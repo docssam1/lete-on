@@ -196,7 +196,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
   @page{margin:14mm}
 }
 
-/* ── introPreview 스타일 (스코프 격리) ── */
+/* ── introPreview 스타일 ── */
 #introPreview{display:none;font-family:'Noto Sans KR',system-ui,sans-serif;word-break:keep-all;background:#fbf9f4}
 #introPreview *{box-sizing:border-box}
 #introPreview .ip-wrap{max-width:1120px;margin:0 auto;padding:0 22px}
@@ -305,6 +305,8 @@ body.intro-active>*:not(#gfieldIntro){display:none!important}
 #gfieldIntro .count-num{font-size:clamp(90px,24vw,220px);font-weight:900;color:#f8dd83;line-height:.8;text-shadow:0 0 68px rgba(212,175,55,.42);animation:introCountPop .7s ease}
 #gfieldIntro .count-label{font-size:clamp(20px,4vw,38px);font-weight:900;margin-bottom:16px}
 @keyframes introCountPop{0%{transform:scale(.65);opacity:0}55%{transform:scale(1.12);opacity:1}100%{transform:scale(1)}}
+
+/* ── 인트로 반응형 ── */
 @media(max-width:960px){
   #gfieldIntro .records{grid-template-columns:1fr}
   #gfieldIntro .grand{order:-1;min-height:250px}
@@ -313,6 +315,45 @@ body.intro-active>*:not(#gfieldIntro){display:none!important}
   #gfieldIntro .intro-title{font-size:clamp(42px,15vw,86px)}
   #gfieldIntro .intro-subtitle{font-size:clamp(26px,9vw,46px)}
   #gfieldIntro .type-line{font-size:clamp(15px,5.2vw,30px)}
+}
+/* ── 모바일 전광판 한 화면 압축 ── */
+@media(max-width:600px){
+  #gfieldIntroScene1{
+    overflow-y:auto!important;
+    align-items:flex-start!important;
+    padding-top:54px!important;
+    padding-bottom:12px!important
+  }
+  #gfieldIntro .records{gap:6px!important;width:calc(100% - 16px)!important}
+  #gfieldIntro .stack{gap:5px!important;max-width:100%!important}
+  /* grand 숫자판 압축 */
+  #gfieldIntro .grand{
+    min-height:0!important;
+    padding:10px 8px!important;
+    border-radius:16px!important;
+    flex-direction:row!important;
+    justify-content:center!important;
+    gap:12px!important
+  }
+  #gfieldIntro .grand:before{display:none}
+  #gfieldIntro .glabel{font-size:10px!important}
+  #gfieldIntro .gnum{font-size:clamp(42px,14vw,64px)!important;margin-top:0!important;line-height:1!important}
+  #gfieldIntro .gunit{font-size:14px!important;margin-top:0!important}
+  #gfieldIntro .gnote{font-size:8px!important;margin-top:2px!important;line-height:1.3!important}
+  /* record 카드 압축 */
+  #gfieldIntro .record{padding:7px 9px!important;border-radius:12px!important}
+  #gfieldIntro .recordTitle{font-size:10px!important;gap:4px!important}
+  #gfieldIntro .recordTitle small{font-size:7px!important}
+  #gfieldIntro .year{
+    grid-template-columns:40px 1fr 24px!important;
+    gap:4px!important;
+    margin-top:3px!important;
+    font-size:8.5px!important;
+    min-height:14px!important
+  }
+  #gfieldIntro .bar{height:3px!important}
+  #gfieldIntro .total{margin-top:3px!important;font-size:9px!important;padding-top:3px!important}
+  #gfieldIntro .total b{font-size:17px!important}
 }
 </style>
 </head>
@@ -334,7 +375,12 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
   <section class="intro-scene" id="gfieldIntroScene1"><div style="width:100%">
     <div class="records">
       <div class="stack" id="gfieldIntroLeftStack"></div>
-      <div class="grand"><div class="glabel">연도별 누적 실적</div><div class="gnum" id="gfieldIntroGrandNum">0</div><div class="gunit">명</div><div class="gnote">대표 실적은 일부입니다.<br>가운데 숫자는 실제 전체 누적 실적입니다.</div></div>
+      <div class="grand">
+        <div class="glabel">연도별 누적 실적</div>
+        <div class="gnum" id="gfieldIntroGrandNum">0</div>
+        <div class="gunit">명</div>
+        <div class="gnote">대표 실적은 일부입니다.<br>가운데 숫자는 실제 전체 누적 실적입니다.</div>
+      </div>
       <div class="stack" id="gfieldIntroRightStack"></div>
     </div>
   </div></section>
@@ -356,7 +402,7 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
   </div></section>
 </div>
 
-<!-- introPreview: 인트로 종료 후 → 로그인 전 소개 페이지 -->
+<!-- introPreview -->
 <div id="introPreview">
   <section class="ip-hero"><div class="ip-wrap">
     <div class="ip-eyebrow">SOMA PREMIER HYPER FOCUS</div>
@@ -368,7 +414,6 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
     </div>
     <div class="ip-subnote">상담 신청서를 남겨주시면 순서대로 확인 후 연락드립니다.</div>
   </div></section>
-
   <section class="ip-section"><div class="ip-wrap">
     <h2>한 번의 점검이 아니라,<br>회차별 변화를 보는 진단입니다.</h2>
     <p class="ip-lead">문항의 정답 여부만 보는 것이 아니라, 어떤 사고력 영역에서 시간이 걸리고 어떤 유형이 반복적으로 흔들리는지 확인합니다.</p>
@@ -378,19 +423,17 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
       <div class="ip-card"><div class="ip-num">03</div><h3>이전 회차 비교 분석</h3><p>이전 회차에서 해결된 문항과 새롭게 틀린 문항을 비교하여, 다음 학습 방향을 더 정확하게 잡습니다.</p></div>
     </div>
   </div></section>
-
   <section class="ip-ad"><div class="ip-wrap ip-ad-grid">
     <div>
       <div class="ip-eyebrow">REPORT PREVIEW</div>
       <h2>누적 진단 리포트 미리보기</h2>
-      <p>2회차 이후에는 이전 회차와의 변화 흐름, 보완된 유형, 다시 흔들리는 유형을 함께 확인할 수 있습니다. 결과는 영역별 강약점과 오답 분석으로 정리됩니다.</p>
+      <p>2회차 이후에는 이전 회차와의 변화 흐름, 보완된 유형, 다시 흔들리는 유형을 함께 확인할 수 있습니다.</p>
     </div>
     <div class="ip-video-card">
       <video autoplay muted loop playsinline preload="auto" src="https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/premier-report-ad-fast.mp4"></video>
       <div class="ip-video-caption">2회차 진단 리포트 예시 화면</div>
     </div>
   </div></section>
-
   <section class="ip-report"><div class="ip-wrap">
     <div class="ip-report-top">
       <div>
@@ -406,7 +449,6 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
       <div class="ip-report-item"><img alt="오답 문항 상세 분석" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF_MiJafbiMPWzXy3UX339bRqxvaACp-5TJ1ejG8mbe6dhGLZ3cO6Lf2HTc9FWfQJBm1CqPagxlEV6zlaEQnb-QVP51MisA_RliiqR121o_Y7zF1lBK_dOP0HHqeUNC46mAvu8BlIv4hlryCRbHNuah1DaUTGmPGhuRpxKavtjtEIbjNKU-9kU-vBLfHrAfkeOoId8yH8ChPG7yeb3y7IBfYL2uPTUMQXGVeNHTw_l6KBfbYPPuJawtVFCzhou0lDx6TD8d2mN1nE"><div class="ip-report-cap"><b>04</b><span>오답 문항 상세 분석</span></div></div>
     </div>
   </div></section>
-
   <section class="ip-areas"><div class="ip-wrap">
     <h2>7개 핵심 사고력 영역 진단</h2>
     <p class="ip-lead">프리미어 대비에서 자주 흔들리는 대표 사고력 영역을 나누어 확인합니다.</p>
@@ -420,7 +462,6 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
       <div class="ip-area"><small>07</small>지문 이해</div>
     </div>
   </div></section>
-
   <section class="ip-final"><div class="ip-wrap">
     <div class="ip-final-box">
       <h2>프로그램 상담이 필요하신가요?</h2>
@@ -431,7 +472,6 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
       </div>
     </div>
   </div></section>
-
   <footer class="ip-footer">© G-FIELD Gifted Education. Premier Hyper Focus.</footer>
 </div>
 
