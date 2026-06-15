@@ -13,7 +13,11 @@ body{-webkit-user-select:none;-moz-user-select:none;user-select:none}
 input{-webkit-user-select:text;-moz-user-select:text;user-select:text}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;overflow-x:hidden}
-#page1{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 50%,var(--navy-mid) 0%,var(--navy) 100%);position:relative;padding:60px 20px;overflow:hidden}
+
+/* ── #page1 초기 숨김 (introPreview 표시 중 노출 방지) ── */
+#page1{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 50%,var(--navy-mid) 0%,var(--navy) 100%);position:relative;padding:60px 20px;overflow:hidden}
+#page1.active{display:flex}
+
 #page1::after{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 20% 30%,rgba(201,168,76,.15) 1px,transparent 1px),radial-gradient(circle at 80% 70%,rgba(201,168,76,.1) 1.5px,transparent 1.5px),radial-gradient(circle at 40% 80%,rgba(232,201,122,.08) 2px,transparent 2px),radial-gradient(circle at 70% 20%,rgba(201,168,76,.12) 1px,transparent 1px);background-size:100px 100px;opacity:.6;pointer-events:none;animation:particlesMove 20s linear infinite}
 @keyframes particlesMove{0%{background-position:0 0}100%{background-position:100px 100px}}
 #page1::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 80% 20%,rgba(201,168,76,.06) 0%,transparent 60%),radial-gradient(ellipse 40% 60% at 10% 80%,rgba(201,168,76,.04) 0%,transparent 60%);pointer-events:none;z-index:1}
@@ -196,23 +200,83 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
   @page{margin:14mm}
 }
 
-/* ── introPreview 스타일 ── */
+/* ── introPreview ── */
 #introPreview{display:none;font-family:'Noto Sans KR',system-ui,sans-serif;word-break:keep-all;background:#fbf9f4}
 #introPreview *{box-sizing:border-box}
 #introPreview .ip-wrap{max-width:1120px;margin:0 auto;padding:0 22px}
-#introPreview .ip-hero{min-height:72vh;display:flex;align-items:center;background:radial-gradient(circle at 16% 18%,rgba(212,175,55,.2),transparent 28%),linear-gradient(135deg,#07101d,#0f1c2c 60%,#030712);color:#fff}
+
+/* 히어로: 2컬럼 */
+#introPreview .ip-hero{min-height:82vh;display:flex;align-items:center;background:radial-gradient(circle at 16% 18%,rgba(212,175,55,.2),transparent 28%),linear-gradient(135deg,#07101d,#0f1c2c 60%,#030712);color:#fff}
+#introPreview .ip-hero-inner{display:grid;grid-template-columns:1fr auto;gap:60px;align-items:center;width:100%}
 #introPreview .ip-eyebrow{display:inline-block;border:1px solid rgba(248,221,131,.75);color:#f8dd83;padding:7px 14px;border-radius:999px;font-size:12px;font-weight:900;letter-spacing:.14em;margin-bottom:22px}
-/* h1: 두 줄 span으로 분리 — 단어 중간 잘림 방지 */
-#introPreview .ip-hero h1{font-size:clamp(36px,7vw,76px);line-height:1.18;letter-spacing:-.05em;margin:0 0 20px;font-weight:900;white-space:normal}
+#introPreview .ip-hero h1{font-size:clamp(32px,5vw,64px);line-height:1.12;letter-spacing:-.05em;margin:0 0 20px;font-weight:900}
 #introPreview .ip-hero h1 .line1{display:block}
 #introPreview .ip-hero h1 .line2{display:block;color:#f8dd83}
-#introPreview .ip-hero p{font-size:clamp(17px,2.4vw,24px);line-height:1.58;color:#dbe4f0;max-width:820px;margin:0 0 34px}
+#introPreview .ip-hero p{font-size:clamp(15px,1.7vw,19px);line-height:1.65;color:#dbe4f0;max-width:540px;margin:0 0 34px}
 #introPreview .ip-cta-row{display:flex;gap:14px;flex-wrap:wrap}
-#introPreview .ip-cta{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-weight:900;font-size:18px;padding:18px 28px;border-radius:14px;transition:.2s;cursor:pointer;border:none;font-family:'Noto Sans KR',sans-serif}
+#introPreview .ip-cta{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-weight:900;font-size:17px;padding:16px 24px;border-radius:14px;transition:.2s;cursor:pointer;border:none;font-family:'Noto Sans KR',sans-serif}
 #introPreview .ip-cta.primary{background:linear-gradient(135deg,#d4af37,#f8dd83);color:#111;box-shadow:0 18px 45px rgba(0,0,0,.28)}
 #introPreview .ip-cta.dark{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.28)}
 #introPreview .ip-cta:hover{transform:translateY(-2px)}
-#introPreview .ip-subnote{margin-top:14px;color:#b9c5d6;font-size:14px}
+#introPreview .ip-subnote{margin-top:14px;color:#b9c5d6;font-size:13px}
+
+/* ── 3D 두꺼운 책 ── */
+#introPreview .ip-book-scene{perspective:1000px;width:220px;height:310px;flex-shrink:0}
+#introPreview .ip-book{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:bookRotate 7s ease-in-out infinite}
+@keyframes bookRotate{
+  0%  {transform:rotateY(-22deg) rotateX(6deg)}
+  45% {transform:rotateY(20deg) rotateX(3deg)}
+  55% {transform:rotateY(20deg) rotateX(3deg)}
+  100%{transform:rotateY(-22deg) rotateX(6deg)}
+}
+/* 앞면 */
+#introPreview .ip-book-front{
+  position:absolute;inset:0;
+  border-radius:3px 10px 10px 3px;
+  transform:translateZ(28px);
+  overflow:hidden;
+  box-shadow:0 28px 70px rgba(0,0,0,.55);
+  border:1px solid rgba(212,175,55,.3)
+}
+#introPreview .ip-book-front img{width:100%;height:100%;object-fit:cover;display:block}
+#introPreview .ip-book-front::after{content:'';position:absolute;inset:6px;border:1px solid rgba(212,175,55,.4);border-radius:2px 8px 8px 2px;pointer-events:none}
+/* 뒷면 */
+#introPreview .ip-book-back{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,#0a1520,#1a2e44);
+  border-radius:10px 3px 3px 10px;
+  transform:translateZ(-28px) rotateY(180deg)
+}
+/* 책등 (두께 56px) */
+#introPreview .ip-book-spine{
+  position:absolute;top:0;left:0;
+  width:56px;height:100%;
+  background:linear-gradient(90deg,#050d18,#0d1b2a 45%,#182d44);
+  transform:rotateY(-90deg) translateX(-28px);
+  transform-origin:left center;
+  display:flex;align-items:center;justify-content:center
+}
+#introPreview .ip-book-spine::after{content:'';position:absolute;right:0;top:0;width:3px;height:100%;background:linear-gradient(180deg,rgba(212,175,55,.5),rgba(212,175,55,.15),rgba(212,175,55,.5))}
+#introPreview .ip-book-spine-text{writing-mode:vertical-rl;color:rgba(212,175,55,.75);font-size:9px;font-weight:900;letter-spacing:.2em;text-shadow:0 0 8px rgba(212,175,55,.3)}
+/* 상단 두께 */
+#introPreview .ip-book-top{
+  position:absolute;top:0;left:0;right:0;height:56px;
+  background:linear-gradient(180deg,#e2d9c8,#cec5b2);
+  transform:rotateX(90deg) translateY(-28px);
+  transform-origin:top center
+}
+#introPreview .ip-book-top::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0,rgba(0,0,0,.05) 1px,transparent 1px,transparent 3px)}
+/* 하단 두께 */
+#introPreview .ip-book-bottom{
+  position:absolute;bottom:0;left:0;right:0;height:56px;
+  background:linear-gradient(0deg,#c4bba8,#cec5b2);
+  transform:rotateX(-90deg) translateY(28px);
+  transform-origin:bottom center
+}
+#introPreview .ip-book-bottom::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0,rgba(0,0,0,.05) 1px,transparent 1px,transparent 3px)}
+/* 그림자 */
+#introPreview .ip-book-shadow{position:absolute;bottom:-24px;left:5%;right:5%;height:24px;background:radial-gradient(ellipse at center,rgba(0,0,0,.42) 0%,transparent 72%);filter:blur(7px)}
+
 #introPreview .ip-section{padding:78px 0;background:#fbf9f4}
 #introPreview .ip-section h2{font-size:clamp(28px,4.4vw,46px);line-height:1.2;letter-spacing:-.05em;margin:0 0 16px;color:#0f1c2c;font-weight:900}
 #introPreview .ip-lead{font-size:18px;line-height:1.75;color:#626b79;max-width:760px;margin:0}
@@ -226,9 +290,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
 #introPreview .ip-ad h2{color:#fff;font-size:clamp(28px,4.4vw,46px);line-height:1.2;letter-spacing:-.05em;margin:0 0 16px;font-weight:900}
 #introPreview .ip-ad .ip-eyebrow{margin-bottom:16px}
 #introPreview .ip-ad p{color:#cbd5e1;line-height:1.75;font-size:18px;margin:0}
-#introPreview .ip-video-card{position:relative;border:1px solid rgba(248,221,131,.25);border-radius:24px;overflow:hidden;background:#050a12;box-shadow:0 22px 60px rgba(0,0,0,.32);min-height:280px}
-#introPreview .ip-video-card video{display:block;width:100%;height:100%;min-height:280px;object-fit:cover}
-#introPreview .ip-video-caption{position:absolute;left:18px;bottom:18px;background:rgba(0,0,0,.58);color:#fff;border:1px solid rgba(255,255,255,.18);padding:10px 14px;border-radius:999px;font-size:14px;font-weight:800;backdrop-filter:blur(8px)}
+/* 영상: 캡션 제거 + 크기 420px */
+#introPreview .ip-video-card{position:relative;border:1px solid rgba(248,221,131,.25);border-radius:24px;overflow:hidden;background:#050a12;box-shadow:0 22px 60px rgba(0,0,0,.32);min-height:420px}
+#introPreview .ip-video-card video{display:block;width:100%;height:100%;min-height:420px;object-fit:cover}
 #introPreview .ip-report{background:#fff;padding:78px 0}
 #introPreview .ip-report-top{display:flex;align-items:end;justify-content:space-between;gap:28px;margin-bottom:34px}
 #introPreview .ip-report-top p{max-width:460px;color:#626b79;line-height:1.7;margin:0}
@@ -250,6 +314,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
 #introPreview .ip-final-box h2{margin:0 0 14px;color:#fff;font-size:clamp(28px,4.4vw,46px);line-height:1.2;letter-spacing:-.05em;font-weight:900}
 #introPreview .ip-final-box p{margin:0 auto 28px;max-width:680px;color:#d6deea;line-height:1.75;font-size:18px}
 #introPreview .ip-footer{padding:34px 0;text-align:center;color:#87909c;font-size:13px;background:#fbf9f4}
+@media(max-width:900px){
+  #introPreview .ip-hero-inner{grid-template-columns:1fr;gap:40px}
+  #introPreview .ip-book-scene{margin:0 auto;order:-1}
+}
 @media(max-width:820px){
   #introPreview .ip-cards,#introPreview .ip-report-grid,#introPreview .ip-ad-grid{grid-template-columns:1fr}
   #introPreview .ip-report-top{display:block}
@@ -257,6 +325,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
   #introPreview .ip-cta-row{display:grid}
   #introPreview .ip-cta{width:100%}
   #introPreview .ip-final-box{padding:36px 22px}
+  #introPreview .ip-book-scene{width:160px;height:226px}
 }
 @media(max-width:520px){#introPreview .ip-area-grid{grid-template-columns:1fr}}
 
@@ -341,6 +410,7 @@ body.intro-active>*:not(#gfieldIntro){display:none!important}
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&e.key==='I')||(e.ctrlKey&&e.key==='u')||(e.ctrlKey&&e.key==='U')||(e.ctrlKey&&e.shiftKey&&e.key==='C')||(e.ctrlKey&&e.shiftKey&&e.key==='J'))e.preventDefault()});
 </script>
+
 <div id="gfieldIntro">
   <div class="intro-bg"></div>
   <button class="intro-skip" type="button" onclick="showIntroPreview()">SKIP</button>
@@ -375,19 +445,37 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
 
 <div id="introPreview">
   <section class="ip-hero"><div class="ip-wrap">
-    <div class="ip-eyebrow">SOMA PREMIER HYPER FOCUS</div>
-    <!-- h1: br 대신 span.line1/2로 줄 고정 -->
-    <h1>
-      <span class="line1">프리미어 합격을 위한</span>
-      <span class="line2">약점 유형 진단 프로그램</span>
-    </h1>
-    <p>소마 프리미어 준비 과정에서 자주 흔들리는 사고력 유형을 점검하고, 아이의 현재 약점과 보완 방향, 프리미어 합격 가능성을 함께 확인하는 진단 프로그램입니다.</p>
-    <div class="ip-cta-row">
-      <a class="ip-cta primary" href="https://naver.me/xy7bsjyb" target="_blank" rel="noopener">프로그램 상담 신청하기</a>
-      <button class="ip-cta dark" onclick="showLoginFromPreview()">로그인해서 진단 시작하기</button>
+    <div class="ip-hero-inner">
+      <!-- 왼쪽: 텍스트 -->
+      <div>
+        <div class="ip-eyebrow">SOMA PREMIER HYPER FOCUS</div>
+        <h1>
+          <span class="line1">프리미어 합격을 위한</span>
+          <span class="line2">약점 유형 진단 프로그램</span>
+        </h1>
+        <p>소마 프리미어 준비 과정에서 자주 흔들리는 사고력 유형을 점검하고, 아이의 현재 약점과 보완 방향, 프리미어 합격 가능성을 함께 확인하는 진단 프로그램입니다.</p>
+        <div class="ip-cta-row">
+          <a class="ip-cta primary" href="https://naver.me/xy7bsjyb" target="_blank" rel="noopener">프로그램 상담 신청하기</a>
+          <button class="ip-cta dark" onclick="showLoginFromPreview()">로그인해서 진단 시작하기</button>
+        </div>
+        <div class="ip-subnote">상담 신청서를 남겨주시면 순서대로 확인 후 연락드립니다.</div>
+      </div>
+      <!-- 오른쪽: 3D 두꺼운 책 -->
+      <div class="ip-book-scene">
+        <div class="ip-book">
+          <div class="ip-book-front">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkqj4hGZfL2B1T_5rkNPit3qjJ1Z6Fm3MSaUxw2LQ64yvrANnkWR6i8qa78SjObf_8tgmbrvBaW9QGeVf3-y81X2j4AjvCspw-TIrcGwbXlKGbWIu8AiVEg2cRU8sMYmZ5eZwkZDvb70c-Mbzvhx4XxQjem93m6dltNujj_PUBbjZAe_HCblWg40aVZhCKZ8o2RwXO9bQLPgjKR94XSBAwsd-OWGWEmTUB_Bz0gMb7sqUAATs1XYj7zcBgk8JH35SQGqbju3XOnTE" alt="리포트 표지">
+          </div>
+          <div class="ip-book-back"></div>
+          <div class="ip-book-spine"><span class="ip-book-spine-text">G·FIELD PREMIER</span></div>
+          <div class="ip-book-top"></div>
+          <div class="ip-book-bottom"></div>
+          <div class="ip-book-shadow"></div>
+        </div>
+      </div>
     </div>
-    <div class="ip-subnote">상담 신청서를 남겨주시면 순서대로 확인 후 연락드립니다.</div>
   </div></section>
+
   <section class="ip-section"><div class="ip-wrap">
     <h2>한 번의 점검이 아니라,<br>회차별 변화를 보는 진단입니다.</h2>
     <p class="ip-lead">문항의 정답 여부만 보는 것이 아니라, 어떤 사고력 영역에서 시간이 걸리고 어떤 유형이 반복적으로 흔들리는지 확인합니다.</p>
@@ -397,6 +485,7 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
       <div class="ip-card"><div class="ip-num">03</div><h3>이전 회차 비교 분석</h3><p>이전 회차에서 해결된 문항과 새롭게 틀린 문항을 비교하여, 다음 학습 방향을 더 정확하게 잡습니다.</p></div>
     </div>
   </div></section>
+
   <section class="ip-ad"><div class="ip-wrap ip-ad-grid">
     <div>
       <div class="ip-eyebrow">REPORT PREVIEW</div>
@@ -404,10 +493,11 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
       <p>2회차 이후에는 이전 회차와의 변화 흐름, 보완된 유형, 다시 흔들리는 유형을 함께 확인할 수 있습니다.</p>
     </div>
     <div class="ip-video-card">
+      <!-- 캡션 div 제거됨 -->
       <video autoplay muted loop playsinline preload="auto" src="https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/premier-report-ad-fast.mp4"></video>
-      <div class="ip-video-caption">2회차 진단 리포트 예시 화면</div>
     </div>
   </div></section>
+
   <section class="ip-report"><div class="ip-wrap">
     <div class="ip-report-top">
       <div>
@@ -423,6 +513,7 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
       <div class="ip-report-item"><img alt="오답 문항 상세 분석" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF_MiJafbiMPWzXy3UX339bRqxvaACp-5TJ1ejG8mbe6dhGLZ3cO6Lf2HTc9FWfQJBm1CqPagxlEV6zlaEQnb-QVP51MisA_RliiqR121o_Y7zF1lBK_dOP0HHqeUNC46mAvu8BlIv4hlryCRbHNuah1DaUTGmPGhuRpxKavtjtEIbjNKU-9kU-vBLfHrAfkeOoId8yH8ChPG7yeb3y7IBfYL2uPTUMQXGVeNHTw_l6KBfbYPPuJawtVFCzhou0lDx6TD8d2mN1nE"><div class="ip-report-cap"><b>04</b><span>오답 문항 상세 분석</span></div></div>
     </div>
   </div></section>
+
   <section class="ip-areas"><div class="ip-wrap">
     <h2>7개 핵심 사고력 영역 진단</h2>
     <p class="ip-lead">프리미어 대비에서 자주 흔들리는 대표 사고력 영역을 나누어 확인합니다.</p>
@@ -436,6 +527,7 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
       <div class="ip-area"><small>07</small>지문 이해</div>
     </div>
   </div></section>
+
   <section class="ip-final"><div class="ip-wrap">
     <div class="ip-final-box">
       <h2>프로그램 상담이 필요하신가요?</h2>
@@ -545,8 +637,8 @@ let myChart=null,diffChart=null,currentUserKey="",studentHistory=[];
 window.onload=function(){const viewArea=document.getElementById('view-area');const listGrid=document.getElementById('list-grid');const quickGrid=document.getElementById('quick-grid');let allItems=[];data.forEach(cat=>{let blockHTML=`<div class="category-block"><div class="category-header"><div class="category-num">${cat.categoryNum}</div><div class="category-title">유형 ${cat.categoryNum}. ${cat.categoryTitle}</div><div class="category-divider"></div></div><div class="items-grid">`;cat.items.forEach(item=>{blockHTML+=`<label class="check-item" data-id="${item.id}" onclick="toggleItem(event,${item.id})"><div class="custom-check">${checkSVG}</div><span class="list-num">${String(item.id).padStart(2,'0')}</span><span>${item.text}</span></label>`;allItems.push(item)});blockHTML+=`</div></div>`;viewArea.innerHTML+=blockHTML;});allItems.sort((a,b)=>a.id-b.id);allItems.forEach(item=>{const listLbl=document.createElement('label');listLbl.className='check-item';listLbl.setAttribute('data-id',item.id);listLbl.onclick=(e)=>toggleItem(e,item.id);listLbl.innerHTML=`<div class="custom-check">${checkSVG}</div><span class="list-num">${String(item.id).padStart(2,'0')}</span><span>${item.text}</span>`;listGrid.appendChild(listLbl);const quickLbl=document.createElement('label');quickLbl.className='check-item num-item';quickLbl.setAttribute('data-id',item.id);quickLbl.onclick=(e)=>toggleItem(e,item.id);quickLbl.innerHTML=`<span class="list-num">${String(item.id).padStart(2,'0')}</span>`;quickGrid.appendChild(quickLbl);});};
 function toggleItem(e,id){e.preventDefault();if(selectedSet.has(id))selectedSet.delete(id);else selectedSet.add(id);updateChecksUI()}
 function updateChecksUI(){document.querySelectorAll('.check-item').forEach(el=>{const elId=parseInt(el.getAttribute('data-id'));el.classList.toggle('checked',selectedSet.has(elId))});document.getElementById('checkCount').textContent=selectedSet.size}
-function showLoginFromPreview(){document.getElementById('introPreview').style.display='none';document.getElementById('page1').style.display='flex';window.scrollTo(0,0);}
-function checkAuth(){const name=document.getElementById('studentName').value.trim();const phone=document.getElementById('parentPhone').value.trim();const code=document.getElementById('authCode').value;if(!name||!phone){alert('이름과 연락처를 모두 입력해 주세요.');return}if(!code.includes('777200')){alert('승인번호가 올바르지 않습니다.');return}currentUserKey=`gfield_${name}_${phone}`;const stored=localStorage.getItem(currentUserKey);studentHistory=stored?JSON.parse(stored):[];document.getElementById('page1').style.display='none';document.getElementById('page2').style.display='block';document.getElementById('studentInfoDisplay').textContent=`학생: ${name}  |  연락처: ${phone}`;updateAttemptButtons();if(studentHistory.length>=3)alert('이미 최대 응시 횟수(3회)를 모두 완료하셨습니다. 이전 결과를 불러와 확인해 주세요.');setView('quick');window.scrollTo(0,0);}
+function showLoginFromPreview(){document.getElementById('introPreview').style.display='none';const p1=document.getElementById('page1');p1.classList.add('active');window.scrollTo(0,0);}
+function checkAuth(){const name=document.getElementById('studentName').value.trim();const phone=document.getElementById('parentPhone').value.trim();const code=document.getElementById('authCode').value;if(!name||!phone){alert('이름과 연락처를 모두 입력해 주세요.');return}if(!code.includes('777200')){alert('승인번호가 올바르지 않습니다.');return}currentUserKey=`gfield_${name}_${phone}`;const stored=localStorage.getItem(currentUserKey);studentHistory=stored?JSON.parse(stored):[];const p1=document.getElementById('page1');p1.classList.remove('active');p1.style.display='none';document.getElementById('page2').style.display='block';document.getElementById('studentInfoDisplay').textContent=`학생: ${name}  |  연락처: ${phone}`;updateAttemptButtons();if(studentHistory.length>=3)alert('이미 최대 응시 횟수(3회)를 모두 완료하셨습니다. 이전 결과를 불러와 확인해 주세요.');setView('quick');window.scrollTo(0,0);}
 function updateAttemptButtons(){for(let i=0;i<3;i++){const btn=document.getElementById(`btn-att-${i}`);if(i<studentHistory.length){btn.className='attempt-btn completed';btn.disabled=false}else{btn.className='attempt-btn disabled';btn.disabled=true}}}
 function loadAttempt(index){if(index>=studentHistory.length)return;selectedSet.clear();studentHistory[index].wrongIds.forEach(id=>selectedSet.add(id));updateChecksUI();renderResultUI(index)}
 function submitNewAttempt(){if(selectedSet.size===0){alert('틀린(약점) 유형을 최소 하나 이상 체크해 주세요.');return}if(studentHistory.length>=3){alert('총 3회 응시 제한을 초과했습니다.');return}const sortedIds=Array.from(selectedSet).sort((a,b)=>a-b);const name=document.getElementById('studentName').value.trim();const phone=document.getElementById('parentPhone').value.trim();const rate=Math.round(((54-sortedIds.length)/54)*100);studentHistory.push({attempt:studentHistory.length+1,wrongIds:sortedIds,rate:rate});localStorage.setItem(currentUserKey,JSON.stringify(studentHistory));updateAttemptButtons();const scriptURL='https://script.google.com/macros/s/AKfycbzwtu2FOu_rmqT-pyhwakl0EYrkbdUHUwTYnxB0GBlLcZlgXqmxTJfObeKQHx8Tu_FZsA/exec';fetch(scriptURL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,wrongIds:sortedIds.join(', '),rate})}).catch(err=>console.error(err));renderResultUI(studentHistory.length-1);}
