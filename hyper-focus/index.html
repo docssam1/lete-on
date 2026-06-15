@@ -123,15 +123,85 @@ body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif;background:var(--c
 .pdf-sheet.report-sheet{padding:24px 22px 26px}
 .pdf-watermark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-28deg);transform-origin:center;opacity:.035;color:#8f959d;font-weight:800;letter-spacing:.08em;white-space:nowrap;pointer-events:none;user-select:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .pdf-sheet .pdf-watermark{font-size:42px}
-.prelogin-locked{display:none!important}
-@media(max-width:760px){.pre-login-grid{grid-template-columns:1fr}.pre-login-brief{margin:18px 12px;padding:22px}}
+.pdf-sheet .export-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;margin-bottom:16px;break-inside:avoid;page-break-inside:avoid}
+.pdf-sheet .export-card h3{margin:0 0 10px;font-size:18px;color:#0d1b2a}
+.pdf-sheet .export-card p,.pdf-sheet .export-card li{font-size:13px;line-height:1.7;color:#1f2937}
+.pdf-sheet .export-card ul{margin:0;padding-left:18px}
+.pdf-sheet .export-header{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #0d1b2a}
+.pdf-sheet .export-header h1{margin:0 0 6px;font-size:28px;color:#0d1b2a}
+.pdf-sheet .export-header p{margin:0;font-size:13px;color:#475569}
+.pdf-sheet .export-chart{width:100%;border:1px solid #e5e7eb;border-radius:12px;background:#fff;padding:8px}
+.pdf-sheet .export-chart img{display:block;width:100%;height:auto}
+.pdf-sheet .export-results .res-card{margin-bottom:14px;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden}
+.pdf-sheet .export-results .res-card-body{display:block!important}
+.pdf-report-clone{width:100%;background:#fff}
+.pdf-report-clone #result-area{display:block!important;margin:0!important;border:none!important;box-shadow:none!important;border-radius:0!important}
+.pdf-report-clone .result-body{padding:18px 0 0!important}
+.pdf-report-clone .result-actions,.pdf-report-clone .res-video-btn,.pdf-report-clone .res-card-toggle,.pdf-report-clone .btn-action,.pdf-report-clone .tab-bar,.pdf-report-clone .attempt-menu,.pdf-report-clone .action-btns,.pdf-report-clone .helper-text,.pdf-report-clone .submit-area{display:none!important}
+.pdf-report-clone canvas{max-width:100%!important;height:auto!important}
+.login-card .quick-download-actions{display:none!important}
+@media print{
+  body.report-print-mode #page1,
+  body.report-print-mode .action-btns,
+  body.report-print-mode .helper-text,
+  body.report-print-mode .attempt-menu,
+  body.report-print-mode .tab-bar,
+  body.report-print-mode .checklist-section,
+  body.report-print-mode .submit-area,
+  body.report-print-mode .result-actions,
+  body.report-print-mode .res-video-btn,
+  body.report-print-mode .res-card-toggle{display:none!important}
+  body.report-print-mode .print-only{display:flex!important}
+  body.report-print-mode #printCover{
+    display:flex!important;
+    min-height:100vh!important;
+    page-break-after:always!important;
+    break-after:page!important
+  }
+  body.report-print-mode #page2{display:block!important;padding:0!important;margin:0!important}
+  body.report-print-mode .p2-header{display:none!important}
+  body.report-print-mode #allAnswerPrint{display:none!important}
+  body.report-print-mode #result-area{display:block!important;box-shadow:none!important;border:none!important;margin:0!important;padding:0!important;page-break-before:auto!important;page-break-after:auto!important;break-before:auto!important;break-after:auto!important}
+  body.report-print-mode .result-body{padding:0!important}
+  body.report-print-mode .result-header{background:transparent!important;padding:0 0 10px!important;border-bottom:2px solid #0d1b2a!important;margin-bottom:14px!important}
+  body.report-print-mode .result-header h2,
+  body.report-print-mode .result-header p,
+  body.report-print-mode .result-header strong{color:#111!important}
+  body.report-print-mode .result-icon{display:none!important}
+  body.report-print-mode .diagnosis-grid{display:block!important;break-inside:auto!important;margin-bottom:12px!important}
+  body.report-print-mode .chart-container{height:auto!important;min-height:0!important;margin:0 0 12px!important;padding:10px!important;border:1px solid #ccc!important;break-inside:avoid!important;page-break-inside:avoid!important}
+  body.report-print-mode .diag-card{margin-bottom:12px!important;padding:14px!important;border:1px solid #ccc!important;break-inside:avoid!important;page-break-inside:avoid!important}
+  body.report-print-mode .diag-card.prediction{background:#fff!important;border:1px solid #0d1b2a!important}
+  body.report-print-mode .diag-card.prediction h3,
+  body.report-print-mode .diag-card.prediction p,
+  body.report-print-mode .diag-card.prediction .highlight-msg{color:#111!important}
+  body.report-print-mode .result-list-box{border:none!important;background:transparent!important;padding:0!important;margin-top:14px!important}
+  body.report-print-mode .res-card{border:1px solid #ccc!important;margin-bottom:12px!important;break-inside:avoid!important;page-break-inside:avoid!important}
+  body.report-print-mode .res-card-header{background:#f9f9f9!important;border-bottom:1px dashed #ccc!important;padding:10px!important}
+  body.report-print-mode .res-card-body{display:block!important;padding:10px!important}
+  body.report-print-mode .res-badge{border:1px solid #c0392b!important;color:#c0392b!important;background:transparent!important}
+  body.report-print-mode canvas{max-width:100%!important;height:auto!important}
+  body.report-print-mode .diff-chart-container{height:auto!important;min-height:220px!important;break-inside:avoid!important;page-break-inside:avoid!important}
+  body.report-print-mode .chart-container,
+  body.report-print-mode .diff-chart-container,
+  body.report-print-mode .diag-card,
+  body.report-print-mode .res-card{overflow:visible!important}
+  @page{margin:14mm}
+}
+@media(max-width:760px){
+  #gfieldIntro .records{grid-template-columns:1fr!important;gap:8px!important}
+  #gfieldIntro .grand{order:-1}
+  #gfieldIntro .year{grid-template-columns:72px 1fr 32px!important}
+  .pre-login-grid{grid-template-columns:1fr}
+  .pre-login-brief{margin:18px 12px;padding:22px}
+}
 </style>`;
 
   const PATCH_JS = `
 <script id="premier-phase1-js">
 (function(){
 const TYPE_TEXTS=['쌓기나무와 입체도형','전개도와 주사위','색종이 접기와 펀칭','도형 개수 세기','수와 연산 퍼즐','논리표 조건 추론','최단 거리 가짓수','양팔저울 무게 비교','규칙 찾기','암호 풀기','거울과 디지털 수','달력과 시계','조건에 알맞은 수','평면도형 분할','입체도형 관찰','도형 회전','경우의 수','분수 조건','나머지 규칙','도형 겹치기','거리와 위치','쌍과 짝짓기','색칠 논리','입체 단면','수 배열','문장제 추론','숫자 카드'];
-const BOOK_IMAGE_URLS=["https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_001.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_002.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_003.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_004.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_005.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_006.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_007.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_008.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_009.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_010.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_011.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_012.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_013.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_014.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_015.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_016.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_017.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_018.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_019.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_020.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_021.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_022.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_023.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_024.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_025.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_026.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_027.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_028.jpg","https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_029.jpg"];
+const BOOK_IMAGE_URLS=["https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_001.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_002.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_003.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_004.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_005.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_006.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_007.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_008.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_009.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_010.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_011.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_012.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_013.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_014.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_015.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_016.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_017.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_018.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_019.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_020.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_021.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_022.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_023.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_024.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_025.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_026.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_027.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_028.jpg", "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/book/book_029.jpg"];
 const ROOT_ANSWER_SOURCE_URL='./index.html?v=shared-answer-data';
 const ROOT_ANSWER_SOURCE_FALLBACK_URL='https://docssam1.github.io/Hyper-Focus-answer-Key/?v=shared-answer-data';
 function replaceIntroWording(){document.querySelectorAll('#gfieldIntroScene3 *').forEach(function(el){if(el.children.length===0&&el.textContent){el.textContent=el.textContent.replace(/대표\\s*유형/g,'심화 대표 유형').replace(/빠르게\\s*점검합니다/g,'약점유형을 진단합니다')}})}
@@ -145,7 +215,13 @@ function patchPreLogin(){
     brief=document.createElement('div');
     brief.id='preLoginBrief';
     brief.style.cssText='display:none;background:#fbf9f4;color:#16181d';
-    brief.innerHTML=`<section class="hero"><div class="wrap"><div class="eyebrow">SOMA PREMIER HYPER FOCUS</div><h1>프리미어 합격을 위한<br><strong>약점 유형 진단 프로그램</strong></h1><p>소마 프리미어 준비 과정에서 자주 흔들리는 사고력 유형을 점검하고, 아이의 현재 약점과 보완 방향, 프리미어 합격 가능성을 함께 확인하는 진단 프로그램입니다.</p><div class="cta-row"><a class="cta primary" href="https://naver.me/xy7bsjyb" target="_blank" rel="noopener">프로그램 상담 신청하기</a><a class="cta dark" href="#" onclick="gfieldPreLoginStart();return false;">로그인해서 진단 시작하기</a></div><div class="subnote">상담 신청서를 남겨주시면 순서대로 확인 후 연락드립니다.</div></div></section><section class="section"><div class="wrap"><h2>한 번의 점검이 아니라,<br>회차별 변화를 보는 진단입니다.</h2><p class="lead">문항의 정답 여부만 보는 것이 아니라, 어떤 사고력 영역에서 시간이 걸리고 어떤 유형이 반복적으로 흔들리는지 확인합니다.</p><div class="cards"><div class="card"><div class="num">01</div><h3>54개 대표 유형 점검</h3><p>공간 지각, 평면 지각, 수와 연산, 논리 추리, 경우의 수, 문제 해결, 지문 이해 영역의 대표 유형을 확인합니다.</p></div><div class="card"><div class="num">02</div><h3>최대 3회 진단 가능</h3><p>1회성 체크가 아니라 최대 3회까지 진단하며, 아이의 보완 흐름을 회차별로 확인할 수 있습니다.</p></div><div class="card"><div class="num">03</div><h3>이전 회차 비교 분석</h3><p>이전 회차에서 해결된 문항과 새롭게 틀린 문항을 비교하여, 다음 학습 방향을 더 정확하게 잡습니다.</p></div></div></div></section><section class="section ad"><div class="wrap ad-grid"><div><div class="eyebrow">REPORT PREVIEW</div><h2>누적 진단 리포트 미리보기</h2><p>2회차 이후에는 이전 회차와의 변화 흐름, 보완된 유형, 다시 흔들리는 유형을 함께 확인할 수 있습니다.</p></div><div class="video-card"><video autoplay muted loop playsinline preload="auto" src="https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/premier-report-ad-fast.mp4"></video><div class="video-caption">2회차 진단 리포트 예시 화면</div></div></div></section><section class="section report"><div class="wrap"><div class="report-top"><div><div class="eyebrow" style="border-color:#d4af37;color:#8a6b00">REPORT SAMPLE</div><h2>진단 후 제공되는<br>리포트 미리보기</h2></div><p>영역별 강약점과 오답 분석으로 정리됩니다.</p></div><div class="report-grid"><div class="report-item"><img alt="개인별 진단 리포트" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkqj4hGZfL2B1T_5rkNPit3qjJ1Z6Fm3MSaUxw2LQ64yvrANnkWR6i8qa78SjObf_8tgmbrvBaW9QGeVf3-y81X2j4AjvCspw-TIrcGwbXlKGbWIu8AiVEg2cRU8sMYmZ5eZwkZDvb70c-Mbzvhx4XxQjem93m6dltNujj_PUBbjZAe_HCblWg40aVZhCKZ8o2RwXO9bQLPgjKR94XSBAwsd-OWGWEmTUB_Bz0gMb7sqUAATs1XYj7zcBgk8JH35SQGqbju3XOnTE"><div class="report-cap"><b>01</b><span>개인별 진단 리포트</span></div></div><div class="report-item"><img alt="영역별 강약점 분석" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi48xQbJOwciTrlVjaL3PxJgVfp5BwEYZoeoSuhqkPU8N1mTSiap_auNnCiOc19nyGUR8zxH-0OkK5gKBsRFvzFopPvwkb8KKOX3ZtPMAaF6I7p1oCo5XST0nFgLS7nvCfNoJgiTiYPs-G4fLS8IWvb0C7YMb6LFzlcX6T4rDI6nuwgGqXbAlW5p3wkaOYYklah9CtY9FW7r5SwIZiFBUV2cG2Xtra-wVH7Ay8o3ZdglxkcB-mc8CrVNl-uAcEh6jUrzt2wW9zTtU"><div class="report-cap"><b>02</b><span>영역별 강약점 분석</span></div></div><div class="report-item"><img alt="이전 회차 대비 변화도" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAb0f9OQ3Ta9io3fOYVqiwHSE4fciTaFcaP5lD55h3xARloV12jEH5TxrVfaf9MIYiJtkjCwGudShW1owXq2x_x6M1XVgT3C_vN7Mz-jVYj4YOT67kycg3FCuYzBNd-i22FKsvQYzGhFLaiIf1h2zH0euBAxffFIsa1HRaTiHNNawQpxXiRaAqZkGgMzRCrezLJNkmxNfl-SkBu38CHtiGVecycSBGSSZNM2IWYkzWtBD441p0xqPCbdpDJknokoyOv2-MO72riDIA"><div class="report-cap"><b>03</b><span>이전 회차 대비 변화도</span></div></div><div class="report-item"><img alt="오답 문항 상세 분석" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF_MiJafbiMPWzXy3UX339bRqxvaACp-5TJ1ejG8mbe6dhGLZ3cO6Lf2HTc9FWfQJBm1CqPagxlEV6zlaEQnb-QVP51MisA_RliiqR121o_Y7zF1lBK_dOP0HHqeUNC46mAvu8BlIv4hlryCRbHNuah1DaUTGmPGhuRpxKavtjtEIbjNKU-9kU-vBLfHrAfkeOoId8yH8ChPG7yeb3y7IBfYL2uPTUMQXGVeNHTw_l6KBfbYPPuJawtVFCzhou0lDx6TD8d2mN1nE"><div class="report-cap"><b>04</b><span>오답 문항 상세 분석</span></div></div></div></div></section><section class="section areas"><div class="wrap"><h2>7개 핵심 사고력 영역 진단</h2><p class="lead">프리미어 대비에서 자주 흔들리는 대표 사고력 영역을 나누어 확인합니다.</p><div class="area-grid"><div class="area"><small>01</small>공간 지각</div><div class="area"><small>02</small>평면 지각</div><div class="area"><small>03</small>수와 연산</div><div class="area"><small>04</small>논리 추리</div><div class="area"><small>05</small>경우의 수</div><div class="area"><small>06</small>문제 해결</div><div class="area"><small>07</small>지문 이해</div></div></div></section><section class="final"><div class="wrap"><div class="final-box"><h2>프로그램 상담이 필요하신가요?</h2><p>아이의 현재 준비 상황과 목표 반, 보완이 필요한 유형을 남겨주시면 확인 후 상담 안내를 드립니다.</p><div class="cta-row" style="justify-content:center"><a class="cta primary" href="https://naver.me/xy7bsjyb" target="_blank" rel="noopener">프로그램 상담 신청하기</a><a class="cta dark" href="#" onclick="gfieldPreLoginStart();return false;">로그인해서 진단 시작하기</a></div></div></div></section><footer class="footer">© G-FIELD Gifted Education. Premier Hyper Focus.</footer>`;
+    brief.innerHTML=`<section class="hero"><div class="wrap"><div class="eyebrow">SOMA PREMIER HYPER FOCUS</div><h1>프리미어 합격을 위한<br><strong>약점 유형 진단 프로그램</strong></h1><p>소마 프리미어 준비 과정에서 자주 흔들리는 사고력 유형을 점검하고, 아이의 현재 약점과 보완 방향, 프리미어 합격 가능성을 함께 확인하는 진단 프로그램입니다.</p><div class="cta-row"><a class="cta primary" href="https://naver.me/xy7bsjyb" target="_blank" rel="noopener">프로그램 상담 신청하기</a><a class="cta dark" href="#" onclick="gfieldPreLoginStart();return false;" rel="noopener">로그인해서 진단 시작하기</a></div><div class="subnote">상담 신청서를 남겨주시면 순서대로 확인 후 연락드립니다.</div></div></section>
+<section class="section"><div class="wrap"><h2>한 번의 점검이 아니라,<br>회차별 변화를 보는 진단입니다.</h2><p class="lead">문항의 정답 여부만 보는 것이 아니라, 어떤 사고력 영역에서 시간이 걸리고 어떤 유형이 반복적으로 흔들리는지 확인합니다.</p><div class="cards"><div class="card"><div class="num">01</div><h3>54개 대표 유형 점검</h3><p>공간 지각, 평면 지각, 수와 연산, 논리 추리, 경우의 수, 문제 해결, 지문 이해 영역의 대표 유형을 확인합니다.</p></div><div class="card"><div class="num">02</div><h3>최대 3회 진단 가능</h3><p>1회성 체크가 아니라 최대 3회까지 진단하며, 아이의 보완 흐름을 회차별로 확인할 수 있습니다.</p></div><div class="card"><div class="num">03</div><h3>이전 회차 비교 분석</h3><p>이전 회차에서 해결된 문항과 새롭게 틀린 문항을 비교하여, 다음 학습 방향을 더 정확하게 잡습니다.</p></div></div></div></section>
+<section class="section ad"><div class="wrap ad-grid"><div><div class="eyebrow">REPORT PREVIEW</div><h2>누적 진단 리포트 미리보기</h2><p>2회차 이후에는 이전 회차와의 변화 흐름, 보완된 유형, 다시 흔들리는 유형을 함께 확인할 수 있습니다. 결과는 영역별 강약점과 오답 분석으로 정리됩니다.</p></div><div class="video-card"><video autoplay muted loop playsinline preload="auto" src="https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/premier-report-ad-fast.mp4"></video><div class="video-caption">2회차 진단 리포트 예시 화면</div></div></div></section>
+<section class="section report"><div class="wrap"><div class="report-top"><div><div class="eyebrow" style="border-color:#d4af37;color:#8a6b00">REPORT SAMPLE</div><h2>진단 후 제공되는<br>리포트 미리보기</h2></div><p>학생명, 승인번호, 전화번호는 노출하지 않고 2회차 진단 리포트의 변화 흐름만 보여주는 이미지로 교체합니다.</p></div><div class="report-grid"><div class="report-item"><img alt="개인별 진단 리포트" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkqj4hGZfL2B1T_5rkNPit3qjJ1Z6Fm3MSaUxw2LQ64yvrANnkWR6i8qa78SjObf_8tgmbrvBaW9QGeVf3-y81X2j4AjvCspw-TIrcGwbXlKGbWIu8AiVEg2cRU8sMYmZ5eZwkZDvb70c-Mbzvhx4XxQjem93m6dltNujj_PUBbjZAe_HCblWg40aVZhCKZ8o2RwXO9bQLPgjKR94XSBAwsd-OWGWEmTUB_Bz0gMb7sqUAATs1XYj7zcBgk8JH35SQGqbju3XOnTE"><div class="report-cap"><b>01</b><span>개인별 진단 리포트</span></div></div><div class="report-item"><img alt="영역별 강약점 분석" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi48xQbJOwciTrlVjaL3PxJgVfp5BwEYZoeoSuhqkPU8N1mTSiap_auNnCiOc19nyGUR8zxH-0OkK5gKBsRFvzFopPvwkb8KKOX3ZtPMAaF6I7p1oCo5XST0nFgLS7nvCfNoJgiTiYPs-G4fLS8IWvb0C7YMb6LFzlcX6T4rDI6nuwgGqXbAlW5p3wkaOYYklah9CtY9FW7r5SwIZiFBUV2cG2Xtra-wVH7Ay8o3ZdglxkcB-mc8CrVNl-uAcEh6jUrzt2wW9zTtU"><div class="report-cap"><b>02</b><span>영역별 강약점 분석</span></div></div><div class="report-item"><img alt="이전 회차 대비 변화도" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAb0f9OQ3Ta9io3fOYVqiwHSE4fciTaFcaP5lD55h3xARloV12jEH5TxrVfaf9MIYiJtkjCwGudShW1owXq2x_x6M1XVgT3C_vN7Mz-jVYj4YOT67kycg3FCuYzBNd-i22FKsvQYzGhFLaiIf1h2zH0euBAxffFIsa1HRaTiHNNawQpxXiRaAqZkGgMzRCrezLJNkmxNfl-SkBu38CHtiGVecycSBGSSZNM2IWYkzWtBD441p0xqPCbdpDJknokoyOv2-MO72riDIA"><div class="report-cap"><b>03</b><span>이전 회차 대비 변화도</span></div></div><div class="report-item"><img alt="오답 문항 상세 분석" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF_MiJafbiMPWzXy3UX339bRqxvaACp-5TJ1ejG8mbe6dhGLZ3cO6Lf2HTc9FWfQJBm1CqPagxlEV6zlaEQnb-QVP51MisA_RliiqR121o_Y7zF1lBK_dOP0HHqeUNC46mAvu8BlIv4hlryCRbHNuah1DaUTGmPGhuRpxKavtjtEIbjNKU-9kU-vBLfHrAfkeOoId8yH8ChPG7yeb3y7IBfYL2uPTUMQXGVeNHTw_l6KBfbYPPuJawtVFCzhou0lDx6TD8d2mN1nE"><div class="report-cap"><b>04</b><span>오답 문항 상세 분석</span></div></div></div></div></section>
+<section class="section areas"><div class="wrap"><h2>7개 핵심 사고력 영역 진단</h2><p class="lead">프리미어 대비에서 자주 흔들리는 대표 사고력 영역을 나누어 확인합니다.</p><div class="area-grid"><div class="area"><small>01</small>공간 지각</div><div class="area"><small>02</small>평면 지각</div><div class="area"><small>03</small>수와 연산</div><div class="area"><small>04</small>논리 추리</div><div class="area"><small>05</small>경우의 수</div><div class="area"><small>06</small>문제 해결</div><div class="area"><small>07</small>지문 이해</div></div></div></section>
+<section class="final"><div class="wrap"><div class="final-box"><h2>프로그램 상담이 필요하신가요?</h2><p>아이의 현재 준비 상황과 목표 반, 보완이 필요한 유형을 남겨주시면 확인 후 상담 안내를 드립니다.</p><div class="cta-row" style="justify-content:center"><a class="cta primary" href="https://naver.me/xy7bsjyb" target="_blank" rel="noopener">프로그램 상담 신청하기</a><a class="cta dark" href="#" onclick="gfieldPreLoginStart();return false;" rel="noopener">로그인해서 진단 시작하기</a></div></div></div></section>
+<footer class="footer">© G-FIELD Gifted Education. Premier Hyper Focus.</footer>`;
     login.parentNode.insertBefore(brief,login);
   }
   window.gfieldPreLoginStart=function(){
@@ -161,7 +237,6 @@ function patchPreLogin(){
     brief.style.display='block';
     login.classList.add('prelogin-locked');
   }
-}
 })();
 <\/script>`;
 
@@ -170,13 +245,19 @@ function patchPreLogin(){
     return r.text();
   });
   html = html.replace('<img class="intro-logo" src="https://drive.google.com/uc?export=view&id=1c2yx_O6sKcTF9-YoTKxnQ2lWOqfWiUCL" alt="GFIELD">','<img class="intro-logo" src="' + LOGO_URL + '" alt="GFIELD">');
+  html = html.replace(/대표\s*유형을<br>빠르게\s*점검합니다/g,'심화 대표 유형으로<br>약점유형을 진단합니다');
+  html = html.replace(/대표\s*유형/g,'심화 대표 유형');
+  html = html.replace(/빠르게\s*점검합니다/g,'약점유형을 진단합니다');
   html = html.replace(/영재\s*클래스/g,'필즈 TOPCLASS');
   html = html.replace(/테마\s*프리미어/g,'소마 프리미어(대치)');
   const rs = html.indexOf("const recordData=");
   const re = rs > -1 ? html.indexOf(";", rs) : -1;
   if (rs > -1 && re > -1) html = html.slice(0, rs) + SCOREBOARD_DATA + html.slice(re + 1);
+  html = html.replace(/const scenes=\['gfieldIntroScene0','gfieldIntroScene1','gfieldIntroScene2','gfieldIntroScene3','gfieldIntroScene4','gfieldIntroScene5'\],times=\[[^\]]+\]/,"const scenes=['gfieldIntroScene0','gfieldIntroScene1','gfieldIntroScene2','gfieldIntroScene3','gfieldIntroScene4','gfieldIntroScene5'],times=[0,2300,5000,7200,9600,11800]");
   html = html.replace(/let c=5;/g,"let c=3;");
   html = html.replace(/let n=5;/g,"let n=3;");
+  html = html.split("},900);").join("},850);");
+  html = html.replace(/setTimeout\(\(\)=>window\.gfieldIntroGoDiagnosis\(\),20300\)/g,"setTimeout(()=>window.gfieldIntroGoDiagnosis(),15200)");
   html = html.replace("</head>", PATCH_CSS + "</head>");
   html = html.replace("</body>", PATCH_JS + '<div id="G_FIELD_PAGE_READY_MARKER"></div></body>');
   document.open();
