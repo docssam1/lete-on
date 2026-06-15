@@ -18,6 +18,12 @@ html,body{margin:0;min-height:100%;background:#02050b;color:#fff;font-family:sys
   const BASE_URL = "https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/ebcbacd3ef208a8ba2de36babc35a3858e08e23d/premier-hyper-focus/index.html";
   const LOGO_URL = "https://lh3.googleusercontent.com/d/1c2yx_O6sKcTF9-YoTKxnQ2lWOqfWiUCL";
   const SCOREBOARD_DATA = "const recordData={left:[{title:'생각하는 황소 경시합격',years:[['2021',15],['2022',14],['2023',18],['2024',29],['2025',20],['2026',12]],total:108},{title:'대치 소마 프리미어',years:[['2020',10],['2021',11],['2022',5],['2023',12],['2024',7],['2025',8],['2026',8]],total:61}],right:[{title:'대치 필즈 더 클래식 TOP CLASS',years:[['2021',8],['2023',13],['2024',17],['2025',10]],total:48},{title:'영재원 & 성대경시',years:[['교육청 영재원',89],['대학부설 영재원',78],['성대경시 대상',13]],total:180}],grand:400};";
+  const DATA_SCRIPTS = `
+<script src="https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/data/sq-a.js"><\/script>
+<script src="https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/data/sq-b.js"><\/script>
+<script src="https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/data/sq-c.js"><\/script>
+<script src="https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/data/gfield-verified-similar-questions.js"><\/script>
+<script src="https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/data/tutor-scripts.js"><\/script>`;
   const PATCH_CSS = `
 <style id="premier-intro-css">
 :root{--navy:#0f1c2c;--navy2:#182d44;--gold:#d4af37;--gold2:#f8dd83;--cream:#fbf9f4;--text:#16181d;--muted:#626b79;--line:#e5e1d8}
@@ -258,7 +264,7 @@ function patchPreLogin(){
   html = html.replace(/let n=5;/g,"let n=3;");
   html = html.split("},900);").join("},850);");
   html = html.replace(/setTimeout\(\(\)=>window\.gfieldIntroGoDiagnosis\(\),20300\)/g,"setTimeout(()=>window.gfieldIntroGoDiagnosis(),15200)");
-  html = html.replace("</head>", PATCH_CSS + "</head>");
+  html = html.replace("</head>", DATA_SCRIPTS + PATCH_CSS + "</head>");
   html = html.replace("</body>", PATCH_JS + '<div id="G_FIELD_PAGE_READY_MARKER"></div></body>');
   document.open();
   document.write(html);
