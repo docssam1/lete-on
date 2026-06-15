@@ -158,7 +158,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
 #allAnswerPrint{display:none}
 @media print{
   body{background:white;color:black;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-  #page1,.action-btns,.helper-text,.attempt-menu,.tab-bar,.checklist-section,.submit-area,.result-actions,.res-video-btn,.res-card-toggle{display:none!important}
+  #page1,#introPreview,.action-btns,.helper-text,.attempt-menu,.tab-bar,.checklist-section,.submit-area,.result-actions,.res-video-btn,.res-card-toggle{display:none!important}
   .print-only{display:flex!important}
   #printCover{background-color:var(--navy)!important;color:#fff!important;height:100vh!important;width:100%!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;page-break-after:always!important;margin:0!important;padding:0!important;box-sizing:border-box!important}
   #page2{display:block!important;padding:0!important;margin:0!important}
@@ -195,6 +195,68 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
   .print-watermark{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-28deg);width:110%;text-align:center;font-size:3.1rem;font-weight:800;color:rgba(13,27,42,.075);letter-spacing:.08em;z-index:9999;pointer-events:none;white-space:nowrap}
   @page{margin:14mm}
 }
+
+/* ── introPreview 스타일 (스코프 격리) ── */
+#introPreview{display:none;font-family:'Noto Sans KR',system-ui,sans-serif;word-break:keep-all;background:#fbf9f4}
+#introPreview *{box-sizing:border-box}
+#introPreview .ip-wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+#introPreview .ip-hero{min-height:72vh;display:flex;align-items:center;background:radial-gradient(circle at 16% 18%,rgba(212,175,55,.2),transparent 28%),linear-gradient(135deg,#07101d,#0f1c2c 60%,#030712);color:#fff}
+#introPreview .ip-eyebrow{display:inline-block;border:1px solid rgba(248,221,131,.75);color:#f8dd83;padding:7px 14px;border-radius:999px;font-size:12px;font-weight:900;letter-spacing:.14em;margin-bottom:22px}
+#introPreview .ip-hero h1{font-size:clamp(36px,7vw,76px);line-height:1.08;letter-spacing:-.07em;margin:0 0 20px;font-weight:900}
+#introPreview .ip-hero strong{color:#f8dd83}
+#introPreview .ip-hero p{font-size:clamp(17px,2.4vw,24px);line-height:1.58;color:#dbe4f0;max-width:820px;margin:0 0 34px}
+#introPreview .ip-cta-row{display:flex;gap:14px;flex-wrap:wrap}
+#introPreview .ip-cta{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-weight:900;font-size:18px;padding:18px 28px;border-radius:14px;transition:.2s;cursor:pointer;border:none;font-family:'Noto Sans KR',sans-serif}
+#introPreview .ip-cta.primary{background:linear-gradient(135deg,#d4af37,#f8dd83);color:#111;box-shadow:0 18px 45px rgba(0,0,0,.28)}
+#introPreview .ip-cta.dark{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.28)}
+#introPreview .ip-cta:hover{transform:translateY(-2px)}
+#introPreview .ip-subnote{margin-top:14px;color:#b9c5d6;font-size:14px}
+#introPreview .ip-section{padding:78px 0;background:#fbf9f4}
+#introPreview .ip-section h2{font-size:clamp(28px,4.4vw,46px);line-height:1.2;letter-spacing:-.05em;margin:0 0 16px;color:#0f1c2c;font-weight:900}
+#introPreview .ip-lead{font-size:18px;line-height:1.75;color:#626b79;max-width:760px;margin:0}
+#introPreview .ip-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+#introPreview .ip-card{background:#fff;border:1px solid #e5e1d8;border-radius:22px;padding:26px;box-shadow:0 14px 34px rgba(15,28,44,.07)}
+#introPreview .ip-num{display:inline-flex;width:34px;height:34px;align-items:center;justify-content:center;background:#0f1c2c;color:#f8dd83;border-radius:10px;font-weight:900;margin-bottom:18px}
+#introPreview .ip-card h3{margin:0 0 10px;font-size:22px;color:#0f1c2c;font-weight:800}
+#introPreview .ip-card p{margin:0;color:#626b79;line-height:1.7}
+#introPreview .ip-ad{background:#07101d;color:#fff;padding:78px 0}
+#introPreview .ip-ad-grid{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+#introPreview .ip-ad h2{color:#fff;font-size:clamp(28px,4.4vw,46px);line-height:1.2;letter-spacing:-.05em;margin:0 0 16px;font-weight:900}
+#introPreview .ip-ad .ip-eyebrow{margin-bottom:16px}
+#introPreview .ip-ad p{color:#cbd5e1;line-height:1.75;font-size:18px;margin:0}
+#introPreview .ip-video-card{position:relative;border:1px solid rgba(248,221,131,.25);border-radius:24px;overflow:hidden;background:#050a12;box-shadow:0 22px 60px rgba(0,0,0,.32);min-height:280px}
+#introPreview .ip-video-card video{display:block;width:100%;height:100%;min-height:280px;object-fit:cover}
+#introPreview .ip-video-caption{position:absolute;left:18px;bottom:18px;background:rgba(0,0,0,.58);color:#fff;border:1px solid rgba(255,255,255,.18);padding:10px 14px;border-radius:999px;font-size:14px;font-weight:800;backdrop-filter:blur(8px)}
+#introPreview .ip-report{background:#fff;padding:78px 0}
+#introPreview .ip-report-top{display:flex;align-items:end;justify-content:space-between;gap:28px;margin-bottom:34px}
+#introPreview .ip-report-top p{max-width:460px;color:#626b79;line-height:1.7;margin:0}
+#introPreview .ip-report-eyebrow{display:inline-block;border:1px solid #d4af37;color:#8a6b00;padding:7px 14px;border-radius:999px;font-size:12px;font-weight:900;letter-spacing:.14em;margin-bottom:22px}
+#introPreview .ip-report-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:26px}
+#introPreview .ip-report-item{background:#fff;border:1px solid #e5e1d8;border-radius:20px;padding:12px;box-shadow:0 12px 28px rgba(15,28,44,.06)}
+#introPreview .ip-report-item img{display:block;width:100%;height:auto;border-radius:14px;background:#eee}
+#introPreview .ip-report-cap{display:flex;gap:12px;align-items:center;padding:16px 6px 6px}
+#introPreview .ip-report-cap b{color:#d4af37;font-size:15px}
+#introPreview .ip-report-cap span{font-weight:900;color:#0f1c2c;font-size:18px}
+#introPreview .ip-areas{background:#0f1c2c;color:#fff;padding:78px 0}
+#introPreview .ip-areas h2{color:#fff;text-align:center;font-size:clamp(28px,4.4vw,46px);line-height:1.2;letter-spacing:-.05em;margin:0 0 16px;font-weight:900}
+#introPreview .ip-areas .ip-lead{text-align:center;margin:0 auto 34px;color:#cbd5e1}
+#introPreview .ip-area-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:12px}
+#introPreview .ip-area{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.055);border-radius:18px;padding:20px 10px;text-align:center;font-weight:900}
+#introPreview .ip-area small{display:block;color:#f8dd83;font-size:22px;margin-bottom:8px}
+#introPreview .ip-final{padding:78px 0;background:#fbf9f4}
+#introPreview .ip-final-box{background:linear-gradient(135deg,#0f1c2c,#182d44);color:#fff;border-radius:28px;padding:48px;text-align:center;box-shadow:0 18px 45px rgba(15,28,44,.18)}
+#introPreview .ip-final-box h2{margin:0 0 14px;color:#fff;font-size:clamp(28px,4.4vw,46px);line-height:1.2;letter-spacing:-.05em;font-weight:900}
+#introPreview .ip-final-box p{margin:0 auto 28px;max-width:680px;color:#d6deea;line-height:1.75;font-size:18px}
+#introPreview .ip-footer{padding:34px 0;text-align:center;color:#87909c;font-size:13px;background:#fbf9f4}
+@media(max-width:820px){
+  #introPreview .ip-cards,#introPreview .ip-report-grid,#introPreview .ip-ad-grid{grid-template-columns:1fr}
+  #introPreview .ip-report-top{display:block}
+  #introPreview .ip-area-grid{grid-template-columns:repeat(2,1fr)}
+  #introPreview .ip-cta-row{display:grid}
+  #introPreview .ip-cta{width:100%}
+  #introPreview .ip-final-box{padding:36px 22px}
+}
+@media(max-width:520px){#introPreview .ip-area-grid{grid-template-columns:1fr}}
 
 /* ── 인트로 스타일 ── */
 body.intro-active{background:#02050b!important;overflow:hidden}
@@ -261,10 +323,10 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&e.key==='I')||(e.ctrlKey&&e.key==='u')||(e.ctrlKey&&e.key==='U')||(e.ctrlKey&&e.shiftKey&&e.key==='C')||(e.ctrlKey&&e.shiftKey&&e.key==='J'))e.preventDefault()});
 </script>
 
-<!-- 인트로 (Drive 영상 제거 → 배경만) -->
+<!-- 인트로 -->
 <div id="gfieldIntro">
   <div class="intro-bg"></div>
-  <button class="intro-skip" type="button" onclick="gfieldIntroGoDiagnosis()">SKIP</button>
+  <button class="intro-skip" type="button" onclick="showIntroPreview()">SKIP</button>
   <section class="intro-scene on" id="gfieldIntroScene0"><div>
     <img class="intro-logo" src="https://lh3.googleusercontent.com/d/1c2yx_O6sKcTF9-YoTKxnQ2lWOqfWiUCL" alt="GFIELD">
     <h1 class="intro-subtitle">실적으로 입증된<br>성공하는 공부습관을<br>만드는<br><span class="gold">지필드 영재교육</span></h1>
@@ -292,6 +354,85 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
     <div class="count-label">진단 시작까지</div>
     <div class="count-num" id="gfieldIntroCountNum">3</div>
   </div></section>
+</div>
+
+<!-- introPreview: 인트로 종료 후 → 로그인 전 소개 페이지 -->
+<div id="introPreview">
+  <section class="ip-hero"><div class="ip-wrap">
+    <div class="ip-eyebrow">SOMA PREMIER HYPER FOCUS</div>
+    <h1>프리미어 합격을 위한<br><strong>약점 유형 진단 프로그램</strong></h1>
+    <p>소마 프리미어 준비 과정에서 자주 흔들리는 사고력 유형을 점검하고, 아이의 현재 약점과 보완 방향, 프리미어 합격 가능성을 함께 확인하는 진단 프로그램입니다.</p>
+    <div class="ip-cta-row">
+      <a class="ip-cta primary" href="https://naver.me/xy7bsjyb" target="_blank" rel="noopener">프로그램 상담 신청하기</a>
+      <button class="ip-cta dark" onclick="showLoginFromPreview()">로그인해서 진단 시작하기</button>
+    </div>
+    <div class="ip-subnote">상담 신청서를 남겨주시면 순서대로 확인 후 연락드립니다.</div>
+  </div></section>
+
+  <section class="ip-section"><div class="ip-wrap">
+    <h2>한 번의 점검이 아니라,<br>회차별 변화를 보는 진단입니다.</h2>
+    <p class="ip-lead">문항의 정답 여부만 보는 것이 아니라, 어떤 사고력 영역에서 시간이 걸리고 어떤 유형이 반복적으로 흔들리는지 확인합니다.</p>
+    <div class="ip-cards">
+      <div class="ip-card"><div class="ip-num">01</div><h3>54개 대표 유형 점검</h3><p>공간 지각, 평면 지각, 수와 연산, 논리 추리, 경우의 수, 문제 해결, 지문 이해 영역의 대표 유형을 확인합니다.</p></div>
+      <div class="ip-card"><div class="ip-num">02</div><h3>최대 3회 진단 가능</h3><p>1회성 체크가 아니라 최대 3회까지 진단하며, 아이의 보완 흐름을 회차별로 확인할 수 있습니다.</p></div>
+      <div class="ip-card"><div class="ip-num">03</div><h3>이전 회차 비교 분석</h3><p>이전 회차에서 해결된 문항과 새롭게 틀린 문항을 비교하여, 다음 학습 방향을 더 정확하게 잡습니다.</p></div>
+    </div>
+  </div></section>
+
+  <section class="ip-ad"><div class="ip-wrap ip-ad-grid">
+    <div>
+      <div class="ip-eyebrow">REPORT PREVIEW</div>
+      <h2>누적 진단 리포트 미리보기</h2>
+      <p>2회차 이후에는 이전 회차와의 변화 흐름, 보완된 유형, 다시 흔들리는 유형을 함께 확인할 수 있습니다. 결과는 영역별 강약점과 오답 분석으로 정리됩니다.</p>
+    </div>
+    <div class="ip-video-card">
+      <video autoplay muted loop playsinline preload="auto" src="https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/premier-report-ad-fast.mp4"></video>
+      <div class="ip-video-caption">2회차 진단 리포트 예시 화면</div>
+    </div>
+  </div></section>
+
+  <section class="ip-report"><div class="ip-wrap">
+    <div class="ip-report-top">
+      <div>
+        <div class="ip-report-eyebrow">REPORT SAMPLE</div>
+        <h2 style="font-size:clamp(28px,4.4vw,46px);line-height:1.2;letter-spacing:-.05em;margin:0 0 16px;color:#0f1c2c;font-weight:900;">진단 후 제공되는<br>리포트 미리보기</h2>
+      </div>
+      <p>학생명, 승인번호, 전화번호는 노출하지 않고 2회차 진단 리포트의 변화 흐름만 보여주는 이미지로 교체합니다.</p>
+    </div>
+    <div class="ip-report-grid">
+      <div class="ip-report-item"><img alt="개인별 진단 리포트" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkqj4hGZfL2B1T_5rkNPit3qjJ1Z6Fm3MSaUxw2LQ64yvrANnkWR6i8qa78SjObf_8tgmbrvBaW9QGeVf3-y81X2j4AjvCspw-TIrcGwbXlKGbWIu8AiVEg2cRU8sMYmZ5eZwkZDvb70c-Mbzvhx4XxQjem93m6dltNujj_PUBbjZAe_HCblWg40aVZhCKZ8o2RwXO9bQLPgjKR94XSBAwsd-OWGWEmTUB_Bz0gMb7sqUAATs1XYj7zcBgk8JH35SQGqbju3XOnTE"><div class="ip-report-cap"><b>01</b><span>개인별 진단 리포트</span></div></div>
+      <div class="ip-report-item"><img alt="영역별 강약점 분석" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi48xQbJOwciTrlVjaL3PxJgVfp5BwEYZoeoSuhqkPU8N1mTSiap_auNnCiOc19nyGUR8zxH-0OkK5gKBsRFvzFopPvwkb8KKOX3ZtPMAaF6I7p1oCo5XST0nFgLS7nvCfNoJgiTiYPs-G4fLS8IWvb0C7YMb6LFzlcX6T4rDI6nuwgGqXbAlW5p3wkaOYYklah9CtY9FW7r5SwIZiFBUV2cG2Xtra-wVH7Ay8o3ZdglxkcB-mc8CrVNl-uAcEh6jUrzt2wW9zTtU"><div class="ip-report-cap"><b>02</b><span>영역별 강약점 분석</span></div></div>
+      <div class="ip-report-item"><img alt="이전 회차 대비 변화도" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAb0f9OQ3Ta9io3fOYVqiwHSE4fciTaFcaP5lD55h3xARloV12jEH5TxrVfaf9MIYiJtkjCwGudShW1owXq2x_x6M1XVgT3C_vN7Mz-jVYj4YOT67kycg3FCuYzBNd-i22FKsvQYzGhFLaiIf1h2zH0euBAxffFIsa1HRaTiHNNawQpxXiRaAqZkGgMzRCrezLJNkmxNfl-SkBu38CHtiGVecycSBGSSZNM2IWYkzWtBD441p0xqPCbdpDJknokoyOv2-MO72riDIA"><div class="ip-report-cap"><b>03</b><span>이전 회차 대비 변화도</span></div></div>
+      <div class="ip-report-item"><img alt="오답 문항 상세 분석" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF_MiJafbiMPWzXy3UX339bRqxvaACp-5TJ1ejG8mbe6dhGLZ3cO6Lf2HTc9FWfQJBm1CqPagxlEV6zlaEQnb-QVP51MisA_RliiqR121o_Y7zF1lBK_dOP0HHqeUNC46mAvu8BlIv4hlryCRbHNuah1DaUTGmPGhuRpxKavtjtEIbjNKU-9kU-vBLfHrAfkeOoId8yH8ChPG7yeb3y7IBfYL2uPTUMQXGVeNHTw_l6KBfbYPPuJawtVFCzhou0lDx6TD8d2mN1nE"><div class="ip-report-cap"><b>04</b><span>오답 문항 상세 분석</span></div></div>
+    </div>
+  </div></section>
+
+  <section class="ip-areas"><div class="ip-wrap">
+    <h2>7개 핵심 사고력 영역 진단</h2>
+    <p class="ip-lead">프리미어 대비에서 자주 흔들리는 대표 사고력 영역을 나누어 확인합니다.</p>
+    <div class="ip-area-grid">
+      <div class="ip-area"><small>01</small>공간 지각</div>
+      <div class="ip-area"><small>02</small>평면 지각</div>
+      <div class="ip-area"><small>03</small>수와 연산</div>
+      <div class="ip-area"><small>04</small>논리 추리</div>
+      <div class="ip-area"><small>05</small>경우의 수</div>
+      <div class="ip-area"><small>06</small>문제 해결</div>
+      <div class="ip-area"><small>07</small>지문 이해</div>
+    </div>
+  </div></section>
+
+  <section class="ip-final"><div class="ip-wrap">
+    <div class="ip-final-box">
+      <h2>프로그램 상담이 필요하신가요?</h2>
+      <p>아이의 현재 준비 상황과 목표 반, 보완이 필요한 유형을 남겨주시면 확인 후 상담 안내를 드립니다.</p>
+      <div class="ip-cta-row" style="justify-content:center">
+        <a class="ip-cta primary" href="https://naver.me/xy7bsjyb" target="_blank" rel="noopener">프로그램 상담 신청하기</a>
+        <button class="ip-cta dark" onclick="showLoginFromPreview()">로그인해서 진단 시작하기</button>
+      </div>
+    </div>
+  </div></section>
+
+  <footer class="ip-footer">© G-FIELD Gifted Education. Premier Hyper Focus.</footer>
 </div>
 
 <div id="printCover" class="print-only">
@@ -410,6 +551,12 @@ window.onload=function(){
 
 function toggleItem(e,id){e.preventDefault();if(selectedSet.has(id))selectedSet.delete(id);else selectedSet.add(id);updateChecksUI()}
 function updateChecksUI(){document.querySelectorAll('.check-item').forEach(el=>{const elId=parseInt(el.getAttribute('data-id'));el.classList.toggle('checked',selectedSet.has(elId))});document.getElementById('checkCount').textContent=selectedSet.size}
+
+function showLoginFromPreview(){
+  document.getElementById('introPreview').style.display='none';
+  document.getElementById('page1').style.display='flex';
+  window.scrollTo(0,0);
+}
 
 function checkAuth(){
   const name=document.getElementById('studentName').value.trim();
@@ -591,11 +738,18 @@ function generateDiagnosis(weakCounts,totalCounts,studentName,wrongCount,history
   function runCountdown(){
     if(window.gfieldIntroCountStarted)return;window.gfieldIntroCountStarted=true;
     let n=3;const countNum=document.getElementById('gfieldIntroCountNum');countNum.textContent=n;
-    const timer=setInterval(()=>{n--;if(n<=0){clearInterval(timer);window.gfieldIntroGoDiagnosis();return}countNum.textContent=n;countNum.style.animation='none';countNum.offsetHeight;countNum.style.animation='introCountPop .7s ease'},900);
+    const timer=setInterval(()=>{n--;if(n<=0){clearInterval(timer);showIntroPreview();return}countNum.textContent=n;countNum.style.animation='none';countNum.offsetHeight;countNum.style.animation='introCountPop .7s ease'},900);
   }
-  window.gfieldIntroGoDiagnosis=function(){const intro=document.getElementById('gfieldIntro');if(intro)intro.hidden=true;document.body.classList.remove('intro-active');window.scrollTo(0,0)};
+  window.showIntroPreview=function(){
+    const intro=document.getElementById('gfieldIntro');
+    if(intro)intro.hidden=true;
+    document.body.classList.remove('intro-active');
+    document.getElementById('introPreview').style.display='block';
+    window.scrollTo(0,0);
+  };
+  window.gfieldIntroGoDiagnosis=window.showIntroPreview;
   times.forEach((t,i)=>setTimeout(()=>showScene(i),t));
-  setTimeout(()=>window.gfieldIntroGoDiagnosis(),15200);
+  setTimeout(()=>window.showIntroPreview(),15200);
 })();
 </script>
 </body>
