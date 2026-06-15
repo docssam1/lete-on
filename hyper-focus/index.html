@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{--navy:#0d1b2a;--navy-mid:#1a2e44;--navy-light:#243b55;--gold:#c9a84c;--gold-light:#e8c97a;--cream:#faf8f3;--cream-dark:#f0ece0;--red:#c0392b;--red-light:#e74c3c;--blue:#2980b9;--purple:#8e44ad;--text:#2c2c2c;--text-light:#6b7280;--border:rgba(201,168,76,0.25);--shadow:0 20px 60px rgba(13,27,42,0.12)}
 body{-webkit-user-select:none;-moz-user-select:none;user-select:none}
@@ -229,52 +230,17 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
   55% {transform:rotateY(20deg) rotateX(3deg)}
   100%{transform:rotateY(-22deg) rotateX(6deg)}
 }
-/* 앞면 */
-#introPreview .ip-book-front{
-  position:absolute;inset:0;
-  border-radius:3px 10px 10px 3px;
-  transform:translateZ(28px);
-  overflow:hidden;
-  box-shadow:0 28px 70px rgba(0,0,0,.55);
-  border:1px solid rgba(212,175,55,.3)
-}
+#introPreview .ip-book-front{position:absolute;inset:0;border-radius:3px 10px 10px 3px;transform:translateZ(28px);overflow:hidden;box-shadow:0 28px 70px rgba(0,0,0,.55);border:1px solid rgba(212,175,55,.3)}
 #introPreview .ip-book-front img{width:100%;height:100%;object-fit:cover;display:block}
 #introPreview .ip-book-front::after{content:'';position:absolute;inset:6px;border:1px solid rgba(212,175,55,.4);border-radius:2px 8px 8px 2px;pointer-events:none}
-/* 뒷면 */
-#introPreview .ip-book-back{
-  position:absolute;inset:0;
-  background:linear-gradient(135deg,#0a1520,#1a2e44);
-  border-radius:10px 3px 3px 10px;
-  transform:translateZ(-28px) rotateY(180deg)
-}
-/* 책등 (두께 56px) */
-#introPreview .ip-book-spine{
-  position:absolute;top:0;left:0;
-  width:56px;height:100%;
-  background:linear-gradient(90deg,#050d18,#0d1b2a 45%,#182d44);
-  transform:rotateY(-90deg) translateX(-28px);
-  transform-origin:left center;
-  display:flex;align-items:center;justify-content:center
-}
+#introPreview .ip-book-back{position:absolute;inset:0;background:linear-gradient(135deg,#0a1520,#1a2e44);border-radius:10px 3px 3px 10px;transform:translateZ(-28px) rotateY(180deg)}
+#introPreview .ip-book-spine{position:absolute;top:0;left:0;width:56px;height:100%;background:linear-gradient(90deg,#050d18,#0d1b2a 45%,#182d44);transform:rotateY(-90deg) translateX(-28px);transform-origin:left center;display:flex;align-items:center;justify-content:center}
 #introPreview .ip-book-spine::after{content:'';position:absolute;right:0;top:0;width:3px;height:100%;background:linear-gradient(180deg,rgba(212,175,55,.5),rgba(212,175,55,.15),rgba(212,175,55,.5))}
 #introPreview .ip-book-spine-text{writing-mode:vertical-rl;color:rgba(212,175,55,.75);font-size:9px;font-weight:900;letter-spacing:.2em;text-shadow:0 0 8px rgba(212,175,55,.3)}
-/* 상단 두께 */
-#introPreview .ip-book-top{
-  position:absolute;top:0;left:0;right:0;height:56px;
-  background:linear-gradient(180deg,#e2d9c8,#cec5b2);
-  transform:rotateX(90deg) translateY(-28px);
-  transform-origin:top center
-}
+#introPreview .ip-book-top{position:absolute;top:0;left:0;right:0;height:56px;background:linear-gradient(180deg,#e2d9c8,#cec5b2);transform:rotateX(90deg) translateY(-28px);transform-origin:top center}
 #introPreview .ip-book-top::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0,rgba(0,0,0,.05) 1px,transparent 1px,transparent 3px)}
-/* 하단 두께 */
-#introPreview .ip-book-bottom{
-  position:absolute;bottom:0;left:0;right:0;height:56px;
-  background:linear-gradient(0deg,#c4bba8,#cec5b2);
-  transform:rotateX(-90deg) translateY(28px);
-  transform-origin:bottom center
-}
+#introPreview .ip-book-bottom{position:absolute;bottom:0;left:0;right:0;height:56px;background:linear-gradient(0deg,#c4bba8,#cec5b2);transform:rotateX(-90deg) translateY(28px);transform-origin:bottom center}
 #introPreview .ip-book-bottom::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0,rgba(0,0,0,.05) 1px,transparent 1px,transparent 3px)}
-/* 그림자 */
 #introPreview .ip-book-shadow{position:absolute;bottom:-24px;left:5%;right:5%;height:24px;background:radial-gradient(ellipse at center,rgba(0,0,0,.42) 0%,transparent 72%);filter:blur(7px)}
 
 #introPreview .ip-section{padding:78px 0;background:#fbf9f4}
@@ -290,7 +256,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
 #introPreview .ip-ad h2{color:#fff;font-size:clamp(28px,4.4vw,46px);line-height:1.2;letter-spacing:-.05em;margin:0 0 16px;font-weight:900}
 #introPreview .ip-ad .ip-eyebrow{margin-bottom:16px}
 #introPreview .ip-ad p{color:#cbd5e1;line-height:1.75;font-size:18px;margin:0}
-/* 영상: 캡션 제거 + 크기 420px */
 #introPreview .ip-video-card{position:relative;border:1px solid rgba(248,221,131,.25);border-radius:24px;overflow:hidden;background:#050a12;box-shadow:0 22px 60px rgba(0,0,0,.32);min-height:420px}
 #introPreview .ip-video-card video{display:block;width:100%;height:100%;min-height:420px;object-fit:cover}
 #introPreview .ip-report{background:#fff;padding:78px 0}
@@ -446,7 +411,6 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
 <div id="introPreview">
   <section class="ip-hero"><div class="ip-wrap">
     <div class="ip-hero-inner">
-      <!-- 왼쪽: 텍스트 -->
       <div>
         <div class="ip-eyebrow">SOMA PREMIER HYPER FOCUS</div>
         <h1>
@@ -460,7 +424,6 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
         </div>
         <div class="ip-subnote">상담 신청서를 남겨주시면 순서대로 확인 후 연락드립니다.</div>
       </div>
-      <!-- 오른쪽: 3D 두꺼운 책 -->
       <div class="ip-book-scene">
         <div class="ip-book">
           <div class="ip-book-front">
@@ -493,7 +456,6 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
       <p>2회차 이후에는 이전 회차와의 변화 흐름, 보완된 유형, 다시 흔들리는 유형을 함께 확인할 수 있습니다.</p>
     </div>
     <div class="ip-video-card">
-      <!-- 캡션 div 제거됨 -->
       <video autoplay muted loop playsinline preload="auto" src="https://raw.githubusercontent.com/docssam1/Hyper-Focus-answer-Key/main/premier-hyper-focus/assets/premier-report-ad-fast.mp4"></video>
     </div>
   </div></section>
@@ -590,6 +552,7 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
       <a href="https://youtu.be/OkkrvK9ZxMI?si=_POQwsA-hhrw-vCN&t=786" target="_blank" class="video-btn btn-youtube"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>설명회 영상</a>
       <a href="https://youtu.be/8l-YgY8LZzk" target="_blank" class="video-btn btn-youtube"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>풀이 영상 전체보기</a>
       <button type="button" class="video-btn download-answer-btn btn-print-dark" onclick="downloadAnswerPdf()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 9V2h12v7h1a3 3 0 0 1 3 3v6h-4v4H6v-4H2v-6a3 3 0 0 1 3-3h1zm2-5v5h8V4H8zm0 12v4h8v-4H8zm11-4a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>전체 답안 인쇄</button>
+      <button type="button" class="video-btn btn-print-dark" id="bookDownloadBtn" onclick="downloadBook()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>교재 다운로드</button>
       <a href="https://open.kakao.com/me/gfield" target="_blank" class="video-btn btn-kakao"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-5.523 0-10 3.5-10 7.828 0 2.748 1.76 5.166 4.417 6.44-.22.842-.796 3.016-.814 3.125-.025.15.05.228.163.155.116-.076 3.65-2.457 4.296-2.923.63.084 1.28.129 1.938.129 5.523 0 10-3.5 10-7.828S17.523 3 12 3z"/></svg>카카오 문의하기</a>
     </div>
     <div class="helper-text">자녀가 어려워하거나 자주 틀리는 유형의 항목을 선택해 주세요.<br><strong style="color:var(--red);font-size:1rem;">(이미 완벽하게 알고 있는 유형은 체크하지 마세요)</strong><br><strong style="color:var(--navy);font-size:.95rem;display:inline-block;margin-top:8px;">총 3회까지 응시 가능합니다.</strong></div>
@@ -648,6 +611,67 @@ function escapeHTML(v){return String(v??'').replace(/[&<>"]/g,ch=>({'&':'&amp;',
 function downloadAnswerPdf(){const name=document.getElementById('studentName').value.trim()||'학생';const phone=document.getElementById('parentPhone').value.trim()||'';const code=document.getElementById('authCode').value.trim()||'승인번호 미입력';const allItems=[];data.forEach(cat=>cat.items.forEach(item=>allItems.push({...item,categoryNum:cat.categoryNum,categoryTitle:cat.categoryTitle})));allItems.sort((a,b)=>a.id-b.id);const printArea=document.getElementById('allAnswerPrint');const wm=`${name} · ${code}`;let html=`<div class="print-watermark">${escapeHTML(wm)}</div><section class="answer-print-cover"><div class="brand">G-FIELD GIFTED EDUCATION</div><h1>소마 프리미어<br>전체 답안·해설 인쇄본</h1><div class="meta"><div><strong>${escapeHTML(name)}</strong> 학생</div><div>승인번호: <strong>${escapeHTML(code)}</strong></div>${phone?`<div>연락처: ${escapeHTML(phone)}</div>`:''}<div>총 ${allItems.length}문제</div></div></section>`;data.forEach(cat=>{const items=cat.items.slice().sort((a,b)=>a.id-b.id);html+=`<section class="answer-print-section"><h2>유형 ${escapeHTML(cat.categoryNum)}. ${escapeHTML(cat.categoryTitle)}</h2>`;items.forEach(item=>{html+=`<article class="answer-print-item"><h3>${String(item.id).padStart(2,'0')}번. ${escapeHTML(item.text)}</h3><p class="answer-line">정답: ${escapeHTML(item.ans)}</p><p><strong>해설:</strong> ${escapeHTML(item.tTip)}</p><p><strong>지도 포인트:</strong> ${escapeHTML(item.mTip)}</p></article>`});html+=`</section>`;});printArea.innerHTML=html;document.body.classList.add('answer-print-mode');setTimeout(()=>window.print(),100);}
 function downloadReportPdf(){document.body.classList.add('report-print-mode');setTimeout(()=>window.print(),50);setTimeout(()=>document.body.classList.remove('report-print-mode'),1200);}
 window.addEventListener('afterprint',()=>{document.body.classList.remove('answer-print-mode','report-print-mode')});
+function downloadBook(){
+  const name=document.getElementById('studentName').value.trim()||'학생';
+  const code=document.getElementById('authCode').value.trim()||'';
+  const now=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  const accessTime=`${now.getFullYear()}.${pad(now.getMonth()+1)}.${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const totalPages=29;
+  const baseUrl='https://raw.githubusercontent.com/docssam1/lete-on/main/hyper-focus/assets/book/1_';
+  const btn=document.getElementById('bookDownloadBtn');
+  btn.textContent='생성 중...';btn.disabled=true;
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const pageW=210,pageH=297;
+  function addWatermark(pageNum,isLast){
+    doc.saveGraphicsState();
+    doc.setGState(new doc.GState({opacity:0.07}));
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(32);
+    doc.setTextColor(13,27,42);
+    for(let y=60;y<pageH;y+=80){doc.text(`${name} · ${code}`,pageW/2,y,{angle:30,align:'center'});}
+    doc.restoreGraphicsState();
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(9);
+    doc.setTextColor(150,150,150);
+    doc.text(`${pageNum} / ${totalPages}`,pageW-12,pageH-8,{align:'right'});
+    if(isLast){
+      doc.setFontSize(8);
+      doc.setTextColor(100,100,100);
+      doc.text(`합격을 응원합니다  |  접속시간: ${accessTime}  |  승인번호: ${code}  |  ${name}`,pageW/2,pageH-4,{align:'center'});
+    }
+  }
+  function loadImg(n,cb){
+    const img=new Image();
+    img.crossOrigin='Anonymous';
+    img.onload=()=>cb(img);
+    img.onerror=()=>cb(null);
+    img.src=baseUrl+n+'.png?t='+Date.now();
+  }
+  function processPage(n){
+    if(n>totalPages){
+      doc.save(`프리미어_하이퍼포커스_교재_${name}.pdf`);
+      btn.textContent='교재 다운로드';btn.disabled=false;
+      return;
+    }
+    loadImg(n,img=>{
+      if(n>1)doc.addPage();
+      if(img){
+        const canvas=document.createElement('canvas');
+        canvas.width=img.width;canvas.height=img.height;
+        canvas.getContext('2d').drawImage(img,0,0);
+        const ratio=Math.min(pageW/(img.width*0.2645),pageH/(img.height*0.2645));
+        const w=img.width*0.2645*ratio,h=img.height*0.2645*ratio;
+        doc.addImage(canvas.toDataURL('image/jpeg',0.85),'JPEG',(pageW-w)/2,(pageH-h)/2,w,h);
+      }
+      addWatermark(n,n===totalPages);
+      btn.textContent=`생성 중... (${n}/${totalPages})`;
+      setTimeout(()=>processPage(n+1),30);
+    });
+  }
+  processPage(1);
+}
 function renderResultUI(historyIndex){const attemptData=studentHistory[historyIndex];const name=document.getElementById('studentName').value.trim();document.getElementById('printStudentName').textContent=name;document.getElementById('printAttempt').textContent=historyIndex+1;document.getElementById('reportTitle').textContent=`프리미어 전문 진단 리포트 (${historyIndex+1}회차)`;document.getElementById('resName').textContent=name;document.getElementById('resCount').textContent=attemptData.wrongIds.length;const listBox=document.getElementById('resultListBox');listBox.innerHTML='';let weakCounts=[0,0,0,0,0,0,0],strengthCounts=[0,0,0,0,0,0,0];const totalCounts=data.map(d=>d.total);attemptData.wrongIds.forEach(id=>{let itemData=null,categoryName="";data.forEach((cat,index)=>{const found=cat.items.find(i=>i.id===id);if(found){itemData=found;categoryName=cat.shortName;weakCounts[index]++}});if(itemData){const card=document.createElement('div');card.className='res-card';card.innerHTML=`<div class="res-card-header" onclick="this.parentElement.classList.toggle('open')"><div class="res-card-title"><span class="res-badge">${categoryName}</span><span class="res-num">${String(id).padStart(2,'0')}</span><span>${itemData.text}</span></div><span class="res-card-toggle">상세 분석 및 풀이 ▼</span></div><div class="res-card-body" onclick="event.stopPropagation()"><div class="res-ans-box">정답: ${itemData.ans}</div><div class="res-tip-box"><strong>👨‍🏫 선생님의 풀이 비법</strong>${itemData.tTip}</div><div class="res-tip-box"><strong>💡 우리 아이 실수 방지 팁</strong>${itemData.mTip}</div><a href="${itemData.video}" target="_blank" class="res-video-btn"><svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>선생님 해설 영상 확인하기</a></div>`;listBox.appendChild(card);}});totalCounts.forEach((tot,i)=>{strengthCounts[i]=tot-weakCounts[i]});renderChart(strengthCounts,weakCounts);generateDiagnosis(weakCounts,totalCounts,name,attemptData.wrongIds.length,historyIndex);const ra=document.getElementById('result-area');ra.style.display='block';ra.scrollIntoView({behavior:'smooth'});}
 function renderChart(strengths,weaknesses){const ctx=document.getElementById('diagnosisChart').getContext('2d');if(myChart)myChart.destroy();myChart=new Chart(ctx,{type:'bar',data:{labels:data.map(d=>d.shortName),datasets:[{label:'강점 (정답 수)',data:strengths,backgroundColor:'#2980b9',borderRadius:4},{label:'약점 (오답 수)',data:weaknesses,backgroundColor:'#c0392b',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true,ticks:{font:{family:"'Noto Sans KR',sans-serif",weight:'bold',size:12},color:'#0d1b2a'}},y:{stacked:true,beginAtZero:true,ticks:{stepSize:2}}},plugins:{legend:{position:'bottom'},title:{display:true,text:'영역별 강약점 분석',font:{size:15}}}}});}
 function generateDiagnosis(weakCounts,totalCounts,studentName,wrongCount,historyIndex){const rate=studentHistory[historyIndex].rate;let predictionMsg="";if(rate>=75)predictionMsg="프리미어 1 합격 가능성 높음";else if(rate>=65)predictionMsg="프리미어 1,2 합격 가능성 높음";else if(rate>=55)predictionMsg="챌린지 합격 가능성 높음";else if(rate>=40)predictionMsg="약점 보완 후 챌린지 합격 도전";else predictionMsg="약점 및 보완 상담 필요";let weakRates=weakCounts.map((w,i)=>w/totalCounts[i]);let maxRate=Math.max(...weakRates),minRate=Math.min(...weakRates);let weakIndexes=[],strongIndexes=[];weakRates.forEach((r,i)=>{if(r===maxRate&&maxRate>0)weakIndexes.push(i);if(r===minRate&&minRate<1)strongIndexes.push(i)});const diagContainer=document.getElementById('diagnosisContent');let weakAreaNames=weakIndexes.map(i=>`<span class="badge-weakness">${data[i].shortName}</span>`).join(' · ');let strongAreaNames=strongIndexes.length>0?strongIndexes.map(i=>`<span class="badge-strength">${data[i].shortName}</span>`).join(' · '):"";let html=`<div class="diag-card prediction"><h3>정답률(수행률) ${rate}%</h3><div class="diagnosis-desc"><p>${studentName} 학생은 <span class="highlight-msg">${predictionMsg}</span> 수준입니다.</p></div></div>`;let renderDiffChart=false,domainResolved=[[],[],[],[],[],[],[]],domainNewWrong=[[],[],[],[],[],[],[]];if(historyIndex>0){renderDiffChart=true;const prevData=studentHistory[historyIndex-1],currData=studentHistory[historyIndex];const resolvedIds=prevData.wrongIds.filter(id=>!currData.wrongIds.includes(id));const newWrongIds=currData.wrongIds.filter(id=>!prevData.wrongIds.includes(id));resolvedIds.forEach(id=>data.forEach((cat,idx)=>{if(cat.items.some(item=>item.id===id))domainResolved[idx].push(id)}));newWrongIds.forEach(id=>data.forEach((cat,idx)=>{if(cat.items.some(item=>item.id===id))domainNewWrong[idx].push(id)}));const rateDiff=currData.rate-prevData.rate;const rateDiffText=rateDiff>=0?`▲ ${rateDiff}% 상승`:`▼ ${Math.abs(rateDiff)}% 하락`;const diffColor=rateDiff>=0?'var(--blue)':'var(--red)';html+=`<div class="diag-card diff-card"><h3>📈 이전 차시(${historyIndex}회차) 대비 변화도</h3><div class="diagnosis-desc"><p style="margin-bottom:10px;">▪ <strong>수행률 변화:</strong> ${prevData.rate}% → <strong>${currData.rate}%</strong> (<span style="color:${diffColor};font-weight:700;">${rateDiffText}</span>)</p><p style="margin-bottom:10px;">▪ <strong>해결된 문항:</strong> ${resolvedIds.length>0?`<strong style="color:var(--blue);">${resolvedIds.length}개의 약점을 완벽히 보완</strong>했습니다! 👏`:'추가로 해결된 약점 유형이 없습니다.'}</p><p>▪ <strong>새롭게 틀린 문항:</strong> ${newWrongIds.length>0?`<strong style="color:var(--red);">${newWrongIds.length}개의 오답이 새롭게 발생</strong>했습니다.`:'새롭게 추가된 오답이 없습니다. 훌륭합니다!'}</p></div><div class="diff-chart-container" style="margin-top:24px;height:250px;position:relative;"><canvas id="diffChartCanvas"></canvas></div></div>`;}html+=`<div class="diag-card overall"><h3>종합 진단 결과 및 분석</h3><div class="diagnosis-desc"><p style="margin-bottom:12px;color:var(--navy);font-weight:600;line-height:1.6;">본 진단 리포트는 7세 최상위권 학생들이 소마 프리미어 시험에서 흔히 겪는 인지적 어려움을 정밀 분석한 '맞춤형 오답 지도 가이드'입니다.</p><p style="margin-bottom:8px;"><strong>${studentName}</strong> 학생의 성취도 분석 결과, 특히 ${strongAreaNames?strongAreaNames+' 영역에서 뛰어난 수학적 통찰력과 논리적 사고를 보여주고 있습니다.':'전반적인 연산 및 기본기가 탄탄하게 형성되어 있습니다.'}</p><p>반면, 최상위권 1반 진입을 위해서는 ${weakAreaNames} 영역에서 발생하는 오답의 근본적 원인을 파악해야 합니다.</p></div></div>`;if(strongIndexes.length>0){html+=`<div class="diag-card strength"><h3>우수 영역 심층 분석</h3><div class="diagnosis-desc">`;strongIndexes.forEach(i=>html+=`<p>▪ <strong>[${data[i].shortName}]</strong> ${data[i].strength}</p>`);html+=`</div></div>`}html+=`<div class="diag-card weakness"><h3>취약 영역 맞춤 솔루션</h3><div class="diagnosis-desc">`;weakIndexes.forEach(i=>html+=`<p>▪ <strong>[${data[i].shortName}]</strong> ${data[i].weakness}</p>`);html+=`</div></div>`;diagContainer.innerHTML=html;if(renderDiffChart){setTimeout(()=>{const diffCtx=document.getElementById('diffChartCanvas').getContext('2d');if(diffChart)diffChart.destroy();diffChart=new Chart(diffCtx,{type:'bar',data:{labels:data.map(d=>d.shortName),datasets:[{label:'해결됨',data:domainResolved.map(arr=>arr.length),backgroundColor:'rgba(142,68,173,.8)',borderRadius:4},{label:'새롭게 틀림',data:domainNewWrong.map(arr=>-arr.length),backgroundColor:'rgba(0,0,0,.7)',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true,ticks:{font:{family:"'Noto Sans KR',sans-serif",weight:'bold',size:12},color:'#0d1b2a'}},y:{stacked:true,ticks:{stepSize:1,callback:v=>Math.abs(v)}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+Math.abs(c.raw)+'개'}}}}});},100);}}
