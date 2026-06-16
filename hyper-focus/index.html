@@ -566,24 +566,48 @@ function downloadBook(){
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const pageW=210,pageH=297;
+
+  function makeWatermarkCanvas(wmText,w,h){
+    const dpr=2;
+    const c=document.createElement('canvas');
+    c.width=w*dpr;c.height=h*dpr;
+    const ctx=c.getContext('2d');
+    ctx.scale(dpr,dpr);
+    ctx.clearRect(0,0,w,h);
+    ctx.save();
+    ctx.globalAlpha=0.07;
+    ctx.translate(w/2,h/2);
+    ctx.rotate(-30*Math.PI/180);
+    ctx.font='bold 36px "Noto Sans KR",sans-serif';
+    ctx.fillStyle='#0d1b2a';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    for(let y=-h;y<h;y+=90){ctx.fillText(wmText,-10,y);ctx.fillText(wmText,w*0.5,y+45);}
+    ctx.restore();
+    return c;
+  }
+
   function addWatermark(pageNum,isLast){
-    doc.saveGraphicsState();
-    doc.setGState(new doc.GState({opacity:0.07}));
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(32);
-    doc.setTextColor(13,27,42);
-    for(let y=60;y<pageH;y+=80){doc.text(`${name} · ${code}`,pageW/2,y,{angle:30,align:'center'});}
-    doc.restoreGraphicsState();
+    const wmText=`${name} · ${code}`;
+    const wCanvas=makeWatermarkCanvas(wmText,pageW*3,pageH*3);
+    doc.addImage(wCanvas.toDataURL('image/png'),'PNG',0,0,pageW,pageH);
     doc.setFont('helvetica','normal');
     doc.setFontSize(9);
     doc.setTextColor(150,150,150);
     doc.text(`${pageNum} / ${totalPages}`,pageW-12,pageH-8,{align:'right'});
     if(isLast){
-      doc.setFontSize(8);
-      doc.setTextColor(100,100,100);
-      doc.text(`합격을 응원합니다  |  접속시간: ${accessTime}  |  승인번호: ${code}  |  ${name}`,pageW/2,pageH-4,{align:'center'});
+      const footerCanvas=document.createElement('canvas');
+      footerCanvas.width=pageW*6;footerCanvas.height=30;
+      const fCtx=footerCanvas.getContext('2d');
+      fCtx.font='14px "Noto Sans KR",sans-serif';
+      fCtx.fillStyle='#646464';
+      fCtx.textAlign='center';
+      fCtx.textBaseline='middle';
+      fCtx.fillText(`합격을 응원합니다  |  접속시간: ${accessTime}  |  승인번호: ${code}  |  ${name}`,pageW*3,15);
+      doc.addImage(footerCanvas.toDataURL('image/png'),'PNG',0,pageH-6,pageW,4);
     }
   }
+
   function loadImg(n,cb){
     const img=new Image();
     img.crossOrigin='Anonymous';
