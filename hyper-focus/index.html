@@ -561,6 +561,8 @@ function downloadBook(){
   const accessTime=`${now.getFullYear()}.${pad(now.getMonth()+1)}.${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
   const totalPages=29;
   const baseUrl='https://raw.githubusercontent.com/docssam1/lete-on/main/hyper-focus/assets/book/1_';
+  function toRoman(str){const map={'김':'KIM','이':'LEE','박':'PARK','최':'CHOI','정':'JUNG','강':'KANG','조':'JO','윤':'YUN','장':'JANG','임':'LIM','한':'HAN','오':'OH','서':'SEO','신':'SHIN','권':'KWON','황':'HWANG','안':'AN','송':'SONG','류':'RYU','전':'JUN','홍':'HONG','고':'KO','문':'MOON','양':'YANG','손':'SON','배':'BAE','백':'BAEK','허':'HEO','유':'YU','남':'NAM','심':'SIM','노':'NOH','하':'HA','곽':'KWAK','성':'SUNG','차':'CHA','주':'JU','우':'WOO','구':'KU','가':'GA','나':'NA','다':'DA','라':'RA','마':'MA','바':'BA','사':'SA','아':'A','자':'JA','타':'TA','파':'PA','민':'MIN','지':'JI','수':'SU','현':'HYUN','준':'JUN','예':'YE','은':'EUN','진':'JIN','호':'HO','재':'JAE','연':'YEON'};return str.split('').map(c=>map[c]||c).join('').toUpperCase();}
+  const romanName=toRoman(name);
   const btn=document.getElementById('bookDownloadBtn');
   btn.textContent='생성 중...';btn.disabled=true;
   const {jsPDF}=window.jspdf;
@@ -573,7 +575,7 @@ function downloadBook(){
     doc.setFont('helvetica','bold');
     doc.setFontSize(32);
     doc.setTextColor(13,27,42);
-    for(let y=60;y<pageH;y+=80){doc.text(`${code}`,pageW/2,y,{angle:30,align:'center'});}
+    for(let y=60;y<pageH;y+=80){doc.text(`${romanName} ${code}`,pageW/2,y,{angle:30,align:'center'});}
     doc.restoreGraphicsState();
     doc.setFont('helvetica','normal');
     doc.setFontSize(9);
@@ -582,7 +584,7 @@ function downloadBook(){
     if(isLast){
       doc.setFontSize(8);
       doc.setTextColor(100,100,100);
-      doc.text(`GFIELD PREMIER  |  ${accessTime}  |  ${code}`,pageW/2,pageH-4,{align:'center'});
+      doc.text(`${romanName}  |  ${accessTime}  |  ${code}`,pageW/2,pageH-4,{align:'center'});
     }
   }
 
