@@ -1,19 +1,10 @@
-  function makeWatermarkCanvas(wmText,w,h){
-    const dpr=2;
-    const c=document.createElement('canvas');
-    c.width=w*dpr;c.height=h*dpr;
-    const ctx=c.getContext('2d');
-    ctx.scale(dpr,dpr);
-    ctx.clearRect(0,0,w,h);
-    ctx.save();
-    ctx.globalAlpha=0.07;
-    ctx.translate(w/2,h/2);
-    ctx.rotate(-30*Math.PI/180);
-    ctx.font='bold 36px "Noto Sans KR",sans-serif';
-    ctx.fillStyle='#0d1b2a';
-    ctx.textAlign='center';
-    ctx.textBaseline='middle';
-    for(let y=-h;y<h;y+=90){ctx.fillText(wmText,-10,y);ctx.fillText(wmText,w*0.5,y+45);}
-    ctx.restore();
-    return c;
-  }
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>지필드 영재교육 — 프리미어 합격 진단 리포트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
