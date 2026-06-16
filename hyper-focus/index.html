@@ -581,11 +581,9 @@ function downloadBook(){
     doc.setFontSize(9);
     doc.setTextColor(150,150,150);
     doc.text(`${pageNum} / ${totalPages}`,pageW-12,pageH-14,{align:'right'});
-    if(isLast){
-      doc.setFontSize(8);
-      doc.setTextColor(100,100,100);
-      doc.text(`${romanName}  |  ${accessTime}  |  ${code}`,pageW/2,pageH-4,{align:'center'});
-    }
+    doc.setFontSize(8);
+    doc.setTextColor(100,100,100);
+    doc.text(`${romanName}  |  ${accessTime}  |  ${code}`,pageW/2,pageH-4,{align:'center'});
   }
 
   function loadImg(n,cb){
