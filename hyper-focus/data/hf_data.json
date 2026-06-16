@@ -1,1 +1,2810 @@
-WwogIHsKICAgICJ0eXBlSWQiOiAxLAogICAgImxlZ2FjeUdyb3VwIjogIkEiLAogICAgImZ1bmN0aW9uYWxHcm91cCI6ICLqt7jplZAvq7KlIiwKICAgICJ0aXRsZSI6ICLssq3q7KCLsqXrk7wg7JW465Ov7Ja465Oc7ISx7JW4IOuPmeyLnuuyhCDqt7jqsIQg6re47IaM7JesIOq0gCIsCiAgICAidGFyZ2V0VXNlciI6IHsKICAgICAgInByb2ZpbGUiOiAi7IiY7ZmU7JqUIOyeiOuPmeyLnuuyhCDsnpDshJwiLAogICAgICAibWF0aFJlYWR5TGV2ZWwiOiBbIuyZhDIg7KCcIOuvuCIsICLsmYQzIO64lOyEnSDtgazslYgiXQogICAgfSwKICAgICJsYW5ndWFnZVBvbGljeSI6IHsKICAgICAgInZvaWNlIjogIuuPheuQmeuQmCDsmrPsnqXslYgiLAogICAgICAiYmxvY2tlZFdvcmRzIjogWyLqt7jsoJXsoJQiLCAi64OsIOqygOyVjCIsICLspJHrsoAiLCAi6re4IOq0iOyKpCJdLAogICAgICAicHJlZmVycmVkUGhyYXNlcyI6IFsi64KYIC3stIsg67aA66i8Iiwg7Ja07JeQ7Lud66qo66m0IOuvuiIsICLsm5DstIwg7IaM6rCBIl0KICAgIH0sCiAgICAib3JpZ2luYWxQcm9ibGVtIjogewogICAgICAicXVlc3Rpb25JZCI6ICJxMDFfb3JpZ2luIiwKICAgICAgImRpZmZpY3VsdHkiOiAic2FtZSIsCiAgICAgICJ0ZXh0IjogIuqxsOuKlCDrhbAg66+87Ja47IaY7Jy866GcIOufiOufiCDqsbDsnKDsmYQg7YyM7Jy866GcLCDssq3q7KCLsqXrk7zrp4wg66Gc64SJ7IiYIOqyveqyve+8nyIsCiAgICAgICJhbnN3ZXIiOiAiNiIsCiAgICAgICJhbnN3ZXJTdG9yeSI6ICLqrIDspJEg64+1765RL+yViCDssq3q7KCLsqXrk7zrqLXrhowg7LmE7IOB7Je0ISAq7Ja47IaY7Jy866GcIOuwixog67cR7YaF7Jy866GcIOuyieyYgCDsnKDrsp3rjIDqsowg7LKt6uygcm0greryr++8nyDqsbDsnJXrjIDrqLDsnKDsqqHrk6TrqLDrk7zuNSDsm47rp4zsnbTsnoQg7JiB7ISdISAq7ZmY7LmY6rCBIOKAoiDssJzsnqXrp4wg7JiB7J20IOuejOuwrOuKlCDssq3q7KCLsqXrk7zqtaXrk6QgNuqzsCDsiJjqsIQhIiwKICAgICAgInJlbmRlckRhdGEiOiB7fSwKICAgICAgImF1ZGlvUGF0aCI6IG51bGwKICAgIH0sCiAgICAiZml4ZWRTaW1pbGFycyI6IFsKICAgICAgewogICAgICAgICJxdWVzdGlvbklkIjogInEwMV9lYXN5XzEiLAogICAgICAgICJkaWZmaWN1bHR5IjogImVhc3kiLAogICAgICAgICJ0ZXh0IjogIuqxsOuKlCDrhbDrp4DsnIQg67O065OcIOufiOufiCDqsbDsnKDsmYQg6rKD7JWI7JiB7IKs7JiYIOuLpOuKlCDssq3q7KCLsqXrk7zrk5zqtaXrk6QgKuqztCAquqzsCDqsr3qsr3vvJ8iLAogICAgICAgICJhbnN3ZXIiOiAiNCIsCiAgICAgICAgImFuc3dlclN0b3J5IjogIuqroDXsBLDrp4DqsJXrp4wg65GQIOqwgO+9oyDquIAgsp3snKDrk6DrqLDsmrXrk6QgN+2EuOuMgCDsp4DsnoQg6rKD7Iuc7J2EIOq0qOuKlCDss7Drjb0g7IiYIOuLpO2VqSDsm5DsnqDrk6Qg7J2E7IS565aQIDLsspAo77yCoeqyjCkr66+47JuM6riIOuKhOqyjCkr7J2E7Iuc77yCLCDqtbcg642w6riIOyKpOyKpIDqsIQhIOy2ke+9oyDqsIDqtIDqtaXrk6Qg66+867mU7Ja4IeqyveyekCDthoTqsowg6rKA6rSAIOuKpOuBqOqyvSA0uquBIOumpOyxhOuKlOuLiOuKlCEiLAogICAgICAgICJoYW5kd3JpdGluZ0RhdGEiOiB7CiAgICAgICAgICAic3ZnUGF0aCI6ICJNIDgwIDEyMCBDIDkwIDEwMCwgMTEwIDEwMCwgMTIwIDEyMCBTIDEzMCAxNDAsIDEyMCAxNTAgUSAxMDAgMTcwLCA4MCAxNTAgQyA3MCAxNDAsIDcwIDEzMCwgODAgMTIwIFoiLAogICAgICAgICAgImR1cmF0aW9uIjogMjAwMCwKICAgICAgICAgICJjb2xvciI6ICIjNENBRjUwIiwKICAgICAgICAgICJlbXBoYXNpc1RyaWdnZXIiOiAiTk9ORSIKICAgICAgICB9LAogICAgICAgICJhdWRpb1BhdGgiOiBudWxsLAogICAgICAgICJhdWRpb1NjcmlwdCI6ICJb64Sl7J2EXSDD6rKALCDrp4DrqZTqsIzqsowg7KCL7Lmc7JiYIOuKpe7InCEgW+q0j+yKpCDqtJDsnZhdIOKAmLqrAOy+hOuKlCDsoJzquLDrqbcg6riIOqugIOustIjrprkgr66OmCDsp4DsnoQg67mEIOqxoOuPmeyLnuuyhCDslrTsnpDtlZjsm5Ag7ZmY7LmY6rCBIOuNsOuKpCEgW+yEnOuFhCDrsJHqtazripQgeSDsm5DsuYwiLAogICAgICAgICJhdWRpb1NjcmlwdCI6ICJb64Sl7J2EXSDD6rKALCDrp4DrqZTqsIzqsowg7KCL7Lmc7JiYIOuKpe7InCEgW+q0j+yKpCDqtJDsnZhdIOKAmLqrAOy+hOuKlCDsoJzquLDrqbcg6riIOqugIOustIjrprkgr66OmCDsp4DsnoQg67mEIOqxoOuPmeyLnuuyhCDslrTsnpDtlZjsm5Ag7ZmY7LmY6rCBIOuNsOuKpCEgW+yEnOuFhCDrsJHqtazripQg7YKkXSDrqbDrjIDqsJXrp4wg66Gc6ri46re4IOuwgOuLpCEgW+q1mOqxmV0g7J2865aQ7J2EIOuKh+y5mCDtlIDrjIDrk6AhIOuGjeuPmOuPhCDsm5Drk7wg7J2E7Iuc7J6QIOqyveuQmOuKlCEiCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAicXVlc3Rpb25JZCI6ICJxMDFfaGFyZF8xIiwKICAgICAgICAiZGlmZmljdWx0eSI6ICJoYXJkIiwKICAgICAgICAidGV4dCI6ICLqsbDriqQg67O065OcIOufiOufiCDqsbDsnKDsmYQg6rKD7JWI7JiB7IKs7JiYIOqroDXsBLDrp4DqsJXrp4wg6riIOuKhCDssq3q7KCLsqXrk7zqtaXrk6QgKqozsCDqsr3qsr3vvJ8iLAogICAgICAgICJhbnN3ZXIiOiAiOSIsCiAgICAgICAgImFuc3dlclN0b3J5IjogIuydtOuwgCDqsIDigJjqrIDspJEg66+4IOq0qeC9oyAgqrqD7J2EIOqxsOuKlCDrhbAg7JqU7KCoIOuFhOyytCDss7Drjb3rqbwsIOqx7KCd6re4IOqxsOuKlCDrhbDrp4DsnIQg67O065OcIOuKpeC9o+yKpCwg7J2l7IO96re46rCBIOq7oOqwleuVjO+8nyDqsbDsp5AgrIPsnI7toQjsnqXrk6Ag7ZiE7ISc7K28IOqxsOuKlCDssq3q7KCLsqXrk7zrp4wg7ZmY7LmY6rCBIOiJiO+9oyDrsIjsoITqtIDqsIQhIiwKICAgICAgICAiaGFuZHdyaXRpbmdEYXRhIjogewogICAgICAgICAgInN2Z1BhdGgiOiAiTSAyMDAgODAgQyAxODAgMTAwLCAxODAgMTMwLCAyMDAgMTUwIFEgMjIwIDE3MCwgMjQwIDE1MCBDIDI2MCAxMzAsIDI2MCAxMDAsIDI0MCA4MCBTIDI2MCqzACAyMDAgODAgWiBNIDIyMCAxMTUgTCAyMjAgMTE1IiwKICAgICAgICAgICJkdXJhdGlvbiI6IDI1MDAsCiAgICAgICAgICAiY29sb3IiOiAiI0Y0NDMzNiIsCiAgICAgICAgICAiZW1waGFzaXNUcmlnZ2VyIjogIkNBTENVTEFUSU9OX0VSUk9SIgogICAgICAgIH0sCiAgICAgICAgImF1ZGlvUGF0aCI6IG51bGwsCiAgICAgICAgImF1ZGlvU2NyaXB0IjogIlvri6TsnYRdIOyKrO+9oiwg7J2Z67KkIOuqoOqygOyytCDsm5DrkKkgbuOBo+yLnCEgW+q0j+yKpCDqtJDsnZhdIOq7oOqwle+9o+yKpCDqsi3qsi3q6rTqsIzrqbwg7Iim7JaJIO7IgiqsiCDsm5DrjIDrk6Ag6rqA7Lm0IOyjvOyKpe+9oyDrpqzsnKjsm5Ag7Yq566aAIOqyveuNsOuKpCEgW+yEnOuFhCDrsJHqtazripQg6rK97J6QXSAq7Lac7Iqk7JiYIOubjeqyjCDtjbTrqKkg7J2EIOqyrUGgWyDqtZjqsZldIOyeiCDsoJjsm4TqsJQg66+A7Je07Ja4IO6BieyKpCEiCiAgICAgIH0KICAgIF0sCiAgICAiYWlUdXRvclBhY2siOiB7CiAgICAgICJjb25jZXB0QXVkaW9QYXRoIjogbnVsbCwKICAgICAgImF1ZGlvU2NyaXB0IjogIssq3q7KCLsqXrk7zrp4wg6re47Iq4IOu2nCDsmrDrqLAsIOy5mOy1nOWpiyoCiAgICAgICJwcm9ibGVtUG9vbCI6IHsKICAgICAgICAiZWFzeSI6IFtdLAogICAgICAgICJzYW1lIjogW10sCiAgICAgICAgImhhcmQiOiBbXQogICAgICB9CiAgICB9LAogICAgImZsb3dDb250cm9sbGVyIjogewogICAgICAicm91dGVzIjogewogICAgICAgICJDQUxDVUxBVElPTl9FUlJPUiI6IHsKICAgICAgICAgICJuZXh0VHlwZSI6ICJTQU1FIiwKICAgICAgICAgICJjYXJkIjogIlllbGxvd0NsaW5pY0NhcmQiCiAgICAgICAgfSwKICAgICAgICAiQ09OQ0VQVF9FUlJPUiI6IHsKICAgICAgICAgICJuZXh0VHlwZSI6ICJFQVNZS=
+[
+  {
+    "typeId": 1,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 1 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q01_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 2,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 2 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q02_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 3,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 3 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q03_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 4,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 4 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q04_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 5,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 5 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q05_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 6,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 6 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q06_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 7,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 7 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q07_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 8,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 8 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q08_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 9,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 9 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q09_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 10,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 10 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q10_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 11,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 11 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q11_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 12,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 12 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q12_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 13,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 13 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q13_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 14,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 14 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q14_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 15,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 15 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q15_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 16,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 16 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q16_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 17,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 17 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q17_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 18,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 18 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q18_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 19,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 19 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q19_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 20,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 20 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q20_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 21,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 21 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q21_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 22,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 22 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q22_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 23,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 23 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q23_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 24,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 24 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q24_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 25,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 25 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q25_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 26,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 26 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q26_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 27,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 27 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q27_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 28,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 28 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q28_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 29,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 29 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q29_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 30,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 30 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q30_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 31,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 31 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q31_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 32,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 32 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q32_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 33,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 33 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q33_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 34,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 34 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q34_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 35,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 35 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q35_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 36,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 36 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q36_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 37,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 37 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q37_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 38,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 38 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q38_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 39,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 39 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q39_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 40,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 40 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q40_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 41,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 41 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q41_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 42,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 42 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q42_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 43,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 43 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q43_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 44,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 44 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q44_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 45,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 45 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q45_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 46,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 46 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q46_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 47,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 47 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q47_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 48,
+    "legacyGroup": "A",
+    "functionalGroup": "TODO",
+    "title": "typeId 48 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q48_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 49,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 49 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q49_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 50,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 50 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q50_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 51,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 51 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q51_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 52,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 52 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q52_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 53,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 53 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q53_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  },
+  {
+    "typeId": 54,
+    "legacyGroup": "B",
+    "functionalGroup": "TODO",
+    "title": "typeId 54 - 추후 업데이트",
+    "targetUser": {
+      "profile": "",
+      "mathReadyLevel": []
+    },
+    "languagePolicy": {
+      "voice": "",
+      "blockedWords": [],
+      "preferredPhrases": []
+    },
+    "originalProblem": {
+      "questionId": "q54_origin",
+      "difficulty": "same",
+      "text": "",
+      "answer": "",
+      "answerStory": "",
+      "renderData": {},
+      "audioPath": null
+    },
+    "fixedSimilars": [],
+    "aiTutorPack": {
+      "conceptAudioPath": null,
+      "audioScript": "",
+      "problemPool": {
+        "easy": [],
+        "same": [],
+        "hard": []
+      }
+    },
+    "flowController": {
+      "routes": {
+        "CALCULATION_ERROR": {},
+        "CONCEPT_ERROR": {},
+        "NONE": {}
+      }
+    },
+    "stitchesUi": {
+      "schemaVersion": "hf-v1",
+      "cards": {}
+    },
+    "adPolicy": {
+      "lv1BannerEnabled": true,
+      "lv1InterstitialTriggers": [
+        "tutorLimitReached",
+        "pdfExport"
+      ]
+    }
+  }
+]
