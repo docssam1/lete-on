@@ -317,6 +317,14 @@ body.intro-active>*:not(#gfieldIntro){display:none!important}
 @media(max-width:600px){#gfieldIntroScene1{overflow-y:auto!important;align-items:flex-start!important;padding-top:54px!important;padding-bottom:12px!important}#gfieldIntro .records{gap:6px!important;width:calc(100% - 16px)!important}#gfieldIntro .stack{gap:5px!important;max-width:100%!important}#gfieldIntro .grand{min-height:0!important;padding:10px 8px!important;border-radius:16px!important;flex-direction:row!important;justify-content:center!important;gap:12px!important}#gfieldIntro .grand:before{display:none}#gfieldIntro .glabel{font-size:10px!important}#gfieldIntro .gnum{font-size:clamp(42px,14vw,64px)!important;margin-top:0!important;line-height:1!important}#gfieldIntro .gunit{font-size:14px!important;margin-top:0!important}#gfieldIntro .gnote{font-size:8px!important;margin-top:2px!important;line-height:1.3!important}#gfieldIntro .record{padding:7px 9px!important;border-radius:12px!important}#gfieldIntro .recordTitle{font-size:10px!important;gap:4px!important}#gfieldIntro .recordTitle small{font-size:7px!important}#gfieldIntro .year{grid-template-columns:40px 1fr 24px!important;gap:4px!important;margin-top:3px!important;font-size:8.5px!important;min-height:14px!important}#gfieldIntro .bar{height:3px!important}#gfieldIntro .total{margin-top:3px!important;font-size:9px!important;padding-top:3px!important}#gfieldIntro .total b{font-size:17px!important}}
 .sim-diff-btn{padding:7px 16px;border:1px solid #ddd;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:500;transition:all .2s}
 .sim-diff-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.sim-card{border:1px solid #e0e0e0;border-radius:14px;padding:16px;margin-bottom:16px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.sim-card-img{width:100%;border-radius:10px;margin-bottom:12px;display:block}
+.sim-svg-wrap{width:100%;min-height:80px;margin:10px 0;border-radius:8px;background:#fafafa;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.sim-svg-wrap svg{width:100%;height:auto}
+.sim-answer-toggle{background:none;border:1px solid var(--navy);color:var(--navy);border-radius:20px;padding:6px 16px;cursor:pointer;font-size:.82rem;font-weight:600;margin-top:8px;width:100%}
+.sim-answer-box{display:none;margin-top:10px;padding:12px;background:#f0f4ff;border-radius:8px;line-height:1.6;font-size:.88rem;color:#333}
+.sim-answer-box.open{display:block}
+.sim-audio-btn{background:var(--navy);color:#fff;border:none;border-radius:20px;padding:6px 16px;cursor:pointer;font-size:.82rem;margin-top:8px;margin-right:8px}
 </style>
 </head>
 <body>
@@ -555,7 +563,76 @@ function setView(v){['quick','area','list','similar'].forEach(n=>{const vs=docum
 let hfData=null;let currentSimilarDiff='easy';
 function setSimilarDiff(diff){currentSimilarDiff=diff;document.querySelectorAll('.sim-diff-btn').forEach(b=>b.classList.toggle('active',b.dataset.diff===diff));renderSimilarList();}
 async function renderSimilarUI(){if(!hfData){try{const res=await fetch('./data/hf_data.json');hfData=await res.json();}catch(e){document.getElementById('similar-list').innerHTML='<p style="color:red">데이터 로드 실패</p>';return;}}renderSimilarList();}
-function renderSimilarList(){const wrongIds=selectedSet.size>0?Array.from(selectedSet):[];const container=document.getElementById('similar-list');if(wrongIds.length===0){container.innerHTML='<p style="text-align:center;color:#888;padding:24px">먼저 틀린 문제를 체크해 주세요.</p>';return;}if(!hfData){container.innerHTML='<p style="text-align:center;color:#888">데이터 로딩 중...</p>';return;}let html='';wrongIds.forEach(id=>{const item=hfData.find(d=>d.typeId===id);if(!item)return;const sims=item.fixedSimilars||[];const sim=sims.find(s=>s.difficulty===currentSimilarDiff)||sims[0];if(!sim)return;html+=`<div class="sim-card" style="border:1px solid #ddd;border-radius:10px;padding:16px;margin-bottom:12px;background:#fff;"><div style="font-size:.75rem;color:#888;margin-bottom:6px">유형 ${String(id).padStart(2,'0')} · ${item.title}</div><div style="font-weight:600;margin-bottom:10px;line-height:1.5">${sim.text}</div><details><summary style="cursor:pointer;color:var(--navy);font-weight:600">정답 및 풀이 보기</summary><div style="margin-top:10px;padding:12px;background:#f8f8f8;border-radius:8px"><div style="margin-bottom:6px"><strong>정답:</strong> ${sim.answer}</div><div style="line-height:1.6;color:#444">${sim.answerStory||''}</div></div></details></div>`;});container.innerHTML=html||'<p style="text-align:center;color:#888;padding:24px">해당 난이도 유사문제가 없습니다.</p>';}
+function renderSimilarList(){
+  const wrongIds=selectedSet.size>0?Array.from(selectedSet):[];
+  const container=document.getElementById('similar-list');
+  if(wrongIds.length===0){container.innerHTML='<p style="text-align:center;color:#888;padding:24px">먼저 틀린 문제를 체크해 주세요.</p>';return;}
+  if(!hfData){container.innerHTML='<p style="text-align:center;color:#888">데이터 로딩 중...</p>';return;}
+  const BASE_IMG='https://raw.githubusercontent.com/docssam1/lete-on/main/hyper-focus/assets/book/';
+  let html='';
+  wrongIds.forEach(id=>{
+    const item=hfData.find(d=>d.typeId===id);
+    if(!item)return;
+    const sims=item.fixedSimilars||[];
+    const imgNums=currentSimilarDiff==='easy'?[1,2]:currentSimilarDiff==='hard'?[3,4]:[1,2];
+    const simItems=imgNums.map((n,i)=>{
+      const sim=sims[i]||sims[0];
+      return {img:`${BASE_IMG}${id}_${n}.png`,sim};
+    }).filter(x=>x.sim);
+    if(!simItems.length)return;
+    simItems.forEach(({img,sim},i)=>{
+      const cardId=`sim-card-${id}-${i}`;
+      const svgId=`sim-svg-${id}-${i}`;
+      const svgPath=sim.handwritingData&&sim.handwritingData.svgPath?sim.handwritingData.svgPath:'';
+      const svgColor=sim.handwritingData&&sim.handwritingData.color?sim.handwritingData.color:'#0d1b2a';
+      const audioScript=sim.audioScript||item.aiTutorPack&&item.aiTutorPack.audioScript||'';
+      html+=`<div class="sim-card" id="${cardId}">
+        <div style="font-size:.72rem;color:#888;margin-bottom:8px;font-weight:500">유형 ${String(id).padStart(2,'0')} · ${item.title} · ${i===0?'유사문제 ①':'유사문제 ②'}</div>
+        <img class="sim-card-img" src="${img}" onerror="this.style.display='none'" alt="유사문제 ${i+1}">
+        ${svgPath?`<div class="sim-svg-wrap"><svg id="${svgId}" viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg"><path d="${svgPath}" fill="none" stroke="${svgColor}" stroke-width="2.5" stroke-linecap="round"/></svg></div>`:''}
+        ${audioScript?`<button class="sim-audio-btn" onclick="speakSim(this,'${audioScript.replace(/'/g,"\'")}')">🔊 음성 듣기</button>`:''}
+        <button class="sim-answer-toggle" onclick="toggleSimAnswer(this)">정답 및 풀이 보기 ▾</button>
+        <div class="sim-answer-box">
+          <strong>정답:</strong> ${sim.answer||''}
+          <div style="margin-top:6px">${sim.answerStory||''}</div>
+        </div>
+      </div>`;
+    });
+  });
+  container.innerHTML=html||'<p style="text-align:center;color:#888;padding:24px">유사문제가 없습니다.</p>';
+  // SVG 손글씨 애니메이션
+  setTimeout(()=>{
+    wrongIds.forEach(id=>{
+      const item=hfData.find(d=>d.typeId===id);
+      if(!item)return;
+      const sims=item.fixedSimilars||[];
+      [0,1].forEach(i=>{
+        const sim=sims[i];
+        if(!sim||!sim.handwritingData||!sim.handwritingData.svgPath)return;
+        const svgId=`sim-svg-${id}-${i}`;
+        const el=document.getElementById(svgId);
+        if(!el)return;
+        try{
+          if(typeof Vivus!=='undefined'){
+            new Vivus(svgId,{duration:sim.handwritingData.duration||200,type:'delayed',animTimingFunction:Vivus.EASE});
+          }
+        }catch(e){}
+      });
+    });
+  },300);
+}
+function toggleSimAnswer(btn){
+  const box=btn.nextElementSibling;
+  const open=box.classList.toggle('open');
+  btn.textContent=open?'정답 및 풀이 닫기 ▴':'정답 및 풀이 보기 ▾';
+}
+function speakSim(btn,text){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const utt=new SpeechSynthesisUtterance(text);
+  utt.lang='ko-KR';utt.rate=0.9;
+  window.speechSynthesis.speak(utt);
+}
 function toggleAllAccordions(){const cards=document.querySelectorAll('#resultListBox .res-card');const allOpen=[...cards].every(c=>c.classList.contains('open'));cards.forEach(c=>c.classList.toggle('open',!allOpen));}
 function escapeHTML(v){return String(v??'').replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]))}
 function downloadAnswerPdf(){const name=document.getElementById('studentName').value.trim()||'학생';const phone=document.getElementById('parentPhone').value.trim()||'';const code=document.getElementById('authCode').value.trim()||'승인번호 미입력';const allItems=[];data.forEach(cat=>cat.items.forEach(item=>allItems.push({...item,categoryNum:cat.categoryNum,categoryTitle:cat.categoryTitle})));allItems.sort((a,b)=>a.id-b.id);const printArea=document.getElementById('allAnswerPrint');const wm=`${name} · ${code}`;let html=`<div class="print-watermark">${escapeHTML(wm)}</div><section class="answer-print-cover"><div class="brand">G-FIELD GIFTED EDUCATION</div><h1>소마 프리미어<br>전체 답안·해설 인쇄본</h1><div class="meta"><div><strong>${escapeHTML(name)}</strong> 학생</div><div>승인번호: <strong>${escapeHTML(code)}</strong></div>${phone?`<div>연락처: ${escapeHTML(phone)}</div>`:''}<div>총 ${allItems.length}문제</div></div></section>`;data.forEach(cat=>{const items=cat.items.slice().sort((a,b)=>a.id-b.id);html+=`<section class="answer-print-section"><h2>유형 ${escapeHTML(cat.categoryNum)}. ${escapeHTML(cat.categoryTitle)}</h2>`;items.forEach(item=>{html+=`<article class="answer-print-item"><h3>${String(item.id).padStart(2,'0')}번. ${escapeHTML(item.text)}</h3><p class="answer-line">정답: ${escapeHTML(item.ans)}</p><p><strong>해설:</strong> ${escapeHTML(item.tTip)}</p><p><strong>지도 포인트:</strong> ${escapeHTML(item.mTip)}</p></article>`});html+=`</section>`;});printArea.innerHTML=html;document.body.classList.add('answer-print-mode');setTimeout(()=>window.print(),100);}
@@ -647,5 +724,6 @@ function generateDiagnosis(weakCounts,totalCounts,studentName,wrongCount,history
   setTimeout(()=>window.showIntroPreview(),15200);
 })();
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vivus/0.4.6/vivus.min.js"></script>
 </body>
 </html>
