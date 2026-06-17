@@ -3,21 +3,21 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/lete-on/hf-viewer:$COMMIT_SHA'
+      - 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/leteon/hf-viewer:$COMMIT_SHA'
       - '.'
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/lete-on/hf-viewer:$COMMIT_SHA'
+      - 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/leteon/hf-viewer:$COMMIT_SHA'
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
       - 'run'
       - 'deploy'
       - 'hf-viewer'
-      - '--image=asia-northeast3-docker.pkg.dev/$PROJECT_ID/lete-on/hf-viewer:$COMMIT_SHA'
+      - '--image=asia-northeast3-docker.pkg.dev/$PROJECT_ID/leteon/hf-viewer:$COMMIT_SHA'
       - '--region=asia-northeast3'
       - '--platform=managed'
       - '--allow-unauthenticated'
 images:
-  - 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/lete-on/hf-viewer:$COMMIT_SHA'
+  - 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/leteon/hf-viewer:$COMMIT_SHA'
