@@ -21,3 +21,5 @@ steps:
       - '--allow-unauthenticated'
 images:
   - 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/leteon/hf-viewer:$COMMIT_SHA'
+options:
+  logging: CLOUD_LOGGING_ONLY
