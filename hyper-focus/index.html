@@ -181,7 +181,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
   .res-card-header{background:#f9f9f9!important;border-bottom:1px dashed #ccc!important;padding:10px!important}
   .res-card-body{display:block!important;padding:10px!important}
   .res-badge{border:1px solid var(--red)!important;color:var(--red)!important;background:transparent!important}
-  body.report-print-mode #page1,body.report-print-mode .action-btns,body.report-print-mode .helper-text,body.report-print-mode .attempt-menu,body.report-print-mode .tab-bar,body.report-print-mode .checklist-section,body.report-print-mode .submit-area,body.report-print-mode .result-actions,body.report-print-mode .res-video-btn,body.report-print-mode .res-card-toggle,body.report-print-mode #allAnswerPrint,body.report-print-mode #printCover{display:none!important}
+  body.report-print-mode #printCover{display:flex!important;page-break-after:always!important}body.report-print-mode #page2{page-break-before:always!important}
+  body.report-print-mode #page1,body.report-print-mode .action-btns,body.report-print-mode .helper-text,body.report-print-mode .attempt-menu,body.report-print-mode .tab-bar,body.report-print-mode .checklist-section,body.report-print-mode .submit-area,body.report-print-mode .result-actions,body.report-print-mode .res-video-btn,body.report-print-mode .res-card-toggle,body.report-print-mode #allAnswerPrint{display:none!important}
   body.answer-print-mode #page1,body.answer-print-mode #page2,body.answer-print-mode #printCover{display:none!important}
   body.answer-print-mode #allAnswerPrint{display:block!important;position:relative;padding:0!important}
   body.answer-print-mode .print-only{display:none!important}
