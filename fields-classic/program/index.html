@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>필즈 더 클래식 대비 과정 | 지필드 영재교육</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#02050b;--surface:#080d14;--surface2:#0d1520;--gold:#d4af37;--gold2:#f8dd83;--gold3:#e9c176;--gold-glow:rgba(212,175,55,.2);--white:#f0ece2;--muted:#7a8a9a;--border:rgba(212,175,55,.15);--border2:rgba(255,255,255,.07);--navy:#0d1b2a}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;min-height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--white);overflow-x:hidden}
+body.in-viewer{overflow:hidden}
+
+/* ── 로그인 ── */
+#gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 20% 20%,rgba(212,175,55,.1),transparent 40%),var(--bg)}
+#gate.hidden{display:none}
+.gate-card{width:min(420px,95vw);background:rgba(8,13,20,.97);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.7)}
+.gate-bar{height:4px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold))}
+.gate-body{padding:32px 28px 24px;text-align:center}
+.gate-logo{width:56px;border-radius:10px;margin:0 auto 14px;display:block;filter:drop-shadow(0 0 12px var(--gold-glow))}
+.gate-tag{font-size:10px;font-weight:900;letter-spacing:3px;color:var(--gold);margin-bottom:6px}
+.gate-title{font-family:'DM Serif Display',serif;font-size:24px;color:var(--white);margin-bottom:6px}
+.gate-desc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px}
+.gate-input{width:100%;height:46px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:11px;color:var(--white);font-size:14px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:0 14px;text-align:center;outline:none;margin-bottom:8px;transition:border-color .2s}
+.gate-input:focus{border-color:var(--gold)}
+.gate-input::placeholder{color:rgba(255,255,255,.2);font-weight:400;font-size:12px}
+.gate-btn{width:100%;height:46px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:14px;font-weight:900;font-family:'Noto Sans KR',sans-serif;border:none;border-radius:11px;cursor:pointer;margin-top:4px}
+.gate-btn:active{transform:scale(.97)}
+.gate-error{min-height:18px;color:#e74c3c;font-size:12px;font-weight:700;margin-top:6px}
+.gate-note{font-size:10px;color:rgba(255,255,255,.25);margin-top:12px;line-height:1.6}
+
+/* ── 앱 ── */
+#app{display:none;min-height:100vh;flex-direction:column}
+#app.show{display:flex}
+.app-header{position:sticky;top:0;z-index:100;padding:10px 20px;background:rgba(2,5,11,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
+.header-left{display:flex;align-items:center;gap:10px}
+.header-logo{width:90px;filter:brightness(0) invert(1);opacity:.9}
+.header-sep{width:1px;height:22px;background:var(--border)}
+.header-badge{font-size:10px;font-weight:900;color:var(--gold);background:rgba(212,175,55,.08);border:1px solid var(--border);padding:3px 10px;border-radius:20px;letter-spacing:.05em}
+.header-right{display:flex;align-items:center;gap:8px}
+.header-student{font-size:12px;color:var(--muted)}
+.header-student b{color:var(--gold)}
+.header-logout{background:none;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);font-size:11px;font-weight:700;padding:5px 10px;border-radius:7px;cursor:pointer;font-family:'Noto Sans KR',sans-serif}
+.header-logout:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── 서재 대시보드 ── */
+#dashboard{flex:1;overflow-y:auto;padding:0 20px 60px}
+.dash-hero{padding:40px 0 32px;text-align:center;position:relative}
+.dash-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(212,175,55,.05),transparent 70%);pointer-events:none}
+.dash-eyebrow{font-size:10px;font-weight:900;letter-spacing:3px;color:var(--gold);margin-bottom:10px}
+.dash-title{font-family:'DM Serif Display',serif;font-size:clamp(24px,4vw,40px);color:var(--white);line-height:1.25;margin-bottom:8px}
+.dash-title em{font-style:italic;color:var(--gold)}
+.dash-sub{font-size:13px;color:var(--muted)}
+
+/* ── 상품 그리드 ── */
+.products-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+
+/* ── 상품 카드 ── */
+.product-card{position:relative;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:20px 16px 16px;display:flex;flex-direction:column;gap:14px;transition:all .3s cubic-bezier(.22,1,.36,1);overflow:hidden}
+.product-card.unlocked{border-color:rgba(212,175,55,.2);cursor:pointer}
+.product-card.unlocked:hover{transform:translateY(-5px);box-shadow:0 24px 48px rgba(0,0,0,.5),0 0 0 1px rgba(212,175,55,.25);border-color:rgba(212,175,55,.35)}
+.product-card.locked{opacity:.45;cursor:not-allowed}
+.lock-icon{position:absolute;top:12px;right:12px;font-size:14px;opacity:.6}
+
+/* 3D 책 */
+.book-wrap{perspective:700px;height:150px;display:flex;align-items:center;justify-content:center}
+.book-3d{width:90px;height:128px;position:relative;transform-style:preserve-3d;transform:rotateY(-16deg) rotateX(3deg);transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.product-card.unlocked:hover .book-3d{transform:rotateY(-26deg) rotateX(7deg) translateY(-4px)}
+.book-front{position:absolute;inset:0;border-radius:2px 7px 7px 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px;box-shadow:4px 8px 24px rgba(0,0,0,.6)}
+.book-spine{position:absolute;top:0;left:0;width:10px;height:100%;border-radius:2px 0 0 2px;transform:rotateY(-90deg) translateX(-5px);transform-origin:left center}
+.book-shadow{position:absolute;bottom:-10px;left:5%;right:5%;height:10px;background:radial-gradient(ellipse,rgba(0,0,0,.5),transparent 70%);filter:blur(3px)}
+.book-icon{font-size:26px}
+.book-label{font-size:8px;font-weight:900;text-align:center;line-height:1.3;letter-spacing:.05em}
+
+/* 상품 색상 */
+.theme-concept .book-front{background:linear-gradient(160deg,#1a3a5c,#0d2040)}
+.theme-concept .book-spine{background:#0f2535}
+.theme-concept .book-label{color:#93c5fd}
+.theme-killer .book-front{background:linear-gradient(160deg,#4a1a1a,#2d0a0a)}
+.theme-killer .book-spine{background:#380f0f}
+.theme-killer .book-label{color:#fca5a5}
+.theme-final .book-front{background:linear-gradient(160deg,#1a3a1a,#0a2010)}
+.theme-final .book-spine{background:#102510}
+.theme-final .book-label{color:#86efac}
+.theme-mock .book-front{background:linear-gradient(160deg,#2a1a4a,#170a30)}
+.theme-mock .book-spine{background:#1a1030}
+.theme-mock .book-label{color:#d8b4fe}
+.theme-archive .book-front{background:linear-gradient(160deg,#1a1a0a,#0f0f05)}
+.theme-archive .book-spine{background:#111108}
+.theme-archive .book-label{color:var(--gold)}
+
+.product-badge{font-size:9px;font-weight:900;letter-spacing:.1em;color:var(--gold);background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.18);padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:6px}
+.product-name{font-size:13px;font-weight:900;color:var(--white);line-height:1.35;margin-bottom:4px}
+.product-desc{font-size:11px;color:var(--muted);line-height:1.55}
+.product-action{margin-top:auto;padding-top:10px;border-top:1px solid var(--border2)}
+.product-btn{width:100%;padding:9px;border-radius:9px;font-size:11px;font-weight:800;font-family:'Noto Sans KR',sans-serif;border:none;cursor:pointer;transition:opacity .15s}
+.product-btn.open{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)}
+.product-btn.open:hover{opacity:.9}
+.product-btn.locked{background:rgba(255,255,255,.04);color:rgba(255,255,255,.25);cursor:not-allowed;border:1px solid rgba(255,255,255,.06)}
+
+/* ── 뷰어 ── */
+#viewer{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);flex-direction:column}
+#viewer.show{display:flex}
+.viewer-header{padding:9px 14px;background:rgba(2,5,11,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0}
+.viewer-back{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.05);border:1px solid var(--border2);color:rgba(255,255,255,.65);font-size:12px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:6px 11px;border-radius:7px;cursor:pointer}
+.viewer-back:hover{border-color:var(--gold);color:var(--gold)}
+.viewer-title{font-size:13px;font-weight:900;color:var(--gold2)}
+.viewer-acts{display:flex;gap:6px}
+.v-btn{background:rgba(255,255,255,.05);border:1px solid var(--border2);color:rgba(255,255,255,.65);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:6px 11px;border-radius:7px;cursor:pointer}
+.v-btn:hover{border-color:var(--gold);color:var(--gold)}
+.v-btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none}
+
+.viewer-tabs{padding:7px 10px;background:rgba(8,13,20,.92);border-bottom:1px solid var(--border);display:flex;gap:5px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+.viewer-tabs::-webkit-scrollbar{display:none}
+.tab-btn{flex-shrink:0;padding:6px 13px;border-radius:9px;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:rgba(255,255,255,.55);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;white-space:nowrap;transition:all .14s}
+.tab-btn:hover{border-color:rgba(212,175,55,.3);color:var(--gold2)}
+.tab-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border-color:transparent}
+
+.viewer-body{flex:1;display:grid;overflow:hidden}
+.viewer-body.has-video{grid-template-columns:minmax(300px,.85fr) minmax(380px,1.15fr)}
+.viewer-body.no-video{grid-template-columns:1fr}
+
+.vpanel{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden}
+.vpanel-head{padding:9px 13px;background:linear-gradient(135deg,var(--navy),#132030);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.vpanel-title{font-size:13px;font-weight:900;color:var(--gold2)}
+.vframe-box{position:relative;width:100%;aspect-ratio:16/9;background:#000;flex-shrink:0}
+#videoIframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.vcaption{padding:11px 13px;background:rgba(0,0,0,.25);font-size:11.5px;color:rgba(255,255,255,.55);line-height:1.65;flex:1}
+.vcaption b{color:var(--gold)}
+
+.bpanel{overflow:auto;background:rgba(5,8,14,.9);padding:14px 0 40px}
+.bpanel .page{width:210mm;height:297mm;background:white;position:relative;box-sizing:border-box;box-shadow:0 6px 28px rgba(0,0,0,.5);margin:0 auto 18px;display:block;zoom:.5;page-break-after:always;overflow:hidden}
+.bpanel-empty{display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:10px;color:rgba(255,255,255,.2);text-align:center;padding:40px}
+.bpanel-empty .ei{font-size:44px;opacity:.35}
+.bpanel-empty .et{font-size:12px;font-weight:700;line-height:1.7}
+.swm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-34deg);font-size:44pt;font-weight:900;color:rgba(13,27,42,.1);white-space:nowrap;pointer-events:none;user-select:none;z-index:2}
+
+/* 인쇄용 워터마크 3줄 */
+.pwm{display:none}
+@media print{
+  #gate,#app,#viewer .viewer-header,#viewer .viewer-tabs,#viewer .vpanel,.sec-toast{display:none!important}
+  #viewer{position:relative!important;display:block!important}
+  .viewer-body{display:block!important}
+  .bpanel{overflow:visible!important;padding:0!important;background:white!important}
+  .bpanel .page{zoom:1!important;width:210mm!important;height:297mm!important;margin:0!important;box-shadow:none!important;page-break-after:always!important}
+  .swm{display:none!important}
+  .pwm{display:block!important;position:absolute;left:50%;transform:translateX(-50%) rotate(-34deg);font-size:40pt;font-weight:900;color:rgba(13,27,42,.13);white-space:nowrap;pointer-events:none;user-select:none;z-index:2}
+  .pwm:nth-child(1){top:20%}
+  .pwm:nth-child(2){top:50%}
+  .pwm:nth-child(3){top:80%}
+  @page{margin:0}
+}
+
+.sec-toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:99999;display:none;padding:9px 16px;border-radius:999px;background:rgba(2,5,11,.96);color:var(--gold2);font-size:11px;font-weight:800;border:1px solid var(--border)}
+.sec-toast.show{display:block}
+
+@media(max-width:860px){.viewer-body.has-video{grid-template-columns:1fr;grid-template-rows:auto 1fr}.vpanel{border-right:none;border-bottom:1px solid var(--border)}.bpanel .page{zoom:.36}}
+@media(max-width:600px){.products-grid{grid-template-columns:1fr 1fr}#dashboard{padding:0 12px 40px}.bpanel .page{zoom:.3}}
+@media(max-width:380px){.products-grid{grid-template-columns:1fr}}
+@media(min-width:1400px){.bpanel .page{zoom:.6}}
+</style>
+</head>
+<body>
+
+<!-- 로그인 -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-bar"></div>
+    <div class="gate-body">
+      <img class="gate-logo" src="https://lh3.googleusercontent.com/d/1c2yx_O6sKcTF9-YoTKxnQ2lWOqfWiUCL" alt="G-FIELD">
+      <div class="gate-tag">FIELDS THE CLASSIC · ONLINE PROGRAM</div>
+      <div class="gate-title">필즈 더 클래식 대비 과정</div>
+      <p class="gate-desc">승인번호와 학생 이름을 입력하면<br>구매하신 프로그램이 열립니다.</p>
+      <input class="gate-input" id="gCode" type="text" autocomplete="off" placeholder="승인번호 (예: FC-CONCEPT-001)">
+      <input class="gate-input" id="gName" type="text" autocomplete="off" placeholder="학생 이름">
+      <button class="gate-btn" onclick="GF.login()">입장하기 →</button>
+      <div class="gate-error" id="gErr"></div>
+      <p class="gate-note">승인번호는 구매 후 카카오톡으로 전달됩니다.<br>이름은 교재 워터마크에만 사용됩니다.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 앱 -->
+<div id="app">
+  <header class="app-header">
+    <div class="header-left">
+      <img class="header-logo" src="https://lh3.googleusercontent.com/d/1c2yx_O6sKcTF9-YoTKxnQ2lWOqfWiUCL" alt="G-FIELD">
+      <div class="header-sep"></div>
+      <span class="header-badge">필즈 대비 과정</span>
+    </div>
+    <div class="header-right">
+      <span class="header-student"><b id="hName"></b> 학생</span>
+      <button class="header-logout" onclick="GF.logout()">로그아웃</button>
+    </div>
+  </header>
+  <div id="dashboard">
+    <div class="dash-hero">
+      <div class="dash-eyebrow">GFIELD GIFTED EDUCATION</div>
+      <h1 class="dash-title">필즈 더 클래식<br><em>대비 과정 서재</em></h1>
+      <p class="dash-sub">구매하신 프로그램을 선택해 학습을 시작하세요</p>
+    </div>
+    <div class="products-grid" id="grid"></div>
+  </div>
+</div>
+
+<!-- 뷰어 -->
+<div id="viewer">
+  <div class="viewer-header">
+    <button class="viewer-back" onclick="GF.closeViewer()">← 서재로</button>
+    <span class="viewer-title" id="vTitle"></span>
+    <div class="viewer-acts">
+      <button class="v-btn" onclick="window.print()">🖨 인쇄</button>
+      <button class="v-btn gold" id="vYtBtn" onclick="GF.openYt()" style="display:none">▶ 새 창</button>
+    </div>
+  </div>
+  <div class="viewer-tabs" id="vTabs"></div>
+  <div class="viewer-body" id="vBody">
+    <div class="vpanel" id="vPanel">
+      <div class="vpanel-head">
+        <span class="vpanel-title" id="vPanelTitle">강의</span>
+        <span style="font-size:10px;color:var(--muted)" id="vPanelMeta"></span>
+      </div>
+      <div class="vframe-box"><iframe id="videoIframe" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
+      <div class="vcaption"><b>학습 순서:</b> 영상 시청 후 오른쪽 교재를 풀어보세요. 인쇄 시 이름 워터마크 3줄이 삽입됩니다.</div>
+    </div>
+    <div class="bpanel" id="bPanel">
+      <div class="bpanel-empty" id="bEmpty">
+        <div class="ei">📖</div>
+        <div class="et">강의를 선택하면 교재가 표시됩니다.<br><small style="opacity:.5">교재 PDF 준비 중</small></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-toast" id="secToast">🔒 학생 전용 보안 자료입니다.</div>
+
+<script>
+(function(){"use strict";
+
+const PRODUCTS=[
+  {key:"FC-CONCEPT",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 8주 완성 커리큘럼",icon:"📘",theme:"theme-concept",hasVideo:true,
+   lessons:[{key:"c1",label:"1강 · 공간지각",title:"공간지각력 완성",videoUrl:""},{key:"c2",label:"2강 · 평면도형",title:"평면도형 완성",videoUrl:""},{key:"c3",label:"3강 · 수와연산",title:"수와 연산 완성",videoUrl:""},{key:"c4",label:"4강 · 논리추리",title:"논리추리 완성",videoUrl:""},{key:"c5",label:"5강 · 경우의수",title:"경우의 수 완성",videoUrl:""},{key:"c6",label:"6강 · 문제해결",title:"문제해결력 완성",videoUrl:""}]},
+  {key:"FC-KILLER",name:"킬러문항 완전 해제",desc:"최상위 킬러 유형 집중 공략",icon:"🎯",theme:"theme-killer",hasVideo:true,
+   lessons:[{key:"k1",label:"킬러 유형 1",title:"킬러 유형 해제 1",videoUrl:""},{key:"k2",label:"킬러 유형 2",title:"킬러 유형 해제 2",videoUrl:""},{key:"k3",label:"킬러 유형 3",title:"킬러 유형 해제 3",videoUrl:""},{key:"k4",label:"킬러 유형 4",title:"킬러 유형 해제 4",videoUrl:""},{key:"k5",label:"킬러 유형 5",title:"킬러 유형 해제 5",videoUrl:""},{key:"k6",label:"킬러 유형 6",title:"킬러 유형 해제 6",videoUrl:""}]},
+  {key:"FC-FINAL",name:"파이널 모의고사 6회",desc:"실전과 동일한 파이널 6세트",icon:"📝",theme:"theme-final",hasVideo:true,
+   lessons:[{key:"f1",label:"1회",title:"파이널 모의고사 1회",videoUrl:""},{key:"f2",label:"2회",title:"파이널 모의고사 2회",videoUrl:""},{key:"f3",label:"3회",title:"파이널 모의고사 3회",videoUrl:""},{key:"f4",label:"4회",title:"파이널 모의고사 4회",videoUrl:""},{key:"f5",label:"5회",title:"파이널 모의고사 5회",videoUrl:""},{key:"f6",label:"6회",title:"파이널 모의고사 6회",videoUrl:""}]},
+  {key:"FC-MOCK",name:"온라인 진단 모의고사",desc:"현재 수준 정밀 진단 + 분석",icon:"🔍",theme:"theme-mock",hasVideo:true,
+   lessons:[{key:"m1",label:"진단 1회차",title:"진단 모의고사 1회",videoUrl:""},{key:"m2",label:"진단 2회차",title:"진단 모의고사 2회",videoUrl:""},{key:"m3",label:"풀이 영상",title:"진단 풀이",videoUrl:""},{key:"m4",label:"분석 리포트",title:"분석 리포트",videoUrl:""}]},
+  {key:"FC-ARCHIVE",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",hasVideo:false,
+   lessons:[{key:"a1",label:"필즈 핵심 자료",title:"필즈 핵심 자료",videoUrl:""},{key:"a2",label:"오답 정리",title:"오답 정리 자료",videoUrl:""},{key:"a3",label:"기출 분석",title:"최신 기출 분석",videoUrl:""}]}
+];
+
+const SALT="gfield-fields-classic-2026-v1";
+const CODES={
+  "bbbdc79775916a1a6f7675f3db54cba1f33f26e1dffda97fcb685e1c993df7c7":["FC-CONCEPT"],
+  "c5e2beda61041ffeeb6056cb9d2167786d179a219e79e864e6216ecedf620984":["FC-KILLER"],
+  "d769a92ca39f255ea72854ca13e7c1d9309e811cd1c52f71567bfef4a63d9b9c":["FC-FINAL"],
+  "fcee3d55de77d92a5e3014b3c4dc874ae825fbbf0e0970399766d0a16841d50b":["FC-MOCK"]
+};
+
+async function sha256(m){const b=new TextEncoder().encode(m);if(window.crypto?.subtle){const d=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,"0")).join("")}return fb(m)}
+function fb(s){function rr(v,a){return v>>>a|v<<32-a}const mp=Math.pow,mw=mp(2,32);let r="",w=[],al=s.length*8;let h=fb.h=fb.h||[],k=fb.k=fb.k||[],pc=k.length;const ic={};for(let c=2;pc<64;c++){if(!ic[c]){for(let i=0;i<313;i+=c)ic[i]=c;h[pc]=mp(c,.5)*mw|0;k[pc++]=mp(c,1/3)*mw|0}}s+="\x80";while(s.length%64-56)s+="\x00";for(let i=0;i<s.length;i++){const j=s.charCodeAt(i);if(j>>8)return"";w[i>>2]|=j<<(3-i%4)*8}w[w.length]=al/mw|0;w[w.length]=al;for(let j=0;j<w.length;){const wd=w.slice(j,j+=16),oh=h.slice(0);for(let i=0;i<64;i++){const w15=wd[i-15],w2=wd[i-2],a=h[0],e=h[4];const t1=h[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&h[5])^(~e&h[6]))+k[i]+(wd[i]=i<16?wd[i]:wd[i-16]+(rr(w15,7)^rr(w15,18)^w15>>>3)+wd[i-7]+(rr(w2,17)^rr(w2,19)^w2>>>10)|0);const t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&h[1])^(a&h[2])^(h[1]&h[2]));h=[t1+t2|0].concat(h);h[4]=h[4]+t1|0;h.pop()}for(let i=0;i<8;i++)h[i]=h[i]+oh[i]|0}for(let i=0;i<8;i++)for(let j=3;j+1;j--){const b=h[i]>>j*8&255;r+=(b<16?0:"")+b.toString(16)}return r}
+
+async function verify(code){const h=await sha256(SALT+":"+code.trim().toUpperCase());return CODES[h]||null}
+
+function toast(){const t=document.getElementById("secToast");t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),1500)}
+function security(){
+  document.addEventListener("contextmenu",e=>{e.preventDefault();toast()});
+  document.addEventListener("copy",e=>{e.preventDefault();toast()});
+  document.addEventListener("cut",e=>{e.preventDefault();toast()});
+  document.addEventListener("dragstart",e=>e.preventDefault());
+  document.addEventListener("keydown",e=>{const k=String(e.key||"").toLowerCase();if(k==="f12"||(e.ctrlKey&&["u","s"].includes(k))||(e.ctrlKey&&e.shiftKey&&["i","j","c"].includes(k))){e.preventDefault();e.stopPropagation();toast()}},true);
+}
+
+function embed(url){if(!url)return"";try{const p=new URL(url);let id="",s=0;if(p.hostname.includes("youtu.be"))id=p.pathname.replace(/^\//,"");else if(p.hostname.includes("youtube.com"))id=p.searchParams.get("v")||"";const t=p.searchParams.get("t")||"";if(/^\d+$/.test(t))s=Number(t);return id?"https://www.youtube.com/embed/"+id+"?rel=0&modestbranding=1&playsinline=1"+(s?"&start="+s:""):url}catch{return url}}
+
+let S={name:"",perms:[],product:null,lesson:null};
+
+function wm(name){return"G·FIELD · "+name}
+
+const GF={
+  async login(){
+    const c=document.getElementById("gCode").value.trim();
+    const n=document.getElementById("gName").value.replace(/\s+/g,"").trim();
+    const e=document.getElementById("gErr");
+    if(!c){e.textContent="승인번호를 입력해 주세요.";return}
+    if(!n){e.textContent="학생 이름을 입력해 주세요.";return}
+    e.textContent="확인 중...";
+    const perms=await verify(c);
+    if(!perms){e.textContent="올바르지 않은 승인번호입니다.";return}
+    S.name=n;S.perms=perms;
+    sessionStorage.setItem("gf_c",c);sessionStorage.setItem("gf_n",n);
+    this.showApp();
+  },
+  showApp(){
+    document.getElementById("gate").classList.add("hidden");
+    const app=document.getElementById("app");
+    app.classList.add("show");
+    document.getElementById("hName").textContent=S.name;
+    this.renderGrid();
+  },
+  renderGrid(){
+    const g=document.getElementById("grid");g.innerHTML="";
+    PRODUCTS.forEach(p=>{
+      const ok=S.perms.includes(p.key);
+      const el=document.createElement("div");
+      el.className="product-card "+p.theme+(ok?" unlocked":" locked");
+      el.innerHTML=`
+        ${!ok?'<span class="lock-icon">🔒</span>':""}
+        <div class="book-wrap"><div class="book-3d">
+          <div class="book-front"><div class="book-icon">${p.icon}</div><div class="book-label">${p.name}</div></div>
+          <div class="book-spine"></div><div class="book-shadow"></div>
+        </div></div>
+        <div>
+          <div class="product-badge">${p.key}</div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-desc">${p.desc}</div>
+        </div>
+        <div class="product-action">
+          <button class="product-btn ${ok?"open":"locked"}" ${ok?"":"disabled"}>
+            ${ok?"📖 학습 시작":"🔒 구매 후 이용 가능"}
+          </button>
+        </div>`;
+      if(ok)el.addEventListener("click",()=>GF.openViewer(p.key));
+      g.appendChild(el);
+    });
+  },
+  openViewer(key){
+    const p=PRODUCTS.find(x=>x.key===key);if(!p)return;
+    S.product=p;
+    document.getElementById("vTitle").textContent=p.icon+" "+p.name;
+    document.getElementById("vYtBtn").style.display=p.hasVideo?"block":"none";
+    // 레이아웃
+    document.getElementById("vBody").className="viewer-body "+(p.hasVideo?"has-video":"no-video");
+    document.getElementById("vPanel").style.display=p.hasVideo?"flex":"none";
+    // 탭
+    const tabs=document.getElementById("vTabs");tabs.innerHTML="";
+    p.lessons.forEach(l=>{
+      const b=document.createElement("button");b.className="tab-btn";b.textContent=l.label;b.dataset.k=l.key;
+      b.addEventListener("click",()=>GF.selectLesson(l.key));tabs.appendChild(b);
+    });
+    if(p.lessons.length)this.selectLesson(p.lessons[0].key);
+    document.getElementById("viewer").classList.add("show");
+    document.body.classList.add("in-viewer");
+    this.applyWm();
+  },
+  selectLesson(key){
+    S.lesson=S.product?.lessons.find(l=>l.key===key);
+    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b.dataset.k===key));
+    if(!S.lesson)return;
+    document.getElementById("vPanelTitle").textContent=S.lesson.title;
+    document.getElementById("vPanelMeta").textContent=S.lesson.videoUrl?"영상 준비됨":"영상 준비 중";
+    const fr=document.getElementById("videoIframe");
+    if(fr)fr.src=S.lesson.videoUrl?embed(S.lesson.videoUrl):"";
+  },
+  openYt(){if(S.lesson?.videoUrl)window.open(S.lesson.videoUrl,"_blank","noopener")},
+  closeViewer(){
+    document.getElementById("viewer").classList.remove("show");
+    document.body.classList.remove("in-viewer");
+    const fr=document.getElementById("videoIframe");if(fr)fr.src="";
+    S.product=null;S.lesson=null;
+  },
+  applyWm(){
+    // 뷰어: 1줄 워터마크
+    document.querySelectorAll(".page").forEach(pg=>{
+      if(!pg.querySelector(".swm")){
+        const w=document.createElement("div");w.className="swm";w.textContent=wm(S.name);pg.insertBefore(w,pg.firstChild);
+      }
+      // 인쇄용 3줄
+      if(!pg.querySelector(".pwm")){
+        [1,2,3].forEach(()=>{const w=document.createElement("div");w.className="pwm";w.textContent=wm(S.name);pg.appendChild(w)});
+      }
+    });
+  },
+  logout(){
+    sessionStorage.clear();S={name:"",perms:[],product:null,lesson:null};
+    document.getElementById("gate").classList.remove("hidden");
+    document.getElementById("app").classList.remove("show");
+    document.getElementById("viewer").classList.remove("show");
+    document.body.classList.remove("in-viewer");
+    document.getElementById("gCode").value="";document.getElementById("gName").value="";document.getElementById("gErr").textContent="";
+  }
+};
+
+document.addEventListener("DOMContentLoaded",()=>{
+  security();
+  const ci=document.getElementById("gCode"),ni=document.getElementById("gName");
+  ci?.addEventListener("keydown",e=>{if(e.key==="Enter")ni?.focus()});
+  ni?.addEventListener("keydown",e=>{if(e.key==="Enter")GF.login()});
+  setTimeout(()=>ci?.focus(),60);
+  const sc=sessionStorage.getItem("gf_c"),sn=sessionStorage.getItem("gf_n");
+  if(sc&&sn)verify(sc).then(p=>{if(p){S.name=sn;S.perms=p;GF.showApp()}else sessionStorage.clear()});
+});
+window.GF=GF;
+})();
+</script>
+</body>
+</html>
