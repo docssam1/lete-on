@@ -6,10 +6,12 @@
 <title>필즈 더 클래식 대비 과정 | 지필드 영재교육</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#02050b;--surface:#080d14;--surface2:#0d1520;--gold:#d4af37;--gold2:#f8dd83;--gold3:#e9c176;--gold-glow:rgba(212,175,55,.2);--white:#f0ece2;--muted:#7a8a9a;--border:rgba(212,175,55,.15);--border2:rgba(255,255,255,.07);--navy:#0d1b2a}
+:root{--bg:#02050b;--surface:#080d14;--gold:#d4af37;--gold2:#f8dd83;--gold-glow:rgba(212,175,55,.2);--white:#f0ece2;--muted:#7a8a9a;--border:rgba(212,175,55,.15);--border2:rgba(255,255,255,.07);--navy:#0d1b2a}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;min-height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--white);overflow-x:hidden}
 body.in-viewer{overflow:hidden}
+
+/* ── 로그인 ── */
 #gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 20% 20%,rgba(212,175,55,.1),transparent 40%),var(--bg)}
 #gate.hidden{display:none}
 .gate-card{width:min(420px,95vw);background:rgba(8,13,20,.97);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.7)}
@@ -26,6 +28,8 @@ body.in-viewer{overflow:hidden}
 .gate-btn:active{transform:scale(.97)}
 .gate-error{min-height:18px;color:#e74c3c;font-size:12px;font-weight:700;margin-top:6px}
 .gate-note{font-size:10px;color:rgba(255,255,255,.25);margin-top:12px;line-height:1.6}
+
+/* ── 앱 ── */
 #app{display:none;min-height:100vh;flex-direction:column}
 #app.show{display:flex}
 .app-header{position:sticky;top:0;z-index:100;padding:10px 20px;background:rgba(2,5,11,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
@@ -38,6 +42,8 @@ body.in-viewer{overflow:hidden}
 .header-student b{color:var(--gold)}
 .header-logout{background:none;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);font-size:11px;font-weight:700;padding:5px 10px;border-radius:7px;cursor:pointer;font-family:'Noto Sans KR',sans-serif}
 .header-logout:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── 서재 ── */
 #dashboard{flex:1;overflow-y:auto;padding:0 20px 60px}
 .dash-hero{padding:40px 0 32px;text-align:center;position:relative}
 .dash-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(212,175,55,.05),transparent 70%);pointer-events:none}
@@ -72,56 +78,85 @@ body.in-viewer{overflow:hidden}
 .product-btn.open{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)}
 .product-btn.open:hover{opacity:.9}
 .product-btn.locked{background:rgba(255,255,255,.04);color:rgba(255,255,255,.25);cursor:not-allowed;border:1px solid rgba(255,255,255,.06)}
+
+/* ── 가로 전환 안내 (세로 + 뷰어) ── */
+#rotateHint{display:none;position:fixed;inset:0;z-index:9998;background:linear-gradient(135deg,#02050b,#0d1b2a);flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:20px}
+#rotateHint.show{display:flex}
+.rotate-icon{font-size:64px;animation:rotateAnim 1.5s ease-in-out infinite}
+@keyframes rotateAnim{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
+.rotate-title{font-size:18px;font-weight:900;color:var(--gold2)}
+.rotate-desc{font-size:13px;color:var(--muted);line-height:1.7}
+
+/* ── 뷰어 ── */
 #viewer{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);flex-direction:column}
 #viewer.show{display:flex}
-.viewer-header{padding:9px 14px;background:rgba(2,5,11,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0}
-.viewer-back{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.05);border:1px solid var(--border2);color:rgba(255,255,255,.65);font-size:12px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:6px 11px;border-radius:7px;cursor:pointer}
+.viewer-header{padding:8px 12px;background:rgba(2,5,11,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0}
+.viewer-back{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.05);border:1px solid var(--border2);color:rgba(255,255,255,.65);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:5px 10px;border-radius:7px;cursor:pointer}
 .viewer-back:hover{border-color:var(--gold);color:var(--gold)}
-.viewer-title{font-size:13px;font-weight:900;color:var(--gold2)}
+.viewer-title{font-size:12px;font-weight:900;color:var(--gold2);flex:1;text-align:center}
 .viewer-acts{display:flex;gap:6px}
-.v-btn{background:rgba(255,255,255,.05);border:1px solid var(--border2);color:rgba(255,255,255,.65);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:6px 11px;border-radius:7px;cursor:pointer}
+.v-btn{background:rgba(255,255,255,.05);border:1px solid var(--border2);color:rgba(255,255,255,.65);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:5px 10px;border-radius:7px;cursor:pointer;white-space:nowrap}
 .v-btn:hover{border-color:var(--gold);color:var(--gold)}
 .v-btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none}
-.viewer-tabs{padding:7px 10px;background:rgba(8,13,20,.92);border-bottom:1px solid var(--border);display:flex;gap:5px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+
+.viewer-tabs{padding:5px 8px;background:rgba(8,13,20,.92);border-bottom:1px solid var(--border);display:flex;gap:4px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
 .viewer-tabs::-webkit-scrollbar{display:none}
-.tab-btn{flex-shrink:0;padding:6px 13px;border-radius:9px;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:rgba(255,255,255,.55);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;white-space:nowrap;transition:all .14s}
+.tab-btn{flex-shrink:0;padding:5px 11px;border-radius:8px;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:rgba(255,255,255,.55);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;white-space:nowrap;transition:all .14s}
 .tab-btn:hover{border-color:rgba(212,175,55,.3);color:var(--gold2)}
 .tab-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border-color:transparent}
-.viewer-body{flex:1;display:grid;overflow:hidden}
-.viewer-body.has-video{grid-template-columns:minmax(300px,.85fr) minmax(380px,1.15fr)}
+
+/* 뷰어 바디 - 항상 좌우 분할 */
+.viewer-body{flex:1;display:grid;overflow:hidden;min-height:0}
+.viewer-body.has-video{grid-template-columns:42% 58%}
 .viewer-body.no-video{grid-template-columns:1fr}
-.vpanel{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden}
-.vpanel-head{padding:9px 13px;background:linear-gradient(135deg,var(--navy),#132030);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.vpanel-title{font-size:13px;font-weight:900;color:var(--gold2)}
+
+.vpanel{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden;min-height:0}
+.vpanel-head{padding:7px 11px;background:linear-gradient(135deg,var(--navy),#132030);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.vpanel-title{font-size:12px;font-weight:900;color:var(--gold2)}
+.vpanel-meta{font-size:10px;color:var(--muted)}
 .vframe-box{position:relative;width:100%;aspect-ratio:16/9;background:#000;flex-shrink:0}
 #videoIframe{position:absolute;inset:0;width:100%;height:100%;border:none}
-.bpanel{overflow:auto;background:rgba(5,8,14,.9);padding:14px 0 40px}
-.bpanel .page{width:210mm;height:297mm;background:white;position:relative;box-sizing:border-box;box-shadow:0 6px 28px rgba(0,0,0,.5);margin:0 auto 18px;display:block;zoom:.5;page-break-after:always;overflow:hidden}
-.bpanel-empty{display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:10px;color:rgba(255,255,255,.2);text-align:center;padding:40px}
-.bpanel-empty .ei{font-size:44px;opacity:.35}
-.bpanel-empty .et{font-size:12px;font-weight:700;line-height:1.7}
+
+.bpanel{overflow:auto;background:rgba(5,8,14,.9);padding:10px 0 30px;min-height:0}
+.bpanel .page{width:210mm;height:297mm;background:white;position:relative;box-sizing:border-box;box-shadow:0 4px 20px rgba(0,0,0,.5);margin:0 auto 14px;display:block;zoom:.42;page-break-after:always;overflow:hidden}
+.bpanel-empty{display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:10px;color:rgba(255,255,255,.2);text-align:center;padding:30px}
+.bpanel-empty .ei{font-size:36px;opacity:.35}
+.bpanel-empty .et{font-size:11px;font-weight:700;line-height:1.7}
 .swm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-34deg);font-size:44pt;font-weight:900;color:rgba(13,27,42,.1);white-space:nowrap;pointer-events:none;user-select:none;z-index:2}
 .pwm{display:none}
+
+/* 인쇄 */
 @media print{
-  #gate,#app,#viewer .viewer-header,#viewer .viewer-tabs,#viewer .vpanel,.sec-toast{display:none!important}
+  #gate,#app,#rotateHint,#viewer .viewer-header,#viewer .viewer-tabs,#viewer .vpanel,.sec-toast{display:none!important}
   #viewer{position:relative!important;display:block!important}
   .viewer-body{display:block!important}
   .bpanel{overflow:visible!important;padding:0!important;background:white!important}
   .bpanel .page{zoom:1!important;width:210mm!important;height:297mm!important;margin:0!important;box-shadow:none!important;page-break-after:always!important}
   .swm{display:none!important}
-  .pwm{display:block!important;position:absolute;left:50%;transform:translateX(-50%) rotate(-34deg);font-size:40pt;font-weight:900;color:rgba(13,27,42,.13);white-space:nowrap;pointer-events:none;user-select:none;z-index:2}
+  .pwm{display:block!important;position:absolute;left:50%;transform:translateX(-50%) rotate(-34deg);font-size:40pt;font-weight:900;color:rgba(13,27,42,.13);white-space:nowrap;pointer-events:none;z-index:2}
   .pwm:nth-child(1){top:20%}.pwm:nth-child(2){top:50%}.pwm:nth-child(3){top:80%}
   @page{margin:0}
 }
+
+/* 가로 화면 대응 */
+@media(max-height:500px) and (orientation:landscape){
+  .viewer-header{padding:5px 10px}
+  .viewer-tabs{padding:3px 8px}
+  .tab-btn{padding:4px 10px;font-size:10px}
+  .bpanel .page{zoom:.38}
+}
+@media(min-width:1200px){.bpanel .page{zoom:.55}}
+@media(min-width:1400px){.bpanel .page{zoom:.62}}
+@media(max-width:600px){.products-grid{grid-template-columns:1fr 1fr}#dashboard{padding:0 12px 40px}}
+@media(max-width:380px){.products-grid{grid-template-columns:1fr}}
+
 .sec-toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:99999;display:none;padding:9px 16px;border-radius:999px;background:rgba(2,5,11,.96);color:var(--gold2);font-size:11px;font-weight:800;border:1px solid var(--border)}
 .sec-toast.show{display:block}
-@media(max-width:860px){.viewer-body.has-video{grid-template-columns:1fr;grid-template-rows:auto 1fr}.vpanel{border-right:none;border-bottom:1px solid var(--border)}.bpanel .page{zoom:.36}}
-@media(max-width:600px){.products-grid{grid-template-columns:1fr 1fr}#dashboard{padding:0 12px 40px}.bpanel .page{zoom:.3}}
-@media(max-width:380px){.products-grid{grid-template-columns:1fr}}
-@media(min-width:1400px){.bpanel .page{zoom:.6}}
 </style>
 </head>
 <body>
+
+<!-- 로그인 -->
 <div id="gate">
   <div class="gate-card">
     <div class="gate-bar"></div>
@@ -138,6 +173,15 @@ body.in-viewer{overflow:hidden}
     </div>
   </div>
 </div>
+
+<!-- 가로 전환 안내 -->
+<div id="rotateHint">
+  <div class="rotate-icon">📱</div>
+  <div class="rotate-title">가로로 돌려주세요</div>
+  <div class="rotate-desc">뷰어는 가로 화면에서만 이용할 수 있습니다.<br>휴대폰을 가로로 돌려 주세요.</div>
+</div>
+
+<!-- 앱 -->
 <div id="app">
   <header class="app-header">
     <div class="header-left">
@@ -159,6 +203,8 @@ body.in-viewer{overflow:hidden}
     <div class="products-grid" id="grid"></div>
   </div>
 </div>
+
+<!-- 뷰어 -->
 <div id="viewer">
   <div class="viewer-header">
     <button class="viewer-back" onclick="GF.closeViewer()">← 서재로</button>
@@ -173,9 +219,11 @@ body.in-viewer{overflow:hidden}
     <div class="vpanel" id="vPanel">
       <div class="vpanel-head">
         <span class="vpanel-title" id="vPanelTitle">강의</span>
-        <span style="font-size:10px;color:var(--muted)" id="vPanelMeta"></span>
+        <span class="vpanel-meta" id="vPanelMeta"></span>
       </div>
-      <div class="vframe-box"><iframe id="videoIframe" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
+      <div class="vframe-box">
+        <iframe id="videoIframe" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
+      </div>
     </div>
     <div class="bpanel" id="bPanel">
       <div class="bpanel-empty" id="bEmpty">
@@ -185,7 +233,9 @@ body.in-viewer{overflow:hidden}
     </div>
   </div>
 </div>
+
 <div class="sec-toast" id="secToast">🔒 학생 전용 보안 자료입니다.</div>
+
 <script>
 (function(){"use strict";
 const PRODUCTS=[
@@ -207,14 +257,38 @@ const CODES={
   "d769a92ca39f255ea72854ca13e7c1d9309e811cd1c52f71567bfef4a63d9b9c":["FC-FINAL"],
   "fcee3d55de77d92a5e3014b3c4dc874ae825fbbf0e0970399766d0a16841d50b":["FC-MOCK"]
 };
+
 async function sha256(m){const b=new TextEncoder().encode(m);if(window.crypto?.subtle){const d=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,"0")).join("")}return fb(m)}
 function fb(s){function rr(v,a){return v>>>a|v<<32-a}const mp=Math.pow,mw=mp(2,32);let r="",w=[],al=s.length*8;let h=fb.h=fb.h||[],k=fb.k=fb.k||[],pc=k.length;const ic={};for(let c=2;pc<64;c++){if(!ic[c]){for(let i=0;i<313;i+=c)ic[i]=c;h[pc]=mp(c,.5)*mw|0;k[pc++]=mp(c,1/3)*mw|0}}s+="\x80";while(s.length%64-56)s+="\x00";for(let i=0;i<s.length;i++){const j=s.charCodeAt(i);if(j>>8)return"";w[i>>2]|=j<<(3-i%4)*8}w[w.length]=al/mw|0;w[w.length]=al;for(let j=0;j<w.length;){const wd=w.slice(j,j+=16),oh=h.slice(0);for(let i=0;i<64;i++){const w15=wd[i-15],w2=wd[i-2],a=h[0],e=h[4];const t1=h[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&h[5])^(~e&h[6]))+k[i]+(wd[i]=i<16?wd[i]:wd[i-16]+(rr(w15,7)^rr(w15,18)^w15>>>3)+wd[i-7]+(rr(w2,17)^rr(w2,19)^w2>>>10)|0);const t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&h[1])^(a&h[2])^(h[1]&h[2]));h=[t1+t2|0].concat(h);h[4]=h[4]+t1|0;h.pop()}for(let i=0;i<8;i++)h[i]=h[i]+oh[i]|0}for(let i=0;i<8;i++)for(let j=3;j+1;j--){const b=h[i]>>j*8&255;r+=(b<16?0:"")+b.toString(16)}return r}
+
 async function verify(code){const h=await sha256(SALT+":"+code.trim().toUpperCase());return CODES[h]||null}
+
 function toast(){const t=document.getElementById("secToast");t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),1500)}
-function security(){document.addEventListener("contextmenu",e=>{e.preventDefault();toast()});document.addEventListener("copy",e=>{e.preventDefault();toast()});document.addEventListener("cut",e=>{e.preventDefault();toast()});document.addEventListener("dragstart",e=>e.preventDefault());document.addEventListener("keydown",e=>{const k=String(e.key||"").toLowerCase();if(k==="f12"||(e.ctrlKey&&["u","s"].includes(k))||(e.ctrlKey&&e.shiftKey&&["i","j","c"].includes(k))){e.preventDefault();e.stopPropagation();toast()}},true)}
+function security(){
+  document.addEventListener("contextmenu",e=>{e.preventDefault();toast()});
+  document.addEventListener("copy",e=>{e.preventDefault();toast()});
+  document.addEventListener("cut",e=>{e.preventDefault();toast()});
+  document.addEventListener("dragstart",e=>e.preventDefault());
+  document.addEventListener("keydown",e=>{const k=String(e.key||"").toLowerCase();if(k==="f12"||(e.ctrlKey&&["u","s"].includes(k))||(e.ctrlKey&&e.shiftKey&&["i","j","c"].includes(k))){e.preventDefault();e.stopPropagation();toast()}},true);
+}
+
 function embed(url){if(!url)return"";try{const p=new URL(url);let id="",s=0;if(p.hostname.includes("youtu.be"))id=p.pathname.replace(/^\//,"");else if(p.hostname.includes("youtube.com"))id=p.searchParams.get("v")||"";const t=p.searchParams.get("t")||"";if(/^\d+$/.test(t))s=Number(t);return id?"https://www.youtube.com/embed/"+id+"?rel=0&modestbranding=1&playsinline=1"+(s?"&start="+s:""):url}catch{return url}}
-let S={name:"",perms:[],product:null,lesson:null};
+
+let S={name:"",perms:[],product:null,lesson:null,viewerOpen:false};
+
+/* 가로/세로 감지 - 뷰어 열려있을 때만 */
+function checkOrientation(){
+  if(!S.viewerOpen)return;
+  const isPortrait=window.innerHeight>window.innerWidth;
+  document.getElementById("rotateHint").classList.toggle("show",isPortrait);
+  document.getElementById("viewer").style.visibility=isPortrait?"hidden":"visible";
+}
+
+window.addEventListener("resize",checkOrientation);
+window.addEventListener("orientationchange",()=>setTimeout(checkOrientation,100));
+
 function wm(name){return"G·FIELD · "+name}
+
 const GF={
   async login(){
     const c=document.getElementById("gCode").value.trim(),n=document.getElementById("gName").value.replace(/\s+/g,"").trim(),e=document.getElementById("gErr");
@@ -244,7 +318,7 @@ const GF={
   },
   openViewer(key){
     const p=PRODUCTS.find(x=>x.key===key);if(!p)return;
-    S.product=p;
+    S.product=p;S.viewerOpen=true;
     document.getElementById("vTitle").textContent=p.icon+" "+p.name;
     document.getElementById("vYtBtn").style.display=p.hasVideo?"block":"none";
     document.getElementById("vBody").className="viewer-body "+(p.hasVideo?"has-video":"no-video");
@@ -254,6 +328,7 @@ const GF={
     if(p.lessons.length)this.selectLesson(p.lessons[0].key);
     document.getElementById("viewer").classList.add("show");
     document.body.classList.add("in-viewer");
+    checkOrientation();
     this.applyWm();
   },
   selectLesson(key){
@@ -266,8 +341,13 @@ const GF={
   },
   openYt(){if(S.lesson?.videoUrl)window.open(S.lesson.videoUrl,"_blank","noopener")},
   closeViewer(){
-    document.getElementById("viewer").classList.remove("show");document.body.classList.remove("in-viewer");
-    const fr=document.getElementById("videoIframe");if(fr)fr.src="";S.product=null;S.lesson=null;
+    S.viewerOpen=false;
+    document.getElementById("viewer").classList.remove("show");
+    document.getElementById("viewer").style.visibility="";
+    document.getElementById("rotateHint").classList.remove("show");
+    document.body.classList.remove("in-viewer");
+    const fr=document.getElementById("videoIframe");if(fr)fr.src="";
+    S.product=null;S.lesson=null;
   },
   applyWm(){
     document.querySelectorAll(".page").forEach(pg=>{
@@ -276,11 +356,14 @@ const GF={
     });
   },
   logout(){
-    sessionStorage.clear();S={name:"",perms:[],product:null,lesson:null};
-    document.getElementById("gate").classList.remove("hidden");document.getElementById("app").classList.remove("show");document.getElementById("viewer").classList.remove("show");document.body.classList.remove("in-viewer");
+    S={name:"",perms:[],product:null,lesson:null,viewerOpen:false};sessionStorage.clear();
+    document.getElementById("gate").classList.remove("hidden");document.getElementById("app").classList.remove("show");
+    document.getElementById("viewer").classList.remove("show");document.getElementById("viewer").style.visibility="";
+    document.getElementById("rotateHint").classList.remove("show");document.body.classList.remove("in-viewer");
     document.getElementById("gCode").value="";document.getElementById("gName").value="";document.getElementById("gErr").textContent="";
   }
 };
+
 document.addEventListener("DOMContentLoaded",()=>{
   security();
   const ci=document.getElementById("gCode"),ni=document.getElementById("gName");
