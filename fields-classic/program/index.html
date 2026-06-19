@@ -45,15 +45,17 @@ body.in-viewer{overflow:hidden}
 
 /* ── 서재 ── */
 #dashboard{flex:1;overflow-y:auto;padding:0 20px 60px}
-.dash-hero{padding:40px 0 32px;text-align:center;position:relative}
+.dash-hero{padding:36px 0 28px;text-align:center;position:relative}
 .dash-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(212,175,55,.05),transparent 70%);pointer-events:none}
 .dash-eyebrow{font-size:10px;font-weight:900;letter-spacing:3px;color:var(--gold);margin-bottom:10px}
-.dash-title{font-family:'DM Serif Display',serif;font-size:clamp(24px,4vw,40px);color:var(--white);line-height:1.25;margin-bottom:8px}
+.dash-title{font-family:'DM Serif Display',serif;font-size:clamp(22px,4vw,38px);color:var(--white);line-height:1.25;margin-bottom:6px}
 .dash-title em{font-style:italic;color:var(--gold)}
 .dash-sub{font-size:13px;color:var(--muted)}
+
+/* ── 상품 그리드 ── */
 .products-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
-.product-card{position:relative;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:20px 16px 16px;display:flex;flex-direction:column;gap:14px;transition:all .3s cubic-bezier(.22,1,.36,1);overflow:hidden}
-.product-card.unlocked{border-color:rgba(212,175,55,.2);cursor:pointer}
+.product-card{position:relative;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:20px 16px 16px;display:flex;flex-direction:column;gap:14px;transition:all .3s cubic-bezier(.22,1,.36,1);overflow:hidden;cursor:pointer}
+.product-card.unlocked{border-color:rgba(212,175,55,.2)}
 .product-card.unlocked:hover{transform:translateY(-5px);box-shadow:0 24px 48px rgba(0,0,0,.5),0 0 0 1px rgba(212,175,55,.25);border-color:rgba(212,175,55,.35)}
 .product-card.locked{opacity:.45;cursor:not-allowed}
 .lock-icon{position:absolute;top:12px;right:12px;font-size:14px;opacity:.6}
@@ -76,10 +78,53 @@ body.in-viewer{overflow:hidden}
 .product-action{margin-top:auto;padding-top:10px;border-top:1px solid var(--border2)}
 .product-btn{width:100%;padding:9px;border-radius:9px;font-size:11px;font-weight:800;font-family:'Noto Sans KR',sans-serif;border:none;cursor:pointer;transition:opacity .15s}
 .product-btn.open{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)}
-.product-btn.open:hover{opacity:.9}
 .product-btn.locked{background:rgba(255,255,255,.04);color:rgba(255,255,255,.25);cursor:not-allowed;border:1px solid rgba(255,255,255,.06)}
 
-/* ── 가로 전환 안내 (세로 + 뷰어) ── */
+/* ── 챕터 리스트 뷰 ── */
+.chapter-view{max-width:1100px;margin:0 auto}
+.chapter-back{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid var(--border2);color:rgba(255,255,255,.6);font-size:12px;font-weight:700;padding:7px 14px;border-radius:9px;cursor:pointer;margin-bottom:20px;font-family:'Noto Sans KR',sans-serif}
+.chapter-back:hover{border-color:var(--gold);color:var(--gold)}
+.chapter-heading{font-family:'DM Serif Display',serif;font-size:22px;color:var(--white);margin-bottom:4px}
+.chapter-heading em{font-style:italic;color:var(--gold)}
+.chapter-subhead{font-size:12px;color:var(--muted);margin-bottom:20px}
+.chapters-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.chapter-card{background:var(--surface);border:1px solid rgba(212,175,55,.2);border-radius:14px;padding:18px 16px;cursor:pointer;transition:all .3s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden}
+.chapter-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(212,175,55,.04),transparent 60%);opacity:0;transition:opacity .3s}
+.chapter-card:hover::before{opacity:1}
+.chapter-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.4),0 0 0 1px rgba(212,175,55,.3)}
+.chapter-card.is-final{border-color:rgba(212,175,55,.4);background:rgba(212,175,55,.05)}
+.chapter-vol{font-size:10px;font-weight:900;letter-spacing:.1em;color:var(--gold);margin-bottom:6px}
+.chapter-title{font-size:15px;font-weight:900;color:var(--white);margin-bottom:8px;line-height:1.3}
+.chapter-topics{list-style:none;margin-bottom:12px}
+.chapter-topics li{font-size:11px;color:var(--muted);line-height:1.7;padding-left:12px;position:relative}
+.chapter-topics li::before{content:'·';position:absolute;left:0;color:var(--gold)}
+.chapter-cta{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border2)}
+.chapter-video-count{font-size:10px;color:var(--muted)}
+.chapter-start{font-size:11px;font-weight:900;color:var(--gold)}
+
+/* ── 코멘트 모달 ── */
+#commentModal{display:none;position:fixed;inset:0;z-index:500;padding:20px;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);align-items:center;justify-content:center}
+#commentModal.show{display:flex}
+.modal-card{width:min(480px,95vw);background:rgba(8,13,20,.98);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.8);animation:modalIn .25s cubic-bezier(.22,1,.36,1)}
+@keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(16px)}to{opacity:1;transform:none}}
+.modal-bar{height:4px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold))}
+.modal-body{padding:24px 22px 20px}
+.modal-vol{font-size:10px;font-weight:900;letter-spacing:3px;color:var(--gold);margin-bottom:6px}
+.modal-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--white);margin-bottom:14px}
+.modal-topics{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;margin-bottom:14px}
+.modal-topics-head{font-size:10px;font-weight:900;color:var(--muted);letter-spacing:.08em;margin-bottom:8px}
+.modal-topics ul{list-style:none}
+.modal-topics li{font-size:12px;color:var(--white);line-height:1.8;padding-left:14px;position:relative}
+.modal-topics li::before{content:'▸';position:absolute;left:0;color:var(--gold);font-size:10px}
+.modal-comment{background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:12px 14px;margin-bottom:18px}
+.modal-comment-head{font-size:10px;font-weight:900;color:var(--gold);margin-bottom:6px}
+.modal-comment p{font-size:12px;color:rgba(255,255,255,.75);line-height:1.75}
+.modal-actions{display:flex;gap:10px}
+.modal-close{flex:1;padding:12px;border-radius:10px;border:1px solid var(--border2);background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);font-size:13px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer}
+.modal-go{flex:2;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:14px;font-weight:900;font-family:'Noto Sans KR',sans-serif;cursor:pointer}
+.modal-go:active{transform:scale(.97)}
+
+/* ── 가로 전환 안내 ── */
 #rotateHint{display:none;position:fixed;inset:0;z-index:9998;background:linear-gradient(135deg,#02050b,#0d1b2a);flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:20px}
 #rotateHint.show{display:flex}
 .rotate-icon{font-size:64px;animation:rotateAnim 1.5s ease-in-out infinite}
@@ -101,22 +146,27 @@ body.in-viewer{overflow:hidden}
 
 .viewer-tabs{padding:5px 8px;background:rgba(8,13,20,.92);border-bottom:1px solid var(--border);display:flex;gap:4px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
 .viewer-tabs::-webkit-scrollbar{display:none}
-.tab-btn{flex-shrink:0;padding:5px 11px;border-radius:8px;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:rgba(255,255,255,.55);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;white-space:nowrap;transition:all .14s}
+.tab-btn{flex-shrink:0;padding:5px 13px;border-radius:8px;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:rgba(255,255,255,.55);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;white-space:nowrap;transition:all .14s}
 .tab-btn:hover{border-color:rgba(212,175,55,.3);color:var(--gold2)}
-.tab-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border-color:transparent}
+.tab-btn.active{color:var(--navy);border-color:transparent;font-weight:900}
+.tab-btn[data-type="check"].active{background:linear-gradient(135deg,#f093fb,#f5576c)}
+.tab-btn[data-type="concept"].active{background:linear-gradient(135deg,#4facfe,#00f2fe)}
+.tab-btn[data-type="practice"].active{background:linear-gradient(135deg,#43e97b,#38f9d7)}
+.tab-btn[data-type="final"].active{background:linear-gradient(135deg,var(--gold),var(--gold2))}
+.tab-btn:not(.active)[data-type="check"]{color:rgba(245,87,108,.7)}
+.tab-btn:not(.active)[data-type="concept"]{color:rgba(79,172,254,.7)}
+.tab-btn:not(.active)[data-type="practice"]{color:rgba(67,233,123,.7)}
+.tab-btn:not(.active)[data-type="final"]{color:var(--gold)}
 
-/* 뷰어 바디 - 항상 좌우 분할 */
 .viewer-body{flex:1;display:grid;overflow:hidden;min-height:0}
 .viewer-body.has-video{grid-template-columns:42% 58%}
 .viewer-body.no-video{grid-template-columns:1fr}
-
 .vpanel{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden;min-height:0}
 .vpanel-head{padding:7px 11px;background:linear-gradient(135deg,var(--navy),#132030);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .vpanel-title{font-size:12px;font-weight:900;color:var(--gold2)}
 .vpanel-meta{font-size:10px;color:var(--muted)}
 .vframe-box{position:relative;width:100%;aspect-ratio:16/9;background:#000;flex-shrink:0}
 #videoIframe{position:absolute;inset:0;width:100%;height:100%;border:none}
-
 .bpanel{overflow:auto;background:rgba(5,8,14,.9);padding:10px 0 30px;min-height:0}
 .bpanel .page{width:210mm;height:297mm;background:white;position:relative;box-sizing:border-box;box-shadow:0 4px 20px rgba(0,0,0,.5);margin:0 auto 14px;display:block;zoom:.42;page-break-after:always;overflow:hidden}
 .bpanel-empty{display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:10px;color:rgba(255,255,255,.2);text-align:center;padding:30px}
@@ -125,11 +175,9 @@ body.in-viewer{overflow:hidden}
 .swm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-34deg);font-size:44pt;font-weight:900;color:rgba(13,27,42,.1);white-space:nowrap;pointer-events:none;user-select:none;z-index:2}
 .pwm{display:none}
 
-/* 인쇄 */
 @media print{
-  #gate,#app,#rotateHint,#viewer .viewer-header,#viewer .viewer-tabs,#viewer .vpanel,.sec-toast{display:none!important}
-  #viewer{position:relative!important;display:block!important}
-  .viewer-body{display:block!important}
+  #gate,#app,#rotateHint,#commentModal,#viewer .viewer-header,#viewer .viewer-tabs,#viewer .vpanel,.sec-toast{display:none!important}
+  #viewer{position:relative!important;display:block!important}.viewer-body{display:block!important}
   .bpanel{overflow:visible!important;padding:0!important;background:white!important}
   .bpanel .page{zoom:1!important;width:210mm!important;height:297mm!important;margin:0!important;box-shadow:none!important;page-break-after:always!important}
   .swm{display:none!important}
@@ -138,17 +186,11 @@ body.in-viewer{overflow:hidden}
   @page{margin:0}
 }
 
-/* 가로 화면 대응 */
-@media(max-height:500px) and (orientation:landscape){
-  .viewer-header{padding:5px 10px}
-  .viewer-tabs{padding:3px 8px}
-  .tab-btn{padding:4px 10px;font-size:10px}
-  .bpanel .page{zoom:.38}
-}
+@media(max-height:500px) and (orientation:landscape){.viewer-header{padding:5px 10px}.viewer-tabs{padding:3px 8px}.tab-btn{padding:4px 10px;font-size:10px}.bpanel .page{zoom:.38}}
 @media(min-width:1200px){.bpanel .page{zoom:.55}}
 @media(min-width:1400px){.bpanel .page{zoom:.62}}
-@media(max-width:600px){.products-grid{grid-template-columns:1fr 1fr}#dashboard{padding:0 12px 40px}}
-@media(max-width:380px){.products-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.products-grid{grid-template-columns:1fr 1fr}.chapters-grid{grid-template-columns:1fr 1fr}#dashboard{padding:0 12px 40px}}
+@media(max-width:380px){.products-grid{grid-template-columns:1fr}.chapters-grid{grid-template-columns:1fr}}
 
 .sec-toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:99999;display:none;padding:9px 16px;border-radius:999px;background:rgba(2,5,11,.96);color:var(--gold2);font-size:11px;font-weight:800;border:1px solid var(--border)}
 .sec-toast.show{display:block}
@@ -174,11 +216,34 @@ body.in-viewer{overflow:hidden}
   </div>
 </div>
 
+<!-- 코멘트 모달 -->
+<div id="commentModal">
+  <div class="modal-card">
+    <div class="modal-bar"></div>
+    <div class="modal-body">
+      <div class="modal-vol" id="modalVol"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-topics">
+        <div class="modal-topics-head">이번 회차 학습 내용</div>
+        <ul id="modalTopics"></ul>
+      </div>
+      <div class="modal-comment" id="modalCommentBox" style="display:none">
+        <div class="modal-comment-head">💬 원장님 코멘트</div>
+        <p id="modalComment"></p>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-close" onclick="GF.closeModal()">닫기</button>
+        <button class="modal-go" onclick="GF.startFromModal()">학습 시작 →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- 가로 전환 안내 -->
 <div id="rotateHint">
   <div class="rotate-icon">📱</div>
   <div class="rotate-title">가로로 돌려주세요</div>
-  <div class="rotate-desc">뷰어는 가로 화면에서만 이용할 수 있습니다.<br>휴대폰을 가로로 돌려 주세요.</div>
+  <div class="rotate-desc">뷰어는 가로 화면에서만 이용할 수 있습니다.</div>
 </div>
 
 <!-- 앱 -->
@@ -187,7 +252,7 @@ body.in-viewer{overflow:hidden}
     <div class="header-left">
       <img class="header-logo" src="https://lh3.googleusercontent.com/d/1c2yx_O6sKcTF9-YoTKxnQ2lWOqfWiUCL" alt="G-FIELD">
       <div class="header-sep"></div>
-      <span class="header-badge">필즈 대비 과정</span>
+      <span class="header-badge" id="headerBadge">필즈 대비 과정</span>
     </div>
     <div class="header-right">
       <span class="header-student"><b id="hName"></b> 학생</span>
@@ -197,17 +262,18 @@ body.in-viewer{overflow:hidden}
   <div id="dashboard">
     <div class="dash-hero">
       <div class="dash-eyebrow">GFIELD GIFTED EDUCATION</div>
-      <h1 class="dash-title">필즈 더 클래식<br><em>대비 과정 서재</em></h1>
-      <p class="dash-sub">구매하신 프로그램을 선택해 학습을 시작하세요</p>
+      <h1 class="dash-title" id="dashTitle">필즈 더 클래식<br><em>대비 과정 서재</em></h1>
+      <p class="dash-sub" id="dashSub">구매하신 프로그램을 선택해 학습을 시작하세요</p>
     </div>
-    <div class="products-grid" id="grid"></div>
+    <div id="mainGrid" class="products-grid"></div>
+    <div id="chapterView" class="chapter-view" style="display:none"></div>
   </div>
 </div>
 
 <!-- 뷰어 -->
 <div id="viewer">
   <div class="viewer-header">
-    <button class="viewer-back" onclick="GF.closeViewer()">← 서재로</button>
+    <button class="viewer-back" onclick="GF.closeViewer()">← 목록으로</button>
     <span class="viewer-title" id="vTitle"></span>
     <div class="viewer-acts">
       <button class="v-btn" onclick="window.print()">🖨 인쇄</button>
@@ -215,7 +281,7 @@ body.in-viewer{overflow:hidden}
     </div>
   </div>
   <div class="viewer-tabs" id="vTabs"></div>
-  <div class="viewer-body" id="vBody">
+  <div class="viewer-body has-video" id="vBody">
     <div class="vpanel" id="vPanel">
       <div class="vpanel-head">
         <span class="vpanel-title" id="vPanelTitle">강의</span>
@@ -226,9 +292,9 @@ body.in-viewer{overflow:hidden}
       </div>
     </div>
     <div class="bpanel" id="bPanel">
-      <div class="bpanel-empty" id="bEmpty">
+      <div class="bpanel-empty">
         <div class="ei">📖</div>
-        <div class="et">강의를 선택하면 교재가 표시됩니다.<br><small style="opacity:.5">교재 PDF 준비 중</small></div>
+        <div class="et">교재가 여기에 표시됩니다.<br><small style="opacity:.5">준비 중</small></div>
       </div>
     </div>
   </div>
@@ -238,18 +304,71 @@ body.in-viewer{overflow:hidden}
 
 <script>
 (function(){"use strict";
+
+/* ── 상품 데이터 ── */
 const PRODUCTS=[
-  {key:"FC-CONCEPT",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 8주 완성 커리큘럼",icon:"📘",theme:"theme-concept",hasVideo:true,
-   lessons:[{key:"c1",label:"1강 · 공간지각",title:"공간지각력 완성",videoUrl:""},{key:"c2",label:"2강 · 평면도형",title:"평면도형 완성",videoUrl:""},{key:"c3",label:"3강 · 수와연산",title:"수와 연산 완성",videoUrl:""},{key:"c4",label:"4강 · 논리추리",title:"논리추리 완성",videoUrl:""},{key:"c5",label:"5강 · 경우의수",title:"경우의 수 완성",videoUrl:""},{key:"c6",label:"6강 · 문제해결",title:"문제해결력 완성",videoUrl:""}]},
-  {key:"FC-KILLER",name:"킬러문항 완전 해제",desc:"최상위 킬러 유형 집중 공략",icon:"🎯",theme:"theme-killer",hasVideo:true,
-   lessons:[{key:"k1",label:"킬러 유형 1",title:"킬러 유형 해제 1",videoUrl:""},{key:"k2",label:"킬러 유형 2",title:"킬러 유형 해제 2",videoUrl:""},{key:"k3",label:"킬러 유형 3",title:"킬러 유형 해제 3",videoUrl:""},{key:"k4",label:"킬러 유형 4",title:"킬러 유형 해제 4",videoUrl:""},{key:"k5",label:"킬러 유형 5",title:"킬러 유형 해제 5",videoUrl:""},{key:"k6",label:"킬러 유형 6",title:"킬러 유형 해제 6",videoUrl:""}]},
-  {key:"FC-FINAL",name:"파이널 모의고사 6회",desc:"실전과 동일한 파이널 6세트",icon:"📝",theme:"theme-final",hasVideo:true,
-   lessons:[{key:"f1",label:"1회",title:"파이널 모의고사 1회",videoUrl:""},{key:"f2",label:"2회",title:"파이널 모의고사 2회",videoUrl:""},{key:"f3",label:"3회",title:"파이널 모의고사 3회",videoUrl:""},{key:"f4",label:"4회",title:"파이널 모의고사 4회",videoUrl:""},{key:"f5",label:"5회",title:"파이널 모의고사 5회",videoUrl:""},{key:"f6",label:"6회",title:"파이널 모의고사 6회",videoUrl:""}]},
-  {key:"FC-MOCK",name:"온라인 진단 모의고사",desc:"현재 수준 정밀 진단 + 분석",icon:"🔍",theme:"theme-mock",hasVideo:true,
-   lessons:[{key:"m1",label:"진단 1회차",title:"진단 모의고사 1회",videoUrl:""},{key:"m2",label:"진단 2회차",title:"진단 모의고사 2회",videoUrl:""},{key:"m3",label:"풀이 영상",title:"진단 풀이",videoUrl:""},{key:"m4",label:"분석 리포트",title:"분석 리포트",videoUrl:""}]},
-  {key:"FC-ARCHIVE",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",hasVideo:false,
-   lessons:[{key:"a1",label:"필즈 핵심 자료",title:"필즈 핵심 자료",videoUrl:""},{key:"a2",label:"오답 정리",title:"오답 정리 자료",videoUrl:""},{key:"a3",label:"기출 분석",title:"최신 기출 분석",videoUrl:""}]}
+  {
+    key:"FC-CONCEPT",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",
+    icon:"📘",theme:"theme-concept",type:"folder",
+    chapters:[
+      {
+        key:"vol1",vol:"Vol.1",title:"수와 규칙",subtitle:"1회차 · 필즈 대비 개념",
+        topics:["수 피라미드","줄 세우기, 자리찾기","도형이 나타내는 수"],
+        comment:"필즈 테스트 시 연산은 첫 페이지에 있는 연산을 틀리지 않으면 됩니다. 다만 도형이 나타내는 수와 같이 구구단 정도는 반드시 필요하니 받아내림, 받아올림, 구구단은 실수없이 할 수 있도록 해주세요.",
+        videos:[
+          {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/7aPj5IJUzQM"},
+          {key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/itmV6EXWQA4"}
+        ]
+      },
+      {
+        key:"vol2",vol:"Vol.2",title:"저울과 패턴",subtitle:"2회차 · 필즈 대비 개념",
+        topics:["양팔저울","양팔저울의 활용","조건에 알맞은 수","패턴 도형 규칙"],
+        comment:null,
+        videos:[
+          {key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/WoN9Ie8Fn8s"},
+          {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/WoN9Ie8Fn8s?t=318"},
+          {key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/vBgZ_lZ_XiA"}
+        ]
+      },
+      {
+        key:"vol3",vol:"Vol.3",title:"숨겨진 수",subtitle:"3회차 · 필즈 대비 개념",
+        topics:["도형으로 수 나타내기","어떤 수 구하기"],
+        comment:"체크체크에서는 지금까지 배운 유형을 계속 누적하여 확인하고 있습니다. 지금까지 배운 내용은 수피라미드, 양팔저울, 도형규칙, 도형이 나타내는 수, 줄세우기, 조건에 알맞은 수입니다. 부족한 유형은 반드시 복습해주세요. 줄세우기 문제 풀 때 동그라미 그리는 연습이 필요합니다.",
+        videos:[
+          {key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/TOHw8sCumHY"},
+          {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/mq-1VxjLzMk"},
+          {key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/jhjqxBZ40UQ"}
+        ]
+      },
+      {
+        key:"vol4",vol:"Vol.4",title:"바둑돌의 비밀",subtitle:"4회차 · 필즈 대비 개념",
+        topics:["바둑돌 규칙","마디 끊기 연습"],
+        comment:"시험에서 가장 어려워하는 바둑돌 규칙에 대한 개념입니다. 마디를 끊는 연습도 반드시 해주세요.",
+        videos:[
+          {key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/ESmcuckBYIw"},
+          {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/neRIODxo13I"}
+        ]
+      },
+      {
+        key:"final",vol:"Final",title:"종합 체크",subtitle:"마무리 체크체크",
+        topics:["지금까지 배운 전체 유형 종합 테스트"],
+        comment:null,
+        videos:[
+          {key:"final",type:"final",label:"🏆 학습영상",url:"https://youtu.be/FC4W2bRJwKc"}
+        ]
+      }
+    ]
+  },
+  {key:"FC-KILLER",name:"킬러문항 완전 해제",desc:"최상위 킬러 유형 집중 공략",icon:"🎯",theme:"theme-killer",type:"direct",
+   lessons:[{key:"k1",label:"킬러 유형 1",title:"킬러 유형 해제 1",type:"concept",url:""},{key:"k2",label:"킬러 유형 2",title:"킬러 유형 해제 2",type:"concept",url:""}]},
+  {key:"FC-FINAL",name:"파이널 모의고사 6회",desc:"실전과 동일한 파이널 6세트",icon:"📝",theme:"theme-final",type:"direct",
+   lessons:[{key:"f1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:""},{key:"f2",label:"2회",title:"파이널 모의고사 2회",type:"concept",url:""}]},
+  {key:"FC-MOCK",name:"온라인 진단 모의고사",desc:"현재 수준 정밀 진단 + 분석",icon:"🔍",theme:"theme-mock",type:"direct",
+   lessons:[{key:"m1",label:"진단 1회차",title:"진단 모의고사 1회",type:"concept",url:""}]},
+  {key:"FC-ARCHIVE",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,
+   lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:""}]}
 ];
+
 const SALT="gfield-fields-classic-2026-v1";
 const CODES={
   "bbbdc79775916a1a6f7675f3db54cba1f33f26e1dffda97fcb685e1c993df7c7":["FC-CONCEPT"],
@@ -260,7 +379,6 @@ const CODES={
 
 async function sha256(m){const b=new TextEncoder().encode(m);if(window.crypto?.subtle){const d=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,"0")).join("")}return fb(m)}
 function fb(s){function rr(v,a){return v>>>a|v<<32-a}const mp=Math.pow,mw=mp(2,32);let r="",w=[],al=s.length*8;let h=fb.h=fb.h||[],k=fb.k=fb.k||[],pc=k.length;const ic={};for(let c=2;pc<64;c++){if(!ic[c]){for(let i=0;i<313;i+=c)ic[i]=c;h[pc]=mp(c,.5)*mw|0;k[pc++]=mp(c,1/3)*mw|0}}s+="\x80";while(s.length%64-56)s+="\x00";for(let i=0;i<s.length;i++){const j=s.charCodeAt(i);if(j>>8)return"";w[i>>2]|=j<<(3-i%4)*8}w[w.length]=al/mw|0;w[w.length]=al;for(let j=0;j<w.length;){const wd=w.slice(j,j+=16),oh=h.slice(0);for(let i=0;i<64;i++){const w15=wd[i-15],w2=wd[i-2],a=h[0],e=h[4];const t1=h[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&h[5])^(~e&h[6]))+k[i]+(wd[i]=i<16?wd[i]:wd[i-16]+(rr(w15,7)^rr(w15,18)^w15>>>3)+wd[i-7]+(rr(w2,17)^rr(w2,19)^w2>>>10)|0);const t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&h[1])^(a&h[2])^(h[1]&h[2]));h=[t1+t2|0].concat(h);h[4]=h[4]+t1|0;h.pop()}for(let i=0;i<8;i++)h[i]=h[i]+oh[i]|0}for(let i=0;i<8;i++)for(let j=3;j+1;j--){const b=h[i]>>j*8&255;r+=(b<16?0:"")+b.toString(16)}return r}
-
 async function verify(code){const h=await sha256(SALT+":"+code.trim().toUpperCase());return CODES[h]||null}
 
 function toast(){const t=document.getElementById("secToast");t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),1500)}
@@ -274,20 +392,18 @@ function security(){
 
 function embed(url){if(!url)return"";try{const p=new URL(url);let id="",s=0;if(p.hostname.includes("youtu.be"))id=p.pathname.replace(/^\//,"");else if(p.hostname.includes("youtube.com"))id=p.searchParams.get("v")||"";const t=p.searchParams.get("t")||"";if(/^\d+$/.test(t))s=Number(t);return id?"https://www.youtube.com/embed/"+id+"?rel=0&modestbranding=1&playsinline=1"+(s?"&start="+s:""):url}catch{return url}}
 
-let S={name:"",perms:[],product:null,lesson:null,viewerOpen:false};
+let S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};
 
-/* 가로/세로 감지 - 뷰어 열려있을 때만 */
 function checkOrientation(){
   if(!S.viewerOpen)return;
-  const isPortrait=window.innerHeight>window.innerWidth;
-  document.getElementById("rotateHint").classList.toggle("show",isPortrait);
-  document.getElementById("viewer").style.visibility=isPortrait?"hidden":"visible";
+  const p=window.innerHeight>window.innerWidth;
+  document.getElementById("rotateHint").classList.toggle("show",p);
+  document.getElementById("viewer").style.visibility=p?"hidden":"visible";
 }
-
 window.addEventListener("resize",checkOrientation);
 window.addEventListener("orientationchange",()=>setTimeout(checkOrientation,100));
 
-function wm(name){return"G·FIELD · "+name}
+function wm(n){return"G·FIELD · "+n}
 
 const GF={
   async login(){
@@ -299,67 +415,146 @@ const GF={
     if(!perms){e.textContent="올바르지 않은 승인번호입니다.";return}
     S.name=n;S.perms=perms;sessionStorage.setItem("gf_c",c);sessionStorage.setItem("gf_n",n);this.showApp();
   },
+
   showApp(){
     document.getElementById("gate").classList.add("hidden");
     document.getElementById("app").classList.add("show");
     document.getElementById("hName").textContent=S.name;
-    this.renderGrid();
+    this.showMainGrid();
   },
-  renderGrid(){
-    const g=document.getElementById("grid");g.innerHTML="";
+
+  showMainGrid(){
+    document.getElementById("mainGrid").style.display="";
+    document.getElementById("chapterView").style.display="none";
+    document.getElementById("dashTitle").innerHTML='필즈 더 클래식<br><em>대비 과정 서재</em>';
+    document.getElementById("dashSub").textContent="구매하신 프로그램을 선택해 학습을 시작하세요";
+    document.getElementById("headerBadge").textContent="필즈 대비 과정";
+    const g=document.getElementById("mainGrid");g.innerHTML="";
     PRODUCTS.forEach(p=>{
       const ok=S.perms.includes(p.key);
       const el=document.createElement("div");
       el.className="product-card "+p.theme+(ok?" unlocked":" locked");
-      el.innerHTML=`${!ok?'<span class="lock-icon">🔒</span>':""}<div class="book-wrap"><div class="book-3d"><div class="book-front"><div class="book-icon">${p.icon}</div><div class="book-label">${p.name}</div></div><div class="book-spine"></div><div class="book-shadow"></div></div></div><div><div class="product-badge">${p.key}</div><div class="product-name">${p.name}</div><div class="product-desc">${p.desc}</div></div><div class="product-action"><button class="product-btn ${ok?"open":"locked"}" ${ok?"":"disabled"}>${ok?"📖 학습 시작":"🔒 구매 후 이용 가능"}</button></div>`;
-      if(ok)el.addEventListener("click",()=>GF.openViewer(p.key));
+      el.innerHTML=`${!ok?'<span class="lock-icon">🔒</span>':""}<div class="book-wrap"><div class="book-3d"><div class="book-front"><div class="book-icon">${p.icon}</div><div class="book-label">${p.name}</div></div><div class="book-spine"></div><div class="book-shadow"></div></div></div><div><div class="product-badge">${p.key}</div><div class="product-name">${p.name}</div><div class="product-desc">${p.desc}</div></div><div class="product-action"><button class="product-btn ${ok?"open":"locked"}" ${ok?"":"disabled"}>${ok?(p.type==="folder"?"📂 목록 보기":"📖 학습 시작"):"🔒 구매 후 이용 가능"}</button></div>`;
+      if(ok){
+        if(p.type==="folder")el.addEventListener("click",()=>GF.showChapters(p.key));
+        else el.addEventListener("click",()=>GF.openDirectViewer(p.key));
+      }
       g.appendChild(el);
     });
   },
-  openViewer(key){
-    const p=PRODUCTS.find(x=>x.key===key);if(!p)return;
-    S.product=p;S.viewerOpen=true;
-    document.getElementById("vTitle").textContent=p.icon+" "+p.name;
-    document.getElementById("vYtBtn").style.display=p.hasVideo?"block":"none";
-    document.getElementById("vBody").className="viewer-body "+(p.hasVideo?"has-video":"no-video");
-    document.getElementById("vPanel").style.display=p.hasVideo?"flex":"none";
+
+  showChapters(productKey){
+    const p=PRODUCTS.find(x=>x.key===productKey);if(!p||!p.chapters)return;
+    S.currentProduct=p;
+    document.getElementById("mainGrid").style.display="none";
+    document.getElementById("dashTitle").innerHTML=`${p.icon} <em>${p.name}</em>`;
+    document.getElementById("dashSub").textContent="회차를 선택해 학습을 시작하세요";
+    document.getElementById("headerBadge").textContent=p.name;
+    const cv=document.getElementById("chapterView");cv.style.display="";
+    cv.innerHTML=`<button class="chapter-back" onclick="GF.showMainGrid()">← 서재로</button>
+    <div class="chapters-grid">${p.chapters.map(ch=>`
+      <div class="chapter-card${ch.key==="final"?" is-final":""}" onclick="GF.showChapterModal('${productKey}','${ch.key}')">
+        <div class="chapter-vol">${ch.vol}</div>
+        <div class="chapter-title">${ch.title}</div>
+        <ul class="chapter-topics">${ch.topics.slice(0,3).map(t=>`<li>${t}</li>`).join("")}</ul>
+        <div class="chapter-cta">
+          <span class="chapter-video-count">영상 ${ch.videos.length}개</span>
+          <span class="chapter-start">학습 시작 →</span>
+        </div>
+      </div>`).join("")}</div>`;
+  },
+
+  showChapterModal(productKey,chapterKey){
+    const p=PRODUCTS.find(x=>x.key===productKey);
+    const ch=p?.chapters.find(c=>c.key===chapterKey);
+    if(!ch)return;
+    S.currentChapter=ch;
+    document.getElementById("modalVol").textContent=ch.vol+" · "+ch.subtitle;
+    document.getElementById("modalTitle").textContent=ch.title;
+    document.getElementById("modalTopics").innerHTML=ch.topics.map(t=>`<li>${t}</li>`).join("");
+    const cb=document.getElementById("modalCommentBox");
+    if(ch.comment){cb.style.display="";document.getElementById("modalComment").textContent=ch.comment}
+    else cb.style.display="none";
+    document.getElementById("commentModal").classList.add("show");
+  },
+
+  closeModal(){document.getElementById("commentModal").classList.remove("show")},
+
+  startFromModal(){
+    this.closeModal();
+    if(S.currentChapter)this.openChapterViewer(S.currentChapter);
+  },
+
+  openChapterViewer(ch){
+    S.viewerOpen=true;
+    document.getElementById("vTitle").textContent=ch.vol+" · "+ch.title;
+    document.getElementById("vYtBtn").style.display="block";
+    document.getElementById("vBody").className="viewer-body has-video";
+    document.getElementById("vPanel").style.display="flex";
     const tabs=document.getElementById("vTabs");tabs.innerHTML="";
-    p.lessons.forEach(l=>{const b=document.createElement("button");b.className="tab-btn";b.textContent=l.label;b.dataset.k=l.key;b.addEventListener("click",()=>GF.selectLesson(l.key));tabs.appendChild(b)});
-    if(p.lessons.length)this.selectLesson(p.lessons[0].key);
+    ch.videos.forEach(v=>{
+      const b=document.createElement("button");
+      b.className="tab-btn";b.textContent=v.label;b.dataset.k=v.key;b.dataset.type=v.type;
+      b.addEventListener("click",()=>GF.selectVideo(ch,v.key));tabs.appendChild(b);
+    });
+    if(ch.videos.length)this.selectVideo(ch,ch.videos[0].key);
     document.getElementById("viewer").classList.add("show");
     document.body.classList.add("in-viewer");
     checkOrientation();
-    this.applyWm();
   },
-  selectLesson(key){
-    S.lesson=S.product?.lessons.find(l=>l.key===key);
+
+  selectVideo(ch,key){
+    const v=ch.videos.find(x=>x.key===key);
+    S.currentVideo=v;
     document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b.dataset.k===key));
-    if(!S.lesson)return;
-    document.getElementById("vPanelTitle").textContent=S.lesson.title;
-    document.getElementById("vPanelMeta").textContent=S.lesson.videoUrl?"영상 준비됨":"영상 준비 중";
-    const fr=document.getElementById("videoIframe");if(fr)fr.src=S.lesson.videoUrl?embed(S.lesson.videoUrl):"";
+    if(!v)return;
+    document.getElementById("vPanelTitle").textContent=v.label.replace(/^[^\s]+\s/,"");
+    document.getElementById("vPanelMeta").textContent=v.url?"준비됨":"준비 중";
+    document.getElementById("videoIframe").src=v.url?embed(v.url):"";
   },
-  openYt(){if(S.lesson?.videoUrl)window.open(S.lesson.videoUrl,"_blank","noopener")},
+
+  openDirectViewer(productKey){
+    const p=PRODUCTS.find(x=>x.key===productKey);if(!p)return;
+    S.viewerOpen=true;S.currentProduct=p;
+    document.getElementById("vTitle").textContent=p.icon+" "+p.name;
+    const hasVid=p.hasVideo!==false;
+    document.getElementById("vYtBtn").style.display=hasVid?"block":"none";
+    document.getElementById("vBody").className="viewer-body "+(hasVid?"has-video":"no-video");
+    document.getElementById("vPanel").style.display=hasVid?"flex":"none";
+    const tabs=document.getElementById("vTabs");tabs.innerHTML="";
+    (p.lessons||[]).forEach(l=>{
+      const b=document.createElement("button");b.className="tab-btn";b.textContent=l.label;b.dataset.k=l.key;b.dataset.type=l.type||"concept";
+      b.addEventListener("click",()=>{
+        document.querySelectorAll(".tab-btn").forEach(x=>x.classList.toggle("active",x.dataset.k===l.key));
+        document.getElementById("videoIframe").src=l.url?embed(l.url):"";
+        S.currentVideo={url:l.url};
+      });tabs.appendChild(b);
+    });
+    if(p.lessons?.length){const first=p.lessons[0];document.getElementById("videoIframe").src=first.url?embed(first.url):"";tabs.querySelector(".tab-btn")?.classList.add("active")}
+    document.getElementById("viewer").classList.add("show");
+    document.body.classList.add("in-viewer");
+    checkOrientation();
+  },
+
+  openYt(){if(S.currentVideo?.url)window.open(S.currentVideo.url,"_blank","noopener")},
+
   closeViewer(){
     S.viewerOpen=false;
     document.getElementById("viewer").classList.remove("show");
     document.getElementById("viewer").style.visibility="";
     document.getElementById("rotateHint").classList.remove("show");
     document.body.classList.remove("in-viewer");
-    const fr=document.getElementById("videoIframe");if(fr)fr.src="";
-    S.product=null;S.lesson=null;
+    document.getElementById("videoIframe").src="";
+    S.currentChapter=null;S.currentVideo=null;
   },
-  applyWm(){
-    document.querySelectorAll(".page").forEach(pg=>{
-      if(!pg.querySelector(".swm")){const w=document.createElement("div");w.className="swm";w.textContent=wm(S.name);pg.insertBefore(w,pg.firstChild)}
-      if(!pg.querySelector(".pwm")){[1,2,3].forEach(()=>{const w=document.createElement("div");w.className="pwm";w.textContent=wm(S.name);pg.appendChild(w)})}
-    });
-  },
+
   logout(){
-    S={name:"",perms:[],product:null,lesson:null,viewerOpen:false};sessionStorage.clear();
+    S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};
+    sessionStorage.clear();
     document.getElementById("gate").classList.remove("hidden");document.getElementById("app").classList.remove("show");
     document.getElementById("viewer").classList.remove("show");document.getElementById("viewer").style.visibility="";
-    document.getElementById("rotateHint").classList.remove("show");document.body.classList.remove("in-viewer");
+    document.getElementById("rotateHint").classList.remove("show");document.getElementById("commentModal").classList.remove("show");
+    document.body.classList.remove("in-viewer");
     document.getElementById("gCode").value="";document.getElementById("gName").value="";document.getElementById("gErr").textContent="";
   }
 };
