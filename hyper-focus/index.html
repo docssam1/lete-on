@@ -278,7 +278,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
 body.intro-active{background:#02050b!important;overflow:hidden}
 body.intro-active>*:not(#gfieldIntro){display:none!important}
 #gfieldIntro{position:fixed;inset:0;z-index:99999;height:100dvh;min-height:100vh;overflow:hidden;background:#02050b;color:#fff;font-family:'Noto Sans KR',sans-serif}
-#gfieldIntro[hidden]{display:none!important}
+#gfieldIntro[hidden]{display:none!important;pointer-events:none!important;visibility:hidden!important}
 #gfieldIntro .intro-bg{position:absolute;inset:0;background:radial-gradient(circle at 16% 10%,rgba(22,65,124,.62),transparent 34%),radial-gradient(circle at 82% 16%,rgba(212,175,55,.22),transparent 30%),radial-gradient(circle at 50% 88%,rgba(124,58,237,.18),transparent 36%),linear-gradient(135deg,#02050b,#07111f 60%,#010205)}
 #gfieldIntro .intro-bg:before{content:"";position:absolute;inset:0;background-image:linear-gradient(to right,rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.035) 1px,transparent 1px);background-size:36px 36px;mask-image:radial-gradient(circle at center,#000,transparent 82%)}
 #gfieldIntro:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,rgba(2,5,11,.04),rgba(2,5,11,.54) 55%,rgba(2,5,11,.94));pointer-events:none}
@@ -735,5 +735,26 @@ function generateDiagnosis(weakCounts,totalCounts,studentName,wrongCount,history
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vivus/0.4.6/vivus.min.js"></script>
+<script>
+(function(){
+  function killIntro(){
+    var intro=document.getElementById('gfieldIntro');
+    if(intro){intro.hidden=true;intro.style.display='none';intro.style.pointerEvents='none';}
+    document.body.classList.remove('intro-active');
+  }
+  function bind(){
+    var nm=document.getElementById('studentName');
+    if(!nm)return;
+    ['focus','click','touchstart'].forEach(function(ev){
+      nm.addEventListener(ev,function(){
+        var intro=document.getElementById('gfieldIntro');
+        if(intro && !intro.hidden){killIntro();}
+      },{passive:true});
+    });
+  }
+  if(document.readyState!=='loading')bind();
+  else document.addEventListener('DOMContentLoaded',bind);
+})();
+</script>
 </body>
 </html>
