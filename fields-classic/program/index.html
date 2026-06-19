@@ -171,7 +171,7 @@ body.in-viewer{overflow:hidden}
       <div class="gate-tag">FIELDS THE CLASSIC · ONLINE PROGRAM</div>
       <div class="gate-title">필즈 더 클래식 대비 과정</div>
       <p class="gate-desc">승인번호와 학생 이름을 입력하면<br>구매하신 프로그램이 열립니다.</p>
-      <input class="gate-input" id="gCode" type="text" autocomplete="off" placeholder="승인번호 (예: FC-CONCEPT-001)">
+      <input class="gate-input" id="gCode" type="text" autocomplete="off" placeholder="승인번호">
       <input class="gate-input" id="gName" type="text" autocomplete="off" placeholder="학생 이름">
       <button class="gate-btn" onclick="GF.login()">입장하기 →</button>
       <div class="gate-error" id="gErr"></div>
@@ -258,42 +258,17 @@ body.in-viewer{overflow:hidden}
 (function(){"use strict";
 
 const PDF_CONCEPT="https://docssam1.github.io/lete-on/fields-classic/assets/concept/%ED%83%84%ED%83%84%20%ED%95%84%EC%A6%88%EB%8C%80%EB%B9%84%20%EA%B0%9C%EB%85%90%20SET.pdf";
+const ALL=["FC-CONCEPT","FC-KILLER","FC-FINAL","FC-MOCK","FC-ARCHIVE"];
 
 const PRODUCTS=[
-  {
-    key:"FC-CONCEPT",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",
-    icon:"📘",theme:"theme-concept",type:"folder",pdf:PDF_CONCEPT,
-    chapters:[
-      {key:"vol1",vol:"Vol.1",title:"수와 규칙",subtitle:"1회차 · 필즈 대비 개념",
-       topics:["수 피라미드","줄 세우기, 자리찾기","도형이 나타내는 수"],
-       comment:"필즈 테스트 시 연산은 첫 페이지에 있는 연산을 틀리지 않으면 됩니다. 다만 도형이 나타내는 수와 같이 구구단 정도는 반드시 필요하니 받아내림, 받아올림, 구구단은 실수없이 할 수 있도록 해주세요.",
-       videos:[
-         {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/7aPj5IJUzQM",pdfPage:2},
-         {key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/itmV6EXWQA4",pdfPage:15}]},
-      {key:"vol2",vol:"Vol.2",title:"저울과 패턴",subtitle:"2회차 · 필즈 대비 개념",
-       topics:["양팔저울","양팔저울의 활용","조건에 알맞은 수","패턴 도형 규칙"],comment:null,
-       videos:[
-         {key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/WoN9Ie8Fn8s",pdfPage:21},
-         {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/WoN9Ie8Fn8s?t=318",pdfPage:24},
-         {key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/vBgZ_lZ_XiA",pdfPage:34}]},
-      {key:"vol3",vol:"Vol.3",title:"숨겨진 수",subtitle:"3회차 · 필즈 대비 개념",
-       topics:["도형으로 수 나타내기","어떤 수 구하기"],
-       comment:"체크체크에서는 지금까지 배운 유형을 계속 누적하여 확인하고 있습니다. 지금까지 배운 내용은 수피라미드, 양팔저울, 도형규칙, 도형이 나타내는 수, 줄세우기, 조건에 알맞은 수입니다. 부족한 유형은 반드시 복습해주세요. 줄세우기 문제 풀 때 동그라미 그리는 연습이 필요합니다.",
-       videos:[
-         {key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/TOHw8sCumHY",pdfPage:40},
-         {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/mq-1VxjLzMk",pdfPage:45},
-         {key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/jhjqxBZ40UQ",pdfPage:50}]},
-      {key:"vol4",vol:"Vol.4",title:"바둑돌의 비밀",subtitle:"4회차 · 필즈 대비 개념",
-       topics:["바둑돌 규칙","마디 끊기 연습"],
-       comment:"시험에서 가장 어려워하는 바둑돌 규칙에 대한 개념입니다. 마디를 끊는 연습도 반드시 해주세요.",
-       videos:[
-         {key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/ESmcuckBYIw",pdfPage:55},
-         {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/neRIODxo13I",pdfPage:57}]},
-      {key:"final",vol:"Final",title:"종합 체크",subtitle:"마무리 체크체크",
-       topics:["지금까지 배운 전체 유형 종합 테스트"],comment:null,
-       videos:[{key:"final",type:"final",label:"🏆 학습영상",url:"https://youtu.be/FC4W2bRJwKc",pdfPage:65}]}
-    ]
-  },
+  {key:"FC-CONCEPT",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",icon:"📘",theme:"theme-concept",type:"folder",pdf:PDF_CONCEPT,
+   chapters:[
+    {key:"vol1",vol:"Vol.1",title:"수와 규칙",subtitle:"1회차 · 필즈 대비 개념",topics:["수 피라미드","줄 세우기, 자리찾기","도형이 나타내는 수"],comment:"필즈 테스트 시 연산은 첫 페이지에 있는 연산을 틀리지 않으면 됩니다. 다만 도형이 나타내는 수와 같이 구구단 정도는 반드시 필요하니 받아내림, 받아올림, 구구단은 실수없이 할 수 있도록 해주세요.",videos:[{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/7aPj5IJUzQM",pdfPage:2},{key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/itmV6EXWQA4",pdfPage:15}]},
+    {key:"vol2",vol:"Vol.2",title:"저울과 패턴",subtitle:"2회차 · 필즈 대비 개념",topics:["양팔저울","양팔저울의 활용","조건에 알맞은 수","패턴 도형 규칙"],comment:null,videos:[{key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/WoN9Ie8Fn8s",pdfPage:21},{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/WoN9Ie8Fn8s?t=318",pdfPage:24},{key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/vBgZ_lZ_XiA",pdfPage:34}]},
+    {key:"vol3",vol:"Vol.3",title:"숨겨진 수",subtitle:"3회차 · 필즈 대비 개념",topics:["도형으로 수 나타내기","어떤 수 구하기"],comment:"체크체크에서는 지금까지 배운 유형을 계속 누적하여 확인하고 있습니다. 지금까지 배운 내용은 수피라미드, 양팔저울, 도형규칙, 도형이 나타내는 수, 줄세우기, 조건에 알맞은 수입니다. 부족한 유형은 반드시 복습해주세요. 줄세우기 문제 풀 때 동그라미 그리는 연습이 필요합니다.",videos:[{key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/TOHw8sCumHY",pdfPage:40},{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/mq-1VxjLzMk",pdfPage:45},{key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/jhjqxBZ40UQ",pdfPage:50}]},
+    {key:"vol4",vol:"Vol.4",title:"바둑돌의 비밀",subtitle:"4회차 · 필즈 대비 개념",topics:["바둑돌 규칙","마디 끊기 연습"],comment:"시험에서 가장 어려워하는 바둑돌 규칙에 대한 개념입니다. 마디를 끊는 연습도 반드시 해주세요.",videos:[{key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/ESmcuckBYIw",pdfPage:55},{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/neRIODxo13I",pdfPage:57}]},
+    {key:"final",vol:"Final",title:"종합 체크",subtitle:"마무리 체크체크",topics:["지금까지 배운 전체 유형 종합 테스트"],comment:null,videos:[{key:"final",type:"final",label:"🏆 학습영상",url:"https://youtu.be/FC4W2bRJwKc",pdfPage:65}]}
+  ]},
   {key:"FC-KILLER",name:"킬러문항 완전 해제",desc:"최상위 킬러 유형 집중 공략",icon:"🎯",theme:"theme-killer",type:"direct",lessons:[{key:"k1",label:"킬러 유형 1",title:"킬러 유형 해제 1",type:"concept",url:"",pdfPage:1}]},
   {key:"FC-FINAL",name:"파이널 모의고사 6회",desc:"실전과 동일한 파이널 6세트",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"f1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
   {key:"FC-MOCK",name:"온라인 진단 모의고사",desc:"현재 수준 정밀 진단 + 분석",icon:"🔍",theme:"theme-mock",type:"direct",lessons:[{key:"m1",label:"진단 1회차",title:"진단 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
@@ -305,7 +280,8 @@ const CODES={
   "bbbdc79775916a1a6f7675f3db54cba1f33f26e1dffda97fcb685e1c993df7c7":["FC-CONCEPT"],
   "c5e2beda61041ffeeb6056cb9d2167786d179a219e79e864e6216ecedf620984":["FC-KILLER"],
   "d769a92ca39f255ea72854ca13e7c1d9309e811cd1c52f71567bfef4a63d9b9c":["FC-FINAL"],
-  "fcee3d55de77d92a5e3014b3c4dc874ae825fbbf0e0970399766d0a16841d50b":["FC-MOCK"]
+  "fcee3d55de77d92a5e3014b3c4dc874ae825fbbf0e0970399766d0a16841d50b":["FC-MOCK"],
+  "7952b6a2f87c81cf4049e69cf7ece810f2a281c4199483ab39829d9e16dead33":ALL
 };
 
 async function sha256(m){const b=new TextEncoder().encode(m);if(window.crypto?.subtle){const d=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,"0")).join("")}return fb(m)}
@@ -313,38 +289,22 @@ function fb(s){function rr(v,a){return v>>>a|v<<32-a}const mp=Math.pow,mw=mp(2,3
 async function verify(code){const h=await sha256(SALT+":"+code.trim().toUpperCase());return CODES[h]||null}
 
 function toast(){const t=document.getElementById("secToast");t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),1500)}
-function security(){
-  document.addEventListener("contextmenu",e=>{e.preventDefault();toast()});
-  document.addEventListener("copy",e=>{e.preventDefault();toast()});
-  document.addEventListener("cut",e=>{e.preventDefault();toast()});
-  document.addEventListener("dragstart",e=>e.preventDefault());
-  document.addEventListener("keydown",e=>{const k=String(e.key||"").toLowerCase();if(k==="f12"||(e.ctrlKey&&["u","s"].includes(k))||(e.ctrlKey&&e.shiftKey&&["i","j","c"].includes(k))){e.preventDefault();e.stopPropagation();toast()}},true);
-}
+function security(){document.addEventListener("contextmenu",e=>{e.preventDefault();toast()});document.addEventListener("copy",e=>{e.preventDefault();toast()});document.addEventListener("cut",e=>{e.preventDefault();toast()});document.addEventListener("dragstart",e=>e.preventDefault());document.addEventListener("keydown",e=>{const k=String(e.key||"").toLowerCase();if(k==="f12"||(e.ctrlKey&&["u","s"].includes(k))||(e.ctrlKey&&e.shiftKey&&["i","j","c"].includes(k))){e.preventDefault();e.stopPropagation();toast()}},true)}
 
 function embed(url){if(!url)return"";try{const p=new URL(url);let id="",s=0;if(p.hostname.includes("youtu.be"))id=p.pathname.replace(/^\//,"");else if(p.hostname.includes("youtube.com"))id=p.searchParams.get("v")||"";const t=p.searchParams.get("t")||"";if(/^\d+$/.test(t))s=Number(t);return id?"https://www.youtube.com/embed/"+id+"?rel=0&modestbranding=1&playsinline=1"+(s?"&start="+s:""):url}catch{return url}}
 
-/* PDF: Google Docs Viewer로 모든 모바일 지원 */
 let _pdfBase="";
 function setPdfPage(pdfUrl,page){
-  const fr=document.getElementById("pdfIframe");
-  const openBtn=document.getElementById("pdfOpenBtn");
-  if(!fr)return;
+  const fr=document.getElementById("pdfIframe"),ob=document.getElementById("pdfOpenBtn");if(!fr)return;
   _pdfBase=pdfUrl;
-  // Google Docs Viewer — 모든 브라우저에서 작동
   const gdocs="https://docs.google.com/viewer?url="+encodeURIComponent(pdfUrl)+"&embedded=true";
   if(fr.src!==gdocs)fr.src=gdocs;
-  // 직접 열기 버튼은 해당 페이지로
-  if(openBtn){openBtn.href=pdfUrl+"#page="+page;openBtn.style.display="inline-flex"}
+  if(ob){ob.href=pdfUrl+"#page="+page;ob.style.display="inline-flex"}
 }
 
 let S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};
 
-function checkOrientation(){
-  if(!S.viewerOpen)return;
-  const p=window.innerHeight>window.innerWidth;
-  document.getElementById("rotateHint").classList.toggle("show",p);
-  document.getElementById("viewer").style.visibility=p?"hidden":"visible";
-}
+function checkOrientation(){if(!S.viewerOpen)return;const p=window.innerHeight>window.innerWidth;document.getElementById("rotateHint").classList.toggle("show",p);document.getElementById("viewer").style.visibility=p?"hidden":"visible"}
 window.addEventListener("resize",checkOrientation);
 window.addEventListener("orientationchange",()=>setTimeout(checkOrientation,100));
 
@@ -358,15 +318,9 @@ const GF={
     if(!perms){e.textContent="올바르지 않은 승인번호입니다.";return}
     S.name=n;S.perms=perms;sessionStorage.setItem("gf_c",c);sessionStorage.setItem("gf_n",n);this.showApp();
   },
-  showApp(){
-    document.getElementById("gate").classList.add("hidden");
-    document.getElementById("app").classList.add("show");
-    document.getElementById("hName").textContent=S.name;
-    this.showMainGrid();
-  },
+  showApp(){document.getElementById("gate").classList.add("hidden");document.getElementById("app").classList.add("show");document.getElementById("hName").textContent=S.name;this.showMainGrid()},
   showMainGrid(){
-    document.getElementById("mainGrid").style.display="";
-    document.getElementById("chapterView").style.display="none";
+    document.getElementById("mainGrid").style.display="";document.getElementById("chapterView").style.display="none";
     document.getElementById("dashTitle").innerHTML='필즈 더 클래식<br><em>대비 과정 서재</em>';
     document.getElementById("dashSub").textContent="구매하신 프로그램을 선택해 학습을 시작하세요";
     document.getElementById("headerBadge").textContent="필즈 대비 과정";
@@ -391,8 +345,7 @@ const GF={
     cv.innerHTML=`<button class="chapter-back" onclick="GF.showMainGrid()">← 서재로</button><div class="chapters-grid">${p.chapters.map(ch=>`<div class="chapter-card${ch.key==="final"?" is-final":""}" onclick="GF.showChapterModal('${productKey}','${ch.key}')"><div class="chapter-vol">${ch.vol}</div><div class="chapter-title">${ch.title}</div><ul class="chapter-topics">${ch.topics.slice(0,3).map(t=>`<li>${t}</li>`).join("")}</ul><div class="chapter-cta"><span class="chapter-video-count">영상 ${ch.videos.length}개</span><span class="chapter-start">학습 시작 →</span></div></div>`).join("")}</div>`;
   },
   showChapterModal(productKey,chapterKey){
-    const p=PRODUCTS.find(x=>x.key===productKey);
-    const ch=p?.chapters.find(c=>c.key===chapterKey);if(!ch)return;
+    const p=PRODUCTS.find(x=>x.key===productKey);const ch=p?.chapters.find(c=>c.key===chapterKey);if(!ch)return;
     S.currentChapter=ch;S.currentProduct=p;
     document.getElementById("modalVol").textContent=ch.vol+" · "+ch.subtitle;
     document.getElementById("modalTitle").textContent=ch.title;
@@ -410,26 +363,18 @@ const GF={
     document.getElementById("vBody").className="viewer-body has-video";
     document.getElementById("vPanel").style.display="flex";
     const tabs=document.getElementById("vTabs");tabs.innerHTML="";
-    ch.videos.forEach(v=>{
-      const b=document.createElement("button");
-      b.className="tab-btn";b.textContent=v.label;b.dataset.k=v.key;b.dataset.type=v.type;
-      b.addEventListener("click",()=>GF.selectVideo(ch,v.key));tabs.appendChild(b);
-    });
+    ch.videos.forEach(v=>{const b=document.createElement("button");b.className="tab-btn";b.textContent=v.label;b.dataset.k=v.key;b.dataset.type=v.type;b.addEventListener("click",()=>GF.selectVideo(ch,v.key));tabs.appendChild(b)});
     if(ch.videos.length)this.selectVideo(ch,ch.videos[0].key);
-    document.getElementById("viewer").classList.add("show");
-    document.body.classList.add("in-viewer");
-    checkOrientation();
+    document.getElementById("viewer").classList.add("show");document.body.classList.add("in-viewer");checkOrientation();
   },
   selectVideo(ch,key){
-    const v=ch.videos.find(x=>x.key===key);
-    S.currentVideo=v;
+    const v=ch.videos.find(x=>x.key===key);S.currentVideo=v;
     document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b.dataset.k===key));
     if(!v)return;
     document.getElementById("vPanelTitle").textContent=v.label.replace(/^[^\s]+\s/,"");
     document.getElementById("vPanelMeta").textContent=v.url?"준비됨":"준비 중";
     document.getElementById("videoIframe").src=v.url?embed(v.url):"";
-    const pdfUrl=S.currentProduct?.pdf||"";
-    if(pdfUrl&&v.pdfPage)setPdfPage(pdfUrl,v.pdfPage);
+    const pdfUrl=S.currentProduct?.pdf||"";if(pdfUrl&&v.pdfPage)setPdfPage(pdfUrl,v.pdfPage);
   },
   openDirectViewer(productKey){
     const p=PRODUCTS.find(x=>x.key===productKey);if(!p)return;
@@ -440,40 +385,23 @@ const GF={
     document.getElementById("vBody").className="viewer-body "+(hasVid?"has-video":"no-video");
     document.getElementById("vPanel").style.display=hasVid?"flex":"none";
     const tabs=document.getElementById("vTabs");tabs.innerHTML="";
-    (p.lessons||[]).forEach(l=>{
-      const b=document.createElement("button");b.className="tab-btn";b.textContent=l.label;b.dataset.k=l.key;b.dataset.type=l.type||"concept";
-      b.addEventListener("click",()=>{
-        document.querySelectorAll(".tab-btn").forEach(x=>x.classList.toggle("active",x.dataset.k===l.key));
-        document.getElementById("videoIframe").src=l.url?embed(l.url):"";
-        if(p.pdf&&l.pdfPage)setPdfPage(p.pdf,l.pdfPage);
-        S.currentVideo={url:l.url};
-      });tabs.appendChild(b);
-    });
-    if(p.lessons?.length){
-      const first=p.lessons[0];
-      document.getElementById("videoIframe").src=first.url?embed(first.url):"";
-      if(p.pdf&&first.pdfPage)setPdfPage(p.pdf,first.pdfPage);
-      tabs.querySelector(".tab-btn")?.classList.add("active");
-    }
-    document.getElementById("viewer").classList.add("show");
-    document.body.classList.add("in-viewer");
-    checkOrientation();
+    (p.lessons||[]).forEach(l=>{const b=document.createElement("button");b.className="tab-btn";b.textContent=l.label;b.dataset.k=l.key;b.dataset.type=l.type||"concept";b.addEventListener("click",()=>{document.querySelectorAll(".tab-btn").forEach(x=>x.classList.toggle("active",x.dataset.k===l.key));document.getElementById("videoIframe").src=l.url?embed(l.url):"";if(p.pdf&&l.pdfPage)setPdfPage(p.pdf,l.pdfPage);S.currentVideo={url:l.url}});tabs.appendChild(b)});
+    if(p.lessons?.length){const first=p.lessons[0];document.getElementById("videoIframe").src=first.url?embed(first.url):"";if(p.pdf&&first.pdfPage)setPdfPage(p.pdf,first.pdfPage);tabs.querySelector(".tab-btn")?.classList.add("active")}
+    document.getElementById("viewer").classList.add("show");document.body.classList.add("in-viewer");checkOrientation();
   },
   openYt(){if(S.currentVideo?.url)window.open(S.currentVideo.url,"_blank","noopener")},
   closeViewer(){
     S.viewerOpen=false;_pdfBase="";
-    document.getElementById("viewer").classList.remove("show");
-    document.getElementById("viewer").style.visibility="";
-    document.getElementById("rotateHint").classList.remove("show");
-    document.body.classList.remove("in-viewer");
-    document.getElementById("videoIframe").src="";
-    document.getElementById("pdfIframe").src="";
+    document.getElementById("viewer").classList.remove("show");document.getElementById("viewer").style.visibility="";
+    document.getElementById("rotateHint").classList.remove("show");document.body.classList.remove("in-viewer");
+    document.getElementById("videoIframe").src="";document.getElementById("pdfIframe").src="";
     const ob=document.getElementById("pdfOpenBtn");if(ob)ob.style.display="none";
     S.currentChapter=null;S.currentVideo=null;
   },
   logout(){
     S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};_pdfBase="";
     sessionStorage.clear();
+    ["gate","app","viewer","rotateHint","commentModal"].forEach(id=>document.getElementById(id)?.classList.remove("hidden","show","show"));
     document.getElementById("gate").classList.remove("hidden");document.getElementById("app").classList.remove("show");
     document.getElementById("viewer").classList.remove("show");document.getElementById("viewer").style.visibility="";
     document.getElementById("rotateHint").classList.remove("show");document.getElementById("commentModal").classList.remove("show");
