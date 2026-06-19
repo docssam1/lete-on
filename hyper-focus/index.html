@@ -333,6 +333,11 @@ body.intro-active>*:not(#gfieldIntro){display:none!important}
 .sim-answer-box{display:none;margin-top:10px;padding:12px;background:#f0f4ff;border-radius:8px;line-height:1.6;font-size:.88rem;color:#333}
 .sim-answer-box.open{display:block}
 .sim-audio-btn{background:var(--navy);color:#fff;border:none;border-radius:20px;padding:6px 16px;cursor:pointer;font-size:.82rem;margin-top:8px;margin-right:8px}
+
+/* 버튼/제목 한글 줄바꿈 교정 */
+.p2-header h1,.btn-action,.submit-btn,.res-video-btn,.tab-btn,.attempt-menu,.login-card h3,.diag-card h3{word-break:keep-all!important;overflow-wrap:break-word}
+.tab-btn{writing-mode:horizontal-tb!important;white-space:normal!important;line-height:1.3}
+.btn-action,.submit-btn{white-space:normal!important;line-height:1.35}
 </style>
 </head>
 <body>
