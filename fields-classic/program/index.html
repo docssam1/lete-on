@@ -121,7 +121,7 @@ body.in-viewer{overflow:hidden}
 .viewer-back:hover{border-color:var(--gold);color:var(--gold)}
 .viewer-title{font-size:12px;font-weight:900;color:var(--gold2);flex:1;text-align:center}
 .viewer-acts{display:flex;gap:6px}
-.v-btn{background:rgba(255,255,255,.05);border:1px solid var(--border2);color:rgba(255,255,255,.65);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:5px 10px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.v-btn{background:rgba(255,255,255,.05);border:1px solid var(--border2);color:rgba(255,255,255,.65);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:5px 10px;border-radius:7px;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
 .v-btn:hover{border-color:var(--gold);color:var(--gold)}
 .v-btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none}
 .viewer-tabs{padding:5px 8px;background:rgba(8,13,20,.92);border-bottom:1px solid var(--border);display:flex;gap:4px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
@@ -146,7 +146,6 @@ body.in-viewer{overflow:hidden}
 .vpanel-meta{font-size:10px;color:var(--muted)}
 .vframe-box{position:relative;width:100%;aspect-ratio:16/9;background:#000;flex-shrink:0}
 #videoIframe{position:absolute;inset:0;width:100%;height:100%;border:none}
-/* PDF 패널 - iframe으로 직접 표시 */
 .bpanel{overflow:hidden;min-height:0;display:flex;flex-direction:column;background:#525659}
 #pdfIframe{flex:1;width:100%;border:none;min-height:0}
 @media print{
@@ -234,6 +233,7 @@ body.in-viewer{overflow:hidden}
     <span class="viewer-title" id="vTitle"></span>
     <div class="viewer-acts">
       <button class="v-btn" onclick="window.print()">🖨 인쇄</button>
+      <a class="v-btn" id="pdfOpenBtn" target="_blank" rel="noopener" style="display:none">📄 교재</a>
       <button class="v-btn gold" id="vYtBtn" onclick="GF.openYt()" style="display:none">▶ 새 창</button>
     </div>
   </div>
@@ -257,71 +257,47 @@ body.in-viewer{overflow:hidden}
 <script>
 (function(){"use strict";
 
-/* PDF URL */
 const PDF_CONCEPT="https://docssam1.github.io/lete-on/fields-classic/assets/concept/%ED%83%84%ED%83%84%20%ED%95%84%EC%A6%88%EB%8C%80%EB%B9%84%20%EA%B0%9C%EB%85%90%20SET.pdf";
 
 const PRODUCTS=[
   {
     key:"FC-CONCEPT",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",
-    icon:"📘",theme:"theme-concept",type:"folder",
-    pdf:PDF_CONCEPT,
+    icon:"📘",theme:"theme-concept",type:"folder",pdf:PDF_CONCEPT,
     chapters:[
-      {
-        key:"vol1",vol:"Vol.1",title:"수와 규칙",subtitle:"1회차 · 필즈 대비 개념",
-        topics:["수 피라미드","줄 세우기, 자리찾기","도형이 나타내는 수"],
-        comment:"필즈 테스트 시 연산은 첫 페이지에 있는 연산을 틀리지 않으면 됩니다. 다만 도형이 나타내는 수와 같이 구구단 정도는 반드시 필요하니 받아내림, 받아올림, 구구단은 실수없이 할 수 있도록 해주세요.",
-        videos:[
-          {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/7aPj5IJUzQM",pdfPage:2},
-          {key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/itmV6EXWQA4",pdfPage:15}
-        ]
-      },
-      {
-        key:"vol2",vol:"Vol.2",title:"저울과 패턴",subtitle:"2회차 · 필즈 대비 개념",
-        topics:["양팔저울","양팔저울의 활용","조건에 알맞은 수","패턴 도형 규칙"],
-        comment:null,
-        videos:[
-          {key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/WoN9Ie8Fn8s",pdfPage:21},
-          {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/WoN9Ie8Fn8s?t=318",pdfPage:24},
-          {key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/vBgZ_lZ_XiA",pdfPage:34}
-        ]
-      },
-      {
-        key:"vol3",vol:"Vol.3",title:"숨겨진 수",subtitle:"3회차 · 필즈 대비 개념",
-        topics:["도형으로 수 나타내기","어떤 수 구하기"],
-        comment:"체크체크에서는 지금까지 배운 유형을 계속 누적하여 확인하고 있습니다. 지금까지 배운 내용은 수피라미드, 양팔저울, 도형규칙, 도형이 나타내는 수, 줄세우기, 조건에 알맞은 수입니다. 부족한 유형은 반드시 복습해주세요. 줄세우기 문제 풀 때 동그라미 그리는 연습이 필요합니다.",
-        videos:[
-          {key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/TOHw8sCumHY",pdfPage:40},
-          {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/mq-1VxjLzMk",pdfPage:45},
-          {key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/jhjqxBZ40UQ",pdfPage:50}
-        ]
-      },
-      {
-        key:"vol4",vol:"Vol.4",title:"바둑돌의 비밀",subtitle:"4회차 · 필즈 대비 개념",
-        topics:["바둑돌 규칙","마디 끊기 연습"],
-        comment:"시험에서 가장 어려워하는 바둑돌 규칙에 대한 개념입니다. 마디를 끊는 연습도 반드시 해주세요.",
-        videos:[
-          {key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/ESmcuckBYIw",pdfPage:55},
-          {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/neRIODxo13I",pdfPage:57}
-        ]
-      },
-      {
-        key:"final",vol:"Final",title:"종합 체크",subtitle:"마무리 체크체크",
-        topics:["지금까지 배운 전체 유형 종합 테스트"],
-        comment:null,
-        videos:[
-          {key:"final",type:"final",label:"🏆 학습영상",url:"https://youtu.be/FC4W2bRJwKc",pdfPage:65}
-        ]
-      }
+      {key:"vol1",vol:"Vol.1",title:"수와 규칙",subtitle:"1회차 · 필즈 대비 개념",
+       topics:["수 피라미드","줄 세우기, 자리찾기","도형이 나타내는 수"],
+       comment:"필즈 테스트 시 연산은 첫 페이지에 있는 연산을 틀리지 않으면 됩니다. 다만 도형이 나타내는 수와 같이 구구단 정도는 반드시 필요하니 받아내림, 받아올림, 구구단은 실수없이 할 수 있도록 해주세요.",
+       videos:[
+         {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/7aPj5IJUzQM",pdfPage:2},
+         {key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/itmV6EXWQA4",pdfPage:15}]},
+      {key:"vol2",vol:"Vol.2",title:"저울과 패턴",subtitle:"2회차 · 필즈 대비 개념",
+       topics:["양팔저울","양팔저울의 활용","조건에 알맞은 수","패턴 도형 규칙"],comment:null,
+       videos:[
+         {key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/WoN9Ie8Fn8s",pdfPage:21},
+         {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/WoN9Ie8Fn8s?t=318",pdfPage:24},
+         {key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/vBgZ_lZ_XiA",pdfPage:34}]},
+      {key:"vol3",vol:"Vol.3",title:"숨겨진 수",subtitle:"3회차 · 필즈 대비 개념",
+       topics:["도형으로 수 나타내기","어떤 수 구하기"],
+       comment:"체크체크에서는 지금까지 배운 유형을 계속 누적하여 확인하고 있습니다. 지금까지 배운 내용은 수피라미드, 양팔저울, 도형규칙, 도형이 나타내는 수, 줄세우기, 조건에 알맞은 수입니다. 부족한 유형은 반드시 복습해주세요. 줄세우기 문제 풀 때 동그라미 그리는 연습이 필요합니다.",
+       videos:[
+         {key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/TOHw8sCumHY",pdfPage:40},
+         {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/mq-1VxjLzMk",pdfPage:45},
+         {key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/jhjqxBZ40UQ",pdfPage:50}]},
+      {key:"vol4",vol:"Vol.4",title:"바둑돌의 비밀",subtitle:"4회차 · 필즈 대비 개념",
+       topics:["바둑돌 규칙","마디 끊기 연습"],
+       comment:"시험에서 가장 어려워하는 바둑돌 규칙에 대한 개념입니다. 마디를 끊는 연습도 반드시 해주세요.",
+       videos:[
+         {key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/ESmcuckBYIw",pdfPage:55},
+         {key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/neRIODxo13I",pdfPage:57}]},
+      {key:"final",vol:"Final",title:"종합 체크",subtitle:"마무리 체크체크",
+       topics:["지금까지 배운 전체 유형 종합 테스트"],comment:null,
+       videos:[{key:"final",type:"final",label:"🏆 학습영상",url:"https://youtu.be/FC4W2bRJwKc",pdfPage:65}]}
     ]
   },
-  {key:"FC-KILLER",name:"킬러문항 완전 해제",desc:"최상위 킬러 유형 집중 공략",icon:"🎯",theme:"theme-killer",type:"direct",
-   lessons:[{key:"k1",label:"킬러 유형 1",title:"킬러 유형 해제 1",type:"concept",url:"",pdfPage:1}]},
-  {key:"FC-FINAL",name:"파이널 모의고사 6회",desc:"실전과 동일한 파이널 6세트",icon:"📝",theme:"theme-final",type:"direct",
-   lessons:[{key:"f1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
-  {key:"FC-MOCK",name:"온라인 진단 모의고사",desc:"현재 수준 정밀 진단 + 분석",icon:"🔍",theme:"theme-mock",type:"direct",
-   lessons:[{key:"m1",label:"진단 1회차",title:"진단 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
-  {key:"FC-ARCHIVE",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,
-   lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
+  {key:"FC-KILLER",name:"킬러문항 완전 해제",desc:"최상위 킬러 유형 집중 공략",icon:"🎯",theme:"theme-killer",type:"direct",lessons:[{key:"k1",label:"킬러 유형 1",title:"킬러 유형 해제 1",type:"concept",url:"",pdfPage:1}]},
+  {key:"FC-FINAL",name:"파이널 모의고사 6회",desc:"실전과 동일한 파이널 6세트",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"f1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
+  {key:"FC-MOCK",name:"온라인 진단 모의고사",desc:"현재 수준 정밀 진단 + 분석",icon:"🔍",theme:"theme-mock",type:"direct",lessons:[{key:"m1",label:"진단 1회차",title:"진단 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
+  {key:"FC-ARCHIVE",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
 ];
 
 const SALT="gfield-fields-classic-2026-v1";
@@ -347,13 +323,18 @@ function security(){
 
 function embed(url){if(!url)return"";try{const p=new URL(url);let id="",s=0;if(p.hostname.includes("youtu.be"))id=p.pathname.replace(/^\//,"");else if(p.hostname.includes("youtube.com"))id=p.searchParams.get("v")||"";const t=p.searchParams.get("t")||"";if(/^\d+$/.test(t))s=Number(t);return id?"https://www.youtube.com/embed/"+id+"?rel=0&modestbranding=1&playsinline=1"+(s?"&start="+s:""):url}catch{return url}}
 
-/* PDF 페이지 이동 */
-let _pdfBase="",_pdfLoaded=false;
+/* PDF: Google Docs Viewer로 모든 모바일 지원 */
+let _pdfBase="";
 function setPdfPage(pdfUrl,page){
-  const fr=document.getElementById("pdfIframe");if(!fr)return;
-  const target=pdfUrl+"#page="+page;
-  if(_pdfBase!==pdfUrl){_pdfBase=pdfUrl;_pdfLoaded=false;fr.src=target}
-  else{fr.src=target}
+  const fr=document.getElementById("pdfIframe");
+  const openBtn=document.getElementById("pdfOpenBtn");
+  if(!fr)return;
+  _pdfBase=pdfUrl;
+  // Google Docs Viewer — 모든 브라우저에서 작동
+  const gdocs="https://docs.google.com/viewer?url="+encodeURIComponent(pdfUrl)+"&embedded=true";
+  if(fr.src!==gdocs)fr.src=gdocs;
+  // 직접 열기 버튼은 해당 페이지로
+  if(openBtn){openBtn.href=pdfUrl+"#page="+page;openBtn.style.display="inline-flex"}
 }
 
 let S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};
@@ -447,7 +428,6 @@ const GF={
     document.getElementById("vPanelTitle").textContent=v.label.replace(/^[^\s]+\s/,"");
     document.getElementById("vPanelMeta").textContent=v.url?"준비됨":"준비 중";
     document.getElementById("videoIframe").src=v.url?embed(v.url):"";
-    /* PDF 페이지 이동 */
     const pdfUrl=S.currentProduct?.pdf||"";
     if(pdfUrl&&v.pdfPage)setPdfPage(pdfUrl,v.pdfPage);
   },
@@ -488,6 +468,7 @@ const GF={
     document.body.classList.remove("in-viewer");
     document.getElementById("videoIframe").src="";
     document.getElementById("pdfIframe").src="";
+    const ob=document.getElementById("pdfOpenBtn");if(ob)ob.style.display="none";
     S.currentChapter=null;S.currentVideo=null;
   },
   logout(){
