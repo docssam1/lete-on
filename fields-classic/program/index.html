@@ -71,23 +71,29 @@ body.in-viewer{overflow:hidden}
 .product-btn{width:100%;padding:9px;border-radius:9px;font-size:11px;font-weight:800;font-family:'Noto Sans KR',sans-serif;border:none;cursor:pointer;transition:opacity .15s}
 .product-btn.open{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)}
 .product-btn.locked{background:rgba(255,255,255,.04);color:rgba(255,255,255,.25);cursor:not-allowed;border:1px solid rgba(255,255,255,.06)}
-.chapter-view{max-width:1100px;margin:0 auto}
-.chapter-back{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid var(--border2);color:rgba(255,255,255,.6);font-size:12px;font-weight:700;padding:7px 14px;border-radius:9px;cursor:pointer;margin-bottom:20px;font-family:'Noto Sans KR',sans-serif}
-.chapter-back:hover{border-color:var(--gold);color:var(--gold)}
-.chapters-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
-.chapter-card{background:var(--surface);border:1px solid rgba(212,175,55,.2);border-radius:14px;padding:18px 16px;cursor:pointer;transition:all .3s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden}
-.chapter-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(212,175,55,.04),transparent 60%);opacity:0;transition:opacity .3s}
-.chapter-card:hover::before{opacity:1}
-.chapter-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.4),0 0 0 1px rgba(212,175,55,.3)}
-.chapter-card.is-final{border-color:rgba(212,175,55,.4);background:rgba(212,175,55,.05)}
-.chapter-vol{font-size:10px;font-weight:900;letter-spacing:.1em;color:var(--gold);margin-bottom:6px}
-.chapter-title{font-size:15px;font-weight:900;color:var(--white);margin-bottom:8px;line-height:1.3}
-.chapter-topics{list-style:none;margin-bottom:12px}
-.chapter-topics li{font-size:11px;color:var(--muted);line-height:1.7;padding-left:12px;position:relative}
-.chapter-topics li::before{content:'·';position:absolute;left:0;color:var(--gold)}
-.chapter-cta{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border2)}
-.chapter-video-count{font-size:10px;color:var(--muted)}
-.chapter-start{font-size:11px;font-weight:900;color:var(--gold)}
+/* ── 3D 책장 챕터 뷰 ── */
+.bookshelf-scene{padding:20px 0 40px;width:100%}
+.bookshelf-row{display:flex;gap:clamp(12px,3vw,28px);justify-content:center;flex-wrap:wrap;align-items:flex-end;padding:0 10px}
+.shelf-slot{display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;flex:0 0 auto}
+.shelf-book-wrap{perspective:800px}
+.shelf-book-3d{width:clamp(82px,13vw,118px);height:clamp(116px,18vw,166px);position:relative;transform-style:preserve-3d;transform:rotateY(-22deg) rotateX(4deg);transition:transform .45s cubic-bezier(.22,1,.36,1),filter .45s ease;filter:drop-shadow(0 16px 28px rgba(0,0,0,.7))}
+.shelf-slot:hover .shelf-book-3d{transform:rotateY(-6deg) rotateX(1deg) translateY(-14px) scale(1.06);filter:drop-shadow(0 28px 40px rgba(212,175,55,.35)) drop-shadow(0 0 20px rgba(212,175,55,.15))}
+.shelf-slot.is-final:hover .shelf-book-3d{filter:drop-shadow(0 28px 40px rgba(212,175,55,.55)) drop-shadow(0 0 32px rgba(212,175,55,.35))}
+.shelf-book-front{position:absolute;inset:0;border-radius:2px 7px 7px 2px;overflow:hidden;box-shadow:inset -3px 0 8px rgba(0,0,0,.4)}
+.shelf-book-front img{width:100%;height:100%;object-fit:cover;display:block}
+.shelf-book-spine{position:absolute;top:0;left:0;width:12px;height:100%;background:linear-gradient(to right,#020408,#0a1628);border-radius:2px 0 0 2px;transform:rotateY(-90deg) translateX(-6px);transform-origin:left center}
+.shelf-book-shadow{position:absolute;bottom:-14px;left:8%;right:8%;height:14px;background:radial-gradient(ellipse,rgba(0,0,0,.7),transparent 70%);filter:blur(6px)}
+.shelf-label{text-align:center;max-width:clamp(82px,13vw,118px)}
+.shelf-vol-text{font-size:9px;font-weight:900;color:var(--gold);letter-spacing:.12em;margin-bottom:3px}
+.shelf-title-text{font-size:clamp(11px,2vw,13px);font-weight:900;color:var(--white);line-height:1.3}
+.shelf-videos{font-size:10px;color:var(--muted);margin-top:3px}
+.shelf-rail{width:100%;height:10px;background:linear-gradient(to bottom,#1a2d44,#080f1a);border-radius:5px;margin-top:20px;box-shadow:0 10px 30px rgba(0,0,0,.6),0 -1px 0 rgba(212,175,55,.1)}
+.chapter-back-fancy{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:rgba(255,255,255,.6);font-size:12px;font-weight:700;padding:8px 16px;border-radius:10px;cursor:pointer;margin-bottom:28px;font-family:'Noto Sans KR',sans-serif;transition:all .2s}
+.chapter-back-fancy:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,175,55,.06)}
+.shelf-section-title{font-family:'DM Serif Display',serif;font-size:clamp(18px,3vw,24px);color:var(--white);text-align:center;margin-bottom:6px}
+.shelf-section-title em{color:var(--gold);font-style:italic}
+.shelf-section-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:32px}
+@media(max-width:500px){.bookshelf-row{gap:8px}.shelf-label{max-width:72px}}
 #commentModal{display:none;position:fixed;inset:0;z-index:500;padding:20px;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);align-items:center;justify-content:center}
 #commentModal.show{display:flex}
 .modal-card{width:min(480px,95vw);background:rgba(8,13,20,.98);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.8);animation:modalIn .25s cubic-bezier(.22,1,.36,1)}
@@ -156,8 +162,8 @@ body.in-viewer{overflow:hidden}
   @page{margin:0}
 }
 @media(max-height:500px) and (orientation:landscape){.viewer-header{padding:5px 10px}.viewer-tabs{padding:3px 8px}.tab-btn{padding:4px 10px;font-size:10px}}
-@media(max-width:600px){.products-grid{grid-template-columns:1fr 1fr}.chapters-grid{grid-template-columns:1fr 1fr}#dashboard{padding:0 12px 40px}}
-@media(max-width:380px){.products-grid{grid-template-columns:1fr}.chapters-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.products-grid{grid-template-columns:1fr 1fr}#dashboard{padding:0 12px 40px}}
+@media(max-width:380px){.products-grid{grid-template-columns:1fr}}
 .sec-toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:99999;display:none;padding:9px 16px;border-radius:999px;background:rgba(2,5,11,.96);color:var(--gold2);font-size:11px;font-weight:800;border:1px solid var(--border)}
 .sec-toast.show{display:block}
 </style>
@@ -256,10 +262,10 @@ body.in-viewer{overflow:hidden}
 <div class="sec-toast" id="secToast">🔒 학생 전용 보안 자료입니다.</div>
 <script>
 (function(){"use strict";
-
+const COVER_BASE='https://docssam1.github.io/lete-on/fields-classic/assets/concept/covers/';
+const COVER_MAP={vol1:'cover_vol1.webp',vol2:'cover_vol2.webp',vol3:'cover_vol3.webp',vol4:'cover_vol4.webp',final:'cover_final.webp'};
 const PDF_CONCEPT="https://docssam1.github.io/lete-on/fields-classic/assets/concept/%ED%83%84%ED%83%84%20%ED%95%84%EC%A6%88%EB%8C%80%EB%B9%84%20%EA%B0%9C%EB%85%90%20SET.pdf";
 const ALL=["FC-CONCEPT","FC-KILLER","FC-FINAL","FC-MOCK","FC-ARCHIVE"];
-
 const PRODUCTS=[
   {key:"FC-CONCEPT",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",icon:"📘",theme:"theme-concept",type:"folder",pdf:PDF_CONCEPT,
    chapters:[
@@ -274,7 +280,6 @@ const PRODUCTS=[
   {key:"FC-MOCK",name:"온라인 진단 모의고사",desc:"현재 수준 정밀 진단 + 분석",icon:"🔍",theme:"theme-mock",type:"direct",lessons:[{key:"m1",label:"진단 1회차",title:"진단 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
   {key:"FC-ARCHIVE",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
 ];
-
 const SALT="gfield-fields-classic-2026-v1";
 const CODES={
   "bbbdc79775916a1a6f7675f3db54cba1f33f26e1dffda97fcb685e1c993df7c7":["FC-CONCEPT"],
@@ -283,16 +288,12 @@ const CODES={
   "fcee3d55de77d92a5e3014b3c4dc874ae825fbbf0e0970399766d0a16841d50b":["FC-MOCK"],
   "7952b6a2f87c81cf4049e69cf7ece810f2a281c4199483ab39829d9e16dead33":ALL
 };
-
 async function sha256(m){const b=new TextEncoder().encode(m);if(window.crypto?.subtle){const d=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,"0")).join("")}return fb(m)}
 function fb(s){function rr(v,a){return v>>>a|v<<32-a}const mp=Math.pow,mw=mp(2,32);let r="",w=[],al=s.length*8;let h=fb.h=fb.h||[],k=fb.k=fb.k||[],pc=k.length;const ic={};for(let c=2;pc<64;c++){if(!ic[c]){for(let i=0;i<313;i+=c)ic[i]=c;h[pc]=mp(c,.5)*mw|0;k[pc++]=mp(c,1/3)*mw|0}}s+="\x80";while(s.length%64-56)s+="\x00";for(let i=0;i<s.length;i++){const j=s.charCodeAt(i);if(j>>8)return"";w[i>>2]|=j<<(3-i%4)*8}w[w.length]=al/mw|0;w[w.length]=al;for(let j=0;j<w.length;){const wd=w.slice(j,j+=16),oh=h.slice(0);for(let i=0;i<64;i++){const w15=wd[i-15],w2=wd[i-2],a=h[0],e=h[4];const t1=h[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&h[5])^(~e&h[6]))+k[i]+(wd[i]=i<16?wd[i]:wd[i-16]+(rr(w15,7)^rr(w15,18)^w15>>>3)+wd[i-7]+(rr(w2,17)^rr(w2,19)^w2>>>10)|0);const t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&h[1])^(a&h[2])^(h[1]&h[2]));h=[t1+t2|0].concat(h);h[4]=h[4]+t1|0;h.pop()}for(let i=0;i<8;i++)h[i]=h[i]+oh[i]|0}for(let i=0;i<8;i++)for(let j=3;j+1;j--){const b=h[i]>>j*8&255;r+=(b<16?0:"")+b.toString(16)}return r}
 async function verify(code){const h=await sha256(SALT+":"+code.trim().toUpperCase());return CODES[h]||null}
-
 function toast(){const t=document.getElementById("secToast");t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),1500)}
 function security(){document.addEventListener("contextmenu",e=>{e.preventDefault();toast()});document.addEventListener("copy",e=>{e.preventDefault();toast()});document.addEventListener("cut",e=>{e.preventDefault();toast()});document.addEventListener("dragstart",e=>e.preventDefault());document.addEventListener("keydown",e=>{const k=String(e.key||"").toLowerCase();if(k==="f12"||(e.ctrlKey&&["u","s"].includes(k))||(e.ctrlKey&&e.shiftKey&&["i","j","c"].includes(k))){e.preventDefault();e.stopPropagation();toast()}},true)}
-
 function embed(url){if(!url)return"";try{const p=new URL(url);let id="",s=0;if(p.hostname.includes("youtu.be"))id=p.pathname.replace(/^\//,"");else if(p.hostname.includes("youtube.com"))id=p.searchParams.get("v")||"";const t=p.searchParams.get("t")||"";if(/^\d+$/.test(t))s=Number(t);return id?"https://www.youtube.com/embed/"+id+"?rel=0&modestbranding=1&playsinline=1"+(s?"&start="+s:""):url}catch{return url}}
-
 let _pdfBase="";
 function setPdfPage(pdfUrl,page){
   const fr=document.getElementById("pdfIframe"),ob=document.getElementById("pdfOpenBtn");if(!fr)return;
@@ -301,13 +302,10 @@ function setPdfPage(pdfUrl,page){
   if(fr.src!==gdocs)fr.src=gdocs;
   if(ob){ob.href=pdfUrl+"#page="+page;ob.style.display="inline-flex"}
 }
-
 let S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};
-
 function checkOrientation(){if(!S.viewerOpen)return;const p=window.innerHeight>window.innerWidth;document.getElementById("rotateHint").classList.toggle("show",p);document.getElementById("viewer").style.visibility=p?"hidden":"visible"}
 window.addEventListener("resize",checkOrientation);
 window.addEventListener("orientationchange",()=>setTimeout(checkOrientation,100));
-
 const GF={
   async login(){
     const c=document.getElementById("gCode").value.trim(),n=document.getElementById("gName").value.replace(/\s+/g,"").trim(),e=document.getElementById("gErr");
@@ -339,10 +337,35 @@ const GF={
     S.currentProduct=p;
     document.getElementById("mainGrid").style.display="none";
     document.getElementById("dashTitle").innerHTML=`${p.icon} <em>${p.name}</em>`;
-    document.getElementById("dashSub").textContent="회차를 선택해 학습을 시작하세요";
+    document.getElementById("dashSub").textContent="";
     document.getElementById("headerBadge").textContent=p.name;
     const cv=document.getElementById("chapterView");cv.style.display="";
-    cv.innerHTML=`<button class="chapter-back" onclick="GF.showMainGrid()">← 서재로</button><div class="chapters-grid">${p.chapters.map(ch=>`<div class="chapter-card${ch.key==="final"?" is-final":""}" onclick="GF.showChapterModal('${productKey}','${ch.key}')"><div class="chapter-vol">${ch.vol}</div><div class="chapter-title">${ch.title}</div><ul class="chapter-topics">${ch.topics.slice(0,3).map(t=>`<li>${t}</li>`).join("")}</ul><div class="chapter-cta"><span class="chapter-video-count">영상 ${ch.videos.length}개</span><span class="chapter-start">학습 시작 →</span></div></div>`).join("")}</div>`;
+    cv.innerHTML=`
+      <button class="chapter-back-fancy" onclick="GF.showMainGrid()">← 서재로</button>
+      <div class="bookshelf-scene">
+        <div class="shelf-section-title">📘 <em>개념 완성</em> 커리큘럼</div>
+        <div class="shelf-section-sub">회차를 선택해 학습을 시작하세요</div>
+        <div class="bookshelf-row">
+          ${p.chapters.map(ch=>{
+            const imgFile=COVER_MAP[ch.key]||'cover_vol1.webp';
+            return `<div class="shelf-slot${ch.key==='final'?' is-final':''}" onclick="GF.showChapterModal('${productKey}','${ch.key}')">
+              <div class="shelf-book-wrap">
+                <div class="shelf-book-3d">
+                  <div class="shelf-book-front"><img src="${COVER_BASE}${imgFile}" alt="${ch.title}" loading="lazy"></div>
+                  <div class="shelf-book-spine"></div>
+                  <div class="shelf-book-shadow"></div>
+                </div>
+              </div>
+              <div class="shelf-label">
+                <div class="shelf-vol-text">${ch.vol}</div>
+                <div class="shelf-title-text">${ch.title}</div>
+                <div class="shelf-videos">영상 ${ch.videos.length}개</div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="shelf-rail"></div>
+      </div>`;
   },
   showChapterModal(productKey,chapterKey){
     const p=PRODUCTS.find(x=>x.key===productKey);const ch=p?.chapters.find(c=>c.key===chapterKey);if(!ch)return;
@@ -401,7 +424,6 @@ const GF={
   logout(){
     S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};_pdfBase="";
     sessionStorage.clear();
-    ["gate","app","viewer","rotateHint","commentModal"].forEach(id=>document.getElementById(id)?.classList.remove("hidden","show","show"));
     document.getElementById("gate").classList.remove("hidden");document.getElementById("app").classList.remove("show");
     document.getElementById("viewer").classList.remove("show");document.getElementById("viewer").style.visibility="";
     document.getElementById("rotateHint").classList.remove("show");document.getElementById("commentModal").classList.remove("show");
@@ -410,7 +432,6 @@ const GF={
     document.getElementById("gCode").value="";document.getElementById("gName").value="";document.getElementById("gErr").textContent="";
   }
 };
-
 document.addEventListener("DOMContentLoaded",()=>{
   security();
   const ci=document.getElementById("gCode"),ni=document.getElementById("gName");
