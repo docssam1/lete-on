@@ -1,0 +1,628 @@
+{
+  "01": {
+    "problemType": "TYPE-01",
+    "subType": "stacking_front_back_count",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "stacking_write_heights",
+      "hidden_blocks"
+    ],
+    "verified": true
+  },
+  "02": {
+    "problemType": "TYPE-01",
+    "subType": "stacking_fill_cube",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "full_count_minus_current",
+      "dont_miss_last_blocks"
+    ],
+    "verified": true
+  },
+  "03": {
+    "problemType": "TYPE-01",
+    "subType": "stacking_checker_color",
+    "answerType": "color_count_pair",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "even_layer_same",
+      "odd_layer_top_more",
+      "check_total"
+    ],
+    "verified": true
+  },
+  "04": {
+    "problemType": "TYPE-01",
+    "subType": "stacking_hole_removed",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "removed_column",
+      "total_minus_removed"
+    ],
+    "verified": true
+  },
+  "05": {
+    "problemType": "TYPE-01",
+    "subType": "stacking_hidden_count",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "total_minus_visible"
+    ],
+    "verified": true
+  },
+  "06": {
+    "problemType": "TYPE-02",
+    "subType": "solid_view_impossible",
+    "answerType": "option_set",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "viewpoint_turn",
+      "color_position_check"
+    ],
+    "verified": true
+  },
+  "07": {
+    "problemType": "TYPE-02",
+    "subType": "cube_net_matching",
+    "answerType": "option_set",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "fold_net",
+      "opposite_faces",
+      "pattern_rotation"
+    ],
+    "verified": true
+  },
+  "08": {
+    "problemType": "TYPE-02",
+    "subType": "dice_roll",
+    "answerType": "number",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "dice_squashed_box",
+      "opposite_faces"
+    ],
+    "verified": true
+  },
+  "09": {
+    "problemType": "TYPE-01",
+    "subType": "stacking_three_views_minimum",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "write_heights_on_top_view",
+      "minimum_blocks"
+    ],
+    "verified": true
+  },
+  "10": {
+    "problemType": "TYPE-05",
+    "subType": "overlap_paper_count",
+    "answerType": "number",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "overlap_layers",
+      "overlap_sum_variant"
+    ],
+    "verified": true
+  },
+  "11": {
+    "problemType": "TYPE-02",
+    "subType": "paper_fold_top_numbers",
+    "answerType": "number",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "back_face_comes_up"
+    ],
+    "verified": true
+  },
+  "12": {
+    "problemType": "TYPE-02",
+    "subType": "paper_hole_fold",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "draw_reverse",
+      "fold_reflection"
+    ],
+    "verified": true
+  },
+  "13": {
+    "problemType": "TYPE-03",
+    "subType": "pentomino_fill",
+    "answerType": "drawing_layout",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "rotate_flip",
+      "place_constrained_piece_first"
+    ],
+    "verified": true
+  },
+  "14": {
+    "problemType": "TYPE-03",
+    "subType": "square_partition_min",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "largest_square_first",
+      "not_same_size"
+    ],
+    "verified": true
+  },
+  "15": {
+    "problemType": "TYPE-03",
+    "subType": "line_partition_six",
+    "answerType": "drawing_instruction",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "cross_lines",
+      "extend_line"
+    ],
+    "verified": true
+  },
+  "16": {
+    "problemType": "TYPE-03",
+    "subType": "count_squares_grid",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "count_by_size",
+      "complete_edges_only"
+    ],
+    "verified": true
+  },
+  "17": {
+    "problemType": "TYPE-03",
+    "subType": "count_tilted_squares",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "count_by_size",
+      "include_tilted"
+    ],
+    "verified": true
+  },
+  "18": {
+    "problemType": "TYPE-03",
+    "subType": "tetra_cube_cases",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "rotation_same_shape"
+    ],
+    "verified": true
+  },
+  "19": {
+    "problemType": "TYPE-03",
+    "subType": "geoboard_triangles",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "count_by_direction",
+      "include_tilted"
+    ],
+    "verified": true
+  },
+  "20": {
+    "problemType": "TYPE-05",
+    "subType": "segment_sum_lengths",
+    "answerType": "count",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "list_from_small",
+      "remove_duplicates"
+    ],
+    "verified": true
+  },
+  "21": {
+    "problemType": "TYPE-05",
+    "subType": "place_value_conditions",
+    "answerType": "number",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "fix_key_place",
+      "reduce_candidates"
+    ],
+    "verified": true
+  },
+  "22": {
+    "problemType": "TYPE-05",
+    "subType": "swap_digits_equation",
+    "answerType": "equation",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "swap_two_only"
+    ],
+    "verified": true
+  },
+  "23": {
+    "problemType": "TYPE-05",
+    "subType": "operator_insert_or_blank",
+    "answerType": "count",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "blank_can_join_digits"
+    ],
+    "verified": true
+  },
+  "24": {
+    "problemType": "TYPE-05",
+    "subType": "change_plus_to_minus",
+    "answerType": "number",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "difference_half"
+    ],
+    "verified": true
+  },
+  "25": {
+    "problemType": "TYPE-05",
+    "subType": "two_condition_digits",
+    "answerType": "number",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "list_candidates_each_box"
+    ],
+    "verified": true
+  },
+  "26": {
+    "problemType": "TYPE-03",
+    "subType": "matchstick_move",
+    "answerType": "drawing_target",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "move_not_add",
+      "same_size_shapes"
+    ],
+    "verified": true
+  },
+  "27": {
+    "problemType": "TYPE-05",
+    "subType": "honeycomb_operation",
+    "answerType": "ordered_slots",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "use_all_numbers",
+      "fit_operation"
+    ],
+    "verified": true
+  },
+  "28": {
+    "problemType": "TYPE-05",
+    "subType": "venn_sum_equal",
+    "answerType": "number",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "subtract_overlap",
+      "avoid_double_count"
+    ],
+    "verified": true
+  },
+  "29": {
+    "problemType": "TYPE-05",
+    "subType": "number_grid_pattern",
+    "answerType": "ordered_slots",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "row_column_rules"
+    ],
+    "verified": true
+  },
+  "30": {
+    "problemType": "TYPE-06",
+    "subType": "target_score_cases",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "case_by_total",
+      "same_total_once"
+    ],
+    "verified": true
+  },
+  "31": {
+    "problemType": "TYPE-05",
+    "subType": "symbol_value_equations",
+    "answerType": "symbol_values",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "find_best_hint_first"
+    ],
+    "verified": true
+  },
+  "32": {
+    "problemType": "TYPE-05",
+    "subType": "mirror_digital_number",
+    "answerType": "number",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "read_mirror_digit"
+    ],
+    "verified": true
+  },
+  "33": {
+    "problemType": "TYPE-04",
+    "subType": "rps_stair_position",
+    "answerType": "count",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "start_at_10_to_avoid_negative"
+    ],
+    "verified": true
+  },
+  "34": {
+    "problemType": "TYPE-05",
+    "subType": "digit_card_subtraction",
+    "answerType": "min_max_values",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "tens_difference_one",
+      "borrowing_check"
+    ],
+    "verified": true
+  },
+  "35": {
+    "problemType": "TYPE-04",
+    "subType": "line_order",
+    "answerType": "name",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "draw_circles_or_number_line"
+    ],
+    "verified": true
+  },
+  "36": {
+    "problemType": "TYPE-04",
+    "subType": "min_max_order",
+    "answerType": "min_max_values",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "front_case_back_case"
+    ],
+    "verified": true
+  },
+  "37": {
+    "problemType": "TYPE-04",
+    "subType": "circular_seating",
+    "answerType": "circular_position_map",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "fix_anchor_person"
+    ],
+    "verified": true
+  },
+  "38": {
+    "problemType": "TYPE-04",
+    "subType": "circular_viewpoint_order",
+    "answerType": "ordinal",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "draw_circle",
+      "rotate_paper"
+    ],
+    "verified": true
+  },
+  "39": {
+    "problemType": "TYPE-04",
+    "subType": "logic_matrix",
+    "answerType": "matching_pair",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "dont_fill_all",
+      "two_circles_per_row"
+    ],
+    "verified": true
+  },
+  "40": {
+    "problemType": "TYPE-05",
+    "subType": "number_code_rule",
+    "answerType": "number",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "try_add_multiply_digit_sum"
+    ],
+    "verified": true
+  },
+  "41": {
+    "problemType": "TYPE-05",
+    "subType": "shape_transform_code",
+    "answerType": "shape_description",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "split_color_shape_inner_direction"
+    ],
+    "verified": true
+  },
+  "42": {
+    "problemType": "TYPE-06",
+    "subType": "grid_fill_cases",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "fix_one_circle_first"
+    ],
+    "verified": true
+  },
+  "43": {
+    "problemType": "TYPE-06",
+    "subType": "coloring_triomino",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "rotation_flip_same"
+    ],
+    "verified": true
+  },
+  "44": {
+    "problemType": "TYPE-05",
+    "subType": "three_digit_conditions",
+    "answerType": "list",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "list_all_valid_numbers"
+    ],
+    "verified": true
+  },
+  "45": {
+    "problemType": "TYPE-09",
+    "subType": "shortest_path_grid",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "fill_ones_first",
+      "add_top_left"
+    ],
+    "verified": true
+  },
+  "46": {
+    "problemType": "TYPE-07",
+    "subType": "reverse_story",
+    "answerType": "count",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "write_on_problem",
+      "draw_reverse"
+    ],
+    "verified": true
+  },
+  "47": {
+    "problemType": "TYPE-07",
+    "subType": "reverse_table",
+    "answerType": "count",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "table_from_end"
+    ],
+    "verified": true
+  },
+  "48": {
+    "problemType": "TYPE-08",
+    "subType": "work_together",
+    "answerType": "time_count",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "same_number_in_times_table",
+      "work_bar"
+    ],
+    "verified": true
+  },
+  "49": {
+    "problemType": "TYPE-08",
+    "subType": "unit_rate_animals",
+    "answerType": "time_count",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "one_unit_first"
+    ],
+    "verified": true
+  },
+  "50": {
+    "problemType": "TYPE-08",
+    "subType": "length_units_picture",
+    "answerType": "multi_length_values",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "write_given_number_on_picture"
+    ],
+    "verified": true
+  },
+  "51": {
+    "problemType": "TYPE-05",
+    "subType": "clock_bell_count",
+    "answerType": "count",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "exclude_start_time"
+    ],
+    "verified": true
+  },
+  "52": {
+    "problemType": "TYPE-10",
+    "subType": "balance_smallest_unit",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "smallest_is_one_or_two"
+    ],
+    "verified": true
+  },
+  "53": {
+    "problemType": "TYPE-10",
+    "subType": "balance_unit_count",
+    "answerType": "count",
+    "svgRequired": true,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "think_balance_scale",
+      "one_unit_first"
+    ],
+    "verified": true
+  },
+  "54": {
+    "problemType": "TYPE-05",
+    "subType": "parity_sequence",
+    "answerType": "count",
+    "svgRequired": false,
+    "difficultyPolicy": "default",
+    "docsamRules": [
+      "odd_one_even_two",
+      "pattern_repeat"
+    ],
+    "verified": true
+  }
+}

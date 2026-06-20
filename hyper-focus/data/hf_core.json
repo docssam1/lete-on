@@ -1,0 +1,2386 @@
+{
+  "version": "hf-core-v1",
+  "sourceVersion": "hf-db-v3.1",
+  "scope": "01-54",
+  "status": "qa_passed",
+  "totalProblems": 54,
+  "problemMap": {
+    "01": {
+      "problemType": "TYPE-01",
+      "subType": "stacking_front_back_count",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "stacking_write_heights",
+        "hidden_blocks"
+      ],
+      "verified": true
+    },
+    "02": {
+      "problemType": "TYPE-01",
+      "subType": "stacking_fill_cube",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "full_count_minus_current",
+        "dont_miss_last_blocks"
+      ],
+      "verified": true
+    },
+    "03": {
+      "problemType": "TYPE-01",
+      "subType": "stacking_checker_color",
+      "answerType": "color_count_pair",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "even_layer_same",
+        "odd_layer_top_more",
+        "check_total"
+      ],
+      "verified": true
+    },
+    "04": {
+      "problemType": "TYPE-01",
+      "subType": "stacking_hole_removed",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "removed_column",
+        "total_minus_removed"
+      ],
+      "verified": true
+    },
+    "05": {
+      "problemType": "TYPE-01",
+      "subType": "stacking_hidden_count",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "total_minus_visible"
+      ],
+      "verified": true
+    },
+    "06": {
+      "problemType": "TYPE-02",
+      "subType": "solid_view_impossible",
+      "answerType": "option_set",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "viewpoint_turn",
+        "color_position_check"
+      ],
+      "verified": true
+    },
+    "07": {
+      "problemType": "TYPE-02",
+      "subType": "cube_net_matching",
+      "answerType": "option_set",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "fold_net",
+        "opposite_faces",
+        "pattern_rotation"
+      ],
+      "verified": true
+    },
+    "08": {
+      "problemType": "TYPE-02",
+      "subType": "dice_roll",
+      "answerType": "number",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "dice_squashed_box",
+        "opposite_faces"
+      ],
+      "verified": true
+    },
+    "09": {
+      "problemType": "TYPE-01",
+      "subType": "stacking_three_views_minimum",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "write_heights_on_top_view",
+        "minimum_blocks"
+      ],
+      "verified": true
+    },
+    "10": {
+      "problemType": "TYPE-05",
+      "subType": "overlap_paper_count",
+      "answerType": "number",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "overlap_layers",
+        "overlap_sum_variant"
+      ],
+      "verified": true
+    },
+    "11": {
+      "problemType": "TYPE-02",
+      "subType": "paper_fold_top_numbers",
+      "answerType": "number",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "back_face_comes_up"
+      ],
+      "verified": true
+    },
+    "12": {
+      "problemType": "TYPE-02",
+      "subType": "paper_hole_fold",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "draw_reverse",
+        "fold_reflection"
+      ],
+      "verified": true
+    },
+    "13": {
+      "problemType": "TYPE-03",
+      "subType": "pentomino_fill",
+      "answerType": "drawing_layout",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "rotate_flip",
+        "place_constrained_piece_first"
+      ],
+      "verified": true
+    },
+    "14": {
+      "problemType": "TYPE-03",
+      "subType": "square_partition_min",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "largest_square_first",
+        "not_same_size"
+      ],
+      "verified": true
+    },
+    "15": {
+      "problemType": "TYPE-03",
+      "subType": "line_partition_six",
+      "answerType": "drawing_instruction",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "cross_lines",
+        "extend_line"
+      ],
+      "verified": true
+    },
+    "16": {
+      "problemType": "TYPE-03",
+      "subType": "count_squares_grid",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "count_by_size",
+        "complete_edges_only"
+      ],
+      "verified": true
+    },
+    "17": {
+      "problemType": "TYPE-03",
+      "subType": "count_tilted_squares",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "count_by_size",
+        "include_tilted"
+      ],
+      "verified": true
+    },
+    "18": {
+      "problemType": "TYPE-03",
+      "subType": "tetra_cube_cases",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "rotation_same_shape"
+      ],
+      "verified": true
+    },
+    "19": {
+      "problemType": "TYPE-03",
+      "subType": "geoboard_triangles",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "count_by_direction",
+        "include_tilted"
+      ],
+      "verified": true
+    },
+    "20": {
+      "problemType": "TYPE-05",
+      "subType": "segment_sum_lengths",
+      "answerType": "count",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "list_from_small",
+        "remove_duplicates"
+      ],
+      "verified": true
+    },
+    "21": {
+      "problemType": "TYPE-05",
+      "subType": "place_value_conditions",
+      "answerType": "number",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "fix_key_place",
+        "reduce_candidates"
+      ],
+      "verified": true
+    },
+    "22": {
+      "problemType": "TYPE-05",
+      "subType": "swap_digits_equation",
+      "answerType": "equation",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "swap_two_only"
+      ],
+      "verified": true
+    },
+    "23": {
+      "problemType": "TYPE-05",
+      "subType": "operator_insert_or_blank",
+      "answerType": "count",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "blank_can_join_digits"
+      ],
+      "verified": true
+    },
+    "24": {
+      "problemType": "TYPE-05",
+      "subType": "change_plus_to_minus",
+      "answerType": "number",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "difference_half"
+      ],
+      "verified": true
+    },
+    "25": {
+      "problemType": "TYPE-05",
+      "subType": "two_condition_digits",
+      "answerType": "number",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "list_candidates_each_box"
+      ],
+      "verified": true
+    },
+    "26": {
+      "problemType": "TYPE-03",
+      "subType": "matchstick_move",
+      "answerType": "drawing_target",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "move_not_add",
+        "same_size_shapes"
+      ],
+      "verified": true
+    },
+    "27": {
+      "problemType": "TYPE-05",
+      "subType": "honeycomb_operation",
+      "answerType": "ordered_slots",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "use_all_numbers",
+        "fit_operation"
+      ],
+      "verified": true
+    },
+    "28": {
+      "problemType": "TYPE-05",
+      "subType": "venn_sum_equal",
+      "answerType": "number",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "subtract_overlap",
+        "avoid_double_count"
+      ],
+      "verified": true
+    },
+    "29": {
+      "problemType": "TYPE-05",
+      "subType": "number_grid_pattern",
+      "answerType": "ordered_slots",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "row_column_rules"
+      ],
+      "verified": true
+    },
+    "30": {
+      "problemType": "TYPE-06",
+      "subType": "target_score_cases",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "case_by_total",
+        "same_total_once"
+      ],
+      "verified": true
+    },
+    "31": {
+      "problemType": "TYPE-05",
+      "subType": "symbol_value_equations",
+      "answerType": "symbol_values",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "find_best_hint_first"
+      ],
+      "verified": true
+    },
+    "32": {
+      "problemType": "TYPE-05",
+      "subType": "mirror_digital_number",
+      "answerType": "number",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "read_mirror_digit"
+      ],
+      "verified": true
+    },
+    "33": {
+      "problemType": "TYPE-04",
+      "subType": "rps_stair_position",
+      "answerType": "count",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "start_at_10_to_avoid_negative"
+      ],
+      "verified": true
+    },
+    "34": {
+      "problemType": "TYPE-05",
+      "subType": "digit_card_subtraction",
+      "answerType": "min_max_values",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "tens_difference_one",
+        "borrowing_check"
+      ],
+      "verified": true
+    },
+    "35": {
+      "problemType": "TYPE-04",
+      "subType": "line_order",
+      "answerType": "name",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "draw_circles_or_number_line"
+      ],
+      "verified": true
+    },
+    "36": {
+      "problemType": "TYPE-04",
+      "subType": "min_max_order",
+      "answerType": "min_max_values",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "front_case_back_case"
+      ],
+      "verified": true
+    },
+    "37": {
+      "problemType": "TYPE-04",
+      "subType": "circular_seating",
+      "answerType": "circular_position_map",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "fix_anchor_person"
+      ],
+      "verified": true
+    },
+    "38": {
+      "problemType": "TYPE-04",
+      "subType": "circular_viewpoint_order",
+      "answerType": "ordinal",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "draw_circle",
+        "rotate_paper"
+      ],
+      "verified": true
+    },
+    "39": {
+      "problemType": "TYPE-04",
+      "subType": "logic_matrix",
+      "answerType": "matching_pair",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "dont_fill_all",
+        "two_circles_per_row"
+      ],
+      "verified": true
+    },
+    "40": {
+      "problemType": "TYPE-05",
+      "subType": "number_code_rule",
+      "answerType": "number",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "try_add_multiply_digit_sum"
+      ],
+      "verified": true
+    },
+    "41": {
+      "problemType": "TYPE-05",
+      "subType": "shape_transform_code",
+      "answerType": "shape_description",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "split_color_shape_inner_direction"
+      ],
+      "verified": true
+    },
+    "42": {
+      "problemType": "TYPE-06",
+      "subType": "grid_fill_cases",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "fix_one_circle_first"
+      ],
+      "verified": true
+    },
+    "43": {
+      "problemType": "TYPE-06",
+      "subType": "coloring_triomino",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "rotation_flip_same"
+      ],
+      "verified": true
+    },
+    "44": {
+      "problemType": "TYPE-05",
+      "subType": "three_digit_conditions",
+      "answerType": "list",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "list_all_valid_numbers"
+      ],
+      "verified": true
+    },
+    "45": {
+      "problemType": "TYPE-09",
+      "subType": "shortest_path_grid",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "fill_ones_first",
+        "add_top_left"
+      ],
+      "verified": true
+    },
+    "46": {
+      "problemType": "TYPE-07",
+      "subType": "reverse_story",
+      "answerType": "count",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "write_on_problem",
+        "draw_reverse"
+      ],
+      "verified": true
+    },
+    "47": {
+      "problemType": "TYPE-07",
+      "subType": "reverse_table",
+      "answerType": "count",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "table_from_end"
+      ],
+      "verified": true
+    },
+    "48": {
+      "problemType": "TYPE-08",
+      "subType": "work_together",
+      "answerType": "time_count",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "same_number_in_times_table",
+        "work_bar"
+      ],
+      "verified": true
+    },
+    "49": {
+      "problemType": "TYPE-08",
+      "subType": "unit_rate_animals",
+      "answerType": "time_count",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "one_unit_first"
+      ],
+      "verified": true
+    },
+    "50": {
+      "problemType": "TYPE-08",
+      "subType": "length_units_picture",
+      "answerType": "multi_length_values",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "write_given_number_on_picture"
+      ],
+      "verified": true
+    },
+    "51": {
+      "problemType": "TYPE-05",
+      "subType": "clock_bell_count",
+      "answerType": "count",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "exclude_start_time"
+      ],
+      "verified": true
+    },
+    "52": {
+      "problemType": "TYPE-10",
+      "subType": "balance_smallest_unit",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "smallest_is_one_or_two"
+      ],
+      "verified": true
+    },
+    "53": {
+      "problemType": "TYPE-10",
+      "subType": "balance_unit_count",
+      "answerType": "count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "think_balance_scale",
+        "one_unit_first"
+      ],
+      "verified": true
+    },
+    "54": {
+      "problemType": "TYPE-05",
+      "subType": "parity_sequence",
+      "answerType": "count",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "odd_one_even_two",
+        "pattern_repeat"
+      ],
+      "verified": true
+    }
+  },
+  "typeMap": {
+    "TYPE-01": {
+      "name": "쌓기나무",
+      "description": "보이는 개수, 숨은 개수, 층, 색, 구멍을 이용한 쌓기나무 문제",
+      "defaultSvgRequired": true
+    },
+    "TYPE-02": {
+      "name": "입체/접기/주사위",
+      "description": "전개도, 종이접기, 구멍, 주사위, 보는 방향",
+      "defaultSvgRequired": true
+    },
+    "TYPE-03": {
+      "name": "도형 구성/분할/개수",
+      "description": "펜토미노, 정사각형 세기, 성냥개비, 지오보드, 선 긋기",
+      "defaultSvgRequired": true
+    },
+    "TYPE-04": {
+      "name": "논리배열/순서",
+      "description": "줄세우기, 원형배열, 논리표, 위치 추론",
+      "defaultSvgRequired": false
+    },
+    "TYPE-05": {
+      "name": "수/규칙/암호",
+      "description": "수 규칙, 연산식, 조건 수, 암호, 수열",
+      "defaultSvgRequired": false
+    },
+    "TYPE-06": {
+      "name": "경우의 수",
+      "description": "색칠, 과녁, 배치 경우의 수",
+      "defaultSvgRequired": true
+    },
+    "TYPE-07": {
+      "name": "거꾸로 해결",
+      "description": "마지막 상태에서 처음 상태를 거꾸로 찾는 문제",
+      "defaultSvgRequired": false
+    },
+    "TYPE-08": {
+      "name": "비례/단위량/길이",
+      "description": "같이 일하기, 단위량, 길이 비교",
+      "defaultSvgRequired": false
+    },
+    "TYPE-09": {
+      "name": "최단거리",
+      "description": "격자 최단 경로 가짓수",
+      "defaultSvgRequired": true
+    },
+    "TYPE-10": {
+      "name": "저울/균형 비교",
+      "description": "양팔저울, 균형, 가장 작은 기준, 단위 개수 환산",
+      "defaultSvgRequired": true
+    }
+  },
+  "docsamRules": {
+    "stacking_write_heights": "쌓기나무는 위에 층수나 개수를 써서 센다.",
+    "hidden_blocks": "보이는 것과 뒤에 가려진 것을 나누어 더한다.",
+    "full_count_minus_current": "가득 찬 전체 개수에서 현재 있는 개수를 뺀다.",
+    "dont_miss_last_blocks": "마지막 구석이나 위쪽 블록을 까먹지 않는다.",
+    "even_layer_same": "짝수층은 두 색의 개수가 같다.",
+    "odd_layer_top_more": "홀수층은 위에 있는 색이 하나 더 많다.",
+    "check_total": "색깔별 개수를 센 뒤 전체 개수와 맞는지 검산한다.",
+    "removed_column": "구멍은 겉 1개가 아니라 아래까지 빠지는 기둥 전체다.",
+    "total_minus_removed": "전체 개수에서 빠진 전체 개수를 뺀다.",
+    "total_minus_visible": "전체 개수에서 보이는 개수를 빼서 숨은 개수를 찾는다.",
+    "viewpoint_turn": "보는 방향이 바뀌면 좌우가 바뀔 수 있다.",
+    "color_position_check": "색깔 위치와 순서가 실제로 보일 수 있는지 확인한다.",
+    "fold_net": "전개도를 실제로 접는 순서로 본다.",
+    "opposite_faces": "마주보는 면을 먼저 확인한다.",
+    "pattern_rotation": "면이 접히면 문양 방향도 함께 돌아간다.",
+    "dice_squashed_box": "주사위가 헷갈리면 찌그러진 상자를 그린다.",
+    "back_face_comes_up": "접으면 뒤에 있던 면이 다음에는 위로 올라온다.",
+    "draw_reverse": "접기/구멍 문제는 반드시 거꾸로 그린다.",
+    "fold_reflection": "접힌 선을 기준으로 반대편에 생긴다.",
+    "rotate_flip": "뒤집거나 돌려서 맞춰 본다.",
+    "place_constrained_piece_first": "특이하거나 위치가 제한된 조각부터 놓는다.",
+    "largest_square_first": "정사각형 분할은 큰 정사각형부터 넣는다.",
+    "not_same_size": "모든 정사각형이 같은 크기일 필요는 없다.",
+    "cross_lines": "선 2개가 만나야 조각 수가 늘어난다.",
+    "extend_line": "선을 살짝 넘어가게 그린다.",
+    "count_by_size": "작은 것부터 큰 것까지 크기별로 센다.",
+    "complete_edges_only": "선이 끊어진 것은 세지 않는다.",
+    "include_tilted": "기울어진 것도 따로 센다.",
+    "rotation_same_shape": "돌리거나 뒤집어 같은 모양은 한 가지다.",
+    "count_by_direction": "방향별로 나누어 센다.",
+    "list_from_small": "가능한 수를 작은 것부터 정리한다.",
+    "remove_duplicates": "같은 값은 한 번만 센다.",
+    "fix_key_place": "자리 조건이 강한 자리부터 고정한다.",
+    "reduce_candidates": "후보를 하나씩 줄인다.",
+    "swap_two_only": "숫자 2개만 바꾸고 새 숫자는 만들지 않는다.",
+    "blank_can_join_digits": "기호를 안 넣으면 숫자를 붙여 큰 수로 볼 수 있다.",
+    "difference_half": "전체 합과 목표값 차이의 절반을 찾는다.",
+    "list_candidates_each_box": "각 빈칸 후보를 따로 쓴다.",
+    "move_not_add": "성냥개비는 새로 추가하지 않고 옮긴다.",
+    "same_size_shapes": "같은 크기 도형 조건을 지킨다.",
+    "use_all_numbers": "주어진 숫자를 모두 사용한다.",
+    "fit_operation": "연산 결과가 맞도록 위치를 맞춘다.",
+    "subtract_overlap": "공통 부분을 먼저 빼고 생각한다.",
+    "avoid_double_count": "겹친 부분을 두 번 더하지 않는다.",
+    "row_column_rules": "가로 규칙과 세로 규칙을 따로 확인한다.",
+    "case_by_total": "총점별 경우를 나눈다.",
+    "same_total_once": "순서만 다른 같은 총점은 한 번만 센다.",
+    "find_best_hint_first": "가장 힌트가 되는 문자나 식부터 찾는다.",
+    "read_mirror_digit": "거울에 비친 디지털 숫자는 원래 방향으로 돌려 읽는다.",
+    "start_at_10_to_avoid_negative": "계단 문제는 0보다 작아지지 않게 10번째 계단에서 시작한다.",
+    "tens_difference_one": "가장 작은 뺄셈은 십의 자리 차이가 1인 수를 찾는다.",
+    "borrowing_check": "받아내림이 생기는지 확인한다.",
+    "draw_circles_or_number_line": "줄세우기는 동그라미형인지 수직선형인지 구분한다.",
+    "front_case_back_case": "최대·최소는 앞에 있는 경우와 뒤에 있는 경우를 모두 그린다.",
+    "fix_anchor_person": "원형배열은 기준 사람을 먼저 고정한다.",
+    "draw_circle": "원형 문제는 동그라미를 반드시 그린다.",
+    "rotate_paper": "오른쪽/왼쪽이 헷갈리면 시험지를 돌린다.",
+    "dont_fill_all": "논리표는 모든 칸을 다 채우지 않아도 된다.",
+    "two_circles_per_row": "한 줄에 필요한 동그라미 개수를 확인한다.",
+    "try_add_multiply_digit_sum": "암호 문제는 더하기, 곱하기, 숫자끼리 더하기부터 해 본다.",
+    "split_color_shape_inner_direction": "도형 암호는 색, 겉모양, 안쪽 모양, 방향을 나누어 본다.",
+    "fix_one_circle_first": "경우의 수는 먼저 하나를 어디에 둘지 고정한다.",
+    "rotation_flip_same": "돌리거나 뒤집어 같은 것은 한 가지다.",
+    "list_all_valid_numbers": "조건에 맞는 수를 모두 적고 빠진 것이 없는지 확인한다.",
+    "fill_ones_first": "최단거리 격자는 가로와 세로 첫 줄에 1을 쓴다.",
+    "add_top_left": "만나는 칸은 위쪽 수와 왼쪽 수를 더한다.",
+    "write_on_problem": "거꾸로 해결은 문제 위에 직접 쓰거나 그림으로 푼다.",
+    "table_from_end": "표를 그리고 뒤에서부터 반대로 계산한다.",
+    "same_number_in_times_table": "최소공배수 대신 구구단에서 둘 다 나오는 수를 찾는다.",
+    "work_bar": "전체 일을 막대그림으로 나눈다.",
+    "one_unit_first": "1개, 1마리, 1일 기준으로 먼저 바꾼다.",
+    "write_given_number_on_picture": "문제에서 준 수는 그림에 바로 적는다.",
+    "exclude_start_time": "시작 시각에 종이 울렸는지 반드시 확인한다.",
+    "smallest_is_one_or_two": "가장 작은 것을 1로 두되 나누어떨어지지 않으면 2로 둔다.",
+    "think_balance_scale": "길이/단위 비교도 양팔저울처럼 생각한다.",
+    "odd_one_even_two": "홀수는 1, 짝수는 2로 바꾸어 본다.",
+    "pattern_repeat": "홀짝 반복 패턴을 찾아 개수를 센다.",
+    "write_heights_on_top_view": "위에서 본 칸마다 가능한 높이를 써서 최소 쌓기나무 수를 찾는다.",
+    "minimum_blocks": "조건을 만족하는 데 꼭 필요한 최소 개수만 놓는다.",
+    "overlap_layers": "겹친 부분은 몇 장이 포개졌는지 층수처럼 센다.",
+    "overlap_sum_variant": "겹친 영역을 한 장, 두 장, 세 장으로 나누어 합을 맞춘다."
+  },
+  "difficultyPolicy": {
+    "default": {
+      "easy": 70,
+      "same": 20,
+      "hard": 10
+    },
+    "premier_focus_note": "프리미어 대비 단계에서는 20% 낮춘 문제가 가장 학습 효율이 높고, 높은 난이도는 20%를 넘기지 않는다."
+  },
+  "answerTypeGuide": {
+    "count": "개수/가지 수/횟수처럼 단위가 붙는 수량형 답",
+    "number": "순수 숫자 또는 계산 결과",
+    "color_count_pair": "색깔별 개수 쌍",
+    "option_set": "여러 선택지 번호",
+    "drawing_layout": "가능한 배치 그림",
+    "drawing_instruction": "선을 긋거나 그림으로 답해야 하는 유형",
+    "drawing_target": "도형을 완성하거나 성냥개비를 옮겨 만드는 답",
+    "ordered_slots": "빈칸에 순서대로 들어가는 수",
+    "equation": "완성된 식",
+    "symbol_values": "문자/기호별 값",
+    "min_max_values": "최댓값과 최솟값",
+    "name": "사람 이름",
+    "circular_position_map": "원형 자리 배치 결과",
+    "ordinal": "몇 번째",
+    "matching_pair": "두 대상의 매칭 결과",
+    "shape_description": "색/모양/방향을 포함한 도형 설명",
+    "list": "조건을 만족하는 답 목록",
+    "time_count": "며칠/몇 번 등 시간 기반 수량",
+    "multi_length_values": "여러 물건의 길이값"
+  },
+  "problems": [
+    {
+      "typeId": "01",
+      "answer": "11개",
+      "coreConcept": "앞과 뒤에서 본 모양으로 전체 쌓기나무 개수 구하기",
+      "teacherShortcut": "위에서 본 칸마다 개수를 써라. 앞에서 보이는 8개에 뒤에 가려진 3개를 더한다.",
+      "docssamPhrase": "뒤에서 볼 때 오른쪽과 왼쪽이 어떻게 보이는지 확인한다.",
+      "mentalHack": "앞모양으로 기본 개수를 잡고, 뒤모양에서 안 보이는 것만 추가한다.",
+      "studentMistake": "앞뒤가 바뀔 때 좌우가 바뀌는 것을 놓치거나 뒤에 가려진 블록을 빠뜨림",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "앞/뒤 시점 구조는 유지하고 층수와 숨은 블록 수만 바꾼다.",
+      "mustPreserve": [
+        "앞에서 본 모양",
+        "뒤에서 본 모양",
+        "숨은 블록 추론 구조"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-01",
+      "subType": "stacking_front_back_count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "stacking_write_heights",
+        "hidden_blocks"
+      ],
+      "answerType": "count",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "02",
+      "answer": "16개",
+      "coreConcept": "상자를 가득 채우는 데 필요한 쌓기나무 개수 구하기",
+      "teacherShortcut": "1층에 9개, 3층이면 전체 27개. 지금 있는 11개를 빼면 16개가 더 필요하다.",
+      "docssamPhrase": "마지막에 두 개를 까먹는다.",
+      "mentalHack": "빈칸을 눈으로 세지 말고, 가득 찬 전체 개수에서 현재 있는 개수를 뺀다.",
+      "studentMistake": "구석이나 윗부분의 빈칸을 빠뜨림",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "전체 가득 찬 개수 - 현재 있는 개수 구조 유지",
+      "mustPreserve": [
+        "상자 구조",
+        "층 구조",
+        "현재 있는 쌓기나무"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-01",
+      "subType": "stacking_fill_cube",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "full_count_minus_current",
+        "dont_miss_last_blocks"
+      ],
+      "answerType": "count",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "03",
+      "answer": "흰색 14개, 검은색 15개",
+      "coreConcept": "흑백이 교대로 쌓인 쌓기나무의 색깔별 개수 세기",
+      "teacherShortcut": "짝수층은 두 색이 같고, 홀수층은 위에 있는 색이 하나 더 많다.",
+      "docssamPhrase": "마지막에 흰색과 검은색을 더해서 전체 개수와 맞는지 확인한다.",
+      "mentalHack": "색깔별로 센 뒤 반드시 전체 개수로 검산한다.",
+      "studentMistake": "색만 세고 전체 블록 수와 맞는지 확인하지 않음",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "흑백 교대 규칙은 유지하고 층수/맨 위 색만 변경",
+      "mustPreserve": [
+        "흑백 교대",
+        "층별 색 규칙",
+        "색깔별 개수 세기"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-01",
+      "subType": "stacking_checker_color",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "even_layer_same",
+        "odd_layer_top_more",
+        "check_total"
+      ],
+      "answerType": "color_count_pair",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "04",
+      "answer": "79개",
+      "coreConcept": "구멍이 뚫린 뒤 남은 쌓기나무 개수 구하기",
+      "teacherShortcut": "원래 100개에서 아래까지 뻥 뚫린 21개를 뺀다.",
+      "docssamPhrase": "겉에 한 개만 빠진 게 아니라 아래까지 구멍이 뚫린 것이다.",
+      "mentalHack": "검은 부분 하나만 보지 말고, 아래까지 빠지는 기둥 전체를 본다.",
+      "studentMistake": "겉에 보이는 검은 블록만 빠졌다고 착각함",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "전체 개수 - 구멍 때문에 빠진 기둥 전체 개수 구조 유지",
+      "mustPreserve": [
+        "전체 덩어리",
+        "구멍 방향",
+        "빠진 기둥"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-01",
+      "subType": "stacking_hole_removed",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "removed_column",
+        "total_minus_removed"
+      ],
+      "answerType": "count",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "05",
+      "answer": "5개",
+      "coreConcept": "전체 개수에서 보이는 개수를 빼서 안 보이는 쌓기나무 찾기",
+      "teacherShortcut": "전체 16개에서 눈에 보이는 11개를 뺀다.",
+      "docssamPhrase": "문제에 16개가 있으니까 16개를 기준으로 본다.",
+      "mentalHack": "전체 개수가 주어진 경우에는 숨은 개수 = 전체 - 보이는 개수.",
+      "studentMistake": "전체 개수 조건을 놓치고 보이는 것만 셈",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "전체 개수 조건과 보이는 개수 차이 구조 유지",
+      "mustPreserve": [
+        "전체 개수 조건",
+        "보이는 쌓기나무",
+        "숨은 쌓기나무"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-01",
+      "subType": "stacking_hidden_count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "total_minus_visible"
+      ],
+      "answerType": "count",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "06",
+      "answer": "4번, 6번",
+      "coreConcept": "여러 방향에서 볼 때 나올 수 없는 모습 고르기",
+      "teacherShortcut": "시선을 돌려 보고 색깔 위치와 보이는 블록 순서가 맞는지 확인한다.",
+      "docssamPhrase": "뒤돌아보면 내가 보던 오른쪽이 왼쪽이 될 수 있다.",
+      "mentalHack": "보기 하나씩 실제로 어느 방향에서 볼 수 있는지 화살표로 확인한다.",
+      "studentMistake": "방향이 바뀌는데 색깔의 좌우 위치를 그대로 둠",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "입체 블록과 방향별 보기 비교 구조 유지",
+      "mustPreserve": [
+        "입체 블록",
+        "색깔 위치",
+        "보기 선택지",
+        "방향 판단"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-02",
+      "subType": "solid_view_impossible",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "viewpoint_turn",
+        "color_position_check"
+      ],
+      "answerType": "option_set",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "07",
+      "answer": "2번, 4번, 5번",
+      "coreConcept": "전개도를 접어 만들 수 있는 정육면체 고르기",
+      "teacherShortcut": "확실히 안 되는 보기부터 지우고, 문양이 옆으로 갈 때 방향이 어떻게 바뀌는지 본다.",
+      "docssamPhrase": "더하기가 몇 개 있는지, X가 마주보는지 확인한다.",
+      "mentalHack": "면이 옆으로 이동하면 문양 방향도 같이 돌아간다.",
+      "studentMistake": "접었을 때 문양 방향이 90도 돌아가는 것을 놓침",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "전개도-완성 정육면체 대응 구조 유지",
+      "mustPreserve": [
+        "전개도",
+        "문양",
+        "마주보는 면",
+        "보기 선택지"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-02",
+      "subType": "cube_net_matching",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "fold_net",
+        "opposite_faces",
+        "pattern_rotation"
+      ],
+      "answerType": "option_set",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "08",
+      "answer": "5",
+      "coreConcept": "주사위를 굴렸을 때 바닥에 닿는 면의 수 구하기",
+      "teacherShortcut": "모르면 찌그러진 상자를 꾹 밟은 것처럼 그려서 면을 확인한다.",
+      "docssamPhrase": "이렇게 하면 세 개의 면만 보이던 것이 다섯 개의 면처럼 보인다.",
+      "mentalHack": "전개도/찌그러진 주사위로 마주보는 면을 먼저 정리하고 굴린다.",
+      "studentMistake": "머릿속으로만 굴리다가 마주보는 면과 바닥면을 놓침",
+      "renderStrategy": "transform_original_svg_with_teaching_sketch",
+      "variationRule": "주사위 전개도와 굴리는 방향 구조 유지",
+      "mustPreserve": [
+        "주사위",
+        "전개도 또는 면 배치",
+        "굴림 화살표",
+        "바닥면 질문"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-02",
+      "subType": "dice_roll",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "dice_squashed_box",
+        "opposite_faces"
+      ],
+      "answerType": "number",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "09",
+      "answer": "6개",
+      "coreConcept": "위, 앞, 오른쪽 옆에서 본 모양으로 최소 쌓기나무 개수 구하기",
+      "teacherShortcut": "위에서 본 칸에 앞과 옆에서 본 높이를 숫자로 써 넣는다.",
+      "docssamPhrase": "1이 들어간 칸에 먼저 채워라.",
+      "mentalHack": "위에서 본 칸마다 가능한 높이를 적고, 1층 조건을 먼저 고정한다.",
+      "studentMistake": "1층이어야 하는 줄에 2층 이상을 올림",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "위/앞/오른쪽 옆 보기로 최소 개수 찾는 구조 유지",
+      "mustPreserve": [
+        "위에서 본 모양",
+        "앞에서 본 모양",
+        "오른쪽 옆에서 본 모양",
+        "높이 제한"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-01",
+      "subType": "stacking_three_views_minimum",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "write_heights_on_top_view",
+        "minimum_blocks"
+      ],
+      "answerType": "count",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "10",
+      "answer": "4",
+      "coreConcept": "색종이가 겹친 영역의 장수 또는 겹친 영역의 합 구하기",
+      "teacherShortcut": "하나만 겹친 곳, 두 장 겹친 곳, 세 장 겹친 곳을 차례로 찾는다.",
+      "docssamPhrase": "어떤 유형은 겹친 영역끼리 더한 수를 묻기도 한다.",
+      "mentalHack": "겹친 단계가 1장→2장→3장→4장으로 늘어나는 흐름을 따라간다.",
+      "studentMistake": "색종이 겹침 구조를 보지 않고 숫자만 봄",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "겹친 장수 구하기 또는 겹친 영역의 합 구하기로 변형 가능",
+      "mustPreserve": [
+        "색종이 여러 장",
+        "겹친 영역",
+        "장수 세기 구조"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-05",
+      "subType": "overlap_paper_count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "overlap_layers",
+        "overlap_sum_variant"
+      ],
+      "answerType": "number",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "11",
+      "answer": "22",
+      "coreConcept": "숫자 종이를 두 번 접었을 때 위로 오는 수의 합 구하기",
+      "teacherShortcut": "뒤에 있는 면이 다음에는 위로 올라온다.",
+      "docssamPhrase": "뒷면에 있는 것이 위로 다시 올라오는 거야.",
+      "mentalHack": "숫자가 뒤집히는 게 아니라 칸 전체가 접혀 올라온다고 생각한다.",
+      "studentMistake": "숫자 모양이 뒤집힌다고 생각하고 칸의 이동을 놓침",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "접는 방향 2회와 위에 오는 수 합 구조 유지",
+      "mustPreserve": [
+        "숫자 칸 종이",
+        "접는 방향",
+        "위로 올라오는 칸"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-02",
+      "subType": "paper_fold_top_numbers",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "back_face_comes_up"
+      ],
+      "answerType": "number",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "12",
+      "answer": "8개",
+      "coreConcept": "접은 종이에 구멍을 뚫고 펼쳤을 때 구멍 개수 구하기",
+      "teacherShortcut": "반드시 거꾸로 그리기.",
+      "docssamPhrase": "구멍 뚫기는 거꾸로 해결하는 거야.",
+      "mentalHack": "접힌 선을 기준으로 구멍이 반대편에 생긴다고 보고 거꾸로 표시한다.",
+      "studentMistake": "구멍을 같은 방향으로 그대로 복사함",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "접기 횟수와 구멍 위치 반사 구조 유지",
+      "mustPreserve": [
+        "접힌 종이",
+        "구멍 위치",
+        "펼친 결과"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-02",
+      "subType": "paper_hole_fold",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "draw_reverse",
+        "fold_reflection"
+      ],
+      "answerType": "count",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "13",
+      "answer": "다양한 배치 가능",
+      "coreConcept": "펜토미노 조각으로 네모 칸 빈틈없이 채우기",
+      "teacherShortcut": "특이한 조각부터 구석에 넣고, 뒤집거나 돌려 본다.",
+      "docssamPhrase": "뒤집거나 돌리거나 이러면 된다.",
+      "mentalHack": "ㄷ자나 큰 조각처럼 위치가 제한되는 조각부터 넣는다.",
+      "studentMistake": "처음 놓은 방향만 고집함",
+      "renderStrategy": "use_original_structure_preferred",
+      "variationRule": "조각 종류와 보드 크기 구조 유지",
+      "mustPreserve": [
+        "펜토미노 조각",
+        "직사각형 보드",
+        "빈틈없이 채우기"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-03",
+      "subType": "pentomino_fill",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "rotate_flip",
+        "place_constrained_piece_first"
+      ],
+      "answerType": "drawing_layout",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "14",
+      "answer": "6개",
+      "coreConcept": "도형을 가장 적은 개수의 정사각형으로 나누기",
+      "teacherShortcut": "같은 크기 정사각형이 아니다. 큰 정사각형부터 넣는다.",
+      "docssamPhrase": "개수가 적어야 되잖아. 같은 정사각형이 아니잖아.",
+      "mentalHack": "가장 큰 정사각형을 먼저 찾고 남은 곳을 작은 정사각형으로 채운다.",
+      "studentMistake": "모든 정사각형을 같은 크기로 나누려 함",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "최소 개수와 다양한 크기의 정사각형 분할 구조 유지",
+      "mustPreserve": [
+        "복합 도형",
+        "정사각형 분할",
+        "최소 개수 조건"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-03",
+      "subType": "square_partition_min",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "largest_square_first",
+        "not_same_size"
+      ],
+      "answerType": "count",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "15",
+      "answer": "선 2개로 6조각",
+      "coreConcept": "선 2개로 조각 수를 최대화하기",
+      "teacherShortcut": "두 번째 선을 살짝 넘어가게 그어 6조각을 만든다.",
+      "docssamPhrase": "먼저 한 번 자르고, 얘를 살짝 넘어가게 그려.",
+      "mentalHack": "두 선이 서로 만나고 여러 부분을 지나가게 그려야 조각 수가 늘어난다.",
+      "studentMistake": "두 선이 만나지 않게 그려 조각 수가 부족함",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "선 2개로 6조각 만드는 구조 유지",
+      "mustPreserve": [
+        "U자형 도형",
+        "선 2개",
+        "6조각 조건"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-03",
+      "subType": "line_partition_six",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "cross_lines",
+        "extend_line"
+      ],
+      "answerType": "drawing_instruction",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "16",
+      "answer": "10개",
+      "coreConcept": "크고 작은 정사각형 모두 세기",
+      "teacherShortcut": "한 칸짜리부터 시작해 1×1, 2×2처럼 크기별로 나누어 센다.",
+      "docssamPhrase": "한 칸짜리부터 세어라.",
+      "mentalHack": "크기별 표를 만들고, 완성된 네모만 센다.",
+      "studentMistake": "선이 끊어진 것도 정사각형으로 셈",
+      "renderStrategy": "use_original_structure_preferred",
+      "variationRule": "선 구조가 바뀌면 답이 바뀌므로 원본 구조 우선",
+      "mustPreserve": [
+        "격자/선 구조",
+        "끊어진 선",
+        "크기별 정사각형 세기"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-03",
+      "subType": "count_squares_grid",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "count_by_size",
+        "complete_edges_only"
+      ],
+      "answerType": "count",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "17",
+      "answer": "10개",
+      "coreConcept": "대각선 또는 비스듬한 선이 있는 도형에서 정사각형 세기",
+      "teacherShortcut": "작은 것부터 큰 것까지 크기별로 확인한다.",
+      "docssamPhrase": "기준 모양을 잡고 크기를 키워가며 세어라.",
+      "mentalHack": "비스듬한 정사각형도 빠뜨리지 않도록 따로 세어 더한다.",
+      "studentMistake": "비스듬한 정사각형을 빠뜨림",
+      "renderStrategy": "use_original_structure_preferred",
+      "variationRule": "대각선/비스듬한 선 구조 유지",
+      "mustPreserve": [
+        "대각선",
+        "비스듬한 정사각형",
+        "크기별 분류"
+      ],
+      "scriptCheck": true,
+      "problemType": "TYPE-03",
+      "subType": "count_tilted_squares",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "count_by_size",
+        "include_tilted"
+      ],
+      "answerType": "count",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "18",
+      "answer": "8가지",
+      "coreConcept": "쌓기나무 4개로 만들 수 있는 서로 다른 모양 가짓수",
+      "teacherShortcut": "돌리거나 뒤집어서 같은 모양은 하나로 본다.",
+      "docssamPhrase": "같은 모양인지 돌려 보며 확인해.",
+      "mentalHack": "기준 모양을 고정하고 마지막 블록 위치를 바꿔 본다.",
+      "studentMistake": "회전하면 같은 모양을 다른 것으로 셈",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "블록 4개, 면끼리 붙임, 회전 같은 모양 제외 구조 유지",
+      "mustPreserve": [
+        "쌓기나무 4개",
+        "서로 다른 입체 모양",
+        "회전 중복 제외"
+      ],
+      "scriptCheck": false,
+      "problemType": "TYPE-03",
+      "subType": "tetra_cube_cases",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "rotation_same_shape"
+      ],
+      "answerType": "count",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "19",
+      "answer": "12개",
+      "coreConcept": "점판에서 만들 수 있는 정삼각형 모두 세기",
+      "teacherShortcut": "기본 방향 세모를 먼저 찾고, 기울어진 세모를 따로 확인한다.",
+      "docssamPhrase": "기울어진 것도 놓치지 마.",
+      "mentalHack": "8개 + 2개 + 2개처럼 방향별로 나누어 센다.",
+      "studentMistake": "기울어진 정삼각형을 빠뜨림",
+      "renderStrategy": "use_original_structure_preferred",
+      "variationRule": "점 배열과 정삼각형 조건 유지",
+      "mustPreserve": [
+        "점판",
+        "정삼각형",
+        "기울어진 세모"
+      ],
+      "scriptCheck": false,
+      "problemType": "TYPE-03",
+      "subType": "geoboard_triangles",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "count_by_direction",
+        "include_tilted"
+      ],
+      "answerType": "count",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "20",
+      "answer": "15가지",
+      "coreConcept": "서로 다른 선분을 조합해 만들 수 있는 길이 가짓수 구하기",
+      "teacherShortcut": "나올 수 있는 길이를 작은 수부터 정리하고 중복을 지운다.",
+      "docssamPhrase": "같은 길이는 한 번만 세어라.",
+      "mentalHack": "1부터 15까지 가능한 길이를 체크하며 중복 없이 정리한다.",
+      "studentMistake": "같은 길이를 다른 방법으로 만들었다고 여러 번 셈",
+      "renderStrategy": "text_with_diagram_or_simple_svg",
+      "variationRule": "선분 조합으로 가능한 길이 중복 제외 구조 유지",
+      "mustPreserve": [
+        "선분 길이",
+        "조합",
+        "중복 제외"
+      ],
+      "scriptCheck": false,
+      "problemType": "TYPE-05",
+      "subType": "segment_sum_lengths",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "list_from_small",
+        "remove_duplicates"
+      ],
+      "answerType": "count",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "21",
+      "answer": "3845",
+      "coreConcept": "자리 조건을 만족하는 네 자리 수 찾기",
+      "teacherShortcut": "천의 자리는 3으로 고정하고, 백의 자리가 십의 자리의 2배인지 먼저 본다.",
+      "docssamPhrase": "자리 조건을 하나씩 고정해서 후보를 줄인다.",
+      "mentalHack": "3700보다 큰 수 조건을 먼저 잡고, 남은 자리 조건으로 후보를 줄인다.",
+      "studentMistake": "3700보다 큰 조건만 보고 나머지 자리 조건을 놓침",
+      "renderStrategy": "text_with_place_value_box",
+      "variationRule": "자리값 조건 구조 유지",
+      "mustPreserve": [
+        "네 자리 수",
+        "자리 조건",
+        "크기 조건"
+      ],
+      "scriptCheck": false,
+      "problemType": "TYPE-05",
+      "subType": "place_value_conditions",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "fix_key_place",
+        "reduce_candidates"
+      ],
+      "answerType": "number",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "22",
+      "answer": "38-16=22",
+      "coreConcept": "숫자 2개의 위치를 바꿔 올바른 식 만들기",
+      "teacherShortcut": "새 식을 만들지 말고, 기존 숫자 중 딱 2개만 바꾼다.",
+      "docssamPhrase": "숫자 위치만 바꿔서 식이 맞게 만든다.",
+      "mentalHack": "답 쪽이나 십의 자리처럼 영향이 큰 곳부터 의심한다.",
+      "studentMistake": "숫자를 새로 만들거나 여러 개를 바꿈",
+      "renderStrategy": "text_equation_with_swap_marks",
+      "variationRule": "숫자 2개 위치 바꾸기 구조 유지",
+      "mustPreserve": [
+        "두 자리 수 식",
+        "숫자 2개 교환",
+        "등식 맞추기"
+      ],
+      "scriptCheck": false,
+      "problemType": "TYPE-05",
+      "subType": "swap_digits_equation",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "swap_two_only"
+      ],
+      "answerType": "equation",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "23",
+      "answer": "2개",
+      "coreConcept": "숫자 사이에 +, -를 넣거나 비워 두어 등식 만들기",
+      "teacherShortcut": "모든 자리 사이에 기호를 넣을 필요는 없다. 숫자를 붙여서 큰 수로 볼 수 있다.",
+      "docssamPhrase": "수 사이에 항상 + 또는 -가 들어갈 필요는 없다.",
+      "mentalHack": "기호 넣기와 숫자 붙이기를 모두 경우로 본다.",
+      "studentMistake": "모든 빈칸에 반드시 + 또는 -를 넣으려 함",
+      "renderStrategy": "text_equation_with_blank_operator_slots",
+      "variationRule": "숫자 순서와 목표값 구조 유지",
+      "mustPreserve": [
+        "숫자 순서",
+        "기호 선택",
+        "비워 두기 가능"
+      ],
+      "scriptCheck": false,
+      "problemType": "TYPE-05",
+      "subType": "operator_insert_or_blank",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "blank_can_join_digits"
+      ],
+      "answerType": "count",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "24",
+      "answer": "8",
+      "coreConcept": "+ 하나를 -로 바꾸어 목표값 만들기",
+      "teacherShortcut": "전체 합과 목표값의 차이를 구하고, 그 차이의 절반을 찾는다.",
+      "docssamPhrase": "답하고의 차이가 16이니까 절반인 8 빼기.",
+      "mentalHack": "+를 -로 바꾸면 그 수만큼 한 번 더 빠져 차이가 두 배 생긴다.",
+      "studentMistake": "무작정 하나씩 바꿔 보며 시간 낭비함",
+      "renderStrategy": "text_equation_with_one_sign_change",
+      "variationRule": "연속 덧셈식과 하나의 부호 변경 구조 유지",
+      "mustPreserve": [
+        "전체 합",
+        "목표값",
+        "차이의 절반"
+      ],
+      "scriptCheck": false,
+      "problemType": "TYPE-05",
+      "subType": "change_plus_to_minus",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "difference_half"
+      ],
+      "answerType": "number",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "25",
+      "answer": "21",
+      "coreConcept": "두 조건을 만족하는 숫자들의 합 구하기",
+      "teacherShortcut": "각 빈칸에 들어갈 수 있는 숫자를 따로 쓰고, 조건에 맞는 숫자만 더한다.",
+      "docssamPhrase": "각 빈칸에 들어갈 수 있는 숫자를 먼저 모두 써라.",
+      "mentalHack": "왼쪽 조건과 오른쪽 조건을 따로 정리한 뒤 겹치는 가능성을 확인한다.",
+      "studentMistake": "한쪽 조건만 보고 숫자를 더함",
+      "renderStrategy": "text_with_two_condition_boxes",
+      "variationRule": "두 조건 비교 구조 유지",
+      "mustPreserve": [
+        "두 조건",
+        "가능한 숫자 후보",
+        "합 구하기"
+      ],
+      "scriptCheck": false,
+      "problemType": "TYPE-05",
+      "subType": "two_condition_digits",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "list_candidates_each_box"
+      ],
+      "answerType": "number",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "26",
+      "answer": "같은 크기의 정사각형 3개",
+      "coreConcept": "성냥개비 3개를 옮겨 목표 도형 만들기",
+      "teacherShortcut": "없앨 성냥개비를 먼저 찾고 빈 곳을 채운다.",
+      "docssamPhrase": "새로 만드는 게 아니라 옮기는 것이다.",
+      "mentalHack": "불필요한 선을 빼서 필요한 빈자리에 옮긴다.",
+      "studentMistake": "성냥개비를 추가하거나 크기가 다른 정사각형을 만듦",
+      "renderStrategy": "use_original_structure_preferred",
+      "variationRule": "성냥개비 개수와 이동 개수 유지",
+      "mustPreserve": [
+        "성냥개비 구조",
+        "3개 이동",
+        "같은 크기의 정사각형 3개"
+      ],
+      "scriptCheck": false,
+      "problemType": "TYPE-03",
+      "subType": "matchstick_move",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "move_not_add",
+        "same_size_shapes"
+      ],
+      "answerType": "drawing_target",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "27",
+      "answer": "6, 3, 8",
+      "coreConcept": "벌집 수 배열에서 연산식 완성하기",
+      "teacherShortcut": "큰 수를 먼저 만들고, 남은 수로 나누기나 빼기를 맞춘다.",
+      "docssamPhrase": "벌집 안 숫자를 모두 써야 한다.",
+      "mentalHack": "사용할 수의 위치와 연산 결과를 동시에 맞춘다.",
+      "studentMistake": "벌집 안 숫자를 모두 써야 한다는 조건을 놓침",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "벌집 배열과 연산 완성 구조 유지",
+      "mustPreserve": [
+        "벌집 배열",
+        "사용할 숫자",
+        "연산식"
+      ],
+      "scriptCheck": false,
+      "problemType": "TYPE-05",
+      "subType": "honeycomb_operation",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "use_all_numbers",
+        "fit_operation"
+      ],
+      "answerType": "ordered_slots",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "28",
+      "answer": "85",
+      "coreConcept": "겹친 원 안 네 수의 합을 맞추기",
+      "teacherShortcut": "전체 목표 97에서 이미 확정된 겹친 수 12를 뺀다.",
+      "docssamPhrase": "97 - 12 = 85",
+      "mentalHack": "공통으로 들어가는 수를 먼저 빼고 남은 합을 맞춘다.",
+      "studentMistake": "겹친 부분을 중복해서 더함",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "겹친 영역과 합 같게 만들기 구조 유지",
+      "mustPreserve": [
+        "겹친 원",
+        "공통 영역",
+        "합 조건"
+      ],
+      "scriptCheck": false,
+      "problemType": "TYPE-05",
+      "subType": "venn_sum_equal",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "subtract_overlap",
+        "avoid_double_count"
+      ],
+      "answerType": "number",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "29",
+      "answer": "19, 23, 30",
+      "coreConcept": "수 배열표의 가로·세로 증가 규칙 찾기",
+      "teacherShortcut": "가로는 +2, 세로는 일정한 차이로 커지는 규칙을 먼저 표시한다.",
+      "docssamPhrase": "가로와 세로 규칙을 따로 확인한다.",
+      "mentalHack": "빈칸을 채우기 전에 행 규칙과 열 규칙을 각각 표시한다.",
+      "studentMistake": "행·열 규칙을 따로 확인하지 않음",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "가로/세로 증가 규칙 구조 유지",
+      "mustPreserve": [
+        "수 배열표",
+        "가로 규칙",
+        "세로 규칙"
+      ],
+      "scriptCheck": false,
+      "problemType": "TYPE-05",
+      "subType": "number_grid_pattern",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "row_column_rules"
+      ],
+      "answerType": "ordered_slots",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "30",
+      "answer": "7가지",
+      "coreConcept": "과녁에 화살 3번을 쏘아 만들 수 있는 서로 다른 점수 세기",
+      "teacherShortcut": "3번 모두 맞힌 경우를 경우별로 나누고 같은 총점은 한 번만 센다.",
+      "docssamPhrase": "같은 총점은 순서가 달라도 한 번만 센다.",
+      "mentalHack": "3+3, 3+2+1처럼 점수 조합으로 정리한다.",
+      "studentMistake": "같은 총점을 다른 순서로 맞힌 것을 여러 가지로 셈",
+      "renderStrategy": "transform_original_svg",
+      "variationRule": "과녁 점수와 화살 횟수 구조 유지",
+      "mustPreserve": [
+        "과녁",
+        "점수 영역",
+        "화살 3번",
+        "서로 다른 총점"
+      ],
+      "scriptCheck": false,
+      "problemType": "TYPE-06",
+      "subType": "target_score_cases",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "case_by_total",
+        "same_total_once"
+      ],
+      "answerType": "count",
+      "needsReview": false,
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "31",
+      "answerType": "symbol_values",
+      "answer": {
+        "A": 4,
+        "B": 2,
+        "C": 3,
+        "D": 1,
+        "E": 6,
+        "F": 8,
+        "G": 0
+      },
+      "coreConcept": "문자마다 0~8 중 하나의 수를 넣어 식을 만족시키기",
+      "teacherShortcut": "가장 힌트가 되는 문자를 먼저 찾는다. 선생님은 B가 먼저 보인다.",
+      "docssamPhrase": "힌트가 많이 되는 문자부터 잡아라.",
+      "mentalHack": "여러 식에 자주 나오거나 곱셈/나눗셈에 걸린 문자를 먼저 본다.",
+      "studentMistake": "A부터 순서대로 찾으려다가 시간이 오래 걸림",
+      "renderStrategy": "text_equation_with_symbol_boxes",
+      "variationRule": "문자 식 구조와 0~8 숫자 배정 구조 유지",
+      "mustPreserve": [
+        "문자 식",
+        "0~8 숫자 카드",
+        "문자별 값 찾기"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-05",
+      "subType": "symbol_value_equations",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "find_best_hint_first"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "32",
+      "answerType": "number",
+      "answer": "80",
+      "coreConcept": "거울에 비친 디지털 숫자를 원래 수로 읽고 합 구하기",
+      "teacherShortcut": "거울에 비친 수를 원래 방향으로 돌려 읽는다.",
+      "docssamPhrase": "디지털 숫자는 거울 방향을 바꾸어 읽는다.",
+      "mentalHack": "빈칸 두 개의 원래 수를 각각 읽고 더한다.",
+      "studentMistake": "거울에 비친 디지털 숫자를 그대로 읽음",
+      "renderStrategy": "digital_number_svg",
+      "variationRule": "디지털 숫자와 거울 반전 구조 유지",
+      "mustPreserve": [
+        "디지털 숫자",
+        "거울 반전",
+        "두 빈칸의 합"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-05",
+      "subType": "mirror_digital_number",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "read_mirror_digit"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "33",
+      "answerType": "count",
+      "answer": "3계단",
+      "coreConcept": "가위바위보 승패에 따라 계단 위치 차이 구하기",
+      "teacherShortcut": "0보다 작은 수가 나올 수 있으니 처음에 둘 다 10번째 계단에 있다고 생각한다.",
+      "docssamPhrase": "처음 위치를 넉넉하게 잡고 위아래로 움직인다.",
+      "mentalHack": "10번째 계단에서 시작해 이긴 횟수×2, 진 횟수×1을 계산한다.",
+      "studentMistake": "내려가는 경우를 빼다가 음수가 나와 헷갈림",
+      "renderStrategy": "text_with_step_diagram",
+      "variationRule": "승패별 이동 규칙과 비교 구조 유지",
+      "mustPreserve": [
+        "이긴 사람 +2",
+        "진 사람 -1",
+        "두 사람 위치 차이"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-04",
+      "subType": "rps_stair_position",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "start_at_10_to_avoid_negative"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "34",
+      "answerType": "min_max_values",
+      "answer": {
+        "max": 41,
+        "min": 6
+      },
+      "coreConcept": "숫자 카드로 두 자리 수끼리 뺄셈식을 만들어 최댓값과 최솟값 구하기",
+      "teacherShortcut": "가장 작은 뺄셈은 십의 자리 차이가 1이 되는 수를 찾는다. 여러 개면 가운데에 가까운 수를 쓰고 받아내림을 생각한다.",
+      "docssamPhrase": "가장 작은 차이는 십의 자리부터 1 차이로 만든다.",
+      "mentalHack": "최댓값은 큰 수-작은 수, 최솟값은 가까운 두 수를 만들고 받아내림을 본다.",
+      "studentMistake": "최솟값을 만들 때 단순히 작은 수에서 큰 수를 빼려고 함",
+      "renderStrategy": "digit_card_subtraction_svg",
+      "variationRule": "숫자 카드 한 번씩 사용, 두 자리 수 뺄셈 구조 유지",
+      "mustPreserve": [
+        "숫자 카드",
+        "두 자리 수",
+        "최대/최소 뺄셈"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-05",
+      "subType": "digit_card_subtraction",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "tens_difference_one",
+        "borrowing_check"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "35",
+      "answerType": "name",
+      "answer": "민호",
+      "coreConcept": "조건을 보고 달리기 순서를 추론하기",
+      "teacherShortcut": "줄세우기는 사람 수만큼 동그라미를 그리는 유형과 수직선을 그려야 하는 유형이 있으니 구분한다.",
+      "docssamPhrase": "사람 수만큼 자리를 먼저 그려라.",
+      "mentalHack": "조건마다 사람 이름을 자리 그림에 붙여 간다.",
+      "studentMistake": "앞/뒤 조건을 글로만 읽고 위치를 표시하지 않음",
+      "renderStrategy": "line_order_diagram",
+      "variationRule": "순서 조건과 등수 찾기 구조 유지",
+      "mustPreserve": [
+        "사람 이름",
+        "앞/뒤 조건",
+        "순위 추론"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-04",
+      "subType": "line_order",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "draw_circles_or_number_line"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "36",
+      "answerType": "min_max_values",
+      "answer": "18명, 32명",
+      "coreConcept": "줄 세우기에서 두 사람 사이 사람 수 조건으로 전체 사람 수의 최소·최대 구하기",
+      "teacherShortcut": "최대·최소 문제는 반드시 앞에 있는 경우와 뒤에 있는 경우를 둘 다 생각한다.",
+      "docssamPhrase": "앞에 있는 경우와 뒤에 있는 경우를 따로 그려라.",
+      "mentalHack": "한 사람을 기준으로 상대가 앞쪽에 있는 경우, 뒤쪽에 있는 경우를 각각 그린다.",
+      "studentMistake": "한 방향 배치만 보고 최대·최소를 결정함",
+      "renderStrategy": "line_order_diagram",
+      "variationRule": "앞/뒤 배치 두 경우 비교 구조 유지",
+      "mustPreserve": [
+        "최소값",
+        "최대값",
+        "두 사람 사이 인원",
+        "앞/뒤 경우"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-04",
+      "subType": "min_max_order",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "front_case_back_case"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "37",
+      "answerType": "circular_position_map",
+      "answer": {
+        "왼쪽 위": "하은",
+        "오른쪽 위": "주원",
+        "왼쪽 아래": "무검",
+        "오른쪽 아래": "이영"
+      },
+      "coreConcept": "원탁 자리에서 앞/왼쪽/오른쪽 조건으로 위치 정하기",
+      "teacherShortcut": "기준 사람을 먼저 고정하고, 바로 옆 조건부터 채운다.",
+      "docssamPhrase": "원형은 기준 사람을 먼저 박아두고 시작한다.",
+      "mentalHack": "기준 사람의 앞, 왼쪽, 오른쪽을 원 그림에 직접 적는다.",
+      "studentMistake": "원형 자리에서 왼쪽·오른쪽을 자기 기준으로 착각함",
+      "renderStrategy": "circular_seating_svg",
+      "variationRule": "원형 자리와 방향 조건 유지",
+      "mustPreserve": [
+        "원형 자리",
+        "기준 사람",
+        "왼쪽/오른쪽/앞 조건"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-04",
+      "subType": "circular_seating",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "fix_anchor_person"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "38",
+      "answerType": "ordinal",
+      "answer": "3번째",
+      "coreConcept": "원 모양 자리에서 바라보는 방향 기준으로 오른쪽·왼쪽 순서 판단하기",
+      "teacherShortcut": "동그라미를 안 그리면 틀린다. 바라본 곳에서 오른쪽·왼쪽을 따질 때는 시험지를 돌려라.",
+      "docssamPhrase": "동그라미 안 그리면 틀린다.",
+      "mentalHack": "원형 자리 그림을 그리고, 바라보는 방향으로 종이를 돌려 오른쪽/왼쪽을 확인한다.",
+      "studentMistake": "자기 기준 오른쪽과 문제 속 사람 기준 오른쪽을 헷갈림",
+      "renderStrategy": "circular_seating_svg",
+      "variationRule": "원형 배열과 시선 방향 기준 유지",
+      "mustPreserve": [
+        "원형 배열",
+        "바라보는 방향",
+        "오른쪽/왼쪽 순서"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-04",
+      "subType": "circular_viewpoint_order",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "draw_circle",
+        "rotate_paper"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "39",
+      "answerType": "matching_pair",
+      "answer": "사과, 귤",
+      "coreConcept": "논리표를 이용해 조건에 맞는 과일 짝 찾기",
+      "teacherShortcut": "동그라미를 다 채우지 않아도 된다. 하지만 한 줄에 동그라미 2개가 있어야 하는 구조인지 확인한다.",
+      "docssamPhrase": "한 줄에 동그라미 2개 그려야 하는 거 알지?",
+      "mentalHack": "확실한 X와 O만 먼저 표시하고, 줄마다 필요한 동그라미 개수를 맞춘다.",
+      "studentMistake": "모든 칸을 끝까지 채우려다가 시간 낭비함",
+      "renderStrategy": "logic_matrix_table_svg",
+      "variationRule": "사람/항목 논리표와 줄별 동그라미 개수 조건 유지",
+      "mustPreserve": [
+        "논리표",
+        "O/X 표시",
+        "줄별 필요한 동그라미 수"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-04",
+      "subType": "logic_matrix",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "dont_fill_all",
+        "two_circles_per_row"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "40",
+      "answerType": "number",
+      "answer": "3",
+      "coreConcept": "도형 안 숫자 규칙을 찾아 빈칸에 알맞은 수 구하기",
+      "teacherShortcut": "암호 문제는 더하거나 곱하거나 숫자끼리 더해보면 답이 나온다.",
+      "docssamPhrase": "더하거나 곱하거나 숫자끼리 더해봐.",
+      "mentalHack": "바깥 숫자끼리 더하기, 곱하기, 차이를 먼저 해 보고 가운데 수와 비교한다.",
+      "studentMistake": "복잡한 규칙부터 찾으려 하고 간단한 더하기·곱하기를 먼저 안 해봄",
+      "renderStrategy": "number_rule_diagram_svg",
+      "variationRule": "도형 안 숫자 규칙 구조 유지",
+      "mustPreserve": [
+        "바깥 숫자",
+        "가운데 숫자",
+        "숫자 규칙"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-05",
+      "subType": "number_code_rule",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "try_add_multiply_digit_sum"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "41",
+      "answerType": "shape_description",
+      "answer": "주황색 세모 안에 거꾸로 뒤집힌 노란색 별",
+      "coreConcept": "버튼 규칙을 이용해 도형 암호 만들기",
+      "teacherShortcut": "각 버튼이 바꾸는 특징을 따로 본다. 색, 겉모양, 안쪽 모양, 방향을 나누어 확인한다.",
+      "docssamPhrase": "버튼 하나가 무엇을 바꾸는지 따로 보자.",
+      "mentalHack": "한 번에 보지 말고 색/겉모양/안쪽/방향을 나누어 표시한다.",
+      "studentMistake": "색만 바꾸고 안쪽 모양이나 뒤집힘을 놓침",
+      "renderStrategy": "shape_rule_diagram_svg",
+      "variationRule": "버튼별 도형 변화 규칙 유지",
+      "mustPreserve": [
+        "버튼",
+        "도형 변화",
+        "색/모양/방향"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-05",
+      "subType": "shape_transform_code",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "split_color_shape_inner_direction"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "42",
+      "answerType": "count",
+      "answer": "8가지",
+      "coreConcept": "빈칸 3칸을 조건에 맞게 색칠하는 방법 수 세기",
+      "teacherShortcut": "우선 동그라미 한 개를 어디에 그릴까를 먼저 생각한다.",
+      "docssamPhrase": "동그라미 위치부터 정하자.",
+      "mentalHack": "동그라미 위치를 먼저 고정하고, 남은 칸에 X를 채운다.",
+      "studentMistake": "처음부터 모든 배치를 무작정 그리다가 중복함",
+      "renderStrategy": "grid_coloring_cases_svg",
+      "variationRule": "빈칸 수와 색칠 조건 유지",
+      "mustPreserve": [
+        "격자",
+        "빈칸 3개",
+        "동그라미/X 배치"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-06",
+      "subType": "grid_fill_cases",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "fix_one_circle_first"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "43",
+      "answerType": "count",
+      "answer": "12가지",
+      "coreConcept": "4가지 색 중 3가지를 골라 칸을 칠하는 경우의 수 구하기",
+      "teacherShortcut": "돌리거나 뒤집어서 같은 모양은 1가지로 본다.",
+      "docssamPhrase": "돌리거나 뒤집어서 같은 것은 한 가지다.",
+      "mentalHack": "색 3개를 고른 뒤, 같은 배치는 돌려서 겹치는지 확인한다.",
+      "studentMistake": "돌리거나 뒤집으면 같은 것을 여러 가지로 셈",
+      "renderStrategy": "coloring_cases_svg",
+      "variationRule": "색 선택과 회전/뒤집기 중복 제외 구조 유지",
+      "mustPreserve": [
+        "4색 중 3색",
+        "트리미노",
+        "회전/뒤집기 같은 것 제외"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-06",
+      "subType": "coloring_triomino",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "rotation_flip_same"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "44",
+      "answerType": "list",
+      "answer": [
+        "409",
+        "508",
+        "607"
+      ],
+      "coreConcept": "조건을 만족하는 세 자리 수 모두 찾기",
+      "teacherShortcut": "0이 반드시 들어가고, 세 자리 숫자의 합이 13이 되도록 찾는다.",
+      "docssamPhrase": "0이 항상 들어간다.",
+      "mentalHack": "0을 가운데에 두고, 백의 자리와 일의 자리의 합이 13이 되는 쌍을 찾는다.",
+      "studentMistake": "백의 자리 숫자가 일의 자리보다 작아야 한다는 조건을 놓침",
+      "renderStrategy": "text_with_number_list",
+      "variationRule": "세 자리 수 조건과 자리 합 구조 유지",
+      "mustPreserve": [
+        "세 자리 수",
+        "0 포함",
+        "자리 합",
+        "백의 자리 조건"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-05",
+      "subType": "three_digit_conditions",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "list_all_valid_numbers"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "45",
+      "answerType": "count",
+      "answer": "16가지",
+      "coreConcept": "격자 길에서 가장 가까운 길로 가는 가짓수 구하기",
+      "teacherShortcut": "가로와 세로에 1, 1, 1 쓰는 것을 잊지 않는다.",
+      "docssamPhrase": "처음 가로와 세로는 1로 채워라.",
+      "mentalHack": "시작점에서 오른쪽과 아래쪽 첫 줄은 모두 1로 채우고, 만나는 곳마다 위와 왼쪽 수를 더한다.",
+      "studentMistake": "첫 줄의 1을 안 쓰거나 막힌 길까지 더함",
+      "renderStrategy": "grid_path_count_svg",
+      "variationRule": "최단 경로와 격자 더하기 구조 유지",
+      "mustPreserve": [
+        "격자 길",
+        "출발/도착",
+        "첫 줄 1",
+        "위+왼쪽 더하기"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-09",
+      "subType": "shortest_path_grid",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "fill_ones_first",
+        "add_top_left"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "46",
+      "answerType": "count",
+      "answer": "8개",
+      "coreConcept": "결과에서 처음 사탕 수를 거꾸로 구하기",
+      "teacherShortcut": "거꾸로 해결하기 유형이다. 문제 위에 직접 쓰거나 그림으로 해결한다.",
+      "docssamPhrase": "2개 남았으면 그 전에는 4개였고, 그 전에는 8개였다.",
+      "mentalHack": "남은 개수부터 시작해서 반대로 올라간다.",
+      "studentMistake": "처음부터 계산하려고 함",
+      "renderStrategy": "draw_half_reverse_diagram",
+      "variationRule": "거꾸로 계산 구조 유지",
+      "mustPreserve": [
+        "마지막 남은 수",
+        "반대로 계산",
+        "처음 수"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-07",
+      "subType": "reverse_story",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "write_on_problem",
+        "draw_reverse"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "47",
+      "answerType": "count",
+      "answer": "9명",
+      "coreConcept": "표의 변화 과정을 뒤에서부터 거꾸로 추적하기",
+      "teacherShortcut": "표를 그리고 뒤에서부터 반대로 계산한다.",
+      "docssamPhrase": "거꾸로 해결하기는 표가 제일 빠르다.",
+      "mentalHack": "마지막 상태부터 표를 거꾸로 올라간다.",
+      "studentMistake": "앞에서부터 계산하려고 함",
+      "renderStrategy": "reverse_table",
+      "variationRule": "변화 과정과 역추적 표 구조 유지",
+      "mustPreserve": [
+        "처음/중간/마지막 상태",
+        "표",
+        "거꾸로 계산"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-07",
+      "subType": "reverse_table",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "table_from_end"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "48",
+      "answerType": "time_count",
+      "answer": "4일",
+      "coreConcept": "둘이 함께 일할 때 걸리는 시간 구하기",
+      "teacherShortcut": "구구단에서 둘 다 만나는 수를 찾는다.",
+      "docssamPhrase": "6단도 나오고 12단도 나오는 수가 뭐야?",
+      "mentalHack": "6, 12, 18, 24... 와 12, 24... 를 써 보고 처음 만나는 수를 전체 일로 잡는다.",
+      "studentMistake": "최소공배수라는 어려운 말만 외우고 막대그림을 못 그림",
+      "renderStrategy": "work_bar_diagram",
+      "variationRule": "구구단에서 같이 나오는 수를 전체 일로 잡고 하루 일량을 비교하는 구조 유지",
+      "mustPreserve": [
+        "혼자 걸리는 시간",
+        "구구단에서 같이 나오는 수",
+        "하루 일량",
+        "함께 걸리는 시간"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-08",
+      "subType": "work_together",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "same_number_in_times_table",
+        "work_bar"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "49",
+      "answerType": "time_count",
+      "answer": "2일",
+      "coreConcept": "비례 관계에서 1마리 기준으로 바꿔 계산하기",
+      "teacherShortcut": "1마리 기준으로 바꿔서 생각한다.",
+      "docssamPhrase": "3마리가 45개면 1마리는 15개다.",
+      "mentalHack": "먼저 1마리 1일 기준으로 바꾼 뒤 10마리 양을 구한다.",
+      "studentMistake": "비례관계를 한 번에 계산하려 함",
+      "renderStrategy": "unit_rate_diagram",
+      "variationRule": "단위량 찾기와 비례 계산 구조 유지",
+      "mustPreserve": [
+        "동물 수",
+        "먹이 수",
+        "하루 기준",
+        "비례 계산"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-08",
+      "subType": "unit_rate_animals",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "one_unit_first"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "50",
+      "answerType": "multi_length_values",
+      "answer": "크레파스 6cm, 연필 8cm, 클립 3cm",
+      "coreConcept": "서로 다른 물건 길이를 그림에 표시하며 구하기",
+      "teacherShortcut": "지우개가 4cm라고 나왔으니까 그림에 직접 4라고 쓴다.",
+      "docssamPhrase": "문제에서 준 수는 그림에 바로 적어.",
+      "mentalHack": "주어진 길이를 그림에 적고, 전체 길이를 같은 조각으로 나누어 비교한다.",
+      "studentMistake": "4cm를 머릿속에만 두고 그림에 표시하지 않음",
+      "renderStrategy": "length_bar_with_labels",
+      "variationRule": "같은 길이 물건 연결과 주어진 길이 표시 구조 유지",
+      "mustPreserve": [
+        "물건별 길이",
+        "전체 길이 비교",
+        "그림 위 숫자 표시"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-08",
+      "subType": "length_units_picture",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "write_given_number_on_picture"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "51",
+      "answerType": "count",
+      "answer": "60번",
+      "coreConcept": "시간 범위 안에서 시계탑 종이 울린 총 횟수 구하기",
+      "teacherShortcut": "7시에 종이 안 울린 것을 꼭 조심한다.",
+      "docssamPhrase": "시작 시각에 울리는지 안 울리는지 확인해.",
+      "mentalHack": "8시부터 2시까지 정각 종소리와 중간 종소리를 나누어 더한다.",
+      "studentMistake": "7시 종소리를 포함해서 더함",
+      "renderStrategy": "time_range_count_diagram",
+      "variationRule": "시간 범위와 정각/중간 종소리 규칙 유지",
+      "mustPreserve": [
+        "시작 시각 제외 여부",
+        "정각 종소리",
+        "중간 종소리",
+        "총합"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-05",
+      "subType": "clock_bell_count",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "exclude_start_time"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "52",
+      "answerType": "count",
+      "answer": "10개",
+      "coreConcept": "양팔저울 결과로 가장 가벼운 물건의 개수 구하기",
+      "teacherShortcut": "가장 작은 수를 찾아 1이라 쓴다. 단, 나누어 떨어지지 않으면 2라 쓴다.",
+      "docssamPhrase": "가장 작은 것을 1로 놓고 비교한다.",
+      "mentalHack": "저울에서 더 가벼운 쪽을 기준 1로 두고 다른 물건을 몇 개짜리인지 바꾼다.",
+      "studentMistake": "가장 작은 기준을 잡지 않고 바로 세려고 함",
+      "renderStrategy": "balance_scale_comparison_svg",
+      "variationRule": "저울 비교와 기준 물건 개수 환산 구조 유지",
+      "mustPreserve": [
+        "양팔저울",
+        "가장 작은 기준",
+        "개수 환산"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-10",
+      "subType": "balance_smallest_unit",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "smallest_is_one_or_two"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "53",
+      "answerType": "count",
+      "answer": "12개",
+      "coreConcept": "서로 다른 단위길이를 양팔저울처럼 비교하여 필요한 개수 구하기",
+      "teacherShortcut": "양팔저울 문제라고 생각하면 정말 쉽다.",
+      "docssamPhrase": "같은 길이가 되도록 양쪽을 맞춘다.",
+      "mentalHack": "각 단위 길이를 저울 양쪽에 놓듯이 비교하고 같은 길이로 맞춘다.",
+      "studentMistake": "길이 비교를 식으로만 하려다가 관계를 놓침",
+      "renderStrategy": "unit_length_balance_diagram",
+      "variationRule": "서로 다른 단위 길이를 같은 길이로 맞추는 구조 유지",
+      "mustPreserve": [
+        "서로 다른 단위 길이",
+        "같은 길이 비교",
+        "필요 개수"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-10",
+      "subType": "balance_unit_count",
+      "svgRequired": true,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "think_balance_scale",
+        "one_unit_first"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    },
+    {
+      "typeId": "54",
+      "answerType": "count",
+      "answer": "27개",
+      "coreConcept": "수열에서 홀수의 개수 구하기",
+      "teacherShortcut": "홀수의 개수를 구하는 것이므로 홀수는 1, 짝수는 2라 쓰고 간단히 만들어 푼다.",
+      "docssamPhrase": "홀수는 1, 짝수는 2로 바꾸어 보자.",
+      "mentalHack": "홀수, 홀수, 짝수 패턴을 찾아 반복 개수로 센다.",
+      "studentMistake": "수열 값을 모두 크게 계산하려고 함",
+      "renderStrategy": "sequence_parity_pattern",
+      "variationRule": "수열의 홀짝 반복 패턴 찾기 구조 유지",
+      "mustPreserve": [
+        "수열",
+        "홀짝 변환",
+        "반복 패턴",
+        "개수 세기"
+      ],
+      "scriptCheck": false,
+      "needsReview": false,
+      "problemType": "TYPE-05",
+      "subType": "parity_sequence",
+      "svgRequired": false,
+      "difficultyPolicy": "default",
+      "docsamRules": [
+        "odd_one_even_two",
+        "pattern_repeat"
+      ],
+      "verified": true,
+      "schemaVersion": "v3.1"
+    }
+  ],
+  "validation": {
+    "errors": [],
+    "checks": {
+      "problemCount54": true,
+      "q07IsNetNotDice": true,
+      "q08IsDice": true,
+      "q53IsBalance": true
+    }
+  }
+}

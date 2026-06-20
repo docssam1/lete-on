@@ -1,0 +1,55 @@
+﻿typeId,title,problemType,subType,answerType,answer,verified
+1,앞과 뒤에서 본 모양으로 전체 쌓기나무 개수 구하기,TYPE-01,stacking_front_back_count,count,11개,True
+2,상자를 가득 채우는 데 필요한 쌓기나무 개수 구하기,TYPE-01,stacking_fill_cube,count,16개,True
+3,흑백이 교대로 쌓인 쌓기나무의 색깔별 개수 세기,TYPE-01,stacking_checker_color,color_count_pair,"흰색 14개, 검은색 15개",True
+4,구멍이 뚫린 뒤 남은 쌓기나무 개수 구하기,TYPE-01,stacking_hole_removed,count,79개,True
+5,전체 개수에서 보이는 개수를 빼서 안 보이는 쌓기나무 찾기,TYPE-01,stacking_hidden_count,count,5개,True
+6,여러 방향에서 볼 때 나올 수 없는 모습 고르기,TYPE-02,solid_view_impossible,option_set,"4번, 6번",True
+7,전개도를 접어 만들 수 있는 정육면체 고르기,TYPE-02,cube_net_matching,option_set,"2번, 4번, 5번",True
+8,주사위를 굴렸을 때 바닥에 닿는 면의 수 구하기,TYPE-02,dice_roll,number,5,True
+9,"위, 앞, 오른쪽 옆에서 본 모양으로 최소 쌓기나무 개수 구하기",TYPE-01,stacking_three_views_minimum,count,6개,True
+10,색종이가 겹친 영역의 장수 또는 겹친 영역의 합 구하기,TYPE-05,overlap_paper_count,number,4,True
+11,숫자 종이를 두 번 접었을 때 위로 오는 수의 합 구하기,TYPE-02,paper_fold_top_numbers,number,22,True
+12,접은 종이에 구멍을 뚫고 펼쳤을 때 구멍 개수 구하기,TYPE-02,paper_hole_fold,count,8개,True
+13,펜토미노 조각으로 네모 칸 빈틈없이 채우기,TYPE-03,pentomino_fill,drawing_layout,다양한 배치 가능,True
+14,도형을 가장 적은 개수의 정사각형으로 나누기,TYPE-03,square_partition_min,count,6개,True
+15,선 2개로 조각 수를 최대화하기,TYPE-03,line_partition_six,drawing_instruction,선 2개로 6조각,True
+16,크고 작은 정사각형 모두 세기,TYPE-03,count_squares_grid,count,10개,True
+17,대각선 또는 비스듬한 선이 있는 도형에서 정사각형 세기,TYPE-03,count_tilted_squares,count,10개,True
+18,쌓기나무 4개로 만들 수 있는 서로 다른 모양 가짓수,TYPE-03,tetra_cube_cases,count,8가지,True
+19,점판에서 만들 수 있는 정삼각형 모두 세기,TYPE-03,geoboard_triangles,count,12개,True
+20,서로 다른 선분을 조합해 만들 수 있는 길이 가짓수 구하기,TYPE-05,segment_sum_lengths,count,15가지,True
+21,자리 조건을 만족하는 네 자리 수 찾기,TYPE-05,place_value_conditions,number,3845,True
+22,숫자 2개의 위치를 바꿔 올바른 식 만들기,TYPE-05,swap_digits_equation,equation,38-16=22,True
+23,"숫자 사이에 +, -를 넣거나 비워 두어 등식 만들기",TYPE-05,operator_insert_or_blank,count,2개,True
+24,+ 하나를 -로 바꾸어 목표값 만들기,TYPE-05,change_plus_to_minus,number,8,True
+25,두 조건을 만족하는 숫자들의 합 구하기,TYPE-05,two_condition_digits,number,21,True
+26,성냥개비 3개를 옮겨 목표 도형 만들기,TYPE-03,matchstick_move,drawing_target,같은 크기의 정사각형 3개,True
+27,벌집 수 배열에서 연산식 완성하기,TYPE-05,honeycomb_operation,ordered_slots,"6, 3, 8",True
+28,겹친 원 안 네 수의 합을 맞추기,TYPE-05,venn_sum_equal,number,85,True
+29,수 배열표의 가로·세로 증가 규칙 찾기,TYPE-05,number_grid_pattern,ordered_slots,"19, 23, 30",True
+30,과녁에 화살 3번을 쏘아 만들 수 있는 서로 다른 점수 세기,TYPE-06,target_score_cases,count,7가지,True
+31,문자마다 0~8 중 하나의 수를 넣어 식을 만족시키기,TYPE-05,symbol_value_equations,symbol_values,"{""A"": 4, ""B"": 2, ""C"": 3, ""D"": 1, ""E"": 6, ""F"": 8, ""G"": 0}",True
+32,거울에 비친 디지털 숫자를 원래 수로 읽고 합 구하기,TYPE-05,mirror_digital_number,number,80,True
+33,가위바위보 승패에 따라 계단 위치 차이 구하기,TYPE-04,rps_stair_position,count,3계단,True
+34,숫자 카드로 두 자리 수끼리 뺄셈식을 만들어 최댓값과 최솟값 구하기,TYPE-05,digit_card_subtraction,min_max_values,"{""max"": 41, ""min"": 6}",True
+35,조건을 보고 달리기 순서를 추론하기,TYPE-04,line_order,name,민호,True
+36,줄 세우기에서 두 사람 사이 사람 수 조건으로 전체 사람 수의 최소·최대 구하기,TYPE-04,min_max_order,min_max_values,"18명, 32명",True
+37,원탁 자리에서 앞/왼쪽/오른쪽 조건으로 위치 정하기,TYPE-04,circular_seating,circular_position_map,"{""왼쪽 위"": ""하은"", ""오른쪽 위"": ""주원"", ""왼쪽 아래"": ""무검"", ""오른쪽 아래"": ""이영""}",True
+38,원 모양 자리에서 바라보는 방향 기준으로 오른쪽·왼쪽 순서 판단하기,TYPE-04,circular_viewpoint_order,ordinal,3번째,True
+39,논리표를 이용해 조건에 맞는 과일 짝 찾기,TYPE-04,logic_matrix,matching_pair,"사과, 귤",True
+40,도형 안 숫자 규칙을 찾아 빈칸에 알맞은 수 구하기,TYPE-05,number_code_rule,number,3,True
+41,버튼 규칙을 이용해 도형 암호 만들기,TYPE-05,shape_transform_code,shape_description,주황색 세모 안에 거꾸로 뒤집힌 노란색 별,True
+42,빈칸 3칸을 조건에 맞게 색칠하는 방법 수 세기,TYPE-06,grid_fill_cases,count,8가지,True
+43,4가지 색 중 3가지를 골라 칸을 칠하는 경우의 수 구하기,TYPE-06,coloring_triomino,count,12가지,True
+44,조건을 만족하는 세 자리 수 모두 찾기,TYPE-05,three_digit_conditions,list,"[""409"", ""508"", ""607""]",True
+45,격자 길에서 가장 가까운 길로 가는 가짓수 구하기,TYPE-09,shortest_path_grid,count,16가지,True
+46,결과에서 처음 사탕 수를 거꾸로 구하기,TYPE-07,reverse_story,count,8개,True
+47,표의 변화 과정을 뒤에서부터 거꾸로 추적하기,TYPE-07,reverse_table,count,9명,True
+48,둘이 함께 일할 때 걸리는 시간 구하기,TYPE-08,work_together,time_count,4일,True
+49,비례 관계에서 1마리 기준으로 바꿔 계산하기,TYPE-08,unit_rate_animals,time_count,2일,True
+50,서로 다른 물건 길이를 그림에 표시하며 구하기,TYPE-08,length_units_picture,multi_length_values,"크레파스 6cm, 연필 8cm, 클립 3cm",True
+51,시간 범위 안에서 시계탑 종이 울린 총 횟수 구하기,TYPE-05,clock_bell_count,count,60번,True
+52,양팔저울 결과로 가장 가벼운 물건의 개수 구하기,TYPE-10,balance_smallest_unit,count,10개,True
+53,서로 다른 단위길이를 양팔저울처럼 비교하여 필요한 개수 구하기,TYPE-10,balance_unit_count,count,12개,True
+54,수열에서 홀수의 개수 구하기,TYPE-05,parity_sequence,count,27개,True
