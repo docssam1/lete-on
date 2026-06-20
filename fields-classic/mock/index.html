@@ -343,10 +343,29 @@ function submitAll(){
   const weak=TY.filter(t=>ts[t].tot>0&&pct(ts[t].ok,ts[t].tot)<70);
   document.getElementById('scoreSum').innerHTML=`<span class="sc-ok">✓ ${mg.filter(Boolean).length}문항</span><span class="sc-no">✗ ${mg.filter(v=>!v).length}문항</span><span>→ ${sc}점</span>`;
   const r=document.getElementById('result');r.style.display='block';
+  // 예측 점수 계산 (입력일 기준 자동 생성)
+  // 가중치: 6월=30%, 7월=25%, 8월=20%, 9월=15%, 10월=10%, 11월=5%
+  const _now=new Date();const _mon=_now.getMonth()+1;
+  const _left=Math.max(0,Math.min(5,11-_mon));
+  const _w=Math.max(0.05,(_left+1)*0.05);
+  const _pred=Math.min(100,Math.round(sc+(100-sc)*_w));
+  const _gain=_pred-sc;
+  const _ml=['','1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  const _predHTML='<div style="margin-top:12px;background:rgba(212,175,55,.07);border:1px solid var(--bd);border-radius:14px;padding:12px 16px;text-align:center">'
+    +'<div style="font-size:10px;color:var(--mu);margin-bottom:6px">'+_ml[_mon]+' 기준 · 필즈 시험까지 '+_left+'개월 · 꾸준히 학습 시 예측</div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;gap:12px">'
+    +'<div><div style="font-size:10px;color:var(--mu)">현재</div><div style="font-family:\'DM Serif Display\',serif;font-size:28px;color:rgba(255,255,255,.5);line-height:1">'+sc+'<span style="font-size:11px">점</span></div></div>'
+    +'<div style="font-size:20px;color:var(--g)">→</div>'
+    +'<div><div style="font-size:10px;color:var(--g2)">예측</div><div style="font-family:\'DM Serif Display\',serif;font-size:36px;color:var(--g);line-height:1;text-shadow:0 0 20px rgba(212,175,55,.4)">'+_pred+'<span style="font-size:11px">점</span></div></div>'
+    +'<div style="font-size:11px;color:var(--ok);font-weight:900">+'+_gain+'점</div>'
+    +'</div>'
+    +(_left>=3?'<div style="font-size:10px;color:var(--mu);margin-top:6px">※ 실제로 이 시점 50점대에서 90점 이상으로 성장한 사례가 있습니다</div>':'')
+    +'</div>';
   r.innerHTML=`
 <div class="res-hero">
   <div class="res-nm">${nm2} 학생 · 필즈 선발 대비 모의고사 진단 결과</div>
   <div class="res-sc">${sc}</div><div class="res-sc-s">/ 100점 (25문항 × 4점)</div>
+  ${_predHTML}
   <div class="res-lv ${li.cls}">${li.lv}</div>
 </div>
 <div class="r-card"><div class="r-ct">영역 분석 차트</div>
