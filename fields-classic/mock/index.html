@@ -234,6 +234,14 @@ function getLv(sc){for(const d of LVLS)if(sc>=d.mn&&sc<=d.mx)return d;return LVL
 function pct(ok,tot){return tot===0?0:Math.round(ok/tot*100);}
 
 function calcDiag(addW,subW,cw){
+  // 14개 중 9개 이상 틀림 → 기초 상담 필요 (패턴 분석 생략)
+  if(cw>=9){
+    return{
+      cls:'cb-연', grade:'기초 점검 필요', lvText:'연산 기초부터 상담 권장',
+      patterns:['14개 중 '+(14-cw)+'개 맞음'],
+      comment:'연산 → 지문 이해 → 교과가 단단해야 사고력도 올라갑니다. 기본 연산부터 선생님과 함께 상담하고 점검해 보세요.'
+    };
+  }
   const add역연산=addW[0],add기본틀림=addW[1]||addW[4],add올림틀림=addW[2]||addW[3]||addW[5],add세자리=addW[6];
   const sub역연산=subW[0],sub기본틀림=subW[3]||subW[4],sub작은틀림=subW[1]||subW[2],sub큰틀림=subW[5]||subW[6],sub내림틀림=sub작은틀림||sub큰틀림;
   const 덧셈역설=add기본틀림&&!add올림틀림,뺄셈역설=sub기본틀림&&!sub내림틀림,뺄셈단계역설=sub작은틀림&&!sub큰틀림;
