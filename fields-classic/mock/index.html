@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>필즈 선발 대비 모의고사 | G-FIELD</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#02050b;--surface:#080d14;--gold:#d4af37;--gold2:#f8dd83;
+  --gold-glow:rgba(212,175,55,.2);--white:#f0ece2;--muted:#7a8a9a;
+  --border:rgba(212,175,55,.15);--border2:rgba(255,255,255,.07);--navy:#0d1b2a;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;min-height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--white);overflow-x:hidden}
+.screen{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.screen.on{display:flex}
+#sQ,#sCalc{align-items:stretch;justify-content:flex-start;padding:0}
+#sResult{align-items:stretch;justify-content:flex-start;padding:0}
+
+/* GATE */
+#sGate{background:radial-gradient(circle at 20% 20%,rgba(212,175,55,.08),transparent 50%),var(--bg)}
+.gate-card{width:min(400px,95vw);background:rgba(8,13,20,.97);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.7)}
+.gate-bar{height:4px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold))}
+.gate-body{padding:32px 26px 24px;text-align:center}
+.gate-logo{width:52px;border-radius:10px;margin:0 auto 12px;display:block;filter:drop-shadow(0 0 12px var(--gold-glow))}
+.gate-tag{font-size:9px;font-weight:900;letter-spacing:3px;color:var(--gold);margin-bottom:6px}
+.gate-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--white);margin-bottom:4px}
+.gate-sub{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px}
+.gate-input{width:100%;height:48px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;color:var(--white);font-size:15px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:0 16px;text-align:center;outline:none;margin-bottom:10px;transition:border-color .2s}
+.gate-input:focus{border-color:var(--gold)}
+.gate-input::placeholder{color:rgba(255,255,255,.25);font-weight:400;font-size:13px}
+.gate-btn{width:100%;height:48px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:15px;font-weight:900;font-family:'Noto Sans KR',sans-serif;border:none;border-radius:12px;cursor:pointer;margin-top:4px}
+.gate-btn:active{transform:scale(.97)}
+.gate-err{min-height:18px;color:#ef4444;font-size:12px;font-weight:700;margin-top:8px}
+.gate-note{font-size:10px;color:rgba(255,255,255,.2);margin-top:12px;line-height:1.6}
+
+/* HEADER */
+.q-header{position:sticky;top:0;z-index:50;padding:10px 16px;background:rgba(2,5,11,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.q-header-title{font-size:13px;font-weight:900;color:var(--gold2);flex:1}
+.q-header-student{font-size:11px;color:var(--muted)}
+.q-prog-wrap{background:rgba(2,5,11,.94);padding:4px 16px 8px;border-bottom:1px solid var(--border2)}
+.q-progress-bar{height:3px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
+.q-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:999px;transition:width .3s}
+.q-prog-text{font-size:10px;color:var(--muted);margin-top:4px;text-align:right}
+.q-body{flex:1;padding:14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* CARDS */
+.q-card{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:14px;margin-bottom:10px;transition:border-color .2s}
+.q-card.answered{border-color:rgba(212,175,55,.3)}
+.q-card-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.q-num{font-family:'DM Serif Display',serif;font-size:22px;color:var(--gold2);min-width:32px}
+.q-type-badge{font-size:9px;font-weight:900;padding:3px 8px;border-radius:20px;letter-spacing:.05em}
+.type-식의계산{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.2)}
+.type-수{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
+.type-논리추리{background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.2)}
+.type-도형{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
+.type-규칙{background:rgba(244,114,182,.12);color:#f472b6;border:1px solid rgba(244,114,182,.2)}
+.q-topic{font-size:10px;color:var(--muted);flex:1}
+.q-input{width:100%;height:44px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.12);border-radius:10px;color:var(--white);font-size:16px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:0 14px;outline:none;transition:border-color .2s}
+.q-input:focus{border-color:var(--gold)}
+.q-input::placeholder{color:rgba(255,255,255,.2);font-weight:400;font-size:13px}
+.q-dual{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.q-dual label{font-size:10px;color:var(--muted);margin-bottom:4px;display:block;font-weight:700}
+.animal-btns{display:flex;gap:8px;flex-wrap:wrap}
+.animal-btn{padding:8px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:var(--white);font-size:13px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all .15s}
+.animal-btn.selected{border-color:var(--gold);background:rgba(212,175,55,.12);color:var(--gold2)}
+.animal-order{font-size:12px;color:var(--muted);margin-top:8px;min-height:20px}
+.animal-clear{font-size:11px;color:var(--muted);background:none;border:1px solid rgba(255,255,255,.1);padding:4px 10px;border-radius:7px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;margin-top:6px}
+.symbol-section{margin-bottom:10px}
+.symbol-section label{font-size:10px;color:var(--muted);font-weight:700;display:block;margin-bottom:6px}
+.symbol-btns{display:flex;gap:6px;flex-wrap:wrap}
+.sym-btn{padding:7px 14px;border-radius:9px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:var(--white);font-size:16px;cursor:pointer;transition:all .15s;min-width:44px;text-align:center;font-family:'Noto Sans KR',sans-serif}
+.sym-btn.sel{border-color:var(--gold);background:rgba(212,175,55,.15);color:var(--gold2)}
+
+/* FOOTER */
+.q-footer{padding:12px 16px;background:rgba(2,5,11,.96);border-top:1px solid var(--border);display:flex;gap:10px;align-items:center}
+.q-submit-btn{flex:1;height:48px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:15px;font-weight:900;font-family:'Noto Sans KR',sans-serif;border:none;border-radius:12px;cursor:pointer}
+.q-submit-btn:active{transform:scale(.97)}
+.q-back-btn{height:48px;padding:0 16px;background:rgba(255,255,255,.06);border:1px solid var(--border2);color:rgba(255,255,255,.6);font-size:13px;font-weight:700;font-family:'Noto Sans KR',sans-serif;border-radius:12px;cursor:pointer;white-space:nowrap}
+.q-count{font-size:11px;color:var(--muted);min-width:50px;text-align:right}
+
+/* CALC */
+.calc-intro{background:rgba(212,175,55,.06);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--muted);line-height:1.7}
+.calc-intro strong{color:var(--gold2)}
+.calc-section-title{font-size:13px;font-weight:900;color:var(--white);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border2)}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.calc-card{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s}
+.calc-card.answered{border-color:rgba(212,175,55,.25)}
+.calc-expr{font-size:14px;font-weight:700;color:var(--white);text-align:center;line-height:1.4}
+.calc-input{width:100%;height:40px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.12);border-radius:9px;color:var(--white);font-size:16px;font-weight:900;font-family:'Noto Sans KR',sans-serif;text-align:center;outline:none;transition:border-color .2s}
+.calc-input:focus{border-color:var(--gold)}
+.calc-input::placeholder{color:rgba(255,255,255,.2);font-size:13px;font-weight:400}
+
+/* RESULT */
+.res-header{padding:10px 16px;background:rgba(2,5,11,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.res-header-title{font-size:13px;font-weight:900;color:var(--gold2);flex:1}
+.res-print-btn{padding:6px 14px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:11px;font-weight:900;font-family:'Noto Sans KR',sans-serif;border:none;cursor:pointer}
+.res-back-btn{padding:6px 14px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--border2);color:rgba(255,255,255,.6);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer}
+.res-body{padding:14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.res-hero{background:linear-gradient(135deg,rgba(212,175,55,.1),rgba(212,175,55,.04));border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center;margin-bottom:12px;position:relative;overflow:hidden}
+.res-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(212,175,55,.12),transparent 60%);pointer-events:none}
+.res-hero-name{font-size:12px;color:var(--muted);margin-bottom:6px;position:relative}
+.res-score{font-family:'DM Serif Display',serif;font-size:60px;color:var(--gold);line-height:1;margin-bottom:4px;text-shadow:0 0 30px var(--gold-glow);position:relative}
+.res-score-sub{font-size:13px;color:var(--muted);position:relative}
+.res-level{display:inline-block;font-size:17px;font-weight:900;color:var(--white);background:rgba(212,175,55,.12);border:1px solid var(--border);padding:6px 20px;border-radius:30px;margin-top:12px;position:relative}
+.res-level.s반{background:rgba(212,175,55,.2);border-color:var(--gold);color:var(--gold2)}
+.res-level.e1{background:rgba(96,165,250,.12);border-color:rgba(96,165,250,.3);color:#60a5fa}
+.res-level.e2{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.3);color:#a78bfa}
+.res-card{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:16px;margin-bottom:10px}
+.res-card-title{font-size:10px;font-weight:900;color:var(--gold);letter-spacing:.12em;margin-bottom:14px}
+.res-type-row{display:grid;grid-template-columns:72px 1fr 42px;align-items:center;gap:8px;margin-bottom:10px}
+.res-type-row:last-child{margin-bottom:0}
+.res-type-name{font-size:12px;font-weight:700;color:var(--white)}
+.res-bar-bg{background:rgba(255,255,255,.06);border-radius:999px;height:6px;overflow:hidden}
+.res-bar-fill{height:100%;border-radius:999px;transition:width .8s cubic-bezier(.22,1,.36,1)}
+.res-bar-pct{font-size:11px;font-weight:900;color:var(--gold2);text-align:right}
+.bar-식의계산{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+.bar-수{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
+.bar-논리추리{background:linear-gradient(90deg,#ea580c,#fb923c)}
+.bar-도형{background:linear-gradient(90deg,#16a34a,#22c55e)}
+.bar-규칙{background:linear-gradient(90deg,#db2777,#f472b6)}
+.bar-키즈팩토{background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.bar-초등팩토{background:linear-gradient(90deg,#0891b2,#22d3ee)}
+.bar-1031입문{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+.bar-1031심화{background:linear-gradient(90deg,#be123c,#f43f5e)}
+.calc-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:30px;font-size:13px;font-weight:900}
+.calc-우수{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#22c55e}
+.calc-약간실수{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3);color:#fbbf24}
+.calc-연습필요{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#ef4444}
+.res-comment{font-size:12px;color:rgba(255,255,255,.75);line-height:1.8;background:rgba(212,175,55,.04);border-left:3px solid var(--gold);padding:12px 14px;border-radius:0 10px 10px 0;margin-top:8px}
+.study-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border2)}
+.study-item:last-child{border-bottom:none}
+.study-type-name{font-size:13px;font-weight:700;color:var(--white)}
+.study-vol{font-size:10px;color:var(--muted);margin-top:2px}
+.study-link{font-size:11px;font-weight:900;color:var(--gold);background:rgba(212,175,55,.08);border:1px solid var(--border);padding:5px 12px;border-radius:8px;text-decoration:none;white-space:nowrap}
+.wrong-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.wrong-item{display:flex;align-items:center;gap:4px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);border-radius:8px;padding:4px 10px}
+.wrong-num{font-size:11px;font-weight:900;color:#ef4444}
+.wrong-topic{font-size:10px;color:var(--muted)}
+
+/* PRINT */
+@media print{
+  body{background:white!important;color:#111!important}
+  .screen{display:none!important}
+  #sResult{display:flex!important}
+  .res-header .res-back-btn,.res-header .res-print-btn{display:none!important}
+  .res-body{padding:0!important}
+  .cta-section{display:none!important}
+  .watermark{display:block!important;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:72px;font-weight:900;color:rgba(212,175,55,.05);pointer-events:none;z-index:9999;white-space:nowrap;font-family:'Noto Sans KR',sans-serif}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .res-hero{background:#fffbec!important;border-color:#d4af37!important}
+  .res-score{color:#b8960c!important;text-shadow:none!important}
+  .res-card{background:#f9f9f9!important;border-color:#e0e0e0!important}
+  .res-bar-bg{background:#e0e0e0!important}
+  .res-type-name,.study-type-name{color:#111!important}
+  .res-comment{background:#fffbec!important;color:#333!important}
+  @page{margin:1.2cm}
+}
+.watermark{display:none}
+</style>
+</head>
+<body>
+
+<div class="watermark" id="wm"></div>
+
+<!-- GATE -->
+<div class="screen on" id="sGate">
+  <div class="gate-card">
+    <div class="gate-bar"></div>
+    <div class="gate-body">
+      <img class="gate-logo" src="https://lh3.googleusercontent.com/d/1c2yx_O6sKcTF9-YoTKxnQ2lWOqfWiUCL" alt="G-FIELD">
+      <div class="gate-tag">G-FIELD GIFTED EDUCATION</div>
+      <div class="gate-title">필즈 선발 대비 모의고사</div>
+      <p class="gate-sub">25문항 사고력 + 14문항 연산 테스트<br>답을 입력하면 즉시 진단 결과가 나옵니다.</p>
+      <input class="gate-input" id="gName" type="text" autocomplete="off" placeholder="학생 이름을 입력하세요">
+      <button class="gate-btn" onclick="GD.start()">진단 시작하기 →</button>
+      <div class="gate-err" id="gErr"></div>
+      <p class="gate-note">시험지를 먼저 인쇄해서 풀고 답만 입력하거나<br>화면을 보며 바로 입력하셔도 됩니다.</p>
+    </div>
+  </div>
+</div>
+
+<!-- QUESTIONS -->
+<div class="screen" id="sQ">
+  <div class="q-header">
+    <span class="q-header-title">📝 사고력 진단 (25문항)</span>
+    <span class="q-header-student" id="qName"></span>
+  </div>
+  <div class="q-prog-wrap">
+    <div class="q-progress-bar"><div class="q-progress-fill" id="qFill" style="width:0%"></div></div>
+    <div class="q-prog-text" id="qProg">0 / 25 입력</div>
+  </div>
+  <div class="q-body" id="qBody"></div>
+  <div class="q-footer">
+    <div class="q-count" id="qCount">0/25</div>
+    <button class="q-submit-btn" onclick="GD.goCalc()">다음: 연산 테스트 →</button>
+  </div>
+</div>
+
+<!-- CALC -->
+<div class="screen" id="sCalc">
+  <div class="q-header">
+    <span class="q-header-title">🧮 연산 테스트 (14문항)</span>
+    <span class="q-header-student" id="cName"></span>
+  </div>
+  <div class="q-body" id="cBody"></div>
+  <div class="q-footer">
+    <button class="q-back-btn" onclick="GD.goQ()">← 이전</button>
+    <button class="q-submit-btn" onclick="GD.showResult()">결과 보기 →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="sResult">
+  <div class="res-header">
+    <span class="res-header-title">📊 진단 결과</span>
+    <button class="res-back-btn" onclick="GD.goGate()">← 다시 진단</button>
+    <button class="res-print-btn" onclick="window.print()">🖨 인쇄</button>
+  </div>
+  <div class="res-body" id="resBody"></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+const QS=[
+  {id:1,t:'식의계산',lv:'키즈팩토',tp:'막대의 길이(수 채우기)',a:'8',in:'num',ph:'답 입력'},
+  {id:2,t:'식의계산',lv:'키즈팩토',tp:'조건에 따른 수 구하기(대화,문장제)',a:'8',in:'num',ph:'답 입력'},
+  {id:3,t:'수',lv:'키즈팩토',tp:'주고받기(같게 만들기)',a:'2',in:'num',ph:'답 입력'},
+  {id:4,t:'도형',lv:'키즈팩토',tp:'한번 접은 색종이 구멍 개수',a:'6',in:'num',ph:'답 입력'},
+  {id:5,t:'수',lv:'초등팩토',tp:'주고받기(더 많이 가지기)',a:'11',in:'num',ph:'답 입력'},
+  {id:6,t:'논리추리',lv:'초등팩토',tp:'줄 세우기(등수 정하기)',a:'5',in:'num',ph:'등 입력'},
+  {id:7,t:'논리추리',lv:'초등팩토',tp:'집합과 포함 관계',a:'17',in:'num',ph:'명 입력'},
+  {id:8,t:'논리추리',lv:'키즈팩토',tp:'무게 비교(시소)',a:'다람쥐,거북,토끼',in:'animal',ph:''},
+  {id:9,t:'수',lv:'초등팩토',tp:'수의 관계(원판)',a:'2',in:'num',ph:'답 입력'},
+  {id:10,t:'식의계산',lv:'초등팩토',tp:'표 안의 도형 수(같은 2개)',a:'14',in:'num',ph:'㉠값'},
+  {id:11,t:'규칙',lv:'키즈팩토',tp:'수열의 규칙(두 패턴)',a:'4,13',in:'dual',lb:['패턴①','패턴②'],ph:['4','13']},
+  {id:12,t:'규칙',lv:'키즈팩토',tp:'도형 패턴의 규칙',a:'□,○',in:'sym',ph:''},
+  {id:13,t:'수',lv:'초등팩토',tp:'도형으로 수 나타내기',a:'14',in:'num',ph:'답 입력'},
+  {id:14,t:'수',lv:'초등팩토',tp:'마방진(합 일정) △값',a:'18',in:'num',ph:'△값'},
+  {id:15,t:'식의계산',lv:'초등팩토',tp:'타고 내린 승객 수',a:'17',in:'num',ph:'명 입력'},
+  {id:16,t:'수',lv:'초등팩토',tp:'수 피라미드(두번 모으기)',a:'1',in:'num',ph:'㉠값'},
+  {id:17,t:'논리추리',lv:'초등팩토',tp:'숫자 배치 규칙(이웃 금지)',a:'3',in:'num',ph:'㉠값'},
+  {id:18,t:'수',lv:'초등팩토',tp:'조건에 맞는 두 자리 수',a:'94',in:'num',ph:'두 자리 수'},
+  {id:19,t:'식의계산',lv:'1031입문',tp:'표 안의 도형 수(같은 3개)',a:'22',in:'num',ph:'㉠값'},
+  {id:20,t:'식의계산',lv:'1031입문',tp:'복면산(두자리+두자리)',a:'9,1',in:'dual',lb:['□ =','○ ='],ph:['9','1']},
+  {id:21,t:'식의계산',lv:'1031입문',tp:'수 배열 규칙(화살표)',a:'28',in:'num',ph:'㉠값'},
+  {id:22,t:'규칙',lv:'1031입문',tp:'삼각형 증가 규칙(6번째)',a:'36',in:'num',ph:'장 입력'},
+  {id:23,t:'규칙',lv:'1031심화',tp:'바둑돌 규칙(차이로 번째)',a:'33',in:'num',ph:'번째'},
+  {id:24,t:'수',lv:'1031심화',tp:'도형이 나타낸 수 □',a:'15',in:'num',ph:'□값'},
+  {id:25,t:'도형',lv:'1031심화',tp:'쌓기나무 규칙(5번째)',a:'55',in:'num',ph:'개 입력'},
+];
+
+const CA=[
+  {e:'5 + □ = 13',a:'8'},{e:'8 + 21 = □',a:'29'},{e:'35 + 7 = □',a:'42'},
+  {e:'6 + 18 = □',a:'24'},{e:'23 + 34 = □',a:'57'},{e:'59 + 22 = □',a:'81'},{e:'37 + 65 = □',a:'102'},
+];
+const CS=[
+  {e:'□ − 5 = 21',a:'26'},{e:'12 − 8 = □',a:'4'},{e:'23 − 5 = □',a:'18'},
+  {e:'39 − 16 = □',a:'23'},{e:'57 − 24 = □',a:'33'},{e:'62 − 38 = □',a:'24'},{e:'96 − 79 = □',a:'17'},
+];
+
+const LEVELS=[
+  {mn:96,mx:100,lv:'E1합격 · S반 GO',cls:'s반',tx:'E1반 합격이 확실합니다. 관리 잘해주신 부모님의 노력이 보입니다. 오답 문제가 있지만 작년에도 100점은 없었습니다. 약점 문항을 참고하여 학습해주세요. 88점 이상의 학생은 모두 대치 소프1, 필즈 S1 합격을 하였습니다. 필즈 입학 시 교과 진도는 3-2 시작 수준이었으니 교과 영역도 병행해 주세요.'},
+  {mn:88,mx:95,lv:'E1합격 · S반 GO',cls:'s반',tx:'E1반 합격이 확실합니다. 관리 잘해주신 부모님의 노력이 보입니다. 약점 문항을 학습해주세요. 만약 소마도 다니면서 외부 학원에서 2회 이상 학습 중이라면 둘 다 유지하면서 프리미어 대비와 S반 관리까지 이어가기를 추천합니다. 하지만 필즈 대비 중 타 학습에 문제가 있었다면 필즈만 선택하고 교과와 필즈 예습·복습에 집중해 주세요.'},
+  {mn:84,mx:87,lv:'E1합격',cls:'e1',tx:'E1반 합격이 확실합니다. 오답 문제가 있지만 약점 유형을 꼭 학습해주세요.'},
+  {mn:80,mx:83,lv:'E1합격',cls:'e1',tx:'E1반 합격 가능성이 높습니다. 약점 유형을 꼭 학습해주세요. 조금만 노력하면 충분히 E1 점수가 나올 수 있기 때문에 시험대비에도 집중해주세요.'},
+  {mn:76,mx:79,lv:'E2합격',cls:'e2',tx:'레벨은 E2가 나왔지만 E1반 합격 가능성이 높습니다. 약점 유형을 꼭 학습해주세요. 조금만 노력하면 충분히 E1 점수가 나올 수 있습니다.'},
+  {mn:68,mx:75,lv:'E2합격',cls:'e2',tx:'E2레벨은 당연하고 E1도 연습하면 가능하니 남은기간 집중적으로 복습과 예습에 힘써주세요. 만약 연산이 잘 되어 있고 선행이 되어 있다면 대치의 경우 1달 안에도 E1반으로 승급될 가능성도 높습니다.'},
+  {mn:60,mx:67,lv:'E2합격',cls:'e2',tx:'E2레벨은 당연하고 E1도 연습하면 가능하니 남은기간 집중적으로 복습과 예습에 힘써주세요. 개념은 알지만 시험 스킬 연습이 덜 되어 있어 시간 관리가 안 되어 있을 수도 있습니다.'},
+  {mn:52,mx:59,lv:'주 1회 높은 반',cls:'',tx:'주1회 높은반 레벨이지만 시험 대비를 집중하면 주2회도 충분히 가능한 점수입니다. 남은기간 집중적으로 복습과 예습에 힘써주세요.'},
+  {mn:0,mx:51,lv:'주 1회 낮은 반',cls:'',tx:'주 1회 낮은반 레벨이지만 충분히 연습하면 주2회도 나올 수 있습니다. 다만 아직 덜 채워진 교과, 사고력 학습이 필요할 수 있습니다. 복습량이나 선행 학습량이 부족한 경우, 한 곳을 선택하여 학습에 집중하는 것이 더 효과적입니다.'},
+];
+
+const CALC_TX={
+  우수:'연산 진단은 우수입니다. 필즈 시험에서의 연산은 두자리+두자리 또는 두자리-두자리까지 출제됩니다. 학생은 시험에 문제 없는 연산 실력을 가졌습니다. 필즈 입학 후 같은 3개의 수로 가르기, 합이 일정한 경우의 수, 두자리×한자리 정도의 연산이 필요한 경우가 많습니다. 꾸준히 유지해 주세요.',
+  약간실수:'연산 진단은 약간 실수입니다. 필즈 시험에서의 연산은 두자리+두자리 또는 두자리-두자리까지 출제됩니다. 학생은 시험의 연산을 할 수 있으나 실수하지 않고 속도가 빠르도록 여러 번 연습해야 합니다.',
+  연습필요:'연산 진단은 연습 필요입니다. 필즈 시험에서의 연산은 두자리+두자리 또는 두자리-두자리까지 출제됩니다. 학생은 우선 연산에 집중하여 학습해주세요. 기적의 계산법 3-4권 수준의 연산 학습이 필요합니다.',
+};
+
+const TV={
+  '식의계산':{vol:'Vol.1 · Vol.2',url:'https://youtu.be/7aPj5IJUzQM',lb:'개념영상'},
+  '수':{vol:'Vol.3 · Vol.4',url:'https://youtu.be/mq-1VxjLzMk',lb:'유형반복'},
+  '논리추리':{vol:'Vol.2 체크체크',url:'https://youtu.be/TOHw8sCumHY',lb:'체크체크'},
+  '도형':{vol:'Final',url:'https://youtu.be/FC4W2bRJwKc',lb:'학습영상'},
+  '규칙':{vol:'Vol.4',url:'https://youtu.be/neRIODxo13I',lb:'개념영상'},
+};
+
+const SYMS=['▲','■','□','○','△','◇'];
+
+let S={name:'',ans:Array(25).fill(''),cal:Array(14).fill(''),anim:[],s12:['','']};
+
+function n(s){return String(s||'').trim().replace(/\s+/g,'').replace(/，/g,',');}
+function ok(u,c){return n(u)===n(c);}
+function getLv(sc){for(const d of LEVELS)if(sc>=d.mn&&sc<=d.mx)return d;return LEVELS[LEVELS.length-1];}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);}
+
+const GD={
+  start(){
+    const nm=document.getElementById('gName').value.trim();
+    if(!nm){document.getElementById('gErr').textContent='이름을 입력해주세요.';return;}
+    S={name:nm,ans:Array(25).fill(''),cal:Array(14).fill(''),anim:[],s12:['','']};
+    document.getElementById('wm').textContent=nm;
+    document.getElementById('qName').textContent=nm+' 학생';
+    document.getElementById('cName').textContent=nm+' 학생';
+    buildQ();buildC();show('sQ');
+  },
+  goCalc(){show('sCalc');},
+  goQ(){show('sQ');},
+  goGate(){
+    S={name:'',ans:Array(25).fill(''),cal:Array(14).fill(''),anim:[],s12:['','']};
+    document.getElementById('gName').value='';
+    document.getElementById('gErr').textContent='';
+    show('sGate');
+  },
+  showResult(){
+    renderRes();show('sResult');
+  }
+};
+window.GD=GD;
+
+function buildQ(){
+  const b=document.getElementById('qBody');b.innerHTML='';
+  QS.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='q-card';d.id='qc'+i;
+    d.innerHTML=`<div class="q-card-top">
+      <div class="q-num">${String(q.id).padStart(2,'0')}</div>
+      <span class="q-type-badge type-${q.t}">${q.t}</span>
+      <span class="q-topic">${q.tp}</span>
+    </div>${buildIn(q,i)}`;
+    b.appendChild(d);
+  });upP();
+}
+
+function buildIn(q,i){
+  if(q.in==='num')return`<input class="q-input" type="text" inputmode="numeric" placeholder="${q.ph}" id="qi${i}" oninput="sa(${i},this.value)">`;
+  if(q.in==='dual')return`<div class="q-dual">
+    <div><label>${q.lb[0]}</label><input class="q-input" type="text" inputmode="numeric" placeholder="${q.ph[0]}" id="qi${i}a" oninput="sd(${i})"></div>
+    <div><label>${q.lb[1]}</label><input class="q-input" type="text" inputmode="numeric" placeholder="${q.ph[1]}" id="qi${i}b" oninput="sd(${i})"></div>
+  </div>`;
+  if(q.in==='animal')return`<div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">가장 가벼운 동물부터 순서대로 탭하세요</div>
+    <div class="animal-btns">
+      <button class="animal-btn" onclick="sa8('다람쥐',this)">🐿 다람쥐</button>
+      <button class="animal-btn" onclick="sa8('거북',this)">🐢 거북</button>
+      <button class="animal-btn" onclick="sa8('토끼',this)">🐇 토끼</button>
+    </div>
+    <div class="animal-order" id="ao">선택: </div>
+    <button class="animal-clear" onclick="ca8()">다시 선택</button>
+  </div>`;
+  if(q.in==='sym')return`<div>
+    <div class="symbol-section"><label>패턴 ① 빈칸</label>
+      <div class="symbol-btns" id="sa">${SYMS.map(s=>`<button class="sym-btn" onclick="ss(0,'${s}',this)">${s}</button>`).join('')}</div>
+    </div>
+    <div class="symbol-section"><label>패턴 ② 빈칸</label>
+      <div class="symbol-btns" id="sb">${SYMS.map(s=>`<button class="sym-btn" onclick="ss(1,'${s}',this)">${s}</button>`).join('')}</div>
+    </div>
+  </div>`;
+}
+
+function sa(i,v){S.ans[i]=v;document.getElementById('qc'+i).classList.toggle('answered',!!v.trim());upP();}
+function sd(i){
+  const a=document.getElementById('qi'+i+'a')?.value||'',b=document.getElementById('qi'+i+'b')?.value||'';
+  S.ans[i]=a&&b?a+','+b:'';
+  document.getElementById('qc'+i).classList.toggle('answered',!!(a&&b));upP();
+}
+function sa8(nm,btn){
+  if(S.anim.includes(nm))return;S.anim.push(nm);btn.classList.add('selected');
+  document.getElementById('ao').textContent='선택: '+S.anim.join(' → ');
+  S.ans[7]=S.anim.join(',');
+  document.getElementById('qc7').classList.toggle('answered',S.anim.length===3);upP();
+}
+function ca8(){
+  S.anim=[];S.ans[7]='';
+  document.querySelectorAll('.animal-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('ao').textContent='선택: ';
+  document.getElementById('qc7').classList.remove('answered');upP();
+}
+function ss(part,sym,btn){
+  S.s12[part]=sym;
+  const g=document.getElementById(part===0?'sa':'sb');
+  g.querySelectorAll('.sym-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');
+  if(S.s12[0]&&S.s12[1]){S.ans[11]=S.s12[0]+','+S.s12[1];document.getElementById('qc11').classList.add('answered');}
+  else{S.ans[11]='';document.getElementById('qc11').classList.remove('answered');}upP();
+}
+function upP(){
+  const d=S.ans.filter(a=>a.trim()).length,p=d/25*100;
+  document.getElementById('qFill').style.width=p+'%';
+  document.getElementById('qProg').textContent=d+' / 25 입력';
+  document.getElementById('qCount').textContent=d+'/25';
+}
+window.sa=sa;window.sd=sd;window.sa8=sa8;window.ca8=ca8;window.ss=ss;
+
+function buildC(){
+  const b=document.getElementById('cBody');b.innerHTML='';
+  b.innerHTML=`<div class="calc-intro"><strong>연산 테스트 안내</strong><br>덧셈 7문항 + 뺄셈 7문항입니다. □에 알맞은 수를 넣으세요.</div>
+    <div class="calc-section-title">1. 덧셈</div>
+    <div class="calc-grid" id="cg1"></div>
+    <div class="calc-section-title">2. 뺄셈</div>
+    <div class="calc-grid" id="cg2"></div>`;
+  buildCG('cg1',CA,0);buildCG('cg2',CS,7);
+}
+function buildCG(id,data,off){
+  const g=document.getElementById(id);
+  data.forEach((c,i)=>{
+    const d=document.createElement('div');d.className='calc-card';d.id='cc'+(off+i);
+    d.innerHTML=`<div class="calc-expr">${c.e}</div>
+    <input class="calc-input" type="text" inputmode="numeric" placeholder="□" id="ci${off+i}" oninput="sc(${off+i},this.value)">`;
+    g.appendChild(d);
+  });
+}
+function sc(i,v){S.cal[i]=v;document.getElementById('cc'+i).classList.toggle('answered',!!v.trim());}
+window.sc=sc;
+
+function renderRes(){
+  const mg=QS.map((q,i)=>ok(S.ans[i],q.a));
+  const sc=mg.filter(Boolean).length*4;
+  const tys=['식의계산','수','논리추리','도형','규칙'];
+  const ts={};tys.forEach(t=>{ts[t]={tot:0,ok:0}});
+  QS.forEach((q,i)=>{ts[q.t].tot++;if(mg[i])ts[q.t].ok++;});
+  const lvs={'키즈팩토':{tot:0,ok:0},'초등팩토':{tot:0,ok:0},'1031입문':{tot:0,ok:0},'1031심화':{tot:0,ok:0}};
+  QS.forEach((q,i)=>{
+    const k=q.lv.includes('키즈')?'키즈팩토':q.lv.includes('초등')?'초등팩토':q.lv.includes('심화')?'1031심화':'1031입문';
+    lvs[k].tot++;if(mg[i])lvs[k].ok++;
+  });
+  const ac=[...CA,...CS],cg=ac.map((c,i)=>n(S.cal[i])===n(c.a)),cw=cg.filter(g=>!g).length;
+  const cl=cw===0?'우수':cw<=2?'약간실수':'연습필요';
+  const li=getLv(sc);
+  const wq=QS.filter((q,i)=>!mg[i]);
+  const weak=tys.filter(t=>ts[t].tot>0&&Math.round(ts[t].ok/ts[t].tot*100)<70);
+  const p=(ok,tot)=>tot===0?0:Math.round(ok/tot*100);
+
+  document.getElementById('resBody').innerHTML=`
+  <div class="res-hero">
+    <div class="res-hero-name">${S.name} 학생 · 필즈 선발 대비 모의고사 진단 결과</div>
+    <div class="res-score">${sc}</div>
+    <div class="res-score-sub">/ 100점 (25문항 × 4점)</div>
+    <div class="res-level ${li.cls}">${li.lv}</div>
+  </div>
+
+  <div class="res-card">
+    <div class="res-card-title">유형별 분석</div>
+    ${tys.map(t=>`<div class="res-type-row">
+      <span class="res-type-name">${t}</span>
+      <div class="res-bar-bg"><div class="res-bar-fill bar-${t}" style="width:${p(ts[t].ok,ts[t].tot)}%"></div></div>
+      <span class="res-bar-pct">${ts[t].ok}/${ts[t].tot}</span>
+    </div>`).join('')}
+  </div>
+
+  <div class="res-card">
+    <div class="res-card-title">난이도별 분석</div>
+    ${['키즈팩토','초등팩토','1031입문','1031심화'].map(k=>`<div class="res-type-row">
+      <span class="res-type-name" style="font-size:11px">${k}</span>
+      <div class="res-bar-bg"><div class="res-bar-fill bar-${k}" style="width:${p(lvs[k].ok,lvs[k].tot)}%"></div></div>
+      <span class="res-bar-pct">${lvs[k].ok}/${lvs[k].tot}</span>
+    </div>`).join('')}
+  </div>
+
+  <div class="res-card">
+    <div class="res-card-title">연산 진단</div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+      <span class="calc-badge calc-${cl}">${cl==='약간실수'?'약간 실수':cl==='연습필요'?'연습 필요':cl}</span>
+      <span style="font-size:11px;color:var(--muted)">${14-cw}/14 정답</span>
+    </div>
+    <div class="res-comment">${CALC_TX[cl]}</div>
+  </div>
+
+  <div class="res-card">
+    <div class="res-card-title">학습 전략</div>
+    <div class="res-comment">${li.tx}</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.7">당부 드리고 싶은 건 학원이 중요한 것이 아니라 연산, 교과, 사고력 순으로 균형이 맞아야 합니다.</div>
+  </div>
+
+  ${wq.length?`<div class="res-card">
+    <div class="res-card-title">틀린 문항 (${wq.length}개)</div>
+    <div class="wrong-wrap">${wq.map(q=>`<div class="wrong-item"><span class="wrong-num">Q${q.id}</span><span class="wrong-topic">${q.tp.slice(0,10)}</span></div>`).join('')}</div>
+  </div>`:''}
+
+  ${weak.length?`<div class="res-card">
+    <div class="res-card-title">약점 유형 학습 (70% 미만)</div>
+    ${weak.map(t=>`<div class="study-item">
+      <div><div class="study-type-name">${t}</div><div class="study-vol">${TV[t].vol} · ${TV[t].lb}</div></div>
+      <a class="study-link" href="${TV[t].url}" target="_blank" rel="noopener">▶ 영상 보기</a>
+    </div>`).join('')}
+    <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.7">필즈 대비 과정 서재에서 전체 커리큘럼을 이용하세요.</div>
+  </div>`:''}
+
+  <div class="cta-section" style="text-align:center;padding:20px 0 10px">
+    <a href="https://naver.me/Ge7B7WcJ" target="_blank" rel="noopener" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:15px;font-weight:900;border-radius:14px;text-decoration:none;font-family:'Noto Sans KR',sans-serif;box-shadow:0 6px 24px rgba(212,175,55,.3)">
+      지필드 영재교육 상담 신청하기 →
+    </a>
+    <div style="font-size:11px;color:var(--muted);margin-top:10px">G-FIELD 영재교육 · 필즈 선발 대비 전문</div>
+  </div>`;
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const g=document.getElementById('gName');
+  g.addEventListener('keydown',e=>{if(e.key==='Enter')GD.start();});
+  setTimeout(()=>g.focus(),100);
+});
+
+})();
+</script>
+</body>
+</html>
