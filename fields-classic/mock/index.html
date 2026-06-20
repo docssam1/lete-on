@@ -191,29 +191,24 @@ const QS=[
   {id:25,t:'도형',lv:'1031심화',tp:'쌓기나무 규칙(5번째)',ba:'대칭·공간',a:'55',in:'num',ph:'개'},
 ];
 
-/* ─ 연산 교육과정 태그 ─
-   lv2=1학년2학기  lv3=2학년1학기  lv4=2학년2학기+
-   받아올림소: 두자리+한자리 받아올림 (단원①)
-   받아올림대: 두자리+두자리 받아올림 (단원②)
-   받아내림소: 십몇/이십몇-한자리 받아내림 (단원①, 작은 수)
-   받아내림대: 큰수-두자리 받아내림 (단원②, 이십몇 이상) */
+/* ─ 연산 문항 데이터 ─ */
 const CA=[
-  {e:'5+□=13',  a:'8',  tp:'역연산',             lv:2, tags:['역연산']},
-  {e:'8+21=□',  a:'29', tp:'받아올림없음',         lv:2, tags:['받아올림없음']},
-  {e:'35+7=□',  a:'42', tp:'두자리+한자리 받아올림',lv:3, tags:['받아올림','받아올림소']},
-  {e:'6+18=□',  a:'24', tp:'한자리+두자리 받아올림',lv:3, tags:['받아올림','받아올림소']},
-  {e:'23+34=□', a:'57', tp:'받아올림없음',         lv:3, tags:['받아올림없음']},
-  {e:'59+22=□', a:'81', tp:'두자리+두자리 받아올림',lv:3, tags:['받아올림','받아올림대']},
-  {e:'37+65=□', a:'102',tp:'받아올림(세자리결과)', lv:4, tags:['받아올림','받아올림대','세자리결과']},
+  {e:'5+□=13',  a:'8',  tp:'역연산'},
+  {e:'8+21=□',  a:'29', tp:'받아올림없음'},
+  {e:'35+7=□',  a:'42', tp:'받아올림'},
+  {e:'6+18=□',  a:'24', tp:'받아올림'},
+  {e:'23+34=□', a:'57', tp:'받아올림없음'},
+  {e:'59+22=□', a:'81', tp:'받아올림'},
+  {e:'37+65=□', a:'102',tp:'세 자리 되는 덧셈'},
 ];
 const CS=[
-  {e:'□-5=21',  a:'26', tp:'역연산',               lv:2, tags:['역연산']},
-  {e:'12-8=□',  a:'4',  tp:'십몇-한자리 받아내림',  lv:3, tags:['받아내림','받아내림소']},
-  {e:'23-5=□',  a:'18', tp:'이십몇-한자리 받아내림', lv:3, tags:['받아내림','받아내림소']},
-  {e:'39-16=□', a:'23', tp:'받아내림없음',           lv:3, tags:['받아내림없음']},
-  {e:'57-24=□', a:'33', tp:'받아내림없음',           lv:3, tags:['받아내림없음']},
-  {e:'62-38=□', a:'24', tp:'큰수 두자리-두자리 받아내림',lv:3,tags:['받아내림','받아내림대']},
-  {e:'96-79=□', a:'17', tp:'큰수 두자리-두자리 받아내림',lv:3,tags:['받아내림','받아내림대']},
+  {e:'□-5=21',  a:'26', tp:'역연산'},
+  {e:'12-8=□',  a:'4',  tp:'받아내림'},
+  {e:'23-5=□',  a:'18', tp:'받아내림'},
+  {e:'39-16=□', a:'23', tp:'받아내림없음'},
+  {e:'57-24=□', a:'33', tp:'받아내림없음'},
+  {e:'62-38=□', a:'24', tp:'두 자리 빼기 받아내림'},
+  {e:'96-79=□', a:'17', tp:'두 자리 빼기 받아내림'},
 ];
 
 const SYMS=['▲','■','□','○','△','◇'];
@@ -241,113 +236,119 @@ function match(u,c){return nm(u)===nm(c);}
 function getLv(sc){for(const d of LVLS)if(sc>=d.mn&&sc<=d.mx)return d;return LVLS[LVLS.length-1];}
 function pct(ok,tot){return tot===0?0:Math.round(ok/tot*100);}
 
-/* ─ 연산 스마트 진단: 역설 감지 + 단계 세분화 ─ */
+/* ─ 연산 진단: 전체 흐름 보고 판단, 쉬운 말만 사용 ─
+   설명회 기준: "기적의 계산법 3-4권 = 두 자리 빼기 받아내림"
+   역설 감지: 어려운 거 맞고 쉬운 거 틀림 → 집중력 문제
+*/
 function calcDiag(addW,subW,cw){
-  // 덧셈 패턴
-  const add역연산W   = addW[0];                  // 5+□=13
-  const add올림없음W  = addW[1]||addW[4];          // 8+21, 23+34
-  const add올림소W   = addW[2]||addW[3];           // 35+7, 6+18 ← 2학년1학기 단원①
-  const add올림대W   = addW[5];                   // 59+22 ← 2학년1학기 단원②
-  const add세자리W   = addW[6];                   // 37+65=102 ← 2학년2학기
-  // 뺄셈 패턴
-  const sub역연산W   = subW[0];                   // □-5=21
-  const sub내림없음W  = subW[3]||subW[4];          // 39-16, 57-24
-  const sub내림소W   = subW[1]||subW[2];           // 12-8, 23-5 ← 십몇/이십몇-한자리 (단원①)
-  const sub내림대W   = subW[5]||subW[6];           // 62-38, 96-79 ← 큰수-두자리 (단원②)
+  // 덧셈 전체 패턴
+  const add역연산   = addW[0];               // 5+□=13
+  const add기본틀림  = addW[1]||addW[4];       // 8+21, 23+34 (받아올림없음)
+  const add올림틀림  = addW[2]||addW[3]||addW[5]; // 35+7, 6+18, 59+22 (받아올림)
+  const add세자리   = addW[6];               // 37+65=102
 
-  // ── 역설 감지: 어려운 거 맞고 쉬운 거 틀림 → 집중력 문제 ──
-  const add역설 = add올림없음W && !add올림소W && !add올림대W; // 받아올림없음 틀림 + 받아올림있음 맞음
-  const sub역설 = sub내림없음W && !sub내림소W && !sub내림대W; // 받아내림없음 틀림 + 받아내림있음 맞음
-  const sub소역설 = sub내림소W && !sub내림대W;               // 작은 수 받아내림 틀림 + 큰 수 맞음
+  // 뺄셈 전체 패턴
+  const sub역연산   = subW[0];               // □-5=21
+  const sub기본틀림  = subW[3]||subW[4];       // 39-16, 57-24 (받아내림없음)
+  const sub작은틀림  = subW[1]||subW[2];       // 12-8, 23-5 (작은 수 받아내림)
+  const sub큰틀림   = subW[5]||subW[6];       // 62-38, 96-79 (두 자리 빼기 받아내림)
+  const sub내림틀림  = sub작은틀림||sub큰틀림;
+
+  // 역설: 어려운 거 맞고 쉬운 거 틀림 → 집중력 문제
+  const 덧셈역설 = add기본틀림 && !add올림틀림;        // 기본 틀리고 받아올림 맞음
+  const 뺄셈역설 = sub기본틀림 && !sub내림틀림;        // 기본 틀리고 받아내림 맞음
+  const 뺄셈단계역설 = sub작은틀림 && !sub큰틀림;      // 작은 수 틀리고 큰 수 맞음
 
   let cls='cb-우', grade='우수', lvText='', comment='';
   const patterns=[];
   const cmts=[];
 
+  // ─ 0개 틀림 ─
   if(cw===0){
-    lvText='2학년 1학기~2학기 수준 완벽 숙지';
-    comment='필즈 시험 수준의 연산을 완벽히 숙지했습니다. 필즈 입학 후에는 같은 3개의 수로 가르기, 두자리×한자리 정도의 연산이 필요한 경우가 많습니다. 꾸준히 유지해 주세요.';
+    lvText='연산 우수';
+    comment='연산 실력이 우수합니다. 필즈 시험에서 요구하는 두 자리 더하기·빼기를 모두 잘 합니다. S반이나 E1반을 목표로 한다면 이제는 얼마나 빨리 바로 나오느냐가 중요합니다. 꾸준히 속도도 함께 연습해 주세요.';
     return {cls,grade,lvText,patterns,comment};
   }
 
-  // ── 역설 처리 먼저 ──
-  if(add역설){
+  // ─ 역설 패턴 먼저 (쉬운 거 틀리고 어려운 거 맞음 → 집중력) ─
+  if(덧셈역설){
     cls='cb-약'; grade='잔실수';
-    lvText='받아올림 개념 있음 — 쉬운 문제 집중력 저하';
-    patterns.push('받아올림없음 실수 (역설·집중력)');
-    cmts.push('받아올림이 있는 어려운 덧셈은 맞히면서 받아올림이 없는 쉬운 덧셈에서 실수했습니다. 개념 부재가 아닌 집중력·주의력 문제입니다. 꼼꼼히 확인하는 습관 훈련이 필요합니다.');
+    lvText='받아올림 개념 있음 — 집중력 문제';
+    patterns.push('받아올림 없는 덧셈에서 실수');
+    cmts.push('받아올림이 있는 어려운 덧셈은 다 맞히는데, 더 쉬운 덧셈에서 실수가 나왔습니다. 개념이 없어서가 아니라 집중력이 흐트러진 경우입니다. 빠르게 풀면서도 한 번 더 확인하는 습관을 길러 주세요.');
   }
-  if(sub역설){
+  if(뺄셈역설){
     if(cls==='cb-우'){cls='cb-약'; grade='잔실수';}
-    if(!lvText) lvText='받아내림 개념 있음 — 쉬운 문제 집중력 저하';
-    patterns.push('받아내림없음 실수 (역설·집중력)');
-    cmts.push('받아내림이 있는 어려운 뺄셈은 맞히면서 받아내림이 없는 쉬운 뺄셈에서 실수했습니다. 집중력 향상 훈련이 필요합니다.');
+    if(!lvText) lvText='받아내림 개념 있음 — 집중력 문제';
+    patterns.push('받아내림 없는 뺄셈에서 실수');
+    cmts.push('받아내림이 있는 어려운 뺄셈은 다 맞히는데, 더 쉬운 뺄셈에서 실수가 나왔습니다. 집중력을 높이는 훈련이 필요합니다.');
   }
-  if(sub소역설){
+  if(뺄셈단계역설){
     if(cls==='cb-우'){cls='cb-약'; grade='잔실수';}
-    if(!lvText) lvText='받아내림 개념 있음 — 작은 수에서 집중력 저하';
-    patterns.push('작은 수 받아내림 실수 (역설·집중력)');
-    cmts.push('62-38, 96-79 같은 큰 수의 받아내림은 맞히면서 12-8, 23-5처럼 더 작은 수의 받아내림에서 실수했습니다. 쉽다고 생각해 집중이 흐트러진 경우입니다. 꼼꼼히 확인하는 습관이 필요합니다.');
+    if(!lvText) lvText='뺄셈 개념 있음 — 집중력 문제';
+    patterns.push('쉬운 뺄셈에서 실수 (역설)');
+    cmts.push('62-38 같은 어려운 뺄셈은 맞히면서 12-8처럼 더 쉬운 뺄셈에서 실수했습니다. 쉽다고 대충 보는 습관을 고쳐야 합니다.');
   }
 
-  // ── 뺄셈 단계별 구분 ──
-  if(!sub역설 && !sub소역설 && !sub내림소W && sub내림대W){
-    // 소 맞음 + 대 틀림 → 단계 격차 (원장님이 말씀하신 케이스)
-    if(cls==='cb-우'){cls='cb-약'; grade='부분 미숙';}
-    if(!lvText) lvText='2학년1학기 뺄셈 심화 단원 미학습';
-    patterns.push('두자리-두자리 받아내림 미숙 (큰 수)');
-    cmts.push('12-8, 23-5처럼 한 자리 수를 빼는 받아내림은 잘 하지만, 62-38, 96-79처럼 큰 수에서 두 자리 수를 빼는 받아내림에서 어려움이 있습니다. 2학년 1학기 뺄셈 심화 단원(두자리-두자리 받아내림) 집중 학습이 필요합니다.');
-  } else if(!sub역설 && !sub소역설 && sub내림소W && sub내림대W){
+  // ─ 역연산 ─
+  if(add역연산||sub역연산){
     if(cls==='cb-우'){cls='cb-연'; grade='연습 필요';}
-    if(!lvText) lvText='2학년1학기 받아내림 처음부터 학습';
-    patterns.push('받아내림 전반 미숙');
-    cmts.push('받아내림 전반이 어렵습니다. 12-8처럼 작은 수부터 받아내림 개념을 익히고 점차 큰 수(62-38)로 확장해야 합니다.');
+    if(!lvText) lvText='역연산 따로 연습 필요';
+    patterns.push('역연산 실수');
+    cmts.push('5+□=13, □-5=21처럼 □가 있는 식을 어려워합니다. 이런 역연산 문제는 필즈 시험에 꼭 나오는 유형입니다. 따로 연습이 필요합니다.');
   }
 
-  // ── 역연산 ──
-  if(add역연산W||sub역연산W){
-    if(cls==='cb-우'){cls='cb-연'; grade='연습 필요';}
-    if(!lvText) lvText='1학년2학기 역연산 미학습';
-    patterns.push('역연산 개념 미숙');
-    cmts.push('□가 포함된 역연산 문제(5+□=13, □-5=21)를 어려워합니다. 역연산 개념부터 별도로 연습이 필요합니다.');
-  }
-
-  // ── 덧셈 기본 ──
-  if(!add역설 && add올림없음W){
-    if(cls==='cb-우'){cls='cb-연'; grade='연습 필요';}
-    if(!lvText) lvText='1학년2학기~2학년1학기 기초 필요';
-    patterns.push('두자리 기본 덧셈 약점');
-    cmts.push('받아올림이 없는 두자리 덧셈에서도 실수가 있습니다. 기본 두자리 덧셈부터 다시 연습이 필요합니다.');
-  } else if(!add역설){
-    if(add올림소W && add올림대W){
+  // ─ 덧셈 전체 흐름 ─
+  if(!덧셈역설){
+    if(add기본틀림 && add올림틀림){
+      // 기본도 틀리고 받아올림도 틀림 → 덧셈 전반 약점
       if(cls==='cb-우'){cls='cb-연'; grade='연습 필요';}
-      if(!lvText) lvText='2학년1학기 받아올림 처음부터 학습';
-      patterns.push('받아올림 전반 미숙');
-      cmts.push('받아올림이 있는 덧셈 전반이 어렵습니다. 35+7처럼 작은 받아올림부터 차례로 연습해야 합니다.');
-    } else if(add올림소W && !add올림대W){
-      // 소 틀림 + 대 맞음 → 역설 (잔실수)
-      if(cls==='cb-우'){cls='cb-약'; grade='잔실수';}
-      if(!lvText) lvText='받아올림 개념 있음 — 소규모에서 잔실수';
-      patterns.push('소규모 받아올림 실수 (역설·잔실수)');
-      cmts.push('두자리+두자리 어려운 받아올림(59+22)은 맞히면서 더 쉬운 받아올림(35+7, 6+18)에서 실수했습니다. 집중력 향상이 필요합니다.');
-    } else if(!add올림소W && add올림대W){
-      // 소 맞음 + 대 틀림 → 단계 격차
+      if(!lvText) lvText='두 자리 덧셈 기초부터 연습 필요';
+      patterns.push('두 자리 덧셈 전반 약점');
+      cmts.push('받아올림이 없는 기본 덧셈에서도 실수가 있습니다. 기적의 계산법 3권(두 자리 더하기)부터 다시 연습이 필요합니다.');
+    } else if(add올림틀림){
+      // 기본은 맞고 받아올림만 틀림
       if(cls==='cb-우'){cls='cb-약'; grade='부분 미숙';}
-      if(!lvText) lvText='2학년1학기 덧셈 심화 단원 미숙';
-      patterns.push('두자리+두자리 받아올림 미숙');
-      cmts.push('두자리+한자리 받아올림(35+7, 6+18)은 잘 하지만, 두자리+두자리 받아올림(59+22)이 어렵습니다. 2학년 1학기 덧셈 심화 단원 집중 연습이 필요합니다.');
+      if(!lvText) lvText='받아올림 있는 덧셈 연습 필요';
+      patterns.push('받아올림 있는 덧셈 실수');
+      cmts.push('받아올림이 없는 덧셈은 잘 하지만, 35+7, 59+22처럼 받아올림이 생기는 덧셈에서 실수합니다. 기적의 계산법 3-4권 수준의 받아올림 연습이 필요합니다.');
     }
   }
 
-  // ── 세자리 결과 ──
-  if(add세자리W && !add올림없음W && !add역설){
-    patterns.push('세자리결과 받아올림 미숙');
-    cmts.push('37+65=102처럼 받아올림이 연속으로 세 자리 수가 되는 경우를 어려워합니다. 2학년 2학기 수준 연산 연습이 필요합니다.');
+  // ─ 세 자리 결과만 틀림 ─
+  if(add세자리 && !add기본틀림 && !add올림틀림 && !덧셈역설){
+    if(cls==='cb-우'){cls='cb-약'; grade='부분 미숙';}
+    if(!lvText) lvText='세 자리 되는 덧셈 미숙';
+    patterns.push('37+65=102 — 세 자리 결과 실수');
+    cmts.push('37+65=102처럼 더했더니 답이 세 자리가 되는 경우를 어려워합니다. 기적의 계산법 4권 이후 수준의 연습이 필요합니다.');
   }
 
-  if(!lvText) lvText='두자리 연산 집중 학습 필요';
+  // ─ 뺄셈 전체 흐름 ─
+  if(!뺄셈역설 && !뺄셈단계역설){
+    if(sub기본틀림 && sub내림틀림){
+      // 기본도 틀리고 받아내림도 틀림 → 뺄셈 전반 약점
+      if(cls==='cb-우'){cls='cb-연'; grade='연습 필요';}
+      if(!lvText) lvText='두 자리 뺄셈 기초부터 연습 필요';
+      patterns.push('두 자리 뺄셈 전반 약점');
+      cmts.push('받아내림이 없는 기본 뺄셈에서도 실수가 있습니다. 기적의 계산법 3권(두 자리 빼기)부터 다시 연습이 필요합니다.');
+    } else if(!sub작은틀림 && sub큰틀림){
+      // 12-8은 맞고 62-38만 틀림 → 단계 격차 (원장님이 말씀하신 케이스)
+      if(cls==='cb-우'){cls='cb-약'; grade='부분 미숙';}
+      if(!lvText) lvText='두 자리끼리 빼기 받아내림 연습 필요';
+      patterns.push('두 자리 빼기 받아내림 실수');
+      cmts.push('12-8처럼 작은 수 빼기는 잘 하는데, 62-38, 96-79처럼 두 자리끼리 빼기에서 받아내림이 생기면 실수합니다. 기적의 계산법 4권 수준(두 자리 빼기 받아내림) 집중 연습이 필요합니다.');
+    } else if(sub내림틀림){
+      // 받아내림 전반 틀림
+      if(cls==='cb-우'){cls='cb-약'; grade='부분 미숙';}
+      if(!lvText) lvText='받아내림 있는 뺄셈 연습 필요';
+      patterns.push('받아내림 있는 뺄셈 실수');
+      cmts.push('받아내림이 없는 뺄셈은 잘 하지만, 12-8, 62-38처럼 받아내림이 필요한 뺄셈에서 실수합니다. 기적의 계산법 3-4권 수준의 받아내림 연습이 필요합니다.');
+    }
+  }
+
+  if(!lvText) lvText='연산 집중 연습 필요';
   if(cls==='cb-우'){cls='cb-연'; grade='연습 필요';}
-  comment = cmts.join(' ') || '두자리 연산 전반에 걸쳐 연습이 필요합니다. 기적의 계산법 3-4권 수준의 연습을 권장합니다.';
+  comment = cmts.join(' ') || '기적의 계산법 3-4권 수준의 꾸준한 반복 연습이 필요합니다.';
   return {cls,grade,lvText,patterns,comment};
 }
 
@@ -412,7 +413,7 @@ function submitAll(){
   if(pOk<cOk-20)insights.push({cls:'i-warn',icon:'⚠️',txt:`pre1031(${pOk}%)에서 급격히 하락합니다. 초등팩토 수준은 학습되었으나 1031 수준 사고력이 아직 부족합니다.`});
   BA_ORDER.forEach(b=>{const {tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)<50)insights.push({cls:'i-warn',icon:'📌',txt:`행동영역 [${BA_LBL[b]}] 정답률 ${pct(ok,tot)}% — 이 영역 집중 훈련이 필요합니다.`});});
   BA_ORDER.forEach(b=>{const {tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)===100)insights.push({cls:'i-ok',icon:'⭐',txt:`행동영역 [${BA_LBL[b]}] 100% 정답 — 강점 영역입니다.`});});
-  if(CD.patterns.length) insights.push({cls:'i-info',icon:'🔢',txt:`연산 패턴 진단: ${CD.patterns.join(' · ')}`});
+  if(CD.patterns.length) insights.push({cls:'i-info',icon:'🔢',txt:`연산 진단: ${CD.patterns.join(' · ')}`});
   const wq=QS.filter((q,i)=>!mg[i]);
   const weak=TY.filter(t=>ts[t].tot>0&&pct(ts[t].ok,ts[t].tot)<70);
   document.getElementById('scoreSum').innerHTML=`<span class="sc-ok">✓ ${mg.filter(Boolean).length}문항</span><span class="sc-no">✗ ${mg.filter(v=>!v).length}문항</span><span>→ ${sc}점</span>`;
@@ -445,7 +446,7 @@ function submitAll(){
   </table></div>
 </div>
 ${insights.length?`<div class="r-card"><div class="r-ct">심층 분석 인사이트</div><div class="insight-list">${insights.map(ins=>`<div class="insight-item ${ins.cls}"><span class="i-icon">${ins.icon}</span><span>${ins.txt}</span></div>`).join('')}</div></div>`:''}
-<div class="r-card"><div class="r-ct">연산 진단 (한국 교육과정 단원별 분석)</div>
+<div class="r-card"><div class="r-ct">연산 진단</div>
   <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
     <span class="calc-badge ${CD.cls}">${CD.grade} (${14-cw}/14)</span>
     <span class="calc-lv-chip">${CD.lvText}</span>
