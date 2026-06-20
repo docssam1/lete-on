@@ -7,12 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#02050b;--sur:#080d14;--g:#d4af37;--g2:#f8dd83;
-  --gg:rgba(212,175,55,.18);--w:#f0ece2;--mu:#7a8a9a;--bd:rgba(212,175,55,.15);
-  --b2:rgba(255,255,255,.07);--nv:#0d1b2a;--ok:#22c55e;--no:#ef4444;
-  --ok-bg:rgba(34,197,94,.07);--no-bg:rgba(239,68,68,.07);
-}
+:root{--bg:#02050b;--sur:#080d14;--g:#d4af37;--g2:#f8dd83;--gg:rgba(212,175,55,.18);--w:#f0ece2;--mu:#7a8a9a;--bd:rgba(212,175,55,.15);--b2:rgba(255,255,255,.07);--nv:#0d1b2a;--ok:#22c55e;--no:#ef4444;--ok-bg:rgba(34,197,94,.07);--no-bg:rgba(239,68,68,.07)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--w);min-height:100vh;overflow-x:hidden}
 .top{background:rgba(2,5,11,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);padding:8px 14px;position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -20,8 +15,7 @@ html,body{background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(-
 .top-sep{width:1px;height:18px;background:var(--bd);flex-shrink:0}
 .top-title{font-size:11px;color:var(--mu);flex:1;min-width:60px}
 .top-name{height:34px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:8px;color:var(--w);font-size:13px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:0 10px;outline:none;width:100px;transition:border-color .2s}
-.top-name:focus{border-color:var(--g)}
-.top-name::placeholder{color:rgba(255,255,255,.25);font-weight:400;font-size:12px}
+.top-name:focus{border-color:var(--g)}.top-name::placeholder{color:rgba(255,255,255,.25);font-weight:400;font-size:12px}
 .ai-spin{display:none;align-items:center;gap:5px;font-size:11px;color:var(--g2);background:rgba(212,175,55,.08);border:1px solid var(--bd);padding:4px 10px;border-radius:6px}
 .ai-ok{display:none;font-size:11px;color:var(--ok);background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);padding:4px 10px;border-radius:6px}
 .sp{width:12px;height:12px;border:2px solid rgba(212,175,55,.3);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite}
@@ -34,48 +28,34 @@ main{max-width:960px;margin:0 auto;padding:12px 14px 40px}
 .up-panel{background:var(--sur);border:1.5px dashed rgba(212,175,55,.2);border-radius:12px;padding:14px;text-align:center;cursor:pointer;transition:all .2s}
 .up-panel:hover{border-color:var(--g);background:rgba(212,175,55,.04)}
 .up-panel.done{border-color:rgba(34,197,94,.4);border-style:solid;background:var(--ok-bg)}
-.up-panel-icon{font-size:24px;margin-bottom:6px}
-.up-panel-title{font-size:12px;font-weight:900;color:var(--w);margin-bottom:2px}
-.up-panel-sub{font-size:10px;color:var(--mu)}
+.up-panel-icon{font-size:24px;margin-bottom:6px}.up-panel-title{font-size:12px;font-weight:900;color:var(--w);margin-bottom:2px}.up-panel-sub{font-size:10px;color:var(--mu)}
 .up-panel-done{font-size:10px;color:var(--ok);font-weight:700;margin-top:4px;display:none}
 .up-panel.done .up-panel-done{display:block}
 .q-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 @media(max-width:480px){.q-grid{grid-template-columns:repeat(2,1fr)}}
 .q-card{background:var(--sur);border:1.5px solid var(--b2);border-radius:12px;padding:10px 10px 8px;transition:border-color .2s,background .2s;position:relative;overflow:hidden}
 .q-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;opacity:0;transition:opacity .2s}
-.q-card.ok{border-color:rgba(34,197,94,.4);background:var(--ok-bg)}
-.q-card.ok::before{background:var(--ok);opacity:1}
-.q-card.no{border-color:rgba(239,68,68,.4);background:var(--no-bg)}
-.q-card.no::before{background:var(--no);opacity:1}
+.q-card.ok{border-color:rgba(34,197,94,.4);background:var(--ok-bg)}.q-card.ok::before{background:var(--ok);opacity:1}
+.q-card.no{border-color:rgba(239,68,68,.4);background:var(--no-bg)}.q-card.no::before{background:var(--no);opacity:1}
 .q-top{display:flex;align-items:center;gap:5px;margin-bottom:7px}
 .q-num{font-family:'DM Serif Display',serif;font-size:17px;color:var(--g2);min-width:24px;line-height:1}
 .q-t{font-size:8px;font-weight:900;padding:2px 6px;border-radius:20px;white-space:nowrap}
-.t-식의계산{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.2)}
-.t-수{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
-.t-논리추리{background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.2)}
-.t-도형{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
-.t-규칙{background:rgba(244,114,182,.12);color:#f472b6;border:1px solid rgba(244,114,182,.2)}
-.q-fb{margin-left:auto;font-size:13px;transition:opacity .2s;opacity:0}
-.ok .q-ok-fb,.no .q-no-fb{opacity:1}
+.t-식의계산{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.2)}.t-수{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}.t-논리추리{background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.2)}.t-도형{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.2)}.t-규칙{background:rgba(244,114,182,.12);color:#f472b6;border:1px solid rgba(244,114,182,.2)}
+.q-fb{margin-left:auto;font-size:13px;transition:opacity .2s;opacity:0}.ok .q-ok-fb,.no .q-no-fb{opacity:1}
 .q-inp{width:100%;height:36px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:8px;color:var(--w);font-size:15px;font-weight:700;font-family:'Noto Sans KR',sans-serif;text-align:center;outline:none;padding:0 4px;transition:border-color .2s}
-.q-inp:focus{border-color:var(--g)}
-.ok .q-inp{border-color:rgba(34,197,94,.4)}
-.no .q-inp{border-color:rgba(239,68,68,.4)}
+.q-inp:focus{border-color:var(--g)}.ok .q-inp{border-color:rgba(34,197,94,.4)}.no .q-inp{border-color:rgba(239,68,68,.4)}
 .q-hint{font-size:9px;color:var(--mu);margin-top:4px;text-align:center;line-height:1.3}
-.q-dual{display:grid;grid-template-columns:1fr 1fr;gap:4px}
-.q-dual label{font-size:8px;color:var(--mu);display:block;margin-bottom:2px;font-weight:700;text-align:center}
+.q-dual{display:grid;grid-template-columns:1fr 1fr;gap:4px}.q-dual label{font-size:8px;color:var(--mu);display:block;margin-bottom:2px;font-weight:700;text-align:center}
 .q-animal{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:4px}
 .a-btn{padding:6px 2px;border-radius:6px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--w);font-size:9px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;text-align:center;line-height:1.3}
 .a-btn.sel{border-color:var(--g);background:rgba(212,175,55,.12);color:var(--g2)}
 .a-order{font-size:8px;color:var(--mu);text-align:center;margin-bottom:2px}
 .a-clr{font-size:8px;color:var(--mu);background:none;border:none;cursor:pointer;font-family:'Noto Sans KR',sans-serif;text-decoration:underline;display:block;margin:0 auto}
-.sym-lbl{font-size:8px;color:var(--mu);font-weight:700;margin-bottom:3px}
-.sym-row{display:flex;gap:3px;margin-bottom:5px;flex-wrap:wrap}
+.sym-lbl{font-size:8px;color:var(--mu);font-weight:700;margin-bottom:3px}.sym-row{display:flex;gap:3px;margin-bottom:5px;flex-wrap:wrap}
 .s-btn{padding:4px 6px;border-radius:5px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--w);font-size:12px;cursor:pointer;min-width:28px;text-align:center}
 .s-btn.sel{border-color:var(--g);background:rgba(212,175,55,.12);color:var(--g2)}
 .c-card{background:var(--sur);border:1.5px solid var(--b2);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:7px;transition:border-color .2s}
-.c-card.ok{border-color:rgba(34,197,94,.4);background:var(--ok-bg)}
-.c-card.no{border-color:rgba(239,68,68,.4);background:var(--no-bg)}
+.c-card.ok{border-color:rgba(34,197,94,.4);background:var(--ok-bg)}.c-card.no{border-color:rgba(239,68,68,.4);background:var(--no-bg)}
 .c-expr{font-size:13px;font-weight:700;color:var(--w);text-align:center}
 .prog-wrap{margin:10px 0 4px;background:rgba(255,255,255,.06);border-radius:999px;height:3px;overflow:hidden}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--g),var(--g2));border-radius:999px;transition:width .3s}
@@ -93,60 +73,41 @@ main{max-width:960px;margin:0 auto;padding:12px 14px 40px}
 .res-sc{font-family:'DM Serif Display',serif;font-size:72px;color:var(--g);line-height:1;text-shadow:0 0 40px var(--gg);position:relative}
 .res-sc-s{font-size:13px;color:var(--mu);position:relative;margin-top:2px}
 .res-lv{display:inline-block;font-size:17px;font-weight:900;padding:8px 24px;border-radius:30px;margin-top:12px;position:relative}
-.lv-s{background:rgba(212,175,55,.2);border:1px solid var(--g);color:var(--g2)}
-.lv-e1{background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.3);color:#60a5fa}
-.lv-e2{background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.3);color:#a78bfa}
-.lv-j{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7)}
+.lv-s{background:rgba(212,175,55,.2);border:1px solid var(--g);color:var(--g2)}.lv-e1{background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.3);color:#60a5fa}.lv-e2{background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.3);color:#a78bfa}.lv-j{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7)}
 .r-card{background:var(--sur);border:1px solid var(--b2);border-radius:14px;padding:18px;margin-bottom:12px}
-.r-ct{font-size:10px;font-weight:900;color:var(--g);letter-spacing:.13em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.r-ct::after{content:'';flex:1;height:1px;background:var(--bd)}
+.r-ct{font-size:10px;font-weight:900;color:var(--g);letter-spacing:.13em;margin-bottom:14px;display:flex;align-items:center;gap:8px}.r-ct::after{content:'';flex:1;height:1px;background:var(--bd)}
 .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:480px){.charts-row{grid-template-columns:1fr}}
-.chart-lbl{font-size:11px;font-weight:700;color:var(--mu);text-align:center;margin-bottom:8px}
-.chart-wrap{position:relative;height:180px}
-.r-row{display:grid;grid-template-columns:74px 1fr 44px;align-items:center;gap:8px;margin-bottom:10px}
-.r-row:last-child{margin-bottom:0}
-.r-tn{font-size:11px;font-weight:700;color:var(--w)}
-.r-bg{background:rgba(255,255,255,.06);border-radius:999px;height:6px;overflow:hidden}
-.r-fill{height:100%;border-radius:999px;transition:width .8s cubic-bezier(.22,1,.36,1)}
-.r-p{font-size:11px;font-weight:900;color:var(--g2);text-align:right}
+.chart-lbl{font-size:11px;font-weight:700;color:var(--mu);text-align:center;margin-bottom:8px}.chart-wrap{position:relative;height:180px}
+.r-row{display:grid;grid-template-columns:74px 1fr 44px;align-items:center;gap:8px;margin-bottom:10px}.r-row:last-child{margin-bottom:0}
+.r-tn{font-size:11px;font-weight:700;color:var(--w)}.r-bg{background:rgba(255,255,255,.06);border-radius:999px;height:6px;overflow:hidden}
+.r-fill{height:100%;border-radius:999px;transition:width .8s cubic-bezier(.22,1,.36,1)}.r-p{font-size:11px;font-weight:900;color:var(--g2);text-align:right}
 .f-식의계산{background:linear-gradient(90deg,#3b82f6,#60a5fa)}.f-수{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}.f-논리추리{background:linear-gradient(90deg,#ea580c,#fb923c)}.f-도형{background:linear-gradient(90deg,#16a34a,#22c55e)}.f-규칙{background:linear-gradient(90deg,#db2777,#f472b6)}
 .cross-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:8px}
 .cross-table th{background:rgba(212,175,55,.08);color:var(--g2);font-weight:900;padding:7px 8px;text-align:center;border:1px solid var(--b2);font-size:10px}
-.cross-table td{padding:7px 8px;text-align:center;border:1px solid var(--b2);color:var(--mu)}
-.cross-table td.hit{color:var(--w);font-weight:700}
+.cross-table td{padding:7px 8px;text-align:center;border:1px solid var(--b2);color:var(--mu)}.cross-table td.hit{color:var(--w);font-weight:700}
 .cross-cell{display:inline-flex;align-items:center;justify-content:center;width:28px;height:22px;border-radius:6px;font-size:10px;font-weight:900}
 .cell-ok{background:rgba(34,197,94,.15);color:var(--ok)}.cell-no{background:rgba(239,68,68,.15);color:var(--no)}.cell-na{color:rgba(255,255,255,.2)}
 .insight-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
 .insight-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;font-size:12px;line-height:1.7}
-.i-warn{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);color:rgba(255,255,255,.8)}
-.i-ok{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);color:rgba(255,255,255,.8)}
-.i-info{background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.15);color:rgba(255,255,255,.8)}
+.i-warn{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);color:rgba(255,255,255,.8)}.i-ok{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);color:rgba(255,255,255,.8)}.i-info{background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.15);color:rgba(255,255,255,.8)}
 .i-icon{font-size:16px;flex-shrink:0;margin-top:1px}
 .calc-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:30px;font-size:13px;font-weight:900}
-.cb-우{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:var(--ok)}
-.cb-약{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3);color:#fbbf24}
-.cb-연{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:var(--no)}
+.cb-우{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:var(--ok)}.cb-약{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3);color:#fbbf24}.cb-연{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:var(--no)}
 .calc-detail{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .calc-d-card{background:rgba(255,255,255,.03);border:1px solid var(--b2);border-radius:10px;padding:10px}
 .calc-d-title{font-size:10px;font-weight:900;color:var(--mu);margin-bottom:8px}
 .calc-d-items{display:flex;flex-direction:column;gap:5px}
 .calc-d-item{display:flex;align-items:center;justify-content:space-between;gap:6px}
-.calc-d-expr{font-size:12px;color:var(--mu);font-weight:600}
-.calc-d-ok{color:var(--ok);font-weight:900;font-size:12px}
-.calc-d-no{color:var(--no);font-size:10px;font-weight:900;text-align:right}
+.calc-d-expr{font-size:12px;color:var(--mu);font-weight:600}.calc-d-ok{color:var(--ok);font-weight:900;font-size:12px}.calc-d-no{color:var(--no);font-size:10px;font-weight:900;text-align:right}
 .calc-pat-chip{display:inline-block;font-size:10px;font-weight:900;padding:3px 9px;border-radius:20px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
 .calc-lv-chip{display:inline-block;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(212,175,55,.08);border:1px solid var(--bd);color:var(--g2);margin-left:6px}
 .r-comment{font-size:12px;color:rgba(255,255,255,.75);line-height:1.8;background:rgba(212,175,55,.04);border-left:3px solid var(--g);padding:12px 14px;border-radius:0 10px 10px 0;margin-top:10px}
 .wrong-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
 .wrong-item{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.wrong-left{flex:1}
-.wrong-num{font-size:11px;font-weight:900;color:var(--no)}
-.wrong-topic{font-size:12px;font-weight:700;color:var(--w);margin:2px 0}
-.wrong-area{font-size:10px;color:var(--mu)}
+.wrong-left{flex:1}.wrong-num{font-size:11px;font-weight:900;color:var(--no)}.wrong-topic{font-size:12px;font-weight:700;color:var(--w);margin:2px 0}.wrong-area{font-size:10px;color:var(--mu)}
 .wrong-link{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;background:#c0392b;color:#fff;text-decoration:none;font-size:11px;font-weight:900;white-space:nowrap;flex-shrink:0}
-.s-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--b2)}
-.s-item:last-child{border-bottom:none}
+.s-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--b2)}.s-item:last-child{border-bottom:none}
 .s-tn{font-size:13px;font-weight:700;color:var(--w)}.s-vol{font-size:10px;color:var(--mu);margin-top:2px}
 .s-link{font-size:11px;font-weight:900;color:var(--g);background:rgba(212,175,55,.08);border:1px solid var(--bd);padding:5px 12px;border-radius:8px;text-decoration:none;white-space:nowrap}
 .res-actions{display:flex;gap:10px;padding:14px 0;flex-wrap:wrap}
@@ -156,12 +117,9 @@ main{max-width:960px;margin:0 auto;padding:12px 14px 40px}
   body{background:#fff!important;color:#111!important}
   .top,.submit-area,.res-actions,.wrong-link,.s-link,.upload-panels,.q-grid,.sec,.prog-wrap,.prog-txt{display:none!important}
   #result{display:block!important;margin:0!important}
-  .res-hero{background:#fffbec!important;border-color:#d4af37!important}
-  .res-sc{color:#b8960c!important;text-shadow:none!important}
-  .r-card{background:#f9f9f9!important;border-color:#e0e0e0!important}
-  .r-bg{background:#e0e0e0!important}
-  .r-tn,.s-tn,.wrong-topic{color:#111!important}
-  .r-comment{background:#fffbec!important;color:#333!important}
+  .res-hero{background:#fffbec!important;border-color:#d4af37!important}.res-sc{color:#b8960c!important;text-shadow:none!important}
+  .r-card{background:#f9f9f9!important;border-color:#e0e0e0!important}.r-bg{background:#e0e0e0!important}
+  .r-tn,.s-tn,.wrong-topic{color:#111!important}.r-comment{background:#fffbec!important;color:#333!important}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   @page{margin:1.2cm}
 }
@@ -169,8 +127,7 @@ main{max-width:960px;margin:0 auto;padding:12px 14px 40px}
 </head>
 <body>
 <div class="top">
-  <span class="top-brand">G-FIELD</span>
-  <div class="top-sep"></div>
+  <span class="top-brand">G-FIELD</span><div class="top-sep"></div>
   <span class="top-title">필즈 선발 대비 모의고사</span>
   <input class="top-name" id="nameInp" type="text" placeholder="학생 이름" autocomplete="off">
   <div class="ai-spin" id="aiSpin"><div class="sp"></div>AI 분석 중</div>
@@ -180,16 +137,12 @@ main{max-width:960px;margin:0 auto;padding:12px 14px 40px}
 <div class="sec">답안지 업로드 <span class="sec-sub">· 사진 찍어 올리면 AI가 자동 인식</span></div>
 <div class="upload-panels">
   <div class="up-panel" id="panelA" onclick="document.getElementById('fileA').click()">
-    <div class="up-panel-icon">📄</div>
-    <div class="up-panel-title">시험지 A · 사고력 1~25번</div>
-    <div class="up-panel-sub">답안란 사진을 올리세요</div>
-    <div class="up-panel-done">✓ 인식 완료 — 자동 입력됨</div>
+    <div class="up-panel-icon">📄</div><div class="up-panel-title">시험지 A · 사고력 1~25번</div>
+    <div class="up-panel-sub">답안란 사진을 올리세요</div><div class="up-panel-done">✓ 인식 완료 — 자동 입력됨</div>
   </div>
   <div class="up-panel" id="panelB" onclick="document.getElementById('fileB').click()">
-    <div class="up-panel-icon">🧮</div>
-    <div class="up-panel-title">시험지 B · 연산 14문항</div>
-    <div class="up-panel-sub">연산 답안 사진을 올리세요</div>
-    <div class="up-panel-done">✓ 인식 완료 — 자동 입력됨</div>
+    <div class="up-panel-icon">🧮</div><div class="up-panel-title">시험지 B · 연산 14문항</div>
+    <div class="up-panel-sub">연산 답안 사진을 올리세요</div><div class="up-panel-done">✓ 인식 완료 — 자동 입력됨</div>
   </div>
 </div>
 <input type="file" id="fileA" accept="image/*" style="display:none" onchange="analyzeImg(this,'A')">
@@ -210,7 +163,6 @@ main{max-width:960px;margin:0 auto;padding:12px 14px 40px}
 (function(){
 const YT='https://www.youtube.com/watch?v=DRVcC6pCZcw';
 const TS={1:'&t=9s',2:'&t=61s',3:'&t=107s',4:'&t=157s',5:'&t=205s',6:'&t=257s',7:'&t=309s',8:'&t=359s',9:'&t=415s',10:'&t=468s',11:'&t=522s',12:'&t=522s',13:'&t=577s',14:'&t=624s',15:'&t=677s',16:'&t=729s',17:'&t=775s',18:'&t=827s',19:'&t=876s',20:'&t=924s',21:'&t=980s',22:'&t=980s',23:'&t=1035s',24:'&t=1144s',25:'&t=1253s'};
-
 const QS=[
   {id:1,t:'식의계산',lv:'키즈팩토',tp:'막대의 길이',ba:'지문이해',a:'8',in:'num',ph:'숫자'},
   {id:2,t:'식의계산',lv:'키즈팩토',tp:'조건에 따른 수(대화)',ba:'지문이해',a:'8',in:'num',ph:'숫자'},
@@ -239,27 +191,29 @@ const QS=[
   {id:25,t:'도형',lv:'1031심화',tp:'쌓기나무 규칙(5번째)',ba:'대칭·공간',a:'55',in:'num',ph:'개'},
 ];
 
-/* ─ 연산: 교육과정 수준 태그 부여 ─
-   lv2 = 1학년2학기 (두자리 기본·역연산)
-   lv3 = 2학년1학기 (받아올림·받아내림 있는 두자리)
-   lv4 = 2학년2학기+ (세자리 결과) */
+/* ─ 연산 교육과정 태그 ─
+   lv2=1학년2학기  lv3=2학년1학기  lv4=2학년2학기+
+   받아올림소: 두자리+한자리 받아올림 (단원①)
+   받아올림대: 두자리+두자리 받아올림 (단원②)
+   받아내림소: 십몇/이십몇-한자리 받아내림 (단원①, 작은 수)
+   받아내림대: 큰수-두자리 받아내림 (단원②, 이십몇 이상) */
 const CA=[
-  {e:'5+□=13',  a:'8',  tp:'역연산',         lv:2, tags:['역연산']},
-  {e:'8+21=□',  a:'29', tp:'받아올림없음',    lv:2, tags:['받아올림없음']},
-  {e:'35+7=□',  a:'42', tp:'받아올림',        lv:3, tags:['받아올림']},
-  {e:'6+18=□',  a:'24', tp:'받아올림',        lv:3, tags:['받아올림']},
-  {e:'23+34=□', a:'57', tp:'받아올림없음',    lv:3, tags:['받아올림없음']},
-  {e:'59+22=□', a:'81', tp:'받아올림',        lv:3, tags:['받아올림']},
-  {e:'37+65=□', a:'102',tp:'받아올림(세자리)',lv:4, tags:['받아올림','세자리결과']},
+  {e:'5+□=13',  a:'8',  tp:'역연산',             lv:2, tags:['역연산']},
+  {e:'8+21=□',  a:'29', tp:'받아올림없음',         lv:2, tags:['받아올림없음']},
+  {e:'35+7=□',  a:'42', tp:'두자리+한자리 받아올림',lv:3, tags:['받아올림','받아올림소']},
+  {e:'6+18=□',  a:'24', tp:'한자리+두자리 받아올림',lv:3, tags:['받아올림','받아올림소']},
+  {e:'23+34=□', a:'57', tp:'받아올림없음',         lv:3, tags:['받아올림없음']},
+  {e:'59+22=□', a:'81', tp:'두자리+두자리 받아올림',lv:3, tags:['받아올림','받아올림대']},
+  {e:'37+65=□', a:'102',tp:'받아올림(세자리결과)', lv:4, tags:['받아올림','받아올림대','세자리결과']},
 ];
 const CS=[
-  {e:'□-5=21',  a:'26', tp:'역연산',         lv:2, tags:['역연산']},
-  {e:'12-8=□',  a:'4',  tp:'받아내림',        lv:3, tags:['받아내림']},
-  {e:'23-5=□',  a:'18', tp:'받아내림',        lv:3, tags:['받아내림']},
-  {e:'39-16=□', a:'23', tp:'받아내림없음',    lv:3, tags:['받아내림없음']},
-  {e:'57-24=□', a:'33', tp:'받아내림없음',    lv:3, tags:['받아내림없음']},
-  {e:'62-38=□', a:'24', tp:'받아내림',        lv:3, tags:['받아내림']},
-  {e:'96-79=□', a:'17', tp:'받아내림',        lv:3, tags:['받아내림']},
+  {e:'□-5=21',  a:'26', tp:'역연산',               lv:2, tags:['역연산']},
+  {e:'12-8=□',  a:'4',  tp:'십몇-한자리 받아내림',  lv:3, tags:['받아내림','받아내림소']},
+  {e:'23-5=□',  a:'18', tp:'이십몇-한자리 받아내림', lv:3, tags:['받아내림','받아내림소']},
+  {e:'39-16=□', a:'23', tp:'받아내림없음',           lv:3, tags:['받아내림없음']},
+  {e:'57-24=□', a:'33', tp:'받아내림없음',           lv:3, tags:['받아내림없음']},
+  {e:'62-38=□', a:'24', tp:'큰수 두자리-두자리 받아내림',lv:3,tags:['받아내림','받아내림대']},
+  {e:'96-79=□', a:'17', tp:'큰수 두자리-두자리 받아내림',lv:3,tags:['받아내림','받아내림대']},
 ];
 
 const SYMS=['▲','■','□','○','△','◇'];
@@ -281,81 +235,120 @@ const LVLS=[
   {mn:0,mx:51,lv:'주 1회 낮은 반',cls:'lv-j',tx:'주 1회 낮은반 레벨이지만 충분히 연습하면 주2회도 나올 수 있습니다. 교과, 사고력 학습의 균형이 필요합니다.'},
 ];
 const TV={'식의계산':{vol:'Vol.1·Vol.2',url:'https://youtu.be/7aPj5IJUzQM'},'수':{vol:'Vol.3·Vol.4',url:'https://youtu.be/mq-1VxjLzMk'},'논리추리':{vol:'Vol.2',url:'https://youtu.be/TOHw8sCumHY'},'도형':{vol:'Final',url:'https://youtu.be/FC4W2bRJwKc'},'규칙':{vol:'Vol.4',url:'https://youtu.be/neRIODxo13I'}};
-
 let anim=[],s12=['',''],charts=[];
-
 function nm(s){return String(s||'').trim().replace(/\s+/g,'').replace(/，/g,',');}
 function match(u,c){return nm(u)===nm(c);}
 function getLv(sc){for(const d of LVLS)if(sc>=d.mn&&sc<=d.mx)return d;return LVLS[LVLS.length-1];}
 function pct(ok,tot){return tot===0?0:Math.round(ok/tot*100);}
 
-/* ─ 연산 교육과정 기반 스마트 패턴 분석 ─ */
+/* ─ 연산 스마트 진단: 역설 감지 + 단계 세분화 ─ */
 function calcDiag(addW,subW,cw){
   // 덧셈 패턴
-  const add역연산W  = addW[0];                           // 5+□=13
-  const add올림없음W = addW[1]||addW[4];                  // 8+21, 23+34
-  const add올림W    = addW[2]||addW[3]||addW[5];         // 35+7, 6+18, 59+22
-  const add세자리W  = addW[6];                           // 37+65=102
+  const add역연산W   = addW[0];                  // 5+□=13
+  const add올림없음W  = addW[1]||addW[4];          // 8+21, 23+34
+  const add올림소W   = addW[2]||addW[3];           // 35+7, 6+18 ← 2학년1학기 단원①
+  const add올림대W   = addW[5];                   // 59+22 ← 2학년1학기 단원②
+  const add세자리W   = addW[6];                   // 37+65=102 ← 2학년2학기
   // 뺄셈 패턴
-  const sub역연산W  = subW[0];                           // □-5=21
-  const sub내림없음W = subW[3]||subW[4];                  // 39-16, 57-24
-  const sub내림W    = subW[1]||subW[2]||subW[5]||subW[6];// 12-8, 23-5, 62-38, 96-79
+  const sub역연산W   = subW[0];                   // □-5=21
+  const sub내림없음W  = subW[3]||subW[4];          // 39-16, 57-24
+  const sub내림소W   = subW[1]||subW[2];           // 12-8, 23-5 ← 십몇/이십몇-한자리 (단원①)
+  const sub내림대W   = subW[5]||subW[6];           // 62-38, 96-79 ← 큰수-두자리 (단원②)
+
+  // ── 역설 감지: 어려운 거 맞고 쉬운 거 틀림 → 집중력 문제 ──
+  const add역설 = add올림없음W && !add올림소W && !add올림대W; // 받아올림없음 틀림 + 받아올림있음 맞음
+  const sub역설 = sub내림없음W && !sub내림소W && !sub내림대W; // 받아내림없음 틀림 + 받아내림있음 맞음
+  const sub소역설 = sub내림소W && !sub내림대W;               // 작은 수 받아내림 틀림 + 큰 수 맞음
 
   let cls='cb-우', grade='우수', lvText='', comment='';
   const patterns=[];
+  const cmts=[];
 
   if(cw===0){
     lvText='2학년 1학기~2학기 수준 완벽 숙지';
     comment='필즈 시험 수준의 연산을 완벽히 숙지했습니다. 필즈 입학 후에는 같은 3개의 수로 가르기, 두자리×한자리 정도의 연산이 필요한 경우가 많습니다. 꾸준히 유지해 주세요.';
-
-  } else if(cw<=2 && !add올림없음W && !sub내림없음W && !add역연산W && !sub역연산W){
-    // 1-2개 실수, 기본(받아올림없음·역연산)은 다 맞음 → 잔실수
-    cls='cb-약'; grade='약간 실수';
-    if(add세자리W && cw===1){
-      patterns.push('받아올림 연속(세자리결과) 실수');
-      lvText='2학년 2학기 수준 미숙';
-      comment='전반적으로 연산이 잘 됩니다. 37+65=102처럼 받아올림이 두 번 일어나 세 자리 수가 되는 경우에서만 실수가 있습니다. 2학년 2학기 연산 연습이 추가로 필요합니다.';
-    } else {
-      patterns.push('잔실수 (속도·집중력)');
-      lvText='2학년 1학기 수준 — 잔실수';
-      comment='연산 실력이 전반적으로 양호합니다. 특정 유형의 약점이 아닌 집중력 또는 속도 부족으로 인한 잔실수입니다. 꾸준한 반복 훈련으로 정확도를 높여 주세요.';
-    }
-
-  } else {
-    cls='cb-연'; grade='연습 필요';
-    const cmts=[];
-
-    if(add역연산W||sub역연산W){
-      patterns.push('역연산 개념 미숙');
-      lvText='1학년 2학기 역연산 미학습';
-      cmts.push('□가 포함된 역연산 문제(5+□=13, □-5=21)를 어려워합니다. 빈칸 채우기 유형을 별도로 연습해야 합니다. 1학년 수준 역연산 개념부터 익혀 주세요.');
-    }
-    if(add올림없음W||sub내림없음W){
-      patterns.push('두자리 기본 연산 약점');
-      if(!lvText) lvText='2학년 1학기 기본 연산 학습 필요';
-      cmts.push('받아올림·받아내림이 없는 두자리 연산에서도 실수가 있습니다. 교육과정상 2학년 1학기 기본 연산부터 체계적으로 다시 학습하는 것이 필요합니다.');
-    } else {
-      if(add올림W){
-        patterns.push('받아올림 있는 덧셈 실수');
-        if(!lvText) lvText='2학년 1학기 받아올림 집중 필요';
-        cmts.push('받아올림이 없는 덧셈(23+34)은 잘 하지만, 받아올림이 있는 경우(35+7, 6+18, 59+22)에서 실수합니다. 일의자리에서 받아올림이 발생할 때 십의자리에 더하는 과정을 집중 연습해 주세요.');
-      }
-      if(sub내림W){
-        patterns.push('받아내림 있는 뺄셈 실수');
-        if(!lvText) lvText='2학년 1학기 받아내림 집중 필요';
-        cmts.push('받아내림이 없는 뺄셈(39-16, 57-24)은 잘 하지만, 받아내림이 있는 경우(12-8, 62-38, 96-79)에서 실수합니다. 십의자리에서 빌려오는 개념을 집중 연습해 주세요.');
-      }
-    }
-    if(add세자리W && !add올림없음W){
-      patterns.push('세자리 결과 연산 미숙');
-      cmts.push('37+65=102처럼 받아올림이 연속으로 일어나 세 자리 수가 되는 경우를 어려워합니다. 2학년 2학기 수준 연산 연습이 필요합니다.');
-    }
-
-    comment = cmts.join(' ') || '두자리 연산 전반에 걸쳐 연습이 필요합니다. 기적의 계산법 3-4권 수준의 연습을 권장합니다.';
-    if(!lvText) lvText='두자리 연산 집중 학습 필요';
+    return {cls,grade,lvText,patterns,comment};
   }
 
-  return {cls, grade, lvText, patterns, comment};
+  // ── 역설 처리 먼저 ──
+  if(add역설){
+    cls='cb-약'; grade='잔실수';
+    lvText='받아올림 개념 있음 — 쉬운 문제 집중력 저하';
+    patterns.push('받아올림없음 실수 (역설·집중력)');
+    cmts.push('받아올림이 있는 어려운 덧셈은 맞히면서 받아올림이 없는 쉬운 덧셈에서 실수했습니다. 개념 부재가 아닌 집중력·주의력 문제입니다. 꼼꼼히 확인하는 습관 훈련이 필요합니다.');
+  }
+  if(sub역설){
+    if(cls==='cb-우'){cls='cb-약'; grade='잔실수';}
+    if(!lvText) lvText='받아내림 개념 있음 — 쉬운 문제 집중력 저하';
+    patterns.push('받아내림없음 실수 (역설·집중력)');
+    cmts.push('받아내림이 있는 어려운 뺄셈은 맞히면서 받아내림이 없는 쉬운 뺄셈에서 실수했습니다. 집중력 향상 훈련이 필요합니다.');
+  }
+  if(sub소역설){
+    if(cls==='cb-우'){cls='cb-약'; grade='잔실수';}
+    if(!lvText) lvText='받아내림 개념 있음 — 작은 수에서 집중력 저하';
+    patterns.push('작은 수 받아내림 실수 (역설·집중력)');
+    cmts.push('62-38, 96-79 같은 큰 수의 받아내림은 맞히면서 12-8, 23-5처럼 더 작은 수의 받아내림에서 실수했습니다. 쉽다고 생각해 집중이 흐트러진 경우입니다. 꼼꼼히 확인하는 습관이 필요합니다.');
+  }
+
+  // ── 뺄셈 단계별 구분 ──
+  if(!sub역설 && !sub소역설 && !sub내림소W && sub내림대W){
+    // 소 맞음 + 대 틀림 → 단계 격차 (원장님이 말씀하신 케이스)
+    if(cls==='cb-우'){cls='cb-약'; grade='부분 미숙';}
+    if(!lvText) lvText='2학년1학기 뺄셈 심화 단원 미학습';
+    patterns.push('두자리-두자리 받아내림 미숙 (큰 수)');
+    cmts.push('12-8, 23-5처럼 한 자리 수를 빼는 받아내림은 잘 하지만, 62-38, 96-79처럼 큰 수에서 두 자리 수를 빼는 받아내림에서 어려움이 있습니다. 2학년 1학기 뺄셈 심화 단원(두자리-두자리 받아내림) 집중 학습이 필요합니다.');
+  } else if(!sub역설 && !sub소역설 && sub내림소W && sub내림대W){
+    if(cls==='cb-우'){cls='cb-연'; grade='연습 필요';}
+    if(!lvText) lvText='2학년1학기 받아내림 처음부터 학습';
+    patterns.push('받아내림 전반 미숙');
+    cmts.push('받아내림 전반이 어렵습니다. 12-8처럼 작은 수부터 받아내림 개념을 익히고 점차 큰 수(62-38)로 확장해야 합니다.');
+  }
+
+  // ── 역연산 ──
+  if(add역연산W||sub역연산W){
+    if(cls==='cb-우'){cls='cb-연'; grade='연습 필요';}
+    if(!lvText) lvText='1학년2학기 역연산 미학습';
+    patterns.push('역연산 개념 미숙');
+    cmts.push('□가 포함된 역연산 문제(5+□=13, □-5=21)를 어려워합니다. 역연산 개념부터 별도로 연습이 필요합니다.');
+  }
+
+  // ── 덧셈 기본 ──
+  if(!add역설 && add올림없음W){
+    if(cls==='cb-우'){cls='cb-연'; grade='연습 필요';}
+    if(!lvText) lvText='1학년2학기~2학년1학기 기초 필요';
+    patterns.push('두자리 기본 덧셈 약점');
+    cmts.push('받아올림이 없는 두자리 덧셈에서도 실수가 있습니다. 기본 두자리 덧셈부터 다시 연습이 필요합니다.');
+  } else if(!add역설){
+    if(add올림소W && add올림대W){
+      if(cls==='cb-우'){cls='cb-연'; grade='연습 필요';}
+      if(!lvText) lvText='2학년1학기 받아올림 처음부터 학습';
+      patterns.push('받아올림 전반 미숙');
+      cmts.push('받아올림이 있는 덧셈 전반이 어렵습니다. 35+7처럼 작은 받아올림부터 차례로 연습해야 합니다.');
+    } else if(add올림소W && !add올림대W){
+      // 소 틀림 + 대 맞음 → 역설 (잔실수)
+      if(cls==='cb-우'){cls='cb-약'; grade='잔실수';}
+      if(!lvText) lvText='받아올림 개념 있음 — 소규모에서 잔실수';
+      patterns.push('소규모 받아올림 실수 (역설·잔실수)');
+      cmts.push('두자리+두자리 어려운 받아올림(59+22)은 맞히면서 더 쉬운 받아올림(35+7, 6+18)에서 실수했습니다. 집중력 향상이 필요합니다.');
+    } else if(!add올림소W && add올림대W){
+      // 소 맞음 + 대 틀림 → 단계 격차
+      if(cls==='cb-우'){cls='cb-약'; grade='부분 미숙';}
+      if(!lvText) lvText='2학년1학기 덧셈 심화 단원 미숙';
+      patterns.push('두자리+두자리 받아올림 미숙');
+      cmts.push('두자리+한자리 받아올림(35+7, 6+18)은 잘 하지만, 두자리+두자리 받아올림(59+22)이 어렵습니다. 2학년 1학기 덧셈 심화 단원 집중 연습이 필요합니다.');
+    }
+  }
+
+  // ── 세자리 결과 ──
+  if(add세자리W && !add올림없음W && !add역설){
+    patterns.push('세자리결과 받아올림 미숙');
+    cmts.push('37+65=102처럼 받아올림이 연속으로 세 자리 수가 되는 경우를 어려워합니다. 2학년 2학기 수준 연산 연습이 필요합니다.');
+  }
+
+  if(!lvText) lvText='두자리 연산 집중 학습 필요';
+  if(cls==='cb-우'){cls='cb-연'; grade='연습 필요';}
+  comment = cmts.join(' ') || '두자리 연산 전반에 걸쳐 연습이 필요합니다. 기적의 계산법 3-4권 수준의 연습을 권장합니다.';
+  return {cls,grade,lvText,patterns,comment};
 }
 
 function getVal(i){const q=QS[i];if(q.in==='num')return document.getElementById('qi'+i)?.value||'';if(q.in==='dual'){const a=document.getElementById('qi'+i+'a')?.value||'',b=document.getElementById('qi'+i+'b')?.value||'';return a&&b?a+','+b:'';}if(q.in==='animal')return anim.join(',');if(q.in==='sym')return s12[0]&&s12[1]?s12[0]+','+s12[1]:'';return '';}
@@ -363,16 +356,13 @@ function setVal(i,v){const q=QS[i];if(q.in==='num'){const el=document.getElement
 function chkQ(i){const v=getVal(i),q=QS[i];const c=document.getElementById('qc'+i);if(!c)return;c.className='q-card'+(v.trim()?(match(v,q.a)?' ok':' no'):'');upProg();}
 function chkC(i){const all=[...CA,...CS];const el=document.getElementById('ci'+i);if(!el)return;const c=document.getElementById('cc'+i);if(!c)return;const v=el.value.trim();c.className='c-card'+(v?(nm(v)===nm(all[i].a)?' ok':' no'):'');}
 function upProg(){const d=QS.filter((_,i)=>getVal(i).trim()).length,p=d/25*100;document.getElementById('progFill').style.width=p+'%';document.getElementById('progTxt').textContent=d+' / 25 입력';}
-
 function buildQ(){const g=document.getElementById('qGrid');g.innerHTML='';QS.forEach((q,i)=>{const c=document.createElement('div');c.className='q-card';c.id='qc'+i;c.innerHTML=`<div class="q-top"><div class="q-num">${String(q.id).padStart(2,'0')}</div><span class="q-t ${TYPST[q.t]}">${q.t}</span><span class="q-fb q-ok-fb">✅</span><span class="q-fb q-no-fb" style="position:absolute;right:8px;top:8px">❌</span></div>${bIn(q,i)}<div class="q-hint">${q.tp}</div>`;g.appendChild(c);});}
 function bIn(q,i){if(q.in==='num')return`<input class="q-inp" type="text" inputmode="numeric" id="qi${i}" placeholder="${q.ph}" oninput="chkQ(${i})">`;if(q.in==='dual')return`<div class="q-dual"><div><label>${q.lb[0]}</label><input class="q-inp" type="text" inputmode="numeric" id="qi${i}a" placeholder="${q.ph[0]}" oninput="chkQ(${i})"></div><div><label>${q.lb[1]}</label><input class="q-inp" type="text" inputmode="numeric" id="qi${i}b" placeholder="${q.ph[1]}" oninput="chkQ(${i})"></div></div>`;if(q.in==='animal')return`<div><div class="q-animal"><button class="a-btn" onclick="selA('다람쥐',this)">🐿다람쥐</button><button class="a-btn" onclick="selA('거북',this)">🐢거북</button><button class="a-btn" onclick="selA('토끼',this)">🐇토끼</button></div><div class="a-order" id="ao">가벼운 순서로 탭</div><button class="a-clr" onclick="clrA()">초기화</button></div>`;if(q.in==='sym')return`<div><div class="sym-lbl">① 빈칸</div><div class="sym-row" id="sga">${SYMS.map(s=>`<button class="s-btn" onclick="setSym(0,'${s}',this)">${s}</button>`).join('')}</div><div class="sym-lbl">② 빈칸</div><div class="sym-row" id="sgb">${SYMS.map(s=>`<button class="s-btn" onclick="setSym(1,'${s}',this)">${s}</button>`).join('')}</div></div>`;}
 function buildC(){const g=document.getElementById('cGrid');g.innerHTML='';[...CA,...CS].forEach((c,i)=>{const d=document.createElement('div');d.className='c-card';d.id='cc'+i;d.innerHTML=`<div class="c-expr">${c.e}</div><input class="q-inp" type="text" inputmode="numeric" id="ci${i}" placeholder="□" style="text-align:center" oninput="chkC(${i})"><div class="q-hint">${c.tp}</div>`;g.appendChild(d);});}
-
 function selA(n,btn){if(anim.includes(n))return;anim.push(n);btn.classList.add('sel');document.getElementById('ao').textContent=anim.join(' → ');chkQ(7);}
 function clrA(){anim=[];document.querySelectorAll('.a-btn').forEach(b=>b.classList.remove('sel'));document.getElementById('ao').textContent='가벼운 순서로 탭';chkQ(7);}
 function setSym(pt,sym,btn){s12[pt]=sym;document.getElementById(pt===0?'sga':'sgb').querySelectorAll('.s-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');chkQ(11);}
 window.chkQ=chkQ;window.chkC=chkC;window.selA=selA;window.clrA=clrA;window.setSym=setSym;
-
 async function analyzeImg(input,sheet){
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
@@ -394,14 +384,12 @@ async function analyzeImg(input,sheet){
   };reader.readAsDataURL(file);input.value='';
 }
 window.analyzeImg=analyzeImg;
-
 function submitAll(){
   charts.forEach(c=>c.destroy());charts=[];
   const mg=QS.map((q,i)=>match(getVal(i),q.a));
   const sc=mg.filter(Boolean).length*4;
   const li=getLv(sc);
   const nm2=document.getElementById('nameInp').value.trim()||'학생';
-
   const TY=['식의계산','수','논리추리','도형','규칙'];
   const ts={};TY.forEach(t=>{ts[t]={tot:0,ok:0}});
   QS.forEach((q,i)=>{ts[q.t].tot++;if(mg[i])ts[q.t].ok++;});
@@ -411,13 +399,11 @@ function submitAll(){
   QS.forEach((q,i)=>{if(lvMap[q.lv]){lvMap[q.lv].tot++;if(mg[i])lvMap[q.lv].ok++;}});
   const cross={};TY.forEach(t=>{cross[t]={};LV_ORDER.forEach(l=>{cross[t][l]={tot:0,ok:0}});});
   QS.forEach((q,i)=>{if(cross[q.t]&&cross[q.t][q.lv]){cross[q.t][q.lv].tot++;if(mg[i])cross[q.t][q.lv].ok++;}});
-
   const allC=[...CA,...CS];
   const cg=allC.map((c,i)=>{const el=document.getElementById('ci'+i);return el?nm(el.value)===nm(c.a):false;});
-  const addW=CA.map((_,i)=>!cg[i]), subW=CS.map((_,i)=>!cg[i+7]);
+  const addW=CA.map((_,i)=>!cg[i]),subW=CS.map((_,i)=>!cg[i+7]);
   const cw=cg.filter(v=>!v).length;
   const CD=calcDiag(addW,subW,cw);
-
   const insights=[];
   const kOk=pct(lvMap['키즈팩토'].ok,lvMap['키즈팩토'].tot);
   const cOk=pct(lvMap['초등팩토'].ok,lvMap['초등팩토'].tot);
@@ -427,100 +413,64 @@ function submitAll(){
   BA_ORDER.forEach(b=>{const {tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)<50)insights.push({cls:'i-warn',icon:'📌',txt:`행동영역 [${BA_LBL[b]}] 정답률 ${pct(ok,tot)}% — 이 영역 집중 훈련이 필요합니다.`});});
   BA_ORDER.forEach(b=>{const {tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)===100)insights.push({cls:'i-ok',icon:'⭐',txt:`행동영역 [${BA_LBL[b]}] 100% 정답 — 강점 영역입니다.`});});
   if(CD.patterns.length) insights.push({cls:'i-info',icon:'🔢',txt:`연산 패턴 진단: ${CD.patterns.join(' · ')}`});
-
   const wq=QS.filter((q,i)=>!mg[i]);
   const weak=TY.filter(t=>ts[t].tot>0&&pct(ts[t].ok,ts[t].tot)<70);
-
   document.getElementById('scoreSum').innerHTML=`<span class="sc-ok">✓ ${mg.filter(Boolean).length}문항</span><span class="sc-no">✗ ${mg.filter(v=>!v).length}문항</span><span>→ ${sc}점</span>`;
   const r=document.getElementById('result');r.style.display='block';
-
   r.innerHTML=`
 <div class="res-hero">
   <div class="res-nm">${nm2} 학생 · 필즈 선발 대비 모의고사 진단 결과</div>
-  <div class="res-sc">${sc}</div>
-  <div class="res-sc-s">/ 100점 (25문항 × 4점)</div>
+  <div class="res-sc">${sc}</div><div class="res-sc-s">/ 100점 (25문항 × 4점)</div>
   <div class="res-lv ${li.cls}">${li.lv}</div>
 </div>
-
-<div class="r-card">
-  <div class="r-ct">영역 분석 차트</div>
+<div class="r-card"><div class="r-ct">영역 분석 차트</div>
   <div class="charts-row">
     <div><div class="chart-lbl">문제 유형별 정답률</div><div class="chart-wrap"><canvas id="cTY"></canvas></div></div>
     <div><div class="chart-lbl">행동 영역별 정답률</div><div class="chart-wrap"><canvas id="cBA"></canvas></div></div>
   </div>
 </div>
-
-<div class="r-card">
-  <div class="r-ct">문제 유형별 분석</div>
+<div class="r-card"><div class="r-ct">문제 유형별 분석</div>
   ${TY.map(t=>`<div class="r-row"><span class="r-tn">${t}</span><div class="r-bg"><div class="r-fill f-${t}" style="width:${pct(ts[t].ok,ts[t].tot)}%"></div></div><span class="r-p">${ts[t].ok}/${ts[t].tot}</span></div>`).join('')}
 </div>
-
-<div class="r-card">
-  <div class="r-ct">행동 영역별 분석</div>
+<div class="r-card"><div class="r-ct">행동 영역별 분석</div>
   ${BA_ORDER.map(b=>{const s=baMap[b];return s.tot>0?`<div class="r-row"><span class="r-tn" style="font-size:10px">${BA_LBL[b]}</span><div class="r-bg"><div class="r-fill" style="width:${pct(s.ok,s.tot)}%;background:${BA_CLR[b]}"></div></div><span class="r-p">${s.ok}/${s.tot}</span></div>`:'';}).join('')}
 </div>
-
-<div class="r-card">
-  <div class="r-ct">난이도별 분석 (키즈팩토 → 초등팩토 → pre1031 → 1031심화)</div>
+<div class="r-card"><div class="r-ct">난이도별 분석 (키즈팩토 → 초등팩토 → pre1031 → 1031심화)</div>
   ${LV_ORDER.map((l,i)=>{const s=lvMap[l];return s.tot>0?`<div class="r-row"><span class="r-tn" style="font-size:10px">${l}</span><div class="r-bg"><div class="r-fill" style="width:${pct(s.ok,s.tot)}%;background:${['linear-gradient(90deg,var(--g),var(--g2))','linear-gradient(90deg,#0891b2,#22d3ee)','linear-gradient(90deg,#7c3aed,#a78bfa)','linear-gradient(90deg,#be123c,#f43f5e)'][i]}"></div></div><span class="r-p">${s.ok}/${s.tot}</span></div>`:'';}).join('')}
 </div>
-
-<div class="r-card">
-  <div class="r-ct">유형 × 난이도 교차 분석</div>
-  <div style="overflow-x:auto">
-  <table class="cross-table">
+<div class="r-card"><div class="r-ct">유형 × 난이도 교차 분석</div>
+  <div style="overflow-x:auto"><table class="cross-table">
     <tr><th>유형</th>${LV_ORDER.map(l=>`<th>${l}</th>`).join('')}</tr>
     ${TY.map(t=>`<tr><td class="hit">${t}</td>${LV_ORDER.map(l=>{const s=cross[t][l];if(s.tot===0)return`<td><span class="cross-cell cell-na">—</span></td>`;return`<td><span class="cross-cell ${s.ok===s.tot?'cell-ok':s.ok===0?'cell-no':''}">${s.ok}/${s.tot}</span></td>`;}).join('')}</tr>`).join('')}
   </table></div>
 </div>
-
 ${insights.length?`<div class="r-card"><div class="r-ct">심층 분석 인사이트</div><div class="insight-list">${insights.map(ins=>`<div class="insight-item ${ins.cls}"><span class="i-icon">${ins.icon}</span><span>${ins.txt}</span></div>`).join('')}</div></div>`:''}
-
-<div class="r-card">
-  <div class="r-ct">연산 진단 (한국 교육과정 기반)</div>
+<div class="r-card"><div class="r-ct">연산 진단 (한국 교육과정 단원별 분석)</div>
   <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
     <span class="calc-badge ${CD.cls}">${CD.grade} (${14-cw}/14)</span>
     <span class="calc-lv-chip">${CD.lvText}</span>
   </div>
   ${CD.patterns.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">${CD.patterns.map(p=>`<span class="calc-pat-chip">${p}</span>`).join('')}</div>`:''}
   <div class="calc-detail">
-    <div class="calc-d-card">
-      <div class="calc-d-title">덧셈 7문항</div>
-      <div class="calc-d-items">
-        ${CA.map((c,i)=>`<div class="calc-d-item">
-          <span class="calc-d-expr">${c.e}</span>
-          <span class="${addW[i]?'calc-d-no':'calc-d-ok'}">${addW[i]?'✗ ['+c.tp+']':'✓'}</span>
-        </div>`).join('')}
-      </div>
-    </div>
-    <div class="calc-d-card">
-      <div class="calc-d-title">뺄셈 7문항</div>
-      <div class="calc-d-items">
-        ${CS.map((c,i)=>`<div class="calc-d-item">
-          <span class="calc-d-expr">${c.e}</span>
-          <span class="${subW[i]?'calc-d-no':'calc-d-ok'}">${subW[i]?'✗ ['+c.tp+']':'✓'}</span>
-        </div>`).join('')}
-      </div>
-    </div>
+    <div class="calc-d-card"><div class="calc-d-title">덧셈 7문항</div><div class="calc-d-items">
+      ${CA.map((c,i)=>`<div class="calc-d-item"><span class="calc-d-expr">${c.e}</span><span class="${addW[i]?'calc-d-no':'calc-d-ok'}">${addW[i]?'✗ ['+c.tp+']':'✓'}</span></div>`).join('')}
+    </div></div>
+    <div class="calc-d-card"><div class="calc-d-title">뺄셈 7문항</div><div class="calc-d-items">
+      ${CS.map((c,i)=>`<div class="calc-d-item"><span class="calc-d-expr">${c.e}</span><span class="${subW[i]?'calc-d-no':'calc-d-ok'}">${subW[i]?'✗ ['+c.tp+']':'✓'}</span></div>`).join('')}
+    </div></div>
   </div>
   <div class="r-comment">${CD.comment}</div>
 </div>
-
-<div class="r-card">
-  <div class="r-ct">학습 전략</div>
+<div class="r-card"><div class="r-ct">학습 전략</div>
   <div class="r-comment">${li.tx}</div>
   <div style="font-size:11px;color:var(--mu);margin-top:10px;line-height:1.7">당부: 학원보다 연산 → 교과 → 사고력 순으로 균형이 맞아야 합니다.</div>
 </div>
-
 ${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 해설 보기 (${wq.length}개)</div><div class="wrong-list">${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div></div><a class="wrong-link" href="${YT+TS[q.id]}" target="_blank" rel="noopener">▶ 해설 보기</a></div>`).join('')}</div></div>`:''}
-
 ${weak.length?`<div class="r-card"><div class="r-ct">약점 유형 개념 강의</div>${weak.map(t=>`<div class="s-item"><div><div class="s-tn">${t}</div><div class="s-vol">FC-CONCEPT ${TV[t].vol}</div></div><a class="s-link" href="${TV[t].url}" target="_blank" rel="noopener">▶ 강의 보기</a></div>`).join('')}</div>`:''}
-
 <div class="res-actions">
   <button class="res-print" onclick="window.print()">🖨 진단지 인쇄</button>
   <a class="res-consult" href="https://naver.me/Ge7B7WcJ" target="_blank" rel="noopener">상담 신청하기 →</a>
 </div>`;
-
   setTimeout(()=>{
     const tCtx=document.getElementById('cTY')?.getContext('2d');
     if(tCtx)charts.push(new Chart(tCtx,{type:'doughnut',data:{labels:TY,datasets:[{data:TY.map(t=>pct(ts[t].ok,ts[t].tot)),backgroundColor:TY.map(t=>TY_CLR[t]),borderColor:'rgba(8,13,20,.8)',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'rgba(255,255,255,.7)',font:{size:10},padding:6}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}%`}}}}}));
