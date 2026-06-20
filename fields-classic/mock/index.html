@@ -84,8 +84,7 @@ main{max-width:960px;margin:0 auto;padding:12px 14px 40px}
 .sub-btn{display:inline-block;padding:15px 52px;background:linear-gradient(135deg,var(--g),var(--g2));color:var(--nv);font-size:16px;font-weight:900;font-family:'Noto Sans KR',sans-serif;border:none;border-radius:14px;cursor:pointer;box-shadow:0 8px 28px rgba(212,175,55,.25)}
 .sub-btn:active{transform:scale(.97)}
 .score-sum{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:8px;font-size:11px;color:var(--mu)}
-.sc-ok{color:var(--ok);font-weight:900}
-.sc-no{color:var(--no);font-weight:900}
+.sc-ok{color:var(--ok);font-weight:900}.sc-no{color:var(--no);font-weight:900}
 #result{display:none;margin-top:20px;animation:fadeUp .5s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 .res-hero{background:linear-gradient(135deg,rgba(212,175,55,.1),rgba(212,175,55,.03));border:1px solid var(--bd);border-radius:18px;padding:24px;text-align:center;margin-bottom:14px;position:relative;overflow:hidden}
@@ -124,16 +123,20 @@ main{max-width:960px;margin:0 auto;padding:12px 14px 40px}
 .i-ok{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);color:rgba(255,255,255,.8)}
 .i-info{background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.15);color:rgba(255,255,255,.8)}
 .i-icon{font-size:16px;flex-shrink:0;margin-top:1px}
-.calc-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:30px;font-size:13px;font-weight:900;margin-bottom:10px}
+.calc-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:30px;font-size:13px;font-weight:900}
 .cb-우{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:var(--ok)}
 .cb-약{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3);color:#fbbf24}
 .cb-연{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:var(--no)}
-.calc-detail{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.calc-detail{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .calc-d-card{background:rgba(255,255,255,.03);border:1px solid var(--b2);border-radius:10px;padding:10px}
-.calc-d-title{font-size:10px;font-weight:900;color:var(--mu);margin-bottom:6px}
-.calc-d-items{display:flex;flex-direction:column;gap:4px}
-.calc-d-item{display:flex;align-items:center;justify-content:space-between;font-size:11px}
-.calc-d-expr{color:var(--mu)}.calc-d-ok{color:var(--ok);font-weight:900}.calc-d-no{color:var(--no);font-weight:900}
+.calc-d-title{font-size:10px;font-weight:900;color:var(--mu);margin-bottom:8px}
+.calc-d-items{display:flex;flex-direction:column;gap:5px}
+.calc-d-item{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.calc-d-expr{font-size:12px;color:var(--mu);font-weight:600}
+.calc-d-ok{color:var(--ok);font-weight:900;font-size:12px}
+.calc-d-no{color:var(--no);font-size:10px;font-weight:900;text-align:right}
+.calc-pat-chip{display:inline-block;font-size:10px;font-weight:900;padding:3px 9px;border-radius:20px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+.calc-lv-chip{display:inline-block;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(212,175,55,.08);border:1px solid var(--bd);color:var(--g2);margin-left:6px}
 .r-comment{font-size:12px;color:rgba(255,255,255,.75);line-height:1.8;background:rgba(212,175,55,.04);border-left:3px solid var(--g);padding:12px 14px;border-radius:0 10px 10px 0;margin-top:10px}
 .wrong-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
 .wrong-item{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -207,6 +210,7 @@ main{max-width:960px;margin:0 auto;padding:12px 14px 40px}
 (function(){
 const YT='https://www.youtube.com/watch?v=DRVcC6pCZcw';
 const TS={1:'&t=9s',2:'&t=61s',3:'&t=107s',4:'&t=157s',5:'&t=205s',6:'&t=257s',7:'&t=309s',8:'&t=359s',9:'&t=415s',10:'&t=468s',11:'&t=522s',12:'&t=522s',13:'&t=577s',14:'&t=624s',15:'&t=677s',16:'&t=729s',17:'&t=775s',18:'&t=827s',19:'&t=876s',20:'&t=924s',21:'&t=980s',22:'&t=980s',23:'&t=1035s',24:'&t=1144s',25:'&t=1253s'};
+
 const QS=[
   {id:1,t:'식의계산',lv:'키즈팩토',tp:'막대의 길이',ba:'지문이해',a:'8',in:'num',ph:'숫자'},
   {id:2,t:'식의계산',lv:'키즈팩토',tp:'조건에 따른 수(대화)',ba:'지문이해',a:'8',in:'num',ph:'숫자'},
@@ -234,8 +238,30 @@ const QS=[
   {id:24,t:'규칙',lv:'1031심화',tp:'도형 연립(☆○▽)',ba:'패턴·규칙',a:'15',in:'num',ph:'□값'},
   {id:25,t:'도형',lv:'1031심화',tp:'쌓기나무 규칙(5번째)',ba:'대칭·공간',a:'55',in:'num',ph:'개'},
 ];
-const CA=[{e:'5+□=13',a:'8',tp:'역연산'},{e:'8+21=□',a:'29',tp:'두자리+한자리'},{e:'35+7=□',a:'42',tp:'받아올림'},{e:'6+18=□',a:'24',tp:'두자리+두자리'},{e:'23+34=□',a:'57',tp:'두자리+두자리'},{e:'59+22=□',a:'81',tp:'받아올림'},{e:'37+65=□',a:'102',tp:'받아올림(백단위)'}];
-const CS=[{e:'□-5=21',a:'26',tp:'역연산'},{e:'12-8=□',a:'4',tp:'받아내림'},{e:'23-5=□',a:'18',tp:'받아내림'},{e:'39-16=□',a:'23',tp:'두자리-두자리'},{e:'57-24=□',a:'33',tp:'두자리-두자리'},{e:'62-38=□',a:'24',tp:'받아내림'},{e:'96-79=□',a:'17',tp:'받아내림'}];
+
+/* ─ 연산: 교육과정 수준 태그 부여 ─
+   lv2 = 1학년2학기 (두자리 기본·역연산)
+   lv3 = 2학년1학기 (받아올림·받아내림 있는 두자리)
+   lv4 = 2학년2학기+ (세자리 결과) */
+const CA=[
+  {e:'5+□=13',  a:'8',  tp:'역연산',         lv:2, tags:['역연산']},
+  {e:'8+21=□',  a:'29', tp:'받아올림없음',    lv:2, tags:['받아올림없음']},
+  {e:'35+7=□',  a:'42', tp:'받아올림',        lv:3, tags:['받아올림']},
+  {e:'6+18=□',  a:'24', tp:'받아올림',        lv:3, tags:['받아올림']},
+  {e:'23+34=□', a:'57', tp:'받아올림없음',    lv:3, tags:['받아올림없음']},
+  {e:'59+22=□', a:'81', tp:'받아올림',        lv:3, tags:['받아올림']},
+  {e:'37+65=□', a:'102',tp:'받아올림(세자리)',lv:4, tags:['받아올림','세자리결과']},
+];
+const CS=[
+  {e:'□-5=21',  a:'26', tp:'역연산',         lv:2, tags:['역연산']},
+  {e:'12-8=□',  a:'4',  tp:'받아내림',        lv:3, tags:['받아내림']},
+  {e:'23-5=□',  a:'18', tp:'받아내림',        lv:3, tags:['받아내림']},
+  {e:'39-16=□', a:'23', tp:'받아내림없음',    lv:3, tags:['받아내림없음']},
+  {e:'57-24=□', a:'33', tp:'받아내림없음',    lv:3, tags:['받아내림없음']},
+  {e:'62-38=□', a:'24', tp:'받아내림',        lv:3, tags:['받아내림']},
+  {e:'96-79=□', a:'17', tp:'받아내림',        lv:3, tags:['받아내림']},
+];
+
 const SYMS=['▲','■','□','○','△','◇'];
 const TYPST={'식의계산':'t-식의계산','수':'t-수','논리추리':'t-논리추리','도형':'t-도형','규칙':'t-규칙'};
 const LV_ORDER=['키즈팩토','초등팩토','pre1031','1031심화'];
@@ -254,29 +280,99 @@ const LVLS=[
   {mn:52,mx:59,lv:'주 1회 높은 반',cls:'lv-j',tx:'주1회 높은반 레벨이지만 시험 대비를 집중하면 주2회도 충분히 가능한 점수입니다.'},
   {mn:0,mx:51,lv:'주 1회 낮은 반',cls:'lv-j',tx:'주 1회 낮은반 레벨이지만 충분히 연습하면 주2회도 나올 수 있습니다. 교과, 사고력 학습의 균형이 필요합니다.'},
 ];
-const CALC_TX={
-  우:'연산 진단은 우수입니다. 필즈 시험에서의 연산은 두자리+두자리 또는 두자리-두자리까지 출제됩니다. 시험에 문제 없는 연산 실력을 가졌습니다. 꾸준히 유지해 주세요.',
-  약:'연산 진단은 약간 실수입니다. 두자리 연산은 할 수 있으나 실수하지 않고 속도가 빠르도록 여러 번 연습해야 합니다. 받아올림·받아내림 실수 패턴을 확인하세요.',
-  연:'연산 진단은 연습 필요입니다. 필즈 시험에 필요한 두자리 연산 학습이 우선입니다. 기적의 계산법 3-4권 수준의 연습이 필요합니다.',
-};
 const TV={'식의계산':{vol:'Vol.1·Vol.2',url:'https://youtu.be/7aPj5IJUzQM'},'수':{vol:'Vol.3·Vol.4',url:'https://youtu.be/mq-1VxjLzMk'},'논리추리':{vol:'Vol.2',url:'https://youtu.be/TOHw8sCumHY'},'도형':{vol:'Final',url:'https://youtu.be/FC4W2bRJwKc'},'규칙':{vol:'Vol.4',url:'https://youtu.be/neRIODxo13I'}};
+
 let anim=[],s12=['',''],charts=[];
+
 function nm(s){return String(s||'').trim().replace(/\s+/g,'').replace(/，/g,',');}
 function match(u,c){return nm(u)===nm(c);}
 function getLv(sc){for(const d of LVLS)if(sc>=d.mn&&sc<=d.mx)return d;return LVLS[LVLS.length-1];}
 function pct(ok,tot){return tot===0?0:Math.round(ok/tot*100);}
+
+/* ─ 연산 교육과정 기반 스마트 패턴 분석 ─ */
+function calcDiag(addW,subW,cw){
+  // 덧셈 패턴
+  const add역연산W  = addW[0];                           // 5+□=13
+  const add올림없음W = addW[1]||addW[4];                  // 8+21, 23+34
+  const add올림W    = addW[2]||addW[3]||addW[5];         // 35+7, 6+18, 59+22
+  const add세자리W  = addW[6];                           // 37+65=102
+  // 뺄셈 패턴
+  const sub역연산W  = subW[0];                           // □-5=21
+  const sub내림없음W = subW[3]||subW[4];                  // 39-16, 57-24
+  const sub내림W    = subW[1]||subW[2]||subW[5]||subW[6];// 12-8, 23-5, 62-38, 96-79
+
+  let cls='cb-우', grade='우수', lvText='', comment='';
+  const patterns=[];
+
+  if(cw===0){
+    lvText='2학년 1학기~2학기 수준 완벽 숙지';
+    comment='필즈 시험 수준의 연산을 완벽히 숙지했습니다. 필즈 입학 후에는 같은 3개의 수로 가르기, 두자리×한자리 정도의 연산이 필요한 경우가 많습니다. 꾸준히 유지해 주세요.';
+
+  } else if(cw<=2 && !add올림없음W && !sub내림없음W && !add역연산W && !sub역연산W){
+    // 1-2개 실수, 기본(받아올림없음·역연산)은 다 맞음 → 잔실수
+    cls='cb-약'; grade='약간 실수';
+    if(add세자리W && cw===1){
+      patterns.push('받아올림 연속(세자리결과) 실수');
+      lvText='2학년 2학기 수준 미숙';
+      comment='전반적으로 연산이 잘 됩니다. 37+65=102처럼 받아올림이 두 번 일어나 세 자리 수가 되는 경우에서만 실수가 있습니다. 2학년 2학기 연산 연습이 추가로 필요합니다.';
+    } else {
+      patterns.push('잔실수 (속도·집중력)');
+      lvText='2학년 1학기 수준 — 잔실수';
+      comment='연산 실력이 전반적으로 양호합니다. 특정 유형의 약점이 아닌 집중력 또는 속도 부족으로 인한 잔실수입니다. 꾸준한 반복 훈련으로 정확도를 높여 주세요.';
+    }
+
+  } else {
+    cls='cb-연'; grade='연습 필요';
+    const cmts=[];
+
+    if(add역연산W||sub역연산W){
+      patterns.push('역연산 개념 미숙');
+      lvText='1학년 2학기 역연산 미학습';
+      cmts.push('□가 포함된 역연산 문제(5+□=13, □-5=21)를 어려워합니다. 빈칸 채우기 유형을 별도로 연습해야 합니다. 1학년 수준 역연산 개념부터 익혀 주세요.');
+    }
+    if(add올림없음W||sub내림없음W){
+      patterns.push('두자리 기본 연산 약점');
+      if(!lvText) lvText='2학년 1학기 기본 연산 학습 필요';
+      cmts.push('받아올림·받아내림이 없는 두자리 연산에서도 실수가 있습니다. 교육과정상 2학년 1학기 기본 연산부터 체계적으로 다시 학습하는 것이 필요합니다.');
+    } else {
+      if(add올림W){
+        patterns.push('받아올림 있는 덧셈 실수');
+        if(!lvText) lvText='2학년 1학기 받아올림 집중 필요';
+        cmts.push('받아올림이 없는 덧셈(23+34)은 잘 하지만, 받아올림이 있는 경우(35+7, 6+18, 59+22)에서 실수합니다. 일의자리에서 받아올림이 발생할 때 십의자리에 더하는 과정을 집중 연습해 주세요.');
+      }
+      if(sub내림W){
+        patterns.push('받아내림 있는 뺄셈 실수');
+        if(!lvText) lvText='2학년 1학기 받아내림 집중 필요';
+        cmts.push('받아내림이 없는 뺄셈(39-16, 57-24)은 잘 하지만, 받아내림이 있는 경우(12-8, 62-38, 96-79)에서 실수합니다. 십의자리에서 빌려오는 개념을 집중 연습해 주세요.');
+      }
+    }
+    if(add세자리W && !add올림없음W){
+      patterns.push('세자리 결과 연산 미숙');
+      cmts.push('37+65=102처럼 받아올림이 연속으로 일어나 세 자리 수가 되는 경우를 어려워합니다. 2학년 2학기 수준 연산 연습이 필요합니다.');
+    }
+
+    comment = cmts.join(' ') || '두자리 연산 전반에 걸쳐 연습이 필요합니다. 기적의 계산법 3-4권 수준의 연습을 권장합니다.';
+    if(!lvText) lvText='두자리 연산 집중 학습 필요';
+  }
+
+  return {cls, grade, lvText, patterns, comment};
+}
+
 function getVal(i){const q=QS[i];if(q.in==='num')return document.getElementById('qi'+i)?.value||'';if(q.in==='dual'){const a=document.getElementById('qi'+i+'a')?.value||'',b=document.getElementById('qi'+i+'b')?.value||'';return a&&b?a+','+b:'';}if(q.in==='animal')return anim.join(',');if(q.in==='sym')return s12[0]&&s12[1]?s12[0]+','+s12[1]:'';return '';}
 function setVal(i,v){const q=QS[i];if(q.in==='num'){const el=document.getElementById('qi'+i);if(el){el.value=v;chkQ(i);}}if(q.in==='dual'){const p=v.split(',');const a=document.getElementById('qi'+i+'a'),b=document.getElementById('qi'+i+'b');if(a)a.value=p[0]||'';if(b)b.value=p[1]||'';chkQ(i);}}
 function chkQ(i){const v=getVal(i),q=QS[i];const c=document.getElementById('qc'+i);if(!c)return;c.className='q-card'+(v.trim()?(match(v,q.a)?' ok':' no'):'');upProg();}
 function chkC(i){const all=[...CA,...CS];const el=document.getElementById('ci'+i);if(!el)return;const c=document.getElementById('cc'+i);if(!c)return;const v=el.value.trim();c.className='c-card'+(v?(nm(v)===nm(all[i].a)?' ok':' no'):'');}
 function upProg(){const d=QS.filter((_,i)=>getVal(i).trim()).length,p=d/25*100;document.getElementById('progFill').style.width=p+'%';document.getElementById('progTxt').textContent=d+' / 25 입력';}
+
 function buildQ(){const g=document.getElementById('qGrid');g.innerHTML='';QS.forEach((q,i)=>{const c=document.createElement('div');c.className='q-card';c.id='qc'+i;c.innerHTML=`<div class="q-top"><div class="q-num">${String(q.id).padStart(2,'0')}</div><span class="q-t ${TYPST[q.t]}">${q.t}</span><span class="q-fb q-ok-fb">✅</span><span class="q-fb q-no-fb" style="position:absolute;right:8px;top:8px">❌</span></div>${bIn(q,i)}<div class="q-hint">${q.tp}</div>`;g.appendChild(c);});}
 function bIn(q,i){if(q.in==='num')return`<input class="q-inp" type="text" inputmode="numeric" id="qi${i}" placeholder="${q.ph}" oninput="chkQ(${i})">`;if(q.in==='dual')return`<div class="q-dual"><div><label>${q.lb[0]}</label><input class="q-inp" type="text" inputmode="numeric" id="qi${i}a" placeholder="${q.ph[0]}" oninput="chkQ(${i})"></div><div><label>${q.lb[1]}</label><input class="q-inp" type="text" inputmode="numeric" id="qi${i}b" placeholder="${q.ph[1]}" oninput="chkQ(${i})"></div></div>`;if(q.in==='animal')return`<div><div class="q-animal"><button class="a-btn" onclick="selA('다람쥐',this)">🐿다람쥐</button><button class="a-btn" onclick="selA('거북',this)">🐢거북</button><button class="a-btn" onclick="selA('토끼',this)">🐇토끼</button></div><div class="a-order" id="ao">가벼운 순서로 탭</div><button class="a-clr" onclick="clrA()">초기화</button></div>`;if(q.in==='sym')return`<div><div class="sym-lbl">① 빈칸</div><div class="sym-row" id="sga">${SYMS.map(s=>`<button class="s-btn" onclick="setSym(0,'${s}',this)">${s}</button>`).join('')}</div><div class="sym-lbl">② 빈칸</div><div class="sym-row" id="sgb">${SYMS.map(s=>`<button class="s-btn" onclick="setSym(1,'${s}',this)">${s}</button>`).join('')}</div></div>`;}
 function buildC(){const g=document.getElementById('cGrid');g.innerHTML='';[...CA,...CS].forEach((c,i)=>{const d=document.createElement('div');d.className='c-card';d.id='cc'+i;d.innerHTML=`<div class="c-expr">${c.e}</div><input class="q-inp" type="text" inputmode="numeric" id="ci${i}" placeholder="□" style="text-align:center" oninput="chkC(${i})"><div class="q-hint">${c.tp}</div>`;g.appendChild(d);});}
+
 function selA(n,btn){if(anim.includes(n))return;anim.push(n);btn.classList.add('sel');document.getElementById('ao').textContent=anim.join(' → ');chkQ(7);}
 function clrA(){anim=[];document.querySelectorAll('.a-btn').forEach(b=>b.classList.remove('sel'));document.getElementById('ao').textContent='가벼운 순서로 탭';chkQ(7);}
 function setSym(pt,sym,btn){s12[pt]=sym;document.getElementById(pt===0?'sga':'sgb').querySelectorAll('.s-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');chkQ(11);}
 window.chkQ=chkQ;window.chkC=chkC;window.selA=selA;window.clrA=clrA;window.setSym=setSym;
+
 async function analyzeImg(input,sheet){
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
@@ -298,12 +394,14 @@ async function analyzeImg(input,sheet){
   };reader.readAsDataURL(file);input.value='';
 }
 window.analyzeImg=analyzeImg;
+
 function submitAll(){
   charts.forEach(c=>c.destroy());charts=[];
   const mg=QS.map((q,i)=>match(getVal(i),q.a));
   const sc=mg.filter(Boolean).length*4;
   const li=getLv(sc);
   const nm2=document.getElementById('nameInp').value.trim()||'학생';
+
   const TY=['식의계산','수','논리추리','도형','규칙'];
   const ts={};TY.forEach(t=>{ts[t]={tot:0,ok:0}});
   QS.forEach((q,i)=>{ts[q.t].tot++;if(mg[i])ts[q.t].ok++;});
@@ -313,15 +411,13 @@ function submitAll(){
   QS.forEach((q,i)=>{if(lvMap[q.lv]){lvMap[q.lv].tot++;if(mg[i])lvMap[q.lv].ok++;}});
   const cross={};TY.forEach(t=>{cross[t]={};LV_ORDER.forEach(l=>{cross[t][l]={tot:0,ok:0}});});
   QS.forEach((q,i)=>{if(cross[q.t]&&cross[q.t][q.lv]){cross[q.t][q.lv].tot++;if(mg[i])cross[q.t][q.lv].ok++;}});
+
   const allC=[...CA,...CS];
   const cg=allC.map((c,i)=>{const el=document.getElementById('ci'+i);return el?nm(el.value)===nm(c.a):false;});
-  const addW=CA.map((_,i)=>!cg[i]),subW=CS.map((_,i)=>!cg[i+7]);
+  const addW=CA.map((_,i)=>!cg[i]), subW=CS.map((_,i)=>!cg[i+7]);
   const cw=cg.filter(v=>!v).length;
-  const cl=cw===0?'우':cw<=2?'약':'연';
-  const clLbl=cw===0?'우수':cw<=2?'약간 실수':'연습 필요';
-  const clCls=cw===0?'cb-우':cw<=2?'cb-약':'cb-연';
-  const addPat=[...new Set(CA.filter((_,i)=>addW[i]).map(c=>c.tp))];
-  const subPat=[...new Set(CS.filter((_,i)=>subW[i]).map(c=>c.tp))];
+  const CD=calcDiag(addW,subW,cw);
+
   const insights=[];
   const kOk=pct(lvMap['키즈팩토'].ok,lvMap['키즈팩토'].tot);
   const cOk=pct(lvMap['초등팩토'].ok,lvMap['초등팩토'].tot);
@@ -330,11 +426,14 @@ function submitAll(){
   if(pOk<cOk-20)insights.push({cls:'i-warn',icon:'⚠️',txt:`pre1031(${pOk}%)에서 급격히 하락합니다. 초등팩토 수준은 학습되었으나 1031 수준 사고력이 아직 부족합니다.`});
   BA_ORDER.forEach(b=>{const {tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)<50)insights.push({cls:'i-warn',icon:'📌',txt:`행동영역 [${BA_LBL[b]}] 정답률 ${pct(ok,tot)}% — 이 영역 집중 훈련이 필요합니다.`});});
   BA_ORDER.forEach(b=>{const {tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)===100)insights.push({cls:'i-ok',icon:'⭐',txt:`행동영역 [${BA_LBL[b]}] 100% 정답 — 강점 영역입니다.`});});
-  if(addPat.length||subPat.length)insights.push({cls:'i-info',icon:'🔢',txt:`연산 실수 패턴: ${[...addPat,...subPat].filter((v,i,a)=>a.indexOf(v)===i).join(' · ')} — 반복 연습으로 교정 가능합니다.`});
+  if(CD.patterns.length) insights.push({cls:'i-info',icon:'🔢',txt:`연산 패턴 진단: ${CD.patterns.join(' · ')}`});
+
   const wq=QS.filter((q,i)=>!mg[i]);
   const weak=TY.filter(t=>ts[t].tot>0&&pct(ts[t].ok,ts[t].tot)<70);
+
   document.getElementById('scoreSum').innerHTML=`<span class="sc-ok">✓ ${mg.filter(Boolean).length}문항</span><span class="sc-no">✗ ${mg.filter(v=>!v).length}문항</span><span>→ ${sc}점</span>`;
   const r=document.getElementById('result');r.style.display='block';
+
   r.innerHTML=`
 <div class="res-hero">
   <div class="res-nm">${nm2} 학생 · 필즈 선발 대비 모의고사 진단 결과</div>
@@ -342,6 +441,7 @@ function submitAll(){
   <div class="res-sc-s">/ 100점 (25문항 × 4점)</div>
   <div class="res-lv ${li.cls}">${li.lv}</div>
 </div>
+
 <div class="r-card">
   <div class="r-ct">영역 분석 차트</div>
   <div class="charts-row">
@@ -349,18 +449,22 @@ function submitAll(){
     <div><div class="chart-lbl">행동 영역별 정답률</div><div class="chart-wrap"><canvas id="cBA"></canvas></div></div>
   </div>
 </div>
+
 <div class="r-card">
   <div class="r-ct">문제 유형별 분석</div>
   ${TY.map(t=>`<div class="r-row"><span class="r-tn">${t}</span><div class="r-bg"><div class="r-fill f-${t}" style="width:${pct(ts[t].ok,ts[t].tot)}%"></div></div><span class="r-p">${ts[t].ok}/${ts[t].tot}</span></div>`).join('')}
 </div>
+
 <div class="r-card">
   <div class="r-ct">행동 영역별 분석</div>
   ${BA_ORDER.map(b=>{const s=baMap[b];return s.tot>0?`<div class="r-row"><span class="r-tn" style="font-size:10px">${BA_LBL[b]}</span><div class="r-bg"><div class="r-fill" style="width:${pct(s.ok,s.tot)}%;background:${BA_CLR[b]}"></div></div><span class="r-p">${s.ok}/${s.tot}</span></div>`:'';}).join('')}
 </div>
+
 <div class="r-card">
   <div class="r-ct">난이도별 분석 (키즈팩토 → 초등팩토 → pre1031 → 1031심화)</div>
   ${LV_ORDER.map((l,i)=>{const s=lvMap[l];return s.tot>0?`<div class="r-row"><span class="r-tn" style="font-size:10px">${l}</span><div class="r-bg"><div class="r-fill" style="width:${pct(s.ok,s.tot)}%;background:${['linear-gradient(90deg,var(--g),var(--g2))','linear-gradient(90deg,#0891b2,#22d3ee)','linear-gradient(90deg,#7c3aed,#a78bfa)','linear-gradient(90deg,#be123c,#f43f5e)'][i]}"></div></div><span class="r-p">${s.ok}/${s.tot}</span></div>`:'';}).join('')}
 </div>
+
 <div class="r-card">
   <div class="r-ct">유형 × 난이도 교차 분석</div>
   <div style="overflow-x:auto">
@@ -369,27 +473,54 @@ function submitAll(){
     ${TY.map(t=>`<tr><td class="hit">${t}</td>${LV_ORDER.map(l=>{const s=cross[t][l];if(s.tot===0)return`<td><span class="cross-cell cell-na">—</span></td>`;return`<td><span class="cross-cell ${s.ok===s.tot?'cell-ok':s.ok===0?'cell-no':''}">${s.ok}/${s.tot}</span></td>`;}).join('')}</tr>`).join('')}
   </table></div>
 </div>
+
 ${insights.length?`<div class="r-card"><div class="r-ct">심층 분석 인사이트</div><div class="insight-list">${insights.map(ins=>`<div class="insight-item ${ins.cls}"><span class="i-icon">${ins.icon}</span><span>${ins.txt}</span></div>`).join('')}</div></div>`:''}
+
 <div class="r-card">
-  <div class="r-ct">연산 진단</div>
-  <span class="calc-badge ${clCls}">${clLbl} (${14-cw}/14)</span>
-  <div class="calc-detail">
-    <div class="calc-d-card"><div class="calc-d-title">덧셈 7문항</div><div class="calc-d-items">${CA.map((c,i)=>`<div class="calc-d-item"><span class="calc-d-expr">${c.e}</span><span class="${addW[i]?'calc-d-no':'calc-d-ok'}">${addW[i]?'✗ '+c.tp:'✓'}</span></div>`).join('')}</div></div>
-    <div class="calc-d-card"><div class="calc-d-title">뺄셈 7문항</div><div class="calc-d-items">${CS.map((c,i)=>`<div class="calc-d-item"><span class="calc-d-expr">${c.e}</span><span class="${subW[i]?'calc-d-no':'calc-d-ok'}">${subW[i]?'✗ '+c.tp:'✓'}</span></div>`).join('')}</div></div>
+  <div class="r-ct">연산 진단 (한국 교육과정 기반)</div>
+  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+    <span class="calc-badge ${CD.cls}">${CD.grade} (${14-cw}/14)</span>
+    <span class="calc-lv-chip">${CD.lvText}</span>
   </div>
-  <div class="r-comment">${CALC_TX[cl]}</div>
+  ${CD.patterns.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">${CD.patterns.map(p=>`<span class="calc-pat-chip">${p}</span>`).join('')}</div>`:''}
+  <div class="calc-detail">
+    <div class="calc-d-card">
+      <div class="calc-d-title">덧셈 7문항</div>
+      <div class="calc-d-items">
+        ${CA.map((c,i)=>`<div class="calc-d-item">
+          <span class="calc-d-expr">${c.e}</span>
+          <span class="${addW[i]?'calc-d-no':'calc-d-ok'}">${addW[i]?'✗ ['+c.tp+']':'✓'}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="calc-d-card">
+      <div class="calc-d-title">뺄셈 7문항</div>
+      <div class="calc-d-items">
+        ${CS.map((c,i)=>`<div class="calc-d-item">
+          <span class="calc-d-expr">${c.e}</span>
+          <span class="${subW[i]?'calc-d-no':'calc-d-ok'}">${subW[i]?'✗ ['+c.tp+']':'✓'}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>
+  <div class="r-comment">${CD.comment}</div>
 </div>
+
 <div class="r-card">
   <div class="r-ct">학습 전략</div>
   <div class="r-comment">${li.tx}</div>
   <div style="font-size:11px;color:var(--mu);margin-top:10px;line-height:1.7">당부: 학원보다 연산 → 교과 → 사고력 순으로 균형이 맞아야 합니다.</div>
 </div>
+
 ${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 해설 보기 (${wq.length}개)</div><div class="wrong-list">${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div></div><a class="wrong-link" href="${YT+TS[q.id]}" target="_blank" rel="noopener">▶ 해설 보기</a></div>`).join('')}</div></div>`:''}
+
 ${weak.length?`<div class="r-card"><div class="r-ct">약점 유형 개념 강의</div>${weak.map(t=>`<div class="s-item"><div><div class="s-tn">${t}</div><div class="s-vol">FC-CONCEPT ${TV[t].vol}</div></div><a class="s-link" href="${TV[t].url}" target="_blank" rel="noopener">▶ 강의 보기</a></div>`).join('')}</div>`:''}
+
 <div class="res-actions">
   <button class="res-print" onclick="window.print()">🖨 진단지 인쇄</button>
   <a class="res-consult" href="https://naver.me/Ge7B7WcJ" target="_blank" rel="noopener">상담 신청하기 →</a>
 </div>`;
+
   setTimeout(()=>{
     const tCtx=document.getElementById('cTY')?.getContext('2d');
     if(tCtx)charts.push(new Chart(tCtx,{type:'doughnut',data:{labels:TY,datasets:[{data:TY.map(t=>pct(ts[t].ok,ts[t].tot)),backgroundColor:TY.map(t=>TY_CLR[t]),borderColor:'rgba(8,13,20,.8)',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'rgba(255,255,255,.7)',font:{size:10},padding:6}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}%`}}}}}));
