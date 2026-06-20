@@ -230,7 +230,7 @@ body.in-viewer{overflow:hidden}
       <p class="dash-sub" id="dashSub">구매하신 프로그램을 선택해 학습을 시작하세요</p>
     </div>
     <div id="mainGrid" class="products-grid"></div>
-    <div id="chapterView" class="chapter-view" style="display:none"></div>
+    <div id="chapterView" style="display:none;padding:20px 0"></div>
   </div>
 </div>
 <div id="viewer">
@@ -262,8 +262,9 @@ body.in-viewer{overflow:hidden}
 <div class="sec-toast" id="secToast">🔒 학생 전용 보안 자료입니다.</div>
 <script>
 (function(){"use strict";
-const COVER_BASE='https://docssam1.github.io/lete-on/fields-classic/assets/concept/covers/';
-const COVER_MAP={vol1:'cover_vol1.webp',vol2:'cover_vol2.webp',vol3:'cover_vol3.webp',vol4:'cover_vol4.webp',final:'cover_final.webp'};
+/* ── 이미지 경로 (concept/ 직접) ── */
+const COVER_BASE='https://docssam1.github.io/lete-on/fields-classic/assets/concept/';
+const COVER_MAP={vol1:'vol1.png',vol2:'vol2.png',vol3:'vol3.png',vol4:'vol4.png',final:'final.png'};
 const PDF_CONCEPT="https://docssam1.github.io/lete-on/fields-classic/assets/concept/%ED%83%84%ED%83%84%20%ED%95%84%EC%A6%88%EB%8C%80%EB%B9%84%20%EA%B0%9C%EB%85%90%20SET.pdf";
 const ALL=["FC-CONCEPT","FC-KILLER","FC-FINAL","FC-MOCK","FC-ARCHIVE"];
 const PRODUCTS=[
@@ -347,7 +348,7 @@ const GF={
         <div class="shelf-section-sub">회차를 선택해 학습을 시작하세요</div>
         <div class="bookshelf-row">
           ${p.chapters.map(ch=>{
-            const imgFile=COVER_MAP[ch.key]||'cover_vol1.webp';
+            const imgFile=COVER_MAP[ch.key]||'vol1.png';
             return `<div class="shelf-slot${ch.key==='final'?' is-final':''}" onclick="GF.showChapterModal('${productKey}','${ch.key}')">
               <div class="shelf-book-wrap">
                 <div class="shelf-book-3d">
