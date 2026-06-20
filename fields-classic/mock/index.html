@@ -7,229 +7,319 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#02050b;--surface:#080d14;--gold:#d4af37;--gold2:#f8dd83;
-  --gold-glow:rgba(212,175,55,.2);--white:#f0ece2;--muted:#7a8a9a;
-  --border:rgba(212,175,55,.15);--border2:rgba(255,255,255,.07);--navy:#0d1b2a;
+  --bg:#02050b;--sur:#080d14;--gold:#d4af37;--g2:#f8dd83;
+  --gg:rgba(212,175,55,.2);--w:#f0ece2;--mu:#7a8a9a;
+  --bd:rgba(212,175,55,.15);--b2:rgba(255,255,255,.07);--nv:#0d1b2a;
+  --ok:#22c55e;--no:#ef4444;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;min-height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--white);overflow-x:hidden}
-.screen{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:20px}
-.screen.on{display:flex}
-#sQ,#sCalc{align-items:stretch;justify-content:flex-start;padding:0}
-#sResult{align-items:stretch;justify-content:flex-start;padding:0}
+html,body{width:100%;min-height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--w);overflow-x:hidden}
+.scr{display:none;min-height:100vh;flex-direction:column}
+.scr.on{display:flex}
+#sGate,#sMode{align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 20% 20%,rgba(212,175,55,.07),transparent 50%),var(--bg)}
 
-/* GATE */
-#sGate{background:radial-gradient(circle at 20% 20%,rgba(212,175,55,.08),transparent 50%),var(--bg)}
-.gate-card{width:min(400px,95vw);background:rgba(8,13,20,.97);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.7)}
-.gate-bar{height:4px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold))}
-.gate-body{padding:32px 26px 24px;text-align:center}
-.gate-logo{width:52px;border-radius:10px;margin:0 auto 12px;display:block;filter:drop-shadow(0 0 12px var(--gold-glow))}
-.gate-tag{font-size:9px;font-weight:900;letter-spacing:3px;color:var(--gold);margin-bottom:6px}
-.gate-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--white);margin-bottom:4px}
-.gate-sub{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px}
-.gate-input{width:100%;height:48px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;color:var(--white);font-size:15px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:0 16px;text-align:center;outline:none;margin-bottom:10px;transition:border-color .2s}
-.gate-input:focus{border-color:var(--gold)}
-.gate-input::placeholder{color:rgba(255,255,255,.25);font-weight:400;font-size:13px}
-.gate-btn{width:100%;height:48px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:15px;font-weight:900;font-family:'Noto Sans KR',sans-serif;border:none;border-radius:12px;cursor:pointer;margin-top:4px}
-.gate-btn:active{transform:scale(.97)}
-.gate-err{min-height:18px;color:#ef4444;font-size:12px;font-weight:700;margin-top:8px}
-.gate-note{font-size:10px;color:rgba(255,255,255,.2);margin-top:12px;line-height:1.6}
+/* ─ GATE ─ */
+.g-card{width:min(400px,95vw);background:rgba(8,13,20,.97);border:1px solid var(--bd);border-radius:20px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.7)}
+.g-bar{height:4px;background:linear-gradient(90deg,var(--gold),var(--g2),var(--gold))}
+.g-body{padding:32px 26px 24px;text-align:center}
+.g-logo{width:52px;border-radius:10px;margin:0 auto 12px;display:block;filter:drop-shadow(0 0 12px var(--gg))}
+.g-tag{font-size:9px;font-weight:900;letter-spacing:3px;color:var(--gold);margin-bottom:6px}
+.g-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--w);margin-bottom:4px}
+.g-sub{font-size:12px;color:var(--mu);line-height:1.7;margin-bottom:20px}
+.g-inp{width:100%;height:52px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;color:var(--w);font-size:16px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:0 16px;text-align:center;outline:none;margin-bottom:10px;transition:border-color .2s}
+.g-inp:focus{border-color:var(--gold)}
+.g-inp::placeholder{color:rgba(255,255,255,.25);font-weight:400;font-size:13px}
+.g-btn{width:100%;height:52px;background:linear-gradient(135deg,var(--gold),var(--g2));color:var(--nv);font-size:16px;font-weight:900;font-family:'Noto Sans KR',sans-serif;border:none;border-radius:12px;cursor:pointer}
+.g-btn:active{transform:scale(.97)}
+.g-err{min-height:18px;color:var(--no);font-size:12px;font-weight:700;margin-top:8px}
+.g-note{font-size:10px;color:rgba(255,255,255,.2);margin-top:12px;line-height:1.6}
 
-/* HEADER */
-.q-header{position:sticky;top:0;z-index:50;padding:10px 16px;background:rgba(2,5,11,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
-.q-header-title{font-size:13px;font-weight:900;color:var(--gold2);flex:1}
-.q-header-student{font-size:11px;color:var(--muted)}
-.q-prog-wrap{background:rgba(2,5,11,.94);padding:4px 16px 8px;border-bottom:1px solid var(--border2)}
-.q-progress-bar{height:3px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
-.q-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:999px;transition:width .3s}
-.q-prog-text{font-size:10px;color:var(--muted);margin-top:4px;text-align:right}
-.q-body{flex:1;padding:14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+/* ─ MODE ─ */
+.mode-wrap{width:min(440px,95vw)}
+.mode-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--w);text-align:center;margin-bottom:6px}
+.mode-sub{font-size:12px;color:var(--mu);text-align:center;margin-bottom:24px}
+.mode-cards{display:flex;flex-direction:column;gap:12px}
+.mode-card{background:rgba(8,13,20,.95);border:1.5px solid var(--b2);border-radius:18px;padding:22px;cursor:pointer;transition:all .25s;display:flex;gap:16px;align-items:flex-start}
+.mode-card:hover,.mode-card:active{border-color:var(--gold);background:rgba(212,175,55,.06);transform:translateY(-2px)}
+.mode-icon{font-size:36px;flex-shrink:0;margin-top:2px}
+.mode-card-title{font-size:15px;font-weight:900;color:var(--w);margin-bottom:5px}
+.mode-card-desc{font-size:12px;color:var(--mu);line-height:1.6}
+.mode-card-tag{display:inline-block;font-size:10px;font-weight:900;padding:3px 10px;border-radius:20px;margin-top:8px}
+.tag-easy{background:rgba(34,197,94,.12);color:var(--ok);border:1px solid rgba(34,197,94,.25)}
+.tag-auto{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.25)}
 
-/* CARDS */
-.q-card{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:14px;margin-bottom:10px;transition:border-color .2s}
-.q-card.answered{border-color:rgba(212,175,55,.3)}
-.q-card-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.q-num{font-family:'DM Serif Display',serif;font-size:22px;color:var(--gold2);min-width:32px}
-.q-type-badge{font-size:9px;font-weight:900;padding:3px 8px;border-radius:20px;letter-spacing:.05em}
-.type-식의계산{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.2)}
-.type-수{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
-.type-논리추리{background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.2)}
-.type-도형{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
-.type-규칙{background:rgba(244,114,182,.12);color:#f472b6;border:1px solid rgba(244,114,182,.2)}
-.q-topic{font-size:10px;color:var(--muted);flex:1}
-.q-input{width:100%;height:44px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.12);border-radius:10px;color:var(--white);font-size:16px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:0 14px;outline:none;transition:border-color .2s}
-.q-input:focus{border-color:var(--gold)}
-.q-input::placeholder{color:rgba(255,255,255,.2);font-weight:400;font-size:13px}
-.q-dual{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.q-dual label{font-size:10px;color:var(--muted);margin-bottom:4px;display:block;font-weight:700}
+/* ─ HEADER ─ */
+.hd{position:sticky;top:0;z-index:50;padding:10px 16px;background:rgba(2,5,11,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.hd-title{font-size:13px;font-weight:900;color:var(--g2);flex:1}
+.hd-name{font-size:11px;color:var(--mu)}
+.prog-wrap{background:rgba(2,5,11,.95);padding:6px 16px 10px;border-bottom:1px solid var(--b2);flex-shrink:0}
+.prog-bar{height:4px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--g2));border-radius:999px;transition:width .35s}
+.prog-txt{font-size:10px;color:var(--mu);margin-top:5px;text-align:right}
+.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px}
+.ft{padding:12px 16px;background:rgba(2,5,11,.97);border-top:1px solid var(--bd);display:flex;gap:10px;flex-shrink:0}
+.ft-btn{flex:1;height:52px;background:linear-gradient(135deg,var(--gold),var(--g2));color:var(--nv);font-size:15px;font-weight:900;font-family:'Noto Sans KR',sans-serif;border:none;border-radius:12px;cursor:pointer}
+.ft-btn:active{transform:scale(.97)}
+.ft-back{height:52px;padding:0 16px;background:rgba(255,255,255,.06);border:1px solid var(--b2);color:rgba(255,255,255,.55);font-size:13px;font-weight:700;font-family:'Noto Sans KR',sans-serif;border-radius:12px;cursor:pointer;white-space:nowrap}
+.ft-cnt{font-size:11px;color:var(--mu);min-width:46px;text-align:right;align-self:center}
+
+/* ─ OX GRID ─ */
+.ox-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ox-card{background:var(--sur);border:1.5px solid var(--b2);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s}
+.ox-card.ok{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.04)}
+.ox-card.no{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.04)}
+.ox-num{font-family:'DM Serif Display',serif;font-size:20px;color:var(--g2)}
+.ox-type{font-size:9px;font-weight:900;padding:2px 8px;border-radius:999px;margin-bottom:2px;display:inline-block}
+.ox-ans{font-size:11px;color:var(--mu);line-height:1.4}
+.ox-ans b{color:var(--gold);font-weight:900}
+.ox-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:2px}
+.ox-o,.ox-x{height:44px;border-radius:10px;font-size:18px;font-weight:900;border:1.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);cursor:pointer;transition:all .15s}
+.ox-o:active,.ox-x:active{transform:scale(.93)}
+.ox-o.sel{background:rgba(34,197,94,.18);border-color:var(--ok);color:var(--ok)}
+.ox-x.sel{background:rgba(239,68,68,.18);border-color:var(--no);color:var(--no)}
+.ox-o:not(.sel){color:rgba(34,197,94,.5)}
+.ox-x:not(.sel){color:rgba(239,68,68,.5)}
+
+/* ─ DIRECT INPUT ─ */
+.di-card{background:var(--sur);border:1.5px solid var(--b2);border-radius:14px;padding:14px;margin-bottom:10px;transition:border-color .2s}
+.di-card.filled{border-color:rgba(212,175,55,.3)}
+.di-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.di-num{font-family:'DM Serif Display',serif;font-size:20px;color:var(--g2);min-width:30px}
+.di-t{font-size:9px;font-weight:900;padding:2px 8px;border-radius:999px}
+.di-tp{font-size:10px;color:var(--mu);flex:1}
+.di-inp{width:100%;height:46px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;color:var(--w);font-size:16px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:0 14px;outline:none;transition:border-color .2s}
+.di-inp:focus{border-color:var(--gold)}
+.di-inp::placeholder{color:rgba(255,255,255,.2);font-weight:400;font-size:13px}
+.di-dual{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.di-dual label{font-size:10px;color:var(--mu);margin-bottom:4px;display:block;font-weight:700}
 .animal-btns{display:flex;gap:8px;flex-wrap:wrap}
-.animal-btn{padding:8px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:var(--white);font-size:13px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all .15s}
-.animal-btn.selected{border-color:var(--gold);background:rgba(212,175,55,.12);color:var(--gold2)}
-.animal-order{font-size:12px;color:var(--muted);margin-top:8px;min-height:20px}
-.animal-clear{font-size:11px;color:var(--muted);background:none;border:1px solid rgba(255,255,255,.1);padding:4px 10px;border-radius:7px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;margin-top:6px}
-.symbol-section{margin-bottom:10px}
-.symbol-section label{font-size:10px;color:var(--muted);font-weight:700;display:block;margin-bottom:6px}
-.symbol-btns{display:flex;gap:6px;flex-wrap:wrap}
-.sym-btn{padding:7px 14px;border-radius:9px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:var(--white);font-size:16px;cursor:pointer;transition:all .15s;min-width:44px;text-align:center;font-family:'Noto Sans KR',sans-serif}
-.sym-btn.sel{border-color:var(--gold);background:rgba(212,175,55,.15);color:var(--gold2)}
+.a-btn{padding:10px 16px;border-radius:10px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:var(--w);font-size:13px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all .15s}
+.a-btn.sel{border-color:var(--gold);background:rgba(212,175,55,.12);color:var(--g2)}
+.a-order{font-size:12px;color:var(--mu);margin-top:8px}
+.a-clr{font-size:11px;color:var(--mu);background:none;border:1px solid rgba(255,255,255,.1);padding:4px 10px;border-radius:7px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;margin-top:6px}
+.sym-group{margin-bottom:10px}
+.sym-lbl{font-size:10px;color:var(--mu);font-weight:700;display:block;margin-bottom:6px}
+.sym-btns{display:flex;gap:6px;flex-wrap:wrap}
+.sym-b{padding:8px 14px;border-radius:9px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:var(--w);font-size:16px;cursor:pointer;min-width:44px;text-align:center;font-family:'Noto Sans KR',sans-serif;transition:all .15s}
+.sym-b.sel{border-color:var(--gold);background:rgba(212,175,55,.15);color:var(--g2)}
 
-/* FOOTER */
-.q-footer{padding:12px 16px;background:rgba(2,5,11,.96);border-top:1px solid var(--border);display:flex;gap:10px;align-items:center}
-.q-submit-btn{flex:1;height:48px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:15px;font-weight:900;font-family:'Noto Sans KR',sans-serif;border:none;border-radius:12px;cursor:pointer}
-.q-submit-btn:active{transform:scale(.97)}
-.q-back-btn{height:48px;padding:0 16px;background:rgba(255,255,255,.06);border:1px solid var(--border2);color:rgba(255,255,255,.6);font-size:13px;font-weight:700;font-family:'Noto Sans KR',sans-serif;border-radius:12px;cursor:pointer;white-space:nowrap}
-.q-count{font-size:11px;color:var(--muted);min-width:50px;text-align:right}
-
-/* CALC */
-.calc-intro{background:rgba(212,175,55,.06);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--muted);line-height:1.7}
-.calc-intro strong{color:var(--gold2)}
-.calc-section-title{font-size:13px;font-weight:900;color:var(--white);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border2)}
+/* ─ CALC ─ */
+.calc-hd{font-size:13px;font-weight:900;color:var(--w);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--b2)}
 .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
-.calc-card{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s}
-.calc-card.answered{border-color:rgba(212,175,55,.25)}
-.calc-expr{font-size:14px;font-weight:700;color:var(--white);text-align:center;line-height:1.4}
-.calc-input{width:100%;height:40px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.12);border-radius:9px;color:var(--white);font-size:16px;font-weight:900;font-family:'Noto Sans KR',sans-serif;text-align:center;outline:none;transition:border-color .2s}
-.calc-input:focus{border-color:var(--gold)}
-.calc-input::placeholder{color:rgba(255,255,255,.2);font-size:13px;font-weight:400}
+.c-card{background:var(--sur);border:1.5px solid var(--b2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s}
+.c-card.filled{border-color:rgba(212,175,55,.25)}
+/* OX calc */
+.c-card.ok{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.04)}
+.c-card.no{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.04)}
+.c-expr{font-size:14px;font-weight:700;color:var(--w);text-align:center}
+.c-ans{font-size:11px;color:var(--mu);text-align:center}
+.c-ans b{color:var(--gold)}
+.c-inp{width:100%;height:40px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;color:var(--w);font-size:16px;font-weight:900;font-family:'Noto Sans KR',sans-serif;text-align:center;outline:none;transition:border-color .2s}
+.c-inp:focus{border-color:var(--gold)}
+.c-inp::placeholder{color:rgba(255,255,255,.2);font-size:13px;font-weight:400}
+.c-ox{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.c-ox button{height:38px;border-radius:9px;font-size:16px;font-weight:900;border:1.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);cursor:pointer;transition:all .15s}
+.c-ox .co:not(.sel){color:rgba(34,197,94,.5)}
+.c-ox .cx:not(.sel){color:rgba(239,68,68,.5)}
+.c-ox .co.sel{background:rgba(34,197,94,.18);border-color:var(--ok);color:var(--ok)}
+.c-ox .cx.sel{background:rgba(239,68,68,.18);border-color:var(--no);color:var(--no)}
 
-/* RESULT */
-.res-header{padding:10px 16px;background:rgba(2,5,11,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-.res-header-title{font-size:13px;font-weight:900;color:var(--gold2);flex:1}
-.res-print-btn{padding:6px 14px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:11px;font-weight:900;font-family:'Noto Sans KR',sans-serif;border:none;cursor:pointer}
-.res-back-btn{padding:6px 14px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--border2);color:rgba(255,255,255,.6);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer}
+/* ─ RESULT ─ */
+.res-hd{padding:10px 16px;background:rgba(2,5,11,.96);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.res-hd-title{font-size:13px;font-weight:900;color:var(--g2);flex:1}
+.res-print{padding:6px 14px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--g2));color:var(--nv);font-size:11px;font-weight:900;font-family:'Noto Sans KR',sans-serif;border:none;cursor:pointer}
+.res-re{padding:6px 12px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--b2);color:rgba(255,255,255,.6);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer}
 .res-body{padding:14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.res-hero{background:linear-gradient(135deg,rgba(212,175,55,.1),rgba(212,175,55,.04));border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center;margin-bottom:12px;position:relative;overflow:hidden}
+.res-hero{background:linear-gradient(135deg,rgba(212,175,55,.1),rgba(212,175,55,.04));border:1px solid var(--bd);border-radius:16px;padding:22px;text-align:center;margin-bottom:12px;position:relative;overflow:hidden}
 .res-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(212,175,55,.12),transparent 60%);pointer-events:none}
-.res-hero-name{font-size:12px;color:var(--muted);margin-bottom:6px;position:relative}
-.res-score{font-family:'DM Serif Display',serif;font-size:60px;color:var(--gold);line-height:1;margin-bottom:4px;text-shadow:0 0 30px var(--gold-glow);position:relative}
-.res-score-sub{font-size:13px;color:var(--muted);position:relative}
-.res-level{display:inline-block;font-size:17px;font-weight:900;color:var(--white);background:rgba(212,175,55,.12);border:1px solid var(--border);padding:6px 20px;border-radius:30px;margin-top:12px;position:relative}
-.res-level.s반{background:rgba(212,175,55,.2);border-color:var(--gold);color:var(--gold2)}
-.res-level.e1{background:rgba(96,165,250,.12);border-color:rgba(96,165,250,.3);color:#60a5fa}
-.res-level.e2{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.3);color:#a78bfa}
-.res-card{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:16px;margin-bottom:10px}
-.res-card-title{font-size:10px;font-weight:900;color:var(--gold);letter-spacing:.12em;margin-bottom:14px}
-.res-type-row{display:grid;grid-template-columns:72px 1fr 42px;align-items:center;gap:8px;margin-bottom:10px}
-.res-type-row:last-child{margin-bottom:0}
-.res-type-name{font-size:12px;font-weight:700;color:var(--white)}
-.res-bar-bg{background:rgba(255,255,255,.06);border-radius:999px;height:6px;overflow:hidden}
-.res-bar-fill{height:100%;border-radius:999px;transition:width .8s cubic-bezier(.22,1,.36,1)}
-.res-bar-pct{font-size:11px;font-weight:900;color:var(--gold2);text-align:right}
-.bar-식의계산{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
-.bar-수{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
-.bar-논리추리{background:linear-gradient(90deg,#ea580c,#fb923c)}
-.bar-도형{background:linear-gradient(90deg,#16a34a,#22c55e)}
-.bar-규칙{background:linear-gradient(90deg,#db2777,#f472b6)}
-.bar-키즈팩토{background:linear-gradient(90deg,var(--gold),var(--gold2))}
-.bar-초등팩토{background:linear-gradient(90deg,#0891b2,#22d3ee)}
-.bar-1031입문{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
-.bar-1031심화{background:linear-gradient(90deg,#be123c,#f43f5e)}
+.res-nm{font-size:12px;color:var(--mu);position:relative;margin-bottom:8px}
+.res-sc{font-family:'DM Serif Display',serif;font-size:64px;color:var(--gold);line-height:1;text-shadow:0 0 32px var(--gg);position:relative}
+.res-sc-s{font-size:14px;color:var(--mu);position:relative}
+.res-lv{display:inline-block;font-size:17px;font-weight:900;padding:7px 22px;border-radius:30px;margin-top:12px;position:relative}
+.lv-s{background:rgba(212,175,55,.2);border:1px solid var(--gold);color:var(--g2)}
+.lv-e1{background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.3);color:#60a5fa}
+.lv-e2{background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.3);color:#a78bfa}
+.lv-j{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7)}
+.r-card{background:var(--sur);border:1px solid var(--b2);border-radius:14px;padding:16px;margin-bottom:10px}
+.r-ct{font-size:10px;font-weight:900;color:var(--gold);letter-spacing:.12em;margin-bottom:14px}
+.r-row{display:grid;grid-template-columns:72px 1fr 42px;align-items:center;gap:8px;margin-bottom:10px}
+.r-row:last-child{margin-bottom:0}
+.r-tn{font-size:12px;font-weight:700;color:var(--w)}
+.r-bg{background:rgba(255,255,255,.06);border-radius:999px;height:6px;overflow:hidden}
+.r-fill{height:100%;border-radius:999px;transition:width .8s cubic-bezier(.22,1,.36,1)}
+.r-p{font-size:11px;font-weight:900;color:var(--g2);text-align:right}
+.f-식의계산{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+.f-수{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
+.f-논리추리{background:linear-gradient(90deg,#ea580c,#fb923c)}
+.f-도형{background:linear-gradient(90deg,#16a34a,#22c55e)}
+.f-규칙{background:linear-gradient(90deg,#db2777,#f472b6)}
+.f-키{background:linear-gradient(90deg,var(--gold),var(--g2))}
+.f-초{background:linear-gradient(90deg,#0891b2,#22d3ee)}
+.f-입{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+.f-심{background:linear-gradient(90deg,#be123c,#f43f5e)}
 .calc-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:30px;font-size:13px;font-weight:900}
-.calc-우수{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#22c55e}
-.calc-약간실수{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3);color:#fbbf24}
-.calc-연습필요{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#ef4444}
-.res-comment{font-size:12px;color:rgba(255,255,255,.75);line-height:1.8;background:rgba(212,175,55,.04);border-left:3px solid var(--gold);padding:12px 14px;border-radius:0 10px 10px 0;margin-top:8px}
-.study-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border2)}
-.study-item:last-child{border-bottom:none}
-.study-type-name{font-size:13px;font-weight:700;color:var(--white)}
-.study-vol{font-size:10px;color:var(--muted);margin-top:2px}
-.study-link{font-size:11px;font-weight:900;color:var(--gold);background:rgba(212,175,55,.08);border:1px solid var(--border);padding:5px 12px;border-radius:8px;text-decoration:none;white-space:nowrap}
-.wrong-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.wrong-item{display:flex;align-items:center;gap:4px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);border-radius:8px;padding:4px 10px}
-.wrong-num{font-size:11px;font-weight:900;color:#ef4444}
-.wrong-topic{font-size:10px;color:var(--muted)}
-
-/* PRINT */
+.cb-우{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:var(--ok)}
+.cb-약{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3);color:#fbbf24}
+.cb-연{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:var(--no)}
+.r-comment{font-size:12px;color:rgba(255,255,255,.75);line-height:1.8;background:rgba(212,175,55,.04);border-left:3px solid var(--gold);padding:12px 14px;border-radius:0 10px 10px 0;margin-top:8px}
+.s-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--b2)}
+.s-item:last-child{border-bottom:none}
+.s-tn{font-size:13px;font-weight:700;color:var(--w)}
+.s-vol{font-size:10px;color:var(--mu);margin-top:2px}
+.s-link{font-size:11px;font-weight:900;color:var(--gold);background:rgba(212,175,55,.08);border:1px solid var(--bd);padding:5px 12px;border-radius:8px;text-decoration:none;white-space:nowrap}
+.w-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.w-item{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);border-radius:8px;padding:4px 10px;display:flex;align-items:center;gap:4px}
+.w-num{font-size:11px;font-weight:900;color:var(--no)}
+.w-tp{font-size:10px;color:var(--mu)}
+.print-info{display:none;text-align:center;padding:8px;font-size:11px;color:var(--mu)}
+.no-print{display:block}
 @media print{
-  body{background:white!important;color:#111!important}
-  .screen{display:none!important}
+  body{background:#fff!important;color:#111!important}
+  .scr{display:none!important}
   #sResult{display:flex!important}
-  .res-header .res-back-btn,.res-header .res-print-btn{display:none!important}
+  .res-hd .res-re,.res-hd .res-print,.no-print{display:none!important}
+  .print-info{display:block!important}
   .res-body{padding:0!important}
-  .cta-section{display:none!important}
-  .watermark{display:block!important;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:72px;font-weight:900;color:rgba(212,175,55,.05);pointer-events:none;z-index:9999;white-space:nowrap;font-family:'Noto Sans KR',sans-serif}
+  .cta-s{display:none!important}
+  .wm{display:block!important;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:72px;font-weight:900;color:rgba(212,175,55,.05);pointer-events:none;z-index:9999;white-space:nowrap}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .res-hero{background:#fffbec!important;border-color:#d4af37!important}
-  .res-score{color:#b8960c!important;text-shadow:none!important}
-  .res-card{background:#f9f9f9!important;border-color:#e0e0e0!important}
-  .res-bar-bg{background:#e0e0e0!important}
-  .res-type-name,.study-type-name{color:#111!important}
-  .res-comment{background:#fffbec!important;color:#333!important}
+  .res-sc{color:#b8960c!important;text-shadow:none!important}
+  .r-card{background:#f9f9f9!important;border-color:#e0e0e0!important}
+  .r-tn,.s-tn{color:#111!important}
+  .r-comment{background:#fffbec!important;color:#333!important}
+  .r-bg{background:#e0e0e0!important}
   @page{margin:1.2cm}
 }
-.watermark{display:none}
+.wm{display:none}
 </style>
 </head>
 <body>
 
-<div class="watermark" id="wm"></div>
+<div class="wm" id="wm"></div>
 
 <!-- GATE -->
-<div class="screen on" id="sGate">
-  <div class="gate-card">
-    <div class="gate-bar"></div>
-    <div class="gate-body">
-      <img class="gate-logo" src="https://lh3.googleusercontent.com/d/1c2yx_O6sKcTF9-YoTKxnQ2lWOqfWiUCL" alt="G-FIELD">
-      <div class="gate-tag">G-FIELD GIFTED EDUCATION</div>
-      <div class="gate-title">필즈 선발 대비 모의고사</div>
-      <p class="gate-sub">25문항 사고력 + 14문항 연산 테스트<br>답을 입력하면 즉시 진단 결과가 나옵니다.</p>
-      <input class="gate-input" id="gName" type="text" autocomplete="off" placeholder="학생 이름을 입력하세요">
-      <button class="gate-btn" onclick="GD.start()">진단 시작하기 →</button>
-      <div class="gate-err" id="gErr"></div>
-      <p class="gate-note">시험지를 먼저 인쇄해서 풀고 답만 입력하거나<br>화면을 보며 바로 입력하셔도 됩니다.</p>
+<div class="scr on" id="sGate">
+  <div class="g-card">
+    <div class="g-bar"></div>
+    <div class="g-body">
+      <img class="g-logo" src="https://lh3.googleusercontent.com/d/1c2yx_O6sKcTF9-YoTKxnQ2lWOqfWiUCL" alt="G-FIELD">
+      <div class="g-tag">G-FIELD GIFTED EDUCATION</div>
+      <div class="g-title">필즈 선발 대비 모의고사</div>
+      <p class="g-sub">사고력 25문항 + 연산 14문항<br>즉시 채점 · 유형별 진단 결과 제공</p>
+      <input class="g-inp" id="gName" type="text" autocomplete="off" placeholder="학생 이름">
+      <button class="g-btn" onclick="G.start()">시작하기 →</button>
+      <div class="g-err" id="gErr"></div>
+      <p class="g-note">결과는 즉시 인쇄 가능합니다</p>
     </div>
   </div>
 </div>
 
-<!-- QUESTIONS -->
-<div class="screen" id="sQ">
-  <div class="q-header">
-    <span class="q-header-title">📝 사고력 진단 (25문항)</span>
-    <span class="q-header-student" id="qName"></span>
-  </div>
-  <div class="q-prog-wrap">
-    <div class="q-progress-bar"><div class="q-progress-fill" id="qFill" style="width:0%"></div></div>
-    <div class="q-prog-text" id="qProg">0 / 25 입력</div>
-  </div>
-  <div class="q-body" id="qBody"></div>
-  <div class="q-footer">
-    <div class="q-count" id="qCount">0/25</div>
-    <button class="q-submit-btn" onclick="GD.goCalc()">다음: 연산 테스트 →</button>
+<!-- MODE SELECT -->
+<div class="scr" id="sMode">
+  <div class="mode-wrap">
+    <div class="mode-title" style="margin-bottom:4px">어떻게 진행할까요?</div>
+    <div class="mode-sub" id="modeStudentName"></div>
+    <div class="mode-cards">
+
+      <div class="mode-card" onclick="G.setMode('ox')">
+        <div class="mode-icon">📄</div>
+        <div>
+          <div class="mode-card-title">시험지 인쇄 후 채점</div>
+          <div class="mode-card-desc">
+            시험지를 인쇄해서 아이가 풀고,<br>
+            정답을 보면서 <b style="color:var(--w)">O / X</b> 만 탭하면 끝.<br>
+            가장 쉽고 빠른 방법입니다.
+          </div>
+          <span class="mode-card-tag tag-easy">✓ 가장 쉬운 방법</span>
+        </div>
+      </div>
+
+      <div class="mode-card" onclick="G.setMode('direct')">
+        <div class="mode-icon">📱</div>
+        <div>
+          <div class="mode-card-title">화면으로 직접 입력</div>
+          <div class="mode-card-desc">
+            화면을 보면서 답을 직접 입력하면<br>
+            자동으로 채점합니다.
+          </div>
+          <span class="mode-card-tag tag-auto">⚡ 자동 채점</span>
+        </div>
+      </div>
+
+    </div>
+    <div style="margin-top:16px;text-align:center">
+      <button style="background:none;border:none;color:var(--mu);font-size:12px;font-family:'Noto Sans KR',sans-serif;cursor:pointer" onclick="G.goGate()">← 이름 다시 입력</button>
+    </div>
   </div>
 </div>
 
-<!-- CALC -->
-<div class="screen" id="sCalc">
-  <div class="q-header">
-    <span class="q-header-title">🧮 연산 테스트 (14문항)</span>
-    <span class="q-header-student" id="cName"></span>
+<!-- OX MODE: MAIN -->
+<div class="scr" id="sOX">
+  <div class="hd"><span class="hd-title">📝 사고력 채점 (25문항)</span><span class="hd-name" id="oxName"></span></div>
+  <div class="prog-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="oxFill" style="width:0%"></div></div>
+    <div class="prog-txt" id="oxProg">0 / 25 채점</div>
   </div>
-  <div class="q-body" id="cBody"></div>
-  <div class="q-footer">
-    <button class="q-back-btn" onclick="GD.goQ()">← 이전</button>
-    <button class="q-submit-btn" onclick="GD.showResult()">결과 보기 →</button>
+  <div class="body" id="oxBody"></div>
+  <div class="ft">
+    <div class="ft-cnt" id="oxCnt">0/25</div>
+    <button class="ft-btn" onclick="G.goCalcOX()">다음: 연산 채점 →</button>
+  </div>
+</div>
+
+<!-- OX MODE: CALC -->
+<div class="scr" id="sCalcOX">
+  <div class="hd"><span class="hd-title">🧮 연산 채점 (14문항)</span><span class="hd-name" id="coxName"></span></div>
+  <div class="body" id="coxBody"></div>
+  <div class="ft">
+    <button class="ft-back" onclick="G.goOX()">← 이전</button>
+    <button class="ft-btn" onclick="G.showResult()">결과 보기 →</button>
+  </div>
+</div>
+
+<!-- DIRECT MODE: MAIN -->
+<div class="scr" id="sDI">
+  <div class="hd"><span class="hd-title">📝 사고력 (25문항)</span><span class="hd-name" id="diName"></span></div>
+  <div class="prog-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="diFill" style="width:0%"></div></div>
+    <div class="prog-txt" id="diProg">0 / 25 입력</div>
+  </div>
+  <div class="body" id="diBody"></div>
+  <div class="ft">
+    <div class="ft-cnt" id="diCnt">0/25</div>
+    <button class="ft-btn" onclick="G.goCalcDI()">다음: 연산 입력 →</button>
+  </div>
+</div>
+
+<!-- DIRECT MODE: CALC -->
+<div class="scr" id="sCalcDI">
+  <div class="hd"><span class="hd-title">🧮 연산 테스트 (14문항)</span><span class="hd-name" id="cdiName"></span></div>
+  <div class="body" id="cdiBody"></div>
+  <div class="ft">
+    <button class="ft-back" onclick="G.goDI()">← 이전</button>
+    <button class="ft-btn" onclick="G.showResult()">결과 보기 →</button>
   </div>
 </div>
 
 <!-- RESULT -->
-<div class="screen" id="sResult">
-  <div class="res-header">
-    <span class="res-header-title">📊 진단 결과</span>
-    <button class="res-back-btn" onclick="GD.goGate()">← 다시 진단</button>
-    <button class="res-print-btn" onclick="window.print()">🖨 인쇄</button>
+<div class="scr" id="sResult">
+  <div class="res-hd">
+    <span class="res-hd-title">📊 진단 결과</span>
+    <button class="res-re" onclick="G.goGate()">← 다시 진단</button>
+    <button class="res-print" onclick="window.print()">🖨 인쇄</button>
   </div>
   <div class="res-body" id="resBody"></div>
 </div>
 
 <script>
-(function(){
-'use strict';
+(function(){'use strict';
 
 const QS=[
   {id:1,t:'식의계산',lv:'키즈팩토',tp:'막대의 길이(수 채우기)',a:'8',in:'num',ph:'답 입력'},
-  {id:2,t:'식의계산',lv:'키즈팩토',tp:'조건에 따른 수 구하기(대화,문장제)',a:'8',in:'num',ph:'답 입력'},
+  {id:2,t:'식의계산',lv:'키즈팩토',tp:'조건에 따른 수 구하기',a:'8',in:'num',ph:'답 입력'},
   {id:3,t:'수',lv:'키즈팩토',tp:'주고받기(같게 만들기)',a:'2',in:'num',ph:'답 입력'},
-  {id:4,t:'도형',lv:'키즈팩토',tp:'한번 접은 색종이 구멍 개수',a:'6',in:'num',ph:'답 입력'},
+  {id:4,t:'도형',lv:'키즈팩토',tp:'색종이 접어 구멍 뚫기',a:'6',in:'num',ph:'개 입력'},
   {id:5,t:'수',lv:'초등팩토',tp:'주고받기(더 많이 가지기)',a:'11',in:'num',ph:'답 입력'},
   {id:6,t:'논리추리',lv:'초등팩토',tp:'줄 세우기(등수 정하기)',a:'5',in:'num',ph:'등 입력'},
   {id:7,t:'논리추리',lv:'초등팩토',tp:'집합과 포함 관계',a:'17',in:'num',ph:'명 입력'},
@@ -237,7 +327,7 @@ const QS=[
   {id:9,t:'수',lv:'초등팩토',tp:'수의 관계(원판)',a:'2',in:'num',ph:'답 입력'},
   {id:10,t:'식의계산',lv:'초등팩토',tp:'표 안의 도형 수(같은 2개)',a:'14',in:'num',ph:'㉠값'},
   {id:11,t:'규칙',lv:'키즈팩토',tp:'수열의 규칙(두 패턴)',a:'4,13',in:'dual',lb:['패턴①','패턴②'],ph:['4','13']},
-  {id:12,t:'규칙',lv:'키즈팩토',tp:'도형 패턴의 규칙',a:'□,○',in:'sym',ph:''},
+  {id:12,t:'규칙',lv:'키즈팩토',tp:'도형 패턴 규칙',a:'□,○',in:'sym',ph:''},
   {id:13,t:'수',lv:'초등팩토',tp:'도형으로 수 나타내기',a:'14',in:'num',ph:'답 입력'},
   {id:14,t:'수',lv:'초등팩토',tp:'마방진(합 일정) △값',a:'18',in:'num',ph:'△값'},
   {id:15,t:'식의계산',lv:'초등팩토',tp:'타고 내린 승객 수',a:'17',in:'num',ph:'명 입력'},
@@ -248,11 +338,10 @@ const QS=[
   {id:20,t:'식의계산',lv:'1031입문',tp:'복면산(두자리+두자리)',a:'9,1',in:'dual',lb:['□ =','○ ='],ph:['9','1']},
   {id:21,t:'식의계산',lv:'1031입문',tp:'수 배열 규칙(화살표)',a:'28',in:'num',ph:'㉠값'},
   {id:22,t:'규칙',lv:'1031입문',tp:'삼각형 증가 규칙(6번째)',a:'36',in:'num',ph:'장 입력'},
-  {id:23,t:'규칙',lv:'1031심화',tp:'바둑돌 규칙(차이로 번째)',a:'33',in:'num',ph:'번째'},
-  {id:24,t:'수',lv:'1031심화',tp:'도형이 나타낸 수 □',a:'15',in:'num',ph:'□값'},
+  {id:23,t:'규칙',lv:'1031심화',tp:'바둑돌 규칙',a:'33',in:'num',ph:'번째'},
+  {id:24,t:'수',lv:'1031심화',tp:'도형이 나타낸 수',a:'15',in:'num',ph:'□값'},
   {id:25,t:'도형',lv:'1031심화',tp:'쌓기나무 규칙(5번째)',a:'55',in:'num',ph:'개 입력'},
 ];
-
 const CA=[
   {e:'5 + □ = 13',a:'8'},{e:'8 + 21 = □',a:'29'},{e:'35 + 7 = □',a:'42'},
   {e:'6 + 18 = □',a:'24'},{e:'23 + 34 = □',a:'57'},{e:'59 + 22 = □',a:'81'},{e:'37 + 65 = □',a:'102'},
@@ -261,246 +350,345 @@ const CS=[
   {e:'□ − 5 = 21',a:'26'},{e:'12 − 8 = □',a:'4'},{e:'23 − 5 = □',a:'18'},
   {e:'39 − 16 = □',a:'23'},{e:'57 − 24 = □',a:'33'},{e:'62 − 38 = □',a:'24'},{e:'96 − 79 = □',a:'17'},
 ];
-
-const LEVELS=[
-  {mn:96,mx:100,lv:'E1합격 · S반 GO',cls:'s반',tx:'E1반 합격이 확실합니다. 관리 잘해주신 부모님의 노력이 보입니다. 오답 문제가 있지만 작년에도 100점은 없었습니다. 약점 문항을 참고하여 학습해주세요. 88점 이상의 학생은 모두 대치 소프1, 필즈 S1 합격을 하였습니다. 필즈 입학 시 교과 진도는 3-2 시작 수준이었으니 교과 영역도 병행해 주세요.'},
-  {mn:88,mx:95,lv:'E1합격 · S반 GO',cls:'s반',tx:'E1반 합격이 확실합니다. 관리 잘해주신 부모님의 노력이 보입니다. 약점 문항을 학습해주세요. 만약 소마도 다니면서 외부 학원에서 2회 이상 학습 중이라면 둘 다 유지하면서 프리미어 대비와 S반 관리까지 이어가기를 추천합니다. 하지만 필즈 대비 중 타 학습에 문제가 있었다면 필즈만 선택하고 교과와 필즈 예습·복습에 집중해 주세요.'},
-  {mn:84,mx:87,lv:'E1합격',cls:'e1',tx:'E1반 합격이 확실합니다. 오답 문제가 있지만 약점 유형을 꼭 학습해주세요.'},
-  {mn:80,mx:83,lv:'E1합격',cls:'e1',tx:'E1반 합격 가능성이 높습니다. 약점 유형을 꼭 학습해주세요. 조금만 노력하면 충분히 E1 점수가 나올 수 있기 때문에 시험대비에도 집중해주세요.'},
-  {mn:76,mx:79,lv:'E2합격',cls:'e2',tx:'레벨은 E2가 나왔지만 E1반 합격 가능성이 높습니다. 약점 유형을 꼭 학습해주세요. 조금만 노력하면 충분히 E1 점수가 나올 수 있습니다.'},
-  {mn:68,mx:75,lv:'E2합격',cls:'e2',tx:'E2레벨은 당연하고 E1도 연습하면 가능하니 남은기간 집중적으로 복습과 예습에 힘써주세요. 만약 연산이 잘 되어 있고 선행이 되어 있다면 대치의 경우 1달 안에도 E1반으로 승급될 가능성도 높습니다.'},
-  {mn:60,mx:67,lv:'E2합격',cls:'e2',tx:'E2레벨은 당연하고 E1도 연습하면 가능하니 남은기간 집중적으로 복습과 예습에 힘써주세요. 개념은 알지만 시험 스킬 연습이 덜 되어 있어 시간 관리가 안 되어 있을 수도 있습니다.'},
-  {mn:52,mx:59,lv:'주 1회 높은 반',cls:'',tx:'주1회 높은반 레벨이지만 시험 대비를 집중하면 주2회도 충분히 가능한 점수입니다. 남은기간 집중적으로 복습과 예습에 힘써주세요.'},
-  {mn:0,mx:51,lv:'주 1회 낮은 반',cls:'',tx:'주 1회 낮은반 레벨이지만 충분히 연습하면 주2회도 나올 수 있습니다. 다만 아직 덜 채워진 교과, 사고력 학습이 필요할 수 있습니다. 복습량이나 선행 학습량이 부족한 경우, 한 곳을 선택하여 학습에 집중하는 것이 더 효과적입니다.'},
+const SYMS=['▲','■','□','○','△','◇'];
+const LVLS=[
+  {mn:96,mx:100,lv:'E1합격 · S반 GO',cls:'lv-s',tx:'E1반 합격이 확실합니다. 관리 잘해주신 부모님의 노력이 보입니다. 오답 문제가 있지만 작년에도 100점은 없었습니다. 약점 문항을 참고하여 학습해주세요. 88점 이상의 학생은 모두 대치 소프1, 필즈 S1 합격을 하였습니다. 필즈 입학 시 교과 진도는 3-2 시작 수준이었으니 교과 영역도 병행해 주세요.'},
+  {mn:88,mx:95,lv:'E1합격 · S반 GO',cls:'lv-s',tx:'E1반 합격이 확실합니다. 약점 문항을 학습해주세요. 소마도 다니면서 외부 학원에서 2회 이상 학습 중이라면 둘 다 유지하면서 프리미어 대비와 S반 관리까지 이어가기를 추천합니다.'},
+  {mn:84,mx:87,lv:'E1합격',cls:'lv-e1',tx:'E1반 합격이 확실합니다. 약점 유형을 꼭 학습해주세요.'},
+  {mn:80,mx:83,lv:'E1합격',cls:'lv-e1',tx:'E1반 합격 가능성이 높습니다. 약점 유형을 꼭 학습해주세요. 조금만 노력하면 충분히 E1 점수가 나올 수 있습니다.'},
+  {mn:76,mx:79,lv:'E2합격',cls:'lv-e2',tx:'레벨은 E2가 나왔지만 E1반 합격 가능성이 높습니다. 약점 유형을 꼭 학습해주세요.'},
+  {mn:68,mx:75,lv:'E2합격',cls:'lv-e2',tx:'E2레벨은 당연하고 E1도 연습하면 가능하니 남은기간 집중적으로 복습과 예습에 힘써주세요. 연산이 잘 되어 있고 선행이 되어 있다면 1달 안에도 E1반으로 승급될 가능성도 높습니다.'},
+  {mn:60,mx:67,lv:'E2합격',cls:'lv-e2',tx:'E2레벨은 당연하고 E1도 연습하면 가능하니 남은기간 집중적으로 복습과 예습에 힘써주세요.'},
+  {mn:52,mx:59,lv:'주 1회 높은 반',cls:'lv-j',tx:'주1회 높은반 레벨이지만 시험 대비를 집중하면 주2회도 충분히 가능한 점수입니다.'},
+  {mn:0,mx:51,lv:'주 1회 낮은 반',cls:'lv-j',tx:'주 1회 낮은반 레벨이지만 충분히 연습하면 주2회도 나올 수 있습니다. 교과, 사고력 학습의 균형이 필요합니다.'},
 ];
-
 const CALC_TX={
-  우수:'연산 진단은 우수입니다. 필즈 시험에서의 연산은 두자리+두자리 또는 두자리-두자리까지 출제됩니다. 학생은 시험에 문제 없는 연산 실력을 가졌습니다. 필즈 입학 후 같은 3개의 수로 가르기, 합이 일정한 경우의 수, 두자리×한자리 정도의 연산이 필요한 경우가 많습니다. 꾸준히 유지해 주세요.',
-  약간실수:'연산 진단은 약간 실수입니다. 필즈 시험에서의 연산은 두자리+두자리 또는 두자리-두자리까지 출제됩니다. 학생은 시험의 연산을 할 수 있으나 실수하지 않고 속도가 빠르도록 여러 번 연습해야 합니다.',
-  연습필요:'연산 진단은 연습 필요입니다. 필즈 시험에서의 연산은 두자리+두자리 또는 두자리-두자리까지 출제됩니다. 학생은 우선 연산에 집중하여 학습해주세요. 기적의 계산법 3-4권 수준의 연산 학습이 필요합니다.',
+  우:'연산 진단은 우수입니다. 필즈 시험에서의 연산은 두자리+두자리 또는 두자리-두자리까지 출제됩니다. 학생은 시험에 문제 없는 연산 실력을 가졌습니다. 꾸준히 유지해 주세요.',
+  약:'연산 진단은 약간 실수입니다. 필즈 시험에서의 연산은 두자리+두자리 또는 두자리-두자리까지 출제됩니다. 실수하지 않고 속도가 빠르도록 여러 번 연습해야 합니다.',
+  연:'연산 진단은 연습 필요입니다. 필즈 시험에서의 연산은 두자리+두자리 또는 두자리-두자리까지 출제됩니다. 우선 연산에 집중하여 학습해주세요. 기적의 계산법 3-4권 수준이 필요합니다.',
 };
-
 const TV={
   '식의계산':{vol:'Vol.1 · Vol.2',url:'https://youtu.be/7aPj5IJUzQM',lb:'개념영상'},
   '수':{vol:'Vol.3 · Vol.4',url:'https://youtu.be/mq-1VxjLzMk',lb:'유형반복'},
-  '논리추리':{vol:'Vol.2 체크체크',url:'https://youtu.be/TOHw8sCumHY',lb:'체크체크'},
+  '논리추리':{vol:'Vol.2',url:'https://youtu.be/TOHw8sCumHY',lb:'체크체크'},
   '도형':{vol:'Final',url:'https://youtu.be/FC4W2bRJwKc',lb:'학습영상'},
   '규칙':{vol:'Vol.4',url:'https://youtu.be/neRIODxo13I',lb:'개념영상'},
 };
+const TYPBADGE={
+  '식의계산':'background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.2)',
+  '수':'background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.2)',
+  '논리추리':'background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.2)',
+  '도형':'background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.2)',
+  '규칙':'background:rgba(244,114,182,.12);color:#f472b6;border:1px solid rgba(244,114,182,.2)',
+};
 
-const SYMS=['▲','■','□','○','△','◇'];
+let S={name:'',mode:'',ox:Array(25).fill(null),oxc:Array(14).fill(null),ans:Array(25).fill(''),cal:Array(14).fill(''),anim:[],s12:['','']};
 
-let S={name:'',ans:Array(25).fill(''),cal:Array(14).fill(''),anim:[],s12:['','']};
+function nm(s){return String(s||'').trim().replace(/\s+/g,'').replace(/，/g,',');}
+function match(u,c){return nm(u)===nm(c);}
+function lv(sc){for(const d of LVLS)if(sc>=d.mn&&sc<=d.mx)return d;return LVLS[LVLS.length-1];}
+function pct(ok,tot){return tot===0?0:Math.round(ok/tot*100);}
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);}
+function badge(t){return `<span class="ox-type" style="${TYPBADGE[t]}">${t}</span>`;}
 
-function n(s){return String(s||'').trim().replace(/\s+/g,'').replace(/，/g,',');}
-function ok(u,c){return n(u)===n(c);}
-function getLv(sc){for(const d of LEVELS)if(sc>=d.mn&&sc<=d.mx)return d;return LEVELS[LEVELS.length-1];}
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);}
-
-const GD={
+const G={
   start(){
-    const nm=document.getElementById('gName').value.trim();
-    if(!nm){document.getElementById('gErr').textContent='이름을 입력해주세요.';return;}
-    S={name:nm,ans:Array(25).fill(''),cal:Array(14).fill(''),anim:[],s12:['','']};
-    document.getElementById('wm').textContent=nm;
-    document.getElementById('qName').textContent=nm+' 학생';
-    document.getElementById('cName').textContent=nm+' 학생';
-    buildQ();buildC();show('sQ');
+    const n=document.getElementById('gName').value.trim();
+    if(!n){document.getElementById('gErr').textContent='이름을 입력해주세요.';return;}
+    S={name:n,mode:'',ox:Array(25).fill(null),oxc:Array(14).fill(null),ans:Array(25).fill(''),cal:Array(14).fill(''),anim:[],s12:['','']};
+    document.getElementById('wm').textContent=n;
+    document.getElementById('modeStudentName').textContent=n+' 학생, 방법을 선택하세요';
+    show('sMode');
   },
-  goCalc(){show('sCalc');},
-  goQ(){show('sQ');},
   goGate(){
-    S={name:'',ans:Array(25).fill(''),cal:Array(14).fill(''),anim:[],s12:['','']};
     document.getElementById('gName').value='';
     document.getElementById('gErr').textContent='';
     show('sGate');
   },
-  showResult(){
-    renderRes();show('sResult');
-  }
+  setMode(m){
+    S.mode=m;
+    if(m==='ox'){
+      ['oxName','coxName'].forEach(id=>document.getElementById(id).textContent=S.name+' 학생');
+      buildOX();buildCalcOX();show('sOX');
+    } else {
+      ['diName','cdiName'].forEach(id=>document.getElementById(id).textContent=S.name+' 학생');
+      buildDI();buildCalcDI();show('sDI');
+    }
+  },
+  goOX(){show('sOX');},
+  goCalcOX(){show('sCalcOX');},
+  goDI(){show('sDI');},
+  goCalcDI(){show('sCalcDI');},
+  showResult(){renderRes();show('sResult');}
 };
-window.GD=GD;
+window.G=G;
 
-function buildQ(){
-  const b=document.getElementById('qBody');b.innerHTML='';
+/* ─ OX BUILD ─ */
+function buildOX(){
+  const b=document.getElementById('oxBody');b.innerHTML='';
+  const grid=document.createElement('div');grid.className='ox-grid';
   QS.forEach((q,i)=>{
-    const d=document.createElement('div');d.className='q-card';d.id='qc'+i;
-    d.innerHTML=`<div class="q-card-top">
-      <div class="q-num">${String(q.id).padStart(2,'0')}</div>
-      <span class="q-type-badge type-${q.t}">${q.t}</span>
-      <span class="q-topic">${q.tp}</span>
-    </div>${buildIn(q,i)}`;
-    b.appendChild(d);
-  });upP();
+    const c=document.createElement('div');c.className='ox-card';c.id='oc'+i;
+    c.innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="ox-num">Q${String(q.id).padStart(2,'0')}</div>
+        ${badge(q.t)}
+      </div>
+      <div class="ox-ans">정답: <b>${q.a}</b></div>
+      <div class="ox-btns">
+        <button class="ox-o" id="oo${i}" onclick="setOX(${i},true)">⭕</button>
+        <button class="ox-x" id="ox${i}" onclick="setOX(${i},false)">❌</button>
+      </div>`;
+    grid.appendChild(c);
+  });
+  b.appendChild(grid);upOX();
 }
+function setOX(i,v){
+  S.ox[i]=v;
+  const c=document.getElementById('oc'+i);
+  c.className='ox-card '+(v?'ok':'no');
+  document.getElementById('oo'+i).className='ox-o'+(v?' sel':'');
+  document.getElementById('ox'+i).className='ox-x'+(!v?' sel':'');
+  upOX();
+}
+function upOX(){
+  const d=S.ox.filter(v=>v!==null).length,p=d/25*100;
+  document.getElementById('oxFill').style.width=p+'%';
+  document.getElementById('oxProg').textContent=d+' / 25 채점';
+  document.getElementById('oxCnt').textContent=d+'/25';
+}
+window.setOX=setOX;
 
-function buildIn(q,i){
-  if(q.in==='num')return`<input class="q-input" type="text" inputmode="numeric" placeholder="${q.ph}" id="qi${i}" oninput="sa(${i},this.value)">`;
-  if(q.in==='dual')return`<div class="q-dual">
-    <div><label>${q.lb[0]}</label><input class="q-input" type="text" inputmode="numeric" placeholder="${q.ph[0]}" id="qi${i}a" oninput="sd(${i})"></div>
-    <div><label>${q.lb[1]}</label><input class="q-input" type="text" inputmode="numeric" placeholder="${q.ph[1]}" id="qi${i}b" oninput="sd(${i})"></div>
-  </div>`;
-  if(q.in==='animal')return`<div>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">가장 가벼운 동물부터 순서대로 탭하세요</div>
-    <div class="animal-btns">
-      <button class="animal-btn" onclick="sa8('다람쥐',this)">🐿 다람쥐</button>
-      <button class="animal-btn" onclick="sa8('거북',this)">🐢 거북</button>
-      <button class="animal-btn" onclick="sa8('토끼',this)">🐇 토끼</button>
-    </div>
-    <div class="animal-order" id="ao">선택: </div>
-    <button class="animal-clear" onclick="ca8()">다시 선택</button>
-  </div>`;
-  if(q.in==='sym')return`<div>
-    <div class="symbol-section"><label>패턴 ① 빈칸</label>
-      <div class="symbol-btns" id="sa">${SYMS.map(s=>`<button class="sym-btn" onclick="ss(0,'${s}',this)">${s}</button>`).join('')}</div>
-    </div>
-    <div class="symbol-section"><label>패턴 ② 빈칸</label>
-      <div class="symbol-btns" id="sb">${SYMS.map(s=>`<button class="sym-btn" onclick="ss(1,'${s}',this)">${s}</button>`).join('')}</div>
-    </div>
-  </div>`;
+function buildCalcOX(){
+  const b=document.getElementById('coxBody');b.innerHTML='';
+  const intro=document.createElement('div');
+  intro.style.cssText='background:rgba(212,175,55,.06);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--mu);line-height:1.7';
+  intro.innerHTML='<b style="color:var(--g2)">연산 테스트 채점</b><br>정답을 확인하면서 아이가 맞혔으면 ⭕, 틀렸으면 ❌를 탭하세요.';
+  b.appendChild(intro);
+  buildCalcOXSec(b,'1. 덧셈',CA,0);
+  buildCalcOXSec(b,'2. 뺄셈',CS,7);
 }
-
-function sa(i,v){S.ans[i]=v;document.getElementById('qc'+i).classList.toggle('answered',!!v.trim());upP();}
-function sd(i){
-  const a=document.getElementById('qi'+i+'a')?.value||'',b=document.getElementById('qi'+i+'b')?.value||'';
-  S.ans[i]=a&&b?a+','+b:'';
-  document.getElementById('qc'+i).classList.toggle('answered',!!(a&&b));upP();
-}
-function sa8(nm,btn){
-  if(S.anim.includes(nm))return;S.anim.push(nm);btn.classList.add('selected');
-  document.getElementById('ao').textContent='선택: '+S.anim.join(' → ');
-  S.ans[7]=S.anim.join(',');
-  document.getElementById('qc7').classList.toggle('answered',S.anim.length===3);upP();
-}
-function ca8(){
-  S.anim=[];S.ans[7]='';
-  document.querySelectorAll('.animal-btn').forEach(b=>b.classList.remove('selected'));
-  document.getElementById('ao').textContent='선택: ';
-  document.getElementById('qc7').classList.remove('answered');upP();
-}
-function ss(part,sym,btn){
-  S.s12[part]=sym;
-  const g=document.getElementById(part===0?'sa':'sb');
-  g.querySelectorAll('.sym-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');
-  if(S.s12[0]&&S.s12[1]){S.ans[11]=S.s12[0]+','+S.s12[1];document.getElementById('qc11').classList.add('answered');}
-  else{S.ans[11]='';document.getElementById('qc11').classList.remove('answered');}upP();
-}
-function upP(){
-  const d=S.ans.filter(a=>a.trim()).length,p=d/25*100;
-  document.getElementById('qFill').style.width=p+'%';
-  document.getElementById('qProg').textContent=d+' / 25 입력';
-  document.getElementById('qCount').textContent=d+'/25';
-}
-window.sa=sa;window.sd=sd;window.sa8=sa8;window.ca8=ca8;window.ss=ss;
-
-function buildC(){
-  const b=document.getElementById('cBody');b.innerHTML='';
-  b.innerHTML=`<div class="calc-intro"><strong>연산 테스트 안내</strong><br>덧셈 7문항 + 뺄셈 7문항입니다. □에 알맞은 수를 넣으세요.</div>
-    <div class="calc-section-title">1. 덧셈</div>
-    <div class="calc-grid" id="cg1"></div>
-    <div class="calc-section-title">2. 뺄셈</div>
-    <div class="calc-grid" id="cg2"></div>`;
-  buildCG('cg1',CA,0);buildCG('cg2',CS,7);
-}
-function buildCG(id,data,off){
-  const g=document.getElementById(id);
+function buildCalcOXSec(b,title,data,off){
+  const h=document.createElement('div');h.className='calc-hd';h.textContent=title;b.appendChild(h);
+  const g=document.createElement('div');g.className='calc-grid';
   data.forEach((c,i)=>{
-    const d=document.createElement('div');d.className='calc-card';d.id='cc'+(off+i);
-    d.innerHTML=`<div class="calc-expr">${c.e}</div>
-    <input class="calc-input" type="text" inputmode="numeric" placeholder="□" id="ci${off+i}" oninput="sc(${off+i},this.value)">`;
+    const d=document.createElement('div');d.className='c-card';d.id='coc'+(off+i);
+    d.innerHTML=`<div class="c-expr">${c.e}</div>
+    <div class="c-ans">정답: <b>${c.a}</b></div>
+    <div class="c-ox">
+      <button class="co" id="coo${off+i}" onclick="setCalcOX(${off+i},true)">⭕</button>
+      <button class="cx" id="cox${off+i}" onclick="setCalcOX(${off+i},false)">❌</button>
+    </div>`;
     g.appendChild(d);
   });
+  b.appendChild(g);
 }
-function sc(i,v){S.cal[i]=v;document.getElementById('cc'+i).classList.toggle('answered',!!v.trim());}
-window.sc=sc;
+function setCalcOX(i,v){
+  S.oxc[i]=v;
+  const c=document.getElementById('coc'+i);c.className='c-card '+(v?'ok':'no');
+  document.getElementById('coo'+i).className='co'+(v?' sel':'');
+  document.getElementById('cox'+i).className='cx'+(!v?' sel':'');
+}
+window.setCalcOX=setCalcOX;
 
+/* ─ DIRECT BUILD ─ */
+function buildDI(){
+  const b=document.getElementById('diBody');b.innerHTML='';
+  QS.forEach((q,i)=>{
+    const c=document.createElement('div');c.className='di-card';c.id='dc'+i;
+    c.innerHTML=`<div class="di-top">
+      <div class="di-num">Q${String(q.id).padStart(2,'0')}</div>
+      <span class="di-t" style="${TYPBADGE[q.t]}">${q.t}</span>
+      <span class="di-tp">${q.tp}</span>
+    </div>${buildDIIn(q,i)}`;
+    b.appendChild(c);
+  });upDI();
+}
+function buildDIIn(q,i){
+  if(q.in==='num')return`<input class="di-inp" type="text" inputmode="numeric" placeholder="${q.ph}" id="di${i}" oninput="setDI(${i},this.value)">`;
+  if(q.in==='dual')return`<div class="di-dual">
+    <div><label>${q.lb[0]}</label><input class="di-inp" type="text" inputmode="numeric" placeholder="${q.ph[0]}" id="di${i}a" oninput="setDIDual(${i})"></div>
+    <div><label>${q.lb[1]}</label><input class="di-inp" type="text" inputmode="numeric" placeholder="${q.ph[1]}" id="di${i}b" oninput="setDIDual(${i})"></div>
+  </div>`;
+  if(q.in==='animal')return`<div>
+    <div style="font-size:11px;color:var(--mu);margin-bottom:8px">가장 가벼운 동물부터 탭하세요</div>
+    <div class="animal-btns">
+      <button class="a-btn" onclick="setA('다람쥐',this)">🐿 다람쥐</button>
+      <button class="a-btn" onclick="setA('거북',this)">🐢 거북</button>
+      <button class="a-btn" onclick="setA('토끼',this)">🐇 토끼</button>
+    </div>
+    <div class="a-order" id="ao">선택: </div>
+    <button class="a-clr" onclick="clrA()">다시 선택</button>
+  </div>`;
+  if(q.in==='sym')return`<div>
+    <div class="sym-group"><label class="sym-lbl">패턴 ① 빈칸</label>
+      <div class="sym-btns" id="sga">${SYMS.map(s=>`<button class="sym-b" onclick="setSym(0,'${s}',this)">${s}</button>`).join('')}</div>
+    </div>
+    <div class="sym-group"><label class="sym-lbl">패턴 ② 빈칸</label>
+      <div class="sym-btns" id="sgb">${SYMS.map(s=>`<button class="sym-b" onclick="setSym(1,'${s}',this)">${s}</button>`).join('')}</div>
+    </div>
+  </div>`;
+}
+function setDI(i,v){S.ans[i]=v;document.getElementById('dc'+i).classList.toggle('filled',!!v.trim());upDI();}
+function setDIDual(i){
+  const a=document.getElementById('di'+i+'a')?.value||'',b2=document.getElementById('di'+i+'b')?.value||'';
+  S.ans[i]=a&&b2?a+','+b2:'';
+  document.getElementById('dc'+i).classList.toggle('filled',!!(a&&b2));upDI();
+}
+function setA(nm,btn){
+  if(S.anim.includes(nm))return;S.anim.push(nm);btn.classList.add('sel');
+  document.getElementById('ao').textContent='선택: '+S.anim.join(' → ');
+  S.ans[7]=S.anim.join(',');
+  document.getElementById('dc7').classList.toggle('filled',S.anim.length===3);upDI();
+}
+function clrA(){
+  S.anim=[];S.ans[7]='';
+  document.querySelectorAll('.a-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('ao').textContent='선택: ';
+  document.getElementById('dc7').classList.remove('filled');upDI();
+}
+function setSym(pt,sym,btn){
+  S.s12[pt]=sym;
+  const g=document.getElementById(pt===0?'sga':'sgb');
+  g.querySelectorAll('.sym-b').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');
+  S.ans[11]=S.s12[0]&&S.s12[1]?S.s12[0]+','+S.s12[1]:'';
+  document.getElementById('dc11').classList.toggle('filled',!!(S.s12[0]&&S.s12[1]));upDI();
+}
+function upDI(){
+  const d=S.ans.filter(a=>a.trim()).length,p=d/25*100;
+  document.getElementById('diFill').style.width=p+'%';
+  document.getElementById('diProg').textContent=d+' / 25 입력';
+  document.getElementById('diCnt').textContent=d+'/25';
+}
+window.setDI=setDI;window.setDIDual=setDIDual;window.setA=setA;window.clrA=clrA;window.setSym=setSym;
+
+function buildCalcDI(){
+  const b=document.getElementById('cdiBody');b.innerHTML='';
+  const intro=document.createElement('div');
+  intro.style.cssText='background:rgba(212,175,55,.06);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--mu);line-height:1.7';
+  intro.innerHTML='<b style="color:var(--g2)">연산 테스트</b><br>덧셈 7문항 + 뺄셈 7문항. □에 알맞은 수를 입력하세요.';
+  b.appendChild(intro);
+  buildCalcDISec(b,'1. 덧셈',CA,0);
+  buildCalcDISec(b,'2. 뺄셈',CS,7);
+}
+function buildCalcDISec(b,title,data,off){
+  const h=document.createElement('div');h.className='calc-hd';h.textContent=title;b.appendChild(h);
+  const g=document.createElement('div');g.className='calc-grid';
+  data.forEach((c,i)=>{
+    const d=document.createElement('div');d.className='c-card';d.id='cdi'+(off+i);
+    d.innerHTML=`<div class="c-expr">${c.e}</div>
+    <input class="c-inp" type="text" inputmode="numeric" placeholder="□" id="ci${off+i}" oninput="setCalcDI(${off+i},this.value)">`;
+    g.appendChild(d);
+  });b.appendChild(g);
+}
+function setCalcDI(i,v){S.cal[i]=v;document.getElementById('cdi'+i).classList.toggle('filled',!!v.trim());}
+window.setCalcDI=setCalcDI;
+
+/* ─ RESULT ─ */
 function renderRes(){
-  const mg=QS.map((q,i)=>ok(S.ans[i],q.a));
+  let mg;
+  if(S.mode==='ox'){
+    mg=S.ox.map(v=>v===true);
+  } else {
+    mg=QS.map((q,i)=>match(S.ans[i],q.a));
+  }
   const sc=mg.filter(Boolean).length*4;
+
   const tys=['식의계산','수','논리추리','도형','규칙'];
   const ts={};tys.forEach(t=>{ts[t]={tot:0,ok:0}});
   QS.forEach((q,i)=>{ts[q.t].tot++;if(mg[i])ts[q.t].ok++;});
-  const lvs={'키즈팩토':{tot:0,ok:0},'초등팩토':{tot:0,ok:0},'1031입문':{tot:0,ok:0},'1031심화':{tot:0,ok:0}};
+
+  const ls={'키즈팩토':{tot:0,ok:0},'초등팩토':{tot:0,ok:0},'1031입문':{tot:0,ok:0},'1031심화':{tot:0,ok:0}};
   QS.forEach((q,i)=>{
     const k=q.lv.includes('키즈')?'키즈팩토':q.lv.includes('초등')?'초등팩토':q.lv.includes('심화')?'1031심화':'1031입문';
-    lvs[k].tot++;if(mg[i])lvs[k].ok++;
+    ls[k].tot++;if(mg[i])ls[k].ok++;
   });
-  const ac=[...CA,...CS],cg=ac.map((c,i)=>n(S.cal[i])===n(c.a)),cw=cg.filter(g=>!g).length;
-  const cl=cw===0?'우수':cw<=2?'약간실수':'연습필요';
-  const li=getLv(sc);
+
+  let cg;
+  if(S.mode==='ox'){
+    cg=S.oxc.map(v=>v===true);
+  } else {
+    const ac=[...CA,...CS];
+    cg=ac.map((c,i)=>match(S.cal[i],c.a));
+  }
+  const cw=cg.filter(v=>!v).length;
+  const cl=cw===0?'우':cw<=2?'약':'연';
+  const clLbl=cw===0?'우수':cw<=2?'약간 실수':'연습 필요';
+  const clCls=cw===0?'cb-우':cw<=2?'cb-약':'cb-연';
+
+  const li=lv(sc);
   const wq=QS.filter((q,i)=>!mg[i]);
-  const weak=tys.filter(t=>ts[t].tot>0&&Math.round(ts[t].ok/ts[t].tot*100)<70);
-  const p=(ok,tot)=>tot===0?0:Math.round(ok/tot*100);
+  const weak=tys.filter(t=>ts[t].tot>0&&pct(ts[t].ok,ts[t].tot)<70);
 
   document.getElementById('resBody').innerHTML=`
+  <div class="print-info">G-FIELD 영재교육 · 필즈 선발 대비 모의고사 진단 결과</div>
   <div class="res-hero">
-    <div class="res-hero-name">${S.name} 학생 · 필즈 선발 대비 모의고사 진단 결과</div>
-    <div class="res-score">${sc}</div>
-    <div class="res-score-sub">/ 100점 (25문항 × 4점)</div>
-    <div class="res-level ${li.cls}">${li.lv}</div>
+    <div class="res-nm">${S.name} 학생 · 필즈 선발 대비 모의고사 진단</div>
+    <div class="res-sc">${sc}</div>
+    <div class="res-sc-s">/ 100점 &nbsp;(25문항 × 4점)</div>
+    <div class="res-lv ${li.cls}">${li.lv}</div>
   </div>
 
-  <div class="res-card">
-    <div class="res-card-title">유형별 분석</div>
-    ${tys.map(t=>`<div class="res-type-row">
-      <span class="res-type-name">${t}</span>
-      <div class="res-bar-bg"><div class="res-bar-fill bar-${t}" style="width:${p(ts[t].ok,ts[t].tot)}%"></div></div>
-      <span class="res-bar-pct">${ts[t].ok}/${ts[t].tot}</span>
+  <div class="r-card">
+    <div class="r-ct">유형별 분석</div>
+    ${tys.map(t=>`<div class="r-row">
+      <span class="r-tn">${t}</span>
+      <div class="r-bg"><div class="r-fill f-${t}" style="width:${pct(ts[t].ok,ts[t].tot)}%"></div></div>
+      <span class="r-p">${ts[t].ok}/${ts[t].tot}</span>
     </div>`).join('')}
   </div>
 
-  <div class="res-card">
-    <div class="res-card-title">난이도별 분석</div>
-    ${['키즈팩토','초등팩토','1031입문','1031심화'].map(k=>`<div class="res-type-row">
-      <span class="res-type-name" style="font-size:11px">${k}</span>
-      <div class="res-bar-bg"><div class="res-bar-fill bar-${k}" style="width:${p(lvs[k].ok,lvs[k].tot)}%"></div></div>
-      <span class="res-bar-pct">${lvs[k].ok}/${lvs[k].tot}</span>
+  <div class="r-card">
+    <div class="r-ct">난이도별 분석</div>
+    ${[['키즈팩토','키'],['초등팩토','초'],['1031입문','입'],['1031심화','심']].map(([k,f])=>`<div class="r-row">
+      <span class="r-tn" style="font-size:11px">${k}</span>
+      <div class="r-bg"><div class="r-fill f-${f}" style="width:${pct(ls[k].ok,ls[k].tot)}%"></div></div>
+      <span class="r-p">${ls[k].ok}/${ls[k].tot}</span>
     </div>`).join('')}
   </div>
 
-  <div class="res-card">
-    <div class="res-card-title">연산 진단</div>
+  <div class="r-card">
+    <div class="r-ct">연산 진단</div>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-      <span class="calc-badge calc-${cl}">${cl==='약간실수'?'약간 실수':cl==='연습필요'?'연습 필요':cl}</span>
-      <span style="font-size:11px;color:var(--muted)">${14-cw}/14 정답</span>
+      <span class="calc-badge ${clCls}">${clLbl}</span>
+      <span style="font-size:11px;color:var(--mu)">${14-cw}/14 정답</span>
     </div>
-    <div class="res-comment">${CALC_TX[cl]}</div>
+    <div class="r-comment">${CALC_TX[cl]}</div>
   </div>
 
-  <div class="res-card">
-    <div class="res-card-title">학습 전략</div>
-    <div class="res-comment">${li.tx}</div>
-    <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.7">당부 드리고 싶은 건 학원이 중요한 것이 아니라 연산, 교과, 사고력 순으로 균형이 맞아야 합니다.</div>
+  <div class="r-card">
+    <div class="r-ct">학습 전략</div>
+    <div class="r-comment">${li.tx}</div>
+    <div style="font-size:11px;color:var(--mu);margin-top:10px;line-height:1.7">당부: 학원보다 연산 → 교과 → 사고력 순서로 균형이 맞아야 합니다.</div>
   </div>
 
-  ${wq.length?`<div class="res-card">
-    <div class="res-card-title">틀린 문항 (${wq.length}개)</div>
-    <div class="wrong-wrap">${wq.map(q=>`<div class="wrong-item"><span class="wrong-num">Q${q.id}</span><span class="wrong-topic">${q.tp.slice(0,10)}</span></div>`).join('')}</div>
+  ${wq.length?`<div class="r-card">
+    <div class="r-ct">틀린 문항 (${wq.length}개)</div>
+    <div class="w-list">${wq.map(q=>`<div class="w-item"><span class="w-num">Q${q.id}</span><span class="w-tp">${q.tp.slice(0,10)}</span></div>`).join('')}</div>
   </div>`:''}
 
-  ${weak.length?`<div class="res-card">
-    <div class="res-card-title">약점 유형 학습 (70% 미만)</div>
-    ${weak.map(t=>`<div class="study-item">
-      <div><div class="study-type-name">${t}</div><div class="study-vol">${TV[t].vol} · ${TV[t].lb}</div></div>
-      <a class="study-link" href="${TV[t].url}" target="_blank" rel="noopener">▶ 영상 보기</a>
+  ${weak.length?`<div class="r-card">
+    <div class="r-ct">약점 유형 학습 (70% 미만)</div>
+    ${weak.map(t=>`<div class="s-item">
+      <div><div class="s-tn">${t}</div><div class="s-vol">${TV[t].vol} · ${TV[t].lb}</div></div>
+      <a class="s-link" href="${TV[t].url}" target="_blank" rel="noopener">▶ 영상 보기</a>
     </div>`).join('')}
-    <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.7">필즈 대비 과정 서재에서 전체 커리큘럼을 이용하세요.</div>
   </div>`:''}
 
-  <div class="cta-section" style="text-align:center;padding:20px 0 10px">
-    <a href="https://naver.me/Ge7B7WcJ" target="_blank" rel="noopener" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:15px;font-weight:900;border-radius:14px;text-decoration:none;font-family:'Noto Sans KR',sans-serif;box-shadow:0 6px 24px rgba(212,175,55,.3)">
+  <div class="cta-s no-print" style="text-align:center;padding:20px 0 16px">
+    <a href="https://naver.me/Ge7B7WcJ" target="_blank" rel="noopener"
+      style="display:inline-block;padding:16px 32px;background:linear-gradient(135deg,var(--gold),var(--g2));color:var(--nv);font-size:15px;font-weight:900;border-radius:14px;text-decoration:none;font-family:'Noto Sans KR',sans-serif;box-shadow:0 6px 24px rgba(212,175,55,.3)">
       지필드 영재교육 상담 신청하기 →
     </a>
-    <div style="font-size:11px;color:var(--muted);margin-top:10px">G-FIELD 영재교육 · 필즈 선발 대비 전문</div>
+    <div style="font-size:11px;color:var(--mu);margin-top:10px">G-FIELD 영재교육 · 필즈 선발 대비 전문</div>
   </div>`;
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
   const g=document.getElementById('gName');
-  g.addEventListener('keydown',e=>{if(e.key==='Enter')GD.start();});
+  g.addEventListener('keydown',e=>{if(e.key==='Enter')G.start();});
   setTimeout(()=>g.focus(),100);
 });
-
 })();
 </script>
 </body>
