@@ -16,17 +16,28 @@
   },
   "machineReadable": {
     "payloadType": "overlap_paper_count",
+    "papers": [
+      { "paperId": "B", "value": 4, "shape": "circle_left" },
+      { "paperId": "C", "value": 6, "shape": "circle_right" }
+    ],
+    "diagramGeometry": {
+      "regions": [
+        { "regionId": "B_only", "papers": ["B"] },
+        { "regionId": "C_only", "papers": ["C"] },
+        { "regionId": "B_intersect_C", "papers": ["B", "C"] }
+      ]
+    },
     "paperCountByRegion": {
       "B_only": 4,
       "C_only": 6,
-      "B_intersect_C": 8
+      "B_intersect_C": 10
     },
     "questionMode": "count_overlap_layers",
     "targetRegion": "B_intersect_C",
-    "expectedAnswer": 8
+    "expectedAnswer": 10
   },
   "answerValidation": {
     "answerType": "integer",
-    "expectedAnswer": 8
+    "expectedAnswer": 10
   }
 }
