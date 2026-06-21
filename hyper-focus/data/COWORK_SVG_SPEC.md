@@ -13,9 +13,9 @@ data/variations/q##_var##.json ← 108개, machineReadable 구조 데이터
 
 ## 출력 위치
 ```
-assets/similar/q##_var##.svg
+assets/svg/variations/q##_var##.svg
 ```
-예: `assets/similar/q01_var01.svg`
+예: `assets/svg/variations/q01_var01.svg`
 
 ---
 
@@ -181,18 +181,18 @@ SVG: 격자 + 화살표 경로
 
 ### 파일명 규칙
 ```
-assets/similar/q01_var01.svg
-assets/similar/q01_var02.svg
+assets/svg/variations/q01_var01.svg
+assets/svg/variations/q01_var02.svg
 ...
-assets/similar/q54_var02.svg
+assets/svg/variations/q54_var02.svg
 ```
 
 ---
 
 ## 작업 순서
 1. `data/hf_core.json` 읽어 typeId 목록 확인
-2. 1순위(TYPE-01) 6개 파일(q01~q05, q09) × 2 = 12개 SVG 생성
-3. 각 SVG를 `assets/similar/` 에 저장
+2. 1순위(TYPE-01) 6문항(q01~q05, q09) × 2 variation = 12개 SVG 생성
+3. 각 SVG를 `assets/svg/variations/` 에 저장
 4. 2순위 진행
 
 ## 주의
