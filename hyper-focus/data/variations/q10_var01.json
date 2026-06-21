@@ -2,7 +2,7 @@
   "schemaVersion": "hf-variation-problem-v1",
   "baseQuestionId": "q10",
   "variationId": "q10_var01",
-  "subType": "overlap_count_rule",
+  "subType": "overlap_paper_count",
   "status": "draft",
   "source": {
     "problemImage": "./assets/problems/q10_var01.png"
@@ -15,9 +15,13 @@
     "prompt": "Overlapped parts follow the sum rule. Find the requested value."
   },
   "machineReadable": {
-    "payloadType": "overlap_count_rule",
-    "baseValues": [3, 5, 7],
-    "overlapRule": "sum",
+    "payloadType": "overlap_paper_count",
+    "paperCountByRegion": {
+      "A_only": 3,
+      "B_only": 5,
+      "A_intersect_B": 8
+    },
+    "questionMode": "count_overlap_layers",
     "targetRegion": "A_intersect_B",
     "expectedAnswer": 8
   },

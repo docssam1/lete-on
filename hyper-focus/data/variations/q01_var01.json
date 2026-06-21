@@ -20,6 +20,24 @@
         { "y": 2, "heights": [1, 1, 0] }
       ]
     },
+    "viewModel": {
+      "frontView": {
+        "knownStackPositions": [
+          { "x": 0, "y": 0 },
+          { "x": 1, "y": 0 },
+          { "x": 0, "y": 1 },
+          { "x": 1, "y": 1 },
+          { "x": 2, "y": 1 }
+        ]
+      },
+      "rearView": {
+        "newlyConfirmedStackPositions": [
+          { "x": 0, "y": 2 },
+          { "x": 1, "y": 2 }
+        ],
+        "horizontalRelationToFront": "mirrored"
+      }
+    },
     "countingModel": {
       "frontVisibleBlockCount": 7,
       "rearOnlyHiddenBlockCount": 2,

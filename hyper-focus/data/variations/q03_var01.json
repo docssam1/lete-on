@@ -22,13 +22,13 @@
     },
     "derivedCounts": {
       "totalBlockCount": 16,
-      "blackCount": 8,
-      "whiteCount": 8,
+      "blackCount": 9,
+      "whiteCount": 7,
       "askedColor": "black"
     }
   },
   "answerValidation": {
     "answerType": "integer",
-    "expectedAnswer": 8
+    "expectedAnswer": 9
   }
 }

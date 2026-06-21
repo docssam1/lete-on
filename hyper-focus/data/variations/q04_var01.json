@@ -21,15 +21,17 @@
     },
     "layerCountModel": {
       "layers": [
-        { "z": 1, "remainingBlockCount": 2 },
-        { "z": 2, "remainingBlockCount": 8 },
-        { "z": 3, "remainingBlockCount": 2 },
-        { "z": 4, "remainingBlockCount": 8 },
-        { "z": 5, "remainingBlockCount": 2 }
+        { "layer": 1, "removedBlockCount": 2 },
+        { "layer": 2, "removedBlockCount": 8 },
+        { "layer": 3, "removedBlockCount": 2 },
+        { "layer": 4, "removedBlockCount": 8 },
+        { "layer": 5, "removedBlockCount": 2 }
       ],
       "removedBlockCount": 22
     },
     "countingModel": {
+      "totalBlockCount": 100,
+      "removedBlockCount": 22,
       "remainingBlockCount": 78
     }
   },

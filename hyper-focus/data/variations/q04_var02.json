@@ -21,14 +21,16 @@
     },
     "layerCountModel": {
       "layers": [
-        { "z": 1, "remainingBlockCount": 1 },
-        { "z": 2, "remainingBlockCount": 7 },
-        { "z": 3, "remainingBlockCount": 1 },
-        { "z": 4, "remainingBlockCount": 7 }
+        { "layer": 1, "removedBlockCount": 1 },
+        { "layer": 2, "removedBlockCount": 7 },
+        { "layer": 3, "removedBlockCount": 1 },
+        { "layer": 4, "removedBlockCount": 7 }
       ],
       "removedBlockCount": 16
     },
     "countingModel": {
+      "totalBlockCount": 64,
+      "removedBlockCount": 16,
       "remainingBlockCount": 48
     }
   },
