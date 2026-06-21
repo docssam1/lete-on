@@ -1,0 +1,193 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q19",
+  "typeId": 19,
+  "title": "점판에서 만들 수 있는 정삼각형 모두 세기",
+  "problemType": "TYPE-03",
+  "subType": "geoboard_triangles",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q19.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 19,
+    "originalQuestionId": "q19_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "geoboard_triangles",
+      "dotBoard": {
+        "latticeType": "equilateral_triangle_lattice",
+        "rowDirection": "top_to_bottom",
+        "rowDotCounts": [1, 2, 3, 2, 1],
+        "pointIds": [
+          { "id": "P1", "row": 0, "index": 0 },
+          { "id": "P2", "row": 1, "index": 0 },
+          { "id": "P3", "row": 1, "index": 1 },
+          { "id": "P4", "row": 2, "index": 0 },
+          { "id": "P5", "row": 2, "index": 1 },
+          { "id": "P6", "row": 2, "index": 2 },
+          { "id": "P7", "row": 3, "index": 0 },
+          { "id": "P8", "row": 3, "index": 1 },
+          { "id": "P9", "row": 4, "index": 0 }
+        ]
+      },
+      "countingRule": {
+        "targetShape": "equilateral_triangle",
+        "includeUpright": true,
+        "includeInverted": true,
+        "countBySize": true,
+        "description": "기본 방향 정삼각형과 기울어진 정삼각형을 크기별로 모두 센다."
+      },
+      "countingModel": {
+        "expectedAnswer": 12,
+        "groupedCount": [
+          {
+            "group": "small_upright",
+            "count": 8
+          },
+          {
+            "group": "medium_upright",
+            "count": 2
+          },
+          {
+            "group": "tilted_or_inverted",
+            "count": 2
+          }
+        ],
+        "mentalHackFormula": "8 + 2 + 2 = 12"
+      },
+      "judgementRule": {
+        "checks": [
+          "count_by_direction",
+          "include_tilted"
+        ],
+        "description": "한 방향으로만 세지 말고, 기울어진 정삼각형도 빠짐없이 포함한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 목표 정삼각형 개수를 정하고, 점 배열을 바꾸더라도 기본 방향과 기울어진 방향을 합친 총개수가 하나로 결정되게 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "baseBoard": "3x3_square_dot_board",
+          "pointRemovalAllowed": true,
+          "maxRemovedPoints": 2,
+          "mustPreserve": [
+            "square dot board base",
+            "point removal",
+            "include_tilted",
+            "unique_total_count"
+          ]
+        },
+        "baseMode": {
+          "baseBoard": "4x4_square_dot_board",
+          "pointRemovalAllowed": true,
+          "recommendedRemovedPointCount": 1,
+          "mustPreserve": [
+            "square dot board base",
+            "point removal",
+            "count by direction",
+            "answer first design"
+          ]
+        },
+        "hardMode": {
+          "allowedBaseBoards": [
+            "3x3_square_dot_board",
+            "4x4_square_dot_board"
+          ],
+          "pointRemovalAllowed": true,
+          "maxRemovedPoints": 4,
+          "mustPreserve": [
+            "include multiple sizes",
+            "include tilted triangles",
+            "unique_total_count"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "기본 점판 크기(3x3 또는 4x4)",
+          "빠지는 점의 위치",
+          "빠지는 점의 개수",
+          "정삼각형의 크기 분포"
+        ],
+        "mustPreserve": [
+          "점 사이 간격이 일정한 점판 구조",
+          "기본 점판에서 일부 점이 빠지는 구조",
+          "기본 방향과 기울어진 방향을 함께 세는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "점판 바깥에 점을 추가하는 구조",
+          "점판 규칙과 무관하게 점을 새로 재배치하는 구조",
+          "정삼각형 여부가 모호한 배치",
+          "기울어진 정삼각형을 셀 수 없게 막는 배치",
+          "정답이 여러 값으로 갈리는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "use_original_structure_preferred",
+        "svgRequired": true,
+        "renderer": "geoboard_triangle_counter",
+        "showDots": true,
+        "showGuideLines": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 12,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "count_equilateral_triangles_by_direction_and_size",
+      "checks": [
+        "기본 방향 작은 정삼각형 개수를 센다",
+        "더 큰 정삼각형 개수를 센다",
+        "기울어진 정삼각형 개수를 센다",
+        "전체 합이 12인지 확인한다"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q19 경로 존재 확인",
+      "hf_data.json typeId 19의 originalProblem.answer가 12개인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 geoboard_triangles인지 확인",
+      "countingRule.includeUpright가 true인지 확인",
+      "countingRule.includeInverted가 true인지 확인",
+      "expectedAnswer가 12인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

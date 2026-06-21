@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q19",
+  "variationId": "q19_var02",
+  "subType": "geoboard_triangles",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q19_var02.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q19.json", "hfDataTypeId": 19 },
+  "machineReadable": { "payloadType": "geoboard_triangles", "boardSize": "3x3", "missingPointCount": 1, "expectedAnswer": 6 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 6 }
+}

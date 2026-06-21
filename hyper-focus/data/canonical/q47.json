@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q47",
+  "typeId": 47,
+  "title": "변화 과정을 표에서 거꾸로 추적하기",
+  "problemType": "TYPE-07",
+  "subType": "reverse_table",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q47.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 47,
+    "originalQuestionId": "q47_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "reverse_table",
+      "tableRule": {
+        "states": ["처음", "중간", "마지막"],
+        "solveFromEnd": true
+      },
+      "solvingModel": {
+        "expectedAnswer": 9,
+        "strategy": [
+          "마지막 상태를 먼저 본다.",
+          "표를 거꾸로 올라가며 이전 상태를 복원한다.",
+          "처음 수를 구한다."
+        ]
+      },
+      "judgementRule": {
+        "checks": [
+          "table_from_end"
+        ],
+        "description": "표의 끝 상태에서 시작해 한 줄씩 거꾸로 계산한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 처음 수를 정한 뒤, 변화표를 순방향으로 만든 다음 역으로 풀어 그 수가 유일하게 복원되게 한다. 전학생처럼 외부에서 새로 들어오는 설정은 쓰지 않고, 구슬 색 수 변화처럼 닫힌 수량 변화 구조를 우선 사용한다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "stateCount": 3
+        },
+        "baseMode": {
+          "stateCount": 4
+        },
+        "hardMode": {
+          "stateCount": 5,
+          "mustPreserve": [
+            "reverse table reasoning",
+            "single valid start value"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "상태 수",
+          "각 단계 연산",
+          "마지막 값",
+          "대상 종류(사람 수, 빨간구슬 수, 파란구슬 수 등)"
+        ],
+        "mustPreserve": [
+          "표를 거꾸로 추적하는 구조",
+          "처음 값을 역산하는 구조",
+          "외부에서 새로 추가되는 값 없이 내부 수량만 변하는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "전학생처럼 외부 인원이 새로 들어오는 설정",
+          "표 해석이 모호한 문제",
+          "역산 도중 여러 값이 가능한 문제",
+          "앞뒤 연산이 맞지 않는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "reverse_table",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 9,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "reverse_through_state_table",
+      "checks": [
+        "마지막 상태에서 거꾸로 올라가는지 확인",
+        "처음 값이 9인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q47 경로 존재 확인",
+      "hf_data.json typeId 47의 originalProblem.answer가 9명인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 reverse_table인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

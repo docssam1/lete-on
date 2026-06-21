@@ -1,0 +1,383 @@
+{
+  "schemaVersion": "hf-canonical-index-v1",
+  "items": [
+    {
+      "questionId": "q01",
+      "typeId": 1,
+      "subType": "stacking_front_back_count",
+      "path": "./q01.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q02",
+      "typeId": 2,
+      "subType": "stacking_fill_cube",
+      "path": "./q02.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q03",
+      "typeId": 3,
+      "subType": "stacking_checker_color",
+      "path": "./q03.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q04",
+      "typeId": 4,
+      "subType": "stacking_hole_removed",
+      "path": "./q04.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q05",
+      "typeId": 5,
+      "subType": "stacking_hidden_count",
+      "path": "./q05.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q06",
+      "typeId": 6,
+      "subType": "solid_view_impossible",
+      "path": "./q06.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q07",
+      "typeId": 7,
+      "subType": "cube_net_matching",
+      "path": "./q07.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q08",
+      "typeId": 8,
+      "subType": "dice_roll",
+      "path": "./q08.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q09",
+      "typeId": 9,
+      "subType": "stacking_three_views_minimum",
+      "path": "./q09.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q10",
+      "typeId": 10,
+      "subType": "overlap_count_rule",
+      "path": "./q10.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q11",
+      "typeId": 11,
+      "subType": "paper_fold_top_numbers",
+      "path": "./q11.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q12",
+      "typeId": 12,
+      "subType": "paper_fold_hole_count",
+      "path": "./q12.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q13",
+      "typeId": 13,
+      "subType": "pentomino_fill",
+      "path": "./q13.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q14",
+      "typeId": 14,
+      "subType": "square_partition_min",
+      "path": "./q14.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q15",
+      "typeId": 15,
+      "subType": "line_partition_six",
+      "path": "./q15.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q16",
+      "typeId": 16,
+      "subType": "count_squares_grid",
+      "path": "./q16.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q17",
+      "typeId": 17,
+      "subType": "count_tilted_squares",
+      "path": "./q17.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q18",
+      "typeId": 18,
+      "subType": "tetra_cube_cases",
+      "path": "./q18.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q19",
+      "typeId": 19,
+      "subType": "geoboard_triangles",
+      "path": "./q19.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q20",
+      "typeId": 20,
+      "subType": "segment_sum_lengths",
+      "path": "./q20.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q21",
+      "typeId": 21,
+      "subType": "place_value_conditions",
+      "path": "./q21.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q22",
+      "typeId": 22,
+      "subType": "swap_digits_equation",
+      "path": "./q22.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q23",
+      "typeId": 23,
+      "subType": "operator_insert_or_blank",
+      "path": "./q23.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q24",
+      "typeId": 24,
+      "subType": "change_plus_to_minus",
+      "path": "./q24.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q25",
+      "typeId": 25,
+      "subType": "two_condition_digits",
+      "path": "./q25.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q26",
+      "typeId": 26,
+      "subType": "matchstick_move",
+      "path": "./q26.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q27",
+      "typeId": 27,
+      "subType": "honeycomb_operation",
+      "path": "./q27.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q28",
+      "typeId": 28,
+      "subType": "venn_sum_equal",
+      "path": "./q28.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q29",
+      "typeId": 29,
+      "subType": "number_grid_pattern",
+      "path": "./q29.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q30",
+      "typeId": 30,
+      "subType": "target_score_cases",
+      "path": "./q30.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q31",
+      "typeId": 31,
+      "subType": "symbol_value_equations",
+      "path": "./q31.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q32",
+      "typeId": 32,
+      "subType": "mirror_digital_number",
+      "path": "./q32.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q33",
+      "typeId": 33,
+      "subType": "rps_stair_position",
+      "path": "./q33.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q34",
+      "typeId": 34,
+      "subType": "digit_card_subtraction",
+      "path": "./q34.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q35",
+      "typeId": 35,
+      "subType": "line_order",
+      "path": "./q35.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q36",
+      "typeId": 36,
+      "subType": "min_max_order",
+      "path": "./q36.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q37",
+      "typeId": 37,
+      "subType": "circular_seating",
+      "path": "./q37.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q38",
+      "typeId": 38,
+      "subType": "circular_viewpoint_order",
+      "path": "./q38.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q39",
+      "typeId": 39,
+      "subType": "logic_matrix",
+      "path": "./q39.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q40",
+      "typeId": 40,
+      "subType": "number_code_rule",
+      "path": "./q40.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q41",
+      "typeId": 41,
+      "subType": "shape_transform_code",
+      "path": "./q41.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q42",
+      "typeId": 42,
+      "subType": "grid_fill_cases",
+      "path": "./q42.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q43",
+      "typeId": 43,
+      "subType": "coloring_triomino",
+      "path": "./q43.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q44",
+      "typeId": 44,
+      "subType": "three_digit_conditions",
+      "path": "./q44.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q45",
+      "typeId": 45,
+      "subType": "shortest_path_grid",
+      "path": "./q45.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q46",
+      "typeId": 46,
+      "subType": "reverse_story",
+      "path": "./q46.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q47",
+      "typeId": 47,
+      "subType": "reverse_table",
+      "path": "./q47.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q48",
+      "typeId": 48,
+      "subType": "work_together",
+      "path": "./q48.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q49",
+      "typeId": 49,
+      "subType": "unit_rate_animals",
+      "path": "./q49.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q50",
+      "typeId": 50,
+      "subType": "length_units_picture",
+      "path": "./q50.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q51",
+      "typeId": 51,
+      "subType": "clock_bell_count",
+      "path": "./q51.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q52",
+      "typeId": 52,
+      "subType": "balance_smallest_unit",
+      "path": "./q52.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q53",
+      "typeId": 53,
+      "subType": "balance_unit_count",
+      "path": "./q53.json",
+      "status": "verified"
+    },
+    {
+      "questionId": "q54",
+      "typeId": 54,
+      "subType": "parity_sequence",
+      "path": "./q54.json",
+      "status": "verified"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q41",
+  "variationId": "q41_var02",
+  "subType": "shape_transform_code",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q41_var02.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q41.json", "hfDataTypeId": 41 },
+  "machineReadable": { "payloadType": "shape_transform_code", "transformCount": 3, "expectedAnswer": 6 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 6 }
+}

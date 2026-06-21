@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q24",
+  "typeId": 24,
+  "title": "+ 하나를 -로 바꾸어 목표값 만들기",
+  "problemType": "TYPE-05",
+  "subType": "change_plus_to_minus",
+  "answerType": "number",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q24.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 24,
+    "originalQuestionId": "q24_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "change_plus_to_minus",
+      "originalExpression": "9+8+7+6+5+4+3+2+1=29",
+      "operationRule": {
+        "changeCount": 1,
+        "fromOperator": "+",
+        "toOperator": "-",
+        "numbersFixed": true
+      },
+      "solvingModel": {
+        "originalTotal": 45,
+        "targetTotal": 29,
+        "difference": 16,
+        "changedNumber": 8,
+        "reason": "+8을 -8로 바꾸면 전체 합이 16만큼 줄어든다."
+      },
+      "judgementRule": {
+        "checks": [
+          "difference_half"
+        ],
+        "description": "원래 합과 목표 합의 차를 구하고, 그 절반인 수의 부호를 바꾸면 된다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 바꿀 수를 정한 뒤, 목표값을 원래 합에서 그 수의 두 배만큼 줄이거나 늘려 설계한다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "numberCount": 5,
+          "numbersConsecutive": true
+        },
+        "baseMode": {
+          "numberCount": 9,
+          "allOperatorsInitiallyPlus": true
+        },
+        "hardMode": {
+          "numberCount": 10,
+          "allowCustomNumberSet": true,
+          "mustPreserve": [
+            "single operator change",
+            "difference half logic"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "숫자 집합",
+          "처음 합",
+          "목표값",
+          "바꿀 부호"
+        ],
+        "mustPreserve": [
+          "플러스 하나를 마이너스로 바꾸는 구조",
+          "차의 절반으로 바꿀 수를 찾는 풀이 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "두 개 이상 부호를 바꿔야 하는 문제",
+          "숫자 자체를 바꿔야 하는 문제",
+          "정답 후보가 여러 개인 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "text_equation_with_one_sign_change",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "number",
+    "expectedAnswer": 8,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "difference_half_after_sign_flip",
+      "checks": [
+        "원래 합이 45인지 확인",
+        "목표값이 29인지 확인",
+        "차가 16인지 확인",
+        "절반이 8인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q24 경로 존재 확인",
+      "hf_data.json typeId 24의 originalProblem.answer가 8인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 change_plus_to_minus인지 확인",
+      "operationRule.changeCount가 1인지 확인",
+      "solvingModel.changedNumber가 8인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

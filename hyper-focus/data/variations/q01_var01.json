@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q01",
+  "variationId": "q01_var01",
+  "subType": "stacking_front_back_count",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/problems/q01_var01.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q01.json",
+    "hfDataTypeId": 1
+  },
+  "machineReadable": {
+    "payloadType": "stacking_front_back_count",
+    "heightMap": {
+      "rows": [
+        { "y": 0, "heights": [1, 2] },
+        { "y": 1, "heights": [2, 1, 1] },
+        { "y": 2, "heights": [1, 1, 0] }
+      ]
+    },
+    "countingModel": {
+      "frontVisibleBlockCount": 7,
+      "rearOnlyHiddenBlockCount": 2,
+      "expectedTotalBlockCount": 9
+    }
+  },
+  "answerValidation": {
+    "answerType": "integer",
+    "expectedAnswer": 9
+  }
+}

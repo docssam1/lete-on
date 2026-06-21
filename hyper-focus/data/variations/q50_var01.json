@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q50",
+  "variationId": "q50_var01",
+  "subType": "length_units_picture",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q50_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q50.json", "hfDataTypeId": 50 },
+  "machineReadable": { "payloadType": "length_units_picture", "unit": "cm", "expectedAnswer": 120 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 120 }
+}

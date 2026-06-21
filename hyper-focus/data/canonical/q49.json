@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q49",
+  "typeId": 49,
+  "title": "비례 관계를 1마리 기준으로 바꾸어 계산하기",
+  "problemType": "TYPE-08",
+  "subType": "unit_rate_animals",
+  "answerType": "time_count",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q49.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 49,
+    "originalQuestionId": "q49_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "unit_rate_animals",
+      "givenRatio": {
+        "animals": 3,
+        "days": 3,
+        "nuts": 45
+      },
+      "target": {
+        "animals": 10,
+        "nuts": 60
+      },
+      "solvingModel": {
+        "perAnimalPerDay": 5,
+        "targetPerDay": 50,
+        "expectedAnswer": 2
+      },
+      "judgementRule": {
+        "checks": [
+          "one_unit_first"
+        ],
+        "description": "먼저 1마리 1일 기준을 구한 뒤 원하는 마릿수와 날짜로 바꾼다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 목표 날짜를 정한 뒤, 1마리 기준 양이 깔끔하게 나오도록 비례 수치를 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "oneStepScaling": true
+        },
+        "baseMode": {
+          "requirePerUnitConversion": true
+        },
+        "hardMode": {
+          "allowTwoTargetVariables": true,
+          "mustPreserve": [
+            "one unit first",
+            "single valid time"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "마릿수",
+          "도토리 수",
+          "일수"
+        ],
+        "mustPreserve": [
+          "1단위 기준으로 바꾸는 구조",
+          "비례 관계를 이용하는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "비례 관계가 성립하지 않는 문제",
+          "단위 기준이 정수/유리수로 애매한 문제",
+          "질문이 여러 값으로 해석되는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "unit_rate_diagram",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "time_count",
+    "expectedAnswer": 2,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "convert_to_one_animal_one_day_unit",
+      "checks": [
+        "3마리 3일 45개인지 확인",
+        "1마리 1일 5개인지 확인",
+        "10마리 60개가 2일인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q49 경로 존재 확인",
+      "hf_data.json typeId 49의 originalProblem.answer가 2일인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 unit_rate_animals인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

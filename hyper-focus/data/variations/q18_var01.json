@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q18",
+  "variationId": "q18_var01",
+  "subType": "tetra_cube_cases",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q18_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q18.json", "hfDataTypeId": 18 },
+  "machineReadable": { "payloadType": "tetra_cube_cases", "shapeSet": ["square4", "triangle3", "triangle4", "square2_triangle2", "trapezoid3"], "expectedAnswer": 3 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 3 }
+}

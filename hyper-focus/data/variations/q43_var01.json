@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q43",
+  "variationId": "q43_var01",
+  "subType": "coloring_triomino",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q43_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q43.json", "hfDataTypeId": 43 },
+  "machineReadable": { "payloadType": "coloring_triomino", "pieceCount": 3, "expectedAnswer": 2 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 2 }
+}

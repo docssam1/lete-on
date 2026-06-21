@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q27",
+  "variationId": "q27_var01",
+  "subType": "honeycomb_operation",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q27_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q27.json", "hfDataTypeId": 27 },
+  "machineReadable": { "payloadType": "honeycomb_operation", "centerValue": 12, "neighborValues": [2, 3, 4], "expectedAnswer": 9 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 9 }
+}

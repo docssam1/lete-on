@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q14",
+  "variationId": "q14_var01",
+  "subType": "square_partition_min",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/problems/q14_var01.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q14.json",
+    "hfDataTypeId": 14
+  },
+  "problem": {
+    "prompt": "Cut the figure into the minimum number of squares."
+  },
+  "machineReadable": {
+    "payloadType": "square_partition_min",
+    "gridSize": {
+      "rows": 4,
+      "cols": 4
+    },
+    "expectedAnswer": 4
+  },
+  "answerValidation": {
+    "answerType": "integer",
+    "expectedAnswer": 4
+  }
+}

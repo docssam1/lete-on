@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q25",
+  "variationId": "q25_var01",
+  "subType": "two_condition_digits",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q25_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q25.json", "hfDataTypeId": 25 },
+  "machineReadable": { "payloadType": "two_condition_digits", "conditions": ["all_different", "sum_12"], "expectedAnswer": 345 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 345 }
+}

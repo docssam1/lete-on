@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q25",
+  "typeId": 25,
+  "title": "두 조건에 공통으로 맞는 숫자들의 합 구하기",
+  "problemType": "TYPE-05",
+  "subType": "two_condition_digits",
+  "answerType": "number",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q25.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 25,
+    "originalQuestionId": "q25_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "two_condition_digits",
+      "digitDomain": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "conditionBoxes": [
+        {
+          "id": "left",
+          "expressionTemplate": "74 > [ ]5"
+        },
+        {
+          "id": "right",
+          "expressionTemplate": "3[ ] < 39"
+        }
+      ],
+      "solvingModel": {
+        "leftCandidates": [1, 2, 3, 4, 5, 6],
+        "rightCandidates": [0, 1, 2, 3, 4, 5, 6, 7, 8],
+        "commonCandidatesWithinDomain": [1, 2, 3, 4, 5, 6],
+        "expectedSum": 21
+      },
+      "judgementRule": {
+        "checks": [
+          "list_candidates_each_box"
+        ],
+        "description": "각 빈칸에 들어갈 수 있는 숫자를 따로 구한 뒤, 두 조건에 공통인 숫자만 골라 더한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 공통 후보 집합과 합을 정한 뒤, 두 조건 상자를 역으로 설계해 공통 숫자가 정확히 그 집합만 되도록 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "digitDomain": [1, 2, 3, 4, 5],
+          "conditionCount": 2
+        },
+        "baseMode": {
+          "digitDomain": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+          "conditionCount": 2
+        },
+        "hardMode": {
+          "digitDomain": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+          "conditionCount": 3,
+          "mustPreserve": [
+            "intersection logic",
+            "unique common set"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "숫자 범위",
+          "비교식",
+          "조건 상자 수",
+          "묻는 값(합 또는 개수)"
+        ],
+        "mustPreserve": [
+          "각 조건의 후보를 따로 구하는 구조",
+          "공통 후보를 골라 결과를 만드는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "후보 범위가 모호한 문제",
+          "두 조건의 공통 집합이 여러 해석으로 갈리는 문제",
+          "문제 지시와 숫자 범위가 충돌하는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "text_with_two_condition_boxes",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "number",
+    "expectedAnswer": 21,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "intersect_candidates_and_sum",
+      "checks": [
+        "왼쪽 조건 후보를 구한다",
+        "오른쪽 조건 후보를 구한다",
+        "공통 후보를 찾는다",
+        "공통 후보의 합이 21인지 확인한다"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q25 경로 존재 확인",
+      "hf_data.json typeId 25의 originalProblem.answer가 21인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 two_condition_digits인지 확인",
+      "solvingModel.expectedSum이 21인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

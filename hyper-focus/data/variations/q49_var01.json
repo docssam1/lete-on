@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q49",
+  "variationId": "q49_var01",
+  "subType": "unit_rate_animals",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q49_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q49.json", "hfDataTypeId": 49 },
+  "machineReadable": { "payloadType": "unit_rate_animals", "unitPair": [3, 12], "expectedAnswer": 4 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 4 }
+}

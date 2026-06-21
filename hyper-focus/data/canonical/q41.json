@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q41",
+  "typeId": 41,
+  "title": "버튼 규칙으로 도형 변환 결과 만들기",
+  "problemType": "TYPE-05",
+  "subType": "shape_transform_code",
+  "answerType": "shape_description",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q41.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 41,
+    "originalQuestionId": "q41_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "shape_transform_code",
+      "buttonLabels": ["가", "나", "다"],
+      "ruleAxes": [
+        "outer_shape",
+        "fill_color",
+        "inner_shape",
+        "inner_direction"
+      ],
+      "solvingModel": {
+        "strategy": [
+          "각 버튼이 바꾸는 요소를 한 가지씩 찾는다.",
+          "예시를 보고 색, 바깥 모양, 안쪽 모양, 방향을 분리한다.",
+          "주어진 시작 도형에 버튼 순서를 적용한다."
+        ],
+        "expectedAnswerDescription": "주황색 별 안에 거꾸로 뒤집힌 노란 모양"
+      },
+      "judgementRule": {
+        "checks": [
+          "split_color_shape_inner_direction"
+        ],
+        "description": "한 번에 전체를 보지 말고 색, 바깥 모양, 안쪽 모양, 방향을 나누어 추적한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 최종 도형을 정한 뒤, 각 버튼이 바꾸는 속성을 정해 그 결과가 유일하게 나오도록 설계한다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "buttonCount": 2,
+          "changeable": [
+            "색",
+            "바깥 모양"
+          ]
+        },
+        "baseMode": {
+          "buttonCount": 3,
+          "changeable": [
+            "색",
+            "바깥 모양",
+            "안쪽 모양",
+            "방향"
+          ]
+        },
+        "hardMode": {
+          "buttonCount": 3,
+          "mustPreserve": [
+            "independent transform axes",
+            "single valid final shape"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "시작 도형",
+          "버튼별 변환 규칙",
+          "버튼 순서"
+        ],
+        "mustPreserve": [
+          "버튼마다 일정한 변환 규칙이 있는 구조",
+          "색/모양/방향을 분리해 추적하는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "한 버튼이 예시마다 다르게 작동하는 문제",
+          "속성 구분이 모호한 문제",
+          "최종 도형이 여러 개 가능한 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "shape_rule_diagram_svg",
+        "svgRequired": true,
+        "renderer": "shape_transform_code"
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "shape_description",
+    "expectedAnswer": "주황색 별 안에 거꾸로 뒤집힌 노란 모양",
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "apply_button_transforms_in_order",
+      "checks": [
+        "버튼별 변환 요소를 분리하는지 확인",
+        "버튼 순서를 지키는지 확인",
+        "최종 도형 설명이 기존 정답과 일치하는지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q41 경로 존재 확인",
+      "hf_data.json typeId 41의 originalProblem.answer 확인",
+      "hf_core.json 및 problem_map.json의 subType이 shape_transform_code인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

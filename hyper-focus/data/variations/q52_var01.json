@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q52",
+  "variationId": "q52_var01",
+  "subType": "balance_smallest_unit",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q52_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q52.json", "hfDataTypeId": 52 },
+  "machineReadable": { "payloadType": "balance_smallest_unit", "unitCount": 3, "expectedAnswer": 2 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 2 }
+}

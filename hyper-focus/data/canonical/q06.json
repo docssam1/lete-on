@@ -1,0 +1,251 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q06",
+  "typeId": 6,
+  "title": "여러 방향에서 보았을 때 나타날 수 없는 모습 고르기",
+  "problemType": "TYPE-02",
+  "subType": "solid_view_impossible",
+  "answerType": "option_set",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q06.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": true,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 6,
+    "originalQuestionId": "q06_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "solid_view_impossible",
+      "coordinateSystem": {
+        "xAxis": "left_to_right",
+        "yAxis": "front_to_back",
+        "zAxis": "bottom_to_top",
+        "unit": "cube"
+      },
+      "baseSolid": {
+        "layerCount": 1,
+        "fixedSingleLayer": true,
+        "blocks": [
+          {
+            "blockId": "B1",
+            "grid": { "x": 0, "y": 0, "z": 0 },
+            "color": "blue"
+          },
+          {
+            "blockId": "B2",
+            "grid": { "x": 0, "y": 1, "z": 0 },
+            "color": "blue"
+          },
+          {
+            "blockId": "G1",
+            "grid": { "x": 1, "y": 0, "z": 0 },
+            "color": "green"
+          },
+          {
+            "blockId": "P1",
+            "grid": { "x": 1, "y": 1, "z": 0 },
+            "color": "purple"
+          },
+          {
+            "blockId": "O1",
+            "grid": { "x": 2, "y": 1, "z": 0 },
+            "color": "orange"
+          }
+        ],
+        "observedTopLayout": {
+          "rowOrder": "front_to_back",
+          "rows": [
+            {
+              "y": 0,
+              "colors": ["blue", "green", null]
+            },
+            {
+              "y": 1,
+              "colors": ["blue", "purple", "orange"]
+            }
+          ]
+        }
+      },
+      "viewpointRule": {
+        "allowedTransforms": [
+          "rotation"
+        ],
+        "forbiddenTransforms": [
+          "mirror_reflection"
+        ],
+        "judgementFocus": [
+          "viewpoint_turn",
+          "color_position_check"
+        ],
+        "description": "실제로 방향을 돌려 보았을 때의 색 위치와 보이는 블록 순서가 일치해야 한다."
+      },
+      "choices": [
+        {
+          "choiceId": 1,
+          "visibleColorSequence": ["green", "purple", "orange"],
+          "isValid": true
+        },
+        {
+          "choiceId": 2,
+          "visibleColorSequence": ["orange", "blue"],
+          "isValid": true
+        },
+        {
+          "choiceId": 3,
+          "visibleColorSequence": ["blue", "green", "green", "purple", "orange"],
+          "isValid": true
+        },
+        {
+          "choiceId": 4,
+          "visibleColorSequence": ["blue", "orange", "green", "purple"],
+          "isValid": false,
+          "invalidReason": "회전해도 색의 좌우 순서가 맞지 않는다."
+        },
+        {
+          "choiceId": 5,
+          "visibleColorSequence": ["blue", "green"],
+          "isValid": true
+        },
+        {
+          "choiceId": 6,
+          "visibleColorSequence": ["orange", "blue", "blue", "blue", "green"],
+          "isValid": false,
+          "invalidReason": "보이는 블록 수와 색 배치가 실제 입체와 일치하지 않는다."
+        },
+        {
+          "choiceId": 7,
+          "visibleColorSequence": ["orange", "orange", "purple", "green"],
+          "isValid": true
+        },
+        {
+          "choiceId": 8,
+          "visibleColorSequence": ["blue", "blue", "blue", "green"],
+          "isValid": true
+        }
+      ],
+      "generationTemplate": {
+        "baseMode": {
+          "changeable": [
+            "baseSolid block colors",
+            "choice sequences",
+            "choice count"
+          ],
+          "mustPreserve": [
+            "1층 테트로미노 구조",
+            "기본 블록 배치 형태",
+            "회전으로 가능한 모습과 불가능한 모습을 구분하는 구조",
+            "색 위치 비교 규칙",
+            "복수 보기 중 불가능한 보기 찾기 구조"
+          ]
+        },
+        "easyMode": {
+          "changeable": [
+            "baseSolid block colors",
+            "choice sequences",
+            "choice count"
+          ],
+          "fixedLayerCount": 1,
+          "maxChoiceCount": 6,
+          "minChoiceCount": 4
+        },
+        "hardMode": {
+          "changeable": [
+            "baseSolid block colors",
+            "choice sequences",
+            "choice count",
+            "color variety"
+          ],
+          "fixedLayerCount": 1,
+          "maxChoiceCount": 8,
+          "minChoiceCount": 5
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "블록 색 배치",
+          "보기의 색 순서",
+          "보기 개수 축소",
+          "보기별 색 순서"
+        ],
+        "mustPreserve": [
+          "모든 블록이 1층에만 놓이는 구조",
+          "원본과 같은 블록 배치 형태",
+          "회전만 허용하고 대칭 뒤집기는 허용하지 않는 판단 구조",
+          "색 위치 비교를 통해 가능/불가능을 가리는 구조",
+          "정답이 하나 이상이지만 명확하게 결정되는 보기 구조"
+        ],
+        "forbiddenChanges": [
+          "2층 이상 블록이 생기는 배치",
+          "기본 블록 배치를 바꾸는 변형",
+          "거울상과 회전을 구분할 수 없게 만드는 배치",
+          "색이 중복되어 판단 근거가 사라지는 배치",
+          "정답이 하나로 결정되지 않는 보기 구성",
+          "원본과 다른 유형으로 바뀌는 변형"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg",
+        "svgRequired": true,
+        "renderer": "colored_solid_view_choices",
+        "showBaseSolid": true,
+        "showChoices": true
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "option_set",
+    "expectedAnswer": [4, 6],
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "rotation_view_elimination",
+      "checks": [
+        "각 보기를 실제 회전 방향에서 볼 수 있는지 확인",
+        "색 위치가 좌우 반전 없이 일치하는지 확인",
+        "불가능한 보기만 4번, 6번인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q06 경로 존재 확인",
+      "hf_data.json typeId 6의 originalProblem.answer가 4번, 6번인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 solid_view_impossible인지 확인",
+      "baseSolid block count가 5인지 확인",
+      "모든 block의 z값이 0인지 확인",
+      "choice count가 8인지 확인",
+      "4번과 6번만 isValid false인지 확인",
+      "viewpointRule에 mirror_reflection 금지가 포함되는지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

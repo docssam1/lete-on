@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q22",
+  "variationId": "q22_var02",
+  "subType": "swap_digits_equation",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q22_var02.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q22.json", "hfDataTypeId": 22 },
+  "machineReadable": { "payloadType": "swap_digits_equation", "baseNumber": 63, "swapRule": "reverse_digits", "expectedAnswer": 36 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 36 }
+}

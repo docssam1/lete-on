@@ -1,0 +1,225 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q12",
+  "typeId": 12,
+  "title": "접은 종이에 구멍을 뚫고 펼쳤을 때 구멍 개수 구하기",
+  "problemType": "TYPE-02",
+  "subType": "paper_fold_hole_count",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q12.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 12,
+    "originalQuestionId": "q12_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "paper_fold_hole_count",
+      "paper": {
+        "shape": "square",
+        "baseSize": {
+          "widthUnits": 2,
+          "heightUnits": 2
+        }
+      },
+      "foldSequence": [
+        {
+          "step": 1,
+          "axis": "vertical",
+          "linePosition": "center",
+          "movingSide": "right_to_left",
+          "description": "정사각형 종이를 세로 중심선으로 반 접는다."
+        },
+        {
+          "step": 2,
+          "axis": "horizontal",
+          "linePosition": "center",
+          "movingSide": "bottom_to_top",
+          "description": "직사각형이 된 종이를 가로 중심선으로 다시 반 접는다."
+        },
+        {
+          "step": 3,
+          "axis": "diagonal",
+          "linePosition": "square_diagonal",
+          "movingSide": "one_half_over_other",
+          "description": "정사각형이 된 종이를 대각선으로 접어 삼각형으로 만든다."
+        }
+      ],
+      "punch": {
+        "count": 1,
+        "shape": "circle",
+        "observedOnFoldedState": true
+      },
+      "unfoldRule": {
+        "description": "접힌 횟수만큼 구멍이 대칭 복제되어 펼쳤을 때 전체 구멍 개수가 결정된다.",
+        "checks": [
+          "draw_reverse",
+          "fold_reflection",
+          "hole_multiplication_by_fold_layers"
+        ]
+      },
+      "countingModel": {
+        "expectedAnswer": 8,
+        "reasoningPattern": [
+          "첫 번째 반 접기로 대칭이 2배가 된다.",
+          "두 번째 반 접기로 다시 2배가 된다.",
+          "대각선 접기로 다시 2배가 되어 총 8개가 된다."
+        ]
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 목표 구멍 개수를 먼저 정한 뒤, 접기 횟수와 구멍 위치를 설계해 답이 유일하게 결정되도록 만든다."
+      },
+      "generationTemplate": {
+        "baseMode": {
+          "changeable": [
+            "fold directions",
+            "punch position",
+            "punch shape",
+            "cut line",
+            "target question type"
+          ],
+          "mustPreserve": [
+            "접기 후 자르거나 구멍을 뚫고 펼쳤을 때 결과를 구하는 구조",
+            "거꾸로 대칭을 그려 펼치는 규칙",
+            "정답이 하나로 결정되는 구조"
+          ]
+        },
+        "easyMode": {
+          "changeable": [
+            "fold directions",
+            "punch position",
+            "cut line",
+            "target question type"
+          ],
+          "maxFoldCount": 2
+        },
+        "hardMode": {
+          "changeable": [
+            "fold directions",
+            "punch position",
+            "punch count",
+            "cut line",
+            "target question type"
+          ],
+          "maxFoldCount": 3
+        },
+        "variantModes": [
+          {
+            "mode": "hole_count",
+            "description": "접은 뒤 구멍을 뚫고 펼쳤을 때 구멍이 몇 개인지 묻는다."
+          },
+          {
+            "mode": "cut_shape_count",
+            "description": "접은 뒤 선을 따라 자르고 펼쳤을 때 어떤 도형이 몇 개 생기는지 묻는다."
+          }
+        ],
+        "observedVariationPatterns": [
+          "2번 접은 뒤 대각선 또는 X 모양으로 자르기",
+          "2번 접은 뒤 한 변 또는 두 변에서 자르기",
+          "접은 뒤 구멍 하나를 뚫고 펼친 결과 세기"
+        ]
+      },
+      "resultRule": {
+        "questionTypes": [
+          "hole_count",
+          "shape_count_after_cut"
+        ],
+        "description": "유사문제는 펼친 뒤 남는 구멍 개수 또는 생성된 도형 종류별 개수를 묻는 형태로 확장할 수 있다."
+      },
+      "shapeCountRule": {
+        "enabledForVariations": true,
+        "description": "접은 상태에서 자른 선은 펼쳤을 때 대칭 복제되어 여러 개의 동일 또는 서로 다른 도형을 만든다."
+      },
+      "questionDesignRule": {
+        "answerFirst": true,
+        "description": "유사문제는 먼저 목표 구멍 개수 또는 목표 도형 개수를 정하고, 그 결과가 유일하게 나오도록 자르는 선과 접기 방향을 설계한다."
+      },
+      "generationConstraints": {
+        "canChange": [
+          "접는 방향",
+          "접는 순서",
+          "구멍 위치",
+          "구멍 개수",
+          "자르는 선",
+          "질문 유형"
+        ],
+        "mustPreserve": [
+          "펼칠 때 대칭 복제로 결과가 결정되는 구조",
+          "거꾸로 해결하는 규칙",
+          "접은 뒤 자르기 또는 구멍 뚫기 후 펼쳐서 결과를 판단하는 구조",
+          "정답이 유일하게 결정되는 구조",
+          "정답을 먼저 정하고 문제를 설계하는 원칙"
+        ],
+        "forbiddenChanges": [
+          "접기 방향이 모호한 그림",
+          "펼쳤을 때 결과 도형 수가 여러 해석으로 갈리는 구조",
+          "펼쳤을 때 구멍 위치가 여러 해석으로 갈리는 구조",
+          "원본과 다른 유형으로 바뀌는 변형"
+        }
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg",
+        "svgRequired": true,
+        "renderer": "paper_fold_hole_count",
+        "showFoldArrows": true,
+        "showPunchOnFoldedState": true
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 8,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "fold_reflection_hole_count",
+      "checks": [
+        "반 접기 2회와 대각선 접기 1회 구조인지 확인",
+        "구멍 1개가 각 접기마다 대칭 복제되는지 확인",
+        "최종 구멍 수가 8개인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q12 경로 존재 확인",
+      "hf_data.json typeId 12의 originalProblem.answer가 8개인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 paper_fold_hole_count인지 확인",
+      "foldSequence가 3단계인지 확인",
+      "punch.count가 1인지 확인",
+      "expectedAnswer가 8인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q09",
+  "variationId": "q09_var02",
+  "subType": "stacking_three_views_minimum",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/problems/q09_var02.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q09.json",
+    "hfDataTypeId": 9
+  },
+  "problem": {
+    "prompt": "Using the top, front, and right views, find the minimum number of cubes."
+  },
+  "machineReadable": {
+    "payloadType": "stacking_three_views_minimum",
+    "views": {
+      "topView": {
+        "occupiedCells": [
+          { "x": 0, "y": 0 },
+          { "x": 2, "y": 0 },
+          { "x": 0, "y": 1 },
+          { "x": 1, "y": 1 }
+        ]
+      },
+      "frontView": {
+        "columnHeights": [3, 1, 1]
+      },
+      "rightView": {
+        "columnHeights": [3, 1]
+      }
+    },
+    "finalBlockStructure": {
+      "minimumHeightMap": {
+        "rows": [
+          { "y": 0, "heights": [3, 0, 1] },
+          { "y": 1, "heights": [1, 1, 0] }
+        ]
+      },
+      "totalBlockCount": 6
+    }
+  },
+  "answerValidation": {
+    "answerType": "integer",
+    "expectedAnswer": 6
+  }
+}

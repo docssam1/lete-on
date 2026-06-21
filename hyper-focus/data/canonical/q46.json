@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q46",
+  "typeId": 46,
+  "title": "결과에서 처음 수를 거꾸로 구하기",
+  "problemType": "TYPE-07",
+  "subType": "reverse_story",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q46.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 46,
+    "originalQuestionId": "q46_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "reverse_story",
+      "forwardRule": {
+        "step": "give_half_then_eat_half_of_remaining",
+        "finalCount": 2
+      },
+      "solvingModel": {
+        "reverseStrategy": [
+          "2개가 남았으면 바로 전에는 4개였다.",
+          "또 그 전에는 8개였다."
+        ],
+        "expectedAnswer": 8
+      },
+      "judgementRule": {
+        "checks": [
+          "write_on_problem",
+          "draw_reverse"
+        ],
+        "description": "마지막 수에서 시작해 반대로 두 배씩 올라가며 처음 수를 찾는다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 처음 수를 정한 뒤, 반 주기·절반 먹기 같은 역산 규칙을 적용해 마지막 수가 되도록 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "reverseStepCount": 2
+        },
+        "baseMode": {
+          "reverseStepCount": 3
+        },
+        "hardMode": {
+          "reverseStepCount": 4,
+          "mustPreserve": [
+            "reverse drawing",
+            "single valid start value"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "마지막 개수",
+          "반으로 주는 횟수",
+          "추가로 먹는 규칙"
+        ],
+        "mustPreserve": [
+          "결과에서 거꾸로 올라가는 구조",
+          "역산으로 처음 수를 찾는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "역산 규칙이 모호한 문제",
+          "거꾸로 계산해도 시작 수가 여러 개인 문제",
+          "앞으로 계산과 뒤로 계산이 맞지 않는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "draw_half_reverse_diagram",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 8,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "reverse_double_from_final",
+      "checks": [
+        "마지막 수가 2인지 확인",
+        "거꾸로 4, 8로 올라가는지 확인",
+        "처음 수가 8인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q46 경로 존재 확인",
+      "hf_data.json typeId 46의 originalProblem.answer가 8개인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 reverse_story인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

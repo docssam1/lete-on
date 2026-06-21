@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q06",
+  "variationId": "q06_var02",
+  "subType": "solid_view_impossible",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/problems/q06_var02.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q06.json",
+    "hfDataTypeId": 6
+  },
+  "machineReadable": {
+    "payloadType": "solid_view_impossible",
+    "baseSolid": {
+      "layerCount": 1,
+      "fixedSingleLayer": true,
+      "blocks": [
+        { "blockId": "R1", "grid": { "x": 0, "y": 0, "z": 0 }, "color": "red" },
+        { "blockId": "R2", "grid": { "x": 0, "y": 1, "z": 0 }, "color": "red" },
+        { "blockId": "Y1", "grid": { "x": 1, "y": 0, "z": 0 }, "color": "yellow" },
+        { "blockId": "G1", "grid": { "x": 1, "y": 1, "z": 0 }, "color": "green" },
+        { "blockId": "P1", "grid": { "x": 2, "y": 1, "z": 0 }, "color": "purple" }
+      ]
+    },
+    "choices": [
+      { "choiceId": 1, "visibleColorSequence": ["yellow", "green", "purple"], "isValid": true },
+      { "choiceId": 2, "visibleColorSequence": ["purple", "red"], "isValid": true },
+      { "choiceId": 3, "visibleColorSequence": ["red", "yellow", "green", "purple"], "isValid": false },
+      { "choiceId": 4, "visibleColorSequence": ["red", "yellow"], "isValid": true },
+      { "choiceId": 5, "visibleColorSequence": ["red", "red", "yellow", "green"], "isValid": false }
+    ]
+  },
+  "answerValidation": {
+    "answerType": "option_set",
+    "expectedAnswer": [3, 5]
+  }
+}

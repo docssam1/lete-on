@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q51",
+  "variationId": "q51_var01",
+  "subType": "clock_bell_count",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q51_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q51.json", "hfDataTypeId": 51 },
+  "machineReadable": { "payloadType": "clock_bell_count", "startHour": 2, "endHour": 5, "expectedAnswer": 14 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 14 }
+}

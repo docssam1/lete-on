@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q40",
+  "variationId": "q40_var01",
+  "subType": "number_code_rule",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q40_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q40.json", "hfDataTypeId": 40 },
+  "machineReadable": { "payloadType": "number_code_rule", "ruleFamily": "digit_transform", "expectedAnswer": 14 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 14 }
+}

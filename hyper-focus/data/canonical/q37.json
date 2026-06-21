@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q37",
+  "typeId": 37,
+  "title": "원탁 자리에서 왼쪽·오른쪽 조건으로 위치 정하기",
+  "problemType": "TYPE-04",
+  "subType": "circular_seating",
+  "answerType": "circular_position_map",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q37.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 37,
+    "originalQuestionId": "q37_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "circular_seating",
+      "participants": ["재하", "주원", "하은", "무겸", "아영"],
+      "anchorPerson": "재하",
+      "conditions": [
+        "재하는 주원 옆에 앉아 있다.",
+        "주원은 하은의 한 사람 건너 왼쪽에 앉아 있다.",
+        "무겸은 아영의 바로 왼쪽 옆에 앉아 있다."
+      ],
+      "expectedPositionMap": {
+        "left_top": "하은",
+        "right_top": "주원",
+        "left_bottom": "무겸",
+        "right_bottom": "아영"
+      },
+      "judgementRule": {
+        "checks": [
+          "fix_anchor_person"
+        ],
+        "description": "기준 사람을 먼저 고정하고 왼쪽·오른쪽 조건을 시계방향으로 채운다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 원탁 자리 정답 배치를 정한 뒤, 기준 인물과 좌우 조건을 만들어 그 배치만 가능하게 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "participantCount": 4
+        },
+        "baseMode": {
+          "participantCount": 5
+        },
+        "hardMode": {
+          "participantCount": 6,
+          "mustPreserve": [
+            "anchor fixed",
+            "left right constraints",
+            "single valid seating"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "이름",
+          "기준 사람",
+          "좌우 조건"
+        ],
+        "mustPreserve": [
+          "원형 자리 구조",
+          "기준 사람을 두고 좌우를 따지는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "왼쪽 기준이 모호한 문제",
+          "기준 사람 없이 좌우만 주어 혼동되는 문제",
+          "배치가 여러 개 가능한 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "circular_seating_svg",
+        "svgRequired": true,
+        "renderer": "circular_seating"
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "circular_position_map",
+    "expectedAnswer": {
+      "left_top": "하은",
+      "right_top": "주원",
+      "left_bottom": "무겸",
+      "right_bottom": "아영"
+    },
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "fix_anchor_and_fill_circular_positions",
+      "checks": [
+        "재하를 기준으로 놓는지 확인",
+        "주원의 위치를 맞추는지 확인",
+        "무겸과 아영의 좌우 관계를 맞추는지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q37 경로 존재 확인",
+      "hf_data.json typeId 37의 originalProblem.answer 맵 확인",
+      "hf_core.json 및 problem_map.json의 subType이 circular_seating인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

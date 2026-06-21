@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q48",
+  "variationId": "q48_var01",
+  "subType": "work_together",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q48_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q48.json", "hfDataTypeId": 48 },
+  "machineReadable": { "payloadType": "work_together", "workerRates": [2, 3], "expectedAnswer": 6 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 6 }
+}

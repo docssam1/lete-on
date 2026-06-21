@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q47",
+  "variationId": "q47_var01",
+  "subType": "reverse_table",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q47_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q47.json", "hfDataTypeId": 47 },
+  "machineReadable": { "payloadType": "reverse_table", "theme": "red_blue_marbles", "expectedAnswer": 14 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 14 }
+}

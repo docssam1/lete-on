@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q10",
+  "variationId": "q10_var01",
+  "subType": "overlap_count_rule",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/problems/q10_var01.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q10.json",
+    "hfDataTypeId": 10
+  },
+  "problem": {
+    "prompt": "Overlapped parts follow the sum rule. Find the requested value."
+  },
+  "machineReadable": {
+    "payloadType": "overlap_count_rule",
+    "baseValues": [3, 5, 7],
+    "overlapRule": "sum",
+    "targetRegion": "A_intersect_B",
+    "expectedAnswer": 8
+  },
+  "answerValidation": {
+    "answerType": "integer",
+    "expectedAnswer": 8
+  }
+}

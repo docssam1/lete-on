@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q36",
+  "variationId": "q36_var01",
+  "subType": "min_max_order",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q36_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q36.json", "hfDataTypeId": 36 },
+  "machineReadable": { "payloadType": "min_max_order", "itemCount": 4, "expectedAnswer": 2 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 2 }
+}

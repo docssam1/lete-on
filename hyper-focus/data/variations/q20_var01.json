@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q20",
+  "variationId": "q20_var01",
+  "subType": "segment_sum_lengths",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q20_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q20.json", "hfDataTypeId": 20 },
+  "machineReadable": { "payloadType": "segment_sum_lengths", "numbers": [2, 4, 6, 10], "constructionMode": "overlap_allowed", "expectedAnswer": 12 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 12 }
+}

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q53",
+  "variationId": "q53_var02",
+  "subType": "balance_unit_count",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q53_var02.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q53.json", "hfDataTypeId": 53 },
+  "machineReadable": { "payloadType": "balance_unit_count", "balanceItems": [3, 1, 2], "expectedAnswer": 6 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 6 }
+}

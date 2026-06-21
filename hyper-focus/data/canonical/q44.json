@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q44",
+  "typeId": 44,
+  "title": "조건을 만족하는 세 자리 수 모두 찾기",
+  "problemType": "TYPE-05",
+  "subType": "three_digit_conditions",
+  "answerType": "list",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q44.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 44,
+    "originalQuestionId": "q44_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "three_digit_conditions",
+      "conditions": [
+        "세 자리 수이다.",
+        "숫자 0이 항상 들어간다.",
+        "각 자리 숫자의 합은 13이다.",
+        "백의 자리 숫자는 일의 자리 숫자보다 작다."
+      ],
+      "solvingModel": {
+        "expectedAnswer": ["409", "508", "607"],
+        "strategy": [
+          "0의 위치를 먼저 정한다.",
+          "세 자리 수의 각 자리 합이 13이 되게 찾는다.",
+          "백의 자리 < 일의 자리 조건으로 걸러낸다."
+        ]
+      },
+      "judgementRule": {
+        "checks": [
+          "list_all_valid_numbers"
+        ],
+        "description": "가능한 수를 빠짐없이 목록으로 쓴 뒤 조건에 맞는 것만 남긴다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 정답 목록을 정한 뒤, 자리수 조건과 합 조건을 맞춰 그 목록만 남도록 설계한다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "digitCount": 3,
+          "fixedContainsZero": false
+        },
+        "baseMode": {
+          "digitCount": 3,
+          "fixedContainsZero": true
+        },
+        "hardMode": {
+          "digitCount": 3,
+          "allowTwoRelations": true,
+          "mustPreserve": [
+            "list all valid numbers",
+            "single valid answer list"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "자리수 합",
+          "포함해야 하는 숫자",
+          "자리 비교 조건"
+        ],
+        "mustPreserve": [
+          "조건을 만족하는 수를 전부 찾는 구조",
+          "빠짐없이 목록화하는 구조",
+          "정답 목록이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "답 목록이 무한하거나 너무 많은 문제",
+          "조건이 서로 모순되는 문제",
+          "목록이 여러 해석으로 갈리는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "text_with_number_list",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "list",
+    "expectedAnswer": ["409", "508", "607"],
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "enumerate_and_filter_three_digit_numbers",
+      "checks": [
+        "0이 포함되는지 확인",
+        "자리수 합이 13인지 확인",
+        "백의 자리 < 일의 자리인지 확인",
+        "남는 수가 409, 508, 607인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q44 경로 존재 확인",
+      "hf_data.json typeId 44의 originalProblem.answer 목록 확인",
+      "hf_core.json 및 problem_map.json의 subType이 three_digit_conditions인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

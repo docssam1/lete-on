@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q15",
+  "variationId": "q15_var02",
+  "subType": "line_partition_six",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q15_var02.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q15.json", "hfDataTypeId": 15 },
+  "machineReadable": { "payloadType": "line_partition_six", "targetShapes": ["triangle", "triangle", "quadrilateral", "quadrilateral"], "cutCount": 2 },
+  "answerValidation": { "answerType": "shape_multiset", "expectedAnswer": ["triangle", "triangle", "quadrilateral", "quadrilateral"] }
+}

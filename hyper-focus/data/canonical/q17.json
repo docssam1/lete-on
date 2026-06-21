@@ -1,0 +1,160 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q17",
+  "typeId": 17,
+  "title": "기울어진 정사각형까지 포함해 큰 정사각형과 작은 정사각형 세기",
+  "problemType": "TYPE-03",
+  "subType": "count_tilted_squares",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q17.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 17,
+    "originalQuestionId": "q17_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "count_tilted_squares",
+      "baseFigure": {
+        "shapeType": "grid_with_diagonals",
+        "description": "격자 위에 대각선과 비스듬한 선이 포함된 도형",
+        "includeAxisAlignedSquares": true,
+        "includeTiltedSquares": true
+      },
+      "countingRule": {
+        "countBySize": true,
+        "includeTilted": true,
+        "smallestGivenAreSquares": true,
+        "description": "기준이 되는 가장 작은 사각형은 모두 정사각형이며, 똑바른 정사각형과 기울어진 정사각형을 크기별로 모두 센다."
+      },
+      "countingModel": {
+        "expectedAnswer": 10,
+        "strategy": [
+          "기준이 되는 작은 정사각형부터 센다.",
+          "같은 방향의 큰 정사각형을 센다.",
+          "기울어진 정사각형도 빠뜨리지 않고 센다."
+        ]
+      },
+      "judgementRule": {
+        "checks": [
+          "count_by_size",
+          "include_tilted"
+        ],
+        "description": "기준 모양을 잡고 크기를 키워가며 세되, 비스듬한 정사각형도 모두 포함한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 목표 정사각형 개수를 먼저 정한 뒤, 기울어진 정사각형까지 포함한 전체 개수가 유일하게 나오도록 선 구조를 설계한다."
+      },
+      "generationTemplate": {
+        "baseMode": {
+          "changeable": [
+            "grid span",
+            "diagonal placement",
+            "tilted square placement"
+          ],
+          "mustPreserve": [
+            "크기별 정사각형 세기 구조",
+            "기울어진 정사각형 포함 규칙",
+            "기준이 되는 작은 사각형은 정사각형이라는 조건"
+          ]
+        },
+        "easyMode": {
+          "changeable": [
+            "grid span",
+            "diagonal placement"
+          ],
+          "maxSpan": 4
+        },
+        "hardMode": {
+          "changeable": [
+            "grid span",
+            "diagonal placement",
+            "tilted square placement"
+          ],
+          "maxSpan": 6
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "격자 크기",
+          "대각선 위치",
+          "비스듬한 정사각형 배치"
+        ],
+        "mustPreserve": [
+          "똑바른 정사각형과 기울어진 정사각형을 모두 세는 구조",
+          "크기별로 분류해서 세는 구조",
+          "정답이 유일하게 결정되는 구조",
+          "정답을 먼저 정하고 문제를 설계하는 원칙"
+        ],
+        "forbiddenChanges": [
+          "기울어진 사각형인지 정사각형인지 모호한 구조",
+          "같은 답이 여러 해석으로 흔들리는 구조",
+          "원본과 다른 유형으로 바뀌는 변형"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "use_original_structure_preferred",
+        "svgRequired": true,
+        "renderer": "count_tilted_squares",
+        "showGridSegments": true,
+        "showDiagonals": true
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 10,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "count_axis_aligned_and_tilted_squares",
+      "checks": [
+        "작은 정사각형 개수를 확인",
+        "더 큰 정사각형 개수를 확인",
+        "기울어진 정사각형을 포함한 전체 합이 10인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q17 경로 존재 확인",
+      "hf_data.json typeId 17의 originalProblem.answer가 10개인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 count_tilted_squares인지 확인",
+      "countingRule.includeTilted가 true인지 확인",
+      "countingRule.countBySize가 true인지 확인",
+      "expectedAnswer가 10인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

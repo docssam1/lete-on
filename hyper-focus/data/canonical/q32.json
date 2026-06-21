@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q32",
+  "typeId": 32,
+  "title": "거울에 비친 디지털 숫자의 원래 수 합 구하기",
+  "problemType": "TYPE-05",
+  "subType": "mirror_digital_number",
+  "answerType": "number",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q32.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": true,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 32,
+    "originalQuestionId": "q32_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "mirror_digital_number",
+      "displayType": "seven_segment_like",
+      "mirrorDirection": "right_side_mirror",
+      "visibleEquation": {
+        "line1": "42 = 14 + [ ]",
+        "line2": "[ ] = 22 + 25"
+      },
+      "solvingModel": {
+        "readMirrorBackToOriginal": true,
+        "expectedAnswer": 80
+      },
+      "judgementRule": {
+        "checks": [
+          "read_mirror_digit"
+        ],
+        "description": "거울에 비친 숫자를 그대로 읽지 말고 원래 방향으로 다시 해석한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 원래 수와 합을 정한 뒤, 거울에 비쳤을 때 보이는 디지털 숫자 배치를 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "digitCount": 2
+        },
+        "baseMode": {
+          "digitCount": 2,
+          "blankCount": 2
+        },
+        "hardMode": {
+          "digitCount": 3,
+          "mustPreserve": [
+            "mirror readback",
+            "single valid original sum"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "디지털 숫자",
+          "빈칸 수",
+          "목표 합"
+        ],
+        "mustPreserve": [
+          "거울 반사 해석 구조",
+          "원래 숫자를 다시 읽어야 하는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "거울 방향이 모호한 문제",
+          "디지털 모양이 여러 숫자로 읽히는 문제",
+          "해가 여러 개인 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "digital_number_svg",
+        "svgRequired": true,
+        "renderer": "mirror_digital_number"
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "number",
+    "expectedAnswer": 80,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "read_original_digits_from_mirror_and_sum",
+      "checks": [
+        "거울 방향을 원래 방향으로 되돌리는지 확인",
+        "두 빈칸의 원래 수를 찾는지 확인",
+        "원래 수의 합이 80인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q32 경로 존재 확인",
+      "hf_data.json typeId 32의 originalProblem.answer가 80인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 mirror_digital_number인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}
