@@ -323,13 +323,97 @@ th,td{border:1px solid var(--line);padding:7px 5px;height:45px;vertical-align:mi
   transform:translate(-50%,-50%) rotate(-24deg);font-size:64px;font-weight:900;
   color:rgba(30,58,138,.06);white-space:nowrap;font-family:'Pretendard',sans-serif}
 /* 인쇄 차단 */
-@media print{ html,body{display:none!important} }
+/* ===== PDF 인쇄 (가로, 표지 + 페이지 구분) ===== */
+@media print{
+  @page{ size:A4 landscape; margin:8mm; }
+  body{ background:#fff!important; padding:0!important; }
+  /* 화면 전용 요소 숨김 */
+  #diagnosticGate, #approvalGate, #loadingLayer, .print-btn, .print-btn-wrap, .mobile-rotate-hint,
+  .pg-character-wrap, #drawer, .overlay, #details, .guide-overlay{ display:none!important; }
+  /* 표지 */
+  #printCover{ display:flex!important; }
+  /* 표준표 컨테이너(#map 들어있는 것)는 인쇄에 포함 - 단 2레벨만 */
+  /* studentResult 컨테이너도 포함 */
+  .container{ box-shadow:none!important; border:0!important; max-width:100%!important; margin:0!important; padding:5mm 0!important; }
+  #studentResult.container{ padding-top:0!important; }
+  /* 페이지 나눔: 표준표(map) → 새 페이지 */
+  #mapContainer{ page-break-before:always; }
+  .progress-graph-wrap{ page-break-before:always; padding-top:5mm!important; }
+  .study-guide-box, .comment{ page-break-inside:avoid; }
+  /* 비교박스+코멘트를 한 페이지에 압축 */
+  #studentResult{ page-break-inside:avoid; margin-top:0!important; padding-top:0!important; }
+  #studentResult .student-card{ padding:14px!important; box-shadow:none!important; margin-top:0!important; }
+  #studentResult .student-card h2{ font-size:18px!important; }
+  #studentResult .student-card .sub{ margin:5px 0 10px!important; font-size:11px!important; }
+  #studentResult .comment{ padding:11px!important; font-size:11px!important; line-height:1.5!important; margin-top:10px!important; }
+  #studentResult .delta-box{ padding:11px!important; }
+  #studentResult .study-guide-box{ padding:11px 13px!important; margin-top:10px!important; }
+  #studentResult .study-guide-box *{ font-size:10.5px!important; line-height:1.45!important; }
+  #studentResult .level-delta, #studentResult .delta-legend{ font-size:10px!important; }
+  /* 인쇄 때 숨길 레벨/행 */
+  .print-hide-level{ display:none!important; }
+  /* 개인 블록의 중복 월/나이 헤더: 글자만 숨기고 칸 정렬은 유지 */
+  #map tr.cur-head th{ font-size:0!important; line-height:0!important; height:0!important; padding:0!important; border-top:0!important; border-bottom:0!important; color:transparent!important; background:transparent!important; }
+  /* '현재 진도 기준 위치' 구분줄은 얇게 유지 */
+  #map tr.cur-divider td{ font-size:8px!important; padding:2px!important; }
+  /* 표를 가로 한 페이지에 우겨넣기 (가로 압축 / 세로 확대 / 가운데 정렬) */
+  #mapContainer{ text-align:center!important; }
+  #map{ font-size:6.5px!important; width:90%!important; min-width:0!important; margin:0 auto!important; table-layout:fixed!important; }
+  #map col.mcol{ width:auto!important; }
+  #map td, #map th{ padding:2.2px 0.5px!important; line-height:1.18!important; word-break:keep-all!important; overflow:hidden!important; }
+  #map .sub{ font-size:5px!important; }
+  #map .level-desc{ font-size:5px!important; }
+  #map thead .age-head{ font-size:8px!important; }
+  #map thead .month-head{ font-size:6px!important; min-width:0!important; }
+  #map tbody td.category, #map tbody td.level{ padding:2.2px 1px!important; }
+  /* 표 위 헤더 영역 압축 (표를 위로 올려 한 페이지 확보) */
+  #mapContainer{ padding-top:0!important; }
+  #mapContainer .header{ margin:0!important; padding:0!important; }
+  #mapContainer .header h1{ font-size:15px!important; margin:0!important; padding:0!important; line-height:1.2!important; }
+  #mapContainer .main-subtitle{ display:none!important; }
+  #mapContainer .table-note{ display:none!important; }
+  #mapContainer .purple-top-guide{ font-size:7px!important; margin:1px 0!important; padding:1px!important; }
+  #printTableTitle{ font-size:11px!important; padding:2px 0!important; margin:0!important; }
+  /* 표 전체를 한 페이지에 유지 (중간 잘림 방지) */
+  #mapContainer .table-wrapper, #map{ page-break-inside:avoid!important; }
+  #map tbody tr{ page-break-inside:avoid!important; }
+  .standard-scroll{ overflow:visible!important; }
+  /* 그래프 SVG 한 페이지 맞춤 */
+  #progressGraph svg{ max-width:100%!important; height:auto!important; }
+  .pg-bubble{ display:none!important; }
+  /* 표 위 안내 타이틀 (인쇄 전용) */
+  #printTableTitle{ display:block!important; }
+}
+/* 표지 (평소 숨김, 인쇄 때만) */
+#printCover{ display:none; }
+#printTableTitle{ display:none; }
+@media print{
+  #printCover{
+    page-break-after:always; min-height:180mm; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center;
+    border:2px solid #1a2740; margin:0;
+  }
+  #printCover .pc-brand{ font-size:13px; letter-spacing:.3em; color:#a8895c; font-weight:700; margin-bottom:30px; }
+  #printCover .pc-title{ font-size:34px; font-weight:900; color:#1a2740; letter-spacing:-.02em; line-height:1.4; }
+  #printCover .pc-sub{ font-size:15px; color:#5a6478; margin-top:18px; }
+  #printCover .pc-date{ font-size:12px; color:#9aa1b4; margin-top:40px; }
+  #printCover .pc-line{ width:60px; height:2px; background:#a8895c; margin:24px 0; }
+  #printTableTitle{ font-size:15px; font-weight:800; color:#1a2740; padding:0 0 6px; }
+}
 /* 텍스트 선택/드래그 방지 (입력칸 제외) */
 body{-webkit-user-select:none;-moz-user-select:none;user-select:none}
 input,textarea{-webkit-user-select:text;user-select:text}
 </style>
 </head>
 <body>
+<!-- PDF 인쇄용 표지 (화면에선 숨김) -->
+<div id="printCover">
+  <div class="pc-brand">G·FIELD 영재교육</div>
+  <div class="pc-title" id="coverTitle">○○○ 학생의<br>로드맵 분석</div>
+  <div class="pc-line"></div>
+  <div class="pc-sub" id="coverSub">사고력 진단 로드맵 리포트</div>
+  <div class="pc-date" id="coverDate"></div>
+</div>
 <div id="demoTile"></div>
 <div id="demoWatermark">DEMO</div>
 
@@ -370,11 +454,12 @@ input,textarea{-webkit-user-select:text;user-select:text}
 </div>
 <div id="loadingLayer"><span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span><span class="spark s4"></span><div><div class="load-title">합격의 PASSWORD<br>지필드 영재교육</div><div class="load-sub" id="loadText">학생의 로드맵을 생성 중입니다.</div><div class="load-track"><div class="load-fill" id="loadFill"></div></div><div class="load-pct" id="loadPct">0%</div></div></div>
 
-<div class="container">
+<div class="container" id="mapContainer">
   <div class="header">
     <h1>소마 시험부터 프리미어 선발까지</h1>
     <div class="main-subtitle">상위권 5·6세를 위한 성공하는 공부습관을 만드는<br><strong>지필드 영재교육 “TOP SECRET” 로드맵</strong></div>
   </div>
+  <div id="printTableTitle">우리 아이 현재 위치와 목표 레벨 로드맵</div>
   <div class="table-note">※ 실제 대치 합격생 진도를 바탕으로 한 예시입니다. 아이의 연산력·자기조절력·지문 이해도·학습 성향에 따라 결과는 달라질 수 있습니다.</div>
   <div class="purple-top-guide"><span>보라색 선은 각 과정의 현재 기준 진도입니다.</span></div>
   <div class="mobile-rotate-hint">📱 모바일에서는 로드맵을 가로로 보시면 더 편합니다. (좌우로 넘겨 보세요)</div>
@@ -391,6 +476,12 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div class="table-wrapper student-roadmap-wrapper"><table class="student-table" id="studentTable"></table></div>
   <div class="level-delta" id="levelDelta"></div><div class="delta-legend">각 수치는 사고력·교과·연산 현재 위치를 해당 레벨의 같은 시점 표준 진도와 비교한 평균입니다. <b>＋</b>는 앞선 흐름, <b>－</b>는 보완이 필요한 흐름입니다.</div>
   <div class="comment" id="studentComment"></div>
+  <div class="print-btn-wrap" style="text-align:center;margin:18px 0 4px">
+    <button class="print-btn" onclick="printRoadmap()" style="display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border:0;border-radius:9px;background:#1a2740;color:#fff;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.01em">
+      <span style="font-size:17px">🖨</span> 로드맵 분석 PDF로 저장 / 인쇄
+    </button>
+    <div style="font-size:11px;color:#94a3b8;margin-top:8px">가로 방향으로 인쇄됩니다. 인쇄 창에서 '대상'을 <b>PDF로 저장</b>으로 선택하세요.</div>
+  </div>
   <div class="progress-graph-wrap" id="progressGraphWrap" style="display:none">
     <div class="pg-brand">docssam의 로드맵 컨설팅</div>
     <div class="pg-title">프리미어·필즈 진단 예측 그래프</div>
@@ -1399,9 +1490,49 @@ function fillComment(d){
     // 개발자도구: Ctrl+Shift+I/J/C, Cmd+Opt+I/J/C
     if((e.ctrlKey||e.metaKey) && e.shiftKey && ['i','j','c'].includes(k)){ e.preventDefault(); return false; }
   });
-  // 인쇄 시도 차단 (Ctrl+P 우회 포함)
-  window.addEventListener('beforeprint',function(){ document.body.style.display='none'; });
-  window.addEventListener('afterprint',function(){ document.body.style.display=''; });
+  // 로드맵 PDF 인쇄 (표지 + [근접 표준 레벨 1개 + 우리 아이 개인 로드맵])
+  window.printRoadmap=function(){
+    var name=(typeof diagData!=='undefined' && diagData && diagData.name)?diagData.name:'학생';
+    var ct=document.getElementById('coverTitle');
+    var cd=document.getElementById('coverDate');
+    if(ct) ct.innerHTML=(name==='학생'?'학생':name+' 학생')+'의<br>로드맵 분석';
+    if(cd){
+      var d=new Date();
+      cd.textContent=d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 기준';
+    }
+    // 남길 표준 레벨 = 가장 근접한 레벨(best) 1개. 개인 블록은 항상 유지.
+    var bestId=(window.__bestLevel && window.__bestLevel.id) || 'L1';
+    markPrintLevels(bestId);
+    window.print();
+  };
+  // tbody: best 표준 레벨 1개 + 개인 블록(현재 진도)만 남기고 나머지 표준 레벨 숨김
+  function markPrintLevels(keepLevel){
+    var tbody=document.getElementById('tbody');
+    if(!tbody) return;
+    var rows=tbody.querySelectorAll('tr');
+    var curLevel=null, inPersonal=false;
+    rows.forEach(function(tr){
+      tr.classList.remove('print-hide-level');
+      // 개인 블록 시작 감지 (cur-divider부터 끝까지는 항상 유지)
+      if(tr.classList.contains('cur-divider')) inPersonal=true;
+      if(inPersonal) return; // 개인 블록은 무조건 표시
+      // 표준 레벨 식별
+      var lvCell=tr.querySelector('td.level');
+      if(lvCell){
+        if(lvCell.classList.contains('l0')) curLevel='L0';
+        else if(lvCell.classList.contains('l1')) curLevel='L1';
+        else if(lvCell.classList.contains('l2')) curLevel='L2';
+      }
+      // keep 레벨이 아니면 숨김 (spacer 포함)
+      if(curLevel && curLevel!==keepLevel){
+        tr.classList.add('print-hide-level');
+      }
+    });
+    window.addEventListener('afterprint',function once(){
+      rows.forEach(function(tr){ tr.classList.remove('print-hide-level'); });
+      window.removeEventListener('afterprint',once);
+    });
+  }
   // (개발자도구 감지 기능은 모바일 오작동으로 제거함)
 })();
 </script>
