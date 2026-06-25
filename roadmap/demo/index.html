@@ -289,24 +289,26 @@ th,td{border:1px solid var(--line);padding:7px 5px;height:45px;vertical-align:mi
 @media(max-width:700px){#welcomeLayer .hello{font-size:21px}#welcomeLayer .subhello{font-size:14px}}
 
 /* ===== 독쌤 캐릭터 + 말풍선 ===== */
-.pg-character-wrap{display:flex;align-items:flex-end;gap:14px;justify-content:flex-end;
-  margin-top:8px;flex-wrap:wrap}
-.pg-bubble{position:relative;max-width:560px;flex:1;min-width:260px;
-  background:#fff;border:2px solid #1e3a8a;border-radius:16px;padding:16px 18px;
-  font-size:13.5px;line-height:1.75;color:#1e293b;
-  box-shadow:0 6px 18px rgba(30,58,138,.12)}
+.pg-character-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:0;
+  margin-top:14px}
+.pg-bubble{position:relative;width:100%;max-width:680px;align-self:flex-end;
+  background:#fff;border:2px solid #1e3a8a;border-radius:18px;padding:20px 24px;
+  font-size:15px;line-height:1.85;color:#1e293b;margin-bottom:14px;
+  box-shadow:0 8px 22px rgba(30,58,138,.13)}
 .pg-bubble b{color:#1d4ed8;font-weight:800}
-.pg-bubble::after{content:'';position:absolute;right:-14px;bottom:24px;
-  border:7px solid transparent;border-left-color:#1e3a8a}
-.pg-bubble::before{content:'';position:absolute;right:-10px;bottom:25px;z-index:1;
-  border:6px solid transparent;border-left-color:#fff}
-.pg-character-wrap .pg-character{position:static;width:150px;height:auto;flex:0 0 auto;
-  filter:drop-shadow(0 4px 10px rgba(0,0,0,.12));mix-blend-mode:multiply}
+/* 꼬리: 말풍선 아래 오른쪽 → 캐릭터 머리 가리킴 */
+.pg-bubble::after{content:'';position:absolute;right:54px;bottom:-15px;
+  border:8px solid transparent;border-top-color:#1e3a8a;border-bottom:0}
+.pg-bubble::before{content:'';position:absolute;right:55px;bottom:-11px;z-index:1;
+  border:7px solid transparent;border-top-color:#fff;border-bottom:0}
+.pg-character-wrap .pg-character{position:static;width:170px;height:auto;flex:0 0 auto;
+  margin-right:6px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.12));mix-blend-mode:multiply}
 @media(max-width:700px){
-  .pg-character-wrap{justify-content:center}
-  .pg-bubble{max-width:100%;font-size:12.5px}
-  .pg-bubble::after,.pg-bubble::before{display:none}
-  .pg-character-wrap .pg-character{width:110px}
+  .pg-character-wrap{align-items:center}
+  .pg-bubble{max-width:100%;font-size:13.5px;padding:16px 18px}
+  .pg-bubble::after{right:50%;margin-right:-8px}
+  .pg-bubble::before{right:50%;margin-right:-7px}
+  .pg-character-wrap .pg-character{width:120px;margin-right:0}
 }
 
 /* ===== DEMO 워터마크 ===== */
@@ -392,6 +394,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div class="progress-graph-wrap" id="progressGraphWrap" style="display:none">
     <div class="pg-brand">docssam의 로드맵 컨설팅</div>
     <div class="pg-title">프리미어·필즈 진단 예측 그래프</div>
+    <div class="pg-desc" style="margin-bottom:10px">※ 이 그래프는 <b style="color:#7c3aed">사고력1 진도</b>를 기준으로 그려집니다. 교과·연산의 현재 위치와 보완 방향은 위의 분석 내용을 함께 참고해 주세요.</div>
     <div id="progressGraph"></div>
     <div class="pg-character-wrap">
       <div class="pg-bubble" id="pgBubble" style="display:none"></div>
@@ -943,10 +946,15 @@ function drawProgressGraph(d){
     keepPts.forEach((p,i)=>{ if(i>0 && i<keepPts.length-1 && p.x>nowIdx+0.3 && p.x<N-1-0.3) svg+=`<circle cx="${X(p.x)}" cy="${Y(p.lv)}" r="3" fill="#fff" stroke="${col}" stroke-width="1.8" opacity=".85"/>`; });
 
     // ② 증속선 (현재 과정 ×0.9=10%빠름, 이후 ×0.83≈20%빠름) → 실선
+    // L0보다 높으면 = 이미 최상위 → 증속선 숨김 (불균형이면 말풍선으로 대응)
+    const bL=window.__bestLevel||{};
+    const hideFast = bL.aboveL0;
     const fastPts=clampPts(predict(k=> k===0 ? 0.9 : 0.83));
-    svg+=`<path d="${toPath(fastPts)}" fill="none" stroke="${col}" stroke-width="3" opacity=".95"/>`;
-    // 증속선 과정 완료 점
-    fastPts.forEach((p,i)=>{ if(i>0 && i<fastPts.length-1 && p.x>nowIdx+0.3 && p.x<N-1-0.3) svg+=`<circle cx="${X(p.x)}" cy="${Y(p.lv)}" r="3.5" fill="${col}" stroke="#fff" stroke-width="1.5"/>`; });
+    if(!hideFast){
+      svg+=`<path d="${toPath(fastPts)}" fill="none" stroke="${col}" stroke-width="3" opacity=".95"/>`;
+      // 증속선 과정 완료 점
+      fastPts.forEach((p,i)=>{ if(i>0 && i<fastPts.length-1 && p.x>nowIdx+0.3 && p.x<N-1-0.3) svg+=`<circle cx="${X(p.x)}" cy="${Y(p.lv)}" r="3.5" fill="${col}" stroke="#fff" stroke-width="1.5"/>`; });
+    }
 
     // ===== 말풍선 데이터: 증속선이 상위 레벨을 따라잡는 시점 =====
     // 상위 레벨 = best보다 한 단계 위 (L2→L1→L0)
@@ -979,15 +987,27 @@ function drawProgressGraph(d){
       caught: catchIdx!=null,
       catchMonth: catchIdx!=null ? idxToLabel(catchIdx) : null,
       // 격차(개월): 표 끝에서 상위 레벨선 lv - 증속선 lv 를 개월로 환산(대략 5개월/레벨)
-      gapMonths: (function(){ const uEnd=lvAt(upperStd,N-1), fEnd=fastPts[fastPts.length-1].lv; const d2=uEnd-fEnd; return d2>0?Math.round(d2*5):0; })()
+      gapMonths: (function(){ const uEnd=lvAt(upperStd,N-1), fEnd=fastPts[fastPts.length-1].lv; const d2=uEnd-fEnd; return d2>0?Math.round(d2*5):0; })(),
+      // 균형 판정 (fillLevelDelta에서 계산됨)
+      bothOK: bL.bothOK, oneOK: bL.oneOK, noneOK: bL.noneOK,
+      schoolOK: bL.schoolOK, calcOK: bL.calcOK, aboveL0: bL.aboveL0,
+      hideFast: hideFast,
+      // 약한 축 이름 (하나만 충족일 때 부족한 축)
+      weakAxis: bL.schoolOK&&!bL.calcOK ? '연산' : (!bL.schoolOK&&bL.calcOK ? '교과' : null)
     };
 
     // 색인(범례) — 좌상단
     const lgX=padL+10, lgY=padT+12;
-    svg+=`<line x1="${lgX}" y1="${lgY}" x2="${lgX+26}" y2="${lgY}" stroke="${col}" stroke-width="3"/>`;
-    svg+=`<text x="${lgX+32}" y="${lgY+4}" font-size="10" font-weight="700" fill="${col}">학습량 늘렸을 때 예측</text>`;
-    svg+=`<line x1="${lgX}" y1="${lgY+16}" x2="${lgX+26}" y2="${lgY+16}" stroke="${col}" stroke-width="2.4" stroke-dasharray="5 4" opacity=".75"/>`;
-    svg+=`<text x="${lgX+32}" y="${lgY+20}" font-size="10" font-weight="700" fill="${col}" opacity=".8">현 속도 유지 예측</text>`;
+    if(!hideFast){
+      svg+=`<line x1="${lgX}" y1="${lgY}" x2="${lgX+26}" y2="${lgY}" stroke="${col}" stroke-width="3"/>`;
+      svg+=`<text x="${lgX+32}" y="${lgY+4}" font-size="10" font-weight="700" fill="${col}">학습량 늘렸을 때 예측</text>`;
+      svg+=`<line x1="${lgX}" y1="${lgY+16}" x2="${lgX+26}" y2="${lgY+16}" stroke="${col}" stroke-width="2.4" stroke-dasharray="5 4" opacity=".75"/>`;
+      svg+=`<text x="${lgX+32}" y="${lgY+20}" font-size="10" font-weight="700" fill="${col}" opacity=".8">현 속도 유지 예측</text>`;
+    } else {
+      // 증속선 없을 때: 유지선만 안내
+      svg+=`<line x1="${lgX}" y1="${lgY}" x2="${lgX+26}" y2="${lgY}" stroke="${col}" stroke-width="2.4" stroke-dasharray="5 4" opacity=".75"/>`;
+      svg+=`<text x="${lgX+32}" y="${lgY+4}" font-size="10" font-weight="700" fill="${col}" opacity=".8">현 진도 유지 시 예측</text>`;
+    }
 
     svg+=`<circle cx="${sx2}" cy="${sy2}" r="7" fill="${col}" stroke="#fff" stroke-width="2.5"/>`;
     svg+=`<text x="${sx2}" y="${sy2+22}" text-anchor="middle" font-size="11" font-weight="900" fill="${col}">${d.name} 학생의 현 진도</text>`;
@@ -1002,12 +1022,37 @@ function drawProgressGraph(d){
   const bubble=document.getElementById('pgBubble');
   if(bd && bubble){
     let msg=`현재 <b>${bd.name}</b> 학생은 <b>${bd.closeLevel}</b>과 비슷한 진도를 보이고 있습니다. `;
-    if(bd.caught){
-      msg += `지금부터 학습량을 처음 2개월간 10%, 그 후 20% 정도 늘린다면 <b>${bd.catchMonth}</b>쯤에는 <b>${bd.upperLevel}</b>을 따라잡거나 비슷한 진도를 유지할 수 있습니다.`;
-    } else if(bd.gapMonths>0){
-      msg += `한 단계 위인 <b>${bd.upperLevel}</b>까지는 약 <b>${bd.gapMonths}개월</b> 정도 차이가 있어, 학습량을 늘리면서 교과·연산을 함께 보완해 가는 것이 필요합니다.`;
+    const incPhrase = `지금부터 2개월 동안은 학습량을 지금의 10% 정도, 그 이후부터는 20% 정도 늘린다면`;
+    if(bd.aboveL0){
+      // L0보다 높음 = 이미 최상위 (증속선 없음) → 균형 여부로 멘트만 분기
+      if(bd.bothOK){
+        msg += `사고력 진도가 이미 최상위권이고, 교과·연산도 잘 받쳐주고 있어 <b>세 영역이 균형을 잘 이루고 있습니다.</b> 굳이 학습량을 더 늘릴 필요 없이 지금 속도 그대로 꾸준히 진행하시면 됩니다.`;
+      } else if(bd.oneOK){
+        msg += `사고력은 이미 최상위권으로 매우 빠릅니다. 다만 <b>${bd.weakAxis}</b>이 사고력 진도에 비해 다소 부족하니, 사고력은 지금 흐름을 유지하면서 <b>${bd.weakAxis}을 조금 더 신경 써</b> 균형을 맞춰 주시면 좋습니다.`;
+      } else {
+        msg += `사고력은 매우 빠르지만, <b>교과·연산이 사고력 진도를 충분히 따라오지 못하고 있습니다.</b> 지금은 사고력을 더 빼기보다, 사고력은 스스로 풀며 점검하게 두고 <b>교과·연산을 함께 끌어올려 균형을 맞추는 것</b>이 먼저입니다.`;
+      }
     } else {
-      msg += `학습량을 처음 2개월간 10%, 그 후 20% 정도 늘리면 상위 흐름까지 안정적으로 끌어올릴 수 있습니다.`;
+      // L0 이하 = 레벨을 더 높이려면 학습량 증가 필요 (증속선 있음)
+      if(bd.bothOK){
+        // 균형 잡힘 → 균형 멘트 + 상위 도전 안내
+        msg += `교과·연산이 사고력 진도를 잘 받쳐주고 있어 <b>세 영역의 균형이 좋습니다.</b> `;
+        if(bd.caught){
+          msg += `여기서 한 단계 더 올라가려면, ${incPhrase} <b>${bd.catchMonth}</b>쯤 <b>${bd.upperLevel}</b> 수준까지 끌어올릴 수 있습니다.`;
+        } else {
+          msg += `여기서 한 단계 더 올라가려면, ${incPhrase} 상위 흐름까지 안정적으로 도전할 수 있습니다.`;
+        }
+      } else if(bd.oneOK){
+        msg += `${bd.weakAxis==='교과'?'사고력과 연산은':'사고력과 교과는'} 잘 자리 잡았지만, <b>${bd.weakAxis}</b>이 사고력 진도에 비해 조금 부족합니다. 사고력은 스스로 풀며 점검하는 정도로 두고, <b>몇 개월간은 ${bd.weakAxis}에 우선 집중</b>해 균형을 맞추는 것이 좋습니다.`;
+      } else {
+        if(bd.caught){
+          msg += `다만 교과·연산이 사고력 진도를 충분히 받쳐주지 못하고 있어, 이를 함께 끌어올리는 것이 먼저입니다. ${incPhrase} <b>${bd.catchMonth}</b>쯤 <b>${bd.upperLevel}</b> 흐름에 가까워질 수 있지만, 교과·연산 보완이 전제되어야 합니다.`;
+        } else if(bd.gapMonths>0){
+          msg += `한 단계 위인 <b>${bd.upperLevel}</b>까지는 약 <b>${bd.gapMonths}개월</b> 차이가 있고, 무엇보다 교과·연산이 사고력 진도를 받쳐주지 못하고 있어 이를 함께 보완하는 것이 우선입니다.`;
+        } else {
+          msg += `다만 교과·연산이 사고력 진도를 받쳐주지 못하고 있어, ${incPhrase} 함께 끌어올리는 것이 필요합니다.`;
+        }
+      }
     }
     bubble.innerHTML=msg;
     bubble.style.display='block';
@@ -1190,7 +1235,7 @@ function fillLevelDelta(d){
     const lC=levelStdMonth(L.shift,'calc',cur.calc);
     const dT=lT!=null?now-lT:0, dS=lS!=null?now-lS:0, dC=lC!=null?now-lC:0;
     const avg=(dT+dS+dC)/3;
-    if(Math.abs(avg)<best.abs) best={id:L.id,abs:Math.abs(avg),avg};
+    if(Math.abs(avg)<best.abs) best={id:L.id,abs:Math.abs(avg),avg,dT,dS,dC};
     return {id:L.id,avg,dT,dS,dC};
   });
   document.getElementById('levelDelta').innerHTML=boxes.map(x=>{
@@ -1201,6 +1246,19 @@ function fillLevelDelta(d){
   const l2=boxes.find(b=>b.id==='L2');
   best.needRedesign = l2 && Math.abs(l2.avg)>=6 && best.id==='L2';
   best.l2avg = l2?l2.avg:0;
+  // ===== 균형(충족) 판정 =====
+  // 충족 = 해당 축이 사고력1 진도를 받쳐줌. dT/dS/dC는 +면 느림(뒤처짐).
+  // 교과(또는 연산)가 사고력보다 2개월 넘게 뒤처지지 않으면 충족 (앞서면 당연히 충족).
+  const schoolOK = ((best.dS||0)-(best.dT||0)) <= 2;
+  const calcOK   = ((best.dC||0)-(best.dT||0)) <= 2;
+  best.schoolOK = schoolOK;
+  best.calcOK = calcOK;
+  best.bothOK = schoolOK && calcOK;
+  best.oneOK = (schoolOK || calcOK) && !(schoolOK && calcOK);
+  best.noneOK = !schoolOK && !calcOK;
+  // L0보다 높음 = best가 L0이면서 평균이 빠름(avg<0), 또는 사고력이 L0 표준보다 앞섬
+  const l0=boxes.find(b=>b.id==='L0');
+  best.aboveL0 = l0 && l0.dT < -1; // L0 사고력 표준보다 1개월+ 빠르면 'L0보다 높음'
   window.__bestLevel = best;
   return best;
 }
@@ -1328,7 +1386,7 @@ function fillComment(d){
   document.addEventListener('contextmenu',e=>e.preventDefault());
   // 드래그/선택/복사·잘라내기 차단
   document.addEventListener('dragstart',e=>e.preventDefault());
-  document.addEventListener('selectstart',e=>{ const t=e.target.tagName; if(t!=='INPUT'&&t!=='TEXTAREA') e.preventDefault(); });
+  document.addEventListener('selectstart',e=>{ const t=e.target.tagName; if(t!=='INPUT'&&t!=='TEXTAREA'&&t!=='BUTTON'&&t!=='LABEL') e.preventDefault(); });
   document.addEventListener('copy',e=>e.preventDefault());
   document.addEventListener('cut',e=>e.preventDefault());
   // 키보드 단축키 차단
@@ -1344,14 +1402,7 @@ function fillComment(d){
   // 인쇄 시도 차단 (Ctrl+P 우회 포함)
   window.addEventListener('beforeprint',function(){ document.body.style.display='none'; });
   window.addEventListener('afterprint',function(){ document.body.style.display=''; });
-  // 개발자도구 열림 감지 시 화면 가리기 (창 크기 편차 기반, 가벼운 수준)
-  let _dt=false;
-  setInterval(function(){
-    const w=window.outerWidth-window.innerWidth, h=window.outerHeight-window.innerHeight;
-    const open = w>200 || h>300;
-    if(open && !_dt){ _dt=true; document.documentElement.style.filter='blur(8px)'; }
-    else if(!open && _dt){ _dt=false; document.documentElement.style.filter=''; }
-  },1000);
+  // (개발자도구 감지 기능은 모바일 오작동으로 제거함)
 })();
 </script>
 </body></html>
