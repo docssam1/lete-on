@@ -329,7 +329,7 @@ th,td{border:1px solid var(--line);padding:7px 5px;height:45px;vertical-align:mi
   body{ background:#fff!important; padding:0!important; }
   /* 화면 전용 요소 숨김 */
   #diagnosticGate, #approvalGate, #loadingLayer, .print-btn, .print-btn-wrap, .mobile-rotate-hint,
-  .pg-character-wrap, #drawer, .overlay, #details, .guide-overlay{ display:none!important; }
+  .pg-character-wrap, #drawer, .overlay, #details{ display:none!important; }
   /* 표지 */
   #printCover{ display:flex!important; }
   /* 표준표 컨테이너(#map 들어있는 것)는 인쇄에 포함 - 단 2레벨만 */
@@ -378,6 +378,9 @@ th,td{border:1px solid var(--line);padding:7px 5px;height:45px;vertical-align:mi
   #mapContainer .table-wrapper, #map{ page-break-inside:avoid!important; }
   #map tbody tr{ page-break-inside:avoid!important; }
   .standard-scroll{ overflow:visible!important; }
+  /* 인쇄 시 빨간 사고력 기준선 선명하게 (border 기반이라 배경그래픽 옵션 무관) */
+  .guide-overlay{ opacity:.85!important; border-left-width:1.5px!important; z-index:50!important; }
+  .guide-overlay .g-label{ font-size:7px!important; padding:1px 4px!important; -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; }
   /* 그래프 SVG 한 페이지 맞춤 */
   #progressGraph svg{ max-width:100%!important; height:auto!important; }
   .pg-bubble{ display:none!important; }
@@ -750,14 +753,16 @@ function drawGuideOverlay(cur){
   if(!c || !diagData) return;
   // 현재월의 표시 칸 위치 (사고력1 현재과정 중앙이 여기 옴)
   const nowIdx = toIdx(studentNowMonth(diagData.age)); // 칸 인덱스
-  const cellX = nowIdx + 0.5; // 칸 중앙
   const table=document.getElementById('map');
   const monthThs=table.querySelectorAll('#thead .month-head');
   if(!monthThs.length) return;
-  const first=monthThs[0].getBoundingClientRect();
-  const cw=first.width;
   const tableRect=table.getBoundingClientRect();
-  const xPx=(first.left - tableRect.left) + cellX*cw;
+  // 칸 너비가 균일하지 않으므로 해당 월칸의 실제 위치를 직접 측정
+  const idx=Math.max(0, Math.min(monthThs.length-1, nowIdx));
+  const cellRect=monthThs[idx].getBoundingClientRect();
+  const cw=cellRect.width;
+  // 칸 중앙 = 해당 칸 좌측 + 칸너비/2
+  const xPx=(cellRect.left - tableRect.left) + cw/2;
   if(xPx<=0 || cw<=0) return; // 레이아웃 미완성 시 스킵
   const ov=document.createElement('div');
   ov.className='guide-overlay';
@@ -1027,7 +1032,26 @@ function drawProgressGraph(d){
       }
       return out;
     }
-    const clampPts=pts=>pts.filter(p=>p.x<=N-1+0.01).map(p=>({x:Math.min(p.x,N-1),lv:Math.max(0,Math.min(5,p.lv))}));
+    // 표 오른쪽 끝(N-1)에서 잘리는 구간은 버리지 말고 경계 레벨을 보간해 이어붙임
+    const clampPts=pts=>{
+      const out=[];
+      for(let i=0;i<pts.length;i++){
+        const p=pts[i];
+        if(p.x<=N-1+0.01){
+          out.push({x:Math.min(p.x,N-1), lv:Math.max(0,Math.min(5,p.lv))});
+        } else {
+          // 이 점은 표 밖 → 직전 점과 사이를 N-1에서 보간하여 종료점 추가
+          const prev=pts[i-1];
+          if(prev && prev.x<N-1){
+            const t=(N-1-prev.x)/(p.x-prev.x);
+            const lvAt=prev.lv+(p.lv-prev.lv)*t;
+            out.push({x:N-1, lv:Math.max(0,Math.min(5,lvAt))});
+          }
+          break; // 표 밖부터는 그리지 않음
+        }
+      }
+      return out;
+    };
     const toPath=pts=>{let dd='';pts.forEach((p,i)=>{dd+=(i===0?'M':'L')+X(p.x).toFixed(1)+' '+Y(p.lv).toFixed(1)+' ';});return dd;};
 
     // ① 유지선 (현 속도 = 표 기간 그대로, ×1.0) → 점선
@@ -1503,6 +1527,15 @@ function fillComment(d){
     // 남길 표준 레벨 = 가장 근접한 레벨(best) 1개. 개인 블록은 항상 유지.
     var bestId=(window.__bestLevel && window.__bestLevel.id) || 'L1';
     markPrintLevels(bestId);
+    // 인쇄 레이아웃(표 축소·레벨 숨김) 반영 후 기준선 재계산
+    var _redrawPrint=function(){ try{ drawGuideOverlay(undefined); }catch(e){} };
+    window.addEventListener('beforeprint', _redrawPrint);
+    window.addEventListener('afterprint', function once2(){
+      window.removeEventListener('beforeprint', _redrawPrint);
+      window.removeEventListener('afterprint', once2);
+      // 화면 레이아웃으로 복귀 후 기준선 원위치 재계산
+      setTimeout(function(){ try{ drawGuideOverlay(undefined); }catch(e){} }, 50);
+    });
     window.print();
   };
   // tbody: best 표준 레벨 1개 + 개인 블록(현재 진도)만 남기고 나머지 표준 레벨 숨김
