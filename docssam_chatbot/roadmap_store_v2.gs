@@ -23,6 +23,7 @@
  *  4) 상단 함수 선택창에서 "setup" 고르고 실행(▶) 한 번 → 권한 허용 → 탭·헤더 자동 생성
  *  5) 배포 > 새 배포 > 유형:웹앱 > 실행:나 / 액세스:모든 사용자 > 배포
  *  6) 나오는 웹앱 URL 복사 → 로드맵·어드민 HTML에 넣기
+ *  ※ 코드를 수정했으면 반드시 "배포 관리 > 편집(연필) > 버전:새 버전 > 배포"로 재배포해야 반영됨
  *
  * [보안]
  *  - 학부모용은 승인번호만 있으면 자기 데이터 접근 (남의 번호 모르면 못 봄)
@@ -34,7 +35,7 @@
 const SHEET_ID = '1MXqXxqz68Y7ChRUhkOqYdXoZOSoz2hqjcihdvBIQtKs';   // GFIELD 로드맵 저장소 (생성됨)
 const SHEET_NAME = 'roadmap';
 const MAX_EDITS = 2;                            // 재작성 최대 횟수
-const ADMIN_KEY = 'gfield-dn6szel77zfw2nj8';     // 원장 어드민 키 (어드민 페이지 로그인 시 입력)
+const ADMIN_KEY = '01020837265';     // 원장 어드민 키 (어드민 페이지 로그인 시 입력)
 
 // ===== 공통 =====
 function getSheet_() {
