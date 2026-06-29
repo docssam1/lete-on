@@ -2,6 +2,10 @@
  * G-FIELD 로드맵 저장 서버 (Google Apps Script) — v2 (어드민 포함)
  * ENGINE_DESIGN.md 섹션 0-B 구현체
  *
+ * ⚠️ 보안: 이 파일은 공개 저장소용 안전 버전입니다.
+ *    SHEET_ID·ADMIN_KEY는 실제 값을 넣지 않습니다.
+ *    실제 값은 Apps Script 편집기 안에서만 직접 입력하세요(아래 설정 참고).
+ *
  * [역할]
  *  학부모용:
  *   - doGet ?code=GF1234           → 그 승인번호 데이터 반환 (불러오기, 자동)
@@ -16,26 +20,24 @@
  * [시트 구조] 시트명 "roadmap" (첫 행 헤더)
  *  A 승인번호 | B 이름 | C 연락처 | D 진도JSON | E 커스텀JSON | F 재작성횟수 | G 커스텀권한 | H 생성일 | I 수정일
  *
- * [배포 — 천천히]
- *  1) 이 코드 전체 복사
- *  2) script.google.com → 새 프로젝트 → 기본 코드 지우고 붙여넣기
- *  3) SHEET_ID·ADMIN_KEY는 이미 채워져 있음 (그대로 두면 됨)
- *  4) 상단 함수 선택창에서 "setup" 고르고 실행(▶) 한 번 → 권한 허용 → 탭·헤더 자동 생성
- *  5) 배포 > 새 배포 > 유형:웹앱 > 실행:나 / 액세스:모든 사용자 > 배포
- *  6) 나오는 웹앱 URL 복사 → 로드맵·어드민 HTML에 넣기
- *  ※ 코드를 수정했으면 반드시 "배포 관리 > 편집(연필) > 버전:새 버전 > 배포"로 재배포해야 반영됨
+ * [배포]
+ *  1) 이 코드 복사 → script.google.com → 새 프로젝트 → 붙여넣기
+ *  2) 아래 SHEET_ID·ADMIN_KEY에 실제 값 입력 (편집기 안에서만)
+ *  3) 함수 "setup" 실행(▶) → 권한 허용 → 탭·헤더 자동 생성
+ *  4) 배포 > 새 배포 > 웹앱 > 실행:나 / 액세스:모든 사용자 > 배포 → URL 복사
+ *  ※ 코드 수정 시 "배포 관리 > 편집(연필) > 버전:새 버전 > 배포"로 재배포(URL 유지)
  *
  * [보안]
  *  - 학부모용은 승인번호만 있으면 자기 데이터 접근 (남의 번호 모르면 못 봄)
- *  - 어드민용은 ADMIN_KEY 일치해야만 동작. 키는 원장 기기 localStorage에 저장.
- *  - 커스텀권한(G열)은 어드민 엔드포인트로만 변경 (학부모 저장은 G열 안 건드림)
+ *  - 어드민용은 ADMIN_KEY 일치해야만 동작
+ *  - 커스텀권한(G열)은 어드민 엔드포인트로만 변경
  */
 
-// ===== 설정 =====
-const SHEET_ID = '1MXqXxqz68Y7ChRUhkOqYdXoZOSoz2hqjcihdvBIQtKs';   // GFIELD 로드맵 저장소 (생성됨)
+// ===== 설정 (Apps Script 편집기 안에서만 실제 값 입력) =====
+const SHEET_ID = 'PUT_YOUR_SHEET_ID_HERE';       // Google Sheets ID
 const SHEET_NAME = 'roadmap';
-const MAX_EDITS = 2;                            // 재작성 최대 횟수
-const ADMIN_KEY = '01020837265';     // 원장 어드민 키 (어드민 페이지 로그인 시 입력)
+const MAX_EDITS = 2;                              // 재작성 최대 횟수
+const ADMIN_KEY = 'PUT_YOUR_ADMIN_KEY_HERE';     // 어드민 로그인 키
 
 // ===== 공통 =====
 function getSheet_() {
