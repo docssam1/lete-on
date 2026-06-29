@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G-FIELD 로드맵 · 관리자</title>
+<style>
+  :root{
+    --navy:#163a89; --navy-d:#10245a; --purple:#7c3aed; --purple-l:#f5f1ff;
+    --ink:#1f2d4d; --sub:#5b6b8c; --line:#e2e7f1; --bg:#f4f6fb;
+    --ok:#0d9f6e; --okbg:#e7f7f0; --off:#94a3b8; --offbg:#eef1f6;
+    --danger:#be123c; --warn:#d97706;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5}
+  /* ---- 헤더 ---- */
+  header{background:linear-gradient(120deg,var(--navy),var(--navy-d));color:#fff;
+    padding:18px 20px;display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;z-index:50;box-shadow:0 4px 18px rgba(16,36,90,.22)}
+  header .brand{font-weight:900;letter-spacing:-.02em;font-size:16px}
+  header .brand small{display:block;font-size:11px;font-weight:600;letter-spacing:.12em;
+    color:#9fb4e8;margin-top:2px}
+  header button{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);
+    color:#fff;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer}
+  header button:hover{background:rgba(255,255,255,.2)}
+  .wrap{max-width:820px;margin:0 auto;padding:18px 16px 60px}
+
+  /* ---- 로그인 게이트 ---- */
+  #gate{position:fixed;inset:0;z-index:100;background:linear-gradient(140deg,#eef2ff,#f7f1ff);
+    display:flex;align-items:center;justify-content:center;padding:18px}
+  .gate-card{width:min(380px,100%);background:#fff;border:1px solid var(--line);
+    border-radius:18px;padding:30px 26px;box-shadow:0 18px 46px rgba(36,58,123,.16);text-align:center}
+  .gate-card .lock{font-size:30px;margin-bottom:6px}
+  .gate-card h1{margin:0 0 4px;font-size:19px;color:var(--navy)}
+  .gate-card p{margin:0 0 18px;color:var(--sub);font-size:12.5px}
+  .gate-card input{width:100%;height:46px;padding:0 14px;border:1px solid #c9d4e5;
+    border-radius:10px;font-size:15px;color:var(--ink);outline:none}
+  .gate-card input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,58,237,.1)}
+  .gate-card button{width:100%;height:46px;margin-top:12px;border:0;border-radius:10px;
+    background:var(--navy);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+  .gate-card button:hover{background:var(--navy-d)}
+  .gate-err{min-height:16px;margin-top:8px;color:var(--danger);font-size:12px;font-weight:700}
+  .gate-remember{display:flex;align-items:center;justify-content:center;gap:6px;
+    margin-top:12px;color:var(--sub);font-size:12px}
+
+  /* ---- 툴바 ---- */
+  .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+  .toolbar input{flex:1;min-width:140px;height:40px;padding:0 12px;border:1px solid var(--line);
+    border-radius:9px;font-size:13.5px;outline:none;background:#fff}
+  .toolbar input:focus{border-color:var(--purple)}
+  .btn{height:40px;padding:0 14px;border:0;border-radius:9px;font-size:13px;font-weight:800;
+    cursor:pointer;white-space:nowrap}
+  .btn.primary{background:var(--purple);color:#fff}
+  .btn.primary:hover{background:#6b2fd6}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--purple);color:var(--purple)}
+
+  .count{color:var(--sub);font-size:12px;margin:0 0 10px 2px}
+
+  /* ---- 학생 카드 ---- */
+  .student{background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:14px 15px;margin-bottom:9px;cursor:pointer;transition:.12s}
+  .student:hover{border-color:#c7b6f5;box-shadow:0 4px 14px rgba(124,58,237,.08)}
+  .student .top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .student .who{display:flex;align-items:baseline;gap:9px;min-width:0}
+  .student .code{font-weight:900;color:var(--navy);font-size:15px;letter-spacing:-.01em}
+  .student .name{color:var(--ink);font-size:13.5px;font-weight:700}
+  .student .phone{color:var(--sub);font-size:11.5px}
+  .badges{display:flex;gap:6px;flex-shrink:0}
+  .badge{font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:999px;white-space:nowrap}
+  .badge.on{background:var(--okbg);color:var(--ok)}
+  .badge.off{background:var(--offbg);color:var(--off)}
+  .badge.edit{background:#fff4e6;color:var(--warn)}
+  .badge.has{background:var(--purple-l);color:var(--purple)}
+  .student .meta{margin-top:7px;color:var(--sub);font-size:11px}
+
+  .empty{text-align:center;color:var(--sub);padding:50px 20px;font-size:13px}
+  .empty b{color:var(--ink)}
+
+  /* ---- 상세 모달 ---- */
+  .modal-bg{position:fixed;inset:0;z-index:120;background:rgba(16,28,56,.5);
+    display:none;align-items:flex-end;justify-content:center;padding:0}
+  .modal-bg.show{display:flex}
+  .modal{width:100%;max-width:560px;max-height:88vh;overflow-y:auto;background:#fff;
+    border-radius:20px 20px 0 0;padding:22px 20px 30px;animation:up .22s ease}
+  @keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:translateY(0);opacity:1}}
+  @media(min-width:600px){.modal-bg{align-items:center}.modal{border-radius:18px}}
+  .modal h2{margin:0 0 2px;font-size:19px;color:var(--navy)}
+  .modal .msub{color:var(--sub);font-size:12px;margin-bottom:16px}
+  .modal .close{position:absolute;top:14px;right:16px;background:none;border:0;
+    font-size:24px;color:#9aa6bf;cursor:pointer;line-height:1}
+  .field{margin-bottom:13px}
+  .field .lab{font-size:11px;font-weight:800;color:var(--sub);letter-spacing:.02em;
+    text-transform:uppercase;margin-bottom:5px}
+  .field .val{background:var(--bg);border:1px solid var(--line);border-radius:9px;
+    padding:10px 12px;font-size:12.5px;color:var(--ink);white-space:pre-wrap;word-break:break-all}
+  .ctrl-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .ctrl-row .btn{height:38px}
+  .toggle{display:flex;align-items:center;gap:8px;background:var(--bg);
+    border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin-bottom:10px}
+  .toggle .tlab{flex:1;font-size:13px;font-weight:700}
+  .switch{position:relative;width:46px;height:26px;flex-shrink:0}
+  .switch input{opacity:0;width:0;height:0}
+  .slider{position:absolute;inset:0;background:#cbd5e1;border-radius:999px;transition:.18s;cursor:pointer}
+  .slider:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;
+    background:#fff;border-radius:50%;transition:.18s}
+  .switch input:checked + .slider{background:var(--ok)}
+  .switch input:checked + .slider:before{transform:translateX(20px)}
+
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--navy-d);color:#fff;padding:11px 18px;border-radius:10px;
+    font-size:13px;font-weight:700;z-index:200;opacity:0;transition:.2s;pointer-events:none}
+  .toast.show{opacity:1}
+  .spinner{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);
+    border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- 로그인 게이트 -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="lock">🔐</div>
+    <h1>로드맵 관리자</h1>
+    <p>관리자 키를 입력하세요.</p>
+    <input id="keyInput" type="password" placeholder="관리자 키" autocomplete="off">
+    <button id="keyBtn">들어가기</button>
+    <div class="gate-remember">
+      <input type="checkbox" id="rememberKey" checked style="width:auto;height:auto">
+      <label for="rememberKey">이 기기에 저장 (다음부터 자동 입장)</label>
+    </div>
+    <div class="gate-err" id="gateErr"></div>
+  </div>
+</div>
+
+<!-- 메인 -->
+<header>
+  <div class="brand">G-FIELD 로드맵 관리자<small>STUDENT &amp; ACCESS</small></div>
+  <button id="logoutBtn">로그아웃</button>
+</header>
+
+<div class="wrap">
+  <div class="toolbar">
+    <input id="search" placeholder="승인번호·이름·연락처 검색">
+    <button class="btn ghost" id="refreshBtn">새로고침</button>
+    <button class="btn primary" id="addBtn">+ 승인번호 발급</button>
+  </div>
+  <div class="count" id="count">불러오는 중…</div>
+  <div id="list"></div>
+</div>
+
+<!-- 상세 모달 -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modal" style="position:relative">
+    <button class="close" id="modalClose">&times;</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ====== 설정 ====== */
+// Apps Script 웹앱 배포 후 나오는 URL을 여기에 붙여넣으세요.
+const API_URL = 'https://script.google.com/macros/s/AKfycbyX98qS-UA4K82D9r1EDp5cOJw1ZuohQqW-2e7kTL_8GiRirCJeek5mwmbp3om4s7Oy/exec';
+const LS_KEY = 'gfield_admin_key';
+
+let ADMIN_KEY = '';
+let STUDENTS = [];
+
+/* ====== 유틸 ====== */
+const $ = id => document.getElementById(id);
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
+
+async function api(payload){
+  const res = await fetch(API_URL, {
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'}, // CORS 단순요청
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
+
+/* ====== 로그인 ====== */
+function tryLogin(key, remember){
+  // 키 검증은 첫 admin_list 호출로 확인
+  ADMIN_KEY = key;
+  $('gateErr').textContent = '검증 중…';
+  api({action:'admin_list', key}).then(r=>{
+    if(r && r.ok){
+      if(remember) localStorage.setItem(LS_KEY, key);
+      $('gate').style.display='none';
+      renderList(r.list||[]);
+    }else{
+      $('gateErr').textContent = '키가 올바르지 않습니다.';
+      ADMIN_KEY='';
+    }
+  }).catch(()=>{ $('gateErr').textContent='연결 오류. URL을 확인하세요.'; });
+}
+
+$('keyBtn').addEventListener('click', ()=>{
+  const k=$('keyInput').value.trim();
+  if(!k){$('gateErr').textContent='키를 입력하세요.';return;}
+  tryLogin(k, $('rememberKey').checked);
+});
+$('keyInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('keyBtn').click();});
+
+$('logoutBtn').addEventListener('click', ()=>{
+  localStorage.removeItem(LS_KEY); ADMIN_KEY='';
+  $('gate').style.display='flex'; $('keyInput').value=''; $('gateErr').textContent='';
+});
+
+/* 자동 로그인 */
+window.addEventListener('DOMContentLoaded', ()=>{
+  const saved = localStorage.getItem(LS_KEY);
+  if(saved) tryLogin(saved, true);
+});
+
+/* ====== 목록 ====== */
+function loadList(){
+  $('count').textContent='불러오는 중…';
+  api({action:'admin_list', key:ADMIN_KEY}).then(r=>{
+    if(r&&r.ok) renderList(r.list||[]);
+    else toast('목록을 불러오지 못했습니다.');
+  });
+}
+$('refreshBtn').addEventListener('click', loadList);
+
+function renderList(list){
+  STUDENTS = list;
+  applyFilter();
+}
+$('search').addEventListener('input', applyFilter);
+
+function applyFilter(){
+  const q = $('search').value.trim().toLowerCase();
+  const rows = STUDENTS.filter(s=>{
+    if(!q) return true;
+    return [s.code,s.name,s.phone].some(x=>String(x||'').toLowerCase().includes(q));
+  });
+  $('count').textContent = `학생 ${rows.length}명` + (q?` (검색: ${STUDENTS.length}명 중)`:'');
+  const html = rows.map(s=>{
+    const custom = s.customAllowed
+      ? '<span class="badge on">커스텀 ON</span>'
+      : '<span class="badge off">커스텀 OFF</span>';
+    const edit = `<span class="badge edit">재작성 ${s.edits||0}회</span>`;
+    const diag = s.hasDiag?'<span class="badge has">진도</span>':'';
+    const cust = s.hasCustom?'<span class="badge has">웩슬러</span>':'';
+    return `<div class="student" data-code="${esc(s.code)}">
+      <div class="top">
+        <div class="who">
+          <span class="code">${esc(s.code)}</span>
+          <span class="name">${esc(s.name||'-')}</span>
+        </div>
+        <div class="badges">${custom}</div>
+      </div>
+      <div class="meta">
+        <span class="phone">${esc(s.phone||'연락처 없음')}</span>
+        &nbsp;·&nbsp; ${edit} ${diag} ${cust}
+      </div>
+    </div>`;
+  }).join('');
+  $('list').innerHTML = rows.length ? html
+    : '<div class="empty"><b>학생이 없습니다.</b><br>우측 상단 “승인번호 발급”으로 추가하세요.</div>';
+  document.querySelectorAll('.student').forEach(el=>{
+    el.addEventListener('click', ()=>openDetail(el.dataset.code));
+  });
+}
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* ====== 상세 ====== */
+function openDetail(code){
+  $('modalBody').innerHTML = '<div class="empty">불러오는 중…</div>';
+  $('modalBg').classList.add('show');
+  api({action:'admin_detail', key:ADMIN_KEY, code}).then(r=>{
+    if(!r||!r.ok){ $('modalBody').innerHTML='<div class="empty">기록을 찾을 수 없습니다.</div>'; return; }
+    renderDetail(r);
+  });
+}
+$('modalClose').addEventListener('click', ()=>$('modalBg').classList.remove('show'));
+$('modalBg').addEventListener('click', e=>{ if(e.target===$('modalBg')) $('modalBg').classList.remove('show'); });
+
+function renderDetail(s){
+  const diagStr = s.diag ? JSON.stringify(s.diag,null,2) : '(없음)';
+  const custStr = s.custom ? JSON.stringify(s.custom,null,2) : '(없음)';
+  $('modalBody').innerHTML = `
+    <h2>${esc(s.code)}</h2>
+    <div class="msub">${esc(s.name||'-')} · ${esc(s.phone||'연락처 없음')} · 수정 ${fmt(s.updatedAt)}</div>
+
+    <div class="toggle">
+      <div class="tlab">커스텀 권한</div>
+      <label class="switch">
+        <input type="checkbox" id="customToggle" ${s.customAllowed?'checked':''}>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="field">
+      <div class="lab">재작성 횟수 (현재 ${s.edits||0}회 / 최대 2회)</div>
+      <div class="ctrl-row">
+        <button class="btn ghost" id="resetEdits">0회로 리셋</button>
+        <button class="btn ghost" id="setEdits1">1회로</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="lab">스탠다드 진도</div>
+      <div class="val">${esc(diagStr)}</div>
+    </div>
+    <div class="field">
+      <div class="lab">커스텀 (웩슬러·환경·과제)</div>
+      <div class="val">${esc(custStr)}</div>
+    </div>
+  `;
+  // 권한 토글
+  $('customToggle').addEventListener('change', e=>{
+    const val = e.target.checked;
+    api({action:'admin_toggle_custom', key:ADMIN_KEY, code:s.code, value:val}).then(r=>{
+      if(r&&r.ok){ toast(val?'커스텀 권한 켜짐':'커스텀 권한 꺼짐'); s.customAllowed=val; loadList(); }
+      else { toast('변경 실패'); e.target.checked=!val; }
+    });
+  });
+  // 횟수 리셋
+  $('resetEdits').addEventListener('click', ()=>setEdits(s.code,0));
+  $('setEdits1').addEventListener('click', ()=>setEdits(s.code,1));
+}
+
+function setEdits(code, val){
+  api({action:'admin_reset_edits', key:ADMIN_KEY, code, value:val}).then(r=>{
+    if(r&&r.ok){ toast(`재작성 ${val}회로 설정`); loadList(); openDetail(code); }
+    else toast('변경 실패');
+  });
+}
+
+function fmt(d){ if(!d) return '-'; try{return new Date(d).toLocaleDateString('ko-KR');}catch(e){return d;} }
+
+/* ====== 승인번호 발급 ====== */
+$('addBtn').addEventListener('click', ()=>{
+  const code = prompt('발급할 승인번호를 입력하세요 (예: GF1234)');
+  if(!code) return;
+  const name = prompt('학생 이름 (선택, 비워도 됨)') || '';
+  const phone = prompt('연락처 (선택, 비워도 됨)') || '';
+  api({action:'admin_add', key:ADMIN_KEY, code:code.trim(), name:name.trim(), phone:phone.trim()}).then(r=>{
+    if(r&&r.ok){ toast(`${code} 발급 완료`); loadList(); }
+    else if(r&&r.error==='already_exists') toast('이미 있는 승인번호입니다.');
+    else toast('발급 실패');
+  });
+});
+</script>
+</body>
+</html>
