@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q44",
+  "variationId": "q44_var02",
+  "subType": "three_digit_conditions",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q44_var02.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q44.json", "hfDataTypeId": 44 },
+  "machineReadable": { "payloadType": "three_digit_conditions", "conditions": ["sum_10", "ones_smallest"], "expectedAnswer": 631 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 631 }
+}

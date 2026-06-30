@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q36",
+  "typeId": 36,
+  "title": "줄서기 조건으로 전체 인원수의 최솟값과 최댓값 구하기",
+  "problemType": "TYPE-04",
+  "subType": "min_max_order",
+  "answerType": "min_max_values",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q36.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 36,
+    "originalQuestionId": "q36_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "min_max_order",
+      "givens": {
+        "frontRank": 15,
+        "backRank": 10,
+        "peopleBetween": 6
+      },
+      "solvingModel": {
+        "minTotal": 18,
+        "maxTotal": 32,
+        "caseSplit": [
+          "두 사람이 같은 방향 기준으로 셀 때",
+          "두 사람이 줄의 반대쪽에 가까울 때"
+        ]
+      },
+      "judgementRule": {
+        "checks": [
+          "front_case_back_case"
+        ],
+        "description": "앞쪽에 있는 경우와 뒤쪽에 있는 경우를 따로 그려 최솟값과 최댓값을 구한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 최소값과 최대값을 정한 뒤, 앞에서 몇 번째·뒤에서 몇 번째·사이 인원 조건을 맞춰 그 두 값이 나오게 설계한다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "conditionCount": 2
+        },
+        "baseMode": {
+          "conditionCount": 3
+        },
+        "hardMode": {
+          "conditionCount": 4,
+          "mustPreserve": [
+            "min max split",
+            "single valid min and max"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "앞 순위",
+          "뒤 순위",
+          "사이 인원 수"
+        ],
+        "mustPreserve": [
+          "줄서기 조건으로 전체 인원을 추론하는 구조",
+          "최솟값과 최댓값을 함께 구하는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "최소·최대가 같은 값으로만 나오는 문제",
+          "조건이 모순되는 문제",
+          "최소나 최대가 여러 값으로 갈리는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "line_order_diagram",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "min_max_values",
+    "expectedAnswer": {
+      "min": 18,
+      "max": 32
+    },
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "split_cases_for_line_order_extremes",
+      "checks": [
+        "앞 순위와 뒤 순위를 반영했는지 확인",
+        "사이에 6명이 있는 조건을 반영했는지 확인",
+        "최솟값이 18인지 확인",
+        "최댓값이 32인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q36 경로 존재 확인",
+      "hf_data.json typeId 36의 originalProblem.answer가 18명, 32명인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 min_max_order인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

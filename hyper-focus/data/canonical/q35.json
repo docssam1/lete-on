@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q35",
+  "typeId": 35,
+  "title": "조건을 보고 달리기 순서 추론하기",
+  "problemType": "TYPE-04",
+  "subType": "line_order",
+  "answerType": "name",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q35.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": false,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 35,
+    "originalQuestionId": "q35_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "line_order",
+      "participants": ["현수", "정희", "민호", "가영", "호진"],
+      "conditions": [
+        "가영은 현수보다 뒤, 호진보다 앞이다.",
+        "호진보다 앞에 있는 사람 수와 뒤에 있는 사람 수는 같다.",
+        "민호 바로 뒤에는 정희가 달리고 있다."
+      ],
+      "query": "4등으로 달리고 있는 사람",
+      "solvingModel": {
+        "recommendedOrder": [
+          "가운데가 고정되는 사람을 먼저 잡는다.",
+          "앞뒤 조건으로 줄을 그린다.",
+          "붙어 있는 두 사람 조건을 끼워 넣는다."
+        ],
+        "expectedAnswer": "민호"
+      },
+      "judgementRule": {
+        "checks": [
+          "draw_circles_or_number_line"
+        ],
+        "description": "이름을 일렬로 적어 보며 앞뒤와 바로 뒤 조건을 함께 맞춘다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 목표 순서와 물을 사람을 정한 뒤, 그 순서만 가능하도록 앞뒤 조건을 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "participantCount": 4
+        },
+        "baseMode": {
+          "participantCount": 5
+        },
+        "hardMode": {
+          "participantCount": 6,
+          "allowMoreAdjacencyConditions": true
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "이름",
+          "조건 문장",
+          "묻는 등수"
+        ],
+        "mustPreserve": [
+          "일렬 순서를 추론하는 구조",
+          "앞뒤 비교와 인접 조건을 함께 쓰는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "조건이 서로 모순되는 문제",
+          "같은 조건으로 순서가 여러 개 가능한 문제",
+          "등수 질문이 모호한 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "line_order_diagram",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "name",
+    "expectedAnswer": "민호",
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "solve_line_order_constraints",
+      "checks": [
+        "호진이 가운데 위치 조건을 만족하는지 확인",
+        "가영의 앞뒤 조건을 적용하는지 확인",
+        "민호 바로 뒤에 정희 조건을 적용하는지 확인",
+        "4등이 민호인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q35 경로 존재 확인",
+      "hf_data.json typeId 35의 originalProblem.answer가 민호인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 line_order인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

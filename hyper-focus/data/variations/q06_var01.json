@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q06",
+  "variationId": "q06_var01",
+  "subType": "solid_view_impossible",
+  "status": "approved",
+  "source": {
+    "problemImage": "./assets/problems/q06_var01.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q06.json",
+    "hfDataTypeId": 6
+  },
+  "variationPolicy": {
+    "preservedFromOriginal": [
+      "1층 테트로미노 구조",
+      "기본 블록 배치 형태",
+      "회전만 허용하고 대칭 뒤집기는 허용하지 않는 판단 구조",
+      "색 위치 비교 규칙"
+    ],
+    "changedFromOriginal": [
+      "블록 색 배치",
+      "보기 색 순서",
+      "보기 개수 축소"
+    ]
+  },
+  "machineReadable": {
+    "payloadType": "solid_view_impossible",
+    "baseSolid": {
+      "layerCount": 1,
+      "fixedSingleLayer": true,
+      "blocks": [
+        {
+          "blockId": "R1",
+          "grid": { "x": 0, "y": 0, "z": 0 },
+          "color": "red"
+        },
+        {
+          "blockId": "R2",
+          "grid": { "x": 0, "y": 1, "z": 0 },
+          "color": "red"
+        },
+        {
+          "blockId": "Y1",
+          "grid": { "x": 1, "y": 0, "z": 0 },
+          "color": "yellow"
+        },
+        {
+          "blockId": "B1",
+          "grid": { "x": 1, "y": 1, "z": 0 },
+          "color": "blue"
+        },
+        {
+          "blockId": "P1",
+          "grid": { "x": 2, "y": 1, "z": 0 },
+          "color": "purple"
+        }
+      ]
+    },
+    "choices": [
+      {
+        "choiceId": 1,
+        "visibleColorSequence": ["yellow", "blue", "purple"],
+        "isValid": true
+      },
+      {
+        "choiceId": 2,
+        "visibleColorSequence": ["purple", "red"],
+        "isValid": true
+      },
+      {
+        "choiceId": 3,
+        "visibleColorSequence": ["red", "yellow", "yellow", "blue", "purple"],
+        "isValid": true
+      },
+      {
+        "choiceId": 4,
+        "visibleColorSequence": ["red", "yellow", "blue", "purple"],
+        "isValid": false,
+        "invalidReason": "회전으로는 만들 수 없는 색 순서다."
+      },
+      {
+        "choiceId": 5,
+        "visibleColorSequence": ["red", "yellow"],
+        "isValid": true
+      }
+    ]
+  },
+  "answerValidation": {
+    "answerType": "option_set",
+    "expectedAnswer": [4]
+  },
+  "reviewSummary": {
+    "sameAsOriginal": [
+      "1층 고정",
+      "회전 관찰 문제",
+      "색 위치 비교로 정답 판단"
+    ],
+    "changedFromOriginal": [
+      "색 구성 변경",
+      "보기 8개에서 5개로 축소"
+    ],
+    "humanCheckPoints": [
+      "거울상과 회전을 혼동하지 않았는지",
+      "4번만 불가능한지",
+      "블록 배치가 원본과 같은지"
+    ]
+  }
+}

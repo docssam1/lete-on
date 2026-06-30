@@ -1,0 +1,264 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q01",
+  "typeId": 1,
+  "title": "앞과 뒤에서 본 모양으로 전체 쌓기나무 개수 구하기",
+  "problemType": "TYPE-01",
+  "subType": "stacking_front_back_count",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q01.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "summary": {
+    "prompt": "다음은 쌓기 나무로 만든 모양을 앞과 뒤에서 본 모양입니다. 쌓기 나무는 모두 몇 개입니까?",
+    "asks": "앞과 뒤에서 보이는 쌓기나무를 이용하여 전체 개수를 구한다.",
+    "coreRule": "앞모양으로 기본 개수를 잡고, 뒤모양에서 안 보이는 것만 추가한다.",
+    "commonMistakes": [
+      "앞뒤가 바뀔 때 오른쪽과 왼쪽이 바뀌는 것을 놓친다.",
+      "뒤에 가려진 블록을 빠뜨린다.",
+      "앞에서 이미 센 블록을 뒤에서 다시 더한다."
+    ],
+    "docssamRules": [
+      "stacking_write_heights",
+      "hidden_blocks"
+    ]
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 1,
+    "originalQuestionId": "q01_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "stacking_front_back_count",
+      "coordinateSystem": {
+        "origin": "앞줄의 가장 왼쪽 바닥 칸",
+        "xAxis": "앞에서 볼 때 왼쪽에서 오른쪽",
+        "yAxis": "앞에서 뒤쪽",
+        "zAxis": "아래에서 위쪽",
+        "unit": "cube"
+      },
+      "heightMap": {
+        "rowOrder": "front_to_back",
+        "rows": [
+          {
+            "y": 0,
+            "heights": [
+              1,
+              1
+            ]
+          },
+          {
+            "y": 1,
+            "heights": [
+              3,
+              2,
+              1
+            ]
+          },
+          {
+            "y": 2,
+            "heights": [
+              1,
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      "stacks": [
+        {
+          "stackId": "front_left",
+          "grid": {
+            "x": 0,
+            "y": 0
+          },
+          "height": 1
+        },
+        {
+          "stackId": "front_center",
+          "grid": {
+            "x": 1,
+            "y": 0
+          },
+          "height": 1
+        },
+        {
+          "stackId": "middle_left",
+          "grid": {
+            "x": 0,
+            "y": 1
+          },
+          "height": 3
+        },
+        {
+          "stackId": "middle_center",
+          "grid": {
+            "x": 1,
+            "y": 1
+          },
+          "height": 2
+        },
+        {
+          "stackId": "middle_right",
+          "grid": {
+            "x": 2,
+            "y": 1
+          },
+          "height": 1
+        },
+        {
+          "stackId": "rear_left",
+          "grid": {
+            "x": 0,
+            "y": 2
+          },
+          "height": 1
+        },
+        {
+          "stackId": "rear_center",
+          "grid": {
+            "x": 1,
+            "y": 2
+          },
+          "height": 1
+        },
+        {
+          "stackId": "rear_right",
+          "grid": {
+            "x": 2,
+            "y": 2
+          },
+          "height": 1
+        }
+      ],
+      "viewModel": {
+        "projection": "isometric",
+        "frontView": {
+          "id": "front",
+          "knownStackIds": [
+            "front_left",
+            "front_center",
+            "middle_left",
+            "middle_center",
+            "middle_right"
+          ],
+          "cameraDirection": "front_isometric"
+        },
+        "rearView": {
+          "id": "rear",
+          "newlyConfirmedStackIds": [
+            "rear_left",
+            "rear_center",
+            "rear_right"
+          ],
+          "cameraDirection": "rear_isometric",
+          "horizontalRelationToFront": "mirrored"
+        }
+      },
+      "countingModel": {
+        "frontVisibleBlockCount": 8,
+        "rearOnlyHiddenBlockCount": 3,
+        "expectedTotalBlockCount": 11,
+        "formula": "frontVisibleBlockCount + rearOnlyHiddenBlockCount"
+      },
+      "renderSpec": {
+        "renderer": "isometric_stacking_blocks",
+        "frontSvgGroupId": "q01-front-view",
+        "rearSvgGroupId": "q01-rear-view",
+        "showRearOnlyBlocksInExplanation": true,
+        "rearOnlyHighlightStackIds": [
+          "rear_left",
+          "rear_center",
+          "rear_right"
+        ]
+      },
+      "generationConstraints": {
+        "canChange": [
+          "기둥별 높이",
+          "앞줄 가운데줄 뒷줄의 칸 수",
+          "뒤에서 새로 확인되는 블록의 위치",
+          "가장 높은 기둥의 위치"
+        ],
+        "mustPreserve": [
+          "앞과 뒤 두 시점으로 전체 개수가 하나로 결정되는 구조",
+          "앞에서 확인되는 기본 블록과 뒤에서 추가 확인되는 블록의 구분",
+          "뒤에서 볼 때 좌우가 바뀌는 관계",
+          "쌓기나무가 아래에서부터 빈칸 없이 쌓이는 규칙"
+        ],
+        "forbiddenChanges": [
+          "앞과 뒤 그림을 보고도 전체 개수가 하나로 정해지지 않는 구조",
+          "앞에서 이미 확인된 블록을 뒤에서 다시 더하게 만드는 구조",
+          "뒤모양에서 좌우 반전을 무시하는 구조",
+          "공중에 떠 있는 쌓기나무 구조"
+        ]
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "integer_with_unit",
+    "unit": "개",
+    "expectedAnswer": 11,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "front_visible_plus_rear_only_hidden",
+      "steps": [
+        {
+          "step": 1,
+          "description": "앞에서 보이는 쌓기나무는 8개입니다.",
+          "value": 8
+        },
+        {
+          "step": 2,
+          "description": "뒤에서만 새로 확인되는 쌓기나무는 3개입니다.",
+          "value": 3
+        },
+        {
+          "step": 3,
+          "description": "8 + 3 = 11 이므로 전체는 11개입니다.",
+          "expression": "8 + 3",
+          "value": 11
+        }
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q01 경로 존재 확인",
+      "hf_data.json typeId 1의 originalProblem.answer가 11개인지 확인",
+      "aiTutorPack.audioScript의 8 + 3 = 11 흐름과 일치하는지 확인",
+      "subType이 stacking_front_back_count인지 확인",
+      "heightMap 합계가 11인지 확인",
+      "rearView가 frontView의 좌우 반전 규칙과 일치하는지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q04",
+  "variationId": "q04_var02",
+  "subType": "stacking_hole_removed",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/problems/q04_var02.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q04.json",
+    "hfDataTypeId": 4
+  },
+  "machineReadable": {
+    "payloadType": "stacking_hole_removed",
+    "container": {
+      "width": 4,
+      "height": 4,
+      "depth": 4,
+      "totalCells": 64
+    },
+    "layerCountModel": {
+      "layers": [
+        { "layer": 1, "removedBlockCount": 1 },
+        { "layer": 2, "removedBlockCount": 7 },
+        { "layer": 3, "removedBlockCount": 1 },
+        { "layer": 4, "removedBlockCount": 7 }
+      ],
+      "removedBlockCount": 16
+    },
+    "countingModel": {
+      "totalBlockCount": 64,
+      "removedBlockCount": 16,
+      "remainingBlockCount": 48
+    }
+  },
+  "answerValidation": {
+    "answerType": "integer",
+    "expectedAnswer": 48
+  }
+}

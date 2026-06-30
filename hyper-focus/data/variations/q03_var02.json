@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q03",
+  "variationId": "q03_var02",
+  "subType": "stacking_checker_color",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/problems/q03_var02.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q03.json",
+    "hfDataTypeId": 3
+  },
+  "machineReadable": {
+    "payloadType": "stacking_checker_color",
+    "heightMap": {
+      "rows": [
+        { "y": 0, "heights": [4, 3, 2, 1] },
+        { "y": 1, "heights": [2, 2, 1, 0] },
+        { "y": 2, "heights": [1, 0, 0, 0] }
+      ]
+    },
+    "derivedCounts": {
+      "totalBlockCount": 16,
+      "blackCount": 9,
+      "whiteCount": 7,
+      "askedColor": "white"
+    }
+  },
+  "answerValidation": {
+    "answerType": "integer",
+    "expectedAnswer": 7
+  }
+}

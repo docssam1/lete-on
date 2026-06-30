@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q26",
+  "typeId": 26,
+  "title": "성냥개비 3개를 옮겨 목표 도형 만들기",
+  "problemType": "TYPE-03",
+  "subType": "matchstick_move",
+  "answerType": "drawing_target",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q26.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 26,
+    "originalQuestionId": "q26_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "matchstick_move",
+      "initialFigure": {
+        "figureClass": "matchstick_grid_like_open_shape",
+        "matchstickCount": 12
+      },
+      "moveRule": {
+        "moveCount": 3,
+        "removeThenPlace": true,
+        "addForbidden": true,
+        "discardForbidden": true
+      },
+      "targetFigure": {
+        "shapeType": "squares",
+        "squareCount": 3,
+        "equalSizeRequired": true
+      },
+      "judgementRule": {
+        "checks": [
+          "move_not_add",
+          "same_size_shapes"
+        ],
+        "description": "성냥개비를 새로 더하는 것이 아니라 정확히 3개만 옮겨, 크기가 같은 정사각형 3개를 만들어야 한다."
+      },
+      "solutionStrategy": {
+        "recommendedOrder": [
+          "이미 쓸 수 있는 선분은 먼저 남긴다.",
+          "부족한 변이 어디인지 찾는다.",
+          "남는 성냥개비 3개를 그 자리로 옮긴다."
+        ]
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 목표 도형 배치를 정한 뒤, 거기서 3개 선분을 어긋나게 옮겨 원문제를 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "moveCount": 2,
+          "targetShape": "equal_squares"
+        },
+        "baseMode": {
+          "moveCount": 3,
+          "targetShape": "equal_squares",
+          "targetCount": 3
+        },
+        "hardMode": {
+          "moveCount": 3,
+          "allowTargetShapes": [
+            "equal_squares",
+            "equal_triangles"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "초기 성냥개비 배치",
+          "이동 개수",
+          "목표 도형 종류",
+          "목표 도형 개수"
+        ],
+        "mustPreserve": [
+          "성냥개비를 옮기는 구조",
+          "새로 추가하지 않는 규칙",
+          "목표 도형 크기가 같아야 하는 규칙",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "성냥개비를 더하거나 버려야 하는 문제",
+          "같은 크기 조건이 모호한 문제",
+          "여러 답이 동시에 허용되는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "use_original_structure_preferred",
+        "svgRequired": true,
+        "renderer": "matchstick_move"
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "drawing_target",
+    "expectedAnswer": "같은 크기의 정사각형 3개",
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "rearrange_matchsticks_to_equal_squares",
+      "checks": [
+        "성냥개비 수가 유지되는지 확인",
+        "정확히 3개만 이동하는지 확인",
+        "결과가 같은 크기 정사각형 3개인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q26 경로 존재 확인",
+      "hf_data.json typeId 26의 originalProblem.answer가 같은 크기의 정사각형 3개인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 matchstick_move인지 확인",
+      "moveRule.moveCount가 3인지 확인",
+      "targetFigure.squareCount가 3인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

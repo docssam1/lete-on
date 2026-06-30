@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q13",
+  "variationId": "q13_var01",
+  "subType": "pentomino_fill",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/problems/q13_var01.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q13.json",
+    "hfDataTypeId": 13
+  },
+  "problem": {
+    "prompt": "Choose the piece that can fill the target shape exactly."
+  },
+  "machineReadable": {
+    "payloadType": "pentomino_fill",
+    "targetCellCount": 5,
+    "choices": [
+      { "choiceId": 1, "isValid": false },
+      { "choiceId": 2, "isValid": true },
+      { "choiceId": 3, "isValid": false },
+      { "choiceId": 4, "isValid": false }
+    ],
+    "expectedAnswer": [2]
+  },
+  "answerValidation": {
+    "answerType": "option_set",
+    "expectedAnswer": [2]
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q09",
+  "typeId": 9,
+  "title": "위, 앞, 오른쪽 옆에서 본 모양으로 최소 쌓기나무 개수 구하기",
+  "problemType": "TYPE-01",
+  "subType": "stacking_three_views_minimum",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q09.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 9,
+    "originalQuestionId": "q09_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "stacking_three_views_minimum",
+      "coordinateSystem": {
+        "xAxis": "left_to_right",
+        "yAxis": "front_to_back",
+        "zAxis": "bottom_to_top",
+        "unit": "cube"
+      },
+      "views": {
+        "topView": {
+          "occupiedCells": [
+            { "x": 0, "y": 0 },
+            { "x": 0, "y": 1 },
+            { "x": 0, "y": 2 },
+            { "x": 1, "y": 1 }
+          ],
+          "shapeLabel": "T_right"
+        },
+        "frontView": {
+          "columnHeights": [3, 1],
+          "shapeLabel": "L_shape"
+        },
+        "rightView": {
+          "columnHeights": [1, 1, 3],
+          "shapeLabel": "T_top"
+        }
+      },
+      "finalBlockStructure": {
+        "minimumHeightMap": {
+          "rowOrder": "front_to_back",
+          "rows": [
+            {
+              "y": 0,
+              "heights": [3, 0]
+            },
+            {
+              "y": 1,
+              "heights": [1, 1]
+            },
+            {
+              "y": 2,
+              "heights": [1, 0]
+            }
+          ]
+        },
+        "totalBlockCount": 6
+      },
+      "judgementRule": {
+        "description": "완성된 쌓기나무를 먼저 정한 뒤 위, 앞, 오른쪽 옆에서 본 모양이 모두 일치하도록 최소 개수로 채운다.",
+        "checks": [
+          "top_view_occupancy",
+          "front_view_heights",
+          "right_view_heights",
+          "minimum_blocks"
+        ]
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "정답을 먼저 확정한 뒤, 그 정답이 유일하게 나오도록 완성 구조와 세 방향 투영도를 설계한다."
+      },
+      "generationTemplate": {
+        "baseMode": {
+          "changeable": [
+            "topView occupied cells",
+            "frontView column heights",
+            "rightView column heights"
+          ],
+          "mustPreserve": [
+            "완성된 쌓기나무를 기준으로 위, 앞, 오른쪽 옆 투영도를 그리는 구조",
+            "최소 개수를 묻는 구조",
+            "정답이 하나로 결정되는 구조"
+          ]
+        },
+        "easyMode": {
+          "changeable": [
+            "topView occupied cells",
+            "frontView column heights",
+            "rightView column heights"
+          ],
+          "maxHeight": 3,
+          "maxOccupiedCells": 4
+        },
+        "hardMode": {
+          "changeable": [
+            "topView occupied cells",
+            "frontView column heights",
+            "rightView column heights",
+            "height upper bound"
+          ],
+          "maxHeight": 4,
+          "maxOccupiedCells": 6
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "완성 구조의 높이맵",
+          "위에서 본 점유 칸 배치",
+          "앞에서 본 높이 배열",
+          "오른쪽 옆에서 본 높이 배열"
+        ],
+        "mustPreserve": [
+          "완성된 쌓기나무를 먼저 정하고 투영도를 계산하는 구조",
+          "위, 앞, 오른쪽 옆 3개 투영도가 서로 일관되는 구조",
+          "최소 개수 정답이 유일하게 결정되는 구조",
+          "정답을 먼저 정하고 문제를 설계하는 원칙"
+        ],
+        "forbiddenChanges": [
+          "세 방향 투영도로부터 완성 구조가 여러 개 나오는 배치",
+          "공중에 떠 있는 쌓기나무",
+          "한 기둥의 중간층이 비는 구조",
+          "원본과 다른 유형으로 바뀌는 변형"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg",
+        "svgRequired": true,
+        "renderer": "three_view_minimum_blocks",
+        "showTopView": true,
+        "showFrontView": true,
+        "showRightView": true
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "integer_with_unit",
+    "unit": "개",
+    "expectedAnswer": 6,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "three_view_minimum_reconstruction",
+      "steps": [
+        {
+          "step": 1,
+          "description": "위에서 본 모양의 4칸을 기준으로 쌓을 위치를 정합니다."
+        },
+        {
+          "step": 2,
+          "description": "앞에서 본 높이 3과 1을 맞추도록 최소 높이를 배치합니다."
+        },
+        {
+          "step": 3,
+          "description": "오른쪽 옆에서 본 높이 1, 1, 3을 동시에 만족하도록 조정하면 총 6개가 됩니다.",
+          "value": 6
+        }
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q09 경로 존재 확인",
+      "hf_data.json typeId 9의 originalProblem.answer가 6개인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 stacking_three_views_minimum인지 확인",
+      "minimumHeightMap 합계가 6인지 확인",
+      "topView occupiedCells 수가 4인지 확인",
+      "frontView columnHeights가 [3,1]인지 확인",
+      "rightView columnHeights가 [1,1,3]인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

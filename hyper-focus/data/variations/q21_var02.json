@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q21",
+  "variationId": "q21_var02",
+  "subType": "place_value_conditions",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q21_var02.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q21.json", "hfDataTypeId": 21 },
+  "machineReadable": { "payloadType": "place_value_conditions", "digitCount": 3, "conditions": ["sum_9", "hundreds_eq_ones"], "expectedAnswer": 252 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 252 }
+}

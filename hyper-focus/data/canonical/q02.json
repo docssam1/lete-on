@@ -1,0 +1,264 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q02",
+  "typeId": 2,
+  "title": "상자를 가득 채우는 데 필요한 쌓기나무 개수 구하기",
+  "problemType": "TYPE-01",
+  "subType": "stacking_fill_cube",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q02.png",
+      "originalFilename": "2 정육면체를 완성하기 위해 채우기 위해 필요한 쌓기 나무의 개수 구하기.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "summary": {
+    "prompt": "오른쪽 그림은 네모 반듯한 모양의 상자 속에서 크기가 같은 상자 모양의 쌓기나무를 여러 개 채워 놓은 것입니다. 이 상자를 완전히 채우려면 쌓기나무가 몇 개 더 필요합니까?",
+    "asks": "상자 전체 칸 수와 현재 들어 있는 쌓기나무 수를 비교하여 더 필요한 개수를 구합니다.",
+    "coreRule": "가득 찬 전체 개수를 먼저 구한 다음, 지금 들어 있는 개수를 빼면 됩니다.",
+    "commonMistakes": [
+      "빈칸을 눈으로 하나씩 세다가 빠뜨린다.",
+      "구석이나 윗부분의 빈칸을 빠뜨린다.",
+      "아래층이 비었는데 위층만 있는 구조를 허용한다."
+    ],
+    "docssamRules": [
+      "full_count_minus_current",
+      "dont_miss_last_blocks"
+    ]
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 2,
+    "originalQuestionId": "q02_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "stacking_fill_cube",
+      "coordinateSystem": {
+        "rowOrder": "front_to_back",
+        "columnOrder": "left_to_right",
+        "heightAxis": "bottom_to_top",
+        "unit": "cube"
+      },
+      "container": {
+        "width": 3,
+        "depth": 3,
+        "height": 3,
+        "totalCells": 27
+      },
+      "heightMap": {
+        "rowOrder": "front_to_back",
+        "rows": [
+          {
+            "y": 0,
+            "heights": [
+              3,
+              3,
+              2
+            ]
+          },
+          {
+            "y": 1,
+            "heights": [
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "y": 2,
+            "heights": [
+              1,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "originalSolvedValues": {
+        "filledCount": 11,
+        "missingCount": 16,
+        "countMethod": "totalCells - filledCount"
+      },
+      "countingModel": {
+        "step1": {
+          "label": "가득 찬 전체 개수",
+          "expression": "3 x 3 x 3",
+          "value": 27
+        },
+        "step2": {
+          "label": "현재 있는 쌓기나무 개수",
+          "value": 11
+        },
+        "step3": {
+          "label": "더 필요한 개수",
+          "expression": "27 - 11",
+          "value": 16
+        }
+      },
+      "stackRule": {
+        "representation": "height_map",
+        "allowedHeights": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gravityRule": "각 바닥 칸의 쌓기나무는 반드시 1층부터 연속으로 쌓인다.",
+        "forbidden": [
+          "floating_block",
+          "gap_inside_vertical_stack",
+          "z2_without_z1",
+          "z3_without_z1_and_z2"
+        ]
+      },
+      "originalFigureStructure": {
+        "figureClass": "transparent_box_with_internal_stacks",
+        "confirmedFromSource": [
+          "3x3x3 container",
+          "filledCount 11",
+          "missingCount 16",
+          "heightMap"
+        ]
+      },
+      "generationTemplate": {
+        "baseMode": {
+          "container": {
+            "width": 3,
+            "depth": 3,
+            "height": 3
+          },
+          "mustHave": [
+            "at least 2 fully empty vertical columns"
+          ]
+        },
+        "advancedMode": {
+          "maxContainer": {
+            "width": 4,
+            "depth": 4,
+            "height": 4
+          }
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "상자 안의 쌓기나무 배치",
+          "각 바닥 칸의 높이",
+          "완전히 빈 세로 기둥의 위치",
+          "심화형의 상자 크기(최대 4x4x4)"
+        ],
+        "mustPreserve": [
+          "전체 가득 찬 개수 - 현재 있는 개수 구조 유지",
+          "기본형은 3x3x3 상자",
+          "기본형은 완전히 빈 세로 기둥 2개 이상 포함",
+          "모든 쌓기나무는 아래층부터 연속으로 쌓임"
+        ],
+        "forbiddenChanges": [
+          "기본형에서 3x3x3을 넘는 상자",
+          "심화형에서 4x4x4를 넘는 상자",
+          "공중에 떠 있는 쌓기나무",
+          "1층과 3층만 있고 2층이 비는 구조",
+          "중간이 빈 세로 기둥 구조",
+          "완전히 빈 세로 기둥이 2개 미만인 기본형",
+          "정답이 하나로 결정되지 않는 배치"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg",
+        "svgRequired": true,
+        "renderer": "transparent_box_with_inner_stacks",
+        "boxStyle": "wireframe_transparent",
+        "blockStyle": "wood_grain_cube",
+        "showInteriorVisibility": true
+      }
+    }
+  },
+  "variationPolicy": {
+    "canChange": [
+      "내부 배치",
+      "각 위치의 높이",
+      "빈 기둥 위치",
+      "심화형 상자 크기"
+    ],
+    "mustPreserve": [
+      "전체 가득 찬 개수 - 현재 있는 개수 구조 유지",
+      "기본형은 3x3x3 상자",
+      "기본형은 완전히 빈 세로 기둥 2개 이상 포함",
+      "모든 쌓기나무는 아래층부터 연속으로 쌓임"
+    ],
+    "forbiddenChanges": [
+      "공중 블록",
+      "중간이 빈 기둥",
+      "기본형에서 3x3x3 초과",
+      "심화형에서 4x4x4 초과",
+      "완전히 빈 세로 기둥이 2개 미만인 기본형"
+    ]
+  },
+  "answerValidation": {
+    "answerType": "integer_with_unit",
+    "unit": "개",
+    "expectedAnswer": 16,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "full_count_minus_current",
+      "steps": [
+        {
+          "step": 1,
+          "description": "1층에 9개, 3층이면 전체 27개입니다.",
+          "expression": "3 x 3 x 3",
+          "value": 27
+        },
+        {
+          "step": 2,
+          "description": "지금 있는 쌓기나무는 11개입니다.",
+          "value": 11
+        },
+        {
+          "step": 3,
+          "description": "27 - 11 = 16 이므로 16개가 더 필요합니다.",
+          "expression": "27 - 11",
+          "value": 16
+        }
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q02 경로 존재 확인",
+      "hf_data.json typeId 2의 originalProblem.answer가 16개인지 확인",
+      "aiTutorPack.audioScript의 27 - 11 = 16 흐름과 일치하는지 확인",
+      "subType이 stacking_fill_cube인지 확인",
+      "heightMap 합계가 11인지 확인",
+      "기본형 생성 시 상자 크기가 3x3x3인지 확인",
+      "기본형 생성 시 완전히 빈 세로 기둥이 2개 이상인지 확인",
+      "생성된 모든 세로 기둥에 공중 블록이 없는지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

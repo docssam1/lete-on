@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q45",
+  "typeId": 45,
+  "title": "격자 길에서 가장 가까운 길의 가지 수 구하기",
+  "problemType": "TYPE-09",
+  "subType": "shortest_path_grid",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q45.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 45,
+    "originalQuestionId": "q45_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "shortest_path_grid",
+      "mapShape": {
+        "layout": "rectilinear_grid_with_indent"
+      },
+      "routeRule": {
+        "start": "미술관",
+        "end": "동물원",
+        "countShortestOnly": true
+      },
+      "solvingModel": {
+        "expectedAnswer": 16,
+        "strategy": [
+          "출발점과 도착점에 가장 가까운 칸부터 1로 채운다.",
+          "만나는 점마다 위와 왼쪽 값을 더한다.",
+          "도착점의 수를 읽는다."
+        ]
+      },
+      "judgementRule": {
+        "checks": [
+          "fill_ones_first",
+          "add_top_left"
+        ],
+        "description": "가장자리의 1을 먼저 채우고, 교차점마다 위와 왼쪽 값을 더한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 최단경로 수를 정한 뒤, 격자 구조를 설계해 도착점 값이 그 수가 되게 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "gridComplexity": "simple_rectangle"
+        },
+        "baseMode": {
+          "gridComplexity": "one_indent"
+        },
+        "hardMode": {
+          "gridComplexity": "multiple_indent",
+          "mustPreserve": [
+            "shortest path only",
+            "single valid count"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "격자 모양",
+          "시작점",
+          "도착점"
+        ],
+        "mustPreserve": [
+          "최단경로 가짓수를 세는 구조",
+          "격자 위 동적합으로 푸는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "최단경로 기준이 모호한 문제",
+          "대각선 이동 여부가 불명확한 문제",
+          "격자가 끊겨 해석이 갈리는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "grid_path_count_svg",
+        "svgRequired": true,
+        "renderer": "shortest_path_grid"
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 16,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "dp_count_shortest_paths",
+      "checks": [
+        "최단경로만 세는지 확인",
+        "가장자리 1 채우기를 적용하는지 확인",
+        "도착점 값이 16인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q45 경로 존재 확인",
+      "hf_data.json typeId 45의 originalProblem.answer가 16가지인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 shortest_path_grid인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

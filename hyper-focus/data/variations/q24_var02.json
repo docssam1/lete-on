@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q24",
+  "variationId": "q24_var02",
+  "subType": "change_plus_to_minus",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q24_var02.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q24.json", "hfDataTypeId": 24 },
+  "machineReadable": { "payloadType": "change_plus_to_minus", "equationCount": 4, "changeCount": 1, "expectedAnswer": 3 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 3 }
+}

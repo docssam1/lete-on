@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q16",
+  "variationId": "q16_var01",
+  "subType": "count_squares_grid",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q16_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q16.json", "hfDataTypeId": 16 },
+  "machineReadable": { "payloadType": "count_squares_grid", "gridRows": 3, "gridCols": 3, "expectedAnswer": 14 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 14 }
+}

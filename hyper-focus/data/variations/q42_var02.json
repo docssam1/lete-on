@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q42",
+  "variationId": "q42_var02",
+  "subType": "grid_fill_cases",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q42_var02.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q42.json", "hfDataTypeId": 42 },
+  "machineReadable": { "payloadType": "grid_fill_cases", "gridSize": "4x4", "expectedAnswer": 6 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 6 }
+}

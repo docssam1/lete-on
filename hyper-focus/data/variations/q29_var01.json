@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q29",
+  "variationId": "q29_var01",
+  "subType": "number_grid_pattern",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q29_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q29.json", "hfDataTypeId": 29 },
+  "machineReadable": { "payloadType": "number_grid_pattern", "gridSize": "3x3", "rule": "row_plus_col_pattern", "expectedAnswer": 12 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 12 }
+}

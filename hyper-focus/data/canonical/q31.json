@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q31",
+  "typeId": 31,
+  "title": "문자마다 0~8 중 하나씩 넣어 식 만족시키기",
+  "problemType": "TYPE-05",
+  "subType": "symbol_value_equations",
+  "answerType": "symbol_values",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q31.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 31,
+    "originalQuestionId": "q31_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "symbol_value_equations",
+      "digitDomain": [0, 1, 2, 3, 4, 5, 6, 7, 8],
+      "distinctAssignment": true,
+      "equations": [
+        "A + G = A",
+        "C + D = A",
+        "B + B + B = E",
+        "B x B x B = F",
+        "D + D + D = C",
+        "C x D = C"
+      ],
+      "solvingModel": {
+        "bestHintFirst": true,
+        "expectedAnswer": {
+          "A": 4,
+          "B": 2,
+          "C": 3,
+          "D": 1,
+          "E": 6,
+          "F": 8,
+          "G": 0
+        }
+      },
+      "judgementRule": {
+        "checks": [
+          "find_best_hint_first"
+        ],
+        "description": "조건이 강한 식부터 보고 문자의 값을 하나씩 고정한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 문자별 정답 배정을 정한 뒤, 그 배정이 유일하게 나오도록 식을 역으로 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "symbolCount": 4,
+          "digitDomainMax": 5
+        },
+        "baseMode": {
+          "symbolCount": 7,
+          "digitDomainMax": 8
+        },
+        "hardMode": {
+          "symbolCount": 8,
+          "allowMoreRelations": true,
+          "mustPreserve": [
+            "distinct assignment",
+            "single valid mapping"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "문자 수",
+          "식 내용",
+          "사용 숫자 범위"
+        ],
+        "mustPreserve": [
+          "문자마다 서로 다른 값을 넣는 구조",
+          "식을 만족하는 유일한 배정 구조",
+          "강한 힌트부터 좁혀 가는 풀이 구조"
+        ],
+        "forbiddenChanges": [
+          "문자값이 여러 개 가능한 문제",
+          "같은 숫자를 여러 문자에 써야 하는 문제",
+          "초기 조건만으로 해가 모호한 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "text_equation_with_symbol_boxes",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "symbol_values",
+    "expectedAnswer": {
+      "A": 4,
+      "B": 2,
+      "C": 3,
+      "D": 1,
+      "E": 6,
+      "F": 8,
+      "G": 0
+    },
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "solve_symbol_value_equations",
+      "checks": [
+        "각 문자가 0~8 중 하나인지 확인",
+        "중복 배정이 없는지 확인",
+        "모든 식을 만족하는지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q31 경로 존재 확인",
+      "hf_data.json typeId 31의 originalProblem.answer 매핑 확인",
+      "hf_core.json 및 problem_map.json의 subType이 symbol_value_equations인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

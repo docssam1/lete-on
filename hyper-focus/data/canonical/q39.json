@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q39",
+  "typeId": 39,
+  "title": "논리표를 이용해 조건에 맞는 짝 찾기",
+  "problemType": "TYPE-04",
+  "subType": "logic_matrix",
+  "answerType": "matching_pair",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q39.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": false,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 39,
+    "originalQuestionId": "q39_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "logic_matrix",
+      "entities": ["A", "B", "C", "D"],
+      "categories": ["사과", "배", "귤", "딸기"],
+      "choiceRule": {
+        "eachPersonChooses": 2
+      },
+      "conditions": [
+        "사과를 좋아한다고 말한 사람은 3명이다.",
+        "배와 귤을 좋아하는 사람은 각각 2명씩이다.",
+        "딸기는 C만 좋아한다.",
+        "A는 배, B는 사과를 좋아한다.",
+        "D는 사과와 배를 좋아한다."
+      ],
+      "solvingModel": {
+        "expectedAnswer": ["사과", "귤"],
+        "strategy": [
+          "확정되는 O와 X를 먼저 적는다.",
+          "각 과일의 총 인원 수 조건을 맞춘다.",
+          "B의 두 과일을 결정한다."
+        ]
+      },
+      "judgementRule": {
+        "checks": [
+          "dont_fill_all",
+          "two_circles_per_row"
+        ],
+        "description": "논리표를 전부 채우기보다 먼저 확정되는 O/X를 적고 각 줄의 개수를 맞춘다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 맞는 짝을 정한 뒤, 각 행·열의 개수 조건을 배치해 그 짝만 남도록 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "entityCount": 3,
+          "categoryCount": 3
+        },
+        "baseMode": {
+          "entityCount": 4,
+          "categoryCount": 4
+        },
+        "hardMode": {
+          "entityCount": 5,
+          "categoryCount": 5,
+          "mustPreserve": [
+            "count conditions",
+            "single valid pair"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "이름",
+          "카테고리 이름",
+          "좋아하는 개수 조건"
+        ],
+        "mustPreserve": [
+          "논리표로 O/X를 추론하는 구조",
+          "행·열 개수 조건을 함께 쓰는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "O/X 표가 여러 개 가능한 문제",
+          "개수 조건이 서로 모순되는 문제",
+          "질문 대상의 정답이 둘 이상인 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "logic_matrix_table_svg",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "matching_pair",
+    "expectedAnswer": ["사과", "귤"],
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "solve_logic_matrix_with_counts",
+      "checks": [
+        "딸기는 C만 좋아하는지 확인",
+        "A, B, D의 확정 과일을 반영하는지 확인",
+        "B의 과일이 사과와 귤인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q39 경로 존재 확인",
+      "hf_data.json typeId 39의 originalProblem.answer가 사과, 귤인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 logic_matrix인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

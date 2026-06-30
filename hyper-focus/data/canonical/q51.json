@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q51",
+  "typeId": 51,
+  "title": "시간 범위 안에서 시계 종이 울리는 횟수 구하기",
+  "problemType": "TYPE-05",
+  "subType": "clock_bell_count",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q51.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 51,
+    "originalQuestionId": "q51_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "clock_bell_count",
+      "bellRule": {
+        "hourBellCount": "hour_number",
+        "halfHourBellCount": 1
+      },
+      "timeRange": {
+        "start": "07:00",
+        "end": "14:00",
+        "excludeStartBell": true,
+        "includeEndBell": true
+      },
+      "solvingModel": {
+        "strategy": [
+          "7시 종은 제외한다.",
+          "7시 30분부터 1시 30분까지의 30분 종 횟수를 센다.",
+          "8시부터 2시까지의 정각 종 횟수를 더한다."
+        ],
+        "expectedAnswer": 60
+      },
+      "judgementRule": {
+        "checks": [
+          "exclude_start_time"
+        ],
+        "description": "시작 시각의 종 포함 여부를 먼저 확인한 뒤 정각 종과 30분 종을 나누어 센다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 총 종 횟수를 정한 뒤, 시작·끝 시각과 포함/제외 조건을 조절해 그 합이 나오도록 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "timeSpanHours": 3
+        },
+        "baseMode": {
+          "timeSpanHours": 7
+        },
+        "hardMode": {
+          "timeSpanHours": 12,
+          "mustPreserve": [
+            "hour half-hour split",
+            "single valid bell total"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "시작 시각",
+          "끝 시각",
+          "시작 포함 여부"
+        ],
+        "mustPreserve": [
+          "정각 종과 30분 종을 함께 세는 구조",
+          "시간 범위 안 합계를 구하는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "포함/제외 기준이 모호한 문제",
+          "정각과 30분 규칙이 섞여 불명확한 문제",
+          "해가 여러 개인 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "time_range_count_diagram",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 60,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "sum_hour_bells_and_half_hour_bells",
+      "checks": [
+        "7시 종을 제외하는지 확인",
+        "2시까지 정각 종을 포함하는지 확인",
+        "총합이 60인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q51 경로 존재 확인",
+      "hf_data.json typeId 51의 originalProblem.answer가 60번인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 clock_bell_count인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

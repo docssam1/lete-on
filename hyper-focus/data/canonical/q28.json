@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q28",
+  "typeId": 28,
+  "title": "겹치는 영역을 고려해 원 안의 합 맞추기",
+  "problemType": "TYPE-05",
+  "subType": "venn_sum_equal",
+  "answerType": "number",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q28.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": true,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 28,
+    "originalQuestionId": "q28_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "venn_sum_equal",
+      "diagram": {
+        "circleCount": 3,
+        "layout": "three_circle_overlap",
+        "targetPerCircle": 97
+      },
+      "knownRegions": {
+        "leftOnly": 39,
+        "rightOnly": 41,
+        "topLeftOverlap": 7
+      },
+      "unknownRegions": [
+        "topOnly",
+        "topRightOverlap",
+        "bottomOverlap"
+      ],
+      "solvingModel": {
+        "commonOverlapContribution": 12,
+        "expectedAnswer": 85,
+        "formula": "97 - 12 = 85"
+      },
+      "judgementRule": {
+        "checks": [
+          "subtract_overlap",
+          "avoid_double_count"
+        ],
+        "description": "한 원의 합을 맞출 때 겹친 영역을 중복해서 더하지 않도록 공통 부분을 먼저 본다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 답과 목표 합을 정한 뒤, 겹치는 공통 영역 값을 배치해 한 원 안 합이 정확히 맞도록 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "circleCount": 2,
+          "changeable": [
+            "수",
+            "목표 합"
+          ]
+        },
+        "baseMode": {
+          "circleCount": 3,
+          "changeable": [
+            "수",
+            "겹친 영역 값",
+            "목표 합"
+          ]
+        },
+        "hardMode": {
+          "circleCount": 3,
+          "allowMoreUnknownRegions": true,
+          "mustPreserve": [
+            "overlap subtraction",
+            "single valid answer"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "배치 숫자",
+          "겹친 영역 숫자",
+          "목표 합"
+        ],
+        "mustPreserve": [
+          "겹친 영역이 있는 원 구조",
+          "중복 계산을 피해야 하는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "겹친 영역을 어떻게 세는지 모호한 문제",
+          "중복 계산 여부가 갈리는 문제",
+          "정답이 여러 개인 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg",
+        "svgRequired": true,
+        "renderer": "venn_sum_equal"
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "number",
+    "expectedAnswer": 85,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "subtract_shared_overlap_from_target",
+      "checks": [
+        "한 원의 목표 합이 97인지 확인",
+        "공통으로 먼저 보는 값이 12인지 확인",
+        "97 - 12 = 85인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q28 경로 존재 확인",
+      "hf_data.json typeId 28의 originalProblem.answer가 85인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 venn_sum_equal인지 확인",
+      "solvingModel.expectedAnswer가 85인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

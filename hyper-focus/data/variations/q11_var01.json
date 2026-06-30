@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q11",
+  "variationId": "q11_var01",
+  "subType": "paper_fold_top_numbers",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/problems/q11_var01.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q11.json",
+    "hfDataTypeId": 11
+  },
+  "problem": {
+    "prompt": "Fold the numbered paper as shown and find the sum of the visible top numbers after cutting."
+  },
+  "machineReadable": {
+    "payloadType": "paper_fold_top_numbers",
+    "grid": {
+      "rows": 4,
+      "cols": 4,
+      "values": [
+        [1, 2, 1, 2],
+        [2, 1, 2, 1],
+        [1, 2, 1, 2],
+        [2, 1, 2, 1]
+      ]
+    },
+    "foldSequence": ["left", "up"],
+    "cutPattern": "top_right_quarter",
+    "expectedAnswer": 6
+  },
+  "answerValidation": {
+    "answerType": "integer",
+    "expectedAnswer": 6
+  }
+}

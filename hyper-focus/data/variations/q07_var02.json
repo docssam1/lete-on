@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q07",
+  "variationId": "q07_var02",
+  "subType": "cube_net_matching",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/problems/q07_var02.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q07.json",
+    "hfDataTypeId": 7
+  },
+  "variationPolicy": {
+    "preservedFromOriginal": [
+      "cube net folding",
+      "opposite face check",
+      "triangle direction distinction"
+    ],
+    "changedFromOriginal": [
+      "new face marks",
+      "new impossible choice set"
+    ]
+  },
+  "problem": {
+    "prompt": "Choose all cube views that cannot be made from the net."
+  },
+  "machineReadable": {
+    "payloadType": "cube_net_matching",
+    "orientationBasis": {
+      "symbol0deg": "image_up",
+      "rotationDirection": "clockwise"
+    },
+    "net": {
+      "faces": [
+        { "faceId": "A_PLUS", "grid": { "x": -1, "y": 2 }, "mark": { "kind": "plus", "orientation": 0 } },
+        { "faceId": "B_CIRCLE", "grid": { "x": 0, "y": 2 }, "mark": { "kind": "circle", "orientation": 0 } },
+        { "faceId": "C_DOWN_TRIANGLE", "grid": { "x": 0, "y": 1 }, "mark": { "kind": "triangle_down", "orientation": 0 } },
+        { "faceId": "D_VERTICAL_STRIPES", "grid": { "x": 0, "y": 0 }, "mark": { "kind": "vertical_stripes", "orientation": 0, "stripeCount": 4 } },
+        { "faceId": "E_SQUARE", "grid": { "x": 1, "y": 0 }, "mark": { "kind": "square", "orientation": 0 } },
+        { "faceId": "F_UP_TRIANGLE", "grid": { "x": 0, "y": -1 }, "mark": { "kind": "triangle_up", "orientation": 0 } }
+      ],
+      "adjacency": [
+        { "from": "A_PLUS", "to": "B_CIRCLE", "direction": "right" },
+        { "from": "B_CIRCLE", "to": "C_DOWN_TRIANGLE", "direction": "down" },
+        { "from": "C_DOWN_TRIANGLE", "to": "D_VERTICAL_STRIPES", "direction": "down" },
+        { "from": "D_VERTICAL_STRIPES", "to": "E_SQUARE", "direction": "right" },
+        { "from": "D_VERTICAL_STRIPES", "to": "F_UP_TRIANGLE", "direction": "down" }
+      ],
+      "oppositeFacePairs": [
+        ["A_PLUS", "E_SQUARE"],
+        ["B_CIRCLE", "D_VERTICAL_STRIPES"],
+        ["C_DOWN_TRIANGLE", "F_UP_TRIANGLE"]
+      ]
+    },
+    "choices": [
+      { "choiceId": 1, "isValid": true },
+      { "choiceId": 2, "isValid": false, "invalidRule": "opposite_faces" },
+      { "choiceId": 3, "isValid": true },
+      { "choiceId": 4, "isValid": false, "invalidRule": "opposite_faces" },
+      { "choiceId": 5, "isValid": true }
+    ],
+    "expectedInvalidChoices": [2, 4]
+  },
+  "answerValidation": {
+    "answerType": "option_set",
+    "expectedAnswer": [2, 4]
+  }
+}

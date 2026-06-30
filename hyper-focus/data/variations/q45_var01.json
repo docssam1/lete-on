@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q45",
+  "variationId": "q45_var01",
+  "subType": "shortest_path_grid",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q45_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q45.json", "hfDataTypeId": 45 },
+  "machineReadable": { "payloadType": "shortest_path_grid", "gridSize": "4x4", "expectedAnswer": 6 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 6 }
+}

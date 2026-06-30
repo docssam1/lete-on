@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q08",
+  "variationId": "q08_var01",
+  "subType": "dice_roll",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/problems/q08_var01.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q08.json",
+    "hfDataTypeId": 8
+  },
+  "problem": {
+    "prompt": "Roll the cube along the arrows and find the bottom number at the target cell."
+  },
+  "machineReadable": {
+    "payloadType": "dice_roll",
+    "startState": {
+      "knownFaces": {
+        "front": 1,
+        "top": 2,
+        "right": 3
+      },
+      "oppositeFacePairs": [
+        [1, 6],
+        [2, 5],
+        [3, 4]
+      ]
+    },
+    "grid": {
+      "rowCount": 2,
+      "colCount": 4
+    },
+    "path": {
+      "startCell": { "x": 0, "y": 0 },
+      "moves": ["right", "right", "down"],
+      "targetCell": { "x": 2, "y": 1 }
+    },
+    "countingModel": {
+      "askedFace": "bottom",
+      "expectedAnswer": 1
+    }
+  },
+  "answerValidation": {
+    "answerType": "integer",
+    "expectedAnswer": 1
+  }
+}

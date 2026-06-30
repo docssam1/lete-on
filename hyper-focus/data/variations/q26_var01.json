@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q26",
+  "variationId": "q26_var01",
+  "subType": "matchstick_move",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q26_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q26.json", "hfDataTypeId": 26 },
+  "machineReadable": { "payloadType": "matchstick_move", "moveCount": 1, "targetEquationValue": 8, "expectedAnswer": 1 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 1 }
+}

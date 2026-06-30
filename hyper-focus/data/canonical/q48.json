@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q48",
+  "typeId": 48,
+  "title": "함께 할 때 걸리는 시간 구하기",
+  "problemType": "TYPE-08",
+  "subType": "work_together",
+  "answerType": "time_count",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q48.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 48,
+    "originalQuestionId": "q48_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "work_together",
+      "individualTimes": {
+        "민수": 6,
+        "철수": 12
+      },
+      "solvingModel": {
+        "lcmBasis": 12,
+        "민수WorkPerLCM": 2,
+        "철수WorkPerLCM": 1,
+        "togetherWorkPerLCM": 3,
+        "expectedAnswer": 4
+      },
+      "judgementRule": {
+        "checks": [
+          "same_number_in_times_table",
+          "work_bar"
+        ],
+        "description": "같은 작업량이 되는 시간 단위를 잡아 두 사람의 일한 양을 더한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 함께 걸리는 시간을 정한 뒤, 각자 걸리는 시간을 배치해 일의 양 합으로 그 시간이 나오게 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "workerCount": 2,
+          "timesShareSimpleMultiple": true
+        },
+        "baseMode": {
+          "workerCount": 2,
+          "useLCM": true
+        },
+        "hardMode": {
+          "workerCount": 3,
+          "mustPreserve": [
+            "same workload basis",
+            "single valid total time"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "각자 걸리는 시간",
+          "사람 수"
+        ],
+        "mustPreserve": [
+          "함께 한 일의 양을 더하는 구조",
+          "공배수 기준으로 비교하는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "일의 양 기준이 모호한 문제",
+          "소수점 처리가 불명확한 문제",
+          "함께 하는 시간이 여러 해로 갈리는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "work_bar_diagram",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "time_count",
+    "expectedAnswer": 4,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "combine_work_rates_via_common_work_amount",
+      "checks": [
+        "혼자 6일, 12일인지 확인",
+        "공배수 기준 작업량을 잡는지 확인",
+        "함께 4일인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q48 경로 존재 확인",
+      "hf_data.json typeId 48의 originalProblem.answer가 4일인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 work_together인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

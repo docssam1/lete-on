@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q34",
+  "variationId": "q34_var02",
+  "subType": "digit_card_subtraction",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q34_var02.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q34.json", "hfDataTypeId": 34 },
+  "machineReadable": { "payloadType": "digit_card_subtraction", "cards": [4, 5, 6, 8], "mustContainAdjacentDiffOne": true, "expectedAnswer": 41 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 41 }
+}

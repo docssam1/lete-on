@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q29",
+  "typeId": 29,
+  "title": "수 배열의 가로·세로 증가 규칙 찾기",
+  "problemType": "TYPE-05",
+  "subType": "number_grid_pattern",
+  "answerType": "ordered_slots",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q29.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": true,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 29,
+    "originalQuestionId": "q29_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "number_grid_pattern",
+      "gridShape": {
+        "layout": "staggered_boxes",
+        "blankCount": 3
+      },
+      "knownValues": [3, 5, 7, 14, 17, 21, 26, 32],
+      "ruleModel": {
+        "rowRule": "increase_by_2",
+        "columnRule": "fixed_difference_pattern",
+        "description": "가로로는 일정한 증가 규칙을 보고, 세로로도 따로 맞는 규칙을 확인한다."
+      },
+      "solvingModel": {
+        "expectedAnswer": [19, 23, 30],
+        "recommendedOrder": [
+          "가로 줄 규칙을 먼저 찾는다.",
+          "세로 줄 규칙을 따로 확인한다.",
+          "두 규칙을 동시에 만족하는 수를 빈칸에 넣는다."
+        ]
+      },
+      "judgementRule": {
+        "checks": [
+          "row_column_rules"
+        ],
+        "description": "가로 규칙과 세로 규칙을 따로 본 뒤 동시에 맞는 값을 넣는다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 빈칸 정답을 정한 뒤, 가로 규칙과 세로 규칙이 동시에 맞도록 주변 수를 배치한다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "blankCount": 2,
+          "changeable": [
+            "수",
+            "시작값"
+          ]
+        },
+        "baseMode": {
+          "blankCount": 3,
+          "changeable": [
+            "수",
+            "가로 증가폭",
+            "세로 증가폭"
+          ]
+        },
+        "hardMode": {
+          "blankCount": 4,
+          "mustPreserve": [
+            "row rule",
+            "column rule",
+            "single valid answer set"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "시작 숫자",
+          "증가폭",
+          "빈칸 위치",
+          "정답 수"
+        ],
+        "mustPreserve": [
+          "가로 규칙이 있는 구조",
+          "세로 규칙이 있는 구조",
+          "두 규칙을 함께 써야 풀리는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "가로와 세로 규칙이 충돌하는 문제",
+          "한 규칙만 봐도 여러 해가 되는 문제",
+          "배치 구조가 규칙 해석을 흐리는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg",
+        "svgRequired": true,
+        "renderer": "number_grid_pattern"
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "ordered_slots",
+    "expectedAnswer": [19, 23, 30],
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "fit_row_and_column_rules",
+      "checks": [
+        "가로 규칙을 확인한다",
+        "세로 규칙을 확인한다",
+        "빈칸 값이 19, 23, 30인지 확인한다"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q29 경로 존재 확인",
+      "hf_data.json typeId 29의 originalProblem.answer가 19, 23, 30인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 number_grid_pattern인지 확인",
+      "solvingModel.expectedAnswer가 19, 23, 30인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q17",
+  "variationId": "q17_var01",
+  "subType": "count_tilted_squares",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q17_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q17.json", "hfDataTypeId": 17 },
+  "machineReadable": { "payloadType": "count_tilted_squares", "figureClass": "mixed_axis_and_tilted_squares", "expectedAnswer": 6 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 6 }
+}

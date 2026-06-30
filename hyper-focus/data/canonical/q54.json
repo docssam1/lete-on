@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q54",
+  "typeId": 54,
+  "title": "수열에서 홀수의 개수 구하기",
+  "problemType": "TYPE-05",
+  "subType": "parity_sequence",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q54.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 54,
+    "originalQuestionId": "q54_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "parity_sequence",
+      "sequenceRule": {
+        "nextTerm": "sum_of_previous_two"
+      },
+      "parityPattern": {
+        "oddAs": 1,
+        "evenAs": 2,
+        "repeatUnit": [1, 1, 2],
+        "repeatLength": 3
+      },
+      "targetCount": 40,
+      "solvingModel": {
+        "expectedAnswer": 27,
+        "strategy": [
+          "홀수는 1, 짝수는 2로 바꾸어 본다.",
+          "홀홀짝 패턴이 반복되는 것을 찾는다.",
+          "40개까지의 반복 횟수로 홀수 개수를 센다."
+        ]
+      },
+      "judgementRule": {
+        "checks": [
+          "odd_one_even_two",
+          "pattern_repeat"
+        ],
+        "description": "수 자체를 모두 구하지 말고 홀짝 패턴의 반복만 본다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 홀수 개수를 정한 뒤, 항 개수와 시작 패턴을 조절해 반복 패턴으로 그 개수가 나오게 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "termCount": 15
+        },
+        "baseMode": {
+          "termCount": 40
+        },
+        "hardMode": {
+          "termCount": 60,
+          "mustPreserve": [
+            "parity only reasoning",
+            "repeat pattern count"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "앞의 시작 항",
+          "전체 항 개수"
+        ],
+        "mustPreserve": [
+          "앞의 두 수의 합으로 다음 수를 만드는 구조",
+          "홀짝 반복 패턴을 이용하는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "시작 패턴이 반복 규칙과 맞지 않는 문제",
+          "홀짝 패턴이 불명확한 문제",
+          "직접 수를 모두 써야만 하는 구조"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "sequence_parity_pattern",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 27,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "count_odds_from_repeating_parity_pattern",
+      "checks": [
+        "홀홀짝 반복 패턴을 확인하는지 확인",
+        "40항까지 홀수 개수가 27인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q54 경로 존재 확인",
+      "hf_data.json typeId 54의 originalProblem.answer가 27개인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 parity_sequence인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

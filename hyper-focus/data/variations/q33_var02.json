@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q33",
+  "variationId": "q33_var02",
+  "subType": "rps_stair_position",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q33_var02.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q33.json", "hfDataTypeId": 33 },
+  "machineReadable": { "payloadType": "rps_stair_position", "startPosition": 5, "moveCount": 3, "expectedAnswer": 8 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 8 }
+}

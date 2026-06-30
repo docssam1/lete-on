@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q46",
+  "variationId": "q46_var02",
+  "subType": "reverse_story",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q46_var02.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q46.json", "hfDataTypeId": 46 },
+  "machineReadable": { "payloadType": "reverse_story", "storyKind": "multiply_then_remove", "expectedAnswer": 21 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 21 }
+}

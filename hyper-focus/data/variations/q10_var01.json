@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q10",
+  "variationId": "q10_var01",
+  "subType": "overlap_paper_count",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/problems/q10_var01.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q10.json",
+    "hfDataTypeId": 10
+  },
+  "problem": {
+    "prompt": "Overlapped parts follow the sum rule. Find the requested value."
+  },
+  "machineReadable": {
+    "payloadType": "overlap_paper_count",
+    "paperCountByRegion": {
+      "A_only": 3,
+      "B_only": 5,
+      "A_intersect_B": 8
+    },
+    "questionMode": "count_overlap_layers",
+    "targetRegion": "A_intersect_B",
+    "expectedAnswer": 8
+  },
+  "answerValidation": {
+    "answerType": "integer",
+    "expectedAnswer": 8
+  }
+}

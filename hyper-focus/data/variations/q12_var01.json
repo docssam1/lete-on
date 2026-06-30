@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q12",
+  "variationId": "q12_var01",
+  "subType": "paper_hole_fold",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/problems/q12_var01.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q12.json",
+    "hfDataTypeId": 12
+  },
+  "problem": {
+    "prompt": "Fold the square paper twice and punch one hole. Find the number of holes after unfolding."
+  },
+  "machineReadable": {
+    "payloadType": "paper_hole_fold",
+    "foldSequence": ["vertical_half", "horizontal_half"],
+    "punchCount": 1,
+    "symmetryMultiplier": 4,
+    "expectedAnswer": 4
+  },
+  "answerValidation": {
+    "answerType": "integer",
+    "expectedAnswer": 4
+  }
+}

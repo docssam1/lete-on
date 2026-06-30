@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q27",
+  "typeId": 27,
+  "title": "벌집 배열에서 연산식 완성하기",
+  "problemType": "TYPE-05",
+  "subType": "honeycomb_operation",
+  "answerType": "ordered_slots",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q27.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": true,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 27,
+    "originalQuestionId": "q27_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "honeycomb_operation",
+      "boardShape": {
+        "cellCount": 7,
+        "layout": "center_with_surrounding_hexes"
+      },
+      "pathRule": {
+        "useAllGivenNumbers": true,
+        "useAllGivenOperators": true,
+        "visitEachUsedCellOnce": true,
+        "calculationOrder": "path_order",
+        "description": "보기에 있는 숫자와 연산 기호를 빠뜨리지 않고 한 번씩 지나는 길을 그려 식을 만든다."
+      },
+      "choiceSet": {
+        "choiceCount": 3,
+        "answers": [6, 3, 8]
+      },
+      "solvingModel": {
+        "recommendedOrder": [
+          "= 위치를 먼저 찾는다.",
+          "나눗셈이나 뺄셈처럼 제약이 큰 연산을 먼저 맞춘다.",
+          "남은 숫자를 모두 한 번씩 쓰는지 확인한다."
+        ],
+        "expectedFilledValues": [6, 3, 8]
+      },
+      "judgementRule": {
+        "checks": [
+          "use_all_numbers",
+          "fit_operation"
+        ],
+        "description": "모든 숫자와 기호를 한 번씩 써야 하고, 경로 순서대로 읽은 식이 올바르게 계산되어야 한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 빈칸 정답과 완성 식을 정한 뒤, 그 답이 나오도록 벌집 안 숫자 위치를 바꾸어 배치한다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "cellCount": 7,
+          "operationCount": 1,
+          "changeable": [
+            "숫자 위치",
+            "정답 순서"
+          ]
+        },
+        "baseMode": {
+          "cellCount": 7,
+          "operationCount": 1,
+          "changeable": [
+            "숫자 위치",
+            "연산 기호",
+            "빈칸 위치"
+          ]
+        },
+        "hardMode": {
+          "cellCount": 7,
+          "operationCount": 2,
+          "mustPreserve": [
+            "use all symbols",
+            "single valid path"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "숫자 위치",
+          "연산 기호",
+          "빈칸 위치",
+          "정답 순서"
+        ],
+        "mustPreserve": [
+          "벌집 배열 구조",
+          "답을 먼저 정하고 배치하는 생성 방식",
+          "모든 숫자와 기호를 한 번씩 사용하는 구조",
+          "경로 순서대로 계산하는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "숫자나 기호 일부를 쓰지 않아도 되는 문제",
+          "경로가 둘 이상 가능한 문제",
+          "계산 순서 해석이 갈리는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg",
+        "svgRequired": true,
+        "renderer": "honeycomb_operation"
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "ordered_slots",
+    "expectedAnswer": [6, 3, 8],
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "fit_all_cells_into_valid_operation_path",
+      "checks": [
+        "모든 보기 숫자와 기호를 사용하는지 확인",
+        "각 칸을 한 번씩만 지나는지 확인",
+        "경로 순서대로 계산한 값이 성립하는지 확인",
+        "빈칸 값 순서가 6, 3, 8인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q27 경로 존재 확인",
+      "hf_data.json typeId 27의 originalProblem.answer가 6, 3, 8인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 honeycomb_operation인지 확인",
+      "pathRule.useAllGivenNumbers가 true인지 확인",
+      "pathRule.visitEachUsedCellOnce가 true인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

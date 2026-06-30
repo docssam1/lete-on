@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q25",
+  "variationId": "q25_var02",
+  "subType": "two_condition_digits",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q25_var02.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q25.json", "hfDataTypeId": 25 },
+  "machineReadable": { "payloadType": "two_condition_digits", "conditions": ["ones_even", "sum_9"], "expectedAnswer": 243 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 243 }
+}

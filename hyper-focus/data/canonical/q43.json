@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q43",
+  "typeId": 43,
+  "title": "3칸 도형 색칠 경우의 수 구하기",
+  "problemType": "TYPE-06",
+  "subType": "coloring_triomino",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q43.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 43,
+    "originalQuestionId": "q43_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "coloring_triomino",
+      "shape": {
+        "cellCount": 3,
+        "layout": "straight_triomino"
+      },
+      "colorRule": {
+        "palette": ["red", "blue", "yellow", "purple"],
+        "pickCount": 3,
+        "rotationFlipSame": true
+      },
+      "solvingModel": {
+        "expectedAnswer": 12,
+        "strategy": [
+          "먼저 4가지 색 중 3가지를 고른다.",
+          "고른 3색의 배열을 만든다.",
+          "돌리거나 뒤집어 같은 것은 하나로 본다."
+        ]
+      },
+      "judgementRule": {
+        "checks": [
+          "rotation_flip_same"
+        ],
+        "description": "회전하거나 뒤집어 겹치면 같은 경우로 처리한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 경우의 수를 정한 뒤, 색 개수와 중복 제거 규칙을 맞춰 그 수가 나오게 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "paletteSize": 3,
+          "pickCount": 2
+        },
+        "baseMode": {
+          "paletteSize": 4,
+          "pickCount": 3
+        },
+        "hardMode": {
+          "paletteSize": 5,
+          "pickCount": 3,
+          "mustPreserve": [
+            "rotation flip dedupe",
+            "single valid count"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "색 개수",
+          "선택 색 수",
+          "도형 길이"
+        ],
+        "mustPreserve": [
+          "색칠 경우를 세는 구조",
+          "회전/뒤집기 중복 제거 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "중복 제거 기준이 모호한 문제",
+          "서로 다른 도형으로 해석되는 문제",
+          "경우의 수가 여러 값으로 갈리는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "coloring_cases_svg",
+        "svgRequired": true,
+        "renderer": "coloring_triomino"
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 12,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "count_colorings_with_symmetry_dedup",
+      "checks": [
+        "4가지 중 3가지를 고르는지 확인",
+        "회전/뒤집기 같은 것을 제거하는지 확인",
+        "경우 수가 12인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q43 경로 존재 확인",
+      "hf_data.json typeId 43의 originalProblem.answer가 12가지인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 coloring_triomino인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

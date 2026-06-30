@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q14",
+  "typeId": 14,
+  "title": "복합 도형을 가장 적은 수의 정사각형으로 나누기",
+  "problemType": "TYPE-03",
+  "subType": "square_partition_min",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q14.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 14,
+    "originalQuestionId": "q14_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "square_partition_min",
+      "baseFigure": {
+        "shapeType": "orthogonal_polygon",
+        "description": "격자 위의 ㄱ자형 복합 도형",
+        "gridBased": true
+      },
+      "partitionRule": {
+        "targetShape": "square",
+        "mustCoverAllArea": true,
+        "mustNotOverlap": true,
+        "mustStayInsideFigure": true,
+        "sameSizeNotRequired": true
+      },
+      "countingModel": {
+        "expectedAnswer": 6,
+        "strategy": [
+          "가장 큰 정사각형부터 먼저 찾는다.",
+          "남는 부분을 더 작은 정사각형으로 채운다.",
+          "서로 겹치거나 남는 부분 없이 최소 개수를 만든다."
+        ]
+      },
+      "judgementRule": {
+        "checks": [
+          "largest_square_first",
+          "not_same_size",
+          "full_partition_without_gap"
+        ],
+        "description": "정사각형들은 모두 같은 크기일 필요가 없으며, 가장 큰 정사각형부터 채워 최소 개수를 만든다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 최소 정사각형 개수를 먼저 정한 뒤, 그 개수가 유일하게 나오도록 복합 도형 구조를 설계한다."
+      },
+      "generationTemplate": {
+        "baseMode": {
+          "changeable": [
+            "row count",
+            "column count",
+            "inner notch size"
+          ],
+          "mustPreserve": [
+            "복합 도형을 정사각형으로 분할하는 구조",
+            "최소 개수를 묻는 구조",
+            "같은 크기일 필요가 없는 정사각형 분할 규칙"
+          ]
+        },
+        "easyMode": {
+          "changeable": [
+            "row count",
+            "column count"
+          ],
+          "maxGridSpan": 6
+        },
+        "hardMode": {
+          "changeable": [
+            "row count",
+            "column count",
+            "inner notch size"
+          ],
+          "maxGridSpan": 8
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "가로 칸 수",
+          "세로 칸 수",
+          "ㄱ자 돌출 길이",
+          "오목한 부분 크기"
+        ],
+        "mustPreserve": [
+          "정사각형으로 나누는 구조",
+          "겹침이나 남는 부분 없이 채우는 구조",
+          "최소 개수가 유일하게 결정되는 구조",
+          "정답을 먼저 정하고 문제를 설계하는 원칙"
+        ],
+        "forbiddenChanges": [
+          "여러 최소 해석이 같은 수준으로 성립하는 구조",
+          "정사각형 분할이 불가능한 도형",
+          "원본과 다른 유형으로 바뀌는 변형"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg",
+        "svgRequired": true,
+        "renderer": "square_partition_min",
+        "showGrid": true,
+        "showBaseFigure": true
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 6,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "largest_square_decomposition",
+      "checks": [
+        "가장 큰 정사각형을 우선 배치했는지 확인",
+        "남는 영역을 정사각형으로 모두 덮는지 확인",
+        "정사각형 개수가 6보다 더 작아질 수 없는지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q14 경로 존재 확인",
+      "hf_data.json typeId 14의 originalProblem.answer가 6개인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 square_partition_min인지 확인",
+      "partitionRule.sameSizeNotRequired가 true인지 확인",
+      "expectedAnswer가 6인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

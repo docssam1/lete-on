@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q32",
+  "variationId": "q32_var01",
+  "subType": "mirror_digital_number",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q32_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q32.json", "hfDataTypeId": 32 },
+  "machineReadable": { "payloadType": "mirror_digital_number", "displayNumber": 206, "expectedAnswer": 902 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 902 }
+}

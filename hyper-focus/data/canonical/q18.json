@@ -1,0 +1,180 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q18",
+  "typeId": 18,
+  "title": "쌓기나무 4개로 만들 수 있는 서로 다른 입체 모양 개수 구하기",
+  "problemType": "TYPE-03",
+  "subType": "tetra_cube_cases",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q18.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 18,
+    "originalQuestionId": "q18_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "tetra_cube_cases",
+      "baseUnit": {
+        "shape": "unit_cube",
+        "count": 4,
+        "connectivity": "face_connected_only"
+      },
+      "equivalenceRule": {
+        "sameIfRotated": true,
+        "sameIfReflected": true,
+        "description": "돌리거나 뒤집어서 겹치면 같은 모양으로 본다."
+      },
+      "countingRule": {
+        "target": "distinct_3d_shapes",
+        "expectedAnswer": 8,
+        "description": "쌓기나무 4개를 모두 이어 만든 입체를 회전과 뒤집기 중복 없이 센다."
+      },
+      "constructionRule": {
+        "allBlocksUsed": true,
+        "mustRemainConnected": true,
+        "allowStraight": true,
+        "allowBent": true,
+        "allowLayered": true,
+        "forbidden": [
+          "disconnected_shape",
+          "edge_only_contact",
+          "corner_only_contact"
+        ]
+      },
+      "solutionStrategy": {
+        "recommendedOrder": [
+          "기준 모양 하나를 정한다.",
+          "마지막 블록 위치를 바꾸며 가능한 입체를 나눈다.",
+          "돌리거나 뒤집어 같은 모양은 합친다.",
+          "남는 모양이 모두 몇 개인지 센다."
+        ],
+        "dedupeChecks": [
+          "rotation_same_shape",
+          "reflection_same_shape"
+        ]
+      },
+      "shapeFamilyGuide": {
+        "classificationAxes": [
+          "일직선형",
+          "한 번 꺾인형",
+          "두 방향으로 퍼지는형",
+          "층이 생기는형"
+        ],
+        "purpose": "유사문제 생성 시 모양 누락 없이 분류하기 위한 체크 축"
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 목표 블록 수와 중복 제거 규칙을 정한 뒤, 서로 다른 입체 개수가 하나로 결정되는 문제만 사용한다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "unitCubeCount": 3,
+          "mustPreserve": [
+            "face_connected_only",
+            "rotation_same_shape",
+            "reflection_same_shape"
+          ]
+        },
+        "baseMode": {
+          "unitCubeCount": 4,
+          "mustPreserve": [
+            "all blocks used",
+            "connected polycube",
+            "rotation/reflection dedupe"
+          ]
+        },
+        "hardMode": {
+          "unitCubeCount": 5,
+          "mustPreserve": [
+            "answer first design",
+            "connected polycube",
+            "rotation/reflection dedupe"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "사용 블록 수",
+          "예시 배치 방식",
+          "정답 개수"
+        ],
+        "mustPreserve": [
+          "모든 블록을 사용해 하나의 입체를 만드는 구조",
+          "면끼리 붙어 연결되는 규칙",
+          "돌리거나 뒤집어 같은 모양은 한 가지로 보는 규칙",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "블록이 떨어진 구조",
+          "꼭짓점이나 모서리만 닿는 구조",
+          "회전/뒤집기 중복 제거 규칙이 흐려지는 문제",
+          "정답이 여러 값으로 해석되는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg",
+        "svgRequired": true,
+        "renderer": "connected_polycube_counter",
+        "showUnitCubes": true,
+        "showReferenceBlocksOnly": true
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 8,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "count_distinct_tetracubes_under_rotation_and_reflection",
+      "checks": [
+        "사용 블록 수가 4개인지 확인",
+        "모든 경우가 연결된 입체인지 확인",
+        "돌림과 뒤집기 중복을 제거했는지 확인",
+        "남는 경우의 수가 8가지인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q18 경로 존재 확인",
+      "hf_data.json typeId 18의 originalProblem.answer가 8가지인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 tetra_cube_cases인지 확인",
+      "equivalenceRule.sameIfRotated가 true인지 확인",
+      "equivalenceRule.sameIfReflected가 true인지 확인",
+      "expectedAnswer가 8인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

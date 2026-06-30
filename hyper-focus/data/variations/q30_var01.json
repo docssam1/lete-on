@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q30",
+  "variationId": "q30_var01",
+  "subType": "target_score_cases",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q30_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q30.json", "hfDataTypeId": 30 },
+  "machineReadable": { "payloadType": "target_score_cases", "targetScore": 10, "choices": [1, 2, 3, 4], "expectedAnswer": 2 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 2 }
+}

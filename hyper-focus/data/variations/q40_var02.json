@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q40",
+  "variationId": "q40_var02",
+  "subType": "number_code_rule",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q40_var02.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q40.json", "hfDataTypeId": 40 },
+  "machineReadable": { "payloadType": "number_code_rule", "ruleFamily": "sum_difference_mix", "expectedAnswer": 18 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 18 }
+}
