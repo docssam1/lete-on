@@ -152,17 +152,7 @@
     filter:drop-shadow(0 8px 24px rgba(0,0,0,0.35));
     margin-bottom:-30px; /* 헤더 아래로 돌출 */
   }
-  .char-placeholder {
-    width:88px; height:88px; margin-bottom:12px; border-radius:16px;
-    border:1.5px dashed rgba(255,255,255,0.45);
-    background:repeating-linear-gradient(45deg,rgba(255,255,255,0.05) 0 8px,rgba(255,255,255,0.12) 8px 16px);
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
-  }
-  .char-placeholder-code { font-size:19px; font-weight:800; color:rgba(255,255,255,0.85); }
-  .char-placeholder-label {
-    font-family:monospace; font-size:8.5px;
-    color:rgba(255,255,255,0.6); text-align:center; line-height:1.3;
-  }
+
   .score-chips {
     display:grid; grid-template-columns:repeat(4,1fr);
     gap:6px; padding:0 20px 18px; margin-top:14px;
@@ -232,26 +222,28 @@
   }
 
   /* 레이더 차트 */
-  /* 차트 + 캐릭터 좌우 배치 */
+  /* 차트 카드 - 네이비 배경 */
+  .chart-card {
+    background: linear-gradient(145deg, #0D1250 0%, #1A237E 60%, #1565C0 100%);
+    border-radius: 16px; padding: 16px 14px 12px;
+    box-shadow: 0 8px 32px rgba(13,18,80,0.4);
+  }
   .chart-char-row {
-    display:flex; align-items:center; gap:8px; margin-top:4px;
+    display:flex; align-items:center; gap:6px;
   }
   .chart-wrap {
     flex:1; min-width:0; position:relative;
   }
   .chart-char-right {
-    width:140px; min-width:140px; display:flex; align-items:center;
+    width:130px; min-width:130px; display:flex; align-items:center;
     justify-content:center;
-  }
-  .chart-char-right img {
-    width:140px; height:140px; object-fit:contain;
-    filter:drop-shadow(0 6px 16px rgba(0,0,0,0.25));
   }
   .chart-legend {
     display:grid; grid-template-columns:1fr 1fr; gap:3px;
-    margin-top:8px; font-size:10.5px; color:#5A6480;
+    margin-top:10px; font-size:10.5px; color:rgba(235,240,255,0.7);
   }
-  .chart-legend span::before { content:'● '; color:#2196F3; }
+  .chart-legend span::before { content:'● '; color:#64B5F6; }
+  .chart-legend strong { color:rgba(235,240,255,0.9); }
 
   /* AI 상담 (결과 페이지 하단) */
   .chat-divider { height:1px; background:#EEF1F7; margin:22px 0 0; }
@@ -478,10 +470,7 @@
           <div class="report-subtitle-txt" id="r-subtitle"></div>
           <div class="report-badge-txt" id="r-badge"></div>
         </div>
-        <div id="char-fallback" class="char-placeholder hidden" style="margin:12px 12px 0 0;">
-            <span id="char-code" class="char-placeholder-code"></span>
-            <span class="char-placeholder-label">character<br>image</span>
-          </div>
+
       </div>
       <div class="score-chips" id="score-chips"></div>
     </div>
@@ -501,18 +490,20 @@
         <span class="rpt-section-num">02</span>
         <span class="rpt-section-title">학습 성향 분석</span>
       </div>
-      <div class="chart-char-row">
-        <div class="chart-wrap">
-          <canvas id="radar-chart"></canvas>
-          <div class="chart-legend">
-            <span><strong>기획력</strong> — 계획·완성도</span>
-            <span><strong>사회성</strong> — 관계·배려</span>
-            <span><strong>창의성</strong> — 도전·실행</span>
-            <span><strong>탐구력</strong> — 원리·몰입</span>
+      <div class="chart-card">
+        <div class="chart-char-row">
+          <div class="chart-wrap">
+            <canvas id="radar-chart"></canvas>
+          </div>
+          <div class="chart-char-right">
+            <img id="char-img-chart" alt="성향 캐릭터" style="opacity:0; width:130px; height:130px; object-fit:contain; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4));">
           </div>
         </div>
-        <div class="chart-char-right">
-          <img id="char-img-chart" alt="성향 캐릭터" style="opacity:0;">
+        <div class="chart-legend">
+          <span><strong>기획력</strong> — 계획·완성도</span>
+          <span><strong>사회성</strong> — 관계·배려</span>
+          <span><strong>창의성</strong> — 도전·실행</span>
+          <span><strong>탐구력</strong> — 원리·몰입</span>
         </div>
       </div>
     </div>
@@ -1404,26 +1395,22 @@ function displayCharacter() {
   const ageCode = parseInt(studentInfo.age) >= 12 ? 'teen' : 'child';
   const filename = `${typeCode}_male_${ageCode}.png`;
   const path = `assets/images/characters/${filename}`;
-  const img = document.getElementById('char-img-chart') || document.createElement('img');
-  const fallback = document.getElementById('char-fallback');
-  img.style.opacity = '0';
-  fallback.classList.add('hidden');
+  const chartImg = document.getElementById('char-img-chart');
+  if (!chartImg) return;
+  chartImg.style.opacity = '0';
   const tmp = new Image();
   tmp.src = path;
   tmp.onload = () => {
-    img.src = path;
-    img.style.opacity = '1';
-    fallback.classList.add('hidden');
-    // 차트 옆 캐릭터도 동일 이미지
-    const chartImg = document.getElementById('char-img-chart');
-    if (chartImg) { chartImg.src = path; chartImg.style.opacity = '1'; }
+    chartImg.src = path;
+    chartImg.style.opacity = '1';
   };
   tmp.onerror = () => {
-    img.style.display = 'none';
-    fallback.classList.remove('hidden');
-    document.getElementById('char-code').textContent = r.primaryType;
-    const chartImg = document.getElementById('char-img-chart');
-    if (chartImg) chartImg.style.display = 'none';
+    // 단일 성향 폴백
+    const fallbackPath = `assets/images/characters/${r.primaryType.toLowerCase()}_male_${ageCode}.png`;
+    const tmp2 = new Image();
+    tmp2.src = fallbackPath;
+    tmp2.onload = () => { chartImg.src = fallbackPath; chartImg.style.opacity = '1'; };
+    tmp2.onerror = () => { chartImg.style.display = 'none'; };
   };
 }
 
@@ -1432,95 +1419,73 @@ function renderRadar() {
   const ctx = document.getElementById('radar-chart');
   if (radarChart) radarChart.destroy();
 
-  // 3D 질감: 그라데이션 레이어 3개 + 글로우 효과
-  const canvas = ctx;
-  const chartCtx = canvas.getContext('2d');
-
-  // 그라데이션 fill
-  const grad = chartCtx.createRadialGradient(0, 0, 0, 0, 0, 200);
-  grad.addColorStop(0,   'rgba(100,181,246,0.75)');
-  grad.addColorStop(0.5, 'rgba(33,150,243,0.50)');
-  grad.addColorStop(1,   'rgba(26,35,126,0.30)');
+  const chartCtx = ctx.getContext('2d');
+  // 메인 그라데이션 - 파랑~하늘 (네이비 배경 위에서 빛나는 느낌)
+  const grad = chartCtx.createRadialGradient(
+    ctx.width/2, ctx.height/2, 10,
+    ctx.width/2, ctx.height/2, ctx.width/2
+  );
+  grad.addColorStop(0,   'rgba(144,202,249,0.85)');
+  grad.addColorStop(0.6, 'rgba(33,150,243,0.65)');
+  grad.addColorStop(1,   'rgba(26,35,126,0.40)');
 
   radarChart = new Chart(ctx, {
     type: 'radar',
     data: {
       labels: ['기획력','사회성','창의성','탐구력'],
       datasets: [
-        // 레이어1: 바닥 그림자 (오프셋)
+        // 그림자 레이어
         {
           data: [scores.A, scores.B, scores.C, scores.D],
-          backgroundColor: 'rgba(26,35,126,0.18)',
-          borderColor: 'transparent', borderWidth: 0,
-          pointRadius: 0, fill: true,
+          backgroundColor: 'rgba(0,0,40,0.3)',
+          borderColor: 'transparent',
+          borderWidth: 0, pointRadius: 0,
         },
-        // 레이어2: 메인 그라데이션
+        // 메인 데이터
         {
           label: '성향 점수',
           data: [scores.A, scores.B, scores.C, scores.D],
           backgroundColor: grad,
-          borderColor: '#2196F3',
-          borderWidth: 2.5,
-          pointBackgroundColor: '#fff',
-          pointBorderColor: '#1565C0',
+          borderColor: '#90CAF9',
+          borderWidth: 2,
+          pointBackgroundColor: '#FFFFFF',
+          pointBorderColor: '#64B5F6',
           pointBorderWidth: 2,
           pointRadius: 5,
           pointHoverRadius: 7,
-          fill: true,
         },
-        // 레이어3: 하이라이트 (상단 밝은 레이어)
+        // 하이라이트
         {
-          data: [scores.A, scores.B, scores.C, scores.D].map(v => v * 0.55),
-          backgroundColor: 'rgba(255,255,255,0.18)',
-          borderColor: 'rgba(255,255,255,0.55)',
-          borderWidth: 1,
-          pointRadius: 0, fill: true,
+          data: [scores.A, scores.B, scores.C, scores.D].map(v => v * 0.4),
+          backgroundColor: 'rgba(255,255,255,0.12)',
+          borderColor: 'rgba(255,255,255,0.3)',
+          borderWidth: 1, pointRadius: 0,
         }
       ]
     },
     options: {
       scales: { r: {
-        angleLines: {
-          color: 'rgba(33,150,243,0.2)',
-          lineWidth: 1.5
-        },
-        grid: {
-          color: (ctx) => {
-            const idx = ctx.index;
-            const alpha = [0.08, 0.12, 0.18, 0.25, 0.35][idx] || 0.15;
-            return `rgba(26,35,126,${alpha})`;
-          },
-          circular: false,
-          lineWidth: 1.2
-        },
+        angleLines: { color: 'rgba(255,255,255,0.2)', lineWidth: 1 },
+        grid: { color: 'rgba(255,255,255,0.15)', lineWidth: 1 },
         pointLabels: {
           font: { size: 12, weight: '700' },
-          color: '#1A237E',
-          padding: 8
+          color: '#E3F2FD',
+          padding: 6
         },
-        ticks: { display: false, min: 0, max: 100 },
+        ticks: { display: false },
         suggestedMin: 0, suggestedMax: 100
       }},
       plugins: {
         legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: (item) => ` ${item.raw}%`
-          }
-        }
+        tooltip: { callbacks: { label: (i) => ` ${i.raw}%` } }
       },
-      elements: {
-        line: { tension: 0.1 }
-      },
-      animation: {
-        duration: 800,
-        easing: 'easeOutQuart'
-      },
-      responsive: true,
-      maintainAspectRatio: true
+      elements: { line: { tension: 0.05 } },
+      animation: { duration: 900, easing: 'easeOutQuart' },
+      responsive: true, maintainAspectRatio: true
     }
   });
 }
+
 
 // --- 챗봇 롤링 ---
 function setupChatbot() {
@@ -1530,7 +1495,22 @@ function setupChatbot() {
   if (!rollList.length) { document.getElementById('roll-area').style.display = 'none'; return; }
   rollIndex = 0;
   renderRolling();
+  startAutoRoll();
 }
+
+let autoRollTimer = null;
+function startAutoRoll() {
+  stopAutoRoll();
+  if (rollList.length <= 1) return;
+  autoRollTimer = setInterval(() => {
+    rollIndex = (rollIndex + 1) % rollList.length;
+    renderRolling();
+  }, 3000);
+}
+function stopAutoRoll() {
+  if (autoRollTimer) { clearInterval(autoRollTimer); autoRollTimer = null; }
+}
+
 
 function renderRolling() {
   if (!rollList.length) return;
@@ -1557,9 +1537,63 @@ function renderRolling() {
   }
 }
 
-document.getElementById('roll-prev').onclick = () => { rollIndex = (rollIndex-1+rollList.length)%rollList.length; renderRolling(); };
-document.getElementById('roll-next').onclick = () => { rollIndex = (rollIndex+1)%rollList.length; renderRolling(); };
-document.getElementById('roll-main').onclick = () => { document.getElementById('chat-input').value = rollList[rollIndex]; };
+document.getElementById('roll-prev').onclick = () => {
+  stopAutoRoll();
+  rollIndex = (rollIndex-1+rollList.length)%rollList.length;
+  renderRolling();
+  startAutoRoll();
+};
+document.getElementById('roll-next').onclick = () => {
+  stopAutoRoll();
+  rollIndex = (rollIndex+1)%rollList.length;
+  renderRolling();
+  startAutoRoll();
+};
+// 롤 메인 클릭 → 입력창에 질문
+document.getElementById('roll-main').onclick = () => {
+  document.getElementById('chat-input').value = rollList[rollIndex];
+};
+
+// 터치 스와이프 (모바일)
+(function() {
+  const el = document.getElementById('roll-main');
+  let startX = 0, startY = 0;
+  el.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+  el.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return; // 탭은 무시
+    if (Math.abs(dx) > Math.abs(dy) * 1.2) {
+      // 좌우 스와이프
+      stopAutoRoll();
+      rollIndex = dx < 0
+        ? (rollIndex + 1) % rollList.length
+        : (rollIndex - 1 + rollList.length) % rollList.length;
+      renderRolling();
+      startAutoRoll();
+    }
+  }, { passive: true });
+
+  // 마우스 드래그 (PC)
+  let mouseStartX = 0, isDragging = false;
+  el.addEventListener('mousedown', e => { mouseStartX = e.clientX; isDragging = true; });
+  el.addEventListener('mouseup', e => {
+    if (!isDragging) return;
+    isDragging = false;
+    const dx = e.clientX - mouseStartX;
+    if (Math.abs(dx) > 40) {
+      stopAutoRoll();
+      rollIndex = dx < 0
+        ? (rollIndex + 1) % rollList.length
+        : (rollIndex - 1 + rollList.length) % rollList.length;
+      renderRolling();
+      startAutoRoll();
+    }
+  });
+})();
 document.getElementById('roll-ask-btn').onclick = (e) => {
   e.stopPropagation();
   const q = rollList[rollIndex];
@@ -1711,6 +1745,7 @@ document.getElementById('btn-restart').onclick = () => {
   document.getElementById('student-age').value = '';
   document.getElementById('math-level').value = '';
   document.getElementById('math-advance').value = '';
+  stopAutoRoll();
   chatCount = 0;
   updateChatCounter();
   document.getElementById('chat-input').disabled = false;
