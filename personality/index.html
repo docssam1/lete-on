@@ -232,10 +232,24 @@
   }
 
   /* 레이더 차트 */
-  .chart-wrap { position:relative; max-width:240px; margin:0 auto; }
+  /* 차트 + 캐릭터 좌우 배치 */
+  .chart-char-row {
+    display:flex; align-items:center; gap:8px; margin-top:4px;
+  }
+  .chart-wrap {
+    flex:1; min-width:0; position:relative;
+  }
+  .chart-char-right {
+    width:140px; min-width:140px; display:flex; align-items:center;
+    justify-content:center;
+  }
+  .chart-char-right img {
+    width:140px; height:140px; object-fit:contain;
+    filter:drop-shadow(0 6px 16px rgba(0,0,0,0.25));
+  }
   .chart-legend {
-    display:grid; grid-template-columns:1fr 1fr; gap:4px;
-    margin-top:8px; font-size:11px; color:#5A6480;
+    display:grid; grid-template-columns:1fr 1fr; gap:3px;
+    margin-top:8px; font-size:10.5px; color:#5A6480;
   }
   .chart-legend span::before { content:'● '; color:#2196F3; }
 
@@ -464,13 +478,10 @@
           <div class="report-subtitle-txt" id="r-subtitle"></div>
           <div class="report-badge-txt" id="r-badge"></div>
         </div>
-        <div class="report-char-area">
-          <img id="char-img" alt="성향 캐릭터" style="opacity:0; width:150px; height:150px; object-fit:contain; display:block; filter:drop-shadow(0 8px 24px rgba(0,0,0,0.35)); margin-bottom:-30px;">
-          <div id="char-fallback" class="char-placeholder hidden">
+        <div id="char-fallback" class="char-placeholder hidden" style="margin:12px 12px 0 0;">
             <span id="char-code" class="char-placeholder-code"></span>
             <span class="char-placeholder-label">character<br>image</span>
           </div>
-        </div>
       </div>
       <div class="score-chips" id="score-chips"></div>
     </div>
@@ -490,12 +501,19 @@
         <span class="rpt-section-num">02</span>
         <span class="rpt-section-title">학습 성향 분석</span>
       </div>
-      <div class="chart-wrap"><canvas id="radar-chart"></canvas></div>
-      <div class="chart-legend">
-        <span><strong>기획력</strong> — 계획·체계·완성도</span>
-        <span><strong>사회성</strong> — 관계·협력·배려</span>
-        <span><strong>창의성</strong> — 아이디어·도전·실행</span>
-        <span><strong>탐구력</strong> — 원리·집중·몰입</span>
+      <div class="chart-char-row">
+        <div class="chart-wrap">
+          <canvas id="radar-chart"></canvas>
+          <div class="chart-legend">
+            <span><strong>기획력</strong> — 계획·완성도</span>
+            <span><strong>사회성</strong> — 관계·배려</span>
+            <span><strong>창의성</strong> — 도전·실행</span>
+            <span><strong>탐구력</strong> — 원리·몰입</span>
+          </div>
+        </div>
+        <div class="chart-char-right">
+          <img id="char-img-chart" alt="성향 캐릭터" style="opacity:0;">
+        </div>
       </div>
     </div>
 
@@ -1386,7 +1404,7 @@ function displayCharacter() {
   const ageCode = parseInt(studentInfo.age) >= 12 ? 'teen' : 'child';
   const filename = `${typeCode}_male_${ageCode}.png`;
   const path = `assets/images/characters/${filename}`;
-  const img = document.getElementById('char-img');
+  const img = document.getElementById('char-img-chart') || document.createElement('img');
   const fallback = document.getElementById('char-fallback');
   img.style.opacity = '0';
   fallback.classList.add('hidden');
@@ -1396,11 +1414,16 @@ function displayCharacter() {
     img.src = path;
     img.style.opacity = '1';
     fallback.classList.add('hidden');
+    // 차트 옆 캐릭터도 동일 이미지
+    const chartImg = document.getElementById('char-img-chart');
+    if (chartImg) { chartImg.src = path; chartImg.style.opacity = '1'; }
   };
   tmp.onerror = () => {
     img.style.display = 'none';
     fallback.classList.remove('hidden');
     document.getElementById('char-code').textContent = r.primaryType;
+    const chartImg = document.getElementById('char-img-chart');
+    if (chartImg) chartImg.style.display = 'none';
   };
 }
 
@@ -1408,27 +1431,93 @@ function displayCharacter() {
 function renderRadar() {
   const ctx = document.getElementById('radar-chart');
   if (radarChart) radarChart.destroy();
+
+  // 3D 질감: 그라데이션 레이어 3개 + 글로우 효과
+  const canvas = ctx;
+  const chartCtx = canvas.getContext('2d');
+
+  // 그라데이션 fill
+  const grad = chartCtx.createRadialGradient(0, 0, 0, 0, 0, 200);
+  grad.addColorStop(0,   'rgba(100,181,246,0.75)');
+  grad.addColorStop(0.5, 'rgba(33,150,243,0.50)');
+  grad.addColorStop(1,   'rgba(26,35,126,0.30)');
+
   radarChart = new Chart(ctx, {
     type: 'radar',
     data: {
       labels: ['기획력','사회성','창의성','탐구력'],
-      datasets: [{
-        label: '성향 점수',
-        data: [scores.A, scores.B, scores.C, scores.D],
-        backgroundColor: 'rgba(33,150,243,0.35)',
-        borderColor: '#1A237E', borderWidth: 2,
-        pointBackgroundColor: '#2196F3', pointBorderColor: '#fff', pointRadius: 4
-      }]
+      datasets: [
+        // 레이어1: 바닥 그림자 (오프셋)
+        {
+          data: [scores.A, scores.B, scores.C, scores.D],
+          backgroundColor: 'rgba(26,35,126,0.18)',
+          borderColor: 'transparent', borderWidth: 0,
+          pointRadius: 0, fill: true,
+        },
+        // 레이어2: 메인 그라데이션
+        {
+          label: '성향 점수',
+          data: [scores.A, scores.B, scores.C, scores.D],
+          backgroundColor: grad,
+          borderColor: '#2196F3',
+          borderWidth: 2.5,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#1565C0',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          fill: true,
+        },
+        // 레이어3: 하이라이트 (상단 밝은 레이어)
+        {
+          data: [scores.A, scores.B, scores.C, scores.D].map(v => v * 0.55),
+          backgroundColor: 'rgba(255,255,255,0.18)',
+          borderColor: 'rgba(255,255,255,0.55)',
+          borderWidth: 1,
+          pointRadius: 0, fill: true,
+        }
+      ]
     },
     options: {
       scales: { r: {
-        angleLines: { color:'rgba(0,0,0,0.08)' },
-        grid: { color:'rgba(0,0,0,0.08)', circular:true },
-        pointLabels: { font:{ size:13, weight:'bold' }, color:'#1A237E' },
-        ticks: { display:false, min:0, max:100 }
+        angleLines: {
+          color: 'rgba(33,150,243,0.2)',
+          lineWidth: 1.5
+        },
+        grid: {
+          color: (ctx) => {
+            const idx = ctx.index;
+            const alpha = [0.08, 0.12, 0.18, 0.25, 0.35][idx] || 0.15;
+            return `rgba(26,35,126,${alpha})`;
+          },
+          circular: false,
+          lineWidth: 1.2
+        },
+        pointLabels: {
+          font: { size: 12, weight: '700' },
+          color: '#1A237E',
+          padding: 8
+        },
+        ticks: { display: false, min: 0, max: 100 },
+        suggestedMin: 0, suggestedMax: 100
       }},
-      plugins: { legend:{ display:false } },
-      responsive: true, maintainAspectRatio: true
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (item) => ` ${item.raw}%`
+          }
+        }
+      },
+      elements: {
+        line: { tension: 0.1 }
+      },
+      animation: {
+        duration: 800,
+        easing: 'easeOutQuart'
+      },
+      responsive: true,
+      maintainAspectRatio: true
     }
   });
 }
