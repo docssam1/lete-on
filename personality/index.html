@@ -124,10 +124,10 @@
   /* 보고서 헤더 */
   .report-header {
     background:linear-gradient(135deg,#141B5D 0%,#1E63C8 100%);
-    border-radius:18px; overflow:hidden; margin-bottom:0;
+    border-radius:18px; overflow:visible; margin-bottom:0; position:relative;
   }
-  .report-header-inner { display:flex; align-items:stretch; }
-  .report-header-text { flex:1; padding:20px 4px 16px 20px; min-width:0; }
+  .report-header-inner { display:flex; align-items:flex-start; }
+  .report-header-text { flex:1; padding:20px 14px 16px 20px; min-width:0; }
   .report-date-str {
     font-size:10.5px; letter-spacing:1.2px;
     color:rgba(235,240,255,0.6); font-weight:600; margin-bottom:7px;
@@ -142,11 +142,16 @@
     background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.3);
     border-radius:999px; padding:4px 11px; font-size:11px; font-weight:600; color:#EAF3FF;
   }
+  /* 캐릭터: 헤더 아래로 돌출 */
   .report-char-area {
-    width:112px; display:flex; align-items:flex-end;
-    justify-content:center; padding-right:8px;
+    display:flex; align-items:flex-end; justify-content:center;
+    padding: 0 12px 0 0; margin-top: 8px;
   }
-  #char-img { width:102px; height:102px; object-fit:contain; display:block; }
+  #char-img {
+    width:150px; height:150px; object-fit:contain; display:block;
+    filter:drop-shadow(0 8px 24px rgba(0,0,0,0.35));
+    margin-bottom:-30px; /* 헤더 아래로 돌출 */
+  }
   .char-placeholder {
     width:88px; height:88px; margin-bottom:12px; border-radius:16px;
     border:1.5px dashed rgba(255,255,255,0.45);
@@ -160,7 +165,7 @@
   }
   .score-chips {
     display:grid; grid-template-columns:repeat(4,1fr);
-    gap:6px; padding:0 20px 18px;
+    gap:6px; padding:0 20px 18px; margin-top:14px;
   }
   .score-chip {
     background:rgba(255,255,255,0.12); border-radius:10px;
@@ -460,7 +465,7 @@
           <div class="report-badge-txt" id="r-badge"></div>
         </div>
         <div class="report-char-area">
-          <img id="char-img" alt="성향 캐릭터" style="opacity:0; width:102px; height:102px; object-fit:contain; display:block;">
+          <img id="char-img" alt="성향 캐릭터" style="opacity:0; width:150px; height:150px; object-fit:contain; display:block; filter:drop-shadow(0 8px 24px rgba(0,0,0,0.35)); margin-bottom:-30px;">
           <div id="char-fallback" class="char-placeholder hidden">
             <span id="char-code" class="char-placeholder-code"></span>
             <span class="char-placeholder-label">character<br>image</span>
