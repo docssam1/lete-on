@@ -1165,19 +1165,6 @@ document.addEventListener('keydown', e => {
     return false;
   }
 });
-
-// 개발자도구 열림 감지 → 경고
-(function() {
-  const threshold = 160;
-  setInterval(() => {
-    if (
-      window.outerWidth - window.innerWidth > threshold ||
-      window.outerHeight - window.innerHeight > threshold
-    ) {
-      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0D1250;color:#fff;font-family:Pretendard,sans-serif;font-size:18px;font-weight:700;">⚠️ 접근이 제한된 페이지입니다.</div>';
-    }
-  }, 1000);
-})();
 </script>
 </body>
 </html>
