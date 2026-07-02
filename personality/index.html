@@ -264,16 +264,27 @@
     opacity:0.65; cursor:pointer; padding:9px 14px; text-align:left;
     font-family:inherit; font-size:11.5px; color:#8A93AC;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    transition:transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
   }
   .roll-prev { top:0; }
   .roll-next { bottom:0; display:flex; align-items:flex-end; }
   .roll-next span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%; }
+  .roll-prev:active, .roll-next:active {
+    transform:translateY(1px) scale(0.985);
+    box-shadow:inset 0 2px 8px rgba(20,27,93,0.10);
+    background:#E8EEF8;
+  }
   .roll-main {
     position:absolute; top:28px; bottom:28px; left:0; right:0; z-index:2;
     border-radius:16px;
     background:linear-gradient(180deg,#FFFFFF 52%,#E9F3FF 88%,#D9EAFF 100%);
     border:1px solid #E0E9F8; box-shadow:0 14px 30px rgba(30,99,200,0.20);
     padding:15px 16px; cursor:pointer; animation:rollIn 0.45s ease;
+    transition:transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .roll-main:active {
+    transform:translateY(1px) scale(0.992);
+    box-shadow:0 8px 18px rgba(30,99,200,0.18);
   }
   .roll-q-badge {
     width:20px; height:20px; border-radius:7px;
@@ -296,6 +307,10 @@
     transition:transform 0.15s ease;
   }
   .roll-ask-btn:hover { transform:scale(1.08); }
+  .roll-ask-btn:active {
+    transform:translateY(1px) scale(0.96);
+    box-shadow:inset 0 2px 8px rgba(255,255,255,0.12);
+  }
 
   /* 채팅 */
   #chat-window {
@@ -404,10 +419,34 @@
   .roll-main {
     overscroll-behavior:contain;
   }
-  @media (max-width: 520px) {
-    .chart-char-row { gap:10px !important; }
-    #radar-chart { max-width:160px; max-height:160px; }
-    #char-img-chart { width:160px !important; height:160px !important; }
+  @media (max-width: 640px) {
+    .chart-char-row {
+      flex-direction:column !important;
+      align-items:center !important;
+      gap:12px !important;
+    }
+    .chart-char-right {
+      order:1;
+      width:100% !important;
+      padding:6px 8px 0 !important;
+      justify-content:center !important;
+    }
+    .chart-wrap {
+      order:2;
+      width:100% !important;
+      padding:8px 8px 12px !important;
+    }
+    #char-img-chart {
+      width:190px !important;
+      height:190px !important;
+    }
+    #radar-chart {
+      max-width:220px;
+      max-height:220px;
+    }
+    .chart-legend {
+      margin-top:6px !important;
+    }
   }
 </style>
 </head>
@@ -475,7 +514,7 @@
       <div>
         <label class="field-label">연산 선행 정도 <span class="field-sub">(선택)</span></label>
         <div class="select-wrap">
-          <select id="math-advance" class="dark-select">
+          <select id="math-advance" class="dark-select hidden" aria-hidden="true">
             <option value="">선택하세요</option>
             <option value="none">선행 없음 (학년 수준)</option>
             <option value="half">반 학기 선행</option>
@@ -633,12 +672,12 @@
       <div class="roll-area" id="roll-area">
         <div class="roll-dots" id="roll-dots"></div>
         <div class="roll-viewport">
-          <button class="roll-prev hidden" id="roll-prev"></button>
-          <button class="roll-next hidden" id="roll-next"><span id="roll-next-txt"></span></button>
+          <button type="button" class="roll-prev hidden" id="roll-prev"></button>
+          <button type="button" class="roll-next hidden" id="roll-next"><span id="roll-next-txt"></span></button>
           <div class="roll-main" id="roll-main">
             <div class="roll-q-badge">Q</div>
             <p class="roll-q-text" id="roll-text"></p>
-            <button class="roll-ask-btn" id="roll-ask-btn">→</button>
+            <button type="button" class="roll-ask-btn" id="roll-ask-btn">→</button>
           </div>
         </div>
       </div>
@@ -660,10 +699,10 @@
     <div class="report-footer">
       <span class="footer-note">본 보고서는 성향 진단 응답을 기반으로 생성되었습니다.</span>
       <div style="display:flex; gap:8px; align-items:center;">
-        <button id="btn-save" style="background:none; border:1px solid #D0D8EC; color:#3A4260; font-size:11.5px; font-weight:600; border-radius:8px; padding:6px 12px; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:4px;">
+        <button type="button" id="btn-save" style="background:none; border:1px solid #D0D8EC; color:#3A4260; font-size:11.5px; font-weight:600; border-radius:8px; padding:6px 12px; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:4px;">
           ⬇ 저장
         </button>
-        <button class="btn-restart" id="btn-restart">다시 진단</button>
+        <button type="button" class="btn-restart" id="btn-restart">다시 진단</button>
       </div>
     </div>
   </div>
@@ -1290,7 +1329,7 @@ document.getElementById('info-form').addEventListener('submit', e => {
   studentInfo = {
     name, age, gender: studentInfo.gender,
     mathLevel: document.getElementById('math-level').value,
-    mathAdvance: document.getElementById('math-advance').value
+    mathAdvance: ''
   };
   setupPreSurvey();
   showScreen('pre');
@@ -1352,6 +1391,26 @@ function getAgeGuidance(age) {
   return '장기 목표와 현재 수행 사이의 간격을 구체적인 실행 계획으로 연결하는 방향으로 조언합니다.';
 }
 
+function hideDeprecatedMathUi() {
+  const mathAdvance = document.getElementById('math-advance');
+  const mathSection = document.getElementById('r-math-section');
+  const compareNum = document.getElementById('r-compare-num');
+
+  const advanceFieldBlock = mathAdvance?.closest('.select-wrap')?.parentElement;
+  if (advanceFieldBlock) {
+    advanceFieldBlock.style.display = 'none';
+  }
+
+  if (mathSection) {
+    mathSection.style.display = 'none';
+    mathSection.classList.add('hidden');
+  }
+
+  if (compareNum) {
+    compareNum.textContent = '05';
+  }
+}
+
 function startSurvey() {
   const ag = getAgeGroup(studentInfo.age);
   questionSet = questions[ag];
@@ -1408,6 +1467,7 @@ function finishSurvey() {
   normalizeScores();
   personalityResult = getResult();
   renderResult();
+  hideDeprecatedMathUi();
   showScreen('result');
   setupChatbot();
 }
@@ -1586,6 +1646,7 @@ function setupChatbot() {
 }
 
 let autoRollTimer = null;
+let lastWheelMoveAt = 0;
 function startAutoRoll() {
   stopAutoRoll();
   if (rollList.length <= 1) return;
@@ -1648,7 +1709,8 @@ document.getElementById('roll-next').onclick = () => {
 };
 // 롤 메인 클릭 → 입력창에 질문
 document.getElementById('roll-main').onclick = () => {
-  document.getElementById('chat-input').value = rollList[rollIndex];
+  const q = rollList[rollIndex];
+  if (q) sendChat(q, { source: 'faq' });
 };
 
 // 터치 스와이프 (모바일)
@@ -1693,18 +1755,27 @@ document.getElementById('roll-main').onclick = () => {
   });
 
   const wheelHandler = (e) => {
-    if (Math.abs(e.deltaY) < Math.abs(e.deltaX) && Math.abs(e.deltaY) < 8) return;
+    const now = Date.now();
+    if (Math.abs(e.deltaY) < Math.abs(e.deltaX) && Math.abs(e.deltaY) < 36) return;
+    if (Math.abs(e.deltaY) < 36) return;
+    if (now - lastWheelMoveAt < 450) return;
     e.preventDefault();
+    lastWheelMoveAt = now;
     moveRollByWheel(e.deltaY > 0 ? 1 : -1);
   };
 
   el.addEventListener('wheel', wheelHandler, { passive: false });
   viewport.addEventListener('wheel', wheelHandler, { passive: false });
+  viewport.addEventListener('mouseenter', stopAutoRoll);
+  viewport.addEventListener('mouseleave', startAutoRoll);
 })();
 document.getElementById('roll-ask-btn').onclick = (e) => {
+  e.preventDefault();
   e.stopPropagation();
+  if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
   const q = rollList[rollIndex];
-  sendChat(q, { source: 'faq' });
+  if (q) sendChat(q, { source: 'faq' });
+  return false;
 };
 
 // --- 채팅 ---
@@ -1892,8 +1963,8 @@ document.getElementById('btn-restart').onclick = () => {
   studentInfo = { name:'', gender:'male', age:'', mathLevel:'', mathAdvance:'' };
   document.getElementById('student-name').value = '';
   document.getElementById('student-age').value = '';
-  document.getElementById('math-level').value = '';
-  document.getElementById('math-advance').value = '';
+  if (document.getElementById('math-level')) document.getElementById('math-level').value = '';
+  if (document.getElementById('math-advance')) document.getElementById('math-advance').value = '';
   stopAutoRoll();
   chatCount = 0;
   updateChatCounter();
@@ -1901,15 +1972,18 @@ document.getElementById('btn-restart').onclick = () => {
   document.getElementById('chat-input').placeholder = '질문을 입력하세요';
   document.getElementById('chat-submit').disabled = false;
   document.getElementById('chat-window').innerHTML = '<div class="msg-bot">안녕하세요! 아이에 대해 궁금한 점을 질문해주세요. 위 추천 질문을 눌러 시작하거나 직접 입력하세요.</div>';
-  document.getElementById('r-math-section').classList.add('hidden');
-  document.getElementById('r-compare-num').textContent = '06';
-  document.getElementById('char-img').style.opacity = '0';
-  document.getElementById('char-img').style.display = 'block';
+  hideDeprecatedMathUi();
+  const chartImg = document.getElementById('char-img-chart');
+  if (chartImg) {
+    chartImg.style.opacity = '0';
+    chartImg.style.display = 'block';
+  }
   if (radarChart) { radarChart.destroy(); radarChart = null; }
   document.querySelectorAll('.btn-gender').forEach(b => b.classList.toggle('active', b.dataset.gender==='male'));
   showScreen('intro');
 };
 
 // --- 초기화 ---
+hideDeprecatedMathUi();
 showScreen('intro');
 </script>
