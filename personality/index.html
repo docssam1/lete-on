@@ -353,6 +353,62 @@
 
   /* 숨김 */
   .hidden { display:none !important; }
+
+  /* chart white theme override */
+  .chart-card {
+    background:#FFFFFF !important;
+    border:1px solid #E4EBF5;
+    border-radius:18px;
+    padding:16px 14px 14px;
+    box-shadow:0 10px 26px rgba(20,27,93,0.08) !important;
+  }
+  .chart-char-row {
+    gap:14px !important;
+  }
+  .chart-wrap {
+    flex:1 1 50% !important;
+    background:#FFFFFF;
+    border-radius:16px;
+    padding:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .chart-char-right {
+    flex:1 1 50% !important;
+    width:auto !important;
+    min-width:0 !important;
+    background:#FFFFFF;
+    border-radius:16px;
+    padding:8px 10px;
+  }
+  #radar-chart {
+    width:100% !important;
+    max-width:190px;
+    max-height:190px;
+    margin:0 auto;
+    display:block;
+  }
+  #char-img-chart {
+    width:180px !important;
+    height:180px !important;
+    object-fit:contain;
+    filter:drop-shadow(0 8px 18px rgba(20,27,93,0.10)) !important;
+  }
+  .chart-legend {
+    color:#5F6B85 !important;
+  }
+  .chart-legend strong {
+    color:#1A2454 !important;
+  }
+  .roll-main {
+    overscroll-behavior:contain;
+  }
+  @media (max-width: 520px) {
+    .chart-char-row { gap:10px !important; }
+    #radar-chart { max-width:160px; max-height:160px; }
+    #char-img-chart { width:160px !important; height:160px !important; }
+  }
 </style>
 </head>
 <body>
@@ -1265,6 +1321,37 @@ function getAgeGroup(age) {
   return 'high';
 }
 
+function getSchoolStageLabel(age) {
+  const a = parseInt(age);
+  if (!Number.isFinite(a)) return '미입력';
+  if (a <= 7) return '유아 · 초등 입학 준비';
+  if (a <= 9) return '초등 저학년';
+  if (a <= 12) return '초등 고학년';
+  if (a <= 15) return '중학생';
+  if (a <= 18) return '고등학생';
+  return '청소년';
+}
+
+function getDevelopmentStageLabel(age) {
+  const a = parseInt(age);
+  if (!Number.isFinite(a)) return '발달 단계 정보 없음';
+  if (a <= 7) return '초기 아동기: 정서적 안정감, 기본 습관, 놀이 기반 학습이 중요한 시기';
+  if (a <= 9) return '아동기 전반: 기초 문해력과 수리 감각, 학습 루틴 형성이 중요한 시기';
+  if (a <= 12) return '아동기 후반: 자기조절, 과제 지속력, 학습 전략 형성이 중요한 시기';
+  if (a <= 15) return '초기 청소년기: 자율성, 또래 관계, 학습 동기 관리가 중요한 시기';
+  return '청소년기: 진로 인식, 자기주도 학습, 장기 목표 관리가 중요한 시기';
+}
+
+function getAgeGuidance(age) {
+  const a = parseInt(age);
+  if (!Number.isFinite(a)) return '연령 정보를 고려해 과도한 기대나 단정 대신 현재 발달 단계에 맞는 조언을 제시합니다.';
+  if (a <= 7) return '정답 중심 압박보다 정서 안정, 놀이형 동기, 반복 가능한 작은 습관 형성을 우선합니다.';
+  if (a <= 9) return '짧고 선명한 과제, 시각 자료, 즉각적 피드백 중심으로 조언합니다.';
+  if (a <= 12) return '습관 형성과 자기조절을 함께 보며, 학습 전략을 한 단계씩 훈련하는 방향으로 조언합니다.';
+  if (a <= 15) return '자율성과 책임감을 함께 키우되, 감정 기복과 비교 스트레스를 고려한 현실적 조언을 제공합니다.';
+  return '장기 목표와 현재 수행 사이의 간격을 구체적인 실행 계획으로 연결하는 방향으로 조언합니다.';
+}
+
 function startSurvey() {
   const ag = getAgeGroup(studentInfo.age);
   questionSet = questions[ag];
@@ -1425,9 +1512,9 @@ function renderRadar() {
     ctx.width/2, ctx.height/2, 10,
     ctx.width/2, ctx.height/2, ctx.width/2
   );
-  grad.addColorStop(0,   'rgba(144,202,249,0.85)');
-  grad.addColorStop(0.6, 'rgba(33,150,243,0.65)');
-  grad.addColorStop(1,   'rgba(26,35,126,0.40)');
+  grad.addColorStop(0,   'rgba(144,202,249,0.45)');
+  grad.addColorStop(0.6, 'rgba(33,150,243,0.28)');
+  grad.addColorStop(1,   'rgba(26,35,126,0.10)');
 
   radarChart = new Chart(ctx, {
     type: 'radar',
@@ -1465,11 +1552,11 @@ function renderRadar() {
     },
     options: {
       scales: { r: {
-        angleLines: { color: 'rgba(255,255,255,0.2)', lineWidth: 1 },
-        grid: { color: 'rgba(255,255,255,0.15)', lineWidth: 1 },
+        angleLines: { color: 'rgba(26,36,84,0.10)', lineWidth: 1 },
+        grid: { color: 'rgba(26,36,84,0.12)', lineWidth: 1 },
         pointLabels: {
           font: { size: 12, weight: '700' },
-          color: '#E3F2FD',
+          color: '#1A2454',
           padding: 6
         },
         ticks: { display: false },
@@ -1537,6 +1624,16 @@ function renderRolling() {
   }
 }
 
+function moveRollByWheel(direction) {
+  if (!rollList.length || rollList.length <= 1) return;
+  stopAutoRoll();
+  rollIndex = direction > 0
+    ? (rollIndex + 1) % rollList.length
+    : (rollIndex - 1 + rollList.length) % rollList.length;
+  renderRolling();
+  startAutoRoll();
+}
+
 document.getElementById('roll-prev').onclick = () => {
   stopAutoRoll();
   rollIndex = (rollIndex-1+rollList.length)%rollList.length;
@@ -1557,6 +1654,7 @@ document.getElementById('roll-main').onclick = () => {
 // 터치 스와이프 (모바일)
 (function() {
   const el = document.getElementById('roll-main');
+  const viewport = document.getElementById('roll-viewport');
   let startX = 0, startY = 0;
   el.addEventListener('touchstart', e => {
     startX = e.touches[0].clientX;
@@ -1593,11 +1691,20 @@ document.getElementById('roll-main').onclick = () => {
       startAutoRoll();
     }
   });
+
+  const wheelHandler = (e) => {
+    if (Math.abs(e.deltaY) < Math.abs(e.deltaX) && Math.abs(e.deltaY) < 8) return;
+    e.preventDefault();
+    moveRollByWheel(e.deltaY > 0 ? 1 : -1);
+  };
+
+  el.addEventListener('wheel', wheelHandler, { passive: false });
+  viewport.addEventListener('wheel', wheelHandler, { passive: false });
 })();
 document.getElementById('roll-ask-btn').onclick = (e) => {
   e.stopPropagation();
   const q = rollList[rollIndex];
-  sendChat(q);
+  sendChat(q, { source: 'faq' });
 };
 
 // --- 채팅 ---
@@ -1624,13 +1731,14 @@ function addMsg(text, type) {
   return div;
 }
 
-async function sendChat(query) {
+async function sendChat(query, options = {}) {
   if (!query.trim()) return;
+  const source = options.source || 'direct';
   document.getElementById('chat-input').value = '';
   addMsg(query, 'user');
 
-  // 미리 작성된 답변 확인 (횟수 차감 없음)
-  if (predefinedAnswers[query]) {
+  // 추천 질문 카드만 정적 답변 허용
+  if (source === 'faq' && predefinedAnswers[query]) {
     setTimeout(() => addMsg(predefinedAnswers[query], 'bot'), 400);
     return;
   }
@@ -1654,7 +1762,43 @@ async function sendChat(query) {
   const mathInfo = studentInfo.mathLevel
     ? `수학 교과: ${mathLevelLabel[studentInfo.mathLevel]}, 선행: ${mathAdvanceLabel[studentInfo.mathAdvance]||'-'}`
     : '';
-  const sysPrompt = `당신은 15년 이상 경력의 영재교육 전문가입니다. 아이의 성향 진단 결과를 바탕으로 학부모께 전문적이고 구체적인 코칭 조언을 드립니다. 답변은 [원인 분석] → [맞춤 솔루션] → [긍정적 기대 효과] 순서로 구체적이고 즉시 실천 가능하게 작성하세요. 특정 브랜드·기관명은 언급하지 마세요.\n\n[이 아이 정보]\n이름: ${studentInfo.name}, 나이: ${studentInfo.age}세\n성향 진단: ${personalityResult.label}\n${mathInfo}\n\n[참고 자료]\n${ctx}`;
+  const schoolStage = getSchoolStageLabel(studentInfo.age);
+  const developmentStage = getDevelopmentStageLabel(studentInfo.age);
+  const ageGuidance = getAgeGuidance(studentInfo.age);
+  const profile = typeProfile[personalityResult.primaryType] || { strengths: [], weaknesses: [], studyMethods: [], parentTip: '' };
+  const strengthSummary = profile.strengths.slice(0, 2).join(', ') || '관찰을 통해 드러난 강점 참고';
+  const riskSummary = profile.weaknesses.slice(0, 2).join(', ') || '보완 포인트 참고';
+  const parentTip = profile.parentTip || '부모의 언어와 루틴 설계가 중요합니다.';
+  const sysPrompt = `당신은 15년 이상 경력의 영재교육 전문가입니다. 학부모 질문에 답할 때 반드시 아이의 성향, 나이, 학교 단계, 발달 특성을 함께 고려하세요.
+
+답변 원칙:
+1. 직접 입력 질문은 정적 대본처럼 복사하지 말고, 이 아이 정보에 맞춰 새로 작성합니다.
+2. 연령에 맞지 않는 과도한 기대는 경계하고, 발달적으로 자연스러운 모습과 주의 신호를 구분합니다.
+3. 답변은 반드시 완결된 한국어 문장 4문단 이내로 작성합니다.
+4. 마지막 문단은 부모가 바로 실천할 수 있는 행동 제안으로 마무리합니다.
+5. 문장이 '위한', '그리고', '현재', '특히', '최적의'처럼 미완성 표현으로 끝나면 안 됩니다.
+6. 특정 브랜드명, 기관명, 과장 광고 문구는 사용하지 않습니다.
+
+[이 아이 정보]
+이름: ${studentInfo.name}
+나이: ${studentInfo.age}세
+학교 단계 추정: ${schoolStage}
+발달 단계 해석: ${developmentStage}
+성향 진단: ${personalityResult.label}
+주요 강점: ${strengthSummary}
+주의 포인트: ${riskSummary}
+부모 지도 핵심: ${parentTip}
+연령 고려 원칙: ${ageGuidance}
+${mathInfo}
+
+[답변 구조]
+1문단: 공감 + 현재 질문의 핵심 해석
+2문단: 성향과 발달 단계를 함께 본 원인 분석
+3문단: 집에서 바로 적용할 수 있는 지도 방법 2~3가지
+4문단: 짧고 분명한 마무리 조언
+
+[참고 자료]
+${ctx}`;
 
   try {
     const res = await fetch('https://algebra2-gemini-proxy-v2-243382036810.asia-northeast3.run.app/identify-chat', {
