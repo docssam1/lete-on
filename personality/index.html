@@ -1664,7 +1664,12 @@ async function sendChat(query) {
     });
     if (!res.ok) throw new Error(res.statusText);
     const data = await res.json();
-    thinkingDiv.textContent = data.candidates[0].content.parts[0].text;
+    const answerText =
+      data.text ||
+      data.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('') ||
+      data.error ||
+      '';
+    thinkingDiv.textContent = answerText.trim() || '답변을 완성하지 못했습니다. 질문을 조금 더 구체적으로 다시 입력해주세요.';
   } catch(e) {
     thinkingDiv.textContent = '오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
   }
