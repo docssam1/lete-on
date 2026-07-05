@@ -52,6 +52,23 @@ window.TownGame = (function () {
         this.bZones.push({ b, solid });
       });
 
+      // decoration slots (unlock-slot model)
+      this.slotObjs = {};
+      const slots = (opts.slots) || {};
+      Object.keys(slots).forEach(id => {
+        const s = slots[id];
+        const marker = this.add.graphics();
+        marker.lineStyle(2, 0x5aa06a, 0.7); marker.strokeCircle(s.x, s.y, 20);
+        marker.fillStyle(0xffffff, 0.5).fillCircle(s.x, s.y, 18);
+        const plus = this.add.text(s.x, s.y, '＋', { fontSize: '20px', color: '#4f8a5f' }).setOrigin(0.5);
+        const deco = this.add.text(s.x, s.y - 6, '', { fontSize: '30px' }).setOrigin(0.5);
+        const hit = this.add.circle(s.x, s.y, 26, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
+        hit.on('pointerdown', () => { if (opts.onSlotClick) opts.onSlotClick(id); });
+        this.slotObjs[id] = { marker, plus, deco };
+        const cur = opts.placed && opts.placed[id];
+        if (cur) { deco.setText(cur); marker.setVisible(false); plus.setVisible(false); }
+      });
+
       // avatar (drawn from equipped colors — shared paper-doll model)
       const look = opts.look || {};
       const skin = Phaser.Display.Color.HexStringToColor(look.skin || '#ffd9ad').color;
@@ -114,6 +131,7 @@ window.TownGame = (function () {
     });
   }
   function setMove(x, y) { if (S && S.touch) { S.touch.x = x; S.touch.y = y; } }
+  function setDecor(slotId, emoji) { if (S && S.slotObjs && S.slotObjs[slotId]) { const o = S.slotObjs[slotId]; o.deco.setText(emoji || ''); const empty = !emoji; o.marker.setVisible(empty); o.plus.setVisible(empty); } }
   function destroy() { if (game) { try { game.destroy(true); } catch (e) {} game = null; S = null; } }
-  return { mount, setMove, destroy };
+  return { mount, setMove, setDecor, destroy };
 })();
