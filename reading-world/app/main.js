@@ -290,8 +290,9 @@ function sqDayView(){const d=(VIDEO_PLAN.days||[]).find(x=>x.key===sq.day);if(!d
  return `<div class="sq-sub"><button class="btn" data-act="sq-plan">← ${sqT('주간 플랜','Weekly Plan','周计划')}</button><b>${esc(sqLoc(d.name))} · ${esc(sqLoc(d.focus))}</b></div><div class="sq-vcards">${cards}</div>`;}
 function sqWatchView(){const v=sqVideo(sq.vid);if(!v)return sqPlanView();const sec=sqSection(v);
  const words=(v.keyWords||[]).map(k=>`<span class="sq-kw">${esc(k.en)}<em>${esc(k.ko)}</em></span>`).join('');
+ const backup=v.id?`<a class="sq-backup" href="https://www.youtube.com/results?search_query=${encodeURIComponent(v.search||sqLoc(v.title))}" target="_blank" rel="noopener noreferrer">🔎 ${sqT('영상이 안 나오면 여기서 찾기','Video not showing? Find it here','视频看不到？在这里查找')}</a>`:'';
  return `<div class="sq-sub"><button class="btn" data-act="sq-day" data-day="${esc(sq.day||'')}">← ${sqT('뒤로','Back','返回')}</button><b>${sec.emoji} ${esc(sqLoc(v.title))}</b></div>
- <section class="sq-watch" style="--sec:${sec.color}">${sqEmbed(v)}<div class="sq-watch-info"><div class="sq-kws">${words}</div><p class="sq-sum">${esc(sqLoc(v.summary))}</p><button class="btn good big" data-act="sq-start-quiz" data-vid="${esc(sq.vid)}">📝 ${sqT('퀴즈 시작 (4문제)','Start Quiz (4 questions)','开始测验（4题）')} →</button></div></section>`;}
+ <section class="sq-watch" style="--sec:${sec.color}">${sqEmbed(v)}<div class="sq-watch-info"><div class="sq-kws">${words}</div><p class="sq-sum">${esc(sqLoc(v.summary))}</p>${backup}<button class="btn good big" data-act="sq-start-quiz" data-vid="${esc(sq.vid)}">📝 ${sqT('퀴즈 시작 (4문제)','Start Quiz (4 questions)','开始测验（4题）')} →</button></div></section>`;}
 function sqQuizView(){const v=sqVideo(sq.vid);if(!v)return sqPlanView();const sec=sqSection(v);const quiz=v.quiz||[];const i=Math.min(sq.qi||0,quiz.length-1);const q=quiz[i];
  const status=(sq.quiz&&sq.quiz.status)||{};const picks=(sq.quiz&&sq.quiz.answers)||{};
  const solved=quiz.filter((_,k)=>status[k]==='correct').length;const allDone=solved===quiz.length;
