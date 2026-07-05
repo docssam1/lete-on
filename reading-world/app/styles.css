@@ -79,6 +79,34 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 /* v28: skipped questions are marked apart from unanswered ones */
 .num.skipped{background:#fff4e5;border-color:#f2c894;border-style:dashed;color:#a05f0a}
 
+/* v32: mid report (교재 학습 후 강점·약점·추천, 정답 비공개) + 오답 학습 요약 */
+.midreport{margin-top:18px;border:1px solid #dfe4f0;border-radius:18px;padding:20px;background:linear-gradient(180deg,#fbfcff,#fff)}
+.mr-head{display:flex;gap:14px;align-items:center;margin-bottom:16px}
+.mr-orb{flex:none;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:17px;color:#fff;background:linear-gradient(135deg,#10ad9e,#6d50e7);font-variant-numeric:tabular-nums}
+.mr-head h3{margin:0;font-size:18px}
+.mr-head p{margin:3px 0 0;color:#66718a;font-size:13px;line-height:1.5}
+.mr-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mr-box{border:1px solid #e6ebf3;border-radius:14px;padding:14px 15px;background:#fff}
+.mr-box h4{margin:0 0 10px;font-size:13px;letter-spacing:.01em}
+.mr-box.strong{background:#f2fffa;border-color:#bfe8d7}
+.mr-box.weak{background:#fff8f0;border-color:#f3dcb6}
+.mr-box.rec{margin-top:12px;background:#f6f4ff;border-color:#ddd4ff}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{background:#dff8ef;color:#0a7d67;border:1px solid #b6e6d4;border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:750}
+.mr-none{margin:0;color:#8a93a6;font-size:13px}
+.wk-list{display:grid;gap:11px}
+.wk-top{display:flex;align-items:center;gap:8px}
+.wk-badge{flex:none;width:22px;height:22px;border-radius:7px;display:grid;place-items:center;background:#f3dcb6;color:#93600b;font-weight:800;font-size:12px}
+.wk-top b{font-size:13.5px}
+.wk-m{margin:5px 0 0 30px;color:#7a5a1e;font-size:13px;line-height:1.5}
+.rec-list{margin:0;padding-left:18px;display:grid;gap:8px}
+.rec-list li{font-size:13.5px;line-height:1.55;color:#3a3560}
+.rec-list b{color:#4a3fa0}
+.review-summary{padding:26px 22px;text-align:center}
+.rs-orb{margin:14px auto;width:110px;height:110px;border-radius:50%;display:grid;place-items:center;font-size:30px;font-weight:900;color:#fff;background:linear-gradient(135deg,#43c78a,#28a76a);font-variant-numeric:tabular-nums}
+.review-summary .tools{justify-content:center}
+@media(max-width:680px){.mr-cols{grid-template-columns:1fr}}
+
 /* v31: Read with Me (echo reading) */
 .echo-btn{background:#fff2f7;border-color:#ffbcd6;color:#b83a75}
 .echo-btn:hover{background:#ffe6f0}
