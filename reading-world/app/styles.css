@@ -190,3 +190,24 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 .flow-step.done b{color:#127a4e}
 .flow-step.done.active{background:linear-gradient(135deg,#e2f8ff,#eef3ff);border-color:#27b8aa}
 .flow-check{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:999px;background:#2bbd7e;color:#fff;font-size:11px;font-weight:900;line-height:1}
+
+/* v34: word game hint/fix + My Words */
+.game-tools{display:flex;gap:8px;justify-content:center;margin:14px 0 4px;flex-wrap:wrap}
+.btn.tiny.star{border-color:#f0c96a}
+.btn.tiny.star.on{background:#fff5d8;border-color:#f4d488;color:#96690a}
+.btn.tiny.on{background:#eef1ff;border-color:#b9c2f5}
+.game-choice button.correct{background:#e9fbf1;border-color:#37c98a;color:#127a4e;font-weight:800}
+.game-choice button.wrong{background:#fdecec;border-color:#f0a3a3;color:#b3403f;opacity:.85}
+.game-choice button:disabled{cursor:default}
+.game-feedback{margin-top:16px;padding:13px 15px;border-radius:14px;text-align:left;font-size:15px;line-height:1.5}
+.game-feedback.good{background:#e9fbf1;border:1px solid #9be3bf;color:#127a4e}
+.game-feedback.hint{background:#fff6e2;border:1px solid #f4d488;color:#8a6100}
+.game-feedback.hint em{font-style:normal;font-weight:800;color:#5a4300}
+.game-feedback.reveal{background:#eef4ff;border:1px solid #b9c9ef;color:#274a86}
+.game-hint-open{margin:6px auto 0;max-width:520px;background:#fff6e2;border:1px dashed #e6c477;border-radius:12px;padding:9px 13px;color:#8a6100;font-weight:700}
+.mywords-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:13px}
+.word-card.saved{border-color:#f2d79a;background:linear-gradient(180deg,#fffdf6,#fff)}
+.mywords-empty{max-width:460px;margin:22px auto;text-align:center;padding:26px 18px}
+.mywords-empty .mw-star{font-size:44px;margin-bottom:8px}
+.mywords-empty h3{margin:0 0 8px}
+.mywords-empty p{color:var(--muted);line-height:1.6}
