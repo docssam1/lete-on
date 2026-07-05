@@ -29,5 +29,19 @@ window.DECORATIONS = {
     { id: 'pond_fountain',slot: 'pond',   name: { ko: '분수', en: 'Fountain', zh: '喷泉' }, cost: 60, emoji: '⛲' },
     { id: 'gate_arch',    slot: 'gate',   name: { ko: '아치문', en: 'Arch Gate', zh: '拱门' }, cost: 30, emoji: '⛩️' },
     { id: 'gate_castle',  slot: 'gate',   name: { ko: '성문', en: 'Castle Gate', zh: '城门' }, cost: 90, emoji: '🏰' },
+    // 🌊 ocean theme
+    { id: 'garden_palm',  slot: 'garden', name: { ko: '야자수', en: 'Palm Tree', zh: '棕榈树' }, cost: 30, emoji: '🌴' },
+    { id: 'pond_fish',    slot: 'pond',   name: { ko: '물고기', en: 'Fish', zh: '鱼' }, cost: 20, emoji: '🐠' },
+    { id: 'pond_shell',   slot: 'pond',   name: { ko: '조개', en: 'Shell', zh: '贝壳' }, cost: 15, emoji: '🐚' },
+    { id: 'bench_beach',  slot: 'bench',  name: { ko: '바닷가', en: 'Beach', zh: '沙滩' }, cost: 35, emoji: '🏖️' },
+    { id: 'sign_chime',   slot: 'sign',   name: { ko: '풍경', en: 'Wind Chime', zh: '风铃' }, cost: 15, emoji: '🎐' },
+    // 🌸 seasonal theme
+    { id: 'garden_blossom', slot: 'garden', name: { ko: '벚꽃', en: 'Blossom', zh: '樱花' }, cost: 20, emoji: '🌸' },
+    { id: 'garden_maple', slot: 'garden', name: { ko: '단풍', en: 'Maple', zh: '枫叶' }, cost: 20, emoji: '🍁' },
+    { id: 'bench_snowman',slot: 'bench',  name: { ko: '눈사람', en: 'Snowman', zh: '雪人' }, cost: 30, emoji: '⛄' },
+    { id: 'sign_carp',    slot: 'sign',   name: { ko: '잉어깃발', en: 'Carp Flag', zh: '鲤鱼旗' }, cost: 25, emoji: '🎏' },
+    { id: 'lamp_candle',  slot: 'lamp',   name: { ko: '촛불', en: 'Candle', zh: '蜡烛' }, cost: 15, emoji: '🕯️' },
+    { id: 'gate_bamboo',  slot: 'gate',   name: { ko: '대나무', en: 'Bamboo', zh: '竹子' }, cost: 25, emoji: '🎋' },
+    { id: 'gate_rainbow', slot: 'gate',   name: { ko: '무지개', en: 'Rainbow', zh: '彩虹' }, cost: 45, emoji: '🌈' },
   ],
 };

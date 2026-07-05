@@ -361,3 +361,23 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 .sq-arch{display:flex;align-items:center;gap:9px;padding:11px 13px;border:1px solid var(--line);border-left:5px solid var(--sec,#7a5cc3);border-radius:12px;background:#fbfcfe;cursor:pointer;text-align:left;font:inherit}
 .sq-arch:hover{background:#f4f7fd}.sq-arch.done{background:#f2fbf4;border-color:#bfe6cd}
 @media(max-width:680px){.sq-vchips,.sq-arch-grid{grid-template-columns:1fr}.sq-plan-hero h1{font-size:24px}.sq-q{font-size:18px}}
+/* ---- Customize: avatar / town toggle + click-to-decorate (v39) ---- */
+.cz-modes{display:flex;gap:8px;margin:0 auto}
+.cz-mode{border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px 16px;font-weight:800;font-size:14px;color:#5a6b88;cursor:pointer}
+.cz-mode.active{background:linear-gradient(90deg,#6d50e7,#9271ff);border-color:#7657ee;color:#fff}
+.td-wrap{padding:4px 2px 20px}
+.td-intro{margin:0 0 14px;font-size:14px;color:#5a6b88;line-height:1.55;background:#f4f7fd;border:1px solid var(--line);border-radius:12px;padding:11px 14px}
+.td-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.td-slot{border:1px solid var(--line);border-radius:16px;background:#fff;padding:14px;box-shadow:0 5px 14px rgba(40,60,90,.05)}
+.td-slot-head{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.td-cur{width:42px;height:42px;flex:0 0 auto;display:grid;place-items:center;border-radius:11px;background:#f1f5fb;font-size:24px;color:#9db0cf;border:2px dashed #cdd8ea}
+.td-cur.filled{background:#eef6ff;border-style:solid;border-color:#bcd4f2}
+.td-slot-head b{flex:1;font-size:16px;color:#2a3a58}
+.td-items{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.td-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border:1px solid var(--line);border-radius:12px;background:#fbfcfe;transition:.12s}
+.td-item:hover{border-color:#dbe3ee;background:#fff}
+.td-item.on{border-color:#8fd7a5;background:#f2fbf4}
+.td-emoji{font-size:26px;line-height:1}
+.td-item small{font-size:11px;color:#5a6b88;font-weight:700;text-align:center;line-height:1.15}
+.td-item .btn.tiny,.td-item .av-badge{margin-top:2px}
+@media(max-width:680px){.td-grid{grid-template-columns:1fr}.td-items{grid-template-columns:repeat(4,1fr)}}
