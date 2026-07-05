@@ -66,7 +66,7 @@ window.VIDEO_PLAN = {
       ],
     },
     'v-tue-1': {
-      section: 'animal', channel: 'Nat Geo Kids', minutes: 10, search: 'Nat Geo Kids ocean animals', id: 'rf8v1LVediI',
+      section: 'animal', channel: 'Nat Geo Kids', minutes: 20, search: 'Nat Geo Kids ocean animals', id: '', playlist: 'PLQlnTldJs0ZTKvQQ-SqolTVPbfab2A5fP',
       title: { ko: '바닷속 동물들', en: 'Ocean Animals', zh: '海洋动物' },
       keyWords: [{ en: 'ocean', ko: '바다' }, { en: 'gills', ko: '아가미' }, { en: 'mammal', ko: '포유류' }],
       summary: { ko: '바다에는 물고기, 문어, 돌고래가 살아요. 돌고래는 물고기가 아니라 숨을 쉬러 위로 올라와요!', en: 'Fish, octopuses, and dolphins live in the ocean. Dolphins are not fish — they come up to breathe air!', zh: '海里有鱼、章鱼和海豚。海豚不是鱼，它们要浮上来呼吸空气！' },
@@ -78,7 +78,7 @@ window.VIDEO_PLAN = {
       ],
     },
     'v-tue-2': {
-      section: 'animal', channel: 'Nat Geo Kids', minutes: 6, search: 'Nat Geo Kids weird but true ocean coral reef', id: 'Lc05q7jUYfc',
+      section: 'animal', channel: 'Nat Geo Kids', minutes: 20, search: 'Nat Geo Kids weird but true ocean coral reef', id: '', playlist: 'PLQlnTldJs0ZTKvQQ-SqolTVPbfab2A5fP',
       title: { ko: '신기한 바다 동물 (Weird but True)', en: 'Weird but True: Sea Animals', zh: '奇趣海洋动物' },
       keyWords: [{ en: 'seahorse', ko: '해마' }, { en: 'starfish', ko: '불가사리' }, { en: 'regrow', ko: '다시 자라다' }],
       summary: { ko: '해마 아빠가 아기를 몸에 담아 키워요. 불가사리는 팔이 떨어져도 다시 자라요!', en: 'Male seahorse dads carry the babies. A starfish can regrow an arm if it loses one!', zh: '海马爸爸把宝宝装在身上。海星掉了一条腕还能重新长出来！' },
@@ -162,7 +162,7 @@ window.VIDEO_PLAN = {
       ],
     },
     'v-sat-1': {
-      section: 'animal', channel: 'Nat Geo Kids', minutes: 4, search: 'Nat Geo Kids weird but true ocean wonders', id: '6Dm9eeIlgyE',
+      section: 'animal', channel: 'Nat Geo Kids', minutes: 20, search: 'Nat Geo Kids weird but true ocean wonders', id: '', playlist: 'PLQlnTldJs0ZTKvQQ-SqolTVPbfab2A5fP',
       title: { ko: '바다 동물 재미 사실', en: 'Ocean Animal Fun Facts', zh: '海洋动物趣事' },
       keyWords: [{ en: 'whale', ko: '고래' }, { en: 'huge', ko: '거대한' }, { en: 'clever', ko: '똑똑한' }],
       summary: { ko: '고래는 지구에서 가장 큰 동물이에요. 문어는 아주 똑똑해서 문제를 풀 수 있어요!', en: 'The whale is the biggest animal on Earth. Octopuses are so clever they can solve puzzles!', zh: '鲸是地球上最大的动物。章鱼非常聪明，能解谜！' },
