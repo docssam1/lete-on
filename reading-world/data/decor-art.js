@@ -39,4 +39,13 @@
     gate_bamboo: S('<g stroke="#4e9e43" stroke-width="0"><rect x="15" y="8" width="5" height="34" rx="2" fill="#6bbf59"/><rect x="27" y="8" width="5" height="34" rx="2" fill="#5fb552"/></g><path d="M15 18h5M15 28h5M27 16h5M27 26h5M27 36h5" stroke="#3d8235" stroke-width="1.4"/><path d="M20 14c5-2 8 0 9 3-4 0-7-1-9-3zM27 22c-5-2-8 0-9 3 4 0 7-1 9-3z" fill="#8ed17f"/>'),
     gate_rainbow: S('<path d="M6 40a18 18 0 0 1 36 0" fill="none" stroke="#e0504a" stroke-width="4"/><path d="M10 40a14 14 0 0 1 28 0" fill="none" stroke="#f4b942" stroke-width="4"/><path d="M14 40a10 10 0 0 1 20 0" fill="none" stroke="#5fb552" stroke-width="4"/><path d="M18 40a6 6 0 0 1 12 0" fill="none" stroke="#6db3f2" stroke-width="4"/><circle cx="9" cy="40" r="4" fill="#fff"/><circle cx="39" cy="40" r="4" fill="#fff"/>'),
   };
+  // building roof signs (flat-vector badges) keyed by building
+  const B = (inner) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="100%" height="100%"><rect x="2.5" y="2.5" width="35" height="35" rx="11" fill="#fff" stroke="#e6ecf4" stroke-width="1.5"/>${inner}</svg>`;
+  window.BUILDING_ART = {
+    library: B('<path d="M20 13c-4-2.4-8-2.4-11 0v14c3-1.5 7-1.5 11 0z" fill="#7a5cc3"/><path d="M20 13c4-2.4 8-2.4 11 0v14c-3-1.5-7-1.5-11 0z" fill="#9576d8"/><path d="M20 13v14" stroke="#fff" stroke-width="1.5"/><path d="M12 17h5M12 21h5M23 17h5M23 21h5" stroke="#fff" stroke-width="1.2" opacity=".7"/>'),
+    wordshop: B('<path d="M20 11l-6 18M20 11l6 18M16 24h8" stroke="#e08a3c" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'),
+    theater: B('<rect x="8" y="18" width="24" height="13" rx="2.5" fill="#c0433f"/><path d="M8 18l.8-4.2 22.4 3.2-.8 4.2z" fill="#2f3033"/><path d="M11.4 14.2l4.2.6-1.7 3.6-4.2-.6zM17.6 15l4.2.6-1.7 3.6-4.2-.6zM23.8 15.9l4.2.6-1.7 3.6-4.2-.6z" fill="#fff"/><circle cx="16" cy="25" r="2.2" fill="#fff"/><path d="M22 22l6 5-6 1z" fill="#fff"/>'),
+    practice: B('<path d="M11 29l1.7-6L25 10.7l4.3 4.3L17 27.3z" fill="#2f9e8f"/><path d="M24 11.7l4.3 4.3" stroke="#217d70" stroke-width="1.4"/><path d="M11 29l1.7-6 4.3 4.3z" fill="#f4d59a"/><path d="M11 29l.7-2.4 1.7 1.7z" fill="#3a4256"/>'),
+    report: B('<g fill="#d05f8a"><rect x="10" y="22" width="5" height="8" rx="1.4"/><rect x="17.5" y="16" width="5" height="14" rx="1.4"/><rect x="25" y="12" width="5" height="18" rx="1.4"/></g><path d="M10 31h20" stroke="#e79fb9" stroke-width="1.6" stroke-linecap="round"/>'),
+  };
 })();

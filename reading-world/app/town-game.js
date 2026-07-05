@@ -19,6 +19,8 @@ window.TownGame = (function () {
       if (opts.avatarUri) { try { this.load.svg('avatarTex', opts.avatarUri, { width: 96, height: 96 }); } catch (e) {} }
       const da = opts.decorArt || {};
       Object.keys(da).forEach(id => { if (da[id]) { try { this.load.svg('deco_' + id, da[id], { width: 64, height: 64 }); } catch (e) {} } });
+      const ba = opts.buildingArt || {};
+      Object.keys(ba).forEach(k => { if (ba[k]) { try { this.load.svg('bsign_' + k, ba[k], { width: 64, height: 64 }); } catch (e) {} } });
     },
     create() {
       S = this; const g = this.add.graphics();
@@ -46,7 +48,8 @@ window.TownGame = (function () {
         bg.fillStyle(col, 1).fillTriangle(b.x - 66, b.y - 34, b.x + 66, b.y - 34, b.x, b.y - 74); // roof
         bg.fillStyle(0x000000, 0.12).fillTriangle(b.x - 66, b.y - 34, b.x + 66, b.y - 34, b.x, b.y - 74);
         bg.fillStyle(0xfff3d6, 1).fillRoundedRect(b.x - 14, b.y - 6, 28, 46, 4);         // door
-        this.add.text(b.x, b.y - 52, b.sign, { fontSize: '26px' }).setOrigin(0.5);
+        if (this.textures.exists('bsign_' + b.key)) this.add.image(b.x, b.y - 52, 'bsign_' + b.key).setDisplaySize(38, 38);
+        else this.add.text(b.x, b.y - 52, b.sign, { fontSize: '26px' }).setOrigin(0.5);
         const label = (opts.labels && opts.labels[b.key]) || b.key;
         this.add.text(b.x, b.y + 52, label, { fontSize: '15px', fontStyle: 'bold', color: '#31405c', backgroundColor: '#ffffffcc', padding: { x: 6, y: 3 } }).setOrigin(0.5);
         // clickable + solid
