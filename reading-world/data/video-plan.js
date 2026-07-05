@@ -78,7 +78,7 @@ window.VIDEO_PLAN = {
       ],
     },
     'v-tue-2': {
-      section: 'animal', channel: 'Nat Geo Kids', minutes: 4, search: 'Nat Geo Kids weird but true ocean animals', id: '',
+      section: 'animal', channel: 'Nat Geo Kids', minutes: 6, search: 'Nat Geo Kids weird but true ocean coral reef', id: 'Lc05q7jUYfc',
       title: { ko: '신기한 바다 동물 (Weird but True)', en: 'Weird but True: Sea Animals', zh: '奇趣海洋动物' },
       keyWords: [{ en: 'seahorse', ko: '해마' }, { en: 'starfish', ko: '불가사리' }, { en: 'regrow', ko: '다시 자라다' }],
       summary: { ko: '해마 아빠가 아기를 몸에 담아 키워요. 불가사리는 팔이 떨어져도 다시 자라요!', en: 'Male seahorse dads carry the babies. A starfish can regrow an arm if it loses one!', zh: '海马爸爸把宝宝装在身上。海星掉了一条腕还能重新长出来！' },
@@ -90,7 +90,7 @@ window.VIDEO_PLAN = {
       ],
     },
     'v-wed-1': {
-      section: 'story', channel: 'Storyline Online / read-aloud', minutes: 9, search: 'The Rainbow Fish read aloud', id: '',
+      section: 'story', channel: 'Read-Aloud (animated)', minutes: 8, search: 'The Rainbow Fish read aloud', id: 'tB7zgO5p-DI',
       title: { ko: '무지개 물고기 (The Rainbow Fish)', en: 'The Rainbow Fish', zh: '彩虹鱼' },
       keyWords: [{ en: 'shiny', ko: '반짝이는' }, { en: 'share', ko: '나누다' }, { en: 'friend', ko: '친구' }],
       summary: { ko: '반짝이는 비늘을 가진 물고기가 처음엔 나누지 않아 외로웠어요. 비늘을 나눠주자 친구가 생겼어요!', en: 'A fish with shiny scales was lonely because he would not share. When he shared his scales, he made friends!', zh: '有闪亮鳞片的鱼因为不分享而孤单。当他分享鳞片后，交到了朋友！' },
@@ -102,7 +102,7 @@ window.VIDEO_PLAN = {
       ],
     },
     'v-wed-2': {
-      section: 'story', channel: 'read-aloud / Vooks', minutes: 8, search: 'The Pout Pout Fish read aloud', id: '',
+      section: 'story', channel: 'Author read-aloud (Deborah Diesen)', minutes: 6, search: 'The Pout Pout Fish read aloud', id: '_Y2VTzkwMv0',
       title: { ko: '툴툴 물고기 (The Pout-Pout Fish)', en: 'The Pout-Pout Fish', zh: '噘嘴鱼' },
       keyWords: [{ en: 'pout', ko: '툴툴대다' }, { en: 'grumpy', ko: '뿌루퉁한' }, { en: 'cheer', ko: '기운을 북돋다' }],
       summary: { ko: '늘 뿌루퉁하던 물고기가 자기는 그런 물고기라고 생각했어요. 하지만 마음을 바꿔 기쁨을 나눌 수 있었어요!', en: 'A grumpy fish thought he was born to be gloomy. But he learned he could change and spread cheer instead!', zh: '一条爱噘嘴的鱼以为自己天生忧郁。但他学会了改变，去传播快乐！' },
@@ -114,7 +114,7 @@ window.VIDEO_PLAN = {
       ],
     },
     'v-thu-1': {
-      section: 'science', channel: 'SciShow Kids', minutes: 4, search: 'SciShow Kids why is the ocean salty', id: '',
+      section: 'science', channel: 'Science for Kids', minutes: 4, search: 'why is the ocean salty science for kids', id: 'zCTjxO80Ykc',
       title: { ko: '바다는 왜 짤까요?', en: 'Why Is the Ocean Salty?', zh: '海水为什么是咸的？' },
       keyWords: [{ en: 'salt', ko: '소금' }, { en: 'river', ko: '강' }, { en: 'rock', ko: '바위' }],
       summary: { ko: '강물이 바위에서 작은 소금 알갱이를 씻어 바다로 옮겨요. 물은 마르고 소금은 남아서 바다가 짜져요!', en: 'Rivers wash tiny bits of salt from rocks into the sea. Water dries away but the salt stays, so the ocean is salty!', zh: '河水把岩石里的小盐粒冲进大海。水蒸发了，盐留下来，海就变咸了！' },
@@ -162,7 +162,7 @@ window.VIDEO_PLAN = {
       ],
     },
     'v-sat-1': {
-      section: 'animal', channel: 'Nat Geo Kids', minutes: 5, search: 'Nat Geo Kids ocean animals fun facts', id: '',
+      section: 'animal', channel: 'Nat Geo Kids', minutes: 4, search: 'Nat Geo Kids weird but true ocean wonders', id: '6Dm9eeIlgyE',
       title: { ko: '바다 동물 재미 사실', en: 'Ocean Animal Fun Facts', zh: '海洋动物趣事' },
       keyWords: [{ en: 'whale', ko: '고래' }, { en: 'huge', ko: '거대한' }, { en: 'clever', ko: '똑똑한' }],
       summary: { ko: '고래는 지구에서 가장 큰 동물이에요. 문어는 아주 똑똑해서 문제를 풀 수 있어요!', en: 'The whale is the biggest animal on Earth. Octopuses are so clever they can solve puzzles!', zh: '鲸是地球上最大的动物。章鱼非常聪明，能解谜！' },
@@ -174,7 +174,7 @@ window.VIDEO_PLAN = {
       ],
     },
     'v-sat-2': {
-      section: 'science', channel: 'SciShow Kids', minutes: 5, search: 'SciShow Kids sink or float experiment', id: '',
+      section: 'science', channel: 'Blippi', minutes: 5, search: 'sink or float science experiment for kids', id: 'astwv4c_iP0',
       title: { ko: '뜰까 가라앉을까? (Sink or Float)', en: 'Sink or Float?', zh: '会浮还是会沉？' },
       keyWords: [{ en: 'float', ko: '뜨다' }, { en: 'sink', ko: '가라앉다' }, { en: 'experiment', ko: '실험' }],
       summary: { ko: '어떤 물건은 물에 뜨고 어떤 것은 가라앉아요. 직접 넣어보는 실험으로 알아봐요!', en: 'Some things float on water and some sink. We find out by doing an experiment!', zh: '有些东西浮在水上，有些会沉。用实验来找答案！' },
