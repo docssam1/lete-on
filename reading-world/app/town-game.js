@@ -9,6 +9,7 @@ window.TownGame = (function () {
   const BUILDINGS = [
     { key: 'library',  x: 210, y: 165, color: '#7a5cc3', sign: '📚' },
     { key: 'wordshop', x: 750, y: 165, color: '#e08a3c', sign: '🔤' },
+    { key: 'theater',  x: 480, y: 182, color: '#c0433f', sign: '🎬' },
     { key: 'practice', x: 210, y: 445, color: '#2f9e8f', sign: '🏠' },
     { key: 'report',   x: 750, y: 445, color: '#d05f8a', sign: '📊' },
   ];
