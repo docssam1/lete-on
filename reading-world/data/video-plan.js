@@ -59,10 +59,10 @@ window.VIDEO_PLAN = {
       keyWords: [{ en: 'ten', ko: '십' }, { en: 'teen', ko: '십몇' }, { en: 'ones', ko: '일의 자리' }],
       summary: { ko: '11~20은 “10과 몇 개”로 만들어져요. 13은 10 더하기 3이에요!', en: 'Teen numbers are “ten and some more”. 13 is ten plus three!', zh: '十几就是“十再加几”。13 是 10 加 3！' },
       quiz: [
-        { strat: 'Number Sense', q: { ko: '13은 10과 몇으로 이루어질까요?', en: '13 is ten and how many more?', zh: '13 是十再加几？' }, choices: ['3', '1', '13', '30'], answer: 0, hint: { ko: '10 + ? = 13', en: '10 + ? = 13', zh: '10 + ? = 13' } },
-        { strat: 'Number Sense', q: { ko: '10 다음에 오는 수는?', en: 'Which number comes right after 10?', zh: '10 后面紧接着是哪个数？' }, choices: ['11', '20', '9', '12'], answer: 0, hint: { ko: '10보다 하나 더 큰 수예요.', en: 'One more than ten.', zh: '比十多一。' } },
-        { strat: 'Number Sense', q: { ko: '“twenty”는 숫자로 얼마인가요?', en: 'What number is “twenty”?', zh: '“twenty” 是多少？' }, choices: ['20', '12', '2', '10'], answer: 0, hint: { ko: '2개의 10이에요.', en: 'It is two tens.', zh: '是两个十。' } },
-        { strat: 'Sequence', q: { ko: '15, 16, __, 18 — 빈칸에 알맞은 수는?', en: '15, 16, __, 18 — what fits in the blank?', zh: '15, 16, __, 18 — 空格里是几？' }, choices: ['17', '19', '14', '7'], answer: 0, hint: { ko: '한 개씩 커지고 있어요.', en: 'The numbers go up by one.', zh: '每次加一。' } },
+        { strat: 'Number Sense', q: { ko: '10 + 4 = ?', en: '10 + 4 = ?', zh: '10 + 4 = ?' }, choices: ['13', '14', '15', '40'], answer: 1, hint: { ko: '10에서 4만큼 더 세어 보세요.', en: 'Count on 4 more from ten.', zh: '从十再数 4 个。' } },
+        { strat: 'Number Sense', q: { ko: '13은 10이 1개와 낱개(일) 몇 개일까요?', en: '13 is 1 ten and how many ones?', zh: '13 是 1 个十和几个一？' }, choices: ['1', '2', '3', '13'], answer: 2, hint: { ko: '10 + ? = 13', en: '10 + ? = 13', zh: '10 + ? = 13' } },
+        { strat: 'Number Sense', q: { ko: '17과 12 중 어느 수가 더 클까요?', en: 'Which is bigger, 17 or 12?', zh: '17 和 12 哪个更大？' }, choices: ['12', '17', '같아요 (same)', '11'], answer: 1, hint: { ko: '17이 12보다 더 많아요.', en: '17 is more than 12.', zh: '17 比 12 多。' } },
+        { strat: 'Sequence', q: { ko: '이어 세기: 15, 16, 17, ?', en: 'Count on: 15, 16, 17, ?', zh: '接着数：15, 16, 17, ?' }, choices: ['14', '20', '18', '7'], answer: 2, hint: { ko: '17보다 하나 더 큰 수예요.', en: 'One more than 17.', zh: '比 17 多一。' } },
       ],
     },
     'v-tue-1': {
@@ -143,10 +143,10 @@ window.VIDEO_PLAN = {
       keyWords: [{ en: 'even', ko: '짝수' }, { en: 'odd', ko: '홀수' }, { en: 'pair', ko: '짝' }],
       summary: { ko: '짝수는 둘씩 짝을 지을 수 있어요. 홀수는 하나가 남아요. 4는 짝수, 5는 홀수!', en: 'Even numbers make pairs with none left over. Odd numbers have one left over. 4 is even, 5 is odd!', zh: '偶数能两两配对，奇数会多出一个。4 是偶数，5 是奇数！' },
       quiz: [
-        { strat: 'Number Sense', q: { ko: '다음 중 짝수는 무엇인가요?', en: 'Which number is even?', zh: '哪个数是偶数？' }, choices: ['6', '5', '7', '9'], answer: 0, hint: { ko: '둘씩 짝지어 남는 게 없어요.', en: 'It makes pairs with none left over.', zh: '两两配对没有剩余。' } },
-        { strat: 'Number Sense', q: { ko: '홀수는 짝을 지으면 어떻게 되나요?', en: 'What happens when you pair up an odd number?', zh: '奇数配对时会怎样？' }, choices: ['One is left over', 'None are left', 'It becomes zero', 'It doubles'], answer: 0, hint: { ko: '항상 하나가 남아요.', en: 'There is always one left over.', zh: '总会剩一个。' } },
-        { strat: 'Detail', q: { ko: '“even” 은 우리말로 무엇인가요?', en: 'What does “even” mean in numbers?', zh: '数字里的 “even” 指什么？' }, choices: ['짝수 (makes pairs)', '홀수 (one left)', '큰 수', '작은 수'], answer: 0, hint: { ko: '둘씩 나뉘는 수예요.', en: 'A number that splits into pairs.', zh: '能分成两两的数。' } },
-        { strat: 'Sequence', q: { ko: '2, 4, 6, __ — 다음 짝수는?', en: '2, 4, 6, __ — what is the next even number?', zh: '2, 4, 6, __ — 下一个偶数是？' }, choices: ['8', '7', '9', '5'], answer: 0, hint: { ko: '2씩 커져요.', en: 'They go up by two.', zh: '每次加二。' } },
+        { strat: 'Number Sense', q: { ko: '게 6마리가 남김없이 짝을 지어요. 6은 홀수일까요, 짝수일까요?', en: '6 crabs pair up with none left over. Is 6 odd or even?', zh: '6 只螃蟹两两配对没有剩余。6 是奇数还是偶数？' }, choices: ['odd', 'even', 'both', 'neither'], answer: 1, hint: { ko: '남는 것 없이 짝이 지어지면 짝수예요.', en: 'Pairs with none left over = even.', zh: '配对无剩余就是偶数。' } },
+        { strat: 'Number Sense', q: { ko: '다음 중 홀수는 무엇인가요?', en: 'Which number is odd?', zh: '哪个数是奇数？' }, choices: ['4', '6', '7', '8'], answer: 2, hint: { ko: '짝을 지으면 하나가 남는 수예요.', en: 'One is left over when it pairs up.', zh: '配对时会剩一个。' } },
+        { strat: 'Number Sense', q: { ko: '물고기 5마리가 둘씩 짝을 지으면 몇 마리가 남을까요?', en: '5 fish pair up two by two. How many are left over?', zh: '5 条鱼两两配对，会剩几条？' }, choices: ['0', '1', '2', '5'], answer: 1, hint: { ko: '2 + 2 + 1 = 5, 하나가 남아요.', en: '2 + 2 + 1 = 5, one is left.', zh: '2 + 2 + 1 = 5，剩一条。' } },
+        { strat: 'Sequence', q: { ko: '짝수 세기: 2, 4, 6, ?', en: 'Count the even numbers: 2, 4, 6, ?', zh: '数偶数：2, 4, 6, ?' }, choices: ['7', '8', '9', '5'], answer: 1, hint: { ko: '2씩 커져요.', en: 'They go up by two.', zh: '每次加二。' } },
       ],
     },
     'v-fri-2': {
