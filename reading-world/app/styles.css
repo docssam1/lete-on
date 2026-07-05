@@ -79,6 +79,30 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 /* v28: skipped questions are marked apart from unanswered ones */
 .num.skipped{background:#fff4e5;border-color:#f2c894;border-style:dashed;color:#a05f0a}
 
+/* v31: Read with Me (echo reading) */
+.echo-btn{background:#fff2f7;border-color:#ffbcd6;color:#b83a75}
+.echo-btn:hover{background:#ffe6f0}
+.echo-overlay{position:fixed;inset:0;z-index:120;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:32px 22px;text-align:center;background:radial-gradient(120% 120% at 50% 20%,#0f6d78 0%,#124a86 60%,#241a5e 100%);color:#fff}
+.echo-x{position:absolute;top:16px;right:18px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:26px;line-height:1;cursor:pointer}
+.echo-x:hover{background:rgba(255,255,255,.28)}
+.echo-progress{position:absolute;top:22px;left:0;right:0;font-size:15px;font-weight:800;letter-spacing:.05em;color:rgba(255,255,255,.82);font-variant-numeric:tabular-nums}
+.echo-flash{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(34px,7vw,60px);font-weight:900;color:#fff;text-shadow:0 4px 24px rgba(0,0,0,.25);opacity:0;transform:scale(.86);pointer-events:none;transition:opacity .5s ease,transform .5s ease;text-wrap:balance}
+.echo-flash.show{opacity:1;transform:scale(1)}
+.echo-sentence{max-width:16em;font-family:Georgia,"Times New Roman",serif;font-size:clamp(26px,4.6vw,46px);line-height:1.5;font-weight:600;color:#fff;text-wrap:balance;transition:opacity .3s}
+.echo-sentence.reading{color:#fff5b0}
+.echo-phase{font-size:clamp(16px,2.6vw,22px);font-weight:800;color:rgba(255,255,255,.9);min-height:1.4em}
+.echo-ring{position:relative;width:120px;height:120px;display:grid;place-items:center}
+.echo-ring svg{position:absolute;inset:0;width:120px;height:120px;transform:rotate(-90deg)}
+.echo-ring .ring-bg{fill:none;stroke:rgba(255,255,255,.22);stroke-width:9}
+.echo-ring .ring-fg{fill:none;stroke:#ffd94b;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+.echo-count{position:relative;font-size:40px;font-weight:900;color:#fff;font-variant-numeric:tabular-nums}
+.echo-controls{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.echo-controls .btn.big{padding:15px 24px;font-size:16px;border-radius:15px}
+.echo-controls .btn.big:not(.primary){background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.34);color:#fff}
+.echo-controls .btn.big:not(.primary):hover{background:rgba(255,255,255,.26)}
+@media(prefers-reduced-motion:reduce){.echo-flash{transition:none}.echo-ring .ring-fg{transition:none}}
+@media(max-width:520px){.echo-overlay{gap:20px}.echo-controls{width:100%}.echo-controls .btn.big{flex:1}}
+
 /* v30: Reading Town hub + lesson path */
 .town{min-height:100vh;padding:22px clamp(14px,4vw,44px) 48px;background:radial-gradient(130% 120% at 50% -10%,#e9fbf7 0%,#eef0ff 46%,#fff7ef 100%)}
 .town-top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:20px}
