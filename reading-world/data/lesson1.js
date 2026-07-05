@@ -2,7 +2,7 @@
 // 교재 원문 지문/문항은 data/lesson1.original.js(비공개 파일)에 있습니다.
 window.LESSON1={
  "title": "My Backyard Zoo",
- "image": "assets/images/backyard-zoo.svg",
+ "image": "assets/images/cars-level-b/lesson-01-my-backyard-zoo.png",
  "words": [
   [
    "zoo",
