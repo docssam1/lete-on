@@ -227,7 +227,11 @@ function enterStudent(student){
  if(Store.pull){Store.pull(student.id).then(remote=>{if(remote&&currentStudent&&currentStudent.id===student.id&&(remote.updatedAt||0)>(profile.updatedAt||0)){profile=migrateProfile(remote);st=stForLesson(currentLessonId,lang);render();}}).catch(()=>{});}
 }
 function saveCurrentToProfile(){if(profile){profile.lessons=profile.lessons||{};profile.lessons[currentLessonId]=st;}}
-function openLesson(id,view){stopSpeak();saveCurrentToProfile();loadLesson(id);st=stForLesson(currentLessonId,st.lang);st.view=view||'home';if(view==='words')st.wordMode='cards';atTown=false;save();render();window.scrollTo({top:0});}
+function openLesson(id,view){stopSpeak();saveCurrentToProfile();loadLesson(id);st=stForLesson(currentLessonId,st.lang);st.view=view||'home';if(view==='words')st.wordMode='cards';
+ // keep qMode in sync with the view (mirrors setView) so town buildings that jump
+ // straight into a question view don't record/grade answers against a stale mode.
+ if(view==='questions')st.qMode='original';else if(view==='originalExtra'||view==='questionOriginalExtra')st.qMode='originalExtra';else if(view==='similar'||view==='questionSimilar')st.qMode='similar';
+ atTown=false;save();render();window.scrollTo({top:0});}
 function goTown(){stopSpeak();saveCurrentToProfile();atTown=true;townView='map';save();render();window.scrollTo({top:0});}
 function switchStudent(){stopSpeak();saveCurrentToProfile();save();currentStudent=null;profile=null;atTown=true;Store.setCurrentId(null);render();}
 function lessonDone(id){const l=profile&&profile.lessons?profile.lessons[id]:null;return !!(l&&l.original&&l.originalExtra&&l.similar);}
