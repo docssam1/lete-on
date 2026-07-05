@@ -1,0 +1,4 @@
+# Licensed book content — never publish to a public repository.
+# 교재 원문 지문/문항(라이선스 자료)은 공개 저장소에 올리지 않습니다.
+data/lesson1.original.js
+data/*.original.js
