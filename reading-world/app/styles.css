@@ -47,6 +47,34 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 /* v26: print is always visible in the title tool area */
 .header-actions{display:flex;align-items:flex-start;justify-content:flex-end;gap:9px;flex-wrap:wrap;max-width:620px}.header-actions .sentence-controls{max-width:none}.print-btn{white-space:nowrap;background:#fff7ef;border-color:#ffc784;color:#9a5107;box-shadow:0 2px 0 #f6bb7422}.print-btn:hover{background:#fff0dd}@media(max-width:760px){.header-actions{margin-top:13px;justify-content:flex-start}.header-actions .sentence-controls{margin-top:0}.print-btn{width:auto}}
 
+/* v29: name-only onboarding cover + student chip */
+.cover{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(120% 120% at 50% -10%,#e9fbf7 0%,#eef0ff 48%,#fff7ef 100%)}
+.cover-card{width:100%;max-width:460px;background:#fff;border:1px solid #e7ebf3;border-radius:28px;padding:34px 30px 30px;box-shadow:0 24px 60px #22355016;text-align:center;position:relative}
+.cover-lang{display:inline-flex;gap:5px;margin:0 auto 20px;padding:4px;background:#eef2ff;border-radius:12px}
+.cover-lang button{border:0;background:transparent;border-radius:8px;padding:6px 10px;font-weight:800;color:#586074;cursor:pointer;font-size:12px;white-space:nowrap}
+.cover-lang button.active{background:#5b4bc4;color:#fff}
+.brand-badge{display:inline-block;font-weight:900;letter-spacing:.14em;font-size:12px;color:#0b968a;background:#d9f6f1;padding:6px 12px;border-radius:999px}
+.cover-title{font-size:27px;letter-spacing:-.5px;margin:16px 0 4px;font-weight:900;background:linear-gradient(90deg,#137a8e,#6d4de8 55%,#137a8e);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:220% auto;animation:shimmer 4.5s linear infinite}
+@keyframes shimmer{to{background-position:220% center}}
+.cover-level{font-weight:800;color:#33415a;font-size:15px}
+.cover-tag{color:#8a93a6;font-size:13px;margin-top:4px;letter-spacing:.04em}
+.gate-block{margin-top:24px;text-align:left}
+.gate-label{font-size:12px;font-weight:800;color:#7a8698;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.student-cards{display:flex;flex-wrap:wrap;gap:10px}
+.student-card{display:flex;align-items:center;gap:10px;border:1px solid #e2e7f0;background:#fff;border-radius:14px;padding:10px 14px 10px 10px;cursor:pointer;font-size:14px;font-weight:750;transition:.16s}
+.student-card:hover{border-color:#8fdccf;background:#f2fffb;transform:translateY(-1px)}
+.student-card .avatar,.chip-avatar{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#12ad9e,#6d50e7);color:#fff;font-weight:900;font-size:14px}
+.name-form{display:flex;gap:9px}
+.name-input{flex:1;min-width:0;border:1px solid #d7dce6;border-radius:13px;padding:13px 14px;font-size:15px;font-weight:600;outline:none;transition:.16s}
+.name-input:focus{border-color:#6d50e7;box-shadow:0 0 0 3px #6d50e733}
+.btn.big{padding:13px 18px;font-size:14px;border-radius:13px;white-space:nowrap}
+.gate-hint{margin:12px 2px 0;font-size:12px;color:#98a1b2;line-height:1.5}
+.student-chip{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid #e0e6f0;border-radius:999px;padding:4px 6px 4px 5px;font-size:13px;font-weight:800;color:#2a3547}
+.student-chip .chip-avatar{width:24px;height:24px;font-size:12px}
+.chip-switch{border:0;background:#eef1f7;color:#5a6376;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:13px;line-height:1;padding:0}
+.chip-switch:hover{background:#e2e7f1;color:#2a3547}
+@media(max-width:520px){.cover-card{padding:26px 20px 24px}.name-form{flex-direction:column}.btn.big{width:100%}}
+
 /* v28: skipped questions are marked apart from unanswered ones */
 .num.skipped{background:#fff4e5;border-color:#f2c894;border-style:dashed;color:#a05f0a}
 
