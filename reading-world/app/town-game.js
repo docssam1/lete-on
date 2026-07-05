@@ -1,0 +1,119 @@
+// Gfield Reading Town — Phaser 3 town scene (phase-1 PoC).
+// Self-contained: draws its own placeholder art (no external tiles/sprites),
+// a movable avatar, and 4 buildings that call back into the app to open menus.
+// Real Gfield art + Tiled JSON maps drop in later without changing the API.
+window.TownGame = (function () {
+  let game = null, S = null, opts = null;
+  const W = 960, H = 600;
+  // buildings: key, grid position (px center), color, roof, emoji sign, label key
+  const BUILDINGS = [
+    { key: 'library',  x: 210, y: 165, color: '#7a5cc3', sign: '📚' },
+    { key: 'wordshop', x: 750, y: 165, color: '#e08a3c', sign: '🔤' },
+    { key: 'practice', x: 210, y: 445, color: '#2f9e8f', sign: '🏠' },
+    { key: 'report',   x: 750, y: 445, color: '#d05f8a', sign: '📊' },
+  ];
+
+  function scene() { return {
+    preload() {},
+    create() {
+      S = this; const g = this.add.graphics();
+      // ground
+      g.fillStyle(0xbfe6a4, 1).fillRect(0, 0, W, H);
+      // soft ground patches
+      for (let i = 0; i < 26; i++) { const x = (i * 137) % W, y = (i * 89) % H; g.fillStyle(0xb2dd96, 1).fillCircle(x, y, 26 + (i % 3) * 8); }
+      // paths (cross to center)
+      g.fillStyle(0xe8d6a8, 1);
+      g.fillRect(W/2 - 26, 90, 52, H - 180);            // vertical
+      g.fillRect(120, H/2 - 26, W - 240, 52);           // horizontal
+      // path stubs to each building
+      BUILDINGS.forEach(b => { g.fillRect(Math.min(b.x, W/2) - 20, b.y - 12, Math.abs(b.x - W/2) + 24, 24); g.fillRect(b.x - 12, Math.min(b.y, H/2) - 20, 24, Math.abs(b.y - H/2) + 24); });
+      // decorative trees / flowers (placeholder art)
+      const deco = [[70,320],[890,300],[470,70],[470,540],[120,80],[840,540],[120,540],[840,70]];
+      deco.forEach((p, i) => { if (i % 2) { g.fillStyle(0x6bbf59,1).fillCircle(p[0], p[1], 20); g.fillStyle(0x8b5a2b,1).fillRect(p[0]-3, p[1]+14, 6, 14); } else { g.fillStyle(0xff9ec4,1).fillCircle(p[0], p[1], 7); g.fillStyle(0xffe08a,1).fillCircle(p[0], p[1], 3); } });
+
+      // buildings
+      this.bZones = [];
+      BUILDINGS.forEach(b => {
+        const bg = this.add.graphics();
+        const col = Phaser.Display.Color.HexStringToColor(b.color).color;
+        bg.fillStyle(col, 1).fillRoundedRect(b.x - 58, b.y - 34, 116, 74, 12);          // body
+        bg.fillStyle(0xffffff, 0.18).fillRoundedRect(b.x - 58, b.y - 34, 116, 20, 8);   // light top
+        bg.fillStyle(col, 1).fillTriangle(b.x - 66, b.y - 34, b.x + 66, b.y - 34, b.x, b.y - 74); // roof
+        bg.fillStyle(0x000000, 0.12).fillTriangle(b.x - 66, b.y - 34, b.x + 66, b.y - 34, b.x, b.y - 74);
+        bg.fillStyle(0xfff3d6, 1).fillRoundedRect(b.x - 14, b.y - 6, 28, 46, 4);         // door
+        this.add.text(b.x, b.y - 52, b.sign, { fontSize: '26px' }).setOrigin(0.5);
+        const label = (opts.labels && opts.labels[b.key]) || b.key;
+        this.add.text(b.x, b.y + 52, label, { fontSize: '15px', fontStyle: 'bold', color: '#31405c', backgroundColor: '#ffffffcc', padding: { x: 6, y: 3 } }).setOrigin(0.5);
+        // clickable + solid
+        const hit = this.add.rectangle(b.x, b.y - 4, 120, 118, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
+        hit.on('pointerdown', () => openMenu(b.key));
+        this.physics.add.existing(this.add.rectangle(b.x, b.y + 4, 108, 60), true); // solid base (last child)
+        const solid = this.children.list[this.children.list.length - 1];
+        this.bZones.push({ b, solid });
+      });
+
+      // avatar (drawn from equipped colors — shared paper-doll model)
+      const look = opts.look || {};
+      const skin = Phaser.Display.Color.HexStringToColor(look.skin || '#ffd9ad').color;
+      const hair = Phaser.Display.Color.HexStringToColor(look.hair || '#6b4326').color;
+      const cloth = Phaser.Display.Color.HexStringToColor(look.clothes || '#6db3f2').color;
+      const p = this.add.container(W / 2, H / 2 + 70);
+      const ag = this.add.graphics();
+      ag.fillStyle(0x000000, 0.14).fillEllipse(0, 26, 34, 10);       // shadow
+      ag.fillStyle(cloth, 1).fillRoundedRect(-15, 2, 30, 26, 9);      // body
+      ag.fillStyle(skin, 1).fillCircle(0, -8, 15);                    // head
+      ag.fillStyle(hair, 1).fillEllipse(0, -16, 30, 18);             // hair top
+      ag.fillStyle(0x33405c, 1).fillCircle(-5, -8, 2).fillCircle(5, -8, 2); // eyes
+      p.add(ag);
+      if (look.hatEmoji) { const h = this.add.text(0, -26, look.hatEmoji, { fontSize: '20px' }).setOrigin(0.5); p.add(h); }
+      this.physics.add.existing(p);
+      p.body.setSize(30, 26).setOffset(-15, 2);
+      p.body.setCollideWorldBounds(true);
+      this.physics.world.setBounds(24, 96, W - 48, H - 120);
+      this.bZones.forEach(z => this.physics.add.collider(p, z.solid));
+      this.player = p;
+      window.__townPlayer = p; // for tests
+
+      // prompt bubble
+      this.prompt = this.add.text(0, 0, '', { fontSize: '13px', fontStyle: 'bold', color: '#fff', backgroundColor: '#31405ccc', padding: { x: 8, y: 4 } }).setOrigin(0.5).setDepth(20).setVisible(false);
+
+      this.cursors = this.input.keyboard.createCursorKeys();
+      this.wasd = this.input.keyboard.addKeys('W,A,S,D,SPACE,ENTER');
+      this.input.keyboard.on('keydown-SPACE', tryOpenNear);
+      this.input.keyboard.on('keydown-ENTER', tryOpenNear);
+      this.touch = { x: 0, y: 0 };
+    },
+    update() {
+      if (!this.player) return; const b = this.player.body; const sp = 190;
+      let vx = 0, vy = 0;
+      if (this.cursors.left.isDown || this.wasd.A.isDown) vx = -1;
+      else if (this.cursors.right.isDown || this.wasd.D.isDown) vx = 1;
+      if (this.cursors.up.isDown || this.wasd.W.isDown) vy = -1;
+      else if (this.cursors.down.isDown || this.wasd.S.isDown) vy = 1;
+      if (this.touch.x || this.touch.y) { vx = this.touch.x; vy = this.touch.y; }
+      const len = Math.hypot(vx, vy) || 1; b.setVelocity((vx / len) * sp, (vy / len) * sp);
+      // nearest building
+      let near = null, nd = 999;
+      this.bZones.forEach(z => { const d = Phaser.Math.Distance.Between(this.player.x, this.player.y, z.b.x, z.b.y + 4); if (d < nd) { nd = d; near = z.b; } });
+      this._near = (near && nd < 110) ? near : null;
+      if (this._near) { this.prompt.setText((opts.labels && opts.labels.open) || 'Open').setPosition(this._near.x, this._near.y - 92).setVisible(true); }
+      else this.prompt.setVisible(false);
+    },
+  }; }
+
+  function tryOpenNear() { if (S && S._near) openMenu(S._near.key); }
+  function openMenu(key) { if (opts && opts.onOpenMenu) opts.onOpenMenu(key); }
+
+  function mount(container, options) {
+    opts = options; destroy();
+    game = new Phaser.Game({
+      type: Phaser.CANVAS, parent: container, width: W, height: H,
+      backgroundColor: '#bfe6a4', scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_HORIZONTALLY },
+      physics: { default: 'arcade', arcade: { gravity: { y: 0 }, debug: false } },
+      scene: scene(),
+    });
+  }
+  function setMove(x, y) { if (S && S.touch) { S.touch.x = x; S.touch.y = y; } }
+  function destroy() { if (game) { try { game.destroy(true); } catch (e) {} game = null; S = null; } }
+  return { mount, setMove, destroy };
+})();
