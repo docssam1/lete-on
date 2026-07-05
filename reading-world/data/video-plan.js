@@ -42,7 +42,7 @@ window.VIDEO_PLAN = {
   ],
   videos: {
     'v-mon-1': {
-      section: 'phonics', channel: 'Alphablocks', minutes: 12, search: 'Alphablocks silent e', id: '',
+      section: 'phonics', channel: 'Alphablocks', minutes: 12, search: 'Alphablocks silent e', id: 'Q4wFMtXY0Q4',
       title: { ko: '매직 e (Silent e)', en: 'Magic e (Silent e)', zh: '魔法 e' },
       keyWords: [{ en: 'magic e', ko: '매직 이(e)' }, { en: 'vowel', ko: '모음' }, { en: 'long sound', ko: '긴 소리' }],
       summary: { ko: '단어 끝의 소리 없는 e가 앞의 모음을 이름 소리(긴 소리)로 바꿔줘요. cap → cape!', en: 'A silent e at the end makes the vowel say its name — the long sound. cap → cape!', zh: '词尾不发音的 e 让前面的元音发长音。cap → cape！' },
@@ -54,7 +54,7 @@ window.VIDEO_PLAN = {
       ],
     },
     'v-mon-2': {
-      section: 'math', channel: 'Numberblocks', minutes: 15, search: 'Numberblocks 11 to 20', id: '',
+      section: 'math', channel: 'Numberblocks', minutes: 7, search: 'Numberblocks 11 to 20', id: 'RGpQcce_fMg',
       title: { ko: '11부터 20까지 (Teen Numbers)', en: '11 to 20 (Teen Numbers)', zh: '11 到 20' },
       keyWords: [{ en: 'ten', ko: '십' }, { en: 'teen', ko: '십몇' }, { en: 'ones', ko: '일의 자리' }],
       summary: { ko: '11~20은 “10과 몇 개”로 만들어져요. 13은 10 더하기 3이에요!', en: 'Teen numbers are “ten and some more”. 13 is ten plus three!', zh: '十几就是“十再加几”。13 是 10 加 3！' },
@@ -66,7 +66,7 @@ window.VIDEO_PLAN = {
       ],
     },
     'v-tue-1': {
-      section: 'animal', channel: 'Nat Geo Kids', minutes: 5, search: 'Nat Geo Kids ocean animals', id: '',
+      section: 'animal', channel: 'Nat Geo Kids', minutes: 10, search: 'Nat Geo Kids ocean animals', id: 'rf8v1LVediI',
       title: { ko: '바닷속 동물들', en: 'Ocean Animals', zh: '海洋动物' },
       keyWords: [{ en: 'ocean', ko: '바다' }, { en: 'gills', ko: '아가미' }, { en: 'mammal', ko: '포유류' }],
       summary: { ko: '바다에는 물고기, 문어, 돌고래가 살아요. 돌고래는 물고기가 아니라 숨을 쉬러 위로 올라와요!', en: 'Fish, octopuses, and dolphins live in the ocean. Dolphins are not fish — they come up to breathe air!', zh: '海里有鱼、章鱼和海豚。海豚不是鱼，它们要浮上来呼吸空气！' },
@@ -126,7 +126,7 @@ window.VIDEO_PLAN = {
       ],
     },
     'v-thu-2': {
-      section: 'science', channel: 'SciShow Kids', minutes: 4, search: 'SciShow Kids where does rain come from water cycle', id: '',
+      section: 'science', channel: 'SciShow Kids', minutes: 4, search: 'SciShow Kids where does rain come from water cycle', id: 'vD-ZwMjRDPU',
       title: { ko: '비는 어디에서 올까요? (물의 여행)', en: 'Where Does Rain Come From? (Water Cycle)', zh: '雨从哪里来？（水循环）' },
       keyWords: [{ en: 'evaporate', ko: '증발하다' }, { en: 'cloud', ko: '구름' }, { en: 'rain', ko: '비' }],
       summary: { ko: '바닷물이 햇빛에 데워져 위로 올라가 구름이 돼요. 구름이 무거워지면 비가 되어 내려요!', en: 'The sun warms ocean water, it rises to make clouds, and when clouds get heavy it rains!', zh: '太阳晒暖海水，水上升变成云，云变重就下雨！' },
@@ -138,7 +138,7 @@ window.VIDEO_PLAN = {
       ],
     },
     'v-fri-1': {
-      section: 'math', channel: 'Numberblocks', minutes: 12, search: 'Numberblocks odds and evens', id: '',
+      section: 'math', channel: 'Numberblocks', minutes: 12, search: 'Numberblocks odds and evens', id: 'UdmHrpyZfQc',
       title: { ko: '홀수와 짝수 (Odds & Evens)', en: 'Odds and Evens', zh: '奇数和偶数' },
       keyWords: [{ en: 'even', ko: '짝수' }, { en: 'odd', ko: '홀수' }, { en: 'pair', ko: '짝' }],
       summary: { ko: '짝수는 둘씩 짝을 지을 수 있어요. 홀수는 하나가 남아요. 4는 짝수, 5는 홀수!', en: 'Even numbers make pairs with none left over. Odd numbers have one left over. 4 is even, 5 is odd!', zh: '偶数能两两配对，奇数会多出一个。4 是偶数，5 是奇数！' },
@@ -150,7 +150,7 @@ window.VIDEO_PLAN = {
       ],
     },
     'v-fri-2': {
-      section: 'phonics', channel: 'Alphablocks', minutes: 11, search: 'Alphablocks digraphs sh ch', id: '',
+      section: 'phonics', channel: 'Alphablocks', minutes: 11, search: 'Alphablocks digraphs sh ch', id: 'FfxZVaPowWg',
       title: { ko: '두 글자 한 소리 (Digraphs: sh, ch)', en: 'Two Letters, One Sound (sh, ch)', zh: '双字母一个音 (sh, ch)' },
       keyWords: [{ en: 'digraph', ko: '두 글자 소리' }, { en: 'sh', ko: '쉬 소리' }, { en: 'ch', ko: '취 소리' }],
       summary: { ko: '두 글자가 만나 한 소리를 내요. s와 h가 만나면 “쉬”, c와 h가 만나면 “취” 소리가 나요!', en: 'Two letters can join to make one sound. s + h says “sh”, and c + h says “ch”!', zh: '两个字母合起来发一个音。s + h 发 “sh”，c + h 发 “ch”！' },
