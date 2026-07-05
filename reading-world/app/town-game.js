@@ -14,7 +14,7 @@ window.TownGame = (function () {
   ];
 
   function scene() { return {
-    preload() {},
+    preload() { if (opts.avatarUri) { try { this.load.svg('avatarTex', opts.avatarUri, { width: 96, height: 96 }); } catch (e) {} } },
     create() {
       S = this; const g = this.add.graphics();
       // ground
@@ -75,14 +75,18 @@ window.TownGame = (function () {
       const hair = Phaser.Display.Color.HexStringToColor(look.hair || '#6b4326').color;
       const cloth = Phaser.Display.Color.HexStringToColor(look.clothes || '#6db3f2').color;
       const p = this.add.container(W / 2, H / 2 + 70);
-      const ag = this.add.graphics();
-      ag.fillStyle(0x000000, 0.14).fillEllipse(0, 26, 34, 10);       // shadow
-      ag.fillStyle(cloth, 1).fillRoundedRect(-15, 2, 30, 26, 9);      // body
-      ag.fillStyle(skin, 1).fillCircle(0, -8, 15);                    // head
-      ag.fillStyle(hair, 1).fillEllipse(0, -16, 30, 18);             // hair top
-      ag.fillStyle(0x33405c, 1).fillCircle(-5, -8, 2).fillCircle(5, -8, 2); // eyes
-      p.add(ag);
-      if (look.hatEmoji) { const h = this.add.text(0, -26, look.hatEmoji, { fontSize: '20px' }).setOrigin(0.5); p.add(h); }
+      const shadow = this.add.graphics(); shadow.fillStyle(0x000000, 0.14).fillEllipse(0, 26, 34, 10); p.add(shadow);
+      if (this.textures.exists('avatarTex')) {
+        const spr = this.add.image(0, 30, 'avatarTex').setOrigin(0.5, 1).setScale(0.92); p.add(spr);
+      } else {
+        const ag = this.add.graphics();
+        ag.fillStyle(cloth, 1).fillRoundedRect(-15, 2, 30, 26, 9);      // body
+        ag.fillStyle(skin, 1).fillCircle(0, -8, 15);                    // head
+        ag.fillStyle(hair, 1).fillEllipse(0, -16, 30, 18);             // hair top
+        ag.fillStyle(0x33405c, 1).fillCircle(-5, -8, 2).fillCircle(5, -8, 2); // eyes
+        p.add(ag);
+        if (look.hatEmoji) { const h = this.add.text(0, -26, look.hatEmoji, { fontSize: '20px' }).setOrigin(0.5); p.add(h); }
+      }
       this.physics.add.existing(p);
       p.body.setSize(30, 26).setOffset(-15, 2);
       p.body.setCollideWorldBounds(true);
