@@ -24,25 +24,28 @@ window.TownGame = (function () {
     },
     create() {
       S = this; const g = this.add.graphics();
-      // ground
+      // ground — layered flat-vector meadow
       g.fillStyle(0xbfe6a4, 1).fillRect(0, 0, W, H);
-      // soft ground patches
-      for (let i = 0; i < 26; i++) { const x = (i * 137) % W, y = (i * 89) % H; g.fillStyle(0xb2dd96, 1).fillCircle(x, y, 26 + (i % 3) * 8); }
-      // paths (cross to center)
-      g.fillStyle(0xe8d6a8, 1);
-      g.fillRect(W/2 - 26, 90, 52, H - 180);            // vertical
-      g.fillRect(120, H/2 - 26, W - 240, 52);           // horizontal
-      // path stubs to each building
-      BUILDINGS.forEach(b => { g.fillRect(Math.min(b.x, W/2) - 20, b.y - 12, Math.abs(b.x - W/2) + 24, 24); g.fillRect(b.x - 12, Math.min(b.y, H/2) - 20, 24, Math.abs(b.y - H/2) + 24); });
-      // decorative trees / flowers (placeholder art)
-      const deco = [[70,320],[890,300],[470,70],[470,540],[120,80],[840,540],[120,540],[840,70]];
-      deco.forEach((p, i) => { if (i % 2) { g.fillStyle(0x6bbf59,1).fillCircle(p[0], p[1], 20); g.fillStyle(0x8b5a2b,1).fillRect(p[0]-3, p[1]+14, 6, 14); } else { g.fillStyle(0xff9ec4,1).fillCircle(p[0], p[1], 7); g.fillStyle(0xffe08a,1).fillCircle(p[0], p[1], 3); } });
+      [[0xc9edb0, 46], [0xb4dd97, 36]].forEach(([col, r], ti) => { for (let i = 0; i < 14; i++) { const x = ((i * 167 + ti * 70) % (W + 80)) - 40, y = ((i * 113 + ti * 50) % (H + 60)) - 30; g.fillStyle(col, 1).fillCircle(x, y, r - (i % 3) * 7); } });
+      // paths with soft edges + center plaza
+      const path = (x, y, w, h) => { g.fillStyle(0xd8bf87, 1).fillRoundedRect(x - 3, y - 3, w + 6, h + 6, 10); g.fillStyle(0xecd9ab, 1).fillRoundedRect(x, y, w, h, 8); };
+      path(W/2 - 26, 90, 52, H - 180); path(120, H/2 - 26, W - 240, 52);
+      BUILDINGS.forEach(b => { const x = Math.min(b.x, W/2) - 20, w = Math.abs(b.x - W/2) + 24; path(x, b.y - 11, w, 22); const y = Math.min(b.y, H/2) - 20, h = Math.abs(b.y - H/2) + 24; path(b.x - 11, y, 22, h); });
+      g.fillStyle(0xd8bf87, 1).fillCircle(W/2, H/2, 50); g.fillStyle(0xecd9ab, 1).fillCircle(W/2, H/2, 44); g.fillStyle(0xf4e7c4, 1).fillCircle(W/2, H/2, 19);
+      // scenery — trees, bushes, flowers (flat-vector, matches decorations)
+      const tree = (x, y, s) => { g.fillStyle(0x2f7a3a, 0.13).fillEllipse(x, y + 22 * s, 46 * s, 13 * s); g.fillStyle(0xa9743f, 1).fillRect(x - 3 * s, y + 6 * s, 6 * s, 16 * s); g.fillStyle(0x57a349, 1).fillCircle(x - 11 * s, y + 2 * s, 13 * s); g.fillStyle(0x57a349, 1).fillCircle(x + 11 * s, y + 2 * s, 13 * s); g.fillStyle(0x6bbf59, 1).fillCircle(x, y - 8 * s, 15 * s); g.fillStyle(0x8ed17f, 0.9).fillCircle(x - 5 * s, y - 12 * s, 6 * s); };
+      const bush = (x, y) => { g.fillStyle(0x2f7a3a, 0.12).fillEllipse(x, y + 9, 34, 8); g.fillStyle(0x57a349, 1).fillCircle(x - 10, y, 11); g.fillStyle(0x57a349, 1).fillCircle(x + 10, y, 11); g.fillStyle(0x6bbf59, 1).fillCircle(x, y - 4, 13); };
+      const flower = (x, y, c) => { g.fillStyle(0x4e9e43, 1).fillRect(x - 1, y - 2, 2, 8); [[-5, 0], [5, 0], [0, -5], [0, 5]].forEach(d => { g.fillStyle(c, 1).fillCircle(x + d[0], y + d[1] - 3, 3.4); }); g.fillStyle(0xffe08a, 1).fillCircle(x, y - 3, 2.2); };
+      [[58, 120, 1], [905, 120, 1], [58, 500, 1], [905, 500, 0.9], [150, 255, 0.8], [812, 255, 0.8]].forEach(t => tree(t[0], t[1], t[2]));
+      [[250, 545], [700, 545], [95, 420], [880, 140]].forEach(bp => bush(bp[0], bp[1]));
+      [[120, 395, 0xff9ec4], [860, 395, 0xff9ec4], [420, 118, 0xffd45e], [548, 118, 0xe0777a], [300, 110, 0xff9ec4], [660, 510, 0xffd45e]].forEach(f => flower(f[0], f[1], f[2]));
 
       // buildings
       this.bZones = [];
       BUILDINGS.forEach(b => {
         const bg = this.add.graphics();
         const col = Phaser.Display.Color.HexStringToColor(b.color).color;
+        bg.fillStyle(0x000000, 0.08).fillEllipse(b.x, b.y + 44, 120, 20);                // ground shadow
         bg.fillStyle(col, 1).fillRoundedRect(b.x - 58, b.y - 34, 116, 74, 12);          // body
         bg.fillStyle(0xffffff, 0.18).fillRoundedRect(b.x - 58, b.y - 34, 116, 20, 8);   // light top
         bg.fillStyle(col, 1).fillTriangle(b.x - 66, b.y - 34, b.x + 66, b.y - 34, b.x, b.y - 74); // roof
