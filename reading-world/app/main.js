@@ -7,7 +7,7 @@ const LESSON1_ZH={zoo:'动物园',squirrels:'松鼠',robins:'知更鸟',cages:'�
 let L={};                 // current runtime lesson (kept in the same shape the views expect)
 let currentLessonId='lesson1';
 let originalReqRun=0;      // guards async original fetches when switching lessons
-function availableLessons(){const list=['lesson1'];Object.keys(window.LESSONS||{}).sort().forEach(id=>{if(!list.includes(id))list.push(id);});return list;}
+function availableLessons(){const list=['lesson1'];Object.keys(window.LESSONS||{}).sort((a,b)=>lessonNum(a)-lessonNum(b)).forEach(id=>{if(!list.includes(id))list.push(id);});return list;}
 function lessonNum(id){return parseInt(String(id).replace(/[^0-9]/g,''),10)||0;}
 function lessonMeta(id){if(id==='lesson1'){const b=window.LESSON1||{};return{id:'lesson1',num:1,title:b.title||'My Backyard Zoo',image:b.image||'assets/images/cars-level-b/lesson-01-my-backyard-zoo.png',theme:b.title||'My Backyard Zoo'};}const r=(window.LESSONS||{})[id]||{};return{id,num:lessonNum(id),title:r.title||id,image:r.image||'',theme:r.theme||''};}
 function buildRuntimeLesson(id){
