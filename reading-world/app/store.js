@@ -83,6 +83,16 @@ window.Store = (function () {
     load(id) { return readJSON(dataKey(id), null); },
     pull(id) { return remoteGet(id); },
 
+    // Fetch a lesson's licensed original passage/questions from the private table.
+    pullOriginal(bookId, lessonId) {
+      if (!remoteOn()) return Promise.resolve(null);
+      const url = `${SUPABASE.url}/rest/v1/lesson_content?book_id=eq.${encodeURIComponent(bookId)}&lesson_id=eq.${encodeURIComponent(lessonId)}&select=original_passage,original_questions`;
+      return fetch(url, { headers: hdr() })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((rows) => (rows && rows[0] ? { passage: rows[0].original_passage, questions: rows[0].original_questions } : null))
+        .catch(() => null);
+    },
+
     save(id, data) {
       if (!id) return;
       try { localStorage.setItem(dataKey(id), JSON.stringify(data)); } catch (e) {}

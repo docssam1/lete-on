@@ -79,6 +79,38 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 /* v28: skipped questions are marked apart from unanswered ones */
 .num.skipped{background:#fff4e5;border-color:#f2c894;border-style:dashed;color:#a05f0a}
 
+/* v30: Reading Town hub + lesson path */
+.town{min-height:100vh;padding:22px clamp(14px,4vw,44px) 48px;background:radial-gradient(130% 120% at 50% -10%,#e9fbf7 0%,#eef0ff 46%,#fff7ef 100%)}
+.town-top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+.town-brand{font-weight:900;letter-spacing:.02em;font-size:20px;color:#177f95}
+.town-brand small{display:block;font-size:12px;color:#7d8c9f;font-weight:700;letter-spacing:.05em}
+.town-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.points-pill{background:#fff5d8;border:1px solid #f4d488;color:#96690a;font-weight:850;font-size:13px;padding:6px 12px;border-radius:999px;white-space:nowrap}
+.town-lang{margin:0;background:#eef2ff;border-radius:12px;padding:4px}
+.town-lang button{white-space:nowrap}
+.house-card{max-width:1000px;margin:0 auto;background:#fff;border:1px solid #e6ebf3;border-radius:26px;padding:26px clamp(16px,3vw,30px) 30px;box-shadow:0 18px 46px #2235500f}
+.house-head{display:flex;gap:16px;align-items:center;margin-bottom:22px}
+.house-emoji{font-size:40px;width:66px;height:66px;display:grid;place-items:center;background:linear-gradient(135deg,#effdfa,#f2efff);border:1px solid #dcece9;border-radius:20px;flex:none}
+.house-tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;color:#0b968a;background:#d9f6f1;padding:3px 9px;border-radius:999px;text-transform:uppercase}
+.house-title{font-size:24px;margin:7px 0 3px;letter-spacing:-.5px}
+.house-head p{margin:0;color:#66718a;font-size:13px;line-height:1.5}
+.lesson-path{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.lesson-stop{display:flex;align-items:center;gap:13px;text-align:left;border:1px solid #e3e8f1;background:#fff;border-radius:18px;padding:12px;cursor:pointer;transition:.18s;position:relative}
+.lesson-stop:hover{transform:translateY(-2px);border-color:#8fdccf;box-shadow:0 12px 24px #22355012}
+.lesson-stop.current{border-color:#6d50e7;box-shadow:0 0 0 2px #6d50e733}
+.lesson-stop.done{background:#f4fffb;border-color:#bfe8d7}
+.stop-badge{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:900;color:#fff;background:linear-gradient(135deg,#12ad9e,#6d50e7)}
+.lesson-stop.done .stop-badge{background:linear-gradient(135deg,#43c78a,#28a76a)}
+.stop-thumb{flex:none;width:52px;height:52px;border-radius:12px;overflow:hidden;background:#f1f4f9;border:1px solid #e2e7f0}
+.stop-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.stop-info{min-width:0}
+.stop-info b{display:block;font-size:14px}
+.stop-info small{display:block;font-size:12px;color:#66718a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stop-status{display:block;font-size:11px;font-weight:800;color:#0b8b78;font-style:normal;margin-top:3px}
+.town-btn{width:100%;display:flex;align-items:center;gap:10px;border:1px solid #dfe4ee;background:#f7f9fc;border-radius:14px;padding:11px 13px;margin-bottom:14px;cursor:pointer;font-weight:800;font-size:13px;color:#3a465c}
+.town-btn:hover{background:#eef2f8;transform:translateY(-1px)}
+@media(max-width:680px){.town-top{align-items:flex-start}.lesson-path{grid-template-columns:1fr}}
+
 /* v28: the collapsed side menu must not force the page wider than the screen */
 @media(max-width:1120px){.side,.main{min-width:0}.side .menu{min-width:0;max-width:100%;overflow-x:auto}}
 
