@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'reading-world/**'
+      - '.github/pages-index.html'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
@@ -25,14 +26,20 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Stage site (app under /reading-world, landing menu at root)
+        run: |
+          mkdir -p _site/reading-world
+          cp -R reading-world/. _site/reading-world/
+          cp .github/pages-index.html _site/index.html
+          cp reading-world/robots.txt _site/robots.txt
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
-      - name: Upload the reading-world app as the Pages artifact
+      - name: Upload the staged site as the Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: reading-world
+          path: _site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
