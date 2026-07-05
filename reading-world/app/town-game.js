@@ -3,7 +3,7 @@
 // a movable avatar, and 4 buildings that call back into the app to open menus.
 // Real Gfield art + Tiled JSON maps drop in later without changing the API.
 window.TownGame = (function () {
-  let game = null, S = null, opts = null;
+  let game = null, S = null, opts = null, decorSeq = 0;
   const W = 960, H = 600;
   // buildings: key, grid position (px center), color, roof, emoji sign, label key
   const BUILDINGS = [
@@ -15,7 +15,11 @@ window.TownGame = (function () {
   ];
 
   function scene() { return {
-    preload() { if (opts.avatarUri) { try { this.load.svg('avatarTex', opts.avatarUri, { width: 96, height: 96 }); } catch (e) {} } },
+    preload() {
+      if (opts.avatarUri) { try { this.load.svg('avatarTex', opts.avatarUri, { width: 96, height: 96 }); } catch (e) {} }
+      const da = opts.decorArt || {};
+      Object.keys(da).forEach(id => { if (da[id]) { try { this.load.svg('deco_' + id, da[id], { width: 64, height: 64 }); } catch (e) {} } });
+    },
     create() {
       S = this; const g = this.add.graphics();
       // ground
@@ -62,12 +66,16 @@ window.TownGame = (function () {
         marker.lineStyle(2, 0x5aa06a, 0.7); marker.strokeCircle(s.x, s.y, 20);
         marker.fillStyle(0xffffff, 0.5).fillCircle(s.x, s.y, 18);
         const plus = this.add.text(s.x, s.y, '＋', { fontSize: '20px', color: '#4f8a5f' }).setOrigin(0.5);
-        const deco = this.add.text(s.x, s.y - 6, '', { fontSize: '30px' }).setOrigin(0.5);
+        const deco = this.add.text(s.x, s.y - 6, '', { fontSize: '30px' }).setOrigin(0.5).setVisible(false);
         const hit = this.add.circle(s.x, s.y, 26, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
         hit.on('pointerdown', () => { if (opts.onSlotClick) opts.onSlotClick(id); });
-        this.slotObjs[id] = { marker, plus, deco };
+        this.slotObjs[id] = { marker, plus, deco, img: null, x: s.x, y: s.y };
         const cur = opts.placed && opts.placed[id];
-        if (cur) { deco.setText(cur); marker.setVisible(false); plus.setVisible(false); }
+        if (cur) {
+          marker.setVisible(false); plus.setVisible(false);
+          if (this.textures.exists('deco_' + id)) this.slotObjs[id].img = this.add.image(s.x, s.y - 6, 'deco_' + id).setDisplaySize(40, 40);
+          else deco.setText(cur).setVisible(true);
+        }
       });
 
       // avatar (drawn from equipped colors — shared paper-doll model)
@@ -136,7 +144,22 @@ window.TownGame = (function () {
     });
   }
   function setMove(x, y) { if (S && S.touch) { S.touch.x = x; S.touch.y = y; } }
-  function setDecor(slotId, emoji) { if (S && S.slotObjs && S.slotObjs[slotId]) { const o = S.slotObjs[slotId]; o.deco.setText(emoji || ''); const empty = !emoji; o.marker.setVisible(empty); o.plus.setVisible(empty); } }
+  function setDecor(slotId, emoji, uri) {
+    if (!S || !S.slotObjs || !S.slotObjs[slotId]) return;
+    const o = S.slotObjs[slotId];
+    const empty = !emoji && !uri;
+    o.marker.setVisible(empty); o.plus.setVisible(empty);
+    if (o.img) { o.img.destroy(); o.img = null; }
+    o.deco.setVisible(false);
+    if (uri) {
+      const key = 'deco_' + slotId + '_' + (++decorSeq);
+      try {
+        S.load.svg(key, uri, { width: 64, height: 64 });
+        S.load.once('complete', () => { if (S && S.slotObjs[slotId] && S.textures.exists(key)) { if (o.img) o.img.destroy(); o.img = S.add.image(o.x, o.y - 6, key).setDisplaySize(40, 40); } });
+        S.load.start();
+      } catch (e) { if (emoji) o.deco.setText(emoji).setVisible(true); }
+    } else if (emoji) { o.deco.setText(emoji).setVisible(true); }
+  }
   function destroy() { if (game) { try { game.destroy(true); } catch (e) {} game = null; S = null; } }
   return { mount, setMove, setDecor, destroy };
 })();
