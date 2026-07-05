@@ -17,12 +17,12 @@ window.LESSON1={
   [
    "robins",
    "small birds that build nests",
-   "울새들"
+   "울새(작은 새)"
   ],
   [
    "cages",
    "places with bars where animals are kept",
-   "우리"
+   "동물 우리"
   ],
   [
    "crickets",
@@ -52,7 +52,7 @@ window.LESSON1={
   [
    "free",
    "costing no money",
-   "무료인"
+   "공짜인"
   ],
   [
    "pulling your leg",

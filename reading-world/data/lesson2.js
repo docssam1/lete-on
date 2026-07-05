@@ -13,18 +13,18 @@ window.LESSONS['lesson2'] = {
 
   // [english, easy english definition, korean, chinese(simplified)]
   words: [
-    ['marsh', 'a low, wet place with soft ground', '습지', '沼泽'],
+    ['marsh', 'a low, wet place with soft ground', '늪(질척한 땅)', '沼泽'],
     ['damp', 'a little bit wet', '축축한', '潮湿的'],
     ['dried up', 'became dry, with no water left', '말라 버렸다', '干涸了'],
     ['search', 'to look hard for something', '찾아다니다', '寻找'],
     ['well', 'a deep hole dug to get water', '우물', '井'],
-    ['wise', 'good at making smart choices', '지혜로운', '明智的'],
+    ['wise', 'good at making smart choices', '슬기로운', '明智的'],
     ['leap', 'to jump far or high', '뛰어오르다', '跳跃'],
     ['worried', 'feeling that something bad may happen', '걱정하는', '担心的'],
     ['shallow', 'not deep', '얕은', '浅的'],
     ['weather', 'how hot, cold, or wet it is outside', '날씨', '天气'],
-    ['lesson', 'something important that you learn', '교훈', '教训'],
-    ['look before you leap', 'think carefully before you act', '뛰기 전에 살펴라 (신중히 행동하라)', '三思而后行'],
+    ['lesson', 'something important that you learn', '배울 점', '教训'],
+    ['look before you leap', 'think carefully before you act', '뛰기 전에 잘 살펴봐요 (서두르지 말기)', '三思而后行'],
   ],
 
   // 추가 학습 — a short helper passage that deepens the same strategy focus.
