@@ -211,3 +211,33 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 .mywords-empty .mw-star{font-size:44px;margin-bottom:8px}
 .mywords-empty h3{margin:0 0 8px}
 .mywords-empty p{color:var(--muted);line-height:1.6}
+
+/* v35: avatar + closet (character customization) */
+.avatar-svg{display:block;border-radius:18px}
+.avatar-card{display:flex;align-items:center;gap:18px;background:linear-gradient(135deg,#fffdf9,#f3f7ff);border:1px solid var(--line);border-radius:22px;padding:16px 20px;margin:0 0 16px}
+.avatar-card .ava-wrap{flex:0 0 auto;filter:drop-shadow(0 6px 14px rgba(30,50,90,.14))}
+.avatar-card .ava-info{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.avatar-card .ava-hello{font-size:20px;font-weight:800;color:#26324b}
+.avatar-card .ava-hello b{color:#0f9f92}
+.closet{background:#fff;border:1px solid var(--line);border-radius:22px;padding:18px 20px}
+.closet-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.closet-head h2{margin:0;flex:1;font-size:20px}
+.points-pill.big{font-size:15px;padding:8px 15px}
+.closet-body{display:grid;grid-template-columns:minmax(180px,240px) 1fr;gap:22px;align-items:start}
+.closet-preview{position:sticky;top:12px;display:flex;justify-content:center;filter:drop-shadow(0 8px 18px rgba(30,50,90,.16))}
+.av-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.av-tab{background:#f1f4f9;border:1px solid var(--line);border-radius:999px;padding:8px 15px;font-weight:800;font-size:14px;cursor:pointer;color:#59657c}
+.av-tab.active{background:linear-gradient(135deg,#effffd,#f5f0ff);border-color:#27b8aa;color:#0f7f76}
+.av-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.av-item{display:flex;flex-direction:column;align-items:center;gap:7px;padding:12px 8px;border:1px solid var(--line);border-radius:16px;background:#fbfcfe;text-align:center}
+.av-item.equipped{border-color:#37c98a;background:#f0fbf4}
+.av-item b{font-size:13px;color:#41506a}
+.av-prev{width:60px;height:60px;border-radius:14px;background:#eef2f8;display:flex;align-items:center;justify-content:center}
+.av-emoji{font-size:34px;line-height:1}
+.av-none{font-size:24px;color:#b6c0d0}
+.av-swatch{width:44px;height:44px;border-radius:10px;border:2px solid rgba(0,0,0,.06)}
+.av-badge{font-size:12.5px;font-weight:800;padding:5px 10px;border-radius:999px}
+.av-badge.on{background:#e9fbf1;color:#127a4e}
+.av-badge.lock{background:#f1f4f9;color:#8a94a6}
+.btn.tiny.buy{background:#fff5d8;border-color:#f4d488;color:#96690a;font-weight:850}
+@media(max-width:680px){.closet-body{grid-template-columns:1fr}.closet-preview{position:static}.avatar-card{flex-direction:column;text-align:center}.avatar-card .ava-info{align-items:center}}
