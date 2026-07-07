@@ -381,6 +381,13 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 .sq-arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .sq-arch{display:flex;align-items:center;gap:9px;padding:11px 13px;border:1px solid var(--line);border-left:5px solid var(--sec,#7a5cc3);border-radius:12px;background:#fbfcfe;cursor:pointer;text-align:left;font:inherit}
 .sq-arch:hover{background:#f4f7fd}.sq-arch.done{background:#f2fbf4;border-color:#bfe6cd}
+.sq-week-block{margin-bottom:22px}
+.sq-week-block+.sq-week-block{padding-top:18px;border-top:1px dashed var(--line)}
+.sq-week-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 14px;padding:10px 14px;border-radius:14px;background:linear-gradient(135deg,#eef3fb,#e6f7f3);border:1px solid var(--line)}
+.sq-week-label{font-size:17px;font-weight:800;color:#25406b}
+.sq-week-tag{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:#39b39a;padding:3px 9px;border-radius:999px}
+.sq-week-head small{margin-left:auto;font-size:13px;color:#6a7b95}
+.sq-arch-empty{margin:0;font-size:14px;color:#8494ad}
 @media(max-width:680px){.sq-vchips,.sq-arch-grid{grid-template-columns:1fr}.sq-plan-hero h1{font-size:24px}.sq-q{font-size:18px}}
 /* ---- Customize: avatar / town toggle + click-to-decorate (v39) ---- */
 .cz-modes{display:flex;gap:8px;margin:0 auto}

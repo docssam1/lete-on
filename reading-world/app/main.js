@@ -540,8 +540,9 @@ function sqAvailable(){return !!(window.VIDEO_PLAN&&VIDEO_PLAN.videos);}
 function sqLoc(o){return o?(o[st.lang]||o.en||o.ko||''):'';}
 function sqT(ko,en,zh){return st.lang==='ko'?ko:st.lang==='zh'?zh:en;}
 function sqEnsure(){if(!profile.screenQuest)profile.screenQuest={passed:{}};if(!profile.screenQuest.passed)profile.screenQuest.passed={};return profile.screenQuest;}
-function sqVideo(id){return sqAvailable()?VIDEO_PLAN.videos[id]:null;}
-function sqSection(v){return (VIDEO_PLAN.sections||[]).find(s=>s.key===(v&&v.section))||{emoji:'🎬',color:'#7a5cc3',name:{en:''}};}
+function sqArchiveWeeks(){return Array.isArray(window.VIDEO_ARCHIVE)?window.VIDEO_ARCHIVE:[];}
+function sqVideo(id){if(sqAvailable()&&VIDEO_PLAN.videos[id])return VIDEO_PLAN.videos[id];for(const p of sqArchiveWeeks()){if(p&&p.videos&&p.videos[id])return p.videos[id];}return null;}
+function sqSection(v){const key=v&&v.section;let s=(VIDEO_PLAN.sections||[]).find(x=>x.key===key);if(s)return s;for(const p of sqArchiveWeeks()){s=((p&&p.sections)||[]).find(x=>x.key===key);if(s)return s;}return {emoji:'🎬',color:'#7a5cc3',name:{en:''}};}
 function sqPassed(id){return !!(profile.screenQuest&&profile.screenQuest.passed&&profile.screenQuest.passed[id]);}
 function sqDayDone(day){return (day.videos||[]).every(id=>sqPassed(id));}
 function sqAllVideos(){const out=[];(VIDEO_PLAN.days||[]).forEach(d=>(d.videos||[]).forEach(id=>{if(!out.includes(id))out.push(id);}));return out;}
@@ -590,11 +591,16 @@ function sqQuizView(){const v=sqVideo(sq.vid);if(!v)return sqPlanView();const se
  <section class="sq-quiz" style="--sec:${sec.color}"><div class="sq-dots">${dots}</div><div class="sq-strat">${esc(q.strat||'')}</div><h3 class="sq-q">${esc(sqLoc(q.q))}</h3><div class="sq-opts">${opts}</div>${fb}${navBtns}</section>`;}
 function sqResultView(){const v=sqVideo(sq.vid);if(!v)return sqPlanView();const sec=sqSection(v);const d=(VIDEO_PLAN.days||[]).find(x=>x.key===sq.day);
  return `<section class="sq-result" style="--sec:${sec.color}"><div class="sq-result-emoji">${sec.emoji}⭐</div><h1>${sqT('참 잘했어요!','Great job!','太棒了！')}</h1><p>${sqT('퀴즈 4문제를 모두 통과했어요.','You passed all 4 quiz questions.','你通过了全部 4 道题。')}</p><div class="sq-reward">★ +${VIDEO_PLAN.points||12}P</div><div class="tools center"><button class="btn primary big" data-act="sq-day" data-day="${esc(sq.day||'')}">${sqT('오늘의 다른 영상','Other video today','今天的另一个视频')} →</button><button class="btn" data-act="sq-plan">${sqT('주간 플랜','Weekly Plan','周计划')}</button></div></section>`;}
-function sqArchiveView(){const secs=VIDEO_PLAN.sections||[];
- const groups=secs.map(sec=>{const vids=sqAllVideos().map(sqVideo).filter(v=>v&&v.section===sec.key);if(!vids.length)return '';
-  const cards=vids.map(v=>{const id=Object.keys(VIDEO_PLAN.videos).find(k=>VIDEO_PLAN.videos[k]===v);const p=sqPassed(id);return `<button class="sq-arch ${p?'done':''}" data-act="sq-video" data-vid="${esc(id)}" style="--sec:${sec.color}"><span class="sq-vemoji">${sec.emoji}</span><span class="sq-vt">${esc(sqLoc(v.title))}</span>${p?'<span class="sq-check">✓</span>':''}</button>`;}).join('');
+function sqArchWeekVideoIds(plan){const out=[];(plan.days||[]).forEach(d=>(d.videos||[]).forEach(id=>{if(!out.includes(id))out.push(id);}));return out;}
+function sqArchWeekBlock(plan,isCurrent){const secs=plan.sections||[];const vmap=plan.videos||{};const ids=sqArchWeekVideoIds(plan);
+ const groups=secs.map(sec=>{const list=ids.filter(id=>vmap[id]&&vmap[id].section===sec.key);if(!list.length)return '';
+  const cards=list.map(id=>{const v=vmap[id];const p=sqPassed(id);return `<button class="sq-arch ${p?'done':''}" data-act="sq-video" data-vid="${esc(id)}" style="--sec:${sec.color}"><span class="sq-vemoji">${sec.emoji}</span><span class="sq-vt">${esc(sqLoc(v.title))}</span>${p?'<span class="sq-check">✓</span>':''}</button>`;}).join('');
   return `<section class="sq-arch-sec"><div class="sq-arch-head" style="--sec:${sec.color}">${sec.emoji} <b>${esc(sqLoc(sec.name))}</b><small>${esc(sec.playlist||'')}</small></div><div class="sq-arch-grid">${cards}</div></section>`;}).join('');
- return `<div class="sq-sub"><button class="btn" data-act="sq-plan">← ${sqT('주간 플랜','Weekly Plan','周计划')}</button><b>🗂️ ${sqT('영상 자료실','Video Library','视频资料库')}</b></div><p class="sq-arch-note">${sqT('배운 영상은 섹션별로 여기에 모여요. 언제든 다시 보고 퀴즈를 풀 수 있어요.','Videos you learn are gathered here by section. Watch and quiz again anytime.','学过的视频按分类收藏在这里，随时可以重看和复习。')}</p>${groups}`;}
+ const w=plan.week||{};const label=sqLoc(w.label);const theme=sqLoc(w.theme);
+ return `<div class="sq-week-block${isCurrent?' current':''}"><div class="sq-week-head"><span class="sq-week-label">${esc(label)}</span>${isCurrent?`<span class="sq-week-tag">${sqT('이번 주','This week','本周')}</span>`:''}${theme?`<small>${esc(theme)}</small>`:''}</div>${groups||`<p class="sq-arch-empty">${sqT('영상이 없어요.','No videos.','没有视频。')}</p>`}</div>`;}
+function sqArchiveView(){const current=sqArchWeekBlock(VIDEO_PLAN,true);
+ const past=sqArchiveWeeks().map(p=>sqArchWeekBlock(p,false)).join('');
+ return `<div class="sq-sub"><button class="btn" data-act="sq-plan">← ${sqT('주간 플랜','Weekly Plan','周计划')}</button><b>🗂️ ${sqT('영상 자료실','Video Library','视频资料库')}</b></div><p class="sq-arch-note">${sqT('배운 영상은 주별·섹션별로 여기에 모여요. 지난 주 영상도 언제든 다시 보고 퀴즈를 풀 수 있어요.','Videos are gathered here week by week and by section. You can rewatch and quiz past weeks anytime.','学过的视频按周和分类收藏在这里，往期视频随时可以重看和复习。')}</p>${current}${past}`;}
 function enterScreenQuest(){sqEnsure();sq={view:'plan',day:null,vid:null,qi:0};townView='screen';save();render();window.scrollTo({top:0});}
 function handleScreenQuest(b){const act=b.dataset.act;sqEnsure();
  if(act==='sq-open'){enterScreenQuest();return;}
