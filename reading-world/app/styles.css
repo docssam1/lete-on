@@ -479,6 +479,31 @@ img{-webkit-user-drag:none;user-select:none}
 .level-books{display:flex;flex-wrap:wrap;gap:22px 18px;align-items:end;flex:1}
 .level-empty{color:var(--muted);font-size:13px;padding:20px 6px;opacity:.65;font-weight:600}
 
+/* Notice board (공지사항) */
+.notice-board{min-height:100vh;background:var(--bg)}
+.nb-wrap{max-width:720px;margin:0 auto;padding:16px 16px 52px}
+.nb-list{display:flex;flex-direction:column;gap:14px;margin-top:6px}
+.nb-card{background:var(--card,#fff);border:1px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:0 3px 14px rgba(0,0,0,.06)}
+.nb-card.pinned{border-color:#f2c94c;background:linear-gradient(180deg,#fffdf3,var(--card,#fff))}
+.nb-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.nb-top h3{margin:0;font-size:17px;font-weight:800;flex:1;min-width:0;line-height:1.35}
+.nb-top time{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.nb-pin{font-size:11.5px;font-weight:800;color:#a9750b;background:#ffe6a0;border-radius:20px;padding:3px 10px}
+.nb-body{margin-top:12px;font-size:14.5px;line-height:1.65;color:var(--ink,#2b3346)}
+.nb-body p{margin:0 0 10px}.nb-body p:last-child{margin-bottom:0}
+.nb-body strong{font-weight:800;color:var(--ink,#1f2733)}
+.nb-h{margin:16px 0 8px;font-size:14px;font-weight:800;color:#0aa394;display:flex;align-items:center;gap:6px}
+.nb-body ul{margin:6px 0 12px;padding-left:2px;list-style:none;display:flex;flex-direction:column;gap:5px}
+.nb-body li{position:relative;padding-left:20px}
+.nb-body li::before{content:"▸";position:absolute;left:2px;color:#7bc47f;font-weight:900}
+.nb-by{margin-top:14px;font-size:12px;color:var(--muted);text-align:right}
+.nb-loading,.nb-empty{text-align:center;color:var(--muted);padding:44px 0;font-size:14px}
+.nb-compose{background:var(--card,#fff);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.nb-in{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:14px;background:var(--bg);color:var(--ink,#2b3346);box-sizing:border-box}
+.nb-in:focus{outline:2px solid #7bc47f;border-color:#7bc47f}
+textarea.nb-in{resize:vertical}
+.nb-compose-btns{display:flex;gap:10px;justify-content:flex-end}
+
 /* 3-D book card */
 .book-card{perspective:600px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;user-select:none}
 .book-card:hover .book-3d{transform:rotateY(-15deg) translateY(-4px);box-shadow:-10px 14px 32px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.3)}

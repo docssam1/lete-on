@@ -93,6 +93,23 @@ window.Store = (function () {
         .catch(() => null);
     },
 
+    // ---- notice board (public announcements) ----
+    pullNotices() {
+      if (!remoteOn()) return Promise.resolve(null);
+      const url = `${SUPABASE.url}/rest/v1/notices?select=id,created_at,title,body,pinned,author&order=pinned.desc,created_at.desc&limit=50`;
+      return fetch(url, { headers: hdr() })
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null);
+    },
+    postNotice(n) {
+      if (!remoteOn() || !n || !n.title) return Promise.resolve(false);
+      return fetch(`${SUPABASE.url}/rest/v1/notices`, {
+        method: 'POST',
+        headers: { ...hdr(), Prefer: 'return=representation' },
+        body: JSON.stringify({ title: String(n.title).slice(0, 120), body: String(n.body || '').slice(0, 2000), author: String(n.author || 'Gfield').slice(0, 40), pinned: !!n.pinned }),
+      }).then((r) => (r.ok ? r.json() : false)).catch(() => false);
+    },
+
     save(id, data) {
       if (!id) return;
       try { localStorage.setItem(dataKey(id), JSON.stringify(data)); } catch (e) {}
