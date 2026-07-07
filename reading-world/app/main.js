@@ -440,6 +440,7 @@ function speakPassage(passage){
  if(bookId){
    if(passage==='originalExtra')audioUrl=`${AUDIO_BASE}/${bookId}/${currentLessonId}-extra.mp3`;
    else if(passage==='extra')audioUrl=`${AUDIO_BASE}/${bookId}/${currentLessonId}-new.mp3`;
+   else if(passage==='original')audioUrl=`${AUDIO_BASE}/${bookId}/${currentLessonId}-original.mp3`;
  }
  if(audioUrl){const el=new Audio(audioUrl);el.playbackRate=Number(st.speed)||1;_audioEl=el;el.onended=()=>{if(run===st.speechRun)_audioEl=null;};el.play().catch(()=>{_audioEl=null;speakPassageWSA(text,run,nodes);});return;}
  speakPassageWSA(text,run,nodes);}

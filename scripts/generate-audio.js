@@ -114,6 +114,23 @@ async function generateMp3(text) {
   return Buffer.from(json.audioContent, 'base64');
 }
 
+async function fetchOriginalPassages() {
+  const res = await httpRequest({
+    hostname: new URL(SUPABASE_URL).hostname,
+    path: '/rest/v1/lesson_content?select=book_id,lesson_id,original_passage',
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'apikey': SUPABASE_KEY,
+    },
+  });
+  if (res.status !== 200) {
+    console.warn('⚠  Could not fetch original passages from Supabase:', res.body.toString().slice(0, 200));
+    return [];
+  }
+  return JSON.parse(res.body.toString());
+}
+
 async function uploadToSupabase(mp3Buffer, storagePath) {
   const res = await httpRequest({
     hostname: new URL(SUPABASE_URL).hostname,
@@ -131,6 +148,24 @@ async function uploadToSupabase(mp3Buffer, storagePath) {
 
 // ── Main ───────────────────────────────────────────────────────────────────────
 async function main() {
+  // Add original passages from Supabase
+  console.log('📥  Fetching original passages from Supabase...');
+  const originals = await fetchOriginalPassages();
+  for (const row of originals) {
+    const text = (row.original_passage || []).join('\n\n');
+    if (text.trim()) {
+      tasks.unshift({
+        lessonId: row.lesson_id,
+        bookId: row.book_id,
+        type: 'original',
+        text,
+        storagePath: `${row.book_id}/${row.lesson_id}-original.mp3`,
+      });
+    }
+  }
+  console.log(`📋  ${tasks.length} total passages (incl. ${originals.length} originals)`);
+  console.log('');
+
   let done = 0, failed = 0, totalUsed = 0;
   const results = {};
 
