@@ -115,20 +115,15 @@ td .keys{color:var(--sub);font-size:11px}
 
 <script>
 "use strict";
-/* ===== 설정 ===== */
 const CFG={owner:"docssam1",repo:"lete-on",branch:"main",path:"config.js",globalVar:"GFIELD_CONFIG"};
 const LS_PASS="gfieldon_admin_ok", LS_PAT="gfieldon_pat", LS_REG="gfieldon_registry";
 const FALLBACK_PASS="01020837265";
 const LOCKS=["open","closed","soon"];
 const LOCKLABEL={open:"🔓 미리보기",closed:"🔒 승인필요",soon:"준비중"};
-
-/* ===== 상태 ===== */
-let DATA=null;       // config (brands/meta/access)
+let DATA=null;
 let FILE_SHA=null;
-let REG=[];          // 회원 레지스트리(원장 전용, localStorage): [{name,code,keys:[]}]
+let REG=[];
 let curTab="structure";
-
-/* ===== 유틸 ===== */
 const $=id=>document.getElementById(id);
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),2200);}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
@@ -138,8 +133,6 @@ function getPAT(){return localStorage.getItem(LS_PAT)||"";}
 function ensurePAT(){let t=getPAT();if(!t){t=(prompt("GitHub PAT 입력 (Contents: Read and write)")||"").trim();if(t)localStorage.setItem(LS_PAT,t);}return t;}
 async function sha256(m){const b=new TextEncoder().encode(m);const d=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,"0")).join("");}
 function genCode(){const s="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let r="GF";for(let i=0;i<5;i++)r+=s[Math.floor(Math.random()*s.length)];return r;}
-
-/* ===== 게이트 ===== */
 $("passBtn").addEventListener("click",()=>{
   const p=$("passInput").value.trim();
   const ok=(DATA&&DATA.meta&&DATA.meta.adminPass)?(p===DATA.meta.adminPass):(p===FALLBACK_PASS);
@@ -147,8 +140,6 @@ $("passBtn").addEventListener("click",()=>{
   else $("gateErr").textContent="비밀번호가 올바르지 않습니다.";
 });
 $("passInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("passBtn").click();});
-
-/* ===== 로드 ===== */
 async function load(){
   $("status").innerHTML='<span class="spinner"></span> 불러오는 중…';
   REG=JSON.parse(localStorage.getItem(LS_REG)||"[]");
@@ -166,8 +157,6 @@ async function load(){
 function parseCfg(t){try{const w={};new Function("window",t)(w);return w[CFG.globalVar]||null;}catch(e){toast("config 파싱 오류: "+e.message);return null;}}
 function emptyCfg(){return {meta:{updatedAt:"",salt:"gfield-on-2026-v1"},brands:[],access:{}};}
 function shape(d){d.meta=d.meta||{};if(!d.meta.salt)d.meta.salt="gfield-on-2026-v1";d.brands=Array.isArray(d.brands)?d.brands:[];d.access=d.access||{};}
-
-/* ===== 탭 ===== */
 document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
   curTab=t.dataset.tab;
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===t));
@@ -175,8 +164,6 @@ document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
   $("panel-"+curTab).classList.add("active");render();
 }));
 function render(){ curTab==="structure"?renderStructure():renderMembers(); }
-
-/* ===== 권한 열쇠 목록 (구조에서 파생) ===== */
 function keyList(){
   const out=[];
   (DATA.brands||[]).forEach(b=>{
@@ -196,8 +183,6 @@ function pushProg(out,prefix,p){
     for(let i=1;i<=p.count;i++)out.push({key:base+":"+i,label:p.name+" "+i+"회",lvl:"prog"});
   }else out.push({key:base,label:p.name,lvl:"prog"});
 }
-
-/* ===== 구조 탭 ===== */
 function renderStructure(){
   const blocks=(DATA.brands||[]).map((b,bi)=>{
     let inner="";
@@ -246,8 +231,6 @@ function progByPath(path){
   if(m[2]==="c"){const ci=+m[3];return {arr:b.courses[ci].programs};}
   return {arr:b.programs};
 }
-
-/* ===== 모달 편집기 ===== */
 function modal(title,fields,obj,onSave){
   const body=fields.map(f=>{
     const v=obj[f.k];
@@ -268,7 +251,6 @@ function modal(title,fields,obj,onSave){
 const BRAND_F=[{k:"key",label:"키(영문, 예: soma)",type:"text"},{k:"name",label:"이름",type:"text"},{k:"icon",label:"아이콘(이모지)",type:"text"},{k:"badge",label:"배지(영문)",type:"text"},{k:"desc",label:"설명",type:"textarea"},{k:"single",label:"단일과정(과정 없이 바로 프로그램)",type:"checkbox"}];
 const COURSE_F=[{k:"key",label:"키(영문, 예: premier)",type:"text"},{k:"name",label:"이름",type:"text"},{k:"desc",label:"설명",type:"textarea"},{k:"lock",label:"잠금",type:"select",opts:LOCKS}];
 const PROG_F=[{k:"key",label:"키(영문, 예: concept)",type:"text"},{k:"name",label:"이름",type:"text"},{k:"type",label:"유형(예: 개념+강의)",type:"text"},{k:"lock",label:"잠금",type:"select",opts:LOCKS},{k:"count",label:"회차 수(모의고사면, 없으면 0)",type:"number"},{k:"url",label:"링크(예: /fields-classic/program/)",type:"text"},{k:"desc",label:"설명",type:"textarea"}];
-
 const ADM={
   addBrand(){const o={key:"",name:"",icon:"🟦",badge:"",desc:"",single:false};modal("축 추가",BRAND_F,o,x=>{if(x.single)x.programs=[];else x.courses=[];DATA.brands.push(x);renderStructure();});},
   editBrand(bi){modal("축 수정",BRAND_F,DATA.brands[bi],()=>renderStructure());},
@@ -281,8 +263,6 @@ const ADM={
   delProg(path,pi){if(confirm("이 프로그램을 삭제할까요?")){const {arr}=progByPath(path);arr.splice(pi,1);renderStructure();}}
 };
 window.ADM=ADM;
-
-/* ===== 회원·권한 탭 ===== */
 function renderMembers(){
   const rows=REG.map((m,i)=>`<tr>
     <td>${esc(m.name||"-")}</td>
@@ -329,8 +309,6 @@ const MEM={
   importReg(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{REG=JSON.parse(r.result);this.saveReg();renderMembers();toast("레지스트리 불러옴 "+REG.length+"명");}catch(e){toast("불러오기 실패");}};r.readAsText(f);}
 };
 window.MEM=MEM;
-
-/* ===== 저장 (해시 생성 + config.js 커밋) ===== */
 async function buildAccess(){
   const salt=DATA.meta.salt||"gfield-on-2026-v1";const access={};
   for(const m of REG){ if(!m.code||!(m.keys&&m.keys.length))continue; const h=await sha256(salt+":"+m.code.trim().toUpperCase()); access[h]=m.keys; }
@@ -361,7 +339,6 @@ async function save(){
 }
 $("saveBtn").addEventListener("click",save);
 $("reloadBtn").addEventListener("click",load);
-
 load();
 </script>
 </body>
