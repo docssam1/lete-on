@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GFIELD-ON 통합관리</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--bg:#0b0f17;--surface:#121826;--surface2:#161e2e;--gold:#d4af37;--gold2:#f8dd83;--ink:#e8ecf3;--sub:#95a2b8;--line:rgba(255,255,255,.09);--ok:#3fae6f;--okbg:rgba(63,174,111,.12);--warn:#d4af37;--danger:#e5657f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+header{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;background:rgba(11,15,23,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+header .brand{font-weight:900;font-size:16px;color:var(--gold2)}
+header .brand small{display:block;font-size:10px;letter-spacing:.14em;color:var(--sub);font-weight:700;margin-top:2px}
+header .hbtns{display:flex;gap:8px}
+header button{border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--ink);border-radius:9px;padding:9px 13px;font-size:12.5px;font-weight:800;cursor:pointer}
+header button.save{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0b0f17;border:0}
+.wrap{max-width:940px;margin:0 auto;padding:18px 16px 90px}
+.status{font-size:12px;color:var(--sub);margin:0 0 14px 2px}
+#gate{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 30% 20%,rgba(212,175,55,.1),transparent 45%),var(--bg);display:flex;align-items:center;justify-content:center;padding:18px}
+.gate-card{width:min(380px,100%);background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:30px 26px;text-align:center}
+.gate-card h1{margin:0 0 4px;font-size:19px;color:var(--gold2)}
+.gate-card p{margin:0 0 16px;color:var(--sub);font-size:12.5px}
+.gate-card input{width:100%;height:46px;padding:0 14px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:rgba(255,255,255,.04);color:var(--ink);outline:none;text-align:center}
+.gate-card input:focus{border-color:var(--gold)}
+.gate-card button{width:100%;height:46px;margin-top:12px;border:0;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0b0f17;font-size:15px;font-weight:900;cursor:pointer}
+.gate-err{min-height:16px;margin-top:8px;color:var(--danger);font-size:12px;font-weight:700}
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:9px 15px;border-radius:9px;background:var(--surface);border:1px solid var(--line);font-size:13px;font-weight:800;color:var(--sub);cursor:pointer}
+.tab.active{background:var(--gold);color:#0b0f17;border-color:var(--gold)}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.card h2{margin:0 0 4px;font-size:15px;color:var(--gold2)}
+.card .chelp{color:var(--sub);font-size:12px;margin-bottom:12px}
+.brandblock{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:var(--surface2)}
+.brandhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.brandhead .bt{font-size:15px;font-weight:900}
+.brandhead .badge{font-size:10px;font-weight:900;color:var(--gold);background:rgba(212,175,55,.1);border:1px solid var(--line);padding:3px 9px;border-radius:99px;margin-left:8px}
+.subblock{margin:8px 0 8px 12px;padding-left:12px;border-left:2px solid var(--line)}
+.subhead{font-size:13px;font-weight:800;color:var(--gold2);margin:8px 0 6px}
+.prog{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;margin-bottom:6px;background:rgba(255,255,255,.02)}
+.prog .pn{font-size:13px;font-weight:700}
+.prog .pk{font-size:11px;color:var(--sub);font-family:monospace}
+.lockpill{font-size:10px;font-weight:900;padding:2px 8px;border-radius:99px;margin-left:6px}
+.lockpill.open{background:var(--okbg);color:var(--ok)}
+.lockpill.closed{background:rgba(255,255,255,.06);color:var(--sub)}
+.lockpill.soon{background:rgba(212,175,55,.12);color:var(--gold2)}
+.btn{height:34px;padding:0 12px;border:0;border-radius:8px;font-size:12.5px;font-weight:800;cursor:pointer}
+.btn.sm{height:30px;padding:0 9px;font-size:11.5px}
+.btn.primary{background:var(--gold);color:#0b0f17}
+.btn.ghost{background:rgba(255,255,255,.05);color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:rgba(229,101,127,.12);color:var(--danger);border:1px solid rgba(229,101,127,.3)}
+.row-actions{display:flex;gap:6px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);font-size:12.5px;vertical-align:middle}
+th{color:var(--sub);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+td .code{font-family:monospace;font-weight:800;color:var(--gold2)}
+td .keys{color:var(--sub);font-size:11px}
+.modal-bg{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.62);display:none;align-items:center;justify-content:center;padding:18px}
+.modal-bg.show{display:flex}
+.modal{width:min(560px,100%);max-height:88vh;overflow-y:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;position:relative}
+.modal h3{margin:0 0 14px;font-size:16px;color:var(--gold2)}
+.fld{margin-bottom:11px}
+.fld label{display:block;font-size:11px;font-weight:800;color:var(--sub);margin-bottom:5px}
+.fld input,.fld select,.fld textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:rgba(255,255,255,.04);color:var(--ink);outline:none;font-family:inherit}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--gold)}
+.modal-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.keygrid{display:flex;flex-direction:column;gap:4px;max-height:280px;overflow-y:auto;border:1px solid var(--line);border-radius:9px;padding:10px;background:rgba(0,0,0,.2)}
+.keyitem{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:3px 0}
+.keyitem.lvl-brand{font-weight:900;color:var(--gold2);margin-top:6px}
+.keyitem.lvl-course{font-weight:800;margin-left:14px;color:var(--ink)}
+.keyitem.lvl-prog{margin-left:28px;color:var(--sub)}
+.keyitem input{width:16px;height:16px;flex-shrink:0}
+.keyitem code{font-family:monospace;font-size:10.5px;color:var(--sub)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0b0f17;color:var(--gold2);border:1px solid var(--line);padding:11px 18px;border-radius:10px;font-size:13px;font-weight:800;z-index:200;opacity:0;transition:.2s;pointer-events:none}
+.toast.show{opacity:1}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(212,175,55,.3);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.addbar{margin-top:8px}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <div style="font-size:28px">🔐</div>
+    <h1>GFIELD-ON 통합관리</h1>
+    <p>관리자 비밀번호를 입력하세요.</p>
+    <input id="passInput" type="password" placeholder="비밀번호" autocomplete="off">
+    <button id="passBtn">들어가기</button>
+    <div class="gate-err" id="gateErr"></div>
+  </div>
+</div>
+
+<header>
+  <div class="brand">GFIELD-ON 통합관리<small>ONE PLACE · ALL INDEXES</small></div>
+  <div class="hbtns">
+    <button id="reloadBtn">새로고침</button>
+    <button class="save" id="saveBtn">💾 GitHub 저장</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="status" id="status">불러오는 중…</div>
+  <div class="tabs">
+    <div class="tab active" data-tab="structure">① 구조·프로그램</div>
+    <div class="tab" data-tab="members">② 회원·권한</div>
+  </div>
+  <div class="panel active" id="panel-structure"></div>
+  <div class="panel" id="panel-members"></div>
+</div>
+
+<div class="modal-bg" id="modalBg"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ===== 설정 ===== */
+const CFG={owner:"docssam1",repo:"lete-on",branch:"main",path:"config.js",globalVar:"GFIELD_CONFIG"};
+const LS_PASS="gfieldon_admin_ok", LS_PAT="gfieldon_pat", LS_REG="gfieldon_registry";
+const FALLBACK_PASS="01020837265";
+const LOCKS=["open","closed","soon"];
+const LOCKLABEL={open:"🔓 미리보기",closed:"🔒 승인필요",soon:"준비중"};
+
+/* ===== 상태 ===== */
+let DATA=null;       // config (brands/meta/access)
+let FILE_SHA=null;
+let REG=[];          // 회원 레지스트리(원장 전용, localStorage): [{name,code,keys:[]}]
+let curTab="structure";
+
+/* ===== 유틸 ===== */
+const $=id=>document.getElementById(id);
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),2200);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function utf8b64(s){return btoa(unescape(encodeURIComponent(s)));}
+function b64utf8(b){return decodeURIComponent(escape(atob(b)));}
+function getPAT(){return localStorage.getItem(LS_PAT)||"";}
+function ensurePAT(){let t=getPAT();if(!t){t=(prompt("GitHub PAT 입력 (Contents: Read and write)")||"").trim();if(t)localStorage.setItem(LS_PAT,t);}return t;}
+async function sha256(m){const b=new TextEncoder().encode(m);const d=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,"0")).join("");}
+function genCode(){const s="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let r="GF";for(let i=0;i<5;i++)r+=s[Math.floor(Math.random()*s.length)];return r;}
+
+/* ===== 게이트 ===== */
+$("passBtn").addEventListener("click",()=>{
+  const p=$("passInput").value.trim();
+  const ok=(DATA&&DATA.meta&&DATA.meta.adminPass)?(p===DATA.meta.adminPass):(p===FALLBACK_PASS);
+  if(ok){localStorage.setItem(LS_PASS,"1");$("gate").style.display="none";}
+  else $("gateErr").textContent="비밀번호가 올바르지 않습니다.";
+});
+$("passInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("passBtn").click();});
+
+/* ===== 로드 ===== */
+async function load(){
+  $("status").innerHTML='<span class="spinner"></span> 불러오는 중…';
+  REG=JSON.parse(localStorage.getItem(LS_REG)||"[]");
+  const url=`https://api.github.com/repos/${CFG.owner}/${CFG.repo}/contents/${CFG.path}?ref=${CFG.branch}`;
+  const headers={"Accept":"application/vnd.github+json"};const pat=getPAT();if(pat)headers.Authorization="Bearer "+pat;
+  try{
+    const res=await fetch(url,{headers});
+    if(res.status===404){DATA=emptyCfg();FILE_SHA=null;$("status").textContent="config.js 없음 — 저장 시 새로 생성됩니다.";}
+    else if(res.ok){const j=await res.json();FILE_SHA=j.sha;DATA=parseCfg(b64utf8(j.content.replace(/\n/g,"")))||emptyCfg();$("status").textContent="불러옴 · 최종수정 "+(DATA.meta&&DATA.meta.updatedAt||"-")+" · 회원 "+REG.length+"명";}
+    else throw new Error("HTTP "+res.status);
+  }catch(e){DATA=emptyCfg();FILE_SHA=null;$("status").textContent="불러오기 실패("+e.message+") — 빈 상태로 시작";}
+  if(localStorage.getItem(LS_PASS)==="1")$("gate").style.display="none";
+  shape(DATA);render();
+}
+function parseCfg(t){try{const w={};new Function("window",t)(w);return w[CFG.globalVar]||null;}catch(e){toast("config 파싱 오류: "+e.message);return null;}}
+function emptyCfg(){return {meta:{updatedAt:"",salt:"gfield-on-2026-v1"},brands:[],access:{}};}
+function shape(d){d.meta=d.meta||{};if(!d.meta.salt)d.meta.salt="gfield-on-2026-v1";d.brands=Array.isArray(d.brands)?d.brands:[];d.access=d.access||{};}
+
+/* ===== 탭 ===== */
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
+  curTab=t.dataset.tab;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===t));
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  $("panel-"+curTab).classList.add("active");render();
+}));
+function render(){ curTab==="structure"?renderStructure():renderMembers(); }
+
+/* ===== 권한 열쇠 목록 (구조에서 파생) ===== */
+function keyList(){
+  const out=[];
+  (DATA.brands||[]).forEach(b=>{
+    out.push({key:b.key,label:b.icon+" "+b.name,lvl:"brand"});
+    if(b.single){(b.programs||[]).forEach(p=>pushProg(out,b.key,p));}
+    else (b.courses||[]).forEach(c=>{
+      out.push({key:b.key+":"+c.key,label:c.name,lvl:"course"});
+      (c.programs||[]).forEach(p=>pushProg(out,b.key+":"+c.key,p));
+    });
+  });
+  return out;
+}
+function pushProg(out,prefix,p){
+  const base=prefix+":"+p.key;
+  if(p.count&&p.count>1){
+    out.push({key:base,label:p.name+" (전체)",lvl:"prog"});
+    for(let i=1;i<=p.count;i++)out.push({key:base+":"+i,label:p.name+" "+i+"회",lvl:"prog"});
+  }else out.push({key:base,label:p.name,lvl:"prog"});
+}
+
+/* ===== 구조 탭 ===== */
+function renderStructure(){
+  const blocks=(DATA.brands||[]).map((b,bi)=>{
+    let inner="";
+    if(b.single){
+      inner=`<div class="subblock">${progRows(b.programs||[],"b:"+bi)}
+        <div class="addbar"><button class="btn ghost sm" onclick="ADM.addProg(${bi},-1)">＋ 프로그램</button></div></div>`;
+    }else{
+      inner=(b.courses||[]).map((c,ci)=>`
+        <div class="subblock">
+          <div class="subhead">${esc(c.name)} <span class="lockpill ${c.lock||'closed'}">${LOCKLABEL[c.lock||'closed']}</span>
+            <button class="btn ghost sm" onclick="ADM.editCourse(${bi},${ci})">수정</button>
+            <button class="btn danger sm" onclick="ADM.delCourse(${bi},${ci})">삭제</button>
+          </div>
+          ${progRows(c.programs||[],"b:"+bi+":c:"+ci)}
+          <div class="addbar"><button class="btn ghost sm" onclick="ADM.addProg(${bi},${ci})">＋ 프로그램</button></div>
+        </div>`).join("")+
+        `<div class="addbar" style="margin-left:12px"><button class="btn ghost sm" onclick="ADM.addCourse(${bi})">＋ 과정</button></div>`;
+    }
+    return `<div class="brandblock">
+      <div class="brandhead">
+        <div class="bt">${esc(b.icon||"")} ${esc(b.name)}<span class="badge">${esc(b.badge||"")}</span>${b.single?'<span class="lockpill soon">단일과정</span>':""}</div>
+        <div class="row-actions">
+          <button class="btn ghost sm" onclick="ADM.editBrand(${bi})">수정</button>
+          <button class="btn danger sm" onclick="ADM.delBrand(${bi})">삭제</button>
+        </div>
+      </div>${inner}</div>`;
+  }).join("");
+  $("panel-structure").innerHTML=`<div class="card">
+    <h2>대비 과정 구조</h2>
+    <div class="chelp">여기서 바꾸면 config.js에 저장되고 모든 인덱스에 뿌려집니다. (저장 필수)</div>
+    ${blocks||'<div class="chelp">축이 없습니다.</div>'}
+    <div class="addbar"><button class="btn primary" onclick="ADM.addBrand()">＋ 축(브랜드) 추가</button></div>
+  </div>`;
+}
+function progRows(progs,path){
+  if(!progs.length)return '<div class="chelp">프로그램 없음</div>';
+  return progs.map((p,pi)=>`<div class="prog">
+    <div><span class="pn">${esc(p.name)}</span> <span class="lockpill ${p.lock||'closed'}">${LOCKLABEL[p.lock||'closed']}</span><br><span class="pk">${esc(p.type||"")}${p.count?" · "+p.count+"회":""}${p.url?" · "+esc(p.url):""}</span></div>
+    <div class="row-actions">
+      <button class="btn ghost sm" onclick="ADM.editProg('${path}',${pi})">수정</button>
+      <button class="btn danger sm" onclick="ADM.delProg('${path}',${pi})">삭제</button>
+    </div></div>`).join("");
+}
+function progByPath(path){
+  const m=path.split(":");const bi=+m[1];const b=DATA.brands[bi];
+  if(m[2]==="c"){const ci=+m[3];return {arr:b.courses[ci].programs};}
+  return {arr:b.programs};
+}
+
+/* ===== 모달 편집기 ===== */
+function modal(title,fields,obj,onSave){
+  const body=fields.map(f=>{
+    const v=obj[f.k];
+    if(f.type==="select")return `<div class="fld"><label>${f.label}</label><select data-k="${f.k}">${f.opts.map(o=>`<option ${o===v?"selected":""}>${o}</option>`).join("")}</select></div>`;
+    if(f.type==="textarea")return `<div class="fld"><label>${f.label}</label><textarea data-k="${f.k}">${esc(v||"")}</textarea></div>`;
+    if(f.type==="checkbox")return `<div class="fld"><label>${f.label}</label><input type="checkbox" data-k="${f.k}" ${v?"checked":""} style="width:auto"></div>`;
+    return `<div class="fld"><label>${f.label}</label><input type="${f.type==="number"?"number":"text"}" data-k="${f.k}" value="${esc(v==null?"":v)}"></div>`;
+  }).join("");
+  $("modal").innerHTML=`<h3>${esc(title)}</h3>${body}<div class="modal-foot"><button class="btn ghost" id="mCancel">취소</button><button class="btn primary" id="mOk">적용</button></div>`;
+  $("modalBg").classList.add("show");
+  $("mCancel").onclick=()=>$("modalBg").classList.remove("show");
+  $("mOk").onclick=()=>{
+    fields.forEach(f=>{const el=$("modal").querySelector('[data-k="'+f.k+'"]');if(!el)return;
+      obj[f.k]=f.type==="checkbox"?el.checked:(f.type==="number"?(el.value===""?"":Number(el.value)):el.value);});
+    $("modalBg").classList.remove("show");onSave(obj);
+  };
+}
+const BRAND_F=[{k:"key",label:"키(영문, 예: soma)",type:"text"},{k:"name",label:"이름",type:"text"},{k:"icon",label:"아이콘(이모지)",type:"text"},{k:"badge",label:"배지(영문)",type:"text"},{k:"desc",label:"설명",type:"textarea"},{k:"single",label:"단일과정(과정 없이 바로 프로그램)",type:"checkbox"}];
+const COURSE_F=[{k:"key",label:"키(영문, 예: premier)",type:"text"},{k:"name",label:"이름",type:"text"},{k:"desc",label:"설명",type:"textarea"},{k:"lock",label:"잠금",type:"select",opts:LOCKS}];
+const PROG_F=[{k:"key",label:"키(영문, 예: concept)",type:"text"},{k:"name",label:"이름",type:"text"},{k:"type",label:"유형(예: 개념+강의)",type:"text"},{k:"lock",label:"잠금",type:"select",opts:LOCKS},{k:"count",label:"회차 수(모의고사면, 없으면 0)",type:"number"},{k:"url",label:"링크(예: /fields-classic/program/)",type:"text"},{k:"desc",label:"설명",type:"textarea"}];
+
+const ADM={
+  addBrand(){const o={key:"",name:"",icon:"🟦",badge:"",desc:"",single:false};modal("축 추가",BRAND_F,o,x=>{if(x.single)x.programs=[];else x.courses=[];DATA.brands.push(x);renderStructure();});},
+  editBrand(bi){modal("축 수정",BRAND_F,DATA.brands[bi],()=>renderStructure());},
+  delBrand(bi){if(confirm("이 축을 삭제할까요?")){DATA.brands.splice(bi,1);renderStructure();}},
+  addCourse(bi){const o={key:"",name:"",desc:"",lock:"closed",programs:[]};modal("과정 추가",COURSE_F,o,x=>{x.programs=x.programs||[];DATA.brands[bi].courses.push(x);renderStructure();});},
+  editCourse(bi,ci){modal("과정 수정",COURSE_F,DATA.brands[bi].courses[ci],()=>renderStructure());},
+  delCourse(bi,ci){if(confirm("이 과정을 삭제할까요?")){DATA.brands[bi].courses.splice(ci,1);renderStructure();}},
+  addProg(bi,ci){const o={key:"",name:"",type:"",lock:"closed",count:0,url:"",desc:""};const arr=ci<0?DATA.brands[bi].programs:DATA.brands[bi].courses[ci].programs;modal("프로그램 추가",PROG_F,o,x=>{if(!x.count)delete x.count;arr.push(x);renderStructure();});},
+  editProg(path,pi){const {arr}=progByPath(path);modal("프로그램 수정",PROG_F,arr[pi],x=>{if(!x.count)delete x.count;renderStructure();});},
+  delProg(path,pi){if(confirm("이 프로그램을 삭제할까요?")){const {arr}=progByPath(path);arr.splice(pi,1);renderStructure();}}
+};
+window.ADM=ADM;
+
+/* ===== 회원·권한 탭 ===== */
+function renderMembers(){
+  const rows=REG.map((m,i)=>`<tr>
+    <td>${esc(m.name||"-")}</td>
+    <td><span class="code">${esc(m.code)}</span></td>
+    <td><span class="keys">${(m.keys||[]).length}개</span></td>
+    <td class="row-actions">
+      <button class="btn ghost sm" onclick="MEM.edit(${i})">권한</button>
+      <button class="btn ghost sm" onclick="MEM.copy(${i})">코드복사</button>
+      <button class="btn danger sm" onclick="MEM.del(${i})">삭제</button>
+    </td></tr>`).join("");
+  $("panel-members").innerHTML=`<div class="card">
+    <h2>회원 · 권한 (회원번호식 · 누적)</h2>
+    <div class="chelp">회원 1명 = 승인번호 1개. 권한 열쇠를 체크하면 그 회원이 해당 프로그램을 엽니다. 원문 코드·이름은 이 브라우저에만 저장(내보내기로 백업), config.js엔 해시만 올라갑니다.</div>
+    <div class="row-actions" style="margin-bottom:12px">
+      <button class="btn primary" onclick="MEM.add()">＋ 회원 발급</button>
+      <button class="btn ghost" onclick="MEM.exportReg()">레지스트리 내보내기</button>
+      <label class="btn ghost" style="cursor:pointer">불러오기<input type="file" accept="application/json" style="display:none" onchange="MEM.importReg(event)"></label>
+    </div>
+    <table><thead><tr><th>이름</th><th>승인번호</th><th>권한</th><th></th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="4" style="color:var(--sub);text-align:center;padding:24px">회원이 없습니다. "회원 발급"으로 추가하세요.</td></tr>'}</tbody></table>
+  </div>`;
+}
+const MEM={
+  saveReg(){localStorage.setItem(LS_REG,JSON.stringify(REG));},
+  add(){const name=prompt("학생/회원 이름")||"";const code=genCode();REG.push({name:name.trim(),code,keys:[]});this.saveReg();renderMembers();this.edit(REG.length-1);},
+  del(i){if(confirm("이 회원을 삭제할까요?")){REG.splice(i,1);this.saveReg();renderMembers();}},
+  copy(i){navigator.clipboard?.writeText(REG[i].code);toast("코드 복사: "+REG[i].code);},
+  edit(i){
+    const m=REG[i];const keys=keyList();const set=new Set(m.keys||[]);
+    const grid=keys.map(k=>`<label class="keyitem lvl-${k.lvl}"><input type="checkbox" value="${esc(k.key)}" ${set.has(k.key)?"checked":""}> ${esc(k.label)} <code>${esc(k.key)}</code></label>`).join("");
+    $("modal").innerHTML=`<h3>${esc(m.name||"회원")} · ${esc(m.code)}</h3>
+      <div class="fld"><label>이름</label><input id="mName" value="${esc(m.name||"")}"></div>
+      <div class="fld"><label>권한 열쇠 (체크한 것만 열림)</label><div class="keygrid">${grid||'<div class="chelp">구조가 없습니다.</div>'}</div></div>
+      <div class="modal-foot"><button class="btn ghost" id="mCancel">취소</button><button class="btn primary" id="mOk">적용</button></div>`;
+    $("modalBg").classList.add("show");
+    $("mCancel").onclick=()=>$("modalBg").classList.remove("show");
+    $("mOk").onclick=()=>{
+      m.name=$("mName").value.trim();
+      m.keys=[...$("modal").querySelectorAll(".keygrid input:checked")].map(x=>x.value);
+      this.saveReg();$("modalBg").classList.remove("show");renderMembers();toast("적용됨 (GitHub 저장 필요)");
+    };
+  },
+  exportReg(){const blob=new Blob([JSON.stringify(REG,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="gfieldon-registry.json";a.click();},
+  importReg(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{REG=JSON.parse(r.result);this.saveReg();renderMembers();toast("레지스트리 불러옴 "+REG.length+"명");}catch(e){toast("불러오기 실패");}};r.readAsText(f);}
+};
+window.MEM=MEM;
+
+/* ===== 저장 (해시 생성 + config.js 커밋) ===== */
+async function buildAccess(){
+  const salt=DATA.meta.salt||"gfield-on-2026-v1";const access={};
+  for(const m of REG){ if(!m.code||!(m.keys&&m.keys.length))continue; const h=await sha256(salt+":"+m.code.trim().toUpperCase()); access[h]=m.keys; }
+  return access;
+}
+function serialize(){
+  DATA.meta.updatedAt=new Date().toISOString().slice(0,10);
+  const header="/* GFIELD-ON 통합 설정 · 통합관리 자동생성 · "+new Date().toLocaleString("ko-KR")+" */\n";
+  return header+"window."+CFG.globalVar+" = "+JSON.stringify(DATA,null,2)+";\n";
+}
+async function save(){
+  const pat=ensurePAT();if(!pat){toast("토큰이 필요합니다.");return;}
+  $("saveBtn").innerHTML='<span class="spinner"></span> 저장 중…';
+  try{
+    DATA.access=await buildAccess();
+    const content=utf8b64(serialize());
+    const url=`https://api.github.com/repos/${CFG.owner}/${CFG.repo}/contents/${CFG.path}`;
+    const body={message:"통합관리: config.js 업데이트 ("+DATA.meta.updatedAt+")",content,branch:CFG.branch};
+    if(FILE_SHA)body.sha=FILE_SHA;
+    const res=await fetch(url,{method:"PUT",headers:{"Accept":"application/vnd.github+json","Authorization":"Bearer "+pat,"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const j=await res.json();
+    if(res.ok){FILE_SHA=j.content.sha;toast("저장 완료! 1~2분 후 전 인덱스 반영");$("status").textContent="저장됨 · "+DATA.meta.updatedAt+" · 회원 "+REG.length+"명";}
+    else if(res.status===401){toast("토큰이 유효하지 않습니다.");localStorage.removeItem(LS_PAT);}
+    else if(res.status===409){toast("충돌 — 새로고침 후 다시 저장");}
+    else toast("저장 실패: "+(j.message||res.status));
+  }catch(e){toast("저장 오류: "+e.message);}
+  $("saveBtn").innerHTML="💾 GitHub 저장";
+}
+$("saveBtn").addEventListener("click",save);
+$("reloadBtn").addEventListener("click",load);
+
+load();
+</script>
+</body>
+</html>
