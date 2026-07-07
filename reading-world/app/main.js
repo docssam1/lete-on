@@ -3,6 +3,7 @@
 const app=document.getElementById('app');
 // Pick best English voice once and reuse — prefers Google/natural voices over robotic fallbacks
 let _enVoice=null;
+let _audioEl=null;
 function getBestEnVoice(){
   if(_enVoice)return _enVoice;
   const all=window.speechSynthesis?window.speechSynthesis.getVoices():[];
@@ -426,19 +427,29 @@ function render(){if(!currentStudent){if(!introSeen()){app.innerHTML=introScreen
  if(!(atTown&&townView==='game')&&window.TownGame)TownGame.destroy();
  if(atTown){if(townView==='game'&&gameAvailable()){app.innerHTML=gameTownShell();bindGameTown();return;}if(townView==='screen'&&sqAvailable()){app.innerHTML=screenQuestScreen();bind();return;}if(townView==='parent'){app.innerHTML=parentDashboard();bind();return;}app.innerHTML=town();bind();return;}let content=st.view==='home'?home():st.view==='words'?words():(st.view==='originalRead'||st.view==='questions')&&!hasOriginal()?missingOriginal():st.view==='originalRead'?originalRead():st.view==='questions'?questionScreen('original'):st.view==='questionOriginalExtra'?questionScreen('originalExtra'):st.view==='questionSimilar'?questionScreen('similar'):st.view==='review'?questionScreen('review'):st.view==='originalExtra'?originalExtra():st.view==='similar'?extra():report();app.innerHTML=`<div class="shell">${nav()}<main class="main">${top()}${flow()}${content}</main></div>${modal()}`;bind();}
 function makeGameChoices(){const w=L.words[st.gameIndex];return [w[1],...L.words.filter((_,i)=>i!==st.gameIndex).sort(()=>Math.random()-.5).slice(0,3).map(x=>x[1])].sort(()=>Math.random()-.5)}
-function speakPassage(passage){if(!('speechSynthesis' in window)){toast(st.lang==='ko'?'이 브라우저는 읽어주기를 지원하지 않아요.':'Speech is not supported in this browser.');return}
+function speakPassage(passage){
  stopSpeak();
  const source=passage==='extra'?L.extraPassage:passage==='originalExtra'?(L.originalExtraPassage||L.originalPassage):L.originalPassage;
  if(!(source||[]).length)return;
  const text=(source||[]).join('\n\n');
  const run=++st.speechRun;
  const nodes=[...document.querySelectorAll(`.sentence-line[data-passage="${passage}"]`)];
+ const AUDIO_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio';
+ const bookId=(window.LESSONS&&window.LESSONS[currentLessonId])&&window.LESSONS[currentLessonId].bookId;
+ let audioUrl=null;
+ if(bookId){
+   if(passage==='originalExtra')audioUrl=`${AUDIO_BASE}/${bookId}/${currentLessonId}-extra.mp3`;
+   else if(passage==='extra')audioUrl=`${AUDIO_BASE}/${bookId}/${currentLessonId}-new.mp3`;
+ }
+ if(audioUrl){const el=new Audio(audioUrl);el.playbackRate=Number(st.speed)||1;_audioEl=el;el.onended=()=>{if(run===st.speechRun)_audioEl=null;};el.play().catch(()=>{_audioEl=null;speakPassageWSA(text,run,nodes);});return;}
+ speakPassageWSA(text,run,nodes);}
+function speakPassageWSA(text,run,nodes){if(!('speechSynthesis' in window)){toast(st.lang==='ko'?'이 브라우저는 읽어주기를 지원하지 않아요.':'Speech is not supported in this browser.');return}
  const u=new SpeechSynthesisUtterance(text);u.lang='en-US';const _v=getBestEnVoice();if(_v)u.voice=_v;u.rate=Number(st.speed)||1;u.pitch=1;
  let lastHL=null;u.onboundary=(ev)=>{if(run!==st.speechRun)return;const cur=nodes.find(n=>ev.charIndex>=Number(n.dataset.start)&&ev.charIndex<Number(n.dataset.end));if(!cur||cur===lastHL)return;lastHL=cur;nodes.forEach(n=>n.classList.toggle('reading-now',n===cur));cur.scrollIntoView({behavior:'smooth',block:'center'});};
  u.onend=()=>{if(run===st.speechRun)document.querySelectorAll('.sentence-line.reading-now').forEach(n=>n.classList.remove('reading-now'));};
  window.speechSynthesis.speak(u);}
 function speakText(text){if(!('speechSynthesis' in window)){toast(st.lang==='ko'?'이 브라우저는 읽어주기를 지원하지 않아요.':'Speech is not supported in this browser.');return}stopSpeak();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';const _v=getBestEnVoice();if(_v)u.voice=_v;u.rate=Number(st.speed)||1;window.speechSynthesis.speak(u)}
-function stopSpeak(){if('speechSynthesis' in window)window.speechSynthesis.cancel();st.speechRun++;try{document.querySelectorAll('.sentence-line.reading-now').forEach(n=>n.classList.remove('reading-now'));}catch(e){}}
+function stopSpeak(){if(_audioEl){try{_audioEl.pause();}catch(e){}  _audioEl=null;}if('speechSynthesis' in window)window.speechSynthesis.cancel();st.speechRun++;try{document.querySelectorAll('.sentence-line.reading-now').forEach(n=>n.classList.remove('reading-now'));}catch(e){}}
 // --- Read with Me (echo reading) for young learners ---
 const ECHO_TXT={ko:{ready:'자, 같이 읽어봐요!',your:'이제 따라 읽어요',hear:'다시 듣기',next:'다음',done:'잘 읽었어요!',close:'닫기'},en:{ready:"Let's read together!",your:'Now you read',hear:'Hear it again',next:'Next',done:'Great reading!',close:'Close'},zh:{ready:'我们一起读吧！',your:'现在你来读',hear:'再听一次',next:'下一句',done:'读得真棒！',close:'关闭'}};
 let echo={run:0,sentences:[],i:0,timer:null,phase:''};
