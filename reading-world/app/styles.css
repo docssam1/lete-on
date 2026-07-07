@@ -461,3 +461,58 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 /* soft copy-deterrents on licensed content */
 .passage,.sentence-line{-webkit-user-select:none;user-select:none}
 img{-webkit-user-drag:none;user-select:none}
+
+/* ── Book Shelf (Library) ──────────────────────────────────────── */
+.book-shelf{display:flex;flex-direction:column;min-height:100vh;background:var(--bg)}
+.book-shelf-top{display:flex;align-items:center;gap:10px;padding:14px 18px 10px;border-bottom:1px solid var(--line)}
+.book-shelf-top h2{flex:1;margin:0;font-size:17px;font-weight:800}
+.book-shelf-top .btn{flex-shrink:0}
+.book-shelf-sub{font-size:13px;color:var(--muted);padding:10px 18px 0;margin:0}
+.book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:28px 22px;padding:22px 18px 36px;align-items:end}
+
+/* 3-D book card */
+.book-card{perspective:600px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;user-select:none}
+.book-card:hover .book-3d{transform:rotateY(-15deg) translateY(-4px);box-shadow:-10px 14px 32px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.3)}
+.book-3d{position:relative;width:100px;height:138px;border-radius:2px 5px 5px 2px;transform:rotateY(-8deg);transform-style:preserve-3d;transition:transform .28s ease,box-shadow .28s ease;box-shadow:-6px 8px 20px rgba(0,0,0,.35),0 2px 4px rgba(0,0,0,.25)}
+/* front face */
+.book-front{position:absolute;inset:0;border-radius:2px 5px 5px 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 6px;overflow:hidden}
+.book-front::before{content:'';position:absolute;inset:0;opacity:.18;background:linear-gradient(110deg,rgba(255,255,255,.5) 0%,transparent 60%)}
+/* spine */
+.book-spine{position:absolute;top:0;bottom:0;left:-12px;width:12px;border-radius:2px 0 0 2px;transform-origin:right center}
+.book-front-pub{font-size:9.5px;font-weight:900;letter-spacing:.08em;opacity:.85;z-index:1;text-align:center;line-height:1.2;padding:3px 5px;border-radius:3px}
+.book-front-title{font-size:15px;font-weight:900;line-height:1.1;text-align:center;z-index:1;word-break:break-word}
+.book-front-sub{font-size:10.5px;font-weight:700;opacity:.8;z-index:1;text-align:center;letter-spacing:.02em}
+.book-front-grade{font-size:9px;font-weight:700;z-index:1;opacity:.65;text-align:center}
+.book-front-lock{position:absolute;bottom:6px;right:7px;font-size:14px;opacity:.6;z-index:2}
+/* decorative lines on front */
+.book-front::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:rgba(0,0,0,.18);border-radius:1px}
+/* card label below book */
+.book-card-label{text-align:center;line-height:1.25}
+.book-card-label strong{font-size:12.5px;font-weight:800;display:block}
+.book-card-label small{font-size:10.5px;color:var(--muted)}
+.book-card.locked .book-3d{filter:saturate(.35) brightness(.75)}
+.book-card.locked .book-card-label small{color:#aaa}
+
+@media(max-width:520px){
+  .book-grid{grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:22px 16px;padding:16px 12px 28px}
+  .book-3d{width:84px;height:116px}
+}
+
+/* ── DRM Copying Overlay ──────────────────────────────────────── */
+.drm-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.72);backdrop-filter:blur(6px)}
+.drm-box{background:#13171f;border:1px solid #2a3040;border-radius:16px;padding:32px 36px;width:min(360px,90vw);display:flex;flex-direction:column;align-items:center;gap:18px;box-shadow:0 24px 64px rgba(0,0,0,.7)}
+.drm-logo{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff}
+.drm-title{color:#e8edf5;font-size:16px;font-weight:800;text-align:center;letter-spacing:.01em}
+.drm-isbn{font-size:10px;color:#566270;letter-spacing:.08em;font-family:monospace}
+.drm-spin-wrap{position:relative;width:52px;height:52px}
+.drm-spinner{width:52px;height:52px;border-radius:50%;border:4px solid #1e2530;border-top-color:#4d94ff;animation:drm-rotate 1s linear infinite}
+@keyframes drm-rotate{to{transform:rotate(360deg)}}
+.drm-check{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;opacity:0;transition:opacity .4s}
+.drm-msg{color:#a8b5c8;font-size:13.5px;text-align:center;line-height:1.5}
+.drm-progress-wrap{width:100%;background:#1e2530;border-radius:8px;height:6px;overflow:hidden}
+.drm-progress-bar{height:100%;background:linear-gradient(90deg,#3a6fd8,#6fb3ff);border-radius:8px;width:0%;transition:width .1s linear}
+.drm-steps{display:flex;flex-direction:column;gap:4px;width:100%}
+.drm-step{font-size:10.5px;color:#566270;display:flex;align-items:center;gap:6px;transition:color .3s}
+.drm-step.done{color:#4d94ff}
+.drm-step.done::before{content:'✓';color:#4d94ff}
+.drm-step:not(.done)::before{content:'○'}

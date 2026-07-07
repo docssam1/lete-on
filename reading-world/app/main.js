@@ -298,7 +298,9 @@ function bindGameTown(){bind();
  const stage=document.getElementById('town-stage');
  if(stage&&gameAvailable()){TownGame.mount(stage,{look:lookForGame(),coins:(profile&&profile.points)||0,labels,onOpenMenu:buildingMenu,slots:(window.DECORATIONS&&DECORATIONS.slots)||{},placed:placedDecoEmoji(),onSlotClick:decorationMenu,avatarUri:avatarSvgUri(),decorArt:placedDecoArt(),buildingArt:buildingArtMap()});}
  app.querySelectorAll('.town-dpad [data-move]').forEach(b=>{const[x,y]=b.dataset.move.split(',').map(Number);const on=e=>{e.preventDefault();TownGame.setMove(x,y);};const off=()=>TownGame.setMove(0,0);b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointerleave',off);b.addEventListener('pointercancel',off);});}
-function buildingMenu(key){if(key==='theater'){if(window.TownGame)TownGame.destroy();enterScreenQuest();return;}const map={library:{view:'questions',icon:'📚',title:{ko:'도서관 · 교재 학습',en:'Library · Book Study',zh:'图书馆 · 教材学习'},sub:{ko:'교재 지문을 읽고 12문제를 풀어요.',en:'Read the book passage and answer 12 questions.',zh:'阅读课文并完成 12 道题。'}},wordshop:{view:'words',icon:'🔤',title:{ko:'단어 상점 · 단어 배우기',en:'Word Shop · Learn Words',zh:'单词商店 · 学习单词'},sub:{ko:'단어 카드 · 암기 카드 · 단어 게임.',en:'Word cards · memory · word game.',zh:'单词卡 · 记忆卡 · 单词游戏。'}},practice:{view:'originalExtra',icon:'🏠',title:{ko:'연습의 집 · 추가 학습',en:'Practice House · Extra Learning',zh:'练习屋 · 追加学习'},sub:{ko:'추가 학습과 새 지문 연습으로 약점을 채워요.',en:'Extra learning + new passage practice.',zh:'追加学习与新文章练习。'}},report:{view:'report',icon:'📊',title:{ko:'리포트 홀 · 학습 리포트',en:'Report Hall · Learning Report',zh:'报告厅 · 学习报告'},sub:{ko:'전략별 강점·약점을 확인해요.',en:'See your strengths and weaknesses by strategy.',zh:'查看各策略的强弱项。'}}};const m=map[key];if(!m)return;const el=document.getElementById('town-menu');if(!el)return;
+function buildingMenu(key){if(key==='theater'){if(window.TownGame)TownGame.destroy();enterScreenQuest();return;}
+ if(key==='library'){showBookShelf();return;}
+ const map={wordshop:{view:'words',icon:'🔤',title:{ko:'단어 상점 · 단어 배우기',en:'Word Shop · Learn Words',zh:'单词商店 · 学习单词'},sub:{ko:'단어 카드 · 암기 카드 · 단어 게임.',en:'Word cards · memory · word game.',zh:'单词卡 · 记忆卡 · 单词游戏。'}},practice:{view:'originalExtra',icon:'🏠',title:{ko:'연습의 집 · 추가 학습',en:'Practice House · Extra Learning',zh:'练习屋 · 追加学习'},sub:{ko:'추가 학습과 새 지문 연습으로 약점을 채워요.',en:'Extra learning + new passage practice.',zh:'追加学习与新文章练习。'}},report:{view:'report',icon:'📊',title:{ko:'리포트 홀 · 학습 리포트',en:'Report Hall · Learning Report',zh:'报告厅 · 学习报告'},sub:{ko:'전략별 강점·약점을 확인해요.',en:'See your strengths and weaknesses by strategy.',zh:'查看各策略的强弱项。'}}};const m=map[key];if(!m)return;const el=document.getElementById('town-menu');if(!el)return;
  const lessons=availableLessons();
  el.innerHTML=`<div class="tm-backdrop" data-tmx></div><div class="tm-card"><button class="tm-x" data-tmx>×</button><div class="tm-head">${m.icon} <b>${m.title[st.lang]||m.title.en}</b></div><p class="tm-sub">${m.sub[st.lang]||m.sub.en}</p><div class="tm-pick">${st.lang==='ko'?'어느 레슨을 열까요?':st.lang==='zh'?'打开哪一课？':'Which lesson?'}</div><div class="tm-lessons">${lessons.map(id=>{const n=lessonNum(id);const done=lessonDone(id);return `<button class="tm-lesson ${done?'done':''}" data-tm-lesson="${esc(id)}"><span class="stop-badge">${n}</span><span>Lesson ${n}${done?' ✓':''}</span></button>`;}).join('')}</div></div>`;
  el.classList.add('show');
@@ -306,6 +308,106 @@ function buildingMenu(key){if(key==='theater'){if(window.TownGame)TownGame.destr
  el.querySelectorAll('[data-tmx]').forEach(b=>b.onclick=close);
  el.querySelectorAll('[data-tm-lesson]').forEach(b=>b.onclick=()=>{openLessonAt(b.dataset.tmLesson,m.view);});}
 function openLessonAt(id,view){if(window.TownGame)TownGame.destroy();openLesson(id,view);}
+function _book3dHtml(bk){
+ const locked=!bk.available;
+ const spineStyle=`background:${bk.spineColor||bk.publisherColor};`;
+ const frontStyle=`background:${bk.coverGradient};color:${bk.accentColor||'#fff'};`;
+ const pubStyle=`background:rgba(0,0,0,.25);color:${bk.accentColor||'#fff'};`;
+ return `<div class="book-card${locked?' locked':''}" data-book-id="${esc(bk.id)}" title="${esc(bk.fullTitle)}">
+  <div class="book-3d">
+   <div class="book-spine" style="${spineStyle}"></div>
+   <div class="book-front" style="${frontStyle}">
+    <span class="book-front-pub" style="${pubStyle}">${esc(bk.publisherAbbr)}</span>
+    <span class="book-front-title">${esc(bk.title)}</span>
+    <span class="book-front-sub">${esc(bk.subtitle)}</span>
+    <span class="book-front-grade">${esc(bk.grade)}</span>
+    ${locked?'<span class="book-front-lock">🔒</span>':''}
+   </div>
+  </div>
+  <div class="book-card-label">
+   <strong>${esc(bk.title)} <span style="font-weight:500">${esc(bk.subtitle)}</span></strong>
+   <small>${esc(bk.publisher)}</small>
+  </div>
+ </div>`;}
+function showBookShelf(){
+ const t=(ko,en,zh)=>st.lang==='ko'?ko:st.lang==='zh'?zh:en;
+ const catalog=window.BOOK_CATALOG||[];
+ const booksHtml=catalog.map(bk=>_book3dHtml(bk)).join('');
+ const html=`<div class="book-shelf">
+  <div class="book-shelf-top">
+   <h2>📚 ${t('도서관','Library','图书馆')}</h2>
+   <button class="btn secondary" data-act="town-map">← ${t('마을로','Town','返回')}</button>
+  </div>
+  <p class="book-shelf-sub">${t('교재를 선택하세요. 🔒 는 준비 중인 교재예요.','Choose a textbook. 🔒 = coming soon.','请选择教材。🔒 = 即将开放。')}</p>
+  <div class="book-grid">${booksHtml}</div>
+ </div>`;
+ if(window.TownGame)TownGame.destroy();
+ const el=document.getElementById('app');
+ el.innerHTML=html;
+ bind();
+ el.querySelectorAll('.book-card').forEach(card=>{
+  card.addEventListener('click',()=>{
+   const bid=card.dataset.bookId;
+   const bk=(window.BOOK_CATALOG||[]).find(b=>b.id===bid);
+   if(!bk)return;
+   if(!bk.available){
+    toast(t('아직 준비 중인 교재예요 🔒','This book is coming soon 🔒','该教材即将开放 🔒'));
+    return;
+   }
+   startBookCopy(bk,()=>{
+    currentBookId=bid;
+    if(profile)profile.currentBookId=bid;
+    const lessons=availableLessons(bid);
+    const firstLesson=lessons[0]||'lesson1';
+    openLessonAt(firstLesson,'questions');
+   });
+  });
+ });}
+function startBookCopy(bk,onDone){
+ const t=(ko,en,zh)=>st.lang==='ko'?ko:st.lang==='zh'?zh:en;
+ const steps=[
+  t('라이선스 서버 연결 중...','Connecting to license server...','连接许可服务器...'),
+  t('교재 정보 확인 중...','Verifying book metadata...','验证教材信息...'),
+  t('DRM 키 교환 중...','Exchanging DRM keys...','交换 DRM 密钥...'),
+  t('콘텐츠 복사 중...','Copying content...','复制内容...'),
+  t('라이선스 등록 완료!','License registered!','许可证注册完成！'),
+ ];
+ const pubStyle=`background:${bk.publisherColor};`;
+ const overlay=document.createElement('div');
+ overlay.className='drm-overlay';
+ overlay.innerHTML=`<div class="drm-box">
+  <div class="drm-logo" style="${pubStyle}">${esc(bk.publisherAbbr)}</div>
+  <div class="drm-title">${t('책 복사 중입니다','Copying Book','正在复制教材')}<br><small style="font-weight:500;opacity:.7">${esc(bk.fullTitle)}</small></div>
+  <div class="drm-isbn">${esc(bk.isbn)}</div>
+  <div class="drm-spin-wrap"><div class="drm-spinner"></div><div class="drm-check" id="drm-check">✓</div></div>
+  <div class="drm-progress-wrap"><div class="drm-progress-bar" id="drm-bar"></div></div>
+  <div class="drm-steps" id="drm-steps">${steps.map((s,i)=>`<div class="drm-step" id="drm-step-${i}">${esc(s)}</div>`).join('')}</div>
+ </div>`;
+ document.body.appendChild(overlay);
+ const bar=overlay.querySelector('#drm-bar');
+ const totalMs=2900;
+ const stepMs=totalMs/steps.length;
+ let prog=0;
+ const progInt=setInterval(()=>{
+  prog=Math.min(prog+100/(totalMs/80),100);
+  bar.style.width=prog+'%';
+ },80);
+ steps.forEach((_,i)=>{
+  setTimeout(()=>{
+   const el=overlay.querySelector(`#drm-step-${i}`);
+   if(el)el.classList.add('done');
+  },stepMs*(i+.6));
+ });
+ setTimeout(()=>{
+  clearInterval(progInt);
+  bar.style.width='100%';
+  const check=overlay.querySelector('#drm-check');
+  const spin=overlay.querySelector('.drm-spinner');
+  if(spin)spin.style.opacity='0';
+  if(check)check.style.opacity='1';
+  setTimeout(()=>{overlay.remove();onDone();},400);
+ },totalMs);
+}
 function decoItem(id){return ((window.DECORATIONS&&DECORATIONS.items)||[]).find(x=>x.id===id);}
 function placedDecoEmoji(){const t=(profile&&profile.town&&profile.town.placedDecorations)||{};const out={};Object.keys(t).forEach(slot=>{const it=decoItem(t[slot]);if(it)out[slot]=it.emoji;});return out;}
 function placedDecoArt(){const t=(profile&&profile.town&&profile.town.placedDecorations)||{};const out={};Object.keys(t).forEach(slot=>{const u=decorArtUri(t[slot]);if(u)out[slot]=u;});return out;}
