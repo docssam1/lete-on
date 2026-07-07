@@ -292,15 +292,18 @@ function avatarSvgUri(){try{var svg=renderAvatar(avEquipped(),120,{noBg:true});r
 function gameTownShell(){const pts=(profile&&profile.points)||0;const langBtns=['ko','en','zh'].map(l=>`<button data-lang="${l}" class="${st.lang===l?'active':''}">${l==='ko'?'한국어':l==='en'?'English':'中文'}</button>`).join('');
  const listLbl=st.lang==='ko'?'목록':st.lang==='zh'?'列表':'List';const customize=st.lang==='ko'?'꾸미기':st.lang==='zh'?'装扮':'Dress up';
  const hint=st.lang==='ko'?'방향키나 아래 버튼으로 움직여요 · 건물에 다가가 스페이스/탭!':st.lang==='zh'?'用方向键或下方按钮移动 · 走近建筑物按空格/点击！':'Move with arrows or the buttons · walk up to a building and press Space/tap!';
- return `<div class="town game-town"><div class="town-top"><div class="town-brand">Gfield Reading Town</div><div class="town-tools"><span class="points-pill">🪙 ${pts}</span>${sqAvailable()?`<button class="btn tiny" data-act="sq-open">🎬 ${sqT('스크린','Screen','屏幕')}</button>`:''}<button class="btn tiny" data-act="town-closet">🎨 ${customize}</button><button class="btn tiny" data-act="town-list">≣ ${listLbl}</button><div class="language-toggle town-lang">${langBtns}</div></div></div><div class="town-stage-wrap"><div id="town-stage"></div></div><div class="town-dpad"><button class="dpad" data-move="0,-1" aria-label="up">▲</button><div class="dpad-mid"><button class="dpad" data-move="-1,0" aria-label="left">◀</button><button class="dpad" data-move="1,0" aria-label="right">▶</button></div><button class="dpad" data-move="0,1" aria-label="down">▼</button></div><div id="town-menu" class="town-menu"></div><p class="town-hint">${hint}</p></div>`;}
+ return `<div class="town game-town"><div class="town-top"><div class="town-brand">Gfield Reading Town</div><div class="town-tools"><span class="points-pill">🪙 ${pts}</span>${sqAvailable()?`<button class="btn tiny" data-act="sq-open">🎬 ${sqT('스크린','Screen','屏幕')}</button>`:''}<button class="btn tiny" id="rw-weather" title="${st.lang==='ko'?'날씨':st.lang==='zh'?'天气':'Weather'}">☀️</button><button class="btn tiny" data-act="town-closet">🎨 ${customize}</button><button class="btn tiny" data-act="town-list">≣ ${listLbl}</button><div class="language-toggle town-lang">${langBtns}</div></div></div><div class="town-stage-wrap"><div id="town-stage"></div></div><div class="town-dpad"><button class="dpad" data-move="0,-1" aria-label="up">▲</button><div class="dpad-mid"><button class="dpad" data-move="-1,0" aria-label="left">◀</button><button class="dpad" data-move="1,0" aria-label="right">▶</button></div><button class="dpad" data-move="0,1" aria-label="down">▼</button></div><div id="town-menu" class="town-menu"></div><p class="town-hint">${hint}</p></div>`;}
 function bindGameTown(){bind();
- const labels={library:st.lang==='ko'?'도서관':st.lang==='zh'?'图书馆':'Library',wordshop:st.lang==='ko'?'단어 상점':st.lang==='zh'?'单词商店':'Word Shop',theater:st.lang==='ko'?'영상 극장':st.lang==='zh'?'视频剧场':'Screen Theater',practice:st.lang==='ko'?'연습의 집':st.lang==='zh'?'练习屋':'Practice House',report:st.lang==='ko'?'리포트 홀':st.lang==='zh'?'报告厅':'Report Hall',open:st.lang==='ko'?'스페이스/탭하여 열기':st.lang==='zh'?'空格/点击打开':'Space / tap to open'};
+ // English village signage (fixed English names regardless of UI language)
+ const labels={library:'Library',wordshop:'Word Shop',theater:'Screen Theater',practice:'Study House',report:'Report Hall',open:st.lang==='ko'?'탭하여 들어가기':st.lang==='zh'?'点击进入':'Tap to enter'};
  const stage=document.getElementById('town-stage');
  if(stage&&gameAvailable()){TownGame.mount(stage,{look:lookForGame(),coins:(profile&&profile.points)||0,labels,onOpenMenu:buildingMenu,slots:(window.DECORATIONS&&DECORATIONS.slots)||{},placed:placedDecoEmoji(),onSlotClick:decorationMenu,avatarUri:avatarSvgUri(),decorArt:placedDecoArt(),buildingArt:buildingArtMap()});}
- app.querySelectorAll('.town-dpad [data-move]').forEach(b=>{const[x,y]=b.dataset.move.split(',').map(Number);const on=e=>{e.preventDefault();TownGame.setMove(x,y);};const off=()=>TownGame.setMove(0,0);b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointerleave',off);b.addEventListener('pointercancel',off);});}
+ app.querySelectorAll('.town-dpad [data-move]').forEach(b=>{const[x,y]=b.dataset.move.split(',').map(Number);const on=e=>{e.preventDefault();TownGame.setMove(x,y);};const off=()=>TownGame.setMove(0,0);b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointerleave',off);b.addEventListener('pointercancel',off);});
+ const wx=document.getElementById('rw-weather');if(wx){const icons=['☀️','🌧️'];let wi=0;wx.onclick=()=>{wi=(wi+1)%icons.length;wx.textContent=icons[wi];if(window.TownGame)TownGame.setWeather(wi===1?'rain':'clear');};}}
 function buildingMenu(key){if(key==='theater'){if(window.TownGame)TownGame.destroy();enterScreenQuest();return;}
- if(key==='library'){showBookShelf();return;}
- const map={wordshop:{view:'words',icon:'🔤',title:{ko:'단어 상점 · 단어 배우기',en:'Word Shop · Learn Words',zh:'单词商店 · 学习单词'},sub:{ko:'단어 카드 · 암기 카드 · 단어 게임.',en:'Word cards · memory · word game.',zh:'单词卡 · 记忆卡 · 单词游戏。'}},practice:{view:'originalExtra',icon:'🏠',title:{ko:'연습의 집 · 추가 학습',en:'Practice House · Extra Learning',zh:'练习屋 · 追加学习'},sub:{ko:'추가 학습과 새 지문 연습으로 약점을 채워요.',en:'Extra learning + new passage practice.',zh:'追加学习与新文章练习。'}},report:{view:'report',icon:'📊',title:{ko:'리포트 홀 · 학습 리포트',en:'Report Hall · Learning Report',zh:'报告厅 · 学习报告'},sub:{ko:'전략별 강점·약점을 확인해요.',en:'See your strengths and weaknesses by strategy.',zh:'查看各策略的强弱项。'}}};const m=map[key];if(!m)return;const el=document.getElementById('town-menu');if(!el)return;
+ if(key==='practice'){showBookShelf();return;}          // Study House → level ladder / book catalog
+ if(key==='library'){toast(st.lang==='ko'?'곧 열려요! 🔒':st.lang==='zh'?'即将开放！🔒':'Coming soon! 🔒');return;} // reserved for later
+ const map={wordshop:{view:'words',icon:'🔤',title:{ko:'단어 상점 · 단어 배우기',en:'Word Shop · Learn Words',zh:'单词商店 · 学习单词'},sub:{ko:'단어 카드 · 암기 카드 · 단어 게임.',en:'Word cards · memory · word game.',zh:'单词卡 · 记忆卡 · 单词游戏。'}},report:{view:'report',icon:'📊',title:{ko:'리포트 홀 · 학습 리포트',en:'Report Hall · Learning Report',zh:'报告厅 · 学习报告'},sub:{ko:'전략별 강점·약점을 확인해요.',en:'See your strengths and weaknesses by strategy.',zh:'查看各策略的强弱项。'}}};const m=map[key];if(!m)return;const el=document.getElementById('town-menu');if(!el)return;
  const lessons=availableLessons();
  el.innerHTML=`<div class="tm-backdrop" data-tmx></div><div class="tm-card"><button class="tm-x" data-tmx>×</button><div class="tm-head">${m.icon} <b>${m.title[st.lang]||m.title.en}</b></div><p class="tm-sub">${m.sub[st.lang]||m.sub.en}</p><div class="tm-pick">${st.lang==='ko'?'어느 레슨을 열까요?':st.lang==='zh'?'打开哪一课？':'Which lesson?'}</div><div class="tm-lessons">${lessons.map(id=>{const n=lessonNum(id);const done=lessonDone(id);return `<button class="tm-lesson ${done?'done':''}" data-tm-lesson="${esc(id)}"><span class="stop-badge">${n}</span><span>Lesson ${n}${done?' ✓':''}</span></button>`;}).join('')}</div></div>`;
  el.classList.add('show');
@@ -332,14 +335,19 @@ function _book3dHtml(bk){
 function showBookShelf(){
  const t=(ko,en,zh)=>st.lang==='ko'?ko:st.lang==='zh'?zh:en;
  const catalog=window.BOOK_CATALOG||[];
- const booksHtml=catalog.map(bk=>_book3dHtml(bk)).join('');
- const html=`<div class="book-shelf">
+ const bandOf=(bk)=>{if(bk.band)return bk.band;const g=(bk.grade||'').toString();if(/start/i.test(g))return 'Starter';const m=g.match(/G\s*([1-5])/i);return m?('G'+m[1]):'G3';};
+ // ladder rungs from top (G5) down to Starter at the bottom — you climb up as you level up
+ const BANDS=[{k:'G5',c:'#2b8a86'},{k:'G4',c:'#2f9e8f'},{k:'G3',c:'#3fa86a'},{k:'G2',c:'#5bb56a'},{k:'G1',c:'#7bc47f'},{k:'Starter',c:'#9ccc9e'}];
+ const rungs=BANDS.map(b=>{const bks=catalog.filter(x=>bandOf(x)===b.k);
+  const inner=bks.length?bks.map(_book3dHtml).join(''):`<div class="level-empty">🔒 ${t('준비중','Coming soon','即将开放')}</div>`;
+  return `<section class="level-row"><div class="level-tag" style="background:${b.c}">${b.k}</div><div class="level-books">${inner}</div></section>`;}).join('');
+ const html=`<div class="book-shelf study-house">
   <div class="book-shelf-top">
-   <h2>📚 ${t('도서관','Library','图书馆')}</h2>
+   <h2>🏫 Study House</h2>
    <button class="btn secondary" data-act="town-map">← ${t('마을로','Town','返回')}</button>
   </div>
-  <p class="book-shelf-sub">${t('교재를 선택하세요. 🔒 는 준비 중인 교재예요.','Choose a textbook. 🔒 = coming soon.','请选择教材。🔒 = 即将开放。')}</p>
-  <div class="book-grid">${booksHtml}</div>
+  <p class="book-shelf-sub">${t('레벨을 골라 책을 선택하세요. 위로 갈수록 어려워져요!','Pick your level, then a book — it gets harder as you climb!','选择级别再选书，越往上越难！')}</p>
+  <div class="level-ladder">${rungs}</div>
  </div>`;
  if(window.TownGame)TownGame.destroy();
  const el=document.getElementById('app');

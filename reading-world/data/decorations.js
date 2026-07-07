@@ -3,14 +3,14 @@
 // place it in its slot (no free placement yet). Placeholder emoji art now;
 // real Gfield art swaps in behind the same ids.
 window.DECORATIONS = {
-  // fixed slots on reading-town-v1 (960x600), kept clear of buildings/paths
+  // fixed slots on lego-town-map (1207x837), kept clear of buildings/paths
   slots: {
-    lamp:   { x: 480, y: 62,  name: { ko: '가로등', en: 'Lamp', zh: '路灯' } },
-    sign:   { x: 636, y: 62,  name: { ko: '간판', en: 'Sign', zh: '招牌' } },
-    garden: { x: 92,  y: 300, name: { ko: '정원', en: 'Garden', zh: '花园' } },
-    bench:  { x: 868, y: 300, name: { ko: '벤치', en: 'Bench', zh: '长椅' } },
-    pond:   { x: 338, y: 556, name: { ko: '연못', en: 'Pond', zh: '池塘' } },
-    gate:   { x: 560, y: 556, name: { ko: '대문', en: 'Gate', zh: '大门' } },
+    lamp:   { x: 560, y: 455, name: { ko: '가로등', en: 'Lamp', zh: '路灯' } },
+    sign:   { x: 720, y: 430, name: { ko: '간판', en: 'Sign', zh: '招牌' } },
+    garden: { x: 150, y: 470, name: { ko: '정원', en: 'Garden', zh: '花园' } },
+    bench:  { x: 660, y: 560, name: { ko: '벤치', en: 'Bench', zh: '长椅' } },
+    pond:   { x: 455, y: 705, name: { ko: '연못', en: 'Pond', zh: '池塘' } },
+    gate:   { x: 620, y: 135, name: { ko: '대문', en: 'Gate', zh: '大门' } },
   },
   // each decoration belongs to one slot
   items: [

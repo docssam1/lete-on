@@ -470,6 +470,15 @@ img{-webkit-user-drag:none;user-select:none}
 .book-shelf-sub{font-size:13px;color:var(--muted);padding:10px 18px 0;margin:0}
 .book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:28px 22px;padding:22px 18px 36px;align-items:end}
 
+/* Study House — level ladder (Starter at bottom, climb up to G5) */
+.level-ladder{display:flex;flex-direction:column;gap:12px;padding:16px 18px 40px;position:relative}
+.level-ladder::before,.level-ladder::after{content:"";position:absolute;top:8px;bottom:32px;width:8px;border-radius:6px;background:linear-gradient(#c79a5b,#9b7038);box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.level-ladder::before{left:6px}.level-ladder::after{right:6px}
+.level-row{display:flex;align-items:center;gap:16px;padding:12px 20px;background:var(--card,#fff);border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);position:relative;z-index:1}
+.level-tag{flex-shrink:0;width:58px;height:58px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:#fff;border-radius:14px;box-shadow:0 3px 8px rgba(0,0,0,.18);letter-spacing:.5px}
+.level-books{display:flex;flex-wrap:wrap;gap:22px 18px;align-items:end;flex:1}
+.level-empty{color:var(--muted);font-size:13px;padding:20px 6px;opacity:.65;font-weight:600}
+
 /* 3-D book card */
 .book-card{perspective:600px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;user-select:none}
 .book-card:hover .book-3d{transform:rotateY(-15deg) translateY(-4px);box-shadow:-10px 14px 32px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.3)}
