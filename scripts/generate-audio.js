@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 /**
- * ElevenLabs audio generation script for Gfield Reading Town
+ * Google Cloud TTS Neural2 audio generation script for Gfield Reading Town
  *
  * Usage:
- *   ELEVENLABS_KEY=sk_xxx node scripts/generate-audio.js
+ *   set GOOGLE_TTS_KEY=AIza... && node scripts/generate-audio.js   (Windows)
+ *   GOOGLE_TTS_KEY=AIza... node scripts/generate-audio.js          (Mac/Linux)
  *
  * Generates MP3 files for all Level C extraLearning + newPassage passages,
  * uploads them to Supabase Storage, and prints the URLs.
  *
- * Character usage estimate: ~16,000 chars (Level C only)
- * Use a second account for Level B passages.
+ * Free tier: 1,000,000 chars/month for Neural2 voices — more than enough.
+ * Character estimate: ~16,000 chars (Level C) + ~14,000 chars (Level B extras)
  */
 
 const https = require('https');
@@ -17,21 +18,19 @@ const fs = require('fs');
 const path = require('path');
 
 // ── Config ────────────────────────────────────────────────────────────────────
-const ELEVENLABS_KEY = process.env.ELEVENLABS_KEY;
-const RACHEL_VOICE_ID = '21m00Tcm4TlvDq8ikWAM';
+const GOOGLE_TTS_KEY = process.env.GOOGLE_TTS_KEY;
+const VOICE_NAME = 'en-US-Neural2-F';   // Natural female Neural2 voice
 const SUPABASE_URL = 'https://fgahqumaldheqettmvqg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
-const MODEL = 'eleven_multilingual_v2';
 const OUT_DIR = path.join(__dirname, '../audio-generated');
 
-if (!ELEVENLABS_KEY) {
-  console.error('❌  Set ELEVENLABS_KEY environment variable first.');
-  console.error('    Example: ELEVENLABS_KEY=sk_xxx node scripts/generate-audio.js');
+if (!GOOGLE_TTS_KEY) {
+  console.error('❌  Set GOOGLE_TTS_KEY environment variable first.');
+  console.error('    Windows: set GOOGLE_TTS_KEY=AIza... && node scripts/generate-audio.js');
   process.exit(1);
 }
 
 // ── Load lesson data ───────────────────────────────────────────────────────────
-// Mock window.LESSONS so the lesson JS files can be eval'd
 const window = { LESSONS: {} };
 const LESSON1 = {};
 const dataDir = path.join(__dirname, '../reading-world/data');
@@ -79,6 +78,7 @@ for (const [lessonId, lesson] of Object.entries(window.LESSONS)) {
 
 const totalChars = tasks.reduce((s, t) => s + t.text.length, 0);
 console.log(`📋  ${tasks.length} passages | ~${totalChars.toLocaleString()} characters`);
+console.log(`🎙  Voice: ${VOICE_NAME} (Google Neural2)`);
 console.log('');
 
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -99,22 +99,19 @@ function httpRequest(options, body) {
 
 async function generateMp3(text) {
   const payload = JSON.stringify({
-    text,
-    model_id: MODEL,
-    voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.0 },
+    input: { text },
+    voice: { languageCode: 'en-US', name: VOICE_NAME },
+    audioConfig: { audioEncoding: 'MP3', speakingRate: 0.95 },
   });
   const res = await httpRequest({
-    hostname: 'api.elevenlabs.io',
-    path: `/v1/text-to-speech/${RACHEL_VOICE_ID}`,
+    hostname: 'texttospeech.googleapis.com',
+    path: `/v1/text:synthesize?key=${GOOGLE_TTS_KEY}`,
     method: 'POST',
-    headers: {
-      'xi-api-key': ELEVENLABS_KEY,
-      'Content-Type': 'application/json',
-      'Accept': 'audio/mpeg',
-    },
+    headers: { 'Content-Type': 'application/json' },
   }, payload);
-  if (res.status !== 200) throw new Error(`ElevenLabs ${res.status}: ${res.body.toString().slice(0,200)}`);
-  return res.body;
+  if (res.status !== 200) throw new Error(`Google TTS ${res.status}: ${res.body.toString().slice(0, 300)}`);
+  const json = JSON.parse(res.body.toString());
+  return Buffer.from(json.audioContent, 'base64');
 }
 
 async function uploadToSupabase(mp3Buffer, storagePath) {
@@ -128,7 +125,7 @@ async function uploadToSupabase(mp3Buffer, storagePath) {
       'x-upsert': 'true',
     },
   }, mp3Buffer);
-  if (res.status !== 200 && res.status !== 201) throw new Error(`Supabase upload ${res.status}: ${res.body.toString().slice(0,200)}`);
+  if (res.status !== 200 && res.status !== 201) throw new Error(`Supabase upload ${res.status}: ${res.body.toString().slice(0, 200)}`);
   return `${SUPABASE_URL}/storage/v1/object/public/audio/${storagePath}`;
 }
 
@@ -160,7 +157,6 @@ async function main() {
 
       // Save locally as backup
       const localPath = path.join(OUT_DIR, task.storagePath.replace('/', '-'));
-      fs.mkdirSync(path.dirname(localPath), { recursive: true });
       fs.writeFileSync(localPath, mp3);
 
       const url = await uploadToSupabase(mp3, task.storagePath);
@@ -173,8 +169,7 @@ async function main() {
       console.log(`✗  ${e.message}`);
     }
 
-    // Small delay to avoid rate limiting
-    await new Promise(r => setTimeout(r, 300));
+    await new Promise(r => setTimeout(r, 200));
   }
 
   console.log('');
@@ -184,7 +179,6 @@ async function main() {
   console.log('Generated URLs:');
   for (const [k, v] of Object.entries(results)) console.log(`  ${k}: ${v}`);
 
-  // Save results as JSON for reference
   fs.writeFileSync(path.join(OUT_DIR, 'urls.json'), JSON.stringify(results, null, 2));
   console.log(`\nSaved to ${path.join(OUT_DIR, 'urls.json')}`);
 }
