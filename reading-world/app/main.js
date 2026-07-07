@@ -1,6 +1,22 @@
 (()=>{
 'use strict';
 const app=document.getElementById('app');
+// Pick best English voice once and reuse — prefers Google/natural voices over robotic fallbacks
+let _enVoice=null;
+function getBestEnVoice(){
+  if(_enVoice)return _enVoice;
+  const all=window.speechSynthesis?window.speechSynthesis.getVoices():[];
+  const en=all.filter(v=>v.lang.startsWith('en'));
+  // Priority: Google US > Google > any en-US local > any en-US > any en
+  _enVoice=en.find(v=>v.name==='Google US English')
+    ||en.find(v=>/google/i.test(v.name)&&v.lang==='en-US')
+    ||en.find(v=>/google/i.test(v.name))
+    ||en.find(v=>v.lang==='en-US'&&v.localService)
+    ||en.find(v=>v.lang==='en-US')
+    ||en[0]||null;
+  return _enVoice;
+}
+if(window.speechSynthesis)window.speechSynthesis.onvoiceschanged=()=>{_enVoice=null;getBestEnVoice();};
 const letters=['A','B','C','D'];
 const LESSON1_ZH={zoo:'动物园',squirrels:'松鼠',robins:'知更鸟',cages:'笼子',crickets:'蟋蟀',chipmunks:'花栗鼠',moths:'飞蛾',fireflies:'萤火虫',skunks:'臭鼬',free:'免费的', 'pulling your leg':'开玩笑 / 骗你', 'shoo away':'赶走'};
 // --- multi-lesson engine ---
@@ -417,11 +433,11 @@ function speakPassage(passage){if(!('speechSynthesis' in window)){toast(st.lang=
  const text=(source||[]).join('\n\n');
  const run=++st.speechRun;
  const nodes=[...document.querySelectorAll(`.sentence-line[data-passage="${passage}"]`)];
- const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=Number(st.speed)||1;u.pitch=1;
+ const u=new SpeechSynthesisUtterance(text);u.lang='en-US';const _v=getBestEnVoice();if(_v)u.voice=_v;u.rate=Number(st.speed)||1;u.pitch=1;
  let lastHL=null;u.onboundary=(ev)=>{if(run!==st.speechRun)return;const cur=nodes.find(n=>ev.charIndex>=Number(n.dataset.start)&&ev.charIndex<Number(n.dataset.end));if(!cur||cur===lastHL)return;lastHL=cur;nodes.forEach(n=>n.classList.toggle('reading-now',n===cur));cur.scrollIntoView({behavior:'smooth',block:'center'});};
  u.onend=()=>{if(run===st.speechRun)document.querySelectorAll('.sentence-line.reading-now').forEach(n=>n.classList.remove('reading-now'));};
  window.speechSynthesis.speak(u);}
-function speakText(text){if(!('speechSynthesis' in window)){toast(st.lang==='ko'?'이 브라우저는 읽어주기를 지원하지 않아요.':'Speech is not supported in this browser.');return}stopSpeak();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=Number(st.speed)||1;window.speechSynthesis.speak(u)}
+function speakText(text){if(!('speechSynthesis' in window)){toast(st.lang==='ko'?'이 브라우저는 읽어주기를 지원하지 않아요.':'Speech is not supported in this browser.');return}stopSpeak();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';const _v=getBestEnVoice();if(_v)u.voice=_v;u.rate=Number(st.speed)||1;window.speechSynthesis.speak(u)}
 function stopSpeak(){if('speechSynthesis' in window)window.speechSynthesis.cancel();st.speechRun++;try{document.querySelectorAll('.sentence-line.reading-now').forEach(n=>n.classList.remove('reading-now'));}catch(e){}}
 // --- Read with Me (echo reading) for young learners ---
 const ECHO_TXT={ko:{ready:'자, 같이 읽어봐요!',your:'이제 따라 읽어요',hear:'다시 듣기',next:'다음',done:'잘 읽었어요!',close:'닫기'},en:{ready:"Let's read together!",your:'Now you read',hear:'Hear it again',next:'Next',done:'Great reading!',close:'Close'},zh:{ready:'我们一起读吧！',your:'现在你来读',hear:'再听一次',next:'下一句',done:'读得真棒！',close:'关闭'}};
@@ -432,7 +448,7 @@ function startEcho(key){if(!('speechSynthesis' in window)){toast(st.lang==='ko'?
 function buildEchoOverlay(){const old=document.getElementById('echo-overlay');if(old)old.remove();const g=ECHO_TXT[st.lang]||ECHO_TXT.ko;const el=document.createElement('div');el.id='echo-overlay';el.className='echo-overlay';el.innerHTML=`<button class="echo-x" data-echo="close" aria-label="close">×</button><div class="echo-progress"></div><div class="echo-flash"></div><div class="echo-sentence"></div><div class="echo-phase"></div><div class="echo-ring"><svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="52"/><circle class="ring-fg" cx="60" cy="60" r="52"/></svg><span class="echo-count"></span></div><div class="echo-controls"><button class="btn big" data-echo="replay">🔁 ${esc(g.hear)}</button><button class="btn primary big" data-echo="next">${esc(g.next)} →</button></div>`;el.onclick=(e)=>{const b=e.target.closest('[data-echo]');if(!b)return;const a=b.dataset.echo;if(a==='close')echoClose();else if(a==='replay')echoListen(echo.i);else if(a==='next')echoNext();};document.body.appendChild(el);}
 function echoEl(sel){const o=document.getElementById('echo-overlay');return o?o.querySelector(sel):null;}
 function echoIntro(){const g=ECHO_TXT[st.lang]||ECHO_TXT.ko;const run=echo.run;const f=echoEl('.echo-flash');if(f){f.textContent=g.ready;f.classList.add('show');}const ctl=echoEl('.echo-controls');if(ctl)ctl.style.visibility='hidden';const ring=echoEl('.echo-ring');if(ring)ring.style.visibility='hidden';setTimeout(()=>{if(echo.run!==run)return;const ff=echoEl('.echo-flash');if(ff)ff.classList.remove('show');echoListen(0);},1700);}
-function echoListen(i){const run=echo.run;echo.i=i;echo.phase='listen';stopEchoTimer();window.speechSynthesis.cancel();const s=echo.sentences[i];const prog=echoEl('.echo-progress');if(prog)prog.textContent=`${i+1} / ${echo.sentences.length}`;const sen=echoEl('.echo-sentence');if(sen){sen.textContent=s;sen.classList.add('reading');}const ph=echoEl('.echo-phase');if(ph)ph.textContent='🔊';const ring=echoEl('.echo-ring');if(ring)ring.style.visibility='hidden';const ctl=echoEl('.echo-controls');if(ctl)ctl.style.visibility='visible';const u=new SpeechSynthesisUtterance(s);u.lang='en-US';u.rate=Number(st.speed)||1;u.pitch=1.05;let done=false;const fin=()=>{if(done||echo.run!==run||echo.i!==i)return;done=true;echoRepeat(i);};u.onend=fin;const words=s.split(/\s+/).length;const est=words/(2.4*(Number(st.speed)||1))*1000+900;setTimeout(fin,est+1600);window.speechSynthesis.speak(u);}
+function echoListen(i){const run=echo.run;echo.i=i;echo.phase='listen';stopEchoTimer();window.speechSynthesis.cancel();const s=echo.sentences[i];const prog=echoEl('.echo-progress');if(prog)prog.textContent=`${i+1} / ${echo.sentences.length}`;const sen=echoEl('.echo-sentence');if(sen){sen.textContent=s;sen.classList.add('reading');}const ph=echoEl('.echo-phase');if(ph)ph.textContent='🔊';const ring=echoEl('.echo-ring');if(ring)ring.style.visibility='hidden';const ctl=echoEl('.echo-controls');if(ctl)ctl.style.visibility='visible';const u=new SpeechSynthesisUtterance(s);u.lang='en-US';const _v=getBestEnVoice();if(_v)u.voice=_v;u.rate=Number(st.speed)||1;u.pitch=1.05;let done=false;const fin=()=>{if(done||echo.run!==run||echo.i!==i)return;done=true;echoRepeat(i);};u.onend=fin;const words=s.split(/\s+/).length;const est=words/(2.4*(Number(st.speed)||1))*1000+900;setTimeout(fin,est+1600);window.speechSynthesis.speak(u);}
 function echoRepeat(i){const run=echo.run;echo.phase='repeat';const g=ECHO_TXT[st.lang]||ECHO_TXT.ko;const sen=echoEl('.echo-sentence');if(sen)sen.classList.remove('reading');const ph=echoEl('.echo-phase');if(ph)ph.textContent='🎤 '+g.your;const ring=echoEl('.echo-ring');if(ring)ring.style.visibility='visible';const fg=echoEl('.ring-fg');const cnt=echoEl('.echo-count');const circ=2*Math.PI*52;if(fg)fg.style.strokeDasharray=circ;const words=echo.sentences[i].split(/\s+/).length;const total=Math.max(5,Math.min(12,Math.round(words*0.8)));let remain=total;const draw=()=>{if(cnt)cnt.textContent=Math.max(0,remain);if(fg)fg.style.strokeDashoffset=circ*(1-Math.max(0,remain)/total);};draw();stopEchoTimer();echo.timer=setInterval(()=>{if(echo.run!==run){stopEchoTimer();return;}remain--;draw();if(remain<=0){stopEchoTimer();echoNext();}},1000);}
 function echoNext(){stopEchoTimer();window.speechSynthesis.cancel();const n=echo.i+1;if(n>=echo.sentences.length)echoDone();else echoListen(n);}
 function echoDone(){const g=ECHO_TXT[st.lang]||ECHO_TXT.ko;stopEchoTimer();window.speechSynthesis.cancel();const sen=echoEl('.echo-sentence');if(sen)sen.textContent='';const ph=echoEl('.echo-phase');if(ph)ph.textContent='';const ring=echoEl('.echo-ring');if(ring)ring.style.visibility='hidden';const f=echoEl('.echo-flash');if(f){f.textContent='⭐ '+g.done;f.classList.add('show');}const ctl=echoEl('.echo-controls');if(ctl){ctl.style.visibility='visible';ctl.innerHTML=`<button class="btn primary big" data-echo="close">${esc(g.close)}</button>`;}}
