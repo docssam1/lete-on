@@ -418,7 +418,7 @@ function speakPassage(passage){if(!('speechSynthesis' in window)){toast(st.lang=
  const run=++st.speechRun;
  const nodes=[...document.querySelectorAll(`.sentence-line[data-passage="${passage}"]`)];
  const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=Number(st.speed)||1;u.pitch=1;
- u.onboundary=(ev)=>{if(run!==st.speechRun)return;const cur=nodes.find(n=>ev.charIndex>=Number(n.dataset.start)&&ev.charIndex<Number(n.dataset.end));if(!cur)return;nodes.forEach(n=>n.classList.toggle('reading-now',n===cur));cur.scrollIntoView({behavior:'smooth',block:'center'});};
+ let lastHL=null;u.onboundary=(ev)=>{if(run!==st.speechRun)return;const cur=nodes.find(n=>ev.charIndex>=Number(n.dataset.start)&&ev.charIndex<Number(n.dataset.end));if(!cur||cur===lastHL)return;lastHL=cur;nodes.forEach(n=>n.classList.toggle('reading-now',n===cur));cur.scrollIntoView({behavior:'smooth',block:'center'});};
  u.onend=()=>{if(run===st.speechRun)document.querySelectorAll('.sentence-line.reading-now').forEach(n=>n.classList.remove('reading-now'));};
  window.speechSynthesis.speak(u);}
 function speakText(text){if(!('speechSynthesis' in window)){toast(st.lang==='ko'?'이 브라우저는 읽어주기를 지원하지 않아요.':'Speech is not supported in this browser.');return}stopSpeak();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=Number(st.speed)||1;window.speechSynthesis.speak(u)}
