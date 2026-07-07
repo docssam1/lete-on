@@ -26,7 +26,12 @@ let currentLessonId='lesson1';
 let currentBookId='cars-level-b';
 let originalReqRun=0;      // guards async original fetches when switching lessons
 function availableLessons(bookId){const bid=bookId||currentBookId;if(bid==='cars-level-b'){const list=['lesson1'];Object.keys(window.LESSONS||{}).filter(id=>{const r=window.LESSONS[id];return(r.bookId||'cars-level-b')==='cars-level-b';}).sort((a,b)=>lessonNum(a)-lessonNum(b)).forEach(id=>{if(!list.includes(id))list.push(id);});return list;}return Object.keys(window.LESSONS||{}).filter(id=>{const r=window.LESSONS[id];return r.bookId===bid;}).sort((a,b)=>lessonNum(a)-lessonNum(b));}
-function availableBooks(){const books=new Map();books.set('cars-level-b',{id:'cars-level-b',title:'CARS · Level B',shortLabel:'Level B'});Object.values(window.LESSONS||{}).forEach(r=>{const bid=r.bookId||'cars-level-b';if(!books.has(bid)){const lvl=r.levelId||bid.split('-').pop().toUpperCase();books.set(bid,{id:bid,title:`CARS · Level ${lvl}`,shortLabel:`Level ${lvl}`});}});return[...books.values()];}
+function bookCatalogEntry(bid){return (window.BOOK_CATALOG||[]).find(b=>b.id===bid)||null;}
+function availableBooks(){const books=new Map();
+ const add=(bid)=>{if(books.has(bid))return;const c=bookCatalogEntry(bid);if(c){const title=(c.subtitle?`${c.title} · ${c.subtitle}`:c.title);books.set(bid,{id:bid,title,shortLabel:c.subtitle||c.title});}else{const r=Object.values(window.LESSONS||{}).find(x=>(x.bookId||'cars-level-b')===bid);const lvl=(r&&r.levelId)||bid.split('-').pop().toUpperCase();books.set(bid,{id:bid,title:`CARS · Level ${lvl}`,shortLabel:`Level ${lvl}`});}};
+ add('cars-level-b');
+ Object.values(window.LESSONS||{}).forEach(r=>add(r.bookId||'cars-level-b'));
+ return [...books.values()];}
 function lessonNum(id){return parseInt(String(id).replace(/[^0-9]/g,''),10)||0;}
 function currentBookLabel(){return(availableBooks().find(b=>b.id===currentBookId)||{shortLabel:'Level B'}).shortLabel;}
 function lessonMeta(id){if(id==='lesson1'){const b=window.LESSON1||{};return{id:'lesson1',num:1,title:b.title||'My Backyard Zoo',image:b.image||'assets/images/cars-level-b/lesson-01-my-backyard-zoo.png',theme:b.title||'My Backyard Zoo'};}const r=(window.LESSONS||{})[id]||{};return{id,num:lessonNum(id),title:r.title||id,image:r.image||'',theme:r.theme||''};}
