@@ -229,12 +229,11 @@ let townView = 'map';  // 'map' | 'closet' | 'game' | 'pick' | 'screen'
 ## 개발 브랜치
 
 ```
-develop: claude/cars-reading-world-dev-35728z
-main: main (GitHub Pages 자동 배포)
+main: main (GitHub Pages 자동 배포, 직접 작업)
 ```
 
-- 작업은 항상 `claude/cars-reading-world-dev-35728z` 에서
-- PR → main 머지 → GitHub Pages 자동 배포
+- 작업은 `main` 브랜치에 직접 커밋·푸시
+- PR 없이 즉시 GitHub Pages 반영
 
 ---
 
