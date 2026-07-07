@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>지필드 레테 ON · 관리자</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root{
+    --navy:#163a89; --navy-d:#10245a; --purple:#7c3aed; --purple-l:#f5f1ff;
+    --ink:#1f2d4d; --sub:#5b6b8c; --line:#e2e7f1; --bg:#f4f6fb;
+    --ok:#0d9f6e; --okbg:#e7f7f0; --off:#94a3b8; --offbg:#eef1f6;
+    --danger:#be123c; --warn:#d97706;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5}
+  header{background:linear-gradient(120deg,var(--navy),var(--navy-d));color:#fff;
+    padding:16px 20px;display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;z-index:50;box-shadow:0 4px 18px rgba(16,36,90,.22)}
+  header .brand{font-weight:900;letter-spacing:-.02em;font-size:16px}
+  header .brand small{display:block;font-size:11px;font-weight:600;letter-spacing:.12em;color:#9fb4e8;margin-top:2px}
+  header .hbtns{display:flex;gap:8px}
+  header button{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);
+    color:#fff;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:800;cursor:pointer}
+  header button:hover{background:rgba(255,255,255,.2)}
+  header button.save{background:linear-gradient(135deg,#22c55e,#16a34a);border:0}
+  .wrap{max-width:900px;margin:0 auto;padding:16px 16px 80px}
+
+  /* 게이트 */
+  #gate{position:fixed;inset:0;z-index:100;background:linear-gradient(140deg,#eef2ff,#f7f1ff);
+    display:flex;align-items:center;justify-content:center;padding:18px}
+  .gate-card{width:min(380px,100%);background:#fff;border:1px solid var(--line);
+    border-radius:18px;padding:30px 26px;box-shadow:0 18px 46px rgba(36,58,123,.16);text-align:center}
+  .gate-card .lock{font-size:30px;margin-bottom:6px}
+  .gate-card h1{margin:0 0 4px;font-size:19px;color:var(--navy)}
+  .gate-card p{margin:0 0 18px;color:var(--sub);font-size:12.5px}
+  .gate-card input{width:100%;height:46px;padding:0 14px;border:1px solid #c9d4e5;border-radius:10px;font-size:15px;outline:none}
+  .gate-card input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,58,237,.1)}
+  .gate-card button{width:100%;height:46px;margin-top:12px;border:0;border-radius:10px;background:var(--navy);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+  .gate-err{min-height:16px;margin-top:8px;color:var(--danger);font-size:12px;font-weight:700}
+
+  /* 탭 */
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  .tab{padding:9px 13px;border-radius:9px;background:#fff;border:1px solid var(--line);
+    font-size:13px;font-weight:800;color:var(--sub);cursor:pointer}
+  .tab.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+  .panel{display:none}
+  .panel.active{display:block}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;margin-bottom:12px}
+  .card h2{margin:0 0 12px;font-size:15px;color:var(--navy)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .fld{flex:1;min-width:160px}
+  .fld label{display:block;font-size:11px;font-weight:800;color:var(--sub);margin-bottom:4px;text-transform:uppercase;letter-spacing:.02em}
+  .fld input,.fld select,.fld textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;outline:none;font-family:inherit}
+  .fld input:focus,.fld textarea:focus,.fld select:focus{border-color:var(--purple)}
+  .fld textarea{min-height:80px;resize:vertical}
+
+  .btn{height:38px;padding:0 14px;border:0;border-radius:9px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
+  .btn.primary{background:var(--purple);color:#fff}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+  .btn.danger{background:#fff;color:var(--danger);border:1px solid #f3c9d3}
+  .btn.sm{height:32px;padding:0 10px;font-size:12px}
+
+  .item{border:1px solid var(--line);border-radius:11px;padding:12px 13px;margin-bottom:9px;background:#fff}
+  .item .itop{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .item .ititle{font-weight:800;color:var(--ink);font-size:14px}
+  .item .isub{color:var(--sub);font-size:12px;margin-top:2px}
+  .item .iacts{display:flex;gap:6px;flex-shrink:0}
+  .empty{text-align:center;color:var(--sub);padding:26px;font-size:13px}
+  .addbar{margin-top:6px}
+
+  /* 모달 */
+  .modal-bg{position:fixed;inset:0;z-index:120;background:rgba(16,28,56,.5);display:none;align-items:flex-end;justify-content:center}
+  .modal-bg.show{display:flex}
+  .modal{width:100%;max-width:600px;max-height:90vh;overflow-y:auto;background:#fff;border-radius:20px 20px 0 0;padding:20px;position:relative}
+  @media(min-width:600px){.modal-bg{align-items:center}.modal{border-radius:18px}}
+  .modal h3{margin:0 0 14px;font-size:17px;color:var(--navy)}
+  .modal .close{position:absolute;top:12px;right:14px;background:none;border:0;font-size:24px;color:#9aa6bf;cursor:pointer}
+  .modal-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy-d);color:#fff;
+    padding:11px 18px;border-radius:10px;font-size:13px;font-weight:700;z-index:200;opacity:0;transition:.2s;pointer-events:none}
+  .toast.show{opacity:1}
+  .status{font-size:12px;color:var(--sub);margin:0 0 12px 2px}
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(124,58,237,.3);border-top-color:var(--purple);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- 로그인 게이트 -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="lock">🔐</div>
+    <h1>레테 ON 관리자</h1>
+    <p>관리자 비밀번호를 입력하세요.</p>
+    <input id="passInput" type="password" placeholder="관리자 비밀번호" autocomplete="off">
+    <button id="passBtn">들어가기</button>
+    <div class="gate-err" id="gateErr"></div>
+  </div>
+</div>
+
+<!-- 헤더 -->
+<header>
+  <div class="brand">지필드 레테 ON · 관리자<small>CONTENT CONSOLE</small></div>
+  <div class="hbtns">
+    <button id="reloadBtn">새로고침</button>
+    <button class="save" id="saveBtn">💾 GitHub 저장</button>
+    <button id="logoutBtn">로그아웃</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="status" id="status">데이터 불러오는 중…</div>
+  <div class="tabs" id="tabs"></div>
+  <div id="panels"></div>
+</div>
+
+<!-- 편집 모달 -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modal">
+    <button class="close" id="modalClose">&times;</button>
+    <h3 id="modalTitle">항목 편집</h3>
+    <div id="modalForm"></div>
+    <div class="modal-foot">
+      <button class="btn ghost" id="modalCancel">취소</button>
+      <button class="btn primary" id="modalSave">적용</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+ * 설정 — 저장소/파일/브랜치. 필요 시 여기만 바꾸면 됨.
+ * ============================================================ */
+const CFG = {
+  owner: 'docssam1',
+  repo:  'lete-on',
+  branch:'main',
+  path:  'data.js',            // 콘텐츠 데이터 파일
+  globalVar: 'LETE_DATA'       // window.LETE_DATA
+};
+const LS_PASS = 'lete_admin_ok';
+const LS_PAT  = 'lete_github_pat';
+
+/* ============================================================
+ * 섹션 스키마 — 리스트 편집기를 이 정의 하나로 재사용.
+ * type: text|textarea|select|number|checkbox
+ * ============================================================ */
+const SCHEMA = {
+  academies: {
+    label:'② 학원·레테', titleKey:'name', subKey:'category', idPrefix:'ac',
+    fields:[
+      {k:'id',label:'ID',type:'text'},
+      {k:'name',label:'학원명',type:'text'},
+      {k:'category',label:'분류',type:'text'},
+      {k:'order',label:'정렬순서',type:'number'},
+      {k:'logo',label:'로고 URL',type:'text'},
+      {k:'test.schedule',label:'시험일정',type:'text'},
+      {k:'test.apply',label:'접수방법',type:'text'},
+      {k:'test.range',label:'시험범위',type:'text'},
+      {k:'test.type',label:'시험형태',type:'text'},
+      {k:'test.difficulty',label:'난이도',type:'select',opts:['상','중상','중','하']},
+      {k:'test.classLevels',label:'반편성',type:'text'},
+      {k:'note',label:'메모',type:'textarea'}
+    ]
+  },
+  testTypes: {
+    label:'③ 유형·기출', titleKey:'title', subKey:'area', idPrefix:'tt',
+    fields:[
+      {k:'id',label:'ID',type:'text'},
+      {k:'academyId',label:'학원ID',type:'text'},
+      {k:'title',label:'유형명',type:'text'},
+      {k:'area',label:'영역',type:'text'},
+      {k:'difficulty',label:'난이도',type:'select',opts:['상','중상','중','하']},
+      {k:'sample',label:'예시 이미지 URL',type:'text'},
+      {k:'desc',label:'설명',type:'textarea'}
+    ]
+  },
+  guides: {
+    label:'④ 대비 가이드', titleKey:'title', subKey:'category', idPrefix:'g',
+    fields:[
+      {k:'id',label:'ID',type:'text'},
+      {k:'title',label:'제목',type:'text'},
+      {k:'category',label:'분류',type:'text'},
+      {k:'level',label:'레벨',type:'select',opts:['전체','L0','L1','L2','L3','L4']},
+      {k:'date',label:'날짜',type:'text'},
+      {k:'cover',label:'커버 이미지 URL',type:'text'},
+      {k:'summary',label:'요약',type:'textarea'},
+      {k:'html',label:'본문(HTML)',type:'textarea'}
+    ]
+  },
+  schedule: {
+    label:'⑤ 일정', titleKey:'title', subKey:'date', idPrefix:'s',
+    fields:[
+      {k:'id',label:'ID',type:'text'},
+      {k:'academyId',label:'학원ID',type:'text'},
+      {k:'title',label:'일정명',type:'text'},
+      {k:'date',label:'시험일(YYYY-MM-DD)',type:'text'},
+      {k:'applyStart',label:'접수시작',type:'text'},
+      {k:'applyEnd',label:'접수마감',type:'text'},
+      {k:'status',label:'상태',type:'select',opts:['접수예정','접수중','마감','종료']},
+      {k:'url',label:'접수 링크',type:'text'}
+    ]
+  },
+  reviews: {
+    label:'⑥ 후기', titleKey:'academy', subKey:'result', idPrefix:'r',
+    fields:[
+      {k:'id',label:'ID',type:'text'},
+      {k:'academy',label:'학원',type:'text'},
+      {k:'student',label:'대상(익명)',type:'text'},
+      {k:'grade',label:'배정/결과',type:'text'},
+      {k:'result',label:'결과',type:'select',opts:['합격','대기','응시']},
+      {k:'date',label:'날짜',type:'text'},
+      {k:'text',label:'후기 내용',type:'textarea'}
+    ]
+  },
+  faq: {
+    label:'⑦ FAQ·공지', titleKey:'q', subKey:'category', idPrefix:'f',
+    fields:[
+      {k:'id',label:'ID',type:'text'},
+      {k:'category',label:'분류',type:'text'},
+      {k:'q',label:'질문',type:'text'},
+      {k:'a',label:'답변',type:'textarea'}
+    ]
+  },
+  notices: {
+    label:'⑦ 공지(별도)', titleKey:'title', subKey:'date', idPrefix:'n',
+    fields:[
+      {k:'id',label:'ID',type:'text'},
+      {k:'title',label:'제목',type:'text'},
+      {k:'date',label:'날짜',type:'text'},
+      {k:'pinned',label:'상단고정',type:'checkbox'},
+      {k:'body',label:'내용',type:'textarea'}
+    ]
+  }
+};
+
+/* meta/hero/diagnostic 기본설정 폼 필드 */
+const SETTINGS_FIELDS = [
+  {k:'meta.site',label:'사이트명'},
+  {k:'meta.tagline',label:'한 줄 소개'},
+  {k:'meta.consultKakao',label:'카톡 상담 URL'},
+  {k:'meta.consultForm',label:'네이버 폼 URL'},
+  {k:'hero.title',label:'히어로 제목'},
+  {k:'hero.subtitle',label:'히어로 부제'},
+  {k:'hero.ctaLabel',label:'히어로 버튼 문구'},
+  {k:'hero.ctaUrl',label:'히어로 버튼 링크'},
+  {k:'diagnostic.ctaLabel',label:'진단 버튼 문구'},
+  {k:'diagnostic.url',label:'진단 링크(hyper-focus)'},
+  {k:'diagnostic.intro',label:'진단 안내문'}
+];
+
+/* ============================================================
+ * 상태
+ * ============================================================ */
+let DATA = null;      // 현재 편집중 데이터
+let FILE_SHA = null;  // 저장 시 필요한 현재 파일 sha
+let curTab = 'settings';
+
+/* ============================================================
+ * 유틸
+ * ============================================================ */
+const $ = id => document.getElementById(id);
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function getPath(obj,path){return path.split('.').reduce((o,k)=>(o==null?undefined:o[k]),obj);}
+function setPath(obj,path,val){const ks=path.split('.');let o=obj;for(let i=0;i<ks.length-1;i++){if(o[ks[i]]==null||typeof o[ks[i]]!=='object')o[ks[i]]={};o=o[ks[i]];}o[ks[ks.length-1]]=val;}
+function utf8ToBase64(str){return btoa(unescape(encodeURIComponent(str)));}
+function base64ToUtf8(b64){return decodeURIComponent(escape(atob(b64)));}
+function getPAT(){return localStorage.getItem(LS_PAT)||'';}
+function ensurePAT(){
+  let t=getPAT();
+  if(!t){ t=(prompt('GitHub Personal Access Token 을 입력하세요\n(Contents: Read and write 권한)')||'').trim();
+    if(t) localStorage.setItem(LS_PAT,t); }
+  return t;
+}
+
+/* ============================================================
+ * 로그인 게이트 (클라이언트 비밀번호 — data.js meta.adminPass 또는 기본값)
+ * ============================================================ */
+const FALLBACK_PASS = '01020837265'; // data.js에 meta.adminPass 없을 때
+function tryPass(p){
+  const ok = (DATA && DATA.meta && DATA.meta.adminPass) ? (p===DATA.meta.adminPass) : (p===FALLBACK_PASS);
+  return ok;
+}
+$('passBtn').addEventListener('click', ()=>{
+  const p=$('passInput').value.trim();
+  if(tryPass(p)){ localStorage.setItem(LS_PASS,'1'); $('gate').style.display='none'; }
+  else $('gateErr').textContent='비밀번호가 올바르지 않습니다.';
+});
+$('passInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('passBtn').click();});
+$('logoutBtn').addEventListener('click', ()=>{localStorage.removeItem(LS_PASS);location.reload();});
+
+/* ============================================================
+ * data.js 로드 (GitHub Contents API → sha + 본문)
+ * ============================================================ */
+async function loadData(){
+  $('status').innerHTML='<span class="spinner"></span> 데이터 불러오는 중…';
+  const url=`https://api.github.com/repos/${CFG.owner}/${CFG.repo}/contents/${CFG.path}?ref=${CFG.branch}`;
+  const headers={'Accept':'application/vnd.github+json'};
+  const pat=getPAT(); if(pat) headers['Authorization']='Bearer '+pat;
+  try{
+    const res=await fetch(url,{headers});
+    if(res.status===404){ // 파일 없음 → 빈 스키마로 시작
+      DATA=emptyData(); FILE_SHA=null;
+      $('status').textContent='data.js 없음 — 새로 생성 대상(저장 시 생성됩니다).';
+    }else if(res.ok){
+      const j=await res.json();
+      FILE_SHA=j.sha;
+      const text=base64ToUtf8(j.content.replace(/\n/g,''));
+      DATA=parseDataJs(text)||emptyData();
+      $('status').textContent='불러옴 · 마지막 수정 '+(DATA.meta&&DATA.meta.updatedAt||'-');
+    }else{
+      throw new Error('HTTP '+res.status);
+    }
+  }catch(e){
+    DATA=emptyData(); FILE_SHA=null;
+    $('status').textContent='불러오기 실패('+e.message+') — 빈 데이터로 시작';
+  }
+  // 게이트 (data.js 로드 후 adminPass 반영)
+  if(localStorage.getItem(LS_PASS)==='1') $('gate').style.display='none';
+  ensureShape(DATA);
+  renderTabs(); renderPanel();
+}
+function parseDataJs(text){
+  try{ const w={}; new Function('window',text)(w); return w[CFG.globalVar]||null; }
+  catch(e){ toast('data.js 파싱 오류: '+e.message); return null; }
+}
+function emptyData(){
+  return {meta:{site:'지필드 레테 ON',tagline:'',updatedAt:'',consultKakao:'',consultForm:''},
+    hero:{title:'',subtitle:'',ctaLabel:'',ctaUrl:'',bg:''},
+    academies:[],testTypes:[],guides:[],schedule:[],reviews:[],faq:[],notices:[],
+    diagnostic:{enabled:true,url:'/hyper-focus/',ctaLabel:'',intro:''}};
+}
+function ensureShape(d){
+  d.meta=d.meta||{}; d.hero=d.hero||{}; d.diagnostic=d.diagnostic||{};
+  Object.keys(SCHEMA).forEach(k=>{ if(!Array.isArray(d[k])) d[k]=[]; });
+}
+
+/* ============================================================
+ * 탭 & 패널
+ * ============================================================ */
+function renderTabs(){
+  const tabs=[{key:'settings',label:'① 기본설정'}].concat(
+    Object.keys(SCHEMA).map(k=>({key:k,label:SCHEMA[k].label})));
+  $('tabs').innerHTML=tabs.map(t=>
+    `<div class="tab ${t.key===curTab?'active':''}" data-tab="${t.key}">${esc(t.label)}</div>`).join('');
+  document.querySelectorAll('.tab').forEach(el=>el.addEventListener('click',()=>{
+    curTab=el.dataset.tab; renderTabs(); renderPanel();
+  }));
+}
+function renderPanel(){
+  if(curTab==='settings') return renderSettings();
+  renderList(curTab);
+}
+
+/* --- 기본설정 --- */
+function renderSettings(){
+  const rows=SETTINGS_FIELDS.map(f=>`
+    <div class="fld">
+      <label>${esc(f.label)}</label>
+      <input data-set="${f.k}" value="${esc(getPath(DATA,f.k)||'')}">
+    </div>`).join('');
+  $('panels').innerHTML=`<div class="panel active"><div class="card">
+    <h2>사이트 기본설정 · 상담/진단 링크</h2>
+    <div class="row">${rows}</div>
+    <button class="btn primary" id="applySettings">이 탭 적용</button>
+  </div></div>`;
+  $('applySettings').addEventListener('click',()=>{
+    document.querySelectorAll('[data-set]').forEach(i=>setPath(DATA,i.dataset.set,i.value));
+    toast('적용됨 (저장하려면 상단 💾)');
+  });
+}
+
+/* --- 리스트 섹션 --- */
+function renderList(section){
+  const sc=SCHEMA[section];
+  const arr=DATA[section]||[];
+  const items=arr.map((it,idx)=>`
+    <div class="item">
+      <div class="itop">
+        <div>
+          <div class="ititle">${esc(it[sc.titleKey]||'(제목 없음)')}</div>
+          <div class="isub">${esc(it[sc.subKey]||'')} · ${esc(it.id||'')}</div>
+        </div>
+        <div class="iacts">
+          <button class="btn ghost sm" data-edit="${idx}">편집</button>
+          <button class="btn danger sm" data-del="${idx}">삭제</button>
+        </div>
+      </div>
+    </div>`).join('');
+  $('panels').innerHTML=`<div class="panel active"><div class="card">
+    <h2>${esc(sc.label)} · ${arr.length}개</h2>
+    ${arr.length?items:'<div class="empty">항목이 없습니다. 아래 버튼으로 추가하세요.</div>'}
+    <div class="addbar"><button class="btn primary" id="addItem">＋ 새 항목 추가</button></div>
+  </div></div>`;
+  $('addItem').addEventListener('click',()=>openEditor(section,-1));
+  document.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>openEditor(section,+b.dataset.edit)));
+  document.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{
+    if(confirm('이 항목을 삭제할까요?')){ DATA[section].splice(+b.dataset.del,1); renderList(section); toast('삭제됨 (저장하려면 💾)'); }
+  }));
+}
+
+/* ============================================================
+ * 편집 모달
+ * ============================================================ */
+let editCtx={section:null,idx:-1};
+function openEditor(section,idx){
+  editCtx={section,idx};
+  const sc=SCHEMA[section];
+  const isNew=idx<0;
+  const obj=isNew?{}:JSON.parse(JSON.stringify(DATA[section][idx]));
+  if(isNew && !obj.id) obj.id=sc.idPrefix+'-'+Date.now().toString(36);
+  $('modalTitle').textContent=(isNew?'새 항목 · ':'편집 · ')+sc.label;
+  $('modalForm').innerHTML=sc.fields.map(f=>{
+    const v=getPath(obj,f.k);
+    if(f.type==='textarea')
+      return `<div class="fld" style="margin-bottom:10px"><label>${esc(f.label)}</label><textarea data-k="${f.k}">${esc(v||'')}</textarea></div>`;
+    if(f.type==='select')
+      return `<div class="fld" style="margin-bottom:10px"><label>${esc(f.label)}</label><select data-k="${f.k}">${f.opts.map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join('')}</select></div>`;
+    if(f.type==='checkbox')
+      return `<div class="fld" style="margin-bottom:10px"><label>${esc(f.label)}</label><input type="checkbox" data-k="${f.k}" ${v?'checked':''} style="width:auto;height:auto"></div>`;
+    return `<div class="fld" style="margin-bottom:10px"><label>${esc(f.label)}</label><input type="${f.type==='number'?'number':'text'}" data-k="${f.k}" value="${esc(v==null?'':v)}"></div>`;
+  }).join('');
+  $('modalForm')._obj=obj;
+  $('modalBg').classList.add('show');
+}
+function closeModal(){$('modalBg').classList.remove('show');}
+$('modalClose').addEventListener('click',closeModal);
+$('modalCancel').addEventListener('click',closeModal);
+$('modalBg').addEventListener('click',e=>{if(e.target===$('modalBg'))closeModal();});
+$('modalSave').addEventListener('click',()=>{
+  const {section,idx}=editCtx;
+  const obj=$('modalForm')._obj;
+  document.querySelectorAll('#modalForm [data-k]').forEach(el=>{
+    let val = el.type==='checkbox'?el.checked : (el.type==='number'?(el.value===''?'':Number(el.value)):el.value);
+    setPath(obj,el.dataset.k,val);
+  });
+  if(idx<0) DATA[section].push(obj); else DATA[section][idx]=obj;
+  closeModal(); renderList(section); toast('적용됨 (저장하려면 💾)');
+});
+
+/* ============================================================
+ * 직렬화 & GitHub 저장
+ * ============================================================ */
+function serialize(){
+  DATA.meta=DATA.meta||{};
+  DATA.meta.updatedAt=new Date().toISOString().slice(0,10);
+  const header=`/* =========================================================\n`+
+    ` * 지필드 레테 ON — 콘텐츠 데이터 (admin 자동 생성)\n`+
+    ` * 생성: ${new Date().toLocaleString('ko-KR')}\n`+
+    ` * ========================================================= */\n`;
+  return header+`window.${CFG.globalVar} = `+JSON.stringify(DATA,null,2)+`;\n`;
+}
+async function saveToGitHub(){
+  const pat=ensurePAT();
+  if(!pat){ toast('토큰이 필요합니다.'); return; }
+  $('saveBtn').innerHTML='<span class="spinner"></span> 저장 중…';
+  const content=utf8ToBase64(serialize());
+  const url=`https://api.github.com/repos/${CFG.owner}/${CFG.repo}/contents/${CFG.path}`;
+  const body={message:`admin: update ${CFG.path} (${DATA.meta.updatedAt})`,content,branch:CFG.branch};
+  if(FILE_SHA) body.sha=FILE_SHA;
+  try{
+    const res=await fetch(url,{method:'PUT',
+      headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer '+pat,'Content-Type':'application/json'},
+      body:JSON.stringify(body)});
+    const j=await res.json();
+    if(res.ok){ FILE_SHA=j.content.sha; toast('저장 완료! 1~2분 후 반영됩니다.'); $('status').textContent='저장됨 · '+DATA.meta.updatedAt; }
+    else if(res.status===401){ toast('토큰이 유효하지 않습니다. 다시 발급하세요.'); localStorage.removeItem(LS_PAT); }
+    else if(res.status===409){ toast('충돌 — 새로고침 후 다시 저장하세요.'); }
+    else { toast('저장 실패: '+(j.message||res.status)); }
+  }catch(e){ toast('저장 오류: '+e.message); }
+  $('saveBtn').innerHTML='💾 GitHub 저장';
+}
+$('saveBtn').addEventListener('click',saveToGitHub);
+$('reloadBtn').addEventListener('click',loadData);
+
+/* ============================================================
+ * 시작
+ * ============================================================ */
+loadData();
+</script>
+</body>
+</html>
