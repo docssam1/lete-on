@@ -124,6 +124,6 @@ window.BOOK_CATALOG = [
     grade: 'G3–6',
     band: 'G3',
     isbn: 'ISBN 978-1-2345-XXXX-T',
-    available: false,
+    available: true,
   },
 ];
