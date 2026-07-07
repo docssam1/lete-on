@@ -102,16 +102,55 @@ function hairPaths(style,C){const cap=`<path d="M35,52 Q34,29 60,27 Q86,29 85,52
   case 'curly':return {back:'',front:`<g fill="${C}"><circle cx="42" cy="41" r="10"/><circle cx="53" cy="31" r="10"/><circle cx="67" cy="31" r="10"/><circle cx="78" cy="41" r="10"/><circle cx="60" cy="45" r="11"/></g>`};
   default:return {back:'',front:cap};
  }}
+function legoHair(style,c){
+ const cap=`<path d="M42,41 Q41,25 60,24 Q79,25 78,41 Q69,34 60,34 Q51,34 42,41 Z" fill="${c}"/>`;
+ let ex='';
+ switch(style){
+  case 'long': ex=`<path d="M41,38 L39,66 Q44,70 47,66 L48,40 Z" fill="${c}"/><path d="M79,38 L81,66 Q76,70 73,66 L72,40 Z" fill="${c}"/>`; break;
+  case 'ponytail': ex=`<path d="M77,32 Q93,34 90,53 Q87,42 77,43 Z" fill="${c}"/><ellipse cx="79" cy="35" rx="3.4" ry="3" fill="#0000001f"/>`; break;
+  case 'braids': ex=`<rect x="39" y="40" width="6" height="22" rx="3" fill="${c}"/><rect x="75" y="40" width="6" height="22" rx="3" fill="${c}"/><circle cx="42" cy="63" r="3.4" fill="${c}"/><circle cx="78" cy="63" r="3.4" fill="${c}"/>`; break;
+  case 'bun': ex=`<circle cx="60" cy="18" r="7.5" fill="${c}"/>`; break;
+  case 'curly': ex=`<circle cx="44" cy="36" r="4.6" fill="${c}"/><circle cx="51" cy="29" r="4.6" fill="${c}"/><circle cx="60" cy="27" r="4.6" fill="${c}"/><circle cx="69" cy="29" r="4.6" fill="${c}"/><circle cx="76" cy="36" r="4.6" fill="${c}"/>`; break;
+  case 'wavy': ex=`<path d="M42,42 Q48,37 52,42 Q56,37 60,42 Q64,37 68,42 Q72,37 78,42 L78,45 Q60,39 42,45 Z" fill="${c}"/>`; break;
+ }
+ return cap+ex;
+}
+// LEGO minifigure avatar — round (cylindrical) head, stud, trapezoid torso (clothes),
+// C-hands, legs, plus hat/hair customization. Same signature/parts as before.
 function renderAvatar(eq,size,ropts){eq=eq||avEquipped();size=size||120;const noBg=ropts&&ropts.noBg;
  const bg=avItem('background',eq.background)||avItem('background','meadow');const clo=avItem('clothes',eq.clothes)||avItem('clothes','blue');
- const skin=(avItem('skin',eq.skin)||{}).fill||'#ffd9ad';const hairC=(avItem('haircolor',eq.haircolor)||{}).fill||'#6b4326';const hair=hairPaths(eq.hair||'short',hairC);
+ const skin=(avItem('skin',eq.skin)||{}).fill||'#ffd9ad';const hairC=(avItem('haircolor',eq.haircolor)||{}).fill||'#6b4326';
  const hat=avItem('hat',eq.hat),gl=avItem('glasses',eq.glasses),pet=avItem('pet',eq.pet);
+ const cloF=clo?clo.fill:'#6db3f2';const PANTS='#3f4d66',BOOT='#29313f';
  const stars=bg&&bg.stars?Array.from({length:10},(_,i)=>`<circle cx="${(i*17+9)%112+4}" cy="${(i*29+8)%64+6}" r="${i%3?1:1.6}" fill="#fff" opacity=".85"/>`).join(''):'';
- const eyes=(gl&&gl.emoji)?'':`<ellipse cx="52" cy="53" rx="3" ry="4" fill="#3a4256"/><ellipse cx="68" cy="53" rx="3" ry="4" fill="#3a4256"/><circle cx="53.1" cy="51.4" r="1" fill="#fff"/><circle cx="69.1" cy="51.4" r="1" fill="#fff"/>`;
- const glT=(gl&&gl.emoji)?`<text x="60" y="56" font-size="19" text-anchor="middle">${gl.emoji}</text>`:'';
- const hatT=(hat&&hat.emoji)?`<text x="60" y="33" font-size="29" text-anchor="middle">${hat.emoji}</text>`:'';
- const petT=(pet&&pet.emoji)?`<text x="98" y="113" font-size="25" text-anchor="middle">${pet.emoji}</text>`:'';
- return `<svg xmlns="http://www.w3.org/2000/svg" class="avatar-svg" viewBox="0 0 120 120" width="${size}" height="${size}" role="img" aria-label="avatar"><defs><linearGradient id="av_sunset" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd39b"/><stop offset="1" stop-color="#ff9a9e"/></linearGradient></defs>${noBg?'':`<rect x="0" y="0" width="120" height="120" rx="20" fill="${bg?bg.fill:'#dff5e1'}"/>${stars}`}${hair.back}<path d="M40,86 Q60,76 80,86 L83,113 Q83,118 77,118 L43,118 Q37,118 37,113 Z" fill="${clo?clo.fill:'#6db3f2'}"/><circle cx="38" cy="100" r="6" fill="${skin}"/><circle cx="82" cy="100" r="6" fill="${skin}"/><circle cx="46" cy="54" r="4" fill="${skin}"/><circle cx="74" cy="54" r="4" fill="${skin}"/><circle cx="60" cy="52" r="24" fill="${skin}"/>${hair.front}${eyes}<circle cx="47" cy="61" r="3.6" fill="#ff9aa2" opacity=".45"/><circle cx="73" cy="61" r="3.6" fill="#ff9aa2" opacity=".45"/><path d="M53,62 Q60,69 67,62" fill="none" stroke="#3a4256" stroke-width="2.4" stroke-linecap="round"/>${glT}${hatT}${petT}</svg>`;}
+ const hasHat=!!(hat&&hat.emoji);
+ const eyes=(gl&&gl.emoji)?'':`<circle cx="52" cy="43" r="2.5" fill="#33272a"/><circle cx="68" cy="43" r="2.5" fill="#33272a"/>`;
+ const glT=(gl&&gl.emoji)?`<text x="60" y="48" font-size="17" text-anchor="middle">${gl.emoji}</text>`:'';
+ const hatT=hasHat?`<text x="60" y="31" font-size="30" text-anchor="middle">${hat.emoji}</text>`:'';
+ const petT=(pet&&pet.emoji)?`<text x="98" y="113" font-size="24" text-anchor="middle">${pet.emoji}</text>`:'';
+ const hair=hasHat?'':legoHair(eq.hair||'short',hairC);
+ return `<svg xmlns="http://www.w3.org/2000/svg" class="avatar-svg" viewBox="0 0 120 120" width="${size}" height="${size}" role="img" aria-label="avatar">`+
+  (noBg?'':`<rect x="0" y="0" width="120" height="120" rx="20" fill="${bg?bg.fill:'#dff5e1'}"/>${stars}`)+
+  // legs + boots
+  `<rect x="44" y="99" width="14" height="17" rx="2" fill="${PANTS}"/><rect x="62" y="99" width="14" height="17" rx="2" fill="${PANTS}"/>`+
+  `<rect x="43" y="112" width="16" height="6" rx="2" fill="${BOOT}"/><rect x="61" y="112" width="16" height="6" rx="2" fill="${BOOT}"/>`+
+  // hips
+  `<rect x="42" y="92" width="36" height="9" rx="3" fill="${PANTS}"/>`+
+  // arms (behind torso) + hands
+  `<path d="M45,64 Q33,71 35,85 L43,85 Q42,73 50,67 Z" fill="${cloF}"/><path d="M75,64 Q87,71 85,85 L77,85 Q78,73 70,67 Z" fill="${cloF}"/>`+
+  `<circle cx="37" cy="86" r="5" fill="${skin}"/><circle cx="83" cy="86" r="5" fill="${skin}"/>`+
+  // torso (trapezoid = clothes)
+  `<path d="M45,63 L75,63 L79,93 L41,93 Z" fill="${cloF}"/><path d="M45,63 L75,63 L76,71 L44,71 Z" fill="#ffffff" opacity=".13"/>`+
+  `<rect x="41" y="89" width="38" height="4" fill="#0000001c"/>`+
+  // neck
+  `<rect x="54" y="56" width="12" height="6" fill="${skin}"/>`+
+  // head (cylinder) + top stud
+  `<rect x="54" y="20" width="12" height="7" rx="3" fill="${skin}"/><ellipse cx="60" cy="20" rx="6" ry="2.4" fill="${skin}"/>`+
+  `<rect x="43" y="26" width="34" height="33" rx="13" fill="${skin}"/>`+
+  // face
+  eyes+`<circle cx="49" cy="49" r="3" fill="#ff9aa2" opacity=".4"/><circle cx="71" cy="49" r="3" fill="#ff9aa2" opacity=".4"/>`+
+  `<path d="M51,48 Q60,55 69,48" fill="none" stroke="#33272a" stroke-width="2.2" stroke-linecap="round"/>`+
+  hair+glT+hatT+petT+`</svg>`;}
 function basePicker(){const P=window.AVATAR.presets||[];const title=st.lang==='ko'?'어떤 친구로 시작할까요?':st.lang==='zh'?'想用哪个角色开始？':'Pick a character to start!';const sub=st.lang==='ko'?'나중에 언제든 바꿀 수 있어요.':st.lang==='zh'?'以后随时可以更换。':'You can change it anytime later.';const skip=st.lang==='ko'?'이걸로 시작!':st.lang==='zh'?'就用这个！':'Start!';
  const eq=avEquipped();const cards=P.map(p=>{const sel=eq.skin===p.look.skin&&eq.hair===p.look.hair&&eq.haircolor===p.look.haircolor;return `<button class="pick-card ${sel?'selected':''}" data-act="av-pick" data-preset="${p.id}"><div class="pick-ava">${renderAvatar({...window.AVATAR.defaults,...p.look},120)}</div><b>${p.name[st.lang]||p.name.en}</b></button>`;}).join('');
  return `<section class="base-picker"><h1>${title}</h1><p class="sub">${sub}</p><div class="pick-grid">${cards}</div><div class="tools center"><button class="btn primary big" data-act="av-pick-done">${skip} →</button></div></section>`;}
