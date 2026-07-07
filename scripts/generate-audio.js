@@ -21,7 +21,7 @@ const ELEVENLABS_KEY = process.env.ELEVENLABS_KEY;
 const RACHEL_VOICE_ID = '21m00Tcm4TlvDq8ikWAM';
 const SUPABASE_URL = 'https://fgahqumaldheqettmvqg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
-const MODEL = 'eleven_monolingual_v1';
+const MODEL = 'eleven_multilingual_v2';
 const OUT_DIR = path.join(__dirname, '../audio-generated');
 
 if (!ELEVENLABS_KEY) {
