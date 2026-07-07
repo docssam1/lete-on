@@ -105,7 +105,7 @@ async function generateMp3(text) {
   });
   const res = await httpRequest({
     hostname: 'texttospeech.googleapis.com',
-    path: `/v1/text:synthesize?key=${GOOGLE_TTS_KEY}`,
+    path: `/v1/text:synthesize?key=${encodeURIComponent(GOOGLE_TTS_KEY)}`,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   }, payload);
