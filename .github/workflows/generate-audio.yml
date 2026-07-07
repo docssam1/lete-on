@@ -1,0 +1,23 @@
+name: Generate Audio
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'reading-world/data/lc*.js'
+      - 'reading-world/data/lesson*.js'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate and upload MP3s
+        env:
+          GOOGLE_TTS_KEY: ${{ secrets.GOOGLE_TTS_KEY }}
+        run: node scripts/generate-audio.js
