@@ -412,27 +412,15 @@ function render(){if(!currentStudent){if(!introSeen()){app.innerHTML=introScreen
 function makeGameChoices(){const w=L.words[st.gameIndex];return [w[1],...L.words.filter((_,i)=>i!==st.gameIndex).sort(()=>Math.random()-.5).slice(0,3).map(x=>x[1])].sort(()=>Math.random()-.5)}
 function speakPassage(passage){if(!('speechSynthesis' in window)){toast(st.lang==='ko'?'이 브라우저는 읽어주기를 지원하지 않아요.':'Speech is not supported in this browser.');return}
  stopSpeak();
- const nodes=[...document.querySelectorAll(`.sentence-line[data-passage="${passage}"]`)];
  const source=passage==='extra'?L.extraPassage:passage==='originalExtra'?(L.originalExtraPassage||L.originalPassage):L.originalPassage;
- const sentences=nodes.length?nodes.map(n=>n.textContent):(source||[]).flatMap(p=>splitSentences(p));
- if(!sentences.length)return;
- const run=++st.speechRun;let i=0;
- const clear=()=>document.querySelectorAll('.sentence-line.reading-now').forEach(n=>n.classList.remove('reading-now'));
- // Speak one sentence at a time and move the highlight on each — works on
- // mobile where the word-boundary event never fires (onstart/onend do).
- const speakOne=()=>{
-  if(run!==st.speechRun){clear();return;}
-  if(i>=sentences.length){clear();return;}
-  const idx=i;clear();
-  if(nodes[idx]){nodes[idx].classList.add('reading-now');nodes[idx].scrollIntoView({behavior:'smooth',block:'center'});}
-  const u=new SpeechSynthesisUtterance(sentences[idx]);u.lang='en-US';u.rate=Number(st.speed)||1;u.pitch=1;
-  let advanced=false;const next=()=>{if(advanced||run!==st.speechRun)return;advanced=true;i++;speakOne();};
-  u.onend=next;
-  const words=sentences[idx].split(/\s+/).length;const est=Math.max(1300,words/(2.6*(Number(st.speed)||1))*1000+750);
-  setTimeout(next,est+400); // fallback if onend is unreliable (mobile)
-  window.speechSynthesis.speak(u);
- };
- speakOne();}
+ if(!(source||[]).length)return;
+ const text=(source||[]).join('\n\n');
+ const run=++st.speechRun;
+ const nodes=[...document.querySelectorAll(`.sentence-line[data-passage="${passage}"]`)];
+ const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=Number(st.speed)||1;u.pitch=1;
+ u.onboundary=(ev)=>{if(run!==st.speechRun)return;const cur=nodes.find(n=>ev.charIndex>=Number(n.dataset.start)&&ev.charIndex<Number(n.dataset.end));if(!cur)return;nodes.forEach(n=>n.classList.toggle('reading-now',n===cur));cur.scrollIntoView({behavior:'smooth',block:'center'});};
+ u.onend=()=>{if(run===st.speechRun)document.querySelectorAll('.sentence-line.reading-now').forEach(n=>n.classList.remove('reading-now'));};
+ window.speechSynthesis.speak(u);}
 function speakText(text){if(!('speechSynthesis' in window)){toast(st.lang==='ko'?'이 브라우저는 읽어주기를 지원하지 않아요.':'Speech is not supported in this browser.');return}stopSpeak();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=Number(st.speed)||1;window.speechSynthesis.speak(u)}
 function stopSpeak(){if('speechSynthesis' in window)window.speechSynthesis.cancel();st.speechRun++;try{document.querySelectorAll('.sentence-line.reading-now').forEach(n=>n.classList.remove('reading-now'));}catch(e){}}
 // --- Read with Me (echo reading) for young learners ---
