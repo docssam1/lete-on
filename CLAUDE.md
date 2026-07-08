@@ -65,19 +65,27 @@ GitHub Pages 배포: `docssam1/lete-on` 저장소 → `/reading-world/` 경로.
 - 원본 지문: Supabase `lesson_content` 테이블 (`book_id='cars-level-c'`, `lesson_id='lc1'`~`'lc10'`)
 - 창작 콘텐츠: extraLearning + newPassage (모두 js 파일에 포함)
 
-### Level C 레슨 목록 (제목 / extraLearning / newPassage)
-| # | 제목 | extraLearning | newPassage |
-|---|------|---------------|------------|
-| lc1 | The Great Migration | The Caribou Journey | Salmon's Long Way Home |
-| lc2 | Inside a Volcano | Kilauea: Earth's Most Active Volcano | The Day Mount St. Helens Woke Up |
-| lc3 | A World Without Bees | The Waggle Dance | A Beekeeper's Year |
-| lc4 | Layers of the Rainforest | Life on the Forest Floor | Meet the Harpy Eagle |
-| lc5 | Our Solar System | Journey to the Outer Planets | Mars: Our Neighbor in Space |
-| lc6 | Ancient Egypt | The Rosetta Stone | Building the Great Pyramid |
-| lc7 | The Water Cycle | Freshwater: Earth's Rarest Resource | A Raindrop's Remarkable Journey |
-| lc8 | The Monarch's Journey | The Super Generation | Milkweed Matters |
-| lc9 | Ocean Zones | Life at Hydrothermal Vents | Dive to the Deep |
-| lc10 | Community Gardens | Rooftop Farms in the City | The Seed Library |
+### Level C 레슨 목록 — 실제 원본 지문 (2026-07-08 재정렬 완료)
+> ⚠️ 레슨 제목 = **실제 교재 원본 제목**. 창작 콘텐츠(extraLearning/newPassage)는
+> 원문의 주제·인물·형식을 이어가고 **원문 길이에 맞춰** 재작성됨. 이전의
+> "The Great Migration / Inside a Volcano …" 테마 표는 **폐기**(원문과 무관했음).
+
+| # | 원본 제목(교재, Supabase) | 형식·주제 | 원문 길이 |
+|---|---------------------------|-----------|-----------|
+| lc1 | Family Barbecue | 이메일 · 가족 바비큐 | ~269w |
+| lc2 | A Fable About Friendship | 우화 · 새와 애벌레의 우정 | ~279w |
+| lc3 | Owls | 논픽션 · 올빼미의 사냥 | ~348w |
+| lc4 | Harry's Holiday Journal | 일기 · 휴가지 선택 | ~373w |
+| lc5 | To the Skies! | 논픽션 · 비행의 역사 | ~305w |
+| lc6 | The Hungry Spider | 민담 · 욕심 많은 거미 | ~570w |
+| lc7 | The Truth About Science | 생활문 · Grace의 과학 발견 | ~517w |
+| lc8 | 51 Oak Street | 편지 · 삼촌의 낙농장 | ~614w |
+| lc9 | Kate's Cat Corner | 조언 칼럼(Q&A) · 고양이 돌봄 | ~787w |
+| lc10 | The Helpless Helper | 생활문 · Robin과 숙제 | ~550w |
+
+- **extraLearning** = 원문의 같은 주제/인물/형식을 이어가는 창작 지문 + 12문항 (git)
+- **newPassage** = 원문 핵심 어휘 12개를 쓰는 같은 레벨의 새 이야기 + 12문항 (git)
+- 어휘 12개 = 실제 원문에서 추출 · 레슨 커버 = 실제 교재 삽화(`assets/images/cars-level-c/illustrations/lcN.jpg`)
 
 ---
 
@@ -126,21 +134,10 @@ STEP 7 — 유사 문항 (questionSimilar)
 ### 정답 분포 요건 (중요!)
 - 각 12문항 세트: 정확히 **3A / 3B / 3C / 3D**
 - lc1~lc10 전체 240문항: 60A / 60B / 60C / 60D
-- 2026-07-07 기준 모든 Level C 문항 재생성 완료 (이전 버전은 B 82.5%, D 0%로 폐기)
-
-### Level C extraLearning 정답 패턴 (각 레슨별)
-| 레슨 | extraLearning 정답 순서 | newPassage 정답 순서 |
-|------|------------------------|---------------------|
-| lc1  | B,C,A,D,B,C,A,D,B,C,A,D | A,D,C,B,A,D,C,B,A,D,C,B |
-| lc2  | C,B,D,A,C,B,D,A,C,B,D,A | D,A,B,C,D,A,B,C,D,A,B,C |
-| lc3  | B,D,A,C,B,D,A,C,B,D,A,C | C,A,D,B,C,A,D,B,C,A,D,B |
-| lc4  | A,C,B,D,A,C,B,D,A,C,B,D | D,B,C,A,D,B,C,A,D,B,C,A |
-| lc5  | C,D,A,B,C,D,A,B,C,D,A,B | B,A,D,C,B,A,D,C,B,A,D,C |
-| lc6  | A,B,C,D,A,B,C,D,A,B,C,D | D,C,B,A,D,C,B,A,D,C,B,A |
-| lc7  | B,A,C,D,B,A,C,D,B,A,C,D | C,D,B,A,C,D,B,A,C,D,B,A |
-| lc8  | A,D,B,C,A,D,B,C,A,D,B,C | D,B,A,C,D,B,A,C,D,B,A,C |
-| lc9  | C,A,D,B,C,A,D,B,C,A,D,B | B,C,A,D,B,C,A,D,B,C,A,D |
-| lc10 | D,B,C,A,D,B,C,A,D,B,C,A | A,C,D,B,A,C,D,B,A,C,D,B |
+- **2026-07-08 Level C 전면 재작성**: 실제 원문에 정렬 + 원문 길이로 재생성.
+  각 세트는 여전히 3A/3B/3C/3D를 만족하지만 **고정 순서 패턴은 폐기** —
+  이제 레슨마다 정답 순서가 자유롭게 섞여 있고 분포만 3/3/3/3으로 유지됨.
+  (이전의 레슨별 고정 순서 표는 옛 콘텐츠용이라 삭제함.)
 
 ---
 
@@ -267,6 +264,26 @@ main: main (GitHub Pages 자동 배포, 직접 작업)
 
 ## 최근 주요 작업 이력
 
+- **2026-07-08 (야간 세션, 다수 커밋)**
+  - **CARS C 전면 재작업**: 창작 콘텐츠(제목/어휘/extraLearning/newPassage)를
+    실제 원본 지문에 정렬 + 원문 길이(276~797단어)로 재작성. 실제 교재 삽화 10개
+    추가(`assets/images/cars-level-c/illustrations/`).
+  - **Reading Prime Level 1** 신규 리딩북 (`bookId:'reading-prime-1'`, `rp1`~`rp7`).
+    OCR→앱 레슨. 원본은 Supabase, 창작은 git. books.js `available:true`. 엔진에
+    비-CARS 북 라벨링 추가(availableBooks가 BOOK_CATALOG 사용).
+  - **디자인 리프레시**: 파스텔 그라데이션·Inter·무지개색·이모지칩 제거 →
+    따뜻한 크림 지면 + 그린/어씨 팔레트 + 세리프 헤딩 ("Storybook Reading Town").
+  - **레고 빌리지**: 로그인 후 랜딩 = Phaser 레고 마을 이미지맵 + "이어서 학습"
+    배너. 맵 배경 `assets/images/lego-town-map.png`, 효과(분수/구름/연기/비 토글),
+    레고 미니피겨 아바타(renderAvatar). 건물 키: library(예약)·practice='Study
+    House'(책 레벨 사다리)·theater(Screen Quest)·wordshop(단어)·report(리포트).
+  - **공지 게시판**: Supabase `notices` 테이블(공개읽기+anon쓰기) + 앱 게시판
+    (리치 마크다운 ##/불릿/**볼드**) + 주간 자동공지 Routine.
+  - **Screen Quest 주별 아카이브**: `data/video-archive.js`(과거 주 보관).
+  - ⚠️ **음성 MP3 미갱신**: CARS C extra/new 지문이 바뀌어 Supabase Storage의
+    `{book}/{lesson}-extra.mp3`/`-new.mp3`가 옛 내용. 앱은 MP3 실패 시 브라우저
+    TTS로 폴백(새 지문 정확히 읽음)하므로 학습엔 지장 없음. 고품질 MP3 재생성은
+    미완(Storage 업로드가 이 환경에선 막힘).
 - **2026-07-07** — Level C 240문항 전체 재생성 (정답 분포 60A/60B/60C/60D)
   - 이전 버전 문제: B 82.5%, D 0% (GPT 리뷰 46/100점)
   - Q11 실제 인용구 사용, Q12 현실적 wrong choices, Q3 실제 사건순서 강화
