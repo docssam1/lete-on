@@ -240,25 +240,32 @@ main: main (GitHub Pages 자동 배포, 직접 작업)
 |------|--------|------|
 | `store.js` remoteUpsert 하드코딩 | 낮음 | `book_id: 'cars-level-b'`, `lesson_id: 'lesson1'` 고정 → analytics만 영향 |
 | Level C 커버 이미지 | 낮음 | `assets/images/cars-level-c/` 전부 placeholder PNG (실제 아트워크 미제작) |
-| 적응형 학습 기능 | 미구현 | 아래 계획 참조 |
 
 ---
 
-## 다음 구현 예정 기능: 적응형 학습
+## 적응형 학습 — 스킬 코치 (Skill Coach) ✅ 구현됨 (2026-07-08)
+
+Raz-Plus "Level Up!" 참고 + 로드맵 스펙 구현. 자체 모듈(`main.js`,
+`coachScreen/handleCoach/startCoach/finishCoach`, 상태 `st.coach`, `st.view==='coach'`).
+CSS `.cch-*`, 진입 버튼 `data-act="coach-start"`(midReport·리포트홀).
 
 ```
-학생이 원본문항 풀기
+원본문항 채점 → st.original.missed(약한 전략) 확인
+  ↓  (dispatch: bind()에서 act.slice(0,6)==='coach-' → handleCoach)
+전략 큐 = 틀린 전략들(전략명 dedup). 각 전략마다:
+  intro  — 전략 해설(stratInfo.m 왜 틀렸나 / .t 이렇게) 
+  q1     — 같은 전략 유사문제 = L.originalExtraQuestions[i] (추가학습 지문+문항)
+           정답 → mastered / 2회 오답 → 정답·해설 공개
+  q2     — 그래도 틀리면 새 지문 같은 전략 문제 = L.extraQuestions[i]
+           정답 → partial / 오답 → struggled(단어 복습 권유)
   ↓
-틀린 전략 확인 (예: Sequence / Inference 약함)
-  ↓
-유사문제 3문제 자동 제공
-  ↓
-그래도 틀리면 → 해당 전략 해설 + 단어 퀴즈
-  ↓
-유사지문 1개 제공
-  ↓
-점수·오답·전략별 결과 저장 → 학습 리포트 반영
+done   — struggled=0 이면 "레벨 업! 🏆", 아니면 "한 걸음 성장! 💪"
+         코인 = mastered*8 + partial*5, st.coachCleared/st.coachStars 저장
 ```
+- 핵심: 문항 index i = 전략 i 고정순서라, 원본 오답 index로 추가/새지문의
+  **같은 전략 문항**을 지문째 자동 소환(Supabase 불필요, 전부 git 데이터).
+- 향후 확장(미구현): 크로스-레슨 레벨업(레슨 마스터리→다음 레벨 언락),
+  누적 전략별 약점 랭킹 리포트, 자기 낭독 녹음(fluency).
 
 ---
 
