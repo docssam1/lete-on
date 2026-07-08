@@ -5,7 +5,7 @@
 // rain) are drawn on top. Same public API as before: mount / setMove / setDecor /
 // setWeather / destroy. Building keys unchanged so main.js wiring is untouched.
 window.TownGame = (function () {
-  let game = null, S = null, opts = null, decorSeq = 0, weather = 'clear';
+  let game = null, S = null, opts = null, decorSeq = 0, weather = 'clear', zoom = 1;
   // world = native map image size, so all coords below are image pixels
   const W = 1207, H = 837;
   const MAP_URL = 'assets/images/lego-town-map.png';
@@ -179,6 +179,12 @@ window.TownGame = (function () {
       this.input.keyboard.on('keydown-SPACE', tryOpenNear);
       this.input.keyboard.on('keydown-ENTER', tryOpenNear);
       this.touch = { x: 0, y: 0 };
+      // Camera follows the avatar so the +/- zoom can magnify the map (bigger
+      // buildings/labels on small screens). At zoom 1 the viewport equals the map,
+      // so bounds pin it to the full view; zooming in centres on the player.
+      this.cameras.main.setBounds(0, 0, W, H);
+      this.cameras.main.startFollow(this.player, true, 0.14, 0.14);
+      this.cameras.main.setZoom(zoom);
       if (weather === 'rain') applyWeather('rain');
     },
     update() {
@@ -222,6 +228,8 @@ window.TownGame = (function () {
     });
   }
   function setMove(x, y) { if (S && S.touch) { S.touch.x = x; S.touch.y = y; } }
+  function setZoom(z) { zoom = Math.max(1, Math.min(2.6, z)); if (S && S.cameras) S.cameras.main.setZoom(zoom); return zoom; }
+  function getZoom() { return zoom; }
   function setWeather(type) { applyWeather(type || 'clear'); }
   function setDecor(slotId, emoji, uri) {
     if (!S || !S.slotObjs || !S.slotObjs[slotId]) return;
@@ -240,5 +248,5 @@ window.TownGame = (function () {
     } else if (emoji) { o.deco.setText(emoji).setVisible(true); }
   }
   function destroy() { if (game) { try { game.destroy(true); } catch (e) {} game = null; S = null; } }
-  return { mount, setMove, setDecor, setWeather, destroy };
+  return { mount, setMove, setDecor, setWeather, setZoom, getZoom, destroy };
 })();
