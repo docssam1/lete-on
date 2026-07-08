@@ -638,6 +638,20 @@ function render(){if(!currentStudent){if(!introSeen()){app.innerHTML=introScreen
  if(!(atTown&&townView==='game')&&window.TownGame)TownGame.destroy();
  if(atTown){if(townView==='game'&&gameAvailable()){app.innerHTML=gameTownShell();bindGameTown();return;}if(townView==='screen'&&sqAvailable()){app.innerHTML=screenQuestScreen();bind();return;}if(townView==='notice'){app.innerHTML=noticeBoardScreen();bind();return;}if(townView==='parent'){app.innerHTML=parentDashboard();bind();return;}app.innerHTML=town();bind();return;}let content=st.view==='home'?home():st.view==='words'?words():(st.view==='originalRead'||st.view==='questions')&&!hasOriginal()?missingOriginal():st.view==='originalRead'?originalRead():st.view==='questions'?questionScreen('original'):st.view==='questionOriginalExtra'?questionScreen('originalExtra'):st.view==='questionSimilar'?questionScreen('similar'):st.view==='review'?questionScreen('review'):st.view==='originalExtra'?originalExtra():st.view==='similar'?extra():report();app.innerHTML=`<div class="shell">${nav()}<main class="main">${top()}${flow()}${content}</main></div>${modal()}`;bind();}
 function makeGameChoices(){const w=L.words[st.gameIndex];return [w[1],...L.words.filter((_,i)=>i!==st.gameIndex).sort(()=>Math.random()-.5).slice(0,3).map(x=>x[1])].sort(()=>Math.random()-.5)}
+const AUDIO_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio';
+// Voice-over availability. The stored MP3 files for these (book → passage-file)
+// no longer match the on-screen text and must fall back to on-device TTS, which
+// reads the real text aloud. CARS C extraLearning/newPassage were rewritten on
+// 2026-07-08 after the 2026-07-07 voice files were recorded; the originals were
+// untouched, so -original.mp3 stays valid. Delete an entry once its MP3 has been
+// re-recorded and re-uploaded to Supabase Storage.
+const AUDIO_STALE={'cars-level-c':{extra:true,'new':true}};
+// passage → Storage file suffix. originalExtra(추가학습)→-extra, extra(새지문)→-new.
+function audioFileFor(passage){return passage==='originalExtra'?'extra':passage==='extra'?'new':passage==='original'?'original':null;}
+function audioUrlFor(bookId,lessonId,passage){
+ const file=audioFileFor(passage);if(!bookId||!file)return null;
+ const stale=AUDIO_STALE[bookId];if(stale&&stale[file])return null;   // let TTS read the current text
+ return `${AUDIO_BASE}/${bookId}/${lessonId}-${file}.mp3`;}
 function speakPassage(passage){
  stopSpeak();
  const source=passage==='extra'?L.extraPassage:passage==='originalExtra'?(L.originalExtraPassage||L.originalPassage):L.originalPassage;
@@ -645,14 +659,8 @@ function speakPassage(passage){
  const text=(source||[]).join('\n\n');
  const run=++st.speechRun;
  const nodes=[...document.querySelectorAll(`.sentence-line[data-passage="${passage}"]`)];
- const AUDIO_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio';
  const bookId=(window.LESSONS&&window.LESSONS[currentLessonId])&&window.LESSONS[currentLessonId].bookId;
- let audioUrl=null;
- if(bookId){
-   if(passage==='originalExtra')audioUrl=`${AUDIO_BASE}/${bookId}/${currentLessonId}-extra.mp3`;
-   else if(passage==='extra')audioUrl=`${AUDIO_BASE}/${bookId}/${currentLessonId}-new.mp3`;
-   else if(passage==='original')audioUrl=`${AUDIO_BASE}/${bookId}/${currentLessonId}-original.mp3`;
- }
+ const audioUrl=audioUrlFor(bookId,currentLessonId,passage);
  if(audioUrl){const el=new Audio(audioUrl);el.playbackRate=Number(st.speed)||1;_audioEl=el;el.onended=()=>{if(run===st.speechRun)_audioEl=null;};el.play().catch(()=>{_audioEl=null;speakPassageWSA(text,run,nodes);});return;}
  speakPassageWSA(text,run,nodes);}
 function speakPassageWSA(text,run,nodes){if(!('speechSynthesis' in window)){toast(st.lang==='ko'?'이 브라우저는 읽어주기를 지원하지 않아요.':'Speech is not supported in this browser.');return}
@@ -667,7 +675,7 @@ const ECHO_TXT={ko:{ready:'자, 같이 읽어봐요!',your:'이제 따라 읽어
 let echo={run:0,sentences:[],i:0,timer:null,phase:''};
 function stopEchoTimer(){if(echo.timer){clearInterval(echo.timer);echo.timer=null;}}
 function passageSentences(key){const src=key==='extra'?L.extraPassage:key==='originalExtra'?(L.originalExtraPassage||L.originalPassage):L.originalPassage;return (src||[]).flatMap(p=>splitSentences(p));}
-function _echoAudioUrl(key){const AUDIO_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio';const bid=currentBookId,lid=currentLessonId;if(key==='originalExtra')return`${AUDIO_BASE}/${bid}/${lid}-extra.mp3`;if(key==='extra')return`${AUDIO_BASE}/${bid}/${lid}-new.mp3`;if(key==='original')return`${AUDIO_BASE}/${bid}/${lid}-original.mp3`;return null;}
+function _echoAudioUrl(key){return audioUrlFor(currentBookId,currentLessonId,key);}
 function stopEchoTimer(){if(echo.timer){clearInterval(echo.timer);echo.timer=null;}}
 function _stopEchoAudio(){if(echo._seekInt){clearInterval(echo._seekInt);echo._seekInt=null;}if(echo._audio){try{echo._audio.pause();}catch(e){}}}
 function passageSentences(key){const src=key==='extra'?L.extraPassage:key==='originalExtra'?(L.originalExtraPassage||L.originalPassage):L.originalPassage;return (src||[]).flatMap(p=>splitSentences(p));}
