@@ -221,10 +221,12 @@ function libSeriesMeta(id){return libCatalog().series.find(s=>s.id===id)||null;}
 function libEnsure(){if(profile&&!profile.library)profile.library={};return profile&&profile.library;}
 function openLibrary(){lib={view:'shelf'};atTown=true;townView='library';render();window.scrollTo({top:0});}
 function libSpreadCount(meta){return Math.ceil((meta.totalPages||0)/2);}
+function libProgress(bookId){return libEnsure()&&profile.library[bookId];}
 function openLibraryBook(bookId){
  const meta=libBookMeta(bookId);if(!meta)return;
- const saved=libEnsure()&&profile.library[bookId];
- lib={view:'book',bookId,pages:null,loading:true,spread:(saved&&typeof saved.spread==='number')?saved.spread:-1};
+ const saved=libProgress(bookId);
+ const stage=(saved&&saved.introSeen)?'read':(meta.background?'intro':(meta.vocab&&meta.vocab.length?'vocab':'read'));
+ lib={view:'book',bookId,pages:null,loading:true,spread:(saved&&typeof saved.spread==='number')?saved.spread:-1,stage,quizIndex:0,quizAnswers:[],quizFeedback:null};
  atTown=true;townView='library';render();window.scrollTo({top:0});
  if(!(window.Store&&Store.pullLibraryPages)){lib.loading=false;render();return;}
  Store.pullLibraryPages(bookId).then(pages=>{
@@ -232,7 +234,8 @@ function openLibraryBook(bookId){
   lib.pages=Array.isArray(pages)?pages:[];lib.loading=false;render();
  }).catch(()=>{if(lib&&lib.bookId===bookId){lib.loading=false;render();}});
 }
-function libSaveProgress(){if(!lib||lib.view!=='book'||!profile)return;libEnsure();profile.library[lib.bookId]={spread:lib.spread,updatedAt:Date.now()};save();}
+function libSaveProgress(patch){if(!lib||lib.view!=='book'||!profile)return;libEnsure();const cur=profile.library[lib.bookId]||{};profile.library[lib.bookId]={...cur,spread:lib.spread,updatedAt:Date.now(),...(patch||{})};save();}
+function libGoStage(stage){if(!lib||lib.view!=='book')return;lib.stage=stage;stopSpeak();window.scrollTo({top:0});render();}
 function libGoSpread(delta){if(!lib||lib.view!=='book')return;const meta=libBookMeta(lib.bookId);const max=meta?libSpreadCount(meta)-1:0;
  lib.spread=Math.max(-1,Math.min(max,lib.spread+delta));lib.flip=delta>0?'next':'prev';stopSpeak();libSaveProgress();render();window.scrollTo({top:0});}
 // Wrap a page's paragraphs into sentence-line spans (read-along highlight target),
@@ -287,7 +290,7 @@ function libShelfScreen(){
    return `<button class="lib-card" data-act="lib-open" data-book="${esc(b.id)}">
     <div class="lib-card-cover"><span class="lib-card-emoji">📗</span></div>
     <div class="lib-card-body"><b>${esc(b.title)}</b>
-     <div class="lib-card-tags"><span class="lib-tag">AR ${esc(b.ar)}</span><span class="lib-tag">R/G ${esc(b.rg)}</span>${b.audio&&b.audio!=='none'?`<span class="lib-tag audio">🎧 ${libT('오디오북','Audiobook','有声书')}</span>`:''}</div>
+     <div class="lib-card-tags"><span class="lib-tag">AR ${esc(b.ar)}</span><span class="lib-tag">R/G ${esc(b.rg)}</span>${b.audio&&b.audio!=='none'?`<span class="lib-tag audio">🎧 ${libT('오디오북','Audiobook','有声书')}</span>`:''}${prog&&prog.quizBest!=null?`<span class="lib-tag quiz">📝 ${prog.quizBest}/${(b.quiz||[]).length||prog.quizTotal||0}</span>`:''}</div>
      ${started?`<div class="lib-progress"><span style="width:${pct}%"></span></div><small>${libT('이어 읽기','Continue reading','继续阅读')} · ${pct}%</small>`:`<small>${libT('새 책','New','新书')}</small>`}
     </div></button>`;
   }).join('');
@@ -296,9 +299,51 @@ function libShelfScreen(){
  const head=`<div class="town-top"><div class="town-brand">📚 ${libT('도서관','Library','图书馆')}</div><div class="town-tools"><button class="btn tiny" data-act="lib-back">← ${libT('마을로','Town','小镇')}</button></div></div>`;
  return `<div class="town lib-town">${head}<div class="lib-wrap">${groups||`<p class="lib-empty">${libT('아직 등록된 책이 없어요.','No books yet.','还没有书。')}</p>`}</div></div>`;
 }
+function libStageHead(meta){
+ const stage=lib.stage;
+ const tabs=[];
+ if(meta.background)tabs.push(['intro','📚',libT('배경지식','Background','背景知识')]);
+ if(meta.vocab&&meta.vocab.length)tabs.push(['vocab','🔤',libT('어휘','Vocabulary','词汇')]);
+ tabs.push(['read','📖',libT('읽기','Read','阅读')]);
+ if(meta.quiz&&meta.quiz.length)tabs.push(['quiz','📝',libT('AR퀴즈','AR Quiz','AR测验')]);
+ const tabHtml=tabs.map(([s,icon,label])=>`<button class="lib-tabbtn ${stage===s||(stage==='quizResult'&&s==='quiz')?'active':''}" data-act="lib-goto" data-stage="${s}">${icon} ${label}</button>`).join('');
+ return `<div class="town-top lib-reader-top"><button class="btn tiny" data-act="lib-shelf">← ${libT('서가로','Shelf','书架')}</button><b class="lib-reader-title">${esc(meta.title)}</b><span class="lib-reader-tags"><span class="lib-tag">AR ${esc(meta.ar)}</span><span class="lib-tag">R/G ${esc(meta.rg)}</span></span></div><div class="lib-stage-tabs">${tabHtml}</div>`;
+}
+function libIntroScreen(){
+ const meta=libBookMeta(lib.bookId);if(!meta)return libShelfScreen();
+ const head=libStageHead(meta);
+ const bg=meta.background?(meta.background[st.lang]||meta.background.en):'';
+ const nextLbl=(meta.vocab&&meta.vocab.length)?libT('다음: 어휘 학습 →','Next: Vocabulary →','下一步：学习词汇 →'):libT('책 읽기 시작 →','Start Reading →','开始阅读 →');
+ return `<div class="town lib-town">${head}<div class="lib-wrap"><section class="lib-intro"><h2>📚 ${libT('배경 지식','Background Knowledge','背景知识')}</h2><p class="lib-intro-text">${esc(bg)}</p><div class="tools center"><button class="btn primary" data-act="lib-intro-next">${nextLbl}</button></div></section></div></div>`;
+}
+function libVocabMeaning(w){return st.lang==='ko'?w[2]:st.lang==='zh'?w[3]:w[1];}
+function libVocabScreenBook(){
+ const meta=libBookMeta(lib.bookId);if(!meta)return libShelfScreen();
+ const head=libStageHead(meta);
+ const words=meta.vocab||[];
+ const cards=words.map((w,i)=>`<article class="word-card ${st.lang==='ko'?'ko':''}"><strong>${esc(w[0])}</strong><p class="meaning">${esc(libVocabMeaning(w))}</p><div class="word-actions"><button class="btn tiny" data-act="lib-word-speak" data-i="${i}">🔊</button></div></article>`).join('');
+ return `<div class="town lib-town">${head}<div class="lib-wrap"><section class="lib-vocab"><h2>🔤 ${libT('중요 어휘','Key Vocabulary','重点词汇')}</h2><div class="word-grid">${cards}</div><div class="tools center"><button class="btn primary" data-act="lib-vocab-next">${libT('책 읽기 시작 →','Start Reading →','开始阅读 →')}</button></div></section></div></div>`;
+}
+function libQuizScreenBook(){
+ const meta=libBookMeta(lib.bookId);if(!meta)return libShelfScreen();
+ const head=libStageHead(meta);
+ const quiz=meta.quiz||[];
+ if(!quiz.length)return `<div class="town lib-town">${head}<div class="lib-wrap"><p class="lib-empty">${libT('퀴즈가 없어요.','No quiz yet.','暂无测验。')}</p></div></div>`;
+ if(lib.stage==='quizResult'){
+  const total=quiz.length;const correct=lib.quizAnswers.filter((a,i)=>a===quiz[i][2]).length;
+  const passed=correct>=Math.ceil(total*0.6);
+  return `<div class="town lib-town">${head}<div class="lib-wrap"><section class="lib-quiz-result"><div class="score-orb">${correct}/${total}</div><h2>${passed?libT('통과했어요! 🏆','You passed! 🏆','通过了！🏆'):libT('한 번 더 도전해요 💪','Try again 💪','再试一次 💪')}</h2><div class="tools center"><button class="btn primary" data-act="lib-quiz-restart">${libT('다시 풀기','Retake Quiz','重新测验')}</button><button class="btn" data-act="lib-goto" data-stage="read">${libT('책으로 돌아가기','Back to Book','返回书本')}</button></div></section></div></div>`;
+ }
+ const idx=lib.quizIndex;const q=quiz[idx];const picked=lib.quizAnswers[idx];
+ const locked=picked!=null;
+ const choices=q[1].map((c,i)=>{const letter=letters[i];let cls='choice';if(locked&&letter===q[2])cls+=' correct';if(locked&&letter===picked&&picked!==q[2])cls+=' wrong';return `<button class="${cls}" data-act="lib-quiz-answer" data-letter="${letter}" ${locked?'disabled':''}><b>${letter}.</b> ${esc(c)}</button>`;}).join('');
+ const fb=locked?`<div class="learn-feedback ${picked===q[2]?'good':'reveal'}"><b>${picked===q[2]?libT('정답!','Correct!','答对了！'):libT('정답: ','Answer: ','答案：')+q[2]}</b><br>${esc(q[3])}</div>`:'';
+ const nextBtn=locked?`<button class="btn primary" data-act="lib-quiz-next">${idx<quiz.length-1?libT('다음 →','Next →','下一题 →'):libT('결과 보기','See Results','查看结果')}</button>`:'';
+ return `<div class="town lib-town">${head}<div class="lib-wrap"><section class="lib-quiz"><div class="qtop"><div class="section-tag"><i>📝</i> ${libT('AR 퀴즈','AR Quiz','AR测验')}</div><span class="badge">${idx+1}/${quiz.length}</span></div><article class="qcard"><div class="prompt">${esc(q[0])}</div><div class="choices">${choices}</div>${fb}</article><div class="tools center">${nextBtn}</div></section></div></div>`;
+}
 function libReaderScreen(){
  const meta=libBookMeta(lib.bookId);if(!meta)return libShelfScreen();
- const head=`<div class="town-top lib-reader-top"><button class="btn tiny" data-act="lib-shelf">← ${libT('서가로','Shelf','书架')}</button><b class="lib-reader-title">${esc(meta.title)}</b><span class="lib-reader-tags"><span class="lib-tag">AR ${esc(meta.ar)}</span><span class="lib-tag">R/G ${esc(meta.rg)}</span></span></div>`;
+ const head=libStageHead(meta);
  if(lib.loading)return `<div class="town lib-town">${head}<div class="lib-wrap"><p class="lib-empty">${libT('불러오는 중…','Loading…','加载中…')}</p></div></div>`;
  const pages=lib.pages||[];const spreads=libSpreadCount(meta);
  let stage;
@@ -314,7 +359,13 @@ function libReaderScreen(){
  const hint=`<p class="lib-hint">${libT('저장은 자동으로 돼요 · 인쇄는 지원하지 않아요','Progress saves automatically · Printing is not available','自动保存进度 · 不支持打印')}</p>`;
  return `<div class="town lib-town">${head}<div class="lib-wrap"><div class="lib-reader">${stage}</div>${nav}${hint}</div></div>`;
 }
-function libraryScreen(){return lib&&lib.view==='book'?libReaderScreen():libShelfScreen();}
+function libraryScreen(){
+ if(!lib||lib.view!=='book')return libShelfScreen();
+ if(lib.stage==='intro')return libIntroScreen();
+ if(lib.stage==='vocab')return libVocabScreenBook();
+ if(lib.stage==='quiz'||lib.stage==='quizResult')return libQuizScreenBook();
+ return libReaderScreen();
+}
 function bindLibraryAudio(){
  app.querySelectorAll('[data-act="lib-listen"]').forEach(b=>{b.onclick=()=>{const idx=+b.dataset.page;const pg=(lib.pages||[])[idx];if(!pg)return;const text=(pg.paragraphs||[]).join(' ');libSpeakPage(idx,text);};});
 }
@@ -324,6 +375,20 @@ function handleLibrary(b){const act=b.dataset.act;
  if(act==='lib-open'){openLibraryBook(b.dataset.book);return;}
  if(act==='lib-prev'){libGoSpread(-1);return;}
  if(act==='lib-next'){libGoSpread(1);return;}
+ if(act==='lib-intro-next'){const meta=libBookMeta(lib.bookId);libSaveProgress({introSeen:true});lib.stage=(meta&&meta.vocab&&meta.vocab.length)?'vocab':'read';stopSpeak();render();window.scrollTo({top:0});return;}
+ if(act==='lib-vocab-next'){lib.stage='read';stopSpeak();render();window.scrollTo({top:0});return;}
+ if(act==='lib-word-speak'){const meta=libBookMeta(lib.bookId);const w=(meta&&meta.vocab||[])[+b.dataset.i];if(w)speakText(w[0]);return;}
+ if(act==='lib-goto'){const meta=libBookMeta(lib.bookId);let stage=b.dataset.stage;if(stage==='quiz'&&meta){const total=(meta.quiz||[]).length;if(total>0&&lib.quizAnswers.length===total)stage='quizResult';}lib.stage=stage;stopSpeak();render();window.scrollTo({top:0});return;}
+ if(act==='lib-quiz-answer'){const meta=libBookMeta(lib.bookId);const q=(meta&&meta.quiz||[])[lib.quizIndex];if(!q||lib.quizAnswers[lib.quizIndex]!=null)return;lib.quizAnswers[lib.quizIndex]=b.dataset.letter;render();return;}
+ if(act==='lib-quiz-next'){const meta=libBookMeta(lib.bookId);const quiz=(meta&&meta.quiz)||[];const total=quiz.length;
+  if(lib.quizIndex<total-1){lib.quizIndex++;render();window.scrollTo({top:0});return;}
+  const correct=lib.quizAnswers.filter((a,i)=>a===quiz[i][2]).length;
+  const prog=libProgress(lib.bookId);const passMark=Math.ceil(total*0.6);const best=Math.max(correct,(prog&&prog.quizBest)||0);
+  const firstClear=!(prog&&prog.quizBest>=passMark)&&correct>=passMark;
+  libSaveProgress({quizScore:correct,quizTotal:total,quizBest:best});
+  if(firstClear)awardPoints(correct*5,libT('AR퀴즈 통과','AR Quiz passed','AR测验通过'));
+  lib.stage='quizResult';render();window.scrollTo({top:0});return;}
+ if(act==='lib-quiz-restart'){lib.quizIndex=0;lib.quizAnswers=[];lib.stage='quiz';render();window.scrollTo({top:0});return;}
 }
 const reviewQuestions=()=>(st.original?.missed||[]).map(i=>L.originalQuestions[i]).filter(Boolean);
 const qs=(mode)=>mode==='original'?L.originalQuestions:mode==='originalExtra'?L.originalExtraQuestions:mode==='review'?reviewQuestions():L.extraQuestions;
