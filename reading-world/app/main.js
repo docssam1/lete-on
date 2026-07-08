@@ -639,13 +639,12 @@ function render(){if(!currentStudent){if(!introSeen()){app.innerHTML=introScreen
  if(atTown){if(townView==='game'&&gameAvailable()){app.innerHTML=gameTownShell();bindGameTown();return;}if(townView==='screen'&&sqAvailable()){app.innerHTML=screenQuestScreen();bind();return;}if(townView==='notice'){app.innerHTML=noticeBoardScreen();bind();return;}if(townView==='parent'){app.innerHTML=parentDashboard();bind();return;}app.innerHTML=town();bind();return;}let content=st.view==='home'?home():st.view==='words'?words():(st.view==='originalRead'||st.view==='questions')&&!hasOriginal()?missingOriginal():st.view==='originalRead'?originalRead():st.view==='questions'?questionScreen('original'):st.view==='questionOriginalExtra'?questionScreen('originalExtra'):st.view==='questionSimilar'?questionScreen('similar'):st.view==='review'?questionScreen('review'):st.view==='originalExtra'?originalExtra():st.view==='similar'?extra():report();app.innerHTML=`<div class="shell">${nav()}<main class="main">${top()}${flow()}${content}</main></div>${modal()}`;bind();}
 function makeGameChoices(){const w=L.words[st.gameIndex];return [w[1],...L.words.filter((_,i)=>i!==st.gameIndex).sort(()=>Math.random()-.5).slice(0,3).map(x=>x[1])].sort(()=>Math.random()-.5)}
 const AUDIO_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio';
-// Voice-over availability. The stored MP3 files for these (book → passage-file)
-// no longer match the on-screen text and must fall back to on-device TTS, which
-// reads the real text aloud. CARS C extraLearning/newPassage were rewritten on
-// 2026-07-08 after the 2026-07-07 voice files were recorded; the originals were
-// untouched, so -original.mp3 stays valid. Delete an entry once its MP3 has been
-// re-recorded and re-uploaded to Supabase Storage.
-const AUDIO_STALE={'cars-level-c':{extra:true,'new':true}};
+// Voice-over availability guard. If a stored MP3 no longer matches the on-screen
+// text, list it here (book → {extra|new|original:true}) and the app falls back to
+// on-device TTS, which reads the current text aloud, until the file is re-recorded.
+// CARS C extra/new were rewritten 2026-07-08 and the Google-TTS pipeline
+// regenerated their voice files the same day, so the map is now empty.
+const AUDIO_STALE={};
 // passage → Storage file suffix. originalExtra(추가학습)→-extra, extra(새지문)→-new.
 function audioFileFor(passage){return passage==='originalExtra'?'extra':passage==='extra'?'new':passage==='original'?'original':null;}
 function audioUrlFor(bookId,lessonId,passage){
