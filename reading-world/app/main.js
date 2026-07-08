@@ -226,13 +226,23 @@ function openLibraryBook(bookId){
  const meta=libBookMeta(bookId);if(!meta)return;
  const saved=libProgress(bookId);
  const stage=(saved&&saved.introSeen)?'read':(meta.background?'intro':(meta.vocab&&meta.vocab.length?'vocab':'read'));
- lib={view:'book',bookId,pages:null,loading:true,spread:(saved&&typeof saved.spread==='number')?saved.spread:-1,stage,quizIndex:0,quizAnswers:[],quizFeedback:null};
+ lib={view:'book',bookId,pages:null,loading:true,loadError:false,spread:(saved&&typeof saved.spread==='number')?saved.spread:-1,stage,quizIndex:0,quizAnswers:[],quizFeedback:null};
  atTown=true;townView='library';render();window.scrollTo({top:0});
- if(!(window.Store&&Store.pullLibraryPages)){lib.loading=false;render();return;}
+ libFetchPages(bookId);
+}
+// Fetches page text for the currently-open book. Split out from openLibraryBook so a
+// failed/empty fetch (flaky connection, transient Supabase hiccup) can be retried
+// without resetting reading progress or replaying the intro/vocab stages. A silent
+// empty array here used to render as a totally blank page with no explanation — the
+// mobile spread layout even CSS-hides the empty placeholder box, so a failed fetch
+// looked like nothing was wrong at all. loadError surfaces that state explicitly.
+function libFetchPages(bookId){
+ if(!(window.Store&&Store.pullLibraryPages)){lib.loading=false;lib.loadError=true;render();return;}
  Store.pullLibraryPages(bookId).then(pages=>{
   if(!lib||lib.bookId!==bookId)return; // user navigated away before the fetch resolved
-  lib.pages=Array.isArray(pages)?pages:[];lib.loading=false;render();
- }).catch(()=>{if(lib&&lib.bookId===bookId){lib.loading=false;render();}});
+  const arr=Array.isArray(pages)?pages:[];
+  lib.pages=arr;lib.loadError=(arr.length===0);lib.loading=false;render();
+ }).catch(()=>{if(lib&&lib.bookId===bookId){lib.pages=lib.pages||[];lib.loadError=true;lib.loading=false;render();}});
 }
 function libSaveProgress(patch){if(!lib||lib.view!=='book'||!profile)return;libEnsure();const cur=profile.library[lib.bookId]||{};profile.library[lib.bookId]={...cur,spread:lib.spread,updatedAt:Date.now(),...(patch||{})};save();}
 function libGoStage(stage){if(!lib||lib.view!=='book')return;lib.stage=stage;stopSpeak();window.scrollTo({top:0});render();}
@@ -345,6 +355,7 @@ function libReaderScreen(){
  const meta=libBookMeta(lib.bookId);if(!meta)return libShelfScreen();
  const head=libStageHead(meta);
  if(lib.loading)return `<div class="town lib-town">${head}<div class="lib-wrap"><p class="lib-empty">${libT('불러오는 중…','Loading…','加载中…')}</p></div></div>`;
+ if(lib.loadError&&lib.spread>-1)return `<div class="town lib-town">${head}<div class="lib-wrap"><div class="lib-load-error"><p>${libT('책 내용을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.','Could not load this book. Please check your internet connection.','未能加载书籍内容，请检查网络连接。')}</p><button class="btn primary" data-act="lib-retry">${libT('다시 시도','Retry','重试')}</button></div></div></div>`;
  const pages=lib.pages||[];const spreads=libSpreadCount(meta);
  let stage;
  if(lib.spread===-1){
@@ -389,6 +400,7 @@ function handleLibrary(b){const act=b.dataset.act;
   if(firstClear)awardPoints(correct*5,libT('AR퀴즈 통과','AR Quiz passed','AR测验通过'));
   lib.stage='quizResult';render();window.scrollTo({top:0});return;}
  if(act==='lib-quiz-restart'){lib.quizIndex=0;lib.quizAnswers=[];lib.stage='quiz';render();window.scrollTo({top:0});return;}
+ if(act==='lib-retry'){lib.loading=true;lib.loadError=false;render();libFetchPages(lib.bookId);return;}
 }
 const reviewQuestions=()=>(st.original?.missed||[]).map(i=>L.originalQuestions[i]).filter(Boolean);
 const qs=(mode)=>mode==='original'?L.originalQuestions:mode==='originalExtra'?L.originalExtraQuestions:mode==='review'?reviewQuestions():L.extraQuestions;
