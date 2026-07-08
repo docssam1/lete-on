@@ -2,7 +2,7 @@
 // Base look (skin, hair style, hair color) is free to choose; accessories cost
 // points earned by learning (never by chance).
 window.AVATAR = {
-  defaults: { skin: 'light', hair: 'short', haircolor: 'brown', background: 'meadow', clothes: 'blue', hat: 'none', glasses: 'none', pet: 'none' },
+  defaults: { skin: 'light', hair: 'short', haircolor: 'brown', background: 'meadow', face: 'happy', clothes: 'blue', bottom: 'navy', hat: 'none', glasses: 'none', pet: 'none' },
 
   // starter characters shown right after a child types their name
   presets: [
@@ -50,7 +50,24 @@ window.AVATAR = {
       ],
     },
     {
-      key: 'clothes', name: { ko: '옷', en: 'Clothes', zh: '衣服' },
+      // "Face" — an expression picker in the same spirit as a LEGO-style head sheet,
+      // but entirely original geometric shapes (no licensed decals or logos), so it
+      // stays clear of any trademark.
+      key: 'face', name: { ko: '얼굴', en: 'Face', zh: '表情' },
+      items: [
+        { id: 'happy', name: { ko: '웃는 얼굴', en: 'Happy', zh: '微笑' }, cost: 0 },
+        { id: 'bigsmile', name: { ko: '활짝 웃음', en: 'Big Smile', zh: '大笑' }, cost: 0 },
+        { id: 'wink', name: { ko: '윙크', en: 'Wink', zh: '眨眼' }, cost: 0 },
+        { id: 'surprised', name: { ko: '깜짝 놀람', en: 'Surprised', zh: '惊讶' }, cost: 0 },
+        { id: 'determined', name: { ko: '파이팅', en: 'Determined', zh: '加油' }, cost: 20 },
+        { id: 'cool', name: { ko: '시크', en: 'Cool', zh: '酷' }, cost: 20 },
+        { id: 'sleepy', name: { ko: '졸림', en: 'Sleepy', zh: '困倦' }, cost: 20 },
+        { id: 'silly', name: { ko: '메롱', en: 'Silly', zh: '调皮' }, cost: 30 },
+        { id: 'star', name: { ko: '반짝반짝', en: 'Starstruck', zh: '星星眼' }, cost: 40 },
+      ],
+    },
+    {
+      key: 'clothes', name: { ko: '상의', en: 'Top', zh: '上衣' },
       items: [
         { id: 'blue', name: { ko: '파란 옷', en: 'Blue', zh: '蓝色' }, cost: 0, fill: '#6db3f2' },
         { id: 'red', name: { ko: '빨간 옷', en: 'Red', zh: '红色' }, cost: 0, fill: '#f28b82' },
@@ -58,6 +75,17 @@ window.AVATAR = {
         { id: 'purple', name: { ko: '보라 옷', en: 'Purple', zh: '紫色' }, cost: 20, fill: '#b39ddb' },
         { id: 'sunny', name: { ko: '노랑 옷', en: 'Sunny', zh: '黄色' }, cost: 20, fill: '#ffd54f' },
         { id: 'mint', name: { ko: '민트 옷', en: 'Mint', zh: '薄荷' }, cost: 40, fill: '#6fd6c4' },
+      ],
+    },
+    {
+      key: 'bottom', name: { ko: '하의', en: 'Bottom', zh: '下装' },
+      items: [
+        { id: 'navy', name: { ko: '네이비 바지', en: 'Navy', zh: '藏青色' }, cost: 0, fill: '#3f4d66' },
+        { id: 'gray', name: { ko: '회색 바지', en: 'Gray', zh: '灰色' }, cost: 0, fill: '#7c8592' },
+        { id: 'black', name: { ko: '검정 바지', en: 'Black', zh: '黑色' }, cost: 20, fill: '#2b2f38' },
+        { id: 'khaki', name: { ko: '카키 바지', en: 'Khaki', zh: '卡其色' }, cost: 20, fill: '#c9b384' },
+        { id: 'denim', name: { ko: '데님 바지', en: 'Denim', zh: '牛仔蓝' }, cost: 30, fill: '#4d7ab5' },
+        { id: 'maroon', name: { ko: '와인 바지', en: 'Maroon', zh: '酒红色' }, cost: 30, fill: '#7a3b3b' },
       ],
     },
     {

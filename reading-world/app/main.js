@@ -122,16 +122,35 @@ function legoHair(style,c){
  }
  return cap+ex;
 }
+// Face expressions — original geometric shapes (no licensed decals), swapped into
+// the same eye/brow/mouth slots on the head. 'happy' matches the pre-existing look
+// exactly, so a profile with no saved face preference renders unchanged.
+const BLUSH='<circle cx="49" cy="49" r="3" fill="#ff9aa2" opacity=".4"/><circle cx="71" cy="49" r="3" fill="#ff9aa2" opacity=".4"/>';
+const DOT_EYES='<circle cx="52" cy="43" r="2.5" fill="#33272a"/><circle cx="68" cy="43" r="2.5" fill="#33272a"/>';
+const SMILE='<path d="M51,48 Q60,55 69,48" fill="none" stroke="#33272a" stroke-width="2.2" stroke-linecap="round"/>';
+const FACE_DEFS={
+ happy:{eyes:DOT_EYES,mouth:SMILE,blush:BLUSH},
+ bigsmile:{eyes:DOT_EYES,mouth:SMILE+'<rect x="54" y="47" width="12" height="4" rx="1" fill="#fff"/>',blush:BLUSH},
+ wink:{eyes:'<circle cx="52" cy="43" r="2.5" fill="#33272a"/><path d="M65,43 Q68,40 71,43" fill="none" stroke="#33272a" stroke-width="2" stroke-linecap="round"/>',mouth:SMILE,blush:BLUSH},
+ surprised:{eyes:'<circle cx="52" cy="43" r="3.6" fill="#33272a"/><circle cx="68" cy="43" r="3.6" fill="#33272a"/>',mouth:'<ellipse cx="60" cy="51" rx="4" ry="5" fill="#3a2b1e"/>',blush:BLUSH},
+ determined:{eyes:DOT_EYES,mouth:'<path d="M52,50 L68,50" stroke="#33272a" stroke-width="2.2" stroke-linecap="round"/>',brows:'<path d="M47,39 L56,42" stroke="#33272a" stroke-width="2.2" stroke-linecap="round"/><path d="M73,39 L64,42" stroke="#33272a" stroke-width="2.2" stroke-linecap="round"/>'},
+ cool:{eyes:'<path d="M49,43 Q52,40 55,43" fill="none" stroke="#33272a" stroke-width="2" stroke-linecap="round"/><path d="M65,43 Q68,40 71,43" fill="none" stroke="#33272a" stroke-width="2" stroke-linecap="round"/>',mouth:'<path d="M53,50 L67,50" stroke="#33272a" stroke-width="2.2" stroke-linecap="round"/>'},
+ sleepy:{eyes:'<path d="M49,43 Q52,41 55,43" fill="none" stroke="#33272a" stroke-width="2" stroke-linecap="round"/><path d="M65,43 Q68,41 71,43" fill="none" stroke="#33272a" stroke-width="2" stroke-linecap="round"/>',mouth:'<ellipse cx="60" cy="50" rx="2.2" ry="2.6" fill="#3a2b1e"/>',blush:BLUSH,extra:'<text x="82" y="30" font-size="11" font-weight="900" fill="#8aa6c9">Z</text>'},
+ silly:{eyes:'<circle cx="52" cy="43" r="2.5" fill="#33272a"/><path d="M65,43 Q68,40 71,43" fill="none" stroke="#33272a" stroke-width="2" stroke-linecap="round"/>',mouth:SMILE+'<ellipse cx="60" cy="55" rx="3" ry="4" fill="#ff8fa3"/>',blush:BLUSH},
+ star:{eyes:'<text x="52" y="47" font-size="10" text-anchor="middle">✦</text><text x="68" y="47" font-size="10" text-anchor="middle">✦</text>',mouth:SMILE+'<rect x="54" y="47" width="12" height="4" rx="1" fill="#fff"/>',blush:BLUSH},
+};
 // LEGO minifigure avatar — round (cylindrical) head, stud, trapezoid torso (clothes),
 // C-hands, legs, plus hat/hair customization. Same signature/parts as before.
 function renderAvatar(eq,size,ropts){eq=eq||avEquipped();size=size||120;const noBg=ropts&&ropts.noBg;
  const bg=avItem('background',eq.background)||avItem('background','meadow');const clo=avItem('clothes',eq.clothes)||avItem('clothes','blue');
  const skin=(avItem('skin',eq.skin)||{}).fill||'#ffd9ad';const hairC=(avItem('haircolor',eq.haircolor)||{}).fill||'#6b4326';
  const hat=avItem('hat',eq.hat),gl=avItem('glasses',eq.glasses),pet=avItem('pet',eq.pet);
- const cloF=clo?clo.fill:'#6db3f2';const PANTS='#3f4d66',BOOT='#29313f';
+ const btm=avItem('bottom',eq.bottom)||avItem('bottom','navy');
+ const cloF=clo?clo.fill:'#6db3f2';const PANTS=btm?btm.fill:'#3f4d66',BOOT='#29313f';
+ const fd=FACE_DEFS[eq.face]||FACE_DEFS.happy;
  const stars=bg&&bg.stars?Array.from({length:10},(_,i)=>`<circle cx="${(i*17+9)%112+4}" cy="${(i*29+8)%64+6}" r="${i%3?1:1.6}" fill="#fff" opacity=".85"/>`).join(''):'';
  const hasHat=!!(hat&&hat.emoji);
- const eyes=(gl&&gl.emoji)?'':`<circle cx="52" cy="43" r="2.5" fill="#33272a"/><circle cx="68" cy="43" r="2.5" fill="#33272a"/>`;
+ const eyes=(gl&&gl.emoji)?'':fd.eyes;
  const glT=(gl&&gl.emoji)?`<text x="60" y="48" font-size="17" text-anchor="middle">${gl.emoji}</text>`:'';
  const hatT=hasHat?`<text x="60" y="31" font-size="30" text-anchor="middle">${hat.emoji}</text>`:'';
  const petT=(pet&&pet.emoji)?`<text x="98" y="113" font-size="24" text-anchor="middle">${pet.emoji}</text>`:'';
@@ -155,8 +174,7 @@ function renderAvatar(eq,size,ropts){eq=eq||avEquipped();size=size||120;const no
   `<rect x="54" y="20" width="12" height="7" rx="3" fill="${skin}"/><ellipse cx="60" cy="20" rx="6" ry="2.4" fill="${skin}"/>`+
   `<rect x="43" y="26" width="34" height="33" rx="13" fill="${skin}"/>`+
   // face
-  eyes+`<circle cx="49" cy="49" r="3" fill="#ff9aa2" opacity=".4"/><circle cx="71" cy="49" r="3" fill="#ff9aa2" opacity=".4"/>`+
-  `<path d="M51,48 Q60,55 69,48" fill="none" stroke="#33272a" stroke-width="2.2" stroke-linecap="round"/>`+
+  (fd.brows||'')+eyes+(fd.blush||'')+fd.mouth+(fd.extra||'')+
   hair+glT+hatT+petT+`</svg>`;}
 function basePicker(){const P=window.AVATAR.presets||[];const title=st.lang==='ko'?'어떤 친구로 시작할까요?':st.lang==='zh'?'想用哪个角色开始？':'Pick a character to start!';const sub=st.lang==='ko'?'나중에 언제든 바꿀 수 있어요.':st.lang==='zh'?'以后随时可以更换。':'You can change it anytime later.';const skip=st.lang==='ko'?'이걸로 시작!':st.lang==='zh'?'就用这个！':'Start!';
  const eq=avEquipped();const cards=P.map(p=>{const sel=eq.skin===p.look.skin&&eq.hair===p.look.hair&&eq.haircolor===p.look.haircolor;return `<button class="pick-card ${sel?'selected':''}" data-act="av-pick" data-preset="${p.id}"><div class="pick-ava">${renderAvatar({...window.AVATAR.defaults,...p.look},120)}</div><b>${p.name[st.lang]||p.name.en}</b></button>`;}).join('');
