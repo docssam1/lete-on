@@ -7,7 +7,7 @@ window.LESSONS['lc4'] = {
   lessonId: 'lc4',
   title: "Harry's Holiday Journal",
   theme: "A boy's summer-trip diary: choosing between camping and sailing, and the adventures that follow with his brother and Aunt Karen.",
-  image: 'assets/images/cars-level-c/illustrations/lc4.jpg',
+  image: 'assets/images/cars-level-c/4.png',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["journal", "a book where you write about what you do each day", "일기, 일지", "日记"], ["relative", "a person who is part of your family", "친척", "亲戚"], ["camp", "to sleep outdoors, usually in a tent", "야영하다, 캠핑하다", "露营"], ["sailing", "moving across water in a boat pushed by the wind", "항해, 요트 타기", "航行"], ["bush", "wild land covered with plants and small trees", "덤불, 수풀", "灌木丛"], ["hiking", "walking a long way in nature for fun", "하이킹, 등산", "徒步旅行"], ["fishing", "trying to catch fish", "낚시", "钓鱼"], ["ocean", "a very large area of salt water", "바다, 대양", "海洋"], ["whale", "a very large animal that lives in the sea", "고래", "鲸鱼"], ["shark", "a large fish with sharp teeth", "상어", "鲨鱼"], ["decision", "a choice that you make", "결정", "决定"], ["agree", "to have the same idea as someone else", "동의하다", "同意"]],

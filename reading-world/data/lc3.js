@@ -7,7 +7,7 @@ window.LESSONS['lc3'] = {
   lessonId: 'lc3',
   title: "Owls",
   theme: "Owls: how these silent night hunters live, hunt, and help the world around them",
-  image: 'assets/images/cars-level-c/illustrations/lc3.jpg',
+  image: 'assets/images/cars-level-c/3.png',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["stir", "to begin to move", "움직이기 시작하다", "开始活动"], ["prey", "an animal that is hunted for food", "먹잇감", "猎物"], ["talons", "the sharp, curved claws of a bird", "(맹금의) 발톱", "利爪"], ["beak", "the hard, pointed mouth of a bird", "부리", "鸟喙"], ["broad", "wide from side to side", "폭이 넓은", "宽阔的"], ["hoot", "the deep call that an owl makes", "부엉부엉 우는 소리", "猫头鹰的叫声"], ["hiss", "a sharp 'sss' sound, like a snake", "쉿 하는 소리", "嘶嘶声"], ["capture", "to catch and hold something", "붙잡다", "捕捉"], ["crops", "plants that farmers grow for food", "농작물", "农作物"], ["protected", "kept safe from harm by a law", "보호받는", "受保护的"], ["nest", "the home a bird makes for its eggs", "둥지", "鸟巢"], ["feathers", "the soft, light covering on a bird", "깃털", "羽毛"]],

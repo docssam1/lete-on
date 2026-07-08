@@ -7,7 +7,7 @@ window.LESSONS['lc9'] = {
   lessonId: 'lc9',
   title: "Kate's Cat Corner",
   theme: "Taking Care of Cats",
-  image: 'assets/images/cars-level-c/illustrations/lc9.jpg',
+  image: 'assets/images/cars-level-c/9.png',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["adopt", "to take a pet into your home as your own", "입양하다", "收养"], ["fussy", "hard to please; very picky", "까다로운", "挑剔的"], ["canned", "kept fresh inside a sealed metal can", "통조림의", "罐装的"], ["pounce", "to jump on something suddenly to catch it", "덮치다", "猛扑"], ["prey", "an animal that is hunted by another for food", "먹잇감", "猎物"], ["groom", "to clean and take care of fur", "털을 다듬다", "梳理毛发"], ["coat", "the fur that covers an animal's body", "털, 외피", "毛皮"], ["nocturnal", "active at night rather than in the day", "야행성의", "夜间活动的"], ["catnip", "a plant whose smell many cats love", "개박하", "猫薄荷"], ["litter", "material in a box where a cat goes to the bathroom", "고양이 화장실 모래", "猫砂"], ["vet", "a doctor who takes care of animals", "수의사", "兽医"], ["collar", "a band worn around an animal's neck", "목걸이, 목줄", "项圈"]],

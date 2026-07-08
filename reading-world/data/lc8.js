@@ -7,7 +7,7 @@ window.LESSONS['lc8'] = {
   lessonId: 'lc8',
   title: "51 Oak Street",
   theme: "Letters home from a family dairy farm — the everyday work, science, and small joys of country life.",
-  image: 'assets/images/cars-level-c/illustrations/lc8.jpg',
+  image: 'assets/images/cars-level-c/8.png',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["dairy", "a farm or business that produces milk and things made from milk", "낙농장, 유제품의", "奶牛场；乳品"], ["tractor", "a strong vehicle used to pull machines and loads on a farm", "트랙터", "拖拉机"], ["farmhand", "a person who is hired to work on a farm", "농장 일꾼", "农场工人"], ["breed", "a particular type of animal within one kind of animal", "품종", "品种"], ["butterfat", "the natural fat that is found in milk", "유지방", "乳脂"], ["protein", "a part of food that helps the body grow and stay strong", "단백질", "蛋白质"], ["silo", "a large tank or tower used to store milk or grain", "저장 탱크, 사일로", "筒仓；储奶罐"], ["germs", "tiny living things that can cause disease", "세균", "细菌"], ["bale", "a large bundle of hay wrapped tightly together", "건초 더미, 베일", "干草大捆"], ["loft", "a space or room just below the roof of a barn or house", "다락, 위층 공간", "阁楼；干草棚顶层"], ["Friesian", "a popular black-and-white breed of dairy cow", "프리지안 젖소", "弗里斯兰奶牛"], ["enclose", "to put something inside an envelope or box along with a letter", "동봉하다", "附上；装入"]],

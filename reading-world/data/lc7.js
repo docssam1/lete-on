@@ -7,7 +7,7 @@ window.LESSONS['lc7'] = {
   lessonId: 'lc7',
   title: "The Truth About Science",
   theme: "Realistic fiction: discovering that science is found all around us, in everyday life.",
-  image: 'assets/images/cars-level-c/illustrations/lc7.jpg',
+  image: 'assets/images/cars-level-c/7.png',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["troop", "a group of scouts who meet and do activities together", "(스카우트) 단, 무리", "(童子军)队"], ["present", "to show or explain something to a group of people", "발표하다, 소개하다", "展示，介绍"], ["excitement", "a happy feeling of being eager and full of energy", "흥분, 신남", "兴奋"], ["snapped", "spoke in a quick, sharp, angry way", "쏘아붙였다, 딱딱거렸다", "厉声说，没好气地说"], ["blame", "to say that someone or something caused a problem", "탓하다, 비난하다", "责怪，归咎于"], ["dictionary", "a book that lists words and tells what they mean", "사전", "词典"], ["definition", "the meaning of a word", "정의, 뜻풀이", "定义"], ["gather", "to bring or collect things together", "모으다, 수집하다", "收集，聚集"], ["report", "a written or spoken account that gives facts about a topic", "보고서", "报告"], ["poster", "a large printed sheet with pictures or words that show information", "포스터", "海报"], ["rhyme", "a short poem with words that end in the same sound", "운을 맞춘 시, 라임", "押韵的诗"], ["paused", "stopped for a short moment before going on", "잠시 멈췄다", "停顿了一下"]],

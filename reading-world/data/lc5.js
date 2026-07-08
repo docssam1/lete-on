@@ -7,7 +7,7 @@ window.LESSONS['lc5'] = {
   lessonId: 'lc5',
   title: "To the Skies!",
   theme: "The history of flight and air travel",
-  image: 'assets/images/cars-level-c/illustrations/lc5.jpg',
+  image: 'assets/images/cars-level-c/5.png',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["travel", "to go from one place to another", "여행하다, 이동하다", "旅行"], ["view", "what you can see from a place", "경치, 전망", "景色"], ["aeroplane", "a flying machine with wings and engines", "비행기", "飞机"], ["succeed", "to do what you were trying to do", "성공하다", "成功"], ["occur", "to happen or come into your mind", "일어나다, 떠오르다", "发生"], ["costly", "costing a lot of money", "비싼", "昂贵的"], ["uncomfortable", "not pleasant to sit in or feel", "불편한", "不舒服的"], ["improvement", "a change that makes something better", "개선, 향상", "改进"], ["passenger", "a person who rides in a vehicle but does not drive it", "승객", "乘客"], ["jet", "a fast plane powered by jet engines", "제트기", "喷气式飞机"], ["conquer", "to overcome or gain control of something", "정복하다, 극복하다", "征服"], ["common", "happening often; usual", "흔한", "常见的"]],

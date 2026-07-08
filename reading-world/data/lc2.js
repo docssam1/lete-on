@@ -7,7 +7,7 @@ window.LESSONS['lc2'] = {
   lessonId: 'lc2',
   title: "A Fable About Friendship",
   theme: "Friendship, kindness, and the life cycle of a butterfly",
-  image: 'assets/images/cars-level-c/illustrations/lc2.jpg',
+  image: 'assets/images/cars-level-c/2.png',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["caterpillar", "a small worm-like animal that grows into a butterfly", "애벌레", "毛毛虫"], ["autumn", "the season after summer when leaves fall", "가을", "秋天"], ["oak", "a large, strong tree that grows acorns", "참나무", "橡树"], ["meal", "food that is eaten at one time", "식사", "一餐"], ["trouble", "a problem or difficult situation", "곤란, 문제", "麻烦"], ["harsh", "very rough, cold, or hard to bear", "혹독한", "严酷的"], ["weak", "not strong; having little power", "약한", "虚弱的"], ["curious", "wanting to know about something", "궁금해하는", "好奇的"], ["butterfly", "an insect with large, colorful wings", "나비", "蝴蝶"], ["crawling", "moving slowly with the body close to the ground", "기어가는", "爬行"], ["wings", "the body parts a bird or insect uses to fly", "날개", "翅膀"], ["nest", "a home a bird builds to hold its eggs", "둥지", "巢"]],

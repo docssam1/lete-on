@@ -7,7 +7,7 @@ window.LESSONS['lc1'] = {
   lessonId: 'lc1',
   title: "Family Barbecue",
   theme: "Family gatherings, food, and celebrations",
-  image: 'assets/images/cars-level-c/illustrations/lc1.jpg',
+  image: 'assets/images/cars-level-c/1.png',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["annual", "happening once every year", "매년의", "每年的"], ["gather", "to come together in a group", "모이다", "聚集"], ["cousins", "the children of your aunt or uncle", "사촌들", "表（堂）兄弟姐妹"], ["twins", "two children born at the same time to one mother", "쌍둥이", "双胞胎"], ["fuss", "too much excitement or attention about something", "야단법석", "大惊小怪"], ["spicy", "having a strong, hot flavor", "매운", "辛辣的"], ["grill", "to cook food over a fire or hot metal", "석쇠에 굽다", "烧烤"], ["tortillas", "thin, flat, round breads", "토르티야(얇은 빵)", "玉米薄饼"], ["cheered", "shouted out with joy or excitement", "환호했다", "欢呼"], ["complains", "says that something is wrong or annoying", "불평하다", "抱怨"], ["disappeared", "went away and could not be seen", "사라졌다", "消失"], ["headache", "a pain in the head", "두통", "头痛"]],

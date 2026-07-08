@@ -7,7 +7,7 @@ window.LESSONS['lc10'] = {
   lessonId: 'lc10',
   title: "The Helpless Helper",
   theme: "Realistic fiction about homework, learning, and the quiet joy of helping others learn for themselves.",
-  image: 'assets/images/cars-level-c/illustrations/lc10.jpg',
+  image: 'assets/images/cars-level-c/10.png',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["avoided", "stayed away from something on purpose", "피했다", "避开"], ["assignments", "tasks or homework given to students", "과제", "作业"], ["preferred", "liked one thing better than another", "더 좋아했다", "更喜欢"], ["clever", "quick to understand; smart", "영리한", "聪明的"], ["glaring", "very easy to see; obvious", "확연한", "显眼的"], ["guide", "a person who leads or shows the way", "안내자", "向导"], ["borrow", "to take and use something for a while", "빌리다", "借用"], ["confused", "not able to understand clearly", "혼란스러운", "困惑的"], ["praise", "words that show you like or admire something", "칭찬", "表扬"], ["amazed", "very surprised", "놀란", "惊讶的"], ["overjoyed", "extremely happy", "매우 기쁜", "欣喜若狂"], ["twinkle", "a small, quick shine of light in the eye", "반짝임", "闪烁"]],

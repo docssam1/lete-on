@@ -7,7 +7,7 @@ window.LESSONS['lc6'] = {
   lessonId: 'lc6',
   title: "The Hungry Spider",
   theme: "Folktales and fables — greed, kindness, and getting back what you give.",
-  image: 'assets/images/cars-level-c/illustrations/lc6.jpg',
+  image: 'assets/images/cars-level-c/6.png',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["greedy", "wanting much more than you need or is fair", "탐욕스러운", "贪婪的"], ["reluctantly", "in an unwilling way; not really wanting to", "마지못해", "不情愿地"], ["journey", "a long trip from one place to another", "여정, 여행", "旅程"], ["refresh", "to make someone feel cool and rested again", "상쾌하게 하다", "使清爽"], ["scrambled", "climbed or moved quickly using hands and feet", "기어올랐다", "爬，攀爬"], ["embarrassed", "feeling shy or uneasy about something", "창피한, 당황한", "尴尬的"], ["disappointed", "sad because something was not as good as you hoped", "실망한", "失望的"], ["famished", "very, very hungry", "몹시 배고픈", "饥饿的"], ["feast", "a large, special meal for many people", "잔치, 성찬", "盛宴"], ["morsel", "a small piece of food", "한 입, 음식 조각", "一小口食物"], ["bobbed", "moved quickly up and down", "까딱까딱 움직였다", "上下浮动"], ["kindness", "the act of being friendly and caring", "친절", "善良，仁慈"]],
