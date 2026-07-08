@@ -238,8 +238,8 @@ main: main (GitHub Pages 자동 배포, 직접 작업)
 
 | 항목 | 심각도 | 설명 |
 |------|--------|------|
-| `store.js` remoteUpsert 하드코딩 | 낮음 | `book_id: 'cars-level-b'`, `lesson_id: 'lesson1'` 고정 → analytics만 영향 |
-| Level C 커버 이미지 | 낮음 | `assets/images/cars-level-c/` 전부 placeholder PNG (실제 아트워크 미제작) |
+| ~~`store.js` remoteUpsert 하드코딩~~ | ✅ 수정됨 (2026-07-08) | `remoteMeta(data)`가 프로필의 `currentBookId`·최근 학습 레슨(updatedAt 최대)에서 `book_id`/`lesson_id`를 도출 → analytics 컬럼이 실제 학습 반영 |
+| ~~Level C 커버 이미지~~ | ✅ 해결됨 (2026-07-08) | 실사 삽화 `cars-level-c/1.png`~`10.png` 적용(lcN→N.png). 옛 placeholder·illustrations/jpg 삭제 |
 
 ---
 

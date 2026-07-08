@@ -37,9 +37,21 @@ window.Store = (function () {
   const nameOf = (id) => { const s = reg().find((x) => x.id === id); return s ? s.name : 'Reader'; };
 
   // ---- remote (best-effort) ----
+  // Derive the analytics columns from the saved profile instead of hardcoding them,
+  // so book_id/lesson_id reflect the student's current book and most-recently-studied
+  // lesson. The full progress still lives in `data`; these columns are for reporting.
+  function remoteMeta(data) {
+    const bookId = (data && data.currentBookId) || 'cars-level-b';
+    const lessons = (data && data.lessons) || {};
+    let lessonId = null, best = -1;
+    Object.keys(lessons).forEach((k) => { const t = (lessons[k] && lessons[k].updatedAt) || 0; if (t > best) { best = t; lessonId = k; } });
+    return { bookId, lessonId: lessonId || 'lesson1' };
+  }
   function remoteUpsert(id) {
     if (!remoteOn()) return;
-    const row = { student_id: id, name: nameOf(id), book_id: 'cars-level-b', lesson_id: 'lesson1', data: readJSON(dataKey(id), {}) };
+    const data = readJSON(dataKey(id), {});
+    const meta = remoteMeta(data);
+    const row = { student_id: id, name: nameOf(id), book_id: meta.bookId, lesson_id: meta.lessonId, data };
     fetch(`${SUPABASE.url}/rest/v1/${SUPABASE.table}`, {
       method: 'POST',
       headers: { ...hdr(), Prefer: 'resolution=merge-duplicates,return=minimal' },
