@@ -166,6 +166,23 @@ async function fetchOriginalPassages() {
   return JSON.parse(res.body.toString());
 }
 
+async function fetchLibraryBooks() {
+  const res = await httpRequest({
+    hostname: new URL(SUPABASE_URL).hostname,
+    path: '/rest/v1/library_books?select=book_id,pages',
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'apikey': SUPABASE_KEY,
+    },
+  });
+  if (res.status !== 200) {
+    console.warn('⚠  Could not fetch library books from Supabase:', res.body.toString().slice(0, 200));
+    return [];
+  }
+  return JSON.parse(res.body.toString());
+}
+
 async function uploadToSupabase(mp3Buffer, storagePath) {
   const res = await httpRequest({
     hostname: new URL(SUPABASE_URL).hostname,
@@ -198,7 +215,26 @@ async function main() {
       });
     }
   }
-  console.log(`📋  ${tasks.length} total passages (incl. ${originals.length} originals)`);
+  // Add Library book pages (licensed e-book text, one MP3 per displayed page so
+  // the reader's read-along highlight can time itself to a single short clip).
+  console.log('📥  Fetching Library book pages from Supabase...');
+  const libBooks = await fetchLibraryBooks();
+  let libPageCount = 0;
+  for (const row of libBooks) {
+    (row.pages || []).forEach((page, i) => {
+      const text = (page.paragraphs || []).join('\n\n');
+      if (!text.trim()) return;
+      libPageCount++;
+      tasks.unshift({
+        lessonId: `${row.book_id}-page${i + 1}`,
+        bookId: row.book_id,
+        type: 'original', // stable licensed text -> same skip-if-exists behavior as CARS originals
+        text,
+        storagePath: `${row.book_id}/page${i + 1}.mp3`,
+      });
+    });
+  }
+  console.log(`📋  ${tasks.length} total passages (incl. ${originals.length} originals, ${libPageCount} library pages)`);
   console.log('');
 
   let done = 0, failed = 0, totalUsed = 0;

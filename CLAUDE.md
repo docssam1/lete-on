@@ -321,6 +321,40 @@ B~H=12문항(4지선다·3/3/3/3). 문항수·난이도 상승(47w→582w). 배�
 
 ---
 
+## 도서관(Library) — 페이지 넘김 전자책 리더 ✅ 구현됨 (2026-07-08)
+
+CARS의 12전략 문항 엔진과 별개인 **순수 독서 경험**. 마을 Library 건물(예약 상태였음)이
+이제 시리즈별 서가 → 책 카드(AR/R-G 표시) → 표지+2페이지 스프레드 리더로 연결됨.
+
+- **데이터 분리**: `data/library.js`의 `window.LIBRARY_CATALOG`는 시리즈·책 메타데이터만
+  (제목·AR·R-G·삽화가·총 페이지수) — **라이선스 원문은 절대 git에 없음**. 실제 페이지 텍스트는
+  Supabase `library_books` 테이블(`book_id`, `pages` jsonb, RLS anon-select-only, `lesson_content`와
+  동일 패턴)에만 저장, `Store.pullLibraryPages(bookId)`로 조회.
+- **1호 도서**: Magic Tree House #1 *Dinosaurs Before Dark* (Mary Pope Osborne/Sal Murdocca,
+  1992 Random House) — `book_id: 'library-mth1'`. 원문 PDF(57p, calibre 변환본)를 `pdftotext -layout`
+  으로 전량 추출(6,518 단어) 후 10챕터로 정확히 분할, 문단을 페이지당 ~115단어로 재페이지네이션
+  (48페이지, 챕터는 항상 새 페이지에서 시작). AR 2.6 / R/G 2C / W/C 4,737(출판사 공식 시리즈
+  #1~28 AR표 기준, 사용자 제공) — 웹 검색으로도 AR 2.6/Lexile 510L 교차 확인됨.
+  **삽화(Sal Murdocca, 라이선스)는 git에 넣지 않음** — 리더는 오리지널 이모지/타이포 커버만 사용.
+- **리더 UI** (`libraryScreen`/`libShelfScreen`/`libReaderScreen`, `main.js`): 표지 단독 표시 →
+  이후 좌우 2페이지 스프레드(모바일은 세로 스택), 클릭 시 CSS 3D 플립 애니메이션(`.flip-next`/
+  `.flip-prev`). 진행 위치는 `profile.library[bookId]={spread,updatedAt}`로 자동 저장(이어 읽기),
+  서가 카드에 진행률 바 표시.
+- **인쇄 방지**: `installGuards()`에 Ctrl/Cmd+P 키다운 차단 + `beforeprint` 이벤트 훅 추가(라이브러리
+  열람 중일 때 토스트), `@media print{.lib-town{display:none}}`로 인쇄 시 콘텐츠 숨김. 저장(진행 위치)은
+  그대로 가능 — "인쇄는 안 되지만 저장은 가능" 요구사항.
+- **오디오·읽어주기**: 페이지별 문장 하이라이트(`libPageBody`가 `.sentence-line[data-libpage]`로
+  래핑) + MP3 재생 시 `currentTime/duration` 기반 하이라이트(기존 `speakPassage` 패턴 재사용),
+  MP3 없으면 Web Speech 폴백. `scripts/generate-audio.js`에 `fetchLibraryBooks()` 추가 —
+  Supabase `library_books`의 페이지마다 `{bookId}/page{N}.mp3` 생성(48개, 원본과 동일한
+  skip-if-exists 캐싱). **웹상의 기존 오디오북을 자동으로 찾아 링크하는 기능은 구현하지 않음**
+  (공식 오디오북은 대부분 유료·비공개 스트림이라 저작권상 위험 — 항상 자체 TTS 우선, 추후 정말
+  라이선스 확보된 링크가 있으면 `library.js`에 `audioUrl` 필드로 수동 등록 가능하도록 설계).
+- **확장 설계**: `LIBRARY_CATALOG.books`에 항목을 추가하고 Supabase에 페이지 텍스트만 넣으면
+  시리즈 #2~28도 동일 파이프라인으로 추가 가능(사용자 제공 AR표 기준 메타데이터 이미 확보).
+
+---
+
 ## 최근 주요 작업 이력
 
 - **2026-07-08 (마을 조작 재설계: 탭/클릭 이동)** — 가장자리 D-pad 4버튼(같은 날 오전

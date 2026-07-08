@@ -105,6 +105,16 @@ window.Store = (function () {
         .catch(() => null);
     },
 
+    // Fetch a Library book's licensed page text (never bundled in git).
+    pullLibraryPages(bookId) {
+      if (!remoteOn()) return Promise.resolve(null);
+      const url = `${SUPABASE.url}/rest/v1/library_books?book_id=eq.${encodeURIComponent(bookId)}&select=pages`;
+      return fetch(url, { headers: hdr() })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((rows) => (rows && rows[0] ? rows[0].pages : null))
+        .catch(() => null);
+    },
+
     // ---- notice board (public announcements) ----
     pullNotices() {
       if (!remoteOn()) return Promise.resolve(null);
