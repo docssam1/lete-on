@@ -174,18 +174,24 @@ async function main() {
     process.stdout.write(`  🎙  ${label} (${task.text.length} chars)... `);
 
     try {
-      // Check if already uploaded
-      const checkRes = await httpRequest({
-        hostname: new URL(SUPABASE_URL).hostname,
-        path: `/storage/v1/object/info/public/audio/${task.storagePath}`,
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` },
-      });
-      if (checkRes.status === 200) {
-        const url = `${SUPABASE_URL}/storage/v1/object/public/audio/${task.storagePath}`;
-        console.log(`skip (already exists)`);
-        results[label] = url;
-        continue;
+      // Skip only the stable licensed originals when they already exist (they are
+      // large and rarely change). Always regenerate the created content (extra/new)
+      // so rewritten extraLearning / newPassage passages get fresh audio instead of
+      // keeping a stale MP3 that no longer matches the on-screen text. Upload uses
+      // x-upsert:true, so regenerated files overwrite in place.
+      if (task.type === 'original') {
+        const checkRes = await httpRequest({
+          hostname: new URL(SUPABASE_URL).hostname,
+          path: `/storage/v1/object/info/public/audio/${task.storagePath}`,
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` },
+        });
+        if (checkRes.status === 200) {
+          const url = `${SUPABASE_URL}/storage/v1/object/public/audio/${task.storagePath}`;
+          console.log(`skip (original already exists)`);
+          results[label] = url;
+          continue;
+        }
       }
 
       const mp3 = await generateMp3(task.text);
