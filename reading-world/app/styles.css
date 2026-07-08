@@ -514,6 +514,19 @@ img{-webkit-user-drag:none;user-select:none}
 textarea.nb-in{resize:vertical}
 .nb-compose-btns{display:flex;gap:10px;justify-content:flex-end}
 
+/* Continue-learning banner on the village landing */
+.resume-banner{display:flex;align-items:center;gap:12px;width:100%;max-width:1000px;margin:2px auto 12px;padding:11px 15px;border:1px solid var(--line);background:var(--paper,#fffdf7);border-radius:14px;cursor:pointer;text-align:left;box-shadow:0 2px 10px rgba(0,0,0,.05);transition:.16s;font:inherit}
+.resume-banner:hover{transform:translateY(-1px);border-color:#7bc47f;box-shadow:0 6px 16px rgba(47,138,92,.16)}
+.rb-icon{font-size:21px;width:40px;height:40px;display:grid;place-items:center;background:#e7f3ea;border-radius:11px;flex-shrink:0}
+.rb-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.rb-text small{font-size:11.5px;color:var(--muted);font-weight:800;letter-spacing:.02em}
+.rb-text b{font-size:15px;color:var(--ink,#23312a);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:"Iowan Old Style",Georgia,"Apple SD Gothic Neo","Malgun Gothic",serif}
+.rb-status{flex-shrink:0;font-size:12px;font-weight:800;color:#2f8a5c;background:#e7f3ea;padding:4px 11px;border-radius:999px}
+.rb-status.done{color:#a9750b;background:#ffe9a8}
+.rb-status.mid{color:#40799a;background:#e4eef4}
+.rb-go{flex-shrink:0;color:#2f8a5c;font-size:14px;font-weight:900}
+@media(max-width:680px){.resume-banner{margin:2px 0 10px}.rb-status{display:none}}
+
 /* 3-D book card */
 .book-card{perspective:600px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;user-select:none}
 .book-card:hover .book-3d{transform:rotateY(-15deg) translateY(-4px);box-shadow:-10px 14px 32px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.3)}
