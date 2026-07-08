@@ -51,6 +51,19 @@ for (let i = 2; i <= 10; i++) {
   }
 }
 
+// Level B lesson1 uses the legacy flat shape (window.LESSON1 with
+// originalExtraPassage / extraPassage) instead of window.LESSONS[...].extraLearning /
+// newPassage, so it must be loaded and handled on its own or its created passages
+// never get a voice file and the app falls back to on-device TTS. LESSON1_ZH is a
+// dependency referenced inside lesson1.js, so declare it before eval.
+var LESSON1_ZH = {};
+{
+  const file = path.join(dataDir, 'lesson1.js');
+  if (fs.existsSync(file)) {
+    try { eval(fs.readFileSync(file, 'utf8')); } catch(e) { console.warn('⚠  lesson1.js eval error:', e.message); }
+  }
+}
+
 // ── Build task list ────────────────────────────────────────────────────────────
 const tasks = [];
 
@@ -72,6 +85,28 @@ for (const [lessonId, lesson] of Object.entries(window.LESSONS)) {
       type: 'new',
       text: lesson.newPassage.passage.join('\n\n'),
       storagePath: `${bookId}/${lessonId}-new.mp3`,
+    });
+  }
+}
+
+// Level B lesson1 (legacy flat shape). Its STEP 4 (extra learning) lives in
+// originalExtraPassage → -extra.mp3, and STEP 6 (new passage) in extraPassage → -new.mp3,
+// matching the app's audioFileFor()/speakPassage() mapping for cars-level-b/lesson1.
+if (window.LESSON1) {
+  if (window.LESSON1.originalExtraPassage?.length) {
+    tasks.push({
+      lessonId: 'lesson1', bookId: 'cars-level-b',
+      type: 'extra',
+      text: window.LESSON1.originalExtraPassage.join('\n\n'),
+      storagePath: 'cars-level-b/lesson1-extra.mp3',
+    });
+  }
+  if (window.LESSON1.extraPassage?.length) {
+    tasks.push({
+      lessonId: 'lesson1', bookId: 'cars-level-b',
+      type: 'new',
+      text: window.LESSON1.extraPassage.join('\n\n'),
+      storagePath: 'cars-level-b/lesson1-new.mp3',
     });
   }
 }
