@@ -88,6 +88,12 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 .student-chip .chip-avatar{width:24px;height:24px;font-size:12px}
 .chip-switch{border:0;background:#eeeae0;color:#5a6376;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:13px;line-height:1;padding:0}
 .chip-switch:hover{background:#e7e2d5;color:#2a3547}
+/* Top-right identity chip — the student's own LEGO minifigure + name */
+.user-chip{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #e7e2d5;border-radius:999px;padding:3px 12px 3px 3px;cursor:pointer;font-family:inherit;box-shadow:0 1px 2px rgba(35,49,42,.06);transition:box-shadow .15s,border-color .15s}
+.user-chip:hover{border-color:#cd7b3a;box-shadow:0 2px 8px rgba(205,123,58,.18)}
+.user-chip .uc-ava{width:34px;height:34px;border-radius:50%;overflow:hidden;background:#f0ece0;display:grid;place-items:center;flex:0 0 auto}
+.user-chip .uc-ava svg{width:100%;height:100%;display:block}
+.user-chip .uc-name{font-size:13px;font-weight:800;color:#23312a;max-width:9ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:520px){.cover-card{padding:26px 20px 24px}.name-form{flex-direction:column}.btn.big{width:100%}}
 
 /* v28: skipped questions are marked apart from unanswered ones */
