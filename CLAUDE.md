@@ -304,6 +304,21 @@ B~H=12문항(4지선다·3/3/3/3). 문항수·난이도 상승(47w→582w). 배�
 
 ## 최근 주요 작업 이력
 
+- **2026-07-08 (CARS C 창작 문항 품질 재검토)** — 240문항(lc1~lc10 × extraLearning/
+  newPassage × 12문항) 전수를 3개 병렬 리뷰로 점검(정답 분포·오답 설계·전략 적합성).
+  분포는 전 세트 3A/3B/3C/3D로 이상 없음. 소프트 결함 15건 발견 후 지문 근거를 살려
+  재작성(정답 letter는 전부 그대로 유지, 재검증 완료):
+  - **Q6 Making Predictions(8건)** — 지문에 이미 명시된 문장을 그대로 반복하던 문항을
+    "다음에 비슷한 상황이 오면"류의 진짜 추론 요구 문항으로 교체
+    (lc1×2, lc2, lc4×2, lc5는 별개로 Q8, lc7, lc8×2).
+  - **Q12 Real vs Make-believe(5건)** — '동물/식물이 말한다'는 유치한 오답을 그럴듯하지만
+    불가능한 물리적 사건으로 교체 (lc2×2, lc9×2, lc10).
+  - **기타 2건** — lc5 extraLearning Q8(추론이 아닌 문장 반복), lc4 extraLearning Q10
+    (저자 목적이 아닌 텍스트 구조를 묻던 문항 → 진짜 저자 목적으로 교체).
+- **2026-07-08 (마을 UI)** — 이동 버튼을 맵 4방향 가장자리 중앙으로 재배치(건물 오탭
+  방지, `pointer-events:none` 컨테이너 + 버튼만 클릭 활성). 지도 ＋/− 확대 버튼 추가
+  (`TownGame.setZoom/getZoom`, 카메라 아바타 추적, 1x~2.6x). 단어 학습 탭(`.segmented`)
+  스타일 신규 추가(브라우저 기본 회색 버튼 → 크림 트랙 세그먼트 컨트롤).
 - **2026-07-08 (오디오 파리티)** — **CARS B lesson1 실음성 MP3 추가**. lesson1은
   레거시 플랫 구조(`window.LESSON1`의 `originalExtraPassage`/`extraPassage`, `window.LESSONS`
   미등록)라 `scripts/generate-audio.js`가 통째로 건너뛰어 STEP4/6이 윈도우 TTS 폴백이었음.
