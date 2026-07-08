@@ -304,6 +304,13 @@ B~H=12문항(4지선다·3/3/3/3). 문항수·난이도 상승(47w→582w). 배�
 
 ## 최근 주요 작업 이력
 
+- **2026-07-08 (오디오 파리티)** — **CARS B lesson1 실음성 MP3 추가**. lesson1은
+  레거시 플랫 구조(`window.LESSON1`의 `originalExtraPassage`/`extraPassage`, `window.LESSONS`
+  미등록)라 `scripts/generate-audio.js`가 통째로 건너뛰어 STEP4/6이 윈도우 TTS 폴백이었음.
+  스크립트에 lesson1.js 로드 + 태스크 2개 생성(`originalExtraPassage→lesson1-extra.mp3`,
+  `extraPassage→lesson1-new.mp3`, 앱 `audioFileFor` 매핑과 일치) 추가 → Actions
+  `Generate Audio` 수동 디스패치(스크립트 변경은 워크플로 path 트리거 대상 아님)로
+  Neural2 MP3 생성·업로드. 이제 레슨2~10과 음성 일관성 확보.
 - **2026-07-08 (야간 세션, 다수 커밋)**
   - **CARS C 전면 재작업**: 창작 콘텐츠(제목/어휘/extraLearning/newPassage)를
     실제 원본 지문에 정렬 + 원문 길이(276~797단어)로 재작성. 실제 교재 삽화 10개
