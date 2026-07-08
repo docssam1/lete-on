@@ -179,6 +179,18 @@ window.TownGame = (function () {
       this.input.keyboard.on('keydown-SPACE', tryOpenNear);
       this.input.keyboard.on('keydown-ENTER', tryOpenNear);
       this.touch = { x: 0, y: 0 };
+      this.moveTarget = null;
+      // Click/tap the open ground to walk there — simpler than the direction pad it
+      // replaces, and doesn't cover any buildings. A tap that lands on a building or
+      // decoration hotspot is handled by that hotspot's own pointerdown (open the
+      // building / decoration menu instantly), so this only fires for empty ground.
+      // Ignore non-primary touch points so a two-finger pinch-zoom gesture never
+      // also drops a movement target.
+      this.input.on('pointerdown', (pointer) => {
+        if (pointer.event && pointer.event.isPrimary === false) return;
+        if (this.input.hitTestPointer(pointer).length) return;
+        this.moveTarget = { x: pointer.worldX, y: pointer.worldY };
+      });
       // Camera follows the avatar so the +/- zoom can magnify the map (bigger
       // buildings/labels on small screens). At zoom 1 the viewport equals the map,
       // so bounds pin it to the full view; zooming in centres on the player.
@@ -195,6 +207,12 @@ window.TownGame = (function () {
       if (this.cursors.up.isDown || this.wasd.W.isDown) vy = -1;
       else if (this.cursors.down.isDown || this.wasd.S.isDown) vy = 1;
       if (this.touch.x || this.touch.y) { vx = this.touch.x; vy = this.touch.y; }
+      if (vx || vy) { this.moveTarget = null; } // keyboard always overrides a pending tap-to-move
+      else if (this.moveTarget) {
+        const dx = this.moveTarget.x - this.player.x, dy = this.moveTarget.y - this.player.y;
+        const d = Math.hypot(dx, dy);
+        if (d < 6) this.moveTarget = null; else { vx = dx / d; vy = dy / d; }
+      }
       const len = Math.hypot(vx, vy) || 1; b.setVelocity((vx / len) * sp, (vy / len) * sp);
       // nearest building → prompt + glow
       let near = null, nd = 1e9;

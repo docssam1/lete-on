@@ -453,17 +453,6 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 .town-stage-wrap{position:relative;margin-top:12px;border-radius:18px;overflow:hidden;background:#bcd9a8;box-shadow:0 8px 26px rgba(30,50,90,.14)}
 #town-stage{width:100%;aspect-ratio:960/600;display:block;touch-action:none}
 #town-stage canvas{display:block;width:100%!important;height:100%!important;border-radius:18px}
-/* Movement controls overlaid on the map edges (mid of each side). The container is
-   click-through (pointer-events:none) so buildings in the map center stay tappable;
-   only the four buttons capture input. As HTML above the Phaser canvas they can never
-   fall through to a building hotspot, so edge taps won't accidentally open a lesson. */
-.town-dpad{position:absolute;inset:0;pointer-events:none;z-index:5;touch-action:none}
-.town-dpad .dpad{position:absolute;pointer-events:auto;width:54px;height:54px;border-radius:50%;border:1px solid rgba(231,226,213,.9);background:rgba(255,255,255,.82);color:#23312a;font-size:22px;font-weight:900;cursor:pointer;box-shadow:0 3px 10px rgba(30,50,90,.22);user-select:none;display:grid;place-items:center;line-height:1;padding:0;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
-.town-dpad .d-up{top:10px;left:50%;transform:translateX(-50%)}
-.town-dpad .d-down{bottom:10px;left:50%;transform:translateX(-50%)}
-.town-dpad .d-left{left:10px;top:50%;transform:translateY(-50%)}
-.town-dpad .d-right{right:10px;top:50%;transform:translateY(-50%)}
-.town-dpad .dpad:active{background:#eef3f0}
 /* Map zoom (+/-) — top-right corner, clear of every building hotspot. */
 .town-zoom{position:absolute;top:10px;right:10px;z-index:5;display:flex;flex-direction:column;gap:6px}
 .town-zoom .zbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(231,226,213,.9);background:rgba(255,255,255,.85);color:#23312a;font-size:23px;font-weight:900;cursor:pointer;box-shadow:0 3px 10px rgba(30,50,90,.2);display:grid;place-items:center;line-height:1;padding:0;user-select:none;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
@@ -483,7 +472,7 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 .tm-lesson:hover{border-color:#b9ddc7;background:#f2fbf9}
 .tm-lesson.done{border-color:#c6e2cf;background:#f1fbf4}
 .tm-lesson .stop-badge{flex:0 0 auto}
-@media(max-width:680px){.town-dpad .dpad{width:58px;height:58px;font-size:25px}.town-zoom .zbtn{width:50px;height:50px;font-size:26px}.tm-lessons{grid-template-columns:1fr}}
+@media(max-width:680px){.town-zoom .zbtn{width:50px;height:50px;font-size:26px}.tm-lessons{grid-template-columns:1fr}}
 /* ---- Screen Quest (v38) ---- */
 .btn.amber{background:#cf9a34;border-color:#a97d22;color:#fff}
 .screen-quest{max-width:820px;margin:0 auto}
