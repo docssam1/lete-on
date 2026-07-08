@@ -696,7 +696,18 @@ function speakPassage(passage){
  const nodes=[...document.querySelectorAll(`.sentence-line[data-passage="${passage}"]`)];
  const bookId=(window.LESSONS&&window.LESSONS[currentLessonId])&&window.LESSONS[currentLessonId].bookId;
  const audioUrl=audioUrlFor(bookId,currentLessonId,passage);
- if(audioUrl){const el=new Audio(audioUrl);el.playbackRate=Number(st.speed)||1;_audioEl=el;el.onended=()=>{if(run===st.speechRun)_audioEl=null;};el.play().catch(()=>{_audioEl=null;speakPassageWSA(text,run,nodes);});return;}
+ if(audioUrl){const el=new Audio(audioUrl);el.playbackRate=Number(st.speed)||1;_audioEl=el;
+  // HTML Audio has no word-boundary event like Web Speech's onboundary, so drive the
+  // sentence highlight from playback time: map currentTime/duration onto the cumulative
+  // character offsets the spans already carry (data-start/-end). Approximate but keeps
+  // the same read-along highlight on the real MP3 path, not just the TTS fallback.
+  const totalChars=nodes.length?Number(nodes[nodes.length-1].dataset.end)||0:0;let lastHL=null;
+  el.ontimeupdate=()=>{if(run!==st.speechRun||!el.duration||!totalChars)return;
+   const pos=(el.currentTime/el.duration)*totalChars;
+   const cur=nodes.find(n=>pos>=Number(n.dataset.start)&&pos<Number(n.dataset.end));
+   if(!cur||cur===lastHL)return;lastHL=cur;nodes.forEach(n=>n.classList.toggle('reading-now',n===cur));cur.scrollIntoView({behavior:'smooth',block:'center'});};
+  el.onended=()=>{if(run===st.speechRun){_audioEl=null;document.querySelectorAll('.sentence-line.reading-now').forEach(n=>n.classList.remove('reading-now'));}};
+  el.play().catch(()=>{_audioEl=null;speakPassageWSA(text,run,nodes);});return;}
  speakPassageWSA(text,run,nodes);}
 function speakPassageWSA(text,run,nodes){if(!('speechSynthesis' in window)){toast(st.lang==='ko'?'이 브라우저는 읽어주기를 지원하지 않아요.':'Speech is not supported in this browser.');return}
  const u=new SpeechSynthesisUtterance(text);u.lang='en-US';const _v=getBestEnVoice();if(_v)u.voice=_v;u.rate=Number(st.speed)||1;u.pitch=1;
