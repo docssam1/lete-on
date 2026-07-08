@@ -855,22 +855,29 @@ let diag=null;
 function diagLevels(){return (window.DIAGNOSTIC&&window.DIAGNOSTIC.levels)||[];}
 function diagLevel(id){return diagLevels().find(l=>l&&l.id===id)||null;}
 function diagT(ko,en,zh){return st.lang==='ko'?ko:st.lang==='zh'?zh:en;}
-function bookForLevel(id){const m={B:'cars-level-b',C:'cars-level-c'};return m[id]||'cars-level-b';}
+// Full CARS ladder, easy→hard. Only levels with loaded content take part in placement.
+const DIAG_ORDER=['P','AA','A','B','C','D','E','F','G','H'];
+// Levels that already have learning books in the app; others are placement-only (content TBD).
+const LEVEL_BOOK={B:'cars-level-b',C:'cars-level-c'};
+function bookForLevel(id){return LEVEL_BOOK[id]||null;}
+function diagOrderPresent(){return DIAG_ORDER.filter(id=>diagLevel(id));}
 function firstLessonOf(bookId){const a=availableLessons(bookId);return (a&&a[0])||'lesson1';}
-// CARS placement: returns {verdict:'up'|'fit'|'down', recommend:levelId}
-function diagPlacement(levelId,score){const order=['B','C'];const idx=order.indexOf(levelId);
- if(score>=11){const up=order[idx+1]||levelId;return {verdict:'up',recommend:up,capped:!order[idx+1]};}
- if(score<6){const dn=order[idx-1]||levelId;return {verdict:'down',recommend:dn,capped:!order[idx-1]};}
+// Per-count thresholds mirror the CARS rule (12Q: <6 down / 11+ up), scaled for shorter tests.
+function diagThresholds(n){if(n>=12)return {up:11,down:6};if(n>=8)return {up:7,down:4};return {up:n,down:3};}
+// Placement: returns {verdict:'up'|'fit'|'down', recommend:levelId, capped:bool}
+function diagPlacement(levelId,score,n){const order=diagOrderPresent();const idx=order.indexOf(levelId);const th=diagThresholds(n||12);
+ if(score>=th.up){const up=order[idx+1]||levelId;return {verdict:'up',recommend:up,capped:!order[idx+1]};}
+ if(score<th.down){const dn=order[idx-1]||levelId;return {verdict:'down',recommend:dn,capped:!order[idx-1]};}
  return {verdict:'fit',recommend:levelId,capped:false};}
 function startDiagnostic(levelId){const lv=diagLevel(levelId);if(!lv){toast(diagT('진단 콘텐츠를 불러오지 못했어요.','Diagnostic content unavailable.','无法加载测评内容。'));return;}
  diag={phase:'test',levelId,qIndex:0,answers:{},picked:null};atTown=true;townView='diagnostic';render();window.scrollTo({top:0});}
 function openDiagnostic(){diag={phase:'intro'};atTown=true;townView='diagnostic';render();window.scrollTo({top:0});}
 function diagScore(){const lv=diagLevel(diag.levelId);if(!lv)return {score:0,correct:[],missed:[]};const correct=[],missed=[];
  lv.questions.forEach((q,i)=>{(diag.answers[i]===q[3]?correct:missed).push(i);});return {score:correct.length,correct,missed};}
-function finishDiagnostic(){const lv=diagLevel(diag.levelId);const {score,correct,missed}=diagScore();const pl=diagPlacement(diag.levelId,score);
+function finishDiagnostic(){const lv=diagLevel(diag.levelId);const {score,correct,missed}=diagScore();const pl=diagPlacement(diag.levelId,score,lv.questions.length);
  profile.diagnostic={done:true,testedLevel:diag.levelId,score,total:lv.questions.length,recommend:pl.recommend,verdict:pl.verdict,capped:pl.capped,
   strengths:correct.map(i=>lv.questions[i][0]),weaknesses:missed.map(i=>lv.questions[i][0]),at:Date.now()};
- profile.currentBookId=bookForLevel(pl.recommend);currentBookId=profile.currentBookId;
+ const recBook=bookForLevel(pl.recommend);if(recBook){profile.currentBookId=recBook;currentBookId=recBook;}
  awardPoints(30,diagT('진단 완료','Diagnostic done','测评完成'));diag.phase='result';save();render();window.scrollTo({top:0});}
 function diagnosticScreen(){
  if(!diag)diag={phase:'intro'};
@@ -878,11 +885,12 @@ function diagnosticScreen(){
  const head=`<div class="town-top"><div class="town-brand">🧭 ${diagT('리딩 진단','Reading Check','阅读测评')}</div><div class="town-tools"><div class="language-toggle town-lang">${langBtns}</div></div></div>`;
  let body='';
  if(diag.phase==='intro'){
-  const levels=diagLevels();
-  const cards=levels.map(l=>`<button class="dg-lvl" data-act="diag-start" data-level="${esc(l.id)}"><span class="dg-lvl-badge">${esc(l.id)}</span><b>${diagT('레벨','Level','级别')} ${esc(l.id)}</b><small>${esc(l.grade||'')} · ${esc(l.title||'')}</small></button>`).join('');
-  body=`<section class="card dg-card"><div class="dg-hero"><div class="dg-orb">🧭</div><h1>${diagT('나의 레벨을 찾아봐요','Find your level','找到你的级别')}</h1><p class="dg-sub">${diagT('짧은 지문 하나를 읽고 12문제를 풀면, 딱 맞는 레벨과 강점·약점, 추천 학습 로드맵을 알려줄게요.','Read one short passage and answer 12 questions — we will find your level, your strengths and weak spots, and a recommended roadmap.','读一篇短文并回答12题——我们会找出你的级别、强弱项和推荐路线。')}</p></div>
+  const levels=DIAG_ORDER.map(id=>diagLevel(id)).filter(Boolean);
+  const cards=levels.map(l=>`<button class="dg-lvl${LEVEL_BOOK[l.id]?' has-book':''}" data-act="diag-start" data-level="${esc(l.id)}"><span class="dg-lvl-badge">${esc(l.id)}</span><b>${diagT('레벨','Level','级别')} ${esc(l.id)}</b><small>${esc(l.grade||'')}</small></button>`).join('');
+  body=`<section class="card dg-card"><div class="dg-hero"><div class="dg-orb">🧭</div><h1>${diagT('나의 레벨을 찾아봐요','Find your level','找到你的级别')}</h1><p class="dg-sub">${diagT('짧은 지문 하나를 읽고 문제를 풀면, 딱 맞는 레벨과 강점·약점, 추천 학습 로드맵을 알려줄게요.','Read one short passage and answer the questions — we will find your level, your strengths and weak spots, and a recommended roadmap.','读一篇短文并回答问题——我们会找出你的级别、强弱项和推荐路线。')}</p></div>
    <div class="dg-pick-lab">${diagT('어느 레벨부터 시작할까요? (잘 모르면 아무거나 골라도 돼요 — 결과에 맞춰 조정해 줄게요)','Which level to start? (Not sure? Pick any — we will adjust from your result.)','从哪个级别开始？（不确定就随便选，我们会据结果调整。）')}</div>
    <div class="dg-levels">${cards}</div>
+   <p class="dg-legend">${diagT('● = 학습 콘텐츠가 준비된 레벨이에요. 다른 레벨도 진단은 얼마든지 볼 수 있어요.','● = levels with lessons ready. You can still take the check at any level.','● = 已有课程的级别；其他级别也可随时测评。')}</p>
    <div class="tools"><button class="btn ghost" data-act="diag-skip">${diagT('건너뛰고 자유롭게 고르기','Skip — choose freely','跳过，自由选择')}</button></div></section>`;
  } else if(diag.phase==='test'){
   const lv=diagLevel(diag.levelId);const total=lv.questions.length;const i=diag.qIndex;const q=lv.questions[i];const picked=diag.answers[i];
@@ -902,7 +910,7 @@ function diagnosticScreen(){
   const weakStrats=uniq(d.weaknesses);
   const weaks=weakStrats.length?weakStrats.slice(0,4).map(s=>`<span class="dg-tag warn">${esc(stratInfo(s).n)}</span>`).join(''):`<span class="dg-none">${T('없어요! 훌륭해요','none — great!','无！很棒')}</span>`;
   const roadmap=weakStrats.slice(0,3).map((s,k)=>`<li><span class="dg-step">${k+1}</span><div><b>${esc(stratInfo(s).n)}</b><small>${esc(stratInfo(s).t)}</small></div></li>`).join('');
-  body=`<section class="card dg-card dg-result"><div class="dg-resulthead"><div class="dg-scoreorb">${d.score}<i>/${d.total}</i></div><div><div class="dg-verdict">${esc(vTxt)}</div><h1>${T('추천 레벨','Recommended','推荐级别')}: <span class="dg-reclvl">${esc(d.recommend)}</span></h1><p class="dg-recbook">${recBook?esc((recBook.title+' '+(recBook.subtitle||'')).trim()):''}</p></div></div>
+  body=`<section class="card dg-card dg-result"><div class="dg-resulthead"><div class="dg-scoreorb">${d.score}<i>/${d.total}</i></div><div><div class="dg-verdict">${esc(vTxt)}</div><h1>${T('추천 레벨','Recommended','推荐级别')}: <span class="dg-reclvl">${esc(d.recommend)}</span></h1><p class="dg-recbook">${recBook?esc((recBook.title+' '+(recBook.subtitle||'')).trim()):T('이 레벨의 학습 콘텐츠는 준비 중이에요 — 가까운 레벨로 시작할 수 있어요','Lessons for this level are coming soon — start at a nearby level','该级别课程即将上线——可从相近级别开始')}</p></div></div>
    <div class="dg-analysis"><div class="dg-anbox"><h3>💪 ${T('강점','Strengths','强项')}</h3><div class="dg-tags">${strengths}</div></div><div class="dg-anbox"><h3>🎯 ${T('먼저 다질 전략','Focus first','先攻克')}</h3><div class="dg-tags">${weaks}</div></div></div>
    ${roadmap?`<div class="dg-roadmap"><h3>🗺 ${T('추천 로드맵','Your roadmap','推荐路线')}</h3><ol class="dg-road">${roadmap}</ol><p class="dg-road-note">${T('추천 레벨의 Lesson 1부터 시작하고, 위 약점 전략은 스킬 코치로 집중 연습해요. 물론 레벨은 언제든 자유롭게 바꿀 수 있어요.','Start at Lesson 1 of your level and drill the weak skills with the Skill Coach. You can change levels anytime.','从推荐级别的第1课开始，用技能教练强化薄弱项。级别随时可改。')}</p></div>`:''}
    <div class="tools">${(d.verdict!=='fit'&&!d.capped&&diagLevel(d.recommend))?`<button class="btn" data-act="diag-retest" data-level="${esc(d.recommend)}">↻ ${T('추천 레벨로 다시 진단','Re-test at that level','按推荐级别重测')}</button>`:''}<button class="btn primary big" data-act="diag-go">${T('추천 레벨로 학습 시작','Start learning','开始学习')} →</button><button class="btn ghost" data-act="diag-town">${T('마을로','To Town','回小镇')}</button></div></section>`;
@@ -917,7 +925,7 @@ function handleDiag(b){const act=b.dataset.act;if(!diag)diag={phase:'intro'};
  if(act==='diag-next'){const lv=diagLevel(diag.levelId);diag.qIndex=Math.min(lv.questions.length-1,diag.qIndex+1);diag.picked=diag.answers[diag.qIndex]||null;render();window.scrollTo({top:0});return;}
  if(act==='diag-prev'){diag.qIndex=Math.max(0,diag.qIndex-1);diag.picked=diag.answers[diag.qIndex]||null;render();window.scrollTo({top:0});return;}
  if(act==='diag-finish'){finishDiagnostic();return;}
- if(act==='diag-go'){const bk=bookForLevel(profile.diagnostic.recommend);currentBookId=bk;if(profile)profile.currentBookId=bk;diag=null;openLesson(firstLessonOf(bk),'home');return;}
+ if(act==='diag-go'){const bk=bookForLevel(profile.diagnostic.recommend);diag=null;if(bk){currentBookId=bk;if(profile)profile.currentBookId=bk;openLesson(firstLessonOf(bk),'home');}else{atTown=true;if(window.TownGame)TownGame.destroy();showBookShelf();toast(diagT('추천 레벨은 준비 중이에요. 원하는 책을 골라보세요!','That level is coming soon — pick any book!','该级别即将上线，先选一本吧！'));}return;}
 }
 function toast(msg){const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
 function printStudy(passage){

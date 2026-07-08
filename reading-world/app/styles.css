@@ -188,12 +188,15 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 .dg-hero h1{font-family:Georgia,serif;font-size:28px;margin:8px 0 8px;color:#23312a}
 .dg-sub{font-size:16px;color:#5a6055;max-width:44ch;margin:0 auto;line-height:1.55}
 .dg-pick-lab{margin:22px 0 12px;font-weight:800;font-size:14px;color:#3a4238;text-align:center}
-.dg-levels{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.dg-lvl{display:flex;flex-direction:column;align-items:center;gap:4px;background:#fffdf7;border:2px solid #e7e2d5;border-radius:16px;padding:16px 20px;min-width:150px;cursor:pointer;font-family:inherit;transition:border-color .12s,transform .12s}
+.dg-levels{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.dg-lvl{display:flex;flex-direction:column;align-items:center;gap:3px;background:#fffdf7;border:2px solid #e7e2d5;border-radius:14px;padding:12px 14px;min-width:96px;cursor:pointer;font-family:inherit;transition:border-color .12s,transform .12s,box-shadow .12s;position:relative}
 .dg-lvl:hover{border-color:#2f8a5c;transform:translateY(-2px)}
-.dg-lvl-badge{width:38px;height:38px;border-radius:50%;background:#2f8a5c;color:#fff;font-weight:900;font-size:18px;display:grid;place-items:center}
-.dg-lvl b{font-size:15px;color:#23312a}
-.dg-lvl small{font-size:12px;color:#7a8070;text-align:center}
+.dg-lvl.has-book{border-color:#bfe0cb;box-shadow:0 1px 6px rgba(47,138,92,.1)}
+.dg-lvl.has-book::after{content:"●";position:absolute;top:7px;right:9px;color:#2f8a5c;font-size:8px}
+.dg-lvl-badge{width:34px;height:34px;border-radius:50%;background:#2f8a5c;color:#fff;font-weight:900;font-size:16px;display:grid;place-items:center}
+.dg-lvl b{font-size:14px;color:#23312a}
+.dg-lvl small{font-size:11px;color:#7a8070;text-align:center}
+.dg-legend{text-align:center;font-size:12px;color:#8a8f80;margin:14px 0 4px}
 .dg-testtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .dg-chip{background:#2f8a5c;color:#fff;font-weight:800;font-size:12px;padding:4px 11px;border-radius:999px}
 .dg-count{font-weight:900;color:#2f8a5c;font-variant-numeric:tabular-nums}

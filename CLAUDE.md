@@ -280,8 +280,12 @@ done   — struggled=0 이면 "레벨 업! 🏆", 아니면 "한 걸음 성장! 
 
 ### 리딩 진단 테스트 (Placement) ✅ 구현됨 (2026-07-08)
 CARS & STARS Plus Placement Book 구조 참고(라이선스 원문은 git 금지 → **창작 진단
-콘텐츠** `data/diagnostic.js` = `window.DIAGNOSTIC`, B/C 각 지문1+전략별 12문항,
-3A/3B/3C/3D). 배치 규칙(CARS 공식): **<6 → 아래 레벨 / 6~10 → 현재 레벨 / 11+ → 위 레벨**.
+콘텐츠** `data/diagnostic.js` = `window.DIAGNOSTIC`). **전체 사다리 P·AA·A·B·C·D·E·F·G·H
+10레벨**(`DIAG_ORDER`): P·AA=6문항(3지선다·2/2/2), A=8문항(4지선다·2/2/2/2),
+B~H=12문항(4지선다·3/3/3/3). 문항수·난이도 상승(47w→582w). 배치 임계값
+`diagThresholds`: 12문항 `<6↓/11+↑`, 8문항 `<4↓/7+↑`, 6문항 `만점(N)↑/<3↓`.
+학습 책 있는 레벨=B(cars-level-b)·C(cars-level-c)뿐(`LEVEL_BOOK`), 나머지는 진단·추천만
+되고 "학습 시작"=Study House 안내(콘텐츠 준비 중). 레벨 선택기에 ●=콘텐츠 준비 표시.
 - 흐름: 첫 로그인(아바타 픽 직후, `profile.diagnostic` 없으면) → `townView='diagnostic'`
   intro(레벨 선택 or 건너뛰기) → 12문항 test → result. 수동 진입=빌리지 툴바 🧭
   (`data-act="diag-open"`). 모듈: `main.js` `diagnosticScreen/handleDiag/startDiagnostic/
