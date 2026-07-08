@@ -521,8 +521,11 @@ function parentDashboard(){const t=(ko,en,zh)=>st.lang==='ko'?ko:st.lang==='zh'?
  const rowsHtml=S.rows.map(r=>{const status=r.done?t('완료','Done','完成'):r.started?t('학습 중','In progress','进行中'):t('시작 전','Not started','未开始');return `<div class="pd-row ${r.done?'done':''}"><span class="pd-lnum">${r.num}</span><div class="pd-linfo"><b>Lesson ${r.num}</b><small>${esc(r.title)}</small></div><span class="pd-stat ${r.done?'ok':r.started?'mid':''}">${status}</span><span class="pd-scv">${sc(r.orig)}</span><span class="pd-scv">${sc(r.ext)}</span><span class="pd-scv">${sc(r.sim)}</span><span class="pd-scv">${r.known}/${r.wc||12}</span></div>`;}).join('');
  const table=`<div class="pd-table"><div class="pd-row head"><span class="pd-lnum">#</span><div class="pd-linfo"><b>${t('레슨','Lesson','课程')}</b></div><span class="pd-stat">${t('상태','Status','状态')}</span><span class="pd-scv">${t('교재','Book','教材')}</span><span class="pd-scv">${t('추가','Extra','追加')}</span><span class="pd-scv">${t('새지문','New','新文')}</span><span class="pd-scv">${t('단어','Words','单词')}</span></div>${rowsHtml}</div>`;
  const name=currentStudent?esc(currentStudent.name):'';
+ const dg=profile&&profile.diagnostic;const uniq=a=>[...new Set(a||[])];
+ const diagSec=(dg&&dg.done)?`<section class="pd-sec pd-diag"><h3>🧭 ${t('리딩 진단 결과','Reading diagnostic result','阅读测评结果')}</h3><div class="pd-diagrow"><div class="pd-diagorb">${dg.score}<i>/${dg.total}</i></div><div class="pd-diaginfo"><p class="pd-diagline"><b>${t('응시 레벨','Tested','测试级别')}</b> ${esc(dg.testedLevel)}　→　<b>${t('추천 레벨','Recommended','推荐级别')}</b> <span class="pd-reclvl">${esc(dg.recommend)}</span></p><p class="pd-diagtags"><b>💪 ${t('강점','Strengths','强项')}:</b> ${uniq(dg.strengths).slice(0,4).map(s=>`<span class="pd-tag">${esc(stratInfo(s).n)}</span>`).join('')||'—'}</p><p class="pd-diagtags"><b>🎯 ${t('약점','Focus','弱项')}:</b> ${uniq(dg.weaknesses).slice(0,4).map(s=>`<span class="pd-tag warn">${esc(stratInfo(s).n)}</span>`).join('')||`<span class="pd-empty">${t('없음','none','无')}</span>`}</p></div></div><div class="pd-diagact"><button class="btn tiny" data-act="diag-open">↻ ${t('다시 진단','Re-test','重新测评')}</button></div></section>`:`<section class="pd-sec pd-diag"><h3>🧭 ${t('리딩 진단','Reading diagnostic','阅读测评')}</h3><p class="pd-empty">${t('아직 진단을 보지 않았어요.','No diagnostic taken yet.','还没有测评。')} <button class="btn tiny" data-act="diag-open">${t('진단 시작','Start check','开始测评')}</button></p></section>`;
  return `<div class="town parent-dash"><div class="town-top"><div class="town-brand">👨‍👩‍👧 ${t('학부모 대시보드','Parent Dashboard','家长面板')}</div><div class="town-tools"><span class="student-chip"><b>${name}</b></span><button class="btn tiny" data-act="town-map">← ${t('마을로','Town','返回')}</button></div></div>
   ${sum}
+  ${diagSec}
   <section class="pd-sec"><h3>🎯 ${t('전략별 약점','Weak reading strategies','薄弱阅读策略')}</h3><p class="pd-note">${t('교재 학습(진단)에서 자주 틀린 독해 전략이에요. 이 유형을 새 지문 연습에서 집중하면 좋아요.','Strategies most missed in the diagnostic Book Study — focus these in New Passage Practice.','教材学习中最常错的策略，可在新文章练习中重点练习。')}</p>${weakHtml}<div class="pd-strong"><b>💪 ${t('잘하는 전략','Strong','强项')}:</b> ${strongHtml}</div></section>
   <section class="pd-sec"><h3>📚 ${t('레슨별 진도','Progress by lesson','各课进度')}</h3>${table}</section>
   <p class="pd-foot">${t('점수는 운·뽑기가 아니라 학습 완료와 성장에만 연결돼요. 데이터는 아이별로 저장됩니다.','Points come only from learning and growth — never luck. Data is saved per child.','积分只来自学习与成长，绝非运气。数据按孩子分别保存。')}</p></div>`;}
@@ -913,11 +916,24 @@ function diagnosticScreen(){
   body=`<section class="card dg-card dg-result"><div class="dg-resulthead"><div class="dg-scoreorb">${d.score}<i>/${d.total}</i></div><div><div class="dg-verdict">${esc(vTxt)}</div><h1>${T('추천 레벨','Recommended','推荐级别')}: <span class="dg-reclvl">${esc(d.recommend)}</span></h1><p class="dg-recbook">${recBook?esc((recBook.title+' '+(recBook.subtitle||'')).trim()):T('이 레벨의 학습 콘텐츠는 준비 중이에요 — 가까운 레벨로 시작할 수 있어요','Lessons for this level are coming soon — start at a nearby level','该级别课程即将上线——可从相近级别开始')}</p></div></div>
    <div class="dg-analysis"><div class="dg-anbox"><h3>💪 ${T('강점','Strengths','强项')}</h3><div class="dg-tags">${strengths}</div></div><div class="dg-anbox"><h3>🎯 ${T('먼저 다질 전략','Focus first','先攻克')}</h3><div class="dg-tags">${weaks}</div></div></div>
    ${roadmap?`<div class="dg-roadmap"><h3>🗺 ${T('추천 로드맵','Your roadmap','推荐路线')}</h3><ol class="dg-road">${roadmap}</ol><p class="dg-road-note">${T('추천 레벨의 Lesson 1부터 시작하고, 위 약점 전략은 스킬 코치로 집중 연습해요. 물론 레벨은 언제든 자유롭게 바꿀 수 있어요.','Start at Lesson 1 of your level and drill the weak skills with the Skill Coach. You can change levels anytime.','从推荐级别的第1课开始，用技能教练强化薄弱项。级别随时可改。')}</p></div>`:''}
-   <div class="tools">${(d.verdict!=='fit'&&!d.capped&&diagLevel(d.recommend))?`<button class="btn" data-act="diag-retest" data-level="${esc(d.recommend)}">↻ ${T('추천 레벨로 다시 진단','Re-test at that level','按推荐级别重测')}</button>`:''}<button class="btn primary big" data-act="diag-go">${T('추천 레벨로 학습 시작','Start learning','开始学习')} →</button><button class="btn ghost" data-act="diag-town">${T('마을로','To Town','回小镇')}</button></div></section>`;
+   <div class="tools"><button class="btn primary big" data-act="diag-go">${T('추천 레벨로 학습 시작','Start learning','开始学习')} →</button>${weakStrats.length?`<button class="btn" data-act="diag-coach">🎯 ${T('약점 전략 바로 연습','Coach my weak skills','马上练弱项')}</button>`:''}${(d.verdict!=='fit'&&!d.capped&&diagLevel(d.recommend))?`<button class="btn" data-act="diag-retest" data-level="${esc(d.recommend)}">↻ ${T('추천 레벨로 다시 진단','Re-test at that level','按推荐级别重测')}</button>`:''}<button class="btn ghost" data-act="diag-town">${T('마을로','To Town','回小镇')}</button></div></section>`;
  }
  return `<div class="town diag-town">${head}<div class="dg-wrap">${body}</div></div>`;
 }
+// Map a strategy name to the fixed question index within a loaded lesson (index = strategy).
+function coachStrategyIndex(name){const key=stratInfo(name).n;const src=L.originalExtraQuestions||L.extraQuestions||[];for(let i=0;i<src.length;i++){if(stratInfo((src[i]||[])[0]||'').n===key)return i;}return -1;}
+// Diagnostic → Skill Coach: drill the diagnostic's weak strategies inside a real
+// B/C lesson (any owned book has the same 12 strategies), no lesson attempt needed.
+function diagToCoach(){const d=profile&&profile.diagnostic;if(!d)return;
+ const names=[...new Set(d.weaknesses||[])];
+ const bk=bookForLevel(d.recommend)||bookForLevel(d.testedLevel)||currentBookId||'cars-level-b';
+ diag=null;openLesson(firstLessonOf(bk),'home');
+ const seen=new Set();const queue=[];
+ names.forEach(nm=>{const i=coachStrategyIndex(nm);const k=stratInfo(nm).n;if(i>=0&&coachPractice(i).length&&!seen.has(k)){seen.add(k);queue.push(i);}});
+ if(!queue.length){toast(diagT('연습할 전략을 찾지 못했어요.','No strategy to practice.','未找到可练习的策略。'));return;}
+ st.coach={queue,pos:0,phase:'intro',tries:0,picked:null,reveal:false,correctNow:false,result:{},awarded:0,showP:false,fromDiag:true};st.view='coach';save();render();window.scrollTo({top:0});}
 function handleDiag(b){const act=b.dataset.act;if(!diag)diag={phase:'intro'};
+ if(act==='diag-coach'){diagToCoach();return;}
  if(act==='diag-open'){openDiagnostic();return;}
  if(act==='diag-skip'||act==='diag-town'){diag=null;atTown=true;townView=landingView();if(profile){profile.diagnostic=profile.diagnostic||{done:false,skipped:true};save();}render();window.scrollTo({top:0});return;}
  if(act==='diag-start'||act==='diag-retest'){startDiagnostic(b.dataset.level);return;}
