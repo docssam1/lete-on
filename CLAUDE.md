@@ -278,6 +278,19 @@ done   — struggled=0 이면 "레벨 업! 🏆", 아니면 "한 걸음 성장! 
   `grade('similar')`·`finishCoach`·로그인(`enterStudent`)·`boot`. CSS `.lu-*`.
 - 향후 확장(미구현): 누적 전략별 약점 랭킹 리포트, 자기 낭독 녹음(fluency).
 
+### 리딩 진단 테스트 (Placement) ✅ 구현됨 (2026-07-08)
+CARS & STARS Plus Placement Book 구조 참고(라이선스 원문은 git 금지 → **창작 진단
+콘텐츠** `data/diagnostic.js` = `window.DIAGNOSTIC`, B/C 각 지문1+전략별 12문항,
+3A/3B/3C/3D). 배치 규칙(CARS 공식): **<6 → 아래 레벨 / 6~10 → 현재 레벨 / 11+ → 위 레벨**.
+- 흐름: 첫 로그인(아바타 픽 직후, `profile.diagnostic` 없으면) → `townView='diagnostic'`
+  intro(레벨 선택 or 건너뛰기) → 12문항 test → result. 수동 진입=빌리지 툴바 🧭
+  (`data-act="diag-open"`). 모듈: `main.js` `diagnosticScreen/handleDiag/startDiagnostic/
+  finishDiagnostic/diagPlacement`, 상태 `let diag`(transient)+`profile.diagnostic`(영구).
+- 결과: 점수·추천레벨(추천책 `bookForLevel`)·강점/약점(전략별)·추천 로드맵(약점 top3
+  =스킬 코치 안내). verdict가 up/down이고 인접 레벨 콘텐츠 있으면 "추천 레벨로 다시 진단"
+  버튼. "레벨은 언제든 자유롭게 바꿀 수 있어요" 명시(자유 선택 원칙 유지). CSS `.dg-*`.
+- 저작 참고 강화: STARS "Understanding the strategies"(PIDE 등)로 전략 코칭 문구 보강.
+
 ---
 
 ## 최근 주요 작업 이력
