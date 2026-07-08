@@ -264,8 +264,19 @@ done   — struggled=0 이면 "레벨 업! 🏆", 아니면 "한 걸음 성장! 
 ```
 - 핵심: 문항 index i = 전략 i 고정순서라, 원본 오답 index로 추가/새지문의
   **같은 전략 문항**을 지문째 자동 소환(Supabase 불필요, 전부 git 데이터).
-- 향후 확장(미구현): 크로스-레슨 레벨업(레슨 마스터리→다음 레벨 언락),
-  누적 전략별 약점 랭킹 리포트, 자기 낭독 녹음(fluency).
+
+### 크로스-레슨 진도 + Level Up (2026-07-08, 격려용 · 잠금 없음)
+> ⚠️ 사용자 지시: **책은 난이도와 무관하게 자유 선택**. 레벨업은 보상일 뿐
+> 절대 다음 레벨을 잠그지 않음. Study House 사다리도 난이도 안내일 뿐 게이트 아님.
+- `lessonMastery(id)`→{stars 0~3,done}: similar.score/coachCleared/coachStars로 별점.
+- `bookMastery(bookId)`→{done,total,pct,complete,stars}: 레슨 진도 집계.
+- 표시: 레슨 스톱·Study House 레슨픽커에 별점(`starDots`), Study House 책카드에
+  진도바(`_bookProgressHtml`) + "완주 ⭐" 리본. 사다리 서브노트=자유선택 안내.
+- **Level Up 오버레이**(`maybeLevelUp`/`flushLevelUp`, `profile.pendingLevelUp`):
+  한 책의 전 레슨 done→최초 1회 축하(+50코인, `profile.levelUps[bookId]`).
+  다음 레벨을 **추천만** 하고 "아무 레벨이나 골라도 좋아요" 명시. 트리거:
+  `grade('similar')`·`finishCoach`·로그인(`enterStudent`)·`boot`. CSS `.lu-*`.
+- 향후 확장(미구현): 누적 전략별 약점 랭킹 리포트, 자기 낭독 녹음(fluency).
 
 ---
 

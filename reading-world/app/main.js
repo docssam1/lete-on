@@ -296,7 +296,7 @@ function stForLesson(id,fallbackLang){const lp=profile&&profile.lessons?profile.
 function enterStudent(student){
  stopSpeak();const lang=st.lang;currentStudent=student;Store.setCurrentId(student.id);
  profile=migrateProfile(Store.load(student.id));ensureAvatar(profile);if(window.GameStore)GameStore.migrate(profile);currentBookId=(profile&&profile.currentBookId)||'cars-level-b';currentLessonId='lesson1';loadLesson('lesson1');
- st=stForLesson('lesson1',lang);atTown=true;townView=(profile.avatar&&profile.avatar.picked)?landingView():'pick';save();render();window.scrollTo({top:0});
+ st=stForLesson('lesson1',lang);atTown=true;townView=(profile.avatar&&profile.avatar.picked)?landingView():'pick';save();render();window.scrollTo({top:0});flushLevelUp();
  if(Store.pull){Store.pull(student.id).then(remote=>{if(remote&&currentStudent&&currentStudent.id===student.id&&(remote.updatedAt||0)>(profile.updatedAt||0)){profile=migrateProfile(remote);st=stForLesson(currentLessonId,lang);render();}}).catch(()=>{});}
 }
 function saveCurrentToProfile(){if(profile){profile.lessons=profile.lessons||{};profile.lessons[currentLessonId]=st;}}
@@ -309,13 +309,31 @@ function goTown(){stopSpeak();saveCurrentToProfile();atTown=true;townView='map';
 function switchStudent(){stopSpeak();saveCurrentToProfile();save();currentStudent=null;profile=null;atTown=true;render();}
 function lessonDone(id){const l=profile&&profile.lessons?profile.lessons[id]:null;return !!(l&&l.original&&l.originalExtra&&l.similar);}
 function lessonStarted(id){const l=profile&&profile.lessons?profile.lessons[id]:null;return !!(l&&(Object.keys(l.known||{}).length||Object.keys((l.answers||{}).original||{}).length||l.original));}
-function boot(){render();} // always open the "누가 공부해요?" picker (saved students are cards)
+// Mastery is encouragement only — it never locks a book or lesson. Any level
+// stays freely selectable regardless of difficulty (books climb the ladder just
+// for orientation, not as a gate).
+function lessonMastery(id){const l=profile&&profile.lessons?profile.lessons[id]:null;
+ if(!l)return {stars:0,done:false,started:false};
+ const done=!!(l.original&&l.originalExtra&&l.similar);
+ const started=!!(Object.keys(l.known||{}).length||Object.keys((l.answers||{}).original||{}).length||l.original);
+ if(!done)return {stars:0,done:false,started};
+ const ss=(l.similar&&l.similar.score)||0,coachCleared=!!l.coachCleared,coachStars=l.coachStars||0;
+ const noMiss=((l.similar&&l.similar.missed)||[]).length===0;
+ let stars=1;if(ss>=9||coachCleared||coachStars>=2)stars=2;if(ss>=11&&(coachCleared||noMiss))stars=3;
+ return {stars,done:true,started:true};}
+function bookMastery(bookId){const ids=availableLessons(bookId);const total=ids.length;let done=0,started=0,stars=0;
+ ids.forEach(id=>{const m=lessonMastery(id);if(m.done)done++;if(m.started)started++;stars+=m.stars;});
+ return {total,done,started,stars,complete:total>0&&done>=total,pct:total?Math.round(done/total*100):0};}
+function bookBandOf(bk){if(!bk)return 'G3';if(bk.band)return bk.band;const g=(bk.grade||'').toString();if(/start/i.test(g))return 'Starter';const m=g.match(/G\s*([1-5])/i);return m?('G'+m[1]):'G3';}
+function starDots(n){return `<span class="mstars" aria-label="${n}/3">${'★'.repeat(n)}${'☆'.repeat(3-n)}</span>`;}
+function boot(){render();flushLevelUp();} // always open the "누가 공부해요?" picker (saved students are cards)
 function town(){
  const langBtns=['ko','en','zh'].map(l=>`<button data-lang="${l}" class="${st.lang===l?'active':''}">${l==='ko'?'한국어':l==='en'?'English':'中文'}</button>`).join('');
  const pts=(profile&&profile.points)||0;
  const stops=availableLessons().map(id=>{const m=lessonMeta(id);const done=lessonDone(id);const started=lessonStarted(id);const cur=id===currentLessonId;
   const status=done?(st.lang==='ko'?'완료':st.lang==='zh'?'完成':'Done'):started?(st.lang==='ko'?'학습 중':st.lang==='zh'?'学习中':'In progress'):(st.lang==='ko'?'시작하기':st.lang==='zh'?'开始':'Start');
-  return `<button class="lesson-stop ${done?'done':''} ${cur?'current':''}" data-act="open-lesson" data-lesson="${esc(id)}"><span class="stop-badge">${m.num}</span><span class="stop-thumb"><img src="${esc(m.image)}" alt="" loading="lazy" onerror="this.remove()"></span><span class="stop-info"><b>Lesson ${m.num}</b><small>${esc(m.title)}</small><em class="stop-status">${done?'✓ ':''}${status}</em></span></button>`;}).join('');
+  const mst=lessonMastery(id);const starsHtml=mst.stars?`<span class="stop-stars">${starDots(mst.stars)}</span>`:'';
+  return `<button class="lesson-stop ${done?'done':''} ${cur?'current':''}" data-act="open-lesson" data-lesson="${esc(id)}"><span class="stop-badge">${m.num}</span><span class="stop-thumb"><img src="${esc(m.image)}" alt="" loading="lazy" onerror="this.remove()"></span><span class="stop-info"><b>Lesson ${m.num}</b><small>${esc(m.title)}</small><em class="stop-status">${done?'✓ ':''}${status}${starsHtml}</em></span></button>`;}).join('');
  ensureAvatar(profile);
  const parentBtn=`<button class="btn tiny ghost" data-act="parent-open" title="${st.lang==='ko'?'학부모':st.lang==='zh'?'家长':'Parent'}">👨‍👩‍👧</button>`;
  const noticeBtn=`<button class="btn tiny" data-act="town-notice" title="${st.lang==='ko'?'공지사항':st.lang==='zh'?'公告':'Notices'}">📢</button>`;
@@ -364,7 +382,7 @@ function buildingMenu(key){if(key==='theater'){if(window.TownGame)TownGame.destr
  if(key==='library'){toast(st.lang==='ko'?'곧 열려요! 🔒':st.lang==='zh'?'即将开放！🔒':'Coming soon! 🔒');return;} // reserved for later
  const map={wordshop:{view:'words',icon:'🔤',title:{ko:'단어 상점 · 단어 배우기',en:'Word Shop · Learn Words',zh:'单词商店 · 学习单词'},sub:{ko:'단어 카드 · 암기 카드 · 단어 게임.',en:'Word cards · memory · word game.',zh:'单词卡 · 记忆卡 · 单词游戏。'}},report:{view:'report',icon:'📊',title:{ko:'리포트 홀 · 학습 리포트',en:'Report Hall · Learning Report',zh:'报告厅 · 学习报告'},sub:{ko:'전략별 강점·약점을 확인해요.',en:'See your strengths and weaknesses by strategy.',zh:'查看各策略的强弱项。'}}};const m=map[key];if(!m)return;const el=document.getElementById('town-menu');if(!el)return;
  const lessons=availableLessons();
- el.innerHTML=`<div class="tm-backdrop" data-tmx></div><div class="tm-card"><button class="tm-x" data-tmx>×</button><div class="tm-head">${m.icon} <b>${m.title[st.lang]||m.title.en}</b></div><p class="tm-sub">${m.sub[st.lang]||m.sub.en}</p><div class="tm-pick">${st.lang==='ko'?'어느 레슨을 열까요?':st.lang==='zh'?'打开哪一课？':'Which lesson?'}</div><div class="tm-lessons">${lessons.map(id=>{const n=lessonNum(id);const done=lessonDone(id);return `<button class="tm-lesson ${done?'done':''}" data-tm-lesson="${esc(id)}"><span class="stop-badge">${n}</span><span>Lesson ${n}${done?' ✓':''}</span></button>`;}).join('')}</div></div>`;
+ el.innerHTML=`<div class="tm-backdrop" data-tmx></div><div class="tm-card"><button class="tm-x" data-tmx>×</button><div class="tm-head">${m.icon} <b>${m.title[st.lang]||m.title.en}</b></div><p class="tm-sub">${m.sub[st.lang]||m.sub.en}</p><div class="tm-pick">${st.lang==='ko'?'어느 레슨을 열까요?':st.lang==='zh'?'打开哪一课？':'Which lesson?'}</div><div class="tm-lessons">${lessons.map(id=>{const n=lessonNum(id);const done=lessonDone(id);const ms=lessonMastery(id);return `<button class="tm-lesson ${done?'done':''}" data-tm-lesson="${esc(id)}"><span class="stop-badge">${n}</span><span>Lesson ${n}${done?' ✓':''}${ms.stars?`<em class="tm-stars">${starDots(ms.stars)}</em>`:''}</span></button>`;}).join('')}</div></div>`;
  el.classList.add('show');
  const close=()=>{el.classList.remove('show');el.innerHTML='';};
  el.querySelectorAll('[data-tmx]').forEach(b=>b.onclick=close);
@@ -389,8 +407,13 @@ function _book3dHtml(bk){
   <div class="book-card-label">
    <strong>${esc(bk.title)} <span style="font-weight:500">${esc(bk.subtitle)}</span></strong>
    <small>${esc(bk.publisher)}</small>
+   ${_bookProgressHtml(bk)}
   </div>
  </div>`;}
+function _bookProgressHtml(bk){if(!bk||!bk.available)return '';const bm=bookMastery(bk.id);if(!bm.total||!bm.started)return '';
+ const done=bm.complete;const avg=Math.max(0,Math.min(3,Math.round(bm.stars/Math.max(1,bm.total))));
+ const lbl=done?(st.lang==='ko'?'완주':st.lang==='zh'?'完成':'Cleared'):`${bm.done}/${bm.total}`;
+ return `<div class="book-prog ${done?'done':''}"><div class="bp-bar"><b style="width:${bm.pct}%"></b></div><div class="bp-meta">${done?'⭐ ':''}${lbl}${bm.stars?` · ${starDots(avg)}`:''}</div></div>`;}
 function showBookShelf(){
  const t=(ko,en,zh)=>st.lang==='ko'?ko:st.lang==='zh'?zh:en;
  const catalog=window.BOOK_CATALOG||[];
@@ -405,7 +428,7 @@ function showBookShelf(){
    <h2>🏫 Study House</h2>
    <button class="btn secondary" data-act="town-map">← ${t('마을로','Town','返回')}</button>
   </div>
-  <p class="book-shelf-sub">${t('레벨을 골라 책을 선택하세요. 위로 갈수록 어려워져요!','Pick your level, then a book — it gets harder as you climb!','选择级别再选书，越往上越难！')}</p>
+  <p class="book-shelf-sub">${t('어느 레벨이든 자유롭게 고르세요 — 잠긴 순서는 없어요. 사다리는 난이도 안내일 뿐이에요.','Pick any level freely — nothing is locked. The ladder just shows difficulty.','任意级别都可自由选择——没有锁定，梯子只表示难度。')}</p>
   <div class="level-ladder">${rungs}</div>
  </div>`;
  if(window.TownGame)TownGame.destroy();
@@ -694,7 +717,7 @@ function echoClose(){echo.run++;stopEchoTimer();_stopEchoAudio();if('speechSynth
 function focusQuestion(){requestAnimationFrame(()=>{const target=document.querySelector('#question-drawer #question-anchor');if(!target)return;const top=target.getBoundingClientRect().top+window.scrollY-14;window.scrollTo({top:Math.max(0,top),behavior:'auto'});});}
 function grade(mode){const list=qs(mode),miss=[];for(let i=0;i<list.length;i++)if(st.answers[mode][i]!==list[i][3])miss.push(i);st[mode]={score:list.length-miss.length,missed:miss};st.modal=null;
  if(st.awarded&&!st.awarded[mode]){const correct=list.length-miss.length,per=mode==='original'?5:3,bonus=miss.length===0?15:0;const rm=({ko:'학습 완료',en:'learned',zh:'学习完成'})[st.lang]||'learned';awardPoints(correct*per+bonus,rm);st.awarded[mode]=true;}
- save();render();setTimeout(()=>{const r=document.getElementById('grade-result');if(!r)return;if(mode==='original'){r.innerHTML=midReport('original');}else{const next=mode==='originalExtra'?'similar':'report';const nextLabel=mode==='originalExtra'?t('similar'):t('reviewReport');r.innerHTML=`<div class="result"><span class="badge">${st[mode].score}/${list.length}</span><h3>${st.lang==='ko'?'채점 완료':'Checked!'}</h3><p>${mode==='originalExtra'?(st.lang==='ko'?'원문 이해를 한 번 더 확인했어요.':'Your extra learning result was saved.'):(st.lang==='ko'?'리포트에서 약점 변화를 확인하세요.':'Review your skill changes in the report.')}</p><button class="btn violet" data-view="${next}">${nextLabel} →</button></div>`;}bind();r.scrollIntoView({behavior:'smooth',block:'start'});},0)}
+ save();if(mode==='similar')maybeLevelUp();render();setTimeout(()=>{const r=document.getElementById('grade-result');if(!r)return;if(mode==='original'){r.innerHTML=midReport('original');}else{const next=mode==='originalExtra'?'similar':'report';const nextLabel=mode==='originalExtra'?t('similar'):t('reviewReport');r.innerHTML=`<div class="result"><span class="badge">${st[mode].score}/${list.length}</span><h3>${st.lang==='ko'?'채점 완료':'Checked!'}</h3><p>${mode==='originalExtra'?(st.lang==='ko'?'원문 이해를 한 번 더 확인했어요.':'Your extra learning result was saved.'):(st.lang==='ko'?'리포트에서 약점 변화를 확인하세요.':'Review your skill changes in the report.')}</p><button class="btn violet" data-view="${next}">${nextLabel} →</button></div>`;}bind();r.scrollIntoView({behavior:'smooth',block:'start'});},0)}
 const STRAT=[
  ['main idea',{ko:['주제 찾기','전체가 아니라 한 부분만 보고 골랐을 수 있어요.','지문 전체가 무엇에 관한 이야기인지 한 문장으로 말해 보기.'],en:['Main Idea','You may have picked one small part, not the whole story.','Say what the whole passage is about in one sentence.'],zh:['找主旨','可能只看了一个细节，而不是整篇。','用一句话说出整篇讲什么。']}],
  ['details',{ko:['사실·세부 찾기','지문에 없거나 다른 곳의 정보를 골랐을 수 있어요.','답의 근거 문장을 지문에서 손가락으로 짚어 보기.'],en:['Facts & Details','You may have chosen information that is not in the passage.','Point to the exact sentence that proves the answer.'],zh:['事实与细节','可能选了文中没有的信息。','在文中指出证明答案的句子。']}],
@@ -788,7 +811,7 @@ function finishCoach(){const c=st.coach;let mastered=0,partial=0,struggled=0;
  if(!c.awarded&&coins>0){awardPoints(coins,coachT('스킬 코치','Skill Coach','技能教练'));c.awarded=coins;}
  c.mastered=mastered;c.partial=partial;c.struggled=struggled;c.phase='done';
  st.coachCleared=struggled===0;st.coachStars=Math.min(3,Math.round((mastered+partial)/Math.max(1,c.queue.length)*3));
- save();render();window.scrollTo({top:0});}
+ save();maybeLevelUp();render();window.scrollTo({top:0});}
 function handleCoach(b){const act=b.dataset.act;
  if(act==='coach-start'){startCoach();return;}
  const c=st.coach;if(!c){startCoach();return;}
@@ -803,6 +826,25 @@ function handleCoach(b){const act=b.dataset.act;
   else if(c.tries>=2){c.reveal=true;c.correctNow=false;if(c.phase==='q2'||coachPractice(cur.i).length<2){if(c.result[cur.i]!=='mastered'&&c.result[cur.i]!=='partial')c.result[cur.i]='struggled';}}
   save();render();return;}
 }
+// ── Level Up! — a reward for finishing a book level (never a gate) ───────────
+function nextLevelBook(bookId){const cat=window.BOOK_CATALOG||[];const cur=cat.find(b=>b.id===bookId);if(!cur)return null;
+ const rank=b=>({Starter:0,G1:1,G2:2,G3:3,G4:4,G5:5})[bookBandOf(b)]??3;const cr=rank(cur);
+ return cat.filter(b=>b.available&&b.id!==bookId&&rank(b)>cr).sort((a,b)=>rank(a)-rank(b))[0]||null;}
+function maybeLevelUp(){if(!profile||!currentBookId)return;const bm=bookMastery(currentBookId);if(!bm.complete)return;
+ profile.levelUps=profile.levelUps||{};if(profile.levelUps[currentBookId])return;
+ profile.levelUps[currentBookId]=Date.now();
+ const cat=(window.BOOK_CATALOG||[]).find(b=>b.id===currentBookId);const nx=nextLevelBook(currentBookId);
+ profile.pendingLevelUp={bookId:currentBookId,band:cat?bookBandOf(cat):'',title:cat?`${cat.title} ${cat.subtitle||''}`.trim():'',next:nx?{id:nx.id,label:`${nx.title} ${nx.subtitle||''}`.trim(),band:bookBandOf(nx)}:null};
+ awardPoints(50,coachT('레벨 업','Level Up','升级'));save();flushLevelUp();}
+function flushLevelUp(){if(!profile||!profile.pendingLevelUp)return;if(document.getElementById('levelup-overlay'))return;
+ const p=profile.pendingLevelUp;const T=(ko,en,zh)=>st.lang==='ko'?ko:st.lang==='zh'?zh:en;
+ const next=p.next?`<div class="lu-next"><small>${T('다음 레벨은 이렇게 있어요 — 원하면 바로, 아니면 아무 레벨이나 골라도 좋아요','A next level is ready — jump in, or pick any level you like','下一级已就绪，也可自由选择任意级别')}</small><b>${esc(p.next.label)} · ${esc(p.next.band)}</b></div>`:`<div class="lu-next"><b>${T('열린 모든 레벨을 완주했어요! 🎉','You finished every open level! 🎉','已完成所有开放级别！🎉')}</b></div>`;
+ const el=document.createElement('div');el.id='levelup-overlay';el.className='lu-backdrop';
+ el.innerHTML=`<div class="lu-card"><div class="lu-burst">🏆</div><div class="lu-kicker">LEVEL UP!</div><h2>${esc(p.band)} ${T('레벨 완주!','Level cleared!','级别通关！')}</h2><p class="lu-book">${esc(p.title)}</p><div class="lu-coins">🪙 +50</div>${next}<div class="lu-actions">${p.next?`<button class="btn primary big" id="lu-next">${T('다음 레벨 열기','Open next level','打开下一级')} →</button>`:''}<button class="btn" id="lu-close">${T('닫기','Close','关闭')}</button></div></div>`;
+ document.body.appendChild(el);
+ const close=()=>{el.remove();if(profile){profile.pendingLevelUp=null;save();}};
+ el.querySelector('#lu-close').onclick=close;
+ const nx=el.querySelector('#lu-next');if(nx)nx.onclick=()=>{close();if(window.TownGame)TownGame.destroy();atTown=true;showBookShelf();};}
 function toast(msg){const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
 function printStudy(passage){
  const cfg=passage==='original'?{text:L.originalPassage,questions:L.originalQuestions,title:L.title||'My Backyard Zoo'}:passage==='originalExtra'?{text:L.originalExtraPassage||L.originalPassage,questions:L.originalExtraQuestions||L.originalQuestions,title:(L.originalExtraTitle||L.title||'Extra Learning')}:{text:L.extraPassage||[],questions:L.extraQuestions||[],title:L.extraTitle||'New Passage'};
