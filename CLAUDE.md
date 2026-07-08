@@ -276,7 +276,15 @@ done   — struggled=0 이면 "레벨 업! 🏆", 아니면 "한 걸음 성장! 
   한 책의 전 레슨 done→최초 1회 축하(+50코인, `profile.levelUps[bookId]`).
   다음 레벨을 **추천만** 하고 "아무 레벨이나 골라도 좋아요" 명시. 트리거:
   `grade('similar')`·`finishCoach`·로그인(`enterStudent`)·`boot`. CSS `.lu-*`.
-- 향후 확장(미구현): 누적 전략별 약점 랭킹 리포트, 자기 낭독 녹음(fluency).
+- **누적 전략별 약점 랭킹** ✅ 구현됨 (2026-07-08). `cumulativeStrategyStats()`가
+  `profile.lessons`의 모든 레슨 × 모든 책 × 3단계(original/originalExtra/similar =
+  STEP3/5/7)를 합산. 문항 index는 항상 고정 전략 순서(`CANON_STRATS`)이므로 레슨별
+  문항 재로딩 없이 저장된 `{score,missed}`만으로 계산 — Supabase 원본을 다시 안 불러도
+  됨. 부수 효과로 기존 버그도 고침: 옛 `parentStats().strat`는 `buildRuntimeLesson(id)
+  .originalQuestions`(레슨1만 정적 보유, 나머지는 Supabase 전용이라 항상 빈 배열)에
+  의존해 **lesson1 외 모든 레슨의 STEP3 약점이 조용히 누락**되고 있었음. 부모 대시보드
+  "누적 전략별 약점 랭킹" 섹션에 순위 배지(`.pd-rank`)로 표시, 완전히 익힌 전략은 태그로.
+  자기 낭독 녹음(fluency)은 사용자 지시로 진행 안 함(불편함).
 
 ### 리딩 진단 테스트 (Placement) ✅ 구현됨 (2026-07-08)
 CARS & STARS Plus Placement Book 구조 참고(라이선스 원문은 git 금지 → **창작 진단

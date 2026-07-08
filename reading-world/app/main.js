@@ -530,19 +530,36 @@ function placedDecoArt(){const t=(profile&&profile.town&&profile.town.placedDeco
 function svgToUri(svg){try{return svg?'data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svg))):null;}catch(e){return null;}}
 function buildingArtMap(){const A=window.BUILDING_ART||{};const out={};Object.keys(A).forEach(k=>{const u=svgToUri(A[k]);if(u)out[k]=u;});return out;}
 // ---- Parent dashboard ----
-function parentStats(){const lessons=availableLessons();const strat={};
- const rows=lessons.map(id=>{const ls=(profile.lessons||{})[id]||null;const rt=buildRuntimeLesson(id)||{};const oq=rt.originalQuestions||[];const orig=ls&&ls.original,ext=ls&&ls.originalExtra,sim=ls&&ls.similar;
-  if(orig&&oq.length){const missed=orig.missed||[];oq.forEach((q,i)=>{const info=stratInfo(q&&q[0]);const e=strat[info.n]||(strat[info.n]={miss:0,seen:0,tip:info.t});e.seen++;if(missed.includes(i))e.miss++;});}
+function parentStats(){const lessons=availableLessons();
+ const rows=lessons.map(id=>{const ls=(profile.lessons||{})[id]||null;const rt=buildRuntimeLesson(id)||{};const orig=ls&&ls.original,ext=ls&&ls.originalExtra,sim=ls&&ls.similar;
   const wc=(rt.words||[]).length;const known=ls?Object.keys(ls.known||{}).filter(k=>ls.known[k]).length:0;
   return {id,num:lessonNum(id),title:rt.title||'',done:lessonDone(id),started:lessonStarted(id),orig:orig?orig.score:null,ext:ext?ext.score:null,sim:sim?sim.score:null,wc,known};});
- return {rows,strat};}
+ return {rows};}
+// Cumulative strategy-weakness ranking across every lesson AND every book the
+// student has ever attempted (Book Study / Extra Learning / New Passage — STEP
+// 3/5/7). Question index i always maps to the same fixed-order strategy (see
+// CLAUDE.md), so this only needs the saved {score,missed} per attempt — no need
+// to re-fetch each lesson's (often Supabase-only) question list. That also fixes
+// a latent bug where the old per-book calc silently skipped STEP-3 strategy data
+// for every lesson except lesson1 (the only one with statically-bundled originals).
+const CANON_STRATS=['Finding Main Idea','Recalling Facts and Details','Understanding Sequence','Recognizing Cause and Effect','Comparing and Contrasting','Making Predictions','Finding Word Meaning in Context','Drawing Conclusions and Making Inferences','Distinguishing Between Fact and Opinion',"Understanding Author's Purpose",'Interpreting Figurative Language','Distinguishing Between Real and Make-believe'];
+function cumulativeStrategyStats(){
+ const strat={};CANON_STRATS.forEach(s=>{strat[s]={seen:0,miss:0};});
+ const lessons=(profile&&profile.lessons)||{};let attempts=0;
+ Object.values(lessons).forEach(ls=>{if(!ls)return;
+  ['original','originalExtra','similar'].forEach(mode=>{const att=ls[mode];if(!att||!Array.isArray(att.missed))return;attempts++;
+   CANON_STRATS.forEach((s,i)=>{strat[s].seen++;if(att.missed.includes(i))strat[s].miss++;});});});
+ const ranked=CANON_STRATS.map(s=>({name:s,seen:strat[s].seen,miss:strat[s].miss,rate:strat[s].seen?strat[s].miss/strat[s].seen:0}))
+  .filter(r=>r.seen>0).sort((a,b)=>b.rate-a.rate||b.miss-a.miss);
+ return {ranked,attempts};}
 function parentDashboard(){const t=(ko,en,zh)=>st.lang==='ko'?ko:st.lang==='zh'?zh:en;const pts=window.GameStore?GameStore.coins(profile):(profile&&profile.points)||0;
  const S=parentStats();const doneN=S.rows.filter(r=>r.done).length,total=S.rows.length;const sqN=Object.keys((profile.screenQuest&&profile.screenQuest.passed)||{}).length;const myW=((profile&&profile.myWords)||[]).length;
  const sum=`<div class="pd-sum"><div class="pd-card"><span class="pd-n">${pts}</span><small>${t('총 포인트','Points','总积分')}</small></div><div class="pd-card"><span class="pd-n">${doneN}/${total}</span><small>${t('완료 레슨','Lessons done','完成课程')}</small></div><div class="pd-card"><span class="pd-n">${sqN}</span><small>${t('영상 퀴즈 통과','Video quizzes','视频测验')}</small></div><div class="pd-card"><span class="pd-n">${myW}</span><small>${t('나만의 단어','My words','我的单词')}</small></div></div>`;
- const weak=Object.entries(S.strat).filter(([,e])=>e.miss>0).sort((a,b)=>b[1].miss-a[1].miss);
- const strong=Object.entries(S.strat).filter(([,e])=>e.seen>0&&e.miss===0).map(([n])=>n);
- const weakHtml=weak.length?weak.map(([n,e])=>`<div class="pd-weak"><div class="pd-weak-h"><b>${esc(n)}</b><span class="pd-miss">${t('틀림','missed','错')} ${e.miss}/${e.seen}</span></div><p>${esc(e.tip)}</p></div>`).join(''):`<p class="pd-empty">${t('아직 교재 학습(진단) 데이터가 쌓이지 않았어요.','No diagnostic Book Study data yet.','还没有教材学习数据。')}</p>`;
- const strongHtml=strong.length?strong.map(n=>`<span class="pd-tag">${esc(n)}</span>`).join(''):'<span class="pd-empty">—</span>';
+ const C=cumulativeStrategyStats();
+ const weakRanked=C.ranked.filter(r=>r.miss>0);
+ const strong=C.ranked.filter(r=>r.miss===0).map(r=>r.name);
+ const weakHtml=weakRanked.length?weakRanked.map((r,i)=>{const info=stratInfo(r.name);return `<div class="pd-weak"><div class="pd-weak-h"><span class="pd-rank">${i+1}</span><b>${esc(info.n)}</b><span class="pd-miss">${t('틀림','missed','错')} ${r.miss}/${r.seen} (${Math.round(r.rate*100)}%)</span></div><p>${esc(info.t)}</p></div>`;}).join(''):(C.attempts?`<p class="pd-empty">${t('훌륭해요! 지금까지 모든 전략을 잘 풀고 있어요.','Great job — no weak strategies so far.','太棒了，目前没有薄弱项。')}</p>`:`<p class="pd-empty">${t('아직 교재 학습 데이터가 쌓이지 않았어요.','No Book Study data yet.','还没有教材学习数据。')}</p>`);
+ const strongHtml=strong.length?strong.map(n=>`<span class="pd-tag">${esc(stratInfo(n).n)}</span>`).join(''):'<span class="pd-empty">—</span>';
  const sc=v=>v==null?'—':v+'/12';
  const rowsHtml=S.rows.map(r=>{const status=r.done?t('완료','Done','完成'):r.started?t('학습 중','In progress','进行中'):t('시작 전','Not started','未开始');return `<div class="pd-row ${r.done?'done':''}"><span class="pd-lnum">${r.num}</span><div class="pd-linfo"><b>Lesson ${r.num}</b><small>${esc(r.title)}</small></div><span class="pd-stat ${r.done?'ok':r.started?'mid':''}">${status}</span><span class="pd-scv">${sc(r.orig)}</span><span class="pd-scv">${sc(r.ext)}</span><span class="pd-scv">${sc(r.sim)}</span><span class="pd-scv">${r.known}/${r.wc||12}</span></div>`;}).join('');
  const table=`<div class="pd-table"><div class="pd-row head"><span class="pd-lnum">#</span><div class="pd-linfo"><b>${t('레슨','Lesson','课程')}</b></div><span class="pd-stat">${t('상태','Status','状态')}</span><span class="pd-scv">${t('교재','Book','教材')}</span><span class="pd-scv">${t('추가','Extra','追加')}</span><span class="pd-scv">${t('새지문','New','新文')}</span><span class="pd-scv">${t('단어','Words','单词')}</span></div>${rowsHtml}</div>`;
@@ -552,7 +569,7 @@ function parentDashboard(){const t=(ko,en,zh)=>st.lang==='ko'?ko:st.lang==='zh'?
  return `<div class="town parent-dash"><div class="town-top"><div class="town-brand">👨‍👩‍👧 ${t('학부모 대시보드','Parent Dashboard','家长面板')}</div><div class="town-tools"><span class="student-chip"><b>${name}</b></span><button class="btn tiny" data-act="town-map">← ${t('마을로','Town','返回')}</button></div></div>
   ${sum}
   ${diagSec}
-  <section class="pd-sec"><h3>🎯 ${t('전략별 약점','Weak reading strategies','薄弱阅读策略')}</h3><p class="pd-note">${t('교재 학습(진단)에서 자주 틀린 독해 전략이에요. 이 유형을 새 지문 연습에서 집중하면 좋아요.','Strategies most missed in the diagnostic Book Study — focus these in New Passage Practice.','教材学习中最常错的策略，可在新文章练习中重点练习。')}</p>${weakHtml}<div class="pd-strong"><b>💪 ${t('잘하는 전략','Strong','强项')}:</b> ${strongHtml}</div></section>
+  <section class="pd-sec"><h3>🎯 ${t('누적 전략별 약점 랭킹','Cumulative strategy weakness ranking','累计策略薄弱排名')}</h3><p class="pd-note">${t('지금까지 푼 모든 레슨·모든 책의 교재 학습·추가 학습·새 지문 연습을 합산한 순위예요. 1위가 가장 자주 틀리는 전략이에요.','Ranked across every lesson and every book studied so far (Book Study + Extra Learning + New Passage). #1 is the most-missed strategy.','汇总迄今学习过的所有课程和书籍（教材学习+追加学习+新文章练习）后的排名，第1名是最常错的策略。')}</p>${weakHtml}<div class="pd-strong"><b>💪 ${t('완전히 익힌 전략','Mastered','已掌握')}:</b> ${strongHtml}</div></section>
   <section class="pd-sec"><h3>📚 ${t('레슨별 진도','Progress by lesson','各课进度')}</h3>${table}</section>
   <p class="pd-foot">${t('점수는 운·뽑기가 아니라 학습 완료와 성장에만 연결돼요. 데이터는 아이별로 저장됩니다.','Points come only from learning and growth — never luck. Data is saved per child.','积分只来自学习与成长，绝非运气。数据按孩子分别保存。')}</p></div>`;}
 function updateCoinHud(){const pill=document.querySelector('.game-town .town-tools .points-pill');if(pill)pill.textContent='🪙 '+(window.GameStore?GameStore.coins(profile):(profile&&profile.points)||0);}
