@@ -331,11 +331,16 @@ CARS의 12전략 문항 엔진과 별개인 **순수 독서 경험**. 마을 Lib
   Supabase `library_books` 테이블(`book_id`, `pages` jsonb, RLS anon-select-only, `lesson_content`와
   동일 패턴)에만 저장, `Store.pullLibraryPages(bookId)`로 조회.
 - **1호 도서**: Magic Tree House #1 *Dinosaurs Before Dark* (Mary Pope Osborne/Sal Murdocca,
-  1992 Random House) — `book_id: 'library-mth1'`. 원문 PDF(57p, calibre 변환본)를 `pdftotext -layout`
-  으로 전량 추출(6,518 단어) 후 10챕터로 정확히 분할, 문단을 페이지당 ~115단어로 재페이지네이션
-  (48페이지, 챕터는 항상 새 페이지에서 시작). AR 2.6 / R/G 2C / W/C 4,737(출판사 공식 시리즈
-  #1~28 AR표 기준, 사용자 제공) — 웹 검색으로도 AR 2.6/Lexile 510L 교차 확인됨.
-  **삽화(Sal Murdocca, 라이선스)는 git에 넣지 않음** — 리더는 오리지널 이모지/타이포 커버만 사용.
+  1992 Random House) — `book_id: 'library-mth1'`. 원문 PDF(57p, calibre 변환본, 텍스트 레이어
+  포함 — OCR 아님)를 `pdftotext -layout`으로 전량 추출(6,518 단어). **페이지는 원본 그대로**:
+  처음엔 페이지당 ~115단어로 임의 재페이지네이션(48p)했으나, "원본을 그대로 올려라"는 사용자
+  피드백에 따라 실제 인쇄본의 진짜 페이지 경계(10~45쪽, 삽화 전용 빈 페이지 2장 포함 36페이지)로
+  재구성 — 챕터가 반드시 새 페이지에서 시작하지 않고 이전 챕터 끝과 같은 페이지에 이어지는 실제
+  조판까지 그대로 반영(`chapterTitleAt`으로 챕터 제목을 페이지 내 정확한 문단 앞에 삽입). 총
+  단어수 4,728 vs 출판사 공식 W/C 4,737(±9, 카운팅 방식 차이 수준) — 추출 정확도 검증됨.
+  AR 2.6 / R/G 2C(출판사 공식 시리즈 #1~28 AR표, 사용자 제공 이미지 기준) — 웹 검색으로도
+  AR 2.6/Lexile 510L 교차 확인됨. **삽화(Sal Murdocca, 라이선스)는 git에 넣지 않음** — 리더는
+  오리지널 이모지/타이포 커버만 사용, 삽화 전용 페이지는 "(원본 삽화 페이지)" 자리표시.
 - **리더 UI** (`libraryScreen`/`libShelfScreen`/`libReaderScreen`, `main.js`): 표지 단독 표시 →
   이후 좌우 2페이지 스프레드(모바일은 세로 스택), 클릭 시 CSS 3D 플립 애니메이션(`.flip-next`/
   `.flip-prev`). 진행 위치는 `profile.library[bookId]={spread,updatedAt}`로 자동 저장(이어 읽기),
@@ -346,8 +351,9 @@ CARS의 12전략 문항 엔진과 별개인 **순수 독서 경험**. 마을 Lib
 - **오디오·읽어주기**: 페이지별 문장 하이라이트(`libPageBody`가 `.sentence-line[data-libpage]`로
   래핑) + MP3 재생 시 `currentTime/duration` 기반 하이라이트(기존 `speakPassage` 패턴 재사용),
   MP3 없으면 Web Speech 폴백. `scripts/generate-audio.js`에 `fetchLibraryBooks()` 추가 —
-  Supabase `library_books`의 페이지마다 `{bookId}/page{N}.mp3` 생성(48개, 원본과 동일한
-  skip-if-exists 캐싱). **웹상의 기존 오디오북을 자동으로 찾아 링크하는 기능은 구현하지 않음**
+  Supabase `library_books`의 페이지마다 `{bookId}/page{N}.mp3` 생성(36개, type `libpage`로
+  **항상 재생성** — 페이지네이션이 한 번 교정된 전례가 있어 CARS 원본처럼 skip-if-exists로 캐싱하면
+  스토리지 경로는 그대로인데 텍스트만 바뀐 상황을 못 잡아냄). **웹상의 기존 오디오북을 자동으로 찾아 링크하는 기능은 구현하지 않음**
   (공식 오디오북은 대부분 유료·비공개 스트림이라 저작권상 위험 — 항상 자체 TTS 우선, 추후 정말
   라이선스 확보된 링크가 있으면 `library.js`에 `audioUrl` 필드로 수동 등록 가능하도록 설계).
 - **확장 설계**: `LIBRARY_CATALOG.books`에 항목을 추가하고 Supabase에 페이지 텍스트만 넣으면

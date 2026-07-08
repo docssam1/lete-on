@@ -12,7 +12,7 @@ window.LIBRARY_CATALOG = {
       title: 'Dinosaurs Before Dark',
       illustrator: 'Sal Murdocca',
       ar: 2.6, rg: '2C', wc: 4737,
-      totalPages: 48,
+      totalPages: 36, // real per-page count from the source book, not a synthetic split
       audio: 'tts',
     },
   ],

@@ -239,14 +239,22 @@ function libGoSpread(delta){if(!lib||lib.view!=='book')return;const meta=libBook
 // namespaced by page index so multiple visible pages don't collide.
 function libPageBody(page,pageIdx){
  if(!page)return '';
- const title=page.chapterTitle?`<h3 class="lib-ch-title">${esc(page.chapterTitle)}</h3>`:'';
+ const paras=page.paragraphs||[];
+ // Real book pagination: a chapter doesn't always start at the top of a page (the
+ // previous chapter's tail may share the page). chapterTitleAt is the paragraph
+ // index the heading prints before; defaults to 0 (top of page) when unset.
+ const titleAt=page.chapterTitle?(page.chapterTitleAt||0):-1;
+ if(!paras.length){
+  return `<div class="lib-page-text lib-page-illus">${libT('(원본 삽화 페이지)','(Illustration page)','（原书插图页）')}</div>`;
+ }
  let offset=0;
- const html=(page.paragraphs||[]).map(p=>{
+ const html=paras.map((p,pi)=>{
+  const heading=pi===titleAt?`<h3 class="lib-ch-title">${esc(page.chapterTitle)}</h3>`:'';
   const sentences=splitSentences(p);
   const inner=sentences.map(s=>{const start=offset;const end=start+s.length;offset=end+1;return `<span class="sentence-line" data-libpage="${pageIdx}" data-start="${start}" data-end="${end}">${esc(s)} </span>`;}).join('');
-  offset+=1;return `<p>${inner}</p>`;
+  offset+=1;return `${heading}<p>${inner}</p>`;
  }).join('');
- return `${title}<div class="lib-page-text">${html}</div>`;
+ return `<div class="lib-page-text">${html}</div>`;
 }
 function libAudioUrl(bookId,pageIdx){return `${AUDIO_BASE}/${bookId}/page${pageIdx+1}.mp3`;}
 function libSpeakPage(pageIdx,pageText){

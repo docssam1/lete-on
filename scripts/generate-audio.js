@@ -228,7 +228,11 @@ async function main() {
       tasks.unshift({
         lessonId: `${row.book_id}-page${i + 1}`,
         bookId: row.book_id,
-        type: 'original', // stable licensed text -> same skip-if-exists behavior as CARS originals
+        // Always regenerate (not 'original', so the skip-if-exists check below is
+        // bypassed): pagination has already been corrected once after going live, so
+        // a stale MP3 under the same storagePath would silently mismatch the on-screen
+        // text. Upload uses x-upsert:true, so this just overwrites in place.
+        type: 'libpage',
         text,
         storagePath: `${row.book_id}/page${i + 1}.mp3`,
       });
