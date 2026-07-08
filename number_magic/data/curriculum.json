@@ -1,0 +1,39 @@
+{
+  "title": "Numbers of Magic",
+  "zones": {
+    "library": { "name": "마법 도서관", "desc": "개념 학습 · 권 선택" },
+    "practice": { "name": "연습 마을", "desc": "매직 랩 게임" },
+    "arena": { "name": "아레나 극장 (테스트존)", "desc": "온라인/인쇄 테스트" },
+    "hall": { "name": "도장의 전당", "desc": "모은 도장·수료 인장" },
+    "plaza": { "name": "중앙 광장", "desc": "내 코인·진행 상태" },
+    "store": { "name": "매직 스토어", "desc": "누미 코인 교환" }
+  },
+  "levels": [
+    { "id": "basic", "name": "기본 연산학습", "note": "구 초급" },
+    { "id": "extend", "name": "확장 연산학습", "note": "구 중급" },
+    { "id": "challenge", "name": "경시 도전", "note": "구 고급" }
+  ],
+  "books": [
+    {
+      "id": "A",
+      "level": "basic",
+      "title": "창의수연 I 초급 A권",
+      "unlocked": true,
+      "chapters": [
+        { "id": "A-01", "title": "더해서 10이 되는 수를 찾아라 1", "concept": "pair10" },
+        { "id": "A-02", "title": "수를 이사시켜요 1", "concept": "move10" },
+        { "id": "A-03", "title": "우선 10을 더하기", "concept": "add10first" },
+        { "id": "A-04", "title": "계단식 덧셈", "concept": "stepadd" },
+        { "id": "A-05", "title": "관문 (Review · SONA · 매직 배틀)", "concept": "gate", "gate": true }
+      ]
+    },
+    { "id": "B", "level": "basic", "title": "창의수연 I 초급 B권", "unlocked": false, "chapters": [] },
+    { "id": "C", "level": "basic", "title": "창의수연 I 초급 C권", "unlocked": false, "chapters": [] },
+    { "id": "D", "level": "basic", "title": "창의수연 I 초급 D권", "unlocked": false, "chapters": [] },
+    { "id": "E", "level": "basic", "title": "창의수연 I 초급 E권", "unlocked": false, "chapters": [] },
+    { "id": "F", "level": "basic", "title": "창의수연 I 초급 F권", "unlocked": false, "chapters": [] },
+    { "id": "G", "level": "basic", "title": "창의수연 I 초급 G권", "unlocked": false, "chapters": [] },
+    { "id": "H", "level": "basic", "title": "창의수연 I 초급 H권", "unlocked": false, "chapters": [] },
+    { "id": "I", "level": "basic", "title": "창의수연 I 초급 I권", "unlocked": false, "chapters": [] }
+  ]
+}
