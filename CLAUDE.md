@@ -280,10 +280,21 @@ main: main (GitHub Pages 자동 배포, 직접 작업)
   - **공지 게시판**: Supabase `notices` 테이블(공개읽기+anon쓰기) + 앱 게시판
     (리치 마크다운 ##/불릿/**볼드**) + 주간 자동공지 Routine.
   - **Screen Quest 주별 아카이브**: `data/video-archive.js`(과거 주 보관).
-  - ⚠️ **음성 MP3 미갱신**: CARS C extra/new 지문이 바뀌어 Supabase Storage의
-    `{book}/{lesson}-extra.mp3`/`-new.mp3`가 옛 내용. 앱은 MP3 실패 시 브라우저
-    TTS로 폴백(새 지문 정확히 읽음)하므로 학습엔 지장 없음. 고품질 MP3 재생성은
-    미완(Storage 업로드가 이 환경에선 막힘).
+  - **우상단 신원 칩(userChip)**: 로그인하면 우상단에 학생 본인의 레고 아바타 +
+    이름 표시(빌리지 툴바·타운 홈·레슨 상단바). 클릭=학생 전환. 인증은 아직
+    없음(회원제는 추후). `main.js` `userChip()`, CSS `.user-chip/.uc-ava/.uc-name`.
+  - **음성 MP3 처리(중요)**: CARS C extra/new 지문을 이번에 재작성 → 07-07 녹음
+    MP3가 옛 내용. ①앱: `main.js`의 `AUDIO_STALE={'cars-level-c':{extra,new}}`
+    가드가 해당 파일을 건너뛰고 온디바이스 TTS로 실제 지문을 읽음(정확). 원본
+    (-original.mp3)·CARS B는 그대로 MP3 재생. ②파이프라인: `scripts/generate-audio.js`
+    (Google Neural2 TTS→Supabase Storage 업로드, GitHub Actions `Generate Audio`가
+    main 푸시 시 데이터 변경 감지해 실행). 스킵 로직을 "원본만 스킵, extra/new는
+    항상 재생성(upsert)"으로 고쳐 바뀐 지문이 새 음성으로 갱신됨.
+    **재생성 확인 후** `AUDIO_STALE`의 cars-level-c 항목을 지우면 실음성으로 전환.
+  - **통합관리 콘솔(admin)**: main에 있던 `admin.html`·`gfield-on-admin.html`·
+    `config.js`·`GFIELD-ON-통합설계.md`. 병합 시 보존(앱 코드는 dev 우선).
+  - **병합**: dev(`claude/cars-reading-world-dev-35728z`) → `main` 병합·푸시 완료
+    (GitHub Pages 라이브). 이 세션 작업 브랜치는 dev, 사용자 허가로 main 병합함.
 - **2026-07-07** — Level C 240문항 전체 재생성 (정답 분포 60A/60B/60C/60D)
   - 이전 버전 문제: B 82.5%, D 0% (GPT 리뷰 46/100점)
   - Q11 실제 인용구 사용, Q12 현실적 wrong choices, Q3 실제 사건순서 강화
