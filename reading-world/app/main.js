@@ -380,6 +380,20 @@ function gameTownShell(){const pts=(profile&&profile.points)||0;const langBtns=[
  const _rst=_r.done?(st.lang==='ko'?'복습':st.lang==='zh'?'复习':'Review'):(_r.started?(st.lang==='ko'?'학습 중':st.lang==='zh'?'学习中':'In progress'):(st.lang==='ko'?'시작하기':st.lang==='zh'?'开始':'Start'));
  const banner=`<button class="resume-banner" data-act="resume-lesson"><span class="rb-icon">📖</span><span class="rb-text"><small>${_cont}</small><b>Lesson ${_r.num} · ${esc(_r.title)}</b></span><span class="rb-status ${_r.done?'done':_r.started?'mid':''}">${_rst}</span><span class="rb-go">▶</span></button>`;
  return `<div class="town game-town"><div class="town-top"><div class="town-brand">${brandHTML()}</div><div class="town-tools"><span class="points-pill">🪙 ${pts}</span>${sqAvailable()?`<button class="btn tiny" data-act="sq-open">🎬 ${sqT('스크린','Screen','屏幕')}</button>`:''}<button class="btn tiny" data-act="diag-open" title="${st.lang==='ko'?'레벨 진단':st.lang==='zh'?'水平测评':'Level check'}">🧭</button><button class="btn tiny" data-act="town-notice" title="${st.lang==='ko'?'공지사항':st.lang==='zh'?'公告':'Notices'}">📢</button><button class="btn tiny" id="rw-weather" title="${st.lang==='ko'?'날씨':st.lang==='zh'?'天气':'Weather'}">☀️</button><button class="btn tiny" data-act="town-closet">🎨 ${customize}</button><button class="btn tiny" data-act="town-list">≣ ${listLbl}</button><div class="language-toggle town-lang">${langBtns}</div>${userChip()}</div></div>${banner}<div class="town-stage-wrap"><div id="town-stage"></div><div class="town-dpad"><button class="dpad d-up" data-move="0,-1" aria-label="up">▲</button><button class="dpad d-left" data-move="-1,0" aria-label="left">◀</button><button class="dpad d-right" data-move="1,0" aria-label="right">▶</button><button class="dpad d-down" data-move="0,1" aria-label="down">▼</button></div><div class="town-zoom"><button class="zbtn" data-zoom="in" aria-label="zoom in">＋</button><button class="zbtn" data-zoom="out" aria-label="zoom out">－</button></div></div><div id="town-menu" class="town-menu"></div><p class="town-hint">${hint}</p></div>`;}
+// Two-finger pinch to zoom the town map, alongside the +/- buttons. Tracks active
+// pointers on the stage; with exactly two down, scales TownGame's zoom by the change
+// in finger distance each move. A single finger is left alone so it still drives
+// avatar movement/building taps — only a genuine two-finger gesture zooms.
+function bindPinchZoom(stage){
+ const pts=new Map();let startDist=0,startZoom=1;
+ const dist=()=>{const[a,b]=[...pts.values()];return Math.hypot(a.x-b.x,a.y-b.y);};
+ stage.addEventListener('pointerdown',e=>{pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pts.size===2){startDist=dist();startZoom=(window.TownGame&&TownGame.getZoom)?TownGame.getZoom():1;}});
+ stage.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pts.size===2&&startDist>0&&window.TownGame&&TownGame.setZoom){e.preventDefault();TownGame.setZoom(startZoom*(dist()/startDist));}},{passive:false});
+ const end=e=>{pts.delete(e.pointerId);if(pts.size<2)startDist=0;};
+ stage.addEventListener('pointerup',end);stage.addEventListener('pointercancel',end);stage.addEventListener('pointerleave',end);
+}
 function bindGameTown(){bind();
  // English village signage (fixed English names regardless of UI language)
  const labels={library:'Library',wordshop:'Word Shop',theater:'Screen Theater',practice:'Study House',report:'Report Hall',open:st.lang==='ko'?'탭하여 들어가기':st.lang==='zh'?'点击进入':'Tap to enter'};
@@ -387,6 +401,7 @@ function bindGameTown(){bind();
  if(stage&&gameAvailable()){TownGame.mount(stage,{look:lookForGame(),coins:(profile&&profile.points)||0,labels,onOpenMenu:buildingMenu,slots:(window.DECORATIONS&&DECORATIONS.slots)||{},placed:placedDecoEmoji(),onSlotClick:decorationMenu,avatarUri:avatarSvgUri(),decorArt:placedDecoArt(),buildingArt:buildingArtMap()});}
  app.querySelectorAll('.town-dpad [data-move]').forEach(b=>{const[x,y]=b.dataset.move.split(',').map(Number);const on=e=>{e.preventDefault();TownGame.setMove(x,y);};const off=()=>TownGame.setMove(0,0);b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointerleave',off);b.addEventListener('pointercancel',off);});
  app.querySelectorAll('.town-zoom [data-zoom]').forEach(b=>{b.onclick=()=>{if(!window.TownGame||!TownGame.setZoom)return;const cur=TownGame.getZoom?TownGame.getZoom():1;TownGame.setZoom(b.dataset.zoom==='in'?cur+0.4:cur-0.4);};});
+ if(stage)bindPinchZoom(stage);
  const wx=document.getElementById('rw-weather');if(wx){const icons=['☀️','🌧️'];let wi=0;wx.onclick=()=>{wi=(wi+1)%icons.length;wx.textContent=icons[wi];if(window.TownGame)TownGame.setWeather(wi===1?'rain':'clear');};}}
 function buildingMenu(key){if(key==='theater'){if(window.TownGame)TownGame.destroy();enterScreenQuest();return;}
  if(key==='practice'){showBookShelf();return;}          // Study House → level ladder / book catalog

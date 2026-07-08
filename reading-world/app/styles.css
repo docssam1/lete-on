@@ -451,7 +451,7 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 /* v37: Phaser town (Gfield Reading Town game view) */
 .game-town{max-width:1000px}
 .town-stage-wrap{position:relative;margin-top:12px;border-radius:18px;overflow:hidden;background:#bcd9a8;box-shadow:0 8px 26px rgba(30,50,90,.14)}
-#town-stage{width:100%;aspect-ratio:960/600;display:block}
+#town-stage{width:100%;aspect-ratio:960/600;display:block;touch-action:none}
 #town-stage canvas{display:block;width:100%!important;height:100%!important;border-radius:18px}
 /* Movement controls overlaid on the map edges (mid of each side). The container is
    click-through (pointer-events:none) so buildings in the map center stay tappable;
