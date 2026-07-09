@@ -3,382 +3,243 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Numbers of Magic — 마법의 마을</title>
+<title>Numbers of Magic — 마법의 숫자 마을</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <style>
 :root{
-  --blue:#16417C; --blue-deep:#0E2C57; --gold:#EAC996; --gold-deep:#C9A063;
-  --sky1:#bfe0f2; --sky2:#e8f4ec; --grass:#a8cf8e; --grass2:#8fbf74;
-  --water:#7fc4e0; --ink:#1A2233;
+  --blue:#16417C; --blue-deep:#0E2C57; --gold:#EAC996; --gold-deep:#C9A063; --ink:#1A2233;
+  --n1:#e23b3b;--n2:#ff8c1a;--n3:#ffd21a;--n4:#4bb84b;--n5:#2fa3e0;
+  --n6:#7b5cff;--n7:#e05fb0;--n8:#8a5a2b;--n9:#8a8f99;--n10:#1a9c8a;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;font-family:'Pretendard',sans-serif}
-body{background:var(--sky1)}
+body{background:#cfe8c0}
 
-#viewport{position:fixed;inset:0;overflow:hidden;touch-action:none;cursor:grab}
+#viewport{position:fixed;inset:0;overflow:hidden;touch-action:none;cursor:grab;background:#bfe0f2}
 #viewport.drag{cursor:grabbing}
 #world{
-  position:absolute;left:0;top:0;width:1400px;height:1000px;transform-origin:0 0;
-  background:linear-gradient(180deg,#bfe0f2 0%,#d7ecf3 30%,#e8f4ec 46%,var(--grass) 46%,var(--grass2) 100%);
+  position:absolute;left:0;top:0;width:1024px;height:687px;transform-origin:0 0;
+  background:linear-gradient(180deg,#bfe0f2 0%,#dbeee4 42%,#a8cf8e 42%,#8fbf74 100%);
+  background-image:url(assets/map.jpg);
+  background-size:100% 100%;background-repeat:no-repeat;
 }
-.sun{position:absolute;left:1120px;top:70px;width:120px;height:120px;border-radius:50%;
-  background:radial-gradient(circle at 40% 40%,#fff6d8,#ffe08a 60%,#ffd25e);
-  box-shadow:0 0 80px 30px rgba(255,224,138,.5);animation:sunpulse 6s ease-in-out infinite}
-@keyframes sunpulse{50%{box-shadow:0 0 100px 44px rgba(255,224,138,.65)}}
-.cloud{position:absolute;background:#fff;border-radius:100px;opacity:.9;filter:blur(.3px)}
-.cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
-.cloud.c1{width:150px;height:46px;top:110px;left:-200px;animation:drift1 60s linear infinite}
-.cloud.c1::before{width:70px;height:70px;top:-30px;left:26px}
-.cloud.c1::after{width:56px;height:56px;top:-20px;left:80px}
-.cloud.c2{width:120px;height:38px;top:220px;left:-300px;animation:drift2 90s linear infinite;opacity:.75}
-.cloud.c2::before{width:56px;height:56px;top:-24px;left:20px}
-.cloud.c2::after{width:44px;height:44px;top:-16px;left:64px}
-.cloud.c3{width:180px;height:52px;top:60px;left:-400px;animation:drift3 120s linear infinite;opacity:.65}
-.cloud.c3::before{width:80px;height:80px;top:-34px;left:30px}
-.cloud.c3::after{width:60px;height:60px;top:-22px;left:96px}
-@keyframes drift1{to{transform:translateX(1750px)}}
-@keyframes drift2{to{transform:translateX(1850px)}}
-@keyframes drift3{to{transform:translateX(1950px)}}
-.path{position:absolute;background:#e6d8b8;border-radius:40px}
-.path.main{left:120px;top:640px;width:1160px;height:70px;box-shadow:inset 0 4px 12px rgba(0,0,0,.06)}
-.path.v1{left:340px;top:500px;width:56px;height:180px}
-.path.v2{left:720px;top:500px;width:56px;height:180px}
-.path.v3{left:1020px;top:500px;width:56px;height:180px}
-.pond{position:absolute;left:120px;top:770px;width:340px;height:150px;border-radius:50%;
-  background:radial-gradient(circle at 50% 40%,#a9dcef,var(--water));overflow:hidden}
-.ripple{position:absolute;border:2px solid rgba(255,255,255,.6);border-radius:50%;
-  left:50%;top:50%;width:10px;height:10px;transform:translate(-50%,-50%);animation:ripple 4s ease-out infinite}
-.ripple.r2{animation-delay:1.3s}.ripple.r3{animation-delay:2.6s}
-@keyframes ripple{0%{width:10px;height:6px;opacity:.8}100%{width:220px;height:120px;opacity:0}}
-.lily{position:absolute;width:26px;height:26px;background:#6fbf7a;border-radius:50% 50% 50% 0;
-  transform:rotate(45deg);animation:bob 3s ease-in-out infinite}
-.lily.l2{animation-delay:1s}
-.fountain{position:absolute;left:640px;top:560px;width:120px;height:120px}
-.f-basin{position:absolute;bottom:0;width:120px;height:44px;border-radius:50%;
-  background:radial-gradient(circle at 50% 30%,#bfe8f5,#88c9e2);box-shadow:0 6px 14px rgba(0,0,0,.15)}
-.f-jet{position:absolute;left:50%;bottom:28px;width:6px;height:60px;transform:translateX(-50%);
-  background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(160,220,240,.2));border-radius:6px;
-  animation:jet 1.4s ease-in-out infinite}
-@keyframes jet{0%,100%{height:44px;opacity:.7}50%{height:66px;opacity:1}}
-.drop{position:absolute;left:50%;bottom:70px;width:5px;height:5px;background:#cfeefb;border-radius:50%}
-.d1{animation:fall 1.4s ease-in infinite}.d2{animation:fall 1.4s .3s ease-in infinite}
-.d3{animation:fall 1.4s .6s ease-in infinite}
-@keyframes fall{0%{transform:translate(-50%,-10px);opacity:1}100%{transform:translate(-50%,40px) translateX(var(--dx,-14px));opacity:0}}
-.zone{position:absolute;cursor:pointer;transition:transform .2s;text-align:center}
-.zone:hover{transform:translateY(-6px)}
-.zone:active{transform:translateY(-2px) scale(.98)}
-.bldg{position:relative;filter:drop-shadow(0 12px 18px rgba(0,0,0,.18))}
-.roof{width:0;height:0;margin:0 auto}
-.wall{border-radius:8px 8px 4px 4px;position:relative;overflow:hidden}
-.win{position:absolute;background:#ffe9a8;border-radius:3px;animation:winglow 4s ease-in-out infinite}
-@keyframes winglow{0%,100%{background:#ffe9a8}50%{background:#fff4cf;box-shadow:0 0 10px #ffe9a8}}
-.door{position:absolute;bottom:0;left:50%;transform:translateX(-50%);background:#7a5230;border-radius:6px 6px 0 0}
-.zlabel{margin-top:8px;font-weight:800;font-size:15px;color:var(--blue-deep);
-  background:rgba(255,255,255,.85);border-radius:10px;padding:4px 10px;display:inline-block;
-  box-shadow:0 3px 8px rgba(0,0,0,.1);white-space:nowrap}
-.zlabel .ic{margin-right:4px}
-.smoke{position:absolute;width:12px;height:12px;background:rgba(255,255,255,.7);border-radius:50%;
-  animation:smoke 4s ease-out infinite}
-@keyframes smoke{0%{transform:translateY(0) scale(.5);opacity:.7}100%{transform:translateY(-60px) scale(2);opacity:0}}
-.clock{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:30px;height:30px;
-  border-radius:50%;background:#fff;border:3px solid var(--gold-deep)}
-.hand{position:absolute;left:50%;bottom:50%;transform-origin:bottom center;background:var(--blue-deep);border-radius:2px}
-.hh{width:3px;height:9px;transform:translateX(-50%) rotate(30deg)}
-.mh{width:2px;height:12px;transform:translateX(-50%) rotate(200deg);animation:tick 8s linear infinite}
-@keyframes tick{to{transform:translateX(-50%) rotate(560deg)}}
-.bridge{position:absolute;left:400px;top:800px;width:120px;height:36px}
-.bridge .plank{position:absolute;width:100%;height:14px;background:#b98a54;border-radius:8px;top:14px}
-.bridge .rail{position:absolute;width:100%;height:4px;background:#9a6f3e;border-radius:4px}
-.char{position:absolute;width:56px;cursor:pointer;z-index:20;transition:transform .1s}
-.char:active{transform:scale(.9)}
-.char .body{width:46px;height:46px;margin:0 auto;border-radius:16px;position:relative;
-  box-shadow:0 8px 16px -6px rgba(0,0,0,.35);animation:walkbob .5s ease-in-out infinite}
-.char .body::before{content:"";position:absolute;width:9px;height:9px;background:#fff;border-radius:50%;top:15px;left:11px;box-shadow:16px 0 0 #fff}
-.char .body::after{content:"";position:absolute;width:4px;height:4px;background:var(--ink);border-radius:50%;top:18px;left:14px;box-shadow:16px 0 0 var(--ink)}
-.char .nm{text-align:center;font-size:11px;font-weight:800;color:#fff;margin-top:3px;
-  background:rgba(0,0,0,.35);border-radius:8px;padding:1px 5px}
-@keyframes walkbob{50%{transform:translateY(-4px)}}
-#numi .body{background:linear-gradient(145deg,#3768ad,#16417C)}
-#numi .hat{position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:0;height:0;
-  border-left:16px solid transparent;border-right:16px solid transparent;border-bottom:20px solid var(--gold-deep);z-index:2}
-#poco .body{background:linear-gradient(145deg,#e8a94e,#cf8a2e);border-radius:50% 50% 46% 46%}
-#momo .body{background:linear-gradient(145deg,#5fae86,#3d8a63);border-radius:12px}
-.shadow{width:40px;height:10px;background:rgba(0,0,0,.15);border-radius:50%;margin:2px auto 0;filter:blur(2px)}
-.speech{position:absolute;bottom:100%;left:50%;transform:translateX(-50%) translateY(-6px);
-  background:#fff;border-radius:14px;padding:8px 14px;font-size:13px;font-weight:700;color:var(--ink);
-  white-space:nowrap;box-shadow:0 8px 20px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:.25s;z-index:30}
-.speech.show{opacity:1;transform:translateX(-50%) translateY(-10px)}
-.speech::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);
-  border:7px solid transparent;border-top-color:#fff}
-.spark{position:absolute;width:5px;height:5px;border-radius:50%;background:#fff6d8;
-  box-shadow:0 0 8px 2px rgba(255,240,180,.9);pointer-events:none;animation:float 7s ease-in-out infinite}
-@keyframes float{0%{transform:translateY(0);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateY(-120px);opacity:0}}
-.bob{animation:bob 3s ease-in-out infinite}
-@keyframes bob{50%{transform:translateY(-5px) rotate(45deg)}}
+
+.ncloud{position:absolute;display:flex;align-items:center;justify-content:center;
+  font-weight:900;color:#5b7fb0;pointer-events:none;opacity:.9;
+  filter:drop-shadow(0 4px 6px rgba(0,0,0,.08))}
+.ncloud .puff{position:absolute;background:#fff;border-radius:50%}
+.ncloud .num{position:relative;z-index:2;font-size:26px;color:#3a67a8;text-shadow:0 1px 0 #fff}
+.ncloud.a{top:70px;left:-160px;animation:cdrift 70s linear infinite}
+@keyframes cdrift{to{transform:translateX(1380px)}}
+.ncloud.c{top:110px;left:-560px;animation:cdriftC 130s linear infinite;opacity:.75}
+@keyframes cdriftC{from{transform:translateX(0) scale(1.1)}to{transform:translateX(1580px) scale(1.1)}}
+.ncloud.b{top:40px;left:-360px;animation:cdriftB 100s linear infinite}
+@keyframes cdriftB{from{transform:translateX(0) scale(.8)}to{transform:translateX(1480px) scale(.8)}}
+
+#fountain0{position:absolute;left:300px;top:290px;width:90px;height:90px;pointer-events:none}
+.zero{position:absolute;left:50%;bottom:20px;font-weight:900;color:#8fd3ec;
+  font-size:20px;text-shadow:0 1px 2px rgba(255,255,255,.9);opacity:0}
+@keyframes zrise{
+  0%{transform:translate(-50%,0) scale(.6);opacity:0}
+  20%{opacity:1}60%{opacity:1}
+  100%{transform:translate(calc(-50% + var(--zx,0px)),-70px) scale(1.1);opacity:0}
+}
+
+.spark{position:absolute;width:6px;height:6px;border-radius:50%;background:#fff6d8;
+  box-shadow:0 0 8px 2px rgba(255,240,180,.9);pointer-events:none;animation:sfloat 6s ease-in-out infinite}
+@keyframes sfloat{0%{transform:translateY(0);opacity:0}25%{opacity:1}75%{opacity:1}100%{transform:translateY(-90px);opacity:0}}
+
+.nb{position:absolute;cursor:pointer;z-index:25;transition:transform .1s;width:44px}
+.nb:active{transform:scale(.92)}
+.nb .stack{display:flex;flex-direction:column-reverse;align-items:center;gap:2px;animation:hop .5s ease-in-out infinite}
+@keyframes hop{50%{transform:translateY(-4px)}}
+.nb .blk{width:34px;height:34px;border-radius:8px;position:relative;
+  box-shadow:0 3px 0 rgba(0,0,0,.18),inset 0 2px 3px rgba(255,255,255,.35);display:grid;place-items:center}
+.nb .blk .eye{position:absolute;top:9px;width:7px;height:7px;background:#fff;border-radius:50%}
+.nb .blk .eye::after{content:"";position:absolute;top:2px;left:2px;width:3px;height:3px;background:#1a2233;border-radius:50%}
+.nb .blk .eye.l{left:6px}.nb .blk .eye.r{right:6px}
+.nb .blk .mo{position:absolute;bottom:7px;width:9px;height:5px;border-bottom:2px solid #1a2233;border-radius:0 0 8px 8px}
+.nb .cap{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-weight:900;font-size:14px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);z-index:3}
+.nb .shadow{width:32px;height:8px;background:rgba(0,0,0,.18);border-radius:50%;margin:3px auto 0;filter:blur(2px)}
+.nb .speech{position:absolute;bottom:100%;left:50%;transform:translateX(-50%) translateY(-4px);
+  background:#fff;border-radius:12px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--ink);
+  white-space:nowrap;box-shadow:0 8px 20px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:.25s;z-index:30}
+.nb .speech.show{opacity:1;transform:translateX(-50%) translateY(-8px)}
+.nb .speech::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#fff}
+
+.zone{position:absolute;cursor:pointer;border-radius:16px;transition:.2s;z-index:15}
+.zone::after{content:"";position:absolute;inset:0;border-radius:16px;box-shadow:0 0 0 0 rgba(234,201,150,0);transition:.25s}
+.zone:hover{background:rgba(255,255,255,.14)}
+.zone:hover::after{box-shadow:0 0 0 3px rgba(234,201,150,.9),0 0 22px rgba(234,201,150,.6)}
+.zlabel{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(6px);
+  font-weight:800;font-size:13px;color:var(--blue-deep);background:rgba(255,255,255,.9);
+  border-radius:10px;padding:4px 10px;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.15);
+  opacity:0;transition:.2s;pointer-events:none}
+.zone:hover .zlabel{opacity:1;transform:translateX(-50%) translateY(10px)}
+
 .hud{position:fixed;z-index:100}
-.brand{top:16px;left:18px;font-weight:900;font-size:20px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.3);letter-spacing:-.02em}
-.brand small{display:block;font-size:11px;font-weight:700;opacity:.85;letter-spacing:.15em;margin-top:2px}
-.coin-hud{top:18px;right:18px;display:flex;align-items:center;gap:8px;font-weight:800;
+.brand{top:14px;left:16px;font-weight:900;font-size:18px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.4);letter-spacing:-.02em}
+.brand small{display:block;font-size:10px;font-weight:700;opacity:.9;letter-spacing:.15em;margin-top:2px}
+.coin-hud{top:16px;right:16px;display:flex;align-items:center;gap:7px;font-weight:800;
   background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:#4a370f;
-  padding:9px 16px;border-radius:999px;box-shadow:0 8px 20px -6px rgba(201,160,99,.7)}
-.coin-hud .c{width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff6df,#e7b24e);display:grid;place-items:center;font-size:11px;color:#7a5a12}
-.ctrls{bottom:22px;right:18px;display:flex;flex-direction:column;gap:10px}
-.iconbtn{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;font-size:22px;
+  padding:8px 15px;border-radius:999px;box-shadow:0 8px 20px -6px rgba(201,160,99,.7)}
+.coin-hud .c{width:19px;height:19px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff6df,#e7b24e);display:grid;place-items:center;font-size:11px;color:#7a5a12}
+.ctrls{bottom:20px;right:16px;display:flex;flex-direction:column;gap:9px}
+.iconbtn{width:50px;height:50px;border-radius:50%;border:none;cursor:pointer;font-size:21px;
   background:rgba(255,255,255,.92);box-shadow:0 8px 20px rgba(0,0,0,.18);display:grid;place-items:center;transition:.15s}
 .iconbtn:active{transform:scale(.9)}
-.hint-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:100;
-  background:rgba(14,44,87,.9);color:#fff;font-weight:700;font-size:14px;padding:12px 22px;border-radius:999px;
-  box-shadow:0 10px 30px rgba(0,0,0,.3);animation:toastin .5s ease}
-@keyframes toastin{from{opacity:0;transform:translateX(-50%) translateY(14px)}to{opacity:1;transform:translateX(-50%)}}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:100;
+  background:rgba(14,44,87,.92);color:#fff;font-weight:700;font-size:14px;padding:12px 22px;border-radius:999px;
+  box-shadow:0 10px 30px rgba(0,0,0,.3);animation:tin .4s ease}
+@keyframes tin{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%)}}
 </style>
 </head>
 <body>
 
 <div id="viewport">
   <div id="world">
-    <div class="sun"></div>
-    <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
 
-    <div class="path main"></div>
-    <div class="path v1"></div><div class="path v2"></div><div class="path v3"></div>
+    <div class="ncloud a"><span class="puff" style="width:64px;height:64px;left:0;top:-8px"></span><span class="puff" style="width:48px;height:48px;left:44px;top:0"></span><span class="puff" style="width:40px;height:40px;left:78px;top:6px"></span><span class="num">7</span></div>
+    <div class="ncloud b"><span class="puff" style="width:70px;height:70px;left:0;top:-10px"></span><span class="puff" style="width:50px;height:50px;left:50px;top:2px"></span><span class="num">10</span></div>
+    <div class="ncloud c"><span class="puff" style="width:56px;height:56px;left:0;top:-6px"></span><span class="puff" style="width:44px;height:44px;left:40px;top:2px"></span><span class="num">5</span></div>
 
-    <div class="pond">
-      <div class="ripple"></div><div class="ripple r2"></div><div class="ripple r3"></div>
-      <div class="lily" style="left:60px;top:40px"></div>
-      <div class="lily l2" style="left:220px;top:80px"></div>
-    </div>
-    <div class="bridge"><div class="rail"></div><div class="plank"></div></div>
+    <div id="fountain0"></div>
 
-    <div class="fountain">
-      <div class="drop d1"></div><div class="drop d2" style="--dx:14px"></div><div class="drop d3"></div>
-      <div class="f-jet"></div><div class="f-basin"></div>
-    </div>
+    <div class="zone" style="left:7%;top:9%;width:26%;height:33%" data-go="book.html" data-say="📖 마법 도서관 — 마법책을 펼쳐볼까?"><span class="zlabel">📖 마법 도서관</span></div>
+    <div class="zone" style="left:40%;top:15%;width:16%;height:28%" data-go="chapter.html" data-say="🏛️ 연습 마을 — 함께 연습하자!"><span class="zlabel">🏛️ 연습 마을</span></div>
+    <div class="zone" style="left:56%;top:19%;width:16%;height:27%" data-go="chapter.html?mode=arena" data-say="🎬 아레나 극장 — 실력을 겨뤄보자!"><span class="zlabel">🎬 아레나 극장</span></div>
+    <div class="zone" style="left:82%;top:22%;width:14%;height:20%" data-go="#" data-say="🔔 도장의 전당 — 네 도장을 자랑해봐!"><span class="zlabel">🔔 도장의 전당</span></div>
+    <div class="zone" style="left:78%;top:54%;width:18%;height:22%" data-go="#" data-say="🎁 매직 스토어 — 코인으로 뭘 바꿀까?"><span class="zlabel">🎁 매직 스토어</span></div>
+    <div class="zone" style="left:6%;top:52%;width:28%;height:34%" data-go="chapter.html" data-say="🏘️ 연습 마을 집들 — 매직 랩으로!"><span class="zlabel">🏘️ 매직 랩</span></div>
 
-    <div class="zone" style="left:180px;top:360px" data-go="book.html" data-say="어떤 마법책을 펼쳐볼까?">
-      <div class="bldg">
-        <div class="roof" style="border-left:70px solid transparent;border-right:70px solid transparent;border-bottom:46px solid #8a4b3f"></div>
-        <div class="wall" style="width:120px;height:96px;background:#e8d6c0;margin:0 auto">
-          <div class="win" style="width:20px;height:26px;top:18px;left:20px"></div>
-          <div class="win" style="width:20px;height:26px;top:18px;right:20px"></div>
-          <div class="door" style="width:34px;height:44px"></div>
-          <div style="position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:20px">📖</div>
-        </div>
+    <div class="nb" id="nbNumi" style="left:40%;top:62%">
+      <div class="speech">안녕! 난 3이야 ✨</div>
+      <span class="cap">3</span>
+      <div class="stack">
+        <div class="blk" style="background:var(--n3)"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div>
+        <div class="blk" style="background:var(--n3)"></div>
+        <div class="blk" style="background:var(--n3)"></div>
       </div>
-      <div class="zlabel"><span class="ic">📖</span>마법 도서관</div>
+      <div class="shadow"></div>
     </div>
 
-    <div class="zone" style="left:470px;top:390px" data-go="chapter.html" data-say="함께 연습하러 갈래?">
-      <div class="bldg">
-        <div class="roof" style="border-left:52px solid transparent;border-right:52px solid transparent;border-bottom:38px solid #c96a4a"></div>
-        <div class="wall" style="width:92px;height:78px;background:#f2e4d0;margin:0 auto">
-          <div class="win" style="width:18px;height:20px;top:14px;left:14px"></div>
-          <div class="win" style="width:18px;height:20px;top:14px;right:14px"></div>
-          <div class="door" style="width:26px;height:36px"></div>
-        </div>
-        <div style="position:absolute;top:-58px;right:14px;width:10px;height:20px;background:#9a6f3e"></div>
-        <div class="smoke" style="top:-64px;right:15px"></div>
-        <div class="smoke" style="top:-64px;right:15px;animation-delay:1.6s"></div>
+    <div class="nb" id="nbPoco" style="left:55%;top:66%">
+      <div class="speech">숫자는 재밌어! 🎈</div>
+      <span class="cap">5</span>
+      <div class="stack">
+        <div class="blk" style="background:var(--n5)"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div>
+        <div class="blk" style="background:var(--n5)"></div>
+        <div class="blk" style="background:var(--n5)"></div>
+        <div class="blk" style="background:var(--n5)"></div>
+        <div class="blk" style="background:var(--n5)"></div>
       </div>
-      <div class="zlabel"><span class="ic">🏘️</span>연습 마을</div>
+      <div class="shadow"></div>
     </div>
 
-    <div class="zone" style="left:760px;top:360px" data-go="chapter.html?mode=arena" data-say="실력을 겨뤄보자!">
-      <div class="bldg">
-        <div class="roof" style="border-left:64px solid transparent;border-right:64px solid transparent;border-bottom:40px solid #5a4a8a"></div>
-        <div class="wall" style="width:108px;height:88px;background:#ded4ef;margin:0 auto">
-          <div class="win" style="width:22px;height:28px;top:16px;left:16px"></div>
-          <div class="win" style="width:22px;height:28px;top:16px;right:16px"></div>
-          <div class="door" style="width:32px;height:42px;background:#4a3a6a"></div>
-          <div style="position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:18px">🎬</div>
-        </div>
+    <div class="nb" id="nbMomo" style="left:30%;top:70%">
+      <div class="speech">10을 만들어볼까? 📐</div>
+      <span class="cap">2</span>
+      <div class="stack">
+        <div class="blk" style="background:var(--n2)"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div>
+        <div class="blk" style="background:var(--n2)"></div>
       </div>
-      <div class="zlabel"><span class="ic">🎬</span>아레나 극장</div>
+      <div class="shadow"></div>
     </div>
 
-    <div class="zone" style="left:1030px;top:320px" data-go="#" data-say="네 도장들을 자랑해봐!">
-      <div class="bldg">
-        <div class="roof" style="border-left:44px solid transparent;border-right:44px solid transparent;border-bottom:34px solid var(--gold-deep)"></div>
-        <div class="wall" style="width:78px;height:126px;background:#e6ddc9;margin:0 auto;position:relative">
-          <div class="clock"><span class="hand hh"></span><span class="hand mh"></span></div>
-          <div class="win" style="width:16px;height:20px;top:52px;left:14px"></div>
-          <div class="win" style="width:16px;height:20px;top:52px;right:14px"></div>
-          <div class="door" style="width:26px;height:38px"></div>
-        </div>
-      </div>
-      <div class="zlabel"><span class="ic">🔔</span>도장의 전당</div>
-    </div>
-
-    <div class="zone" style="left:620px;top:700px" data-go="#" data-say="여기가 마을의 중심이야!">
-      <div class="zlabel" style="font-size:14px"><span class="ic">⛲</span>중앙 광장</div>
-    </div>
-
-    <div class="zone" style="left:300px;top:720px" data-go="#" data-say="코인으로 뭘 바꿀까?">
-      <div class="bldg">
-        <div class="roof" style="border-left:46px solid transparent;border-right:46px solid transparent;border-bottom:32px solid #3d8a63"></div>
-        <div class="wall" style="width:84px;height:66px;background:#dff0e4;margin:0 auto">
-          <div class="win" style="width:30px;height:22px;top:14px;left:50%;transform:translateX(-50%);background:#bfe8cf"></div>
-          <div class="door" style="width:24px;height:32px"></div>
-          <div style="position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:16px">🎁</div>
-        </div>
-      </div>
-      <div class="zlabel"><span class="ic">🌉</span>매직 스토어</div>
-    </div>
-
-    <div class="char" id="numi" style="left:400px;top:600px">
-      <div class="speech" id="sp-numi">안녕! 난 누미야 ✨</div>
-      <div class="hat"></div><div class="body"></div><div class="shadow"></div>
-      <div class="nm">누미</div>
-    </div>
-    <div class="char" id="poco" style="left:720px;top:610px">
-      <div class="speech" id="sp-poco">오늘은 뭐 하지? 🎈</div>
-      <div class="body"></div><div class="shadow"></div><div class="nm">포코</div>
-    </div>
-    <div class="char" id="momo" style="left:1000px;top:600px">
-      <div class="speech" id="sp-momo">차근차근 해보자 📐</div>
-      <div class="body"></div><div class="shadow"></div><div class="nm">모모</div>
-    </div>
   </div>
 </div>
 
-<div class="hud brand">Numbers of Magic<small>마법의 마을</small></div>
+<div class="hud brand">Numbers of Magic<small>마법의 숫자 마을</small></div>
 <div class="hud coin-hud"><span class="c">◈</span><span id="coinNum">0</span></div>
 <div class="hud ctrls">
-  <button class="iconbtn" id="muteBtn" title="음소거">🔊</button>
-  <button class="iconbtn" id="zoomIn" title="확대">＋</button>
-  <button class="iconbtn" id="zoomOut" title="축소">－</button>
+  <button class="iconbtn" id="muteBtn">🔊</button>
+  <button class="iconbtn" id="zoomIn">＋</button>
+  <button class="iconbtn" id="zoomOut">－</button>
 </div>
 
-<audio id="bgm" loop>
-  <source src="assets/audio/bgm.mp3" type="audio/mpeg">
-</audio>
+<audio id="bgm" loop><source src="assets/audio/bgm.mp3" type="audio/mpeg"></audio>
 
 <script>
-try{
-  const st=JSON.parse(localStorage.getItem("nm_progress")||"{}");
-  document.getElementById("coinNum").textContent = st.coins||0;
-}catch(e){}
+try{const st=JSON.parse(localStorage.getItem("nm_progress")||"{}");document.getElementById("coinNum").textContent=st.coins||0;}catch(e){}
 
 const vp=document.getElementById("viewport"), world=document.getElementById("world");
-const WORLD_W=1400, WORLD_H=1000;
-let cam={x:0,y:0,scale:1}, minScale=1, maxScale=2.2;
-function fit(){ minScale=Math.max(innerWidth/WORLD_W, innerHeight/WORLD_H); cam.scale=Math.max(cam.scale,minScale); }
-function apply(){ world.style.transform="translate("+cam.x+"px,"+cam.y+"px) scale("+cam.scale+")"; }
-function bound(){
-  const minX=innerWidth-WORLD_W*cam.scale, minY=innerHeight-WORLD_H*cam.scale;
-  cam.x=Math.min(0,Math.max(minX,cam.x)); cam.y=Math.min(0,Math.max(minY,cam.y));
-}
-function center(){
-  cam.scale=Math.max(minScale,1);
-  cam.x=-(WORLD_W*cam.scale-innerWidth)/2; cam.y=-(WORLD_H*cam.scale-innerHeight)/2;
-  bound(); apply();
-}
-let dragging=false, moved=false, sx=0, sy=0, cx=0, cy=0;
-vp.addEventListener("pointerdown",e=>{ dragging=true;moved=false;vp.classList.add("drag");
-  sx=e.clientX;sy=e.clientY;cx=cam.x;cy=cam.y; });
-vp.addEventListener("pointermove",e=>{
-  if(!dragging)return;
-  const dx=e.clientX-sx, dy=e.clientY-sy;
-  if(Math.abs(dx)+Math.abs(dy)>6)moved=true;
-  cam.x=cx+dx;cam.y=cy+dy;bound();apply();
-});
-vp.addEventListener("pointerup",()=>{dragging=false;vp.classList.remove("drag");});
-vp.addEventListener("pointercancel",()=>{dragging=false;vp.classList.remove("drag");});
-
-let pts=new Map(), pinchDist=0;
+const W=1024,H=687;
+let cam={x:0,y:0,scale:1},minS=1,maxS=2.4;
+function fit(){minS=Math.max(innerWidth/W,innerHeight/H);cam.scale=Math.max(cam.scale,minS);}
+function apply(){world.style.transform="translate("+cam.x+"px,"+cam.y+"px) scale("+cam.scale+")";}
+function bound(){const mx=innerWidth-W*cam.scale,my=innerHeight-H*cam.scale;cam.x=Math.min(0,Math.max(mx,cam.x));cam.y=Math.min(0,Math.max(my,cam.y));}
+function center(){cam.scale=Math.max(minS,1);cam.x=-(W*cam.scale-innerWidth)/2;cam.y=-(H*cam.scale-innerHeight)/2;bound();apply();}
+let drag=false,moved=false,sx,sy,cx,cy;
+vp.addEventListener("pointerdown",e=>{drag=true;moved=false;vp.classList.add("drag");sx=e.clientX;sy=e.clientY;cx=cam.x;cy=cam.y;});
+vp.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>6)moved=true;cam.x=cx+dx;cam.y=cy+dy;bound();apply();});
+vp.addEventListener("pointerup",()=>{drag=false;vp.classList.remove("drag");});
+vp.addEventListener("pointercancel",()=>{drag=false;vp.classList.remove("drag");});
+let pts=new Map(),pd=0;
 vp.addEventListener("pointerdown",e=>pts.set(e.pointerId,e));
-vp.addEventListener("pointermove",e=>{
-  if(!pts.has(e.pointerId))return; pts.set(e.pointerId,e);
-  if(pts.size===2){
-    const a=[...pts.values()][0], b=[...pts.values()][1];
-    const d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
-    if(pinchDist){ zoomTo(cam.scale*(d/pinchDist),(a.clientX+b.clientX)/2,(a.clientY+b.clientY)/2); }
-    pinchDist=d; dragging=false;
-  }
-});
-["pointerup","pointercancel"].forEach(ev=>vp.addEventListener(ev,e=>{pts.delete(e.pointerId);if(pts.size<2)pinchDist=0;}));
-
-function zoomTo(ns,ox,oy){
-  ns=Math.min(maxScale,Math.max(minScale,ns));
-  const wx=(ox-cam.x)/cam.scale, wy=(oy-cam.y)/cam.scale;
-  cam.scale=ns; cam.x=ox-wx*ns; cam.y=oy-wy*ns; bound(); apply();
-}
+vp.addEventListener("pointermove",e=>{if(!pts.has(e.pointerId))return;pts.set(e.pointerId,e);if(pts.size===2){const v=[...pts.values()];const d=Math.hypot(v[0].clientX-v[1].clientX,v[0].clientY-v[1].clientY);if(pd)zoomTo(cam.scale*(d/pd),(v[0].clientX+v[1].clientX)/2,(v[0].clientY+v[1].clientY)/2);pd=d;drag=false;}});
+["pointerup","pointercancel"].forEach(ev=>vp.addEventListener(ev,e=>{pts.delete(e.pointerId);if(pts.size<2)pd=0;}));
+function zoomTo(ns,ox,oy){ns=Math.min(maxS,Math.max(minS,ns));const wx=(ox-cam.x)/cam.scale,wy=(oy-cam.y)/cam.scale;cam.scale=ns;cam.x=ox-wx*ns;cam.y=oy-wy*ns;bound();apply();}
 document.getElementById("zoomIn").onclick=()=>zoomTo(cam.scale*1.25,innerWidth/2,innerHeight/2);
 document.getElementById("zoomOut").onclick=()=>zoomTo(cam.scale/1.25,innerWidth/2,innerHeight/2);
-vp.addEventListener("wheel",e=>{e.preventDefault();zoomTo(cam.scale*(e.deltaY<0?1.1:0.9),e.clientX,e.clientY);},{passive:false});
-
-fit(); center();
-addEventListener("resize",()=>{fit();bound();apply();});
+vp.addEventListener("wheel",e=>{e.preventDefault();zoomTo(cam.scale*(e.deltaY<0?1.1:.9),e.clientX,e.clientY);},{passive:false});
+fit();center();addEventListener("resize",()=>{fit();bound();apply();});
 
 document.querySelectorAll(".zone").forEach(z=>{
-  z.addEventListener("pointerup",()=>{
-    if(moved)return;
-    const go=z.dataset.go, msg=z.dataset.say;
-    if(go && go!=="#"){ setTimeout(()=>location.href=go,120); }
-    else if(msg){ toast(msg); }
-  });
+  z.addEventListener("pointerup",()=>{if(moved)return;const g=z.dataset.go,m=z.dataset.say;if(g&&g!=="#"){setTimeout(()=>location.href=g,120);}else toast(m);});
 });
 
-const chars=[
-  {el:document.getElementById("numi"), sp:"sp-numi", x:400,y:600, tx:400,ty:600, spd:.5,
-   lines:["안녕! 난 누미야 ✨","10의 짝꿍, 같이 찾을래?","마법노트 보여줄게!"]},
-  {el:document.getElementById("poco"), sp:"sp-poco", x:720,y:610, tx:720,ty:610, spd:.7,
-   lines:["오늘은 뭐 하지? 🎈","게임하러 가자!","코인 모으는 중이야~"]},
-  {el:document.getElementById("momo"), sp:"sp-momo", x:1000,y:600, tx:1000,ty:600, spd:.4,
-   lines:["차근차근 해보자 📐","실수는 괜찮아!","다시 확인해볼까?"]}
+const f0=document.getElementById("fountain0");
+setInterval(()=>{
+  const z=document.createElement("div");z.className="zero";z.textContent="0";
+  z.style.setProperty("--zx",(Math.random()*30-15)+"px");
+  z.style.fontSize=(16+Math.random()*10)+"px";
+  z.style.animation="zrise "+(1.6+Math.random()*.8)+"s ease-out forwards";
+  f0.appendChild(z);setTimeout(()=>z.remove(),2600);
+},260);
+
+setInterval(()=>{
+  const s=document.createElement("div");s.className="spark";
+  s.style.left=(28+Math.random()*20)+"%";s.style.top=(42+Math.random()*10)+"%";
+  s.style.animationDuration=(4+Math.random()*3)+"s";
+  world.appendChild(s);setTimeout(()=>s.remove(),8000);
+},600);
+
+const nbs=[
+  {el:document.getElementById("nbNumi"),x:40,y:62,tx:40,ty:62,spd:.10,lines:["안녕! 난 3이야 ✨","7이랑 만나면 10! 🔟","마법노트 보여줄게!"]},
+  {el:document.getElementById("nbPoco"),x:55,y:66,tx:55,ty:66,spd:.14,lines:["숫자는 재밌어! 🎈","게임하러 가자!","코인 모으는 중~"]},
+  {el:document.getElementById("nbMomo"),x:30,y:70,tx:30,ty:70,spd:.08,lines:["10을 만들어볼까? 📐","실수는 괜찮아!","다시 확인해보자"]}
 ];
-function pickTarget(c){
-  const zones=[[180,640],[470,650],[760,640],[1020,650],[620,655],[340,760]];
-  const t=zones[Math.random()*zones.length|0];
-  c.tx=t[0]+Math.random()*60; c.ty=t[1]+Math.random()*30;
-}
-chars.forEach(pickTarget);
+function pick(n){const sp=[[38,60],[52,64],[30,72],[46,74],[60,68],[24,66]];const t=sp[Math.random()*sp.length|0];n.tx=t[0]+Math.random()*6;n.ty=t[1]+Math.random()*4;}
+nbs.forEach(pick);
 function walk(){
-  chars.forEach(c=>{
-    const dx=c.tx-c.x, dy=c.ty-c.y, d=Math.hypot(dx,dy);
-    if(d<2){ if(Math.random()<0.012) pickTarget(c); return; }
-    c.x+=dx/d*c.spd; c.y+=dy/d*c.spd;
-    c.el.style.left=c.x+"px"; c.el.style.top=c.y+"px";
-    c.el.style.transform = dx<0 ? "scaleX(-1)" : "scaleX(1)";
+  nbs.forEach(n=>{
+    const dx=n.tx-n.x,dy=n.ty-n.y,d=Math.hypot(dx,dy);
+    if(d<.3){if(Math.random()<.012)pick(n);return;}
+    n.x+=dx/d*n.spd;n.y+=dy/d*n.spd;
+    n.el.style.left=n.x+"%";n.el.style.top=n.y+"%";
+    n.el.querySelector(".stack").style.transform=dx<0?"scaleX(-1)":"scaleX(1)";
   });
   requestAnimationFrame(walk);
 }
 walk();
-
-chars.forEach(c=>{
-  c.el.addEventListener("pointerup",e=>{
-    if(moved)return; e.stopPropagation();
-    const sp=document.getElementById(c.sp);
-    sp.textContent=c.lines[Math.random()*c.lines.length|0];
-    sp.classList.add("show"); say(sp.textContent);
-    clearTimeout(c._t); c._t=setTimeout(()=>sp.classList.remove("show"),2600);
+nbs.forEach(n=>{
+  n.el.addEventListener("pointerup",e=>{
+    if(moved)return;e.stopPropagation();
+    const sp=n.el.querySelector(".speech");
+    sp.textContent=n.lines[Math.random()*n.lines.length|0];
+    sp.classList.add("show");say(sp.textContent);
+    clearTimeout(n._t);n._t=setTimeout(()=>sp.classList.remove("show"),2400);
   });
 });
 
-const worldEl=document.getElementById("world");
-function spawnSpark(){
-  const s=document.createElement("div"); s.className="spark";
-  s.style.left=(540+Math.random()*260)+"px"; s.style.top=(660+Math.random()*80)+"px";
-  s.style.animationDuration=(5+Math.random()*4)+"s";
-  worldEl.appendChild(s); setTimeout(()=>s.remove(),9000);
-}
-setInterval(spawnSpark,700);
-
-const bgm=document.getElementById("bgm"), muteBtn=document.getElementById("muteBtn");
+const bgm=document.getElementById("bgm"),mb=document.getElementById("muteBtn");
 let muted=true;
-function tryPlay(){ if(!muted){ bgm.volume=.4; bgm.play().catch(()=>{}); } }
-muteBtn.onclick=()=>{ muted=!muted; muteBtn.textContent=muted?"🔊":"🔈"; if(muted){bgm.pause();}else{tryPlay();} };
-addEventListener("pointerdown",()=>{ if(!muted) tryPlay(); },{once:true});
+mb.onclick=()=>{muted=!muted;mb.textContent=muted?"🔊":"🔈";if(muted)bgm.pause();else{bgm.volume=.4;bgm.play().catch(()=>{});}};
+function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="ko-KR";u.rate=1;u.pitch=1.25;speechSynthesis.speak(u);}catch(e){}}
 
-function say(t){ try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="ko-KR";u.rate=1;u.pitch=1.2;speechSynthesis.speak(u);}catch(e){} }
-
-let toastEl=null;
-function toast(msg){
-  toastEl&&toastEl.remove();
-  toastEl=document.createElement("div"); toastEl.className="hint-toast"; toastEl.textContent=msg;
-  document.body.appendChild(toastEl); say(msg);
-  setTimeout(()=>toastEl&&toastEl.remove(),2400);
-}
+let te=null;
+function toast(m){te&&te.remove();te=document.createElement("div");te.className="toast";te.textContent=m;document.body.appendChild(te);say(m);setTimeout(()=>te&&te.remove(),2300);}
 </script>
 </body>
 </html>
