@@ -22,3 +22,15 @@ jobs:
         with:
           name: numi-tts-samples
           path: numi-samples/*.mp3
+
+      # Actions artifacts download via Azure blob storage, which is unreachable from
+      # some sandboxed dev environments. Also push the same files to a disposable
+      # branch so they're fetchable with plain `git fetch` instead.
+      - name: Push samples to a fetchable branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B numi-samples-output
+          git add -f numi-samples/*.mp3
+          git commit -m "Numi TTS samples (auto-generated, temporary)"
+          git push -f origin numi-samples-output
