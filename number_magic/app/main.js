@@ -155,6 +155,30 @@ const TOWN_SPOTS=[
 function tierById(id){return CUR.tiers.find(x=>x.id===id);}
 function tierOpen(tier){return !!(tier&&tier.levels.some(l=>l.available&&(l.units||[]).some(u=>UNITS[u])));}
 
+/* 건물 5곳을 모두 포함하는 콘텐츠 영역(bbox) 계산 — 카메라 피팅에 사용 */
+function parsePos(posStr){
+  const o={};
+  posStr.split(';').forEach(kv=>{
+    const parts=kv.split(':');
+    if(parts.length===2)o[parts[0].trim()]=parseFloat(parts[1]);
+  });
+  return o;
+}
+function computeContentBBox(W,H,pad){
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  TOWN_SPOTS.forEach(sp=>{
+    const p=parsePos(sp.pos);
+    const x1=p.left/100*W, y1=p.top/100*H;
+    const x2=x1+p.width/100*W, y2=y1+p.height/100*H;
+    if(x1<minX)minX=x1; if(y1<minY)minY=y1;
+    if(x2>maxX)maxX=x2; if(y2>maxY)maxY=y2;
+  });
+  const padX=W*pad, padY=H*pad;
+  const x=Math.max(0,minX-padX), y=Math.max(0,minY-padY);
+  const w=Math.min(W,maxX+padX)-x, h=Math.min(H,maxY+padY)-y;
+  return {x,y,w,h};
+}
+
 function screenTown(){
   if(townCleanup){townCleanup();townCleanup=null;}
   const scr=$('#screen');
@@ -220,17 +244,30 @@ function initTownWorld(scr){
   const modal=scr.querySelector('#tmodal');
   const W=1024,H=687;
   let cam={x:0,y:0,scale:1},minS=1,maxS=3;
+  const BBOX=computeContentBBox(W,H,.04);
 
-  /* cover 스케일: 화면을 항상 꽉 채움(레터박스 없음).
-     건물 클릭존이 세로 13%~74% 안쪽에 몰려있어 웬만한 화면비에서도 안 잘림. */
-  function fit(){minS=Math.max(vp.clientWidth/W,vp.clientHeight/H);if(cam.scale<minS)cam.scale=minS;}
+  /* 화면 꽉 채우기(cover)와 "건물 5곳 항상 보이기(bbox contain)" 중 더 작은(=더 안전한) 배율 선택.
+     데스크탑처럼 화면비가 지도와 비슷하면 cover와 같은 값이라 화면이 꽉 참.
+     세로로 매우 긴 모바일처럼 화면비가 크게 다르면 bbox 쪽이 이겨서 건물이 절대 화면 밖으로 안 밀림. */
+  function fit(){
+    const coverS=Math.max(vp.clientWidth/W,vp.clientHeight/H);
+    const bboxS=Math.min(vp.clientWidth/BBOX.w,vp.clientHeight/BBOX.h);
+    minS=Math.min(coverS,bboxS);
+    if(cam.scale<minS)cam.scale=minS;
+  }
   function apply(){world.style.transform=`translate(${cam.x}px,${cam.y}px) scale(${cam.scale})`;}
   function bound(){
     const mx=vp.clientWidth-W*cam.scale, my=vp.clientHeight-H*cam.scale;
     cam.x = mx>=0 ? Math.min(mx,Math.max(0,cam.x)) : Math.min(0,Math.max(mx,cam.x));
     cam.y = my>=0 ? Math.min(my,Math.max(0,cam.y)) : Math.min(0,Math.max(my,cam.y));
   }
-  function center(){cam.scale=minS;cam.x=(vp.clientWidth-W*cam.scale)/2;cam.y=(vp.clientHeight-H*cam.scale)/2;bound();apply();}
+  function center(){
+    cam.scale=minS;
+    const bcx=BBOX.x+BBOX.w/2, bcy=BBOX.y+BBOX.h/2;
+    cam.x=vp.clientWidth/2-bcx*cam.scale;
+    cam.y=vp.clientHeight/2-bcy*cam.scale;
+    bound();apply();
+  }
 
   let drag=false,moved=false,sx,sy,cx,cy;
   function onDown(e){drag=true;moved=false;vp.classList.add('drag');sx=e.clientX;sy=e.clientY;cx=cam.x;cy=cam.y;}
