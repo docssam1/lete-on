@@ -246,12 +246,13 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nb .speech.show{opacity:1;transform:translateX(-50%) translateY(-8px)}
 .nb .speech::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#fff}
 
+/* 건물 클릭존 — 딱딱한 박스 대신 은은한 링 글로우 */
 .nm-zone{position:absolute;border:none;background:transparent;cursor:pointer;padding:0;border-radius:16px;z-index:15;transition:.2s}
-.nm-zone:hover{background:rgba(255,255,255,.14)}
-.nm-halo{position:absolute;inset:0;border-radius:16px;border:3px solid var(--gold-bright);
-  box-shadow:0 0 0 3px rgba(255,255,255,.35),0 0 26px 6px rgba(234,201,150,.7);
-  animation:nmpulse 1.8s ease-in-out infinite;background:rgba(234,201,150,.12)}
-@keyframes nmpulse{50%{box-shadow:0 0 0 3px rgba(255,255,255,.5),0 0 40px 12px rgba(234,201,150,.9)}}
+.nm-zone:hover{background:rgba(255,255,255,.1)}
+.nm-halo{position:absolute;inset:4px;border-radius:14px;pointer-events:none;
+  box-shadow:0 0 0 2px rgba(255,230,168,.55),0 0 16px 3px rgba(234,201,150,.55);
+  animation:nmpulse 2.2s ease-in-out infinite}
+@keyframes nmpulse{50%{box-shadow:0 0 0 2px rgba(255,230,168,.85),0 0 26px 6px rgba(234,201,150,.8)}}
 .nm-lockico{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;z-index:2}
 .nm-zlabel{position:absolute;top:-32px;left:50%;transform:translateX(-50%);white-space:nowrap;
   background:var(--blue-deep);color:#fff;font-weight:900;font-size:13px;padding:5px 12px;border-radius:99px;box-shadow:0 6px 14px rgba(0,0,0,.4);pointer-events:none}
