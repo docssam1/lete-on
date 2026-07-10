@@ -2,7 +2,7 @@
    Numbers of Magic — 본체 엔진 (app/main.js)
    reading-world 아키텍처 미러링(상태/저장/i18n t()/STEP flow).
    의존: window.NM_GEN, NM_CURRICULUM, NM_UNITS, katex
-   흐름: 리빙맵 → 유닛[프랙티스→디스커버→핵심체크→랩→아레나→도장]
+   흐름: 마을(건물 클릭) → 등급 유닛목록 → 유닛[프랙티스→디스커버→핵심체크→랩→아레나→도장]
    진단 스킵(B안): 프랙티스 진입 시 "바로 넘어갈래? / 한번 볼래?"
    ============================================================ */
 (()=>{
@@ -42,9 +42,10 @@ const L=(obj)=>obj?(obj[S.lang]??obj.ko??obj.en):'';   // 다국어 필드 픽
 
 /* ---------- 상태 + 저장 ---------- */
 const KEY='nm_state_v1';
-function defaults(){return{ lang:'ko', view:'map', coins:0, range:'oneDigit',
-  unit:null, step:null, sub:{}, progress:{} };}
+function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
+  tierId:null, unit:null, step:null, sub:{}, progress:{} };}
 let S=load();
+if(S.view==='map')S.view='town'; // 구버전 상태 마이그레이션
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
@@ -72,55 +73,150 @@ function render(){
     </div>
   </div><div id="screen"></div>`;
   $('#langBtn').onclick=cycleLang;
-  if(S.view==='map')screenMap();
+  if(S.view==='town')screenTown();
+  else if(S.view==='tier')screenTier();
   else if(S.view==='unit')screenUnit();
-  else screenMap();
+  else screenTown();
   renderMath();
 }
 function cycleLang(){const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.lang)+1)%3];save();render();}
 
 /* ============================================================
-   리빙맵 — 급수/단계/유닛 카탈로그
+   마을 — map.jpg 위 건물 클릭 (등급 입구)
+   건물↔등급: 책건물=BASIC · 타운홀=PRIME · 시계탑=ADVANCE ·
+   정자=CHALLENGE · Magic Theater=영상관(별도)
    ============================================================ */
-function screenMap(){
+const TOWN_SPOTS=[
+  { tier:'numberland',   pos:'left:8%;top:13%;width:24%;height:28%',  tag:'📖 BASIC',     sub:{ko:'수의 나라',en:'Number Land',zh:'数字王国'} },
+  { tier:'beginner',     pos:'left:36%;top:19%;width:16%;height:22%', tag:'🏛️ PRIME',     sub:{ko:'초급',en:'Beginner',zh:'初级'} },
+  { tier:'intermediate', pos:'left:29%;top:14%;width:9%;height:16%',  tag:'🕰️ ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
+  { tier:'advanced',     pos:'left:73%;top:24%;width:11%;height:14%', tag:'⛰️ CHALLENGE', sub:{ko:'고급',en:'Advanced',zh:'高级'} },
+  { tier:'_theater',     pos:'left:53%;top:19%;width:13%;height:22%', tag:'🎬 극장',       sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' }
+];
+function tierById(id){return CUR.tiers.find(x=>x.id===id);}
+function tierOpen(tier){return !!(tier&&tier.levels.some(l=>l.available&&(l.units||[]).some(u=>UNITS[u])));}
+
+function screenTown(){
   const scr=$('#screen');
+  let spots='';
+  TOWN_SPOTS.forEach(sp=>{
+    const tier=tierById(sp.tier);
+    const open=sp.tier==='_theater'?false:tierOpen(tier);
+    spots+=`<button class="nm-spot ${open?'':'locked'}" style="${sp.pos}" data-spot="${sp.tier}">
+      <div class="nm-halo"></div>
+      ${open?'':`<div class="nm-lockico">${sp.lockIcon||'🔒'}</div>`}
+      <div class="nm-spot-tag">${sp.tag}<small>${L(sp.sub)}</small></div>
+    </button>`;
+  });
+  scr.innerHTML=`<style>
+    .nm-town{position:relative;width:100%;height:calc(100dvh - 58px);overflow:hidden;background:#0E2C57}
+    .nm-town-wrap{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);height:100%;aspect-ratio:1024/687}
+    .nm-town-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+    .nm-spot{position:absolute;border:none;background:transparent;cursor:pointer;padding:0}
+    .nm-halo{width:100%;height:100%;border-radius:16px;border:3px solid #F5D98B;
+      box-shadow:0 0 0 3px rgba(255,255,255,.35),0 0 26px 6px rgba(234,201,150,.7);
+      animation:nmpulse 1.8s ease-in-out infinite;background:rgba(234,201,150,.12)}
+    @keyframes nmpulse{50%{box-shadow:0 0 0 3px rgba(255,255,255,.5),0 0 40px 12px rgba(234,201,150,.9)}}
+    .nm-spot.locked .nm-halo{border-color:#9aa2b1;box-shadow:0 0 0 3px rgba(0,0,0,.25);background:rgba(30,40,60,.35);animation:none}
+    .nm-spot-tag{position:absolute;top:-32px;left:50%;transform:translateX(-50%);white-space:nowrap;
+      background:#0E2C57;color:#fff;font-weight:900;font-size:13px;padding:5px 12px;border-radius:99px;box-shadow:0 6px 14px rgba(0,0,0,.4)}
+    .nm-spot-tag small{font-weight:600;opacity:.8;font-size:11px;margin-left:4px}
+    .nm-spot.locked .nm-spot-tag{background:#5a6577}
+    .nm-lockico{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px}
+    .nm-town-hint{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:rgba(255,255,255,.85);
+      font-size:12px;font-weight:700;text-shadow:0 2px 6px rgba(0,0,0,.6);pointer-events:none}
+    .nm-tmodal{position:fixed;inset:0;background:rgba(14,44,87,.55);backdrop-filter:blur(3px);display:none;
+      align-items:center;justify-content:center;z-index:60;padding:24px}
+    .nm-tmodal.on{display:flex}
+    .nm-tmcard{background:#fff;border-radius:22px;padding:26px 22px;max-width:340px;width:100%;text-align:center;box-shadow:0 30px 70px -20px rgba(0,0,0,.5)}
+    .nm-tmcard h3{font-size:20px;color:#0E2C57;margin-bottom:4px}
+    .nm-tmcard p{font-size:14px;color:#4a5468;margin-bottom:18px}
+    .nm-tmcard .go{display:block;width:100%;padding:14px;border:none;border-radius:14px;background:#16417C;color:#fff;font-weight:800;font-size:16px;cursor:pointer}
+    .nm-tmcard .close{margin-top:10px;background:none;border:none;color:#9aa2b1;font-weight:700;font-size:14px;cursor:pointer}
+  </style>
+  <div class="nm-town">
+    <div class="nm-town-wrap">
+      <img src="assets/map.jpg" alt="${t('mapTitle')}">
+      ${spots}
+    </div>
+    <div class="nm-town-hint">${S.lang==='ko'?'건물을 눌러 들어가요':S.lang==='en'?'Tap a building to enter':'点击建筑进入'}</div>
+  </div>
+  <div class="nm-tmodal" id="tmodal">
+    <div class="nm-tmcard">
+      <h3 id="tmTitle"></h3><p id="tmDesc"></p>
+      <button class="go" id="tmGo"></button>
+      <button class="close" id="tmClose">${S.lang==='ko'?'닫기':S.lang==='en'?'Close':'关闭'}</button>
+    </div>
+  </div>`;
+  const modal=$('#tmodal');
+  scr.querySelectorAll('[data-spot]').forEach(b=>{
+    b.onclick=()=>{
+      const id=b.dataset.spot;
+      if(id==='_theater'){
+        showTownModal(modal,'🎬 '+(S.lang==='ko'?'매직 극장':'Magic Theater'),
+          S.lang==='ko'?'영상 학습관 — 준비 중이에요!':'Video theater — coming soon!',null);
+        return;
+      }
+      const tier=tierById(id);
+      if(tierOpen(tier)){
+        showTownModal(modal,`${tier.grade} · ${tier.subtitle}`,tier.desc,()=>{enterTier(id);});
+      }else{
+        showTownModal(modal,`${tier.grade} · ${tier.subtitle}`,tier.desc+' — '+t('locked'),null);
+      }
+    };
+  });
+  $('#tmClose').onclick=()=>modal.classList.remove('on');
+  modal.onclick=e=>{if(e.target===modal)modal.classList.remove('on');};
+}
+function showTownModal(modal,title,desc,onGo){
+  $('#tmTitle').textContent=title;
+  $('#tmDesc').textContent=desc;
+  const go=$('#tmGo');
+  if(onGo){go.style.display='block';go.textContent=(S.lang==='ko'?'유닛 보러가기 →':S.lang==='en'?'See units →':'查看单元 →');go.onclick=onGo;}
+  else go.style.display='none';
+  modal.classList.add('on');
+}
+function enterTier(id){S.view='tier';S.tierId=id;save();render();}
+function exitTier(){S.view='town';S.tierId=null;save();render();}
+
+/* ============================================================
+   학습선택 — 선택한 등급의 단계/유닛 목록
+   ============================================================ */
+function screenTier(){
+  const scr=$('#screen');
+  const tier=tierById(S.tierId);
+  if(!tier){exitTier();return;}
   let html=`<div class="nm-map">
-    <div class="nm-map-hero">
-      <div class="nm-map-title">${t('mapTitle')}</div>
-      <p class="nm-map-sub">${S.lang==='ko'?'마법의 마을에서 수를 펼치는 법을 배워요':S.lang==='en'?'Learn to unfold numbers in the magic town':'在魔法小镇学习展开数字'}</p>
-    </div>`;
-  CUR.tiers.forEach(tier=>{
-    html+=`<div class="nm-tier">
-      <div class="nm-tier-head">
-        <span class="nm-tier-badge" style="background:${tier.color}">${tier.grade}</span>
-        <div><b>${tier.title}</b><small>${tier.subtitle} · ${tier.ageLabel}</small></div>
-      </div>
+    <div class="nm-unit-bar">
+      <button class="nm-back" id="backTown">${t('back')}</button>
+      <div class="nm-unit-title">${tier.title}<small>${tier.subtitle} · ${tier.ageLabel}</small></div>
+    </div>
+    <div class="nm-tier">
       <p class="nm-tier-desc">${tier.desc}</p>
       <div class="nm-levels">`;
-    tier.levels.forEach(lvl=>{
-      const units=(lvl.units||[]).filter(u=>UNITS[u]);
-      const open=lvl.available&&units.length;
-      if(open){
-        html+=`<div class="nm-level open">
-          <div class="nm-level-t">${lvl.title}</div>
-          <div class="nm-unit-row">`;
-        units.forEach(uid=>{
-          const u=UNITS[uid];const done=unitDone(uid);
-          html+=`<button class="nm-unit ${done?'done':''}" data-unit="${uid}">
-            <span class="nm-unit-ic">${u.icon||'✦'}</span>
-            <span class="nm-unit-name">${L(u.title)}</span>
-            ${done?'<span class="nm-unit-check">✓</span>':''}
-          </button>`;
-        });
-        html+=`</div></div>`;
-      }else{
-        html+=`<div class="nm-level locked"><div class="nm-level-t">${lvl.title}</div><span class="nm-lock">🔒 ${t('locked')}</span></div>`;
-      }
-    });
-    html+=`</div></div>`;
+  tier.levels.forEach(lvl=>{
+    const units=(lvl.units||[]).filter(u=>UNITS[u]);
+    const open=lvl.available&&units.length;
+    if(open){
+      html+=`<div class="nm-level open">
+        <div class="nm-level-t">${lvl.title}</div>
+        <div class="nm-unit-row">`;
+      units.forEach(uid=>{
+        const u=UNITS[uid];const done=unitDone(uid);
+        html+=`<button class="nm-unit ${done?'done':''}" data-unit="${uid}">
+          <span class="nm-unit-ic">${u.icon||'✦'}</span>
+          <span class="nm-unit-name">${L(u.title)}</span>
+          ${done?'<span class="nm-unit-check">✓</span>':''}
+        </button>`;
+      });
+      html+=`</div></div>`;
+    }else{
+      html+=`<div class="nm-level locked"><div class="nm-level-t">${lvl.title}</div><span class="nm-lock">🔒 ${t('locked')}</span></div>`;
+    }
   });
-  html+=`</div>`;
+  html+=`</div></div></div>`;
   scr.innerHTML=html;
+  $('#backTown').onclick=exitTier;
   scr.querySelectorAll('[data-unit]').forEach(b=>b.onclick=()=>enterUnit(b.dataset.unit));
 }
 
@@ -129,7 +225,7 @@ function screenMap(){
    ============================================================ */
 function enterUnit(uid){S.view='unit';S.unit=uid;S.step='range';S.sub={};save();render();}
 function pickRange(rk){S.range=rk;S.step='practice';S.sub={};save();render();}
-function exitUnit(){S.view='map';S.unit=null;S.step=null;S.sub={};save();render();}
+function exitUnit(){S.view=S.tierId?'tier':'town';S.unit=null;S.step=null;S.sub={};save();render();}
 
 function flowBar(){
   const u=S.unit;
@@ -205,12 +301,12 @@ function handlePractice(val,body,u){
       if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
       S.sub.cur=GEN[u.practice.generator]({level:'practice'});save();
       setTimeout(()=>runPractice(body,u),650);
-    }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent='\u00a0';}
+    }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=' ';}
     return;
   }
   if(val==='del'){S.sub.inp=(S.sub.inp||'').slice(0,-1);}
   else if((S.sub.inp||'').length<3){S.sub.inp=(S.sub.inp||'')+val;}
-  $('#pscreen').textContent=S.sub.inp||'\u00a0';
+  $('#pscreen').textContent=S.sub.inp||' ';
 }
 
 /* ---------- STEP2 디스커버 (마법 노트) ---------- */
@@ -303,10 +399,10 @@ function stepCheck(body,u){
   buildNumpad($('#pad'),val=>{
     if(val==='ok'){const inp=S.sub.inp||'';if(inp==='')return;
       if(+inp===fill.answer){toast(t('correct'),true);numiHappy();markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
-      else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);S.sub.inp='';$('#pscreen').textContent='\u00a0';}
+      else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);S.sub.inp='';$('#pscreen').textContent=' ';}
       return;}
     if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
-    $('#pscreen').textContent=S.sub.inp||'\u00a0';
+    $('#pscreen').textContent=S.sub.inp||' ';
   });
 }
 function openQuestion(body,u){
@@ -390,7 +486,7 @@ function nextArena(body,u,need){
       if(S.sub.ai>=need){clearInterval(window._nmTimer);arenaEnd(body,u);return;}
       nextArena(body,u,need);return;}
     if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
-    $('#pscreen').textContent=S.sub.inp||'\u00a0';
+    $('#pscreen').textContent=S.sub.inp||' ';
   });
 }
 function arenaEnd(body,u){
