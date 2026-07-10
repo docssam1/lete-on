@@ -1,21 +1,21 @@
 /* ============================================================
    Numbers of Magic — 커리큘럼 카탈로그
-   3층 구조: 0급 수의 나라 · 1급 초급 A~I · 2급 중급 · 3급 고급
+   등급: BASIC · PRIME · ADVANCE · CHALLENGE
    reading-world의 BOOK_CATALOG 패턴 미러링.
    유닛의 실제 데이터(generator·대사·개념)는 data/units/*.js 에.
    ============================================================ */
 (function(){
 'use strict';
 
-// 급(tier) → 단계(level) → 유닛(unit) 3계층.
+// 등급(tier) → 단계(level) → 유닛(unit) 3계층.
 // available:true 인 것만 지금 학습 가능. 나머지는 카드로 예고.
 window.NM_CURRICULUM = {
 
   tiers:[
-    /* ===== 0급 · 수의 나라 (G1 "9까지의 수") ===== */
+    /* ===== BASIC · 수의 나라 (G1 "9까지의 수") ===== */
     {
-      id:'numberland', grade:'0급', order:0,
-      title:'수의 나라', subtitle:'9까지의 수',
+      id:'numberland', name:'BASIC', grade:'BASIC', order:0,
+      title:'BASIC', subtitle:'수의 나라 · 9까지의 수',
       ageFrom:5, ageLabel:'5~6세',
       color:'#7a8aa0', accent:'#EAC996',
       desc:'수를 알고, 세고, 나누고, 비교하고 — 수와 처음 친해지는 곳',
@@ -28,10 +28,10 @@ window.NM_CURRICULUM = {
       ]
     },
 
-    /* ===== 1급 · 초급 (창의수연 A~I) ===== */
+    /* ===== PRIME · 초급 (창의수연 A~I) ===== */
     {
-      id:'beginner', grade:'1급', order:1,
-      title:'초급 수연', subtitle:'창의수연 A~I',
+      id:'beginner', name:'PRIME', grade:'PRIME', order:1,
+      title:'PRIME', subtitle:'초급 · 창의수연 A~I',
       ageFrom:5, ageLabel:'만 5세+',
       color:'#16417C', accent:'#EAC996',
       desc:'수를 펼쳐 쉽게 만드는 첫 마법 — 더하기의 여러 전략',
@@ -52,20 +52,20 @@ window.NM_CURRICULUM = {
       ]
     },
 
-    /* ===== 2급 · 중급 ===== */
+    /* ===== ADVANCE · 중급 ===== */
     {
-      id:'intermediate', grade:'2급', order:2,
-      title:'중급 수연', subtitle:'분배법칙·곱셈',
+      id:'intermediate', name:'ADVANCE', grade:'ADVANCE', order:2,
+      title:'ADVANCE', subtitle:'중급 · 분배법칙·곱셈',
       ageFrom:7, ageLabel:'7세+',
       color:'#5a4a8a', accent:'#EAC996',
       desc:'수를 나누어 곱하는 힘 — 분배법칙과 곱셈 공식으로',
       levels:[{ id:'M-A', title:'준비 중', units:[], available:false }]
     },
 
-    /* ===== 3급 · 고급 ===== */
+    /* ===== CHALLENGE · 고급 ===== */
     {
-      id:'advanced', grade:'3급', order:3,
-      title:'고급 수연', subtitle:'상관관계·경시',
+      id:'advanced', name:'CHALLENGE', grade:'CHALLENGE', order:3,
+      title:'CHALLENGE', subtitle:'고급 · 상관관계·경시',
       ageFrom:8, ageLabel:'초1 말+ (영재)',
       color:'#C9A063', accent:'#16417C',
       desc:'수들의 관계로 푸는 마법 — 등차수열과 경시로 가는 길',
@@ -74,8 +74,7 @@ window.NM_CURRICULUM = {
   ],
 
   /* 유닛 = 하나의 학습 흐름.
-     flow: 프랙티스 → 디스커버 → 핵심체크 → 매직랩 → 아레나 → 도장
-     (reading-world의 STEP flow 미러링, 연산용) */
+     flow: 프랙티스 → 디스커버 → 핵심체크 → 매직랩 → 아레나 → 도장 */
   unitFlow:[
     { key:'practice', step:1, ko:'기본 연산', en:'Warm-up',   zh:'基础运算', icon:'🔢',
       desc_ko:'개념 연산을 작은 수로 미리 연습' },
@@ -86,7 +85,7 @@ window.NM_CURRICULUM = {
     { key:'lab',      step:4, ko:'매직 랩',   en:'Magic Lab', zh:'魔法实验', icon:'🧪',
       desc_ko:'대화형 문제로 재미있게 연습' },
     { key:'arena',    step:5, ko:'아레나',    en:'Arena',     zh:'竞技场',   icon:'⚔️',
-      desc_ko:'타임 배틀 — 5분 안에 풀어봐요' },
+      desc_ko:'타임 배틀 — 짝을 빠르게 찾아요' },
     { key:'stamp',    step:6, ko:'도장 쾅!',  en:'Stamp',     zh:'盖章',     icon:'🏅',
       desc_ko:'통과하면 마법 도장을 받아요' }
   ],
