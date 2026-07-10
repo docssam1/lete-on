@@ -14,7 +14,8 @@ const shuffle = a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor
 
 /* ---------- A-01 : 더해서 10이 되는 수를 찾아라 ----------
    개념: 여러 수 중 합이 10인 짝을 찾아 먼저 묶는다.
-   3+6+7+4 = (3+7)+(6+4) = 10+10 = 20
+   교재처럼 "짝 + 남는 수"가 섞여 답이 다양해야 한다.
+   3+6+7+4=20 / 1+5+8+5=19 (남는 수 때문에 20이 아님)
    level: 'practice' = 10의 짝 즉답(한 짝) / 'main' = 여러 항 묶기 */
 function pair10(opts){
   opts=opts||{};
@@ -30,17 +31,23 @@ function pair10(opts){
       answerType:'number'   // 숫자패드
     };
   }
-  // main: 짝들 + 남는 수 몇 개
-  const pairCount = opts.pairs || R(2,3);           // 10짝 개수
-  const extra     = opts.extra!=null?opts.extra:R(0,1); // 짝 안 되는 남는 수
+  // main: 10의 짝 1~2개 + 짝이 안 되는 "남는 수" 1~2개 → 답 다양(교재식)
+  const pairCount = opts.pairs || R(1,2);
+  let orphan = opts.orphans!=null?opts.orphans:R(1,2);
   let nums=[];
   for(let i=0;i<pairCount;i++){const a=R(1,9);nums.push(a,10-a);}
-  for(let i=0;i<extra;i++)nums.push(R(1,9));
+  // 남는 수: 이미 있는 수와 10을 만들지 않도록 골라 넣음 → 의도한 짝만 존재
+  let tries=0;
+  while(orphan>0 && tries<80){
+    tries++;
+    const o=R(1,9);
+    if(!nums.includes(10-o)){ nums.push(o); orphan--; }
+  }
   nums=shuffle(nums);
   const sum=nums.reduce((s,n)=>s+n,0);
   return {
     gen:'pair10', mode:'main',
-    nums, sum,
+    nums, sum, pairCount,
     prompt_ko:`짝꿍이 되는 두 수(합이 10)를 골라 묶어요`,
     tex:nums.join(' + '),
     answerType:'selectPairs', target:10, answer:sum
