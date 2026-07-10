@@ -64,6 +64,62 @@ function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad
 function coinAdd(n){S.coins+=n;save();}
 function pickVoice(arr){return L(arr[Math.floor(Math.random()*arr.length)]);}
 
+/* ---------- Web Audio 앰비언스 (신비한 배경음악 + 물소리, 외부 파일 없이 합성) ---------- */
+let actx=null;
+function getCtx(){
+  if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==='suspended')actx.resume();
+  return actx;
+}
+function startAmbience(){
+  const ctx=getCtx();
+  const master=ctx.createGain();master.gain.value=.55;master.connect(ctx.destination);
+
+  /* 물소리: 브라운노이즈를 대역통과 필터로 걸러 시냇물/분수 느낌 + 느린 볼륨 요동으로 보글거림 */
+  const bufSize=ctx.sampleRate*4;
+  const buf=ctx.createBuffer(1,bufSize,ctx.sampleRate);
+  const data=buf.getChannelData(0);
+  let last=0;
+  for(let i=0;i<bufSize;i++){const white=Math.random()*2-1;last=(last+.02*white)/1.02;data[i]=last*3.2;}
+  const noiseSrc=ctx.createBufferSource();noiseSrc.buffer=buf;noiseSrc.loop=true;
+  const waterFilter=ctx.createBiquadFilter();waterFilter.type='bandpass';waterFilter.frequency.value=950;waterFilter.Q.value=.7;
+  const waterGain=ctx.createGain();waterGain.gain.value=.14;
+  noiseSrc.connect(waterFilter).connect(waterGain).connect(master);
+  noiseSrc.start();
+  const lfo=ctx.createOscillator();lfo.frequency.value=.16;
+  const lfoGain=ctx.createGain();lfoGain.gain.value=.05;
+  lfo.connect(lfoGain).connect(waterGain.gain);
+  lfo.start();
+
+  /* 신비한 마법 벨 아르페지오: 딜레이 피드백으로 반짝이는 잔향 */
+  const delay=ctx.createDelay();delay.delayTime.value=.34;
+  const feedback=ctx.createGain();feedback.gain.value=.36;
+  const musicGain=ctx.createGain();musicGain.gain.value=.2;
+  delay.connect(feedback).connect(delay);
+  musicGain.connect(delay);delay.connect(master);musicGain.connect(master);
+  const scale=[261.6,293.7,329.6,392.0,440.0,523.3]; // C D E G A C (오음계, 신비로운 울림)
+  let noteTimer=null;
+  function pluck(){
+    const freq=scale[Math.floor(Math.random()*scale.length)];
+    const osc=ctx.createOscillator();osc.type='sine';osc.frequency.value=freq;
+    const g=ctx.createGain();g.gain.value=0;
+    osc.connect(g).connect(musicGain);
+    const now=ctx.currentTime;
+    g.gain.linearRampToValueAtTime(.5,now+.6);
+    g.gain.exponentialRampToValueAtTime(.0001,now+2.6);
+    osc.start(now);osc.stop(now+2.8);
+    noteTimer=setTimeout(pluck,1800+Math.random()*1600);
+  }
+  pluck();
+
+  return function stopAmbience(){
+    clearTimeout(noteTimer);
+    try{noiseSrc.stop();}catch(e){}
+    try{lfo.stop();}catch(e){}
+    try{master.disconnect();}catch(e){}
+  };
+}
+
 /* ---------- 최상단 렌더 ---------- */
 let townCleanup=null;
 function render(){
@@ -158,16 +214,16 @@ function showTownModal(title,desc,onGo){
 function enterTier(id){S.view='tier';S.tierId=id;save();render();}
 function exitTier(){S.view='town';S.tierId=null;save();render();}
 
-/* 마을 상호작용(드래그/핀치줌/구름/분수/숫자친구) — 화면을 나갈 때 반드시 cleanup() 호출 */
+/* 마을 상호작용(드래그/핀치줌/구름/분수/숫자친구/배경음) — 화면을 나갈 때 반드시 cleanup() 호출 */
 function initTownWorld(scr){
   const vp=scr.querySelector('#townVp'), world=scr.querySelector('#townWorld');
   const modal=scr.querySelector('#tmodal');
   const W=1024,H=687;
   let cam={x:0,y:0,scale:1},minS=1,maxS=3;
 
-  /* contain 스케일: 화면 크기와 무관하게 지도 전체가 항상 보이는 게 기본값.
-     (예전엔 cover=Math.max로 화면을 꽉 채우며 잘렸음 → PC에서 지도 일부가 안 보이는 문제) */
-  function fit(){minS=Math.min(vp.clientWidth/W,vp.clientHeight/H);if(cam.scale<minS)cam.scale=minS;}
+  /* cover 스케일: 화면을 항상 꽉 채움(레터박스 없음).
+     건물 클릭존이 세로 13%~74% 안쪽에 몰려있어 웬만한 화면비에서도 안 잘림. */
+  function fit(){minS=Math.max(vp.clientWidth/W,vp.clientHeight/H);if(cam.scale<minS)cam.scale=minS;}
   function apply(){world.style.transform=`translate(${cam.x}px,${cam.y}px) scale(${cam.scale})`;}
   function bound(){
     const mx=vp.clientWidth-W*cam.scale, my=vp.clientHeight-H*cam.scale;
@@ -266,6 +322,7 @@ function initTownWorld(scr){
   nbs.forEach(pick);
   let walkRAF;
   let muted=true;
+  let stopAmbience=null;
   function walk(){
     nbs.forEach(n=>{
       const dx=n.tx-n.x,dy=n.ty-n.y,d=Math.hypot(dx,dy);
@@ -288,16 +345,26 @@ function initTownWorld(scr){
     });
   });
 
-  /* 음소거(숫자친구 TTS) */
+  /* 음소거 버튼: 배경음악+물소리(Web Audio)와 숫자친구 TTS를 함께 켜고 끔 */
   const mb=scr.querySelector('#townMute');
   mb.textContent=muted?'🔇':'🔈';
-  mb.onclick=()=>{muted=!muted;mb.textContent=muted?'🔇':'🔈';if(muted)speechSynthesis.cancel();};
+  mb.onclick=()=>{
+    muted=!muted;
+    mb.textContent=muted?'🔇':'🔈';
+    if(muted){
+      speechSynthesis.cancel();
+      if(stopAmbience){stopAmbience();stopAmbience=null;}
+    }else{
+      if(!stopAmbience)stopAmbience=startAmbience();
+    }
+  };
 
   return function cleanup(){
     clearInterval(fountainTimer);
     clearInterval(sparkTimer);
     cancelAnimationFrame(walkRAF);
     removeEventListener('resize',onResize);
+    if(stopAmbience){stopAmbience();stopAmbience=null;}
   };
 }
 
