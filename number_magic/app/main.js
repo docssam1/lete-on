@@ -2,7 +2,8 @@
    Numbers of Magic — 본체 엔진 (app/main.js)
    reading-world 아키텍처 미러링(상태/저장/i18n t()/STEP flow).
    의존: window.NM_GEN, NM_CURRICULUM, NM_UNITS, katex
-   흐름: 마을(건물 클릭) → 등급 유닛목록 → 유닛[프랙티스→디스커버→핵심체크→랩→아레나→도장]
+   흐름: 살아있는 마을(드래그/줌+구름/분수/숫자친구, 건물 클릭)
+        → 등급 유닛목록 → 유닛[프랙티스→디스커버→핵심체크→랩→아레나→도장]
    진단 스킵(B안): 프랙티스 진입 시 "바로 넘어갈래? / 한번 볼래?"
    ============================================================ */
 (()=>{
@@ -64,7 +65,9 @@ function coinAdd(n){S.coins+=n;save();}
 function pickVoice(arr){return L(arr[Math.floor(Math.random()*arr.length)]);}
 
 /* ---------- 최상단 렌더 ---------- */
+let townCleanup=null;
 function render(){
+  if(townCleanup){townCleanup();townCleanup=null;}
   app.innerHTML=`<div class="nm-top">
     <div class="nm-brand">🪄 ${t('appName')}</div>
     <div class="nm-top-right">
@@ -82,9 +85,9 @@ function render(){
 function cycleLang(){const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.lang)+1)%3];save();render();}
 
 /* ============================================================
-   마을 — map.jpg 위 건물 클릭 (등급 입구)
-   건물↔등급: 책건물=BASIC · 타운홀=PRIME · 시계탑=ADVANCE ·
-   정자=CHALLENGE · Magic Theater=영상관(별도)
+   마을(Living Town) — map.jpg 위 드래그/줌 + 구름/분수/걸어다니는 숫자친구
+   건물↔등급 배치(확정): 책건물=BASIC · 타운홀=PRIME · 시계탑=ADVANCE ·
+   정자=CHALLENGE · Magic Theater=영상관(별도, 등급 아님)
    ============================================================ */
 const TOWN_SPOTS=[
   { tier:'numberland',   pos:'left:8%;top:13%;width:24%;height:28%',  tag:'📖 BASIC',     sub:{ko:'수의 나라',en:'Number Land',zh:'数字王国'} },
@@ -97,87 +100,199 @@ function tierById(id){return CUR.tiers.find(x=>x.id===id);}
 function tierOpen(tier){return !!(tier&&tier.levels.some(l=>l.available&&(l.units||[]).some(u=>UNITS[u])));}
 
 function screenTown(){
+  if(townCleanup){townCleanup();townCleanup=null;}
   const scr=$('#screen');
-  let spots='';
+  let zones='';
   TOWN_SPOTS.forEach(sp=>{
     const tier=tierById(sp.tier);
     const open=sp.tier==='_theater'?false:tierOpen(tier);
-    spots+=`<button class="nm-spot ${open?'':'locked'}" style="${sp.pos}" data-spot="${sp.tier}">
-      <div class="nm-halo"></div>
-      ${open?'':`<div class="nm-lockico">${sp.lockIcon||'🔒'}</div>`}
-      <div class="nm-spot-tag">${sp.tag}<small>${L(sp.sub)}</small></div>
+    zones+=`<button class="nm-zone ${open?'':'locked'}" style="${sp.pos}" data-spot="${sp.tier}">
+      ${open?'<div class="nm-halo"></div>':`<div class="nm-lockico">${sp.lockIcon||'🔒'}</div>`}
+      <span class="nm-zlabel">${sp.tag}<small>${L(sp.sub)}</small></span>
     </button>`;
   });
-  scr.innerHTML=`<style>
-    .nm-town{position:relative;width:100%;height:calc(100dvh - 58px);overflow:hidden;background:#0E2C57}
-    .nm-town-wrap{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);height:100%;aspect-ratio:1024/687}
-    .nm-town-wrap img{width:100%;height:100%;object-fit:cover;display:block}
-    .nm-spot{position:absolute;border:none;background:transparent;cursor:pointer;padding:0}
-    .nm-halo{width:100%;height:100%;border-radius:16px;border:3px solid #F5D98B;
-      box-shadow:0 0 0 3px rgba(255,255,255,.35),0 0 26px 6px rgba(234,201,150,.7);
-      animation:nmpulse 1.8s ease-in-out infinite;background:rgba(234,201,150,.12)}
-    @keyframes nmpulse{50%{box-shadow:0 0 0 3px rgba(255,255,255,.5),0 0 40px 12px rgba(234,201,150,.9)}}
-    .nm-spot.locked .nm-halo{border-color:#9aa2b1;box-shadow:0 0 0 3px rgba(0,0,0,.25);background:rgba(30,40,60,.35);animation:none}
-    .nm-spot-tag{position:absolute;top:-32px;left:50%;transform:translateX(-50%);white-space:nowrap;
-      background:#0E2C57;color:#fff;font-weight:900;font-size:13px;padding:5px 12px;border-radius:99px;box-shadow:0 6px 14px rgba(0,0,0,.4)}
-    .nm-spot-tag small{font-weight:600;opacity:.8;font-size:11px;margin-left:4px}
-    .nm-spot.locked .nm-spot-tag{background:#5a6577}
-    .nm-lockico{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px}
-    .nm-town-hint{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:rgba(255,255,255,.85);
-      font-size:12px;font-weight:700;text-shadow:0 2px 6px rgba(0,0,0,.6);pointer-events:none}
-    .nm-tmodal{position:fixed;inset:0;background:rgba(14,44,87,.55);backdrop-filter:blur(3px);display:none;
-      align-items:center;justify-content:center;z-index:60;padding:24px}
-    .nm-tmodal.on{display:flex}
-    .nm-tmcard{background:#fff;border-radius:22px;padding:26px 22px;max-width:340px;width:100%;text-align:center;box-shadow:0 30px 70px -20px rgba(0,0,0,.5)}
-    .nm-tmcard h3{font-size:20px;color:#0E2C57;margin-bottom:4px}
-    .nm-tmcard p{font-size:14px;color:#4a5468;margin-bottom:18px}
-    .nm-tmcard .go{display:block;width:100%;padding:14px;border:none;border-radius:14px;background:#16417C;color:#fff;font-weight:800;font-size:16px;cursor:pointer}
-    .nm-tmcard .close{margin-top:10px;background:none;border:none;color:#9aa2b1;font-weight:700;font-size:14px;cursor:pointer}
-  </style>
-  <div class="nm-town">
-    <div class="nm-town-wrap">
-      <img src="assets/map.jpg" alt="${t('mapTitle')}">
-      ${spots}
+  scr.innerHTML=`
+    <div id="townVp">
+      <div id="townWorld">
+        <div class="ncloud a"><span class="puff" style="width:64px;height:64px;left:0;top:-8px"></span><span class="puff" style="width:48px;height:48px;left:44px;top:0"></span><span class="puff" style="width:40px;height:40px;left:78px;top:6px"></span><span class="num">7</span></div>
+        <div class="ncloud b"><span class="puff" style="width:70px;height:70px;left:0;top:-10px"></span><span class="puff" style="width:50px;height:50px;left:50px;top:2px"></span><span class="num">10</span></div>
+        <div class="ncloud c"><span class="puff" style="width:56px;height:56px;left:0;top:-6px"></span><span class="puff" style="width:44px;height:44px;left:40px;top:2px"></span><span class="num">5</span></div>
+        <div id="townFountain"></div>
+        ${zones}
+        <div class="nb" id="nbNumi"><div class="speech"></div><span class="cap">3</span>
+          <div class="stack"><div class="blk n3"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div><div class="blk n3"></div><div class="blk n3"></div></div>
+          <div class="shadow"></div></div>
+        <div class="nb" id="nbPoco"><div class="speech"></div><span class="cap">5</span>
+          <div class="stack"><div class="blk n5"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div><div class="blk n5"></div><div class="blk n5"></div><div class="blk n5"></div><div class="blk n5"></div></div>
+          <div class="shadow"></div></div>
+        <div class="nb" id="nbMomo"><div class="speech"></div><span class="cap">2</span>
+          <div class="stack"><div class="blk n2"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div><div class="blk n2"></div></div>
+          <div class="shadow"></div></div>
+      </div>
     </div>
-    <div class="nm-town-hint">${S.lang==='ko'?'건물을 눌러 들어가요':S.lang==='en'?'Tap a building to enter':'点击建筑进入'}</div>
-  </div>
-  <div class="nm-tmodal" id="tmodal">
-    <div class="nm-tmcard">
-      <h3 id="tmTitle"></h3><p id="tmDesc"></p>
-      <button class="go" id="tmGo"></button>
-      <button class="close" id="tmClose">${S.lang==='ko'?'닫기':S.lang==='en'?'Close':'关闭'}</button>
+    <div class="nm-town-hud brand">${t('mapTitle')}</div>
+    <div class="nm-town-hud ctrls">
+      <button class="nm-iconbtn" id="townMute">🔇</button>
+      <button class="nm-iconbtn" id="townZin">＋</button>
+      <button class="nm-iconbtn" id="townZout">－</button>
     </div>
-  </div>`;
-  const modal=$('#tmodal');
-  scr.querySelectorAll('[data-spot]').forEach(b=>{
-    b.onclick=()=>{
-      const id=b.dataset.spot;
-      if(id==='_theater'){
-        showTownModal(modal,'🎬 '+(S.lang==='ko'?'매직 극장':'Magic Theater'),
-          S.lang==='ko'?'영상 학습관 — 준비 중이에요!':'Video theater — coming soon!',null);
-        return;
-      }
-      const tier=tierById(id);
-      if(tierOpen(tier)){
-        showTownModal(modal,`${tier.grade} · ${tier.subtitle}`,tier.desc,()=>{enterTier(id);});
-      }else{
-        showTownModal(modal,`${tier.grade} · ${tier.subtitle}`,tier.desc+' — '+t('locked'),null);
-      }
-    };
-  });
-  $('#tmClose').onclick=()=>modal.classList.remove('on');
-  modal.onclick=e=>{if(e.target===modal)modal.classList.remove('on');};
+    <div class="nm-tmodal" id="tmodal">
+      <div class="nm-tmcard">
+        <h3 id="tmTitle"></h3><p id="tmDesc"></p>
+        <button class="go" id="tmGo"></button>
+        <button class="close" id="tmClose">${S.lang==='ko'?'닫기':S.lang==='en'?'Close':'关闭'}</button>
+      </div>
+    </div>`;
+  townCleanup=initTownWorld(scr);
 }
-function showTownModal(modal,title,desc,onGo){
+
+function showTownModal(title,desc,onGo){
+  const modal=$('#tmodal');
   $('#tmTitle').textContent=title;
   $('#tmDesc').textContent=desc;
   const go=$('#tmGo');
-  if(onGo){go.style.display='block';go.textContent=(S.lang==='ko'?'유닛 보러가기 →':S.lang==='en'?'See units →':'查看单元 →');go.onclick=onGo;}
+  if(onGo){go.style.display='block';go.textContent=(S.lang==='ko'?'유닛 보러가기 →':S.lang==='en'?'See units →':'查看单元 →');go.onclick=()=>{modal.classList.remove('on');onGo();};}
   else go.style.display='none';
   modal.classList.add('on');
 }
 function enterTier(id){S.view='tier';S.tierId=id;save();render();}
 function exitTier(){S.view='town';S.tierId=null;save();render();}
+
+/* 마을 상호작용(드래그/핀치줌/구름/분수/숫자친구) — 화면을 나갈 때 반드시 cleanup() 호출 */
+function initTownWorld(scr){
+  const vp=scr.querySelector('#townVp'), world=scr.querySelector('#townWorld');
+  const modal=scr.querySelector('#tmodal');
+  const W=1024,H=687;
+  let cam={x:0,y:0,scale:1},minS=1,maxS=2.4;
+  function fit(){minS=Math.max(vp.clientWidth/W,vp.clientHeight/H);cam.scale=Math.max(cam.scale,minS);}
+  function apply(){world.style.transform=`translate(${cam.x}px,${cam.y}px) scale(${cam.scale})`;}
+  function bound(){const mx=vp.clientWidth-W*cam.scale,my=vp.clientHeight-H*cam.scale;cam.x=Math.min(0,Math.max(mx,cam.x));cam.y=Math.min(0,Math.max(my,cam.y));}
+  function center(){cam.scale=Math.max(minS,1);cam.x=-(W*cam.scale-vp.clientWidth)/2;cam.y=-(H*cam.scale-vp.clientHeight)/2;bound();apply();}
+
+  let drag=false,moved=false,sx,sy,cx,cy;
+  function onDown(e){drag=true;moved=false;vp.classList.add('drag');sx=e.clientX;sy=e.clientY;cx=cam.x;cy=cam.y;}
+  function onMove(e){if(!drag)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>6)moved=true;cam.x=cx+dx;cam.y=cy+dy;bound();apply();}
+  function onUp(){drag=false;vp.classList.remove('drag');}
+  vp.addEventListener('pointerdown',onDown);
+  vp.addEventListener('pointermove',onMove);
+  vp.addEventListener('pointerup',onUp);
+  vp.addEventListener('pointercancel',onUp);
+
+  let pts=new Map(),pd=0;
+  function pdDown(e){pts.set(e.pointerId,e);}
+  function pdMove(e){
+    if(!pts.has(e.pointerId))return;pts.set(e.pointerId,e);
+    if(pts.size===2){
+      const v=[...pts.values()];
+      const d=Math.hypot(v[0].clientX-v[1].clientX,v[0].clientY-v[1].clientY);
+      if(pd)zoomTo(cam.scale*(d/pd),(v[0].clientX+v[1].clientX)/2,(v[0].clientY+v[1].clientY)/2);
+      pd=d;drag=false;
+    }
+  }
+  function pdUp(e){pts.delete(e.pointerId);if(pts.size<2)pd=0;}
+  vp.addEventListener('pointerdown',pdDown);
+  vp.addEventListener('pointermove',pdMove);
+  vp.addEventListener('pointerup',pdUp);
+  vp.addEventListener('pointercancel',pdUp);
+
+  function zoomTo(ns,ox,oy){
+    ns=Math.min(maxS,Math.max(minS,ns));
+    const r=vp.getBoundingClientRect();
+    const lx=ox-r.left, ly=oy-r.top;
+    const wx=(lx-cam.x)/cam.scale, wy=(ly-cam.y)/cam.scale;
+    cam.scale=ns;cam.x=lx-wx*ns;cam.y=ly-wy*ns;bound();apply();
+  }
+  const zin=scr.querySelector('#townZin'), zout=scr.querySelector('#townZout');
+  zin.onclick=()=>{const r=vp.getBoundingClientRect();zoomTo(cam.scale*1.25,r.left+r.width/2,r.top+r.height/2);};
+  zout.onclick=()=>{const r=vp.getBoundingClientRect();zoomTo(cam.scale/1.25,r.left+r.width/2,r.top+r.height/2);};
+  function onWheel(e){e.preventDefault();zoomTo(cam.scale*(e.deltaY<0?1.1:.9),e.clientX,e.clientY);}
+  vp.addEventListener('wheel',onWheel,{passive:false});
+
+  requestAnimationFrame(()=>{fit();center();});
+  function onResize(){fit();bound();apply();}
+  addEventListener('resize',onResize);
+
+  /* 건물 클릭 */
+  scr.querySelectorAll('.nm-zone').forEach(z=>{
+    z.addEventListener('pointerup',e=>{
+      if(moved)return;e.stopPropagation();
+      const id=z.dataset.spot;
+      if(id==='_theater'){
+        showTownModal('🎬 '+(S.lang==='ko'?'매직 극장':S.lang==='en'?'Magic Theater':'魔法剧场'),
+          S.lang==='ko'?'영상 학습관 — 준비 중이에요!':S.lang==='en'?'Video theater — coming soon!':'视频剧场——即将推出！',null);
+        return;
+      }
+      const tier=tierById(id);
+      if(tierOpen(tier)) showTownModal(`${tier.grade} · ${tier.subtitle}`,tier.desc,()=>enterTier(id));
+      else showTownModal(`${tier.grade} · ${tier.subtitle}`,tier.desc+' — '+t('locked'),null);
+    });
+  });
+  scr.querySelector('#tmClose').onclick=()=>modal.classList.remove('on');
+  modal.onclick=e=>{if(e.target===modal)modal.classList.remove('on');};
+
+  /* 분수(0 뿜기) */
+  const f0=scr.querySelector('#townFountain');
+  const fountainTimer=setInterval(()=>{
+    const z=document.createElement('div');z.className='tzero';z.textContent='0';
+    z.style.setProperty('--zx',(Math.random()*30-15)+'px');
+    z.style.fontSize=(16+Math.random()*10)+'px';
+    z.style.animation='zrise '+(1.6+Math.random()*.8)+'s ease-out forwards';
+    f0.appendChild(z);setTimeout(()=>z.remove(),2600);
+  },260);
+
+  /* 반짝임 */
+  const sparkTimer=setInterval(()=>{
+    const s=document.createElement('div');s.className='tspark';
+    s.style.left=(28+Math.random()*20)+'%';s.style.top=(42+Math.random()*10)+'%';
+    s.style.animationDuration=(4+Math.random()*3)+'s';
+    world.appendChild(s);setTimeout(()=>s.remove(),8000);
+  },600);
+
+  /* 걸어다니는 숫자친구 */
+  const nbs=[
+    {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.10,lines:['안녕! 난 3이야 ✨','7이랑 만나면 10! 🔟','마법노트 보여줄게!']},
+    {el:scr.querySelector('#nbPoco'),x:55,y:66,tx:55,ty:66,spd:.14,lines:['숫자는 재밌어! 🎈','게임하러 가자!','코인 모으는 중~']},
+    {el:scr.querySelector('#nbMomo'),x:30,y:70,tx:30,ty:70,spd:.08,lines:['10을 만들어볼까? 📐','실수는 괜찮아!','다시 확인해보자']}
+  ];
+  nbs.forEach(n=>{n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';});
+  function pick(n){const sp=[[38,60],[52,64],[30,72],[46,74],[60,68],[24,66]];const p=sp[Math.random()*sp.length|0];n.tx=p[0]+Math.random()*6;n.ty=p[1]+Math.random()*4;}
+  nbs.forEach(pick);
+  let walkRAF;
+  let muted=true;
+  function walk(){
+    nbs.forEach(n=>{
+      const dx=n.tx-n.x,dy=n.ty-n.y,d=Math.hypot(dx,dy);
+      if(d<.3){if(Math.random()<.012)pick(n);return;}
+      n.x+=dx/d*n.spd;n.y+=dy/d*n.spd;
+      n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';
+      n.el.querySelector('.stack').style.transform=dx<0?'scaleX(-1)':'scaleX(1)';
+    });
+    walkRAF=requestAnimationFrame(walk);
+  }
+  walkRAF=requestAnimationFrame(walk);
+  nbs.forEach(n=>{
+    n.el.addEventListener('pointerup',e=>{
+      if(moved)return;e.stopPropagation();
+      const sp=n.el.querySelector('.speech');
+      const line=n.lines[Math.random()*n.lines.length|0];
+      sp.textContent=line;sp.classList.add('show');
+      if(!muted&&S.lang==='ko')say(line);
+      clearTimeout(n._t);n._t=setTimeout(()=>sp.classList.remove('show'),2400);
+    });
+  });
+
+  /* 음소거(숫자친구 TTS) */
+  const mb=scr.querySelector('#townMute');
+  mb.textContent=muted?'🔇':'🔈';
+  mb.onclick=()=>{muted=!muted;mb.textContent=muted?'🔇':'🔈';if(muted)speechSynthesis.cancel();};
+
+  return function cleanup(){
+    clearInterval(fountainTimer);
+    clearInterval(sparkTimer);
+    cancelAnimationFrame(walkRAF);
+    removeEventListener('resize',onResize);
+  };
+}
 
 /* ============================================================
    학습선택 — 선택한 등급의 단계/유닛 목록
@@ -301,12 +416,12 @@ function handlePractice(val,body,u){
       if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
       S.sub.cur=GEN[u.practice.generator]({level:'practice'});save();
       setTimeout(()=>runPractice(body,u),650);
-    }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=' ';}
+    }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=' ';}
     return;
   }
   if(val==='del'){S.sub.inp=(S.sub.inp||'').slice(0,-1);}
   else if((S.sub.inp||'').length<3){S.sub.inp=(S.sub.inp||'')+val;}
-  $('#pscreen').textContent=S.sub.inp||' ';
+  $('#pscreen').textContent=S.sub.inp||' ';
 }
 
 /* ---------- STEP2 디스커버 (마법 노트) ---------- */
@@ -399,10 +514,10 @@ function stepCheck(body,u){
   buildNumpad($('#pad'),val=>{
     if(val==='ok'){const inp=S.sub.inp||'';if(inp==='')return;
       if(+inp===fill.answer){toast(t('correct'),true);numiHappy();markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
-      else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);S.sub.inp='';$('#pscreen').textContent=' ';}
+      else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);S.sub.inp='';$('#pscreen').textContent=' ';}
       return;}
     if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
-    $('#pscreen').textContent=S.sub.inp||' ';
+    $('#pscreen').textContent=S.sub.inp||' ';
   });
 }
 function openQuestion(body,u){
@@ -486,7 +601,7 @@ function nextArena(body,u,need){
       if(S.sub.ai>=need){clearInterval(window._nmTimer);arenaEnd(body,u);return;}
       nextArena(body,u,need);return;}
     if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
-    $('#pscreen').textContent=S.sub.inp||' ';
+    $('#pscreen').textContent=S.sub.inp||' ';
   });
 }
 function arenaEnd(body,u){
