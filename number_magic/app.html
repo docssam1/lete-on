@@ -8,13 +8,54 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <link rel="stylesheet" href="app/styles.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+#nm-intro{position:fixed;inset:0;z-index:9999;background:#0E2C57;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease}
+#nm-intro.hide{opacity:0;pointer-events:none}
+#nm-intro video{width:100%;height:100%;object-fit:cover}
+#nm-intro .skip{position:absolute;bottom:26px;right:20px;z-index:2;background:rgba(0,0,0,.45);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:99px;padding:10px 20px;font-family:'Pretendard',sans-serif;font-size:15px;font-weight:800;cursor:pointer;backdrop-filter:blur(4px)}
+#nm-intro .sound{position:absolute;bottom:26px;left:20px;z-index:2;background:rgba(0,0,0,.45);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:99px;width:46px;height:46px;font-size:20px;cursor:pointer;backdrop-filter:blur(4px)}
+</style>
 </head>
 <body>
+
+<!-- 인트로 영상 (세션당 1회, 끝나면 앱으로) -->
+<div id="nm-intro">
+  <video id="nm-introVid" src="assets/intro.mp4" autoplay muted playsinline preload="auto"></video>
+  <button class="sound" id="nm-sound" title="소리">🔇</button>
+  <button class="skip" id="nm-skip">건너뛰기 ▶</button>
+</div>
+
 <div id="app"></div>
+
 <!-- 데이터 → 엔진 → 본체 순서 -->
 <script src="engine/generators.js"></script>
 <script src="data/curriculum.js"></script>
 <script src="data/units/A-01.js"></script>
 <script src="app/main.js"></script>
+
+<script>
+(function(){
+  var intro=document.getElementById('nm-intro');
+  var vid=document.getElementById('nm-introVid');
+  var skip=document.getElementById('nm-skip');
+  var snd=document.getElementById('nm-sound');
+  // 세션당 1회만: 이미 봤으면 바로 숨김
+  try{ if(sessionStorage.getItem('nm_intro_seen')){ intro.classList.add('hide'); return; } }catch(e){}
+  function done(){
+    try{sessionStorage.setItem('nm_intro_seen','1');}catch(e){}
+    intro.classList.add('hide');
+    setTimeout(function(){ if(intro&&intro.parentNode) intro.parentNode.removeChild(intro); },700);
+    try{vid.pause();}catch(e){}
+  }
+  // 소리 켜기(탭 시 음소거 해제)
+  snd.onclick=function(){ vid.muted=!vid.muted; snd.textContent=vid.muted?'🔇':'🔊'; if(!vid.muted){vid.play().catch(function(){});} };
+  skip.onclick=done;
+  vid.addEventListener('ended',done);
+  // 영상 로드 실패 시(파일 아직 없거나 오류) 바로 앱으로
+  vid.addEventListener('error',done);
+  // 안전장치: 12초 지나면 자동 종료
+  setTimeout(done,12000);
+})();
+</script>
 </body>
 </html>
