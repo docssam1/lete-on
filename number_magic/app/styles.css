@@ -16,7 +16,7 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
   overflow:hidden}
 .katex{font-size:1em}
 #app{max-width:640px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
-#screen{flex:1;min-height:0;display:flex;flex-direction:column}
+#screen{flex:1;min-height:0;display:flex;flex-direction:column;position:relative}
 
 /* ── 상단바 ── */
 .nm-top{flex:none;display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--line);background:rgba(251,250,247,.95);backdrop-filter:blur(8px);z-index:10}
@@ -194,3 +194,82 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-clink{position:absolute;left:0;top:-44px;height:44px;z-index:3;overflow:visible;pointer-events:none}
 .nm-cresult{margin-top:12px;text-align:center;font-size:14px;font-weight:800;color:var(--ok)}
 .nm-cbook{background:#f4f7fc;border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 12px;margin-top:12px;font-size:12.5px;color:#33415a;line-height:1.55}
+
+/* ============================================================
+   ── 마을(Living Town) — 드래그/줌 + 구름·분수·반짝임 애니메이션 ──
+   ============================================================ */
+#townVp{position:relative;flex:1;min-height:0;overflow:hidden;touch-action:none;cursor:grab;background:#bfe0f2}
+#townVp.drag{cursor:grabbing}
+#townWorld{position:absolute;left:0;top:0;width:1024px;height:687px;transform-origin:0 0;
+  background:url(../assets/map.jpg) no-repeat center/cover;}
+
+.ncloud{position:absolute;display:flex;align-items:center;justify-content:center;
+  font-weight:900;color:#5b7fb0;pointer-events:none;opacity:.9;
+  filter:drop-shadow(0 4px 6px rgba(0,0,0,.08))}
+.ncloud .puff{position:absolute;background:#fff;border-radius:50%}
+.ncloud .num{position:relative;z-index:2;font-size:26px;color:#3a67a8;text-shadow:0 1px 0 #fff}
+.ncloud.a{top:70px;left:-160px;animation:cdrift 70s linear infinite}
+@keyframes cdrift{to{transform:translateX(1380px)}}
+.ncloud.c{top:110px;left:-560px;animation:cdriftC 130s linear infinite;opacity:.75}
+@keyframes cdriftC{from{transform:translateX(0) scale(1.1)}to{transform:translateX(1580px) scale(1.1)}}
+.ncloud.b{top:40px;left:-360px;animation:cdriftB 100s linear infinite}
+@keyframes cdriftB{from{transform:translateX(0) scale(.8)}to{transform:translateX(1480px) scale(.8)}}
+
+#townFountain{position:absolute;left:300px;top:290px;width:90px;height:90px;pointer-events:none}
+.tzero{position:absolute;left:50%;bottom:20px;font-weight:900;color:#8fd3ec;
+  font-size:20px;text-shadow:0 1px 2px rgba(255,255,255,.9);opacity:0}
+@keyframes zrise{
+  0%{transform:translate(-50%,0) scale(.6);opacity:0}
+  20%{opacity:1}60%{opacity:1}
+  100%{transform:translate(calc(-50% + var(--zx,0px)),-70px) scale(1.1);opacity:0}
+}
+.tspark{position:absolute;width:6px;height:6px;border-radius:50%;background:#fff6d8;
+  box-shadow:0 0 8px 2px rgba(255,240,180,.9);pointer-events:none;animation:sfloat 6s ease-in-out infinite}
+@keyframes sfloat{0%{transform:translateY(0);opacity:0}25%{opacity:1}75%{opacity:1}100%{transform:translateY(-90px);opacity:0}}
+
+.nb{position:absolute;cursor:pointer;z-index:25;transition:transform .1s;width:44px}
+.nb:active{transform:scale(.92)}
+.nb .stack{display:flex;flex-direction:column-reverse;align-items:center;gap:2px;animation:hop .5s ease-in-out infinite}
+@keyframes hop{50%{transform:translateY(-4px)}}
+.nb .blk{width:34px;height:34px;border-radius:8px;position:relative;
+  box-shadow:0 3px 0 rgba(0,0,0,.18),inset 0 2px 3px rgba(255,255,255,.35);display:grid;place-items:center}
+.nb .blk.n2{background:#ff8c1a}.nb .blk.n3{background:#ffd21a}.nb .blk.n5{background:#2fa3e0}
+.nb .blk .eye{position:absolute;top:9px;width:7px;height:7px;background:#fff;border-radius:50%}
+.nb .blk .eye::after{content:"";position:absolute;top:2px;left:2px;width:3px;height:3px;background:#1a2233;border-radius:50%}
+.nb .blk .eye.l{left:6px}.nb .blk .eye.r{right:6px}
+.nb .blk .mo{position:absolute;bottom:7px;width:9px;height:5px;border-bottom:2px solid #1a2233;border-radius:0 0 8px 8px}
+.nb .cap{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-weight:900;font-size:14px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);z-index:3}
+.nb .shadow{width:32px;height:8px;background:rgba(0,0,0,.18);border-radius:50%;margin:3px auto 0;filter:blur(2px)}
+.nb .speech{position:absolute;bottom:100%;left:50%;transform:translateX(-50%) translateY(-4px);
+  background:#fff;border-radius:12px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--ink);
+  white-space:nowrap;box-shadow:0 8px 20px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:.25s;z-index:30}
+.nb .speech.show{opacity:1;transform:translateX(-50%) translateY(-8px)}
+.nb .speech::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#fff}
+
+.nm-zone{position:absolute;border:none;background:transparent;cursor:pointer;padding:0;border-radius:16px;z-index:15;transition:.2s}
+.nm-zone:hover{background:rgba(255,255,255,.14)}
+.nm-halo{position:absolute;inset:0;border-radius:16px;border:3px solid var(--gold-bright);
+  box-shadow:0 0 0 3px rgba(255,255,255,.35),0 0 26px 6px rgba(234,201,150,.7);
+  animation:nmpulse 1.8s ease-in-out infinite;background:rgba(234,201,150,.12)}
+@keyframes nmpulse{50%{box-shadow:0 0 0 3px rgba(255,255,255,.5),0 0 40px 12px rgba(234,201,150,.9)}}
+.nm-lockico{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;z-index:2}
+.nm-zlabel{position:absolute;top:-32px;left:50%;transform:translateX(-50%);white-space:nowrap;
+  background:var(--blue-deep);color:#fff;font-weight:900;font-size:13px;padding:5px 12px;border-radius:99px;box-shadow:0 6px 14px rgba(0,0,0,.4);pointer-events:none}
+.nm-zlabel small{font-weight:600;opacity:.8;font-size:11px;margin-left:4px}
+.nm-zone.locked .nm-zlabel{background:#5a6577}
+
+.nm-town-hud{position:absolute;z-index:40;pointer-events:none}
+.nm-town-hud.brand{top:12px;left:14px;font-weight:900;font-size:13px;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.5);letter-spacing:.02em}
+.nm-town-hud.ctrls{bottom:16px;right:14px;display:flex;flex-direction:column;gap:9px;pointer-events:auto}
+.nm-iconbtn{width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:19px;
+  background:rgba(255,255,255,.92);box-shadow:0 8px 20px rgba(0,0,0,.18);display:grid;place-items:center;transition:.15s}
+.nm-iconbtn:active{transform:scale(.9)}
+
+.nm-tmodal{position:fixed;inset:0;background:rgba(14,44,87,.55);backdrop-filter:blur(3px);display:none;
+  align-items:center;justify-content:center;z-index:60;padding:24px}
+.nm-tmodal.on{display:flex}
+.nm-tmcard{background:#fff;border-radius:22px;padding:26px 22px;max-width:340px;width:100%;text-align:center;box-shadow:0 30px 70px -20px rgba(0,0,0,.5)}
+.nm-tmcard h3{font-size:20px;color:var(--blue-deep);margin-bottom:4px}
+.nm-tmcard p{font-size:14px;color:#4a5468;margin-bottom:18px}
+.nm-tmcard .go{display:block;width:100%;padding:14px;border:none;border-radius:14px;background:var(--blue);color:#fff;font-weight:800;font-size:16px;cursor:pointer;margin-bottom:9px}
+.nm-tmcard .close{background:none;border:none;color:#9aa2b1;font-weight:700;font-size:14px;cursor:pointer}
