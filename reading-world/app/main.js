@@ -265,7 +265,7 @@ function libPageBody(page,pageIdx){
  const src=`${LIBRARY_IMG_BASE}/${lib.bookId}/page${pageIdx+1}.jpg`;
  if(!paras.length){
   const placeholderText=libT('(원본 삽화 페이지)','(Illustration page)','（原书插图页）');
-  return `<div class="lib-page-illus-wrap"><img class="lib-page-img lib-page-img-full" src="${src}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="lib-page-text lib-page-illus" style="display:none">${esc(placeholderText)}</div></div>`;
+  return `<div class="lib-page-illus-wrap"><img class="lib-page-img-full" src="${src}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="lib-page-text lib-page-illus" style="display:none">${esc(placeholderText)}</div></div>`;
  }
  let offset=0;
  const html=paras.map((p,pi)=>{
@@ -274,7 +274,7 @@ function libPageBody(page,pageIdx){
   const inner=sentences.map(s=>{const start=offset;const end=start+s.length;offset=end+1;return `<span class="sentence-line" data-libpage="${pageIdx}" data-start="${start}" data-end="${end}">${esc(s)} </span>`;}).join('');
   offset+=1;return `${heading}<p>${inner}</p>`;
  }).join('');
- return `<img class="lib-page-img" src="${src}" alt="" onerror="this.remove()"><div class="lib-page-text">${html}</div>`;
+ return `<img class="lib-page-img" src="${src}" alt="" onerror="this.remove()"><div class="lib-page-content"><div class="lib-page-text">${html}</div></div>`;
 }
 function libAudioUrl(bookId,pageIdx){return `${AUDIO_BASE}/${bookId}/page${pageIdx+1}.mp3`;}
 function libSpeakPage(pageIdx,pageText){
