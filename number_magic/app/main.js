@@ -42,7 +42,7 @@ const L=(obj)=>obj?(obj[S.lang]??obj.ko??obj.en):'';   // 다국어 필드 픽
 
 /* ---------- 상태 + 저장 ---------- */
 const KEY='nm_state_v1';
-function defaults(){return{ lang:'ko', view:'map', coins:0,
+function defaults(){return{ lang:'ko', view:'map', coins:0, range:'oneDigit',
   unit:null, step:null, sub:{}, progress:{} };}
 let S=load();
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
@@ -127,7 +127,8 @@ function screenMap(){
 /* ============================================================
    유닛 — 6단계 STEP 흐름
    ============================================================ */
-function enterUnit(uid){S.view='unit';S.unit=uid;S.step='practice';S.sub={};save();render();}
+function enterUnit(uid){S.view='unit';S.unit=uid;S.step='range';S.sub={};save();render();}
+function pickRange(rk){S.range=rk;S.step='practice';S.sub={};save();render();}
 function exitUnit(){S.view='map';S.unit=null;S.step=null;S.sub={};save();render();}
 
 function flowBar(){
@@ -146,12 +147,13 @@ function screenUnit(){
       <button class="nm-back" id="backMap">${t('back')}</button>
       <div class="nm-unit-title">${L(u.title)}<small>${L(u.subtitle)}</small></div>
     </div>
-    ${flowBar()}
+    ${S.step==='range'?'':flowBar()}
     <div id="stepBody" class="nm-step-body"></div>
   </div>`;
   $('#backMap').onclick=exitUnit;
   scr.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{S.step=b.dataset.step;save();screenUnit();});
   const body=$('#stepBody');
+  if(S.step==='range'){stepRange(body,u);renderMath(body);return;}
   ({practice:stepPractice,discover:stepDiscover,check:stepCheck,lab:stepLab,arena:stepArena,stamp:stepStamp}[S.step]||stepDiscover)(body,u);
   renderMath(body);
 }
@@ -212,21 +214,82 @@ function handlePractice(val,body,u){
 }
 
 /* ---------- STEP2 디스커버 (마법 노트) ---------- */
+function stepRange(body,u){
+  if(!u.ranges){ pickRange('oneDigit'); return; }
+  body.innerHTML=`<div class="nm-skip">
+    <div class="nm-numi big"><div class="hat"></div></div>
+    <div class="nm-skip-q">${S.lang==='ko'?'수 범위를 골라요':S.lang==='en'?'Choose number range':'选择数字范围'}</div>
+    <div class="nm-range-btns">`+u.ranges.map(r=>`
+      <button class="nm-range-card" data-rk="${r.key}">
+        <b>${L({ko:r.ko,en:r.en,zh:r.zh})}</b><small>${r.desc_ko||''}</small></button>`).join('')+`
+    </div></div>`;
+  body.querySelectorAll('[data-rk]').forEach(b=>b.onclick=()=>pickRange(b.dataset.rk));
+}
+
+/* 개념 렌더: 투명표 + 폰트 자동축소 + 짝 연결선(일의자리 색) */
+function conceptExpr(container, terms){
+  const box=document.createElement('div');box.className='nm-cbox';
+  const scroll=document.createElement('div');scroll.className='nm-cscroll';box.appendChild(scroll);
+  const table=document.createElement('table');table.className='nm-cexpr';
+  const tr=document.createElement('tr');table.appendChild(tr);
+  const cells=[];
+  terms.forEach((t,i)=>{
+    if(i){const op=document.createElement('td');op.className='op';op.textContent='+';tr.appendChild(op);}
+    const td=document.createElement('td');td.className=(t.pair?'p'+t.pair:'');
+    td.innerHTML=(t.tens!=null?`<span class="tens">${t.tens}</span>`:'')+`<span class="ones">${t.ones}</span>`;
+    tr.appendChild(td);cells.push({td,t});
+  });
+  scroll.appendChild(table);container.appendChild(box);
+  const fit=()=>{
+    const avail=scroll.clientWidth;let fs=32;table.style.fontSize=fs+'px';
+    while(table.scrollWidth>avail&&fs>17){fs--;table.style.fontSize=fs+'px';}
+    const old=scroll.querySelector('.nm-clink');if(old)old.remove();
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','nm-clink');
+    const sr=scroll.getBoundingClientRect();const cols={1:'#2E9E6B',2:'#E0682F',3:'#8A5CD0'};
+    [1,2,3].forEach(pc=>{
+      const idx=cells.map((c,i)=>c.t.pair===pc?i:-1).filter(i=>i>=0);
+      if(idx.length===2){
+        const a=cells[idx[0]].td.querySelector('.ones').getBoundingClientRect();
+        const b=cells[idx[1]].td.querySelector('.ones').getBoundingClientRect();
+        const x1=a.left+a.width/2-sr.left,x2=b.left+b.width/2-sr.left,dip=42,top=8;
+        const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+        p.setAttribute('d',`M ${x1} ${dip} C ${x1} ${top}, ${x2} ${top}, ${x2} ${dip}`);
+        p.setAttribute('fill','none');p.setAttribute('stroke',cols[pc]);p.setAttribute('stroke-width','2.5');p.setAttribute('stroke-linecap','round');
+        svg.appendChild(p);
+        const tx=document.createElementNS('http://www.w3.org/2000/svg','text');
+        tx.setAttribute('x',(x1+x2)/2);tx.setAttribute('y',top-1);tx.setAttribute('text-anchor','middle');
+        tx.setAttribute('fill',cols[pc]);tx.setAttribute('font-size','12');tx.setAttribute('font-weight','800');tx.textContent='10';svg.appendChild(tx);
+      }
+    });
+    svg.setAttribute('width',sr.width);scroll.appendChild(svg);
+  };
+  requestAnimationFrame(fit);
+  try{new ResizeObserver(fit).observe(scroll);}catch(e){}
+}
+
 function stepDiscover(body,u){
   const d=u.discover;
-  let html=`<div class="nm-card"><div class="nm-card-h">📓 ${L(d.title)}</div>`;
-  d.examples.forEach(ex=>{
-    html+=`<div class="nm-note">
-      <div class="nm-note-steps">${ex.steps.map((s,i)=>`${i?'<span class="nm-eq">=</span>':''}<span data-tex="${esc(s.replace(/×/g,'\\times'))}"></span>`).join('')}</div>
-      <div class="nm-note-desc">✦ ${L(ex.note)}</div></div>`;
-  });
-  html+=`<div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
+  // 두 자리 범위가 아니면 두 자리 단계(kind two/mix)는 접어둠(한 자리만)
+  const two = S.range==='twoDigit';
+  const stages = d.stages.filter(s=> two || s.kind==='one');
+  body.innerHTML=`<div class="nm-card"><div class="nm-card-h">📓 ${L(d.title)}</div><div id="cstages"></div>
+    <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
     <button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
-  body.innerHTML=html;
+  const host=body.querySelector('#cstages');
+  stages.forEach(s=>{
+    const wrap=document.createElement('div');wrap.className='nm-cstage';
+    wrap.innerHTML=`<span class="nm-ctag ${s.kind}">${L(s.tag)}</span>
+      <div class="nm-ch">${L(s.head)}</div>
+      <div class="nm-cdesc">${L(s.desc)}</div>`;
+    host.appendChild(wrap);
+    conceptExpr(wrap, s.terms);
+    const res=document.createElement('div');res.className='nm-cresult';res.textContent=L(s.result);wrap.appendChild(res);
+    if(s.book){const bk=document.createElement('div');bk.className='nm-cbook';bk.innerHTML='📖 '+L(s.book);wrap.appendChild(bk);}
+  });
   $('#toCheck').onclick=()=>{markStepDone(S.unit,'discover');gotoStep('check');};
 }
 
-/* ---------- STEP3 핵심체크 (빈칸 + 열린질문) ---------- */
+
 function stepCheck(body,u){
   const c=u.check;S.sub.fi=S.sub.fi||0;
   const fill=c.fills[S.sub.fi];
