@@ -21,24 +21,23 @@ h1{font-size:20px;color:var(--blue-deep);margin-bottom:4px}
 .stage-h{font-size:16px;font-weight:900;color:var(--blue-deep);margin:8px 0 4px}
 .stage-desc{font-size:14px;color:var(--sub);line-height:1.55;margin-bottom:16px}
 
-/* ★ 식 박스: 잘리지 않게 가로스크롤, 절대 줄바꿈 안 함 */
+/* ★ 식 영역: 투명 표, 폰트는 JS가 폭에 맞춰 자동 축소 → 스크롤 없음 */
 .expr-box{border:1.5px solid #e3ecf7;background:linear-gradient(180deg,#fbfdff,#f5f9ff);border-radius:16px;
-  padding:52px 16px 18px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
-.expr-scroll{position:relative;display:inline-block;min-width:100%}
-.expr{display:inline-flex;gap:10px;align-items:flex-end;white-space:nowrap;position:relative;z-index:2;padding:0 4px}
-.term{display:inline-flex;align-items:baseline;font-size:32px;font-weight:900;color:var(--blue-deep);position:relative}
-.term .ones{position:relative;padding:0 3px;border-radius:6px}
-.term.p1 .ones{color:var(--pair1);background:rgba(46,158,107,.15)}
-.term.p2 .ones{color:var(--pair2);background:rgba(224,104,47,.15)}
-.term.p3 .ones{color:var(--pair3);background:rgba(138,92,208,.15)}
-.op{font-size:26px;font-weight:800;color:#b0b7c3;align-self:center}
-.linkSvg{position:absolute;top:-48px;left:0;height:48px;z-index:1;overflow:visible;pointer-events:none}
-.scrollhint{font-size:11px;color:#b0b7c3;text-align:right;margin-top:4px;font-weight:600}
+  padding:50px 12px 16px;position:relative;overflow:hidden}
+.expr-scroll{position:relative;width:100%}
+table.expr{border-collapse:collapse;margin:0 auto;table-layout:auto}
+table.expr td{border:none;padding:0 .12em;text-align:center;vertical-align:baseline;
+  font-weight:900;color:var(--blue-deep);white-space:nowrap;line-height:1.1}
+table.expr td.op{color:#b0b7c3;font-weight:800;padding:0 .06em}
+table.expr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block}
+td.p1 .ones{color:var(--pair1);background:rgba(46,158,107,.15)}
+td.p2 .ones{color:var(--pair2);background:rgba(224,104,47,.15)}
+td.p3 .ones{color:var(--pair3);background:rgba(138,92,208,.15)}
+.linkSvg{position:absolute;left:0;top:-46px;height:46px;z-index:3;overflow:visible;pointer-events:none}
 
 .result{margin-top:16px;text-align:center;font-size:15px;color:var(--sub)}
 .result .r{font-size:22px;font-weight:900;color:var(--ok);display:block;margin-top:6px}
 .result .r b{color:var(--blue)}
-
 .legend{display:flex;gap:14px;justify-content:center;margin-top:14px;flex-wrap:wrap}
 .leg{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--sub)}
 .leg .dot{width:12px;height:12px;border-radius:4px}
@@ -73,7 +72,6 @@ h1{font-size:20px;color:var(--blue-deep);margin-bottom:4px}
   <div class="stage-h">일의 자리 짝을 모두 찾아요</div>
   <div class="stage-desc">한 자리·두 자리가 섞여 있어도 걱정 없어요. <b>일의 자리끼리 짝</b>을 찾아 묶으면 됩니다.</div>
   <div class="expr-box"><div class="expr-scroll" id="w3"></div></div>
-  <div class="scrollhint">← 식이 길면 좌우로 밀어요</div>
   <div class="result">7·3 짝, 6·4 짝 → 각각 40<span class="r"><b>40</b> + <b>40</b> = 80</span></div>
   <div class="legend">
     <span class="leg"><span class="dot" style="background:var(--pair1)"></span>첫째 짝</span>
@@ -82,43 +80,56 @@ h1{font-size:20px;color:var(--blue-deep);margin-bottom:4px}
 </div>
 
 <script>
+const MAX=34, MIN=18;   // 폰트 최대/최소(px)
+
 function render(scrollId, terms){
   const scroll=document.getElementById(scrollId);
-  const expr=document.createElement('div');expr.className='expr';
-  scroll.appendChild(expr);
-  const nodes=[];
+  const table=document.createElement('table');table.className='expr';
+  const tr=document.createElement('tr');table.appendChild(tr);
+  const cells=[];
   terms.forEach((t,i)=>{
-    if(i){const op=document.createElement('span');op.className='op';op.textContent='+';expr.appendChild(op);}
-    const el=document.createElement('span');el.className='term'+(t.pair?' p'+t.pair:'');
-    el.innerHTML=(t.tens!=null?`<span class="tens">${t.tens}</span>`:'')+`<span class="ones">${t.ones}</span>`;
-    expr.appendChild(el);nodes.push(el);
+    if(i){const op=document.createElement('td');op.className='op';op.textContent='+';tr.appendChild(op);}
+    const td=document.createElement('td');td.className=(t.pair?'p'+t.pair:'');
+    td.innerHTML=(t.tens!=null?`<span class="tens">${t.tens}</span>`:'')+`<span class="ones">${t.ones}</span>`;
+    tr.appendChild(td);cells.push({td,t});
   });
-  requestAnimationFrame(()=>{
-    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-    svg.setAttribute('class','linkSvg');
-    const er=expr.getBoundingClientRect();
-    svg.setAttribute('width',expr.scrollWidth||er.width);
-    const cols={1:'#2E9E6B',2:'#E0682F',3:'#8A5CD0'};
-    [1,2,3].forEach(pc=>{
-      const idxs=terms.map((t,i)=>t.pair===pc?i:-1).filter(i=>i>=0);
-      if(idxs.length===2){
-        const a=nodes[idxs[0]].querySelector('.ones').getBoundingClientRect();
-        const b=nodes[idxs[1]].querySelector('.ones').getBoundingClientRect();
-        const x1=a.left+a.width/2-er.left, x2=b.left+b.width/2-er.left;
-        const dip=46, top=8;
-        const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-        path.setAttribute('d',`M ${x1} ${dip} C ${x1} ${top}, ${x2} ${top}, ${x2} ${dip}`);
-        path.setAttribute('fill','none');path.setAttribute('stroke',cols[pc]);
-        path.setAttribute('stroke-width','2.5');path.setAttribute('stroke-linecap','round');
-        svg.appendChild(path);
-        const tx=document.createElementNS('http://www.w3.org/2000/svg','text');
-        tx.setAttribute('x',(x1+x2)/2);tx.setAttribute('y',top-1);tx.setAttribute('text-anchor','middle');
-        tx.setAttribute('fill',cols[pc]);tx.setAttribute('font-size','12');tx.setAttribute('font-weight','800');
-        tx.textContent='10';svg.appendChild(tx);
-      }
-    });
-    expr.appendChild(svg);
+  scroll.appendChild(table);
+  fitAndLink(scroll,table,cells);
+  new ResizeObserver(()=>fitAndLink(scroll,table,cells)).observe(scroll);
+}
+
+function fitAndLink(scroll,table,cells){
+  // 1) 폰트 자동 축소: 표가 컨테이너 폭에 맞을 때까지 줄임
+  const avail=scroll.clientWidth;
+  let fs=MAX;
+  table.style.fontSize=fs+'px';
+  while(table.scrollWidth>avail && fs>MIN){ fs--; table.style.fontSize=fs+'px'; }
+  // 2) 연결선 다시 그림
+  const old=scroll.querySelector('.linkSvg');if(old)old.remove();
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('class','linkSvg');
+  const sr=scroll.getBoundingClientRect();
+  const cols={1:'#2E9E6B',2:'#E0682F',3:'#8A5CD0'};
+  [1,2,3].forEach(pc=>{
+    const idxs=cells.map((c,i)=>c.t.pair===pc?i:-1).filter(i=>i>=0);
+    if(idxs.length===2){
+      const ea=cells[idxs[0]].td.querySelector('.ones').getBoundingClientRect();
+      const eb=cells[idxs[1]].td.querySelector('.ones').getBoundingClientRect();
+      const x1=ea.left+ea.width/2-sr.left, x2=eb.left+eb.width/2-sr.left;
+      const dip=44, top=8;
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d',`M ${x1} ${dip} C ${x1} ${top}, ${x2} ${top}, ${x2} ${dip}`);
+      path.setAttribute('fill','none');path.setAttribute('stroke',cols[pc]);
+      path.setAttribute('stroke-width','2.5');path.setAttribute('stroke-linecap','round');
+      svg.appendChild(path);
+      const tx=document.createElementNS('http://www.w3.org/2000/svg','text');
+      tx.setAttribute('x',(x1+x2)/2);tx.setAttribute('y',top-1);tx.setAttribute('text-anchor','middle');
+      tx.setAttribute('fill',cols[pc]);tx.setAttribute('font-size','12');tx.setAttribute('font-weight','800');
+      tx.textContent='10';svg.appendChild(tx);
+    }
   });
+  svg.setAttribute('width',sr.width);
+  scroll.appendChild(svg);
 }
 
 render('w1',[{ones:'3',pair:1},{ones:'6',pair:2},{ones:'7',pair:1},{ones:'4',pair:2}]);
