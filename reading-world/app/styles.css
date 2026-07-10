@@ -449,8 +449,8 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 .av-prev{width:auto;height:auto;background:transparent}
 
 /* v37: Phaser town (Gfield Reading Town game view) */
-.game-town{max-width:1000px}
-.town-stage-wrap{position:relative;margin-top:12px;border-radius:18px;overflow:hidden;background:#bcd9a8;box-shadow:0 8px 26px rgba(30,50,90,.14)}
+.game-town{max-width:none}
+.town-stage-wrap{position:relative;margin:12px auto 0;border-radius:18px;overflow:hidden;background:#bcd9a8;box-shadow:0 8px 26px rgba(30,50,90,.14);width:min(100%,calc((100vh - 245px)*1.6))}
 #town-stage{width:100%;aspect-ratio:960/600;display:block;touch-action:none}
 #town-stage canvas{display:block;width:100%!important;height:100%!important;border-radius:18px}
 /* Map zoom (+/-) — top-right corner, clear of every building hotspot. */
