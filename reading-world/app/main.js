@@ -258,7 +258,13 @@ function libPageBody(page,pageIdx){
  // index the heading prints before; defaults to 0 (top of page) when unset.
  const titleAt=page.chapterTitle?(page.chapterTitleAt||0):-1;
  if(!paras.length){
-  return `<div class="lib-page-text lib-page-illus">${libT('(원본 삽화 페이지)','(Illustration page)','（原书插图页）')}</div>`;
+  // Original illustration for this page, supplied by the director (not the
+  // licensed book's own art). Convention: assets/images/library/{bookId}/page{N}.png
+  // (1-indexed to match the on-screen page number). Falls back to the placeholder
+  // note until that file exists, so nothing breaks before it's uploaded.
+  const src=`assets/images/library/${lib.bookId}/page${pageIdx+1}.png`;
+  const placeholderText=libT('(원본 삽화 페이지)','(Illustration page)','（原书插图页）');
+  return `<div class="lib-page-art-wrap"><img class="lib-page-art-img" src="${src}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="lib-page-text lib-page-illus" style="display:none">${esc(placeholderText)}</div></div>`;
  }
  let offset=0;
  const html=paras.map((p,pi)=>{
