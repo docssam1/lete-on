@@ -86,14 +86,14 @@ function cycleLang(){const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.lang)+1)%3];
 
 /* ============================================================
    마을(Living Town) — map.jpg 위 드래그/줌 + 구름/분수/걸어다니는 숫자친구
-   건물↔등급 배치(확정): 책건물=BASIC · 타운홀=PRIME · 시계탑=ADVANCE ·
-   정자=CHALLENGE · Magic Theater=영상관(별도, 등급 아님)
+   건물↔등급 배치(확정): 책건물=BASIC · 타운홀=PRIME ·
+   우하단 집=ADVANCE · 정자=CHALLENGE · Magic Theater=영상관(별도, 등급 아님)
    ============================================================ */
 const TOWN_SPOTS=[
   { tier:'numberland',   pos:'left:8%;top:13%;width:24%;height:28%',  tag:'📖 BASIC',     sub:{ko:'수의 나라',en:'Number Land',zh:'数字王国'} },
   { tier:'beginner',     pos:'left:36%;top:19%;width:16%;height:22%', tag:'🏛️ PRIME',     sub:{ko:'초급',en:'Beginner',zh:'初级'} },
-  { tier:'intermediate', pos:'left:29%;top:14%;width:9%;height:16%',  tag:'🕰️ ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
   { tier:'advanced',     pos:'left:73%;top:24%;width:11%;height:14%', tag:'⛰️ CHALLENGE', sub:{ko:'고급',en:'Advanced',zh:'高级'} },
+  { tier:'intermediate', pos:'left:74%;top:58%;width:13%;height:16%', tag:'🏠 ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
   { tier:'_theater',     pos:'left:53%;top:19%;width:13%;height:22%', tag:'🎬 극장',       sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' }
 ];
 function tierById(id){return CUR.tiers.find(x=>x.id===id);}
@@ -163,11 +163,18 @@ function initTownWorld(scr){
   const vp=scr.querySelector('#townVp'), world=scr.querySelector('#townWorld');
   const modal=scr.querySelector('#tmodal');
   const W=1024,H=687;
-  let cam={x:0,y:0,scale:1},minS=1,maxS=2.4;
-  function fit(){minS=Math.max(vp.clientWidth/W,vp.clientHeight/H);cam.scale=Math.max(cam.scale,minS);}
+  let cam={x:0,y:0,scale:1},minS=1,maxS=3;
+
+  /* contain 스케일: 화면 크기와 무관하게 지도 전체가 항상 보이는 게 기본값.
+     (예전엔 cover=Math.max로 화면을 꽉 채우며 잘렸음 → PC에서 지도 일부가 안 보이는 문제) */
+  function fit(){minS=Math.min(vp.clientWidth/W,vp.clientHeight/H);if(cam.scale<minS)cam.scale=minS;}
   function apply(){world.style.transform=`translate(${cam.x}px,${cam.y}px) scale(${cam.scale})`;}
-  function bound(){const mx=vp.clientWidth-W*cam.scale,my=vp.clientHeight-H*cam.scale;cam.x=Math.min(0,Math.max(mx,cam.x));cam.y=Math.min(0,Math.max(my,cam.y));}
-  function center(){cam.scale=Math.max(minS,1);cam.x=-(W*cam.scale-vp.clientWidth)/2;cam.y=-(H*cam.scale-vp.clientHeight)/2;bound();apply();}
+  function bound(){
+    const mx=vp.clientWidth-W*cam.scale, my=vp.clientHeight-H*cam.scale;
+    cam.x = mx>=0 ? Math.min(mx,Math.max(0,cam.x)) : Math.min(0,Math.max(mx,cam.x));
+    cam.y = my>=0 ? Math.min(my,Math.max(0,cam.y)) : Math.min(0,Math.max(my,cam.y));
+  }
+  function center(){cam.scale=minS;cam.x=(vp.clientWidth-W*cam.scale)/2;cam.y=(vp.clientHeight-H*cam.scale)/2;bound();apply();}
 
   let drag=false,moved=false,sx,sy,cx,cy;
   function onDown(e){drag=true;moved=false;vp.classList.add('drag');sx=e.clientX;sy=e.clientY;cx=cam.x;cy=cam.y;}
