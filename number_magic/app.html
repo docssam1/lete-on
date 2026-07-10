@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<!-- 인트로 영상 (세션당 1회, 끝나면 앱으로) -->
+<!-- 인트로 영상 (매번 재생, 끝나면 앱으로) -->
 <div id="nm-intro">
   <video id="nm-introVid" src="assets/gemini_generated_video_c12e6123.mp4" autoplay muted playsinline preload="auto"></video>
   <button class="sound" id="nm-sound" title="소리">🔇</button>
@@ -39,10 +39,7 @@
   var vid=document.getElementById('nm-introVid');
   var skip=document.getElementById('nm-skip');
   var snd=document.getElementById('nm-sound');
-  // 세션당 1회만: 이미 봤으면 바로 숨김
-  try{ if(sessionStorage.getItem('nm_intro_seen')){ intro.classList.add('hide'); return; } }catch(e){}
   function done(){
-    try{sessionStorage.setItem('nm_intro_seen','1');}catch(e){}
     intro.classList.add('hide');
     setTimeout(function(){ if(intro&&intro.parentNode) intro.parentNode.removeChild(intro); },700);
     try{vid.pause();}catch(e){}
