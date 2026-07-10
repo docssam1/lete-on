@@ -257,14 +257,15 @@ function libPageBody(page,pageIdx){
  // previous chapter's tail may share the page). chapterTitleAt is the paragraph
  // index the heading prints before; defaults to 0 (top of page) when unset.
  const titleAt=page.chapterTitle?(page.chapterTitleAt||0):-1;
+ // Illustration for this page, supplied by the director (not the licensed book's
+ // own art) — served from private-facing Supabase Storage, never bundled into
+ // git/GitHub Pages. Convention: {bookId}/page{N}.jpg (1-indexed to match the
+ // on-screen page number). Most pages have none — the onerror handlers below
+ // make that a silent no-op either way, so nothing breaks before art exists.
+ const src=`${LIBRARY_IMG_BASE}/${lib.bookId}/page${pageIdx+1}.jpg`;
  if(!paras.length){
-  // Original illustration for this page, supplied by the director (not the
-  // licensed book's own art). Convention: assets/images/library/{bookId}/page{N}.png
-  // (1-indexed to match the on-screen page number). Falls back to the placeholder
-  // note until that file exists, so nothing breaks before it's uploaded.
-  const src=`assets/images/library/${lib.bookId}/page${pageIdx+1}.png`;
   const placeholderText=libT('(원본 삽화 페이지)','(Illustration page)','（原书插图页）');
-  return `<div class="lib-page-art-wrap"><img class="lib-page-art-img" src="${src}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="lib-page-text lib-page-illus" style="display:none">${esc(placeholderText)}</div></div>`;
+  return `<div class="lib-page-illus-wrap"><img class="lib-page-img lib-page-img-full" src="${src}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="lib-page-text lib-page-illus" style="display:none">${esc(placeholderText)}</div></div>`;
  }
  let offset=0;
  const html=paras.map((p,pi)=>{
@@ -273,7 +274,7 @@ function libPageBody(page,pageIdx){
   const inner=sentences.map(s=>{const start=offset;const end=start+s.length;offset=end+1;return `<span class="sentence-line" data-libpage="${pageIdx}" data-start="${start}" data-end="${end}">${esc(s)} </span>`;}).join('');
   offset+=1;return `${heading}<p>${inner}</p>`;
  }).join('');
- return `<div class="lib-page-text">${html}</div>`;
+ return `<img class="lib-page-img" src="${src}" alt="" onerror="this.remove()"><div class="lib-page-text">${html}</div>`;
 }
 function libAudioUrl(bookId,pageIdx){return `${AUDIO_BASE}/${bookId}/page${pageIdx+1}.mp3`;}
 function libSpeakPage(pageIdx,pageText){
@@ -304,7 +305,7 @@ function libShelfScreen(){
    const started=prog&&typeof prog.spread==='number'&&prog.spread>-1;
    const pct=started?Math.min(100,Math.round(((prog.spread+1)/spreads)*100)):0;
    return `<button class="lib-card" data-act="lib-open" data-book="${esc(b.id)}">
-    <div class="lib-card-cover"><span class="lib-card-emoji">📗</span></div>
+    <div class="lib-card-cover"><img class="lib-card-cover-img" src="${LIBRARY_IMG_BASE}/${esc(b.id)}/cover.jpg" alt="" style="display:none" onload="this.style.display='block';this.nextElementSibling.style.display='none'" onerror="this.remove()"><span class="lib-card-emoji">📗</span></div>
     <div class="lib-card-body"><b>${esc(b.title)}</b>
      <div class="lib-card-tags"><span class="lib-tag">AR ${esc(b.ar)}</span><span class="lib-tag">R/G ${esc(b.rg)}</span>${b.audio&&b.audio!=='none'?`<span class="lib-tag audio">🎧 ${libT('오디오북','Audiobook','有声书')}</span>`:''}${prog&&prog.quizBest!=null?`<span class="lib-tag quiz">📝 ${prog.quizBest}/${(b.quiz||[]).length||prog.quizTotal||0}</span>`:''}</div>
      ${started?`<div class="lib-progress"><span style="width:${pct}%"></span></div><small>${libT('이어 읽기','Continue reading','继续阅读')} · ${pct}%</small>`:`<small>${libT('새 책','New','新书')}</small>`}
@@ -365,7 +366,7 @@ function libReaderScreen(){
  const pages=lib.pages||[];const spreads=libSpreadCount(meta);
  let stage;
  if(lib.spread===-1){
-  stage=`<div class="lib-book lib-cover"><div class="lib-cover-face"><div class="lib-cover-emoji">📕</div><h1>${esc(meta.title)}</h1><p>${esc((libSeriesMeta(meta.seriesId)||{}).author||'')}</p><p class="lib-cover-illus">${meta.illustrator?libT('그림 ','Illustrated by ','插图 ')+esc(meta.illustrator):''}</p></div></div>`;
+  stage=`<div class="lib-book lib-cover"><div class="lib-cover-face"><img class="lib-cover-img" src="${LIBRARY_IMG_BASE}/${lib.bookId}/cover.jpg" alt="" style="display:none" onload="this.style.display='block';this.nextElementSibling.style.display='none'" onerror="this.remove()"><div class="lib-cover-emoji">📕</div><h1>${esc(meta.title)}</h1><p>${esc((libSeriesMeta(meta.seriesId)||{}).author||'')}</p><p class="lib-cover-illus">${meta.illustrator?libT('원작 삽화가 ','Original illustrator: ','原著插画 ')+esc(meta.illustrator)+libT(' · 화면 삽화는 재구성작',' · art shown here is newly recreated','，本页插图为重新创作'):''}</p></div></div>`;
  } else {
   const li=lib.spread*2,ri=li+1;
   const leftPg=pages[li],rightPg=pages[ri];
@@ -925,6 +926,7 @@ function render(){if(!currentStudent){if(!introSeen()){app.innerHTML=introScreen
  if(atTown){if(townView==='game'&&gameAvailable()){app.innerHTML=gameTownShell();bindGameTown();return;}if(townView==='screen'&&sqAvailable()){app.innerHTML=screenQuestScreen();bind();return;}if(townView==='notice'){app.innerHTML=noticeBoardScreen();bind();return;}if(townView==='diagnostic'){app.innerHTML=diagnosticScreen();bind();return;}if(townView==='parent'){app.innerHTML=parentDashboard();bind();return;}if(townView==='library'){app.innerHTML=libraryScreen();bind();bindLibraryAudio();return;}app.innerHTML=town();bind();return;}let content=st.view==='home'?home():st.view==='words'?words():(st.view==='originalRead'||st.view==='questions')&&!hasOriginal()?missingOriginal():st.view==='originalRead'?originalRead():st.view==='questions'?questionScreen('original'):st.view==='questionOriginalExtra'?questionScreen('originalExtra'):st.view==='questionSimilar'?questionScreen('similar'):st.view==='review'?questionScreen('review'):st.view==='coach'?coachScreen():st.view==='originalExtra'?originalExtra():st.view==='similar'?extra():report();app.innerHTML=`<div class="shell">${nav()}<main class="main">${top()}${flow()}${content}</main></div>${modal()}`;bind();}
 function makeGameChoices(){const w=L.words[st.gameIndex];return [w[1],...L.words.filter((_,i)=>i!==st.gameIndex).sort(()=>Math.random()-.5).slice(0,3).map(x=>x[1])].sort(()=>Math.random()-.5)}
 const AUDIO_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio';
+const LIBRARY_IMG_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/library-images';
 // Voice-over availability guard. If a stored MP3 no longer matches the on-screen
 // text, list it here (book → {extra|new|original:true}) and the app falls back to
 // on-device TTS, which reads the current text aloud, until the file is re-recorded.

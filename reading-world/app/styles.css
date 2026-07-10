@@ -805,7 +805,8 @@ textarea.nb-in{resize:vertical}
 .lib-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
 .lib-card{text-align:left;background:var(--paper,#fffdf7);border:1px solid var(--line);border-radius:16px;padding:0;overflow:hidden;cursor:pointer;transition:transform .16s,box-shadow .16s}
 .lib-card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(35,49,42,.12)}
-.lib-card-cover{height:120px;display:grid;place-items:center;background:linear-gradient(160deg,var(--teal2),#eef4ee);font-size:44px}
+.lib-card-cover{height:120px;display:grid;place-items:center;background:linear-gradient(160deg,var(--teal2),#eef4ee);font-size:44px;position:relative;overflow:hidden}
+.lib-card-cover-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .lib-card-body{padding:12px 13px 14px}
 .lib-card-body b{display:block;font-family:var(--serif);font-size:15px;line-height:1.35;margin-bottom:7px}
 .lib-card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px}
@@ -830,14 +831,16 @@ textarea.nb-in{resize:vertical}
 .lib-ch-title{font-family:var(--serif);font-size:17px;margin:0 0 14px;color:var(--green-deep);text-align:center}
 .lib-page-text{flex:1;overflow:auto}
 .lib-page-illus{display:grid;place-items:center;color:var(--muted);font-style:italic;font-size:13px;background:repeating-linear-gradient(135deg,#faf7ee,#faf7ee 10px,#f5f1e4 10px,#f5f1e4 20px);border-radius:6px}
-.lib-page-art-wrap{flex:1;position:relative}
-.lib-page-art-img{width:100%;height:100%;object-fit:contain;border-radius:6px}
-.lib-page-art-wrap .lib-page-illus{position:absolute;inset:0}
+.lib-page-illus-wrap{flex:1;position:relative}
+.lib-page-img-full{width:100%;height:100%;object-fit:contain;border-radius:6px}
+.lib-page-illus-wrap .lib-page-illus{position:absolute;inset:0}
+.lib-page-img{flex:0 0 auto;width:100%;max-height:150px;object-fit:contain;border-radius:6px;margin-bottom:10px;background:#fdf8ec}
 .lib-page-text p{margin:0 0 12px}
 .lib-listen{align-self:flex-start;margin-top:8px}
 .lib-cover{justify-content:center;padding:0}
 .lib-cover-face{margin:auto;text-align:center;padding:40px 30px;max-width:420px}
 .lib-cover-emoji{font-size:60px;margin-bottom:10px}
+.lib-cover-img{max-width:220px;max-height:320px;width:100%;object-fit:contain;border-radius:8px;box-shadow:0 10px 24px rgba(35,49,42,.22);margin:0 auto 14px}
 .lib-cover-face h1{font-family:var(--serif);font-size:26px;margin:6px 0}
 .lib-cover-face p{color:var(--muted);margin:2px 0;font-size:13px}
 .lib-cover-illus{font-style:italic}
