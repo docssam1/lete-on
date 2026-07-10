@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Numbers of Magic — 마을 프로토</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif}
+
+#vp{position:fixed;inset:0;overflow:hidden;touch-action:none;background:#bfe0f2;cursor:grab}
+#vp.drag{cursor:grabbing}
+#world{
+  position:absolute;left:0;top:0;width:1024px;height:687px;transform-origin:0 0;
+  background:url(assets/map.jpg) no-repeat center/cover;
+}
+
+/* 건물 클릭 영역 */
+.bldg{position:absolute;cursor:pointer;z-index:20;border-radius:14px;transition:.2s}
+.bldg:hover{background:rgba(255,255,255,.12)}
+
+/* 열린 건물 — 금빛 빛남 */
+.bldg.open::before{
+  content:"";position:absolute;inset:-5px;border-radius:20px;
+  box-shadow:0 0 0 3px #eac996,0 0 22px 8px rgba(234,201,150,.75),0 0 44px 14px rgba(234,201,150,.4);
+  animation:glow 2s ease-in-out infinite alternate;pointer-events:none;
+}
+@keyframes glow{
+  from{box-shadow:0 0 0 3px #eac996,0 0 16px 6px rgba(234,201,150,.6),0 0 30px 10px rgba(234,201,150,.3)}
+  to  {box-shadow:0 0 0 3px #ffd97a,0 0 30px 10px rgba(255,217,122,.9),0 0 54px 18px rgba(255,217,122,.5)}
+}
+
+/* 잠금/아이콘 뱃지 */
+.bldg .badge{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:30px;filter:drop-shadow(0 2px 5px rgba(0,0,0,.45));pointer-events:none;
+}
+.bldg.open .badge{display:none}
+
+/* 레이블 */
+.bldg .lbl{
+  position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);
+  background:rgba(14,44,87,.85);color:#fff;font-size:11px;font-weight:700;
+  padding:3px 10px;border-radius:99px;white-space:nowrap;
+  backdrop-filter:blur(3px);pointer-events:none;letter-spacing:-.02em;
+}
+.bldg.open .lbl{background:linear-gradient(135deg,#c9a063,#eac996);color:#4a370f}
+
+/* 팝업 오버레이 */
+#popup{
+  position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;
+  background:rgba(14,44,87,.55);backdrop-filter:blur(5px);
+}
+#popup.show{display:flex}
+.pop-card{
+  background:#fff;border-radius:24px;padding:30px 24px 22px;
+  width:min(340px,88vw);box-shadow:0 24px 64px rgba(0,0,0,.38);text-align:center;
+  animation:popin .22s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popin{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.pop-card .p-icon{font-size:44px;margin-bottom:10px}
+.pop-card h2{font-size:22px;font-weight:900;color:#0E2C57;margin-bottom:3px;letter-spacing:-.03em}
+.pop-card .p-sub{font-size:12px;color:#7b8fa8;margin-bottom:14px;font-weight:600;letter-spacing:.04em}
+.pop-card p{font-size:14px;color:#334155;line-height:1.75;margin-bottom:20px}
+.pop-btn{
+  display:block;width:100%;padding:13px;border-radius:13px;border:none;cursor:pointer;
+  font-size:15px;font-weight:800;margin-bottom:9px;transition:.15s;letter-spacing:-.01em;
+}
+.pop-btn:active{transform:scale(.97)}
+.pop-btn.primary{background:linear-gradient(135deg,#16417C,#0E2C57);color:#EAC996}
+.pop-btn.ghost{background:#f1f5f9;color:#475569}
+.p-lock{font-size:13px;color:#94a3b8;margin-top:4px;margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<div id="vp">
+  <div id="world">
+
+    <!-- ① BASIC — 왼쪽 위 책 건물 -->
+    <div class="bldg" style="left:6%;top:8%;width:24%;height:32%" data-key="basic">
+      <span class="badge">🔒</span>
+      <span class="lbl">📖 BASIC</span>
+    </div>
+
+    <!-- ② PRIME — 빨간 TOWN HALL (중앙) · 열림 -->
+    <div class="bldg open" style="left:36%;top:10%;width:14%;height:28%" data-key="prime">
+      <span class="badge"></span>
+      <span class="lbl">🏛️ PRIME</span>
+    </div>
+
+    <!-- ③ ADVANCE — 파란 시계탑 (가운데) -->
+    <div class="bldg" style="left:51%;top:12%;width:12%;height:25%" data-key="advance">
+      <span class="badge">🔒</span>
+      <span class="lbl">🕰️ ADVANCE</span>
+    </div>
+
+    <!-- ④ CHALLENGE — 오른쪽 정자 -->
+    <div class="bldg" style="left:81%;top:18%;width:13%;height:20%" data-key="challenge">
+      <span class="badge">🔒</span>
+      <span class="lbl">⛰️ CHALLENGE</span>
+    </div>
+
+    <!-- ⑤ Magic Theater — 주황 극장 (영상관) -->
+    <div class="bldg" style="left:65%;top:14%;width:13%;height:23%" data-key="theater">
+      <span class="badge">🎬</span>
+      <span class="lbl">🎬 Magic Theater</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- 팝업 -->
+<div id="popup">
+  <div class="pop-card">
+    <div class="p-icon" id="pIcon"></div>
+    <h2 id="pTitle"></h2>
+    <div class="p-sub" id="pSub"></div>
+    <p id="pDesc"></p>
+    <div id="pActions"></div>
+  </div>
+</div>
+
+<script>
+const INFO={
+  basic:{
+    icon:'📖',title:'BASIC',sub:'수의 나라 · 0급',
+    desc:'9까지의 수를 배우는 첫 번째 마법! 숫자들의 세계로 들어가볼까요?',
+    locked:true,lockMsg:'PRIME을 완료하면 열려요!'
+  },
+  prime:{
+    icon:'🏛️',title:'PRIME',sub:'초급 · 1급',
+    desc:'창의수연 A~I 과정. 마법의 핵심 과정이에요. 지금 여기서 배우고 있어요!',
+    locked:false,btnLabel:'유닛 보러가기 →',btnHref:'app.html'
+  },
+  advance:{
+    icon:'🕰️',title:'ADVANCE',sub:'중급 · 2급',
+    desc:'한 단계 더 높은 마법 과정. PRIME을 마치면 여기가 열려요!',
+    locked:true,lockMsg:'PRIME을 완료하면 열려요!'
+  },
+  challenge:{
+    icon:'⛰️',title:'CHALLENGE',sub:'고급 · 3급',
+    desc:'최고 난이도 마법 경시 과정. 정상에 오를 준비가 됐나요?',
+    locked:true,lockMsg:'ADVANCE를 완료하면 열려요!'
+  },
+  theater:{
+    icon:'🎬',title:'Magic Theater',sub:'영상관',
+    desc:'마법 수학 영상을 감상하는 극장이에요. 곧 오픈합니다!',
+    locked:true,lockMsg:'영상 준비 중이에요 🎞️'
+  }
+};
+
+const popup=document.getElementById('popup');
+let moved=false;
+
+document.querySelectorAll('.bldg').forEach(b=>{
+  b.addEventListener('pointerdown',()=>{moved=false;});
+  b.addEventListener('pointermove',()=>{moved=true;});
+  b.addEventListener('pointerup',e=>{
+    if(moved)return;
+    e.stopPropagation();
+    const d=INFO[b.dataset.key];
+    document.getElementById('pIcon').textContent=d.icon;
+    document.getElementById('pTitle').textContent=d.title;
+    document.getElementById('pSub').textContent=d.sub;
+    document.getElementById('pDesc').textContent=d.desc;
+    const acts=document.getElementById('pActions');
+    if(d.locked){
+      acts.innerHTML=`<div class="p-lock">🔒 ${d.lockMsg}</div><button class="pop-btn ghost" onclick="closePopup()">닫기</button>`;
+    } else {
+      acts.innerHTML=`<button class="pop-btn primary" onclick="location.href='${d.btnHref}'">${d.btnLabel}</button><button class="pop-btn ghost" onclick="closePopup()">닫기</button>`;
+    }
+    popup.classList.add('show');
+  });
+});
+
+popup.addEventListener('pointerup',e=>{if(e.target===popup)closePopup();});
+function closePopup(){popup.classList.remove('show');}
+
+/* 드래그 & 핀치줌 */
+const vp=document.getElementById('vp'),world=document.getElementById('world');
+const W=1024,H=687;
+let cam={x:0,y:0,scale:1},minS=1,maxS=2.4;
+function fit(){minS=Math.max(innerWidth/W,innerHeight/H);cam.scale=Math.max(cam.scale,minS);}
+function apply(){world.style.transform=`translate(${cam.x}px,${cam.y}px) scale(${cam.scale})`;}
+function bound(){const mx=innerWidth-W*cam.scale,my=innerHeight-H*cam.scale;cam.x=Math.min(0,Math.max(mx,cam.x));cam.y=Math.min(0,Math.max(my,cam.y));}
+function center(){cam.scale=Math.max(minS,1);cam.x=-(W*cam.scale-innerWidth)/2;cam.y=-(H*cam.scale-innerHeight)/2;bound();apply();}
+let drag=false,sx,sy,cx,cy;
+vp.addEventListener('pointerdown',e=>{
+  if(e.target.closest('.bldg'))return;
+  drag=true;moved=false;vp.classList.add('drag');sx=e.clientX;sy=e.clientY;cx=cam.x;cy=cam.y;
+});
+vp.addEventListener('pointermove',e=>{
+  if(!drag)return;const dx=e.clientX-sx,dy=e.clientY-sy;
+  if(Math.abs(dx)+Math.abs(dy)>5)moved=true;
+  cam.x=cx+dx;cam.y=cy+dy;bound();apply();
+});
+['pointerup','pointercancel'].forEach(ev=>vp.addEventListener(ev,()=>{drag=false;vp.classList.remove('drag');}));
+let pts=new Map(),pd=0;
+vp.addEventListener('pointerdown',e=>pts.set(e.pointerId,e));
+vp.addEventListener('pointermove',e=>{
+  if(!pts.has(e.pointerId))return;pts.set(e.pointerId,e);
+  if(pts.size===2){
+    const v=[...pts.values()];
+    const d=Math.hypot(v[0].clientX-v[1].clientX,v[0].clientY-v[1].clientY);
+    if(pd){
+      const ns=Math.min(maxS,Math.max(minS,cam.scale*(d/pd)));
+      const ox=(v[0].clientX+v[1].clientX)/2,oy=(v[0].clientY+v[1].clientY)/2;
+      const wx=(ox-cam.x)/cam.scale,wy=(oy-cam.y)/cam.scale;
+      cam.scale=ns;cam.x=ox-wx*ns;cam.y=oy-wy*ns;bound();apply();
+    }
+    pd=d;drag=false;
+  }
+});
+['pointerup','pointercancel'].forEach(ev=>vp.addEventListener(ev,e=>{pts.delete(e.pointerId);if(pts.size<2)pd=0;}));
+vp.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const ns=Math.min(maxS,Math.max(minS,cam.scale*(e.deltaY<0?1.1:.9)));
+  const wx=(e.clientX-cam.x)/cam.scale,wy=(e.clientY-cam.y)/cam.scale;
+  cam.scale=ns;cam.x=e.clientX-wx*ns;cam.y=e.clientY-wy*ns;bound();apply();
+},{passive:false});
+fit();center();addEventListener('resize',()=>{fit();bound();apply();});
+</script>
+</body>
+</html>
