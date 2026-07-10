@@ -1,0 +1,39 @@
+name: Generate Library Voice Samples
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate library narrator voice samples
+        env:
+          GOOGLE_TTS_KEY: ${{ secrets.GOOGLE_TTS_KEY }}
+        run: node scripts/generate-library-voice-samples.js
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: library-voice-samples
+          path: library-voice-samples/*.mp3
+
+      # Actions artifacts download via Azure blob storage, which is unreachable from
+      # some sandboxed dev environments. Also push the same files to a disposable
+      # branch so they're fetchable with plain `git fetch` instead.
+      - name: Push samples to a fetchable branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B library-voice-samples-output
+          git add -f library-voice-samples/*.mp3
+          git commit -m "Library narrator voice samples (auto-generated, temporary)"
+          git push -f origin library-voice-samples-output
