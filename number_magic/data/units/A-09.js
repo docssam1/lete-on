@@ -1,10 +1,10 @@
 /* ============================================================
    Numbers of Magic — 유닛 데이터: A-09
-   초급 A · 챕터9 "분배 암산 마법"
-   교재 개념 기반(창작 재구성). generator=ml6_mul2d1dMental + dv3_divRem.
-   핵심: 24×3 = (20+4)×3 = 20×3 + 4×3 = 60+12 = 72
-   "십의 자리와 일의 자리를 따로따로 곱해요!"
-   나눗셈: 75÷3 → (60+15)÷3 = 20+5 = 25
+   초급 C · 챕터1 "새치기 덧셈"
+   창의수연 초급 C 실제 교재 내용 기반. generator=jumpAdd.
+   핵심: 37+19+24+33 → (37+33)+(19+24) = 70+43 = 113
+         62+15+68+32 → (62+68)+(15+32) = 130+47 = 177
+   "더하기 쉬운 짝을 찾아 줄 앞으로 새치기시켜요!"
    ============================================================ */
 (function(){
 'use strict';
@@ -12,103 +12,98 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['A-09'] = {
   id:'A-09', tier:'beginner', level:'A', order:9,
-  generator:'ml6_mul2d1dMental',
-  title:{ ko:'분배 암산 마법', en:'Distributive Mental Multiplication', zh:'分配心算魔法' },
-  subtitle:{ ko:'십의 자리와 일의 자리를 따로따로 곱하고 더해요', en:'Multiply tens and ones separately, then add', zh:'分别乘十位和个位，再相加' },
-  icon:'🎯',
+  generator:'jumpAdd',
+  title:{ ko:'새치기 덧셈', en:'Jump the Queue Addition', zh:'插队加法' },
+  subtitle:{ ko:'더하기 쉬운 짝을 찾아 순서를 바꿔 먼저 더해요', en:'Find easy pairs and let them jump to the front', zh:'找出好算的配对，让它们排到前面先加' },
+  icon:'⚡',
 
-  /* ── STEP1 프랙티스: ml5_tensMul 몇십 곱 워밍업 ── */
   practice:{
-    generator:'ml5_tensMul', level:'practice', count:5,
+    generator:'jumpAdd', level:'practice', count:5,
     intro:{
-      ko:'먼저 몇십 곱 워밍업! 0을 분리해서 빠르게 풀어봐요.',
-      en:"Warm up with tens multiplication — separate those zeros and answer fast!",
-      zh:'先热热身，练习整十乘法——去掉0快速解答！'
+      ko:'준비 운동! 이 수와 더해서 10이 되는 새치기 짝꿍은 무엇일까요?',
+      en:"Warm up! Which number jumps the queue to make 10 with this one?",
+      zh:'热热身！哪个数和这个数凑成10，可以"插队"？'
     }
   },
 
-  /* ── STEP2 디스커버: 분배 암산 개념 3단 ── */
   discover:{
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
-      { tag:{ ko:'① 두 자리 수를 쪼개요', en:'1) Split the 2-digit number', zh:'① 把两位数拆开' },
-        head:{ ko:'24 = 20 + 4 로 쪼개요', en:'Split 24 into 20 + 4', zh:'把24拆成20 + 4' },
-        desc:{ ko:'24×3을 바로 계산하기 어렵지만, 24를 20과 4로 나누면 쉬워져요. 20×3은 몇십 곱이라 쉽고, 4×3도 구구단이라 쉬워요. 마지막에 더하면 끝!',
-               en:"24×3 looks hard, but split 24 into 20 and 4 and it's easy. 20×3 is a tens multiplication (easy!), and 4×3 is a times table (easy!). Just add them together at the end!",
-               zh:'24×3看起来难，但把24拆成20和4就简单了。20×3是整十乘法（简单！），4×3是口诀（简单！）。最后加起来就完成！' },
-        mathSteps:['24 × 3','= (20 + 4) × 3','= 20 × 3 + 4 × 3  ← 분배!'],
-        result:{ ko:'나눠서 따로 곱하고 더하면 돼요. 이게 분배 법칙이에요!', en:'Split, multiply separately, then add — this is the distributive law!', zh:'拆开分别乘，再相加——这就是分配律！' },
-        book:{ ko:'(A + B) × C = A×C + B×C. 덧셈 안의 두 수에 각각 C를 곱한 거예요.',
-               en:'(A + B) × C = A×C + B×C. Each number inside is multiplied by C separately.',
-               zh:'(A + B) × C = A×C + B×C。括号里的两个数各自与C相乘。' } },
+      { tag:{ ko:'① 순서를 바꿔도 답은 같아요', en:"1) Changing order doesn't change the answer", zh:'① 换顺序答案不变' },
+        head:{ ko:'덧셈은 어떤 순서로 더해도 답이 같아요', en:'Addition gives the same answer no matter what order you add', zh:'加法不管用什么顺序，答案都一样' },
+        desc:{ ko:'3+5와 5+3은 답이 같아요. 이걸 <b>교환법칙</b>이라고 해요. 여러 수를 더할 때도 순서를 마음대로 바꿀 수 있어요. 이 법칙 덕분에 더하기 쉬운 순서로 바꿔 계산할 수 있어요!',
+               en:'3+5 and 5+3 give the same answer. This is called the commutative property. You can freely change the order when adding multiple numbers. This rule lets you pick the easiest order!',
+               zh:'3+5和5+3答案相同。这叫做交换律。加多个数时，可以随意改变顺序。利用这个规律，可以选择最简单的顺序来算！' },
+        mathSteps:['37 + 19 + 24 + 33','순서를 바꿔도 답은 같아요','= 37 + 33 + 19 + 24  (순서 변경 OK!)','= ... 같은 답'],
+        result:{ ko:'덧셈은 순서를 마음대로 바꿀 수 있어요! 이제 가장 쉬운 순서를 찾아봐요.', en:'Addition order can be changed freely! Now let\'s find the easiest order.', zh:'加法顺序可以随意改变！现在来找最简单的顺序。' },
+        book:{ ko:'덧셈의 교환법칙: a+b = b+a. 세 수 이상도 마찬가지: a+b+c+d는 어떤 순서로도 같아요.',
+               en:'Commutative law of addition: a+b = b+a. Same for 3 or more: a+b+c+d is the same in any order.',
+               zh:'加法交换律：a+b = b+a。三个或更多数也一样：a+b+c+d无论什么顺序都相同。' } },
 
-      { tag:{ ko:'② 쪼개서 곱하고 더해요', en:'2) Split, multiply each, then add', zh:'② 拆开分别乘，再相加' },
-        head:{ ko:'24×3을 단계별로 풀어봐요', en:"Let's solve 24×3 step by step", zh:'一步一步解24×3' },
-        desc:{ ko:'20×3 = 60 (몇십 곱), 4×3 = 12 (구구단). 두 결과를 더해요: 60 + 12 = 72. 이제 두 자리 곱셈이 어렵지 않아요!',
-               en:'20×3 = 60 (tens multiplication), 4×3 = 12 (times table). Add the results: 60 + 12 = 72. Two-digit multiplication is easy now!',
-               zh:'20×3 = 60（整十乘法），4×3 = 12（口诀）。把结果相加：60 + 12 = 72。两位数乘法不难了！' },
-        mathSteps:['24 × 3','= 20 × 3 + 4 × 3','= 60 + 12','= 72'],
-        result:{ ko:'24×3 = 72! 두 단계로 완성이에요.', en:'24×3 = 72! Two steps and done.', zh:'24×3 = 72！两步搞定。' },
-        book:{ ko:'세 수 이상도 같아요: 123×4 = 100×4 + 20×4 + 3×4 = 400+80+12 = 492.',
-               en:'Works for more digits too: 123×4 = 100×4 + 20×4 + 3×4 = 400+80+12 = 492.',
-               zh:'更多位数也一样：123×4 = 100×4 + 20×4 + 3×4 = 400+80+12 = 492。' } },
+      { tag:{ ko:'② 더하기 쉬운 짝을 새치기시켜요', en:'2) Let easy pairs jump the queue', zh:'② 让好算的配对"插队"' },
+        head:{ ko:'합이 10, 20, 30이 되는 짝을 찾아 먼저 더해요', en:'Find pairs that make 10, 20, or 30 — add them first', zh:'找出凑成10、20、30的配对，先加它们' },
+        desc:{ ko:'37+19+24+33에서 어떤 짝이 더하기 쉬울까요? 37과 33! 7+3=10이라서 37+33=70이 돼요. 이 짝을 먼저 새치기시켜요!',
+               en:'In 37+19+24+33, which pair is easiest to add? 37 and 33! Since 7+3=10, 37+33=70. Let this pair jump to the front!',
+               zh:'37+19+24+33里，哪对最好算？37和33！因为7+3=10，所以37+33=70。让这对先"插队"！' },
+        mathSteps:['37 + 19 + 24 + 33','= (37 + 33) + (19 + 24)  ← 짝이 새치기!','= 70 + 43','= 113'],
+        result:{ ko:'37+19+24+33 = 113! 37과 33을 새치기시켰더니 70이 되어 쉬워졌어요!', en:'37+19+24+33 = 113! Letting 37+33 jump first gave us 70, making it easy!', zh:'37+19+24+33 = 113！让37+33先"插队"得到70，就简单了！' },
+        book:{ ko:'62+15+68+32 → (62+68)+(15+32) = 130+47 = 177. 2+8=10이라서 62+68=130, 나머지 15+32=47.',
+               en:'62+15+68+32 → (62+68)+(15+32) = 130+47 = 177. Since 2+8=10, 62+68=130; remaining 15+32=47.',
+               zh:'62+15+68+32 → (62+68)+(15+32) = 130+47 = 177。因为2+8=10，62+68=130；剩下15+32=47。' } },
 
-      { tag:{ ko:'③ 나눗셈도 쪼갤 수 있어요', en:'3) Division can be split too', zh:'③ 除法也可以拆开' },
-        head:{ ko:'75÷3 → 쪼개서 나눠요', en:'75÷3 → split and divide', zh:'75÷3 → 拆开再除' },
-        desc:{ ko:'75÷3을 계산해봐요. 75를 "3으로 딱 나뉘는 수"로 쪼개면 편해요. 60÷3=20이고 15÷3=5이니까 75÷3=(60+15)÷3=20+5=25!',
-               en:"Let's compute 75÷3. Split 75 into numbers that divide evenly by 3: 60÷3=20 and 15÷3=5, so 75÷3 = (60+15)÷3 = 20+5 = 25!",
-               zh:'来算75÷3。把75拆成能被3整除的数：60÷3=20，15÷3=5，所以75÷3=(60+15)÷3=20+5=25！' },
-        mathSteps:['75 ÷ 3','= (60 + 15) ÷ 3','= 60÷3 + 15÷3','= 20 + 5','= 25'],
-        result:{ ko:'75÷3 = 25! 나눗셈도 쪼개면 쉬워져요.', en:'75÷3 = 25! Division is easier when split too.', zh:'75÷3 = 25！除法拆开也简单！' },
+      { tag:{ ko:'③ 실전 — 어떤 짝이 새치기 자격?', en:'3) Which pairs deserve to jump?', zh:'③ 哪对配对有资格"插队"？' },
+        head:{ ko:'더하면 딱 떨어지는 수가 나오는 짝이 새치기 자격!', en:'Pairs that make round numbers deserve to jump!', zh:'相加得到整数的配对有资格"插队"！' },
+        desc:{ ko:'새치기 자격은 더했을 때 계산하기 쉬운 수(10, 20, 30, 40...)가 나오는 짝이에요. 일의 자리를 보고 합이 10이 되면 자격이 있어요. 두 자리 수도 마찬가지!',
+               en:'A pair deserves to jump if adding them makes a round number (10, 20, 30, 40...). Check the ones digits: if they sum to 10, that pair qualifies. Same for two-digit numbers!',
+               zh:'"插队"资格：相加得到整十数(10、20、30、40...)的配对。看个位之和是否为10——是的话就有资格。两位数也一样！' },
+        mathSteps:['23 + 45 + 17 + 35','일의 자리: 3+7=10 (23,17 짝 → 새치기!), 5+5=10 (45,35 짝 → 새치기!)','= (23+17) + (45+35)','= 40 + 80 = 120'],
+        result:{ ko:'23+45+17+35 = 120! 두 쌍이 새치기해서 순식간에 풀었어요.', en:'23+45+17+35 = 120! Two pairs jumped and we solved it in a flash.', zh:'23+45+17+35 = 120！两对配对"插队"，一瞬间就解了。' },
         book:null }
     ],
-    rule:{ ko:'① 두 자리 수를 십의 자리와 일의 자리로 쪼갠다  ② 각각 따로 곱하거나 나눈다  ③ 결과를 더한다',
-      en:'① Split the 2-digit number into tens and ones  ② Multiply or divide each part separately  ③ Add the results.',
-      zh:'①把两位数拆成十位和个位 ②分别相乘或相除 ③把结果相加。' }
+    rule:{ ko:'① 더했을 때 딱 떨어지는 수(10, 20, 30...)가 나오는 짝을 찾는다  ② 그 짝을 먼저 새치기시켜 더한다  ③ 나머지를 더한다',
+      en:'① Find pairs that make round numbers (10, 20, 30...)  ② Let those pairs jump to the front and add first  ③ Add the rest.',
+      zh:'①找出相加得到整十数(10、20、30...)的配对 ②让这些配对"插队"先加 ③再加其余的数。' }
   },
 
-  /* ── STEP3 핵심체크 ── */
   check:{
     fills:[
-      { tex:'32 \\times 3 = 30 \\times 3 + \\square \\times 3', answer:2,
-        hint:{ ko:'32 = 30 + 2예요. 일의 자리 2를 쪼개요!', en:'32 = 30 + 2. Split out the ones digit, 2!', zh:'32 = 30 + 2。拆出个位数2！' } },
-      { tex:'24 \\times 4 = \\square', answer:96,
-        hint:{ ko:'24 = 20+4. 20×4=80, 4×4=16. 80+16=?', en:'24 = 20+4. 20×4=80, 4×4=16. 80+16=?', zh:'24 = 20+4。20×4=80，4×4=16。80+16=？' } }
+      { tex:'37 + 19 + 24 + 33 = (37 + \\square) + (19 + 24)', answer:33,
+        hint:{ ko:'37의 일의 자리는 7. 7+?=10이 되는 일의 자리를 가진 수를 찾아봐요!', en:'Ones of 37 is 7. Find the number whose ones digit makes 7+?=10!', zh:'37的个位是7。找个位让7+?=10的那个数！' } },
+      { tex:'62 + 15 + 68 + 32 = 130 + \\square', answer:47,
+        hint:{ ko:'(62+68)=130. 남은 15+32=?', en:'(62+68)=130. Remaining: 15+32=?', zh:'(62+68)=130。剩下15+32=？' } }
     ],
     open:{
-      ko:'분배 암산을 이용해서 35×6을 계산해보세요. 어떻게 쪼갰나요?',
-      en:'Use distributive mental math to calculate 35×6. How did you split it?',
-      zh:'用分配心算计算35×6。你是怎么拆开的？'
+      ko:'새치기 덧셈이 통하지 않는 경우도 있을까요? 어떤 상황에서는 새치기할 짝이 없을까요?',
+      en:'Are there situations where jump-the-queue addition doesn\'t work? When might there be no pairs to jump?',
+      zh:'有没有"插队加法"不管用的情况？什么情况下找不到可以"插队"的配对？'
     },
     openHint:{
-      ko:'35 = 30 + 5. 30×6=180, 5×6=30. 180+30=210.',
-      en:'35 = 30 + 5. 30×6=180, 5×6=30. 180+30=210.',
-      zh:'35 = 30 + 5。30×6=180，5×6=30。180+30=210。'
+      ko:'예) 모든 수의 일의 자리가 1, 2, 3처럼 작거나 다 다른 홀수면 합이 10이 되는 짝을 찾기 어려울 수 있어요. 그럴 때는 다른 방법(끼리끼리 더하기 등)을 써요!',
+      en:'e.g. If all numbers have small or odd ones digits (1, 2, 3...) with no matching pairs, finding 10-pairs is hard. Then use other methods like place-value grouping!',
+      zh:'例）如果所有数的个位都是1、2、3这样的小数或不同的奇数，就很难找到凑十的配对。这时用其他方法（比如同位相加）！'
     }
   },
 
-  /* ── STEP4 매직랩 ── */
   lab:{
-    generator:'ml6_mul2d1dMental', level:'main', count:4,
+    generator:'jumpAdd', level:'main', count:4,
     intro:{
-      ko:'이제 직접 쪼개봐! 빈칸을 채우면서 분배 암산을 완성해요.',
-      en:"Now split it yourself! Fill in the blanks to complete distributive multiplication.",
-      zh:'现在自己来拆！填写空格，完成分配心算。'
+      ko:'이제 진짜 마법! 새치기할 짝을 찾아 먼저 더해봐요.',
+      en:"Real magic! Find the queue-jumping pairs and add them first.",
+      zh:'真正的魔法！找出可以"插队"的配对，先加它们。'
     }
   },
 
-  /* ── STEP5 아레나 ── */
   arena:{
-    generator:'ml6_mul2d1dMental', level:'main', count:8, timeLimit:300,
-    rule:{ ko:'5분 안에 최대한 많이! 마음속으로 쪼개서 빠르게!', en:'5 minutes — split mentally and go fast!', zh:'5分钟内尽量多！脑子里拆开，快速答题！' }
+    generator:'jumpAdd', level:'main', count:8, timeLimit:300,
+    rule:{ ko:'5분 안에 최대한 많이! 짝을 새치기시켜 빠르게 풀어요!', en:'As many as you can in 5 minutes — let the pairs jump and solve fast!', zh:'5分钟内尽量多做！让配对"插队"，快速解题！' }
   },
 
-  stamp:{ label:{ ko:'분배 마법사', en:'Distribution Wizard', zh:'分配魔法师' }, coins:20 },
+  stamp:{ label:{ ko:'새치기 마법사', en:'Queue Jumper', zh:'插队魔法师' }, coins:20 },
 
   voice:{
-    correct:[ {ko:'정답이야! ✨',en:'Correct!',zh:'答对了！'}, {ko:'분배 마법 완성! 🎯',en:'Distribution magic works!',zh:'分配魔法成功！'}, {ko:'쪼개기 성공! 🪄',en:'Split and conquer!',zh:'拆分成功！'} ],
-    wrong:[ {ko:'음~ 십의 자리와 일의 자리로 쪼개봐!',en:'Hmm — try splitting into tens and ones!',zh:'嗯，试试拆成十位和个位！'}, {ko:'거의 다 왔어!',en:'Almost!',zh:'就快了！'} ],
-    finish:{ ko:'완벽해! 이제 넌 분배 마법사야 🎯✨', en:"Perfect! You're a Distribution Wizard now!", zh:'完美！你现在是分配魔法师啦！' }
+    correct:[ {ko:'정답이야! ✨',en:'Correct!',zh:'答对了！'}, {ko:'새치기 성공! ⚡',en:'Queue jump success!',zh:'插队成功！'}, {ko:'순서 변경 마법! 🪄',en:'Reorder magic works!',zh:'换顺序魔法成功！'} ],
+    wrong:[ {ko:'음~ 일의 자리가 합해서 10이 되는 짝을 새치기시켜봐!',en:'Hmm — find the pair whose ones digits sum to 10 and let them jump!',zh:'嗯，找个位之和为10的配对，让它们"插队"！'}, {ko:'거의 다 왔어!',en:'Almost!',zh:'就快了！'} ],
+    finish:{ ko:'완벽해! 이제 넌 새치기 마법사야 ⚡✨', en:"Perfect! You're a Queue Jumper now!", zh:'完美！你现在是插队魔法师啦！' }
   }
 };
 

@@ -1,10 +1,9 @@
 /* ============================================================
    Numbers of Magic — 유닛 데이터: A-07
-   초급 A · 챕터7 "배와 반 + 구구 2~5단"
-   교재 개념 기반(창작 재구성). generator=ml1_double / ml2_tt25.
-   핵심: ×2 = 두 배(double), ÷2 = 절반(half)
-   배열(직사각형)로 곱셈의 의미를 눈으로 확인.
-   구구 2~5단: 배열 그림 → 패턴 찾기 → 암기
+   초급 B · 챕터3 "끼리끼리 더해요"
+   창의수연 초급 B 실제 교재 내용 기반. generator=splitPlace.
+   핵심: 73+62+50+41 → (70+60+50+40)+(3+2+0+1) = 220+6 = 226
+   "자리끼리 모아서 따로따로 더해요!"
    ============================================================ */
 (function(){
 'use strict';
@@ -12,103 +11,98 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['A-07'] = {
   id:'A-07', tier:'beginner', level:'A', order:7,
-  generator:'ml1_double',
-  title:{ ko:'배와 반 — 구구 2~5단', en:'Double & Half — Times Tables 2-5', zh:'翻倍与减半·乘法口诀2~5' },
-  subtitle:{ ko:'두 배는 같은 수를 한 번 더 더하기, 절반은 둘로 나누기', en:'Double = add the same number once more; Half = split in two', zh:'翻倍=再加一次相同的数；减半=分成两份' },
-  icon:'✌️',
+  generator:'splitPlace',
+  title:{ ko:'끼리끼리 더해요', en:'Add Same Places Together', zh:'同位相加' },
+  subtitle:{ ko:'십의 자리끼리, 일의 자리끼리 따로 더해요', en:'Add tens with tens, ones with ones, separately', zh:'十位加十位，个位加个位，分开来加' },
+  icon:'🏗️',
 
-  /* ── STEP1 프랙티스: ml1_double ×2 워밍업 ── */
   practice:{
-    generator:'ml1_double', level:'practice', count:5,
+    generator:'splitPlace', level:'practice', count:5,
     intro:{
-      ko:'두 배 연습! 내가 숫자를 부르면 두 배가 얼마인지 눌러줘.',
-      en:"Doubles practice! I'll call a number — tap its double!",
-      zh:'翻倍练习！我说一个数，你按出它的两倍！'
+      ko:'준비 운동! 두 자리 수에서 십의 자리 부분이 얼마인지 맞혀봐요.',
+      en:"Warm up! For each two-digit number, what is the tens part?",
+      zh:'热热身！对于每个两位数，十位部分是多少？'
     }
   },
 
-  /* ── STEP2 디스커버: 배와 반 + 구구 2~5단 개념 3단 ── */
   discover:{
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
-      { tag:{ ko:'① 두 배와 절반이란?', en:'1) What are Double and Half?', zh:'① 什么是翻倍和减半？' },
-        head:{ ko:'같은 수 두 묶음이 두 배, 둘로 나누면 절반', en:'Two groups of the same size = double; split in two = half', zh:'两组相同的数量=翻倍；分成两半=减半' },
-        desc:{ ko:'4개의 사과가 있어요. 한 묶음이 4개인 두 묶음을 만들면 4×2=8 (두 배). 다시 둘로 나누면 8÷2=4 (절반). <b>두 배와 절반은 서로 반대 마법이에요!</b>',
-               en:"Imagine 4 apples. Two groups of 4 gives 4×2=8 (double). Split 8 back into two equal groups → 8÷2=4 (half). Double and half are opposite spells!",
-               zh:'假设有4个苹果。两组各4个，4×2=8（翻倍）。再分成两半，8÷2=4（减半）。翻倍和减半是互相反转的魔法！' },
-        mathSteps:['4 × 2 = 8  (두 배)', '8 ÷ 2 = 4  (절반)', '두 배 ↔ 절반은 역(逆)관계'],
-        result:{ ko:'두 배했다가 절반 하면 다시 원래 수로! 6→12→6', en:'Double then half returns to the start! 6→12→6', zh:'翻倍再减半回到原数！6→12→6' },
-        book:{ ko:'직사각형 배열로 생각해요: 4×2 = 가로 4, 세로 2인 직사각형에 점이 몇 개?',
-               en:'Think of arrays: 4×2 = how many dots in a 4-column, 2-row rectangle?',
-               zh:'用阵列图来想：4×2 = 4列2行的矩形里有多少个点？' } },
+      { tag:{ ko:'① 수를 자리별로 나눠요', en:'1) Split each number by place', zh:'① 按数位拆分每个数' },
+        head:{ ko:'두 자리 수 = 십의 자리 + 일의 자리', en:'2-digit number = tens part + ones part', zh:'两位数 = 十位部分 + 个位部分' },
+        desc:{ ko:'73은 70+3이에요. 62는 60+2예요. 모든 두 자리 수는 <b>십의 자리 부분</b>과 <b>일의 자리 부분</b>으로 나눌 수 있어요. 이걸 이용하면 덧셈이 훨씬 쉬워져요!',
+               en:'73 is 70+3. 62 is 60+2. Every two-digit number can be split into a tens part and ones part. This makes addition much easier!',
+               zh:'73就是70+3，62就是60+2。每个两位数都可以拆成十位部分和个位部分。这样加法就容易多了！' },
+        mathSteps:['73 = 70 + 3','62 = 60 + 2','50 = 50 + 0','41 = 40 + 1'],
+        result:{ ko:'73→(70,3), 62→(60,2), 50→(50,0), 41→(40,1)로 모두 나눌 수 있어요!', en:'73→(70,3), 62→(60,2), 50→(50,0), 41→(40,1) — all split up!', zh:'73→(70,3)，62→(60,2)，50→(50,0)，41→(40,1)，都拆开来了！' },
+        book:{ ko:'수를 나누는 것을 "분해"라고 해요. 73을 70과 3으로 분해하면 계산할 때 편해요.',
+               en:'Splitting a number is called decomposing. Decomposing 73 into 70 and 3 makes calculation convenient.',
+               zh:'把数拆开叫做"分解"。把73分解成70和3，计算时就很方便。' } },
 
-      { tag:{ ko:'② 구구 2~5단 — 배열로 보기', en:'2) Times tables 2-5 through arrays', zh:'② 乘法口诀2~5——用阵列图看' },
-        head:{ ko:'곱셈은 같은 묶음을 여러 번 더하는 것', en:'Multiplication = adding equal groups repeatedly', zh:'乘法=把相同的组重复相加' },
-        desc:{ ko:'3×4는 3개짜리 묶음이 4개예요. 또는 4개짜리 묶음이 3개예요. 직사각형에서 가로 × 세로 = 전체 수! <b>구구단은 이 계산 결과를 미리 기억해 두는 거예요.</b>',
-               en:'3×4 means 3 groups of 4 — or 4 groups of 3. In a rectangle: columns × rows = total. Times tables are just these results memorized in advance!',
-               zh:'3×4表示3个4，或者4个3。在矩形里：列数×行数=总数。乘法口诀就是提前记住这些计算结果！' },
-        mathSteps:['2단: 2,4,6,8,10,12,14,16,18','3단: 3,6,9,12,15,18,21,24,27','4단: 4,8,12,16,20,24,28,32,36','5단: 5,10,15,20,25,30,35,40,45'],
-        result:{ ko:'2단은 짝수! 5단은 항상 0 또는 5로 끝나요!', en:'2-table: all even! 5-table: always ends in 0 or 5!', zh:'2的倍数都是偶数！5的倍数总以0或5结尾！' },
-        book:{ ko:'배열 그림에서 가로·세로를 바꿔도 같아요: 3×4 = 4×3 = 12.',
-               en:'Rotating the array gives the same answer: 3×4 = 4×3 = 12.',
-               zh:'旋转阵列图结果不变：3×4 = 4×3 = 12。' } },
+      { tag:{ ko:'② 끼리끼리 모아 더해요', en:'2) Gather same-place digits and add', zh:'② 把同位的数聚在一起相加' },
+        head:{ ko:'십의 자리끼리, 일의 자리끼리 따로 모아요', en:'Gather tens with tens, ones with ones', zh:'十位和十位放在一起，个位和个位放在一起' },
+        desc:{ ko:'나눈 수들을 자리별로 모아요. 십의 자리끼리 더하고, 일의 자리끼리 더하면 계산이 두 단계로 나뉘어 훨씬 쉬워져요!',
+               en:'Group the split parts by place. Adding all tens together and all ones together splits the problem into two easy steps!',
+               zh:'把拆分后的数按数位归类。十位都加在一起，个位都加在一起，问题就分成两个简单的步骤了！' },
+        mathSteps:['73 + 62 + 50 + 41','= (70+60+50+40) + (3+2+0+1)  ← 끼리끼리!','= 220 + 6','= 226'],
+        result:{ ko:'73+62+50+41 = 226! 십의 자리만 더하면 220, 일의 자리만 더하면 6, 합치면 226!', en:'73+62+50+41 = 226! Tens sum: 220, ones sum: 6, together: 226!', zh:'73+62+50+41 = 226！十位之和：220，个位之和：6，合起来：226！' },
+        book:{ ko:'24+51+36+43 → (20+50+30+40)+(4+1+6+3) = 140+14 = 154. 자리별로 나누면 큰 수도 쉽게 풀려요.',
+               en:'24+51+36+43 → (20+50+30+40)+(4+1+6+3) = 140+14 = 154. Splitting by place makes big sums easy.',
+               zh:'24+51+36+43 → (20+50+30+40)+(4+1+6+3) = 140+14 = 154。按数位拆开，大数也容易解了。' } },
 
-      { tag:{ ko:'③ 패턴을 찾아요', en:'3) Find the pattern', zh:'③ 发现规律' },
-        head:{ ko:'구구단에는 아름다운 규칙이 있어요', en:'Times tables have beautiful patterns', zh:'乘法口诀里藏着美丽的规律' },
-        desc:{ ko:'2단은 2씩 커져요. 3단은 3씩. 5단은 5씩이고 항상 0이나 5로 끝나요. 4단은 짝수만! 이런 패턴을 알면 외우기 훨씬 쉬워요.',
-               en:'The 2-table grows by 2s; 3-table by 3s; 5-table by 5s (always ends 0 or 5); 4-table is all even. Knowing these patterns makes memorization easy.',
-               zh:'2的倍数每次增加2；3的增加3；5的增加5且总以0或5结尾；4的都是偶数。掌握这些规律，背口诀容易多了。' },
-        mathSteps:['5단 패턴: 5,10,15,20,25 → 끝자리가 5,0,5,0,5...','4단 = 2단의 두 배: 4×3 = 2×3×2 = 6×2 = 12','9단 손가락 트릭 맛보기: 9×3=27 (2+7=9!)'],
-        result:{ ko:'패턴을 알면 외우다가 잊어도 직접 계산할 수 있어요!', en:'Knowing patterns means you can always figure it out — even if you forget!', zh:'知道规律，就算忘了也能推算出来！' },
+      { tag:{ ko:'③ 합치면 끝!', en:'3) Put it all together!', zh:'③ 合并就完成了！' },
+        head:{ ko:'두 부분을 합쳐 최종 답을 내요', en:'Combine both parts for the final answer', zh:'把两部分合并，得出最终答案' },
+        desc:{ ko:'십의 자리끼리 더한 결과와 일의 자리끼리 더한 결과를 합치면 끝이에요. 두 단계가 각각 훨씬 쉬우니까 실수도 줄어들어요!',
+               en:'Add the tens result and the ones result to finish. Each step is simpler, so you\'ll make fewer mistakes!',
+               zh:'把十位合计和个位合计相加就完成了。每一步都更简单，出错的机会也少！' },
+        mathSteps:['35 + 42 + 13 + 24','십의 자리: 30+40+10+20 = 100','일의 자리: 5+2+3+4 = 14','100 + 14 = 114'],
+        result:{ ko:'35+42+13+24 = 114! 두 단계로 깔끔하게!', en:'35+42+13+24 = 114! Clean and clear in two steps!', zh:'35+42+13+24 = 114！两步清清楚楚！' },
         book:null }
     ],
-    rule:{ ko:'① 두 배 = 같은 수 두 번 더하기(×2)  ② 절반 = 둘로 나누기(÷2)  ③ 구구단은 배열 그림으로 이해하면 오래 기억',
-      en:'① Double = add the same number twice (×2)  ② Half = divide into 2 (÷2)  ③ Understanding tables with arrays helps you remember longer.',
-      zh:'①翻倍=加两次相同的数(×2) ②减半=分成2份(÷2) ③用阵列图理解口诀，记忆更持久。' }
+    rule:{ ko:'① 각 수를 십의 자리와 일의 자리로 나눈다  ② 십의 자리끼리, 일의 자리끼리 따로 더한다  ③ 두 결과를 합친다',
+      en:'① Split each number into tens and ones  ② Add all tens together; add all ones together  ③ Combine both sums.',
+      zh:'①把每个数拆成十位和个位 ②十位都加在一起，个位都加在一起 ③把两个结果合并。' }
   },
 
-  /* ── STEP3 핵심체크 ── */
   check:{
     fills:[
-      { tex:'6 \\times 2 = \\square', answer:12,
-        hint:{ ko:'6+6=? 또는 배열 그림으로 6개짜리 묶음 2개!', en:'6+6=? or think of 2 groups of 6 in an array!', zh:'6+6=？或者想想2组6个的阵列图！' } },
-      { tex:'4 \\times 5 = \\square', answer:20,
-        hint:{ ko:'5단: 5,10,15,20 — 4번째!', en:'5-table: 5,10,15,20 — the 4th!', zh:'5的倍数：5,10,15,20——第4个！' } }
+      { tex:'73 + 62 + 50 + 41 = (70+60+50+40) + (3+2+0+\\square)', answer:1,
+        hint:{ ko:'41의 일의 자리는 몇이에요?', en:'What is the ones digit of 41?', zh:'41的个位是多少？' } },
+      { tex:'24 + 51 + 36 + 43 = 140 + \\square', answer:14,
+        hint:{ ko:'일의 자리끼리: 4+1+6+3=?', en:'Ones together: 4+1+6+3=?', zh:'个位相加：4+1+6+3=？' } }
     ],
     open:{
-      ko:'배와 절반의 관계를 이용해서 8×4를 더 쉽게 계산하는 방법이 있을까요?',
-      en:'Using the relationship between doubling and halving, can you find an easier way to calculate 8×4?',
-      zh:'利用翻倍和减半的关系，有没有更简单的方法来计算8×4呢？'
+      ko:'끼리끼리 더하는 방법이 특히 편리한 경우는 어떤 상황일까요?',
+      en:'In what kind of situation is the "same-place grouping" method especially convenient?',
+      zh:'什么情况下"同位相加"的方法特别方便？'
     },
     openHint:{
-      ko:'예) 8×4 = 8×2×2 = 16×2 = 32. 두 배를 두 번 하면 4배가 돼요!',
-      en:'e.g. 8×4 = 8×2×2 = 16×2 = 32. Doubling twice = ×4!',
-      zh:'例）8×4 = 8×2×2 = 16×2 = 32。翻倍两次就是乘以4！'
+      ko:'예) 더해야 할 수가 많을 때, 또는 일의 자리 숫자들이 크거나 올림이 많을 때 자리를 분리하면 머릿속이 덜 복잡해요.',
+      en:'e.g. When there are many numbers to add, or when ones digits are large with many carries, splitting places keeps your head clearer.',
+      zh:'例）要加的数很多时，或者个位数字大、需要多次进位时，分开数位能让头脑更清晰。'
     }
   },
 
-  /* ── STEP4 매직랩 ── */
   lab:{
-    generator:'ml1_double', level:'main', count:4,
+    generator:'splitPlace', level:'main', count:4,
     intro:{
-      ko:'배열 보드로 직접 두 배와 절반을 만들어봐요! 점을 배열해서 답을 확인해요.',
-      en:"Use the array board to build doubles and halves yourself! Arrange the dots to find the answer.",
-      zh:'用阵列板亲手做出翻倍和减半！排列点点来验证答案。'
+      ko:'이제 직접 끼리끼리 나눠봐! 십의 자리와 일의 자리를 따로 모아서 계산해봐요.',
+      en:"Now group by place yourself! Separate the tens and ones and calculate each part.",
+      zh:'现在自己按数位分组！把十位和个位分开，分别计算。'
     }
   },
 
-  /* ── STEP5 아레나: 구구 2~5단 스피드 ── */
   arena:{
-    generator:'ml2_tt25', level:'main', count:8, timeLimit:300,
-    rule:{ ko:'5분 안에 구구 2~5단을 최대한 많이! 배열 그림으로 기억해요.', en:'Times tables 2-5 speed round — 5 minutes, as many as possible!', zh:'5分钟内尽量多答乘法口诀2~5！' }
+    generator:'splitPlace', level:'main', count:8, timeLimit:300,
+    rule:{ ko:'5분 안에 최대한 많이! 자리별로 빠르게 나눠서 풀어요!', en:'As many as you can in 5 minutes — split by place and solve fast!', zh:'5分钟内尽量多做！按数位快速分开来解题！' }
   },
 
-  stamp:{ label:{ ko:'배열 마법사', en:'Array Wizard', zh:'阵列魔法师' }, coins:20 },
+  stamp:{ label:{ ko:'자리 마법사', en:'Place Wizard', zh:'数位魔法师' }, coins:20 },
 
   voice:{
-    correct:[ {ko:'정답이야! ✨',en:'Correct!',zh:'答对了！'}, {ko:'배열 완성! ✌️',en:'Array complete!',zh:'阵列完成！'}, {ko:'두 배 마법 성공! 🪄',en:'Double magic works!',zh:'翻倍魔法成功！'} ],
-    wrong:[ {ko:'음~ 배열 그림을 그려볼까?',en:'Hmm — try drawing an array!',zh:'嗯，试试画阵列图？'}, {ko:'거의 다 왔어!',en:'Almost!',zh:'就快了！'} ],
-    finish:{ ko:'완벽해! 이제 넌 배열 마법사야 ✌️✨', en:"Perfect! You're an Array Wizard now!", zh:'完美！你现在是阵列魔法师啦！' }
+    correct:[ {ko:'정답이야! ✨',en:'Correct!',zh:'答对了！'}, {ko:'끼리끼리 성공! 🏗️',en:'Same-place grouping works!',zh:'同位相加成功！'}, {ko:'자리 마법 완성! 🪄',en:'Place magic complete!',zh:'数位魔法完成！'} ],
+    wrong:[ {ko:'음~ 십의 자리끼리, 일의 자리끼리 따로 모아봐!',en:'Hmm — try grouping tens with tens and ones with ones!',zh:'嗯，试试把十位和十位、个位和个位分开来加！'}, {ko:'거의 다 왔어!',en:'Almost!',zh:'就快了！'} ],
+    finish:{ ko:'완벽해! 이제 넌 자리 마법사야 🏗️✨', en:"Perfect! You're a Place Wizard now!", zh:'完美！你现在是数位魔法师啦！' }
   }
 };
 

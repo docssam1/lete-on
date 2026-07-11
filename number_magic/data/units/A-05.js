@@ -1,9 +1,9 @@
 /* ============================================================
    Numbers of Magic — 유닛 데이터: A-05
-   초급 A · 챕터5 "보정 빼기 마법"
-   교재 개념 기반(창작 재구성). generator=sb5_subAdjust.
-   핵심: 54-9 = 54-10+1 = 44+1 = 45
-   "더 많이 뺐으니 더 뺀 만큼 돌려받아요!"
+   초급 B · 챕터1 "100의 보수 찾기"
+   창의수연 초급 B 실제 교재 내용 기반. generator=comp100.
+   핵심: 25+54+75+46 → (25+75)+(54+46) = 100+100 = 200
+   "더해서 100이 되는 짝을 찾아 먼저 더해요!"
    ============================================================ */
 (function(){
 'use strict';
@@ -11,103 +11,98 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['A-05'] = {
   id:'A-05', tier:'beginner', level:'A', order:5,
-  generator:'sb5_subAdjust',
-  title:{ ko:'보정 빼기 마법', en:'Compensation Subtraction', zh:'补偿减法魔法' },
-  subtitle:{ ko:'10을 빼고 더 뺀 만큼 돌려받아요', en:'Subtract 10, then give back the extra', zh:'减去10，再补回多减的部分' },
-  icon:'🔄',
+  generator:'comp100',
+  title:{ ko:'100의 보수 찾기', en:'Find Pairs to 100', zh:'找出凑百数' },
+  subtitle:{ ko:'더해서 100이 되는 짝을 먼저 묶어요', en:'Group pairs that sum to 100 and add first', zh:'先把凑成100的配对圈起来' },
+  icon:'💯',
 
-  /* ── STEP1 프랙티스: sb3_sub2d1d 내림 없는 두 자리 빼기 ── */
   practice:{
-    generator:'sb3_sub2d1d', level:'practice', count:5,
+    generator:'comp100', level:'practice', count:5,
     intro:{
-      ko:'먼저 워밍업! 내림 없이 두 자리에서 한 자리를 빼는 연습을 해봐요.',
-      en:"Let's warm up — subtract a 1-digit number from a 2-digit number (no borrowing).",
-      zh:'先热热身！练习两位数减一位数（不退位）。'
+      ko:'준비 운동! 내가 수를 부르면, 더해서 100이 되는 짝꿍을 눌러줘.',
+      en:"Warm up! I'll say a number — tap its partner that makes 100.",
+      zh:'热热身！我说一个数，你按出凑成100的另一半。'
     }
   },
 
-  /* ── STEP2 디스커버: 보정 빼기 개념 3단 ── */
   discover:{
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
-      { tag:{ ko:'① 왜 10을 빼나요?', en:'1) Why subtract 10?', zh:'① 为什么减10？' },
-        head:{ ko:'9, 8, 7을 빼는 건 어렵지만 10은 쉬워요', en:'Subtracting 9, 8, 7 is tricky — but 10 is easy!', zh:'减9、8、7很麻烦，减10却很简单！' },
-        desc:{ ko:'54에서 9를 빼려면 머릿속이 복잡해요. 하지만 10을 빼는 건 쉽죠. <b>9 대신 10을 빼면 어떨까요?</b>',
-               en:"Subtracting 9 from 54 takes a lot of brain power. But subtracting 10 is easy! What if we subtract 10 instead of 9?",
-               zh:'从54里减去9要费很多脑力，但减10很简单！如果把减9换成减10会怎样呢？' },
-        mathSteps:['54 - 9 = ?','54 - 10 = 44 (쉬워요!)','하지만 9 대신 10을 뺐으니 1이 더 빠졌어요'],
-        result:{ ko:'10을 빼면 1이 더 빠진 거예요 → 1을 돌려받아야 해요!', en:'We subtracted 1 too many → we need to give that 1 back!', zh:'多减了1 → 要把1还回来！' },
-        book:{ ko:'9 = 10 - 1 이에요. 그래서 9를 빼는 것과 10을 빼고 1을 더하는 것은 완전히 같아요.',
-               en:'9 = 10 - 1, so subtracting 9 is the same as subtracting 10 and adding 1 back.',
-               zh:'9 = 10 - 1，所以减9等于减10后加1。' } },
+      { tag:{ ko:'① 100의 짝이란?', en:'1) What are 100-pairs?', zh:'① 什么是凑百配对？' },
+        head:{ ko:'10의 짝처럼 100의 짝도 있어요!', en:'Just like pairs to 10, there are pairs to 100!', zh:'就像凑十一样，凑百也有配对！' },
+        desc:{ ko:'A-01에서 더해서 10이 되는 짝을 배웠어요. 이번엔 더해서 <b>100이 되는 짝</b>이에요. 25와 75, 35와 65처럼요. 이 짝을 먼저 찾아 더하면 계산이 훨씬 쉬워져요!',
+               en:'In A-01 you learned pairs to 10. Now it\'s pairs to 100: like 25+75 or 35+65. Find these pairs first and the calculation becomes much easier!',
+               zh:'在A-01里学了凑十的配对。这次是凑成100的配对：像25和75、35和65。先找到这些配对，计算就容易多了！' },
+        mathSteps:['25 + 75 = 100  (짝!)', '40 + 60 = 100  (짝!)', '63 + 37 = 100  (짝!)'],
+        result:{ ko:'두 수를 더했을 때 꼭 100이 되면 "100의 짝"이에요!', en:'Two numbers summing to exactly 100 are a "100-pair"!', zh:'两数之和恰好等于100，就是"凑百配对"！' },
+        book:{ ko:'25+75: 십의 자리 2+7=9, 일의 자리 5+5=10 → 올림 → 100. 짝의 일의 자리는 합이 10, 십의 자리는 합이 9(올림 포함)가 돼요.',
+               en:'25+75: tens 2+7=9, ones 5+5=10 → carry → 100. Ones must sum to 10, tens to 9 (plus carry).',
+               zh:'25+75：十位2+7=9，个位5+5=10→进位→100。个位之和为10，十位之和为9（含进位）。' } },
 
-      { tag:{ ko:'② 더 뺀 만큼 돌려받아요', en:'2) Give back what you over-subtracted', zh:'② 多减了多少就补回多少' },
-        head:{ ko:'10을 빼고 돌려받는 금액을 계산해요', en:'Subtract 10, then figure out what to return', zh:'减10后，算出要补回多少' },
-        desc:{ ko:'8을 빼야 할 때 10을 빼면 2를 더 뺀 거예요. 7을 빼야 할 때 10을 빼면 3이 더 빠진 것! 이 법칙이에요: <b>더 뺀 만큼 = 10 - 빼야 할 수</b>',
-               en:"When subtracting 8, using 10 means 2 too many. For 7, it's 3. The rule: extra subtracted = 10 − the number you needed to subtract.",
-               zh:'减8时用了10，多减了2；减7时多减了3。规律：多减了多少 = 10 − 要减的数。' },
-        mathSteps:['72 - 8 = ?','72 - 10 + 2','= 62 + 2','= 64'],
-        result:{ ko:'72 - 8 = 64! 8 대신 10을 빼고, 2를 돌려받았어요.', en:'72 - 8 = 64! Subtracted 10 instead of 8, returned 2.', zh:'72 - 8 = 64！减10后补回2。' },
-        book:{ ko:'돌려받는 수(보정량) = 10 - 빼는 수. 9를 빼면 1 돌려받기, 8은 2, 7은 3.',
-               en:'Compensation = 10 − the subtracted digit. Subtract 9 → return 1; subtract 8 → return 2; subtract 7 → return 3.',
-               zh:'补偿量 = 10 - 减数。减9补1，减8补2，减7补3。' } },
+      { tag:{ ko:'② 짝을 찾아 먼저 더해요', en:'2) Find pairs, add them first', zh:'② 找出配对先相加' },
+        head:{ ko:'100의 짝을 먼저 묶으면 계산이 쉬워요', en:'Group 100-pairs first — the rest becomes simple', zh:'先把凑百的配对圈起来，其余的就简单了' },
+        desc:{ ko:'여러 수가 섞여 있어도 걱정 없어요. 먼저 더해서 100이 되는 짝을 찾아 묶고, 그 짝들을 먼저 더하면 돼요.',
+               en:'Even with many mixed numbers, find the 100-pairs first, group them, and add the pairs first.',
+               zh:'即使有很多数混在一起，也先找出凑百的配对圈起来，再先加这些配对。' },
+        mathSteps:['25 + 54 + 75 + 46','= (25 + 75) + (54 + 46)  ← 짝끼리!','= 100 + 100','= 200'],
+        result:{ ko:'25와 75, 54와 46이 각각 100의 짝! → 100+100 = 200', en:'25+75 and 54+46 are 100-pairs! → 100+100 = 200', zh:'25和75、54和46各是凑百配对！→ 100+100 = 200' },
+        book:{ ko:'35+63+65+37 → (35+65)+(63+37) = 100+100 = 200. 짝을 찾으면 덧셈이 마법처럼 쉬워져요!',
+               en:'35+63+65+37 → (35+65)+(63+37) = 100+100 = 200. Finding pairs makes addition feel like magic!',
+               zh:'35+63+65+37 → (35+65)+(63+37) = 100+100 = 200。找到配对，加法就像魔法一样简单！' } },
 
-      { tag:{ ko:'③ 실전 연습', en:'3) Practice in action', zh:'③ 实战练习' },
-        head:{ ko:'여러 수로 보정 빼기 연습해요', en:'Practice with different numbers', zh:'用不同的数练习补偿减法' },
-        desc:{ ko:'이제 직접 해봐요! 빼는 수가 9, 8, 7이면 보정 빼기를 써요.',
-               en:"Now let's try it! Use compensation when subtracting 9, 8, or 7.",
-               zh:'现在自己来！减数是9、8、7时就用补偿减法。' },
-        mathSteps:['86 - 7 = 86 - 10 + 3 = 76 + 3 = 79','53 - 9 = 53 - 10 + 1 = 43 + 1 = 44','61 - 8 = 61 - 10 + 2 = 51 + 2 = 53'],
-        result:{ ko:'항상 두 단계: ① 10 빼기 ② 차이만큼 더하기', en:'Always two steps: ① subtract 10 ② add back the difference', zh:'永远两步：①减10 ②补回差值' },
+      { tag:{ ko:'③ 100이 하나뿐이어도 괜찮아요', en:'3) Even one 100-pair helps!', zh:'③ 只有一组凑百配对也没关系！' },
+        head:{ ko:'짝이 한 쌍뿐이어도 먼저 찾아요', en:'Even a single pair is worth finding first', zh:'哪怕只有一组配对，也先找出来' },
+        desc:{ ko:'항상 두 쌍이 있지는 않아요. 하나만 찾아도 그 짝을 먼저 더하면 나머지 계산이 훨씬 쉬워져요.',
+               en:'There won\'t always be two pairs. Even finding one 100-pair first makes the remaining calculation much easier.',
+               zh:'不总是有两组配对。哪怕只找到一组凑百配对，先加它，其余的也会容易很多。' },
+        mathSteps:['48 + 52 + 37','= (48 + 52) + 37  ← 짝 먼저!','= 100 + 37','= 137'],
+        result:{ ko:'48과 52가 짝 → 100+37 = 137! 훨씬 쉬워요.', en:'48+52 is the pair → 100+37 = 137! So much easier.', zh:'48和52是配对 → 100+37 = 137！容易多了。' },
         book:null }
     ],
-    rule:{ ko:'① 빼는 수(7~9) 대신 10을 뺀다  ② 더 뺀 양(10-빼는 수)을 더해 돌려받는다',
-      en:'① Subtract 10 instead of 7-9  ② Add back the extra (10 − the number).',
-      zh:'①用10代替7~9来减 ②再把多减的(10-减数)补回来。' }
+    rule:{ ko:'① 더해서 100이 되는 짝을 찾는다  ② 짝을 먼저 더해 100을 만든다  ③ 나머지를 더한다',
+      en:'① Find pairs summing to 100  ② Add those pairs first to make 100s  ③ Add the rest.',
+      zh:'①找凑成100的配对 ②先加这些配对凑成100 ③再加其余的数。' }
   },
 
-  /* ── STEP3 핵심체크 ── */
   check:{
     fills:[
-      { tex:'45 - 9 = 45 - 10 + \\square', answer:1,
-        hint:{ ko:'9 대신 10을 뺐어요. 10 - 9 = 1이니까 1을 돌려받아요!', en:'We subtracted 10 instead of 9. 10 − 9 = 1, so return 1!', zh:'用10代替9来减，10-9=1，所以补1！' } },
-      { tex:'72 - 8 = 72 - 10 + \\square', answer:2,
-        hint:{ ko:'8 대신 10을 뺐어요. 10 - 8 = 2이니까 2를 돌려받아요!', en:'We subtracted 10 instead of 8. 10 − 8 = 2, so return 2!', zh:'用10代替8来减，10-8=2，所以补2！' } }
+      { tex:'25 + 54 + 75 + 46 = (25 + \\square) + (54 + 46)', answer:75,
+        hint:{ ko:'25와 짝을 이루어 100이 되는 수는? 25+?=100', en:'What pairs with 25 to make 100? 25+?=100', zh:'25的凑百配对是什么？25+?=100' } },
+      { tex:'35 + 63 + 65 + 37 = \\square + \\square', answer:200,
+        hint:{ ko:'(35+65)=100, (63+37)=100 → 100+100=?', en:'(35+65)=100 and (63+37)=100 → 100+100=?', zh:'(35+65)=100，(63+37)=100 → 100+100=？' } }
     ],
     open:{
-      ko:'보정 빼기는 덧셈에서도 쓸 수 있을까요? 예를 들어 35 + 9를 어떻게 하면 쉬울까요?',
-      en:'Can compensation work for addition too? For example, how would you make 35 + 9 easy?',
-      zh:'补偿法也能用在加法里吗？比如35 + 9怎么算更简单？'
+      ko:'100의 짝 찾기 방법을 설명해봐요. 두 자리 수에서 어떤 자리를 먼저 봐야 하나요?',
+      en:'Explain how to find 100-pairs. Which digit place should you look at first in a 2-digit number?',
+      zh:'说一说怎么找凑百配对。两位数应该先看哪个数位？'
     },
     openHint:{
-      ko:'예) 35 + 9 = 35 + 10 - 1 = 45 - 1 = 44. 더하는 수(9)를 10으로 올리고, 더 더한 1을 빼면 돼요!',
-      en:'e.g. 35 + 9 = 35 + 10 − 1 = 45 − 1 = 44. Round up to 10, then subtract the extra!',
-      zh:'例）35 + 9 = 35 + 10 - 1 = 45 - 1 = 44。先凑到10，再减去多加的1！'
+      ko:'예) 일의 자리가 합해서 10이 되는지 먼저 봐요. 그다음 십의 자리가 합해서 9인지 확인해요(올림 포함 10).',
+      en:'e.g. Check if ones sum to 10 first. Then check if tens sum to 9 (making 10 with the carry).',
+      zh:'例）先看个位之和是否为10，再看十位之和是否为9（加上进位变成10）。'
     }
   },
 
-  /* ── STEP4 매직랩 ── */
   lab:{
-    generator:'sb5_subAdjust', level:'main', count:4,
+    generator:'comp100', level:'main', count:4,
     intro:{
-      ko:'이제 진짜 마법! 두 단계 빈칸을 채우면서 보정 빼기를 직접 해봐요.',
-      en:'Real magic time! Fill in the two-step blanks to complete compensation subtraction.',
-      zh:'真正的魔法时刻！填写两步骤的空格，完成补偿减法！'
+      ko:'이제 진짜 마법! 100의 짝을 찾아 먼저 묶어서 계산해봐요.',
+      en:'Real magic time! Find the 100-pairs and group them to calculate.',
+      zh:'真正的魔法时刻！找出凑百配对，先圈起来再计算。'
     }
   },
 
-  /* ── STEP5 아레나: 스피드 배틀 ── */
   arena:{
-    generator:'sb5_subAdjust', level:'main', count:8, timeLimit:300,
-    rule:{ ko:'5분 안에 최대한 많이! 보정 마법을 써서 빠르게 풀어요.', en:'Solve as many as you can in 5 minutes using compensation!', zh:'5分钟内尽量多解题，用补偿魔法加速！' }
+    generator:'comp100', level:'main', count:8, timeLimit:300,
+    rule:{ ko:'5분 안에 최대한 많이! 100의 짝을 먼저 찾아요!', en:'As many as you can in 5 minutes — find the 100-pairs first!', zh:'5分钟内尽量多做！先找凑百配对！' }
   },
 
-  stamp:{ label:{ ko:'보정 마법사', en:'Compensator', zh:'补偿魔法师' }, coins:20 },
+  stamp:{ label:{ ko:'100 마법사', en:'Century Maker', zh:'凑百魔法师' }, coins:20 },
 
   voice:{
-    correct:[ {ko:'정답이야! ✨',en:'Correct!',zh:'答对了！'}, {ko:'돌려받기 성공! 🔄',en:'Got it back!',zh:'补回来啦！'}, {ko:'보정 마법 완성! 🪄',en:'Compensation complete!',zh:'补偿魔法成功！'} ],
-    wrong:[ {ko:'음~ 다시 해볼까? 10을 빼고 돌려받는 거야!',en:'Hmm, try again! Subtract 10, then return the extra!',zh:'嗯，再试试！先减10，再补回来！'}, {ko:'거의 다 왔어!',en:'Almost!',zh:'就快了！'} ],
-    finish:{ ko:'완벽해! 이제 넌 보정 마법사야 🔄✨', en:"Perfect! You're a Compensation Wizard now!", zh:'完美！你现在是补偿魔法师啦！' }
+    correct:[ {ko:'정답이야! ✨',en:'Correct!',zh:'答对了！'}, {ko:'100 짝 발견! 💯',en:'100-pair found!',zh:'找到凑百配对啦！'}, {ko:'대단해! 🪄',en:'Amazing!',zh:'太棒了！'} ],
+    wrong:[ {ko:'음~ 더해서 100이 되는 짝을 찾아봐!',en:'Hmm — look for a pair that sums to 100!',zh:'嗯，找找凑成100的配对！'}, {ko:'거의 다 왔어!',en:'Almost!',zh:'就快了！'} ],
+    finish:{ ko:'완벽해! 이제 넌 100 마법사야 💯✨', en:"Perfect! You're a Century Maker now!", zh:'完美！你现在是凑百魔法师啦！' }
   }
 };
 

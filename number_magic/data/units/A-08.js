@@ -1,9 +1,9 @@
 /* ============================================================
    Numbers of Magic — 유닛 데이터: A-08
-   초급 A · 챕터8 "몇십 곱 마법"
-   교재 개념 기반(창작 재구성). generator=ml5_tensMul + dv2_div2d1d.
-   핵심: 30×4 = 3×4×10 = 120 → 결과에 0을 붙이면 돼요!
-   60÷3 = 6÷3×10 = 20 → 0을 떼고 나눈 다음 0을 붙여요.
+   초급 B · 챕터4 "수를 이사시켜요 2"
+   창의수연 초급 B 실제 교재 내용 기반. generator=move10_2d.
+   핵심: 39+25 → 39+1+24 = 40+24 = 64; 79+17 → 80+16 = 96
+   "한 수에서 몇을 빌려 다른 수를 딱 떨어지는 10으로 만들어요!"
    ============================================================ */
 (function(){
 'use strict';
@@ -11,103 +11,98 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['A-08'] = {
   id:'A-08', tier:'beginner', level:'A', order:8,
-  generator:'ml5_tensMul',
-  title:{ ko:'몇십 곱 마법', en:'Multiplying Tens', zh:'整十乘法魔法' },
-  subtitle:{ ko:'0을 빼고 곱하고 다시 0을 붙여요', en:'Remove the zero, multiply, then put it back', zh:'去掉0相乘，再加回0' },
-  icon:'0️⃣',
+  generator:'move10_2d',
+  title:{ ko:'수를 이사시켜요 2', en:'Move Digits (Two-Digit)', zh:'搬数字 2' },
+  subtitle:{ ko:'한 수에서 조금 빌려 다른 수를 딱 떨어지는 10으로 만들어요', en:'Borrow a little to round one number to the nearest ten', zh:'从一个数借一点，把另一个数凑成整十' },
+  icon:'🚚',
 
-  /* ── STEP1 프랙티스: ml2_tt25 구구 2~5단 워밍업 ── */
   practice:{
-    generator:'ml2_tt25', level:'practice', count:5,
+    generator:'move10_2d', level:'practice', count:5,
     intro:{
-      ko:'먼저 구구단 워밍업! 2~5단을 빠르게 풀어봐요.',
-      en:"Let's warm up with times tables 2-5 — answer them fast!",
-      zh:'先热热身，快速答2~5的乘法口诀！'
+      ko:'준비 운동! 이 수에서 얼마를 더하면 다음 딱 떨어지는 10이 될까요?',
+      en:"Warm up! How much more does this number need to reach the next multiple of 10?",
+      zh:'热热身！这个数再加多少才能到下一个整十？'
     }
   },
 
-  /* ── STEP2 디스커버: 몇십 곱 개념 3단 ── */
   discover:{
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
-      { tag:{ ko:'① 왜 0이 붙을까요?', en:'1) Why does a zero appear?', zh:'① 为什么会多出一个0？' },
-        head:{ ko:'30 = 3 × 10 이에요', en:'30 is just 3 × 10', zh:'30就是3 × 10' },
-        desc:{ ko:'30×4를 계산해볼게요. 30은 3이 10개 있는 수예요. 그러니까 30×4 = 3×10×4 = 3×4×10이에요. 3×4=12를 구하고 거기에 10을 곱하면 0이 하나 붙어요!',
-               en:"Let's compute 30×4. 30 is the same as 3×10. So 30×4 = 3×10×4 = 3×4×10. Calculate 3×4=12, then multiply by 10 — that's why a 0 appears!",
-               zh:'来算30×4。30就是3×10，所以30×4 = 3×10×4 = 3×4×10。先算3×4=12，再乘以10，结果末尾就多了一个0！' },
-        mathSteps:['30 × 4','= 3 × 10 × 4','= 3 × 4 × 10','= 12 × 10','= 120'],
-        result:{ ko:'30×4 = 120! 0을 빼고 계산해서 결과에 0 붙이기!', en:'30×4 = 120! Remove the 0, multiply, add the 0 back!', zh:'30×4 = 120！去掉0计算，结果再加回0！' },
-        book:{ ko:'몇십을 곱할 때는: ① 0을 잠깐 떼기 ② 한 자리 곱셈 하기 ③ 결과에 0 붙이기.',
-               en:'When multiplying by a multiple of 10: ① remove the 0 ② do the 1-digit multiplication ③ attach the 0.',
-               zh:'乘以整十数时：①先去掉0 ②做一位数乘法 ③结果末尾加回0。' } },
+      { tag:{ ko:'① 딱 떨어지는 10이 편해요', en:'1) Multiples of 10 are easy to work with', zh:'① 整十数好算' },
+        head:{ ko:'40, 50, 60처럼 딱 떨어지는 수가 더하기 쉬워요', en:'Round numbers like 40, 50, 60 are easier to add', zh:'像40、50、60这样的整十数更好算' },
+        desc:{ ko:'A-02에서 한 자리 수를 이사시켜 10을 만드는 걸 배웠어요. 이번엔 두 자리 수! 38+25라면 38을 40으로 만들고 싶어요. 38에서 40까지는 얼마가 필요할까요? <b>2</b>가 필요해요!',
+               en:'In A-02, you moved digits to make 10. Now with two-digit numbers! With 38+25, you\'d want to round 38 up to 40. How much does 38 need to reach 40? It needs 2!',
+               zh:'在A-02里，学了把一个数搬成整十。现在换成两位数！38+25，想把38凑成40。38到40还需要多少？需要2！' },
+        mathSteps:['38 → 40까지 2 필요 (2를 이사시켜요)','39 → 40까지 1 필요 (1을 이사시켜요)','68 → 70까지 2 필요 (2를 이사시켜요)'],
+        result:{ ko:'일의 자리를 보면 얼마를 이사시켜야 하는지 알 수 있어요!', en:'Look at the ones digit to know how much to move!', zh:'看个位就知道要搬多少！' },
+        book:{ ko:'일의 자리가 8이면 2를 이사, 9이면 1을 이사, 7이면 3을 이사시키면 딱 떨어지는 10이 돼요.',
+               en:'Ones digit 8: move 2. Ones digit 9: move 1. Ones digit 7: move 3. That rounds to the next ten.',
+               zh:'个位是8，搬2；个位是9，搬1；个位是7，搬3。这样就能凑成整十。' } },
 
-      { tag:{ ko:'② 몇십×몇십도 같아요', en:'2) Tens × tens works the same way', zh:'② 整十乘整十也是同样的道理' },
-        head:{ ko:'20×30 = 2×3 한 다음 0 두 개 붙이기', en:'20×30 = first do 2×3, then attach two zeros', zh:'20×30 = 先算2×3，再加两个0' },
-        desc:{ ko:'20×30에서는 0이 두 개예요. 20 = 2×10, 30 = 3×10이니까 20×30 = 2×10×3×10 = 2×3×100 = 6×100. 결과에 0이 두 개 붙어요!',
-               en:'20×30 has two zeros. Since 20=2×10 and 30=3×10, we get 20×30 = 2×10×3×10 = 2×3×100 = 600. Two zeros attach to the result!',
-               zh:'20×30有两个0。因为20=2×10，30=3×10，所以20×30 = 2×10×3×10 = 2×3×100 = 600。结果末尾加两个0！' },
-        mathSteps:['20 × 30','= 2 × 3 × 100','= 6 × 100','= 600'],
-        result:{ ko:'0의 개수를 세어서 결과에 그 수만큼 0을 붙여요!', en:'Count the zeros and attach that many to the result!', zh:'数一下0的个数，在结果末尾加上相同数量的0！' },
-        book:{ ko:'곱하는 두 수의 0 개수를 합해서 결과에 붙이면 돼요. 20×30에는 0이 두 개니까 결과에도 0 두 개.',
-               en:'Add the number of zeros in both factors — that many zeros go on the result.',
-               zh:'把两个乘数末尾0的数量加起来，结果末尾就加上那么多个0。' } },
+      { tag:{ ko:'② 빌려서 이사시켜요', en:'2) Borrow and move', zh:'② 借过来再搬' },
+        head:{ ko:'더하는 수에서 조금 빌려 먼저 10을 만들어요', en:'Borrow a little from the second number to make a ten first', zh:'从第二个数借一点，先凑成整十' },
+        desc:{ ko:'39+25에서 39를 40으로 만들고 싶어요. 25에서 1을 빌려와요. 25는 1+24가 되고, 39+1 = 40이 돼요. 이제 40+24를 계산하면 돼요!',
+               en:'With 39+25, we want to round 39 to 40. Borrow 1 from 25. 25 becomes 1+24, and 39+1 = 40. Now just calculate 40+24!',
+               zh:'39+25，想把39凑成40。从25借1过来。25变成1+24，39+1=40。现在只需算40+24！' },
+        mathSteps:['39 + 25','= 39 + 1 + 24  ← 25에서 1을 이사!','= 40 + 24','= 64'],
+        result:{ ko:'39+25 = 64! 39를 40으로 만든 뒤 나머지 24를 더했어요.', en:'39+25 = 64! Rounded 39 to 40, then added the remaining 24.', zh:'39+25 = 64！把39凑成40后，再加剩下的24。' },
+        book:{ ko:'79+17 → 79에 1을 이사(17에서) → 80+16 = 96. 68+35 → 68에 2를 이사(35에서) → 70+33 = 103.',
+               en:'79+17 → move 1 from 17 to 79 → 80+16 = 96. 68+35 → move 2 from 35 to 68 → 70+33 = 103.',
+               zh:'79+17 → 从17搬1给79 → 80+16 = 96。68+35 → 从35搬2给68 → 70+33 = 103。' } },
 
-      { tag:{ ko:'③ 나눗셈도 같은 방법이에요', en:'3) Division works the same way', zh:'③ 除法也是同样的方法' },
-        head:{ ko:'60÷3은 0을 떼고 나눠요', en:'60÷3: remove the 0, then divide', zh:'60÷3：先去掉0，再除' },
-        desc:{ ko:'60÷3에서 60=6×10이에요. 그러면 60÷3 = 6×10÷3 = (6÷3)×10 = 2×10 = 20. 나눗셈도 0을 떼고 계산한 다음, 결과에 0을 붙여요!',
-               en:'In 60÷3, since 60=6×10, we get 60÷3 = 6×10÷3 = (6÷3)×10 = 2×10 = 20. For division too — remove the 0, divide, then attach it back!',
-               zh:'60÷3中，60=6×10，所以60÷3 = 6×10÷3 = (6÷3)×10 = 2×10 = 20。除法也是去掉0，除完再加回来！' },
-        mathSteps:['60 ÷ 3','= (6 × 10) ÷ 3','= 6 ÷ 3 × 10','= 2 × 10','= 20'],
-        result:{ ko:'60÷3 = 20! 나눗셈도 0을 분리하면 쉬워져요.', en:'60÷3 = 20! Division with zeros is easy once you separate them.', zh:'60÷3 = 20！把0分开处理，除法也简单了。' },
+      { tag:{ ko:'③ 실전 연습', en:'3) Practice in action', zh:'③ 实战练习' },
+        head:{ ko:'두 단계로 빠르게 풀어요', en:'Solve quickly in two steps', zh:'两步快速解题' },
+        desc:{ ko:'이제 자신 있게 해봐요! ① 첫 번째 수의 일의 자리를 보고 얼마를 이사시킬지 정한다. ② 두 번째 수에서 그만큼 빌려와서 이사시킨다. ③ 딱 떨어지는 수+나머지를 더한다.',
+               en:'Now with confidence! ① Check the ones of the first number to decide how much to move. ② Borrow that amount from the second number. ③ Add the rounded number + remainder.',
+               zh:'现在自信地来！①看第一个数的个位，决定要搬多少。②从第二个数借那么多。③整十数加余数。' },
+        mathSteps:['58 + 34','58에 2를 이사 → 60 + 32 = 92','47 + 36','47에 3을 이사 → 50 + 33 = 83'],
+        result:{ ko:'58+34=92, 47+36=83! 이사 마법으로 쉽게 풀었어요.', en:'58+34=92, 47+36=83! Moving digits makes it easy.', zh:'58+34=92，47+36=83！搬数字魔法，轻松解题！' },
         book:null }
     ],
-    rule:{ ko:'① 0을 잠깐 분리한다  ② 남은 수끼리 구구단으로 계산  ③ 분리했던 0을 결과에 다시 붙인다',
-      en:'① Separate the zeros  ② Multiply/divide the remaining digits using times tables  ③ Reattach the zeros to the result.',
-      zh:'①把0暂时分开 ②用乘法口诀计算剩下的数 ③把0重新加回结果末尾。' }
+    rule:{ ko:'① 첫 번째 수의 일의 자리를 보고 필요한 이사량을 결정한다  ② 두 번째 수에서 이사량을 빌려 첫 번째 수를 딱 떨어지는 10으로 만든다  ③ 나머지를 더한다',
+      en:'① Check the ones digit to decide how much to move  ② Borrow that amount from the second number to round the first to the nearest ten  ③ Add the remainder.',
+      zh:'①看个位决定要搬多少 ②从第二个数借那么多，把第一个数凑成整十 ③再加余数。' }
   },
 
-  /* ── STEP3 핵심체크 ── */
   check:{
     fills:[
-      { tex:'40 \\times 3 = 4 \\times 3 \\times \\square', answer:10,
-        hint:{ ko:'40 = 4 × 10이에요. 빠진 수는 10!', en:'40 = 4 × 10. The missing number is 10!', zh:'40 = 4 × 10，空格里是10！' } },
-      { tex:'60 \\div 2 = \\square', answer:30,
-        hint:{ ko:'6÷2=3이고 거기에 0을 붙이면 30!', en:'6÷2=3, then attach the zero → 30!', zh:'6÷2=3，再加0就是30！' } }
+      { tex:'39 + 25 = 39 + 1 + \\square', answer:24,
+        hint:{ ko:'25에서 1을 이사보냈으니까 25-1=?', en:'We moved 1 from 25, so 25-1=?', zh:'从25搬走了1，所以25-1=？' } },
+      { tex:'79 + 17 = \\square + 16', answer:80,
+        hint:{ ko:'79에서 다음 10은 몇일까요? 17에서 얼마를 이사시키면 될까요?', en:'What is the next ten after 79? How much should you move from 17?', zh:'79的下一个整十是多少？从17搬多少过来？' } }
     ],
     open:{
-      ko:'300×4를 계산하려면 어떻게 해야 할까요? 0의 개수를 세어보세요.',
-      en:'How would you calculate 300×4? Count the zeros!',
-      zh:'怎么计算300×4？数一数0的个数！'
+      ko:'이사 마법을 쓰면 어떤 덧셈이 가장 편해질까요? 어떤 수일 때 이 방법을 쓰면 좋을까요?',
+      en:'Which additions does the "moving digits" trick help the most? What kinds of numbers work best with this method?',
+      zh:'"搬数字"魔法对哪类加法最有帮助？什么样的数用这个方法效果最好？'
     },
     openHint:{
-      ko:'300 = 3×100이에요. 3×4=12이고, 여기에 100을 곱하면 0이 두 개! 300×4 = 1200.',
-      en:'300 = 3×100. So 3×4=12, then ×100 → two zeros! 300×4 = 1200.',
-      zh:'300 = 3×100。3×4=12，再乘以100加两个0！300×4 = 1200。'
+      ko:'예) 일의 자리가 7, 8, 9인 수가 있을 때 특히 편해요. 1, 2, 3만 이사시키면 바로 10이 되거든요!',
+      en:'e.g. It\'s especially helpful when one number has ones digit 7, 8, or 9 — you only need to move 1, 2, or 3 to reach the next ten!',
+      zh:'例）当一个数的个位是7、8、9时特别有用——只需搬1、2、3就能到下一个整十！'
     }
   },
 
-  /* ── STEP4 매직랩 ── */
   lab:{
-    generator:'ml5_tensMul', level:'main', count:4,
+    generator:'move10_2d', level:'main', count:4,
     intro:{
-      ko:'0을 분리해서 계산해봐! 빈칸을 채우면서 몇십 곱을 완성해요.',
-      en:'Separate those zeros and compute! Fill in the blanks to complete tens multiplication.',
-      zh:'把0分开来算！填写空格完成整十乘法。'
+      ko:'이제 진짜 마법! 두 자리 수에서 이사량을 정하고 딱 떨어지는 수를 만들어봐요.',
+      en:'Real magic! Decide how much to move, round to the nearest ten, and solve!',
+      zh:'真正的魔法！决定要搬多少，凑成整十，再解题！'
     }
   },
 
-  /* ── STEP5 아레나 ── */
   arena:{
-    generator:'ml5_tensMul', level:'main', count:8, timeLimit:300,
-    rule:{ ko:'5분 안에 최대한 많이! 0을 분리하면 다 쉬워요.', en:'5 minutes — separate the zeros and it all gets easy!', zh:'5分钟内尽量多！把0分开，一切都简单！' }
+    generator:'move10_2d', level:'main', count:8, timeLimit:300,
+    rule:{ ko:'5분 안에 최대한 많이! 이사 마법으로 빠르게 풀어요!', en:'As many as you can in 5 minutes — use moving magic to solve fast!', zh:'5分钟内尽量多做！用搬数字魔法快速解题！' }
   },
 
-  stamp:{ label:{ ko:'0 마법사', en:'Zero Wizard', zh:'零的魔法师' }, coins:20 },
+  stamp:{ label:{ ko:'이사 마법사', en:'Moving Wizard', zh:'搬数字魔法师' }, coins:20 },
 
   voice:{
-    correct:[ {ko:'정답이야! ✨',en:'Correct!',zh:'答对了！'}, {ko:'0 마법 성공! 0️⃣',en:'Zero magic works!',zh:'零的魔法成功！'}, {ko:'0 분리 완벽! 🪄',en:'Zero separation complete!',zh:'分离0完美！'} ],
-    wrong:[ {ko:'음~ 0을 잠깐 떼어놓고 생각해봐!',en:'Hmm — try removing the zero first!',zh:'嗯，先把0去掉再想想！'}, {ko:'거의 다 왔어!',en:'Almost!',zh:'就快了！'} ],
-    finish:{ ko:'완벽해! 이제 넌 0 마법사야 0️⃣✨', en:"Perfect! You're a Zero Wizard now!", zh:'完美！你现在是零的魔法师啦！' }
+    correct:[ {ko:'정답이야! ✨',en:'Correct!',zh:'答对了！'}, {ko:'이사 성공! 🚚',en:'Moved it!',zh:'搬成功了！'}, {ko:'딱 10 마법! 🪄',en:'Perfect ten magic!',zh:'整十魔法！'} ],
+    wrong:[ {ko:'음~ 일의 자리를 보고 얼마를 이사시킬지 다시 생각해봐!',en:'Hmm — look at the ones digit and think again about how much to move!',zh:'嗯，再看看个位，重新想想要搬多少！'}, {ko:'거의 다 왔어!',en:'Almost!',zh:'就快了！'} ],
+    finish:{ ko:'완벽해! 이제 넌 이사 마법사야 🚚✨', en:"Perfect! You're a Moving Wizard now!", zh:'完美！你现在是搬数字魔法师啦！' }
   }
 };
 
