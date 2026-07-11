@@ -44,9 +44,14 @@ const L=(obj)=>obj?(obj[S.lang]??obj.ko??obj.en):'';   // 다국어 필드 픽
 /* ---------- 상태 + 저장 ---------- */
 const KEY='nm_state_v1';
 function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
-  tierId:null, unit:null, step:null, sub:{}, progress:{} };}
+  tierId:null, unit:null, step:null, sub:{}, progress:{},
+  character:{number:3,color:'blue',face:'happy',hat:'wizard',bg:'plain'},
+  character_unlocked:{} };}
 let S=load();
 if(S.view==='map')S.view='town'; // 구버전 상태 마이그레이션
+// 기존 저장본에 character 필드 없으면 기본값 채움
+if(!S.character)S.character={number:3,color:'blue',face:'happy',hat:'wizard',bg:'plain'};
+if(!S.character_unlocked)S.character_unlocked={};
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
@@ -122,20 +127,26 @@ function startAmbience(){
 
 /* ---------- 최상단 렌더 ---------- */
 let townCleanup=null;
+function charChipHTML(){
+  const mini = window.renderNumiChar ? window.renderNumiChar(S.character, 30) : '🪄';
+  return `<button class="nm-char-chip" id="charChipBtn">${mini}<span class="nm-char-chip-name">#${S.character.number}</span></button>`;
+}
 function render(){
   if(townCleanup){townCleanup();townCleanup=null;}
   app.innerHTML=`<div class="nm-top">
-    <div class="nm-brand">🪄 ${t('appName')}</div>
+    <div class="nm-brand">${charChipHTML()}</div>
     <div class="nm-top-right">
       <span class="nm-coins">🪙 <b>${S.coins}</b></span>
       <button class="nm-lang" id="langBtn">${t('langName')}</button>
     </div>
   </div><div id="screen"></div>`;
   $('#langBtn').onclick=cycleLang;
+  $('#charChipBtn').onclick=()=>{S.view='closet';save();render();};
   if(S.view==='town')screenTown();
   else if(S.view==='tier')screenTier();
   else if(S.view==='unit')screenUnit();
   else if(S.view==='exam')screenExam();
+  else if(S.view==='closet')screenCloset();
   else screenTown();
   renderMath();
 }
@@ -151,7 +162,8 @@ const TOWN_SPOTS=[
   { tier:'beginner',     pos:'left:36%;top:19%;width:16%;height:22%', tag:'🏛️ PRIME',     sub:{ko:'초급',en:'Beginner',zh:'初级'} },
   { tier:'advanced',     pos:'left:73%;top:24%;width:11%;height:14%', tag:'⛰️ CHALLENGE', sub:{ko:'고급',en:'Advanced',zh:'高级'} },
   { tier:'intermediate', pos:'left:74%;top:58%;width:13%;height:16%', tag:'🏠 ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
-  { tier:'_theater',     pos:'left:53%;top:19%;width:13%;height:22%', tag:'🎬 극장',       sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' }
+  { tier:'_theater',     pos:'left:53%;top:19%;width:13%;height:22%', tag:'🎬 극장',       sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' },
+  { tier:'_closet',      pos:'left:8%;top:62%;width:15%;height:20%',  tag:'🪄 꾸미기',      sub:{ko:'마법사 옷장',en:"Wizard's Closet",zh:'魔法师衣橱'} }
 ];
 function tierById(id){return CUR.tiers.find(x=>x.id===id);}
 function tierOpen(tier){return !!(tier&&tier.levels.some(l=>l.available&&(l.units||[]).some(u=>UNITS[u])));}
@@ -186,7 +198,7 @@ function screenTown(){
   let zones='';
   TOWN_SPOTS.forEach(sp=>{
     const tier=tierById(sp.tier);
-    const open=sp.tier==='_theater'?false:tierOpen(tier);
+    const open=sp.tier==='_theater'?false:sp.tier==='_closet'?true:tierOpen(tier);
     zones+=`<button class="nm-zone ${open?'':'locked'}" style="${sp.pos}" data-spot="${sp.tier}">
       ${open?'<div class="nm-halo"></div>':`<div class="nm-lockico">${sp.lockIcon||'🔒'}</div>`}
       <span class="nm-zlabel">${sp.tag}<small>${L(sp.sub)}</small></span>
@@ -201,13 +213,13 @@ function screenTown(){
         <div id="townFountain"></div>
         ${zones}
         <div class="nb" id="nbNumi"><div class="speech"></div>
-          <img class="nb-img" src="assets/characters/numi-0.png" alt="Numi">
+          <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar(S.character,52):'<img src="assets/characters/numi-0.png" alt="Numi">'}</div>
           <div class="shadow"></div></div>
         <div class="nb" id="nbPoco"><div class="speech"></div>
-          <img class="nb-img" src="assets/characters/poco-3.png" alt="Poco">
+          <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar({number:3,color:'green',face:'excited',hat:'none',bg:'plain'},52):'<img src="assets/characters/poco-3.png" alt="Poco">'}</div>
           <div class="shadow"></div></div>
         <div class="nb" id="nbMomo"><div class="speech"></div>
-          <img class="nb-img" src="assets/characters/momo-8.png" alt="Momo">
+          <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar({number:8,color:'pink',face:'happy',hat:'none',bg:'plain'},52):'<img src="assets/characters/momo-8.png" alt="Momo">'}</div>
           <div class="shadow"></div></div>
       </div>
     </div>
@@ -324,6 +336,13 @@ function initTownWorld(scr){
         const examDesc=S.lang==='ko'?'시드 학습지를 인쇄하거나 타이머 시험을 볼 수 있어요.':
           S.lang==='en'?'Print a seeded worksheet or take a timed exam.':'打印带种子的学习单，或进行限时考试。';
         showTownModal(examLabel, examDesc, ()=>{S.view='exam';save();render();});
+        return;
+      }
+      if(id==='_closet'){
+        const cl=S.lang==='ko'?'🪄 마법사 옷장':S.lang==='en'?"🪄 Wizard's Closet":'🪄 魔法师衣橱';
+        const cd=S.lang==='ko'?'숫자·색·표정·모자·배경을 골라 내 캐릭터를 꾸며요!':
+          S.lang==='en'?'Customize your number character!':'选择数字、颜色、表情、帽子和背景，打造专属角色！';
+        showTownModal(cl, cd, ()=>{S.view='closet';save();render();});
         return;
       }
       const tier=tierById(id);
@@ -521,7 +540,7 @@ function stepPractice(body,u){
   // 진단 스킵(B안): 아직 이 단계 안 했고 스킵 물어보기 전이면
   if(!S.sub.skipAsked && !stepDone(S.unit,'practice')){
     body.innerHTML=`<div class="nm-skip">
-      <div class="nm-numi big"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
+      <div class="nm-numi big">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
       <div class="nm-skip-q">${t('skipAsk')}</div>
       <div class="nm-skip-btns">
         <button class="nm-btn ghost" id="skipNo">${t('skipNo')}</button>
@@ -540,7 +559,7 @@ function runPractice(body,u){
   const first=S.sub.pIdx===0&&!S.sub.started;
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
-    <div class="nm-numi"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
+    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro))+'<br><br>'+esc(L(cur.prompt)):esc(L(cur.prompt))}</div>
     <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
     <div class="nm-numpad" id="pad"></div>
@@ -572,7 +591,7 @@ function handlePractice(val,body,u){
 function stepRange(body,u){
   if(!u.ranges){ pickRange('oneDigit'); return; }
   body.innerHTML=`<div class="nm-skip">
-    <div class="nm-numi big"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
+    <div class="nm-numi big">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-skip-q">${S.lang==='ko'?'수 범위를 골라요':S.lang==='en'?'Choose number range':'选择数字范围'}</div>
     <div class="nm-range-btns">`+u.ranges.map(r=>`
       <button class="nm-range-card" data-rk="${r.key}">
@@ -709,7 +728,7 @@ function stepLabPairs(body,u){
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
-    <div class="nm-numi"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
+    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
     <div class="nm-expr" id="expr"></div>
     <button class="nm-btn full" id="pick" disabled>${t('picked')}</button>
@@ -730,7 +749,7 @@ function stepLabNumpad(body,u){
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
-    <div class="nm-numi"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
+    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
     <div class="nm-lab-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
     <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
@@ -811,7 +830,7 @@ function arenaEnd(body,u){
   const need=u.arena.count||10;const sc=S.sub.score;
   markStepDone(S.unit,'arena');
   body.innerHTML=`<div class="nm-card center">
-    <div class="nm-numi big"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
+    <div class="nm-numi big">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-card-h">${t('score')}</div>
     <div class="nm-score">${sc} / ${need}</div>
     <button class="nm-btn full" id="toStamp">${t('next')}</button>
@@ -852,6 +871,38 @@ function dots(n,cur){let h='';for(let i=0;i<n;i++)h+=`<span class="nm-dot ${i<cu
 function fmt(s){s=Math.max(0,s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 function numiHappy(){const n=document.querySelector('.nm-numi');if(n){n.classList.remove('happy');void n.offsetWidth;n.classList.add('happy');}}
 function numiHappyToast(){toast('✓',true);}
+
+/* ---------- 캐릭터 꾸미기 화면 ---------- */
+function screenCloset(){
+  const scr=$('#screen');
+  const titleTxt=S.lang==='en'?'My Character':S.lang==='zh'?'我的角色':'내 캐릭터';
+  scr.innerHTML=`<div class="nm-unit-bar">
+    <button class="nm-back" id="backCloset">← ${t('back')}</button>
+    <div class="nm-unit-title">🪄 ${titleTxt}</div>
+  </div><div id="nm-closet-cnt" class="nm-step-body" style="padding:0"></div>`;
+  $('#backCloset').onclick=()=>{S.view='town';save();render();};
+  if(window.screenCloset){
+    window.screenCloset(document.getElementById('nm-closet-cnt'),{
+      char: S.character,
+      unlocked: S.character_unlocked,
+      coins: S.coins,
+      lang: S.lang,
+      onSave(newChar, newUnlocked, coinsSpent){
+        S.character = newChar;
+        S.character_unlocked = newUnlocked;
+        if(coinsSpent) S.coins = Math.max(0, S.coins - coinsSpent);
+        save();
+        // 상단 칩만 업데이트
+        const chip=$('#charChipBtn');
+        if(chip&&window.renderNumiChar){
+          chip.innerHTML=window.renderNumiChar(S.character,30)+`<span class="nm-char-chip-name">#${S.character.number}</span>`;
+        }
+        const ci=$('.nm-coins b');
+        if(ci)ci.textContent=S.coins;
+      }
+    });
+  }
+}
 
 /* ---------- 시험 / 학습지 화면 ---------- */
 function screenExam(){
