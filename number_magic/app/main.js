@@ -211,6 +211,7 @@ function screenTown(){
       </div>
     </div>
     <div class="nm-town-hud brand">${t('mapTitle')}</div>
+    <div class="nm-town-hud info"><a class="nm-philobtn" href="about.html">✦ ${S.lang==='ko'?'철학':S.lang==='en'?'Philosophy':'理念'}</a></div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
       <button class="nm-iconbtn" id="townZin">＋</button>
