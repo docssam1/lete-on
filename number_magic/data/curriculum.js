@@ -30,10 +30,10 @@ window.NM_CURRICULUM = {
       ]
     },
 
-    /* ===== PRIME · 초급 (창의수연 A~I) ===== */
+    /* ===== PRIME · 초급 (A~I) ===== */
     {
       id:'beginner', name:'PRIME', grade:'PRIME', order:1,
-      title:'PRIME', subtitle:{ko:'초급 · 창의수연 A~I',en:'Beginner · Changui-Suyeon A–I',zh:'初级 · 创意数演 A~I'},
+      title:'PRIME', subtitle:{ko:'초급 · A~I단계',en:'Beginner · Levels A–I',zh:'初级 · A~I阶段'},
       ageFrom:5, ageLabel:'만 5세+',
       color:'#16417C', accent:'#EAC996',
       desc:{ko:'수를 펼쳐 쉽게 만드는 첫 마법 — 더하기의 여러 전략',
