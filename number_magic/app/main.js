@@ -135,6 +135,7 @@ function render(){
   if(S.view==='town')screenTown();
   else if(S.view==='tier')screenTier();
   else if(S.view==='unit')screenUnit();
+  else if(S.view==='exam')screenExam();
   else screenTown();
   renderMath();
 }
@@ -319,8 +320,10 @@ function initTownWorld(scr){
       if(moved)return;e.stopPropagation();
       const id=z.dataset.spot;
       if(id==='_theater'){
-        showTownModal('🎬 '+(S.lang==='ko'?'매직 극장':S.lang==='en'?'Magic Theater':'魔法剧场'),
-          S.lang==='ko'?'영상 학습관 — 준비 중이에요!':S.lang==='en'?'Video theater — coming soon!':'视频剧场——即将推出！',null);
+        const examLabel=S.lang==='ko'?'📝 학습지 & 시험':S.lang==='en'?'📝 Worksheet & Exam':'📝 学习单 & 考试';
+        const examDesc=S.lang==='ko'?'시드 학습지를 인쇄하거나 타이머 시험을 볼 수 있어요.':
+          S.lang==='en'?'Print a seeded worksheet or take a timed exam.':'打印带种子的学习单，或进行限时考试。';
+        showTownModal(examLabel, examDesc, ()=>{S.view='exam';save();render();});
         return;
       }
       const tier=tierById(id);
@@ -849,6 +852,23 @@ function dots(n,cur){let h='';for(let i=0;i<n;i++)h+=`<span class="nm-dot ${i<cu
 function fmt(s){s=Math.max(0,s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 function numiHappy(){const n=document.querySelector('.nm-numi');if(n){n.classList.remove('happy');void n.offsetWidth;n.classList.add('happy');}}
 function numiHappyToast(){toast('✓',true);}
+
+/* ---------- 시험 / 학습지 화면 ---------- */
+function screenExam(){
+  const scr=$('#screen');
+  if(!window.NM_EXAM||!window.examScreen){
+    scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="backExam">${t('back')}</button></div>
+      <p style="padding:40px;text-align:center">시험 모듈 로딩 실패</p>`;
+    $('#backExam').onclick=()=>{S.view='town';save();render();};
+    return;
+  }
+  scr.innerHTML=`<div class="nm-unit-bar">
+    <button class="nm-back" id="backExam">${t('back')}</button>
+    <div class="nm-unit-title">📝 ${S.lang==='ko'?'학습지 & 시험':S.lang==='en'?'Worksheet & Exam':'学习单 & 考试'}</div>
+  </div><div id="nm-exam-cnt" class="nm-step-body"></div>`;
+  $('#backExam').onclick=()=>{S.view='town';save();render();};
+  window.examScreen(document.getElementById('nm-exam-cnt'));
+}
 
 /* ---------- 시작 ---------- */
 function boot(){
