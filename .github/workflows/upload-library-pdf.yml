@@ -1,0 +1,17 @@
+name: Upload Library PDF to Supabase Storage
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Upload PDF to Supabase Storage
+        run: node scripts/upload-library-pdf.js
