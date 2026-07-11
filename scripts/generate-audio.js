@@ -19,7 +19,10 @@ const path = require('path');
 
 // ── Config ────────────────────────────────────────────────────────────────────
 const GOOGLE_TTS_KEY = process.env.GOOGLE_TTS_KEY;
-const VOICE_NAME = 'en-US-Neural2-F';   // Natural female Neural2 voice
+const VOICE_NAME = 'en-US-Neural2-F';   // Natural female Neural2 voice — CARS textbook passages
+// Storybook narrator for the Library eBook reader, picked after an A/B/C/D sample
+// review (owner chose D: this Chirp3-HD voice over the plain Neural2-F baseline).
+const LIBRARY_VOICE_NAME = 'en-US-Chirp3-HD-Leda';
 const SUPABASE_URL = 'https://fgahqumaldheqettmvqg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
 const OUT_DIR = path.join(__dirname, '../audio-generated');
@@ -113,7 +116,7 @@ if (window.LESSON1) {
 
 const totalChars = tasks.reduce((s, t) => s + t.text.length, 0);
 console.log(`📋  ${tasks.length} passages | ~${totalChars.toLocaleString()} characters`);
-console.log(`🎙  Voice: ${VOICE_NAME} (Google Neural2)`);
+console.log(`🎙  Voice: ${VOICE_NAME} (CARS) / ${LIBRARY_VOICE_NAME} (Library)`);
 console.log('');
 
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -132,11 +135,16 @@ function httpRequest(options, body) {
   });
 }
 
-async function generateMp3(text) {
+async function generateMp3(text, voiceName) {
+  voiceName = voiceName || VOICE_NAME;
+  // Chirp3-HD voices reject speakingRate/pitch overrides (400 error) — only apply
+  // the rate tweak to the classic Neural2 voice.
+  const audioConfig = { audioEncoding: 'MP3' };
+  if (!/Chirp3-HD/.test(voiceName)) audioConfig.speakingRate = 0.95;
   const payload = JSON.stringify({
     input: { text },
-    voice: { languageCode: 'en-US', name: VOICE_NAME },
-    audioConfig: { audioEncoding: 'MP3', speakingRate: 0.95 },
+    voice: { languageCode: 'en-US', name: voiceName },
+    audioConfig,
   });
   const res = await httpRequest({
     hostname: 'texttospeech.googleapis.com',
@@ -269,7 +277,7 @@ async function main() {
         }
       }
 
-      const mp3 = await generateMp3(task.text);
+      const mp3 = await generateMp3(task.text, task.type === 'libpage' ? LIBRARY_VOICE_NAME : VOICE_NAME);
 
       // Save locally as backup
       const localPath = path.join(OUT_DIR, task.storagePath.replace('/', '-'));
