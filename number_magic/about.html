@@ -109,28 +109,17 @@ p.lead{font-size:19px;color:var(--sub);max-width:60ch}
 .kids .kicker{color:var(--gold-bright)}
 .kids .kicker::before{background:linear-gradient(90deg,var(--gold-bright),var(--gold))}
 .kids h2{color:#fff}
-.blocks{display:flex;justify-content:center;gap:20px;margin:10px 0 34px;flex-wrap:wrap}
+.blocks{display:flex;justify-content:center;gap:24px;margin:10px 0 34px;flex-wrap:wrap;align-items:flex-end}
 .nblock{display:flex;flex-direction:column-reverse;align-items:center;gap:3px;cursor:default}
 .nblock .cap{font-size:15px;font-weight:900;color:#fff;margin-bottom:4px;text-shadow:0 2px 6px rgba(0,0,0,.4)}
-.nblock .blk{width:44px;height:44px;border-radius:11px;position:relative;box-shadow:0 5px 0 rgba(0,0,0,.22),inset 0 2px 4px rgba(255,255,255,.35);animation:floaty 3s ease-in-out infinite}
-.nblock .blk .eye{position:absolute;top:12px;width:8px;height:8px;background:#fff;border-radius:50%}
-.nblock .blk .eye::after{content:"";position:absolute;top:2px;left:2px;width:4px;height:4px;background:#16233a;border-radius:50%}
-.nblock .blk .eye.l{left:8px}.nblock .blk .eye.r{right:8px}
-.nblock .blk .mo{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:11px;height:6px;border-bottom:2.5px solid #16233a;border-radius:0 0 9px 9px}
-.nb-numi .blk{background:linear-gradient(145deg,#ffd94f,#e7b224)}
-.nb-poco .blk{background:linear-gradient(145deg,#ff9d4a,#e07a1f)}
-.nb-momo .blk{background:linear-gradient(145deg,#5fce96,#3d9a63)}
-.nblock:nth-child(2) .blk{animation-delay:.4s}.nblock:nth-child(3) .blk{animation-delay:.8s}
+.nblock img{width:72px;height:auto;animation:floaty 3s ease-in-out infinite;filter:drop-shadow(0 6px 8px rgba(0,0,0,.35))}
+.nblock:nth-child(2) img{animation-delay:.4s}.nblock:nth-child(3) img{animation-delay:.8s}
 @keyframes floaty{50%{transform:translateY(-8px)}}
 
 .numi-row{display:flex;gap:20px;align-items:flex-start;background:rgba(255,255,255,.08);backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,.16);border-radius:24px;padding:26px;margin-top:20px;box-shadow:0 20px 50px -30px rgba(0,0,0,.6)}
-.numi-big{width:80px;height:80px;flex:none;border-radius:24px;position:relative;background:linear-gradient(145deg,#3d7bd0,#16417C);
-  box-shadow:0 14px 30px -12px rgba(0,0,0,.6);animation:floaty 3.4s ease-in-out infinite}
-.numi-big::before{content:"";position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:28px;left:20px;box-shadow:24px 0 0 #fff}
-.numi-big::after{content:"";position:absolute;width:7px;height:7px;background:var(--blue-deep);border-radius:50%;top:33px;left:25px;box-shadow:24px 0 0 var(--blue-deep)}
-.numi-big .hat{position:absolute;top:-13px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:28px solid transparent;border-right:28px solid transparent;border-bottom:32px solid var(--gold-deep)}
-.numi-big .hat::after{content:"✦";position:absolute;top:-16px;left:-6px;color:var(--gold-bright);font-size:14px;animation:twinkle 2s infinite}
+.numi-big{width:80px;flex:none;animation:floaty 3.4s ease-in-out infinite}
+.numi-big img{width:100%;height:auto;display:block;filter:drop-shadow(0 8px 10px rgba(0,0,0,.5))}
 .numi-row .say{font-size:18px;font-weight:500;color:rgba(255,255,255,.95);line-height:1.65}
 .numi-row .say b{color:var(--gold-bright);font-weight:800}
 .numi-row .say .katex{color:#fff}
@@ -238,17 +227,17 @@ p.lead{font-size:19px;color:var(--sub);max-width:60ch}
     <h2 data-i18n="kH2">누미와 친구들 🪄</h2></div>
 
     <div class="blocks reveal d1">
-      <div class="nblock nb-numi"><span class="cap">누미</span><div class="blk"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div></div>
-      <div class="nblock nb-poco"><span class="cap">포코</span><div class="blk"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div></div>
-      <div class="nblock nb-momo"><span class="cap">모모</span><div class="blk"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div></div>
+      <div class="nblock nb-numi"><span class="cap">누미</span><img src="assets/characters/numi-0.png" alt="Numi"></div>
+      <div class="nblock nb-poco"><span class="cap">포코</span><img src="assets/characters/poco-3.png" alt="Poco"></div>
+      <div class="nblock nb-momo"><span class="cap">모모</span><img src="assets/characters/momo-8.png" alt="Momo"></div>
     </div>
 
     <div class="numi-row reveal d1">
-      <div class="numi-big"><div class="hat"></div></div>
+      <div class="numi-big"><img src="assets/characters/numi-0.png" alt="Numi"></div>
       <div class="say" data-i18n="numiSay1">안녕! 난 수의 마법사 <b>누미</b>야.<br>어려워 보이는 수도, 살짝 <b>펼치면</b> 아주 쉬워져. <span data-tex="8+7"></span>? 7에서 2를 빌려와 <span data-tex="8+2=10"></span>, 그리고 5! 그래서 <b>15</b> ✨</div>
     </div>
     <div class="numi-row reveal d2">
-      <div class="numi-big"><div class="hat"></div></div>
+      <div class="numi-big"><img src="assets/characters/numi-0.png" alt="Numi"></div>
       <div class="say" data-i18n="numiSay2">마을에서 <b>포코·모모</b>랑 같이 놀면서 수를 마법처럼 다루는 법을 배울 거야. 정답보다 <b>어떻게 생각했는지</b>가 더 멋진 거란다!</div>
     </div>
   </div>

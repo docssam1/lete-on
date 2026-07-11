@@ -199,14 +199,14 @@ function screenTown(){
         <div class="ncloud c"><span class="puff" style="width:56px;height:56px;left:0;top:-6px"></span><span class="puff" style="width:44px;height:44px;left:40px;top:2px"></span><span class="num">5</span></div>
         <div id="townFountain"></div>
         ${zones}
-        <div class="nb" id="nbNumi"><div class="speech"></div><span class="cap">3</span>
-          <div class="stack"><div class="blk n3"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div><div class="blk n3"></div><div class="blk n3"></div></div>
+        <div class="nb" id="nbNumi"><div class="speech"></div>
+          <img class="nb-img" src="assets/characters/numi-0.png" alt="Numi">
           <div class="shadow"></div></div>
-        <div class="nb" id="nbPoco"><div class="speech"></div><span class="cap">5</span>
-          <div class="stack"><div class="blk n5"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div><div class="blk n5"></div><div class="blk n5"></div><div class="blk n5"></div><div class="blk n5"></div></div>
+        <div class="nb" id="nbPoco"><div class="speech"></div>
+          <img class="nb-img" src="assets/characters/poco-3.png" alt="Poco">
           <div class="shadow"></div></div>
-        <div class="nb" id="nbMomo"><div class="speech"></div><span class="cap">2</span>
-          <div class="stack"><div class="blk n2"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div><div class="blk n2"></div></div>
+        <div class="nb" id="nbMomo"><div class="speech"></div>
+          <img class="nb-img" src="assets/characters/momo-8.png" alt="Momo">
           <div class="shadow"></div></div>
       </div>
     </div>
@@ -351,9 +351,9 @@ function initTownWorld(scr){
 
   /* 걸어다니는 숫자친구 */
   const nbs=[
-    {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.10,lines:['안녕! 난 3이야 ✨','7이랑 만나면 10! 🔟','마법노트 보여줄게!']},
-    {el:scr.querySelector('#nbPoco'),x:55,y:66,tx:55,ty:66,spd:.14,lines:['숫자는 재밌어! 🎈','게임하러 가자!','코인 모으는 중~']},
-    {el:scr.querySelector('#nbMomo'),x:30,y:70,tx:30,ty:70,spd:.08,lines:['10을 만들어볼까? 📐','실수는 괜찮아!','다시 확인해보자']}
+    {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.10,lines:['안녕! 난 0이야 ⭕','아무것도 없어도 특별해!','마법노트 보여줄게!']},
+    {el:scr.querySelector('#nbPoco'),x:55,y:66,tx:55,ty:66,spd:.14,lines:['안녕! 난 3이야 ✨','7이랑 만나면 10! 🔟','게임하러 가자!']},
+    {el:scr.querySelector('#nbMomo'),x:30,y:70,tx:30,ty:70,spd:.08,lines:['안녕! 난 8이야 💖','2랑 만나면 10! 🔟','실수는 괜찮아!']}
   ];
   nbs.forEach(n=>{n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';});
   function pick(n){const sp=[[38,60],[52,64],[30,72],[46,74],[60,68],[24,66]];const p=sp[Math.random()*sp.length|0];n.tx=p[0]+Math.random()*6;n.ty=p[1]+Math.random()*4;}
