@@ -15,8 +15,9 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
   background:radial-gradient(900px 500px at 30% -10%,#eef3fb,transparent 60%),var(--paper);
   overflow:hidden}
 .katex{font-size:1em}
-#app{max-width:640px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
-#app.nm-townmode{max-width:none}
+/* #app 자체는 항상 화면 전체 폭(모바일/데스크탑 공통) — 마을(지도)이 항상 꽉 차게.
+   학습 화면(등급목록/유닛)만 아래 미디어쿼리에서 데스크탑 폭 기준으로 중앙 640px로 좁힘. */
+#app{width:100%;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 #screen{flex:1;min-height:0;display:flex;flex-direction:column;position:relative}
 
 /* ── 상단바 ── */
@@ -195,6 +196,14 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-clink{position:absolute;left:0;top:-44px;height:44px;z-index:3;overflow:visible;pointer-events:none}
 .nm-cresult{margin-top:12px;text-align:center;font-size:14px;font-weight:800;color:var(--ok)}
 .nm-cbook{background:#f4f7fc;border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 12px;margin-top:12px;font-size:12.5px;color:#33415a;line-height:1.55}
+
+/* ============================================================
+   ── 데스크탑 전용(768px+): 학습 화면(등급목록/유닛)만 중앙 640px로 좁힘.
+      마을(지도)은 위에서 이미 폭 제한이 없으므로 항상 화면 전체를 채움. ──
+   ============================================================ */
+@media (min-width:768px){
+  .nm-map,.nm-unit-view{max-width:640px;margin-left:auto;margin-right:auto;width:100%}
+}
 
 /* ============================================================
    ── 마을(Living Town) — 드래그/줌 + 구름·분수·반짝임 애니메이션 ──
