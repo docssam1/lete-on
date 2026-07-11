@@ -124,6 +124,7 @@ function startAmbience(){
 let townCleanup=null;
 function render(){
   if(townCleanup){townCleanup();townCleanup=null;}
+  app.classList.toggle('nm-townmode',S.view==='town');
   app.innerHTML=`<div class="nm-top">
     <div class="nm-brand">🪄 ${t('appName')}</div>
     <div class="nm-top-right">
