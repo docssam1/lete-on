@@ -1,6 +1,6 @@
 /* ============================================================
    Numbers of Magic — 연산 Generator 엔진 (A권)
-   창의수연 초급 A 교재 실제 개념 기반.
+   초급 A 교재 실제 개념 기반.
    각 generator(opts) → 문제 객체. opts.level로 수 범위 조절
    (practice=작은 수 축소판 / main=교재 수준).
    수식은 LaTeX 문자열(tex)로 반환 → KaTeX 렌더.
