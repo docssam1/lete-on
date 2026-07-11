@@ -19,8 +19,10 @@ window.NM_UNITS['A-01'] = {
 
   /* 수범위 선택지 (유닛 진입 시) */
   ranges:[
-    { key:'oneDigit', ko:'한 자리', en:'1-digit', zh:'一位数', desc_ko:'3 + 7 처럼 한 자리 수' },
-    { key:'twoDigit', ko:'두 자리도', en:'+2-digit', zh:'加两位数', desc_ko:'23 + 17 처럼 두 자리까지' }
+    { key:'oneDigit', ko:'한 자리', en:'1-digit', zh:'一位数',
+      desc:{ko:'3 + 7 처럼 한 자리 수',en:'Single digits, like 3 + 7',zh:'像 3 + 7 这样的一位数'} },
+    { key:'twoDigit', ko:'두 자리도', en:'+2-digit', zh:'加两位数',
+      desc:{ko:'23 + 17 처럼 두 자리까지',en:'Up to 2 digits, like 23 + 17',zh:'像 23 + 17 这样最多两位数'} }
   ],
 
   /* ── STEP1 프랙티스: pair10(practice) ── */

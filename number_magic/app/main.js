@@ -324,8 +324,8 @@ function initTownWorld(scr){
         return;
       }
       const tier=tierById(id);
-      if(tierOpen(tier)) showTownModal(`${tier.grade} · ${tier.subtitle}`,tier.desc,()=>enterTier(id));
-      else showTownModal(`${tier.grade} · ${tier.subtitle}`,tier.desc+' — '+t('locked'),null);
+      if(tierOpen(tier)) showTownModal(`${tier.grade} · ${L(tier.subtitle)}`,L(tier.desc),()=>enterTier(id));
+      else showTownModal(`${tier.grade} · ${L(tier.subtitle)}`,L(tier.desc)+' — '+t('locked'),null);
     });
   });
   scr.querySelector('#tmClose').onclick=()=>modal.classList.remove('on');
@@ -416,17 +416,17 @@ function screenTier(){
   let html=`<div class="nm-map">
     <div class="nm-unit-bar">
       <button class="nm-back" id="backTown">${t('back')}</button>
-      <div class="nm-unit-title">${tier.title}<small>${tier.subtitle} · ${tier.ageLabel}</small></div>
+      <div class="nm-unit-title">${tier.title}<small>${L(tier.subtitle)} · ${tier.ageLabel}</small></div>
     </div>
     <div class="nm-tier">
-      <p class="nm-tier-desc">${tier.desc}</p>
+      <p class="nm-tier-desc">${L(tier.desc)}</p>
       <div class="nm-levels">`;
   tier.levels.forEach(lvl=>{
     const units=(lvl.units||[]).filter(u=>UNITS[u]);
     const open=lvl.available&&units.length;
     if(open){
       html+=`<div class="nm-level open">
-        <div class="nm-level-t">${lvl.title}</div>
+        <div class="nm-level-t">${L(lvl.title)}</div>
         <div class="nm-unit-row">`;
       units.forEach(uid=>{
         const u=UNITS[uid];const done=unitDone(uid);
@@ -438,7 +438,7 @@ function screenTier(){
       });
       html+=`</div></div>`;
     }else{
-      html+=`<div class="nm-level locked"><div class="nm-level-t">${lvl.title}</div><span class="nm-lock">🔒 ${t('locked')}</span></div>`;
+      html+=`<div class="nm-level locked"><div class="nm-level-t">${L(lvl.title)}</div><span class="nm-lock">🔒 ${t('locked')}</span></div>`;
     }
   });
   html+=`</div></div></div>`;
@@ -544,7 +544,7 @@ function stepRange(body,u){
     <div class="nm-skip-q">${S.lang==='ko'?'수 범위를 골라요':S.lang==='en'?'Choose number range':'选择数字范围'}</div>
     <div class="nm-range-btns">`+u.ranges.map(r=>`
       <button class="nm-range-card" data-rk="${r.key}">
-        <b>${L({ko:r.ko,en:r.en,zh:r.zh})}</b><small>${r.desc_ko||''}</small></button>`).join('')+`
+        <b>${L({ko:r.ko,en:r.en,zh:r.zh})}</b><small>${L(r.desc)}</small></button>`).join('')+`
     </div></div>`;
   body.querySelectorAll('[data-rk]').forEach(b=>b.onclick=()=>pickRange(b.dataset.rk));
 }
