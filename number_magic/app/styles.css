@@ -92,17 +92,11 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-btn.full{display:block;width:100%;margin-top:12px;flex:none}
 .nm-btn.ghost{background:#fff;color:var(--blue);border:1.5px solid var(--line);box-shadow:none}
 
-/* 누미 캐릭터 (축소) */
-.nm-numi{width:52px;height:52px;border-radius:17px;position:relative;margin:0 auto;background:linear-gradient(145deg,#2b5aa0,#16417C);box-shadow:0 12px 24px -12px rgba(22,65,124,.7);animation:bob 2.6s ease-in-out infinite;flex:none}
-.nm-numi.big{width:74px;height:74px;border-radius:23px}
+/* 누미 캐릭터 (마법사 이미지) */
+.nm-numi{width:52px;position:relative;margin:0 auto;animation:bob 2.6s ease-in-out infinite;flex:none}
+.nm-numi.big{width:74px}
+.nm-numi img{width:100%;height:auto;display:block;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
 @keyframes bob{50%{transform:translateY(-6px)}}
-.nm-numi::before{content:"";position:absolute;width:10px;height:10px;background:#fff;border-radius:50%;top:18px;left:14px;box-shadow:17px 0 0 #fff}
-.nm-numi::after{content:"";position:absolute;width:5px;height:5px;background:var(--blue-deep);border-radius:50%;top:21px;left:16px;box-shadow:17px 0 0 var(--blue-deep)}
-.nm-numi .hat{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:19px solid transparent;border-right:19px solid transparent;border-bottom:23px solid var(--gold-deep)}
-.nm-numi.big{}
-.nm-numi.big::before{width:14px;height:14px;top:25px;left:19px;box-shadow:24px 0 0 #fff}
-.nm-numi.big::after{width:7px;height:7px;top:29px;left:23px;box-shadow:24px 0 0 var(--blue-deep)}
-.nm-numi.big .hat{border-left:27px solid transparent;border-right:27px solid transparent;border-bottom:31px solid var(--gold-deep);top:-13px}
 .nm-numi.happy{animation:jump .5s ease}
 @keyframes jump{0%,100%{transform:translateY(0)}40%{transform:translateY(-18px) rotate(-6deg)}}
 

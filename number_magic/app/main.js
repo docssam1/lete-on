@@ -367,7 +367,7 @@ function initTownWorld(scr){
       if(d<.3){if(Math.random()<.012)pick(n);return;}
       n.x+=dx/d*n.spd;n.y+=dy/d*n.spd;
       n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';
-      n.el.querySelector('.stack').style.transform=dx<0?'scaleX(-1)':'scaleX(1)';
+      n.el.querySelector('.nb-img').style.transform=dx<0?'scaleX(-1)':'scaleX(1)';
     });
     walkRAF=requestAnimationFrame(walk);
   }
@@ -518,7 +518,7 @@ function stepPractice(body,u){
   // 진단 스킵(B안): 아직 이 단계 안 했고 스킵 물어보기 전이면
   if(!S.sub.skipAsked && !stepDone(S.unit,'practice')){
     body.innerHTML=`<div class="nm-skip">
-      <div class="nm-numi big"><div class="hat"></div></div>
+      <div class="nm-numi big"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
       <div class="nm-skip-q">${t('skipAsk')}</div>
       <div class="nm-skip-btns">
         <button class="nm-btn ghost" id="skipNo">${t('skipNo')}</button>
@@ -537,7 +537,7 @@ function runPractice(body,u){
   const first=S.sub.pIdx===0&&!S.sub.started;
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
-    <div class="nm-numi"><div class="hat"></div></div>
+    <div class="nm-numi"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
     <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro)):esc(cur.prompt_ko)}</div>
     <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
     <div class="nm-numpad" id="pad"></div>
@@ -569,7 +569,7 @@ function handlePractice(val,body,u){
 function stepRange(body,u){
   if(!u.ranges){ pickRange('oneDigit'); return; }
   body.innerHTML=`<div class="nm-skip">
-    <div class="nm-numi big"><div class="hat"></div></div>
+    <div class="nm-numi big"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
     <div class="nm-skip-q">${S.lang==='ko'?'수 범위를 골라요':S.lang==='en'?'Choose number range':'选择数字范围'}</div>
     <div class="nm-range-btns">`+u.ranges.map(r=>`
       <button class="nm-range-card" data-rk="${r.key}">
@@ -705,7 +705,7 @@ function stepLabPairs(body,u){
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
-    <div class="nm-numi"><div class="hat"></div></div>
+    <div class="nm-numi"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(cur.prompt_ko)}</div>
     <div class="nm-expr" id="expr"></div>
     <button class="nm-btn full" id="pick" disabled>${t('picked')}</button>
@@ -726,7 +726,7 @@ function stepLabNumpad(body,u){
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
-    <div class="nm-numi"><div class="hat"></div></div>
+    <div class="nm-numi"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(cur.prompt_ko)}</div>
     <div class="nm-lab-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
     <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
@@ -807,7 +807,7 @@ function arenaEnd(body,u){
   const need=u.arena.count||10;const sc=S.sub.score;
   markStepDone(S.unit,'arena');
   body.innerHTML=`<div class="nm-card center">
-    <div class="nm-numi big"><div class="hat"></div></div>
+    <div class="nm-numi big"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
     <div class="nm-card-h">${t('score')}</div>
     <div class="nm-score">${sc} / ${need}</div>
     <button class="nm-btn full" id="toStamp">${t('next')}</button>
