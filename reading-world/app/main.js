@@ -565,6 +565,24 @@ function lessonMastery(id){const l=profile&&profile.lessons?profile.lessons[id]:
 function bookMastery(bookId){const ids=availableLessons(bookId);const total=ids.length;let done=0,started=0,stars=0;
  ids.forEach(id=>{const m=lessonMastery(id);if(m.done)done++;if(m.started)started++;stars+=m.stars;});
  return {total,done,started,stars,complete:total>0&&done>=total,pct:total?Math.round(done/total*100):0};}
+// Textbook completion across the WHOLE catalog (every series, not just CARS) —
+// bookMastery() itself is already series-agnostic, this just maps it over
+// every available BOOK_CATALOG entry for the Reading Report's summary tally.
+function allBookMasteries(){return (window.BOOK_CATALOG||[]).filter(b=>b.available).map(bk=>({book:bk,mastery:bookMastery(bk.id)}));}
+// eBook side of the cumulative Reading Report: AR total/average + how many
+// library books have been meaningfully engaged with. quizBest!=null is used
+// as the completion signal (same value libSaveProgress already stores) —
+// mirrors bookMastery's done/complete semantics but for the library shape,
+// which has no lesson array to sum.
+function libraryStats(){
+ const prog=(profile&&profile.library)||{};
+ const rows=Object.keys(prog).map(bid=>{const meta=libBookMeta(bid);if(!meta)return null;
+  const p=prog[bid];const completed=p.quizBest!=null;
+  return {id:bid,title:meta.title,ar:meta.ar,completed,quizBest:p.quizBest,quizTotal:p.quizTotal};}).filter(Boolean);
+ const completedRows=rows.filter(r=>r.completed);
+ const arSum=completedRows.reduce((s,r)=>s+(Number(r.ar)||0),0);
+ const arAvg=completedRows.length?arSum/completedRows.length:0;
+ return {rows,completedCount:completedRows.length,totalCount:rows.length,arSum,arAvg};}
 function bookBandOf(bk){if(!bk)return 'G3';if(bk.band)return bk.band;const g=(bk.grade||'').toString();if(/start/i.test(g))return 'Starter';const m=g.match(/G\s*([1-5])/i);return m?('G'+m[1]):'G3';}
 function starDots(n){return `<span class="mstars" aria-label="${n}/3">${'★'.repeat(n)}${'☆'.repeat(3-n)}</span>`;}
 function boot(){render();flushLevelUp();} // always open the "누가 공부해요?" picker (saved students are cards)
@@ -805,9 +823,12 @@ function parentDashboard(){const t=(ko,en,zh)=>st.lang==='ko'?ko:st.lang==='zh'?
  const name=currentStudent?esc(currentStudent.name):'';
  const dg=profile&&profile.diagnostic;const uniq=a=>[...new Set(a||[])];
  const diagSec=(dg&&dg.done)?`<section class="pd-sec pd-diag"><h3>🧭 ${t('리딩 진단 결과','Reading diagnostic result','阅读测评结果')}</h3><div class="pd-diagrow"><div class="pd-diagorb">${dg.score}<i>/${dg.total}</i></div><div class="pd-diaginfo"><p class="pd-diagline"><b>${t('응시 레벨','Tested','测试级别')}</b> ${esc(dg.testedLevel)}　→　<b>${t('추천 레벨','Recommended','推荐级别')}</b> <span class="pd-reclvl">${esc(dg.recommend)}</span></p><p class="pd-diagtags"><b>💪 ${t('강점','Strengths','强项')}:</b> ${uniq(dg.strengths).slice(0,4).map(s=>`<span class="pd-tag">${esc(stratInfo(s).n)}</span>`).join('')||'—'}</p><p class="pd-diagtags"><b>🎯 ${t('약점','Focus','弱项')}:</b> ${uniq(dg.weaknesses).slice(0,4).map(s=>`<span class="pd-tag warn">${esc(stratInfo(s).n)}</span>`).join('')||`<span class="pd-empty">${t('없음','none','无')}</span>`}</p></div></div><div class="pd-diagact"><button class="btn tiny" data-act="diag-open">↻ ${t('다시 진단','Re-test','重新测评')}</button></div></section>`:`<section class="pd-sec pd-diag"><h3>🧭 ${t('리딩 진단','Reading diagnostic','阅读测评')}</h3><p class="pd-empty">${t('아직 진단을 보지 않았어요.','No diagnostic taken yet.','还没有测评。')} <button class="btn tiny" data-act="diag-open">${t('진단 시작','Start check','开始测评')}</button></p></section>`;
+ const LS=libraryStats();const BM=allBookMasteries();const tbDone=BM.filter(x=>x.mastery.complete).length,tbTotal=BM.length;const ebTotal=(libCatalog().books||[]).length;
+ const readingSec=`<section class="pd-sec"><h3>📖 ${t('독서 현황','Reading overview','阅读概况')}</h3><div class="pd-sum"><div class="pd-card"><span class="pd-n">${LS.completedCount}/${ebTotal}</span><small>${t('완독한 eBook','eBooks completed','完读的电子书')}</small></div><div class="pd-card"><span class="pd-n">${LS.arAvg?LS.arAvg.toFixed(1):'—'}</span><small>${t('평균 AR 지수','Avg AR level','平均AR指数')}</small></div><div class="pd-card"><span class="pd-n">${tbDone}/${tbTotal}</span><small>${t('완주한 교재','Textbooks completed','完成的教材')}</small></div></div><p class="pd-note">${t('eBook은 AR·완독 정도만 집계돼요 — 전략별 분석은 교재 학습에서만 나와요(아래).','eBooks contribute AR level and completion only — the strategy breakdown below is textbook-only.','电子书只统计AR指数和完读情况——下方的策略分析仅来自教材学习。')}</p></section>`;
  return `<div class="town parent-dash"><div class="town-top"><div class="town-brand">👨‍👩‍👧 ${t('학부모 대시보드','Parent Dashboard','家长面板')}</div><div class="town-tools"><span class="student-chip"><b>${name}</b></span><button class="btn tiny" data-act="town-map">← ${t('마을로','Town','返回')}</button></div></div>
   ${sum}
   ${diagSec}
+  ${readingSec}
   <section class="pd-sec"><h3>🎯 ${t('누적 전략별 약점 랭킹','Cumulative strategy weakness ranking','累计策略薄弱排名')}</h3><p class="pd-note">${t('지금까지 푼 모든 레슨·모든 책의 교재 학습·추가 학습·새 지문 연습을 합산한 순위예요. 1위가 가장 자주 틀리는 전략이에요.','Ranked across every lesson and every book studied so far (Book Study + Extra Learning + New Passage). #1 is the most-missed strategy.','汇总迄今学习过的所有课程和书籍（教材学习+追加学习+新文章练习）后的排名，第1名是最常错的策略。')}</p>${weakHtml}<div class="pd-strong"><b>💪 ${t('완전히 익힌 전략','Mastered','已掌握')}:</b> ${strongHtml}</div></section>
   <section class="pd-sec"><h3>📚 ${t('레슨별 진도','Progress by lesson','各课进度')}</h3>${table}</section>
   <p class="pd-foot">${t('점수는 운·뽑기가 아니라 학습 완료와 성장에만 연결돼요. 데이터는 아이별로 저장됩니다.','Points come only from learning and growth — never luck. Data is saved per child.','积分只来自学习与成长，绝非运气。数据按孩子分别保存。')}</p></div>`;}
