@@ -658,6 +658,14 @@ function _bookProgressHtml(bk){if(!bk||!bk.available)return '';const bm=bookMast
  const done=bm.complete;const avg=Math.max(0,Math.min(3,Math.round(bm.stars/Math.max(1,bm.total))));
  const lbl=done?(st.lang==='ko'?'완주':st.lang==='zh'?'完成':'Cleared'):`${bm.done}/${bm.total}`;
  return `<div class="book-prog ${done?'done':''}"><div class="bp-bar"><b style="width:${bm.pct}%"></b></div><div class="bp-meta">${done?'⭐ ':''}${lbl}${bm.stars?` · ${starDots(avg)}`:''}</div></div>`;}
+function bookSeriesGroups(bks){
+ // Sub-group a band's books by their .series so CARS renders as one series
+ // among siblings (WonderSkills, Reading Prime, ...) rather than being the
+ // only thing on the shelf — series is display-only, never a gate.
+ const order=[];const map={};
+ bks.forEach(bk=>{const key=bk.series||bk.title;if(!map[key]){map[key]=[];order.push(key);}map[key].push(bk);});
+ return order.map(key=>({series:key,color:map[key][0].publisherColor||map[key][0].spineColor||'#7bc47f',books:map[key]}));
+}
 function showBookShelf(){
  const t=(ko,en,zh)=>st.lang==='ko'?ko:st.lang==='zh'?zh:en;
  const catalog=window.BOOK_CATALOG||[];
@@ -665,7 +673,8 @@ function showBookShelf(){
  // ladder rungs from top (G5) down to Starter at the bottom — you climb up as you level up
  const BANDS=[{k:'G5',c:'#2b8a86'},{k:'G4',c:'#2f9e8f'},{k:'G3',c:'#3fa86a'},{k:'G2',c:'#5bb56a'},{k:'G1',c:'#7bc47f'},{k:'Starter',c:'#9ccc9e'}];
  const rungs=BANDS.map(b=>{const bks=catalog.filter(x=>bandOf(x)===b.k);
-  const inner=bks.length?bks.map(_book3dHtml).join(''):`<div class="level-empty">🔒 ${t('준비중','Coming soon','即将开放')}</div>`;
+  const groups=bookSeriesGroups(bks);
+  const inner=groups.length?groups.map(g=>`<div class="level-series-group"><div class="level-series-label"><span class="lib-series-dot" style="background:${g.color}"></span>${esc(g.series)}</div><div class="level-series-books">${g.books.map(_book3dHtml).join('')}</div></div>`).join(''):`<div class="level-empty">🔒 ${t('준비중','Coming soon','即将开放')}</div>`;
   return `<section class="level-row"><div class="level-tag" style="background:${b.c}">${b.k}</div><div class="level-books">${inner}</div></section>`;}).join('');
  const html=`<div class="book-shelf study-house">
   <div class="book-shelf-top">
