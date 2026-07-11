@@ -310,6 +310,107 @@ function libSpeakPage(pageIdx,pageText){
   u.onend=()=>{if(run===st.speechRun)nodes.forEach(n=>n.classList.remove('reading-now'));};
   window.speechSynthesis.speak(u);});
 }
+// ---- Real-file (PDF) viewer — "원본 보기" tab ---------------------------------
+// Loads pdf.js lazily (only when this tab actually opens) and renders the real
+// scanned/exported page to a <canvas>. A transparent text-layer (positioned by
+// pdf.js itself, not hand-rolled math) sits on top; the spans that fall inside
+// each known-good sentence (from the same `lib.pages` data already driving the
+// "읽기" tab) get tagged with the identical sentence-line/data-start/data-end
+// contract libSpeakPage() already understands, so read-along highlighting works
+// here with no changes to that function — same per-page mp3, same fraction-of-
+// duration highlight math, just positioned over real page pixels instead of
+// reconstructed HTML.
+let _pdfJsLoading=null;
+function ensurePdfJs(){
+ if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);
+ if(_pdfJsLoading)return _pdfJsLoading;
+ _pdfJsLoading=new Promise((resolve,reject)=>{
+  const s=document.createElement('script');
+  s.src='vendor/pdfjs/pdf.min.js';
+  s.onload=()=>{if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc='vendor/pdfjs/pdf.worker.min.js';resolve(window.pdfjsLib);}else reject(new Error('pdfjsLib missing after load'));};
+  s.onerror=()=>reject(new Error('failed to load pdf.js'));
+  document.head.appendChild(s);
+ });
+ return _pdfJsLoading;
+}
+// Collapse whitespace + normalize curly quotes for fuzzy matching, while
+// keeping a per-character map back to the original string's indices — lets a
+// known-good sentence be found inside pdf.js's raw extracted text without
+// whitespace/quote-style differences breaking the match, and without losing
+// the real character offsets needed to know which text items it spans.
+function libNormMap(text){
+ let out='';const map=[];let lastSpace=true;
+ for(let i=0;i<text.length;i++){
+  const c=text[i];
+  const nc=(c==='‘'||c==='’')?"'":(c==='“'||c==='”')?'"':c.toLowerCase();
+  if(/\s/.test(nc)){if(lastSpace)continue;out+=' ';map.push(i);lastSpace=true;}
+  else{out+=nc;map.push(i);lastSpace=false;}
+ }
+ return {norm:out,map};
+}
+function renderLibraryPdfSentenceOverlay(page,viewport,idx){
+ const overlay=document.getElementById('lib-pdf-overlay');if(!overlay)return;
+ overlay.innerHTML='';overlay.style.width=viewport.width+'px';overlay.style.height=viewport.height+'px';overlay.style.setProperty('--scale-factor',viewport.scale);
+ const pageData=(lib.pages||[])[idx];if(!pageData)return;
+ page.getTextContent().then(tc=>window.pdfjsLib.renderTextLayer({textContentSource:tc,container:overlay,viewport}).promise.then(()=>tc)).then(tc=>{
+  const spans=[...overlay.querySelectorAll('span')];const items=tc.items;
+  let text='';const ranges=[];
+  items.forEach((it,i)=>{const s=it.str||'';const start=text.length;text+=s;if(!/\s$/.test(s))text+=' ';ranges.push({start,end:start+s.length,span:spans[i]});});
+  const {norm,map}=libNormMap(text);
+  let searchFrom=0,offset=0;
+  (pageData.paragraphs||[]).forEach(p=>{
+   splitSentences(p).forEach(sentence=>{
+    const start=offset;const end=start+sentence.length;offset=end+1;
+    const needle=libNormMap(sentence).norm;if(!needle)return;
+    const foundAt=norm.indexOf(needle,searchFrom);if(foundAt<0)return;
+    searchFrom=foundAt+needle.length;
+    const origStart=map[foundAt];const origEnd=map[Math.min(foundAt+needle.length-1,map.length-1)]+1;
+    ranges.forEach(r=>{if(r.span&&r.end>origStart&&r.start<origEnd){r.span.classList.add('sentence-line');r.span.dataset.libpage=String(idx);r.span.dataset.start=String(start);r.span.dataset.end=String(end);}});
+   });
+  });
+ }).catch(e=>console.warn('pdf text overlay failed',e));
+}
+function bindLibraryPdf(){
+ if(!lib||lib.stage!=='original')return;
+ const meta=libBookMeta(lib.bookId);if(!meta||!meta.sourceFile)return;
+ const canvas=document.getElementById('lib-pdf-canvas');if(!canvas)return;
+ if(canvas.dataset.rendering)return;
+ const total=(lib.pages||[]).length||meta.totalPages||0;
+ const idx=Math.max(0,Math.min(total-1,lib.pdfPageIndex||0));
+ canvas.dataset.rendering='1';
+ ensurePdfJs().then(pdfjsLib=>{
+  const url=`${STORAGE_PUBLIC_BASE}/${meta.sourceFile.bucket}/${meta.sourceFile.path}`;
+  const getDoc=(lib._pdfDoc&&lib._pdfDocUrl===url)?Promise.resolve(lib._pdfDoc):pdfjsLib.getDocument(url).promise.then(doc=>{lib._pdfDoc=doc;lib._pdfDocUrl=url;return doc;});
+  return getDoc.then(doc=>doc.getPage(idx+(meta.sourceFile.pageOffset||1)));
+ }).then(page=>{
+  if(!document.body.contains(canvas))throw new Error('navigated-away');
+  // Measure the stable outer card, not canvas.parentElement — that wrapper is
+  // display:inline-block and sized BY the (still-empty) canvas itself, a
+  // circular dependency that collapses it to near-zero on first render.
+  const card=canvas.closest('.lib-pdf');
+  const targetWidth=Math.max(240,((card&&card.clientWidth)||640)-8);
+  const baseViewport=page.getViewport({scale:1});
+  const scale=targetWidth/baseViewport.width;
+  const viewport=page.getViewport({scale});
+  canvas.width=viewport.width;canvas.height=viewport.height;
+  canvas.style.width=viewport.width+'px';canvas.style.height=viewport.height+'px';
+  const ctx=canvas.getContext('2d');
+  return page.render({canvasContext:ctx,viewport}).promise.then(()=>renderLibraryPdfSentenceOverlay(page,viewport,idx));
+ }).catch(e=>{if(String((e&&e.message)||e)!=='navigated-away')console.warn('pdf render failed',e);})
+  .finally(()=>{delete canvas.dataset.rendering;});
+}
+function libPdfScreen(){
+ const meta=libBookMeta(lib.bookId);if(!meta||!meta.sourceFile)return libReaderScreen();
+ const head=libStageHead(meta);
+ const total=(lib.pages||[]).length||meta.totalPages||0;
+ if(lib.pdfPageIndex==null)lib.pdfPageIndex=lib.spread>=0?lib.spread*2:0;
+ const idx=Math.max(0,Math.min(total-1,lib.pdfPageIndex));
+ return `<div class="town lib-town">${head}<div class="lib-wrap"><section class="lib-pdf">
+  <div class="lib-pdf-stage"><canvas id="lib-pdf-canvas"></canvas><div id="lib-pdf-overlay" class="lib-pdf-overlay"></div></div>
+  <div class="lib-nav"><button class="btn tiny" data-act="lib-pdf-prev" ${idx<=0?'disabled':''}>← ${libT('이전','Prev','上一页')}</button><span class="lib-pageof">${idx+1} / ${total}</span><button class="btn tiny lib-listen" data-act="lib-pdf-listen">🔊 ${libT('듣기','Listen','朗读')}</button><button class="btn tiny" data-act="lib-pdf-next" ${idx>=total-1?'disabled':''}>${libT('다음','Next','下一页')} →</button></div>
+  <p class="lib-hint">${libT('실제 책 페이지 원본이에요.','This is the real book page.','这是真实的原书页面。')}</p>
+ </section></div></div>`;
+}
 function libShelfScreen(){
  const cat=libCatalog();
  const groups=cat.series.map(s=>{
@@ -337,6 +438,7 @@ function libStageHead(meta){
  if(meta.background)tabs.push(['intro','📚',libT('배경지식','Background','背景知识')]);
  if(meta.vocab&&meta.vocab.length)tabs.push(['vocab','🔤',libT('어휘','Vocabulary','词汇')]);
  tabs.push(['read','📖',libT('읽기','Read','阅读')]);
+ if(meta.sourceFile)tabs.push(['original','📄',libT('원본 보기','Original','原文')]);
  if(meta.quiz&&meta.quiz.length)tabs.push(['quiz','📝',libT('AR퀴즈','AR Quiz','AR测验')]);
  const tabHtml=tabs.map(([s,icon,label])=>`<button class="lib-tabbtn ${stage===s||(stage==='quizResult'&&s==='quiz')?'active':''}" data-act="lib-goto" data-stage="${s}">${icon} ${label}</button>`).join('');
  return `<div class="town-top lib-reader-top"><button class="btn tiny" data-act="lib-shelf">← ${libT('서가로','Shelf','书架')}</button><b class="lib-reader-title">${esc(meta.title)}</b><span class="lib-reader-tags"><span class="lib-tag">AR ${esc(meta.ar)}</span><span class="lib-tag">R/G ${esc(meta.rg)}</span></span></div><div class="lib-stage-tabs">${tabHtml}</div>`;
@@ -398,6 +500,7 @@ function libraryScreen(){
  if(lib.stage==='intro')return libIntroScreen();
  if(lib.stage==='vocab')return libVocabScreenBook();
  if(lib.stage==='quiz'||lib.stage==='quizResult')return libQuizScreenBook();
+ if(lib.stage==='original')return libPdfScreen();
  return libReaderScreen();
 }
 function bindLibraryAudio(){
@@ -409,6 +512,9 @@ function handleLibrary(b){const act=b.dataset.act;
  if(act==='lib-open'){openLibraryBook(b.dataset.book);return;}
  if(act==='lib-prev'){libGoSpread(-1);return;}
  if(act==='lib-next'){libGoSpread(1);return;}
+ if(act==='lib-pdf-prev'){stopSpeak();lib.pdfPageIndex=Math.max(0,(lib.pdfPageIndex||0)-1);render();window.scrollTo({top:0});return;}
+ if(act==='lib-pdf-next'){stopSpeak();const total=(lib.pages||[]).length;lib.pdfPageIndex=Math.min(total-1,(lib.pdfPageIndex||0)+1);render();window.scrollTo({top:0});return;}
+ if(act==='lib-pdf-listen'){const idx=lib.pdfPageIndex||0;const pg=(lib.pages||[])[idx];if(pg)libSpeakPage(idx,(pg.paragraphs||[]).join(' '));return;}
  if(act==='lib-intro-next'){const meta=libBookMeta(lib.bookId);libSaveProgress({introSeen:true});lib.stage=(meta&&meta.vocab&&meta.vocab.length)?'vocab':'read';stopSpeak();render();window.scrollTo({top:0});return;}
  if(act==='lib-vocab-next'){lib.stage='read';stopSpeak();render();window.scrollTo({top:0});return;}
  if(act==='lib-word-speak'){const meta=libBookMeta(lib.bookId);const w=(meta&&meta.vocab||[])[+b.dataset.i];if(w)speakText(w[0]);return;}
@@ -970,10 +1076,11 @@ function handleScreenQuest(b){const act=b.dataset.act;sqEnsure();
 }
 function render(){if(!currentStudent){if(!introSeen()){app.innerHTML=introScreen();bindIntro();return;}app.innerHTML=gate();bindGate();return;}
  if(!(atTown&&townView==='game')&&window.TownGame)TownGame.destroy();
- if(atTown){if(townView==='game'&&gameAvailable()){app.innerHTML=gameTownShell();bindGameTown();return;}if(townView==='screen'&&sqAvailable()){app.innerHTML=screenQuestScreen();bind();return;}if(townView==='notice'){app.innerHTML=noticeBoardScreen();bind();return;}if(townView==='diagnostic'){app.innerHTML=diagnosticScreen();bind();return;}if(townView==='parent'){app.innerHTML=parentDashboard();bind();return;}if(townView==='library'){app.innerHTML=libraryScreen();bind();bindLibraryAudio();return;}app.innerHTML=town();bind();return;}let content=st.view==='home'?home():st.view==='words'?words():(st.view==='originalRead'||st.view==='questions')&&!hasOriginal()?missingOriginal():st.view==='originalRead'?originalRead():st.view==='questions'?questionScreen('original'):st.view==='questionOriginalExtra'?questionScreen('originalExtra'):st.view==='questionSimilar'?questionScreen('similar'):st.view==='review'?questionScreen('review'):st.view==='coach'?coachScreen():st.view==='originalExtra'?originalExtra():st.view==='similar'?extra():report();app.innerHTML=`<div class="shell">${nav()}<main class="main">${top()}${flow()}${content}</main></div>${modal()}`;bind();}
+ if(atTown){if(townView==='game'&&gameAvailable()){app.innerHTML=gameTownShell();bindGameTown();return;}if(townView==='screen'&&sqAvailable()){app.innerHTML=screenQuestScreen();bind();return;}if(townView==='notice'){app.innerHTML=noticeBoardScreen();bind();return;}if(townView==='diagnostic'){app.innerHTML=diagnosticScreen();bind();return;}if(townView==='parent'){app.innerHTML=parentDashboard();bind();return;}if(townView==='library'){app.innerHTML=libraryScreen();bind();bindLibraryAudio();bindLibraryPdf();return;}app.innerHTML=town();bind();return;}let content=st.view==='home'?home():st.view==='words'?words():(st.view==='originalRead'||st.view==='questions')&&!hasOriginal()?missingOriginal():st.view==='originalRead'?originalRead():st.view==='questions'?questionScreen('original'):st.view==='questionOriginalExtra'?questionScreen('originalExtra'):st.view==='questionSimilar'?questionScreen('similar'):st.view==='review'?questionScreen('review'):st.view==='coach'?coachScreen():st.view==='originalExtra'?originalExtra():st.view==='similar'?extra():report();app.innerHTML=`<div class="shell">${nav()}<main class="main">${top()}${flow()}${content}</main></div>${modal()}`;bind();}
 function makeGameChoices(){const w=L.words[st.gameIndex];return [w[1],...L.words.filter((_,i)=>i!==st.gameIndex).sort(()=>Math.random()-.5).slice(0,3).map(x=>x[1])].sort(()=>Math.random()-.5)}
 const AUDIO_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio';
 const LIBRARY_IMG_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/library-images';
+const STORAGE_PUBLIC_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public';
 // Voice-over availability guard. If a stored MP3 no longer matches the on-screen
 // text, list it here (book → {extra|new|original:true}) and the app falls back to
 // on-device TTS, which reads the current text aloud, until the file is re-recorded.

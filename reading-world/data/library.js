@@ -18,7 +18,11 @@ window.LIBRARY_CATALOG = {
       // Present only once a real source file has been uploaded to Supabase Storage
       // (bucket below). Absent/null for every other book — gates the "원본 보기"
       // PDF/EPUB tab so it never shows for a book with nothing to display.
-      sourceFile: { type: 'pdf', bucket: 'library-pdfs', path: 'library-mth1.pdf', pages: 57 },
+      // pageOffset: reader page index 0 (this book's `pages[0]`) is real PDF
+      // page 10 (verified against the actual file) — printed-page front
+      // matter (cover/title/copyright) fills PDF pages 1-9, which aren't
+      // part of the reader's page array at all.
+      sourceFile: { type: 'pdf', bucket: 'library-pdfs', path: 'library-mth1.pdf', pages: 57, pageOffset: 10 },
       // Created content (original writing, not reproduced from the licensed text) that
       // frames the real book: pre-reading background knowledge, key vocabulary drawn
       // from the real pages with our own kid-friendly definitions, and an original
