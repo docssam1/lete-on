@@ -538,14 +538,14 @@ function runPractice(body,u){
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
     <div class="nm-numi"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
-    <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro)):esc(cur.prompt_ko)}</div>
+    <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro))+'<br><br>'+esc(L(cur.prompt)):esc(L(cur.prompt))}</div>
     <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint">${t('numpadHint')}</div>
   </div>`;
   S.sub.started=true;
   buildNumpad($('#pad'),val=>handlePractice(val,body,u));
-  say(first?L(cfg.intro):cur.prompt_ko);
+  say(first?L(cfg.intro)+'. '+L(cur.prompt):L(cur.prompt));
 }
 function handlePractice(val,body,u){
   const cur=S.sub.cur;const need=u.practice.count||5;
@@ -664,6 +664,7 @@ function stepCheck(body,u){
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint" id="fhint"></div>
   </div>`;
+  renderMath(body);
   buildNumpad($('#pad'),val=>{
     if(val==='ok'){const inp=S.sub.inp||'';if(inp==='')return;
       if(+inp===fill.answer){
@@ -706,13 +707,13 @@ function stepLabPairs(body,u){
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
-    <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(cur.prompt_ko)}</div>
+    <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
     <div class="nm-expr" id="expr"></div>
     <button class="nm-btn full" id="pick" disabled>${t('picked')}</button>
     <div class="nm-hint">${t('pairHint')}</div>
   </div>`;
   S.sub.labStarted=true;S.sub.picked=[];
-  say(first?L(cfg.intro):cur.prompt_ko);
+  say(first?L(cfg.intro):L(cur.prompt));
   const expr=$('#expr');
   cur.nums.forEach((n,i)=>{
     if(i)expr.insertAdjacentHTML('beforeend','<span class="nm-plus">+</span>');
@@ -727,7 +728,7 @@ function stepLabNumpad(body,u){
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi"><img src="assets/characters/numi-wizard.png" alt="Numi"></div>
-    <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(cur.prompt_ko)}</div>
+    <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
     <div class="nm-lab-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
     <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
     <div class="nm-numpad" id="pad"></div>
@@ -735,7 +736,7 @@ function stepLabNumpad(body,u){
   </div>`;
   S.sub.labStarted=true;
   renderMath(body);
-  say(first?L(cfg.intro):cur.prompt_ko);
+  say(first?L(cfg.intro):L(cur.prompt));
   buildNumpad($('#pad'),val=>handleLabNumpad(val,body,u));
 }
 function handleLabNumpad(val,body,u){
@@ -817,6 +818,12 @@ function arenaEnd(body,u){
 
 /* ---------- STEP6 도장 ---------- */
 function stepStamp(body,u){
+  /* 도장은 이전 단계(기본연산~아레나)를 실제로 다 마쳐야 받을 수 있음.
+     플로우바 탭으로 건너뛰어 곧장 여기로 오면 안 되므로, 안 끝난 단계가
+     있으면 그 단계로 돌려보내고 코인은 절대 지급하지 않는다. */
+  const requiredKeys=CUR.unitFlow.map(f=>f.key).filter(k=>k!=='stamp');
+  const missing=requiredKeys.find(k=>!stepDone(S.unit,k));
+  if(missing){gotoStep(missing);return;}
   const s=u.stamp;const already=unitDone(S.unit);
   if(!already){coinAdd(s.coins||20);S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;save();}
   body.innerHTML=`<div class="nm-card center stamp">

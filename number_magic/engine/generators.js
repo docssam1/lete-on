@@ -26,7 +26,7 @@ function pair10(opts){
     return {
       gen:'pair10', mode:'practice',
       ask:a, answer:10-a,
-      prompt_ko:`내가 ${a} 하면, 짝꿍은?`,
+      prompt:{ ko:`내가 ${a} 하면, 짝꿍은?`, en:`I say ${a} — what's its partner?`, zh:`我说${a}，配对是几？` },
       tex:`${a} + \\square = 10`,
       answerType:'number'   // 숫자패드
     };
@@ -48,7 +48,7 @@ function pair10(opts){
   return {
     gen:'pair10', mode:'main',
     nums, sum, pairCount,
-    prompt_ko:`짝꿍이 되는 두 수(합이 10)를 골라 묶어요`,
+    prompt:{ ko:'짝꿍이 되는 두 수(합이 10)를 골라 묶어요', en:'Pick two numbers that pair up to make 10', zh:'选出凑成10的两个数' },
     tex:nums.join(' + '),
     answerType:'selectPairs', target:10, answer:sum
   };
@@ -68,7 +68,7 @@ function move10(opts){
     return {
       gen:'move10', mode:'practice',
       ask:a, answer:10-a,
-      prompt_ko:`${a}는 10이 되려면 얼마가 더 필요해?`,
+      prompt:{ ko:`${a}는 10이 되려면 얼마가 더 필요해?`, en:`How much more does ${a} need to make 10?`, zh:`${a}要变成10还差多少？` },
       tex:`${a} + \\square = 10`,
       answerType:'number'
     };
@@ -82,7 +82,7 @@ function move10(opts){
   return {
     gen:'move10', mode:'main',
     a,b, need, rest, answer:ans,
-    prompt_ko:`${b}에서 ${need}을 이사보내 ${a}를 10으로 만들어요`,
+    prompt:{ ko:`${b}에서 ${need}을 이사보내 ${a}를 10으로 만들어요`, en:`Move ${need} from ${b} to make ${a} into 10`, zh:`从${b}里搬${need}过去，把${a}凑成10` },
     tex:`${a} + ${b} = ${a} + ${need} + ${rest} = 10 + ${rest} = ${ans}`,
     steps:[`${a} + ${b}`,`${a} + ${need} + ${rest}`,`10 + ${rest}`,`${ans}`],
     answerType:'number'
@@ -102,7 +102,7 @@ function add10sub(opts){
     return {
       gen:'add10sub', mode:'practice',
       ask:a, answer:10-a,
-      prompt_ko:`${a}는 10보다 얼마 작을까?`,
+      prompt:{ ko:`${a}는 10보다 얼마 작을까?`, en:`How much smaller than 10 is ${a}?`, zh:`${a}比10小多少？` },
       tex:`10 - ${a} = \\square`,
       answerType:'number'
     };
@@ -117,7 +117,7 @@ function add10sub(opts){
   return {
     gen:'add10sub', mode:'main',
     base, add, diff, answer:ans,
-    prompt_ko:`${add} 대신 10을 더하고, 더 준 ${diff}을 빼요`,
+    prompt:{ ko:`${add} 대신 10을 더하고, 더 준 ${diff}을 빼요`, en:`Add 10 instead of ${add}, then subtract the extra ${diff}`, zh:`不加${add}，先加10，再减去多给的${diff}` },
     tex:`${base} + ${add} = ${base} + 10 - ${diff} = ${base+10} - ${diff} = ${ans}`,
     steps:[`${base} + ${add}`,`${base} + 10 - ${diff}`,`${base+10} - ${diff}`,`${ans}`],
     answerType:'number'
@@ -138,7 +138,7 @@ function stairAdd(opts){
     return {
       gen:'stairAdd', mode:'practice',
       ask:n, tens:t*10, ones:o, answer:o,
-      prompt_ko:`${n}은 ${t*10} 하고 얼마?`,
+      prompt:{ ko:`${n}은 ${t*10} 하고 얼마?`, en:`${n} is ${t*10} and how much more?`, zh:`${n}是${t*10}加多少？` },
       tex:`${n} = ${t*10} + \\square`,
       answerType:'number'
     };
@@ -161,13 +161,31 @@ function stairAdd(opts){
   return {
     gen:'stairAdd', mode:'main',
     nums, answer:ans, stair,
-    prompt_ko:`십의 자리 먼저, 일의 자리 나중에 계단처럼 더해요`,
+    prompt:{ ko:'십의 자리 먼저, 일의 자리 나중에 계단처럼 더해요', en:'Add the tens first, then the ones — like climbing stairs', zh:'先加十位，再加个位——像爬楼梯一样' },
     tex:`${nums.join(' + ')} = ${parts.join(' + ')} = ${ans}`,
     answerType:'number'
   };
 }
 
-window.NM_GEN = { pair10, move10, add10sub, stairAdd, _util:{R,pick,shuffle} };
+/* ---------- A-02 프랙티스 워밍업: 수 가르기 ----------
+   개념: move10의 "이사시키기"에 들어가기 전, 더 기본적인 전제부터
+   —  한 수는 여러 가지 방식으로 두 부분으로 나뉠 수 있다 (7=1+6=2+5=3+4).
+   10 만들기와 무관한 순수 분해 연습. level 구분 없이 항상 이 형태. */
+function splitNum(opts){
+  opts=opts||{};
+  const n=opts.fixed!=null?opts.fixed:R(4,9);
+  const p=R(1,n-1);
+  const rest=n-p;
+  return {
+    gen:'splitNum', mode:opts.level||'main',
+    n,p,rest, answer:rest,
+    prompt:{ ko:`${n}을 가르면, ${p}이랑 얼마?`, en:`Split ${n} — ${p} and how much more?`, zh:`把${n}拆开，${p}和多少？` },
+    tex:`${n} = ${p} + \\square`,
+    answerType:'number'
+  };
+}
+
+window.NM_GEN = { pair10, move10, add10sub, stairAdd, splitNum, _util:{R,pick,shuffle} };
 
 /* CommonJS(테스트용) */
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_GEN;

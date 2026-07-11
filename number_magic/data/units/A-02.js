@@ -17,13 +17,16 @@ window.NM_UNITS['A-02'] = {
   subtitle:{ ko:'부족한 만큼 이웃 수에서 빌려와 10을 만들기', en:'Borrow just enough from the other number to make 10', zh:'从旁边的数借一点凑成10' },
   icon:'🚚',
 
-  /* ── STEP1 프랙티스: move10(practice) — "10이 되려면 얼마?" 즉답 ── */
+  /* ── STEP1 프랙티스: splitNum — "수 가르기" 워밍업 ──
+     "이사시키기" 개념(discover ②)에 들어가기 전에, 그보다 기본적인
+     전제인 "한 수는 여러 방식으로 나뉜다"(discover ①)부터 손에 익힌다.
+     10 만들기와는 무관한 순수 가르기 연습. */
   practice:{
-    generator:'move10', level:'practice', count:5,
+    generator:'splitNum', level:'practice', count:5,
     intro:{
-      ko:'이번엔 다른 마법이야! 내가 수를 하나 부르면, 그 수가 10이 되려면 얼마가 더 필요한지 말해줘.',
-      en:"Different magic this time! I'll say a number — tell me how much more it needs to reach 10.",
-      zh:'这次是不一样的魔法！我说一个数，你告诉我它要变成10还差多少。'
+      ko:'이번엔 다른 마법이야! 수를 하나 갈라볼 거야. 예를 들어 7은 3이랑 4로 나눌 수 있어. 내가 수랑 한쪽을 말하면, 남은 쪽을 말해줘.',
+      en:"Different magic this time! We'll split a number in two — like 7 into 3 and 4. I'll give you the number and one part — tell me what's left.",
+      zh:'这次是不一样的魔法！我们要把一个数拆成两半——像7可以拆成3和4。我说数字和一部分，你告诉我剩下多少。'
     }
   },
 
