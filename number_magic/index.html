@@ -14,11 +14,13 @@
 #nm-intro video{width:100%;height:100%;object-fit:cover}
 #nm-intro .skip{position:absolute;bottom:26px;right:20px;z-index:2;background:rgba(0,0,0,.45);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:99px;padding:10px 20px;font-family:'Pretendard',sans-serif;font-size:15px;font-weight:800;cursor:pointer;backdrop-filter:blur(4px)}
 #nm-intro .sound{position:absolute;bottom:26px;left:20px;z-index:2;background:rgba(0,0,0,.45);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:99px;width:46px;height:46px;font-size:20px;cursor:pointer;backdrop-filter:blur(4px)}
+html.skip-intro #nm-intro{display:none}
 </style>
+<script>if(/[?&]enter=1\b/.test(location.search))document.documentElement.classList.add('skip-intro');</script>
 </head>
 <body>
 
-<!-- 인트로 영상 (매번 재생, 끝나면 마을로) -->
+<!-- 인트로 영상 (첫 진입 시 재생 → 철학 소개(about.html)로 이동. about.html에서 "마을로 들어가기"를 누르면 ?enter=1로 돌아와 인트로 없이 바로 마을) -->
 <div id="nm-intro">
   <video id="nm-introVid" src="assets/gemini_generated_video_c12e6123.mp4" autoplay muted playsinline preload="auto"></video>
   <button class="sound" id="nm-sound" title="소리">🔇</button>
@@ -31,27 +33,33 @@
 <script src="engine/generators.js"></script>
 <script src="data/curriculum.js"></script>
 <script src="data/units/A-01.js"></script>
+<script src="data/units/A-02.js"></script>
+<script src="data/units/A-03.js"></script>
+<script src="data/units/A-04.js"></script>
 <script src="app/main.js"></script>
 
 <script>
 (function(){
+  if(document.documentElement.classList.contains('skip-intro')){
+    var introSkip=document.getElementById('nm-intro');
+    if(introSkip&&introSkip.parentNode) introSkip.parentNode.removeChild(introSkip);
+    return;
+  }
   var intro=document.getElementById('nm-intro');
   var vid=document.getElementById('nm-introVid');
   var skip=document.getElementById('nm-skip');
   var snd=document.getElementById('nm-sound');
-  function done(){
-    intro.classList.add('hide');
-    setTimeout(function(){ if(intro&&intro.parentNode) intro.parentNode.removeChild(intro); },700);
-    try{vid.pause();}catch(e){}
+  function toAbout(){
+    location.href='about.html';
   }
   // 소리 켜기(탭 시 음소거 해제)
   snd.onclick=function(){ vid.muted=!vid.muted; snd.textContent=vid.muted?'🔇':'🔊'; if(!vid.muted){vid.play().catch(function(){});} };
-  skip.onclick=done;
-  vid.addEventListener('ended',done);
-  // 영상 로드 실패 시(파일 아직 없거나 오류) 바로 앱으로
-  vid.addEventListener('error',done);
-  // 안전장치: 12초 지나면 자동 종료
-  setTimeout(done,12000);
+  skip.onclick=toAbout;
+  vid.addEventListener('ended',toAbout);
+  // 영상 로드 실패 시(파일 아직 없거나 오류) 바로 철학 소개로
+  vid.addEventListener('error',toAbout);
+  // 안전장치: 12초 지나면 자동 이동
+  setTimeout(toAbout,12000);
 })();
 </script>
 </body>

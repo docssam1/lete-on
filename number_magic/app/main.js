@@ -199,18 +199,19 @@ function screenTown(){
         <div class="ncloud c"><span class="puff" style="width:56px;height:56px;left:0;top:-6px"></span><span class="puff" style="width:44px;height:44px;left:40px;top:2px"></span><span class="num">5</span></div>
         <div id="townFountain"></div>
         ${zones}
-        <div class="nb" id="nbNumi"><div class="speech"></div><span class="cap">3</span>
-          <div class="stack"><div class="blk n3"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div><div class="blk n3"></div><div class="blk n3"></div></div>
+        <div class="nb" id="nbNumi"><div class="speech"></div>
+          <img class="nb-img" src="assets/characters/numi-0.png" alt="Numi">
           <div class="shadow"></div></div>
-        <div class="nb" id="nbPoco"><div class="speech"></div><span class="cap">5</span>
-          <div class="stack"><div class="blk n5"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div><div class="blk n5"></div><div class="blk n5"></div><div class="blk n5"></div><div class="blk n5"></div></div>
+        <div class="nb" id="nbPoco"><div class="speech"></div>
+          <img class="nb-img" src="assets/characters/poco-3.png" alt="Poco">
           <div class="shadow"></div></div>
-        <div class="nb" id="nbMomo"><div class="speech"></div><span class="cap">2</span>
-          <div class="stack"><div class="blk n2"><span class="eye l"></span><span class="eye r"></span><span class="mo"></span></div><div class="blk n2"></div></div>
+        <div class="nb" id="nbMomo"><div class="speech"></div>
+          <img class="nb-img" src="assets/characters/momo-8.png" alt="Momo">
           <div class="shadow"></div></div>
       </div>
     </div>
     <div class="nm-town-hud brand">${t('mapTitle')}</div>
+    <div class="nm-town-hud info"><a class="nm-philobtn" href="about.html">✦ ${S.lang==='ko'?'철학':S.lang==='en'?'Philosophy':'理念'}</a></div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
       <button class="nm-iconbtn" id="townZin">＋</button>
@@ -323,8 +324,8 @@ function initTownWorld(scr){
         return;
       }
       const tier=tierById(id);
-      if(tierOpen(tier)) showTownModal(`${tier.grade} · ${tier.subtitle}`,tier.desc,()=>enterTier(id));
-      else showTownModal(`${tier.grade} · ${tier.subtitle}`,tier.desc+' — '+t('locked'),null);
+      if(tierOpen(tier)) showTownModal(`${tier.grade} · ${L(tier.subtitle)}`,L(tier.desc),()=>enterTier(id));
+      else showTownModal(`${tier.grade} · ${L(tier.subtitle)}`,L(tier.desc)+' — '+t('locked'),null);
     });
   });
   scr.querySelector('#tmClose').onclick=()=>modal.classList.remove('on');
@@ -350,9 +351,9 @@ function initTownWorld(scr){
 
   /* 걸어다니는 숫자친구 */
   const nbs=[
-    {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.10,lines:['안녕! 난 3이야 ✨','7이랑 만나면 10! 🔟','마법노트 보여줄게!']},
-    {el:scr.querySelector('#nbPoco'),x:55,y:66,tx:55,ty:66,spd:.14,lines:['숫자는 재밌어! 🎈','게임하러 가자!','코인 모으는 중~']},
-    {el:scr.querySelector('#nbMomo'),x:30,y:70,tx:30,ty:70,spd:.08,lines:['10을 만들어볼까? 📐','실수는 괜찮아!','다시 확인해보자']}
+    {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.10,lines:['안녕! 난 0이야 ⭕','아무것도 없어도 특별해!','마법노트 보여줄게!']},
+    {el:scr.querySelector('#nbPoco'),x:55,y:66,tx:55,ty:66,spd:.14,lines:['안녕! 난 3이야 ✨','7이랑 만나면 10! 🔟','게임하러 가자!']},
+    {el:scr.querySelector('#nbMomo'),x:30,y:70,tx:30,ty:70,spd:.08,lines:['안녕! 난 8이야 💖','2랑 만나면 10! 🔟','실수는 괜찮아!']}
   ];
   nbs.forEach(n=>{n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';});
   function pick(n){const sp=[[38,60],[52,64],[30,72],[46,74],[60,68],[24,66]];const p=sp[Math.random()*sp.length|0];n.tx=p[0]+Math.random()*6;n.ty=p[1]+Math.random()*4;}
@@ -415,17 +416,17 @@ function screenTier(){
   let html=`<div class="nm-map">
     <div class="nm-unit-bar">
       <button class="nm-back" id="backTown">${t('back')}</button>
-      <div class="nm-unit-title">${tier.title}<small>${tier.subtitle} · ${tier.ageLabel}</small></div>
+      <div class="nm-unit-title">${tier.title}<small>${L(tier.subtitle)} · ${tier.ageLabel}</small></div>
     </div>
     <div class="nm-tier">
-      <p class="nm-tier-desc">${tier.desc}</p>
+      <p class="nm-tier-desc">${L(tier.desc)}</p>
       <div class="nm-levels">`;
   tier.levels.forEach(lvl=>{
     const units=(lvl.units||[]).filter(u=>UNITS[u]);
     const open=lvl.available&&units.length;
     if(open){
       html+=`<div class="nm-level open">
-        <div class="nm-level-t">${lvl.title}</div>
+        <div class="nm-level-t">${L(lvl.title)}</div>
         <div class="nm-unit-row">`;
       units.forEach(uid=>{
         const u=UNITS[uid];const done=unitDone(uid);
@@ -437,7 +438,7 @@ function screenTier(){
       });
       html+=`</div></div>`;
     }else{
-      html+=`<div class="nm-level locked"><div class="nm-level-t">${lvl.title}</div><span class="nm-lock">🔒 ${t('locked')}</span></div>`;
+      html+=`<div class="nm-level locked"><div class="nm-level-t">${L(lvl.title)}</div><span class="nm-lock">🔒 ${t('locked')}</span></div>`;
     }
   });
   html+=`</div></div></div>`;
@@ -449,9 +450,21 @@ function screenTier(){
 /* ============================================================
    유닛 — 6단계 STEP 흐름
    ============================================================ */
-function enterUnit(uid){S.view='unit';S.unit=uid;S.step='range';S.sub={};save();render();}
+function enterUnit(uid){
+  S.view='unit';S.unit=uid;S.sub={};
+  const u=UNITS[uid];
+  const introSeen=!!(S.progress[uid]&&S.progress[uid].introSeen);
+  S.step=(u.introVideo&&!introSeen)?'intro':(u.ranges?'range':'practice');
+  save();render();
+}
 function pickRange(rk){S.range=rk;S.step='practice';S.sub={};save();render();}
 function exitUnit(){S.view=S.tierId?'tier':'town';S.unit=null;S.step=null;S.sub={};save();render();}
+function finishUnitIntro(u){
+  S.progress[S.unit]=S.progress[S.unit]||{steps:{}};
+  S.progress[S.unit].introSeen=true;
+  S.step=u.ranges?'range':'practice';
+  save();screenUnit();
+}
 
 function flowBar(){
   const u=S.unit;
@@ -469,15 +482,32 @@ function screenUnit(){
       <button class="nm-back" id="backMap">${t('back')}</button>
       <div class="nm-unit-title">${L(u.title)}<small>${L(u.subtitle)}</small></div>
     </div>
-    ${S.step==='range'?'':flowBar()}
+    ${(S.step==='range'||S.step==='intro')?'':flowBar()}
     <div id="stepBody" class="nm-step-body"></div>
   </div>`;
   $('#backMap').onclick=exitUnit;
   scr.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{S.step=b.dataset.step;save();screenUnit();});
   const body=$('#stepBody');
+  if(S.step==='intro'){stepUnitIntro(body,u);return;}
   if(S.step==='range'){stepRange(body,u);renderMath(body);return;}
   ({practice:stepPractice,discover:stepDiscover,check:stepCheck,lab:stepLab,arena:stepArena,stamp:stepStamp}[S.step]||stepDiscover)(body,u);
   renderMath(body);
+}
+
+/* ---------- STEP0 유닛 인트로 영상 (선택적: u.introVideo 있을 때만) ----------
+   각 유닛 영상은 나중에 개별 제작해 unit 데이터의 introVideo 필드에 넣으면 자동 재생됨.
+   영상 없으면 이 스텝 자체를 건너뛰므로(enterUnit) 지금 당장은 아무 유닛에도 영향 없음. */
+function stepUnitIntro(body,u){
+  body.innerHTML=`<div class="nm-uintro">
+    <video class="nm-uintro-vid" src="${u.introVideo}" autoplay muted playsinline preload="auto"></video>
+    <button class="nm-uintro-skip">${t('next')}</button>
+  </div>`;
+  const vid=body.querySelector('.nm-uintro-vid');
+  const done=()=>finishUnitIntro(u);
+  body.querySelector('.nm-uintro-skip').onclick=done;
+  vid.addEventListener('ended',done);
+  vid.addEventListener('error',done);
+  setTimeout(done,15000);
 }
 
 function gotoStep(k){S.step=k;save();screenUnit();}
@@ -543,7 +573,7 @@ function stepRange(body,u){
     <div class="nm-skip-q">${S.lang==='ko'?'수 범위를 골라요':S.lang==='en'?'Choose number range':'选择数字范围'}</div>
     <div class="nm-range-btns">`+u.ranges.map(r=>`
       <button class="nm-range-card" data-rk="${r.key}">
-        <b>${L({ko:r.ko,en:r.en,zh:r.zh})}</b><small>${r.desc_ko||''}</small></button>`).join('')+`
+        <b>${L({ko:r.ko,en:r.en,zh:r.zh})}</b><small>${L(r.desc)}</small></button>`).join('')+`
     </div></div>`;
   body.querySelectorAll('[data-rk]').forEach(b=>b.onclick=()=>pickRange(b.dataset.rk));
 }
@@ -591,24 +621,36 @@ function conceptExpr(container, terms){
 
 function stepDiscover(body,u){
   const d=u.discover;
-  // 두 자리 범위가 아니면 두 자리 단계(kind two/mix)는 접어둠(한 자리만)
+  // 두 자리 범위 토글이 있는 유닛(A-01처럼 u.ranges 있을 때)만 kind:'one'/'two'/'mix'로 걸러냄.
+  // 범위 선택 자체가 없는 유닛(A-02~04)은 모든 단계를 그대로 보여줌.
   const two = S.range==='twoDigit';
-  const stages = d.stages.filter(s=> two || s.kind==='one');
+  const stages = u.ranges ? d.stages.filter(s=> two || s.kind==='one') : d.stages;
   body.innerHTML=`<div class="nm-card"><div class="nm-card-h">📓 ${L(d.title)}</div><div id="cstages"></div>
     <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
     <button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
   const host=body.querySelector('#cstages');
   stages.forEach(s=>{
     const wrap=document.createElement('div');wrap.className='nm-cstage';
-    wrap.innerHTML=`<span class="nm-ctag ${s.kind}">${L(s.tag)}</span>
+    wrap.innerHTML=`<span class="nm-ctag ${s.kind||''}">${L(s.tag)}</span>
       <div class="nm-ch">${L(s.head)}</div>
       <div class="nm-cdesc">${L(s.desc)}</div>`;
     host.appendChild(wrap);
-    conceptExpr(wrap, s.terms);
+    if(s.terms)conceptExpr(wrap, s.terms);
+    else if(s.mathSteps)mathStepsExpr(wrap, s.mathSteps);
     const res=document.createElement('div');res.className='nm-cresult';res.textContent=L(s.result);wrap.appendChild(res);
     if(s.book){const bk=document.createElement('div');bk.className='nm-cbook';bk.innerHTML='📖 '+L(s.book);wrap.appendChild(bk);}
   });
   $('#toCheck').onclick=()=>{markStepDone(S.unit,'discover');gotoStep('check');};
+}
+
+/* 개념 렌더(계단식): 세로로 이어지는 수식 스텝(mathSteps: tex 문자열 배열), 화살표로 연결 */
+function mathStepsExpr(container, steps){
+  const box=document.createElement('div');box.className='nm-mstep-box';
+  steps.forEach((tex,i)=>{
+    if(i){const arrow=document.createElement('div');arrow.className='nm-mstep-arrow';arrow.textContent='↓';box.appendChild(arrow);}
+    const line=document.createElement('div');line.className='nm-mstep-line';line.setAttribute('data-tex',tex);box.appendChild(line);
+  });
+  container.appendChild(box);
 }
 
 
@@ -624,7 +666,12 @@ function stepCheck(body,u){
   </div>`;
   buildNumpad($('#pad'),val=>{
     if(val==='ok'){const inp=S.sub.inp||'';if(inp==='')return;
-      if(+inp===fill.answer){toast(t('correct'),true);numiHappy();markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
+      if(+inp===fill.answer){
+        toast(t('correct'),true);numiHappy();
+        S.sub.fi++;S.sub.inp='';
+        if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
+        else setTimeout(()=>stepCheck(body,u),700);
+      }
       else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);S.sub.inp='';$('#pscreen').textContent=' ';}
       return;}
     if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
@@ -643,11 +690,18 @@ function openQuestion(body,u){
   $('#toLab').onclick=()=>gotoStep('lab');
 }
 
-/* ---------- STEP4 매직랩 (선택 모드 대화형) ---------- */
+/* ---------- STEP4 매직랩 (대화형) ----------
+   pair10(짝 고르기, answerType:'selectPairs')는 타일 선택 UI,
+   나머지 생성기(move10/add10sub/stairAdd, answerType:'number')는 숫자패드 UI. */
 function stepLab(body,u){
+  const cfg=u.lab;
+  S.sub.cur=S.sub.cur||GEN[cfg.generator]({level:'main'});
+  if(S.sub.cur.answerType==='selectPairs')stepLabPairs(body,u);
+  else stepLabNumpad(body,u);
+}
+function stepLabPairs(body,u){
   const cfg=u.lab;const need=cfg.count||4;
   S.sub.li=S.sub.li||0;S.sub.picked=S.sub.picked||[];
-  S.sub.cur=S.sub.cur||GEN[cfg.generator]({level:'main'});
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
@@ -665,6 +719,40 @@ function stepLab(body,u){
     const b=document.createElement('button');b.className='nm-tile';b.textContent=n;b.dataset.i=i;
     b.onclick=()=>pickTile(b,i,n,body,u);expr.appendChild(b);
   });
+}
+function stepLabNumpad(body,u){
+  const cfg=u.lab;const need=cfg.count||4;
+  S.sub.li=S.sub.li||0;
+  const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
+  body.innerHTML=`<div class="nm-dialog">
+    <div class="nm-prog">${dots(need,S.sub.li)}</div>
+    <div class="nm-numi"><div class="hat"></div></div>
+    <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(cur.prompt_ko)}</div>
+    <div class="nm-lab-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
+    <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
+    <div class="nm-numpad" id="pad"></div>
+    <div class="nm-hint">${t('numpadHint')}</div>
+  </div>`;
+  S.sub.labStarted=true;
+  renderMath(body);
+  say(first?L(cfg.intro):cur.prompt_ko);
+  buildNumpad($('#pad'),val=>handleLabNumpad(val,body,u));
+}
+function handleLabNumpad(val,body,u){
+  const cur=S.sub.cur;const need=u.lab.count||4;
+  if(val==='ok'){
+    const inp=S.sub.inp||'';if(inp==='')return;
+    if(+inp===cur.answer){
+      toast(pickVoice(u.voice.correct),true);numiHappy();
+      S.sub.li++;S.sub.inp='';S.sub.cur=null;
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep('arena'),700);return;}
+      S.sub.cur=GEN[u.lab.generator]({level:'main'});save();
+      setTimeout(()=>stepLab(body,u),650);
+    }else{toast(pickVoice(u.voice.wrong),false);S.sub.inp='';$('#pscreen').textContent=' ';}
+    return;
+  }
+  if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
+  $('#pscreen').textContent=S.sub.inp||' ';
 }
 function pickTile(el,i,n,body,u){
   const p=S.sub.picked;const at=p.findIndex(x=>x.i===i);
