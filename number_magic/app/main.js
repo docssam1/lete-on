@@ -621,24 +621,36 @@ function conceptExpr(container, terms){
 
 function stepDiscover(body,u){
   const d=u.discover;
-  // 두 자리 범위가 아니면 두 자리 단계(kind two/mix)는 접어둠(한 자리만)
+  // 두 자리 범위 토글이 있는 유닛(A-01처럼 u.ranges 있을 때)만 kind:'one'/'two'/'mix'로 걸러냄.
+  // 범위 선택 자체가 없는 유닛(A-02~04)은 모든 단계를 그대로 보여줌.
   const two = S.range==='twoDigit';
-  const stages = d.stages.filter(s=> two || s.kind==='one');
+  const stages = u.ranges ? d.stages.filter(s=> two || s.kind==='one') : d.stages;
   body.innerHTML=`<div class="nm-card"><div class="nm-card-h">📓 ${L(d.title)}</div><div id="cstages"></div>
     <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
     <button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
   const host=body.querySelector('#cstages');
   stages.forEach(s=>{
     const wrap=document.createElement('div');wrap.className='nm-cstage';
-    wrap.innerHTML=`<span class="nm-ctag ${s.kind}">${L(s.tag)}</span>
+    wrap.innerHTML=`<span class="nm-ctag ${s.kind||''}">${L(s.tag)}</span>
       <div class="nm-ch">${L(s.head)}</div>
       <div class="nm-cdesc">${L(s.desc)}</div>`;
     host.appendChild(wrap);
-    conceptExpr(wrap, s.terms);
+    if(s.terms)conceptExpr(wrap, s.terms);
+    else if(s.mathSteps)mathStepsExpr(wrap, s.mathSteps);
     const res=document.createElement('div');res.className='nm-cresult';res.textContent=L(s.result);wrap.appendChild(res);
     if(s.book){const bk=document.createElement('div');bk.className='nm-cbook';bk.innerHTML='📖 '+L(s.book);wrap.appendChild(bk);}
   });
   $('#toCheck').onclick=()=>{markStepDone(S.unit,'discover');gotoStep('check');};
+}
+
+/* 개념 렌더(계단식): 세로로 이어지는 수식 스텝(mathSteps: tex 문자열 배열), 화살표로 연결 */
+function mathStepsExpr(container, steps){
+  const box=document.createElement('div');box.className='nm-mstep-box';
+  steps.forEach((tex,i)=>{
+    if(i){const arrow=document.createElement('div');arrow.className='nm-mstep-arrow';arrow.textContent='↓';box.appendChild(arrow);}
+    const line=document.createElement('div');line.className='nm-mstep-line';line.setAttribute('data-tex',tex);box.appendChild(line);
+  });
+  container.appendChild(box);
 }
 
 
@@ -654,7 +666,12 @@ function stepCheck(body,u){
   </div>`;
   buildNumpad($('#pad'),val=>{
     if(val==='ok'){const inp=S.sub.inp||'';if(inp==='')return;
-      if(+inp===fill.answer){toast(t('correct'),true);numiHappy();markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
+      if(+inp===fill.answer){
+        toast(t('correct'),true);numiHappy();
+        S.sub.fi++;S.sub.inp='';
+        if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
+        else setTimeout(()=>stepCheck(body,u),700);
+      }
       else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);S.sub.inp='';$('#pscreen').textContent=' ';}
       return;}
     if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
@@ -673,11 +690,18 @@ function openQuestion(body,u){
   $('#toLab').onclick=()=>gotoStep('lab');
 }
 
-/* ---------- STEP4 매직랩 (선택 모드 대화형) ---------- */
+/* ---------- STEP4 매직랩 (대화형) ----------
+   pair10(짝 고르기, answerType:'selectPairs')는 타일 선택 UI,
+   나머지 생성기(move10/add10sub/stairAdd, answerType:'number')는 숫자패드 UI. */
 function stepLab(body,u){
+  const cfg=u.lab;
+  S.sub.cur=S.sub.cur||GEN[cfg.generator]({level:'main'});
+  if(S.sub.cur.answerType==='selectPairs')stepLabPairs(body,u);
+  else stepLabNumpad(body,u);
+}
+function stepLabPairs(body,u){
   const cfg=u.lab;const need=cfg.count||4;
   S.sub.li=S.sub.li||0;S.sub.picked=S.sub.picked||[];
-  S.sub.cur=S.sub.cur||GEN[cfg.generator]({level:'main'});
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
@@ -695,6 +719,40 @@ function stepLab(body,u){
     const b=document.createElement('button');b.className='nm-tile';b.textContent=n;b.dataset.i=i;
     b.onclick=()=>pickTile(b,i,n,body,u);expr.appendChild(b);
   });
+}
+function stepLabNumpad(body,u){
+  const cfg=u.lab;const need=cfg.count||4;
+  S.sub.li=S.sub.li||0;
+  const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
+  body.innerHTML=`<div class="nm-dialog">
+    <div class="nm-prog">${dots(need,S.sub.li)}</div>
+    <div class="nm-numi"><div class="hat"></div></div>
+    <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(cur.prompt_ko)}</div>
+    <div class="nm-lab-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
+    <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
+    <div class="nm-numpad" id="pad"></div>
+    <div class="nm-hint">${t('numpadHint')}</div>
+  </div>`;
+  S.sub.labStarted=true;
+  renderMath(body);
+  say(first?L(cfg.intro):cur.prompt_ko);
+  buildNumpad($('#pad'),val=>handleLabNumpad(val,body,u));
+}
+function handleLabNumpad(val,body,u){
+  const cur=S.sub.cur;const need=u.lab.count||4;
+  if(val==='ok'){
+    const inp=S.sub.inp||'';if(inp==='')return;
+    if(+inp===cur.answer){
+      toast(pickVoice(u.voice.correct),true);numiHappy();
+      S.sub.li++;S.sub.inp='';S.sub.cur=null;
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep('arena'),700);return;}
+      S.sub.cur=GEN[u.lab.generator]({level:'main'});save();
+      setTimeout(()=>stepLab(body,u),650);
+    }else{toast(pickVoice(u.voice.wrong),false);S.sub.inp='';$('#pscreen').textContent=' ';}
+    return;
+  }
+  if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
+  $('#pscreen').textContent=S.sub.inp||' ';
 }
 function pickTile(el,i,n,body,u){
   const p=S.sub.picked;const at=p.findIndex(x=>x.i===i);

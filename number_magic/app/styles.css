@@ -204,6 +204,16 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-cresult{margin-top:12px;text-align:center;font-size:14px;font-weight:800;color:var(--ok)}
 .nm-cbook{background:#f4f7fc;border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 12px;margin-top:12px;font-size:12.5px;color:#33415a;line-height:1.55}
 
+/* 개념(디스커버) — 계단식 수식 전개(mathSteps, A-02~04) */
+.nm-mstep-box{border:1.5px solid #e3ecf7;background:linear-gradient(180deg,#fbfdff,#f5f9ff);border-radius:14px;padding:16px 12px;text-align:center;overflow-x:auto}
+.nm-mstep-line{font-weight:900;color:var(--blue-deep);padding:4px 0}
+.nm-mstep-line .katex{font-size:clamp(16px,4.6vw,20px)}
+.nm-mstep-arrow{color:var(--gold-deep);font-weight:900;font-size:14px;line-height:1}
+
+/* 매직랩 — 숫자패드 모드(move10/add10sub/stairAdd) 문제 표시 */
+.nm-lab-expr{text-align:center;font-weight:900;color:var(--blue-deep);margin:10px 0;overflow-x:auto}
+.nm-lab-expr .katex{font-size:clamp(20px,5.6vw,26px)}
+
 /* ============================================================
    ── 데스크탑 전용(768px+): 학습 화면(등급목록/유닛)만 중앙 640px로 좁힘.
       마을(지도)은 위에서 이미 폭 제한이 없으므로 항상 화면 전체를 채움. ──
