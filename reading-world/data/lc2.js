@@ -5,6 +5,7 @@ window.LESSONS['lc2'] = {
   bookId: 'cars-level-c',
   levelId: 'C',
   lessonId: 'lc2',
+  chapter: null, page: null,
   title: "A Fable About Friendship",
   theme: "Friendship, kindness, and the life cycle of a butterfly",
   image: 'assets/images/cars-level-c/2.png',

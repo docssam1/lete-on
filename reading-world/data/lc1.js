@@ -5,6 +5,7 @@ window.LESSONS['lc1'] = {
   bookId: 'cars-level-c',
   levelId: 'C',
   lessonId: 'lc1',
+  chapter: null, page: null,
   title: "Family Barbecue",
   theme: "Family gatherings, food, and celebrations",
   image: 'assets/images/cars-level-c/1.png',

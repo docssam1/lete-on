@@ -5,6 +5,7 @@ window.LESSONS['lc10'] = {
   bookId: 'cars-level-c',
   levelId: 'C',
   lessonId: 'lc10',
+  chapter: null, page: null,
   title: "The Helpless Helper",
   theme: "Realistic fiction about homework, learning, and the quiet joy of helping others learn for themselves.",
   image: 'assets/images/cars-level-c/10.png',

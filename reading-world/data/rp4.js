@@ -4,6 +4,7 @@ window.LESSONS['rp4'] = {
   bookId: 'reading-prime-1',
   levelId: '1',
   lessonId: 'rp4',
+  chapter: null, page: null,
   title: "The Longest Hot Dog in the World",
   theme: "Length — amazing record-breaking sizes and how far things can stretch",
   image: 'assets/images/reading-prime/cover.svg',

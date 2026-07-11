@@ -4,6 +4,7 @@ window.LESSONS['rp7'] = {
   bookId: 'reading-prime-1',
   levelId: '1',
   lessonId: 'rp7',
+  chapter: null, page: null,
   title: "Color-Blindness",
   theme: "See the world through different eyes!",
   image: 'assets/images/reading-prime/cover.svg',

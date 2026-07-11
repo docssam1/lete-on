@@ -4,6 +4,7 @@ window.LESSONS['rp5'] = {
   bookId: 'reading-prime-1',
   levelId: '1',
   lessonId: 'rp5',
+  chapter: null, page: null,
   title: "The Strange World of Murphy's Law",
   theme: "How Murphy's Law explains everyday bad luck",
   image: 'assets/images/reading-prime/cover.svg',

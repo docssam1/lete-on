@@ -4,6 +4,7 @@ window.LESSONS['rp6'] = {
   bookId: 'reading-prime-1',
   levelId: '1',
   lessonId: 'rp6',
+  chapter: null, page: null,
   title: "Come to the City Insect Museum!",
   theme: "Discover the amazing world of insects and other animals!",
   image: 'assets/images/reading-prime/cover.svg',

@@ -5,6 +5,7 @@ window.LESSONS['lesson5'] = {
   bookId: 'cars-level-b',
   levelId: 'B',
   lessonId: 'lesson5',
+  chapter: null, page: null,
   title: "A Different Kind of Bird",
   theme: "Animals that are special in their own way",
   image: "assets/images/cars-level-b/lesson-05-different-kind-of-bird.png",

@@ -4,6 +4,7 @@ window.LESSONS['rp1'] = {
   bookId: 'reading-prime-1',
   levelId: '1',
   lessonId: 'rp1',
+  chapter: null, page: null,
   title: "The Rubber Duck Project",
   theme: "A giant rubber duck spreads joy and healing",
   image: 'assets/images/reading-prime/cover.svg',

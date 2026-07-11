@@ -5,6 +5,7 @@ window.LESSONS['lc4'] = {
   bookId: 'cars-level-c',
   levelId: 'C',
   lessonId: 'lc4',
+  chapter: null, page: null,
   title: "Harry's Holiday Journal",
   theme: "A boy's summer-trip diary: choosing between camping and sailing, and the adventures that follow with his brother and Aunt Karen.",
   image: 'assets/images/cars-level-c/4.png',

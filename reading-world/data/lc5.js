@@ -5,6 +5,7 @@ window.LESSONS['lc5'] = {
   bookId: 'cars-level-c',
   levelId: 'C',
   lessonId: 'lc5',
+  chapter: null, page: null,
   title: "To the Skies!",
   theme: "The history of flight and air travel",
   image: 'assets/images/cars-level-c/5.png',

@@ -5,6 +5,7 @@ window.LESSONS['lc9'] = {
   bookId: 'cars-level-c',
   levelId: 'C',
   lessonId: 'lc9',
+  chapter: null, page: null,
   title: "Kate's Cat Corner",
   theme: "Taking Care of Cats",
   image: 'assets/images/cars-level-c/9.png',

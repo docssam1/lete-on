@@ -5,6 +5,7 @@ window.LESSONS['lesson3'] = {
   bookId: 'cars-level-b',
   levelId: 'B',
   lessonId: 'lesson3',
+  chapter: null, page: null,
   title: 'Marvin at Bat',
   theme: 'Keep trying and finish your job',
   image: 'assets/images/cars-level-b/lesson-03-marvin-at-bat.png',

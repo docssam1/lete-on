@@ -5,6 +5,7 @@ window.LESSONS['lc7'] = {
   bookId: 'cars-level-c',
   levelId: 'C',
   lessonId: 'lc7',
+  chapter: null, page: null,
   title: "The Truth About Science",
   theme: "Realistic fiction: discovering that science is found all around us, in everyday life.",
   image: 'assets/images/cars-level-c/7.png',

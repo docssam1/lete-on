@@ -5,6 +5,7 @@ window.LESSONS['lc8'] = {
   bookId: 'cars-level-c',
   levelId: 'C',
   lessonId: 'lc8',
+  chapter: null, page: null,
   title: "51 Oak Street",
   theme: "Letters home from a family dairy farm — the everyday work, science, and small joys of country life.",
   image: 'assets/images/cars-level-c/8.png',

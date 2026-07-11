@@ -12,8 +12,13 @@ window.LIBRARY_CATALOG = {
       title: 'Dinosaurs Before Dark',
       illustrator: 'Sal Murdocca',
       ar: 2.6, rg: '2C', wc: 4737,
+      lexile: 510, genre: 'fiction-fantasy', fictionType: 'fiction', grade: 'G2',
       totalPages: 36, // real per-page count from the source book, not a synthetic split
       audio: 'tts',
+      // Present only once a real source file has been uploaded to Supabase Storage
+      // (bucket below). Absent/null for every other book — gates the "원본 보기"
+      // PDF/EPUB tab so it never shows for a book with nothing to display.
+      sourceFile: { type: 'pdf', bucket: 'library-pdfs', path: 'library-mth1.pdf', pages: 57 },
       // Created content (original writing, not reproduced from the licensed text) that
       // frames the real book: pre-reading background knowledge, key vocabulary drawn
       // from the real pages with our own kid-friendly definitions, and an original

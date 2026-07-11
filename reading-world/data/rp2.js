@@ -4,6 +4,7 @@ window.LESSONS['rp2'] = {
   bookId: 'reading-prime-1',
   levelId: '1',
   lessonId: 'rp2',
+  chapter: null, page: null,
   title: "Healthy Banana Vinegar",
   theme: "Bananas: healthy snacks, farms, and homemade drinks",
   image: 'assets/images/reading-prime/cover.svg',

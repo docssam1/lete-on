@@ -2,6 +2,7 @@
 window.BOOK_CATALOG = [
   {
     id: 'cars-level-b',
+    category: 'textbook', totalLessons: 10,
     title: 'CARS',
     subtitle: 'Level B',
     fullTitle: 'Comprehensive Assessment of Reading Strategies',
@@ -20,6 +21,7 @@ window.BOOK_CATALOG = [
   },
   {
     id: 'cars-level-c',
+    category: 'textbook', totalLessons: 10,
     title: 'CARS',
     subtitle: 'Level C',
     fullTitle: 'Comprehensive Assessment of Reading Strategies',
@@ -38,6 +40,7 @@ window.BOOK_CATALOG = [
   },
   {
     id: 'wonderskills-adv3',
+    category: 'textbook', totalLessons: 0,
     title: 'WonderSkills',
     subtitle: 'Reading Adv. 3',
     fullTitle: 'WonderSkills Reading Advanced 3',
@@ -56,6 +59,7 @@ window.BOOK_CATALOG = [
   },
   {
     id: 'subject-link-4',
+    category: 'textbook', totalLessons: 0,
     title: 'Subject Link',
     subtitle: 'Level 4',
     fullTitle: 'Subject Link 4',
@@ -74,6 +78,7 @@ window.BOOK_CATALOG = [
   },
   {
     id: '180days-reading-g3',
+    category: 'textbook', totalLessons: 0,
     title: '180 Days',
     subtitle: 'Reading · Gr. 3',
     fullTitle: '180 Days of Reading: Grade 3',
@@ -92,6 +97,7 @@ window.BOOK_CATALOG = [
   },
   {
     id: 'daily-reading-g5',
+    category: 'textbook', totalLessons: 0,
     title: 'Daily Reading',
     subtitle: 'Comprehension Gr.5',
     fullTitle: 'Daily Reading Comprehension: Grade 5',
@@ -110,6 +116,7 @@ window.BOOK_CATALOG = [
   },
   {
     id: 'reading-prime-1',
+    category: 'textbook', totalLessons: 7,
     title: 'Reading Prime',
     subtitle: 'Level 1',
     fullTitle: 'Reading Prime Level 1',

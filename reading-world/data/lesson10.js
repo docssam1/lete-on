@@ -5,6 +5,7 @@ window.LESSONS['lesson10'] = {
   bookId: 'cars-level-b',
   levelId: 'B',
   lessonId: 'lesson10',
+  chapter: null, page: null,
   title: "Why Owl Has Big Eyes",
   theme: "A \"why\" story about listening",
   image: "assets/images/cars-level-b/lesson-10-why-owl-has-big-eyes.png",

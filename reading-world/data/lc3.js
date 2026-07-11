@@ -5,6 +5,7 @@ window.LESSONS['lc3'] = {
   bookId: 'cars-level-c',
   levelId: 'C',
   lessonId: 'lc3',
+  chapter: null, page: null,
   title: "Owls",
   theme: "Owls: how these silent night hunters live, hunt, and help the world around them",
   image: 'assets/images/cars-level-c/3.png',

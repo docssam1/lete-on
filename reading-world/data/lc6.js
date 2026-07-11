@@ -5,6 +5,7 @@ window.LESSONS['lc6'] = {
   bookId: 'cars-level-c',
   levelId: 'C',
   lessonId: 'lc6',
+  chapter: null, page: null,
   title: "The Hungry Spider",
   theme: "Folktales and fables — greed, kindness, and getting back what you give.",
   image: 'assets/images/cars-level-c/6.png',

@@ -4,6 +4,7 @@ window.LESSONS['rp3'] = {
   bookId: 'reading-prime-1',
   levelId: '1',
   lessonId: 'rp3',
+  chapter: null, page: null,
   title: "A Friend Called Freedom",
   theme: "Relationships — how true friendship helps us heal and recover",
   image: 'assets/images/reading-prime/cover.svg',
