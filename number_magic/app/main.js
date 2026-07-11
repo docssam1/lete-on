@@ -450,9 +450,21 @@ function screenTier(){
 /* ============================================================
    유닛 — 6단계 STEP 흐름
    ============================================================ */
-function enterUnit(uid){S.view='unit';S.unit=uid;S.step='range';S.sub={};save();render();}
+function enterUnit(uid){
+  S.view='unit';S.unit=uid;S.sub={};
+  const u=UNITS[uid];
+  const introSeen=!!(S.progress[uid]&&S.progress[uid].introSeen);
+  S.step=(u.introVideo&&!introSeen)?'intro':(u.ranges?'range':'practice');
+  save();render();
+}
 function pickRange(rk){S.range=rk;S.step='practice';S.sub={};save();render();}
 function exitUnit(){S.view=S.tierId?'tier':'town';S.unit=null;S.step=null;S.sub={};save();render();}
+function finishUnitIntro(u){
+  S.progress[S.unit]=S.progress[S.unit]||{steps:{}};
+  S.progress[S.unit].introSeen=true;
+  S.step=u.ranges?'range':'practice';
+  save();screenUnit();
+}
 
 function flowBar(){
   const u=S.unit;
@@ -470,15 +482,32 @@ function screenUnit(){
       <button class="nm-back" id="backMap">${t('back')}</button>
       <div class="nm-unit-title">${L(u.title)}<small>${L(u.subtitle)}</small></div>
     </div>
-    ${S.step==='range'?'':flowBar()}
+    ${(S.step==='range'||S.step==='intro')?'':flowBar()}
     <div id="stepBody" class="nm-step-body"></div>
   </div>`;
   $('#backMap').onclick=exitUnit;
   scr.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{S.step=b.dataset.step;save();screenUnit();});
   const body=$('#stepBody');
+  if(S.step==='intro'){stepUnitIntro(body,u);return;}
   if(S.step==='range'){stepRange(body,u);renderMath(body);return;}
   ({practice:stepPractice,discover:stepDiscover,check:stepCheck,lab:stepLab,arena:stepArena,stamp:stepStamp}[S.step]||stepDiscover)(body,u);
   renderMath(body);
+}
+
+/* ---------- STEP0 유닛 인트로 영상 (선택적: u.introVideo 있을 때만) ----------
+   각 유닛 영상은 나중에 개별 제작해 unit 데이터의 introVideo 필드에 넣으면 자동 재생됨.
+   영상 없으면 이 스텝 자체를 건너뛰므로(enterUnit) 지금 당장은 아무 유닛에도 영향 없음. */
+function stepUnitIntro(body,u){
+  body.innerHTML=`<div class="nm-uintro">
+    <video class="nm-uintro-vid" src="${u.introVideo}" autoplay muted playsinline preload="auto"></video>
+    <button class="nm-uintro-skip">${t('next')}</button>
+  </div>`;
+  const vid=body.querySelector('.nm-uintro-vid');
+  const done=()=>finishUnitIntro(u);
+  body.querySelector('.nm-uintro-skip').onclick=done;
+  vid.addEventListener('ended',done);
+  vid.addEventListener('error',done);
+  setTimeout(done,15000);
 }
 
 function gotoStep(k){S.step=k;save();screenUnit();}
