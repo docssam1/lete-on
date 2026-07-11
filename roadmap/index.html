@@ -390,6 +390,29 @@ th,td{border:1px solid var(--line);padding:7px 5px;height:45px;vertical-align:mi
 /* 텍스트 선택/드래그 방지 (입력칸 제외) */
 body{-webkit-user-select:none;-moz-user-select:none;user-select:none}
 input,textarea{-webkit-user-select:text;user-select:text}
+/* ===== 컨설팅 모드 ===== */
+.consultant-badge{display:inline-block;background:#1e3a8a;color:#fff;font-size:10px;font-weight:900;letter-spacing:.08em;padding:3px 10px;border-radius:20px;margin-bottom:12px}
+.consultant-name-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:10px;background:#fffbeb;border:1px solid #fcd34d;border-radius:8px}
+.consultant-name-row label{font-size:13px;font-weight:700;color:#92400e}
+.consultant-name-input{border:1px solid #d97706;border-radius:6px;padding:5px 10px;font-size:14px;font-weight:800;color:#1e3a8a;width:140px}
+.consultant-name-btn{background:#1e3a8a;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:800;cursor:pointer}
+.editor-toolbar{display:flex;gap:4px;margin-bottom:8px;padding:8px 10px;background:#f1f5f9;border-radius:8px;flex-wrap:wrap;align-items:center;border:1px solid #e2e8f0}
+.editor-toolbar button,.toolbar-file-btn{border:1px solid #cbd5e1;background:#fff;border-radius:5px;padding:4px 9px;font-size:12px;font-weight:700;cursor:pointer;height:28px;min-width:28px;display:inline-flex;align-items:center;justify-content:center;gap:3px;color:#334155}
+.editor-toolbar button:hover,.toolbar-file-btn:hover{background:#e2e8f0;border-color:#94a3b8}
+.editor-toolbar .sep{width:1px;height:20px;background:#cbd5e1;margin:0 3px}
+.toolbar-file-btn input[type=file]{display:none}
+.hl-btn{border-width:2px!important;font-weight:900!important}
+.save-indicator{font-size:11px;color:#059669;font-weight:700;margin-left:4px;opacity:0;transition:opacity .3s}
+.save-indicator.show{opacity:1}
+.consultant-editor{min-height:240px;border:2px solid #7c3aed;border-radius:8px;padding:16px;font-size:13px;line-height:1.85;color:#334155;background:#fff;outline:none;cursor:text;-webkit-user-select:text;user-select:text}
+.consultant-editor:focus{border-color:#5b21b6;box-shadow:0 0 0 3px rgba(124,58,237,.15)}
+.consultant-editor img{max-width:100%;border-radius:8px;margin:8px 0;display:block}
+.consultant-editor p{margin:0 0 8px}
+.consultant-hint{margin-top:7px;font-size:11px;color:#7c3aed;font-weight:600}
+@media print{
+  .editor-toolbar,.consultant-name-row,.consultant-badge,.consultant-hint{display:none!important}
+  .consultant-editor{border:none!important;box-shadow:none!important;padding:0!important;min-height:auto!important}
+}
 </style>
 </head>
 <body>
@@ -1303,11 +1326,25 @@ function tab(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove
 build();
 
 /* ---------- 승인 ---------- */
+let isConsultant = false;
+
 async function startStandardDiagnosis(){
   const code=document.getElementById('approvalCode').value.trim();
   const name=document.getElementById('approvalName').value.trim();
   const phone=document.getElementById('approvalPhone').value.trim();
   const error=document.getElementById('approvalError');
+
+  // ===== docssam 컨설팅 모드 =====
+  if(name.toLowerCase()==='docssam'){
+    isConsultant=true;
+    document.getElementById('approvalGate').style.display='none';
+    document.getElementById('studentName').value='학생';
+    const diagGate=document.getElementById('diagnosticGate');
+    if(diagGate) diagGate.style.display='block';
+    return;
+  }
+  isConsultant=false;
+
   if(!code||!name||!phone){error.textContent='승인번호, 학생 이름, 연락처를 모두 입력해 주세요.';return;}
   CURRENT_CODE = code;
   document.getElementById('studentName').value=name;
@@ -1501,6 +1538,47 @@ function fillLevelDelta(d){
   return best;
 }
 function fillComment(d){
+  // ===== 컨설팅 모드: 리치 에디터 =====
+  if(isConsultant){
+    const host=document.getElementById('studentComment');
+    const initName=d.name||'학생';
+    host.innerHTML=
+      `<div class="consultant-badge">📋 docssam 컨설팅 모드</div>`+
+      `<div class="consultant-name-row">`+
+        `<label>학생 이름&nbsp;<input id="consultantNameInput" class="consultant-name-input" value="${initName}" placeholder="이름 입력" oninput="autoSaveConsultant()"></label>`+
+        `<button class="consultant-name-btn" onclick="applyConsultantName()">적용</button>`+
+        `<button class="consultant-name-btn" style="background:#059669" onclick="loadConsultant()">📂 불러오기</button>`+
+        `<span class="save-indicator" id="saveIndicator">✓ 저장됨</span>`+
+      `</div>`+
+      `<div class="editor-toolbar">`+
+        `<button onclick="edCmd('bold')" title="굵게"><b>B</b></button>`+
+        `<button onclick="edCmd('italic')" title="기울임"><i>I</i></button>`+
+        `<button onclick="edCmd('underline')" title="밑줄"><u>U</u></button>`+
+        `<div class="sep"></div>`+
+        `<button class="hl-btn" onclick="edHL('#fef08a')" title="노란 형광펜" style="background:#fef08a;border-color:#ca8a04">노</button>`+
+        `<button class="hl-btn" onclick="edHL('#fca5a5')" title="빨간 형광펜" style="background:#fca5a5;border-color:#dc2626">빨</button>`+
+        `<button class="hl-btn" onclick="edHL('#86efac')" title="초록 형광펜" style="background:#86efac;border-color:#16a34a">초</button>`+
+        `<button class="hl-btn" onclick="edHL('#bfdbfe')" title="파란 형광펜" style="background:#bfdbfe;border-color:#2563eb">파</button>`+
+        `<button onclick="edHL('transparent')" title="형광펜 제거" style="font-size:10px">✕형</button>`+
+        `<div class="sep"></div>`+
+        `<button onclick="edFG('#dc2626')" title="빨간 글씨" style="color:#dc2626;font-weight:900">A</button>`+
+        `<button onclick="edFG('#1d4ed8')" title="파란 글씨" style="color:#1d4ed8;font-weight:900">A</button>`+
+        `<button onclick="edFG('#15803d')" title="초록 글씨" style="color:#15803d;font-weight:900">A</button>`+
+        `<button onclick="edFG('#000')" title="검정(기본)">A</button>`+
+        `<div class="sep"></div>`+
+        `<label class="toolbar-file-btn" title="사진 삽입">📷 사진<input type="file" accept="image/*" onchange="insertConsultImg(this)"></label>`+
+        `<div class="sep"></div>`+
+        `<button onclick="saveConsultant()" style="background:#eff6ff;border-color:#3b82f6;color:#1d4ed8">💾 저장</button>`+
+      `</div>`+
+      `<div id="consultantEditor" class="consultant-editor" contenteditable="true" `+
+         `onkeydown="handleEditorKey(event)" oninput="autoSaveConsultant()">`+
+        `<p>여기에 코멘트를 작성해 주세요.</p>`+
+      `</div>`+
+      `<div class="consultant-hint">💾 저장하면 브라우저에 보관됩니다 · 학생 이름별로 저장 · 인쇄 시 툴바는 숨겨집니다</div>`;
+    setTimeout(()=>tryAutoLoad(initName), 100);
+    return;
+  }
+
   const best=fillLevelDelta(d);
   const cur=currentPositions(d);
   const shS=personalShift('school',d.age,cur.school);
@@ -1702,6 +1780,79 @@ window.printRoadmap=function(){
       setTimeout(function(){ try{ drawGuideOverlay(undefined); }catch(e){} }, 50);
     });
     window.print();
+  }
+
+  // ===== 컨설팅 모드 헬퍼 =====
+  function applyConsultantName(){
+    const n=document.getElementById('consultantNameInput').value.trim()||'학생';
+    if(typeof diagData!=='undefined'&&diagData) diagData.name=n;
+    document.getElementById('studentTitle').textContent=`${n} 학생의 현재 로드맵`;
+    const sub=document.getElementById('studentSubtitle');
+    if(sub) sub.textContent=`현재 사고력 ${diagData?.thinkingText||'-'}, 교과 ${diagData?.school||'-'} 기준으로 확인했습니다.`;
+    const ct=document.getElementById('coverTitle');
+    if(ct) ct.innerHTML=n+' 학생의<br>로드맵 분석';
+  }
+  function edCmd(cmd){ document.getElementById('consultantEditor')?.focus(); document.execCommand(cmd,false,null); }
+  function edHL(color){ document.getElementById('consultantEditor')?.focus(); document.execCommand('hiliteColor',false,color); }
+  function edFG(color){ document.getElementById('consultantEditor')?.focus(); document.execCommand('foreColor',false,color); }
+  function handleEditorKey(e){
+    if(e.key==='Enter'&&!e.shiftKey){
+      e.preventDefault();
+      document.execCommand('insertParagraph',false,null);
+    }
+  }
+  function insertConsultImg(input){
+    const file=input.files[0]; if(!file) return;
+    const reader=new FileReader();
+    reader.onload=function(ev){
+      document.getElementById('consultantEditor').focus();
+      document.execCommand('insertHTML',false,
+        `<img src="${ev.target.result}" style="max-width:100%;border-radius:8px;margin:8px 0;display:block">`);
+    };
+    reader.readAsDataURL(file);
+    input.value='';
+  }
+  let _autoSaveTimer=null;
+  function autoSaveConsultant(){
+    clearTimeout(_autoSaveTimer);
+    _autoSaveTimer=setTimeout(()=>{
+      const name=document.getElementById('consultantNameInput')?.value.trim()||'학생';
+      const html=document.getElementById('consultantEditor')?.innerHTML||'';
+      try{
+        localStorage.setItem(`gfield_c_${name}`,JSON.stringify({html,name,ts:new Date().toLocaleString('ko-KR')}));
+        const si=document.getElementById('saveIndicator');
+        if(si){si.classList.add('show');setTimeout(()=>si.classList.remove('show'),1800);}
+      }catch(e){}
+    },1500);
+  }
+  function saveConsultant(){
+    const name=document.getElementById('consultantNameInput')?.value.trim()||'학생';
+    const html=document.getElementById('consultantEditor')?.innerHTML||'';
+    try{
+      localStorage.setItem(`gfield_c_${name}`,JSON.stringify({html,name,ts:new Date().toLocaleString('ko-KR')}));
+      const si=document.getElementById('saveIndicator');
+      if(si){si.textContent='✓ 저장됨';si.classList.add('show');setTimeout(()=>si.classList.remove('show'),2000);}
+    }catch(e){ alert('저장 실패: '+e.message); }
+  }
+  function loadConsultant(){
+    const name=document.getElementById('consultantNameInput')?.value.trim();
+    if(!name){alert('학생 이름을 먼저 입력하세요.');return;}
+    const raw=localStorage.getItem(`gfield_c_${name}`);
+    if(!raw){alert(`"${name}" 학생의 저장된 코멘트가 없습니다.`);return;}
+    const data=JSON.parse(raw);
+    const ed=document.getElementById('consultantEditor');
+    if(ed) ed.innerHTML=data.html||'';
+    alert(`📂 "${name}" 불러왔습니다.\n저장 시각: ${data.ts}`);
+  }
+  function tryAutoLoad(name){
+    if(!name||name==='학생') return;
+    const raw=localStorage.getItem(`gfield_c_${name}`);
+    if(!raw) return;
+    try{
+      const data=JSON.parse(raw);
+      const ed=document.getElementById('consultantEditor');
+      if(ed&&data.html) ed.innerHTML=data.html;
+    }catch(e){}
   }
 })();
 </script>
