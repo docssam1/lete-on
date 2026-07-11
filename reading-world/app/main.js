@@ -7,7 +7,12 @@ let _audioEl=null;
 function getBestEnVoice(){
   if(_enVoice)return _enVoice;
   const all=window.speechSynthesis?window.speechSynthesis.getVoices():[];
-  const en=all.filter(v=>v.lang.startsWith('en'));
+  // Some Windows machines mislabel a non-English system voice's `lang` field
+  // (or ship a non-English voice as the OS default) — filtering by lang alone
+  // isn't always trustworthy there, so also fall back to matching the voice
+  // *name* for "english" when nothing passes the lang check.
+  let en=all.filter(v=>v.lang&&v.lang.toLowerCase().startsWith('en'));
+  if(!en.length)en=all.filter(v=>/english/i.test(v.name||''));
   // Priority: Google US > Google > any en-US local > any en-US > any en
   _enVoice=en.find(v=>v.name==='Google US English')
     ||en.find(v=>/google/i.test(v.name)&&v.lang==='en-US')
@@ -988,7 +993,7 @@ function speakPassage(passage){
  const text=(source||[]).join('\n\n');
  const run=++st.speechRun;
  const nodes=[...document.querySelectorAll(`.sentence-line[data-passage="${passage}"]`)];
- const bookId=(window.LESSONS&&window.LESSONS[currentLessonId])&&window.LESSONS[currentLessonId].bookId;
+ const bookId=(window.LESSONS&&window.LESSONS[currentLessonId])?window.LESSONS[currentLessonId].bookId:'cars-level-b';
  const audioUrl=audioUrlFor(bookId,currentLessonId,passage);
  if(audioUrl){const el=new Audio(audioUrl);el.playbackRate=Number(st.speed)||1;_audioEl=el;
   // HTML Audio has no word-boundary event like Web Speech's onboundary, so drive the
