@@ -185,7 +185,166 @@ function splitNum(opts){
   };
 }
 
-window.NM_GEN = { pair10, move10, add10sub, stairAdd, splitNum, _util:{R,pick,shuffle} };
+/* ---------- A-05 : 100의 보수 찾기 ----------
+   개념: 더해서 100이 되는 짝을 찾아 먼저 묶는다.
+   초급 B 챕터1 실제 내용. 35+65=100, 23+77=100
+   level: practice = 100의 짝 즉답 / main = 4수 묶기 */
+function comp100(opts){
+  opts=opts||{};
+  const lv=opts.level||'main';
+  if(lv==='practice'){
+    const choices=[10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90];
+    const a=pick(choices);
+    return {
+      gen:'comp100', mode:'practice',
+      ask:a, answer:100-a,
+      prompt:{ko:`${a} + ? = 100`,en:`${a} + ? = 100`,zh:`${a} + ? = 100`},
+      tex:`${a} + \\square = 100`,
+      answerType:'number'
+    };
+  }
+  // main: 4 numbers forming 2 pairs that each sum to 100
+  const o1=R(1,9), t1=R(1,8); const a1=t1*10+o1; const b1=100-a1;
+  const o2=R(1,9), t2=R(1,8); const a2=t2*10+o2; const b2=100-a2;
+  const nums=shuffle([a1,b1,a2,b2]);
+  const sum=nums.reduce((s,n)=>s+n,0);
+  return {
+    gen:'comp100', mode:'main', nums, sum, pairCount:2,
+    prompt:{ko:'100이 되는 짝을 찾아 먼저 더해요',en:'Find pairs summing to 100 and add them first',zh:'找出凑成100的配对先相加'},
+    tex:nums.join(' + '),
+    answerType:'number', answer:sum
+  };
+}
+
+/* ---------- A-06 : 더해서 10이 되는 수를 찾아라 2 ----------
+   개념: 두 자리 수 덧셈에서 일의 자리끼리 합이 10이 되는 짝을 먼저.
+   초급 B 챕터2 실제 내용. 13+86+67+24=190 → 일의자리 3+7=10, 6+4=10
+   level: practice = 일의자리 짝꿍 즉답 / main = 4수 묶기(두자리) */
+function pair10_2d(opts){
+  opts=opts||{};
+  const lv=opts.level||'main';
+  if(lv==='practice'){
+    const a=R(1,9);
+    return {
+      gen:'pair10_2d', mode:'practice',
+      ask:a, answer:10-a,
+      prompt:{ko:`일의 자리가 ${a}이면, 짝꿍 일의 자리는?`,en:`Ones is ${a} — what ones digit makes 10?`,zh:`个位是${a}，配对的个位是？`},
+      tex:`${a} + \\square = 10`,
+      answerType:'number'
+    };
+  }
+  // main: 4 two-digit nums, 2 pairs with ones summing to 10
+  const o1=R(1,9); const o2=10-o1;
+  const o3=R(1,9); const o4=10-o3;
+  const nums=shuffle([R(1,8)*10+o1, R(1,8)*10+o2, R(1,8)*10+o3, R(1,8)*10+o4]);
+  const sum=nums.reduce((s,n)=>s+n,0);
+  return {
+    gen:'pair10_2d', mode:'main', nums, sum, pairCount:2,
+    prompt:{ko:'일의 자리가 10이 되는 짝을 먼저 더해요',en:'Pair ones that make 10, add them first',zh:'个位凑成10的先相加'},
+    tex:nums.join(' + '),
+    answerType:'number', answer:sum
+  };
+}
+
+/* ---------- A-07 : 끼리끼리 더해요 ----------
+   개념: 십의 자리끼리, 일의 자리끼리 따로 더한 후 합산.
+   초급 B 챕터3 실제 내용. 73+62+50+41 → 220+6 = 226
+   level: practice = 두자리 십/일 가르기 / main = 3~4수 끼리끼리 */
+function splitPlace(opts){
+  opts=opts||{};
+  const lv=opts.level||'main';
+  if(lv==='practice'){
+    const t=R(2,9), o=R(1,9), n=t*10+o;
+    return {
+      gen:'splitPlace', mode:'practice',
+      ask:n, answer:t*10,
+      prompt:{ko:`${n}에서 십의 자리 부분은?`,en:`What is the tens part of ${n}?`,zh:`${n}的十位部分是？`},
+      tex:`${n} = \\square + ${o}`,
+      answerType:'number'
+    };
+  }
+  const count=opts.count||R(3,4);
+  const nums=[];
+  for(let i=0;i<count;i++) nums.push(R(21,87));
+  const tensSum=nums.reduce((s,n)=>s+Math.floor(n/10)*10,0);
+  const onesSum=nums.reduce((s,n)=>s+n%10,0);
+  const total=tensSum+onesSum;
+  return {
+    gen:'splitPlace', mode:'main', nums, tensSum, onesSum, answer:total,
+    prompt:{ko:'십의 자리끼리, 일의 자리끼리 따로 더해요',en:'Add tens together and ones together, then combine',zh:'十位加十位，个位加个位，再相加'},
+    tex:`${nums.join(' + ')} = ${total}`,
+    steps:[nums.join(' + '), `${tensSum} + ${onesSum}`, `${total}`],
+    answerType:'number'
+  };
+}
+
+/* ---------- A-08 : 수를 이사시켜요 2 (두 자리) ----------
+   개념: 두 자리 덧셈에서 몇 십이 되도록 한 수에서 다른 수로 이사.
+   초급 B 챕터4 실제 내용. 39+25 → 40+24 = 64
+   level: practice = "다음 몇 십까지 얼마?" 즉답 / main = 두자리 이사 덧셈 */
+function move10_2d(opts){
+  opts=opts||{};
+  const lv=opts.level||'main';
+  if(lv==='practice'){
+    const a=R(21,98);
+    const need=a%10===0?0:(10-a%10);
+    const target=need===0?a+10:a+need;
+    return {
+      gen:'move10_2d', mode:'practice',
+      ask:a, answer:need||10,
+      prompt:{ko:`${a}는 다음 몇 십이 되려면 얼마 더?`,en:`How much more does ${a} need to reach the next ten?`,zh:`${a}再加多少能到下一个整十？`},
+      tex:`${a} + \\square = ${target}`,
+      answerType:'number'
+    };
+  }
+  const ones=pick([8,9]); const tens=R(2,8); const a=tens*10+ones;
+  const need=10-ones;
+  const b=R(need+2, 55);
+  const rest=b-need;
+  const nextTen=a+need;
+  const ans=nextTen+rest;
+  return {
+    gen:'move10_2d', mode:'main',
+    a,b,need,rest,nextTen, answer:ans,
+    prompt:{ko:`${b}에서 ${need}을 이사보내 ${a}를 ${nextTen}으로 만들어요`,en:`Move ${need} from ${b} to round ${a} up to ${nextTen}`,zh:`从${b}里搬${need}过去，把${a}凑成${nextTen}`},
+    tex:`${a}+${b} = ${a}+${need}+${rest} = ${nextTen}+${rest} = ${ans}`,
+    steps:[`${a}+${b}`,`${nextTen}+${rest}`,`${ans}`],
+    answerType:'number'
+  };
+}
+
+/* ---------- A-09 : 새치기 덧셈 ----------
+   개념: 덧셈의 교환법칙 — 더하기 쉬운 짝을 먼저 골라 새치기.
+   초급 C 챕터1 실제 내용. 37+19+24+33 → (37+33)+(19+24)
+   level: practice = 10의 짝꿍 즉답(교환법칙 예열) / main = 4수 새치기 */
+function jumpAdd(opts){
+  opts=opts||{};
+  const lv=opts.level||'main';
+  if(lv==='practice'){
+    const a=R(1,9);
+    return {
+      gen:'jumpAdd', mode:'practice',
+      ask:a, answer:10-a,
+      prompt:{ko:`${a}와 합이 10이 되는 새치기 짝은?`,en:`Which number jumps the queue to make 10 with ${a}?`,zh:`哪个数和${a}凑成10可以"插队"？`},
+      tex:`${a} + \\square = 10`,
+      answerType:'number'
+    };
+  }
+  // 4 numbers: one pair of ones that sum to 10, plus 2 other numbers
+  const o1=R(1,9); const o2=10-o1;
+  const a1=R(1,8)*10+o1, a2=R(2,8)*10+o2;
+  const b1=R(11,79), b2=R(11,79);
+  const nums=shuffle([a1,a2,b1,b2]);
+  const sum=nums.reduce((s,n)=>s+n,0);
+  return {
+    gen:'jumpAdd', mode:'main', nums, sum,
+    prompt:{ko:'더하기 쉬운 짝을 찾아 먼저 새치기해요',en:'Find easy pairs and let them jump the queue',zh:'找出好算的配对，让它们先"插队"'},
+    tex:nums.join(' + '),
+    answerType:'number', answer:sum
+  };
+}
+
+window.NM_GEN = { pair10, move10, add10sub, stairAdd, splitNum, comp100, pair10_2d, splitPlace, move10_2d, jumpAdd, _util:{R,pick,shuffle} };
 
 /* CommonJS(테스트용) */
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_GEN;

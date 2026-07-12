@@ -7,6 +7,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <link rel="stylesheet" href="app/styles.css">
+<link rel="stylesheet" href="app/widgets.css">
+<link rel="stylesheet" href="app/closet.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <style>
 #nm-intro{position:fixed;inset:0;z-index:9999;background:#0E2C57;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease}
@@ -30,12 +32,38 @@ html.skip-intro #nm-intro{display:none}
 <div id="app"></div>
 
 <!-- 데이터 → 엔진 → 본체 순서 -->
+<!-- 1. 레거시 generator 엔진 (pair10, move10, ...) -->
 <script src="engine/generators.js"></script>
+<!-- 2. 시드 RNG + NM_TGEN 레지스트리 -->
+<script src="engine/rng.js"></script>
+<!-- 3. 스레드별 생성기 (NM_TGEN 채움) -->
+<script src="engine/threads/ns_ad.js"></script>
+<script src="engine/threads/sb.js"></script>
+<script src="engine/threads/ml.js"></script>
+<script src="engine/threads/dv.js"></script>
+<script src="engine/threads/fr.js"></script>
+<script src="engine/threads/dc_mx.js"></script>
+<!-- 4. 커리큘럼 + 스레드 메타데이터 -->
 <script src="data/curriculum.js"></script>
+<script src="data/threads.js"></script>
+<script src="data/courses.js"></script>
+<!-- 5. 유닛 데이터 (A-01 ~ A-09) -->
 <script src="data/units/A-01.js"></script>
 <script src="data/units/A-02.js"></script>
 <script src="data/units/A-03.js"></script>
 <script src="data/units/A-04.js"></script>
+<script src="data/units/A-05.js"></script>
+<script src="data/units/A-06.js"></script>
+<script src="data/units/A-07.js"></script>
+<script src="data/units/A-08.js"></script>
+<script src="data/units/A-09.js"></script>
+<!-- 6. 위젯 + 시험 + 꾸미기 모듈 -->
+<script src="app/widgets.js"></script>
+<script src="app/exam.js"></script>
+<script src="data/numi-avatar.js"></script>
+<script src="app/numi-render.js"></script>
+<script src="app/closet.js"></script>
+<!-- 7. 본체 -->
 <script src="app/main.js"></script>
 
 <script>
