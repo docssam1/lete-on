@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>수학 연습장 · Numbers of Magic</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+/* ── 리셋 & 기본 ── */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'Pretendard',sans-serif;color:#1a2233;background:#f8f9fc}
+.katex{font-size:1em}
+
+/* ── 레이아웃 ── */
+#drill-root{min-height:100vh;display:flex;flex-direction:column}
+.dr-header{
+  background:#fff;border-bottom:1px solid #e4e2dc;
+  padding:14px 20px;display:flex;align-items:center;gap:14px;
+  position:sticky;top:0;z-index:100
+}
+.dr-logo{font-weight:900;font-size:18px;color:#16417C;letter-spacing:-.02em}
+.dr-logo span{color:#EAC996}
+.dr-header-sub{font-size:13px;color:#6b7280;margin-left:4px}
+.dr-home-link{margin-left:auto;font-size:13px;color:#6b7280;text-decoration:none;
+  border:1px solid #e4e2dc;border-radius:99px;padding:6px 14px;transition:.15s}
+.dr-home-link:hover{background:#f0f0f0}
+.dr-body{flex:1;padding:24px 16px;max-width:720px;margin:0 auto;width:100%}
+
+/* ── 버튼 ── */
+.nm-btn{border:none;border-radius:12px;font-family:'Pretendard',sans-serif;
+  font-weight:700;cursor:pointer;transition:.15s;padding:12px 22px;font-size:15px}
+.nm-btn:disabled{opacity:.4;cursor:not-allowed}
+.nm-btn:active:not(:disabled){transform:scale(.96)}
+.nm-btn-primary{background:#16417C;color:#fff}
+.nm-btn-primary:hover:not(:disabled){background:#1a4d93}
+.nm-btn-secondary{background:#f0f0f0;color:#1a2233}
+.nm-btn-secondary:hover:not(:disabled){background:#e4e4e4}
+.nm-btn-small{font-size:13px;padding:8px 14px;border-radius:8px}
+
+/* ── 홈 화면 ── */
+.dr-home-title{font-size:clamp(22px,5vw,30px);font-weight:900;color:#16417C;margin-bottom:6px}
+.dr-home-desc{font-size:14px;color:#6b7280;margin-bottom:28px}
+
+/* ── 토픽 입력 코드 ── */
+.dr-code-row{display:flex;gap:8px;margin-bottom:28px;align-items:center;flex-wrap:wrap}
+.dr-code-input{border:1px solid #d1d5db;border-radius:10px;padding:10px 14px;font-size:14px;
+  font-family:'Pretendard',monospace;width:180px;outline:none;transition:.15s}
+.dr-code-input:focus{border-color:#16417C;box-shadow:0 0 0 3px rgba(22,65,124,.1)}
+.dr-code-label{font-size:13px;color:#6b7280}
+
+/* ── 카테고리 그리드 ── */
+.dr-cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:32px}
+.dr-cat{
+  border:2px solid transparent;border-radius:18px;padding:18px 14px;
+  cursor:pointer;transition:.18s;text-align:center;background:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.06)
+}
+.dr-cat:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.1)}
+.dr-cat.active{border-color:currentColor}
+.dr-cat-icon{font-size:32px;margin-bottom:8px}
+.dr-cat-label{font-size:15px;font-weight:800;display:block}
+.dr-cat-en{font-size:11px;color:#9ca3af;margin-top:3px}
+
+/* ── 서브토픽 패널 ── */
+.dr-sub-panel{background:#fff;border-radius:16px;padding:20px;margin-bottom:24px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.dr-sub-title{font-size:15px;font-weight:800;color:#374151;margin-bottom:14px}
+.dr-subs{display:flex;flex-direction:column;gap:8px}
+.dr-sub-item{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;
+  border:2px solid #e4e2dc;border-radius:12px;cursor:pointer;transition:.15s;background:#fafaf9
+}
+.dr-sub-item:hover{border-color:#9ca3af;background:#fff}
+.dr-sub-item.selected{border-color:var(--cat-color);background:#fff;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--cat-color) 15%,transparent)}
+.dr-sub-item-radio{width:16px;height:16px;border-radius:50%;border:2px solid #d1d5db;flex:none;
+  display:flex;align-items:center;justify-content:center;transition:.15s}
+.dr-sub-item.selected .dr-sub-item-radio{border-color:var(--cat-color);background:var(--cat-color)}
+.dr-sub-item.selected .dr-sub-item-radio::after{content:'';display:block;width:6px;height:6px;border-radius:50%;background:#fff}
+.dr-sub-item-label{font-size:14px;font-weight:700;color:#1f2937}
+.dr-sub-item-desc{font-size:12px;color:#9ca3af;margin-top:2px}
+
+/* ── 설정 패널 ── */
+.dr-settings{background:#fff;border-radius:16px;padding:20px;margin-bottom:24px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.dr-settings-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.dr-settings-row:last-child{margin-bottom:0}
+.dr-settings-label{font-size:13px;font-weight:700;color:#374151;min-width:80px}
+.dr-chip-group{display:flex;gap:6px;flex-wrap:wrap}
+.dr-chip{border:1px solid #d1d5db;border-radius:99px;padding:7px 14px;font-size:13px;
+  font-weight:700;cursor:pointer;transition:.15s;background:#f9f9f9;color:#374151}
+.dr-chip:hover{border-color:#9ca3af;background:#f0f0f0}
+.dr-chip.on{border-color:#16417C;background:#16417C;color:#fff}
+
+/* ── 시작 버튼 영역 ── */
+.dr-start-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.dr-seed-wrap{display:flex;align-items:center;gap:8px;margin-left:auto}
+.dr-seed-label{font-size:12px;color:#9ca3af}
+.dr-seed-code{font-size:12px;font-family:monospace;color:#6b7280;border:1px solid #e4e2dc;
+  border-radius:6px;padding:5px 10px;background:#fafaf9}
+
+/* ── 문제 화면 (exam.js가 생성하는 .nm-exam-*) ── */
+.nm-exam-run{display:flex;flex-direction:column;gap:0}
+.nm-exam-header{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.nm-exam-progress{height:8px;background:#e4e2dc;border-radius:99px;overflow:hidden;margin-bottom:10px}
+.nm-progress-bar{height:100%;background:linear-gradient(90deg,#16417C,#3b82f6);border-radius:99px;
+  transition:width .3s ease}
+.nm-exam-info{display:flex;justify-content:space-between;align-items:center}
+.nm-q-counter{font-size:13px;font-weight:700;color:#6b7280}
+.nm-timer{font-size:14px;font-weight:800;color:#ef4444;background:#fef2f2;
+  padding:4px 10px;border-radius:99px}
+
+.nm-exam-question{
+  background:#fff;border-radius:20px;padding:40px 24px 32px;
+  text-align:center;margin-bottom:16px;
+  box-shadow:0 4px 20px rgba(0,0,0,.08);min-height:160px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center
+}
+.nm-q-tex{font-size:clamp(28px,8vw,44px);font-weight:900;letter-spacing:-.02em;color:#1a2233;
+  line-height:1.3}
+.nm-q-tex .katex{font-size:1em}
+.nm-q-hint{font-size:13px;color:#9ca3af;margin-top:12px}
+
+.nm-exam-input{display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:16px}
+#nm-ex-ans{
+  font-size:clamp(22px,6vw,32px);text-align:center;padding:14px 16px;
+  border:2px solid #e4e2dc;border-radius:14px;width:140px;font-family:'Pretendard',sans-serif;
+  font-weight:900;outline:none;transition:.15s;background:#fff;color:#1a2233;
+  -moz-appearance:textfield
+}
+#nm-ex-ans::-webkit-outer-spin-button,#nm-ex-ans::-webkit-inner-spin-button{-webkit-appearance:none}
+#nm-ex-ans:focus{border-color:#16417C;box-shadow:0 0 0 3px rgba(22,65,124,.15)}
+#nm-ex-submit{background:#16417C;color:#fff;font-size:17px;font-weight:900;
+  border:none;border-radius:14px;padding:14px 24px;cursor:pointer;transition:.15s;
+  font-family:'Pretendard',sans-serif}
+#nm-ex-submit:hover{background:#1a4d93}
+#nm-ex-submit:active{transform:scale(.96)}
+
+.nm-exam-nav{display:flex;justify-content:center;gap:12px}
+#nm-ex-prev,#nm-ex-skip{background:#f0f0f0;color:#374151;border:none;border-radius:10px;
+  padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;
+  font-family:'Pretendard',sans-serif;transition:.15s}
+#nm-ex-prev:hover:not(:disabled),#nm-ex-skip:hover{background:#e4e4e4}
+#nm-ex-prev:disabled{opacity:.35;cursor:not-allowed}
+
+/* ── 숫자 키패드 (모바일) ── */
+.dr-numpad{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  margin-top:16px;max-width:260px;margin-left:auto;margin-right:auto
+}
+.dr-numpad-btn{
+  background:#fff;border:1px solid #e4e2dc;border-radius:12px;
+  font-size:22px;font-weight:700;padding:16px 10px;
+  cursor:pointer;transition:.1s;color:#1a2233;font-family:'Pretendard',sans-serif
+}
+.dr-numpad-btn:active{background:#eef3fb;transform:scale(.94)}
+.dr-numpad-btn.dr-np-del{background:#fef2f2;color:#ef4444;font-size:18px}
+.dr-numpad-btn.dr-np-ok{background:#16417C;color:#fff;font-size:16px;grid-column:span 2}
+
+/* ── 결과 화면 ── */
+.nm-exam-result{display:flex;flex-direction:column;gap:16px}
+.nm-result-score{
+  background:#fff;border-radius:20px;padding:32px 24px;text-align:center;
+  box-shadow:0 4px 20px rgba(0,0,0,.08)
+}
+.nm-result-score.nm-pass{border-top:6px solid #10b981}
+.nm-result-score.nm-fail{border-top:6px solid #f59e0b}
+.nm-score-num{font-size:clamp(40px,12vw,64px);font-weight:900;color:#1a2233;line-height:1}
+.nm-score-pct{font-size:24px;font-weight:800;color:#6b7280;margin-top:4px}
+.nm-score-label{font-size:18px;font-weight:800;margin-top:10px}
+.nm-result-score.nm-pass .nm-score-label{color:#10b981}
+.nm-result-score.nm-fail .nm-score-label{color:#f59e0b}
+.nm-score-time{font-size:14px;color:#9ca3af;margin-top:8px}
+
+.nm-result-perfect{font-size:18px;font-weight:700;text-align:center;padding:20px;color:#10b981}
+
+.nm-result-wrongs{background:#fff;border-radius:16px;padding:20px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.nm-result-wrongs h3{font-size:15px;font-weight:800;margin-bottom:14px;color:#374151}
+.nm-result-table{width:100%;border-collapse:collapse;font-size:14px}
+.nm-result-table th{text-align:left;padding:8px 12px;font-size:12px;color:#9ca3af;
+  border-bottom:1px solid #e4e2dc;font-weight:700}
+.nm-result-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.nm-rtex{min-width:120px}
+.nm-wrong-ans{color:#ef4444;font-weight:700;font-size:15px}
+.nm-correct-ans{color:#10b981;font-weight:700;font-size:15px}
+
+.nm-result-actions{display:flex;gap:10px;flex-wrap:wrap}
+.nm-result-actions .nm-btn{flex:1;min-width:120px;text-align:center}
+.nm-result-code{font-size:12px;color:#9ca3af;text-align:center}
+.nm-result-code code{font-family:monospace;background:#f0f0f0;padding:2px 8px;border-radius:4px;color:#374151}
+
+/* ── 학습지 코드 입력 영역 ── */
+.dr-replay-section{background:#fffbeb;border:1px solid #fde68a;border-radius:14px;
+  padding:16px;margin-bottom:24px}
+.dr-replay-title{font-size:14px;font-weight:700;color:#92400e;margin-bottom:10px}
+
+/* ── 반응형 ── */
+@media(max-width:500px){
+  .dr-cats{grid-template-columns:repeat(3,1fr);gap:8px}
+  .dr-cat{padding:14px 8px}
+  .dr-cat-icon{font-size:26px;margin-bottom:6px}
+  .dr-cat-label{font-size:13px}
+  .dr-cat-en{display:none}
+  .nm-exam-question{padding:28px 16px 24px;min-height:130px}
+  .dr-numpad{max-width:300px}
+}
+
+/* ── 인쇄 (exam.js print CSS 보완) ── */
+@media print{
+  body>*:not(.nm-print-sheet){display:none!important}
+  .nm-print-sheet{display:block!important}
+}
+</style>
+</head>
+<body>
+<div id="drill-root">
+  <header class="dr-header">
+    <div class="dr-logo">Numbers <span>of</span> Magic</div>
+    <span class="dr-header-sub">수학 연습장</span>
+    <a href="index.html?enter=1" class="dr-home-link">🏠 마을로</a>
+  </header>
+  <div class="dr-body" id="dr-body"></div>
+</div>
+
+<!-- ── 엔진 → 스레드 생성기 → 스레드 메타 → 시험 모듈 ── -->
+<script src="engine/generators.js"></script>
+<script src="engine/rng.js"></script>
+<script src="engine/threads/ns_ad.js"></script>
+<script src="engine/threads/sb.js"></script>
+<script src="engine/threads/ml.js"></script>
+<script src="engine/threads/dv.js"></script>
+<script src="engine/threads/fr.js"></script>
+<script src="engine/threads/dc_mx.js"></script>
+<script src="data/threads.js"></script>
+<script src="app/exam.js"></script>
+
+<script>
+(function(){
+'use strict';
+
+/* ── 토픽 정의 ── */
+var TOPICS = [
+  { id:'add', label:'덧셈', en:'Addition', icon:'＋', color:'#3b82f6',
+    subs:[
+      {label:'한 자리 덧셈 (올림 없음)', thread:'AD1', level:1, desc:'합 9 이하'},
+      {label:'받아올림 덧셈 (한 자리)', thread:'AD2', level:1, desc:'합 10 이상'},
+      {label:'세 수 더하기', thread:'AD2', level:2, desc:'받아올림 세 수'},
+      {label:'두 자리 + 한 자리 (올림)', thread:'AD3', level:2, desc:'받아올림 포함'},
+      {label:'두 자리 + 두 자리', thread:'AD5', level:2, desc:'받아올림 자유'},
+      {label:'세 자리 덧셈', thread:'AD6', level:2, desc:'3d + 3d'},
+      {label:'몇십 · 몇백 더하기', thread:'AD4', level:1, desc:'10s + 10s'},
+    ]
+  },
+  { id:'sub', label:'뺄셈', en:'Subtraction', icon:'－', color:'#ef4444',
+    subs:[
+      {label:'한 자리 뺄셈', thread:'SB1', level:1, desc:'9 이하'},
+      {label:'두 자리 − 한 자리 (내림 없음)', thread:'SB3', level:1, desc:'받아내림 없음'},
+      {label:'두 자리 − 한 자리 (내림)', thread:'SB3', level:2, desc:'받아내림 있음'},
+      {label:'두 자리 − 두 자리', thread:'SB4', level:2, desc:'받아내림 있음'},
+      {label:'세 자리 뺄셈', thread:'SB6', level:1, desc:'3d − 3d'},
+      {label:'보정 빼기 (7·8·9 빼기)', thread:'SB5', level:1, desc:'더 빼고 돌려받기'},
+    ]
+  },
+  { id:'mul', label:'곱셈', en:'Multiplication', icon:'×', color:'#10b981',
+    subs:[
+      {label:'구구단 2 · 3단', thread:'ML2', level:1, desc:'2단, 3단'},
+      {label:'구구단 4 · 5단', thread:'ML2', level:2, desc:'4단, 5단'},
+      {label:'구구단 6 · 7단', thread:'ML3', level:1, desc:'6단, 7단'},
+      {label:'구구단 8 · 9단', thread:'ML3', level:2, desc:'8단, 9단'},
+      {label:'구구단 전체 (2~9단)', thread:'ML4', level:1, desc:'2~9단 혼합'},
+      {label:'□ 채우기 (역구구)', thread:'ML4', level:2, desc:'빈칸에 인수 찾기'},
+      {label:'두 자리 × 한 자리', thread:'ML6', level:2, desc:'분배 암산'},
+      {label:'배수 (×2 / ÷2)', thread:'ML1', level:1, desc:'두 배와 반으로'},
+    ]
+  },
+  { id:'div', label:'나눗셈', en:'Division', icon:'÷', color:'#f59e0b',
+    subs:[
+      {label:'두 자리 ÷ 한 자리 (나머지 없음)', thread:'DV2', level:1, desc:'나누어 떨어짐'},
+      {label:'나머지 있는 나눗셈', thread:'DV3', level:1, desc:'2d ÷ 1d, 나머지 있음'},
+      {label:'세 자리 ÷ 한 자리', thread:'DV4', level:1, desc:'3d ÷ 1d'},
+      {label:'세 자리 ÷ 한 자리 (나머지)', thread:'DV4', level:2, desc:'나머지 있음'},
+    ]
+  },
+  { id:'creative', label:'창의수연', en:'Strategy Math', icon:'🧠', color:'#8b5cf6',
+    subs:[
+      {label:'보수 10 찾기', thread:'NS3', level:2, desc:'더해서 10 만들기'},
+      {label:'보수 100 찾기', thread:'NS4', level:2, desc:'더해서 100 만들기'},
+      {label:'짝 묶어 더하기 (한 자리)', thread:'AD8', level:1, desc:'4개 수, 짝 10 묶기'},
+      {label:'짝 묶어 더하기 (두 자리)', thread:'AD8', level:3, desc:'두 자리 수 포함'},
+      {label:'자릿값 읽기', thread:'NS1', level:1, desc:'두·세 자리 자릿값'},
+      {label:'모으기 · 가르기', thread:'NS2', level:2, desc:'9까지 수 가르기'},
+    ]
+  }
+];
+
+/* ── 상태 ── */
+var state = {
+  view: 'home',        // 'home' | 'drill' | 'result'
+  catId: null,
+  subIdx: null,
+  count: 10,
+  timer: 0,
+  seed: null,
+  lastResult: null
+};
+
+var body = document.getElementById('dr-body');
+
+/* ── 헬퍼 ── */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function getConfig(){
+  var cat = TOPICS.find(function(t){return t.id===state.catId;});
+  var sub = cat && cat.subs[state.subIdx];
+  if(!sub) return null;
+  return {
+    thread: sub.thread,
+    level: sub.level,
+    count: state.count,
+    timer: state.timer,
+    seed: state.seed || NM_RNG.newCode()
+  };
+}
+
+function newSeed(){ state.seed = NM_RNG.newCode(); }
+
+/* ── 홈 화면 ── */
+function showHome(){
+  state.view = 'home';
+  newSeed();
+
+  var activeCat = TOPICS.find(function(t){return t.id===state.catId;});
+  var activeSub = activeCat && state.subIdx!=null ? activeCat.subs[state.subIdx] : null;
+
+  var html = '';
+  html += '<h1 class="dr-home-title">수학 연습장 📝</h1>';
+  html += '<p class="dr-home-desc">주제를 고르고 바로 연습해요 · 인쇄 학습지도 만들 수 있어요</p>';
+
+  /* 학습지 코드로 재실행 */
+  html += '<div class="dr-replay-section">';
+  html += '<div class="dr-replay-title">📋 학습지 코드로 다시 풀기</div>';
+  html += '<div class="dr-code-row">';
+  html += '<input class="dr-code-input" id="dr-code-in" placeholder="#AD2-L1x20-k3f9z" maxlength="32">';
+  html += '<button class="nm-btn nm-btn-primary nm-btn-small" id="dr-code-start">시작</button>';
+  html += '<span class="dr-code-label">같은 문제를 다시 풀거나 공유할 수 있어요</span>';
+  html += '</div></div>';
+
+  /* 카테고리 타일 */
+  html += '<div class="dr-cats">';
+  TOPICS.forEach(function(cat){
+    var active = state.catId === cat.id ? ' active' : '';
+    html += '<div class="dr-cat' + active + '" data-cat="' + cat.id + '" style="color:' + cat.color + '">';
+    html += '<div class="dr-cat-icon">' + cat.icon + '</div>';
+    html += '<span class="dr-cat-label">' + esc(cat.label) + '</span>';
+    html += '<div class="dr-cat-en">' + esc(cat.en) + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  /* 서브토픽 패널 (카테고리 선택 시 표시) */
+  if(activeCat){
+    html += '<div class="dr-sub-panel">';
+    html += '<div class="dr-sub-title">' + esc(activeCat.icon) + ' ' + esc(activeCat.label) + ' — 주제 선택</div>';
+    html += '<div class="dr-subs">';
+    activeCat.subs.forEach(function(sub, i){
+      var sel = state.subIdx === i ? ' selected' : '';
+      html += '<div class="dr-sub-item' + sel + '" data-sub="' + i + '" style="--cat-color:' + activeCat.color + '">';
+      html += '<div class="dr-sub-item-radio"></div>';
+      html += '<div>';
+      html += '<div class="dr-sub-item-label">' + esc(sub.label) + '</div>';
+      html += '<div class="dr-sub-item-desc">' + esc(sub.desc) + '</div>';
+      html += '</div></div>';
+    });
+    html += '</div></div>';
+  }
+
+  /* 설정 패널 (서브 선택 시 표시) */
+  if(activeSub){
+    html += '<div class="dr-settings">';
+    html += '<div class="dr-settings-row">';
+    html += '<span class="dr-settings-label">문항 수</span>';
+    html += '<div class="dr-chip-group">';
+    [5,10,20,30].forEach(function(n){
+      html += '<div class="dr-chip' + (state.count===n?' on':'') + '" data-count="' + n + '">' + n + '문제</div>';
+    });
+    html += '</div></div>';
+
+    html += '<div class="dr-settings-row">';
+    html += '<span class="dr-settings-label">타이머</span>';
+    html += '<div class="dr-chip-group">';
+    [{v:0,l:'없음'},{v:180,l:'3분'},{v:300,l:'5분'},{v:600,l:'10분'}].forEach(function(t){
+      html += '<div class="dr-chip' + (state.timer===t.v?' on':'') + '" data-timer="' + t.v + '">' + esc(t.l) + '</div>';
+    });
+    html += '</div></div>';
+
+    html += '<div class="dr-start-row">';
+    html += '<button class="nm-btn nm-btn-primary" id="dr-start-btn" style="background:' + activeCat.color + '">▶ 연습 시작</button>';
+    html += '<button class="nm-btn nm-btn-secondary nm-btn-small" id="dr-print-btn">🖨 학습지 인쇄</button>';
+    html += '<div class="dr-seed-wrap">';
+    html += '<span class="dr-seed-label">코드</span>';
+    html += '<span class="dr-seed-code" id="dr-seed-disp">' + esc(NM_EXAM.worksheetCode(getConfig() || {thread:'?',level:1,count:state.count,seed:state.seed})) + '</span>';
+    html += '<button class="nm-btn nm-btn-secondary nm-btn-small" id="dr-new-seed">🎲</button>';
+    html += '</div></div>';
+    html += '</div>';
+  }
+
+  body.innerHTML = html;
+  bindHome();
+}
+
+function bindHome(){
+  /* 카테고리 클릭 */
+  body.querySelectorAll('.dr-cat').forEach(function(el){
+    el.addEventListener('click', function(){
+      state.catId = this.dataset.cat;
+      state.subIdx = null;
+      showHome();
+    });
+  });
+
+  /* 서브토픽 클릭 */
+  body.querySelectorAll('.dr-sub-item').forEach(function(el){
+    el.addEventListener('click', function(){
+      state.subIdx = parseInt(this.dataset.sub);
+      newSeed();
+      showHome();
+    });
+  });
+
+  /* 문항 수 칩 */
+  body.querySelectorAll('.dr-chip[data-count]').forEach(function(el){
+    el.addEventListener('click', function(){
+      state.count = parseInt(this.dataset.count);
+      showHome();
+    });
+  });
+
+  /* 타이머 칩 */
+  body.querySelectorAll('.dr-chip[data-timer]').forEach(function(el){
+    el.addEventListener('click', function(){
+      state.timer = parseInt(this.dataset.timer);
+      showHome();
+    });
+  });
+
+  /* 새 씨드 */
+  var newSeedBtn = document.getElementById('dr-new-seed');
+  if(newSeedBtn) newSeedBtn.addEventListener('click', function(){ newSeed(); showHome(); });
+
+  /* 시작 버튼 */
+  var startBtn = document.getElementById('dr-start-btn');
+  if(startBtn) startBtn.addEventListener('click', function(){
+    var cfg = getConfig();
+    if(!cfg) return;
+    showDrill(cfg);
+  });
+
+  /* 인쇄 버튼 */
+  var printBtn = document.getElementById('dr-print-btn');
+  if(printBtn) printBtn.addEventListener('click', function(){
+    var cfg = getConfig();
+    if(!cfg) return;
+    NM_EXAM.renderPrint(cfg);
+  });
+
+  /* 코드로 시작 */
+  var codeStartBtn = document.getElementById('dr-code-start');
+  if(codeStartBtn) codeStartBtn.addEventListener('click', function(){
+    var code = document.getElementById('dr-code-in').value.trim();
+    var parsed = NM_EXAM.parseWorksheetCode ? NM_EXAM.parseWorksheetCode(code) : null;
+    if(!parsed){
+      /* 직접 파싱 */
+      var m = code.match(/^#?([A-Z0-9]+)-L(\d+)x(\d+)-([a-z0-9]+)$/i);
+      if(m) parsed = {thread:m[1],level:parseInt(m[2]),count:parseInt(m[3]),seed:m[4]};
+    }
+    if(!parsed){ alert('코드 형식이 올바르지 않아요.\n예) #AD2-L1x20-k3f9z'); return; }
+    var cfg = {thread:parsed.thread,level:parsed.level,count:parsed.count,timer:0,seed:parsed.seed};
+    showDrill(cfg);
+  });
+
+  /* Enter 키 */
+  var codeIn = document.getElementById('dr-code-in');
+  if(codeIn) codeIn.addEventListener('keydown', function(e){
+    if(e.key==='Enter') document.getElementById('dr-code-start') && document.getElementById('dr-code-start').click();
+  });
+}
+
+/* ── 연습 화면 ── */
+function showDrill(cfg){
+  state.view = 'drill';
+  body.innerHTML = '';
+
+  var wrapper = document.createElement('div');
+  wrapper.id = 'dr-drill-wrap';
+  body.appendChild(wrapper);
+
+  /* 뒤로가기 버튼 */
+  var backRow = document.createElement('div');
+  backRow.style.cssText = 'margin-bottom:14px;display:flex;align-items:center;gap:10px';
+  var backBtn = document.createElement('button');
+  backBtn.className = 'nm-btn nm-btn-secondary nm-btn-small';
+  backBtn.textContent = '← 주제 선택';
+  backBtn.addEventListener('click', showHome);
+  backRow.appendChild(backBtn);
+
+  /* 현재 주제 표시 */
+  var topicInfo = document.createElement('span');
+  topicInfo.style.cssText = 'font-size:13px;color:#6b7280;font-weight:600';
+  var th = (window.NM_THREADS||{})[cfg.thread]||{};
+  topicInfo.textContent = (th.name&&th.name.ko)||cfg.thread;
+  backRow.appendChild(topicInfo);
+  body.insertBefore(backRow, wrapper);
+
+  /* 숫자패드 (모바일 지원) — drill wrapper 아래에 추가 */
+  var numpadHtml = '<div class="dr-numpad" id="dr-numpad" style="display:none">';
+  [7,8,9, 4,5,6, 1,2,3].forEach(function(n){
+    numpadHtml += '<button class="dr-numpad-btn" data-n="' + n + '">' + n + '</button>';
+  });
+  numpadHtml += '<button class="dr-numpad-btn dr-np-del" data-n="del">⌫</button>';
+  numpadHtml += '<button class="dr-numpad-btn" data-n="0">0</button>';
+  numpadHtml += '<button class="dr-numpad-btn dr-np-ok" data-n="ok">확인 ✓</button>';
+  numpadHtml += '</div>';
+
+  NM_EXAM.runExam(cfg, wrapper, function(result){
+    /* 숫자패드 숨기기 */
+    var np = document.getElementById('dr-numpad');
+    if(np) np.remove();
+    state.lastResult = result;
+    showResult(result, cfg);
+  });
+
+  /* 숫자패드 삽입 + 활성화 */
+  body.insertAdjacentHTML('beforeend', numpadHtml);
+  activateNumpad();
+}
+
+function activateNumpad(){
+  var numpad = document.getElementById('dr-numpad');
+  if(!numpad) return;
+
+  /* 모바일이면 보여주기, 데스크탑은 숨김 */
+  if('ontouchstart' in window || navigator.maxTouchPoints > 0){
+    numpad.style.display = 'grid';
+  } else {
+    numpad.style.display = 'none';
+  }
+
+  numpad.addEventListener('click', function(e){
+    var btn = e.target.closest('.dr-numpad-btn');
+    if(!btn) return;
+    var n = btn.dataset.n;
+    var inp = document.getElementById('nm-ex-ans') || document.getElementById('nm-ex-ans2');
+    if(!inp) return;
+    if(n === 'del'){
+      inp.value = inp.value.slice(0, -1) || '';
+    } else if(n === 'ok'){
+      var submitBtn = document.getElementById('nm-ex-submit') || document.getElementById('nm-ex-sub2');
+      if(submitBtn) submitBtn.click();
+    } else {
+      inp.value = (inp.value||'') + n;
+    }
+    inp.dispatchEvent(new Event('input'));
+  });
+}
+
+/* ── 결과 화면 ── */
+function showResult(result, origCfg){
+  state.view = 'result';
+  body.innerHTML = '';
+
+  var backRow = document.createElement('div');
+  backRow.style.cssText = 'margin-bottom:14px';
+  var backBtn = document.createElement('button');
+  backBtn.className = 'nm-btn nm-btn-secondary nm-btn-small';
+  backBtn.textContent = '← 주제 선택';
+  backBtn.addEventListener('click', showHome);
+  backRow.appendChild(backBtn);
+  body.appendChild(backRow);
+
+  var resultWrap = document.createElement('div');
+  body.appendChild(resultWrap);
+
+  NM_EXAM.renderResult(result, resultWrap, function(opts){
+    if(opts.mode === 'new'){
+      var newCfg = {
+        thread: opts.thread||origCfg.thread,
+        level: opts.level||origCfg.level,
+        count: opts.count||origCfg.count,
+        timer: origCfg.timer,
+        seed: NM_RNG.newCode()
+      };
+      showDrill(newCfg);
+    } else if(opts.mode === 'wrongs'){
+      showWrongsRetry(opts.wrongs, origCfg);
+    }
+  });
+
+  /* 키패드 추가 (결과 화면에도 오답 재시험 있으므로) */
+  body.insertAdjacentHTML('beforeend', '<div class="dr-numpad" id="dr-numpad" style="display:none"></div>');
+  document.getElementById('dr-numpad').innerHTML = buildNumpadHTML();
+  activateNumpad();
+}
+
+function buildNumpadHTML(){
+  var h = '';
+  [7,8,9,4,5,6,1,2,3].forEach(function(n){ h += '<button class="dr-numpad-btn" data-n="'+n+'">'+n+'</button>'; });
+  h += '<button class="dr-numpad-btn dr-np-del" data-n="del">⌫</button>';
+  h += '<button class="dr-numpad-btn" data-n="0">0</button>';
+  h += '<button class="dr-numpad-btn dr-np-ok" data-n="ok">확인 ✓</button>';
+  return h;
+}
+
+/* ── 오답 재시험 ── */
+function showWrongsRetry(wrongs, origCfg){
+  body.innerHTML = '';
+  var wrongProblems = wrongs.map(function(w){return w.p;});
+  var answers = new Array(wrongProblems.length).fill(null);
+  var current = 0;
+  var startTime = Date.now();
+
+  var backRow = document.createElement('div');
+  backRow.style.cssText = 'margin-bottom:14px';
+  var backBtn = document.createElement('button');
+  backBtn.className = 'nm-btn nm-btn-secondary nm-btn-small';
+  backBtn.textContent = '← 주제 선택';
+  backBtn.addEventListener('click', showHome);
+  backRow.appendChild(backBtn);
+  body.appendChild(backRow);
+
+  var wrap = document.createElement('div');
+  body.appendChild(wrap);
+
+  function renderWrong(){
+    var p = wrongProblems[current];
+    var pct = Math.round((current/wrongProblems.length)*100);
+    wrap.innerHTML =
+      '<div class="nm-exam-run">' +
+        '<div class="nm-exam-header">' +
+          '<div class="nm-exam-progress"><div class="nm-progress-bar" style="width:' + pct + '%"></div></div>' +
+          '<div class="nm-exam-info"><span class="nm-q-counter">오답 재시험 ' + (current+1) + ' / ' + wrongProblems.length + '</span></div>' +
+        '</div>' +
+        '<div class="nm-exam-question"><div class="nm-q-tex" id="nm-ex-qtex2"></div></div>' +
+        '<div class="nm-exam-input">' +
+          '<input id="nm-ex-ans2" type="number" placeholder="답" autocomplete="off" ' +
+            'style="font-size:clamp(22px,6vw,32px);text-align:center;padding:14px 16px;' +
+            'border:2px solid #e4e2dc;border-radius:14px;width:140px;font-family:Pretendard,sans-serif;' +
+            'font-weight:900;outline:none;-moz-appearance:textfield">' +
+          '<button id="nm-ex-sub2" class="nm-btn nm-btn-primary" style="margin-left:12px">확인 ✓</button>' +
+        '</div>' +
+      '</div>';
+
+    if(window.katex){
+      try{ katex.render(p.tex||'', document.getElementById('nm-ex-qtex2'), {throwOnError:false}); }catch(_){}
+    } else {
+      document.getElementById('nm-ex-qtex2').textContent = (p.tex||'').replace(/\\square/g,'□').replace(/\\/g,'');
+    }
+
+    var inp = document.getElementById('nm-ex-ans2');
+    if(answers[current]!==null) inp.value = answers[current];
+    inp.focus();
+
+    function submit(){
+      var v = parseInt(inp.value);
+      if(!isNaN(v)) answers[current] = v;
+      current++;
+      if(current >= wrongProblems.length){
+        var score = wrongProblems.filter(function(p,i){return answers[i]===p.answer;}).length;
+        var elapsed = Math.round((Date.now()-startTime)/1000);
+        wrap.innerHTML =
+          '<div class="nm-exam-result">' +
+            '<div class="nm-result-score ' + (score===wrongProblems.length?'nm-pass':'nm-fail') + '">' +
+              '<div class="nm-score-num">' + score + ' / ' + wrongProblems.length + '</div>' +
+              '<div class="nm-score-label">' + (score===wrongProblems.length?'🎉 완벽해요!':'💪 계속 연습해요') + '</div>' +
+            '</div>' +
+            '<div class="nm-result-actions" style="margin-top:16px">' +
+              '<button id="dr-wr-again" class="nm-btn nm-btn-primary">🎲 새 문제</button>' +
+              '<button id="dr-wr-home" class="nm-btn nm-btn-secondary">← 주제 선택</button>' +
+            '</div>' +
+          '</div>';
+        document.getElementById('dr-wr-home').addEventListener('click', showHome);
+        document.getElementById('dr-wr-again').addEventListener('click', function(){
+          showDrill({thread:origCfg.thread,level:origCfg.level,count:origCfg.count,timer:origCfg.timer,seed:NM_RNG.newCode()});
+        });
+      } else {
+        renderWrong();
+      }
+    }
+    document.getElementById('nm-ex-sub2').addEventListener('click', submit);
+    inp.addEventListener('keydown', function(e){ if(e.key==='Enter') submit(); });
+  }
+
+  body.insertAdjacentHTML('beforeend', '<div class="dr-numpad" id="dr-numpad" style="display:none">' + buildNumpadHTML() + '</div>');
+  activateNumpad();
+  renderWrong();
+}
+
+/* ── 시작 ── */
+/* parseWorksheetCode를 NM_EXAM에서 가져오거나 직접 구현 */
+if(!NM_EXAM.parseWorksheetCode){
+  NM_EXAM.parseWorksheetCode = function(code){
+    var m = (code||'').match(/^#?([A-Z0-9]+)-L(\d+)x(\d+)-([a-z0-9]+)$/i);
+    if(!m) return null;
+    return {thread:m[1],level:parseInt(m[2]),count:parseInt(m[3]),seed:m[4]};
+  };
+}
+
+showHome();
+
+})();
+</script>
+</body>
+</html>
