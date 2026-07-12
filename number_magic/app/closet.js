@@ -18,7 +18,7 @@ window.screenCloset = function(container, opts){
 
   const TABS = [
     {key:'number',ko:'캐릭터',en:'Character',zh:'角色'},
-    {key:'color', ko:'오라',  en:'Aura',     zh:'光环'},
+    {key:'color', ko:'색',    en:'Color',    zh:'颜色'},
     {key:'bg',    ko:'배경',  en:'BG',       zh:'背景'},
   ];
   let activeTab = 'number';
@@ -65,14 +65,11 @@ window.screenCloset = function(container, opts){
 
   /* ── 선택 ── */
   function select(type, val){
-    if(type==='number'){
-      cur.number = +val;
-    } else {
-      if(!isUnlocked(type, val)){
-        if(!buy(type, val)) return;
-      }
-      cur[type] = val;
+    if(!isUnlocked(type, val)){
+      if(!buy(type, val)) return;
     }
+    if(type==='number') cur.number = +val;
+    else cur[type] = val;
     save();
     redraw();
   }
@@ -86,12 +83,31 @@ window.screenCloset = function(container, opts){
   /* ── 탭 항목 HTML ── */
   function tabItemsHTML(){
     if(activeTab==='number'){
-      return [0,1,2,3,4,5,6,7,8,9].map(n=>{
+      const items = av.numbers || [];
+      const singles = items.filter(it=>+it.id < 10);
+      const specials = items.filter(it=>+it.id >= 10);
+      let html = singles.map(item=>{
+        const n = +item.id;
         const sel = cur.number===n ? 'sel' : '';
-        return `<button class="nmc-num-btn ${sel}" data-n="${n}">
+        return `<button class="nmc-num-btn ${sel}" data-type="number" data-id="${item.id}">
           ${rndr ? rndr({...cur,number:n},54) : n}
         </button>`;
       }).join('');
+      if(specials.length){
+        const hdr = lang==='en'?'✨ Special Rewards · Two-Digit':lang==='zh'?'✨ 特别奖励 · 两位数':'✨ 특별 보상 · 두 자리 수';
+        html += `<div class="nmc-section-title">${hdr}</div>`;
+        html += specials.map(item=>{
+          const n = +item.id;
+          const unl = isUnlocked('number', item.id);
+          const sel = cur.number===n ? 'sel' : '';
+          return `<button class="nmc-item ${sel}${unl?'':' locked'}" data-type="number" data-id="${item.id}">
+            <div class="nmc-thumb">${miniPreview({number:n},52)}</div>
+            <div class="nmc-iname">${n}</div>
+            ${unl?'':item.price?`<div class="nmc-iprice">🪙${item.price}</div>`:''}
+          </button>`;
+        }).join('');
+      }
+      return html;
     }
     const typeItems = {color:'colors',bg:'bgs'};
     const items = av[typeItems[activeTab]] || [];
@@ -124,7 +140,6 @@ window.screenCloset = function(container, opts){
 
   /* ── 항목 이벤트 바인딩 ── */
   function bindItems(){
-    container.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>select('number',b.dataset.n));
     container.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>select(b.dataset.type, b.dataset.id));
   }
 

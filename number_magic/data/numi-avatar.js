@@ -21,6 +21,14 @@ window.NM_AVATAR = {
     {id:'sparks',  ko:'반짝',  en:'Sparkle', zh:'闪耀',price:15},
     {id:'rainbow', ko:'무지개',en:'Rainbow', zh:'彩虹',price:25},
     {id:'magic',   ko:'마법',  en:'Magic',   zh:'魔法',price:40},
+  ],
+  /* 캐릭터 숫자 — 0~9 무료, 10 이상은 두 자리 수 "특별 보상"(코인으로 잠금 해제) */
+  numbers:[
+    {id:'0',free:true},{id:'1',free:true},{id:'2',free:true},{id:'3',free:true},
+    {id:'4',free:true},{id:'5',free:true},{id:'6',free:true},{id:'7',free:true},
+    {id:'8',free:true},{id:'9',free:true},
+    {id:'10',price:40},{id:'11',price:55},{id:'20',price:70},{id:'25',price:85},
+    {id:'33',price:100},{id:'50',price:130},{id:'77',price:160},{id:'99',price:200},
   ]
 };
 
