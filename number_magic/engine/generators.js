@@ -344,7 +344,103 @@ function jumpAdd(opts){
   };
 }
 
-window.NM_GEN = { pair10, move10, add10sub, stairAdd, splitNum, comp100, pair10_2d, splitPlace, move10_2d, jumpAdd, _util:{R,pick,shuffle} };
+/* ---------- A-10 : 단위별 따로따로 빼기 ----------
+   개념: 두 자리(이상) 수 빼기에서 십의 자리를 먼저 빼고, 일의 자리를 뺀다.
+   초급 C 챕터2 실제 내용. 80-47 → 80-40=40, 40-7=33
+   level: practice = 몇십 빼기 즉답 / main = 십의자리→일의자리 순서 빼기 */
+function subByPlace(opts){
+  opts=opts||{};
+  const lv=opts.level||'main';
+  if(lv==='practice'){
+    const tens=R(2,9), a=tens*10+R(1,9);
+    const subTens=R(1,tens-1)*10;
+    return {
+      gen:'subByPlace', mode:'practice',
+      ask:a, answer:a-subTens,
+      prompt:{ko:`${a}에서 ${subTens}을 먼저 빼면?`,en:`First subtract ${subTens} from ${a} — what do you get?`,zh:`${a}先减${subTens}，得多少？`},
+      tex:`${a} - ${subTens} = \\square`,
+      answerType:'number'
+    };
+  }
+  const big = (opts.level2||opts.range)==='big';
+  const tensA=R(3,9), onesA=R(0,9), a=tensA*10+onesA;
+  const tensB=R(1,tensA-1), onesB=R(1,9), b=tensB*10+onesB;
+  const step1=a-tensB*10, ans=step1-onesB;
+  return {
+    gen:'subByPlace', mode:'main', a, b, step1, answer:ans,
+    prompt:{ko:'십의 자리를 먼저 빼고, 일의 자리를 나중에 빼요',en:'Subtract the tens first, then the ones',zh:'先减十位，再减个位'},
+    tex:`${a} - ${b} = \\square`,
+    steps:[`${a} - ${b}`, `${a} - ${tensB*10} - ${onesB}`, `${step1} - ${onesB}`, `${ans}`],
+    answerType:'number'
+  };
+}
+
+/* ---------- A-11 : 쉬었다 빼기 ----------
+   개념: 몇 십이 되도록 필요한 만큼만 먼저 빼고, 쉬었다가 남은 만큼 마저 뺀다.
+   초급 C 챕터3 실제 내용. 43-8 → 43-3-5 = 40-5 = 35
+   level: practice = 다음 몇 십까지 얼마 빼야하는지 즉답 / main = 쉬었다 빼기 전체 */
+function restSubtract(opts){
+  opts=opts||{};
+  const lv=opts.level||'main';
+  if(lv==='practice'){
+    const a=R(21,98);
+    const x=a%10; // 다음 몇십 아래로 가려면 뺄 양
+    const target=a-x;
+    return {
+      gen:'restSubtract', mode:'practice',
+      ask:a, answer:x,
+      prompt:{ko:`${a}에서 얼마를 빼야 ${target}이 될까?`,en:`How much to subtract from ${a} to reach ${target}?`,zh:`${a}要减多少才能变成${target}？`},
+      tex:`${a} - \\square = ${target}`,
+      answerType:'number'
+    };
+  }
+  const tens=R(2,9), ones=R(1,9), a=tens*10+ones;
+  const x=ones;                 // 첫 걸음: 몇십으로 만들기 위해 빼는 양
+  const bExtra=R(x+1,x+9);      // b는 x보다 커야 함(그래야 나머지가 남음)
+  const b=bExtra;
+  const y=b-x;
+  const target=a-x;
+  const ans=target-y;
+  return {
+    gen:'restSubtract', mode:'main', a, b, x, y, target, answer:ans,
+    prompt:{ko:'몇 십이 되도록 먼저 빼고, 쉬었다가 나머지를 빼요',en:'Subtract just enough to reach a ten, then subtract the rest',zh:'先减到整十，歇一下再减剩下的'},
+    tex:`${a} - ${b} = \\square`,
+    steps:[`${a} - ${b}`, `${a} - ${x} - ${y}`, `${target} - ${y}`, `${ans}`],
+    answerType:'number'
+  };
+}
+
+/* ---------- A-12 : 덧셈, 뺄셈 끼리끼리 1 ----------
+   개념: 더하는 수끼리, 빼는 수끼리 각각 묶어 더한 뒤, (덧셈의 합)-(뺄셈의 합)으로 계산.
+   초급 C 챕터4 실제 내용. 35-14+21-22 → (35+21)-(14+22) = 56-36 = 20
+   level: practice = 두 수 더하기 즉답(묶기 준비) / main = 4수 덧뺄 끼리끼리 */
+function addSubGroup(opts){
+  opts=opts||{};
+  const lv=opts.level||'main';
+  if(lv==='practice'){
+    const a=R(10,60), b=R(10,60);
+    return {
+      gen:'addSubGroup', mode:'practice',
+      ask:[a,b], answer:a+b,
+      prompt:{ko:`더하는 수끼리 먼저 더해요: ${a} + ${b} = ?`,en:`Add the plus-terms first: ${a} + ${b} = ?`,zh:`先把加数加起来：${a} + ${b} = ?`},
+      tex:`${a} + ${b} = \\square`,
+      answerType:'number'
+    };
+  }
+  // a - b + c - d = (a+c) - (b+d), 양수 결과 보장
+  const b=R(10,40), d=R(10,40);
+  const a=R(b+5,b+50), c=R(d+5,d+50);
+  const plusSum=a+c, minusSum=b+d, ans=plusSum-minusSum;
+  return {
+    gen:'addSubGroup', mode:'main', nums:[a,b,c,d], plusSum, minusSum, answer:ans,
+    prompt:{ko:'더하는 수끼리, 빼는 수끼리 묶어서 계산해요',en:'Group the plus-terms and minus-terms separately',zh:'把加数和减数分别圈起来计算'},
+    tex:`${a} - ${b} + ${c} - ${d} = \\square`,
+    steps:[`${a} - ${b} + ${c} - ${d}`, `(${a} + ${c}) - (${b} + ${d})`, `${plusSum} - ${minusSum}`, `${ans}`],
+    answerType:'number'
+  };
+}
+
+window.NM_GEN = { pair10, move10, add10sub, stairAdd, splitNum, comp100, pair10_2d, splitPlace, move10_2d, jumpAdd, subByPlace, restSubtract, addSubGroup, _util:{R,pick,shuffle} };
 
 /* CommonJS(테스트용) */
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_GEN;
