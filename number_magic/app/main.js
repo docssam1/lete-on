@@ -20,7 +20,10 @@ const I18N={
     checkTitle:'핵심 체크', openTitle:'생각해 보기', submit:'확인', myAnswer:'내 생각 적어보기(선택)',
     arenaGo:'배틀 시작!', timeUp:'시간 종료!', score:'점수', stampGet:'도장 획득!',
     doneUnit:'유닛 완료!', toMap:'마을로', numpadHint:'숫자를 눌러 답해요', pairHint:'짝꿍 두 수를 골라요',
-    picked:'골랐어요!', langName:'한국어' },
+    picked:'골랐어요!', langName:'한국어',
+    obTitle:'나만의 숫자 친구', obSub:'캐릭터를 고르고 이름을 알려주세요!',
+    obNamePh:'이름을 적어주세요', obGo:'짜잔! 시작하기 ✨', obNeedName:'이름을 알려줘야 시작할 수 있어요!',
+    obWelcome:n=>`환영해요, ${n}!` },
   en:{ appName:'Numbers of Magic', start:'Start', back:'← Back', next:'Next →',
     coins:'Numi Coins', locked:'Coming soon', enter:'Enter', mapTitle:'Magic Number Town',
     skipAsk:'Already good at this?', skipYes:'Skip ahead!', skipNo:"Let's see it",
@@ -28,7 +31,10 @@ const I18N={
     checkTitle:'Key Check', openTitle:'Think about it', submit:'Check', myAnswer:'Write your idea (optional)',
     arenaGo:'Start Battle!', timeUp:"Time's up!", score:'Score', stampGet:'Stamp earned!',
     doneUnit:'Unit complete!', toMap:'To Town', numpadHint:'Tap numbers to answer', pairHint:'Pick two that make the target',
-    picked:'Picked!', langName:'English' },
+    picked:'Picked!', langName:'English',
+    obTitle:'Your Number Friend', obSub:'Pick a character and tell us your name!',
+    obNamePh:'Enter your name', obGo:'Ta-da! Start ✨', obNeedName:'Tell us your name first!',
+    obWelcome:n=>`Welcome, ${n}!` },
   zh:{ appName:'数字魔法', start:'开始', back:'← 返回', next:'下一个 →',
     coins:'努米金币', locked:'即将推出', enter:'进入', mapTitle:'数字魔法小镇',
     skipAsk:'这部分已经会了吗？', skipYes:'直接跳过！', skipNo:'看一看',
@@ -36,23 +42,33 @@ const I18N={
     checkTitle:'核心检查', openTitle:'想一想', submit:'确认', myAnswer:'写下你的想法（可选）',
     arenaGo:'开始对战！', timeUp:'时间到！', score:'分数', stampGet:'获得印章！',
     doneUnit:'单元完成！', toMap:'回小镇', numpadHint:'点击数字作答', pairHint:'选出凑成目标的两个数',
-    picked:'选好了！', langName:'中文' }
+    picked:'选好了！', langName:'中文',
+    obTitle:'我的数字朋友', obSub:'选一个角色，告诉我你的名字！',
+    obNamePh:'请输入名字', obGo:'哇！开始吧 ✨', obNeedName:'请先告诉我你的名字！',
+    obWelcome:n=>`欢迎，${n}！` }
 };
 const t=k=>(I18N[S.lang]&&I18N[S.lang][k])??I18N.ko[k]??k;
 const L=(obj)=>obj?(obj[S.lang]??obj.ko??obj.en):'';   // 다국어 필드 픽
 
 /* ---------- 상태 + 저장 ---------- */
 const KEY='nm_state_v1';
+/* onboarded는 defaults()에 넣지 않음(항상 undefined로 시작) —
+   완전 신규 설치(hadSave===false)일 때만 온보딩을 요구하기 위한 표식.
+   defaults()에 박아두면 구버전 저장본(onboarded 필드 없음)과 병합 시에도
+   항상 값이 채워져 있어 "미설정" 여부를 구분할 수 없게 된다. */
 function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
-  tierId:null, unit:null, step:null, sub:{}, progress:{},
-  character:{number:3,color:'blue',face:'happy',hat:'wizard',bg:'plain'},
+  tierId:null, unit:null, step:null, sub:{}, progress:{}, name:'',
+  character:{number:3,color:'blue',bg:'plain',cape:'none'},
   character_unlocked:{} };}
+function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
+const hadSave=!!localStorage.getItem(KEY); // 온보딩은 "완전 신규 설치"에서만 요구
 let S=load();
 if(S.view==='map')S.view='town'; // 구버전 상태 마이그레이션
 // 기존 저장본에 character 필드 없으면 기본값 채움
-if(!S.character)S.character={number:3,color:'blue',face:'happy',hat:'wizard',bg:'plain'};
+if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none'};
 if(!S.character_unlocked)S.character_unlocked={};
-function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
+if(typeof S.onboarded!=='boolean')S.onboarded=hadSave; // 이미 쓰던 사용자는 온보딩 화면 스킵
+if(S.name===undefined)S.name='';
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
 function markStepDone(unit,step){S.progress[unit]=S.progress[unit]||{steps:{}};S.progress[unit].steps[step]=true;save();}
@@ -129,10 +145,16 @@ function startAmbience(){
 let townCleanup=null;
 function charChipHTML(){
   const mini = window.renderNumiChar ? window.renderNumiChar(S.character, 30) : '🪄';
-  return `<button class="nm-char-chip" id="charChipBtn">${mini}<span class="nm-char-chip-name">#${S.character.number}</span></button>`;
+  const label = S.name ? esc(S.name) : ('#'+S.character.number);
+  return `<button class="nm-char-chip" id="charChipBtn">${mini}<span class="nm-char-chip-name">${label}</span></button>`;
 }
 function render(){
   if(townCleanup){townCleanup();townCleanup=null;}
+  if(!S.onboarded){
+    app.innerHTML='<div id="screen"></div>';
+    screenWelcome();
+    return;
+  }
   app.innerHTML=`<div class="nm-top">
     <div class="nm-brand">${charChipHTML()}</div>
     <div class="nm-top-right">
@@ -151,6 +173,92 @@ function render(){
   renderMath();
 }
 function cycleLang(){const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.lang)+1)%3];save();render();}
+
+/* ============================================================
+   온보딩 — 캐릭터+이름 선택 → "짠!" 구름 등장 연출 → 마을 입장
+   완전 신규 설치(localStorage 없던 상태)에서만 1회 등장(hadSave 참고)
+   ============================================================ */
+function screenWelcome(){
+  const scr=$('#screen');
+  const ob = { number:S.character.number||3, color:S.character.color||'blue',
+    bg:S.character.bg||'plain', cape:S.character.cape||'none', name:'' };
+  const NUMS=[0,1,2,3,4,5,6,7,8,9];
+
+  function draw(){
+    scr.innerHTML=`
+    <div class="nm-ob">
+      <div class="nm-ob-card">
+        <h1 class="nm-ob-title">${t('obTitle')}</h1>
+        <p class="nm-ob-sub">${t('obSub')}</p>
+        <div class="nm-ob-stage" id="obStage">
+          <div class="nm-ob-pick" id="obChar">${window.renderNumiChar?window.renderNumiChar(ob,120):''}</div>
+        </div>
+        <div class="nm-ob-nav">
+          <button class="nm-ob-arrow" id="obPrev">‹</button>
+          <span class="nm-ob-num">#${ob.number}</span>
+          <button class="nm-ob-arrow" id="obNext">›</button>
+        </div>
+        <input class="nm-ob-input" id="obName" placeholder="${t('obNamePh')}" maxlength="8" value="${esc(ob.name)}">
+        <button class="nm-btn nm-ob-go" id="obGo">${t('obGo')}</button>
+      </div>
+    </div>`;
+    $('#obPrev').onclick=()=>{ob.number=(ob.number+9)%10;drawChar();};
+    $('#obNext').onclick=()=>{ob.number=(ob.number+1)%10;drawChar();};
+    $('#obName').oninput=e=>{ob.name=e.target.value;};
+    $('#obName').addEventListener('keydown',e=>{if(e.key==='Enter')go();});
+    $('#obGo').onclick=go;
+  }
+  function drawChar(){
+    $('#obChar').innerHTML = window.renderNumiChar?window.renderNumiChar(ob,120):'';
+    $('.nm-ob-num').textContent='#'+ob.number;
+  }
+
+  function go(){
+    const name=(ob.name||'').trim();
+    if(!name){ toast(t('obNeedName'),false); return; }
+    ob.name=name;
+    reveal(name);
+  }
+
+  /* 구름 뒤에서 캐릭터가 "짠!" 등장하는 연출 */
+  function reveal(name){
+    const puffs=[
+      {w:140,h:140,l:-70,  tp:-80,  dx:-20, dy:-90},
+      {w:100,h:100,l:-145, tp:-40,  dx:-110,dy:-50},
+      {w:95, h:95, l:47.5, tp:-42.5,dx:120, dy:-55},
+      {w:80, h:80, l:-95,  tp:15,   dx:-90, dy:60},
+      {w:80, h:80, l:20,   tp:20,   dx:95,  dy:65},
+      {w:70, h:70, l:-35,  tp:35,   dx:10,  dy:100},
+    ];
+    const puffHtml=puffs.map(p=>`<span class="puff" style="width:${p.w}px;height:${p.h}px;left:${p.l}px;top:${p.tp}px;--dx:${p.dx}px;--dy:${p.dy}px"></span>`).join('');
+    scr.innerHTML=`
+    <div class="nm-ob">
+      <div class="nm-ob-card">
+        <div class="nm-ob-reveal" id="obReveal">
+          <div class="ncloud nm-ob-rcloud" id="obCloud">${puffHtml}</div>
+          <div class="nm-ob-rchar" id="obRchar">${window.renderNumiChar?window.renderNumiChar(ob,140):''}</div>
+          <div class="nm-ob-welcome" id="obWelcomeMsg">${esc(t('obWelcome')(name))}</div>
+        </div>
+      </div>
+    </div>`;
+    requestAnimationFrame(()=>{
+      $('#obCloud').classList.add('burst');
+      $('#obRchar').classList.add('pop');
+      $('#obWelcomeMsg').classList.add('show');
+    });
+    setTimeout(finish, 1900);
+  }
+
+  function finish(){
+    S.character = {number:ob.number,color:ob.color,bg:ob.bg,cape:ob.cape};
+    S.name = ob.name;
+    S.onboarded = true;
+    save();
+    render();
+  }
+
+  draw();
+}
 
 /* ============================================================
    마을(Living Town) — map.jpg 위 드래그/줌 + 구름/분수/걸어다니는 숫자친구
