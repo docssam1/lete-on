@@ -117,12 +117,52 @@ function sparkle4(cx,cy,r,fill){
   return `<path d="M${cx},${cy-r} L${cx+r*.25},${cy-r*.25} L${cx+r},${cy} L${cx+r*.25},${cy+r*.25} L${cx},${cy+r} L${cx-r*.25},${cy+r*.25} L${cx-r},${cy} L${cx-r*.25},${cy-r*.25}Z" fill="${fill}"/>`;
 }
 
+function darkerHsl(fg, factor){
+  const [h,s,l] = hex2hsl(fg);
+  return `hsl(${h.toFixed(0)},${Math.max(30,s).toFixed(0)}%,${Math.max(8,l*factor).toFixed(0)}%)`;
+}
+function lighterHsl(fg, target){
+  const [h,s] = hex2hsl(fg);
+  return `hsl(${h.toFixed(0)},${Math.max(20,s*.6).toFixed(0)}%,${target}%)`;
+}
+
+/* ── 망토 (viewBox 0 0 120 150, 캐릭터 뒤에 깔림 — 어깨선 y≈46 기준 보편 배치) ── */
+function capeSVG(id, uid){
+  if(!id || id==='none') return '';
+  const av = window.NM_AVATAR;
+  const item = av && av.capes && av.capes.find(x=>x.id===id);
+  const cx=60, collarY=45, bottomY=132;
+  let fill;
+  if(id==='rainbow'){
+    fill = `url(#nmcape_${uid})`;
+  } else {
+    fill = (item && item.fg) || '#2980b9';
+  }
+  const defs = id==='rainbow'
+    ? `<defs><linearGradient id="nmcape_${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#e74c3c"/><stop offset="30%" stop-color="#f39c12"/>
+<stop offset="55%" stop-color="#2ecc71"/><stop offset="80%" stop-color="#3498db"/>
+<stop offset="100%" stop-color="#9b59b6"/></linearGradient></defs>`
+    : '';
+  const strokeC = id==='rainbow' ? '#8e44ad' : darkerHsl(fill, 0.55);
+  const foldC   = id==='rainbow' ? '#ffffff' : darkerHsl(fill, 0.42);
+  return `${defs}
+<path d="M${cx-16},${collarY} Q${cx},${collarY-7} ${cx+16},${collarY}
+L${cx+38},${bottomY} Q${cx},${bottomY+9} ${cx-38},${bottomY} Z"
+fill="${fill}" stroke="${strokeC}" stroke-width="2" opacity=".97"/>
+<path d="M${cx-2},${collarY+4} L${cx-6},${bottomY-6} M${cx+4},${collarY+3} L${cx+10},${bottomY-8}"
+stroke="${foldC}" stroke-width="2" opacity=".35" fill="none" stroke-linecap="round"/>
+<path d="M${cx-16},${collarY} Q${cx},${collarY-7} ${cx+16},${collarY} L${cx+11},${collarY+9} Q${cx},${collarY+3} ${cx-11},${collarY+9} Z" fill="${foldC}" opacity=".55"/>
+<circle cx="${cx}" cy="${collarY+1}" r="4" fill="#ffe000" stroke="#c8960a" stroke-width="1"/>`;
+}
+
 /* ── 메인 렌더 ── */
 window.renderNumiChar = function(char, size){
   char = char || {};
   const num     = char.number != null ? +char.number : 3;
   const colorId = char.color  || 'blue';
   const bgId    = char.bg     || 'plain';
+  const capeId  = char.cape   || 'none';
   size = size || 120;
 
   const fg = getCol(colorId).fg;
@@ -140,6 +180,12 @@ background:radial-gradient(closest-side,${fg}45,${fg}00 95%);pointer-events:none
   const decorSvg = decor
     ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" preserveAspectRatio="xMidYMid meet"
 style="position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none">${decor}</svg>`
+    : '';
+
+  const cape = capeSVG(capeId, uid);
+  const capeSvg = cape
+    ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" preserveAspectRatio="xMidYMid meet"
+style="position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none">${cape}</svg>`
     : '';
 
   // 11~99(10 제외) → 두 자리 합체: 자리별 캐릭터를 나란히 배치
@@ -160,7 +206,7 @@ max-width:76%;max-height:88%;object-fit:contain;filter:${tint} ${shadow}">`;
   }
 
   return `<span class="numi-fig" style="position:relative;display:inline-block;width:${size}px;height:${ph}px;vertical-align:middle">
-${aura}${decorSvg}${figure}
+${aura}${decorSvg}${capeSvg}${figure}
 </span>`;
 };
 
