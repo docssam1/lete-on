@@ -216,10 +216,10 @@ function screenTown(){
           <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar(S.character,52):'<img src="assets/characters/numi-0.png" alt="Numi">'}</div>
           <div class="shadow"></div></div>
         <div class="nb" id="nbPoco"><div class="speech"></div>
-          <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar({number:3,color:'green',face:'excited',hat:'none',bg:'plain'},52):'<img src="assets/characters/poco-3.png" alt="Poco">'}</div>
+          <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar({number:3,color:'gold',bg:'plain'},52):'<img src="assets/characters/poco-3.png" alt="Poco">'}</div>
           <div class="shadow"></div></div>
         <div class="nb" id="nbMomo"><div class="speech"></div>
-          <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar({number:8,color:'pink',face:'happy',hat:'none',bg:'plain'},52):'<img src="assets/characters/momo-8.png" alt="Momo">'}</div>
+          <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar({number:8,color:'pink',bg:'plain'},52):'<img src="assets/characters/momo-8.png" alt="Momo">'}</div>
           <div class="shadow"></div></div>
       </div>
     </div>

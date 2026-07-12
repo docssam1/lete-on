@@ -11,17 +11,15 @@ window.screenCloset = function(container, opts){
   const lang = opts.lang || 'ko';
   const L = (item) => item[lang] || item.ko || item.en || '';
 
-  let cur = Object.assign({number:3,color:'blue',face:'happy',hat:'wizard',bg:'plain'}, opts.char || {});
+  let cur = Object.assign({number:3,color:'blue',bg:'plain'}, opts.char || {});
   let unlocked = Object.assign({}, opts.unlocked || {});
   let coins = +(opts.coins || 0);
   let dirty = 0;  // 소비한 코인 누적
 
   const TABS = [
-    {key:'number',ko:'숫자',en:'Number',zh:'数字'},
-    {key:'color', ko:'색',  en:'Color', zh:'颜色'},
-    {key:'face',  ko:'표정',en:'Face',  zh:'表情'},
-    {key:'hat',   ko:'모자',en:'Hat',   zh:'帽子'},
-    {key:'bg',    ko:'배경',en:'BG',    zh:'背景'},
+    {key:'number',ko:'캐릭터',en:'Character',zh:'角色'},
+    {key:'color', ko:'오라',  en:'Aura',     zh:'光环'},
+    {key:'bg',    ko:'배경',  en:'BG',       zh:'背景'},
   ];
   let activeTab = 'number';
 
@@ -95,7 +93,7 @@ window.screenCloset = function(container, opts){
         </button>`;
       }).join('');
     }
-    const typeItems = {color:'colors',face:'faces',hat:'hats',bg:'bgs'};
+    const typeItems = {color:'colors',bg:'bgs'};
     const items = av[typeItems[activeTab]] || [];
     return items.map(item=>{
       const unl = isUnlocked(activeTab, item.id);

@@ -30,7 +30,7 @@
 .nmc-item.sel{border-color:#2980b9;background:#eef6fd;box-shadow:0 0 0 3px rgba(41,128,185,.2)}
 .nmc-item.locked{opacity:.7;cursor:pointer}
 .nmc-item.locked::after{content:'🔒';position:absolute;top:4px;right:5px;font-size:.65rem}
-.nmc-thumb{width:52px;height:61px;display:flex;align-items:center;justify-content:center}
+.nmc-thumb{width:52px;height:66px;display:flex;align-items:center;justify-content:center}
 .nmc-iname{font-size:.7rem;font-weight:700;color:#555;text-align:center;line-height:1.2}
 .nmc-iprice{font-size:.68rem;font-weight:700;color:#e6ac00;background:#fef9e7;border-radius:99px;padding:1px 6px;margin-top:1px}
 
