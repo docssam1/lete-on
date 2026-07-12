@@ -42,8 +42,8 @@ window.NM_CURRICULUM = {
       levels:[
         {
           id:'A', title:{ko:'A단계 · 덧셈의 전략',en:'Level A · Addition Strategies',zh:'A阶段 · 加法策略'}, available:true,
-          units:['A-01','A-02','A-03','A-04'],
-          gates:['A-review','A-sona','A-battle']   // 관문
+          units:['A-01','A-02','A-03','A-04','A-05','A-06','A-07','A-08','A-09'],
+          gates:['A-review','A-sona','A-battle']   // 관문 — 유닛 미구현, screenTier()에서도 미사용(추후 작업)
         },
         { id:'B', title:{ko:'B단계',en:'Level B',zh:'B阶段'}, units:[], available:false },
         { id:'C', title:{ko:'C단계',en:'Level C',zh:'C阶段'}, units:[], available:false },
