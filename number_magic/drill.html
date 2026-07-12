@@ -44,6 +44,17 @@ html,body{height:100%;font-family:'Pretendard',sans-serif;color:#1a2233;backgrou
 .dr-home-title{font-size:clamp(22px,5vw,30px);font-weight:900;color:#16417C;margin-bottom:6px}
 .dr-home-desc{font-size:14px;color:#6b7280;margin-bottom:28px}
 
+/* ── 섹션 탭 ── */
+.dr-tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;
+  background:#f0f0f0;border-radius:16px;padding:4px;margin-bottom:20px}
+.dr-tab{border:none;border-radius:12px;font-family:'Pretendard',sans-serif;
+  font-weight:800;font-size:15px;padding:14px 10px;cursor:pointer;
+  transition:.18s;background:transparent;color:#6b7280;text-align:center;line-height:1.3}
+.dr-tab .dr-tab-sub{font-size:11px;font-weight:600;display:block;margin-top:2px;opacity:.7}
+.dr-tab.on{background:#fff;color:#1a2233;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.dr-tab.on.school{color:#16417C}
+.dr-tab.on.magic{color:#7c3aed}
+
 /* ── 홈 폼 ── */
 .dr-form{background:#fff;border-radius:20px;padding:28px 24px;
   box-shadow:0 4px 20px rgba(0,0,0,.08);margin-bottom:20px}
@@ -226,7 +237,7 @@ html,body{height:100%;font-family:'Pretendard',sans-serif;color:#1a2233;backgrou
 
 /* ── 토픽 정의 ── */
 var TOPICS = [
-  { id:'add', label:'덧셈', en:'Addition', icon:'＋', color:'#3b82f6',
+  { id:'add', label:'덧셈', en:'Addition', icon:'＋', color:'#3b82f6', section:'school',
     subs:[
       {label:'한 자리 덧셈 (올림 없음)', thread:'AD1', level:1, desc:'합 9 이하'},
       {label:'받아올림 덧셈 (한 자리)', thread:'AD2', level:1, desc:'합 10 이상'},
@@ -237,7 +248,7 @@ var TOPICS = [
       {label:'몇십 · 몇백 더하기', thread:'AD4', level:1, desc:'10s + 10s'},
     ]
   },
-  { id:'sub', label:'뺄셈', en:'Subtraction', icon:'－', color:'#ef4444',
+  { id:'sub', label:'뺄셈', en:'Subtraction', icon:'－', color:'#ef4444', section:'school',
     subs:[
       {label:'한 자리 뺄셈', thread:'SB1', level:1, desc:'9 이하'},
       {label:'두 자리 − 한 자리 (내림 없음)', thread:'SB3', level:1, desc:'받아내림 없음'},
@@ -247,7 +258,7 @@ var TOPICS = [
       {label:'보정 빼기 (7·8·9 빼기)', thread:'SB5', level:1, desc:'더 빼고 돌려받기'},
     ]
   },
-  { id:'mul', label:'곱셈', en:'Multiplication', icon:'×', color:'#10b981',
+  { id:'mul', label:'곱셈', en:'Multiplication', icon:'×', color:'#10b981', section:'school',
     subs:[
       {label:'구구단 2 · 3단', thread:'ML2', level:1, desc:'2단, 3단'},
       {label:'구구단 4 · 5단', thread:'ML2', level:2, desc:'4단, 5단'},
@@ -259,7 +270,7 @@ var TOPICS = [
       {label:'배수 (×2 / ÷2)', thread:'ML1', level:1, desc:'두 배와 반으로'},
     ]
   },
-  { id:'div', label:'나눗셈', en:'Division', icon:'÷', color:'#f59e0b',
+  { id:'div', label:'나눗셈', en:'Division', icon:'÷', color:'#f59e0b', section:'school',
     subs:[
       {label:'두 자리 ÷ 한 자리 (나머지 없음)', thread:'DV2', level:1, desc:'나누어 떨어짐'},
       {label:'나머지 있는 나눗셈', thread:'DV3', level:1, desc:'2d ÷ 1d, 나머지 있음'},
@@ -267,7 +278,7 @@ var TOPICS = [
       {label:'세 자리 ÷ 한 자리 (나머지)', thread:'DV4', level:2, desc:'나머지 있음'},
     ]
   },
-  { id:'creative', label:'창의수연', en:'Strategy Math', icon:'🧠', color:'#8b5cf6',
+  { id:'creative', label:'창의수연', en:'Strategy Math', icon:'🧠', color:'#8b5cf6', section:'magic',
     subs:[
       {label:'보수 10 찾기', thread:'NS3', level:2, desc:'더해서 10 만들기'},
       {label:'보수 100 찾기', thread:'NS4', level:2, desc:'더해서 100 만들기'},
@@ -282,6 +293,7 @@ var TOPICS = [
 /* ── 상태 ── */
 var state = {
   view: 'home',
+  section: 'school',
   topicKey: null,   // 'catId:subIdx' 형식
   count: 10,
   timer: 0,
@@ -319,12 +331,29 @@ function getConfig(){
 /* ── 홈 화면 ── */
 function showHome(){
   state.view = 'home';
+  var sec = state.section || 'school';
+
+  /* 현재 섹션에 속하지 않는 topicKey 정리 */
+  if(state.topicKey){
+    var _kp = state.topicKey.split(':');
+    var _kc = TOPICS.find(function(c){ return c.id===_kp[0]; });
+    if(!_kc || _kc.section !== sec){ state.topicKey = null; }
+  }
 
   var t = parseTopic(state.topicKey);
 
-  /* 드롭다운 옵션 빌드 */
-  var topicOptions = '<option value="">— 연산 주제 선택 —</option>';
-  TOPICS.forEach(function(cat){
+  /* 섹션 탭 */
+  var tabHtml = '<div class="dr-tabs">';
+  tabHtml += '<button class="dr-tab school' + (sec==='school'?' on':'') + '" data-sec="school">';
+  tabHtml += '교과 연산<span class="dr-tab-sub">덧셈 · 뺄셈 · 곱셈 · 나눗셈</span></button>';
+  tabHtml += '<button class="dr-tab magic' + (sec==='magic'?' on':'') + '" data-sec="magic">';
+  tabHtml += 'Numbers of Magic<span class="dr-tab-sub">창의수연 · 수 감각</span></button>';
+  tabHtml += '</div>';
+
+  /* 드롭다운 옵션 — 현재 섹션 카테고리만 */
+  var topicLabel = sec === 'school' ? '연산 주제' : '전략 주제';
+  var topicOptions = '<option value="">— ' + (sec==='school'?'연산':'전략') + ' 주제 선택 —</option>';
+  TOPICS.filter(function(cat){ return cat.section === sec; }).forEach(function(cat){
     topicOptions += '<optgroup label="' + esc(cat.icon+' '+cat.label) + '">';
     cat.subs.forEach(function(sub, i){
       var key = cat.id + ':' + i;
@@ -348,11 +377,14 @@ function showHome(){
   html += '<h1 class="dr-home-title">수학 연습장 📝</h1>';
   html += '<p class="dr-home-desc">주제를 고르고 바로 연습해요 · 인쇄 학습지도 만들 수 있어요</p>';
 
+  /* 섹션 탭 */
+  html += tabHtml;
+
   /* 메인 폼 */
   html += '<div class="dr-form">';
 
   html += '<div class="dr-form-row">';
-  html += '<label class="dr-form-label" for="dr-sel-topic">연산 주제</label>';
+  html += '<label class="dr-form-label" for="dr-sel-topic">' + esc(topicLabel) + '</label>';
   html += '<select class="dr-select" id="dr-sel-topic">' + topicOptions + '</select>';
   html += '</div>';
 
@@ -367,7 +399,7 @@ function showHome(){
   html += '</div>';
 
   /* 시작 버튼 행 */
-  var startColor = t ? t.cat.color : '#16417C';
+  var startColor = t ? t.cat.color : (sec==='magic' ? '#7c3aed' : '#16417C');
   html += '<div class="dr-start-row">';
   html += '<button class="nm-btn nm-btn-primary" id="dr-start-btn" style="background:'+startColor+';min-width:130px"' + (t?'':' disabled') + '>▶ 연습 시작</button>';
   html += '<button class="nm-btn nm-btn-secondary nm-btn-small" id="dr-print-btn"' + (t?'':' disabled') + '>🖨 학습지 인쇄</button>';
@@ -395,6 +427,16 @@ function showHome(){
 }
 
 function bindHome(){
+  /* 섹션 탭 */
+  document.querySelectorAll('.dr-tab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      state.section = this.dataset.sec;
+      state.topicKey = null;
+      state.seed = NM_RNG.newCode();
+      showHome();
+    });
+  });
+
   /* 주제 드롭다운 */
   document.getElementById('dr-sel-topic').addEventListener('change', function(){
     state.topicKey = this.value || null;
