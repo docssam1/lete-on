@@ -59,6 +59,7 @@ function isSaved(en){return myWordsList().some(w=>w.en===en);}
 function myWordSourceLabel(w){
  const src=w.source;
  if(src&&src.type==='ebook'){const meta=libBookMeta(src.bookId);return `📗 ${meta?esc(meta.title):'eBook'}`;}
+ if(src&&src.type==='writing'){const u=(window.WRITING&&WRITING.units||[]).find(x=>x.id===src.bookId);return `✏️ ${u?esc(u.title):'Writing'}`;}
  const lessonId=(src&&src.lessonId)||w.lessonId;
  return lessonId?`📘 Lesson ${lessonNum(lessonId)}`:'📘';
 }
@@ -411,6 +412,218 @@ function libPdfScreen(){
   <p class="lib-hint">${libT('실제 책 페이지 원본이에요.','This is the real book page.','这是真实的原书页面。')}</p>
  </section></div></div>`;
 }
+// ---- Writing Village (wv-) — 6~9세 영어 라이팅: 편지→낱말→모델→트리→저널→답장 ----
+// 전 콘텐츠는 data/writing.js의 창작물. 흐름: 캐릭터 질문 편지(말하기 리허설 포함) →
+// 낱말 정원 → 모델 트리+저널 → 내 트리(낱말 골라 문장 실시간 조립+TTS) → 스스로 쓰기
+// (유령 스타터 + 다듬기 체크) → 캐릭터 답장. 진행은 profile.writing에 저장.
+let wv=null;
+let _wvRec=null;
+function WVDATA(){return window.WRITING||{pals:{},units:[]};}
+function wvUnit(id){return WVDATA().units.find(u=>u.id===id)||null;}
+function wvPal(u){return WVDATA().pals[u.from]||{name:'Friend',ko:'친구',e:'💌'};}
+function wvEnsure(){if(profile&&!profile.writing)profile.writing={};return (profile&&profile.writing)||{};}
+function wvProg(id){return wvEnsure()[id]||null;}
+function wvJournalCount(){const W=wvEnsure();return Object.values(W).reduce((s,r)=>s+((r.journals||[]).length),0);}
+function openWritingVillage(){stopSpeak();wv={view:'hub'};atTown=true;townView='writing';render();window.scrollTo({top:0});}
+function openWvUnit(id){const u=wvUnit(id);if(!u)return;stopSpeak();wv={view:'unit',unitId:id,step:0,picks:{},journal:'',leaves:[],reply:null,treeAwarded:false,pruneAwarded:false};render();window.scrollTo({top:0});}
+function wvMicSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition);}
+function wvListenStart(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR||!wv)return;
+ try{_wvRec=new SR();}catch(e){return;}
+ _wvRec.lang='en-US';_wvRec.interimResults=false;_wvRec.maxAlternatives=1;
+ wv.listening=true;render();
+ _wvRec.onresult=ev=>{try{const t=ev.results[0][0].transcript;if(t&&wv&&wv.leaves.length<8)wv.leaves.push(t.trim());}catch(e){}};
+ _wvRec.onend=()=>{if(wv){wv.listening=false;render();}};
+ _wvRec.onerror=()=>{if(wv){wv.listening=false;render();}};
+ try{_wvRec.start();}catch(e){wv.listening=false;render();}
+}
+// recipe의 {slot}에 고른 값을 끼워 문장 목록으로 조립. blank=미선택 표시.
+function wvAssemble(u,picks,blank){return u.recipe.map(line=>{const s=line.replace(/\{(\w+)\}/g,(m,k)=>{const v=(picks[k]||'').trim();return v||blank||'___';});return s.charAt(0).toUpperCase()+s.slice(1);});}
+function wvFilledCount(u){return u.slots.filter(s=>((wv.picks[s.k]||'').trim())).length;}
+// 나무 SVG — 원본 기하 도형만. 채워진 슬롯 수만큼 가지에 잎이 핀다.
+function wvTreeSvg(u,picks,size){
+ size=size||260;const n=u.slots.length;const cx=size/2,groundY=size-18,topY=size*0.30;
+ const leafColors=['#66bb6a','#43a047','#81c784','#4caf50','#a5d6a7','#2e7d32'];
+ let branches='';
+ for(let i=0;i<n;i++){
+  const filled=!!((picks[u.slots[i].k]||'').trim());
+  const ang=(-155+(130/(Math.max(1,n-1)))*i)*Math.PI/180;
+  const bx=cx+Math.cos(ang)*size*0.34,by=topY+size*0.10+Math.sin(ang)*size*0.26;
+  const label=filled?String(picks[u.slots[i].k]):u.slots[i].ko;
+  const short=esc(label.length>14?label.slice(0,13)+'…':label);
+  branches+=`<line x1="${cx}" y1="${topY+size*0.16}" x2="${bx}" y2="${by}" stroke="#8d6e63" stroke-width="5" stroke-linecap="round" opacity="${filled?1:.35}"/>`;
+  branches+=`<g class="wv-leaf ${filled?'on':''}"><circle cx="${bx}" cy="${by}" r="${filled?26:16}" fill="${filled?leafColors[i%leafColors.length]:'#dce8d8'}"/><text x="${bx}" y="${by+3}" text-anchor="middle" font-size="${filled?8.5:9}" fill="${filled?'#fff':'#8aa08c'}" font-weight="700">${short}</text></g>`;
+ }
+ const crown=wvFilledCount(u)>=n?`<text x="${cx}" y="${topY-size*0.12}" text-anchor="middle" font-size="22">🌸</text>`:'';
+ const center=(picks.topic||u.title);
+ return `<svg viewBox="0 0 ${size} ${size}" class="wv-tree" role="img" aria-label="sentence tree">
+  <ellipse cx="${cx}" cy="${groundY}" rx="${size*0.32}" ry="10" fill="#d7e6c9"/>
+  <path d="M ${cx-10} ${groundY} C ${cx-8} ${groundY-size*0.3} ${cx-6} ${topY+30} ${cx} ${topY+16} C ${cx+6} ${topY+30} ${cx+8} ${groundY-size*0.3} ${cx+10} ${groundY} Z" fill="#8d6e63"/>
+  ${branches}
+  <circle cx="${cx}" cy="${topY+size*0.16}" r="30" fill="#fff8e1" stroke="#c9a227" stroke-width="2.5"/>
+  <text x="${cx}" y="${topY+size*0.16+3}" text-anchor="middle" font-size="9" font-weight="800" fill="#7a5b00">${esc(String(center).length>13?String(center).slice(0,12)+'…':center)}</text>
+  ${crown}
+ </svg>`;
+}
+function wvChecks(u,text){
+ const t=(text||'').trim();
+ const sentences=splitSentences(t).filter(s=>s.trim().length>1);
+ const treeWords=Object.values(wv.picks||{}).map(v=>String(v||'').trim()).filter(Boolean);
+ const used=treeWords.filter(w=>t.toLowerCase().includes(w.toLowerCase().slice(0,12))).length;
+ return [
+  {ko:'대문자로 시작했어요',ok:/^[A-Z"']/.test(t)},
+  {ko:'문장 끝에 . ! ?',ok:/[.!?]["']?\s*$/.test(t)},
+  {ko:'because를 썼어요',ok:/because/i.test(t)},
+  {ko:'문장이 3개 이상',ok:sentences.length>=3},
+  {ko:'내 트리 낱말 2개 이상',ok:used>=2},
+ ];
+}
+function wvRuleReply(u,picks){const s=u.reply.replace(/\{(\w+)\}/g,(m,k)=>{const v=(picks[k]||'').trim();return v||'that';});return s.replace(/([.!?]\s+)([a-z])/g,(m,a,b)=>a+b.toUpperCase());}
+function wvSpeak(text){speakText(text);}
+function wvHead(u){
+ const pal=wvPal(u);
+ const steps=[['💌','편지'],['🌱','낱말'],['🌳','모델'],['🌿','내 트리'],['✏️','저널'],['📬','답장']];
+ const tabs=steps.map((s,i)=>`<button class="lib-tabbtn ${wv.step===i?'active':''}" data-act="wv-step" data-i="${i}" ${i>0&&wv.step<i&&!wvProg(u.id)?'':''}>${s[0]} ${s[1]}</button>`).join('');
+ return `<div class="town-top lib-reader-top"><button class="btn tiny" data-act="wv-hub">← ${st.lang==='ko'?'마을 광장':'Village'}</button><b class="lib-reader-title">${u.emoji} ${esc(u.title)}</b><span class="lib-reader-tags"><span class="lib-tag">${pal.e} ${esc(pal.ko)}</span><span class="lib-tag">${u.level===1?'추천 6세+':'추천 7세+'}</span></span></div><div class="lib-stage-tabs">${tabs}</div>`;
+}
+function wvHubScreen(){
+ const W=WVDATA();const total=wvJournalCount();
+ const forest=total?`<div class="wv-forest">${'🌳'.repeat(Math.min(total,24))}${total>24?` +${total-24}`:''}</div>`:`<p class="wv-forest-empty">${st.lang==='ko'?'저널을 쓸 때마다 숲에 나무가 자라요!':'Every journal grows a tree!'}</p>`;
+ const cards=W.units.map(u=>{const p=wvProg(u.id);const done=p&&p.done;const cnt=(p&&p.journals||[]).length;
+  return `<button class="wv-card ${done?'done':''}" data-act="wv-open" data-unit="${u.id}"><span class="wv-card-emoji">${u.emoji}</span><b>${esc(u.title)}</b><small>${esc(u.ko)}</small><span class="wv-card-meta">${wvPal(u).e} ${done?`🌳×${cnt}`:(u.level===1?'6세+':'7세+')}</span></button>`;}).join('');
+ return `<div class="town lib-town"><div class="town-top"><div class="town-brand">✏️ Writing Village</div><div class="town-tools"><button class="btn tiny" data-act="wv-book">📖 ${st.lang==='ko'?'내 이야기책':'My Storybook'} (${total})</button><button class="btn tiny" data-act="lib-back">← ${st.lang==='ko'?'마을로':'Town'}</button></div></div>
+ <div class="lib-wrap"><p class="wv-sub">${st.lang==='ko'?'마을 친구들이 너에게 편지를 보냈어! 답장을 쓰면 숲이 자라나요.':'Village friends sent you letters! Write back and grow the forest.'}</p>
+ ${forest}<div class="wv-grid">${cards}</div></div></div>`;
+}
+function wvBookScreen(){
+ const W=wvEnsure();const rows=[];
+ WVDATA().units.forEach(u=>{(W[u.id]&&W[u.id].journals||[]).forEach((j,ji)=>rows.push({u,j,ji}));});
+ rows.sort((a,b)=>(b.j.date||0)-(a.j.date||0));
+ const list=rows.length?rows.map(r=>`<article class="wv-entry"><div class="wv-entry-head"><b>${r.u.emoji} ${esc(r.u.title)}</b><small>${new Date(r.j.date).toLocaleDateString()}</small><button class="btn tiny" data-act="wv-entry-speak" data-unit="${r.u.id}" data-j="${r.ji}">🔊</button></div><p class="wv-entry-text">${esc(r.j.text)}</p>${r.j.reply?`<p class="wv-entry-reply">${wvPal(r.u).e} ${esc(r.j.reply)}</p>`:''}</article>`).join(''):`<p class="wv-forest-empty">${st.lang==='ko'?'아직 쓴 이야기가 없어요. 첫 편지에 답장해 볼까요?':'No stories yet!'}</p>`;
+ return `<div class="town lib-town"><div class="town-top"><div class="town-brand">📖 My Storybook</div><div class="town-tools"><button class="btn tiny" data-act="wv-hub">← Writing Village</button></div></div><div class="lib-wrap"><div class="wv-book">${list}</div></div></div>`;
+}
+function wvLetterScreen(u){
+ const pal=wvPal(u);
+ const leaves=wv.leaves.map((l,i)=>`<span class="wv-leafchip">🍃 ${esc(l)} <button class="wv-x" data-act="wv-leaf-del" data-i="${i}">✕</button></span>`).join('');
+ const mic=wvMicSupported()?`<button class="btn ${wv.listening?'secondary':'primary'}" data-act="wv-mic">${wv.listening?'🎙️ 듣고 있어요…':'🎙️ '+(st.lang==='ko'?'말로 먼저 대답해 보기':'Say it first')}</button>`:'';
+ return `<div class="town lib-town">${wvHead(u)}<div class="lib-wrap"><section class="wv-panel">
+  <div class="wv-envelope"><div class="wv-palrow"><span class="wv-palface">${pal.e}</span><b>${esc(pal.name)}</b><small>${esc(pal.ko)}</small></div>
+  <p class="wv-letter">${esc(u.letter)}</p><p class="wv-letter-ko">${esc(u.letterKo||'')}</p>
+  <div class="tools center"><button class="btn tiny" data-act="wv-letter-speak">🔊 ${st.lang==='ko'?'편지 듣기':'Listen'}</button>${mic}</div>
+  ${leaves?`<div class="wv-leaves"><small>${st.lang==='ko'?'내가 말한 것 (트리에서 쓸 수 있어요)':'What I said'}:</small> ${leaves}</div>`:''}
+  </div><div class="tools center"><button class="btn primary" data-act="wv-step" data-i="1">${st.lang==='ko'?'다음: 낱말 정원':'Next: Words'} →</button></div></section></div></div>`;
+}
+function wvWordsScreen(u){
+ const cards=u.words.map((w,i)=>`<article class="word-card ${st.lang==='ko'?'ko':''}"><strong>${w[2]||''} ${esc(w[0])}</strong><p class="meaning">${esc(w[1])}</p><div class="word-actions"><button class="btn tiny" data-act="wv-word-speak" data-i="${i}">🔊</button><button class="btn tiny star ${isSaved(w[0])?'on':''}" data-act="wv-word-save" data-i="${i}">${isSaved(w[0])?'★':'☆'}</button></div></article>`).join('');
+ return `<div class="town lib-town">${wvHead(u)}<div class="lib-wrap"><section class="wv-panel"><h2>🌱 ${st.lang==='ko'?'낱말 정원':'Word Garden'}</h2><div class="word-grid">${cards}</div><div class="tools center"><button class="btn primary" data-act="wv-step" data-i="2">${st.lang==='ko'?'다음: 모델 나무 구경':'Next: Model'} →</button></div></section></div></div>`;
+}
+function wvModelScreen(u){
+ const pal=wvPal(u);
+ const mockPicks={};u.slots.forEach((s,i)=>{mockPicks[s.k]=u.model.branches[i]||u.model.branches[u.model.branches.length-1]||'';});
+ if(u.slots.some(s=>s.photo))mockPicks.topic=u.model.center;
+ const sentences=splitSentences(u.model.journal);let off=0;
+ const spans=sentences.map(s=>{const html=`<span class="sentence-line" data-wvmodel="1" data-start="${off}" data-end="${off+s.length}">${esc(s)} </span>`;off+=s.length+1;return html;}).join('');
+ return `<div class="town lib-town">${wvHead(u)}<div class="lib-wrap"><section class="wv-panel"><h2>🌳 ${st.lang==='ko'?'친구의 나무와 저널':'A Friend\'s Tree & Journal'}</h2>
+ <div class="wv-model"><div class="wv-treewrap">${wvTreeSvg(u,{...mockPicks,topic:u.model.center},240)}</div>
+ <div class="wv-modeljournal"><div class="wv-palrow"><span class="wv-palface">${pal.e}</span><b>${st.lang==='ko'?'친구의 저널':'Friend\'s journal'}</b><button class="btn tiny" data-act="wv-model-speak">🔊</button></div><p class="wv-journaltext">${spans}</p>
+ <p class="wv-tip">💡 ${st.lang==='ko'?'나무의 잎(재료)들이 문장 속에 쏙쏙 들어가 있어요!':'The leaves became sentences!'}</p></div></div>
+ <div class="tools center"><button class="btn primary" data-act="wv-step" data-i="3">${st.lang==='ko'?'다음: 내 나무 키우기':'Next: My Tree'} →</button></div></section></div></div>`;
+}
+function wvTreeScreen(u){
+ const photoSlot=u.slots.find(s=>s.photo);
+ const photoPick=photoSlot?`<div class="wv-slotbox"><b>${esc(photoSlot.ko)}</b><div class="wv-chips">${(u.photos||[]).map(p=>`<button class="wv-chip photo ${wv.picks[photoSlot.k]===p.w?'on':''}" data-act="wv-pick" data-k="${photoSlot.k}" data-v="${esc(p.w)}">${p.e} ${esc(p.w)}</button>`).join('')}</div></div>`:'';
+ const others=u.slots.filter(s=>!s.photo).map(s=>{
+  if(s.free){const cur=wv.picks[s.k]||'';
+   const leafBtns=wv.leaves.length?`<div class="wv-chips">${wv.leaves.map((l,i)=>`<button class="wv-chip leaf" data-act="wv-leaf-use" data-k="${s.k}" data-i="${i}">🍃 ${esc(l)}</button>`).join('')}</div>`:'';
+   return `<div class="wv-slotbox free"><b>${esc(s.ko)}</b><input class="wv-input" data-wvfree="${s.k}" maxlength="${s.free.short?24:120}" placeholder="${esc(s.free.hint||'')}" value="${esc(cur)}">${leafBtns}</div>`;}
+  return `<div class="wv-slotbox"><b>${esc(s.ko)}</b><div class="wv-chips">${s.opts.map(o=>`<button class="wv-chip ${wv.picks[s.k]===o?'on':''}" data-act="wv-pick" data-k="${s.k}" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div></div>`;
+ }).join('');
+ const lines=wvAssemble(u,wv.picks);
+ const filled=wvFilledCount(u),totalSlots=u.slots.length;
+ const preview=lines.map(l=>`<span class="${l.includes('___')?'dim':''}">${esc(l)}</span>`).join(' ');
+ return `<div class="town lib-town">${wvHead(u)}<div class="lib-wrap"><section class="wv-panel"><h2>🌿 ${st.lang==='ko'?'내 문장 나무 키우기':'Grow My Sentence Tree'} <small class="wv-count">${filled}/${totalSlots}</small></h2>
+ <div class="wv-treegrow"><div class="wv-treewrap">${wvTreeSvg(u,wv.picks,260)}</div>
+ <div class="wv-slots">${photoPick}${others}</div></div>
+ <div class="wv-preview"><b>${st.lang==='ko'?'지금까지 내 문장':'My sentences so far'}</b><p>${preview}</p><button class="btn tiny" data-act="wv-preview-speak">🔊 ${st.lang==='ko'?'들어보기':'Listen'}</button></div>
+ <div class="tools center"><button class="btn primary" data-act="wv-tree-done" ${filled>=totalSlots?'':'disabled'}>${st.lang==='ko'?'나무 완성! 저널 쓰러 가기':'Tree done! Write'} →</button></div></section></div></div>`;
+}
+function wvJournalScreen(u){
+ const ghost=wvAssemble(u,wv.picks,'___').join(' ');
+ const checks=wvChecks(u,wv.journal);
+ const allOk=checks.every(c=>c.ok);
+ const checkHtml=checks.map(c=>`<span class="wv-check ${c.ok?'ok':''}">${c.ok?'✅':'⬜'} ${esc(c.ko)}</span>`).join('');
+ return `<div class="town lib-town">${wvHead(u)}<div class="lib-wrap"><section class="wv-panel"><h2>✏️ ${st.lang==='ko'?'스스로 써 보기':'Write It Yourself'}</h2>
+ <div class="wv-write"><div class="wv-treewrap small">${wvTreeSvg(u,wv.picks,180)}</div>
+ <div class="wv-editor">${u.level===1?`<p class="wv-ghost">${esc(ghost)}</p>`:`<p class="wv-ghost faint">${st.lang==='ko'?'내 트리를 보며 나만의 문장으로 써 보세요!':'Use your tree!'}</p>`}
+ <textarea class="wv-textarea" data-wvjournal rows="7" placeholder="${st.lang==='ko'?'여기에 내 저널을 써요…':'Write your journal here…'}">${esc(wv.journal||'')}</textarea>
+ <div class="wv-checks">${checkHtml}</div></div></div>
+ <div class="tools center"><button class="btn tiny" data-act="wv-journal-speak">🔊 ${st.lang==='ko'?'내 글 듣기':'Hear my writing'}</button><button class="btn primary" data-act="wv-submit">${st.lang==='ko'?'보내기':'Send'} 📮</button></div>
+ ${allOk?`<p class="wv-alldone">🌸 ${st.lang==='ko'?'다듬기 완료! 나무에 꽃이 피었어요!':'All polished!'}</p>`:''}
+ </section></div></div>`;
+}
+function wvReplyScreen(u){
+ const pal=wvPal(u);
+ const idx=WVDATA().units.findIndex(x=>x.id===u.id);const next=WVDATA().units[idx+1];
+ return `<div class="town lib-town">${wvHead(u)}<div class="lib-wrap"><section class="wv-panel wv-replywrap">
+ <div class="wv-envelope open"><div class="wv-palrow"><span class="wv-palface big">${pal.e}</span><b>${esc(pal.name)}</b><small>${st.lang==='ko'?'답장이 도착했어요!':'You got a reply!'}</small></div>
+ <p class="wv-letter">${esc(wv.reply||'')}</p>
+ <div class="tools center"><button class="btn tiny" data-act="wv-reply-speak">🔊</button></div></div>
+ <div class="tools center">${next?`<button class="btn primary" data-act="wv-open" data-unit="${next.id}">💌 ${st.lang==='ko'?'다음 편지 열기':'Next letter'}: ${next.emoji} ${esc(next.title)}</button>`:''}<button class="btn secondary" data-act="wv-hub">${st.lang==='ko'?'마을 광장으로':'Village'}</button></div>
+ </section></div></div>`;
+}
+function writingScreen(){
+ if(!wv)wv={view:'hub'};
+ if(wv.view==='book')return wvBookScreen();
+ if(wv.view!=='unit')return wvHubScreen();
+ const u=wvUnit(wv.unitId);if(!u){wv={view:'hub'};return wvHubScreen();}
+ return [wvLetterScreen,wvWordsScreen,wvModelScreen,wvTreeScreen,wvJournalScreen,wvReplyScreen][Math.max(0,Math.min(5,wv.step))](u);
+}
+function bindWritingInputs(){
+ if(townView!=='writing'||!wv)return;
+ const ta=app.querySelector('[data-wvjournal]');
+ if(ta){ta.oninput=()=>{wv.journal=ta.value;const checks=wvChecks(wvUnit(wv.unitId),wv.journal);
+  app.querySelectorAll('.wv-check').forEach((el,i)=>{if(checks[i])el.classList.toggle('ok',checks[i].ok);el.innerHTML=`${checks[i]&&checks[i].ok?'✅':'⬜'} ${esc(checks[i].ko)}`;});};}
+ app.querySelectorAll('[data-wvfree]').forEach(inp=>{inp.oninput=()=>{wv.picks[inp.dataset.wvfree]=inp.value;};
+  inp.onblur=()=>{render();};});
+}
+function wvSubmit(){
+ const u=wvUnit(wv.unitId);if(!u)return;
+ const text=(wv.journal||'').trim();
+ if(text.length<10){toast(st.lang==='ko'?'조금만 더 써 볼까요? (10자 이상)':'Write a little more!');return;}
+ const checks=wvChecks(u,text);
+ if(checks.every(c=>c.ok)&&!wv.pruneAwarded){wv.pruneAwarded=true;awardPoints(5,st.lang==='ko'?'다듬기 완벽':'polished');}
+ const W=wvEnsure();const rec=W[u.id]||(W[u.id]={});
+ rec.journals=rec.journals||[];
+ const reply=wvRuleReply(u,wv.picks);
+ rec.journals.push({text,date:Date.now(),picks:{...wv.picks},reply});
+ rec.done=true;rec.updatedAt=Date.now();
+ wv.reply=reply;wv.step=5;
+ awardPoints(20,st.lang==='ko'?'저널 완성':'journal');
+ save();render();window.scrollTo({top:0});
+}
+function handleWriting(b){
+ const act=b.dataset.act;const u=wv&&wv.unitId?wvUnit(wv.unitId):null;
+ if(act==='wv-hub'){stopSpeak();wv={view:'hub'};render();window.scrollTo({top:0});return;}
+ if(act==='wv-book'){stopSpeak();wv={view:'book'};render();window.scrollTo({top:0});return;}
+ if(act==='wv-open'){openWvUnit(b.dataset.unit);return;}
+ if(act==='wv-step'){wv.step=+b.dataset.i;stopSpeak();render();window.scrollTo({top:0});return;}
+ if(act==='wv-mic'){if(wv.listening){try{_wvRec&&_wvRec.stop();}catch(e){}}else wvListenStart();return;}
+ if(act==='wv-leaf-del'){wv.leaves.splice(+b.dataset.i,1);render();return;}
+ if(act==='wv-leaf-use'){const l=wv.leaves[+b.dataset.i];if(l!=null){wv.picks[b.dataset.k]=l;render();}return;}
+ if(act==='wv-letter-speak'){if(u)wvSpeak(u.letter);return;}
+ if(act==='wv-word-speak'){if(u){const w=u.words[+b.dataset.i];if(w)wvSpeak(w[0]);}return;}
+ if(act==='wv-word-save'){if(u){const w=u.words[+b.dataset.i];if(w)toggleSaveWord([w[0],w[1],w[1],w[1]],{type:'writing',bookId:u.id});render();}return;}
+ if(act==='wv-model-speak'){if(u)wvSpeak(u.model.journal);return;}
+ if(act==='wv-pick'){const k=b.dataset.k,v=b.dataset.v;const had=wv.picks[k];wv.picks[k]=v;render();
+  if(u&&!had){const lines=wvAssemble(u,wv.picks);const line=lines.find(l=>l.toLowerCase().includes(String(v).toLowerCase().slice(0,10)));if(line&&!line.includes('___'))wvSpeak(line);}
+  return;}
+ if(act==='wv-preview-speak'){if(u)wvSpeak(wvAssemble(u,wv.picks,'').join(' '));return;}
+ if(act==='wv-tree-done'){if(u){const rec=wvEnsure()[u.id];if(!wv.treeAwarded&&!(rec&&rec.done)){wv.treeAwarded=true;awardPoints(10,st.lang==='ko'?'나무 완성':'tree');}wv.step=4;render();window.scrollTo({top:0});}return;}
+ if(act==='wv-journal-speak'){if((wv.journal||'').trim())wvSpeak(wv.journal);return;}
+ if(act==='wv-submit'){wvSubmit();return;}
+ if(act==='wv-reply-speak'){if(wv.reply)wvSpeak(wv.reply);return;}
+ if(act==='wv-entry-speak'){const eu=wvUnit(b.dataset.unit);const j=eu&&(wvEnsure()[eu.id]||{}).journals?.[+b.dataset.j];if(j)wvSpeak(j.text);return;}
+}
 function libShelfScreen(){
  const cat=libCatalog();
  const groups=cat.series.map(s=>{
@@ -756,7 +969,7 @@ function bindPinchZoom(stage){
 }
 function bindGameTown(){bind();
  // English village signage (fixed English names regardless of UI language)
- const labels={library:'Library',wordshop:'Word Shop',theater:'Screen Theater',practice:'Study House',report:'Report Hall',open:st.lang==='ko'?'탭하여 들어가기':st.lang==='zh'?'点击进入':'Tap to enter'};
+ const labels={library:'Library',wordshop:'Word Shop',theater:'Screen Theater',practice:'Study House',report:'Report Hall',writingvillage:'Writing Village',open:st.lang==='ko'?'탭하여 들어가기':st.lang==='zh'?'点击进入':'Tap to enter'};
  const stage=document.getElementById('town-stage');
  if(stage&&gameAvailable()){TownGame.mount(stage,{look:lookForGame(),coins:(profile&&profile.points)||0,labels,onOpenMenu:buildingMenu,slots:(window.DECORATIONS&&DECORATIONS.slots)||{},placed:placedDecoEmoji(),onSlotClick:decorationMenu,avatarUri:avatarSvgUri(),decorArt:placedDecoArt(),buildingArt:buildingArtMap()});}
  app.querySelectorAll('.town-zoom [data-zoom]').forEach(b=>{b.onclick=()=>{if(!window.TownGame||!TownGame.setZoom)return;const cur=TownGame.getZoom?TownGame.getZoom():1;TownGame.setZoom(b.dataset.zoom==='in'?cur+0.4:cur-0.4);};});
@@ -765,6 +978,7 @@ function bindGameTown(){bind();
 function buildingMenu(key){if(key==='theater'){if(window.TownGame)TownGame.destroy();enterScreenQuest();return;}
  if(key==='practice'){showBookShelf();return;}          // Study House → level ladder / book catalog
  if(key==='library'){if(window.TownGame)TownGame.destroy();openLibrary();return;}
+ if(key==='writingvillage'){if(window.TownGame)TownGame.destroy();openWritingVillage();return;}
  const map={wordshop:{view:'words',icon:'🔤',title:{ko:'단어 상점 · 단어 배우기',en:'Word Shop · Learn Words',zh:'单词商店 · 学习单词'},sub:{ko:'단어 카드 · 암기 카드 · 단어 게임.',en:'Word cards · memory · word game.',zh:'单词卡 · 记忆卡 · 单词游戏。'}},report:{view:'report',icon:'📊',title:{ko:'리포트 홀 · 학습 리포트',en:'Report Hall · Learning Report',zh:'报告厅 · 学习报告'},sub:{ko:'전략별 강점·약점을 확인해요.',en:'See your strengths and weaknesses by strategy.',zh:'查看各策略的强弱项。'}}};const m=map[key];if(!m)return;const el=document.getElementById('town-menu');if(!el)return;
  const lessons=availableLessons();
  el.innerHTML=`<div class="tm-backdrop" data-tmx></div><div class="tm-card"><button class="tm-x" data-tmx>×</button><div class="tm-head">${m.icon} <b>${m.title[st.lang]||m.title.en}</b></div><p class="tm-sub">${m.sub[st.lang]||m.sub.en}</p><div class="tm-pick">${st.lang==='ko'?'어느 레슨을 열까요?':st.lang==='zh'?'打开哪一课？':'Which lesson?'}</div><div class="tm-lessons">${lessons.map(id=>{const n=lessonNum(id);const done=lessonDone(id);const ms=lessonMastery(id);return `<button class="tm-lesson ${done?'done':''}" data-tm-lesson="${esc(id)}"><span class="stop-badge">${n}</span><span>Lesson ${n}${done?' ✓':''}${ms.stars?`<em class="tm-stars">${starDots(ms.stars)}</em>`:''}</span></button>`;}).join('')}</div></div>`;
@@ -1076,7 +1290,7 @@ function handleScreenQuest(b){const act=b.dataset.act;sqEnsure();
 }
 function render(){if(!currentStudent){if(!introSeen()){app.innerHTML=introScreen();bindIntro();return;}app.innerHTML=gate();bindGate();return;}
  if(!(atTown&&townView==='game')&&window.TownGame)TownGame.destroy();
- if(atTown){if(townView==='game'&&gameAvailable()){app.innerHTML=gameTownShell();bindGameTown();return;}if(townView==='screen'&&sqAvailable()){app.innerHTML=screenQuestScreen();bind();return;}if(townView==='notice'){app.innerHTML=noticeBoardScreen();bind();return;}if(townView==='diagnostic'){app.innerHTML=diagnosticScreen();bind();return;}if(townView==='parent'){app.innerHTML=parentDashboard();bind();return;}if(townView==='library'){app.innerHTML=libraryScreen();bind();bindLibraryAudio();bindLibraryPdf();return;}app.innerHTML=town();bind();return;}let content=st.view==='home'?home():st.view==='words'?words():(st.view==='originalRead'||st.view==='questions')&&!hasOriginal()?missingOriginal():st.view==='originalRead'?originalRead():st.view==='questions'?questionScreen('original'):st.view==='questionOriginalExtra'?questionScreen('originalExtra'):st.view==='questionSimilar'?questionScreen('similar'):st.view==='review'?questionScreen('review'):st.view==='coach'?coachScreen():st.view==='originalExtra'?originalExtra():st.view==='similar'?extra():report();app.innerHTML=`<div class="shell">${nav()}<main class="main">${top()}${flow()}${content}</main></div>${modal()}`;bind();}
+ if(atTown){if(townView==='game'&&gameAvailable()){app.innerHTML=gameTownShell();bindGameTown();return;}if(townView==='screen'&&sqAvailable()){app.innerHTML=screenQuestScreen();bind();return;}if(townView==='notice'){app.innerHTML=noticeBoardScreen();bind();return;}if(townView==='diagnostic'){app.innerHTML=diagnosticScreen();bind();return;}if(townView==='parent'){app.innerHTML=parentDashboard();bind();return;}if(townView==='library'){app.innerHTML=libraryScreen();bind();bindLibraryAudio();bindLibraryPdf();return;}if(townView==='writing'){app.innerHTML=writingScreen();bind();bindWritingInputs();return;}app.innerHTML=town();bind();return;}let content=st.view==='home'?home():st.view==='words'?words():(st.view==='originalRead'||st.view==='questions')&&!hasOriginal()?missingOriginal():st.view==='originalRead'?originalRead():st.view==='questions'?questionScreen('original'):st.view==='questionOriginalExtra'?questionScreen('originalExtra'):st.view==='questionSimilar'?questionScreen('similar'):st.view==='review'?questionScreen('review'):st.view==='coach'?coachScreen():st.view==='originalExtra'?originalExtra():st.view==='similar'?extra():report();app.innerHTML=`<div class="shell">${nav()}<main class="main">${top()}${flow()}${content}</main></div>${modal()}`;bind();}
 function makeGameChoices(){const w=L.words[st.gameIndex];return [w[1],...L.words.filter((_,i)=>i!==st.gameIndex).sort(()=>Math.random()-.5).slice(0,3).map(x=>x[1])].sort(()=>Math.random()-.5)}
 const AUDIO_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio';
 const LIBRARY_IMG_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/library-images';
@@ -1377,7 +1591,7 @@ function printStudy(passage){
  const html=`<!doctype html><html><head><meta charset="utf-8"><title>${cfg.title}</title><style>@page{size:A4;margin:15mm}body{font-family:Arial,sans-serif;color:#111;font-size:11pt;line-height:1.45}.page{break-after:page;min-height:250mm}.page:last-child{break-after:auto}h1{font-size:22pt;margin:0 0 5mm}.meta{margin:0 0 7mm}.print-art{display:block;max-width:100%;max-height:72mm;margin:0 auto 7mm;object-fit:contain}.passage p{margin:0 0 4mm}.q{break-inside:avoid;margin:0 0 5mm}.q b{display:block;margin-bottom:2mm}.choice{margin-left:4mm}</style></head><body><section class="page"><h1>${esc(cfg.title)}</h1><div class="meta">Name: ____________________　Date: ____________________</div><img class="print-art" src="${artUrl}" alt="Lesson illustration"><div class="passage">${cfg.text.map(x=>`<p>${esc(x)}</p>`).join('')}</div></section><section class="page">${cfg.questions.slice(0,6).map((q,i)=>`<div class="q"><b>${i+1}. ${esc(q[1])}</b>${q[2].map((c,j)=>`<div class="choice">${letters[j]}. ${esc(c)}</div>`).join('')}</div>`).join('')}</section><section class="page">${cfg.questions.slice(6,12).map((q,i)=>`<div class="q"><b>${i+7}. ${esc(q[1])}</b>${q[2].map((c,j)=>`<div class="choice">${letters[j]}. ${esc(c)}</div>`).join('')}</div>`).join('')}<p style="margin-top:10mm">Answers: 1 ___ 2 ___ 3 ___ 4 ___ 5 ___ 6 ___ 7 ___ 8 ___ 9 ___ 10 ___ 11 ___ 12 ___</p></section></body></html>`;
  const w=window.open('','_blank');if(!w){toast('Pop-up was blocked.');return}w.document.write(html);w.document.close();w.focus();setTimeout(()=>w.print(),500)
 }
-function bind(){app.onclick=(e)=>{const b=e.target.closest('button');if(!b)return;const view=b.dataset.view;if(view){setView(view);return}if(b.dataset.lang){st.lang=b.dataset.lang;save();render();return}if(b.dataset.wordmode){st.wordMode=b.dataset.wordmode;st.view='words';save();render();return}if(b.dataset.answer){const mode=st.qMode;const current=st.qIndex[mode];const picked=b.dataset.answer;const q=qs(mode)[current];const total=qs(mode).length;if(isLearningMode(mode)){st.attempts[mode]=st.attempts[mode]||{};st.feedback[mode]=st.feedback[mode]||{};const tries=Number(st.attempts[mode][current]||0)+1;st.attempts[mode][current]=tries;if(picked===q[3]){st.answers[mode][current]=picked;delete st.skipped[mode]?.[current];st.feedback[mode][current]={type:'correct'};save();render();focusQuestion(mode);if(current<total-1)setTimeout(()=>{if(st.qIndex[mode]===current){st.qIndex[mode]=current+1;save();render();focusQuestion(mode)}},800);}else if(tries>=2){st.answers[mode][current]=picked;delete st.skipped[mode]?.[current];st.feedback[mode][current]={type:'reveal'};save();render();focusQuestion(mode);}else{st.feedback[mode][current]={type:'hint',text:learningHint(q),last:picked};save();render();focusQuestion(mode);}return;}st.answers[mode][current]=picked;delete st.skipped[mode]?.[current];if(current<total-1)st.qIndex[mode]=current+1;save();render();if(current<total-1)focusQuestion(mode);return}if(b.dataset.game){if(st.gameStatus==='correct'||st.gameStatus==='reveal')return;const gw=L.words[st.gameIndex];const correct=gw[1];const picked=b.dataset.game;if(picked===correct){if((st.gameTries||0)===0)st.gameScore++;st.gameStatus='correct';st.gameHintOpen=false;save();render();const gi=st.gameIndex;setTimeout(()=>{if(st.gameIndex===gi&&st.gameStatus==='correct')advanceGame();},950);}else{st.gameTries=(st.gameTries||0)+1;st.gameWrongPick=picked;if(st.gameTries>=2){st.gameStatus='reveal';}else{st.gameStatus='hint';st.gameHintOpen=true;}save();render();}return}const act=b.dataset.act;if(!act)return;if(act.slice(0,3)==='sq-'){handleScreenQuest(b);return;}if(act.slice(0,6)==='coach-'){handleCoach(b);return;}if(act.slice(0,5)==='diag-'){handleDiag(b);return;}if(act.slice(0,4)==='lib-'){handleLibrary(b);return;}if(act.slice(0,3)==='nb-'){handleNotice(b);return;}if(act==='town-notice'){openNoticeBoard();return;}if(act.slice(0,3)==='td-'||act==='cz-mode'){handleTownCustomize(b);return;}const mode=b.dataset.mode||st.qMode;if(act==='known'){const w=L.words[+b.dataset.i][0];st.known[w]=!st.known[w];if(!st.awarded.words&&Object.keys(st.known).filter(k=>st.known[k]).length>=(L.words||[]).length){const rm=({ko:'단어 완성',en:'words learned',zh:'单词完成'})[st.lang]||'words learned';awardPoints(20,rm);st.awarded.words=true;}save();render()}else if(act==='word-speak'){speakText(L.words[+b.dataset.i][0],0,'word')}else if(act==='flip'){st.flipped=!st.flipped;save();render()}else if(act==='mem-prev'){st.wordIndex=Math.max(0,st.wordIndex-1);st.flipped=false;save();render()}else if(act==='mem-next'){st.wordIndex=Math.min(11,st.wordIndex+1);st.flipped=false;save();render()}else if(act==='restart-game'){st.gameIndex=0;st.gameScore=0;st.gameDone=false;st.gameStatus='';st.gameTries=0;st.gameWrongPick='';st.gameHintOpen=false;st.gameChoices=makeGameChoices();save();render()}else if(act==='game-hint'){st.gameHintOpen=!st.gameHintOpen;save();render()}else if(act==='game-show-answer'){st.gameStatus='reveal';save();render()}else if(act==='game-next'){advanceGame()}else if(act==='save-word'){toggleSaveWord(L.words[+b.dataset.i],{type:'textbook',bookId:currentBookId,lessonId:currentLessonId});render()}else if(act==='save-word-game'){toggleSaveWord(L.words[st.gameIndex],{type:'textbook',bookId:currentBookId,lessonId:currentLessonId});render()}else if(act==='myword-speak'){const mw=myWordsList()[+b.dataset.i];if(mw)speakText(mw.en)}else if(act==='myword-remove'){const list=(profile&&profile.myWords)||[];list.splice(+b.dataset.i,1);save();render()}else if(act==='open-original-questions'){st.view='originalRead';st.qMode='original';st.questionOpen=true;save();render();setTimeout(()=>document.getElementById('question-drawer')?.scrollIntoView({behavior:'smooth'}),20)}else if(act==='q-prev'){st.qIndex[mode]=Math.max(0,st.qIndex[mode]-1);save();render();focusQuestion(mode)}else if(act==='q-next'||act==='q-skip'){const cur=st.qIndex[mode];if(act==='q-next'&&!st.answers[mode][cur]&&st.feedback?.[mode]?.[cur]?.type!=='reveal'){toast(t('selectAnswer'));return}if(act==='q-skip'&&!st.answers[mode][cur]){st.skipped[mode]=st.skipped[mode]||{};st.skipped[mode][cur]=true}st.qIndex[mode]=Math.min(qs(mode).length-1,st.qIndex[mode]+1);save();render();focusQuestion(mode)}else if(act==='go-q'){st.qIndex[mode]=+b.dataset.i;save();render();focusQuestion(mode)}else if(act==='attempt-grade'){const unanswered=Array.from({length:qs(mode).length},(_,i)=>i).filter(i=>!st.answers[mode][i]);if(unanswered.length){st.modal={mode};save();render()}else grade(mode)}else if(act==='grade-anyway'){grade(mode)}else if(act==='close-modal'){st.modal=null;save();render()}else if(act==='go-q-modal'){st.qIndex[mode]=+b.dataset.i;st.modal=null;save();render();focusQuestion(mode)}else if(act==='show-answer'){const idx=st.qIndex[mode];st.feedback[mode]=st.feedback[mode]||{};const last=st.feedback[mode][idx]?.last;if(last&&!st.answers[mode][idx]){st.answers[mode][idx]=last;delete st.skipped[mode]?.[idx];}st.feedback[mode][idx]={type:'reveal'};save();render();focusQuestion(mode)}else if(act==='start-original-extra'){st.qMode='originalExtra';st.qIndex.originalExtra=0;st.view='questionOriginalExtra';save();render();focusQuestion('originalExtra')}else if(act==='start-extra'){st.qMode='similar';st.qIndex.similar=0;st.view='questionSimilar';save();render();focusQuestion('similar')}else if(act==='retry-similar'){st.qMode='similar';st.qIndex.similar=st.similar?.missed?.[0]??0;st.view='questionSimilar';save();render()}else if(act==='start-wrong-review'){st.qMode='review';st.qIndex.review=0;st.answers.review={};st.skipped.review={};st.attempts.review={};st.feedback.review={};st.reviewComplete=false;st.view='review';save();render();focusQuestion('review')}else if(act==='finish-review'){const rtotal=qs('review').length;let fixed=0;for(let i=0;i<rtotal;i++){if(st.feedback?.review?.[i]?.type==='correct')fixed++;}const already=st.awarded?.review||0,delta=Math.max(0,fixed-already);if(delta>0){const rm=({ko:'오답 고침',en:'fixed',zh:'改对错题'})[st.lang]||'fixed';awardPoints(delta*8,rm);st.awarded.review=fixed;}st.reviewComplete=true;save();render();window.scrollTo({top:0})}else if(act==='toggle-passage'){const p=b.dataset.passage;st.passageHidden[p]=!st.passageHidden[p];save();render();if(!st.passageHidden[p])setTimeout(()=>document.getElementById('question-drawer')?.scrollIntoView({block:'start'}),20)}else if(act==='print-study'){printStudy(b.dataset.passage||'original')}else if(act==='listen-all'){speakPassage(b.dataset.passage||'original')}else if(act==='echo-read'){startEcho(b.dataset.passage||'original')}else if(act==='stop'){stopSpeak()}else if(act==='switch-student'){switchStudent()}else if(act==='open-lesson'){openLesson(b.dataset.lesson)}else if(act==='switch-book'){currentBookId=b.dataset.book;if(profile)profile.currentBookId=currentBookId;save();render();}else if(act==='go-town'){goTown()}else if(act==='av-pick'){ensureAvatar(profile);const p=(window.AVATAR.presets||[]).find(x=>x.id===b.dataset.preset);if(p){profile.avatar.equipped={...profile.avatar.equipped,...p.look};profile.avatar.picked=true;save();render()}}else if(act==='av-pick-done'){ensureAvatar(profile);profile.avatar.picked=true;const firstTime=!(profile.diagnostic&&(profile.diagnostic.done||profile.diagnostic.skipped));if(firstTime&&diagLevels().length){diag={phase:'intro'};townView='diagnostic';}else{townView=landingView();}save();render();window.scrollTo({top:0})}else if(act==='resume-lesson'){openLesson(lastStudiedLesson())}else if(act==='town-closet'){townView='closet';render();window.scrollTo({top:0})}else if(act==='town-map'){townView='map';render();window.scrollTo({top:0})}else if(act==='parent-open'){townView='parent';render();window.scrollTo({top:0})}else if(act==='town-list'){townView='map';render();window.scrollTo({top:0})}else if(act==='town-game'){townView='game';render();window.scrollTo({top:0})}else if(act==='av-tab'){avTab=b.dataset.cat;render()}else if(act==='av-equip'){ensureAvatar(profile);profile.avatar.equipped[b.dataset.cat]=b.dataset.id;save();render()}else if(act==='av-buy'){ensureAvatar(profile);const it=avItem(b.dataset.cat,b.dataset.id);const canPay=window.GameStore?GameStore.spendCoins(profile,it?it.cost:0):((profile.points||0)>=(it?it.cost:0)&&(profile.points-=it.cost,true));if(it&&canPay){const key=b.dataset.cat+':'+b.dataset.id;if(!profile.avatar.owned.includes(key))profile.avatar.owned.push(key);profile.avatar.equipped[b.dataset.cat]=b.dataset.id;save();render();toast(st.lang==='ko'?'새 아이템을 얻었어요!':st.lang==='zh'?'获得新装扮！':'New item unlocked!')}else{toast(st.lang==='ko'?'포인트가 부족해요.':st.lang==='zh'?'积分不够。':'Not enough points.')}}else if(act==='q-skip'){}else if(b.dataset.answer){st.answers[mode][st.qIndex[mode]]=b.dataset.answer;save();render()}else if(b.dataset.game){if(b.dataset.game===L.words[st.gameIndex][1])st.gameScore++;st.gameIndex++;if(st.gameIndex>=12)st.gameDone=true;st.gameChoices=st.gameDone?[]:makeGameChoices();save();render()}};
+function bind(){app.onclick=(e)=>{const b=e.target.closest('button');if(!b)return;const view=b.dataset.view;if(view){setView(view);return}if(b.dataset.lang){st.lang=b.dataset.lang;save();render();return}if(b.dataset.wordmode){st.wordMode=b.dataset.wordmode;st.view='words';save();render();return}if(b.dataset.answer){const mode=st.qMode;const current=st.qIndex[mode];const picked=b.dataset.answer;const q=qs(mode)[current];const total=qs(mode).length;if(isLearningMode(mode)){st.attempts[mode]=st.attempts[mode]||{};st.feedback[mode]=st.feedback[mode]||{};const tries=Number(st.attempts[mode][current]||0)+1;st.attempts[mode][current]=tries;if(picked===q[3]){st.answers[mode][current]=picked;delete st.skipped[mode]?.[current];st.feedback[mode][current]={type:'correct'};save();render();focusQuestion(mode);if(current<total-1)setTimeout(()=>{if(st.qIndex[mode]===current){st.qIndex[mode]=current+1;save();render();focusQuestion(mode)}},800);}else if(tries>=2){st.answers[mode][current]=picked;delete st.skipped[mode]?.[current];st.feedback[mode][current]={type:'reveal'};save();render();focusQuestion(mode);}else{st.feedback[mode][current]={type:'hint',text:learningHint(q),last:picked};save();render();focusQuestion(mode);}return;}st.answers[mode][current]=picked;delete st.skipped[mode]?.[current];if(current<total-1)st.qIndex[mode]=current+1;save();render();if(current<total-1)focusQuestion(mode);return}if(b.dataset.game){if(st.gameStatus==='correct'||st.gameStatus==='reveal')return;const gw=L.words[st.gameIndex];const correct=gw[1];const picked=b.dataset.game;if(picked===correct){if((st.gameTries||0)===0)st.gameScore++;st.gameStatus='correct';st.gameHintOpen=false;save();render();const gi=st.gameIndex;setTimeout(()=>{if(st.gameIndex===gi&&st.gameStatus==='correct')advanceGame();},950);}else{st.gameTries=(st.gameTries||0)+1;st.gameWrongPick=picked;if(st.gameTries>=2){st.gameStatus='reveal';}else{st.gameStatus='hint';st.gameHintOpen=true;}save();render();}return}const act=b.dataset.act;if(!act)return;if(act.slice(0,3)==='sq-'){handleScreenQuest(b);return;}if(act.slice(0,6)==='coach-'){handleCoach(b);return;}if(act.slice(0,5)==='diag-'){handleDiag(b);return;}if(act.slice(0,4)==='lib-'){if(townView==='writing'&&act==='lib-back'){stopSpeak();wv=null;atTown=true;townView=landingView();render();window.scrollTo({top:0});return;}handleLibrary(b);return;}if(act.slice(0,3)==='wv-'){handleWriting(b);return;}if(act.slice(0,3)==='nb-'){handleNotice(b);return;}if(act==='town-notice'){openNoticeBoard();return;}if(act.slice(0,3)==='td-'||act==='cz-mode'){handleTownCustomize(b);return;}const mode=b.dataset.mode||st.qMode;if(act==='known'){const w=L.words[+b.dataset.i][0];st.known[w]=!st.known[w];if(!st.awarded.words&&Object.keys(st.known).filter(k=>st.known[k]).length>=(L.words||[]).length){const rm=({ko:'단어 완성',en:'words learned',zh:'单词完成'})[st.lang]||'words learned';awardPoints(20,rm);st.awarded.words=true;}save();render()}else if(act==='word-speak'){speakText(L.words[+b.dataset.i][0],0,'word')}else if(act==='flip'){st.flipped=!st.flipped;save();render()}else if(act==='mem-prev'){st.wordIndex=Math.max(0,st.wordIndex-1);st.flipped=false;save();render()}else if(act==='mem-next'){st.wordIndex=Math.min(11,st.wordIndex+1);st.flipped=false;save();render()}else if(act==='restart-game'){st.gameIndex=0;st.gameScore=0;st.gameDone=false;st.gameStatus='';st.gameTries=0;st.gameWrongPick='';st.gameHintOpen=false;st.gameChoices=makeGameChoices();save();render()}else if(act==='game-hint'){st.gameHintOpen=!st.gameHintOpen;save();render()}else if(act==='game-show-answer'){st.gameStatus='reveal';save();render()}else if(act==='game-next'){advanceGame()}else if(act==='save-word'){toggleSaveWord(L.words[+b.dataset.i],{type:'textbook',bookId:currentBookId,lessonId:currentLessonId});render()}else if(act==='save-word-game'){toggleSaveWord(L.words[st.gameIndex],{type:'textbook',bookId:currentBookId,lessonId:currentLessonId});render()}else if(act==='myword-speak'){const mw=myWordsList()[+b.dataset.i];if(mw)speakText(mw.en)}else if(act==='myword-remove'){const list=(profile&&profile.myWords)||[];list.splice(+b.dataset.i,1);save();render()}else if(act==='open-original-questions'){st.view='originalRead';st.qMode='original';st.questionOpen=true;save();render();setTimeout(()=>document.getElementById('question-drawer')?.scrollIntoView({behavior:'smooth'}),20)}else if(act==='q-prev'){st.qIndex[mode]=Math.max(0,st.qIndex[mode]-1);save();render();focusQuestion(mode)}else if(act==='q-next'||act==='q-skip'){const cur=st.qIndex[mode];if(act==='q-next'&&!st.answers[mode][cur]&&st.feedback?.[mode]?.[cur]?.type!=='reveal'){toast(t('selectAnswer'));return}if(act==='q-skip'&&!st.answers[mode][cur]){st.skipped[mode]=st.skipped[mode]||{};st.skipped[mode][cur]=true}st.qIndex[mode]=Math.min(qs(mode).length-1,st.qIndex[mode]+1);save();render();focusQuestion(mode)}else if(act==='go-q'){st.qIndex[mode]=+b.dataset.i;save();render();focusQuestion(mode)}else if(act==='attempt-grade'){const unanswered=Array.from({length:qs(mode).length},(_,i)=>i).filter(i=>!st.answers[mode][i]);if(unanswered.length){st.modal={mode};save();render()}else grade(mode)}else if(act==='grade-anyway'){grade(mode)}else if(act==='close-modal'){st.modal=null;save();render()}else if(act==='go-q-modal'){st.qIndex[mode]=+b.dataset.i;st.modal=null;save();render();focusQuestion(mode)}else if(act==='show-answer'){const idx=st.qIndex[mode];st.feedback[mode]=st.feedback[mode]||{};const last=st.feedback[mode][idx]?.last;if(last&&!st.answers[mode][idx]){st.answers[mode][idx]=last;delete st.skipped[mode]?.[idx];}st.feedback[mode][idx]={type:'reveal'};save();render();focusQuestion(mode)}else if(act==='start-original-extra'){st.qMode='originalExtra';st.qIndex.originalExtra=0;st.view='questionOriginalExtra';save();render();focusQuestion('originalExtra')}else if(act==='start-extra'){st.qMode='similar';st.qIndex.similar=0;st.view='questionSimilar';save();render();focusQuestion('similar')}else if(act==='retry-similar'){st.qMode='similar';st.qIndex.similar=st.similar?.missed?.[0]??0;st.view='questionSimilar';save();render()}else if(act==='start-wrong-review'){st.qMode='review';st.qIndex.review=0;st.answers.review={};st.skipped.review={};st.attempts.review={};st.feedback.review={};st.reviewComplete=false;st.view='review';save();render();focusQuestion('review')}else if(act==='finish-review'){const rtotal=qs('review').length;let fixed=0;for(let i=0;i<rtotal;i++){if(st.feedback?.review?.[i]?.type==='correct')fixed++;}const already=st.awarded?.review||0,delta=Math.max(0,fixed-already);if(delta>0){const rm=({ko:'오답 고침',en:'fixed',zh:'改对错题'})[st.lang]||'fixed';awardPoints(delta*8,rm);st.awarded.review=fixed;}st.reviewComplete=true;save();render();window.scrollTo({top:0})}else if(act==='toggle-passage'){const p=b.dataset.passage;st.passageHidden[p]=!st.passageHidden[p];save();render();if(!st.passageHidden[p])setTimeout(()=>document.getElementById('question-drawer')?.scrollIntoView({block:'start'}),20)}else if(act==='print-study'){printStudy(b.dataset.passage||'original')}else if(act==='listen-all'){speakPassage(b.dataset.passage||'original')}else if(act==='echo-read'){startEcho(b.dataset.passage||'original')}else if(act==='stop'){stopSpeak()}else if(act==='switch-student'){switchStudent()}else if(act==='open-lesson'){openLesson(b.dataset.lesson)}else if(act==='switch-book'){currentBookId=b.dataset.book;if(profile)profile.currentBookId=currentBookId;save();render();}else if(act==='go-town'){goTown()}else if(act==='av-pick'){ensureAvatar(profile);const p=(window.AVATAR.presets||[]).find(x=>x.id===b.dataset.preset);if(p){profile.avatar.equipped={...profile.avatar.equipped,...p.look};profile.avatar.picked=true;save();render()}}else if(act==='av-pick-done'){ensureAvatar(profile);profile.avatar.picked=true;const firstTime=!(profile.diagnostic&&(profile.diagnostic.done||profile.diagnostic.skipped));if(firstTime&&diagLevels().length){diag={phase:'intro'};townView='diagnostic';}else{townView=landingView();}save();render();window.scrollTo({top:0})}else if(act==='resume-lesson'){openLesson(lastStudiedLesson())}else if(act==='town-closet'){townView='closet';render();window.scrollTo({top:0})}else if(act==='town-map'){townView='map';render();window.scrollTo({top:0})}else if(act==='parent-open'){townView='parent';render();window.scrollTo({top:0})}else if(act==='town-list'){townView='map';render();window.scrollTo({top:0})}else if(act==='town-game'){townView='game';render();window.scrollTo({top:0})}else if(act==='av-tab'){avTab=b.dataset.cat;render()}else if(act==='av-equip'){ensureAvatar(profile);profile.avatar.equipped[b.dataset.cat]=b.dataset.id;save();render()}else if(act==='av-buy'){ensureAvatar(profile);const it=avItem(b.dataset.cat,b.dataset.id);const canPay=window.GameStore?GameStore.spendCoins(profile,it?it.cost:0):((profile.points||0)>=(it?it.cost:0)&&(profile.points-=it.cost,true));if(it&&canPay){const key=b.dataset.cat+':'+b.dataset.id;if(!profile.avatar.owned.includes(key))profile.avatar.owned.push(key);profile.avatar.equipped[b.dataset.cat]=b.dataset.id;save();render();toast(st.lang==='ko'?'새 아이템을 얻었어요!':st.lang==='zh'?'获得新装扮！':'New item unlocked!')}else{toast(st.lang==='ko'?'포인트가 부족해요.':st.lang==='zh'?'积分不够。':'Not enough points.')}}else if(act==='q-skip'){}else if(b.dataset.answer){st.answers[mode][st.qIndex[mode]]=b.dataset.answer;save();render()}else if(b.dataset.game){if(b.dataset.game===L.words[st.gameIndex][1])st.gameScore++;st.gameIndex++;if(st.gameIndex>=12)st.gameDone=true;st.gameChoices=st.gameDone?[]:makeGameChoices();save();render()}};
 app.onchange=(e)=>{if(e.target.matches('[data-act="speed"]')){st.speed=Number(e.target.value);save();toast(st.lang==='ko'?'읽기 속도를 바꿨어요.':'Speed updated.')}}}
 // Soft deterrents against casual copying of licensed content (not real
 // security — a determined user can still bypass these).

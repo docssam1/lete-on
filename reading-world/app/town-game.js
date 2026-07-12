@@ -17,6 +17,7 @@ window.TownGame = (function () {
     { key: 'theater',  x: 690, y: 292, w: 330, h: 210, sign: '🎬' }, // the two film-reel cinemas
     { key: 'report',   x: 1058, y: 252, w: 150, h: 170, sign: '📊' }, // white gazebo / dome
     { key: 'wordshop', x: 1082, y: 540, w: 190, h: 170, sign: '🔤' }, // market stalls
+    { key: 'writingvillage', x: 620, y: 750, w: 170, h: 100, sign: '✏️' }, // road signpost → next village over
   ];
   // fountain + chimney anchor points (image pixels)
   const FOUNTAIN = { x: 400, y: 388 };
