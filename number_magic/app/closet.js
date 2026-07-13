@@ -148,18 +148,23 @@ window.screenCloset = function(container, opts){
   const tabsHTML = TABS.map(t=>`<button class="nmc-tab${t.key===activeTab?' active':''}" data-tab="${t.key}">${L(t)}</button>`).join('');
   const titleTxt = lang==='en'?'My Character':lang==='zh'?'我的角色':'내 캐릭터';
 
+  /* 목록(왼쪽)이 바로 보이도록 미리보기는 오른쪽 사이드에 고정 */
   container.innerHTML = `
 <div class="nmc-wrap">
   <div class="nmc-head">
     <div class="nmc-title">✨ ${titleTxt}</div>
     <div id="nmc-coins" class="nmc-coins">🪙 ${coins}</div>
   </div>
-  <div class="nmc-preview-area">
-    <div id="nmc-preview">${rndr ? rndr(cur,110) : ''}</div>
-    <div class="nmc-preview-label">${lang==='en'?'Tap items below to customize!':lang==='zh'?'点击下方项目来定制！':'아래에서 꾸며보세요!'}</div>
+  <div class="nmc-main">
+    <div class="nmc-left">
+      <div class="nmc-tab-bar">${tabsHTML}</div>
+      <div id="nmc-grid" class="nmc-grid">${tabItemsHTML()}</div>
+    </div>
+    <div class="nmc-preview-area">
+      <div id="nmc-preview">${rndr ? rndr(cur,110) : ''}</div>
+      <div class="nmc-preview-label">${lang==='en'?'Tap items to customize!':lang==='zh'?'点击项目来定制！':'골라서 꾸며보세요!'}</div>
+    </div>
   </div>
-  <div class="nmc-tab-bar">${tabsHTML}</div>
-  <div id="nmc-grid" class="nmc-grid">${tabItemsHTML()}</div>
 </div>`;
 
   /* ── 탭 바인딩 ── */
