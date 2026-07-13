@@ -273,31 +273,23 @@ const NM_EXAM = {
         {label:'소수 종합',thread:'DC1',level:2,desc:'소수 두 자리',
           concept:'소수의 덧뺄셈 총정리.\n자리 맞추기, 받아올림·내림, 끝자리 0 처리 모두 확인해요.'},
       ]},
+      /* 2026-07-13: 실제 "디딤돌 연산 6B pre중등.pdf"(Drive)를 OCR로 확인한 실제 목차를 그대로 반영.
+         이전 버전(소인수분해·GCD·LCM·거듭제곱·제곱근 등)은 교재를 확인하지 않고 임의로 채운 것이었음 — 폐기.
+         실제 책은 초등 계산 총정리가 아니라 중학 대수 입문(비례식·방정식·음수)이며, 표 완성형 비례식
+         문제와 등식의 성질을 이용한 방정식 풀이 문제는 기존 NM_TGEN에 대응하는 생성기가 없어
+         온라인/인쇄 문제를 만들어낼 수 없음. 없는 걸 있는 척 다른 스레드로 억지로 채우지 않고
+         comingSoon으로 명시 — 실제 목차만 보여주고 생성기가 준비되면 thread/level을 채울 것.*/
       'PRE':{label:'예비 중등',emoji:'🚀',subs:[
-        {label:'소수(素數) 판별',thread:'DV8',level:1,desc:'소수인가?',
-          concept:'약수가 1과 자기 자신뿐인 수가 소수예요.\n예) 2, 3, 5, 7, 11, 13 …\n주의: 1은 소수가 아니에요!'},
-        {label:'소인수분해',thread:'DV8',level:2,desc:'소수의 곱으로',
-          concept:'수를 소수의 곱으로 나타내는 것이 소인수분해예요.\n예) 12 = 2 × 2 × 3 = 2² × 3\n작은 소수(2, 3, 5…)부터 차례로 나눠 봐요.'},
-        {label:'최대공약수',thread:'DV7',level:2,desc:'GCD',
-          concept:'두 수의 공통 약수 중 가장 큰 수예요.\n예) 12와 18의 최대공약수 = 6\n소인수분해로 공통 소인수를 곱해 구해요.'},
-        {label:'최소공배수',thread:'DV7',level:3,desc:'LCM',
-          concept:'두 수의 공통 배수 중 가장 작은 수예요.\n예) 4와 6의 최소공배수 = 12\n(두 수의 곱) ÷ (최대공약수)로도 구할 수 있어요.'},
-        {label:'거듭제곱',thread:'ML11',level:3,desc:'2ⁿ·3ⁿ·5ⁿ',
-          concept:'같은 수를 여러 번 곱한 것을 거듭제곱이라 해요.\n예) 2×2×2 = 2³ = 8 (2의 세제곱)\n중학교 지수 계산의 기초!'},
-        {label:'제곱근',thread:'MX4',level:1,desc:'√ 구하기',
-          concept:'제곱해서 그 수가 되는 수가 제곱근이에요.\n예) √144 = 12 (12×12 = 144)\n제곱수(121, 144, 169 …)를 외워 두면 빨라요.'},
-        {label:'분수 곱셈',thread:'FR6',level:2,desc:'대분수·자연수',
-          concept:'분자끼리, 분모끼리 곱해요. 약분을 먼저 하면 쉬워요.\n예) 2/3 × 3/4 = 6/12 = 1/2\n대분수는 가분수로 바꾼 뒤 곱해요.'},
-        {label:'분수 나눗셈',thread:'FR7',level:1,desc:'역수 곱하기',
-          concept:'나누는 분수를 뒤집어(역수) 곱해요.\n예) 1/2 ÷ 1/4 = 1/2 × 4/1 = 2'},
-        {label:'소수 곱셈',thread:'DC2',level:1,desc:'소수점 위치',
-          concept:'자연수처럼 곱한 뒤, 소수점 아래 자리 수를 더해 소수점을 찍어요.\n예) 0.3 × 0.2 = 0.06 (한 자리 + 한 자리 = 두 자리)'},
-        {label:'소수 나눗셈',thread:'DC3',level:1,desc:'소수점 이동',
-          concept:'나누는 수가 자연수가 되도록 소수점을 같이 옮겨요.\n예) 1.5 ÷ 0.3 = 15 ÷ 3 = 5'},
-        {label:'사칙 혼합계산',thread:'MX1',level:2,desc:'괄호·연산 순서',
-          concept:'계산 순서: ① 괄호 안 → ② 곱셈·나눗셈 → ③ 덧셈·뺄셈\n예) 3 + 2 × (7 − 4) = 3 + 2 × 3 = 3 + 6 = 9'},
-        {label:'비와 백분율',thread:'MX3',level:1,desc:'비율 → %',
-          concept:'비율에 100을 곱하면 백분율(%)이에요.\n예) 3/4 = 0.75 = 75%'},
+        {label:'정비례와 반비례',desc:'대응 관계 표',comingSoon:true,
+          concept:'두 수 x, y가 있을 때\n· 정비례: x가 2배, 3배… 되면 y도 2배, 3배… 돼요. (y = 정해진 수 × x)\n· 반비례: x가 2배, 3배… 되면 y는 배, 배… 돼요. (x × y = 정해진 수)\n예) 세발자전거 수와 전체 바퀴 수 → 정비례 / 넓이가 일정한 직사각형의 가로·세로 → 반비례'},
+        {label:'덧셈·뺄셈 방정식',desc:'등식의 성질',comingSoon:true,
+          concept:'모르는 수 x가 있는 등식을 방정식이라 해요.\n등식의 양쪽에 같은 수를 더하거나 빼도 등식은 그대로 성립해요.\n예) x − 9 = 12 → 양쪽에 9를 더하면 x = 21'},
+        {label:'곱셈·나눗셈 방정식',desc:'등식의 성질',comingSoon:true,
+          concept:'등식의 양쪽에 같은 수를 곱하거나(0이 아닌 수로) 나누어도 등식은 그대로 성립해요.\n예) x ÷ 5 = 20 → 양쪽에 5를 곱하면 x = 100'},
+        {label:'혼합 방정식',desc:'×,+,− / ÷,+,−',comingSoon:true,
+          concept:'x×(수)나 x÷(수)를 한 덩어리로 먼저 구한 다음 x를 구해요.\n예) x×4+5=17 → x×4=12 → x=3'},
+        {label:'정수와 유리수',desc:'음수·수직선',comingSoon:true,
+          concept:'0보다 작은 수(음수)를 포함한 정수·유리수를 수직선 위에서 비교해요.\n절댓값: 수직선에서 0으로부터 떨어진 거리.\n예) -3의 절댓값은 3'},
       ]},
     };
     const GRADE_ORDER = ['1A','1B','2A','2B','3A','3B','4A','4B','5A','5B','6A','6B','PRE'];
@@ -341,7 +333,7 @@ const NM_EXAM = {
       const items = [], seen = {};
       GRADE_ORDER.forEach(gk => {
         GRADES[gk].subs.forEach(s => {
-          if(!s.thread.startsWith(prefix)) return;
+          if(!s.thread || !s.thread.startsWith(prefix)) return;
           const id = s.thread + '-L' + s.level;
           if(seen[id]) return;
           seen[id] = true;
@@ -464,22 +456,16 @@ const NM_EXAM = {
       }
 
       function render(){
-        container.innerHTML = `
-<div class="nm-ex-form-wrap">
-  <div class="nm-ex-form-head">
-    <button class="nm-ex-back-btn" id="nm-ex-back-topics">← 뒤로</button>
-    <span class="nm-ex-form-title">${opts.title}</span>
-  </div>
-  <div class="nm-ex-form-body">
-    <p class="nm-ex-label">주제 선택</p>
-    <div class="nm-ex-grade-topics">
-      ${subs.map((s,i) => `
-      <button class="nm-ex-topic-chip${i===selIdx?' nm-ex-topic-sel':''}" data-idx="${i}">
-        ${opts.showGrade && s.grade ? `<span class="nm-ex-tchip-grade">${s.grade==='PRE'?'Pre':s.grade}</span>` : ''}
-        <span class="nm-ex-tchip-name">${esc(s.label)}</span>
-        <span class="nm-ex-tchip-desc">${esc(s.desc)}</span>
-      </button>`).join('')}
-    </div>
+        const sub = subs[selIdx];
+        const isComingSoon = !!sub.comingSoon;
+        const bodyHtml = isComingSoon ? `
+    <div class="nm-ex-comingsoon">
+      <div class="nm-ex-comingsoon-badge">🚧 문제 생성기 준비 중</div>
+      <p class="nm-ex-comingsoon-desc">실제 교재 목차를 확인해 주제명은 정확하지만,
+        이 단원은 아직 문제를 자동으로 만드는 생성기가 없어서 온라인/인쇄 문제를 낼 수 없어요.
+        아래는 이 단원에서 배우는 내용이에요.</p>
+      <div class="nm-grid-concept-body nm-ex-comingsoon-concept">${esc(sub.concept||'').replace(/\n/g,'<br>')}</div>
+    </div>` : `
     <p class="nm-ex-label" style="margin-top:18px">문항 수</p>
     <div class="nm-ex-count-btns">
       ${COUNT_OPTS.map(n => `<button class="nm-ex-cnt-btn${n===chosenCount?' sel':''}" data-n="${n}">${n}문항</button>`).join('')}
@@ -498,7 +484,25 @@ const NM_EXAM = {
         <button id="nm-ex-preview-dice" class="nm-ex-btn-ghost">🎲 다른 문제</button>
       </div>
       <div class="nm-ws-grid nm-ws-grid-preview">${previewCells()}</div>
+    </div>`;
+
+        container.innerHTML = `
+<div class="nm-ex-form-wrap">
+  <div class="nm-ex-form-head">
+    <button class="nm-ex-back-btn" id="nm-ex-back-topics">← 뒤로</button>
+    <span class="nm-ex-form-title">${opts.title}</span>
+  </div>
+  <div class="nm-ex-form-body">
+    <p class="nm-ex-label">주제 선택</p>
+    <div class="nm-ex-grade-topics">
+      ${subs.map((s,i) => `
+      <button class="nm-ex-topic-chip${i===selIdx?' nm-ex-topic-sel':''}${s.comingSoon?' nm-ex-topic-soon':''}" data-idx="${i}">
+        ${opts.showGrade && s.grade ? `<span class="nm-ex-tchip-grade">${s.grade==='PRE'?'Pre':s.grade}</span>` : ''}
+        <span class="nm-ex-tchip-name">${esc(s.label)}</span>
+        <span class="nm-ex-tchip-desc">${s.comingSoon?'🚧 준비중':esc(s.desc)}</span>
+      </button>`).join('')}
     </div>
+    ${bodyHtml}
   </div>
 </div>`;
 
@@ -509,6 +513,9 @@ const NM_EXAM = {
         container.querySelectorAll('.nm-ex-topic-chip').forEach(chip => {
           chip.addEventListener('click', () => { selIdx = parseInt(chip.dataset.idx); render(); });
         });
+
+        if(isComingSoon) return;
+
         container.querySelectorAll('[data-n]').forEach(btn => {
           btn.addEventListener('click', () => { chosenCount = parseInt(btn.dataset.n); render(); });
         });
