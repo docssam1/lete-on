@@ -1176,7 +1176,12 @@ function renderIdCard(){
     msg.textContent=ko?'이름 확인 중…':en?'Checking…':'检查中…';
     let existing=null;
     try{ existing=await cloudGet(name); }
-    catch(e){ btn.disabled=false; msg.textContent=ko?'인터넷 연결을 확인해 주세요.':en?'Please check your connection.':'请检查网络连接。'; return; }
+    catch(e){
+      btn.disabled=false;
+      const detail=/cloudGet (\d+)/.test(e.message)?` (${e.message.replace('cloudGet','HTTP')})`:'';
+      msg.textContent=(ko?'연결에 실패했어요. 인터넷을 확인하고 다시 시도해 주세요.':en?'Connection failed — please try again.':'连接失败，请重试。')+detail;
+      return;
+    }
     if(!existing){
       try{
         const okClaim=await cloudClaim(name,S);
