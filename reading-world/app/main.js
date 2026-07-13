@@ -561,13 +561,30 @@ function wvJournalScreen(u){
  ${allOk?`<p class="wv-alldone">🌸 ${st.lang==='ko'?'다듬기 완료! 나무에 꽃이 피었어요!':'All polished!'}</p>`:''}
  </section></div></div>`;
 }
+function wvAiPanel(u,ai){
+ const stars=n=>{const v=Math.max(1,Math.min(4,Number(n)||1));return '★'.repeat(v)+'☆'.repeat(4-v);};
+ const rb=ai.rubric||{};
+ const fixes=(ai.fixes&&ai.fixes.length)?ai.fixes.map(f=>`<div class="wv-fix"><span class="wv-fix-orig">${esc(f.orig||'')}</span> → <b class="wv-fix-better">${esc(f.better||'')}</b><small>${esc(f.why||'')}</small></div>`).join(''):`<p class="wv-fix-none">🎉 ${st.lang==='ko'?'고칠 곳이 없어요! 완벽해요!':'Nothing to fix!'}</p>`;
+ return `<div class="wv-ai">
+  <h3>🌈 ${st.lang==='ko'?'무지개 펜 첨삭':'Rainbow Pen Feedback'}</h3>
+  <div class="wv-praise">${(ai.praise||[]).map(p=>`<span class="wv-praise-chip">💚 ${esc(p)}</span>`).join('')}</div>
+  ${fixes}
+  ${ai.challenge?`<p class="wv-challenge">🎯 ${esc(ai.challenge)}</p>`:''}
+  <div class="wv-rubric"><span>${st.lang==='ko'?'내용':'Content'} ${stars(rb.content)}</span><span>${st.lang==='ko'?'구성':'Organization'} ${stars(rb.organization)}</span><span>${st.lang==='ko'?'문법':'Grammar'} ${stars(rb.grammar)}</span><span>${st.lang==='ko'?'어휘':'Vocab'} ${stars(rb.vocab)}</span></div>
+  ${ai.corrected?`<details class="wv-corrected"><summary>📝 ${st.lang==='ko'?'고쳐 쓴 전체 글 보기':'See the polished version'}</summary><p>${esc(ai.corrected)}</p></details>`:''}
+  ${ai.replyLetter?`<div class="wv-envelope open"><div class="wv-palrow"><span class="wv-palface">${wvPal(u).e}</span><b>${esc(wvPal(u).name)}</b><small>${st.lang==='ko'?'AI 선생님 답장':'AI teacher reply'}</small></div><p class="wv-letter">${esc(ai.replyLetter)}</p><div class="tools center"><button class="btn tiny" data-act="wv-ai-speak">🔊</button></div></div>`:''}
+ </div>`;
+}
 function wvReplyScreen(u){
  const pal=wvPal(u);
  const idx=WVDATA().units.findIndex(x=>x.id===u.id);const next=WVDATA().units[idx+1];
+ const rec=wvEnsure()[u.id];const last=rec&&rec.journals&&rec.journals[rec.journals.length-1];
+ const aiSec=(last&&last.ai)?wvAiPanel(u,last.ai):(wv.aiBusy?`<p class="wv-aibusy">🌈 ${st.lang==='ko'?'무지개 펜 선생님이 내 글을 읽고 있어요…':'The Rainbow Pen teacher is reading…'}</p>`:`<div class="tools center"><button class="btn violet" data-act="wv-ai">🌈 ${st.lang==='ko'?'무지개 펜 첨삭 받기 (AI 원어민 선생님)':'Get Rainbow Pen feedback'}</button></div>`);
  return `<div class="town lib-town">${wvHead(u)}<div class="lib-wrap"><section class="wv-panel wv-replywrap">
  <div class="wv-envelope open"><div class="wv-palrow"><span class="wv-palface big">${pal.e}</span><b>${esc(pal.name)}</b><small>${st.lang==='ko'?'답장이 도착했어요!':'You got a reply!'}</small></div>
- <p class="wv-letter">${esc(wv.reply||'')}</p>
+ <p class="wv-letter">${esc(wv.reply||(last&&last.reply)||'')}</p>
  <div class="tools center"><button class="btn tiny" data-act="wv-reply-speak">🔊</button></div></div>
+ ${aiSec}
  <div class="tools center">${next?`<button class="btn primary" data-act="wv-open" data-unit="${next.id}">💌 ${st.lang==='ko'?'다음 편지 열기':'Next letter'}: ${next.emoji} ${esc(next.title)}</button>`:''}<button class="btn secondary" data-act="wv-hub">${st.lang==='ko'?'마을 광장으로':'Village'}</button></div>
  </section></div></div>`;
 }
@@ -622,6 +639,24 @@ function handleWriting(b){
  if(act==='wv-journal-speak'){if((wv.journal||'').trim())wvSpeak(wv.journal);return;}
  if(act==='wv-submit'){wvSubmit();return;}
  if(act==='wv-reply-speak'){if(wv.reply)wvSpeak(wv.reply);return;}
+ if(act==='wv-ai'){
+  if(!u||wv.aiBusy)return;
+  const rec=wvEnsure()[u.id];const last=rec&&rec.journals&&rec.journals[rec.journals.length-1];
+  if(!last){toast(st.lang==='ko'?'저널을 먼저 보내요!':'Send a journal first!');return;}
+  wv.aiBusy=true;render();
+  fetch(WV_AI_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+WV_ANON,'apikey':WV_ANON},body:JSON.stringify({studentId:(currentStudent&&currentStudent.id)||'anon',palName:wvPal(u).name,unitTitle:u.title,question:u.letter,journal:last.text})})
+  .then(r=>r.json().then(j=>({ok:r.ok,j})))
+  .then(({ok,j})=>{wv.aiBusy=false;
+   if(!ok||!j||j.error){
+    const e=j&&String(j.error||'');
+    const msg=e==='daily-limit'?(st.lang==='ko'?'오늘의 첨삭 횟수를 모두 썼어요. 내일 또 만나요!':'Daily limit reached — see you tomorrow!')
+     :e.includes('GEMINI_API_KEY')?(st.lang==='ko'?'첨삭 기능이 아직 준비 중이에요. (관리자 설정 필요)':'Feedback is being set up.')
+     :(st.lang==='ko'?'첨삭을 불러오지 못했어요. 잠시 후 다시 해봐요.':'Could not load feedback.');
+    toast(msg);render();return;}
+   last.ai=j;save();render();window.scrollTo({top:0});})
+  .catch(()=>{wv.aiBusy=false;toast(st.lang==='ko'?'첨삭을 불러오지 못했어요. 인터넷을 확인해요.':'Network error.');render();});
+  return;}
+ if(act==='wv-ai-speak'){const rec=u&&wvEnsure()[u.id];const last=rec&&rec.journals&&rec.journals[rec.journals.length-1];if(last&&last.ai&&last.ai.replyLetter)wvSpeak(last.ai.replyLetter);return;}
  if(act==='wv-entry-speak'){const eu=wvUnit(b.dataset.unit);const j=eu&&(wvEnsure()[eu.id]||{}).journals?.[+b.dataset.j];if(j)wvSpeak(j.text);return;}
 }
 function libShelfScreen(){
@@ -1295,6 +1330,11 @@ function makeGameChoices(){const w=L.words[st.gameIndex];return [w[1],...L.words
 const AUDIO_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio';
 const LIBRARY_IMG_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/library-images';
 const STORAGE_PUBLIC_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public';
+// Writing Village premium feedback — Edge Function endpoint. The anon key below is
+// the same public client key already shipped in store.js; the LLM API key itself
+// lives only in the Edge Function's server-side secret.
+const WV_AI_URL='https://fgahqumaldheqettmvqg.supabase.co/functions/v1/writing-feedback';
+const WV_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
 // Voice-over availability guard. If a stored MP3 no longer matches the on-screen
 // text, list it here (book → {extra|new|original:true}) and the app falls back to
 // on-device TTS, which reads the current text aloud, until the file is re-recorded.

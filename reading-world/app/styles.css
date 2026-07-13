@@ -936,5 +936,23 @@ textarea.nb-in{resize:vertical}
 .wv-entry-head small{color:var(--muted);flex:1}
 .wv-entry-text{font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0 0 8px}
 .wv-entry-reply{background:#fff9e8;border-radius:10px;padding:8px 12px;font-size:13px;color:#7a5b00;margin:0}
+.wv-ai{margin-top:18px;border:1.5px solid;border-image:linear-gradient(90deg,#e57373,#ffb74d,#fff176,#81c784,#64b5f6,#ba68c8) 1;border-radius:0;background:#fffdf8;padding:16px 16px 14px;text-align:left}
+.wv-ai h3{margin:0 0 10px;font-size:16px;background:linear-gradient(90deg,#e05656,#e09a2f,#3fa86a,#3f7fd6,#9c56c9);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:900}
+.wv-praise{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.wv-praise-chip{background:#e9f8ec;border-radius:10px;padding:7px 11px;font-size:13px;color:#1d5a33}
+.wv-fix{background:#fffbe8;border:1px solid #f2e2a8;border-radius:10px;padding:8px 11px;margin-bottom:6px;font-size:13.5px}
+.wv-fix-orig{text-decoration:line-through;color:#b0803a}
+.wv-fix-better{color:#1d6b38}
+.wv-fix small{display:block;color:#8a7a4a;margin-top:3px;font-size:12px}
+.wv-fix-none{color:#c2569a;font-weight:800;font-size:13.5px}
+.wv-challenge{background:#f0f4ff;border-radius:10px;padding:8px 11px;font-size:13px;color:#3a4f8a;margin:8px 0}
+.wv-rubric{display:flex;flex-wrap:wrap;gap:10px;font-size:12.5px;color:#6b6b52;margin:10px 0}
+.wv-rubric span{background:#f6f4ea;border-radius:8px;padding:4px 9px}
+.wv-corrected{margin:8px 0}
+.wv-corrected summary{cursor:pointer;font-size:13px;color:#4a6b52;font-weight:700}
+.wv-corrected p{font-family:Georgia,serif;font-size:14.5px;line-height:1.8;background:#f4f8f0;border-radius:10px;padding:10px 12px;margin-top:8px}
+.wv-aibusy{text-align:center;color:#9c56c9;font-weight:800;animation:wvPulse 1.2s ease infinite}
+@keyframes wvPulse{0%,100%{opacity:.55}50%{opacity:1}}
+.btn.violet{background:#8e5cc7;border-color:#7a4bb0;color:#fff}
 @media(max-width:680px){.wv-model,.wv-treegrow,.wv-write{flex-direction:column}.wv-treewrap,.wv-treewrap.small{flex:none;width:min(240px,80%);margin:0 auto}.wv-panel{padding:18px 14px}}
 @media print{.lib-town{display:none!important}}
