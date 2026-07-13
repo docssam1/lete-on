@@ -467,3 +467,86 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-grid-score{font-size:20px;font-weight:900;padding:8px 20px;border-radius:12px}
 .nm-grid-pass{color:var(--ok);background:#edfaf3}
 .nm-grid-fail{color:var(--no);background:#fef0f0}
+
+/* ============================================================
+   11math 스타일 학습지 래퍼
+   ============================================================ */
+.nm-ws-wrap{display:flex;flex-direction:column;max-width:700px;margin:0 auto;
+  padding:14px 16px 32px;width:100%;overflow-y:auto;height:100%}
+
+/* 헤더 */
+.nm-ws-hd{display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.nm-ws-hd-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* 탭 */
+.nm-ws-tabs{display:flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.nm-ws-tab{padding:7px 18px;background:#fff;border:none;font-size:14px;font-weight:700;
+  color:var(--sub);cursor:pointer;font-family:'Pretendard',sans-serif;transition:.14s}
+.nm-ws-tab:not(:first-child){border-left:1.5px solid var(--line)}
+.nm-ws-tab.active{background:var(--blue);color:#fff}
+
+/* 문제 그리드 */
+.nm-ws-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:520px){.nm-ws-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* 셀 */
+.nm-ws-cell{display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:10px 8px 12px;background:#fff;border:1.5px solid var(--line);
+  border-radius:14px;position:relative;transition:.15s}
+.nm-ws-ok{border-color:var(--ok);background:#f0faf5}
+.nm-ws-err{border-color:var(--no);background:#fef5f5}
+
+/* 원형 번호 */
+.nm-ws-cnum{font-size:14px;font-weight:900;color:var(--sub);align-self:flex-start;line-height:1}
+
+/* ── 세로셈 (vertical problem) ── */
+.nm-vp{display:flex;flex-direction:column;align-items:flex-end;
+  font-size:1.25em;font-weight:800;color:var(--ink);min-width:64px;width:100%;
+  padding:0 8px}
+.nm-vp-row{display:flex;align-items:center;justify-content:flex-end;width:100%;line-height:1.5}
+.nm-vp-top{margin-bottom:2px}
+.nm-vp-mid{gap:6px}
+.nm-vp-op{min-width:22px;text-align:left;font-size:1em;color:var(--blue-deep)}
+.nm-vp-b{flex:1;text-align:right}
+.nm-vp-line{width:100%;height:2px;background:var(--ink);margin:4px 0}
+.nm-vp-bot{justify-content:flex-end}
+.nm-vp-inp{width:90%;max-width:80px;text-align:right;font-size:1em;font-weight:800;
+  border:none;border-bottom:2px solid var(--blue);background:transparent;
+  outline:none;font-family:'Pretendard',sans-serif;color:var(--blue-deep);padding:2px 0}
+.nm-vp-inp:focus{border-bottom-color:var(--gold-deep)}
+.nm-ws-ok .nm-vp-inp{border-bottom-color:var(--ok);color:var(--ok)}
+.nm-ws-err .nm-vp-inp{border-bottom-color:var(--no);color:var(--no)}
+.nm-vp-ans-val{font-size:1em;font-weight:900;color:var(--no);text-decoration:none}
+.nm-vp-blank{display:inline-block;min-width:60px;height:2px;background:var(--ink);margin-top:6px}
+
+/* 인라인 (세로셈 불가) */
+.nm-vp-inline{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+.nm-vp-tex{font-size:0.95em;text-align:center}
+.nm-vp-inp-sm{width:72px;text-align:center;font-size:0.95em;font-weight:800;
+  border:none;border-bottom:2px solid var(--blue);background:transparent;
+  outline:none;font-family:'Pretendard',sans-serif;color:var(--blue-deep);padding:2px 0}
+.nm-vp-inp-sm:focus{border-bottom-color:var(--gold-deep)}
+
+/* 하단 버튼 영역 */
+.nm-ws-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding-top:10px;
+  border-top:1px solid var(--line)}
+
+/* ============================================================
+   인쇄 학습지 (11math 세로셈 스타일)
+   ============================================================ */
+@media print {
+  .nm-print-ws-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .nm-print-ws-cell{border:1px solid #bbb;border-radius:6px;padding:10px 8px 14px;
+    display:flex;flex-direction:column;align-items:center;gap:4px}
+  .nm-print-cnum{font-size:14px;font-weight:900;color:#555;align-self:flex-start}
+  .nm-print-vp{display:flex;flex-direction:column;align-items:flex-end;
+    font-size:1.15em;font-weight:700;width:100%;padding:0 6px}
+  .nm-print-vp-top{text-align:right;width:100%;line-height:1.5}
+  .nm-print-vp-mid{display:flex;align-items:center;gap:4px;width:100%;line-height:1.5}
+  .nm-print-vp-op{min-width:18px;text-align:left}
+  .nm-print-vp-line{width:100%;height:1.5px;background:#000;margin:4px 0}
+  .nm-print-vp-bot{text-align:right;width:100%;min-height:24px}
+  .nm-print-ak-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .nm-print-ak-item{font-size:13px;font-weight:700}
+}

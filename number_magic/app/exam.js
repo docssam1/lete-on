@@ -638,102 +638,216 @@ window.examScreen = function(container){
     NM_EXAM.renderExamSetup(container, cfg => showExam(cfg));
   }
 
-  /* ── 그리드 학습지 (11math 스타일, 전체 문제 동시 표시) ── */
+  /* ── 그리드 학습지 (11math 스타일) ── */
   function runGridExam(cfg){
     const { thread, level, count, seed, label, concept } = cfg;
     const numericSeed = NM_RNG.hashSeed(seed);
     const problems = buildProblems(thread, level, count, numericSeed);
-    const inputs = [];
     const code = NM_EXAM.worksheetCode(cfg);
+    const userAnswers = new Array(count).fill('');
+    let activeTab = 'problems'; // 'problems' | 'answers'
+    let graded = false;
+    let gradeScore = 0;
 
-    const conceptHtml = concept
-      ? `<details class="nm-grid-concept">
-           <summary class="nm-grid-concept-sum">📖 개념 보기</summary>
-           <div class="nm-grid-concept-body">${esc(concept).replace(/\n/g,'<br>')}</div>
-         </details>`
-      : '';
+    /* 원형 번호 ①②③... */
+    function circled(n){
+      if(n>=1&&n<=20) return String.fromCharCode(0x245F+n);
+      if(n>=21&&n<=35) return String.fromCharCode(0x3250+n-20);
+      return '('+n+')';
+    }
 
-    container.innerHTML = `
-<div class="nm-grid-sheet">
-  <div class="nm-grid-header">
-    <span class="nm-grid-badge">${esc(label || thread)}</span>
-    <span class="nm-grid-code">${esc(code)}</span>
+    /* 세로셈 파싱: "a OP b = \square" 형태 */
+    function parseVert(tex){
+      const m = (tex||'').match(/^([\d.]+)\s*([+\-×÷]|\\times|\\div)\s*([\d.]+)\s*=\s*\\square/);
+      if(!m) return null;
+      const opMap={'\\times':'×','\\div':'÷'};
+      return {a:m[1], op:opMap[m[2]]||m[2], b:m[3]};
+    }
+
+    /* 문제 셀 HTML 생성 */
+    function cellHtml(p, i, mode){
+      // mode: 'online' | 'blank' | 'answer'
+      const v = parseVert(p.tex);
+      const num = circled(i+1);
+      let inner;
+      if(v){
+        let ansRow;
+        if(mode==='online'){
+          ansRow = `<input class="nm-vp-inp" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off">`;
+        } else if(mode==='answer'){
+          ansRow = `<span class="nm-vp-ans-val">${p.answer}</span>`;
+        } else {
+          ansRow = `<span class="nm-vp-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
+        }
+        inner = `<div class="nm-vp">
+  <div class="nm-vp-row nm-vp-top">${esc(v.a)}</div>
+  <div class="nm-vp-row nm-vp-mid"><span class="nm-vp-op">${esc(v.op)}</span><span class="nm-vp-b">${esc(v.b)}</span></div>
+  <div class="nm-vp-line"></div>
+  <div class="nm-vp-row nm-vp-bot">${ansRow}</div>
+</div>`;
+      } else {
+        /* 세로셈 불가 → 인라인 KaTeX */
+        let ansRow;
+        if(mode==='online'){
+          ansRow = `<input class="nm-vp-inp nm-vp-inp-sm" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off" placeholder="?">`;
+        } else if(mode==='answer'){
+          ansRow = `<span class="nm-vp-ans-val">${p.answer}</span>`;
+        } else {
+          ansRow = '';
+        }
+        inner = `<div class="nm-vp-inline">
+  <div class="nm-vp-tex" data-tex="${esc(p.tex||'')}"></div>
+  ${ansRow}
+</div>`;
+      }
+      const stateClass = graded && mode==='online'
+        ? (parseFloat(userAnswers[i])===p.answer ? ' nm-ws-ok' : (userAnswers[i]!=='' ? ' nm-ws-err' : ''))
+        : '';
+      return `<div class="nm-ws-cell${stateClass}" data-ci="${i}">
+  <span class="nm-ws-cnum">${num}</span>
+  ${inner}
+</div>`;
+    }
+
+    function render(){
+      const mode = activeTab==='answers' ? 'answer' : 'online';
+      const conceptHtml = (concept && activeTab==='problems')
+        ? `<details class="nm-grid-concept">
+             <summary class="nm-grid-concept-sum">📖 개념 보기</summary>
+             <div class="nm-grid-concept-body">${esc(concept).replace(/\n/g,'<br>')}</div>
+           </details>`
+        : '';
+      const scoreHtml = graded && activeTab==='problems'
+        ? `<div class="nm-grid-score ${gradeScore/count>=0.8?'nm-grid-pass':'nm-grid-fail'}">${gradeScore}/${count} (${Math.round(gradeScore/count*100)}%)</div>`
+        : '';
+
+      container.innerHTML = `
+<div class="nm-ws-wrap">
+  <div class="nm-ws-hd">
+    <div class="nm-ws-hd-left">
+      <span class="nm-grid-badge">${esc(label||thread)}</span>
+      <span class="nm-grid-code">${esc(code)}</span>
+    </div>
+    <div class="nm-ws-tabs">
+      <button class="nm-ws-tab${activeTab==='problems'?' active':''}" data-tab="problems">문제지</button>
+      <button class="nm-ws-tab${activeTab==='answers'?' active':''}" data-tab="answers">정답지</button>
+    </div>
   </div>
   ${conceptHtml}
-  <div class="nm-prob-grid" id="nm-prob-grid"></div>
-  <div class="nm-grid-actions" id="nm-grid-actions">
-    <button id="nm-grid-grade" class="nm-ex-btn-primary">채점하기 ✓</button>
-    <button id="nm-grid-back" class="nm-ex-btn-secondary">주제 바꾸기</button>
+  <div class="nm-ws-grid">
+    ${problems.map((p,i)=>cellHtml(p,i,mode)).join('')}
+  </div>
+  <div class="nm-ws-foot">
+    ${scoreHtml}
+    ${activeTab==='problems'&&!graded ? '<button id="nm-ws-grade" class="nm-ex-btn-primary">채점하기 ✓</button>' : ''}
+    ${activeTab==='problems'&&graded ? '<button id="nm-ws-again" class="nm-ex-btn-primary">계속 연습 🔄</button>' : ''}
+    <button id="nm-ws-print" class="nm-ex-btn-secondary">🖨️ 출력하기</button>
+    <button id="nm-ws-new" class="nm-ex-btn-secondary">다른 문제지</button>
+    <button id="nm-ws-back" class="nm-ex-btn-ghost">← 주제 바꾸기</button>
   </div>
 </div>`;
 
-    const grid = container.querySelector('#nm-prob-grid');
-    problems.forEach((p, i) => {
-      const cell = document.createElement('div');
-      cell.className = 'nm-prob-cell';
+      /* KaTeX 인라인 렌더 */
+      container.querySelectorAll('.nm-vp-tex').forEach(el => renderKaTeX(el.dataset.tex||'', el));
 
-      const numEl = document.createElement('span');
-      numEl.className = 'nm-prob-num';
-      numEl.textContent = i + 1;
-
-      const texEl = document.createElement('div');
-      texEl.className = 'nm-prob-tex';
-
-      const inp = document.createElement('input');
-      inp.className = 'nm-prob-ans';
-      inp.type = 'number';
-      inp.inputMode = 'numeric';
-      inp.placeholder = '?';
-      inp.autocomplete = 'off';
-
-      cell.appendChild(numEl);
-      cell.appendChild(texEl);
-      cell.appendChild(inp);
-      grid.appendChild(cell);
-
-      renderKaTeX(p.tex || '', texEl);
-      inputs.push(inp);
-    });
-
-    inputs.forEach((inp, i) => {
-      inp.addEventListener('keydown', e => {
-        if(e.key === 'Enter' && i + 1 < inputs.length){ inputs[i+1].focus(); }
+      /* 입력값 복원 + Enter 이동 */
+      const inps = [...container.querySelectorAll('.nm-vp-inp')];
+      inps.forEach((inp,idx_) => {
+        const idx = parseInt(inp.dataset.idx);
+        if(userAnswers[idx]!=='') inp.value = userAnswers[idx];
+        inp.addEventListener('input', ()=>{ userAnswers[idx]=inp.value; });
+        inp.addEventListener('keydown', e=>{
+          if(e.key==='Enter'){ const nx=inps[inps.indexOf(inp)+1]; if(nx) nx.focus(); }
+        });
       });
-    });
 
-    container.querySelector('#nm-grid-back').addEventListener('click', showSetup);
+      /* 탭 전환 */
+      container.querySelectorAll('.nm-ws-tab').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          activeTab = btn.dataset.tab;
+          render();
+        });
+      });
 
-    container.querySelector('#nm-grid-grade').addEventListener('click', function gradeAll(){
-      this.removeEventListener('click', gradeAll);
-      let score = 0;
-      const cells = container.querySelectorAll('.nm-prob-cell');
-      problems.forEach((p, i) => {
-        const raw = inputs[i].value.trim();
-        const val = raw === '' ? NaN : parseFloat(raw);
-        const correct = val === p.answer;
-        if(correct) score++;
-        cells[i].classList.add(correct ? 'correct' : 'wrong');
-        inputs[i].disabled = true;
-        const fb = document.createElement('div');
-        fb.className = 'nm-prob-feedback';
-        fb.textContent = correct ? '✓' : String(p.answer);
-        cells[i].appendChild(fb);
+      /* 채점 */
+      const gradeBtn = container.querySelector('#nm-ws-grade');
+      if(gradeBtn) gradeBtn.addEventListener('click', ()=>{
+        graded = true; gradeScore = 0;
+        problems.forEach((p,i)=>{ if(parseFloat(userAnswers[i])===p.answer) gradeScore++; });
+        render();
       });
-      const pct = Math.round(score / problems.length * 100);
-      const actionsDiv = container.querySelector('#nm-grid-actions');
-      actionsDiv.innerHTML = `
-<div class="nm-grid-score ${pct>=80?'nm-grid-pass':'nm-grid-fail'}">${score}/${problems.length} (${pct}%)</div>
-<button id="nm-grid-again" class="nm-ex-btn-primary">계속 연습 🔄</button>
-<button id="nm-grid-back2" class="nm-ex-btn-secondary">주제 바꾸기</button>
-<button id="nm-grid-print" class="nm-ex-btn-ghost">🖨️ 인쇄</button>`;
-      container.querySelector('#nm-grid-again').addEventListener('click', () => {
-        runGridExam({...cfg, seed: NM_RNG.newCode()});
+
+      /* 계속 연습 */
+      const againBtn = container.querySelector('#nm-ws-again');
+      if(againBtn) againBtn.addEventListener('click', ()=>runGridExam({...cfg, seed:NM_RNG.newCode()}));
+
+      /* 출력 */
+      container.querySelector('#nm-ws-print').addEventListener('click', ()=>printWorksheet());
+
+      /* 다른 문제지 */
+      container.querySelector('#nm-ws-new').addEventListener('click', ()=>runGridExam({...cfg, seed:NM_RNG.newCode()}));
+
+      /* 주제 바꾸기 */
+      container.querySelector('#nm-ws-back').addEventListener('click', showSetup);
+    }
+
+    function printWorksheet(){
+      const old = document.querySelector('.nm-print-sheet');
+      if(old) old.remove();
+      const sheet = document.createElement('div');
+      sheet.className = 'nm-print-sheet';
+      sheet.setAttribute('aria-hidden','true');
+      sheet.innerHTML = `
+<div class="nm-print-header">
+  <h2 style="margin:0;font-size:16px">${esc(label||thread)} 연산 학습지</h2>
+  <div style="display:flex;gap:20px;margin-top:6px;font-size:12px">
+    <span>이름: <span style="display:inline-block;width:100px;border-bottom:1px solid #000">&nbsp;</span></span>
+    <span>날짜: <span style="display:inline-block;width:80px;border-bottom:1px solid #000">&nbsp;</span></span>
+    <span>점수: <span style="display:inline-block;width:50px;border-bottom:1px solid #000">&nbsp;</span> / ${count}</span>
+    <span style="margin-left:auto;font-family:monospace;font-size:11px">${esc(code)}</span>
+  </div>
+</div>
+<div class="nm-print-ws-grid" id="nm-pw-probs"></div>
+<div class="nm-print-answer-key">
+  <h3 style="margin:0 0 6px;font-size:13px">정답지 — <span style="font-family:monospace;font-size:11px">${esc(code)}</span></h3>
+  <div class="nm-print-ak-grid" id="nm-pw-aks"></div>
+</div>`;
+      document.body.appendChild(sheet);
+
+      const probGrid = sheet.querySelector('#nm-pw-probs');
+      const akGrid   = sheet.querySelector('#nm-pw-aks');
+
+      problems.forEach((p,i)=>{
+        const v = parseVert(p.tex);
+        const cell = document.createElement('div');
+        cell.className = 'nm-print-ws-cell';
+        if(v){
+          cell.innerHTML = `<span class="nm-print-cnum">${circled(i+1)}</span>
+<div class="nm-print-vp">
+  <div class="nm-print-vp-top">${esc(v.a)}</div>
+  <div class="nm-print-vp-mid"><span class="nm-print-vp-op">${esc(v.op)}</span>${esc(v.b)}</div>
+  <div class="nm-print-vp-line"></div>
+  <div class="nm-print-vp-bot">&nbsp;</div>
+</div>`;
+        } else {
+          const texEl = document.createElement('div');
+          texEl.className = 'nm-vp-tex';
+          renderKaTeX(p.tex||'', texEl);
+          cell.innerHTML = `<span class="nm-print-cnum">${circled(i+1)}</span>`;
+          cell.appendChild(texEl);
+        }
+        probGrid.appendChild(cell);
+
+        const ak = document.createElement('div');
+        ak.className = 'nm-print-ak-item';
+        ak.textContent = `${circled(i+1)} ${p.answer}`;
+        akGrid.appendChild(ak);
       });
-      container.querySelector('#nm-grid-back2').addEventListener('click', showSetup);
-      container.querySelector('#nm-grid-print').addEventListener('click', () => {
-        NM_EXAM.renderPrint({thread, level, count, seed});
-      });
-    });
+
+      setTimeout(()=>window.print(), 350);
+    }
+
+    render();
   }
 
   function showExam(cfg){
