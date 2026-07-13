@@ -83,8 +83,12 @@ function move10(opts){
     gen:'move10', mode:'main',
     a,b, need, rest, answer:ans,
     prompt:{ ko:`${b}에서 ${need}을 이사보내 ${a}를 10으로 만들어요`, en:`Move ${need} from ${b} to make ${a} into 10`, zh:`从${b}里搬${need}过去，把${a}凑成10` },
-    tex:`${a} + ${b} = ${a} + ${need} + ${rest} = 10 + ${rest} = ${ans}`,
-    steps:[`${a} + ${b}`,`${a} + ${need} + ${rest}`,`10 + ${rest}`,`${ans}`],
+    tex:`${a} + ${b} = \\square`,
+    widget:'steps',
+    steps:[
+      {tex:`${a} + ${need} = \\square`, blank:10},
+      {tex:`10 + ${rest} = \\square`, blank:ans}
+    ],
     answerType:'number'
   };
 }
@@ -118,8 +122,12 @@ function add10sub(opts){
     gen:'add10sub', mode:'main',
     base, add, diff, answer:ans,
     prompt:{ ko:`${add} 대신 10을 더하고, 더 준 ${diff}을 빼요`, en:`Add 10 instead of ${add}, then subtract the extra ${diff}`, zh:`不加${add}，先加10，再减去多给的${diff}` },
-    tex:`${base} + ${add} = ${base} + 10 - ${diff} = ${base+10} - ${diff} = ${ans}`,
-    steps:[`${base} + ${add}`,`${base} + 10 - ${diff}`,`${base+10} - ${diff}`,`${ans}`],
+    tex:`${base} + ${add} = \\square`,
+    widget:'steps',
+    steps:[
+      {tex:`${base} + 10 = \\square`, blank:base+10},
+      {tex:`${base+10} - ${diff} = \\square`, blank:ans}
+    ],
     answerType:'number'
   };
 }
@@ -147,22 +155,22 @@ function stairAdd(opts){
   const count=opts.count||R(2,3);
   const nums=[];
   for(let i=0;i<count;i++)nums.push(R(11,79));
-  // 계단 누적 스텝 생성 (첫 수 기준, 이후 각 수를 십→일로)
+  // 계단 누적: 각 다음 수를 십의 자리 먼저, 일의 자리 나중에 더하는 단계로
   let acc=nums[0];
-  const stair=[`${nums[0]}`];
-  const parts=[`${nums[0]}`];
+  const fillSteps=[];
   for(let i=1;i<count;i++){
     const t=Math.floor(nums[i]/10)*10, o=nums[i]%10;
-    parts.push(`${t} + ${o}`);
-    acc+=t; stair.push(`${acc}`);
-    acc+=o; stair.push(`${acc}`);
+    fillSteps.push({tex:`${acc} + ${t} = \\square`, blank:acc+t}); acc+=t;
+    fillSteps.push({tex:`${acc} + ${o} = \\square`, blank:acc+o}); acc+=o;
   }
   const ans=nums.reduce((s,n)=>s+n,0);
   return {
     gen:'stairAdd', mode:'main',
-    nums, answer:ans, stair,
+    nums, answer:ans,
     prompt:{ ko:'십의 자리 먼저, 일의 자리 나중에 계단처럼 더해요', en:'Add the tens first, then the ones — like climbing stairs', zh:'先加十位，再加个位——像爬楼梯一样' },
-    tex:`${nums.join(' + ')} = ${parts.join(' + ')} = ${ans}`,
+    tex:`${nums.join(' + ')} = \\square`,
+    widget:'steps',
+    steps:fillSteps,
     answerType:'number'
   };
 }
@@ -210,9 +218,9 @@ function comp100(opts){
   const sum=nums.reduce((s,n)=>s+n,0);
   return {
     gen:'comp100', mode:'main', nums, sum, pairCount:2,
-    prompt:{ko:'100이 되는 짝을 찾아 먼저 더해요',en:'Find pairs summing to 100 and add them first',zh:'找出凑成100的配对先相加'},
+    prompt:{ko:'더해서 100이 되는 짝을 골라 묶어요',en:'Pick two numbers that pair up to make 100',zh:'选出凑成100的两个数'},
     tex:nums.join(' + '),
-    answerType:'number', answer:sum
+    answerType:'selectPairs', target:100, answer:sum
   };
 }
 
@@ -370,7 +378,11 @@ function subByPlace(opts){
     gen:'subByPlace', mode:'main', a, b, step1, answer:ans,
     prompt:{ko:'십의 자리를 먼저 빼고, 일의 자리를 나중에 빼요',en:'Subtract the tens first, then the ones',zh:'先减十位，再减个位'},
     tex:`${a} - ${b} = \\square`,
-    steps:[`${a} - ${b}`, `${a} - ${tensB*10} - ${onesB}`, `${step1} - ${onesB}`, `${ans}`],
+    widget:'steps',
+    steps:[
+      {tex:`${a} - ${tensB*10} = \\square`, blank:step1},
+      {tex:`${step1} - ${onesB} = \\square`, blank:ans}
+    ],
     answerType:'number'
   };
 }
@@ -405,7 +417,11 @@ function restSubtract(opts){
     gen:'restSubtract', mode:'main', a, b, x, y, target, answer:ans,
     prompt:{ko:'몇 십이 되도록 먼저 빼고, 쉬었다가 나머지를 빼요',en:'Subtract just enough to reach a ten, then subtract the rest',zh:'先减到整十，歇一下再减剩下的'},
     tex:`${a} - ${b} = \\square`,
-    steps:[`${a} - ${b}`, `${a} - ${x} - ${y}`, `${target} - ${y}`, `${ans}`],
+    widget:'steps',
+    steps:[
+      {tex:`${a} - ${x} = \\square`, blank:target},
+      {tex:`${target} - ${y} = \\square`, blank:ans}
+    ],
     answerType:'number'
   };
 }
@@ -435,12 +451,155 @@ function addSubGroup(opts){
     gen:'addSubGroup', mode:'main', nums:[a,b,c,d], plusSum, minusSum, answer:ans,
     prompt:{ko:'더하는 수끼리, 빼는 수끼리 묶어서 계산해요',en:'Group the plus-terms and minus-terms separately',zh:'把加数和减数分别圈起来计算'},
     tex:`${a} - ${b} + ${c} - ${d} = \\square`,
-    steps:[`${a} - ${b} + ${c} - ${d}`, `(${a} + ${c}) - (${b} + ${d})`, `${plusSum} - ${minusSum}`, `${ans}`],
+    widget:'steps',
+    steps:[
+      {tex:`${a} + ${c} = \\square`, blank:plusSum},
+      {tex:`${b} + ${d} = \\square`, blank:minusSum},
+      {tex:`${plusSum} - ${minusSum} = \\square`, blank:ans}
+    ],
     answerType:'number'
   };
 }
 
-window.NM_GEN = { pair10, move10, add10sub, stairAdd, splitNum, comp100, pair10_2d, splitPlace, move10_2d, jumpAdd, subByPlace, restSubtract, addSubGroup, _util:{R,pick,shuffle} };
+/* ---------- A-13 : 백으로 쪼개서 빼기 ----------
+   개념: 몇 백 - 두 자리 수. 100 하나를 따로 떼어 빼고, 남은 걸 더한다.
+   초급 D 챕터1 실제 내용. 400-35 → 300+100-35 = 300+65 = 365
+   level: practice = 몇백에서 100 떼어내기 즉답 / main = 전체 계산 */
+function splitHundred(opts){
+  opts=opts||{};
+  const lv=opts.level||'main';
+  if(lv==='practice'){
+    const hund=R(2,9)*100;
+    return {
+      gen:'splitHundred', mode:'practice',
+      ask:hund, answer:hund-100,
+      prompt:{ko:`${hund}에서 100을 떼어내면?`,en:`Set aside 100 from ${hund} — what's left?`,zh:`从${hund}里拿出100，还剩多少？`},
+      tex:`${hund} - 100 = \\square`,
+      answerType:'number'
+    };
+  }
+  const a=R(2,9)*100, b=R(11,99);
+  const rest=a-100, comp=100-b, ans=rest+comp;
+  return {
+    gen:'splitHundred', mode:'main', a, b, rest, comp, answer:ans,
+    prompt:{ko:'100 하나를 떼어 빼고, 남은 걸 더해요',en:'Set aside one hundred to subtract, then add the rest',zh:'拿出一个100来减，再加上剩下的'},
+    tex:`${a} - ${b} = \\square`,
+    widget:'steps',
+    steps:[
+      {tex:`100 - ${b} = \\square`, blank:comp},
+      {tex:`${rest} + ${comp} = \\square`, blank:ans}
+    ],
+    answerType:'number'
+  };
+}
+
+/* ---------- A-14 : 자릿수 이동 뺄셈 ----------
+   개념: 세 자리 - 두 자리. 100 하나를 앞에서 이동시켜 계산한다.
+   초급 D 챕터2 실제 내용. 123-85 → 23+100-85 = 23+15 = 38
+   level: practice = 세 자리 수를 100과 나머지로 나누기 즉답 / main = 전체 계산 */
+function digitShiftSub(opts){
+  opts=opts||{};
+  const lv=opts.level||'main';
+  if(lv==='practice'){
+    const rest=R(10,99), a=100+rest;
+    return {
+      gen:'digitShiftSub', mode:'practice',
+      ask:a, answer:rest,
+      prompt:{ko:`${a}를 100과 무엇으로 나눌 수 있나요?`,en:`Split ${a} into 100 and what?`,zh:`把${a}分成100和什么？`},
+      tex:`${a} = 100 + \\square`,
+      answerType:'number'
+    };
+  }
+  const rest=R(10,99), a=R(1,8)*100+100+rest, b=R(11,99);
+  const before=a-100, comp=100-b, ans=before+comp;
+  return {
+    gen:'digitShiftSub', mode:'main', a, b, before, comp, answer:ans,
+    prompt:{ko:'100을 하나 이동시켜 남은 수끼리 먼저 빼요',en:'Move one hundred over, subtract from it first',zh:'挪一个100过去，先减它'},
+    tex:`${a} - ${b} = \\square`,
+    widget:'steps',
+    steps:[
+      {tex:`100 - ${b} = \\square`, blank:comp},
+      {tex:`${before} + ${comp} = \\square`, blank:ans}
+    ],
+    answerType:'number'
+  };
+}
+
+/* ---------- A-15 : 수를 풀어서 쓰기 ----------
+   개념: 두 수를 모두 가까운 몇십으로 올림해 쓰고, 더 올린 만큼 보정한다.
+   초급 D 챕터3 실제 내용. 87-59 = 90-3-60+1 = 30-3+1 = 28
+   level: practice = 다음 몇십까지 얼마나 모자란지 즉답 / main = 전체 계산 */
+function expandRewrite(opts){
+  opts=opts||{};
+  const lv=opts.level||'main';
+  if(lv==='practice'){
+    const a=R(21,98);
+    const up=Math.ceil(a/10)*10;
+    const d=up-a;
+    if(d===0) return expandRewrite(opts);
+    return {
+      gen:'expandRewrite', mode:'practice',
+      ask:a, answer:d,
+      prompt:{ko:`${a}는 다음 몇십(${up})보다 얼마나 작을까?`,en:`How much less is ${a} than the next ten (${up})?`,zh:`${a}比下一个整十(${up})小多少？`},
+      tex:`${up} - \\square = ${a}`,
+      answerType:'number'
+    };
+  }
+  let a,b,upA,upB,da,db;
+  do{
+    a=R(22,98); b=R(21,a-1);
+    upA=Math.ceil(a/10)*10; da=upA-a;
+    upB=Math.ceil(b/10)*10; db=upB-b;
+  } while(da===0||db===0);
+  const ans=(upA-upB)-da+db;
+  return {
+    gen:'expandRewrite', mode:'main', a, b, upA, upB, da, db, answer:ans,
+    prompt:{ko:'두 수를 모두 몇십으로 올려 쓰고, 올린 만큼 보정해요',en:'Round both numbers up to a ten, then adjust',zh:'把两个数都凑成整十，再修正'},
+    tex:`${a} - ${b} = \\square`,
+    widget:'steps',
+    steps:[
+      {tex:`${upA} - ${upB} = \\square`, blank:upA-upB},
+      {tex:`${upA-upB} - ${da} + ${db} = \\square`, blank:ans}
+    ],
+    answerType:'number'
+  };
+}
+
+/* ---------- A-16 : 끊어서 더하기 1 ----------
+   개념: 자리마다(일/십/백/천) 따로 더한 뒤, 그 부분합을 마지막에 다 더한다.
+   초급 D 챕터4 실제 내용. 2347+9268 → 7+8, 40+60, 300+200, 2000+9000을 각각 더해 합산
+   level: practice = 자릿값 부분 더하기 즉답 / main = 세 자리 수 끊어서 더하기 */
+function splitAddByDigit(opts){
+  opts=opts||{};
+  const lv=opts.level||'main';
+  if(lv==='practice'){
+    const t1=R(1,9), t2=R(1,9);
+    return {
+      gen:'splitAddByDigit', mode:'practice',
+      ask:[t1*10,t2*10], answer:t1*10+t2*10,
+      prompt:{ko:`십의 자리끼리 먼저 더해요: ${t1*10} + ${t2*10} = ?`,en:`Add the tens places first: ${t1*10} + ${t2*10} = ?`,zh:`先加十位：${t1*10} + ${t2*10} = ?`},
+      tex:`${t1*10} + ${t2*10} = \\square`,
+      answerType:'number'
+    };
+  }
+  const h1=R(1,9),t1=R(0,9),o1=R(1,9), a=h1*100+t1*10+o1;
+  const h2=R(1,9),t2=R(0,9),o2=R(1,9), b=h2*100+t2*10+o2;
+  const hSum=(h1+h2)*100, tSum=(t1+t2)*10, oSum=o1+o2;
+  const ans=hSum+tSum+oSum;
+  return {
+    gen:'splitAddByDigit', mode:'main', a, b, hSum, tSum, oSum, answer:ans,
+    prompt:{ko:'자리마다 따로 더한 뒤, 마지막에 다 더해요',en:'Add each place separately, then sum the partial totals',zh:'每一位分别相加，最后再全部加起来'},
+    tex:`${a} + ${b} = \\square`,
+    widget:'steps',
+    steps:[
+      {tex:`${hSum} + ${tSum} = \\square`, blank:hSum+tSum},
+      {tex:`${hSum+tSum} + ${oSum} = \\square`, blank:ans}
+    ],
+    answerType:'number'
+  };
+}
+
+window.NM_GEN = { pair10, move10, add10sub, stairAdd, splitNum, comp100, pair10_2d, splitPlace, move10_2d, jumpAdd, subByPlace, restSubtract, addSubGroup, splitHundred, digitShiftSub, expandRewrite, splitAddByDigit, _util:{R,pick,shuffle} };
 
 /* CommonJS(테스트용) */
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_GEN;

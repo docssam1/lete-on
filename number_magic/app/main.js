@@ -828,7 +828,33 @@ function stepLab(body,u){
   const cfg=u.lab;
   S.sub.cur=S.sub.cur||GEN[cfg.generator]({level:'main'});
   if(S.sub.cur.answerType==='selectPairs')stepLabPairs(body,u);
+  else if(S.sub.cur.widget&&S.sub.cur.widget!=='numpad'&&window.NM_WIDGETS)stepLabWidget(body,u);
   else stepLabNumpad(body,u);
+}
+/* 매직랩 — 교구/단계 위젯 (계산기 대신 전략의 중간 과정을 직접 입력) */
+function stepLabWidget(body,u){
+  const cfg=u.lab;const need=cfg.count||4;
+  S.sub.li=S.sub.li||0;
+  const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
+  body.innerHTML=`<div class="nm-dialog">
+    <div class="nm-prog">${dots(need,S.sub.li)}</div>
+    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
+    <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
+    <div id="labWidget" class="nm-lab-widget"></div>
+  </div>`;
+  S.sub.labStarted=true;
+  say(first?L(cfg.intro):L(cur.prompt));
+  NM_WIDGETS.render(cur,$('#labWidget'),val=>{
+    if(+val===cur.answer){
+      toast(pickVoice(u.voice.correct),true);numiHappy();
+      S.sub.li++;S.sub.cur=null;
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep('arena'),700);return;}
+      S.sub.cur=GEN[u.lab.generator]({level:'main'});save();
+      setTimeout(()=>stepLab(body,u),650);
+    }else{
+      toast(pickVoice(u.voice.wrong),false);
+    }
+  });
 }
 function stepLabPairs(body,u){
   const cfg=u.lab;const need=cfg.count||4;
