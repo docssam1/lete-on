@@ -1118,8 +1118,11 @@ function screenCloset(){
   scr.innerHTML=`<div class="nm-unit-bar">
     <button class="nm-back" id="backCloset">← ${t('back')}</button>
     <div class="nm-unit-title">🪄 ${titleTxt}</div>
-  </div><div id="nm-closet-cnt" class="nm-step-body" style="padding:0"></div>`;
+  </div>
+  <div id="nm-idcard-slot"></div>
+  <div id="nm-closet-cnt" class="nm-step-body" style="padding:0"></div>`;
   $('#backCloset').onclick=()=>{S.view='town';save();render();};
+  renderIdCard();
   if(window.screenCloset){
     window.screenCloset(document.getElementById('nm-closet-cnt'),{
       char: S.character,
@@ -1140,6 +1143,69 @@ function screenCloset(){
         if(ci)ci.textContent=S.coins;
       }
     });
+  }
+}
+
+/* ---------- 아이디 등록 카드 (옷장 상단) ----------
+   온보딩을 이미 지난 기존 사용자도 여기서 이름을 아이디로 등록할 수 있다.
+   등록된 뒤에는 상태 표시만 남는다. */
+function renderIdCard(){
+  const slot=$('#nm-idcard-slot');
+  if(!slot)return;
+  const ko=S.lang==='ko', en=S.lang==='en';
+  if(S.cloudLinked){
+    slot.innerHTML=`<div class="nm-idcard linked">☁️ ${ko?'아이디':en?'ID':'账号'}: <b>${esc(S.name)}</b> · ${ko?'자동 저장 중':en?'Auto-saving':'自动保存中'} ✓</div>`;
+    return;
+  }
+  slot.innerHTML=`<div class="nm-idcard">
+    <div class="nm-idcard-t">☁️ ${ko?'아이디 등록':en?'Register your ID':'注册账号'}</div>
+    <div class="nm-idcard-row">
+      <input id="idName" maxlength="8" placeholder="${t('obNamePh')}" value="${esc(S.name||'')}">
+      <button class="nm-btn" id="idClaim">${ko?'등록':en?'Register':'注册'}</button>
+    </div>
+    <div class="nm-idcard-msg" id="idMsg">${ko?'이름이 곧 아이디! 등록하면 다른 기기에서도 이름만 치면 이어서 할 수 있어요.':en?'Your name becomes your ID — continue on any device by typing it.':'名字就是账号！在任何设备上输入名字即可继续。'}</div>
+  </div>`;
+  $('#idClaim').onclick=claimFromCloset;
+  $('#idName').addEventListener('keydown',e=>{if(e.key==='Enter')claimFromCloset();});
+
+  async function claimFromCloset(){
+    const inp=$('#idName'), msg=$('#idMsg'), btn=$('#idClaim');
+    const name=(inp.value||'').trim();
+    if(!name){msg.textContent=t('obNeedName');return;}
+    btn.disabled=true;
+    msg.textContent=ko?'이름 확인 중…':en?'Checking…':'检查中…';
+    let existing=null;
+    try{ existing=await cloudGet(name); }
+    catch(e){ btn.disabled=false; msg.textContent=ko?'인터넷 연결을 확인해 주세요.':en?'Please check your connection.':'请检查网络连接。'; return; }
+    if(!existing){
+      try{
+        const okClaim=await cloudClaim(name,S);
+        if(okClaim){
+          S.name=name; S.cloudLinked=true; save();
+          toast(ko?'아이디 등록 완료! ✨':en?'ID registered! ✨':'注册成功！✨',true);
+          render(); S.view='closet';  // 칩 이름 갱신 후 옷장 유지
+          return;
+        }
+        existing=await cloudGet(name).catch(()=>null)||{state:{}};
+      }catch(e){ btn.disabled=false; msg.textContent=ko?'등록에 실패했어요. 잠시 후 다시!':en?'Failed — try again soon.':'注册失败，请稍后再试。'; return; }
+    }
+    /* 이미 있는 이름 → 이어하기 / 다른 이름 */
+    btn.disabled=false;
+    msg.innerHTML=`${ko?`'${esc(name)}'는 이미 있는 이름이에요. 예전에 내가 만든 거라면 이어서 할 수 있어요.`:en?`'${esc(name)}' is taken. If that was you, continue below.`:`'${esc(name)}'已被使用。如果是你，可以继续。`}
+      <div class="nm-idcard-row" style="margin-top:8px">
+        <button class="nm-btn" id="idResume">${ko?'이건 나예요! 이어하기 ▶':en?"That's me! Continue ▶":'是我！继续 ▶'}</button>
+        <button class="nm-btn ghost" id="idOther">${ko?'다른 이름 쓸게요':en?'Try another':'换个名字'}</button>
+      </div>`;
+    $('#idResume').onclick=()=>{
+      const st=existing&&existing.state?existing.state:{};
+      S={...defaults(),...st};
+      S.name=name; S.onboarded=true; S.cloudLinked=true;
+      if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none'};
+      S.view='closet';
+      save(); render();
+      toast(t('obWelcome')(name),true);
+    };
+    $('#idOther').onclick=()=>{ inp.value=''; inp.focus(); renderIdCard(); };
   }
 }
 
