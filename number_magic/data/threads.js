@@ -91,7 +91,7 @@ SB4:{ name:{ko:'두 자리−두 자리',en:'2d−2d',zh:'两位减两位'}, gen
   widgets:['steps','vertical','numpad'],
   levels:[{id:1,label:{ko:'내림×',en:'no borrow',zh:'不退位'},params:{borrow:false}},
           {id:2,label:{ko:'내림',en:'borrow',zh:'退位'},params:{borrow:true}}] },
-SB5:{ name:{ko:'보정 빼기(더 빼고 돌려받기)',en:'Compensation −',zh:'补偿减法'}, gen:'sb5_subAdjust', prereq:['SB3'],
+SB5:{ name:{ko:'더 빼고 돌려받기',en:'Compensation −',zh:'补偿减法'}, gen:'sb5_subAdjust', prereq:['SB3'],
   widgets:['steps','numpad'],
   levels:[{id:1,label:{ko:'2d−(7~9)',en:'2d−(7-9)',zh:'两位减7~9'},params:{small:true}},
           {id:2,label:{ko:'3d−2d',en:'3d−2d',zh:'三位减两位'},params:{small:false}}] },
