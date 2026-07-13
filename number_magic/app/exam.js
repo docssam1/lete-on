@@ -97,73 +97,118 @@ const NM_EXAM = {
   renderExamSetup(container, onStart){
     const GRADES = {
       '1A':{label:'1학년 1학기',emoji:'🌱',subs:[
-        {label:'9까지의 수',thread:'NS1',level:1,desc:'1~9 읽기'},
-        {label:'모으기 · 가르기',thread:'NS2',level:2,desc:'수 가르기'},
-        {label:'덧셈 기초',thread:'AD1',level:1,desc:'합 9 이하'},
-        {label:'뺄셈 기초',thread:'SB1',level:1,desc:'9 이하 뺄셈'},
+        {label:'9까지의 수',thread:'NS1',level:1,desc:'1~9 읽기',
+          concept:'1부터 9까지의 수를 세고 읽어요.\n예) 사과 5개 → 오(5)'},
+        {label:'모으기 · 가르기',thread:'NS2',level:2,desc:'수 가르기',
+          concept:'두 수를 모으거나, 하나의 수를 둘로 가를 수 있어요.\n예) 3과 4를 모으면 7 / 7을 가르면 3과 4'},
+        {label:'덧셈 기초',thread:'AD1',level:1,desc:'합 9 이하',
+          concept:'두 수를 더해요(+). 합이 9를 넘지 않아요.\n예) 3 + 2 = 5'},
+        {label:'뺄셈 기초',thread:'SB1',level:1,desc:'9 이하 뺄셈',
+          concept:'큰 수에서 작은 수를 빼요(−).\n예) 7 − 3 = 4'},
       ]},
       '1B':{label:'1학년 2학기',emoji:'🌿',subs:[
-        {label:'보수 10 찾기',thread:'NS3',level:2,desc:'더해서 10'},
-        {label:'받아올림 덧셈',thread:'AD2',level:1,desc:'합 10 이상'},
-        {label:'세 수 덧셈',thread:'AD2',level:2,desc:'세 수 더하기'},
-        {label:'몇십 덧셈',thread:'AD4',level:1,desc:'10·20·30 +'},
+        {label:'보수 10 찾기',thread:'NS3',level:2,desc:'더해서 10',
+          concept:'더하면 10이 되는 두 수를 찾아요.\n예) 3 + □ = 10  →  □ = 7'},
+        {label:'받아올림 덧셈',thread:'AD2',level:1,desc:'합 10 이상',
+          concept:'두 수의 합이 10 이상이면 10을 윗 자리로 올려요(받아올림).\n예) 8 + 5 = 13'},
+        {label:'세 수 덧셈',thread:'AD2',level:2,desc:'세 수 더하기',
+          concept:'세 수를 차례로 더해요. 합이 10이 되는 짝을 먼저 찾으면 빨라요.\n예) 2 + 8 + 4 = 10 + 4 = 14'},
+        {label:'몇십 덧셈',thread:'AD4',level:1,desc:'10·20·30 +',
+          concept:'10, 20, 30처럼 묶음 단위로 더해요.\n예) 20 + 30 = 50'},
       ]},
       '2A':{label:'2학년 1학기',emoji:'🌷',subs:[
-        {label:'(두)+(한) 올림없음',thread:'AD3',level:1,desc:'받아올림 없음'},
-        {label:'(두)+(한) 올림있음',thread:'AD3',level:2,desc:'받아올림'},
-        {label:'(두)−(한) 내림없음',thread:'SB3',level:1,desc:'받아내림 없음'},
-        {label:'(두)−(한) 내림있음',thread:'SB3',level:2,desc:'받아내림'},
+        {label:'(두)+(한) 올림없음',thread:'AD3',level:1,desc:'받아올림 없음',
+          concept:'두 자리 수 + 한 자리 수. 일의 자리 합이 9 이하일 때.\n예) 32 + 5 = 37'},
+        {label:'(두)+(한) 올림있음',thread:'AD3',level:2,desc:'받아올림',
+          concept:'일의 자리 합이 10 이상이면 십의 자리로 올려요.\n예) 37 + 5 = 42  (7+5=12, 1 올림)'},
+        {label:'(두)−(한) 내림없음',thread:'SB3',level:1,desc:'받아내림 없음',
+          concept:'두 자리 수 − 한 자리 수. 일의 자리가 충분할 때.\n예) 47 − 3 = 44'},
+        {label:'(두)−(한) 내림있음',thread:'SB3',level:2,desc:'받아내림',
+          concept:'일의 자리가 모자라면 십의 자리에서 10을 빌려요(받아내림).\n예) 43 − 7 = 36  (13−7=6, 십의 자리 1 줄임)'},
       ]},
       '2B':{label:'2학년 2학기',emoji:'🌻',subs:[
-        {label:'(두)+(두)',thread:'AD5',level:2,desc:'두 자리 덧셈'},
-        {label:'(두)−(두)',thread:'SB4',level:2,desc:'두 자리 뺄셈'},
-        {label:'구구단 2·3단',thread:'ML2',level:1,desc:'2단, 3단'},
-        {label:'구구단 4·5단',thread:'ML2',level:2,desc:'4단, 5단'},
+        {label:'(두)+(두)',thread:'AD5',level:2,desc:'두 자리 덧셈',
+          concept:'두 자리 수끼리 더해요. 받아올림에 주의!\n예) 47 + 36 = 83'},
+        {label:'(두)−(두)',thread:'SB4',level:2,desc:'두 자리 뺄셈',
+          concept:'두 자리 수끼리 빼요. 받아내림에 주의!\n예) 73 − 48 = 25'},
+        {label:'구구단 2·3단',thread:'ML2',level:1,desc:'2단, 3단',
+          concept:'같은 수를 여러 번 더하는 것이 곱셈이에요.\n2단: 2×1=2, 2×2=4, 2×3=6 …\n3단: 3×1=3, 3×2=6, 3×3=9 …'},
+        {label:'구구단 4·5단',thread:'ML2',level:2,desc:'4단, 5단',
+          concept:'4단: 4×1=4, 4×2=8, 4×3=12 …\n5단: 5×1=5, 5×2=10, 5×5=25 …\n5단은 끝자리가 항상 0 또는 5!'},
       ]},
       '3A':{label:'3학년 1학기',emoji:'🌼',subs:[
-        {label:'세 자리 덧셈',thread:'AD6',level:2,desc:'3자리+3자리'},
-        {label:'세 자리 뺄셈',thread:'SB6',level:1,desc:'3자리−3자리'},
-        {label:'구구단 전체',thread:'ML4',level:1,desc:'2~9단 혼합'},
-        {label:'나눗셈 기초',thread:'DV2',level:1,desc:'나누어 떨어짐'},
+        {label:'세 자리 덧셈',thread:'AD6',level:2,desc:'3자리+3자리',
+          concept:'일→십→백 자리 순서로 더해요. 받아올림이 연속될 수 있어요.\n예) 357 + 486 = 843'},
+        {label:'세 자리 뺄셈',thread:'SB6',level:1,desc:'3자리−3자리',
+          concept:'일→십→백 자리 순서로 빼요. 모자라면 윗 자리에서 빌려요.\n예) 623 − 358 = 265'},
+        {label:'구구단 전체',thread:'ML4',level:1,desc:'2~9단 혼합',
+          concept:'2단부터 9단까지 모두 익혀요.\n팁: a×b = b×a (순서를 바꿔도 같아요!)'},
+        {label:'나눗셈 기초',thread:'DV2',level:1,desc:'나누어 떨어짐',
+          concept:'같은 수씩 나누는 것이 나눗셈이에요.\n예) 12 ÷ 4 = 3  →  4씩 3묶음\n곱셈의 반대로 생각해요: 4 × □ = 12'},
       ]},
       '3B':{label:'3학년 2학기',emoji:'🍀',subs:[
-        {label:'구구단 6·7단',thread:'ML3',level:1,desc:'6단, 7단'},
-        {label:'구구단 8·9단',thread:'ML3',level:2,desc:'8단, 9단'},
-        {label:'□ 채우기',thread:'ML4',level:2,desc:'빈칸 인수 찾기'},
-        {label:'(두)×(한)',thread:'ML6',level:2,desc:'두 자리 곱셈'},
-        {label:'나머지 있는 나눗셈',thread:'DV3',level:1,desc:'나머지 있음'},
+        {label:'구구단 6·7단',thread:'ML3',level:1,desc:'6단, 7단',
+          concept:'6단: 6×6=36, 6×7=42, 6×8=48, 6×9=54\n7단: 7×7=49, 7×8=56, 7×9=63\n헷갈리는 것 따로 외워요!'},
+        {label:'구구단 8·9단',thread:'ML3',level:2,desc:'8단, 9단',
+          concept:'8단: 8×8=64, 8×9=72\n9단 팁: 십의 자리는 1씩 늘고, 일의 자리는 1씩 줄어요.\n예) 9×1=09, 9×2=18, 9×3=27 …'},
+        {label:'□ 채우기',thread:'ML4',level:2,desc:'빈칸 인수 찾기',
+          concept:'곱셈식의 빈칸을 구구단으로 찾아요.\n예) 3 × □ = 18  →  3단에서 18 찾기  →  □ = 6'},
+        {label:'(두)×(한)',thread:'ML6',level:2,desc:'두 자리 곱셈',
+          concept:'두 자리 수 × 한 자리 수. 자리를 나눠 곱한 뒤 더해요.\n예) 23 × 4 = (20×4) + (3×4) = 80 + 12 = 92'},
+        {label:'나머지 있는 나눗셈',thread:'DV3',level:1,desc:'나머지 있음',
+          concept:'나눠도 남는 수가 나머지예요. 나머지 < 나누는 수!\n예) 17 ÷ 5 = 3 … 2  (5×3=15, 17−15=2)'},
       ]},
       '4A':{label:'4학년 1학기',emoji:'🌺',subs:[
-        {label:'(세)÷(한) 나머지없음',thread:'DV4',level:1,desc:'나머지 없음'},
-        {label:'(세)÷(한) 나머지있음',thread:'DV4',level:2,desc:'나머지 있음'},
-        {label:'배수 × ÷ 2',thread:'ML1',level:1,desc:'두 배와 반으로'},
-        {label:'몇백 덧셈',thread:'AD4',level:1,desc:'몇십·몇백 덧셈'},
+        {label:'(세)÷(한) 나머지없음',thread:'DV4',level:1,desc:'나머지 없음',
+          concept:'세 자리 수를 한 자리 수로 나눠요. 몫이 딱 떨어져요.\n예) 132 ÷ 4 = 33  (백의 자리부터 차례로 나눔)'},
+        {label:'(세)÷(한) 나머지있음',thread:'DV4',level:2,desc:'나머지 있음',
+          concept:'나눠도 남는 수(나머지)가 생겨요.\n예) 137 ÷ 4 = 34 … 1  (확인: 4×34+1=137)'},
+        {label:'배수 × ÷ 2',thread:'ML1',level:1,desc:'두 배와 반으로',
+          concept:'두 배 = ×2, 반 = ÷2\n예) 24의 두 배 = 48 / 24의 반 = 12\n짝수만 반으로 나눌 수 있어요!'},
+        {label:'몇백 덧셈',thread:'AD4',level:1,desc:'몇십·몇백 덧셈',
+          concept:'100, 200 … 단위의 덧셈.\n예) 300 + 400 = 700\n일, 십 자리가 모두 0이면 백의 자리만 더해요.'},
       ]},
       '4B':{label:'4학년 2학기',emoji:'🍁',subs:[
-        {label:'소수 덧·뺄 (1자리)',thread:'DC1',level:1,desc:'소수 한 자리'},
-        {label:'소수 덧·뺄 (2자리)',thread:'DC1',level:2,desc:'소수 두 자리'},
-        {label:'분수 덧·뺄 (동분모)',thread:'FR1',level:1,desc:'같은 분모'},
-        {label:'보정 빼기 7·8·9',thread:'SB5',level:1,desc:'더 빼고 돌려받기'},
+        {label:'소수 덧·뺄 (1자리)',thread:'DC1',level:1,desc:'소수 한 자리',
+          concept:'소수점 아래 한 자리 수의 덧뺄셈.\n소수점끼리 자리를 맞춰 계산해요.\n예) 2.5 + 1.3 = 3.8'},
+        {label:'소수 덧·뺄 (2자리)',thread:'DC1',level:2,desc:'소수 두 자리',
+          concept:'소수 두 자리까지. 자리를 맞추고, 빈 자리는 0으로 채워요.\n예) 1.24 + 0.36 = 1.60'},
+        {label:'분수 덧·뺄 (동분모)',thread:'FR1',level:1,desc:'같은 분모',
+          concept:'분모가 같으면 분자끼리만 더하거나 빼요. 분모는 그대로!\n예) 3/7 + 2/7 = 5/7'},
+        {label:'보정 빼기 7·8·9',thread:'SB5',level:1,desc:'더 빼고 돌려받기',
+          concept:'7, 8, 9로 뺄 때 10을 빼고 나서 모자란 만큼 돌려받아요.\n예) 15 − 8 = 15 − 10 + 2 = 7'},
       ]},
       '5A':{label:'5학년 1학기',emoji:'⭐',subs:[
-        {label:'이분모 분수 덧·뺄',thread:'FR4',level:1,desc:'다른 분모 통분'},
-        {label:'짝 묶어 더하기',thread:'AD8',level:1,desc:'짝 10 묶기'},
-        {label:'식 변형 끼리끼리',thread:'SB7',level:1,desc:'같은 자리 묶기'},
+        {label:'이분모 분수 덧·뺄',thread:'FR4',level:1,desc:'다른 분모 통분',
+          concept:'분모가 다르면 통분(공통분모 만들기)을 먼저 해요.\n예) 1/2 + 1/3 = 3/6 + 2/6 = 5/6\n통분: 두 분모의 최소공배수를 찾아요.'},
+        {label:'짝 묶어 더하기',thread:'AD8',level:1,desc:'짝 10 묶기',
+          concept:'합이 10이 되는 짝을 먼저 묶어 계산해요.\n예) 3 + 7 + 5 + 5 = (3+7) + (5+5) = 10 + 10 = 20'},
+        {label:'식 변형 끼리끼리',thread:'SB7',level:1,desc:'같은 자리 묶기',
+          concept:'같은 자리 수끼리 먼저 묶어 계산해요.\n예) 24 + 31 = (20+30) + (4+1) = 50 + 5 = 55'},
       ]},
       '5B':{label:'5학년 2학기',emoji:'🌙',subs:[
-        {label:'이분모 분수 심화',thread:'FR4',level:1,desc:'다른 분모 통분'},
-        {label:'소수 덧·뺄 심화',thread:'DC1',level:2,desc:'소수 두 자리'},
-        {label:'10 만들기 전략',thread:'SB7',level:2,desc:'받아올림 그룹화'},
+        {label:'이분모 분수 심화',thread:'FR4',level:1,desc:'다른 분모 통분',
+          concept:'대분수도 통분해요. 자연수 부분과 분수 부분을 따로 계산해요.\n예) 1½ + 2⅓ = 1³⁄₆ + 2²⁄₆ = 3⁵⁄₆'},
+        {label:'소수 덧·뺄 심화',thread:'DC1',level:2,desc:'소수 두 자리',
+          concept:'소수 두 자리의 덧뺄셈 반복 연습.\n받아올림·받아내림에 주의!\n예) 3.47 + 1.85 = 5.32'},
+        {label:'10 만들기 전략',thread:'SB7',level:2,desc:'받아올림 그룹화',
+          concept:'받아올림을 그룹으로 처리해요.\n예) 19 + 23 → 19를 20으로 올리고 23에서 1을 빼면 20 + 22 = 42'},
       ]},
       '6A':{label:'6학년 1학기',emoji:'🏆',subs:[
-        {label:'이분모 분수 종합',thread:'FR4',level:1,desc:'다른 분모 통분'},
-        {label:'(세)÷(한) 심화',thread:'DV4',level:2,desc:'나머지 있음'},
-        {label:'보수 100 응용',thread:'NS4',level:2,desc:'더해서 100'},
+        {label:'이분모 분수 종합',thread:'FR4',level:1,desc:'다른 분모 통분',
+          concept:'통분 → 분자 계산 → 약분(필요시) 순서를 익혀요.\n예) 2/3 + 3/4 = 8/12 + 9/12 = 17/12 = 1과 5/12'},
+        {label:'(세)÷(한) 심화',thread:'DV4',level:2,desc:'나머지 있음',
+          concept:'세 자리 ÷ 한 자리. 몫과 나머지를 구하고, 검산으로 확인해요.\n검산: (나누는 수 × 몫) + 나머지 = 나뉘는 수'},
+        {label:'보수 100 응용',thread:'NS4',level:2,desc:'더해서 100',
+          concept:'더하면 100이 되는 두 수를 찾아요.\n예) 37 + □ = 100  →  □ = 63\n응용: 계산 전략으로 활용!'},
       ]},
       '6B':{label:'6학년 2학기',emoji:'🎓',subs:[
-        {label:'분수 종합',thread:'FR1',level:1,desc:'동분모 분수'},
-        {label:'이분모 분수 종합',thread:'FR4',level:1,desc:'이분모 분수'},
-        {label:'소수 종합',thread:'DC1',level:2,desc:'소수 두 자리'},
+        {label:'분수 종합',thread:'FR1',level:1,desc:'동분모 분수',
+          concept:'같은 분모 분수의 덧뺄셈 총정리.\n진분수, 가분수, 대분수 변환도 함께 연습해요.'},
+        {label:'이분모 분수 종합',thread:'FR4',level:1,desc:'이분모 분수',
+          concept:'다른 분모 분수의 덧뺄셈 총정리.\n통분 → 계산 → 약분/대분수 변환까지 한 번에!'},
+        {label:'소수 종합',thread:'DC1',level:2,desc:'소수 두 자리',
+          concept:'소수의 덧뺄셈 총정리.\n자리 맞추기, 받아올림·내림, 끝자리 0 처리 모두 확인해요.'},
       ]},
     };
     const GRADE_ORDER = ['1A','1B','2A','2B','3A','3B','4A','4B','5A','5B','6A','6B'];
@@ -241,7 +286,8 @@ const NM_EXAM = {
       ${COUNT_OPTS.map(n => `<button class="nm-ex-cnt-btn${n===chosenCount?' sel':''}" data-n="${n}">${n}문항</button>`).join('')}
     </div>
     <div class="nm-ex-actions" style="margin-top:22px">
-      <button id="nm-ex-grid-start" class="nm-ex-btn-primary">▶ 학습 시작</button>
+      <button id="nm-ex-grid-start" class="nm-ex-btn-primary">▶ 온라인으로 풀기</button>
+      <button id="nm-ex-print-start" class="nm-ex-btn-secondary">🖨️ 인쇄하여 풀기</button>
     </div>
   </div>
 </div>`;
@@ -256,17 +302,27 @@ const NM_EXAM = {
           btn.addEventListener('click', () => { chosenCount = parseInt(btn.dataset.n); render(); });
         });
 
-        container.querySelector('#nm-ex-grid-start').addEventListener('click', () => {
+        function makeConfig(){
           const sub = g.subs[selIdx];
-          onStart && onStart({
-            thread: sub.thread,
-            level:  sub.level,
-            count:  chosenCount,
-            timer:  0,
-            seed:   NM_RNG.newCode(),
-            layout: 'grid',
-            label:  sub.label,
-          });
+          return {
+            thread:  sub.thread,
+            level:   sub.level,
+            count:   chosenCount,
+            timer:   0,
+            seed:    NM_RNG.newCode(),
+            layout:  'grid',
+            label:   sub.label,
+            concept: sub.concept || '',
+          };
+        }
+
+        container.querySelector('#nm-ex-grid-start').addEventListener('click', () => {
+          onStart && onStart(makeConfig());
+        });
+
+        container.querySelector('#nm-ex-print-start').addEventListener('click', () => {
+          const cfg = makeConfig();
+          NM_EXAM.renderPrint(cfg);
         });
       }
       render();
@@ -584,11 +640,18 @@ window.examScreen = function(container){
 
   /* ── 그리드 학습지 (11math 스타일, 전체 문제 동시 표시) ── */
   function runGridExam(cfg){
-    const { thread, level, count, seed, label } = cfg;
+    const { thread, level, count, seed, label, concept } = cfg;
     const numericSeed = NM_RNG.hashSeed(seed);
     const problems = buildProblems(thread, level, count, numericSeed);
     const inputs = [];
     const code = NM_EXAM.worksheetCode(cfg);
+
+    const conceptHtml = concept
+      ? `<details class="nm-grid-concept">
+           <summary class="nm-grid-concept-sum">📖 개념 보기</summary>
+           <div class="nm-grid-concept-body">${esc(concept).replace(/\n/g,'<br>')}</div>
+         </details>`
+      : '';
 
     container.innerHTML = `
 <div class="nm-grid-sheet">
@@ -596,6 +659,7 @@ window.examScreen = function(container){
     <span class="nm-grid-badge">${esc(label || thread)}</span>
     <span class="nm-grid-code">${esc(code)}</span>
   </div>
+  ${conceptHtml}
   <div class="nm-prob-grid" id="nm-prob-grid"></div>
   <div class="nm-grid-actions" id="nm-grid-actions">
     <button id="nm-grid-grade" class="nm-ex-btn-primary">채점하기 ✓</button>

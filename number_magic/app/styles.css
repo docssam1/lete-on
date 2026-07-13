@@ -437,6 +437,15 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-grid-code{font-size:12px;color:var(--sub);font-family:monospace;background:var(--mist);
   padding:4px 10px;border-radius:6px}
 
+/* 개념 카드 */
+.nm-grid-concept{border:1.5px solid #c9ddf5;border-radius:14px;background:#f0f6ff;margin-bottom:14px;overflow:hidden}
+.nm-grid-concept-sum{display:flex;align-items:center;gap:6px;padding:11px 16px;
+  font-size:14px;font-weight:800;color:var(--blue);cursor:pointer;list-style:none;user-select:none}
+.nm-grid-concept-sum::-webkit-details-marker{display:none}
+.nm-grid-concept[open] .nm-grid-concept-sum{border-bottom:1px solid #c9ddf5}
+.nm-grid-concept-body{padding:12px 16px;font-size:13.5px;line-height:1.8;color:#1e3a6e;
+  white-space:pre-line;background:#f8fbff}
+
 .nm-prob-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
 @media(max-width:500px){.nm-prob-grid{grid-template-columns:repeat(2,1fr)}}
 
