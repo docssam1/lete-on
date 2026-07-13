@@ -158,12 +158,13 @@ const NM_EXAM = {
 
   /* ── 1. 시험 설정 화면 ── */
   renderExamSetup(container, onStart){
-    /* 2026-07-13: 사용자가 디딤돌 연산 1A~6B의 실제 목차(ebook.didimdol.co.kr 캡처)를 학년별로
-       전부 확인해 줌. 이전 매핑은 실제 교재를 보지 않고 만든 것이라 학년 배치가 여러 군데 틀렸었음
-       (특히 2B는 두 자리 덧뺄셈이 아니라 곱셈구구 2·5/3·6/4·8/7·9단 전체였음).
-       디딤돌의 모든 세부 챕터(학년당 7~12개)를 그대로 베끼는 대신, 실제 교육과정 순서·범위에
-       맞춰 우리 스레드로 자체 구성 — 생성기가 있는 스킬만 선정(없는 스킬은 comingSoon 남발 대신
-       과감히 제외). 각 grade 내 subs 순서 = 실제 책의 학습 진행 순서. */
+    /* 2026-07-13: 디딤돌 연산 실제 목차(사용자 캡처, ebook.didimdol.co.kr) 기준 교과 순서 +
+       docssam만의 2단 구성 — 각 학기는 두 층으로 이뤄진다:
+       ① 교과 핵심: 실제 디딤돌 책의 학습 진행 순서 그대로 (학년 배치·순서 검증됨)
+       ② ✨연산 마법(magic:true): 그 학기 내용과 맞물리는 "계산이 빨라지는 전략" 스킬 —
+          보수·두배수·짝묶기·보정빼기·식의 변형·몇십곱·19단/99단/기준곱·가우스 합·
+          제곱수·배수판별 등 수의 마법 고유 스레드를 학년 난이도에 맞춰 배치.
+          단순 반복 드릴이 아니라 "원리로 빨라지는" 경험이 이 앱의 정체성. */
     const GRADES = {
       '1A':{label:'1학년 1학기',emoji:'🌱',subs:[
         {label:'모으기 · 가르기',thread:'NS2',level:2,desc:'9까지',
@@ -174,6 +175,10 @@ const NM_EXAM = {
           concept:'큰 수에서 작은 수를 빼요(−).\n예) 7 − 3 = 4'},
         {label:'10 가르기 · 모으기',thread:'NS3',level:2,desc:'보수 10',
           concept:'더하면 10이 되는 두 수를 찾아요.\n예) 3 + □ = 10  →  □ = 7'},
+        {label:'보수 5 마법',thread:'NS3',level:1,desc:'더해서 5',magic:true,
+          concept:'더해서 5가 되는 짝(1·4, 2·3)을 외워두면\n손가락을 안 세도 셈이 빨라져요!'},
+        {label:'두 배 수 마법',thread:'NS5',level:1,desc:'1~10 두 배',magic:true,
+          concept:'1+1=2, 2+2=4, 3+3=6 … 두 배 수는 눈 감고도!\n4+5는 "4+4보다 1 큰 수"로 바로 나와요.'},
       ]},
       '1B':{label:'1학년 2학기',emoji:'🌿',subs:[
         {label:'세 수의 덧셈',thread:'AD2',level:2,desc:'10 만들어 더하기',
@@ -184,6 +189,10 @@ const NM_EXAM = {
           concept:'두 자리 수에 한 자리 수를 더해요. 일의 자리 합이 9 이하예요.\n예) 32 + 5 = 37'},
         {label:'두 자리 − 한 자리',thread:'SB3',level:1,desc:'내림 없음',
           concept:'두 자리 수에서 한 자리 수를 빼요. 일의 자리가 충분해요.\n예) 47 − 3 = 44'},
+        {label:'몇십 덧뺄 마법',thread:'AD4',level:1,desc:'10·20·30…',magic:true,
+          concept:'몇십끼리는 십 묶음으로 세면 한 번에!\n예) 20+30 → 2묶음+3묶음 = 5묶음 = 50'},
+        {label:'몇십−몇 마법',thread:'SB2',level:1,desc:'30−7 같은 꼴',magic:true,
+          concept:'몇십에서 한 자리를 뺄 때는 10에서 먼저 빼요.\n예) 30−7 → 10−7=3 → 20+3=23'},
       ]},
       '2A':{label:'2학년 1학기',emoji:'🌷',subs:[
         {label:'(두)+(한) 받아올림',thread:'AD3',level:2,desc:'몇십몇+몇',
@@ -196,6 +205,10 @@ const NM_EXAM = {
           concept:'일의 자리가 모자라면 십의 자리에서 10을 빌려요.\n예) 43 − 7 = 36'},
         {label:'(두)−(두) 받아내림',thread:'SB4',level:2,desc:'몇십몇−몇십몇',
           concept:'두 자리 수끼리 빼요. 받아내림에 주의해요.\n예) 73 − 48 = 25'},
+        {label:'보정 빼기 마법',thread:'SB5',level:1,desc:'−9는 −10+1',magic:true,
+          concept:'7, 8, 9를 뺄 때는 10을 빼고 돌려받아요!\n예) 45−9 = 45−10+1 = 36\n받아내림 없이도 답이 나오는 마법!'},
+        {label:'100−수 마법',thread:'SB2',level:2,desc:'100에서 빼기',magic:true,
+          concept:'100에서 뺄 때는 몇십을 먼저, 몇을 나중에.\n예) 100−36 → 100−30=70 → 70−6=64'},
       ]},
       '2B':{label:'2학년 2학기',emoji:'🌻',subs:[
         {label:'2 · 5단 곱셈구구',thread:'ML2',level:4,desc:'2단, 5단',
@@ -208,6 +221,10 @@ const NM_EXAM = {
           concept:'9단 팁: 십의 자리는 1씩 늘고, 일의 자리는 1씩 줄어요.\n예) 9×1=09, 9×2=18, 9×3=27 …'},
         {label:'곱셈구구 종합',thread:'ML4',level:1,desc:'2~9단 혼합',
           concept:'2단부터 9단까지 모두 섞어서 연습해요.\n팁: a×b = b×a (순서를 바꿔도 같아요!)'},
+        {label:'배와 반 마법',thread:'ML1',level:1,desc:'×2 감각',magic:true,
+          concept:'두 배에 익숙해지면 구구단이 반으로 줄어요!\n4단 = 2단의 두 배, 8단 = 4단의 두 배, 6단 = 3단의 두 배'},
+        {label:'거꾸로 구구단',thread:'ML4',level:2,desc:'□×n = 답',magic:true,
+          concept:'곱셈식의 빈칸을 구구단으로 거꾸로 찾아요.\n예) 3×□=18 → 3단에서 18 찾기 → □=6\n3학년 나눗셈을 미리 준비하는 마법!'},
       ]},
       '3A':{label:'3학년 1학기',emoji:'🌼',subs:[
         {label:'세 자리 덧셈',thread:'AD6',level:2,desc:'3자리+3자리',
@@ -218,6 +235,10 @@ const NM_EXAM = {
           concept:'같은 수씩 나누는 것이 나눗셈이에요.\n예) 12 ÷ 4 = 3  →  4씩 3묶음\n곱셈의 반대로 생각해요: 4 × □ = 12'},
         {label:'(두)×(한)',thread:'ML6',level:2,desc:'두 자리 곱셈',
           concept:'두 자리 수 × 한 자리 수. 자리를 나눠 곱한 뒤 더해요.\n예) 23 × 4 = (20×4) + (3×4) = 80 + 12 = 92'},
+        {label:'짝 묶기 마법',thread:'AD8',level:1,desc:'합10 짝 먼저',magic:true,
+          concept:'여러 수를 더할 땐 합이 10이 되는 짝부터!\n예) 3+7+5+5 = (3+7)+(5+5) = 10+10 = 20'},
+        {label:'식 변형 마법',thread:'SB7',level:1,desc:'끼리끼리 묶기',magic:true,
+          concept:'순서를 바꿔 계산하기 쉬운 짝을 만들어요.\n예) 23+15+7+5 = (23+7)+(15+5) = 30+20 = 50'},
       ]},
       '3B':{label:'3학년 2학기',emoji:'🍀',subs:[
         {label:'(세)×(한)',thread:'ML7',level:2,desc:'세 자리 곱셈',
@@ -230,6 +251,10 @@ const NM_EXAM = {
           concept:'세 자리 수를 한 자리 수로 나눠요. 몫이 딱 떨어져요.\n예) 132 ÷ 4 = 33'},
         {label:'(세)÷(한) 나머지있음',thread:'DV4',level:2,desc:'나머지 있음',
           concept:'나눠도 남는 수(나머지)가 생겨요.\n예) 137 ÷ 4 = 34 … 1  (확인: 4×34+1=137)'},
+        {label:'몇십 곱 마법',thread:'ML5',level:2,desc:'20×30 한 번에',magic:true,
+          concept:'몇십×몇십은 앞자리끼리 곱하고 0을 붙여요.\n예) 20×30 → 2×3=6 → 600\n큰 곱셈의 어림값도 이걸로 빨라져요!'},
+        {label:'큰 수 보정 빼기',thread:'SB5',level:2,desc:'−98은 −100+2',magic:true,
+          concept:'끝이 7·8·9인 수를 뺄 때는 몇십으로 올려 빼고 돌려받아요.\n예) 234−98 = 234−100+2 = 136'},
       ]},
       '4A':{label:'4학년 1학기',emoji:'🌺',subs:[
         {label:'(세)×(두)',thread:'ML9',level:1,desc:'세 자리×두 자리',
@@ -238,8 +263,14 @@ const NM_EXAM = {
           concept:'두 자리 수로 나누는 나눗셈이에요. 몫을 어림해서 찾아요.\n예) 78 ÷ 13 = 6'},
         {label:'(세)÷(두)',thread:'DV5',level:2,desc:'세 자리÷두 자리',
           concept:'세 자리 수를 두 자리 수로 나눠요.\n예) 456 ÷ 12 = 38'},
+        {label:'19단 마법',thread:'ML10',level:1,desc:'11~19단 암산',magic:true,
+          concept:'교차 계산법으로 19단도 암산!\n예) 13×12 = (13+2)×10 + 3×2 = 150+6 = 156'},
+        {label:'큰 수 ×2 · ÷2',thread:'ML1',level:3,desc:'네 자리 감각',magic:true,
+          concept:'교과서 "큰 수" 단원과 짝꿍!\n큰 수도 두 배·반으로 다루면 수 감각이 자라요.\n예) 2400의 반 = 1200 / 3200의 두 배 = 6400'},
       ]},
       '4B':{label:'4학년 2학기',emoji:'🍁',subs:[
+        {label:'가분수 ↔ 대분수',thread:'FR2',level:1,desc:'서로 바꾸기',
+          concept:'가분수는 나눗셈으로 대분수로!\n예) 7/3 = 2와1/3 (7÷3 = 2 … 1)'},
         {label:'동분모 분수 덧·뺄',thread:'FR1',level:1,desc:'진분수',
           concept:'분모가 같으면 분자끼리만 더하거나 빼요. 분모는 그대로!\n예) 3/7 + 2/7 = 5/7'},
         {label:'대분수의 덧셈',thread:'FR3',level:1,desc:'동분모, 올림 없음',
@@ -248,10 +279,16 @@ const NM_EXAM = {
           concept:'분수 부분이 부족하면 정수에서 1을 빌려요!\n예) 3과1/4 − 1과3/4 = 1과2/4'},
         {label:'소수 덧·뺄',thread:'DC1',level:1,desc:'소수 한 자리',
           concept:'소수점 아래 한 자리 수의 덧뺄셈.\n소수점끼리 자리를 맞춰 계산해요.\n예) 2.5 + 1.3 = 3.8'},
+        {label:'99단 마법',thread:'ML10',level:2,desc:'99×n = 100n−n',magic:true,
+          concept:'99를 곱할 땐 100을 곱하고 한 번 빼요.\n예) 99×23 = 2300−23 = 2277'},
+        {label:'여러 수 한 번에',thread:'AD8',level:3,desc:'두 자리 섞인 덧셈',magic:true,
+          concept:'수가 많아도 짝을 찾으면 무섭지 않아요!\n예) 14+6+8+2+5 = 20+10+5 = 35'},
       ]},
       '5A':{label:'5학년 1학기',emoji:'⭐',subs:[
         {label:'사칙 혼합계산',thread:'MX1',level:1,desc:'괄호 없음',
           concept:'괄호가 없으면 곱셈·나눗셈을 먼저 계산해요.\n예) 3 + 2 × 5 = 3 + 10 = 13'},
+        {label:'괄호 혼합계산',thread:'MX1',level:2,desc:'소괄호',
+          concept:'괄호 안을 가장 먼저 계산해요.\n예) (3+2) × 5 = 5 × 5 = 25'},
         {label:'최대공약수',thread:'DV7',level:2,desc:'GCD',
           concept:'두 수의 공통 약수 중 가장 큰 수예요.\n예) 12와 18의 최대공약수 = 6'},
         {label:'최소공배수',thread:'DV7',level:3,desc:'LCM',
@@ -260,6 +297,10 @@ const NM_EXAM = {
           concept:'분자와 분모를 공약수로 나눠 더 간단한 분수로 만들어요.\n예) 6/8 = 3/4 (2로 약분)'},
         {label:'이분모 분수 덧·뺄',thread:'FR4',level:1,desc:'통분',
           concept:'분모가 다르면 통분(공통분모 만들기)을 먼저 해요.\n예) 1/2 + 1/3 = 3/6 + 2/6 = 5/6'},
+        {label:'배수 판별 마법',thread:'DV6',level:2,desc:'3·6·9 배수 찾기',magic:true,
+          concept:'자릿수의 합이 3의 배수면 그 수도 3의 배수!\n예) 234 → 2+3+4=9 → 3의 배수\n약분할 공약수가 눈에 보이는 마법이에요.'},
+        {label:'가우스의 합 마법',thread:'MX2',level:1,desc:'1~n 한 번에',magic:true,
+          concept:'1부터 n까지의 합 = n×(n+1)÷2\n예) 1+2+…+10 = 10×11÷2 = 55\n수학자 가우스가 초등학생 때 쓴 방법!'},
       ]},
       '5B':{label:'5학년 2학기',emoji:'🌙',subs:[
         {label:'분수와 자연수의 곱셈',thread:'FR6',level:2,desc:'대분수 포함',
@@ -270,6 +311,10 @@ const NM_EXAM = {
           concept:'분수를 소수로, 소수를 분수로 바꿔요.\n예) 1/4 = 0.25'},
         {label:'소수의 곱셈',thread:'DC2',level:1,desc:'자연수·소수',
           concept:'정수처럼 곱한 뒤 소수점을 옮겨요.\n예) 0.3 × 0.2 = 0.06'},
+        {label:'세 분수 곱 마법',thread:'FR6',level:3,desc:'약분 먼저!',magic:true,
+          concept:'곱하기 전에 약분부터 하면 계산이 훨씬 작아져요.\n분자 셋·분모 셋을 한꺼번에 곱해요!'},
+        {label:'25×4 기준곱 마법',thread:'ML10',level:3,desc:'25×4=100 활용',magic:true,
+          concept:'25×4=100, 125×8=1000을 알면 큰 곱셈이 순식간에!\n예) 25×16 = 25×4×4 = 100×4 = 400'},
       ]},
       '6A':{label:'6학년 1학기',emoji:'🏆',subs:[
         {label:'분수·자연수 곱나눗셈',thread:'FR6',level:2,desc:'분수의 나눗셈 준비',
@@ -278,6 +323,10 @@ const NM_EXAM = {
           concept:'소수를 10배 해서 정수로 계산한 뒤 다시 나눠요.\n예) 3.6 ÷ 4 = 0.9'},
         {label:'비와 비율',thread:'MX3',level:1,desc:'백분율',
           concept:'비율에 100을 곱하면 백분율(%)이에요.\n예) 3/4 = 0.75 = 75%'},
+        {label:'제곱수 마법',thread:'ML11',level:1,desc:'11²~20² 암기',magic:true,
+          concept:'11²=121, 12²=144 … 20²=400\n제곱수를 외워두면 중학교 제곱근이 쉬워져요!'},
+        {label:'홀짝 수열의 합',thread:'MX2',level:2,desc:'홀수 합 = n²',magic:true,
+          concept:'1+3+5+…+(2n−1) = n² (홀수 n개의 합)\n2+4+6+…+2n = n×(n+1)\n규칙을 알면 더하지 않고도 답이 보여요!'},
       ]},
       '6B':{label:'6학년 2학기',emoji:'🎓',subs:[
         {label:'분수의 나눗셈',thread:'FR7',level:1,desc:'분수÷분수',
@@ -286,24 +335,39 @@ const NM_EXAM = {
           concept:'소수 나눗셈 총정리.\n예) 4.8 ÷ 6 = 0.8'},
         {label:'비와 비율 종합',thread:'MX3',level:2,desc:'할·푼·리',
           concept:'우리나라식 소수 비율 표현이에요.\n예) 0.354 → 3할 5푼 4리'},
+        {label:'혼합계산 끝판왕',thread:'MX1',level:3,desc:'중괄호까지',magic:true,
+          concept:'소괄호→중괄호→곱나눗셈→덧뺄셈 순서로!\n예) {(3+5)×4−2} = {32−2} = 30\n초등 연산 6년의 총결산이에요.'},
+        {label:'분수·소수 총정리',thread:'MX5',level:1,desc:'졸업 기념 마법',magic:true,
+          concept:'분수와 소수를 자유자재로 넘나들며 총정리해요.\n약분·통분·변환까지 한 판에!'},
       ]},
-      /* 2026-07-13: 실제 "디딤돌 연산 6B pre중등.pdf"(Drive)를 OCR로 확인한 실제 목차를 그대로 반영.
-         이전 버전(소인수분해·GCD·LCM·거듭제곱·제곱근 등)은 교재를 확인하지 않고 임의로 채운 것이었음 — 폐기.
-         실제 책은 초등 계산 총정리가 아니라 중학 대수 입문(비례식·방정식·음수)이며, 표 완성형 비례식
-         문제와 등식의 성질을 이용한 방정식 풀이 문제는 기존 NM_TGEN에 대응하는 생성기가 없어
-         온라인/인쇄 문제를 만들어낼 수 없음. 없는 걸 있는 척 다른 스레드로 억지로 채우지 않고
-         comingSoon으로 명시 — 실제 목차만 보여주고 생성기가 준비되면 thread/level을 채울 것.*/
+      /* 2026-07-13: 예비 중등은 사용자 지시로 "중1 교육과정 순서"를 따른다:
+         ① 소인수분해(자연수의 성질) → ② 정수와 유리수 → ③ 문자와 식·방정식 → ④ 정비례와 반비례.
+         참고: 디딤돌 Pre중등 책(Drive OCR 확인)은 비례→방정식→정수 순이지만, 중1 진도 순서로 재배열함.
+         ①은 기존 생성기(DV8/DV7/ML11)가 있어 바로 풀 수 있고, ②~④는 표 완성·등식의 성질형
+         문제라 대응 생성기가 없어 comingSoon(개념 카드만) — 억지 매핑 대신 준비중으로 명시. */
       'PRE':{label:'예비 중등',emoji:'🚀',subs:[
-        {label:'정비례와 반비례',desc:'대응 관계 표',comingSoon:true,
-          concept:'두 수 x, y가 있을 때\n· 정비례: x가 2배, 3배… 되면 y도 2배, 3배… 돼요. (y = 정해진 수 × x)\n· 반비례: x가 2배, 3배… 되면 y는 배, 배… 돼요. (x × y = 정해진 수)\n예) 세발자전거 수와 전체 바퀴 수 → 정비례 / 넓이가 일정한 직사각형의 가로·세로 → 반비례'},
+        {label:'소수(素數) 판별',thread:'DV8',level:1,desc:'소수 찾기',
+          concept:'약수가 1과 자기 자신뿐인 수가 소수예요.\n예) 2, 3, 5, 7, 11, 13 …\n주의: 1은 소수가 아니에요!\n중1 첫 단원 "소인수분해"의 출발점.'},
+        {label:'소인수분해',thread:'DV8',level:2,desc:'소수의 곱으로',
+          concept:'수를 소수의 곱으로 나타내요.\n예) 12 = 2 × 2 × 3 = 2² × 3\n작은 소수(2, 3, 5…)부터 차례로 나눠 봐요.'},
+        {label:'거듭제곱',thread:'ML11',level:3,desc:'2ⁿ·3ⁿ·5ⁿ',
+          concept:'같은 수를 여러 번 곱하면 거듭제곱!\n예) 2×2×2 = 2³ = 8\n소인수분해 결과를 지수로 표현할 때 꼭 필요해요.'},
+        {label:'최대공약수·최소공배수',thread:'DV7',level:2,desc:'소인수분해로',
+          concept:'중1에서는 소인수분해를 이용해 최대공약수를 구해요.\n예) 12=2²×3, 18=2×3² → 공통 소인수 2×3 = 6'},
+        {label:'약수의 개수',thread:'DV8',level:3,desc:'(지수+1) 곱',
+          concept:'소인수분해하면 약수의 개수를 세지 않고도 알 수 있어요!\n예) 12 = 2²×3 → (2+1)×(1+1) = 6개'},
+        {label:'정수와 유리수',desc:'음수·수직선',comingSoon:true,
+          concept:'0보다 작은 수(음수)를 포함한 정수·유리수를 수직선 위에서 비교해요.\n절댓값: 수직선에서 0으로부터 떨어진 거리.\n예) -3의 절댓값은 3'},
         {label:'덧셈·뺄셈 방정식',desc:'등식의 성질',comingSoon:true,
           concept:'모르는 수 x가 있는 등식을 방정식이라 해요.\n등식의 양쪽에 같은 수를 더하거나 빼도 등식은 그대로 성립해요.\n예) x − 9 = 12 → 양쪽에 9를 더하면 x = 21'},
         {label:'곱셈·나눗셈 방정식',desc:'등식의 성질',comingSoon:true,
           concept:'등식의 양쪽에 같은 수를 곱하거나(0이 아닌 수로) 나누어도 등식은 그대로 성립해요.\n예) x ÷ 5 = 20 → 양쪽에 5를 곱하면 x = 100'},
         {label:'혼합 방정식',desc:'×,+,− / ÷,+,−',comingSoon:true,
           concept:'x×(수)나 x÷(수)를 한 덩어리로 먼저 구한 다음 x를 구해요.\n예) x×4+5=17 → x×4=12 → x=3'},
-        {label:'정수와 유리수',desc:'음수·수직선',comingSoon:true,
-          concept:'0보다 작은 수(음수)를 포함한 정수·유리수를 수직선 위에서 비교해요.\n절댓값: 수직선에서 0으로부터 떨어진 거리.\n예) -3의 절댓값은 3'},
+        {label:'정비례와 반비례',desc:'대응 관계 표',comingSoon:true,
+          concept:'두 수 x, y가 있을 때\n· 정비례: x가 2배, 3배… 되면 y도 2배, 3배… 돼요. (y = 정해진 수 × x)\n· 반비례: x가 2배, 3배… 되면 y는 반으로, 1/3로… 줄어요. (x × y = 정해진 수)\n예) 세발자전거 수와 전체 바퀴 수 → 정비례 / 넓이가 일정한 직사각형의 가로·세로 → 반비례'},
+        {label:'제곱근 마법',thread:'MX4',level:1,desc:'√121~√400',magic:true,
+          concept:'제곱해서 그 수가 되는 수를 찾아요.\n예) √144 = 12 (12×12=144)\n중3 내용을 살짝 맛보는 보너스 마법!'},
       ]},
     };
     const GRADE_ORDER = ['1A','1B','2A','2B','3A','3B','4A','4B','5A','5B','6A','6B','PRE'];
@@ -509,12 +573,19 @@ const NM_EXAM = {
   <div class="nm-ex-form-body">
     <p class="nm-ex-label">주제 선택</p>
     <div class="nm-ex-grade-topics">
-      ${subs.map((s,i) => `
-      <button class="nm-ex-topic-chip${i===selIdx?' nm-ex-topic-sel':''}${s.comingSoon?' nm-ex-topic-soon':''}" data-idx="${i}">
+      ${(() => {
+        const chip = (s,i) => `
+      <button class="nm-ex-topic-chip${i===selIdx?' nm-ex-topic-sel':''}${s.comingSoon?' nm-ex-topic-soon':''}${s.magic?' nm-ex-topic-magic':''}" data-idx="${i}">
         ${opts.showGrade && s.grade ? `<span class="nm-ex-tchip-grade">${s.grade==='PRE'?'Pre':s.grade}</span>` : ''}
-        <span class="nm-ex-tchip-name">${esc(s.label)}</span>
+        <span class="nm-ex-tchip-name">${s.magic?'✨ ':''}${esc(s.label)}</span>
         <span class="nm-ex-tchip-desc">${s.comingSoon?'🚧 준비중':esc(s.desc)}</span>
-      </button>`).join('')}
+      </button>`;
+        const core  = subs.map((s,i)=>({s,i})).filter(x=>!x.s.magic);
+        const magic = subs.map((s,i)=>({s,i})).filter(x=>x.s.magic);
+        return core.map(x=>chip(x.s,x.i)).join('')
+          + (magic.length ? `<div class="nm-ex-topics-label">✨ 연산 마법 — 계산이 빨라지는 전략</div>`
+              + magic.map(x=>chip(x.s,x.i)).join('') : '');
+      })()}
     </div>
     ${bodyHtml}
   </div>

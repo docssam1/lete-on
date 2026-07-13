@@ -549,6 +549,13 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-ex-topic-soon{opacity:.85}
 .nm-ex-topic-soon .nm-ex-tchip-desc{color:var(--gold-deep);font-weight:800}
 
+/* ── ✨연산 마법(전략) 주제 ── */
+.nm-ex-topics-label{font-size:12px;font-weight:900;color:var(--gold-deep);
+  margin:12px 0 2px;letter-spacing:.02em}
+.nm-ex-topic-magic{border-color:#e7d7ae;background:linear-gradient(160deg,#fffdf5,#fdf6e3)}
+.nm-ex-topic-magic:hover{border-color:var(--gold-deep);background:#fdf3dd}
+.nm-ex-topic-magic.nm-ex-topic-sel{border-color:var(--gold-deep);background:#fdf0d5}
+
 /* ── 준비중(생성기 없음) 안내 카드 ── */
 .nm-ex-comingsoon{margin-top:20px;border:1.5px solid #eadfc4;border-radius:16px;
   background:#fffdf5;padding:18px 18px 20px}
