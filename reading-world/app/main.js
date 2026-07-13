@@ -1035,7 +1035,7 @@ function bindPinchZoom(stage){
 }
 function bindGameTown(){bind();
  // English village signage (fixed English names regardless of UI language)
- const labels={library:'Library',wordshop:'Word Shop',theater:'Screen Theater',practice:'Study House',report:'Report Hall',writingvillage:'Writing Village',open:st.lang==='ko'?'탭하여 들어가기':st.lang==='zh'?'点击进入':'Tap to enter'};
+ const labels={library:'eBook Library',wordshop:'Vocabulary Room',theater:'Screen Theater',practice:'Textbook Library',report:'Reading Report',writingvillage:'Writing Village',open:st.lang==='ko'?'탭하여 들어가기':st.lang==='zh'?'点击进入':'Tap to enter'};
  const stage=document.getElementById('town-stage');
  if(stage&&gameAvailable()){TownGame.mount(stage,{look:lookForGame(),coins:(profile&&profile.points)||0,labels,onOpenMenu:buildingMenu,slots:(window.DECORATIONS&&DECORATIONS.slots)||{},placed:placedDecoEmoji(),onSlotClick:decorationMenu,avatarUri:avatarSvgUri(),decorArt:placedDecoArt(),buildingArt:buildingArtMap()});}
  app.querySelectorAll('.town-zoom [data-zoom]').forEach(b=>{b.onclick=()=>{if(!window.TownGame||!TownGame.setZoom)return;const cur=TownGame.getZoom?TownGame.getZoom():1;TownGame.setZoom(b.dataset.zoom==='in'?cur+0.4:cur-0.4);};});
@@ -1045,7 +1045,7 @@ function buildingMenu(key){if(key==='theater'){if(window.TownGame)TownGame.destr
  if(key==='practice'){showBookShelf();return;}          // Study House → level ladder / book catalog
  if(key==='library'){if(window.TownGame)TownGame.destroy();openLibrary();return;}
  if(key==='writingvillage'){if(window.TownGame)TownGame.destroy();openWritingVillage();return;}
- const map={wordshop:{view:'words',icon:'🔤',title:{ko:'단어 상점 · 단어 배우기',en:'Word Shop · Learn Words',zh:'单词商店 · 学习单词'},sub:{ko:'단어 카드 · 암기 카드 · 단어 게임.',en:'Word cards · memory · word game.',zh:'单词卡 · 记忆卡 · 单词游戏。'}},report:{view:'report',icon:'📊',title:{ko:'리포트 홀 · 학습 리포트',en:'Report Hall · Learning Report',zh:'报告厅 · 学习报告'},sub:{ko:'전략별 강점·약점을 확인해요.',en:'See your strengths and weaknesses by strategy.',zh:'查看各策略的强弱项。'}}};const m=map[key];if(!m)return;const el=document.getElementById('town-menu');if(!el)return;
+ const map={wordshop:{view:'words',icon:'🔤',title:{ko:'어휘 방 · 단어 배우기',en:'Vocabulary Room · Learn Words',zh:'词汇室 · 学习单词'},sub:{ko:'단어 카드 · 암기 카드 · 단어 게임.',en:'Word cards · memory · word game.',zh:'单词卡 · 记忆卡 · 单词游戏。'}},report:{view:'report',icon:'📊',title:{ko:'리딩 리포트 · 학습 리포트',en:'Reading Report · Learning Report',zh:'阅读报告 · 学习报告'},sub:{ko:'전략별 강점·약점을 확인해요.',en:'See your strengths and weaknesses by strategy.',zh:'查看各策略的强弱项。'}}};const m=map[key];if(!m)return;const el=document.getElementById('town-menu');if(!el)return;
  const lessons=availableLessons();
  el.innerHTML=`<div class="tm-backdrop" data-tmx></div><div class="tm-card"><button class="tm-x" data-tmx>×</button><div class="tm-head">${m.icon} <b>${m.title[st.lang]||m.title.en}</b></div><p class="tm-sub">${m.sub[st.lang]||m.sub.en}</p><div class="tm-pick">${st.lang==='ko'?'어느 레슨을 열까요?':st.lang==='zh'?'打开哪一课？':'Which lesson?'}</div><div class="tm-lessons">${lessons.map(id=>{const n=lessonNum(id);const done=lessonDone(id);const ms=lessonMastery(id);return `<button class="tm-lesson ${done?'done':''}" data-tm-lesson="${esc(id)}"><span class="stop-badge">${n}</span><span>Lesson ${n}${done?' ✓':''}${ms.stars?`<em class="tm-stars">${starDots(ms.stars)}</em>`:''}</span></button>`;}).join('')}</div></div>`;
  el.classList.add('show');
@@ -1099,7 +1099,7 @@ function showBookShelf(){
   return `<section class="level-row"><div class="level-tag" style="background:${b.c}">${b.k}</div><div class="level-books">${inner}</div></section>`;}).join('');
  const html=`<div class="book-shelf study-house">
   <div class="book-shelf-top">
-   <h2>🏫 Study House</h2>
+   <h2>🏫 ${t('교재 도서관','Textbook Library','教材图书馆')}</h2>
    <button class="btn secondary" data-act="town-map">← ${t('마을로','Town','返回')}</button>
   </div>
   <p class="book-shelf-sub">${t('어느 레벨이든 자유롭게 고르세요 — 잠긴 순서는 없어요. 사다리는 난이도 안내일 뿐이에요.','Pick any level freely — nothing is locked. The ladder just shows difficulty.','任意级别都可自由选择——没有锁定，梯子只表示难度。')}</p>
@@ -1237,7 +1237,7 @@ function decorationMenu(slotId){const slot=window.DECORATIONS&&DECORATIONS.slots
  const cl=el.querySelector('[data-deco-clear]');if(cl)cl.onclick=()=>{delete profile.town.placedDecorations[slotId];if(window.TownGame)TownGame.setDecor(slotId,'');save();decorationMenu(slotId);};}
 // ---- Notice board (공지사항) ----
 const NOTICE_SEED=[
- {id:'seed-carsc',pinned:true,author:'Gfield',created_at:'2026-07-07T12:00:00Z',title:'📚 CARS Level C 업데이트 완료!',body:"## 📖 소개\nCARS Level C는 '읽기 전략(Reading Strategies)'을 익히는 초등 중학년 독해 교재예요. 다양한 논픽션 주제를 읽으며 **12가지 핵심 독해 전략**을 하나씩 배웁니다.\n\n## 📊 난이도\n- 대상: **초등 3학년(G3)** 수준\n- 지문과 어휘가 Level B보다 한 단계 높아요\n- 사실 확인부터 **추론·작가 의도**까지 폭넓게 연습해요\n\n## 🧩 구성 (레슨마다 7단계)\n- STEP 1 — 핵심 단어 12개 배우기\n- STEP 2~3 — 원문 지문 읽기 + 문제 풀기\n- STEP 4~5 — 추가 학습 지문 + 문제\n- STEP 6~7 — 새 지문(핵심 어휘 활용) + 문제\n\n## 🌍 10개 레슨 주제\n- 대이동 · 화산 · 꿀벌 · 열대우림 · 태양계\n- 고대 이집트 · 물의 순환 · 제왕나비 · 해양 지대 · 공동체 정원\n\nStudy House에서 **G3 사다리**로 올라가면 만날 수 있어요. 오늘부터 도전해봐요! 🚀"},
+ {id:'seed-carsc',pinned:true,author:'Gfield',created_at:'2026-07-07T12:00:00Z',title:'📚 CARS Level C 업데이트 완료!',body:"## 📖 소개\nCARS Level C는 '읽기 전략(Reading Strategies)'을 익히는 초등 중학년 독해 교재예요. 다양한 논픽션 주제를 읽으며 **12가지 핵심 독해 전략**을 하나씩 배웁니다.\n\n## 📊 난이도\n- 대상: **초등 3학년(G3)** 수준\n- 지문과 어휘가 Level B보다 한 단계 높아요\n- 사실 확인부터 **추론·작가 의도**까지 폭넓게 연습해요\n\n## 🧩 구성 (레슨마다 7단계)\n- STEP 1 — 핵심 단어 12개 배우기\n- STEP 2~3 — 원문 지문 읽기 + 문제 풀기\n- STEP 4~5 — 추가 학습 지문 + 문제\n- STEP 6~7 — 새 지문(핵심 어휘 활용) + 문제\n\n## 🌍 10개 레슨 주제\n- 대이동 · 화산 · 꿀벌 · 열대우림 · 태양계\n- 고대 이집트 · 물의 순환 · 제왕나비 · 해양 지대 · 공동체 정원\n\nTextbook Library(교재 도서관)에서 **G3 사다리**로 올라가면 만날 수 있어요. 오늘부터 도전해봐요! 🚀"},
  {id:'seed-welcome',pinned:false,author:'Gfield',created_at:'2026-07-07T00:00:00Z',title:'Gfield Reading Town에 오신 걸 환영해요! 🎉',body:'레고 마을에서 매일 조금씩 읽고, 단어를 배우고, Screen Quest 영상도 즐겨보세요. 열심히 하면 코인을 모아 마을과 캐릭터를 꾸밀 수 있어요!'}
 ];
 function nbDate(s){try{const d=new Date(s);if(isNaN(d.getTime()))return '';const p=n=>('0'+n).slice(-2);return `${d.getFullYear()}.${p(d.getMonth()+1)}.${p(d.getDate())}`;}catch(e){return '';}}
