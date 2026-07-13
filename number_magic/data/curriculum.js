@@ -48,11 +48,31 @@ window.NM_CURRICULUM = {
         { id:'B', title:{ko:'B단계',en:'Level B',zh:'B阶段'}, units:[], available:false },
         { id:'C', title:{ko:'C단계',en:'Level C',zh:'C阶段'}, units:[], available:false },
         { id:'D', title:{ko:'D단계',en:'Level D',zh:'D阶段'}, units:[], available:false },
-        { id:'E', title:{ko:'E단계',en:'Level E',zh:'E阶段'}, units:[], available:false },
-        { id:'F', title:{ko:'F단계',en:'Level F',zh:'F阶段'}, units:[], available:false },
-        { id:'G', title:{ko:'G단계',en:'Level G',zh:'G阶段'}, units:[], available:false },
-        { id:'H', title:{ko:'H단계',en:'Level H',zh:'H阶段'}, units:[], available:false },
-        { id:'I', title:{ko:'I단계',en:'Level I',zh:'I阶段'}, units:[], available:false }
+        {
+          id:'E', available:true,
+          title:{ko:'E단계 · 뺄셈 기초 전략',en:'Level E · Basic Subtraction Strategies',zh:'E阶段 · 减法基础策略'},
+          units:['A-17','A-18','A-19','A-20','A-21']
+        },
+        {
+          id:'F', available:true,
+          title:{ko:'F단계 · 뺄셈 심화 전략',en:'Level F · Advanced Subtraction Strategies',zh:'F阶段 · 减法进阶策略'},
+          units:['A-22','A-23','A-24','A-25']
+        },
+        {
+          id:'G', available:true,
+          title:{ko:'G단계 · 수열과 수 세기',en:'Level G · Sequences & Counting',zh:'G阶段 · 数列与计数'},
+          units:['A-26','A-27','A-28','A-29']
+        },
+        {
+          id:'H', available:true,
+          title:{ko:'H단계 · 자릿값 계산 전략',en:'Level H · Place-Value Calculation Strategies',zh:'H阶段 · 数位计算策略'},
+          units:['A-30','A-31','A-32','A-33','A-34']
+        },
+        {
+          id:'I', available:true,
+          title:{ko:'I단계 · 고대 수와 소수',en:'Level I · Ancient Numbers & Decimals',zh:'I阶段 · 古代数字与小数'},
+          units:['A-35','A-36','A-37','A-38']
+        }
       ]
     },
 
