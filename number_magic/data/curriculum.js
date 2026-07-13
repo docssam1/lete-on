@@ -41,13 +41,25 @@ window.NM_CURRICULUM = {
         zh:'把数字展开变简单的第一个魔法——加法的各种策略'},
       levels:[
         {
-          id:'A', title:{ko:'A단계 · 덧셈의 전략',en:'Level A · Addition Strategies',zh:'A阶段 · 加法策略'}, available:true,
-          units:['A-01','A-02','A-03','A-04','A-05','A-06','A-07','A-08','A-09','A-10','A-11','A-12','A-13','A-14','A-15','A-16'],
-          gates:['A-review','A-sona','A-battle']   // 관문 — 유닛 미구현, screenTier()에서도 미사용(추후 작업)
+          id:'A', available:true,
+          title:{ko:'A단계 · 덧셈 기초 전략',en:'Level A · Basic Addition Strategies',zh:'A阶段 · 加法基础策略'},
+          units:['A-01','A-02','A-03','A-04']
         },
-        { id:'B', title:{ko:'B단계',en:'Level B',zh:'B阶段'}, units:[], available:false },
-        { id:'C', title:{ko:'C단계',en:'Level C',zh:'C阶段'}, units:[], available:false },
-        { id:'D', title:{ko:'D단계',en:'Level D',zh:'D阶段'}, units:[], available:false },
+        {
+          id:'B', available:true,
+          title:{ko:'B단계 · 덧셈 심화 전략',en:'Level B · Advanced Addition Strategies',zh:'B阶段 · 加法进阶策略'},
+          units:['A-05','A-06','A-07','A-08','A-09']
+        },
+        {
+          id:'C', available:true,
+          title:{ko:'C단계 · 뺄셈 기초 전략',en:'Level C · Basic Subtraction Strategies',zh:'C阶段 · 减法基础策略'},
+          units:['A-10','A-11','A-12']
+        },
+        {
+          id:'D', available:true,
+          title:{ko:'D단계 · 뺄셈 심화 전략',en:'Level D · Advanced Subtraction Strategies',zh:'D阶段 · 减法进阶策略'},
+          units:['A-13','A-14','A-15','A-16']
+        },
         {
           id:'E', available:true,
           title:{ko:'E단계 · 뺄셈 기초 전략',en:'Level E · Basic Subtraction Strategies',zh:'E阶段 · 减法基础策略'},
