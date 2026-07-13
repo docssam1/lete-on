@@ -96,105 +96,201 @@ const NM_EXAM = {
     return `#${thread}-L${level}x${count}-${seed}`;
   },
 
-  /* ── 1. 시험 설정 화면 ── */
+  /* ── 1. 시험 설정 화면 (섹션 선택 → 주제 설정) ── */
   renderExamSetup(container, onStart){
-    const threads = window.NM_THREADS || {};
-    const threadKeys = Object.keys(threads);
+    const TOPICS = {
+      school:[
+        {label:'덧셈', icon:'＋', color:'#3b82f6', subs:[
+          {label:'한 자리 덧셈 (올림 없음)', thread:'AD1', level:1, desc:'합 9 이하'},
+          {label:'받아올림 덧셈', thread:'AD2', level:1, desc:'합 10 이상'},
+          {label:'세 수 더하기', thread:'AD2', level:2, desc:'세 수 받아올림'},
+          {label:'두 자리 + 한 자리', thread:'AD3', level:2, desc:'받아올림 포함'},
+          {label:'두 자리 + 두 자리', thread:'AD5', level:2, desc:'받아올림 자유'},
+          {label:'세 자리 덧셈', thread:'AD6', level:2, desc:'3자리 + 3자리'},
+          {label:'몇십 · 몇백 더하기', thread:'AD4', level:1, desc:'10s + 10s'},
+        ]},
+        {label:'뺄셈', icon:'－', color:'#ef4444', subs:[
+          {label:'한 자리 뺄셈', thread:'SB1', level:1, desc:'9 이하'},
+          {label:'두 자리 − 한 자리 (내림 없음)', thread:'SB3', level:1, desc:'받아내림 없음'},
+          {label:'두 자리 − 한 자리 (내림)', thread:'SB3', level:2, desc:'받아내림 있음'},
+          {label:'두 자리 − 두 자리', thread:'SB4', level:2, desc:'받아내림 있음'},
+          {label:'세 자리 뺄셈', thread:'SB6', level:1, desc:'3자리 − 3자리'},
+          {label:'보정 빼기 (7·8·9)', thread:'SB5', level:1, desc:'더 빼고 돌려받기'},
+        ]},
+        {label:'곱셈', icon:'×', color:'#10b981', subs:[
+          {label:'구구단 2 · 3단', thread:'ML2', level:1, desc:'2단, 3단'},
+          {label:'구구단 4 · 5단', thread:'ML2', level:2, desc:'4단, 5단'},
+          {label:'구구단 6 · 7단', thread:'ML3', level:1, desc:'6단, 7단'},
+          {label:'구구단 8 · 9단', thread:'ML3', level:2, desc:'8단, 9단'},
+          {label:'구구단 전체 (2~9단)', thread:'ML4', level:1, desc:'혼합'},
+          {label:'□ 채우기 (역구구)', thread:'ML4', level:2, desc:'빈칸 인수 찾기'},
+          {label:'두 자리 × 한 자리', thread:'ML6', level:2, desc:'분배 암산'},
+          {label:'배수 (×2 / ÷2)', thread:'ML1', level:1, desc:'두 배와 반으로'},
+        ]},
+        {label:'나눗셈', icon:'÷', color:'#f59e0b', subs:[
+          {label:'두 자리 ÷ 한 자리 (나머지 없음)', thread:'DV2', level:1, desc:'나누어 떨어짐'},
+          {label:'나머지 있는 나눗셈', thread:'DV3', level:1, desc:'2자리 ÷ 1자리'},
+          {label:'세 자리 ÷ 한 자리', thread:'DV4', level:1, desc:'나머지 없음'},
+          {label:'세 자리 ÷ 한 자리 (나머지)', thread:'DV4', level:2, desc:'나머지 있음'},
+        ]},
+      ],
+      magic:[
+        {label:'수 감각', icon:'🔢', color:'#0ea5e9', subs:[
+          {label:'보수 10 찾기', thread:'NS3', level:2, desc:'더해서 10 만들기'},
+          {label:'보수 100 찾기', thread:'NS4', level:2, desc:'더해서 100 만들기'},
+          {label:'자릿값 읽기', thread:'NS1', level:1, desc:'두·세 자리 자릿값'},
+          {label:'모으기 · 가르기', thread:'NS2', level:2, desc:'9까지 수 가르기'},
+        ]},
+        {label:'창의수연', icon:'🧠', color:'#8b5cf6', subs:[
+          {label:'짝 묶어 더하기 (한 자리)', thread:'AD8', level:1, desc:'4개 수, 짝 10 묶기'},
+          {label:'짝 묶어 더하기 (두 자리)', thread:'AD8', level:3, desc:'두 자리 수 포함'},
+          {label:'식의 변형 — 끼리끼리', thread:'SB7', level:1, desc:'같은 자리 묶기'},
+          {label:'식의 변형 — 10 만들기', thread:'SB7', level:2, desc:'받아올림 그룹화'},
+        ]},
+        {label:'소수 · 분수', icon:'🔵', color:'#6366f1', subs:[
+          {label:'소수 덧·뺄 (1자리)', thread:'DC1', level:1, desc:'소수 한 자리'},
+          {label:'소수 덧·뺄 (2자리)', thread:'DC1', level:2, desc:'소수 두 자리'},
+          {label:'진분수 덧·뺄 (같은 분모)', thread:'FR1', level:1, desc:'동분모'},
+          {label:'이분모 덧·뺄', thread:'FR4', level:1, desc:'다른 분모'},
+        ]},
+      ]
+    };
 
-    const seed = NM_RNG.newCode();
+    let seed = NM_RNG.newCode();
 
-    container.innerHTML = `
-<div class="nm-exam-setup">
-  <h2 class="nm-exam-title">📝 시험 / Exam / 考试</h2>
-  <div class="nm-exam-form">
-    <div class="nm-form-row">
-      <label>스레드 / Thread / 线程</label>
-      <select id="nm-ex-thread">
-        ${threadKeys.map(k=>`<option value="${k}">${k} — ${esc((threads[k].name||{}).ko||k)}</option>`).join('')}
+    /* ── 1단계: 섹션 선택 ── */
+    function showSectionPick(){
+      container.innerHTML = `
+<div class="nm-ex-sec-wrap">
+  <div class="nm-ex-sec-title">📝 학습지 &amp; 시험</div>
+  <div class="nm-ex-sec-sub">연습할 영역을 선택하세요</div>
+  <div class="nm-ex-sec-grid">
+    <button class="nm-ex-sec-card" data-sec="school">
+      <div class="nm-ex-sec-icon">🏫</div>
+      <div class="nm-ex-sec-name">교과 연산</div>
+      <div class="nm-ex-sec-desc">덧셈 · 뺄셈 · 곱셈 · 나눗셈</div>
+    </button>
+    <button class="nm-ex-sec-card nm-ex-sec-magic" data-sec="magic">
+      <div class="nm-ex-sec-icon">🧙</div>
+      <div class="nm-ex-sec-name">Numbers of Magic</div>
+      <div class="nm-ex-sec-desc">창의수연 · 수 감각 · 분수 · 소수</div>
+    </button>
+  </div>
+</div>`;
+      container.querySelectorAll('.nm-ex-sec-card').forEach(btn=>{
+        btn.addEventListener('click', ()=>{ seed=NM_RNG.newCode(); showTopicForm(btn.dataset.sec); });
+      });
+    }
+
+    /* ── 2단계: 주제 설정 ── */
+    function showTopicForm(section){
+      const cats = TOPICS[section];
+      let topicKey = null;
+
+      function parseTopic(key){
+        if(!key) return null;
+        const [ci,si] = key.split(':').map(Number);
+        return cats[ci]&&cats[ci].subs[si] ? cats[ci].subs[si] : null;
+      }
+
+      function codeText(sub){
+        const cnt = parseInt((container.querySelector('#nm-ex-count')||{}).value)||10;
+        return NM_EXAM.worksheetCode({thread:sub.thread, level:sub.level, count:cnt, seed});
+      }
+
+      function optionsHtml(){
+        let h = '<option value="">— 주제 선택 —</option>';
+        cats.forEach((cat,ci)=>{
+          h += `<optgroup label="${esc(cat.icon+' '+cat.label)}">`;
+          cat.subs.forEach((sub,si)=>{
+            h += `<option value="${ci}:${si}">${esc(sub.label)} — ${esc(sub.desc)}</option>`;
+          });
+          h += '</optgroup>';
+        });
+        return h;
+      }
+
+      const secLabel = section==='school'?'🏫 교과 연산':'🧙 Numbers of Magic';
+
+      container.innerHTML = `
+<div class="nm-ex-form-wrap">
+  <div class="nm-ex-form-head">
+    <button class="nm-ex-back-btn" id="nm-ex-back-sec">← 다시 선택</button>
+    <span class="nm-ex-sec-chip">${esc(secLabel)}</span>
+  </div>
+  <div class="nm-ex-form-body">
+    <div class="nm-ex-form-row">
+      <label class="nm-ex-label">주제</label>
+      <select class="nm-ex-select" id="nm-ex-topic">${optionsHtml()}</select>
+    </div>
+    <div class="nm-ex-form-row">
+      <label class="nm-ex-label">문항 수</label>
+      <select class="nm-ex-select" id="nm-ex-count">
+        ${[5,10,15,20,30].map(n=>`<option value="${n}"${n===10?' selected':''}>${n}문제</option>`).join('')}
       </select>
     </div>
-    <div class="nm-form-row">
-      <label>레벨 / Level / 级别</label>
-      <select id="nm-ex-level"></select>
-    </div>
-    <div class="nm-form-row">
-      <label>문항수 / Questions</label>
-      <select id="nm-ex-count">
-        ${[10,15,20,25,30,40,50].map(n=>`<option value="${n}"${n===20?' selected':''}>${n}</option>`).join('')}
+    <div class="nm-ex-form-row">
+      <label class="nm-ex-label">타이머</label>
+      <select class="nm-ex-select" id="nm-ex-timer">
+        <option value="0">없음</option>
+        <option value="180">3분</option>
+        <option value="300" selected>5분</option>
+        <option value="600">10분</option>
       </select>
     </div>
-    <div class="nm-form-row">
-      <label>타이머 / Timer</label>
-      <select id="nm-ex-timer">
-        <option value="0">없음 / None</option>
-        <option value="300">5분 / 5 min</option>
-        <option value="600" selected>10분 / 10 min</option>
-        <option value="900">15분 / 15 min</option>
-      </select>
+    <div class="nm-ex-code-row" id="nm-ex-code-row" style="display:none">
+      <span class="nm-ex-code-label">코드</span>
+      <code class="nm-ex-code-val" id="nm-ex-code-val"></code>
+      <button class="nm-ex-dice" id="nm-ex-dice" title="새 코드">🎲</button>
     </div>
-    <div class="nm-form-row">
-      <label>시드 코드 / Seed</label>
-      <input id="nm-ex-seed" type="text" value="${seed}" style="width:100px">
-      <button id="nm-ex-new-seed" class="nm-btn-small">🎲 새 코드</button>
-    </div>
-    <div class="nm-form-row nm-form-code">
-      학습지 코드: <code id="nm-ex-code-preview"></code>
-    </div>
-    <div class="nm-exam-actions">
-      <button id="nm-ex-start" class="nm-btn nm-btn-primary">▶ 시험 시작</button>
-      <button id="nm-ex-print" class="nm-btn nm-btn-secondary">🖨️ 인쇄 학습지</button>
+    <div class="nm-ex-actions">
+      <button class="nm-ex-btn-primary" id="nm-ex-start" disabled>▶ 연습 시작</button>
+      <button class="nm-ex-btn-secondary" id="nm-ex-print" disabled>🖨 학습지</button>
     </div>
   </div>
 </div>`;
 
-    // 레벨 목록 동적 갱신
-    const threadSel = $('#nm-ex-thread', container);
-    const levelSel  = $('#nm-ex-level',  container);
-    const seedInput = $('#nm-ex-seed',   container);
-    const codePreview = $('#nm-ex-code-preview', container);
+      function refresh(){
+        const sub = parseTopic(topicKey);
+        const codeRow = container.querySelector('#nm-ex-code-row');
+        const codeVal = container.querySelector('#nm-ex-code-val');
+        const startBtn = container.querySelector('#nm-ex-start');
+        const printBtn = container.querySelector('#nm-ex-print');
+        if(sub){
+          codeRow.style.display='flex';
+          codeVal.textContent = codeText(sub);
+          startBtn.disabled=false; printBtn.disabled=false;
+        } else {
+          codeRow.style.display='none';
+          startBtn.disabled=true; printBtn.disabled=true;
+        }
+      }
 
-    function refreshLevels(){
-      const t = threads[threadSel.value] || {};
-      levelSel.innerHTML = (t.levels || [{id:1,label:{ko:'기본'}}]).map(l =>
-        `<option value="${l.id}">${l.id} — ${esc((l.label||{}).ko||'')}</option>`
-      ).join('');
-      refreshCode();
+      container.querySelector('#nm-ex-back-sec').addEventListener('click', showSectionPick);
+      container.querySelector('#nm-ex-topic').addEventListener('change', function(){ topicKey=this.value||null; refresh(); });
+      container.querySelector('#nm-ex-count').addEventListener('change', ()=>refresh());
+      container.querySelector('#nm-ex-dice').addEventListener('click', ()=>{ seed=NM_RNG.newCode(); refresh(); });
+
+      container.querySelector('#nm-ex-start').addEventListener('click', ()=>{
+        const sub=parseTopic(topicKey); if(!sub) return;
+        onStart && onStart({
+          thread:sub.thread, level:sub.level,
+          count:parseInt(container.querySelector('#nm-ex-count').value)||10,
+          timer:parseInt(container.querySelector('#nm-ex-timer').value)||0,
+          seed, _section:section, _topicKey:topicKey
+        });
+      });
+
+      container.querySelector('#nm-ex-print').addEventListener('click', ()=>{
+        const sub=parseTopic(topicKey); if(!sub) return;
+        NM_EXAM.renderPrint({thread:sub.thread, level:sub.level,
+          count:parseInt(container.querySelector('#nm-ex-count').value)||10, seed});
+      });
+
+      refresh();
     }
 
-    function refreshCode(){
-      const cfg = getConfig();
-      codePreview.textContent = NM_EXAM.worksheetCode(cfg);
-    }
-
-    function getConfig(){
-      return {
-        thread: threadSel.value,
-        level:  parseInt(levelSel.value)||1,
-        count:  parseInt($('#nm-ex-count',container).value)||20,
-        timer:  parseInt($('#nm-ex-timer',container).value)||0,
-        seed:   seedInput.value.trim() || NM_RNG.newCode()
-      };
-    }
-
-    threadSel.addEventListener('change', refreshLevels);
-    levelSel.addEventListener('change', refreshCode);
-    $('#nm-ex-count', container).addEventListener('change', refreshCode);
-    seedInput.addEventListener('input', refreshCode);
-
-    $('#nm-ex-new-seed', container).addEventListener('click', () => {
-      seedInput.value = NM_RNG.newCode();
-      refreshCode();
-    });
-
-    $('#nm-ex-start', container).addEventListener('click', () => {
-      onStart && onStart(getConfig());
-    });
-
-    $('#nm-ex-print', container).addEventListener('click', () => {
-      NM_EXAM.renderPrint(getConfig());
-    });
-
-    refreshLevels();
+    showSectionPick();
   },
 
   /* ── 2. 시험 실행 ── */
@@ -318,28 +414,33 @@ const NM_EXAM = {
     </table>
   </div>`}
   <div class="nm-result-actions">
-    <button id="nm-res-retry-wrong" class="nm-btn nm-btn-primary" ${wrongs.length===0?'disabled':''}>
-      📖 오답만 다시
-    </button>
-    <button id="nm-res-new" class="nm-btn nm-btn-secondary">🎲 새 시험</button>
-    <button id="nm-res-print" class="nm-btn nm-btn-secondary">🖨️ 학습지 인쇄</button>
+    <button id="nm-res-more" class="nm-ex-btn-primary">🔄 계속 연습</button>
+    <button id="nm-res-retry-wrong" class="nm-ex-btn-secondary" ${wrongs.length===0?'disabled':''}>📖 오답만 다시</button>
+    <button id="nm-res-new" class="nm-ex-btn-secondary">🎲 새 문제</button>
   </div>
-  <div class="nm-result-code">학습지 코드: <code>${NM_EXAM.worksheetCode({thread,level,count:total,seed})}</code></div>
+  <div class="nm-result-actions" style="margin-top:6px">
+    <button id="nm-res-print" class="nm-ex-btn-ghost">🖨 학습지 인쇄</button>
+    <button id="nm-res-setup" class="nm-ex-btn-ghost">← 주제 바꾸기</button>
+  </div>
+  <div class="nm-result-code">코드: <code>${NM_EXAM.worksheetCode({thread,level,count:total,seed})}</code></div>
 </div>`;
 
-    // KaTeX 렌더
     $$('.nm-rtex', container).forEach(el => {
       renderKaTeX(el.dataset.tex || '', el);
     });
 
+    $('#nm-res-more', container).addEventListener('click', () => {
+      onReplay && onReplay({mode:'more', thread, level, count:total});
+    });
     $('#nm-res-new', container).addEventListener('click', () => {
       onReplay && onReplay({mode:'new', thread, level, count:total});
     });
-
     $('#nm-res-print', container).addEventListener('click', () => {
       NM_EXAM.renderPrint({thread, level, count:total, seed});
     });
-
+    $('#nm-res-setup', container).addEventListener('click', () => {
+      onReplay && onReplay({mode:'setup'});
+    });
     $('#nm-res-retry-wrong', container).addEventListener('click', () => {
       if(wrongs.length===0) return;
       onReplay && onReplay({mode:'wrongs', wrongs, thread, level});
@@ -432,10 +533,13 @@ window.examScreen = function(container){
   function showResult(result){
     container.innerHTML = '';
     NM_EXAM.renderResult(result, container, opts => {
-      if(opts.mode === 'new'){
-        // 새 시드로 같은 스레드 재시험
-        const newSeed = NM_RNG.newCode();
-        showExam({...opts, seed:newSeed});
+      if(opts.mode === 'more'){
+        // 새 문제로 바로 계속 (같은 설정)
+        showExam({...result, seed:NM_RNG.newCode()});
+      } else if(opts.mode === 'new'){
+        showExam({...opts, seed:NM_RNG.newCode()});
+      } else if(opts.mode === 'setup'){
+        showSetup();
       } else if(opts.mode === 'wrongs'){
         // 오답 문제만 재시험
         const wrongProblems = opts.wrongs.map(w => w.p);

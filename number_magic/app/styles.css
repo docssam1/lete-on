@@ -214,6 +214,57 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-memo{flex:1;font-size:16px;font-family:monospace;padding:5px 8px;border:1.5px solid #d6d0c4;border-radius:10px;background:#faf8f4;color:#3a3226;outline:none;min-width:0}
 .nm-memo:focus{border-color:var(--gold);background:#fffdf7}
 
+/* ── 학습지 & 시험 (극장) ── */
+.nm-ex-sec-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 8px}
+.nm-ex-sec-title{font-size:22px;font-weight:900;color:var(--blue-deep)}
+.nm-ex-sec-sub{font-size:13px;color:#7a8aa0;margin-bottom:4px}
+.nm-ex-sec-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:380px}
+.nm-ex-sec-card{border:2.5px solid #e2ddd5;border-radius:20px;padding:24px 14px;background:#fff;
+  cursor:pointer;transition:.18s;text-align:center;display:flex;flex-direction:column;gap:6px}
+.nm-ex-sec-card:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(22,65,124,.12);transform:translateY(-2px)}
+.nm-ex-sec-magic{border-color:#e2d5f5}
+.nm-ex-sec-magic:hover{border-color:#8b5cf6;box-shadow:0 4px 16px rgba(139,92,246,.15)}
+.nm-ex-sec-icon{font-size:32px;line-height:1}
+.nm-ex-sec-name{font-size:14px;font-weight:800;color:#1a2233}
+.nm-ex-sec-desc{font-size:11px;color:#7a8aa0;line-height:1.4}
+
+.nm-ex-form-wrap{display:flex;flex-direction:column;gap:0;padding:0}
+.nm-ex-form-head{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.nm-ex-back-btn{border:none;background:transparent;font-size:13px;color:#7a8aa0;cursor:pointer;padding:4px 0;font-weight:700}
+.nm-ex-back-btn:hover{color:var(--blue)}
+.nm-ex-sec-chip{font-size:13px;font-weight:800;color:var(--blue-deep);background:#eef3fb;
+  border-radius:99px;padding:4px 12px}
+.nm-ex-form-body{background:#fff;border-radius:18px;padding:20px 18px;box-shadow:0 2px 12px rgba(0,0,0,.06);display:flex;flex-direction:column;gap:14px}
+.nm-ex-form-row{display:flex;align-items:center;gap:12px}
+.nm-ex-label{font-size:13px;font-weight:700;color:#374151;min-width:54px;flex:none}
+.nm-ex-select{flex:1;border:1.5px solid #d1d5db;border-radius:10px;padding:9px 12px;font-size:14px;
+  font-weight:600;color:#1a2233;background:#fff;outline:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;appearance:none}
+.nm-ex-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(22,65,124,.1)}
+
+.nm-ex-code-row{display:flex;align-items:center;gap:8px;padding:8px 12px;
+  background:#faf8f4;border-radius:10px;border:1px solid #e2ddd5}
+.nm-ex-code-label{font-size:11px;font-weight:700;color:#9aa2b1;flex:none}
+.nm-ex-code-val{font-size:12px;font-family:monospace;color:#374151;flex:1;word-break:break-all}
+.nm-ex-dice{border:none;background:transparent;font-size:18px;cursor:pointer;padding:0 2px;line-height:1}
+
+.nm-ex-actions{display:flex;gap:8px;flex-wrap:wrap}
+.nm-ex-btn-primary{flex:1;border:none;border-radius:12px;background:var(--blue-deep);color:#fff;
+  font-size:15px;font-weight:800;padding:13px 10px;cursor:pointer;transition:.15s;font-family:inherit}
+.nm-ex-btn-primary:disabled{opacity:.35;cursor:not-allowed}
+.nm-ex-btn-primary:active:not(:disabled){transform:scale(.96)}
+.nm-ex-btn-secondary{flex:1;border:none;border-radius:12px;background:#f0f0f0;color:#374151;
+  font-size:14px;font-weight:700;padding:12px 10px;cursor:pointer;transition:.15s;font-family:inherit}
+.nm-ex-btn-secondary:disabled{opacity:.35;cursor:not-allowed}
+.nm-ex-btn-ghost{flex:1;border:1.5px solid #e2ddd5;border-radius:10px;background:transparent;
+  color:#7a8aa0;font-size:13px;font-weight:700;padding:9px 10px;cursor:pointer;transition:.15s;font-family:inherit}
+.nm-ex-btn-ghost:hover{background:#f8f6f2;border-color:#c5bfb5}
+
+.nm-result-actions{display:flex;gap:8px;flex-wrap:wrap}
+.nm-result-code{font-size:11px;color:#9aa2b1;text-align:center;margin-top:8px}
+.nm-result-code code{font-family:monospace;background:#f0f0f0;padding:2px 8px;border-radius:4px;color:#374151}
+
 /* ============================================================
    ── 데스크탑 전용(768px+): 학습 화면(등급목록/유닛)만 중앙 640px로 좁힘.
       마을(지도)은 위에서 이미 폭 제한이 없으므로 항상 화면 전체를 채움. ──
