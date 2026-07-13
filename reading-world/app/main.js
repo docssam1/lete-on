@@ -585,7 +585,7 @@ function wvReplyScreen(u){
  <p class="wv-letter">${esc(wv.reply||(last&&last.reply)||'')}</p>
  <div class="tools center"><button class="btn tiny" data-act="wv-reply-speak">🔊</button></div></div>
  ${aiSec}
- <div class="tools center">${next?`<button class="btn primary" data-act="wv-open" data-unit="${next.id}">💌 ${st.lang==='ko'?'다음 편지 열기':'Next letter'}: ${next.emoji} ${esc(next.title)}</button>`:''}<button class="btn secondary" data-act="wv-hub">${st.lang==='ko'?'마을 광장으로':'Village'}</button></div>
+ <div class="tools center"><button class="btn" data-act="wv-step" data-i="4">✍️ ${st.lang==='ko'?'고쳐서 다시 쓰기':'Revise & resend'}</button>${next?`<button class="btn primary" data-act="wv-open" data-unit="${next.id}">💌 ${st.lang==='ko'?'다음 편지 열기':'Next letter'}: ${next.emoji} ${esc(next.title)}</button>`:''}<button class="btn secondary" data-act="wv-hub">${st.lang==='ko'?'마을 광장으로':'Village'}</button></div>
  </section></div></div>`;
 }
 function writingScreen(){
