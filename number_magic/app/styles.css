@@ -532,6 +532,28 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-ws-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding-top:10px;
   border-top:1px solid var(--line)}
 
+/* ── 문장제 셀 ── */
+.nm-ws-wide{grid-column:span 2}
+.nm-vp-wordwrap{display:flex;flex-direction:column;gap:8px;width:100%}
+.nm-vp-word{font-size:13.5px;line-height:1.65;color:var(--ink);font-weight:600;
+  word-break:keep-all;text-align:left;width:100%}
+.nm-vp-word-sm{font-size:12px;line-height:1.55}
+.nm-vp-word-ans{display:flex;justify-content:flex-end;align-items:center;gap:6px}
+
+/* ── 학년/과정 모드 탭 · 예비중등 버튼 ── */
+.nm-ex-mode-tabs{margin-left:auto}
+.nm-ex-grade-pre{border-color:var(--gold-deep);background:linear-gradient(160deg,#fffdf5,#fdf3dd)}
+.nm-ex-grade-pre:hover{border-color:var(--gold-deep);background:#fdf0d5}
+.nm-ex-tchip-grade{flex:none;font-size:11px;font-weight:900;color:#fff;background:var(--blue);
+  border-radius:7px;padding:3px 7px;line-height:1}
+
+/* ── 주제 화면 하단 미리보기 ── */
+.nm-ex-preview{margin-top:24px;border-top:2px dashed var(--line);padding-top:14px}
+.nm-ex-preview-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.nm-ws-grid-preview{margin-bottom:0}
+.nm-ws-cell-sm{padding:8px 6px 10px}
+.nm-vp-sm{font-size:1.05em}
+
 /* ============================================================
    인쇄 학습지 (11math 세로셈 스타일)
    ============================================================ */
@@ -549,4 +571,7 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   .nm-print-vp-bot{text-align:right;width:100%;min-height:24px}
   .nm-print-ak-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
   .nm-print-ak-item{font-size:13px;font-weight:700}
+  .nm-print-ws-wide{grid-column:span 2}
+  .nm-print-word{font-size:12.5px;line-height:1.6;text-align:left;width:100%;word-break:keep-all}
+  .nm-print-word-blank{font-size:12px;align-self:flex-end;margin-top:8px}
 }

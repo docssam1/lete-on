@@ -45,6 +45,69 @@ function renderKaTeX(tex, el){
 
 function esc(str){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+/* 원형 번호 ①②③... */
+function circled(n){
+  if(n>=1&&n<=20) return String.fromCharCode(0x245F+n);
+  if(n>=21&&n<=35) return String.fromCharCode(0x3250+n-20);
+  return '('+n+')';
+}
+
+/* 세로셈 파싱: "a OP b = \square" 형태 */
+function parseVert(tex){
+  const m = (tex||'').match(/^([\d.]+)\s*([+\-×÷]|\\times|\\div)\s*([\d.]+)\s*=\s*\\square\s*$/);
+  if(!m) return null;
+  const opMap={'\\times':'×','\\div':'÷','-':'−'};
+  return {a:m[1], op:opMap[m[2]]||m[2], b:m[3]};
+}
+
+/* ── 문장제(Word Problem) 변환 ─────────────────────────
+   단순 사칙 "a OP b = □" 문제를 교과서식 문장제로 감싼다.
+   시드 rng로 이름·소재를 뽑아 인쇄 재현성 유지. */
+const WP_NAMES=['민수','지우','서연','하준','다은','시우','유나','도윤','예준','소율'];
+const WP_ITEMS=[['사과','개'],['구슬','개'],['색종이','장'],['스티커','장'],['사탕','개'],['동화책','권'],['연필','자루'],['쿠키','개'],['딱지','장'],['블록','개']];
+function kJosa(word, withBatchim, without){
+  const code = word.charCodeAt(word.length-1);
+  if(code<0xAC00||code>0xD7A3) return word+without;
+  return ((code-0xAC00)%28>0) ? word+withBatchim : word+without;
+}
+function wordifyProblem(p, rng){
+  const v = parseVert(p.tex||'');
+  if(!v) return null;
+  if(v.a.indexOf('.')>=0 || v.b.indexOf('.')>=0) return null; /* 소수는 숫자식 유지 */
+  const a=+v.a, b=+v.b;
+  if(!isFinite(a)||!isFinite(b)||a>100000||b>100000) return null;
+  const name = WP_NAMES[(rng()*WP_NAMES.length)|0];
+  const pick = WP_ITEMS[(rng()*WP_ITEMS.length)|0];
+  const item=pick[0], unit=pick[1];
+  const nameJ = kJosa(name,'이는','는');
+  const itemJ = kJosa(item,'을','를');
+  const bUnitJ = b+kJosa(unit,'을','를');
+  switch(v.op){
+    case '+':
+      return `${nameJ} ${itemJ} ${a}${unit} 가지고 있어요. ${bUnitJ} 더 받으면 모두 몇 ${unit}일까요?`;
+    case '−': case '-':
+      if(a<b) return null;
+      return `${nameJ} ${itemJ} ${a}${unit} 가지고 있었는데 ${bUnitJ} 친구에게 주었어요. 남은 ${kJosa(item,'은','는')} 몇 ${unit}일까요?`;
+    case '×':
+      return `${item} 한 묶음에 ${a}${unit}씩 들어 있어요. ${b}묶음에는 ${kJosa(item,'이','가')} 모두 몇 ${unit} 있을까요?`;
+    case '÷':
+      if(b===0 || a%b!==0) return null; /* 나머지 있으면 문장제 제외 */
+      return `${nameJ} ${itemJ} ${a}${unit} 가지고 있어요. ${b}명이 똑같이 나누어 가지면 한 명이 몇 ${unit}씩 가질까요?`;
+  }
+  return null;
+}
+/* wordType: 'none' | 'mix'(약 1/3) | 'all' */
+function applyWordProblems(problems, wordType, numericSeed){
+  if(!wordType || wordType==='none') return problems;
+  const rng = NM_RNG.mulberry32(((numericSeed>>>0) ^ 0x5f3759df)>>>0);
+  problems.forEach((p,i)=>{
+    if(wordType==='mix' && i%3!==1) return;
+    const w = wordifyProblem(p, rng);
+    if(w) p.word = w;
+  });
+  return problems;
+}
+
 /* 스레드 레벨 params 가져오기 */
 function getLevelParams(threadId, lv){
   const th = (window.NM_THREADS || {})[threadId];
@@ -210,8 +273,34 @@ const NM_EXAM = {
         {label:'소수 종합',thread:'DC1',level:2,desc:'소수 두 자리',
           concept:'소수의 덧뺄셈 총정리.\n자리 맞추기, 받아올림·내림, 끝자리 0 처리 모두 확인해요.'},
       ]},
+      'PRE':{label:'예비 중등',emoji:'🚀',subs:[
+        {label:'소수(素數) 판별',thread:'DV8',level:1,desc:'소수인가?',
+          concept:'약수가 1과 자기 자신뿐인 수가 소수예요.\n예) 2, 3, 5, 7, 11, 13 …\n주의: 1은 소수가 아니에요!'},
+        {label:'소인수분해',thread:'DV8',level:2,desc:'소수의 곱으로',
+          concept:'수를 소수의 곱으로 나타내는 것이 소인수분해예요.\n예) 12 = 2 × 2 × 3 = 2² × 3\n작은 소수(2, 3, 5…)부터 차례로 나눠 봐요.'},
+        {label:'최대공약수',thread:'DV7',level:2,desc:'GCD',
+          concept:'두 수의 공통 약수 중 가장 큰 수예요.\n예) 12와 18의 최대공약수 = 6\n소인수분해로 공통 소인수를 곱해 구해요.'},
+        {label:'최소공배수',thread:'DV7',level:3,desc:'LCM',
+          concept:'두 수의 공통 배수 중 가장 작은 수예요.\n예) 4와 6의 최소공배수 = 12\n(두 수의 곱) ÷ (최대공약수)로도 구할 수 있어요.'},
+        {label:'거듭제곱',thread:'ML11',level:3,desc:'2ⁿ·3ⁿ·5ⁿ',
+          concept:'같은 수를 여러 번 곱한 것을 거듭제곱이라 해요.\n예) 2×2×2 = 2³ = 8 (2의 세제곱)\n중학교 지수 계산의 기초!'},
+        {label:'제곱근',thread:'MX4',level:1,desc:'√ 구하기',
+          concept:'제곱해서 그 수가 되는 수가 제곱근이에요.\n예) √144 = 12 (12×12 = 144)\n제곱수(121, 144, 169 …)를 외워 두면 빨라요.'},
+        {label:'분수 곱셈',thread:'FR6',level:2,desc:'대분수·자연수',
+          concept:'분자끼리, 분모끼리 곱해요. 약분을 먼저 하면 쉬워요.\n예) 2/3 × 3/4 = 6/12 = 1/2\n대분수는 가분수로 바꾼 뒤 곱해요.'},
+        {label:'분수 나눗셈',thread:'FR7',level:1,desc:'역수 곱하기',
+          concept:'나누는 분수를 뒤집어(역수) 곱해요.\n예) 1/2 ÷ 1/4 = 1/2 × 4/1 = 2'},
+        {label:'소수 곱셈',thread:'DC2',level:1,desc:'소수점 위치',
+          concept:'자연수처럼 곱한 뒤, 소수점 아래 자리 수를 더해 소수점을 찍어요.\n예) 0.3 × 0.2 = 0.06 (한 자리 + 한 자리 = 두 자리)'},
+        {label:'소수 나눗셈',thread:'DC3',level:1,desc:'소수점 이동',
+          concept:'나누는 수가 자연수가 되도록 소수점을 같이 옮겨요.\n예) 1.5 ÷ 0.3 = 15 ÷ 3 = 5'},
+        {label:'사칙 혼합계산',thread:'MX1',level:2,desc:'괄호·연산 순서',
+          concept:'계산 순서: ① 괄호 안 → ② 곱셈·나눗셈 → ③ 덧셈·뺄셈\n예) 3 + 2 × (7 − 4) = 3 + 2 × 3 = 3 + 6 = 9'},
+        {label:'비와 백분율',thread:'MX3',level:1,desc:'비율 → %',
+          concept:'비율에 100을 곱하면 백분율(%)이에요.\n예) 3/4 = 0.75 = 75%'},
+      ]},
     };
-    const GRADE_ORDER = ['1A','1B','2A','2B','3A','3B','4A','4B','5A','5B','6A','6B'];
+    const GRADE_ORDER = ['1A','1B','2A','2B','3A','3B','4A','4B','5A','5B','6A','6B','PRE'];
     const threads = window.NM_THREADS || {};
     const COUNT_OPTS = [10, 20, 30, 50];
 
@@ -237,46 +326,156 @@ const NM_EXAM = {
       container.querySelector('[data-sec="magic"]').addEventListener('click', showMagicForm);
     }
 
+    /* ── 과정(영역)별 코스 구성: GRADES에서 스레드 접두사로 묶어 파생 ── */
+    const COURSE_DEFS = [
+      {key:'AD', emoji:'➕', label:'덧셈',        desc:'한 자리부터 네 자리까지'},
+      {key:'SB', emoji:'➖', label:'뺄셈',        desc:'받아내림·보정 빼기'},
+      {key:'ML', emoji:'✖️', label:'곱셈',        desc:'구구단부터 거듭제곱까지'},
+      {key:'DV', emoji:'➗', label:'나눗셈',      desc:'나머지·약수·소인수분해'},
+      {key:'FR', emoji:'🍕', label:'분수',        desc:'동분모부터 곱나눗셈까지'},
+      {key:'DC', emoji:'🔢', label:'소수',        desc:'덧뺄셈·곱나눗셈'},
+      {key:'NS', emoji:'🎲', label:'수 감각',     desc:'모으기·가르기·보수'},
+      {key:'MX', emoji:'🧩', label:'혼합·중등 준비', desc:'혼합계산·제곱근·비율'},
+    ];
+    function buildCourse(prefix){
+      const items = [], seen = {};
+      GRADE_ORDER.forEach(gk => {
+        GRADES[gk].subs.forEach(s => {
+          if(!s.thread.startsWith(prefix)) return;
+          const id = s.thread + '-L' + s.level;
+          if(seen[id]) return;
+          seen[id] = true;
+          items.push(Object.assign({}, s, {grade:gk}));
+        });
+      });
+      return items;
+    }
+
+    let pickMode = 'grade'; // 'grade' | 'course'
+
     function showGradePick(){
+      const isGrade = pickMode==='grade';
       container.innerHTML = `
 <div class="nm-ex-form-wrap">
   <div class="nm-ex-form-head">
     <button class="nm-ex-back-btn" id="nm-ex-back-grade">← 뒤로</button>
-    <span class="nm-ex-form-title">학년·학기 선택</span>
+    <span class="nm-ex-form-title">교과 연산 연습</span>
+    <div class="nm-ws-tabs nm-ex-mode-tabs">
+      <button class="nm-ws-tab${isGrade?' active':''}" data-mode="grade">학년·학기별</button>
+      <button class="nm-ws-tab${!isGrade?' active':''}" data-mode="course">과정별</button>
+    </div>
   </div>
   <div class="nm-ex-form-body">
+    ${isGrade ? `
     <div class="nm-ex-grade-grid">
       ${GRADE_ORDER.map(g => `
-      <button class="nm-ex-grade-btn" data-grade="${g}">
-        <span class="nm-ex-grade-key">${GRADES[g].emoji} ${g}</span>
+      <button class="nm-ex-grade-btn${g==='PRE'?' nm-ex-grade-pre':''}" data-grade="${g}">
+        <span class="nm-ex-grade-key">${GRADES[g].emoji} ${g==='PRE'?'Pre':g}</span>
         <span class="nm-ex-grade-sub">${GRADES[g].label}</span>
       </button>`).join('')}
-    </div>
+    </div>` : `
+    <div class="nm-ex-grade-grid nm-ex-course-grid">
+      ${COURSE_DEFS.map(c => `
+      <button class="nm-ex-grade-btn" data-course="${c.key}">
+        <span class="nm-ex-grade-key">${c.emoji} ${c.label}</span>
+        <span class="nm-ex-grade-sub">${c.desc}</span>
+      </button>`).join('')}
+    </div>`}
   </div>
 </div>`;
       container.querySelector('#nm-ex-back-grade').addEventListener('click', showSectionPick);
-      container.querySelectorAll('.nm-ex-grade-btn').forEach(btn => {
-        btn.addEventListener('click', () => showGradeTopics(btn.dataset.grade));
+      container.querySelectorAll('.nm-ex-mode-tabs .nm-ws-tab').forEach(btn => {
+        btn.addEventListener('click', () => { pickMode = btn.dataset.mode; showGradePick(); });
+      });
+      container.querySelectorAll('[data-grade]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const g = GRADES[btn.dataset.grade];
+          showTopics({
+            title: `${g.emoji} ${btn.dataset.grade==='PRE'?'':btn.dataset.grade+' — '}${g.label}`,
+            subs: g.subs,
+          });
+        });
+      });
+      container.querySelectorAll('[data-course]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const c = COURSE_DEFS.find(x => x.key===btn.dataset.course);
+          showTopics({
+            title: `${c.emoji} ${c.label} 과정`,
+            subs: buildCourse(c.key),
+            showGrade: true,
+          });
+        });
       });
     }
 
-    function showGradeTopics(gradeKey){
-      const g = GRADES[gradeKey];
+    /* ── 주제 선택 화면 (학년별·과정별 공용) ──
+       문항 수 + 유형(숫자/문장제) + 하단 실시간 미리보기 */
+    const WORD_OPTS = [
+      {key:'none', label:'숫자 연산'},
+      {key:'mix',  label:'문장제 섞기'},
+      {key:'all',  label:'문장제만'},
+    ];
+    function showTopics(opts){
+      const subs = opts.subs;
       let selIdx = 0;
       let chosenCount = 20;
+      let wordType = 'none';
+      let previewSeed = NM_RNG.newCode();
+
+      function makeConfig(){
+        const sub = subs[selIdx];
+        return {
+          thread:   sub.thread,
+          level:    sub.level,
+          count:    chosenCount,
+          timer:    0,
+          seed:     NM_RNG.newCode(),
+          layout:   'grid',
+          label:    sub.label,
+          concept:  sub.concept || '',
+          wordType: wordType,
+        };
+      }
+
+      function previewCells(){
+        const sub = subs[selIdx];
+        const nSeed = NM_RNG.hashSeed(previewSeed);
+        const probs = buildProblems(sub.thread, sub.level, 4, nSeed);
+        applyWordProblems(probs, wordType, nSeed);
+        return probs.map((p,i) => {
+          let inner;
+          if(p.word){
+            inner = `<div class="nm-vp-word nm-vp-word-sm">${esc(p.word)}</div>`;
+          } else {
+            const v = parseVert(p.tex);
+            inner = v
+              ? `<div class="nm-vp nm-vp-sm">
+                   <div class="nm-vp-row nm-vp-top">${esc(v.a)}</div>
+                   <div class="nm-vp-row nm-vp-mid"><span class="nm-vp-op">${esc(v.op)}</span><span class="nm-vp-b">${esc(v.b)}</span></div>
+                   <div class="nm-vp-line"></div>
+                   <div class="nm-vp-row nm-vp-bot">&nbsp;</div>
+                 </div>`
+              : `<div class="nm-vp-tex" data-tex="${esc(p.tex||'')}"></div>`;
+          }
+          return `<div class="nm-ws-cell nm-ws-cell-sm${p.word?' nm-ws-wide':''}">
+            <span class="nm-ws-cnum">${circled(i+1)}</span>${inner}
+          </div>`;
+        }).join('');
+      }
 
       function render(){
         container.innerHTML = `
 <div class="nm-ex-form-wrap">
   <div class="nm-ex-form-head">
     <button class="nm-ex-back-btn" id="nm-ex-back-topics">← 뒤로</button>
-    <span class="nm-ex-form-title">${g.emoji} ${gradeKey} — ${g.label}</span>
+    <span class="nm-ex-form-title">${opts.title}</span>
   </div>
   <div class="nm-ex-form-body">
     <p class="nm-ex-label">주제 선택</p>
     <div class="nm-ex-grade-topics">
-      ${g.subs.map((s,i) => `
+      ${subs.map((s,i) => `
       <button class="nm-ex-topic-chip${i===selIdx?' nm-ex-topic-sel':''}" data-idx="${i}">
+        ${opts.showGrade && s.grade ? `<span class="nm-ex-tchip-grade">${s.grade==='PRE'?'Pre':s.grade}</span>` : ''}
         <span class="nm-ex-tchip-name">${esc(s.label)}</span>
         <span class="nm-ex-tchip-desc">${esc(s.desc)}</span>
       </button>`).join('')}
@@ -285,44 +484,46 @@ const NM_EXAM = {
     <div class="nm-ex-count-btns">
       ${COUNT_OPTS.map(n => `<button class="nm-ex-cnt-btn${n===chosenCount?' sel':''}" data-n="${n}">${n}문항</button>`).join('')}
     </div>
+    <p class="nm-ex-label" style="margin-top:18px">문제 유형</p>
+    <div class="nm-ex-count-btns">
+      ${WORD_OPTS.map(w => `<button class="nm-ex-cnt-btn${w.key===wordType?' sel':''}" data-w="${w.key}">${w.label}</button>`).join('')}
+    </div>
     <div class="nm-ex-actions" style="margin-top:22px">
       <button id="nm-ex-grid-start" class="nm-ex-btn-primary">▶ 온라인으로 풀기</button>
       <button id="nm-ex-print-start" class="nm-ex-btn-secondary">🖨️ 인쇄하여 풀기</button>
     </div>
+    <div class="nm-ex-preview">
+      <div class="nm-ex-preview-hd">
+        <span class="nm-ex-label" style="margin:0">👀 미리보기</span>
+        <button id="nm-ex-preview-dice" class="nm-ex-btn-ghost">🎲 다른 문제</button>
+      </div>
+      <div class="nm-ws-grid nm-ws-grid-preview">${previewCells()}</div>
+    </div>
   </div>
 </div>`;
+
+        container.querySelectorAll('.nm-vp-tex').forEach(el => renderKaTeX(el.dataset.tex||'', el));
 
         container.querySelector('#nm-ex-back-topics').addEventListener('click', showGradePick);
 
         container.querySelectorAll('.nm-ex-topic-chip').forEach(chip => {
           chip.addEventListener('click', () => { selIdx = parseInt(chip.dataset.idx); render(); });
         });
-
-        container.querySelectorAll('.nm-ex-cnt-btn').forEach(btn => {
+        container.querySelectorAll('[data-n]').forEach(btn => {
           btn.addEventListener('click', () => { chosenCount = parseInt(btn.dataset.n); render(); });
         });
-
-        function makeConfig(){
-          const sub = g.subs[selIdx];
-          return {
-            thread:  sub.thread,
-            level:   sub.level,
-            count:   chosenCount,
-            timer:   0,
-            seed:    NM_RNG.newCode(),
-            layout:  'grid',
-            label:   sub.label,
-            concept: sub.concept || '',
-          };
-        }
+        container.querySelectorAll('[data-w]').forEach(btn => {
+          btn.addEventListener('click', () => { wordType = btn.dataset.w; render(); });
+        });
+        container.querySelector('#nm-ex-preview-dice').addEventListener('click', () => {
+          previewSeed = NM_RNG.newCode(); render();
+        });
 
         container.querySelector('#nm-ex-grid-start').addEventListener('click', () => {
           onStart && onStart(makeConfig());
         });
-
         container.querySelector('#nm-ex-print-start').addEventListener('click', () => {
-          const cfg = makeConfig();
-          NM_EXAM.renderPrint(cfg);
+          NM_EXAM.renderPrint(makeConfig());
         });
       }
       render();
@@ -566,9 +767,10 @@ const NM_EXAM = {
 
   /* ── 4. 인쇄 학습지 ── */
   renderPrint(config){
-    const { thread, level, count, seed } = config;
+    const { thread, level, count, seed, wordType } = config;
     const numericSeed = NM_RNG.hashSeed(seed);
     const problems = buildProblems(thread, level, count, numericSeed);
+    applyWordProblems(problems, wordType, numericSeed);
     const code = NM_EXAM.worksheetCode(config);
 
     const old = document.querySelector('.nm-print-sheet');
@@ -612,7 +814,15 @@ const NM_EXAM = {
       texEl.className  = 'nm-q-tex';
       card.appendChild(numEl);
       card.appendChild(texEl);
-      renderKaTeX(p.tex || '', texEl);
+      if(p.word){
+        texEl.textContent = p.word;
+        const blank = document.createElement('div');
+        blank.textContent = '답: __________';
+        blank.style.marginTop = '6px';
+        card.appendChild(blank);
+      } else {
+        renderKaTeX(p.tex || '', texEl);
+      }
       problemGrid.appendChild(card);
 
       const ak = document.createElement('div');
@@ -640,37 +850,38 @@ window.examScreen = function(container){
 
   /* ── 그리드 학습지 (11math 스타일) ── */
   function runGridExam(cfg){
-    const { thread, level, count, seed, label, concept } = cfg;
+    const { thread, level, count, seed, label, concept, wordType } = cfg;
     const numericSeed = NM_RNG.hashSeed(seed);
     const problems = buildProblems(thread, level, count, numericSeed);
+    applyWordProblems(problems, wordType, numericSeed);
     const code = NM_EXAM.worksheetCode(cfg);
     const userAnswers = new Array(count).fill('');
     let activeTab = 'problems'; // 'problems' | 'answers'
     let graded = false;
     let gradeScore = 0;
 
-    /* 원형 번호 ①②③... */
-    function circled(n){
-      if(n>=1&&n<=20) return String.fromCharCode(0x245F+n);
-      if(n>=21&&n<=35) return String.fromCharCode(0x3250+n-20);
-      return '('+n+')';
-    }
-
-    /* 세로셈 파싱: "a OP b = \square" 형태 */
-    function parseVert(tex){
-      const m = (tex||'').match(/^([\d.]+)\s*([+\-×÷]|\\times|\\div)\s*([\d.]+)\s*=\s*\\square/);
-      if(!m) return null;
-      const opMap={'\\times':'×','\\div':'÷'};
-      return {a:m[1], op:opMap[m[2]]||m[2], b:m[3]};
-    }
-
     /* 문제 셀 HTML 생성 */
     function cellHtml(p, i, mode){
       // mode: 'online' | 'blank' | 'answer'
-      const v = parseVert(p.tex);
+      const v = p.word ? null : parseVert(p.tex);
       const num = circled(i+1);
       let inner;
-      if(v){
+      let wide = false;
+      if(p.word){
+        wide = true;
+        let ansRow;
+        if(mode==='online'){
+          ansRow = `<input class="nm-vp-inp nm-vp-inp-sm" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off" placeholder="답">`;
+        } else if(mode==='answer'){
+          ansRow = `<span class="nm-vp-ans-val">${p.answer}</span>`;
+        } else {
+          ansRow = `<span class="nm-vp-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
+        }
+        inner = `<div class="nm-vp-wordwrap">
+  <div class="nm-vp-word">${esc(p.word)}</div>
+  <div class="nm-vp-word-ans">${ansRow}</div>
+</div>`;
+      } else if(v){
         let ansRow;
         if(mode==='online'){
           ansRow = `<input class="nm-vp-inp" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off">`;
@@ -703,7 +914,7 @@ window.examScreen = function(container){
       const stateClass = graded && mode==='online'
         ? (parseFloat(userAnswers[i])===p.answer ? ' nm-ws-ok' : (userAnswers[i]!=='' ? ' nm-ws-err' : ''))
         : '';
-      return `<div class="nm-ws-cell${stateClass}" data-ci="${i}">
+      return `<div class="nm-ws-cell${wide?' nm-ws-wide':''}${stateClass}" data-ci="${i}">
   <span class="nm-ws-cnum">${num}</span>
   ${inner}
 </div>`;
@@ -818,10 +1029,15 @@ window.examScreen = function(container){
       const akGrid   = sheet.querySelector('#nm-pw-aks');
 
       problems.forEach((p,i)=>{
-        const v = parseVert(p.tex);
+        const v = p.word ? null : parseVert(p.tex);
         const cell = document.createElement('div');
         cell.className = 'nm-print-ws-cell';
-        if(v){
+        if(p.word){
+          cell.className += ' nm-print-ws-wide';
+          cell.innerHTML = `<span class="nm-print-cnum">${circled(i+1)}</span>
+<div class="nm-print-word">${esc(p.word)}</div>
+<div class="nm-print-word-blank">답: __________</div>`;
+        } else if(v){
           cell.innerHTML = `<span class="nm-print-cnum">${circled(i+1)}</span>
 <div class="nm-print-vp">
   <div class="nm-print-vp-top">${esc(v.a)}</div>
