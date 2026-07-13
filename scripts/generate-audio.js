@@ -67,8 +67,30 @@ var LESSON1_ZH = {};
   }
 }
 
+// Writing Village content (window.WRITING) — pure data, no external deps.
+{
+  const file = path.join(dataDir, 'writing.js');
+  if (fs.existsSync(file)) {
+    try { eval(fs.readFileSync(file, 'utf8')); } catch(e) { console.warn('⚠  writing.js eval error:', e.message); }
+  }
+}
+
 // ── Build task list ────────────────────────────────────────────────────────────
 const tasks = [];
+
+// Writing Village — native-English MP3s for the STATIC listening content so it
+// sounds right on every device (esp. Windows PCs with no English TTS voice).
+// Dynamic parts (the child's own journal, AI reply, live-assembled tree sentence)
+// stay on-device Web Speech — they can't be pre-generated. Uses the Chirp3-HD
+// storybook voice, same as the Library reader. 'wv' type is always regenerated
+// (upsert), so edits to writing.js refresh the audio.
+if (window.WRITING && Array.isArray(window.WRITING.units)) {
+  for (const u of window.WRITING.units) {
+    if (u.letter) tasks.push({ lessonId: u.id, bookId: 'writing', type: 'wv', text: String(u.letter), storagePath: `writing/${u.id}-letter.mp3` });
+    if (u.model && u.model.journal) tasks.push({ lessonId: u.id, bookId: 'writing', type: 'wv', text: String(u.model.journal), storagePath: `writing/${u.id}-model.mp3` });
+    (u.words || []).forEach((w, i) => { if (w && w[0]) tasks.push({ lessonId: u.id, bookId: 'writing', type: 'wv', text: String(w[0]), storagePath: `writing/${u.id}-w${i}.mp3` }); });
+  }
+}
 
 for (const [lessonId, lesson] of Object.entries(window.LESSONS)) {
   const bookId = lesson.bookId || 'cars-level-b';
@@ -277,7 +299,7 @@ async function main() {
         }
       }
 
-      const mp3 = await generateMp3(task.text, task.type === 'libpage' ? LIBRARY_VOICE_NAME : VOICE_NAME);
+      const mp3 = await generateMp3(task.text, (task.type === 'libpage' || task.type === 'wv') ? LIBRARY_VOICE_NAME : VOICE_NAME);
 
       // Save locally as backup
       const localPath = path.join(OUT_DIR, task.storagePath.replace('/', '-'));

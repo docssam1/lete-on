@@ -497,6 +497,20 @@ function wvChecks(u,text){
 }
 function wvRuleReply(u,picks){const s=u.reply.replace(/\{(\w+)\}/g,(m,k)=>{const v=(picks[k]||'').trim();return v||'that';});return s.replace(/([.!?]\s+)([a-z])/g,(m,a,b)=>a+b.toUpperCase());}
 function wvSpeak(text){speakText(text);}
+// Static Writing Village content (letters, model journals, word pronunciations)
+// has pre-generated native-English MP3s (Chirp3-HD) in Supabase Storage, so it
+// sounds right on every device regardless of installed voices. Play the MP3;
+// fall back to on-device Web Speech if it can't load (offline / not yet
+// generated). Dynamic content (child journal, AI reply, live tree sentence)
+// keeps using wvSpeak/Web Speech — it can't be pre-recorded.
+function wvAudioUrl(kind,unitId,i){return `${AUDIO_BASE}/writing/${unitId}-${kind==='word'?('w'+i):kind}.mp3`;}
+function wvPlay(url,fallbackText){
+  stopSpeak();const run=st.speechRun;let fell=false;
+  const fb=()=>{if(fell||run!==st.speechRun)return;fell=true;_audioEl=null;if(fallbackText)speakText(fallbackText);};
+  try{const el=new Audio(url);el.playbackRate=Number(st.speed)||1;_audioEl=el;
+   el.onerror=fb;el.onended=()=>{if(run===st.speechRun)_audioEl=null;};
+   el.play().catch(fb);}catch(e){fb();}
+}
 function wvHead(u){
  const pal=wvPal(u);
  const steps=[['💌','편지'],['🌱','낱말'],['🌳','모델'],['🌿','내 트리'],['✏️','저널'],['📬','답장']];
@@ -644,10 +658,10 @@ function handleWriting(b){
  if(act==='wv-mic'){if(wv.listening){try{_wvRec&&_wvRec.stop();}catch(e){}}else wvListenStart();return;}
  if(act==='wv-leaf-del'){wv.leaves.splice(+b.dataset.i,1);render();return;}
  if(act==='wv-leaf-use'){const l=wv.leaves[+b.dataset.i];if(l!=null){wv.picks[b.dataset.k]=l;render();}return;}
- if(act==='wv-letter-speak'){if(u)wvSpeak(u.letter);return;}
- if(act==='wv-word-speak'){if(u){const w=u.words[+b.dataset.i];if(w)wvSpeak(w[0]);}return;}
+ if(act==='wv-letter-speak'){if(u)wvPlay(wvAudioUrl('letter',u.id),u.letter);return;}
+ if(act==='wv-word-speak'){if(u){const i=+b.dataset.i;const w=u.words[i];if(w)wvPlay(wvAudioUrl('word',u.id,i),w[0]);}return;}
  if(act==='wv-word-save'){if(u){const w=u.words[+b.dataset.i];if(w)toggleSaveWord([w[0],w[1],w[1],w[1]],{type:'writing',bookId:u.id});render();}return;}
- if(act==='wv-model-speak'){if(u)wvSpeak(u.model.journal);return;}
+ if(act==='wv-model-speak'){if(u)wvPlay(wvAudioUrl('model',u.id),u.model.journal);return;}
  if(act==='wv-pick'){const k=b.dataset.k,v=b.dataset.v;const had=wv.picks[k];wv.picks[k]=v;render();
   if(u&&!had){const lines=wvAssemble(u,wv.picks);const line=lines.find(l=>l.toLowerCase().includes(String(v).toLowerCase().slice(0,10)));if(line&&!line.includes('___'))wvSpeak(line);}
   return;}
