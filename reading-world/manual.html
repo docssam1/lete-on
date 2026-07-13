@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Gfield Reading Town & Writing Village 사용 설명서</title>
+<style>
+:root{
+  --ink:#23312a; --muted:#6a7a6f; --line:#e7e2d5; --paper:#fffdf7; --bg:#f3efe3;
+  --green:#2f8a5c; --green-deep:#235f43;
+  --sans:-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Segoe UI",system-ui,Roboto,sans-serif;
+  --serif:"Iowan Old Style",Georgia,"Apple SD Gothic Neo","Malgun Gothic",serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block;border-radius:12px;border:1px solid var(--line);background:#fff}
+a{color:var(--green-deep)}
+.skiplink{position:absolute;left:-9999px}
+
+/* ---- top nav ---- */
+.topnav{position:sticky;top:0;z-index:50;background:rgba(255,253,247,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.topnav-inner{max-width:920px;margin:0 auto;padding:10px 16px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin}
+.topnav-inner::-webkit-scrollbar{height:5px}
+.topnav a{flex:0 0 auto;white-space:nowrap;text-decoration:none;color:var(--muted);font-weight:700;font-size:13px;padding:8px 12px;border-radius:999px;border:1px solid transparent;transition:.15s}
+.topnav a:hover{color:var(--green-deep);background:#eef4ee;border-color:#d7e5d9}
+
+/* ---- hero ---- */
+.hero{max-width:880px;margin:0 auto;padding:46px 20px 30px;text-align:center}
+.hero .brand{display:inline-block;font-weight:900;letter-spacing:.14em;font-size:12px;color:var(--green);background:#e2efe4;padding:6px 14px;border-radius:999px;margin-bottom:16px}
+.hero h1{font-family:var(--serif);font-size:34px;letter-spacing:-.5px;margin:0 0 10px;color:var(--green-deep)}
+.hero p{color:var(--muted);font-size:15px;max-width:620px;margin:0 auto}
+.hero .url-pill{display:inline-flex;align-items:center;gap:8px;margin-top:18px;background:var(--paper);border:1px solid var(--line);padding:10px 16px;border-radius:14px;font-size:13px;color:var(--ink)}
+.hero .url-pill code{background:#eef4ee;color:var(--green-deep);padding:3px 8px;border-radius:8px;font-family:ui-monospace,Consolas,monospace}
+
+/* ---- sections ---- */
+.section{max-width:880px;margin:0 auto;padding:38px 20px}
+.section + .section{border-top:1px solid var(--line)}
+.section-head{margin-bottom:22px}
+.section-eyebrow{font-size:12px;font-weight:800;color:var(--green);letter-spacing:.08em;text-transform:uppercase}
+.section-head h2{font-family:var(--serif);font-size:26px;margin:6px 0 8px;color:var(--ink);display:flex;align-items:center;gap:10px}
+.section-head h2 .emoji{font-size:26px}
+.section-head p{color:var(--muted);font-size:14.5px;max-width:680px;margin:0}
+
+/* ---- step cards ---- */
+.steps{display:grid;gap:18px}
+.step{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;grid-template-columns:230px 1fr;gap:18px;align-items:start;box-shadow:0 6px 18px #22355008}
+.step .step-img{min-width:0}
+.step .step-img img{width:100%;height:auto}
+.step-body{min-width:0}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;font-size:14px;margin-right:8px;flex:0 0 auto}
+.step-title{display:flex;align-items:center;font-weight:800;font-size:15px;margin:2px 0 6px}
+.step-body p{margin:0;color:var(--ink);font-size:14px;line-height:1.65}
+.step-body p+p{margin-top:8px}
+.step-body .sub{color:var(--muted);font-size:13px}
+@media(max-width:640px){
+  .step{grid-template-columns:1fr}
+}
+
+/* one-image steps that should show the picture full width above stacked text (used for wide screenshots) */
+.step.wide{grid-template-columns:1fr}
+.step.wide .step-img{max-width:560px;margin:0 auto 4px}
+
+/* ---- location table (section 2) ---- */
+.loc-table{width:100%;border-collapse:collapse;background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden;font-size:13.5px}
+.loc-table th,.loc-table td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line)}
+.loc-table th{background:#f0ede0;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.loc-table tr:last-child td{border-bottom:0}
+.loc-table td b{font-size:14.5px}
+.loc-wrap{overflow-x:auto;margin-bottom:18px}
+.controls{display:grid;gap:8px;margin-top:8px}
+.controls .ctrl{display:flex;gap:10px;align-items:baseline;font-size:13.5px}
+.controls .ctrl b{flex:0 0 auto;color:var(--green-deep)}
+
+/* ---- callouts ---- */
+.note{background:#fffced;border:1px solid #fae8a7;border-radius:14px;padding:14px 16px;font-size:13.5px;color:#6a5a1a;margin:16px 0}
+.note b{color:#8d6806}
+.note.green{background:#f0fcf6;border-color:#c6e2cf;color:#235f43}
+.note.green b{color:#235f43}
+.note.pink{background:#fdf3f6;border-color:#f1cdd9;color:#7a3350}
+.note.pink b{color:#a3436a}
+
+/* ---- flow diagram chips (STEP 1~7) ---- */
+.flowchips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 22px}
+.flowchips span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:700;color:var(--green-deep)}
+.flowchips span i{color:var(--muted);font-style:normal;margin-right:4px}
+
+/* ---- wv 6-step mini nav ---- */
+.wv-order{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 22px}
+.wv-order span{background:#fbf6ef;border:1px solid #e6d3c4;border-radius:12px;padding:8px 12px;font-size:12.5px;font-weight:700;color:#8a5a30}
+
+/* ---- FAQ ---- */
+.faq{display:grid;gap:12px}
+.faq details{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:4px 4px}
+.faq summary{cursor:pointer;list-style:none;padding:14px 16px;font-weight:800;font-size:14.5px;display:flex;align-items:center;gap:10px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:before{content:"Q";display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#e2efe4;color:var(--green-deep);font-size:12px;font-weight:900;flex:0 0 auto}
+.faq .a{padding:0 16px 16px 50px;color:var(--muted);font-size:13.5px;line-height:1.7}
+.faq details[open] summary{color:var(--green-deep)}
+
+/* ---- footer ---- */
+.footer{max-width:880px;margin:0 auto;padding:30px 20px 60px;text-align:center;color:var(--muted);font-size:12.5px}
+.footer a{color:var(--green-deep);font-weight:700;text-decoration:none}
+
+/* ---- responsive tweaks ---- */
+@media(max-width:520px){
+  .hero{padding:34px 16px 24px}
+  .hero h1{font-size:26px}
+  .section{padding:28px 16px}
+  .step{padding:14px;border-radius:16px}
+  .section-head h2{font-size:21px}
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav" aria-label="빠른 이동">
+  <div class="topnav-inner">
+    <a href="#start">🚪 시작하기</a>
+    <a href="#town">🗺️ 마을 지도</a>
+    <a href="#reading">📘 교재 학습</a>
+    <a href="#library">📚 도서관</a>
+    <a href="#writing">✏️ Writing Village</a>
+    <a href="#parent">👨‍👩‍👧 학부모 리포트</a>
+    <a href="#faq">❓ 자주 묻는 질문</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <span class="brand">G-FIELD · READING TOWN</span>
+  <h1>Gfield Reading Town &amp; Writing Village<br>사용 설명서</h1>
+  <p>아이가 혼자서도 척척 사용할 수 있도록 만든 그림 설명서예요. 부모님과 아이가 함께 한 번만 훑어보면
+  충분해요 — 그다음부터는 아이가 지도를 탭탭 눌러가며 스스로 학습을 이어갈 수 있어요.</p>
+  <div class="url-pill">🔗 접속 주소&nbsp; <code>docssam1.github.io/lete-on/reading-world</code></div>
+</header>
+
+<!-- ============ 1. 시작하기 ============ -->
+<section class="section" id="start">
+  <div class="section-head">
+    <div class="section-eyebrow">Step 1</div>
+    <h2><span class="emoji">🚪</span> 시작하기</h2>
+    <p>회원가입도, 비밀번호도 필요 없어요. 이름(또는 별명)만 입력하면 바로 학습을 시작할 수 있고,
+    같은 이름으로 로그인하면 태블릿이든 컴퓨터든 어떤 기기에서든 이어서 학습할 수 있어요.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s1-01-cover.jpg" alt="접속 후 이름을 입력하는 첫 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">①</span>주소로 접속해서 이름 입력하기</div>
+        <p><code>https://docssam1.github.io/lete-on/reading-world/</code> 주소로 들어가면
+        이름(또는 별명)을 입력하는 화면이 나와요.</p>
+        <p class="sub">실명이 아니어도 괜찮아요 — 별명이나 학원에서 받은 코드를 입력해도 돼요.
+        <b>같은 이름으로 로그인</b>하면 다른 기기에서도 진행 상황이 그대로 연동돼요.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s1-02-avatar.jpg" alt="캐릭터(아바타) 고르기 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">②</span>내 캐릭터 고르기</div>
+        <p>처음 로그인하면 나를 대표할 캐릭터(아바타)를 골라요. 머리 모양, 피부색, 옷 등은
+        나중에 마을에서 코인으로 자유롭게 바꿀 수 있으니 지금은 마음에 드는 걸로 가볍게 골라도 돼요.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s1-03-diagnostic-intro.jpg" alt="리딩 진단 시작 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">③</span>리딩 진단 (건너뛰어도 OK)</div>
+        <p>캐릭터를 고르고 나면 짧은 리딩 진단 테스트를 볼 수 있어요. 내 영어 읽기 레벨을 가늠해보고
+        어떤 책부터 시작하면 좋을지 추천을 받는 용도예요.</p>
+        <p class="sub">지금 하고 싶지 않다면 <b>"건너뛰고 자유롭게 고르기"</b>를 눌러도 전혀 문제없어요.
+        나중에 마을 지도 위쪽 툴바의 <b>🧭 나침반 버튼</b>을 눌러 언제든 다시 볼 수 있어요.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. 마을 지도 ============ -->
+<section class="section" id="town">
+  <div class="section-head">
+    <div class="section-eyebrow">Step 2</div>
+    <h2><span class="emoji">🗺️</span> 마을 지도 둘러보기</h2>
+    <p>로그인하면 레고 블록으로 만든 아기자기한 마을이 펼쳐져요. 마을 안의 건물들이 각각 하나의 학습 코너예요.</p>
+  </div>
+
+  <div class="step wide">
+    <div class="step-img"><img src="assets/images/manual2/s2-01-town-map.jpg" alt="레고 마을 지도 전체 화면" loading="lazy"></div>
+    <div class="step-body">
+      <p class="sub" style="text-align:center">마을 지도 — 위쪽 툴바에 코인, 스크린 극장, 진단, 공지, 꾸미기, 목록 버튼이 모여 있어요.</p>
+    </div>
+  </div>
+
+  <div class="loc-wrap">
+    <table class="loc-table">
+      <thead><tr><th>건물</th><th>하는 일</th></tr></thead>
+      <tbody>
+        <tr><td><b>📚 Library</b></td><td>영어 원서 eBook을 페이지 넘기며 읽어요.</td></tr>
+        <tr><td><b>🏠 Study House</b></td><td>CARS 등 교재로 학습해요. 레벨 사다리를 따라 자유롭게 책을 골라요.</td></tr>
+        <tr><td><b>🎬 Screen Theater</b></td><td>영상을 보고 짧은 퀴즈를 풀어요.</td></tr>
+        <tr><td><b>🔤 Word Shop</b></td><td>단어 카드, 암기 게임, 나만의 단어장을 관리해요.</td></tr>
+        <tr><td><b>📊 Report Hall</b></td><td>레슨별 학습 리포트를 확인해요.</td></tr>
+        <tr><td><b>✏️ Writing Village</b></td><td>지도 아래쪽 표지판을 탭하면 이웃 마을인 글쓰기 마을로 이동해요.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl"><b>지도 탭</b> 그 자리로 캐릭터가 걸어가요.</div>
+    <div class="ctrl"><b>건물 탭</b> 바로 그 학습 코너가 열려요.</div>
+    <div class="ctrl"><b>＋ / −</b> 지도를 확대·축소해요.</div>
+    <div class="ctrl"><b>👨‍👩‍👧</b> 우상단(목록 화면)에서 학부모 대시보드를 열어요.</div>
+    <div class="ctrl"><b>🎨 꾸미기</b> 코인으로 아바타 옷·모자와 마을 장식을 사고 꾸며요.</div>
+  </div>
+
+  <div class="step" style="margin-top:18px">
+    <div class="step-img"><img src="assets/images/manual2/s2-02-closet.jpg" alt="캐릭터 꾸미기 화면" loading="lazy"></div>
+    <div class="step-body">
+      <div class="step-title"><span class="step-num">🎨</span>꾸미기 화면</div>
+      <p>레슨을 완료할 때마다 모은 코인(★P)으로 모자·옷·안경 같은 아이템을 사서 캐릭터를 꾸밀 수 있어요.
+      상단 탭에서 "마을"을 누르면 마을 장식도 같은 방식으로 꾸밀 수 있어요.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. Reading Town — 교재 학습 흐름 ============ -->
+<section class="section" id="reading">
+  <div class="section-head">
+    <div class="section-eyebrow">Step 3</div>
+    <h2><span class="emoji">📘</span> Reading Town — 교재 학습 흐름</h2>
+    <p>Study House에서 책을 고르면 한 레슨이 7단계로 진행돼요. 잠금은 전혀 없어요 —
+    어떤 책, 어떤 레벨을 고르든 아이가 자유롭게 선택할 수 있어요.</p>
+  </div>
+
+  <div class="flowchips">
+    <span><i>STEP 1</i>단어 배우기</span>
+    <span><i>STEP 2</i>교재 읽기</span>
+    <span><i>STEP 3</i>교재 문항 12개</span>
+    <span><i>STEP 4</i>추가 학습 지문</span>
+    <span><i>STEP 5</i>추가 문항</span>
+    <span><i>STEP 6</i>새 지문 연습</span>
+    <span><i>STEP 7</i>새 지문 문항</span>
+    <span>→ 리포트</span>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s3-01-study-house.jpg" alt="Study House 책장 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">①</span>Study House에서 책 고르기</div>
+        <p>레벨 사다리를 따라 여러 책이 진열돼 있어요. 난이도와 상관없이 <b>자유롭게</b> 고를 수 있고,
+        레벨업은 잠금장치가 아니라 그냥 축하 보상이에요.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s3-02-lesson-home.jpg" alt="레슨 상단의 STEP 1~7 진행 바" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">②</span>STEP 진행 바로 흐름 확인</div>
+        <p>레슨에 들어가면 상단에 STEP 1~7 진행 바가 보여요. 완료한 단계는 초록색으로 표시되고,
+        지금 있는 단계가 강조돼요. 아무 단계나 눌러서 이동할 수도 있어요.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s3-03-lesson-words.jpg" alt="STEP1 단어 배우기 카드 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">③</span>STEP 1 — 단어 먼저 배우기</div>
+        <p>레슨의 핵심 단어 12개를 카드로 배워요. 🔊 버튼으로 발음을 듣고, ☆ 별표로 어려운 단어를
+        나만의 단어장에 저장할 수 있어요. 암기 카드·단어 게임 탭도 있어서 반복 연습이 쉬워요.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note green">
+    <b>💡 알아두면 좋아요</b><br>
+    STEP 2(교재 읽기)에서는 🔊 듣기 버튼으로 원어민 음성을 들을 수 있고, STEP 3의 12문항을 풀면
+    틀린 전략(예: 사건 순서 파악, 원인과 결과 등)을 <b>스킬 코치</b>가 자동으로 잡아내서
+    같은 전략의 비슷한 문제로 바로 다시 연습시켜줘요. STEP 4·5는 짧은 추가 지문으로 더 깊게 학습하고,
+    STEP 6·7은 같은 단어가 들어간 새 지문으로 실력을 확인해요. 각 단계를 완료할 때마다 코인(★P)이 쌓여서
+    꾸미기에 쓸 수 있어요.
+  </div>
+</section>
+
+<!-- ============ 4. 도서관 ============ -->
+<section class="section" id="library">
+  <div class="section-head">
+    <div class="section-eyebrow">Step 4</div>
+    <h2><span class="emoji">📚</span> 도서관 — 영어 원서 eBook</h2>
+    <p>CARS 문항 없이 순수하게 책을 즐기는 공간이에요. 서가에서 책을 고르면
+    배경지식 → 어휘 → 읽기 → AR 퀴즈 순서로 진행돼요.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s4-01-library-shelf.jpg" alt="도서관 서가 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">①</span>서가에서 책 선택</div>
+        <p>표지를 탭해서 읽고 싶은 책을 골라요. AR 지수와 R/G(리딩 그룹) 표시로 난이도를 미리 볼 수 있어요.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s4-02-library-intro.jpg" alt="배경지식 소개 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">②</span>배경지식 읽기</div>
+        <p>책을 처음 열면 이야기의 배경(시대·인물·설정)을 먼저 소개해줘요. 이해를 돕는 워밍업 단계예요.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s4-03-library-vocab.jpg" alt="중요 어휘 카드 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">③</span>중요 어휘 익히기</div>
+        <p>책에 실제로 나오는 어려운 단어 10개를 미리 배워요. 🔊 발음 듣기, ★ 내 단어장 저장도 가능해요.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s4-04-library-reader.jpg" alt="2페이지 스프레드 리더 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">④</span>2페이지 스프레드로 읽기</div>
+        <p>실제 책처럼 두 페이지가 나란히 펼쳐져요. 🔊 듣기를 누르면 지금 읽는 문장이 하이라이트로
+        따라가며 표시돼요. "원본 보기" 탭에서는 실제 책 페이지 이미지도 확인할 수 있어요.</p>
+        <p class="sub">읽던 위치는 자동으로 저장되니, 나중에 다시 들어가면 이어 읽기로 바로 연결돼요.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s4-05-library-quiz.jpg" alt="AR 퀴즈 문항 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">⑤</span>AR 퀴즈로 마무리</div>
+        <p>줄거리 이해도를 확인하는 객관식 퀴즈예요. 60% 이상 맞히면 통과! 통과 시 코인을 받을 수 있어요.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. Writing Village ============ -->
+<section class="section" id="writing">
+  <div class="section-head">
+    <div class="section-eyebrow">Step 5</div>
+    <h2><span class="emoji">✏️</span> Writing Village — 글쓰기 마을</h2>
+    <p>마을 지도 아래쪽 ✏️ 표지판을 탭하면 이웃 마을인 <b>Writing Village</b>로 이동해요.
+    마을 친구 <b>부엉이 올리(Oli the Owl)</b>가 보낸 질문 편지에 답장을 쓰면서 자연스럽게 글쓰기를 배우는 공간이에요.</p>
+  </div>
+
+  <div class="wv-order">
+    <span>💌 편지 읽기</span>
+    <span>🌱 낱말 정원</span>
+    <span>🌳 모델 나무·저널</span>
+    <span>🌿 내 문장 나무</span>
+    <span>✏️ 저널 쓰기</span>
+    <span>📬 답장 받기</span>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s5-01-wv-hub.jpg" alt="Writing Village 마을 광장 편지 목록" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">0</span>마을 광장 — 편지 목록</div>
+        <p>표지판을 탭하면 올리가 보낸 질문 편지 목록이 나와요. 원하는 주제를 골라 열면 됩니다.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s5-02-wv-letter.jpg" alt="편지 읽기 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">①</span>💌 편지 읽기</div>
+        <p>올리가 궁금한 걸 물어봐요. 🔊 버튼으로 편지를 들을 수 있고, 🎙️ 버튼을 누르면
+        글로 쓰기 전에 <b>말로 먼저 대답</b>해보는 연습도 할 수 있어요.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s5-03-wv-words.jpg" alt="낱말 정원 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">②</span>🌱 낱말 정원</div>
+        <p>답장에 쓰기 좋은 낱말들을 미리 만나요. 🔊 발음을 듣고, ★로 마음에 드는 낱말을 저장해요.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s5-04-wv-model.jpg" alt="친구의 모델 나무와 저널 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">③</span>🌳 친구의 모델 나무 구경</div>
+        <p>먼저 써본 친구의 예시 저널을 나무 모양으로 구경해요. "이렇게 쓰면 되는구나" 하는 감을 잡는 단계예요.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s5-05-wv-tree.jpg" alt="내 문장 나무 키우기 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">④</span>🌿 내 문장 나무 키우기</div>
+        <p>주제·인물·행동·감정 같은 낱말 조각을 하나씩 고르면, 고를 때마다 나무가 자라면서
+        문장이 자동으로 완성돼요. 완성된 문장은 소리로도 들려줘요.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s5-06-wv-journal.jpg" alt="스스로 저널 쓰기 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">⑤</span>✏️ 스스로 저널 쓰기</div>
+        <p>이제 내 힘으로 답장을 써봐요. 화면 아래 다듬기 체크리스트(대문자로 시작했는지, 마침표를 찍었는지,
+        because로 이유를 말했는지, 문장 3개 이상인지, 오늘 배운 낱말을 썼는지)로 스스로 점검할 수 있어요.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-img"><img src="assets/images/manual2/s5-07-wv-reply.jpg" alt="올리의 답장 받기 화면" loading="lazy"></div>
+      <div class="step-body">
+        <div class="step-title"><span class="step-num">⑥</span>📬 답장 받기</div>
+        <p>저널을 보내면 올리가 바로 답장을 보내줘요! 저널을 쓸 때마다 숲에 나무가 한 그루씩 늘어나고,
+        모든 저널은 <b>My Storybook(📖)</b>에 차곡차곡 보관돼요.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note pink">
+    <b>🌈 무지개 펜 첨삭 (프리미엄 기능)</b><br>
+    답장 화면에서 "🌈 무지개 펜 첨삭 받기"를 누르면 AI 원어민 선생님이 아이의 글을 읽고
+    <b>칭찬 2가지</b>, <b>고치면 좋은 부분(이유 포함)</b>, <b>다음 도전 과제</b>, <b>별점</b>, 그리고
+    올리의 답장 편지까지 한 번에 보내줘요. 하루 10회까지 사용할 수 있어요.
+  </div>
+
+  <div class="step" style="margin-top:14px">
+    <div class="step-img"><img src="assets/images/manual2/s5-08-wv-ai-panel.jpg" alt="무지개 펜 첨삭 결과 화면" loading="lazy"></div>
+    <div class="step-body">
+      <div class="step-title">✍️ 고쳐서 다시 쓰기</div>
+      <p>첨삭 결과를 확인한 뒤 <b>"고쳐서 다시 쓰기"</b> 버튼을 누르면 고친 내용을 반영해서 다시
+      저널을 써서 보낼 수 있어요. 다시 쓴 저널도 새 기록으로 차곡차곡 쌓여서, <b>초안 → 첨삭 → 고쳐쓰기</b>로
+      이어지는 좋은 글쓰기 습관을 자연스럽게 길러줘요.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. 학부모 리포트 ============ -->
+<section class="section" id="parent">
+  <div class="section-head">
+    <div class="section-eyebrow">Step 6</div>
+    <h2><span class="emoji">👨‍👩‍👧</span> 학부모 리포트</h2>
+    <p>마을 지도 우상단의 <b>👨‍👩‍👧</b> 버튼(목록 화면 상단)을 누르면 아이의 학습 현황을 한눈에 볼 수 있는
+    대시보드가 열려요. 별도의 비밀번호 없이 언제든 확인 가능한 내부 도구예요.</p>
+  </div>
+
+  <div class="step wide">
+    <div class="step-img"><img src="assets/images/manual2/s6-01-parent-dashboard.jpg" alt="학부모 대시보드 화면" loading="lazy"></div>
+    <div class="step-body">
+      <p class="sub" style="text-align:center">학부모 대시보드 — 위에서부터 순서대로 확인해보세요.</p>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl"><b>총 포인트 / 완료 레슨</b> 지금까지 모은 코인과 끝낸 레슨 개수예요.</div>
+    <div class="ctrl"><b>독서 현황</b> 완독한 eBook 수, 평균 AR 지수, 완주한 교재 수를 보여줘요.</div>
+    <div class="ctrl"><b>누적 전략별 약점 랭킹</b> 12가지 읽기 전략 중 자주 틀리는 전략을 순위로 보여줘요.</div>
+    <div class="ctrl"><b>레슨별 진도표</b> 레슨마다 STEP별 완료 상태를 표로 확인할 수 있어요.</div>
+    <div class="ctrl"><b>리딩 진단 결과</b> 응시 레벨, 추천 레벨, 강점·약점 전략을 확인해요.</div>
+  </div>
+</section>
+
+<!-- ============ 7. FAQ ============ -->
+<section class="section" id="faq">
+  <div class="section-head">
+    <div class="section-eyebrow">Step 7</div>
+    <h2><span class="emoji">❓</span> 자주 묻는 질문</h2>
+    <p>아이와 부모님이 자주 궁금해하는 것들을 모았어요.</p>
+  </div>
+
+  <div class="faq">
+    <details open>
+      <summary>소리가 안 나요.</summary>
+      <div class="a">먼저 기기의 음량과 무음(진동) 모드를 확인해주세요. 그리고 브라우저 정책상
+      화면을 한 번 탭해야 소리가 시작되는 경우가 있어요 — 첫 화면을 살짝 눌러주면 이후부터는
+      🔊 버튼이 정상적으로 소리를 재생해요.</div>
+    </details>
+    <details>
+      <summary>카카오톡으로 받은 링크를 누르면 이상하게 열려요.</summary>
+      <div class="a">카카오톡 인앱 브라우저는 일부 기능이 제한되어 있어서, 링크를 누르면
+      자동으로 크롬(Chrome)이나 사파리(Safari) 같은 기본 브라우저가 열리도록 되어 있어요.
+      정상적인 동작이니 걱정하지 않아도 돼요.</div>
+    </details>
+    <details>
+      <summary>학습 내용은 어떻게 저장되나요?</summary>
+      <div class="a">모든 학습 내용은 별도의 저장 버튼 없이 자동으로 저장돼요. <b>같은 이름으로
+      로그인</b>하면 태블릿, 컴퓨터, 휴대폰 등 어떤 기기에서든 이어서 학습할 수 있어요.</div>
+    </details>
+    <details>
+      <summary>도서관 책이 인쇄가 안 돼요.</summary>
+      <div class="a">도서관의 영어 원서는 저작권으로 보호되고 있어서 인쇄를 지원하지 않아요.
+      대신 읽던 위치는 자동으로 저장되니 언제든 이어서 읽을 수 있고, 학습 자체에는 전혀 지장이 없어요.</div>
+    </details>
+  </div>
+</section>
+
+<footer class="footer">
+  Gfield Reading Town &amp; Writing Village · 이 설명서는 학습을 돕기 위한 안내 자료입니다.<br>
+  <a href="./index.html">← 앱으로 돌아가기</a>
+</footer>
+
+</body>
+</html>
