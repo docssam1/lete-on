@@ -1,28 +1,45 @@
 (()=>{
 'use strict';
 const app=document.getElementById('app');
-// Pick best English voice once and reuse — prefers Google/natural voices over robotic fallbacks
-let _enVoice=null;
+// Pick the best ENGLISH voice for on-device TTS (Web Speech). The persistent
+// "한국말로 영어" bug happens when a Korean (or other non-English) system voice
+// reads English text — so we (1) only ever pick a voice whose lang is en-*,
+// (2) prefer known natural voices across platforms, and (3) never fall back to a
+// non-English voice. We also re-pick whenever the voice list changes, because
+// voices load asynchronously and an early partial list must not lock in a poor
+// choice for the whole session.
+let _enVoice=null, _enVoiceCount=-1;
 let _audioEl=null;
+// Known good, natural-sounding English voices by exact name (Google / Microsoft
+// Natural / Apple). First match in device order wins.
+const GOOD_EN_VOICES=[
+  'Google US English','Google UK English Female','Google UK English Male',
+  'Microsoft Aria Online (Natural) - English (United States)','Microsoft Jenny Online (Natural) - English (United States)',
+  'Microsoft Guy Online (Natural) - English (United States)','Microsoft Ana Online (Natural) - English (United States)',
+  'Microsoft Sonia Online (Natural) - English (United Kingdom)','Microsoft Ryan Online (Natural) - English (United Kingdom)',
+  'Microsoft Aria','Microsoft Jenny','Microsoft Guy','Microsoft Zira','Microsoft David','Microsoft Mark',
+  'Samantha','Ava (Premium)','Ava (Enhanced)','Ava','Allison','Susan','Zoe','Karen','Serena','Daniel','Kate','Oliver','Alex','Fred','Moira','Tessa',
+  'Siri','Nicky','Aaron',
+];
 function getBestEnVoice(){
-  if(_enVoice)return _enVoice;
-  const all=window.speechSynthesis?window.speechSynthesis.getVoices():[];
-  // Some Windows machines mislabel a non-English system voice's `lang` field
-  // (or ship a non-English voice as the OS default) — filtering by lang alone
-  // isn't always trustworthy there, so also fall back to matching the voice
-  // *name* for "english" when nothing passes the lang check.
-  let en=all.filter(v=>v.lang&&v.lang.toLowerCase().startsWith('en'));
-  if(!en.length)en=all.filter(v=>/english/i.test(v.name||''));
-  // Priority: Google US > Google > any en-US local > any en-US > any en
-  _enVoice=en.find(v=>v.name==='Google US English')
-    ||en.find(v=>/google/i.test(v.name)&&v.lang==='en-US')
-    ||en.find(v=>/google/i.test(v.name))
-    ||en.find(v=>v.lang==='en-US'&&v.localService)
-    ||en.find(v=>v.lang==='en-US')
-    ||en[0]||null;
+  const synth=window.speechSynthesis; if(!synth) return null;
+  const all=synth.getVoices()||[];
+  if(_enVoice && all.length===_enVoiceCount) return _enVoice;   // stable list → keep cached pick
+  _enVoiceCount=all.length;
+  // English-only pool. lang like "en-US"/"en_GB"; also accept name containing
+  // "English" as a last resort for mislabelled lang fields — but NEVER a CJK/other voice.
+  let en=all.filter(v=>v.lang && /^en[-_]/i.test(v.lang));
+  if(!en.length) en=all.filter(v=>/english/i.test(v.name||'') && !/[ㄱ-힝぀-ヿ一-鿿]/.test(v.name||''));
+  const byName=n=>en.find(v=>v.name===n);
+  _enVoice = GOOD_EN_VOICES.map(byName).find(Boolean)
+    || en.find(v=>/natural/i.test(v.name||'') && /^en[-_]us/i.test(v.lang))
+    || en.find(v=>/^en[-_]us/i.test(v.lang))
+    || en.find(v=>/^en[-_]gb/i.test(v.lang))
+    || en.find(v=>/^en[-_]au/i.test(v.lang))
+    || en[0] || null;
   return _enVoice;
 }
-if(window.speechSynthesis)window.speechSynthesis.onvoiceschanged=()=>{_enVoice=null;getBestEnVoice();};
+if(window.speechSynthesis){window.speechSynthesis.onvoiceschanged=()=>{_enVoice=null;_enVoiceCount=-1;getBestEnVoice();};try{getBestEnVoice();}catch(e){}}
 const letters=['A','B','C','D'];
 const LESSON1_ZH={zoo:'动物园',squirrels:'松鼠',robins:'知更鸟',cages:'笼子',crickets:'蟋蟀',chipmunks:'花栗鼠',moths:'飞蛾',fireflies:'萤火虫',skunks:'臭鼬',free:'免费的', 'pulling your leg':'开玩笑 / 骗你', 'shoo away':'赶走'};
 // --- multi-lesson engine ---
@@ -1374,7 +1391,34 @@ function speakPassageWSA(text,run,nodes){if(!('speechSynthesis' in window)){toas
  let lastHL=null;u.onboundary=(ev)=>{if(run!==st.speechRun)return;const cur=nodes.find(n=>ev.charIndex>=Number(n.dataset.start)&&ev.charIndex<Number(n.dataset.end));if(!cur||cur===lastHL)return;lastHL=cur;nodes.forEach(n=>n.classList.toggle('reading-now',n===cur));cur.scrollIntoView({behavior:'smooth',block:'center'});};
  u.onend=()=>{if(run===st.speechRun)document.querySelectorAll('.sentence-line.reading-now').forEach(n=>n.classList.remove('reading-now'));};
  window.speechSynthesis.speak(u);}
-function speakText(text){if(!('speechSynthesis' in window)){toast(st.lang==='ko'?'이 브라우저는 읽어주기를 지원하지 않아요.':'Speech is not supported in this browser.');return}stopSpeak();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';const _v=getBestEnVoice();if(_v)u.voice=_v;u.rate=Number(st.speed)||1;window.speechSynthesis.speak(u)}
+// Speak a list of chunks (usually sentences) one at a time, chaining each on the
+// previous one's `onend`. Reading sentence-by-sentence keeps the chosen English
+// voice from drifting mid-passage (some engines re-pick a default — often the
+// system's Korean voice — partway through a long single utterance) and lets the
+// child follow along naturally. Guarded by st.speechRun so stopSpeak() ends it.
+function speakChunks(list){
+  const synth=window.speechSynthesis; if(!synth) return;
+  const chunks=(list||[]).map(s=>String(s).trim()).filter(Boolean);
+  if(!chunks.length) return;
+  const run=st.speechRun;                 // stopSpeak() already bumped this
+  const voice=getBestEnVoice(), rate=Number(st.speed)||1;
+  let i=0;
+  const next=()=>{
+    if(run!==st.speechRun || i>=chunks.length) return;
+    const u=new SpeechSynthesisUtterance(chunks[i++]);
+    u.lang='en-US'; if(voice){try{u.voice=voice;}catch(e){}} u.rate=rate; u.pitch=1;
+    u.onend=()=>{ if(run===st.speechRun) next(); };
+    u.onerror=()=>{ if(run===st.speechRun) next(); };
+    synth.speak(u);
+  };
+  next();
+}
+function speakText(text){
+  if(!('speechSynthesis' in window)){toast(st.lang==='ko'?'이 브라우저는 읽어주기를 지원하지 않아요.':'Speech is not supported in this browser.');return}
+  stopSpeak();
+  const sentences=splitSentences(String(text||''));
+  speakChunks(sentences.length?sentences:[String(text||'')]);
+}
 function stopSpeak(){if(_audioEl){try{_audioEl.pause();}catch(e){}  _audioEl=null;}if('speechSynthesis' in window)window.speechSynthesis.cancel();st.speechRun++;try{document.querySelectorAll('.sentence-line.reading-now').forEach(n=>n.classList.remove('reading-now'));}catch(e){}}
 // --- Read with Me (echo reading) for young learners ---
 const ECHO_TXT={ko:{ready:'자, 같이 읽어봐요!',your:'이제 따라 읽어요',hear:'다시 듣기',next:'다음',done:'잘 읽었어요!',close:'닫기'},en:{ready:"Let's read together!",your:'Now you read',hear:'Hear it again',next:'Next',done:'Great reading!',close:'Close'},zh:{ready:'我们一起读吧！',your:'现在你来读',hear:'再听一次',next:'下一句',done:'读得真棒！',close:'关闭'}};
