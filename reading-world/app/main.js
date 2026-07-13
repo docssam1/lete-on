@@ -1387,7 +1387,8 @@ function speakPassage(passage){
   el.play().catch(()=>{_audioEl=null;speakPassageWSA(text,run,nodes);});return;}
  speakPassageWSA(text,run,nodes);}
 function speakPassageWSA(text,run,nodes){if(!('speechSynthesis' in window)){toast(st.lang==='ko'?'이 브라우저는 읽어주기를 지원하지 않아요.':'Speech is not supported in this browser.');return}
- const u=new SpeechSynthesisUtterance(text);u.lang='en-US';const _v=getBestEnVoice();if(_v)u.voice=_v;u.rate=Number(st.speed)||1;u.pitch=1;
+ maybeVoiceHelp();
+ const u=new SpeechSynthesisUtterance(text);u.lang='en-US';const _v=getBestEnVoice();if(_v){try{u.voice=_v;}catch(e){}}u.rate=Number(st.speed)||1;u.pitch=1;
  let lastHL=null;u.onboundary=(ev)=>{if(run!==st.speechRun)return;const cur=nodes.find(n=>ev.charIndex>=Number(n.dataset.start)&&ev.charIndex<Number(n.dataset.end));if(!cur||cur===lastHL)return;lastHL=cur;nodes.forEach(n=>n.classList.toggle('reading-now',n===cur));cur.scrollIntoView({behavior:'smooth',block:'center'});};
  u.onend=()=>{if(run===st.speechRun)document.querySelectorAll('.sentence-line.reading-now').forEach(n=>n.classList.remove('reading-now'));};
  window.speechSynthesis.speak(u);}
@@ -1416,8 +1417,33 @@ function speakChunks(list){
 function speakText(text){
   if(!('speechSynthesis' in window)){toast(st.lang==='ko'?'이 브라우저는 읽어주기를 지원하지 않아요.':'Speech is not supported in this browser.');return}
   stopSpeak();
+  maybeVoiceHelp();
   const sentences=splitSentences(String(text||''));
   speakChunks(sentences.length?sentences:[String(text||'')]);
+}
+// When a Windows PC has NO English TTS voice installed, Windows falls back to its
+// Korean voice to read English text — the "한국말로 영어" problem. A webpage can't
+// install an OS voice, but it CAN deep-link straight to the Windows "add voices"
+// screen via the ms-settings: URI. Show a one-time helper banner in exactly that
+// situation (Windows + voices loaded + none are English), with a button that
+// opens Windows Speech settings.
+function _ttsVoicesLoaded(){const s=window.speechSynthesis;return !!(s&&(s.getVoices()||[]).length>0);}
+function _isWindows(){try{return /Windows/i.test((navigator.userAgentData&&navigator.userAgentData.platform)||navigator.platform||navigator.userAgent||'');}catch(e){return /Windows/i.test(navigator.userAgent||'');}}
+function maybeVoiceHelp(){
+  try{
+    if(!_isWindows()) return;                       // ms-settings: only exists on Windows
+    if(!_ttsVoicesLoaded()) return;                 // voices not enumerated yet → can't judge
+    if(getBestEnVoice()) return;                    // an English voice exists → all good
+    if(sessionStorage.getItem('rwVoiceHelpX')) return;
+    if(document.getElementById('voice-help')) return;
+    const el=document.createElement('div');
+    el.id='voice-help';el.className='voice-help';
+    const msg=st.lang==='ko'?'이 컴퓨터에 <b>영어 음성</b>이 없어 발음이 한국어처럼 들려요. 영어 음성을 한 번만 추가하면 자연스러워져요.':'This PC has no <b>English voice</b>, so English is read with a Korean voice. Add an English voice once to fix it.';
+    const btn=st.lang==='ko'?'영어 음성 설치 열기':'Open voice settings';
+    el.innerHTML=`<span class="vh-msg">🔊 ${msg}</span><a class="vh-go" href="ms-settings:speech">${btn}</a><button class="vh-x" aria-label="close">✕</button>`;
+    document.body.appendChild(el);
+    el.querySelector('.vh-x').onclick=()=>{try{sessionStorage.setItem('rwVoiceHelpX','1');}catch(e){}el.remove();};
+  }catch(e){}
 }
 function stopSpeak(){if(_audioEl){try{_audioEl.pause();}catch(e){}  _audioEl=null;}if('speechSynthesis' in window)window.speechSynthesis.cancel();st.speechRun++;try{document.querySelectorAll('.sentence-line.reading-now').forEach(n=>n.classList.remove('reading-now'));}catch(e){}}
 // --- Read with Me (echo reading) for young learners ---
