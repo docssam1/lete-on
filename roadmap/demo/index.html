@@ -326,6 +326,11 @@ th,td{border:1px solid var(--line);padding:7px 5px;height:45px;vertical-align:mi
   border:7px solid transparent;border-top-color:#fff;border-bottom:0}
 .pg-character-wrap .pg-character{position:static;width:170px;height:auto;flex:0 0 auto;
   margin-right:6px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.12));mix-blend-mode:multiply}
+.kakao-cta{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:20px;padding-top:20px;border-top:1px solid #e2e8f0}
+.kakao-cta-text{margin:0;font-size:14px;font-weight:700;color:#475569;letter-spacing:-.02em}
+.kakao-cta-btn{display:inline-flex;align-items:center;gap:8px;background:#FEE500;color:#3A1D1D;font-size:15px;font-weight:900;padding:13px 28px;border-radius:12px;text-decoration:none;letter-spacing:-.02em;box-shadow:0 4px 14px rgba(254,229,0,.45);transition:all .18s}
+.kakao-cta-btn:hover{background:#FFD600;transform:translateY(-1px);box-shadow:0 6px 18px rgba(254,229,0,.55)}
+@media(max-width:700px){.kakao-cta-btn{font-size:14px;padding:11px 22px}}
 @media(max-width:700px){
   .pg-character-wrap{align-items:center}
   .pg-bubble{max-width:100%;font-size:13.5px;padding:16px 18px}
@@ -516,6 +521,15 @@ input,textarea{-webkit-user-select:text;user-select:text}
     <div class="pg-character-wrap">
       <div class="pg-bubble" id="pgBubble" style="display:none"></div>
       <img class="pg-character" src="https://raw.githubusercontent.com/docssam1/lete-on/main/roadmap/docssam.jpg" alt="독쌤">
+    </div>
+    <div class="kakao-cta">
+      <p class="kakao-cta-text">더 세밀한 상담을 원한다면</p>
+      <a href="https://open.kakao.com/me/gfield" target="_blank" class="kakao-cta-btn">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink:0">
+          <path d="M10 2C5.58 2 2 4.91 2 8.5c0 2.3 1.42 4.32 3.57 5.5L4.5 17.5l3.8-2.4c.55.1 1.12.15 1.7.15 4.42 0 8-2.91 8-6.5S14.42 2 10 2z" fill="#3A1D1D"/>
+        </svg>
+        카카오로 상담하기
+      </a>
     </div>
   </div>
   
