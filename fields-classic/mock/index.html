@@ -177,6 +177,50 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
   .r-card{background:#f9f9f9!important;border-color:#e0e0e0!important}
   @page{margin:1.2cm}
 }
+.detail-table{width:100%;border-collapse:collapse;font-size:10.5px}
+.detail-table th{background:rgba(22,65,124,.08);color:var(--g-blue);font-weight:900;padding:6px 4px;text-align:center;border:1px solid #e8edf5;font-size:9.5px;white-space:nowrap}
+.detail-table td{padding:5px 4px;text-align:center;border:1px solid #e8edf5;color:var(--g-ink)}
+.detail-table td.dim{color:var(--g-muted);font-size:9.5px}
+.detail-table td.tp-cell{text-align:left;font-size:9.5px;color:var(--g-muted)}
+.detail-table .d-o{color:#16a34a;font-weight:900}
+.detail-table .d-x{color:#dc2626;font-weight:900}
+.detail-table tr.row-x{background:rgba(239,68,68,.03)}
+.strategy-card{background:linear-gradient(135deg,rgba(22,65,124,.04),rgba(234,201,150,.05));border:1.5px solid rgba(22,65,124,.15);border-radius:16px;padding:20px;margin-bottom:12px}
+.strategy-title{font-size:11px;font-weight:900;color:var(--g-blue);letter-spacing:.1em;margin-bottom:12px}
+.strategy-body{font-size:12.5px;color:#374151;line-height:1.9;word-break:keep-all}
+.strategy-body b{color:var(--g-blue)}
+@media print{.detail-table{font-size:9px}.strategy-card{background:#fffbec!important}}
+
+.similar-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;
+  background:linear-gradient(135deg,var(--g-blue),#1e40af);color:#fff;border:none;
+  font-size:11px;font-weight:900;font-family:Pretendard,sans-serif;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.similar-btn:hover{opacity:.9}
+#similarModal{display:none;position:fixed;inset:0;z-index:9500;background:rgba(15,23,42,.75);
+  backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
+#similarModal.show{display:flex}
+.similar-card{background:#fff;border-radius:24px;padding:28px 24px;max-width:480px;width:100%;
+  max-height:85vh;overflow-y:auto;box-shadow:0 28px 80px rgba(0,0,0,.3)}
+.similar-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.similar-title{font-size:16px;font-weight:900;color:var(--g-blue)}
+.similar-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--g-muted);padding:4px}
+.similar-lv{display:flex;gap:6px;margin-bottom:14px}
+.lv-chip{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:900;cursor:pointer;border:2px solid #e2e8f0;color:var(--g-muted);background:#fff;font-family:Pretendard,sans-serif}
+.lv-chip.active{border-color:var(--g-blue);color:var(--g-blue);background:rgba(22,65,124,.06)}
+.similar-problem{background:#f8fafc;border-radius:14px;padding:16px;margin-bottom:12px;min-height:120px}
+.similar-problem-text{font-size:14px;color:var(--g-ink);line-height:1.8;font-weight:600}
+.similar-input{width:100%;height:44px;border:2px solid #e2e8f0;border-radius:10px;
+  font-size:16px;font-weight:700;font-family:Pretendard,sans-serif;text-align:center;
+  outline:none;margin-top:10px;transition:border-color .2s}
+.similar-input:focus{border-color:var(--g-blue)}
+.similar-check-btn{width:100%;height:48px;background:linear-gradient(135deg,var(--g-blue),#1e40af);
+  color:#fff;font-size:15px;font-weight:900;font-family:Pretendard,sans-serif;border:none;
+  border-radius:12px;cursor:pointer;margin-top:10px}
+.similar-result{padding:12px;border-radius:10px;font-size:13px;font-weight:700;margin-top:10px;display:none}
+.similar-result.ok{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);color:#16a34a}
+.similar-result.no{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);color:#dc2626}
+.similar-next{width:100%;height:44px;background:#fff;border:2px solid #e2e8f0;color:var(--g-muted);
+  font-size:14px;font-weight:700;font-family:Pretendard,sans-serif;border-radius:12px;cursor:pointer;margin-top:8px}
+.similar-hint{font-size:11px;color:var(--g-muted);margin-top:6px;display:none}
 </style>
 </head>
 <body>
@@ -208,6 +252,28 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
     </ul>
     <button class="ocr-apply-btn" onclick="window.open('https://naver.me/Ge7B7WcJ','_blank');closeOcr()">프리미엄 신청하기 →</button>
     <button class="ocr-close-btn" onclick="closeOcr()">닫기</button>
+  </div>
+</div>
+
+<div id="similarModal">
+  <div class="similar-card">
+    <div class="similar-header">
+      <div class="similar-title" id="similarModalTitle">유사문제</div>
+      <button class="similar-close" onclick="closeSimilar()">✕</button>
+    </div>
+    <div class="similar-lv">
+      <button class="lv-chip active" onclick="setSimilarLv(1)">기본</button>
+      <button class="lv-chip" onclick="setSimilarLv(2)">심화</button>
+      <button class="lv-chip" onclick="setSimilarLv(3)">최고</button>
+    </div>
+    <div class="similar-problem" id="similarProblemArea">
+      <div class="similar-problem-text" id="similarProblemText">문제 생성 중...</div>
+    </div>
+    <input class="similar-input" type="text" id="similarAnswer" placeholder="답을 입력하세요" onkeydown="if(event.key==='Enter')checkSimilar()">
+    <button class="similar-check-btn" onclick="checkSimilar()">채점하기</button>
+    <div class="similar-result" id="similarResult"></div>
+    <div class="similar-hint" id="similarHint"></div>
+    <button class="similar-next" id="similarNextBtn" onclick="nextSimilar()" style="display:none">다음 문제 →</button>
   </div>
 </div>
 <header class="premium-header" id="mainHeader" style="display:none">
@@ -300,31 +366,31 @@ window.setOX=setOX;window.setCOX=setCOX;
 const YT='https://www.youtube.com/watch?v=DRVcC6pCZcw';
 const TS={1:'&t=9s',2:'&t=61s',3:'&t=107s',4:'&t=157s',5:'&t=205s',6:'&t=257s',7:'&t=309s',8:'&t=359s',9:'&t=415s',10:'&t=468s',11:'&t=522s',12:'&t=522s',13:'&t=577s',14:'&t=624s',15:'&t=677s',16:'&t=729s',17:'&t=775s',18:'&t=827s',19:'&t=876s',20:'&t=924s',21:'&t=980s',22:'&t=980s',23:'&t=1035s',24:'&t=1144s',25:'&t=1253s'};
 const QS=[
-  {id:1,t:'식의계산',lv:'키즈팩토',tp:'막대의 길이',ba:'지문이해',a:'8',in:'num',ph:'숫자'},
-  {id:2,t:'식의계산',lv:'키즈팩토',tp:'조건에 따른 수(대화)',ba:'지문이해',a:'8',in:'num',ph:'숫자'},
-  {id:3,t:'수',lv:'키즈팩토',tp:'주고받기(같게)',ba:'논리추론',a:'2',in:'num',ph:'숫자'},
-  {id:4,t:'도형',lv:'키즈팩토',tp:'색종이 접기(대칭)',ba:'대칭·공간',a:'6',in:'num',ph:'개'},
-  {id:5,t:'수',lv:'초등팩토',tp:'주고받기(더 많이)',ba:'논리추론',a:'11',in:'num',ph:'숫자'},
-  {id:6,t:'논리추리',lv:'초등팩토',tp:'줄 세우기(등수)',ba:'지문이해',a:'5',in:'num',ph:'등'},
-  {id:7,t:'논리추리',lv:'초등팩토',tp:'집합·포함 관계',ba:'지문이해',a:'17',in:'num',ph:'명'},
-  {id:8,t:'논리추리',lv:'키즈팩토',tp:'무게 비교(시소)',ba:'논리추론',a:'다람쥐,거북,토끼',in:'animal',ph:''},
-  {id:9,t:'수',lv:'초등팩토',tp:'수의 관계(원판)',ba:'수관계',a:'2',in:'num',ph:'숫자'},
-  {id:10,t:'식의계산',lv:'초등팩토',tp:'도형이 나타내는 수(2개)',ba:'도형→수',a:'14',in:'num',ph:'㉠값'},
-  {id:11,t:'규칙',lv:'키즈팩토',tp:'수열 규칙(두 패턴)',ba:'패턴·규칙',a:'4,13',in:'dual',lb:['①','②'],ph:['4','13']},
-  {id:12,t:'규칙',lv:'키즈팩토',tp:'도형 패턴 규칙',ba:'패턴·규칙',a:'□,○',in:'sym',ph:''},
-  {id:13,t:'수',lv:'초등팩토',tp:'도형이 나타내는 수(이진)',ba:'도형→수',a:'14',in:'num',ph:'숫자'},
-  {id:14,t:'수',lv:'초등팩토',tp:'마방진(합 일정)',ba:'수관계',a:'18',in:'num',ph:'△값'},
-  {id:15,t:'식의계산',lv:'초등팩토',tp:'타고 내린 승객 수',ba:'지문이해',a:'17',in:'num',ph:'명'},
-  {id:16,t:'수',lv:'초등팩토',tp:'수 피라미드(두번 모으기)',ba:'수관계',a:'1',in:'num',ph:'㉠값'},
-  {id:17,t:'논리추리',lv:'초등팩토',tp:'숫자 배치(이웃 금지)',ba:'논리추론',a:'3',in:'num',ph:'㉠값'},
-  {id:18,t:'수',lv:'초등팩토',tp:'조건에 맞는 두 자리 수',ba:'지문이해',a:'94',in:'num',ph:'두자리수'},
-  {id:19,t:'식의계산',lv:'pre1031',tp:'도형이 나타내는 수(3개)',ba:'도형→수',a:'22',in:'num',ph:'㉠값'},
-  {id:20,t:'식의계산',lv:'pre1031',tp:'복면산(두자리+두자리)',ba:'도형→수',a:'9,1',in:'dual',lb:['□','○'],ph:['9','1']},
-  {id:21,t:'식의계산',lv:'pre1031',tp:'수 배열 규칙(화살표)',ba:'도형→수',a:'28',in:'num',ph:'㉠값'},
-  {id:22,t:'규칙',lv:'pre1031',tp:'삼각형 증가 규칙(6번째)',ba:'패턴·규칙',a:'36',in:'num',ph:'장'},
-  {id:23,t:'규칙',lv:'1031심화',tp:'바둑돌 규칙(홀짝 차이)',ba:'패턴·규칙',a:'33',in:'num',ph:'번째'},
-  {id:24,t:'규칙',lv:'1031심화',tp:'도형 연립(☆○▽)',ba:'패턴·규칙',a:'15',in:'num',ph:'□값'},
-  {id:25,t:'도형',lv:'1031심화',tp:'쌓기나무 규칙(5번째)',ba:'대칭·공간',a:'55',in:'num',ph:'개'},
+  {id:1,t:'식의계산',lv:'키즈 팩토',tp:'막대의 길이(수 채우기)',ba:'지문이해',a:'8',in:'num',ph:'숫자'},
+  {id:2,t:'식의계산',lv:'키즈 팩토',tp:'조건에 따른 수 구하기(대화·문장제)',ba:'지문이해',a:'8',in:'num',ph:'숫자'},
+  {id:3,t:'수',lv:'키즈 팩토',tp:'주고받기(같게 만들기)',ba:'논리추론',a:'2',in:'num',ph:'숫자'},
+  {id:4,t:'도형',lv:'키즈 팩토',tp:'한번 접은 색종이의 구멍의 개수',ba:'대칭·공간',a:'6',in:'num',ph:'개'},
+  {id:5,t:'수',lv:'초등팩토1·PRE 1031',tp:'주고받기(더 많이 가지기)',ba:'논리추론',a:'11',in:'num',ph:'숫자'},
+  {id:6,t:'논리추리',lv:'초등팩토1·PRE 1031',tp:'줄 세우기(등수 정하기)',ba:'지문이해',a:'5',in:'num',ph:'등'},
+  {id:7,t:'논리추리',lv:'초등팩토1·PRE 1031',tp:'집합과 포함 관계',ba:'지문이해',a:'17',in:'num',ph:'명'},
+  {id:8,t:'논리추리',lv:'키즈 팩토',tp:'무게 비교',ba:'논리추론',a:'다람쥐,거북,토끼',in:'animal',ph:''},
+  {id:9,t:'수',lv:'초등팩토1·PRE 1031',tp:'수의 관계',ba:'수관계',a:'2',in:'num',ph:'숫자'},
+  {id:10,t:'식의계산',lv:'초등팩토1·PRE 1031',tp:'표 안의 도형 수(같은 2개의 도형)',ba:'도형→수',a:'14',in:'num',ph:'㉠값'},
+  {id:11,t:'규칙',lv:'키즈 팩토',tp:'수열의 규칙',ba:'패턴·규칙',a:'4,13',in:'dual',lb:['①','②'],ph:['4','13']},
+  {id:12,t:'규칙',lv:'키즈 팩토',tp:'도형 패턴의 규칙',ba:'패턴·규칙',a:'□,○',in:'sym',ph:''},
+  {id:13,t:'수',lv:'초등팩토1·PRE 1031',tp:'도형으로 수 나타내기',ba:'도형→수',a:'14',in:'num',ph:'숫자'},
+  {id:14,t:'수',lv:'초등팩토1·PRE 1031',tp:'마방진(합 일정)',ba:'수관계',a:'18',in:'num',ph:'△값'},
+  {id:15,t:'식의계산',lv:'초등팩토1·PRE 1031',tp:'타고 내린 승객의 수',ba:'지문이해',a:'17',in:'num',ph:'명'},
+  {id:16,t:'수',lv:'초등팩토1·PRE 1031',tp:'수 피라미드(두번 모으기)',ba:'수관계',a:'1',in:'num',ph:'㉠값'},
+  {id:17,t:'논리추리',lv:'초등팩토1·PRE 1031',tp:'숫자 배치 규칙(이웃 금지)',ba:'논리추론',a:'3',in:'num',ph:'㉠값'},
+  {id:18,t:'수',lv:'초등팩토1·PRE 1031',tp:'조건에 맞는 두 자리 수',ba:'지문이해',a:'94',in:'num',ph:'두자리수'},
+  {id:19,t:'식의계산',lv:'1031 입문',tp:'표 안의 도형 수(같은 3개의 도형)',ba:'도형→수',a:'22',in:'num',ph:'㉠값'},
+  {id:20,t:'식의계산',lv:'1031 입문',tp:'복면산(두자리+두자리)',ba:'도형→수',a:'9,1',in:'dual',lb:['□','○'],ph:['9','1']},
+  {id:21,t:'식의계산',lv:'1031 입문',tp:'수 배열 규칙(화살표)',ba:'도형→수',a:'28',in:'num',ph:'㉠값'},
+  {id:22,t:'규칙',lv:'1031 입문',tp:'도형 증가 규칙(삼각형)',ba:'패턴·규칙',a:'36',in:'num',ph:'장'},
+  {id:23,t:'규칙',lv:'1031 입문 심화',tp:'바둑돌 규칙',ba:'패턴·규칙',a:'33',in:'num',ph:'번째'},
+  {id:24,t:'수',lv:'1031 입문 심화',tp:'도형이 나타낸 수',ba:'수관계',a:'15',in:'num',ph:'□값'},
+  {id:25,t:'도형',lv:'1031 입문 심화',tp:'쌓기나무 규칙',ba:'대칭·공간',a:'55',in:'num',ph:'개'},
 ];
 const CA=[
   {e:'5+□=13',a:'8',tp:'역연산'},{e:'8+21=□',a:'29',tp:'받아올림없음'},
@@ -340,21 +406,21 @@ const CS=[
 ];
 const SYMS=['▲','■','□','○','△','◇'];
 const TYPST={'식의계산':'t-식의계산','수':'t-수','논리추리':'t-논리추리','도형':'t-도형','규칙':'t-규칙'};
-const LV_ORDER=['키즈팩토','초등팩토','pre1031','1031심화'];
+const LV_ORDER=['키즈 팩토','초등팩토1·PRE 1031','1031 입문','1031 입문 심화'];
 const BA_ORDER=['지문이해','대칭·공간','패턴·규칙','논리추론','도형→수','수관계'];
 const BA_LBL={'지문이해':'지문 이해','대칭·공간':'대칭·공간','패턴·규칙':'패턴·규칙','논리추론':'논리 추론','도형→수':'도형→수','수관계':'수 관계'};
 const BA_CLR={'지문이해':'rgba(8,145,178,.8)','대칭·공간':'rgba(22,163,74,.8)','패턴·규칙':'rgba(219,39,119,.8)','논리추론':'rgba(234,88,12,.8)','도형→수':'rgba(124,58,237,.8)','수관계':'rgba(217,119,6,.8)'};
 const TY_CLR={'식의계산':'rgba(59,130,246,.8)','수':'rgba(139,92,246,.8)','논리추리':'rgba(234,88,12,.8)','도형':'rgba(22,163,74,.8)','규칙':'rgba(219,39,119,.8)'};
 const LVLS=[
-  {mn:96,mx:100,lv:'E1합격 · S반 GO',cls:'lv-s',tx:'E1반 합격이 확실합니다. 작년 기준 88점 이상 학생은 모두 소마 프리미어·필즈 S반에 합격했습니다. 필즈 입학 후 다음 목표는 5개월 뒤 소마 프리미어 1반 진입입니다. 이를 위해 교과 3학년 1~2학기 완료와 1031입문 수준 유지가 기준입니다. 연산 속도도 꾸준히 관리해 주세요.'},
-  {mn:88,mx:95,lv:'E1합격 · S반 GO',cls:'lv-s',tx:'E1반 합격이 확실합니다. 작년 기준 88점 이상 학생은 모두 소마 프리미어·필즈 S반에 합격했습니다. 필즈 입학 후 다음 목표는 5개월 뒤 소마 프리미어 1반 진입입니다. 약점 문항을 집중 학습하고, 소마를 병행 중이라면 둘 다 유지하면서 프리미어 대비도 함께 이어가길 권장합니다.'},
-  {mn:84,mx:87,lv:'E1합격',cls:'lv-e1',tx:'E1반 합격이 확실합니다. 당분간은 필즈 수업 예습과 교과 학습에 집중해 주세요. 약점 유형도 꼭 보완해 주세요.'},
-  {mn:80,mx:83,lv:'E1합격',cls:'lv-e1',tx:'E1반 합격 가능성이 높습니다. 당분간은 필즈 수업 예습과 교과 학습에 집중해 주세요. 구구단과 두 자리 연산을 완성한 뒤 수업을 따라가는 것이 중요합니다. 약점 유형을 꼭 학습해 주세요.'},
-  {mn:76,mx:79,lv:'E2합격',cls:'lv-e2',tx:'E2 레벨이지만 E1 합격 가능성도 있습니다. 처음 E2로 입학했다가 6개월 만에 S반이 된 아이들도 있습니다. 당분간은 필즈 수업 예습과 교과 학습에 집중하고, 혹시 빈 구멍이 있지는 않은지 약점 유형을 꼼꼼히 확인해 주세요.'},
-  {mn:68,mx:75,lv:'E2합격',cls:'lv-e2',tx:'E2 레벨입니다. 연습하면 E1도 가능합니다. 연산 → 교과 → 사고력 순서로 빈 구멍이 있지는 않은지 먼저 확인해 주세요. 진도보다 지금 배운 것을 제대로 이해하는 것이 먼저입니다.'},
-  {mn:60,mx:67,lv:'E2합격',cls:'lv-e2',tx:'E2 레벨입니다. 연산 → 교과 → 사고력 순서로 빈 구멍이 있지는 않은지 점검해 주세요. 기초부터 차근차근 다져 나가면 충분히 올라갈 수 있습니다.'},
-  {mn:52,mx:59,lv:'주 1회 높은 반',cls:'lv-j',tx:'주 1회 높은 반 레벨입니다. 연산 → 교과 → 사고력 순서로 빈 구멍이 있지는 않은지 먼저 확인해 주세요. 시험 대비를 집중하면 주 2회도 충분히 가능합니다.'},
-  {mn:0,mx:51,lv:'주 1회 낮은 반',cls:'lv-j',tx:'주 1회 낮은 반 레벨입니다. 연산 → 교과 → 사고력 순서로 빈 구멍이 있지는 않은지 점검하는 것이 가장 중요합니다. 선생님과 상담을 통해 지금 수준에 맞는 학습 계획을 세워 주세요.'},
+  {mn:100,mx:100,lv:'E1 합격 · S반 GO',cls:'lv-s',tx:'E1반 합격이 확실합니다. 관리 잘해주신 부모님의 노력이 보입니다. 만약 현재 소마도 다니면서 외부 학원에서 2회 이상 학습하는 양이 연습되어 있다면 둘 다 유지하면서 프리미어 대비와 S반 관리까지 이어가기를 추천합니다. 하지만 필즈 대비 모의고사 중 타 학습에 문제가 있었다면 앞으로 영어학원 준비도 있으니 필즈만 선택하고 교과와 필즈 예습·복습 또는 S반 목표 학습에 집중해 주세요. 작년 88점 이상의 학생은 모두 대치 소마 프리미어 1반, 필즈 S1에 합격했습니다. 실제로 작년 대치 소마 프리미어 1반 8명은 전원 필즈 E1 출신이었고, 전원 88점 합격자였습니다. 프리미어 1반이 된 아이들은 필즈 입학 5개월 뒤까지 1031 입문을 완료하고 교과 3-2(디딤돌 기본·응용 수준)까지 마친 상태였습니다. 이 기준을 목표로 교과 영역도 반드시 병행해 주세요.'},
+  {mn:88,mx:99,lv:'E1 합격 · S반 GO',cls:'lv-s',tx:'E1반 합격이 확실합니다. 관리 잘해주신 부모님의 노력이 보입니다. 오답 문항이 있지만 작년에도 100점은 없었습니다. 작년 최고점은 88점이었고 12명이 이 점수로 합격했습니다. 아래 진단표를 참고하여 약점 문항을 학습해 주세요. 만약 현재 소마도 다니면서 외부 학원에서 2회 이상 학습하는 양이 연습되어 있다면 둘 다 유지하면서 프리미어 대비와 S반 관리까지 이어가기를 추천합니다. 하지만 필즈 대비 모의고사 중 타 학습에 문제가 있었다면 앞으로 영어학원 준비도 있으니 필즈만 선택하고 교과와 필즈 예습·복습 또는 S반 목표 학습에 집중해 주세요. 작년 88점 이상 학생은 모두 대치 소마 프리미어 1반, 필즈 S1에 합격했고, 프리미어 1반 8명 전원이 필즈 E1 출신·88점 합격자였습니다. 그 아이들은 필즈 입학 5개월 뒤까지 1031 입문 완료 + 교과 3-2 수준을 마쳤습니다. 이 로드맵을 기준으로 삼아 주세요.'},
+  {mn:84,mx:87,lv:'E1 합격',cls:'lv-e1',tx:'E1반 합격이 확실합니다. 당분간은 필즈 수업 예습과 교과 학습에 집중해 주세요. 오답 문항이 있지만 작년에도 100점은 없었습니다. 아래 진단표를 참고하여 약점 문항을 꼭 학습해 주세요. E1반에 입학하면 부교재로 필즈 입문이 진행됩니다. 입문을 따라가려면 교과 3-1 과정과 기적의 계산법 5권 정도의 연산이 필요합니다. 진도를 무리하게 앞세우기보다 이 기준을 채우는 것이 우선입니다.'},
+  {mn:80,mx:83,lv:'E1 합격',cls:'lv-e1',tx:'E1반 합격 가능성이 높습니다. 아래 진단표를 참고하면 약점 유형이 잘 보일 겁니다. 꼭 학습해 주세요. 조금만 노력하면 충분히 안정적인 E1 점수가 나올 수 있기 때문에 시험 대비에도 집중해 주세요. 만약 현재 소마도 다니면서 외부 학원에서 2회 이상 학습하는 양이 연습되어 있다면 둘 다 유지하면서 프리미어 대비까지 이어가기를 추천합니다. 타 학습에 부담이 있었다면 필즈만 선택하고 교과와 필즈 예습·복습에 집중해 주세요. E1반 부교재인 필즈 입문 기준은 교과 3-1 + 기적의 계산법 5권 수준입니다.'},
+  {mn:76,mx:79,lv:'E2 합격',cls:'lv-e2',tx:'레벨은 E2가 나왔지만 E1반 합격 가능성이 높습니다. 아래 진단표를 참고하면 약점 유형이 잘 보일 겁니다. 꼭 학습해 주세요. 조금만 노력하면 충분히 E1 점수가 나올 수 있기 때문에 시험 대비에도 집중해 주세요. 실제로 작년 65점으로 E2에 입학했던 아이들이 6개월 만에 E1으로 승급하고, 기존 E1반 학생보다 성적이 좋아져 S반 가능성까지 높아진 사례들이 있습니다. 첫 진도를 따라잡는 데 약 6개월이 걸립니다. 반 배정보다 입학 후 학습이 더 중요합니다. E2반 부교재는 필즈 베이직이며, 교과 2-1 과정과 기적의 계산법 3·4권(두 자리 빼기 받아내림, 구구단) 수준이 기준입니다.'},
+  {mn:68,mx:75,lv:'E2 합격',cls:'lv-e2',tx:'E2 레벨은 당연하고 E1도 연습하면 가능하니 남은 기간 집중적으로 복습과 예습에 힘써 주세요. 만약 연산이 잘 되어 있고 선행이 되어 있다면 대치의 경우 1달 안에도 E1반으로 승급될 가능성이 높습니다. 개념은 알지만 시험 스킬 연습이 덜 되어 있어 시간 관리가 안 되어 있을 수도 있습니다. E2반 부교재인 필즈 베이직을 따라가려면 교과 2-1 과정과 기적의 계산법 3·4권 수준의 연산이 필요합니다. 키즈팩토 → 초등팩토 → 프리1031 순서를 건너뛰지 말고 차근차근 채워 주세요.'},
+  {mn:60,mx:67,lv:'E2 합격',cls:'lv-e2',tx:'E2 레벨은 당연하고 E1도 연습하면 가능하니 남은 기간 집중적으로 복습과 예습에 힘써 주세요. 만약 연산이 잘 되어 있고 선행이 되어 있다면 대치의 경우 1달 안에도 E1반으로 승급될 가능성이 높습니다. 개념은 알지만 시험 스킬 연습이 덜 되어 있어 시간 관리가 안 되어 있을 수도 있습니다. 연산 → 교과 → 사고력 순서로 빈 구멍이 있지는 않은지 먼저 점검해 주세요. 프리1031A를 시작하기 전에는 반드시 99단과 세 자리 받아내림 연산이 가능해야 합니다.'},
+  {mn:52,mx:59,lv:'주 1회 높은 반',cls:'lv-j',tx:'주 1회 높은 반 레벨이지만 시험 대비를 집중하면 주 2회도 충분히 가능한 점수입니다. 남은 기간 집중적으로 복습과 예습에 힘써 주세요. 만약 연산이 잘 되어 있고 선행이 되어 있다면 대치의 경우 1달 안에도 E1반으로 승급될 가능성이 높습니다. 개념은 알지만 시험 스킬 연습이 덜 되어 있어 시간 관리가 안 되어 있을 수도 있습니다. 연산 → 교과 → 사고력 순서로 빈 구멍이 있지는 않은지 확인해 주세요.'},
+  {mn:0,mx:51,lv:'주 1회 낮은 반',cls:'lv-j',tx:'주 1회 낮은 반 레벨이지만 충분히 연습하면 주 2회도 나올 수 있습니다. 다만 아직 덜 채워진 교과·사고력 학습이 필요할 수 있습니다. 주 2회 합격하더라도 필즈와 소마를 병행하기보다는 자녀의 성향과 목표에 맞춘 학습을 권장합니다. 복습량이나 선행 학습량이 부족한 경우, 필즈와 소마를 병행하여 주 2~3일을 소비하기보다는 한 곳을 선택하여 학습에 집중하는 것이 더 효과적입니다. 한 곳에 집중한다면 소마의 챌린지 이상을 목표로 하거나, 계산력이 빠르고 발표를 좋아하며 타 학원의 선행 학습 시간을 소화할 수 있는 경우라면 필즈를 선택하는 것을 추천합니다. 교재는 키즈팩토 → 초등팩토 → 프리1031 순서로, 건너뛰지 말고 차근차근 진행해 주세요.'},
 ];
 const TV={'식의계산':{vol:'Vol.1·Vol.2',url:'https://youtu.be/7aPj5IJUzQM'},'수':{vol:'Vol.3·Vol.4',url:'https://youtu.be/mq-1VxjLzMk'},'논리추리':{vol:'Vol.2',url:'https://youtu.be/TOHw8sCumHY'},'도형':{vol:'Final',url:'https://youtu.be/FC4W2bRJwKc'},'규칙':{vol:'Vol.4',url:'https://youtu.be/neRIODxo13I'}};
 let anim=[],s12=['',''],charts=[];
@@ -364,20 +430,24 @@ function getLv(sc){for(const d of LVLS)if(sc>=d.mn&&sc<=d.mx)return d;return LVL
 function pct(ok,tot){return tot===0?0:Math.round(ok/tot*100);}
 
 function calcDiag(addW,subW,cw){
-  if(cw>=9){return{cls:'cb-연',grade:'기초 점검 필요',lvText:'연산 기초부터 상담 권장',patterns:['14개 중 '+(14-cw)+'개 맞음'],comment:'연산 → 지문 이해 → 교과가 단단해야 사고력도 올라갑니다. 기본 연산부터 선생님과 함께 상담하고 점검해 보세요.'};}
+  // 엑셀 원문 3단계: 우수 / 약간 실수 / 연습 필요
+  const patterns=[];
   const add역연산=addW[0],add올림틀림=addW[2]||addW[3]||addW[5],add세자리=addW[6];
   const sub역연산=subW[0],sub내림틀림=subW[1]||subW[2]||subW[5]||subW[6];
-  let cls='cb-우',grade='우수',lvText='',comment='';
-  const patterns=[],cmts=[];
-  if(cw===0){return{cls,grade,lvText:'연산 우수',patterns,comment:'연산 실력이 우수합니다! 필즈 시험에서 요구하는 두 자리 더하기·빼기를 모두 잘 합니다.'};}
-  if(add역연산||sub역연산){cls='cb-연';grade='연습 필요';lvText='역연산 따로 연습 필요';patterns.push('역연산 실수');cmts.push('5+□=13, □-5=21처럼 □가 있는 식을 어려워합니다. 필즈 시험에 꼭 나오는 유형입니다.');}
-  if(add올림틀림){if(cls==='cb-우'){cls='cb-약';grade='부분 미숙';}if(!lvText)lvText='받아올림 연습 필요';patterns.push('받아올림 실수');cmts.push('받아올림이 생기는 덧셈에서 실수합니다. 기적의 계산법 3-4권 수준의 연습이 필요합니다.');}
-  if(add세자리){if(cls==='cb-우'){cls='cb-약';grade='부분 미숙';}if(!lvText)lvText='세 자리 되는 덧셈 미숙';patterns.push('37+65=102 실수');cmts.push('더했더니 세 자리가 되는 경우를 어려워합니다.');}
-  if(sub내림틀림){if(cls==='cb-우'){cls='cb-약';grade='부분 미숙';}if(!lvText)lvText='받아내림 연습 필요';patterns.push('받아내림 실수');cmts.push('받아내림이 필요한 뺄셈에서 실수합니다.');}
-  if(!lvText)lvText='연산 집중 연습 필요';
-  if(cls==='cb-우'){cls='cb-연';grade='연습 필요';}
-  comment=cmts.join(' ')||'기적의 계산법 3-4권 수준의 꾸준한 반복 연습이 필요합니다.';
-  return{cls,grade,lvText,patterns,comment};
+  if(add역연산||sub역연산)patterns.push('역연산(□가 있는 식) 실수');
+  if(add올림틀림)patterns.push('받아올림 실수');
+  if(add세자리)patterns.push('세 자리 되는 덧셈 실수');
+  if(sub내림틀림)patterns.push('받아내림 실수');
+  if(cw===0){
+    return{cls:'cb-우',grade:'우수',lvText:'시험에 문제 없는 연산 실력',patterns:[],
+    comment:'필즈 시험에서의 연산은 두자리+두자리 또는 두자리-두자리까지 출제됩니다. 학생은 시험에 문제 없는 연산 실력을 가졌습니다. 필즈 입학 후 같은 3개의 수로 가르기, 합이 일정한 경우의 수, 두자리×한자리 정도의 연산이 필요한 경우가 많습니다. 연산도 꾸준히 해주세요.'};
+  }
+  if(cw<=2){
+    return{cls:'cb-약',grade:'약간 실수',lvText:'속도·정확도 반복 연습 필요',patterns,
+    comment:'필즈 시험에서의 연산은 두자리+두자리 또는 두자리-두자리까지 출제됩니다. 학생은 시험의 연산을 할 수 있으나 실수하지 않고 속도가 빠르도록 여러 번 연습해야 합니다. 필즈 입학 후 같은 3개의 수로 가르기, 합이 일정한 경우의 수, 두자리×한자리 정도의 연산이 필요한 경우가 많습니다. 연산도 꾸준히 해주세요.'};
+  }
+  return{cls:'cb-연',grade:'연습 필요',lvText:'연산 집중 학습 필요',patterns,
+  comment:'필즈 시험에서의 연산은 두자리+두자리 또는 두자리-두자리까지 출제됩니다. 학생은 우선 연산에 집중하여 학습해 주세요. 연산이 부족하다면 사고력 선행, 소마·필즈에서의 학습에 문제가 생길 수도 있습니다. 필즈 입학 시 시험의 연산과 구구단 정도는 하고 있어야 합니다.'};
 }
 
 function getVal(i){
@@ -457,11 +527,11 @@ function submitAll(){
   const cw=cg.filter(v=>!v).length;
   const CD=calcDiag(addW,subW,cw);
   const insights=[];
-  const kOk=pct(lvMap['키즈팩토'].ok,lvMap['키즈팩토'].tot);
-  const cOk=pct(lvMap['초등팩토'].ok,lvMap['초등팩토'].tot);
-  const pOk=pct(lvMap['pre1031'].ok,lvMap['pre1031'].tot);
+  const kOk=pct(lvMap['키즈 팩토'].ok,lvMap['키즈 팩토'].tot);
+  const cOk=pct(lvMap['초등팩토1·PRE 1031'].ok,lvMap['초등팩토1·PRE 1031'].tot);
+  const pOk=pct(lvMap['1031 입문'].ok,lvMap['1031 입문'].tot);
   if(kOk<cOk&&kOk<70)insights.push({cls:'i-warn',icon:'⚠️',txt:`키즈팩토(${kOk}%) 정답률이 초등팩토(${cOk}%)보다 낮습니다.`});
-  if(pOk<cOk-20)insights.push({cls:'i-warn',icon:'⚠️',txt:`pre1031(${pOk}%)에서 급격히 하락합니다. 1031 수준 사고력이 아직 부족합니다.`});
+  if(pOk<cOk-20)insights.push({cls:'i-warn',icon:'⚠️',txt:`1031 입문(${pOk}%)에서 급격히 하락합니다. 1031 수준 사고력이 아직 부족합니다.`});
   if(CD.cls==='cb-연'&&sc>=80)insights.push({cls:'i-warn',icon:'🔢',txt:'사고력 점수는 높지만 연산에 약점이 있습니다. 시험장에서 연산 실수가 발목을 잡을 수 있습니다.'});
   BA_ORDER.forEach(b=>{const{tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)<50)insights.push({cls:'i-warn',icon:'📌',txt:`행동영역 [${BA_LBL[b]}] 정답률 ${pct(ok,tot)}% — 집중 훈련이 필요합니다.`});});
   BA_ORDER.forEach(b=>{const{tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)===100)insights.push({cls:'i-ok',icon:'⭐',txt:`행동영역 [${BA_LBL[b]}] 100% 정답 — 강점 영역입니다.`});});
@@ -488,11 +558,35 @@ function submitAll(){
     <div><div class="chart-lbl">행동 영역별 정답률</div><div class="chart-wrap"><canvas id="cBA"></canvas></div></div>
   </div>
 </div>
-<div class="r-card"><div class="r-ct">문제 유형별 분석</div>
+<div class="r-card"><div class="r-ct">문항별 상세 분석</div>
+  <div style="overflow-x:auto"><table class="detail-table">
+    <tr><th>번호</th><th>정답</th>${inputMode==='subj'?'<th>학생 답안</th>':''}<th>O X</th><th>문항 수준</th><th>분류</th><th>유형</th></tr>
+    ${QS.map((q,i)=>{
+      const isOk=mg[i];
+      const sv=inputMode==='subj'?(getVal(i)||'—'):'';
+      return `<tr class="${isOk?'':'row-x'}"><td>${q.id}</td><td class="dim">${q.a}</td>${inputMode==='subj'?`<td>${sv==='__wrong__'?'—':sv}</td>`:''}<td class="${isOk?'d-o':'d-x'}">${isOk?'○':'✗'}</td><td class="dim">${q.lv}</td><td class="dim">${q.t}</td><td class="tp-cell">${q.tp}</td></tr>`;
+    }).join('')}
+  </table></div>
+</div>
+<div class="r-card"><div class="r-ct">유형별 세부 분석</div>
+  <div style="overflow-x:auto"><table class="detail-table">
+    <tr><th>유형</th><th>출제문항 수</th><th>배점</th><th>정답 수</th><th>득점</th><th>수행률</th></tr>
+    ${TY.map(t=>{const s=ts[t];return `<tr><td style="font-weight:700">${t}</td><td>${s.tot}</td><td>${s.tot*4}</td><td>${s.ok}</td><td>${s.ok*4}점</td><td style="font-weight:900;color:var(--g-blue)">${pct(s.ok,s.tot)}%</td></tr>`;}).join('')}
+    <tr style="background:rgba(234,201,150,.1)"><td style="font-weight:900">합계</td><td style="font-weight:900">25</td><td style="font-weight:900">100</td><td style="font-weight:900">${mg.filter(Boolean).length}</td><td style="font-weight:900">${sc}점</td><td style="font-weight:900;color:var(--g-blue)">${sc}%</td></tr>
+  </table></div>
+  <div style="margin-top:14px">
   ${TY.map(t=>`<div class="r-row"><span class="r-tn">${t}</span><div class="r-bg"><div class="r-fill f-${t}" style="width:${pct(ts[t].ok,ts[t].tot)}%"></div></div><span class="r-p">${ts[t].ok}/${ts[t].tot}</span></div>`).join('')}
+  </div>
 </div>
 <div class="r-card"><div class="r-ct">난이도별 분석</div>
-  ${LV_ORDER.map((l,i)=>{const s=lvMap[l];return s.tot>0?`<div class="r-row"><span class="r-tn" style="font-size:10px">${l}</span><div class="r-bg"><div class="r-fill" style="width:${pct(s.ok,s.tot)}%;background:${['linear-gradient(90deg,var(--g-gold),#f5d9a8)','linear-gradient(90deg,#0891b2,#22d3ee)','linear-gradient(90deg,#7c3aed,#a78bfa)','linear-gradient(90deg,#be123c,#f43f5e)'][i]}"></div></div><span class="r-p">${s.ok}/${s.tot}</span></div>`:'';}).join('')}
+  <div style="overflow-x:auto"><table class="detail-table">
+    <tr><th>난이도</th><th>문항 수</th><th>총점</th><th>득점 개수</th><th>득점</th><th>수행률</th></tr>
+    ${LV_ORDER.map(l=>{const s=lvMap[l];if(s.tot===0)return'';return `<tr><td style="font-weight:700;font-size:9.5px">${l}</td><td>${s.tot}</td><td>${s.tot*4}</td><td>${s.ok}</td><td>${s.ok*4}점</td><td style="font-weight:900;color:var(--g-blue)">${pct(s.ok,s.tot)}%</td></tr>`;}).join('')}
+    <tr style="background:rgba(234,201,150,.1)"><td style="font-weight:900">총합</td><td style="font-weight:900">25</td><td style="font-weight:900">100</td><td style="font-weight:900">${mg.filter(Boolean).length}</td><td style="font-weight:900">${sc}점</td><td style="font-weight:900;color:var(--g-blue)">${sc}%</td></tr>
+  </table></div>
+  <div style="margin-top:14px">
+  ${LV_ORDER.map((l,i)=>{const s=lvMap[l];return s.tot>0?`<div class="r-row"><span class="r-tn" style="font-size:9px">${l}</span><div class="r-bg"><div class="r-fill" style="width:${pct(s.ok,s.tot)}%;background:${['linear-gradient(90deg,var(--g-gold),#f5d9a8)','linear-gradient(90deg,#0891b2,#22d3ee)','linear-gradient(90deg,#7c3aed,#a78bfa)','linear-gradient(90deg,#be123c,#f43f5e)'][i]}"></div></div><span class="r-p">${s.ok}/${s.tot}</span></div>`:'';}).join('')}
+  </div>
 </div>
 ${insights.length?`<div class="r-card"><div class="r-ct">심층 분석 인사이트</div><div class="insight-list">${insights.map(ins=>`<div class="insight-item ${ins.cls}"><span class="i-icon">${ins.icon}</span><span>${ins.txt}</span></div>`).join('')}</div></div>`:''}
 <div class="r-card"><div class="r-ct">연산 진단</div>
@@ -503,11 +597,11 @@ ${insights.length?`<div class="r-card"><div class="r-ct">심층 분석 인사이
   ${CD.patterns.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">${CD.patterns.map(p=>`<span class="calc-pat-chip">${p}</span>`).join('')}</div>`:''}
   <div class="r-comment">${CD.comment}</div>
 </div>
-<div class="r-card"><div class="r-ct">학습 전략</div>
-  <div class="r-comment">${li.tx}</div>
-  <div style="font-size:11px;color:var(--g-muted);margin-top:10px;line-height:1.7">당부: 연산 → 교과 → 사고력 순서로 균형이 맞아야 합니다.</div>
+<div class="strategy-card"><div class="strategy-title">학습 전략</div>
+  <div class="strategy-body">안녕하세요. 지필드 영재교육입니다. <b>${nm2}</b> 학생의 필즈 대비 선발 모의 진단 레벨은 <b>${sc}점</b>으로 <b>${li.lv}</b>입니다.<br><br>${li.tx}<br><br>${CD.comment}<br><br>당부 드리고 싶은 건 학원이 중요한 것이 아니라 <b>연산 → 교과 → 사고력</b> 순으로 균형이 맞아야 합니다. 필즈에 입학하게 되면 E1반은 <b>필즈 입문</b>, E2반은 <b>필즈 베이직</b>이 부교재로 진행됩니다. 입문 정도라면 <b>교과 3-1 과정 + 기적의 계산법 5권</b> 정도의 연산이 필요하고, 베이직은 <b>교과 2-1 과정 + 기적의 계산법 3·4권</b> 정도의 수행률이 필요합니다.</div>
 </div>
-${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 해설 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div></div><a class="wrong-link" href="${YT+TS[q.id]}" target="_blank" rel="noopener">▶ 해설</a></div>`).join('')}</div>`:''}
+${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 해설 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div></div><a class="wrong-link" href="${YT+TS[q.id]}" target="_blank" rel="noopener">▶ 해설</a>
+<button class="similar-btn" onclick="openSimilar(${q.id},'${q.t}')">✏️ 유사문제</button></div>`).join('')}</div>`:''}
 ${weak.length?`<div class="r-card"><div class="r-ct">약점 유형 강의</div>${weak.map(t=>`<div class="s-item"><div><div class="s-tn">${t}</div><div class="s-vol">FC-CONCEPT ${TV[t].vol}</div></div><a class="s-link" href="${TV[t].url}" target="_blank" rel="noopener">▶ 강의 보기</a></div>`).join('')}</div>`:''}
 <div class="res-actions">
   <button class="res-print" onclick="window.print()">🖨 진단지 인쇄</button>
@@ -523,6 +617,100 @@ ${weak.length?`<div class="r-card"><div class="r-ct">약점 유형 강의</div>$
   },100);
 }
 window.submitAll=submitAll;
+
+// ===== 유사문제 시스템 =====
+const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+let _simQ=null, _simLv=1, _simType='', _simId=0;
+
+const SIM_GEN = {
+  '식의계산': (lv)=>{
+    const a=R(10+lv*5,20+lv*10), b=R(5,15+lv*5), op=lv>=2&&Math.random()>.5?'-':'+';
+    const ans=op==='+'?a+b:a-b;
+    if(ans<0)return SIM_GEN['식의계산'](lv);
+    const opSym=op==='+' ? '+' : '−'; return {text:`□ ${opSym} ${b} = ${ans}`,answer:String(a),
+      hint:`□ = ${ans} ${op==='+'?'−':'+' } ${b} = ${a}`};
+  },
+  '수': (lv)=>{
+    const diff=R(2,4+lv)*2, base=R(3,10);
+    const A=base+diff, B=base, give=diff/2;
+    const names=[['유비','유준'],['민지','수아'],['태오','현준']][R(0,2)];
+    return {
+      text:`${names[0]}는 ${A}개, ${names[1]}는 ${B}개를 가지고 있습니다.
+${names[0]}가 ${names[1]}에게 몇 개를 주면 두 사람이 같아집니까?`,
+      answer:String(give), hint:`(${A}−${B})÷2 = ${give}`};
+  },
+  '논리추리': (lv)=>{
+    const total=R(15+lv*3,25+lv*5), both=R(2,5);
+    const onlyA=R(3,8), A=onlyA+both;
+    return {
+      text:`전체 ${total}명 중 수학을 좋아하는 학생은 ${A}명, 과학을 좋아하는 학생은 ${A+R(1,3)}명, 둘 다 좋아하는 학생은 ${both}명입니다.
+수학만 좋아하는 학생은 몇 명입니까?`,
+      answer:String(onlyA), hint:`수학만 = ${A} − ${both} = ${onlyA}`};
+  },
+  '규칙': (lv)=>{
+    const start=R(1,5), step=R(2,3+lv);
+    const seq=[start,start+step,start+step*2,start+step*3];
+    const blank=seq[3]+step;
+    return {
+      text:`다음 수의 규칙을 찾아 □에 알맞은 수를 쓰세요.
+${seq.join(', ')}, □`,
+      answer:String(blank), hint:`+${step}씩 증가 → ${blank}`};
+  },
+  '도형': (lv)=>{
+    const n=R(3+lv,5+lv);
+    const cnt=n*(n+1)*(2*n+1)/6;
+    return {
+      text:`다음과 같은 규칙으로 쌓기나무를 쌓을 때 ${n}번째에는 몇 개입니까?
+(1번째: 1개, 2번째: 5개, 3번째: 14개 ...)`,
+      answer:String(cnt), hint:`층별 합: ${Array.from({length:n},(_,i)=>(i+1)*(i+1)).join('+')}=${cnt}`};
+  },
+};
+
+const TYPE_NAMES={'식의계산':'식의계산','수':'수','논리추리':'논리추리','규칙':'규칙','도형':'도형'};
+
+function openSimilar(qid, qtype) {
+  _simId=qid; _simType=qtype; _simLv=1;
+  document.getElementById('similarModalTitle').textContent=`Q${qid} 유사문제 · ${qtype}`;
+  document.getElementById('similarModal').classList.add('show');
+  document.querySelectorAll('.lv-chip').forEach((c,i)=>c.classList.toggle('active',i===0));
+  generateSimilar();
+}
+function closeSimilar(){document.getElementById('similarModal').classList.remove('show');}
+function setSimilarLv(lv){
+  _simLv=lv;
+  document.querySelectorAll('.lv-chip').forEach((c,i)=>c.classList.toggle('active',i===lv-1));
+  generateSimilar();
+}
+function generateSimilar(){
+  const gen=SIM_GEN[_simType]||SIM_GEN['수'];
+  _simQ=gen(_simLv);
+  document.getElementById('similarProblemText').textContent=_simQ.text;
+  document.getElementById('similarAnswer').value='';
+  document.getElementById('similarResult').style.display='none';
+  document.getElementById('similarHint').style.display='none';
+  document.getElementById('similarNextBtn').style.display='none';
+  document.getElementById('similarAnswer').focus();
+}
+function checkSimilar(){
+  const userAns=document.getElementById('similarAnswer').value.trim();
+  const correct=userAns===_simQ.answer;
+  const res=document.getElementById('similarResult');
+  res.style.display='block';
+  res.className='similar-result '+(correct?'ok':'no');
+  if(correct){
+    res.textContent='✓ 정답입니다! 잘했어요!';
+    if(_simLv<3){_simLv++;document.querySelectorAll('.lv-chip').forEach((c,i)=>c.classList.toggle('active',i===_simLv-1));}
+  } else {
+    res.textContent=`✗ 오답입니다. 정답은 ${_simQ.answer}`;
+    const hint=document.getElementById('similarHint');
+    hint.style.display='block'; hint.textContent='🔍 '+_simQ.hint;
+  }
+  document.getElementById('similarNextBtn').style.display='block';
+}
+function nextSimilar(){generateSimilar();}
+window.openSimilar=openSimilar;window.closeSimilar=closeSimilar;
+window.setSimilarLv=setSimilarLv;window.checkSimilar=checkSimilar;window.nextSimilar=nextSimilar;
+
 })();
 </script>
 </body>
