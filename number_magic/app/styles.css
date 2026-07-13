@@ -128,6 +128,10 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-key.ok{background:var(--gold);color:#4a370f;border-color:var(--gold-deep);box-shadow:0 4px 0 var(--gold-deep)}
 .nm-key.del{color:var(--no)}
 .nm-hint{flex:none;text-align:center;font-size:11px;font-weight:700;color:#9aa2b1;margin-top:4px;min-height:14px}
+.nm-memo-wrap{display:flex;align-items:center;gap:6px;max-width:290px;width:100%;margin:6px auto 0}
+.nm-memo-wrap label{font-size:13px;color:#9aa2b1;white-space:nowrap;user-select:none}
+.nm-memo{flex:1;font-size:16px;font-family:monospace;padding:5px 8px;border:1.5px solid #d6d0c4;border-radius:10px;background:#faf8f4;color:#3a3226;outline:none;min-width:0}
+.nm-memo:focus{border-color:var(--gold);background:#fffdf7}
 
 /* 대화형 안에서 숫자패드/버튼을 아래로 밀기 */
 .nm-dialog .nm-numpad-screen{margin-top:auto}
@@ -399,3 +403,249 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   background:#fff9ec;border:1.5px solid #f0d060;border-radius:99px;padding:6px 18px}
 .nm-ob-welcome.show{animation:obWelcomeIn .5s ease 1s forwards}
 @keyframes obWelcomeIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* ============================================================
+   시험 설정 — 섹션 피커
+   ============================================================ */
+.nm-ex-sec-wrap{display:flex;flex-direction:column;align-items:center;padding:28px 20px;max-width:460px;margin:0 auto}
+.nm-ex-sec-title{font-size:22px;font-weight:900;color:var(--blue-deep);margin-bottom:6px;text-align:center}
+.nm-ex-sec-sub{font-size:14px;color:var(--sub);margin-bottom:22px;text-align:center}
+.nm-ex-sec-row{display:flex;gap:14px;width:100%;justify-content:center}
+.nm-ex-sec-card{flex:1;max-width:180px;display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:22px 14px;background:#fff;border:2px solid var(--line);border-radius:20px;
+  cursor:pointer;transition:.18s;font-family:'Pretendard',sans-serif}
+.nm-ex-sec-card:hover{border-color:var(--blue);box-shadow:0 8px 24px -8px rgba(22,65,124,.2);transform:translateY(-2px)}
+.nm-ex-sec-emo{font-size:34px}
+.nm-ex-sec-name{font-size:15px;font-weight:800;color:var(--blue-deep);text-align:center}
+.nm-ex-sec-desc{font-size:12px;color:var(--sub);text-align:center}
+
+/* ============================================================
+   시험 설정 — 공통 폼 래퍼
+   ============================================================ */
+.nm-ex-form-wrap{display:flex;flex-direction:column;max-width:520px;margin:0 auto;padding:16px 18px 32px;width:100%}
+.nm-ex-form-head{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.nm-ex-form-title{font-size:17px;font-weight:800;color:var(--blue-deep)}
+.nm-ex-back-btn{background:none;border:1px solid var(--line);border-radius:99px;padding:6px 14px;
+  font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
+.nm-ex-back-btn:hover{background:var(--mist)}
+.nm-ex-form-body{display:flex;flex-direction:column;gap:0}
+.nm-ex-form-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.nm-ex-label{font-size:13px;font-weight:700;color:var(--sub);display:block;margin-bottom:8px}
+.nm-ex-select{border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;
+  font-size:14px;font-family:'Pretendard',sans-serif;background:#fff;color:var(--ink);cursor:pointer}
+.nm-ex-code-row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--sub);
+  padding:10px 0;border-top:1px solid var(--line);margin-top:4px}
+.nm-ex-code-row code{font-size:13px;background:var(--mist);padding:3px 8px;border-radius:6px;flex:1;word-break:break-all}
+.nm-ex-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+
+.nm-ex-btn-primary{padding:12px 24px;background:var(--blue);color:#fff;border:none;border-radius:14px;
+  font-size:15px;font-weight:800;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
+.nm-ex-btn-primary:hover{background:#1a4d93}
+.nm-ex-btn-primary:active{transform:scale(.97)}
+.nm-ex-btn-secondary{padding:12px 20px;background:#fff;color:var(--blue);border:2px solid var(--blue);border-radius:14px;
+  font-size:15px;font-weight:800;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
+.nm-ex-btn-secondary:hover{background:var(--mist)}
+.nm-ex-btn-ghost{padding:8px 16px;background:none;color:var(--sub);border:1px solid var(--line);border-radius:10px;
+  font-size:13px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
+.nm-ex-btn-ghost:hover{background:var(--mist)}
+
+/* ============================================================
+   학년 그리드 (1A ~ 6B)
+   ============================================================ */
+.nm-ex-grade-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+@media(max-width:400px){.nm-ex-grade-grid{grid-template-columns:repeat(3,1fr)}}
+.nm-ex-grade-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 8px;
+  background:#fff;border:2px solid var(--line);border-radius:16px;cursor:pointer;
+  font-family:'Pretendard',sans-serif;transition:.18s}
+.nm-ex-grade-btn:hover{border-color:var(--blue);background:#f0f5ff;transform:translateY(-2px);box-shadow:0 6px 18px -6px rgba(22,65,124,.2)}
+.nm-ex-grade-key{font-size:15px;font-weight:900;color:var(--blue-deep)}
+.nm-ex-grade-sub{font-size:10px;color:var(--sub);text-align:center;word-break:keep-all}
+
+/* ============================================================
+   주제 칩
+   ============================================================ */
+.nm-ex-grade-topics{display:flex;flex-direction:column;gap:8px}
+.nm-ex-topic-chip{display:flex;align-items:center;gap:10px;padding:12px 16px;
+  background:#fff;border:2px solid var(--line);border-radius:14px;cursor:pointer;
+  font-family:'Pretendard',sans-serif;text-align:left;transition:.15s}
+.nm-ex-topic-chip:hover{border-color:var(--blue);background:#f0f5ff}
+.nm-ex-topic-chip.nm-ex-topic-sel{border-color:var(--blue);background:#e8f0fd}
+.nm-ex-tchip-name{font-size:14px;font-weight:800;color:var(--blue-deep);flex:1}
+.nm-ex-tchip-desc{font-size:12px;color:var(--sub);white-space:nowrap}
+
+/* ============================================================
+   문항 수 버튼
+   ============================================================ */
+.nm-ex-count-btns{display:flex;gap:8px;flex-wrap:wrap}
+.nm-ex-cnt-btn{padding:10px 18px;background:#fff;border:2px solid var(--line);border-radius:10px;
+  font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;color:var(--sub);transition:.15s}
+.nm-ex-cnt-btn:hover{border-color:var(--blue);color:var(--blue)}
+.nm-ex-cnt-btn.sel{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* ============================================================
+   그리드 학습지 (11math 스타일)
+   ============================================================ */
+.nm-grid-sheet{display:flex;flex-direction:column;max-width:700px;margin:0 auto;padding:16px 16px 32px;width:100%;
+  overflow-y:auto;height:100%}
+.nm-grid-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;
+  padding-bottom:12px;border-bottom:2px solid var(--line)}
+.nm-grid-badge{background:var(--blue);color:#fff;font-size:13px;font-weight:800;
+  padding:6px 14px;border-radius:99px}
+.nm-grid-code{font-size:12px;color:var(--sub);font-family:monospace;background:var(--mist);
+  padding:4px 10px;border-radius:6px}
+
+/* 개념 카드 */
+.nm-grid-concept{border:1.5px solid #c9ddf5;border-radius:14px;background:#f0f6ff;margin-bottom:14px;overflow:hidden}
+.nm-grid-concept-sum{display:flex;align-items:center;gap:6px;padding:11px 16px;
+  font-size:14px;font-weight:800;color:var(--blue);cursor:pointer;list-style:none;user-select:none}
+.nm-grid-concept-sum::-webkit-details-marker{display:none}
+.nm-grid-concept[open] .nm-grid-concept-sum{border-bottom:1px solid #c9ddf5}
+.nm-grid-concept-body{padding:12px 16px;font-size:13.5px;line-height:1.8;color:#1e3a6e;
+  white-space:pre-line;background:#f8fbff}
+
+.nm-prob-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+@media(max-width:500px){.nm-prob-grid{grid-template-columns:repeat(2,1fr)}}
+
+.nm-prob-cell{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 8px;
+  background:#fff;border:2px solid var(--line);border-radius:14px;position:relative;transition:.2s}
+.nm-prob-cell.correct{border-color:var(--ok);background:#f0faf5}
+.nm-prob-cell.wrong{border-color:var(--no);background:#fef5f5}
+.nm-prob-num{font-size:10px;font-weight:800;color:var(--sub);align-self:flex-start}
+.nm-prob-tex{font-size:1em;min-height:28px;display:flex;align-items:center;justify-content:center;width:100%}
+.nm-prob-ans{width:100%;max-width:90px;text-align:center;font-size:1.1em;font-weight:700;
+  border:1.5px solid var(--line);border-radius:8px;padding:6px 4px;font-family:'Pretendard',sans-serif;
+  color:var(--ink);background:#fafaf8;outline:none;transition:.15s}
+.nm-prob-ans:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(22,65,124,.12)}
+.nm-prob-ans:disabled{background:transparent;border-color:transparent;pointer-events:none}
+.nm-prob-feedback{font-size:13px;font-weight:900;color:var(--no)}
+.nm-prob-cell.correct .nm-prob-feedback{color:var(--ok)}
+
+.nm-grid-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.nm-grid-score{font-size:20px;font-weight:900;padding:8px 20px;border-radius:12px}
+.nm-grid-pass{color:var(--ok);background:#edfaf3}
+.nm-grid-fail{color:var(--no);background:#fef0f0}
+
+/* ============================================================
+   11math 스타일 학습지 래퍼
+   ============================================================ */
+.nm-ws-wrap{display:flex;flex-direction:column;max-width:700px;margin:0 auto;
+  padding:14px 16px 32px;width:100%;overflow-y:auto;height:100%}
+
+/* 헤더 */
+.nm-ws-hd{display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.nm-ws-hd-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* 탭 */
+.nm-ws-tabs{display:flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.nm-ws-tab{padding:7px 18px;background:#fff;border:none;font-size:14px;font-weight:700;
+  color:var(--sub);cursor:pointer;font-family:'Pretendard',sans-serif;transition:.14s}
+.nm-ws-tab:not(:first-child){border-left:1.5px solid var(--line)}
+.nm-ws-tab.active{background:var(--blue);color:#fff}
+
+/* 문제 그리드 */
+.nm-ws-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:520px){.nm-ws-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* 셀 */
+.nm-ws-cell{display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:10px 8px 12px;background:#fff;border:1.5px solid var(--line);
+  border-radius:14px;position:relative;transition:.15s}
+.nm-ws-ok{border-color:var(--ok);background:#f0faf5}
+.nm-ws-err{border-color:var(--no);background:#fef5f5}
+
+/* 원형 번호 */
+.nm-ws-cnum{font-size:14px;font-weight:900;color:var(--sub);align-self:flex-start;line-height:1}
+
+/* ── 세로셈 (vertical problem) ── */
+.nm-vp{display:flex;flex-direction:column;align-items:flex-end;
+  font-size:1.25em;font-weight:800;color:var(--ink);min-width:64px;width:100%;
+  padding:0 8px}
+.nm-vp-row{display:flex;align-items:center;justify-content:flex-end;width:100%;line-height:1.5}
+.nm-vp-top{margin-bottom:2px}
+.nm-vp-mid{gap:6px}
+.nm-vp-op{min-width:22px;text-align:left;font-size:1em;color:var(--blue-deep)}
+.nm-vp-b{flex:1;text-align:right}
+.nm-vp-line{width:100%;height:2px;background:var(--ink);margin:4px 0}
+.nm-vp-bot{justify-content:flex-end}
+.nm-vp-inp{width:90%;max-width:80px;text-align:right;font-size:1em;font-weight:800;
+  border:none;border-bottom:2px solid var(--blue);background:transparent;
+  outline:none;font-family:'Pretendard',sans-serif;color:var(--blue-deep);padding:2px 0}
+.nm-vp-inp:focus{border-bottom-color:var(--gold-deep)}
+.nm-ws-ok .nm-vp-inp{border-bottom-color:var(--ok);color:var(--ok)}
+.nm-ws-err .nm-vp-inp{border-bottom-color:var(--no);color:var(--no)}
+.nm-vp-ans-val{font-size:1em;font-weight:900;color:var(--no);text-decoration:none}
+.nm-vp-blank{display:inline-block;min-width:60px;height:2px;background:var(--ink);margin-top:6px}
+
+/* 인라인 (세로셈 불가) */
+.nm-vp-inline{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+.nm-vp-tex{font-size:0.95em;text-align:center}
+.nm-vp-inp-sm{width:72px;text-align:center;font-size:0.95em;font-weight:800;
+  border:none;border-bottom:2px solid var(--blue);background:transparent;
+  outline:none;font-family:'Pretendard',sans-serif;color:var(--blue-deep);padding:2px 0}
+.nm-vp-inp-sm:focus{border-bottom-color:var(--gold-deep)}
+
+/* 하단 버튼 영역 */
+.nm-ws-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding-top:10px;
+  border-top:1px solid var(--line)}
+
+/* ── 문장제 셀 ── */
+.nm-ws-wide{grid-column:span 2}
+.nm-vp-wordwrap{display:flex;flex-direction:column;gap:8px;width:100%}
+.nm-vp-word{font-size:13.5px;line-height:1.65;color:var(--ink);font-weight:600;
+  word-break:keep-all;text-align:left;width:100%}
+.nm-vp-word-sm{font-size:12px;line-height:1.55}
+.nm-vp-word-ans{display:flex;justify-content:flex-end;align-items:center;gap:6px}
+
+/* ── 학년/과정 모드 탭 · 예비중등 버튼 ── */
+.nm-ex-mode-tabs{margin-left:auto}
+.nm-ex-grade-pre{border-color:var(--gold-deep);background:linear-gradient(160deg,#fffdf5,#fdf3dd)}
+.nm-ex-grade-pre:hover{border-color:var(--gold-deep);background:#fdf0d5}
+.nm-ex-tchip-grade{flex:none;font-size:11px;font-weight:900;color:#fff;background:var(--blue);
+  border-radius:7px;padding:3px 7px;line-height:1}
+.nm-ex-topic-soon{opacity:.85}
+.nm-ex-topic-soon .nm-ex-tchip-desc{color:var(--gold-deep);font-weight:800}
+
+/* ── ✨연산 마법(전략) 주제 ── */
+.nm-ex-topics-label{font-size:12px;font-weight:900;color:var(--gold-deep);
+  margin:12px 0 2px;letter-spacing:.02em}
+.nm-ex-topic-magic{border-color:#e7d7ae;background:linear-gradient(160deg,#fffdf5,#fdf6e3)}
+.nm-ex-topic-magic:hover{border-color:var(--gold-deep);background:#fdf3dd}
+.nm-ex-topic-magic.nm-ex-topic-sel{border-color:var(--gold-deep);background:#fdf0d5}
+
+/* ── 준비중(생성기 없음) 안내 카드 ── */
+.nm-ex-comingsoon{margin-top:20px;border:1.5px solid #eadfc4;border-radius:16px;
+  background:#fffdf5;padding:18px 18px 20px}
+.nm-ex-comingsoon-badge{display:inline-block;font-size:13px;font-weight:900;color:#8a6d1f;
+  background:#fdf0d5;border-radius:99px;padding:6px 14px;margin-bottom:10px}
+.nm-ex-comingsoon-desc{font-size:13.5px;line-height:1.6;color:var(--sub);margin-bottom:12px}
+.nm-ex-comingsoon-concept{border-radius:12px}
+
+/* ── 주제 화면 하단 미리보기 ── */
+.nm-ex-preview{margin-top:24px;border-top:2px dashed var(--line);padding-top:14px}
+.nm-ex-preview-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.nm-ws-grid-preview{margin-bottom:0}
+.nm-ws-cell-sm{padding:8px 6px 10px}
+.nm-vp-sm{font-size:1.05em}
+
+/* ============================================================
+   인쇄 학습지 (11math 세로셈 스타일)
+   ============================================================ */
+@media print {
+  .nm-print-ws-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .nm-print-ws-cell{border:1px solid #bbb;border-radius:6px;padding:10px 8px 14px;
+    display:flex;flex-direction:column;align-items:center;gap:4px}
+  .nm-print-cnum{font-size:14px;font-weight:900;color:#555;align-self:flex-start}
+  .nm-print-vp{display:flex;flex-direction:column;align-items:flex-end;
+    font-size:1.15em;font-weight:700;width:100%;padding:0 6px}
+  .nm-print-vp-top{text-align:right;width:100%;line-height:1.5}
+  .nm-print-vp-mid{display:flex;align-items:center;gap:4px;width:100%;line-height:1.5}
+  .nm-print-vp-op{min-width:18px;text-align:left}
+  .nm-print-vp-line{width:100%;height:1.5px;background:#000;margin:4px 0}
+  .nm-print-vp-bot{text-align:right;width:100%;min-height:24px}
+  .nm-print-ak-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .nm-print-ak-item{font-size:13px;font-weight:700}
+  .nm-print-ws-wide{grid-column:span 2}
+  .nm-print-word{font-size:12.5px;line-height:1.6;text-align:left;width:100%;word-break:keep-all}
+  .nm-print-word-blank{font-size:12px;align-self:flex-end;margin-top:8px}
+}

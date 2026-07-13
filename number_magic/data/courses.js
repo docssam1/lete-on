@@ -163,7 +163,7 @@ P4:{
 
 P5:{
   tier:'beginner', order:5,
-  title:{ ko:'보정 빼기 마법', en:'Compensation Subtraction', zh:'补偿减法魔法' },
+  title:{ ko:'더 빼고 돌려받기 마법', en:'Compensation Subtraction', zh:'补偿减法魔法' },
   sessions:[
     { magic:'A-05',
       drills:[{t:'AD5',lv:1,n:6},{t:'SB3',lv:2,n:6},{t:'SB4',lv:1,n:4},{t:'AD8',lv:1,n:4}] },

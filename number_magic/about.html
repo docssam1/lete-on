@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Numbers of Magic — 소개 · 철학</title>
+<script>
+/* 카카오톡 인앱브라우저 → 기본 브라우저로 열기 + 인앱 창 닫기 */
+(function(){
+  var ua = navigator.userAgent;
+  if(!/KAKAOTALK/i.test(ua)) return;
+  location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href);
+  setTimeout(function(){
+    location.href = /iPhone|iPad|iPod/i.test(ua)
+      ? 'kakaoweb://closeBrowser'
+      : 'kakaotalk://inappbrowser/close';
+  }, 500);
+})();
+</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>

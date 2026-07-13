@@ -19,6 +19,22 @@
 html.skip-intro #nm-intro{display:none}
 </style>
 <script>if(/[?&]enter=1\b/.test(location.search))document.documentElement.classList.add('skip-intro');</script>
+<script>
+/* 카카오톡 인앱브라우저 → 기본 브라우저(크롬/사파리)로 열기.
+   카카오톡 공식 스킴 openExternal 사용 — 다만 이것만 부르면 외부 브라우저가
+   떠도 카톡 인앱 창이 그대로 남아 "여전히 카톡에서 열린다"고 느껴진다
+   → 잠시 후 인앱 창을 닫는 스킴을 이어서 호출한다. */
+(function(){
+  var ua = navigator.userAgent;
+  if(!/KAKAOTALK/i.test(ua)) return;
+  location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href);
+  setTimeout(function(){
+    location.href = /iPhone|iPad|iPod/i.test(ua)
+      ? 'kakaoweb://closeBrowser'
+      : 'kakaotalk://inappbrowser/close';
+  }, 500);
+})();
+</script>
 </head>
 <body>
 
