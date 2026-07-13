@@ -69,8 +69,45 @@ if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none'};
 if(!S.character_unlocked)S.character_unlocked={};
 if(typeof S.onboarded!=='boolean')S.onboarded=hadSave; // 이미 쓰던 사용자는 온보딩 화면 스킵
 if(S.name===undefined)S.name='';
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}cloudPushSoon();}
 function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
+
+/* ---------- 클라우드 프로필 (Supabase nm_profiles) ----------
+   캐릭터 이름 = 고유 아이디. 온보딩에서 이름이 비어 있지 않고 중복이 아니면
+   그 이름으로 클레임(insert)되고, 이후 진행상황(S 전체)이 이름 아래로 동기화된다.
+   같은 이름이 이미 있으면 "이건 나예요(이어하기) / 다른 이름 쓸래요"를 고른다.
+   네트워크가 안 되면 조용히 로컬 전용으로 동작(앱 사용을 막지 않음).
+   cloudLinked가 true인 프로필만 push — 클레임 절차 없이 이름만 같은 옛 로컬
+   사용자가 남의 클라우드 저장본을 덮어쓰는 사고를 막는다. */
+const SB_URL='https://fgahqumaldheqettmvqg.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
+const sbHdr=()=>({apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'});
+async function cloudGet(name){
+  const url=`${SB_URL}/rest/v1/nm_profiles?name=eq.${encodeURIComponent(name)}&select=name,state`;
+  const r=await fetch(url,{headers:sbHdr()});
+  if(!r.ok)throw new Error('cloudGet '+r.status);
+  const rows=await r.json();
+  return rows[0]||null;
+}
+async function cloudClaim(name,state){
+  const r=await fetch(`${SB_URL}/rest/v1/nm_profiles`,{
+    method:'POST',headers:sbHdr(),
+    body:JSON.stringify({name,state,updated_at:new Date().toISOString()})});
+  if(r.status===409)return false;           // 그 사이 누가 선점 (중복)
+  if(!r.ok)throw new Error('cloudClaim '+r.status);
+  return true;
+}
+let cloudTimer=null;
+function cloudPushSoon(){
+  if(!S.cloudLinked||!S.name)return;
+  clearTimeout(cloudTimer);
+  cloudTimer=setTimeout(()=>{
+    fetch(`${SB_URL}/rest/v1/nm_profiles?name=eq.${encodeURIComponent(S.name)}`,{
+      method:'PATCH',headers:sbHdr(),
+      body:JSON.stringify({state:S,updated_at:new Date().toISOString()})
+    }).catch(()=>{});                       // 오프라인이면 다음 save 때 재시도
+  },1500);
+}
 function markStepDone(unit,step){S.progress[unit]=S.progress[unit]||{steps:{}};S.progress[unit].steps[step]=true;save();}
 function stepDone(unit,step){return !!(S.progress[unit]&&S.progress[unit].steps&&S.progress[unit].steps[step]);}
 
@@ -213,11 +250,49 @@ function screenWelcome(){
     $('.nm-ob-num').textContent='#'+ob.number;
   }
 
-  function go(){
+  async function go(){
     const name=(ob.name||'').trim();
     if(!name){ toast(t('obNeedName'),false); return; }
     ob.name=name;
-    reveal(name);
+    /* 이름 중복 확인: 유일하면 이 이름이 곧 아이디가 되어 클라우드에 기억된다 */
+    const btn=$('#obGo');
+    btn.disabled=true;
+    btn.textContent=S.lang==='ko'?'이름 확인 중…':S.lang==='en'?'Checking name…':'检查名字中…';
+    let existing=null, online=true;
+    try{ existing=await cloudGet(name); }
+    catch(e){ online=false; }               // 오프라인 → 로컬 전용으로 진행
+    if(!online){ reveal(name); return; }
+    if(existing){ askResume(name, existing); return; }
+    /* 유일한 이름 → 클레임 */
+    try{
+      const okClaim=await cloudClaim(name,{});
+      if(!okClaim){ const again=await cloudGet(name).catch(()=>null); askResume(name, again||{state:{}}); return; }
+      ob.claimed=true;
+      reveal(name);
+    }catch(e){ reveal(name); }              // 클레임 실패 시에도 앱은 계속
+  }
+
+  /* 같은 이름이 이미 있을 때: 이어하기 / 다른 이름 */
+  function askResume(name, existing){
+    scr.innerHTML=`
+    <div class="nm-ob">
+      <div class="nm-ob-card">
+        <div class="nm-ob-dupico">🧙</div>
+        <h1 class="nm-ob-title">${S.lang==='ko'?`'${esc(name)}' 친구가 이미 있어요!`:S.lang==='en'?`'${esc(name)}' already exists!`:`已经有叫'${esc(name)}'的朋友了！`}</h1>
+        <p class="nm-ob-sub">${S.lang==='ko'?'예전에 만든 내 캐릭터라면 이어서 할 수 있어요.':S.lang==='en'?'If that was you, you can continue your adventure.':'如果那是你，可以继续冒险。'}</p>
+        <button class="nm-btn nm-ob-go" id="obResume">${S.lang==='ko'?'이건 나예요! 이어하기 ▶':S.lang==='en'?"That's me! Continue ▶":'是我！继续 ▶'}</button>
+        <button class="nm-btn ghost nm-ob-go" id="obRename">${S.lang==='ko'?'다른 이름 쓸래요':S.lang==='en'?'Pick another name':'换个名字'}</button>
+      </div>
+    </div>`;
+    $('#obResume').onclick=()=>{
+      const st=existing&&existing.state?existing.state:{};
+      S={...defaults(),...st};
+      S.name=name; S.onboarded=true; S.cloudLinked=true;
+      if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none'};
+      save(); render();
+      toast(t('obWelcome')(name),true);
+    };
+    $('#obRename').onclick=()=>{ ob.name=''; draw(); };
   }
 
   /* 구름 뒤에서 캐릭터가 "짠!" 등장하는 연출 */
@@ -253,6 +328,7 @@ function screenWelcome(){
     S.character = {number:ob.number,color:ob.color,bg:ob.bg,cape:ob.cape};
     S.name = ob.name;
     S.onboarded = true;
+    if(ob.claimed)S.cloudLinked = true;   // 이름 클레임 성공 → 이후 진행상황 자동 동기화
     save();
     render();
   }
@@ -320,7 +396,8 @@ function screenTown(){
         <div class="ncloud c"><span class="puff" style="width:56px;height:56px;left:0;top:-6px"></span><span class="puff" style="width:44px;height:44px;left:40px;top:2px"></span><span class="num">5</span></div>
         <div id="townFountain"></div>
         ${zones}
-        <div class="nb" id="nbNumi"><div class="speech"></div>
+        <div class="nb nb-player" id="nbNumi"><div class="speech"></div>
+          <div class="nb-name">${S.name?esc(S.name):'#'+S.character.number}</div>
           <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar(S.character,52):'<img src="assets/characters/numi-0.png" alt="Numi">'}</div>
           <div class="shadow"></div></div>
         <div class="nb" id="nbPoco"><div class="speech"></div>
@@ -479,22 +556,25 @@ function initTownWorld(scr){
     world.appendChild(s);setTimeout(()=>s.remove(),8000);
   },600);
 
-  /* 걸어다니는 숫자친구 */
+  /* 걸어다니는 숫자친구 — nbNumi는 "내가 만든 캐릭터"(플레이어): 지도를 탭하면
+     그 자리로 걸어간다. Poco/Momo는 NPC로 계속 자유 배회. */
+  const myName=S.name?S.name:('#'+S.character.number);
   const nbs=[
-    {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.10,lines:['안녕! 난 0이야 ⭕','아무것도 없어도 특별해!','마법노트 보여줄게!']},
+    {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.22,player:true,
+      lines:[`안녕! 난 ${myName}(이)야 ✨`,'지도를 콕 찍으면 내가 걸어가!','오늘은 어떤 마법을 배울까?']},
     {el:scr.querySelector('#nbPoco'),x:55,y:66,tx:55,ty:66,spd:.14,lines:['안녕! 난 3이야 ✨','7이랑 만나면 10! 🔟','게임하러 가자!']},
     {el:scr.querySelector('#nbMomo'),x:30,y:70,tx:30,ty:70,spd:.08,lines:['안녕! 난 8이야 💖','2랑 만나면 10! 🔟','실수는 괜찮아!']}
   ];
   nbs.forEach(n=>{n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';});
   function pick(n){const sp=[[38,60],[52,64],[30,72],[46,74],[60,68],[24,66]];const p=sp[Math.random()*sp.length|0];n.tx=p[0]+Math.random()*6;n.ty=p[1]+Math.random()*4;}
-  nbs.forEach(pick);
+  nbs.forEach(n=>{if(!n.player)pick(n);});
   let walkRAF;
   let muted=true;
   let stopAmbience=null;
   function walk(){
     nbs.forEach(n=>{
       const dx=n.tx-n.x,dy=n.ty-n.y,d=Math.hypot(dx,dy);
-      if(d<.3){if(Math.random()<.012)pick(n);return;}
+      if(d<.3){if(!n.player&&Math.random()<.012)pick(n);return;}   // 플레이어는 도착하면 그 자리에 머문다
       n.x+=dx/d*n.spd;n.y+=dy/d*n.spd;
       n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';
       n.el.querySelector('.nb-img').style.transform=dx<0?'scaleX(-1)':'scaleX(1)';
@@ -502,6 +582,29 @@ function initTownWorld(scr){
     walkRAF=requestAnimationFrame(walk);
   }
   walkRAF=requestAnimationFrame(walk);
+
+  /* 탭 → 내 캐릭터 이동. 카메라 드래그(moved)·핀치줌·건물/친구 탭(stopPropagation)과
+     충돌하지 않도록: 드래그하지 않은 "가벼운 탭"일 때만 목적지로 삼는다. */
+  let pinched=false;
+  vp.addEventListener('pointermove',()=>{if(pts.size>=2)pinched=true;});
+  vp.addEventListener('pointerup',e=>{
+    if(moved){return;}
+    if(pinched){pinched=false;return;}
+    if(modal.classList.contains('on'))return;
+    const r=vp.getBoundingClientRect();
+    const wx=(e.clientX-r.left-cam.x)/cam.scale;   // 월드 px
+    const wy=(e.clientY-r.top -cam.y)/cam.scale;
+    let px=wx/W*100, py=wy/H*100;                  // 월드 %
+    if(px<2||px>98||py<4||py>96)return;            // 지도 밖 무시
+    const me=nbs[0];
+    me.tx=px; me.ty=py;
+    /* 목적지 표시(잠깐 반짝) */
+    const ping=document.createElement('div');
+    ping.className='nb-ping';
+    ping.style.left=px+'%';ping.style.top=py+'%';
+    world.appendChild(ping);
+    setTimeout(()=>ping.remove(),700);
+  });
   nbs.forEach(n=>{
     n.el.addEventListener('pointerup',e=>{
       if(moved)return;e.stopPropagation();

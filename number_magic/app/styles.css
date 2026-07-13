@@ -321,6 +321,22 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nb .speech.show{opacity:1;transform:translateX(-50%) translateY(-8px)}
 .nb .speech::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#fff}
 
+/* ── 내 캐릭터(플레이어) — 이름표 + 탭 목적지 핑 ── */
+.nb-player{z-index:26}
+.nb .nb-name{position:absolute;bottom:calc(100% + 1px);left:50%;transform:translateX(-50%);
+  background:var(--blue);color:#fff;font-size:10px;font-weight:900;letter-spacing:.02em;
+  padding:2.5px 8px;border-radius:99px;white-space:nowrap;pointer-events:none;
+  box-shadow:0 3px 8px rgba(14,44,87,.35)}
+.nb .speech.show~.nb-name,.nb .speech.show+.nb-name{opacity:0}   /* 말풍선 뜨면 이름표 잠시 숨김 */
+.nb-ping{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;
+  border:3px solid var(--gold-deep);pointer-events:none;z-index:24;
+  animation:nbping .7s ease-out forwards}
+@keyframes nbping{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.5);opacity:0}}
+
+/* ── 온보딩: 이름 중복 안내 ── */
+.nm-ob-dupico{font-size:46px;margin-bottom:8px}
+.nm-ob-card .nm-btn.ghost{margin-top:10px}
+
 /* 건물 클릭존 — 딱딱한 박스 대신 은은한 링 글로우 */
 .nm-zone{position:absolute;border:none;background:transparent;cursor:pointer;padding:0;border-radius:16px;z-index:15;transition:.2s}
 .nm-zone:hover{background:rgba(255,255,255,.1)}
