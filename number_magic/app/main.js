@@ -841,6 +841,7 @@ function stepLabWidget(body,u){
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
     <div id="labWidget" class="nm-lab-widget"></div>
+    <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
   </div>`;
   S.sub.labStarted=true;
   say(first?L(cfg.intro):L(cur.prompt));
@@ -888,6 +889,7 @@ function stepLabNumpad(body,u){
     <div class="nm-lab-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
     <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
     <div class="nm-numpad" id="pad"></div>
+    <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
     <div class="nm-hint">${t('numpadHint')}</div>
   </div>`;
   S.sub.labStarted=true;

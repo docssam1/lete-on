@@ -208,6 +208,12 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-lab-expr{text-align:center;font-weight:900;color:var(--blue-deep);margin:10px 0;overflow-x:auto}
 .nm-lab-expr .katex{font-size:clamp(20px,5.6vw,26px)}
 
+/* 메모장 (스크래치패드) */
+.nm-memo-wrap{display:flex;align-items:center;gap:6px;max-width:290px;width:100%;margin:6px auto 0}
+.nm-memo-wrap label{font-size:13px;color:#9aa2b1;white-space:nowrap;user-select:none}
+.nm-memo{flex:1;font-size:16px;font-family:monospace;padding:5px 8px;border:1.5px solid #d6d0c4;border-radius:10px;background:#faf8f4;color:#3a3226;outline:none;min-width:0}
+.nm-memo:focus{border-color:var(--gold);background:#fffdf7}
+
 /* ============================================================
    ── 데스크탑 전용(768px+): 학습 화면(등급목록/유닛)만 중앙 640px로 좁힘.
       마을(지도)은 위에서 이미 폭 제한이 없으므로 항상 화면 전체를 채움. ──
