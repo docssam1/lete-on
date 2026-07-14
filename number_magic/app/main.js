@@ -116,7 +116,25 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function math(tex,el){try{katex.render(tex,el,{throwOnError:false,displayMode:false});}catch(e){el.textContent=tex;}}
 function renderMath(root){(root||document).querySelectorAll('[data-tex]').forEach(el=>{if(el.dataset.done)return;math(el.getAttribute('data-tex'),el);el.dataset.done='1';});}
-function say(text){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=S.lang==='zh'?'zh-CN':S.lang==='en'?'en-US':'ko-KR';u.rate=1;u.pitch=1.2;speechSynthesis.speak(u);}catch(e){}}
+let _ttsCache={};
+function say(text){
+  if(!text)return;
+  const lang=S.lang||'ko';
+  const map=window.NM_TTS_MAP;
+  if(map&&map[lang]&&map[lang][text]){
+    const url=map[lang][text];
+    try{
+      speechSynthesis.cancel();
+      let a=_ttsCache[url];
+      if(!a){a=new Audio(url);_ttsCache[url]=a;}
+      a.currentTime=0;
+      a.play().catch(()=>_sayWeb(text,lang));
+      return;
+    }catch(e){}
+  }
+  _sayWeb(text,lang);
+}
+function _sayWeb(text,lang){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang==='zh'?'zh-CN':lang==='en'?'en-US':'ko-KR';u.rate=1;u.pitch=1.2;speechSynthesis.speak(u);}catch(e){}}
 function toast(msg,ok){const el=document.createElement('div');el.className='nm-toast '+(ok?'ok':'no');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);}
 function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad'];for(let i=0;i<64;i++){const el=document.createElement('div');el.className='nm-confetti';el.style.left=Math.random()*100+'vw';el.style.background=cols[i%cols.length];document.body.appendChild(el);el.animate([{transform:'translateY(-20px) rotate(0)',opacity:1},{transform:`translateY(${innerHeight+40}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove();}}
 function coinAdd(n){S.coins+=n;save();}
@@ -781,7 +799,7 @@ function runPractice(body,u){
   S.sub.started=true;
   renderMath(body);
   buildNumpad($('#pad'),val=>handlePractice(val,body,u));
-  say(first?L(cfg.intro)+'. '+L(cur.prompt):L(cur.prompt));
+  say(first?L(cfg.intro):L(cur.prompt));
 }
 function handlePractice(val,body,u){
   const cur=S.sub.cur;const need=u.practice.count||5;

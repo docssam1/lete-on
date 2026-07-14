@@ -231,7 +231,7 @@
 ══════════════════════════════════════ */
 .nm-w-steps{
   display:flex;flex-direction:column;
-  height:100%;gap:8px;
+  flex:1;min-height:0;gap:8px;
 }
 .nm-w-steps-prog{
   display:flex;gap:6px;justify-content:center;flex:none;padding:2px 0;

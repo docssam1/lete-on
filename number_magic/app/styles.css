@@ -135,6 +135,9 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-memo{flex:1;font-size:16px;font-family:monospace;padding:5px 8px;border:1.5px solid #d6d0c4;border-radius:10px;background:#faf8f4;color:#3a3226;outline:none;min-width:0}
 .nm-memo:focus{border-color:var(--gold);background:#fffdf7}
 
+/* 매직랩 위젯 컨테이너: 남은 높이 전체 사용 → 내부 numpad가 잘리지 않음 */
+.nm-lab-widget{flex:1;min-height:0;display:flex;flex-direction:column;width:100%}
+
 /* 대화형 안에서 숫자패드/버튼을 아래로 밀기 */
 .nm-dialog .nm-numpad-screen{margin-top:auto}
 .nm-dialog .nm-btn.full{margin-top:auto}
