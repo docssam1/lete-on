@@ -337,9 +337,13 @@ function renderSteps(problem, container, onAnswer){
   let stepIdx=0;
   let answered=false;
 
+  function lang(){return(window.S&&window.S.lang)||'ko';}
+  function t(ko,en,zh){const l=lang();return l==='en'?en:l==='zh'?zh:ko;}
+
   function show(){
     const s=steps[stepIdx];
     const totalSteps=steps.length;
+    let wrongCount=0;
 
     // Build progress dots
     const dotHtml=steps.map((_,i)=>`<span class="nm-w-step-dot${i<stepIdx?' done':i===stepIdx?' cur':''}"></span>`).join('');
@@ -366,7 +370,7 @@ function renderSteps(problem, container, onAnswer){
       <div class="nm-w-steps-input">
         <div class="nm-numpad-screen" id="wsScreen">&nbsp;</div>
         <div class="nm-numpad" id="wsPad"></div>
-        <div class="nm-hint" id="wsHint">숫자를 눌러 □ 칸을 채워요</div>
+        <div class="nm-w-feedback" id="wsFeedback"></div>
       </div>
     `;
     container.innerHTML='';
@@ -379,8 +383,16 @@ function renderSteps(problem, container, onAnswer){
     });
 
     const screen=root.querySelector('#wsScreen');
-    const hint=root.querySelector('#wsHint');
+    const feedback=root.querySelector('#wsFeedback');
     const ns=numpadState(screen,3);
+
+    function showHintBtn(){
+      feedback.innerHTML=`<button class="nm-w-hint-btn">💡 ${t('힌트 보기','Show Hint','查看提示')}</button>`;
+      feedback.querySelector('.nm-w-hint-btn').addEventListener('pointerup',e=>{
+        e.stopPropagation();
+        feedback.innerHTML=`<span class="nm-w-hint-reveal">${t('이 단계 답:','Answer:','答案：')} <b>${s.blank}</b> — ${t('입력해봐!','Type it in!','输入试试！')}</span>`;
+      });
+    }
 
     buildNumpad(root.querySelector('#wsPad'),val=>{
       if(val==='ok'){
@@ -399,17 +411,26 @@ function renderSteps(problem, container, onAnswer){
                 activeCard.classList.remove('nm-w-step-active');
                 activeCard.classList.add('nm-w-step-done');
               }
-              hint.textContent='🎉 완성!';
+              feedback.textContent='🎉 '+t('완성!','Done!','完成！');
+              feedback.className='nm-w-feedback ok';
               setTimeout(()=>onAnswer(problem.answer!=null?problem.answer:s.blank),700);
             } else {
               show();
             }
           }
         } else {
+          wrongCount++;
           shake(screen);
-          hint.textContent='다시! 💡';
           ns.clear();
-          setTimeout(()=>{hint.textContent='숫자를 눌러 □ 칸을 채워요';},1100);
+          const card=root.querySelector('#wsActive');
+          if(card){card.classList.add('nm-w-step-err');setTimeout(()=>card.classList.remove('nm-w-step-err'),600);}
+          if(wrongCount>=2){
+            showHintBtn();
+          } else {
+            feedback.className='nm-w-feedback err';
+            feedback.textContent=t('틀렸어요! 다시 해봐 💡','Not quite! Try again 💡','不对！再试一次 💡');
+            setTimeout(()=>{feedback.className='nm-w-feedback';feedback.textContent='';},1400);
+          }
         }
         return;
       }

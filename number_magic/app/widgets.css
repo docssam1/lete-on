@@ -276,6 +276,26 @@
 .nm-w-steps-input .nm-numpad-screen{margin:0;}
 .nm-w-steps-input .nm-numpad{max-width:260px;width:100%;}
 
+/* 틀렸을 때 카드 빨간 테두리 플래시 */
+@keyframes nm-w-err-flash{0%,100%{border-color:var(--line);background:#fff}50%{border-color:var(--no);background:#fff5f5}}
+.nm-w-step-err{animation:nm-w-err-flash .6s ease;}
+
+/* 스텝 피드백 (정답/오답/힌트) */
+.nm-w-feedback{min-height:22px;text-align:center;font-size:13px;font-weight:800;padding:0 4px;}
+.nm-w-feedback.err{color:var(--no);}
+.nm-w-feedback.ok{color:var(--ok);}
+.nm-w-hint-btn{
+  background:#fffbeb;border:1.5px solid var(--gold-deep);border-radius:99px;
+  padding:4px 16px;font-size:13px;font-weight:800;color:#7a5a12;cursor:pointer;
+  box-shadow:0 2px 0 var(--gold-deep);transition:.1s;
+}
+.nm-w-hint-btn:active{transform:translateY(1px);box-shadow:none;}
+.nm-w-hint-reveal{
+  font-size:13px;font-weight:800;color:#7a5a12;
+  background:#fffbeb;border-radius:10px;padding:3px 12px;
+}
+.nm-w-hint-reveal b{color:var(--blue);font-size:16px;}
+
 /* ══════════════════════════════════════
    VERTICAL WIDGET
 ══════════════════════════════════════ */
