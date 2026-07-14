@@ -72,6 +72,8 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 
 /* STEP 본문: 남은 높이 채우고 내부에서 배치 */
 .nm-step-body{flex:1;min-height:0;display:flex;flex-direction:column}
+/* 시험/학습지 폼: 내용이 길어지면 수직 스크롤 허용 */
+#nm-exam-cnt{overflow-y:auto;-webkit-overflow-scrolling:touch}
 
 /* 유닛 인트로 영상 (선택적, u.introVideo 있을 때만) */
 .nm-uintro{position:relative;flex:1;min-height:0;border-radius:20px;overflow:hidden;background:#0E2C57}
