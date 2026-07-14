@@ -173,6 +173,31 @@ NM_TGEN['ml5_tensMul'] = function(params, rng) {
     };
   }
 
+  if (mode === 'h1') {
+    /* 몇백 × 한 자리: a=100·200…900, b=2~9 */
+    const a       = R(rng, 1, 9) * 100;
+    const b       = R(rng, 2, 9);
+    const aHunds  = Math.floor(a / 100);
+    const mid     = aHunds * b;
+    const answer  = a * b;
+
+    return {
+      prompt: {
+        ko: `${a} × ${b}을 몇백 곱셈으로 계산해요`,
+        en: `Calculate ${a} × ${b} using hundreds multiplication`,
+        zh: `用整百乘法计算 ${a} × ${b}`
+      },
+      tex: `${a} \\times ${b} = \\square`,
+      answer,
+      answerType: 'steps',
+      widget: 'steps',
+      steps: [
+        { tex: `${aHunds} \\times ${b} = \\square`,  blank: mid    },
+        { tex: `${mid} \\times 100 = \\square`,        blank: answer }
+      ]
+    };
+  }
+
   /* mode === 'tt': 몇십 × 몇십 */
   const a      = R(rng, 1, 9) * 10;
   const b      = R(rng, 1, 9) * 10;
