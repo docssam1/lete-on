@@ -124,26 +124,41 @@ const BRANCH = "main";
 
 // 상품 목록 (컬럼)
 const PRODUCTS = [
-  {id:"FC-CONCEPT",  name:"개념완성"},
-  {id:"FC-MOCK",     name:"진단모의고사"},
-  {id:"FC-KILLER",   name:"킬러문항"},
-  {id:"FC-FINAL-1",  name:"파이널1회"},
-  {id:"FC-FINAL-2",  name:"파이널2회"},
-  {id:"FC-FINAL-3",  name:"파이널3회"},
-  {id:"FC-FINAL-4",  name:"파이널4회"},
-  {id:"FC-ULTIMATE", name:"최종모의고사"},
+  {id:"개념완성",       name:"개념완성"},
+  {id:"진단모의고사",    name:"진단모의고사"},
+  {id:"킬러문항",       name:"킬러문항"},
+  {id:"실전모의고사1회", name:"실전모의고사 1회"},
+  {id:"실전모의고사2회", name:"실전모의고사 2회"},
+  {id:"실전모의고사3회", name:"실전모의고사 3회"},
+  {id:"실전모의고사4회", name:"실전모의고사 4회"},
+  {id:"실전모의고사5회", name:"실전모의고사 5회"},
+  {id:"실전모의고사6회", name:"실전모의고사 6회"},
+  {id:"파이널모의고사1회", name:"파이널모의고사 1회"},
+  {id:"파이널모의고사2회", name:"파이널모의고사 2회"},
+  {id:"파이널모의고사3회", name:"파이널모의고사 3회"},
+  {id:"파이널모의고사4회", name:"파이널모의고사 4회"},
+  {id:"최종모의고사",    name:"최종모의고사"},
 ];
 
 // 기본 데이터 구조
 let S = window.GFIELD_FC_DATA || {
   students: [],
+  studentCode: {},               // { "이름": "GF-XXXX" } 자동 생성 승인번호
   studentType: {},
-  attendance: {},
+  attendance: {},                // 이름 기준 저장 (내부 관리용)
   content: {},
   archiveFolders: [],           // ["약점유형 보충자료", ...]
   archiveAccess: {},            // { "폴더명": ["*"] 또는 ["학생명",...] }
   books: []                     // [{folder, title, pdf, video, date}]
 };
+
+function genCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXY23456789'; // 헷갈리는 문자(0,O,1,I) 제외
+  let s = 'GF';
+  for(let i=0;i<6;i++) s += chars[Math.floor(Math.random()*chars.length)];
+  if(Object.values(S.studentCode).includes(s)) return genCode();
+  return s;
+}
 
 function esc(s){
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -157,16 +172,19 @@ function cObj(pid){
 function ensureStudent(name){
   if(!S.attendance[name]) S.attendance[name] = [];
   if(!S.studentType[name]) S.studentType[name] = 'internal';
+  if(!S.studentCode[name]) S.studentCode[name] = genCode();
 }
 
 function renderMatrix(){
-  let html = '<thead><tr><th>학생</th><th>구분</th>';
+  let html = '<thead><tr><th>승인번호</th><th>학생</th><th>구분</th>';
   PRODUCTS.forEach(p => html += `<th>${p.name}</th>`);
   html += '<th></th></tr></thead><tbody>';
   S.students.forEach(name => {
     ensureStudent(name);
     const type = S.studentType[name];
-    html += `<tr><td class="name">${name}</td>`;
+    const code = S.studentCode[name];
+    html += `<tr><td class="name" style="font-family:monospace;font-weight:900;color:#16417C;cursor:pointer" onclick="copyCode('${code}')" title="클릭하면 복사됩니다">${code}</td>`;
+    html += `<td class="name">${name}</td>`;
     html += `<td><span class="tag ${type}">${type==='internal'?'재원':'온라인'}</span></td>`;
     PRODUCTS.forEach(p => {
       const on = S.attendance[name].includes(p.id);
@@ -176,6 +194,13 @@ function renderMatrix(){
   });
   html += '</tbody>';
   document.getElementById('matrix').innerHTML = html;
+}
+
+function copyCode(code){
+  navigator.clipboard?.writeText(code).then(()=>{
+    document.getElementById('save-status').textContent = `📋 ${code} 복사됨`;
+    setTimeout(()=>{ document.getElementById('save-status').textContent = '저장됨'; }, 1500);
+  });
 }
 
 function renderContent(){
@@ -330,17 +355,21 @@ function addStudent(){
   // 쉼표 또는 줄바꿈으로 구분된 여러 이름 처리
   const names = raw.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
   let added = 0, skipped = [];
+  const issuedCodes = [];
   names.forEach(name => {
     if(S.students.includes(name)){ skipped.push(name); return; }
     S.students.push(name);
     S.studentType[name] = type;
+    S.studentCode[name] = genCode();
     // 온라인 학생은 구매 즉시 전체 상품 오픈, 재원생은 빈 상태(진도별로 열어줌)
     S.attendance[name] = type === 'online' ? PRODUCTS.map(p=>p.id) : [];
+    issuedCodes.push(`${name}: ${S.studentCode[name]}`);
     added++;
   });
   nameEl.value = '';
   renderMatrix();
   if(added>0) dirty();
+  if(issuedCodes.length) alert('승인번호가 발급되었습니다 (카카오톡으로 전달해주세요):\n\n' + issuedCodes.join('\n'));
   if(skipped.length) alert('이미 있어서 건너뜀: ' + skipped.join(', '));
 }
 

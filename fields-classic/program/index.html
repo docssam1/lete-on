@@ -167,6 +167,7 @@ body.in-viewer{overflow:hidden}
 .sec-toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:99999;display:none;padding:9px 16px;border-radius:999px;background:rgba(2,5,11,.96);color:var(--gold2);font-size:11px;font-weight:800;border:1px solid var(--border)}
 .sec-toast.show{display:block}
 </style>
+<script src="../data.js"></script>
 </head>
 <body>
 <div id="gate">
@@ -266,9 +267,12 @@ body.in-viewer{overflow:hidden}
 const COVER_BASE='https://docssam1.github.io/lete-on/fields-classic/assets/concept/';
 const COVER_MAP={vol1:'vol1.png',vol2:'vol2.png',vol3:'vol3.png',vol4:'vol4.png',final:'final.png'};
 const PDF_CONCEPT="https://docssam1.github.io/lete-on/fields-classic/assets/concept/%ED%83%84%ED%83%84%20%ED%95%84%EC%A6%88%EB%8C%80%EB%B9%84%20%EA%B0%9C%EB%85%90%20SET.pdf";
-const ALL=["FC-CONCEPT","FC-KILLER","FC-FINAL","FC-MOCK","FC-ARCHIVE"];
+const ALL=["개념완성","진단모의고사","킬러문항",
+  "실전모의고사1회","실전모의고사2회","실전모의고사3회","실전모의고사4회","실전모의고사5회","실전모의고사6회",
+  "파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","파이널모의고사4회",
+  "최종모의고사","자료실"];
 const PRODUCTS=[
-  {key:"FC-CONCEPT",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",icon:"📘",theme:"theme-concept",type:"folder",pdf:PDF_CONCEPT,
+  {key:"개념완성",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",icon:"📘",theme:"theme-concept",type:"folder",pdf:PDF_CONCEPT,
    chapters:[
     {key:"vol1",vol:"Vol.1",title:"수와 규칙",subtitle:"1회차 · 필즈 대비 개념",topics:["수 피라미드","줄 세우기, 자리찾기","도형이 나타내는 수"],comment:"필즈 테스트 시 연산은 첫 페이지에 있는 연산을 틀리지 않으면 됩니다. 다만 도형이 나타내는 수와 같이 구구단 정도는 반드시 필요하니 받아내림, 받아올림, 구구단은 실수없이 할 수 있도록 해주세요.",videos:[{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/7aPj5IJUzQM",pdfPage:2},{key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/itmV6EXWQA4",pdfPage:15}]},
     {key:"vol2",vol:"Vol.2",title:"저울과 패턴",subtitle:"2회차 · 필즈 대비 개념",topics:["양팔저울","양팔저울의 활용","조건에 알맞은 수","패턴 도형 규칙"],comment:null,videos:[{key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/WoN9Ie8Fn8s",pdfPage:21},{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/WoN9Ie8Fn8s?t=318",pdfPage:24},{key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/vBgZ_lZ_XiA",pdfPage:34}]},
@@ -276,22 +280,50 @@ const PRODUCTS=[
     {key:"vol4",vol:"Vol.4",title:"바둑돌의 비밀",subtitle:"4회차 · 필즈 대비 개념",topics:["바둑돌 규칙","마디 끊기 연습"],comment:"시험에서 가장 어려워하는 바둑돌 규칙에 대한 개념입니다. 마디를 끊는 연습도 반드시 해주세요.",videos:[{key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/ESmcuckBYIw",pdfPage:55},{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/neRIODxo13I",pdfPage:57}]},
     {key:"final",vol:"Final",title:"종합 체크",subtitle:"마무리 체크체크",topics:["지금까지 배운 전체 유형 종합 테스트"],comment:null,videos:[{key:"final",type:"final",label:"🏆 학습영상",url:"https://youtu.be/FC4W2bRJwKc",pdfPage:65}]}
   ]},
-  {key:"FC-KILLER",name:"킬러문항 완전 해제",desc:"최상위 킬러 유형 집중 공략",icon:"🎯",theme:"theme-killer",type:"direct",lessons:[{key:"k1",label:"킬러 유형 1",title:"킬러 유형 해제 1",type:"concept",url:"",pdfPage:1}]},
-  {key:"FC-FINAL",name:"파이널 모의고사 6회",desc:"실전과 동일한 파이널 6세트",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"f1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
-  {key:"FC-MOCK",name:"온라인 진단 모의고사",desc:"현재 수준 정밀 진단 + 분석",icon:"🔍",theme:"theme-mock",type:"direct",lessons:[{key:"m1",label:"진단 1회차",title:"진단 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
-  {key:"FC-ARCHIVE",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
+  {key:"진단모의고사",name:"진단 모의고사",desc:"현재 수준 정밀 진단 + 분석",icon:"🔍",theme:"theme-mock",type:"direct",lessons:[{key:"m1",label:"진단 1회차",title:"진단 모의고사",type:"concept",url:"",pdfPage:1}]},
+  {key:"킬러문항",name:"킬러문항 완전 해제",desc:"최상위 킬러 유형 집중 공략",icon:"🎯",theme:"theme-killer",type:"direct",lessons:[{key:"k1",label:"킬러 유형 1",title:"킬러 유형 해제 1",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사1회",name:"실전 모의고사 1회",desc:"실전 감각 훈련 1회차",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"p1",label:"1회",title:"실전 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사2회",name:"실전 모의고사 2회",desc:"실전 감각 훈련 2회차",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"p2",label:"2회",title:"실전 모의고사 2회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사3회",name:"실전 모의고사 3회",desc:"실전 감각 훈련 3회차",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"p3",label:"3회",title:"실전 모의고사 3회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사4회",name:"실전 모의고사 4회",desc:"실전 감각 훈련 4회차",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"p4",label:"4회",title:"실전 모의고사 4회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사5회",name:"실전 모의고사 5회",desc:"실전 감각 훈련 5회차",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"p5",label:"5회",title:"실전 모의고사 5회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사6회",name:"실전 모의고사 6회",desc:"실전 감각 훈련 6회차",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"p6",label:"6회",title:"실전 모의고사 6회",type:"concept",url:"",pdfPage:1}]},
+  {key:"파이널모의고사1회",name:"파이널 모의고사 1회",desc:"최종 점검 파이널 1회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
+  {key:"파이널모의고사2회",name:"파이널 모의고사 2회",desc:"최종 점검 파이널 2회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi2",label:"2회",title:"파이널 모의고사 2회",type:"concept",url:"",pdfPage:1}]},
+  {key:"파이널모의고사3회",name:"파이널 모의고사 3회",desc:"최종 점검 파이널 3회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi3",label:"3회",title:"파이널 모의고사 3회",type:"concept",url:"",pdfPage:1}]},
+  {key:"파이널모의고사4회",name:"파이널 모의고사 4회",desc:"최종 점검 파이널 4회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi4",label:"4회",title:"파이널 모의고사 4회",type:"concept",url:"",pdfPage:1}]},
+  {key:"최종모의고사",name:"최종 모의고사",desc:"실전 총정리 최종 리허설",icon:"🏆",theme:"theme-final",type:"direct",lessons:[{key:"u1",label:"최종",title:"최종 모의고사",type:"concept",url:"",pdfPage:1}]},
+  {key:"자료실",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
 ];
 const SALT="gfield-fields-classic-2026-v1";
+// 레거시 승인번호(해시 방식) — 기존 판매분 호환용으로 유지
 const CODES={
-  "bbbdc79775916a1a6f7675f3db54cba1f33f26e1dffda97fcb685e1c993df7c7":["FC-CONCEPT"],
-  "c5e2beda61041ffeeb6056cb9d2167786d179a219e79e864e6216ecedf620984":["FC-KILLER"],
-  "d769a92ca39f255ea72854ca13e7c1d9309e811cd1c52f71567bfef4a63d9b9c":["FC-FINAL"],
-  "fcee3d55de77d92a5e3014b3c4dc874ae825fbbf0e0970399766d0a16841d50b":["FC-MOCK"],
+  "bbbdc79775916a1a6f7675f3db54cba1f33f26e1dffda97fcb685e1c993df7c7":["개념완성"],
+  "c5e2beda61041ffeeb6056cb9d2167786d179a219e79e864e6216ecedf620984":["킬러문항"],
+  "d769a92ca39f255ea72854ca13e7c1d9309e811cd1c52f71567bfef4a63d9b9c":["파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","파이널모의고사4회"],
+  "fcee3d55de77d92a5e3014b3c4dc874ae825fbbf0e0970399766d0a16841d50b":["진단모의고사"],
   "7952b6a2f87c81cf4049e69cf7ece810f2a281c4199483ab39829d9e16dead33":ALL
 };
+// 신규 승인번호(GF-XXXXXX) — admin에서 자동 발급, data.js에서 로드
+const FC = window.GFIELD_FC_DATA || { students:[], studentCode:{}, attendance:{}, studentType:{} };
+function findByCode(code){
+  const upper = code.trim().toUpperCase();
+  const name = Object.keys(FC.studentCode).find(n => FC.studentCode[n] === upper);
+  if(!name) return null;
+  return { name, perms: FC.attendance[name] || [], type: FC.studentType[name] || 'internal' };
+}
 async function sha256(m){const b=new TextEncoder().encode(m);if(window.crypto?.subtle){const d=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,"0")).join("")}return fb(m)}
 function fb(s){function rr(v,a){return v>>>a|v<<32-a}const mp=Math.pow,mw=mp(2,32);let r="",w=[],al=s.length*8;let h=fb.h=fb.h||[],k=fb.k=fb.k||[],pc=k.length;const ic={};for(let c=2;pc<64;c++){if(!ic[c]){for(let i=0;i<313;i+=c)ic[i]=c;h[pc]=mp(c,.5)*mw|0;k[pc++]=mp(c,1/3)*mw|0}}s+="\x80";while(s.length%64-56)s+="\x00";for(let i=0;i<s.length;i++){const j=s.charCodeAt(i);if(j>>8)return"";w[i>>2]|=j<<(3-i%4)*8}w[w.length]=al/mw|0;w[w.length]=al;for(let j=0;j<w.length;){const wd=w.slice(j,j+=16),oh=h.slice(0);for(let i=0;i<64;i++){const w15=wd[i-15],w2=wd[i-2],a=h[0],e=h[4];const t1=h[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&h[5])^(~e&h[6]))+k[i]+(wd[i]=i<16?wd[i]:wd[i-16]+(rr(w15,7)^rr(w15,18)^w15>>>3)+wd[i-7]+(rr(w2,17)^rr(w2,19)^w2>>>10)|0);const t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&h[1])^(a&h[2])^(h[1]&h[2]));h=[t1+t2|0].concat(h);h[4]=h[4]+t1|0;h.pop()}for(let i=0;i<8;i++)h[i]=h[i]+oh[i]|0}for(let i=0;i<8;i++)for(let j=3;j+1;j--){const b=h[i]>>j*8&255;r+=(b<16?0:"")+b.toString(16)}return r}
-async function verify(code){const h=await sha256(SALT+":"+code.trim().toUpperCase());return CODES[h]||null}
+async function verify(code){
+  // 1순위: 신규 승인번호(GF-XXXXXX) 확인
+  const found = findByCode(code);
+  if(found) return { perms: found.perms, name: found.name, type: found.type };
+  // 2순위: 레거시 해시 승인번호 확인
+  const h=await sha256(SALT+":"+code.trim().toUpperCase());
+  const legacyPerms = CODES[h];
+  if(legacyPerms) return { perms: legacyPerms, name: null, type: 'legacy' };
+  return null;
+}
 function toast(){const t=document.getElementById("secToast");t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),1500)}
 function security(){document.addEventListener("contextmenu",e=>{e.preventDefault();toast()});document.addEventListener("copy",e=>{e.preventDefault();toast()});document.addEventListener("cut",e=>{e.preventDefault();toast()});document.addEventListener("dragstart",e=>e.preventDefault());document.addEventListener("keydown",e=>{const k=String(e.key||"").toLowerCase();if(k==="f12"||(e.ctrlKey&&["u","s"].includes(k))||(e.ctrlKey&&e.shiftKey&&["i","j","c"].includes(k))){e.preventDefault();e.stopPropagation();toast()}},true)}
 function embed(url){if(!url)return"";try{const p=new URL(url);let id="",s=0;if(p.hostname.includes("youtu.be"))id=p.pathname.replace(/^\//,"");else if(p.hostname.includes("youtube.com"))id=p.searchParams.get("v")||"";const t=p.searchParams.get("t")||"";if(/^\d+$/.test(t))s=Number(t);return id?"https://www.youtube.com/embed/"+id+"?rel=0&modestbranding=1&playsinline=1"+(s?"&start="+s:""):url}catch{return url}}
@@ -313,9 +345,13 @@ const GF={
     if(!c){e.textContent="승인번호를 입력해 주세요.";return}
     if(!n){e.textContent="학생 이름을 입력해 주세요.";return}
     e.textContent="확인 중...";
-    const perms=await verify(c);
-    if(!perms){e.textContent="올바르지 않은 승인번호입니다.";return}
-    S.name=n;S.perms=perms;sessionStorage.setItem("gf_c",c);sessionStorage.setItem("gf_n",n);this.showApp();
+    const result=await verify(c);
+    if(!result){e.textContent="올바르지 않은 승인번호입니다.";return}
+    // 신규 승인번호는 admin에 등록된 이름을 우선 사용, 레거시는 입력한 이름 사용
+    S.name=result.name||n;
+    S.perms=result.perms;
+    S.studentType=result.type||'legacy';
+    sessionStorage.setItem("gf_c",c);sessionStorage.setItem("gf_n",S.name);this.showApp();
   },
   showApp(){document.getElementById("gate").classList.add("hidden");document.getElementById("app").classList.add("show");document.getElementById("hName").textContent=S.name;this.showMainGrid()},
   showMainGrid(){
