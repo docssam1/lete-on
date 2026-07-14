@@ -11,6 +11,19 @@
 const app=document.getElementById('app');
 const GEN=window.NM_GEN, CUR=window.NM_CURRICULUM, UNITS=window.NM_UNITS;
 
+/* NM_TGEN 브리지: 레거시 NM_GEN + 스레드 생성기(NM_TGEN) 통합. params 전달 포함. */
+function genProblem(cfg, level){
+  const key=cfg.generator;
+  const g=(GEN||{})[key];
+  if(g) return g({level});
+  const tg=(window.NM_TGEN||{})[key];
+  if(tg){
+    const rng=NM_RNG.mulberry32((Math.random()*2147483647)|0);
+    return tg(Object.assign({level},cfg.params||{}),rng);
+  }
+  return {prompt:{ko:'생성기 없음',en:'No generator',zh:'无生成器'},tex:'?',answer:0,answerType:'number'};
+}
+
 /* ---------- i18n ---------- */
 const I18N={
   ko:{ appName:'수의 마법', start:'시작하기', back:'← 뒤로', next:'다음 →',
@@ -220,6 +233,7 @@ function render(){
   $('#langBtn').onclick=cycleLang;
   $('#charChipBtn').onclick=()=>{S.view='closet';save();render();};
   if(S.view==='town')screenTown();
+  else if(S.view==='roadmap')screenRoadmap();
   else if(S.view==='tier')screenTier();
   else if(S.view==='unit')screenUnit();
   else if(S.view==='exam')screenExam();
@@ -427,6 +441,12 @@ function screenTown(){
       </div>
     </div>
     <div class="nm-town-hud brand">${t('mapTitle')}</div>
+    <div class="nm-road-banner" id="roadBanner">
+      <button class="nm-road-banner-btn" id="roadEnter">
+        🗺️ ${S.lang==='ko'?'학습 여행':S.lang==='en'?'Learning Journey':'学习之旅'}
+        <span class="nm-road-next">${roadmapNextLabel()}</span>
+      </button>
+    </div>
     <div class="nm-town-hud info"><a class="nm-philobtn" href="about.html">✦ ${S.lang==='ko'?'철학':S.lang==='en'?'Philosophy':'理念'}</a></div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
@@ -441,6 +461,96 @@ function screenTown(){
       </div>
     </div>`;
   townCleanup=initTownWorld(scr);
+  const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
+}
+
+/* ─── roadmap 헬퍼 ─── */
+function roadmapNextLabel(){
+  if(!window.NM_ROADMAP)return '';
+  const chapters=NM_ROADMAP.chapters;
+  for(const ch of chapters){
+    for(const uid of ch.units){
+      if(!stepDone(uid,'stamp')) return S.lang==='ko'?`이어서: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:S.lang==='en'?`Continue: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:S.lang==='zh'?`继续: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:'';
+    }
+  }
+  return S.lang==='ko'?'🏆 전체 완료!':S.lang==='en'?'🏆 All done!':'🏆 全部完成！';
+}
+
+/* ─── screenRoadmap: 징검다리 길 ─── */
+function screenRoadmap(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  const scr=$('#screen');
+  if(!window.NM_ROADMAP){scr.innerHTML='<div class="nm-card">roadmap.js 없음</div>';return;}
+  const road=NM_ROADMAP;
+  const nextId=findNextRoadUnit();
+  let html=`<div class="nm-road-wrap">
+    <div class="nm-road-header">
+      <button class="nm-back" id="roadBack">← ${t('back')}</button>
+      <div class="nm-unit-title">🗺️ ${L(road.title)}</div>
+      <div class="nm-road-sub">${L(road.subtitle)}</div>
+    </div>
+    <div class="nm-road-path">`;
+
+  road.chapters.forEach((ch,ci)=>{
+    const chapDone=ch.units.every(uid=>stepDone(uid,'stamp'));
+    html+=`<div class="nm-road-chapter ${chapDone?'done':''}">
+      <div class="nm-road-ch-head">${ch.icon} <span>${L(ch.theme)}</span>
+        ${ch.edu?`<span class="nm-edu-badge">${L(ch.edu)}</span>`:''}
+      </div>`;
+    ch.units.forEach((uid,ui)=>{
+      const u=UNITS[uid];
+      if(!u)return;
+      const done=stepDone(uid,'stamp');
+      const isNext=uid===nextId;
+      const cls='nm-road-stone'+(done?' done':isNext?' next':'');
+      html+=`<div class="${cls}" data-uid="${uid}" style="margin-left:${(ui%2)*32}px">
+        ${done?'⭐':''}
+        <div class="nm-road-stone-title">${L(u.title)}</div>
+        ${isNext?`<div class="nm-road-next-lbl">${S.lang==='ko'?'여기부터!':S.lang==='en'?"Start here!":"从这里！"}</div>`:''}
+      </div>`;
+    });
+    if(ch.tip){
+      html+=`<div class="nm-road-tip">💡 ${L(ch.tip)}</div>`;
+    }
+    html+=`</div>`;
+    if(ci<road.chapters.length-1)html+=`<div class="nm-road-arrow">↓</div>`;
+  });
+
+  html+=`</div></div>`;
+  scr.innerHTML=html;
+
+  $('#roadBack').onclick=()=>{S.view='town';save();render();};
+
+  scr.querySelectorAll('.nm-road-stone[data-uid]').forEach(el=>{
+    el.onclick=()=>{
+      const uid=el.dataset.uid;
+      const done=stepDone(uid,'stamp');
+      const isNext=uid===findNextRoadUnit();
+      if(done||isNext){enterRoadUnit(uid);return;}
+      /* 건너뛰기 확인 */
+      const u=UNITS[uid];
+      const msg=S.lang==='ko'?`먼저 앞 걸음을 추천해요.\n그래도 "${L(u.title)}"를 할래요?`:
+        S.lang==='en'?`We recommend the earlier steps first.\nStill want to do "${L(u.title)}"?`:
+        `建议先完成前面的步骤。\n还是要做"${L(u.title)}"吗？`;
+      if(confirm(msg))enterRoadUnit(uid);
+    };
+  });
+}
+
+function findNextRoadUnit(){
+  if(!window.NM_ROADMAP)return null;
+  for(const ch of NM_ROADMAP.chapters){
+    for(const uid of ch.units){
+      if(!stepDone(uid,'stamp'))return uid;
+    }
+  }
+  return null;
+}
+
+function enterRoadUnit(uid){
+  S.unit=uid;S.step=null;S.sub={};S.tierId=null;S.view='unit';
+  S._fromRoadmap=true;
+  save();render();
 }
 
 function showTownModal(title,desc,onGo){
@@ -709,7 +819,10 @@ function enterUnit(uid){
   save();render();
 }
 function pickRange(rk){S.range=rk;S.step='practice';S.sub={};save();render();}
-function exitUnit(){S.view=S.tierId?'tier':'town';S.unit=null;S.step=null;S.sub={};save();render();}
+function exitUnit(){
+  const back=S._fromRoadmap?'roadmap':S.tierId?'tier':'town';
+  S.view=back;S._fromRoadmap=false;S.unit=null;S.step=null;S.sub={};save();render();
+}
 function finishUnitIntro(u){
   S.progress[S.unit]=S.progress[S.unit]||{steps:{}};
   S.progress[S.unit].introSeen=true;
@@ -783,7 +896,7 @@ function stepPractice(body,u){
 }
 function runPractice(body,u){
   const cfg=u.practice;const need=cfg.count||5;
-  S.sub.pIdx=S.sub.pIdx||0;S.sub.cur=S.sub.cur||GEN[cfg.generator]({level:'practice'});
+  S.sub.pIdx=S.sub.pIdx||0;S.sub.cur=S.sub.cur||genProblem(cfg,'practice');
   const cur=S.sub.cur;
   const first=S.sub.pIdx===0&&!S.sub.started;
   const pracTex=cur.tex?`<div class="nm-lab-expr"><span data-tex="${esc(cur.tex)}"></span></div>`:'';
@@ -798,24 +911,25 @@ function runPractice(body,u){
   </div>`;
   S.sub.started=true;
   renderMath(body);
-  buildNumpad($('#pad'),val=>handlePractice(val,body,u));
+  const isDecAns=cur&&!Number.isInteger(cur.answer);
+  buildNumpad($('#pad'),val=>handlePractice(val,body,u),{decimal:isDecAns});
   say(first?L(cfg.intro):L(cur.prompt));
 }
 function handlePractice(val,body,u){
   const cur=S.sub.cur;const need=u.practice.count||5;
   if(val==='ok'){
     const inp=S.sub.inp||'';if(inp==='')return;
-    if(+inp===cur.answer){
+    if(parseFloat(inp)===cur.answer){
       toast(t('correct'),true);numiHappy();
       S.sub.pIdx++;S.sub.inp='';S.sub.cur=null;
       if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
-      S.sub.cur=GEN[u.practice.generator]({level:'practice'});save();
+      S.sub.cur=genProblem(u.practice,'practice');save();
       setTimeout(()=>runPractice(body,u),650);
     }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=' ';}
     return;
   }
   if(val==='del'){S.sub.inp=(S.sub.inp||'').slice(0,-1);}
-  else if((S.sub.inp||'').length<3){S.sub.inp=(S.sub.inp||'')+val;}
+  else if((S.sub.inp||'').length<6&&!(val==='.'&&(S.sub.inp||'').includes('.'))){S.sub.inp=(S.sub.inp||'')+val;}
   $('#pscreen').textContent=S.sub.inp||' ';
 }
 
@@ -950,7 +1064,7 @@ function openQuestion(body,u){
    나머지 생성기(move10/add10sub/stairAdd, answerType:'number')는 숫자패드 UI. */
 function stepLab(body,u){
   const cfg=u.lab;
-  S.sub.cur=S.sub.cur||GEN[cfg.generator]({level:'main'});
+  S.sub.cur=S.sub.cur||genProblem(cfg,'main');
   if(S.sub.cur.answerType==='selectPairs')stepLabPairs(body,u);
   else if(S.sub.cur.widget&&S.sub.cur.widget!=='numpad'&&window.NM_WIDGETS)stepLabWidget(body,u);
   else stepLabNumpad(body,u);
@@ -978,7 +1092,7 @@ function stepLabWidget(body,u){
       toast(pickVoice(u.voice.correct),true);numiHappy();
       S.sub.li++;S.sub.cur=null;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep('arena'),700);return;}
-      S.sub.cur=GEN[u.lab.generator]({level:'main'});save();
+      S.sub.cur=genProblem(u.lab,'main');save();
       setTimeout(()=>stepLab(body,u),650);
     }else{
       toast(pickVoice(u.voice.wrong),false);
@@ -1029,11 +1143,11 @@ function handleLabNumpad(val,body,u){
   const cur=S.sub.cur;const need=u.lab.count||4;
   if(val==='ok'){
     const inp=S.sub.inp||'';if(inp==='')return;
-    if(+inp===cur.answer){
+    if(parseFloat(inp)===cur.answer){
       toast(pickVoice(u.voice.correct),true);numiHappy();
       S.sub.li++;S.sub.inp='';S.sub.cur=null;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep('arena'),700);return;}
-      S.sub.cur=GEN[u.lab.generator]({level:'main'});save();
+      S.sub.cur=genProblem(u.lab,'main');save();
       setTimeout(()=>stepLab(body,u),650);
     }else{toast(pickVoice(u.voice.wrong),false);S.sub.inp='';$('#pscreen').textContent=' ';}
     return;
@@ -1072,7 +1186,7 @@ function stepArena(body,u){
   },1000);
 }
 function nextArena(body,u,need){
-  const cur=GEN[u.arena.generator]({level:'main'});S.sub.cur=cur;S.sub.inp='';
+  const cur=genProblem(u.arena,'main');S.sub.cur=cur;S.sub.inp='';
   body.innerHTML=`<div class="nm-arena">
     <div class="nm-arena-top"><span class="nm-arena-q">${S.sub.ai+1} / ${need}</span><span class="nm-arena-time" id="atime">${fmt(S.sub.left)}</span></div>
     <div class="nm-arena-expr"><span data-tex="${esc(cur.tex.split('=')[0].trim())} = \\square"></span></div>
@@ -1082,7 +1196,7 @@ function nextArena(body,u,need){
   renderMath(body);
   buildNumpad($('#pad'),val=>{
     if(val==='ok'){const inp=S.sub.inp||'';if(inp==='')return;
-      if(+inp===S.sub.cur.answer){S.sub.score++;numiHappyToast();}else toast('✗',false);
+      if(parseFloat(inp)===S.sub.cur.answer){S.sub.score++;numiHappyToast();}else toast('✗',false);
       S.sub.ai++;
       if(S.sub.ai>=need){clearInterval(window._nmTimer);arenaEnd(body,u);return;}
       nextArena(body,u,need);return;}
@@ -1124,10 +1238,15 @@ function stepStamp(body,u){
 }
 
 /* ---------- 공통 UI 조각 ---------- */
-function buildNumpad(pad,cb){
+function buildNumpad(pad,cb,opts){
+  opts=opts||{};
   pad.innerHTML='';
-  ['1','2','3','4','5','6','7','8','9','del','0','ok'].forEach(k=>{
-    const b=document.createElement('button');b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':'');
+  const keys=opts.decimal
+    ?['1','2','3','4','5','6','7','8','9','.','0','del','ok']
+    :['1','2','3','4','5','6','7','8','9','del','0','ok'];
+  if(opts.decimal) pad.classList.add('dec'); else pad.classList.remove('dec');
+  keys.forEach(k=>{
+    const b=document.createElement('button');b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':'');
     b.textContent=k==='del'?'←':k==='ok'?'✓':k;b.onclick=()=>cb(k);pad.appendChild(b);
   });
 }

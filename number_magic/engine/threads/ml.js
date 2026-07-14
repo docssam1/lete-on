@@ -574,12 +574,13 @@ NM_TGEN['ml11_squares'] = function(params, rng) {
 
 /* ── ML_PAIR10 — 곱해서 10/100 만들기 & 분해곱셈법 ─────────── */
 NM_TGEN['ml_pair10'] = function(params, rng) {
-  const target = params.target || 10; /* 10 or 100 */
-  const mode   = params.mode   || 'three'; /* 'three'=세 수 곱 | 'decomp'=분해 */
+  const target = params.target || 10;
+  const mode   = params.mode   || 'three';
+  const lv     = params.level  || 'main';
 
   if (target === 10) {
-    /* 2×5=10 쌍을 포함한 세 수 곱: a × b × 5 where a=2, b=random */
-    const b      = R(rng, 2, 9);
+    const bMax = lv === 'practice' ? 5 : 9;
+    const b      = R(rng, 2, bMax);
     const answer = 2 * b * 5;            /* = 10 × b */
     return {
       prompt:{ ko:`2 × ${b} × 5를 쌍을 찾아 쉽게 계산해요`,
@@ -614,7 +615,8 @@ NM_TGEN['ml_pair10'] = function(params, rng) {
   }
 
   /* target===100: 4×25=100 쌍 포함 세 수 곱 */
-  const b      = R(rng, 2, 9);
+  const bMax2 = lv === 'practice' ? 5 : 9;
+  const b      = R(rng, 2, bMax2);
   const answer = 4 * b * 25;             /* = 100 × b */
   return {
     prompt:{ ko:`4 × ${b} × 25를 쌍을 찾아 계산해요`,
@@ -631,7 +633,9 @@ NM_TGEN['ml_pair10'] = function(params, rng) {
 
 /* ── ML_GAUSS — 가우스 덧셈 (등차수열 합) ────────────────────── */
 NM_TGEN['ml_gauss'] = function(params, rng) {
-  const n      = R(rng, 3, 10) * 2; /* 짝수로 쌍 만들기 쉽게 */
+  const lv = params.level || 'main';
+  const nMax = lv === 'practice' ? 5 : 10;
+  const n      = R(rng, 3, nMax) * 2;
   const total  = n * (n + 1) / 2;
   const pairs  = n / 2;
   const pairSum= n + 1;
@@ -652,7 +656,8 @@ NM_TGEN['ml_gauss'] = function(params, rng) {
 
 /* ── ML_X9 — ×9 전략 (n×9=n×10−n) ──────────────────────────── */
 NM_TGEN['ml_x9'] = function(params, rng) {
-  const n      = R(rng, 2, 99);
+  const lv = params.level || 'main';
+  const n      = lv === 'practice' ? R(rng, 2, 12) : R(rng, 2, 99);
   const answer = n * 9;
 
   return {
@@ -670,12 +675,13 @@ NM_TGEN['ml_x9'] = function(params, rng) {
 
 /* ── ML_OVERMUL — 더 곱해주고 빼기 (올림빼기) ───────────────── */
 NM_TGEN['ml_overmul'] = function(params, rng) {
-  /* n × (round - k): round=10/100, k=1~3 */
-  const rounds  = [10, 100];
+  const lv      = params.level || 'main';
+  const rounds  = lv === 'practice' ? [10] : [10, 100];
   const round   = pick(rng, rounds);
   const k       = R(rng, 1, 3);
-  const near    = round - k;             /* e.g. 9, 99, 98 */
-  const a       = R(rng, 2, round === 10 ? 19 : 9);
+  const near    = round - k;
+  const aMax    = lv === 'practice' ? 9 : (round === 10 ? 19 : 9);
+  const a       = R(rng, 2, aMax);
   const answer  = a * near;
 
   return {
@@ -694,9 +700,10 @@ NM_TGEN['ml_overmul'] = function(params, rng) {
 
 /* ── ML_DIGIT_PRED — 몇 자리 수 예측 ────────────────────────── */
 NM_TGEN['ml_digit_pred'] = function(params, rng) {
-  /* 두 자리×두 자리 → 3자리 or 4자리 예측 + 계산 */
-  const a      = R(rng, 11, 49);
-  const b      = R(rng, 11, 49);
+  const lv = params.level || 'main';
+  const hi = lv === 'practice' ? 31 : 49;
+  const a      = R(rng, 11, hi);
+  const b      = R(rng, 11, hi);
   const answer = a * b;
   const digits = answer.toString().length;
 
@@ -719,8 +726,14 @@ NM_TGEN['ml_digit_pred'] = function(params, rng) {
 
 /* ── ML_X11 — ×11 전략 (ab×11 = a_(a+b)_b) ─────────────────── */
 NM_TGEN['ml_x11'] = function(params, rng) {
-  /* 두 자리 수 × 11 */
-  const a      = R(rng, 11, 99);
+  const lv = params.level || 'main';
+  /* practice: 올림 없는 수(십의 자리+일의 자리 < 10) 우선 */
+  let a;
+  if (lv === 'practice') {
+    do { a = R(rng, 11, 54); } while ((Math.floor(a/10) + a%10) >= 10);
+  } else {
+    a = R(rng, 11, 99);
+  }
   const aT     = Math.floor(a / 10);
   const aO     = a % 10;
   const mid    = aT + aO;
@@ -759,11 +772,12 @@ NM_TGEN['ml_x11'] = function(params, rng) {
 
 /* ── ML_PLACESHIFT — 자리이동 곱셈 (반복 자릿수 인수) ───────── */
 NM_TGEN['ml_placeshift'] = function(params, rng) {
-  /* 두 번째 인수가 같은 숫자 반복: 11,22,...,99 */
-  const REPD   = [2,3,4,5,6,7,8,9];
+  const lv = params.level || 'main';
+  const REPD = lv === 'practice' ? [2,3,4] : [2,3,4,5,6,7,8,9];
   const d      = pick(rng, REPD);
-  const b      = d * 11;                /* 22, 33, ..., 99 */
-  const a      = R(rng, 11, 49);
+  const b      = d * 11;
+  const aMax   = lv === 'practice' ? 29 : 49;
+  const a      = R(rng, 11, aMax);
   const partial= a * d;
   const answer = a * b;
 
@@ -783,10 +797,11 @@ NM_TGEN['ml_placeshift'] = function(params, rng) {
 /* ── ML_X5 — ×5/÷5 전략 ─────────────────────────────────────── */
 NM_TGEN['ml_x5'] = function(params, rng) {
   const mode = params.mode || 'mul';
+  const lv   = params.level || 'main';
 
   if (mode === 'mul') {
-    /* n × 5 = n × 10 ÷ 2  (n이 짝수여야 깔끔) */
-    const n      = R(rng, 1, 49) * 2;
+    const nMax = lv === 'practice' ? 19 : 49;
+    const n      = R(rng, 1, nMax) * 2;
     const answer = n * 5;
     return {
       prompt:{ ko:`${n} × 5를 ×10÷2 전략으로 계산해요`,
@@ -802,7 +817,8 @@ NM_TGEN['ml_x5'] = function(params, rng) {
   }
 
   /* div: n ÷ 5 = n × 2 ÷ 10 */
-  const q      = R(rng, 1, 19);
+  const qMax = lv === 'practice' ? 9 : 19;
+  const q      = R(rng, 1, qMax);
   const n      = q * 5;
   const answer = q;
   return {
@@ -821,10 +837,11 @@ NM_TGEN['ml_x5'] = function(params, rng) {
 /* ── ML_X25 — ×25/÷25 전략 ─────────────────────────────────── */
 NM_TGEN['ml_x25'] = function(params, rng) {
   const mode = params.mode || 'mul';
+  const lv   = params.level || 'main';
 
   if (mode === 'mul') {
-    /* n × 25 = n × 100 ÷ 4  (n이 4의 배수) */
-    const k      = R(rng, 1, 20);
+    const kMax = lv === 'practice' ? 8 : 20;
+    const k      = R(rng, 1, kMax);
     const n      = k * 4;
     const answer = n * 25;
     return {
@@ -841,7 +858,8 @@ NM_TGEN['ml_x25'] = function(params, rng) {
   }
 
   /* div: n ÷ 25 = n × 4 ÷ 100 */
-  const q      = R(rng, 1, 20);
+  const qMax25 = lv === 'practice' ? 8 : 20;
+  const q      = R(rng, 1, qMax25);
   const n      = q * 25;
   const answer = q;
   return {
@@ -859,9 +877,9 @@ NM_TGEN['ml_x25'] = function(params, rng) {
 
 /* ── ML_DIV_DECOMP — 분해 나눗셈 ────────────────────────────── */
 NM_TGEN['ml_div_decomp'] = function(params, rng) {
-  /* a÷b: a를 b의 배수로 분해 → (c×b + d)÷b = c + d÷b
-     예: 312÷3 = (300+12)÷3 = 100+4 = 104 */
-  const b      = R(rng, 2, 9);
+  const lv = params.level || 'main';
+  const bMax = lv === 'practice' ? 5 : 9;
+  const b      = R(rng, 2, bMax);
   const q1     = R(rng, 10, 99);  /* 백의 몫 */
   const q2     = R(rng, 1,  9);   /* 십의 몫 */
   const a      = (q1 * 10 + q2) * b;  /* a = (q1×10+q2)×b, 항상 딱 나눔 */
@@ -885,15 +903,16 @@ NM_TGEN['ml_div_decomp'] = function(params, rng) {
 
 /* ── ML_DIV_SIMPLIFY — 약분 나눗셈 ─────────────────────────── */
 NM_TGEN['ml_div_simplify'] = function(params, rng) {
-  /* a÷b: 두 수를 GCD로 약분해서 쉽게
-     예: 84÷12 → 7÷1=7 (÷12) 또는 42÷6=7 (÷2씩) */
-  const PAIRS = [
+  const lv = params.level || 'main';
+  const PAIRS_EASY = [[48,6],[54,6],[60,6],[56,8],[48,8],[54,9]];
+  const PAIRS_ALL  = [
     [84,12],[96,12],[72,12],[60,12],
     [63, 9],[81, 9],[54, 9],
     [64, 8],[56, 8],[48, 8],
     [70, 7],[84, 7],[56, 7],
     [60, 6],[72, 6],[54, 6]
   ];
+  const PAIRS = lv === 'practice' ? PAIRS_EASY : PAIRS_ALL;
   const [a, b] = pick(rng, PAIRS);
   const gcd    = (x, y) => y === 0 ? x : gcd(y, x % y);
   const g      = gcd(a, b);
@@ -917,10 +936,8 @@ NM_TGEN['ml_div_simplify'] = function(params, rng) {
 
 /* ── ML_DIV_EXPAND — 부풀려 나눗셈 (양쪽 같은 배수) ─────────── */
 NM_TGEN['ml_div_expand'] = function(params, rng) {
-  /* a÷b: 양쪽에 k를 곱해 b를 10/100으로 만듦
-     예: 7÷5 → 14÷10 = 1.4  |  12÷4 → 24÷8 아님 → 다른 접근
-     여기서는: n÷5 → 2n÷10 or n÷25 → 4n÷100 */
-  const mode = pick(rng, ['x2','x4']);
+  const lv   = params.level || 'main';
+  const mode = lv === 'practice' ? 'x2' : pick(rng, ['x2','x4']);
   if (mode === 'x2') {
     const q      = R(rng, 1, 19);
     const b      = 5;
@@ -959,7 +976,9 @@ NM_TGEN['ml_div_expand'] = function(params, rng) {
 /* ── ML_FRAC_SAME — 분수 덧뺄셈 (동분모) ───────────────────── */
 NM_TGEN['ml_frac_same'] = function(params, rng) {
   const op  = params.op || 'add';
-  const den = pick(rng, [3,4,5,6,7,8,9,10]);
+  const lv  = params.level || 'main';
+  const DENS = lv === 'practice' ? [3,4,5,6] : [3,4,5,6,7,8,9,10];
+  const den = pick(rng, DENS);
   let num1, num2;
 
   if (op === 'add') {
@@ -995,8 +1014,10 @@ NM_TGEN['ml_frac_same'] = function(params, rng) {
 /* ── ML_FRAC_DIFF — 분수 덧뺄셈 (이분모/통분) ──────────────── */
 NM_TGEN['ml_frac_diff'] = function(params, rng) {
   const op = params.op || 'add';
-  /* 간단한 통분: den1, den2 → lcm = den1×den2 (서로소 쌍) */
-  const COPRIME_PAIRS = [[2,3],[2,5],[3,4],[3,5],[4,5],[2,7],[3,7]];
+  const lv = params.level || 'main';
+  const COPRIME_PAIRS = lv === 'practice'
+    ? [[2,3],[2,5],[3,4]]
+    : [[2,3],[2,5],[3,4],[3,5],[4,5],[2,7],[3,7]];
   const [d1, d2] = pick(rng, COPRIME_PAIRS);
   const lcd = d1 * d2;
   const n1  = R(rng, 1, d1 - 1);
@@ -1055,8 +1076,10 @@ NM_TGEN['ml_frac_diff'] = function(params, rng) {
 
 /* ── ML_VEDA — VEDA 곱셈 (두 자리 × 두 자리, 교차곱) ──────── */
 NM_TGEN['ml_veda'] = function(params, rng) {
-  const a   = R(rng, 11, 49);
-  const b   = R(rng, 11, 49);
+  const lv = params.level || 'main';
+  const hi = lv === 'practice' ? 31 : 49;
+  const a   = R(rng, 11, hi);
+  const b   = R(rng, 11, hi);
   const aT  = Math.floor(a / 10); const aO = a % 10;
   const bT  = Math.floor(b / 10); const bO = b % 10;
 
@@ -1082,7 +1105,8 @@ NM_TGEN['ml_veda'] = function(params, rng) {
 
 /* ── ML_DIFF2SQ — 차가 2인 두 수의 곱 (n²−1) ────────────────── */
 NM_TGEN['ml_diff2sq'] = function(params, rng) {
-  const n      = R(rng, 5, 20);
+  const lv = params.level || 'main';
+  const n      = lv === 'practice' ? R(rng, 5, 10) : R(rng, 5, 20);
   const a      = n - 1;
   const b      = n + 1;
   const sq     = n * n;
@@ -1104,10 +1128,10 @@ NM_TGEN['ml_diff2sq'] = function(params, rng) {
 /* ── ML_DECIMAL_MUL — 소수 곱셈·나눗셈 ─────────────────────── */
 NM_TGEN['ml_decimal_mul'] = function(params, rng) {
   const mode = params.mode || 'mul';
+  const lv   = params.level || 'main';
 
   if (mode === 'mul') {
-    /* a × 0.1 or a × 0.01: shift decimal */
-    const shift = pick(rng, [1, 2]);
+    const shift = lv === 'practice' ? 1 : pick(rng, [1, 2]);
     const a     = R(rng, 2, 99);
     const label = shift === 1 ? '0.1' : '0.01';
     const div   = shift === 1 ? 10   : 100;
@@ -1126,7 +1150,7 @@ NM_TGEN['ml_decimal_mul'] = function(params, rng) {
   }
 
   /* div: a ÷ 0.1 = a × 10 */
-  const shift  = pick(rng, [1, 2]);
+  const shift  = lv === 'practice' ? 1 : pick(rng, [1, 2]);
   const a      = R(rng, 1, 9);
   const mul    = shift === 1 ? 10  : 100;
   /* a÷0.1은 부동소수점 오차(7÷0.1=70.00…01)가 생기므로 a×mul로 계산 */

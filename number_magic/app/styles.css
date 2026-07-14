@@ -129,6 +129,9 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-key:active{transform:translateY(2px);box-shadow:0 2px 0 #eceae4}
 .nm-key.ok{background:var(--gold);color:#4a370f;border-color:var(--gold-deep);box-shadow:0 4px 0 var(--gold-deep)}
 .nm-key.del{color:var(--no)}
+.nm-key.dot{color:#5a7ab8;font-size:24px;font-weight:900}
+.nm-numpad.dec{grid-template-columns:repeat(4,1fr);max-width:320px}
+.nm-numpad.dec .nm-key.ok{grid-column:span 2}
 .nm-hint{flex:none;text-align:center;font-size:11px;font-weight:700;color:#9aa2b1;margin-top:4px;min-height:14px}
 .nm-memo-wrap{display:flex;align-items:center;gap:6px;max-width:290px;width:100%;margin:6px auto 0}
 .nm-memo-wrap label{font-size:13px;color:#9aa2b1;white-space:nowrap;user-select:none}
@@ -718,3 +721,30 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   .nm-print-word{font-size:12.5px;line-height:1.6;text-align:left;width:100%;word-break:keep-all}
   .nm-print-word-blank{font-size:12px;align-self:flex-end;margin-top:8px}
 }
+
+/* ============================================================
+   학습모드 로드맵 (nm-road-*)
+   ============================================================ */
+.nm-road-banner{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:60;pointer-events:auto}
+.nm-road-banner-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 20px;background:var(--gold);color:#4a370f;border:none;border-radius:20px;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);white-space:nowrap}
+.nm-road-banner-btn:hover{filter:brightness(1.07)}
+.nm-road-next{font-size:11px;font-weight:700;color:#7a5b10;max-width:200px;overflow:hidden;text-overflow:ellipsis}
+.nm-road-wrap{display:flex;flex-direction:column;height:100%;background:#f8f4ee;overflow-y:auto;padding:0 0 80px}
+.nm-road-header{position:sticky;top:0;z-index:10;background:#f0eade;border-bottom:1.5px solid #e2d8c8;padding:10px 16px 8px;display:flex;flex-direction:column;gap:2px}
+.nm-road-header .nm-back{align-self:flex-start;background:none;border:none;color:var(--blue);font-weight:700;font-size:13px;cursor:pointer;padding:0}
+.nm-road-header .nm-unit-title{font-size:18px;font-weight:900;color:var(--blue-deep)}
+.nm-road-sub{font-size:12px;color:#9aa2b1;font-weight:600}
+.nm-road-path{display:flex;flex-direction:column;align-items:center;gap:0;padding:16px 16px 20px}
+.nm-road-chapter{width:100%;max-width:420px;background:#fff;border-radius:18px;padding:14px 16px 10px;margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.nm-road-chapter.done{background:#f4fbf0;border:1.5px solid #b6e4b0}
+.nm-road-ch-head{display:flex;align-items:center;gap:8px;font-weight:900;font-size:15px;color:var(--blue-deep);margin-bottom:10px;flex-wrap:wrap}
+.nm-edu-badge{font-size:10px;font-weight:700;color:#6a8fa8;background:#e8f0f8;padding:2px 7px;border-radius:10px;margin-left:auto}
+.nm-road-stone{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:9px 12px;margin:4px 0;border-radius:14px;background:#f0eade;border:2px solid #e2d6c0;cursor:pointer;transition:.15s;max-width:340px}
+.nm-road-stone:hover{background:#e8e0d0;transform:translateX(2px)}
+.nm-road-stone.done{background:#e4f7e0;border-color:#8ecb82;color:#2d7a26}
+.nm-road-stone.next{background:var(--gold);border-color:var(--gold-deep);color:#4a370f;box-shadow:0 0 0 3px rgba(234,201,150,.5);animation:road-pulse 1.5s ease-in-out infinite}
+@keyframes road-pulse{0%,100%{box-shadow:0 0 0 3px rgba(234,201,150,.5)}50%{box-shadow:0 0 0 7px rgba(234,201,150,.15)}}
+.nm-road-stone-title{font-size:13px;font-weight:800}
+.nm-road-next-lbl{font-size:10px;font-weight:700;color:#7a5b10}
+.nm-road-tip{font-size:11px;color:#7a8aa0;font-weight:600;padding:6px 4px 2px;line-height:1.5}
+.nm-road-arrow{font-size:22px;color:#c8bfb0;margin:4px 0;text-align:center;width:100%;max-width:420px}
