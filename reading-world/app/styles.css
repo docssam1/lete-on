@@ -869,8 +869,8 @@ textarea.nb-in{resize:vertical}
 .lib-pdf-stage{position:relative;display:inline-block;line-height:0;border-radius:8px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.14);background:#fdf8ec}
 .lib-pdf-stage canvas{display:block}
 .lib-pdf-overlay{position:absolute;top:0;left:0;overflow:hidden}
-.lib-pdf-overlay span{position:absolute;color:transparent;white-space:pre;transform-origin:0% 0%;cursor:text}
-.lib-pdf-overlay span.sentence-line.reading-now{background:rgba(255,209,64,.55);border-radius:2px}
+.lib-pdf-overlay span{position:absolute;color:transparent!important;white-space:pre;transform-origin:0% 0%;cursor:text}
+.lib-pdf-overlay span.sentence-line.reading-now{background:rgba(255,209,64,.55);border-radius:2px;color:transparent;box-shadow:none}
 @media(max-width:680px){.lib-book{flex-direction:column;min-height:auto}.lib-gutter{display:none}.lib-page-content{padding:20px 18px}.lib-page-blank{display:none}.lib-page-img{max-height:260px}.lib-intro,.lib-vocab,.lib-quiz,.lib-quiz-result,.lib-pdf{padding:20px 16px}.lib-pdf-stage{max-width:100%}.lib-pdf-stage canvas{max-width:100%;height:auto!important}}
 /* ---- Writing Village (wv-) ---- */
 .wv-sub{color:var(--muted);font-size:14px;margin:6px 0 12px}
