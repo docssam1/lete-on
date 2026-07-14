@@ -258,7 +258,10 @@ function libProgress(bookId){return libEnsure()&&profile.library[bookId];}
 function openLibraryBook(bookId){
  const meta=libBookMeta(bookId);if(!meta)return;
  const saved=libProgress(bookId);
- const stage=(saved&&saved.introSeen)?'read':(meta.background?'intro':(meta.vocab&&meta.vocab.length?'vocab':'read'));
+ // Prefer the real book pages (원본 보기) as the reading view when a source PDF
+ // exists; the reflow "읽기" tab stays available for phones / PDF-less books.
+ const readStage=meta.sourceFile?'original':'read';
+ const stage=(saved&&saved.introSeen)?readStage:(meta.background?'intro':(meta.vocab&&meta.vocab.length?'vocab':readStage));
  lib={view:'book',bookId,pages:null,loading:true,loadError:false,spread:(saved&&typeof saved.spread==='number')?saved.spread:-1,stage,quizIndex:0,quizAnswers:[],quizFeedback:null};
  atTown=true;townView='library';render();window.scrollTo({top:0});
  libFetchPages(bookId);
@@ -794,8 +797,8 @@ function handleLibrary(b){const act=b.dataset.act;
  if(act==='lib-pdf-prev'){stopSpeak();lib.pdfPageIndex=Math.max(0,(lib.pdfPageIndex||0)-1);render();window.scrollTo({top:0});return;}
  if(act==='lib-pdf-next'){stopSpeak();const total=(lib.pages||[]).length;lib.pdfPageIndex=Math.min(total-1,(lib.pdfPageIndex||0)+1);render();window.scrollTo({top:0});return;}
  if(act==='lib-pdf-listen'){const idx=lib.pdfPageIndex||0;const pg=(lib.pages||[])[idx];if(pg)libSpeakPage(idx,(pg.paragraphs||[]).join(' '));return;}
- if(act==='lib-intro-next'){const meta=libBookMeta(lib.bookId);libSaveProgress({introSeen:true});lib.stage=(meta&&meta.vocab&&meta.vocab.length)?'vocab':'read';stopSpeak();render();window.scrollTo({top:0});return;}
- if(act==='lib-vocab-next'){lib.stage='read';stopSpeak();render();window.scrollTo({top:0});return;}
+ if(act==='lib-intro-next'){const meta=libBookMeta(lib.bookId);libSaveProgress({introSeen:true});lib.stage=(meta&&meta.vocab&&meta.vocab.length)?'vocab':((meta&&meta.sourceFile)?'original':'read');stopSpeak();render();window.scrollTo({top:0});return;}
+ if(act==='lib-vocab-next'){const meta=libBookMeta(lib.bookId);lib.stage=(meta&&meta.sourceFile)?'original':'read';stopSpeak();render();window.scrollTo({top:0});return;}
  if(act==='lib-word-speak'){const meta=libBookMeta(lib.bookId);const w=(meta&&meta.vocab||[])[+b.dataset.i];if(w)speakText(w[0]);return;}
  if(act==='lib-word-save'){const meta=libBookMeta(lib.bookId);const w=(meta&&meta.vocab||[])[+b.dataset.i];if(w)toggleSaveWord(w,{type:'ebook',bookId:lib.bookId});render();return;}
  if(act==='lib-goto'){const meta=libBookMeta(lib.bookId);let stage=b.dataset.stage;if(stage==='quiz'&&meta){const total=(meta.quiz||[]).length;if(total>0&&lib.quizAnswers.length===total)stage='quizResult';}lib.stage=stage;stopSpeak();render();window.scrollTo({top:0});return;}
