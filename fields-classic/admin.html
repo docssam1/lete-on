@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>필즈 더 클래식 대비 과정 · Admin</title>
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif}
+body{background:#eef3f8;color:#0f172a;padding:16px}
+h1{font-size:18px;color:#16417C;margin-bottom:4px}
+.sub{font-size:12px;color:#64748b;margin-bottom:20px}
+.card{background:#fff;border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 2px 12px rgba(22,65,124,.06)}
+.card h2{font-size:14px;color:#16417C;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.add-row{display:flex;gap:8px;margin-bottom:14px}
+.add-row input{flex:1;height:38px;border:2px solid #e2e8f0;border-radius:8px;padding:0 12px;font-size:14px}
+.add-row select{height:38px;border:2px solid #e2e8f0;border-radius:8px;padding:0 10px;font-size:13px}
+.btn{height:38px;padding:0 16px;background:#16417C;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+.btn.danger{background:#dc2626}
+.btn.gold{background:linear-gradient(135deg,#EAC996,#f5d9a8);color:#16417C}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:rgba(22,65,124,.06);color:#16417C;padding:8px 6px;text-align:center;border:1px solid #e8edf5;font-weight:800;white-space:nowrap}
+td{padding:6px;text-align:center;border:1px solid #e8edf5}
+td.name{text-align:left;font-weight:700;padding-left:10px}
+.cell{width:32px;height:28px;border-radius:6px;cursor:pointer;transition:.15s;display:inline-block;margin:0 auto}
+.cell.off{background:#f1f5f9;border:1.5px solid #e2e8f0}
+.cell.on{background:#16417C;border:1.5px solid #16417C}
+.cell.on::after{content:'✓';color:#fff;font-size:13px;font-weight:900;display:block;line-height:28px}
+.tag{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:800}
+.tag.internal{background:rgba(22,65,124,.1);color:#16417C}
+.tag.online{background:rgba(234,201,150,.25);color:#a8730f}
+.del-btn{background:none;border:none;color:#dc2626;cursor:pointer;font-size:14px}
+#save-status{font-size:12px;color:#64748b;margin-right:10px}
+.top-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.token-box{display:flex;gap:6px;align-items:center;font-size:12px}
+.token-box input{width:160px;height:32px;border:2px solid #e2e8f0;border-radius:6px;padding:0 8px;font-size:12px}
+.content-week{border:1.5px solid #e8edf5;border-radius:12px;padding:14px;margin-bottom:14px;background:#fafbfc}
+.content-week .wt{font-size:13px;font-weight:900;color:#16417C;margin-bottom:2px}
+.content-week .wd{font-size:11px;color:#64748b;margin-bottom:10px}
+.flbl{font-size:11px;font-weight:800;color:#16417C;display:block;margin:10px 0 4px}
+.cta{width:100%;min-height:90px;border:2px solid #e2e8f0;border-radius:8px;padding:10px;font-size:12.5px;font-family:'Pretendard',sans-serif;resize:vertical;line-height:1.6}
+.tb-row{display:flex;gap:6px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+.tb-row input[type=text]{width:140px;height:32px;border:2px solid #e2e8f0;border-radius:6px;padding:0 8px;font-size:12px}
+.tb-row input[type=url]{flex:1;min-width:160px;height:32px;border:2px solid #e2e8f0;border-radius:6px;padding:0 8px;font-size:12px}
+.tb-row .btn{height:32px;font-size:11px;padding:0 10px}
+.btn.add.sm{background:#16a34a;height:32px;font-size:12px;padding:0 14px}
+.btn.del{background:#fff;color:#dc2626;border:1.5px solid #fecaca}
+.folder-card{border:1.5px solid #e8edf5;border-radius:12px;padding:14px;margin-bottom:12px;background:#fafbfc}
+.folder-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.folder-name{font-size:13px;font-weight:900;color:#16417C}
+.access-row{display:flex;gap:6px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.access-row select{height:30px;border:2px solid #e2e8f0;border-radius:6px;padding:0 8px;font-size:11px}
+.book-row{display:flex;gap:6px;align-items:center;margin-bottom:6px;flex-wrap:wrap;background:#fff;padding:8px;border-radius:8px;border:1px solid #eef2f7}
+.book-row input{height:30px;border:2px solid #e2e8f0;border-radius:6px;padding:0 8px;font-size:11.5px}
+.book-row input.title{width:150px}
+.book-row input.url{flex:1;min-width:150px}
+.book-row .btn{height:30px;font-size:11px;padding:0 8px}
+</style>
+</head>
+<body>
+
+<h1>🔐 필즈 더 클래식 대비 과정 · Admin</h1>
+<div class="sub">학생별 상품(회차) 열기/닫기 — 출석부처럼 클릭으로 토글</div>
+
+<div class="top-actions">
+  <span id="save-status">저장됨</span>
+  <div class="token-box">
+    <input id="ghKey" type="password" placeholder="GitHub 토큰">
+    <button class="btn" onclick="saveGhKey()">토큰저장</button>
+  </div>
+  <button class="btn gold" onclick="saveToGitHub()">💾 GitHub에 저장</button>
+</div>
+
+<!-- 학생 관리 -->
+<div class="card">
+  <h2>👥 학생 관리</h2>
+  <div class="add-row">
+    <input id="newName" placeholder="학생 이름 (여러 명은 쉼표 또는 줄바꿈으로 구분: 김민지, 박수아, 이지훈)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();addStudent();}">
+    <select id="newType">
+      <option value="internal">재원생</option>
+      <option value="online">온라인</option>
+    </select>
+    <button class="btn" onclick="addStudent()">+ 추가</button>
+  </div>
+</div>
+
+<!-- 출석부 매트릭스 -->
+<div class="card">
+  <h2>📋 상품 오픈 현황 (클릭하여 토글)</h2>
+  <div style="font-size:11px;color:#64748b;margin-bottom:10px">
+    재원생은 수업 진도에 맞춰 하나씩 열어주세요 · 온라인 학생은 추가 시 전체 자동 오픈됩니다
+  </div>
+  <div style="overflow-x:auto">
+    <table id="matrix"></table>
+  </div>
+</div>
+
+<!-- 회차별 콘텐츠 관리 -->
+<div class="card">
+  <h2>📘 회차별 콘텐츠 (공지·과제·교재)</h2>
+  <div style="font-size:11px;color:#64748b;margin-bottom:14px">
+    각 상품(회차)마다 학습 안내, 과제, 교재 PDF를 입력하세요. 하이라이트 문법: [[hl:빨강]] [[hlb:파랑배경]]
+  </div>
+  <div id="content-list"></div>
+</div>
+
+<!-- 자료실 -->
+<div class="card">
+  <h2>🗂 자료실</h2>
+  <div style="font-size:11px;color:#64748b;margin-bottom:14px">
+    폴더를 만들고 원하는 자료(PDF·영상·문제은행 등)를 자유롭게 추가하세요. 공개 대상은 전체 또는 특정 학생만 선택 가능합니다.
+  </div>
+  <div class="add-row">
+    <input id="newFolder" placeholder="새 폴더 이름 (예: 약점유형 보충자료)">
+    <button class="btn" onclick="addFolder()">+ 폴더 추가</button>
+  </div>
+  <div id="archive-list"></div>
+</div>
+
+<script>
+const REPO = "docssam1/lete-on";
+const FILE_PATH = "fields-classic/data.js";
+const BRANCH = "main";
+
+// 상품 목록 (컬럼)
+const PRODUCTS = [
+  {id:"FC-CONCEPT",  name:"개념완성"},
+  {id:"FC-MOCK",     name:"진단모의고사"},
+  {id:"FC-KILLER",   name:"킬러문항"},
+  {id:"FC-FINAL-1",  name:"파이널1회"},
+  {id:"FC-FINAL-2",  name:"파이널2회"},
+  {id:"FC-FINAL-3",  name:"파이널3회"},
+  {id:"FC-FINAL-4",  name:"파이널4회"},
+  {id:"FC-ULTIMATE", name:"최종모의고사"},
+];
+
+// 기본 데이터 구조
+let S = window.GFIELD_FC_DATA || {
+  students: [],
+  studentType: {},
+  attendance: {},
+  content: {},
+  archiveFolders: [],           // ["약점유형 보충자료", ...]
+  archiveAccess: {},            // { "폴더명": ["*"] 또는 ["학생명",...] }
+  books: []                     // [{folder, title, pdf, video, date}]
+};
+
+function esc(s){
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function cObj(pid){
+  if(!S.content[pid]) S.content[pid] = {notice:'', homework:'', textbooks:[]};
+  if(!S.content[pid].textbooks) S.content[pid].textbooks = [];
+  return S.content[pid];
+}
+
+function ensureStudent(name){
+  if(!S.attendance[name]) S.attendance[name] = [];
+  if(!S.studentType[name]) S.studentType[name] = 'internal';
+}
+
+function renderMatrix(){
+  let html = '<thead><tr><th>학생</th><th>구분</th>';
+  PRODUCTS.forEach(p => html += `<th>${p.name}</th>`);
+  html += '<th></th></tr></thead><tbody>';
+  S.students.forEach(name => {
+    ensureStudent(name);
+    const type = S.studentType[name];
+    html += `<tr><td class="name">${name}</td>`;
+    html += `<td><span class="tag ${type}">${type==='internal'?'재원':'온라인'}</span></td>`;
+    PRODUCTS.forEach(p => {
+      const on = S.attendance[name].includes(p.id);
+      html += `<td><span class="cell ${on?'on':'off'}" onclick="toggleCell('${name}','${p.id}',this)"></span></td>`;
+    });
+    html += `<td><button class="del-btn" onclick="removeStudent('${name}')">✕</button></td></tr>`;
+  });
+  html += '</tbody>';
+  document.getElementById('matrix').innerHTML = html;
+}
+
+function renderContent(){
+  let html = '';
+  PRODUCTS.forEach(p => {
+    const c = cObj(p.id);
+    let tbRows = '';
+    c.textbooks.forEach((t,i) => {
+      tbRows += `<div class="tb-row">
+        <input type="text" value="${esc(t.title)}" oninput="setTB('${p.id}',${i},'title',this.value)" placeholder="교재 제목">
+        <input type="url" value="${esc(t.url)}" oninput="setTB('${p.id}',${i},'url',this.value)" placeholder="PDF 웹 링크">
+        <button class="btn del" onclick="delTB('${p.id}',${i})">삭제</button>
+      </div>`;
+    });
+    html += `<div class="content-week">
+      <div class="wt">${p.name}</div>
+      <label class="flbl">📘 학습 안내 · 코멘트</label>
+      <textarea class="cta" oninput="setNotice('${p.id}',this.value)" placeholder="학습영상 링크, 코멘트, 안내 등 자유롭게 작성">${esc(c.notice)}</textarea>
+      <label class="flbl">📌 과제</label>
+      <textarea class="cta" style="min-height:50px" oninput="setHW('${p.id}',this.value)" placeholder="과제 안내">${esc(c.homework)}</textarea>
+      <label class="flbl">📕 교재 자료</label>
+      <div class="tb-list">${tbRows}</div>
+      <button class="btn add sm" onclick="addTB('${p.id}')">＋ 교재 추가</button>
+    </div>`;
+  });
+  document.getElementById('content-list').innerHTML = html;
+}
+
+function setNotice(pid, val){ cObj(pid).notice = val; dirty(); }
+function setHW(pid, val){ cObj(pid).homework = val; dirty(); }
+function setTB(pid, i, field, val){ cObj(pid).textbooks[i][field] = val; dirty(); }
+function addTB(pid){
+  cObj(pid).textbooks.push({title:'', url:''});
+  renderContent();
+  dirty();
+}
+function delTB(pid, i){
+  cObj(pid).textbooks.splice(i,1);
+  renderContent();
+  dirty();
+}
+
+// ===== 자료실 =====
+function accArr(folder){
+  if(!Array.isArray(S.archiveAccess[folder])) S.archiveAccess[folder] = ["*"];
+  return S.archiveAccess[folder];
+}
+
+function addFolder(){
+  const el = document.getElementById('newFolder');
+  const name = el.value.trim();
+  if(!name) return;
+  if(S.archiveFolders.includes(name)){ alert('이미 있는 폴더입니다.'); return; }
+  S.archiveFolders.push(name);
+  S.archiveAccess[name] = ["*"];
+  el.value = '';
+  renderArchive();
+  dirty();
+}
+
+function removeFolder(folder){
+  if(!confirm(`'${folder}' 폴더와 안의 자료를 모두 삭제할까요?`)) return;
+  S.archiveFolders = S.archiveFolders.filter(f => f !== folder);
+  delete S.archiveAccess[folder];
+  S.books = S.books.filter(b => b.folder !== folder);
+  renderArchive();
+  dirty();
+}
+
+function toggleAccessAll(folder, checked){
+  S.archiveAccess[folder] = checked ? ["*"] : [];
+  renderArchive();
+  dirty();
+}
+
+function toggleStudentAccess(folder, name){
+  let arr = accArr(folder);
+  if(arr.includes("*")) arr = []; // 전체공개 해제하고 개별선택 시작
+  const i = arr.indexOf(name);
+  if(i>=0) arr.splice(i,1); else arr.push(name);
+  S.archiveAccess[folder] = arr;
+  renderArchive();
+  dirty();
+}
+
+function addBook(folder){
+  S.books.push({folder, title:'', pdf:'', video:'', date: new Date().toISOString().slice(0,10)});
+  renderArchive();
+  dirty();
+}
+
+function setBook(idx, field, val){
+  S.books[idx][field] = val;
+  dirty();
+}
+
+function delBook(idx){
+  S.books.splice(idx,1);
+  renderArchive();
+  dirty();
+}
+
+function renderArchive(){
+  let html = '';
+  S.archiveFolders.forEach(folder => {
+    const access = accArr(folder);
+    const isAll = access.includes("*");
+    const booksInFolder = S.books.map((b,i)=>({...b,idx:i})).filter(b => b.folder === folder);
+
+    html += `<div class="folder-card">
+      <div class="folder-head">
+        <span class="folder-name">📁 ${folder}</span>
+        <button class="del-btn" onclick="removeFolder('${folder}')">✕ 폴더삭제</button>
+      </div>
+      <div class="access-row">
+        <label style="font-size:11px;display:flex;align-items:center;gap:4px">
+          <input type="checkbox" ${isAll?'checked':''} onchange="toggleAccessAll('${folder}',this.checked)"> 전체 공개
+        </label>
+        ${!isAll ? S.students.map(name=>`
+          <label style="font-size:11px;display:flex;align-items:center;gap:3px">
+            <input type="checkbox" ${access.includes(name)?'checked':''} onchange="toggleStudentAccess('${folder}','${name}')">${name}
+          </label>`).join('') : ''}
+      </div>
+      ${booksInFolder.map(b => `
+        <div class="book-row">
+          <input class="title" type="text" value="${esc(b.title)}" oninput="setBook(${b.idx},'title',this.value)" placeholder="자료 제목">
+          <input class="url" type="url" value="${esc(b.pdf)}" oninput="setBook(${b.idx},'pdf',this.value)" placeholder="PDF 링크">
+          <input class="url" type="url" value="${esc(b.video)}" oninput="setBook(${b.idx},'video',this.value)" placeholder="영상 링크 (선택)">
+          <button class="btn del" onclick="delBook(${b.idx})">삭제</button>
+        </div>`).join('')}
+      <button class="btn add sm" onclick="addBook('${folder}')">＋ 자료 추가</button>
+    </div>`;
+  });
+  document.getElementById('archive-list').innerHTML = html || '<div style="font-size:12px;color:#94a3b8">폴더를 추가해 주세요.</div>';
+}
+
+function toggleCell(name, pid, el){
+  ensureStudent(name);
+  const arr = S.attendance[name];
+  const i = arr.indexOf(pid);
+  if(i >= 0){ arr.splice(i,1); el.className='cell off'; }
+  else { arr.push(pid); el.className='cell on'; }
+  dirty();
+}
+
+function addStudent(){
+  const nameEl = document.getElementById('newName');
+  const typeEl = document.getElementById('newType');
+  const raw = nameEl.value.trim();
+  const type = typeEl.value;
+  if(!raw) return;
+  // 쉼표 또는 줄바꿈으로 구분된 여러 이름 처리
+  const names = raw.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
+  let added = 0, skipped = [];
+  names.forEach(name => {
+    if(S.students.includes(name)){ skipped.push(name); return; }
+    S.students.push(name);
+    S.studentType[name] = type;
+    // 온라인 학생은 구매 즉시 전체 상품 오픈, 재원생은 빈 상태(진도별로 열어줌)
+    S.attendance[name] = type === 'online' ? PRODUCTS.map(p=>p.id) : [];
+    added++;
+  });
+  nameEl.value = '';
+  renderMatrix();
+  if(added>0) dirty();
+  if(skipped.length) alert('이미 있어서 건너뜀: ' + skipped.join(', '));
+}
+
+function removeStudent(name){
+  if(!confirm(`'${name}' 학생을 삭제할까요?`)) return;
+  S.students = S.students.filter(s => s !== name);
+  delete S.attendance[name];
+  delete S.studentType[name];
+  renderMatrix();
+  dirty();
+}
+
+function dirty(){
+  document.getElementById('save-status').textContent = '● 저장되지 않은 변경 있음';
+}
+
+function buildFile(){
+  return "/* =========================================================\n"
+    + " * 지필드 영재교육 · 필즈 더 클래식 대비 과정\n"
+    + " * 공용 데이터 파일 — 관리자 콘솔에서 자동 생성됨\n"
+    + " * 생성: " + new Date().toLocaleString('ko-KR') + "\n"
+    + " * ========================================================= */\n"
+    + "window.GFIELD_FC_DATA = " + JSON.stringify(S, null, 2) + ";\n";
+}
+
+function ghKeyGet(){ try{ return localStorage.getItem('gfield_fc_gh_token')||''; }catch(e){ return ''; } }
+function ghKeySet(v){ try{ localStorage.setItem('gfield_fc_gh_token', v); }catch(e){} }
+function ghToken(){ return ghKeyGet(); }
+
+function saveGhKey(){
+  const el = document.getElementById('ghKey');
+  const v = (el.value||'').trim();
+  if(!v){ alert('토큰을 입력하세요'); return; }
+  ghKeySet(v);
+  alert('토큰 저장됨 ✅');
+}
+
+async function saveToGitHub(){
+  const token = ghToken();
+  if(!token){ alert('먼저 GitHub 토큰을 저장하세요'); return; }
+  document.getElementById('save-status').textContent = 'GitHub에 저장 중…';
+  try{
+    let sha = null;
+    const getRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,
+      { headers:{ Authorization:'token '+token, Accept:'application/vnd.github+json' } });
+    if(getRes.ok){ const j = await getRes.json(); sha = j.sha; }
+    const content = buildFile();
+    const b64 = btoa(unescape(encodeURIComponent(content)));
+    const body = { message:'admin: 학생 상품 오픈 현황 갱신', content:b64, branch:BRANCH };
+    if(sha) body.sha = sha;
+    const putRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`,
+      { method:'PUT', headers:{ Authorization:'token '+token, Accept:'application/vnd.github+json' },
+        body: JSON.stringify(body) });
+    if(putRes.ok){
+      document.getElementById('save-status').textContent = '✅ 저장 완료 · ' + new Date().toLocaleTimeString('ko-KR');
+    } else {
+      const err = await putRes.json();
+      document.getElementById('save-status').textContent = '❌ 저장 실패: ' + (err.message||'');
+    }
+  }catch(e){
+    document.getElementById('save-status').textContent = '❌ 오류: ' + e.message;
+  }
+}
+
+// 초기화
+renderMatrix();
+renderContent();
+renderArchive();
+const savedToken = ghKeyGet();
+if(savedToken) document.getElementById('ghKey').value = savedToken;
+</script>
+</body>
+</html>
