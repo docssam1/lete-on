@@ -488,7 +488,7 @@ function initTownWorld(scr){
       pd=d;drag=false;
     }
   }
-  function pdUp(e){pts.delete(e.pointerId);if(pts.size<2)pd=0;}
+  function pdUp(e){pts.delete(e.pointerId);if(pts.size<2){pd=0;pinched=false;}}
   vp.addEventListener('pointerdown',pdDown);
   vp.addEventListener('pointermove',pdMove);
   vp.addEventListener('pointerup',pdUp);

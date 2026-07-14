@@ -659,6 +659,35 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-vp-sm{font-size:1.05em}
 
 /* ============================================================
+   모바일 세로 화면 압축 — 유닛 드릴이 한 화면에 들어오도록
+   ============================================================ */
+@media(max-height:700px){
+  .nm-unit-bar{padding:3px 0}
+  .nm-back{padding:5px 10px;font-size:12px}
+  .nm-unit-title{font-size:13px}
+  .nm-unit-title small{font-size:10px}
+  .nm-flow{padding:2px 0 4px}
+  .nm-flow-step{padding:3px 6px}
+  .nm-flow-ic{font-size:12px}
+  .nm-numi{width:40px}
+  .nm-numi.big{width:56px}
+  .nm-bubble{font-size:13px;padding:8px 12px;margin:4px auto 0}
+  .nm-prog{margin-bottom:2px}
+  .nm-numpad-screen{font-size:24px;min-height:24px;margin:2px 0}
+  .nm-numpad{gap:5px}
+  .nm-key{padding:5px 0;font-size:17px;border-radius:10px;box-shadow:0 3px 0 #eceae4}
+  .nm-key:active{transform:translateY(2px);box-shadow:0 1px 0 #eceae4}
+  .nm-hint{font-size:10px;margin-top:2px}
+}
+@media(max-height:580px){
+  .nm-flow-ic{display:none}
+  .nm-numi{width:32px}
+  .nm-bubble{font-size:12px;padding:6px 10px}
+  .nm-key{padding:4px 0;font-size:15px}
+  .nm-numpad{gap:4px}
+}
+
+/* ============================================================
    인쇄 학습지 (11math 세로셈 스타일)
    ============================================================ */
 @media print {
