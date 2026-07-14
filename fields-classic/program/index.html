@@ -344,6 +344,8 @@ const GF={
     const c=document.getElementById("gCode").value.trim(),n=document.getElementById("gName").value.replace(/\s+/g,"").trim(),e=document.getElementById("gErr");
     if(!c){e.textContent="승인번호를 입력해 주세요.";return}
     if(!n){e.textContent="학생 이름을 입력해 주세요.";return}
+    // 관리자 전용 진입
+    if(c==="01020837265" && n.toLowerCase()==="docssam"){ location.href="../admin.html"; return; }
     e.textContent="확인 중...";
     const result=await verify(c);
     if(!result){e.textContent="올바르지 않은 승인번호입니다.";return}
@@ -476,7 +478,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   ni?.addEventListener("keydown",e=>{if(e.key==="Enter")GF.login()});
   setTimeout(()=>ci?.focus(),60);
   const sc=sessionStorage.getItem("gf_c"),sn=sessionStorage.getItem("gf_n");
-  if(sc&&sn)verify(sc).then(p=>{if(p){S.name=sn;S.perms=p;GF.showApp()}else sessionStorage.clear()});
+  if(sc&&sn)verify(sc).then(r=>{if(r){S.name=r.name||sn;S.perms=r.perms;S.studentType=r.type||"legacy";GF.showApp()}else sessionStorage.clear()});
 });
 window.GF=GF;
 })();
