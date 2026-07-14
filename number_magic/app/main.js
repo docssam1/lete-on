@@ -768,15 +768,18 @@ function runPractice(body,u){
   S.sub.pIdx=S.sub.pIdx||0;S.sub.cur=S.sub.cur||GEN[cfg.generator]({level:'practice'});
   const cur=S.sub.cur;
   const first=S.sub.pIdx===0&&!S.sub.started;
+  const pracTex=cur.tex?`<div class="nm-lab-expr"><span data-tex="${esc(cur.tex)}"></span></div>`:'';
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro))+'<br><br>'+esc(L(cur.prompt)):esc(L(cur.prompt))}</div>
+    ${pracTex}
     <div class="nm-numpad-screen" id="pscreen">&nbsp;</div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint">${t('numpadHint')}</div>
   </div>`;
   S.sub.started=true;
+  renderMath(body);
   buildNumpad($('#pad'),val=>handlePractice(val,body,u));
   say(first?L(cfg.intro)+'. '+L(cur.prompt):L(cur.prompt));
 }
