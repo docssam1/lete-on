@@ -953,6 +953,7 @@ function stepLabWidget(body,u){
     <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
   </div>`;
   S.sub.labStarted=true;
+  renderMath(body);
   say(first?L(cfg.intro):L(cur.prompt));
   NM_WIDGETS.render(cur,$('#labWidget'),val=>{
     if(+val===cur.answer){
