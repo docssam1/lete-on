@@ -97,7 +97,48 @@ window.NM_CURRICULUM = {
       desc:{ko:'수를 나누어 곱하는 힘 — 분배법칙과 곱셈 공식으로',
         en:'The power of splitting numbers to multiply — through the distributive law and multiplication formulas',
         zh:'拆分数字来做乘法的力量——通过分配律与乘法公式'},
-      levels:[{ id:'M-A', title:{ko:'준비 중',en:'Coming soon',zh:'即将推出'}, units:[], available:false }]
+      levels:[
+        {
+          id:'A', available:true,
+          title:{ko:'A단계 · 배와 반',en:'Level A · Doubling & Halving',zh:'A阶段 · 翻倍与减半'},
+          units:['B-01','B-02','B-03']
+        },
+        {
+          id:'B', available:true,
+          title:{ko:'B단계 · 2단·5단',en:'Level B · 2s & 5s Times Tables',zh:'B阶段 · 2和5的口诀'},
+          units:['B-04','B-05','B-06']
+        },
+        {
+          id:'C', available:true,
+          title:{ko:'C단계 · 3단·6단',en:'Level C · 3s & 6s Times Tables',zh:'C阶段 · 3和6的口诀'},
+          units:['B-07','B-08','B-09']
+        },
+        {
+          id:'D', available:true,
+          title:{ko:'D단계 · 4단·8단',en:'Level D · 4s & 8s Times Tables',zh:'D阶段 · 4和8的口诀'},
+          units:['B-10','B-11','B-12']
+        },
+        {
+          id:'E', available:true,
+          title:{ko:'E단계 · 7단·9단',en:'Level E · 7s & 9s Times Tables',zh:'E阶段 · 7和9的口诀'},
+          units:['B-13','B-14','B-15']
+        },
+        {
+          id:'F', available:true,
+          title:{ko:'F단계 · 구구 총정리',en:'Level F · Full Tables Review',zh:'F阶段 · 口诀大总结'},
+          units:['B-16','B-17']
+        },
+        {
+          id:'G', available:true,
+          title:{ko:'G단계 · 몇십·몇백 곱',en:'Level G · Tens & Hundreds ×',zh:'G阶段 · 整十整百乘法'},
+          units:['B-18','B-19','B-20']
+        },
+        {
+          id:'H', available:true,
+          title:{ko:'H단계 · 두 자리×한 자리',en:'Level H · 2-Digit × 1-Digit',zh:'H阶段 · 两位乘一位'},
+          units:['B-21','B-22','B-23']
+        }
+      ]
     },
 
     /* ===== CHALLENGE · 고급 ===== */
