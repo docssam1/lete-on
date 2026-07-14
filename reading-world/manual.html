@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Gfield Reading Town & Writing Village 사용 설명서</title>
+<title>Gfield Reading Town &amp; Writing Village 사용 설명서</title>
 <style>
 :root{
   --ink:#23312a; --muted:#6a7a6f; --line:#e7e2d5; --paper:#fffdf7; --bg:#f3efe3;
@@ -25,6 +25,12 @@ a{color:var(--green-deep)}
 .topnav-inner::-webkit-scrollbar{height:5px}
 .topnav a{flex:0 0 auto;white-space:nowrap;text-decoration:none;color:var(--muted);font-weight:700;font-size:13px;padding:8px 12px;border-radius:999px;border:1px solid transparent;transition:.15s}
 .topnav a:hover{color:var(--green-deep);background:#eef4ee;border-color:#d7e5d9}
+
+/* ---- language selector (added) ---- */
+.langsel{flex:0 0 auto;display:flex;gap:4px;margin-left:auto;position:sticky;right:0;padding-left:8px;background:rgba(255,253,247,.94)}
+.langsel button{cursor:pointer;white-space:nowrap;color:var(--muted);font-weight:700;font-size:12px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;font-family:inherit;transition:.15s}
+.langsel button:hover{color:var(--green-deep);background:#eef4ee;border-color:#d7e5d9}
+.langsel button.active{color:#fff;background:var(--green);border-color:var(--green)}
 
 /* ---- hero ---- */
 .hero{max-width:880px;margin:0 auto;padding:46px 20px 30px;text-align:center}
@@ -117,61 +123,66 @@ a{color:var(--green-deep)}
 
 <nav class="topnav" aria-label="빠른 이동">
   <div class="topnav-inner">
-    <a href="#start">🚪 시작하기</a>
-    <a href="#town">🗺️ 마을 지도</a>
-    <a href="#reading">📘 교재 학습</a>
-    <a href="#library">📚 도서관</a>
-    <a href="#writing">✏️ Writing Village</a>
-    <a href="#parent">👨‍👩‍👧 학부모 리포트</a>
-    <a href="#faq">❓ 자주 묻는 질문</a>
+    <a href="#start" data-i18n="nav_start">🚪 시작하기</a>
+    <a href="#town" data-i18n="nav_town">🗺️ 마을 지도</a>
+    <a href="#reading" data-i18n="nav_reading">📘 교재 학습</a>
+    <a href="#library" data-i18n="nav_library">📚 도서관</a>
+    <a href="#writing" data-i18n="nav_writing">✏️ Writing Village</a>
+    <a href="#parent" data-i18n="nav_parent">👨‍👩‍👧 학부모 리포트</a>
+    <a href="#faq" data-i18n="nav_faq">❓ 자주 묻는 질문</a>
+    <span class="langsel" role="group" aria-label="Language">
+      <button type="button" data-lang="ko">한국어</button>
+      <button type="button" data-lang="en">English</button>
+      <button type="button" data-lang="zh">中文</button>
+    </span>
   </div>
 </nav>
 
 <header class="hero">
   <span class="brand">G-FIELD · READING TOWN</span>
-  <h1>Gfield Reading Town &amp; Writing Village<br>사용 설명서</h1>
-  <p>아이가 혼자서도 척척 사용할 수 있도록 만든 그림 설명서예요. 부모님과 아이가 함께 한 번만 훑어보면
+  <h1 data-i18n="hero_h1">Gfield Reading Town &amp; Writing Village<br>사용 설명서</h1>
+  <p data-i18n="hero_p">아이가 혼자서도 척척 사용할 수 있도록 만든 그림 설명서예요. 부모님과 아이가 함께 한 번만 훑어보면
   충분해요 — 그다음부터는 아이가 지도를 탭탭 눌러가며 스스로 학습을 이어갈 수 있어요.</p>
-  <div class="url-pill">🔗 접속 주소&nbsp; <code>docssam1.github.io/lete-on/reading-world</code></div>
+  <div class="url-pill" data-i18n="hero_url">🔗 접속 주소&nbsp; <code>docssam1.github.io/lete-on/reading-world</code></div>
 </header>
 
 <!-- ============ 1. 시작하기 ============ -->
 <section class="section" id="start">
   <div class="section-head">
     <div class="section-eyebrow">Step 1</div>
-    <h2><span class="emoji">🚪</span> 시작하기</h2>
-    <p>회원가입도, 비밀번호도 필요 없어요. 이름(또는 별명)만 입력하면 바로 학습을 시작할 수 있고,
+    <h2 data-i18n="s1_h2"><span class="emoji">🚪</span> 시작하기</h2>
+    <p data-i18n="s1_p">회원가입도, 비밀번호도 필요 없어요. 이름(또는 별명)만 입력하면 바로 학습을 시작할 수 있고,
     같은 이름으로 로그인하면 태블릿이든 컴퓨터든 어떤 기기에서든 이어서 학습할 수 있어요.</p>
   </div>
 
   <div class="steps">
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s1-01-cover.jpg" alt="접속 후 이름을 입력하는 첫 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s1-01-cover.jpg" alt="접속 후 이름을 입력하는 첫 화면" data-i18n-alt="s1_1_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">①</span>주소로 접속해서 이름 입력하기</div>
-        <p><code>https://docssam1.github.io/lete-on/reading-world/</code> 주소로 들어가면
+        <div class="step-title" data-i18n="s1_1_title"><span class="step-num">①</span>주소로 접속해서 이름 입력하기</div>
+        <p data-i18n="s1_1_p1"><code>https://docssam1.github.io/lete-on/reading-world/</code> 주소로 들어가면
         이름(또는 별명)을 입력하는 화면이 나와요.</p>
-        <p class="sub">실명이 아니어도 괜찮아요 — 별명이나 학원에서 받은 코드를 입력해도 돼요.
+        <p class="sub" data-i18n="s1_1_p2">실명이 아니어도 괜찮아요 — 별명이나 학원에서 받은 코드를 입력해도 돼요.
         <b>같은 이름으로 로그인</b>하면 다른 기기에서도 진행 상황이 그대로 연동돼요.</p>
       </div>
     </div>
 
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s1-02-avatar.jpg" alt="캐릭터(아바타) 고르기 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s1-02-avatar.jpg" alt="캐릭터(아바타) 고르기 화면" data-i18n-alt="s1_2_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">②</span>내 캐릭터 고르기</div>
-        <p>처음 로그인하면 나를 대표할 캐릭터(아바타)를 골라요. 머리 모양, 피부색, 옷 등은
+        <div class="step-title" data-i18n="s1_2_title"><span class="step-num">②</span>내 캐릭터 고르기</div>
+        <p data-i18n="s1_2_p">처음 로그인하면 나를 대표할 캐릭터(아바타)를 골라요. 머리 모양, 피부색, 옷 등은
         나중에 마을에서 코인으로 자유롭게 바꿀 수 있으니 지금은 마음에 드는 걸로 가볍게 골라도 돼요.</p>
       </div>
     </div>
 
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s1-03-diagnostic-intro.jpg" alt="리딩 진단 시작 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s1-03-diagnostic-intro.jpg" alt="리딩 진단 시작 화면" data-i18n-alt="s1_3_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">③</span>리딩 진단 (건너뛰어도 OK)</div>
-        <p>캐릭터를 고르고 나면 짧은 리딩 진단 테스트를 볼 수 있어요. 내 영어 읽기 레벨을 가늠해보고
+        <div class="step-title" data-i18n="s1_3_title"><span class="step-num">③</span>리딩 진단 (건너뛰어도 OK)</div>
+        <p data-i18n="s1_3_p1">캐릭터를 고르고 나면 짧은 리딩 진단 테스트를 볼 수 있어요. 내 영어 읽기 레벨을 가늠해보고
         어떤 책부터 시작하면 좋을지 추천을 받는 용도예요.</p>
-        <p class="sub">지금 하고 싶지 않다면 <b>"건너뛰고 자유롭게 고르기"</b>를 눌러도 전혀 문제없어요.
+        <p class="sub" data-i18n="s1_3_p2">지금 하고 싶지 않다면 <b>"건너뛰고 자유롭게 고르기"</b>를 눌러도 전혀 문제없어요.
         나중에 마을 지도 위쪽 툴바의 <b>🧭 나침반 버튼</b>을 눌러 언제든 다시 볼 수 있어요.</p>
       </div>
     </div>
@@ -182,44 +193,44 @@ a{color:var(--green-deep)}
 <section class="section" id="town">
   <div class="section-head">
     <div class="section-eyebrow">Step 2</div>
-    <h2><span class="emoji">🗺️</span> 마을 지도 둘러보기</h2>
-    <p>로그인하면 레고 블록으로 만든 아기자기한 마을이 펼쳐져요. 마을 안의 건물들이 각각 하나의 학습 코너예요.</p>
+    <h2 data-i18n="s2_h2"><span class="emoji">🗺️</span> 마을 지도 둘러보기</h2>
+    <p data-i18n="s2_p">로그인하면 레고 블록으로 만든 아기자기한 마을이 펼쳐져요. 마을 안의 건물들이 각각 하나의 학습 코너예요.</p>
   </div>
 
   <div class="step wide">
-    <div class="step-img"><img src="assets/images/manual2/s2-01-town-map.jpg" alt="레고 마을 지도 전체 화면" loading="lazy"></div>
+    <div class="step-img"><img src="assets/images/manual2/s2-01-town-map.jpg" alt="레고 마을 지도 전체 화면" data-i18n-alt="s2_map_alt" loading="lazy"></div>
     <div class="step-body">
-      <p class="sub" style="text-align:center">마을 지도 — 위쪽 툴바에 코인, 스크린 극장, 진단, 공지, 꾸미기, 목록 버튼이 모여 있어요.</p>
+      <p class="sub" style="text-align:center" data-i18n="s2_map_cap">마을 지도 — 위쪽 툴바에 코인, 스크린 극장, 진단, 공지, 꾸미기, 목록 버튼이 모여 있어요.</p>
     </div>
   </div>
 
   <div class="loc-wrap">
     <table class="loc-table">
-      <thead><tr><th>건물</th><th>하는 일</th></tr></thead>
+      <thead><tr><th data-i18n="loc_th1">건물</th><th data-i18n="loc_th2">하는 일</th></tr></thead>
       <tbody>
-        <tr><td><b>📚 Library</b></td><td>영어 원서 eBook을 페이지 넘기며 읽어요.</td></tr>
-        <tr><td><b>🏠 Study House</b></td><td>CARS 등 교재로 학습해요. 레벨 사다리를 따라 자유롭게 책을 골라요.</td></tr>
-        <tr><td><b>🎬 Screen Theater</b></td><td>영상을 보고 짧은 퀴즈를 풀어요.</td></tr>
-        <tr><td><b>🔤 Word Shop</b></td><td>단어 카드, 암기 게임, 나만의 단어장을 관리해요.</td></tr>
-        <tr><td><b>📊 Report Hall</b></td><td>레슨별 학습 리포트를 확인해요.</td></tr>
-        <tr><td><b>✏️ Writing Village</b></td><td>지도 아래쪽 표지판을 탭하면 이웃 마을인 글쓰기 마을로 이동해요.</td></tr>
+        <tr><td data-i18n="loc_r1_name"><b>📚 eBook Library</b></td><td data-i18n="loc_r1_desc">영어 원서 eBook을 페이지 넘기며 읽어요.</td></tr>
+        <tr><td data-i18n="loc_r2_name"><b>🏫 Textbook Library</b> (교재 도서관)</td><td data-i18n="loc_r2_desc">CARS 등 교재로 학습해요. 레벨 사다리를 따라 자유롭게 책을 골라요.</td></tr>
+        <tr><td data-i18n="loc_r3_name"><b>🎬 Screen Theater</b></td><td data-i18n="loc_r3_desc">영상을 보고 짧은 퀴즈를 풀어요.</td></tr>
+        <tr><td data-i18n="loc_r4_name"><b>🔤 Vocabulary Room</b> (어휘 방)</td><td data-i18n="loc_r4_desc">단어 카드, 암기 게임, 나만의 단어장을 관리해요.</td></tr>
+        <tr><td data-i18n="loc_r5_name"><b>📊 Reading Report</b> (리딩 리포트)</td><td data-i18n="loc_r5_desc">레슨별 학습 리포트를 확인해요.</td></tr>
+        <tr><td data-i18n="loc_r6_name"><b>✏️ Writing Village</b></td><td data-i18n="loc_r6_desc">지도 아래쪽 표지판을 탭하면 이웃 마을인 글쓰기 마을로 이동해요.</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="controls">
-    <div class="ctrl"><b>지도 탭</b> 그 자리로 캐릭터가 걸어가요.</div>
-    <div class="ctrl"><b>건물 탭</b> 바로 그 학습 코너가 열려요.</div>
-    <div class="ctrl"><b>＋ / −</b> 지도를 확대·축소해요.</div>
-    <div class="ctrl"><b>👨‍👩‍👧</b> 우상단(목록 화면)에서 학부모 대시보드를 열어요.</div>
-    <div class="ctrl"><b>🎨 꾸미기</b> 코인으로 아바타 옷·모자와 마을 장식을 사고 꾸며요.</div>
+    <div class="ctrl" data-i18n="s2_ctrl1"><b>지도 탭</b> 그 자리로 캐릭터가 걸어가요.</div>
+    <div class="ctrl" data-i18n="s2_ctrl2"><b>건물 탭</b> 바로 그 학습 코너가 열려요.</div>
+    <div class="ctrl" data-i18n="s2_ctrl3"><b>＋ / −</b> 지도를 확대·축소해요.</div>
+    <div class="ctrl" data-i18n="s2_ctrl4"><b>👨‍👩‍👧</b> 우상단(목록 화면)에서 학부모 대시보드를 열어요.</div>
+    <div class="ctrl" data-i18n="s2_ctrl5"><b>🎨 꾸미기</b> 코인으로 아바타 옷·모자와 마을 장식을 사고 꾸며요.</div>
   </div>
 
   <div class="step" style="margin-top:18px">
-    <div class="step-img"><img src="assets/images/manual2/s2-02-closet.jpg" alt="캐릭터 꾸미기 화면" loading="lazy"></div>
+    <div class="step-img"><img src="assets/images/manual2/s2-02-closet.jpg" alt="캐릭터 꾸미기 화면" data-i18n-alt="s2_closet_alt" loading="lazy"></div>
     <div class="step-body">
-      <div class="step-title"><span class="step-num">🎨</span>꾸미기 화면</div>
-      <p>레슨을 완료할 때마다 모은 코인(★P)으로 모자·옷·안경 같은 아이템을 사서 캐릭터를 꾸밀 수 있어요.
+      <div class="step-title" data-i18n="s2_closet_title"><span class="step-num">🎨</span>꾸미기 화면</div>
+      <p data-i18n="s2_closet_p">레슨을 완료할 때마다 모은 코인(★P)으로 모자·옷·안경 같은 아이템을 사서 캐릭터를 꾸밀 수 있어요.
       상단 탭에서 "마을"을 누르면 마을 장식도 같은 방식으로 꾸밀 수 있어요.</p>
     </div>
   </div>
@@ -229,52 +240,52 @@ a{color:var(--green-deep)}
 <section class="section" id="reading">
   <div class="section-head">
     <div class="section-eyebrow">Step 3</div>
-    <h2><span class="emoji">📘</span> Reading Town — 교재 학습 흐름</h2>
-    <p>Study House에서 책을 고르면 한 레슨이 7단계로 진행돼요. 잠금은 전혀 없어요 —
+    <h2 data-i18n="s3_h2"><span class="emoji">📘</span> Reading Town — 교재 학습 흐름</h2>
+    <p data-i18n="s3_p">교재 도서관에서 책을 고르면 한 레슨이 7단계로 진행돼요. 잠금은 전혀 없어요 —
     어떤 책, 어떤 레벨을 고르든 아이가 자유롭게 선택할 수 있어요.</p>
   </div>
 
   <div class="flowchips">
-    <span><i>STEP 1</i>단어 배우기</span>
-    <span><i>STEP 2</i>교재 읽기</span>
-    <span><i>STEP 3</i>교재 문항 12개</span>
-    <span><i>STEP 4</i>추가 학습 지문</span>
-    <span><i>STEP 5</i>추가 문항</span>
-    <span><i>STEP 6</i>새 지문 연습</span>
-    <span><i>STEP 7</i>새 지문 문항</span>
-    <span>→ 리포트</span>
+    <span data-i18n="s3_fc1"><i>STEP 1</i>단어 배우기</span>
+    <span data-i18n="s3_fc2"><i>STEP 2</i>교재 읽기</span>
+    <span data-i18n="s3_fc3"><i>STEP 3</i>교재 문항 12개</span>
+    <span data-i18n="s3_fc4"><i>STEP 4</i>추가 학습 지문</span>
+    <span data-i18n="s3_fc5"><i>STEP 5</i>추가 문항</span>
+    <span data-i18n="s3_fc6"><i>STEP 6</i>새 지문 연습</span>
+    <span data-i18n="s3_fc7"><i>STEP 7</i>새 지문 문항</span>
+    <span data-i18n="s3_fc8">→ 리포트</span>
   </div>
 
   <div class="steps">
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s3-01-study-house.jpg" alt="Study House 책장 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s3-01-study-house.jpg" alt="Study House 책장 화면" data-i18n-alt="s3_1_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">①</span>Study House에서 책 고르기</div>
-        <p>레벨 사다리를 따라 여러 책이 진열돼 있어요. 난이도와 상관없이 <b>자유롭게</b> 고를 수 있고,
+        <div class="step-title" data-i18n="s3_1_title"><span class="step-num">①</span>교재 도서관에서 책 고르기</div>
+        <p data-i18n="s3_1_p">레벨 사다리를 따라 여러 책이 진열돼 있어요. 난이도와 상관없이 <b>자유롭게</b> 고를 수 있고,
         레벨업은 잠금장치가 아니라 그냥 축하 보상이에요.</p>
       </div>
     </div>
 
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s3-02-lesson-home.jpg" alt="레슨 상단의 STEP 1~7 진행 바" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s3-02-lesson-home.jpg" alt="레슨 상단의 STEP 1~7 진행 바" data-i18n-alt="s3_2_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">②</span>STEP 진행 바로 흐름 확인</div>
-        <p>레슨에 들어가면 상단에 STEP 1~7 진행 바가 보여요. 완료한 단계는 초록색으로 표시되고,
+        <div class="step-title" data-i18n="s3_2_title"><span class="step-num">②</span>STEP 진행 바로 흐름 확인</div>
+        <p data-i18n="s3_2_p">레슨에 들어가면 상단에 STEP 1~7 진행 바가 보여요. 완료한 단계는 초록색으로 표시되고,
         지금 있는 단계가 강조돼요. 아무 단계나 눌러서 이동할 수도 있어요.</p>
       </div>
     </div>
 
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s3-03-lesson-words.jpg" alt="STEP1 단어 배우기 카드 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s3-03-lesson-words.jpg" alt="STEP1 단어 배우기 카드 화면" data-i18n-alt="s3_3_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">③</span>STEP 1 — 단어 먼저 배우기</div>
-        <p>레슨의 핵심 단어 12개를 카드로 배워요. 🔊 버튼으로 발음을 듣고, ☆ 별표로 어려운 단어를
+        <div class="step-title" data-i18n="s3_3_title"><span class="step-num">③</span>STEP 1 — 단어 먼저 배우기</div>
+        <p data-i18n="s3_3_p">레슨의 핵심 단어 12개를 카드로 배워요. 🔊 버튼으로 발음을 듣고, ☆ 별표로 어려운 단어를
         나만의 단어장에 저장할 수 있어요. 암기 카드·단어 게임 탭도 있어서 반복 연습이 쉬워요.</p>
       </div>
     </div>
   </div>
 
-  <div class="note green">
+  <div class="note green" data-i18n="s3_note">
     <b>💡 알아두면 좋아요</b><br>
     STEP 2(교재 읽기)에서는 🔊 듣기 버튼으로 원어민 음성을 들을 수 있고, STEP 3의 12문항을 풀면
     틀린 전략(예: 사건 순서 파악, 원인과 결과 등)을 <b>스킬 코치</b>가 자동으로 잡아내서
@@ -288,51 +299,51 @@ a{color:var(--green-deep)}
 <section class="section" id="library">
   <div class="section-head">
     <div class="section-eyebrow">Step 4</div>
-    <h2><span class="emoji">📚</span> 도서관 — 영어 원서 eBook</h2>
-    <p>CARS 문항 없이 순수하게 책을 즐기는 공간이에요. 서가에서 책을 고르면
+    <h2 data-i18n="s4_h2"><span class="emoji">📚</span> 도서관 — 영어 원서 eBook</h2>
+    <p data-i18n="s4_p">CARS 문항 없이 순수하게 책을 즐기는 공간이에요. 서가에서 책을 고르면
     배경지식 → 어휘 → 읽기 → AR 퀴즈 순서로 진행돼요.</p>
   </div>
 
   <div class="steps">
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s4-01-library-shelf.jpg" alt="도서관 서가 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s4-01-library-shelf.jpg" alt="도서관 서가 화면" data-i18n-alt="s4_1_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">①</span>서가에서 책 선택</div>
-        <p>표지를 탭해서 읽고 싶은 책을 골라요. AR 지수와 R/G(리딩 그룹) 표시로 난이도를 미리 볼 수 있어요.</p>
+        <div class="step-title" data-i18n="s4_1_title"><span class="step-num">①</span>서가에서 책 선택</div>
+        <p data-i18n="s4_1_p">표지를 탭해서 읽고 싶은 책을 골라요. AR 지수와 R/G(리딩 그룹) 표시로 난이도를 미리 볼 수 있어요.</p>
       </div>
     </div>
 
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s4-02-library-intro.jpg" alt="배경지식 소개 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s4-02-library-intro.jpg" alt="배경지식 소개 화면" data-i18n-alt="s4_2_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">②</span>배경지식 읽기</div>
-        <p>책을 처음 열면 이야기의 배경(시대·인물·설정)을 먼저 소개해줘요. 이해를 돕는 워밍업 단계예요.</p>
+        <div class="step-title" data-i18n="s4_2_title"><span class="step-num">②</span>배경지식 읽기</div>
+        <p data-i18n="s4_2_p">책을 처음 열면 이야기의 배경(시대·인물·설정)을 먼저 소개해줘요. 이해를 돕는 워밍업 단계예요.</p>
       </div>
     </div>
 
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s4-03-library-vocab.jpg" alt="중요 어휘 카드 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s4-03-library-vocab.jpg" alt="중요 어휘 카드 화면" data-i18n-alt="s4_3_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">③</span>중요 어휘 익히기</div>
-        <p>책에 실제로 나오는 어려운 단어 10개를 미리 배워요. 🔊 발음 듣기, ★ 내 단어장 저장도 가능해요.</p>
+        <div class="step-title" data-i18n="s4_3_title"><span class="step-num">③</span>중요 어휘 익히기</div>
+        <p data-i18n="s4_3_p">책에 실제로 나오는 어려운 단어 10개를 미리 배워요. 🔊 발음 듣기, ★ 내 단어장 저장도 가능해요.</p>
       </div>
     </div>
 
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s4-04-library-reader.jpg" alt="2페이지 스프레드 리더 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s4-04-library-reader.jpg" alt="2페이지 스프레드 리더 화면" data-i18n-alt="s4_4_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">④</span>2페이지 스프레드로 읽기</div>
-        <p>실제 책처럼 두 페이지가 나란히 펼쳐져요. 🔊 듣기를 누르면 지금 읽는 문장이 하이라이트로
+        <div class="step-title" data-i18n="s4_4_title"><span class="step-num">④</span>2페이지 스프레드로 읽기</div>
+        <p data-i18n="s4_4_p">실제 책처럼 두 페이지가 나란히 펼쳐져요. 🔊 듣기를 누르면 지금 읽는 문장이 하이라이트로
         따라가며 표시돼요. "원본 보기" 탭에서는 실제 책 페이지 이미지도 확인할 수 있어요.</p>
-        <p class="sub">읽던 위치는 자동으로 저장되니, 나중에 다시 들어가면 이어 읽기로 바로 연결돼요.</p>
+        <p class="sub" data-i18n="s4_4_p2">읽던 위치는 자동으로 저장되니, 나중에 다시 들어가면 이어 읽기로 바로 연결돼요.</p>
       </div>
     </div>
 
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s4-05-library-quiz.jpg" alt="AR 퀴즈 문항 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s4-05-library-quiz.jpg" alt="AR 퀴즈 문항 화면" data-i18n-alt="s4_5_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">⑤</span>AR 퀴즈로 마무리</div>
-        <p>줄거리 이해도를 확인하는 객관식 퀴즈예요. 60% 이상 맞히면 통과! 통과 시 코인을 받을 수 있어요.</p>
+        <div class="step-title" data-i18n="s4_5_title"><span class="step-num">⑤</span>AR 퀴즈로 마무리</div>
+        <p data-i18n="s4_5_p">줄거리 이해도를 확인하는 객관식 퀴즈예요. 60% 이상 맞히면 통과! 통과 시 코인을 받을 수 있어요.</p>
       </div>
     </div>
   </div>
@@ -342,83 +353,83 @@ a{color:var(--green-deep)}
 <section class="section" id="writing">
   <div class="section-head">
     <div class="section-eyebrow">Step 5</div>
-    <h2><span class="emoji">✏️</span> Writing Village — 글쓰기 마을</h2>
-    <p>마을 지도 아래쪽 ✏️ 표지판을 탭하면 이웃 마을인 <b>Writing Village</b>로 이동해요.
+    <h2 data-i18n="s5_h2"><span class="emoji">✏️</span> Writing Village — 글쓰기 마을</h2>
+    <p data-i18n="s5_p">마을 지도 아래쪽 ✏️ 표지판을 탭하면 이웃 마을인 <b>Writing Village</b>로 이동해요.
     마을 친구 <b>부엉이 올리(Oli the Owl)</b>가 보낸 질문 편지에 답장을 쓰면서 자연스럽게 글쓰기를 배우는 공간이에요.</p>
   </div>
 
   <div class="wv-order">
-    <span>💌 편지 읽기</span>
-    <span>🌱 낱말 정원</span>
-    <span>🌳 모델 나무·저널</span>
-    <span>🌿 내 문장 나무</span>
-    <span>✏️ 저널 쓰기</span>
-    <span>📬 답장 받기</span>
+    <span data-i18n="s5_wv1">💌 편지 읽기</span>
+    <span data-i18n="s5_wv2">🌱 낱말 정원</span>
+    <span data-i18n="s5_wv3">🌳 모델 나무·저널</span>
+    <span data-i18n="s5_wv4">🌿 내 문장 나무</span>
+    <span data-i18n="s5_wv5">✏️ 저널 쓰기</span>
+    <span data-i18n="s5_wv6">📬 답장 받기</span>
   </div>
 
   <div class="steps">
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s5-01-wv-hub.jpg" alt="Writing Village 마을 광장 편지 목록" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s5-01-wv-hub.jpg" alt="Writing Village 마을 광장 편지 목록" data-i18n-alt="s5_0_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">0</span>마을 광장 — 편지 목록</div>
-        <p>표지판을 탭하면 올리가 보낸 질문 편지 목록이 나와요. 원하는 주제를 골라 열면 됩니다.</p>
+        <div class="step-title" data-i18n="s5_0_title"><span class="step-num">0</span>마을 광장 — 편지 목록</div>
+        <p data-i18n="s5_0_p">표지판을 탭하면 올리가 보낸 질문 편지 목록이 나와요. 원하는 주제를 골라 열면 됩니다.</p>
       </div>
     </div>
 
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s5-02-wv-letter.jpg" alt="편지 읽기 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s5-02-wv-letter.jpg" alt="편지 읽기 화면" data-i18n-alt="s5_1_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">①</span>💌 편지 읽기</div>
-        <p>올리가 궁금한 걸 물어봐요. 🔊 버튼으로 편지를 들을 수 있고, 🎙️ 버튼을 누르면
+        <div class="step-title" data-i18n="s5_1_title"><span class="step-num">①</span>💌 편지 읽기</div>
+        <p data-i18n="s5_1_p">올리가 궁금한 걸 물어봐요. 🔊 버튼으로 편지를 들을 수 있고, 🎙️ 버튼을 누르면
         글로 쓰기 전에 <b>말로 먼저 대답</b>해보는 연습도 할 수 있어요.</p>
       </div>
     </div>
 
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s5-03-wv-words.jpg" alt="낱말 정원 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s5-03-wv-words.jpg" alt="낱말 정원 화면" data-i18n-alt="s5_2_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">②</span>🌱 낱말 정원</div>
-        <p>답장에 쓰기 좋은 낱말들을 미리 만나요. 🔊 발음을 듣고, ★로 마음에 드는 낱말을 저장해요.</p>
+        <div class="step-title" data-i18n="s5_2_title"><span class="step-num">②</span>🌱 낱말 정원</div>
+        <p data-i18n="s5_2_p">답장에 쓰기 좋은 낱말들을 미리 만나요. 🔊 발음을 듣고, ★로 마음에 드는 낱말을 저장해요.</p>
       </div>
     </div>
 
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s5-04-wv-model.jpg" alt="친구의 모델 나무와 저널 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s5-04-wv-model.jpg" alt="친구의 모델 나무와 저널 화면" data-i18n-alt="s5_3_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">③</span>🌳 친구의 모델 나무 구경</div>
-        <p>먼저 써본 친구의 예시 저널을 나무 모양으로 구경해요. "이렇게 쓰면 되는구나" 하는 감을 잡는 단계예요.</p>
+        <div class="step-title" data-i18n="s5_3_title"><span class="step-num">③</span>🌳 친구의 모델 나무 구경</div>
+        <p data-i18n="s5_3_p">먼저 써본 친구의 예시 저널을 나무 모양으로 구경해요. "이렇게 쓰면 되는구나" 하는 감을 잡는 단계예요.</p>
       </div>
     </div>
 
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s5-05-wv-tree.jpg" alt="내 문장 나무 키우기 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s5-05-wv-tree.jpg" alt="내 문장 나무 키우기 화면" data-i18n-alt="s5_4_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">④</span>🌿 내 문장 나무 키우기</div>
-        <p>주제·인물·행동·감정 같은 낱말 조각을 하나씩 고르면, 고를 때마다 나무가 자라면서
+        <div class="step-title" data-i18n="s5_4_title"><span class="step-num">④</span>🌿 내 문장 나무 키우기</div>
+        <p data-i18n="s5_4_p">주제·인물·행동·감정 같은 낱말 조각을 하나씩 고르면, 고를 때마다 나무가 자라면서
         문장이 자동으로 완성돼요. 완성된 문장은 소리로도 들려줘요.</p>
       </div>
     </div>
 
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s5-06-wv-journal.jpg" alt="스스로 저널 쓰기 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s5-06-wv-journal.jpg" alt="스스로 저널 쓰기 화면" data-i18n-alt="s5_5_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">⑤</span>✏️ 스스로 저널 쓰기</div>
-        <p>이제 내 힘으로 답장을 써봐요. 화면 아래 다듬기 체크리스트(대문자로 시작했는지, 마침표를 찍었는지,
+        <div class="step-title" data-i18n="s5_5_title"><span class="step-num">⑤</span>✏️ 스스로 저널 쓰기</div>
+        <p data-i18n="s5_5_p">이제 내 힘으로 답장을 써봐요. 화면 아래 다듬기 체크리스트(대문자로 시작했는지, 마침표를 찍었는지,
         because로 이유를 말했는지, 문장 3개 이상인지, 오늘 배운 낱말을 썼는지)로 스스로 점검할 수 있어요.</p>
       </div>
     </div>
 
     <div class="step">
-      <div class="step-img"><img src="assets/images/manual2/s5-07-wv-reply.jpg" alt="올리의 답장 받기 화면" loading="lazy"></div>
+      <div class="step-img"><img src="assets/images/manual2/s5-07-wv-reply.jpg" alt="올리의 답장 받기 화면" data-i18n-alt="s5_6_alt" loading="lazy"></div>
       <div class="step-body">
-        <div class="step-title"><span class="step-num">⑥</span>📬 답장 받기</div>
-        <p>저널을 보내면 올리가 바로 답장을 보내줘요! 저널을 쓸 때마다 숲에 나무가 한 그루씩 늘어나고,
+        <div class="step-title" data-i18n="s5_6_title"><span class="step-num">⑥</span>📬 답장 받기</div>
+        <p data-i18n="s5_6_p">저널을 보내면 올리가 바로 답장을 보내줘요! 저널을 쓸 때마다 숲에 나무가 한 그루씩 늘어나고,
         모든 저널은 <b>My Storybook(📖)</b>에 차곡차곡 보관돼요.</p>
       </div>
     </div>
   </div>
 
-  <div class="note pink">
+  <div class="note pink" data-i18n="s5_note">
     <b>🌈 무지개 펜 첨삭 (프리미엄 기능)</b><br>
     답장 화면에서 "🌈 무지개 펜 첨삭 받기"를 누르면 AI 원어민 선생님이 아이의 글을 읽고
     <b>칭찬 2가지</b>, <b>고치면 좋은 부분(이유 포함)</b>, <b>다음 도전 과제</b>, <b>별점</b>, 그리고
@@ -426,10 +437,10 @@ a{color:var(--green-deep)}
   </div>
 
   <div class="step" style="margin-top:14px">
-    <div class="step-img"><img src="assets/images/manual2/s5-08-wv-ai-panel.jpg" alt="무지개 펜 첨삭 결과 화면" loading="lazy"></div>
+    <div class="step-img"><img src="assets/images/manual2/s5-08-wv-ai-panel.jpg" alt="무지개 펜 첨삭 결과 화면" data-i18n-alt="s5_ai_alt" loading="lazy"></div>
     <div class="step-body">
-      <div class="step-title">✍️ 고쳐서 다시 쓰기</div>
-      <p>첨삭 결과를 확인한 뒤 <b>"고쳐서 다시 쓰기"</b> 버튼을 누르면 고친 내용을 반영해서 다시
+      <div class="step-title" data-i18n="s5_ai_title">✍️ 고쳐서 다시 쓰기</div>
+      <p data-i18n="s5_ai_p">첨삭 결과를 확인한 뒤 <b>"고쳐서 다시 쓰기"</b> 버튼을 누르면 고친 내용을 반영해서 다시
       저널을 써서 보낼 수 있어요. 다시 쓴 저널도 새 기록으로 차곡차곡 쌓여서, <b>초안 → 첨삭 → 고쳐쓰기</b>로
       이어지는 좋은 글쓰기 습관을 자연스럽게 길러줘요.</p>
     </div>
@@ -440,24 +451,24 @@ a{color:var(--green-deep)}
 <section class="section" id="parent">
   <div class="section-head">
     <div class="section-eyebrow">Step 6</div>
-    <h2><span class="emoji">👨‍👩‍👧</span> 학부모 리포트</h2>
-    <p>마을 지도 우상단의 <b>👨‍👩‍👧</b> 버튼(목록 화면 상단)을 누르면 아이의 학습 현황을 한눈에 볼 수 있는
+    <h2 data-i18n="s6_h2"><span class="emoji">👨‍👩‍👧</span> 학부모 리포트</h2>
+    <p data-i18n="s6_p">마을 지도 우상단의 <b>👨‍👩‍👧</b> 버튼(목록 화면 상단)을 누르면 아이의 학습 현황을 한눈에 볼 수 있는
     대시보드가 열려요. 별도의 비밀번호 없이 언제든 확인 가능한 내부 도구예요.</p>
   </div>
 
   <div class="step wide">
-    <div class="step-img"><img src="assets/images/manual2/s6-01-parent-dashboard.jpg" alt="학부모 대시보드 화면" loading="lazy"></div>
+    <div class="step-img"><img src="assets/images/manual2/s6-01-parent-dashboard.jpg" alt="학부모 대시보드 화면" data-i18n-alt="s6_alt" loading="lazy"></div>
     <div class="step-body">
-      <p class="sub" style="text-align:center">학부모 대시보드 — 위에서부터 순서대로 확인해보세요.</p>
+      <p class="sub" style="text-align:center" data-i18n="s6_cap">학부모 대시보드 — 위에서부터 순서대로 확인해보세요.</p>
     </div>
   </div>
 
   <div class="controls">
-    <div class="ctrl"><b>총 포인트 / 완료 레슨</b> 지금까지 모은 코인과 끝낸 레슨 개수예요.</div>
-    <div class="ctrl"><b>독서 현황</b> 완독한 eBook 수, 평균 AR 지수, 완주한 교재 수를 보여줘요.</div>
-    <div class="ctrl"><b>누적 전략별 약점 랭킹</b> 12가지 읽기 전략 중 자주 틀리는 전략을 순위로 보여줘요.</div>
-    <div class="ctrl"><b>레슨별 진도표</b> 레슨마다 STEP별 완료 상태를 표로 확인할 수 있어요.</div>
-    <div class="ctrl"><b>리딩 진단 결과</b> 응시 레벨, 추천 레벨, 강점·약점 전략을 확인해요.</div>
+    <div class="ctrl" data-i18n="s6_ctrl1"><b>총 포인트 / 완료 레슨</b> 지금까지 모은 코인과 끝낸 레슨 개수예요.</div>
+    <div class="ctrl" data-i18n="s6_ctrl2"><b>독서 현황</b> 완독한 eBook 수, 평균 AR 지수, 완주한 교재 수를 보여줘요.</div>
+    <div class="ctrl" data-i18n="s6_ctrl3"><b>누적 전략별 약점 랭킹</b> 12가지 읽기 전략 중 자주 틀리는 전략을 순위로 보여줘요.</div>
+    <div class="ctrl" data-i18n="s6_ctrl4"><b>레슨별 진도표</b> 레슨마다 STEP별 완료 상태를 표로 확인할 수 있어요.</div>
+    <div class="ctrl" data-i18n="s6_ctrl5"><b>리딩 진단 결과</b> 응시 레벨, 추천 레벨, 강점·약점 전략을 확인해요.</div>
   </div>
 </section>
 
@@ -465,40 +476,648 @@ a{color:var(--green-deep)}
 <section class="section" id="faq">
   <div class="section-head">
     <div class="section-eyebrow">Step 7</div>
-    <h2><span class="emoji">❓</span> 자주 묻는 질문</h2>
-    <p>아이와 부모님이 자주 궁금해하는 것들을 모았어요.</p>
+    <h2 data-i18n="s7_h2"><span class="emoji">❓</span> 자주 묻는 질문</h2>
+    <p data-i18n="s7_p">아이와 부모님이 자주 궁금해하는 것들을 모았어요.</p>
   </div>
 
   <div class="faq">
     <details open>
-      <summary>소리가 안 나요.</summary>
-      <div class="a">먼저 기기의 음량과 무음(진동) 모드를 확인해주세요. 그리고 브라우저 정책상
+      <summary data-i18n="faq1_q">소리가 안 나요.</summary>
+      <div class="a" data-i18n="faq1_a">먼저 기기의 음량과 무음(진동) 모드를 확인해주세요. 그리고 브라우저 정책상
       화면을 한 번 탭해야 소리가 시작되는 경우가 있어요 — 첫 화면을 살짝 눌러주면 이후부터는
       🔊 버튼이 정상적으로 소리를 재생해요.</div>
     </details>
     <details>
-      <summary>카카오톡으로 받은 링크를 누르면 이상하게 열려요.</summary>
-      <div class="a">카카오톡 인앱 브라우저는 일부 기능이 제한되어 있어서, 링크를 누르면
+      <summary data-i18n="faq2_q">카카오톡으로 받은 링크를 누르면 이상하게 열려요.</summary>
+      <div class="a" data-i18n="faq2_a">카카오톡 인앱 브라우저는 일부 기능이 제한되어 있어서, 링크를 누르면
       자동으로 크롬(Chrome)이나 사파리(Safari) 같은 기본 브라우저가 열리도록 되어 있어요.
       정상적인 동작이니 걱정하지 않아도 돼요.</div>
     </details>
     <details>
-      <summary>학습 내용은 어떻게 저장되나요?</summary>
-      <div class="a">모든 학습 내용은 별도의 저장 버튼 없이 자동으로 저장돼요. <b>같은 이름으로
+      <summary data-i18n="faq3_q">학습 내용은 어떻게 저장되나요?</summary>
+      <div class="a" data-i18n="faq3_a">모든 학습 내용은 별도의 저장 버튼 없이 자동으로 저장돼요. <b>같은 이름으로
       로그인</b>하면 태블릿, 컴퓨터, 휴대폰 등 어떤 기기에서든 이어서 학습할 수 있어요.</div>
     </details>
     <details>
-      <summary>도서관 책이 인쇄가 안 돼요.</summary>
-      <div class="a">도서관의 영어 원서는 저작권으로 보호되고 있어서 인쇄를 지원하지 않아요.
+      <summary data-i18n="faq4_q">도서관 책이 인쇄가 안 돼요.</summary>
+      <div class="a" data-i18n="faq4_a">도서관의 영어 원서는 저작권으로 보호되고 있어서 인쇄를 지원하지 않아요.
       대신 읽던 위치는 자동으로 저장되니 언제든 이어서 읽을 수 있고, 학습 자체에는 전혀 지장이 없어요.</div>
     </details>
   </div>
 </section>
 
 <footer class="footer">
-  Gfield Reading Town &amp; Writing Village · 이 설명서는 학습을 돕기 위한 안내 자료입니다.<br>
-  <a href="./index.html">← 앱으로 돌아가기</a>
+  <span data-i18n="footer_txt">Gfield Reading Town &amp; Writing Village · 이 설명서는 학습을 돕기 위한 안내 자료입니다.</span><br>
+  <a href="./index.html" data-i18n="footer_link">← 앱으로 돌아가기</a>
 </footer>
+
+<script>
+const TXT = {
+  title: {
+    ko: `Gfield Reading Town & Writing Village 사용 설명서`,
+    en: `Gfield Reading Town & Writing Village User Guide`,
+    zh: `Gfield Reading Town & Writing Village 使用说明书`
+  },
+
+  nav_start:   { ko:`🚪 시작하기`, en:`🚪 Getting Started`, zh:`🚪 开始使用` },
+  nav_town:    { ko:`🗺️ 마을 지도`, en:`🗺️ Town Map`, zh:`🗺️ 小镇地图` },
+  nav_reading: { ko:`📘 교재 학습`, en:`📘 Textbook Learning`, zh:`📘 教材学习` },
+  nav_library: { ko:`📚 도서관`, en:`📚 eBook Library`, zh:`📚 电子书图书馆` },
+  nav_writing: { ko:`✏️ Writing Village`, en:`✏️ Writing Village`, zh:`✏️ Writing Village` },
+  nav_parent:  { ko:`👨‍👩‍👧 학부모 리포트`, en:`👨‍👩‍👧 Parent Report`, zh:`👨‍👩‍👧 家长报告` },
+  nav_faq:     { ko:`❓ 자주 묻는 질문`, en:`❓ FAQ`, zh:`❓ 常见问题` },
+
+  hero_h1: {
+    ko: `Gfield Reading Town &amp; Writing Village<br>사용 설명서`,
+    en: `Gfield Reading Town &amp; Writing Village<br>User Guide`,
+    zh: `Gfield Reading Town &amp; Writing Village<br>使用说明书`
+  },
+  hero_p: {
+    ko: `아이가 혼자서도 척척 사용할 수 있도록 만든 그림 설명서예요. 부모님과 아이가 함께 한 번만 훑어보면 충분해요 — 그다음부터는 아이가 지도를 탭탭 눌러가며 스스로 학습을 이어갈 수 있어요.`,
+    en: `An illustrated guide made so your child can use the app all by themselves. Parents and children only need to look through it together once — after that, your child can tap around the map and keep learning on their own.`,
+    zh: `这是一份图文说明书，让孩子可以自己轻松使用。家长和孩子只需一起看一遍，之后孩子就能自己点点地图，继续学习。`
+  },
+  hero_url: {
+    ko: `🔗 접속 주소&nbsp; <code>docssam1.github.io/lete-on/reading-world</code>`,
+    en: `🔗 Web address&nbsp; <code>docssam1.github.io/lete-on/reading-world</code>`,
+    zh: `🔗 访问地址&nbsp; <code>docssam1.github.io/lete-on/reading-world</code>`
+  },
+
+  /* ---- Section 1 ---- */
+  s1_h2: {
+    ko: `<span class="emoji">🚪</span> 시작하기`,
+    en: `<span class="emoji">🚪</span> Getting Started`,
+    zh: `<span class="emoji">🚪</span> 开始使用`
+  },
+  s1_p: {
+    ko: `회원가입도, 비밀번호도 필요 없어요. 이름(또는 별명)만 입력하면 바로 학습을 시작할 수 있고, 같은 이름으로 로그인하면 태블릿이든 컴퓨터든 어떤 기기에서든 이어서 학습할 수 있어요.`,
+    en: `No sign-up and no password needed. Just enter a name (or nickname) to start learning right away, and if you log in with the same name you can pick up where you left off on any device — tablet or computer.`,
+    zh: `无需注册，也不需要密码。只要输入名字（或昵称）就能马上开始学习；用同一个名字登录，无论是平板还是电脑，都能接着上次的进度继续学习。`
+  },
+  s1_1_title: {
+    ko: `<span class="step-num">①</span>주소로 접속해서 이름 입력하기`,
+    en: `<span class="step-num">①</span>Open the address and enter a name`,
+    zh: `<span class="step-num">①</span>打开网址并输入名字`
+  },
+  s1_1_p1: {
+    ko: `<code>https://docssam1.github.io/lete-on/reading-world/</code> 주소로 들어가면 이름(또는 별명)을 입력하는 화면이 나와요.`,
+    en: `When you open <code>https://docssam1.github.io/lete-on/reading-world/</code>, a screen appears where you enter a name (or nickname).`,
+    zh: `打开 <code>https://docssam1.github.io/lete-on/reading-world/</code> 网址后，会出现输入名字（或昵称）的界面。`
+  },
+  s1_1_p2: {
+    ko: `실명이 아니어도 괜찮아요 — 별명이나 학원에서 받은 코드를 입력해도 돼요. <b>같은 이름으로 로그인</b>하면 다른 기기에서도 진행 상황이 그대로 연동돼요.`,
+    en: `It doesn't have to be a real name — a nickname or a code from your academy works too. <b>Log in with the same name</b> and your progress carries over across devices.`,
+    zh: `不用真名也可以——用昵称或补习班给的代码都行。<b>用同一个名字登录</b>，进度就会在不同设备之间自动同步。`
+  },
+  s1_1_alt: {
+    ko: `접속 후 이름을 입력하는 첫 화면`,
+    en: `First screen for entering your name after opening the app`,
+    zh: `打开后输入名字的首个界面`
+  },
+  s1_2_title: {
+    ko: `<span class="step-num">②</span>내 캐릭터 고르기`,
+    en: `<span class="step-num">②</span>Choose your character`,
+    zh: `<span class="step-num">②</span>选择我的角色`
+  },
+  s1_2_p: {
+    ko: `처음 로그인하면 나를 대표할 캐릭터(아바타)를 골라요. 머리 모양, 피부색, 옷 등은 나중에 마을에서 코인으로 자유롭게 바꿀 수 있으니 지금은 마음에 드는 걸로 가볍게 골라도 돼요.`,
+    en: `When you first log in, you pick a character (avatar) to represent you. You can freely change the hair, skin color, clothes and more later in town using coins, so just pick whatever you like for now.`,
+    zh: `第一次登录时，会选择一个代表自己的角色（头像）。发型、肤色、衣服等以后都能在小镇里用金币自由更换，所以现在随便挑一个喜欢的就行。`
+  },
+  s1_2_alt: {
+    ko: `캐릭터(아바타) 고르기 화면`,
+    en: `Screen for choosing a character (avatar)`,
+    zh: `选择角色（头像）的界面`
+  },
+  s1_3_title: {
+    ko: `<span class="step-num">③</span>리딩 진단 (건너뛰어도 OK)`,
+    en: `<span class="step-num">③</span>Reading check (OK to skip)`,
+    zh: `<span class="step-num">③</span>阅读测评（可跳过）`
+  },
+  s1_3_p1: {
+    ko: `캐릭터를 고르고 나면 짧은 리딩 진단 테스트를 볼 수 있어요. 내 영어 읽기 레벨을 가늠해보고 어떤 책부터 시작하면 좋을지 추천을 받는 용도예요.`,
+    en: `After choosing a character, you can take a short reading placement test. It helps gauge your child's English reading level and recommends which book to start with.`,
+    zh: `选好角色后，可以做一个简短的阅读测评。它能帮孩子了解自己的英语阅读水平，并推荐从哪本书开始比较好。`
+  },
+  s1_3_p2: {
+    ko: `지금 하고 싶지 않다면 <b>"건너뛰고 자유롭게 고르기"</b>를 눌러도 전혀 문제없어요. 나중에 마을 지도 위쪽 툴바의 <b>🧭 나침반 버튼</b>을 눌러 언제든 다시 볼 수 있어요.`,
+    en: `If you'd rather not do it now, just tap <b>"Skip and choose freely"</b> — that's totally fine. You can take it anytime later by tapping the <b>🧭 compass button</b> in the toolbar at the top of the town map.`,
+    zh: `如果现在不想做，点 <b>"跳过，自由选择"</b> 也完全没问题。以后随时可以点小镇地图上方工具栏里的 <b>🧭 指南针按钮</b> 再做一次。`
+  },
+  s1_3_alt: {
+    ko: `리딩 진단 시작 화면`,
+    en: `Reading placement test start screen`,
+    zh: `阅读测评开始界面`
+  },
+
+  /* ---- Section 2 ---- */
+  s2_h2: {
+    ko: `<span class="emoji">🗺️</span> 마을 지도 둘러보기`,
+    en: `<span class="emoji">🗺️</span> Exploring the Town Map`,
+    zh: `<span class="emoji">🗺️</span> 逛逛小镇地图`
+  },
+  s2_p: {
+    ko: `로그인하면 레고 블록으로 만든 아기자기한 마을이 펼쳐져요. 마을 안의 건물들이 각각 하나의 학습 코너예요.`,
+    en: `When you log in, a cute town built from LEGO blocks spreads out. Each building in the town is its own learning corner.`,
+    zh: `登录后，会出现一个用乐高积木搭成的可爱小镇。镇里的每一栋建筑都是一个学习角落。`
+  },
+  s2_map_alt: {
+    ko: `레고 마을 지도 전체 화면`,
+    en: `Full LEGO town map screen`,
+    zh: `乐高小镇地图全屏`
+  },
+  s2_map_cap: {
+    ko: `마을 지도 — 위쪽 툴바에 코인, 스크린 극장, 진단, 공지, 꾸미기, 목록 버튼이 모여 있어요.`,
+    en: `Town map — the top toolbar gathers coins, Screen Theater, the placement test, notices, decorating, and the menu.`,
+    zh: `小镇地图——上方工具栏集中了金币、屏幕剧场、测评、公告、装扮和列表按钮。`
+  },
+  loc_th1: { ko:`건물`, en:`Building`, zh:`建筑` },
+  loc_th2: { ko:`하는 일`, en:`What it's for`, zh:`功能` },
+  loc_r1_name: {
+    ko: `<b>📚 eBook Library</b>`,
+    en: `<b>📚 eBook Library</b>`,
+    zh: `<b>📚 eBook Library</b>`
+  },
+  loc_r1_desc: {
+    ko: `영어 원서 eBook을 페이지 넘기며 읽어요.`,
+    en: `Read English storybook eBooks page by page.`,
+    zh: `一页一页地翻读英文原版电子书。`
+  },
+  loc_r2_name: {
+    ko: `<b>🏫 Textbook Library</b> (교재 도서관)`,
+    en: `<b>🏫 Textbook Library</b>`,
+    zh: `<b>🏫 Textbook Library</b> (教材图书馆)`
+  },
+  loc_r2_desc: {
+    ko: `CARS 등 교재로 학습해요. 레벨 사다리를 따라 자유롭게 책을 골라요.`,
+    en: `Study with textbooks like CARS. Pick books freely along the level ladder.`,
+    zh: `用 CARS 等教材学习。沿着等级阶梯自由选书。`
+  },
+  loc_r3_name: {
+    ko: `<b>🎬 Screen Theater</b>`,
+    en: `<b>🎬 Screen Theater</b>`,
+    zh: `<b>🎬 Screen Theater</b>`
+  },
+  loc_r3_desc: {
+    ko: `영상을 보고 짧은 퀴즈를 풀어요.`,
+    en: `Watch videos and answer a short quiz.`,
+    zh: `观看视频并做简短的测验。`
+  },
+  loc_r4_name: {
+    ko: `<b>🔤 Vocabulary Room</b> (어휘 방)`,
+    en: `<b>🔤 Vocabulary Room</b>`,
+    zh: `<b>🔤 Vocabulary Room</b> (词汇室)`
+  },
+  loc_r4_desc: {
+    ko: `단어 카드, 암기 게임, 나만의 단어장을 관리해요.`,
+    en: `Manage word cards, memory games, and your own word list.`,
+    zh: `管理单词卡、记忆游戏和自己的生词本。`
+  },
+  loc_r5_name: {
+    ko: `<b>📊 Reading Report</b> (리딩 리포트)`,
+    en: `<b>📊 Reading Report</b>`,
+    zh: `<b>📊 Reading Report</b> (阅读报告)`
+  },
+  loc_r5_desc: {
+    ko: `레슨별 학습 리포트를 확인해요.`,
+    en: `Check the learning report for each lesson.`,
+    zh: `查看每节课的学习报告。`
+  },
+  loc_r6_name: {
+    ko: `<b>✏️ Writing Village</b>`,
+    en: `<b>✏️ Writing Village</b>`,
+    zh: `<b>✏️ Writing Village</b>`
+  },
+  loc_r6_desc: {
+    ko: `지도 아래쪽 표지판을 탭하면 이웃 마을인 글쓰기 마을로 이동해요.`,
+    en: `Tap the signpost at the bottom of the map to visit the neighboring writing village.`,
+    zh: `点地图下方的路牌，就能去到隔壁的写作村。`
+  },
+  s2_ctrl1: {
+    ko: `<b>지도 탭</b> 그 자리로 캐릭터가 걸어가요.`,
+    en: `<b>Tap the map</b> your character walks to that spot.`,
+    zh: `<b>点地图</b> 角色就会走到那个位置。`
+  },
+  s2_ctrl2: {
+    ko: `<b>건물 탭</b> 바로 그 학습 코너가 열려요.`,
+    en: `<b>Tap a building</b> that learning corner opens right away.`,
+    zh: `<b>点建筑</b> 马上打开那个学习角落。`
+  },
+  s2_ctrl3: {
+    ko: `<b>＋ / −</b> 지도를 확대·축소해요.`,
+    en: `<b>＋ / −</b> zoom the map in and out.`,
+    zh: `<b>＋ / −</b> 放大或缩小地图。`
+  },
+  s2_ctrl4: {
+    ko: `<b>👨‍👩‍👧</b> 우상단(목록 화면)에서 학부모 대시보드를 열어요.`,
+    en: `<b>👨‍👩‍👧</b> open the parent dashboard from the top-right (menu screen).`,
+    zh: `<b>👨‍👩‍👧</b> 在右上角（列表界面）打开家长仪表盘。`
+  },
+  s2_ctrl5: {
+    ko: `<b>🎨 꾸미기</b> 코인으로 아바타 옷·모자와 마을 장식을 사고 꾸며요.`,
+    en: `<b>🎨 Decorate</b> spend coins on avatar clothes, hats, and town decorations.`,
+    zh: `<b>🎨 装扮</b> 用金币购买头像的衣服、帽子和小镇装饰来打扮。`
+  },
+  s2_closet_alt: {
+    ko: `캐릭터 꾸미기 화면`,
+    en: `Character decorating screen`,
+    zh: `角色装扮界面`
+  },
+  s2_closet_title: {
+    ko: `<span class="step-num">🎨</span>꾸미기 화면`,
+    en: `<span class="step-num">🎨</span>Decorating screen`,
+    zh: `<span class="step-num">🎨</span>装扮界面`
+  },
+  s2_closet_p: {
+    ko: `레슨을 완료할 때마다 모은 코인(★P)으로 모자·옷·안경 같은 아이템을 사서 캐릭터를 꾸밀 수 있어요. 상단 탭에서 "마을"을 누르면 마을 장식도 같은 방식으로 꾸밀 수 있어요.`,
+    en: `Each time you finish a lesson you collect coins (★P) you can spend on items like hats, clothes, and glasses to dress up your character. Tap "Town" in the top tab to decorate the town the same way.`,
+    zh: `每完成一节课就会攒到金币（★P），可以用来买帽子、衣服、眼镜等物品来打扮角色。点上方标签里的"小镇"，还能用同样的方式装饰小镇。`
+  },
+
+  /* ---- Section 3 ---- */
+  s3_h2: {
+    ko: `<span class="emoji">📘</span> Reading Town — 교재 학습 흐름`,
+    en: `<span class="emoji">📘</span> Reading Town — Textbook Learning Flow`,
+    zh: `<span class="emoji">📘</span> Reading Town — 教材学习流程`
+  },
+  s3_p: {
+    ko: `교재 도서관에서 책을 고르면 한 레슨이 7단계로 진행돼요. 잠금은 전혀 없어요 — 어떤 책, 어떤 레벨을 고르든 아이가 자유롭게 선택할 수 있어요.`,
+    en: `Pick a book in the Textbook Library and a lesson runs through 7 steps. Nothing is locked — your child can freely choose any book at any level.`,
+    zh: `在教材图书馆里选一本书，一节课会分 7 个步骤进行。完全没有锁定——无论选哪本书、哪个等级，孩子都能自由选择。`
+  },
+  s3_fc1: { ko:`<i>STEP 1</i>단어 배우기`, en:`<i>STEP 1</i>Learn words`, zh:`<i>STEP 1</i>学单词` },
+  s3_fc2: { ko:`<i>STEP 2</i>교재 읽기`, en:`<i>STEP 2</i>Read the text`, zh:`<i>STEP 2</i>阅读教材` },
+  s3_fc3: { ko:`<i>STEP 3</i>교재 문항 12개`, en:`<i>STEP 3</i>12 textbook questions`, zh:`<i>STEP 3</i>12 道教材题` },
+  s3_fc4: { ko:`<i>STEP 4</i>추가 학습 지문`, en:`<i>STEP 4</i>Extra passage`, zh:`<i>STEP 4</i>补充短文` },
+  s3_fc5: { ko:`<i>STEP 5</i>추가 문항`, en:`<i>STEP 5</i>Extra questions`, zh:`<i>STEP 5</i>补充题目` },
+  s3_fc6: { ko:`<i>STEP 6</i>새 지문 연습`, en:`<i>STEP 6</i>New passage practice`, zh:`<i>STEP 6</i>新短文练习` },
+  s3_fc7: { ko:`<i>STEP 7</i>새 지문 문항`, en:`<i>STEP 7</i>New passage questions`, zh:`<i>STEP 7</i>新短文题目` },
+  s3_fc8: { ko:`→ 리포트`, en:`→ Report`, zh:`→ 报告` },
+  s3_1_alt: {
+    ko: `교재 도서관 책장 화면`,
+    en: `Textbook Library bookshelf screen`,
+    zh: `教材图书馆书架界面`
+  },
+  s3_1_title: {
+    ko: `<span class="step-num">①</span>교재 도서관에서 책 고르기`,
+    en: `<span class="step-num">①</span>Choose a book in the Textbook Library`,
+    zh: `<span class="step-num">①</span>在教材图书馆里选书`
+  },
+  s3_1_p: {
+    ko: `레벨 사다리를 따라 여러 책이 진열돼 있어요. 난이도와 상관없이 <b>자유롭게</b> 고를 수 있고, 레벨업은 잠금장치가 아니라 그냥 축하 보상이에요.`,
+    en: `Books are lined up along the level ladder. You can choose <b>freely</b> regardless of difficulty, and leveling up isn't a lock — it's just a celebration reward.`,
+    zh: `沿着等级阶梯陈列着许多书。不管难度如何都可以<b>自由</b>选择，升级不是门槛，只是庆祝的奖励。`
+  },
+  s3_2_alt: {
+    ko: `레슨 상단의 STEP 1~7 진행 바`,
+    en: `STEP 1–7 progress bar at the top of a lesson`,
+    zh: `课程顶部的 STEP 1~7 进度条`
+  },
+  s3_2_title: {
+    ko: `<span class="step-num">②</span>STEP 진행 바로 흐름 확인`,
+    en: `<span class="step-num">②</span>Track progress with the STEP bar`,
+    zh: `<span class="step-num">②</span>用步骤进度条查看流程`
+  },
+  s3_2_p: {
+    ko: `레슨에 들어가면 상단에 STEP 1~7 진행 바가 보여요. 완료한 단계는 초록색으로 표시되고, 지금 있는 단계가 강조돼요. 아무 단계나 눌러서 이동할 수도 있어요.`,
+    en: `Inside a lesson, a STEP 1–7 progress bar appears at the top. Finished steps turn green and the current step is highlighted. You can also tap any step to jump to it.`,
+    zh: `进入课程后，顶部会出现 STEP 1~7 的进度条。完成的步骤会变成绿色，当前步骤会高亮。也可以点任意步骤跳转过去。`
+  },
+  s3_3_alt: {
+    ko: `STEP1 단어 배우기 카드 화면`,
+    en: `STEP 1 word-learning card screen`,
+    zh: `STEP 1 学单词卡片界面`
+  },
+  s3_3_title: {
+    ko: `<span class="step-num">③</span>STEP 1 — 단어 먼저 배우기`,
+    en: `<span class="step-num">③</span>STEP 1 — Learn the words first`,
+    zh: `<span class="step-num">③</span>STEP 1 — 先学单词`
+  },
+  s3_3_p: {
+    ko: `레슨의 핵심 단어 12개를 카드로 배워요. 🔊 버튼으로 발음을 듣고, ☆ 별표로 어려운 단어를 나만의 단어장에 저장할 수 있어요. 암기 카드·단어 게임 탭도 있어서 반복 연습이 쉬워요.`,
+    en: `Learn the lesson's 12 key words with cards. Tap 🔊 to hear the pronunciation, and star ☆ tricky words to save them to your own word list. There are also flashcard and word-game tabs, so repeating is easy.`,
+    zh: `用卡片学习本课的 12 个核心单词。点 🔊 听发音，用 ☆ 把难记的单词收藏到自己的生词本。还有记忆卡和单词游戏标签，方便反复练习。`
+  },
+  s3_note: {
+    ko: `<b>💡 알아두면 좋아요</b><br> STEP 2(교재 읽기)에서는 🔊 듣기 버튼으로 원어민 음성을 들을 수 있고, STEP 3의 12문항을 풀면 틀린 전략(예: 사건 순서 파악, 원인과 결과 등)을 <b>스킬 코치</b>가 자동으로 잡아내서 같은 전략의 비슷한 문제로 바로 다시 연습시켜줘요. STEP 4·5는 짧은 추가 지문으로 더 깊게 학습하고, STEP 6·7은 같은 단어가 들어간 새 지문으로 실력을 확인해요. 각 단계를 완료할 때마다 코인(★P)이 쌓여서 꾸미기에 쓸 수 있어요.`,
+    en: `<b>💡 Good to know</b><br> In STEP 2 (reading), the 🔊 listen button plays a native-speaker voice. When you answer the 12 questions in STEP 3, the <b>Skill Coach</b> automatically catches the strategies you missed (like understanding sequence, or cause and effect) and has you practice similar questions of the same strategy right away. STEP 4–5 go deeper with short extra passages, and STEP 6–7 check your skills with a new passage using the same words. Each step you finish adds coins (★P) you can spend on decorating.`,
+    zh: `<b>💡 小贴士</b><br> 在 STEP 2（阅读教材）中，可以用 🔊 收听按钮听母语者的发音。做完 STEP 3 的 12 道题后，<b>技能教练</b>会自动找出做错的策略（例如理清事件顺序、因果关系等），并马上用同一策略的相似题目让你再练习。STEP 4·5 用简短的补充短文更深入地学习，STEP 6·7 用含相同单词的新短文检验实力。每完成一个步骤都会攒到金币（★P），可以用来装扮。`
+  },
+
+  /* ---- Section 4 ---- */
+  s4_h2: {
+    ko: `<span class="emoji">📚</span> 도서관 — 영어 원서 eBook`,
+    en: `<span class="emoji">📚</span> eBook Library — English Storybooks`,
+    zh: `<span class="emoji">📚</span> 电子书图书馆 — 英文原版电子书`
+  },
+  s4_p: {
+    ko: `CARS 문항 없이 순수하게 책을 즐기는 공간이에요. 서가에서 책을 고르면 배경지식 → 어휘 → 읽기 → AR 퀴즈 순서로 진행돼요.`,
+    en: `A space to simply enjoy books, with no CARS questions. Pick a book from the shelf and it goes background knowledge → vocabulary → reading → AR quiz.`,
+    zh: `这是一个不带 CARS 题目、纯粹享受阅读的空间。从书架上选一本书，会按 背景知识 → 词汇 → 阅读 → AR 测验 的顺序进行。`
+  },
+  s4_1_alt: { ko:`도서관 서가 화면`, en:`eBook Library bookshelf screen`, zh:`电子书图书馆书架界面` },
+  s4_1_title: {
+    ko: `<span class="step-num">①</span>서가에서 책 선택`,
+    en: `<span class="step-num">①</span>Pick a book from the shelf`,
+    zh: `<span class="step-num">①</span>从书架上选书`
+  },
+  s4_1_p: {
+    ko: `표지를 탭해서 읽고 싶은 책을 골라요. AR 지수와 R/G(리딩 그룹) 표시로 난이도를 미리 볼 수 있어요.`,
+    en: `Tap a cover to choose the book you want to read. The AR level and R/G (reading group) labels let you see the difficulty ahead of time.`,
+    zh: `点封面选一本想读的书。AR 指数和 R/G（阅读分组）标记能让你提前了解难度。`
+  },
+  s4_2_alt: { ko:`배경지식 소개 화면`, en:`Background introduction screen`, zh:`背景知识介绍界面` },
+  s4_2_title: {
+    ko: `<span class="step-num">②</span>배경지식 읽기`,
+    en: `<span class="step-num">②</span>Read the background`,
+    zh: `<span class="step-num">②</span>阅读背景知识`
+  },
+  s4_2_p: {
+    ko: `책을 처음 열면 이야기의 배경(시대·인물·설정)을 먼저 소개해줘요. 이해를 돕는 워밍업 단계예요.`,
+    en: `When you first open a book, it introduces the story's background (era, characters, setting) first. It's a warm-up step to help understanding.`,
+    zh: `第一次打开书时，会先介绍故事的背景（时代、人物、设定）。这是帮助理解的热身步骤。`
+  },
+  s4_3_alt: { ko:`중요 어휘 카드 화면`, en:`Key vocabulary card screen`, zh:`重要词汇卡片界面` },
+  s4_3_title: {
+    ko: `<span class="step-num">③</span>중요 어휘 익히기`,
+    en: `<span class="step-num">③</span>Learn key vocabulary`,
+    zh: `<span class="step-num">③</span>掌握重要词汇`
+  },
+  s4_3_p: {
+    ko: `책에 실제로 나오는 어려운 단어 10개를 미리 배워요. 🔊 발음 듣기, ★ 내 단어장 저장도 가능해요.`,
+    en: `Learn 10 hard words that actually appear in the book beforehand. You can tap 🔊 to hear pronunciation and ★ to save them to your word list.`,
+    zh: `提前学习书中真正出现的 10 个难词。可以点 🔊 听发音，用 ★ 收藏到生词本。`
+  },
+  s4_4_alt: { ko:`2페이지 스프레드 리더 화면`, en:`Two-page spread reader screen`, zh:`对开双页阅读器界面` },
+  s4_4_title: {
+    ko: `<span class="step-num">④</span>2페이지 스프레드로 읽기`,
+    en: `<span class="step-num">④</span>Read as a two-page spread`,
+    zh: `<span class="step-num">④</span>以对开双页阅读`
+  },
+  s4_4_p: {
+    ko: `실제 책처럼 두 페이지가 나란히 펼쳐져요. 🔊 듣기를 누르면 지금 읽는 문장이 하이라이트로 따라가며 표시돼요. "원본 보기" 탭에서는 실제 책 페이지 이미지도 확인할 수 있어요.`,
+    en: `Two pages open side by side just like a real book. Tap 🔊 listen and the sentence being read is highlighted as it follows along. The "View original" tab also shows the real book page images.`,
+    zh: `像真书一样两页并排展开。点 🔊 收听，正在读的句子会高亮跟读。在"查看原文"标签里，还能看到真实的书页图片。`
+  },
+  s4_4_p2: {
+    ko: `읽던 위치는 자동으로 저장되니, 나중에 다시 들어가면 이어 읽기로 바로 연결돼요.`,
+    en: `Your reading spot is saved automatically, so next time you come back it picks up right where you left off.`,
+    zh: `阅读的位置会自动保存，之后再进来就能直接续读。`
+  },
+  s4_5_alt: { ko:`AR 퀴즈 문항 화면`, en:`AR quiz question screen`, zh:`AR 测验题目界面` },
+  s4_5_title: {
+    ko: `<span class="step-num">⑤</span>AR 퀴즈로 마무리`,
+    en: `<span class="step-num">⑤</span>Wrap up with the AR quiz`,
+    zh: `<span class="step-num">⑤</span>用 AR 测验收尾`
+  },
+  s4_5_p: {
+    ko: `줄거리 이해도를 확인하는 객관식 퀴즈예요. 60% 이상 맞히면 통과! 통과 시 코인을 받을 수 있어요.`,
+    en: `A multiple-choice quiz that checks how well you understood the story. Score 60% or more to pass! You earn coins when you pass.`,
+    zh: `这是检验你对故事理解程度的选择题测验。答对 60% 以上就通过！通过还能获得金币。`
+  },
+
+  /* ---- Section 5 ---- */
+  s5_h2: {
+    ko: `<span class="emoji">✏️</span> Writing Village — 글쓰기 마을`,
+    en: `<span class="emoji">✏️</span> Writing Village`,
+    zh: `<span class="emoji">✏️</span> Writing Village — 写作村`
+  },
+  s5_p: {
+    ko: `마을 지도 아래쪽 ✏️ 표지판을 탭하면 이웃 마을인 <b>Writing Village</b>로 이동해요. 마을 친구 <b>부엉이 올리(Oli the Owl)</b>가 보낸 질문 편지에 답장을 쓰면서 자연스럽게 글쓰기를 배우는 공간이에요.`,
+    en: `Tap the ✏️ signpost at the bottom of the town map to travel to the neighboring <b>Writing Village</b>. It's a space where children naturally learn writing by replying to question letters from their town friend, <b>Oli the Owl</b>.`,
+    zh: `点小镇地图下方的 ✏️ 路牌，就能前往隔壁的 <b>Writing Village（写作村）</b>。在这里，孩子通过给小镇朋友 <b>猫头鹰奥利（Oli the Owl）</b> 的提问信写回信，自然而然地学习写作。`
+  },
+  s5_wv1: { ko:`💌 편지 읽기`, en:`💌 Read the letter`, zh:`💌 读信` },
+  s5_wv2: { ko:`🌱 낱말 정원`, en:`🌱 Word Garden`, zh:`🌱 单词花园` },
+  s5_wv3: { ko:`🌳 모델 나무·저널`, en:`🌳 Model tree & journal`, zh:`🌳 范文树·日志` },
+  s5_wv4: { ko:`🌿 내 문장 나무`, en:`🌿 My sentence tree`, zh:`🌿 我的句子树` },
+  s5_wv5: { ko:`✏️ 저널 쓰기`, en:`✏️ Write a journal`, zh:`✏️ 写日志` },
+  s5_wv6: { ko:`📬 답장 받기`, en:`📬 Get a reply`, zh:`📬 收到回信` },
+  s5_0_alt: { ko:`Writing Village 마을 광장 편지 목록`, en:`Writing Village square letter list`, zh:`写作村广场信件列表` },
+  s5_0_title: {
+    ko: `<span class="step-num">0</span>마을 광장 — 편지 목록`,
+    en: `<span class="step-num">0</span>Village square — letter list`,
+    zh: `<span class="step-num">0</span>村庄广场 — 信件列表`
+  },
+  s5_0_p: {
+    ko: `표지판을 탭하면 올리가 보낸 질문 편지 목록이 나와요. 원하는 주제를 골라 열면 됩니다.`,
+    en: `Tap the signpost and a list of question letters from Oli appears. Just choose a topic you like and open it.`,
+    zh: `点路牌，就会出现奥利寄来的提问信列表。选一个喜欢的主题打开就行。`
+  },
+  s5_1_alt: { ko:`편지 읽기 화면`, en:`Letter reading screen`, zh:`读信界面` },
+  s5_1_title: {
+    ko: `<span class="step-num">①</span>💌 편지 읽기`,
+    en: `<span class="step-num">①</span>💌 Read the letter`,
+    zh: `<span class="step-num">①</span>💌 读信`
+  },
+  s5_1_p: {
+    ko: `올리가 궁금한 걸 물어봐요. 🔊 버튼으로 편지를 들을 수 있고, 🎙️ 버튼을 누르면 글로 쓰기 전에 <b>말로 먼저 대답</b>해보는 연습도 할 수 있어요.`,
+    en: `Oli asks something he's curious about. Tap 🔊 to hear the letter, and tap 🎙️ to <b>answer out loud first</b> before writing it down.`,
+    zh: `奥利会问一些他好奇的问题。点 🔊 可以听信，点 🎙️ 就能在动笔前先<b>用嘴说出答案</b>来练习。`
+  },
+  s5_2_alt: { ko:`낱말 정원 화면`, en:`Word Garden screen`, zh:`单词花园界面` },
+  s5_2_title: {
+    ko: `<span class="step-num">②</span>🌱 낱말 정원`,
+    en: `<span class="step-num">②</span>🌱 Word Garden`,
+    zh: `<span class="step-num">②</span>🌱 单词花园`
+  },
+  s5_2_p: {
+    ko: `답장에 쓰기 좋은 낱말들을 미리 만나요. 🔊 발음을 듣고, ★로 마음에 드는 낱말을 저장해요.`,
+    en: `Meet words that are handy for your reply ahead of time. Tap 🔊 to hear pronunciation and ★ to save the words you like.`,
+    zh: `提前认识一些适合写回信的单词。点 🔊 听发音，用 ★ 收藏喜欢的单词。`
+  },
+  s5_3_alt: { ko:`친구의 모델 나무와 저널 화면`, en:`Friend's model tree and journal screen`, zh:`朋友的范文树和日志界面` },
+  s5_3_title: {
+    ko: `<span class="step-num">③</span>🌳 친구의 모델 나무 구경`,
+    en: `<span class="step-num">③</span>🌳 Look at a friend's model tree`,
+    zh: `<span class="step-num">③</span>🌳 参观朋友的范文树`
+  },
+  s5_3_p: {
+    ko: `먼저 써본 친구의 예시 저널을 나무 모양으로 구경해요. "이렇게 쓰면 되는구나" 하는 감을 잡는 단계예요.`,
+    en: `Look at an example journal from a friend who wrote first, shown as a tree. It's the step where you get a feel for "oh, so this is how you write it."`,
+    zh: `先看看别人写好的示范日志，它以树的形状呈现。这一步是让你找到"原来可以这样写"的感觉。`
+  },
+  s5_4_alt: { ko:`내 문장 나무 키우기 화면`, en:`Growing my sentence tree screen`, zh:`培育我的句子树界面` },
+  s5_4_title: {
+    ko: `<span class="step-num">④</span>🌿 내 문장 나무 키우기`,
+    en: `<span class="step-num">④</span>🌿 Grow my sentence tree`,
+    zh: `<span class="step-num">④</span>🌿 培育我的句子树`
+  },
+  s5_4_p: {
+    ko: `주제·인물·행동·감정 같은 낱말 조각을 하나씩 고르면, 고를 때마다 나무가 자라면서 문장이 자동으로 완성돼요. 완성된 문장은 소리로도 들려줘요.`,
+    en: `Pick word pieces like topic, character, action, and feeling one by one, and the tree grows with each pick while the sentence completes automatically. Finished sentences are read aloud too.`,
+    zh: `把主题、人物、动作、心情等单词碎片一个一个选出来，每选一个，树就长大一点，句子也会自动完成。完成的句子还会朗读出来。`
+  },
+  s5_5_alt: { ko:`스스로 저널 쓰기 화면`, en:`Writing a journal yourself screen`, zh:`自己写日志界面` },
+  s5_5_title: {
+    ko: `<span class="step-num">⑤</span>✏️ 스스로 저널 쓰기`,
+    en: `<span class="step-num">⑤</span>✏️ Write a journal yourself`,
+    zh: `<span class="step-num">⑤</span>✏️ 自己写日志`
+  },
+  s5_5_p: {
+    ko: `이제 내 힘으로 답장을 써봐요. 화면 아래 다듬기 체크리스트(대문자로 시작했는지, 마침표를 찍었는지, because로 이유를 말했는지, 문장 3개 이상인지, 오늘 배운 낱말을 썼는지)로 스스로 점검할 수 있어요.`,
+    en: `Now write the reply on your own. The polishing checklist at the bottom (started with a capital letter? added a period? gave a reason with "because"? three or more sentences? used today's words?) lets you check your own work.`,
+    zh: `现在用自己的力量写回信吧。屏幕下方的润色清单（是否以大写字母开头、是否加了句号、是否用 because 说明理由、是否有三句以上、是否用了今天学的单词）能让你自己检查。`
+  },
+  s5_6_alt: { ko:`올리의 답장 받기 화면`, en:`Getting Oli's reply screen`, zh:`收到奥利回信的界面` },
+  s5_6_title: {
+    ko: `<span class="step-num">⑥</span>📬 답장 받기`,
+    en: `<span class="step-num">⑥</span>📬 Get a reply`,
+    zh: `<span class="step-num">⑥</span>📬 收到回信`
+  },
+  s5_6_p: {
+    ko: `저널을 보내면 올리가 바로 답장을 보내줘요! 저널을 쓸 때마다 숲에 나무가 한 그루씩 늘어나고, 모든 저널은 <b>My Storybook(📖)</b>에 차곡차곡 보관돼요.`,
+    en: `Send your journal and Oli replies right away! Each journal you write adds one more tree to the forest, and every journal is kept neatly in <b>My Storybook (📖)</b>.`,
+    zh: `把日志寄出去，奥利马上就会回信！每写一篇日志，森林里就会多长出一棵树，所有日志都会整整齐齐地收藏在 <b>My Storybook（📖）</b> 里。`
+  },
+  s5_note: {
+    ko: `<b>🌈 무지개 펜 첨삭 (프리미엄 기능)</b><br> 답장 화면에서 "🌈 무지개 펜 첨삭 받기"를 누르면 AI 원어민 선생님이 아이의 글을 읽고 <b>칭찬 2가지</b>, <b>고치면 좋은 부분(이유 포함)</b>, <b>다음 도전 과제</b>, <b>별점</b>, 그리고 올리의 답장 편지까지 한 번에 보내줘요. 하루 10회까지 사용할 수 있어요.`,
+    en: `<b>🌈 Rainbow Pen feedback (premium feature)</b><br> On the reply screen, tap "🌈 Get Rainbow Pen feedback" and an AI native-speaker teacher reads your child's writing and sends, all at once, <b>2 compliments</b>, <b>things to improve (with reasons)</b>, a <b>next challenge</b>, a <b>star rating</b>, and even a reply letter from Oli. You can use it up to 10 times a day.`,
+    zh: `<b>🌈 彩虹笔批改（高级功能）</b><br> 在回信界面点"🌈 获取彩虹笔批改"，AI 母语老师就会读孩子的作文，并一次性给出 <b>2 个表扬</b>、<b>可以改进的地方（含原因）</b>、<b>下一个挑战</b>、<b>星级评分</b>，还有奥利的回信。每天最多可用 10 次。`
+  },
+  s5_ai_alt: { ko:`무지개 펜 첨삭 결과 화면`, en:`Rainbow Pen feedback result screen`, zh:`彩虹笔批改结果界面` },
+  s5_ai_title: {
+    ko: `✍️ 고쳐서 다시 쓰기`,
+    en: `✍️ Revise and rewrite`,
+    zh: `✍️ 修改后重写`
+  },
+  s5_ai_p: {
+    ko: `첨삭 결과를 확인한 뒤 <b>"고쳐서 다시 쓰기"</b> 버튼을 누르면 고친 내용을 반영해서 다시 저널을 써서 보낼 수 있어요. 다시 쓴 저널도 새 기록으로 차곡차곡 쌓여서, <b>초안 → 첨삭 → 고쳐쓰기</b>로 이어지는 좋은 글쓰기 습관을 자연스럽게 길러줘요.`,
+    en: `After checking the feedback, tap the <b>"Revise and rewrite"</b> button to write and send the journal again with the fixes applied. The rewritten journal is also saved as a new record, naturally building the good writing habit of <b>draft → feedback → rewrite</b>.`,
+    zh: `看完批改结果后，点<b>"修改后重写"</b>按钮，就能把修改内容反映进去，重新写一篇日志再寄出。重写的日志也会作为新记录一篇篇累积，自然而然地养成<b>初稿 → 批改 → 重写</b>的良好写作习惯。`
+  },
+
+  /* ---- Section 6 ---- */
+  s6_h2: {
+    ko: `<span class="emoji">👨‍👩‍👧</span> 학부모 리포트`,
+    en: `<span class="emoji">👨‍👩‍👧</span> Parent Report`,
+    zh: `<span class="emoji">👨‍👩‍👧</span> 家长报告`
+  },
+  s6_p: {
+    ko: `마을 지도 우상단의 <b>👨‍👩‍👧</b> 버튼(목록 화면 상단)을 누르면 아이의 학습 현황을 한눈에 볼 수 있는 대시보드가 열려요. 별도의 비밀번호 없이 언제든 확인 가능한 내부 도구예요.`,
+    en: `Tap the <b>👨‍👩‍👧</b> button at the top-right of the town map (top of the menu screen) to open a dashboard that shows your child's learning status at a glance. It's an internal tool you can check anytime, with no separate password.`,
+    zh: `点小镇地图右上角的 <b>👨‍👩‍👧</b> 按钮（列表界面顶部），就能打开一览孩子学习情况的仪表盘。这是一个无需单独密码、随时可查看的内部工具。`
+  },
+  s6_alt: { ko:`학부모 대시보드 화면`, en:`Parent dashboard screen`, zh:`家长仪表盘界面` },
+  s6_cap: {
+    ko: `학부모 대시보드 — 위에서부터 순서대로 확인해보세요.`,
+    en: `Parent dashboard — check it from top to bottom.`,
+    zh: `家长仪表盘 — 请从上到下依次查看。`
+  },
+  s6_ctrl1: {
+    ko: `<b>총 포인트 / 완료 레슨</b> 지금까지 모은 코인과 끝낸 레슨 개수예요.`,
+    en: `<b>Total points / completed lessons</b> the coins collected so far and the number of lessons finished.`,
+    zh: `<b>总积分 / 已完成课程</b> 到目前为止攒到的金币和完成的课程数。`
+  },
+  s6_ctrl2: {
+    ko: `<b>독서 현황</b> 완독한 eBook 수, 평균 AR 지수, 완주한 교재 수를 보여줘요.`,
+    en: `<b>Reading status</b> shows the number of eBooks finished, the average AR level, and the number of textbooks completed.`,
+    zh: `<b>阅读情况</b> 显示读完的电子书数量、平均 AR 指数和读完的教材数量。`
+  },
+  s6_ctrl3: {
+    ko: `<b>누적 전략별 약점 랭킹</b> 12가지 읽기 전략 중 자주 틀리는 전략을 순위로 보여줘요.`,
+    en: `<b>Cumulative weak-strategy ranking</b> ranks which of the 12 reading strategies are missed most often.`,
+    zh: `<b>累计策略薄弱排行</b> 在 12 种阅读策略中，按经常出错的策略排名显示。`
+  },
+  s6_ctrl4: {
+    ko: `<b>레슨별 진도표</b> 레슨마다 STEP별 완료 상태를 표로 확인할 수 있어요.`,
+    en: `<b>Per-lesson progress table</b> check each lesson's step-by-step completion in a table.`,
+    zh: `<b>各课进度表</b> 用表格查看每节课各步骤的完成情况。`
+  },
+  s6_ctrl5: {
+    ko: `<b>리딩 진단 결과</b> 응시 레벨, 추천 레벨, 강점·약점 전략을 확인해요.`,
+    en: `<b>Reading placement result</b> see the level taken, the recommended level, and strength and weakness strategies.`,
+    zh: `<b>阅读测评结果</b> 查看应试等级、推荐等级以及优势和薄弱策略。`
+  },
+
+  /* ---- Section 7 ---- */
+  s7_h2: {
+    ko: `<span class="emoji">❓</span> 자주 묻는 질문`,
+    en: `<span class="emoji">❓</span> Frequently Asked Questions`,
+    zh: `<span class="emoji">❓</span> 常见问题`
+  },
+  s7_p: {
+    ko: `아이와 부모님이 자주 궁금해하는 것들을 모았어요.`,
+    en: `We've gathered the things children and parents often wonder about.`,
+    zh: `我们整理了孩子和家长常有的疑问。`
+  },
+  faq1_q: { ko:`소리가 안 나요.`, en:`There's no sound.`, zh:`没有声音。` },
+  faq1_a: {
+    ko: `먼저 기기의 음량과 무음(진동) 모드를 확인해주세요. 그리고 브라우저 정책상 화면을 한 번 탭해야 소리가 시작되는 경우가 있어요 — 첫 화면을 살짝 눌러주면 이후부터는 🔊 버튼이 정상적으로 소리를 재생해요.`,
+    en: `First check your device's volume and silent (vibrate) mode. Also, due to browser policies, sound sometimes only starts after you tap the screen once — give the first screen a light tap and the 🔊 button will play sound normally after that.`,
+    zh: `请先检查设备的音量和静音（振动）模式。另外，由于浏览器策略，有时需要先点一下屏幕声音才会开始——轻点一下首个界面，之后 🔊 按钮就能正常播放声音了。`
+  },
+  faq2_q: {
+    ko: `카카오톡으로 받은 링크를 누르면 이상하게 열려요.`,
+    en: `The link I got on KakaoTalk opens strangely.`,
+    zh: `点从 KakaoTalk 收到的链接打开时显示不正常。`
+  },
+  faq2_a: {
+    ko: `카카오톡 인앱 브라우저는 일부 기능이 제한되어 있어서, 링크를 누르면 자동으로 크롬(Chrome)이나 사파리(Safari) 같은 기본 브라우저가 열리도록 되어 있어요. 정상적인 동작이니 걱정하지 않아도 돼요.`,
+    en: `KakaoTalk's in-app browser has some limited features, so tapping the link is set to automatically open your default browser like Chrome or Safari. That's normal behavior, so there's no need to worry.`,
+    zh: `KakaoTalk 的应用内浏览器部分功能受限，所以点链接时会自动用 Chrome 或 Safari 等默认浏览器打开。这是正常现象，不用担心。`
+  },
+  faq3_q: { ko:`학습 내용은 어떻게 저장되나요?`, en:`How is my learning saved?`, zh:`学习内容是怎么保存的？` },
+  faq3_a: {
+    ko: `모든 학습 내용은 별도의 저장 버튼 없이 자동으로 저장돼요. <b>같은 이름으로 로그인</b>하면 태블릿, 컴퓨터, 휴대폰 등 어떤 기기에서든 이어서 학습할 수 있어요.`,
+    en: `Everything is saved automatically with no separate save button. <b>Log in with the same name</b> and you can continue learning on any device — tablet, computer, or phone.`,
+    zh: `所有学习内容都会自动保存，无需单独的保存按钮。<b>用同一个名字登录</b>，无论平板、电脑还是手机，都能接着学习。`
+  },
+  faq4_q: { ko:`도서관 책이 인쇄가 안 돼요.`, en:`I can't print the library books.`, zh:`图书馆的书没法打印。` },
+  faq4_a: {
+    ko: `도서관의 영어 원서는 저작권으로 보호되고 있어서 인쇄를 지원하지 않아요. 대신 읽던 위치는 자동으로 저장되니 언제든 이어서 읽을 수 있고, 학습 자체에는 전혀 지장이 없어요.`,
+    en: `The English storybooks in the library are protected by copyright, so printing isn't supported. Instead, your reading spot is saved automatically so you can always continue, and it doesn't get in the way of learning at all.`,
+    zh: `图书馆里的英文原版书受版权保护，所以不支持打印。不过阅读的位置会自动保存，随时都能续读，完全不影响学习。`
+  },
+
+  footer_txt: {
+    ko: `Gfield Reading Town &amp; Writing Village · 이 설명서는 학습을 돕기 위한 안내 자료입니다.`,
+    en: `Gfield Reading Town &amp; Writing Village · This guide is a reference to help with learning.`,
+    zh: `Gfield Reading Town &amp; Writing Village · 本说明书是帮助学习的参考资料。`
+  },
+  footer_link: {
+    ko: `← 앱으로 돌아가기`,
+    en: `← Back to the app`,
+    zh: `← 返回应用`
+  }
+};
+
+const LANGS = ['ko','en','zh'];
+
+function setLang(lang){
+  if(LANGS.indexOf(lang) === -1) lang = 'ko';
+  document.documentElement.lang = (lang === 'zh') ? 'zh-Hans' : lang;
+  document.title = TXT.title[lang];
+
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key = el.getAttribute('data-i18n');
+    if(TXT[key] && TXT[key][lang] != null) el.innerHTML = TXT[key][lang];
+  });
+  document.querySelectorAll('[data-i18n-alt]').forEach(function(el){
+    var key = el.getAttribute('data-i18n-alt');
+    if(TXT[key] && TXT[key][lang] != null) el.setAttribute('alt', TXT[key][lang]);
+  });
+  document.querySelectorAll('.langsel button').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+  });
+  try{ localStorage.setItem('manualLang', lang); }catch(e){}
+}
+
+(function(){
+  document.querySelectorAll('.langsel button').forEach(function(b){
+    b.addEventListener('click', function(){ setLang(b.getAttribute('data-lang')); });
+  });
+
+  var qs = '';
+  try{ qs = new URLSearchParams(location.search).get('lang') || ''; }catch(e){}
+  var saved = '';
+  try{ saved = localStorage.getItem('manualLang') || ''; }catch(e){}
+  var initial = (LANGS.indexOf(qs) !== -1) ? qs
+              : (LANGS.indexOf(saved) !== -1) ? saved
+              : 'ko';
+  setLang(initial);
+})();
+</script>
 
 </body>
 </html>
