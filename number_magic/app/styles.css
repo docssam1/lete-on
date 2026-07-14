@@ -212,6 +212,11 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-lab-expr{text-align:center;font-weight:900;color:var(--blue-deep);margin:10px 0;overflow-x:auto}
 .nm-lab-expr .katex{font-size:clamp(20px,5.6vw,26px)}
 
+/* 매직랩 — 원래 문제 배너 ("33+8 어떻게 구할까?") */
+.nm-lab-orig{background:#eef2ff;border:1.5px solid #c7d2fe;border-radius:12px;padding:6px 14px 8px;margin:3px 0 2px;text-align:center;flex-shrink:0}
+.nm-lab-orig-lbl{font-size:11px;color:#6366f1;font-weight:700;display:block;margin-bottom:2px}
+.nm-lab-orig .katex{font-size:clamp(17px,4.8vw,22px);font-weight:900}
+
 /* 메모장 (스크래치패드) */
 .nm-memo-wrap{display:flex;align-items:center;gap:6px;max-width:290px;width:100%;margin:6px auto 0}
 .nm-memo-wrap label{font-size:13px;color:#9aa2b1;white-space:nowrap;user-select:none}

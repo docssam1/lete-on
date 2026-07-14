@@ -939,9 +939,12 @@ function stepLabWidget(body,u){
   const cfg=u.lab;const need=cfg.count||4;
   S.sub.li=S.sub.li||0;
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
+  const origLbl=S.lang==='zh'?'怎么算？':S.lang==='en'?'How do we solve?':'어떻게 구할까?';
+  const origTex=cur.tex?`${esc(cur.tex.split('=')[0].trim())} = \\square`:'';
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
+    ${origTex?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span><span data-tex="${origTex}"></span></div>`:''}
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
     <div id="labWidget" class="nm-lab-widget"></div>
     <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
