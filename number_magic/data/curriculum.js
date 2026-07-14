@@ -88,56 +88,65 @@ window.NM_CURRICULUM = {
       ]
     },
 
-    /* ===== ADVANCE · 중급 ===== */
+    /* ===== ADVANCE · 중급 (창의수연 A~F) ===== */
     {
       id:'intermediate', name:'ADVANCE', grade:'ADVANCE', order:2,
-      title:'ADVANCE', subtitle:{ko:'중급 · 분배법칙·곱셈',en:'Intermediate · Distributive Law & Multiplication',zh:'中级 · 分配律与乘法'},
+      title:'ADVANCE', subtitle:{ko:'중급 · 구구 기초 + 창의수연 A~F',en:'Intermediate · Times Tables + Creative Math A–F',zh:'中级 · 口诀基础 + 创意数学A~F'},
       ageFrom:7, ageLabel:'7세+',
       color:'#5a4a8a', accent:'#EAC996',
-      desc:{ko:'수를 나누어 곱하는 힘 — 분배법칙과 곱셈 공식으로',
-        en:'The power of splitting numbers to multiply — through the distributive law and multiplication formulas',
-        zh:'拆分数字来做乘法的力量——通过分配律与乘法公式'},
+      desc:{ko:'곱셈의 기초 구구부터 창의 전략까지 — 분해·조합·패턴으로 수를 정복해요',
+        en:'From times-table foundations to creative strategies — conquer numbers through decomposition, combination, and patterns',
+        zh:'从口诀基础到创意策略——通过分解、组合和规律征服数字'},
       levels:[
-        {
-          id:'A', available:true,
-          title:{ko:'A단계 · 배와 반',en:'Level A · Doubling & Halving',zh:'A阶段 · 翻倍与减半'},
-          units:['B-01','B-02','B-03']
-        },
-        {
-          id:'B', available:true,
-          title:{ko:'B단계 · 2단·5단',en:'Level B · 2s & 5s Times Tables',zh:'B阶段 · 2和5的口诀'},
-          units:['B-04','B-05','B-06']
-        },
-        {
-          id:'C', available:true,
-          title:{ko:'C단계 · 3단·6단',en:'Level C · 3s & 6s Times Tables',zh:'C阶段 · 3和6的口诀'},
-          units:['B-07','B-08','B-09']
-        },
-        {
-          id:'D', available:true,
-          title:{ko:'D단계 · 4단·8단',en:'Level D · 4s & 8s Times Tables',zh:'D阶段 · 4和8的口诀'},
-          units:['B-10','B-11','B-12']
-        },
-        {
-          id:'E', available:true,
-          title:{ko:'E단계 · 7단·9단',en:'Level E · 7s & 9s Times Tables',zh:'E阶段 · 7和9的口诀'},
-          units:['B-13','B-14','B-15']
-        },
-        {
-          id:'F', available:true,
-          title:{ko:'F단계 · 구구 총정리',en:'Level F · Full Tables Review',zh:'F阶段 · 口诀大总结'},
-          units:['B-16','B-17']
-        },
-        {
-          id:'G', available:true,
-          title:{ko:'G단계 · 몇십·몇백 곱',en:'Level G · Tens & Hundreds ×',zh:'G阶段 · 整十整百乘法'},
-          units:['B-18','B-19','B-20']
-        },
-        {
-          id:'H', available:true,
-          title:{ko:'H단계 · 두 자리×한 자리',en:'Level H · 2-Digit × 1-Digit',zh:'H阶段 · 两位乘一位'},
-          units:['B-21','B-22','B-23']
-        }
+        /* ── 구구 기초 (B-01~B-23) — 중급 진입 전 구구단 탄탄하게 ── */
+        { id:'구구A', available:true,
+          title:{ko:'구구 A · 배와 반',en:'Times A · Doubling & Halving',zh:'口诀A · 翻倍与减半'},
+          units:['B-01','B-02','B-03'] },
+        { id:'구구B', available:true,
+          title:{ko:'구구 B · 2단·5단',en:'Times B · 2s & 5s',zh:'口诀B · 2和5的口诀'},
+          units:['B-04','B-05','B-06'] },
+        { id:'구구C', available:true,
+          title:{ko:'구구 C · 3단·6단',en:'Times C · 3s & 6s',zh:'口诀C · 3和6的口诀'},
+          units:['B-07','B-08','B-09'] },
+        { id:'구구D', available:true,
+          title:{ko:'구구 D · 4단·8단',en:'Times D · 4s & 8s',zh:'口诀D · 4和8的口诀'},
+          units:['B-10','B-11','B-12'] },
+        { id:'구구E', available:true,
+          title:{ko:'구구 E · 7단·9단',en:'Times E · 7s & 9s',zh:'口诀E · 7和9的口诀'},
+          units:['B-13','B-14','B-15'] },
+        { id:'구구F', available:true,
+          title:{ko:'구구 F · 구구 총정리',en:'Times F · Full Tables Review',zh:'口诀F · 口诀大总结'},
+          units:['B-16','B-17'] },
+        { id:'구구G', available:true,
+          title:{ko:'구구 G · 몇십·몇백 곱',en:'Times G · Tens & Hundreds ×',zh:'口诀G · 整十整百乘法'},
+          units:['B-18','B-19','B-20'] },
+        { id:'구구H', available:true,
+          title:{ko:'구구 H · 두 자리×한 자리',en:'Times H · 2-Digit × 1-Digit',zh:'口诀H · 两位乘一位'},
+          units:['B-21','B-22','B-23'] },
+        /* ── 창의수연 중급 A · 거듭제곱과 쌍 곱 ── */
+        { id:'A', available:true,
+          title:{ko:'A단계 · 거듭제곱과 쌍 곱',en:'Level A · Powers & Pair Products',zh:'A阶段 · 幂运算与对乘'},
+          units:['C-01','C-02','C-03','C-04'] },
+        /* ── 창의수연 중급 B · 가우스·×9·분배·올림빼기 ── */
+        { id:'B', available:true,
+          title:{ko:'B단계 · 가우스·×9·분배·올림빼기',en:'Level B · Gauss · ×9 · Distribute · Over-subtract',zh:'B阶段 · 高斯·×9·分配·过乘减'},
+          units:['C-05','C-06','C-07','C-08'] },
+        /* ── 창의수연 중급 C · 창의 곱셈법 6가지 ── */
+        { id:'C', available:true,
+          title:{ko:'C단계 · 창의 곱셈법 6가지',en:'Level C · 6 Creative Multiplication Methods',zh:'C阶段 · 六种创意乘法'},
+          units:['C-09','C-10','C-11','C-12','C-13','C-14'] },
+        /* ── 창의수연 중급 D · 자리이동·×5·×25 ── */
+        { id:'D', available:true,
+          title:{ko:'D단계 · 자리이동·×5·×25',en:'Level D · Place-Shift · ×5 · ×25',zh:'D阶段 · 位移·×5·×25'},
+          units:['C-15','C-16','C-17'] },
+        /* ── 창의수연 중급 E · 나눗셈 3법과 분수 덧뺄셈 ── */
+        { id:'E', available:true,
+          title:{ko:'E단계 · 나눗셈 3법·분수 덧뺄셈',en:'Level E · 3 Division Methods · Fraction ±',zh:'E阶段 · 三种除法·分数加减'},
+          units:['C-18','C-19','C-20','C-21','C-22'] },
+        /* ── 창의수연 중급 F · VEDA·차이곱·소수 ── */
+        { id:'F', available:true,
+          title:{ko:'F단계 · VEDA·차이곱·소수',en:'Level F · VEDA · Difference Products · Decimals',zh:'F阶段 · VEDA·差乘·小数'},
+          units:['C-23','C-24','C-25'] }
       ]
     },
 

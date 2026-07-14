@@ -572,4 +572,576 @@ NM_TGEN['ml11_squares'] = function(params, rng) {
   };
 };
 
+/* ── ML_PAIR10 — 곱해서 10/100 만들기 & 분해곱셈법 ─────────── */
+NM_TGEN['ml_pair10'] = function(params, rng) {
+  const target = params.target || 10; /* 10 or 100 */
+  const mode   = params.mode   || 'three'; /* 'three'=세 수 곱 | 'decomp'=분해 */
+
+  if (target === 10) {
+    /* 2×5=10 쌍을 포함한 세 수 곱: a × b × 5 where a=2, b=random */
+    const b      = R(rng, 2, 9);
+    const answer = 2 * b * 5;            /* = 10 × b */
+    return {
+      prompt:{ ko:`2 × ${b} × 5를 쌍을 찾아 쉽게 계산해요`,
+               en:`Find the pair to easily compute 2 × ${b} × 5`,
+               zh:`找到乘积为10的对，轻松计算 2 × ${b} × 5` },
+      tex:`2 \\times ${b} \\times 5 = \\square`,
+      answer, answerType:'steps', widget:'steps',
+      steps:[
+        { tex:`2 \\times 5 = \\square`,     blank:10      },
+        { tex:`10 \\times ${b} = \\square`, blank:answer  }
+      ]
+    };
+  }
+
+  if (mode === 'decomp') {
+    /* 분해곱셈법: n × 25 → (k×4) × 25 = k×100  (4의 배수 n=4k) */
+    const k      = R(rng, 2, 12);
+    const n      = k * 4;
+    const answer = n * 25;
+    return {
+      prompt:{ ko:`${n} × 25를 분해해서 계산해요`,
+               en:`Decompose to compute ${n} × 25`,
+               zh:`分解计算 ${n} × 25` },
+      tex:`${n} \\times 25 = \\square`,
+      answer, answerType:'steps', widget:'steps',
+      steps:[
+        { tex:`${n} = ${k} \\times \\square`, blank:4   },
+        { tex:`4 \\times 25 = \\square`,      blank:100 },
+        { tex:`${k} \\times 100 = \\square`,  blank:answer }
+      ]
+    };
+  }
+
+  /* target===100: 4×25=100 쌍 포함 세 수 곱 */
+  const b      = R(rng, 2, 9);
+  const answer = 4 * b * 25;             /* = 100 × b */
+  return {
+    prompt:{ ko:`4 × ${b} × 25를 쌍을 찾아 계산해요`,
+             en:`Find the pair to compute 4 × ${b} × 25`,
+             zh:`找到乘积为100的对，计算 4 × ${b} × 25` },
+    tex:`4 \\times ${b} \\times 25 = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`4 \\times 25 = \\square`,      blank:100    },
+      { tex:`100 \\times ${b} = \\square`,  blank:answer }
+    ]
+  };
+};
+
+/* ── ML_GAUSS — 가우스 덧셈 (등차수열 합) ────────────────────── */
+NM_TGEN['ml_gauss'] = function(params, rng) {
+  const n      = R(rng, 3, 10) * 2; /* 짝수로 쌍 만들기 쉽게 */
+  const total  = n * (n + 1) / 2;
+  const pairs  = n / 2;
+  const pairSum= n + 1;
+
+  return {
+    prompt:{ ko:`1부터 ${n}까지 더하면 얼마일까요?`,
+             en:`What is the sum from 1 to ${n}?`,
+             zh:`1加到${n}等于多少？` },
+    tex:`1 + 2 + \\cdots + ${n} = \\square`,
+    answer:total, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`1 + ${n} = \\square`,               blank:pairSum },
+      { tex:`\\text{쌍의 수} = ${n} \\div 2 = \\square`, blank:pairs },
+      { tex:`${pairSum} \\times ${pairs} = \\square`, blank:total  }
+    ]
+  };
+};
+
+/* ── ML_X9 — ×9 전략 (n×9=n×10−n) ──────────────────────────── */
+NM_TGEN['ml_x9'] = function(params, rng) {
+  const n      = R(rng, 2, 99);
+  const answer = n * 9;
+
+  return {
+    prompt:{ ko:`${n} × 9를 ×10 빼기 전략으로 계산해요`,
+             en:`Compute ${n} × 9 using the ×10 minus strategy`,
+             zh:`用×10减的策略计算 ${n} × 9` },
+    tex:`${n} \\times 9 = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${n} \\times 10 = \\square`,        blank:n*10   },
+      { tex:`${n*10} - ${n} = \\square`,          blank:answer }
+    ]
+  };
+};
+
+/* ── ML_OVERMUL — 더 곱해주고 빼기 (올림빼기) ───────────────── */
+NM_TGEN['ml_overmul'] = function(params, rng) {
+  /* n × (round - k): round=10/100, k=1~3 */
+  const rounds  = [10, 100];
+  const round   = pick(rng, rounds);
+  const k       = R(rng, 1, 3);
+  const near    = round - k;             /* e.g. 9, 99, 98 */
+  const a       = R(rng, 2, round === 10 ? 19 : 9);
+  const answer  = a * near;
+
+  return {
+    prompt:{ ko:`${a} × ${near}를 올림빼기 전략으로 계산해요`,
+             en:`Compute ${a} × ${near} using the over-subtract strategy`,
+             zh:`用多乘再减策略计算 ${a} × ${near}` },
+    tex:`${a} \\times ${near} = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${a} \\times ${round} = \\square`,       blank:a*round  },
+      { tex:`${a} \\times ${k} = \\square`,           blank:a*k      },
+      { tex:`${a*round} - ${a*k} = \\square`,          blank:answer   }
+    ]
+  };
+};
+
+/* ── ML_DIGIT_PRED — 몇 자리 수 예측 ────────────────────────── */
+NM_TGEN['ml_digit_pred'] = function(params, rng) {
+  /* 두 자리×두 자리 → 3자리 or 4자리 예측 + 계산 */
+  const a      = R(rng, 11, 49);
+  const b      = R(rng, 11, 49);
+  const answer = a * b;
+  const digits = answer.toString().length;
+
+  const aT  = Math.floor(a / 10);
+  const bT  = Math.floor(b / 10);
+  const leadProd = aT * bT;
+
+  return {
+    prompt:{ ko:`${a} × ${b}는 몇 자리 수일지 예측하고 계산해요`,
+             en:`Predict the digit count of ${a} × ${b}, then compute it`,
+             zh:`预测 ${a} × ${b} 的位数，然后计算` },
+    tex:`${a} \\times ${b} = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${aT} \\times ${bT} = \\square \\;\\text{(앞 자리 곱)}`, blank:leadProd },
+      { tex:`\\therefore \\; \\text{${digits}자리} \\;|\\; ${a} \\times ${b} = \\square`, blank:answer }
+    ]
+  };
+};
+
+/* ── ML_X11 — ×11 전략 (ab×11 = a_(a+b)_b) ─────────────────── */
+NM_TGEN['ml_x11'] = function(params, rng) {
+  /* 두 자리 수 × 11 */
+  const a      = R(rng, 11, 99);
+  const aT     = Math.floor(a / 10);
+  const aO     = a % 10;
+  const mid    = aT + aO;
+  const answer = a * 11;
+
+  /* 올림 있을 때 별도 처리 */
+  if (mid >= 10) {
+    /* 올림: (aT+1) | (mid-10) | aO */
+    const h = aT + 1;
+    const m = mid - 10;
+    return {
+      prompt:{ ko:`${a} × 11을 ×11 전략으로 계산해요`,
+               en:`Compute ${a} × 11 using the ×11 trick`,
+               zh:`用×11技巧计算 ${a} × 11` },
+      tex:`${a} \\times 11 = \\square`,
+      answer, answerType:'steps', widget:'steps',
+      steps:[
+        { tex:`${aT} + ${aO} = \\square \\;\\text{(가운데 자리)}`, blank:mid    },
+        { tex:`\\text{올림 포함} \\Rightarrow ${h}${m}${aO}= \\square`, blank:answer }
+      ]
+    };
+  }
+
+  return {
+    prompt:{ ko:`${a} × 11을 ×11 전략으로 계산해요`,
+             en:`Compute ${a} × 11 using the ×11 trick`,
+             zh:`用×11技巧计算 ${a} × 11` },
+    tex:`${a} \\times 11 = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${aT} + ${aO} = \\square \\;\\text{(가운데 자리)}`, blank:mid    },
+      { tex:`\\Rightarrow ${aT}${mid}${aO} = \\square`,  blank:answer }
+    ]
+  };
+};
+
+/* ── ML_PLACESHIFT — 자리이동 곱셈 (반복 자릿수 인수) ───────── */
+NM_TGEN['ml_placeshift'] = function(params, rng) {
+  /* 두 번째 인수가 같은 숫자 반복: 11,22,...,99 */
+  const REPD   = [2,3,4,5,6,7,8,9];
+  const d      = pick(rng, REPD);
+  const b      = d * 11;                /* 22, 33, ..., 99 */
+  const a      = R(rng, 11, 49);
+  const partial= a * d;
+  const answer = a * b;
+
+  return {
+    prompt:{ ko:`${a} × ${b}를 자리이동 전략으로 계산해요`,
+             en:`Compute ${a} × ${b} using the place-shift strategy`,
+             zh:`用位移策略计算 ${a} × ${b}` },
+    tex:`${a} \\times ${b} = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${a} \\times ${d} = \\square`,             blank:partial       },
+      { tex:`${partial} + ${partial*10} = \\square`,     blank:answer        }
+    ]
+  };
+};
+
+/* ── ML_X5 — ×5/÷5 전략 ─────────────────────────────────────── */
+NM_TGEN['ml_x5'] = function(params, rng) {
+  const mode = params.mode || 'mul';
+
+  if (mode === 'mul') {
+    /* n × 5 = n × 10 ÷ 2  (n이 짝수여야 깔끔) */
+    const n      = R(rng, 1, 49) * 2;
+    const answer = n * 5;
+    return {
+      prompt:{ ko:`${n} × 5를 ×10÷2 전략으로 계산해요`,
+               en:`Compute ${n} × 5 using ×10÷2`,
+               zh:`用×10÷2策略计算 ${n} × 5` },
+      tex:`${n} \\times 5 = \\square`,
+      answer, answerType:'steps', widget:'steps',
+      steps:[
+        { tex:`${n} \\times 10 = \\square`,   blank:n*10   },
+        { tex:`${n*10} \\div 2 = \\square`,   blank:answer }
+      ]
+    };
+  }
+
+  /* div: n ÷ 5 = n × 2 ÷ 10 */
+  const q      = R(rng, 1, 19);
+  const n      = q * 5;
+  const answer = q;
+  return {
+    prompt:{ ko:`${n} ÷ 5를 ×2÷10 전략으로 계산해요`,
+             en:`Compute ${n} ÷ 5 using ×2÷10`,
+             zh:`用×2÷10策略计算 ${n} ÷ 5` },
+    tex:`${n} \\div 5 = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${n} \\times 2 = \\square`,     blank:n*2    },
+      { tex:`${n*2} \\div 10 = \\square`,    blank:answer }
+    ]
+  };
+};
+
+/* ── ML_X25 — ×25/÷25 전략 ─────────────────────────────────── */
+NM_TGEN['ml_x25'] = function(params, rng) {
+  const mode = params.mode || 'mul';
+
+  if (mode === 'mul') {
+    /* n × 25 = n × 100 ÷ 4  (n이 4의 배수) */
+    const k      = R(rng, 1, 20);
+    const n      = k * 4;
+    const answer = n * 25;
+    return {
+      prompt:{ ko:`${n} × 25를 ×100÷4 전략으로 계산해요`,
+               en:`Compute ${n} × 25 using ×100÷4`,
+               zh:`用×100÷4策略计算 ${n} × 25` },
+      tex:`${n} \\times 25 = \\square`,
+      answer, answerType:'steps', widget:'steps',
+      steps:[
+        { tex:`${n} \\times 100 = \\square`,  blank:n*100  },
+        { tex:`${n*100} \\div 4 = \\square`,  blank:answer }
+      ]
+    };
+  }
+
+  /* div: n ÷ 25 = n × 4 ÷ 100 */
+  const q      = R(rng, 1, 20);
+  const n      = q * 25;
+  const answer = q;
+  return {
+    prompt:{ ko:`${n} ÷ 25를 ×4÷100 전략으로 계산해요`,
+             en:`Compute ${n} ÷ 25 using ×4÷100`,
+             zh:`用×4÷100策略计算 ${n} ÷ 25` },
+    tex:`${n} \\div 25 = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${n} \\times 4 = \\square`,    blank:n*4    },
+      { tex:`${n*4} \\div 100 = \\square`,  blank:answer }
+    ]
+  };
+};
+
+/* ── ML_DIV_DECOMP — 분해 나눗셈 ────────────────────────────── */
+NM_TGEN['ml_div_decomp'] = function(params, rng) {
+  /* a÷b: a를 b의 배수로 분해 → (c×b + d)÷b = c + d÷b
+     예: 312÷3 = (300+12)÷3 = 100+4 = 104 */
+  const b      = R(rng, 2, 9);
+  const q1     = R(rng, 10, 99);  /* 백의 몫 */
+  const q2     = R(rng, 1,  9);   /* 십의 몫 */
+  const a      = (q1 * 10 + q2) * b;  /* a = (q1×10+q2)×b, 항상 딱 나눔 */
+  const hPart  = Math.floor(a / 100) * 100;    /* 내림백자리 */
+  const rest   = a - hPart;
+  const answer = a / b;
+
+  return {
+    prompt:{ ko:`${a} ÷ ${b}를 분해해서 계산해요`,
+             en:`Compute ${a} ÷ ${b} by decomposing`,
+             zh:`分解计算 ${a} ÷ ${b}` },
+    tex:`${a} \\div ${b} = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${hPart} \\div ${b} = \\square`,    blank:hPart/b    },
+      { tex:`${rest} \\div ${b} = \\square`,     blank:rest/b     },
+      { tex:`${hPart/b} + ${rest/b} = \\square`, blank:answer     }
+    ]
+  };
+};
+
+/* ── ML_DIV_SIMPLIFY — 약분 나눗셈 ─────────────────────────── */
+NM_TGEN['ml_div_simplify'] = function(params, rng) {
+  /* a÷b: 두 수를 GCD로 약분해서 쉽게
+     예: 84÷12 → 7÷1=7 (÷12) 또는 42÷6=7 (÷2씩) */
+  const PAIRS = [
+    [84,12],[96,12],[72,12],[60,12],
+    [63, 9],[81, 9],[54, 9],
+    [64, 8],[56, 8],[48, 8],
+    [70, 7],[84, 7],[56, 7],
+    [60, 6],[72, 6],[54, 6]
+  ];
+  const [a, b] = pick(rng, PAIRS);
+  const gcd    = (x, y) => y === 0 ? x : gcd(y, x % y);
+  const g      = gcd(a, b);
+  const sa     = a / g;
+  const sb     = b / g;
+  const answer = a / b;
+
+  return {
+    prompt:{ ko:`${a} ÷ ${b}를 약분해서 계산해요`,
+             en:`Simplify then compute ${a} ÷ ${b}`,
+             zh:`约分计算 ${a} ÷ ${b}` },
+    tex:`${a} \\div ${b} = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${a} \\div ${g} = \\square`, blank:sa },
+      { tex:`${b} \\div ${g} = \\square`, blank:sb },
+      { tex:`${sa} \\div ${sb} = \\square`, blank:answer }
+    ]
+  };
+};
+
+/* ── ML_DIV_EXPAND — 부풀려 나눗셈 (양쪽 같은 배수) ─────────── */
+NM_TGEN['ml_div_expand'] = function(params, rng) {
+  /* a÷b: 양쪽에 k를 곱해 b를 10/100으로 만듦
+     예: 7÷5 → 14÷10 = 1.4  |  12÷4 → 24÷8 아님 → 다른 접근
+     여기서는: n÷5 → 2n÷10 or n÷25 → 4n÷100 */
+  const mode = pick(rng, ['x2','x4']);
+  if (mode === 'x2') {
+    const q      = R(rng, 1, 19);
+    const b      = 5;
+    const a      = q * b;
+    const answer = q;
+    return {
+      prompt:{ ko:`${a} ÷ 5를 부풀려서 계산해요`,
+               en:`Expand to compute ${a} ÷ 5`,
+               zh:`扩大计算 ${a} ÷ 5` },
+      tex:`${a} \\div 5 = \\square`,
+      answer, answerType:'steps', widget:'steps',
+      steps:[
+        { tex:`${a} \\times 2 = \\square`, blank:a*2  },
+        { tex:`${a*2} \\div 10 = \\square`, blank:answer }
+      ]
+    };
+  }
+  /* x4: n÷25 → 4n÷100 */
+  const q      = R(rng, 1, 12);
+  const b      = 25;
+  const a      = q * b;
+  const answer = q;
+  return {
+    prompt:{ ko:`${a} ÷ 25를 부풀려서 계산해요`,
+             en:`Expand to compute ${a} ÷ 25`,
+             zh:`扩大计算 ${a} ÷ 25` },
+    tex:`${a} \\div 25 = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${a} \\times 4 = \\square`,    blank:a*4    },
+      { tex:`${a*4} \\div 100 = \\square`, blank:answer  }
+    ]
+  };
+};
+
+/* ── ML_FRAC_SAME — 분수 덧뺄셈 (동분모) ───────────────────── */
+NM_TGEN['ml_frac_same'] = function(params, rng) {
+  const op  = params.op || 'add';
+  const den = pick(rng, [3,4,5,6,7,8,9,10]);
+  let num1, num2;
+
+  if (op === 'add') {
+    do {
+      num1 = R(rng, 1, den - 1);
+      num2 = R(rng, 1, den - 1);
+    } while (num1 + num2 > den);
+    const numR  = num1 + num2;
+    const answer= numR;
+    return {
+      prompt:{ ko:`분수를 더해요`,
+               en:`Add the fractions`,
+               zh:`分数加法` },
+      tex:`\\dfrac{${num1}}{${den}} + \\dfrac{${num2}}{${den}} = \\dfrac{\\square}{${den}}`,
+      answer, answerType:'number', widget:'numpad'
+    };
+  }
+
+  /* sub */
+  num1 = R(rng, 2, den - 1);
+  num2 = R(rng, 1, num1 - 1);
+  const numR  = num1 - num2;
+  const answer= numR;
+  return {
+    prompt:{ ko:`분수를 빼요`,
+             en:`Subtract the fractions`,
+             zh:`分数减法` },
+    tex:`\\dfrac{${num1}}{${den}} - \\dfrac{${num2}}{${den}} = \\dfrac{\\square}{${den}}`,
+    answer, answerType:'number', widget:'numpad'
+  };
+};
+
+/* ── ML_FRAC_DIFF — 분수 덧뺄셈 (이분모/통분) ──────────────── */
+NM_TGEN['ml_frac_diff'] = function(params, rng) {
+  const op = params.op || 'add';
+  /* 간단한 통분: den1, den2 → lcm = den1×den2 (서로소 쌍) */
+  const COPRIME_PAIRS = [[2,3],[2,5],[3,4],[3,5],[4,5],[2,7],[3,7]];
+  const [d1, d2] = pick(rng, COPRIME_PAIRS);
+  const lcd = d1 * d2;
+  const n1  = R(rng, 1, d1 - 1);
+  const n2  = R(rng, 1, d2 - 1);
+
+  if (op === 'add') {
+    const r1  = n1 * d2;  /* n1/d1 → r1/lcd */
+    const r2  = n2 * d1;  /* n2/d2 → r2/lcd */
+    const num = r1 + r2;
+    return {
+      prompt:{ ko:`통분해서 더해요`,
+               en:`Find common denominator, then add`,
+               zh:`通分后相加` },
+      tex:`\\dfrac{${n1}}{${d1}} + \\dfrac{${n2}}{${d2}} = \\dfrac{\\square}{${lcd}}`,
+      answer:num, answerType:'steps', widget:'steps',
+      steps:[
+        { tex:`\\dfrac{${n1}}{${d1}} = \\dfrac{\\square}{${lcd}}`, blank:r1  },
+        { tex:`\\dfrac{${n2}}{${d2}} = \\dfrac{\\square}{${lcd}}`, blank:r2  },
+        { tex:`\\dfrac{${r1}}{${lcd}} + \\dfrac{${r2}}{${lcd}} = \\dfrac{\\square}{${lcd}}`, blank:num }
+      ]
+    };
+  }
+
+  /* sub: ensure n1/d1 > n2/d2 */
+  const r1 = n1 * d2;
+  const r2 = n2 * d1;
+  if (r1 <= r2) {
+    const num = r2 - r1;
+    return {
+      prompt:{ ko:`통분해서 빼요`,
+               en:`Find common denominator, then subtract`,
+               zh:`通分后相减` },
+      tex:`\\dfrac{${n2}}{${d2}} - \\dfrac{${n1}}{${d1}} = \\dfrac{\\square}{${lcd}}`,
+      answer:num, answerType:'steps', widget:'steps',
+      steps:[
+        { tex:`\\dfrac{${n2}}{${d2}} = \\dfrac{\\square}{${lcd}}`, blank:r2  },
+        { tex:`\\dfrac{${n1}}{${d1}} = \\dfrac{\\square}{${lcd}}`, blank:r1  },
+        { tex:`\\dfrac{${r2}}{${lcd}} - \\dfrac{${r1}}{${lcd}} = \\dfrac{\\square}{${lcd}}`, blank:num }
+      ]
+    };
+  }
+  const num = r1 - r2;
+  return {
+    prompt:{ ko:`통분해서 빼요`,
+             en:`Find common denominator, then subtract`,
+             zh:`通分后相减` },
+    tex:`\\dfrac{${n1}}{${d1}} - \\dfrac{${n2}}{${d2}} = \\dfrac{\\square}{${lcd}}`,
+    answer:num, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`\\dfrac{${n1}}{${d1}} = \\dfrac{\\square}{${lcd}}`, blank:r1  },
+      { tex:`\\dfrac{${n2}}{${d2}} = \\dfrac{\\square}{${lcd}}`, blank:r2  },
+      { tex:`\\dfrac{${r1}}{${lcd}} - \\dfrac{${r2}}{${lcd}} = \\dfrac{\\square}{${lcd}}`, blank:num }
+    ]
+  };
+};
+
+/* ── ML_VEDA — VEDA 곱셈 (두 자리 × 두 자리, 교차곱) ──────── */
+NM_TGEN['ml_veda'] = function(params, rng) {
+  const a   = R(rng, 11, 49);
+  const b   = R(rng, 11, 49);
+  const aT  = Math.floor(a / 10); const aO = a % 10;
+  const bT  = Math.floor(b / 10); const bO = b % 10;
+
+  const ones  = aO * bO;
+  const cross = aT * bO + aO * bT;
+  const tens  = aT * bT;
+  const answer= a * b;
+
+  return {
+    prompt:{ ko:`${a} × ${b}를 VEDA 교차곱으로 계산해요`,
+             en:`Compute ${a} × ${b} using VEDA cross-multiplication`,
+             zh:`用VEDA交叉法计算 ${a} × ${b}` },
+    tex:`${a} \\times ${b} = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${aO} \\times ${bO} = \\square \\;\\text{(일의 자리)}`, blank:ones  },
+      { tex:`${aT}\\times${bO}+${aO}\\times${bT} = \\square \\;\\text{(교차)}`, blank:cross },
+      { tex:`${aT} \\times ${bT} = \\square \\;\\text{(십의 자리)}`, blank:tens  },
+      { tex:`\\text{합산} \\Rightarrow ${a} \\times ${b} = \\square`, blank:answer }
+    ]
+  };
+};
+
+/* ── ML_DIFF2SQ — 차가 2인 두 수의 곱 (n²−1) ────────────────── */
+NM_TGEN['ml_diff2sq'] = function(params, rng) {
+  const n      = R(rng, 5, 20);
+  const a      = n - 1;
+  const b      = n + 1;
+  const sq     = n * n;
+  const answer = sq - 1;
+
+  return {
+    prompt:{ ko:`${a} × ${b}를 제곱 마법으로 계산해요`,
+             en:`Compute ${a} × ${b} using the square shortcut`,
+             zh:`用平方捷算 ${a} × ${b}` },
+    tex:`${a} \\times ${b} = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${n}^2 = \\square`,          blank:sq     },
+      { tex:`${sq} - 1 = \\square`,       blank:answer }
+    ]
+  };
+};
+
+/* ── ML_DECIMAL_MUL — 소수 곱셈·나눗셈 ─────────────────────── */
+NM_TGEN['ml_decimal_mul'] = function(params, rng) {
+  const mode = params.mode || 'mul';
+
+  if (mode === 'mul') {
+    /* a × 0.1 or a × 0.01: shift decimal */
+    const shift = pick(rng, [1, 2]);
+    const a     = R(rng, 2, 99);
+    const label = shift === 1 ? '0.1' : '0.01';
+    const div   = shift === 1 ? 10   : 100;
+    /* a×0.1은 부동소수점 오차(7×0.1=0.7000…01)가 생기므로 a÷div로 계산 */
+    const answer= a / div;
+    return {
+      prompt:{ ko:`${a} × ${label} = ?`,
+               en:`What is ${a} × ${label}?`,
+               zh:`${a} × ${label} = ?` },
+      tex:`${a} \\times ${label} = \\square`,
+      answer, answerType:'steps', widget:'steps',
+      steps:[
+        { tex:`${a} \\div ${div} = \\square`, blank:answer }
+      ]
+    };
+  }
+
+  /* div: a ÷ 0.1 = a × 10 */
+  const shift  = pick(rng, [1, 2]);
+  const a      = R(rng, 1, 9);
+  const mul    = shift === 1 ? 10  : 100;
+  /* a÷0.1은 부동소수점 오차(7÷0.1=70.00…01)가 생기므로 a×mul로 계산 */
+  const answer = a * mul;
+  const label  = shift === 1 ? '0.1' : '0.01';
+  return {
+    prompt:{ ko:`${a} ÷ ${label} = ?`,
+             en:`What is ${a} ÷ ${label}?`,
+             zh:`${a} ÷ ${label} = ?` },
+    tex:`${a} \\div ${label} = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${a} \\times ${mul} = \\square`, blank:answer }
+    ]
+  };
+};
+
 })();
