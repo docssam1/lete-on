@@ -631,6 +631,29 @@ window.submitAll=submitAll;
 const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 let _simQ=null, _simLv=1, _simType='', _simId=0;
 
+
+// ===== 문항번호 → PNG 유형 매핑 (그림 유형) =====
+const PNG_TYPE_MAP = {
+  4:  {type:'paper_fold',    name:'색종이 접기'},
+  8:  {type:'seesaw',        name:'시소 무게비교'},
+  25: {type:'stacking_rule', name:'쌓기나무 규칙'}
+};
+const PNG_BASE = '../problem-bank/generated/images';
+const PNG_COUNT = 20; // 유형·난이도별 생성 개수
+
+// PNG 정답 캐시
+const _pngAnswerCache = {};
+async function loadPngAnswer(type, lv, num){
+  const key = `${type}_lv${lv}_${String(num).padStart(3,'0')}`;
+  if(_pngAnswerCache[key] !== undefined) return _pngAnswerCache[key];
+  try{
+    const res = await fetch(`${PNG_BASE}/${key}.txt`);
+    const ans = (await res.text()).trim();
+    _pngAnswerCache[key] = ans;
+    return ans;
+  }catch(e){ return null; }
+}
+
 const SIM_GEN = {
   '식의계산': (lv)=>{
     const a=R(10+lv*5,20+lv*10), b=R(5,15+lv*5), op=lv>=2&&Math.random()>.5?'-':'+';
@@ -679,7 +702,9 @@ const TYPE_NAMES={'식의계산':'식의계산','수':'수','논리추리':'논�
 
 function openSimilar(qid, qtype) {
   _simId=qid; _simType=qtype; _simLv=1;
-  document.getElementById('similarModalTitle').textContent=`Q${qid} 유사문제 · ${qtype}`;
+  const pngInfo=PNG_TYPE_MAP[qid];
+  const label=pngInfo?pngInfo.name:qtype;
+  document.getElementById('similarModalTitle').textContent=`Q${qid} 유사문제 · ${label}`;
   document.getElementById('similarModal').classList.add('show');
   document.querySelectorAll('.lv-chip').forEach((c,i)=>c.classList.toggle('active',i===0));
   generateSimilar();
@@ -690,10 +715,25 @@ function setSimilarLv(lv){
   document.querySelectorAll('.lv-chip').forEach((c,i)=>c.classList.toggle('active',i===lv-1));
   generateSimilar();
 }
-function generateSimilar(){
-  const gen=SIM_GEN[_simType]||SIM_GEN['수'];
-  _simQ=gen(_simLv);
-  document.getElementById('similarProblemText').textContent=_simQ.text;
+async function generateSimilar(){
+  const area=document.getElementById('similarProblemArea');
+  const pngInfo=PNG_TYPE_MAP[_simId];
+  if(pngInfo){
+    // 그림 유형: PNG 랜덤 로드
+    const lv=Math.min(_simLv,2); // PNG는 난이도 1,2만 존재
+    const num=Math.floor(Math.random()*PNG_COUNT)+1;
+    const key=`${pngInfo.type}_lv${lv}_${String(num).padStart(3,'0')}`;
+    const imgUrl=`${PNG_BASE}/${key}.png`;
+    const ans=await loadPngAnswer(pngInfo.type,lv,num);
+    _simQ={ text:'', answer:ans, hint:'그림을 보고 답을 구하세요', isPng:true };
+    area.innerHTML=`<img src="${imgUrl}" alt="유사문제" style="width:100%;border-radius:10px;display:block" onerror="this.parentNode.innerHTML='<div style=\'padding:20px;color:#dc2626;font-size:13px\'>이미지를 불러올 수 없습니다.</div>'">`;
+  } else {
+    // 텍스트 유형: JS 생성
+    const gen=SIM_GEN[_simType]||SIM_GEN['수'];
+    _simQ=gen(_simLv);
+    _simQ.isPng=false;
+    area.innerHTML=`<div class="similar-problem-text" id="similarProblemText">${_simQ.text}</div>`;
+  }
   document.getElementById('similarAnswer').value='';
   document.getElementById('similarResult').style.display='none';
   document.getElementById('similarHint').style.display='none';
