@@ -588,6 +588,12 @@ function _mgInit(id){
     for(let i=vals.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[vals[i],vals[j]]=[vals[j],vals[i]];}
     return{id:'make10',tiles:vals.map((v,i)=>({id:i,val:v,state:'idle'})),selected:null,pairs:0,timer:60,startTs:Date.now(),done:false};
   }
+  if(id==='make10_3'){
+    /* 합이 10인 서로 다른 세 수 조합 4세트: 1+2+7, 1+3+6, 1+4+5, 2+3+5 */
+    const vals=[1,2,7,1,3,6,1,4,5,2,3,5];
+    for(let i=vals.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[vals[i],vals[j]]=[vals[j],vals[i]];}
+    return{id:'make10_3',tiles:vals.map((v,i)=>({id:i,val:v,state:'idle'})),selected:[],triples:0,total:4,timer:90,startTs:Date.now(),done:false,wrongFlash:false};
+  }
   return{id,tiles:[],done:false};
 }
 
@@ -671,6 +677,97 @@ function _renderMiniGame(){
               if(mg.pairs===4){mg.done=true;clearInterval(mgTimer);mgTimer=null;save();}
             } else {
               prev.state='idle';tl.state='selected';mg.selected=tid;
+            }
+          }
+          _renderMiniGame();
+        };
+      });
+      if(!mgTimer&&!mg.done){
+        mgTimer=setInterval(()=>{
+          if(!S.miniGame||S.miniGame.done){clearInterval(mgTimer);mgTimer=null;return;}
+          const rem=Math.max(0,S.miniGame.timer-Math.floor((Date.now()-S.miniGame.startTs)/1000));
+          if(rem===0){S.miniGame.done=true;clearInterval(mgTimer);mgTimer=null;save();}
+          _renderMiniGame();
+        },1000);
+      }
+    }
+  }
+
+  /* ─── 3수 합이 10 게임 ─── */
+  else if(mg.id==='make10_3'){
+    const remaining=mg.done?0:Math.max(0,mg.timer-Math.floor((Date.now()-mg.startTs)/1000));
+    if(remaining===0&&!mg.done){mg.done=true;save();}
+
+    const selSet=new Set(mg.selected);
+    const tilesHtml=mg.tiles.map(tl=>{
+      if(tl.state==='matched')return`<div class="nm-mg-tile matched">✓</div>`;
+      const sel=selSet.has(tl.id);
+      return`<div class="nm-mg-tile${sel?' sel':''}${sel&&mg.wrongFlash?' wrong':''}" data-tid="${tl.id}">${tl.val}</div>`;
+    }).join('');
+    const selSum=mg.selected.reduce((s,tid)=>{const tl=mg.tiles.find(x=>x.id===tid);return s+(tl?tl.val:0);},0);
+
+    scr.innerHTML=`<div class="nm-mg-wrap">
+      <div class="nm-mg-header">
+        <button class="nm-back" id="mgBack">← ${t('back')}</button>
+        <div class="nm-mg-title">🎯 3수 Make 10 — ${lk('세 수로 10 만들기','3 Numbers → 10','三数凑10')}</div>
+        <div class="nm-mg-meta">
+          ${mg.done?'':`<span class="nm-mg-timer${remaining<=10?' warn':''}">⏱ ${remaining}s</span>`}
+          <span class="nm-mg-score">⭐ ${mg.triples}/4 ${lk('세트','sets','组')}</span>
+          ${mg.selected.length>0?`<span style="font-size:12px;font-weight:800;padding:3px 10px;border-radius:10px;background:#e8f0fa;color:#2a5a9a">합 ${selSum}</span>`:''}
+        </div>
+      </div>
+      ${mg.done?`<div class="nm-mg-done">
+        <div class="nm-mg-done-icon">${mg.triples===4?'🏆':'🌟'}</div>
+        <div class="nm-mg-done-msg">${mg.triples===4?lk('완벽! 4세트 모두 찾았어요!','Perfect! All 4 sets!','完美！全部找到！'):lk(`${mg.triples}세트 찾았어요! 다시 도전?`,`Got ${mg.triples} sets! Try again?`,`找到${mg.triples}组！再试？`)}</div>
+        <div class="nm-mg-done-coins">🪙 +${mg.triples*5}</div>
+        <div class="nm-mg-done-btns">
+          <button class="nm-mg-btn" id="mgRetry">${lk('다시 하기','Play Again','再玩')}</button>
+          <button class="nm-mg-btn" id="mgContinue">${lk('계속 공부','Keep Learning','继续学习')}</button>
+        </div>
+      </div>`:`<div class="nm-mg-board" id="mgBoard">
+        <div class="nm-mg-hint">${lk('합이 10인 세 수를 골라요!','Pick 3 numbers that sum to 10!','选三个加起来等于10的数！')} &nbsp;<small style="color:#9aa">1+2+7 / 1+3+6 / 1+4+5 / 2+3+5</small></div>
+        <div class="nm-mg-tiles" style="grid-template-columns:repeat(4,1fr)">${tilesHtml}</div>
+      </div>`}
+    </div>`;
+
+    $('#mgBack').onclick=()=>{clearInterval(mgTimer);mgTimer=null;const back=S._fromRoadmap?'roadmap':'town';S.view=back;S._fromRoadmap=false;save();render();};
+
+    if(mg.done){
+      const rb=$('#mgRetry');if(rb)rb.onclick=()=>{clearInterval(mgTimer);mgTimer=null;S.miniGame=_mgInit('make10_3');save();_renderMiniGame();};
+      const cb=$('#mgContinue');if(cb)cb.onclick=()=>{
+        clearInterval(mgTimer);mgTimer=null;S.coins+=(mg.triples*5);
+        S.gamesPlayed=S.gamesPlayed||{};S.gamesPlayed['make10_3']=true;
+        const back=S._fromRoadmap?'roadmap':'town';S.view=back;S._fromRoadmap=false;save();render();
+      };
+    } else {
+      const board=$('#mgBoard');
+      if(board)board.querySelectorAll('.nm-mg-tile[data-tid]').forEach(el=>{
+        el.onclick=()=>{
+          if(mg.wrongFlash)return;
+          const tid=+el.dataset.tid;
+          const tl=mg.tiles.find(x=>x.id===tid);
+          if(!tl||tl.state==='matched')return;
+
+          if(tl.state==='selected'){
+            tl.state='idle';mg.selected=mg.selected.filter(id=>id!==tid);
+          } else if(mg.selected.length<3){
+            tl.state='selected';mg.selected.push(tid);
+          }
+
+          if(mg.selected.length===3){
+            const sum=mg.selected.reduce((s,id)=>{const x=mg.tiles.find(t=>t.id===id);return s+(x?x.val:0);},0);
+            if(sum===10){
+              mg.selected.forEach(id=>{const x=mg.tiles.find(t=>t.id===id);if(x)x.state='matched';});
+              mg.selected=[];mg.triples++;
+              if(mg.triples===4){mg.done=true;clearInterval(mgTimer);mgTimer=null;save();}
+            } else {
+              mg.wrongFlash=true;
+              _renderMiniGame();
+              setTimeout(()=>{
+                mg.selected.forEach(id=>{const x=mg.tiles.find(t=>t.id===id);if(x&&x.state==='selected')x.state='idle';});
+                mg.selected=[];mg.wrongFlash=false;_renderMiniGame();
+              },600);
+              return;
             }
           }
           _renderMiniGame();

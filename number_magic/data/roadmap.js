@@ -41,6 +41,15 @@ window.NM_ROADMAP = {
       tip:{ko:'1+9, 2+8, 3+7... 짝을 찾으면 사라져요! 몇 쌍이나 맞출 수 있을까요?',en:'1+9, 2+8, 3+7... matched pairs vanish! How many can you clear?',zh:'1+9、2+8、3+7……配对就消失！你能配几对？'}
     },
 
+    /* ─────── G1 : 3수 Make 10 게임 ─────── */
+    {
+      id:'G1', icon:'🎯', grade:'초1',
+      edu:{ko:'초1-2 세 수 덧셈',en:'G1-2 Three-Addend Addition',zh:'小1-2三数加法'},
+      theme:{ko:'3수 Make 10 — 세 수 더해서 10 만들기',en:'Make 10 with 3 — Three Numbers That Sum to 10',zh:'三数凑10游戏'},
+      game:'make10_3',
+      tip:{ko:'1+2+7=10, 2+3+5=10... 세 수를 골라요! 더 어렵지만 더 재미있어요 😄',en:'1+2+7=10, 2+3+5=10... pick three! Harder but more fun 😄',zh:'1+2+7=10，2+3+5=10……选三个数！更难但更有趣 😄'}
+    },
+
     /* ─────── R2 : 뺄셈 마법 ─────── */
     {
       id:'R2', icon:'➖', grade:'초1',
