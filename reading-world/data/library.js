@@ -55,6 +55,178 @@ window.LIBRARY_CATALOG = {
         ['How does Jack escape from the Tyrannosaurus rex on the hill?', ['He rides away on the Pteranodon’s back', 'He hides inside a nest', 'He climbs the tallest tree', 'He runs faster than the dinosaur'], 'A', 'Henry the Pteranodon swoops down and carries Jack safely into the sky, away from the charging Tyrannosaurus rex.'],
         ['How do Jack and Annie finally get back home to Frog Creek?', ['The Pteranodon flies them home', 'They walk back through the forest', 'They wish on a picture of the Frog Creek woods', 'They fall asleep and wake up at home'], 'C', 'Jack finds the picture of the Frog Creek woods in the book about Pennsylvania and wishes to go home, and the tree house spins them back.'],
       ],
-    },
+    },,
+      {
+        "id": "library-mth4",
+        "seriesId": "magic-tree-house",
+        "order": 4,
+        "title": "Pirates Past Noon",
+        "illustrator": "Sal Murdocca",
+        "ar": 2.8,
+        "rg": "2C",
+        "wc": 5314,
+        "genre": "fiction-fantasy",
+        "fictionType": "fiction",
+        "grade": "G2",
+        "totalPages": 43,
+        "audio": "tts",
+        "background": {
+          "ko": "잭과 애니는 남매예요. 두 사람은 집 근처 숲속에서 마법의 나무 집을 발견하죠. 비 오는 어느 오후, 나무 집은 두 사람을 아주 먼 옛날, 해적들이 살던 따뜻하고 햇살 가득한 섬으로 데려가요. 말하는 앵무새가 그곳으로 이끌지만, 욕심 많은 해적들이 남매를 붙잡아 보물 찾는 일을 도우라고 하면서 모험은 곧 위험해져요. 잭과 애니가 신비한 지도와 고래에 얽힌 수수께끼, 그리고 약간의 용기로 어떻게 빠져나오는지 살펴보세요. 그리고 그 앵무새를 잘 지켜보세요—보이는 게 전부가 아니랍니다!",
+          "en": "Jack and Annie are a brother and sister who discover a magic tree house hidden in the woods near their home. On a rainy afternoon, the tree house whisks them far away to a warm, sunny island from the days of pirates, hundreds of years ago. A talking parrot leads them there, but the adventure quickly turns dangerous when greedy pirates capture them and demand help finding buried treasure. As you read, watch how Jack and Annie use a mysterious map, a clever clue about a whale, and a bit of courage to get away. And keep an eye on that parrot—she may be far more than she seems!",
+          "zh": "杰克和安妮是一对兄妹，他们在家附近的树林里发现了一座神奇的树屋。在一个下雨的下午，树屋把他们带到了几百年前海盗出没的、阳光明媚的温暖小岛。一只会说话的鹦鹉把他们引到那里，但当贪婪的海盗抓住他们、逼他们帮忙寻找埋藏的宝藏时，冒险很快变得危险起来。阅读时，请留意杰克和安妮如何借助一张神秘的地图、一个关于鲸鱼的巧妙线索和一点勇气逃脱。还要多留心那只鹦鹉——她可不只是一只普通的鸟哦！"
+        },
+        "vocab": [
+          [
+            "medallion",
+            "a round, flat piece of metal, like a large coin, often kept as something precious",
+            "메달; 큰 동전 모양의 둥근 금속 장식",
+            "大奖章；圆形金属饰片"
+          ],
+          [
+            "treasure",
+            "a collection of very valuable things such as gold, silver, or jewels",
+            "보물",
+            "财宝；珍宝"
+          ],
+          [
+            "deserted",
+            "empty and quiet, with no people around",
+            "사람이 없는; 인적이 끊긴",
+            "荒无人烟的；无人的"
+          ],
+          [
+            "gale",
+            "a very strong and powerful wind",
+            "강풍; 세찬 바람",
+            "大风；狂风"
+          ],
+          [
+            "shudder",
+            "to shake for a moment because you are frightened or cold",
+            "(겁이나 추위로) 몸을 부르르 떨다",
+            "(因恐惧或寒冷)发抖；战栗"
+          ],
+          [
+            "squawk",
+            "a loud, harsh cry made by a bird",
+            "(새가) 꽥꽥 우는 소리",
+            "(鸟)刺耳地叫；呱呱叫"
+          ],
+          [
+            "dreary",
+            "dull, gray, and gloomy",
+            "음침한; 우중충한",
+            "阴沉的；沉闷的"
+          ],
+          [
+            "mutineers",
+            "people who refuse to obey their leader and turn against them",
+            "반란자들; 명령을 거부하고 맞서는 사람들",
+            "反叛者；哗变的人"
+          ],
+          [
+            "enchantress",
+            "a woman who can do magic",
+            "마법을 부리는 여자; 마녀",
+            "女魔法师；女巫"
+          ],
+          [
+            "invisible",
+            "not able to be seen",
+            "눈에 보이지 않는",
+            "看不见的；隐形的"
+          ]
+        ],
+        "quiz": [
+          [
+            "Why was Annie so eager to visit the tree house on the rainy morning?",
+            [
+              "She had a feeling the mysterious M person would show up",
+              "She wanted to get out of the rain",
+              "She hoped to catch a new pet parrot",
+              "She needed to return some library books"
+            ],
+            "A",
+            "Annie insisted on going because she sensed the M person would finally appear that day."
+          ],
+          [
+            "What word did the green parrot keep repeating?",
+            [
+              "Hello",
+              "Too late!",
+              "Treasure",
+              "Go home"
+            ],
+            "B",
+            "The parrot squawked \"Too late!\" over and over, both in the woods and on the island."
+          ],
+          [
+            "How did Jack and Annie travel back to the time of pirates?",
+            [
+              "They rowed a boat across the ocean",
+              "They followed a treasure map on foot",
+              "They pointed at a picture in a book and made a wish",
+              "They climbed down a secret tunnel"
+            ],
+            "C",
+            "The tree house carries them wherever they wish when they point to a picture in one of its books."
+          ],
+          [
+            "What did the pirate captain want more than anything else?",
+            [
+              "A brand-new ship",
+              "To make friends with the children",
+              "To learn how to read maps by himself",
+              "To dig up the buried treasure"
+            ],
+            "D",
+            "The captain captured Jack and Annie only because he was desperate to find the hidden gold."
+          ],
+          [
+            "The map said the gold lay beneath the \"whale's eye.\" What did the whale's eye turn out to be?",
+            [
+              "A big black rock on the island",
+              "A lighthouse on the shore",
+              "A cave hidden under the water",
+              "The captain's one good eye"
+            ],
+            "A",
+            "Jack and Annie realized the island was shaped like a whale and that a large black rock marked its eye."
+          ],
+          [
+            "Why did the two pirate helpers abandon their captain and run off?",
+            [
+              "They had found their own treasure map",
+              "They wanted to rescue Jack and Annie",
+              "They were frightened by the fierce storm and the parrot's warnings",
+              "They were simply tired of digging"
+            ],
+            "C",
+            "Scared by the parrot's cries and the coming storm, the two pirates fled to the boat and left the captain behind."
+          ],
+          [
+            "What did Jack end up bringing home from the adventure?",
+            [
+              "A pirate flag",
+              "The gold medallion",
+              "The whole treasure chest",
+              "A green parrot feather"
+            ],
+            "B",
+            "Jack held on to the gold medallion, which mysteriously turned up in his pocket back home."
+          ],
+          [
+            "Who did the parrot Polly turn out to really be?",
+            [
+              "A magical enchantress and librarian from Camelot",
+              "A pirate hiding in disguise",
+              "A neighbor from Jack and Annie's town",
+              "Just an ordinary talking bird"
+            ],
+            "A",
+            "Back in the woods the parrot transformed into Morgan le Fay, the enchantress who owns the tree house and collects books."
+          ]
+        ]
+      }
   ],
 };
