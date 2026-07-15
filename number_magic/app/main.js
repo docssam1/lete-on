@@ -796,6 +796,7 @@ function screenGradeCourse(){
     {key:'초2',label:{ko:'초2',en:'Grade 2',zh:'二年级'}},
     {key:'초3',label:{ko:'초3',en:'Grade 3',zh:'三年级'}},
     {key:'초4',label:{ko:'초4',en:'Grade 4',zh:'四年级'}},
+    {key:'초5',label:{ko:'초5',en:'Grade 5',zh:'五年级'}},
     {key:'창의',label:{ko:'창의수연',en:'Creative',zh:'创意'}},
   ];
   S._gcGrade=S._gcGrade||'초1';

@@ -215,6 +215,26 @@
 
   /* ── DV6 — 배수판별법 ────────────────────────────────────── */
   NM_TGEN['dv6_divisibility'] = function (params, rng) {
+    const mode = (params && params.mode) || 'missing';
+
+    /* ---- 자릿수 합 (3·9 배수 판정) ---- */
+    if (mode === 'digitSum') {
+      const n    = R(rng, 100, 999);
+      const digs = String(n).split('').map(Number);
+      const dsum = digs.reduce((a, b) => a + b, 0);
+      return {
+        prompt: {
+          ko: `${n}의 각 자리 숫자를 더해요 — 3의 배수인지 확인해 봐요!`,
+          en: `Add the digits of ${n} — check if it's a multiple of 3!`,
+          zh: `把${n}各位数字相加——判断是不是3的倍数！`
+        },
+        tex:        `${digs.join('+')} = \\square`,
+        answer:     dsum,
+        answerType: 'number',
+        widget:     'numpad'
+      };
+    }
+
     const rules = (params && params.rules) || [2, 5, 10];
     const r     = pick(rng, rules);
 

@@ -638,10 +638,148 @@ window.NM_UNITS['T-DV3'] = {
 };
 
 /* ─────────────────────────────────────────────
+   T-DV4 · 최대공약수·최소공배수 (초5-1 교과)
+───────────────────────────────────────────── */
+window.NM_UNITS['T-DV4'] = {
+  id:'T-DV4', tier:'bridge', level:'T', order:110,
+  generator:'dv7_gcdLcm', edu:'5-1',
+  title:{ ko:'공약수·공배수', en:'GCD & LCM', zh:'公因数与公倍数' },
+  subtitle:{ ko:'두 수가 함께 가진 약수와 배수를 찾아요!', en:'Find the common factors and multiples of two numbers!', zh:'找两个数共同拥有的因数和倍数！' },
+  icon:'🔗',
+  practice:{ generator:'dv7_gcdLcm', level:'practice', count:4, params:{ mode:'gcd' },
+    intro:{ ko:'두 수 모두의 약수 = 공약수! 그 중 가장 큰 것 = 최대공약수(GCD).',
+      en:'A factor of both numbers = common factor! The largest one = GCD.',
+      zh:'两个数共同的因数=公因数！其中最大的=最大公因数(GCD)。' } },
+  discover:{
+    title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
+    stages:[
+      { tag:{ko:'① 공약수',en:'1) Common factors',zh:'① 公因数'},
+        head:{ko:'두 수가 함께 가진 약수!',en:'Factors shared by two numbers!',zh:'两个数共同拥有的因数！'},
+        desc:{ko:'12의 약수: <b>1, 2, 3, 4, 6, 12</b>. 18의 약수: <b>1, 2, 3, 6, 9, 18</b>. 둘 다 가진 약수 = <b>공약수: 1, 2, 3, 6</b>! 그 중 가장 큰 <b>6 = 최대공약수(GCD)</b>. 최대공약수의 약수 = 전체 공약수, 이것만 알면 다 찾을 수 있어요!',
+          en:'Factors of 12: <b>1, 2, 3, 4, 6, 12</b>. Factors of 18: <b>1, 2, 3, 6, 9, 18</b>. Shared ones = <b>common factors: 1, 2, 3, 6</b>! The biggest, <b>6 = GCD</b>. All factors of the GCD are common factors — super handy!',
+          zh:'12的因数：<b>1、2、3、4、6、12</b>。18的因数：<b>1、2、3、6、9、18</b>。两者共有的=<b>公因数：1、2、3、6</b>！其中最大的<b>6=最大公因数</b>。最大公因数的因数就是全部公因数！'},
+        mathSteps:['12: 1,2,3,4,6,12','18: 1,2,3,6,9,18','공약수: 1,2,3,6 → GCD=6'],
+        result:{ko:'공약수 = GCD의 약수!',en:'Common factors = factors of the GCD!',zh:'公因数＝最大公因数的因数！'},
+        book:{ko:'GCD는 "두 수를 동시에 나눌 수 있는 가장 큰 수"예요. 직사각형 타일 문제에서 자주 나와요!',en:'GCD = "the largest number that divides both" — appears in tiling and sharing problems!',zh:'最大公因数=能同时整除两数的最大数——常出现在铺瓷砖和分组问题中！'} },
+      { tag:{ko:'② 유클리드 호제법',en:'2) Euclidean algorithm',zh:'② 辗转相除法'},
+        head:{ko:'큰 수도 몇 단계면 GCD 완성!',en:'Even big numbers: GCD in just a few steps!',zh:'大数也能几步求出最大公因数！'},
+        desc:{ko:'48과 36의 GCD? 직접 약수 찾기엔 오래 걸려요. <b>유클리드 호제법</b>: ①큰 수 ÷ 작은 수의 나머지를 구하고 ②나머지가 0이 될 때까지 반복! <b>48 = 36×1 + 12 → 36 = 12×3 + 0</b> → GCD = <b>12</b>!',
+          en:'GCD of 48 and 36? Finding all factors takes too long. <b>Euclidean algorithm</b>: ① find the remainder of big÷small, ② repeat until remainder=0! <b>48 = 36×1+12 → 36 = 12×3+0</b> → GCD = <b>12</b>!',
+          zh:'48和36的最大公因数？直接找因数太慢。<b>辗转相除法</b>：①求大数÷小数的余数，②余数为0时停止！<b>48=36×1+12→36=12×3+0</b>→最大公因数=<b>12</b>！'},
+        mathSteps:['48 ÷ 36 = 1 ··· 12','36 ÷ 12 = 3 ··· 0','GCD(48, 36) = 12'],
+        result:{ko:'나머지가 0이 될 때 마지막 나누는 수 = GCD!',en:'The last divisor before remainder=0 is the GCD!',zh:'余数变为0时的最后除数＝最大公因数！'},
+        book:null },
+      { tag:{ko:'③ 최소공배수',en:'3) LCM',zh:'③ 最小公倍数'},
+        head:{ko:'GCD만 알면 LCM도 1초!',en:'Know the GCD? LCM takes 1 second!',zh:'知道最大公因数，最小公倍数1秒搞定！'},
+        desc:{ko:'공배수는 두 수 모두의 배수. 4의 배수: 4,8,12,16,20,<b>24</b>… 6의 배수: 6,12,18,<b>24</b>… 공배수: 12, 24, 36… 그 중 가장 작은 <b>12 = 최소공배수(LCM)</b>! 공식: <b>LCM = a × b ÷ GCD</b>. 4×6÷2 = <b>12</b>!',
+          en:'Common multiples appear in both lists. Multiples of 4: 4,8,12… Multiples of 6: 6,12,18… First shared: <b>12 = LCM</b>! Formula: <b>LCM = a × b ÷ GCD</b>. 4×6÷2 = <b>12</b>!',
+          zh:'公倍数是两个数共同的倍数。4的倍数：4、8、12……6的倍数：6、12、18……最小公倍数：<b>12</b>！公式：<b>LCM = a × b ÷ GCD</b>。4×6÷2 = <b>12</b>！'},
+        mathSteps:['GCD(4, 6) = 2','LCM = 4 × 6 ÷ 2','= 12'],
+        result:{ko:'LCM = 두 수의 곱 ÷ GCD!',en:'LCM = product of two numbers ÷ GCD!',zh:'LCM＝两数之积÷最大公因数！'},
+        book:null }
+    ],
+    rule:{ ko:'① 공약수 = GCD의 약수 ② GCD: 나머지 0까지 나누기 반복 ③ LCM = a×b÷GCD',
+      en:'① Common factors = factors of GCD ② GCD: divide until remainder=0 ③ LCM = a×b÷GCD',
+      zh:'① 公因数=最大公因数的因数 ② 辗转相除至余数为0 ③ LCM=a×b÷最大公因数' }
+  },
+  check:{
+    fills:[
+      { tex:'\\gcd(12,\\,18) = \\square', answer:6,
+        hint:{ ko:'12의 약수: 1,2,3,4,6,12 / 18의 약수: 1,2,3,6,9,18 → 공약수 1,2,3,6', en:'Factors of 12: 1,2,3,4,6,12 / Factors of 18: 1,2,3,6,9,18 → common: 1,2,3,6', zh:'12的因数：1,2,3,4,6,12 / 18的因数：1,2,3,6,9,18 → 公因数：1,2,3,6' } },
+      { tex:'\\text{lcm}(4,\\,6) = \\square', answer:12,
+        hint:{ ko:'GCD(4,6)=2, LCM=4×6÷2=12', en:'GCD(4,6)=2, LCM=4×6÷2=12', zh:'GCD(4,6)=2，LCM=4×6÷2=12' } }
+    ],
+    open:{ ko:'24와 36의 최대공약수를 유클리드 호제법으로 구해 보세요.',
+      en:'Find GCD(24, 36) using the Euclidean algorithm.',
+      zh:'用辗转相除法求24和36的最大公因数。' },
+    openHint:{ ko:'36 ÷ 24 = 1 ··· 12 → 24 ÷ 12 = 2 ··· 0 → GCD = 12',
+      en:'36 ÷ 24 = 1 r 12 → 24 ÷ 12 = 2 r 0 → GCD = 12',
+      zh:'36÷24=1余12→24÷12=2余0→GCD=12' }
+  },
+  lab:{ generator:'dv7_gcdLcm', level:'main', count:4, params:{ mode:'lcm' },
+    intro:{ ko:'이제 최소공배수! GCD를 먼저 구하고 공식에 넣어요.',
+      en:'Now for LCM! Find the GCD first, then apply the formula.',
+      zh:'现在求最小公倍数！先求最大公因数，再套公式。' } },
+  arena:{ generator:'dv7_gcdLcm', level:'main', count:8, timeLimit:300, params:{ mode:'gcd' },
+    rule:{ ko:'5분 안에 최대공약수 문제를 모두 풀어요!', en:'Solve all GCD problems in 5 minutes!', zh:'5分钟内解答所有最大公因数题！' } },
+  stamp:{ label:{ ko:'공약수 탐정', en:'GCD Detective', zh:'公因数侦探' }, coins:32 },
+  voice: voice('완벽해! 공약수 탐정! 🔗','Perfect! GCD Detective!','完美！公因数侦探！')
+};
+
+/* ─────────────────────────────────────────────
+   T-DV5 · 배수 판정법 (초5-1 교과)
+───────────────────────────────────────────── */
+window.NM_UNITS['T-DV5'] = {
+  id:'T-DV5', tier:'bridge', level:'T', order:111,
+  generator:'dv6_divisibility', edu:'5-1',
+  title:{ ko:'배수 판정법', en:'Divisibility Rules', zh:'整除规律' },
+  subtitle:{ ko:'끝자리와 자릿수 합으로 배수를 1초에 판별해요!', en:'Judge multiples in seconds — last-digit and digit-sum rules!', zh:'用末位和数字和规律，1秒判断整除性！' },
+  icon:'🔍',
+  practice:{ generator:'dv6_divisibility', level:'practice', count:4, params:{ mode:'digitSum' },
+    intro:{ ko:'각 자리 숫자를 더하면 3의 배수인지 바로 알 수 있어요!',
+      en:'Add the digits — you can tell right away if it\'s a multiple of 3!',
+      zh:'把各位数字相加——马上就能知道是不是3的倍数！' } },
+  discover:{
+    title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
+    stages:[
+      { tag:{ko:'① 끝자리 규칙',en:'1) Last-digit rules',zh:'① 末位规律'},
+        head:{ko:'끝자리만 봐도 2·5·10의 배수!',en:'Check the last digit for multiples of 2, 5 and 10!',zh:'只看末位，判断2·5·10的倍数！'},
+        desc:{ko:'2의 배수: 끝자리가 <b>0, 2, 4, 6, 8</b>(짝수). 5의 배수: 끝자리가 <b>0 또는 5</b>. 10의 배수: 끝자리가 <b>0</b>! 274는 끝자리가 4이니 <b>2의 배수</b>. 375는 끝자리가 5이니 <b>5의 배수</b>. 끝자리만 보면 OK!',
+          en:'Multiples of 2: last digit is <b>0, 2, 4, 6, or 8</b> (even). Multiples of 5: last digit is <b>0 or 5</b>. Multiples of 10: last digit is <b>0</b>! 274 ends in 4 → <b>multiple of 2</b>. 375 ends in 5 → <b>multiple of 5</b>.',
+          zh:'2的倍数：末位是<b>0、2、4、6、8</b>(偶数)。5的倍数：末位是<b>0或5</b>。10的倍数：末位是<b>0</b>！274末位是4→<b>2的倍数</b>。375末位是5→<b>5的倍数</b>。'},
+        mathSteps:['2의 배수: 끝 0,2,4,6,8','5의 배수: 끝 0 또는 5','10의 배수: 끝 0'],
+        result:{ko:'끝자리만 보면 2·5·10의 배수 판별 완료!',en:'Last digit alone decides multiples of 2, 5, and 10!',zh:'只看末位，2·5·10的整除性一目了然！'},
+        book:{ko:'왜 끝자리만 볼까요? 앞 자리들은 항상 10의 배수라 2·5·10으로 나눠지거든요!',en:'Why only the last digit? The other digits are multiples of 10, which is divisible by 2, 5, and 10!',zh:'为什么只看末位？因为其余位都是10的倍数，自然能被2、5、10整除！'} },
+      { tag:{ko:'② 자릿수 합 규칙',en:'2) Digit-sum rule',zh:'② 数字和规律'},
+        head:{ko:'자릿수 합이 3의 배수면 그 수도 3의 배수!',en:'If the digit sum is a multiple of 3, so is the number!',zh:'如果数字和是3的倍数，这个数也是3的倍数！'},
+        desc:{ko:'234의 자릿수 합: 2+3+4 = <b>9</b>. 9는 3의 배수 → 234도 <b>3의 배수</b>! 231: 2+3+1=6 → 3의 배수. 233: 2+3+3=8 → 3의 배수 아님. <b>9의 배수</b>는 더 엄격: 자릿수 합이 9의 배수면 돼요. 234: 합 9 → <b>9의 배수</b>도!',
+          en:'Digit sum of 234: 2+3+4 = <b>9</b>. 9 is a multiple of 3 → 234 is a <b>multiple of 3</b>! 231: 2+3+1=6 → multiple of 3. 233: 2+3+3=8 → not. <b>Rule for 9</b>: digit sum must be a multiple of 9. 234: sum=9 → also a <b>multiple of 9</b>!',
+          zh:'234的数字和：2+3+4=<b>9</b>。9是3的倍数→234也是<b>3的倍数</b>！231：2+3+1=6→是3的倍数。233：2+3+3=8→不是。<b>9的倍数</b>更严：数字和是9的倍数。234：和=9→也是<b>9的倍数</b>！'},
+        mathSteps:['234: 2+3+4 = 9','9 ÷ 3 = 3 → 3의 배수 ✓','9 ÷ 9 = 1 → 9의 배수 ✓'],
+        result:{ko:'자릿수 합이 3의 배수 → 3의 배수! 9의 배수 → 9의 배수!',en:'Digit sum divisible by 3 → multiple of 3! By 9 → multiple of 9!',zh:'数字和能被3整除→是3的倍数！能被9整除→是9的倍数！'},
+        book:null },
+      { tag:{ko:'③ 6의 배수',en:'3) Multiples of 6',zh:'③ 6的倍数'},
+        head:{ko:'2의 배수 + 3의 배수 = 6의 배수!',en:'Multiple of 2 AND 3 = multiple of 6!',zh:'既是2的倍数又是3的倍数＝6的倍数！'},
+        desc:{ko:'6 = 2 × 3이니까, <b>2의 배수이면서 3의 배수</b>인 수는 6의 배수예요! 312: 끝자리 2(→2의 배수✓), 3+1+2=6(→3의 배수✓) → <b>6의 배수</b>! 314: 끝자리 4(→2의 배수✓), 3+1+4=8(→3의 배수✗) → 6의 배수 아님. 두 조건 모두 확인!',
+          en:'6 = 2 × 3, so a number divisible by <b>both 2 and 3</b> is divisible by 6! 312: ends in 2 (✓), 3+1+2=6 (✓) → <b>divisible by 6</b>! 314: ends in 4 (✓), 3+1+4=8 (✗) → not divisible by 6. Check both!',
+          zh:'因为6=2×3，所以<b>既能被2整除又能被3整除</b>的数就能被6整除！312：末位2(✓)，3+1+2=6(✓)→<b>6的倍数</b>！314：末位4(✓)，3+1+4=8(✗)→不是6的倍数。两条都要满足！'},
+        mathSteps:['312: 끝자리 2 → 2의 배수 ✓','3+1+2=6 → 3의 배수 ✓','→ 6의 배수!'],
+        result:{ko:'6의 배수 = 끝자리 짝수 AND 자릿수 합이 3의 배수!',en:'Multiple of 6 = even last digit AND digit sum divisible by 3!',zh:'6的倍数＝末位偶数 且 数字和是3的倍数！'},
+        book:null }
+    ],
+    rule:{ ko:'① 2: 끝 짝수 / 5: 끝 0,5 / 10: 끝 0 ② 3: 자릿수 합이 3의 배수 ③ 6: ①+②',
+      en:'① ×2: even end / ×5: ends 0,5 / ×10: ends 0 ② ×3: digit sum ÷3 ③ ×6: ①+②',
+      zh:'① 2：末位偶数 / 5：末位0或5 / 10：末位0 ② 3：数字和÷3 ③ 6：①+②' }
+  },
+  check:{
+    fills:[
+      { tex:'2+3+4 = \\square', answer:9,
+        hint:{ ko:'234의 자릿수 합 — 9이면 3의 배수이면서 9의 배수!', en:'Digit sum of 234 — 9 means multiple of both 3 and 9!', zh:'234的数字和——9既是3的倍数也是9的倍数！' } },
+      { tex:'1+5+3 = \\square', answer:9,
+        hint:{ ko:'153의 자릿수 합도 9 → 3과 9의 배수!', en:'Digit sum of 153 is also 9 → multiple of 3 and 9!', zh:'153的数字和也是9→是3和9的倍数！' } }
+    ],
+    open:{ ko:'258은 2의 배수인가요? 3의 배수인가요? 6의 배수인가요? 이유를 설명해 보세요.',
+      en:'Is 258 a multiple of 2? Of 3? Of 6? Explain why.',
+      zh:'258是2的倍数吗？是3的倍数吗？是6的倍数吗？说说理由。' },
+    openHint:{ ko:'끝자리 8(짝수)→2의 배수✓, 2+5+8=15(3의 배수)→3의 배수✓, 둘 다→6의 배수!',
+      en:'Last digit 8 (even) → ×2✓; 2+5+8=15 (÷3) → ×3✓; both → ×6!',
+      zh:'末位8(偶数)→2的倍数✓；2+5+8=15(÷3)→3的倍数✓；两者都满足→6的倍数！' }
+  },
+  lab:{ generator:'dv6_divisibility', level:'main', count:4, params:{ rules:[3,6,9] },
+    intro:{ ko:'이번엔 3·6·9 배수 문제! 자릿수 합 규칙을 써봐요.',
+      en:'Now 3, 6, and 9 multiples! Use the digit-sum rule.',
+      zh:'现在是3·6·9的倍数题！用数字和规律解题。' } },
+  arena:{ generator:'dv6_divisibility', level:'main', count:8, timeLimit:300, params:{ mode:'digitSum' },
+    rule:{ ko:'5분 안에 배수 판정 문제를 모두 풀어요!', en:'Solve all divisibility problems in 5 minutes!', zh:'5分钟内解答所有整除题！' } },
+  stamp:{ label:{ ko:'배수 판정사', en:'Divisibility Detective', zh:'整除侦探' }, coins:30 },
+  voice: voice('완벽해! 배수 판정사! 🔍','Perfect! Divisibility Detective!','完美！整除侦探！')
+};
+
+/* ─────────────────────────────────────────────
    T-DC1 · 소수 알기 (초4-2 교과)
 ───────────────────────────────────────────── */
 window.NM_UNITS['T-DC1'] = {
-  id:'T-DC1', tier:'bridge', level:'T', order:110,
+  id:'T-DC1', tier:'bridge', level:'T', order:112,
   generator:'dc0_intro', edu:'4-2',
   title:{ ko:'소수 알기', en:'Meet Decimals', zh:'认识小数' },
   subtitle:{ ko:'1을 10칸으로 나눈 한 칸 = 0.1', en:'One of ten equal parts of 1 = 0.1', zh:'把1分成10份中的1份＝0.1' },

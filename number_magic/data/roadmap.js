@@ -228,6 +228,15 @@ window.NM_ROADMAP = {
       theme:{ko:'마스터의 길 — VEDA·차이곱·소수',en:'Master Path — VEDA, Difference Products, Decimals',zh:'大师之路——VEDA·差积·小数'},
       units:['C-23','C-24','C-25'],
       tip:{ko:'23×27=(25-2)(25+2)=625-4=621! 수의 아름다움이에요.',en:'23×27=(25-2)(25+2)=625-4=621! The beauty of numbers.',zh:'23×27=(25-2)(25+2)=625-4=621！数字之美。'}
+    },
+
+    /* ─────── R17 : 약수와 배수 ─────── */
+    {
+      id:'R17', icon:'🔢', grade:'초5',
+      edu:{ko:'초5-1 약수·배수',en:'G5-1 Factors & Multiples',zh:'小5-1因数与倍数'},
+      theme:{ko:'약수와 배수 — 공약수·공배수·배수 판정법',en:'Factors & Multiples — GCD, LCM & Divisibility Rules',zh:'因数与倍数——公因数·公倍数·整除规律'},
+      units:['T-DV4','T-DV5'],
+      tip:{ko:'GCD로 피자를 공평하게 나누고, LCM으로 두 버스가 다시 만나는 시간을 계산해요!',en:'Use GCD to share pizza fairly, LCM to find when two buses next meet!',zh:'用最大公因数公平分披萨，用最小公倍数计算两路公交何时再次相遇！'}
     }
 
   ]
