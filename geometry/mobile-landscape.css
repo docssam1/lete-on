@@ -1,0 +1,407 @@
+/* Mobile-first landscape layout for the copy-build game. */
+.orientation-gate {
+  display: none;
+}
+
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) and (max-width: 900px) {
+  body {
+    overflow: hidden;
+  }
+
+  .app-shell {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .orientation-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background:
+      radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.98), rgba(238, 248, 244, 0.98)),
+      #edf8f2;
+    text-align: center;
+  }
+
+  .orientation-gate__card {
+    width: min(360px, 100%);
+    padding: 28px 22px;
+    border: 1px solid #d7e5de;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 20px 50px rgba(35, 121, 100, 0.16);
+  }
+
+  .orientation-gate__phone {
+    width: 78px;
+    height: 126px;
+    margin: 0 auto 22px;
+    border: 7px solid #237964;
+    border-radius: 17px;
+    position: relative;
+    animation: rotate-phone 1.8s ease-in-out infinite;
+  }
+
+  .orientation-gate__phone::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 7px;
+    width: 24px;
+    height: 4px;
+    border-radius: 999px;
+    background: #237964;
+    transform: translateX(-50%);
+  }
+
+  .orientation-gate strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 23px;
+  }
+
+  .orientation-gate p {
+    margin: 0;
+    color: #5f6f68;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+}
+
+@keyframes rotate-phone {
+  0%, 22% { transform: rotate(0deg); }
+  58%, 100% { transform: rotate(90deg); }
+}
+
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) and (max-height: 620px) {
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: #f5f0e7;
+    overscroll-behavior: none;
+  }
+
+  button:hover,
+  .viewer:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .app-shell {
+    width: 100%;
+    height: 100dvh;
+    margin: 0;
+    padding: 6px 8px calc(74px + env(safe-area-inset-bottom));
+    display: grid;
+    grid-template-rows: 42px 42px minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .topbar {
+    min-width: 0;
+    margin: 0;
+    align-items: center;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .topbar > div:first-child {
+    min-width: 0;
+  }
+
+  .eyebrow {
+    display: none;
+  }
+
+  h1 {
+    overflow: hidden;
+    margin: 0;
+    font-size: 18px;
+    line-height: 1;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .language-switch {
+    margin-left: auto;
+    flex-wrap: nowrap;
+    gap: 4px;
+  }
+
+  .language-switch button {
+    min-width: 42px;
+    min-height: 34px;
+    padding: 0 8px;
+    font-size: 11px;
+  }
+
+  .lesson-panel {
+    min-width: 0;
+    margin: 0;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px;
+  }
+
+  .status-card,
+  .counter-card {
+    min-height: 42px;
+    padding: 5px 9px;
+    border-radius: 10px;
+    box-shadow: none;
+  }
+
+  .status-card {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stars {
+    margin: 0;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .status-card h2 {
+    margin: 0;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .status-card p {
+    overflow: hidden;
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .counter-card {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-align: left;
+  }
+
+  .counter-card span {
+    display: none;
+  }
+
+  .counter-card strong {
+    min-width: 26px;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .level-picker-button {
+    min-height: 32px;
+    padding: 0 9px;
+    font-size: 11px;
+  }
+
+  .play-area {
+    min-height: 0;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    gap: 7px;
+  }
+
+  .viewer {
+    min-height: 0;
+    display: grid;
+    grid-template-rows: 34px minmax(0, 1fr);
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(65, 58, 47, 0.09);
+  }
+
+  .viewer-heading {
+    min-height: 34px;
+    padding: 3px 8px;
+  }
+
+  .viewer-heading h2 {
+    font-size: 13px;
+  }
+
+  .icon-button {
+    width: 34px;
+    min-height: 30px;
+    font-size: 17px;
+  }
+
+  .canvas-wrap {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .builder-controls {
+    position: fixed;
+    z-index: 80;
+    left: max(8px, env(safe-area-inset-left));
+    bottom: max(6px, env(safe-area-inset-bottom));
+    width: 154px;
+    height: 62px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .pile-button {
+    width: 100%;
+    height: 62px;
+    min-height: 62px;
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 4px;
+    padding: 4px 7px;
+    border-radius: 14px;
+    text-align: left;
+    box-shadow: 0 8px 20px rgba(64, 48, 28, 0.16);
+  }
+
+  .pile-button strong {
+    display: block;
+    font-size: 12px;
+    line-height: 1.15;
+  }
+
+  .pile-button small {
+    overflow: hidden;
+    margin-top: 2px;
+    font-size: 9px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .pile-cubes {
+    width: 104px;
+    height: 65px;
+    transform: scale(0.5);
+    transform-origin: left center;
+  }
+
+  .control-strip {
+    position: fixed;
+    z-index: 79;
+    right: max(8px, env(safe-area-inset-right));
+    bottom: max(6px, env(safe-area-inset-bottom));
+    left: calc(max(8px, env(safe-area-inset-left)) + 162px);
+    height: 62px;
+    margin: 0;
+    display: grid;
+    grid-template-columns: minmax(94px, 1.35fr) repeat(5, minmax(58px, 0.8fr));
+    gap: 5px;
+    padding: 5px;
+    border: 1px solid rgba(221, 212, 198, 0.9);
+    border-radius: 14px;
+    background: rgba(255, 253, 248, 0.96);
+    box-shadow: 0 8px 22px rgba(65, 58, 47, 0.15);
+    backdrop-filter: blur(8px);
+  }
+
+  .control-strip button {
+    min-width: 0;
+    min-height: 50px;
+    padding: 0 5px;
+    border-radius: 10px;
+    font-size: 11px;
+    line-height: 1.1;
+  }
+
+  #checkAnswer {
+    font-size: 15px;
+  }
+
+  .floating-guide {
+    right: 10px;
+    bottom: 75px;
+    width: min(250px, 34vw);
+    grid-template-columns: minmax(0, 1fr) 52px;
+    gap: 4px;
+  }
+
+  .guide-character {
+    width: 52px;
+    height: 72px;
+  }
+
+  .guide-bubble {
+    min-height: 42px;
+    padding: 5px 7px;
+  }
+
+  .guide-bubble p {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0;
+    font-size: 9px;
+    line-height: 1.25;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .guide-title,
+  .guide-audio {
+    font-size: 9px;
+  }
+
+  .guide-audio {
+    min-height: 22px;
+    padding: 0 5px;
+  }
+
+  .toast {
+    bottom: 76px;
+    padding: 9px 13px;
+    font-size: 12px;
+  }
+
+  .level-dialog-panel {
+    max-height: calc(100dvh - 20px);
+  }
+}
+
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) and (max-height: 430px) {
+  .app-shell {
+    grid-template-rows: 34px 36px minmax(0, 1fr);
+    padding-top: 4px;
+  }
+
+  h1 {
+    font-size: 16px;
+  }
+
+  .language-switch button {
+    min-height: 29px;
+  }
+
+  .status-card,
+  .counter-card {
+    min-height: 36px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+  }
+
+  .viewer {
+    grid-template-rows: 29px minmax(0, 1fr);
+  }
+
+  .viewer-heading {
+    min-height: 29px;
+  }
+
+  .floating-guide {
+    display: none;
+  }
+}
