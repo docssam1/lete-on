@@ -577,7 +577,8 @@ NM_TGEN['ad8_multiAdd10'] = function(params, rng){
     answerType: 'number',
     widget: 'selectPairs',
     nums,
-    target: 10
+    target: 10,
+    pairCount
   };
 };
 

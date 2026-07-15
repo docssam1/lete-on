@@ -817,3 +817,16 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-gc-game-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;background:#fffbe0;cursor:pointer;transition:.1s;border:1px solid #f0e060}
 .nm-gc-game-row:hover{background:#fff5c0}
 .nm-gc-prog{font-size:10px;color:#aaa;font-weight:600;margin-top:6px;text-align:right}
+
+/* ── SELECT-PAIRS widget ── */
+.nm-sp-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;padding:8px 4px}
+.nm-sp-prompt{font-size:14px;font-weight:700;color:var(--sub);text-align:center;padding:0 8px;line-height:1.5}
+.nm-sp-chips{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;padding:8px 4px;min-height:80px;align-items:flex-end}
+.nm-sp-chip{min-width:54px;height:54px;padding:0 12px;border-radius:16px;border:2.5px solid var(--line);background:#fff;font-size:24px;font-weight:900;color:var(--blue-deep);cursor:pointer;display:grid;place-items:center;box-shadow:0 5px 0 #eceae4;transition:transform .22s,box-shadow .22s,border-color .18s,background .18s,color .18s;user-select:none;touch-action:manipulation}
+.nm-sp-chip.sel{border-color:var(--gold-deep);background:linear-gradient(145deg,#fff6e6,#fbeccd);color:#7a5a12;transform:translateY(-5px);box-shadow:0 9px 0 #e2c893}
+.nm-sp-chip.paired{border-color:var(--ok);background:#eafaf1;color:var(--ok);transform:translateY(-16px);box-shadow:0 14px 0 #bfe6cf;pointer-events:none}
+.nm-sp-chip.wrong{border-color:var(--no);background:#fde8e6;color:var(--no);animation:sp-wrong .55s ease}
+@keyframes sp-wrong{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.nm-sp-sum-phase{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;padding-top:12px;border-top:1.5px dashed var(--line)}
+.nm-sp-done-hint{font-size:14px;font-weight:800;color:var(--ok);text-align:center}
+.nm-sp-sum-eq{font-size:15px;margin-bottom:2px;text-align:center}

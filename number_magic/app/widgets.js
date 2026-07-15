@@ -65,8 +65,9 @@ function render(problem, container, onAnswer){
     case 'tenframe': return renderTenframe(problem,container,onAnswer);
     case 'steps':    return renderSteps(problem,container,onAnswer);
     case 'vertical': return renderVertical(problem,container,onAnswer);
-    case 'missing':  return renderMissing(problem,container,onAnswer);
-    default:         return renderFallback(problem,container,onAnswer);
+    case 'missing':      return renderMissing(problem,container,onAnswer);
+    case 'selectPairs':  return renderSelectPairs(problem,container,onAnswer);
+    default:             return renderFallback(problem,container,onAnswer);
   }
 }
 
@@ -534,9 +535,122 @@ function renderMissing(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   SELECT-PAIRS  widget:'selectPairs'
+   problem.nums   = [2,3,8,7,4]
+   problem.target = 10
+   problem.pairCount = 1|2
+   problem.answer = total sum (numpad phase)
+
+   Phase 1: Tap two chips that sum to target → both float up green.
+            Wrong pair → red shake 600ms then reset.
+            Repeat until all pairCount pairs are found.
+   Phase 2: Numpad to enter total sum.
+───────────────────────────────────────── */
+function renderSelectPairs(problem, container, onAnswer){
+  const nums=problem.nums||[];
+  const target=problem.target||10;
+  const pairCount=problem.pairCount||1;
+
+  const chips=nums.map((v,i)=>({id:i,val:v,state:'idle'}));
+  let selId=null;
+  let foundPairs=0;
+  let shaking=false;
+  let submitted=false;
+
+  const root=document.createElement('div');
+  root.className='nm-sp-wrap';
+  const promptText=problem.prompt&&problem.prompt.ko
+    ?problem.prompt.ko
+    :'합이 '+target+'이 되는 짝을 찾아요!';
+  root.innerHTML=`
+    <div class="nm-sp-prompt">${esc(promptText)}</div>
+    <div class="nm-sp-chips"></div>
+    <div class="nm-sp-sum-phase" style="display:none">
+      <div class="nm-sp-done-hint">🎉 짝을 모두 찾았어요! 전체 합을 써요.</div>
+      <div class="nm-sp-sum-eq"></div>
+      <div class="nm-numpad-screen" id="spScreen">&nbsp;</div>
+      <div class="nm-numpad" id="spPad"></div>
+    </div>
+  `;
+  container.appendChild(root);
+
+  const chipsEl=root.querySelector('.nm-sp-chips');
+  const sumPhase=root.querySelector('.nm-sp-sum-phase');
+
+  function paint(){
+    chipsEl.innerHTML='';
+    chips.forEach(c=>{
+      const el=document.createElement('div');
+      el.className='nm-sp-chip'+(c.state==='sel'?' sel':c.state==='paired'?' paired':c.state==='wrong'?' wrong':'');
+      el.textContent=c.val;
+      el.addEventListener('pointerup',e=>{
+        e.stopPropagation();
+        if(submitted||shaking)return;
+        tap(c.id);
+      });
+      chipsEl.appendChild(el);
+    });
+  }
+
+  function tap(id){
+    const chip=chips[id];
+    if(!chip||chip.state==='paired')return;
+    if(selId===null){
+      chips[id].state='sel';
+      selId=id;
+      paint();
+    } else if(selId===id){
+      chips[id].state='idle';
+      selId=null;
+      paint();
+    } else {
+      const a=chips[selId],b=chips[id];
+      if(a.val+b.val===target){
+        a.state='paired';
+        b.state='paired';
+        selId=null;
+        foundPairs++;
+        paint();
+        if(foundPairs>=pairCount){
+          setTimeout(()=>{sumPhase.style.display='';},350);
+        }
+      } else {
+        a.state='wrong';
+        b.state='wrong';
+        paint();
+        shaking=true;
+        setTimeout(()=>{
+          a.state='idle';
+          b.state='idle';
+          selId=null;
+          shaking=false;
+          paint();
+        },600);
+      }
+    }
+  }
+
+  paint();
+
+  root.querySelector('.nm-sp-sum-eq').innerHTML=renderKaTeX(problem.tex||'\\square');
+  const screen=root.querySelector('#spScreen');
+  const ns=numpadState(screen,4);
+  buildNumpad(root.querySelector('#spPad'),val=>{
+    if(submitted)return;
+    if(val==='ok'){
+      const inp=ns.get();
+      if(!inp)return;
+      submitted=true;
+      onAnswer(parseFloat(inp));
+      return;
+    }
+    ns.handle(val);
+  });
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
-   Used for 'numpad', 'selectPairs' placeholders,
-   or any unknown widget type.
+   Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
 function renderFallback(problem, container, onAnswer){
   const rawTex=problem.tex||'\\square';
@@ -584,6 +698,7 @@ window.NM_WIDGETS={
   renderSteps,
   renderVertical,
   renderMissing,
+  renderSelectPairs,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake
