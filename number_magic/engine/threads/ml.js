@@ -271,8 +271,9 @@ NM_TGEN['ml6_mul2d1dMental'] = function(params, rng) {
 /* ── ML7 — 세 자리×한 자리 ───────────────────────────────── */
 NM_TGEN['ml7_mul3d1d'] = function(params, rng) {
   const vertical = params.vertical === true;
-  const a        = R(rng, 100, 999);
-  const b        = R(rng, 2, 9);
+  const lv       = params.level || 'main';
+  const a        = R(rng, lv === 'practice' ? 101 : 100, lv === 'practice' ? 399 : 999);
+  const b        = R(rng, 2, lv === 'practice' ? 4 : 9);
   const h        = Math.floor(a / 100);
   const t        = Math.floor((a % 100) / 10);
   const o        = a % 10;

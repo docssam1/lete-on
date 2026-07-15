@@ -80,8 +80,9 @@
 
   /* ── DV2 — 두 자리÷한 자리(나머지×) ─────────────────────── */
   NM_TGEN['dv2_div2d1d'] = function (params, rng) {
-    const b        = R(rng, 2, 9);
-    const q        = R(rng, 2, 10);
+    const lv       = (params && params.level) || 'main';
+    const b        = R(rng, 2, lv === 'practice' ? 5 : 9);
+    const q        = R(rng, 2, lv === 'practice' ? 9 : 10);
     const dividend = b * q;
 
     return {
@@ -100,8 +101,9 @@
 
   /* ── DV3 — 나머지 있는 나눗셈 ────────────────────────────── */
   NM_TGEN['dv3_divRem'] = function (params, rng) {
-    const b        = R(rng, 2, 9);
-    const q        = R(rng, 2, 10);
+    const lv       = (params && params.level) || 'main';
+    const b        = R(rng, lv === 'practice' ? 3 : 2, lv === 'practice' ? 5 : 9);
+    const q        = R(rng, 2, lv === 'practice' ? 9 : 10);
     const r        = R(rng, 1, b - 1);     // 1 ≤ r ≤ b-1 (나머지 조건)
     const dividend = b * q + r;
 
@@ -252,7 +254,8 @@
 
     /* ---- 약수 찾기 ---- */
     if (mode === 'factors') {
-      const n  = R(rng, 12, 60);
+      const lv = (params && params.level) || 'main';
+      const n  = R(rng, 12, lv === 'practice' ? 30 : 60);
       const fs = allFactors(n);
       return {
         prompt: {

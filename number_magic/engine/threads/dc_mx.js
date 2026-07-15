@@ -597,4 +597,64 @@ NM_TGEN['mx5_mixedReview'] = function(params, rng) {
   };
 };
 
+/* ============================================================
+   DC0 — 소수 알기 · 개념 도입
+   0.1 = 1/10. mode: 'count'(0.1이 n개 → 소수 답) |
+   'place'(소수 첫째 자리 숫자) | 'frac'(n/10 → 소수)
+   소수 답은 넘패드 decimal 지원(parseFloat 채점) 전제.
+   ============================================================ */
+NM_TGEN['dc0_intro'] = function(params, rng) {
+  const lv   = params.level || 'main';
+  const mode = pick(rng, ['count', 'place', 'frac']);
+
+  if (mode === 'count') {
+    /* 0.1이 n개면? practice: n=2~9(0.n), main: n=2~29(2.9까지) */
+    const n = lv === 'practice' ? R(rng, 2, 9) : R(rng, 2, 29);
+    const answer = n / 10;
+    return {
+      prompt: {
+        ko: `0.1이 ${n}개 모이면 얼마일까요?`,
+        en: `What do ${n} copies of 0.1 make?`,
+        zh: `${n}个0.1是多少？`
+      },
+      tex: `0.1 \\times ${n} = \\square`,
+      answer,
+      answerType: 'number',
+      widget: 'numpad'
+    };
+  }
+
+  if (mode === 'place') {
+    /* a.b에서 소수 첫째 자리 숫자는? — 정수 답 */
+    const a = R(rng, 1, lv === 'practice' ? 9 : 99);
+    const b = R(rng, 1, 9);
+    return {
+      prompt: {
+        ko: `${a}.${b}에서 소수 첫째 자리 숫자는 무엇일까요?`,
+        en: `In ${a}.${b}, what digit is in the tenths place?`,
+        zh: `${a}.${b}的十分位上是几？`
+      },
+      tex: `${a}.${b} \\;\\rightarrow\\; \\text{소수 첫째 자리} = \\square`,
+      answer: b,
+      answerType: 'number',
+      widget: 'missing'
+    };
+  }
+
+  /* frac: n/10을 소수로 — 소수 답 */
+  const n = lv === 'practice' ? R(rng, 1, 9) : R(rng, 1, 29);
+  const answer = n / 10;
+  return {
+    prompt: {
+      ko: `10분의 ${n}을 소수로 쓰면? (0.1 = 1/10이에요!)`,
+      en: `Write ${n}/10 as a decimal. (Remember 0.1 = 1/10!)`,
+      zh: `十分之${n}写成小数是多少？(0.1 = 1/10！)`
+    },
+    tex: `\\dfrac{${n}}{10} = \\square`,
+    answer,
+    answerType: 'number',
+    widget: 'numpad'
+  };
+};
+
 })();

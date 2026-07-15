@@ -748,3 +748,70 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-road-next-lbl{font-size:10px;font-weight:700;color:#7a5b10}
 .nm-road-tip{font-size:11px;color:#7a8aa0;font-weight:600;padding:6px 4px 2px;line-height:1.5}
 .nm-road-arrow{font-size:22px;color:#c8bfb0;margin:4px 0;text-align:center;width:100%;max-width:420px}
+
+/* ============================================================
+   브리지 챕터 스톤 + 미니게임 스톤
+   ============================================================ */
+.nm-road-gamestone{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 16px;margin:4px auto;border-radius:18px;background:linear-gradient(135deg,#fffbe6,#fff3c4);border:2px solid #f0d060;cursor:pointer;transition:.15s;max-width:300px;text-align:center;box-shadow:0 2px 8px rgba(240,208,80,.25)}
+.nm-road-gamestone:hover{filter:brightness(1.05);transform:scale(1.02)}
+.nm-road-gamestone.played{background:linear-gradient(135deg,#e8fce8,#d4f4d4);border-color:#80c880}
+.nm-road-gamestone-icon{font-size:28px}
+.nm-road-gamestone-title{font-size:13px;font-weight:800;color:#6a4f10}
+.nm-road-gamestone-tip{font-size:10px;color:#8a7030;line-height:1.4;margin-top:2px}
+.nm-road-gamestone.played .nm-road-gamestone-title{color:#2d7a26}
+
+/* ============================================================
+   Make-10 미니게임 (nm-mg-*)
+   ============================================================ */
+.nm-mg-wrap{display:flex;flex-direction:column;height:100%;background:#f0f7ff;overflow-y:auto}
+.nm-mg-header{position:sticky;top:0;z-index:10;background:#e0edf8;border-bottom:1.5px solid #c0d8f0;padding:10px 16px 8px;display:flex;flex-direction:column;gap:4px}
+.nm-mg-header .nm-back{align-self:flex-start;background:none;border:none;color:var(--blue);font-weight:700;font-size:13px;cursor:pointer;padding:0}
+.nm-mg-title{font-size:17px;font-weight:900;color:#1a4a7a}
+.nm-mg-meta{display:flex;gap:12px;align-items:center}
+.nm-mg-timer{font-size:14px;font-weight:800;color:#3a6a9a;background:#d0e8fa;padding:3px 10px;border-radius:12px}
+.nm-mg-timer.warn{color:#c0340a;background:#fde8e0;animation:timer-warn .5s ease-in-out infinite alternate}
+@keyframes timer-warn{from{opacity:1}to{opacity:.6}}
+.nm-mg-score{font-size:13px;font-weight:700;color:#2a6a2a;background:#d8f0d8;padding:3px 10px;border-radius:12px}
+.nm-mg-board{display:flex;flex-direction:column;align-items:center;gap:16px;padding:24px 16px}
+.nm-mg-hint{font-size:13px;font-weight:700;color:#4a6a8a;text-align:center;background:#d8ecfa;padding:8px 16px;border-radius:14px}
+.nm-mg-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:320px;width:100%}
+.nm-mg-tile{display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;height:70px;border-radius:18px;background:#fff;border:3px solid #b0ccee;color:#1a4a7a;cursor:pointer;transition:.12s;user-select:none;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.nm-mg-tile:hover{border-color:#5090d0;transform:scale(1.06)}
+.nm-mg-tile.sel{background:var(--gold);border-color:#e0a020;color:#4a3000;transform:scale(1.1);box-shadow:0 0 0 4px rgba(234,192,60,.4)}
+.nm-mg-tile.matched{background:#e0f8e0;border-color:#80c880;color:#2a8a2a;pointer-events:none}
+.nm-mg-tile.pop{animation:tile-pop .3s ease}
+@keyframes tile-pop{0%{transform:scale(1.2)}100%{transform:scale(1)}}
+.nm-mg-done{display:flex;flex-direction:column;align-items:center;gap:14px;padding:40px 20px;text-align:center}
+.nm-mg-done-icon{font-size:64px}
+.nm-mg-done-msg{font-size:18px;font-weight:900;color:#1a4a7a}
+.nm-mg-done-coins{font-size:22px;font-weight:800;color:var(--gold-deep);background:#fff9e0;padding:8px 24px;border-radius:20px;border:2px solid var(--gold)}
+.nm-mg-done-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.nm-mg-btn{padding:12px 24px;border-radius:16px;border:none;font-size:14px;font-weight:800;cursor:pointer;background:var(--blue);color:#fff}
+.nm-mg-btn:first-child{background:#f0f0f0;color:#333}
+.nm-mg-btn:hover{filter:brightness(1.08)}
+
+/* ============================================================
+   학년별 교실 (nm-gc-*)
+   ============================================================ */
+.nm-gc-wrap{display:flex;flex-direction:column;height:100%;background:#f6f4f0;overflow:hidden}
+.nm-gc-header{position:sticky;top:0;z-index:10;background:#ece8e0;border-bottom:1.5px solid #ddd5c5;padding:10px 16px 8px}
+.nm-gc-header .nm-back{background:none;border:none;color:var(--blue);font-weight:700;font-size:13px;cursor:pointer;padding:0;display:block;margin-bottom:4px}
+.nm-gc-title{font-size:18px;font-weight:900;color:var(--blue-deep)}
+.nm-gc-tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 16px 0;border-bottom:2px solid #e0d8cc;background:#ece8e0;-webkit-overflow-scrolling:touch}
+.nm-gc-tab{flex:none;padding:6px 14px;border-radius:12px 12px 0 0;font-size:12px;font-weight:800;border:none;background:#e0d8cc;color:#7a7060;cursor:pointer;transition:.12s}
+.nm-gc-tab.active{background:#fff;color:var(--blue-deep);box-shadow:0 -2px 6px rgba(0,0,0,.06)}
+.nm-gc-body{flex:1;overflow-y:auto;padding:12px 16px 60px}
+.nm-gc-grade-label{font-size:11px;font-weight:800;color:#9a8a78;text-transform:uppercase;margin:16px 0 8px;letter-spacing:.05em}
+.nm-gc-chapter{background:#fff;border-radius:16px;padding:12px 14px 8px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.nm-gc-chapter-head{display:flex;align-items:center;gap:8px;font-weight:900;font-size:14px;color:var(--blue-deep);margin-bottom:8px}
+.nm-gc-unit-row{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:10px;cursor:pointer;transition:.1s}
+.nm-gc-unit-row:hover{background:#f4f0e8}
+.nm-gc-unit-dot{width:10px;height:10px;border-radius:50%;background:#d0c8b8;flex:none}
+.nm-gc-unit-dot.done{background:#50c050}
+.nm-gc-unit-dot.next{background:var(--gold-deep)}
+.nm-gc-unit-name{flex:1;font-size:12px;font-weight:700;color:#3a3028}
+.nm-gc-unit-name.done{color:#2a7a2a}
+.nm-gc-badge{font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;background:#e8f0f8;color:#5a7aaa}
+.nm-gc-game-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;background:#fffbe0;cursor:pointer;transition:.1s;border:1px solid #f0e060}
+.nm-gc-game-row:hover{background:#fff5c0}
+.nm-gc-prog{font-size:10px;color:#aaa;font-weight:600;margin-top:6px;text-align:right}

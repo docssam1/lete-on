@@ -465,4 +465,56 @@ NM_TGEN['fr8_frDec'] = function(params, rng){
   }
 };
 
+/* ============================================================
+   FR0 — 분수 알기 (부분과 전체) · 개념 도입
+   분모 = 전체를 똑같이 나눈 조각 수, 분자 = 부분.
+   mode: 'part'(먹은 부분) | 'rest'(남은 부분, steps)
+   ============================================================ */
+NM_TGEN['fr0_partWhole'] = function(params, rng){
+  var lv = params.level || 'main';
+  var dMax = lv === 'practice' ? 6 : 10;
+  var d = R(rng, lv === 'practice' ? 3 : 4, dMax);
+  var n = R(rng, 1, d - 1);
+  var FOOD = [
+    {ko:'피자', en:'pizza', zh:'比萨'},
+    {ko:'초콜릿', en:'chocolate bar', zh:'巧克力'},
+    {ko:'수박', en:'watermelon', zh:'西瓜'},
+    {ko:'케이크', en:'cake', zh:'蛋糕'}
+  ];
+  var f = pick(rng, FOOD);
+  var mode = pick(rng, ['part','rest']);
+
+  if(mode === 'part'){
+    return {
+      prompt:{
+        ko: f.ko+'를 똑같이 '+d+'조각으로 나눠 '+n+'조각을 먹었어요. 먹은 부분은 전체의 몇 분의 몇? 분자를 써요!',
+        en: 'A '+f.en+' is cut into '+d+' equal pieces and you ate '+n+'. What fraction did you eat? Enter the numerator!',
+        zh: '把'+f.zh+'平均分成'+d+'块，吃了'+n+'块。吃掉的是全部的几分之几？填分子！'
+      },
+      tex: '\\text{먹은 부분} = \\dfrac{\\square}{'+d+'}',
+      answer: n,
+      answerType: 'number',
+      widget: 'numpad'
+    };
+  }
+
+  /* rest: 남은 조각 = d-n */
+  var rest = d - n;
+  return {
+    prompt:{
+      ko: f.ko+'를 똑같이 '+d+'조각으로 나눠 '+n+'조각을 먹었어요. 남은 부분은 전체의 몇 분의 몇일까요?',
+      en: 'A '+f.en+' is cut into '+d+' equal pieces and '+n+' were eaten. What fraction is left?',
+      zh: '把'+f.zh+'平均分成'+d+'块，吃了'+n+'块。剩下的是全部的几分之几？'
+    },
+    tex: '\\text{남은 부분} = \\dfrac{\\square}{'+d+'}',
+    answer: rest,
+    answerType: 'steps',
+    widget: 'steps',
+    steps: [
+      { tex: d+' - '+n+' = \\square \\;\\text{(남은 조각)}', blank: rest },
+      { tex: '\\text{남은 부분} = \\dfrac{\\square}{'+d+'}', blank: rest }
+    ]
+  };
+};
+
 })();

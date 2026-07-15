@@ -14,11 +14,16 @@ function renderKaTeX(tex){
   return '<span>'+esc(tex)+'</span>';
 }
 
-function buildNumpad(container, cb){
+function buildNumpad(container, cb, opts){
+  opts=opts||{};
   container.innerHTML='';
-  ['1','2','3','4','5','6','7','8','9','del','0','ok'].forEach(k=>{
+  const keys=opts.decimal
+    ?['1','2','3','4','5','6','7','8','9','.','0','del','ok']
+    :['1','2','3','4','5','6','7','8','9','del','0','ok'];
+  if(opts.decimal)container.classList.add('dec');else container.classList.remove('dec');
+  keys.forEach(k=>{
     const b=document.createElement('button');
-    b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':'');
+    b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':'');
     b.textContent=k==='del'?'←':k==='ok'?'✓':k;
     b.addEventListener('pointerup',e=>{e.stopPropagation();cb(k);});
     container.appendChild(b);
@@ -38,6 +43,7 @@ function numpadState(screenEl, maxLen){
   return {
     handle(val){
       if(val==='del'){ inp=inp.slice(0,-1); }
+      else if(val==='.'&&inp.includes('.')){ /* 소수점 중복 방지 */ }
       else if(inp.length<(maxLen||4)){ inp+=val; }
       if(screenEl) screenEl.textContent=inp||' ';
       return inp;
@@ -384,7 +390,8 @@ function renderSteps(problem, container, onAnswer){
 
     const screen=root.querySelector('#wsScreen');
     const feedback=root.querySelector('#wsFeedback');
-    const ns=numpadState(screen,3);
+    const decStep=!Number.isInteger(s.blank);
+    const ns=numpadState(screen,decStep?6:4);
 
     function showHintBtn(){
       feedback.innerHTML=`<button class="nm-w-hint-btn">💡 ${t('힌트 보기','Show Hint','查看提示')}</button>`;
@@ -398,7 +405,7 @@ function renderSteps(problem, container, onAnswer){
       if(val==='ok'){
         const inp=ns.get();
         if(!inp)return;
-        if(parseInt(inp,10)===s.blank){
+        if(parseFloat(inp)===s.blank){
           // correct
           if(!answered){
             stepIdx++;
@@ -435,7 +442,7 @@ function renderSteps(problem, container, onAnswer){
         return;
       }
       ns.handle(val);
-    });
+    },{decimal:decStep});
   }
 
   show();
@@ -484,12 +491,12 @@ function renderVertical(problem, container, onAnswer){
       if(!inp)return;
       submitted=true;
       root.querySelector('#wvAns').textContent=inp;
-      onAnswer(parseInt(inp,10));
+      onAnswer(parseFloat(inp));
       return;
     }
     ns.handle(val);
     root.querySelector('#wvAns').textContent=ns.get()||'?';
-  });
+  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer)});
 }
 
 /* ─────────────────────────────────────────
@@ -519,11 +526,11 @@ function renderMissing(problem, container, onAnswer){
       const inp=ns.get();
       if(!inp)return;
       submitted=true;
-      onAnswer(parseInt(inp,10));
+      onAnswer(parseFloat(inp));
       return;
     }
     ns.handle(val);
-  });
+  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer)});
 }
 
 /* ─────────────────────────────────────────
@@ -559,11 +566,11 @@ function renderFallback(problem, container, onAnswer){
       const inp=ns.get();
       if(!inp)return;
       submitted=true;
-      onAnswer(parseInt(inp,10));
+      onAnswer(parseFloat(inp));
       return;
     }
     ns.handle(val);
-  });
+  },{decimal:problem.answer!=null&&!Number.isInteger(problem.answer)});
 }
 
 /* ─────────────────────────────────────────

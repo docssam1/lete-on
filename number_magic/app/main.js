@@ -218,6 +218,7 @@ function charChipHTML(){
 }
 function render(){
   if(townCleanup){townCleanup();townCleanup=null;}
+  if(S.view!=='minigame'&&mgTimer){clearInterval(mgTimer);mgTimer=null;}
   if(!S.onboarded){
     app.innerHTML='<div id="screen"></div>';
     screenWelcome();
@@ -234,6 +235,8 @@ function render(){
   $('#charChipBtn').onclick=()=>{S.view='closet';save();render();};
   if(S.view==='town')screenTown();
   else if(S.view==='roadmap')screenRoadmap();
+  else if(S.view==='minigame')screenMiniGame(S.miniGameId||'make10');
+  else if(S.view==='gradecourse')screenGradeCourse();
   else if(S.view==='tier')screenTier();
   else if(S.view==='unit')screenUnit();
   else if(S.view==='exam')screenExam();
@@ -446,6 +449,9 @@ function screenTown(){
         🗺️ ${S.lang==='ko'?'학습 여행':S.lang==='en'?'Learning Journey':'学习之旅'}
         <span class="nm-road-next">${roadmapNextLabel()}</span>
       </button>
+      <button class="nm-road-banner-btn" id="gradeEnter" style="margin-top:6px;background:#e8f0f8;color:#2a4a7a;font-size:13px;padding:7px 16px">
+        🏫 ${S.lang==='ko'?'학년별 교실':S.lang==='en'?'Grade Rooms':'按年级'}
+      </button>
     </div>
     <div class="nm-town-hud info"><a class="nm-philobtn" href="about.html">✦ ${S.lang==='ko'?'철학':S.lang==='en'?'Philosophy':'理念'}</a></div>
     <div class="nm-town-hud ctrls">
@@ -462,6 +468,7 @@ function screenTown(){
     </div>`;
   townCleanup=initTownWorld(scr);
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
+  const gb=$('#gradeEnter');if(gb)gb.onclick=()=>{S.view='gradecourse';save();render();};
 }
 
 /* ─── roadmap 헬퍼 ─── */
@@ -492,12 +499,23 @@ function screenRoadmap(){
     <div class="nm-road-path">`;
 
   road.chapters.forEach((ch,ci)=>{
-    const chapDone=ch.units.every(uid=>stepDone(uid,'stamp'));
+    /* 미니게임 챕터 */
+    if(ch.game){
+      const played=S.gamesPlayed&&S.gamesPlayed[ch.game];
+      html+=`<div class="nm-road-gamestone ${played?'played':''}" data-game="${ch.game}">
+        <div class="nm-road-gamestone-icon">${ch.icon}</div>
+        <div class="nm-road-gamestone-title">${L(ch.theme)}</div>
+        ${ch.tip?`<div class="nm-road-gamestone-tip">💡 ${L(ch.tip)}</div>`:''}
+      </div>`;
+      if(ci<road.chapters.length-1)html+=`<div class="nm-road-arrow">↓</div>`;
+      return;
+    }
+    const chapDone=(ch.units||[]).every(uid=>stepDone(uid,'stamp'));
     html+=`<div class="nm-road-chapter ${chapDone?'done':''}">
       <div class="nm-road-ch-head">${ch.icon} <span>${L(ch.theme)}</span>
         ${ch.edu?`<span class="nm-edu-badge">${L(ch.edu)}</span>`:''}
       </div>`;
-    ch.units.forEach((uid,ui)=>{
+    (ch.units||[]).forEach((uid,ui)=>{
       const u=UNITS[uid];
       if(!u)return;
       const done=stepDone(uid,'stamp');
@@ -535,11 +553,19 @@ function screenRoadmap(){
       if(confirm(msg))enterRoadUnit(uid);
     };
   });
+  /* 미니게임 스톤 클릭 */
+  scr.querySelectorAll('.nm-road-gamestone[data-game]').forEach(el=>{
+    el.onclick=()=>{
+      S.miniGameId=el.dataset.game;S.miniGame=null;
+      S._fromRoadmap=true;S.view='minigame';save();render();
+    };
+  });
 }
 
 function findNextRoadUnit(){
   if(!window.NM_ROADMAP)return null;
   for(const ch of NM_ROADMAP.chapters){
+    if(!ch.units)continue;
     for(const uid of ch.units){
       if(!stepDone(uid,'stamp'))return uid;
     }
@@ -551,6 +577,210 @@ function enterRoadUnit(uid){
   S.unit=uid;S.step=null;S.sub={};S.tierId=null;S.view='unit';
   S._fromRoadmap=true;
   save();render();
+}
+
+/* ─── Make-10 미니게임 ─── */
+let mgTimer=null;
+
+function _mgInit(id){
+  if(id==='make10'){
+    const vals=[1,9,2,8,3,7,4,6];
+    for(let i=vals.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[vals[i],vals[j]]=[vals[j],vals[i]];}
+    return{id:'make10',tiles:vals.map((v,i)=>({id:i,val:v,state:'idle'})),selected:null,pairs:0,timer:60,startTs:Date.now(),done:false};
+  }
+  return{id,tiles:[],done:false};
+}
+
+function screenMiniGame(gameId){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  if(!S.miniGame||S.miniGame.id!==gameId||S.miniGame.fresh){S.miniGame=_mgInit(gameId);}
+  _renderMiniGame();
+}
+
+function _renderMiniGame(){
+  const scr=$('#screen');
+  const mg=S.miniGame;
+  if(!mg){return;}
+  const lang=S.lang;
+  const lk=(ko,en,zh)=>lang==='ko'?ko:lang==='en'?en:zh;
+
+  if(mg.id==='make10'){
+    const remaining=mg.done?0:Math.max(0,mg.timer-Math.floor((Date.now()-mg.startTs)/1000));
+    if(remaining===0&&!mg.done){mg.done=true;save();}
+
+    const tilesHtml=mg.tiles.map(tl=>{
+      if(tl.state==='matched')return`<div class="nm-mg-tile matched">✓</div>`;
+      const sel=tl.state==='selected';
+      return`<div class="nm-mg-tile${sel?' sel':''}" data-tid="${tl.id}">${tl.val}</div>`;
+    }).join('');
+
+    scr.innerHTML=`<div class="nm-mg-wrap">
+      <div class="nm-mg-header">
+        <button class="nm-back" id="mgBack">← ${t('back')}</button>
+        <div class="nm-mg-title">🎮 Make 10 — ${lk('짝 찾기','Pair Up','配对游戏')}</div>
+        <div class="nm-mg-meta">
+          ${mg.done?'':`<span class="nm-mg-timer${remaining<=10?' warn':''}">⏱ ${remaining}s</span>`}
+          <span class="nm-mg-score">⭐ ${mg.pairs}/4 ${lk('쌍','pairs','对')}</span>
+        </div>
+      </div>
+      ${mg.done?`<div class="nm-mg-done">
+        <div class="nm-mg-done-icon">${mg.pairs===4?'🏆':'🌟'}</div>
+        <div class="nm-mg-done-msg">${mg.pairs===4?lk('완벽! 4쌍 모두 맞췄어요!','Perfect! All 4 pairs!','完美！全部配对！'):lk(`${mg.pairs}쌍 맞췄어요! 다시 도전해볼까요?`,`Got ${mg.pairs} pairs! Try again?`,`配对了${mg.pairs}对！再试一次？`)}</div>
+        <div class="nm-mg-done-coins">🪙 +${mg.pairs*3}</div>
+        <div class="nm-mg-done-btns">
+          <button class="nm-mg-btn" id="mgRetry">${lk('다시 하기','Play Again','再玩')}</button>
+          <button class="nm-mg-btn" id="mgContinue">${lk('계속 공부','Keep Learning','继续学习')}</button>
+        </div>
+      </div>`:`<div class="nm-mg-board" id="mgBoard">
+        <div class="nm-mg-hint">${lk('합이 10이 되는 두 수를 눌러요!','Tap two numbers that add up to 10!','点击两个加起来等于10的数！')}</div>
+        <div class="nm-mg-tiles">${tilesHtml}</div>
+      </div>`}
+    </div>`;
+
+    $('#mgBack').onclick=()=>{
+      clearInterval(mgTimer);mgTimer=null;
+      const back=S._fromRoadmap?'roadmap':'town';
+      S.view=back;S._fromRoadmap=false;save();render();
+    };
+
+    if(mg.done){
+      const rb=$('#mgRetry');if(rb)rb.onclick=()=>{clearInterval(mgTimer);mgTimer=null;S.miniGame=_mgInit('make10');save();_renderMiniGame();};
+      const cb=$('#mgContinue');if(cb)cb.onclick=()=>{
+        clearInterval(mgTimer);mgTimer=null;
+        S.coins+=(mg.pairs*3);
+        S.gamesPlayed=S.gamesPlayed||{};S.gamesPlayed['make10']=true;
+        const back=S._fromRoadmap?'roadmap':'town';
+        S.view=back;S._fromRoadmap=false;save();render();
+      };
+    } else {
+      const board=$('#mgBoard');
+      if(board)board.querySelectorAll('.nm-mg-tile[data-tid]').forEach(el=>{
+        el.onclick=()=>{
+          const tid=+el.dataset.tid;
+          const tl=mg.tiles.find(x=>x.id===tid);
+          if(!tl||tl.state==='matched')return;
+          if(mg.selected===null){
+            if(tl.state==='selected'){tl.state='idle';mg.selected=null;}
+            else{tl.state='selected';mg.selected=tid;}
+          } else {
+            const prev=mg.tiles.find(x=>x.id===mg.selected);
+            if(!prev){tl.state='selected';mg.selected=tid;}
+            else if(prev.id===tl.id){tl.state='idle';mg.selected=null;}
+            else if(prev.val+tl.val===10){
+              prev.state='matched';tl.state='matched';mg.selected=null;mg.pairs++;
+              if(mg.pairs===4){mg.done=true;clearInterval(mgTimer);mgTimer=null;save();}
+            } else {
+              prev.state='idle';tl.state='selected';mg.selected=tid;
+            }
+          }
+          _renderMiniGame();
+        };
+      });
+      if(!mgTimer&&!mg.done){
+        mgTimer=setInterval(()=>{
+          if(!S.miniGame||S.miniGame.done){clearInterval(mgTimer);mgTimer=null;return;}
+          const rem=Math.max(0,S.miniGame.timer-Math.floor((Date.now()-S.miniGame.startTs)/1000));
+          if(rem===0){S.miniGame.done=true;clearInterval(mgTimer);mgTimer=null;save();}
+          _renderMiniGame();
+        },1000);
+      }
+    }
+  }
+}
+
+/* ─── 학년별 교실 ─── */
+function screenGradeCourse(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  clearInterval(mgTimer);mgTimer=null;
+  if(!window.NM_ROADMAP){$('#screen').innerHTML='<div class="nm-card">roadmap.js 없음</div>';return;}
+
+  const GRADES=[
+    {key:'초1',label:{ko:'초1',en:'Grade 1',zh:'一年级'}},
+    {key:'초2',label:{ko:'초2',en:'Grade 2',zh:'二年级'}},
+    {key:'초3',label:{ko:'초3',en:'Grade 3',zh:'三年级'}},
+    {key:'초4',label:{ko:'초4',en:'Grade 4',zh:'四年级'}},
+    {key:'창의',label:{ko:'창의수연',en:'Creative',zh:'创意'}},
+  ];
+  S._gcGrade=S._gcGrade||'초1';
+
+  function chaptersForGrade(g){
+    return NM_ROADMAP.chapters.filter(ch=>ch.grade===g);
+  }
+  function unitProgress(chs){
+    let done=0,total=0;
+    chs.forEach(ch=>{(ch.units||[]).forEach(uid=>{total++;if(stepDone(uid,'stamp'))done++;});});
+    return{done,total};
+  }
+
+  const lang=S.lang;
+  const lk=(ko,en,zh)=>lang==='ko'?ko:lang==='en'?en:zh;
+  const scr=$('#screen');
+
+  function draw(){
+    const curGrade=S._gcGrade;
+    const chs=chaptersForGrade(curGrade);
+    const nextId=findNextRoadUnit();
+
+    const tabsHtml=GRADES.map(g=>{
+      const cg=chaptersForGrade(g.key);
+      const prog=unitProgress(cg);
+      return`<button class="nm-gc-tab${g.key===curGrade?' active':''}" data-g="${g.key}">${L(g.label)}${prog.total>0?` <small>${prog.done}/${prog.total}</small>`:''}</button>`;
+    }).join('');
+
+    let bodyHtml='';
+    chs.forEach(ch=>{
+      if(ch.game){
+        const played=S.gamesPlayed&&S.gamesPlayed[ch.game];
+        bodyHtml+=`<div class="nm-gc-game-row" data-game="${ch.game}">
+          <span style="font-size:20px">${ch.icon}</span>
+          <span style="font-size:12px;font-weight:800;flex:1">${L(ch.theme)}</span>
+          ${played?`<span class="nm-gc-badge">✓ ${lk('완료','Done','完成')}</span>`:`<span class="nm-gc-badge">🎮 ${lk('게임','Game','游戏')}</span>`}
+        </div>`;
+        return;
+      }
+      const units=ch.units||[];
+      const chapDone=units.every(uid=>stepDone(uid,'stamp'));
+      const prog=units.filter(uid=>stepDone(uid,'stamp')).length;
+      bodyHtml+=`<div class="nm-gc-chapter">
+        <div class="nm-gc-chapter-head">${ch.icon} ${L(ch.theme)}
+          ${ch.edu?`<span class="nm-gc-badge">${L(ch.edu)}</span>`:''}
+        </div>`;
+      units.forEach(uid=>{
+        const u=UNITS[uid];if(!u)return;
+        const done=stepDone(uid,'stamp');
+        const isNext=uid===nextId;
+        bodyHtml+=`<div class="nm-gc-unit-row" data-uid="${uid}">
+          <div class="nm-gc-unit-dot${done?' done':isNext?' next':''}"></div>
+          <div class="nm-gc-unit-name${done?' done':''}">${L(u.title)}</div>
+          ${done?'<span style="font-size:11px">⭐</span>':isNext?`<span class="nm-gc-badge">${lk('다음','Next','下一个')}</span>`:''}
+        </div>`;
+      });
+      if(units.length>0)bodyHtml+=`<div class="nm-gc-prog">${prog}/${units.length} ${lk('완료','done','完成')}</div>`;
+      bodyHtml+=`</div>`;
+    });
+    if(!bodyHtml)bodyHtml=`<div style="padding:40px;text-align:center;color:#aaa;font-size:13px">${lk('이 학년 유닛이 없어요.','No units for this grade yet.','此年级暂无单元。')}</div>`;
+
+    scr.innerHTML=`<div class="nm-gc-wrap">
+      <div class="nm-gc-header">
+        <button class="nm-back" id="gcBack">← ${t('back')}</button>
+        <div class="nm-gc-title">🏫 ${lk('학년별 교실','Grade Classroom','按年级学习')}</div>
+      </div>
+      <div class="nm-gc-tabs">${tabsHtml}</div>
+      <div class="nm-gc-body">${bodyHtml}</div>
+    </div>`;
+
+    $('#gcBack').onclick=()=>{S.view='town';S._gcGrade=null;save();render();};
+    scr.querySelectorAll('.nm-gc-tab[data-g]').forEach(el=>{
+      el.onclick=()=>{S._gcGrade=el.dataset.g;draw();};
+    });
+    scr.querySelectorAll('.nm-gc-unit-row[data-uid]').forEach(el=>{
+      el.onclick=()=>{enterRoadUnit(el.dataset.uid);};
+    });
+    scr.querySelectorAll('.nm-gc-game-row[data-game]').forEach(el=>{
+      el.onclick=()=>{S.miniGameId=el.dataset.game;S.miniGame=null;S._fromRoadmap=false;S.view='minigame';save();render();};
+    });
+  }
+  draw();
 }
 
 function showTownModal(title,desc,onGo){
@@ -1035,7 +1265,7 @@ function stepCheck(body,u){
   renderMath(body);
   buildNumpad($('#pad'),val=>{
     if(val==='ok'){const inp=S.sub.inp||'';if(inp==='')return;
-      if(+inp===fill.answer){
+      if(parseFloat(inp)===fill.answer){
         toast(t('correct'),true);numiHappy();
         S.sub.fi++;S.sub.inp='';
         if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
@@ -1043,9 +1273,10 @@ function stepCheck(body,u){
       }
       else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);S.sub.inp='';$('#pscreen').textContent=' ';}
       return;}
-    if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
+    if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
+    else if((S.sub.inp||'').length<6&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
     $('#pscreen').textContent=S.sub.inp||' ';
-  });
+  },{decimal:!Number.isInteger(fill.answer)});
 }
 function openQuestion(body,u){
   const c=u.check;
