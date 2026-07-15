@@ -4,11 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <title>GFIELD Geometry World</title>
-    <link rel="stylesheet" href="./styles.css?v=3" />
+    <link rel="preload" href="./assets/geometry-intro-poster.webp" as="image" fetchpriority="high" />
+    <link rel="preload" href="./assets/geometry-world-map.webp" as="image" />
+    <link rel="stylesheet" href="./styles.css?v=4" />
   </head>
   <body>
     <section id="intro" class="intro" aria-label="Geometry World intro">
-      <video id="introVideo" src="./assets/geometry-intro.mp4" autoplay muted playsinline preload="auto"></video>
+      <video id="introVideo" src="./assets/geometry-intro.mp4" poster="./assets/geometry-intro-poster.webp" autoplay muted playsinline preload="auto"></video>
       <div class="intro-controls">
         <button id="introSound" type="button" aria-label="intro sound">♪</button>
         <button id="skipIntro" type="button" data-i18n="skipIntro">건너뛰기 ›</button>
@@ -17,7 +19,7 @@
 
     <main class="world" aria-label="GFIELD Geometry World">
       <section class="map-stage" aria-label="Geometry World map">
-        <img src="./assets/geometry-world-map.png" alt="Geometry World 마을 지도" />
+        <img src="./assets/geometry-world-map.webp" alt="Geometry World 마을 지도" fetchpriority="high" />
 
         <button id="cubeCastle" class="place-hotspot cube-castle" type="button" aria-label="GFIELD Cube Town">
           <span>GFIELD<br />CUBE TOWN</span>
@@ -83,6 +85,6 @@
         </div>
       </section>
     </main>
-    <script type="module" src="./app.js?v=3"></script>
+    <script type="module" src="./app.js?v=4"></script>
   </body>
 </html>

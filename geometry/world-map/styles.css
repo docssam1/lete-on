@@ -25,7 +25,8 @@ body { background: #fdf8d8; color: var(--ink); }
   display: grid;
   place-items: center;
   overflow: hidden;
-  background: #0d1e3e;
+  min-height: 100dvh;
+  background: #0d1e3e url("./assets/geometry-intro-poster.webp") center / cover no-repeat;
   transition: opacity .65s ease, visibility .65s ease;
 }
 .intro.hide { opacity: 0; visibility: hidden; pointer-events: none; }
@@ -44,7 +45,7 @@ body { background: #fdf8d8; color: var(--ink); }
 }
 #introSound { width: 48px; padding: 0; font-size: 22px; }
 
-.world { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.world { position: relative; width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; }
 .map-stage {
   position: absolute;
   left: 50%;
@@ -368,10 +369,10 @@ body { background: #fdf8d8; color: var(--ink); }
 
 @media (max-aspect-ratio: 4 / 5) {
   .world { overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; }
-  .map-stage { left: 0; top: 0; width: calc(100vh * 1.49334); height: 100vh; transform: none; touch-action: pan-x; }
+  .map-stage { left: 0; top: 0; width: calc(100dvh * 1.49334); height: 100dvh; transform: none; touch-action: pan-x; }
   .map-guide { display: none; }
   .cube-castle span { min-width: 86px; padding: 5px; font-size: 9px; opacity: 1; transform: translate(-50%,26%); }
-  .map-toolbar { position: fixed; top: 7px; right: 7px; transform: scale(.78); transform-origin: top right; }
+  .map-toolbar { position: fixed; top: max(7px, env(safe-area-inset-top)); right: 7px; padding: 5px; border-radius: 7px; background: rgba(255,253,231,.84); box-shadow: 0 2px 9px rgba(23,38,83,.16); transform: scale(.78); transform-origin: top right; backdrop-filter: blur(8px); }
   .walker { width: 86px; }
 }
 

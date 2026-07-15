@@ -472,4 +472,1066 @@ function createFrontIndicator(label) {
   arrow.line.renderOrder = 900;
   arrow.cone.renderOrder = 900;
   group.add(arrow);
-ë5¶‰žËkºwµçY”¤ì(€€€‘½Õµ•¹Ð¹É•µ½Ù•Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•ÉÕÀˆ°•¹¤ì(€€€‘½Õµ•¹Ð¹É•µ½Ù•Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•É…¹•°ˆ°…¹•°¤ì(€€€‰Õ¥±‘M•¹”¹½¹ÑÉ½±Ì¹•¹…‰±•€ôÑÉÕ”ì(€€€™¥¹¥Í¡A¥±•É…œ¡•¹‘Ù•¹Ð¹±¥•¹Ñ`°•¹‘Ù•¹Ð¹±¥•¹Ñd¤ì(€ôì(€½¹ÍÐ…¹•°€ô€ ¤€ôøì(€€€‘½Õµ•¹Ð¹É•µ½Ù•Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•Éµ½Ù”ˆ°µ½Ù”¤ì(€€€‘½Õµ•¹Ð¹É•µ½Ù•Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•ÉÕÀˆ°•¹¤ì(€€€‘½Õµ•¹Ð¹É•µ½Ù•Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•É…¹•°ˆ°…¹•°¤ì(€€€‰Õ¥±‘M•¹”¹½¹ÑÉ½±Ì¹•¹…‰±•€ôÑÉÕ”ì(€€€…¹•±A¥±•É…œ ¤ì(€ôì(€‘½Õµ•¹Ð¹…‘‘Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•Éµ½Ù”ˆ°µ½Ù”¤ì(€‘½Õµ•¹Ð¹…‘‘Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•ÉÕÀˆ°•¹¤ì(€‘½Õµ•¹Ð¹…‘‘Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•É…¹•°ˆ°…¹•°¤ì)ô()™Õ¹Ñ¥½¸ÍÑ…ÉÑA¥±•É…œ¡•Ù•¹Ð¤ì(€¥˜€¡ÍÑ…Ñ”¹ÍÕ•ÍÍA•¹‘¥¹œ¤É•ÑÕÉ¸ì(€¥˜€¡ÍÑ…Ñ”¹½Õ¹Ñ5½‘”¤ì(€€€Í¡½ÝQ½…ÍÐ¡Ð ‰‰Õ¥±‘¥ÉÍÐˆ¤¤ì(€€€É•ÑÕÉ¸ì(€ô(€•Ù•¹Ð¹ÁÉ•Ù•¹Ñ•™…Õ±Ð ¤ì(€ÍÑ…Ñ”¹¡½±‘¥¹Õ‰”€ôÑÉÕ”ì(€ÍÑ…Ñ”¹‘É…¥¹Õ‰”€ôÑÉÕ”ì(€ÍÑ…Ñ”¹‘É…¥¹É½µ	½…É€ô¹Õ±°ì(€ÍÑ…Ñ”¹‘É…•±°€ô¹Õ±°ì(€ÍÑ…Ñ”¹Á¥±•Q…É•Ð€ô™…±Í”ì(€ÍÑ…Ñ”¹‘É…1¥™Ñd€ô•ÑÉ…1¥™Ð¡•Ù•¹Ð¹Á½¥¹Ñ•ÉQåÁ”¤ì(€‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆÕ‰•A¥±”ˆ¤¹Í•ÑA½¥¹Ñ•É…ÁÑÕÉ”ü¸¡•Ù•¹Ð¹Á½¥¹Ñ•É%¤ì(€µ½Ù•É…¡½ÍÐ¡•Ù•¹Ð¹±¥•¹Ñ`°•Ù•¹Ð¹±¥•¹Ñd¤ì(€‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆ‘É…¡½ÍÐˆ¤¹±…ÍÍ1¥ÍÐ¹…‘ ‰Í¡½Üˆ¤ì(€Í•ÑÕ¥‘” ‰Õ¥‘•!½±ˆ¤ì(€ÕÁ‘…Ñ•	Õ¥±‘•É½¹ÑÉ½±Ì ¤ì((€½¹ÍÐµ½Ù”€ô€¡µ½Ù•Ù•¹Ð¤€ôøì(€€€µ½Ù•É…¡½ÍÐ¡µ½Ù•Ù•¹Ð¹±¥•¹Ñ`°µ½Ù•Ù•¹Ð¹±¥•¹Ñd¤ì(€€€ÕÁ‘…Ñ•É…Q…É•Ð¡µ½Ù•Ù•¹Ð¹±¥•¹Ñ`°µ½Ù•Ù•¹Ð¹±¥•¹Ñd¤ì(€ôì(€½¹ÍÐ•¹€ô€¡•¹‘Ù•¹Ð¤€ôøì(€€€‘½Õµ•¹Ð¹É•µ½Ù•Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•Éµ½Ù”ˆ°µ½Ù”¤ì(€€€‘½Õµ•¹Ð¹É•µ½Ù•Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•ÉÕÀˆ°•¹¤ì(€€€‘½Õµ•¹Ð¹É•µ½Ù•Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•É…¹•°ˆ°…¹•°¤ì(€€€™¥¹¥Í¡A¥±•É…œ¡•¹‘Ù•¹Ð¹±¥•¹Ñ`°•¹‘Ù•¹Ð¹±¥•¹Ñd¤ì(€ôì(€½¹ÍÐ…¹•°€ô€ ¤€ôøì(€€€‘½Õµ•¹Ð¹É•µ½Ù•Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•Éµ½Ù”ˆ°µ½Ù”¤ì(€€€‘½Õµ•¹Ð¹É•µ½Ù•Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•ÉÕÀˆ°•¹¤ì(€€€‘½Õµ•¹Ð¹É•µ½Ù•Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•É…¹•°ˆ°…¹•°¤ì(€€€…¹•±A¥±•É…œ ¤ì(€ôì(€‘½Õµ•¹Ð¹…‘‘Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•Éµ½Ù”ˆ°µ½Ù”¤ì(€‘½Õµ•¹Ð¹…‘‘Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•ÉÕÀˆ°•¹¤ì(€‘½Õµ•¹Ð¹…‘‘Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•É…¹•°ˆ°…¹•°¤ì)ô()™Õ¹Ñ¥½¸µ½Ù•É…¡½ÍÐ¡à°ä¤ì(€½¹ÍÐ¡½ÍÐ€ô‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆ‘É…¡½ÍÐˆ¤ì(€¡½ÍÐ¹ÍÑå±”¹ÑÉ…¹Í™½É´€ôÑÉ…¹Í±…Ñ” ‘íà€´€ÈÅõÁà°€‘íä€´ÍÑ…Ñ”¹‘É…1¥™Ñd€´€ÈÅõÁà¤É½Ñ…Ñ” á‘•œ¥€ì)ô()™Õ¹Ñ¥½¸•ÑÉ…1¥™Ð¡Á½¥¹Ñ•ÉQåÁ”¤ì(€¥˜€¡Á½¥¹Ñ•ÉQåÁ”€ôôô€‰Ñ½Õ ˆ¤É•ÑÕÉ¸€ØÐì(€¥˜€¡Á½¥¹Ñ•ÉQåÁ”€ôôô€‰Á•¸ˆ¤É•ÑÕÉ¸€ÐÈì(€É•ÑÕÉ¸€ÈÐì)ô()™Õ¹Ñ¥½¸ÕÁ‘…Ñ•É…Q…É•Ð¡à°ä¤ì(€½¹ÍÐ•±•µ•¹Ð€ô‘½Õµ•¹Ð¹•±•µ•¹ÑÉ½µA½¥¹Ð¡à°ä¤ì(€½¹ÍÐÁ¥±”€ô•±•µ•¹Ðü¹±½Í•ÍÐü¸ ˆÕ‰•A¥±”ˆ¤ì(€‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆÕ‰•A¥±”ˆ¤¹±…ÍÍ1¥ÍÐ¹Ñ½±” ‰‘É½ÀµÑ…É•Ðˆ°	½½±•…¸¡Á¥±”€˜˜ÍÑ…Ñ”¹‘É…¥¹É½µ	½…É¤¤ì(€ÍÑ…Ñ”¹Á¥±•Q…É•Ð€ô	½½±•…¸¡Á¥±”€˜˜ÍÑ…Ñ”¹‘É…¥¹É½µ	½…É¤ì(€‘É½Á5…É­•È¹Ù¥Í¥‰±”€ô™…±Í”ì((€½¹ÍÐ•±°€ô•Ñ•±±É½µ…¹Ù…ÍA½¥¹Ð¡à°ä¤ì(€¥˜€ …•±°¤ì(€€€ÍÑ…Ñ”¹‘É…•±°€ô¹Õ±°ì(€€€É•ÑÕÉ¸ì(€ô((€½¹ÍÐÑ…É•Ñ!•¥¡Ð€ô•ÑÉ½Á!•¥¡Ð¡•±°¹à°•±°¹è¤ì(€¥˜€¡Ñ…É•Ñ!•¥¡Ð€øô€Ð¤ì(€€€ÍÑ…Ñ”¹‘É…•±°€ô¹Õ±°ì(€€€É•ÑÕÉ¸ì(€ô((€ÍÑ…Ñ”¹‘É…•±°€ô•±°ì(€‘É½Á5…É­•È¹Á½Í¥Ñ¥½¸¹Í•Ð¡•±°¹à€´€Ä°Ñ…É•Ñ!•¥¡Ð€¬€À¸Ô°•±°¹è€´€Ä¤ì(€‘É½Á5…É­•È¹Ù¥Í¥‰±”€ôÑÉÕ”ì(€Í•ÑÕ¥‘” ‰Õ¥‘•É½Àˆ¤ì)ô()™Õ¹Ñ¥½¸•ÑÉ½Á!•¥¡Ð¡à°è¤ì(€½¹ÍÐÍ½ÕÉ”€ôÍÑ…Ñ”¹‘É…¥¹É½µ	½…Éì(€½¹ÍÐµ½Ù¥¹]¥Ñ¡¥¹M½ÕÉ”€ôÍ½ÕÉ”€˜˜Í½ÕÉ”¹à€ôôôà€˜˜Í½ÕÉ”¹è€ôôôèì(€É•ÑÕÉ¸ÍÑ…Ñ”¹É¥‘méumát€´€¡µ½Ù¥¹]¥Ñ¡¥¹M½ÕÉ”€ü€Ä€è€À¤ì)ô()™Õ¹Ñ¥½¸•Ñ•±±É½µ…¹Ù…ÍA½¥¹Ð¡±¥•¹Ñ`°±¥•¹Ñd¤ì(€½¹ÍÐÉ•Ð€ô‰Õ¥±‘M•¹”¹É•¹‘•É•È¹‘½µ±•µ•¹Ð¹•Ñ	½Õ¹‘¥¹±¥•¹ÑI•Ð ¤ì(€¥˜€ (€€€±¥•¹Ñ`€ðÉ•Ð¹±•™Ðñð(€€€±¥•¹Ñ`€øÉ•Ð¹É¥¡Ðñð(€€€±¥•¹Ñd€ðÉ•Ð¹Ñ½Àñð(€€€±¥•¹Ñd€øÉ•Ð¹‰½ÑÑ½´(€€¤ì(€€€É•ÑÕÉ¸¹Õ±°ì(€ô((€Á½¥¹Ñ•È¹à€ô€ ¡±¥•¹Ñ`€´É•Ð¹±•™Ð¤€¼É•Ð¹Ý¥‘Ñ ¤€¨€È€´€Äì(€Á½¥¹Ñ•È¹ä€ô€´ ¡±¥•¹Ñd€´É•Ð¹Ñ½À¤€¼É•Ð¹¡•¥¡Ð¤€¨€È€¬€Äì(€É…å…ÍÑ•È¹Í•ÑÉ½µ…µ•É„¡Á½¥¹Ñ•È°‰Õ¥±‘M•¹”¹…µ•É„¤ì((€½¹ÍÐ…¹‘¥‘…Ñ•Ì€ômtì(€½¹ÍÐÁ±…¹•9½Éµ…°€ô¹•ÜQ!I¹Y•Ñ½ÈÌ À°€Ä°€À¤ì(€™½È€¡±•Ðè€ô€Àìè€ð€Ììè€¬ô€Ä¤ì(€€€™½È€¡±•Ðà€ô€Àìà€ð€Ììà€¬ô€Ä¤ì(€€€€€½¹ÍÐ¡•¥¡Ð€ô•ÑÉ½Á!•¥¡Ð¡à°è¤ì(€€€€€¥˜€¡¡•¥¡Ð€øô€Ð¤½¹Ñ¥¹Õ”ì((€€€€€½¹ÍÐÁ±…¹”€ô¹•ÜQ!I¹A±…¹”¡Á±…¹•9½Éµ…°°€µ¡•¥¡Ð¤ì(€€€€€½¹ÍÐÁ½¥¹Ð€ô¹•ÜQ!I¹Y•Ñ½ÈÌ ¤ì(€€€€€¥˜€ …É…å…ÍÑ•È¹É…ä¹¥¹Ñ•ÉÍ•ÑA±…¹”¡Á±…¹”°Á½¥¹Ð¤¤½¹Ñ¥¹Õ”ì((€€€€€½¹ÍÐ•¹Ñ•É`€ôà€´€Äì(€€€€€½¹ÍÐ•¹Ñ•Éh€ôè€´€Äì(€€€€€½¹ÍÐ¥¹Í¥‘••±°€ô5…Ñ ¹…‰Ì¡Á½¥¹Ð¹à€´•¹Ñ•É`¤€ðô€À¸ÔÌ€˜˜5…Ñ ¹…‰Ì¡Á½¥¹Ð¹è€´•¹Ñ•Éh¤€ðô€À¸ÔÌì(€€€€€½¹ÍÐÁÉ½©•Ñ•€ô¹•ÜQ!I¹Y•Ñ½ÈÌ¡•¹Ñ•É`°¡•¥¡Ð€¬€À¸ÀÈ°•¹Ñ•Éh¤¹ÁÉ½©•Ð¡‰Õ¥±‘M•¹”¹…µ•É„¤ì(€€€€€½¹ÍÐÍÉ••¹`€ôÉ•Ð¹±•™Ð€¬€ ¡ÁÉ½©•Ñ•¹à€¬€Ä¤€¨€À¸Ô€¨É•Ð¹Ý¥‘Ñ ¤ì(€€€€€½¹ÍÐÍÉ••¹d€ôÉ•Ð¹Ñ½À€¬€  Ä€´ÁÉ½©•Ñ•¹ä¤€¨€À¸Ô€¨É•Ð¹¡•¥¡Ð¤ì(€€€€€½¹ÍÐÍÉ••¹¥ÍÑ…¹”€ô5…Ñ ¹¡åÁ½Ð¡±¥•¹Ñ`€´ÍÉ••¹`°±¥•¹Ñd€´ÍÉ••¹d¤ì((€€€€€…¹‘¥‘…Ñ•Ì¹ÁÕÍ ¡ìà°è°¥¹Í¥‘••±°°ÍÉ••¹¥ÍÑ…¹”ô¤ì(€€€ô(€ô((€½¹ÍÐ‘¥É•Ñ!¥ÑÌ€ô…¹‘¥‘…Ñ•Ì(€€€€¹™¥±Ñ•È ¡…¹‘¥‘…Ñ”¤€ôø…¹‘¥‘…Ñ”¹¥¹Í¥‘••±°¤(€€€€¹Í½ÉÐ ¡„°ˆ¤€ôø„¹ÍÉ••¹¥ÍÑ…¹”€´ˆ¹ÍÉ••¹¥ÍÑ…¹”¤ì(€¥˜€¡‘¥É•Ñ!¥ÑÌ¹±•¹Ñ ¤É•ÑÕÉ¸ìàè‘¥É•Ñ!¥ÑÍlÁt¹à°èè‘¥É•Ñ!¥ÑÍlÁt¹èôì((€½¹ÍÐ¹•…É•ÍÐ€ô…¹‘¥‘…Ñ•Ì¹Í½ÉÐ ¡„°ˆ¤€ôø„¹ÍÉ••¹¥ÍÑ…¹”€´ˆ¹ÍÉ••¹¥ÍÑ…¹”¥lÁtì(€½¹ÍÐÍ¹…ÁI…‘¥ÕÌ€ô5…Ñ ¹µ…à ÐØ°5…Ñ ¹µ¥¸¡É•Ð¹Ý¥‘Ñ °É•Ð¹¡•¥¡Ð¤€¨€À¸ÄÌ¤ì(€¥˜€ …¹•…É•ÍÐñð¹•…É•ÍÐ¹ÍÉ••¹¥ÍÑ…¹”€øÍ¹…ÁI…‘¥ÕÌ¤É•ÑÕÉ¸¹Õ±°ì(€É•ÑÕÉ¸ìàè¹•…É•ÍÐ¹à°èè¹•…É•ÍÐ¹èôì)ô()™Õ¹Ñ¥½¸•ÑQ½ÁÕ‰•É½µ…¹Ù…ÍA½¥¹Ð¡±¥•¹Ñ`°±¥•¹Ñd¤ì(€½¹ÍÐÉ•Ð€ô‰Õ¥±‘M•¹”¹É•¹‘•É•È¹‘½µ±•µ•¹Ð¹•Ñ	½Õ¹‘¥¹±¥•¹ÑI•Ð ¤ì(€¥˜€ (€€€±¥•¹Ñ`€ðÉ•Ð¹±•™Ðñð(€€€±¥•¹Ñ`€øÉ•Ð¹É¥¡Ðñð(€€€±¥•¹Ñd€ðÉ•Ð¹Ñ½Àñð(€€€±¥•¹Ñd€øÉ•Ð¹‰½ÑÑ½´(€€¤ì(€€€É•ÑÕÉ¸¹Õ±°ì(€ô((€Á½¥¹Ñ•È¹à€ô€ ¡±¥•¹Ñ`€´É•Ð¹±•™Ð¤€¼É•Ð¹Ý¥‘Ñ ¤€¨€È€´€Äì(€Á½¥¹Ñ•È¹ä€ô€´ ¡±¥•¹Ñd€´É•Ð¹Ñ½À¤€¼É•Ð¹¡•¥¡Ð¤€¨€È€¬€Äì(€É…å…ÍÑ•È¹Í•ÑÉ½µ…µ•É„¡Á½¥¹Ñ•È°‰Õ¥±‘M•¹”¹…µ•É„¤ì(€½¹ÍÐ¡¥ÑÌ€ôÉ…å…ÍÑ•È¹¥¹Ñ•ÉÍ•Ñ=‰©•ÑÌ¡‰Õ¥±‘É½ÕÀ¹¡¥±‘É•¸°ÑÉÕ”¤ì(€™½È€¡½¹ÍÐ¡¥Ð½˜¡¥ÑÌ¤ì(€€€½¹ÍÐ½‰©•Ð€ô¡¥Ð¹½‰©•Ð¹ÕÍ•É…Ñ„¹­¥¹€ü¡¥Ð¹½‰©•Ð€è¡¥Ð¹½‰©•Ð¹Á…É•¹Ðì(€€€¥˜€¡½‰©•Ðü¹ÕÍ•É…Ñ„¹­¥¹€„ôô€‰Õ‰”ˆ¤½¹Ñ¥¹Õ”ì(€€€½¹ÍÐìà°è°äô€ô½‰©•Ð¹ÕÍ•É…Ñ„ì(€€€¥˜€¡ÍÑ…Ñ”¹É¥‘méumát€´€Ä€ôôôä¤É•ÑÕÉ¸½‰©•Ðì(€ô(€É•ÑÕÉ¸¹Õ±°ì)ô()™Õ¹Ñ¥½¸™¥¹¥Í¡A¥±•É…œ¡à°ä¤ì(€ÍÑ…Ñ”¹±…ÍÑÉ…Ð€ô…Ñ”¹¹½Ü ¤ì(€ÕÁ‘…Ñ•É…Q…É•Ð¡à°ä¤ì(€‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆ‘É…¡½ÍÐˆ¤¹±…ÍÍ1¥ÍÐ¹É•µ½Ù” ‰Í¡½Üˆ¤ì(€‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆÕ‰•A¥±”ˆ¤¹±…ÍÍ1¥ÍÐ¹É•µ½Ù” ‰‘É½ÀµÑ…É•Ðˆ¤ì(€‘É½Á5…É­•È¹Ù¥Í¥‰±”€ô™…±Í”ì(€ÍÑ…Ñ”¹‘É…¥¹Õ‰”€ô™…±Í”ì(€ÍÑ…Ñ”¹‘É…1¥™Ñd€ô€Àì(€¥˜€¡ÍÑ…Ñ”¹‘É…¥¹É½µ	½…É¤ì(€€€½¹ÍÐÍ½ÕÉ”€ôÍÑ…Ñ”¹‘É…¥¹É½µ	½…Éì(€€€½¹ÍÐÍ¡½Õ±‘I•µ½Ù”€ôÍÑ…Ñ”¹Á¥±•Q…É•Ðì(€€€½¹ÍÐÑ…É•Ð€ôÍÑ…Ñ”¹‘É…•±°ì(€€€ÍÑ…Ñ”¹‘É…¥¹É½µ	½…É€ô¹Õ±°ì(€€€ÍÑ…Ñ”¹Á¥±•Q…É•Ð€ô™…±Í”ì(€€€ÍÑ…Ñ”¹¡½±‘¥¹Õ‰”€ô™…±Í”ì(€€€¥˜€¡Í¡½Õ±‘I•µ½Ù”¤ì(€€€€€ÍÑ…Ñ”¹É¥‘mÍ½ÕÉ”¹éumÍ½ÕÉ”¹át€ô5…Ñ ¹µ…à À°ÍÑ…Ñ”¹É¥‘mÍ½ÕÉ”¹éumÍ½ÕÉ”¹át€´€Ä¤ì(€€€€€É•¹‘•É	Õ¥± ¤ì(€€€ô•±Í”¥˜€¡Ñ…É•Ð¤ì(€€€€€½¹ÍÐÍ…µ••±°€ôÍ½ÕÉ”¹à€ôôôÑ…É•Ð¹à€˜˜Í½ÕÉ”¹è€ôôôÑ…É•Ð¹èì(€€€€€¥˜€¡Í…µ••±°¤ì(€€€€€€€ÕÁ‘…Ñ•	Õ¥±‘•É½¹ÑÉ½±Ì ¤ì(€€€€€€€ÍÑ…Ñ”¹‘É…•±°€ô¹Õ±°ì(€€€€€€€É•ÑÕÉ¸ì(€€€€€ô(€€€€€¥˜€ …Í…µ••±°€˜˜ÍÑ…Ñ”¹É¥‘mÑ…É•Ð¹éumÑ…É•Ð¹át€øô€Ð¤ì(€€€€€€€Í¡½ÝQ½…ÍÐ¡Ð ‰µ…á!•¥¡Ðˆ¤¤ì(€€€€€€€ÕÁ‘…Ñ•	Õ¥±‘•É½¹ÑÉ½±Ì ¤ì(€€€€€€€É•ÑÕÉ¸ì(€€€€€ô(€€€€€ÍÑ…Ñ”¹É¥‘mÍ½ÕÉ”¹éumÍ½ÕÉ”¹át€ô5…Ñ ¹µ…à À°ÍÑ…Ñ”¹É¥‘mÍ½ÕÉ”¹éumÍ½ÕÉ”¹át€´€Ä¤ì(€€€€€ÍÑ…Ñ”¹É¥‘mÑ…É•Ð¹éumÑ…É•Ð¹át€ô5…Ñ ¹µ¥¸ Ð°ÍÑ…Ñ”¹É¥‘mÑ…É•Ð¹éumÑ…É•Ð¹át€¬€Ä¤ì(€€€€€É•¹‘•É	Õ¥± ¤ì(€€€€€¡•­ÕÑ½MÕ•ÍÌ ¤ì(€€€ô•±Í”ì(€€€€€ÕÁ‘…Ñ•	Õ¥±‘•É½¹ÑÉ½±Ì ¤ì(€€€ô(€€€ÍÑ…Ñ”¹‘É…•±°€ô¹Õ±°ì(€€€É•ÑÕÉ¸ì(€ô(€¥˜€ …ÍÑ…Ñ”¹‘É…•±°¤ì(€€€ÍÑ…Ñ”¹¡½±‘¥¹Õ‰”€ô™…±Í”ì(€€€ÕÁ‘…Ñ•	Õ¥±‘•É½¹ÑÉ½±Ì ¤ì(€€€É•ÑÕÉ¸ì(€ô(€½¹ÍÐìàè•±±`°èè•±±hô€ôÍÑ…Ñ”¹‘É…•±°ì(€ÍÑ…Ñ”¹‘É…•±°€ô¹Õ±°ì(€Á±…•Ð¡•±±`°•±±h¤ì)ô()™Õ¹Ñ¥½¸…¹•±A¥±•É…œ ¤ì(€ÍÑ…Ñ”¹±…ÍÑÉ…Ð€ô…Ñ”¹¹½Ü ¤ì(€‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆ‘É…¡½ÍÐˆ¤¹±…ÍÍ1¥ÍÐ¹É•µ½Ù” ‰Í¡½Üˆ¤ì(€‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆÕ‰•A¥±”ˆ¤¹±…ÍÍ1¥ÍÐ¹É•µ½Ù” ‰‘É½ÀµÑ…É•Ðˆ¤ì(€‘É½Á5…É­•È¹Ù¥Í¥‰±”€ô™…±Í”ì(€ÍÑ…Ñ”¹‘É…¥¹Õ‰”€ô™…±Í”ì(€ÍÑ…Ñ”¹‘É…1¥™Ñd€ô€Àì(€ÍÑ…Ñ”¹‘É…•±°€ô¹Õ±°ì(€ÍÑ…Ñ”¹‘É…¥¹É½µ	½…É€ô¹Õ±°ì(€ÍÑ…Ñ”¹Á¥±•Q…É•Ð€ô™…±Í”ì(€ÍÑ…Ñ”¹¡½±‘¥¹Õ‰”€ô™…±Í”ì(€ÕÁ‘…Ñ•	Õ¥±‘•É½¹ÑÉ½±Ì ¤ì)ô()™Õ¹Ñ¥½¸™¥¹‘Q½ÁÕ‰”¡à°è¤ì(€½¹ÍÐÑ½Ád€ôÍÑ…Ñ”¹É¥‘méumát€´€Äì(€¥˜€¡Ñ½Ád€ð€À¤É•ÑÕÉ¸¹Õ±°ì(€É•ÑÕÉ¸‰Õ¥±‘É½ÕÀ¹¡¥±‘É•¸¹™¥¹ ¡¡¥±¤€ôøì(€€€É•ÑÕÉ¸¡¥±¹ÕÍ•É…Ñ„¹­¥¹€ôôô€‰Õ‰”ˆ€˜˜¡¥±¹ÕÍ•É…Ñ„¹à€ôôôà€˜˜¡¥±¹ÕÍ•É…Ñ„¹è€ôôôè€˜˜¡¥±¹ÕÍ•É…Ñ„¹ä€ôôôÑ½Ádì(€ô¤ì)ô()™Õ¹Ñ¥½¸ÕÁ‘…Ñ•	Õ¥±‘•É½¹ÑÉ½±Ì ¤ì(€½¹ÍÐÁ¥±”€ô‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆÕ‰•A¥±”ˆ¤ì(€½¹ÍÐ¡…¹€ô‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆ¡…¹‘MÑ…ÑÕÌˆ¤ì(€¥˜€ …Á¥±”ñð€…¡…¹¤É•ÑÕÉ¸ì((€Á¥±”¹±…ÍÍ1¥ÍÐ¹Ñ½±” ‰¡½±‘¥¹œˆ°ÍÑ…Ñ”¹¡½±‘¥¹Õ‰”¤ì(€¡…¹¹Ñ•áÑ½¹Ñ•¹Ð€ôÍÑ…Ñ”¹¡½±‘¥¹Õ‰”€üÐ ‰¥¹!…¹ˆ¤€èÐ ‰•µÁÑå!…¹ˆ¤ì)ô()™Õ¹Ñ¥½¸Í•ÑÕ¥‘”¡­•ä¤ì(€ÍÑ…Ñ”¹Õ¥‘•-•ä€ô­•äì(€½¹ÍÐÕ¥‘”€ô‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆÕ¥‘•5•ÍÍ…”ˆ¤ì(€¥˜€ …Õ¥‘”¤É•ÑÕÉ¸ì(€Õ¥‘”¹Ñ•áÑ½¹Ñ•¹Ð€ôÐ¡­•ä¤ì(€½¹ÍÐ‰Õ‰‰±”€ôÕ¥‘”¹±½Í•ÍÐ ˆ¹Õ¥‘”µ‰Õ‰‰±”ˆ¤ì(€¥˜€ …‰Õ‰‰±”¤É•ÑÕÉ¸ì(€‰Õ‰‰±”¹±…ÍÍ1¥ÍÐ¹É•µ½Ù” ‰Ñ…±¬ˆ¤ì(€Ù½¥‰Õ‰‰±”¹½™™Í•Ñ]¥‘Ñ ì(€‰Õ‰‰±”¹±…ÍÍ1¥ÍÐ¹…‘ ‰Ñ…±¬ˆ¤ì(€ÍÁ•…­Õ¥‘”¡­•ä¤ì)ô()™Õ¹Ñ¥½¸Ñ½±•Õ‘¥¼ ¤ì(€ÍÑ…Ñ”¹…Õ‘¥½¹…‰±•€ô€…ÍÑ…Ñ”¹…Õ‘¥½¹…‰±•ì(€ÕÁ‘…Ñ•Õ‘¥½	ÕÑÑ½¸ ¤ì(€¥˜€¡ÍÑ…Ñ”¹…Õ‘¥½¹…‰±•¤ì(€€€ÍÁ•…­Õ¥‘”¡ÍÑ…Ñ”¹Õ¥‘•-•ä°ÑÉÕ”¤ì(€ô•±Í”¥˜€ ‰ÍÁ••¡Må¹Ñ¡•Í¥Ìˆ¥¸Ý¥¹‘½Ü¤ì(€€€Ý¥¹‘½Ü¹ÍÁ••¡Må¹Ñ¡•Í¥Ì¹…¹•° ¤ì(€ô)ô()™Õ¹Ñ¥½¸ÕÁ‘…Ñ•Õ‘¥½	ÕÑÑ½¸ ¤ì(€½¹ÍÐ‰ÕÑÑ½¸€ô‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆ…Õ‘¥½Q½±”ˆ¤ì(€¥˜€ …‰ÕÑÑ½¸¤É•ÑÕÉ¸ì(€‰ÕÑÑ½¸¹Ñ•áÑ½¹Ñ•¹Ð€ôÍÑ…Ñ”¹…Õ‘¥½¹…‰±•€üÐ ‰…Õ‘¥½=¸ˆ¤€èÐ ‰…Õ‘¥½=™˜ˆ¤ì(€‰ÕÑÑ½¸¹±…ÍÍ1¥ÍÐ¹Ñ½±” ‰…Ñ¥Ù”ˆ°ÍÑ…Ñ”¹…Õ‘¥½¹…‰±•¤ì(€‰ÕÑÑ½¸¹Í•ÑÑÑÉ¥‰ÕÑ” ‰…É¥„µÁÉ•ÍÍ•ˆ°MÑÉ¥¹œ¡ÍÑ…Ñ”¹…Õ‘¥½¹…‰±•¤¤ì)ô()™Õ¹Ñ¥½¸ÍÁ•…­Õ¥‘”¡­•ä°™½É”€ô™…±Í”¤ì(€¥˜€ …ÍÑ…Ñ”¹…Õ‘¥½¹…‰±•€˜˜€…™½É”¤É•ÑÕÉ¸ì(€¥˜€ „ ‰ÍÁ••¡Må¹Ñ¡•Í¥Ìˆ¥¸Ý¥¹‘½Ü¤ñð€„ ‰MÁ••¡Må¹Ñ¡•Í¥ÍUÑÑ•É…¹”ˆ¥¸Ý¥¹‘½Ü¤¤É•ÑÕÉ¸ì((€½¹ÍÐÍ•ÑÑ¥¹Ì€ôÍÁ••¡M•ÑÑ¥¹ÍmÍÑ…Ñ”¹±…¹tñðÍÁ••¡M•ÑÑ¥¹Ì¹­¼ì(€½¹ÍÐÕÑÑ•É…¹”€ô¹•ÜMÁ••¡Må¹Ñ¡•Í¥ÍUÑÑ•É…¹”¡Ð¡­•ä¤¤ì(€ÕÑÑ•É…¹”¹±…¹œ€ôÍ•ÑÑ¥¹Ì¹±…¹œì(€ÕÑÑ•É…¹”¹É…Ñ”€ôÍ•ÑÑ¥¹Ì¹É…Ñ”ì(€ÕÑÑ•É…¹”¹Á¥Ñ €ôÍ•ÑÑ¥¹Ì¹Á¥Ñ ì(€ÕÑÑ•É…¹”¹Ù½±Õµ”€ô€À¸äì((€½¹ÍÐÙ½¥”€ôÁ¥­Y½¥”¡Í•ÑÑ¥¹Ì¹±…¹œ¤ì(€¥˜€¡Ù½¥”¤ÕÑÑ•É…¹”¹Ù½¥”€ôÙ½¥”ì((€Ý¥¹‘½Ü¹ÍÁ••¡Må¹Ñ¡•Í¥Ì¹…¹•° ¤ì(€Ý¥¹‘½Ü¹ÍÁ••¡Må¹Ñ¡•Í¥Ì¹ÍÁ•…¬¡ÕÑÑ•É…¹”¤ì)ô()™Õ¹Ñ¥½¸Á¥­Y½¥”¡±…¹½‘”¤ì(€½¹ÍÐÙ½¥•Ì€ôÍÑ…Ñ”¹ÍÁ••¡Y½¥•Ì¹±•¹Ñ €üÍÑ…Ñ”¹ÍÁ••¡Y½¥•Ì€èÝ¥¹‘½Ü¹ÍÁ••¡Må¹Ñ¡•Í¥Ì¹•ÑY½¥•Ì ¤ì(€¥˜€ …Ù½¥•Ì¹±•¹Ñ ¤É•ÑÕÉ¸¹Õ±°ì(€½¹ÍÐ‰…Í”€ô±…¹½‘”¹ÍÁ±¥Ð ˆ´ˆ¥lÁtì(€½¹ÍÐÍ…µ•1…¹Õ…”€ôÙ½¥•Ì¹™¥±Ñ•È ¡Ù½¥”¤€ôøÙ½¥”¹±…¹œü¹Ñ½1½Ý•É…Í” ¤¹ÍÑ…ÉÑÍ]¥Ñ ¡‰…Í”¹Ñ½1½Ý•É…Í” ¤¤¤ì(€½¹ÍÐ•á…Ñ1…¹Õ…”€ôÍ…µ•1…¹Õ…”¹™¥±Ñ•È ¡Ù½¥”¤€ôøÙ½¥”¹±…¹œü¹Ñ½1½Ý•É…Í” ¤€ôôô±…¹½‘”¹Ñ½1½Ý•É…Í” ¤¤ì(€½¹ÍÐµ…±•!¥¹Ð€ôµ…±•Y½¥•!¥¹ÑÍm‰…Í•tñð€½q‰µ…±•qˆ½¤ì(€½¹ÍÐÅÕ…±¥Ñå!¥¹Ð€ô€½¹…ÑÕÉ…±ñ¹•ÕÉ…±ñÁÉ•µ¥Õµñ•¹¡…¹•‘ñ½½±•ñµ¥É½Í½™Ð½¤ì(€½¹ÍÐ¡½½Í•	•ÍÐ€ô€¡…¹‘¥‘…Ñ•Ì¤€ôøl¸¸¹…¹‘¥‘…Ñ•Ít¹Í½ÉÐ ¡„°ˆ¤€ôøì(€€€½¹ÍÐÍ½É”€ô€¡Ù½¥”¤€ôø€¡ÅÕ…±¥Ñå!¥¹Ð¹Ñ•ÍÐ¡Ù½¥”¹¹…µ”¤€ü€È€è€À¤€¬€¡Ù½¥”¹±½…±M•ÉÙ¥”€ü€Ä€è€À¤ì(€€€É•ÑÕÉ¸Í½É”¡ˆ¤€´Í½É”¡„¤ì(€ô¥lÁtñð¹Õ±°ì((€É•ÑÕÉ¸€ (€€€¡½½Í•	•ÍÐ¡•á…Ñ1…¹Õ…”¹™¥±Ñ•È ¡Ù½¥”¤€ôøµ…±•!¥¹Ð¹Ñ•ÍÐ¡Ù½¥”¹¹…µ”¤¤¤ñð(€€€¡½½Í•	•ÍÐ¡Í…µ•1…¹Õ…”¹™¥±Ñ•È ¡Ù½¥”¤€ôøµ…±•!¥¹Ð¹Ñ•ÍÐ¡Ù½¥”¹¹…µ”¤¤¤ñð(€€€¡½½Í•	•ÍÐ¡•á…Ñ1…¹Õ…”¹™¥±Ñ•È ¡Ù½¥”¤€ôø€…™•µ…±•Y½¥•!¥¹ÑÌ¹Ñ•ÍÐ¡Ù½¥”¹¹…µ”¤¤¤ñð(€€€¡½½Í•	•ÍÐ¡Í…µ•1…¹Õ…”¹™¥±Ñ•È ¡Ù½¥”¤€ôø€…™•µ…±•Y½¥•!¥¹ÑÌ¹Ñ•ÍÐ¡Ù½¥”¹¹…µ”¤¤¤ñð(€€€¡½½Í•	•ÍÐ¡•á…Ñ1…¹Õ…”¤ñð(€€€¡½½Í•	•ÍÐ¡Í…µ•1…¹Õ…”¤(€€¤ì)ô()™Õ¹Ñ¥½¸¥¹¥ÑÕ¥‘•É…œ ¤ì(€½¹ÍÐÕ¥‘”€ô‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆ¹™±½…Ñ¥¹œµÕ¥‘”ˆ¤ì(€¥˜€ …Õ¥‘”¤É•ÑÕÉ¸ì((€±•Ð‘É…¥¹œ€ô™…±Í”ì(€±•Ðµ½Ù•€ô™…±Í”ì(€±•Ð½™™Í•Ñ`€ô€Àì(€±•Ð½™™Í•Ñd€ô€Àì((€½¹ÍÐµ½Ù•Õ¥‘”€ô€¡±¥•¹Ñ`°±¥•¹Ñd¤€ôøì(€€€½¹ÍÐÉ•Ð€ôÕ¥‘”¹•Ñ	½Õ¹‘¥¹±¥•¹ÑI•Ð ¤ì(€€€½¹ÍÐµ…á1•™Ð€ôÝ¥¹‘½Ü¹¥¹¹•É]¥‘Ñ €´É•Ð¹Ý¥‘Ñ €´€àì(€€€½¹ÍÐµ…áQ½À€ôÝ¥¹‘½Ü¹¥¹¹•É!•¥¡Ð€´É•Ð¹¡•¥¡Ð€´€àì(€€€½¹ÍÐ±•™Ð€ô5…Ñ ¹µ…à à°5…Ñ ¹µ¥¸¡µ…á1•™Ð°±¥•¹Ñ`€´½™™Í•Ñ`¤¤ì(€€€½¹ÍÐÑ½À€ô5…Ñ ¹µ…à à°5…Ñ ¹µ¥¸¡µ…áQ½À°±¥•¹Ñd€´½™™Í•Ñd¤¤ì(€€€Õ¥‘”¹ÍÑå±”¹±•™Ð€ô€‘í±•™ÑõÁá€ì(€€€Õ¥‘”¹ÍÑå±”¹Ñ½À€ô€‘íÑ½ÁõÁá€ì(€€€Õ¥‘”¹ÍÑå±”¹É¥¡Ð€ô€‰…ÕÑ¼ˆì(€€€Õ¥‘”¹ÍÑå±”¹‰½ÑÑ½´€ô€‰…ÕÑ¼ˆì(€ôì((€Õ¥‘”¹…‘‘Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•É‘½Ý¸ˆ°€¡•Ù•¹Ð¤€ôøì(€€€½¹ÍÐÉ•Ð€ôÕ¥‘”¹•Ñ	½Õ¹‘¥¹±¥•¹ÑI•Ð ¤ì(€€€‘É…¥¹œ€ôÑÉÕ”ì(€€€µ½Ù•€ô™…±Í”ì(€€€½™™Í•Ñ`€ô•Ù•¹Ð¹±¥•¹Ñ`€´É•Ð¹±•™Ðì(€€€½™™Í•Ñd€ô•Ù•¹Ð¹±¥•¹Ñd€´É•Ð¹Ñ½Àì(€€€Õ¥‘”¹±…ÍÍ1¥ÍÐ¹…‘ ‰‘É…¥¹œˆ¤ì(€€€Õ¥‘”¹±…ÍÍ1¥ÍÐ¹É•µ½Ù” ‰Ý…±­¥¹œˆ¤ì(€€€Õ¥‘”¹‘…Ñ…Í•Ð¹ÕÍ•É5½Ù¥¹œ€ô€‰ÑÉÕ”ˆì(€€€Õ¥‘”¹Í•ÑA½¥¹Ñ•É…ÁÑÕÉ”¡•Ù•¹Ð¹Á½¥¹Ñ•É%¤ì(€ô¤ì((€Õ¥‘”¹…‘‘Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•Éµ½Ù”ˆ°€¡•Ù•¹Ð¤€ôøì(€€€¥˜€ …‘É…¥¹œ¤É•ÑÕÉ¸ì(€€€µ½Ù•€ôÑÉÕ”ì(€€€µ½Ù•Õ¥‘”¡•Ù•¹Ð¹±¥•¹Ñ`°•Ù•¹Ð¹±¥•¹Ñd¤ì(€ô¤ì((€Õ¥‘”¹…‘‘Ù•¹Ñ1¥ÍÑ•¹•È ‰Á½¥¹Ñ•ÉÕÀˆ°€¡•Ù•¹Ð¤€ôøì(€€€¥˜€ …‘É…¥¹œ¤É•ÑÕÉ¸ì(€€€‘É…¥¹œ€ô™…±Í”ì(€€€Õ¥‘”¹±…ÍÍ1¥ÍÐ¹É•µ½Ù” ‰‘É…¥¹œˆ¤ì(€€€Õ¥‘”¹‘…Ñ…Í•Ð¹ÕÍ•É5½Ù¥¹œ€ô€‰™…±Í”ˆì(€€€Õ¥‘”¹‘…Ñ…Í•Ð¹ÕÍ•É5½Ù•‘U¹Ñ¥°€ôMÑÉ¥¹œ¡…Ñ”¹¹½Ü ¤€¬€ÄàÀÀÀ¤ì(€€€Õ¥‘”¹É•±•…Í•A½¥¹Ñ•É…ÁÑÕÉ”¡•Ù•¹Ð¹Á½¥¹Ñ•É%¤ì(€€€¥˜€¡µ½Ù•¤Í•ÑÕ¥‘” ‰Õ¥‘•É…•ˆ¤ì(€ô¤ì((€Ý¥¹‘½Ü¹…‘‘Ù•¹Ñ1¥ÍÑ•¹•È ‰É•Í¥é”ˆ°€ ¤€ôøì(€€€½¹ÍÐÉ•Ð€ôÕ¥‘”¹•Ñ	½Õ¹‘¥¹±¥•¹ÑI•Ð ¤ì(€€€¥˜€ …Õ¥‘”¹ÍÑå±”¹±•™Ð¤É•ÑÕÉ¸ì(€€€µ½Ù•Õ¥‘”¡É•Ð¹±•™Ð€¬½™™Í•Ñ`°É•Ð¹Ñ½À€¬½™™Í•Ñd¤ì(€ô¤ì)ô()™Õ¹Ñ¥½¸¥¹¥ÑÕ¥‘•1¥™” ¤ì(€½¹ÍÐÕ¥‘”€ô‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆ¹™±½…Ñ¥¹œµÕ¥‘”ˆ¤ì(€¥˜€ …Õ¥‘”¤É•ÑÕÉ¸ì((€±•ÐÝ…åÁ½¥¹Ð€ô€Àì(€½¹ÍÐµ½Ù”€ô€ ¤€ôøì(€€€½¹ÍÐÕÍ•É5½Ù•‘U¹Ñ¥°€ô9Õµ‰•È¡Õ¥‘”¹‘…Ñ…Í•Ð¹ÕÍ•É5½Ù•‘U¹Ñ¥°ñð€À¤ì(€€€¥˜€¡Õ¥‘”¹‘…Ñ…Í•Ð¹ÕÍ•É5½Ù¥¹œ€ôôô€‰ÑÉÕ”ˆñð…Ñ”¹¹½Ü ¤€ðÕÍ•É5½Ù•‘U¹Ñ¥°¤ì(€€€€€Í¡•‘Õ±” ¤ì(€€€€€É•ÑÕÉ¸ì(€€€ô((€€€½¹ÍÐÉ•Ð€ôÕ¥‘”¹•Ñ	½Õ¹‘¥¹±¥•¹ÑI•Ð ¤ì(€€€½¹ÍÐ•‘”€ô€ÄÈì(€€€½¹ÍÐÍ…™•Q½À€ô5…Ñ ¹µ…à ÜØ°5…Ñ ¹É½Õ¹¡Ý¥¹‘½Ü¹¥¹¹•É!•¥¡Ð€¨€À¸ÄØ¤¤ì(€€€½¹ÍÐÍ…™•	½ÑÑ½´€ô5…Ñ ¹µ…à àÈ°5…Ñ ¹É½Õ¹¡Ý¥¹‘½Ü¹¥¹¹•É!•¥¡Ð€¨€À¸Ä¤¤ì(€€€½¹ÍÐµ…á1•™Ð€ô5…Ñ ¹µ…à¡•‘”°Ý¥¹‘½Ü¹¥¹¹•É]¥‘Ñ €´É•Ð¹Ý¥‘Ñ €´•‘”¤ì(€€€½¹ÍÐµ…áQ½À€ô5…Ñ ¹µ…à¡Í…™•Q½À°Ý¥¹‘½Ü¹¥¹¹•É!•¥¡Ð€´É•Ð¹¡•¥¡Ð€´Í…™•	½ÑÑ½´¤ì(€€€½¹ÍÐ¹•…ÉI¥¡Ð€ô5…Ñ ¹µ…à¡•‘”°µ…á1•™Ð€´5…Ñ ¹µ¥¸ äØ°Ý¥¹‘½Ü¹¥¹¹•É]¥‘Ñ €¨€À¸ÀÜ¤¤ì(€€€½¹ÍÐµ¥‘‘±•I¥¡Ð€ô5…Ñ ¹µ¥¸¡µ…áQ½À°5…Ñ ¹µ…à¡Í…™•Q½À°5…Ñ ¹É½Õ¹¡Ý¥¹‘½Ü¹¥¹¹•É!•¥¡Ð€¨€À¸Ðà¤¤¤ì(€€€½¹ÍÐÍÁ½ÑÌ€ôÝ¥¹‘½Ü¹¥¹¹•É]¥‘Ñ €ðô€ØàÀ(€€€€€€ül(€€€€€€€€€ì±•™Ðèµ…á1•™Ð°Ñ½Àèµ…áQ½Àô°(€€€€€€€€€ì±•™Ðèµ…á1•™Ð°Ñ½Àèµ¥‘‘±•I¥¡Ðô(€€€€€€€t(€€€€€€èl(€€€€€€€€€ì±•™Ðèµ…á1•™Ð°Ñ½Àèµ…áQ½Àô°(€€€€€€€€€ì±•™Ðè¹•…ÉI¥¡Ð°Ñ½Àèµ¥‘‘±•I¥¡Ðô°(€€€€€€€€€ì±•™Ðèµ…á1•™Ð°Ñ½ÀèÍ…™•Q½Àô°(€€€€€€€€€ì±•™Ðèµ…á1•™Ð°Ñ½Àèµ¥‘‘±•I¥¡Ðô(€€€€€€€tì((€€€Ý…åÁ½¥¹Ð€ô€¡Ý…åÁ½¥¹Ð€¬€Ä¤€”ÍÁ½ÑÌ¹±•¹Ñ ì(€€€½¹ÍÐ¹•áÐ€ôÍÁ½ÑÍmÝ…åÁ½¥¹Ñtì(€€€Õ¥‘”¹±…ÍÍ1¥ÍÐ¹Ñ½±” ‰™…¥¹œµ±•™Ðˆ°¹•áÐ¹±•™Ð€øÉ•Ð¹±•™Ð¤ì(€€€Õ¥‘”¹±…ÍÍ1¥ÍÐ¹…‘ ‰Ý…±­¥¹œˆ¤ì(€€€Õ¥‘”¹ÍÑå±”¹É¥¡Ð€ô€‰…ÕÑ¼ˆì(€€€Õ¥‘”¹ÍÑå±”¹‰½ÑÑ½´€ô€‰…ÕÑ¼ˆì(€€€Õ¥‘”¹ÍÑå±”¹±•™Ð€ô€‘í¹•áÐ¹±•™ÑõÁá€ì(€€€Õ¥‘”¹ÍÑå±”¹Ñ½À€ô€‘í¹•áÐ¹Ñ½ÁõÁá€ì(€€€Ý¥¹‘½Ü¹Í•ÑQ¥µ•½ÕÐ  ¤€ôøÕ¥‘”¹±…ÍÍ1¥ÍÐ¹É•µ½Ù” ‰Ý…±­¥¹œˆ¤°€ÄäÀÀ¤ì(€€€Í¡•‘Õ±” ¤ì(€ôì((€½¹ÍÐÍ¡•‘Õ±”€ô€ ¤€ôøì(€€€Ý¥¹‘½Ü¹Í•ÑQ¥µ•½ÕÐ¡µ½Ù”°€ÜÈÀÀ€¬5…Ñ ¹É…¹‘½´ ¤€¨€ÐÈÀÀ¤ì(€ôì((€Í¡•‘Õ±” ¤ì)ô()±•ÐÑ½…ÍÑQ¥µ•È€ô¹Õ±°ì)™Õ¹Ñ¥½¸Í¡½ÝQ½…ÍÐ¡µ•ÍÍ…”¤ì(€½¹ÍÐÑ½…ÍÐ€ô‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È ˆÑ½…ÍÐˆ¤ì(€Ñ½…ÍÐ¹Ñ•áÑ½¹Ñ•¹Ð€ôµ•ÍÍ…”ì(€Ñ½…ÍÐ¹±…ÍÍ1¥ÍÐ¹…‘ ‰Í¡½Üˆ¤ì(€Ý¥¹‘½Ü¹±•…ÉQ¥µ•½ÕÐ¡Ñ½…ÍÑQ¥µ•È¤ì(€Ñ½…ÍÑQ¥µ•È€ôÝ¥¹‘½Ü¹Í•ÑQ¥µ•½ÕÐ  ¤€ôøÑ½…ÍÐ¹±…ÍÍ1¥ÍÐ¹É•µ½Ù” ‰Í¡½Üˆ¤°€ÈÈÀÀ¤ì)ô
+
+  const labelSprite = createFrontLabelSprite(label);
+  labelSprite.position.set(0, 0.48, 1.88);
+  group.add(labelSprite);
+  return group;
+}
+
+function createFrontLabelSprite(label) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 112;
+  const context = canvas.getContext("2d");
+  context.fillStyle = "rgba(255, 255, 255, 0.96)";
+  context.strokeStyle = "#d94e4e";
+  context.lineWidth = 7;
+  context.beginPath();
+  context.roundRect(10, 10, 236, 92, 24);
+  context.fill();
+  context.stroke();
+  context.fillStyle = "#b52f36";
+  context.font = "800 48px 'Noto Sans KR', sans-serif";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.fillText(label, 128, 57);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.minFilter = THREE.LinearFilter;
+  const material = new THREE.SpriteMaterial({
+    map: texture,
+    transparent: true,
+    depthTest: false,
+    depthWrite: false
+  });
+  const sprite = new THREE.Sprite(material);
+  sprite.scale.set(0.98, 0.43, 1);
+  sprite.renderOrder = 901;
+  sprite.userData = { kind: "front-label" };
+  return sprite;
+}
+
+function refreshFrontIndicator(viewer) {
+  if (viewer.frontIndicator) {
+    viewer.frontIndicator.traverse((node) => {
+      node.material?.map?.dispose?.();
+      node.material?.dispose?.();
+      node.geometry?.dispose?.();
+    });
+    viewer.scene.remove(viewer.frontIndicator);
+  }
+  viewer.frontIndicator = createFrontIndicator(t("front"));
+  viewer.scene.add(viewer.frontIndicator);
+}
+
+function linkViewerControls(first, second) {
+  let syncing = false;
+  const sync = (source, destination) => {
+    if (syncing) return;
+    syncing = true;
+    destination.camera.position.copy(source.camera.position);
+    destination.camera.quaternion.copy(source.camera.quaternion);
+    destination.camera.up.copy(source.camera.up);
+    destination.controls.target.copy(source.controls.target);
+    destination.controls.update();
+    syncing = false;
+  };
+  first.controls.addEventListener("change", () => sync(first, second));
+  second.controls.addEventListener("change", () => sync(second, first));
+}
+
+function addEvents() {
+  window.addEventListener("resize", () => {
+    resizeViewer(targetScene);
+    resizeViewer(buildScene);
+  });
+
+  if ("speechSynthesis" in window) {
+    state.speechVoices = window.speechSynthesis.getVoices();
+    window.speechSynthesis.addEventListener("voiceschanged", () => {
+      state.speechVoices = window.speechSynthesis.getVoices();
+    });
+  }
+
+  document.querySelectorAll("[data-lang]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.lang = button.dataset.lang;
+      applyLanguage();
+    });
+  });
+
+  document.querySelector("#checkAnswer").addEventListener("click", checkAnswer);
+  document.querySelector("#resetBuild").addEventListener("click", resetBuild);
+  document.querySelector("#resetView").addEventListener("click", resetView);
+  document.querySelector("#nextStep").addEventListener("click", nextProblem);
+  document.querySelector("#levelPickerButton").addEventListener("click", openLevelPicker);
+  document.querySelector("#closeLevelDialog").addEventListener("click", closeLevelPicker);
+  document.querySelector("#levelDialog").addEventListener("click", (event) => {
+    if (event.target.id === "levelDialog") closeLevelPicker();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeLevelPicker();
+  });
+  document.querySelector("#viewFront").addEventListener("click", () => setView("front"));
+  document.querySelector("#viewTop").addEventListener("click", () => setView("top"));
+  document.querySelector("#viewFree").addEventListener("click", () => setView("free"));
+  document.querySelector("#cubePile").addEventListener("click", takeFromPile);
+  document.querySelector("#cubePile").addEventListener("pointerdown", startPileDrag);
+  document.querySelector("#audioToggle").addEventListener("pointerdown", (event) => event.stopPropagation());
+  document.querySelector("#audioToggle").addEventListener("click", toggleAudio);
+}
+
+function loadProblem() {
+  clearPendingSuccess();
+  state.countMode = false;
+  state.counted = 0;
+  state.holdingCube = false;
+  state.draggingCube = false;
+  state.draggingFromBoard = null;
+  state.dragCell = null;
+  state.pileTarget = false;
+  state.grid = emptyGrid();
+  state.falling = [];
+  document.querySelector("#modeTitle").textContent = t("copyMode");
+  document.querySelector("#instruction").textContent = t("copyInstruction");
+  updateStepDisplay();
+
+  renderTarget();
+  renderBuild();
+  updateBuilderControls();
+  setGuide("guideStart");
+}
+
+function renderTarget() {
+  clearGroup(targetGroup);
+  const problem = getProblem();
+  setStars(getLevel().stars);
+  renderGrid(targetGroup, problem, false);
+}
+
+function renderBuild() {
+  clearGroup(buildGroup);
+  renderBaseTargets(buildGroup);
+  renderGrid(buildGroup, state.grid, true);
+  updateBuilderControls();
+}
+
+function renderGrid(group, grid, interactive) {
+  grid.forEach((row, z) => {
+    row.forEach((height, x) => {
+      for (let y = 0; y < height; y += 1) {
+        const cube = createCube(colors.cube);
+        cube.position.set(x - 1, y + 0.5, z - 1);
+        cube.userData = { kind: "cube", x, z, y, interactive };
+        group.add(cube);
+      }
+    });
+  });
+}
+
+function renderBaseTargets(group) {
+  for (let z = 0; z < 3; z += 1) {
+    for (let x = 0; x < 3; x += 1) {
+      const marker = new THREE.Mesh(
+        new THREE.BoxGeometry(0.92, 0.04, 0.92),
+        new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          roughness: 0.9,
+          transparent: true,
+          opacity: 0.38
+        })
+      );
+      marker.position.set(x - 1, 0.03, z - 1);
+      marker.userData = { kind: "cell", x, z, interactive: true };
+      group.add(marker);
+    }
+  }
+}
+
+function createCube(color) {
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(0.96, 0.96, 0.96),
+    new THREE.MeshStandardMaterial({ color, roughness: 0.64, metalness: 0.02 })
+  );
+  const edges = new THREE.LineSegments(
+    new THREE.EdgesGeometry(mesh.geometry),
+    new THREE.LineBasicMaterial({ color: 0x8b765b, transparent: true, opacity: 0.48 })
+  );
+  mesh.add(edges);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  return mesh;
+}
+
+function createDropMarker() {
+  const marker = new THREE.Group();
+  const geometry = new THREE.BoxGeometry(1.01, 1.01, 1.01);
+  const fill = new THREE.Mesh(
+    geometry,
+    new THREE.MeshBasicMaterial({
+      color: 0xdf4d4d,
+      transparent: true,
+      opacity: 0.28,
+      depthTest: false,
+      depthWrite: false
+    })
+  );
+  const outline = new THREE.LineSegments(
+    new THREE.EdgesGeometry(geometry),
+    new THREE.LineBasicMaterial({
+      color: 0xff2638,
+      transparent: true,
+      opacity: 0.98,
+      depthTest: false,
+      depthWrite: false
+    })
+  );
+  fill.renderOrder = 1000;
+  outline.renderOrder = 1001;
+  marker.add(fill, outline);
+  marker.visible = false;
+  marker.userData = { kind: "drop-marker" };
+  return marker;
+}
+
+function onPointerDown(event) {
+  downPoint = { x: event.clientX, y: event.clientY };
+  if (state.countMode || state.draggingCube || state.successPending) return;
+  if (state.holdingCube) {
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    return;
+  }
+  const cube = getTopCubeFromCanvasPoint(event.clientX, event.clientY);
+  if (!cube) return;
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
+  startBuildCubeDrag(event, cube.userData.x, cube.userData.z);
+}
+
+function onPointerUp(event) {
+  if (!downPoint) return;
+  const moved = Math.hypot(event.clientX - downPoint.x, event.clientY - downPoint.y);
+  downPoint = null;
+  if (moved > 8) return;
+
+  if (state.holdingCube && !state.draggingCube && !state.draggingFromBoard) {
+    const cell = getCellFromCanvasPoint(event.clientX, event.clientY);
+    if (!cell) return;
+    placeAt(cell.x, cell.z);
+    return;
+  }
+
+  const rect = buildScene.renderer.domElement.getBoundingClientRect();
+  pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, buildScene.camera);
+  const hits = raycaster.intersectObjects(buildGroup.children, true);
+  const hit = hits.find((item) => item.object.userData.kind || item.object.parent?.userData.kind);
+  if (!hit) return;
+  const object = hit.object.userData.kind ? hit.object : hit.object.parent;
+
+  if (state.countMode) {
+    countCube(object);
+    return;
+  }
+}
+
+function getCellFromHit(object, point) {
+  if (object.userData.kind === "cell") {
+    return { x: object.userData.x, z: object.userData.z };
+  }
+  if (object.userData.kind === "cube") {
+    return { x: object.userData.x, z: object.userData.z };
+  }
+  const x = Math.round(point.x + 1);
+  const z = Math.round(point.z + 1);
+  if (x < 0 || x > 2 || z < 0 || z > 2) return null;
+  return { x, z };
+}
+
+function placeAt(x, z) {
+  if (state.successPending) return;
+  if (state.grid[z][x] >= 4) {
+    showToast(t("maxHeight"));
+    return;
+  }
+  state.grid[z][x] += 1;
+  state.holdingCube = false;
+  renderBuild();
+  checkAutoSuccess();
+}
+
+function countCube(object) {
+  if (object.userData.kind !== "cube") return;
+  const { x, z, y } = object.userData;
+  if (state.grid[z][x] - 1 !== y) {
+    showToast(t("topOnly"));
+    return;
+  }
+  state.grid[z][x] -= 1;
+  object.userData.falling = true;
+  state.falling.push({ mesh: object, velocity: 0.045 });
+  updateBuilderControls();
+}
+
+function checkAnswer() {
+  if (state.countMode) {
+    showToast(t("buildFirst"));
+    return;
+  }
+  const problem = getProblem();
+  if (!sameGrid(problem, state.grid)) {
+    setGuide("guideWrong");
+    showToast(t("wrong"));
+    return;
+  }
+  state.countMode = false;
+  state.counted = 0;
+  state.holdingCube = false;
+  updateStepDisplay();
+  updateBuilderControls();
+  showSuccessThenNext();
+}
+
+function checkAutoSuccess() {
+  if (state.countMode) return;
+  if (!sameGrid(getProblem(), state.grid)) {
+    clearPendingSuccess();
+    return;
+  }
+  if (state.successPending) return;
+  state.successPending = true;
+  state.successTimer = window.setTimeout(() => {
+    state.successTimer = null;
+    if (!sameGrid(getProblem(), state.grid)) {
+      state.successPending = false;
+      return;
+    }
+    showSuccessThenNext();
+  }, 220);
+}
+
+function clearPendingSuccess() {
+  if (state.successTimer !== null) {
+    window.clearTimeout(state.successTimer);
+    state.successTimer = null;
+  }
+  state.successPending = false;
+}
+
+function resetBuild() {
+  clearPendingSuccess();
+  state.grid = emptyGrid();
+  state.countMode = false;
+  state.counted = 0;
+  state.holdingCube = false;
+  state.falling = [];
+  updateStepDisplay();
+  renderBuild();
+}
+
+function nextProblem() {
+  const level = getLevel();
+  if (state.problemIndex < level.problems.length - 1) {
+    state.problemIndex += 1;
+  } else {
+    clearPendingSuccess();
+    openLevelPicker();
+    setGuide("guideLevelSelect");
+    return;
+  }
+  resetBuild();
+  renderTarget();
+  setGuide("guideNext");
+}
+
+function openLevelPicker() {
+  renderLevelOptions();
+  const dialog = document.querySelector("#levelDialog");
+  dialog.hidden = false;
+  dialog.querySelector(".level-option.active")?.focus();
+}
+
+function closeLevelPicker() {
+  document.querySelector("#levelDialog").hidden = true;
+}
+
+function selectLevel(index) {
+  state.levelIndex = index;
+  state.problemIndex = 0;
+  closeLevelPicker();
+  loadProblem();
+}
+
+function renderLevelOptions() {
+  const options = document.querySelector("#levelOptions");
+  options.replaceChildren();
+  levels.forEach((level, index) => {
+    const button = document.createElement("button");
+    const title = document.createElement("strong");
+    const stars = document.createElement("span");
+    const problemCount = document.createElement("small");
+
+    button.type = "button";
+    button.className = "level-option";
+    button.classList.toggle("active", index === state.levelIndex);
+    button.setAttribute("aria-pressed", String(index === state.levelIndex));
+    title.textContent = t("levelNumber").replace("{level}", level.level);
+    stars.textContent = "â˜…".repeat(level.stars) + "â˜†".repeat(Math.max(0, levels.length - level.stars));
+    problemCount.textContent = t("levelProblems").replace("{count}", level.problems.length);
+    button.append(title, stars, problemCount);
+    button.addEventListener("click", () => selectLevel(index));
+    options.appendChild(button);
+  });
+}
+
+function getProblem() {
+  return getLevel().problems[state.problemIndex];
+}
+
+function getLevel() {
+  return levels[state.levelIndex];
+}
+
+function updateStepDisplay() {
+  const level = getLevel();
+  document.querySelector("#countValue").textContent = t("levelProgress")
+    .replace("{level}", level.level)
+    .replace("{current}", state.problemIndex + 1)
+    .replace("{total}", level.problems.length);
+}
+
+function setView(view) {
+  const viewers = [targetScene, buildScene];
+  viewers.forEach(({ camera, controls }) => {
+    if (view === "front") camera.position.set(0, 3.2, 7.8);
+    if (view === "top") camera.position.set(0.01, 9.2, 0.01);
+    if (view === "free") camera.position.set(5.4, 5.1, 6.2);
+    controls.target.set(0, 1.25, 0);
+    controls.update();
+  });
+}
+
+function resetView() {
+  setView("free");
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  const time = performance.now() * 0.001;
+  updateFalling();
+  targetScene.sun.position.x = 5 + Math.sin(time * 0.32) * 0.42;
+  targetScene.sun.position.z = 4 + Math.cos(time * 0.28) * 0.34;
+  buildScene.sun.position.x = targetScene.sun.position.x;
+  buildScene.sun.position.z = targetScene.sun.position.z;
+  if (dropMarker.visible) {
+    const pulse = 1 + Math.sin(time * 5.2) * 0.035;
+    dropMarker.scale.setScalar(pulse);
+  }
+  targetScene.controls.update();
+  buildScene.controls.update();
+  targetScene.renderer.render(targetScene.scene, targetScene.camera);
+  buildScene.renderer.render(buildScene.scene, buildScene.camera);
+}
+
+function updateFalling() {
+  for (let index = state.falling.length - 1; index >= 0; index -= 1) {
+    const item = state.falling[index];
+    item.velocity += 0.014;
+    item.mesh.position.y -= item.velocity;
+    item.mesh.rotation.x += 0.045;
+    item.mesh.rotation.z += 0.028;
+    if (item.mesh.position.y < -2.8) {
+      buildGroup.remove(item.mesh);
+      state.falling.splice(index, 1);
+      state.counted += 1;
+      document.querySelector("#countValue").textContent = String(state.counted);
+      showToast(t("counted").replace("{count}", state.counted));
+      if (sumGrid(state.grid) === 0 && state.falling.length === 0) {
+        showToast(t("done").replace("{count}", state.counted));
+      }
+    }
+  }
+}
+
+function applyLanguage() {
+  document.documentElement.lang = state.lang;
+  document.querySelectorAll("[data-i18n]").forEach((node) => {
+    node.textContent = t(node.dataset.i18n);
+  });
+  document.querySelectorAll("[data-lang]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.lang === state.lang);
+  });
+  document.querySelector("#modeTitle").textContent = t("copyMode");
+  document.querySelector("#instruction").textContent = t("copyInstruction");
+  document.querySelector("#resetView").setAttribute("aria-label", t("resetView"));
+  document.querySelector("#closeLevelDialog").setAttribute("aria-label", t("closeLevel"));
+  refreshFrontIndicator(targetScene);
+  refreshFrontIndicator(buildScene);
+  renderLevelOptions();
+  setGuide("guideStart");
+  updateAudioButton();
+  updateBuilderControls();
+}
+
+function showSuccessThenNext() {
+  if (!sameGrid(getProblem(), state.grid)) {
+    clearPendingSuccess();
+    return;
+  }
+  if (!state.successPending) state.successPending = true;
+  awardPoints(`copy-build:${state.levelIndex}:${state.problemIndex}`, 15);
+  const burst = document.querySelector("#successBurst");
+  const phrase = Math.random() > 0.5 ? t("successGreat") : t("successGood");
+  burst.querySelector("strong").textContent = phrase;
+  setGuide("guideSuccess");
+  burst.classList.remove("show");
+  void burst.offsetWidth;
+  burst.classList.add("show");
+  showToast(phrase);
+  window.setTimeout(() => {
+    burst.classList.remove("show");
+    nextProblem();
+  }, 1100);
+}
+
+function awardPoints(rewardId, amount) {
+  const rewarded = new Set(JSON.parse(localStorage.getItem("gfield-rewarded-games") || "[]"));
+  if (rewarded.has(rewardId)) return;
+  rewarded.add(rewardId);
+  const points = Number(localStorage.getItem("gfield-points")) || 120;
+  localStorage.setItem("gfield-points", String(points + amount));
+  localStorage.setItem("gfield-rewarded-games", JSON.stringify([...rewarded]));
+}
+
+function t(key) {
+  return translations[state.lang][key] || translations.ko[key] || key;
+}
+
+function resizeViewer(viewer) {
+  const rect = viewer.container.getBoundingClientRect();
+  const width = Math.max(1, rect.width);
+  const height = Math.max(1, rect.height);
+  viewer.camera.aspect = width / height;
+  viewer.camera.updateProjectionMatrix();
+  viewer.renderer.setSize(width, height, false);
+}
+
+function emptyGrid() {
+  return [
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0]
+  ];
+}
+
+function clearGroup(group) {
+  while (group.children.length) {
+    const child = group.children.pop();
+    child.traverse?.((node) => {
+      if (node.geometry) node.geometry.dispose();
+      if (node.material) {
+        if (Array.isArray(node.material)) node.material.forEach((mat) => mat.dispose());
+        else node.material.dispose();
+      }
+    });
+  }
+}
+
+function sameGrid(a, b) {
+  if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+  return a.every((row, z) => (
+    Array.isArray(row) &&
+    Array.isArray(b[z]) &&
+    row.length === b[z].length &&
+    row.every((value, x) => value === b[z][x])
+  ));
+}
+
+function sumGrid(grid) {
+  return grid.flat().reduce((sum, value) => sum + value, 0);
+}
+
+function setStars(count) {
+  document.querySelector("#stars").textContent = "â˜…".repeat(count) + "â˜†".repeat(Math.max(0, 4 - count));
+}
+
+function takeFromPile() {
+  if (Date.now() - state.lastDragAt < 250) return;
+  if (state.draggingCube || state.successPending) return;
+  if (state.countMode) {
+    showToast(t("buildFirst"));
+    return;
+  }
+  state.holdingCube = true;
+  setGuide("guideHold");
+  updateBuilderControls();
+}
+
+function startBuildCubeDrag(event, x, z) {
+  if (state.successPending) return;
+  state.holdingCube = true;
+  state.draggingCube = true;
+  state.draggingFromBoard = { x, z };
+  state.dragCell = null;
+  state.pileTarget = false;
+  state.dragLiftY = getDragLift(event.pointerType);
+  buildScene.controls.enabled = false;
+  buildScene.renderer.domElement.setPointerCapture?.(event.pointerId);
+  moveDragGhost(event.clientX, event.clientY);
+  document.querySelector("#dragGhost").classList.add("show");
+  setGuide("guideMove");
+  showToast(t("returnToPile"));
+  updateBuilderControls();
+
+  const move = (moveEvent) => {
+    moveDragGhost(moveEvent.clientX, moveEvent.clientY);
+    updateDragTarget(moveEvent.clientX, moveEvent.clientY);
+  };
+  const end = (endEvent) => {
+    document.removeEventListener("pointermove", move);
+    document.removeEventListener("pointerup", end);
+    document.removeEventListener("pointercancel", cancel);
+    buildScene.controls.enabled = true;
+    finishPileDrag(endEvent.clientX, endEvent.clientY);
+  };
+  const cancel = () => {
+    document.removeEventListener("pointermove", move);
+    document.removeEventListener("pointerup", end);
+    document.removeEventListener("pointercancel", cancel);
+    buildScene.controls.enabled = true;
+    cancelPileDrag();
+  };
+  document.addEventListener("pointermove", move);
+  document.addEventListener("pointerup", end);
+  document.addEventListener("pointercancel", cancel);
+}
+
+function startPileDrag(event) {
+  if (state.successPending) return;
+  if (state.countMode) {
+    showToast(t("buildFirst"));
+    return;
+  }
+  event.preventDefault();
+  state.holdingCube = true;
+  state.draggingCube = true;
+  state.draggingFromBoard = null;
+  state.dragCell = null;
+  state.pileTarget = false;
+  state.dragLiftY = getDragLift(event.pointerType);
+  document.querySelector("#cubePile").setPointerCapture?.(event.pointerId);
+  moveDragGhost(event.clientX, event.clientY);
+  document.querySelector("#dragGhost").classList.add("show");
+  setGuide("guideHold");
+  updateBuilderControls();
+
+  const move = (moveEvent) => {
+    moveDragGhost(moveEvent.clientX, moveEvent.clientY);
+    updateDragTarget(moveEvent.clientX, moveEvent.clientY);
+  };
+  const end = (endEvent) => {
+    document.removeEventListener("pointermove", move);
+    document.removeEventListener("pointerup", end);
+    document.removeEventListener("pointercancel", cancel);
+    finishPileDrag(endEvent.clientX, endEvent.clientY);
+  };
+  const cancel = () => {
+    document.removeEventListener("pointermove", move);
+    document.removeEventListener("pointerup", end);
+    document.removeEventListener("pointercancel", cancel);
+    cancelPileDrag();
+  };
+  document.addEventListener("pointermove", move);
+  document.addEventListener("pointerup", end);
+  document.addEventListener("pointercancel", cancel);
+}
+
+function moveDragGhost(x, y) {
+  const ghost = document.querySelector("#dragGhost");
+  ghost.style.transform = `translate(${x - 21}px, ${y - state.dragLiftY - 21}px) rotate(8deg)`;
+}
+
+function getDragLift(pointerType) {
+  if (pointerType === "touch") return 64;
+  if (pointerType === "pen") return 42;
+  return 24;
+}
+
+function updateDragTarget(x, y) {
+  const element = document.elementFromPoint(x, y);
+  const pile = element?.closest?.("#cubePile");
+  document.querySelector("#cubePile").classList.toggle("drop-target", Boolean(pile && state.draggingFromBoard));
+  state.pileTarget = Boolean(pile && state.draggingFromBoard);
+  dropMarker.visible = false;
+
+  const cell = getCellFromCanvasPoint(x, y);
+  if (!cell) {
+    state.dragCell = null;
+    return;
+  }
+
+  const targetHeight = getDropHeight(cell.x, cell.z);
+  if (targetHeight >= 4) {
+    state.dragCell = null;
+    return;
+  }
+
+  state.dragCell = cell;
+  dropMarker.position.set(cell.x - 1, targetHeight + 0.5, cell.z - 1);
+  dropMarker.visible = true;
+  setGuide("guideDrop");
+}
+
+function getDropHeight(x, z) {
+  const source = state.draggingFromBoard;
+  const movingWithinSource = source && source.x === x && source.z === z;
+  return state.grid[z][x] - (movingWithinSource ? 1 : 0);
+}
+
+function getCellFromCanvasPoint(clientX, clientY) {
+  const rect = buildScene.renderer.domElement.getBoundingClientRect();
+  if (
+    clientX < rect.left ||
+    clientX > rect.right ||
+    clientY < rect.top ||
+    clientY > rect.bottom
+  ) {
+    return null;
+  }
+
+  pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, buildScene.camera);
+
+  const candidates = [];
+  const planeNormal = new THREE.Vector3(0, 1, 0);
+  for (let z = 0; z < 3; z += 1) {
+    for (let x = 0; x < 3; x += 1) {
+      const height = getDropHeight(x, z);
+      if (height >= 4) continue;
+
+      const plane = new THREE.Plane(planeNormal, -height);
+      const point = new THREE.Vector3();
+      if (!raycaster.ray.intersectPlane(plane, point)) continue;
+
+      const centerX = x - 1;
+      const centerZ = z - 1;
+      const insideCell = Math.abs(point.x - centerX) <= 0.53 && Math.abs(point.z - centerZ) <= 0.53;
+      const projected = new THREE.Vector3(centerX, height + 0.02, centerZ).project(buildScene.camera);
+      const screenX = rect.left + ((projected.x + 1) * 0.5 * rect.width);
+      const screenY = rect.top + ((1 - projected.y) * 0.5 * rect.height);
+      const screenDistance = Math.hypot(clientX - screenX, clientY - screenY);
+
+      candidates.push({ x, z, insideCell, screenDistance });
+    }
+  }
+
+  const directHits = candidates
+    .filter((candidate) => candidate.insideCell)
+    .sort((a, b) => a.screenDistance - b.screenDistance);
+  if (directHits.length) return { x: directHits[0].x, z: directHits[0].z };
+
+  const nearest = candidates.sort((a, b) => a.screenDistance - b.screenDistance)[0];
+  const snapRadius = Math.max(46, Math.min(rect.width, rect.height) * 0.13);
+  if (!nearest || nearest.screenDistance > snapRadius) return null;
+  return { x: nearest.x, z: nearest.z };
+}
+
+function getTopCubeFromCanvasPoint(clientX, clientY) {
+  const rect = buildScene.renderer.domElement.getBoundingClientRect();
+  if (
+    clientX < rect.left ||
+    clientX > rect.right ||
+    clientY < rect.top ||
+    clientY > rect.bottom
+  ) {
+    return null;
+  }
+
+  pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, buildScene.camera);
+  const hits = raycaster.intersectObjects(buildGroup.children, true);
+  for (const hit of hits) {
+    const object = hit.object.userData.kind ? hit.object : hit.object.parent;
+    if (object?.userData.kind !== "cube") continue;
+    const { x, z, y } = object.userData;
+    if (state.grid[z][x] - 1 === y) return object;
+  }
+  return null;
+}
+
+function finishPileDrag(x, y) {
+  state.lastDragAt = Date.now();
+  updateDragTarget(x, y);
+  document.querySelector("#dragGhost").classList.remove("show");
+  document.querySelector("#cubePile").classList.remove("drop-target");
+  dropMarker.visible = false;
+  state.draggingCube = false;
+  state.dragLiftY = 0;
+  if (state.draggingFromBoard) {
+    const source = state.draggingFromBoard;
+    const shouldRemove = state.pileTarget;
+    const target = state.dragCell;
+    state.draggingFromBoard = null;
+    state.pileTarget = false;
+    state.holdingCube = false;
+    if (shouldRemove) {
+      state.grid[source.z][source.x] = Math.max(0, state.grid[source.z][source.x] - 1);
+      renderBuild();
+    } else if (target) {
+      const sameCell = source.x === target.x && source.z === target.z;
+      if (sameCell) {
+        updateBuilderControls();
+        state.dragCell = null;
+        return;
+      }
+      if (!sameCell && state.grid[target.z][target.x] >= 4) {
+        showToast(t("maxHeight"));
+        updateBuilderControls();
+        return;
+      }
+      state.grid[source.z][source.x] = Math.max(0, state.grid[source.z][source.x] - 1);
+      state.grid[target.z][target.x] = Math.min(4, state.grid[target.z][target.x] + 1);
+      renderBuild();
+      checkAutoSuccess();
+    } else {
+      updateBuilderControls();
+    }
+    state.dragCell = null;
+    return;
+  }
+  if (!state.dragCell) {
+    state.holdingCube = false;
+    updateBuilderControls();
+    return;
+  }
+  const { x: cellX, z: cellZ } = state.dragCell;
+  state.dragCell = null;
+  placeAt(cellX, cellZ);
+}
+
+function cancelPileDrag() {
+  state.lastDragAt = Date.now();
+  document.querySelector("#dragGhost").classList.remove("show");
+  document.querySelector("#cubePile").classList.remove("drop-target");
+  dropMarker.visible = false;
+  state.draggingCube = false;
+  state.dragLiftY = 0;
+  state.dragCell = null;
+  state.draggingFromBoard = null;
+  state.pileTarget = false;
+  state.holdingCube = false;
+  updateBuilderControls();
+}
+
+function findTopCube(x, z) {
+  const topY = state.grid[z][x] - 1;
+  if (topY < 0) return null;
+  return buildGroup.children.find((child) => {
+    return child.userData.kind === "cube" && child.userData.x === x && child.userData.z === z && child.userData.y === topY;
+  });
+}
+
+function updateBuilderControls() {
+  const pile = document.querySelector("#cubePile");
+  const hand = document.querySelector("#handStatus");
+  if (!pile || !hand) return;
+
+  pile.classList.toggle("holding", state.holdingCube);
+  hand.textContent = state.holdingCube ? t("inHand") : t("emptyHand");
+}
+
+function setGuide(key) {
+  state.guideKey = key;
+  const guide = document.querySelector("#guideMessage");
+  if (!guide) return;
+  guide.textContent = t(key);
+  const bubble = guide.closest(".guide-bubble");
+  if (!bubble) return;
+  bubble.classList.remove("talk");
+  void bubble.offsetWidth;
+  bubble.classList.add("talk");
+  speakGuide(key);
+}
+
+function toggleAudio() {
+  state.audioEnabled = !state.audioEnabled;
+  updateAudioButton();
+  if (state.audioEnabled) {
+    speakGuide(state.guideKey, true);
+  } else if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+  }
+}
+
+function updateAudioButton() {
+  const button = document.querySelector("#audioToggle");
+  if (!button) return;
+  button.textContent = state.audioEnabled ? t("audioOn") : t("audioOff");
+  button.classList.toggle("active", state.audioEnabled);
+  button.setAttribute("aria-pressed", String(state.audioEnabled));
+}
+
+function speakGuide(key, force = false) {
+  if (!state.audioEnabled && !force) return;
+  if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) return;
+
+  const settings = speechSettings[state.lang] || speechSettings.ko;
+  const utterance = new SpeechSynthesisUtterance(t(key));
+  utterance.lang = settings.lang;
+  utterance.rate = settings.rate;
+  utterance.pitch = settings.pitch;
+  utterance.volume = 0.9;
+
+  const voice = pickVoice(settings.lang);
+  if (voice) utterance.voice = voice;
+
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+
+function pickVoice(langCode) {
+  const voices = state.speechVoices.length ? state.speechVoices : window.speechSynthesis.getVoices();
+  if (!voices.length) return null;
+  const base = langCode.split("-")[0];
+  const sameLanguage = voices.filter((voice) => voice.lang?.toLowerCase().startsWith(base.toLowerCase()));
+  const exactLanguage = sameLanguage.filter((voice) => voice.lang?.toLowerCase() === langCode.toLowerCase());
+  const maleHint = maleVoiceHints[base] || /\bmale\b/i;
+  const qualityHint = /natural|neural|premium|enhanced|google|microsoft/i;
+  const chooseBest = (candidates) => [...candidates].sort((a, b) => {
+    const score = (voice) => (qualityHint.test(voice.name) ? 2 : 0) + (voice.localService ? 1 : 0);
+    return score(b) - score(a);
+  })[0] || null;
+
+  return (
+    chooseBest(exactLanguage.filter((voice) => maleHint.test(voice.name))) ||
+    chooseBest(sameLanguage.filter((voice) => maleHint.test(voice.name))) ||
+    chooseBest(exactLanguage.filter((voice) => !femaleVoiceHints.test(voice.name))) ||
+    chooseBest(sameLanguage.filter((voice) => !femaleVoiceHints.test(voice.name))) ||
+    chooseBest(exactLanguage) ||
+    chooseBest(sameLanguage)
+  );
+}
+
+function initGuideDrag() {
+  const guide = document.querySelector(".floating-guide");
+  if (!guide) return;
+
+  let dragging = false;
+  let moved = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  const moveGuide = (clientX, clientY) => {
+    const rect = guide.getBoundingClientRect();
+    const maxLeft = window.innerWidth - rect.width - 8;
+    const maxTop = window.innerHeight - rect.height - 8;
+    const left = Math.max(8, Math.min(maxLeft, clientX - offsetX));
+    const top = Math.max(8, Math.min(maxTop, clientY - offsetY));
+    guide.style.left = `${left}px`;
+    guide.style.top = `${top}px`;
+    guide.style.right = "auto";
+    guide.style.bottom = "auto";
+  };
+
+  guide.addEventListener("pointerdown", (event) => {
+    const rect = guide.getBoundingClientRect();
+    dragging = true;
+    moved = false;
+    offsetX = event.clientX - rect.left;
+    offsetY = event.clientY - rect.top;
+    guide.classList.add("dragging");
+    guide.classList.remove("walking");
+    guide.dataset.userMoving = "true";
+    guide.setPointerCapture(event.pointerId);
+  });
+
+  guide.addEventListener("pointermove", (event) => {
+    if (!dragging) return;
+    moved = true;
+    moveGuide(event.clientX, event.clientY);
+  });
+
+  guide.addEventListener("pointerup", (event) => {
+    if (!dragging) return;
+    dragging = false;
+    guide.classList.remove("dragging");
+    guide.dataset.userMoving = "false";
+    guide.dataset.userMovedUntil = String(Date.now() + 18000);
+    guide.releasePointerCapture(event.pointerId);
+    if (moved) setGuide("guideDragged");
+  });
+
+  window.addEventListener("resize", () => {
+    const rect = guide.getBoundingClientRect();
+    if (!guide.style.left) return;
+    moveGuide(rect.left + offsetX, rect.top + offsetY);
+  });
+}
+
+function initGuideLife() {
+  const guide = document.querySelector(".floating-guide");
+  if (!guide) return;
+
+  let waypoint = 0;
+  const move = () => {
+    const userMovedUntil = Number(guide.dataset.userMovedUntil || 0);
+    if (guide.dataset.userMoving === "true" || Date.now() < userMovedUntil) {
+      schedule();
+      return;
+    }
+
+    const rect = guide.getBoundingClientRect();
+    const edge = 12;
+    const safeTop = Math.max(76, Math.round(window.innerHeight * 0.16));
+    const safeBottom = Math.max(82, Math.round(window.innerHeight * 0.1));
+    const maxLeft = Math.max(edge, window.innerWidth - rect.width - edge);
+    const maxTop = Math.max(safeTop, window.innerHeight - rect.height - safeBottom);
+    const nearRight = Math.max(edge, maxLeft - Math.min(96, window.innerWidth * 0.07));
+    const middleRight = Math.min(maxTop, Math.max(safeTop, Math.round(window.innerHeight * 0.48)));
+    const spots = window.innerWidth <= 680
+      ? [
+          { left: maxLeft, top: maxTop },
+          { left: maxLeft, top: middleRight }
+        ]
+      : [
+          { left: maxLeft, top: maxTop },
+          { left: nearRight, top: middleRight },
+          { left: maxLeft, top: safeTop },
+          { left: maxLeft, top: middleRight }
+        ];
+
+    waypoint = (waypoint + 1) % spots.length;
+    const next = spots[waypoint];
+    guide.classList.toggle("facing-left", next.left > rect.left);
+    guide.classList.add("walking");
+    guide.style.right = "auto";
+    guide.style.bottom = "auto";
+    guide.style.left = `${next.left}px`;
+    guide.style.top = `${next.top}px`;
+    window.setTimeout(() => guide.classList.remove("walking"), 1900);
+    schedule();
+  };
+
+  const schedule = () => {
+    window.setTimeout(move, 7200 + Math.random() * 4200);
+  };
+
+  schedule();
+}
+
+let toastTimer = null;
+function showToast(message) {
+  const toast = document.querySelector("#toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  window.clearTimeout(toastTimer);
+  toastTimer = window.setTimeout(() => toast.classList.remove("show"), 2200);
+}
