@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GFIELD Cube Town - Count the Cubes</title>
+    <link rel="stylesheet" href="./styles.css?v=2" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.166.1/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.166.1/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main class="game-shell">
+      <header class="topbar">
+        <div class="brand">
+          <p data-i18n="world">GFIELD Geometry World</p>
+          <h1 data-i18n="town">GFIELD Cube Town</h1>
+        </div>
+        <nav class="languages" aria-label="Language">
+          <button type="button" data-lang="ko" class="active">한국어</button>
+          <button type="button" data-lang="zh">中文</button>
+          <button type="button" data-lang="ja">日本語</button>
+          <button type="button" data-lang="en">English</button>
+        </nav>
+      </header>
+
+      <section class="mission-bar">
+        <div>
+          <div id="stars" class="stars" aria-label="difficulty">★☆☆☆☆</div>
+          <h2 data-i18n="title">쌓기나무 개수 세기</h2>
+          <p data-i18n="instruction">각 자리의 가장 높은 층수를 쓰고 모두 더해 보세요.</p>
+        </div>
+        <div class="progress-box">
+          <strong id="progress">레벨 1 · 1/5</strong>
+          <button id="openLevels" type="button" data-i18n="level">레벨 선택</button>
+        </div>
+      </section>
+
+      <div class="view-switch" role="tablist" aria-label="input view">
+        <button id="modelMode" type="button" role="tab" class="active" data-mode="model" data-i18n="modelView">입체에 쓰기</button>
+        <button id="topMode" type="button" role="tab" data-mode="top" data-i18n="topView">위에서 쓰기</button>
+      </div>
+
+      <section class="play-grid">
+        <article class="viewer-panel">
+          <header>
+            <h2 data-i18n="modelTitle">쌓기나무 모양</h2>
+            <div class="camera-tools">
+              <button type="button" data-view="front" data-i18n="front">앞</button>
+              <button type="button" data-view="top" data-i18n="top">위</button>
+              <button type="button" data-view="free" data-i18n="free">돌려보기</button>
+            </div>
+          </header>
+          <div id="scene" class="scene" aria-label="3D cube model"></div>
+        </article>
+
+        <article class="answer-panel">
+          <header><h2 data-i18n="answerTitle">높이 기록판</h2></header>
+          <div id="modelPrompt" class="model-prompt">
+            <div class="mini-columns" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+            <strong data-i18n="selectColumn">숫자를 쓸 기둥을 눌러 보자!</strong>
+          </div>
+          <div id="topBoard" class="top-board" hidden></div>
+
+          <section class="sum-work">
+            <span data-i18n="addition">높이를 모두 더하면</span>
+            <div id="additionLine" class="addition-line"></div>
+            <button id="totalDisplay" class="total-display" type="button">
+              <span data-i18n="totalQuestion">전체는 몇 개?</span>
+              <strong id="totalValue">?</strong>
+            </button>
+          </section>
+
+          <div id="numberPrompt" class="number-prompt" data-i18n="chooseNumber">이 자리의 높이를 골라요.</div>
+          <div id="numberPad" class="number-pad" aria-label="number pad"></div>
+        </article>
+      </section>
+
+      <footer class="action-bar">
+        <button id="hint" type="button" data-i18n="hint">힌트</button>
+        <button id="reset" type="button" data-i18n="reset">처음부터</button>
+        <button id="next" type="button" data-i18n="next">다음 문제</button>
+      </footer>
+
+      <div id="levelDialog" class="dialog" hidden>
+        <section role="dialog" aria-modal="true" aria-labelledby="levelTitle">
+          <header><h2 id="levelTitle" data-i18n="level">레벨 선택</h2><button id="closeLevels" type="button" aria-label="close">×</button></header>
+          <div id="levelList" class="level-list"></div>
+        </section>
+      </div>
+
+      <aside class="docssam" aria-live="polite">
+        <div class="speech-bubble">
+          <div><strong data-i18n="docssam">docssam</strong><button id="audio" type="button" data-i18n="audioOff">음성 켜기</button></div>
+          <p id="guide" data-i18n="guideStart">맨 위 숫자는 그 기둥의 높이야.</p>
+        </div>
+        <img src="../../assets/docssam.png" alt="" aria-hidden="true" />
+      </aside>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+      <div id="success" class="success" aria-hidden="true"><strong>Great job!</strong><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </main>
+    <script type="module" src="./app.js?v=3"></script>
+  </body>
+</html>

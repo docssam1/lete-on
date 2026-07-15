@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GFIELD Cube Town</title>
+    <link rel="stylesheet" href="./styles.css?v=1" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="map-back" href="../world-map/?enter=1" data-i18n="back">← 지도</a>
+      <div class="town-brand">
+        <p>GFIELD Geometry World</p>
+        <strong>GFIELD Cube Town</strong>
+      </div>
+      <div class="top-actions">
+        <a class="print-link" href="./print.html" data-i18n="printMode">인쇄 학습</a>
+        <div class="points"><span>◆</span><strong id="points">120</strong></div>
+        <span id="avatar" class="avatar character-sprite sprite-0"></span>
+        <div class="languages">
+          <button type="button" data-lang="ko" class="active">한</button>
+          <button type="button" data-lang="zh">中</button>
+          <button type="button" data-lang="ja">日</button>
+          <button type="button" data-lang="en">EN</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="catalog-shell">
+      <section class="catalog-heading">
+        <div>
+          <span data-i18n="eyebrow">CUBE LEARNING PATH</span>
+          <h1 data-i18n="title">쌓기나무로 여는 공간 사고의 세계</h1>
+          <p data-i18n="subtitle">기초 조작부터 세 방향 추론까지, 단계별로 도전해요.</p>
+        </div>
+        <a href="./print.html" class="study-banner">
+          <span class="study-icon" aria-hidden="true">▤</span>
+          <span><strong data-i18n="worksheet">문제은행 학습지</strong><small data-i18n="worksheetDesc">레벨과 문제 수를 골라 인쇄해요</small></span>
+          <b aria-hidden="true">›</b>
+        </a>
+      </section>
+      <div id="levelGroups" class="level-groups"></div>
+    </main>
+    <script type="module" src="./app.js?v=1"></script>
+  </body>
+</html>
