@@ -6,7 +6,7 @@
     <title>GFIELD Cube Town</title>
     <link rel="stylesheet" href="./styles.css?v=gap-placement2" />
     <link rel="stylesheet" href="./mobile-landscape.css?v=2" />
-    <link rel="stylesheet" href="./quiet-cubi.css?v=1" />
+    <link rel="stylesheet" href="./quiet-cubi.css?v=2" />
     <link rel="stylesheet" href="./premium-layout.css?v=2" />
     <script type="importmap">
       {
@@ -103,15 +103,15 @@
       </div>
 
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
-      <aside class="floating-guide" aria-live="polite">
+      <aside class="floating-guide" aria-live="polite" aria-label="큐비 음성 안내">
         <div class="guide-bubble">
           <div class="guide-head">
-            <strong class="guide-title" data-i18n="guideTitle">docssam</strong>
+            <strong class="guide-title">큐비</strong>
             <button id="audioToggle" class="guide-audio" type="button" aria-pressed="false" data-i18n="audioOff">음성 켜기</button>
           </div>
           <p id="guideMessage" data-i18n="guideStart">문제 모양을 보고 더미에서 하나씩 가져와 보자!</p>
         </div>
-        <img class="guide-character" src="./assets/docssam.png" alt="" aria-hidden="true" />
+        <span class="guide-character" role="img" aria-label="쌓기나무 캐릭터 큐비"></span>
       </aside>
       <div id="successBurst" class="success-burst" aria-hidden="true">
         <strong data-i18n="successPop">SUCCESS!</strong>
