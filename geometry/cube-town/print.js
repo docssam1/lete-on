@@ -117,6 +117,14 @@ function polygon(context, points, fill, stroke) {
 }
 
 function drawCube(context, x, z, y, originX, originY, size, colorName = "cube") {
+  const { top, left, right } = cubeFaces(x, z, y, originX, originY, size);
+  const [topFill, leftFill, rightFill] = CUBE_COLORS[colorName] || CUBE_COLORS.cube;
+  polygon(context, left, leftFill, "#735b3e");
+  polygon(context, right, rightFill, "#735b3e");
+  polygon(context, top, topFill, "#735b3e");
+}
+
+function cubeFaces(x, z, y, originX, originY, size) {
   const half = size / 2;
   const depth = size * 0.48;
   const height = size * 0.72;
@@ -125,10 +133,7 @@ function drawCube(context, x, z, y, originX, originY, size, colorName = "cube") 
   const top = [[sx, sy - depth / 2], [sx + half, sy], [sx, sy + depth / 2], [sx - half, sy]];
   const left = [top[3], top[2], [top[2][0], top[2][1] + height], [top[3][0], top[3][1] + height]];
   const right = [top[2], top[1], [top[1][0], top[1][1] + height], [top[2][0], top[2][1] + height]];
-  const [topFill, leftFill, rightFill] = CUBE_COLORS[colorName] || CUBE_COLORS.cube;
-  polygon(context, left, leftFill, "#735b3e");
-  polygon(context, right, rightFill, "#735b3e");
-  polygon(context, top, topFill, "#735b3e");
+  return { top, left, right };
 }
 
 function problemGrid(problem) {
@@ -141,23 +146,34 @@ function problemColor(problem, x, z, y, blank) {
 }
 
 function drawProblem(canvas, problem, { blank = false } = {}) {
+  const canvasWidth = 300;
+  const canvasHeight = 160;
   const ratio = 2;
-  canvas.width = 300 * ratio;
-  canvas.height = 160 * ratio;
+  canvas.width = canvasWidth * ratio;
+  canvas.height = canvasHeight * ratio;
   const context = canvas.getContext("2d");
   context.scale(ratio, ratio);
-  context.clearRect(0, 0, 300, 160);
+  context.clearRect(0, 0, canvasWidth, canvasHeight);
   const grid = problemGrid(problem);
-  const width = grid[0].length;
-  const depth = grid.length;
-  const maxHeight = Math.max(...grid.flat());
-  const size = Math.min(60, 190 / Math.max(width, depth), 140 / Math.max(2, maxHeight));
-  const originX = 150;
-  const originY = 124 - Math.max(width, depth) * 4 + maxHeight * 8;
   const cubes = [];
   grid.forEach((row, z) => row.forEach((height, x) => {
     for (let y = 0; y < height; y += 1) cubes.push({ x, z, y });
   }));
+  const unitPoints = cubes.flatMap((cube) => {
+    const faces = cubeFaces(cube.x, cube.z, cube.y, 0, 0, 1);
+    return [...faces.top, ...faces.left, ...faces.right];
+  });
+  const xs = unitPoints.map(([x]) => x);
+  const ys = unitPoints.map(([, y]) => y);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+  const contentWidth = Math.max(1, maxX - minX);
+  const contentHeight = Math.max(1, maxY - minY);
+  const size = Math.min(64, 276 / contentWidth, 142 / contentHeight);
+  const originX = (canvasWidth - contentWidth * size) / 2 - minX * size;
+  const originY = (canvasHeight - contentHeight * size) / 2 - minY * size;
   cubes.sort((a, b) => (a.x + a.z + a.y * 0.01) - (b.x + b.z + b.y * 0.01));
   cubes.forEach((cube) => drawCube(
     context,
@@ -185,13 +201,16 @@ function topViewMarkup(problem, answers = false) {
 
 function renderCountQuestion(problem, index, target) {
   const article = document.createElement("article");
-  article.className = "question";
+  const workedExample = index === 0;
+  article.className = `question${workedExample ? " worked-example" : ""}`;
   const occupied = problem.heights.flat().filter(Boolean);
   article.innerHTML = `
     <span class="question-number">${index + 1}</span>
+    ${workedExample ? '<span class="example-badge">풀이 예시</span>' : ""}
     <canvas class="cube-canvas"></canvas>
-    <div class="height-grid">${occupied.map(() => '<span class="height-cell"></span>').join("")}</div>
-    <div class="answer-line"><span>전체</span><i></i><span>개</span></div>
+    <div class="height-grid">${occupied.map((height) => `<span class="height-cell">${workedExample ? height : ""}</span>`).join("")}</div>
+    <div class="answer-line"><span>전체</span><i>${workedExample ? problem.answer.total : ""}</i><span>개</span></div>
+    ${workedExample ? '<p class="example-note">각 자리의 높이를 쓰고 모두 더해요.</p>' : ""}
   `;
   target.append(article);
   drawProblem(article.querySelector("canvas"), problem);
@@ -199,27 +218,30 @@ function renderCountQuestion(problem, index, target) {
 
 function renderCopyQuestion(problem, index, target, colorMode) {
   const article = document.createElement("article");
-  article.className = `question copy-question ${colorMode ? "color-copy-question" : "wood-copy-question"}`;
+  const workedExample = index === 0;
+  article.className = `question copy-question ${colorMode ? "color-copy-question" : "wood-copy-question"}${workedExample ? " worked-example" : ""}`;
   article.innerHTML = colorMode
     ? `
       <span class="question-number">${index + 1}</span>
+      ${workedExample ? '<span class="example-badge">풀이 예시</span>' : ""}
       <div class="copy-pair">
         <figure><figcaption>문제 모양</figcaption><canvas class="cube-canvas target-copy"></canvas></figure>
-        <figure><figcaption>똑같이 색칠</figcaption><canvas class="cube-canvas blank-copy"></canvas></figure>
+        <figure><figcaption>${workedExample ? "색칠한 정답" : "똑같이 색칠"}</figcaption><canvas class="cube-canvas blank-copy"></canvas></figure>
       </div>
       <div class="color-key"><span class="green">○ 초록</span><span class="blue">△ 파랑</span><span class="yellow">★ 노랑</span><span class="rose">□ 빨강</span></div>
     `
     : `
       <span class="question-number">${index + 1}</span>
+      ${workedExample ? '<span class="example-badge">풀이 예시</span>' : ""}
       <div class="wood-observe">
         <figure><figcaption>문제 모양</figcaption><canvas class="cube-canvas target-copy"></canvas></figure>
-        <figure><figcaption>위에서 본 칸에 높이 쓰기</figcaption>${topViewMarkup(problem)}</figure>
+        <figure><figcaption>${workedExample ? "각 칸의 높이 정답" : "위에서 본 칸에 높이 쓰기"}</figcaption>${topViewMarkup(problem, workedExample)}</figure>
       </div>
     `;
   target.append(article);
   drawProblem(article.querySelector(".target-copy"), problem);
   const blankCanvas = article.querySelector(".blank-copy");
-  if (blankCanvas) drawProblem(blankCanvas, problem, { blank: true });
+  if (blankCanvas) drawProblem(blankCanvas, problem, { blank: !workedExample });
 }
 
 function createQuestionSheet(pageIndex, pageCount) {

@@ -154,8 +154,8 @@ let nextPieceId = 1;
 
 const woodTexture = createWoodTexture();
 const materials = {
-  cube: makeMaterial(0xf0ca82),
-  cuboid: makeMaterial(0xd89a52),
+  cube: makeMaterial(0xfff0d2),
+  cuboid: makeMaterial(0xf1d5aa),
   wedge: makeMaterial(0x78aa6b),
   pyramid: makeMaterial(0xe6b941),
   cone: makeMaterial(0xda775e)
@@ -754,8 +754,8 @@ function createViewer(host, interactive) {
   controls.maxPolarAngle = Math.PI * .49;
   controls.target.set(0, 1.1, 0);
 
-  scene.add(new THREE.HemisphereLight(0xfff9ea, 0x8d745d, 2.35));
-  const key = new THREE.DirectionalLight(0xfff0cf, 3.1);
+  scene.add(new THREE.HemisphereLight(0xfffbf1, 0xa68d72, 2.15));
+  const key = new THREE.DirectionalLight(0xfff5df, 2.55);
   key.position.set(5, 9, 6);
   key.castShadow = true;
   key.shadow.mapSize.set(1536, 1536);
@@ -787,7 +787,7 @@ function createBoard() {
   const group = new THREE.Group();
   const base = new THREE.Mesh(
     new RoundedBoxGeometry(BOARD_SIZE + .8, .25, BOARD_SIZE + .8, 8, .16),
-    makeMaterial(0xc78847)
+    makeMaterial(0xe2bb86)
   );
   base.position.y = -.16;
   base.receiveShadow = true;
@@ -795,7 +795,7 @@ function createBoard() {
   group.add(base);
   const inset = new THREE.Mesh(
     new THREE.PlaneGeometry(BOARD_SIZE + .04, BOARD_SIZE + .04),
-    makeMaterial(0xf2cf8a)
+    makeMaterial(0xffefd1)
   );
   inset.rotation.x = -Math.PI / 2;
   inset.position.y = -.02;
@@ -849,11 +849,11 @@ function makeMaterial(color) {
     color,
     map: woodTexture,
     bumpMap: woodTexture,
-    bumpScale: .018,
-    roughness: .46,
-    metalness: .015,
-    clearcoat: .13,
-    clearcoatRoughness: .48
+    bumpScale: .009,
+    roughness: .56,
+    metalness: .008,
+    clearcoat: .08,
+    clearcoatRoughness: .58
   });
 }
 
@@ -863,9 +863,9 @@ function createWoodTexture() {
   canvas.height = 384;
   const context = canvas.getContext("2d");
   const gradient = context.createLinearGradient(0, 0, 384, 384);
-  gradient.addColorStop(0, "#ffe4aa");
-  gradient.addColorStop(.48, "#dfae69");
-  gradient.addColorStop(1, "#a96531");
+  gradient.addColorStop(0, "#fff7e8");
+  gradient.addColorStop(.48, "#efd3a5");
+  gradient.addColorStop(1, "#d8b47f");
   context.fillStyle = gradient;
   context.fillRect(0, 0, 384, 384);
   for (let index = 0; index < 58; index += 1) {
@@ -875,8 +875,8 @@ function createWoodTexture() {
     for (let x = -10; x < 400; x += 16) {
       context.lineTo(x, y + Math.sin(x * .035 + index) * 3.2);
     }
-    context.strokeStyle = index % 3 ? "rgba(255,248,220,.18)" : "rgba(89,47,18,.16)";
-    context.lineWidth = 1;
+    context.strokeStyle = index % 3 ? "rgba(255,255,245,.23)" : "rgba(99,62,27,.085)";
+    context.lineWidth = .9;
     context.stroke();
   }
   const texture = new THREE.CanvasTexture(canvas);
@@ -890,30 +890,35 @@ function createBoardLabels() {
   const group = new THREE.Group();
   group.userData.kind = "board-labels";
   const front = createLabel(getText("front"));
-  front.position.set(0, .02, BOARD_SIZE / 2 + .28);
-  front.rotation.x = -Math.PI / 2;
+  front.position.set(0, -.045, BOARD_SIZE / 2 + .42);
   group.add(front);
   const right = createLabel(getText("right"));
-  right.position.set(BOARD_SIZE / 2 + .28, .02, 0);
-  right.rotation.set(-Math.PI / 2, 0, -Math.PI / 2);
+  right.position.set(BOARD_SIZE / 2 + .42, -.045, 0);
+  right.rotation.set(0, Math.PI / 2, 0);
   group.add(right);
   return group;
 }
 
 function createLabel(text) {
   const canvas = document.createElement("canvas");
-  canvas.width = 256;
-  canvas.height = 96;
+  canvas.width = 384;
+  canvas.height = 112;
   const context = canvas.getContext("2d");
-  context.fillStyle = "rgba(73,42,18,.86)";
-  context.font = "900 38px sans-serif";
+  context.fillStyle = "rgba(64,38,17,.96)";
+  context.font = "950 56px sans-serif";
   context.textAlign = "center";
   context.textBaseline = "middle";
-  context.fillText(text, 128, 48);
+  context.fillText(text, canvas.width / 2, canvas.height / 2 + 2);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false, side: THREE.DoubleSide });
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1.05, .38), material);
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    depthTest: false,
+    depthWrite: false,
+    side: THREE.DoubleSide
+  });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1.42, .42), material);
   mesh.renderOrder = 900;
   return mesh;
 }

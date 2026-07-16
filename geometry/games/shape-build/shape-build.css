@@ -3,6 +3,10 @@
   align-content: center;
 }
 
+.shape-build-page .shape-controls {
+  grid-template-columns: repeat(7, minmax(64px, 1fr));
+}
+
 .shape-tray {
   display: grid;
   grid-template-columns: repeat(5, minmax(52px, 1fr));
@@ -49,7 +53,7 @@
 .shape-piece[data-shape="cuboid"] .shape-icon {
   width: 48px;
   height: 27px;
-  background: #d59a53;
+  background: #e7c28f;
 }
 
 .shape-piece[data-shape="wedge"] .shape-icon {

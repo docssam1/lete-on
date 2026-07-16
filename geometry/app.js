@@ -230,10 +230,23 @@ const fixedCopy = {
     levelProgress: "레벨 {level} · {current}/{total}",
     guideStart: "문제 모양을 보고 더미에서 하나씩 가져와 보자!",
     guideHold: "좋아, 빨간 위치에 천천히 내려놓아 봐.",
-    guideDrop: "거기 좋아! 손을 떼면 그 자리에 쌓여.",
+    guideDrop: "손을 놓으면 이 자리에 쌓여.",
     guideMove: "위에 있는 블록은 다른 자리로 옮길 수 있어.",
     guideWrong: "조금 달라. 문제 모양의 위치와 높이를 다시 볼까?",
     guideSuccess: "Great job! 똑같이 잘 쌓았어.",
+    guidePlaced1: "좋았어! 다음 쌓기나무도 놓아 볼까?",
+    guidePlaced2: "잘 놓았어. 문제 모양과 비교해 보자.",
+    guidePlaced3: "하나 완성! 다음 자리를 찾아보자.",
+    guidePlaced4: "차근차근 잘하고 있어.",
+    guideSuccess1: "완벽해! 모양과 색까지 모두 똑같아.",
+    guideSuccess2: "멋지게 완성했어! 방향도 정확해.",
+    guideSuccess3: "대단해! 숨은 쌓기나무까지 잘 찾았어.",
+    guideSuccess4: "끝까지 차근차근 잘 만들었어!",
+    tutorialTake: "반짝이는 쌓기나무를 더미에서 끌어 와 볼까?",
+    tutorialPlace: "빨간 자리에 천천히 내려놓아 볼까?",
+    tutorialStack: "잘했어! 방금 놓은 쌓기나무 위로 하나 더 올려 볼까?",
+    tutorialReturn: "이제 맨 위 쌓기나무를 더미로 옮겨서 없애 보자.",
+    tutorialDone: "완벽해! 이제 원하는 자리에 자유롭게 쌓아 보자.",
     guideNext: "다음 문제야. 이번 모양도 차근차근 만들어 보자.",
     guideTitle: "큐비",
     guideDragged: "좋아, 큐비가 옆에서 알려줄게!",
@@ -272,10 +285,23 @@ const fixedCopy = {
     wrong: "有一点不一样。再看看位置和高度。",
     guideStart: "看看目标形状，从盒子里拿一个方块吧！",
     guideHold: "很好，慢慢放到红色位置上。",
-    guideDrop: "这个位置不错！松手就可以放下。",
+    guideDrop: "松手就会放在这个位置。",
     guideMove: "最上面的方块可以移动到别的位置。",
     guideWrong: "有一点不一样。我们再比较一下目标形状吧。",
     guideSuccess: "Great job! 搭得一样了。",
+    guidePlaced1: "很好！再放一个积木吧？",
+    guidePlaced2: "放得很好。和目标形状比较一下吧。",
+    guidePlaced3: "完成一个！找找下一个位置。",
+    guidePlaced4: "一步一步做得很好。",
+    guideSuccess1: "太完美了！形状和颜色都一样。",
+    guideSuccess2: "完成得真棒！方向也很准确。",
+    guideSuccess3: "太厉害了！隐藏的积木也找到了。",
+    guideSuccess4: "你一步一步坚持完成了！",
+    tutorialTake: "把闪闪发光的积木从盒子里拖出来吧。",
+    tutorialPlace: "慢慢放到红色位置上吧。",
+    tutorialStack: "很好！再往刚才的积木上放一个吧。",
+    tutorialReturn: "现在把最上面的积木拖回盒子里吧。",
+    tutorialDone: "完成！现在可以自由搭建了。",
     guideNext: "下一题来了。一步一步搭起来吧。",
     guideTitle: "Cubi",
     guideDragged: "很好，Cubi 会在旁边提示你！",
@@ -315,10 +341,23 @@ const fixedCopy = {
     wrong: "少し違います。位置と高さをもう一度見てみましょう。",
     guideStart: "問題の形を見て、トレイから一つ取ってみよう！",
     guideHold: "いいね。赤い場所にゆっくり置いてみよう。",
-    guideDrop: "そこがいいよ！指を離すと置けるよ。",
+    guideDrop: "指を離すと、この場所に置けるよ。",
     guideMove: "上にあるブロックは別の場所へ動かせるよ。",
     guideWrong: "少し違うね。問題の形と比べてみよう。",
     guideSuccess: "Great job! 同じ形にできたね。",
+    guidePlaced1: "いいね！次の積み木も置いてみよう。",
+    guidePlaced2: "上手に置けたね。問題の形と比べよう。",
+    guidePlaced3: "一つ完成！次の場所を探そう。",
+    guidePlaced4: "ゆっくり、しっかりできているよ。",
+    guideSuccess1: "完璧！形も色も同じだね。",
+    guideSuccess2: "すてきに完成！向きも正確だよ。",
+    guideSuccess3: "すごい！隠れた積み木も見つけたね。",
+    guideSuccess4: "最後までていねいに作れたね！",
+    tutorialTake: "光っている積み木をトレイから動かしてみよう。",
+    tutorialPlace: "赤い場所にゆっくり置いてみよう。",
+    tutorialStack: "できた！今の積み木の上にもう一つ置こう。",
+    tutorialReturn: "いちばん上の積み木をトレイへ戻してみよう。",
+    tutorialDone: "完璧！これから自由に積んでみよう。",
     guideNext: "次の問題だよ。今度もゆっくり作ろう。",
     guideTitle: "Cubi",
     guideDragged: "いいね。Cubi がそばで教えるよ！",
@@ -360,10 +399,23 @@ const fixedCopy = {
     wrong: "Not quite. Check the position and height again.",
     guideStart: "Look at the target shape and bring one cube from the tray.",
     guideHold: "Nice. Move it slowly onto the red guide.",
-    guideDrop: "Good spot! Release to place it there.",
+    guideDrop: "Release to place the cube here.",
     guideMove: "You can move a top cube to another place.",
     guideWrong: "Not quite. Let's compare the position and height again.",
     guideSuccess: "Great job! You copied the shape.",
+    guidePlaced1: "Nice! Shall we place the next cube?",
+    guidePlaced2: "Well placed. Compare it with the target.",
+    guidePlaced3: "One done! Find the next position.",
+    guidePlaced4: "You are building it carefully.",
+    guideSuccess1: "Perfect! The shape and colors all match.",
+    guideSuccess2: "Wonderful build! Every direction is correct.",
+    guideSuccess3: "Amazing! You found the hidden cubes too.",
+    guideSuccess4: "You built it carefully all the way through!",
+    tutorialTake: "Drag the sparkling cube from the tray.",
+    tutorialPlace: "Lower it slowly onto the red guide.",
+    tutorialStack: "Great! Place another cube on top of it.",
+    tutorialReturn: "Now drag the top cube back to the tray.",
+    tutorialDone: "Perfect! Now you can build freely.",
     guideNext: "Next problem. Build this one step by step.",
     guideTitle: "Cubi",
     guideDragged: "Nice. Cubi will help from here!",
@@ -432,17 +484,17 @@ const cubeGeometry = new RoundedBoxGeometry(0.96, 0.96, 0.96, 6, 0.075);
 const cubeEdges = new THREE.EdgesGeometry(cubeGeometry, 24);
 const woodTexture = createWoodTexture();
 const woodMaterial = new THREE.MeshStandardMaterial({
-  color: 0xf0c97d,
+  color: 0xfff5df,
   map: woodTexture,
   bumpMap: woodTexture,
-  bumpScale: 0.024,
-  roughness: 0.48,
-  metalness: 0.025
+  bumpScale: 0.012,
+  roughness: 0.56,
+  metalness: 0.012
 });
 const cubeEdgeMaterial = new THREE.LineBasicMaterial({
-  color: 0x8f6332,
+  color: 0x8b6840,
   transparent: true,
-  opacity: 0.22
+  opacity: 0.18
 });
 
 function createWoodTexture() {
@@ -451,9 +503,9 @@ function createWoodTexture() {
   canvas.height = 512;
   const context = canvas.getContext("2d");
   const base = context.createLinearGradient(0, 0, 512, 512);
-  base.addColorStop(0, "#ffe2a7");
-  base.addColorStop(0.42, "#efc27a");
-  base.addColorStop(1, "#bf7d38");
+  base.addColorStop(0, "#fff7e7");
+  base.addColorStop(0.46, "#f0d4a5");
+  base.addColorStop(1, "#d9b57e");
   context.fillStyle = base;
   context.fillRect(0, 0, 512, 512);
   for (let i = 0; i < 76; i += 1) {
@@ -463,15 +515,15 @@ function createWoodTexture() {
     for (let x = -20; x <= 540; x += 18) {
       context.lineTo(x, y + Math.sin(x * 0.036 + i) * 3.6 + Math.sin(x * 0.012 + i * 0.4) * 2.4);
     }
-    context.strokeStyle = i % 3 === 0 ? "rgba(102,61,24,.18)" : "rgba(255,248,220,.18)";
-    context.lineWidth = i % 3 === 0 ? 1.4 : 1;
+    context.strokeStyle = i % 3 === 0 ? "rgba(115,78,39,.095)" : "rgba(255,255,245,.24)";
+    context.lineWidth = i % 3 === 0 ? 1.15 : 0.9;
     context.stroke();
   }
   for (let i = 0; i < 34; i += 1) {
     context.beginPath();
     context.ellipse(44 + (i * 83) % 432, 38 + (i * 117) % 420, 20, 6, i, 0, Math.PI * 2);
-    context.strokeStyle = "rgba(98,58,22,.105)";
-    context.lineWidth = 1.2;
+    context.strokeStyle = "rgba(105,70,35,.07)";
+    context.lineWidth = 1;
     context.stroke();
   }
   const glow = context.createRadialGradient(160, 120, 20, 160, 120, 420);
@@ -513,6 +565,10 @@ const state = {
   audioEnabled: false,
   guideKey: "guideStart",
   speechVoices: []
+  ,
+  tutorialStep: -1,
+  lastPlacementGuide: "",
+  lastSuccessGuide: ""
 };
 
 const targetScene = createViewer(document.querySelector("#targetCanvas"), false);
@@ -612,12 +668,12 @@ function createWoodBoard() {
   const tray = new THREE.Mesh(
     new RoundedBoxGeometry(4.96, 0.24, 4.96, 8, 0.18),
     new THREE.MeshStandardMaterial({
-      color: 0xd19a55,
+      color: 0xe7c28e,
       map: woodTexture,
       bumpMap: woodTexture,
-      bumpScale: 0.018,
-      roughness: 0.52,
-      metalness: 0.02
+      bumpScale: 0.01,
+      roughness: 0.58,
+      metalness: 0.01
     })
   );
   tray.position.y = -0.15;
@@ -626,12 +682,12 @@ function createWoodBoard() {
   group.add(tray);
 
   const railMaterial = new THREE.MeshStandardMaterial({
-    color: 0xb97939,
+    color: 0xd0a36b,
     map: woodTexture,
     bumpMap: woodTexture,
-    bumpScale: 0.014,
-    roughness: 0.5,
-    metalness: 0.02
+    bumpScale: 0.009,
+    roughness: 0.58,
+    metalness: 0.01
   });
   [
     { x: 0, z: 2.12, sx: 4.32, sz: 0.18 },
@@ -652,13 +708,13 @@ function createWoodBoard() {
   const inset = new THREE.Mesh(
     new THREE.PlaneGeometry(3.28, 3.28),
     new THREE.MeshStandardMaterial({
-      color: 0xffedc7,
+      color: 0xfff2d7,
       map: woodTexture,
       bumpMap: woodTexture,
-      bumpScale: 0.008,
-      roughness: 0.9,
-      transparent: true,
-      opacity: 0.88
+      bumpScale: 0.004,
+      roughness: 0.82,
+      transparent: false,
+      opacity: 1
     })
   );
   inset.rotation.x = -Math.PI / 2;
@@ -674,45 +730,30 @@ function createFrontIndicator() {
   group.userData = { kind: "front-indicator" };
 
   const front = createBoardLabelPlane(t("front"));
-  front.position.set(0, -0.04, 2.42);
+  front.position.set(0, -0.045, 2.435);
   front.rotation.set(0, 0, 0);
   group.add(front);
 
-  const frontTop = createBoardLabelPlane(t("front"));
-  frontTop.position.set(0, 0.032, 1.7);
-  frontTop.rotation.set(-Math.PI / 2, 0, 0);
-  group.add(frontTop);
-
   const side = createBoardLabelPlane(t("side"));
-  side.position.set(2.42, -0.04, 0);
+  side.position.set(2.435, -0.045, 0);
   side.rotation.set(0, Math.PI / 2, 0);
   group.add(side);
-
-  const sideTop = createBoardLabelPlane(t("side"));
-  sideTop.position.set(1.7, 0.032, 0);
-  sideTop.rotation.set(-Math.PI / 2, 0, -Math.PI / 2);
-  group.add(sideTop);
-
-  const back = createBoardLabelPlane(t("back"));
-  back.position.set(0, -0.04, -2.42);
-  back.rotation.set(0, Math.PI, 0);
-  group.add(back);
   return group;
 }
 
 function createBoardLabelPlane(label) {
   const canvas = document.createElement("canvas");
-  canvas.width = 256;
-  canvas.height = 96;
+  canvas.width = 384;
+  canvas.height = 112;
   const context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = "rgba(72, 47, 23, 0.72)";
-  context.font = "900 42px 'Noto Sans KR', sans-serif";
+  context.fillStyle = "rgba(64, 38, 17, 0.95)";
+  context.font = "950 58px 'Noto Sans KR', sans-serif";
   context.textAlign = "center";
   context.textBaseline = "middle";
-  context.shadowColor = "rgba(255, 242, 195, 0.55)";
-  context.shadowBlur = 4;
-  context.fillText(label, 128, 49);
+  context.shadowColor = "rgba(255, 247, 224, 0.82)";
+  context.shadowBlur = 3;
+  context.fillText(label, canvas.width / 2, canvas.height / 2 + 2);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -720,10 +761,11 @@ function createBoardLabelPlane(label) {
   const material = new THREE.MeshBasicMaterial({
     map: texture,
     transparent: true,
+    depthTest: false,
     depthWrite: false,
     side: THREE.DoubleSide
   });
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(0.96, 0.36), material);
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1.42, 0.42), material);
   mesh.renderOrder = 902;
   mesh.userData = { kind: "board-label" };
   return mesh;
@@ -825,7 +867,7 @@ function loadProblem() {
   renderTarget();
   renderBuild();
   updateBuilderControls();
-  setGuide(isColorProblem() ? "guideColorCount" : "guideStart");
+  if (!maybeStartTutorial()) setGuide(isColorProblem() ? "guideColorCount" : "guideStart", true);
 }
 
 function renderTarget() {
@@ -865,11 +907,11 @@ function renderBaseTargets(group) {
     for (let x = 0; x < size; x += 1) {
       const marker = new THREE.Mesh(
         new RoundedBoxGeometry(0.9, 0.035, 0.9, 3, 0.018),
-        new THREE.MeshStandardMaterial({
-          color: 0xfff2d0,
-          roughness: 0.9,
-          transparent: true,
-          opacity: 0.58
+        new THREE.MeshBasicMaterial({
+          color: 0xf8e6bf,
+          transparent: false,
+          opacity: 1,
+          depthWrite: false
         })
       );
       marker.position.set(x - offset, 0.045, z - offset);
@@ -1009,10 +1051,13 @@ function placeAt(x, z) {
     showToast(t("pileFirst"));
     return;
   }
-  state.colorGrid[z][x][state.grid[z][x]] = colorName;
+  const previousHeight = state.grid[z][x];
+  state.colorGrid[z][x][previousHeight] = colorName;
   state.grid[z][x] += 1;
   state.holdingCube = false;
   renderBuild();
+  playPlacementSound();
+  handlePlacementFeedback(previousHeight, x, z);
   checkAutoSuccess();
 }
 
@@ -1277,7 +1322,11 @@ function showSuccessThenNext() {
   const phrases = [t("successGood"), t("successGreat"), t("successPop")];
   const phrase = phrases[Math.floor(Math.random() * phrases.length)];
   burst.querySelector("strong").textContent = phrase;
-  setGuide("guideSuccess");
+  setRandomGuide(
+    ["guideSuccess1", "guideSuccess2", "guideSuccess3", "guideSuccess4"],
+    "lastSuccessGuide"
+  );
+  playSuccessSound();
   burst.classList.remove("show");
   void burst.offsetWidth;
   burst.classList.add("show");
@@ -1477,7 +1526,11 @@ function startPileDrag(event) {
   document.querySelector("#cubePile").setPointerCapture?.(event.pointerId);
   moveDragGhost(event.clientX, event.clientY);
   document.querySelector("#dragGhost").classList.add("show");
-  setGuide("guideHold");
+  if (state.tutorialStep === 0) {
+    setTutorialStep(1, "tutorialPlace");
+  } else {
+    setGuide("guideHold");
+  }
   updateBuilderControls();
 
   const move = (moveEvent) => {
@@ -1548,7 +1601,8 @@ function updateDragTarget(x, y) {
   const offset = (getProblemBoardSize() - 1) / 2;
   dropMarker.position.set(cell.x - offset, targetHeight + 0.5, cell.z - offset);
   dropMarker.visible = true;
-  setGuide("guideDrop");
+  if (state.tutorialStep === 1) setGuide("tutorialPlace");
+  else setGuide("guideDrop");
 }
 
 function getDropHeight(x, z) {
@@ -1651,6 +1705,8 @@ function finishPileDrag(x, y) {
       state.colorGrid[source.z][source.x].pop();
       state.grid[source.z][source.x] = Math.max(0, state.grid[source.z][source.x] - 1);
       renderBuild();
+      playRemovalSound();
+      if (state.tutorialStep === 3) completeTutorial();
     } else if (target) {
       const sameCell = source.x === target.x && source.z === target.z;
       if (sameCell) {
@@ -1668,6 +1724,8 @@ function finishPileDrag(x, y) {
       state.colorGrid[target.z][target.x][state.grid[target.z][target.x]] = movingColor;
       state.grid[target.z][target.x] = Math.min(4, state.grid[target.z][target.x] + 1);
       renderBuild();
+      playPlacementSound();
+      handlePlacementFeedback(state.grid[target.z][target.x] - 1, target.x, target.z);
       checkAutoSuccess();
     } else {
       updateBuilderControls();
@@ -1716,8 +1774,20 @@ function updateBuilderControls() {
   pile.classList.toggle("color-problem", colorProblem);
   pile.classList.toggle("holding", state.holdingCube);
   hand.textContent = state.holdingCube ? t("inHand") : t("emptyHand");
+  updateWoodPile();
   updateColorTray();
   updateDragGhostColor();
+}
+
+function updateWoodPile() {
+  const pile = document.querySelector(".pile-cubes");
+  const countLabel = document.querySelector("#woodPileCount");
+  if (!pile || !countLabel) return;
+  const remaining = getRemainingInventory().cube || 0;
+  countLabel.textContent = `x${remaining}`;
+  pile.querySelectorAll(":scope > span").forEach((cube, index) => {
+    cube.hidden = isColorProblem() || index >= Math.min(remaining, 13);
+  });
 }
 
 function updateColorTray() {
@@ -1741,7 +1811,8 @@ function updateDragGhostColor() {
   ghost.dataset.cubeColor = state.selectedColor;
 }
 
-function setGuide(key) {
+function setGuide(key, force = false) {
+  if (!force && state.guideKey === key) return;
   state.guideKey = key;
   const guide = document.querySelector("#guideMessage");
   if (!guide) return;
@@ -1752,6 +1823,137 @@ function setGuide(key) {
   void bubble.offsetWidth;
   bubble.classList.add("talk");
   speakGuide(key);
+}
+
+function setRandomGuide(keys, stateKey) {
+  const candidates = keys.filter((key) => key !== state[stateKey]);
+  const key = candidates[Math.floor(Math.random() * candidates.length)] || keys[0];
+  state[stateKey] = key;
+  setGuide(key, true);
+}
+
+function handlePlacementFeedback(previousHeight, x, z) {
+  if (state.tutorialStep === 1) {
+    setTutorialStep(2, "tutorialStack");
+    showTutorialStackMarker(x, z, previousHeight + 1);
+    return;
+  }
+  if (state.tutorialStep === 2) {
+    if (previousHeight >= 1) setTutorialStep(3, "tutorialReturn");
+    else setGuide("tutorialStack", true);
+    return;
+  }
+  if (state.tutorialStep === 3) {
+    setGuide("tutorialReturn");
+    return;
+  }
+  setRandomGuide(
+    ["guidePlaced1", "guidePlaced2", "guidePlaced3", "guidePlaced4"],
+    "lastPlacementGuide"
+  );
+}
+
+const tutorialStorageKey = "gfield-copy-build-tutorial-v1";
+
+function maybeStartTutorial() {
+  const forceTutorial = new URLSearchParams(window.location.search).get("tutorial") === "1";
+  const firstProblem = state.levelIndex === 0 && state.problemIndex === 0 && !isColorProblem();
+  if (!firstProblem || (!forceTutorial && localStorage.getItem(tutorialStorageKey))) {
+    clearTutorialHighlights();
+    state.tutorialStep = -1;
+    return false;
+  }
+  state.tutorialStep = 0;
+  setTutorialStep(0, "tutorialTake");
+  return true;
+}
+
+function setTutorialStep(step, guideKey) {
+  state.tutorialStep = step;
+  clearTutorialHighlights();
+  dropMarker.visible = false;
+  const pile = document.querySelector("#cubePile");
+  const build = document.querySelector(".build-view");
+  if (step === 0 || step === 3) pile?.classList.add("tutorial-highlight");
+  if (step === 1 || step === 2) build?.classList.add("tutorial-highlight");
+  if (step === 0) showTutorialMarker();
+  setGuide(guideKey, true);
+}
+
+function showTutorialStackMarker(x, z, height) {
+  const size = getProblemBoardSize();
+  const offset = (size - 1) / 2;
+  dropMarker.position.set(x - offset, height + 0.5, z - offset);
+  dropMarker.visible = true;
+}
+
+function showTutorialMarker() {
+  const problem = getProblemData();
+  const size = getProblemBoardSize(problem);
+  const offset = (size - 1) / 2;
+  for (let z = 0; z < problem.grid.length; z += 1) {
+    const x = problem.grid[z].findIndex((height) => height > 0);
+    if (x >= 0) {
+      dropMarker.position.set(x - offset, 0.5, z - offset);
+      dropMarker.visible = true;
+      return;
+    }
+  }
+}
+
+function completeTutorial() {
+  state.tutorialStep = -1;
+  localStorage.setItem(tutorialStorageKey, "done");
+  clearTutorialHighlights();
+  dropMarker.visible = false;
+  setGuide("tutorialDone", true);
+}
+
+function clearTutorialHighlights() {
+  document.querySelector("#cubePile")?.classList.remove("tutorial-highlight");
+  document.querySelector(".build-view")?.classList.remove("tutorial-highlight");
+}
+
+let effectsContext = null;
+
+function getEffectsContext() {
+  const Context = window.AudioContext || window.webkitAudioContext;
+  if (!Context) return null;
+  effectsContext ||= new Context();
+  if (effectsContext.state === "suspended") effectsContext.resume();
+  return effectsContext;
+}
+
+function playWoodTone(frequency, duration, volume, type = "triangle", delay = 0) {
+  const context = getEffectsContext();
+  if (!context) return;
+  const start = context.currentTime + delay;
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(frequency, start);
+  oscillator.frequency.exponentialRampToValueAtTime(Math.max(80, frequency * 0.72), start + duration);
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.exponentialRampToValueAtTime(volume, start + 0.008);
+  gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+  oscillator.connect(gain).connect(context.destination);
+  oscillator.start(start);
+  oscillator.stop(start + duration + 0.02);
+}
+
+function playPlacementSound() {
+  playWoodTone(330, 0.09, 0.085);
+  playWoodTone(165, 0.075, 0.055, "sine", 0.012);
+}
+
+function playRemovalSound() {
+  playWoodTone(230, 0.11, 0.055, "triangle");
+}
+
+function playSuccessSound() {
+  playWoodTone(392, 0.14, 0.06, "sine");
+  playWoodTone(523, 0.18, 0.055, "sine", 0.09);
+  playWoodTone(659, 0.21, 0.05, "sine", 0.18);
 }
 
 function toggleAudio() {
