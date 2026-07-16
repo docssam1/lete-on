@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 
 const translations = { ko: {}, zh: {}, ja: {}, en: {} };
 
@@ -472,21 +473,35 @@ const levels = [
         [1, 3, 1],
         [0, 1, 0]
       ],
-      [
-        [2, 1, 0],
-        [1, 2, 2],
-        [0, 0, 1]
-      ],
+      {
+        grid: [
+          [2, 1, 0],
+          [1, 2, 2],
+          [0, 0, 1]
+        ],
+        colorMap: [
+          [["cube", "green"], ["yellow"], []],
+          [["blue"], ["cube", "cube"], ["yellow", "rose"]],
+          [[], [], ["green"]]
+        ]
+      },
       [
         [0, 1, 3],
         [1, 2, 1],
         [1, 0, 0]
       ],
-      [
-        [1, 2, 1],
-        [0, 3, 2],
-        [1, 0, 1]
-      ]
+      {
+        grid: [
+          [1, 2, 1],
+          [0, 3, 2],
+          [1, 0, 1]
+        ],
+        colorMap: [
+          [["green"], ["cube", "blue"], ["yellow"]],
+          [[], ["cube", "rose", "cube"], ["blue", "yellow"]],
+          [["cube"], [], ["rose"]]
+        ]
+      }
     ]
   }
 ];
@@ -502,55 +517,62 @@ const colors = {
   red: 0xd86f73
 };
 
-const cubeGeometry = new THREE.BoxGeometry(0.96, 0.96, 0.96);
+const cubeGeometry = new RoundedBoxGeometry(0.96, 0.96, 0.96, 6, 0.075);
 const cubeEdges = new THREE.EdgesGeometry(cubeGeometry, 24);
 const woodTexture = createWoodTexture();
 const woodMaterial = new THREE.MeshStandardMaterial({
   color: 0xf0c97d,
   map: woodTexture,
-  roughness: 0.58,
-  metalness: 0.02
+  bumpMap: woodTexture,
+  bumpScale: 0.024,
+  roughness: 0.48,
+  metalness: 0.025
 });
 const cubeEdgeMaterial = new THREE.LineBasicMaterial({
   color: 0x8f6332,
   transparent: true,
-  opacity: 0.34
+  opacity: 0.22
 });
 
 function createWoodTexture() {
   const canvas = document.createElement("canvas");
-  canvas.width = 256;
-  canvas.height = 256;
+  canvas.width = 512;
+  canvas.height = 512;
   const context = canvas.getContext("2d");
-  const base = context.createLinearGradient(0, 0, 256, 256);
-  base.addColorStop(0, "#f7d995");
-  base.addColorStop(0.45, "#e9bd70");
-  base.addColorStop(1, "#c9924d");
+  const base = context.createLinearGradient(0, 0, 512, 512);
+  base.addColorStop(0, "#ffe2a7");
+  base.addColorStop(0.42, "#efc27a");
+  base.addColorStop(1, "#bf7d38");
   context.fillStyle = base;
-  context.fillRect(0, 0, 256, 256);
-  for (let i = 0; i < 38; i += 1) {
-    const y = 12 + i * 7 + Math.sin(i * 1.7) * 5;
+  context.fillRect(0, 0, 512, 512);
+  for (let i = 0; i < 76; i += 1) {
+    const y = 18 + i * 6.5 + Math.sin(i * 1.7) * 6;
     context.beginPath();
     context.moveTo(-20, y);
-    for (let x = -20; x <= 276; x += 18) {
-      context.lineTo(x, y + Math.sin(x * 0.045 + i) * 3.4);
+    for (let x = -20; x <= 540; x += 18) {
+      context.lineTo(x, y + Math.sin(x * 0.036 + i) * 3.6 + Math.sin(x * 0.012 + i * 0.4) * 2.4);
     }
-    context.strokeStyle = i % 3 === 0 ? "rgba(126,79,32,.16)" : "rgba(255,246,207,.16)";
-    context.lineWidth = i % 3 === 0 ? 1.3 : 1;
+    context.strokeStyle = i % 3 === 0 ? "rgba(102,61,24,.18)" : "rgba(255,248,220,.18)";
+    context.lineWidth = i % 3 === 0 ? 1.4 : 1;
     context.stroke();
   }
-  for (let i = 0; i < 18; i += 1) {
+  for (let i = 0; i < 34; i += 1) {
     context.beginPath();
-    context.ellipse(32 + (i * 47) % 210, 24 + (i * 73) % 208, 12, 4, i, 0, Math.PI * 2);
-    context.strokeStyle = "rgba(112,70,29,.09)";
-    context.lineWidth = 1;
+    context.ellipse(44 + (i * 83) % 432, 38 + (i * 117) % 420, 20, 6, i, 0, Math.PI * 2);
+    context.strokeStyle = "rgba(98,58,22,.105)";
+    context.lineWidth = 1.2;
     context.stroke();
   }
+  const glow = context.createRadialGradient(160, 120, 20, 160, 120, 420);
+  glow.addColorStop(0, "rgba(255,255,255,.18)");
+  glow.addColorStop(1, "rgba(255,255,255,0)");
+  context.fillStyle = glow;
+  context.fillRect(0, 0, 512, 512);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(1.25, 1.25);
+  texture.repeat.set(1.1, 1.1);
   return texture;
 }
 
@@ -559,6 +581,8 @@ const state = {
   levelIndex: 0,
   problemIndex: 0,
   grid: emptyGrid(),
+  colorGrid: emptyColorGrid(),
+  selectedColor: "cube",
   countMode: false,
   counted: 0,
   holdingCube: false,
@@ -605,8 +629,8 @@ function createViewer(container, interactive) {
   const scene = new THREE.Scene();
   scene.background = null;
 
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-  camera.position.set(5.4, 5.1, 6.2);
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  camera.position.set(4.8, 4.25, 5.35);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -618,10 +642,10 @@ function createViewer(container, interactive) {
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
   controls.enablePan = false;
-  controls.minDistance = 5;
-  controls.maxDistance = 12;
+  controls.minDistance = 4.6;
+  controls.maxDistance = 11;
   controls.maxPolarAngle = Math.PI * 0.48;
-  controls.target.set(0, 1.25, 0);
+  controls.target.set(0, 0.68, 0);
   controls.touches = {
     ONE: THREE.TOUCH.ROTATE,
     TWO: THREE.TOUCH.DOLLY_ROTATE
@@ -658,30 +682,59 @@ function createViewer(container, interactive) {
 function createWoodBoard() {
   const group = new THREE.Group();
   const tray = new THREE.Mesh(
-    new THREE.BoxGeometry(4.92, 0.16, 4.92),
+    new RoundedBoxGeometry(4.96, 0.24, 4.96, 8, 0.18),
     new THREE.MeshStandardMaterial({
-      color: 0xc68a4a,
+      color: 0xd19a55,
       map: woodTexture,
-      roughness: 0.62,
+      bumpMap: woodTexture,
+      bumpScale: 0.018,
+      roughness: 0.52,
       metalness: 0.02
     })
   );
-  tray.position.y = -0.11;
+  tray.position.y = -0.15;
   tray.receiveShadow = true;
   tray.castShadow = true;
   group.add(tray);
 
+  const railMaterial = new THREE.MeshStandardMaterial({
+    color: 0xb97939,
+    map: woodTexture,
+    bumpMap: woodTexture,
+    bumpScale: 0.014,
+    roughness: 0.5,
+    metalness: 0.02
+  });
+  [
+    { x: 0, z: 2.12, sx: 4.32, sz: 0.18 },
+    { x: 0, z: -2.12, sx: 4.32, sz: 0.18 },
+    { x: 2.12, z: 0, sx: 0.18, sz: 4.32 },
+    { x: -2.12, z: 0, sx: 0.18, sz: 4.32 }
+  ].forEach((rail) => {
+    const mesh = new THREE.Mesh(
+      new RoundedBoxGeometry(rail.sx, 0.12, rail.sz, 5, 0.06),
+      railMaterial
+    );
+    mesh.position.set(rail.x, 0.005, rail.z);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    group.add(mesh);
+  });
+
   const inset = new THREE.Mesh(
     new THREE.PlaneGeometry(3.28, 3.28),
     new THREE.MeshStandardMaterial({
-      color: 0xfff8df,
+      color: 0xffedc7,
+      map: woodTexture,
+      bumpMap: woodTexture,
+      bumpScale: 0.008,
       roughness: 0.9,
       transparent: true,
-      opacity: 0.94
+      opacity: 0.88
     })
   );
   inset.rotation.x = -Math.PI / 2;
-  inset.position.y = 0.002;
+  inset.position.y = 0.014;
   inset.receiveShadow = true;
   group.add(inset);
 
@@ -829,7 +882,10 @@ function loadProblem() {
   state.dragCell = null;
   state.pileTarget = false;
   state.grid = emptyGrid();
+  state.colorGrid = emptyColorGrid();
+  state.selectedColor = "cube";
   state.falling = [];
+  document.body.classList.toggle("color-problem", isColorProblem());
   document.querySelector("#modeTitle").textContent = t("copyMode");
   document.querySelector("#instruction").textContent = t("copyInstruction");
   updateStepDisplay();
@@ -843,7 +899,7 @@ function loadProblem() {
 
 function renderTarget() {
   clearGroup(targetGroup);
-  const problem = getProblem();
+  const problem = getProblemData();
   setStars(getLevel().stars);
   renderGrid(targetGroup, problem, false);
 }
@@ -856,10 +912,12 @@ function renderBuild() {
 }
 
 function renderGrid(group, grid, interactive) {
-  grid.forEach((row, z) => {
+  const problem = normalizeProblem(grid);
+  problem.grid.forEach((row, z) => {
     row.forEach((height, x) => {
       for (let y = 0; y < height; y += 1) {
-        const cube = createCube(colors.cube);
+        const colorName = interactive ? (state.colorGrid[z]?.[x]?.[y] || "cube") : getProblemCubeColor(problem, x, z, y);
+        const cube = createCube(colors[colorName] || colors.cube);
         cube.position.set(x - 1, y + 0.5, z - 1);
         cube.userData = { kind: "cube", x, z, y, interactive };
         group.add(cube);
@@ -872,15 +930,15 @@ function renderBaseTargets(group) {
   for (let z = 0; z < 3; z += 1) {
     for (let x = 0; x < 3; x += 1) {
       const marker = new THREE.Mesh(
-        new THREE.BoxGeometry(0.92, 0.035, 0.92),
+        new RoundedBoxGeometry(0.9, 0.035, 0.9, 3, 0.018),
         new THREE.MeshStandardMaterial({
-          color: 0xfff5d2,
+          color: 0xfff2d0,
           roughness: 0.9,
           transparent: true,
-          opacity: 0.5
+          opacity: 0.58
         })
       );
-      marker.position.set(x - 1, 0.03, z - 1);
+      marker.position.set(x - 1, 0.045, z - 1);
       marker.userData = { kind: "cell", x, z, interactive: true };
       group.add(marker);
     }
@@ -888,11 +946,21 @@ function renderBaseTargets(group) {
 }
 
 function createCube(color) {
+  const isWood = color === colors.cube;
+  const cubeMaterial = isWood
+    ? woodMaterial.clone()
+    : new THREE.MeshStandardMaterial({
+      color,
+      map: woodTexture,
+      bumpMap: woodTexture,
+      bumpScale: 0.012,
+      roughness: 0.54,
+      metalness: 0.03
+    });
+  cubeMaterial.envMapIntensity = 0.65;
   const mesh = new THREE.Mesh(
     cubeGeometry,
-    color === colors.cube
-      ? woodMaterial.clone()
-      : new THREE.MeshStandardMaterial({ color, roughness: 0.62, metalness: 0.02 })
+    cubeMaterial
   );
   const edges = new THREE.LineSegments(
     cubeEdges,
@@ -906,13 +974,13 @@ function createCube(color) {
 
 function createDropMarker() {
   const marker = new THREE.Group();
-  const geometry = new THREE.BoxGeometry(1.01, 1.01, 1.01);
+  const geometry = new RoundedBoxGeometry(1.02, 1.02, 1.02, 4, 0.045);
   const fill = new THREE.Mesh(
     geometry,
     new THREE.MeshBasicMaterial({
       color: 0xdf4d4d,
       transparent: true,
-      opacity: 0.28,
+      opacity: 0.2,
       depthTest: false,
       depthWrite: false
     })
@@ -922,7 +990,7 @@ function createDropMarker() {
     new THREE.LineBasicMaterial({
       color: 0xff2638,
       transparent: true,
-      opacity: 0.98,
+      opacity: 0.92,
       depthTest: false,
       depthWrite: false
     })
@@ -999,6 +1067,13 @@ function placeAt(x, z) {
     showToast(t("maxHeight"));
     return;
   }
+  const colorName = isColorProblem() ? state.selectedColor : "cube";
+  const remaining = getRemainingInventory();
+  if (isColorProblem() && (remaining[colorName] || 0) <= 0) {
+    showToast(t("pileFirst"));
+    return;
+  }
+  state.colorGrid[z][x][state.grid[z][x]] = colorName;
   state.grid[z][x] += 1;
   state.holdingCube = false;
   renderBuild();
@@ -1012,6 +1087,7 @@ function countCube(object) {
     showToast(t("topOnly"));
     return;
   }
+  state.colorGrid[z][x].pop();
   state.grid[z][x] -= 1;
   object.userData.falling = true;
   state.falling.push({ mesh: object, velocity: 0.045 });
@@ -1023,8 +1099,8 @@ function checkAnswer() {
     showToast(t("buildFirst"));
     return;
   }
-  const problem = getProblem();
-  if (!sameGrid(problem, state.grid)) {
+  const problem = getProblemData();
+  if (!sameBuild(problem)) {
     setGuide("guideWrong");
     showToast(t("wrong"));
     return;
@@ -1039,7 +1115,7 @@ function checkAnswer() {
 
 function checkAutoSuccess() {
   if (state.countMode) return;
-  if (!sameGrid(getProblem(), state.grid)) {
+  if (!sameBuild(getProblemData())) {
     clearPendingSuccess();
     return;
   }
@@ -1047,7 +1123,7 @@ function checkAutoSuccess() {
   state.successPending = true;
   state.successTimer = window.setTimeout(() => {
     state.successTimer = null;
-    if (!sameGrid(getProblem(), state.grid)) {
+    if (!sameBuild(getProblemData())) {
       state.successPending = false;
       return;
     }
@@ -1066,6 +1142,8 @@ function clearPendingSuccess() {
 function resetBuild() {
   clearPendingSuccess();
   state.grid = emptyGrid();
+  state.colorGrid = emptyColorGrid();
+  state.selectedColor = "cube";
   state.countMode = false;
   state.counted = 0;
   state.holdingCube = false;
@@ -1131,7 +1209,27 @@ function renderLevelOptions() {
 }
 
 function getProblem() {
-  return getLevel().problems[state.problemIndex];
+  return getProblemData().grid;
+}
+
+function getProblemData() {
+  return normalizeProblem(getLevel().problems[state.problemIndex]);
+}
+
+function normalizeProblem(problem) {
+  if (Array.isArray(problem)) return { grid: problem, colorMap: null };
+  return {
+    grid: problem.grid,
+    colorMap: problem.colorMap || null
+  };
+}
+
+function isColorProblem() {
+  return Boolean(getProblemData().colorMap);
+}
+
+function getProblemCubeColor(problem, x, z, y) {
+  return problem.colorMap?.[z]?.[x]?.[y] || "cube";
 }
 
 function getLevel() {
@@ -1230,7 +1328,7 @@ function applyLanguage() {
 }
 
 function showSuccessThenNext() {
-  if (!sameGrid(getProblem(), state.grid)) {
+  if (!sameBuild(getProblemData())) {
     clearPendingSuccess();
     return;
   }
@@ -1281,6 +1379,10 @@ function emptyGrid() {
   ];
 }
 
+function emptyColorGrid() {
+  return Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => []));
+}
+
 function clearGroup(group) {
   while (group.children.length) {
     const child = group.children.pop();
@@ -1299,13 +1401,54 @@ function clearGroup(group) {
 }
 
 function sameGrid(a, b) {
-  if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
-  return a.every((row, z) => (
+  const gridA = normalizeProblem(a).grid;
+  const gridB = normalizeProblem(b).grid;
+  if (!Array.isArray(gridA) || !Array.isArray(gridB) || gridA.length !== gridB.length) return false;
+  return gridA.every((row, z) => (
     Array.isArray(row) &&
-    Array.isArray(b[z]) &&
-    row.length === b[z].length &&
-    row.every((value, x) => value === b[z][x])
+    Array.isArray(gridB[z]) &&
+    row.length === gridB[z].length &&
+    row.every((value, x) => value === gridB[z][x])
   ));
+}
+
+function sameBuild(problem) {
+  if (!sameGrid(problem.grid, state.grid)) return false;
+  if (!problem.colorMap) return true;
+  for (let z = 0; z < problem.grid.length; z += 1) {
+    for (let x = 0; x < problem.grid[z].length; x += 1) {
+      for (let y = 0; y < problem.grid[z][x]; y += 1) {
+        if ((state.colorGrid[z]?.[x]?.[y] || "cube") !== getProblemCubeColor(problem, x, z, y)) return false;
+      }
+    }
+  }
+  return true;
+}
+
+function getProblemInventory() {
+  const problem = getProblemData();
+  const inventory = { cube: 0, green: 0, blue: 0, yellow: 0, rose: 0 };
+  problem.grid.forEach((row, z) => {
+    row.forEach((height, x) => {
+      for (let y = 0; y < height; y += 1) {
+        const colorName = getProblemCubeColor(problem, x, z, y);
+        inventory[colorName] = (inventory[colorName] || 0) + 1;
+      }
+    });
+  });
+  return inventory;
+}
+
+function getRemainingInventory() {
+  const remaining = getProblemInventory();
+  state.colorGrid.forEach((row) => {
+    row.forEach((stack) => {
+      stack.forEach((colorName) => {
+        remaining[colorName] = Math.max(0, (remaining[colorName] || 0) - 1);
+      });
+    });
+  });
+  return remaining;
 }
 
 function sumGrid(grid) {
@@ -1316,13 +1459,14 @@ function setStars(count) {
   document.querySelector("#stars").textContent = `${"★".repeat(count)}${"☆".repeat(Math.max(0, 4 - count))}`;
 }
 
-function takeFromPile() {
+function takeFromPile(event) {
   if (Date.now() - state.lastDragAt < 250) return;
   if (state.draggingCube || state.successPending) return;
   if (state.countMode) {
     showToast(t("buildFirst"));
     return;
   }
+  selectPileColorFromEvent(event);
   state.holdingCube = true;
   setGuide("guideHold");
   updateBuilderControls();
@@ -1330,6 +1474,8 @@ function takeFromPile() {
 
 function startBuildCubeDrag(event, x, z) {
   if (state.successPending) return;
+  const topY = state.grid[z][x] - 1;
+  state.selectedColor = state.colorGrid[z]?.[x]?.[topY] || "cube";
   state.holdingCube = true;
   state.draggingCube = true;
   state.draggingFromBoard = { x, z };
@@ -1374,6 +1520,13 @@ function startPileDrag(event) {
     return;
   }
   event.preventDefault();
+  selectPileColorFromEvent(event);
+  const remaining = getRemainingInventory();
+  if (isColorProblem() && (remaining[state.selectedColor] || 0) <= 0) {
+    showToast(t("pileFirst"));
+    updateBuilderControls();
+    return;
+  }
   state.holdingCube = true;
   state.draggingCube = true;
   state.draggingFromBoard = null;
@@ -1405,6 +1558,19 @@ function startPileDrag(event) {
   document.addEventListener("pointermove", move);
   document.addEventListener("pointerup", end);
   document.addEventListener("pointercancel", cancel);
+}
+
+function selectPileColorFromEvent(event) {
+  if (!isColorProblem()) {
+    state.selectedColor = "cube";
+    return;
+  }
+  const selected = event?.target?.closest?.("[data-cube-color]")?.dataset?.cubeColor;
+  if (selected) state.selectedColor = selected;
+  const remaining = getRemainingInventory();
+  if ((remaining[state.selectedColor] || 0) <= 0) {
+    state.selectedColor = Object.keys(remaining).find((key) => remaining[key] > 0) || "cube";
+  }
 }
 
 function moveDragGhost(x, y) {
@@ -1538,6 +1704,7 @@ function finishPileDrag(x, y) {
     state.pileTarget = false;
     state.holdingCube = false;
     if (shouldRemove) {
+      state.colorGrid[source.z][source.x].pop();
       state.grid[source.z][source.x] = Math.max(0, state.grid[source.z][source.x] - 1);
       renderBuild();
     } else if (target) {
@@ -1552,7 +1719,9 @@ function finishPileDrag(x, y) {
         updateBuilderControls();
         return;
       }
+      const movingColor = state.colorGrid[source.z][source.x].pop() || "cube";
       state.grid[source.z][source.x] = Math.max(0, state.grid[source.z][source.x] - 1);
+      state.colorGrid[target.z][target.x][state.grid[target.z][target.x]] = movingColor;
       state.grid[target.z][target.x] = Math.min(4, state.grid[target.z][target.x] + 1);
       renderBuild();
       checkAutoSuccess();
@@ -1599,8 +1768,33 @@ function updateBuilderControls() {
   const hand = document.querySelector("#handStatus");
   if (!pile || !hand) return;
 
+  const colorProblem = isColorProblem();
+  pile.classList.toggle("color-problem", colorProblem);
   pile.classList.toggle("holding", state.holdingCube);
   hand.textContent = state.holdingCube ? t("inHand") : t("emptyHand");
+  updateColorTray();
+  updateDragGhostColor();
+}
+
+function updateColorTray() {
+  const tray = document.querySelector("#colorTray");
+  if (!tray) return;
+  const remaining = getRemainingInventory();
+  tray.querySelectorAll("[data-cube-color]").forEach((button) => {
+    const colorName = button.dataset.cubeColor;
+    const count = remaining[colorName] || 0;
+    button.hidden = !isColorProblem() || count <= 0;
+    button.disabled = count <= 0;
+    button.classList.toggle("active", colorName === state.selectedColor);
+    const label = button.querySelector("strong");
+    if (label) label.textContent = `x${count}`;
+  });
+}
+
+function updateDragGhostColor() {
+  const ghost = document.querySelector("#dragGhost");
+  if (!ghost) return;
+  ghost.dataset.cubeColor = state.selectedColor;
 }
 
 function setGuide(key) {
