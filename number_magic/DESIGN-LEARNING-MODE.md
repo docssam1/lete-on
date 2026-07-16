@@ -417,7 +417,8 @@ window.NM_ROADMAP = {
   교재라 git에는 요약만. 유닛 제작 시 해당 권 PDF(scratchpad/upload/)를 구조 참고용으로만 열람.
 
 **진행 체크리스트** (하나 끝날 때마다 [x] 갱신할 것!)
-- [ ] N-01 수 세기 (nl1_count + tapCount 위젯 + 유아탭 + N0챕터 + numberland 타일 연결 + basic 플로우)
+- [x] N-01 수 세기 (nl1_count + tapCount/tapMake 위젯 + 유아탭 + N0챕터 + numberland 타일 연결
+      + basic 경량 플로우 + 프랙티스 위젯 지원) — 2026-07-16 Playwright 전 구간 검증 완료
 - [ ] N-06 모으기·가르기·0 (nl4_bond + numberBond 위젯)
 - [ ] N-07 10까지 관계망 (1큰수·텐프레임 — 기존 tenframe 재사용 + numberBond)
 - [ ] N-02 수의 순서 (nl2_seq + seqFill/dotToDot)

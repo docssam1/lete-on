@@ -14,6 +14,15 @@ window.NM_ROADMAP = {
 
   chapters:[
 
+    /* ─────── N0 : 수의 나라 — 수 세기와 개수 (유아 프롤로그 섬) ─────── */
+    {
+      id:'N0', icon:'🐤', grade:'유아',
+      edu:{ko:'유아 5~7세 · 수 감각',en:'Ages 5–7 · Number sense',zh:'幼儿5~7岁 · 数感'},
+      theme:{ko:'수 세기와 개수 — 하나, 둘, 셋!',en:'Counting & Quantity — One, Two, Three!',zh:'数数与数量——一、二、三！'},
+      units:['N-01'],
+      tip:{ko:'병아리를 톡톡 짚으면서 세어 봐요. 마지막 수가 전체 개수!',en:'Tap the chicks one by one — the last number is how many!',zh:'点着小鸡一个一个数——最后的数就是总数！'}
+    },
+
     /* ─────── R0 : 연산 첫걸음 ─────── */
     {
       id:'R0', icon:'🌱', grade:'초1',

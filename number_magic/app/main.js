@@ -476,7 +476,7 @@ function roadmapNextLabel(){
   if(!window.NM_ROADMAP)return '';
   const chapters=NM_ROADMAP.chapters;
   for(const ch of chapters){
-    for(const uid of ch.units){
+    for(const uid of (ch.units||[])){   /* 게임 챕터(G0·G1)는 units 없음 */
       if(!stepDone(uid,'stamp')) return S.lang==='ko'?`이어서: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:S.lang==='en'?`Continue: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:S.lang==='zh'?`继续: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:'';
     }
   }
@@ -792,6 +792,7 @@ function screenGradeCourse(){
   if(!window.NM_ROADMAP){$('#screen').innerHTML='<div class="nm-card">roadmap.js 없음</div>';return;}
 
   const GRADES=[
+    {key:'유아',label:{ko:'유아',en:'Ages 5–7',zh:'幼儿'}},
     {key:'초1',label:{ko:'초1',en:'Grade 1',zh:'一年级'}},
     {key:'초2',label:{ko:'초2',en:'Grade 2',zh:'二年级'}},
     {key:'초3',label:{ko:'초3',en:'Grade 3',zh:'三年级'}},
@@ -1158,9 +1159,17 @@ function finishUnitIntro(u){
   save();screenUnit();
 }
 
+/* 수의 나라(tier:'basic') 유아 유닛은 경량 플로우 — check(서술형)·arena(타이머) 생략 */
+const BASIC_FLOW_KEYS=['practice','discover','lab','stamp'];
+function unitFlowOf(u){
+  if(u&&u.tier==='basic')return CUR.unitFlow.filter(f=>BASIC_FLOW_KEYS.includes(f.key));
+  return CUR.unitFlow;
+}
+function afterLabKey(u){return (u&&u.tier==='basic')?'stamp':'arena';}
+
 function flowBar(){
   const u=S.unit;
-  return `<div class="nm-flow">`+CUR.unitFlow.map((f,i)=>{
+  return `<div class="nm-flow">`+unitFlowOf(UNITS[u]).map((f,i)=>{
     const active=S.step===f.key, done=stepDone(u,f.key);
     return `${i?'<span class="nm-flow-arrow">→</span>':''}<button class="nm-flow-step ${active?'active':''} ${done?'done':''}" data-step="${f.key}">
       <span class="nm-flow-ic">${f.icon}</span><small>${L({ko:f.ko,en:f.en,zh:f.zh})}${done?' ✓':''}</small></button>`;
@@ -1203,7 +1212,7 @@ function stepUnitIntro(body,u){
 }
 
 function gotoStep(k){S.step=k;save();screenUnit();}
-function nextStepKey(){const ks=CUR.unitFlow.map(f=>f.key);const i=ks.indexOf(S.step);return ks[Math.min(i+1,ks.length-1)];}
+function nextStepKey(){const ks=unitFlowOf(UNITS[S.unit]).map(f=>f.key);const i=ks.indexOf(S.step);return ks[Math.min(i+1,ks.length-1)];}
 
 /* ---------- STEP1 프랙티스 (진단스킵 + 숫자패드 대화형) ---------- */
 function stepPractice(body,u){
@@ -1227,6 +1236,8 @@ function runPractice(body,u){
   S.sub.pIdx=S.sub.pIdx||0;S.sub.cur=S.sub.cur||genProblem(cfg,'practice');
   const cur=S.sub.cur;
   const first=S.sub.pIdx===0&&!S.sub.started;
+  /* 조작 위젯 문제(유아 tapCount 등)는 넘패드 대신 위젯 렌더 */
+  if(cur.widget&&cur.widget!=='numpad'&&window.NM_WIDGETS){runPracticeWidget(body,u,cur,first,need);return;}
   const pracTex=cur.tex?`<div class="nm-lab-expr"><span data-tex="${esc(cur.tex)}"></span></div>`:'';
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
@@ -1242,6 +1253,28 @@ function runPractice(body,u){
   const isDecAns=cur&&!Number.isInteger(cur.answer);
   buildNumpad($('#pad'),val=>handlePractice(val,body,u),{decimal:isDecAns});
   say(first?L(cfg.intro):L(cur.prompt));
+}
+function runPracticeWidget(body,u,cur,first,need){
+  const cfg=u.practice;
+  body.innerHTML=`<div class="nm-dialog">
+    <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
+    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
+    <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro))+'<br><br>'+esc(L(cur.prompt)):esc(L(cur.prompt))}</div>
+    <div id="pracWidget" class="nm-lab-widget"></div>
+  </div>`;
+  S.sub.started=true;
+  say(first?L(cfg.intro):L(cur.prompt));
+  NM_WIDGETS.render(cur,$('#pracWidget'),val=>{
+    if(+val===cur.answer){
+      toast(t('correct'),true);numiHappy();
+      S.sub.pIdx++;S.sub.cur=null;
+      if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
+      S.sub.cur=genProblem(cfg,'practice');save();
+      setTimeout(()=>runPractice(body,u),650);
+    }else{
+      toast(t('tryAgain'),false);
+    }
+  });
 }
 function handlePractice(val,body,u){
   const cur=S.sub.cur;const need=u.practice.count||5;
@@ -1336,7 +1369,7 @@ function stepDiscover(body,u){
     const res=document.createElement('div');res.className='nm-cresult';res.textContent=L(s.result);wrap.appendChild(res);
     if(s.book){const bk=document.createElement('div');bk.className='nm-cbook';bk.innerHTML='📖 '+L(s.book);wrap.appendChild(bk);}
   });
-  $('#toCheck').onclick=()=>{markStepDone(S.unit,'discover');gotoStep('check');};
+  $('#toCheck').onclick=()=>{markStepDone(S.unit,'discover');gotoStep(u.tier==='basic'?'lab':'check');};
 }
 
 /* 개념 렌더(계단식): 세로로 이어지는 수식 스텝(mathSteps: tex 문자열 배열), 화살표로 연결 */
@@ -1420,7 +1453,7 @@ function stepLabWidget(body,u){
     if(+val===cur.answer){
       toast(pickVoice(u.voice.correct),true);numiHappy();
       S.sub.li++;S.sub.cur=null;
-      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep('arena'),700);return;}
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
       setTimeout(()=>stepLab(body,u),650);
     }else{
@@ -1475,7 +1508,7 @@ function handleLabNumpad(val,body,u){
     if(parseFloat(inp)===cur.answer){
       toast(pickVoice(u.voice.correct),true);numiHappy();
       S.sub.li++;S.sub.inp='';S.sub.cur=null;
-      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep('arena'),700);return;}
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
       setTimeout(()=>stepLab(body,u),650);
     }else{toast(pickVoice(u.voice.wrong),false);S.sub.inp='';$('#pscreen').textContent=' ';}
@@ -1496,7 +1529,7 @@ function pickTile(el,i,n,body,u){
       p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e){e.classList.remove('sel');e.classList.add('paired');}});
       S.sub.li++;S.sub.cur=null;
       const need=u.lab.count||4;
-      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep('arena'),800);return;}
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),800);return;}
       setTimeout(()=>stepLab(body,u),900);
     }else{toast(pickVoice(u.voice.wrong),false);p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e)e.classList.remove('sel');});S.sub.picked=[];pk.disabled=true;}
   };
@@ -1550,7 +1583,7 @@ function stepStamp(body,u){
   /* 도장은 이전 단계(기본연산~아레나)를 실제로 다 마쳐야 받을 수 있음.
      플로우바 탭으로 건너뛰어 곧장 여기로 오면 안 되므로, 안 끝난 단계가
      있으면 그 단계로 돌려보내고 코인은 절대 지급하지 않는다. */
-  const requiredKeys=CUR.unitFlow.map(f=>f.key).filter(k=>k!=='stamp');
+  const requiredKeys=unitFlowOf(u).map(f=>f.key).filter(k=>k!=='stamp');
   const missing=requiredKeys.find(k=>!stepDone(S.unit,k));
   if(missing){gotoStep(missing);return;}
   const s=u.stamp;const already=unitDone(S.unit);

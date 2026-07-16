@@ -22,7 +22,7 @@ window.NM_CURRICULUM = {
         en:'Know, count, share, and compare numbers — your first steps getting friendly with them',
         zh:'认识、数数、分配、比较——第一次和数字做朋友的地方'},
       levels:[
-        { id:'NL-1', title:{ko:'수 세기와 개수',en:'Counting & Quantity',zh:'数数与数量'}, units:['NL-1-1'], available:false },
+        { id:'NL-1', title:{ko:'수 세기와 개수',en:'Counting & Quantity',zh:'数数与数量'}, units:['N-01'], available:true },
         { id:'NL-2', title:{ko:'순서와 뛰어세기',en:'Order & Skip-Counting',zh:'顺序与跳数'}, units:['NL-2-1'], available:false },
         { id:'NL-3', title:{ko:'순서수와 크기 비교',en:'Ordinals & Comparing Size',zh:'序数与大小比较'}, units:['NL-3-1'], available:false },
         { id:'NL-4', title:{ko:'짝수·홀수와 논리',en:'Odd, Even & Logic',zh:'奇偶数与逻辑'}, units:['NL-4-1'], available:false },

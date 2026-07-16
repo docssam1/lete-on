@@ -67,6 +67,8 @@ function render(problem, container, onAnswer){
     case 'vertical': return renderVertical(problem,container,onAnswer);
     case 'missing':      return renderMissing(problem,container,onAnswer);
     case 'selectPairs':  return renderSelectPairs(problem,container,onAnswer);
+    case 'tapCount':     return renderTapCount(problem,container,onAnswer);
+    case 'tapMake':      return renderTapMake(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -649,6 +651,112 @@ function renderSelectPairs(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   TAPCOUNT  widget:'tapCount'  (유아 · 수의 나라)
+   problem.items = [{e:'🍎',t:true}, ...] 섞인 장면
+   대상을 탭하면 순서 배지(1,2,3…)가 찍히며 세어짐 →
+   아래 큰 숫자 보기 중 정답 선택. onAnswer(선택값).
+───────────────────────────────────────── */
+function renderTapCount(problem, container, onAnswer){
+  const items=(problem.items||[]).map((it,i)=>({...it,id:i}));
+  const answer=problem.answer;
+  const marked=[];          /* 탭한 순서대로 id 저장 */
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-tc-wrap';
+  root.innerHTML=`
+    <div class="nm-tc-scene"></div>
+    <div class="nm-tc-counter"><span class="nm-tc-cnt">0</span></div>
+    <div class="nm-tc-choices"></div>`;
+  container.appendChild(root);
+
+  const scene=root.querySelector('.nm-tc-scene');
+  const cnt=root.querySelector('.nm-tc-cnt');
+
+  function paint(){
+    scene.innerHTML='';
+    items.forEach(it=>{
+      const el=document.createElement('button');
+      const ord=marked.indexOf(it.id);
+      el.className='nm-tc-item'+(ord>=0?' on':'');
+      el.innerHTML=`<span class="nm-tc-emoji">${it.e}</span>`+
+        (ord>=0?`<span class="nm-tc-ord">${ord+1}</span>`:'');
+      el.addEventListener('pointerup',e=>{
+        e.stopPropagation();
+        const at=marked.indexOf(it.id);
+        if(at>=0)marked.splice(at,1); else marked.push(it.id);
+        cnt.textContent=marked.length;
+        paint();
+      });
+      scene.appendChild(el);
+    });
+  }
+  paint();
+
+  /* 큰 숫자 보기 3개 (정답 포함, 1~9 범위) */
+  const cand=[answer-2,answer-1,answer,answer+1,answer+2].filter(n=>n>=1&&n<=9&&n!==answer);
+  const picks=[answer];
+  while(picks.length<3&&cand.length){picks.push(cand.splice(Math.floor(Math.random()*cand.length),1)[0]);}
+  picks.sort(()=>Math.random()-.5);
+  const ch=root.querySelector('.nm-tc-choices');
+  picks.forEach(n=>{
+    const b=document.createElement('button');
+    b.className='nm-tc-choice';b.textContent=n;
+    b.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(lock)return;
+      lock=true;setTimeout(()=>{lock=false;},700);
+      if(n!==answer)shake(b);
+      onAnswer(n);
+    });
+    ch.appendChild(b);
+  });
+}
+
+/* ─────────────────────────────────────────
+   TAPMAKE  widget:'tapMake'  (유아 · 수의 나라)
+   problem.target 만큼 판을 탭해 이모지를 만든 뒤
+   "다 됐어요!" 버튼으로 제출. 스탬프 탭 = 지우기.
+   onAnswer(현재 개수).
+───────────────────────────────────────── */
+function renderTapMake(problem, container, onAnswer){
+  const em=problem.emoji||'⭐';
+  const target=problem.target||3;
+  let stamps=0, lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-tm-wrap';
+  root.innerHTML=`
+    <div class="nm-tm-goal"><span class="nm-tm-goal-em">${em}</span><span class="nm-tm-goal-x">×</span><span class="nm-tm-goal-n">${target}</span></div>
+    <div class="nm-tm-board"></div>
+    <div class="nm-tm-counter"><span class="nm-tm-cnt">0</span></div>
+    <button class="nm-tm-done">✔</button>`;
+  container.appendChild(root);
+
+  const board=root.querySelector('.nm-tm-board');
+  const cnt=root.querySelector('.nm-tm-cnt');
+
+  board.addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(e.target.classList.contains('nm-tm-stamp')){   /* 스탬프 탭 = 지우기 */
+      e.target.remove();stamps--;cnt.textContent=stamps;return;
+    }
+    if(stamps>=12)return;                              /* 판이 꽉 참 */
+    const s=document.createElement('span');
+    s.className='nm-tm-stamp';s.textContent=em;
+    board.appendChild(s);stamps++;cnt.textContent=stamps;
+  });
+
+  root.querySelector('.nm-tm-done').addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(lock||stamps===0)return;
+    lock=true;setTimeout(()=>{lock=false;},700);
+    if(stamps!==target)shake(board);
+    onAnswer(stamps);
+  });
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
    Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
@@ -699,6 +807,8 @@ window.NM_WIDGETS={
   renderVertical,
   renderMissing,
   renderSelectPairs,
+  renderTapCount,
+  renderTapMake,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake
