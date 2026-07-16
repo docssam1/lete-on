@@ -292,5 +292,57 @@
     };
   };
 
+  /* ── NL11 — 수 배열·이어 세기 ────────────────────────────
+     mode:'seq'   이어 세기 수열 빈칸 (seqFill 재사용) — 이어 세기 +1 패턴
+     mode:'match' 수↔점배열 카드 매칭 (matchLine 신규 위젯)
+                  left: 숫자 카드(셔플), right: 점 그림 카드(셔플) */
+  NM_TGEN['nl11_arrange'] = function (params, rng) {
+    const mode = (params && params.mode) || 'seq';
+    const lv   = (params && params.level) || 'main';
+
+    if (mode === 'seq') {
+      /* 이어 세기 +1 빈칸: practice 1~10 범위, main 1~15 범위 */
+      const maxStart = lv === 'practice' ? 6 : 11;
+      const start = R(rng, 1, maxStart);
+      const len   = 5;
+      const seq   = [];
+      for (let i = 0; i < len; i++) seq.push(start + i);
+      const blank = R(rng, 1, len - 2);   /* 첫 칸(힌트)·마지막 칸 제외 */
+      return {
+        prompt: {
+          ko: '이어 세기! 순서대로 커지는 빈 칸을 골라요',
+          en: 'Count on! Pick the missing number that comes next in order',
+          zh: '接着数！选出按顺序增大的空格里的数'
+        },
+        answer:     seq[blank],
+        answerType: 'number',
+        widget:     'seqFill',
+        seq, blank
+      };
+    }
+
+    /* ---- match: 수↔점 배열 매칭 ---- */
+    const N    = lv === 'practice' ? 3 : 4;
+    const maxN = lv === 'practice' ? 5 : 9;
+    /* 1~maxN에서 N개 비복원 추출 */
+    const pool = [];
+    for (let i = 1; i <= maxN; i++) pool.push(i);
+    const chosen = shuffle(rng, pool).slice(0, N);
+    const left   = shuffle(rng, chosen.slice());
+    const right  = shuffle(rng, chosen.slice());
+    return {
+      prompt: {
+        ko: '수와 점 그림을 이어요! 왼쪽 수 톡 → 오른쪽 점 그림 톡!',
+        en: 'Match numbers to dot pictures! Tap a number, then tap its dots!',
+        zh: '连连看！先点左边的数，再点右边的点图！'
+      },
+      answer:     N,
+      answerType: 'number',
+      widget:     'matchLine',
+      left,   /* 숫자 카드 배열(셔플) */
+      right   /* 점 그림 수 배열(셔플) */
+    };
+  };
+
   if (typeof module !== 'undefined' && module.exports) module.exports = NM_TGEN;
 })();

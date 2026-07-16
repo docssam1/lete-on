@@ -73,6 +73,7 @@ function render(problem, container, onAnswer){
     case 'seqFill':      return renderSeqFill(problem,container,onAnswer);
     case 'dotToDot':     return renderDotToDot(problem,container,onAnswer);
     case 'pyramid':      return renderPyramid(problem,container,onAnswer);
+    case 'matchLine':    return renderMatchLine(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -988,6 +989,121 @@ function renderPyramid(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   MATCHLINE  widget:'matchLine'  (유아 · 수의 나라)
+   problem.left  = 숫자 배열(셔플), problem.right = 점 그림 수 배열(셔플)
+   왼쪽 숫자 카드 탭 → 선택(금색), 오른쪽 점 그림 카드 탭 → 짝 맞추기.
+   맞으면 초록 선 + matched, 틀리면 shake. 전부 맞으면 onAnswer(N).
+───────────────────────────────────────── */
+function renderMatchLine(problem, container, onAnswer){
+  const left  = problem.left  || [];
+  const right = problem.right || [];
+  const N     = left.length;
+  let selL    = -1;
+  const matchedL = new Set();
+  const matchedR = new Set();
+  let remaining  = N;
+
+  /* 1~9 점 배치 (viewBox 0~60) */
+  const DOT_POS = {
+    1:[[30,30]],
+    2:[[18,30],[42,30]],
+    3:[[18,20],[42,20],[30,44]],
+    4:[[18,18],[42,18],[18,42],[42,42]],
+    5:[[18,18],[42,18],[30,30],[18,42],[42,42]],
+    6:[[18,14],[42,14],[18,30],[42,30],[18,46],[42,46]],
+    7:[[18,12],[42,12],[18,26],[42,26],[18,40],[42,40],[30,52]],
+    8:[[14,12],[30,12],[46,12],[14,28],[46,28],[14,44],[30,44],[46,44]],
+    9:[[14,12],[30,12],[46,12],[14,28],[30,28],[46,28],[14,44],[30,44],[46,44]]
+  };
+  function dotSvg(n){
+    const pts = DOT_POS[n] || DOT_POS[1];
+    const circles = pts.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5" fill="currentColor"/>`).join('');
+    return `<svg viewBox="0 0 60 60" class="nm-ml-dots" aria-hidden="true">${circles}</svg>`;
+  }
+
+  const root = document.createElement('div');
+  root.className = 'nm-ml-wrap';
+  const arena = document.createElement('div');
+  arena.className = 'nm-ml-arena';
+  root.appendChild(arena);
+  container.appendChild(root);
+
+  /* SVG 오버레이 — 연결선 그리기 */
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.className = 'nm-ml-lines';
+  arena.appendChild(svg);
+
+  /* 왼쪽: 숫자 카드 */
+  const colL = document.createElement('div');
+  colL.className = 'nm-ml-col';
+  left.forEach((num, i)=>{
+    const card = document.createElement('button');
+    card.className = 'nm-ml-card nm-ml-num';
+    card.textContent = num;
+    card.addEventListener('pointerup', e=>{
+      e.stopPropagation();
+      if(matchedL.has(i)) return;
+      if(selL === i){ selL=-1; card.classList.remove('sel'); return; }
+      colL.querySelectorAll('.nm-ml-card').forEach(c=>c.classList.remove('sel'));
+      selL = i;
+      card.classList.add('sel');
+    });
+    colL.appendChild(card);
+  });
+  arena.appendChild(colL);
+
+  /* 오른쪽: 점 그림 카드 */
+  const colR = document.createElement('div');
+  colR.className = 'nm-ml-col';
+  right.forEach((num, j)=>{
+    const card = document.createElement('button');
+    card.className = 'nm-ml-card nm-ml-dot';
+    card.innerHTML = dotSvg(num);
+    card.addEventListener('pointerup', e=>{
+      e.stopPropagation();
+      if(matchedR.has(j)) return;
+      if(selL === -1) return;
+      if(left[selL] === num){
+        const lCard = colL.children[selL];
+        lCard.classList.remove('sel');
+        lCard.classList.add('matched');
+        card.classList.add('matched');
+        matchedL.add(selL);
+        matchedR.add(j);
+        drawLine(selL, j);
+        selL = -1;
+        remaining--;
+        if(remaining === 0) setTimeout(()=>onAnswer(N), 600);
+      } else {
+        shake(colL.children[selL]);
+        shake(card);
+      }
+    });
+    colR.appendChild(card);
+  });
+  arena.appendChild(colR);
+
+  function drawLine(li, ri){
+    const ar = arena.getBoundingClientRect();
+    const lR = colL.children[li].getBoundingClientRect();
+    const rR = colR.children[ri].getBoundingClientRect();
+    const aw = ar.width, ah = ar.height;
+    svg.setAttribute('viewBox',`0 0 ${aw} ${ah}`);
+    svg.setAttribute('width', aw);
+    svg.setAttribute('height', ah);
+    const x1 = lR.right  - ar.left;
+    const y1 = lR.top    + lR.height/2 - ar.top;
+    const x2 = rR.left   - ar.left;
+    const y2 = rR.top    + rR.height/2 - ar.top;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+    line.setAttribute('class','nm-ml-line');
+    svg.appendChild(line);
+  }
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
    Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
@@ -1044,6 +1160,7 @@ window.NM_WIDGETS={
   renderSeqFill,
   renderDotToDot,
   renderPyramid,
+  renderMatchLine,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake

@@ -363,6 +363,54 @@
 .nm-w-fallback .nm-numpad{max-width:260px;width:100%;}
 
 /* ══════════════════════════════════════
+   MATCHLINE WIDGET  (유아 · 수의 나라)
+══════════════════════════════════════ */
+.nm-ml-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  gap:14px;padding:8px 4px;
+}
+.nm-ml-arena{
+  position:relative;
+  display:flex;gap:40px;justify-content:center;align-items:flex-start;
+  padding:8px 12px;
+}
+.nm-ml-lines{
+  position:absolute;inset:0;
+  pointer-events:none;overflow:visible;
+}
+.nm-ml-col{display:flex;flex-direction:column;gap:10px;}
+.nm-ml-card{
+  width:64px;height:64px;
+  border-radius:18px;
+  border:2.5px solid var(--line);
+  background:#fff;
+  cursor:pointer;
+  display:grid;place-items:center;
+  box-shadow:0 4px 0 #e0dbd2;
+  transition:transform .15s,border-color .15s,background .15s,box-shadow .15s;
+  touch-action:manipulation;user-select:none;
+}
+.nm-ml-num{font-size:32px;font-weight:900;color:var(--blue-deep);}
+.nm-ml-dot{color:var(--blue-deep);}
+.nm-ml-dots{width:42px;height:42px;}
+.nm-ml-card.sel{
+  border-color:var(--gold-deep);
+  background:linear-gradient(145deg,#fff6e6,#fbeccd);
+  transform:translateY(-4px);
+  box-shadow:0 8px 0 #e2c893;
+}
+.nm-ml-card.matched{
+  border-color:var(--ok);background:#eafaf1;
+  pointer-events:none;color:var(--ok);
+}
+.nm-ml-line{
+  stroke:var(--ok);stroke-width:3;stroke-linecap:round;opacity:.75;
+  stroke-dasharray:300;stroke-dashoffset:300;
+  animation:ml-draw .4s ease forwards;
+}
+@keyframes ml-draw{to{stroke-dashoffset:0;}}
+
+/* ══════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════ */
 @media (max-width:360px){
