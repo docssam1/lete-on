@@ -745,6 +745,297 @@ button.active,
   94% { transform: translateY(0); }
 }
 
+/* Premium Cube Town skin */
+.app-shell {
+  width: min(1500px, 100vw);
+  min-height: 100dvh;
+  padding: 0 16px 108px;
+}
+
+body {
+  overflow-x: hidden;
+  background:
+    linear-gradient(180deg, rgba(47, 28, 13, .24), rgba(128, 82, 38, .18)),
+    repeating-linear-gradient(90deg, #b77c42 0 34px, #c58b4e 34px 68px, #a96f39 68px 102px);
+}
+
+.topbar {
+  min-height: 78px;
+  align-items: center;
+  margin: 0 -16px 18px;
+  padding: 12px 24px;
+  border-bottom: 2px solid rgba(255, 220, 155, .18);
+  border-radius: 0 0 10px 10px;
+  background:
+    linear-gradient(180deg, rgba(56, 32, 15, .98), rgba(26, 15, 9, .98));
+  box-shadow: 0 10px 24px rgba(33, 18, 9, .35);
+  color: #fff4dc;
+}
+
+.topbar .eyebrow {
+  margin: 0;
+  color: #eac283;
+  font-size: 12px;
+}
+
+.topbar h1 {
+  color: white;
+  font-size: clamp(24px, 3vw, 38px);
+}
+
+.language-switch button {
+  min-height: 42px;
+  border: 2px solid rgba(239, 198, 131, .5);
+  border-radius: 22px;
+  background: rgba(35, 22, 14, .55);
+  color: #f7dfb4;
+  box-shadow: none;
+}
+
+.language-switch button.active {
+  border-color: #ffc978;
+  background: rgba(255, 221, 159, .16);
+  color: #fff;
+}
+
+.top-level-button {
+  min-height: 42px;
+  border: 2px solid rgba(239, 198, 131, .5);
+  border-radius: 22px;
+  background: linear-gradient(#8d5b2f, #5c341b);
+  color: #fff1c8;
+  font-weight: 900;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.22);
+}
+
+.lesson-panel {
+  grid-template-columns: minmax(0, 1fr) minmax(168px, 230px);
+}
+
+.status-card,
+.counter-card,
+.viewer,
+.builder-controls,
+.control-strip {
+  border: 2px solid rgba(105, 66, 33, .36);
+  background:
+    linear-gradient(180deg, rgba(255, 246, 225, .92), rgba(244, 217, 178, .84));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.55),
+    0 16px 30px rgba(46, 28, 13, .2);
+}
+
+.play-area {
+  grid-template-columns: minmax(280px, .45fr) minmax(520px, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.target-view .canvas-wrap {
+  height: clamp(360px, 42vw, 560px);
+}
+
+.build-view .canvas-wrap {
+  height: clamp(420px, 48vw, 660px);
+}
+
+.viewer {
+  position: relative;
+  border-radius: 26px;
+  overflow: visible;
+}
+
+.viewer-heading {
+  position: absolute;
+  left: 28px;
+  top: -2px;
+  z-index: 3;
+  min-height: 56px;
+  border: 0;
+  border-radius: 0 0 18px 18px;
+  padding: 10px 36px;
+  color: white;
+  box-shadow: 0 8px 14px rgba(38, 23, 12, .2);
+}
+
+.target-view .viewer-heading {
+  background: linear-gradient(#74884b, #566b39);
+}
+
+.build-view .viewer-heading {
+  background: linear-gradient(#3f789b, #285b7e);
+}
+
+.viewer-heading h2 {
+  font-size: clamp(18px, 2.1vw, 26px);
+  font-weight: 950;
+}
+
+.viewer-heading .icon-button {
+  display: none;
+}
+
+.canvas-wrap {
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 247, 225, .8), rgba(227, 176, 113, .42)),
+    repeating-linear-gradient(12deg, rgba(255,255,255,.14) 0 8px, rgba(131,78,31,.06) 8px 16px);
+}
+
+.builder-controls {
+  width: min(450px, 32vw);
+  margin-top: 14px;
+  padding: 14px 20px 16px;
+  border-radius: 22px;
+}
+
+.pile-button {
+  min-height: 140px;
+  width: 100%;
+  border: 0;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, #eecb92, #b8783c);
+  box-shadow:
+    inset 0 6px 0 rgba(255,255,255,.28),
+    inset 0 -7px 0 rgba(95,52,21,.22),
+    0 9px 16px rgba(56,33,15,.22);
+}
+
+.control-strip {
+  position: fixed;
+  left: max(16px, calc((100vw - 1500px) / 2 + 16px));
+  right: max(16px, calc((100vw - 1500px) / 2 + 16px));
+  bottom: max(10px, env(safe-area-inset-bottom));
+  z-index: 18;
+  margin: 0;
+  padding: 12px;
+  border-radius: 24px;
+  background: rgba(92, 55, 28, .88);
+  backdrop-filter: blur(8px);
+}
+
+.control-strip button {
+  min-height: 62px;
+  border: 2px solid rgba(86, 48, 21, .22);
+  border-radius: 16px;
+  background: linear-gradient(#f2d2a4, #d19a5c);
+  color: #4c2d16;
+  font-size: clamp(14px, 1.5vw, 20px);
+  box-shadow:
+    inset 0 3px 0 rgba(255,255,255,.3),
+    0 6px 0 rgba(82,46,20,.24);
+}
+
+.control-strip .primary {
+  background: linear-gradient(#65bd58, #438c3c);
+  color: white;
+}
+
+#nextStep {
+  background: linear-gradient(#4c9dd2, #2875aa);
+  color: white;
+}
+
+#resetBuild {
+  background: linear-gradient(#f3a54d, #d97724);
+  color: white;
+}
+
+.character-sprite {
+  display: block;
+  background-image: url("./world-map/assets/geometry-characters.png");
+  background-repeat: no-repeat;
+  background-size: 300% 300%;
+  filter: var(--character-filter, none);
+}
+
+.sprite-0 { background-position: 0 0; }
+.color-original { --character-filter: none; }
+
+.guide-character {
+  width: 102px;
+  height: 102px;
+  align-self: end;
+  filter: var(--character-filter, none) drop-shadow(0 14px 12px rgba(47, 24, 10, .25));
+}
+
+.floating-guide {
+  width: 330px;
+  grid-template-columns: minmax(0, 1fr) 104px;
+}
+
+.floating-guide.level-2 .guide-character {
+  --character-filter: hue-rotate(24deg) saturate(1.08) brightness(1.02);
+}
+
+.floating-guide.level-3 .guide-character {
+  --character-filter: hue-rotate(58deg) saturate(1.16) brightness(1.03);
+}
+
+.floating-guide.level-4 .guide-character {
+  --character-filter: hue-rotate(98deg) saturate(1.14) brightness(1.04);
+}
+
+.floating-guide.level-5 .guide-character,
+.floating-guide.level-6 .guide-character {
+  --character-filter: hue-rotate(132deg) saturate(1.18) brightness(1.05);
+}
+
+.floating-guide::after {
+  content: "";
+  position: absolute;
+  right: 44px;
+  top: 24px;
+  width: 30px;
+  height: 20px;
+  border-radius: 8px 8px 4px 4px;
+  background: linear-gradient(#ffd86b, #c78b25);
+  box-shadow: 0 4px 0 rgba(86,49,16,.22);
+  opacity: 0;
+  transform: rotate(7deg);
+}
+
+.floating-guide.level-3::after,
+.floating-guide.level-4::after,
+.floating-guide.level-5::after,
+.floating-guide.level-6::after {
+  opacity: 1;
+}
+
+.floating-guide.level-4::before,
+.floating-guide.level-5::before,
+.floating-guide.level-6::before {
+  content: "";
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 62px;
+  height: 22px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #376db0, #6cb6d9);
+  opacity: .88;
+  transform: rotate(-10deg);
+}
+
+.floating-guide.level-5 .guide-bubble::after,
+.floating-guide.level-6 .guide-bubble::after {
+  content: "★";
+  position: absolute;
+  right: -10px;
+  bottom: -12px;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 25%, #fff6a8, #f3b233 52%, #9f5f16 100%);
+  color: #70410d;
+  font-size: 20px;
+  font-weight: 900;
+  box-shadow: 0 7px 12px rgba(62, 32, 12, .26);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pile-cubes span,
   .guide-character,
@@ -758,7 +1049,7 @@ button.active,
   }
 }
 
-@media (max-width: 820px) {
+@media (max-width: 820px) and (orientation: portrait) {
   .topbar {
     align-items: stretch;
     flex-direction: column;
@@ -837,5 +1128,179 @@ button.active,
     min-height: 26px;
     padding: 0 6px;
     font-size: 10px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  body {
+    overflow: hidden;
+  }
+
+  .app {
+    width: 100vw;
+    height: 100svh;
+    min-height: 0;
+    padding: 70px 12px 76px;
+    overflow: hidden;
+  }
+
+  .topbar {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 30;
+    min-height: 58px;
+    border-radius: 0 0 14px 14px;
+    padding: 8px 14px;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .brand-mark {
+    min-width: 0;
+  }
+
+  .brand-mark span {
+    display: none;
+  }
+
+  .topbar h1 {
+    font-size: clamp(20px, 4.4vw, 28px);
+    line-height: 1;
+  }
+
+  .language-switch {
+    gap: 6px;
+  }
+
+  .language-switch button {
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .top-level-button {
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .lesson-panel {
+    display: none;
+  }
+
+  .play-area {
+    display: grid;
+    grid-template-columns: minmax(220px, .38fr) minmax(380px, 1fr);
+    gap: 10px;
+    height: calc(100svh - 150px);
+    min-height: 220px;
+    margin: 0;
+  }
+
+  .viewer {
+    min-height: 0;
+    border-radius: 18px;
+  }
+
+  .viewer-heading {
+    left: 16px;
+    top: 70px;
+    min-height: 42px;
+    padding: 7px 22px;
+    border-radius: 0 0 14px 14px;
+  }
+
+  .viewer-heading h2 {
+    font-size: 16px;
+  }
+
+  .target-view .canvas-wrap,
+  .build-view .canvas-wrap {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .builder-controls {
+    position: fixed;
+    left: 14px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 19;
+    width: min(240px, 30vw);
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 16px;
+  }
+
+  .pile-button {
+    min-height: 54px;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .pile-cubes {
+    width: 74px;
+    height: 44px;
+    transform: scale(.55);
+    transform-origin: left bottom;
+  }
+
+  .pile-label {
+    font-size: 13px;
+  }
+
+  .pile-hint {
+    font-size: 11px;
+  }
+
+  .control-strip {
+    left: calc(min(240px, 30vw) + 24px);
+    right: 12px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    display: grid;
+    grid-template-columns: repeat(6, minmax(64px, 1fr));
+    gap: 8px;
+    padding: 8px;
+    border-radius: 18px;
+  }
+
+  .control-strip button {
+    min-height: 54px;
+    padding: 6px 8px;
+    border-radius: 13px;
+    font-size: 13px;
+  }
+
+  .floating-guide {
+    right: 12px;
+    bottom: calc(max(10px, env(safe-area-inset-bottom)) + 76px);
+    width: 250px;
+    grid-template-columns: minmax(0, 1fr) 76px;
+    gap: 8px;
+    pointer-events: none;
+  }
+
+  .guide-bubble {
+    padding: 9px 10px;
+    font-size: 11px;
+  }
+
+  .guide-character {
+    width: 74px;
+    height: 74px;
+  }
+
+  .floating-guide::after {
+    right: 31px;
+    top: 18px;
+    transform: scale(.78) rotate(7deg);
+  }
+
+  .floating-guide.level-4::before,
+  .floating-guide.level-5::before,
+  .floating-guide.level-6::before {
+    right: 2px;
+    bottom: 0;
+    transform: scale(.8) rotate(-10deg);
   }
 }

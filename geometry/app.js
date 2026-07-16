@@ -1,12 +1,14 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-const translations = {
+const translations = { ko: {}, zh: {}, ja: {}, en: {} };
+
+const displayCopy = {
   ko: {
     sectionLabel: "GFIELD Geometry World",
     title: "GFIELD Cube Town",
     copyMode: "똑같이 쌓기",
-    copyInstruction: "더미에서 하나씩 끌어 와 3D 판의 빨간 자리에 내려놓아 보세요.",
+    copyInstruction: "쌓기나무 더미에서 하나씩 끌어 와 빨간 위치에 놓아 보세요.",
     target: "문제 모양",
     myBuild: "내가 만든 모양",
     countLabel: "문제",
@@ -14,212 +16,366 @@ const translations = {
     next: "다음 문제",
     reset: "처음부터",
     front: "앞",
+    side: "오른쪽",
+    back: "뒤",
     top: "위",
     free: "돌려보기",
-    resetView: "보기 초기화",
-    successPop: "성공!",
-    successGood: "Good job!",
-    successGreat: "Great job!",
-    singleCube: "한 개",
-    correct: "잘했어요! 다음 문제로 가요.",
-    wrong: "조금 달라요. 위치와 높이를 다시 살펴보세요.",
-    counted: "{count}개",
-    done: "모두 {count}개예요!",
+    resetView: "시점 초기화",
+    singleCube: "1개",
+    correct: "정확해요! 다음 문제로 갈게요.",
+    wrong: "조금 달라요. 위치와 높이를 다시 확인해 보세요.",
     buildFirst: "먼저 문제 모양과 똑같이 만들어 보세요.",
-    topOnly: "맨 위에 있는 쌓기나무부터 눌러 보세요.",
-    pileLabel: "쌓기나무 더미",
+    topOnly: "맨 위에 있는 쌓기나무부터 고를 수 있어요.",
+    pileLabel: "큐브 보관함",
     emptyHand: "하나씩 가져와요",
-    inHand: "손에 하나 있어요",
-    boardLabel: "3D 판의 빨간 자리에 내려놓아요",
+    inHand: "쌓기나무를 들고 있어요",
+    boardLabel: "빨간 위치에 내려놓으세요",
     pileFirst: "먼저 더미에서 쌓기나무를 하나 가져오세요.",
     maxHeight: "여기는 4층까지 쌓을 수 있어요.",
-    cellLabel: "{row}행 {col}열, 높이 {height}",
-    returnToPile: "다른 자리로 옮기거나 더미에 내려놓을 수 있어요.",
+    returnToPile: "다른 자리로 옮기거나 더미에 내려놓으면 빠져요.",
     levelProgress: "레벨 {level} · {current}/{total}",
     guideStart: "문제 모양을 보고 더미에서 하나씩 가져와 보자!",
-    guideHold: "좋아, 쌓기나무 하나를 가져왔어. 빨간 자리에 내려놓자!",
-    guideDrop: "거기 좋아! 손을 떼면 그 자리에 올라가.",
-    guideMove: "블록은 다른 자리로 옮기거나 더미에 다시 놓을 수 있어.",
+    guideHold: "좋아, 빨간 위치에 천천히 내려놓아 봐.",
+    guideDrop: "거기 좋아! 손을 떼면 그 자리에 쌓여.",
+    guideMove: "위에 있는 블록은 다른 자리로 옮길 수 있어.",
     guideWrong: "조금 달라. 문제 모양의 위치와 높이를 다시 볼까?",
-    guideSuccess: "Great job! 정말 잘했어. 다음 문제로 가자!",
-    guideNext: "새 문제야. 이번 모양도 차근차근 만들어 보자.",
-    guideTitle: "docssam",
-    guideDragged: "좋아, 여기서 도와줄게!",
+    guideSuccess: "Great job! 똑같이 잘 쌓았어.",
+    guideNext: "다음 문제야. 이번 모양도 차근차근 만들어 보자.",
+    guideTitle: "큐비",
+    guideDragged: "좋아, 큐비가 옆에서 알려줄게!",
     audioOn: "음성 켜짐",
-    audioOff: "음성 켜기"
+    audioOff: "음성 켜기",
+    levelSelect: "레벨 선택",
+    levelNumber: "레벨 {level}",
+    levelProblems: "{count}문제",
+    closeLevel: "닫기",
+    guideLevelSelect: "도전할 레벨을 골라 보자!",
+    successPop: "SUCCESS!",
+    successGood: "GOOD JOB!",
+    successGreat: "GREAT JOB!"
   },
   zh: {
     sectionLabel: "GFIELD Geometry World",
     title: "GFIELD Cube Town",
-    copyMode: "照样搭",
-    copyInstruction: "从积木堆一次拖一个，放到 3D 板上的红色位置。",
-    target: "题目",
-    myBuild: "我的作品",
+    copyMode: "照样搭建",
+    copyInstruction: "从积木盒里拖出方块，放到红色位置上。",
+    target: "目标形状",
+    myBuild: "我的搭建",
     countLabel: "题目",
     check: "检查",
     next: "下一题",
-    reset: "重来",
-    front: "前面",
-    top: "上面",
-    free: "旋转",
+    reset: "重新开始",
+    front: "前",
+    side: "右侧",
+    back: "后",
+    top: "上",
+    free: "旋转看看",
     resetView: "重置视角",
-    successPop: "成功！",
-    successGood: "Good job!",
-    successGreat: "Great job!",
-    singleCube: "一个",
-    correct: "做得好！进入下一题。",
-    wrong: "有一点不一样。再看看位置和高度。",
-    counted: "{count}个",
-    done: "一共有 {count} 个！",
-    buildFirst: "先搭成和题目一样的形状吧。",
-    topOnly: "请先点最上面的积木。",
-    pileLabel: "积木堆",
+    pileLabel: "方块盒",
     emptyHand: "一次拿一个",
-    inHand: "手里有一个",
-    boardLabel: "放到 3D 板上的红色位置",
-    pileFirst: "请先从积木堆拿一个。",
-    maxHeight: "这里最多可以搭 4 层。",
-    cellLabel: "第 {row} 行第 {col} 列，高度 {height}",
-    returnToPile: "可以移到别的位置，也可以放回积木堆。",
+    inHand: "正在拿方块",
+    boardLabel: "放到红色位置上",
+    wrong: "有一点不一样。再看看位置和高度。",
+    guideStart: "看看目标形状，从盒子里拿一个方块吧！",
+    guideHold: "很好，慢慢放到红色位置上。",
+    guideDrop: "这个位置不错！松手就可以放下。",
+    guideMove: "最上面的方块可以移动到别的位置。",
+    guideWrong: "有一点不一样。我们再比较一下目标形状吧。",
+    guideSuccess: "Great job! 搭得一样了。",
+    guideNext: "下一题来了。一步一步搭起来吧。",
+    guideTitle: "Cubi",
+    guideDragged: "很好，Cubi 会在旁边提示你！",
+    audioOn: "语音已开",
+    audioOff: "打开语音",
+    levelSelect: "选择等级",
+    levelNumber: "等级 {level}",
+    levelProblems: "{count}题",
+    closeLevel: "关闭",
+    guideLevelSelect: "选择要挑战的等级吧！",
     levelProgress: "等级 {level} · {current}/{total}",
-    guideStart: "看看题目形状，从积木堆一次拿一个吧！",
-    guideHold: "很好，拿到一个积木了。放到红色位置吧！",
-    guideDrop: "这里不错！松手就会放上去。",
-    guideMove: "积木可以移到别的位置，也可以放回积木堆。",
-    guideWrong: "有一点不一样。再看看位置和高度吧。",
-    guideSuccess: "Great job! 做得很好，进入下一题！",
-    guideNext: "新题目来了。我们一步一步搭吧。",
-    guideTitle: "docssam",
-    guideDragged: "好，我就在这里帮你！",
-    audioOn: "语音开",
-    audioOff: "语音"
+    successPop: "SUCCESS!",
+    successGood: "GOOD JOB!",
+    successGreat: "GREAT JOB!"
   },
   ja: {
     sectionLabel: "GFIELD Geometry World",
     title: "GFIELD Cube Town",
     copyMode: "同じ形を作る",
-    copyInstruction: "積み木の山からひとつずつ動かして、3D台の赤い場所に置きましょう。",
-    target: "もんだい",
-    myBuild: "自分の形",
-    countLabel: "もんだい",
+    copyInstruction: "積み木トレイから一つずつドラッグして、赤い場所に置きましょう。",
+    target: "問題の形",
+    myBuild: "作った形",
+    countLabel: "問題",
     check: "確認",
     next: "次の問題",
     reset: "はじめから",
     front: "前",
+    side: "右",
+    back: "後ろ",
     top: "上",
-    free: "回す",
-    resetView: "表示をリセット",
-    successPop: "成功！",
-    successGood: "Good job!",
-    successGreat: "Great job!",
-    singleCube: "ひとつ",
-    correct: "よくできました！次のもんだいへ進みます。",
-    wrong: "少しちがいます。場所と高さをもう一度見てみましょう。",
-    counted: "{count}こ",
-    done: "ぜんぶで {count}こです！",
-    buildFirst: "まず、もんだいと同じ形を作りましょう。",
-    topOnly: "いちばん上の積み木から押しましょう。",
-    pileLabel: "積み木の山",
-    emptyHand: "ひとつずつ取ろう",
-    inHand: "手にひとつあります",
-    boardLabel: "3D台の赤い場所に置こう",
-    pileFirst: "まず積み木の山からひとつ取りましょう。",
-    maxHeight: "ここは4段まで積めます。",
-    cellLabel: "{row}行 {col}列、高さ {height}",
-    returnToPile: "別の場所へ動かすか、積み木の山にもどせます。",
-    levelProgress: "レベル {level} · {current}/{total}",
-    guideStart: "もんだいの形を見て、積み木の山からひとつずつ取ろう！",
-    guideHold: "いいね、積み木をひとつ持ったよ。赤い場所に置こう！",
-    guideDrop: "そこがいいね！手をはなすと置けるよ。",
-    guideMove: "積み木は別の場所へ動かしたり、山にもどしたりできるよ。",
-    guideWrong: "少しちがうね。場所と高さをもう一度見てみよう。",
-    guideSuccess: "Great job! とてもよくできたね。次へ進もう！",
-    guideNext: "新しいもんだいだよ。ゆっくり作ってみよう。",
-    guideTitle: "docssam",
-    guideDragged: "いいね、ここで手伝うよ！",
+    free: "回して見る",
+    resetView: "視点を戻す",
+    pileLabel: "キューブトレイ",
+    emptyHand: "一つずつ取ろう",
+    inHand: "積み木を持っています",
+    boardLabel: "赤い場所に置きましょう",
+    wrong: "少し違います。位置と高さをもう一度見てみましょう。",
+    guideStart: "問題の形を見て、トレイから一つ取ってみよう！",
+    guideHold: "いいね。赤い場所にゆっくり置いてみよう。",
+    guideDrop: "そこがいいよ！指を離すと置けるよ。",
+    guideMove: "上にあるブロックは別の場所へ動かせるよ。",
+    guideWrong: "少し違うね。問題の形と比べてみよう。",
+    guideSuccess: "Great job! 同じ形にできたね。",
+    guideNext: "次の問題だよ。今度もゆっくり作ろう。",
+    guideTitle: "Cubi",
+    guideDragged: "いいね。Cubi がそばで教えるよ！",
     audioOn: "音声オン",
-    audioOff: "音声"
+    audioOff: "音声をオン",
+    levelSelect: "レベル選択",
+    levelNumber: "レベル {level}",
+    levelProblems: "{count}問",
+    closeLevel: "閉じる",
+    guideLevelSelect: "挑戦するレベルを選ぼう！",
+    levelProgress: "レベル {level} · {current}/{total}",
+    successPop: "SUCCESS!",
+    successGood: "GOOD JOB!",
+    successGreat: "GREAT JOB!"
   },
   en: {
     sectionLabel: "GFIELD Geometry World",
     title: "GFIELD Cube Town",
     copyMode: "Copy Build",
-    copyInstruction: "Drag one cube at a time from the pile and drop it on the red spot on the 3D board.",
-    target: "Challenge",
-    myBuild: "My Build",
-    countLabel: "Step",
+    copyInstruction: "Drag cubes from the tray and place them on the red guide.",
+    target: "Target Shape",
+    myBuild: "Your Build Area",
+    countLabel: "Problem",
     check: "Check",
     next: "Next",
-    reset: "Reset",
+    reset: "Retry",
     front: "Front",
+    side: "Right",
+    back: "Back",
     top: "Top",
-    free: "Free View",
+    free: "Rotate",
     resetView: "Reset View",
-    successPop: "Success!",
-    successGood: "Good job!",
-    successGreat: "Great job!",
-    singleCube: "One cube",
-    correct: "Great job! Moving to the next challenge.",
-    wrong: "Something is different. Check the position and height again.",
-    counted: "{count}",
-    done: "There are {count} cubes!",
-    buildFirst: "First, build the same shape as the challenge.",
-    topOnly: "Tap the top cube first.",
-    pileLabel: "Cube pile",
+    singleCube: "1 cube",
+    pileLabel: "Cube Tray",
     emptyHand: "Take one cube",
-    inHand: "One cube in hand",
-    boardLabel: "Drop it on the red spot on the 3D board",
-    pileFirst: "Take one cube from the pile first.",
-    maxHeight: "This spot can hold up to 4 cubes.",
-    cellLabel: "row {row}, column {col}, height {height}",
-    returnToPile: "Move it to another spot or drop it on the pile to remove it.",
-    levelProgress: "Level {level} · {current}/{total}",
-    guideStart: "Look at the challenge, then take one cube from the pile!",
-    guideHold: "Nice, you picked up one cube. Drop it on the red spot!",
-    guideDrop: "That spot works! Let go to place it there.",
-    guideMove: "You can move a cube to another spot or drop it back on the pile.",
-    guideWrong: "Something is different. Check the position and height again.",
-    guideSuccess: "Great job! You built it. On to the next challenge!",
-    guideNext: "New challenge. Build it one cube at a time.",
-    guideTitle: "docssam",
-    guideDragged: "Okay, I will help from here!",
+    inHand: "Cube in hand",
+    boardLabel: "Drop on the red guide",
+    correct: "Exactly right! Moving to the next problem.",
+    wrong: "Not quite. Check the position and height again.",
+    guideStart: "Look at the target shape and bring one cube from the tray.",
+    guideHold: "Nice. Move it slowly onto the red guide.",
+    guideDrop: "Good spot! Release to place it there.",
+    guideMove: "You can move a top cube to another place.",
+    guideWrong: "Not quite. Let's compare the position and height again.",
+    guideSuccess: "Great job! You copied the shape.",
+    guideNext: "Next problem. Build this one step by step.",
+    guideTitle: "Cubi",
+    guideDragged: "Nice. Cubi will help from here!",
     audioOn: "Voice on",
-    audioOff: "Voice"
+    audioOff: "Voice on",
+    levelSelect: "Select Level",
+    levelNumber: "Level {level}",
+    levelProblems: "{count} problems",
+    closeLevel: "Close",
+    guideLevelSelect: "Choose a level to try!",
+    levelProgress: "Level {level} · {current}/{total}",
+    successPop: "SUCCESS!",
+    successGood: "GOOD JOB!",
+    successGreat: "GREAT JOB!"
   }
 };
 
-const levelPickerTranslations = {
+Object.entries(displayCopy).forEach(([lang, labels]) => {
+  Object.assign(translations[lang], labels);
+});
+
+const fixedCopy = {
   ko: {
+    sectionLabel: "GFIELD Geometry World",
+    title: "GFIELD Cube Town",
+    copyMode: "똑같이 쌓기",
+    copyInstruction: "쌓기나무 더미에서 하나씩 끌어 와 빨간 위치에 놓아 보세요.",
+    target: "문제 모양",
+    myBuild: "내가 만든 모양",
+    countLabel: "문제",
+    check: "확인",
+    next: "다음 문제",
+    reset: "처음부터",
+    front: "앞",
+    side: "오른쪽",
+    back: "뒤",
+    top: "위",
+    free: "돌려보기",
+    resetView: "시점 초기화",
+    singleCube: "1개",
+    correct: "정확해요! 다음 문제로 갈게요.",
+    wrong: "조금 달라요. 위치와 높이를 다시 확인해 보세요.",
+    buildFirst: "먼저 문제 모양과 똑같이 만들어 보세요.",
+    topOnly: "맨 위에 있는 쌓기나무부터 고를 수 있어요.",
+    pileLabel: "큐브 보관함",
+    emptyHand: "하나씩 가져와요",
+    inHand: "쌓기나무를 들고 있어요",
+    boardLabel: "빨간 위치에 내려놓으세요",
+    pileFirst: "먼저 더미에서 쌓기나무를 하나 가져오세요.",
+    maxHeight: "여기는 4층까지 쌓을 수 있어요.",
+    returnToPile: "다른 자리로 옮기거나 더미에 내려놓으면 빠져요.",
+    levelProgress: "레벨 {level} · {current}/{total}",
+    guideStart: "문제 모양을 보고 더미에서 하나씩 가져와 보자!",
+    guideHold: "좋아, 빨간 위치에 천천히 내려놓아 봐.",
+    guideDrop: "거기 좋아! 손을 떼면 그 자리에 쌓여.",
+    guideMove: "위에 있는 블록은 다른 자리로 옮길 수 있어.",
+    guideWrong: "조금 달라. 문제 모양의 위치와 높이를 다시 볼까?",
+    guideSuccess: "Great job! 똑같이 잘 쌓았어.",
+    guideNext: "다음 문제야. 이번 모양도 차근차근 만들어 보자.",
+    guideTitle: "큐비",
+    guideDragged: "좋아, 큐비가 옆에서 알려줄게!",
+    audioOn: "음성 켜짐",
+    audioOff: "음성 켜기",
     levelSelect: "레벨 선택",
     levelNumber: "레벨 {level}",
     levelProblems: "{count}문제",
     closeLevel: "닫기",
-    guideLevelSelect: "다음에 도전할 레벨을 골라 보자!"
+    guideLevelSelect: "도전할 레벨을 골라 보자!",
+    successPop: "SUCCESS!",
+    successGood: "GOOD JOB!",
+    successGreat: "GREAT JOB!"
   },
   zh: {
-    levelSelect: "选择关卡",
-    levelNumber: "第 {level} 关",
-    levelProblems: "{count} 题",
+    sectionLabel: "GFIELD Geometry World",
+    title: "GFIELD Cube Town",
+    copyMode: "照样搭建",
+    copyInstruction: "从积木盒里拖出方块，放到红色位置上。",
+    target: "目标形状",
+    myBuild: "我的搭建",
+    countLabel: "题目",
+    check: "检查",
+    next: "下一题",
+    reset: "重新开始",
+    front: "前",
+    side: "右侧",
+    back: "后",
+    top: "上",
+    free: "旋转看看",
+    resetView: "重置视角",
+    pileLabel: "方块盒",
+    emptyHand: "一次拿一个",
+    inHand: "正在拿方块",
+    boardLabel: "放到红色位置上",
+    wrong: "有一点不一样。再看看位置和高度。",
+    guideStart: "看看目标形状，从盒子里拿一个方块吧！",
+    guideHold: "很好，慢慢放到红色位置上。",
+    guideDrop: "这个位置不错！松手就可以放下。",
+    guideMove: "最上面的方块可以移动到别的位置。",
+    guideWrong: "有一点不一样。我们再比较一下目标形状吧。",
+    guideSuccess: "Great job! 搭得一样了。",
+    guideNext: "下一题来了。一步一步搭起来吧。",
+    guideTitle: "Cubi",
+    guideDragged: "很好，Cubi 会在旁边提示你！",
+    audioOn: "语音已开",
+    audioOff: "打开语音",
+    levelSelect: "选择等级",
+    levelNumber: "等级 {level}",
+    levelProblems: "{count}题",
     closeLevel: "关闭",
-    guideLevelSelect: "选择接下来要挑战的关卡吧！"
+    guideLevelSelect: "选择要挑战的等级吧！",
+    levelProgress: "等级 {level} · {current}/{total}",
+    successPop: "SUCCESS!",
+    successGood: "GOOD JOB!",
+    successGreat: "GREAT JOB!"
   },
   ja: {
-    levelSelect: "レベルを選ぶ",
+    sectionLabel: "GFIELD Geometry World",
+    title: "GFIELD Cube Town",
+    copyMode: "同じ形を作る",
+    copyInstruction: "積み木トレイから一つずつドラッグして、赤い場所に置きましょう。",
+    target: "問題の形",
+    myBuild: "作った形",
+    countLabel: "問題",
+    check: "確認",
+    next: "次の問題",
+    reset: "はじめから",
+    front: "前",
+    side: "右",
+    back: "後ろ",
+    top: "上",
+    free: "回して見る",
+    resetView: "視点を戻す",
+    pileLabel: "キューブトレイ",
+    emptyHand: "一つずつ取ろう",
+    inHand: "積み木を持っています",
+    boardLabel: "赤い場所に置きましょう",
+    wrong: "少し違います。位置と高さをもう一度見てみましょう。",
+    guideStart: "問題の形を見て、トレイから一つ取ってみよう！",
+    guideHold: "いいね。赤い場所にゆっくり置いてみよう。",
+    guideDrop: "そこがいいよ！指を離すと置けるよ。",
+    guideMove: "上にあるブロックは別の場所へ動かせるよ。",
+    guideWrong: "少し違うね。問題の形と比べてみよう。",
+    guideSuccess: "Great job! 同じ形にできたね。",
+    guideNext: "次の問題だよ。今度もゆっくり作ろう。",
+    guideTitle: "Cubi",
+    guideDragged: "いいね。Cubi がそばで教えるよ！",
+    audioOn: "音声オン",
+    audioOff: "音声をオン",
+    levelSelect: "レベル選択",
     levelNumber: "レベル {level}",
-    levelProblems: "{count}もん",
+    levelProblems: "{count}問",
     closeLevel: "閉じる",
-    guideLevelSelect: "つぎにチャレンジするレベルをえらぼう！"
+    guideLevelSelect: "挑戦するレベルを選ぼう！",
+    levelProgress: "レベル {level} · {current}/{total}",
+    successPop: "SUCCESS!",
+    successGood: "GOOD JOB!",
+    successGreat: "GREAT JOB!"
   },
   en: {
-    levelSelect: "Choose level",
+    sectionLabel: "GFIELD Geometry World",
+    title: "GFIELD Cube Town",
+    copyMode: "Copy Build",
+    copyInstruction: "Drag cubes from the tray and place them on the red guide.",
+    target: "Target Shape",
+    myBuild: "Your Build Area",
+    countLabel: "Problem",
+    check: "Check",
+    next: "Next",
+    reset: "Retry",
+    front: "Front",
+    side: "Right",
+    back: "Back",
+    top: "Top",
+    free: "Rotate",
+    resetView: "Reset View",
+    singleCube: "1 cube",
+    pileLabel: "Cube Tray",
+    emptyHand: "Take one cube",
+    inHand: "Cube in hand",
+    boardLabel: "Drop on the red guide",
+    correct: "Exactly right! Moving to the next problem.",
+    wrong: "Not quite. Check the position and height again.",
+    guideStart: "Look at the target shape and bring one cube from the tray.",
+    guideHold: "Nice. Move it slowly onto the red guide.",
+    guideDrop: "Good spot! Release to place it there.",
+    guideMove: "You can move a top cube to another place.",
+    guideWrong: "Not quite. Let's compare the position and height again.",
+    guideSuccess: "Great job! You copied the shape.",
+    guideNext: "Next problem. Build this one step by step.",
+    guideTitle: "Cubi",
+    guideDragged: "Nice. Cubi will help from here!",
+    audioOn: "Voice on",
+    audioOff: "Voice on",
+    levelSelect: "Select Level",
     levelNumber: "Level {level}",
-    levelProblems: "{count} challenges",
+    levelProblems: "{count} problems",
     closeLevel: "Close",
-    guideLevelSelect: "Choose the level you want to try next!"
+    guideLevelSelect: "Choose a level to try!",
+    levelProgress: "Level {level} · {current}/{total}",
+    successPop: "SUCCESS!",
+    successGood: "GOOD JOB!",
+    successGreat: "GREAT JOB!"
   }
 };
 
-Object.entries(levelPickerTranslations).forEach(([lang, labels]) => {
+Object.entries(fixedCopy).forEach(([lang, labels]) => {
   Object.assign(translations[lang], labels);
 });
 
@@ -346,6 +502,58 @@ const colors = {
   red: 0xd86f73
 };
 
+const cubeGeometry = new THREE.BoxGeometry(0.96, 0.96, 0.96);
+const cubeEdges = new THREE.EdgesGeometry(cubeGeometry, 24);
+const woodTexture = createWoodTexture();
+const woodMaterial = new THREE.MeshStandardMaterial({
+  color: 0xf0c97d,
+  map: woodTexture,
+  roughness: 0.58,
+  metalness: 0.02
+});
+const cubeEdgeMaterial = new THREE.LineBasicMaterial({
+  color: 0x8f6332,
+  transparent: true,
+  opacity: 0.34
+});
+
+function createWoodTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 256;
+  const context = canvas.getContext("2d");
+  const base = context.createLinearGradient(0, 0, 256, 256);
+  base.addColorStop(0, "#f7d995");
+  base.addColorStop(0.45, "#e9bd70");
+  base.addColorStop(1, "#c9924d");
+  context.fillStyle = base;
+  context.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 38; i += 1) {
+    const y = 12 + i * 7 + Math.sin(i * 1.7) * 5;
+    context.beginPath();
+    context.moveTo(-20, y);
+    for (let x = -20; x <= 276; x += 18) {
+      context.lineTo(x, y + Math.sin(x * 0.045 + i) * 3.4);
+    }
+    context.strokeStyle = i % 3 === 0 ? "rgba(126,79,32,.16)" : "rgba(255,246,207,.16)";
+    context.lineWidth = i % 3 === 0 ? 1.3 : 1;
+    context.stroke();
+  }
+  for (let i = 0; i < 18; i += 1) {
+    context.beginPath();
+    context.ellipse(32 + (i * 47) % 210, 24 + (i * 73) % 208, 12, 4, i, 0, Math.PI * 2);
+    context.strokeStyle = "rgba(112,70,29,.09)";
+    context.lineWidth = 1;
+    context.stroke();
+  }
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(1.25, 1.25);
+  return texture;
+}
+
 const state = {
   lang: "ko",
   levelIndex: 0,
@@ -422,25 +630,19 @@ function createViewer(container, interactive) {
   const ambient = new THREE.HemisphereLight(0xffffff, 0xc9d5cd, 2.2);
   scene.add(ambient);
   const sun = new THREE.DirectionalLight(0xffffff, 2.4);
-  sun.position.set(5, 8, 4);
+  sun.position.set(4.2, 8.5, 5.8);
   sun.castShadow = true;
   sun.shadow.mapSize.set(1024, 1024);
   scene.add(sun);
 
-  const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(7.2, 7.2),
-    new THREE.MeshStandardMaterial({ color: 0xf3ead5, roughness: 0.85 })
-  );
-  floor.rotation.x = -Math.PI / 2;
-  floor.receiveShadow = true;
-  floor.position.y = -0.02;
-  scene.add(floor);
+  const board = createWoodBoard();
+  scene.add(board);
 
   const grid = new THREE.GridHelper(3, 3, 0x9b8b75, 0xd3c6b2);
   grid.position.y = 0.01;
   scene.add(grid);
 
-  const frontIndicator = createFrontIndicator(t("front"));
+  const frontIndicator = createFrontIndicator();
   scene.add(frontIndicator);
 
   if (interactive) {
@@ -453,64 +655,97 @@ function createViewer(container, interactive) {
   return viewer;
 }
 
-function createFrontIndicator(label) {
+function createWoodBoard() {
   const group = new THREE.Group();
-  group.userData = { kind: "front-indicator" };
-
-  const arrow = new THREE.ArrowHelper(
-    new THREE.Vector3(0, 0, -1),
-    new THREE.Vector3(0, 0.1, 1.62),
-    0.5,
-    0xd94e4e,
-    0.18,
-    0.12
+  const tray = new THREE.Mesh(
+    new THREE.BoxGeometry(4.92, 0.16, 4.92),
+    new THREE.MeshStandardMaterial({
+      color: 0xc68a4a,
+      map: woodTexture,
+      roughness: 0.62,
+      metalness: 0.02
+    })
   );
-  arrow.line.material.depthTest = false;
-  arrow.line.material.depthWrite = false;
-  arrow.cone.material.depthTest = false;
-  arrow.cone.material.depthWrite = false;
-  arrow.line.renderOrder = 900;
-  arrow.cone.renderOrder = 900;
-  group.add(arrow);
+  tray.position.y = -0.11;
+  tray.receiveShadow = true;
+  tray.castShadow = true;
+  group.add(tray);
 
-  const labelSprite = createFrontLabelSprite(label);
-  labelSprite.position.set(0, 0.48, 1.88);
-  group.add(labelSprite);
+  const inset = new THREE.Mesh(
+    new THREE.PlaneGeometry(3.28, 3.28),
+    new THREE.MeshStandardMaterial({
+      color: 0xfff8df,
+      roughness: 0.9,
+      transparent: true,
+      opacity: 0.94
+    })
+  );
+  inset.rotation.x = -Math.PI / 2;
+  inset.position.y = 0.002;
+  inset.receiveShadow = true;
+  group.add(inset);
+
   return group;
 }
 
-function createFrontLabelSprite(label) {
+function createFrontIndicator() {
+  const group = new THREE.Group();
+  group.userData = { kind: "front-indicator" };
+
+  const front = createBoardLabelPlane(t("front"));
+  front.position.set(0, -0.04, 2.42);
+  front.rotation.set(0, 0, 0);
+  group.add(front);
+
+  const frontTop = createBoardLabelPlane(t("front"));
+  frontTop.position.set(0, 0.032, 1.7);
+  frontTop.rotation.set(-Math.PI / 2, 0, 0);
+  group.add(frontTop);
+
+  const side = createBoardLabelPlane(t("side"));
+  side.position.set(2.42, -0.04, 0);
+  side.rotation.set(0, Math.PI / 2, 0);
+  group.add(side);
+
+  const sideTop = createBoardLabelPlane(t("side"));
+  sideTop.position.set(1.7, 0.032, 0);
+  sideTop.rotation.set(-Math.PI / 2, 0, -Math.PI / 2);
+  group.add(sideTop);
+
+  const back = createBoardLabelPlane(t("back"));
+  back.position.set(0, -0.04, -2.42);
+  back.rotation.set(0, Math.PI, 0);
+  group.add(back);
+  return group;
+}
+
+function createBoardLabelPlane(label) {
   const canvas = document.createElement("canvas");
   canvas.width = 256;
-  canvas.height = 112;
+  canvas.height = 96;
   const context = canvas.getContext("2d");
-  context.fillStyle = "rgba(255, 255, 255, 0.96)";
-  context.strokeStyle = "#d94e4e";
-  context.lineWidth = 7;
-  context.beginPath();
-  context.roundRect(10, 10, 236, 92, 24);
-  context.fill();
-  context.stroke();
-  context.fillStyle = "#b52f36";
-  context.font = "800 48px 'Noto Sans KR', sans-serif";
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "rgba(72, 47, 23, 0.72)";
+  context.font = "900 42px 'Noto Sans KR', sans-serif";
   context.textAlign = "center";
   context.textBaseline = "middle";
-  context.fillText(label, 128, 57);
+  context.shadowColor = "rgba(255, 242, 195, 0.55)";
+  context.shadowBlur = 4;
+  context.fillText(label, 128, 49);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.minFilter = THREE.LinearFilter;
-  const material = new THREE.SpriteMaterial({
+  const material = new THREE.MeshBasicMaterial({
     map: texture,
     transparent: true,
-    depthTest: false,
-    depthWrite: false
+    depthWrite: false,
+    side: THREE.DoubleSide
   });
-  const sprite = new THREE.Sprite(material);
-  sprite.scale.set(0.98, 0.43, 1);
-  sprite.renderOrder = 901;
-  sprite.userData = { kind: "front-label" };
-  return sprite;
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(0.96, 0.36), material);
+  mesh.renderOrder = 902;
+  mesh.userData = { kind: "board-label" };
+  return mesh;
 }
 
 function refreshFrontIndicator(viewer) {
@@ -567,6 +802,7 @@ function addEvents() {
   document.querySelector("#resetView").addEventListener("click", resetView);
   document.querySelector("#nextStep").addEventListener("click", nextProblem);
   document.querySelector("#levelPickerButton").addEventListener("click", openLevelPicker);
+  document.querySelector("#topLevelPickerButton").addEventListener("click", openLevelPicker);
   document.querySelector("#closeLevelDialog").addEventListener("click", closeLevelPicker);
   document.querySelector("#levelDialog").addEventListener("click", (event) => {
     if (event.target.id === "levelDialog") closeLevelPicker();
@@ -597,6 +833,7 @@ function loadProblem() {
   document.querySelector("#modeTitle").textContent = t("copyMode");
   document.querySelector("#instruction").textContent = t("copyInstruction");
   updateStepDisplay();
+  updateGuideCharacter();
 
   renderTarget();
   renderBuild();
@@ -635,12 +872,12 @@ function renderBaseTargets(group) {
   for (let z = 0; z < 3; z += 1) {
     for (let x = 0; x < 3; x += 1) {
       const marker = new THREE.Mesh(
-        new THREE.BoxGeometry(0.92, 0.04, 0.92),
+        new THREE.BoxGeometry(0.92, 0.035, 0.92),
         new THREE.MeshStandardMaterial({
-          color: 0xffffff,
+          color: 0xfff5d2,
           roughness: 0.9,
           transparent: true,
-          opacity: 0.38
+          opacity: 0.5
         })
       );
       marker.position.set(x - 1, 0.03, z - 1);
@@ -652,12 +889,14 @@ function renderBaseTargets(group) {
 
 function createCube(color) {
   const mesh = new THREE.Mesh(
-    new THREE.BoxGeometry(0.96, 0.96, 0.96),
-    new THREE.MeshStandardMaterial({ color, roughness: 0.64, metalness: 0.02 })
+    cubeGeometry,
+    color === colors.cube
+      ? woodMaterial.clone()
+      : new THREE.MeshStandardMaterial({ color, roughness: 0.62, metalness: 0.02 })
   );
   const edges = new THREE.LineSegments(
-    new THREE.EdgesGeometry(mesh.geometry),
-    new THREE.LineBasicMaterial({ color: 0x8b765b, transparent: true, opacity: 0.48 })
+    cubeEdges,
+    cubeEdgeMaterial
   );
   mesh.add(edges);
   mesh.castShadow = true;
@@ -865,6 +1104,7 @@ function selectLevel(index) {
   state.levelIndex = index;
   state.problemIndex = 0;
   closeLevelPicker();
+  updateGuideCharacter();
   loadProblem();
 }
 
@@ -882,7 +1122,7 @@ function renderLevelOptions() {
     button.classList.toggle("active", index === state.levelIndex);
     button.setAttribute("aria-pressed", String(index === state.levelIndex));
     title.textContent = t("levelNumber").replace("{level}", level.level);
-    stars.textContent = "★".repeat(level.stars) + "☆".repeat(Math.max(0, levels.length - level.stars));
+    stars.textContent = `${"★".repeat(level.stars)}${"☆".repeat(Math.max(0, levels.length - level.stars))}`;
     problemCount.textContent = t("levelProblems").replace("{count}", level.problems.length);
     button.append(title, stars, problemCount);
     button.addEventListener("click", () => selectLevel(index));
@@ -904,6 +1144,15 @@ function updateStepDisplay() {
     .replace("{level}", level.level)
     .replace("{current}", state.problemIndex + 1)
     .replace("{total}", level.problems.length);
+}
+
+function updateGuideCharacter() {
+  const guide = document.querySelector(".floating-guide");
+  if (!guide) return;
+  const level = Math.min(getLevel()?.level || 1, 6);
+  guide.classList.remove("level-1", "level-2", "level-3", "level-4", "level-5", "level-6");
+  guide.classList.add(`level-${level}`);
+  guide.dataset.level = String(level);
 }
 
 function setView(view) {
@@ -974,6 +1223,7 @@ function applyLanguage() {
   refreshFrontIndicator(targetScene);
   refreshFrontIndicator(buildScene);
   renderLevelOptions();
+  updateGuideCharacter();
   setGuide("guideStart");
   updateAudioButton();
   updateBuilderControls();
@@ -987,7 +1237,8 @@ function showSuccessThenNext() {
   if (!state.successPending) state.successPending = true;
   awardPoints(`copy-build:${state.levelIndex}:${state.problemIndex}`, 15);
   const burst = document.querySelector("#successBurst");
-  const phrase = Math.random() > 0.5 ? t("successGreat") : t("successGood");
+  const phrases = [t("successGood"), t("successGreat"), t("successPop")];
+  const phrase = phrases[Math.floor(Math.random() * phrases.length)];
   burst.querySelector("strong").textContent = phrase;
   setGuide("guideSuccess");
   burst.classList.remove("show");
@@ -1034,10 +1285,14 @@ function clearGroup(group) {
   while (group.children.length) {
     const child = group.children.pop();
     child.traverse?.((node) => {
-      if (node.geometry) node.geometry.dispose();
+      if (node.geometry && node.geometry !== cubeGeometry && node.geometry !== cubeEdges) node.geometry.dispose();
       if (node.material) {
-        if (Array.isArray(node.material)) node.material.forEach((mat) => mat.dispose());
-        else node.material.dispose();
+        const disposeMaterial = (mat) => {
+          if (mat === woodMaterial || mat === cubeEdgeMaterial) return;
+          mat.dispose();
+        };
+        if (Array.isArray(node.material)) node.material.forEach(disposeMaterial);
+        else disposeMaterial(node.material);
       }
     });
   }
@@ -1058,7 +1313,7 @@ function sumGrid(grid) {
 }
 
 function setStars(count) {
-  document.querySelector("#stars").textContent = "★".repeat(count) + "☆".repeat(Math.max(0, 4 - count));
+  document.querySelector("#stars").textContent = `${"★".repeat(count)}${"☆".repeat(Math.max(0, 4 - count))}`;
 }
 
 function takeFromPile() {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GFIELD Cube Town</title>
-    <link rel="stylesheet" href="./styles.css?v=gap-placement2" />
+    <link rel="stylesheet" href="./styles.css?v=cube-town-premium-20260716e" />
     <script type="importmap">
       {
         "imports": {
@@ -27,6 +27,7 @@
           <button data-lang="ja">日本語</button>
           <button data-lang="en">English</button>
         </div>
+        <button id="topLevelPickerButton" class="top-level-button" type="button" aria-haspopup="dialog" data-i18n="levelSelect">레벨 선택</button>
       </header>
 
       <section class="lesson-panel">
@@ -98,14 +99,14 @@
       <aside class="floating-guide" aria-live="polite">
         <div class="guide-bubble">
           <div class="guide-head">
-            <strong class="guide-title" data-i18n="guideTitle">docssam</strong>
+            <strong class="guide-title" data-i18n="guideTitle">큐비</strong>
             <button id="audioToggle" class="guide-audio" type="button" aria-pressed="false" data-i18n="audioOff">
               음성 켜기
             </button>
           </div>
           <p id="guideMessage" data-i18n="guideStart">문제 모양을 보고 더미에서 하나씩 가져와 보자!</p>
         </div>
-        <img class="guide-character" src="./assets/docssam.png" alt="" aria-hidden="true" />
+        <span class="guide-character character-sprite sprite-0 color-original" aria-hidden="true"></span>
       </aside>
       <div id="successBurst" class="success-burst" aria-hidden="true">
         <strong data-i18n="successPop">성공!</strong>
@@ -114,6 +115,6 @@
       <div id="dragGhost" class="drag-ghost" aria-hidden="true"></div>
     </main>
 
-    <script type="module" src="./app.js?v=gap-placement2"></script>
+    <script type="module" src="./app.js?v=cube-town-premium-20260716f"></script>
   </body>
 </html>
