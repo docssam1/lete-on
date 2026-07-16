@@ -72,6 +72,7 @@ function render(problem, container, onAnswer){
     case 'numberBond':   return renderNumberBond(problem,container,onAnswer);
     case 'seqFill':      return renderSeqFill(problem,container,onAnswer);
     case 'dotToDot':     return renderDotToDot(problem,container,onAnswer);
+    case 'pyramid':      return renderPyramid(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -662,6 +663,7 @@ function renderSelectPairs(problem, container, onAnswer){
 function renderTapCount(problem, container, onAnswer){
   const items=(problem.items||[]).map((it,i)=>({...it,id:i}));
   const answer=problem.answer;
+  const step=problem.step||1;   /* 뛰어세기 배지: 10이면 10,20,30… (동전) */
   const marked=[];          /* 탭한 순서대로 id 저장 */
   let lock=false;
 
@@ -683,12 +685,12 @@ function renderTapCount(problem, container, onAnswer){
       const ord=marked.indexOf(it.id);
       el.className='nm-tc-item'+(ord>=0?' on':'');
       el.innerHTML=`<span class="nm-tc-emoji">${it.e}</span>`+
-        (ord>=0?`<span class="nm-tc-ord">${ord+1}</span>`:'');
+        (ord>=0?`<span class="nm-tc-ord">${(ord+1)*step}</span>`:'');
       el.addEventListener('pointerup',e=>{
         e.stopPropagation();
         const at=marked.indexOf(it.id);
         if(at>=0)marked.splice(at,1); else marked.push(it.id);
-        cnt.textContent=marked.length;
+        cnt.textContent=marked.length*step;
         paint();
       });
       scene.appendChild(el);
@@ -696,8 +698,8 @@ function renderTapCount(problem, container, onAnswer){
   }
   paint();
 
-  /* 큰 숫자 보기 3개 (정답 포함, 1~9 범위) */
-  const cand=[answer-2,answer-1,answer,answer+1,answer+2].filter(n=>n>=1&&n<=9&&n!==answer);
+  /* 큰 숫자 보기 3개 (정답 포함, step~9·step 범위) */
+  const cand=[answer-2*step,answer-step,answer+step,answer+2*step].filter(n=>n>=step&&n<=9*step&&n!==answer);
   const picks=[answer];
   while(picks.length<3&&cand.length){picks.push(cand.splice(Math.floor(Math.random()*cand.length),1)[0]);}
   picks.sort(()=>Math.random()-.5);
@@ -937,6 +939,55 @@ function renderDotToDot(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   PYRAMID  widget:'pyramid'  (유아 · 수의 나라)
+   problem.rows = [[top],[m1,m2],[a,b,c]] — 빈 칸은 null
+   이웃 두 돌의 합 = 위 돌. 아래 큰 숫자 보기 3개로 답 선택.
+   onAnswer(선택값).
+───────────────────────────────────────── */
+function renderPyramid(problem, container, onAnswer){
+  const rows=problem.rows||[[null],[1,1],[1,1,1]];
+  const answer=problem.answer;
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-py-wrap';
+  root.innerHTML=`<div class="nm-py-tower"></div><div class="nm-py-choices"></div>`;
+  container.appendChild(root);
+
+  const tower=root.querySelector('.nm-py-tower');
+  rows.forEach(row=>{
+    const r=document.createElement('div');r.className='nm-py-row';
+    row.forEach(v=>{
+      const c=document.createElement('div');
+      if(v===null){c.className='nm-py-cell ask';c.id='pyAsk';c.textContent='?';}
+      else{c.className='nm-py-cell';c.textContent=v;}
+      r.appendChild(c);
+    });
+    tower.appendChild(r);
+  });
+
+  const cand=[answer-2,answer-1,answer+1,answer+2].filter(n=>n>=1&&n<=9&&n!==answer);
+  const picks=[answer];
+  while(picks.length<3&&cand.length){picks.push(cand.splice(Math.floor(Math.random()*cand.length),1)[0]);}
+  picks.sort(()=>Math.random()-.5);
+
+  const ch=root.querySelector('.nm-py-choices');
+  picks.forEach(n=>{
+    const b=document.createElement('button');
+    b.className='nm-tc-choice';b.textContent=n;
+    b.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(lock)return;
+      lock=true;setTimeout(()=>{lock=false;},700);
+      if(n===answer){const a=root.querySelector('#pyAsk');if(a){a.textContent=n;a.classList.add('found');}}
+      else shake(b);
+      onAnswer(n);
+    });
+    ch.appendChild(b);
+  });
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
    Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
@@ -992,6 +1043,7 @@ window.NM_WIDGETS={
   renderNumberBond,
   renderSeqFill,
   renderDotToDot,
+  renderPyramid,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake

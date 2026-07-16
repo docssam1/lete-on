@@ -838,7 +838,7 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-tc-item .nm-tc-emoji{font-size:38px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.12))}
 .nm-tc-item.on{transform:scale(1.12)}
 .nm-tc-item.on::before{content:'';position:absolute;inset:2px;border-radius:50%;border:3px solid var(--ok);background:rgba(46,158,107,.08)}
-.nm-tc-ord{position:absolute;top:-4px;right:-2px;width:22px;height:22px;border-radius:50%;background:var(--ok);color:#fff;font-size:13px;font-weight:900;display:grid;place-items:center;box-shadow:0 2px 4px rgba(0,0,0,.18);animation:tc-pop .25s ease}
+.nm-tc-ord{position:absolute;top:-4px;right:-2px;min-width:22px;height:22px;padding:0 3px;border-radius:11px;background:var(--ok);color:#fff;font-size:13px;font-weight:900;display:grid;place-items:center;box-shadow:0 2px 4px rgba(0,0,0,.18);animation:tc-pop .25s ease}
 @keyframes tc-pop{0%{transform:scale(.3)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
 .nm-tc-counter{font-size:15px;font-weight:800;color:var(--sub)}
 .nm-tc-cnt{display:inline-grid;place-items:center;min-width:34px;height:34px;border-radius:12px;background:#eafaf1;color:var(--ok);font-size:20px;font-weight:900;padding:0 8px}
@@ -898,3 +898,12 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-dd-dot.on text{fill:#fff}
 .nm-dd-dot.no circle:not(.nm-dd-hit){fill:#fde8e6;stroke:var(--no)}
 .nm-dd-hint{font-size:14px;font-weight:800;color:var(--sub)}
+
+/* ── 유아 위젯 · pyramid (수 피라미드) ─────────────────────── */
+.nm-py-wrap{display:flex;flex-direction:column;align-items:center;gap:18px;padding:8px 4px}
+.nm-py-tower{display:flex;flex-direction:column;align-items:center;gap:6px}
+.nm-py-row{display:flex;gap:6px;justify-content:center}
+.nm-py-cell{width:58px;height:52px;border-radius:14px;border:2.5px solid var(--line);background:#fdfbf5;font-size:24px;font-weight:900;color:var(--blue-deep);display:grid;place-items:center;box-shadow:0 4px 0 #eceae4}
+.nm-py-cell.ask{border-color:var(--gold-deep);border-style:dashed;background:#fffaf0;color:#b8860b}
+.nm-py-cell.ask.found{border-style:solid;border-color:var(--ok);background:#eafaf1;color:var(--ok);animation:tc-pop .3s ease}
+.nm-py-choices{display:flex;gap:14px;justify-content:center}

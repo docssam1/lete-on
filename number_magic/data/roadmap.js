@@ -28,7 +28,7 @@ window.NM_ROADMAP = {
       id:'N1', icon:'🪜', grade:'유아',
       edu:{ko:'유아 5~7세 · 수 감각',en:'Ages 5–7 · Number sense',zh:'幼儿5~7岁 · 数感'},
       theme:{ko:'순서와 뛰어세기 — 앞으로, 거꾸로, 폴짝!',en:'Order & Skip-Counting — Forward, Backward, Hop!',zh:'顺序与跳数——往前、倒着、跳一跳！'},
-      units:['N-02'],
+      units:['N-02','N-09'],
       tip:{ko:'1부터 차례로 점을 이으면 숨은 그림이 짠! 나타나요.',en:'Connect the dots from 1 in order — a hidden picture appears!',zh:'从1开始按顺序连点——藏着的图案就出现啦！'}
     },
 

@@ -192,6 +192,60 @@
     };
   };
 
+  /* ── NL9 — 연쇄 합성·화폐 감각 ────────────────────────────
+     mode:'coins'    10원 동전 뛰어세기 — 탭 배지가 10,20,30… (tapCount 재사용)
+     mode:'pyramid'  수 피라미드 — 이웃 두 수의 합이 위 돌 → pyramid 위젯 */
+  NM_TGEN['nl9_chain'] = function (params, rng) {
+    const mode = (params && params.mode) || 'pyramid';
+    const lv   = (params && params.level) || 'main';
+
+    if (mode === 'coins') {
+      const n = lv === 'practice' ? R(rng, 2, 5) : R(rng, 3, 9);
+      const items = [];
+      for (let i = 0; i < n; i++) items.push({ e: '🪙', t: true });
+      return {
+        prompt: {
+          ko: '한 닢에 10원! 10, 20, 30… 뛰어세며 톡톡 — 모두 얼마인지 골라요',
+          en: 'Each coin is 10! Tap along — 10, 20, 30… then pick the total',
+          zh: '一枚10元！10、20、30……跳着数，选出一共多少'
+        },
+        answer:     n * 10,
+        answerType: 'number',
+        widget:     'tapCount',
+        emoji:      '🪙',
+        step:       10,
+        items
+      };
+    }
+
+    /* ---- pyramid: 아랫돌 3개 → 이웃 합으로 위 돌 ----
+       바닥 1~3, 꼭대기 ≤ 9 보장. practice는 꼭대기만, main은 중간/꼭대기 빈칸 */
+    let a, b, c, tries = 0;
+    do { a = R(rng, 1, 3); b = R(rng, 1, 3); c = R(rng, 1, 3); tries++; }
+    while (a + 2 * b + c > 9 && tries < 40);
+    if (a + 2 * b + c > 9) { a = 1; b = 1; c = 1; }
+    const m1 = a + b, m2 = b + c, top = m1 + m2;
+
+    const spots = lv === 'practice' ? [[0, 0]] : [[0, 0], [1, 0], [1, 1]];
+    const [ar, ai] = pick(rng, spots);
+    const rows = [[top], [m1, m2], [a, b, c]];
+    const answer = rows[ar][ai];
+    rows[ar] = rows[ar].slice();
+    rows[ar][ai] = null;
+
+    return {
+      prompt: {
+        ko: '이웃한 두 돌을 모으면 위 돌이 돼요! 빈 돌에 올 수를 골라요',
+        en: 'Two neighbor stones join into the stone above! Pick the missing one',
+        zh: '相邻两块石头合起来就是上面那块！选出空石头上的数'
+      },
+      answer,
+      answerType: 'number',
+      widget:     'pyramid',
+      rows
+    };
+  };
+
   /* ── NL7 — 10까지의 수 관계망 ─────────────────────────────
      mode:'tenpair'  텐프레임 — n개에서 10 만들기(10의 짝꿍) → tenframe 위젯
      mode:'oneStep'  1 큰 수 / 1 작은 수 — 세어 보고 이웃 수 고르기 → tapCount 위젯

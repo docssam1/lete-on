@@ -427,7 +427,9 @@ window.NM_ROADMAP = {
 - [x] N-02 수의 순서 (nl2_seq: gap=수열 빈칸 이어·거꾸로·2씩 / dots=점 잇기.
       seqFill·dotToDot 위젯 신규 — 점 잇기 도형 4종은 오리지널 좌표. dotToDot
       엔진은 추후 숫자 획순 따라 쓰기에 재사용 예정) — 2026-07-16 검증 완료 · N1 챕터 신설
-- [ ] N-09 피라미드·동전 뛰어세기 (pyramid + coinCount)
+- [x] N-09 피라미드·동전 뛰어세기 (nl9_chain: coins=tapCount에 step:10 확장
+      — 배지 10,20,30… / pyramid=3층 이웃 합 위젯, main은 가운데 빈칸도)
+      — 2026-07-16 Playwright 전 구간 검증 완료. 별도 coinCount 위젯 불필요해짐
 - [ ] N-11 수 배열·이어 세기 (seqFill + matchLine)
 - [ ] N-03 서수·크기 비교 (nl3_ordinal + gridPaint)
 - [ ] N-05 생활 서수 문장제 (storyCard)
