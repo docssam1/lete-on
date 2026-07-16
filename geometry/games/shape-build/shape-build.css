@@ -1,0 +1,166 @@
+.shape-build-page .shape-pile {
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+}
+
+.shape-tray {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(52px, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+
+.shape-piece {
+  position: relative;
+  min-width: 0;
+  min-height: 74px;
+  display: grid;
+  place-items: center;
+  gap: 3px;
+  padding: 6px 4px;
+  border-radius: 14px;
+  color: #4b2c17;
+}
+
+.shape-piece[hidden] {
+  display: none;
+}
+
+.shape-piece.active {
+  outline: 3px solid #ffe486;
+  outline-offset: 2px;
+}
+
+.shape-piece[disabled] {
+  opacity: .42;
+  cursor: default;
+}
+
+.shape-icon {
+  position: relative;
+  display: block;
+  width: 36px;
+  height: 34px;
+  border-radius: 7px;
+  background: #e9c982;
+  box-shadow: inset -7px -7px 0 rgba(0,0,0,.12), 0 4px 7px rgba(55,31,13,.2);
+}
+
+.shape-piece[data-shape="cuboid"] .shape-icon {
+  width: 48px;
+  height: 27px;
+  background: #d59a53;
+}
+
+.shape-piece[data-shape="wedge"] .shape-icon {
+  width: 44px;
+  background: #79ad6c;
+  clip-path: polygon(0 100%, 0 48%, 50% 0, 100% 48%, 100% 100%);
+}
+
+.shape-piece[data-shape="pyramid"] .shape-icon {
+  background: #e7b943;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.shape-piece[data-shape="cone"] .shape-icon {
+  width: 34px;
+  background: #dc795f;
+  clip-path: polygon(50% 0, 100% 88%, 82% 100%, 18% 100%, 0 88%);
+}
+
+.shape-piece strong {
+  overflow: hidden;
+  max-width: 100%;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shape-piece small {
+  font-size: 10px;
+}
+
+.shape-tray-copy {
+  display: none;
+}
+
+.shape-drag-ghost {
+  display: none;
+  place-items: center;
+  border-color: #5d371d;
+  background: #e9c982;
+  color: #4b2c17;
+  font-size: 10px;
+  font-weight: 950;
+}
+
+.shape-drag-ghost.show {
+  display: grid;
+}
+
+.shape-drag-ghost[data-shape="cuboid"] {
+  width: 64px;
+  background: #d59a53;
+}
+
+.shape-drag-ghost[data-shape="wedge"] { background: #79ad6c; }
+.shape-drag-ghost[data-shape="pyramid"] { background: #e7b943; }
+.shape-drag-ghost[data-shape="cone"] { background: #dc795f; }
+
+#shapePile.drop-target {
+  outline: 4px solid rgba(224, 70, 70, .68);
+  outline-offset: -4px;
+}
+
+#captureBuild[hidden] {
+  display: none;
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .shape-build-page .shape-controls {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .shape-build-page .shape-tray {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 3px;
+    height: 100%;
+  }
+
+  .shape-build-page .shape-piece {
+    min-height: 0;
+    height: 100%;
+    gap: 1px;
+    padding: 2px;
+    border-radius: 7px;
+  }
+
+  .shape-build-page .shape-icon {
+    width: 24px;
+    height: 22px;
+    border-radius: 5px;
+  }
+
+  .shape-build-page .shape-piece[data-shape="cuboid"] .shape-icon,
+  .shape-build-page .shape-piece[data-shape="wedge"] .shape-icon {
+    width: 31px;
+    height: 20px;
+  }
+
+  .shape-build-page .shape-piece[data-shape="cone"] .shape-icon {
+    width: 22px;
+  }
+
+  .shape-build-page .shape-piece strong {
+    font-size: 8px;
+  }
+
+  .shape-build-page .shape-piece small {
+    font-size: 8px;
+  }
+
+  .shape-build-page .shape-tray-copy {
+    display: none;
+  }
+}

@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { COPY_BUILD_LEVELS } from "./data/copy-build-levels.js";
 
 const translations = { ko: {}, zh: {}, ja: {}, en: {} };
 
@@ -36,6 +37,7 @@ const displayCopy = {
     returnToPile: "다른 자리로 옮기거나 더미에 내려놓으면 빠져요.",
     levelProgress: "레벨 {level} · {current}/{total}",
     guideStart: "문제 모양을 보고 더미에서 하나씩 가져와 보자!",
+    guideColorCount: "가려진 쌓기나무는 보관함의 색별 개수를 단서로 똑같이 만들어 보자!",
     guideHold: "좋아, 빨간 위치에 천천히 내려놓아 봐.",
     guideDrop: "거기 좋아! 손을 떼면 그 자리에 쌓여.",
     guideMove: "위에 있는 블록은 다른 자리로 옮길 수 있어.",
@@ -78,6 +80,7 @@ const displayCopy = {
     boardLabel: "放到红色位置上",
     wrong: "有一点不一样。再看看位置和高度。",
     guideStart: "看看目标形状，从盒子里拿一个方块吧！",
+    guideColorCount: "看不见的方块要根据盒子里每种颜色的数量来推理并搭好！",
     guideHold: "很好，慢慢放到红色位置上。",
     guideDrop: "这个位置不错！松手就可以放下。",
     guideMove: "最上面的方块可以移动到别的位置。",
@@ -121,6 +124,7 @@ const displayCopy = {
     boardLabel: "赤い場所に置きましょう",
     wrong: "少し違います。位置と高さをもう一度見てみましょう。",
     guideStart: "問題の形を見て、トレイから一つ取ってみよう！",
+    guideColorCount: "見えない積み木は、トレイの色ごとの数を手がかりに同じ形を作ろう！",
     guideHold: "いいね。赤い場所にゆっくり置いてみよう。",
     guideDrop: "そこがいいよ！指を離すと置けるよ。",
     guideMove: "上にあるブロックは別の場所へ動かせるよ。",
@@ -166,6 +170,7 @@ const displayCopy = {
     correct: "Exactly right! Moving to the next problem.",
     wrong: "Not quite. Check the position and height again.",
     guideStart: "Look at the target shape and bring one cube from the tray.",
+    guideColorCount: "Use the number of each color in the tray to infer the hidden cubes.",
     guideHold: "Nice. Move it slowly onto the red guide.",
     guideDrop: "Good spot! Release to place it there.",
     guideMove: "You can move a top cube to another place.",
@@ -397,112 +402,18 @@ const maleVoiceHints = {
 const femaleVoiceHints = /\bfemale\b|sunhi|xiaoxiao|nanami|zira|jenny|aria|susan|samantha/i;
 
 const levels = [
+  ...COPY_BUILD_LEVELS,
   {
-    level: 1,
-    stars: 1,
-    problems: [
-      [
-        [0, 1, 0],
-        [1, 1, 1],
-        [0, 0, 0]
-      ],
-      [
-        [1, 1, 0],
-        [0, 1, 0],
-        [0, 0, 0]
-      ],
-      [
-        [0, 0, 0],
-        [1, 1, 1],
-        [0, 1, 0]
-      ],
-      [
-        [1, 0, 1],
-        [0, 1, 0],
-        [0, 0, 0]
-      ],
-      [
-        [0, 1, 0],
-        [0, 1, 0],
-        [1, 1, 0]
-      ]
-    ]
+    level: 4,
+    stars: 4,
+    problemCount: 5,
+    href: "./games/shape-build/?level=4"
   },
   {
-    level: 2,
-    stars: 2,
-    problems: [
-      [
-        [0, 1, 0],
-        [1, 2, 1],
-        [0, 1, 0]
-      ],
-      [
-        [1, 2, 0],
-        [0, 1, 1],
-        [0, 0, 0]
-      ],
-      [
-        [0, 2, 1],
-        [1, 1, 0],
-        [0, 1, 0]
-      ],
-      [
-        [1, 1, 0],
-        [2, 1, 1],
-        [0, 0, 0]
-      ],
-      [
-        [0, 1, 0],
-        [2, 2, 1],
-        [0, 0, 1]
-      ]
-    ]
-  },
-  {
-    level: 3,
-    stars: 3,
-    problems: [
-      [
-        [1, 0, 2],
-        [1, 2, 1],
-        [0, 0, 1]
-      ],
-      [
-        [0, 2, 0],
-        [1, 3, 1],
-        [0, 1, 0]
-      ],
-      {
-        grid: [
-          [2, 1, 0],
-          [1, 2, 2],
-          [0, 0, 1]
-        ],
-        colorMap: [
-          [["cube", "green"], ["yellow"], []],
-          [["blue"], ["cube", "cube"], ["yellow", "rose"]],
-          [[], [], ["green"]]
-        ]
-      },
-      [
-        [0, 1, 3],
-        [1, 2, 1],
-        [1, 0, 0]
-      ],
-      {
-        grid: [
-          [1, 2, 1],
-          [0, 3, 2],
-          [1, 0, 1]
-        ],
-        colorMap: [
-          [["green"], ["cube", "blue"], ["yellow"]],
-          [[], ["cube", "rose", "cube"], ["blue", "yellow"]],
-          [["cube"], [], ["rose"]]
-        ]
-      }
-    ]
+    level: 5,
+    stars: 5,
+    problemCount: 5,
+    href: "./games/shape-build/?level=5"
   }
 ];
 
@@ -576,9 +487,13 @@ function createWoodTexture() {
   return texture;
 }
 
+const requestedLevel = Number(new URLSearchParams(window.location.search).get("level"));
+
 const state = {
   lang: "ko",
-  levelIndex: 0,
+  levelIndex: Number.isInteger(requestedLevel) && requestedLevel >= 1 && requestedLevel <= 3
+    ? requestedLevel - 1
+    : 0,
   problemIndex: 0,
   grid: emptyGrid(),
   colorGrid: emptyColorGrid(),
@@ -674,9 +589,22 @@ function createViewer(container, interactive) {
     renderer.domElement.addEventListener("pointerup", onPointerUp);
   }
 
-  const viewer = { scene, camera, renderer, controls, container, frontIndicator, sun };
+  const viewer = { scene, camera, renderer, controls, container, frontIndicator, sun, grid };
   resizeViewer(viewer);
   return viewer;
+}
+
+function setViewerBoardSize(viewer, size) {
+  if (viewer.grid) {
+    viewer.scene.remove(viewer.grid);
+    viewer.grid.geometry?.dispose?.();
+    if (Array.isArray(viewer.grid.material)) viewer.grid.material.forEach((material) => material.dispose());
+    else viewer.grid.material?.dispose?.();
+  }
+  const grid = new THREE.GridHelper(size, size, 0x8e6841, 0xc79b67);
+  grid.position.y = 0.025;
+  viewer.scene.add(grid);
+  viewer.grid = grid;
 }
 
 function createWoodBoard() {
@@ -874,6 +802,7 @@ function addEvents() {
 
 function loadProblem() {
   clearPendingSuccess();
+  const boardSize = getProblemBoardSize();
   state.countMode = false;
   state.counted = 0;
   state.holdingCube = false;
@@ -881,11 +810,13 @@ function loadProblem() {
   state.draggingFromBoard = null;
   state.dragCell = null;
   state.pileTarget = false;
-  state.grid = emptyGrid();
-  state.colorGrid = emptyColorGrid();
+  state.grid = emptyGrid(boardSize);
+  state.colorGrid = emptyColorGrid(boardSize);
   state.selectedColor = "cube";
   state.falling = [];
   document.body.classList.toggle("color-problem", isColorProblem());
+  setViewerBoardSize(targetScene, boardSize);
+  setViewerBoardSize(buildScene, boardSize);
   document.querySelector("#modeTitle").textContent = t("copyMode");
   document.querySelector("#instruction").textContent = t("copyInstruction");
   updateStepDisplay();
@@ -894,7 +825,7 @@ function loadProblem() {
   renderTarget();
   renderBuild();
   updateBuilderControls();
-  setGuide("guideStart");
+  setGuide(isColorProblem() ? "guideColorCount" : "guideStart");
 }
 
 function renderTarget() {
@@ -913,12 +844,13 @@ function renderBuild() {
 
 function renderGrid(group, grid, interactive) {
   const problem = normalizeProblem(grid);
+  const offset = (getProblemBoardSize(problem) - 1) / 2;
   problem.grid.forEach((row, z) => {
     row.forEach((height, x) => {
       for (let y = 0; y < height; y += 1) {
         const colorName = interactive ? (state.colorGrid[z]?.[x]?.[y] || "cube") : getProblemCubeColor(problem, x, z, y);
         const cube = createCube(colors[colorName] || colors.cube);
-        cube.position.set(x - 1, y + 0.5, z - 1);
+        cube.position.set(x - offset, y + 0.5, z - offset);
         cube.userData = { kind: "cube", x, z, y, interactive };
         group.add(cube);
       }
@@ -927,8 +859,10 @@ function renderGrid(group, grid, interactive) {
 }
 
 function renderBaseTargets(group) {
-  for (let z = 0; z < 3; z += 1) {
-    for (let x = 0; x < 3; x += 1) {
+  const size = getProblemBoardSize();
+  const offset = (size - 1) / 2;
+  for (let z = 0; z < size; z += 1) {
+    for (let x = 0; x < size; x += 1) {
       const marker = new THREE.Mesh(
         new RoundedBoxGeometry(0.9, 0.035, 0.9, 3, 0.018),
         new THREE.MeshStandardMaterial({
@@ -938,7 +872,7 @@ function renderBaseTargets(group) {
           opacity: 0.58
         })
       );
-      marker.position.set(x - 1, 0.045, z - 1);
+      marker.position.set(x - offset, 0.045, z - offset);
       marker.userData = { kind: "cell", x, z, interactive: true };
       group.add(marker);
     }
@@ -1055,9 +989,11 @@ function getCellFromHit(object, point) {
   if (object.userData.kind === "cube") {
     return { x: object.userData.x, z: object.userData.z };
   }
-  const x = Math.round(point.x + 1);
-  const z = Math.round(point.z + 1);
-  if (x < 0 || x > 2 || z < 0 || z > 2) return null;
+  const size = getProblemBoardSize();
+  const offset = (size - 1) / 2;
+  const x = Math.round(point.x + offset);
+  const z = Math.round(point.z + offset);
+  if (x < 0 || x >= size || z < 0 || z >= size) return null;
   return { x, z };
 }
 
@@ -1141,8 +1077,9 @@ function clearPendingSuccess() {
 
 function resetBuild() {
   clearPendingSuccess();
-  state.grid = emptyGrid();
-  state.colorGrid = emptyColorGrid();
+  const boardSize = getProblemBoardSize();
+  state.grid = emptyGrid(boardSize);
+  state.colorGrid = emptyColorGrid(boardSize);
   state.selectedColor = "cube";
   state.countMode = false;
   state.counted = 0;
@@ -1162,9 +1099,7 @@ function nextProblem() {
     setGuide("guideLevelSelect");
     return;
   }
-  resetBuild();
-  renderTarget();
-  setGuide("guideNext");
+  loadProblem();
 }
 
 function openLevelPicker() {
@@ -1179,6 +1114,10 @@ function closeLevelPicker() {
 }
 
 function selectLevel(index) {
+  if (levels[index]?.href) {
+    window.location.href = levels[index].href;
+    return;
+  }
   state.levelIndex = index;
   state.problemIndex = 0;
   closeLevelPicker();
@@ -1201,7 +1140,7 @@ function renderLevelOptions() {
     button.setAttribute("aria-pressed", String(index === state.levelIndex));
     title.textContent = t("levelNumber").replace("{level}", level.level);
     stars.textContent = `${"★".repeat(level.stars)}${"☆".repeat(Math.max(0, levels.length - level.stars))}`;
-    problemCount.textContent = t("levelProblems").replace("{count}", level.problems.length);
+    problemCount.textContent = t("levelProblems").replace("{count}", level.problems?.length || level.problemCount || 0);
     button.append(title, stars, problemCount);
     button.addEventListener("click", () => selectLevel(index));
     options.appendChild(button);
@@ -1322,7 +1261,7 @@ function applyLanguage() {
   refreshFrontIndicator(buildScene);
   renderLevelOptions();
   updateGuideCharacter();
-  setGuide("guideStart");
+  setGuide(isColorProblem() ? "guideColorCount" : "guideStart");
   updateAudioButton();
   updateBuilderControls();
 }
@@ -1367,20 +1306,22 @@ function resizeViewer(viewer) {
   const width = Math.max(1, rect.width);
   const height = Math.max(1, rect.height);
   viewer.camera.aspect = width / height;
+  viewer.camera.fov = viewer.container.id === "targetCanvas" && width / height < 0.9 ? 50 : 38;
   viewer.camera.updateProjectionMatrix();
   viewer.renderer.setSize(width, height, false);
 }
 
-function emptyGrid() {
-  return [
-    [0, 0, 0],
-    [0, 0, 0],
-    [0, 0, 0]
-  ];
+function getProblemBoardSize(problem = getProblemData()) {
+  const rows = normalizeProblem(problem).grid;
+  return Math.max(rows.length, ...rows.map((row) => row.length));
 }
 
-function emptyColorGrid() {
-  return Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => []));
+function emptyGrid(size = 3) {
+  return Array.from({ length: size }, () => Array(size).fill(0));
+}
+
+function emptyColorGrid(size = 3) {
+  return Array.from({ length: size }, () => Array.from({ length: size }, () => []));
 }
 
 function clearGroup(group) {
@@ -1456,7 +1397,7 @@ function sumGrid(grid) {
 }
 
 function setStars(count) {
-  document.querySelector("#stars").textContent = `${"★".repeat(count)}${"☆".repeat(Math.max(0, 4 - count))}`;
+  document.querySelector("#stars").textContent = `${"★".repeat(count)}${"☆".repeat(Math.max(0, 5 - count))}`;
 }
 
 function takeFromPile(event) {
@@ -1604,7 +1545,8 @@ function updateDragTarget(x, y) {
   }
 
   state.dragCell = cell;
-  dropMarker.position.set(cell.x - 1, targetHeight + 0.5, cell.z - 1);
+  const offset = (getProblemBoardSize() - 1) / 2;
+  dropMarker.position.set(cell.x - offset, targetHeight + 0.5, cell.z - offset);
   dropMarker.visible = true;
   setGuide("guideDrop");
 }
@@ -1631,9 +1573,11 @@ function getCellFromCanvasPoint(clientX, clientY) {
   raycaster.setFromCamera(pointer, buildScene.camera);
 
   const candidates = [];
+  const size = getProblemBoardSize();
+  const offset = (size - 1) / 2;
   const planeNormal = new THREE.Vector3(0, 1, 0);
-  for (let z = 0; z < 3; z += 1) {
-    for (let x = 0; x < 3; x += 1) {
+  for (let z = 0; z < size; z += 1) {
+    for (let x = 0; x < size; x += 1) {
       const height = getDropHeight(x, z);
       if (height >= 4) continue;
 
@@ -1641,8 +1585,8 @@ function getCellFromCanvasPoint(clientX, clientY) {
       const point = new THREE.Vector3();
       if (!raycaster.ray.intersectPlane(plane, point)) continue;
 
-      const centerX = x - 1;
-      const centerZ = z - 1;
+      const centerX = x - offset;
+      const centerZ = z - offset;
       const insideCell = Math.abs(point.x - centerX) <= 0.53 && Math.abs(point.z - centerZ) <= 0.53;
       const projected = new THREE.Vector3(centerX, height + 0.02, centerZ).project(buildScene.camera);
       const screenX = rect.left + ((projected.x + 1) * 0.5 * rect.width);

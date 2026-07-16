@@ -41,9 +41,10 @@ Create a touch-first educational block-building game for young children. The app
 ## Layout
 
 - Desktop: target model and learner build side by side.
-- Mobile: stacked flow: instruction, count, target, build, controls.
-- The build panel must reserve enough space for the pile below the 3D board.
-- Touch targets must stay at least 64px.
+- Mobile portrait: show only a clear landscape-rotation guide with Cubi.
+- Mobile landscape: keep target, build board, pile, and controls inside one viewport without page scrolling.
+- The target panel uses about 31% of the width and the build panel uses the remaining space.
+- Touch targets in the landscape control row must stay at least 44px tall.
 
 ## Color Tokens
 

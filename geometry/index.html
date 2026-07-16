@@ -2,9 +2,9 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town</title>
-    <link rel="stylesheet" href="./styles.css?v=cube-town-premium-fit-color-20260716a" />
+    <link rel="stylesheet" href="./styles.css?v=cube-town-mobile-landscape-20260716b" />
     <script type="importmap">
       {
         "imports": {
@@ -15,6 +15,20 @@
     </script>
   </head>
   <body>
+    <section class="portrait-guard" aria-label="화면 회전 안내">
+      <div class="portrait-brand">GFIELD <span>Cube Town</span></div>
+      <div class="rotate-phone" aria-hidden="true">
+        <span class="rotate-phone-device"></span>
+        <span class="rotate-phone-arrow">↻</span>
+      </div>
+      <div class="portrait-guide">
+        <span class="portrait-character character-sprite sprite-0 color-original" aria-hidden="true"></span>
+        <div>
+          <strong>가로로 돌려 주세요</strong>
+          <p>더 넓은 판에서 쌓기나무를 움직여 볼까요?</p>
+        </div>
+      </div>
+    </section>
     <main class="app-shell">
       <header class="topbar">
         <div>
@@ -122,6 +136,6 @@
       <div id="dragGhost" class="drag-ghost" aria-hidden="true"></div>
     </main>
 
-    <script type="module" src="./app.js?v=cube-town-premium-fit-color-20260716a"></script>
+    <script type="module" src="./app.js?v=cube-town-mobile-landscape-20260716c"></script>
   </body>
 </html>

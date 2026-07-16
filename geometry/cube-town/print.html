@@ -4,14 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GFIELD Cube Town - Print Study</title>
-    <link rel="stylesheet" href="./print.css?v=2" />
+    <link rel="stylesheet" href="./print.css?v=copy-build-1" />
   </head>
   <body>
     <header class="print-toolbar">
       <a href="./index.html">← Cube Town</a>
       <div class="tool-field">
         <label for="gameSelect">게임</label>
-        <select id="gameSelect"><option>쌓기나무 개수 세기</option></select>
+        <select id="gameSelect">
+          <option value="copy-wood">똑같이 쌓기 · 원목 관찰</option>
+          <option value="copy-color">똑같이 쌓기 · 컬러 색칠</option>
+          <option value="count-heights">쌓기나무 개수 세기</option>
+        </select>
       </div>
       <div class="tool-field">
         <label for="levelSelect">레벨</label>
@@ -22,7 +26,7 @@
       </div>
       <div class="tool-field">
         <label for="countSelect">문제 수</label>
-        <select id="countSelect"><option value="10" selected>10문제</option><option value="15">15문제</option></select>
+        <select id="countSelect"><option value="5">5문제</option><option value="10" selected>10문제</option><option value="20">20문제</option></select>
       </div>
       <label class="answer-toggle"><input id="coverToggle" type="checkbox" checked /> 표지 포함</label>
       <label class="answer-toggle"><input id="answerToggle" type="checkbox" checked /> 정답지 포함</label>
@@ -35,9 +39,9 @@
         <div class="cover-brand"><span>GFIELD</span><strong>GEOMETRY WORLD</strong></div>
         <div class="cover-copy">
           <p>CUBE TOWN PRACTICE BOOK</p>
-          <h1>쌓기나무<br />개수 세기</h1>
+          <h1 id="coverTitle">똑같이 쌓기<br />원목 관찰</h1>
           <div class="cover-rule"></div>
-          <p class="cover-subtitle">높이를 살펴보고, 하나씩 더하고,<br />공간을 수로 표현해 보세요.</p>
+          <p id="coverSubtitle" class="cover-subtitle">입체 모양을 살펴보고,<br />각 자리의 높이를 기록해 보세요.</p>
         </div>
         <div class="cover-mascots" aria-hidden="true">
           <i class="mascot mascot-cube"></i>
@@ -61,6 +65,6 @@
         <div id="answers" class="answer-grid"></div>
       </section>
     </main>
-    <script type="module" src="./print.js?v=2"></script>
+    <script type="module" src="./print.js?v=copy-build-1"></script>
   </body>
 </html>

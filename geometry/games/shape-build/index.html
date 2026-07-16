@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>GFIELD Cube Town - Shape Build</title>
+    <link rel="stylesheet" href="../../styles.css?v=shape-build-20260716a" />
+    <link rel="stylesheet" href="./shape-build.css?v=shape-build-20260716a" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.166.1/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.166.1/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body class="shape-build-page">
+    <section class="portrait-guard" aria-label="화면 회전 안내">
+      <div class="portrait-brand">GFIELD <span>Cube Town</span></div>
+      <div class="rotate-phone" aria-hidden="true">
+        <span class="rotate-phone-device"></span>
+        <span class="rotate-phone-arrow">↻</span>
+      </div>
+      <div class="portrait-guide">
+        <span class="portrait-character character-sprite sprite-0 color-original" aria-hidden="true"></span>
+        <div>
+          <strong>가로로 돌려 주세요</strong>
+          <p>여러 입체를 넓은 판에서 움직여 볼까요?</p>
+        </div>
+      </div>
+    </section>
+
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">GFIELD Geometry World</p>
+          <h1>GFIELD Cube Town</h1>
+        </div>
+        <div class="language-switch" aria-label="Language">
+          <button data-lang="ko" class="active">한국어</button>
+          <button data-lang="zh">中文</button>
+          <button data-lang="ja">日本語</button>
+          <button data-lang="en">English</button>
+        </div>
+        <button id="topLevelPickerButton" class="top-level-button" type="button" aria-haspopup="dialog">레벨 선택</button>
+      </header>
+
+      <section class="play-area">
+        <article class="viewer target-view">
+          <div class="viewer-heading"><h2 id="targetTitle">문제 모양</h2></div>
+          <div id="targetCanvas" class="canvas-wrap"></div>
+        </article>
+        <article class="viewer build-view">
+          <div class="viewer-heading"><h2 id="buildTitle">내가 만든 모양</h2></div>
+          <div id="buildCanvas" class="canvas-wrap interactive"></div>
+        </article>
+      </section>
+
+      <section class="builder-controls" aria-label="입체 조각 보관함">
+        <div id="shapePile" class="pile-button shape-pile">
+          <div id="shapeTray" class="shape-tray"></div>
+          <span class="shape-tray-copy">
+            <strong id="trayTitle">입체 조각</strong>
+            <small id="trayHint">조각을 끌어다 놓아요</small>
+          </span>
+        </div>
+      </section>
+
+      <section class="control-strip shape-controls">
+        <button id="checkAnswer" class="primary" type="button">확인</button>
+        <button id="nextStep" type="button">다음 문제</button>
+        <button id="resetBuild" type="button">처음부터</button>
+        <button id="rotatePiece" type="button">방향</button>
+        <button id="viewFront" type="button">앞</button>
+        <button id="viewTop" type="button">위</button>
+        <button id="captureBuild" type="button">사진</button>
+      </section>
+
+      <div id="levelDialog" class="level-dialog" hidden>
+        <section class="level-dialog-panel" role="dialog" aria-modal="true" aria-labelledby="levelDialogTitle">
+          <header class="level-dialog-head">
+            <h2 id="levelDialogTitle">레벨 선택</h2>
+            <button id="closeLevelDialog" class="icon-button" type="button" aria-label="닫기">&times;</button>
+          </header>
+          <div id="levelOptions" class="level-options"></div>
+        </section>
+      </div>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+      <aside id="shapeGuide" class="floating-guide" aria-live="polite">
+        <div class="guide-bubble">
+          <div class="guide-head">
+            <strong class="guide-title">큐비</strong>
+            <button id="audioToggle" class="guide-audio" type="button" aria-pressed="false">음성 켜기</button>
+          </div>
+          <p id="guideMessage">조각의 모양과 방향을 잘 살펴보자!</p>
+        </div>
+        <span class="guide-character character-sprite sprite-0 color-original" aria-hidden="true"></span>
+      </aside>
+      <div id="successBurst" class="success-burst" aria-hidden="true">
+        <strong>SUCCESS!</strong>
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div id="shapeDragGhost" class="drag-ghost shape-drag-ghost" aria-hidden="true"></div>
+    </main>
+
+    <script type="module" src="./shape-build.js?v=shape-build-20260716b"></script>
+  </body>
+</html>
