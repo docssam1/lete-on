@@ -12,40 +12,43 @@
   box-shadow: 0 10px 24px rgba(78, 58, 35, 0.08);
 }
 
-.copy-level-card strong {
-  grid-row: 1 / span 2;
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  color: #9a6735;
-}
+.copy-level-card strong { grid-row: 1 / span 2; font-size: 0.78rem; letter-spacing: 0.08em; color: #9a6735; }
+.copy-level-card b { font-size: 1rem; }
+.copy-level-card small { color: #71695e; line-height: 1.35; }
+.copy-level-card.active { border-color: #e0a33a; background: linear-gradient(145deg, #fff9e9, #f3dfb7); box-shadow: 0 12px 28px rgba(177, 116, 25, 0.18); }
 
-.copy-level-card b {
-  font-size: 1rem;
-}
-
-.copy-level-card small {
-  color: #71695e;
-  line-height: 1.35;
-}
-
-.copy-level-card.active {
-  border-color: #e0a33a;
-  background: linear-gradient(145deg, #fff9e9, #f3dfb7);
-  box-shadow: 0 12px 28px rgba(177, 116, 25, 0.18);
-}
-
-body[data-copy-build-level="5"] .play-area {
-  grid-template-columns: 1fr;
-}
-
-body[data-copy-build-level="5"] .creative-view {
+.block-type-tray {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   width: 100%;
-  min-height: 0;
+  padding: 10px 12px;
+  border: 2px solid rgba(111, 79, 44, 0.16);
+  border-radius: 20px;
+  background: linear-gradient(145deg, rgba(255,255,255,.96), rgba(238,222,190,.94));
+  box-shadow: 0 10px 22px rgba(88, 62, 33, .11);
 }
 
-body[data-copy-build-level="5"] .creative-view .canvas-wrap {
-  min-height: min(58vh, 560px);
+.block-type-tray button {
+  min-height: 48px;
+  padding: 9px 16px;
+  border: 2px solid rgba(112, 80, 47, .18);
+  border-radius: 15px;
+  background: linear-gradient(145deg, #fffdf8, #ead1a5);
+  color: #4d3926;
+  font-weight: 800;
+  box-shadow: 0 5px 12px rgba(90, 62, 35, .1);
 }
+
+.block-type-tray button.active {
+  border-color: #df9c2f;
+  background: linear-gradient(145deg, #fff5d9, #e8b963);
+  transform: translateY(-2px);
+}
+
+body[data-copy-build-level="5"] .play-area { grid-template-columns: 1fr; }
+body[data-copy-build-level="5"] .creative-view { width: 100%; min-height: 0; }
+body[data-copy-build-level="5"] .creative-view .canvas-wrap { min-height: min(58vh, 560px); }
 
 #captureBuild {
   background: linear-gradient(145deg, #7655c8, #4c35a2);
@@ -53,19 +56,11 @@ body[data-copy-build-level="5"] .creative-view .canvas-wrap {
   border-color: rgba(62, 38, 131, 0.42);
   box-shadow: 0 8px 18px rgba(71, 47, 148, 0.24);
 }
-
-#captureBuild:disabled {
-  opacity: 0.6;
-  cursor: wait;
-}
+#captureBuild:disabled { opacity: 0.6; cursor: wait; }
 
 @media (orientation: landscape) and (max-height: 620px) {
-  body[data-copy-build-level="5"] .creative-view .canvas-wrap {
-    min-height: calc(100dvh - 154px - env(safe-area-inset-bottom));
-  }
-
-  .copy-level-card {
-    padding: 9px 12px;
-    border-radius: 14px;
-  }
+  body[data-copy-build-level="5"] .creative-view .canvas-wrap { min-height: calc(100dvh - 154px - env(safe-area-inset-bottom)); }
+  .copy-level-card { padding: 9px 12px; border-radius: 14px; }
+  .block-type-tray { padding: 6px 8px; gap: 6px; border-radius: 14px; }
+  .block-type-tray button { min-height: 40px; padding: 6px 11px; border-radius: 11px; font-size: .82rem; }
 }
