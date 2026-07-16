@@ -32,7 +32,7 @@ const elements = {
   toast: $("#toast"),
   success: $("#success"),
   docssam: $(".docssam"),
-  docssamImage: $(".docssam img")
+  cubi: $(".cubi-sprite")
 };
 
 const state = {
@@ -341,8 +341,11 @@ function checkAnswer() {
 function completeProblem() {
   state.solved = true;
   awardPoints(`count-cubes:${currentProblem().id}`, 15);
-  const phrase = state.hintsUsed === 0 && state.wrongAttempts === 0 ? "success" : "successGood";
-  elements.success.querySelector("strong").textContent = text(state.lang, phrase);
+  const phrases = state.hintsUsed === 0 && state.wrongAttempts === 0
+    ? ["success", "successGood"]
+    : ["successGood"];
+  const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+  elements.success.querySelector("strong").textContent = text(state.lang, phrase).toUpperCase();
   elements.success.classList.remove("show");
   void elements.success.offsetWidth;
   elements.success.classList.add("show");
@@ -626,15 +629,16 @@ animate();
 
 function setupDocssamDrag() {
   let drag = null;
-  elements.docssamImage.addEventListener("pointerdown", (event) => {
+  if (!elements.cubi) return;
+  elements.cubi.addEventListener("pointerdown", (event) => {
     drag = { x: event.clientX, y: event.clientY };
-    elements.docssamImage.setPointerCapture(event.pointerId);
+    elements.cubi.setPointerCapture(event.pointerId);
   });
-  elements.docssamImage.addEventListener("pointermove", (event) => {
+  elements.cubi.addEventListener("pointermove", (event) => {
     if (!drag) return;
     elements.docssam.style.transform = `translate(${event.clientX - drag.x}px, ${event.clientY - drag.y}px)`;
   });
-  elements.docssamImage.addEventListener("pointerup", () => { drag = null; });
+  elements.cubi.addEventListener("pointerup", () => { drag = null; });
 }
 
 elements.modelMode.addEventListener("click", () => setMode("model"));

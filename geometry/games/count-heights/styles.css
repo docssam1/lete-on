@@ -243,15 +243,17 @@ button:focus-visible { outline: 3px solid #226dba; outline-offset: 2px; }
   gap: 7px;
   pointer-events: none;
 }
-.docssam img {
-  width: 88px;
-  height: 116px;
-  object-fit: contain;
-  object-position: bottom;
+.cubi-sprite {
+  width: 98px;
+  height: 98px;
+  border: 0;
+  background: url("../../world-map/assets/geometry-characters.png") 0 0 / 300% 300% no-repeat;
   filter: drop-shadow(0 7px 5px rgba(31,43,51,.19));
   animation: breathe 3.1s ease-in-out infinite;
   pointer-events: auto;
+  cursor: grab;
 }
+.cubi-sprite:active { cursor: grabbing; }
 .speech-bubble {
   position: relative;
   width: min(310px, calc(100vw - 125px));
@@ -344,14 +346,14 @@ button:focus-visible { outline: 3px solid #226dba; outline-offset: 2px; }
   .play-grid { grid-template-columns: 1fr; }
   .scene { height: min(480px, 57vh); }
   .answer-panel { min-height: 500px; }
-  .docssam img { width: 72px; height: 96px; }
+  .cubi-sprite { width: 78px; height: 78px; }
   .speech-bubble { margin-bottom: 49px; width: min(280px, calc(100vw - 105px)); }
 }
 
 @media (max-width: 1320px) {
   .speech-bubble { display: none; }
   .docssam { right: 5px; bottom: 64px; }
-  .docssam img { width: 72px; height: 96px; }
+  .cubi-sprite { width: 78px; height: 78px; }
 }
 
 @media (max-width: 560px) {
@@ -374,7 +376,7 @@ button:focus-visible { outline: 3px solid #226dba; outline-offset: 2px; }
   .action-bar button { padding: 7px 4px; font-size: 14px; }
   .speech-bubble { display: none; }
   .docssam { right: 4px; bottom: 58px; }
-  .docssam img { width: 62px; height: 82px; }
+  .cubi-sprite { width: 68px; height: 68px; }
   .level-list { grid-template-columns: repeat(3, 1fr); }
 }
 

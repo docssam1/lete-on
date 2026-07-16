@@ -14,7 +14,7 @@ export const games = [
   {
     id: "count-cubes", group: "foundation", number: "02", ready: true, href: "../games/count-heights/?v=3", thumb: "count", levels: "Lv. 1–5",
     name: { ko: "쌓기나무 개수 세기", zh: "数一数积木", ja: "つみきの数を数えよう", en: "Count the Cubes" },
-    description: { ko: "각 자리의 높이를 쓰고 모두 더해 전체 개수를 구해요.", zh: "写出每列高度并相加，求出方块总数。", ja: "各列の高さを書いて足し、全部の数を求めます。", en: "Record each column height and add them to find the total." }
+    description: { ko: "쌓기나무 맨 위에 수를 쓰고 모두 더해 전체 개수를 구해요.", zh: "在每列积木顶部写数字，再相加求总数。", ja: "積み木の上に数を書いて、全部たして数えます。", en: "Write numbers on top of the cube columns and add them to count all cubes." }
   },
   {
     id: "hidden-count", group: "counting", number: "03", ready: false, thumb: "hidden", levels: "Lv. 1–5",

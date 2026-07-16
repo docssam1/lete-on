@@ -23,8 +23,8 @@ const GAME_COPY = {
   [GAME_COUNT]: {
     title: "쌓기나무 개수 세기",
     cover: "쌓기나무<br />개수 세기",
-    subtitle: "높이를 살펴보고, 하나씩 더하고,<br />공간을 수로 표현해 보세요.",
-    instruction: "각 자리의 가장 높은 층수를 쓰고 모두 더하여 전체 개수를 구하세요."
+    subtitle: "쌓기나무 맨 위에 수를 쓰고,<br />쓴 수를 모두 더해 보세요.",
+    instruction: "문제 모양의 각 쌓기나무 맨 위에 들어갈 수를 쓰고, 모두 더하여 전체 개수를 구하세요."
   }
 };
 
@@ -145,7 +145,7 @@ function problemColor(problem, x, z, y, blank) {
   return normalizeCopyProblem(problem).colorMap?.[z]?.[x]?.[y] || "cube";
 }
 
-function drawProblem(canvas, problem, { blank = false } = {}) {
+function drawProblem(canvas, problem, { blank = false, writeOnTop = false, answers = false } = {}) {
   const canvasWidth = 300;
   const canvasHeight = 160;
   const ratio = 2;
@@ -185,6 +185,33 @@ function drawProblem(canvas, problem, { blank = false } = {}) {
     size,
     problemColor(problem, cube.x, cube.z, cube.y, blank)
   ));
+  if (writeOnTop) drawTopNumberPlaces(context, grid, originX, originY, size, answers);
+}
+
+function drawTopNumberPlaces(context, grid, originX, originY, size, answers) {
+  const radius = Math.max(7, Math.min(12, size * 0.18));
+  grid.forEach((row, z) => row.forEach((height, x) => {
+    if (!height) return;
+    const faces = cubeFaces(x, z, height - 1, originX, originY, size);
+    const centerX = faces.top.reduce((sum, point) => sum + point[0], 0) / faces.top.length;
+    const centerY = faces.top.reduce((sum, point) => sum + point[1], 0) / faces.top.length;
+    context.save();
+    context.beginPath();
+    context.ellipse(centerX, centerY, radius * 1.08, radius * 0.82, 0, 0, Math.PI * 2);
+    context.fillStyle = answers ? "#e6f4ea" : "#ffffff";
+    context.strokeStyle = answers ? "#278958" : "#173457";
+    context.lineWidth = 1.2;
+    context.fill();
+    context.stroke();
+    if (answers) {
+      context.fillStyle = "#173457";
+      context.font = `900 ${Math.max(10, radius * 1.15)}px sans-serif`;
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillText(String(height), centerX, centerY + 0.3);
+    }
+    context.restore();
+  }));
 }
 
 function topViewMarkup(problem, answers = false) {
@@ -202,18 +229,16 @@ function topViewMarkup(problem, answers = false) {
 function renderCountQuestion(problem, index, target) {
   const article = document.createElement("article");
   const workedExample = index === 0;
-  article.className = `question${workedExample ? " worked-example" : ""}`;
-  const occupied = problem.heights.flat().filter(Boolean);
+  article.className = `question count-question${workedExample ? " worked-example" : ""}`;
   article.innerHTML = `
     <span class="question-number">${index + 1}</span>
     ${workedExample ? '<span class="example-badge">풀이 예시</span>' : ""}
     <canvas class="cube-canvas"></canvas>
-    <div class="height-grid">${occupied.map((height) => `<span class="height-cell">${workedExample ? height : ""}</span>`).join("")}</div>
     <div class="answer-line"><span>전체</span><i>${workedExample ? problem.answer.total : ""}</i><span>개</span></div>
-    ${workedExample ? '<p class="example-note">각 자리의 높이를 쓰고 모두 더해요.</p>' : ""}
+    ${workedExample ? '<p class="example-note">쌓기나무 위에 쓸 수를 적고 모두 더해요.</p>' : ""}
   `;
   target.append(article);
-  drawProblem(article.querySelector("canvas"), problem);
+  drawProblem(article.querySelector("canvas"), problem, { writeOnTop: true, answers: workedExample });
 }
 
 function renderCopyQuestion(problem, index, target, colorMode) {

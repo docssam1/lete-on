@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GFIELD Cube Town - Count the Cubes</title>
-    <link rel="stylesheet" href="./styles.css?v=2" />
+    <link rel="stylesheet" href="./styles.css?v=4" />
     <script type="importmap">
       {
         "imports": {
@@ -33,7 +33,7 @@
         <div>
           <div id="stars" class="stars" aria-label="difficulty">★☆☆☆☆</div>
           <h2 data-i18n="title">쌓기나무 개수 세기</h2>
-          <p data-i18n="instruction">각 자리의 가장 높은 층수를 쓰고 모두 더해 보세요.</p>
+          <p data-i18n="instruction">쌓기나무의 맨 위를 눌러 각 기둥의 수를 쓰고, 모두 더해 보세요.</p>
         </div>
         <div class="progress-box">
           <strong id="progress">레벨 1 · 1/5</strong>
@@ -42,8 +42,8 @@
       </section>
 
       <div class="view-switch" role="tablist" aria-label="input view">
-        <button id="modelMode" type="button" role="tab" class="active" data-mode="model" data-i18n="modelView">입체에 쓰기</button>
-        <button id="topMode" type="button" role="tab" data-mode="top" data-i18n="topView">위에서 쓰기</button>
+        <button id="modelMode" type="button" role="tab" class="active" data-mode="model" data-i18n="modelView">쌓기나무 위에 쓰기</button>
+        <button id="topMode" type="button" role="tab" data-mode="top" data-i18n="topView">위에서 본 칸에 쓰기</button>
       </div>
 
       <section class="play-grid">
@@ -60,15 +60,15 @@
         </article>
 
         <article class="answer-panel">
-          <header><h2 data-i18n="answerTitle">높이 기록판</h2></header>
+          <header><h2 data-i18n="answerTitle">쓴 숫자 확인</h2></header>
           <div id="modelPrompt" class="model-prompt">
             <div class="mini-columns" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-            <strong data-i18n="selectColumn">숫자를 쓸 기둥을 눌러 보자!</strong>
+            <strong data-i18n="selectColumn">숫자를 쓸 쌓기나무의 맨 위를 눌러 보자!</strong>
           </div>
           <div id="topBoard" class="top-board" hidden></div>
 
           <section class="sum-work">
-            <span data-i18n="addition">높이를 모두 더하면</span>
+            <span data-i18n="addition">쌓기나무 위에 쓴 수를 더하면</span>
             <div id="additionLine" class="addition-line"></div>
             <button id="totalDisplay" class="total-display" type="button">
               <span data-i18n="totalQuestion">전체는 몇 개?</span>
@@ -76,7 +76,7 @@
             </button>
           </section>
 
-          <div id="numberPrompt" class="number-prompt" data-i18n="chooseNumber">이 자리의 높이를 골라요.</div>
+          <div id="numberPrompt" class="number-prompt" data-i18n="chooseNumber">맨 위에 쓸 수를 골라요.</div>
           <div id="numberPad" class="number-pad" aria-label="number pad"></div>
         </article>
       </section>
@@ -96,15 +96,15 @@
 
       <aside class="docssam" aria-live="polite">
         <div class="speech-bubble">
-          <div><strong data-i18n="docssam">docssam</strong><button id="audio" type="button" data-i18n="audioOff">음성 켜기</button></div>
-          <p id="guide" data-i18n="guideStart">맨 위 숫자는 그 기둥의 높이야.</p>
+          <div><strong data-i18n="docssam">큐비</strong><button id="audio" type="button" data-i18n="audioOff">음성 켜기</button></div>
+          <p id="guide" data-i18n="guideStart">쌓기나무 맨 위에 쓰는 수가 그 자리의 개수야.</p>
         </div>
-        <img src="../../assets/docssam.png" alt="" aria-hidden="true" />
+        <button class="cubi-sprite" type="button" aria-label="큐비"></button>
       </aside>
 
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
       <div id="success" class="success" aria-hidden="true"><strong>Great job!</strong><i></i><i></i><i></i><i></i><i></i><i></i></div>
     </main>
-    <script type="module" src="./app.js?v=3"></script>
+    <script type="module" src="./app.js?v=4"></script>
   </body>
 </html>
