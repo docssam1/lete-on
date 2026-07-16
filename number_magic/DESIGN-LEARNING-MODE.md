@@ -384,6 +384,56 @@ window.NM_ROADMAP = {
 - 수의 나라는 **학습모드 R0 앞의 "프롤로그 섬"**으로 배치(연산 로드맵과 분리된
   유아 전용 구역, 티어 자유선택은 동일). N-15 완료 시 R0 연산 첫걸음 추천.
 
+### 9-5. 구현 확정 설계 + 진행 체크리스트 (2026-07-16 사용자 승인)
+> 원칙: 신규 화면 안 만들고 기존 엔진 최대 재사용. **하나씩 구현·검증·커밋.**
+
+**구조 결정**
+- `screenGradeCourse` GRADES 맨 앞에 `{key:'유아'}` 탭 (초5 탭과 같은 패턴)
+- `NM_ROADMAP.chapters` 앞에 유아 챕터 5개(grade:'유아'):
+  - `N0 🔢 수 세기와 개수` = NL-1 → units N-01·N-06·N-07 (← G1-1,6,7 구조)
+  - `N1 🪜 순서와 뛰어세기` = NL-2 → N-02·N-09·N-11 (← G1-2,9,11)
+  - `N2 🥇 몇째와 크기 비교` = NL-3 → N-03·N-05·N-12 (← G1-3,5,12)
+  - `N3 🧩 수 퍼즐과 논리` = NL-4 → N-08·N-13·N-15 (← G1-8,13,15)
+  - `N4 🎨 수의 여러 표현` = NL-5 → N-04·N-10·N-14 (← G1-4,10,14)
+- 마을 `numberland` 타일 → 학년코스 '유아' 탭 진입
+- N-유닛 `tier:'basic'` → 경량 플로우 practice→discover(1스테이지)→lab→stamp
+  (check·arena 스킵 — main.js 스텝 진행에 tier 분기)
+- 생성기: `engine/threads/nl.js` — nl1_count / nl2_seq / nl3_ordinal / nl4_bond / nl5_represent
+- 프롬프트 TTS 자동 낭독(유아는 글 못 읽음), 큰 터치 타깃
+
+**위젯 단계** ①tapCount·numberBond·seqFill(missing확장)·matchLine →
+②gridPaint·dotToDot·pyramid·coinCount → ③balanceScale·sortBasket·tallyBuild·numberMachine·storyCard
+
+**문장제·따라 그리기 처리 (2026-07-16 확정 — 15권 페이지 카탈로그의 변환 매핑 기반)**
+- 문장제(`storyCard`): TTS **자동 낭독**+🔊 다시 듣기(유아는 글 못 읽음). 장면은 생성기가
+  데이터(인물 수·위치·질문 타입)로 만들고 위젯이 **이모지 줄**로 렌더(교재 삽화 사용 금지).
+  답하기 = ①그림 속 대상 직접 탭("앞에서 셋째를 탭해요" → 탭이 곧 답) ②넘패드.
+  답란 2개(몇째+몇 개)는 순차 2빈칸. 문장은 전부 창작.
+- 따라 그리기 = **"쓰기→조작" 변환 원칙**: 개수만큼 ○그리기/초꽂기 → 탭마다 하나
+  추가되는 스탬프 모드(tapCount 역방향·같은 엔진) / 색칠 → gridPaint 탭 토글 /
+  점선 긋기·점 잇기 → dotToDot / **숫자 획순 따라 쓰기 → 신규 위젯 없이 dotToDot
+  엔진 재사용**: 숫자 모양 가이드 점을 순서대로 드래그 통과하면 획이 그려짐(판정=통과 순서).
+- 15권 페이지별 활동→위젯 매핑 카탈로그는 세션 로그(2026-07-14)에 있음 — 라이선스
+  교재라 git에는 요약만. 유닛 제작 시 해당 권 PDF(scratchpad/upload/)를 구조 참고용으로만 열람.
+
+**진행 체크리스트** (하나 끝날 때마다 [x] 갱신할 것!)
+- [ ] N-01 수 세기 (nl1_count + tapCount 위젯 + 유아탭 + N0챕터 + numberland 타일 연결 + basic 플로우)
+- [ ] N-06 모으기·가르기·0 (nl4_bond + numberBond 위젯)
+- [ ] N-07 10까지 관계망 (1큰수·텐프레임 — 기존 tenframe 재사용 + numberBond)
+- [ ] N-02 수의 순서 (nl2_seq + seqFill/dotToDot)
+- [ ] N-09 피라미드·동전 뛰어세기 (pyramid + coinCount)
+- [ ] N-11 수 배열·이어 세기 (seqFill + matchLine)
+- [ ] N-03 서수·크기 비교 (nl3_ordinal + gridPaint)
+- [ ] N-05 생활 서수 문장제 (storyCard)
+- [ ] N-12 무당벌레 가르기·저울 (numberBond + balanceScale)
+- [ ] N-08 수 기계·매직 퍼즐 (numberMachine)
+- [ ] N-13 수 퍼즐·추론 (pathTrace or 합퍼즐)
+- [ ] N-15 문장제·논리 (storyCard + sortBasket)
+- [ ] N-04 기수법 놀이 (tallyBuild + matchLine)
+- [ ] N-10 자료 분류·표 (sortBasket)
+- [ ] N-14 산가지·규칙 (tallyBuild + seqFill)
+- [ ] N-15 완료 시 R0 추천 배너
+
 ## 5. 구현 순서 (다음 세션 체크리스트)
 
 1. [ ] **브리지 수정** (2-1) — main.js `genProblem` + 6개 호출부. ★최우선, 이것 없이는 B/C 유닛 전부 깨짐
