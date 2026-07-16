@@ -405,5 +405,69 @@
     };
   };
 
+  /* ── NL5 — 생활 서수 문장제 ───────────────────────────────
+     mode:'lineup' 줄서기 상황 + 왼쪽/오른쪽에서 몇째 친구 콕 짚기 → storyCard(tap)
+     mode:'stairs' 계단에 있는 동물 친구가 아래에서 몇째 계단인지 숫자로 답 → storyCard(numpad) */
+  const FRIEND_EMOJI  = ['🧒','👧','👦','🧑','👩','👨','🧓','👴','👵'];
+  const CRITTER_EMOJI = ['🐿️','🐰','🐻','🦊','🐱','🐶'];
+  const LINEUP_SCENES = [
+    { ko:'미끄럼틀 앞에 친구들이 줄을 섰어요!', en:'Friends are lining up at the slide!', zh:'朋友们在滑梯前排队呢！' },
+    { ko:'버스 정류장에 친구들이 줄을 섰어요!', en:'Friends are lining up at the bus stop!', zh:'朋友们在公交站排队呢！' },
+    { ko:'매표소 앞에 친구들이 줄을 섰어요!', en:'Friends are lining up at the ticket booth!', zh:'朋友们在售票口排队呢！' }
+  ];
+
+  NM_TGEN['nl5_story'] = function (params, rng) {
+    const mode = (params && params.mode) || 'lineup';
+    const lv   = (params && params.level) || 'main';
+
+    if (mode === 'stairs') {
+      const total   = lv === 'practice' ? R(rng, 4, 5) : R(rng, 5, 8);
+      const k       = R(rng, 1, total);
+      const critter = pick(rng, CRITTER_EMOJI);
+      return {
+        prompt: {
+          ko: `${critter} 친구가 계단에 있어요! 아래에서부터 세어서 몇째 계단인지 숫자로 답해요`,
+          en: `The ${critter} friend is on a step! Count from the bottom and type which step it is`,
+          zh: `${critter}朋友在台阶上！从下面数一数，是第几级台阶？`
+        },
+        answer:     k,
+        answerType: 'number',
+        widget:     'storyCard',
+        interaction:'numpad',
+        layout:     'stairs',
+        total, mark: k - 1,
+        emoji:      critter
+      };
+    }
+
+    /* ---- lineup: 줄서기 서수 찾기 ---- */
+    const total = lv === 'practice' ? R(rng, 5, 6) : R(rng, 6, 9);
+    const dir   = lv === 'practice' ? 'left' : pick(rng, ['left', 'right']);
+    const pos   = R(rng, 1, total);
+    const targetIndex = dir === 'left' ? pos - 1 : total - pos;
+    const scene = pick(rng, LINEUP_SCENES);
+    const chars = shuffle(rng, FRIEND_EMOJI.slice()).slice(0, total);
+    const [ordKo, ordEn, ordZh] = ORDINAL[pos] || [`${pos}째`, `${pos}th`, `第${pos}`];
+
+    return {
+      prompt: dir === 'left' ? {
+        ko: `${scene.ko} 왼쪽에서 ${ordKo} 친구를 콕! 짚어요`,
+        en: `${scene.en} Tap the ${ordEn} friend from the left!`,
+        zh: `${scene.zh}从左边数${ordZh}个朋友，点一点！`
+      } : {
+        ko: `${scene.ko} 오른쪽에서 ${ordKo} 친구를 콕! 짚어요`,
+        en: `${scene.en} Tap the ${ordEn} friend from the right!`,
+        zh: `${scene.zh}从右边数${ordZh}个朋友，点一点！`
+      },
+      answer:     targetIndex,
+      answerType: 'number',
+      widget:     'storyCard',
+      interaction:'tap',
+      layout:     'row',
+      total, dir, pos, targetIndex,
+      chars
+    };
+  };
+
   if (typeof module !== 'undefined' && module.exports) module.exports = NM_TGEN;
 })();

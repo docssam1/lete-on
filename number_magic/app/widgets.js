@@ -75,6 +75,7 @@ function render(problem, container, onAnswer){
     case 'pyramid':      return renderPyramid(problem,container,onAnswer);
     case 'matchLine':    return renderMatchLine(problem,container,onAnswer);
     case 'gridPaint':    return renderGridPaint(problem,container,onAnswer);
+    case 'storyCard':    return renderStoryCard(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -1190,6 +1191,102 @@ function renderGridPaint(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   STORYCARD  widget:'storyCard'  (유아 · 수의 나라 · 생활 서수 문장제)
+   problem.interaction:
+     'tap'    — problem.layout:'row'. problem.chars(이모지 배열) 한 줄 표시.
+                한 칸 탭 = 즉시 판정(onAnswer(index)), targetIndex 정답.
+     'numpad' — problem.layout:'stairs'. 계단(세로) 중 problem.mark번째(0-base,
+                아래부터)에 problem.emoji 캐릭터. 숫자패드로 답 입력(onAnswer(number)).
+   🔊 다시 듣기 버튼 — window.NM_SAY/NM_L(main.js에서 노출)로 problem.prompt 재낭독.
+   유아는 글을 못 읽으므로 문장을 몇 번이고 다시 들을 수 있어야 함.
+───────────────────────────────────────── */
+function renderStoryCard(problem, container, onAnswer){
+  const total       = problem.total || 6;
+  const interaction = problem.interaction || 'tap';
+  const layout      = problem.layout || 'row';
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-sc-wrap';
+
+  const replay=document.createElement('button');
+  replay.className='nm-sc-replay';
+  replay.textContent='🔊';
+  replay.addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(window.NM_SAY&&window.NM_L) window.NM_SAY(window.NM_L(problem.prompt));
+  });
+  root.appendChild(replay);
+
+  const scene=document.createElement('div');
+  scene.className='nm-sc-scene '+(layout==='stairs'?'nm-sc-stairs':'nm-sc-row');
+  root.appendChild(scene);
+
+  if(layout==='stairs'){
+    /* 왼쪽(낮음)→오른쪽(높음)으로 오르는 계단 옆모습. i=0이 아래(왼쪽) 첫 계단.
+       세로로 쌓지 않고 가로로 배치해 화면 높이를 적게 차지함(스크롤 없는 고정 화면 요건). */
+    for(let i=0;i<total;i++){
+      const col=document.createElement('div');
+      col.className='nm-sc-stairq';
+      if(i===problem.mark){
+        const em=document.createElement('div');
+        em.className='nm-sc-stairq-em';
+        em.textContent=problem.emoji||'🐿️';
+        col.appendChild(em);
+      }
+      const bar=document.createElement('div');
+      bar.className='nm-sc-stairq-bar'+(i===problem.mark?' has':'');
+      bar.style.height=(10+i*6)+'px';
+      col.appendChild(bar);
+      scene.appendChild(col);
+    }
+  }else{
+    const chars=problem.chars||[];
+    chars.forEach((em,i)=>{
+      const c=document.createElement('button');
+      c.className='nm-sc-char';
+      c.textContent=em;
+      if(interaction==='tap'){
+        c.addEventListener('pointerup',e=>{
+          e.stopPropagation();
+          if(lock)return;
+          lock=true;setTimeout(()=>{lock=false;},700);
+          if(i===problem.targetIndex) c.classList.add('on');
+          else shake(c);
+          onAnswer(i);
+        });
+      }else{
+        c.disabled=true;
+      }
+      scene.appendChild(c);
+    });
+  }
+  container.appendChild(root);
+
+  if(interaction==='numpad'){
+    const screen=document.createElement('div');
+    screen.className='nm-numpad-screen nm-sc-screen';screen.innerHTML='&nbsp;';
+    root.appendChild(screen);
+    const pad=document.createElement('div');
+    pad.className='nm-numpad nm-sc-pad';
+    root.appendChild(pad);
+    const ns=numpadState(screen,2);
+    buildNumpad(pad,val=>{
+      if(lock)return;
+      if(val==='ok'){
+        const inp=ns.get();
+        if(!inp)return;
+        lock=true;setTimeout(()=>{lock=false;},700);
+        onAnswer(parseInt(inp,10));
+        ns.clear();
+        return;
+      }
+      ns.handle(val);
+    });
+  }
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
    Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
@@ -1248,6 +1345,7 @@ window.NM_WIDGETS={
   renderPyramid,
   renderMatchLine,
   renderGridPaint,
+  renderStoryCard,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake

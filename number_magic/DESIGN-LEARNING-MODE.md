@@ -438,7 +438,15 @@ window.NM_ROADMAP = {
       count모드, 🎯목표 배지). gridPaint 위젯 신규. N2 챕터 신설(NL-3 최초 유닛)
       — 2000시드 퍼즈 + Playwright 전 구간(practice→discover→lab→stamp, +20코인)
       검증 완료 2026-07-16
-- [ ] N-05 생활 서수 문장제 (storyCard)
+- [x] N-05 생활 서수 문장제 (nl5_story: lineup=줄서기 이야기+왼쪽/오른쪽에서 몇째 친구
+      탭(storyCard tap모드) / stairs=계단 위 동물이 아래에서 몇째인지 숫자로 답
+      (storyCard numpad모드). storyCard 위젯 신규 — 🔊 다시듣기 버튼(main.js가
+      window.NM_SAY/NM_L 노출, 유아는 글을 못 읽어 재낭독 필수). stairs는 처음
+      세로 계단으로 만들었다가 numpad와 합쳐 화면 높이 초과 → 메모입력창에 가려
+      숫자 7 버튼이 클릭 안 되는 실제 버그 발견, 가로 오름차순 막대(옆모습 계단)
+      + 위젯 전용 축소 numpad(.nm-sc-pad)로 재설계해 해결
+      — 2000시드 퍼즈 + Playwright 전 구간(practice tap→discover→lab numpad→stamp,
+      +20코인) 검증 완료 2026-07-16
 - [ ] N-12 무당벌레 가르기·저울 (numberBond + balanceScale)
 - [ ] N-08 수 기계·매직 퍼즐 (numberMachine)
 - [ ] N-13 수 퍼즐·추론 (pathTrace or 합퍼즐)
