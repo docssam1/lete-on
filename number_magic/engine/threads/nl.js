@@ -124,5 +124,51 @@
     };
   };
 
+  /* ── NL7 — 10까지의 수 관계망 ─────────────────────────────
+     mode:'tenpair'  텐프레임 — n개에서 10 만들기(10의 짝꿍) → tenframe 위젯
+     mode:'oneStep'  1 큰 수 / 1 작은 수 — 세어 보고 이웃 수 고르기 → tapCount 위젯
+                     (장면의 개수 자체가 함정 보기로 등장) */
+  NM_TGEN['nl7_relation'] = function (params, rng) {
+    const mode = (params && params.mode) || 'tenpair';
+
+    if (mode === 'oneStep') {
+      const more = pick(rng, [true, false]);          /* 1 큰 수 / 1 작은 수 */
+      const [em, ko, en, zh] = pick(rng, THINGS);
+      const n = more ? R(rng, 1, 8) : R(rng, 2, 9);   /* 답이 1~9 안에 있게 */
+      const items = [];
+      for (let i = 0; i < n; i++) items.push({ e: em, t: true });
+      return {
+        prompt: more ? {
+          ko: `${ko}를 세어 보고, 그것보다 1 큰 수를 골라요!`,
+          en: `Count the ${en}, then pick the number that is 1 more!`,
+          zh: `数一数${zh}，选比它大1的数！`
+        } : {
+          ko: `${ko}를 세어 보고, 그것보다 1 작은 수를 골라요!`,
+          en: `Count the ${en}, then pick the number that is 1 less!`,
+          zh: `数一数${zh}，选比它小1的数！`
+        },
+        answer:     more ? n + 1 : n - 1,
+        answerType: 'number',
+        widget:     'tapCount',
+        emoji:      em,
+        items
+      };
+    }
+
+    /* ---- tenpair: 텐프레임에서 10의 짝꿍 만들기 ---- */
+    const n = R(rng, 3, 9);
+    return {
+      prompt: {
+        ko: `${n}의 10 짝꿍을 찾아요! 빈 칸을 눌러 10을 가득 채워 봐요`,
+        en: `Find ${n}'s partner to 10! Tap the empty squares to fill up to 10`,
+        zh: `找${n}的凑十好朋友！点空格把10填满`
+      },
+      answer:     10 - n,
+      answerType: 'number',
+      widget:     'tenframe',
+      cubes:      { piles: [n, 0], moveTo: 10 }
+    };
+  };
+
   if (typeof module !== 'undefined' && module.exports) module.exports = NM_TGEN;
 })();
