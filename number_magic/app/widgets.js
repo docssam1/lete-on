@@ -76,6 +76,7 @@ function render(problem, container, onAnswer){
     case 'matchLine':    return renderMatchLine(problem,container,onAnswer);
     case 'gridPaint':    return renderGridPaint(problem,container,onAnswer);
     case 'storyCard':    return renderStoryCard(problem,container,onAnswer);
+    case 'balanceScale': return renderBalanceScale(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -1287,6 +1288,48 @@ function renderStoryCard(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   BALANCESCALE  widget:'balanceScale'  (유아 · 수의 나라)
+   problem.left/right = 접시별 개수(서로 다름), problem.emoji = 접시 위 아이템.
+   접시(왼쪽=0/오른쪽=1) 탭 = 즉시 판정(onAnswer(index)). 빔이 무거운 쪽으로 기움.
+───────────────────────────────────────── */
+function renderBalanceScale(problem, container, onAnswer){
+  const left  = problem.left  || 3;
+  const right = problem.right || 5;
+  const em    = problem.emoji || '🍎';
+  let lock=false;
+
+  /* 무거운(개수 많은) 쪽이 아래로 내려가도록 기울기 계산. 최대 ±12deg */
+  const diff  = right - left;
+  const angle = Math.max(-12, Math.min(12, diff * 2));
+
+  const root=document.createElement('div');
+  root.className='nm-bs-wrap';
+  root.innerHTML=`
+    <div class="nm-bs-scale">
+      <div class="nm-bs-post"></div>
+      <div class="nm-bs-beam" style="transform:rotate(${angle}deg)">
+        <button class="nm-bs-pan" data-side="0"><span class="nm-bs-items"></span></button>
+        <button class="nm-bs-pan" data-side="1"><span class="nm-bs-items"></span></button>
+      </div>
+    </div>`;
+  container.appendChild(root);
+
+  const pans=root.querySelectorAll('.nm-bs-pan');
+  const counts=[left,right];
+  pans.forEach((pan,i)=>{
+    pan.querySelector('.nm-bs-items').textContent=em.repeat(counts[i]);
+    pan.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(lock)return;
+      lock=true;setTimeout(()=>{lock=false;},700);
+      if(i===problem.answer) pan.classList.add('on');
+      else shake(pan);
+      onAnswer(i);
+    });
+  });
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
    Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
@@ -1346,6 +1389,7 @@ window.NM_WIDGETS={
   renderMatchLine,
   renderGridPaint,
   renderStoryCard,
+  renderBalanceScale,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake

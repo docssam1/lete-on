@@ -447,7 +447,12 @@ window.NM_ROADMAP = {
       + 위젯 전용 축소 numpad(.nm-sc-pad)로 재설계해 해결
       — 2000시드 퍼즈 + Playwright 전 구간(practice tap→discover→lab numpad→stamp,
       +20코인) 검증 완료 2026-07-16
-- [ ] N-12 무당벌레 가르기·저울 (numberBond + balanceScale)
+- [x] N-12 무당벌레 가르기·저울 (nl4_ladybug: numberBond 재사용, ⚫점 테마 —
+      사용자 지시 "너무 같게는 말고 구성 바꿔도 돼"에 따라 한쪽 날개 점수를
+      0~whole 균등추출해 3:0·1:4 등 비대칭 구성도 자주 등장하게 설계 /
+      nl12_scale: balanceScale 신규 위젯 — 좌우 접시 개수 비교, 무거운/가벼운
+      쪽 탭, 개수차에 비례해 빔이 기욺) — 2000시드 퍼즈 + Playwright 전 구간
+      (practice→discover→lab→stamp, +20코인) 검증 완료 2026-07-16
 - [ ] N-08 수 기계·매직 퍼즐 (numberMachine)
 - [ ] N-13 수 퍼즐·추론 (pathTrace or 합퍼즐)
 - [ ] N-15 문장제·논리 (storyCard + sortBasket)

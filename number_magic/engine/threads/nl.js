@@ -124,6 +124,31 @@
     };
   };
 
+  /* ── NL4b — 무당벌레 가르기(넘버본드 재사용, 좌우 날개 점 테마) ──────
+     수학은 split과 동일(전체-한쪽=다른쪽)이지만, 한쪽에 치우친 반쪽(항상 절반)
+     느낌을 피하려 한쪽 날개 점수를 넓은 범위에서 균등 추출 — 3:0, 1:4처럼
+     비대칭 구성도 자연스럽게 자주 나오게 함(사용자 요청: "너무 같게는 말고"). */
+  NM_TGEN['nl4_ladybug'] = function (params, rng) {
+    const lv    = (params && params.level) || 'main';
+    const whole = lv === 'practice' ? R(rng, 3, 5) : R(rng, 4, 9);
+    const left  = R(rng, 0, whole);           /* 0~whole 균등추출 → 비대칭 구성도 자주 등장 */
+    const askLeft = pick(rng, [true, false]); /* 왼쪽/오른쪽 날개 중 무작위로 빈칸 */
+    const a = askLeft ? whole - left : left;  /* numberBond에 제시할 '아는 쪽' 개수 */
+    return {
+      prompt: {
+        ko: `무당벌레 등에 점이 ${whole}개예요! ${askLeft ? '오른쪽' : '왼쪽'} 날개에 점이 ${a}개면, ${askLeft ? '왼쪽' : '오른쪽'} 날개는 몇 개? 빈 원을 톡톡!`,
+        en: `The ladybug has ${whole} spots! The ${askLeft ? 'right' : 'left'} wing has ${a} — how many on the ${askLeft ? 'left' : 'right'} wing? Tap the empty circle!`,
+        zh: `瓢虫背上有${whole}个点！${askLeft ? '右边' : '左边'}翅膀有${a}个，${askLeft ? '左边' : '右边'}翅膀有几个？点一点空圆！`
+      },
+      answer:     whole - a,
+      answerType: 'number',
+      widget:     'numberBond',
+      dir:        'split',
+      whole, a,
+      emoji:      '⚫'
+    };
+  };
+
   /* ── 서수 낱말 (1~9) ── */
   const ORDINAL = {
     1:['첫째','first','第一'],   2:['둘째','second','第二'],
@@ -466,6 +491,37 @@
       layout:     'row',
       total, dir, pos, targetIndex,
       chars
+    };
+  };
+
+  /* ── NL12 — 양팔저울 비교 ─────────────────────────────────
+     좌우 접시에 서로 다른 개수의 이모지를 올려두고, 더 무겁거나(개수가 많은)
+     더 가벼운(개수가 적은) 쪽을 콕 짚기 → balanceScale 위젯 신규 */
+  NM_TGEN['nl12_scale'] = function (params, rng) {
+    const lv  = (params && params.level) || 'main';
+    const max = lv === 'practice' ? 5 : 9;
+    const [em] = pick(rng, THINGS);
+    let left, right;
+    do { left = R(rng, 1, max); right = R(rng, 1, max); } while (left === right);
+    const askHeavier = pick(rng, [true, false]);
+    const heavySide  = left > right ? 0 : 1;              /* 0=왼쪽, 1=오른쪽 */
+    const answerSide = askHeavier ? heavySide : 1 - heavySide;
+
+    return {
+      prompt: askHeavier ? {
+        ko: '양팔저울이 있어요! 더 무거운 쪽 접시를 콕 짚어요',
+        en: "Here's a balance scale! Tap the heavier pan",
+        zh: '天平来啦！点一点更重的那边！'
+      } : {
+        ko: '양팔저울이 있어요! 더 가벼운 쪽 접시를 콕 짚어요',
+        en: "Here's a balance scale! Tap the lighter pan",
+        zh: '天平来啦！点一点更轻的那边！'
+      },
+      answer:     answerSide,
+      answerType: 'number',
+      widget:     'balanceScale',
+      left, right,
+      emoji:      em
     };
   };
 

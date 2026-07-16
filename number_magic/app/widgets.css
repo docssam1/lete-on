@@ -489,6 +489,37 @@
 .nm-sc-pad .nm-key{padding:4px 0!important;font-size:17px!important;border-radius:10px!important;}
 
 /* ══════════════════════════════════════
+   BALANCESCALE WIDGET  (유아 · 수의 나라)
+══════════════════════════════════════ */
+.nm-bs-wrap{display:flex;justify-content:center;padding:8px 4px;}
+.nm-bs-scale{position:relative;width:280px;height:118px;margin:0 auto;}
+.nm-bs-post{
+  position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  width:0;height:0;
+  border-left:14px solid transparent;border-right:14px solid transparent;
+  border-bottom:46px solid var(--blue-deep);
+}
+.nm-bs-beam{
+  position:absolute;left:50%;top:30px;margin-left:-130px;
+  width:260px;transform-origin:center center;
+  display:flex;justify-content:space-between;align-items:center;
+  transition:transform .4s ease;
+}
+.nm-bs-pan{
+  width:112px;min-height:54px;border-radius:14px;
+  background:#fff;border:2.5px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;padding:4px;box-shadow:0 4px 0 #e0dbd2;
+  touch-action:manipulation;transition:border-color .15s,background .15s;
+}
+.nm-bs-pan.on{border-color:var(--ok);background:#eafaf1;}
+.nm-bs-items{
+  font-size:16px;line-height:1.25;text-align:center;
+  display:flex;flex-wrap:wrap;justify-content:center;align-content:center;
+  gap:0;max-width:100px;max-height:46px;overflow:hidden;
+}
+
+/* ══════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════ */
 @media (max-width:360px){
