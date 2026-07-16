@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town</title>
     <link rel="stylesheet" href="./styles.css?v=gap-placement2" />
-    <link rel="stylesheet" href="./mobile-landscape.css?v=2" />
-    <link rel="stylesheet" href="./quiet-cubi.css?v=2" />
-    <link rel="stylesheet" href="./premium-layout.css?v=2" />
+    <link rel="stylesheet" href="./mobile-landscape.css?v=3" />
+    <link rel="stylesheet" href="./quiet-cubi.css?v=3" />
+    <link rel="stylesheet" href="./premium-layout.css?v=3" />
     <script type="importmap">
       {
         "imports": {
@@ -29,27 +29,33 @@
     <main class="app-shell">
       <header class="topbar">
         <div class="brand-lockup">
-          <p class="eyebrow" data-i18n="sectionLabel">GFIELD Geometry World</p>
-          <h1 data-i18n="title">GFIELD Cube Town</h1>
+          <span class="brand-cube" aria-hidden="true"><i></i><i></i><i></i></span>
+          <div>
+            <p class="eyebrow" data-i18n="sectionLabel">GFIELD Geometry World</p>
+            <h1 data-i18n="title">GFIELD Cube Town</h1>
+          </div>
         </div>
-        <div class="language-switch" aria-label="Language">
-          <button data-lang="ko" class="active">한국어</button>
-          <button data-lang="zh">中文</button>
-          <button data-lang="ja">日本語</button>
-          <button data-lang="en">English</button>
+        <div class="top-actions">
+          <button id="levelPickerButton" class="level-picker-button" type="button" aria-haspopup="dialog" data-i18n="levelSelect">레벨 선택</button>
+          <div class="language-switch" aria-label="Language">
+            <button data-lang="ko" class="active">한국어</button>
+            <button data-lang="en">English</button>
+          </div>
+          <span class="menu-dots" aria-hidden="true">☰</span>
         </div>
       </header>
 
       <section class="lesson-panel">
         <div class="status-card">
           <div class="stars" id="stars" aria-label="difficulty">★★☆☆</div>
-          <h2 id="modeTitle" data-i18n="copyMode">똑같이 쌓기</h2>
-          <p id="instruction" data-i18n="copyInstruction">왼쪽 모양을 보고 오른쪽 판에 똑같이 쌓아 보세요.</p>
+          <div class="lesson-copy">
+            <h2 id="modeTitle" data-i18n="copyMode">똑같이 쌓기</h2>
+            <p id="instruction" data-i18n="copyInstruction">왼쪽 모양을 보고 오른쪽 판에 똑같이 쌓아 보세요.</p>
+          </div>
         </div>
         <div class="counter-card">
           <span data-i18n="countLabel">문제</span>
           <strong id="countValue">0</strong>
-          <button id="levelPickerButton" class="level-picker-button" type="button" aria-haspopup="dialog" data-i18n="levelSelect">레벨 선택</button>
         </div>
       </section>
 
@@ -60,36 +66,40 @@
             <button id="resetView" class="icon-button" type="button" aria-label="reset view">↻</button>
           </div>
           <div id="targetCanvas" class="canvas-wrap">
-            <div class="board-direction-labels" aria-hidden="true"><span class="front-face">앞</span><span class="side-face">옆</span></div>
+            <div class="board-direction-labels" aria-hidden="true"><span class="front-face">앞</span><span class="side-face">옆</span><span class="back-face">뒤</span></div>
           </div>
         </article>
 
         <article class="viewer build-view">
           <div class="viewer-heading"><h2 data-i18n="myBuild">내가 만든 모양</h2></div>
           <div id="buildCanvas" class="canvas-wrap interactive">
-            <div class="board-direction-labels" aria-hidden="true"><span class="front-face">앞</span><span class="side-face">옆</span></div>
+            <div class="board-direction-labels" aria-hidden="true"><span class="front-face">앞</span><span class="side-face">옆</span><span class="back-face">뒤</span></div>
           </div>
         </article>
       </section>
 
-      <section class="builder-controls" aria-label="cube tray">
-        <button id="cubePile" class="pile-button" type="button">
-          <span class="pile-cubes" aria-hidden="true">
-            <span></span><span></span><span></span><span></span><span></span>
-            <span></span><span></span><span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-          </span>
-          <span><strong data-i18n="pileLabel">쌓기나무 더미</strong><small id="handStatus" data-i18n="emptyHand">하나씩 끌어와요</small></span>
-        </button>
-      </section>
+      <section class="bottom-dock">
+        <section class="builder-controls" aria-label="cube tray">
+          <button id="cubePile" class="pile-button" type="button">
+            <span class="pile-title"><strong data-i18n="pileLabel">쌓기나무 보관함</strong><small id="handStatus" data-i18n="emptyHand">하나씩 끌어와요</small></span>
+            <span class="inventory-row" aria-hidden="true">
+              <span class="inventory-item wood"><i></i><b>∞</b></span>
+              <span class="inventory-item green"><i></i><b>8</b></span>
+              <span class="inventory-item blue"><i></i><b>8</b></span>
+              <span class="inventory-item yellow"><i></i><b>8</b></span>
+              <span class="inventory-item red"><i></i><b>8</b></span>
+            </span>
+          </button>
+        </section>
 
-      <section class="control-strip">
-        <button id="checkAnswer" class="primary" type="button" data-i18n="check">확인</button>
-        <button id="nextStep" type="button" data-i18n="next">다음 문제</button>
-        <button id="resetBuild" type="button" data-i18n="reset">처음부터</button>
-        <button id="viewFront" type="button" data-i18n="front">앞</button>
-        <button id="viewTop" type="button" data-i18n="top">위</button>
-        <button id="viewFree" type="button" data-i18n="free">돌려보기</button>
+        <section class="control-strip">
+          <button id="checkAnswer" class="primary" type="button" data-i18n="check">확인</button>
+          <button id="nextStep" class="next-button" type="button" data-i18n="next">다음 문제</button>
+          <button id="resetBuild" class="reset-button" type="button" data-i18n="reset">처음부터</button>
+          <button id="viewFront" type="button" data-i18n="front">앞</button>
+          <button id="viewTop" type="button" data-i18n="top">위</button>
+          <button id="viewFree" type="button" data-i18n="free">돌려보기</button>
+        </section>
       </section>
 
       <div id="levelDialog" class="level-dialog" hidden>
@@ -109,7 +119,7 @@
             <strong class="guide-title">큐비</strong>
             <button id="audioToggle" class="guide-audio" type="button" aria-pressed="false" data-i18n="audioOff">음성 켜기</button>
           </div>
-          <p id="guideMessage" data-i18n="guideStart">문제 모양을 보고 더미에서 하나씩 가져와 보자!</p>
+          <p id="guideMessage" data-i18n="guideStart">문제 모양을 보고 보관함에서 하나씩 가져와 보자!</p>
         </div>
         <span class="guide-character" role="img" aria-label="쌓기나무 캐릭터 큐비"></span>
       </aside>
