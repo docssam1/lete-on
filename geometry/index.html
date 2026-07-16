@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="./styles.css?v=gap-placement2" />
     <link rel="stylesheet" href="./mobile-landscape.css?v=2" />
     <link rel="stylesheet" href="./quiet-cubi.css?v=1" />
-    <link rel="stylesheet" href="./premium-layout.css?v=1" />
+    <link rel="stylesheet" href="./premium-layout.css?v=2" />
     <script type="importmap">
       {
         "imports": {
@@ -59,12 +59,16 @@
             <h2 data-i18n="target">문제 모양</h2>
             <button id="resetView" class="icon-button" type="button" aria-label="reset view">↻</button>
           </div>
-          <div id="targetCanvas" class="canvas-wrap"></div>
+          <div id="targetCanvas" class="canvas-wrap">
+            <div class="board-direction-labels" aria-hidden="true"><span class="front-face">앞</span><span class="side-face">옆</span></div>
+          </div>
         </article>
 
         <article class="viewer build-view">
           <div class="viewer-heading"><h2 data-i18n="myBuild">내가 만든 모양</h2></div>
-          <div id="buildCanvas" class="canvas-wrap interactive"></div>
+          <div id="buildCanvas" class="canvas-wrap interactive">
+            <div class="board-direction-labels" aria-hidden="true"><span class="front-face">앞</span><span class="side-face">옆</span></div>
+          </div>
         </article>
       </section>
 
