@@ -411,6 +411,42 @@
 @keyframes ml-draw{to{stroke-dashoffset:0;}}
 
 /* ══════════════════════════════════════
+   GRIDPAINT WIDGET  (유아 · 수의 나라)
+══════════════════════════════════════ */
+.nm-gp-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  gap:14px;padding:8px 4px;
+}
+.nm-gp-goal{display:flex;align-items:center;gap:6px;font-size:17px;font-weight:800;color:var(--gold-deep);}
+.nm-gp-goal-n{font-size:24px;font-weight:900;color:var(--blue-deep);}
+.nm-gp-rowline{display:flex;align-items:center;gap:10px;}
+.nm-gp-arrow{font-size:26px;animation:gp-point 1s ease-in-out infinite;}
+.nm-gp-arrow.flip{transform:scaleX(-1);}
+@keyframes gp-point{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+.nm-gp-arrow.flip{animation:gp-point-flip 1s ease-in-out infinite;}
+@keyframes gp-point-flip{0%,100%{transform:scaleX(-1) translateX(0)}50%{transform:scaleX(-1) translateX(4px)}}
+.nm-gp-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:320px;}
+.nm-gp-cell{
+  width:42px;height:42px;border-radius:10px;
+  border:2.5px solid var(--line);background:#fff;
+  cursor:pointer;transition:transform .15s,background .15s,border-color .15s;
+  touch-action:manipulation;user-select:none;
+}
+.nm-gp-cell.on{
+  background:linear-gradient(145deg,var(--gold-bright),var(--gold-deep));
+  border-color:var(--gold-deep);transform:scale(1.08);
+}
+.nm-gp-counter{font-size:15px;font-weight:800;color:var(--sub);}
+.nm-gp-cnt{display:inline-grid;place-items:center;min-width:34px;height:34px;border-radius:12px;background:#fff9e0;color:var(--gold-deep);font-size:20px;font-weight:900;padding:0 8px;}
+.nm-gp-done{
+  width:56px;height:56px;border-radius:18px;border:none;
+  background:var(--blue);color:#fff;font-size:24px;font-weight:900;
+  cursor:pointer;box-shadow:0 5px 0 var(--blue-deep);
+  touch-action:manipulation;
+}
+.nm-gp-done:active{transform:translateY(3px);box-shadow:none;}
+
+/* ══════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════ */
 @media (max-width:360px){

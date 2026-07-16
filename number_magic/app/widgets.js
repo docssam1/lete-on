@@ -74,6 +74,7 @@ function render(problem, container, onAnswer){
     case 'dotToDot':     return renderDotToDot(problem,container,onAnswer);
     case 'pyramid':      return renderPyramid(problem,container,onAnswer);
     case 'matchLine':    return renderMatchLine(problem,container,onAnswer);
+    case 'gridPaint':    return renderGridPaint(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -1104,6 +1105,91 @@ function renderMatchLine(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   GRIDPAINT  widget:'gridPaint'  (유아 · 수의 나라)
+   problem.gridMode:
+     'single' — 서수 위치 콕 짚기. 한 칸 탭 = 즉시 판정(onAnswer(index)).
+                dir:'left'|'right' 방향 화살표 표시.
+     'count'  — 정확히 target개만 칠하기. 탭=토글, ✔ 로 제출(onAnswer(칠한 개수)).
+───────────────────────────────────────── */
+function renderGridPaint(problem, container, onAnswer){
+  const total = problem.total || 6;
+  const mode  = problem.gridMode || 'count';
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-gp-wrap';
+  if(mode==='count'){
+    const goal=document.createElement('div');
+    goal.className='nm-gp-goal';
+    goal.innerHTML=`🎯 <span class="nm-gp-goal-n">${problem.target}</span>`;
+    root.appendChild(goal);
+  }
+  const line=document.createElement('div');
+  line.className='nm-gp-rowline';
+  if(mode==='single' && problem.dir==='left'){
+    const a=document.createElement('span');a.className='nm-gp-arrow';a.textContent='👉';line.appendChild(a);
+  }
+  const row=document.createElement('div');
+  row.className='nm-gp-row';
+  line.appendChild(row);
+  if(mode==='single' && problem.dir==='right'){
+    const a=document.createElement('span');a.className='nm-gp-arrow flip';a.textContent='👈';line.appendChild(a);
+  }
+  root.appendChild(line);
+  container.appendChild(root);
+
+  const cells=[];
+  for(let i=0;i<total;i++){
+    const c=document.createElement('button');
+    c.className='nm-gp-cell';
+    row.appendChild(c);
+    cells.push(c);
+  }
+
+  if(mode==='single'){
+    cells.forEach((c,i)=>{
+      c.addEventListener('pointerup',e=>{
+        e.stopPropagation();
+        if(lock)return;
+        lock=true;setTimeout(()=>{lock=false;},700);
+        if(i===problem.targetIndex) c.classList.add('on');
+        else shake(c);
+        onAnswer(i);
+      });
+    });
+    return;
+  }
+
+  /* count mode */
+  let painted=0;
+  const foot=document.createElement('div');
+  foot.className='nm-gp-counter';
+  foot.innerHTML='<span class="nm-gp-cnt">0</span>';
+  root.appendChild(foot);
+  const done=document.createElement('button');
+  done.className='nm-gp-done';done.textContent='✔';
+  root.appendChild(done);
+
+  const cnt=foot.querySelector('.nm-gp-cnt');
+  cells.forEach(c=>{
+    c.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(c.classList.contains('on')){ c.classList.remove('on'); painted--; }
+      else{ c.classList.add('on'); painted++; }
+      cnt.textContent=painted;
+    });
+  });
+
+  done.addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(lock||painted===0)return;
+    lock=true;setTimeout(()=>{lock=false;},700);
+    if(painted!==problem.target) shake(row);
+    onAnswer(painted);
+  });
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
    Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
@@ -1161,6 +1247,7 @@ window.NM_WIDGETS={
   renderDotToDot,
   renderPyramid,
   renderMatchLine,
+  renderGridPaint,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake

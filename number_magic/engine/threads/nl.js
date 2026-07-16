@@ -124,6 +124,15 @@
     };
   };
 
+  /* ── 서수 낱말 (1~9) ── */
+  const ORDINAL = {
+    1:['첫째','first','第一'],   2:['둘째','second','第二'],
+    3:['셋째','third','第三'],   4:['넷째','fourth','第四'],
+    5:['다섯째','fifth','第五'], 6:['여섯째','sixth','第六'],
+    7:['일곱째','seventh','第七'], 8:['여덟째','eighth','第八'],
+    9:['아홉째','ninth','第九']
+  };
+
   /* ── 점 잇기 창작 도형 (viewBox 0~100 좌표, 전부 오리지널) ── */
   const DD_SHAPES = [
     { name: { ko: '집', en: 'house', zh: '房子' }, close: true,
@@ -341,6 +350,58 @@
       widget:     'matchLine',
       left,   /* 숫자 카드 배열(셔플) */
       right   /* 점 그림 수 배열(셔플) */
+    };
+  };
+
+  /* ── NL3 — 서수와 크기 비교 ───────────────────────────────
+     mode:'position' 왼쪽/오른쪽에서 몇째인지 콕 짚기 → gridPaint(single) 위젯
+     mode:'paint'    정확히 N칸만 색칠하기(기수 색칠) → gridPaint(count) 위젯 */
+  NM_TGEN['nl3_ordinal'] = function (params, rng) {
+    const mode = (params && params.mode) || 'position';
+    const lv   = (params && params.level) || 'main';
+    const [em] = pick(rng, THINGS);
+
+    if (mode === 'paint') {
+      const total  = lv === 'practice' ? R(rng, 4, 6) : R(rng, 6, 9);
+      const target = R(rng, 2, total - 1);
+      return {
+        prompt: {
+          ko: `칸을 정확히 ${target}개만 콕콕 칠해요!`,
+          en: `Paint exactly ${target} boxes!`,
+          zh: `正好涂${target}格！`
+        },
+        answer:     target,
+        answerType: 'number',
+        widget:     'gridPaint',
+        gridMode:   'count',
+        total, target,
+        emoji:      em
+      };
+    }
+
+    /* ---- position: 왼쪽/오른쪽에서 몇째 콕 짚기 ---- */
+    const total = lv === 'practice' ? R(rng, 5, 6) : R(rng, 6, 9);
+    const dir   = lv === 'practice' ? 'left' : pick(rng, ['left', 'right']);
+    const pos   = R(rng, 1, total);
+    const targetIndex = dir === 'left' ? pos - 1 : total - pos;
+    const [ordKo, ordEn, ordZh] = ORDINAL[pos] || [`${pos}째`, `${pos}th`, `第${pos}`];
+
+    return {
+      prompt: dir === 'left' ? {
+        ko: `왼쪽에서 ${ordKo}를 콕! 짚어요`,
+        en: `Tap the ${ordEn} one from the left!`,
+        zh: `点一点从左边数${ordZh}个！`
+      } : {
+        ko: `오른쪽에서 ${ordKo}를 콕! 짚어요`,
+        en: `Tap the ${ordEn} one from the right!`,
+        zh: `点一点从右边数${ordZh}个！`
+      },
+      answer:     targetIndex,
+      answerType: 'number',
+      widget:     'gridPaint',
+      gridMode:   'single',
+      total, dir, pos, targetIndex,
+      emoji:      em
     };
   };
 

@@ -32,6 +32,15 @@ window.NM_ROADMAP = {
       tip:{ko:'1부터 차례로 점을 이으면 숨은 그림이 짠! 나타나요.',en:'Connect the dots from 1 in order — a hidden picture appears!',zh:'从1开始按顺序连点——藏着的图案就出现啦！'}
     },
 
+    /* ─────── N2 : 수의 나라 — 몇째와 크기 비교 ─────── */
+    {
+      id:'N2', icon:'🥇', grade:'유아',
+      edu:{ko:'유아 5~7세 · 수 감각',en:'Ages 5–7 · Number sense',zh:'幼儿5~7岁 · 数感'},
+      theme:{ko:'몇째와 크기 비교 — 콕 짚고, 딱 맞게 칠해요!',en:'Ordinals & Size — Tap it, paint it just right!',zh:'第几个与大小比较——点一点，涂对数量！'},
+      units:['N-03'],
+      tip:{ko:'개수(몇 개)와 순서(몇째)는 달라요 — 방향을 먼저 정하고 세어 봐요.',en:'Amount and order are different — pick a direction first, then count!',zh:'数量和顺序不一样——先定方向，再数一数！'}
+    },
+
     /* ─────── R0 : 연산 첫걸음 ─────── */
     {
       id:'R0', icon:'🌱', grade:'초1',

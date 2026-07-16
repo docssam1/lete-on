@@ -430,8 +430,14 @@ window.NM_ROADMAP = {
 - [x] N-09 피라미드·동전 뛰어세기 (nl9_chain: coins=tapCount에 step:10 확장
       — 배지 10,20,30… / pyramid=3층 이웃 합 위젯, main은 가운데 빈칸도)
       — 2026-07-16 Playwright 전 구간 검증 완료. 별도 coinCount 위젯 불필요해짐
-- [ ] N-11 수 배열·이어 세기 (seqFill + matchLine)
-- [ ] N-03 서수·크기 비교 (nl3_ordinal + gridPaint)
+- [x] N-11 수 배열·이어 세기 (nl11_arrange: seq=이어세기 +1 빈칸(seqFill 재사용) /
+      match=수↔점배열 카드 매칭. matchLine 위젯 신규 — SVG 연결선 애니메이션)
+      — 1500시드 퍼즈 통과, 2026-07-16 커밋 완료
+- [x] N-03 서수·크기 비교 (nl3_ordinal: position=왼쪽/오른쪽에서 몇째 콕 짚기
+      (gridPaint single모드, 방향 화살표 👉👈) / paint=정확히 N칸 색칠(gridPaint
+      count모드, 🎯목표 배지). gridPaint 위젯 신규. N2 챕터 신설(NL-3 최초 유닛)
+      — 2000시드 퍼즈 + Playwright 전 구간(practice→discover→lab→stamp, +20코인)
+      검증 완료 2026-07-16
 - [ ] N-05 생활 서수 문장제 (storyCard)
 - [ ] N-12 무당벌레 가르기·저울 (numberBond + balanceScale)
 - [ ] N-08 수 기계·매직 퍼즐 (numberMachine)
