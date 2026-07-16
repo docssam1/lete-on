@@ -69,6 +69,7 @@ function render(problem, container, onAnswer){
     case 'selectPairs':  return renderSelectPairs(problem,container,onAnswer);
     case 'tapCount':     return renderTapCount(problem,container,onAnswer);
     case 'tapMake':      return renderTapMake(problem,container,onAnswer);
+    case 'numberBond':   return renderNumberBond(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -757,6 +758,68 @@ function renderTapMake(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   NUMBERBOND  widget:'numberBond'  (유아 · 수의 나라)
+   모으기·가르기 트리 — 위 원(전체) + 아래 원 2개(부분).
+   dir:'join'  아래 두 원 제시 → 위 원을 톡톡 채움
+   dir:'split' 위 원+왼쪽 원 제시 → 오른쪽 원을 톡톡 채움
+   빈 원 탭 = 이모지 추가, 채운 이모지 탭 = 지우기, ✔ = 제출.
+   onAnswer(채운 개수). 0도 정답이 될 수 있음(0 개념).
+───────────────────────────────────────── */
+function renderNumberBond(problem, container, onAnswer){
+  const em=problem.emoji||'🍬';
+  const dir=problem.dir||'split';
+  let fill=0, lock=false;
+
+  /* 알려진 원 내용: 이모지 나열 + 숫자 (0이면 숫자만) */
+  const known=n=>`<div class="nm-nb-dots">${em.repeat(n)}</div><div class="nm-nb-num">${n}</div>`;
+  const askHtml=`<div class="nm-nb-dots" id="nbAskDots"></div><div class="nm-nb-num ask" id="nbAskNum">?</div>`;
+
+  const top   = dir==='join' ? askHtml : known(problem.whole);
+  const left  = dir==='join' ? known(problem.a) : known(problem.a);
+  const right = dir==='join' ? known(problem.b) : askHtml;
+  const topAsk=dir==='join';
+
+  const root=document.createElement('div');
+  root.className='nm-nb-wrap';
+  root.innerHTML=`
+    <div class="nm-nb-tree">
+      <div class="nm-nb-node top ${topAsk?'ask':''}" data-ask="${topAsk?'1':''}">${top}</div>
+      <svg class="nm-nb-links" viewBox="0 0 120 26" aria-hidden="true">
+        <line x1="60" y1="2" x2="28" y2="24"/><line x1="60" y1="2" x2="92" y2="24"/>
+      </svg>
+      <div class="nm-nb-row">
+        <div class="nm-nb-node">${left}</div>
+        <div class="nm-nb-node ${topAsk?'':'ask'}" data-ask="${topAsk?'':'1'}">${right}</div>
+      </div>
+    </div>
+    <button class="nm-nb-done">✔</button>`;
+  container.appendChild(root);
+
+  const askNode=root.querySelector('[data-ask="1"]');
+  const askDots=root.querySelector('#nbAskDots');
+  const askNum=root.querySelector('#nbAskNum');
+
+  askNode.addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(e.target.classList.contains('nm-nb-fill')){   /* 채운 이모지 탭 = 지우기 */
+      e.target.remove();fill--;askNum.textContent=fill;return;
+    }
+    if(fill>=9)return;
+    const s=document.createElement('span');
+    s.className='nm-nb-fill';s.textContent=em;
+    askDots.appendChild(s);fill++;askNum.textContent=fill;
+  });
+
+  root.querySelector('.nm-nb-done').addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(lock)return;
+    lock=true;setTimeout(()=>{lock=false;},700);
+    if(fill!==problem.answer)shake(askNode);
+    onAnswer(fill);
+  });
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
    Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
@@ -809,6 +872,7 @@ window.NM_WIDGETS={
   renderSelectPairs,
   renderTapCount,
   renderTapMake,
+  renderNumberBond,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake

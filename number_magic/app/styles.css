@@ -858,3 +858,20 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-tm-cnt{display:inline-grid;place-items:center;min-width:34px;height:34px;border-radius:12px;background:#fff6e6;color:#7a5a12;font-size:20px;font-weight:900;padding:0 8px}
 .nm-tm-done{width:72px;height:56px;border-radius:18px;border:none;background:var(--ok);color:#fff;font-size:26px;font-weight:900;cursor:pointer;box-shadow:0 5px 0 #1f7a50;transition:transform .15s;touch-action:manipulation}
 .nm-tm-done:active{transform:translateY(3px);box-shadow:0 2px 0 #1f7a50}
+
+/* ── 유아 위젯 · numberBond (모으기·가르기 트리) ───────────── */
+.nm-nb-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 4px}
+.nm-nb-tree{display:flex;flex-direction:column;align-items:center;width:min(320px,92%)}
+.nm-nb-links{width:120px;height:26px;margin:-2px 0}
+.nm-nb-links line{stroke:var(--gold-deep);stroke-width:3;stroke-linecap:round}
+.nm-nb-row{display:flex;gap:28px;justify-content:center}
+.nm-nb-node{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:104px;height:104px;border-radius:50%;border:3px solid var(--line);background:#fdfbf5;padding:8px;user-select:none;touch-action:manipulation}
+.nm-nb-node.top{width:118px;height:118px}
+.nm-nb-node.ask{border-color:var(--gold-deep);border-style:dashed;background:#fffaf0;cursor:pointer}
+.nm-nb-dots{display:flex;flex-wrap:wrap;justify-content:center;gap:1px;font-size:17px;line-height:1.15;max-width:88px;min-height:20px}
+.nm-nb-node.top .nm-nb-dots{max-width:100px}
+.nm-nb-fill{animation:tc-pop .25s ease;cursor:pointer}
+.nm-nb-num{font-size:20px;font-weight:900;color:var(--blue-deep)}
+.nm-nb-num.ask{color:#b8860b}
+.nm-nb-done{width:72px;height:56px;border-radius:18px;border:none;background:var(--ok);color:#fff;font-size:26px;font-weight:900;cursor:pointer;box-shadow:0 5px 0 #1f7a50;transition:transform .15s;touch-action:manipulation}
+.nm-nb-done:active{transform:translateY(3px);box-shadow:0 2px 0 #1f7a50}

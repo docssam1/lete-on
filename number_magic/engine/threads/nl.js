@@ -75,5 +75,54 @@
     };
   };
 
+  /* ── NL4 — 모으기·가르기·0 (넘버본드 트리) ────────────────
+     mode:'join'   두 부분을 모으면 전체는? (아래 두 원 → 위 원)
+     mode:'split'  전체를 갈라요 — 나머지 부분은? (위 원 → 아래 원)
+     0 개념: main 레벨에서 한쪽이 0인 경우가 자연스럽게 등장 */
+  NM_TGEN['nl4_bond'] = function (params, rng) {
+    const mode = (params && params.mode) || 'split';
+    const lv   = (params && params.level) || 'main';
+    const [em, ko, en, zh] = pick(rng, THINGS);
+
+    if (mode === 'join') {
+      let a, b;
+      if (lv === 'practice') { a = R(rng, 1, 3); b = R(rng, 1, Math.min(4, 5 - a)); }
+      else {
+        a = R(rng, 0, 5); b = R(rng, 0, Math.min(9, 9 - a));
+        if (a === 0 && b === 0) { a = R(rng, 1, 5); }        /* 0+0 방지 */
+      }
+      return {
+        prompt: {
+          ko: `${ko} ${a}개와 ${b}개를 모으면 모두 몇 개? 위쪽 원을 톡톡 채워요`,
+          en: `Join ${a} and ${b} ${en} — how many in all? Tap to fill the top circle`,
+          zh: `把${a}个和${b}个${zh}合起来一共几个？点一点填满上面的圆`
+        },
+        answer:     a + b,
+        answerType: 'number',
+        widget:     'numberBond',
+        dir:        'join',
+        a, b,
+        emoji:      em
+      };
+    }
+
+    /* ---- split: 전체와 한 부분 제시 → 나머지 부분 ---- */
+    const whole = lv === 'practice' ? R(rng, 3, 5) : R(rng, 3, 9);
+    const a     = lv === 'practice' ? R(rng, 1, whole - 1) : R(rng, 0, whole);
+    return {
+      prompt: {
+        ko: `${ko} ${whole}개를 두 접시에 갈라요. 한 접시에 ${a}개면 다른 접시엔 몇 개? 빈 원을 톡톡!`,
+        en: `Split ${whole} ${en} onto two plates. One has ${a} — how many on the other? Tap the empty circle!`,
+        zh: `把${whole}个${zh}分到两个盘子里。一个盘子有${a}个，另一个有几个？点一点空圆！`
+      },
+      answer:     whole - a,
+      answerType: 'number',
+      widget:     'numberBond',
+      dir:        'split',
+      whole, a,
+      emoji:      em
+    };
+  };
+
   if (typeof module !== 'undefined' && module.exports) module.exports = NM_TGEN;
 })();
