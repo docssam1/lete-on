@@ -2,9 +2,12 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town</title>
     <link rel="stylesheet" href="./styles.css?v=gap-placement2" />
+    <link rel="stylesheet" href="./mobile-landscape.css?v=2" />
+    <link rel="stylesheet" href="./quiet-cubi.css?v=2" />
+    <link rel="stylesheet" href="./premium-layout.css?v=2" />
     <script type="importmap">
       {
         "imports": {
@@ -15,9 +18,17 @@
     </script>
   </head>
   <body>
+    <div class="orientation-gate" role="status" aria-live="polite">
+      <div class="orientation-gate__card">
+        <div class="orientation-gate__phone" aria-hidden="true"></div>
+        <strong>휴대폰을 가로로 돌려 주세요</strong>
+        <p>문제 모양과 쌓기판을 함께 보면서 더 편하게 게임할 수 있어요.</p>
+      </div>
+    </div>
+
     <main class="app-shell">
       <header class="topbar">
-        <div>
+        <div class="brand-lockup">
           <p class="eyebrow" data-i18n="sectionLabel">GFIELD Geometry World</p>
           <h1 data-i18n="title">GFIELD Cube Town</h1>
         </div>
@@ -33,12 +44,10 @@
         <div class="status-card">
           <div class="stars" id="stars" aria-label="difficulty">★★☆☆</div>
           <h2 id="modeTitle" data-i18n="copyMode">똑같이 쌓기</h2>
-          <p id="instruction" data-i18n="copyInstruction">
-            왼쪽 모양을 보고 오른쪽 판에 똑같이 쌓아 보세요.
-          </p>
+          <p id="instruction" data-i18n="copyInstruction">왼쪽 모양을 보고 오른쪽 판에 똑같이 쌓아 보세요.</p>
         </div>
         <div class="counter-card">
-          <span data-i18n="countLabel">센 개수</span>
+          <span data-i18n="countLabel">문제</span>
           <strong id="countValue">0</strong>
           <button id="levelPickerButton" class="level-picker-button" type="button" aria-haspopup="dialog" data-i18n="levelSelect">레벨 선택</button>
         </div>
@@ -50,14 +59,16 @@
             <h2 data-i18n="target">문제 모양</h2>
             <button id="resetView" class="icon-button" type="button" aria-label="reset view">↻</button>
           </div>
-          <div id="targetCanvas" class="canvas-wrap"></div>
+          <div id="targetCanvas" class="canvas-wrap">
+            <div class="board-direction-labels" aria-hidden="true"><span class="front-face">앞</span><span class="side-face">옆</span></div>
+          </div>
         </article>
 
         <article class="viewer build-view">
-          <div class="viewer-heading">
-            <h2 data-i18n="myBuild">내가 만든 모양</h2>
+          <div class="viewer-heading"><h2 data-i18n="myBuild">내가 만든 모양</h2></div>
+          <div id="buildCanvas" class="canvas-wrap interactive">
+            <div class="board-direction-labels" aria-hidden="true"><span class="front-face">앞</span><span class="side-face">옆</span></div>
           </div>
-          <div id="buildCanvas" class="canvas-wrap interactive"></div>
         </article>
       </section>
 
@@ -68,10 +79,7 @@
             <span></span><span></span><span></span><span></span><span></span>
             <span></span><span></span><span></span>
           </span>
-          <span>
-            <strong data-i18n="pileLabel">쌓기나무 더미</strong>
-            <small id="handStatus" data-i18n="emptyHand">하나씩 가져와요</small>
-          </span>
+          <span><strong data-i18n="pileLabel">쌓기나무 더미</strong><small id="handStatus" data-i18n="emptyHand">하나씩 끌어와요</small></span>
         </button>
       </section>
 
@@ -95,25 +103,23 @@
       </div>
 
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
-      <aside class="floating-guide" aria-live="polite">
+      <aside class="floating-guide" aria-live="polite" aria-label="큐비 음성 안내">
         <div class="guide-bubble">
           <div class="guide-head">
-            <strong class="guide-title" data-i18n="guideTitle">docssam</strong>
-            <button id="audioToggle" class="guide-audio" type="button" aria-pressed="false" data-i18n="audioOff">
-              음성 켜기
-            </button>
+            <strong class="guide-title">큐비</strong>
+            <button id="audioToggle" class="guide-audio" type="button" aria-pressed="false" data-i18n="audioOff">음성 켜기</button>
           </div>
           <p id="guideMessage" data-i18n="guideStart">문제 모양을 보고 더미에서 하나씩 가져와 보자!</p>
         </div>
-        <img class="guide-character" src="./assets/docssam.png" alt="" aria-hidden="true" />
+        <span class="guide-character" role="img" aria-label="쌓기나무 캐릭터 큐비"></span>
       </aside>
       <div id="successBurst" class="success-burst" aria-hidden="true">
-        <strong data-i18n="successPop">성공!</strong>
+        <strong data-i18n="successPop">SUCCESS!</strong>
         <span></span><span></span><span></span><span></span><span></span><span></span>
       </div>
       <div id="dragGhost" class="drag-ghost" aria-hidden="true"></div>
     </main>
 
-    <script type="module" src="./app.js?v=gap-placement2"></script>
+    <script type="module" src="./app.js?v=gap-placement3"></script>
   </body>
 </html>

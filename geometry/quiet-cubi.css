@@ -1,0 +1,102 @@
+/* Cubi stays quiet in the corner and appears only for short guidance moments. */
+.floating-guide {
+  left: auto !important;
+  top: auto !important;
+  right: max(10px, env(safe-area-inset-right)) !important;
+  bottom: calc(78px + env(safe-area-inset-bottom)) !important;
+  width: min(265px, calc(100vw - 20px));
+  grid-template-columns: minmax(0, 1fr) 58px;
+  align-items: end;
+  pointer-events: none;
+  transition: none !important;
+}
+
+.floating-guide.walking,
+.floating-guide.dragging {
+  transition: none !important;
+}
+
+.floating-guide .guide-character {
+  width: 58px;
+  height: 58px;
+  align-self: end;
+  background-image: url("./world-map/assets/geometry-characters.png");
+  background-repeat: no-repeat;
+  background-size: 300% 300%;
+  background-position: 0 0;
+  filter: drop-shadow(0 5px 4px rgba(30, 53, 33, 0.22));
+  animation: cubi-idle 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.floating-guide .guide-bubble {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px) scale(0.96);
+  pointer-events: none;
+}
+
+.floating-guide .guide-bubble.talk {
+  animation: cubi-message 4.2s ease both;
+}
+
+.floating-guide .guide-audio {
+  pointer-events: auto;
+}
+
+@keyframes cubi-message {
+  0% { opacity: 0; visibility: visible; transform: translateY(8px) scale(0.96); }
+  10%, 78% { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+  100% { opacity: 0; visibility: hidden; transform: translateY(6px) scale(0.98); }
+}
+
+@keyframes cubi-idle {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-3px) rotate(1deg); }
+}
+
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) and (max-height: 620px) {
+  .floating-guide {
+    right: max(8px, env(safe-area-inset-right)) !important;
+    bottom: calc(72px + env(safe-area-inset-bottom)) !important;
+    width: min(220px, 32vw);
+    grid-template-columns: minmax(0, 1fr) 46px;
+    gap: 3px;
+  }
+
+  .floating-guide .guide-character {
+    width: 46px;
+    height: 46px;
+  }
+
+  .floating-guide .guide-bubble {
+    min-height: 38px;
+    padding: 5px 7px;
+  }
+
+  .floating-guide .guide-bubble p {
+    font-size: 9px;
+    line-height: 1.2;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) and (max-height: 430px) {
+  .floating-guide {
+    display: grid !important;
+    width: 46px;
+    grid-template-columns: 46px;
+  }
+
+  .floating-guide .guide-bubble {
+    position: absolute;
+    right: 48px;
+    bottom: 0;
+    width: min(190px, 30vw);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-guide .guide-character {
+    animation: none;
+  }
+}
