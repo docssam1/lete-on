@@ -124,6 +124,74 @@
     };
   };
 
+  /* ── 점 잇기 창작 도형 (viewBox 0~100 좌표, 전부 오리지널) ── */
+  const DD_SHAPES = [
+    { name: { ko: '집', en: 'house', zh: '房子' }, close: true,
+      pts: [[15,88],[15,45],[50,12],[85,45],[85,88]] },
+    { name: { ko: '로켓', en: 'rocket', zh: '火箭' }, close: true,
+      pts: [[50,8],[68,32],[68,72],[50,92],[32,72],[32,32]] },
+    { name: { ko: '물고기', en: 'fish', zh: '鱼' }, close: true,
+      pts: [[10,50],[35,26],[70,30],[90,50],[70,70],[35,74]] },
+    { name: { ko: '별', en: 'star', zh: '星星' }, close: true,
+      pts: [[50,5],[61,36],[94,36],[67,57],[78,90],[50,70],[22,90],[33,57],[6,36],[39,36]] }
+  ];
+
+  /* ── NL2 — 수의 순서 ──────────────────────────────────────
+     mode:'gap'   수열 빈칸 — 이어 세기·거꾸로·2씩 뛰어세기 → seqFill 위젯
+     mode:'dots'  1부터 차례로 점을 이어 그림 완성 → dotToDot 위젯 */
+  NM_TGEN['nl2_seq'] = function (params, rng) {
+    const mode = (params && params.mode) || 'gap';
+    const lv   = (params && params.level) || 'main';
+
+    if (mode === 'dots') {
+      const shape = pick(rng, lv === 'practice' ? DD_SHAPES.slice(0, 3) : DD_SHAPES);
+      return {
+        prompt: {
+          ko: `1부터 차례대로 점을 이어 ${shape.name.ko}을(를) 완성해요!`,
+          en: `Connect the dots from 1 in order to finish the ${shape.name.en}!`,
+          zh: `从1开始按顺序连点，画出${shape.name.zh}！`
+        },
+        answer:     shape.pts.length,
+        answerType: 'number',
+        widget:     'dotToDot',
+        pts:        shape.pts,
+        close:      shape.close
+      };
+    }
+
+    /* ---- gap: 수열 빈칸 ---- */
+    const kind = lv === 'practice' ? 'up' : pick(rng, ['up', 'down', 'skip2']);
+    const len  = 5;
+    let start, step;
+    if (kind === 'up')        { step = 1;  start = R(rng, 1, (lv==='practice'?10:20) - (len-1)); }
+    else if (kind === 'down') { step = -1; start = R(rng, len, 20); }
+    else                      { step = 2;  start = R(rng, 1, 20 - 2*(len-1)); }
+
+    const seq = [];
+    for (let i = 0; i < len; i++) seq.push(start + step * i);
+    const blank = R(rng, 1, len - 1);          /* 첫 칸은 힌트로 남김 */
+
+    return {
+      prompt: kind === 'down' ? {
+        ko: '거꾸로 세기! 빈 칸에 올 수를 골라요',
+        en: 'Counting backwards! Pick the number for the blank',
+        zh: '倒着数！选出空格里的数'
+      } : kind === 'skip2' ? {
+        ko: '2씩 뛰어세기! 빈 칸에 올 수를 골라요',
+        en: 'Skip-count by 2! Pick the number for the blank',
+        zh: '两个两个跳着数！选出空格里的数'
+      } : {
+        ko: '순서대로! 빈 칸에 올 수를 골라요',
+        en: 'In order! Pick the number for the blank',
+        zh: '按顺序！选出空格里的数'
+      },
+      answer:     seq[blank],
+      answerType: 'number',
+      widget:     'seqFill',
+      seq, blank
+    };
+  };
+
   /* ── NL7 — 10까지의 수 관계망 ─────────────────────────────
      mode:'tenpair'  텐프레임 — n개에서 10 만들기(10의 짝꿍) → tenframe 위젯
      mode:'oneStep'  1 큰 수 / 1 작은 수 — 세어 보고 이웃 수 고르기 → tapCount 위젯

@@ -23,6 +23,15 @@ window.NM_ROADMAP = {
       tip:{ko:'병아리를 톡톡 짚으면서 세어 봐요. 마지막 수가 전체 개수!',en:'Tap the chicks one by one — the last number is how many!',zh:'点着小鸡一个一个数——最后的数就是总数！'}
     },
 
+    /* ─────── N1 : 수의 나라 — 순서와 뛰어세기 ─────── */
+    {
+      id:'N1', icon:'🪜', grade:'유아',
+      edu:{ko:'유아 5~7세 · 수 감각',en:'Ages 5–7 · Number sense',zh:'幼儿5~7岁 · 数感'},
+      theme:{ko:'순서와 뛰어세기 — 앞으로, 거꾸로, 폴짝!',en:'Order & Skip-Counting — Forward, Backward, Hop!',zh:'顺序与跳数——往前、倒着、跳一跳！'},
+      units:['N-02'],
+      tip:{ko:'1부터 차례로 점을 이으면 숨은 그림이 짠! 나타나요.',en:'Connect the dots from 1 in order — a hidden picture appears!',zh:'从1开始按顺序连点——藏着的图案就出现啦！'}
+    },
+
     /* ─────── R0 : 연산 첫걸음 ─────── */
     {
       id:'R0', icon:'🌱', grade:'초1',

@@ -70,6 +70,8 @@ function render(problem, container, onAnswer){
     case 'tapCount':     return renderTapCount(problem,container,onAnswer);
     case 'tapMake':      return renderTapMake(problem,container,onAnswer);
     case 'numberBond':   return renderNumberBond(problem,container,onAnswer);
+    case 'seqFill':      return renderSeqFill(problem,container,onAnswer);
+    case 'dotToDot':     return renderDotToDot(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -820,6 +822,121 @@ function renderNumberBond(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   SEQFILL  widget:'seqFill'  (유아 · 수의 나라)
+   problem.seq = [3,4,5,6,7], problem.blank = 빈 칸 index
+   수열 칩 한 줄 + 빈 칩, 아래 큰 숫자 보기 3개.
+   onAnswer(선택값).
+───────────────────────────────────────── */
+function renderSeqFill(problem, container, onAnswer){
+  const seq=problem.seq||[];
+  const blank=problem.blank||1;
+  const answer=problem.answer;
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-sf-wrap';
+  root.innerHTML=`<div class="nm-sf-row"></div><div class="nm-sf-choices"></div>`;
+  container.appendChild(root);
+
+  const row=root.querySelector('.nm-sf-row');
+  seq.forEach((v,i)=>{
+    const c=document.createElement('div');
+    if(i===blank){c.className='nm-sf-chip blank';c.id='sfBlank';c.textContent='?';}
+    else{c.className='nm-sf-chip';c.textContent=v;}
+    row.appendChild(c);
+    if(i<seq.length-1){
+      const a=document.createElement('span');a.className='nm-sf-arr';a.textContent='→';
+      row.appendChild(a);
+    }
+  });
+
+  /* 보기 3개: 정답 + 이웃 수 함정 */
+  const step=seq.length>1?seq[1]-seq[0]:1;
+  const cand=[answer-step,answer+step,answer-1,answer+1].filter(n=>n>=0&&n<=20&&n!==answer);
+  const uniq=[...new Set(cand)];
+  const picks=[answer];
+  while(picks.length<3&&uniq.length){picks.push(uniq.splice(Math.floor(Math.random()*uniq.length),1)[0]);}
+  picks.sort(()=>Math.random()-.5);
+
+  const ch=root.querySelector('.nm-sf-choices');
+  picks.forEach(n=>{
+    const b=document.createElement('button');
+    b.className='nm-tc-choice';b.textContent=n;
+    b.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(lock)return;
+      lock=true;setTimeout(()=>{lock=false;},700);
+      if(n===answer){const bl=root.querySelector('#sfBlank');if(bl){bl.textContent=n;bl.classList.add('found');}}
+      else shake(b);
+      onAnswer(n);
+    });
+    ch.appendChild(b);
+  });
+}
+
+/* ─────────────────────────────────────────
+   DOTTODOT  widget:'dotToDot'  (유아 · 수의 나라)
+   problem.pts = [[x,y]...] (0~100), problem.close = 마지막→첫 점 닫기
+   1부터 차례로 점을 탭 — 맞으면 선이 그어지고, 틀리면 흔들림.
+   전부 이으면 자동 제출 onAnswer(problem.answer).
+───────────────────────────────────────── */
+function renderDotToDot(problem, container, onAnswer){
+  const pts=problem.pts||[];
+  const close=!!problem.close;
+  let next=0, done=false;
+  const NS='http://www.w3.org/2000/svg';
+
+  const root=document.createElement('div');
+  root.className='nm-dd-wrap';
+  root.innerHTML=`<svg class="nm-dd-svg" viewBox="0 0 100 100"><g id="ddLines"></g><g id="ddDots"></g></svg>
+    <div class="nm-dd-hint">1️⃣ 부터 차례대로!</div>`;
+  container.appendChild(root);
+
+  const lines=root.querySelector('#ddLines');
+  const dots=root.querySelector('#ddDots');
+
+  function drawLine(a,b){
+    const l=document.createElementNS(NS,'line');
+    l.setAttribute('x1',a[0]);l.setAttribute('y1',a[1]);
+    l.setAttribute('x2',b[0]);l.setAttribute('y2',b[1]);
+    lines.appendChild(l);
+  }
+
+  pts.forEach((p,i)=>{
+    const g=document.createElementNS(NS,'g');
+    g.setAttribute('class','nm-dd-dot');
+    const hit=document.createElementNS(NS,'circle');   /* 큰 투명 히트존 */
+    hit.setAttribute('cx',p[0]);hit.setAttribute('cy',p[1]);hit.setAttribute('r',11);
+    hit.setAttribute('class','nm-dd-hit');
+    const c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r',6.5);
+    const t=document.createElementNS(NS,'text');
+    t.setAttribute('x',p[0]);t.setAttribute('y',p[1]);
+    t.textContent=i+1;
+    g.appendChild(hit);g.appendChild(c);g.appendChild(t);
+    g.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(done)return;
+      if(i===next){
+        g.classList.add('on');
+        if(next>0)drawLine(pts[next-1],pts[next]);
+        next++;
+        if(next>=pts.length){
+          done=true;
+          if(close)drawLine(pts[pts.length-1],pts[0]);
+          root.querySelector('.nm-dd-hint').textContent='🎉 완성!';
+          setTimeout(()=>onAnswer(problem.answer!=null?problem.answer:pts.length),600);
+        }
+      }else{
+        g.classList.add('no');
+        setTimeout(()=>g.classList.remove('no'),450);
+      }
+    });
+    dots.appendChild(g);
+  });
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
    Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
@@ -873,6 +990,8 @@ window.NM_WIDGETS={
   renderTapCount,
   renderTapMake,
   renderNumberBond,
+  renderSeqFill,
+  renderDotToDot,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake
