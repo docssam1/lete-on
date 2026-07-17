@@ -443,6 +443,7 @@ const compactUiCopy = {
     nextStage: "다음 단계",
     moving: "이동 중",
     showHint: "힌트 보기",
+    tutorialStart: "시작",
     hintPrompt: "힌트가 필요해?",
     hintShown: "이 부분을 다시 살펴볼까?",
     placementCorrect: "잘했어!",
@@ -458,6 +459,7 @@ const compactUiCopy = {
     nextStage: "下一步",
     moving: "正在前往",
     showHint: "查看提示",
+    tutorialStart: "开始",
     hintPrompt: "需要提示吗？",
     hintShown: "再看看这里吧。",
     placementCorrect: "做得好！",
@@ -473,6 +475,7 @@ const compactUiCopy = {
     nextStage: "次のステップ",
     moving: "移動中",
     showHint: "ヒントを見る",
+    tutorialStart: "スタート",
     hintPrompt: "ヒントがいる？",
     hintShown: "ここをもう一度見てみよう。",
     placementCorrect: "よくできたね！",
@@ -488,6 +491,7 @@ const compactUiCopy = {
     nextStage: "Next Step",
     moving: "Moving",
     showHint: "Show Hint",
+    tutorialStart: "Start",
     hintPrompt: "Need a hint?",
     hintShown: "Take another look here.",
     placementCorrect: "Well done!",
@@ -904,6 +908,7 @@ function addEvents() {
   document.querySelector("#cubePile").addEventListener("pointerdown", startPileDrag);
   document.querySelector("#audioToggle").addEventListener("pointerdown", (event) => event.stopPropagation());
   document.querySelector("#audioToggle").addEventListener("click", toggleAudio);
+  document.querySelector("#tutorialAction").addEventListener("click", beginTutorialInteraction);
   document.querySelector("#hintAction").addEventListener("click", showHint);
   document.querySelector(".menu-exit").addEventListener("click", handleMenuExit);
 }
@@ -914,6 +919,8 @@ function loadProblem() {
   hintMarker.visible = false;
   const hintButton = document.querySelector("#hintAction");
   if (hintButton) hintButton.hidden = true;
+  const tutorialButton = document.querySelector("#tutorialAction");
+  if (tutorialButton) tutorialButton.hidden = true;
   const boardSize = getProblemBoardSize();
   state.countMode = false;
   state.counted = 0;
@@ -2071,13 +2078,26 @@ function maybeStartTutorial() {
   if (!firstProblem || (!forceTutorial && localStorage.getItem(tutorialStorageKey))) {
     clearTutorialHighlights();
     document.body.classList.remove("tutorial-active");
+    const tutorialButton = document.querySelector("#tutorialAction");
+    if (tutorialButton) tutorialButton.hidden = true;
     state.tutorialStep = -1;
     return false;
   }
   state.tutorialStep = 0;
   document.body.classList.add("tutorial-active");
   setTutorialStep(0, "tutorialTake");
+  const tutorialButton = document.querySelector("#tutorialAction");
+  if (tutorialButton) tutorialButton.hidden = false;
   return true;
+}
+
+function beginTutorialInteraction() {
+  if (state.tutorialStep !== 0) return;
+  const tutorialButton = document.querySelector("#tutorialAction");
+  if (tutorialButton) tutorialButton.hidden = true;
+  document.body.classList.remove("tutorial-active");
+  setTutorialStep(0, "tutorialTake");
+  document.querySelector("#cubePile")?.focus({ preventScroll: true });
 }
 
 function setTutorialStep(step, guideKey) {
@@ -2117,6 +2137,8 @@ function completeTutorial() {
   state.tutorialStep = -1;
   localStorage.setItem(tutorialStorageKey, "done");
   document.body.classList.remove("tutorial-active");
+  const tutorialButton = document.querySelector("#tutorialAction");
+  if (tutorialButton) tutorialButton.hidden = true;
   clearTutorialHighlights();
   dropMarker.visible = false;
   setGuide("tutorialDone", true);
