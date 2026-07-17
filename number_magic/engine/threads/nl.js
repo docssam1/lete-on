@@ -763,5 +763,63 @@
     };
   };
 
+  /* ── NL10 — 자료 분류와 표 ─────────────────────────────────
+     mode:'sort'    섞인 아이템을 나눠 담고 특정 종류의 개수 세기 → sortBasket 재사용
+     mode:'compare' 나눠 담은 뒤 어느 바구니가 더 많은지 콕 짚기 → sortBasket(askMode:'compare') */
+  NM_TGEN['nl10_data'] = function (params, rng) {
+    const mode = (params && params.mode) || 'sort';
+    const lv   = (params && params.level) || 'main';
+    const pair = pick(rng, SORT_PAIRS);
+    const [emA, koA, enA, zhA] = pair[0];
+    const [emB, koB, enB, zhB] = pair[1];
+    const cap  = lv === 'practice' ? 4 : 6;
+
+    if (mode === 'compare') {
+      let nA, nB;
+      do { nA = R(rng, 2, cap); nB = R(rng, 2, cap); } while (nA === nB);
+      const items = [];
+      for (let i = 0; i < nA; i++) items.push({ e: emA, type: 'A' });
+      for (let i = 0; i < nB; i++) items.push({ e: emB, type: 'B' });
+      return {
+        prompt: {
+          ko: '섞인 걸 나눠 담고, 어느 바구니에 더 많은지 콕 짚어요!',
+          en: "Sort them into baskets, then tap the one with more!",
+          zh: '分类装进篮子，点一点数量更多的那个！'
+        },
+        answer:     nA > nB ? 0 : 1,
+        answerType: 'number',
+        widget:     'sortBasket',
+        askMode:    'compare',
+        items:      shuffle(rng, items),
+        basketA:    { emoji: emA }, basketB: { emoji: emB }
+      };
+    }
+
+    /* ---- sort: 특정 종류의 개수 세기(N-15와 같은 위젯, 새 소재) ---- */
+    const nA = R(rng, 2, cap);
+    const nB = R(rng, 2, cap);
+    const items = [];
+    for (let i = 0; i < nA; i++) items.push({ e: emA, type: 'A' });
+    for (let i = 0; i < nB; i++) items.push({ e: emB, type: 'B' });
+    const askA = pick(rng, [true, false]);
+    const answer = askA ? nA : nB;
+    const [askKo, askEn, askZh] = askA ? [koA, enA, zhA] : [koB, enB, zhB];
+
+    return {
+      prompt: {
+        ko: `섞여 있는 걸 종류별로 나눠요! 톡톡 눌러서 바구니에 담고, ${askKo}가 모두 몇 개인지 세어 봐요`,
+        en: `Sort the mixed items! Tap to put them in baskets, then count the ${askEn}`,
+        zh: `把混在一起的东西分类！点一点放进篮子，再数一数${askZh}有几个`
+      },
+      answer,
+      answerType: 'number',
+      widget:     'sortBasket',
+      askMode:    'count',
+      items:      shuffle(rng, items),
+      basketA:    { emoji: emA }, basketB: { emoji: emB },
+      askType:    askA ? 'A' : 'B'
+    };
+  };
+
   if (typeof module !== 'undefined' && module.exports) module.exports = NM_TGEN;
 })();

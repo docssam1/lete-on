@@ -1460,7 +1460,8 @@ function renderCrossSum(problem, container, onAnswer){
    3지선다 보기 등장(askType 바구니 개수 정답). onAnswer(선택값).
 ───────────────────────────────────────── */
 function renderSortBasket(problem, container, onAnswer){
-  const items = problem.items || [];
+  const items    = problem.items || [];
+  const askMode  = problem.askMode || 'count';
   let lock=false, remaining=items.length, sortedA=0, sortedB=0;
 
   const root=document.createElement('div');
@@ -1468,15 +1469,16 @@ function renderSortBasket(problem, container, onAnswer){
   root.innerHTML=`
     <div class="nm-sb-scatter"></div>
     <div class="nm-sb-baskets">
-      <div class="nm-sb-basket"><span class="nm-sb-basket-em">${problem.basketA.emoji}</span><span class="nm-sb-basket-cnt">0</span></div>
-      <div class="nm-sb-basket"><span class="nm-sb-basket-em">${problem.basketB.emoji}</span><span class="nm-sb-basket-cnt">0</span></div>
+      <div class="nm-sb-basket" data-side="0"><span class="nm-sb-basket-em">${problem.basketA.emoji}</span><span class="nm-sb-basket-cnt">0</span></div>
+      <div class="nm-sb-basket" data-side="1"><span class="nm-sb-basket-em">${problem.basketB.emoji}</span><span class="nm-sb-basket-cnt">0</span></div>
     </div>
     <div class="nm-sb-choices"></div>`;
   container.appendChild(root);
 
   const scatter = root.querySelector('.nm-sb-scatter');
-  const baskets = root.querySelectorAll('.nm-sb-basket-cnt');
-  const cntA=baskets[0], cntB=baskets[1];
+  const basketEls = root.querySelectorAll('.nm-sb-basket');
+  const cntA = basketEls[0].querySelector('.nm-sb-basket-cnt');
+  const cntB = basketEls[1].querySelector('.nm-sb-basket-cnt');
   const choicesBox = root.querySelector('.nm-sb-choices');
 
   items.forEach(it=>{
@@ -1489,10 +1491,24 @@ function renderSortBasket(problem, container, onAnswer){
       if(it.type==='A'){ sortedA++; cntA.textContent=sortedA; }
       else{ sortedB++; cntB.textContent=sortedB; }
       remaining--;
-      if(remaining===0) showChoices();
+      if(remaining===0) askMode==='compare' ? enableBasketTap() : showChoices();
     });
     scatter.appendChild(chip);
   });
+
+  function enableBasketTap(){
+    basketEls.forEach((el,i)=>{
+      el.classList.add('tappable');
+      el.addEventListener('pointerup',e=>{
+        e.stopPropagation();
+        if(lock)return;
+        lock=true;setTimeout(()=>{lock=false;},700);
+        if(i===problem.answer) el.classList.add('on');
+        else shake(el);
+        onAnswer(i);
+      });
+    });
+  }
 
   function showChoices(){
     const answer=problem.answer;

@@ -482,7 +482,12 @@ window.NM_ROADMAP = {
       수혜를 받음(같은 위젯 공유)
       — 2000시드 퍼즈 + Playwright 전 구간(practice→discover→lab→stamp,
       +20코인) 검증 완료 2026-07-16
-- [ ] N-10 자료 분류·표 (sortBasket)
+- [x] N-10 자료 분류·표 (nl10_data: sort=N-15와 같은 sortBasket 재사용(개수
+      3지선다, 소재만 다름) / compare=분류 후 어느 바구니가 더 많은지 직접
+      바구니를 탭. sortBasket에 askMode:'compare' 옵션 추가(바구니 자체가
+      tappable해짐, gridPaint-single과 같은 즉시판정 패턴). N4 챕터 완성
+      (N-04·N-10) — 2000시드 퍼즈 + Playwright 전 구간(practice→discover→
+      lab→stamp, +20코인) 검증 완료 2026-07-16
 - [ ] N-14 산가지·규칙 (tallyBuild + seqFill)
 - [ ] N-15 완료 시 R0 추천 배너
 

@@ -581,6 +581,9 @@
 }
 .nm-sb-basket-em{font-size:26px;}
 .nm-sb-basket-cnt{font-size:16px;font-weight:900;color:var(--blue-deep);}
+.nm-sb-basket.tappable{cursor:pointer;border-style:solid;touch-action:manipulation;transition:transform .15s,border-color .15s,background .15s;}
+.nm-sb-basket.tappable:active{transform:scale(.95);}
+.nm-sb-basket.on{border-color:var(--ok);background:#eafaf1;}
 .nm-sb-choices{display:flex;gap:14px;justify-content:center;}
 
 /* ══════════════════════════════════════
