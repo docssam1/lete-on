@@ -2214,10 +2214,14 @@ body {
 .tutorial-active .guide-character {
   width: 188px;
   height: 188px;
+  animation: tutorial-cubi-alive 2.1s ease-in-out infinite;
+  transform-origin: 50% 88%;
+  filter: drop-shadow(0 12px 12px rgba(29, 17, 8, .3));
 }
 
 .tutorial-active .guide-bubble {
   padding: 18px 20px;
+  animation: tutorial-bubble-alive 2.1s ease-in-out infinite;
 }
 
 .tutorial-active .guide-bubble p {
@@ -2244,6 +2248,18 @@ body {
   0%, 100% { transform: rotate(0); }
   32% { transform: translateY(5px) rotate(2deg); }
   64% { transform: translateY(-2px) rotate(-1deg); }
+}
+
+@keyframes tutorial-cubi-alive {
+  0%, 100% { transform: translateY(0) rotate(-1deg) scale(1); }
+  28% { transform: translateY(-7px) rotate(2deg) scale(1.02); }
+  58% { transform: translateY(-3px) rotate(-2deg) scale(1.01); }
+  78% { transform: translateY(-8px) rotate(1deg) scale(1.025); }
+}
+
+@keyframes tutorial-bubble-alive {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.008); }
 }
 
 @keyframes guide-tilt {

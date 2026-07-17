@@ -1367,6 +1367,7 @@ function resetView() {
 function animate() {
   requestAnimationFrame(animate);
   const time = performance.now() * 0.001;
+  const tutorialIntro = document.body.classList.contains("tutorial-active");
   updateFalling();
   targetScene.sun.position.x = 5 + Math.sin(time * 0.32) * 0.42;
   targetScene.sun.position.z = 4 + Math.cos(time * 0.28) * 0.34;
@@ -1376,6 +1377,10 @@ function animate() {
     const pulse = 1 + Math.sin(time * 5.2) * 0.035;
     dropMarker.scale.setScalar(pulse);
   }
+  targetScene.controls.autoRotate = tutorialIntro;
+  buildScene.controls.autoRotate = tutorialIntro;
+  targetScene.controls.autoRotateSpeed = 0.42;
+  buildScene.controls.autoRotateSpeed = 0.42;
   targetScene.controls.update();
   buildScene.controls.update();
   targetScene.renderer.render(targetScene.scene, targetScene.camera);
@@ -2096,6 +2101,7 @@ function beginTutorialInteraction() {
   const tutorialButton = document.querySelector("#tutorialAction");
   if (tutorialButton) tutorialButton.hidden = true;
   document.body.classList.remove("tutorial-active");
+  resetView();
   setTutorialStep(0, "tutorialTake");
   document.querySelector("#cubePile")?.focus({ preventScroll: true });
 }
