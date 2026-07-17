@@ -652,6 +652,7 @@ const state = {
   tutorialStep: -1,
   lastPlacementGuide: "",
   lastSuccessGuide: "",
+  lastSuccessPhrase: "",
   transitioning: false,
   readyForNext: false,
   wrongPlacements: 0,
@@ -1485,14 +1486,17 @@ function showSuccessThenNext() {
   if (hintButton) hintButton.hidden = true;
   awardPoints(`copy-build:${state.levelIndex}:${state.problemIndex}`, 15);
   const burst = document.querySelector("#successBurst");
-  const phrases = [t("successGood"), t("successGreat"), t("successPop")];
-  const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+  const phraseKeys = ["successGood", "successGreat", "successPop"];
+  const phraseCandidates = phraseKeys.filter((key) => key !== state.lastSuccessPhrase);
+  const phraseKey = phraseCandidates[Math.floor(Math.random() * phraseCandidates.length)] || phraseKeys[0];
+  state.lastSuccessPhrase = phraseKey;
+  const phrase = t(phraseKey);
   burst.querySelector("strong").textContent = phrase;
   setRandomGuide(
     ["guideSuccess1", "guideSuccess2", "guideSuccess3", "guideSuccess4"],
     "lastSuccessGuide"
   );
-  playSuccessSound();
+  playSuccessSound(phraseKey);
   burst.classList.remove("show");
   void burst.offsetWidth;
   burst.classList.add("show");
@@ -2238,10 +2242,33 @@ function playRemovalSound() {
   playWoodTone(230, 0.11, 0.055, "triangle");
 }
 
-function playSuccessSound() {
+function playSuccessSound(phraseKey = "successPop") {
   playWoodTone(392, 0.14, 0.06, "sine");
   playWoodTone(523, 0.18, 0.055, "sine", 0.09);
   playWoodTone(659, 0.21, 0.05, "sine", 0.18);
+  playSuccessVoice(phraseKey);
+}
+
+function playSuccessVoice(phraseKey) {
+  if (!state.audioEnabled) return;
+  if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) return;
+
+  const successVoiceText = {
+    successGood: "Good job!",
+    successGreat: "Great job!",
+    successPop: "Success!"
+  };
+  const utterance = new SpeechSynthesisUtterance(successVoiceText[phraseKey] || successVoiceText.successPop);
+  utterance.lang = "en-US";
+  utterance.rate = 0.68;
+  utterance.pitch = 0.86;
+  utterance.volume = 1;
+
+  const voice = pickVoice("en-US");
+  if (voice) utterance.voice = voice;
+
+  window.speechSynthesis.cancel();
+  window.setTimeout(() => window.speechSynthesis.speak(utterance), 90);
 }
 
 function toggleAudio() {
