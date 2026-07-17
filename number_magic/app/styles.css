@@ -879,7 +879,7 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 /* ── 유아 위젯 · seqFill (수열 빈칸) ───────────────────────── */
 .nm-sf-wrap{display:flex;flex-direction:column;align-items:center;gap:18px;padding:8px 4px}
 .nm-sf-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center}
-.nm-sf-chip{min-width:46px;height:46px;padding:0 8px;border-radius:14px;border:2.5px solid var(--line);background:#fff;font-size:22px;font-weight:900;color:var(--blue-deep);display:grid;place-items:center;box-shadow:0 4px 0 #eceae4}
+.nm-sf-chip{min-width:52px;height:52px;padding:0 8px;border-radius:14px;border:2.5px solid var(--line);background:#fff;font-size:23px;font-weight:900;color:var(--blue-deep);display:grid;place-items:center;box-shadow:0 4px 0 #eceae4}
 .nm-sf-chip.blank{border-color:var(--gold-deep);border-style:dashed;background:#fffaf0;color:#b8860b}
 .nm-sf-chip.blank.found{border-style:solid;border-color:var(--ok);background:#eafaf1;color:var(--ok);animation:tc-pop .3s ease}
 .nm-sf-arr{font-size:14px;color:var(--sub);font-weight:800}

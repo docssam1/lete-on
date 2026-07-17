@@ -496,12 +496,24 @@ window.NM_ROADMAP = {
       — 2000시드 퍼즈 + Playwright 전 구간(practice→discover→lab→stamp,
       +20코인) 검증 완료 2026-07-16
 - [ ] N-15 완료 시 R0 추천 배너 (부가 기능, 디자인 다듬기 단계에서 처리)
-- [ ] **다음 단계 — 유아용 세밀 디자인 패스** (사용자 지시 2026-07-16: "완료
-      한 다음 세밀하게 디자인하자 이건 유아잖아"): 기능은 15개 유닛 모두
-      완성됐으나 지금까지는 기존 PRIME/ADVANCE 티어의 성인향 컴포넌트
-      스타일(작은 버튼·차분한 색·촘촘한 여백)을 그대로 물려받았음. 5~7세
-      기준으로 터치 타깃 크기, 색상 대비·명도, 애니메이션 피드백(정답/오답),
-      폰트 크기, 여백/숨쉴 공간, 캐릭터·이모지 톤을 전면 재검토 필요.
+- [x] **1차 디자인 패스 — 터치 타깃 + 정답 피드백 일관성** (사용자 지시
+      2026-07-16: "완료한 다음 세밀하게 디자인하자 이건 유아잖아"): widgets.css의
+      신규 위젯 7종(gridPaint·storyCard·balanceScale·numberMachine·crossSum·
+      sortBasket·matchLine)을 점검한 결과, N-01~N-12 시절 만든 구식 위젯(tapCount·
+      tapMake·numberBond·seqFill·pyramid, styles.css)은 정답 시 `tc-pop`
+      바운스 애니메이션이 있었는데, N-03 이후 신규 위젯들은 색상만 바뀌고
+      바운스가 빠져 있던 **일관성 결여**를 발견 → 전부 `animation:tc-pop .3s ease`
+      추가(gridPaint .on, storyCard .on, balanceScale .on, crossSum .found,
+      sortBasket .on, matchLine .matched). 터치 타깃도 5~7세 손가락 기준으로
+      확대: gridPaint 셀 42→52px, storyCard 캐릭터 52→58px, sortBasket 칩
+      40→50px·바구니 최소폭 64→70px, numberMachine 칸 38→44px, crossSum 칸
+      50→56px, balanceScale 접시 최소높이 54→60px, seqFill 칩(styles.css)
+      46→52px. 영향받은 6개 유닛(N-03·N-05·N-11·N-12·N-13·N-15) Playwright
+      스크린샷으로 레이아웃 깨짐 없음 확인.
+- [ ] **2차 디자인 패스 후보** (다음에 이어서 할 것): 색상·명도 대비 재검토,
+      오답 시 피드백(현재 shake만 — 유아 눈높이에 소리·표정 반응 추가 고려),
+      styles.css 구식 위젯(tapCount 등)도 터치 타깃 재검토, 상단바/플로우바
+      등 유닛 밖 공통 UI도 유아 탭에서는 더 크게 보일지 검토.
 
 ## 5. 구현 순서 (다음 세션 체크리스트)
 
