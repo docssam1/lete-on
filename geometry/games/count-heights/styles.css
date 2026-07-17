@@ -227,8 +227,11 @@ button:focus-visible { outline: 3px solid #226dba; outline-offset: 2px; }
 .number-pad button.clear-key { grid-column: span 2; font-size: 15px; color: #9b4035; background: #fff4f0; }
 .number-pad button:disabled { opacity: .34; cursor: default; transform: none; }
 
-.action-bar { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 9px; margin-top: 14px; }
+.action-bar { display: grid; grid-template-columns: .65fr 1fr 1fr 1.3fr .65fr; gap: 9px; margin-top: 14px; }
 .action-bar button { min-height: 53px; font-size: 16px; }
+.action-bar .icon-action,
+.action-bar .exit-action { display: grid; place-items: center; min-height: 53px; border: 1px solid var(--line); border-radius: 7px; background: white; text-decoration: none; font-weight: 800; }
+.exit-action small { display: block; font-size: 10px; }
 #hint { background: #fff6cb; border-color: #e4c75c; }
 #reset { background: white; }
 #next { color: white; background: var(--ink); border-color: var(--ink); }
@@ -382,4 +385,218 @@ button:focus-visible { outline: 3px solid #226dba; outline-offset: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}
+
+/* Cube Town premium wood theme */
+body {
+  background:
+    linear-gradient(rgba(72, 37, 18, .78), rgba(92, 50, 24, .82)),
+    repeating-linear-gradient(90deg, #70411f 0 58px, #653819 58px 116px);
+}
+
+.topbar {
+  color: #fff8e8;
+  border: 1px solid rgba(244, 198, 128, .42);
+  border-radius: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(180deg, #3a2112, #241309);
+  box-shadow: 0 8px 24px rgba(24, 11, 3, .28);
+}
+
+.brand p { color: #eec783; }
+.mission-bar,
+.viewer-panel,
+.answer-panel,
+.view-switch {
+  border-color: #c89a67;
+  background: linear-gradient(145deg, #fffaf0, #f5dfbd);
+  box-shadow: 0 10px 28px rgba(38, 17, 5, .22), inset 0 0 0 2px rgba(255,255,255,.48);
+}
+.mission-bar { margin-top: 8px; border-left-color: #7d954c; border-radius: 8px; }
+.viewer-panel > header,
+.answer-panel > header { background: rgba(255, 249, 236, .82); border-bottom-color: #d8b889; }
+.scene { background: linear-gradient(145deg, #f9ecd8, #eed0a2); }
+.view-switch { border-width: 2px; }
+.view-switch button.active { background: #34759a; }
+.sum-work { border-color: #d7b98f; }
+.total-display { border-color: #bd8f5e; background: #fffaf0; }
+.number-pad button {
+  border-color: #bd8f5e;
+  background: linear-gradient(#fffaf0, #efd0a4);
+  box-shadow: 0 3px 0 #a76d38;
+}
+.action-bar {
+  padding: 8px;
+  border: 1px solid #9e6a3c;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #6d4327, #4a2916);
+}
+#reset { background: linear-gradient(#fff0cc, #e6b979); }
+#next { background: linear-gradient(#408dba, #22648e); border-color: #1f587b; }
+.speech-bubble { border-color: #b88752; background: #fffaf0; }
+.speech-bubble::after { background: #fffaf0; border-color: #b88752; }
+
+/* Phone and small-tablet landscape: the whole activity fits below browser chrome. */
+@media (orientation: landscape) and (max-height: 560px) {
+  html,
+  body { width: 100%; height: 100%; min-height: 0; overflow: hidden; }
+
+  .game-shell {
+    position: relative;
+    display: grid;
+    grid-template-rows: 40px minmax(0, 1fr);
+    gap: 5px;
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    padding: 5px calc(52px + env(safe-area-inset-right)) 5px max(5px, env(safe-area-inset-left));
+  }
+
+  .topbar { display: none; }
+
+  .mission-bar {
+    grid-row: 1;
+    min-height: 0;
+    height: 40px;
+    margin: 0;
+    padding: 4px 7px 4px 282px;
+    border-left-width: 4px;
+    gap: 5px;
+  }
+  .mission-bar > div:first-child { min-width: 0; }
+  .mission-bar .stars,
+  .mission-bar p { display: none; }
+  .mission-bar h2 { overflow: hidden; font-size: 14px; white-space: nowrap; text-overflow: ellipsis; }
+  .progress-box {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+    min-width: 0;
+    font-size: 11px;
+  }
+  .progress-box button { min-height: 28px; padding: 3px 8px; font-size: 11px; }
+
+  .view-switch {
+    position: absolute;
+    top: 5px;
+    left: max(7px, env(safe-area-inset-left));
+    z-index: 4;
+    grid-template-columns: 1fr 1fr;
+    width: 270px;
+    height: 40px;
+    margin: 0;
+    padding: 3px;
+  }
+  .view-switch button { min-width: 0; min-height: 30px; padding: 3px 7px; font-size: 12px; }
+
+  .play-grid {
+    grid-row: 2;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1.42fr) minmax(235px, .78fr);
+    gap: 5px;
+  }
+  .viewer-panel,
+  .answer-panel { height: 100%; min-height: 0; border-radius: 7px; }
+  .viewer-panel { display: grid; grid-template-rows: 33px minmax(0, 1fr); }
+  .viewer-panel > header { min-height: 0; height: 33px; padding: 3px 7px; }
+  .viewer-panel h2 { font-size: 13px; }
+  .camera-tools { gap: 3px; }
+  .camera-tools button { min-height: 25px; padding: 2px 7px; font-size: 10px; }
+  .scene { height: 100%; min-height: 0; }
+
+  .answer-panel {
+    display: grid;
+    grid-template-rows: 30px minmax(74px, .9fr) 25px minmax(70px, 1fr);
+    padding: 0 0 4px;
+  }
+  .answer-panel > header { display: none; }
+  .model-prompt,
+  .top-board { grid-row: 1; min-height: 0; height: 30px; padding: 3px 6px; }
+  .model-prompt { display: grid; place-content: center; }
+  .model-prompt .mini-columns { display: none; }
+  .model-prompt strong { font-size: 10px; line-height: 1.15; }
+  .top-board {
+    grid-template-columns: repeat(var(--cols), var(--cell-size, 30px));
+    gap: 2px;
+    align-content: center;
+    overflow: hidden;
+  }
+  .top-cell { font-size: 15px; border-width: 1px; }
+  .top-cell.example::after { display: none; }
+
+  .answer-panel:has(#topBoard:not([hidden])) {
+    grid-template-rows: minmax(78px, .74fr) minmax(72px, .72fr) 25px minmax(70px, 1fr);
+  }
+  .answer-panel:has(#topBoard:not([hidden])) .top-board {
+    height: auto;
+    min-height: 78px;
+  }
+
+  .sum-work { grid-row: 2; min-height: 0; padding: 5px 7px; }
+  .sum-work > span { display: block; font-size: 9px; }
+  .addition-line { min-height: 24px; padding: 2px 0; gap: 2px; font-size: 13px; }
+  .total-display { min-height: 34px; height: 34px; padding: 3px 8px; font-size: 11px; }
+  .total-display strong { min-width: 34px; font-size: 21px; }
+  .number-prompt { grid-row: 3; min-height: 0; padding: 3px; font-size: 10px; }
+  .number-pad {
+    grid-row: 4;
+    grid-template-columns: repeat(5, 1fr);
+    align-content: stretch;
+    gap: 3px;
+    padding: 0 5px;
+  }
+  .number-pad button { height: auto; min-height: 31px; border-radius: 5px; font-size: 16px; }
+  .number-pad .clear-key { display: none; }
+
+  .action-bar {
+    position: fixed;
+    top: 5px;
+    right: max(4px, env(safe-area-inset-right));
+    bottom: 5px;
+    z-index: 16;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(5, 1fr);
+    gap: 4px;
+    width: 44px;
+    margin: 0;
+    padding: 4px;
+    border-radius: 7px;
+  }
+  .action-bar button,
+  .action-bar .exit-action { min-height: 0; padding: 3px 1px; font-size: 10px; line-height: 1.1; writing-mode: horizontal-tb; }
+  .action-bar .icon-action { font-size: 15px; }
+  .exit-action small { font-size: 8px; }
+
+  .docssam { left: calc(61% - 48px); right: auto; bottom: 7px; }
+  .cubi-sprite { width: 48px; height: 48px; }
+  .speech-bubble { display: none; }
+  .toast { bottom: 7px; padding: 7px 11px; font-size: 11px; }
+  .success strong { font-size: clamp(46px, 10vw, 82px); }
+  .dialog { padding: 6px 58px 6px 6px; }
+  .dialog > section { width: min(560px, 100%); max-height: 96dvh; }
+  .dialog header { padding: 5px 8px; }
+  .dialog h2 { font-size: 15px; }
+  .dialog header button { min-height: 29px; width: 32px; }
+  .level-list { grid-template-columns: repeat(5, 1fr); gap: 4px; padding: 7px; }
+  .level-list button { min-height: 58px; font-size: 11px; }
+  .level-list small { font-size: 9px; }
+}
+
+@media (orientation: landscape) and (max-height: 390px) {
+  .game-shell { grid-template-rows: 35px minmax(0, 1fr); }
+  .mission-bar { height: 35px; padding-left: 244px; }
+  .view-switch { width: 232px; height: 35px; }
+  .view-switch button { font-size: 10px; }
+  .viewer-panel { grid-template-rows: 29px minmax(0, 1fr); }
+  .viewer-panel > header { height: 29px; }
+  .answer-panel { grid-template-rows: 25px minmax(64px, .9fr) 21px minmax(62px, 1fr); }
+  .model-prompt,
+  .top-board { height: 25px; }
+  .camera-tools button { font-size: 9px; }
+  .answer-panel:has(#topBoard:not([hidden])) {
+    grid-template-rows: minmax(67px, .7fr) minmax(60px, .65fr) 21px minmax(62px, 1fr);
+  }
+  .answer-panel:has(#topBoard:not([hidden])) .top-board { min-height: 67px; }
 }

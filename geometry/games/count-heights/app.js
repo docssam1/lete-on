@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { levels, validateLevels } from "./levels.js";
 import { text } from "./i18n.js";
 
@@ -74,12 +75,20 @@ function applyLanguage() {
   document.documentElement.lang = state.lang;
   $$('[data-i18n]').forEach((node) => { node.textContent = text(state.lang, node.dataset.i18n); });
   $$('[data-lang]').forEach((button) => button.classList.toggle("active", button.dataset.lang === state.lang));
-  elements.audio.textContent = text(state.lang, state.audioEnabled ? "audioOn" : "audioOff");
+  updateAudioButton();
   updateProgress();
   renderLevelList();
   renderNumberPad();
   updatePrompt();
   renderModel();
+}
+
+function updateAudioButton() {
+  const label = text(state.lang, state.audioEnabled ? "audioOn" : "audioOff");
+  elements.audio.textContent = state.audioEnabled ? "🔊" : "🔇";
+  elements.audio.setAttribute("aria-label", label);
+  elements.audio.setAttribute("title", label);
+  elements.audio.setAttribute("aria-pressed", String(state.audioEnabled));
 }
 
 function updateProgress() {
@@ -201,6 +210,7 @@ function selectTotal() {
 function renderTopBoard() {
   const [width, depth] = currentProblem().board;
   elements.topBoard.style.setProperty("--cols", width);
+  elements.topBoard.style.setProperty("--cell-size", width >= 4 ? "20px" : width === 3 ? "26px" : "34px");
   elements.topBoard.replaceChildren();
   for (let z = 0; z < depth; z += 1) {
     for (let x = 0; x < width; x += 1) {
@@ -413,8 +423,8 @@ function renderLevelList() {
 
 // Three.js model
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xdff3f8);
-scene.fog = new THREE.Fog(0xdff3f8, 12, 23);
+scene.background = new THREE.Color(0xf7e8cf);
+scene.fog = new THREE.Fog(0xf7e8cf, 13, 24);
 const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
 camera.position.set(7.2, 6.3, 8.2);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -434,7 +444,7 @@ controls.minPolarAngle = 0.12;
 controls.maxPolarAngle = Math.PI / 2.06;
 controls.target.set(0, 1.25, 0);
 
-scene.add(new THREE.HemisphereLight(0xffffff, 0x8eb19f, 2.2));
+scene.add(new THREE.HemisphereLight(0xfffbef, 0x9b6d45, 2.15));
 const sunlight = new THREE.DirectionalLight(0xfff4d6, 3.2);
 sunlight.position.set(-5, 9, 6);
 sunlight.castShadow = true;
@@ -447,10 +457,58 @@ scene.add(sunlight);
 
 const modelGroup = new THREE.Group();
 scene.add(modelGroup);
-const cubeGeometry = new THREE.BoxGeometry(0.96, 0.96, 0.96);
-const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0xe7b765, roughness: 0.73, metalness: 0.02 });
-const edgeGeometry = new THREE.EdgesGeometry(cubeGeometry, 22);
-const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x986429, transparent: true, opacity: 0.62 });
+
+function createWoodTexture(base = "#e9bc77", grain = "#b87636") {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 512;
+  const context = canvas.getContext("2d");
+  context.fillStyle = base;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.globalAlpha = 0.17;
+  context.strokeStyle = grain;
+  for (let line = 0; line < 46; line += 1) {
+    const y = 8 + line * 11 + Math.sin(line * 1.7) * 3;
+    context.lineWidth = line % 5 === 0 ? 2 : 1;
+    context.beginPath();
+    for (let x = -20; x <= 540; x += 18) {
+      const wave = Math.sin(x * 0.025 + line * 0.8) * (2 + line % 3);
+      if (x === -20) context.moveTo(x, y + wave);
+      else context.lineTo(x, y + wave);
+    }
+    context.stroke();
+  }
+  context.globalAlpha = 0.08;
+  for (let knot = 0; knot < 6; knot += 1) {
+    context.beginPath();
+    context.ellipse(70 + knot * 76, 90 + (knot % 3) * 140, 28, 10, 0, 0, Math.PI * 2);
+    context.stroke();
+  }
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(1.15, 1.15);
+  texture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+  return texture;
+}
+
+const cubeWoodTexture = createWoodTexture("#edc98f", "#ad6e32");
+const boardWoodTexture = createWoodTexture("#c9823e", "#74401f");
+boardWoodTexture.repeat.set(2.5, 2.5);
+const insetWoodTexture = createWoodTexture("#f7dfb6", "#bd854d");
+insetWoodTexture.repeat.set(2, 2);
+const cubeGeometry = new RoundedBoxGeometry(0.96, 0.96, 0.96, 5, 0.075);
+const cubeMaterial = new THREE.MeshStandardMaterial({
+  color: 0xffffff,
+  map: cubeWoodTexture,
+  roughness: 0.62,
+  metalness: 0.01,
+  bumpMap: cubeWoodTexture,
+  bumpScale: 0.018
+});
+const edgeGeometry = new THREE.EdgesGeometry(cubeGeometry, 28);
+const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x87552d, transparent: true, opacity: 0.3 });
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 let clickableObjects = [];
@@ -492,6 +550,30 @@ function makeTextSprite(label, options = {}) {
   return sprite;
 }
 
+function makeBoardLabelSprite(label) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 384;
+  canvas.height = 96;
+  const context = canvas.getContext("2d");
+  context.fillStyle = "rgba(255,255,255,.76)";
+  context.beginPath();
+  context.roundRect(8, 10, 368, 76, 22);
+  context.fill();
+  context.fillStyle = "#4b2b18";
+  context.font = "900 42px sans-serif";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.fillText(label, 192, 51);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
+  const sprite = new THREE.Sprite(material);
+  sprite.scale.set(1.35, 0.34, 1);
+  sprite.renderOrder = 30;
+  sprite.userData.generatedTexture = true;
+  return sprite;
+}
+
 function renderModel() {
   clearModel();
   clickableObjects = [];
@@ -500,19 +582,26 @@ function renderModel() {
   const centerZ = (depth - 1) / 2;
   const floorSize = Math.max(width, depth) + 3.2;
 
-  const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(floorSize, floorSize),
-    new THREE.MeshStandardMaterial({ color: 0xfffced, roughness: 1 })
+  const board = new THREE.Mesh(
+    new RoundedBoxGeometry(floorSize, 0.28, floorSize, 5, 0.16),
+    new THREE.MeshStandardMaterial({ map: boardWoodTexture, color: 0xffffff, roughness: 0.66, bumpMap: boardWoodTexture, bumpScale: 0.018 })
   );
-  floor.rotation.x = -Math.PI / 2;
-  floor.position.y = -0.02;
+  board.position.y = -0.2;
+  board.receiveShadow = true;
+  modelGroup.add(board);
+
+  const floor = new THREE.Mesh(
+    new RoundedBoxGeometry(floorSize - 0.5, 0.09, floorSize - 0.5, 4, 0.06),
+    new THREE.MeshStandardMaterial({ map: insetWoodTexture, color: 0xffffff, roughness: 0.78, bumpMap: insetWoodTexture, bumpScale: 0.01 })
+  );
+  floor.position.y = -0.025;
   floor.receiveShadow = true;
   modelGroup.add(floor);
 
-  const grid = new THREE.GridHelper(Math.max(width, depth), Math.max(width, depth), 0xbcae8e, 0xd6cab1);
-  grid.position.y = 0.005;
+  const grid = new THREE.GridHelper(Math.max(width, depth), Math.max(width, depth), 0x9c6637, 0xc99a64);
+  grid.position.y = 0.03;
   grid.material.transparent = true;
-  grid.material.opacity = 0.65;
+  grid.material.opacity = 0.56;
   modelGroup.add(grid);
 
   occupiedCells().forEach((cell) => {
@@ -569,14 +658,12 @@ function renderModel() {
     }
   });
 
-  const frontLabel = makeTextSprite(text(state.lang, "front"), {
-    small: true,
-    fill: "rgba(36,49,61,.94)",
-    stroke: "#f6c94d",
-    color: "#ffffff"
-  });
-  frontLabel.position.set(0, 0.55, depth / 2 + 0.95);
+  const frontLabel = makeBoardLabelSprite(text(state.lang, "front"));
+  frontLabel.position.set(0, 0.16, depth / 2 + 0.82);
   modelGroup.add(frontLabel);
+  const rightLabel = makeBoardLabelSprite(state.lang === "ko" ? "오른쪽" : state.lang === "zh" ? "右边" : state.lang === "ja" ? "右" : "Right");
+  rightLabel.position.set(width / 2 + 0.82, 0.16, 0);
+  modelGroup.add(rightLabel);
   controls.target.set(0, Math.min(1.75, currentProblem().maxHeight * 0.42 + 0.4), 0);
   controls.update();
 }
@@ -649,7 +736,7 @@ elements.reset.addEventListener("click", resetProblem);
 elements.next.addEventListener("click", nextProblem);
 elements.audio.addEventListener("click", () => {
   state.audioEnabled = !state.audioEnabled;
-  elements.audio.textContent = text(state.lang, state.audioEnabled ? "audioOn" : "audioOff");
+  updateAudioButton();
   if (state.audioEnabled) speak(elements.guide.textContent);
   else speechSynthesis?.cancel();
 });

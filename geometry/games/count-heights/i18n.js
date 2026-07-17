@@ -17,7 +17,7 @@ export const messages = {
     example: "보기",
     clear: "지우기",
     hint: "힌트",
-    reset: "처음부터",
+    reset: "비우기",
     next: "다음 문제",
     level: "레벨 선택",
     front: "앞",

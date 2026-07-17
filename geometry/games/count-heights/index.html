@@ -2,9 +2,9 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town - Count the Cubes</title>
-    <link rel="stylesheet" href="./styles.css?v=4" />
+    <link rel="stylesheet" href="./styles.css?v=count-mobile-20260718c" />
     <script type="importmap">
       {
         "imports": {
@@ -82,9 +82,11 @@
       </section>
 
       <footer class="action-bar">
+        <button id="audio" class="icon-action" type="button" aria-pressed="false" aria-label="음소거">🔊</button>
         <button id="hint" type="button" data-i18n="hint">힌트</button>
         <button id="reset" type="button" data-i18n="reset">처음부터</button>
         <button id="next" type="button" data-i18n="next">다음 문제</button>
+        <a class="exit-action" href="../../cube-town/" aria-label="나가기">⌂<small>나가기</small></a>
       </footer>
 
       <div id="levelDialog" class="dialog" hidden>
@@ -96,7 +98,6 @@
 
       <aside class="docssam" aria-live="polite">
         <div class="speech-bubble">
-          <div><strong data-i18n="docssam">큐비</strong><button id="audio" type="button" data-i18n="audioOff">음성 켜기</button></div>
           <p id="guide" data-i18n="guideStart">쌓기나무 맨 위에 쓰는 수가 그 자리의 개수야.</p>
         </div>
         <button class="cubi-sprite" type="button" aria-label="큐비"></button>
@@ -105,6 +106,6 @@
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
       <div id="success" class="success" aria-hidden="true"><strong>Great job!</strong><i></i><i></i><i></i><i></i><i></i><i></i></div>
     </main>
-    <script type="module" src="./app.js?v=4"></script>
+    <script type="module" src="./app.js?v=count-mobile-20260718c"></script>
   </body>
 </html>
