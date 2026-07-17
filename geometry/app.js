@@ -527,6 +527,15 @@ const speechSettings = {
   en: { lang: "en-US", rate: 0.9, pitch: 0.9 }
 };
 
+const cubiAudioProfile = {
+  useMp3: false,
+  success: {
+    successGood: "./assets/audio/cubi/success/good-job.mp3",
+    successGreat: "./assets/audio/cubi/success/great-job.mp3",
+    successPop: "./assets/audio/cubi/success/success.mp3"
+  }
+};
+
 const maleVoiceHints = {
   ko: /\bmale\b|injoon|hyunsu|bongjin|minjun|seojun/i,
   zh: /\bmale\b|yunxi|yunjian|yunyang|kangkang|zhiwei/i,
@@ -2251,6 +2260,7 @@ function playSuccessSound(phraseKey = "successPop") {
 
 function playSuccessVoice(phraseKey) {
   if (!state.audioEnabled) return;
+  if (playCubiMp3("success", phraseKey)) return;
   if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) return;
 
   const successVoiceText = {
@@ -2269,6 +2279,17 @@ function playSuccessVoice(phraseKey) {
 
   window.speechSynthesis.cancel();
   window.setTimeout(() => window.speechSynthesis.speak(utterance), 90);
+}
+
+function playCubiMp3(group, cueKey) {
+  if (!cubiAudioProfile.useMp3) return false;
+  const src = cubiAudioProfile[group]?.[cueKey];
+  if (!src) return false;
+
+  const audio = new Audio(src);
+  audio.volume = 0.92;
+  audio.play().catch(() => {});
+  return true;
 }
 
 function toggleAudio() {
