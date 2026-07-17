@@ -1161,7 +1161,6 @@ function placeAt(x, z) {
   state.grid[z][x] += 1;
   state.holdingCube = false;
   renderBuild();
-  playPlacementSound();
   handlePlacementFeedback(previousHeight, x, z);
   checkAutoSuccess();
 }
@@ -1901,7 +1900,6 @@ function finishPileDrag(x, y) {
       state.colorGrid[target.z][target.x][state.grid[target.z][target.x]] = movingColor;
       state.grid[target.z][target.x] = Math.min(4, state.grid[target.z][target.x] + 1);
       renderBuild();
-      playPlacementSound();
       handlePlacementFeedback(state.grid[target.z][target.x] - 1, target.x, target.z);
       checkAutoSuccess();
     } else {
@@ -2032,20 +2030,6 @@ function setRandomGuide(keys, stateKey) {
 }
 
 function handlePlacementFeedback(previousHeight, x, z) {
-  if (state.tutorialStep === 1) {
-    setTutorialStep(2, "tutorialStack");
-    showTutorialStackMarker(x, z, previousHeight + 1);
-    return;
-  }
-  if (state.tutorialStep === 2) {
-    if (previousHeight >= 1) setTutorialStep(3, "tutorialReturn");
-    else setGuide("tutorialStack", true);
-    return;
-  }
-  if (state.tutorialStep === 3) {
-    setGuide("tutorialReturn");
-    return;
-  }
   const correct = isPlacedCubeCorrect(x, z, previousHeight);
   showPlacementFlash(x, z, previousHeight, correct);
   if (!correct) {
@@ -2054,9 +2038,26 @@ function handlePlacementFeedback(previousHeight, x, z) {
     animateGuide("tilt");
     playWrongPlacementSound();
     if (state.wrongPlacements >= 2) offerHint();
-    return;
+    return false;
+  }
+
+  playPlacementSound();
+  if (state.tutorialStep === 1) {
+    setTutorialStep(2, "tutorialStack");
+    showTutorialStackMarker(x, z, previousHeight + 1);
+    return true;
+  }
+  if (state.tutorialStep === 2) {
+    if (previousHeight >= 1) setTutorialStep(3, "tutorialReturn");
+    else setGuide("tutorialStack", true);
+    return true;
+  }
+  if (state.tutorialStep === 3) {
+    setGuide("tutorialReturn");
+    return true;
   }
   hideGuide();
+  return true;
 }
 
 function isPlacedCubeCorrect(x, z, y) {
