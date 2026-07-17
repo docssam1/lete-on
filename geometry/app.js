@@ -437,6 +437,73 @@ Object.entries(fixedCopy).forEach(([lang, labels]) => {
   Object.assign(translations[lang], labels);
 });
 
+const compactUiCopy = {
+  ko: {
+    clear: "비우기",
+    nextStage: "다음 단계",
+    moving: "이동 중",
+    showHint: "힌트 보기",
+    hintPrompt: "힌트가 필요해?",
+    hintShown: "이 부분을 다시 살펴볼까?",
+    placementCorrect: "잘했어!",
+    placementCorrect2: "좋았어!",
+    placementCorrect3: "다음 것도 놓아 볼까?",
+    placementWrong: "문제 모양을 다시 살펴볼까?",
+    nextPrompt: "그럼 다음 단계로 갈까?",
+    mute: "음소거",
+    unmute: "소리 켜기"
+  },
+  zh: {
+    clear: "清空",
+    nextStage: "下一步",
+    moving: "正在前往",
+    showHint: "查看提示",
+    hintPrompt: "需要提示吗？",
+    hintShown: "再看看这里吧。",
+    placementCorrect: "做得好！",
+    placementCorrect2: "很好！",
+    placementCorrect3: "再放一个试试吧。",
+    placementWrong: "再看看目标形状吧。",
+    nextPrompt: "那我们进入下一步吗？",
+    mute: "静音",
+    unmute: "打开声音"
+  },
+  ja: {
+    clear: "空にする",
+    nextStage: "次のステップ",
+    moving: "移動中",
+    showHint: "ヒントを見る",
+    hintPrompt: "ヒントがいる？",
+    hintShown: "ここをもう一度見てみよう。",
+    placementCorrect: "よくできたね！",
+    placementCorrect2: "いいね！",
+    placementCorrect3: "次も置いてみよう。",
+    placementWrong: "問題の形をもう一度見てみよう。",
+    nextPrompt: "次のステップへ行こうか？",
+    mute: "ミュート",
+    unmute: "音を出す"
+  },
+  en: {
+    clear: "Clear",
+    nextStage: "Next Step",
+    moving: "Moving",
+    showHint: "Show Hint",
+    hintPrompt: "Need a hint?",
+    hintShown: "Take another look here.",
+    placementCorrect: "Well done!",
+    placementCorrect2: "Nice work!",
+    placementCorrect3: "Ready for the next one?",
+    placementWrong: "Take another look at the target shape.",
+    nextPrompt: "Shall we go to the next step?",
+    mute: "Mute",
+    unmute: "Turn sound on"
+  }
+};
+
+Object.entries(compactUiCopy).forEach(([lang, labels]) => {
+  Object.assign(translations[lang], labels);
+});
+
 const speechSettings = {
   ko: { lang: "ko-KR", rate: 0.9, pitch: 0.92 },
   zh: { lang: "zh-CN", rate: 0.9, pitch: 0.92 },
@@ -542,7 +609,7 @@ function createWoodTexture() {
 const requestedLevel = Number(new URLSearchParams(window.location.search).get("level"));
 
 const state = {
-  lang: "ko",
+  lang: localStorage.getItem("gfield-language") || "ko",
   levelIndex: Number.isInteger(requestedLevel) && requestedLevel >= 1 && requestedLevel <= 3
     ? requestedLevel - 1
     : 0,
@@ -562,13 +629,17 @@ const state = {
   successPending: false,
   successTimer: null,
   falling: [],
-  audioEnabled: false,
+  audioEnabled: localStorage.getItem("gfield-audio-muted") !== "true",
   guideKey: "guideStart",
   speechVoices: []
   ,
   tutorialStep: -1,
   lastPlacementGuide: "",
-  lastSuccessGuide: ""
+  lastSuccessGuide: "",
+  transitioning: false,
+  wrongPlacements: 0,
+  hintTimer: null,
+  guideHideTimer: null
 };
 
 const targetScene = createViewer(document.querySelector("#targetCanvas"), false);
@@ -580,6 +651,12 @@ targetScene.scene.add(targetGroup);
 buildScene.scene.add(buildGroup);
 const dropMarker = createDropMarker();
 buildScene.scene.add(dropMarker);
+const hintMarker = createDropMarker();
+hintMarker.children.forEach((child) => {
+  child.material.color.set(child.type === "LineSegments" ? 0xf5b82e : 0xffdc69);
+  child.material.opacity = child.type === "LineSegments" ? 0.9 : 0.24;
+});
+buildScene.scene.add(hintMarker);
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -590,8 +667,6 @@ init();
 function init() {
   applyLanguage();
   addEvents();
-  initGuideDrag();
-  initGuideLife();
   loadProblem();
   animate();
 }
@@ -820,30 +895,25 @@ function addEvents() {
     });
   });
 
-  document.querySelector("#checkAnswer").addEventListener("click", checkAnswer);
   document.querySelector("#resetBuild").addEventListener("click", resetBuild);
-  document.querySelector("#resetView").addEventListener("click", resetView);
   document.querySelector("#nextStep").addEventListener("click", nextProblem);
-  document.querySelector("#levelPickerButton").addEventListener("click", openLevelPicker);
-  document.querySelector("#topLevelPickerButton").addEventListener("click", openLevelPicker);
-  document.querySelector("#closeLevelDialog").addEventListener("click", closeLevelPicker);
-  document.querySelector("#levelDialog").addEventListener("click", (event) => {
-    if (event.target.id === "levelDialog") closeLevelPicker();
-  });
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeLevelPicker();
-  });
   document.querySelector("#viewFront").addEventListener("click", () => setView("front"));
+  document.querySelector("#viewRight").addEventListener("click", () => setView("right"));
   document.querySelector("#viewTop").addEventListener("click", () => setView("top"));
-  document.querySelector("#viewFree").addEventListener("click", () => setView("free"));
   document.querySelector("#cubePile").addEventListener("click", takeFromPile);
   document.querySelector("#cubePile").addEventListener("pointerdown", startPileDrag);
   document.querySelector("#audioToggle").addEventListener("pointerdown", (event) => event.stopPropagation());
   document.querySelector("#audioToggle").addEventListener("click", toggleAudio);
+  document.querySelector("#hintAction").addEventListener("click", showHint);
+  document.querySelector(".menu-exit").addEventListener("click", handleMenuExit);
 }
 
 function loadProblem() {
   clearPendingSuccess();
+  window.clearTimeout(state.hintTimer);
+  hintMarker.visible = false;
+  const hintButton = document.querySelector("#hintAction");
+  if (hintButton) hintButton.hidden = true;
   const boardSize = getProblemBoardSize();
   state.countMode = false;
   state.counted = 0;
@@ -856,18 +926,22 @@ function loadProblem() {
   state.colorGrid = emptyColorGrid(boardSize);
   state.selectedColor = "cube";
   state.falling = [];
+  state.wrongPlacements = 0;
+  state.transitioning = false;
   document.body.classList.toggle("color-problem", isColorProblem());
   setViewerBoardSize(targetScene, boardSize);
   setViewerBoardSize(buildScene, boardSize);
-  document.querySelector("#modeTitle").textContent = t("copyMode");
-  document.querySelector("#instruction").textContent = t("copyInstruction");
   updateStepDisplay();
   updateGuideCharacter();
+  updateNextButton();
 
   renderTarget();
   renderBuild();
   updateBuilderControls();
-  if (!maybeStartTutorial()) setGuide(isColorProblem() ? "guideColorCount" : "guideStart", true);
+  if (!maybeStartTutorial()) {
+    setGuide(isColorProblem() ? "guideColorCount" : "guideStart", true);
+    scheduleHintOffer();
+  }
 }
 
 function renderTarget() {
@@ -1122,6 +1196,9 @@ function clearPendingSuccess() {
 
 function resetBuild() {
   clearPendingSuccess();
+  hintMarker.visible = false;
+  const hintButton = document.querySelector("#hintAction");
+  if (hintButton) hintButton.hidden = true;
   const boardSize = getProblemBoardSize();
   state.grid = emptyGrid(boardSize);
   state.colorGrid = emptyColorGrid(boardSize);
@@ -1131,20 +1208,49 @@ function resetBuild() {
   state.holdingCube = false;
   state.falling = [];
   updateStepDisplay();
+  updateNextButton();
   renderBuild();
+  scheduleHintOffer();
 }
 
 function nextProblem() {
+  if (state.transitioning) return;
+  state.transitioning = true;
+  updateNextButton();
   const level = getLevel();
-  if (state.problemIndex < level.problems.length - 1) {
-    state.problemIndex += 1;
-  } else {
-    clearPendingSuccess();
-    openLevelPicker();
-    setGuide("guideLevelSelect");
+  window.setTimeout(() => {
+    if (state.problemIndex < level.problems.length - 1) {
+      state.problemIndex += 1;
+      loadProblem();
+      return;
+    }
+    window.location.href = "./cube-town/";
+  }, 220);
+}
+
+function updateNextButton() {
+  const button = document.querySelector("#nextStep");
+  if (!button) return;
+  button.disabled = state.transitioning;
+  button.classList.toggle("loading", state.transitioning);
+  button.classList.remove("ready");
+  button.setAttribute("aria-busy", String(state.transitioning));
+  const label = button.querySelector(".next-label");
+  if (label) label.textContent = state.transitioning ? t("moving") : t("nextStage");
+}
+
+function handleMenuExit(event) {
+  const link = event.currentTarget;
+  if (link.classList.contains("loading")) {
+    event.preventDefault();
     return;
   }
-  loadProblem();
+  event.preventDefault();
+  link.classList.add("loading");
+  link.setAttribute("aria-busy", "true");
+  window.setTimeout(() => {
+    window.location.href = link.href;
+  }, 180);
 }
 
 function openLevelPicker() {
@@ -1222,10 +1328,8 @@ function getLevel() {
 
 function updateStepDisplay() {
   const level = getLevel();
-  document.querySelector("#countValue").textContent = t("levelProgress")
-    .replace("{level}", level.level)
-    .replace("{current}", state.problemIndex + 1)
-    .replace("{total}", level.problems.length);
+  const progress = document.querySelector("#problemProgress");
+  if (progress) progress.textContent = `${state.problemIndex + 1}/${level.problems.length}`;
 }
 
 function updateGuideCharacter() {
@@ -1241,6 +1345,7 @@ function setView(view) {
   const viewers = [targetScene, buildScene];
   viewers.forEach(({ camera, controls }) => {
     if (view === "front") camera.position.set(0, 3.2, 7.8);
+    if (view === "right") camera.position.set(7.8, 3.2, 0);
     if (view === "top") camera.position.set(0.01, 9.2, 0.01);
     if (view === "free") camera.position.set(5.4, 5.1, 6.2);
     controls.target.set(0, 1.25, 0);
@@ -1298,17 +1403,15 @@ function applyLanguage() {
   document.querySelectorAll("[data-lang]").forEach((button) => {
     button.classList.toggle("active", button.dataset.lang === state.lang);
   });
-  document.querySelector("#modeTitle").textContent = t("copyMode");
-  document.querySelector("#instruction").textContent = t("copyInstruction");
-  document.querySelector("#resetView").setAttribute("aria-label", t("resetView"));
-  document.querySelector("#closeLevelDialog").setAttribute("aria-label", t("closeLevel"));
+  const indicator = document.querySelector("#languageIndicator");
+  if (indicator) indicator.textContent = ({ ko: "한", zh: "中", ja: "日", en: "EN" })[state.lang] || "한";
   refreshFrontIndicator(targetScene);
   refreshFrontIndicator(buildScene);
-  renderLevelOptions();
   updateGuideCharacter();
   setGuide(isColorProblem() ? "guideColorCount" : "guideStart");
   updateAudioButton();
   updateBuilderControls();
+  updateNextButton();
 }
 
 function showSuccessThenNext() {
@@ -1333,7 +1436,8 @@ function showSuccessThenNext() {
   showToast(phrase);
   window.setTimeout(() => {
     burst.classList.remove("show");
-    nextProblem();
+    setGuide("nextPrompt", true);
+    document.querySelector("#nextStep")?.classList.add("ready");
   }, 1100);
 }
 
@@ -1446,7 +1550,8 @@ function sumGrid(grid) {
 }
 
 function setStars(count) {
-  document.querySelector("#stars").textContent = `${"★".repeat(count)}${"☆".repeat(Math.max(0, 5 - count))}`;
+  const stars = document.querySelector("#stars");
+  if (stars) stars.textContent = `${"★".repeat(count)}${"☆".repeat(Math.max(0, 5 - count))}`;
 }
 
 function takeFromPile(event) {
@@ -1819,10 +1924,20 @@ function setGuide(key, force = false) {
   guide.textContent = t(key);
   const bubble = guide.closest(".guide-bubble");
   if (!bubble) return;
+  const shell = bubble.closest(".floating-guide");
+  shell?.classList.add("message-visible");
   bubble.classList.remove("talk");
   void bubble.offsetWidth;
   bubble.classList.add("talk");
-  speakGuide(key);
+  const silentPlacement = key.startsWith("placementCorrect") || key === "placementWrong";
+  if (!silentPlacement) speakGuide(key);
+  window.clearTimeout(state.guideHideTimer);
+  const persistent = state.tutorialStep >= 0 || key === "hintPrompt" || key === "nextPrompt";
+  if (!persistent) {
+    state.guideHideTimer = window.setTimeout(() => {
+      shell?.classList.remove("message-visible");
+    }, 1500);
+  }
 }
 
 function setRandomGuide(keys, stateKey) {
@@ -1847,10 +1962,105 @@ function handlePlacementFeedback(previousHeight, x, z) {
     setGuide("tutorialReturn");
     return;
   }
-  setRandomGuide(
-    ["guidePlaced1", "guidePlaced2", "guidePlaced3", "guidePlaced4"],
-    "lastPlacementGuide"
-  );
+  const correct = isPlacedCubeCorrect(x, z, previousHeight);
+  showPlacementFlash(x, z, previousHeight, correct);
+  animateGuide(correct ? "nod" : "tilt");
+  if (correct) {
+    setRandomGuide(
+      ["placementCorrect", "placementCorrect2", "placementCorrect3"],
+      "lastPlacementGuide"
+    );
+  } else {
+    setGuide("placementWrong", true);
+  }
+  if (!correct) {
+    state.wrongPlacements += 1;
+    if (state.wrongPlacements >= 2) offerHint();
+  }
+}
+
+function isPlacedCubeCorrect(x, z, y) {
+  const problem = getProblemData();
+  if ((problem.grid?.[z]?.[x] || 0) <= y) return false;
+  if (!problem.colorMap) return true;
+  return (state.colorGrid?.[z]?.[x]?.[y] || "cube") === getProblemCubeColor(problem, x, z, y);
+}
+
+function showPlacementFlash(x, z, y, correct) {
+  const flash = document.querySelector("#placementFeedback");
+  if (!flash) return;
+  const size = getProblemBoardSize();
+  const offset = (size - 1) / 2;
+  const world = new THREE.Vector3(x - offset, y + 0.72, z - offset).project(buildScene.camera);
+  const canvasRect = buildScene.renderer.domElement.getBoundingClientRect();
+  const viewerRect = document.querySelector(".build-view").getBoundingClientRect();
+  const left = canvasRect.left - viewerRect.left + ((world.x + 1) * 0.5 * canvasRect.width);
+  const top = canvasRect.top - viewerRect.top + ((1 - world.y) * 0.5 * canvasRect.height);
+  flash.style.left = `${left}px`;
+  flash.style.top = `${top}px`;
+  flash.className = `placement-feedback ${correct ? "correct" : "wrong"}`;
+  void flash.offsetWidth;
+  flash.classList.add("show");
+  window.setTimeout(() => flash.classList.remove("show"), 680);
+}
+
+function animateGuide(motion) {
+  const guide = document.querySelector(".floating-guide");
+  if (!guide) return;
+  guide.classList.remove("guide-nod", "guide-tilt");
+  void guide.offsetWidth;
+  guide.classList.add(motion === "nod" ? "guide-nod" : "guide-tilt");
+  window.setTimeout(() => guide.classList.remove("guide-nod", "guide-tilt"), 760);
+}
+
+function scheduleHintOffer() {
+  window.clearTimeout(state.hintTimer);
+  state.hintTimer = window.setTimeout(() => {
+    if (!state.successPending && state.tutorialStep < 0) offerHint();
+  }, 18000);
+}
+
+function offerHint() {
+  const button = document.querySelector("#hintAction");
+  if (!button || state.successPending) return;
+  button.hidden = false;
+  setGuide("hintPrompt", true);
+}
+
+function showHint() {
+  const button = document.querySelector("#hintAction");
+  if (button) button.hidden = true;
+  const mismatch = findHintMismatch();
+  if (!mismatch) return;
+  setGuide("hintShown", true);
+  if (mismatch.kind === "extra") {
+    showPlacementFlash(mismatch.x, mismatch.z, mismatch.y, false);
+    return;
+  }
+  const size = getProblemBoardSize();
+  const offset = (size - 1) / 2;
+  hintMarker.position.set(mismatch.x - offset, mismatch.y + 0.5, mismatch.z - offset);
+  hintMarker.visible = true;
+  window.setTimeout(() => {
+    hintMarker.visible = false;
+  }, 2600);
+}
+
+function findHintMismatch() {
+  const problem = getProblemData();
+  for (let z = 0; z < state.grid.length; z += 1) {
+    for (let x = 0; x < state.grid[z].length; x += 1) {
+      const expectedHeight = problem.grid?.[z]?.[x] || 0;
+      const actualHeight = state.grid[z][x] || 0;
+      if (actualHeight > expectedHeight) return { kind: "extra", x, z, y: actualHeight - 1 };
+      const sharedHeight = Math.min(actualHeight, expectedHeight);
+      for (let y = 0; y < sharedHeight; y += 1) {
+        if (problem.colorMap && !isPlacedCubeCorrect(x, z, y)) return { kind: "extra", x, z, y };
+      }
+      if (actualHeight < expectedHeight) return { kind: "missing", x, z, y: actualHeight };
+    }
+  }
+  return null;
 }
 
 const tutorialStorageKey = "gfield-copy-build-tutorial-v1";
@@ -1860,10 +2070,12 @@ function maybeStartTutorial() {
   const firstProblem = state.levelIndex === 0 && state.problemIndex === 0 && !isColorProblem();
   if (!firstProblem || (!forceTutorial && localStorage.getItem(tutorialStorageKey))) {
     clearTutorialHighlights();
+    document.body.classList.remove("tutorial-active");
     state.tutorialStep = -1;
     return false;
   }
   state.tutorialStep = 0;
+  document.body.classList.add("tutorial-active");
   setTutorialStep(0, "tutorialTake");
   return true;
 }
@@ -1904,9 +2116,11 @@ function showTutorialMarker() {
 function completeTutorial() {
   state.tutorialStep = -1;
   localStorage.setItem(tutorialStorageKey, "done");
+  document.body.classList.remove("tutorial-active");
   clearTutorialHighlights();
   dropMarker.visible = false;
   setGuide("tutorialDone", true);
+  scheduleHintOffer();
 }
 
 function clearTutorialHighlights() {
@@ -1958,6 +2172,7 @@ function playSuccessSound() {
 
 function toggleAudio() {
   state.audioEnabled = !state.audioEnabled;
+  localStorage.setItem("gfield-audio-muted", String(!state.audioEnabled));
   updateAudioButton();
   if (state.audioEnabled) {
     speakGuide(state.guideKey, true);
@@ -1969,9 +2184,11 @@ function toggleAudio() {
 function updateAudioButton() {
   const button = document.querySelector("#audioToggle");
   if (!button) return;
-  button.textContent = state.audioEnabled ? t("audioOn") : t("audioOff");
+  const icon = button.querySelector("span");
+  if (icon) icon.textContent = state.audioEnabled ? "🔊" : "🔇";
   button.classList.toggle("active", state.audioEnabled);
   button.setAttribute("aria-pressed", String(state.audioEnabled));
+  button.setAttribute("aria-label", state.audioEnabled ? t("mute") : t("unmute"));
 }
 
 function speakGuide(key, force = false) {

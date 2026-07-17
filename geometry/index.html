@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town</title>
-    <link rel="stylesheet" href="./styles.css?v=cube-town-mobile-landscape-20260716d" />
+    <link rel="stylesheet" href="./styles.css?v=cube-town-focus-20260717a" />
     <script type="importmap">
       {
         "imports": {
@@ -30,20 +30,6 @@
       </div>
     </section>
     <main class="app-shell">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow" data-i18n="sectionLabel">GFIELD Geometry World</p>
-          <h1 data-i18n="title">GFIELD Cube Town</h1>
-        </div>
-        <div class="language-switch" aria-label="Language">
-          <button data-lang="ko" class="active">한국어</button>
-          <button data-lang="zh">中文</button>
-          <button data-lang="ja">日本語</button>
-          <button data-lang="en">English</button>
-        </div>
-        <button id="topLevelPickerButton" class="top-level-button" type="button" aria-haspopup="dialog" data-i18n="levelSelect">레벨 선택</button>
-      </header>
-
       <section class="lesson-panel">
         <div class="status-card">
           <div class="stars" id="stars" aria-label="difficulty">★★☆☆</div>
@@ -63,7 +49,7 @@
         <article class="viewer target-view">
           <div class="viewer-heading">
             <h2 data-i18n="target">문제 모양</h2>
-            <button id="resetView" class="icon-button" type="button" aria-label="reset view">↻</button>
+            <strong id="problemProgress" class="problem-progress">1/10</strong>
           </div>
           <div id="targetCanvas" class="canvas-wrap"></div>
         </article>
@@ -72,7 +58,20 @@
           <div class="viewer-heading">
             <h2 data-i18n="myBuild">내가 만든 모양</h2>
           </div>
+          <div class="brand-watermark" aria-label="GFIELD Cube Town">
+            <span aria-hidden="true">◇</span><strong>GFIELD</strong><small>Cube Town</small>
+          </div>
+          <nav class="build-utilities" aria-label="Game settings">
+            <button id="audioToggle" class="utility-button" type="button" aria-pressed="false" aria-label="Mute">
+              <span aria-hidden="true">🔊</span>
+            </button>
+            <span id="languageIndicator" class="language-indicator" aria-label="Current language">한</span>
+            <a class="utility-button menu-exit" href="./cube-town/" aria-label="Cube Town menu">
+              <span aria-hidden="true">⌂</span>
+            </a>
+          </nav>
           <div id="buildCanvas" class="canvas-wrap interactive"></div>
+          <span id="placementFeedback" class="placement-feedback" aria-hidden="true"></span>
         </article>
       </section>
 
@@ -99,12 +98,15 @@
       </section>
 
       <section class="control-strip">
-        <button id="checkAnswer" class="primary" type="button" data-i18n="check">확인</button>
-        <button id="nextStep" type="button" data-i18n="next">다음 문제</button>
-        <button id="resetBuild" type="button" data-i18n="reset">처음부터</button>
-        <button id="viewFront" type="button" data-i18n="front">앞</button>
-        <button id="viewTop" type="button" data-i18n="top">위</button>
-        <button id="viewFree" type="button" data-i18n="free">돌려보기</button>
+        <button id="viewFront" class="rail-button" type="button"><b aria-hidden="true">↑</b><span data-i18n="front">앞</span></button>
+        <button id="viewRight" class="rail-button" type="button"><b aria-hidden="true">→</b><span data-i18n="side">오른쪽</span></button>
+        <button id="viewTop" class="rail-button" type="button"><b aria-hidden="true">◆</b><span data-i18n="top">위</span></button>
+        <button id="resetBuild" class="rail-button" type="button"><b aria-hidden="true">⌫</b><span data-i18n="clear">비우기</span></button>
+        <button id="nextStep" class="rail-button next-stage" type="button">
+          <b class="next-icon" aria-hidden="true">›</b>
+          <span class="next-label" data-i18n="nextStage">다음 단계</span>
+          <i class="button-spinner" aria-hidden="true"></i>
+        </button>
       </section>
 
       <div id="levelDialog" class="level-dialog" hidden>
@@ -120,13 +122,10 @@
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
       <aside class="floating-guide" aria-live="polite">
         <div class="guide-bubble">
-          <div class="guide-head">
-            <strong class="guide-title" data-i18n="guideTitle">큐비</strong>
-            <button id="audioToggle" class="guide-audio" type="button" aria-pressed="false" data-i18n="audioOff">
-              음성 켜기
-            </button>
-          </div>
           <p id="guideMessage" data-i18n="guideStart">문제 모양을 보고 더미에서 하나씩 가져와 보자!</p>
+          <div class="guide-actions">
+            <button id="hintAction" type="button" hidden data-i18n="showHint">힌트 보기</button>
+          </div>
         </div>
         <span class="guide-character character-sprite sprite-0 color-original" aria-hidden="true"></span>
       </aside>
@@ -137,6 +136,6 @@
       <div id="dragGhost" class="drag-ghost" aria-hidden="true"></div>
     </main>
 
-    <script type="module" src="./app.js?v=cube-town-mobile-landscape-20260716d"></script>
+    <script type="module" src="./app.js?v=cube-town-focus-20260717a"></script>
   </body>
 </html>
