@@ -55,7 +55,7 @@ window.NM_ROADMAP = {
       id:'N4', icon:'🎨', grade:'유아',
       edu:{ko:'유아 5~7세 · 수 감각',en:'Ages 5–7 · Number sense',zh:'幼儿5~7岁 · 数感'},
       theme:{ko:'수의 여러 표현 — 탤리 막대로 수를 그려요!',en:'Many Ways to Show Numbers — Draw them with tally marks!',zh:'数字的多种表示——用计数符号画数字！'},
-      units:['N-04','N-10'],
+      units:['N-04','N-10','N-14'],
       tip:{ko:'막대 4개까지는 그대로, 5번째는 사선으로 묶어요!',en:'Up to 4 strokes stay plain — the 5th is bundled with a diagonal!',zh:'4笔以内直接画，第5笔斜着捆一下！'}
     },
 

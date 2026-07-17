@@ -611,6 +611,9 @@
   cursor:pointer;box-shadow:0 4px 0 var(--blue-deep);touch-action:manipulation;
 }
 .nm-tb-undo:active,.nm-tb-done:active{transform:translateY(2px);box-shadow:none;}
+.nm-tb-screen{min-height:22px!important;font-size:22px!important;margin:2px 0!important;}
+.nm-tb-pad.nm-numpad{gap:5px!important;max-width:250px!important;margin-top:8px;}
+.nm-tb-pad .nm-key{padding:4px 0!important;font-size:17px!important;border-radius:10px!important;}
 
 /* ══════════════════════════════════════
    RESPONSIVE

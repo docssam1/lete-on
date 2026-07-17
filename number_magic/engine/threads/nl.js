@@ -821,5 +821,54 @@
     };
   };
 
+  /* ── NL14 — 산가지와 규칙 ──────────────────────────────────
+     mode:'read'  미리 그려진 탤리(산가지)를 세어 숫자로 답 → tallyBuild(interaction:'read')
+     mode:'arrow' 화살표를 따라 1씩 늘거나 줄어드는 수열 빈칸 → seqFill 재사용 */
+  NM_TGEN['nl14_pattern'] = function (params, rng) {
+    const mode = (params && params.mode) || 'read';
+    const lv   = (params && params.level) || 'main';
+
+    if (mode === 'arrow') {
+      const dir  = lv === 'practice' ? 'up' : pick(rng, ['up', 'down']);
+      const step = dir === 'up' ? 1 : -1;
+      const len  = 5;
+      const start = dir === 'up' ? R(rng, 1, 20 - (len - 1)) : R(rng, len, 20);
+      const seq = [];
+      for (let i = 0; i < len; i++) seq.push(start + step * i);
+      const blank = R(rng, 1, len - 2);
+
+      return {
+        prompt: dir === 'up' ? {
+          ko: '산가지 규칙! 화살표를 따라 1씩 늘어나요 — 빈 칸을 골라요',
+          en: 'Tally rule! It grows by 1 along the arrow — pick the blank',
+          zh: '计数规则！沿着箭头每次加1——选出空格'
+        } : {
+          ko: '산가지 규칙! 화살표를 따라 1씩 줄어들어요 — 빈 칸을 골라요',
+          en: 'Tally rule! It shrinks by 1 along the arrow — pick the blank',
+          zh: '计数规则！沿着箭头每次减1——选出空格'
+        },
+        answer:     seq[blank],
+        answerType: 'number',
+        widget:     'seqFill',
+        seq, blank
+      };
+    }
+
+    /* ---- read: 미리 그려진 탤리를 세어 답하기 ---- */
+    const target = lv === 'practice' ? R(rng, 2, 6) : R(rng, 3, 9);
+    return {
+      prompt: {
+        ko: '탤리(산가지)를 세어 봐요! 모두 몇 개일까요?',
+        en: 'Count the tally marks! How many are there?',
+        zh: '数一数计数符号！一共有几个？'
+      },
+      answer:     target,
+      answerType: 'number',
+      widget:     'tallyBuild',
+      interaction:'read',
+      target
+    };
+  };
+
   if (typeof module !== 'undefined' && module.exports) module.exports = NM_TGEN;
 })();

@@ -1538,17 +1538,20 @@ function renderSortBasket(problem, container, onAnswer){
 ───────────────────────────────────────── */
 function renderTallyBuild(problem, container, onAnswer){
   const target = problem.target || 3;
-  let count=0, lock=false;
+  const interaction = problem.interaction || 'build';
+  const isRead = interaction === 'read';
+  let count = isRead ? target : 0, lock=false;
 
   const root=document.createElement('div');
   root.className='nm-tb-wrap';
-  root.innerHTML=`
-    <div class="nm-tb-goal">🎯 <span class="nm-tb-goal-n">${target}</span></div>
-    <button class="nm-tb-board"><svg viewBox="0 0 130 60" class="nm-tb-svg"></svg></button>
-    <div class="nm-tb-controls">
-      <button class="nm-tb-undo">↩</button>
-      <button class="nm-tb-done">✔</button>
-    </div>`;
+  root.innerHTML = isRead
+    ? `<button class="nm-tb-board" disabled><svg viewBox="0 0 130 60" class="nm-tb-svg"></svg></button>`
+    : `<div class="nm-tb-goal">🎯 <span class="nm-tb-goal-n">${target}</span></div>
+       <button class="nm-tb-board"><svg viewBox="0 0 130 60" class="nm-tb-svg"></svg></button>
+       <div class="nm-tb-controls">
+         <button class="nm-tb-undo">↩</button>
+         <button class="nm-tb-done">✔</button>
+       </div>`;
   container.appendChild(root);
 
   const svg=root.querySelector('.nm-tb-svg');
@@ -1568,6 +1571,29 @@ function renderTallyBuild(problem, container, onAnswer){
     svg.innerHTML=lines.join('');
   }
   draw();
+
+  if(isRead){
+    const screen=document.createElement('div');
+    screen.className='nm-numpad-screen nm-tb-screen';screen.innerHTML='&nbsp;';
+    root.appendChild(screen);
+    const pad=document.createElement('div');
+    pad.className='nm-numpad nm-tb-pad';
+    root.appendChild(pad);
+    const ns=numpadState(screen,2);
+    buildNumpad(pad,val=>{
+      if(lock)return;
+      if(val==='ok'){
+        const inp=ns.get();
+        if(!inp)return;
+        lock=true;setTimeout(()=>{lock=false;},700);
+        onAnswer(parseInt(inp,10));
+        ns.clear();
+        return;
+      }
+      ns.handle(val);
+    });
+    return;
+  }
 
   board.addEventListener('pointerup',e=>{
     e.stopPropagation();
