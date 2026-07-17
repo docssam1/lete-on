@@ -183,7 +183,13 @@ function setMode(mode) {
   renderModel();
   renderAnswers();
   renderNumberPad();
-  if (mode === "top") setGuide("guideTop");
+  const topViewLocked = mode === "top";
+  controls.enabled = !topViewLocked;
+  $$(".camera-tools button").forEach((button) => {
+    button.disabled = topViewLocked;
+  });
+  setCameraView(topViewLocked ? "top" : "free");
+  if (topViewLocked) setGuide("guideTop");
 }
 
 function selectCell(x, z, options = {}) {
@@ -461,54 +467,62 @@ scene.add(sunlight);
 const modelGroup = new THREE.Group();
 scene.add(modelGroup);
 
-function createWoodTexture(base = "#e9bc77", grain = "#b87636") {
+function createWoodTexture() {
   const canvas = document.createElement("canvas");
   canvas.width = 512;
   canvas.height = 512;
   const context = canvas.getContext("2d");
+  const base = context.createLinearGradient(0, 0, 512, 512);
+  base.addColorStop(0, "#fff7e7");
+  base.addColorStop(0.46, "#f0d4a5");
+  base.addColorStop(1, "#d9b57e");
   context.fillStyle = base;
   context.fillRect(0, 0, canvas.width, canvas.height);
-  context.globalAlpha = 0.17;
-  context.strokeStyle = grain;
-  for (let line = 0; line < 46; line += 1) {
-    const y = 8 + line * 11 + Math.sin(line * 1.7) * 3;
-    context.lineWidth = line % 5 === 0 ? 2 : 1;
+  for (let line = 0; line < 76; line += 1) {
+    const y = 18 + line * 6.5 + Math.sin(line * 1.7) * 6;
     context.beginPath();
+    context.moveTo(-20, y);
     for (let x = -20; x <= 540; x += 18) {
-      const wave = Math.sin(x * 0.025 + line * 0.8) * (2 + line % 3);
-      if (x === -20) context.moveTo(x, y + wave);
-      else context.lineTo(x, y + wave);
+      context.lineTo(x, y + Math.sin(x * 0.036 + line) * 3.6 + Math.sin(x * 0.012 + line * 0.4) * 2.4);
     }
+    context.strokeStyle = line % 3 === 0 ? "rgba(115,78,39,.095)" : "rgba(255,255,245,.24)";
+    context.lineWidth = line % 3 === 0 ? 1.15 : 0.9;
     context.stroke();
   }
-  context.globalAlpha = 0.08;
-  for (let knot = 0; knot < 6; knot += 1) {
+  for (let knot = 0; knot < 34; knot += 1) {
     context.beginPath();
-    context.ellipse(70 + knot * 76, 90 + (knot % 3) * 140, 28, 10, 0, 0, Math.PI * 2);
+    context.ellipse(44 + (knot * 83) % 432, 38 + (knot * 117) % 420, 20, 6, knot, 0, Math.PI * 2);
+    context.strokeStyle = "rgba(105,70,35,.07)";
+    context.lineWidth = 1;
     context.stroke();
   }
+  const glow = context.createRadialGradient(160, 120, 20, 160, 120, 420);
+  glow.addColorStop(0, "rgba(255,255,255,.18)");
+  glow.addColorStop(1, "rgba(255,255,255,0)");
+  context.fillStyle = glow;
+  context.fillRect(0, 0, 512, 512);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(1.15, 1.15);
+  texture.repeat.set(1.1, 1.1);
   texture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
   return texture;
 }
 
-const cubeWoodTexture = createWoodTexture("#edc98f", "#ad6e32");
-const boardWoodTexture = createWoodTexture("#c9823e", "#74401f");
+const cubeWoodTexture = createWoodTexture();
+const boardWoodTexture = createWoodTexture();
 boardWoodTexture.repeat.set(2.5, 2.5);
-const insetWoodTexture = createWoodTexture("#f7dfb6", "#bd854d");
+const insetWoodTexture = createWoodTexture();
 insetWoodTexture.repeat.set(2, 2);
 const cubeGeometry = new RoundedBoxGeometry(0.96, 0.96, 0.96, 5, 0.075);
 const cubeMaterial = new THREE.MeshStandardMaterial({
-  color: 0xffffff,
+  color: 0xfff5df,
   map: cubeWoodTexture,
-  roughness: 0.62,
-  metalness: 0.01,
+  roughness: 0.56,
+  metalness: 0.012,
   bumpMap: cubeWoodTexture,
-  bumpScale: 0.018
+  bumpScale: 0.012
 });
 const edgeGeometry = new THREE.EdgesGeometry(cubeGeometry, 28);
 const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x87552d, transparent: true, opacity: 0.3 });
@@ -587,7 +601,7 @@ function renderModel() {
 
   const board = new THREE.Mesh(
     new RoundedBoxGeometry(floorSize, 0.28, floorSize, 5, 0.16),
-    new THREE.MeshStandardMaterial({ map: boardWoodTexture, color: 0xffffff, roughness: 0.66, bumpMap: boardWoodTexture, bumpScale: 0.018 })
+    new THREE.MeshStandardMaterial({ map: boardWoodTexture, color: 0xe7c28e, roughness: 0.58, bumpMap: boardWoodTexture, bumpScale: 0.01 })
   );
   board.position.y = -0.2;
   board.receiveShadow = true;
@@ -595,7 +609,7 @@ function renderModel() {
 
   const floor = new THREE.Mesh(
     new RoundedBoxGeometry(floorSize - 0.5, 0.09, floorSize - 0.5, 4, 0.06),
-    new THREE.MeshStandardMaterial({ map: insetWoodTexture, color: 0xffffff, roughness: 0.78, bumpMap: insetWoodTexture, bumpScale: 0.01 })
+    new THREE.MeshStandardMaterial({ map: insetWoodTexture, color: 0xfff2d7, roughness: 0.82, bumpMap: insetWoodTexture, bumpScale: 0.004 })
   );
   floor.position.y = -0.025;
   floor.receiveShadow = true;
