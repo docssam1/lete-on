@@ -646,5 +646,78 @@
     };
   };
 
+  /* ── 분류 놀이 창작 소재 쌍(종류 A/B) ── */
+  const SORT_PAIRS = [
+    [['🍎', '사과', 'apple', '苹果'],   ['🍌', '바나나', 'banana', '香蕉']],
+    [['🐶', '강아지', 'dog', '小狗'],   ['🐱', '고양이', 'cat', '猫']],
+    [['⚽', '축구공', 'soccer ball', '足球'], ['🏀', '농구공', 'basketball', '篮球']]
+  ];
+
+  /* ── NL15 — 문장제·논리 ───────────────────────────────────
+     mode:'story' 이야기 속 조건(더 받음/먹음)으로 수 구하기 → storyCard 재사용
+     mode:'sort'  섞인 것을 종류별로 나누고 개수 세기 → sortBasket 신규 */
+  NM_TGEN['nl15_logic'] = function (params, rng) {
+    const mode = (params && params.mode) || 'story';
+    const lv   = (params && params.level) || 'main';
+
+    if (mode === 'sort') {
+      const pair = pick(rng, SORT_PAIRS);
+      const [emA, koA, enA, zhA] = pair[0];
+      const [emB, koB, enB, zhB] = pair[1];
+      const cap = lv === 'practice' ? 4 : 6;
+      const nA = R(rng, 2, cap);
+      const nB = R(rng, 2, cap);
+      const items = [];
+      for (let i = 0; i < nA; i++) items.push({ e: emA, type: 'A' });
+      for (let i = 0; i < nB; i++) items.push({ e: emB, type: 'B' });
+      const askA = pick(rng, [true, false]);
+      const answer = askA ? nA : nB;
+      const [askKo, askEn, askZh] = askA ? [koA, enA, zhA] : [koB, enB, zhB];
+
+      return {
+        prompt: {
+          ko: `섞여 있는 걸 종류별로 나눠요! 톡톡 눌러서 바구니에 담고, ${askKo}가 모두 몇 개인지 세어 봐요`,
+          en: `Sort the mixed items! Tap to put them in baskets, then count the ${askEn}`,
+          zh: `把混在一起的东西分类！点一点放进篮子，再数一数${askZh}有几个`
+        },
+        answer,
+        answerType: 'number',
+        widget:  'sortBasket',
+        items:   shuffle(rng, items),
+        basketA: { emoji: emA }, basketB: { emoji: emB },
+        askType: askA ? 'A' : 'B'
+      };
+    }
+
+    /* ---- story: 이야기 조건 수 구하기(storyCard 재사용) ---- */
+    const [em, ko, en, zh] = pick(rng, THINGS);
+    const cap   = lv === 'practice' ? 6 : 9;
+    const isAdd = pick(rng, [true, false]);
+    let start, change;
+    if (isAdd) { start = R(rng, 1, cap - 1); change = R(rng, 1, cap - start); }
+    else       { start = R(rng, 2, cap);     change = R(rng, 1, start - 1); }
+    const answer = isAdd ? start + change : start - change;
+    const items  = new Array(start).fill(em);
+
+    return {
+      prompt: isAdd ? {
+        ko: `${ko}이(가) ${start}개 있었어요! 친구에게 ${change}개를 더 받았어요. 이제 모두 몇 개일까요?`,
+        en: `There were ${start} ${en}! Got ${change} more from a friend. How many now?`,
+        zh: `有${start}个${zh}！又从朋友那里得到${change}个。现在一共几个？`
+      } : {
+        ko: `${ko}이(가) ${start}개 있었어요! ${change}개를 친구에게 줬어요. 이제 몇 개가 남았을까요?`,
+        en: `There were ${start} ${en}! Gave ${change} to a friend. How many are left?`,
+        zh: `有${start}个${zh}！送给了朋友${change}个。现在还剩几个？`
+      },
+      answer,
+      answerType: 'number',
+      widget:     'storyCard',
+      interaction:'numpad',
+      layout:     'row',
+      total:      start,
+      chars:      items
+    };
+  };
+
   if (typeof module !== 'undefined' && module.exports) module.exports = NM_TGEN;
 })();

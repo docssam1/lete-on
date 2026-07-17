@@ -79,6 +79,7 @@ function render(problem, container, onAnswer){
     case 'balanceScale': return renderBalanceScale(problem,container,onAnswer);
     case 'numberMachine':return renderNumberMachine(problem,container,onAnswer);
     case 'crossSum':     return renderCrossSum(problem,container,onAnswer);
+    case 'sortBasket':   return renderSortBasket(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -1436,6 +1437,68 @@ function renderCrossSum(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   SORTBASKET  widget:'sortBasket'  (유아 · 수의 나라)
+   problem.items = [{e,type:'A'|'B'}...](셔플), problem.basketA/basketB = {emoji}.
+   섞인 칩을 탭하면 자기 종류의 바구니로 들어감(카운트 증가). 다 나뉘면
+   3지선다 보기 등장(askType 바구니 개수 정답). onAnswer(선택값).
+───────────────────────────────────────── */
+function renderSortBasket(problem, container, onAnswer){
+  const items = problem.items || [];
+  let lock=false, remaining=items.length, sortedA=0, sortedB=0;
+
+  const root=document.createElement('div');
+  root.className='nm-sb-wrap';
+  root.innerHTML=`
+    <div class="nm-sb-scatter"></div>
+    <div class="nm-sb-baskets">
+      <div class="nm-sb-basket"><span class="nm-sb-basket-em">${problem.basketA.emoji}</span><span class="nm-sb-basket-cnt">0</span></div>
+      <div class="nm-sb-basket"><span class="nm-sb-basket-em">${problem.basketB.emoji}</span><span class="nm-sb-basket-cnt">0</span></div>
+    </div>
+    <div class="nm-sb-choices"></div>`;
+  container.appendChild(root);
+
+  const scatter = root.querySelector('.nm-sb-scatter');
+  const baskets = root.querySelectorAll('.nm-sb-basket-cnt');
+  const cntA=baskets[0], cntB=baskets[1];
+  const choicesBox = root.querySelector('.nm-sb-choices');
+
+  items.forEach(it=>{
+    const chip=document.createElement('button');
+    chip.className='nm-sb-chip';
+    chip.textContent=it.e;
+    chip.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      chip.remove();
+      if(it.type==='A'){ sortedA++; cntA.textContent=sortedA; }
+      else{ sortedB++; cntB.textContent=sortedB; }
+      remaining--;
+      if(remaining===0) showChoices();
+    });
+    scatter.appendChild(chip);
+  });
+
+  function showChoices(){
+    const answer=problem.answer;
+    const cand=[answer-2,answer-1,answer+1,answer+2].filter(n=>n>=1&&n<=9&&n!==answer);
+    const picks=[answer];
+    while(picks.length<3&&cand.length){picks.push(cand.splice(Math.floor(Math.random()*cand.length),1)[0]);}
+    picks.sort(()=>Math.random()-.5);
+    picks.forEach(n=>{
+      const b=document.createElement('button');
+      b.className='nm-tc-choice';b.textContent=n;
+      b.addEventListener('pointerup',e=>{
+        e.stopPropagation();
+        if(lock)return;
+        lock=true;setTimeout(()=>{lock=false;},700);
+        if(n!==answer)shake(b);
+        onAnswer(n);
+      });
+      choicesBox.appendChild(b);
+    });
+  }
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
    Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
@@ -1498,6 +1561,7 @@ window.NM_WIDGETS={
   renderBalanceScale,
   renderNumberMachine,
   renderCrossSum,
+  renderSortBasket,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake

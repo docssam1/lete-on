@@ -46,7 +46,7 @@ window.NM_ROADMAP = {
       id:'N3', icon:'🧩', grade:'유아',
       edu:{ko:'유아 5~7세 · 수 감각',en:'Ages 5–7 · Number sense',zh:'幼儿5~7岁 · 数感'},
       theme:{ko:'수 퍼즐과 논리 — 비밀 규칙을 찾아라!',en:'Number Puzzles & Logic — Find the secret rule!',zh:'数字谜题与逻辑——找出秘密规则！'},
-      units:['N-08','N-13'],
+      units:['N-08','N-13','N-15'],
       tip:{ko:'예시 두 개를 비교하면 숨은 규칙이 보여요!',en:'Compare two examples and the hidden rule appears!',zh:'比较两个例子，就能看出隐藏的规则！'}
     },
 

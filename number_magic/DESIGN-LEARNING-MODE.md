@@ -465,7 +465,12 @@ window.NM_ROADMAP = {
       같은 3보기 선택 패턴 재사용). N3 챕터에 추가
       — 2000시드 퍼즈 + Playwright 전 구간(practice→discover→lab→stamp,
       +20코인) 검증 완료 2026-07-16
-- [ ] N-15 문장제·논리 (storyCard + sortBasket)
+- [x] N-15 문장제·논리 (nl15_logic: story=이야기 조건(더 받음/나눠줌)으로 덧셈·
+      뺄셈 문장제 — storyCard 재사용(신규 위젯 0개, row layout에 numpad
+      interaction) / sort=섞인 아이템(사과·바나나 등 3쌍)을 탭해 바구니로
+      분류 후 개수 3지선다. sortBasket 신규 위젯. N3 챕터 완성(N-08·N-13·N-15)
+      — 2000시드 퍼즈 + Playwright 전 구간(practice→discover→lab→stamp,
+      +20코인) 검증 완료 2026-07-16
 - [ ] N-04 기수법 놀이 (tallyBuild + matchLine)
 - [ ] N-10 자료 분류·표 (sortBasket)
 - [ ] N-14 산가지·규칙 (tallyBuild + seqFill)

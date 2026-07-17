@@ -559,6 +559,29 @@
 .nm-cs-choices{display:flex;gap:14px;justify-content:center;}
 
 /* ══════════════════════════════════════
+   SORTBASKET WIDGET  (유아 · 수의 나라)
+══════════════════════════════════════ */
+.nm-sb-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:6px 4px;max-width:340px;margin:0 auto;}
+.nm-sb-scatter{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:44px;}
+.nm-sb-chip{
+  width:40px;height:40px;border-radius:12px;
+  background:#fff;border:2.5px solid var(--line);
+  font-size:22px;cursor:pointer;display:grid;place-items:center;
+  box-shadow:0 3px 0 #e0dbd2;transition:transform .15s;
+  touch-action:manipulation;user-select:none;
+}
+.nm-sb-chip:active{transform:scale(.9);}
+.nm-sb-baskets{display:flex;gap:16px;}
+.nm-sb-basket{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  min-width:64px;padding:8px 10px;border-radius:16px;
+  background:#fdfbf5;border:2px dashed var(--line);
+}
+.nm-sb-basket-em{font-size:26px;}
+.nm-sb-basket-cnt{font-size:16px;font-weight:900;color:var(--blue-deep);}
+.nm-sb-choices{display:flex;gap:14px;justify-content:center;}
+
+/* ══════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════ */
 @media (max-width:360px){
