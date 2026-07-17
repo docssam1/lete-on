@@ -525,5 +525,65 @@
     };
   };
 
+  /* ── NL8 — 수 기계 (입출력 규칙) ───────────────────────────
+     mode:'apply' 규칙이 보임(+n/-n) — 입력을 넣으면 나오는 수를 계산
+     mode:'guess' 규칙이 숨음 — 예시 2개를 보고 비밀 규칙을 추리해 답을 구함 */
+  NM_TGEN['nl8_machine'] = function (params, rng) {
+    const mode = (params && params.mode) || 'apply';
+    const lv   = (params && params.level) || 'main';
+    const maxN = lv === 'practice' ? 9 : 12;
+
+    function genPair(delta) {
+      const lo = Math.max(0, -delta), hi = Math.min(maxN, maxN - delta);
+      const inp = R(rng, lo, hi);
+      return [inp, inp + delta];
+    }
+
+    if (mode === 'guess') {
+      const deltas = lv === 'practice' ? [1, 2, 3] : [-3, -2, -1, 1, 2, 3, 4];
+      const delta  = pick(rng, deltas);
+      const ex1 = genPair(delta);
+      let ex2 = genPair(delta), tries = 0;
+      while (ex2[0] === ex1[0] && tries < 10) { ex2 = genPair(delta); tries++; }
+      let target = genPair(delta); tries = 0;
+      while ((target[0] === ex1[0] || target[0] === ex2[0]) && tries < 10) { target = genPair(delta); tries++; }
+
+      return {
+        prompt: {
+          ko: '수 기계의 비밀 규칙을 찾아봐요! 예시를 보고 마지막 수의 답을 구해요',
+          en: "Find the number machine's secret rule! Look at the examples and find the last answer",
+          zh: '找出数字机器的秘密规则！看例子，算出最后的答案'
+        },
+        answer:     target[1],
+        answerType: 'number',
+        widget:     'numberMachine',
+        mmode:      'guess',
+        examples:   [ex1, ex2],
+        target:     target[0]
+      };
+    }
+
+    /* ---- apply: 규칙이 보임 — 입력→출력 계산 ---- */
+    const sign  = lv === 'practice' ? 1 : pick(rng, [1, -1]);
+    const mag   = lv === 'practice' ? R(rng, 1, 3) : R(rng, 1, 4);
+    const delta = sign * mag;
+    const [inp, out] = genPair(delta);
+    const ruleLabel = delta >= 0 ? `+${delta}` : `${delta}`;
+
+    return {
+      prompt: {
+        ko: `수 기계에 ${inp}을(를) 넣어요! 규칙은 "${ruleLabel}" — 나오는 수는?`,
+        en: `Put ${inp} into the machine! The rule is "${ruleLabel}" — what comes out?`,
+        zh: `把${inp}放进机器！规则是"${ruleLabel}"——出来的数是？`
+      },
+      answer:     out,
+      answerType: 'number',
+      widget:     'numberMachine',
+      mmode:      'apply',
+      rule:       ruleLabel,
+      input:      inp
+    };
+  };
+
   if (typeof module !== 'undefined' && module.exports) module.exports = NM_TGEN;
 })();

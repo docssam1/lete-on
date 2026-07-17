@@ -77,6 +77,7 @@ function render(problem, container, onAnswer){
     case 'gridPaint':    return renderGridPaint(problem,container,onAnswer);
     case 'storyCard':    return renderStoryCard(problem,container,onAnswer);
     case 'balanceScale': return renderBalanceScale(problem,container,onAnswer);
+    case 'numberMachine':return renderNumberMachine(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -1330,6 +1331,63 @@ function renderBalanceScale(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   NUMBERMACHINE  widget:'numberMachine'  (유아 · 수의 나라)
+   problem.mmode:
+     'apply' — problem.rule('+n'/'-n' 표시) + problem.input. 규칙이 보임,
+               나오는 수를 numpad로 답.
+     'guess' — problem.examples([in,out] 2쌍, 규칙 숨김) + problem.target.
+               예시로 규칙을 추리해 target 입력 시 나오는 수를 numpad로 답.
+───────────────────────────────────────── */
+function renderNumberMachine(problem, container, onAnswer){
+  const mmode = problem.mmode || 'apply';
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-nm-wrap';
+
+  function makeRow(inp, out, opts){
+    opts=opts||{};
+    const r=document.createElement('div');
+    r.className='nm-nm-row'+(opts.ask?' ask':'');
+    r.innerHTML=
+      `<div class="nm-nm-io in">${inp}</div>`+
+      `<div class="nm-nm-arrow">→</div>`+
+      `<div class="nm-nm-machine">${opts.rule?`<span class="nm-nm-rule">${opts.rule}</span>`:'⚙️'}</div>`+
+      `<div class="nm-nm-arrow">→</div>`+
+      `<div class="nm-nm-io out${opts.ask?' ask':''}">${opts.ask?'?':out}</div>`;
+    return r;
+  }
+
+  if(mmode==='guess'){
+    (problem.examples||[]).forEach(pair=>root.appendChild(makeRow(pair[0],pair[1],{})));
+    root.appendChild(makeRow(problem.target,null,{ask:true}));
+  }else{
+    root.appendChild(makeRow(problem.input,null,{ask:true,rule:problem.rule}));
+  }
+  container.appendChild(root);
+
+  const screen=document.createElement('div');
+  screen.className='nm-numpad-screen nm-nm-screen';screen.innerHTML='&nbsp;';
+  root.appendChild(screen);
+  const pad=document.createElement('div');
+  pad.className='nm-numpad nm-nm-pad';
+  root.appendChild(pad);
+  const ns=numpadState(screen,2);
+  buildNumpad(pad,val=>{
+    if(lock)return;
+    if(val==='ok'){
+      const inp=ns.get();
+      if(!inp)return;
+      lock=true;setTimeout(()=>{lock=false;},700);
+      onAnswer(parseInt(inp,10));
+      ns.clear();
+      return;
+    }
+    ns.handle(val);
+  });
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
    Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
@@ -1390,6 +1448,7 @@ window.NM_WIDGETS={
   renderGridPaint,
   renderStoryCard,
   renderBalanceScale,
+  renderNumberMachine,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake

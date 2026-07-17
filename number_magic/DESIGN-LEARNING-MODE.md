@@ -453,7 +453,12 @@ window.NM_ROADMAP = {
       nl12_scale: balanceScale 신규 위젯 — 좌우 접시 개수 비교, 무거운/가벼운
       쪽 탭, 개수차에 비례해 빔이 기욺) — 2000시드 퍼즈 + Playwright 전 구간
       (practice→discover→lab→stamp, +20코인) 검증 완료 2026-07-16
-- [ ] N-08 수 기계·매직 퍼즐 (numberMachine)
+- [x] N-08 수 기계·매직 퍼즐 (nl8_machine: apply=규칙(+n/-n)이 보임, 입력→출력
+      계산 / guess=규칙이 숨음, 예시 2개(같은 델타)로 추리해 답. numberMachine
+      신규 위젯 — 입출력 흐름 도식(칸→⚙️→칸) + 위젯 전용 축소 numpad
+      (.nm-nm-pad, N-05에서 만든 패턴 재사용). N3 챕터 신설(NL-4 첫 유닛)
+      — 2000시드 퍼즈 + Playwright 전 구간(practice→discover→lab→stamp,
+      +20코인) 검증 완료 2026-07-16
 - [ ] N-13 수 퍼즐·추론 (pathTrace or 합퍼즐)
 - [ ] N-15 문장제·논리 (storyCard + sortBasket)
 - [ ] N-04 기수법 놀이 (tallyBuild + matchLine)

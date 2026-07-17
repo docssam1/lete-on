@@ -41,6 +41,15 @@ window.NM_ROADMAP = {
       tip:{ko:'개수(몇 개)와 순서(몇째)는 달라요 — 방향을 먼저 정하고 세어 봐요.',en:'Amount and order are different — pick a direction first, then count!',zh:'数量和顺序不一样——先定方向，再数一数！'}
     },
 
+    /* ─────── N3 : 수의 나라 — 수 퍼즐과 논리 ─────── */
+    {
+      id:'N3', icon:'🧩', grade:'유아',
+      edu:{ko:'유아 5~7세 · 수 감각',en:'Ages 5–7 · Number sense',zh:'幼儿5~7岁 · 数感'},
+      theme:{ko:'수 퍼즐과 논리 — 비밀 규칙을 찾아라!',en:'Number Puzzles & Logic — Find the secret rule!',zh:'数字谜题与逻辑——找出秘密规则！'},
+      units:['N-08'],
+      tip:{ko:'예시 두 개를 비교하면 숨은 규칙이 보여요!',en:'Compare two examples and the hidden rule appears!',zh:'比较两个例子，就能看出隐藏的规则！'}
+    },
+
     /* ─────── R0 : 연산 첫걸음 ─────── */
     {
       id:'R0', icon:'🌱', grade:'초1',

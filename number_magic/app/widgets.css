@@ -520,6 +520,29 @@
 }
 
 /* ══════════════════════════════════════
+   NUMBERMACHINE WIDGET  (유아 · 수의 나라)
+══════════════════════════════════════ */
+.nm-nm-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px;max-width:360px;margin:0 auto;}
+.nm-nm-row{display:flex;align-items:center;justify-content:center;gap:6px;}
+.nm-nm-io{
+  min-width:38px;height:38px;padding:0 6px;border-radius:10px;
+  background:#fff;border:2px solid var(--line);
+  display:grid;place-items:center;font-size:19px;font-weight:900;color:var(--blue-deep);
+}
+.nm-nm-io.out.ask{background:#fffaf0;border-color:var(--gold-deep);border-style:dashed;color:var(--gold-deep);}
+.nm-nm-arrow{font-size:16px;color:#9aa2b1;}
+.nm-nm-machine{
+  min-width:44px;height:38px;padding:0 8px;border-radius:10px;
+  background:linear-gradient(145deg,#eef3fb,#dbe6f5);border:2px solid #cdddf3;
+  display:grid;place-items:center;font-size:20px;
+}
+.nm-nm-rule{font-size:17px;font-weight:900;color:var(--blue);}
+.nm-nm-row.ask .nm-nm-io.in{border-color:var(--blue);}
+.nm-nm-screen{min-height:22px!important;font-size:22px!important;margin:2px 0!important;}
+.nm-nm-pad.nm-numpad{gap:5px!important;max-width:250px!important;}
+.nm-nm-pad .nm-key{padding:4px 0!important;font-size:17px!important;border-radius:10px!important;}
+
+/* ══════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════ */
 @media (max-width:360px){
