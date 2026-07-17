@@ -78,6 +78,7 @@ function render(problem, container, onAnswer){
     case 'storyCard':    return renderStoryCard(problem,container,onAnswer);
     case 'balanceScale': return renderBalanceScale(problem,container,onAnswer);
     case 'numberMachine':return renderNumberMachine(problem,container,onAnswer);
+    case 'crossSum':     return renderCrossSum(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -1388,6 +1389,53 @@ function renderNumberMachine(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   CROSSSUM  widget:'crossSum'  (유아 · 수의 나라)
+   problem.cells = {top,bottom,left,right}(한 칸은 null), problem.askKey = 빈 칸 키.
+   위+아래 = 왼쪽+오른쪽 규칙. 아래 큰 숫자 보기 3개 중 정답 선택.
+   onAnswer(선택값).
+───────────────────────────────────────── */
+function renderCrossSum(problem, container, onAnswer){
+  const cells  = problem.cells || {};
+  const answer = problem.answer;
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-cs-wrap';
+  const cell=(key)=>{
+    const v=cells[key];
+    return `<div class="nm-cs-cell ${key}${v===null?' ask':''}">${v===null?'?':v}</div>`;
+  };
+  root.innerHTML=`
+    <div class="nm-cs-cross">
+      ${cell('top')}
+      <div class="nm-cs-mid">${cell('left')}<div class="nm-cs-plus">+</div>${cell('right')}</div>
+      ${cell('bottom')}
+    </div>
+    <div class="nm-cs-choices"></div>`;
+  container.appendChild(root);
+
+  const cand=[answer-2,answer-1,answer+1,answer+2].filter(n=>n>=1&&n<=9&&n!==answer);
+  const picks=[answer];
+  while(picks.length<3&&cand.length){picks.push(cand.splice(Math.floor(Math.random()*cand.length),1)[0]);}
+  picks.sort(()=>Math.random()-.5);
+
+  const ch=root.querySelector('.nm-cs-choices');
+  picks.forEach(n=>{
+    const b=document.createElement('button');
+    b.className='nm-tc-choice';b.textContent=n;
+    b.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(lock)return;
+      lock=true;setTimeout(()=>{lock=false;},700);
+      if(n===answer){const a=root.querySelector('.nm-cs-cell.ask');if(a){a.textContent=n;a.classList.add('found');}}
+      else shake(b);
+      onAnswer(n);
+    });
+    ch.appendChild(b);
+  });
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
    Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
@@ -1449,6 +1497,7 @@ window.NM_WIDGETS={
   renderStoryCard,
   renderBalanceScale,
   renderNumberMachine,
+  renderCrossSum,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake

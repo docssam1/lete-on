@@ -543,6 +543,22 @@
 .nm-nm-pad .nm-key{padding:4px 0!important;font-size:17px!important;border-radius:10px!important;}
 
 /* ══════════════════════════════════════
+   CROSSSUM WIDGET  (유아 · 수의 나라)
+══════════════════════════════════════ */
+.nm-cs-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;padding:8px 4px;}
+.nm-cs-cross{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.nm-cs-mid{display:flex;align-items:center;gap:6px;}
+.nm-cs-cell{
+  width:50px;height:50px;border-radius:12px;
+  background:#fff;border:2.5px solid var(--line);
+  display:grid;place-items:center;font-size:22px;font-weight:900;color:var(--blue-deep);
+}
+.nm-cs-cell.ask{background:#fffaf0;border-color:var(--gold-deep);border-style:dashed;color:var(--gold-deep);}
+.nm-cs-cell.found{background:#eafaf1;border-color:var(--ok);color:var(--ok);border-style:solid;}
+.nm-cs-plus{font-size:22px;color:#9aa2b1;width:24px;text-align:center;}
+.nm-cs-choices{display:flex;gap:14px;justify-content:center;}
+
+/* ══════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════ */
 @media (max-width:360px){

@@ -585,5 +585,66 @@
     };
   };
 
+  /* ── 격자 순서 길잇기 창작 경로 (viewBox 0~100, 직각으로 꺾이는 오리지널 길) ── */
+  const PATH_SHAPES = [
+    { pts: [[20,30],[50,30],[50,70],[80,70]] },
+    { pts: [[20,80],[20,50],[50,50],[50,20],[80,20]] },
+    { pts: [[15,80],[15,55],[40,55],[40,30],[65,30],[65,10]] },
+    { pts: [[15,20],[50,20],[50,50],[85,50],[85,80],[50,80]] }
+  ];
+
+  /* ── NL13 — 수 퍼즐·추론 ───────────────────────────────────
+     mode:'path'  격자 위 길을 1부터 차례로 이음 → dotToDot 재사용
+     mode:'cross' 십자 합 퍼즐 — 위+아래 = 왼쪽+오른쪽, 빈 칸 추론 → crossSum 신규 */
+  NM_TGEN['nl13_puzzle'] = function (params, rng) {
+    const mode = (params && params.mode) || 'path';
+    const lv   = (params && params.level) || 'main';
+
+    if (mode === 'cross') {
+      const cap = lv === 'practice' ? 4 : 6;
+      let top, bottom, left, right, tries = 0;
+      do {
+        top   = R(rng, 1, cap);
+        bottom= R(rng, 1, cap);
+        left  = R(rng, 1, cap);
+        right = top + bottom - left;
+        tries++;
+      } while ((right < 1 || right > 9) && tries < 30);
+      if (right < 1 || right > 9) { top = 2; bottom = 3; left = 2; right = 3; }
+
+      const cells  = { top, bottom, left, right };
+      const askKey = pick(rng, ['top', 'bottom', 'left', 'right']);
+      const answer = cells[askKey];
+      cells[askKey] = null;
+
+      return {
+        prompt: {
+          ko: '십자 퍼즐! 위+아래 = 왼쪽+오른쪽이 되도록 빈 칸을 채워요',
+          en: 'Cross puzzle! Fill the blank so top+bottom equals left+right',
+          zh: '十字谜题！填空让上+下等于左+右'
+        },
+        answer,
+        answerType: 'number',
+        widget:     'crossSum',
+        cells, askKey
+      };
+    }
+
+    /* ---- path: 1부터 차례대로 격자 길을 이음(dotToDot 재사용) ---- */
+    const shape = pick(rng, lv === 'practice' ? PATH_SHAPES.slice(0, 2) : PATH_SHAPES);
+    return {
+      prompt: {
+        ko: '1부터 차례대로 길을 이어요!',
+        en: 'Connect the path from 1 in order!',
+        zh: '从1开始按顺序连路！'
+      },
+      answer:     shape.pts.length,
+      answerType: 'number',
+      widget:     'dotToDot',
+      pts:        shape.pts,
+      close:      false
+    };
+  };
+
   if (typeof module !== 'undefined' && module.exports) module.exports = NM_TGEN;
 })();

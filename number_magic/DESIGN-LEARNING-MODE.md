@@ -459,7 +459,12 @@ window.NM_ROADMAP = {
       (.nm-nm-pad, N-05에서 만든 패턴 재사용). N3 챕터 신설(NL-4 첫 유닛)
       — 2000시드 퍼즈 + Playwright 전 구간(practice→discover→lab→stamp,
       +20코인) 검증 완료 2026-07-16
-- [ ] N-13 수 퍼즐·추론 (pathTrace or 합퍼즐)
+- [x] N-13 수 퍼즐·추론 (nl13_puzzle: path=격자 위 지그재그 길을 1부터 순서대로
+      잇기 — dotToDot 위젯 재사용(신규 위젯 0개), 오리지널 격자 좌표 4종 /
+      cross=십자 합 퍼즐(위+아래=왼쪽+오른쪽), crossSum 신규 위젯(pyramid과
+      같은 3보기 선택 패턴 재사용). N3 챕터에 추가
+      — 2000시드 퍼즈 + Playwright 전 구간(practice→discover→lab→stamp,
+      +20코인) 검증 완료 2026-07-16
 - [ ] N-15 문장제·논리 (storyCard + sortBasket)
 - [ ] N-04 기수법 놀이 (tallyBuild + matchLine)
 - [ ] N-10 자료 분류·표 (sortBasket)
