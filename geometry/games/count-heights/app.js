@@ -179,6 +179,9 @@ function setMode(mode) {
   elements.topMode.setAttribute("aria-selected", String(mode === "top"));
   elements.modelPrompt.hidden = mode !== "model";
   elements.topBoard.hidden = mode !== "top";
+  renderTopBoard();
+  renderModel();
+  renderAnswers();
   renderNumberPad();
   if (mode === "top") setGuide("guideTop");
 }
