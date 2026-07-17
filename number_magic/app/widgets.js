@@ -1118,11 +1118,12 @@ function renderMatchLine(problem, container, onAnswer){
     const y1 = lR.top    + lR.height/2 - ar.top;
     const x2 = rR.left   - ar.left;
     const y2 = rR.top    + rR.height/2 - ar.top;
-    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
-    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
-    line.setAttribute('class','nm-ml-line');
-    svg.appendChild(line);
+    /* 유아 리딩앱 레퍼런스처럼 굵은 곡선 점선으로 연결(직선 대신 아래로 살짝 활 모양) */
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', `M ${x1} ${y1} Q ${mx} ${my + 18} ${x2} ${y2}`);
+    path.setAttribute('class','nm-ml-line');
+    svg.appendChild(path);
   }
 }
 
