@@ -719,5 +719,49 @@
     };
   };
 
+  /* ── NL — 기수법 놀이 (탤리·산가지) ──────────────────────
+     mode:'build' 탤리를 탭해서 목표 수 만들기 → tallyBuild 신규 위젯
+     mode:'match' 수↔탤리 그림 카드 매칭 → matchLine 재사용(rightType:'tally') */
+  NM_TGEN['nl_tallybuild'] = function (params, rng) {
+    const mode = (params && params.mode) || 'build';
+    const lv   = (params && params.level) || 'main';
+
+    if (mode === 'match') {
+      const N    = lv === 'practice' ? 3 : 4;
+      const maxN = lv === 'practice' ? 5 : 9;
+      const pool = [];
+      for (let i = 1; i <= maxN; i++) pool.push(i);
+      const chosen = shuffle(rng, pool).slice(0, N);
+      const left   = shuffle(rng, chosen.slice());
+      const right  = shuffle(rng, chosen.slice());
+      return {
+        prompt: {
+          ko: '수와 탤리(산가지) 그림을 이어요! 숫자 톡 → 탤리 그림 톡!',
+          en: 'Match numbers to tally marks! Tap a number, then tap its tally!',
+          zh: '连连看！先点数字，再点它的计数符号！'
+        },
+        answer:     N,
+        answerType: 'number',
+        widget:     'matchLine',
+        left, right,
+        rightType:  'tally'
+      };
+    }
+
+    /* ---- build: 탤리를 탭해서 목표 수 만들기 ---- */
+    const target = lv === 'practice' ? R(rng, 2, 5) : R(rng, 3, 9);
+    return {
+      prompt: {
+        ko: `탤리(산가지)로 ${target}을(를) 만들어요! 판을 톡톡 눌러 막대를 더해요`,
+        en: `Make ${target} with tally marks! Tap the board to add strokes`,
+        zh: `用计数符号做出${target}！点一点板子加一笔`
+      },
+      answer:     target,
+      answerType: 'number',
+      widget:     'tallyBuild',
+      target
+    };
+  };
+
   if (typeof module !== 'undefined' && module.exports) module.exports = NM_TGEN;
 })();

@@ -471,7 +471,17 @@ window.NM_ROADMAP = {
       분류 후 개수 3지선다. sortBasket 신규 위젯. N3 챕터 완성(N-08·N-13·N-15)
       — 2000시드 퍼즈 + Playwright 전 구간(practice→discover→lab→stamp,
       +20코인) 검증 완료 2026-07-16
-- [ ] N-04 기수법 놀이 (tallyBuild + matchLine)
+- [x] N-04 기수법 놀이 (nl_tallybuild: build=탤리 판을 탭해 목표 수 만들기(4개+
+      대각선 5묶음), tallyBuild 신규 위젯(↩되돌리기+✔제출) / match=수↔탤리
+      카드 매칭, matchLine 재사용(rightType:'tally' 옵션 추가, dotSvg 옆에
+      tallySvg 함수 추가). N4 챕터 신설(NL-5 첫 유닛). **실제 버그 발견·수정**:
+      matchLine의 `svg.className='...'` 대입이 실제 브라우저에서 SVGElement의
+      className이 getter-only라 TypeError로 매 렌더마다 죽는 버그 — N-11 구현 때
+      단위테스트만 돌리고 실제 Playwright UI 테스트를 안 해서 지금까지 발견 못함.
+      `svg.setAttribute('class',...)`로 수정, N-11 lab(수 배열 유닛)도 이 수정의
+      수혜를 받음(같은 위젯 공유)
+      — 2000시드 퍼즈 + Playwright 전 구간(practice→discover→lab→stamp,
+      +20코인) 검증 완료 2026-07-16
 - [ ] N-10 자료 분류·표 (sortBasket)
 - [ ] N-14 산가지·규칙 (tallyBuild + seqFill)
 - [ ] N-15 완료 시 R0 추천 배너

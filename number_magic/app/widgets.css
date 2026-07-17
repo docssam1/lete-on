@@ -393,6 +393,8 @@
 .nm-ml-num{font-size:32px;font-weight:900;color:var(--blue-deep);}
 .nm-ml-dot{color:var(--blue-deep);}
 .nm-ml-dots{width:42px;height:42px;}
+.nm-ml-tally{width:44px;height:44px;}
+.nm-ml-tally line{stroke:var(--blue-deep);stroke-width:3;stroke-linecap:round;}
 .nm-ml-card.sel{
   border-color:var(--gold-deep);
   background:linear-gradient(145deg,#fff6e6,#fbeccd);
@@ -580,6 +582,32 @@
 .nm-sb-basket-em{font-size:26px;}
 .nm-sb-basket-cnt{font-size:16px;font-weight:900;color:var(--blue-deep);}
 .nm-sb-choices{display:flex;gap:14px;justify-content:center;}
+
+/* ══════════════════════════════════════
+   TALLYBUILD WIDGET  (유아 · 수의 나라)
+══════════════════════════════════════ */
+.nm-tb-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:6px 4px;}
+.nm-tb-goal{display:flex;align-items:center;gap:6px;font-size:17px;font-weight:800;color:var(--gold-deep);}
+.nm-tb-goal-n{font-size:24px;font-weight:900;color:var(--blue-deep);}
+.nm-tb-board{
+  width:220px;height:100px;border-radius:16px;
+  background:#fdfbf5;border:2px dashed var(--line);
+  cursor:pointer;touch-action:manipulation;padding:0;
+}
+.nm-tb-svg{width:100%;height:100%;}
+.nm-tb-svg line{stroke:var(--blue-deep);stroke-width:4;stroke-linecap:round;}
+.nm-tb-controls{display:flex;gap:14px;}
+.nm-tb-undo{
+  width:52px;height:52px;border-radius:16px;border:2px solid var(--line);
+  background:#fff;font-size:22px;color:var(--sub);cursor:pointer;
+  box-shadow:0 4px 0 #e0dbd2;touch-action:manipulation;
+}
+.nm-tb-done{
+  width:52px;height:52px;border-radius:16px;border:none;
+  background:var(--blue);color:#fff;font-size:22px;font-weight:900;
+  cursor:pointer;box-shadow:0 4px 0 var(--blue-deep);touch-action:manipulation;
+}
+.nm-tb-undo:active,.nm-tb-done:active{transform:translateY(2px);box-shadow:none;}
 
 /* ══════════════════════════════════════
    RESPONSIVE

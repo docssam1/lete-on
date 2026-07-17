@@ -80,6 +80,7 @@ function render(problem, container, onAnswer){
     case 'numberMachine':return renderNumberMachine(problem,container,onAnswer);
     case 'crossSum':     return renderCrossSum(problem,container,onAnswer);
     case 'sortBasket':   return renderSortBasket(problem,container,onAnswer);
+    case 'tallyBuild':   return renderTallyBuild(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -1027,6 +1028,22 @@ function renderMatchLine(problem, container, onAnswer){
     return `<svg viewBox="0 0 60 60" class="nm-ml-dots" aria-hidden="true">${circles}</svg>`;
   }
 
+  /* 탤리(산가지) 그림: 4개 세로줄 + 5번째는 대각선으로 묶음 */
+  function tallySvg(n){
+    const groups = Math.floor(n/5), rem = n%5, spacing = 6.2;
+    let slot = 0;
+    const lines = [];
+    for(let g=0; g<groups; g++){
+      const startSlot = slot;
+      for(let i=0;i<4;i++){ const x=5+slot*spacing; lines.push(`<line x1="${x}" y1="10" x2="${x}" y2="50"/>`); slot++; }
+      const x1=5+startSlot*spacing, x2=5+(slot-1)*spacing;
+      lines.push(`<line x1="${x1}" y1="50" x2="${x2}" y2="10"/>`);
+    }
+    for(let i=0;i<rem;i++){ const x=5+slot*spacing; lines.push(`<line x1="${x}" y1="10" x2="${x}" y2="50"/>`); slot++; }
+    return `<svg viewBox="0 0 60 60" class="nm-ml-tally" aria-hidden="true">${lines.join('')}</svg>`;
+  }
+  const rightSvg = problem.rightType === 'tally' ? tallySvg : dotSvg;
+
   const root = document.createElement('div');
   root.className = 'nm-ml-wrap';
   const arena = document.createElement('div');
@@ -1036,7 +1053,7 @@ function renderMatchLine(problem, container, onAnswer){
 
   /* SVG 오버레이 — 연결선 그리기 */
   const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.className = 'nm-ml-lines';
+  svg.setAttribute('class', 'nm-ml-lines');
   arena.appendChild(svg);
 
   /* 왼쪽: 숫자 카드 */
@@ -1064,7 +1081,7 @@ function renderMatchLine(problem, container, onAnswer){
   right.forEach((num, j)=>{
     const card = document.createElement('button');
     card.className = 'nm-ml-card nm-ml-dot';
-    card.innerHTML = dotSvg(num);
+    card.innerHTML = rightSvg(num);
     card.addEventListener('pointerup', e=>{
       e.stopPropagation();
       if(matchedR.has(j)) return;
@@ -1499,6 +1516,62 @@ function renderSortBasket(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   TALLYBUILD  widget:'tallyBuild'  (유아 · 수의 나라)
+   problem.target 만큼 판을 탭해 탤리(산가지) 막대를 그림(4개+대각선 묶음).
+   ↩ 되돌리기(마지막 막대 지우기), ✔ 제출. onAnswer(현재 막대 수).
+───────────────────────────────────────── */
+function renderTallyBuild(problem, container, onAnswer){
+  const target = problem.target || 3;
+  let count=0, lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-tb-wrap';
+  root.innerHTML=`
+    <div class="nm-tb-goal">🎯 <span class="nm-tb-goal-n">${target}</span></div>
+    <button class="nm-tb-board"><svg viewBox="0 0 130 60" class="nm-tb-svg"></svg></button>
+    <div class="nm-tb-controls">
+      <button class="nm-tb-undo">↩</button>
+      <button class="nm-tb-done">✔</button>
+    </div>`;
+  container.appendChild(root);
+
+  const svg=root.querySelector('.nm-tb-svg');
+  const board=root.querySelector('.nm-tb-board');
+
+  function draw(){
+    const groups=Math.floor(count/5), rem=count%5, spacing=11;
+    let slot=0; const lines=[];
+    for(let g=0; g<groups; g++){
+      const startSlot=slot;
+      for(let i=0;i<4;i++){ const x=10+slot*spacing; lines.push(`<line x1="${x}" y1="15" x2="${x}" y2="50"/>`); slot++; }
+      const x1=10+startSlot*spacing, x2=10+(slot-1)*spacing;
+      lines.push(`<line x1="${x1}" y1="50" x2="${x2}" y2="15"/>`);
+      slot++;
+    }
+    for(let i=0;i<rem;i++){ const x=10+slot*spacing; lines.push(`<line x1="${x}" y1="15" x2="${x}" y2="50"/>`); slot++; }
+    svg.innerHTML=lines.join('');
+  }
+  draw();
+
+  board.addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(count>=9)return;
+    count++; draw();
+  });
+  root.querySelector('.nm-tb-undo').addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(count>0){ count--; draw(); }
+  });
+  root.querySelector('.nm-tb-done').addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(lock||count===0)return;
+    lock=true;setTimeout(()=>{lock=false;},700);
+    if(count!==target) shake(board);
+    onAnswer(count);
+  });
+}
+
+/* ─────────────────────────────────────────
    FALLBACK — tex display + numpad
    Used for 'numpad' or any unknown widget type.
 ───────────────────────────────────────── */
@@ -1562,6 +1635,7 @@ window.NM_WIDGETS={
   renderNumberMachine,
   renderCrossSum,
   renderSortBasket,
+  renderTallyBuild,
   // expose helpers for testing
   _buildNumpad:buildNumpad,
   _shake:shake
