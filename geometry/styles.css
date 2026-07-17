@@ -2331,10 +2331,15 @@ body {
 @keyframes button-spin { to { transform: rotate(360deg); } }
 
 @media (orientation: landscape) and (max-height: 560px) {
+  :root {
+    --mobile-rail-width: 48px;
+    --mobile-panel-gap: 6px;
+  }
+
   .app-shell {
-    grid-template-columns: minmax(190px, 33fr) minmax(0, 67fr);
-    grid-template-rows: minmax(0, 1fr) 64px;
-    gap: 6px;
+    grid-template-columns: minmax(215px, 35fr) minmax(0, 65fr);
+    grid-template-rows: minmax(0, 1fr) 70px;
+    gap: var(--mobile-panel-gap);
     padding:
       max(4px, env(safe-area-inset-top))
       max(5px, env(safe-area-inset-right))
@@ -2344,6 +2349,14 @@ body {
 
   .viewer {
     border-radius: 14px;
+  }
+
+  .build-view {
+    padding-right: calc(var(--mobile-rail-width) + 4px);
+  }
+
+  .build-view .canvas-wrap {
+    border-radius: 13px 7px 7px 13px;
   }
 
   .viewer-heading {
@@ -2371,7 +2384,7 @@ body {
 
   .build-utilities {
     top: 2px;
-    right: 3px;
+    right: calc(var(--mobile-rail-width) + 7px);
   }
 
   .utility-button,
@@ -2403,18 +2416,20 @@ body {
   }
 
   .pile-button {
-    grid-template-columns: 96px minmax(0, 1fr);
+    grid-template-columns: 128px minmax(0, 1fr);
     padding: 3px 6px;
     border-radius: 8px;
   }
 
   .pile-cubes {
-    transform: scale(.66);
+    width: 128px;
+    height: 56px;
+    transform: scale(.8);
     transform-origin: left center;
   }
 
   .pile-cubes.compact-pile {
-    transform: scale(.48);
+    transform: scale(.55);
   }
 
   .pile-button > span:last-child strong { font-size: 10px; }
@@ -2431,8 +2446,8 @@ body {
   }
 
   .tray-cube span {
-    width: 26px;
-    height: 26px;
+    width: 29px;
+    height: 29px;
     border-radius: 4px;
   }
 
@@ -2440,16 +2455,16 @@ body {
 
   .control-strip {
     right: max(5px, env(safe-area-inset-right));
-    width: 46px;
+    width: var(--mobile-rail-width);
     gap: 3px;
     padding: 3px;
     border-radius: 11px;
   }
 
   .control-strip .rail-button {
-    flex-basis: 40px;
-    width: 40px;
-    height: 40px;
+    flex-basis: 42px;
+    width: 42px;
+    height: 42px;
     grid-template-rows: 17px 1fr;
     padding: 3px 1px;
     border-radius: 8px;
@@ -2459,15 +2474,15 @@ body {
   .control-strip .rail-button b { font-size: 14px; }
 
   .floating-guide {
-    right: 5px !important;
-    bottom: 4px !important;
-    grid-template-columns: minmax(0, 150px) 58px;
+    right: calc(var(--mobile-rail-width) + 10px) !important;
+    bottom: 7px !important;
+    grid-template-columns: minmax(0, 160px) 60px;
     gap: 4px;
   }
 
   .guide-character {
-    width: 56px;
-    height: 56px;
+    width: 58px;
+    height: 58px;
   }
 
   .guide-bubble {
