@@ -349,11 +349,29 @@ button.active,
 }
 
 .tray-cube span {
+  position: relative;
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: #e9c982;
-  box-shadow: inset -7px -7px 0 rgba(0,0,0,.12), 0 4px 7px rgba(55,31,13,.2);
+  border: 1px solid rgba(129, 83, 38, .32);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.62), transparent 28%),
+    repeating-linear-gradient(8deg, rgba(126,76,31,.04) 0 1px, transparent 1px 4px),
+    linear-gradient(145deg, #f4d9a3 0%, #e7bd79 56%, #c98c4e 100%);
+  box-shadow:
+    inset 3px 3px 3px rgba(255,255,255,.5),
+    inset -7px -8px 8px rgba(103,61,24,.18),
+    0 5px 7px rgba(55,31,13,.22);
+}
+
+.tray-cube span::after,
+.pile-cubes span::after {
+  content: "";
+  position: absolute;
+  inset: 3px 5px auto 5px;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.48);
 }
 
 .tray-cube strong {
@@ -362,27 +380,31 @@ button.active,
 }
 
 .tray-cube-green span,
-.drag-ghost[data-cube-color="green"] { background: #73bd81; }
+.drag-ghost[data-cube-color="green"] { background: linear-gradient(145deg, #b4ce8a, #719350 58%, #526f3b); }
 
 .tray-cube-blue span,
-.drag-ghost[data-cube-color="blue"] { background: #4ea6ce; }
+.drag-ghost[data-cube-color="blue"] { background: linear-gradient(145deg, #a9c5da, #668dae 58%, #476b8d); }
 
 .tray-cube-yellow span,
-.drag-ghost[data-cube-color="yellow"] { background: #f0ce4e; }
+.drag-ghost[data-cube-color="yellow"] { background: linear-gradient(145deg, #ffe293, #d8a93d 58%, #b98224); }
 
 .tray-cube-rose span,
-.drag-ghost[data-cube-color="rose"] { background: #df6d71; }
+.drag-ghost[data-cube-color="rose"] { background: linear-gradient(145deg, #efb19e, #c97968 58%, #a95249); }
 
 .pile-cubes span {
   position: absolute;
   width: 38px;
   height: 38px;
   border-radius: 7px;
-  background: #e9c982;
-  border: 1px solid #b99254;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.64), transparent 28%),
+    repeating-linear-gradient(8deg, rgba(126,76,31,.04) 0 1px, transparent 1px 4px),
+    linear-gradient(145deg, #f4d9a3 0%, #e7bd79 56%, #c98c4e 100%);
+  border: 1px solid rgba(143, 94, 46, .42);
   box-shadow:
-    inset -7px -7px 0 rgba(0, 0, 0, 0.1),
-    0 4px 8px rgba(80, 55, 28, 0.14);
+    inset 3px 3px 3px rgba(255,255,255,.48),
+    inset -7px -8px 8px rgba(103,61,24,.17),
+    0 5px 8px rgba(80,55,28,.2);
   animation: pile-idle 4.8s ease-in-out infinite;
 }
 
@@ -1965,6 +1987,26 @@ body {
   opacity: .5;
 }
 
+.menu-exit {
+  width: auto;
+  min-width: 58px;
+  padding: 0 7px;
+  grid-template-columns: auto auto;
+  gap: 3px;
+  border-radius: 999px;
+}
+
+.menu-exit::before {
+  width: 100%;
+  border-radius: 999px;
+}
+
+.menu-exit small {
+  font-size: 9px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
 .language-indicator {
   position: relative;
   font-size: 10px;
@@ -2065,6 +2107,19 @@ body {
   color: #fff;
 }
 
+.guide-actions .next-stage {
+  min-width: 94px;
+  border-color: #276f9d;
+  background: linear-gradient(#53a8da, #2875aa);
+  color: #fff;
+  font-weight: 950;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.3), 0 3px 0 rgba(31,78,108,.3);
+}
+
+.guide-actions .next-stage.ready {
+  animation: next-ready 1s ease-in-out infinite;
+}
+
 .control-strip .next-stage.ready {
   animation: next-ready 1s ease-in-out infinite;
 }
@@ -2111,8 +2166,8 @@ body {
 
 .placement-feedback::before { top: -14px; left: 3px; }
 .placement-feedback::after { right: -10px; bottom: 0; }
-.placement-feedback.correct { color: rgba(246, 194, 62, .78); }
-.placement-feedback.wrong { color: rgba(226, 125, 103, .66); }
+.placement-feedback.correct,
+.placement-feedback.wrong { color: rgba(255, 224, 142, .62); }
 .placement-feedback.show { animation: placement-sparkle .68s ease-out; }
 
 .floating-guide {
@@ -2326,6 +2381,16 @@ body {
     font-size: 13px;
   }
 
+  .menu-exit {
+    width: auto;
+    min-width: 50px;
+    padding-inline: 5px;
+  }
+
+  .menu-exit small {
+    font-size: 7px;
+  }
+
   .utility-button::before,
   .language-indicator::before {
     width: 25px;
@@ -2338,14 +2403,18 @@ body {
   }
 
   .pile-button {
-    grid-template-columns: 62px minmax(0, 1fr);
+    grid-template-columns: 96px minmax(0, 1fr);
     padding: 3px 6px;
     border-radius: 8px;
   }
 
   .pile-cubes {
-    transform: scale(.45);
+    transform: scale(.66);
     transform-origin: left center;
+  }
+
+  .pile-cubes.compact-pile {
+    transform: scale(.48);
   }
 
   .pile-button > span:last-child strong { font-size: 10px; }
@@ -2362,8 +2431,8 @@ body {
   }
 
   .tray-cube span {
-    width: 21px;
-    height: 21px;
+    width: 26px;
+    height: 26px;
     border-radius: 4px;
   }
 

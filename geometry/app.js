@@ -440,7 +440,10 @@ Object.entries(fixedCopy).forEach(([lang, labels]) => {
 const compactUiCopy = {
   ko: {
     clear: "비우기",
-    nextStage: "다음 단계",
+    nextStage: "다음 문제",
+    nextLevel: "다음 단계",
+    finishGame: "마치기",
+    exit: "나가기",
     moving: "이동 중",
     showHint: "힌트 보기",
     tutorialStart: "시작",
@@ -450,13 +453,16 @@ const compactUiCopy = {
     placementCorrect2: "좋았어!",
     placementCorrect3: "다음 것도 놓아 볼까?",
     placementWrong: "문제 모양을 다시 살펴볼까?",
-    nextPrompt: "그럼 다음 단계로 갈까?",
+    nextPrompt: "그럼 다음 문제로 갈까?",
     mute: "음소거",
     unmute: "소리 켜기"
   },
   zh: {
     clear: "清空",
-    nextStage: "下一步",
+    nextStage: "下一题",
+    nextLevel: "下一阶段",
+    finishGame: "完成",
+    exit: "退出",
     moving: "正在前往",
     showHint: "查看提示",
     tutorialStart: "开始",
@@ -466,13 +472,16 @@ const compactUiCopy = {
     placementCorrect2: "很好！",
     placementCorrect3: "再放一个试试吧。",
     placementWrong: "再看看目标形状吧。",
-    nextPrompt: "那我们进入下一步吗？",
+    nextPrompt: "那我们进入下一题吗？",
     mute: "静音",
     unmute: "打开声音"
   },
   ja: {
     clear: "空にする",
-    nextStage: "次のステップ",
+    nextStage: "次の問題",
+    nextLevel: "次のステップ",
+    finishGame: "おわる",
+    exit: "出る",
     moving: "移動中",
     showHint: "ヒントを見る",
     tutorialStart: "スタート",
@@ -482,13 +491,16 @@ const compactUiCopy = {
     placementCorrect2: "いいね！",
     placementCorrect3: "次も置いてみよう。",
     placementWrong: "問題の形をもう一度見てみよう。",
-    nextPrompt: "次のステップへ行こうか？",
+    nextPrompt: "次の問題へ行こうか？",
     mute: "ミュート",
     unmute: "音を出す"
   },
   en: {
     clear: "Clear",
-    nextStage: "Next Step",
+    nextStage: "Next Problem",
+    nextLevel: "Next Level",
+    finishGame: "Finish",
+    exit: "Exit",
     moving: "Moving",
     showHint: "Show Hint",
     tutorialStart: "Start",
@@ -498,7 +510,7 @@ const compactUiCopy = {
     placementCorrect2: "Nice work!",
     placementCorrect3: "Ready for the next one?",
     placementWrong: "Take another look at the target shape.",
-    nextPrompt: "Shall we go to the next step?",
+    nextPrompt: "Shall we try the next problem?",
     mute: "Mute",
     unmute: "Turn sound on"
   }
@@ -641,6 +653,7 @@ const state = {
   lastPlacementGuide: "",
   lastSuccessGuide: "",
   transitioning: false,
+  readyForNext: false,
   wrongPlacements: 0,
   hintTimer: null,
   guideHideTimer: null
@@ -664,6 +677,7 @@ buildScene.scene.add(hintMarker);
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
+const tutorialStorageKey = "gfield-copy-build-tutorial-v1";
 let downPoint = null;
 
 init();
@@ -935,6 +949,7 @@ function loadProblem() {
   state.falling = [];
   state.wrongPlacements = 0;
   state.transitioning = false;
+  state.readyForNext = false;
   document.body.classList.toggle("color-problem", isColorProblem());
   setViewerBoardSize(targetScene, boardSize);
   setViewerBoardSize(buildScene, boardSize);
@@ -946,8 +961,7 @@ function loadProblem() {
   renderBuild();
   updateBuilderControls();
   if (!maybeStartTutorial()) {
-    setGuide(isColorProblem() ? "guideColorCount" : "guideStart", true);
-    scheduleHintOffer();
+    hideGuide();
   }
 }
 
@@ -1214,14 +1228,15 @@ function resetBuild() {
   state.counted = 0;
   state.holdingCube = false;
   state.falling = [];
+  state.readyForNext = false;
   updateStepDisplay();
   updateNextButton();
   renderBuild();
-  scheduleHintOffer();
+  hideGuide();
 }
 
 function nextProblem() {
-  if (state.transitioning) return;
+  if (state.transitioning || !state.readyForNext) return;
   state.transitioning = true;
   updateNextButton();
   const level = getLevel();
@@ -1231,6 +1246,24 @@ function nextProblem() {
       loadProblem();
       return;
     }
+    if (state.levelIndex < levels.length - 1) {
+      const nextLevel = levels[state.levelIndex + 1];
+      if (nextLevel?.problems?.length) {
+        state.levelIndex += 1;
+        state.problemIndex = 0;
+        const url = new URL(window.location.href);
+        url.searchParams.set("level", String(state.levelIndex + 1));
+        url.searchParams.delete("tutorial");
+        window.history.replaceState(null, "", url);
+        loadProblem();
+        return;
+      }
+      if (nextLevel?.href) {
+        window.location.href = nextLevel.href;
+        return;
+      }
+      return;
+    }
     window.location.href = "./cube-town/";
   }, 220);
 }
@@ -1238,12 +1271,20 @@ function nextProblem() {
 function updateNextButton() {
   const button = document.querySelector("#nextStep");
   if (!button) return;
-  button.disabled = state.transitioning;
+  button.hidden = !state.readyForNext && !state.transitioning;
+  button.disabled = state.transitioning || !state.readyForNext;
   button.classList.toggle("loading", state.transitioning);
-  button.classList.remove("ready");
+  button.classList.toggle("ready", state.readyForNext && !state.transitioning);
   button.setAttribute("aria-busy", String(state.transitioning));
   const label = button.querySelector(".next-label");
-  if (label) label.textContent = state.transitioning ? t("moving") : t("nextStage");
+  if (label) label.textContent = state.transitioning ? t("moving") : t(getNextActionKey());
+}
+
+function getNextActionKey() {
+  const level = getLevel();
+  if (state.problemIndex < level.problems.length - 1) return "nextStage";
+  if (state.levelIndex < levels.length - 1) return "nextLevel";
+  return "finishGame";
 }
 
 function handleMenuExit(event) {
@@ -1412,6 +1453,9 @@ function applyLanguage() {
   document.querySelectorAll("[data-i18n]").forEach((node) => {
     node.textContent = t(node.dataset.i18n);
   });
+  document.querySelectorAll("[data-i18n-aria]").forEach((node) => {
+    node.setAttribute("aria-label", t(node.dataset.i18nAria));
+  });
   document.querySelectorAll("[data-lang]").forEach((button) => {
     button.classList.toggle("active", button.dataset.lang === state.lang);
   });
@@ -1420,7 +1464,9 @@ function applyLanguage() {
   refreshFrontIndicator(targetScene);
   refreshFrontIndicator(buildScene);
   updateGuideCharacter();
-  setGuide(isColorProblem() ? "guideColorCount" : "guideStart");
+  const activeGuide = document.querySelector(".floating-guide.message-visible, .tutorial-active .floating-guide");
+  const guideMessage = document.querySelector("#guideMessage");
+  if (activeGuide && guideMessage) guideMessage.textContent = t(state.guideKey);
   updateAudioButton();
   updateBuilderControls();
   updateNextButton();
@@ -1432,6 +1478,11 @@ function showSuccessThenNext() {
     return;
   }
   if (!state.successPending) state.successPending = true;
+  window.clearTimeout(state.hintTimer);
+  state.hintTimer = null;
+  hintMarker.visible = false;
+  const hintButton = document.querySelector("#hintAction");
+  if (hintButton) hintButton.hidden = true;
   awardPoints(`copy-build:${state.levelIndex}:${state.problemIndex}`, 15);
   const burst = document.querySelector("#successBurst");
   const phrases = [t("successGood"), t("successGreat"), t("successPop")];
@@ -1448,8 +1499,9 @@ function showSuccessThenNext() {
   showToast(phrase);
   window.setTimeout(() => {
     burst.classList.remove("show");
+    state.readyForNext = true;
     setGuide("nextPrompt", true);
-    document.querySelector("#nextStep")?.classList.add("ready");
+    updateNextButton();
   }, 1100);
 }
 
@@ -1575,7 +1627,6 @@ function takeFromPile(event) {
   }
   selectPileColorFromEvent(event);
   state.holdingCube = true;
-  setGuide("guideHold");
   updateBuilderControls();
 }
 
@@ -1593,8 +1644,7 @@ function startBuildCubeDrag(event, x, z) {
   buildScene.renderer.domElement.setPointerCapture?.(event.pointerId);
   moveDragGhost(event.clientX, event.clientY);
   document.querySelector("#dragGhost").classList.add("show");
-  setGuide("guideMove");
-  showToast(t("returnToPile"));
+  if (state.tutorialStep >= 0) setGuide("tutorialReturn");
   updateBuilderControls();
 
   const move = (moveEvent) => {
@@ -1645,8 +1695,6 @@ function startPileDrag(event) {
   document.querySelector("#dragGhost").classList.add("show");
   if (state.tutorialStep === 0) {
     setTutorialStep(1, "tutorialPlace");
-  } else {
-    setGuide("guideHold");
   }
   updateBuilderControls();
 
@@ -1719,7 +1767,6 @@ function updateDragTarget(x, y) {
   dropMarker.position.set(cell.x - offset, targetHeight + 0.5, cell.z - offset);
   dropMarker.visible = true;
   if (state.tutorialStep === 1) setGuide("tutorialPlace");
-  else setGuide("guideDrop");
 }
 
 function getDropHeight(x, z) {
@@ -1901,6 +1948,7 @@ function updateWoodPile() {
   const countLabel = document.querySelector("#woodPileCount");
   if (!pile || !countLabel) return;
   const remaining = getRemainingInventory().cube || 0;
+  pile.classList.toggle("compact-pile", remaining > 8);
   countLabel.textContent = `x${remaining}`;
   pile.querySelectorAll(":scope > span").forEach((cube, index) => {
     cube.hidden = isColorProblem() || index >= Math.min(remaining, 13);
@@ -1941,14 +1989,25 @@ function setGuide(key, force = false) {
   bubble.classList.remove("talk");
   void bubble.offsetWidth;
   bubble.classList.add("talk");
-  const silentPlacement = key.startsWith("placementCorrect") || key === "placementWrong";
-  if (!silentPlacement) speakGuide(key);
+  if (key.startsWith("tutorial")) speakGuide(key);
   window.clearTimeout(state.guideHideTimer);
   const persistent = state.tutorialStep >= 0 || key === "hintPrompt" || key === "nextPrompt";
   if (!persistent) {
     state.guideHideTimer = window.setTimeout(() => {
       shell?.classList.remove("message-visible");
     }, 1500);
+  }
+}
+
+function hideGuide() {
+  window.clearTimeout(state.guideHideTimer);
+  const shell = document.querySelector(".floating-guide");
+  shell?.classList.remove("message-visible");
+  const hintButton = document.querySelector("#hintAction");
+  if (hintButton) hintButton.hidden = true;
+  if (!state.readyForNext) {
+    const nextButton = document.querySelector("#nextStep");
+    if (nextButton) nextButton.hidden = true;
   }
 }
 
@@ -1976,15 +2035,6 @@ function handlePlacementFeedback(previousHeight, x, z) {
   }
   const correct = isPlacedCubeCorrect(x, z, previousHeight);
   showPlacementFlash(x, z, previousHeight, correct);
-  animateGuide(correct ? "nod" : "tilt");
-  if (correct) {
-    setRandomGuide(
-      ["placementCorrect", "placementCorrect2", "placementCorrect3"],
-      "lastPlacementGuide"
-    );
-  } else {
-    setGuide("placementWrong", true);
-  }
   if (!correct) {
     state.wrongPlacements += 1;
     if (state.wrongPlacements >= 2) offerHint();
@@ -2027,9 +2077,7 @@ function animateGuide(motion) {
 
 function scheduleHintOffer() {
   window.clearTimeout(state.hintTimer);
-  state.hintTimer = window.setTimeout(() => {
-    if (!state.successPending && state.tutorialStep < 0) offerHint();
-  }, 18000);
+  state.hintTimer = null;
 }
 
 function offerHint() {
@@ -2075,12 +2123,9 @@ function findHintMismatch() {
   return null;
 }
 
-const tutorialStorageKey = "gfield-copy-build-tutorial-v1";
-
 function maybeStartTutorial() {
-  const forceTutorial = new URLSearchParams(window.location.search).get("tutorial") === "1";
   const firstProblem = state.levelIndex === 0 && state.problemIndex === 0 && !isColorProblem();
-  if (!firstProblem || (!forceTutorial && localStorage.getItem(tutorialStorageKey))) {
+  if (!firstProblem || localStorage.getItem(tutorialStorageKey)) {
     clearTutorialHighlights();
     document.body.classList.remove("tutorial-active");
     const tutorialButton = document.querySelector("#tutorialAction");
@@ -2167,6 +2212,7 @@ function getEffectsContext() {
 }
 
 function playWoodTone(frequency, duration, volume, type = "triangle", delay = 0) {
+  if (!state.audioEnabled) return;
   const context = getEffectsContext();
   if (!context) return;
   const start = context.currentTime + delay;
@@ -2202,7 +2248,7 @@ function toggleAudio() {
   state.audioEnabled = !state.audioEnabled;
   localStorage.setItem("gfield-audio-muted", String(!state.audioEnabled));
   updateAudioButton();
-  if (state.audioEnabled) {
+  if (state.audioEnabled && state.tutorialStep >= 0) {
     speakGuide(state.guideKey, true);
   } else if ("speechSynthesis" in window) {
     window.speechSynthesis.cancel();
