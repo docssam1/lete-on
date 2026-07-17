@@ -252,7 +252,7 @@ async function main() {
   let libPageCount = 0;
   for (const row of libBooks) {
     (row.pages || []).forEach((page, i) => {
-      const text = (page.paragraphs || []).join('\n\n');
+      const text = typeof page === 'string' ? page : (page.paragraphs || []).join('\n\n');
       if (!text.trim()) return;
       libPageCount++;
       tasks.unshift({
