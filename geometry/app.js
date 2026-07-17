@@ -2050,8 +2050,13 @@ function handlePlacementFeedback(previousHeight, x, z) {
   showPlacementFlash(x, z, previousHeight, correct);
   if (!correct) {
     state.wrongPlacements += 1;
+    setGuide("guideWrong", true);
+    animateGuide("tilt");
+    playWrongPlacementSound();
     if (state.wrongPlacements >= 2) offerHint();
+    return;
   }
+  hideGuide();
 }
 
 function isPlacedCubeCorrect(x, z, y) {
@@ -2249,6 +2254,11 @@ function playPlacementSound() {
 
 function playRemovalSound() {
   playWoodTone(230, 0.11, 0.055, "triangle");
+}
+
+function playWrongPlacementSound() {
+  playWoodTone(196, 0.1, 0.045, "sine");
+  playWoodTone(147, 0.11, 0.035, "sine", 0.07);
 }
 
 function playSuccessSound(phraseKey = "successPop") {
