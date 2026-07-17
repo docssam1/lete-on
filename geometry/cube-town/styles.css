@@ -21,3 +21,26 @@ button:focus-visible,a:focus-visible{outline:3px solid #eebd25;outline-offset:3p
 .card-status,.game-level{position:absolute;top:7px;padding:4px 6px;border-radius:4px;font-size:10px;font-weight:900}.card-status{left:7px;color:white;background:rgba(23,38,83,.9)}.game-level{right:7px;color:var(--navy);background:rgba(255,255,255,.9)}.game-copy{display:grid;grid-template-columns:26px 1fr;padding:10px}.game-number{grid-row:span 2;color:#89918c;font-size:11px;font-weight:900}.game-copy h3,.game-copy p{margin:0}.game-copy h3{color:var(--navy);font-size:15px;line-height:1.25}.game-copy p{margin-top:5px;color:var(--muted);font-size:11px;line-height:1.4}
 @media(max-width:900px){.topbar{grid-template-columns:auto 1fr}.top-actions{grid-column:1/-1;justify-content:flex-end}.catalog-heading{grid-template-columns:1fr}.study-banner{max-width:500px}.game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.topbar{padding:8px}.town-brand strong{font-size:18px}.print-link{display:none}.catalog-shell{width:calc(100% - 16px);padding-top:18px}.catalog-heading h1{font-size:29px}.game-grid{grid-template-columns:1fr}.game-card{display:grid;grid-template-columns:135px 1fr}.game-thumb{height:100%;aspect-ratio:auto;border-bottom:0;border-right:1px solid var(--line)}.level-section>header{align-items:flex-start}.level-section h2{font-size:16px}.languages button{width:31px}}
+
+button.game-card{padding:0;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.dialog-open{overflow:hidden}
+.copy-level-dialog{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px;background:rgba(16,27,38,.68);backdrop-filter:blur(8px)}
+.copy-level-dialog[hidden]{display:none}
+.copy-level-panel{width:min(1120px,100%);max-height:calc(100dvh - 36px);overflow:auto;border:1px solid #d8c7aa;border-radius:8px;background:#fffdf5;box-shadow:0 24px 80px rgba(8,19,31,.35)}
+.copy-level-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 18px;border-bottom:1px solid var(--line);background:rgba(255,253,245,.96);backdrop-filter:blur(8px)}
+.copy-level-head h2,.copy-level-head p{margin:0}
+.copy-level-head h2{color:var(--navy);font-size:24px}
+.copy-level-head p{margin-top:3px;color:var(--muted);font-size:13px}
+.copy-level-head button{width:38px;height:38px;border:1px solid var(--line);border-radius:6px;background:white;color:var(--navy);font-size:26px;cursor:pointer}
+.copy-level-options{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;padding:14px}
+.copy-level-card{position:relative;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:7px;background:white;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.copy-level-card:hover{transform:translateY(-3px);border-color:#2d9b61;box-shadow:0 12px 24px rgba(31,54,43,.16)}
+.copy-level-card img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center 65%;border-bottom:1px solid var(--line);background:#f3e2c6}
+.copy-level-number{display:block;margin:10px 11px 3px;color:#278958;font-size:10px;font-weight:950;letter-spacing:.8px}
+.copy-level-card strong{display:block;margin:0 30px 0 11px;color:var(--navy);font-size:16px;line-height:1.25}
+.copy-level-card p{min-height:46px;margin:6px 11px 12px;color:var(--muted);font-size:11px;line-height:1.4}
+.copy-level-card b{position:absolute;right:10px;bottom:12px;color:#278958;font-size:20px}
+
+@media(max-width:900px){.copy-level-options{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:560px){.copy-level-options{grid-template-columns:repeat(2,minmax(0,1fr))}.copy-level-dialog{padding:8px}.copy-level-panel{max-height:calc(100dvh - 16px)}.copy-level-head{padding:10px 12px}.copy-level-head h2{font-size:20px}.copy-level-card strong{font-size:14px}}
+@media(orientation:landscape) and (max-height:560px){.copy-level-dialog{padding:6px}.copy-level-panel{max-height:calc(100dvh - 12px)}.copy-level-head{padding:8px 12px}.copy-level-head h2{font-size:18px}.copy-level-head p{font-size:11px}.copy-level-options{grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;padding:8px}.copy-level-card img{aspect-ratio:16/9}.copy-level-number{margin:6px 7px 2px}.copy-level-card strong{margin-left:7px;font-size:12px}.copy-level-card p{min-height:31px;margin:4px 7px 7px;font-size:9px}.copy-level-card b{right:6px;bottom:6px;font-size:16px}}

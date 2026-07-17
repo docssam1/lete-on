@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GFIELD Cube Town</title>
-    <link rel="stylesheet" href="./styles.css?v=1" />
+    <link rel="stylesheet" href="./styles.css?v=copy-level-picker-20260718a" />
   </head>
   <body>
     <header class="topbar">
@@ -41,6 +41,20 @@
       </section>
       <div id="levelGroups" class="level-groups"></div>
     </main>
-    <script type="module" src="./app.js?v=1"></script>
+
+    <div id="copyLevelDialog" class="copy-level-dialog" hidden>
+      <section class="copy-level-panel" role="dialog" aria-modal="true" aria-labelledby="copyLevelTitle">
+        <header class="copy-level-head">
+          <div>
+            <h2 id="copyLevelTitle">똑같이 쌓기</h2>
+            <p id="copyLevelSubtitle">도전할 레벨을 골라 바로 시작해요.</p>
+          </div>
+          <button id="closeCopyLevelDialog" type="button" aria-label="닫기">&times;</button>
+        </header>
+        <div id="copyLevelOptions" class="copy-level-options"></div>
+      </section>
+    </div>
+
+    <script type="module" src="./app.js?v=copy-level-picker-20260718a"></script>
   </body>
 </html>

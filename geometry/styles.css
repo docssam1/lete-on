@@ -2179,7 +2179,7 @@ body {
   left: auto !important;
   width: auto;
   display: grid;
-  grid-template-columns: minmax(0, 220px) 96px;
+  grid-template-columns: minmax(0, 220px) 114px;
   align-items: end;
   gap: 7px;
   pointer-events: none;
@@ -2187,8 +2187,8 @@ body {
 }
 
 .guide-character {
-  width: 94px;
-  height: 94px;
+  width: 112px;
+  height: 112px;
   animation: none;
   pointer-events: none;
 }
