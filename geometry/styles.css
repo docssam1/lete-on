@@ -2568,3 +2568,176 @@ body {
     font-size: 13px;
   }
 }
+
+/* ============================================================
+   GFIELD Wood Design v2 — photo-textured skin (2026-07-18)
+   Layered on top of the premium skin; no game logic changes.
+   ============================================================ */
+
+/* Warm blurred toy-village backdrop */
+body {
+  background:
+    linear-gradient(180deg, rgba(59, 36, 18, .30), rgba(59, 36, 18, .14) 30%, rgba(43, 26, 14, .38)),
+    url("./assets/ui/bg-ambient.webp") center / cover no-repeat fixed,
+    #b98a55;
+}
+body::before {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 236, 195, .20), transparent 58%),
+    linear-gradient(180deg, rgba(36, 20, 10, .10), rgba(70, 42, 20, .22));
+}
+
+/* Cream card panels with paper texture */
+.viewer,
+.status-card,
+.counter-card {
+  border: 2px solid rgba(214, 178, 128, .9);
+  background:
+    linear-gradient(180deg, rgba(255, 250, 238, .32), rgba(240, 218, 184, .30)),
+    url("./assets/ui/panel-cream.webp") center / 340px auto;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, .7),
+    inset 0 -10px 22px rgba(140, 92, 44, .16),
+    0 22px 40px rgba(37, 22, 10, .38);
+}
+
+.viewer { border-radius: 26px; }
+
+/* Corner tab chips */
+.viewer-heading {
+  min-height: 52px;
+  padding: 9px 30px;
+  border-radius: 0 0 16px 16px;
+  font-weight: 900;
+  letter-spacing: .02em;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, .30),
+    inset 0 -4px 8px rgba(0, 0, 0, .14),
+    0 10px 16px rgba(38, 23, 12, .28);
+}
+.target-view .viewer-heading { background: linear-gradient(180deg, #879a58, #5d7239); }
+.build-view .viewer-heading { background: linear-gradient(180deg, #5f83ab, #3d5f86); }
+
+/* Cube tray — real wood */
+.builder-controls,
+.pile-button {
+  border-radius: 20px;
+}
+.builder-controls {
+  border: 2px solid rgba(146, 100, 52, .55);
+  background:
+    linear-gradient(180deg, rgba(255, 240, 210, .30), rgba(146, 98, 50, .26)),
+    url("./assets/ui/wood-light.webp") center / 480px auto;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, .5),
+    inset 0 -8px 16px rgba(104, 64, 26, .28),
+    0 18px 32px rgba(37, 22, 10, .36);
+}
+.pile-button {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+/* tray cubes use real render crops */
+.tray-cube span {
+  background: none;
+  border: 0;
+  box-shadow: none;
+}
+.tray-cube-wood span { background: url("./assets/ui/cube-wood.webp") center / contain no-repeat; }
+.tray-cube-green span { background: url("./assets/ui/cube-green.webp") center / contain no-repeat; }
+.tray-cube-blue span { background: url("./assets/ui/cube-blue.webp") center / contain no-repeat; }
+.tray-cube-yellow span { background: url("./assets/ui/cube-yellow.webp") center / contain no-repeat; }
+.tray-cube-rose span { background: url("./assets/ui/cube-rose.webp") center / contain no-repeat; }
+
+.pile-cubes > span {
+  border: 0;
+  border-radius: 4px;
+  background: url("./assets/ui/cube-wood.webp") center / cover no-repeat;
+  box-shadow: 0 3px 5px rgba(80, 48, 18, .35);
+}
+
+/* Wooden rail buttons */
+.rail-button {
+  border: 2px solid rgba(132, 88, 44, .65);
+  background:
+    linear-gradient(180deg, rgba(255, 244, 216, .55), rgba(206, 160, 106, .38)),
+    url("./assets/ui/wood-light.webp") center / 300px auto;
+  color: #4c3013;
+  text-shadow: 0 1px 0 rgba(255, 246, 222, .6);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, .55),
+    inset 0 -5px 9px rgba(112, 68, 26, .30),
+    0 8px 14px rgba(37, 22, 10, .32);
+}
+.rail-button:active { transform: translateY(2px); box-shadow: inset 0 2px 6px rgba(80, 48, 18, .4); }
+
+/* Guide character & bubble */
+.guide-character {
+  filter: drop-shadow(0 10px 8px rgba(30, 17, 7, .38));
+}
+.guide-bubble {
+  border: 2px solid #e3cba1;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fffaf0, #f7e9d2);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, .8),
+    0 14px 26px rgba(37, 22, 10, .30);
+}
+
+/* Success burst — gold pop */
+.success-burst strong {
+  color: #ffca28;
+  -webkit-text-stroke: 2px #a4520c;
+  text-shadow:
+    0 3px 0 #c96f12,
+    0 10px 24px rgba(80, 40, 6, .45);
+}
+
+/* v2 polish: larger Cubi + cleaner panel texture scale */
+.viewer,
+.status-card,
+.counter-card {
+  background:
+    linear-gradient(180deg, rgba(255, 250, 238, .5), rgba(240, 218, 184, .42)),
+    url("./assets/ui/panel-cream.webp") center / 720px auto;
+}
+
+.guide-character {
+  width: 172px;
+  height: 172px;
+}
+.floating-guide {
+  width: 480px;
+  grid-template-columns: minmax(0, 1fr) 176px;
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .guide-character {
+    width: 84px !important;
+    height: 84px !important;
+  }
+  .floating-guide {
+    grid-template-columns: minmax(0, 190px) 86px !important;
+  }
+  .guide-bubble p { font-size: 10px !important; }
+}
+
+/* v2: soft cream scene interiors (replaces stripe pattern) */
+.canvas-wrap {
+  background:
+    radial-gradient(ellipse at 50% 34%, rgba(255, 252, 242, .9), rgba(247, 235, 210, .7) 55%, rgba(232, 209, 172, .8)),
+    url("./assets/ui/panel-cream.webp") center / 720px auto;
+}
+
+/* v2: bigger tray cubes on desktop */
+@media (min-width: 900px) {
+  .pile-cubes > span {
+    width: 34px;
+    height: 34px;
+  }
+  .pile-cubes b {
+    font-size: 17px;
+  }
+}
