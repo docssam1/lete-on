@@ -938,7 +938,7 @@ body {
   height: 100dvh;
   min-height: 0;
   margin: 0 auto;
-  padding: 8px 66px 8px 8px;
+  padding: 8px 154px 8px 8px;
   overflow: hidden;
 }
 
@@ -1005,12 +1005,18 @@ body {
   position: fixed;
   z-index: 24;
   left: auto;
-  right: calc(64px + env(safe-area-inset-right));
-  bottom: 12px;
+  right: calc(62px + env(safe-area-inset-right));
+  bottom: 18px;
   transform: none !important;
 }
 .speech-bubble { display: none; }
-.cubi-sprite { width: 72px; height: 72px; opacity: .92; }
+.cubi-sprite {
+  width: 118px;
+  height: 118px;
+  opacity: 1;
+  filter: drop-shadow(0 10px 8px rgba(31, 18, 9, .28));
+  transform-origin: 50% 100%;
+}
 
 @media (orientation: landscape) and (max-height: 560px) {
   .game-shell { padding: 5px calc(52px + env(safe-area-inset-right)) 5px max(5px, env(safe-area-inset-left)); }
