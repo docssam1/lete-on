@@ -3,6 +3,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { levels, validateLevels } from "./levels.js";
 import { text } from "./i18n.js?v=count-board-20260718b";
+import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
 validateLevels();
 
@@ -36,10 +37,14 @@ const elements = {
   cubi: $(".cubi-sprite")
 };
 
+const countProgress = readGameProgress("countHeights");
+const savedCountLevel = Number.isInteger(Number(countProgress.levelIndex))
+  ? Number(countProgress.levelIndex)
+  : Number(localStorage.getItem("count-heights-level")) || 0;
 const state = {
   lang: localStorage.getItem("gfield-language") || "ko",
-  levelIndex: Math.max(0, Math.min(4, Number(localStorage.getItem("count-heights-level")) || 0)),
-  problemIndex: 0,
+  levelIndex: Math.max(0, Math.min(4, savedCountLevel)),
+  problemIndex: Math.max(0, Number(countProgress.problemIndex) || 0),
   mode: "model",
   cellAnswers: new Map(),
   totalAnswer: "",
@@ -150,6 +155,12 @@ function initializeExample() {
 }
 
 function loadProblem() {
+  state.problemIndex = Math.max(0, Math.min(levels[state.levelIndex].problems.length - 1, state.problemIndex));
+  saveGameProgress("countHeights", {
+    levelIndex: state.levelIndex,
+    problemIndex: state.problemIndex,
+    level: state.levelIndex + 1
+  });
   clearTimeout(state.advanceTimer);
   elements.success.classList.remove("show");
   state.cellAnswers = new Map();

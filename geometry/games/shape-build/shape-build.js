@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
 const BOARD_SIZE = 4;
 const MAX_HEIGHT = 4;
@@ -129,12 +130,17 @@ function p(type, x, y, z, rotation = 0) {
 }
 
 const params = new URLSearchParams(window.location.search);
+const requestedShapeLevel = Number(params.get("level"));
+const shapeProgress = readGameProgress("shapeBuild");
+const startingShapeLevel = requestedShapeLevel === 4 || requestedShapeLevel === 5
+  ? requestedShapeLevel
+  : Number(shapeProgress.level) === 4 ? 4 : 5;
 const state = {
-  lang: "ko",
-  level: Number(params.get("level")) === 4 ? 4 : 5,
-  problemIndex: 0,
+  lang: localStorage.getItem("gfield-language") || "ko",
+  level: startingShapeLevel,
+  problemIndex: Number(shapeProgress.level) === startingShapeLevel ? Math.max(0, Number(shapeProgress.problemIndex) || 0) : 0,
   pieces: [],
-  selectedType: Number(params.get("level")) === 4 ? TYPES.CUBOID : TYPES.CUBE,
+  selectedType: startingShapeLevel === 4 ? TYPES.CUBOID : TYPES.CUBE,
   selectedRotation: 0,
   drag: null,
   audio: false,
@@ -235,6 +241,12 @@ function getTypeLabel(type) {
 }
 
 function loadProblem() {
+  state.problemIndex = Math.max(0, Math.min(getProblems().length - 1, state.problemIndex));
+  saveGameProgress("shapeBuild", {
+    level: state.level,
+    levelIndex: state.level - 1,
+    problemIndex: state.problemIndex
+  });
   state.pieces = [];
   state.drag = null;
   state.successPending = false;

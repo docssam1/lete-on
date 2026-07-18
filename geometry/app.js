@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { COPY_BUILD_LEVELS } from "./data/copy-build-levels.js";
+import { readGameProgress, saveGameProgress } from "./shared/profile-storage.js";
 
 const translations = { ko: {}, zh: {}, ja: {}, en: {} };
 
@@ -632,13 +633,18 @@ function createWoodTexture() {
 }
 
 const requestedLevel = Number(new URLSearchParams(window.location.search).get("level"));
+const copyProgress = readGameProgress("copyBuild");
+const startingLevelIndex = Number.isInteger(requestedLevel) && requestedLevel >= 1 && requestedLevel <= 3
+  ? requestedLevel - 1
+  : Math.max(0, Math.min(2, Number(copyProgress.levelIndex) || 0));
+const savedProblemIndex = Number(copyProgress.levelIndex) === startingLevelIndex
+  ? Number(copyProgress.problemIndex) || 0
+  : 0;
 
 const state = {
   lang: localStorage.getItem("gfield-language") || "ko",
-  levelIndex: Number.isInteger(requestedLevel) && requestedLevel >= 1 && requestedLevel <= 3
-    ? requestedLevel - 1
-    : 0,
-  problemIndex: 0,
+  levelIndex: startingLevelIndex,
+  problemIndex: Math.max(0, Math.min((levels[startingLevelIndex]?.problems.length || 1) - 1, savedProblemIndex)),
   grid: emptyGrid(),
   colorGrid: emptyColorGrid(),
   selectedColor: "cube",
@@ -960,6 +966,11 @@ function loadProblem() {
   state.wrongPlacements = 0;
   state.transitioning = false;
   state.readyForNext = false;
+  saveGameProgress("copyBuild", {
+    levelIndex: state.levelIndex,
+    problemIndex: state.problemIndex,
+    level: state.levelIndex + 1
+  });
   document.body.classList.toggle("color-problem", isColorProblem());
   setViewerBoardSize(targetScene, boardSize);
   setViewerBoardSize(buildScene, boardSize);

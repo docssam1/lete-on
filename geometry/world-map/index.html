@@ -6,7 +6,7 @@
     <title>GFIELD Geometry World</title>
     <link rel="preload" href="./assets/geometry-intro-poster.webp" as="image" fetchpriority="high" />
     <link rel="preload" href="./assets/geometry-world-map.webp" as="image" />
-    <link rel="stylesheet" href="./styles.css?v=4" />
+    <link rel="stylesheet" href="./styles.css?v=5" />
   </head>
   <body>
     <section id="intro" class="intro" aria-label="Geometry World intro">
@@ -31,6 +31,7 @@
           <button id="profileButton" class="profile-button" type="button" aria-label="character">
             <span id="profileAvatar" class="character-sprite sprite-0"></span>
           </button>
+          <span id="toolbarName" class="toolbar-name"></span>
           <div class="point-display" aria-label="points"><span>◆</span><strong class="point-value">120</strong></div>
           <button id="soundToggle" type="button" aria-label="sound">♪</button>
           <div class="language-menu" aria-label="Language">
@@ -62,10 +63,15 @@
             <section class="selected-character">
               <div class="preview-stage">
                 <span id="selectedSprite" class="character-sprite sprite-0"></span>
-                <span id="equippedItem" class="equipped-item" aria-hidden="true"></span>
+                <span id="equippedItems" class="equipped-items" aria-hidden="true"></span>
               </div>
               <h3 id="selectedName">큐비</h3>
               <p id="selectedRole">Cube Town Guide</p>
+              <label class="player-name-field" for="playerName">
+                <span data-i18n="playerName">내 이름</span>
+                <input id="playerName" type="text" maxlength="16" autocomplete="nickname" data-i18n-placeholder="namePlaceholder" placeholder="이름이나 별명" />
+              </label>
+              <small id="nameHint" class="name-hint" data-i18n="nameHint">이 이름으로 학습 기록이 저장돼요.</small>
             </section>
 
             <section class="character-options">
@@ -76,15 +82,17 @@
               <div id="colorPalette" class="color-palette"></div>
 
               <div class="item-heading">
-                <h3 data-i18n="items">포인트 아이템</h3>
+                <h3 data-i18n="items">포인트 몰</h3>
                 <span data-i18n="itemHint">포인트로 해금하고 장착해요</span>
               </div>
+              <nav id="itemCategories" class="item-categories" aria-label="item categories"></nav>
               <div id="itemGrid" class="item-grid"></div>
+              <button id="saveProfile" class="save-profile" type="button" data-i18n="saveProfile">이 이름으로 시작하기</button>
             </section>
           </div>
         </div>
       </section>
     </main>
-    <script type="module" src="./app.js?v=4"></script>
+    <script type="module" src="./app.js?v=5"></script>
   </body>
 </html>
