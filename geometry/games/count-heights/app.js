@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { levels, validateLevels } from "./levels.js";
-import { text } from "./i18n.js?v=count-board-20260718c";
+import { text } from "./i18n.js?v=count-board-20260718d";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
 validateLevels();
@@ -381,19 +381,47 @@ function completeProblem() {
   state.solved = true;
   awardPoints(`count-cubes:${currentProblem().id}`, 15);
   const phrases = state.hintsUsed === 0 && state.wrongAttempts === 0
-    ? ["success", "successGood"]
-    : ["successGood"];
+    ? ["success", "successGood", "successPop"]
+    : ["success", "successGood"];
   const phrase = phrases[Math.floor(Math.random() * phrases.length)];
   elements.success.querySelector("strong").textContent = text(state.lang, phrase).toUpperCase();
   elements.success.classList.remove("show");
   void elements.success.offsetWidth;
   elements.success.classList.add("show");
+  playSuccessBurstSound();
   setGuide("guideSuccess");
   renderNumberPad();
   state.advanceTimer = setTimeout(() => {
     elements.success.classList.remove("show");
     nextProblem();
   }, 1250);
+}
+
+function playSuccessBurstSound() {
+  if (!state.audioEnabled) return;
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return;
+  const context = new AudioContextClass();
+  const now = context.currentTime;
+  const master = context.createGain();
+  master.gain.setValueAtTime(0.0001, now);
+  master.gain.exponentialRampToValueAtTime(0.22, now + 0.018);
+  master.gain.exponentialRampToValueAtTime(0.0001, now + 0.48);
+  master.connect(context.destination);
+
+  [196, 294, 392, 587].forEach((frequency, index) => {
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.type = index === 0 ? "triangle" : "sine";
+    oscillator.frequency.setValueAtTime(frequency, now);
+    oscillator.frequency.exponentialRampToValueAtTime(frequency * 1.55, now + 0.22);
+    gain.gain.setValueAtTime(index === 0 ? 0.34 : 0.18, now + index * 0.018);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.38 + index * 0.025);
+    oscillator.connect(gain).connect(master);
+    oscillator.start(now + index * 0.018);
+    oscillator.stop(now + 0.5);
+  });
+  window.setTimeout(() => context.close(), 650);
 }
 
 function awardPoints(rewardId, amount) {
