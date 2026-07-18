@@ -13,17 +13,17 @@ const copyLevelText = {
 
 const copyLevels = [
   {
-    level: 1, image: "./assets/copy-levels/level-1.png", href: "../index.html?level=1",
+    level: 1, image: "./assets/copy-levels/level-1.png", href: "../games/copy-build/?level=1",
     title: { ko: "큐브 기초", zh: "方块基础", ja: "キューブの基本", en: "Cube Basics" },
     description: { ko: "낮은 원목과 컬러 모양을 따라 쌓아요.", zh: "搭出较低的木色和彩色形状。", ja: "低い木目とカラーの形を作ります。", en: "Copy low wooden and colored builds." }
   },
   {
-    level: 2, image: "./assets/copy-levels/level-2.png", href: "../index.html?level=2",
+    level: 2, image: "./assets/copy-levels/level-2.png", href: "../games/copy-build/?level=2",
     title: { ko: "입체 쌓기", zh: "立体搭建", ja: "立体を積む", en: "Build in 3D" },
     description: { ko: "3×3×3 안에서 높이와 색을 맞춰요.", zh: "在3×3×3内匹配高度和颜色。", ja: "3×3×3で高さと色を合わせます。", en: "Match height and color in a 3×3×3 space." }
   },
   {
-    level: 3, image: "./assets/copy-levels/level-3.png", href: "../index.html?level=3",
+    level: 3, image: "./assets/copy-levels/level-3.png", href: "../games/copy-build/?level=3",
     title: { ko: "컬러와 큰 구조", zh: "颜色与大型结构", ja: "カラーと大きな形", en: "Color & Larger Builds" },
     description: { ko: "색 위치와 4×4×4 원목 구조에 도전해요.", zh: "挑战颜色位置和4×4×4木制结构。", ja: "色の位置と4×4×4の木目構造に挑戦します。", en: "Tackle color positions and 4×4×4 wooden builds." }
   },

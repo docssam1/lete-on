@@ -7,7 +7,7 @@ export const groups = [
 
 export const games = [
   {
-    id: "copy-build", group: "foundation", number: "01", ready: true, href: "../index.html?v=cube-town2", thumb: "copy", levels: "Lv. 1–5",
+    id: "copy-build", group: "foundation", number: "01", ready: true, href: "../games/copy-build/?v=cube-town3", thumb: "copy", levels: "Lv. 1–5",
     name: { ko: "똑같이 쌓기", zh: "搭出相同形状", ja: "同じ形を作ろう", en: "Copy the Build" },
     description: { ko: "문제 모양을 돌려 보고 같은 자리에 블록을 쌓아요.", zh: "旋转观察题目，并在相同位置搭建方块。", ja: "見本を回して、同じ場所にブロックを積みます。", en: "Turn the model and place cubes in the matching positions." }
   },

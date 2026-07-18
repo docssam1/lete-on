@@ -530,9 +530,9 @@ const speechSettings = {
 const cubiAudioProfile = {
   useMp3: false,
   success: {
-    successGood: "./assets/audio/cubi/success/good-job.mp3",
-    successGreat: "./assets/audio/cubi/success/great-job.mp3",
-    successPop: "./assets/audio/cubi/success/success.mp3"
+    successGood: "../../assets/audio/cubi/success/good-job.mp3",
+    successGreat: "../../assets/audio/cubi/success/great-job.mp3",
+    successPop: "../../assets/audio/cubi/success/success.mp3"
   }
 };
 
@@ -551,13 +551,13 @@ const levels = [
     level: 4,
     stars: 4,
     problemCount: 5,
-    href: "./games/shape-build/?level=4"
+    href: "../shape-build/?level=4"
   },
   {
     level: 5,
     stars: 5,
     problemCount: 5,
-    href: "./games/shape-build/?level=5"
+    href: "../shape-build/?level=5"
   }
 ];
 
@@ -1273,7 +1273,7 @@ function nextProblem() {
       }
       return;
     }
-    window.location.href = "./cube-town/";
+    window.location.href = "../../cube-town/";
   }, 220);
 }
 
