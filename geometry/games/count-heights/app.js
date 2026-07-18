@@ -54,7 +54,7 @@ const state = {
   hintKey: null,
   hintsUsed: 0,
   wrongAttempts: 0,
-  audioEnabled: false,
+  audioEnabled: localStorage.getItem("gfield-audio-muted") !== "true",
   solved: false,
   advanceTimer: null
 };
@@ -830,6 +830,7 @@ elements.reset.addEventListener("click", resetProblem);
 elements.next.addEventListener("click", nextProblem);
 elements.audio.addEventListener("click", () => {
   state.audioEnabled = !state.audioEnabled;
+  localStorage.setItem("gfield-audio-muted", String(!state.audioEnabled));
   updateAudioButton();
   if (state.audioEnabled) speak(elements.guide.textContent);
   else speechSynthesis?.cancel();

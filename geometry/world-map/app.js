@@ -134,7 +134,7 @@ let language = localStorage.getItem("gfield-language") || "ko";
 const storedPoints = localStorage.getItem("gfield-points");
 let points = storedPoints === null ? 120 : Number(storedPoints);
 if (!Number.isFinite(points)) points = 120;
-let audioEnabled = false;
+let audioEnabled = localStorage.getItem("gfield-audio-muted") !== "true";
 let activeItemCategory = "hat";
 let onboarding = !profile.setupComplete;
 
@@ -167,6 +167,8 @@ function applyLanguage() {
   elements.characterModal.classList.toggle("onboarding", onboarding);
   $("#characterTitle").textContent = message(onboarding ? "setupCharacter" : "chooseCharacter");
   elements.saveProfile.textContent = message(onboarding ? "saveProfile" : "updateProfile");
+  elements.sound.textContent = audioEnabled ? "♫" : "♪";
+  elements.sound.setAttribute("aria-pressed", String(audioEnabled));
   setGuide("mapGuide");
   renderCharacterRoom();
 }
@@ -452,7 +454,9 @@ elements.playerName.addEventListener("keydown", (event) => {
 });
 elements.sound.addEventListener("click", () => {
   audioEnabled = !audioEnabled;
+  localStorage.setItem("gfield-audio-muted", String(!audioEnabled));
   elements.sound.textContent = audioEnabled ? "♫" : "♪";
+  elements.sound.setAttribute("aria-pressed", String(audioEnabled));
   if (audioEnabled) speak(message("mapGuide"));
   else speechSynthesis?.cancel();
 });

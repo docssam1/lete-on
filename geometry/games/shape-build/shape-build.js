@@ -143,7 +143,7 @@ const state = {
   selectedType: startingShapeLevel === 4 ? TYPES.CUBOID : TYPES.CUBE,
   selectedRotation: 0,
   drag: null,
-  audio: false,
+  audio: localStorage.getItem("gfield-audio-muted") !== "true",
   successPending: false
 };
 
@@ -684,6 +684,7 @@ function setLanguage(lang) {
   document.querySelector("#viewTop").textContent = getText("top");
   document.querySelector("#captureBuild").textContent = getText("capture");
   document.querySelector("#audioToggle").textContent = getText(state.audio ? "audioOn" : "audioOff");
+  document.querySelector("#audioToggle").setAttribute("aria-pressed", String(state.audio));
   refreshBoardLabels(targetViewer);
   refreshBoardLabels(buildViewer);
   loadProblem();
@@ -691,6 +692,7 @@ function setLanguage(lang) {
 
 function toggleAudio() {
   state.audio = !state.audio;
+  localStorage.setItem("gfield-audio-muted", String(!state.audio));
   document.querySelector("#audioToggle").setAttribute("aria-pressed", String(state.audio));
   document.querySelector("#audioToggle").textContent = getText(state.audio ? "audioOn" : "audioOff");
   if (state.audio) speak(document.querySelector("#guideMessage").textContent);
