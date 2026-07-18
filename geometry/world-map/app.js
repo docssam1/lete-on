@@ -50,43 +50,43 @@ const colors = [
 ];
 
 const itemCategories = [
-  { id: "hat", icon: "♛", label: { ko: "모자", zh: "帽子", ja: "ぼうし", en: "Hats" } },
-  { id: "face", icon: "◉", label: { ko: "얼굴", zh: "脸部", ja: "かお", en: "Face" } },
-  { id: "badge", icon: "★", label: { ko: "배지", zh: "徽章", ja: "バッジ", en: "Badges" } },
-  { id: "hand", icon: "✦", label: { ko: "소품", zh: "道具", ja: "こもの", en: "Props" } },
-  { id: "aura", icon: "✧", label: { ko: "효과", zh: "特效", ja: "エフェクト", en: "Effects" } }
+  { id: "hat", iconId: "cat-crown", label: { ko: "모자", zh: "帽子", ja: "ぼうし", en: "Hats" } },
+  { id: "face", iconId: "cat-glasses", label: { ko: "얼굴", zh: "脸部", ja: "かお", en: "Face" } },
+  { id: "badge", iconId: "cat-star", label: { ko: "배지", zh: "徽章", ja: "バッジ", en: "Badges" } },
+  { id: "hand", iconId: "cat-wand", label: { ko: "소품", zh: "道具", ja: "こもの", en: "Props" } },
+  { id: "aura", iconId: "cat-sparkles", label: { ko: "효과", zh: "特效", ja: "エフェクト", en: "Effects" } }
 ];
 
 const items = [
-  { id: "cap", category: "hat", icon: "🧢", cost: 100, name: { ko: "탐험 모자", zh: "探险帽", ja: "たんけん帽", en: "Explorer Cap" } },
-  { id: "crown", category: "hat", icon: "👑", cost: 400, name: { ko: "황금 왕관", zh: "金色王冠", ja: "金の王冠", en: "Golden Crown" } },
-  { id: "helmet", category: "hat", icon: "⛑️", cost: 220, name: { ko: "안전 헬멧", zh: "安全帽", ja: "ヘルメット", en: "Builder Helmet" } },
-  { id: "wizard-hat", category: "hat", icon: "🧙", cost: 320, name: { ko: "마법사 모자", zh: "魔法帽", ja: "魔法の帽子", en: "Wizard Hat" } },
-  { id: "flower-crown", category: "hat", icon: "🌼", cost: 280, name: { ko: "꽃 왕관", zh: "花冠", ja: "花かんむり", en: "Flower Crown" } },
+  { id: "cap", category: "hat", iconId: "cat-hat", cost: 100, name: { ko: "탐험 모자", zh: "探险帽", ja: "たんけん帽", en: "Explorer Cap" } },
+  { id: "crown", category: "hat", iconId: "cat-crown", cost: 400, name: { ko: "황금 왕관", zh: "金色王冠", ja: "金の王冠", en: "Golden Crown" } },
+  { id: "helmet", category: "hat", iconId: "cat-helmet", cost: 220, name: { ko: "안전 헬멧", zh: "安全帽", ja: "ヘルメット", en: "Builder Helmet" } },
+  { id: "wizard-hat", category: "hat", iconId: "cat-wizard", cost: 320, name: { ko: "마법사 모자", zh: "魔法帽", ja: "魔法の帽子", en: "Wizard Hat" } },
+  { id: "flower-crown", category: "hat", iconId: "cat-flower", cost: 280, name: { ko: "꽃 왕관", zh: "花冠", ja: "花かんむり", en: "Flower Crown" } },
 
-  { id: "glasses", category: "face", icon: "👓", cost: 180, name: { ko: "둥근 안경", zh: "圆眼镜", ja: "丸めがね", en: "Round Glasses" } },
-  { id: "star-glasses", category: "face", icon: "🤩", cost: 240, name: { ko: "별 안경", zh: "星星眼镜", ja: "スターめがね", en: "Star Glasses" } },
-  { id: "monocle", category: "face", icon: "🧐", cost: 220, name: { ko: "탐정 렌즈", zh: "侦探镜", ja: "探偵レンズ", en: "Detective Lens" } },
-  { id: "mask", category: "face", icon: "🥸", cost: 300, name: { ko: "변신 가면", zh: "变身面具", ja: "変身マスク", en: "Funny Mask" } },
-  { id: "goggles", category: "face", icon: "🥽", cost: 260, name: { ko: "연구 고글", zh: "研究护目镜", ja: "研究ゴーグル", en: "Lab Goggles" } },
+  { id: "glasses", category: "face", iconId: "cat-glasses", cost: 180, name: { ko: "둥근 안경", zh: "圆眼镜", ja: "丸めがね", en: "Round Glasses" } },
+  { id: "star-glasses", category: "face", iconId: "cat-stars", cost: 240, name: { ko: "별 안경", zh: "星星眼镜", ja: "スターめがね", en: "Star Glasses" } },
+  { id: "monocle", category: "face", iconId: "cat-monocle", cost: 220, name: { ko: "탐정 렌즈", zh: "侦探镜", ja: "探偵レンズ", en: "Detective Lens" } },
+  { id: "mask", category: "face", iconId: "cat-mask", cost: 300, name: { ko: "변신 가면", zh: "变身面具", ja: "変身マスク", en: "Funny Mask" } },
+  { id: "goggles", category: "face", iconId: "cat-goggles", cost: 260, name: { ko: "연구 고글", zh: "研究护目镜", ja: "研究ゴーグル", en: "Lab Goggles" } },
 
-  { id: "star", category: "badge", icon: "⭐", cost: 0, name: { ko: "별 배지", zh: "星星徽章", ja: "星バッジ", en: "Star Badge" } },
-  { id: "heart", category: "badge", icon: "💛", cost: 60, name: { ko: "마음 배지", zh: "爱心徽章", ja: "ハートバッジ", en: "Heart Badge" } },
-  { id: "medal", category: "badge", icon: "🏅", cost: 140, name: { ko: "도전 메달", zh: "挑战奖牌", ja: "チャレンジメダル", en: "Challenge Medal" } },
-  { id: "gem", category: "badge", icon: "💎", cost: 220, name: { ko: "보석 배지", zh: "宝石徽章", ja: "宝石バッジ", en: "Gem Badge" } },
-  { id: "compass", category: "badge", icon: "🧭", cost: 260, name: { ko: "나침반 배지", zh: "指南针徽章", ja: "コンパスバッジ", en: "Compass Badge" } },
+  { id: "star", category: "badge", iconId: "cat-star", cost: 0, name: { ko: "별 배지", zh: "星星徽章", ja: "星バッジ", en: "Star Badge" } },
+  { id: "heart", category: "badge", iconId: "cat-heart", cost: 60, name: { ko: "마음 배지", zh: "爱心徽章", ja: "ハートバッジ", en: "Heart Badge" } },
+  { id: "medal", category: "badge", iconId: "cat-medal", cost: 140, name: { ko: "도전 메달", zh: "挑战奖牌", ja: "チャレンジメダル", en: "Challenge Medal" } },
+  { id: "gem", category: "badge", iconId: "cat-gem", cost: 220, name: { ko: "보석 배지", zh: "宝石徽章", ja: "宝石バッジ", en: "Gem Badge" } },
+  { id: "compass", category: "badge", iconId: "cat-compass", cost: 260, name: { ko: "나침반 배지", zh: "指南针徽章", ja: "コンパスバッジ", en: "Compass Badge" } },
 
-  { id: "wand", category: "hand", icon: "🪄", cost: 260, name: { ko: "마법봉", zh: "魔法棒", ja: "魔法の杖", en: "Magic Wand" } },
-  { id: "flag", category: "hand", icon: "🚩", cost: 140, name: { ko: "탐험 깃발", zh: "探险旗", ja: "探検フラッグ", en: "Explorer Flag" } },
-  { id: "telescope", category: "hand", icon: "🔭", cost: 240, name: { ko: "관찰 망원경", zh: "观察望远镜", ja: "観察望遠鏡", en: "Telescope" } },
-  { id: "camera", category: "hand", icon: "📷", cost: 300, name: { ko: "작품 카메라", zh: "作品相机", ja: "作品カメラ", en: "Studio Camera" } },
-  { id: "blueprint", category: "hand", icon: "📐", cost: 180, name: { ko: "설계 도구", zh: "设计工具", ja: "設計ツール", en: "Design Tool" } },
+  { id: "wand", category: "hand", iconId: "cat-wand", cost: 260, name: { ko: "마법봉", zh: "魔法棒", ja: "魔法の杖", en: "Magic Wand" } },
+  { id: "flag", category: "hand", iconId: "cat-flag", cost: 140, name: { ko: "탐험 깃발", zh: "探险旗", ja: "探検フラッグ", en: "Explorer Flag" } },
+  { id: "telescope", category: "hand", iconId: "cat-telescope", cost: 240, name: { ko: "관찰 망원경", zh: "观察望远镜", ja: "観察望遠鏡", en: "Telescope" } },
+  { id: "camera", category: "hand", iconId: "cat-camera", cost: 300, name: { ko: "작품 카메라", zh: "作品相机", ja: "作品カメラ", en: "Studio Camera" } },
+  { id: "blueprint", category: "hand", iconId: "cat-blueprint", cost: 180, name: { ko: "설계 도구", zh: "设计工具", ja: "設計ツール", en: "Design Tool" } },
 
-  { id: "sparkles", category: "aura", icon: "✨", cost: 180, name: { ko: "반짝 효과", zh: "闪亮特效", ja: "きらきら", en: "Sparkles" } },
-  { id: "rainbow", category: "aura", icon: "🌈", cost: 320, name: { ko: "무지개 효과", zh: "彩虹特效", ja: "虹エフェクト", en: "Rainbow" } },
-  { id: "flame", category: "aura", icon: "🔥", cost: 280, name: { ko: "열정 불꽃", zh: "热情火焰", ja: "情熱の炎", en: "Power Flame" } },
-  { id: "snow", category: "aura", icon: "❄️", cost: 250, name: { ko: "눈꽃 효과", zh: "雪花特效", ja: "雪エフェクト", en: "Snow Glow" } },
-  { id: "galaxy", category: "aura", icon: "🌌", cost: 450, name: { ko: "은하 효과", zh: "银河特效", ja: "銀河エフェクト", en: "Galaxy Aura" } }
+  { id: "sparkles", category: "aura", iconId: "cat-sparkles", cost: 180, name: { ko: "반짝 효과", zh: "闪亮特效", ja: "きらきら", en: "Sparkles" } },
+  { id: "rainbow", category: "aura", iconId: "cat-rainbow", cost: 320, name: { ko: "무지개 효과", zh: "彩虹特效", ja: "虹エフェクト", en: "Rainbow" } },
+  { id: "flame", category: "aura", iconId: "cat-flame", cost: 280, name: { ko: "열정 불꽃", zh: "热情火焰", ja: "情熱の炎", en: "Power Flame" } },
+  { id: "snow", category: "aura", iconId: "cat-snow", cost: 250, name: { ko: "눈꽃 효과", zh: "雪花特效", ja: "雪エフェクト", en: "Snow Glow" } },
+  { id: "galaxy", category: "aura", iconId: "cat-galaxy", cost: 450, name: { ko: "은하 효과", zh: "银河特效", ja: "銀河エフェクト", en: "Galaxy Aura" } }
 ];
 
 const messages = {
@@ -183,6 +183,11 @@ function itemName(item) {
   return item.name?.[language] || item.name?.ko || item.id;
 }
 
+function iconMarkup(iconId, className = "mall-icon") {
+  if (!iconId) return "";
+  return `<svg class="${className}" aria-hidden="true" focusable="false"><use href="./assets/point-mall-icons.svg#${iconId}"></use></svg>`;
+}
+
 function equippedItemList() {
   return Object.values(profile.equipped)
     .map((itemId) => items.find((item) => item.id === itemId))
@@ -190,7 +195,7 @@ function equippedItemList() {
 }
 
 function primaryEquippedIcon() {
-  return equippedItemList()[0]?.icon || "";
+  return equippedItemList()[0]?.iconId || "";
 }
 
 function renderEquippedItems() {
@@ -198,7 +203,7 @@ function renderEquippedItems() {
   equippedItemList().forEach((item) => {
     const icon = document.createElement("span");
     icon.className = `equipped-slot equipped-${item.category}`;
-    icon.textContent = item.icon;
+    icon.innerHTML = iconMarkup(item.iconId, "mall-icon equipped-icon");
     elements.equippedItems.append(icon);
   });
 }
@@ -257,7 +262,7 @@ function renderCharacterRoom() {
     button.type = "button";
     button.className = "item-category";
     button.classList.toggle("active", category.id === activeItemCategory);
-    button.innerHTML = `<span>${category.icon}</span><strong>${category.label[language] || category.label.ko}</strong>`;
+    button.innerHTML = `${iconMarkup(category.iconId, "mall-icon category-icon")}<strong>${category.label[language] || category.label.ko}</strong>`;
     button.addEventListener("click", () => {
       activeItemCategory = category.id;
       renderCharacterRoom();
@@ -270,7 +275,7 @@ function renderCharacterRoom() {
   remove.type = "button";
   remove.className = "item-choice remove-item";
   remove.classList.toggle("active", !profile.equipped[activeItemCategory]);
-  remove.innerHTML = `<span class="item-icon">×</span><strong>${message("removeItem")}</strong><small>✓</small>`;
+  remove.innerHTML = `<span class="item-icon remove-glyph">×</span><strong>${message("removeItem")}</strong><small>✓</small>`;
   remove.addEventListener("click", () => {
     delete profile.equipped[activeItemCategory];
     saveProfile();
@@ -286,7 +291,7 @@ function renderCharacterRoom() {
     button.className = "item-choice";
     button.classList.toggle("active", item.id === profile.equipped[item.category]);
     button.classList.toggle("locked", !unlocked);
-    button.innerHTML = `<span class="item-icon">${item.icon}</span><strong>${itemName(item)}</strong><small>${unlocked ? "✓" : `◆ ${item.cost}`}</small>`;
+    button.innerHTML = `${iconMarkup(item.iconId, "mall-icon item-art")}<strong>${itemName(item)}</strong><small>${unlocked ? "✓" : `◆ ${item.cost}`}</small>`;
     button.addEventListener("click", () => {
       if (!unlocked) {
         if (points < item.cost) {
@@ -321,7 +326,7 @@ function renderWalkers() {
     const selected = character.id === profile.character;
     walker.className = `walker route-${["a", "b", "c"][index]}${selected ? " selected" : ""}`;
     const color = selected ? profile.color : "original";
-    walker.innerHTML = `<span class="character-sprite sprite-${character.sprite} color-${color}"></span>${selected && primaryEquippedIcon() ? `<span class="walker-item">${primaryEquippedIcon()}</span>` : ""}`;
+    walker.innerHTML = `<span class="character-sprite sprite-${character.sprite} color-${color}"></span>${selected && primaryEquippedIcon() ? `<span class="walker-item">${iconMarkup(primaryEquippedIcon(), "mall-icon walker-icon")}</span>` : ""}`;
     elements.walkers.append(walker);
   });
 }
