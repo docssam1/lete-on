@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <title>GFIELD Geometry World</title>
     <link rel="preload" href="./assets/geometry-intro-poster.webp" as="image" fetchpriority="high" />
+    <link rel="preload" href="./assets/geometry-world-gateway.webp" as="image" />
     <link rel="preload" href="./assets/geometry-world-map.webp" as="image" />
-    <link rel="stylesheet" href="./styles.css?v=7" />
+    <link rel="stylesheet" href="./styles.css?v=8" />
   </head>
   <body>
     <section id="intro" class="intro" aria-label="Geometry World intro">
@@ -14,6 +15,16 @@
       <div class="intro-controls">
         <button id="introSound" type="button" aria-label="intro sound">♪</button>
         <button id="skipIntro" type="button" data-i18n="skipIntro">건너뛰기 ›</button>
+      </div>
+    </section>
+
+    <section id="worldGate" class="world-gate" aria-live="polite" aria-hidden="true">
+      <img src="./assets/geometry-world-gateway.webp" alt="Geometry World 친구들과 마을" />
+      <div class="world-gate-copy">
+        <p>GFIELD GEOMETRY WORLD</p>
+        <h1 data-i18n="gatewayTitle">지오메트리 월드로 이동 중…</h1>
+        <div class="gateway-progress" aria-hidden="true"><i></i></div>
+        <span data-i18n="gatewayHint">도형 친구들이 기다리고 있어요</span>
       </div>
     </section>
 
@@ -99,6 +110,6 @@
         </div>
       </section>
     </main>
-    <script type="module" src="./app.js?v=7"></script>
+    <script type="module" src="./app.js?v=8"></script>
   </body>
 </html>

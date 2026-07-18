@@ -6,6 +6,7 @@ const elements = {
   introVideo: $("#introVideo"),
   introSound: $("#introSound"),
   skipIntro: $("#skipIntro"),
+  worldGate: $("#worldGate"),
   castle: $("#cubeCastle"),
   walkers: $("#walkers"),
   guide: $("#mapGuide"),
@@ -91,19 +92,19 @@ const items = [
 
 const messages = {
   ko: {
-    skipIntro: "건너뛰기 ›", mapGuide: "{name}, 쌓기나무 성에 새로운 게임이 있어!", myPartner: "나의 도형 파트너", chooseCharacter: "캐릭터 선택", setupCharacter: "내 도형 친구 만들기", friends: "도형 친구들", color: "색상", items: "포인트 몰", itemHint: "포인트로 해금하고 여러 장식을 함께 착용해요", playerName: "내 이름", namePlaceholder: "이름이나 별명", nameHint: "이 이름으로 학습 기록이 저장돼요.", saveProfile: "이 이름으로 시작하기", updateProfile: "변경 내용 저장", nameRequired: "이름이나 별명을 먼저 적어 주세요.", removeItem: "장착 해제",
+    skipIntro: "건너뛰기 ›", gatewayTitle: "지오메트리 월드로 이동 중…", gatewayHint: "도형 친구들이 기다리고 있어요", mapGuide: "{name}, 쌓기나무 성에 새로운 게임이 있어!", myPartner: "나의 도형 파트너", chooseCharacter: "캐릭터 선택", setupCharacter: "내 도형 친구 만들기", friends: "도형 친구들", color: "색상", items: "포인트 몰", itemHint: "포인트로 해금하고 여러 장식을 함께 착용해요", playerName: "내 이름", namePlaceholder: "이름이나 별명", nameHint: "이 이름으로 학습 기록이 저장돼요.", saveProfile: "이 이름으로 시작하기", updateProfile: "변경 내용 저장", nameRequired: "이름이나 별명을 먼저 적어 주세요.", removeItem: "장착 해제",
     needPoints: "포인트가 조금 더 필요해!", unlocked: "새 아이템을 얻었어!"
   },
   zh: {
-    skipIntro: "跳过 ›", mapGuide: "{name}，积木城堡里有新游戏！", myPartner: "我的几何伙伴", chooseCharacter: "选择角色", setupCharacter: "创建我的几何伙伴", friends: "几何朋友", color: "颜色", items: "积分商城", itemHint: "用积分解锁并同时佩戴多件装饰", playerName: "我的名字", namePlaceholder: "名字或昵称", nameHint: "学习记录会保存在这个名字下。", saveProfile: "用这个名字开始", updateProfile: "保存更改", nameRequired: "请先填写名字或昵称。", removeItem: "卸下",
+    skipIntro: "跳过 ›", gatewayTitle: "正在进入几何世界…", gatewayHint: "几何伙伴们正在等你", mapGuide: "{name}，积木城堡里有新游戏！", myPartner: "我的几何伙伴", chooseCharacter: "选择角色", setupCharacter: "创建我的几何伙伴", friends: "几何朋友", color: "颜色", items: "积分商城", itemHint: "用积分解锁并同时佩戴多件装饰", playerName: "我的名字", namePlaceholder: "名字或昵称", nameHint: "学习记录会保存在这个名字下。", saveProfile: "用这个名字开始", updateProfile: "保存更改", nameRequired: "请先填写名字或昵称。", removeItem: "卸下",
     needPoints: "还需要更多积分！", unlocked: "获得了新道具！"
   },
   ja: {
-    skipIntro: "スキップ ›", mapGuide: "{name}、つみき城に新しいゲームがあるよ！", myPartner: "わたしの図形パートナー", chooseCharacter: "キャラクター選択", setupCharacter: "図形パートナーをつくる", friends: "図形のなかま", color: "カラー", items: "ポイントモール", itemHint: "ポイントで解放して複数のアイテムを装備", playerName: "なまえ", namePlaceholder: "なまえ・ニックネーム", nameHint: "この名前で学習記録を保存します。", saveProfile: "この名前ではじめる", updateProfile: "変更を保存", nameRequired: "名前かニックネームを入力してください。", removeItem: "はずす",
+    skipIntro: "スキップ ›", gatewayTitle: "ジオメトリーワールドへ移動中…", gatewayHint: "図形のなかまたちが待っているよ", mapGuide: "{name}、つみき城に新しいゲームがあるよ！", myPartner: "わたしの図形パートナー", chooseCharacter: "キャラクター選択", setupCharacter: "図形パートナーをつくる", friends: "図形のなかま", color: "カラー", items: "ポイントモール", itemHint: "ポイントで解放して複数のアイテムを装備", playerName: "なまえ", namePlaceholder: "なまえ・ニックネーム", nameHint: "この名前で学習記録を保存します。", saveProfile: "この名前ではじめる", updateProfile: "変更を保存", nameRequired: "名前かニックネームを入力してください。", removeItem: "はずす",
     needPoints: "ポイントがもう少し必要！", unlocked: "新しいアイテムをゲット！"
   },
   en: {
-    skipIntro: "Skip ›", mapGuide: "{name}, there is a new game in the cube castle!", myPartner: "My Geometry Partner", chooseCharacter: "Choose a Character", setupCharacter: "Create My Geometry Partner", friends: "Geometry Friends", color: "Color", items: "Point Mall", itemHint: "Unlock items with points and wear several together", playerName: "My name", namePlaceholder: "Name or nickname", nameHint: "Your learning progress is saved under this name.", saveProfile: "Start with this name", updateProfile: "Save changes", nameRequired: "Enter a name or nickname first.", removeItem: "Remove",
+    skipIntro: "Skip ›", gatewayTitle: "Entering Geometry World…", gatewayHint: "Your geometry friends are waiting", mapGuide: "{name}, there is a new game in the cube castle!", myPartner: "My Geometry Partner", chooseCharacter: "Choose a Character", setupCharacter: "Create My Geometry Partner", friends: "Geometry Friends", color: "Color", items: "Point Mall", itemHint: "Unlock items with points and wear several together", playerName: "My name", namePlaceholder: "Name or nickname", nameHint: "Your learning progress is saved under this name.", saveProfile: "Start with this name", updateProfile: "Save changes", nameRequired: "Enter a name or nickname first.", removeItem: "Remove",
     needPoints: "You need a few more points!", unlocked: "New item unlocked!"
   }
 };
@@ -354,16 +355,37 @@ function speak(text) {
   speechSynthesis.speak(utterance);
 }
 
-function finishIntro() {
-  if (!document.body.contains(elements.intro)) return;
-  elements.intro.classList.add("hide");
-  setTimeout(() => elements.intro.remove(), 700);
+let introFinishing = false;
+
+function enterWorldMap() {
   if (onboarding) {
-    setTimeout(() => openCharacterRoom(true), 760);
+    openCharacterRoom(true);
   } else {
-    setTimeout(() => elements.castle.classList.add("attention"), 850);
+    elements.castle.classList.add("attention");
     setTimeout(() => elements.castle.classList.remove("attention"), 3700);
   }
+}
+
+function finishIntro({ skipGateway = false } = {}) {
+  if (introFinishing || !document.body.contains(elements.intro)) return;
+  introFinishing = true;
+  elements.introVideo.pause();
+  elements.intro.classList.add("hide");
+  setTimeout(() => elements.intro.remove(), 700);
+
+  if (skipGateway) {
+    elements.worldGate?.remove();
+    setTimeout(enterWorldMap, 80);
+    return;
+  }
+
+  elements.worldGate.setAttribute("aria-hidden", "false");
+  elements.worldGate.classList.add("show");
+  setTimeout(() => elements.worldGate.classList.add("leaving"), 2050);
+  setTimeout(() => {
+    elements.worldGate.remove();
+    enterWorldMap();
+  }, 2650);
 }
 
 function openCharacterRoom(forceOnboarding = false) {
@@ -403,7 +425,7 @@ function completeProfile() {
   setTimeout(() => elements.castle.classList.remove("attention"), 2900);
 }
 
-if (new URLSearchParams(location.search).get("enter") === "1") finishIntro();
+if (new URLSearchParams(location.search).get("enter") === "1") finishIntro({ skipGateway: true });
 elements.skipIntro.addEventListener("click", finishIntro);
 elements.introVideo.addEventListener("ended", finishIntro);
 elements.introVideo.addEventListener("error", finishIntro);
