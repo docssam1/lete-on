@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town - Count the Cubes</title>
-    <link rel="stylesheet" href="./styles.css?v=count-layout-20260718a" />
+    <link rel="stylesheet" href="./styles.css?v=count-board-20260718b" />
     <script type="importmap">
       {
         "imports": {
@@ -86,6 +86,9 @@
       <footer class="action-bar">
         <button id="audio" class="icon-action" type="button" aria-pressed="false" aria-label="음소거">🔊</button>
         <button id="hint" type="button" data-i18n="hint">힌트</button>
+        <button class="mobile-view-action" type="button" data-view="front"><b aria-hidden="true">↑</b><span data-i18n="front">앞</span></button>
+        <button class="mobile-view-action" type="button" data-view="right"><b aria-hidden="true">→</b><span data-i18n="right">오른쪽</span></button>
+        <button class="mobile-view-action" type="button" data-view="top"><b aria-hidden="true">◆</b><span data-i18n="top">위</span></button>
         <button id="reset" type="button" data-i18n="reset">처음부터</button>
         <button id="next" type="button" data-i18n="next">다음 문제</button>
         <a class="exit-action" href="../../cube-town/" aria-label="나가기">⌂<small>나가기</small></a>
@@ -108,6 +111,6 @@
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
       <div id="success" class="success" aria-hidden="true"><strong>Great job!</strong><i></i><i></i><i></i><i></i><i></i><i></i></div>
     </main>
-    <script type="module" src="./app.js?v=count-layout-20260718a"></script>
+    <script type="module" src="./app.js?v=count-board-20260718b"></script>
   </body>
 </html>

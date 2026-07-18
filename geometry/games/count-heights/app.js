@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { levels, validateLevels } from "./levels.js";
-import { text } from "./i18n.js";
+import { text } from "./i18n.js?v=count-board-20260718b";
 
 validateLevels();
 
@@ -183,13 +183,11 @@ function setMode(mode) {
   renderModel();
   renderAnswers();
   renderNumberPad();
-  const topViewLocked = mode === "top";
-  controls.enabled = !topViewLocked;
+  controls.enabled = true;
   $$(".camera-tools button").forEach((button) => {
-    button.disabled = topViewLocked;
+    button.disabled = false;
   });
-  setCameraView(topViewLocked ? "top" : "free");
-  if (topViewLocked) setGuide("guideTop");
+  if (mode === "top") setGuide("guideTop");
 }
 
 function selectCell(x, z, options = {}) {
@@ -597,28 +595,70 @@ function renderModel() {
   const [width, depth] = currentProblem().board;
   const centerX = (width - 1) / 2;
   const centerZ = (depth - 1) / 2;
-  const floorSize = Math.max(width, depth) + 3.2;
+  const gridSize = Math.max(width, depth);
+  const traySize = gridSize + 1.96;
+  const railSpan = gridSize + 1.32;
+  const railOffset = gridSize / 2 + 0.62;
 
   const board = new THREE.Mesh(
-    new RoundedBoxGeometry(floorSize, 0.28, floorSize, 5, 0.16),
-    new THREE.MeshStandardMaterial({ map: boardWoodTexture, color: 0xe7c28e, roughness: 0.58, bumpMap: boardWoodTexture, bumpScale: 0.01 })
+    new RoundedBoxGeometry(traySize, 0.24, traySize, 8, 0.18),
+    new THREE.MeshStandardMaterial({
+      map: boardWoodTexture,
+      color: 0xe7c28e,
+      roughness: 0.58,
+      metalness: 0.01,
+      bumpMap: boardWoodTexture,
+      bumpScale: 0.01
+    })
   );
-  board.position.y = -0.2;
+  board.position.y = -0.15;
   board.receiveShadow = true;
+  board.castShadow = true;
   modelGroup.add(board);
 
+  const railMaterial = new THREE.MeshStandardMaterial({
+    map: boardWoodTexture,
+    color: 0xd0a36b,
+    roughness: 0.58,
+    metalness: 0.01,
+    bumpMap: boardWoodTexture,
+    bumpScale: 0.009
+  });
+  [
+    { x: 0, z: railOffset, sx: railSpan, sz: 0.18 },
+    { x: 0, z: -railOffset, sx: railSpan, sz: 0.18 },
+    { x: railOffset, z: 0, sx: 0.18, sz: railSpan },
+    { x: -railOffset, z: 0, sx: 0.18, sz: railSpan }
+  ].forEach((rail) => {
+    const mesh = new THREE.Mesh(
+      new RoundedBoxGeometry(rail.sx, 0.12, rail.sz, 5, 0.06),
+      railMaterial
+    );
+    mesh.position.set(rail.x, 0.005, rail.z);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    modelGroup.add(mesh);
+  });
+
   const floor = new THREE.Mesh(
-    new RoundedBoxGeometry(floorSize - 0.5, 0.09, floorSize - 0.5, 4, 0.06),
-    new THREE.MeshStandardMaterial({ map: insetWoodTexture, color: 0xfff2d7, roughness: 0.82, bumpMap: insetWoodTexture, bumpScale: 0.004 })
+    new THREE.PlaneGeometry(gridSize + 0.28, gridSize + 0.28),
+    new THREE.MeshStandardMaterial({
+      map: insetWoodTexture,
+      color: 0xfff2d7,
+      roughness: 0.82,
+      bumpMap: insetWoodTexture,
+      bumpScale: 0.004
+    })
   );
-  floor.position.y = -0.025;
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = 0.014;
   floor.receiveShadow = true;
   modelGroup.add(floor);
 
-  const grid = new THREE.GridHelper(Math.max(width, depth), Math.max(width, depth), 0x9c6637, 0xc99a64);
-  grid.position.y = 0.03;
+  const grid = new THREE.GridHelper(gridSize, gridSize, 0x8e6841, 0xc79b67);
+  grid.position.y = 0.025;
   grid.material.transparent = true;
-  grid.material.opacity = 0.56;
+  grid.material.opacity = 0.88;
   modelGroup.add(grid);
 
   occupiedCells().forEach((cell) => {
@@ -688,6 +728,7 @@ function renderModel() {
 function setCameraView(view) {
   const max = currentProblem().maxHeight;
   if (view === "front") camera.position.set(0.2, Math.max(3.2, max + 1.5), 8.6);
+  if (view === "right") camera.position.set(8.6, Math.max(3.2, max + 1.5), 0.2);
   if (view === "top") camera.position.set(0.01, 10.5, 0.01);
   if (view === "free") camera.position.set(7.2, Math.max(5.5, max + 2.2), 8.2);
   camera.lookAt(controls.target);
