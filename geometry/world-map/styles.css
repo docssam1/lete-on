@@ -418,6 +418,8 @@ body { background: #fdf8d8; color: var(--ink); }
 .character-dialog header p, .character-dialog header h2 { margin: 0; }
 .character-dialog header p { color: var(--green-dark); font-size: 12px; font-weight: 850; }
 .character-dialog header h2 { color: var(--navy); font-size: 27px; }
+.character-language-menu { flex: 0 0 auto; }
+.character-language-menu button { min-width: 38px; min-height: 36px; padding: 5px 7px; }
 .dialog-points { display: flex; align-items: center; gap: 6px; padding: 8px 11px; border: 1px solid var(--line); border-radius: 6px; background: white; font-weight: 900; }
 .character-content { min-height: 0; display: grid; grid-template-columns: 280px minmax(0,1fr); max-height: calc(min(760px,94vh) - 78px); overflow: auto; }
 .character-content > * { min-width: 0; }
@@ -530,6 +532,8 @@ body { background: #fdf8d8; color: var(--ink); }
   .character-options { padding: 14px 12px 24px; }
   .character-dialog > header { min-height: 70px; padding: 10px 12px; }
   .character-dialog header h2 { font-size: 22px; }
+  .character-language-menu { gap: 2px; }
+  .character-language-menu button { min-width: 32px; min-height: 32px; padding: 3px 5px; font-size: 11px; }
   .dialog-points { padding: 6px 8px; }
   .character-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
   .character-choice .character-sprite { width: 62px; height: 62px; }

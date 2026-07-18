@@ -440,6 +440,8 @@ Object.entries(fixedCopy).forEach(([lang, labels]) => {
 
 const compactUiCopy = {
   ko: {
+    skipProblem: "넘어가기",
+    skipProblemHint: "현재 문제를 건너뛰고 다음 문제로 이동해요. 포인트는 받지 않아요.",
     clear: "비우기",
     nextStage: "다음 문제",
     nextLevel: "다음 단계",
@@ -459,6 +461,8 @@ const compactUiCopy = {
     unmute: "소리 켜기"
   },
   zh: {
+    skipProblem: "跳过",
+    skipProblemHint: "跳过当前题目并前往下一题。本题不获得积分。",
     clear: "清空",
     nextStage: "下一题",
     nextLevel: "下一阶段",
@@ -478,6 +482,8 @@ const compactUiCopy = {
     unmute: "打开声音"
   },
   ja: {
+    skipProblem: "スキップ",
+    skipProblemHint: "この問題を飛ばして次へ進みます。この問題のポイントは獲得できません。",
     clear: "空にする",
     nextStage: "次の問題",
     nextLevel: "次のステップ",
@@ -497,6 +503,8 @@ const compactUiCopy = {
     unmute: "音を出す"
   },
   en: {
+    skipProblem: "Skip",
+    skipProblemHint: "Skip this problem and move to the next one. No points are awarded.",
     clear: "Clear",
     nextStage: "Next Problem",
     nextLevel: "Next Level",
@@ -766,7 +774,7 @@ function setViewerBoardSize(viewer, size) {
     if (Array.isArray(viewer.grid.material)) viewer.grid.material.forEach((material) => material.dispose());
     else viewer.grid.material?.dispose?.();
   }
-  const grid = new THREE.GridHelper(size, size, 0x8e6841, 0xc79b67);
+  const grid = new THREE.GridHelper(size, size, 0x6f604e, 0xa59177);
   grid.position.y = 0.025;
   viewer.scene.add(grid);
   viewer.grid = grid;
@@ -817,11 +825,11 @@ function createWoodBoard() {
   const inset = new THREE.Mesh(
     new THREE.PlaneGeometry(3.28, 3.28),
     new THREE.MeshStandardMaterial({
-      color: 0xfff2d7,
+      color: 0xdbe2d7,
       map: woodTexture,
       bumpMap: woodTexture,
-      bumpScale: 0.004,
-      roughness: 0.82,
+      bumpScale: 0.0025,
+      roughness: 0.9,
       transparent: false,
       opacity: 1
     })
@@ -930,6 +938,7 @@ function addEvents() {
   });
 
   document.querySelector("#resetBuild").addEventListener("click", resetBuild);
+  document.querySelector("#skipProblem").addEventListener("click", skipProblem);
   document.querySelector("#nextStep").addEventListener("click", nextProblem);
   document.querySelector("#viewFront").addEventListener("click", () => setView("front"));
   document.querySelector("#viewRight").addEventListener("click", () => setView("right"));
@@ -977,6 +986,7 @@ function loadProblem() {
   updateStepDisplay();
   updateGuideCharacter();
   updateNextButton();
+  updateSkipProblemButton();
 
   renderTarget();
   renderBuild();
@@ -1259,8 +1269,23 @@ function nextProblem() {
   if (state.transitioning || !state.readyForNext) return;
   state.transitioning = true;
   updateNextButton();
+  window.setTimeout(moveToFollowingProblem, 220);
+}
+
+function skipProblem() {
+  if (state.transitioning) return;
+  clearPendingSuccess();
+  state.transitioning = true;
+  state.readyForNext = false;
+  hideGuide();
+  const nextButton = document.querySelector("#nextStep");
+  if (nextButton) nextButton.hidden = true;
+  updateSkipProblemButton();
+  window.setTimeout(moveToFollowingProblem, 220);
+}
+
+function moveToFollowingProblem() {
   const level = getLevel();
-  window.setTimeout(() => {
     if (state.problemIndex < level.problems.length - 1) {
       state.problemIndex += 1;
       loadProblem();
@@ -1285,7 +1310,16 @@ function nextProblem() {
       return;
     }
     window.location.href = "../../cube-town/";
-  }, 220);
+}
+
+function updateSkipProblemButton() {
+  const button = document.querySelector("#skipProblem");
+  if (!button) return;
+  button.disabled = state.transitioning;
+  button.classList.toggle("loading", state.transitioning);
+  button.setAttribute("aria-busy", String(state.transitioning));
+  const label = button.querySelector(".skip-label");
+  if (label) label.textContent = state.transitioning ? t("moving") : t("skipProblem");
 }
 
 function updateNextButton() {
@@ -1490,6 +1524,7 @@ function applyLanguage() {
   updateAudioButton();
   updateBuilderControls();
   updateNextButton();
+  updateSkipProblemButton();
 }
 
 function showSuccessThenNext() {

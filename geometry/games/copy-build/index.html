@@ -102,6 +102,11 @@
         <button id="viewRight" class="rail-button" type="button"><b aria-hidden="true">→</b><span data-i18n="side">오른쪽</span></button>
         <button id="viewTop" class="rail-button" type="button"><b aria-hidden="true">◆</b><span data-i18n="top">위</span></button>
         <button id="resetBuild" class="rail-button" type="button"><b aria-hidden="true">⌫</b><span data-i18n="clear">비우기</span></button>
+        <button id="skipProblem" class="rail-button skip-problem" type="button" data-i18n-aria="skipProblemHint" aria-label="현재 문제 넘어가기">
+          <b class="skip-icon" aria-hidden="true">»</b>
+          <span class="skip-label" data-i18n="skipProblem">넘어가기</span>
+          <i class="button-spinner" aria-hidden="true"></i>
+        </button>
       </section>
 
       <div id="levelDialog" class="level-dialog" hidden>
@@ -136,6 +141,6 @@
       <div id="dragGhost" class="drag-ghost" aria-hidden="true"></div>
     </main>
 
-    <script type="module" src="../../app.js?v=profile-resume-20260718"></script>
+    <script type="module" src="../../app.js?v=skip-and-contrast-20260718"></script>
   </body>
 </html>
