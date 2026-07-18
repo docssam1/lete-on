@@ -110,6 +110,17 @@
         <button class="cubi-sprite" type="button" aria-label="큐비"></button>
       </aside>
 
+      <div id="conceptTutorial" class="concept-tutorial" hidden>
+        <section class="concept-card" role="dialog" aria-modal="true" aria-labelledby="conceptMessage">
+          <div class="concept-copy">
+            <p id="conceptMessage"></p>
+            <div id="conceptSteps" class="concept-steps" aria-label="tutorial progress"></div>
+            <button id="conceptNext" type="button"></button>
+          </div>
+          <span class="concept-cubi" aria-hidden="true"></span>
+        </section>
+      </div>
+
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
       <div id="success" class="success" aria-hidden="true">
         <span class="success-rays"></span>
@@ -119,6 +130,6 @@
         <i></i><i></i><i></i><i></i><i></i><i></i>
       </div>
     </main>
-    <script type="module" src="./app.js?v=audio-default-20260718"></script>
+    <script type="module" src="./app.js?v=count-tutorial-20260718"></script>
   </body>
 </html>

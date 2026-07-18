@@ -1104,3 +1104,98 @@ body {
   .docssam { right: calc(50px + env(safe-area-inset-right)); bottom: 4px; }
   .cubi-sprite { width: 38px; height: 38px; }
 }
+
+/* First-problem concept guide. It appears once, then regular play stays quiet. */
+.concept-tutorial[hidden] { display: none; }
+.concept-tutorial {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(40, 23, 11, .48);
+  backdrop-filter: blur(4px);
+}
+.concept-card {
+  display: grid;
+  grid-template-columns: minmax(270px, 460px) 190px;
+  align-items: center;
+  gap: 18px;
+  width: min(690px, 88vw);
+}
+.concept-copy {
+  position: relative;
+  padding: 24px 26px 20px;
+  border: 2px solid #d6b982;
+  border-radius: 16px;
+  background: #fffaf0;
+  box-shadow: 0 16px 36px rgba(28, 14, 6, .3), inset 0 2px 0 #fff;
+}
+.concept-copy::after {
+  content: "";
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  background: #fffaf0;
+  border-top: 2px solid #d6b982;
+  border-right: 2px solid #d6b982;
+  transform: translateY(-50%) rotate(45deg);
+}
+.concept-copy p {
+  min-height: 60px;
+  margin: 0 0 16px;
+  color: #332317;
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1.5;
+}
+.concept-copy button {
+  min-width: 104px;
+  min-height: 42px;
+  padding: 8px 18px;
+  border-color: #367532;
+  background: linear-gradient(#67bc5d, #3d9139);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 950;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.3), 0 3px 0 rgba(39,87,36,.3);
+}
+.concept-steps { display: flex; gap: 7px; margin: 0 0 14px; }
+.concept-steps span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #d9c8aa;
+}
+.concept-steps span.active { width: 24px; border-radius: 8px; background: #3b8e80; }
+.concept-steps span.done { background: #7db69a; }
+.concept-cubi {
+  width: 190px;
+  aspect-ratio: 1;
+  background: url("../../world-map/assets/geometry-characters.png") 0 0 / 300% 300% no-repeat;
+  filter: drop-shadow(0 14px 12px rgba(26, 14, 7, .35));
+  animation: count-cubi-alive 2.1s ease-in-out infinite;
+  transform-origin: 50% 88%;
+}
+@keyframes count-cubi-alive {
+  0%, 100% { transform: translateY(0) rotate(-1deg) scale(1); }
+  30% { transform: translateY(-8px) rotate(2deg) scale(1.025); }
+  65% { transform: translateY(-3px) rotate(-2deg) scale(1.01); }
+}
+
+@media (orientation: landscape) and (max-height: 560px) {
+  .concept-tutorial { padding: 8px; }
+  .concept-card {
+    grid-template-columns: minmax(250px, 1fr) 124px;
+    gap: 12px;
+    width: min(560px, 86vw);
+  }
+  .concept-copy { padding: 14px 16px 12px; border-radius: 12px; }
+  .concept-copy p { min-height: 44px; margin-bottom: 8px; font-size: 15px; line-height: 1.4; }
+  .concept-copy button { min-height: 34px; padding: 5px 13px; font-size: 13px; }
+  .concept-steps { margin-bottom: 8px; }
+  .concept-cubi { width: 124px; }
+}

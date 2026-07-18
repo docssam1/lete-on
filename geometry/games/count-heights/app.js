@@ -33,6 +33,10 @@ const elements = {
   audio: $("#audio"),
   toast: $("#toast"),
   success: $("#success"),
+  conceptTutorial: $("#conceptTutorial"),
+  conceptMessage: $("#conceptMessage"),
+  conceptSteps: $("#conceptSteps"),
+  conceptNext: $("#conceptNext"),
   docssam: $(".docssam"),
   cubi: $(".cubi-sprite")
 };
@@ -56,8 +60,12 @@ const state = {
   wrongAttempts: 0,
   audioEnabled: localStorage.getItem("gfield-audio-muted") !== "true",
   solved: false,
-  advanceTimer: null
+  advanceTimer: null,
+  tutorialStep: -1
 };
+
+const tutorialStorageKey = "gfield-count-heights-tutorial-v1";
+const tutorialKeys = ["tutorialCount1", "tutorialCount2", "tutorialCount3"];
 
 const currentProblem = () => levels[state.levelIndex].problems[state.problemIndex];
 const cellKey = (x, z) => `${x},${z}`;
@@ -86,6 +94,7 @@ function applyLanguage() {
   renderNumberPad();
   updatePrompt();
   renderModel();
+  if (state.tutorialStep >= 0) renderConceptTutorial();
 }
 
 function updateAudioButton() {
@@ -157,6 +166,51 @@ function initializeExample() {
   if (first) state.cellAnswers.set(first.key, first.height);
 }
 
+function shouldShowConceptTutorial() {
+  const forced = new URLSearchParams(window.location.search).get("tutorial") === "1";
+  return state.levelIndex === 0
+    && state.problemIndex === 0
+    && (forced || localStorage.getItem(tutorialStorageKey) !== "done");
+}
+
+function renderConceptTutorial() {
+  if (state.tutorialStep < 0) return;
+  elements.conceptMessage.textContent = text(state.lang, tutorialKeys[state.tutorialStep]);
+  elements.conceptNext.textContent = text(
+    state.lang,
+    state.tutorialStep === tutorialKeys.length - 1 ? "tutorialStart" : "tutorialNext"
+  );
+  elements.conceptSteps.replaceChildren();
+  tutorialKeys.forEach((_, index) => {
+    const dot = document.createElement("span");
+    dot.classList.toggle("active", index === state.tutorialStep);
+    dot.classList.toggle("done", index < state.tutorialStep);
+    elements.conceptSteps.append(dot);
+  });
+}
+
+function openConceptTutorial() {
+  state.tutorialStep = 0;
+  elements.conceptTutorial.hidden = false;
+  document.body.classList.add("count-tutorial-active");
+  renderConceptTutorial();
+  window.setTimeout(() => speak(text(state.lang, tutorialKeys[0])), 220);
+}
+
+function advanceConceptTutorial() {
+  if (state.tutorialStep < tutorialKeys.length - 1) {
+    state.tutorialStep += 1;
+    renderConceptTutorial();
+    speak(text(state.lang, tutorialKeys[state.tutorialStep]));
+    return;
+  }
+  state.tutorialStep = -1;
+  localStorage.setItem(tutorialStorageKey, "done");
+  elements.conceptTutorial.hidden = true;
+  document.body.classList.remove("count-tutorial-active");
+  speechSynthesis?.cancel();
+}
+
 function loadProblem() {
   state.problemIndex = Math.max(0, Math.min(levels[state.levelIndex].problems.length - 1, state.problemIndex));
   saveGameProgress("countHeights", {
@@ -184,6 +238,7 @@ function loadProblem() {
   renderModel();
   setGuide("guideStart", false);
   setCameraView("free");
+  if (shouldShowConceptTutorial()) openConceptTutorial();
 }
 
 function setMode(mode) {
@@ -351,7 +406,7 @@ function checkAnswer() {
   if (!occupied.every(({ key }) => state.cellAnswers.has(key))) return;
   if (state.totalAnswer === "") {
     selectTotal();
-    setGuide("totalMissing");
+    setGuide("totalMissing", false);
     return;
   }
 
@@ -363,7 +418,7 @@ function checkAnswer() {
     renderTopBoard();
     renderModel();
     showToast(text(state.lang, "heightWrong"));
-    setGuide("heightWrong");
+    setGuide("heightWrong", false);
     return;
   }
 
@@ -371,7 +426,7 @@ function checkAnswer() {
     state.wrongAttempts += 1;
     elements.totalDisplay.classList.add("wrong");
     showToast(text(state.lang, "totalWrong"));
-    setGuide("totalWrong");
+    setGuide("totalWrong", false);
     return;
   }
   completeProblem();
@@ -389,7 +444,7 @@ function completeProblem() {
   void elements.success.offsetWidth;
   elements.success.classList.add("show");
   playSuccessBurstSound();
-  setGuide("guideSuccess");
+  setGuide("guideSuccess", false);
   renderNumberPad();
   state.advanceTimer = setTimeout(() => {
     elements.success.classList.remove("show");
@@ -824,6 +879,7 @@ animate();
 
 elements.modelMode.addEventListener("click", () => setMode("model"));
 elements.topMode.addEventListener("click", () => setMode("top"));
+elements.conceptNext.addEventListener("click", advanceConceptTutorial);
 elements.totalDisplay.addEventListener("click", selectTotal);
 elements.hint.addEventListener("click", giveHint);
 elements.reset.addEventListener("click", resetProblem);
