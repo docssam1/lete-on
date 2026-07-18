@@ -766,3 +766,262 @@ body {
   }
   .answer-panel:has(#topBoard:not([hidden])) .top-board { min-height: 88px; }
 }
+
+/* Shared writing surface: cube-top and top-view inputs always mirror one another. */
+.answer-panel {
+  display: grid;
+  grid-template-rows: 58px minmax(220px, 1fr) auto auto auto;
+  padding-bottom: 12px;
+}
+
+.input-canvas {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 220px;
+  overflow: hidden;
+  border-bottom: 1px solid #d7b98f;
+  background:
+    linear-gradient(rgba(255, 250, 238, .84), rgba(246, 222, 186, .86)),
+    repeating-linear-gradient(90deg, rgba(151, 94, 43, .05) 0 1px, transparent 1px 42px);
+}
+
+.input-canvas .model-prompt {
+  position: absolute;
+  z-index: 2;
+  top: 10px;
+  left: 50%;
+  min-height: 0;
+  width: max-content;
+  max-width: calc(100% - 20px);
+  padding: 7px 13px;
+  border: 1px solid rgba(166, 113, 63, .42);
+  border-radius: 999px;
+  background: rgba(255, 250, 240, .9);
+  box-shadow: 0 4px 12px rgba(91, 49, 22, .08);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.input-canvas .model-prompt[hidden] { display: none; }
+.input-canvas .model-prompt strong { font-size: 12px; }
+
+.input-canvas .top-board {
+  width: min(290px, 82%);
+  min-height: 0;
+  padding: 12px;
+  gap: 5px;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  align-content: center;
+}
+
+.input-canvas:has(.model-prompt:not([hidden])) .top-board { padding-top: 54px; }
+.top-board.read-only .top-cell:not(.empty) { cursor: default; }
+.top-board.read-only .top-cell:not(.empty):hover { transform: none; }
+
+.top-cell {
+  border-color: #9a7049;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.72), rgba(238,205,158,.56)),
+    repeating-linear-gradient(0deg, rgba(139,88,40,.05) 0 1px, transparent 1px 9px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.52);
+}
+.top-cell.empty { border-color: rgba(154,112,73,.58); background: rgba(255,250,239,.5); }
+.top-cell.selected { border-color: #e26f51; background: #fff1e7; }
+
+@media (orientation: landscape) and (max-height: 560px) {
+  .play-grid {
+    grid-template-columns: minmax(280px, 54fr) minmax(260px, 46fr);
+    gap: 6px;
+  }
+
+  .viewer-panel { grid-template-rows: 32px minmax(0, 1fr); }
+  .viewer-panel > header { height: 32px; }
+
+  .answer-panel,
+  .answer-panel:has(#topBoard:not([hidden])) {
+    grid-template-rows: 31px minmax(98px, 1fr) 40px 18px minmax(82px, .78fr);
+    padding: 0 0 3px;
+  }
+
+  .answer-panel > header { height: 31px; }
+  .answer-panel .view-switch { height: 27px; }
+  .answer-panel .view-switch button { font-size: 9px; }
+
+  .input-canvas {
+    grid-row: 2;
+    min-height: 98px;
+    overflow: hidden;
+  }
+
+  .input-canvas .model-prompt {
+    display: none;
+  }
+  .input-canvas .model-prompt strong {
+    overflow: hidden;
+    display: block;
+    font-size: 8px;
+    text-overflow: ellipsis;
+  }
+
+  .input-canvas .top-board,
+  .answer-panel:has(#topBoard:not([hidden])) .top-board {
+    grid-row: auto;
+    width: min(29vh, 152px);
+    height: auto;
+    min-height: 0;
+    padding: 4px;
+    gap: 2px;
+    overflow: visible;
+  }
+  .input-canvas:has(.model-prompt:not([hidden])) .top-board { padding-top: 4px; }
+  .top-cell { min-width: 0; border-width: 1px; border-radius: 3px; font-size: 14px; }
+
+  .sum-work,
+  .answer-panel:has(#topBoard:not([hidden])) .sum-work {
+    grid-row: 3;
+    min-height: 0;
+    padding: 3px 6px;
+  }
+  .total-display { height: 34px; min-height: 34px; }
+
+  .number-prompt { grid-row: 4; padding: 2px; font-size: 8px; }
+  .number-pad,
+  .answer-panel:has(#topBoard:not([hidden])) .number-pad {
+    grid-row: 5;
+    gap: 3px;
+    padding: 0 4px;
+  }
+  .number-pad button { min-height: 30px; font-size: 15px; }
+
+  .action-bar {
+    width: 46px;
+    grid-template-rows: repeat(8, minmax(0, 1fr));
+  }
+
+  .docssam {
+    left: auto;
+    right: calc(50px + env(safe-area-inset-right));
+    bottom: 4px;
+    transform: none !important;
+  }
+  .cubi-sprite { width: 38px; height: 38px; }
+}
+
+@media (orientation: landscape) and (max-height: 390px) {
+  .answer-panel,
+  .answer-panel:has(#topBoard:not([hidden])) {
+    grid-template-rows: 29px minmax(92px, 1fr) 36px 17px minmax(76px, .75fr);
+  }
+  .answer-panel > header { height: 29px; }
+  .answer-panel .view-switch { height: 25px; }
+  .input-canvas { min-height: 92px; }
+  .input-canvas .top-board,
+  .answer-panel:has(#topBoard:not([hidden])) .top-board { width: min(28vh, 142px); }
+  .total-display { height: 31px; min-height: 31px; }
+}
+
+/* Focused game shell: language and level are chosen before entering Cube Town. */
+html,
+body {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.game-shell {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  width: min(1600px, 100vw);
+  height: 100dvh;
+  min-height: 0;
+  margin: 0 auto;
+  padding: 8px 66px 8px 8px;
+  overflow: hidden;
+}
+
+.topbar,
+.mission-bar { display: none !important; }
+
+.play-grid {
+  grid-row: 1;
+  grid-template-columns: minmax(420px, 52fr) minmax(390px, 48fr);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  gap: 8px;
+}
+
+.viewer-panel,
+.answer-panel { height: 100%; min-height: 0; }
+.viewer-panel { display: grid; grid-template-rows: 48px minmax(0, 1fr); }
+.viewer-panel > header { min-height: 0; height: 48px; padding: 5px 12px; }
+.viewer-panel .progress-box button,
+.camera-tools { display: none; }
+.scene { height: 100%; min-height: 0; }
+
+.answer-panel {
+  grid-template-rows: 48px minmax(210px, 1fr) 64px minmax(140px, .72fr);
+  padding-bottom: 6px;
+}
+.answer-panel > header { min-height: 0; height: 48px; padding: 4px 7px; }
+.answer-panel > header h2 { display: none; }
+.answer-panel .view-switch { width: 100%; height: 38px; }
+.answer-panel .view-switch button { min-width: 0; min-height: 30px; padding: 4px 8px; }
+
+.input-canvas { min-height: 0; }
+.sum-work { min-height: 0; padding: 7px 10px; }
+.sum-work .total-display { min-height: 48px; height: 48px; }
+.number-prompt { display: none; }
+.number-pad { grid-row: 4; align-content: stretch; padding: 0 10px; }
+.number-pad button { height: auto; min-height: 42px; }
+.number-pad .clear-key { display: none; }
+
+.action-bar {
+  position: fixed;
+  z-index: 30;
+  top: 8px;
+  right: max(7px, env(safe-area-inset-right));
+  bottom: 8px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(8, minmax(0, 1fr));
+  gap: 5px;
+  width: 52px;
+  margin: 0;
+  padding: 5px;
+}
+.action-bar .mobile-view-action { display: grid; place-items: center; gap: 1px; }
+.action-bar .mobile-view-action b { font-size: 15px; line-height: 1; }
+.action-bar .mobile-view-action span { font-size: 8px; line-height: 1; }
+.action-bar button,
+.action-bar .exit-action { min-height: 0; padding: 4px 2px; font-size: 10px; line-height: 1.08; }
+.action-bar .icon-action { font-size: 17px; }
+.exit-action small { font-size: 8px; }
+
+.docssam {
+  position: fixed;
+  z-index: 24;
+  left: auto;
+  right: calc(64px + env(safe-area-inset-right));
+  bottom: 12px;
+  transform: none !important;
+}
+.speech-bubble { display: none; }
+.cubi-sprite { width: 72px; height: 72px; opacity: .92; }
+
+@media (orientation: landscape) and (max-height: 560px) {
+  .game-shell { padding: 5px calc(52px + env(safe-area-inset-right)) 5px max(5px, env(safe-area-inset-left)); }
+  .play-grid { grid-template-columns: minmax(280px, 54fr) minmax(260px, 46fr); gap: 6px; }
+  .viewer-panel { grid-template-rows: 32px minmax(0, 1fr); }
+  .viewer-panel > header { height: 32px; }
+  .answer-panel,
+  .answer-panel:has(#topBoard:not([hidden])) {
+    grid-template-rows: 31px minmax(98px, 1fr) 40px minmax(82px, .78fr);
+  }
+  .action-bar { top: 5px; right: max(4px, env(safe-area-inset-right)); bottom: 5px; width: 46px; gap: 2px; padding: 3px; }
+  .docssam { right: calc(50px + env(safe-area-inset-right)); bottom: 4px; }
+  .cubi-sprite { width: 38px; height: 38px; }
+}

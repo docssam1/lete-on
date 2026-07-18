@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town - Count the Cubes</title>
-    <link rel="stylesheet" href="./styles.css?v=count-board-20260718b" />
+    <link rel="stylesheet" href="./styles.css?v=count-board-20260718c" />
     <script type="importmap">
       {
         "imports": {
@@ -62,13 +62,15 @@
             <h2 data-i18n="answerTitle">쓴 숫자 확인</h2>
             <div class="view-switch" role="tablist" aria-label="input view">
               <button id="modelMode" type="button" role="tab" class="active" data-mode="model" data-i18n="modelView">쌓기나무 위에 쓰기</button>
-              <button id="topMode" type="button" role="tab" data-mode="top" data-i18n="topView">위에서 본 칸에 쓰기</button>
+              <button id="topMode" type="button" role="tab" data-mode="top" data-i18n="topView">바탕그림에 쓰기</button>
             </div>
           </header>
-          <div id="modelPrompt" class="model-prompt">
-            <strong data-i18n="selectColumn">숫자를 쓸 쌓기나무의 맨 위를 눌러 보자!</strong>
+          <div class="input-canvas">
+            <div id="modelPrompt" class="model-prompt">
+              <strong data-i18n="selectColumn">숫자를 쓸 쌓기나무의 맨 위를 눌러 보자!</strong>
+            </div>
+            <div id="topBoard" class="top-board" aria-label="위에서 본 바탕그림"></div>
           </div>
-          <div id="topBoard" class="top-board" hidden></div>
 
           <section class="sum-work total-only">
             <div id="additionLine" class="addition-line" hidden></div>
@@ -111,6 +113,6 @@
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
       <div id="success" class="success" aria-hidden="true"><strong>Great job!</strong><i></i><i></i><i></i><i></i><i></i><i></i></div>
     </main>
-    <script type="module" src="./app.js?v=profile-resume-20260718"></script>
+    <script type="module" src="./app.js?v=count-board-20260718c"></script>
   </body>
 </html>

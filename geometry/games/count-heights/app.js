@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { levels, validateLevels } from "./levels.js";
-import { text } from "./i18n.js?v=count-board-20260718b";
+import { text } from "./i18n.js?v=count-board-20260718c";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
 validateLevels();
@@ -90,7 +90,7 @@ function applyLanguage() {
 
 function updateAudioButton() {
   const label = text(state.lang, state.audioEnabled ? "audioOn" : "audioOff");
-  elements.audio.textContent = state.audioEnabled ? "🔊" : "🔇";
+  elements.audio.textContent = state.audioEnabled ? "♪" : "∕";
   elements.audio.setAttribute("aria-label", label);
   elements.audio.setAttribute("title", label);
   elements.audio.setAttribute("aria-pressed", String(state.audioEnabled));
@@ -145,11 +145,14 @@ function setGuide(key, shouldSpeak = true) {
 }
 
 function updatePrompt() {
-  elements.numberPrompt.textContent = text(state.lang, state.inputTarget === "total" ? "chooseTotal" : "chooseNumber");
+  const key = state.inputTarget === "total"
+    ? "chooseTotal"
+    : state.mode === "top" ? "chooseTopNumber" : "chooseNumber";
+  elements.numberPrompt.textContent = text(state.lang, key);
 }
 
 function initializeExample() {
-  if (state.levelIndex !== 0) return;
+  if (state.levelIndex !== 0 || state.problemIndex !== 0) return;
   const first = occupiedCells()[0];
   if (first) state.cellAnswers.set(first.key, first.height);
 }
@@ -177,6 +180,7 @@ function loadProblem() {
   renderTopBoard();
   renderAnswers();
   renderNumberPad();
+  updatePrompt();
   renderModel();
   setGuide("guideStart", false);
   setCameraView("free");
@@ -189,16 +193,18 @@ function setMode(mode) {
   elements.modelMode.setAttribute("aria-selected", String(mode === "model"));
   elements.topMode.setAttribute("aria-selected", String(mode === "top"));
   elements.modelPrompt.hidden = mode !== "model";
-  elements.topBoard.hidden = mode !== "top";
+  elements.topBoard.hidden = false;
+  elements.topBoard.classList.toggle("read-only", mode === "model");
   renderTopBoard();
   renderModel();
   renderAnswers();
   renderNumberPad();
+  updatePrompt();
   controls.enabled = true;
   $$(".camera-tools button").forEach((button) => {
     button.disabled = false;
   });
-  if (mode === "top") setGuide("guideTop");
+  if (mode === "top") setGuide("guideTop", false);
 }
 
 function selectCell(x, z, options = {}) {
@@ -211,7 +217,7 @@ function selectCell(x, z, options = {}) {
   renderModel();
   renderNumberPad();
   updatePrompt();
-  setGuide(state.mode === "top" ? "guideTop" : "guideCell");
+  setGuide(state.mode === "top" ? "guideTop" : "guideCell", false);
 }
 
 function selectTotal() {
@@ -247,7 +253,12 @@ function renderTopBoard() {
         button.classList.toggle("hint", key === state.hintKey);
         button.classList.toggle("example", state.levelIndex === 0 && key === occupiedCells()[0]?.key);
         button.setAttribute("aria-label", `${x + 1}, ${z + 1}`);
-        button.addEventListener("click", () => selectCell(x, z));
+        if (state.mode === "top") {
+          button.addEventListener("click", () => selectCell(x, z));
+        } else {
+          button.tabIndex = -1;
+          button.setAttribute("aria-disabled", "true");
+        }
       }
       elements.topBoard.append(button);
     }
@@ -281,7 +292,7 @@ function renderNumberPad() {
     button.type = "button";
     button.textContent = String(value);
     button.disabled = state.solved
-      || (state.inputTarget === "cell" && (value > 4 || (value === 0 && state.mode === "model")));
+      || (state.inputTarget === "cell" && (value > 4 || value === 0));
     button.addEventListener("click", () => enterNumber(value));
     elements.numberPad.append(button);
   }
@@ -301,7 +312,7 @@ function enterNumber(value) {
       showToast(text(state.lang, state.mode === "top" ? "selectCell" : "selectColumn"));
       return;
     }
-    if (value > 4 || (value === 0 && state.mode === "model")) return;
+    if (value > 4 || value === 0) return;
     state.cellAnswers.set(state.selectedKey, value);
     state.wrongKeys.delete(state.selectedKey);
     state.hintKey = null;
@@ -783,20 +794,6 @@ function animate() {
 }
 animate();
 
-function setupDocssamDrag() {
-  let drag = null;
-  if (!elements.cubi) return;
-  elements.cubi.addEventListener("pointerdown", (event) => {
-    drag = { x: event.clientX, y: event.clientY };
-    elements.cubi.setPointerCapture(event.pointerId);
-  });
-  elements.cubi.addEventListener("pointermove", (event) => {
-    if (!drag) return;
-    elements.docssam.style.transform = `translate(${event.clientX - drag.x}px, ${event.clientY - drag.y}px)`;
-  });
-  elements.cubi.addEventListener("pointerup", () => { drag = null; });
-}
-
 elements.modelMode.addEventListener("click", () => setMode("model"));
 elements.topMode.addEventListener("click", () => setMode("top"));
 elements.totalDisplay.addEventListener("click", selectTotal);
@@ -831,7 +828,6 @@ window.addEventListener("keydown", (event) => {
   if (event.key === "Backspace" || event.key === "Delete") clearInput();
 });
 
-setupDocssamDrag();
 applyLanguage();
 renderLevelList();
 loadProblem();
