@@ -291,7 +291,10 @@ function renderCharacterRoom() {
     button.className = "item-choice";
     button.classList.toggle("active", item.id === profile.equipped[item.category]);
     button.classList.toggle("locked", !unlocked);
-    button.innerHTML = `${iconMarkup(item.iconId, "mall-icon item-art")}<strong>${itemName(item)}</strong><small>${unlocked ? "✓" : `◆ ${item.cost}`}</small>`;
+    const itemStatus = unlocked
+      ? "✓"
+      : `${iconMarkup("cat-gem", "mall-icon cost-icon")}<span>${item.cost}</span>`;
+    button.innerHTML = `${iconMarkup(item.iconId, "mall-icon item-art")}<strong>${itemName(item)}</strong><small>${itemStatus}</small>`;
     button.addEventListener("click", () => {
       if (!unlocked) {
         if (points < item.cost) {

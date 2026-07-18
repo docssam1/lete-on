@@ -143,7 +143,7 @@ body { background: #fdf8d8; color: var(--ink); }
   color: var(--navy);
   font-weight: 900;
 }
-.point-display span, .dialog-points span { color: #e7aa13; }
+.point-icon { display: block; flex: 0 0 auto; width: 22px; height: 22px; color: #e7aa13; filter: drop-shadow(0 2px 1px rgba(126,84,0,.2)); }
 
 .map-guide {
   position: absolute;
@@ -379,7 +379,8 @@ body { background: #fdf8d8; color: var(--ink); }
 .item-icon { font-size: 29px; line-height: 1; }
 .remove-glyph { display: grid; place-items: center; width: 42px; height: 42px; border: 2px dashed #aab4af; border-radius: 12px; color: #8b918e; font-size: 28px; }
 .item-choice strong { font-size: 11px; text-align: center; }
-.item-choice small { color: #986d00; font-size: 10px; font-weight: 850; }
+.item-choice small { min-height: 14px; display: flex; align-items: center; justify-content: center; gap: 2px; color: #986d00; font-size: 10px; font-weight: 850; }
+.cost-icon { width: 13px; height: 13px; color: #dca91b; filter: none; }
 .item-choice:nth-child(2n) .item-art { color: #4d7199; }
 .item-choice:nth-child(3n) .item-art { color: #9b6937; }
 .item-choice:nth-child(4n) .item-art { color: #56845d; }
