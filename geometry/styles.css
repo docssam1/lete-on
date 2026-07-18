@@ -2819,3 +2819,15 @@ body::before {
   }
   .guide-bubble p { font-size: 11px !important; }
 }
+
+/* v2: larger brand watermark */
+.brand-watermark { gap: 7px; opacity: .38; }
+.brand-watermark span { font-size: 26px; }
+.brand-watermark strong { font-size: 21px; }
+.brand-watermark small { font-size: 15px; }
+
+@media (orientation: landscape) and (max-height: 560px) {
+  .brand-watermark span { font-size: 18px; }
+  .brand-watermark strong { font-size: 14px; }
+  .brand-watermark small { font-size: 10px; }
+}
