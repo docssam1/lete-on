@@ -49,6 +49,9 @@ button.game-card{padding:0;color:inherit;font:inherit;text-align:left;cursor:poi
 .copy-level-card strong{display:block;margin:0 30px 0 11px;color:var(--navy);font-size:16px;line-height:1.25}
 .copy-level-card p{min-height:46px;margin:6px 11px 12px;color:var(--muted);font-size:11px;line-height:1.4}
 .copy-level-card b{position:absolute;right:10px;bottom:12px;color:#278958;font-size:20px}
+.copy-level-done{position:absolute;top:8px;right:8px;z-index:2;padding:4px 10px;border-radius:999px;background:linear-gradient(135deg,#2fae62,#14683a);color:#fff;font-size:11px;font-weight:950;letter-spacing:.2px;box-shadow:0 2px 6px rgba(20,80,45,.35),inset 0 1px 0 rgba(255,255,255,.35)}
+.copy-level-card.completed{border-color:#2d9b61;box-shadow:0 0 0 2px rgba(45,155,97,.28)}
+.copy-level-card.completed img{filter:saturate(1.05)}
 
 @media(max-width:900px){.copy-level-options{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:560px){.copy-level-options{grid-template-columns:repeat(2,minmax(0,1fr))}.copy-level-dialog{padding:8px}.copy-level-panel{max-height:calc(var(--app-dvh) - 16px)}.copy-level-head{padding:10px 12px}.copy-level-head h2{font-size:20px}.copy-level-card strong{font-size:14px}}
