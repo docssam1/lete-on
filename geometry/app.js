@@ -950,6 +950,12 @@ function addEvents() {
   document.querySelector("#tutorialAction").addEventListener("click", beginTutorialInteraction);
   document.querySelector("#hintAction").addEventListener("click", showHint);
   document.querySelector(".menu-exit").addEventListener("click", handleMenuExit);
+  document.querySelector("#levelPickerButton")?.addEventListener("click", openLevelPicker);
+  document.querySelector("#problemProgress")?.addEventListener("click", openLevelPicker);
+  document.querySelector("#closeLevelDialog")?.addEventListener("click", closeLevelPicker);
+  document.querySelector("#levelDialog")?.addEventListener("click", (event) => {
+    if (event.target.id === "levelDialog") closeLevelPicker();
+  });
 }
 
 function loadProblem() {
@@ -1357,9 +1363,18 @@ function handleMenuExit(event) {
 
 function openLevelPicker() {
   renderLevelOptions();
+  updatePrintWorksheetLink();
   const dialog = document.querySelector("#levelDialog");
   dialog.hidden = false;
   dialog.querySelector(".level-option.active")?.focus();
+}
+
+function updatePrintWorksheetLink() {
+  const link = document.querySelector("#printWorksheetLink");
+  if (!link) return;
+  const level = state.levelIndex + 1;
+  const game = isColorProblem() ? "copy-color" : "copy-wood";
+  link.href = `../../cube-town/print.html?game=${game}&level=${level}`;
 }
 
 function closeLevelPicker() {
