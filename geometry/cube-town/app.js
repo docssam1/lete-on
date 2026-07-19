@@ -5,32 +5,51 @@ const $$ = (selector) => [...document.querySelectorAll(selector)];
 let language = localStorage.getItem("gfield-language") || "ko";
 
 const copyLevelText = {
-  ko: { title: "똑같이 쌓기", subtitle: "도전할 레벨을 골라 바로 시작해요.", close: "닫기" },
-  zh: { title: "搭出相同形状", subtitle: "选择等级并开始挑战。", close: "关闭" },
-  ja: { title: "同じ形を作ろう", subtitle: "挑戦するレベルを選んで始めよう。", close: "閉じる" },
-  en: { title: "Copy the Build", subtitle: "Choose a level and start building.", close: "Close" }
+  ko: { title: "똑같이 쌓기", subtitle: "도전할 레벨을 골라 바로 시작해요.", close: "닫기", done: "완료!" },
+  zh: { title: "搭出相同形状", subtitle: "选择等级并开始挑战。", close: "关闭", done: "完成！" },
+  ja: { title: "同じ形を作ろう", subtitle: "挑戦するレベルを選んで始めよう。", close: "閉じる", done: "クリア！" },
+  en: { title: "Copy the Build", subtitle: "Choose a level and start building.", close: "Close", done: "DONE!" }
 };
+
+// A copy-build level is COMPLETE when every one of its 10 problems has been
+// solved (each solve writes `copy-build:{levelIndex}:{problemIndex}` into
+// gfield-rewarded-games). Levels 4-5 run in shape-build, which has no solve
+// tracking yet, so they never show the badge.
+function completedCopyLevels() {
+  let solved;
+  try { solved = new Set(JSON.parse(localStorage.getItem("gfield-rewarded-games") || "[]")); }
+  catch { solved = new Set(); }
+  const done = new Set();
+  for (let li = 0; li < 3; li += 1) {
+    let count = 0;
+    for (let pi = 0; pi < 10; pi += 1) {
+      if (solved.has(`copy-build:${li}:${pi}`)) count += 1;
+    }
+    if (count >= 10) done.add(li + 1);
+  }
+  return done;
+}
 
 const copyLevels = [
   {
     level: 1, image: "./assets/copy-levels/level-1.png", href: "../games/copy-build/?level=1",
     title: { ko: "큐브 기초", zh: "方块基础", ja: "キューブの基本", en: "Cube Basics" },
-    description: { ko: "낮은 원목과 컬러 모양을 따라 쌓아요.", zh: "搭出较低的木色和彩色形状。", ja: "低い木目とカラーの形を作ります。", en: "Copy low wooden and colored builds." }
+    description: { ko: "낮은 원목과 컴러 모양을 따라 쌓아요.", zh: "搭出较低的木色和彩色形状。", ja: "低い木目とカラーの形を作ります。", en: "Copy low wooden and colored builds." }
   },
   {
     level: 2, image: "./assets/copy-levels/level-2.png", href: "../games/copy-build/?level=2",
     title: { ko: "입체 쌓기", zh: "立体搭建", ja: "立体を積む", en: "Build in 3D" },
-    description: { ko: "3×3×3 안에서 높이와 색을 맞춰요.", zh: "在3×3×3内匹配高度和颜色。", ja: "3×3×3で高さと色を合わせます。", en: "Match height and color in a 3×3×3 space." }
+    description: { ko: "3×3×3 안에서 높이와 색을 맞추요.", zh: "在3×3×3内匹配高度和颜色。", ja: "3×3×3で高さと色を合わせます。", en: "Match height and color in a 3×3×3 space." }
   },
   {
     level: 3, image: "./assets/copy-levels/level-3.png", href: "../games/copy-build/?level=3",
-    title: { ko: "컬러와 큰 구조", zh: "颜色与大型结构", ja: "カラーと大きな形", en: "Color & Larger Builds" },
+    title: { ko: "컴러와 큰 구조", zh: "颜色与大型结构", ja: "カラーと大きな形", en: "Color & Larger Builds" },
     description: { ko: "색 위치와 4×4×4 원목 구조에 도전해요.", zh: "挑战颜色位置和4×4×4木制结构。", ja: "色の位置と4×4×4の木目構造に挑戦します。", en: "Tackle color positions and 4×4×4 wooden builds." }
   },
   {
     level: 4, image: "./assets/copy-levels/level-4.png", href: "../games/shape-build/?level=4",
     title: { ko: "직육면체 방향", zh: "长方体方向", ja: "直方体の向き", en: "Rectangular Prisms" },
-    description: { ko: "직육면체를 눕히고 세워 방향까지 맞춰요.", zh: "横放或竖放长方体并匹配方向。", ja: "直方体を寝かせたり立てたりして向きを合わせます。", en: "Turn and stand rectangular prisms to match." }
+    description: { ko: "직육면체를 늽히고 세워 방향까지 맞추요.", zh: "横放或竖放长方体并匹配方向。", ja: "直方体を寝かせたり立てたりして向きを合わせます。", en: "Turn and stand rectangular prisms to match." }
   },
   {
     level: 5, image: "./assets/copy-levels/level-5.png", href: "../games/shape-build/?level=5",
@@ -54,13 +73,16 @@ function renderCopyLevelDialog() {
   $("#copyLevelSubtitle").textContent = text.subtitle;
   $("#closeCopyLevelDialog").setAttribute("aria-label", text.close);
   const options = $("#copyLevelOptions");
+  const done = completedCopyLevels();
   options.replaceChildren();
   copyLevels.forEach((entry) => {
+    const isDone = done.has(entry.level);
     const link = document.createElement("a");
-    link.className = "copy-level-card";
+    link.className = `copy-level-card${isDone ? " completed" : ""}`;
     link.href = entry.href;
     link.innerHTML = `
       <img src="${entry.image}" alt="" />
+      ${isDone ? `<span class="copy-level-done">✓ ${text.done}</span>` : ""}
       <span class="copy-level-number">LEVEL ${entry.level}</span>
       <strong>${entry.title[language] || entry.title.ko}</strong>
       <p>${entry.description[language] || entry.description.ko}</p>

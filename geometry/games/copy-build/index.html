@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town</title>
     <link rel="stylesheet" href="../../styles.css?v=menu-cleanup-20260719a" />
+    <link rel="stylesheet" href="../../shared/portrait-lock.css?v=1" />
     <script type="importmap">
       {
         "imports": {
@@ -156,11 +157,16 @@
       // Character growth: watch the solved-problem count and celebrate level-ups
       // and Cubi evolutions in-game. Kept as a standalone module so the copy-build
       // engine (app.js) stays completely untouched.
-      import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve2-20260719a";
+      import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve3-20260719a";
       const lang = () => localStorage.getItem("gfield-language") || "ko";
       const BADGE_POS = { left: "25%" }; // free zone above the target board (clear of headings/watermark)
       syncEvolution();                     // normalize/migrate on load (silent)
       updateLevelBadge(lang(), BADGE_POS); // show the persistent top level badge right away
+      // After rotating out of the portrait guard, make sure the 3D canvases
+      // re-measure (the engine listens to window resize) so cubes always render.
+      const kickResize = () => window.dispatchEvent(new Event("resize"));
+      window.addEventListener("orientationchange", () => { setTimeout(kickResize, 250); setTimeout(kickResize, 800); });
+      if (screen.orientation?.addEventListener) screen.orientation.addEventListener("change", () => { setTimeout(kickResize, 250); setTimeout(kickResize, 800); });
       let seen = -1;
       setInterval(() => {
         let count = 0;
