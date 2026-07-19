@@ -509,6 +509,12 @@ function resetProblem() {
   showToast(text(state.lang, "reset"));
 }
 
+function updatePrintWorksheetLink() {
+  const link = $("#printWorksheetLink");
+  if (!link) return;
+  link.href = `../../cube-town/print.html?game=count-heights&level=${state.levelIndex + 1}`;
+}
+
 function renderLevelList() {
   elements.levelList.replaceChildren();
   levels.forEach((level, index) => {
@@ -893,6 +899,7 @@ elements.audio.addEventListener("click", () => {
 });
 elements.openLevels.addEventListener("click", () => {
   renderLevelList();
+  updatePrintWorksheetLink();
   elements.levelDialog.hidden = false;
 });
 elements.closeLevels.addEventListener("click", () => { elements.levelDialog.hidden = true; });
