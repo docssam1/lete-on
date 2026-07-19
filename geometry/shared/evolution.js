@@ -44,25 +44,25 @@ const CONFETTI_COLORS = ["#ffd23d", "#ff6fae", "#5b8cff", "#58c47a", "#ff8a3d", 
 
 const TEXT = {
   ko: {
-    levelUp: "레벨 업!", level: "Lv.{n}",
+    levelUp: "캐릭터 레벨 업!", level: "Lv.{n}", charLevel: "캐릭터 Lv.{n}",
     gift: "새 아이템 “{item}” 획득!",
     stageName: { 1: "새싹 탐험가", 2: "호기심 관찰가", 3: "쌓기 명탐정", 4: "반짝이는 도형가", 5: "큐브 기사", 6: "도형 연구가", 7: "마법 건축가", 8: "큐브 마스터" },
     itemName: { cap: "탐험 모자", glasses: "둥근 안경", telescope: "관찰 망원경", sparkles: "반짝 효과", crown: "황금 왕관", goggles: "연구 고글", wand: "마법봉", medal: "도전 메달" }
   },
   zh: {
-    levelUp: "升级了！", level: "Lv.{n}",
+    levelUp: "角色升级了！", level: "Lv.{n}", charLevel: "角色 Lv.{n}",
     gift: "获得新道具“{item}”！",
     stageName: { 1: "新芽探险家", 2: "好奇观察家", 3: "积木名侦探", 4: "闪耀几何家", 5: "立方骑士", 6: "几何研究家", 7: "魔法建筑师", 8: "立方大师" },
     itemName: { cap: "探险帽", glasses: "圆眼镜", telescope: "观察望远镜", sparkles: "闪亮特效", crown: "金色王冠", goggles: "研究护目镜", wand: "魔法棒", medal: "挑战奖牌" }
   },
   ja: {
-    levelUp: "レベルアップ！", level: "Lv.{n}",
+    levelUp: "キャラレベルアップ！", level: "Lv.{n}", charLevel: "キャラ Lv.{n}",
     gift: "新アイテム「{item}」ゲット！",
     stageName: { 1: "新芽の探検家", 2: "好奇心の観察者", 3: "つみき名探偵", 4: "きらめく図形家", 5: "キューブ騎士", 6: "図形研究家", 7: "魔法の建築家", 8: "キューブマスター" },
     itemName: { cap: "たんけん帽", glasses: "丸めがね", telescope: "観察望遠鏡", sparkles: "きらきら", crown: "金の王冠", goggles: "研究ゴーグル", wand: "魔法の杖", medal: "チャレンジメダル" }
   },
   en: {
-    levelUp: "Level Up!", level: "Lv.{n}",
+    levelUp: "Character Level Up!", level: "Lv.{n}", charLevel: "My Lv.{n}",
     gift: "New item “{item}” unlocked!",
     stageName: { 1: "Sprout Explorer", 2: "Curious Observer", 3: "Cube Detective", 4: "Shining Builder", 5: "Cube Knight", 6: "Shape Researcher", 7: "Magic Architect", 8: "Cube Master" },
     itemName: { cap: "Explorer Cap", glasses: "Round Glasses", telescope: "Telescope", sparkles: "Sparkles", crown: "Golden Crown", goggles: "Lab Goggles", wand: "Magic Wand", medal: "Challenge Medal" }
@@ -289,7 +289,7 @@ export function updateLevelBadge(lang = "ko", opts = {}) {
     document.body.append(badge);
   }
   if (opts.left) badge.style.left = opts.left;
-  const label = dict(lang).level.replace("{n}", evo.level);
+  const label = dict(lang).charLevel.replace("{n}", evo.level);
   const prev = badge.dataset.level;
   badge.innerHTML = `<span class="evo-top-star" aria-hidden="true">★</span><span>${label}</span>`;
   badge.classList.toggle("evo-top-max", evo.stage >= evo.maxStage);
@@ -357,4 +357,9 @@ export function applyCharacterGlow(el, stage) {
 
 export function stageName(stage, lang = "ko") {
   return dict(lang).stageName[stage] || "";
+}
+
+// "캐릭터 Lv.N" style label — clearly the CHARACTER's level, never a game level.
+export function levelLabel(level, lang = "ko") {
+  return dict(lang).charLevel.replace("{n}", level);
 }
