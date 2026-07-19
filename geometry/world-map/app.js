@@ -1,4 +1,4 @@
-import { syncEvolution, getEvolution, applyCharacterGlow, stageName } from "../shared/evolution.js?v=evolve-20260719a";
+import { syncEvolution, getEvolution, applyCharacterGlow, stageName, releaseColorLock } from "../shared/evolution.js?v=evolve2-20260719a";
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -290,6 +290,7 @@ function renderCharacterRoom() {
     button.setAttribute("aria-label", color.id);
     button.addEventListener("click", () => {
       profile.color = color.id;
+      releaseColorLock(profile);
       saveProfile();
       updateProfileVisuals();
       renderCharacterRoom();
