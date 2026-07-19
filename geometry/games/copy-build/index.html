@@ -156,7 +156,11 @@
       // Character growth: watch the solved-problem count and celebrate level-ups
       // and Cubi evolutions in-game. Kept as a standalone module so the copy-build
       // engine (app.js) stays completely untouched.
-      import { syncEvolution, celebrateEvolution } from "../../shared/evolution.js?v=evolve-20260719a";
+      import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve2-20260719a";
+      const lang = () => localStorage.getItem("gfield-language") || "ko";
+      const BADGE_POS = { left: "25%" }; // free zone above the target board (clear of headings/watermark)
+      syncEvolution();                     // normalize/migrate on load (silent)
+      updateLevelBadge(lang(), BADGE_POS); // show the persistent top level badge right away
       let seen = -1;
       setInterval(() => {
         let count = 0;
@@ -165,7 +169,8 @@
         const firstPass = seen === -1;
         seen = count;
         const result = syncEvolution();
-        if (!firstPass) celebrateEvolution(result, localStorage.getItem("gfield-language") || "ko");
+        updateLevelBadge(lang(), BADGE_POS);
+        if (!firstPass) celebrateEvolution(result, lang());
       }, 600);
     </script>
   </body>
