@@ -236,6 +236,32 @@ button.active,
   font-size: 20px;
 }
 
+.level-dialog-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.print-worksheet-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  min-height: 0;
+  border: 1px solid rgba(47, 156, 130, 0.4);
+  border-radius: 50%;
+  background: #f4fbf7;
+  color: var(--accent-strong);
+  font-size: 17px;
+  text-decoration: none;
+  flex: none;
+}
+
+.print-worksheet-link:hover {
+  background: #e8f7f0;
+}
+
 .canvas-wrap {
   height: clamp(310px, 40vw, 500px);
   background:
@@ -1905,11 +1931,19 @@ body {
 .problem-progress {
   margin-left: 12px;
   padding: 3px 8px;
+  min-height: 0;
+  border: 0;
   border-radius: 999px;
   background: rgba(255, 255, 255, .22);
   color: #fff;
+  font: inherit;
   font-size: 12px;
   font-weight: 900;
+  cursor: pointer;
+}
+
+.problem-progress:hover {
+  background: rgba(255, 255, 255, .34);
 }
 
 .brand-watermark {
