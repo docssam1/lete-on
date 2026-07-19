@@ -4,6 +4,7 @@ import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.j
 import { levels, validateLevels } from "./levels.js";
 import { text } from "./i18n.js?v=count-board-20260718d";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
+import { syncEvolution, celebrateEvolution } from "../../shared/evolution.js?v=evolve-20260719a";
 
 validateLevels();
 
@@ -435,6 +436,7 @@ function checkAnswer() {
 function completeProblem() {
   state.solved = true;
   awardPoints(`count-cubes:${currentProblem().id}`, 15);
+  celebrateEvolution(syncEvolution(), state.lang);
   const phrases = state.hintsUsed === 0 && state.wrongAttempts === 0
     ? ["success", "successGood", "successPop"]
     : ["success", "successGood"];
