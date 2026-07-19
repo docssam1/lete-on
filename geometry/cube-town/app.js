@@ -39,7 +39,7 @@ const copyLevels = [
   {
     level: 2, image: "./assets/copy-levels/level-2.png", href: "../games/copy-build/?level=2",
     title: { ko: "입체 쌓기", zh: "立体搭建", ja: "立体を積む", en: "Build in 3D" },
-    description: { ko: "3×3×3 안에서 높이와 색을 맞추요.", zh: "在3×3×3内匹配高度和颜色。", ja: "3×3×3で高さと色を合わせます。", en: "Match height and color in a 3×3×3 space." }
+    description: { ko: "3×3×3 안에서 높이와 색을 맞춰요.", zh: "在3×3×3内匹配高度和颜色。", ja: "3×3×3で高さと色を合わせます。", en: "Match height and color in a 3×3×3 space." }
   },
   {
     level: 3, image: "./assets/copy-levels/level-3.png", href: "../games/copy-build/?level=3",
@@ -49,7 +49,7 @@ const copyLevels = [
   {
     level: 4, image: "./assets/copy-levels/level-4.png", href: "../games/shape-build/?level=4",
     title: { ko: "직육면체 방향", zh: "长方体方向", ja: "直方体の向き", en: "Rectangular Prisms" },
-    description: { ko: "직육면체를 늽히고 세워 방향까지 맞추요.", zh: "横放或竖放长方体并匹配方向。", ja: "直方体を寝かせたり立てたりして向きを合わせます。", en: "Turn and stand rectangular prisms to match." }
+    description: { ko: "직육면체를 눕히고 세워 방향까지 맞춰요.", zh: "横放或竖放长方体并匹配方向。", ja: "直方体を寝かせたり立てたりして向きを合わせます。", en: "Turn and stand rectangular prisms to match." }
   },
   {
     level: 5, image: "./assets/copy-levels/level-5.png", href: "../games/shape-build/?level=5",
