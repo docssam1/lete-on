@@ -40,10 +40,10 @@ const copyLevels = [
 ];
 
 const messages = {
-  ko: { back: "← 지도", printMode: "인쇄 학습", eyebrow: "CUBE LEARNING PATH", title: "쌓기나무로 여는 공간 사고의 세계", subtitle: "기초 조작부터 세 방향 추론까지, 단계별로 도전해요.", worksheet: "문제은행 학습지", worksheetDesc: "레벨과 문제 수를 골라 인쇄해요", level: "LEVEL", ready: "플레이", soon: "준비 중" },
-  zh: { back: "← 地图", printMode: "打印学习", eyebrow: "CUBE LEARNING PATH", title: "用方块开启空间思维世界", subtitle: "从基础操作到三方向推理，逐级挑战。", worksheet: "题库练习纸", worksheetDesc: "选择等级和题量后打印", level: "等级", ready: "开始", soon: "即将推出" },
-  ja: { back: "← 地図", printMode: "印刷学習", eyebrow: "CUBE LEARNING PATH", title: "つみきで広がる空間思考の世界", subtitle: "基本操作から三方向推理まで、段階的に挑戦します。", worksheet: "問題バンク学習プリント", worksheetDesc: "レベルと問題数を選んで印刷", level: "レベル", ready: "プレイ", soon: "準備中" },
-  en: { back: "← Map", printMode: "Print Study", eyebrow: "CUBE LEARNING PATH", title: "A World of Spatial Thinking with Cubes", subtitle: "Progress from hands-on building to three-view reasoning.", worksheet: "Question Bank Worksheets", worksheetDesc: "Choose a level and question count, then print", level: "LEVEL", ready: "PLAY", soon: "COMING SOON" }
+  ko: { back: "← 지도", eyebrow: "CUBE LEARNING PATH", title: "쌓기나무로 여는 공간 사고의 세계", subtitle: "기초 조작부터 세 방향 추론까지, 단계별로 도전해요.", worksheet: "문제은행 학습지", worksheetDesc: "레벨과 문제 수를 골라 인쇄해요", level: "LEVEL", ready: "플레이", soon: "준비 중" },
+  zh: { back: "← 地图", eyebrow: "CUBE LEARNING PATH", title: "用方块开启空间思维世界", subtitle: "从基础操作到三方向推理，逐级挑战。", worksheet: "题库练习纸", worksheetDesc: "选择等级和题量后打印", level: "等级", ready: "开始", soon: "即将推出" },
+  ja: { back: "← 地図", eyebrow: "CUBE LEARNING PATH", title: "つみきで広がる空間思考の世界", subtitle: "基本操作から三方向推理まで、段階的に挑戦します。", worksheet: "問題バンク学習プリント", worksheetDesc: "レベルと問題数を選んで印刷", level: "レベル", ready: "プレイ", soon: "準備中" },
+  en: { back: "← Map", eyebrow: "CUBE LEARNING PATH", title: "A World of Spatial Thinking with Cubes", subtitle: "Progress from hands-on building to three-view reasoning.", worksheet: "Question Bank Worksheets", worksheetDesc: "Choose a level and question count, then print", level: "LEVEL", ready: "PLAY", soon: "COMING SOON" }
 };
 
 function t(key) { return messages[language]?.[key] || messages.ko[key] || key; }
