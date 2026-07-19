@@ -152,5 +152,21 @@
     </main>
 
     <script type="module" src="../../app.js?v=evolve-20260719a"></script>
+    <script type="module">
+      // Character growth: watch the solved-problem count and celebrate level-ups
+      // and Cubi evolutions in-game. Kept as a standalone module so the copy-build
+      // engine (app.js) stays completely untouched.
+      import { syncEvolution, celebrateEvolution } from "../../shared/evolution.js?v=evolve-20260719a";
+      let seen = -1;
+      setInterval(() => {
+        let count = 0;
+        try { count = (JSON.parse(localStorage.getItem("gfield-rewarded-games") || "[]") || []).length; } catch {}
+        if (count === seen) return;
+        const firstPass = seen === -1;
+        seen = count;
+        const result = syncEvolution();
+        if (!firstPass) celebrateEvolution(result, localStorage.getItem("gfield-language") || "ko");
+      }, 600);
+    </script>
   </body>
 </html>
