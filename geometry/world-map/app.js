@@ -9,6 +9,7 @@ const elements = {
   worldGate: $("#worldGate"),
   castle: $("#cubeCastle"),
   walkers: $("#walkers"),
+  mapStage: $(".map-stage"),
   guide: $("#mapGuide"),
   guideName: $("#guideName"),
   sound: $("#soundToggle"),
@@ -337,6 +338,38 @@ function renderWalkers() {
   });
 }
 
+function moveSelectedWalkerTo(clientX, clientY) {
+  const walker = elements.walkers.querySelector(".walker.selected");
+  const stage = elements.mapStage;
+  if (!walker || !stage) return;
+  const rect = stage.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+  const targetX = Math.min(92, Math.max(6, ((clientX - rect.left) / rect.width) * 100));
+  const targetY = Math.min(88, Math.max(14, ((clientY - rect.top) / rect.height) * 100));
+  const fromX = parseFloat(walker.dataset.x || "35");
+  const fromY = parseFloat(walker.dataset.y || "39");
+  const dx = targetX - fromX;
+  if (Math.abs(dx) > 1) walker.classList.toggle("facing-left", dx < 0);
+  const distance = Math.hypot(targetX - fromX, targetY - fromY);
+  const duration = Math.min(2600, Math.max(450, distance * 28));
+  walker.style.setProperty("--walk-duration", `${duration}ms`);
+  walker.classList.add("moving");
+  walker.style.left = `${targetX}%`;
+  walker.style.top = `${targetY}%`;
+  walker.dataset.x = String(targetX);
+  walker.dataset.y = String(targetY);
+  window.clearTimeout(walker._moveTimer);
+  walker._moveTimer = window.setTimeout(() => {
+    walker.classList.remove("moving");
+  }, duration + 80);
+}
+
+function handleMapStageClick(event) {
+  if (!elements.characterModal.hidden) return;
+  if (event.target.closest(".place-hotspot, .map-toolbar, .map-guide, button")) return;
+  moveSelectedWalkerTo(event.clientX, event.clientY);
+}
+
 function preferredVoice() {
   const locale = { ko: "ko", zh: "zh", ja: "ja", en: "en" }[language];
   const voices = speechSynthesis.getVoices().filter((voice) => voice.lang.toLowerCase().startsWith(locale));
@@ -439,6 +472,7 @@ elements.introSound.addEventListener("click", () => {
 });
 
 elements.castle.addEventListener("click", () => { location.href = "../cube-town/"; });
+elements.mapStage?.addEventListener("click", handleMapStageClick);
 elements.profileButton.addEventListener("click", () => openCharacterRoom(false));
 elements.closeCharacter.addEventListener("click", closeCharacterRoom);
 elements.characterModal.addEventListener("click", (event) => {
