@@ -1,4 +1,4 @@
-import { syncEvolution, getEvolution, applyCharacterGlow, stageName, releaseColorLock } from "../shared/evolution.js?v=evolve2-20260719a";
+import { syncEvolution, getEvolution, applyCharacterGlow, stageName, levelLabel, releaseColorLock } from "../shared/evolution.js?v=evolve3-20260719a";
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -249,9 +249,10 @@ function updateEvolutionDisplay() {
     chip.addEventListener("click", () => openCharacterRoom(false));
     elements.profileButton.insertAdjacentElement("afterend", chip);
   }
-  chip.textContent = `Lv.${evo.level}`;
-  chip.setAttribute("aria-label", sname ? `${sname} · Lv.${evo.level}` : `Lv.${evo.level}`);
-  chip.title = sname || `Lv.${evo.level}`;
+  const chipLabel = levelLabel(evo.level, language);
+  chip.textContent = chipLabel;
+  chip.setAttribute("aria-label", sname ? `${sname} · ${chipLabel}` : chipLabel);
+  chip.title = sname || chipLabel;
   chip.classList.toggle("evo-max", evo.stage >= evo.maxStage);
 
   let line = document.querySelector("#evoStageLine");
@@ -261,7 +262,7 @@ function updateEvolutionDisplay() {
     line.className = "evo-stage-line";
     elements.selectedRole.insertAdjacentElement("afterend", line);
   }
-  if (line) line.textContent = (evo.stage > 0 && sname) ? `Lv.${evo.level} · ${sname}` : `Lv.${evo.level}`;
+  if (line) line.textContent = (evo.stage > 0 && sname) ? `${levelLabel(evo.level, language)} · ${sname}` : levelLabel(evo.level, language);
 }
 
 function renderCharacterRoom() {
@@ -393,7 +394,7 @@ function moveSelectedWalkerTo(clientX, clientY) {
   const dx = targetX - fromX;
   if (Math.abs(dx) > 1) walker.classList.toggle("facing-left", dx < 0);
   const distance = Math.hypot(targetX - fromX, targetY - fromY);
-  const duration = Math.min(2600, Math.max(450, distance * 28));
+  const duration = Math.min(5600, Math.max(1000, distance * 62)); // calm stroll, not a dash
   walker.style.setProperty("--walk-duration", `${duration}ms`);
   walker.classList.add("moving");
   walker.style.left = `${targetX}%`;
