@@ -246,21 +246,23 @@ body { background: #fdf8d8; color: var(--ink); }
 
 .evo-level-chip {
   height: 40px;
-  padding: 0 12px;
+  padding: 0 15px;
   border: 2px solid var(--navy);
-  border-radius: 6px;
-  background: linear-gradient(135deg, #eaf7ec, #d5f0dc);
-  color: var(--green-dark);
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ffe98a, #f6c445);
+  color: #6b4300;
   font-weight: 950;
-  font-size: 14px;
-  letter-spacing: -.2px;
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: -.3px;
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 2px 6px rgba(160,110,0,.22);
 }
 .evo-level-chip.evo-max {
-  background: linear-gradient(135deg, #fff0bf, #ffd85a);
+  background: linear-gradient(135deg, #fff1c0, #ffcf3a);
   color: #7a4d00;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.55), 0 2px 8px rgba(214,140,0,.28);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.6), 0 3px 12px rgba(214,140,0,.4);
 }
 .evo-stage-line { margin: 6px 0 0; color: var(--green-dark); font-size: 13px; font-weight: 850; }
 

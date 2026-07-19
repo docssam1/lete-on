@@ -4,7 +4,7 @@ import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.j
 import { levels, validateLevels } from "./levels.js";
 import { text } from "./i18n.js?v=count-board-20260718d";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
-import { syncEvolution, celebrateEvolution } from "../../shared/evolution.js?v=evolve-20260719a";
+import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve2-20260719a";
 
 validateLevels();
 
@@ -437,6 +437,7 @@ function completeProblem() {
   state.solved = true;
   awardPoints(`count-cubes:${currentProblem().id}`, 15);
   celebrateEvolution(syncEvolution(), state.lang);
+  updateLevelBadge(state.lang, { left: "25%" });
   const phrases = state.hintsUsed === 0 && state.wrongAttempts === 0
     ? ["success", "successGood", "successPop"]
     : ["success", "successGood"];
@@ -926,3 +927,5 @@ applyLanguage();
 renderLevelList();
 loadProblem();
 resizeScene();
+syncEvolution();                            // normalize/migrate on load (silent)
+updateLevelBadge(state.lang, { left: "25%" }); // persistent top level badge (free zone above the left board)
