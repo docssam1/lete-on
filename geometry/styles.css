@@ -2861,12 +2861,20 @@ body::before {
 }
 
 @media (orientation: landscape) and (max-height: 560px) {
+  :root {
+    --mobile-rail-width: 84px;
+  }
+
   .brand-watermark {
     left: 10px;
     transform: none;
     max-width: calc(100% - var(--mobile-rail-width) - 118px);
     opacity: .24;
   }
+
+  .brand-watermark span { font-size: 12px; }
+  .brand-watermark strong { font-size: 9px; }
+  .brand-watermark small { font-size: 7px; }
 
   .build-utilities {
     right: calc(var(--mobile-rail-width) + 7px);
@@ -2877,7 +2885,7 @@ body::before {
     right: calc(var(--mobile-rail-width) + 10px) !important;
     bottom: 7px !important;
     width: min(420px, calc(100vw - var(--mobile-rail-width) - 18px));
-    grid-template-columns: minmax(0, 1fr) clamp(52px, 14vw, 60px);
+    grid-template-columns: minmax(0, 1fr) 66px !important;
   }
 
   .floating-guide.message-visible {
@@ -2888,5 +2896,10 @@ body::before {
     width: min(560px, calc(100vw - 24px));
     max-width: calc(100vw - 24px);
     grid-template-columns: minmax(0, 1fr) clamp(82px, 24vw, 116px);
-}
+  }
+
+  body:not(.tutorial-active) .guide-character {
+    width: 64px !important;
+    height: 64px !important;
+  }
 }
