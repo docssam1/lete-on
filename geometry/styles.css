@@ -2603,20 +2603,30 @@ body::before {
 
 .viewer { border-radius: 26px; }
 
-/* Corner tab chips */
+/* Corner tab chips — thin, glossy "coated" pill instead of a thick block */
 .viewer-heading {
-  min-height: 52px;
-  padding: 9px 30px;
-  border-radius: 0 0 16px 16px;
+  position: absolute;
+  min-height: 38px;
+  padding: 7px 22px;
+  border-radius: 0 0 14px 14px;
   font-weight: 900;
   letter-spacing: .02em;
+  overflow: hidden;
   box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, .30),
-    inset 0 -4px 8px rgba(0, 0, 0, .14),
-    0 10px 16px rgba(38, 23, 12, .28);
+    inset 0 1px 0 rgba(255, 255, 255, .34),
+    inset 0 -3px 6px rgba(0, 0, 0, .16),
+    0 8px 14px rgba(38, 23, 12, .26);
 }
-.target-view .viewer-heading { background: linear-gradient(180deg, #879a58, #5d7239); }
-.build-view .viewer-heading { background: linear-gradient(180deg, #5f83ab, #3d5f86); }
+/* glossy sheen: a soft diagonal highlight sitting over the flat color */
+.viewer-heading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(255, 255, 255, .40) 0%, rgba(255, 255, 255, .08) 38%, rgba(255, 255, 255, 0) 60%);
+  pointer-events: none;
+}
+.target-view .viewer-heading { background: linear-gradient(180deg, #8ba15e, #5d7239); }
+.build-view .viewer-heading { background: linear-gradient(180deg, #6690b8, #3d5f86); }
 
 /* Cube tray — real wood */
 .builder-controls,
@@ -2901,5 +2911,19 @@ body::before {
   body:not(.tutorial-active) .guide-character {
     width: 64px !important;
     height: 64px !important;
+  }
+
+  /* thin glossy tab chip on the small screen too */
+  .viewer-heading {
+    min-height: 24px !important;
+    padding: 3px 12px !important;
+    border-radius: 0 0 9px 9px !important;
+  }
+  .viewer-heading h2 {
+    font-size: 11px !important;
+  }
+  .problem-progress {
+    font-size: 8px !important;
+    padding: 1px 6px !important;
   }
 }
