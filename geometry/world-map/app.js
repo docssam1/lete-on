@@ -1,3 +1,5 @@
+import { syncEvolution, getEvolution, applyCharacterGlow, stageName } from "../shared/evolution.js?v=evolve-20260719a";
+
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 
@@ -115,6 +117,10 @@ function readStoredProfile() {
   catch { return {}; }
 }
 
+// Bring earned level/stage/gifts up to date (migrates returning players
+// silently) BEFORE we snapshot the profile, so `stored` already reflects any
+// newly-applied gifts and the new `evolution` field.
+syncEvolution();
 const stored = readStoredProfile();
 const legacyItem = items.find((item) => item.id === stored.item);
 const profile = {
@@ -128,6 +134,7 @@ const profile = {
     : legacyItem ? { [legacyItem.category]: legacyItem.id } : { badge: "star" },
   unlocked: Array.isArray(stored.unlocked) ? [...new Set([...stored.unlocked, "star"])] : ["star"],
   progress: stored.progress && typeof stored.progress === "object" ? stored.progress : {},
+  evolution: (stored.evolution && typeof stored.evolution === "object") ? { ...stored.evolution } : undefined,
   createdAt: stored.createdAt || Date.now(),
   lastPlayedAt: Date.now()
 };
@@ -225,6 +232,36 @@ function updateProfileVisuals() {
   elements.profileButton.setAttribute("aria-label", profile.name ? `${profile.name} profile` : message("chooseCharacter"));
   updatePoints();
   renderWalkers();
+  updateEvolutionDisplay();
+}
+
+function updateEvolutionDisplay() {
+  const evo = getEvolution();
+  const sname = stageName(evo.stage, language);
+  applyCharacterGlow(elements.selectedSprite, evo.stage);
+
+  let chip = document.querySelector("#evoLevelChip");
+  if (!chip) {
+    chip = document.createElement("button");
+    chip.type = "button";
+    chip.id = "evoLevelChip";
+    chip.className = "evo-level-chip";
+    chip.addEventListener("click", () => openCharacterRoom(false));
+    elements.profileButton.insertAdjacentElement("afterend", chip);
+  }
+  chip.textContent = `Lv.${evo.level}`;
+  chip.setAttribute("aria-label", sname ? `${sname} · Lv.${evo.level}` : `Lv.${evo.level}`);
+  chip.title = sname || `Lv.${evo.level}`;
+  chip.classList.toggle("evo-max", evo.stage >= evo.maxStage);
+
+  let line = document.querySelector("#evoStageLine");
+  if (!line && elements.selectedRole) {
+    line = document.createElement("p");
+    line.id = "evoStageLine";
+    line.className = "evo-stage-line";
+    elements.selectedRole.insertAdjacentElement("afterend", line);
+  }
+  if (line) line.textContent = (evo.stage > 0 && sname) ? `Lv.${evo.level} · ${sname}` : `Lv.${evo.level}`;
 }
 
 function renderCharacterRoom() {
@@ -282,6 +319,7 @@ function renderCharacterRoom() {
   remove.innerHTML = `<span class="item-icon remove-glyph">×</span><strong>${message("removeItem")}</strong><small>✓</small>`;
   remove.addEventListener("click", () => {
     delete profile.equipped[activeItemCategory];
+    if (profile.evolution?.gifts) delete profile.evolution.gifts[activeItemCategory];
     saveProfile();
     updateProfileVisuals();
     renderCharacterRoom();
@@ -311,6 +349,7 @@ function renderCharacterRoom() {
         setGuide("unlocked");
       }
       profile.equipped[item.category] = item.id;
+      if (profile.evolution?.gifts) delete profile.evolution.gifts[item.category];
       saveProfile();
       updateProfileVisuals();
       renderCharacterRoom();
@@ -327,6 +366,7 @@ function sampleWalkers() {
 }
 
 function renderWalkers() {
+  const evo = getEvolution();
   elements.walkers.replaceChildren();
   sampleWalkers().forEach((character, index) => {
     const walker = document.createElement("div");
@@ -334,6 +374,7 @@ function renderWalkers() {
     walker.className = `walker route-${["a", "b", "c"][index]}${selected ? " selected" : ""}`;
     const color = selected ? profile.color : "original";
     walker.innerHTML = `<span class="character-sprite sprite-${character.sprite} color-${color}"></span>${selected && primaryEquippedIcon() ? `<span class="walker-item">${iconMarkup(primaryEquippedIcon(), "mall-icon walker-icon")}</span>` : ""}`;
+    if (selected) applyCharacterGlow(walker.querySelector(".character-sprite"), evo.stage);
     elements.walkers.append(walker);
   });
 }
