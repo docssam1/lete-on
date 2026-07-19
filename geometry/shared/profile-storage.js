@@ -9,6 +9,16 @@ export function readProfile() {
   }
 }
 
+// Additive write: callers pass the full profile object they just read+mutated.
+// Never called with a partial object, so existing keys are preserved.
+export function writeProfile(profile) {
+  const safe = profile && typeof profile === "object" ? profile : {};
+  safe.version = Math.max(2, Number(safe.version) || 0);
+  safe.lastPlayedAt = Date.now();
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(safe));
+  return safe;
+}
+
 export function readGameProgress(gameId) {
   const progress = readProfile().progress?.[gameId];
   return progress && typeof progress === "object" ? progress : {};
