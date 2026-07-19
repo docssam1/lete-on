@@ -2831,3 +2831,62 @@ body::before {
   .brand-watermark strong { font-size: 14px; }
   .brand-watermark small { font-size: 10px; }
 }
+
+/* Final responsive guardrails for the fixed guide and build utilities. */
+.guide-bubble,
+.guide-bubble p,
+.guide-actions {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.guide-bubble p {
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+.floating-guide.message-visible {
+  max-width: min(420px, calc(100vw - 24px));
+}
+
+.build-utilities {
+  max-width: calc(100% - 116px);
+}
+
+.brand-watermark {
+  max-width: calc(100% - 132px);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@media (orientation: landscape) and (max-height: 560px) {
+  .brand-watermark {
+    left: 10px;
+    transform: none;
+    max-width: calc(100% - var(--mobile-rail-width) - 118px);
+    opacity: .24;
+  }
+
+  .build-utilities {
+    right: calc(var(--mobile-rail-width) + 7px);
+    max-width: calc(100% - var(--mobile-rail-width) - 92px);
+  }
+
+  .floating-guide {
+    right: calc(var(--mobile-rail-width) + 10px) !important;
+    bottom: 7px !important;
+    width: min(420px, calc(100vw - var(--mobile-rail-width) - 18px));
+    grid-template-columns: minmax(0, 1fr) clamp(52px, 14vw, 60px);
+  }
+
+  .floating-guide.message-visible {
+    width: min(420px, calc(100vw - var(--mobile-rail-width) - 18px));
+  }
+
+  .tutorial-active .floating-guide {
+    width: min(560px, calc(100vw - 24px));
+    max-width: calc(100vw - 24px);
+    grid-template-columns: minmax(0, 1fr) clamp(82px, 24vw, 116px);
+}
+}
