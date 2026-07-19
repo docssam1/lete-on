@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town - Count the Cubes</title>
-    <link rel="stylesheet" href="./styles.css?v=count-board-20260718h" />
+    <link rel="stylesheet" href="./styles.css?v=count-board-portrait-20260719a" />
     <script type="importmap">
       {
         "imports": {
@@ -22,6 +22,20 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   </head>
   <body>
+    <section class="portrait-guard" aria-label="화면 회전 안내">
+      <div class="portrait-brand">GFIELD <span>Cube Town</span></div>
+      <div class="rotate-phone" aria-hidden="true">
+        <span class="rotate-phone-device"></span>
+        <span class="rotate-phone-arrow">↻</span>
+      </div>
+      <div class="portrait-guide">
+        <span class="portrait-character" aria-hidden="true"></span>
+        <div>
+          <strong>가로로 돌려 주세요</strong>
+          <p>쌓기나무 개수를 넓은 화면에서 세어 볼까요?</p>
+        </div>
+      </div>
+    </section>
     <main class="game-shell">
       <header class="topbar">
         <div class="brand">
@@ -105,7 +119,13 @@
 
       <div id="levelDialog" class="dialog" hidden>
         <section role="dialog" aria-modal="true" aria-labelledby="levelTitle">
-          <header><h2 id="levelTitle" data-i18n="level">레벨 선택</h2><button id="closeLevels" type="button" aria-label="close">×</button></header>
+          <header>
+            <h2 id="levelTitle" data-i18n="level">레벨 선택</h2>
+            <div class="dialog-actions">
+              <a id="printWorksheetLink" class="print-worksheet-link" href="../../cube-town/print.html?game=count-heights&level=1" target="_blank" rel="noopener" aria-label="학습지 인쇄" title="학습지 인쇄">▤</a>
+              <button id="closeLevels" type="button" aria-label="close">×</button>
+            </div>
+          </header>
           <div id="levelList" class="level-list"></div>
         </section>
       </div>

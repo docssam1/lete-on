@@ -15,10 +15,10 @@ const GAME_COPY = {
     instruction: "문제 모양을 보고, 위에서 본 바닥판의 각 칸에 쌓기나무 높이를 써 보세요."
   },
   [GAME_COPY_COLOR]: {
-    title: "똑같이 쌓기 · 컬러 색칠",
-    cover: "똑같이 쌓기<br />컬러 색칠",
+    title: "똑같이 쌓기 · 컴러 색칠",
+    cover: "똑같이 쌓기<br />컴러 색칠",
     subtitle: "색과 위치를 자세히 살펴보고,<br />같은 모양에 똑같이 색칠해 보세요.",
-    instruction: "왼쪽의 색깔 쌓기나무를 보고, 오른쪽의 같은 모양에 위치와 색을 똑같이 칠하세요."
+    instruction: "왼쪽의 색까 쌓기나무를 보고, 오른쪽의 같은 모양에 위치와 색을 똑같이 칠하세요."
   },
   [GAME_COUNT]: {
     title: "쌓기나무 개수 세기",
@@ -352,4 +352,20 @@ $("#coverToggle").addEventListener("change", () => { $("#coverSheet").hidden = !
 $("#answerToggle").addEventListener("change", () => { $("#answerSheet").hidden = !$("#answerToggle").checked; });
 $("#generate").addEventListener("click", generate);
 $("#printButton").addEventListener("click", () => window.print());
+
+function applyInitialParams() {
+  const params = new URLSearchParams(window.location.search);
+  const initialGame = params.get("game");
+  if (initialGame && GAME_COPY[initialGame]) {
+    $("#gameSelect").value = initialGame;
+  }
+  updateLevelOptions();
+  const initialLevel = params.get("level");
+  if (initialLevel) {
+    const option = $("#levelSelect").querySelector(`option[value="${initialLevel}"]`);
+    if (option && !option.disabled) $("#levelSelect").value = initialLevel;
+  }
+}
+
+applyInitialParams();
 generate();

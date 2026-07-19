@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town</title>
-    <link rel="stylesheet" href="../../styles.css?v=wood-v2-tab-polish-20260719d" />
+    <link rel="stylesheet" href="../../styles.css?v=menu-cleanup-20260719a" />
     <script type="importmap">
       {
         "imports": {
@@ -56,7 +56,7 @@
         <article class="viewer target-view">
           <div class="viewer-heading">
             <h2 data-i18n="target">문제 모양</h2>
-            <strong id="problemProgress" class="problem-progress">1/10</strong>
+            <button id="problemProgress" class="problem-progress" type="button" aria-label="레벨 선택" aria-haspopup="dialog">1/10</button>
           </div>
           <div id="targetCanvas" class="canvas-wrap"></div>
         </article>
@@ -120,7 +120,10 @@
         <section class="level-dialog-panel" role="dialog" aria-modal="true" aria-labelledby="levelDialogTitle">
           <header class="level-dialog-head">
             <h2 id="levelDialogTitle" data-i18n="levelSelect">레벨 선택</h2>
-            <button id="closeLevelDialog" class="icon-button" type="button" aria-label="닫기">&times;</button>
+            <div class="level-dialog-actions">
+              <a id="printWorksheetLink" class="print-worksheet-link" href="../../cube-town/print.html?game=copy-wood&level=1" target="_blank" rel="noopener" aria-label="학습지 인쇄" title="학습지 인쇄">▤</a>
+              <button id="closeLevelDialog" class="icon-button" type="button" aria-label="닫기">&times;</button>
+            </div>
           </header>
           <div id="levelOptions" class="level-options"></div>
         </section>
@@ -148,6 +151,6 @@
       <div id="dragGhost" class="drag-ghost" aria-hidden="true"></div>
     </main>
 
-    <script type="module" src="../../app.js?v=skip-and-contrast-20260718"></script>
+    <script type="module" src="../../app.js?v=level-picker-fix-20260719a"></script>
   </body>
 </html>
