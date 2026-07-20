@@ -679,28 +679,35 @@ function makeTextSprite(label, options = {}) {
   return sprite;
 }
 
-function makeBoardLabelSprite(label) {
+// Front / right board labels engraved flat on the wooden frame, matching
+// copy-build ("똑같이 쌓기") and shape-build — a dark-brown glyph with a light
+// wood-tone glow, on a thin plane laid at the board's edge (no floating pill).
+function makeBoardLabelPlane(label) {
   const canvas = document.createElement("canvas");
   canvas.width = 384;
-  canvas.height = 96;
+  canvas.height = 112;
   const context = canvas.getContext("2d");
-  context.fillStyle = "rgba(255,255,255,.76)";
-  context.beginPath();
-  context.roundRect(8, 10, 368, 76, 22);
-  context.fill();
-  context.fillStyle = "#4b2b18";
-  context.font = "900 42px sans-serif";
+  context.fillStyle = "rgba(64, 38, 17, 0.95)";
+  context.font = "950 58px 'Noto Sans KR', sans-serif";
   context.textAlign = "center";
   context.textBaseline = "middle";
-  context.fillText(label, 192, 51);
+  context.shadowColor = "rgba(255, 247, 224, 0.82)";
+  context.shadowBlur = 3;
+  context.fillText(label, canvas.width / 2, canvas.height / 2 + 2);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
-  const sprite = new THREE.Sprite(material);
-  sprite.scale.set(1.35, 0.34, 1);
-  sprite.renderOrder = 30;
-  sprite.userData.generatedTexture = true;
-  return sprite;
+  texture.minFilter = THREE.LinearFilter;
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    depthTest: false,
+    depthWrite: false,
+    side: THREE.DoubleSide
+  });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1.42, 0.42), material);
+  mesh.renderOrder = 902;
+  mesh.userData.generatedTexture = true;
+  return mesh;
 }
 
 function renderModel() {
@@ -829,11 +836,15 @@ function renderModel() {
     }
   });
 
-  const frontLabel = makeBoardLabelSprite(text(state.lang, "front"));
-  frontLabel.position.set(0, 0.16, depth / 2 + 0.82);
+  // Labels sit on the square wooden frame (rail is at gridSize/2 + 0.62),
+  // laid flat like copy-build/shape-build rather than as floating billboards.
+  const labelOffset = gridSize / 2 + 0.46;
+  const frontLabel = makeBoardLabelPlane(text(state.lang, "front"));
+  frontLabel.position.set(0, -0.01, labelOffset);
   modelGroup.add(frontLabel);
-  const rightLabel = makeBoardLabelSprite(state.lang === "ko" ? "오른쪽" : state.lang === "zh" ? "右边" : state.lang === "ja" ? "右" : "Right");
-  rightLabel.position.set(width / 2 + 0.82, 0.16, 0);
+  const rightLabel = makeBoardLabelPlane(state.lang === "ko" ? "오른쪽" : state.lang === "zh" ? "右边" : state.lang === "ja" ? "右" : "Right");
+  rightLabel.position.set(labelOffset, -0.01, 0);
+  rightLabel.rotation.set(0, Math.PI / 2, 0);
   modelGroup.add(rightLabel);
   controls.target.set(0, Math.min(1.75, currentProblem().maxHeight * 0.42 + 0.4), 0);
   controls.update();
