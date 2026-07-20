@@ -565,9 +565,13 @@ controls.minPolarAngle = 0.12;
 controls.maxPolarAngle = Math.PI / 2.06;
 controls.target.set(0, 1.25, 0);
 
-scene.add(new THREE.HemisphereLight(0xfffbef, 0x9b6d45, 2.15));
-const sunlight = new THREE.DirectionalLight(0xfff4d6, 3.2);
-sunlight.position.set(-5, 9, 6);
+// Lighting matched to copy-build ("똑같이 쌓기"): neutral white sky/sun so the
+// wood tone comes from the textures rather than a warm tint, at the same
+// intensities. Shadow-camera bounds stay wider (±7) because count-heights
+// boards go up to 5×5.
+scene.add(new THREE.HemisphereLight(0xffffff, 0xc9d5cd, 2.2));
+const sunlight = new THREE.DirectionalLight(0xffffff, 2.4);
+sunlight.position.set(5, 8.5, 4);
 sunlight.castShadow = true;
 sunlight.shadow.mapSize.set(1024, 1024);
 sunlight.shadow.camera.left = -7;
@@ -637,7 +641,7 @@ const cubeMaterial = new THREE.MeshStandardMaterial({
   bumpScale: 0.012
 });
 const edgeGeometry = new THREE.EdgesGeometry(cubeGeometry, 28);
-const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x87552d, transparent: true, opacity: 0.3 });
+const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x8b6840, transparent: true, opacity: 0.18 });
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 let clickableObjects = [];
@@ -765,10 +769,10 @@ function renderModel() {
     new THREE.PlaneGeometry(gridSize + 0.28, gridSize + 0.28),
     new THREE.MeshStandardMaterial({
       map: insetWoodTexture,
-      color: 0xfff2d7,
-      roughness: 0.82,
+      color: 0xdbe2d7,
+      roughness: 0.9,
       bumpMap: insetWoodTexture,
-      bumpScale: 0.004
+      bumpScale: 0.0025
     })
   );
   floor.rotation.x = -Math.PI / 2;
@@ -891,6 +895,10 @@ renderer.domElement.addEventListener("pointerup", (event) => {
 
 new ResizeObserver(resizeScene).observe(elements.scene);
 function animate() {
+  // Gently drifting sun, matching copy-build's living "sunlight".
+  const time = performance.now() * 0.001;
+  sunlight.position.x = 5 + Math.sin(time * 0.32) * 0.42;
+  sunlight.position.z = 4 + Math.cos(time * 0.28) * 0.34;
   controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
