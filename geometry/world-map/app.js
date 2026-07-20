@@ -1,4 +1,4 @@
-import { syncEvolution, getEvolution, applyCharacterGlow, stageName, levelLabel, releaseColorLock } from "../shared/evolution.js?v=evolve3-20260719a";
+import { syncEvolution, getEvolution, applyCharacterGlow, stageName, levelLabel, releaseColorLock } from "../shared/evolution.js?v=evolve4-20260720a";
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
