@@ -4,7 +4,7 @@ import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.j
 import { levels, validateLevels } from "./levels.js";
 import { text } from "./i18n.js?v=count-board-20260718d";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
-import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve3-20260719a";
+import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
 
 validateLevels();
 
