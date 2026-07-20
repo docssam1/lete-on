@@ -2,128 +2,73 @@ import { countries, COUNTRY_TOTAL, continentNames, rewards, buildings } from './
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
 import { feature, mesh } from 'https://cdn.jsdelivr.net/npm/topojson-client@3/+esm';
 
-const $ = selector => document.querySelector(selector);
-const $$ = selector => [...document.querySelectorAll(selector)];
-const storageKey = 'gfield-world-explorer-v1';
-const defaultState = { points:0, streak:0, solved:[], ownedRewards:[], ownedBuildings:[], audio:false, continent:'all', mode:'flag' };
-const isoNumeric = {KR:'410',JP:'392',CN:'156',IN:'356',TH:'764',ID:'360',GB:'826',FR:'250',DE:'276',IT:'380',ES:'724',GR:'300',EG:'818',ZA:'710',KE:'404',NG:'566',US:'840',CA:'124',MX:'484',BR:'076',AR:'032',PE:'604',AU:'036',NZ:'554'};
-const numericCountry = new Map(countries.map(c => [isoNumeric[c.id], c]));
-const focusViews = {
-  all:{x:0,y:0,k:1}, asia:{x:-425,y:-60,k:1.72}, europe:{x:-105,y:28,k:2.45}, africa:{x:-125,y:-190,k:1.85},
-  'north-america':{x:305,y:-40,k:1.72}, 'south-america':{x:190,y:-285,k:1.92}, oceania:{x:-570,y:-300,k:2.05}
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const storageKey='gfield-world-explorer-v1';
+const defaultState={points:0,streak:0,solved:[],ownedRewards:[],ownedBuildings:[],audio:false,continent:'all',mode:'flag',lang:'ko'};
+const isoNumeric={KR:'410',JP:'392',CN:'156',IN:'356',TH:'764',ID:'360',GB:'826',FR:'250',DE:'276',IT:'380',ES:'724',GR:'300',EG:'818',ZA:'710',KE:'404',NG:'566',US:'840',CA:'124',MX:'484',BR:'076',AR:'032',PE:'604',AU:'036',NZ:'554'};
+const numericCountry=new Map(countries.map(c=>[isoNumeric[c.id],c]));
+const focusViews={all:{x:0,y:0,k:1},asia:{x:-425,y:-60,k:1.72},europe:{x:-105,y:28,k:2.45},africa:{x:-125,y:-190,k:1.85},'north-america':{x:305,y:-40,k:1.72},'south-america':{x:190,y:-285,k:1.92},oceania:{x:-570,y:-300,k:2.05}};
+const localeMap={ko:'ko-KR',zh:'zh-CN',ja:'ja-JP',en:'en-US'};
+const ui={
+ ko:{rotateTitle:'가로 화면으로 돌려 주세요',rotateText:'세계지도를 넓게 보며 탐험해요.',points:'포인트',streak:'연속',explored:'탐험',missionTitle:'오늘의 세계 탐험',missionText:'지도를 살펴보고 나라 퀴즈에 도전해 보세요.',modeFlag:'국기',modeClue:'정보',modeLocation:'위치',mapTitleUi:'세계 탐험 지도',mapLoading:'정확한 세계지도를 펼치는 중...',unvisited:'미탐험',visited:'탐험 완료',target:'이번 문제',hint:'힌트',next:'다음 나라',bag:'큐비의 여행 가방',village:'세계 마을',cubi:'큐비',audioOn:'🔊 음성 끄기',audioOff:'🔈 음성 켜기',all:'전 세계',asia:'아시아',europe:'유럽',africa:'아프리카','north-america':'북아메리카','south-america':'남아메리카',oceania:'오세아니아'},
+ zh:{rotateTitle:'请横屏使用',rotateText:'横屏可以更清楚地探索世界地图。',points:'积分',streak:'连胜',explored:'已探索',missionTitle:'今天的世界探险',missionText:'观察地图并挑战国家问答。',modeFlag:'国旗',modeClue:'信息',modeLocation:'位置',mapTitleUi:'世界探索地图',mapLoading:'正在展开世界地图...',unvisited:'未探索',visited:'已完成',target:'本题国家',hint:'提示',next:'下一个国家',bag:'Qubi的旅行包',village:'世界村庄',cubi:'Qubi',audioOn:'🔊 关闭语音',audioOff:'🔈 开启语音',all:'全世界',asia:'亚洲',europe:'欧洲',africa:'非洲','north-america':'北美洲','south-america':'南美洲',oceania:'大洋洲'},
+ ja:{rotateTitle:'横向きにしてください',rotateText:'横画面で世界地図を広く見て探検しよう。',points:'ポイント',streak:'連続',explored:'探検',missionTitle:'今日の世界探検',missionText:'地図を見て国クイズに挑戦しよう。',modeFlag:'国旗',modeClue:'情報',modeLocation:'場所',mapTitleUi:'世界探検マップ',mapLoading:'世界地図を広げています...',unvisited:'未探検',visited:'探検済み',target:'今回の国',hint:'ヒント',next:'次の国',bag:'キュービの旅行かばん',village:'世界の村',cubi:'キュービ',audioOn:'🔊 音声オフ',audioOff:'🔈 音声オン',all:'全世界',asia:'アジア',europe:'ヨーロッパ',africa:'アフリカ','north-america':'北アメリカ','south-america':'南アメリカ',oceania:'オセアニア'},
+ en:{rotateTitle:'Rotate your device',rotateText:'Explore the world map in landscape view.',points:'Points',streak:'Streak',explored:'Explored',missionTitle:"Today's World Mission",missionText:'Study the map and take on a country quiz.',modeFlag:'Flag',modeClue:'Clue',modeLocation:'Location',mapTitleUi:'World Explorer Map',mapLoading:'Opening the world map...',unvisited:'Unvisited',visited:'Completed',target:'Current target',hint:'Hint',next:'Next country',bag:"Qubi's Travel Bag",village:'World Village',cubi:'Qubi',audioOn:'🔊 Voice off',audioOff:'🔈 Voice on',all:'World',asia:'Asia',europe:'Europe',africa:'Africa','north-america':'North America','south-america':'South America',oceania:'Oceania'}
 };
+const countryNames={
+ KR:{ko:'대한민국',zh:'韩国',ja:'韓国',en:'South Korea'},JP:{ko:'일본',zh:'日本',ja:'日本',en:'Japan'},CN:{ko:'중국',zh:'中国',ja:'中国',en:'China'},IN:{ko:'인도',zh:'印度',ja:'インド',en:'India'},TH:{ko:'태국',zh:'泰国',ja:'タイ',en:'Thailand'},ID:{ko:'인도네시아',zh:'印度尼西亚',ja:'インドネシア',en:'Indonesia'},GB:{ko:'영국',zh:'英国',ja:'イギリス',en:'United Kingdom'},FR:{ko:'프랑스',zh:'法国',ja:'フランス',en:'France'},DE:{ko:'독일',zh:'德国',ja:'ドイツ',en:'Germany'},IT:{ko:'이탈리아',zh:'意大利',ja:'イタリア',en:'Italy'},ES:{ko:'스페인',zh:'西班牙',ja:'スペイン',en:'Spain'},GR:{ko:'그리스',zh:'希腊',ja:'ギリシャ',en:'Greece'},EG:{ko:'이집트',zh:'埃及',ja:'エジプト',en:'Egypt'},ZA:{ko:'남아프리카 공화국',zh:'南非',ja:'南アフリカ',en:'South Africa'},KE:{ko:'케냐',zh:'肯尼亚',ja:'ケニア',en:'Kenya'},NG:{ko:'나이지리아',zh:'尼日利亚',ja:'ナイジェリア',en:'Nigeria'},US:{ko:'미국',zh:'美国',ja:'アメリカ',en:'United States'},CA:{ko:'캐나다',zh:'加拿大',ja:'カナダ',en:'Canada'},MX:{ko:'멕시코',zh:'墨西哥',ja:'メキシコ',en:'Mexico'},BR:{ko:'브라질',zh:'巴西',ja:'ブラジル',en:'Brazil'},AR:{ko:'아르헨티나',zh:'阿根廷',ja:'アルゼンチン',en:'Argentina'},PE:{ko:'페루',zh:'秘鲁',ja:'ペルー',en:'Peru'},AU:{ko:'오스트레일리아',zh:'澳大利亚',ja:'オーストラリア',en:'Australia'},NZ:{ko:'뉴질랜드',zh:'新西兰',ja:'ニュージーランド',en:'New Zealand'}
+};
+const populationBand={KR:'약 5천만 명',JP:'약 1억 명 이상',CN:'10억 명 이상',IN:'10억 명 이상',TH:'약 7천만 명',ID:'2억 명 이상',GB:'약 7천만 명',FR:'약 7천만 명',DE:'약 8천만 명',IT:'약 6천만 명',ES:'약 5천만 명',GR:'약 1천만 명',EG:'1억 명 이상',ZA:'약 6천만 명',KE:'약 5천만 명',NG:'2억 명 이상',US:'3억 명 이상',CA:'약 4천만 명',MX:'1억 명 이상',BR:'2억 명 이상',AR:'약 5천만 명',PE:'약 3천만 명',AU:'약 3천만 명',NZ:'약 5백만 명'};
+let state=loadState(),current=null,locked=false,hintLevel=0,atlas=null,svg,mapRoot,projection,geoPath,zoom;
 
-let state = loadState();
-let current = null;
-let locked = false;
-let atlas = null;
-let svg, mapRoot, projection, geoPath, zoom;
+function loadState(){try{return {...defaultState,...JSON.parse(localStorage.getItem(storageKey)||'{}')}}catch{return {...defaultState}}}
+function saveState(){localStorage.setItem(storageKey,JSON.stringify(state))}
+function sample(a){return a[Math.floor(Math.random()*a.length)]}
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function pool(){const f=state.continent==='all'?countries:countries.filter(c=>c.continent===state.continent);return f.length>=4?f:countries}
+function t(k){return ui[state.lang]?.[k]??ui.ko[k]??k}
+function n(c){return countryNames[c.id]?.[state.lang]??c.name}
+function speak(text){if(!state.audio||!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=localeMap[state.lang];u.rate=.95;speechSynthesis.speak(u)}
+function guide(text){$('#guideMessage').textContent=text;speak(text)}
+function toast(text){const e=$('#toast');e.textContent=text;e.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>e.classList.remove('show'),1800)}
 
-function loadState(){ try{return {...defaultState,...JSON.parse(localStorage.getItem(storageKey)||'{}')}}catch{return {...defaultState}} }
-function saveState(){ localStorage.setItem(storageKey,JSON.stringify(state)); }
-function sample(list){ return list[Math.floor(Math.random()*list.length)]; }
-function shuffle(list){ return [...list].sort(()=>Math.random()-.5); }
-function pool(){ const filtered=state.continent==='all'?countries:countries.filter(c=>c.continent===state.continent); return filtered.length>=4?filtered:countries; }
-function speak(text){ if(!state.audio||!('speechSynthesis'in window))return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text);u.lang='ko-KR';u.rate=.95;speechSynthesis.speak(u); }
-function guide(text){ $('#guideMessage').textContent=text;speak(text); }
-function toast(text){ const el=$('#toast');el.textContent=text;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),1800); }
+function applyLanguage(){
+ document.documentElement.lang=state.lang==='zh'?'zh-CN':state.lang==='ja'?'ja':state.lang==='en'?'en':'ko';
+ $$('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
+ $$('.language-switch button').forEach(b=>b.classList.toggle('active',b.dataset.lang===state.lang));
+ const select=$('#continentFilter');select.innerHTML=Object.keys(focusViews).map(id=>`<option value="${id}">${t(id)}</option>`).join('');select.value=state.continent;
+ if(current){renderQuizVisual();renderAnswers();renderMapState()}
+ updateStatus();
+}
 
 async function initAtlas(){
-  svg=d3.select('#atlasSvg');
-  const width=1000,height=520;
-  projection=d3.geoNaturalEarth1().fitExtent([[24,24],[width-24,height-24]],{type:'Sphere'});
-  geoPath=d3.geoPath(projection);
-  mapRoot=svg.append('g').attr('class','atlas-root');
-  mapRoot.append('path').datum(d3.geoGraticule10()).attr('class','graticule').attr('d',geoPath);
-  mapRoot.append('path').datum({type:'Sphere'}).attr('class','sphere-outline').attr('d',geoPath);
-  try{
-    const world=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(r=>{if(!r.ok)throw new Error('map');return r.json()});
-    atlas=feature(world,world.objects.countries).features;
-    mapRoot.append('g').attr('id','countryPaths').selectAll('path').data(atlas).join('path')
-      .attr('class','country').attr('d',geoPath).attr('data-numeric',d=>String(d.id).padStart(3,'0'))
-      .on('pointerenter',(event,d)=>showMapTooltip(event,d)).on('pointermove',(event,d)=>showMapTooltip(event,d))
-      .on('pointerleave',hideMapTooltip).on('click',(_,d)=>selectMappedCountry(d));
-    mapRoot.append('path').datum(mesh(world,world.objects.countries,(a,b)=>a!==b)).attr('class','country-border').attr('d',geoPath);
-    mapRoot.append('g').attr('id','atlasMarkers');
-    zoom=d3.zoom().scaleExtent([1,5]).translateExtent([[-250,-180],[1250,720]]).on('zoom',event=>mapRoot.attr('transform',event.transform));
-    svg.call(zoom).on('dblclick.zoom',null);
-    $('#zoomIn').onclick=()=>svg.transition().duration(260).call(zoom.scaleBy,1.35);
-    $('#zoomOut').onclick=()=>svg.transition().duration(260).call(zoom.scaleBy,1/1.35);
-    $('#resetMap').onclick=()=>focusMap('all');
-    $('#mapLoading').classList.add('hide');
-    renderMapState();focusMap(state.continent,false);
-  }catch(error){
-    $('#mapLoading').innerHTML='<b>지도를 불러오지 못했어요.<br>인터넷 연결을 확인해 주세요.</b>';
-    console.error(error);
-  }
-}
+ svg=d3.select('#atlasSvg');projection=d3.geoNaturalEarth1().fitExtent([[24,24],[976,496]],{type:'Sphere'});geoPath=d3.geoPath(projection);mapRoot=svg.append('g').attr('class','atlas-root');
+ mapRoot.append('path').datum(d3.geoGraticule10()).attr('class','graticule').attr('d',geoPath);mapRoot.append('path').datum({type:'Sphere'}).attr('class','sphere-outline').attr('d',geoPath);
+ try{const world=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(r=>{if(!r.ok)throw new Error('map');return r.json()});atlas=feature(world,world.objects.countries).features;
+ mapRoot.append('g').attr('id','countryPaths').selectAll('path').data(atlas).join('path').attr('class','country').attr('d',geoPath).attr('data-numeric',d=>String(d.id).padStart(3,'0')).on('pointerenter',(e,d)=>showMapTooltip(e,d)).on('pointermove',(e,d)=>showMapTooltip(e,d)).on('pointerleave',hideMapTooltip).on('click',(_,d)=>selectMappedCountry(d));
+ mapRoot.append('path').datum(mesh(world,world.objects.countries,(a,b)=>a!==b)).attr('class','country-border').attr('d',geoPath);mapRoot.append('g').attr('id','atlasMarkers');zoom=d3.zoom().scaleExtent([1,5]).translateExtent([[-250,-180],[1250,720]]).on('zoom',e=>mapRoot.attr('transform',e.transform));svg.call(zoom).on('dblclick.zoom',null);$('#zoomIn').onclick=()=>svg.transition().duration(260).call(zoom.scaleBy,1.35);$('#zoomOut').onclick=()=>svg.transition().duration(260).call(zoom.scaleBy,1/1.35);$('#resetMap').onclick=()=>focusMap('all');$('#mapLoading').classList.add('hide');renderMapState();focusMap(state.continent,false)}catch(e){$('#mapLoading').innerHTML='<b>Map loading failed</b>';console.error(e)}}
+function showMapTooltip(event,d){const c=numericCountry.get(String(d.id).padStart(3,'0')),tip=$('#mapTooltip'),r=$('#worldMap').getBoundingClientRect();tip.hidden=false;tip.textContent=c?`${c.flag} ${n(c)}`:'Country';tip.style.left=`${event.clientX-r.left}px`;tip.style.top=`${event.clientY-r.top}px`}
+function hideMapTooltip(){$('#mapTooltip').hidden=true}
+function selectMappedCountry(d){const c=numericCountry.get(String(d.id).padStart(3,'0'));if(!c)return;setContinent(c.continent)}
+function focusMap(continent,animate=true){if(!svg||!zoom)return;const v=focusViews[continent]||focusViews.all,tform=d3.zoomIdentity.translate(v.x,v.y).scale(v.k);(animate?svg.transition().duration(650).ease(d3.easeCubicOut):svg).call(zoom.transform,tform)}
+function renderMapState(){if(!atlas||!mapRoot)return;mapRoot.selectAll('.country').attr('class',d=>{const c=numericCountry.get(String(d.id).padStart(3,'0')),a=['country'];if(c&&state.solved.includes(c.id))a.push('solved');if(c&&current&&c.id===current.id&&state.mode==='location')a.push('current');return a.join(' ')});const data=countries.filter(c=>state.solved.includes(c.id)&&isoNumeric[c.id]).map(c=>{const s=atlas.find(d=>String(d.id).padStart(3,'0')===isoNumeric[c.id]);return s?{...c,point:geoPath.centroid(s)}:null}).filter(Boolean);mapRoot.select('#atlasMarkers').selectAll('text').data(data,d=>d.id).join('text').attr('class','flag-pin').attr('x',d=>d.point[0]).attr('y',d=>d.point[1]-5).text(d=>d.flag);const target=current&&state.mode==='location'&&isoNumeric[current.id]?atlas.find(d=>String(d.id).padStart(3,'0')===isoNumeric[current.id]):null;mapRoot.select('#atlasMarkers').selectAll('circle').data(target?[geoPath.centroid(target)]:[]).join('circle').attr('class','target-pulse').attr('cx',d=>d[0]).attr('cy',d=>d[1])}
 
-function showMapTooltip(event,d){
-  const id=String(d.id).padStart(3,'0'); const known=numericCountry.get(id); const tip=$('#mapTooltip');
-  const rect=$('#worldMap').getBoundingClientRect(); tip.hidden=false; tip.textContent=known?`${known.flag} ${known.name}`:'세계의 한 국가';
-  tip.style.left=`${event.clientX-rect.left}px`;tip.style.top=`${event.clientY-rect.top}px`;
-}
-function hideMapTooltip(){ $('#mapTooltip').hidden=true; }
-function selectMappedCountry(d){ const c=numericCountry.get(String(d.id).padStart(3,'0')); if(!c)return; state.continent=c.continent;$('#continentFilter').value=c.continent;focusMap(c.continent);nextQuiz();updateStatus(); }
-function focusMap(continent,animate=true){ if(!svg||!zoom)return; const v=focusViews[continent]||focusViews.all; const t=d3.zoomIdentity.translate(v.x,v.y).scale(v.k); const target=animate?svg.transition().duration(650).ease(d3.easeCubicOut):svg;target.call(zoom.transform,t); }
-function renderMapState(){
-  if(!atlas||!mapRoot)return;
-  mapRoot.selectAll('.country').attr('class',d=>{
-    const c=numericCountry.get(String(d.id).padStart(3,'0')); const classes=['country'];
-    if(c&&state.solved.includes(c.id))classes.push('solved');
-    if(c&&current&&c.id===current.id&&state.mode==='location')classes.push('current');
-    return classes.join(' ');
-  });
-  const markerData=countries.filter(c=>state.solved.includes(c.id)&&isoNumeric[c.id]).map(c=>{
-    const shape=atlas.find(d=>String(d.id).padStart(3,'0')===isoNumeric[c.id]);return shape?{...c,point:geoPath.centroid(shape)}:null;
-  }).filter(Boolean);
-  const markers=mapRoot.select('#atlasMarkers').selectAll('text').data(markerData,d=>d.id);
-  markers.join(enter=>enter.append('text').attr('class','flag-pin').attr('x',d=>d.point[0]).attr('y',d=>d.point[1]-5).text(d=>d.flag).attr('opacity',0).transition().duration(350).attr('opacity',1),update=>update.attr('x',d=>d.point[0]).attr('y',d=>d.point[1]-5),exit=>exit.remove());
-  const target=current&&state.mode==='location'&&isoNumeric[current.id]?atlas.find(d=>String(d.id).padStart(3,'0')===isoNumeric[current.id]):null;
-  const pulse=mapRoot.select('#atlasMarkers').selectAll('circle').data(target?[geoPath.centroid(target)]:[]);
-  pulse.join('circle').attr('class','target-pulse').attr('cx',d=>d[0]).attr('cy',d=>d[1]);
-}
+function updateStatus(){$('#points').textContent=state.points;$('#streak').textContent=state.streak;$('#solved').textContent=state.solved.length;$('#totalCountries').textContent=COUNTRY_TOTAL;$('#speakToggle').textContent=state.audio?t('audioOn'):t('audioOff');$('#speakToggle').setAttribute('aria-pressed',String(state.audio));renderMapState();renderProgress();renderCollections();saveState()}
+function renderProgress(){const root=$('#continentProgress');root.innerHTML='';Object.keys(focusViews).filter(id=>id!=='all').forEach(id=>{const items=countries.filter(c=>c.continent===id),solved=items.filter(c=>state.solved.includes(c.id)).length,b=document.createElement('button');b.className=`progress-chip ${state.continent===id?'active':''}`;b.textContent=`${t(id)} ${solved}/${items.length}`;b.onclick=()=>setContinent(id);root.appendChild(b)})}
+function renderCollections(){const inv=$('#inventory');inv.innerHTML='';rewards.forEach(i=>{const owned=state.ownedRewards.includes(i.id),b=document.createElement('button');b.className=`reward ${owned?'':'locked'}`;b.innerHTML=`<b>${i.icon}</b><br>${i.name}<br><small>${owned?'✓':i.cost+'P'}</small>`;b.onclick=()=>buy(i,'reward');inv.appendChild(b)});const root=$('#buildings');root.innerHTML='';buildings.forEach(i=>{const owned=state.ownedBuildings.includes(i.id),b=document.createElement('button');b.className=`reward ${owned?'':'locked'}`;b.innerHTML=`<b>${i.icon}</b><br>${i.name}<br><small>${owned?'✓':i.cost+'P'}</small>`;b.onclick=()=>buy(i,'building');root.appendChild(b)})}
+function buy(item,type){const key=type==='reward'?'ownedRewards':'ownedBuildings';if(state[key].includes(item.id))return;if(state.points<item.cost)return toast(`${item.cost-state.points}P`);state.points-=item.cost;state[key].push(item.id);updateStatus()}
 
-function updateStatus(){
-  $('#points').textContent=state.points;$('#streak').textContent=state.streak;$('#solved').textContent=state.solved.length;$('#totalCountries').textContent=COUNTRY_TOTAL;
-  $('#speakToggle').textContent=state.audio?'🔊 음성 끄기':'🔈 음성 켜기';$('#speakToggle').setAttribute('aria-pressed',String(state.audio));
-  renderMapState();renderProgress();renderCollections();saveState();
-}
-function renderProgress(){
-  const root=$('#continentProgress');root.innerHTML='';
-  Object.entries(continentNames).filter(([id])=>id!=='all').forEach(([id,name])=>{const items=countries.filter(c=>c.continent===id);const solved=items.filter(c=>state.solved.includes(c.id)).length;const chip=document.createElement('button');chip.className=`progress-chip ${state.continent===id?'active':''}`;chip.textContent=`${name} ${solved}/${items.length}`;chip.onclick=()=>setContinent(id);root.appendChild(chip)});
-}
-function renderCollections(){
-  const inv=$('#inventory');inv.innerHTML='';rewards.forEach(item=>{const owned=state.ownedRewards.includes(item.id);const el=document.createElement('button');el.className=`reward ${owned?'':'locked'}`;el.innerHTML=`<b>${item.icon}</b><br>${item.name}<br><small>${owned?'보유':item.cost+'P'}</small>`;el.onclick=()=>buy(item,'reward');inv.appendChild(el)});
-  const build=$('#buildings');build.innerHTML='';buildings.forEach(item=>{const owned=state.ownedBuildings.includes(item.id);const el=document.createElement('button');el.className=`reward ${owned?'':'locked'}`;el.innerHTML=`<b>${item.icon}</b><br>${item.name}<br><small>${owned?'건설 완료':item.cost+'P'}</small>`;el.onclick=()=>buy(item,'building');build.appendChild(el)});
-}
-function buy(item,type){ const key=type==='reward'?'ownedRewards':'ownedBuildings';if(state[key].includes(item.id))return toast('이미 가지고 있어요.');if(state.points<item.cost)return toast(`포인트가 ${item.cost-state.points}점 더 필요해요.`);state.points-=item.cost;state[key].push(item.id);updateStatus();guide(`${item.name}을 획득했어! 세계 마을이 더 멋져졌네.`); }
-
-function nextQuiz(){
-  locked=false;$('#nextButton').disabled=true;const available=pool();const unsolved=available.filter(c=>!state.solved.includes(c.id));current=sample(unsolved.length?unsolved:available);
-  const alternatives=shuffle(available.filter(c=>c.id!==current.id)).slice(0,3);const choices=shuffle([current,...alternatives]);renderQuizVisual();
-  const answers=$('#answers');answers.innerHTML='';choices.forEach((c,index)=>{const button=document.createElement('button');button.innerHTML=`<span>${index+1}</span> ${c.name}`;button.dataset.countryId=c.id;button.onclick=()=>answer(c,button);answers.appendChild(button)});guide(modeIntro());renderMapState();
-}
-function modeIntro(){ if(state.mode==='flag')return'국기를 자세히 보고 나라 이름을 골라 보자!';if(state.mode==='clue')return'지리와 역사 단서를 읽고 나라를 찾아보자!';return'지도에 빛나는 나라의 위치를 보고 맞혀 보자!'; }
-function renderQuizVisual(){
-  const visual=$('#quizVisual');visual.innerHTML='';const heading=$('#quizHeading');
-  if(state.mode==='flag'){heading.textContent='국기를 보고 나라를 맞혀요';visual.innerHTML=`<div class="big-flag" aria-label="국기">${current.flag}</div>`;$('#quizPrompt').textContent='이 국기는 어느 나라의 국기일까요?'}
-  else if(state.mode==='clue'){heading.textContent='정보를 읽고 나라를 맞혀요';visual.innerHTML=`<div class="clue-card">${current.clue}<br><small>역사 단서 · ${current.history}</small></div>`;$('#quizPrompt').textContent='설명에 알맞은 나라는 어디일까요?'}
-  else{heading.textContent='위치를 보고 나라를 맞혀요';visual.innerHTML=`<div class="clue-card"><b>${continentNames[current.continent]}</b> 지도를 확대했어요.<br><small>붉게 빛나는 국가의 이름을 골라 보세요.</small></div>`;$('#quizPrompt').textContent='지도에서 표시된 나라는 어디일까요?';focusMap(current.continent)}
-}
-function answer(choice,button){
-  if(locked)return;locked=true;const buttons=$$('#answers button');const correctButton=buttons.find(b=>b.dataset.countryId===current.id);
-  if(choice.id===current.id){button.classList.add('correct');state.streak+=1;const first=!state.solved.includes(current.id);const gained=10+Math.min(state.streak,5)*2+(first?15:0);state.points+=gained;if(first)state.solved.push(current.id);guide(`정답! ${current.name}. ${current.geography} ${gained}포인트를 받았어.`);toast(`+${gained}P`);setTimeout(()=>openCountryCard(current),550)}
-  else{button.classList.add('wrong');correctButton?.classList.add('correct');state.streak=0;guide(`아쉽다. 정답은 ${current.name}이야. ${current.location}에 있는 나라야.`)}
-  $('#nextButton').disabled=false;updateStatus();
-}
-function openCountryCard(c){ $('#countryCard').innerHTML=`<section class="country-info"><h2>${c.flag} ${c.name}</h2><p>${c.clue}</p><div class="facts"><div class="fact"><b>수도</b><br>${c.capital}</div><div class="fact"><b>위치</b><br>${c.location}</div><div class="fact"><b>언어</b><br>${c.language}</div><div class="fact"><b>화폐</b><br>${c.currency}</div></div><h3>지리</h3><p>${c.geography}</p><h3>인문·문화</h3><p>${c.human}</p><h3>역사</h3><p>${c.history}</p><p><b>나라 보상:</b> ${c.reward} · ${c.building}</p></section>`;$('#countryDialog').showModal(); }
+function nextQuiz(){locked=false;hintLevel=0;$('#hintPanel').hidden=true;$('#nextButton').disabled=true;const a=pool(),u=a.filter(c=>!state.solved.includes(c.id));current=sample(u.length?u:a);renderQuizVisual();renderAnswers();guide(state.lang==='en'?'Look carefully and choose the country!':state.lang==='ja'?'よく見て国を選ぼう！':state.lang==='zh'?'仔细观察并选择国家！':'잘 살펴보고 나라를 골라 보자!');renderMapState()}
+function renderAnswers(){const a=pool(),alts=shuffle(a.filter(c=>c.id!==current.id)).slice(0,3),choices=shuffle([current,...alts]),root=$('#answers');root.innerHTML='';choices.forEach((c,i)=>{const b=document.createElement('button');b.innerHTML=`<span>${i+1}</span> ${n(c)}`;b.dataset.countryId=c.id;b.onclick=()=>answer(c,b);root.appendChild(b)})}
+function renderQuizVisual(){const v=$('#quizVisual'),h=$('#quizHeading');v.innerHTML='';if(state.mode==='flag'){h.textContent=state.lang==='en'?'Guess the country by its flag':state.lang==='ja'?'国旗を見て国を当てよう':state.lang==='zh'?'看国旗猜国家':'국기를 보고 나라를 맞혀요';v.innerHTML=`<div class="big-flag">${current.flag}</div>`;$('#quizPrompt').textContent=state.lang==='en'?'Which country has this flag?':state.lang==='ja'?'この国旗はどの国？':state.lang==='zh'?'这是哪个国家的国旗？':'이 국기는 어느 나라의 국기일까요?'}else if(state.mode==='clue'){h.textContent=t('modeClue');v.innerHTML=`<div class="clue-card">${current.clue}<br><small>${current.history}</small></div>`;$('#quizPrompt').textContent=state.lang==='en'?'Which country matches the clues?':state.lang==='ja'?'説明に合う国は？':state.lang==='zh'?'哪个国家符合这些线索？':'설명에 알맞은 나라는 어디일까요?'}else{h.textContent=t('modeLocation');v.innerHTML=`<div class="clue-card"><b>${t(current.continent)}</b><br><small>${state.lang==='en'?'Choose the highlighted country on the map.':'지도에서 빛나는 나라를 골라 보세요.'}</small></div>`;$('#quizPrompt').textContent=state.lang==='en'?'Which country is highlighted?':'지도에 표시된 나라는 어디일까요?';focusMap(current.continent)}}
+function blankName(name){return [...name].map(ch=>/\s|·|-/.test(ch)?ch:'＿').join(' ')}
+function hintText(){const name=n(current),first=[...name].find(ch=>!/[\s·-]/.test(ch))||name[0];const stages={ko:[`나라 이름은 ${[...name.replace(/\s/g,'')].length}글자예요. ${blankName(name)}`,`지역 힌트: ${current.location}`,`인구 규모 힌트: ${populationBand[current.id]||'중간 규모의 인구를 가진 나라'}`,`첫 글자 힌트: “${first}”로 시작해요.`],zh:[`国名有 ${[...name.replace(/\s/g,'')].length} 个字：${blankName(name)}`,`地区提示：${t(current.continent)}`,`人口规模提示：与同地区的中大型国家相近`, `首字提示：以“${first}”开头。`],ja:[`国名は ${[...name.replace(/\s/g,'')].length}文字：${blankName(name)}`,`地域ヒント：${t(current.continent)}`,`人口規模ヒント：同じ地域の中～大規模の国に近いよ`, `最初の文字は「${first}」です。`],en:[`The country name has ${[...name.replace(/\s/g,'')].length} letters: ${blankName(name)}`,`Region hint: ${t(current.continent)}`,`Population hint: it has a similar population scale to other medium or large countries in its region.`,`First-letter hint: it starts with “${first}”.`]};return stages[state.lang][Math.min(hintLevel,3)]}
+function showHint(){const text=hintText();$('#hintPanel').hidden=false;$('#hintStep').textContent=`${Math.min(hintLevel+1,4)}/4`;$('#hintText').textContent=text;guide(text);if(hintLevel<3)hintLevel++}
+function answer(choice,button){if(locked)return;locked=true;const correct=$$('#answers button').find(b=>b.dataset.countryId===current.id);if(choice.id===current.id){button.classList.add('correct');state.streak++;const first=!state.solved.includes(current.id),gained=10+Math.min(state.streak,5)*2+(first?15:0);state.points+=gained;if(first)state.solved.push(current.id);guide(`${n(current)}! +${gained}P`);toast(`+${gained}P`);setTimeout(()=>openCountryCard(current),550)}else{button.classList.add('wrong');correct?.classList.add('correct');state.streak=0;guide(`${n(current)}`)}$('#nextButton').disabled=false;updateStatus()}
+function openCountryCard(c){$('#countryCard').innerHTML=`<section class="country-info"><h2>${c.flag} ${n(c)}</h2><p>${c.clue}</p><div class="facts"><div class="fact"><b>Capital</b><br>${c.capital}</div><div class="fact"><b>Location</b><br>${c.location}</div><div class="fact"><b>Language</b><br>${c.language}</div><div class="fact"><b>Currency</b><br>${c.currency}</div></div><h3>Geography</h3><p>${c.geography}</p><h3>Culture</h3><p>${c.human}</p><h3>History</h3><p>${c.history}</p></section>`;$('#countryDialog').showModal()}
 function setContinent(id){state.continent=id;$('#continentFilter').value=id;focusMap(id);nextQuiz();updateStatus()}
 
-$$('.mode-tabs button').forEach(button=>button.addEventListener('click',()=>{$$('.mode-tabs button').forEach(b=>b.classList.remove('active'));button.classList.add('active');state.mode=button.dataset.mode;nextQuiz();updateStatus()}));
-$('#continentFilter').addEventListener('change',event=>setContinent(event.target.value));
-$('#speakToggle').addEventListener('click',()=>{state.audio=!state.audio;updateStatus();guide(state.audio?'음성 안내를 시작할게!':'음성 안내를 껐어.')});
-$('#hintButton').addEventListener('click',()=>{const text=`힌트: 수도는 ${current.capital}, 위치는 ${current.location}이야.`;toast(text);guide(text)});
-$('#nextButton').addEventListener('click',nextQuiz);$('#closeDialog').addEventListener('click',()=>$('#countryDialog').close());$('#countryDialog').addEventListener('click',event=>{if(event.target===$('#countryDialog'))$('#countryDialog').close()});
-$('#continentFilter').value=state.continent;$$('.mode-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.mode===state.mode));
-updateStatus();nextQuiz();initAtlas();
+$$('.language-switch button').forEach(b=>b.onclick=()=>{state.lang=b.dataset.lang;applyLanguage()});
+$$('.mode-tabs button').forEach(b=>b.onclick=()=>{$$('.mode-tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');state.mode=b.dataset.mode;nextQuiz();updateStatus()});
+$('#continentFilter').onchange=e=>setContinent(e.target.value);$('#speakToggle').onclick=()=>{state.audio=!state.audio;updateStatus()};$('#hintButton').onclick=showHint;$('#nextButton').onclick=nextQuiz;$('#closeDialog').onclick=()=>$('#countryDialog').close();$('#countryDialog').onclick=e=>{if(e.target===$('#countryDialog'))$('#countryDialog').close()};
+applyLanguage();nextQuiz();initAtlas();
