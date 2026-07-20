@@ -11,10 +11,10 @@ const copyLevelText = {
   en: { title: "Copy the Build", subtitle: "Choose a level and start building.", close: "Close", done: "DONE!" }
 };
 
-// A copy-build level is COMPLETE when every one of its 10 problems has been
-// solved (each solve writes `copy-build:{levelIndex}:{problemIndex}` into
-// gfield-rewarded-games). Levels 4-5 run in shape-build, which has no solve
-// tracking yet, so they never show the badge.
+// A copy-build level (1-3) is COMPLETE when every one of its 10 problems has
+// been solved (each solve writes `copy-build:{levelIndex}:{problemIndex}` into
+// gfield-rewarded-games). A shape-build level (4-5) is COMPLETE when all 5 of
+// its problems have been solved (`shape-build:{level}:{problemIndex}`).
 function completedCopyLevels() {
   let solved;
   try { solved = new Set(JSON.parse(localStorage.getItem("gfield-rewarded-games") || "[]")); }
@@ -26,6 +26,13 @@ function completedCopyLevels() {
       if (solved.has(`copy-build:${li}:${pi}`)) count += 1;
     }
     if (count >= 10) done.add(li + 1);
+  }
+  for (const level of [4, 5]) {
+    let count = 0;
+    for (let pi = 0; pi < 5; pi += 1) {
+      if (solved.has(`shape-build:${level}:${pi}`)) count += 1;
+    }
+    if (count >= 5) done.add(level);
   }
   return done;
 }
