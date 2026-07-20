@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { levels, hiddenCubes, validateLevels } from "./levels.js";
-import { text } from "./i18n.js?v=hidden-1";
+import { levels, hiddenCubes, validateLevels } from "./levels.js?v=hidden-2";
+import { text } from "./i18n.js?v=hidden-2";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
 
@@ -42,7 +42,7 @@ const savedLevel = Number.isInteger(Number(countProgress.levelIndex))
   : Number(localStorage.getItem("hidden-count-level")) || 0;
 const state = {
   lang: localStorage.getItem("gfield-language") || "ko",
-  levelIndex: Math.max(0, Math.min(4, savedLevel)),
+  levelIndex: Math.max(0, Math.min(levels.length - 1, savedLevel)),
   problemIndex: Math.max(0, Number(countProgress.problemIndex) || 0),
   answer: "",
   xray: false,
@@ -213,7 +213,7 @@ function loadProblem() {
   updatePrompt();
   renderModel();
   renderHiddenValue();
-  setGuide("guideStart", false);
+  setGuide(levels[state.levelIndex].wall ? "guideWall" : "guideStart", false);
   setCameraView("free");
   if (shouldShowConceptTutorial()) openConceptTutorial();
 }
@@ -288,10 +288,13 @@ function completeProblem() {
   setGuide("guideSuccess", false);
   renderNumberPad();
   renderHiddenValue();
+  // Longer dwell: the success burst plays (~1.2s), then the child keeps seeing
+  // the outer cubes faded to a watermark with the hidden cubes glowing red
+  // before the next problem loads.
   state.advanceTimer = setTimeout(() => {
     elements.success.classList.remove("show");
     nextProblem();
-  }, 1500);
+  }, 2900);
 }
 
 function playSuccessBurstSound() {
@@ -341,7 +344,7 @@ function toggleXray() {
   state.xray = !state.xray;
   updateXrayButtons();
   renderModel();
-  setGuide(state.xray ? "guideXray" : "guideStart");
+  setGuide(state.xray ? "guideXray" : (levels[state.levelIndex].wall ? "guideWall" : "guideStart"));
 }
 
 function nextProblem() {
@@ -498,8 +501,11 @@ const hiddenMaterial = new THREE.MeshStandardMaterial({
 const edgeGeometry = new THREE.EdgesGeometry(cubeGeometry, 28);
 const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x8b6840, transparent: true, opacity: 0.18 });
 const edgeMaterialDim = new THREE.LineBasicMaterial({ color: 0x8b6840, transparent: true, opacity: 0.08 });
+// The two walls the cubes lean against (back + left). A warm plaster tone so it
+// reads as a room corner, not as more cubes.
+const wallMaterial = new THREE.MeshStandardMaterial({ color: 0xe9ddc4, roughness: 0.95, metalness: 0.0 });
 
-const sharedMaterials = new Set([cubeMaterial, xrayShellMaterial, hiddenMaterial, edgeMaterial, edgeMaterialDim]);
+const sharedMaterials = new Set([cubeMaterial, xrayShellMaterial, hiddenMaterial, edgeMaterial, edgeMaterialDim, wallMaterial]);
 let hiddenMeshes = [];
 
 function clearModel() {
@@ -591,6 +597,21 @@ function renderModel() {
   grid.material.transparent = true;
   grid.material.opacity = 0.88;
   modelGroup.add(grid);
+
+  // Back wall (-z) and left wall (-x): the cubes are stacked into this corner,
+  // so their back and left faces are hidden against the walls. This is what the
+  // "벽에 붙여서 쌓았다" definition means, and it makes the hidden-cube rule
+  // (blocked from 위·앞·오른쪽) visually obvious.
+  const wallThick = 0.16;
+  const wallH = currentProblem().maxHeight + 0.4;
+  const backWall = new THREE.Mesh(new THREE.BoxGeometry(gridSize + 0.5, wallH, wallThick), wallMaterial);
+  backWall.position.set(0, wallH / 2 - 0.02, -centerZ - 0.5 - wallThick / 2);
+  backWall.receiveShadow = true;
+  modelGroup.add(backWall);
+  const leftWall = new THREE.Mesh(new THREE.BoxGeometry(wallThick, wallH, gridSize + 0.5), wallMaterial);
+  leftWall.position.set(-centerX - 0.5 - wallThick / 2, wallH / 2 - 0.02, 0);
+  leftWall.receiveShadow = true;
+  modelGroup.add(leftWall);
 
   const hiddenKeys = new Set(hiddenCubes(heights).map((c) => `${c.x},${c.y},${c.z}`));
   occupiedColumns().forEach((cell) => {
