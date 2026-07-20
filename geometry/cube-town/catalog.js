@@ -17,7 +17,7 @@ export const games = [
     description: { ko: "쌓기나무 맨 위에 수를 쓰고 모두 더해 전체 개수를 구해요.", zh: "在每列积木顶部写数字，再相加求总数。", ja: "積み木の上に数を書いて、全部たして数えます。", en: "Write numbers on top of the cube columns and add them to count all cubes." }
   },
   {
-    id: "hidden-count", group: "counting", number: "03", ready: true, href: "../games/hidden-count/?v=1", thumb: "hidden", levels: "Lv. 1–5",
+    id: "hidden-count", group: "counting", number: "03", ready: true, href: "../games/hidden-count/?v=2", thumb: "hidden", levels: "Lv. 1–6",
     name: { ko: "숨은 쌓기나무 찾기", zh: "寻找隐藏方块", ja: "かくれたつみきを探す", en: "Find Hidden Cubes" },
     description: { ko: "보이는 블록을 단서로 안쪽에 숨은 개수를 찾아요.", zh: "根据可见方块推理内部隐藏的数量。", ja: "見えるブロックから、内側に隠れた数を考えます。", en: "Use the visible cubes to reason about the cubes hidden inside." }
   },

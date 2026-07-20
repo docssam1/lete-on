@@ -129,11 +129,28 @@ export const levels = [
       makeProblem("hidden-l5-04", 5, [[4, 4, 4, 3], [4, 3, 3, 2], [3, 2, 2, 1], [2, 1, 1, 1]]),
       makeProblem("hidden-l5-05", 5, [[4, 3, 3, 2], [3, 4, 2, 2], [3, 2, 2, 1], [2, 2, 1, 1]])
     ]
+  },
+  {
+    // 벽에 붙여 쌓기 — the solid is pushed into the back-left corner against two
+    // walls, so its back and left faces never show. Every problem is a fully
+    // filled block (no empty wells), so the hidden cubes are exactly the ones
+    // sealed inside by the surrounding cubes. Counts rise 1 -> 4 -> 8 -> 18 -> 27;
+    // the 4x4x4 finale hides its full 3x3x3 interior.
+    level: 6,
+    stars: 5,
+    wall: true,
+    problems: [
+      makeProblem("hidden-l6-01", 6, [[2, 2], [2, 2]]),
+      makeProblem("hidden-l6-02", 6, [[2, 2, 2], [2, 2, 2], [2, 2, 2]]),
+      makeProblem("hidden-l6-03", 6, [[3, 3, 3], [3, 3, 3], [3, 3, 3]]),
+      makeProblem("hidden-l6-04", 6, [[3, 3, 3, 3], [3, 3, 3, 3], [3, 3, 3, 3], [3, 3, 3, 3]]),
+      makeProblem("hidden-l6-05", 6, [[4, 4, 4, 4], [4, 4, 4, 4], [4, 4, 4, 4], [4, 4, 4, 4]])
+    ]
   }
 ];
 
 export function validateLevels() {
-  if (levels.length !== 5) throw new Error("hidden-count requires five levels");
+  if (levels.length !== 6) throw new Error("hidden-count requires six levels");
   levels.forEach((level) => {
     if (level.problems.length !== 5) throw new Error(`level ${level.level} requires five problems`);
     level.problems.forEach((problem) => {
