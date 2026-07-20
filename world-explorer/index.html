@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>GFIELD World Explorer</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="orientation-gate" role="status" aria-live="polite">
+    <div class="orientation-card"><span class="phone">↻</span><strong>가로 화면으로 돌려 주세요</strong><p>세계지도를 넓게 보며 탐험해요.</p></div>
+  </div>
+
+  <main class="app-shell">
+    <header class="topbar">
+      <div><p class="eyebrow">GFIELD SOCIAL WORLD</p><h1>World Explorer</h1></div>
+      <div class="status-row"><span>⭐ <b id="points">0</b></span><span>🔥 <b id="streak">0</b></span><span>🏳️ <b id="solved">0</b>/<b id="totalCountries">195</b></span></div>
+    </header>
+
+    <section class="mission-bar">
+      <div><strong id="missionTitle">오늘의 세계 탐험</strong><p id="missionText">대륙을 고르고 나라 퀴즈에 도전해 보세요.</p></div>
+      <nav class="mode-tabs" aria-label="게임 모드">
+        <button class="active" data-mode="flag">국기 맞히기</button>
+        <button data-mode="clue">정보 맞히기</button>
+        <button data-mode="location">위치 맞히기</button>
+      </nav>
+    </section>
+
+    <section class="game-grid">
+      <article class="wood-panel map-panel">
+        <div class="panel-head"><h2>세계 지도</h2><select id="continentFilter" aria-label="대륙 선택"><option value="all">전 세계</option><option value="asia">아시아</option><option value="europe">유럽</option><option value="africa">아프리카</option><option value="north-america">북아메리카</option><option value="south-america">남아메리카</option><option value="oceania">오세아니아</option></select></div>
+        <div id="worldMap" class="world-map" aria-label="세계 지도">
+          <button class="continent north-america" data-continent="north-america">북아메리카</button>
+          <button class="continent south-america" data-continent="south-america">남아메리카</button>
+          <button class="continent europe" data-continent="europe">유럽</button>
+          <button class="continent africa" data-continent="africa">아프리카</button>
+          <button class="continent asia" data-continent="asia">아시아</button>
+          <button class="continent oceania" data-continent="oceania">오세아니아</button>
+          <div id="flagPins" class="flag-pins" aria-hidden="true"></div>
+        </div>
+        <div id="continentProgress" class="continent-progress"></div>
+      </article>
+
+      <article class="wood-panel quiz-panel">
+        <div class="panel-head"><h2 id="quizHeading">국기를 보고 나라를 맞혀요</h2><button id="speakToggle" class="sound-button" type="button" aria-pressed="false">🔊 음성 켜기</button></div>
+        <div id="quizVisual" class="quiz-visual"></div>
+        <p id="quizPrompt" class="quiz-prompt"></p>
+        <div id="answers" class="answers"></div>
+        <div class="quiz-actions"><button id="hintButton" type="button">힌트</button><button id="nextButton" type="button" disabled>다음 나라</button></div>
+      </article>
+    </section>
+
+    <section class="bottom-grid">
+      <article class="collection-card"><h2>큐비의 여행 가방</h2><div id="inventory" class="inventory"></div></article>
+      <article class="collection-card"><h2>세계 마을</h2><div id="buildings" class="buildings"></div></article>
+      <aside class="guide" aria-live="polite"><div class="speech"><strong>큐비</strong><p id="guideMessage">어느 나라부터 탐험할까?</p></div><div class="cubi" aria-label="쌓기나무 캐릭터 큐비"><span></span><span></span><span></span></div></aside>
+    </section>
+
+    <dialog id="countryDialog" class="country-dialog"><article><button id="closeDialog" class="close" aria-label="닫기">×</button><div id="countryCard"></div></article></dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
