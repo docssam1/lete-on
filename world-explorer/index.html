@@ -5,19 +5,101 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#18394b" />
   <title>GFIELD World Explorer</title>
-  <link rel="stylesheet" href="./styles.css?v=atlas-2" />
-  <link rel="stylesheet" href="./ui-extras.css?v=1" />
+  <link rel="stylesheet" href="./styles.css?v=atlas-3" />
+  <link rel="stylesheet" href="./ui-extras.css?v=2" />
+  <link rel="stylesheet" href="./village.css?v=1" />
 </head>
-<body>
+<body class="village-mode">
   <div class="orientation-gate" role="status" aria-live="polite">
-    <div class="orientation-card"><span class="phone">↻</span><strong data-i18n="rotateTitle">가로 화면으로 돌려 주세요</strong><p data-i18n="rotateText">세계지도를 넓게 보며 탐험해요.</p></div>
+    <div class="orientation-card">
+      <span class="phone">↻</span>
+      <strong data-i18n="rotateTitle">가로 화면으로 돌려 주세요</strong>
+      <p data-i18n="rotateText">세계지도를 넓게 보며 탐험해요.</p>
+    </div>
   </div>
-  <main class="app-shell">
+
+  <section id="villageHub" class="village-hub" aria-label="3D 세계 탐험 마을">
+    <div id="villageViewport" class="village-viewport" aria-label="사람 탐험가 아리가 걸어 다니는 3D 마을"></div>
+
+    <header class="village-topbar">
+      <div class="village-brand">
+        <span class="village-brand-mark" aria-hidden="true">G</span>
+        <div>
+          <small>GFIELD SOCIAL WORLD</small>
+          <strong data-village-i18n="worldVillage">세계 탐험 마을</strong>
+        </div>
+      </div>
+      <div class="village-top-tools">
+        <div class="language-switch village-language-switch" role="group" aria-label="Language">
+          <button type="button" data-lang="ko" class="active">한</button>
+          <button type="button" data-lang="zh">中</button>
+          <button type="button" data-lang="ja">日</button>
+          <button type="button" data-lang="en">EN</button>
+        </div>
+        <div class="village-stats" aria-label="탐험 현황">
+          <span><i>⭐</i><b id="villagePoints">0</b><small data-village-i18n="points">포인트</small></span>
+          <span><i>🏳️</i><b><em id="villageSolved">0</em>/195</b><small data-village-i18n="explored">탐험</small></span>
+        </div>
+      </div>
+    </header>
+
+    <aside class="village-quest" aria-live="polite">
+      <div class="explorer-portrait" aria-hidden="true"><span>🧭</span></div>
+      <div>
+        <small data-village-i18n="explorerTitle">WORLD EXPLORER ARI</small>
+        <strong id="villageGuide" data-village-i18n="guide">아리를 움직여 빛나는 게임 존으로 가 보세요.</strong>
+      </div>
+    </aside>
+
+    <nav class="zone-radar" aria-label="게임 존 바로가기">
+      <button type="button" data-zone-nav="flag"><span>🏳️</span><b data-village-i18n="flagZone">국기 광장</b></button>
+      <button type="button" data-zone-nav="clue"><span>📚</span><b data-village-i18n="clueZone">세계 도서관</b></button>
+      <button type="button" data-zone-nav="location"><span>🗺️</span><b data-village-i18n="mapZone">지도 전망대</b></button>
+    </nav>
+
+    <div class="village-help">
+      <span>WASD</span>
+      <b data-village-i18n="moveHelp">화면을 터치하거나 조이스틱으로 이동</b>
+    </div>
+
+    <div id="joystick" class="joystick" aria-label="이동 조이스틱">
+      <span id="joystickKnob"></span>
+    </div>
+
+    <section id="zonePrompt" class="zone-prompt" hidden aria-live="polite">
+      <span id="zoneIcon">🏳️</span>
+      <div>
+        <small data-village-i18n="nearZone">게임 존 도착</small>
+        <strong id="zoneName">국기 광장</strong>
+        <p id="zoneDescription">국기를 보고 나라를 맞혀요.</p>
+      </div>
+      <button id="enterZoneButton" type="button" data-village-i18n="enter">입장하기</button>
+    </section>
+
+    <div id="villageLoading" class="village-loading" role="status">
+      <div class="loading-compass" aria-hidden="true">✦</div>
+      <strong data-village-i18n="loading">세계 탐험 마을을 만드는 중...</strong>
+      <span></span>
+    </div>
+
+    <dialog id="villageInfoDialog" class="village-info-dialog">
+      <article>
+        <button id="closeVillageInfo" class="village-dialog-close" type="button" aria-label="닫기">×</button>
+        <div id="villageInfoContent"></div>
+      </article>
+    </dialog>
+  </section>
+
+  <main id="quizApp" class="app-shell" hidden>
     <header class="topbar">
-      <div class="brand"><span class="brand-mark" aria-hidden="true">G</span><div><p class="eyebrow">GFIELD SOCIAL WORLD</p><h1>World Explorer</h1></div></div>
+      <div class="brand">
+        <button id="returnVillage" class="return-village" type="button" aria-label="마을로 돌아가기">← <span data-village-i18n="returnVillage">마을</span></button>
+        <span class="brand-mark" aria-hidden="true">G</span>
+        <div><p class="eyebrow">GFIELD SOCIAL WORLD</p><h1>World Explorer</h1></div>
+      </div>
       <div class="topbar-tools">
         <div class="language-switch" role="group" aria-label="Language">
-          <button data-lang="ko" class="active">한</button><button data-lang="zh">中</button><button data-lang="ja">日</button><button data-lang="en">EN</button>
+          <button type="button" data-lang="ko" class="active">한</button><button type="button" data-lang="zh">中</button><button type="button" data-lang="ja">日</button><button type="button" data-lang="en">EN</button>
         </div>
         <div class="status-row" aria-label="탐험 현황">
           <span><i>⭐</i><b id="points">0</b><small data-i18n="points">포인트</small></span>
@@ -26,14 +108,16 @@
         </div>
       </div>
     </header>
+
     <section class="mission-bar">
       <div class="mission-copy"><span class="mission-badge">TODAY</span><div><strong id="missionTitle" data-i18n="missionTitle">오늘의 세계 탐험</strong><p id="missionText" data-i18n="missionText">지도를 살펴보고 나라 퀴즈에 도전해 보세요.</p></div></div>
       <nav class="mode-tabs" aria-label="게임 모드">
-        <button class="active" data-mode="flag"><span>🏳️</span><b data-i18n="modeFlag">국기</b></button>
-        <button data-mode="clue"><span>📖</span><b data-i18n="modeClue">정보</b></button>
-        <button data-mode="location"><span>📍</span><b data-i18n="modeLocation">위치</b></button>
+        <button type="button" class="active" data-mode="flag"><span>🏳️</span><b data-i18n="modeFlag">국기</b></button>
+        <button type="button" data-mode="clue"><span>📖</span><b data-i18n="modeClue">정보</b></button>
+        <button type="button" data-mode="location"><span>📍</span><b data-i18n="modeLocation">위치</b></button>
       </nav>
     </section>
+
     <section class="game-grid">
       <article class="map-console">
         <div class="panel-head"><div><p>EXPLORE THE WORLD</p><h2 data-i18n="mapTitleUi">세계 탐험 지도</h2></div><select id="continentFilter" aria-label="대륙 선택"></select></div>
@@ -55,14 +139,18 @@
         <div class="quiz-actions"><button id="hintButton" type="button">💡 <span data-i18n="hint">힌트</span></button><button id="nextButton" class="next" type="button" disabled><span data-i18n="next">다음 나라</span> →</button></div>
       </article>
     </section>
+
     <section class="bottom-dock">
       <article class="collection-card"><div class="dock-title"><span>🎒</span><div><small>COLLECTION</small><h2 data-i18n="bag">큐비의 여행 가방</h2></div></div><div id="inventory" class="inventory"></div></article>
       <article class="collection-card"><div class="dock-title"><span>🏘️</span><div><small>MY WORLD</small><h2 data-i18n="village">세계 마을</h2></div></div><div id="buildings" class="buildings"></div></article>
       <aside class="guide" aria-live="polite"><div class="speech"><strong data-i18n="cubi">큐비</strong><p id="guideMessage">어느 나라부터 탐험할까?</p></div><div class="cubi" aria-label="쌓기나무 캐릭터 큐비"><span></span><span></span><span></span></div></aside>
     </section>
+
     <dialog id="countryDialog" class="country-dialog"><article><button id="closeDialog" class="close" aria-label="닫기">×</button><div id="countryCard"></div></article></dialog>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
-  <script type="module" src="./app.js?v=atlas-2"></script>
+
+  <script type="module" src="./app.js?v=atlas-3"></script>
+  <script type="module" src="./village.js?v=1"></script>
 </body>
 </html>
