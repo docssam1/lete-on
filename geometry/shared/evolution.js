@@ -13,10 +13,11 @@
 //    for empty slots or our own prior gift; touch `color` only when the child
 //    hasn't picked one themselves (see releaseColorLock / releaseGiftSlot).
 //
-// Cleared levels are detected from `gfield-rewarded-games`, whose entries the two
+// Cleared levels are detected from `gfield-rewarded-games`, whose entries the three
 // games already write one-per-solved-problem, and which encode the level:
 //   copy-build:{levelIndex 0..2}:{problemIndex 0..9}   (3 levels × 10)
 //   count-cubes:height-l{level 1..5}-{nn}              (5 levels × 5)
+//   shape-build:{level 4|5}:{problemIndex 0..4}        (2 levels × 5)
 
 import { readProfile, writeProfile } from "./profile-storage.js?v=evolve2-20260719a";
 
@@ -24,7 +25,8 @@ const REWARD_KEY = "gfield-rewarded-games";
 
 const COPY_LEVELS = 3, COPY_PER_LEVEL = 10;
 const COUNT_LEVELS = 5, COUNT_PER_LEVEL = 5;
-export const MAX_LEVELS = COPY_LEVELS + COUNT_LEVELS; // 8 clearable levels → up to Lv.9
+const SHAPE_LEVELS = [4, 5], SHAPE_PER_LEVEL = 5;
+export const MAX_LEVELS = COPY_LEVELS + COUNT_LEVELS + SHAPE_LEVELS.length; // 10 clearable levels → up to Lv.11
 
 // One evolution step per cleared level. Each grants an accessory (dropped into an
 // empty slot) and a display colour + aura tier so Cubi visibly changes.
@@ -99,6 +101,14 @@ export function computeClearedLevels() {
       if (id.startsWith(`count-cubes:height-l${n}-`)) count += 1;
     }
     if (count >= COUNT_PER_LEVEL) cleared += 1;
+  }
+
+  for (const lv of SHAPE_LEVELS) {
+    let count = 0;
+    for (let pi = 0; pi < SHAPE_PER_LEVEL; pi += 1) {
+      if (solved.has(`shape-build:${lv}:${pi}`)) count += 1;
+    }
+    if (count >= SHAPE_PER_LEVEL) cleared += 1;
   }
 
   return cleared;
