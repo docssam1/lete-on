@@ -2,7 +2,7 @@
 
 GFIELD World Explorer is an independent game inside LeteOn and is served from `/world-explorer/`.
 
-The launch flow is: intro video → saved explorer-name entry or new explorer creation → 3D village. Explorer names and selected character profiles are local device data, not online accounts.
+The launch flow is: intro video → saved explorer-name entry or new explorer creation → character artwork with the “Preparing your world journey” loading screen → 3D village. Explorer names and selected character profiles are local device data, not online accounts.
 
 ## Isolation contract
 
@@ -17,4 +17,4 @@ The launch flow is: intro video → saved explorer-name entry or new explorer cr
 - Game progress: `gfield-world-explorer-v1`
 - Village position: `gfield-world-village-v1`
 - Character selection and equipment: `gfield-world-character-v2`
-- PWA cache: `gfield-world-explorer-v6`
+- PWA cache: `gfield-world-explorer-v7`

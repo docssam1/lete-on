@@ -24,13 +24,19 @@
       <small>GFIELD</small>
       <strong>WORLD EXPLORER</strong>
     </div>
-    <div class="intro-loading">
-      <span class="intro-compass" aria-hidden="true">✦</span>
-      <div><strong data-intro-loading>세계 여행 준비 중…</strong><span class="intro-progress"><i></i></span></div>
-    </div>
     <div class="intro-actions">
       <button id="introSoundButton" type="button" data-intro-sound>🔊 소리 켜고 처음부터</button>
       <button id="introSkipButton" type="button" data-intro-skip>건너뛰기</button>
+    </div>
+  </section>
+
+  <section id="journeyLoading" class="journey-loading" hidden aria-live="polite">
+    <img src="./assets/world-explorer-intro.png" alt="유준, 아리, 유빈 세계 탐험대" />
+    <div class="intro-shade"></div>
+    <div class="intro-brand"><small>GFIELD</small><strong>WORLD EXPLORER</strong></div>
+    <div class="intro-loading">
+      <span class="intro-compass" aria-hidden="true">✦</span>
+      <div><strong data-intro-loading>세계 여행 준비 중…</strong><span class="intro-progress"><i></i></span></div>
     </div>
   </section>
 
@@ -228,11 +234,12 @@
       const newExplorerForm=document.getElementById('newExplorerForm');
       const newExplorerName=document.getElementById('newExplorerName');
       const backToEntry=document.getElementById('backToEntry');
+      const journey=document.getElementById('journeyLoading');
       if(!splash)return;
       let lang='ko';
       try{lang=JSON.parse(localStorage.getItem('gfield-world-explorer-v1')||'{}').lang||'ko';}catch{}
       const copy={ko:['세계 여행 준비 중…','🔊 소리 켜고 처음부터','건너뛰기','탐험가 이름으로 접속하기','저장된 탐험가 이름으로 접속하세요. 처음이라면 새 탐험가를 만들어 주세요.','탐험가 이름','이름을 입력하세요','접속하기','이름과 진행 기록은 이 기기에만 저장됩니다.','＋ 새 탐험가 만들기','새 탐험가를 만들어 보세요','새 탐험가 이름','만들고 시작하기','기존 탐험가 접속으로','저장된 탐험가를 찾을 수 없어요. 새 탐험가 만들기를 눌러 주세요.'],zh:['正在准备世界旅行…','🔊 开启声音并重播','跳过','使用探险家名字进入','使用已保存的探险家名字进入。第一次请创建新探险家。','探险家名字','请输入名字','进入','名字和进度只保存在此设备上。','＋ 创建新探险家','创建你的新探险家','新探险家名字','创建并开始','返回已有探险家','找不到已保存的探险家。请创建新探险家。'],ja:['世界旅行を準備中…','🔊 音を出して最初から','スキップ','探検家の名前で入る','保存済みの探検家名で入ってください。初めてなら新しい探検家を作りましょう。','探検家の名前','名前を入力','入る','名前と進行記録はこの端末だけに保存されます。','＋ 新しい探検家を作る','新しい探検家を作ろう','新しい探検家名','作って始める','既存の探検家に戻る','保存された探検家が見つかりません。新しく作ってください。'],en:['Preparing your world journey…','🔊 Sound on & restart','Skip','Enter as an explorer','Use your saved explorer name. If this is your first visit, create a new explorer.','Explorer name','Enter your name','Enter','Your name and progress stay on this device.','＋ Create a new explorer','Create your new explorer','New explorer name','Create and start','Back to explorer entry','No saved explorer was found. Please create a new explorer.']}[lang]||[];
-      splash.querySelector('[data-intro-loading]').textContent=copy[0];sound.textContent=copy[1];skip.textContent=copy[2];
+      journey.querySelector('[data-intro-loading]').textContent=copy[0];sound.textContent=copy[1];skip.textContent=copy[2];
       entry.querySelector('[data-entry-title]').textContent=copy[3];entry.querySelector('[data-entry-body]').textContent=copy[4];entry.querySelector('[data-entry-label]').textContent=copy[5];nameInput.placeholder=copy[6];entry.querySelector('[data-entry-button]').textContent=copy[7];entry.querySelector('[data-entry-note]').textContent=copy[8];entry.querySelector('[data-entry-new]').textContent=copy[9];entry.querySelector('[data-create-title]').textContent=copy[10];newExplorerName.placeholder=copy[11];entry.querySelector('[data-create-button]').textContent=copy[12];entry.querySelector('[data-create-back]').textContent=copy[13];
       const profileNames={ko:['아리','루카','미나','유준','유빈'],zh:['Ari','Luca','Mina','Yujun','Yubin'],ja:['Ari','Luca','Mina','Yujun','Yubin'],en:['Ari','Luca','Mina','Yujun','Yubin']}[lang];entry.querySelectorAll('[data-new-profile] b').forEach((label,index)=>label.textContent=profileNames[index]);
       let savedExplorer={};try{savedExplorer=JSON.parse(localStorage.getItem('gfield-world-character-v2')||'{}');nameInput.value=savedExplorer.explorerName||'';}catch{}
@@ -241,7 +248,14 @@
       video?.addEventListener('ended',leave,{once:true});video?.addEventListener('error',()=>setTimeout(leave,2200),{once:true});skip.addEventListener('click',leave);
       sound.addEventListener('click',async()=>{video.muted=false;video.currentTime=0;sound.hidden=true;try{await video.play();}catch{sound.hidden=false;}});
       const attempt=video?.play();attempt?.catch(()=>setTimeout(leave,3500));setTimeout(()=>{if(video&&video.currentTime===0&&video.paused)leave();},7000);
-      const enterVillage=explorerName=>{document.documentElement.dataset.explorerName=explorerName;entry.classList.add('leave');setTimeout(()=>entry.remove(),450);};
+      const enterVillage=explorerName=>{
+        document.documentElement.dataset.explorerName=explorerName;
+        journey.hidden=false;requestAnimationFrame(()=>journey.classList.add('show'));
+        entry.classList.add('leave');setTimeout(()=>entry.remove(),450);
+        const started=performance.now();
+        const waitForVillage=()=>{const ready=document.getElementById('villageLoading')?.classList.contains('hide');const elapsed=performance.now()-started;if((ready&&elapsed>1800)||elapsed>15000){journey.classList.add('leave');setTimeout(()=>journey.remove(),650);return;}requestAnimationFrame(waitForVillage);};
+        requestAnimationFrame(waitForVillage);
+      };
       entryForm.addEventListener('submit',event=>{event.preventDefault();const explorerName=nameInput.value.trim();if(savedExplorer.explorerName&&savedExplorer.explorerName.toLocaleLowerCase()===explorerName.toLocaleLowerCase()){entryError.hidden=true;enterVillage(savedExplorer.explorerName);return;}entryError.textContent=copy[14];entryError.hidden=false;});
       const showCreation=()=>{entry.classList.add('creating');entryForm.hidden=true;newExplorerButton.hidden=true;entryError.hidden=true;newExplorerPanel.hidden=false;newExplorerName.focus();};
       const showEntry=()=>{entry.classList.remove('creating');newExplorerPanel.hidden=true;entryForm.hidden=false;newExplorerButton.hidden=false;nameInput.focus();};
