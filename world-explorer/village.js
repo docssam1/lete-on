@@ -21,6 +21,7 @@ const joystick = $('#joystick');
 const joystickKnob = $('#joystickKnob');
 const infoDialog = $('#villageInfoDialog');
 const infoContent = $('#villageInfoContent');
+const introSplash = $('#introSplash');
 
 const translations = {
   ko: {
@@ -967,6 +968,7 @@ $$('.language-switch button').forEach(button => button.addEventListener('click',
 
 syncVillageUi();
 setupPwa();
+finishIntroWhenReady();
 try {
   buildWorld();
 } catch (error) {
@@ -986,4 +988,23 @@ function setupPwa(){
   dismiss?.addEventListener('click',()=>{banner.hidden=true;localStorage.setItem('gfield-install-dismissed','1');});
   if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!standalone)setTimeout(()=>show(true),900);
   addEventListener('appinstalled',()=>{banner.hidden=true;prompt=null;});
+}
+
+function finishIntroWhenReady(){
+  if(!introSplash)return;
+  const started=performance.now();
+  const labels={ko:'세계 여행 준비 중…',zh:'正在准备世界旅行…',ja:'世界旅行を準備中…',en:'Preparing your world journey…'};
+  const label=introSplash.querySelector('[data-intro-loading]');if(label)label.textContent=labels[currentLang]||labels.ko;
+  const check=()=>{
+    const minimumElapsed=performance.now()-started>2200;
+    const villageReady=loading?.classList.contains('hide');
+    const safetyTimeout=performance.now()-started>12000;
+    if(minimumElapsed&&(villageReady||safetyTimeout)){
+      introSplash.classList.add('leave');
+      setTimeout(()=>introSplash.remove(),700);
+      return;
+    }
+    requestAnimationFrame(check);
+  };
+  requestAnimationFrame(check);
 }

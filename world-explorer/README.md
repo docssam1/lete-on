@@ -15,4 +15,4 @@ GFIELD World Explorer is an independent game inside LeteOn and is served from `/
 - Game progress: `gfield-world-explorer-v1`
 - Village position: `gfield-world-village-v1`
 - Character selection and equipment: `gfield-world-character-v2`
-- PWA cache: `gfield-world-explorer-v4`
+- PWA cache: `gfield-world-explorer-v5`

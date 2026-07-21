@@ -15,6 +15,19 @@
   <link rel="stylesheet" href="./village.css?v=1" />
 </head>
 <body class="village-mode">
+  <section id="introSplash" class="intro-splash" aria-label="GFIELD World Explorer" aria-live="polite">
+    <img src="./assets/world-explorer-intro.png" alt="유준, 아리, 유빈 세계 탐험대" />
+    <div class="intro-shade"></div>
+    <div class="intro-brand">
+      <small>GFIELD</small>
+      <strong>WORLD EXPLORER</strong>
+    </div>
+    <div class="intro-loading">
+      <span class="intro-compass" aria-hidden="true">✦</span>
+      <div><strong data-intro-loading>세계 여행 준비 중…</strong><span class="intro-progress"><i></i></span></div>
+    </div>
+  </section>
+
   <div class="orientation-gate" role="status" aria-live="polite">
     <div class="orientation-card">
       <span class="phone">↻</span>
@@ -85,7 +98,7 @@
 
     <div id="villageLoading" class="village-loading" role="status">
       <div class="loading-compass" aria-hidden="true">✦</div>
-      <strong data-village-i18n="loading">세계 탐험 마을을 만드는 중...</strong>
+      <strong data-village-i18n="loading">세계 여행 준비 중…</strong>
       <span></span>
     </div>
 

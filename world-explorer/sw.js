@@ -1,5 +1,5 @@
-const CACHE='gfield-world-explorer-v4';
-const SHELL=['./','./index.html','./styles.css','./ui-extras.css','./village.css','./app.js','./village.js','./countries.js','./character-data.js','./character.js','./vendor/three.module.js','./vendor/d3.js','./vendor/topojson-client.js','./data/countries-110m.json','./manifest.webmanifest','./icons/app-icon.svg'];
+const CACHE='gfield-world-explorer-v5';
+const SHELL=['./','./index.html','./styles.css','./ui-extras.css','./village.css','./app.js','./village.js','./countries.js','./character-data.js','./character.js','./vendor/three.module.js','./vendor/d3.js','./vendor/topojson-client.js','./data/countries-110m.json','./assets/world-explorer-intro.png','./manifest.webmanifest','./icons/app-icon.svg'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{
