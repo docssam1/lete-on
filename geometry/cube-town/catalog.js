@@ -32,7 +32,7 @@ export const games = [
     description: { ko: "반대편까지 뚫린 구멍을 층별로 표시하고 남은 개수를 세요.", zh: "逐层标出贯通的孔洞并计算剩余方块。", ja: "反対側まで通る穴を層ごとに示して残りを数えます。", en: "Mark through-tunnels layer by layer and count what remains." }
   },
   {
-    id: "join-pieces", group: "transform", number: "06", ready: false, thumb: "pieces", levels: "Lv. 1–5",
+    id: "join-pieces", group: "transform", number: "06", ready: true, href: "../games/cube-piece-lab/?v=1", thumb: "pieces", levels: "Lv. 1–5",
     name: { ko: "큐브 조각 연구소", zh: "方块组合实验室", ja: "キューブピース研究所", en: "Cube Piece Lab" },
     description: { ko: "여러 조각을 회전하고 이어 붙여 목표 모양을 만들어요.", zh: "旋转并组合多个部件，完成目标形状。", ja: "ピースを回してつなぎ、目標の形を作ります。", en: "Rotate and join pieces to create the target solid." }
   },
