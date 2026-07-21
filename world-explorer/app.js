@@ -551,7 +551,7 @@ function showFeedback(correct,gained,first){
 
 function hintText(level){const c=game.target,name=countryName(c),letters=[...name].filter(ch=>!/[\s·-]/.test(ch)),blank=[...name].map(ch=>/[\s·-]/.test(ch)?ch:'＿').join(' '),first=letters[0]||'';if(level===0)return tr('hintLength',{count:letters.length,blank});if(level===1)return tr('hintRegion',{region:regionName(c)});if(level===2)return tr('hintPopulation',{population:populationName(c),area:areaName(c)});return tr('hintFirst',{first});}
 function showHint(){if(game.locked)return;const level=Math.min(game.hintLevel,3),text=hintText(level);$('#hintBox').hidden=false;$('#hintStep').textContent=`${level+1}/4`;$('#hintText').textContent=text;if(game.mode==='location')mapGame.hint(level,game.target);if(game.hintLevel<3)game.hintLevel+=1;speak(text);}
-function showSessionResult(){state.sessions+=1;saveState();$('#resultCorrect').textContent=`${game.correct}/${game.total}`;$('#resultPoints').textContent=`+${game.earned}`;$('#resultNew').textContent=game.newCountries;$('#sessionResult').hidden=false;}
+function showSessionResult(){state.sessions+=1;saveState();$('#feedbackOverlay').hidden=true;$('#resultCorrect').textContent=`${game.correct}/${game.total}`;$('#resultPoints').textContent=`+${game.earned}`;$('#resultNew').textContent=game.newCountries;$('#sessionResult').hidden=false;}
 
 function onMapCountryClick(id){if(game.mode!=='location'||game.locked||!['find-country','flag-map'].includes(game.mapMode))return;game.selectedMap=id;mapGame.markSelection(id);$('#confirmMap').disabled=false;}
 
