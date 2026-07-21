@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>GFIELD Cube Town - Three-View Station</title>
+    <link rel="stylesheet" href="./styles.css?v=views-1" />
+    <link rel="stylesheet" href="../../shared/portrait-lock.css?v=1" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.166.1/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.166.1/examples/jsm/"
+        }
+      }
+    </script>
+    <script src="../../shared/viewport-fit.js?v=1"></script>
+    <link rel="manifest" href="/geometry/manifest.webmanifest" />
+    <meta name="theme-color" content="#2b1a0e" />
+    <link rel="apple-touch-icon" href="/geometry/assets/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  </head>
+  <body>
+    <section class="portrait-guard" aria-label="화면 회전 안내">
+      <div class="portrait-brand">GFIELD <span>Cube Town</span></div>
+      <div class="rotate-phone" aria-hidden="true">
+        <span class="rotate-phone-device"></span>
+        <span class="rotate-phone-arrow">↻</span>
+      </div>
+      <div class="portrait-guide">
+        <span class="portrait-character" aria-hidden="true"></span>
+        <div>
+          <strong>가로로 돌려 주세요</strong>
+          <p>세 방향에서 본 모양을 색칠해 볼까요?</p>
+        </div>
+      </div>
+    </section>
+    <main class="game-shell views-shell">
+      <header class="topbar">
+        <div class="brand">
+          <p data-i18n="world">GFIELD Geometry World</p>
+          <h1 data-i18n="town">GFIELD Cube Town</h1>
+        </div>
+        <nav class="languages" aria-label="Language">
+          <button type="button" data-lang="ko" class="active">한국어</button>
+          <button type="button" data-lang="zh">中文</button>
+          <button type="button" data-lang="ja">日本語</button>
+          <button type="button" data-lang="en">English</button>
+        </nav>
+      </header>
+
+      <section class="mission-bar">
+        <div>
+          <div id="stars" class="stars" aria-label="difficulty">★☆☆☆☆</div>
+          <h2 data-i18n="title">세 방향 관찰소</h2>
+          <p data-i18n="instruction">쌓기나무를 앞·옆·위에서 본 모양을 표에 똑같이 색칠해 보세요.</p>
+        </div>
+      </section>
+
+      <section class="play-grid">
+        <article class="viewer-panel">
+          <header>
+            <h2 data-i18n="modelTitle">쌓기나무</h2>
+            <div class="progress-box">
+              <strong id="progress">레벨 1 · 1/4</strong>
+              <button id="openLevels" type="button" data-i18n="level">레벨 선택</button>
+            </div>
+            <div class="camera-tools">
+              <button type="button" data-view="front" data-i18n="front">앞</button>
+              <button id="xrayToggle" type="button" class="xray-button" data-i18n="revealShow">옆</button>
+              <button type="button" data-view="top" data-i18n="top">위</button>
+              <button type="button" data-view="free" data-i18n="free">돌려보기</button>
+            </div>
+          </header>
+          <div class="brand-watermark" aria-label="GFIELD Cube Town">
+            <span aria-hidden="true">◇</span><strong>GFIELD</strong><small>Cube Town</small>
+          </div>
+          <div id="scene" class="scene" aria-label="3D cube model"></div>
+        </article>
+
+        <article class="answer-panel views-answer">
+          <header>
+            <h2 data-i18n="answerTitle">세 방향에서 본 모양</h2>
+            <button id="xrayToggleWide" type="button" class="xray-button wide" data-i18n="revealShow">옆</button>
+          </header>
+          <div class="views-stage">
+            <div id="numberPrompt" class="number-prompt" data-i18n="paintPrompt">각 방향에서 본 모양을 칸에 색칠해 보세요.</div>
+            <div class="views-row">
+              <div class="view-block">
+                <span class="view-label" data-i18n="viewFront">앞에서 본 모양</span>
+                <div id="frontView" class="view-grid" aria-label="front view"></div>
+              </div>
+              <div class="view-block">
+                <span class="view-label" data-i18n="viewSide">옆에서 본 모양</span>
+                <div id="sideView" class="view-grid" aria-label="side view"></div>
+              </div>
+              <div class="view-block">
+                <span class="view-label" data-i18n="viewTop">위에서 본 모양</span>
+                <div id="topView" class="view-grid" aria-label="top view"></div>
+              </div>
+            </div>
+            <div class="views-actions">
+              <button id="clearBtn" type="button" class="clear-btn" data-i18n="clear">지우기</button>
+              <button id="checkBtn" type="button" class="check-btn" data-i18n="check">확인</button>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <footer class="action-bar">
+        <button id="audio" class="icon-action" type="button" aria-pressed="false" aria-label="음소거">🔊</button>
+        <button id="hint" type="button" data-i18n="hint">힌트</button>
+        <button class="mobile-view-action" type="button" data-view="front"><b aria-hidden="true">↑</b><span data-i18n="front">앞</span></button>
+        <button class="mobile-view-action" type="button" data-view="top"><b aria-hidden="true">◆</b><span data-i18n="top">위</span></button>
+        <button id="xrayToggleMobile" class="mobile-view-action xray-mobile" type="button"><b aria-hidden="true">▤</b><span data-i18n="revealShow">옆</span></button>
+        <button id="reset" type="button" data-i18n="reset">다시</button>
+        <button id="next" type="button" data-i18n="next">다음 문제</button>
+        <a class="exit-action" href="../../cube-town/" aria-label="나가기">⌂<small>나가기</small></a>
+      </footer>
+
+      <div id="levelDialog" class="dialog" hidden>
+        <section role="dialog" aria-modal="true" aria-labelledby="levelTitle">
+          <header>
+            <h2 id="levelTitle" data-i18n="level">레벨 선택</h2>
+            <div class="dialog-actions">
+              <button id="closeLevels" type="button" aria-label="close">×</button>
+            </div>
+          </header>
+          <div id="levelList" class="level-list"></div>
+        </section>
+      </div>
+
+      <aside class="docssam" aria-live="polite">
+        <div class="speech-bubble">
+          <p id="guide" data-i18n="guideStart">쌓기나무를 돌려 보며 앞·옆·위에서 어떻게 보이는지 살펴보자.</p>
+        </div>
+        <button class="cubi-sprite" type="button" aria-label="큐비"></button>
+      </aside>
+
+      <div id="conceptTutorial" class="concept-tutorial" hidden>
+        <section class="concept-card" role="dialog" aria-modal="true" aria-labelledby="conceptMessage">
+          <div class="concept-copy">
+            <p id="conceptMessage"></p>
+            <div id="conceptSteps" class="concept-steps" aria-label="tutorial progress"></div>
+            <button id="conceptNext" type="button"></button>
+          </div>
+          <span class="concept-cubi" aria-hidden="true"></span>
+        </section>
+      </div>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+      <div id="success" class="success" aria-hidden="true">
+        <span class="success-rays"></span>
+        <span class="success-badge"></span>
+        <strong>Great job!</strong>
+        <i></i><i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+    </main>
+    <script type="module" src="./app.js?v=views-1"></script>
+  </body>
+</html>
