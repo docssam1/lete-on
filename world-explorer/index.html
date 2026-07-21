@@ -6,6 +6,12 @@
   <meta name="theme-color" content="#17394a" />
   <title>GFIELD World Explorer MAX</title>
   <link rel="stylesheet" href="./styles.css?v=1" />
+  <link rel="manifest" href="/world-explorer/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/world-explorer/assets/icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="World Explorer" />
 </head>
 <body>
   <div id="orientationGate" class="orientation-gate" role="status" aria-live="polite">
@@ -20,6 +26,7 @@
     <header class="hud top-hud">
       <div class="brand"><span class="brand-mark">G</span><div><small>GFIELD SOCIAL WORLD</small><strong data-i18n="worldVillage">세계 탐험 마을</strong></div></div>
       <div class="top-actions">
+        <button id="fullscreenButton" class="icon-button" type="button" aria-label="전체화면" hidden>⛶</button>
         <button id="characterButton" class="icon-button" type="button" aria-label="캐릭터 선택">🧑‍🚀 <span data-i18n="character">캐릭터</span></button>
         <div class="language-switch" role="group" aria-label="Language">
           <button type="button" data-lang="ko" class="active">한</button><button type="button" data-lang="zh">中</button><button type="button" data-lang="ja">日</button><button type="button" data-lang="en">EN</button>
@@ -27,6 +34,12 @@
         <div class="stats"><span>⭐ <b id="villagePoints">0</b></span><span>🏳️ <b id="villageSolved">0</b>/195</span></div>
       </div>
     </header>
+
+    <div id="installBanner" class="install-banner" hidden>
+      <span id="installBannerText"></span>
+      <button id="installActionButton" type="button" hidden data-i18n="installNow">설치하기</button>
+      <button id="installBannerClose" type="button" aria-label="닫기">×</button>
+    </div>
 
     <aside class="hud quest-card">
       <span class="quest-avatar">🧭</span>
