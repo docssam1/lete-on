@@ -27,7 +27,7 @@ export const games = [
     description: { ko: "직육면체 상자를 가득 채우려면 몇 개가 더 필요한지 구해요.", zh: "计算填满长方体盒子还需要多少方块。", ja: "直方体の箱を満たすのにあと何個必要か考えます。", en: "Work out how many more cubes are needed to fill the box." }
   },
   {
-    id: "tunnel", group: "counting", number: "05", ready: false, thumb: "tunnel", levels: "Lv. 2–5",
+    id: "tunnel", group: "counting", number: "05", ready: true, href: "../games/cube-tunnel/?v=1", thumb: "tunnel", levels: "Lv. 2–5",
     name: { ko: "큐브 터널", zh: "方块隧道", ja: "キューブトンネル", en: "Cube Tunnels" },
     description: { ko: "반대편까지 뚫린 구멍을 층별로 표시하고 남은 개수를 세요.", zh: "逐层标出贯通的孔洞并计算剩余方块。", ja: "反対側まで通る穴を層ごとに示して残りを数えます。", en: "Mark through-tunnels layer by layer and count what remains." }
   },
