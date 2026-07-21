@@ -84,7 +84,7 @@ export const messages = {
     success: "Great job!", successGood: "Good job!", successPop: "Success!",
     guideStart: "三方向カードをよく見て、ケースの中に積み木を置こう。",
     guideBuild: "上のカードで場所を、前・横のカードで高さを決めよう。",
-    guideHint: "上のカードで塗られたマスにだけ積み木を置き、前・横のカードの高さに合わせよう。",
+    guideHint: "上のカードで塗られたマスだけに積み木を置き、前・横のカードの高さに合わせよう。",
     guideSuccess: "完璧！三方向ともカードと同じに見えるよ。",
     tutorialCrystal1: "今度は逆だよ。前・横・上の三つのカードが先に出るよ。",
     tutorialCrystal2: "ケースの中のマスを押して積み木の高さを決め、三つのカードと同じに見せよう。",
