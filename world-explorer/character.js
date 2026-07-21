@@ -28,6 +28,27 @@ function createHat(THREE, head, id, jacketDark, accent) {
     add(THREE, g, new THREE.SphereGeometry(.48, 16, 10, 0, Math.PI * 2, 0, Math.PI * .56), jacketDark, [0, -.02, 0]);
     add(THREE, g, new THREE.CylinderGeometry(.58, .58, .06, 18), jacketDark, [0, -.1, .03]);
     add(THREE, g, new THREE.TorusGeometry(.42, .03, 6, 18), accent, [0, -.05, 0], [Math.PI / 2, 0, 0]);
+  } else if (id === 'crown') {
+    const gold = mat(THREE, 0xf0c457, { metalness: .3, roughness: .35 });
+    const gem = mat(THREE, 0xd9433f, { emissive: 0x6b1a17, emissiveIntensity: .2 });
+    add(THREE, g, new THREE.CylinderGeometry(.44, .48, .24, 14), gold, [0, -.02, 0]);
+    for (let i = 0; i < 6; i += 1) {
+      const a = (i / 6) * Math.PI * 2;
+      add(THREE, g, new THREE.ConeGeometry(.09, .22, 6), gold, [Math.cos(a) * .4, .18, Math.sin(a) * .4]);
+    }
+    add(THREE, g, new THREE.SphereGeometry(.08, 10, 8), gem, [0, .32, 0]);
+  } else if (id === 'safari') {
+    const khaki = mat(THREE, 0xcdb682);
+    add(THREE, g, new THREE.SphereGeometry(.46, 16, 10, 0, Math.PI * 2, 0, Math.PI * .62), khaki, [0, -.02, 0]);
+    add(THREE, g, new THREE.CylinderGeometry(.66, .66, .07, 18), khaki, [0, -.12, 0]);
+    add(THREE, g, new THREE.CylinderGeometry(.47, .47, .1, 18), accent, [0, -.06, 0]);
+  } else if (id === 'wizard') {
+    const purple = mat(THREE, 0x5b4a8f);
+    const star = mat(THREE, 0xf0c457, { emissive: 0xf0c457, emissiveIntensity: .3 });
+    add(THREE, g, new THREE.CylinderGeometry(.62, .62, .08, 16), purple, [0, -.05, 0]);
+    add(THREE, g, new THREE.ConeGeometry(.4, .95, 12), purple, [0, .5, 0]);
+    add(THREE, g, new THREE.SphereGeometry(.06, 8, 6), star, [.16, .68, .12]);
+    add(THREE, g, new THREE.SphereGeometry(.045, 8, 6), star, [-.13, .48, -.1]);
   } else {
     add(THREE, g, new THREE.CylinderGeometry(.43, .47, .22, 12), jacketDark, [0, 0, 0]);
     add(THREE, g, new THREE.BoxGeometry(.56, .08, .3), jacketDark, [0, -.05, .38]);

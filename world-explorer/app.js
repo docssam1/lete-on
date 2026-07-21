@@ -607,7 +607,8 @@ function buyItem(kind, id, price) {
 function renderCharacterDialog() {
   if (!$('#characterCards')) return;
   const profile = profileFor(characterDraft);
-  $('#characterCards').innerHTML = CHARACTER_PROFILES.filter(p=>!p.npcOnly).map(p => `<button type="button" class="character-card ${p.id===characterDraft.profileId?'active':''}" data-profile="${p.id}"><span class="avatar">${p.id==='ari'?'🧭':p.id==='mina'?'📓':'🗺️'}</span><span><h3>${p.name[state.lang]||p.name.en}</h3><p>${p.role[state.lang]||p.role.en}</p></span></button>`).join('');
+  const cardAvatars={ari:'🧭',mina:'📓',luca:'🗺️',yujun:'🔥',yubin:'🌟'};
+  $('#characterCards').innerHTML = CHARACTER_PROFILES.filter(p=>!p.npcOnly).map(p => `<button type="button" class="character-card ${p.id===characterDraft.profileId?'active':''}" data-profile="${p.id}"><span class="avatar">${cardAvatars[p.id]||'🧑‍🚀'}</span><span><h3>${p.name[state.lang]||p.name.en}</h3><p>${p.role[state.lang]||p.role.en}</p></span></button>`).join('');
   $$('#characterCards [data-profile]').forEach(b=>b.addEventListener('click',()=>{characterDraft=applyProfile(characterDraft,b.dataset.profile);renderCharacterDialog();}));
   renderSwatches('#skinOptions',SKIN_PRESETS,'skin'); renderSwatches('#hairOptions',HAIR_PRESETS,'hair'); renderSwatches('#jacketOptions',JACKET_PRESETS,'jacket'); renderSwatches('#scarfOptions',SCARF_PRESETS,'scarf');
   $('#hatOptions').innerHTML=HAT_OPTIONS.map(h=>{const owned=itemOwned(`hat:${h.id}`,h.price);const active=h.id===characterDraft.hat;return `<button type="button" class="${active?'active':''} ${owned?'':'locked'}" data-hat="${h.id}" data-price="${h.price}">${h.icon} ${h.name[state.lang]||h.name.en}${owned?'':`<small>${h.price}P</small>`}</button>`;}).join('');

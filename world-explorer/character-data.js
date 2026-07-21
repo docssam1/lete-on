@@ -18,6 +18,18 @@ export const CHARACTER_PROFILES = [
     hairStyle: 'curly', hat: 'wide'
   },
   {
+    id: 'yujun', name: { ko: '유준', zh: '尤俊', ja: 'ユジュン', en: 'Yujun' },
+    role: { ko: '용감하게 앞장서는 탐험가', zh: '勇敢带头的探险家', ja: '勇敢に先頭に立つ探検家', en: 'Brave trailblazing explorer' },
+    skin: 0xe0a97e, hair: 0x2b211d, jacket: 0xc0524a, jacketDark: 0x8f3a34, scarf: 0xf0c457, trousers: 0x3a3a4a, backpack: 0x7a5030,
+    hairStyle: 'short', hat: 'cap'
+  },
+  {
+    id: 'yubin', name: { ko: '유빈', zh: '尤彬', ja: 'ユビン', en: 'Yubin' },
+    role: { ko: '호기심 많은 세계 탐험가', zh: '好奇心旺盛的探险家', ja: '好奇心いっぱいの探検家', en: 'Curious world explorer' },
+    skin: 0xf0d0a8, hair: 0x4a3728, jacket: 0x9a6bb0, jacketDark: 0x6d4a80, scarf: 0x5cb26f, trousers: 0x40384a, backpack: 0x6b4a38,
+    hairStyle: 'bob', hat: 'round'
+  },
+  {
     id: 'sora', name: { ko: '소라', zh: '索拉', ja: 'ソラ', en: 'Sora' },
     role: { ko: '하늘과 날씨를 관찰하는 탐험가', zh: '观察天空的探险家', ja: '空を観察する探検家', en: 'Sky-watching explorer' },
     skin: 0xeec19a, hair: 0x4a3626, jacket: 0x4a83a6, jacketDark: 0x35617a, scarf: 0xf0c457, trousers: 0x3a4a5f, backpack: 0x7a5a3a,
