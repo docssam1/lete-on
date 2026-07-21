@@ -42,7 +42,7 @@ export const games = [
     description: { ko: "10초 동안 본 모양과 색을 기억해 똑같이 재현해요.", zh: "记住十秒内看到的形状和颜色并重现。", ja: "10秒間見た形と色を覚えて再現します。", en: "Remember the shape and colors for ten seconds, then rebuild it." }
   },
   {
-    id: "views", group: "transform", number: "08", ready: false, thumb: "views", levels: "Lv. 1–5",
+    id: "views", group: "transform", number: "08", ready: true, href: "../games/three-views/?v=1", thumb: "views", levels: "Lv. 1–5",
     name: { ko: "세 방향 관찰소", zh: "三方向观察站", ja: "三方向観察所", en: "Three-View Station" },
     description: { ko: "앞·옆·위에서 본 모양을 표에 직접 색칠해요.", zh: "在表格中画出前视图、侧视图和俯视图。", ja: "前・横・上から見た形を表に塗ります。", en: "Color the front, side, and top views on matching grids." }
   },
