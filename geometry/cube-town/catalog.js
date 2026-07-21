@@ -37,7 +37,7 @@ export const games = [
     description: { ko: "여러 조각을 회전하고 이어 붙여 목표 모양을 만들어요.", zh: "旋转并组合多个部件，完成目标形状。", ja: "ピースを回してつなぎ、目標の形を作ります。", en: "Rotate and join pieces to create the target solid." }
   },
   {
-    id: "memory", group: "transform", number: "07", ready: false, thumb: "memory", levels: "Lv. 1–4",
+    id: "memory", group: "transform", number: "07", ready: true, href: "../games/cube-memory/?v=1", thumb: "memory", levels: "Lv. 1–4",
     name: { ko: "큐브 메모리", zh: "方块记忆", ja: "キューブメモリー", en: "Cube Memory" },
     description: { ko: "10초 동안 본 모양과 색을 기억해 똑같이 재현해요.", zh: "记住十秒内看到的形状和颜色并重现。", ja: "10秒間見た形と色を覚えて再現します。", en: "Remember the shape and colors for ten seconds, then rebuild it." }
   },
