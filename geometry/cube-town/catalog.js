@@ -22,7 +22,7 @@ export const games = [
     description: { ko: "보이는 블록을 단서로 안쪽에 숨은 개수를 찾아요.", zh: "根据可见方块推理内部隐藏的数量。", ja: "見えるブロックから、内側に隠れた数を考えます。", en: "Use the visible cubes to reason about the cubes hidden inside." }
   },
   {
-    id: "fill-box", group: "counting", number: "04", ready: false, thumb: "fill", levels: "Lv. 1–4",
+    id: "fill-box", group: "counting", number: "04", ready: true, href: "../games/fill-box/?v=1", thumb: "fill", levels: "Lv. 1–4",
     name: { ko: "큐브 박스 채우기", zh: "填满方块盒", ja: "キューブボックスを満たす", en: "Fill the Cube Box" },
     description: { ko: "직육면체 상자를 가득 채우려면 몇 개가 더 필요한지 구해요.", zh: "计算填满长方体盒子还需要多少方块。", ja: "直方体の箱を満たすのにあと何個必要か考えます。", en: "Work out how many more cubes are needed to fill the box." }
   },
