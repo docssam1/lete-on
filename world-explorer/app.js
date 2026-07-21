@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.184.0/build/three.module.js';
+import * as THREE from './vendor/three.module.js';
 import { countries195, countryById } from './data/countries-195.js';
 import { worldGeoJSON } from './data/world-lowres.js';
 import {
