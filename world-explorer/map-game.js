@@ -92,6 +92,8 @@ export class WorldMapGame {
 
   setSolved(ids) { this.solved = new Set(ids || []); this.refreshClasses(); }
 
+  hasShape(id) { return this.features.has(id); }
+
   setChallenge({ type, targetId }) {
     this.challengeType = type;
     this.targetId = targetId;
@@ -115,6 +117,7 @@ export class WorldMapGame {
     if (!c) return;
     const tip = document.querySelector('#mapTooltip');
     if (!tip) return;
+    if (['find-country', 'flag-map'].includes(this.challengeType)) { this.hideTooltip(); return; }
     const rect = this.svgEl.getBoundingClientRect();
     tip.hidden = false;
     tip.textContent = `${c.flag} ${c.names[document.documentElement.dataset.lang || 'ko'] || c.names.en}`;
@@ -173,9 +176,8 @@ export class WorldMapGame {
     svg.selectAll('*').remove();
     const feature = this.features.get(targetId);
     if (!feature) {
-      const c = this.countryById.get(targetId);
       svg.append('circle').attr('cx', 250).attr('cy', 145).attr('r', 26).attr('class', 'shape-dot');
-      svg.append('text').attr('x', 250).attr('y', 205).attr('text-anchor', 'middle').attr('class', 'shape-small-note').text(c?.flag || '•');
+      svg.append('text').attr('x', 250).attr('y', 205).attr('text-anchor', 'middle').attr('class', 'shape-small-note').text('?');
       return;
     }
     const projection = d3.geoMercator().fitExtent([[32, 24], [468, 266]], feature);

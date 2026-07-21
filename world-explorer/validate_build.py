@@ -1,6 +1,6 @@
 from pathlib import Path
 import re, json, subprocess, sys
-root=Path('/mnt/data/world-explorer-max-build')
+root=Path(__file__).resolve().parent
 html=(root/'index.html').read_text(encoding='utf-8')
 app=(root/'app.js').read_text(encoding='utf-8')
 css=(root/'styles.css').read_text(encoding='utf-8')

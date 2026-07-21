@@ -481,8 +481,9 @@ $('#characterDialog').addEventListener('click',e=>{if(e.target===$('#characterDi
 let mapGame;
 const game = { mode:'flag', mapMode:'find-country', index:0, total:5, correct:0, earned:0, newCountries:0, target:null, choices:[], hintLevel:0, selectedMap:null, locked:false, lastId:null };
 
-function chooseTarget() {
+function chooseTarget(requireShape=false) {
   let pool = countries195.filter(c=>c.id!==game.lastId);
+  if (requireShape) pool = pool.filter(c=>mapGame.hasShape(c.id));
   const unsolved = pool.filter(c=>!state.solved.includes(c.id));
   if (unsolved.length && Math.random()<.68) pool=unsolved;
   const target=randomItem(pool);game.lastId=target.id;return target;
@@ -503,7 +504,7 @@ function returnVillage(){
 
 function nextQuestion(){
   if(game.index>=game.total){showSessionResult();return;}
-  game.index+=1;game.target=chooseTarget();game.choices=choicePool(game.target);game.hintLevel=0;game.selectedMap=null;game.locked=false;
+  game.index+=1;game.target=chooseTarget(game.mode==='location'&&game.mapMode==='shape-name');game.choices=choicePool(game.target);game.hintLevel=0;game.selectedMap=null;game.locked=false;
   $('#hintBox').hidden=true;$('#confirmMap').disabled=true;$('#feedbackOverlay').hidden=true;renderQuestion();
 }
 
@@ -562,7 +563,7 @@ $('#backVillage').addEventListener('click',returnVillage);$('#resultVillage').ad
 $('#nextQuestionButton').addEventListener('click',nextQuestion);$('#hintButton').addEventListener('click',showHint);$('#skipButton').addEventListener('click',()=>submitAnswer(''));$('#confirmMap').addEventListener('click',()=>{if(game.selectedMap)submitAnswer(game.selectedMap);});
 $('#voiceButton').addEventListener('click',()=>{state.audio=!state.audio;$('#voiceButton').textContent=state.audio?'🔊':'🔈';$('#voiceButton').setAttribute('aria-pressed',String(state.audio));saveState();if(state.audio&&game.target)speak($('#questionPrompt').textContent);});
 $('#mapZoomIn').addEventListener('click',()=>mapGame.zoomBy(1.35));$('#mapZoomOut').addEventListener('click',()=>mapGame.zoomBy(1/1.35));$('#mapReset').addEventListener('click',()=>mapGame.reset());
-$$('#mapSubmodeTabs [data-map-mode]').forEach(button=>button.addEventListener('click',()=>{if(game.locked)return;game.mapMode=button.dataset.mapMode;game.hintLevel=0;$('#hintBox').hidden=true;renderQuestion();}));
+$$('#mapSubmodeTabs [data-map-mode]').forEach(button=>button.addEventListener('click',()=>{if(game.locked)return;game.mapMode=button.dataset.mapMode;if(game.mapMode==='shape-name'&&!mapGame.hasShape(game.target.id)){game.target=chooseTarget(true);game.choices=choicePool(game.target);}game.hintLevel=0;$('#hintBox').hidden=true;renderQuestion();}));
 window.addEventListener('resize',resize);window.addEventListener('beforeunload',()=>{if(player){state.village.x=player.position.x;state.village.z=player.position.z;state.village.camera=cameraController.snapshot();saveState();}});document.addEventListener('visibilitychange',()=>{if(!document.hidden&&clock)clock.getDelta();});
 window.addEventListener('keydown',e=>{if($('#gameScreen').hidden||game.locked)return;if(['Digit1','Digit2','Digit3','Digit4'].includes(e.code)){const i=Number(e.code.slice(-1))-1;$('#answers button')?.parentElement?.children[i]?.click();}});
 
