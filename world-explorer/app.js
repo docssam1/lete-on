@@ -1,6 +1,6 @@
 import { countries, COUNTRY_TOTAL, continentNames, rewards, buildings } from './countries.js';
-import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
-import { feature, mesh } from 'https://cdn.jsdelivr.net/npm/topojson-client@3/+esm';
+import * as d3 from './vendor/d3.js';
+import { feature, mesh } from './vendor/topojson-client.js';
 
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const storageKey='gfield-world-explorer-v1';
@@ -44,7 +44,7 @@ function applyLanguage(){
 async function initAtlas(){
  svg=d3.select('#atlasSvg');projection=d3.geoNaturalEarth1().fitExtent([[24,24],[976,496]],{type:'Sphere'});geoPath=d3.geoPath(projection);mapRoot=svg.append('g').attr('class','atlas-root');
  mapRoot.append('path').datum(d3.geoGraticule10()).attr('class','graticule').attr('d',geoPath);mapRoot.append('path').datum({type:'Sphere'}).attr('class','sphere-outline').attr('d',geoPath);
- try{const world=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(r=>{if(!r.ok)throw new Error('map');return r.json()});atlas=feature(world,world.objects.countries).features;
+ try{const world=await fetch('./data/countries-110m.json').then(r=>{if(!r.ok)throw new Error('map');return r.json()});atlas=feature(world,world.objects.countries).features;
  mapRoot.append('g').attr('id','countryPaths').selectAll('path').data(atlas).join('path').attr('class','country').attr('d',geoPath).attr('data-numeric',d=>String(d.id).padStart(3,'0')).on('pointerenter',(e,d)=>showMapTooltip(e,d)).on('pointermove',(e,d)=>showMapTooltip(e,d)).on('pointerleave',hideMapTooltip).on('click',(_,d)=>selectMappedCountry(d));
  mapRoot.append('path').datum(mesh(world,world.objects.countries,(a,b)=>a!==b)).attr('class','country-border').attr('d',geoPath);mapRoot.append('g').attr('id','atlasMarkers');zoom=d3.zoom().scaleExtent([1,5]).translateExtent([[-250,-180],[1250,720]]).on('zoom',e=>mapRoot.attr('transform',e.transform));svg.call(zoom).on('dblclick.zoom',null);$('#zoomIn').onclick=()=>svg.transition().duration(260).call(zoom.scaleBy,1.35);$('#zoomOut').onclick=()=>svg.transition().duration(260).call(zoom.scaleBy,1/1.35);$('#resetMap').onclick=()=>focusMap('all');$('#mapLoading').classList.add('hide');renderMapState();focusMap(state.continent,false)}catch(e){$('#mapLoading').innerHTML='<b>Map loading failed</b>';console.error(e)}}
 function showMapTooltip(event,d){const c=numericCountry.get(String(d.id).padStart(3,'0')),tip=$('#mapTooltip'),r=$('#worldMap').getBoundingClientRect();tip.hidden=false;tip.textContent=c?`${c.flag} ${n(c)}`:'Country';tip.style.left=`${event.clientX-r.left}px`;tip.style.top=`${event.clientY-r.top}px`}

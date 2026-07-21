@@ -4,6 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#18394b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="World Explorer" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icons/app-icon.svg" type="image/svg+xml" />
   <title>GFIELD World Explorer</title>
   <link rel="stylesheet" href="./styles.css?v=atlas-3" />
   <link rel="stylesheet" href="./ui-extras.css?v=2" />
@@ -30,6 +35,8 @@
         </div>
       </div>
       <div class="village-top-tools">
+        <button id="characterButton" class="village-tool-button" type="button" aria-label="Character">🧑‍🚀</button>
+        <button id="fullscreenButton" class="village-tool-button" type="button" aria-label="Fullscreen">⛶</button>
         <div class="language-switch village-language-switch" role="group" aria-label="Language">
           <button type="button" data-lang="ko" class="active">한</button>
           <button type="button" data-lang="zh">中</button>
@@ -89,6 +96,11 @@
       </article>
     </dialog>
   </section>
+
+  <aside id="installBanner" class="install-banner" hidden>
+    <span aria-hidden="true">🌍</span><div><strong data-install-title>앱으로 설치하기</strong><small data-install-body>전체 화면에서 더 편하게 탐험하세요.</small></div>
+    <button id="installButton" type="button">설치</button><button id="dismissInstall" type="button" aria-label="닫기">×</button>
+  </aside>
 
   <main id="quizApp" class="app-shell" hidden>
     <header class="topbar">
@@ -150,7 +162,7 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
 
-  <script type="module" src="./app.js?v=atlas-3"></script>
-  <script type="module" src="./village.js?v=1"></script>
+  <script type="module" src="./village.js?v=pwa-2"></script>
+  <script type="module" src="./app.js?v=offline-4"></script>
 </body>
 </html>

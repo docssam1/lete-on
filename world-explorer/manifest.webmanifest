@@ -1,0 +1,14 @@
+{
+  "id": "./",
+  "name": "GFIELD World Explorer",
+  "short_name": "World Explorer",
+  "description": "Explore countries, flags, maps, culture and history in a 3D learning village.",
+  "lang": "ko",
+  "start_url": "./index.html?source=pwa",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#173f50",
+  "theme_color": "#18394b",
+  "icons": [{"src":"./icons/app-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}

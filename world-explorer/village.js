@@ -1,4 +1,6 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.184.0/build/three.module.js';
+import * as THREE from './vendor/three.module.js';
+import { CHARACTER_PROFILES, HAT_OPTIONS, loadCharacterState, saveCharacterState, profileFor, displayName } from './character-data.js';
+import { createExplorerCharacter } from './character.js';
 
 const STORAGE_KEY = 'gfield-world-explorer-v1';
 const VILLAGE_KEY = 'gfield-world-village-v1';
@@ -65,6 +67,7 @@ const zoneDefinitions = [
 ];
 
 let currentLang = readGameState().lang || 'ko';
+let characterState = loadCharacterState();
 let activeZone = null;
 let scene;
 let camera;
@@ -603,7 +606,16 @@ function buildWorld() {
   createFenceSegment(17.5, 4.2, -1.0, 4.1);
   createFenceSegment(-3.5, -20.3, .1, 5.2);
 
-  player = createExplorer();
+  const explorer = createExplorerCharacter(profileFor(characterState.profile), characterState.hat);
+  player = explorer.root;
+  playerModel = explorer.model;
+  leftArm = explorer.leftArm;
+  rightArm = explorer.rightArm;
+  leftLeg = explorer.leftLeg;
+  rightLeg = explorer.rightLeg;
+  scarfTail = explorer.scarfTail;
+  player.position.set(-2.8, .12, 2.5);
+  scene.add(player);
   companion = createCubiCompanion();
   const saved = readVillageState();
   if (Number.isFinite(saved.x) && Number.isFinite(saved.z)) player.position.set(saved.x, .12, saved.z);
@@ -834,17 +846,47 @@ function returnToVillage() {
 
 function openInfo(type) {
   const isShop = type === 'shop';
-  const state = readGameState();
-  const ownedCount = isShop ? (state.ownedRewards?.length || 0) : (state.ownedBuildings?.length || 0);
+  const gameState = readGameState();
+  if (isShop) {
+    renderCharacterShop(gameState);
+    infoDialog.showModal();
+    return;
+  }
+  const ownedCount = gameState.ownedBuildings?.length || 0;
   infoContent.innerHTML = `
-    <h2>${isShop ? '🎒' : '🏗️'} ${text(isShop ? 'shopTitle' : 'buildTitle')}</h2>
-    <p>${text(isShop ? 'shopBody' : 'buildBody')}</p>
+    <h2>🏗️ ${text('buildTitle')}</h2>
+    <p>${text('buildBody')}</p>
     <div class="village-info-grid">
-      <div><b>${state.points || 0}</b><span>${text('points')}</span></div>
-      <div><b>${state.solved?.length || 0}</b><span>${text('explored')}</span></div>
-      <div><b>${ownedCount}</b><span>${isShop ? 'ITEM' : 'BUILD'}</span></div>
+      <div><b>${gameState.points || 0}</b><span>${text('points')}</span></div>
+      <div><b>${gameState.solved?.length || 0}</b><span>${text('explored')}</span></div>
+      <div><b>${ownedCount}</b><span>BUILD</span></div>
     </div>`;
   infoDialog.showModal();
+}
+
+function renderCharacterShop(gameState=readGameState()) {
+  for(const reward of gameState.ownedRewards||[]){if(reward.startsWith('hat:')){const id=reward.slice(4);if(!characterState.ownedHats.includes(id))characterState.ownedHats.push(id);}}
+  saveCharacterState(characterState);
+  const profileCards=CHARACTER_PROFILES.map(profile=>`<button class="character-card ${characterState.profile===profile.id?'selected':''}" data-profile="${profile.id}" type="button"><span>${profile.icon}</span><b>${displayName(profile,currentLang)}</b><i style="--jacket:${profile.jacket};--scarf:${profile.scarf}"></i></button>`).join('');
+  const hatCards=HAT_OPTIONS.map(hat=>{
+    const owned=characterState.ownedHats.includes(hat.id), selected=characterState.hat===hat.id;
+    return `<button class="hat-card ${selected?'selected':''} ${owned?'owned':'locked'}" data-hat="${hat.id}" type="button"><span>${hat.icon}</span><b>${hat.names[currentLang]||hat.names.en}</b><small>${owned?(selected?'✓':'OWNED'):`${hat.cost}P`}</small></button>`;
+  }).join('');
+  infoContent.innerHTML=`<h2>🧑‍🚀 ${currentLang==='ko'?'탐험가와 장비':'Explorer & Gear'}</h2><p class="shop-points">⭐ ${gameState.points||0}P</p><div class="character-grid">${profileCards}</div><h3>${currentLang==='ko'?'모자 상점':'Hat shop'}</h3><div class="hat-grid">${hatCards}</div>`;
+  infoContent.querySelectorAll('[data-profile]').forEach(button=>button.addEventListener('click',()=>{characterState.profile=button.dataset.profile;saveCharacterState(characterState);rebuildExplorer();renderCharacterShop();}));
+  infoContent.querySelectorAll('[data-hat]').forEach(button=>button.addEventListener('click',()=>{
+    const hat=HAT_OPTIONS.find(item=>item.id===button.dataset.hat);if(!hat)return;
+    if(!characterState.ownedHats.includes(hat.id)){
+      const latest=readGameState();if((latest.points||0)<hat.cost){button.classList.add('shake');setTimeout(()=>button.classList.remove('shake'),350);return;}
+      latest.points-=hat.cost;latest.ownedRewards=[...new Set([...(latest.ownedRewards||[]),`hat:${hat.id}`])];localStorage.setItem(STORAGE_KEY,JSON.stringify(latest));characterState.ownedHats.push(hat.id);syncVillageUi();
+    }
+    characterState.hat=hat.id;saveCharacterState(characterState);rebuildExplorer();renderCharacterShop();
+  }));
+}
+
+function rebuildExplorer(){
+  if(!scene||!player)return;const position=player.position.clone(),rotation=playerModel.rotation.y;scene.remove(player);
+  const explorer=createExplorerCharacter(profileFor(characterState.profile),characterState.hat);player=explorer.root;playerModel=explorer.model;leftArm=explorer.leftArm;rightArm=explorer.rightArm;leftLeg=explorer.leftLeg;rightLeg=explorer.rightLeg;scarfTail=explorer.scarfTail;player.position.copy(position);playerModel.rotation.y=rotation;scene.add(player);
 }
 
 function navigateToZone(id) {
@@ -912,6 +954,8 @@ window.addEventListener('beforeunload', saveVillageState);
 document.addEventListener('visibilitychange', () => { if (!document.hidden && clock) clock.getDelta(); });
 
 enterZoneButton.addEventListener('click', enterActiveZone);
+$('#characterButton')?.addEventListener('click',()=>openInfo('shop'));
+$('#fullscreenButton')?.addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{}});
 $('#returnVillage').addEventListener('click', returnToVillage);
 $('#closeVillageInfo').addEventListener('click', () => infoDialog.close());
 infoDialog.addEventListener('click', event => { if (event.target === infoDialog) infoDialog.close(); });
@@ -922,9 +966,24 @@ $$('.language-switch button').forEach(button => button.addEventListener('click',
 }));
 
 syncVillageUi();
+setupPwa();
 try {
   buildWorld();
 } catch (error) {
   console.error('Village initialization failed:', error);
   loading.innerHTML = '<strong>3D 마을을 시작하지 못했어요. WebGL을 지원하는 브라우저에서 다시 열어 주세요.</strong>';
+}
+
+function setupPwa(){
+  if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(error=>console.warn('Service worker registration failed',error));
+  const fullscreen=$('#fullscreenButton');if(fullscreen&&!document.documentElement.requestFullscreen)fullscreen.hidden=true;
+  const banner=$('#installBanner'), install=$('#installButton'), dismiss=$('#dismissInstall');let prompt=null;
+  const copy={ko:['앱으로 설치하기','전체 화면에서 더 편하게 탐험하세요.','설치'],zh:['安装应用','在全屏中更舒适地探索。','安装'],ja:['アプリをインストール','全画面でもっと快適に探検できます。','インストール'],en:['Install the app','Explore more comfortably in full screen.','Install']};
+  const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+  const show=(ios=false)=>{if(standalone||localStorage.getItem('gfield-install-dismissed'))return;const words=copy[currentLang]||copy.ko;banner.querySelector('[data-install-title]').textContent=words[0];banner.querySelector('[data-install-body]').textContent=ios?`${words[1]} ${currentLang==='ko'?'공유 → 홈 화면에 추가를 누르세요.':'Use Share → Add to Home Screen.'}`:words[1];install.textContent=ios?(currentLang==='ko'?'설치 방법':'How to install'):words[2];banner.hidden=false;};
+  addEventListener('beforeinstallprompt',event=>{event.preventDefault();prompt=event;show(false);});
+  install?.addEventListener('click',async()=>{if(prompt){await prompt.prompt();await prompt.userChoice;prompt=null;banner.hidden=true;}else show(true);});
+  dismiss?.addEventListener('click',()=>{banner.hidden=true;localStorage.setItem('gfield-install-dismissed','1');});
+  if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!standalone)setTimeout(()=>show(true),900);
+  addEventListener('appinstalled',()=>{banner.hidden=true;prompt=null;});
 }
