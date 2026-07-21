@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>필즈 선발 대비 모의고사 | G-FIELD</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
 <style>
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
 :root{
@@ -230,6 +233,35 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 .similar-next{width:100%;height:44px;background:#fff;border:2px solid #e2e8f0;color:var(--g-muted);
   font-size:14px;font-weight:700;font-family:Pretendard,sans-serif;border-radius:12px;cursor:pointer;margin-top:8px}
 .similar-hint{font-size:11px;color:var(--g-muted);margin-top:6px;display:none}
+
+/* ── 약점 유형 연습하기 ── */
+.pt-select{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px}
+.pt-chip{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;border:1.5px solid rgba(22,65,124,.18);background:#fff;font-size:12px;font-weight:800;color:#16417C;cursor:pointer;user-select:none;transition:.15s}
+.pt-chip.on{background:#16417C;color:#fff;border-color:#16417C}
+.pt-chip input{display:none}
+.pt-start{width:100%;padding:13px;border-radius:10px;border:none;background:linear-gradient(135deg,#16417C,#2563eb);color:#fff;font-size:14px;font-weight:900;cursor:pointer;font-family:inherit}
+.pt-start:disabled{background:#cbd5e1;cursor:not-allowed}
+.pt-hint{font-size:11px;color:#94a3b8;margin-top:6px;text-align:center}
+#practiceModal{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.82);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:14px}
+#practiceModal.show{display:flex}
+.pm-card{width:min(880px,96vw);max-height:94vh;overflow-y:auto;background:#fff;border-radius:18px;padding:20px}
+.pm-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.pm-title{font-size:15px;font-weight:900;color:#16417C}
+.pm-score{font-size:12px;font-weight:800;color:#64748b}
+.pm-close{background:none;border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;color:#64748b;cursor:pointer;font-family:inherit}
+.pm-type{display:inline-block;font-size:11px;font-weight:900;color:#2563eb;background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.2);padding:3px 10px;border-radius:14px;margin-bottom:10px}
+.pm-problem{background:#f8fafc;border:1.5px solid #e8edf5;border-radius:12px;padding:14px;margin-bottom:14px;text-align:center;min-height:180px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px}
+.pm-problem img,.pm-problem canvas{max-width:100%;border-radius:8px}
+.pm-qtext{font-size:14px;font-weight:700;color:#334155;line-height:1.6}
+.pm-row{display:flex;gap:8px}
+.pm-input{flex:1;height:46px;border:2px solid #e2e8f0;border-radius:10px;padding:0 14px;font-size:16px;font-weight:800;text-align:center;color:#16417C;font-family:inherit}
+.pm-input:focus{outline:none;border-color:#16417C}
+.pm-check{height:46px;padding:0 22px;border-radius:10px;border:none;background:#16417C;color:#fff;font-size:14px;font-weight:900;cursor:pointer;font-family:inherit}
+.pm-next{height:46px;padding:0 22px;border-radius:10px;border:2px solid #16417C;background:#fff;color:#16417C;font-size:14px;font-weight:900;cursor:pointer;font-family:inherit;display:none}
+.pm-result{margin-top:10px;padding:11px;border-radius:10px;font-size:13px;font-weight:800;display:none;text-align:center}
+.pm-result.ok{background:rgba(34,197,94,.1);color:#16a34a;display:block}
+.pm-result.no{background:rgba(239,68,68,.08);color:#dc2626;display:block}
+
 </style>
 </head>
 <body>
@@ -611,6 +643,12 @@ ${insights.length?`<div class="r-card"><div class="r-ct">심층 분석 인사이
 </div>
 ${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 해설 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div></div><a class="wrong-link" href="${YT+TS[q.id]}" target="_blank" rel="noopener">▶ 해설</a>
 <button class="similar-btn" onclick="openSimilar(${q.id},'${q.t}')">✏️ 유사문제</button></div>`).join('')}</div>`:''}
+${(()=>{const pts=[...new Map(wq.filter(q=>PNG_TYPE_MAP[q.id]).map(q=>[q.id,{id:q.id,name:PNG_TYPE_MAP[q.id].name}])).values()];
+return pts.length?`<div class="r-card"><div class="r-ct">🎯 약점 유형 연습하기</div>
+<div style="font-size:12px;color:#64748b;margin-bottom:4px">틀린 유형을 선택하면(최대 5개) 비슷한 문제를 계속 연습할 수 있습니다.</div>
+<div class="pt-select">${pts.map(p=>`<label class="pt-chip" data-qid="${p.id}" onclick="event.preventDefault();ptToggle(this)">Q${p.id} ${p.name}</label>`).join('')}</div>
+<button class="pt-start" id="ptStartBtn" disabled onclick="ptStart()">유형을 선택하세요</button>
+<div class="pt-hint">문제는 매번 새로 만들어집니다 · 무제한 연습</div></div>`:''})()}
 ${weak.length?`<div class="r-card"><div class="r-ct">약점 유형 강의</div>${weak.map(t=>`<div class="s-item"><div><div class="s-tn">${t}</div><div class="s-vol">FC-CONCEPT ${TV[t].vol}</div></div><a class="s-link" href="${TV[t].url}" target="_blank" rel="noopener">▶ 강의 보기</a></div>`).join('')}</div>`:''}
 <div class="res-actions">
   <button class="res-print" onclick="window.print()">🖨 진단지 인쇄</button>
@@ -760,6 +798,271 @@ function nextSimilar(){generateSimilar();}
 window.openSimilar=openSimilar;window.closeSimilar=closeSimilar;
 window.setSimilarLv=setSimilarLv;window.checkSimilar=checkSimilar;window.nextSimilar=nextSimilar;
 
+})();
+</script>
+
+<!-- 약점 유형 연습 모달 -->
+<div id="practiceModal">
+  <div class="pm-card">
+    <div class="pm-head">
+      <span class="pm-title">✏️ 약점 유형 연습</span>
+      <span class="pm-score" id="pmScore">0 / 0</span>
+      <button class="pm-close" onclick="Practice.close()">✕ 닫기</button>
+    </div>
+    <span class="pm-type" id="pmType"></span>
+    <div class="pm-problem" id="pmProblem"></div>
+    <div class="pm-row">
+      <input class="pm-input" id="pmAnswer" type="text" inputmode="numeric" placeholder="답 입력" onkeydown="if(event.key==='Enter')Practice.check()">
+      <button class="pm-check" id="pmCheckBtn" onclick="Practice.check()">채점</button>
+      <button class="pm-next" id="pmNextBtn" onclick="Practice.next()">다음 →</button>
+    </div>
+    <div class="pm-result" id="pmResult"></div>
+  </div>
+</div>
+
+<script>
+/* ══════════ 약점 유형 연습 시스템 ══════════ */
+(function(){
+const PR=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+
+/* ── 색종이 접기: 생성 + Canvas 렌더 (확정 v4) ── */
+function genFold(){
+  const folds=PR(1,2);
+  const dirs=[Math.random()<.5?'v':'h'];
+  if(folds===2)dirs.push(dirs[0]==='v'?'h':(Math.random()<.5?'v':'h'));
+  const nHoles=PR(1,folds===1?3:2);
+  const mult=Math.pow(2,folds);
+  const holes=[];let t=0;
+  while(holes.length<nHoles&&t<50){
+    const hh={x:0.22+Math.random()*0.56,y:0.22+Math.random()*0.56};
+    if(holes.every(o=>Math.hypot(o.x-hh.x,o.y-hh.y)>0.3))holes.push(hh);t++;
+  }
+  return{folds,dirs,holes,nHoles,mult,answer:nHoles*mult};
+}
+function foldPaper(ctx,x,y,w,hh,opt={}){
+  ctx.fillStyle='#f9c8c4';ctx.strokeStyle='#e8968f';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.roundRect(x,y,w,hh,4);ctx.fill();ctx.stroke();
+  if(opt.foldLine==='v'){ctx.setLineDash([7,6]);ctx.strokeStyle='#d4756c';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(x+w/2,y+4);ctx.lineTo(x+w/2,y+hh-4);ctx.stroke();ctx.setLineDash([]);}
+  if(opt.foldLine==='h'){ctx.setLineDash([7,6]);ctx.strokeStyle='#d4756c';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(x+4,y+hh/2);ctx.lineTo(x+w-4,y+hh/2);ctx.stroke();ctx.setLineDash([]);}
+  if(opt.foldedEdge==='left'){ctx.fillStyle='rgba(216,110,100,.25)';ctx.fillRect(x,y,10,hh);}
+  if(opt.foldedEdge==='top'){ctx.fillStyle='rgba(216,110,100,.25)';ctx.fillRect(x,y,w,10);}
+}
+function foldArrow(ctx,x,y,w,hh,dir){
+  ctx.strokeStyle='#c0392b';ctx.fillStyle='#c0392b';ctx.lineWidth=6;ctx.lineCap='round';
+  ctx.beginPath();let ex,ey,cpx,cpy;
+  if(dir==='v'){const sx=x+w*0.72,sy=y+hh*0.5;cpx=x+w*0.5;cpy=y+hh*0.14;ex=x+w*0.28;ey=y+hh*0.5;
+    ctx.moveTo(sx,sy);ctx.quadraticCurveTo(cpx,cpy,ex,ey);}
+  else{const sx=x+w*0.5,sy=y+hh*0.72;cpx=x+w*0.14;cpy=y+hh*0.5;ex=x+w*0.5;ey=y+hh*0.28;
+    ctx.moveTo(sx,sy);ctx.quadraticCurveTo(cpx,cpy,ex,ey);}
+  ctx.stroke();
+  const ang=Math.atan2(ey-cpy,ex-cpx);
+  ctx.beginPath();
+  ctx.moveTo(ex+8*Math.cos(ang),ey+8*Math.sin(ang));
+  ctx.lineTo(ex-16*Math.cos(ang-0.5),ey-16*Math.sin(ang-0.5));
+  ctx.lineTo(ex-16*Math.cos(ang+0.5),ey-16*Math.sin(ang+0.5));
+  ctx.closePath();ctx.fill();
+}
+function stepArrow(ctx,x,y){
+  ctx.strokeStyle='#95a5a6';ctx.fillStyle='#95a5a6';ctx.lineWidth=4;
+  ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+40,y);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x+40,y);ctx.lineTo(x+29,y-8);ctx.lineTo(x+29,y+8);ctx.closePath();ctx.fill();
+}
+function foldHoles(ctx,x,y,w,hh,holes){
+  for(const o of holes){ctx.beginPath();ctx.arc(x+o.x*w,y+o.y*hh,12,0,Math.PI*2);
+    ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle='#c0392b';ctx.lineWidth=2.2;ctx.stroke();}
+}
+function renderFold(container,d){
+  const cv=document.createElement('canvas');
+  const steps=d.folds+1;
+  const size=170,gap=56;
+  cv.width=steps===2?size*1.7+gap+40:size*2.3+gap*2+60;cv.height=size+50;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#f8fafc';ctx.fillRect(0,0,cv.width,cv.height);
+  const baseY=26;let x=8;
+  foldPaper(ctx,x,baseY,size,size,{foldLine:d.dirs[0]});
+  foldArrow(ctx,x,baseY,size,size,d.dirs[0]);
+  x+=size+8;stepArrow(ctx,x,baseY+size/2);x+=gap;
+  let w2=d.dirs[0]==='v'?size/2:size,h2=d.dirs[0]==='v'?size:size/2;
+  const y2=baseY+(size-h2)/2;
+  if(d.folds===1){
+    foldPaper(ctx,x,y2,w2,h2,{foldedEdge:d.dirs[0]==='v'?'left':'top'});
+    foldHoles(ctx,x,y2,w2,h2,d.holes);
+  }else{
+    foldPaper(ctx,x,y2,w2,h2,{foldLine:d.dirs[1],foldedEdge:d.dirs[0]==='v'?'left':'top'});
+    foldArrow(ctx,x,y2,w2,h2,d.dirs[1]);
+    x+=w2+8;stepArrow(ctx,x,baseY+size/2);x+=gap;
+    const w3=d.dirs[1]==='v'?w2/2:w2,h3=d.dirs[1]==='v'?h2:h2/2;
+    const y3=baseY+(size-h3)/2;
+    foldPaper(ctx,x,y3,w3,h3,{foldedEdge:'left'});
+    foldHoles(ctx,x,y3,w3,h3,d.holes);
+  }
+  container.appendChild(cv);
+}
+
+/* ── 쌓기나무: Three.js 렌더 (확정본, lazy load) ── */
+let THREE_MOD=null;
+async function loadThree(){
+  if(THREE_MOD)return THREE_MOD;
+  const T=await import('three');
+  const {RoundedBoxGeometry}=await import('three/addons/geometries/RoundedBoxGeometry.js');
+  THREE_MOD={T,RoundedBoxGeometry};
+  return THREE_MOD;
+}
+let _stackRenderer=null;
+async function renderStackImg(k,sz){
+  const {T,RoundedBoxGeometry}=await loadThree();
+  if(!_stackRenderer){
+    _stackRenderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+    _stackRenderer.setPixelRatio(2);
+    _stackRenderer.shadowMap.enabled=true;
+    _stackRenderer.shadowMap.type=T.PCFSoftShadowMap;
+  }
+  _stackRenderer.setSize(sz,sz);
+  const scene=new T.Scene();
+  scene.background=new T.Color(0xf7e8cf);
+  scene.add(new T.HemisphereLight(0xfffbef,0x9b6d45,2.15));
+  const sun=new T.DirectionalLight(0xfff4d6,3.2);
+  sun.position.set(-5,9,6);sun.castShadow=true;
+  sun.shadow.mapSize.set(1024,1024);
+  sun.shadow.camera.left=-8;sun.shadow.camera.right=8;sun.shadow.camera.top=8;sun.shadow.camera.bottom=-8;
+  scene.add(sun);
+  const cubeGeo=new RoundedBoxGeometry(0.96,0.96,0.96,5,0.075);
+  const cubeMat=new T.MeshStandardMaterial({color:0xfff5df,roughness:0.56,metalness:0.012});
+  const edgeGeo=new T.EdgesGeometry(new T.BoxGeometry(0.96,0.96,0.96));
+  const edgeMat=new T.LineBasicMaterial({color:0x87552d,transparent:true,opacity:0.32});
+  const tray=new T.Mesh(new RoundedBoxGeometry(k+1.4,0.24,k+1.4,6,0.16),
+    new T.MeshStandardMaterial({color:0xe7c28e,roughness:0.58,metalness:0.01}));
+  tray.position.y=-0.63;tray.receiveShadow=true;scene.add(tray);
+  for(let layer=0;layer<k;layer++){
+    const s=k-layer,off=(k-s)/2;
+    for(let r=0;r<s;r++)for(let c=0;c<s;c++){
+      const cube=new T.Mesh(cubeGeo,cubeMat);
+      cube.position.set(c+off-(k-1)/2,layer,r+off-(k-1)/2);
+      cube.castShadow=true;cube.receiveShadow=true;scene.add(cube);
+      const eg=new T.LineSegments(edgeGeo,edgeMat);
+      eg.position.copy(cube.position);scene.add(eg);
+    }
+  }
+  const cam=new T.PerspectiveCamera(38,1,0.1,100);
+  const dd=k*2.1+3.5;
+  cam.position.set(dd*0.66,dd*0.56,dd*0.74);
+  cam.lookAt(0,k*0.3,0);
+  _stackRenderer.render(scene,cam);
+  return _stackRenderer.domElement.toDataURL('image/png');
+}
+async function renderStack(container,n){
+  const row=document.createElement('div');
+  row.style.cssText='display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center';
+  const counts=[1,5,14];
+  for(let k=1;k<=3;k++){
+    const url=await renderStackImg(k,150);
+    const slot=document.createElement('div');
+    slot.style.textAlign='center';
+    slot.innerHTML='<img src="'+url+'" width="150" height="150" style="border-radius:8px;display:block"><div style="font-size:11px;font-weight:700;color:#4a3520;margin-top:4px">'+k+'번째 ('+counts[k-1]+'개)</div>';
+    row.appendChild(slot);
+  }
+  const ar=document.createElement('div');
+  ar.style.cssText='font-size:26px;color:#16417C;font-weight:900';ar.textContent='→';
+  row.appendChild(ar);
+  const qb=document.createElement('div');
+  qb.style.cssText='width:150px;height:150px;border:3px dashed #16417C;border-radius:10px;background:#eaf2fb;display:flex;align-items:center;justify-content:center;flex-direction:column';
+  qb.innerHTML='<div style="font-size:44px;font-weight:900;color:#16417C">?</div><div style="font-size:12px;font-weight:700;color:#16417C">'+n+'번째</div>';
+  row.appendChild(qb);
+  container.appendChild(row);
+}
+
+/* ── 연습 컨트롤러 ── */
+const LIVE_TYPES={4:'fold',25:'stack'};   // 즉석 렌더 유형
+const Practice={
+  types:[],cur:null,ok:0,total:0,
+  open(selectedIds){
+    this.types=selectedIds;this.ok=0;this.total=0;
+    document.getElementById('practiceModal').classList.add('show');
+    this.next();
+  },
+  close(){
+    document.getElementById('practiceModal').classList.remove('show');
+  },
+  async next(){
+    const qid=this.types[Math.floor(Math.random()*this.types.length)];
+    const info=PNG_TYPE_MAP[qid];
+    const area=document.getElementById('pmProblem');
+    area.innerHTML='<div style="color:#94a3b8;font-size:13px">문제 준비 중…</div>';
+    document.getElementById('pmType').textContent=info.name;
+    document.getElementById('pmAnswer').value='';
+    document.getElementById('pmResult').className='pm-result';
+    document.getElementById('pmCheckBtn').style.display='';
+    document.getElementById('pmNextBtn').style.display='none';
+    document.getElementById('pmScore').textContent=this.ok+' / '+this.total;
+
+    if(LIVE_TYPES[qid]==='fold'){
+      const d=genFold();
+      this.cur={answer:String(d.answer)};
+      area.innerHTML='';
+      const qt=document.createElement('div');qt.className='pm-qtext';
+      qt.textContent='색종이를 '+(d.folds===1?'반으로 접은':'반으로 두 번 접은')+' 다음 구멍을 뚫었습니다. 펼치면 구멍은 모두 몇 개입니까?';
+      area.appendChild(qt);renderFold(area,d);
+    }
+    else if(LIVE_TYPES[qid]==='stack'){
+      const n=PR(4,7);
+      let s=0;for(let i=1;i<=n;i++)s+=i*i;
+      this.cur={answer:String(s)};
+      area.innerHTML='';
+      const qt=document.createElement('div');qt.className='pm-qtext';
+      qt.textContent='다음 규칙으로 쌓기나무를 쌓을 때, '+n+'번째 모양의 쌓기나무는 모두 몇 개입니까?';
+      area.appendChild(qt);
+      await renderStack(area,n);
+    }
+    else{
+      // 기존 PNG 로드
+      const pngType=Array.isArray(info.type)?info.type[Math.floor(Math.random()*info.type.length)]:info.type;
+      const lv=PR(1,2);
+      const num=PR(1,PNG_COUNT);
+      const key=pngType+'_lv'+lv+'_'+String(num).padStart(3,'0');
+      try{
+        const res=await fetch(PNG_BASE+'/'+key+'.txt');
+        const ans=(await res.text()).trim();
+        this.cur={answer:ans};
+        area.innerHTML='<img src="'+PNG_BASE+'/'+key+'.png" alt="문제" style="max-width:100%">';
+      }catch(e){
+        area.innerHTML='<div style="color:#dc2626;font-size:13px">문제를 불러올 수 없습니다. 다음을 눌러주세요.</div>';
+        this.cur={answer:null};
+      }
+    }
+    setTimeout(()=>document.getElementById('pmAnswer').focus(),100);
+  },
+  check(){
+    if(!this.cur||this.cur.answer===null)return;
+    const v=document.getElementById('pmAnswer').value.trim();
+    if(!v)return;
+    this.total++;
+    const correct=v===this.cur.answer;
+    if(correct)this.ok++;
+    const r=document.getElementById('pmResult');
+    r.className='pm-result '+(correct?'ok':'no');
+    r.textContent=correct?'✓ 정답입니다!':'✗ 오답입니다. 정답: '+this.cur.answer;
+    document.getElementById('pmScore').textContent=this.ok+' / '+this.total;
+    document.getElementById('pmCheckBtn').style.display='none';
+    document.getElementById('pmNextBtn').style.display='';
+  }
+};
+window.Practice=Practice;
+
+/* 결과 화면 체크박스 → 연습 시작 */
+window.ptToggle=function(el){
+  el.classList.toggle('on');
+  const sel=document.querySelectorAll('.pt-chip.on');
+  if(sel.length>5){el.classList.remove('on');return;}
+  const btn=document.getElementById('ptStartBtn');
+  if(btn){btn.disabled=sel.length===0;
+    btn.textContent=sel.length?('선택한 '+sel.length+'개 유형 연습 시작 →'):'유형을 선택하세요';}
+};
+window.ptStart=function(){
+  const ids=[...document.querySelectorAll('.pt-chip.on')].map(el=>+el.dataset.qid);
+  if(ids.length)Practice.open(ids);
+};
 })();
 </script>
 </body>

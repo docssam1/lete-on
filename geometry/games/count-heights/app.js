@@ -1,7 +1,10 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { levels, validateLevels } from "./levels.js";
-import { text } from "./i18n.js";
+import { text } from "./i18n.js?v=count-board-20260718d";
+import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
+import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
 
 validateLevels();
 
@@ -31,14 +34,22 @@ const elements = {
   audio: $("#audio"),
   toast: $("#toast"),
   success: $("#success"),
+  conceptTutorial: $("#conceptTutorial"),
+  conceptMessage: $("#conceptMessage"),
+  conceptSteps: $("#conceptSteps"),
+  conceptNext: $("#conceptNext"),
   docssam: $(".docssam"),
   cubi: $(".cubi-sprite")
 };
 
+const countProgress = readGameProgress("countHeights");
+const savedCountLevel = Number.isInteger(Number(countProgress.levelIndex))
+  ? Number(countProgress.levelIndex)
+  : Number(localStorage.getItem("count-heights-level")) || 0;
 const state = {
   lang: localStorage.getItem("gfield-language") || "ko",
-  levelIndex: Math.max(0, Math.min(4, Number(localStorage.getItem("count-heights-level")) || 0)),
-  problemIndex: 0,
+  levelIndex: Math.max(0, Math.min(4, savedCountLevel)),
+  problemIndex: Math.max(0, Number(countProgress.problemIndex) || 0),
   mode: "model",
   cellAnswers: new Map(),
   totalAnswer: "",
@@ -48,10 +59,14 @@ const state = {
   hintKey: null,
   hintsUsed: 0,
   wrongAttempts: 0,
-  audioEnabled: false,
+  audioEnabled: localStorage.getItem("gfield-audio-muted") !== "true",
   solved: false,
-  advanceTimer: null
+  advanceTimer: null,
+  tutorialStep: -1
 };
+
+const tutorialStorageKey = "gfield-count-heights-tutorial-v1";
+const tutorialKeys = ["tutorialCount1", "tutorialCount2", "tutorialCount3"];
 
 const currentProblem = () => levels[state.levelIndex].problems[state.problemIndex];
 const cellKey = (x, z) => `${x},${z}`;
@@ -74,12 +89,21 @@ function applyLanguage() {
   document.documentElement.lang = state.lang;
   $$('[data-i18n]').forEach((node) => { node.textContent = text(state.lang, node.dataset.i18n); });
   $$('[data-lang]').forEach((button) => button.classList.toggle("active", button.dataset.lang === state.lang));
-  elements.audio.textContent = text(state.lang, state.audioEnabled ? "audioOn" : "audioOff");
+  updateAudioButton();
   updateProgress();
   renderLevelList();
   renderNumberPad();
   updatePrompt();
   renderModel();
+  if (state.tutorialStep >= 0) renderConceptTutorial();
+}
+
+function updateAudioButton() {
+  const label = text(state.lang, state.audioEnabled ? "audioOn" : "audioOff");
+  elements.audio.textContent = state.audioEnabled ? "♪" : "∕";
+  elements.audio.setAttribute("aria-label", label);
+  elements.audio.setAttribute("title", label);
+  elements.audio.setAttribute("aria-pressed", String(state.audioEnabled));
 }
 
 function updateProgress() {
@@ -131,16 +155,70 @@ function setGuide(key, shouldSpeak = true) {
 }
 
 function updatePrompt() {
-  elements.numberPrompt.textContent = text(state.lang, state.inputTarget === "total" ? "chooseTotal" : "chooseNumber");
+  const key = state.inputTarget === "total"
+    ? "chooseTotal"
+    : state.mode === "top" ? "chooseTopNumber" : "chooseNumber";
+  elements.numberPrompt.textContent = text(state.lang, key);
 }
 
 function initializeExample() {
-  if (state.levelIndex !== 0) return;
+  if (state.levelIndex !== 0 || state.problemIndex !== 0) return;
   const first = occupiedCells()[0];
   if (first) state.cellAnswers.set(first.key, first.height);
 }
 
+function shouldShowConceptTutorial() {
+  const forced = new URLSearchParams(window.location.search).get("tutorial") === "1";
+  return state.levelIndex === 0
+    && state.problemIndex === 0
+    && (forced || localStorage.getItem(tutorialStorageKey) !== "done");
+}
+
+function renderConceptTutorial() {
+  if (state.tutorialStep < 0) return;
+  elements.conceptMessage.textContent = text(state.lang, tutorialKeys[state.tutorialStep]);
+  elements.conceptNext.textContent = text(
+    state.lang,
+    state.tutorialStep === tutorialKeys.length - 1 ? "tutorialStart" : "tutorialNext"
+  );
+  elements.conceptSteps.replaceChildren();
+  tutorialKeys.forEach((_, index) => {
+    const dot = document.createElement("span");
+    dot.classList.toggle("active", index === state.tutorialStep);
+    dot.classList.toggle("done", index < state.tutorialStep);
+    elements.conceptSteps.append(dot);
+  });
+}
+
+function openConceptTutorial() {
+  state.tutorialStep = 0;
+  elements.conceptTutorial.hidden = false;
+  document.body.classList.add("count-tutorial-active");
+  renderConceptTutorial();
+  window.setTimeout(() => speak(text(state.lang, tutorialKeys[0])), 220);
+}
+
+function advanceConceptTutorial() {
+  if (state.tutorialStep < tutorialKeys.length - 1) {
+    state.tutorialStep += 1;
+    renderConceptTutorial();
+    speak(text(state.lang, tutorialKeys[state.tutorialStep]));
+    return;
+  }
+  state.tutorialStep = -1;
+  localStorage.setItem(tutorialStorageKey, "done");
+  elements.conceptTutorial.hidden = true;
+  document.body.classList.remove("count-tutorial-active");
+  speechSynthesis?.cancel();
+}
+
 function loadProblem() {
+  state.problemIndex = Math.max(0, Math.min(levels[state.levelIndex].problems.length - 1, state.problemIndex));
+  saveGameProgress("countHeights", {
+    levelIndex: state.levelIndex,
+    problemIndex: state.problemIndex,
+    level: state.levelIndex + 1
+  });
   clearTimeout(state.advanceTimer);
   elements.success.classList.remove("show");
   state.cellAnswers = new Map();
@@ -157,9 +235,11 @@ function loadProblem() {
   renderTopBoard();
   renderAnswers();
   renderNumberPad();
+  updatePrompt();
   renderModel();
   setGuide("guideStart", false);
   setCameraView("free");
+  if (shouldShowConceptTutorial()) openConceptTutorial();
 }
 
 function setMode(mode) {
@@ -169,9 +249,18 @@ function setMode(mode) {
   elements.modelMode.setAttribute("aria-selected", String(mode === "model"));
   elements.topMode.setAttribute("aria-selected", String(mode === "top"));
   elements.modelPrompt.hidden = mode !== "model";
-  elements.topBoard.hidden = mode !== "top";
+  elements.topBoard.hidden = false;
+  elements.topBoard.classList.toggle("read-only", mode === "model");
+  renderTopBoard();
+  renderModel();
+  renderAnswers();
   renderNumberPad();
-  if (mode === "top") setGuide("guideTop");
+  updatePrompt();
+  controls.enabled = true;
+  $$(".camera-tools button").forEach((button) => {
+    button.disabled = false;
+  });
+  if (mode === "top") setGuide("guideTop", false);
 }
 
 function selectCell(x, z, options = {}) {
@@ -184,7 +273,7 @@ function selectCell(x, z, options = {}) {
   renderModel();
   renderNumberPad();
   updatePrompt();
-  setGuide(state.mode === "top" ? "guideTop" : "guideCell");
+  setGuide(state.mode === "top" ? "guideTop" : "guideCell", false);
 }
 
 function selectTotal() {
@@ -201,6 +290,7 @@ function selectTotal() {
 function renderTopBoard() {
   const [width, depth] = currentProblem().board;
   elements.topBoard.style.setProperty("--cols", width);
+  elements.topBoard.style.setProperty("--cell-size", width >= 4 ? "20px" : width === 3 ? "26px" : "34px");
   elements.topBoard.replaceChildren();
   for (let z = 0; z < depth; z += 1) {
     for (let x = 0; x < width; x += 1) {
@@ -219,7 +309,12 @@ function renderTopBoard() {
         button.classList.toggle("hint", key === state.hintKey);
         button.classList.toggle("example", state.levelIndex === 0 && key === occupiedCells()[0]?.key);
         button.setAttribute("aria-label", `${x + 1}, ${z + 1}`);
-        button.addEventListener("click", () => selectCell(x, z));
+        if (state.mode === "top") {
+          button.addEventListener("click", () => selectCell(x, z));
+        } else {
+          button.tabIndex = -1;
+          button.setAttribute("aria-disabled", "true");
+        }
       }
       elements.topBoard.append(button);
     }
@@ -253,7 +348,7 @@ function renderNumberPad() {
     button.type = "button";
     button.textContent = String(value);
     button.disabled = state.solved
-      || (state.inputTarget === "cell" && (value > 4 || (value === 0 && state.mode === "model")));
+      || (state.inputTarget === "cell" && (value > 4 || value === 0));
     button.addEventListener("click", () => enterNumber(value));
     elements.numberPad.append(button);
   }
@@ -273,7 +368,7 @@ function enterNumber(value) {
       showToast(text(state.lang, state.mode === "top" ? "selectCell" : "selectColumn"));
       return;
     }
-    if (value > 4 || (value === 0 && state.mode === "model")) return;
+    if (value > 4 || value === 0) return;
     state.cellAnswers.set(state.selectedKey, value);
     state.wrongKeys.delete(state.selectedKey);
     state.hintKey = null;
@@ -312,7 +407,7 @@ function checkAnswer() {
   if (!occupied.every(({ key }) => state.cellAnswers.has(key))) return;
   if (state.totalAnswer === "") {
     selectTotal();
-    setGuide("totalMissing");
+    setGuide("totalMissing", false);
     return;
   }
 
@@ -324,7 +419,7 @@ function checkAnswer() {
     renderTopBoard();
     renderModel();
     showToast(text(state.lang, "heightWrong"));
-    setGuide("heightWrong");
+    setGuide("heightWrong", false);
     return;
   }
 
@@ -332,7 +427,7 @@ function checkAnswer() {
     state.wrongAttempts += 1;
     elements.totalDisplay.classList.add("wrong");
     showToast(text(state.lang, "totalWrong"));
-    setGuide("totalWrong");
+    setGuide("totalWrong", false);
     return;
   }
   completeProblem();
@@ -341,20 +436,50 @@ function checkAnswer() {
 function completeProblem() {
   state.solved = true;
   awardPoints(`count-cubes:${currentProblem().id}`, 15);
+  celebrateEvolution(syncEvolution(), state.lang);
+  updateLevelBadge(state.lang, { left: "25%" });
   const phrases = state.hintsUsed === 0 && state.wrongAttempts === 0
-    ? ["success", "successGood"]
-    : ["successGood"];
+    ? ["success", "successGood", "successPop"]
+    : ["success", "successGood"];
   const phrase = phrases[Math.floor(Math.random() * phrases.length)];
   elements.success.querySelector("strong").textContent = text(state.lang, phrase).toUpperCase();
   elements.success.classList.remove("show");
   void elements.success.offsetWidth;
   elements.success.classList.add("show");
-  setGuide("guideSuccess");
+  playSuccessBurstSound();
+  setGuide("guideSuccess", false);
   renderNumberPad();
   state.advanceTimer = setTimeout(() => {
     elements.success.classList.remove("show");
     nextProblem();
   }, 1250);
+}
+
+function playSuccessBurstSound() {
+  if (!state.audioEnabled) return;
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return;
+  const context = new AudioContextClass();
+  const now = context.currentTime;
+  const master = context.createGain();
+  master.gain.setValueAtTime(0.0001, now);
+  master.gain.exponentialRampToValueAtTime(0.22, now + 0.018);
+  master.gain.exponentialRampToValueAtTime(0.0001, now + 0.48);
+  master.connect(context.destination);
+
+  [196, 294, 392, 587].forEach((frequency, index) => {
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.type = index === 0 ? "triangle" : "sine";
+    oscillator.frequency.setValueAtTime(frequency, now);
+    oscillator.frequency.exponentialRampToValueAtTime(frequency * 1.55, now + 0.22);
+    gain.gain.setValueAtTime(index === 0 ? 0.34 : 0.18, now + index * 0.018);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.38 + index * 0.025);
+    oscillator.connect(gain).connect(master);
+    oscillator.start(now + index * 0.018);
+    oscillator.stop(now + 0.5);
+  });
+  window.setTimeout(() => context.close(), 650);
 }
 
 function awardPoints(rewardId, amount) {
@@ -387,6 +512,12 @@ function resetProblem() {
   showToast(text(state.lang, "reset"));
 }
 
+function updatePrintWorksheetLink() {
+  const link = $("#printWorksheetLink");
+  if (!link) return;
+  link.href = `../../cube-town/print.html?game=count-heights&level=${state.levelIndex + 1}`;
+}
+
 function renderLevelList() {
   elements.levelList.replaceChildren();
   levels.forEach((level, index) => {
@@ -413,8 +544,8 @@ function renderLevelList() {
 
 // Three.js model
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xdff3f8);
-scene.fog = new THREE.Fog(0xdff3f8, 12, 23);
+scene.background = new THREE.Color(0xf7e8cf);
+scene.fog = new THREE.Fog(0xf7e8cf, 13, 24);
 const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
 camera.position.set(7.2, 6.3, 8.2);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -434,9 +565,13 @@ controls.minPolarAngle = 0.12;
 controls.maxPolarAngle = Math.PI / 2.06;
 controls.target.set(0, 1.25, 0);
 
-scene.add(new THREE.HemisphereLight(0xffffff, 0x8eb19f, 2.2));
-const sunlight = new THREE.DirectionalLight(0xfff4d6, 3.2);
-sunlight.position.set(-5, 9, 6);
+// Lighting matched to copy-build ("똑같이 쌓기"): neutral white sky/sun so the
+// wood tone comes from the textures rather than a warm tint, at the same
+// intensities. Shadow-camera bounds stay wider (±7) because count-heights
+// boards go up to 5×5.
+scene.add(new THREE.HemisphereLight(0xffffff, 0xc9d5cd, 2.2));
+const sunlight = new THREE.DirectionalLight(0xffffff, 2.4);
+sunlight.position.set(5, 8.5, 4);
 sunlight.castShadow = true;
 sunlight.shadow.mapSize.set(1024, 1024);
 sunlight.shadow.camera.left = -7;
@@ -447,10 +582,66 @@ scene.add(sunlight);
 
 const modelGroup = new THREE.Group();
 scene.add(modelGroup);
-const cubeGeometry = new THREE.BoxGeometry(0.96, 0.96, 0.96);
-const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0xe7b765, roughness: 0.73, metalness: 0.02 });
-const edgeGeometry = new THREE.EdgesGeometry(cubeGeometry, 22);
-const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x986429, transparent: true, opacity: 0.62 });
+
+function createWoodTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 512;
+  const context = canvas.getContext("2d");
+  const base = context.createLinearGradient(0, 0, 512, 512);
+  base.addColorStop(0, "#fff7e7");
+  base.addColorStop(0.46, "#f0d4a5");
+  base.addColorStop(1, "#d9b57e");
+  context.fillStyle = base;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  for (let line = 0; line < 76; line += 1) {
+    const y = 18 + line * 6.5 + Math.sin(line * 1.7) * 6;
+    context.beginPath();
+    context.moveTo(-20, y);
+    for (let x = -20; x <= 540; x += 18) {
+      context.lineTo(x, y + Math.sin(x * 0.036 + line) * 3.6 + Math.sin(x * 0.012 + line * 0.4) * 2.4);
+    }
+    context.strokeStyle = line % 3 === 0 ? "rgba(115,78,39,.095)" : "rgba(255,255,245,.24)";
+    context.lineWidth = line % 3 === 0 ? 1.15 : 0.9;
+    context.stroke();
+  }
+  for (let knot = 0; knot < 34; knot += 1) {
+    context.beginPath();
+    context.ellipse(44 + (knot * 83) % 432, 38 + (knot * 117) % 420, 20, 6, knot, 0, Math.PI * 2);
+    context.strokeStyle = "rgba(105,70,35,.07)";
+    context.lineWidth = 1;
+    context.stroke();
+  }
+  const glow = context.createRadialGradient(160, 120, 20, 160, 120, 420);
+  glow.addColorStop(0, "rgba(255,255,255,.18)");
+  glow.addColorStop(1, "rgba(255,255,255,0)");
+  context.fillStyle = glow;
+  context.fillRect(0, 0, 512, 512);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(1.1, 1.1);
+  texture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+  return texture;
+}
+
+const cubeWoodTexture = createWoodTexture();
+const boardWoodTexture = createWoodTexture();
+boardWoodTexture.repeat.set(2.5, 2.5);
+const insetWoodTexture = createWoodTexture();
+insetWoodTexture.repeat.set(2, 2);
+const cubeGeometry = new RoundedBoxGeometry(0.96, 0.96, 0.96, 5, 0.075);
+const cubeMaterial = new THREE.MeshStandardMaterial({
+  color: 0xfff5df,
+  map: cubeWoodTexture,
+  roughness: 0.56,
+  metalness: 0.012,
+  bumpMap: cubeWoodTexture,
+  bumpScale: 0.012
+});
+const edgeGeometry = new THREE.EdgesGeometry(cubeGeometry, 28);
+const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x8b6840, transparent: true, opacity: 0.18 });
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 let clickableObjects = [];
@@ -492,27 +683,107 @@ function makeTextSprite(label, options = {}) {
   return sprite;
 }
 
+// Front / right board labels engraved flat on the wooden frame, matching
+// copy-build ("똑같이 쌓기") and shape-build — a dark-brown glyph with a light
+// wood-tone glow, on a thin plane laid at the board's edge (no floating pill).
+function makeBoardLabelPlane(label) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 384;
+  canvas.height = 112;
+  const context = canvas.getContext("2d");
+  context.fillStyle = "rgba(64, 38, 17, 0.95)";
+  context.font = "950 58px 'Noto Sans KR', sans-serif";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.shadowColor = "rgba(255, 247, 224, 0.82)";
+  context.shadowBlur = 3;
+  context.fillText(label, canvas.width / 2, canvas.height / 2 + 2);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.minFilter = THREE.LinearFilter;
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    depthTest: false,
+    depthWrite: false,
+    side: THREE.DoubleSide
+  });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1.42, 0.42), material);
+  mesh.renderOrder = 902;
+  mesh.userData.generatedTexture = true;
+  return mesh;
+}
+
 function renderModel() {
   clearModel();
   clickableObjects = [];
   const [width, depth] = currentProblem().board;
   const centerX = (width - 1) / 2;
   const centerZ = (depth - 1) / 2;
-  const floorSize = Math.max(width, depth) + 3.2;
+  const gridSize = Math.max(width, depth);
+  const traySize = gridSize + 1.96;
+  const railSpan = gridSize + 1.32;
+  const railOffset = gridSize / 2 + 0.62;
+
+  const board = new THREE.Mesh(
+    new RoundedBoxGeometry(traySize, 0.24, traySize, 8, 0.18),
+    new THREE.MeshStandardMaterial({
+      map: boardWoodTexture,
+      color: 0xe7c28e,
+      roughness: 0.58,
+      metalness: 0.01,
+      bumpMap: boardWoodTexture,
+      bumpScale: 0.01
+    })
+  );
+  board.position.y = -0.15;
+  board.receiveShadow = true;
+  board.castShadow = true;
+  modelGroup.add(board);
+
+  const railMaterial = new THREE.MeshStandardMaterial({
+    map: boardWoodTexture,
+    color: 0xd0a36b,
+    roughness: 0.58,
+    metalness: 0.01,
+    bumpMap: boardWoodTexture,
+    bumpScale: 0.009
+  });
+  [
+    { x: 0, z: railOffset, sx: railSpan, sz: 0.18 },
+    { x: 0, z: -railOffset, sx: railSpan, sz: 0.18 },
+    { x: railOffset, z: 0, sx: 0.18, sz: railSpan },
+    { x: -railOffset, z: 0, sx: 0.18, sz: railSpan }
+  ].forEach((rail) => {
+    const mesh = new THREE.Mesh(
+      new RoundedBoxGeometry(rail.sx, 0.12, rail.sz, 5, 0.06),
+      railMaterial
+    );
+    mesh.position.set(rail.x, 0.005, rail.z);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    modelGroup.add(mesh);
+  });
 
   const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(floorSize, floorSize),
-    new THREE.MeshStandardMaterial({ color: 0xfffced, roughness: 1 })
+    new THREE.PlaneGeometry(gridSize + 0.28, gridSize + 0.28),
+    new THREE.MeshStandardMaterial({
+      map: insetWoodTexture,
+      color: 0xdbe2d7,
+      roughness: 0.9,
+      bumpMap: insetWoodTexture,
+      bumpScale: 0.0025
+    })
   );
   floor.rotation.x = -Math.PI / 2;
-  floor.position.y = -0.02;
+  floor.position.y = 0.014;
   floor.receiveShadow = true;
   modelGroup.add(floor);
 
-  const grid = new THREE.GridHelper(Math.max(width, depth), Math.max(width, depth), 0xbcae8e, 0xd6cab1);
-  grid.position.y = 0.005;
+  const grid = new THREE.GridHelper(gridSize, gridSize, 0x8e6841, 0xc79b67);
+  grid.position.y = 0.025;
   grid.material.transparent = true;
-  grid.material.opacity = 0.65;
+  grid.material.opacity = 0.88;
   modelGroup.add(grid);
 
   occupiedCells().forEach((cell) => {
@@ -569,14 +840,16 @@ function renderModel() {
     }
   });
 
-  const frontLabel = makeTextSprite(text(state.lang, "front"), {
-    small: true,
-    fill: "rgba(36,49,61,.94)",
-    stroke: "#f6c94d",
-    color: "#ffffff"
-  });
-  frontLabel.position.set(0, 0.55, depth / 2 + 0.95);
+  // Labels sit on the square wooden frame (rail is at gridSize/2 + 0.62),
+  // laid flat like copy-build/shape-build rather than as floating billboards.
+  const labelOffset = gridSize / 2 + 0.46;
+  const frontLabel = makeBoardLabelPlane(text(state.lang, "front"));
+  frontLabel.position.set(0, -0.01, labelOffset);
   modelGroup.add(frontLabel);
+  const rightLabel = makeBoardLabelPlane(state.lang === "ko" ? "오른쪽" : state.lang === "zh" ? "右边" : state.lang === "ja" ? "右" : "Right");
+  rightLabel.position.set(labelOffset, -0.01, 0);
+  rightLabel.rotation.set(0, Math.PI / 2, 0);
+  modelGroup.add(rightLabel);
   controls.target.set(0, Math.min(1.75, currentProblem().maxHeight * 0.42 + 0.4), 0);
   controls.update();
 }
@@ -584,6 +857,7 @@ function renderModel() {
 function setCameraView(view) {
   const max = currentProblem().maxHeight;
   if (view === "front") camera.position.set(0.2, Math.max(3.2, max + 1.5), 8.6);
+  if (view === "right") camera.position.set(8.6, Math.max(3.2, max + 1.5), 0.2);
   if (view === "top") camera.position.set(0.01, 10.5, 0.01);
   if (view === "free") camera.position.set(7.2, Math.max(5.5, max + 2.2), 8.2);
   camera.lookAt(controls.target);
@@ -621,40 +895,33 @@ renderer.domElement.addEventListener("pointerup", (event) => {
 
 new ResizeObserver(resizeScene).observe(elements.scene);
 function animate() {
+  // Gently drifting sun, matching copy-build's living "sunlight".
+  const time = performance.now() * 0.001;
+  sunlight.position.x = 5 + Math.sin(time * 0.32) * 0.42;
+  sunlight.position.z = 4 + Math.cos(time * 0.28) * 0.34;
   controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
 }
 animate();
 
-function setupDocssamDrag() {
-  let drag = null;
-  if (!elements.cubi) return;
-  elements.cubi.addEventListener("pointerdown", (event) => {
-    drag = { x: event.clientX, y: event.clientY };
-    elements.cubi.setPointerCapture(event.pointerId);
-  });
-  elements.cubi.addEventListener("pointermove", (event) => {
-    if (!drag) return;
-    elements.docssam.style.transform = `translate(${event.clientX - drag.x}px, ${event.clientY - drag.y}px)`;
-  });
-  elements.cubi.addEventListener("pointerup", () => { drag = null; });
-}
-
 elements.modelMode.addEventListener("click", () => setMode("model"));
 elements.topMode.addEventListener("click", () => setMode("top"));
+elements.conceptNext.addEventListener("click", advanceConceptTutorial);
 elements.totalDisplay.addEventListener("click", selectTotal);
 elements.hint.addEventListener("click", giveHint);
 elements.reset.addEventListener("click", resetProblem);
 elements.next.addEventListener("click", nextProblem);
 elements.audio.addEventListener("click", () => {
   state.audioEnabled = !state.audioEnabled;
-  elements.audio.textContent = text(state.lang, state.audioEnabled ? "audioOn" : "audioOff");
+  localStorage.setItem("gfield-audio-muted", String(!state.audioEnabled));
+  updateAudioButton();
   if (state.audioEnabled) speak(elements.guide.textContent);
   else speechSynthesis?.cancel();
 });
 elements.openLevels.addEventListener("click", () => {
   renderLevelList();
+  updatePrintWorksheetLink();
   elements.levelDialog.hidden = false;
 });
 elements.closeLevels.addEventListener("click", () => { elements.levelDialog.hidden = true; });
@@ -675,8 +942,9 @@ window.addEventListener("keydown", (event) => {
   if (event.key === "Backspace" || event.key === "Delete") clearInput();
 });
 
-setupDocssamDrag();
 applyLanguage();
 renderLevelList();
 loadProblem();
 resizeScene();
+syncEvolution();                            // normalize/migrate on load (silent)
+updateLevelBadge(state.lang, { left: "25%" }); // persistent top level badge (free zone above the left board)

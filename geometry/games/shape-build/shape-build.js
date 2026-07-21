@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
+import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
 
 const BOARD_SIZE = 4;
 const MAX_HEIGHT = 4;
@@ -25,32 +27,40 @@ const UI_TEXT = {
     next: "다음 문제", reset: "처음부터", rotate: "방향", front: "앞", right: "오른쪽", top: "위", capture: "사진",
     audioOn: "음성 끄기", audioOff: "음성 켜기", guide4: "직육면체의 방향까지 똑같이 놓아 보자!",
     guide5: "여러 입체를 골라 멋진 모양을 만들어 보자!", guideCreative: "주어진 조각으로 나만의 작품을 만들어 보자!",
+    guideTapRotate: "놓은 조각을 톡 누르면 방향을 바꿀 수 있어!",
     wrong: "조각의 위치와 방향을 다시 살펴보세요.", success: "정확하게 만들었어요!", needMore: "조각을 5개 이상 사용해 보세요.",
-    invalid: "그 자리에는 놓을 수 없어요.", rotateState: "조각 방향을 바꿨어요.", removed: "조각을 보관함에 돌려놓았어요."
+    invalid: "그 자리에는 놓을 수 없어요.", rotateState: "조각 방향을 바꿨어요.", removed: "조각을 보관함에 돌려놓았어요.",
+    popupRotate: "돌리기", popupStand: "세우기", popupLay: "눕히기", popupRemove: "빼기", popupClose: "닫기"
   },
   zh: {
     target: "目标形状", creative: "我的作品", build: "我的形状", check: "确认", finish: "完成",
     next: "下一题", reset: "重新开始", rotate: "旋转", front: "前面", right: "右侧", top: "上面", capture: "拍照",
     audioOn: "关闭语音", audioOff: "开启语音", guide4: "连长方体的方向也要摆得一样！",
     guide5: "选择不同立体，做出漂亮的形状！", guideCreative: "用给出的积木创作自己的作品吧！",
+    guideTapRotate: "轻点放好的积木就能改变方向！",
     wrong: "再看看积木的位置和方向。", success: "做得完全一样！", needMore: "请至少使用5块积木。",
-    invalid: "这里不能放。", rotateState: "方向已改变。", removed: "积木已放回托盘。"
+    invalid: "这里不能放。", rotateState: "方向已改变。", removed: "积木已放回托盘。",
+    popupRotate: "旋转", popupStand: "立起", popupLay: "放平", popupRemove: "移除", popupClose: "关闭"
   },
   ja: {
     target: "問題の形", creative: "わたしの作品", build: "作った形", check: "確認", finish: "完成",
     next: "次の問題", reset: "最初から", rotate: "向き", front: "前", right: "右側", top: "上", capture: "写真",
     audioOn: "音声オフ", audioOff: "音声オン", guide4: "直方体の向きまで同じに置こう！",
     guide5: "いろいろな立体で素敵な形を作ろう！", guideCreative: "決められたブロックで自分の作品を作ろう！",
+    guideTapRotate: "置いたブロックをトンと押すと向きを変えられるよ！",
     wrong: "位置と向きをもう一度見てください。", success: "同じ形にできました！", needMore: "ブロックを5個以上使ってください。",
-    invalid: "そこには置けません。", rotateState: "向きを変えました。", removed: "ブロックをトレイに戻しました。"
+    invalid: "そこには置けません。", rotateState: "向きを変えました。", removed: "ブロックをトレイに戻しました。",
+    popupRotate: "まわす", popupStand: "たてる", popupLay: "ねかす", popupRemove: "はずす", popupClose: "とじる"
   },
   en: {
     target: "Target Shape", creative: "My Creation", build: "My Build", check: "Check", finish: "Finish",
     next: "Next", reset: "Retry", rotate: "Rotate", front: "Front", right: "Right", top: "Top", capture: "Photo",
     audioOn: "Voice off", audioOff: "Voice on", guide4: "Match every cuboid position and direction!",
     guide5: "Choose different solids and build a wonderful shape!", guideCreative: "Use the given pieces to make your own creation!",
+    guideTapRotate: "Tap a placed piece to change its direction!",
     wrong: "Check every piece position and direction.", success: "You made the same shape!", needMore: "Use at least five pieces.",
-    invalid: "That piece cannot go there.", rotateState: "The piece direction changed.", removed: "The piece returned to the tray."
+    invalid: "That piece cannot go there.", rotateState: "The piece direction changed.", removed: "The piece returned to the tray.",
+    popupRotate: "Rotate", popupStand: "Stand up", popupLay: "Lay down", popupRemove: "Remove", popupClose: "Close"
   }
 };
 
@@ -129,15 +139,20 @@ function p(type, x, y, z, rotation = 0) {
 }
 
 const params = new URLSearchParams(window.location.search);
+const requestedShapeLevel = Number(params.get("level"));
+const shapeProgress = readGameProgress("shapeBuild");
+const startingShapeLevel = requestedShapeLevel === 4 || requestedShapeLevel === 5
+  ? requestedShapeLevel
+  : Number(shapeProgress.level) === 4 ? 4 : 5;
 const state = {
-  lang: "ko",
-  level: Number(params.get("level")) === 4 ? 4 : 5,
-  problemIndex: 0,
+  lang: localStorage.getItem("gfield-language") || "ko",
+  level: startingShapeLevel,
+  problemIndex: Number(shapeProgress.level) === startingShapeLevel ? Math.max(0, Number(shapeProgress.problemIndex) || 0) : 0,
   pieces: [],
-  selectedType: Number(params.get("level")) === 4 ? TYPES.CUBOID : TYPES.CUBE,
+  selectedType: startingShapeLevel === 4 ? TYPES.CUBOID : TYPES.CUBE,
   selectedRotation: 0,
   drag: null,
-  audio: false,
+  audio: localStorage.getItem("gfield-audio-muted") !== "true",
   successPending: false
 };
 
@@ -147,19 +162,43 @@ const toast = document.querySelector("#toast");
 const dragGhost = document.querySelector("#shapeDragGhost");
 const shapePile = document.querySelector("#shapePile");
 const shapeTray = document.querySelector("#shapeTray");
+const popupHost = document.querySelector("#piecePopup");
 const dropPreview = new THREE.Group();
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 let nextPieceId = 1;
 
+// Character growth: award points + sync evolution on every correctly-solved
+// problem, mirroring count-heights' awardPoints() pattern exactly.
+const BADGE_POS = { left: "62%" }; // free zone right of the topbar title, left of the level button
+const TAP_HINT_KEY = "gfield-shape-tap-hint-shown";
+let popupState = null;
+let popupCloseTimer = null;
+let shakeState = null;
+
+function awardPoints(rewardId, amount) {
+  const rewarded = new Set(JSON.parse(localStorage.getItem("gfield-rewarded-games") || "[]"));
+  if (rewarded.has(rewardId)) return;
+  rewarded.add(rewardId);
+  const points = Number(localStorage.getItem("gfield-points")) || 120;
+  localStorage.setItem("gfield-points", String(points + amount));
+  localStorage.setItem("gfield-rewarded-games", JSON.stringify([...rewarded]));
+}
+
 const woodTexture = createWoodTexture();
 const materials = {
   cube: makeMaterial(0xfff0d2),
   cuboid: makeMaterial(0xf1d5aa),
-  wedge: makeMaterial(0x78aa6b),
+  wedge: makeMaterial(0x6f9d64),
   pyramid: makeMaterial(0xe6b941),
-  cone: makeMaterial(0xda775e)
+  cone: makeMaterial(0xcf7057)
 };
+// Crisp wood-grain edge lines on box-like pieces, matching copy-build/count-heights.
+const edgeMaterial = new THREE.LineBasicMaterial({
+  color: 0x87552d,
+  transparent: true,
+  opacity: 0.3
+});
 const previewMaterial = new THREE.MeshPhysicalMaterial({
   color: 0xff4c52,
   transparent: true,
@@ -174,6 +213,10 @@ const targetViewer = createViewer(targetHost, false);
 const buildViewer = createViewer(buildHost, true);
 buildViewer.scene.add(dropPreview);
 dropPreview.visible = false;
+// Reposition the popup only on events that can actually move it (camera
+// orbit/zoom, window resize) rather than every animation frame — keeps the
+// popup's DOM node stable between reflows instead of churning 60x/sec.
+buildViewer.controls.addEventListener("change", () => { if (popupState) positionPopup(); });
 
 init();
 
@@ -183,6 +226,8 @@ function init() {
   renderLevelOptions();
   loadProblem();
   resizeAll();
+  syncEvolution();
+  updateLevelBadge(state.lang, BADGE_POS);
   animate();
 }
 
@@ -234,7 +279,22 @@ function getTypeLabel(type) {
   return TYPE_LABELS[state.lang]?.[type] || TYPE_LABELS.ko[type] || type;
 }
 
+// One-time tutorial nudge the very first time a child reaches level 4's first
+// problem: tell them a placed piece can be tapped to open the direction popup.
+function shouldShowTapHint() {
+  if (state.level !== 4 || state.problemIndex !== 0) return false;
+  if (localStorage.getItem(TAP_HINT_KEY) === "true") return false;
+  localStorage.setItem(TAP_HINT_KEY, "true");
+  return true;
+}
+
 function loadProblem() {
+  state.problemIndex = Math.max(0, Math.min(getProblems().length - 1, state.problemIndex));
+  saveGameProgress("shapeBuild", {
+    level: state.level,
+    levelIndex: state.level - 1,
+    problemIndex: state.problemIndex
+  });
   state.pieces = [];
   state.drag = null;
   state.successPending = false;
@@ -247,7 +307,8 @@ function loadProblem() {
   document.querySelector("#targetTitle").textContent = problem.creative ? getText("creative") : getText("target");
   document.querySelector("#buildTitle").textContent = getText("build");
   document.querySelector("#checkAnswer").textContent = problem.creative ? getText("finish") : getText("check");
-  setGuide(problem.creative ? "guideCreative" : state.level === 4 ? "guide4" : "guide5");
+  setGuide(problem.creative ? "guideCreative" : shouldShowTapHint() ? "guideTapRotate" : state.level === 4 ? "guide4" : "guide5");
+  closePiecePopup();
   renderTarget();
   renderBuild();
   renderTray();
@@ -380,6 +441,7 @@ function startTrayDrag(event, type) {
   if ((inventory[type] || 0) - (used[type] || 0) <= 0) return;
   event.preventDefault();
   event.stopPropagation();
+  closePiecePopup();
   state.selectedType = type;
   state.selectedRotation %= getRotationVariants(type);
   beginDrag(event, {
@@ -389,18 +451,54 @@ function startTrayDrag(event, type) {
   });
 }
 
+// Tap-vs-drag disambiguation: a placed piece is picked up on pointerdown, but
+// we don't commit to a drag until the pointer has actually moved past a small
+// threshold (same 8px distance rule count-heights already uses for its own
+// tap detection — see its pointerdown/pointerup handlers). A tap that never
+// crosses that threshold opens the direction popup instead of starting a drag.
 function startPieceDrag(event) {
   const piece = pickBuildPiece(event.clientX, event.clientY);
   if (!piece) return;
   event.preventDefault();
   event.stopPropagation();
-  state.selectedType = piece.type;
-  state.selectedRotation = piece.rotation || 0;
-  beginDrag(event, {
-    type: piece.type,
-    rotation: piece.rotation || 0,
-    sourceId: piece.id
-  });
+  closePiecePopup();
+  const startX = event.clientX;
+  const startY = event.clientY;
+  let resolved = false;
+
+  const move = (moveEvent) => {
+    if (resolved) return;
+    const dx = moveEvent.clientX - startX;
+    const dy = moveEvent.clientY - startY;
+    if (Math.hypot(dx, dy) < 8) return;
+    resolved = true;
+    document.removeEventListener("pointermove", move);
+    document.removeEventListener("pointerup", up);
+    document.removeEventListener("pointercancel", cancel);
+    state.selectedType = piece.type;
+    state.selectedRotation = piece.rotation || 0;
+    beginDrag(moveEvent, { type: piece.type, rotation: piece.rotation || 0, sourceId: piece.id });
+  };
+  const up = (upEvent) => {
+    if (resolved) return;
+    resolved = true;
+    document.removeEventListener("pointermove", move);
+    document.removeEventListener("pointerup", up);
+    document.removeEventListener("pointercancel", cancel);
+    const dx = upEvent.clientX - startX;
+    const dy = upEvent.clientY - startY;
+    if (Math.hypot(dx, dy) < 8) openPiecePopup(piece);
+  };
+  const cancel = () => {
+    if (resolved) return;
+    resolved = true;
+    document.removeEventListener("pointermove", move);
+    document.removeEventListener("pointerup", up);
+    document.removeEventListener("pointercancel", cancel);
+  };
+  document.addEventListener("pointermove", move);
+  document.addEventListener("pointerup", up);
+  document.addEventListener("pointercancel", cancel);
 }
 
 function beginDrag(event, drag) {
@@ -510,6 +608,133 @@ function pickBuildPiece(clientX, clientY) {
   return state.pieces.find((piece) => piece.id === id) || null;
 }
 
+// --- Direction popup (tap a placed piece → rotate / stand-lay / remove) ---
+//
+// Rotation-value semantics are never redefined here — this is purely a new
+// UI surface over the exact same canPlace()/findDropHeight() rules the drag
+// flow already uses, so normalizePieces() (and every existing answer key)
+// keeps working unchanged.
+
+function pieceWorldCenter(piece) {
+  const [width, height, depth] = getDimensions(piece);
+  const offset = (BOARD_SIZE - 1) / 2;
+  return new THREE.Vector3(
+    piece.x + (width - 1) / 2 - offset,
+    piece.y + height,
+    piece.z + (depth - 1) / 2 - offset
+  );
+}
+
+function openPiecePopup(piece) {
+  popupState = { pieceId: piece.id };
+  renderPiecePopupButtons(piece);
+  popupHost.hidden = false;
+  positionPopup();
+  restartPopupTimer();
+}
+
+function closePiecePopup() {
+  if (!popupState) return;
+  popupState = null;
+  window.clearTimeout(popupCloseTimer);
+  popupHost.hidden = true;
+}
+
+function restartPopupTimer() {
+  window.clearTimeout(popupCloseTimer);
+  popupCloseTimer = window.setTimeout(closePiecePopup, 5000);
+}
+
+function positionPopup() {
+  const piece = state.pieces.find((entry) => entry.id === popupState.pieceId);
+  if (!piece) {
+    closePiecePopup();
+    return;
+  }
+  const rect = buildViewer.renderer.domElement.getBoundingClientRect();
+  const vector = pieceWorldCenter(piece).project(buildViewer.camera);
+  const screenX = rect.left + (vector.x * .5 + .5) * rect.width;
+  const screenY = rect.top + (-vector.y * .5 + .5) * rect.height;
+  const clampedX = Math.min(Math.max(screenX, rect.left + 70), rect.right - 70);
+  const clampedY = Math.max(screenY, rect.top + 96);
+  popupHost.style.left = `${clampedX}px`;
+  popupHost.style.top = `${clampedY}px`;
+}
+
+function renderPiecePopupButtons(piece) {
+  const host = popupHost.querySelector(".piece-popup-inner");
+  host.replaceChildren();
+  const addButton = (icon, label, onClick) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.innerHTML = `<span class="popup-icon" aria-hidden="true">${icon}</span><span>${label}</span>`;
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      restartPopupTimer();
+      onClick();
+    });
+    host.appendChild(button);
+  };
+  if (piece.type === TYPES.WEDGE) {
+    addButton("↻", getText("popupRotate"), () => rotatePopupPiece(piece));
+  }
+  if (piece.type === TYPES.CUBOID) {
+    if (piece.rotation === 2) {
+      addButton("↕", getText("popupLay"), () => layPopupPiece(piece));
+    } else {
+      addButton("↻", getText("popupRotate"), () => rotatePopupPiece(piece));
+      addButton("↕", getText("popupStand"), () => standPopupPiece(piece));
+    }
+  }
+  addButton("✕", getText("popupRemove"), () => removePopupPiece(piece));
+  addButton("×", getText("popupClose"), () => closePiecePopup());
+}
+
+function rotatePopupPiece(piece) {
+  const newRotation = piece.type === TYPES.WEDGE ? (piece.rotation + 1) % 4 : (piece.rotation === 0 ? 1 : 0);
+  applyPopupRotation(piece, newRotation);
+}
+
+function standPopupPiece(piece) {
+  applyPopupRotation(piece, 2);
+}
+
+function layPopupPiece(piece) {
+  applyPopupRotation(piece, 0);
+}
+
+// Rotate a placed piece in-place: keep x/z, recompute a valid drop height for
+// the new rotation. On collision/out-of-bounds, nothing is written — the
+// piece just shakes and shows the existing "invalid" toast.
+function applyPopupRotation(piece, newRotation) {
+  const y = findDropHeight(piece.x, piece.z, piece.type, newRotation, piece.id);
+  if (y < 0) {
+    shakePiece(piece.id);
+    showToast(getText("invalid"));
+    return;
+  }
+  piece.rotation = newRotation;
+  piece.y = y;
+  state.selectedRotation = newRotation;
+  showToast(getText("rotateState"));
+  renderBuild();
+  renderPiecePopupButtons(piece);
+  positionPopup();
+}
+
+function removePopupPiece(piece) {
+  state.pieces = state.pieces.filter((entry) => entry.id !== piece.id);
+  closePiecePopup();
+  renderBuild();
+  showToast(getText("removed"));
+}
+
+function shakePiece(id) {
+  const mesh = buildViewer.pieceGroup.children.find((entry) => entry.userData.pieceId === id);
+  if (!mesh) return;
+  shakeState = { id, start: performance.now(), baseX: mesh.position.x };
+}
+
 function renderDropPreview(piece) {
   clearGroup(dropPreview);
   const mesh = createPieceMesh(piece, false, previewMaterial);
@@ -563,6 +788,9 @@ function isConnectedBuild() {
 function showSuccess() {
   if (state.successPending) return;
   state.successPending = true;
+  awardPoints(`shape-build:${state.level}:${state.problemIndex}`, 15);
+  celebrateEvolution(syncEvolution(), state.lang);
+  updateLevelBadge(state.lang, BADGE_POS);
   const words = ["GOOD JOB!", "GREAT JOB!", "SUCCESS!"];
   const burst = document.querySelector("#successBurst");
   burst.querySelector("strong").textContent = words[Math.floor(Math.random() * words.length)];
@@ -584,6 +812,7 @@ function nextProblem() {
 function resetBuild() {
   state.pieces = [];
   cancelDrag();
+  closePiecePopup();
   renderBuild();
 }
 
@@ -654,6 +883,7 @@ function renderLevelOptions() {
 }
 
 function openLevelDialog() {
+  closePiecePopup();
   document.querySelector("#levelDialog").hidden = false;
 }
 
@@ -672,13 +902,16 @@ function setLanguage(lang) {
   document.querySelector("#viewTop").textContent = getText("top");
   document.querySelector("#captureBuild").textContent = getText("capture");
   document.querySelector("#audioToggle").textContent = getText(state.audio ? "audioOn" : "audioOff");
+  document.querySelector("#audioToggle").setAttribute("aria-pressed", String(state.audio));
   refreshBoardLabels(targetViewer);
   refreshBoardLabels(buildViewer);
+  updateLevelBadge(state.lang, BADGE_POS);
   loadProblem();
 }
 
 function toggleAudio() {
   state.audio = !state.audio;
+  localStorage.setItem("gfield-audio-muted", String(!state.audio));
   document.querySelector("#audioToggle").setAttribute("aria-pressed", String(state.audio));
   document.querySelector("#audioToggle").textContent = getText(state.audio ? "audioOn" : "audioOff");
   if (state.audio) speak(document.querySelector("#guideMessage").textContent);
@@ -711,6 +944,15 @@ function showToast(message) {
 function addEvents() {
   window.addEventListener("resize", resizeAll);
   buildViewer.renderer.domElement.addEventListener("pointerdown", startPieceDrag, true);
+  // Tapping anywhere outside the popup (a new piece, the tray, empty board,
+  // buttons) closes it — mirrors "새 드래그 시작/바깥 탭 시 자동 닫힘".
+  document.addEventListener("pointerdown", (event) => {
+    if (!popupState || popupHost.contains(event.target)) return;
+    closePiecePopup();
+  }, true);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && popupState) closePiecePopup();
+  });
   document.querySelector("#checkAnswer").addEventListener("click", checkAnswer);
   document.querySelector("#nextStep").addEventListener("click", nextProblem);
   document.querySelector("#resetBuild").addEventListener("click", resetBuild);
@@ -766,8 +1008,10 @@ function createViewer(host, interactive) {
 
   const board = createBoard();
   scene.add(board);
-  const grid = new THREE.GridHelper(BOARD_SIZE, BOARD_SIZE, 0x9b6c38, 0xd6af75);
+  const grid = new THREE.GridHelper(BOARD_SIZE, BOARD_SIZE, 0x8e6841, 0xc79b67);
   grid.position.y = .035;
+  grid.material.transparent = true;
+  grid.material.opacity = .88;
   scene.add(grid);
   const labels = createBoardLabels();
   scene.add(labels);
@@ -780,19 +1024,39 @@ function createViewer(host, interactive) {
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = .04;
   scene.add(floor);
-  return { scene, camera, renderer, controls, host, pieceGroup, floor, labels, interactive };
+  return { scene, camera, renderer, controls, host, pieceGroup, floor, labels, interactive, key };
 }
 
 function createBoard() {
   const group = new THREE.Group();
+  const traySize = BOARD_SIZE + 1.96;
+  const railSpan = BOARD_SIZE + 1.32;
+  const railOffset = BOARD_SIZE / 2 + .62;
   const base = new THREE.Mesh(
-    new RoundedBoxGeometry(BOARD_SIZE + .8, .25, BOARD_SIZE + .8, 8, .16),
+    new RoundedBoxGeometry(traySize, .25, traySize, 8, .18),
     makeMaterial(0xe2bb86)
   );
   base.position.y = -.16;
   base.receiveShadow = true;
   base.castShadow = true;
   group.add(base);
+  // Raised rails around the tray edge, matching copy-build/count-heights' board.
+  const railMaterial = makeMaterial(0xd0a36b);
+  [
+    { x: 0, z: railOffset, sx: railSpan, sz: .18 },
+    { x: 0, z: -railOffset, sx: railSpan, sz: .18 },
+    { x: railOffset, z: 0, sx: .18, sz: railSpan },
+    { x: -railOffset, z: 0, sx: .18, sz: railSpan }
+  ].forEach((rail) => {
+    const mesh = new THREE.Mesh(
+      new RoundedBoxGeometry(rail.sx, .12, rail.sz, 5, .06),
+      railMaterial
+    );
+    mesh.position.set(rail.x, .005, rail.z);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    group.add(mesh);
+  });
   const inset = new THREE.Mesh(
     new THREE.PlaneGeometry(BOARD_SIZE + .04, BOARD_SIZE + .04),
     makeMaterial(0xffefd1)
@@ -823,6 +1087,11 @@ function createPieceMesh(piece, interactive, materialOverride = null) {
   mesh.receiveShadow = !materialOverride;
   mesh.userData.pieceId = piece.id;
   mesh.userData.kind = interactive ? "build-piece" : "target-piece";
+  if (!materialOverride && (piece.type === TYPES.CUBE || piece.type === TYPES.CUBOID || piece.type === TYPES.WEDGE)) {
+    const thresholdAngle = piece.type === TYPES.WEDGE ? 1 : 24;
+    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry, thresholdAngle), edgeMaterial);
+    mesh.add(edges);
+  }
   return mesh;
 }
 
@@ -852,7 +1121,7 @@ function makeMaterial(color) {
     bumpScale: .009,
     roughness: .56,
     metalness: .008,
-    clearcoat: .08,
+    clearcoat: .12,
     clearcoatRoughness: .58
   });
 }
@@ -947,12 +1216,50 @@ function resizeAll() {
     viewer.camera.updateProjectionMatrix();
     viewer.renderer.setSize(width, height, false);
   });
+  if (popupState) positionPopup();
 }
 
 function animate() {
   requestAnimationFrame(animate);
+  const time = performance.now() * .001;
   targetViewer.controls.update();
   buildViewer.controls.update();
+  animateLighting(time);
+  animateSelection(time);
+  if (dropPreview.visible) {
+    const pulse = 1 + Math.sin(time * 5.2) * .035;
+    dropPreview.scale.setScalar(pulse);
+  }
   targetViewer.renderer.render(targetViewer.scene, targetViewer.camera);
   buildViewer.renderer.render(buildViewer.scene, buildViewer.camera);
+}
+
+// Gentle drifting key light, matching copy-build's animated "sun".
+function animateLighting(time) {
+  [targetViewer, buildViewer].forEach((viewer) => {
+    viewer.key.position.x = 5 + Math.sin(time * .32) * .42;
+    viewer.key.position.z = 6 + Math.cos(time * .28) * .34;
+  });
+}
+
+// Pulse the tapped/popup-selected piece; shake a piece whose rotation change
+// was rejected (collision/out-of-bounds) then let its position settle back.
+function animateSelection(time) {
+  buildViewer.pieceGroup.children.forEach((mesh) => {
+    if (!mesh.userData.pieceId) return;
+    if (popupState && mesh.userData.pieceId === popupState.pieceId) {
+      mesh.scale.setScalar(1 + Math.sin(time * 6) * .06);
+    } else if (mesh.scale.x !== 1) {
+      mesh.scale.setScalar(1);
+    }
+    if (shakeState && mesh.userData.pieceId === shakeState.id) {
+      const elapsed = performance.now() - shakeState.start;
+      if (elapsed < 320) {
+        mesh.position.x = shakeState.baseX + Math.sin(elapsed * .08) * .05 * (1 - elapsed / 320);
+      } else {
+        mesh.position.x = shakeState.baseX;
+        shakeState = null;
+      }
+    }
+  });
 }

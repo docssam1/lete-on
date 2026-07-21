@@ -410,12 +410,27 @@ function saveGhKey(){
 async function saveToGitHub(){
   const token = ghToken();
   if(!token){ alert('먼저 GitHub 토큰을 저장하세요'); return; }
-  document.getElementById('save-status').textContent = 'GitHub에 저장 중…';
+  const statusEl = document.getElementById('save-status');
+  statusEl.textContent = 'GitHub에 저장 중…';
   try{
     let sha = null;
     const getRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,
       { headers:{ Authorization:'token '+token, Accept:'application/vnd.github+json' } });
     if(getRes.ok){ const j = await getRes.json(); sha = j.sha; }
+    else if(getRes.status===401){
+      statusEl.textContent = '❌ 토큰 인증 실패 (401)';
+      alert('❌ GitHub 토큰이 잘못되었거나 만료되었습니다 (401).\n\n새 토큰을 발급받아 다시 저장하세요.\n· github.com → Settings → Developer settings\n· Personal access tokens → Fine-grained\n· 권한: Contents = Read and write\n· 레포: docssam1/lete-on 선택');
+      return;
+    }
+    else if(getRes.status===404){
+      // data.js가 아직 없음 = 최초 생성 (정상, sha 없이 진행)
+      statusEl.textContent = '최초 생성 중… (data.js 새로 만듦)';
+    }
+    else if(getRes.status===403){
+      statusEl.textContent = '❌ 권한 없음 (403)';
+      alert('❌ 토큰에 이 레포 쓰기 권한이 없습니다 (403).\n\n토큰 권한에서 Contents = Read and write 인지,\n레포 docssam1/lete-on 가 포함됐는지 확인하세요.');
+      return;
+    }
     const content = buildFile();
     const b64 = btoa(unescape(encodeURIComponent(content)));
     const body = { message:'admin: 학생 상품 오픈 현황 갱신', content:b64, branch:BRANCH };
@@ -424,13 +439,16 @@ async function saveToGitHub(){
       { method:'PUT', headers:{ Authorization:'token '+token, Accept:'application/vnd.github+json' },
         body: JSON.stringify(body) });
     if(putRes.ok){
-      document.getElementById('save-status').textContent = '✅ 저장 완료 · ' + new Date().toLocaleTimeString('ko-KR');
+      statusEl.textContent = '✅ 저장 완료 · ' + new Date().toLocaleTimeString('ko-KR');
+      alert('✅ 저장 완료!\n\ndata.js가 GitHub에 반영되었습니다.\n배포 사이트 적용까지 1~2분 걸릴 수 있습니다.');
     } else {
       const err = await putRes.json();
-      document.getElementById('save-status').textContent = '❌ 저장 실패: ' + (err.message||'');
+      statusEl.textContent = '❌ 저장 실패 ('+putRes.status+'): ' + (err.message||'');
+      alert('❌ 저장 실패 (상태코드 '+putRes.status+')\n\n'+(err.message||'알 수 없는 오류')+'\n\n이 메시지를 원장님께 전달하면 원인을 찾을 수 있습니다.');
     }
   }catch(e){
-    document.getElementById('save-status').textContent = '❌ 오류: ' + e.message;
+    statusEl.textContent = '❌ 오류: ' + e.message;
+    alert('❌ 네트워크 오류\n\n'+e.message+'\n\n인터넷 연결 또는 브라우저 광고차단 확장을 확인하세요.');
   }
 }
 

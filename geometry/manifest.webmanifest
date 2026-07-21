@@ -1,0 +1,39 @@
+{
+  "id": "/geometry/",
+  "name": "GFIELD Geometry World",
+  "short_name": "Geometry World",
+  "description": "GFIELD Cube Town에서 쌓기나무로 공간 감각을 키우는 어린이 수학 게임",
+  "lang": "ko",
+  "start_url": "/geometry/world-map/",
+  "scope": "/geometry/",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
+  "background_color": "#f8f0e0",
+  "theme_color": "#2b1a0e",
+  "icons": [
+    {
+      "src": "/geometry/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/geometry/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/geometry/assets/icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/geometry/assets/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

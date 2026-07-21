@@ -229,13 +229,14 @@ function topViewMarkup(problem, answers = false) {
 function renderCountQuestion(problem, index, target) {
   const article = document.createElement("article");
   const workedExample = index === 0;
+  const exampleEquation = problem.heights.flat().filter(Boolean).join(" + ");
   article.className = `question count-question${workedExample ? " worked-example" : ""}`;
   article.innerHTML = `
     <span class="question-number">${index + 1}</span>
     ${workedExample ? '<span class="example-badge">풀이 예시</span>' : ""}
     <canvas class="cube-canvas"></canvas>
     <div class="answer-line"><span>전체</span><i>${workedExample ? problem.answer.total : ""}</i><span>개</span></div>
-    ${workedExample ? '<p class="example-note">쌓기나무 위에 쓸 수를 적고 모두 더해요.</p>' : ""}
+    ${workedExample ? `<p class="example-note">${exampleEquation} = <strong>${problem.answer.total}</strong>개</p>` : ""}
   `;
   target.append(article);
   drawProblem(article.querySelector("canvas"), problem, { writeOnTop: true, answers: workedExample });
@@ -351,4 +352,20 @@ $("#coverToggle").addEventListener("change", () => { $("#coverSheet").hidden = !
 $("#answerToggle").addEventListener("change", () => { $("#answerSheet").hidden = !$("#answerToggle").checked; });
 $("#generate").addEventListener("click", generate);
 $("#printButton").addEventListener("click", () => window.print());
+
+function applyInitialParams() {
+  const params = new URLSearchParams(window.location.search);
+  const initialGame = params.get("game");
+  if (initialGame && GAME_COPY[initialGame]) {
+    $("#gameSelect").value = initialGame;
+  }
+  updateLevelOptions();
+  const initialLevel = params.get("level");
+  if (initialLevel) {
+    const option = $("#levelSelect").querySelector(`option[value="${initialLevel}"]`);
+    if (option && !option.disabled) $("#levelSelect").value = initialLevel;
+  }
+}
+
+applyInitialParams();
 generate();

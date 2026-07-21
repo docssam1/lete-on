@@ -4,7 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GFIELD Cube Town</title>
-    <link rel="stylesheet" href="./styles.css?v=1" />
+    <link rel="stylesheet" href="./styles.css?v=level-done-20260719a" />
+    <script src="../shared/viewport-fit.js?v=1"></script>
+    <link rel="manifest" href="/geometry/manifest.webmanifest" />
+    <meta name="theme-color" content="#2b1a0e" />
+    <link rel="apple-touch-icon" href="/geometry/assets/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   </head>
   <body>
     <header class="topbar">
@@ -14,9 +21,12 @@
         <strong>GFIELD Cube Town</strong>
       </div>
       <div class="top-actions">
-        <a class="print-link" href="./print.html" data-i18n="printMode">인쇄 학습</a>
-        <div class="points"><span>◆</span><strong id="points">120</strong></div>
+        <div class="points">
+          <svg class="point-icon" aria-hidden="true" focusable="false"><use href="../world-map/assets/point-mall-icons.svg#cat-gem"></use></svg>
+          <strong id="points">120</strong>
+        </div>
         <span id="avatar" class="avatar character-sprite sprite-0"></span>
+        <strong id="playerName" class="player-name"></strong>
         <div class="languages">
           <button type="button" data-lang="ko" class="active">한</button>
           <button type="button" data-lang="zh">中</button>
@@ -41,6 +51,20 @@
       </section>
       <div id="levelGroups" class="level-groups"></div>
     </main>
-    <script type="module" src="./app.js?v=1"></script>
+
+    <div id="copyLevelDialog" class="copy-level-dialog" hidden>
+      <section class="copy-level-panel" role="dialog" aria-modal="true" aria-labelledby="copyLevelTitle">
+        <header class="copy-level-head">
+          <div>
+            <h2 id="copyLevelTitle">똑같이 쌓기</h2>
+            <p id="copyLevelSubtitle">도전할 레벨을 골라 바로 시작해요.</p>
+          </div>
+          <button id="closeCopyLevelDialog" type="button" aria-label="닫기">&times;</button>
+        </header>
+        <div id="copyLevelOptions" class="copy-level-options"></div>
+      </section>
+    </div>
+
+    <script type="module" src="./app.js?v=level-done2-20260720a"></script>
   </body>
 </html>

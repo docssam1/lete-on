@@ -168,3 +168,53 @@
     display: none;
   }
 }
+
+/* Tap-a-piece direction popup (rotate / stand-lay / remove / close). */
+.piece-popup {
+  position: fixed;
+  z-index: 4200;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+}
+
+.piece-popup[hidden] {
+  display: none;
+}
+
+.piece-popup-inner {
+  pointer-events: auto;
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  border: 2px solid #172653;
+  background: #fffbe9;
+  box-shadow: 0 10px 24px rgba(23, 38, 83, .3);
+  white-space: nowrap;
+}
+
+.piece-popup-inner button {
+  min-width: 46px;
+  min-height: 46px;
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  padding: 4px 9px;
+  border-radius: 8px;
+  border: 2px solid #172653;
+  background: #fff;
+  color: #172653;
+  font: 800 11px/1.15 "Pretendard", "Noto Sans KR", system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.piece-popup-inner button:active {
+  transform: scale(.94);
+  background: #ffe486;
+}
+
+.piece-popup-inner .popup-icon {
+  font-size: 17px;
+  line-height: 1;
+}

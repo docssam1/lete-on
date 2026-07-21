@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>GFIELD Cube Town</title>
+    <link rel="stylesheet" href="../../styles.css?v=menu-cleanup-20260719a" />
+    <link rel="stylesheet" href="../../shared/portrait-lock.css?v=1" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.166.1/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.166.1/examples/jsm/"
+        }
+      }
+    </script>
+    <script src="../../shared/viewport-fit.js?v=1"></script>
+    <link rel="manifest" href="/geometry/manifest.webmanifest" />
+    <meta name="theme-color" content="#2b1a0e" />
+    <link rel="apple-touch-icon" href="/geometry/assets/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  </head>
+  <body>
+    <section class="portrait-guard" aria-label="화면 회전 안내">
+      <div class="portrait-brand">GFIELD <span>Cube Town</span></div>
+      <div class="rotate-phone" aria-hidden="true">
+        <span class="rotate-phone-device"></span>
+        <span class="rotate-phone-arrow">↻</span>
+      </div>
+      <div class="portrait-guide">
+        <span class="portrait-character character-sprite sprite-0 color-original" aria-hidden="true"></span>
+        <div>
+          <strong>가로로 돌려 주세요</strong>
+          <p>더 넓은 판에서 쌓기나무를 움직여 볼까요?</p>
+        </div>
+      </div>
+    </section>
+    <main class="app-shell">
+      <section class="lesson-panel">
+        <div class="status-card">
+          <div class="stars" id="stars" aria-label="difficulty">★★☆☆</div>
+          <h2 id="modeTitle" data-i18n="copyMode">똑같이 쌓기</h2>
+          <p id="instruction" data-i18n="copyInstruction">
+            왼쪽 모양을 보고 오른쪽 판에 똑같이 쌓아 보세요.
+          </p>
+        </div>
+        <div class="counter-card">
+          <span data-i18n="countLabel">센 개수</span>
+          <strong id="countValue">0</strong>
+          <button id="levelPickerButton" class="level-picker-button" type="button" aria-haspopup="dialog" data-i18n="levelSelect">레벨 선택</button>
+        </div>
+      </section>
+
+      <section class="play-area">
+        <article class="viewer target-view">
+          <div class="viewer-heading">
+            <h2 data-i18n="target">문제 모양</h2>
+            <button id="problemProgress" class="problem-progress" type="button" aria-label="레벨 선택" aria-haspopup="dialog">1/10</button>
+          </div>
+          <div id="targetCanvas" class="canvas-wrap"></div>
+        </article>
+
+        <article class="viewer build-view">
+          <div class="viewer-heading">
+            <h2 data-i18n="myBuild">내가 만든 모양</h2>
+          </div>
+          <div class="brand-watermark" aria-label="GFIELD Cube Town">
+            <span aria-hidden="true">◇</span><strong>GFIELD</strong><small>Cube Town</small>
+          </div>
+          <nav class="build-utilities" aria-label="Game settings">
+            <button id="audioToggle" class="utility-button" type="button" aria-pressed="false" aria-label="Mute">
+              <span aria-hidden="true">🔊</span>
+            </button>
+            <a class="utility-button menu-exit" href="../../cube-town/" aria-label="나가기" data-i18n-aria="exit">
+              <span class="exit-icon" aria-hidden="true">⌂</span>
+              <small data-i18n="exit">나가기</small>
+            </a>
+          </nav>
+          <div id="buildCanvas" class="canvas-wrap interactive"></div>
+          <span id="placementFeedback" class="placement-feedback" aria-hidden="true"></span>
+        </article>
+      </section>
+
+      <section class="builder-controls" aria-label="cube tray">
+        <div id="cubePile" class="pile-button" role="button" tabindex="0">
+          <span class="pile-cubes" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+            <b id="woodPileCount">x0</b>
+          </span>
+          <span id="colorTray" class="color-tray" aria-label="color cube tray">
+            <button class="tray-cube tray-cube-wood active" type="button" data-cube-color="cube"><span></span><strong>x0</strong></button>
+            <button class="tray-cube tray-cube-green" type="button" data-cube-color="green"><span></span><strong>x0</strong></button>
+            <button class="tray-cube tray-cube-blue" type="button" data-cube-color="blue"><span></span><strong>x0</strong></button>
+            <button class="tray-cube tray-cube-yellow" type="button" data-cube-color="yellow"><span></span><strong>x0</strong></button>
+            <button class="tray-cube tray-cube-rose" type="button" data-cube-color="rose"><span></span><strong>x0</strong></button>
+          </span>
+          <span>
+            <strong data-i18n="pileLabel">쌓기나무 더미</strong>
+            <small id="handStatus" data-i18n="emptyHand">하나씩 가져와요</small>
+          </span>
+        </div>
+      </section>
+
+      <section class="control-strip">
+        <button id="viewFront" class="rail-button" type="button"><b aria-hidden="true">↑</b><span data-i18n="front">앞</span></button>
+        <button id="viewRight" class="rail-button" type="button"><b aria-hidden="true">→</b><span data-i18n="side">오른쪽</span></button>
+        <button id="viewTop" class="rail-button" type="button"><b aria-hidden="true">◆</b><span data-i18n="top">위</span></button>
+        <button id="resetBuild" class="rail-button" type="button"><b aria-hidden="true">⌫</b><span data-i18n="clear">비우기</span></button>
+        <button id="skipProblem" class="rail-button skip-problem" type="button" data-i18n-aria="skipProblemHint" aria-label="현재 문제 넘어가기">
+          <b class="skip-icon" aria-hidden="true">»</b>
+          <span class="skip-label" data-i18n="skipProblem">넘어가기</span>
+          <i class="button-spinner" aria-hidden="true"></i>
+        </button>
+      </section>
+
+      <div id="levelDialog" class="level-dialog" hidden>
+        <section class="level-dialog-panel" role="dialog" aria-modal="true" aria-labelledby="levelDialogTitle">
+          <header class="level-dialog-head">
+            <h2 id="levelDialogTitle" data-i18n="levelSelect">레벨 선택</h2>
+            <div class="level-dialog-actions">
+              <a id="printWorksheetLink" class="print-worksheet-link" href="../../cube-town/print.html?game=copy-wood&level=1" target="_blank" rel="noopener" aria-label="학습지 인쇄" title="학습지 인쇄">▤</a>
+              <button id="closeLevelDialog" class="icon-button" type="button" aria-label="닫기">&times;</button>
+            </div>
+          </header>
+          <div id="levelOptions" class="level-options"></div>
+        </section>
+      </div>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+      <aside class="floating-guide" aria-live="polite">
+        <div class="guide-bubble">
+          <p id="guideMessage" data-i18n="guideStart">문제 모양을 보고 더미에서 하나씩 가져와 보자!</p>
+          <div class="guide-actions">
+            <button id="tutorialAction" type="button" hidden data-i18n="tutorialStart">시작</button>
+            <button id="hintAction" type="button" hidden data-i18n="showHint">힌트 보기</button>
+            <button id="nextStep" class="next-stage" type="button" hidden>
+              <span class="next-label" data-i18n="nextStage">다음 문제</span>
+              <i class="button-spinner" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+        <span class="guide-character character-sprite sprite-0 color-original" aria-hidden="true"></span>
+      </aside>
+      <div id="successBurst" class="success-burst" aria-hidden="true">
+        <strong data-i18n="successPop">성공!</strong>
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div id="dragGhost" class="drag-ghost" aria-hidden="true"></div>
+    </main>
+
+    <script type="module" src="../../app.js?v=evolve-20260719a"></script>
+    <script type="module">
+      // Character growth: watch the solved-problem count and celebrate level-ups
+      // and Cubi evolutions in-game. Kept as a standalone module so the copy-build
+      // engine (app.js) stays completely untouched.
+      import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
+      const lang = () => localStorage.getItem("gfield-language") || "ko";
+      const BADGE_POS = { left: "25%" }; // free zone above the target board (clear of headings/watermark)
+      syncEvolution();                     // normalize/migrate on load (silent)
+      updateLevelBadge(lang(), BADGE_POS); // show the persistent top level badge right away
+      // After rotating out of the portrait guard, make sure the 3D canvases
+      // re-measure (the engine listens to window resize) so cubes always render.
+      const kickResize = () => window.dispatchEvent(new Event("resize"));
+      window.addEventListener("orientationchange", () => { setTimeout(kickResize, 250); setTimeout(kickResize, 800); });
+      if (screen.orientation?.addEventListener) screen.orientation.addEventListener("change", () => { setTimeout(kickResize, 250); setTimeout(kickResize, 800); });
+      let seen = -1;
+      setInterval(() => {
+        let count = 0;
+        try { count = (JSON.parse(localStorage.getItem("gfield-rewarded-games") || "[]") || []).length; } catch {}
+        if (count === seen) return;
+        const firstPass = seen === -1;
+        seen = count;
+        const result = syncEvolution();
+        updateLevelBadge(lang(), BADGE_POS);
+        if (!firstPass) celebrateEvolution(result, lang());
+      }, 600);
+    </script>
+  </body>
+</html>

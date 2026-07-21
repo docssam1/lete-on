@@ -7,7 +7,7 @@ export const groups = [
 
 export const games = [
   {
-    id: "copy-build", group: "foundation", number: "01", ready: true, href: "../index.html?v=cube-town2", thumb: "copy", levels: "Lv. 1–5",
+    id: "copy-build", group: "foundation", number: "01", ready: true, href: "../games/copy-build/?v=cube-town3", thumb: "copy", levels: "Lv. 1–5",
     name: { ko: "똑같이 쌓기", zh: "搭出相同形状", ja: "同じ形を作ろう", en: "Copy the Build" },
     description: { ko: "문제 모양을 돌려 보고 같은 자리에 블록을 쌓아요.", zh: "旋转观察题目，并在相同位置搭建方块。", ja: "見本を回して、同じ場所にブロックを積みます。", en: "Turn the model and place cubes in the matching positions." }
   },
@@ -17,17 +17,17 @@ export const games = [
     description: { ko: "쌓기나무 맨 위에 수를 쓰고 모두 더해 전체 개수를 구해요.", zh: "在每列积木顶部写数字，再相加求总数。", ja: "積み木の上に数を書いて、全部たして数えます。", en: "Write numbers on top of the cube columns and add them to count all cubes." }
   },
   {
-    id: "hidden-count", group: "counting", number: "03", ready: false, thumb: "hidden", levels: "Lv. 1–5",
+    id: "hidden-count", group: "counting", number: "03", ready: true, href: "../games/hidden-count/?v=2", thumb: "hidden", levels: "Lv. 1–6",
     name: { ko: "숨은 쌓기나무 찾기", zh: "寻找隐藏方块", ja: "かくれたつみきを探す", en: "Find Hidden Cubes" },
     description: { ko: "보이는 블록을 단서로 안쪽에 숨은 개수를 찾아요.", zh: "根据可见方块推理内部隐藏的数量。", ja: "見えるブロックから、内側に隠れた数を考えます。", en: "Use the visible cubes to reason about the cubes hidden inside." }
   },
   {
-    id: "fill-box", group: "counting", number: "04", ready: false, thumb: "fill", levels: "Lv. 1–4",
+    id: "fill-box", group: "counting", number: "04", ready: true, href: "../games/fill-box/?v=1", thumb: "fill", levels: "Lv. 1–4",
     name: { ko: "큐브 박스 채우기", zh: "填满方块盒", ja: "キューブボックスを満たす", en: "Fill the Cube Box" },
     description: { ko: "직육면체 상자를 가득 채우려면 몇 개가 더 필요한지 구해요.", zh: "计算填满长方体盒子还需要多少方块。", ja: "直方体の箱を満たすのにあと何個必要か考えます。", en: "Work out how many more cubes are needed to fill the box." }
   },
   {
-    id: "tunnel", group: "counting", number: "05", ready: false, thumb: "tunnel", levels: "Lv. 2–5",
+    id: "tunnel", group: "counting", number: "05", ready: true, href: "../games/cube-tunnel/?v=1", thumb: "tunnel", levels: "Lv. 2–5",
     name: { ko: "큐브 터널", zh: "方块隧道", ja: "キューブトンネル", en: "Cube Tunnels" },
     description: { ko: "반대편까지 뚫린 구멍을 층별로 표시하고 남은 개수를 세요.", zh: "逐层标出贯通的孔洞并计算剩余方块。", ja: "反対側まで通る穴を層ごとに示して残りを数えます。", en: "Mark through-tunnels layer by layer and count what remains." }
   },

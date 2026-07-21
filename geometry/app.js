@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { COPY_BUILD_LEVELS } from "./data/copy-build-levels.js";
+import { readGameProgress, saveGameProgress } from "./shared/profile-storage.js";
 
 const translations = { ko: {}, zh: {}, ja: {}, en: {} };
 
@@ -439,6 +440,8 @@ Object.entries(fixedCopy).forEach(([lang, labels]) => {
 
 const compactUiCopy = {
   ko: {
+    skipProblem: "넘어가기",
+    skipProblemHint: "현재 문제를 건너뛰고 다음 문제로 이동해요. 포인트는 받지 않아요.",
     clear: "비우기",
     nextStage: "다음 문제",
     nextLevel: "다음 단계",
@@ -458,6 +461,8 @@ const compactUiCopy = {
     unmute: "소리 켜기"
   },
   zh: {
+    skipProblem: "跳过",
+    skipProblemHint: "跳过当前题目并前往下一题。本题不获得积分。",
     clear: "清空",
     nextStage: "下一题",
     nextLevel: "下一阶段",
@@ -477,6 +482,8 @@ const compactUiCopy = {
     unmute: "打开声音"
   },
   ja: {
+    skipProblem: "スキップ",
+    skipProblemHint: "この問題を飛ばして次へ進みます。この問題のポイントは獲得できません。",
     clear: "空にする",
     nextStage: "次の問題",
     nextLevel: "次のステップ",
@@ -496,6 +503,8 @@ const compactUiCopy = {
     unmute: "音を出す"
   },
   en: {
+    skipProblem: "Skip",
+    skipProblemHint: "Skip this problem and move to the next one. No points are awarded.",
     clear: "Clear",
     nextStage: "Next Problem",
     nextLevel: "Next Level",
@@ -530,9 +539,9 @@ const speechSettings = {
 const cubiAudioProfile = {
   useMp3: false,
   success: {
-    successGood: "./assets/audio/cubi/success/good-job.mp3",
-    successGreat: "./assets/audio/cubi/success/great-job.mp3",
-    successPop: "./assets/audio/cubi/success/success.mp3"
+    successGood: "../../assets/audio/cubi/success/good-job.mp3",
+    successGreat: "../../assets/audio/cubi/success/great-job.mp3",
+    successPop: "../../assets/audio/cubi/success/success.mp3"
   }
 };
 
@@ -551,13 +560,13 @@ const levels = [
     level: 4,
     stars: 4,
     problemCount: 5,
-    href: "./games/shape-build/?level=4"
+    href: "../shape-build/?level=4"
   },
   {
     level: 5,
     stars: 5,
     problemCount: 5,
-    href: "./games/shape-build/?level=5"
+    href: "../shape-build/?level=5"
   }
 ];
 
@@ -632,13 +641,18 @@ function createWoodTexture() {
 }
 
 const requestedLevel = Number(new URLSearchParams(window.location.search).get("level"));
+const copyProgress = readGameProgress("copyBuild");
+const startingLevelIndex = Number.isInteger(requestedLevel) && requestedLevel >= 1 && requestedLevel <= 3
+  ? requestedLevel - 1
+  : Math.max(0, Math.min(2, Number(copyProgress.levelIndex) || 0));
+const savedProblemIndex = Number(copyProgress.levelIndex) === startingLevelIndex
+  ? Number(copyProgress.problemIndex) || 0
+  : 0;
 
 const state = {
   lang: localStorage.getItem("gfield-language") || "ko",
-  levelIndex: Number.isInteger(requestedLevel) && requestedLevel >= 1 && requestedLevel <= 3
-    ? requestedLevel - 1
-    : 0,
-  problemIndex: 0,
+  levelIndex: startingLevelIndex,
+  problemIndex: Math.max(0, Math.min((levels[startingLevelIndex]?.problems.length || 1) - 1, savedProblemIndex)),
   grid: emptyGrid(),
   colorGrid: emptyColorGrid(),
   selectedColor: "cube",
@@ -760,7 +774,7 @@ function setViewerBoardSize(viewer, size) {
     if (Array.isArray(viewer.grid.material)) viewer.grid.material.forEach((material) => material.dispose());
     else viewer.grid.material?.dispose?.();
   }
-  const grid = new THREE.GridHelper(size, size, 0x8e6841, 0xc79b67);
+  const grid = new THREE.GridHelper(size, size, 0x6f604e, 0xa59177);
   grid.position.y = 0.025;
   viewer.scene.add(grid);
   viewer.grid = grid;
@@ -811,11 +825,11 @@ function createWoodBoard() {
   const inset = new THREE.Mesh(
     new THREE.PlaneGeometry(3.28, 3.28),
     new THREE.MeshStandardMaterial({
-      color: 0xfff2d7,
+      color: 0xdbe2d7,
       map: woodTexture,
       bumpMap: woodTexture,
-      bumpScale: 0.004,
-      roughness: 0.82,
+      bumpScale: 0.0025,
+      roughness: 0.9,
       transparent: false,
       opacity: 1
     })
@@ -924,6 +938,7 @@ function addEvents() {
   });
 
   document.querySelector("#resetBuild").addEventListener("click", resetBuild);
+  document.querySelector("#skipProblem").addEventListener("click", skipProblem);
   document.querySelector("#nextStep").addEventListener("click", nextProblem);
   document.querySelector("#viewFront").addEventListener("click", () => setView("front"));
   document.querySelector("#viewRight").addEventListener("click", () => setView("right"));
@@ -935,6 +950,12 @@ function addEvents() {
   document.querySelector("#tutorialAction").addEventListener("click", beginTutorialInteraction);
   document.querySelector("#hintAction").addEventListener("click", showHint);
   document.querySelector(".menu-exit").addEventListener("click", handleMenuExit);
+  document.querySelector("#levelPickerButton")?.addEventListener("click", openLevelPicker);
+  document.querySelector("#problemProgress")?.addEventListener("click", openLevelPicker);
+  document.querySelector("#closeLevelDialog")?.addEventListener("click", closeLevelPicker);
+  document.querySelector("#levelDialog")?.addEventListener("click", (event) => {
+    if (event.target.id === "levelDialog") closeLevelPicker();
+  });
 }
 
 function loadProblem() {
@@ -960,12 +981,18 @@ function loadProblem() {
   state.wrongPlacements = 0;
   state.transitioning = false;
   state.readyForNext = false;
+  saveGameProgress("copyBuild", {
+    levelIndex: state.levelIndex,
+    problemIndex: state.problemIndex,
+    level: state.levelIndex + 1
+  });
   document.body.classList.toggle("color-problem", isColorProblem());
   setViewerBoardSize(targetScene, boardSize);
   setViewerBoardSize(buildScene, boardSize);
   updateStepDisplay();
   updateGuideCharacter();
   updateNextButton();
+  updateSkipProblemButton();
 
   renderTarget();
   renderBuild();
@@ -1248,8 +1275,23 @@ function nextProblem() {
   if (state.transitioning || !state.readyForNext) return;
   state.transitioning = true;
   updateNextButton();
+  window.setTimeout(moveToFollowingProblem, 220);
+}
+
+function skipProblem() {
+  if (state.transitioning) return;
+  clearPendingSuccess();
+  state.transitioning = true;
+  state.readyForNext = false;
+  hideGuide();
+  const nextButton = document.querySelector("#nextStep");
+  if (nextButton) nextButton.hidden = true;
+  updateSkipProblemButton();
+  window.setTimeout(moveToFollowingProblem, 220);
+}
+
+function moveToFollowingProblem() {
   const level = getLevel();
-  window.setTimeout(() => {
     if (state.problemIndex < level.problems.length - 1) {
       state.problemIndex += 1;
       loadProblem();
@@ -1273,8 +1315,17 @@ function nextProblem() {
       }
       return;
     }
-    window.location.href = "./cube-town/";
-  }, 220);
+    window.location.href = "../../cube-town/";
+}
+
+function updateSkipProblemButton() {
+  const button = document.querySelector("#skipProblem");
+  if (!button) return;
+  button.disabled = state.transitioning;
+  button.classList.toggle("loading", state.transitioning);
+  button.setAttribute("aria-busy", String(state.transitioning));
+  const label = button.querySelector(".skip-label");
+  if (label) label.textContent = state.transitioning ? t("moving") : t("skipProblem");
 }
 
 function updateNextButton() {
@@ -1312,9 +1363,18 @@ function handleMenuExit(event) {
 
 function openLevelPicker() {
   renderLevelOptions();
+  updatePrintWorksheetLink();
   const dialog = document.querySelector("#levelDialog");
   dialog.hidden = false;
   dialog.querySelector(".level-option.active")?.focus();
+}
+
+function updatePrintWorksheetLink() {
+  const link = document.querySelector("#printWorksheetLink");
+  if (!link) return;
+  const level = state.levelIndex + 1;
+  const game = isColorProblem() ? "copy-color" : "copy-wood";
+  link.href = `../../cube-town/print.html?game=${game}&level=${level}`;
 }
 
 function closeLevelPicker() {
@@ -1479,6 +1539,7 @@ function applyLanguage() {
   updateAudioButton();
   updateBuilderControls();
   updateNextButton();
+  updateSkipProblemButton();
 }
 
 function showSuccessThenNext() {
