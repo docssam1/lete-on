@@ -37,7 +37,10 @@
       <button type="button" data-zone-nav="flag"><span>🏳️</span><b data-i18n="flagZone">국기 광장</b></button>
       <button type="button" data-zone-nav="clue"><span>📚</span><b data-i18n="clueZone">세계 도서관</b></button>
       <button type="button" data-zone-nav="location"><span>🗺️</span><b data-i18n="mapZone">지도 전망대</b></button>
+      <button type="button" data-zone-nav="guide"><span>🧭</span><b data-i18n="guideZone">탐험 안내소</b></button>
     </nav>
+
+    <div id="npcBubble" class="npc-bubble" hidden></div>
 
     <div class="hud camera-controls">
       <button id="cameraModeButton" type="button"><span>🎥</span><b id="cameraModeLabel">EXPLORE</b></button>
@@ -55,7 +58,14 @@
       <span id="zoneIcon">🏳️</span><div><small data-i18n="nearZone">게임 존 도착</small><strong id="zoneName">국기 광장</strong><p id="zoneDescription">국기를 보고 나라를 맞혀요.</p></div><button id="enterZoneButton" type="button" data-i18n="enterGame">게임 시작</button>
     </section>
 
-    <div id="villageLoading" class="village-loading" role="status"><span class="compass">✦</span><strong data-i18n="loadingVillage">3D 세계 탐험 마을을 만드는 중...</strong><i></i></div>
+    <div id="villageLoading" class="village-loading" role="status">
+      <h1 class="game-logo" aria-label="GFIELD World Explorer">
+        <span class="lg-word"><span class="lg" style="--i:0">G</span><span class="lg" style="--i:1">F</span><span class="lg" style="--i:2">I</span><span class="lg" style="--i:3">E</span><span class="lg" style="--i:4">L</span><span class="lg" style="--i:5">D</span></span>
+        <span class="lg-word"><span class="lg" style="--i:6">W</span><span class="lg" style="--i:7">o</span><span class="lg" style="--i:8">r</span><span class="lg" style="--i:9">l</span><span class="lg" style="--i:10">d</span></span>
+        <span class="lg-word"><span class="lg" style="--i:11">E</span><span class="lg" style="--i:12">x</span><span class="lg" style="--i:13">p</span><span class="lg" style="--i:14">l</span><span class="lg" style="--i:15">o</span><span class="lg" style="--i:16">r</span><span class="lg" style="--i:17">e</span><span class="lg" style="--i:18">r</span></span>
+      </h1>
+      <span class="compass">✦</span><strong data-i18n="loadingVillage">3D 세계 탐험 마을을 만드는 중...</strong><i></i>
+    </div>
   </section>
 
   <section id="gameScreen" class="screen game-screen" hidden aria-label="세계 나라 게임">
@@ -100,7 +110,27 @@
   </section>
 
   <dialog id="characterDialog" class="game-dialog character-dialog">
-    <article><button class="dialog-close" id="closeCharacterDialog" type="button">×</button><header><small>WORLD EXPLORER</small><h2 data-i18n="chooseCharacter">탐험가를 선택하세요</h2><p data-i18n="chooseCharacterBody">캐릭터와 색상을 고르면 3D 마을에 바로 적용됩니다.</p></header><div id="characterCards" class="character-cards"></div><div class="customizer"><section><h3 data-i18n="skinColor">피부색</h3><div id="skinOptions" class="swatches"></div></section><section><h3 data-i18n="hairColor">머리색</h3><div id="hairOptions" class="swatches"></div></section><section><h3 data-i18n="jacketColor">재킷색</h3><div id="jacketOptions" class="swatches"></div></section><section><h3 data-i18n="scarfColor">스카프</h3><div id="scarfOptions" class="swatches"></div></section></div><div id="hatOptions" class="hat-options"></div><button id="saveCharacter" class="save-character" type="button" data-i18n="applyCharacter">캐릭터 적용</button></article>
+    <article><button class="dialog-close" id="closeCharacterDialog" type="button">×</button><header><small>WORLD EXPLORER</small><h2 data-i18n="chooseCharacter">탐험가를 선택하세요</h2><p data-i18n="chooseCharacterBody">캐릭터와 색상을 고르면 3D 마을에 바로 적용됩니다.</p>
+      <div class="dialog-player-row"><span id="dialogPlayerName">-</span><button id="renameButton" type="button" data-i18n="changeName">이름 바꾸기</button><span class="dialog-points">⭐ <b id="dialogPoints">0</b></span></div>
+    </header><div id="characterCards" class="character-cards"></div><div class="customizer"><section><h3 data-i18n="skinColor">피부색</h3><div id="skinOptions" class="swatches"></div></section><section><h3 data-i18n="hairColor">머리색</h3><div id="hairOptions" class="swatches"></div></section><section><h3 data-i18n="jacketColor">재킷색</h3><div id="jacketOptions" class="swatches"></div></section><section><h3 data-i18n="scarfColor">스카프</h3><div id="scarfOptions" class="swatches"></div></section></div>
+    <section class="shop-section"><h3 data-i18n="hatShop">모자 상점</h3><div id="hatOptions" class="hat-options"></div></section>
+    <section class="shop-section"><h3 data-i18n="companionShop">큐비 색깔</h3><div id="companionOptions" class="hat-options"></div></section>
+    <p id="shopMessage" class="shop-message" hidden></p>
+    <button id="saveCharacter" class="save-character" type="button" data-i18n="applyCharacter">캐릭터 적용</button></article>
+  </dialog>
+
+  <dialog id="nameDialog" class="game-dialog name-dialog">
+    <article><button class="dialog-close" id="closeNameDialog" type="button">×</button><header><small>WORLD EXPLORER</small><h2 data-i18n="chooseName">탐험가 이름을 지어주세요</h2><p data-i18n="chooseNameBody">마을에서 사용할 이름을 입력해 주세요.</p></header>
+      <input id="nameInput" type="text" maxlength="12" placeholder="이름을 입력하세요" />
+      <button id="saveName" class="save-character" type="button" data-i18n="saveName">이름 정하기</button></article>
+  </dialog>
+
+  <dialog id="guideDialog" class="game-dialog guide-dialog">
+    <article><button class="dialog-close" id="closeGuideDialog" type="button">×</button>
+      <header><small>WORLD EXPLORER</small><h2 data-i18n="guideZone">탐험 안내소</h2><p id="guideMessage">안녕! 나는 큐비야. 궁금한 걸 눌러봐!</p></header>
+      <div id="guideTopicList" class="guide-topics"></div>
+      <div id="guideDetail" class="guide-detail" hidden><button id="guideBackButton" type="button" data-i18n="back">← 뒤로</button><h3 id="guideDetailTitle"></h3><p id="guideDetailBody"></p></div>
+    </article>
   </dialog>
 
   <script type="module" src="./app.js?v=1"></script>

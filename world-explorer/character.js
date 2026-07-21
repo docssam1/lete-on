@@ -1,4 +1,4 @@
-import { profileFor } from './character-data.js';
+import { profileFor, COMPANION_SKINS } from './character-data.js';
 
 function mat(THREE, color, extra = {}) {
   return new THREE.MeshStandardMaterial({ color, roughness: .78, metalness: .02, ...extra });
@@ -159,16 +159,18 @@ export function animateExplorer(character, delta, speed, turning = 0) {
   p.scarfTail.rotation.z = -.18 + Math.sin(t * 2.2) * .05;
 }
 
-export function createCubiCompanion(THREE) {
+export function createCubiCompanion(THREE, skinId = 'classic', scale = .68) {
+  const skin = COMPANION_SKINS.find(s => s.id === skinId) || COMPANION_SKINS[0];
   const root = new THREE.Group();
-  const wood = mat(THREE, 0xe2b45c, { emissive: 0x6c3e18, emissiveIntensity: .06 });
-  const dark = mat(THREE, 0x76502d);
+  const wood = mat(THREE, skin.wood, { emissive: skin.wood, emissiveIntensity: .06 });
+  const dark = mat(THREE, skin.dark);
   const cube = new THREE.BoxGeometry(.48, .48, .48);
   add(THREE, root, cube, wood, [-.24, 0, 0]);
   add(THREE, root, cube, wood, [.24, 0, 0]);
   const face = add(THREE, root, cube, wood, [0, .47, 0]);
   add(THREE, face, new THREE.SphereGeometry(.035, 8, 6), dark, [-.1, .05, .245]);
   add(THREE, face, new THREE.SphereGeometry(.035, 8, 6), dark, [.1, .05, .245]);
-  root.scale.setScalar(.68);
+  root.scale.setScalar(scale);
+  root.userData.skinId = skin.id;
   return root;
 }
