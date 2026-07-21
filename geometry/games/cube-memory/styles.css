@@ -1,0 +1,155 @@
+/* Cube Memory shares the Cube Town shell (layout, panels, character, success
+   burst, dialogs, responsive rules) with the other games. The shell base is
+   imported here so there is a single source of truth; only the memorize/rebuild
+   controls and this game theming live below. */
+@import url("../fill-box/styles.css?v=fill-1");
+
+/* =========================================================================
+   큐브 메모리 (Cube Memory)
+   The answer panel is a rebuild studio: a color palette + a tap grid. The 3D
+   viewer shows the colored cubes during "기억하기", counts down, then hides them
+   so the child rebuilds the arrangement from memory.
+   ========================================================================= */
+
+/* The stage holds more rows than the shared 3-row grid, so use a simple column. */
+.memory-shell .memory-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px 6px;
+}
+
+.memory-status { flex: 0 0 auto; min-height: 0; padding: 10px 14px; gap: 4px; }
+.memory-status strong { font-size: clamp(30px, 4vw, 46px); }
+.memory-status .phase-memorize { color: #2f7ad1; }
+.memory-status.rebuild strong { font-size: clamp(15px, 1.8vw, 22px); color: #6b4423; }
+.memory-status.solved { border-color: #2f9e3a; background: #edfbe9; }
+.memory-status.solved strong { color: #2f9e3a; }
+
+/* Color palette — big tappable swatches. */
+.color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 9px;
+  padding: 2px 4px;
+}
+.swatch {
+  width: clamp(38px, 4.6vw, 52px);
+  height: clamp(38px, 4.6vw, 52px);
+  border: 3px solid rgba(60, 40, 20, .18);
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 3px 0 rgba(120, 84, 40, .34), inset 0 2px 6px rgba(255, 255, 255, .4);
+  transition: transform .12s ease, border-color .12s ease;
+}
+.swatch:hover { transform: translateY(-2px); }
+.swatch.selected { border-color: #2b1a0e; transform: translateY(-3px) scale(1.05); box-shadow: 0 5px 0 rgba(120, 84, 40, .4); }
+.swatch:disabled { opacity: .4; cursor: default; transform: none; }
+
+/* Rebuild grid — the empty footprint the child taps to place colored cubes. */
+.rebuild-grid {
+  --cols: 3;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  gap: 6px;
+  width: min(100%, 340px);
+  margin: 0 auto;
+  padding: 6px;
+}
+.rebuild-cell {
+  aspect-ratio: 1 / 1;
+  border: 2px dashed #c3aa82;
+  border-radius: 10px;
+  background: repeating-linear-gradient(45deg, #fbf3e2 0 7px, #f3e7cf 7px 14px);
+  cursor: pointer;
+  transition: transform .1s ease, border-color .12s ease, box-shadow .12s ease;
+}
+.rebuild-cell:hover { border-color: #9a7a4e; }
+.rebuild-cell.filled {
+  border-style: solid;
+  border-color: rgba(43, 26, 14, .35);
+  box-shadow: inset 0 3px 8px rgba(255, 255, 255, .45), 0 3px 0 rgba(120, 84, 40, .28);
+  background-image: none;
+}
+.rebuild-cell.right { outline: 3px solid #35a13f; outline-offset: -1px; }
+.rebuild-cell.wrong { outline: 3px solid #d9473f; outline-offset: -1px; animation: wrong-shake .34s ease; }
+.rebuild-cell:disabled { cursor: default; }
+
+/* Action row — clear + confirm. */
+.memory-actions { display: grid; grid-template-columns: 1fr 1.4fr; gap: 9px; padding: 2px 4px 0; }
+.memory-actions button {
+  min-height: 46px;
+  border-radius: 9px;
+  border: 1px solid #cdb188;
+  font-weight: 850;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #d9c09a;
+}
+.memory-actions .clear-btn { background: #fff4f0; color: #9b4035; border-color: #e6b7ab; box-shadow: 0 3px 0 #e0b3a6; }
+.memory-actions .check-btn { background: linear-gradient(#8fd06f, #4fae3f); color: #14380f; border-color: #3d9130; box-shadow: 0 3px 0 #2f7d24; }
+.memory-actions button:active { transform: translateY(2px); box-shadow: 0 1px 0 #d9c09a; }
+.memory-actions button:disabled { opacity: .42; cursor: default; transform: none; }
+
+/* Countdown ring shown over the 3D scene while memorizing. */
+.countdown {
+  position: absolute;
+  z-index: 8;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.94) 55%, rgba(79,151,232,.16) 100%);
+  border: 3px solid #4f97e8;
+  box-shadow: 0 6px 16px rgba(31, 43, 51, .22);
+  color: #245ba0;
+  font-weight: 1000;
+  font-size: 30px;
+}
+.countdown[hidden] { display: none; }
+.countdown span { animation: countdown-tick .9s ease infinite; }
+@keyframes countdown-tick { 0%,100% { transform: scale(1); } 45% { transform: scale(1.16); } }
+
+/* Big "?" shown over the scene once the cubes are hidden. */
+.cover-badge {
+  position: absolute;
+  z-index: 7;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: clamp(72px, 16vh, 150px);
+  font-weight: 1000;
+  color: rgba(109, 69, 39, .16);
+  pointer-events: none;
+  user-select: none;
+}
+.cover-badge[hidden] { display: none; }
+
+/* Peek toggle — purple pressed state to read as "look again". */
+.memory-shell .xray-button[aria-pressed="true"] {
+  background: linear-gradient(#c8a3ea, #9a63d6);
+  border-color: #7d47bf;
+  color: #fff;
+  box-shadow: 0 3px 0 #6a3aa6;
+}
+.memory-shell .xray-mobile[aria-pressed="true"] { color: #efe4ff; }
+.memory-shell .xray-mobile[aria-pressed="true"] b { color: #d6bff5; }
+
+/* Roomier level picker: 4 levels in one row on wide screens. */
+.memory-shell .level-list { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 720px) { .memory-shell .level-list { grid-template-columns: repeat(2, 1fr); } }
+
+/* Tight landscape phones: shrink controls so everything fits above the fold. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .memory-shell .memory-stage { padding: 6px 8px 4px; gap: 6px; }
+  .memory-status { padding: 5px 8px; }
+  .memory-status strong { font-size: clamp(22px, 6vh, 34px); }
+  .swatch { width: 34px; height: 34px; border-radius: 9px; }
+  .rebuild-grid { width: min(100%, 210px); gap: 4px; padding: 3px; }
+  .memory-actions button { min-height: 34px; }
+  .countdown { width: 46px; height: 46px; font-size: 22px; top: 8px; }
+}
