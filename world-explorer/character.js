@@ -49,6 +49,30 @@ function createHat(THREE, head, id, jacketDark, accent) {
     add(THREE, g, new THREE.ConeGeometry(.4, .95, 12), purple, [0, .5, 0]);
     add(THREE, g, new THREE.SphereGeometry(.06, 8, 6), star, [.16, .68, .12]);
     add(THREE, g, new THREE.SphereGeometry(.045, 8, 6), star, [-.13, .48, -.1]);
+  } else if (id === 'flower') {
+    const petalColors = [0xe86a8a, 0xf0c457, 0x9a6bb0, 0x5cb26f, 0xe98fae];
+    const leaf = mat(THREE, 0x4d8a52);
+    add(THREE, g, new THREE.TorusGeometry(.44, .05, 6, 20), leaf, [0, -.1, 0], [Math.PI / 2, 0, 0]);
+    for (let i = 0; i < 8; i += 1) {
+      const a = (i / 8) * Math.PI * 2;
+      const petal = mat(THREE, petalColors[i % petalColors.length]);
+      add(THREE, g, new THREE.SphereGeometry(.08, 8, 6), petal, [Math.cos(a) * .44, -.08, Math.sin(a) * .44]);
+    }
+  } else if (id === 'pirate') {
+    const black = mat(THREE, 0x2b2622);
+    const skull = mat(THREE, 0xf3ecdc);
+    add(THREE, g, new THREE.SphereGeometry(.5, 16, 6, 0, Math.PI, 0, Math.PI * .5), black, [0, -.02, -.18], [0, 0, 0]);
+    add(THREE, g, new THREE.SphereGeometry(.5, 16, 6, 0, Math.PI, 0, Math.PI * .5), black, [0, -.02, .18], [0, Math.PI, 0]);
+    add(THREE, g, new THREE.SphereGeometry(.06, 8, 6), skull, [0, .05, -.42]);
+    add(THREE, g, new THREE.SphereGeometry(.025, 6, 5), black, [-.025, .06, -.4]);
+    add(THREE, g, new THREE.SphereGeometry(.025, 6, 5), black, [.025, .06, -.4]);
+    add(THREE, g, new THREE.TorusGeometry(.46, .03, 6, 18), accent, [0, -.2, 0], [Math.PI / 2, 0, 0]);
+  } else if (id === 'astronaut') {
+    const glass = mat(THREE, 0xbfe4ee, { transparent: true, opacity: .5, metalness: .2, roughness: .15 });
+    const white = mat(THREE, 0xf0ece0);
+    add(THREE, g, new THREE.SphereGeometry(.55, 18, 14), glass, [0, .04, .05]);
+    add(THREE, g, new THREE.TorusGeometry(.52, .08, 8, 20), white, [0, -.18, 0], [Math.PI / 2, 0, 0]);
+    add(THREE, g, new THREE.BoxGeometry(.16, .1, .08), accent, [.36, -.1, .3]);
   } else {
     add(THREE, g, new THREE.CylinderGeometry(.43, .47, .22, 12), jacketDark, [0, 0, 0]);
     add(THREE, g, new THREE.BoxGeometry(.56, .08, .3), jacketDark, [0, -.05, .38]);
