@@ -20,6 +20,43 @@
 
   <div id="fadeLayer" class="fade-layer" aria-hidden="true"></div>
 
+  <section id="introScreen" class="pre-screen intro-screen">
+    <h1 class="game-logo" aria-label="GFIELD World Explorer">
+      <span class="lg-word"><span class="lg" style="--i:0">G</span><span class="lg" style="--i:1">F</span><span class="lg" style="--i:2">I</span><span class="lg" style="--i:3">E</span><span class="lg" style="--i:4">L</span><span class="lg" style="--i:5">D</span></span>
+      <span class="lg-word"><span class="lg" style="--i:6">W</span><span class="lg" style="--i:7">o</span><span class="lg" style="--i:8">r</span><span class="lg" style="--i:9">l</span><span class="lg" style="--i:10">d</span></span>
+      <span class="lg-word"><span class="lg" style="--i:11">E</span><span class="lg" style="--i:12">x</span><span class="lg" style="--i:13">p</span><span class="lg" style="--i:14">l</span><span class="lg" style="--i:15">o</span><span class="lg" style="--i:16">r</span><span class="lg" style="--i:17">e</span><span class="lg" style="--i:18">r</span></span>
+    </h1>
+    <p class="intro-tagline" data-i18n="introTagline">195개국을 탐험하는 나만의 세계 여행!</p>
+    <button id="introStartButton" class="pre-primary-button" type="button" data-i18n="introStart">시작하기</button>
+  </section>
+
+  <section id="loginScreen" class="pre-screen login-screen" hidden>
+    <h2 data-i18n="loginTitle">탐험가 로그인</h2>
+    <div id="profileGrid" class="profile-grid"></div>
+    <button id="newProfileButton" class="profile-card new-profile" type="button">
+      <span class="profile-avatar">➕</span><span data-i18n="newProfile">새 탐험가 만들기</span>
+    </button>
+
+    <div id="nameStep" class="login-step" hidden>
+      <p data-i18n="chooseNameBody">마을에서 사용할 이름을 입력해 주세요.</p>
+      <input id="newProfileName" maxlength="12" placeholder="이름을 입력하세요" />
+      <div class="login-step-actions">
+        <button id="nameStepBack" type="button" data-i18n="back">← 뒤로</button>
+        <button id="nameStepNext" type="button" data-i18n="next">다음</button>
+      </div>
+    </div>
+
+    <div id="pinStep" class="login-step" hidden>
+      <p id="pinStepLabel"></p>
+      <input id="pinInput" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" />
+      <p id="pinError" class="pin-error" hidden data-i18n="pinWrong">비밀번호가 달라요, 다시 입력해 주세요.</p>
+      <div class="login-step-actions">
+        <button id="pinStepBack" type="button" data-i18n="back">← 뒤로</button>
+        <button id="pinStepConfirm" type="button" data-i18n="confirm2">확인</button>
+      </div>
+    </div>
+  </section>
+
   <section id="villageScreen" class="screen village-screen active" aria-label="3D 세계 탐험 마을">
     <div id="villageViewport" class="village-viewport"></div>
 
@@ -27,6 +64,7 @@
       <div class="brand"><span class="brand-mark">G</span><div><small>GFIELD SOCIAL WORLD</small><strong data-i18n="worldVillage">세계 탐험 마을</strong></div></div>
       <div class="top-actions">
         <button id="fullscreenButton" class="icon-button" type="button" aria-label="전체화면" hidden>⛶</button>
+        <button id="switchProfileButton" class="icon-button" type="button" aria-label="다른 탐험가로 전환">🔁</button>
         <button id="characterButton" class="icon-button" type="button" aria-label="캐릭터 선택">🧑‍🚀 <span data-i18n="character">캐릭터</span></button>
         <div class="language-switch" role="group" aria-label="Language">
           <button type="button" data-lang="ko" class="active">한</button><button type="button" data-lang="zh">中</button><button type="button" data-lang="ja">日</button><button type="button" data-lang="en">EN</button>

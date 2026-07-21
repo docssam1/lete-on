@@ -72,6 +72,7 @@ export const COMPANION_SKINS = [
 ];
 
 const KEY = 'gfield-world-character-v2';
+function keyFor(accountId) { return accountId ? `${KEY}:${accountId}` : KEY; }
 
 export function defaultCharacterState() {
   const p = CHARACTER_PROFILES[0];
@@ -87,17 +88,17 @@ export function defaultCharacterState() {
   };
 }
 
-export function loadCharacterState() {
+export function loadCharacterState(accountId) {
   try {
-    const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+    const saved = JSON.parse(localStorage.getItem(keyFor(accountId)) || '{}');
     return { ...defaultCharacterState(), ...saved };
   } catch {
     return defaultCharacterState();
   }
 }
 
-export function saveCharacterState(state) {
-  localStorage.setItem(KEY, JSON.stringify(state));
+export function saveCharacterState(state, accountId) {
+  localStorage.setItem(keyFor(accountId), JSON.stringify(state));
 }
 
 export function applyProfile(state, profileId) {

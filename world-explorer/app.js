@@ -3,7 +3,7 @@ import { countries195, countryById } from './data/countries-195.js';
 import { worldGeoJSON } from './data/world-lowres.js';
 import {
   CHARACTER_PROFILES, SKIN_PRESETS, HAIR_PRESETS, JACKET_PRESETS, SCARF_PRESETS, HAT_OPTIONS, COMPANION_SKINS,
-  loadCharacterState, saveCharacterState, applyProfile, profileFor
+  loadCharacterState, saveCharacterState, applyProfile, profileFor, defaultCharacterState
 } from './character-data.js';
 import { createExplorerCharacter, animateExplorer, createCubiCompanion } from './character.js';
 import { CameraController } from './camera-controller.js';
@@ -12,6 +12,7 @@ import { WorldMapGame } from './map-game.js';
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
 const GAME_KEY = 'gfield-world-max-v1';
+const ACCOUNTS_KEY = 'gfield-world-accounts-v1';
 const VILLAGE_RADIUS = 25.4;
 
 const defaultState = {
@@ -27,9 +28,11 @@ const defaultState = {
   sessions: 0
 };
 
+let activeAccountId = null;
+function gameKey() { return activeAccountId ? `${GAME_KEY}:${activeAccountId}` : GAME_KEY; }
 function loadGameState() {
   try {
-    const saved = JSON.parse(localStorage.getItem(GAME_KEY) || '{}');
+    const saved = JSON.parse(localStorage.getItem(gameKey()) || '{}');
     return {
       ...defaultState,
       ...saved,
@@ -42,14 +45,25 @@ function loadGameState() {
   }
 }
 
-let state = loadGameState();
-let characterState = loadCharacterState();
+function listAccounts() { try { return JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || '[]'); } catch { return []; } }
+function saveAccounts(list) { localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(list)); }
+function createAccount(name, pin) {
+  const id = 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const list = listAccounts();
+  list.push({ id, name, pin });
+  saveAccounts(list);
+  return id;
+}
+
+let state = structuredClone(defaultState);
+let characterState = defaultCharacterState();
 
 const i18n = {
   ko: {
     rotateTitle: '휴대폰을 가로로 돌려 주세요', rotateBody: '세계 탐험 게임은 가로 화면에 맞춰져 있어요.',
     worldVillage: '세계 탐험 마을', character: '캐릭터', guide: '빛나는 게임 존으로 이동해 세계를 탐험하세요.',
-    flagZone: '국기 광장', clueZone: '세계 도서관', mapZone: '지도 전망대', run: '달리기', enter: '입장', enterGame: '게임 시작', nearZone: '게임 존 도착', loadingVillage: '3D 세계 탐험 마을을 만드는 중...',
+    flagZone: '국기 광장', clueZone: '세계 도서관', mapZone: '지도 전망대', run: '달리기', enter: '입장', enterGame: '게임 시작', nearZone: '게임 존 도착', loadingVillage: '세계 여행을 준비하는 중...',
+    introTagline: '195개국을 탐험하는 나만의 세계 여행!', introStart: '시작하기', loginTitle: '탐험가 로그인', newProfile: '새 탐험가 만들기', next: '다음', confirm2: '확인', pinWrong: '비밀번호가 달라요, 다시 입력해 주세요.', pinCreate1: '새로운 4자리 비밀번호를 만들어 주세요', pinCreate2: '비밀번호를 다시 한 번 입력해 주세요', pinUnlock: '{name} 탐험가의 비밀번호를 입력해 주세요', switchProfile: '다른 탐험가로 전환',
     village: '마을', findCountry: '나라 찾기', nameCountry: '나라 맞히기', shapeCountry: '윤곽 맞히기', flagMap: '국기로 찾기',
     unseen: '미발견', solved: '발견', target: '문제', confirm: '선택 확정', hint: '힌트', skip: '건너뛰기', nextQuestion: '다음 문제',
     sessionComplete: '탐험 세션 완료!', correctCount: '정답', earnedPoints: '획득 포인트', newCountries: '새 나라', again: '다시 도전', returnVillage: '마을로 돌아가기',
@@ -75,13 +89,13 @@ const i18n = {
     continents: { asia: '아시아', europe: '유럽', africa: '아프리카', 'north-america': '북아메리카', 'south-america': '남아메리카', oceania: '오세아니아', other: '기타 지역' }
   },
   zh: {
-    rotateTitle: '请横屏使用', rotateBody: '世界探索游戏已针对横屏优化。', worldVillage: '世界探索村', character: '角色', guide: '前往发光的游戏区域，开始探索世界。', flagZone: '国旗广场', clueZone: '世界图书馆', mapZone: '地图观景台', run: '奔跑', enter: '进入', enterGame: '开始游戏', nearZone: '到达游戏区', loadingVillage: '正在建造3D世界探索村...', village: '村庄', findCountry: '寻找国家', nameCountry: '猜国家', shapeCountry: '看轮廓', flagMap: '看国旗找', unseen: '未发现', solved: '已发现', target: '目标', confirm: '确认选择', hint: '提示', skip: '跳过', nextQuestion: '下一题', sessionComplete: '探索完成！', correctCount: '答对', earnedPoints: '获得积分', newCountries: '新国家', again: '再挑战', returnVillage: '返回村庄', chooseCharacter: '选择探险家', chooseCharacterBody: '选择角色和颜色后会立即应用到3D村庄。', skinColor: '肤色', hairColor: '发色', jacketColor: '外套', scarfColor: '围巾', applyCharacter: '应用角色', flagTitle: '看国旗猜国家', clueTitle: '读线索猜国家', locationTitle: '在地图上找国家', flagPrompt: '这是哪个国家的国旗？', cluePrompt: '哪个国家符合这些线索？', findPrompt: '请在地图上找到{country}。', highlightedPrompt: '地图上发光的是哪个国家？', shapePrompt: '这个国家轮廓属于哪里？', flagMapPrompt: '请在地图上找到{flag}国旗的国家。', selectOnMap: '移动或缩放地图，然后选择国家。', selectAnswer: '请选择你认为正确的国家。', correct: '回答正确！', wrong: '再试试看', correctBody: '{country}！+{points}P', wrongBody: '正确答案是{country}。', firstDiscovery: '发现了新的国家！', capital: '首都', region: '地区', population: '人口规模', area: '面积规模', hintLength: '国名有{count}个字：{blank}', hintRegion: '地区提示：{region}', hintPopulation: '人口约为{population}，面积属于{area}。', hintFirst: '首字提示：以“{first}”开头。', cameraFollow: '跟随', cameraExplore: '探索', cameraOverview: '全景', flagDescription: '观察国旗并猜出国家。', clueDescription: '阅读地理、文化和历史线索。', mapDescription: '在真实世界地图上寻找国家。', shopDescription: '选择探险家并更换服装颜色。', guideZone: '探索问讯处', guideDescription: '和会讲解游戏的Qubi见面。', chooseName: '给你的探险家取个名字', chooseNameBody: '请输入在村庄里使用的名字。', nameInputPlaceholder: '请输入名字', saveName: '确定名字', changeName: '改名字', hatShop: '帽子商店', companionShop: 'Qubi颜色', yourPoints: '我的积分', locked: '未解锁', owned: '已拥有', buy: '购买', notEnoughPoints: '积分不够', guideWelcome: '你好！我是Qubi。点一下你想知道的内容吧！', topicZones: '游戏区域介绍', topicMap: '地图游戏4种', topicShop: '积分与商店', topicCurriculum: '能学到什么？', back: '返回', guideZonesBody: '国旗广场用国旗、世界图书馆用线索、地图观景台用地图来猜国家。', guideMapBody: '地图观景台里有寻找国家、猜国家名、看轮廓、看国旗找，一共4种游戏。', guideShopBody: '答对问题会获得积分（⭐）。在角色菜单的商店里可以购买帽子和Qubi的颜色。', guideCurriculumBody: '这个游戏和小学社会科的"世界各国的自然与文化"单元相关联。', installNow: '安装', installAndroid: '添加到主屏幕后可以像应用一样全屏畅玩，没有地址栏！', installIOS: '点击分享按钮 → "添加到主屏幕"，即可像应用一样安装！', populationBands: { 'under-5m': '少于500万', '5m-20m': '500万至2000万', '20m-50m': '2000万至5000万', '50m-100m': '5000万至1亿', '100m-300m': '1亿至3亿', '300m-1b': '3亿至10亿', 'over-1b': '10亿以上' }, areaBands: { micro: '微型国家', small: '小型国家', medium: '中等国家', large: '大型国家', 'very-large': '超大型国家' }, continents: { asia: '亚洲', europe: '欧洲', africa: '非洲', 'north-america': '北美洲', 'south-america': '南美洲', oceania: '大洋洲', other: '其他地区' }
+    rotateTitle: '请横屏使用', rotateBody: '世界探索游戏已针对横屏优化。', worldVillage: '世界探索村', character: '角色', guide: '前往发光的游戏区域，开始探索世界。', flagZone: '国旗广场', clueZone: '世界图书馆', mapZone: '地图观景台', run: '奔跑', enter: '进入', enterGame: '开始游戏', nearZone: '到达游戏区', loadingVillage: '正在准备世界之旅...', introTagline: '探索195个国家的专属世界之旅！', introStart: '开始', loginTitle: '探险家登录', newProfile: '创建新探险家', next: '下一步', confirm2: '确认', pinWrong: '密码不对，请重新输入。', pinCreate1: '请设置新的4位数密码', pinCreate2: '请再输入一次密码', pinUnlock: '请输入{name}探险家的密码', switchProfile: '切换探险家', village: '村庄', findCountry: '寻找国家', nameCountry: '猜国家', shapeCountry: '看轮廓', flagMap: '看国旗找', unseen: '未发现', solved: '已发现', target: '目标', confirm: '确认选择', hint: '提示', skip: '跳过', nextQuestion: '下一题', sessionComplete: '探索完成！', correctCount: '答对', earnedPoints: '获得积分', newCountries: '新国家', again: '再挑战', returnVillage: '返回村庄', chooseCharacter: '选择探险家', chooseCharacterBody: '选择角色和颜色后会立即应用到3D村庄。', skinColor: '肤色', hairColor: '发色', jacketColor: '外套', scarfColor: '围巾', applyCharacter: '应用角色', flagTitle: '看国旗猜国家', clueTitle: '读线索猜国家', locationTitle: '在地图上找国家', flagPrompt: '这是哪个国家的国旗？', cluePrompt: '哪个国家符合这些线索？', findPrompt: '请在地图上找到{country}。', highlightedPrompt: '地图上发光的是哪个国家？', shapePrompt: '这个国家轮廓属于哪里？', flagMapPrompt: '请在地图上找到{flag}国旗的国家。', selectOnMap: '移动或缩放地图，然后选择国家。', selectAnswer: '请选择你认为正确的国家。', correct: '回答正确！', wrong: '再试试看', correctBody: '{country}！+{points}P', wrongBody: '正确答案是{country}。', firstDiscovery: '发现了新的国家！', capital: '首都', region: '地区', population: '人口规模', area: '面积规模', hintLength: '国名有{count}个字：{blank}', hintRegion: '地区提示：{region}', hintPopulation: '人口约为{population}，面积属于{area}。', hintFirst: '首字提示：以“{first}”开头。', cameraFollow: '跟随', cameraExplore: '探索', cameraOverview: '全景', flagDescription: '观察国旗并猜出国家。', clueDescription: '阅读地理、文化和历史线索。', mapDescription: '在真实世界地图上寻找国家。', shopDescription: '选择探险家并更换服装颜色。', guideZone: '探索问讯处', guideDescription: '和会讲解游戏的Qubi见面。', chooseName: '给你的探险家取个名字', chooseNameBody: '请输入在村庄里使用的名字。', nameInputPlaceholder: '请输入名字', saveName: '确定名字', changeName: '改名字', hatShop: '帽子商店', companionShop: 'Qubi颜色', yourPoints: '我的积分', locked: '未解锁', owned: '已拥有', buy: '购买', notEnoughPoints: '积分不够', guideWelcome: '你好！我是Qubi。点一下你想知道的内容吧！', topicZones: '游戏区域介绍', topicMap: '地图游戏4种', topicShop: '积分与商店', topicCurriculum: '能学到什么？', back: '返回', guideZonesBody: '国旗广场用国旗、世界图书馆用线索、地图观景台用地图来猜国家。', guideMapBody: '地图观景台里有寻找国家、猜国家名、看轮廓、看国旗找，一共4种游戏。', guideShopBody: '答对问题会获得积分（⭐）。在角色菜单的商店里可以购买帽子和Qubi的颜色。', guideCurriculumBody: '这个游戏和小学社会科的"世界各国的自然与文化"单元相关联。', installNow: '安装', installAndroid: '添加到主屏幕后可以像应用一样全屏畅玩，没有地址栏！', installIOS: '点击分享按钮 → "添加到主屏幕"，即可像应用一样安装！', populationBands: { 'under-5m': '少于500万', '5m-20m': '500万至2000万', '20m-50m': '2000万至5000万', '50m-100m': '5000万至1亿', '100m-300m': '1亿至3亿', '300m-1b': '3亿至10亿', 'over-1b': '10亿以上' }, areaBands: { micro: '微型国家', small: '小型国家', medium: '中等国家', large: '大型国家', 'very-large': '超大型国家' }, continents: { asia: '亚洲', europe: '欧洲', africa: '非洲', 'north-america': '北美洲', 'south-america': '南美洲', oceania: '大洋洲', other: '其他地区' }
   },
   ja: {
-    rotateTitle: '横向きにしてください', rotateBody: '世界探検ゲームは横画面に最適化されています。', worldVillage: '世界探検村', character: 'キャラクター', guide: '光るゲームゾーンへ移動して世界を探検しよう。', flagZone: '国旗広場', clueZone: '世界図書館', mapZone: '地図展望台', run: '走る', enter: '入る', enterGame: 'ゲーム開始', nearZone: 'ゲームゾーン到着', loadingVillage: '3D世界探検村を作っています...', village: '村', findCountry: '国を探す', nameCountry: '国名を当てる', shapeCountry: '輪郭クイズ', flagMap: '国旗で探す', unseen: '未発見', solved: '発見済み', target: '問題', confirm: '選択を確定', hint: 'ヒント', skip: 'スキップ', nextQuestion: '次の問題', sessionComplete: '探検セッション完了！', correctCount: '正解', earnedPoints: '獲得ポイント', newCountries: '新しい国', again: 'もう一度', returnVillage: '村に戻る', chooseCharacter: '探検家を選ぼう', chooseCharacterBody: 'キャラクターと色を選ぶと3D村にすぐ反映されます。', skinColor: '肌の色', hairColor: '髪の色', jacketColor: 'ジャケット', scarfColor: 'スカーフ', applyCharacter: 'キャラクターを適用', flagTitle: '国旗を見て国を当てよう', clueTitle: 'ヒントを読んで国を当てよう', locationTitle: '地図で国を探そう', flagPrompt: 'この国旗はどの国？', cluePrompt: 'この説明に合う国はどこ？', findPrompt: '地図で{country}を探してください。', highlightedPrompt: '地図で光っている国はどこ？', shapePrompt: 'この国の輪郭はどこ？', flagMapPrompt: '{flag}の国を地図で探してください。', selectOnMap: '地図を移動・拡大して国を選んでください。', selectAnswer: '正しいと思う国を選んでください。', correct: '正解！', wrong: 'おしい！', correctBody: '{country}！+{points}P', wrongBody: '正解は{country}です。', firstDiscovery: '新しい国を発見！', capital: '首都', region: '地域', population: '人口規模', area: '面積規模', hintLength: '国名は{count}文字：{blank}', hintRegion: '地域ヒント：{region}', hintPopulation: '人口は{population}、面積は{area}くらいです。', hintFirst: '最初の文字は「{first}」です。', cameraFollow: 'FOLLOW', cameraExplore: 'EXPLORE', cameraOverview: 'OVERVIEW', flagDescription: '国旗をよく見て国を当てます。', clueDescription: '地理・文化・歴史のヒントを読みます。', mapDescription: '実際の世界地図で国を探します。', shopDescription: '探検家と服の色を選びます。', guideZone: '探検インフォメーション', guideDescription: 'ゲームを説明してくれるキュービに会おう。', chooseName: '探検家の名前を決めよう', chooseNameBody: '村で使う名前を入力してください。', nameInputPlaceholder: '名前を入力', saveName: '名前を決める', changeName: '名前を変える', hatShop: '帽子ショップ', companionShop: 'キュービの色', yourPoints: '所持ポイント', locked: 'ロック中', owned: '所持済み', buy: '購入', notEnoughPoints: 'ポイントが足りません', guideWelcome: 'こんにちは！ぼくはキュービだよ。気になることを押してみてね！', topicZones: 'ゲームゾーン案内', topicMap: '地図ゲーム4種類', topicShop: 'ポイントとショップ', topicCurriculum: '何が学べるの？', back: '戻る', guideZonesBody: '国旗広場は国旗で、世界図書館はヒントで、地図展望台は地図で国を当てるところだよ。', guideMapBody: '地図展望台には、国を探す・国名を当てる・輪郭クイズ・国旗で探すの4つのゲームがあるよ。', guideShopBody: '問題に正解するとポイント（⭐）がもらえるよ。キャラクターメニューのショップで帽子やキュービの色を買えるよ。', guideCurriculumBody: 'この遊びは小学校社会科の「世界のいろいろな国の自然と文化」の単元とつながっているよ。', installNow: 'インストール', installAndroid: 'ホーム画面に追加すると、アドレスバーなしで全画面アプリのように遊べるよ！', installIOS: '共有ボタン→「ホーム画面に追加」でアプリのようにインストールできるよ！', populationBands: { 'under-5m': '500万人未満', '5m-20m': '500万〜2000万人', '20m-50m': '2000万〜5000万人', '50m-100m': '5000万〜1億人', '100m-300m': '1億〜3億人', '300m-1b': '3億〜10億人', 'over-1b': '10億人以上' }, areaBands: { micro: 'とても小さい国', small: '小さい国', medium: '中くらいの国', large: '大きい国', 'very-large': 'とても大きい国' }, continents: { asia: 'アジア', europe: 'ヨーロッパ', africa: 'アフリカ', 'north-america': '北アメリカ', 'south-america': '南アメリカ', oceania: 'オセアニア', other: 'その他' }
+    rotateTitle: '横向きにしてください', rotateBody: '世界探検ゲームは横画面に最適化されています。', worldVillage: '世界探検村', character: 'キャラクター', guide: '光るゲームゾーンへ移動して世界を探検しよう。', flagZone: '国旗広場', clueZone: '世界図書館', mapZone: '地図展望台', run: '走る', enter: '入る', enterGame: 'ゲーム開始', nearZone: 'ゲームゾーン到着', loadingVillage: '世界旅行を準備しています...', introTagline: '195か国を探検するあなただけの世界旅行！', introStart: 'はじめる', loginTitle: '探検家ログイン', newProfile: '新しい探検家を作る', next: '次へ', confirm2: '確認', pinWrong: 'パスワードが違います、もう一度入力してください。', pinCreate1: '新しい4桁のパスワードを作ってください', pinCreate2: 'もう一度パスワードを入力してください', pinUnlock: '{name}探検家のパスワードを入力してください', switchProfile: '探検家を切り替える', village: '村', findCountry: '国を探す', nameCountry: '国名を当てる', shapeCountry: '輪郭クイズ', flagMap: '国旗で探す', unseen: '未発見', solved: '発見済み', target: '問題', confirm: '選択を確定', hint: 'ヒント', skip: 'スキップ', nextQuestion: '次の問題', sessionComplete: '探検セッション完了！', correctCount: '正解', earnedPoints: '獲得ポイント', newCountries: '新しい国', again: 'もう一度', returnVillage: '村に戻る', chooseCharacter: '探検家を選ぼう', chooseCharacterBody: 'キャラクターと色を選ぶと3D村にすぐ反映されます。', skinColor: '肌の色', hairColor: '髪の色', jacketColor: 'ジャケット', scarfColor: 'スカーフ', applyCharacter: 'キャラクターを適用', flagTitle: '国旗を見て国を当てよう', clueTitle: 'ヒントを読んで国を当てよう', locationTitle: '地図で国を探そう', flagPrompt: 'この国旗はどの国？', cluePrompt: 'この説明に合う国はどこ？', findPrompt: '地図で{country}を探してください。', highlightedPrompt: '地図で光っている国はどこ？', shapePrompt: 'この国の輪郭はどこ？', flagMapPrompt: '{flag}の国を地図で探してください。', selectOnMap: '地図を移動・拡大して国を選んでください。', selectAnswer: '正しいと思う国を選んでください。', correct: '正解！', wrong: 'おしい！', correctBody: '{country}！+{points}P', wrongBody: '正解は{country}です。', firstDiscovery: '新しい国を発見！', capital: '首都', region: '地域', population: '人口規模', area: '面積規模', hintLength: '国名は{count}文字：{blank}', hintRegion: '地域ヒント：{region}', hintPopulation: '人口は{population}、面積は{area}くらいです。', hintFirst: '最初の文字は「{first}」です。', cameraFollow: 'FOLLOW', cameraExplore: 'EXPLORE', cameraOverview: 'OVERVIEW', flagDescription: '国旗をよく見て国を当てます。', clueDescription: '地理・文化・歴史のヒントを読みます。', mapDescription: '実際の世界地図で国を探します。', shopDescription: '探検家と服の色を選びます。', guideZone: '探検インフォメーション', guideDescription: 'ゲームを説明してくれるキュービに会おう。', chooseName: '探検家の名前を決めよう', chooseNameBody: '村で使う名前を入力してください。', nameInputPlaceholder: '名前を入力', saveName: '名前を決める', changeName: '名前を変える', hatShop: '帽子ショップ', companionShop: 'キュービの色', yourPoints: '所持ポイント', locked: 'ロック中', owned: '所持済み', buy: '購入', notEnoughPoints: 'ポイントが足りません', guideWelcome: 'こんにちは！ぼくはキュービだよ。気になることを押してみてね！', topicZones: 'ゲームゾーン案内', topicMap: '地図ゲーム4種類', topicShop: 'ポイントとショップ', topicCurriculum: '何が学べるの？', back: '戻る', guideZonesBody: '国旗広場は国旗で、世界図書館はヒントで、地図展望台は地図で国を当てるところだよ。', guideMapBody: '地図展望台には、国を探す・国名を当てる・輪郭クイズ・国旗で探すの4つのゲームがあるよ。', guideShopBody: '問題に正解するとポイント（⭐）がもらえるよ。キャラクターメニューのショップで帽子やキュービの色を買えるよ。', guideCurriculumBody: 'この遊びは小学校社会科の「世界のいろいろな国の自然と文化」の単元とつながっているよ。', installNow: 'インストール', installAndroid: 'ホーム画面に追加すると、アドレスバーなしで全画面アプリのように遊べるよ！', installIOS: '共有ボタン→「ホーム画面に追加」でアプリのようにインストールできるよ！', populationBands: { 'under-5m': '500万人未満', '5m-20m': '500万〜2000万人', '20m-50m': '2000万〜5000万人', '50m-100m': '5000万〜1億人', '100m-300m': '1億〜3億人', '300m-1b': '3億〜10億人', 'over-1b': '10億人以上' }, areaBands: { micro: 'とても小さい国', small: '小さい国', medium: '中くらいの国', large: '大きい国', 'very-large': 'とても大きい国' }, continents: { asia: 'アジア', europe: 'ヨーロッパ', africa: 'アフリカ', 'north-america': '北アメリカ', 'south-america': '南アメリカ', oceania: 'オセアニア', other: 'その他' }
   },
   en: {
-    rotateTitle: 'Rotate your phone', rotateBody: 'World Explorer is designed for landscape play.', worldVillage: 'World Explorer Village', character: 'Character', guide: 'Walk to a glowing game zone and explore the world.', flagZone: 'Flag Plaza', clueZone: 'World Library', mapZone: 'Map Observatory', run: 'Run', enter: 'Enter', enterGame: 'Start game', nearZone: 'Game zone reached', loadingVillage: 'Building the 3D World Explorer Village...', village: 'Village', findCountry: 'Find country', nameCountry: 'Name country', shapeCountry: 'Shape quiz', flagMap: 'Flag to map', unseen: 'Unseen', solved: 'Discovered', target: 'Target', confirm: 'Confirm choice', hint: 'Hint', skip: 'Skip', nextQuestion: 'Next question', sessionComplete: 'Exploration session complete!', correctCount: 'Correct', earnedPoints: 'Points earned', newCountries: 'New countries', again: 'Play again', returnVillage: 'Return to village', chooseCharacter: 'Choose your explorer', chooseCharacterBody: 'Choose a character and colors. Changes appear in the 3D village immediately.', skinColor: 'Skin tone', hairColor: 'Hair color', jacketColor: 'Jacket', scarfColor: 'Scarf', applyCharacter: 'Apply character', flagTitle: 'Guess the country by its flag', clueTitle: 'Read the clues and name the country', locationTitle: 'Find countries on the map', flagPrompt: 'Which country has this flag?', cluePrompt: 'Which country matches these clues?', findPrompt: 'Find {country} on the map.', highlightedPrompt: 'Which country is glowing on the map?', shapePrompt: 'Which country has this outline?', flagMapPrompt: 'Find the country with the {flag} flag.', selectOnMap: 'Move or zoom the map, then select a country.', selectAnswer: 'Choose the country you think is correct.', correct: 'Correct!', wrong: 'Not quite', correctBody: '{country}! +{points}P', wrongBody: 'The correct answer is {country}.', firstDiscovery: 'You discovered a new country!', capital: 'Capital', region: 'Region', population: 'Population', area: 'Area', hintLength: 'The name has {count} letters: {blank}', hintRegion: 'Region hint: {region}', hintPopulation: 'Population: {population}. Area: {area}.', hintFirst: 'First-letter hint: it starts with “{first}”.', cameraFollow: 'FOLLOW', cameraExplore: 'EXPLORE', cameraOverview: 'OVERVIEW', flagDescription: 'Study the flag and name the country.', clueDescription: 'Read geography, culture, and history clues.', mapDescription: 'Find countries on a real world map.', shopDescription: 'Choose an explorer and customize colors.', guideZone: 'Explorer Info Booth', guideDescription: 'Meet Cubi, who explains the games.', chooseName: 'Name your explorer', chooseNameBody: 'Enter the name you want to use in the village.', nameInputPlaceholder: 'Enter a name', saveName: 'Set name', changeName: 'Change name', hatShop: 'Hat shop', companionShop: 'Cubi colors', yourPoints: 'Your points', locked: 'Locked', owned: 'Owned', buy: 'Buy', notEnoughPoints: 'Not enough points', guideWelcome: "Hi! I'm Cubi. Tap something you're curious about!", topicZones: 'Game zones', topicMap: '4 map games', topicShop: 'Points & shop', topicCurriculum: 'What will I learn?', back: 'Back', guideZonesBody: 'Flag Plaza uses flags, World Library uses clues, and Map Observatory uses the map to guess countries.', guideMapBody: 'Map Observatory has 4 games: find the country, name the country, guess the outline, and find it by flag.', guideShopBody: "Answering questions earns points (⭐). You can buy hats and Cubi colors in the shop from the character menu.", guideCurriculumBody: 'This game connects to the elementary social studies unit on "the nature and culture of countries around the world."', installNow: 'Install', installAndroid: 'Add to your home screen to play fullscreen, app-style, with no address bar!', installIOS: 'Tap Share → "Add to Home Screen" to install it like an app!', populationBands: { 'under-5m': 'under 5 million', '5m-20m': '5–20 million', '20m-50m': '20–50 million', '50m-100m': '50–100 million', '100m-300m': '100–300 million', '300m-1b': '300 million–1 billion', 'over-1b': 'over 1 billion' }, areaBands: { micro: 'a microstate', small: 'a small country', medium: 'a medium-sized country', large: 'a large country', 'very-large': 'a very large country' }, continents: { asia: 'Asia', europe: 'Europe', africa: 'Africa', 'north-america': 'North America', 'south-america': 'South America', oceania: 'Oceania', other: 'another region' }
+    rotateTitle: 'Rotate your phone', rotateBody: 'World Explorer is designed for landscape play.', worldVillage: 'World Explorer Village', character: 'Character', guide: 'Walk to a glowing game zone and explore the world.', flagZone: 'Flag Plaza', clueZone: 'World Library', mapZone: 'Map Observatory', run: 'Run', enter: 'Enter', enterGame: 'Start game', nearZone: 'Game zone reached', loadingVillage: 'Preparing your world trip...', introTagline: 'Your own world trip exploring 195 countries!', introStart: 'Start', loginTitle: 'Explorer Login', newProfile: 'Create new explorer', next: 'Next', confirm2: 'Confirm', pinWrong: "That password doesn't match, try again.", pinCreate1: 'Create a new 4-digit password', pinCreate2: 'Enter the password again', pinUnlock: "Enter {name}'s password", switchProfile: 'Switch explorer', village: 'Village', findCountry: 'Find country', nameCountry: 'Name country', shapeCountry: 'Shape quiz', flagMap: 'Flag to map', unseen: 'Unseen', solved: 'Discovered', target: 'Target', confirm: 'Confirm choice', hint: 'Hint', skip: 'Skip', nextQuestion: 'Next question', sessionComplete: 'Exploration session complete!', correctCount: 'Correct', earnedPoints: 'Points earned', newCountries: 'New countries', again: 'Play again', returnVillage: 'Return to village', chooseCharacter: 'Choose your explorer', chooseCharacterBody: 'Choose a character and colors. Changes appear in the 3D village immediately.', skinColor: 'Skin tone', hairColor: 'Hair color', jacketColor: 'Jacket', scarfColor: 'Scarf', applyCharacter: 'Apply character', flagTitle: 'Guess the country by its flag', clueTitle: 'Read the clues and name the country', locationTitle: 'Find countries on the map', flagPrompt: 'Which country has this flag?', cluePrompt: 'Which country matches these clues?', findPrompt: 'Find {country} on the map.', highlightedPrompt: 'Which country is glowing on the map?', shapePrompt: 'Which country has this outline?', flagMapPrompt: 'Find the country with the {flag} flag.', selectOnMap: 'Move or zoom the map, then select a country.', selectAnswer: 'Choose the country you think is correct.', correct: 'Correct!', wrong: 'Not quite', correctBody: '{country}! +{points}P', wrongBody: 'The correct answer is {country}.', firstDiscovery: 'You discovered a new country!', capital: 'Capital', region: 'Region', population: 'Population', area: 'Area', hintLength: 'The name has {count} letters: {blank}', hintRegion: 'Region hint: {region}', hintPopulation: 'Population: {population}. Area: {area}.', hintFirst: 'First-letter hint: it starts with “{first}”.', cameraFollow: 'FOLLOW', cameraExplore: 'EXPLORE', cameraOverview: 'OVERVIEW', flagDescription: 'Study the flag and name the country.', clueDescription: 'Read geography, culture, and history clues.', mapDescription: 'Find countries on a real world map.', shopDescription: 'Choose an explorer and customize colors.', guideZone: 'Explorer Info Booth', guideDescription: 'Meet Cubi, who explains the games.', chooseName: 'Name your explorer', chooseNameBody: 'Enter the name you want to use in the village.', nameInputPlaceholder: 'Enter a name', saveName: 'Set name', changeName: 'Change name', hatShop: 'Hat shop', companionShop: 'Cubi colors', yourPoints: 'Your points', locked: 'Locked', owned: 'Owned', buy: 'Buy', notEnoughPoints: 'Not enough points', guideWelcome: "Hi! I'm Cubi. Tap something you're curious about!", topicZones: 'Game zones', topicMap: '4 map games', topicShop: 'Points & shop', topicCurriculum: 'What will I learn?', back: 'Back', guideZonesBody: 'Flag Plaza uses flags, World Library uses clues, and Map Observatory uses the map to guess countries.', guideMapBody: 'Map Observatory has 4 games: find the country, name the country, guess the outline, and find it by flag.', guideShopBody: "Answering questions earns points (⭐). You can buy hats and Cubi colors in the shop from the character menu.", guideCurriculumBody: 'This game connects to the elementary social studies unit on "the nature and culture of countries around the world."', installNow: 'Install', installAndroid: 'Add to your home screen to play fullscreen, app-style, with no address bar!', installIOS: 'Tap Share → "Add to Home Screen" to install it like an app!', populationBands: { 'under-5m': 'under 5 million', '5m-20m': '5–20 million', '20m-50m': '20–50 million', '50m-100m': '50–100 million', '100m-300m': '100–300 million', '300m-1b': '300 million–1 billion', 'over-1b': 'over 1 billion' }, areaBands: { micro: 'a microstate', small: 'a small country', medium: 'a medium-sized country', large: 'a large country', 'very-large': 'a very large country' }, continents: { asia: 'Asia', europe: 'Europe', africa: 'Africa', 'north-america': 'North America', 'south-america': 'South America', oceania: 'Oceania', other: 'another region' }
   }
 };
 
@@ -105,7 +119,7 @@ function areaName(country) { return tr('areaBands')[country.areaBand] || country
 function randomItem(items) { return items[Math.floor(Math.random() * items.length)]; }
 function shuffle(items) { return [...items].sort(() => Math.random() - .5); }
 function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
-function saveState() { localStorage.setItem(GAME_KEY, JSON.stringify(state)); }
+function saveState() { localStorage.setItem(gameKey(), JSON.stringify(state)); }
 
 function applyLanguage() {
   document.documentElement.lang = state.lang === 'zh' ? 'zh-CN' : state.lang === 'ja' ? 'ja' : state.lang;
@@ -600,7 +614,7 @@ function buyItem(kind, id, price) {
   }
   characterDraft[kind === 'hat' ? 'hat' : 'companionSkin'] = id;
   characterState = { ...characterDraft };
-  saveCharacterState(characterState);
+  saveCharacterState(characterState,activeAccountId);
   if (kind === 'hat') rebuildCharacter(); else rebuildCompanion();
   renderCharacterDialog();
 }
@@ -621,7 +635,7 @@ function renderCharacterDialog() {
 function renderSwatches(rootSelector,values,key){const root=$(rootSelector);root.innerHTML=values.map(v=>`<button type="button" class="${Number(characterDraft[key])===v?'active':''}" data-value="${v}" aria-label="${key}" style="background:#${v.toString(16).padStart(6,'0')}"></button>`).join('');root.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{characterDraft[key]=Number(b.dataset.value);renderCharacterDialog();}));}
 function openCharacterDialog(){characterDraft={...characterState};renderCharacterDialog();$('#characterDialog').showModal();}
 $('#characterButton').addEventListener('click',openCharacterDialog); $('#closeCharacterDialog').addEventListener('click',()=>$('#characterDialog').close());
-$('#saveCharacter').addEventListener('click',()=>{characterState={...characterDraft};saveCharacterState(characterState);rebuildCharacter();rebuildCompanion();$('#characterDialog').close();});
+$('#saveCharacter').addEventListener('click',()=>{characterState={...characterDraft};saveCharacterState(characterState,activeAccountId);rebuildCharacter();rebuildCompanion();$('#characterDialog').close();});
 $('#characterDialog').addEventListener('click',e=>{if(e.target===$('#characterDialog'))$('#characterDialog').close();});
 $('#renameButton').addEventListener('click',()=>openNameDialog(false));
 
@@ -637,7 +651,7 @@ function openNameDialog(firstRun){
 function commitName(){
   const value = $('#nameInput').value.trim().slice(0,12);
   characterState = { ...characterState, playerName: value };
-  saveCharacterState(characterState);
+  saveCharacterState(characterState,activeAccountId);
   updateExplorerName();
   if ($('#dialogPlayerName')) renderCharacterDialog();
   $('#nameDialog').close();
@@ -645,6 +659,89 @@ function commitName(){
 $('#saveName').addEventListener('click',commitName);
 $('#closeNameDialog').addEventListener('click',()=>$('#nameDialog').close());
 $('#nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')commitName();});
+
+// ---------- intro + login flow ----------
+let loginDraft={name:'',pin:'',mode:null,targetAccountId:null};
+function showLoginStep(step){
+  $('#profileGrid').hidden=step!=='grid';
+  $('#newProfileButton').hidden=step!=='grid';
+  $('#nameStep').hidden=step!=='name';
+  $('#pinStep').hidden=step!=='pin';
+}
+function renderProfileGrid(){
+  const accounts=listAccounts();
+  $('#profileGrid').innerHTML=accounts.map(a=>`<button type="button" class="profile-card" data-account="${a.id}"><span class="profile-avatar">🧑‍🚀</span><span>${a.name}</span></button>`).join('');
+  $$('#profileGrid [data-account]').forEach(b=>b.addEventListener('click',()=>startUnlock(b.dataset.account,b.querySelector('span:last-child').textContent)));
+}
+function startCreateFlow(){
+  loginDraft={name:'',pin:'',mode:'create-name',targetAccountId:null};
+  $('#newProfileName').value='';
+  showLoginStep('name');
+  setTimeout(()=>$('#newProfileName').focus(),50);
+}
+function startUnlock(accountId,name){
+  loginDraft={name,pin:'',mode:'unlock',targetAccountId:accountId};
+  $('#pinInput').value='';$('#pinError').hidden=true;
+  $('#pinStepLabel').textContent=tr('pinUnlock',{name});
+  showLoginStep('pin');
+  setTimeout(()=>$('#pinInput').focus(),50);
+}
+function completeLogin(accountId,name){
+  activeAccountId=accountId;
+  localStorage.setItem('gfield-world-active-account-v1',accountId);
+  state=loadGameState();
+  characterState=loadCharacterState(accountId);
+  if(!characterState.playerName){characterState.playerName=name;saveCharacterState(characterState,accountId);}
+  $('#introScreen').hidden=true;$('#loginScreen').hidden=true;
+  boot();
+}
+$('#introStartButton').addEventListener('click',()=>{
+  $('#introScreen').hidden=true;$('#loginScreen').hidden=false;
+  renderProfileGrid();showLoginStep('grid');
+});
+$('#newProfileButton').addEventListener('click',startCreateFlow);
+$('#nameStepBack').addEventListener('click',()=>showLoginStep('grid'));
+$('#nameStepNext').addEventListener('click',()=>{
+  const name=$('#newProfileName').value.trim().slice(0,12);
+  if(!name)return;
+  loginDraft.name=name;loginDraft.mode='create-pin1';
+  $('#pinInput').value='';$('#pinError').hidden=true;
+  $('#pinStepLabel').textContent=tr('pinCreate1');
+  showLoginStep('pin');
+  setTimeout(()=>$('#pinInput').focus(),50);
+});
+$('#pinStepBack').addEventListener('click',()=>{
+  if(loginDraft.mode==='create-pin2'){loginDraft.mode='create-pin1';$('#pinStepLabel').textContent=tr('pinCreate1');$('#pinInput').value='';$('#pinError').hidden=true;return;}
+  if(loginDraft.mode==='create-pin1'){showLoginStep('name');return;}
+  showLoginStep('grid');
+});
+$('#pinStepConfirm').addEventListener('click',()=>{
+  const value=$('#pinInput').value.trim();
+  if(!/^\d{4}$/.test(value)){$('#pinError').hidden=false;$('#pinInput').value='';return;}
+  if(loginDraft.mode==='create-pin1'){
+    loginDraft.pin=value;loginDraft.mode='create-pin2';
+    $('#pinInput').value='';$('#pinError').hidden=true;
+    $('#pinStepLabel').textContent=tr('pinCreate2');
+    return;
+  }
+  if(loginDraft.mode==='create-pin2'){
+    if(value!==loginDraft.pin){
+      $('#pinError').hidden=false;$('#pinInput').value='';
+      loginDraft.mode='create-pin1';$('#pinStepLabel').textContent=tr('pinCreate1');
+      return;
+    }
+    const id=createAccount(loginDraft.name,value);
+    completeLogin(id,loginDraft.name);
+    return;
+  }
+  if(loginDraft.mode==='unlock'){
+    const account=listAccounts().find(a=>a.id===loginDraft.targetAccountId);
+    if(!account||account.pin!==value){$('#pinError').hidden=false;$('#pinInput').value='';return;}
+    completeLogin(account.id,account.name);
+  }
+});
+$('#pinInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('#pinStepConfirm').click();});
+$('#newProfileName').addEventListener('keydown',e=>{if(e.key==='Enter')$('#nameStepNext').click();});
 
 // ---------- guide booth dialogue ----------
 const GUIDE_TOPICS = ['topicZones','topicMap','topicShop','topicCurriculum'];
@@ -769,6 +866,7 @@ function setupFullscreen(){
     else{(el.requestFullscreen||el.webkitRequestFullscreen).call(el).catch(()=>{});}
   });
 }
+$('#switchProfileButton').addEventListener('click',()=>{state.village.x=player?.position?.x??state.village.x;state.village.z=player?.position?.z??state.village.z;saveState();location.reload();});
 function setupInstallBanner(){
   if(isStandaloneDisplay()||sessionStorage.getItem(INSTALL_DISMISS_KEY))return;
   if(isIOSDevice()){
@@ -803,7 +901,5 @@ function boot(){
   applyLanguage();renderCharacterDialog();initMap();
   try{buildWorld();}catch(error){console.error('3D village failed',error);$('#villageLoading').innerHTML='<strong>3D 마을을 시작하지 못했어요. WebGL과 인터넷 연결을 확인해 주세요.</strong>';}
   $('#voiceButton').textContent=state.audio?'🔊':'🔈';$('#voiceButton').setAttribute('aria-pressed',String(state.audio));
-  if(!characterState.playerName) setTimeout(()=>openNameDialog(true),900);
   setupFullscreen();setupInstallBanner();registerServiceWorker();
 }
-boot();
