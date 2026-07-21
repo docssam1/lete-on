@@ -16,7 +16,9 @@
 </head>
 <body class="village-mode">
   <section id="introSplash" class="intro-splash" aria-label="GFIELD World Explorer" aria-live="polite">
-    <img src="./assets/world-explorer-intro.png" alt="유준, 아리, 유빈 세계 탐험대" />
+    <video id="introVideo" autoplay muted playsinline preload="auto" poster="./assets/world-explorer-intro.png" aria-label="GFIELD World Explorer 소개 영상">
+      <source src="./assets/world-explorer-intro.mp4" type="video/mp4" />
+    </video>
     <div class="intro-shade"></div>
     <div class="intro-brand">
       <small>GFIELD</small>
@@ -25,6 +27,42 @@
     <div class="intro-loading">
       <span class="intro-compass" aria-hidden="true">✦</span>
       <div><strong data-intro-loading>세계 여행 준비 중…</strong><span class="intro-progress"><i></i></span></div>
+    </div>
+    <div class="intro-actions">
+      <button id="introSoundButton" type="button" data-intro-sound>🔊 소리 켜고 처음부터</button>
+      <button id="introSkipButton" type="button" data-intro-skip>건너뛰기</button>
+    </div>
+  </section>
+
+  <section id="explorerEntry" class="explorer-entry" hidden aria-labelledby="explorerEntryTitle">
+    <div class="explorer-entry-card">
+      <span class="entry-compass" aria-hidden="true">✦</span>
+      <small>GFIELD WORLD EXPLORER</small>
+      <h2 id="explorerEntryTitle" data-entry-title>탐험가 이름으로 접속하기</h2>
+      <p data-entry-body>세계 탐험 마을에서 사용할 이름을 적어 주세요.</p>
+      <form id="explorerEntryForm">
+        <label for="explorerName" data-entry-label>탐험가 이름</label>
+        <input id="explorerName" name="explorerName" type="text" maxlength="12" autocomplete="off" required placeholder="이름을 입력하세요" />
+        <button type="submit" data-entry-button>접속하기</button>
+      </form>
+      <p id="explorerEntryError" class="entry-error" role="alert" hidden></p>
+      <button id="newExplorerButton" class="new-explorer-button" type="button" data-entry-new>＋ 새 탐험가 만들기</button>
+      <section id="newExplorerPanel" class="new-explorer-panel" hidden>
+        <h3 data-create-title>새 탐험가를 만들어 보세요</h3>
+        <div class="new-profile-grid" role="radiogroup" aria-label="캐릭터 선택">
+          <button type="button" data-new-profile="ari" class="selected" aria-pressed="true"><span>🧭</span><b>아리</b></button>
+          <button type="button" data-new-profile="luca" aria-pressed="false"><span>🌍</span><b>루카</b></button>
+          <button type="button" data-new-profile="mina" aria-pressed="false"><span>📚</span><b>미나</b></button>
+          <button type="button" data-new-profile="yujun" aria-pressed="false"><span>🗺️</span><b>유준</b></button>
+          <button type="button" data-new-profile="yubin" aria-pressed="false"><span>🔭</span><b>유빈</b></button>
+        </div>
+        <form id="newExplorerForm">
+          <input id="newExplorerName" type="text" maxlength="12" autocomplete="off" required placeholder="새 탐험가 이름" />
+          <button type="submit" data-create-button>만들고 시작하기</button>
+        </form>
+        <button id="backToEntry" class="back-to-entry" type="button" data-create-back>기존 탐험가 접속으로</button>
+      </section>
+      <em data-entry-note>이름과 진행 기록은 이 기기에만 저장됩니다.</em>
     </div>
   </section>
 
@@ -175,7 +213,45 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
 
-  <script type="module" src="./village.js?v=pwa-2"></script>
+  <script>
+    (() => {
+      const splash=document.getElementById('introSplash');
+      const video=document.getElementById('introVideo');
+      const sound=document.getElementById('introSoundButton');
+      const skip=document.getElementById('introSkipButton');
+      const entry=document.getElementById('explorerEntry');
+      const entryForm=document.getElementById('explorerEntryForm');
+      const nameInput=document.getElementById('explorerName');
+      const entryError=document.getElementById('explorerEntryError');
+      const newExplorerButton=document.getElementById('newExplorerButton');
+      const newExplorerPanel=document.getElementById('newExplorerPanel');
+      const newExplorerForm=document.getElementById('newExplorerForm');
+      const newExplorerName=document.getElementById('newExplorerName');
+      const backToEntry=document.getElementById('backToEntry');
+      if(!splash)return;
+      let lang='ko';
+      try{lang=JSON.parse(localStorage.getItem('gfield-world-explorer-v1')||'{}').lang||'ko';}catch{}
+      const copy={ko:['세계 여행 준비 중…','🔊 소리 켜고 처음부터','건너뛰기','탐험가 이름으로 접속하기','저장된 탐험가 이름으로 접속하세요. 처음이라면 새 탐험가를 만들어 주세요.','탐험가 이름','이름을 입력하세요','접속하기','이름과 진행 기록은 이 기기에만 저장됩니다.','＋ 새 탐험가 만들기','새 탐험가를 만들어 보세요','새 탐험가 이름','만들고 시작하기','기존 탐험가 접속으로','저장된 탐험가를 찾을 수 없어요. 새 탐험가 만들기를 눌러 주세요.'],zh:['正在准备世界旅行…','🔊 开启声音并重播','跳过','使用探险家名字进入','使用已保存的探险家名字进入。第一次请创建新探险家。','探险家名字','请输入名字','进入','名字和进度只保存在此设备上。','＋ 创建新探险家','创建你的新探险家','新探险家名字','创建并开始','返回已有探险家','找不到已保存的探险家。请创建新探险家。'],ja:['世界旅行を準備中…','🔊 音を出して最初から','スキップ','探検家の名前で入る','保存済みの探検家名で入ってください。初めてなら新しい探検家を作りましょう。','探検家の名前','名前を入力','入る','名前と進行記録はこの端末だけに保存されます。','＋ 新しい探検家を作る','新しい探検家を作ろう','新しい探検家名','作って始める','既存の探検家に戻る','保存された探検家が見つかりません。新しく作ってください。'],en:['Preparing your world journey…','🔊 Sound on & restart','Skip','Enter as an explorer','Use your saved explorer name. If this is your first visit, create a new explorer.','Explorer name','Enter your name','Enter','Your name and progress stay on this device.','＋ Create a new explorer','Create your new explorer','New explorer name','Create and start','Back to explorer entry','No saved explorer was found. Please create a new explorer.']}[lang]||[];
+      splash.querySelector('[data-intro-loading]').textContent=copy[0];sound.textContent=copy[1];skip.textContent=copy[2];
+      entry.querySelector('[data-entry-title]').textContent=copy[3];entry.querySelector('[data-entry-body]').textContent=copy[4];entry.querySelector('[data-entry-label]').textContent=copy[5];nameInput.placeholder=copy[6];entry.querySelector('[data-entry-button]').textContent=copy[7];entry.querySelector('[data-entry-note]').textContent=copy[8];entry.querySelector('[data-entry-new]').textContent=copy[9];entry.querySelector('[data-create-title]').textContent=copy[10];newExplorerName.placeholder=copy[11];entry.querySelector('[data-create-button]').textContent=copy[12];entry.querySelector('[data-create-back]').textContent=copy[13];
+      const profileNames={ko:['아리','루카','미나','유준','유빈'],zh:['Ari','Luca','Mina','Yujun','Yubin'],ja:['Ari','Luca','Mina','Yujun','Yubin'],en:['Ari','Luca','Mina','Yujun','Yubin']}[lang];entry.querySelectorAll('[data-new-profile] b').forEach((label,index)=>label.textContent=profileNames[index]);
+      let savedExplorer={};try{savedExplorer=JSON.parse(localStorage.getItem('gfield-world-character-v2')||'{}');nameInput.value=savedExplorer.explorerName||'';}catch{}
+      let leaving=false;
+      const leave=()=>{if(leaving)return;leaving=true;video?.pause();entry.hidden=false;requestAnimationFrame(()=>entry.classList.add('show'));splash.classList.add('leave');setTimeout(()=>{splash.remove();nameInput.focus();},700);};
+      video?.addEventListener('ended',leave,{once:true});video?.addEventListener('error',()=>setTimeout(leave,2200),{once:true});skip.addEventListener('click',leave);
+      sound.addEventListener('click',async()=>{video.muted=false;video.currentTime=0;sound.hidden=true;try{await video.play();}catch{sound.hidden=false;}});
+      const attempt=video?.play();attempt?.catch(()=>setTimeout(leave,3500));setTimeout(()=>{if(video&&video.currentTime===0&&video.paused)leave();},7000);
+      const enterVillage=explorerName=>{document.documentElement.dataset.explorerName=explorerName;entry.classList.add('leave');setTimeout(()=>entry.remove(),450);};
+      entryForm.addEventListener('submit',event=>{event.preventDefault();const explorerName=nameInput.value.trim();if(savedExplorer.explorerName&&savedExplorer.explorerName.toLocaleLowerCase()===explorerName.toLocaleLowerCase()){entryError.hidden=true;enterVillage(savedExplorer.explorerName);return;}entryError.textContent=copy[14];entryError.hidden=false;});
+      const showCreation=()=>{entry.classList.add('creating');entryForm.hidden=true;newExplorerButton.hidden=true;entryError.hidden=true;newExplorerPanel.hidden=false;newExplorerName.focus();};
+      const showEntry=()=>{entry.classList.remove('creating');newExplorerPanel.hidden=true;entryForm.hidden=false;newExplorerButton.hidden=false;nameInput.focus();};
+      newExplorerButton.addEventListener('click',showCreation);backToEntry.addEventListener('click',showEntry);
+      let selectedProfile='ari';
+      entry.querySelectorAll('[data-new-profile]').forEach(button=>button.addEventListener('click',()=>{selectedProfile=button.dataset.newProfile;entry.querySelectorAll('[data-new-profile]').forEach(item=>{const selected=item===button;item.classList.toggle('selected',selected);item.setAttribute('aria-pressed',String(selected));});}));
+      newExplorerForm.addEventListener('submit',event=>{event.preventDefault();const explorerName=newExplorerName.value.trim();if(!explorerName){newExplorerName.focus();return;}const defaultHats={ari:'explorer',luca:'cap',mina:'beret',yujun:'explorer',yubin:'beret'};savedExplorer={...savedExplorer,explorerName,profile:selectedProfile,hat:defaultHats[selectedProfile],ownedHats:[...new Set([...(savedExplorer.ownedHats||[]),'none','explorer','cap','beret'])]};localStorage.setItem('gfield-world-character-v2',JSON.stringify(savedExplorer));window.dispatchEvent(new CustomEvent('gfield-character-changed',{detail:savedExplorer}));enterVillage(explorerName);});
+    })();
+  </script>
+  <script type="module" src="./village.js?v=video-3"></script>
   <script type="module" src="./app.js?v=offline-4"></script>
 </body>
 </html>

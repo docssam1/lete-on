@@ -21,7 +21,6 @@ const joystick = $('#joystick');
 const joystickKnob = $('#joystickKnob');
 const infoDialog = $('#villageInfoDialog');
 const infoContent = $('#villageInfoContent');
-const introSplash = $('#introSplash');
 
 const translations = {
   ko: {
@@ -132,6 +131,8 @@ function syncVillageUi() {
   $$('.language-switch button').forEach(button => button.classList.toggle('active', button.dataset.lang === currentLang));
   $('#villagePoints').textContent = gameState.points || 0;
   $('#villageSolved').textContent = Array.isArray(gameState.solved) ? gameState.solved.length : 0;
+  const explorerTitle=document.querySelector('.village-quest small');
+  if(explorerTitle)explorerTitle.textContent=`WORLD EXPLORER ${characterState.explorerName||displayName(profileFor(characterState.profile),currentLang)}`;
   updateZonePrompt();
   zones.forEach(zone => updateZoneLabel(zone));
 }
@@ -952,6 +953,7 @@ window.addEventListener('keydown', event => {
 window.addEventListener('keyup', event => keys.delete(event.code));
 window.addEventListener('resize', resize);
 window.addEventListener('beforeunload', saveVillageState);
+window.addEventListener('gfield-character-changed',event=>{characterState={...characterState,...event.detail};saveCharacterState(characterState);if(scene&&player)rebuildExplorer();syncVillageUi();});
 document.addEventListener('visibilitychange', () => { if (!document.hidden && clock) clock.getDelta(); });
 
 enterZoneButton.addEventListener('click', enterActiveZone);
@@ -968,7 +970,6 @@ $$('.language-switch button').forEach(button => button.addEventListener('click',
 
 syncVillageUi();
 setupPwa();
-finishIntroWhenReady();
 try {
   buildWorld();
 } catch (error) {
@@ -988,23 +989,4 @@ function setupPwa(){
   dismiss?.addEventListener('click',()=>{banner.hidden=true;localStorage.setItem('gfield-install-dismissed','1');});
   if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!standalone)setTimeout(()=>show(true),900);
   addEventListener('appinstalled',()=>{banner.hidden=true;prompt=null;});
-}
-
-function finishIntroWhenReady(){
-  if(!introSplash)return;
-  const started=performance.now();
-  const labels={ko:'세계 여행 준비 중…',zh:'正在准备世界旅行…',ja:'世界旅行を準備中…',en:'Preparing your world journey…'};
-  const label=introSplash.querySelector('[data-intro-loading]');if(label)label.textContent=labels[currentLang]||labels.ko;
-  const check=()=>{
-    const minimumElapsed=performance.now()-started>2200;
-    const villageReady=loading?.classList.contains('hide');
-    const safetyTimeout=performance.now()-started>12000;
-    if(minimumElapsed&&(villageReady||safetyTimeout)){
-      introSplash.classList.add('leave');
-      setTimeout(()=>introSplash.remove(),700);
-      return;
-    }
-    requestAnimationFrame(check);
-  };
-  requestAnimationFrame(check);
 }
