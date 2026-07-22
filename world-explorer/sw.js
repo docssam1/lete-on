@@ -1,4 +1,4 @@
-const CACHE_NAME = 'world-explorer-shell-v1';
+const CACHE_NAME = 'world-explorer-shell-v2';
 const SCOPE = '/world-explorer/';
 const APP_SHELL = [
   SCOPE,
@@ -40,16 +40,23 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin || !url.pathname.startsWith(SCOPE)) return;
 
+  const needsFreshCode = event.request.mode === 'navigate' || ['script', 'style', 'worker'].includes(event.request.destination);
+  if (needsFreshCode) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          if (response.ok) caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      const network = fetch(event.request).then(response => {
-        if (response.ok) {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
-        }
-        return response;
-      }).catch(() => cached);
-      return cached || network;
-    })
+    caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
+      if (response.ok) caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
+      return response;
+    }))
   );
 });

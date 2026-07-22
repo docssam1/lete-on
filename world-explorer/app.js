@@ -898,7 +898,12 @@ function registerServiceWorker(){
 
 // ---------- boot ----------
 function boot(){
-  applyLanguage();renderCharacterDialog();initMap();
+  applyLanguage();renderCharacterDialog();
+  try{initMap();}catch(error){
+    console.error('World map initialization failed',error);
+    $('#villageLoading').innerHTML='<strong>세계지도를 시작하지 못했어요. 브라우저를 완전히 닫고 다시 열어 주세요.</strong>';
+    return;
+  }
   try{buildWorld();}catch(error){console.error('3D village failed',error);$('#villageLoading').innerHTML='<strong>3D 마을을 시작하지 못했어요. WebGL과 인터넷 연결을 확인해 주세요.</strong>';}
   $('#voiceButton').textContent=state.audio?'🔊':'🔈';$('#voiceButton').setAttribute('aria-pressed',String(state.audio));
   setupFullscreen();setupInstallBanner();registerServiceWorker();
