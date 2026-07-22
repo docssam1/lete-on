@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
   <meta name="theme-color" content="#17394a" />
   <title>GFIELD World Explorer MAX</title>
-  <link rel="stylesheet" href="./styles.css?v=1" />
+  <link rel="stylesheet" href="./styles.css?v=8" />
   <link rel="manifest" href="/world-explorer/manifest.webmanifest" />
+  <link rel="icon" href="/world-explorer/assets/icons/icon-192.png" type="image/png" />
   <link rel="apple-touch-icon" href="/world-explorer/assets/icons/apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -21,6 +22,10 @@
   <div id="fadeLayer" class="fade-layer" aria-hidden="true"></div>
 
   <section id="introScreen" class="pre-screen intro-screen">
+    <video id="introVideo" class="intro-video" autoplay muted playsinline preload="auto" poster="./assets/icons/icon-512.png">
+      <source src="./assets/intro/gfield-world-explorer-intro.mp4" type="video/mp4" />
+    </video>
+    <div class="intro-vignette" aria-hidden="true"></div>
     <h1 class="game-logo" aria-label="GFIELD World Explorer">
       <span class="lg-word"><span class="lg" style="--i:0">G</span><span class="lg" style="--i:1">F</span><span class="lg" style="--i:2">I</span><span class="lg" style="--i:3">E</span><span class="lg" style="--i:4">L</span><span class="lg" style="--i:5">D</span></span>
       <span class="lg-word"><span class="lg" style="--i:6">W</span><span class="lg" style="--i:7">o</span><span class="lg" style="--i:8">r</span><span class="lg" style="--i:9">l</span><span class="lg" style="--i:10">d</span></span>
@@ -32,6 +37,9 @@
 
   <section id="loginScreen" class="pre-screen login-screen" hidden>
     <h2 data-i18n="loginTitle">탐험가 로그인</h2>
+    <div class="language-switch login-language-switch" role="group" aria-label="Language">
+      <button type="button" data-lang="ko" class="active">한</button><button type="button" data-lang="zh">中</button><button type="button" data-lang="ja">日</button><button type="button" data-lang="en">EN</button>
+    </div>
     <div id="profileGrid" class="profile-grid"></div>
     <button id="newProfileButton" class="profile-card new-profile" type="button">
       <span class="profile-avatar">➕</span><span data-i18n="newProfile">새 탐험가 만들기</span>
@@ -57,7 +65,7 @@
     </div>
   </section>
 
-  <section id="villageScreen" class="screen village-screen active" aria-label="3D 세계 탐험 마을">
+  <section id="villageScreen" class="screen village-screen" aria-label="3D 세계 탐험 마을" hidden>
     <div id="villageViewport" class="village-viewport"></div>
 
     <header class="hud top-hud">
@@ -136,12 +144,13 @@
           <button type="button" data-map-mode="flag-map" data-i18n="flagMap">국기로 찾기</button>
         </div>
 
-        <div id="flagVisual" class="center-visual" hidden><div id="bigFlag" class="big-flag">🇰🇷</div></div>
+        <div id="flagVisual" class="center-visual" hidden><img id="bigFlag" class="big-flag" src="./assets/flags/kr.svg" alt="대한민국 국기" /></div>
         <div id="clueVisual" class="center-visual" hidden><article class="clue-book"><span>📖</span><p id="clueText"></p></article></div>
         <div id="shapeVisual" class="center-visual" hidden><svg id="shapeSvg" viewBox="0 0 500 290" role="img" aria-label="국가 윤곽 지도"></svg></div>
         <div id="mapStage" class="map-stage" hidden>
           <svg id="worldSvg" viewBox="0 0 1000 520" role="img" aria-label="195개국 세계지도"></svg>
           <div id="mapTooltip" class="map-tooltip" hidden></div>
+          <div id="mapSelectionLabel" class="map-selection-label" hidden aria-live="polite"></div>
           <div class="map-toolbar"><button id="mapZoomIn" type="button">＋</button><button id="mapZoomOut" type="button">−</button><button id="mapReset" type="button">⌂</button></div>
           <div class="map-legend"><span><i class="legend-unseen"></i><b data-i18n="unseen">미발견</b></span><span><i class="legend-solved"></i><b data-i18n="solved">발견</b></span><span><i class="legend-target"></i><b data-i18n="target">문제</b></span></div>
         </div>
@@ -184,6 +193,6 @@
     </article>
   </dialog>
 
-  <script type="module" src="./app.js?v=1"></script>
+  <script type="module" src="./app.js?v=8"></script>
 </body>
 </html>

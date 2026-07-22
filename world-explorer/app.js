@@ -29,6 +29,7 @@ const defaultState = {
 };
 
 let activeAccountId = null;
+let villageLoadingStartedAt = 0;
 function gameKey() { return activeAccountId ? `${GAME_KEY}:${activeAccountId}` : GAME_KEY; }
 function loadGameState() {
   try {
@@ -113,6 +114,16 @@ function tr(key, vars = {}) {
 }
 
 function countryName(country) { return country?.names?.[state.lang] || country?.names?.en || country?.id || ''; }
+function flagAssetPath(country) { return `./assets/flags/${country.id.toLowerCase()}.svg`; }
+function setFlagImage(image, country) {
+  image.src = flagAssetPath(country);
+  image.alt = `${countryName(country)} flag`;
+  image.title = countryName(country);
+}
+function flagImageMarkup(country, className = '') {
+  return `<img${className ? ` class="${className}"` : ''} src="${flagAssetPath(country)}" alt="${countryName(country)} flag">`;
+}
+function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch])); }
 function regionName(country) { return subregionNames[state.lang]?.[country.subregion] || country.subregion || tr('continents')[country.continent] || country.continent; }
 function populationName(country) { return tr('populationBands')[country.populationBand] || country.populationBand; }
 function areaName(country) { return tr('areaBands')[country.areaBand] || country.areaBand; }
@@ -120,6 +131,76 @@ function randomItem(items) { return items[Math.floor(Math.random() * items.lengt
 function shuffle(items) { return [...items].sort(() => Math.random() - .5); }
 function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 function saveState() { localStorage.setItem(gameKey(), JSON.stringify(state)); }
+
+const studyLabels = {
+  ko: { geography: '지리', human: '문화·사회', history: '역사' },
+  zh: { geography: '地理', human: '文化·社会', history: '历史' },
+  ja: { geography: '地理', human: '文化・社会', history: '歴史' },
+  en: { geography: 'Geography', human: 'Culture', history: 'History' }
+};
+
+const continentStudyNotes = {
+  ko: {
+    asia: ['산지·평야·해안과 큰 강이 다양하게 나타나는 대륙이에요.', '여러 언어·종교·음식 문화가 함께 발달했어요.', '고대 문명과 교역로가 이어지며 주변 지역과 활발히 교류했어요.'],
+    europe: ['반도와 평야, 산맥이 가까이 이어져 나라 사이의 교류가 활발했어요.', '도시 문화와 예술, 과학, 의회 제도가 발달한 지역이에요.', '고대 그리스·로마와 근대 산업화가 세계사에 큰 영향을 주었어요.'],
+    africa: ['사막, 사바나, 열대우림, 큰 강처럼 자연환경이 매우 다양해요.', '다양한 언어와 음악, 공동체 문화가 살아 있는 대륙이에요.', '고대 문명과 왕국, 무역로의 역사가 이어져 왔어요.'],
+    'north-america': ['넓은 평야와 산맥, 호수, 섬 지역이 함께 나타나요.', '원주민 문화와 이민 문화가 만나 다양한 사회를 이루었어요.', '대서양과 태평양을 잇는 교류가 현대 사회 발전에 영향을 주었어요.'],
+    'south-america': ['안데스산맥, 아마존강, 넓은 평원이 대표적인 자연환경이에요.', '원주민 문화와 유럽·아프리카 문화가 섞여 다양한 생활 문화를 만들었어요.', '고대 문명과 식민지 시대, 독립 운동의 역사를 배울 수 있어요.'],
+    oceania: ['섬과 바다, 산호초, 건조한 내륙 등 독특한 자연환경이 있어요.', '태평양 섬 문화와 원주민 문화가 중요한 의미를 가져요.', '바다를 건넌 이동과 교류의 역사가 이어진 지역이에요.']
+  },
+  en: {
+    asia: ['Asia has a wide mix of mountains, plains, coasts, and major rivers.', 'Many languages, religions, foods, and ways of life developed here.', 'Ancient civilizations and trade routes connected this region with the wider world.'],
+    europe: ['Europe has peninsulas, plains, mountains, and many closely connected countries.', 'Cities, arts, science, and parliamentary traditions developed strongly here.', 'Ancient Greece and Rome, and later industrialization, shaped world history.'],
+    africa: ['Africa includes deserts, savannas, rainforests, highlands, and major rivers.', 'Its societies include many languages, music traditions, and community cultures.', 'Ancient civilizations, kingdoms, and trade routes are important parts of its history.'],
+    'north-america': ['North America includes broad plains, mountains, lakes, islands, and coasts.', 'Indigenous cultures and immigrant communities shaped diverse societies.', 'Atlantic and Pacific connections helped shape modern trade and culture.'],
+    'south-america': ['South America is known for the Andes, the Amazon, and broad plains.', 'Indigenous, European, and African influences shaped many cultures.', 'Ancient civilizations, colonial history, and independence movements are key themes.'],
+    oceania: ['Oceania includes islands, oceans, reefs, and unique inland landscapes.', 'Pacific Islander and Indigenous cultures are central to the region.', 'Voyaging across the sea and cultural exchange are important historical themes.']
+  },
+  zh: {
+    asia: ['亚洲有山地、平原、海岸和大河等多样自然环境。', '这里发展出多种语言、宗教、饮食和生活文化。', '古代文明和贸易路线让这一地区与世界各地相连。'],
+    europe: ['欧洲有半岛、平原和山脉，国家之间交流频繁。', '城市文化、艺术、科学和议会制度在这里发展。', '古希腊、古罗马和近代工业化对世界历史影响很大。'],
+    africa: ['非洲有沙漠、草原、雨林、高原和大河。', '这里有丰富的语言、音乐和共同体文化。', '古代文明、王国和贸易路线是重要历史主题。'],
+    'north-america': ['北美洲有广阔平原、山脉、湖泊、岛屿和海岸。', '原住民文化和移民文化共同塑造了多元社会。', '大西洋和太平洋之间的交流影响了现代贸易与文化。'],
+    'south-america': ['南美洲以安第斯山脉、亚马孙河和广阔平原闻名。', '原住民、欧洲和非洲文化共同形成多样生活方式。', '古代文明、殖民时期和独立运动是重要历史内容。'],
+    oceania: ['大洋洲有岛屿、海洋、珊瑚礁和独特内陆景观。', '太平洋岛屿文化和原住民文化很重要。', '跨海航行与交流是这一地区的重要历史主题。']
+  },
+  ja: {
+    asia: ['アジアには山地、平野、海岸、大きな川など多様な自然があります。', '多くの言語、宗教、食文化、生活文化が発展しました。', '古代文明と交易路が地域を世界とつなげてきました。'],
+    europe: ['ヨーロッパには半島、平野、山脈が近くにあり、国どうしの交流が盛んでした。', '都市文化、芸術、科学、議会のしくみが発展した地域です。', '古代ギリシャ・ローマや近代の産業化が世界史に大きな影響を与えました。'],
+    africa: ['アフリカには砂漠、サバナ、熱帯雨林、高原、大きな川があります。', '多様な言語、音楽、共同体文化が大切にされています。', '古代文明、王国、交易路の歴史を学べる地域です。'],
+    'north-america': ['北アメリカには広い平野、山脈、湖、島、海岸があります。', '先住民文化と移民文化が多様な社会を形づくりました。', '大西洋と太平洋を結ぶ交流が現代の貿易や文化に影響しました。'],
+    'south-america': ['南アメリカはアンデス山脈、アマゾン川、広い平野で知られます。', '先住民、ヨーロッパ、アフリカの文化が混ざり合っています。', '古代文明、植民地時代、独立運動が重要な歴史テーマです。'],
+    oceania: ['オセアニアには島、海、サンゴ礁、独特な内陸の自然があります。', '太平洋の島々の文化と先住民文化が大切です。', '海を越えた移動と交流が重要な歴史です。']
+  }
+};
+
+function sentenceFor(lang, ko, en, zh, ja) {
+  if (lang === 'en') return en;
+  if (lang === 'zh') return zh;
+  if (lang === 'ja') return ja;
+  return ko;
+}
+
+function countryStudyFacts(country) {
+  const lang = state.lang;
+  const labels = studyLabels[lang] || studyLabels.ko;
+  const notes = continentStudyNotes[lang]?.[country.continent] || continentStudyNotes[lang]?.asia || continentStudyNotes.ko.asia;
+  const name = countryName(country);
+  const region = regionName(country);
+  const capital = country.capital || name;
+  const population = populationName(country);
+  const area = areaName(country);
+  const useWrittenKorean = lang === 'ko';
+  const facts = [
+    { label: labels.geography, text: useWrittenKorean && country.geography ? country.geography : sentenceFor(lang, `${name}은(는) ${region}에 있어요. ${notes[0]}`, `${name} is in ${region}. ${notes[0]}`, `${name}位于${region}。${notes[0]}`, `${name}は${region}にあります。${notes[0]}`) },
+    { label: labels.human, text: useWrittenKorean && country.human ? country.human : sentenceFor(lang, `수도는 ${capital}이고, 인구 규모는 ${population} 정도예요. ${notes[1]}`, `Its capital is ${capital}, and its population is ${population}. ${notes[1]}`, `首都是${capital}，人口规模约为${population}。${notes[1]}`, `首都は${capital}で、人口規模は${population}です。${notes[1]}`) },
+    { label: labels.history, text: useWrittenKorean && country.history ? country.history : sentenceFor(lang, `${area}에 해당하는 나라예요. ${notes[2]}`, `It is ${area}. ${notes[2]}`, `它属于${area}。${notes[2]}`, `${area}にあたる国です。${notes[2]}`) }
+  ];
+  const clue = useWrittenKorean && country.clue
+    ? `${country.clue} ${country.human || ''}`.trim()
+    : sentenceFor(lang, `이 나라는 ${region}에 있어요. 수도는 ${capital}이고, ${area}이며 인구는 ${population} 정도예요.`, `This country is in ${region}. Its capital is ${capital}. It is ${area}, with a population of ${population}.`, `这个国家位于${region}，首都是${capital}。它属于${area}，人口约为${population}。`, `この国は${region}にあります。首都は${capital}です。${area}で、人口は${population}です。`);
+  return { facts, clue };
+}
 
 function applyLanguage() {
   document.documentElement.lang = state.lang === 'zh' ? 'zh-CN' : state.lang === 'ja' ? 'ja' : state.lang;
@@ -156,6 +237,13 @@ const colliders = [];
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+
+function finishVillageLoading() {
+  const loading = $('#villageLoading');
+  const elapsed = performance.now() - villageLoadingStartedAt;
+  const remaining = Math.max(0, 1600 - elapsed);
+  window.setTimeout(() => loading.classList.add('done'), remaining);
+}
 
 const zoneDefinitions = [
   { id: 'flag', mode: 'flag', icon: '🏳️', x: -12, z: -7, radius: 3.35, labelKey: 'flagZone', descriptionKey: 'flagDescription', color: 0xe65f52 },
@@ -366,7 +454,7 @@ function buildWorld() {
   clock = new THREE.Clock();
   renderer.setAnimationLoop(animateVillage);
   worldReady = true;
-  $('#villageLoading').classList.add('done');
+  finishVillageLoading();
   updateCameraLabel(); updateVillageUi();
 }
 
@@ -462,10 +550,10 @@ function npcFact(lang) {
   const c = randomItem(countries195);
   const region = regionName(c), pop = populationName(c), area = areaName(c);
   const templates = {
-    ko: [`${c.flag} ${countryName(c)}의 수도는 ${c.capital}이에요!`, `${c.flag} ${countryName(c)}은(는) ${region}에 있어요.`, `${c.flag} ${countryName(c)}은(는) ${area}이고 인구는 ${pop} 정도예요.`],
-    zh: [`${c.flag} ${countryName(c)}的首都是${c.capital}！`, `${c.flag} ${countryName(c)}位于${region}。`, `${c.flag} ${countryName(c)}是${area}，人口约为${pop}。`],
-    ja: [`${c.flag} ${countryName(c)}の首都は${c.capital}だよ！`, `${c.flag} ${countryName(c)}は${region}にあるよ。`, `${c.flag} ${countryName(c)}は${area}で、人口は${pop}くらいだよ。`],
-    en: [`${c.flag} The capital of ${countryName(c)} is ${c.capital}!`, `${c.flag} ${countryName(c)} is in ${region}.`, `${c.flag} ${countryName(c)} is ${area}, with about ${pop} people.`]
+    ko: [`${countryName(c)}의 수도는 ${c.capital}이에요!`, `${countryName(c)}은(는) ${region}에 있어요.`, `${countryName(c)}은(는) ${area}이고 인구는 ${pop} 정도예요.`],
+    zh: [`${countryName(c)}的首都是${c.capital}！`, `${countryName(c)}位于${region}。`, `${countryName(c)}是${area}，人口约为${pop}。`],
+    ja: [`${countryName(c)}の首都は${c.capital}だよ！`, `${countryName(c)}は${region}にあるよ。`, `${countryName(c)}は${area}で、人口は${pop}くらいだよ。`],
+    en: [`The capital of ${countryName(c)} is ${c.capital}!`, `${countryName(c)} is in ${region}.`, `${countryName(c)} is ${area}, with about ${pop} people.`]
   };
   const list = templates[lang] || templates.ko;
   return randomItem(list);
@@ -546,8 +634,12 @@ function moveToWorldPoint(clientX, clientY) {
 
 function navigateToZone(id) {
   const zone = zoneDefinitions.find(z => z.id === id); if (!zone) return;
-  targetPoint = resolvePosition(zone.entry.clone().add(new THREE.Vector3(0,0,1.05)));
-  $('#villageGuide').textContent = `${tr(zone.labelKey)} →`;
+  targetPoint = null;
+  player.position.copy(zone.entry.clone());
+  playerVelocity.set(0, 0, 0);
+  activeZone = zone;
+  renderZonePrompt();
+  $('#villageGuide').textContent = `${tr(zone.labelKey)} · ${tr(zone.descriptionKey)}`;
 }
 
 function bindVillageControls() {
@@ -693,12 +785,32 @@ function completeLogin(accountId,name){
   characterState=loadCharacterState(accountId);
   if(!characterState.playerName){characterState.playerName=name;saveCharacterState(characterState,accountId);}
   $('#introScreen').hidden=true;$('#loginScreen').hidden=true;
+  $('#villageScreen').hidden=false;$('#villageScreen').classList.add('active');
+  const loading = $('#villageLoading');
+  loading.classList.remove('done');
+  villageLoadingStartedAt = performance.now();
   boot();
 }
-$('#introStartButton').addEventListener('click',()=>{
+async function requestAppFullscreen(){
+  const target = document.documentElement;
+  const request = target.requestFullscreen || target.webkitRequestFullscreen || target.msRequestFullscreen;
+  if (!request || document.fullscreenElement || document.webkitFullscreenElement) return;
+  try { await request.call(target); } catch {}
+}
+function enterLoginFromIntro(){
+  const video = $('#introVideo');
+  if (video) { try { video.pause(); } catch {} }
   $('#introScreen').hidden=true;$('#loginScreen').hidden=false;
   renderProfileGrid();showLoginStep('grid');
+}
+$('#introStartButton').addEventListener('click',async()=>{
+  await requestAppFullscreen();
+  enterLoginFromIntro();
 });
+if ($('#introVideo')) {
+  $('#introVideo').addEventListener('ended', enterLoginFromIntro);
+  $('#introVideo').play().catch(()=>{});
+}
 $('#newProfileButton').addEventListener('click',startCreateFlow);
 $('#nameStepBack').addEventListener('click',()=>showLoginStep('grid'));
 $('#nameStepNext').addEventListener('click',()=>{
@@ -773,7 +885,7 @@ function chooseTarget(requireShape=false) {
   const target=randomItem(pool);game.lastId=target.id;return target;
 }
 function choicePool(target){let pool=countries195.filter(c=>c.id!==target.id&&c.continent===target.continent);if(pool.length<3)pool=countries195.filter(c=>c.id!==target.id);return shuffle([target,...shuffle(pool).slice(0,3)]);}
-function clueFor(c){if(state.lang==='ko'&&c.clue)return `${c.clue} ${c.human||''}`.trim();const capital=c.capital||countryName(c);const region=regionName(c),pop=populationName(c),area=areaName(c);if(state.lang==='en')return `This country is in ${region}. Its capital is ${capital}. It is ${area}, with a population of ${pop}.`;if(state.lang==='ja')return `この国は${region}にあります。首都は${capital}です。${area}で、人口は${pop}です。`;if(state.lang==='zh')return `这个国家位于${region}，首都是${capital}。它属于${area}，人口约为${pop}。`;return `이 나라는 ${region}에 있어요. 수도는 ${capital}이고, ${area}이며 인구는 ${pop} 정도예요.`;}
+function clueFor(c){return countryStudyFacts(c).clue;}
 
 function transitionScreens(callback){const fade=$('#fadeLayer');fade.classList.add('show');setTimeout(()=>{callback();requestAnimationFrame(()=>setTimeout(()=>fade.classList.remove('show'),50));},280);}
 function startGame(mode){
@@ -789,7 +901,7 @@ function returnVillage(){
 function nextQuestion(){
   if(game.index>=game.total){showSessionResult();return;}
   game.index+=1;game.target=chooseTarget(game.mode==='location'&&game.mapMode==='shape-name');game.choices=choicePool(game.target);game.hintLevel=0;game.selectedMap=null;game.locked=false;
-  $('#hintBox').hidden=true;$('#confirmMap').disabled=true;$('#feedbackOverlay').hidden=true;renderQuestion();
+  $('#hintBox').hidden=true;$('#confirmMap').disabled=true;$('#feedbackOverlay').hidden=true;$('#mapSelectionLabel').hidden=true;renderQuestion();
 }
 
 function renderQuestion(preserve=false){
@@ -799,7 +911,7 @@ function renderQuestion(preserve=false){
   $('#flagVisual').hidden=true;$('#clueVisual').hidden=true;$('#shapeVisual').hidden=true;$('#mapStage').hidden=true;$('#mapSubmodeTabs').hidden=game.mode!=='location';$('#answers').innerHTML='';$('#confirmMap').hidden=true;$('#questionSupport').textContent='';
   $$('#mapSubmodeTabs button').forEach(b=>b.classList.toggle('active',b.dataset.mapMode===game.mapMode));
   if(game.mode==='flag'){
-    $('#gameModeIcon').textContent='🏳️';$('#gameModeLabel').textContent='FLAG PLAZA';$('#gameQuestionTitle').textContent=tr('flagTitle');$('#questionPrompt').textContent=tr('flagPrompt');$('#questionSupport').textContent=tr('selectAnswer');$('#flagVisual').hidden=false;$('#bigFlag').textContent=c.flag;renderAnswers();
+    $('#gameModeIcon').textContent='🏳️';$('#gameModeLabel').textContent='FLAG PLAZA';$('#gameQuestionTitle').textContent=tr('flagTitle');$('#questionPrompt').textContent=tr('flagPrompt');$('#questionSupport').textContent=tr('selectAnswer');$('#flagVisual').hidden=false;setFlagImage($('#bigFlag'),c);renderAnswers();
   }else if(game.mode==='clue'){
     $('#gameModeIcon').textContent='📚';$('#gameModeLabel').textContent='WORLD LIBRARY';$('#gameQuestionTitle').textContent=tr('clueTitle');$('#questionPrompt').textContent=tr('cluePrompt');$('#questionSupport').textContent=tr('selectAnswer');$('#clueVisual').hidden=false;$('#clueText').textContent=clueFor(c);renderAnswers();
   }else{
@@ -811,7 +923,7 @@ function renderQuestion(preserve=false){
 function renderLocationQuestion(){
   const c=game.target;mapGame.setSolved(state.solved);mapGame.clearSelection();game.selectedMap=null;
   if(game.mapMode==='find-country'){$('#questionPrompt').textContent=tr('findPrompt',{country:countryName(c)});$('#questionSupport').textContent=tr('selectOnMap');$('#mapStage').hidden=false;$('#confirmMap').hidden=false;mapGame.setChallenge({type:'find-country',targetId:c.id});}
-  else if(game.mapMode==='flag-map'){$('#questionPrompt').textContent=tr('flagMapPrompt',{flag:c.flag});$('#questionSupport').textContent=tr('selectOnMap');$('#mapStage').hidden=false;$('#confirmMap').hidden=false;mapGame.setChallenge({type:'flag-map',targetId:c.id});}
+  else if(game.mapMode==='flag-map'){$('#questionPrompt').innerHTML=`${flagImageMarkup(c,'prompt-flag')}<span>${tr('flagMapPrompt',{flag:''}).trim()}</span>`;$('#questionSupport').textContent=tr('selectOnMap');$('#mapStage').hidden=false;$('#confirmMap').hidden=false;mapGame.setChallenge({type:'flag-map',targetId:c.id});}
   else if(game.mapMode==='highlight-name'){$('#questionPrompt').textContent=tr('highlightedPrompt');$('#questionSupport').textContent=tr('selectAnswer');$('#mapStage').hidden=false;mapGame.setChallenge({type:'highlight-name',targetId:c.id});renderAnswers();}
   else{$('#questionPrompt').textContent=tr('shapePrompt');$('#questionSupport').textContent=tr('selectAnswer');$('#shapeVisual').hidden=false;mapGame.setChallenge({type:'shape-name',targetId:c.id});mapGame.renderShape(c.id,$('#shapeSvg'));renderAnswers();}
 }
@@ -829,7 +941,9 @@ function submitAnswer(id,button=null){
 
 function showFeedback(correct,gained,first){
   const c=game.target;$('#feedbackIcon').textContent=correct?'✅':'🧭';$('#feedbackTitle').textContent=tr(correct?'correct':'wrong');$('#feedbackText').textContent=tr(correct?'correctBody':'wrongBody',{country:countryName(c),points:gained})+(correct&&first?` ${tr('firstDiscovery')}`:'');
-  $('#countryMiniCard').innerHTML=`<span class="mini-flag">${c.flag}</span><div><h3>${countryName(c)}</h3><p><b>${tr('capital')}:</b> ${c.capital||'-'} · <b>${tr('region')}:</b> ${regionName(c)}<br><b>${tr('population')}:</b> ${populationName(c)} · <b>${tr('area')}:</b> ${areaName(c)}</p></div>`;
+  const study = countryStudyFacts(c);
+  const factList = study.facts.map(f=>`<li><b>${escapeHtml(f.label)}</b><span>${escapeHtml(f.text)}</span></li>`).join('');
+  $('#countryMiniCard').innerHTML=`${flagImageMarkup(c,'mini-flag')}<div><h3>${escapeHtml(countryName(c))}</h3><p><b>${tr('capital')}:</b> ${escapeHtml(c.capital||'-')} · <b>${tr('region')}:</b> ${escapeHtml(regionName(c))}<br><b>${tr('population')}:</b> ${escapeHtml(populationName(c))} · <b>${tr('area')}:</b> ${escapeHtml(areaName(c))}</p><ul class="country-facts">${factList}</ul></div>`;
   $('#feedbackOverlay').hidden=false;speak(correct?`${countryName(c)}!`:countryName(c));
 }
 
@@ -837,7 +951,15 @@ function hintText(level){const c=game.target,name=countryName(c),letters=[...nam
 function showHint(){if(game.locked)return;const level=Math.min(game.hintLevel,3),text=hintText(level);$('#hintBox').hidden=false;$('#hintStep').textContent=`${level+1}/4`;$('#hintText').textContent=text;if(game.mode==='location')mapGame.hint(level,game.target);if(game.hintLevel<3)game.hintLevel+=1;speak(text);}
 function showSessionResult(){state.sessions+=1;saveState();$('#feedbackOverlay').hidden=true;$('#resultCorrect').textContent=`${game.correct}/${game.total}`;$('#resultPoints').textContent=`+${game.earned}`;$('#resultNew').textContent=game.newCountries;$('#sessionResult').hidden=false;}
 
-function onMapCountryClick(id){if(game.mode!=='location'||game.locked||!['find-country','flag-map'].includes(game.mapMode))return;game.selectedMap=id;mapGame.markSelection(id);$('#confirmMap').disabled=false;}
+function onMapCountryClick(id){
+  if(game.mode!=='location'||game.locked||!['find-country','flag-map'].includes(game.mapMode))return;
+  const selected=countryById.get(id);
+  if(!selected)return;
+  game.selectedMap=id;mapGame.markSelection(id);$('#confirmMap').disabled=false;
+  const label=$('#mapSelectionLabel');
+  label.innerHTML=`${flagImageMarkup(selected,'selected-flag')}<span>${countryName(selected)}</span>`;
+  label.hidden=false;
+}
 
 function initMap(){mapGame=new WorldMapGame({svg:$('#worldSvg'),countries:countries195,geojson:worldGeoJSON,onCountryClick:onMapCountryClick});mapGame.setSolved(state.solved);}
 
@@ -898,7 +1020,12 @@ function registerServiceWorker(){
 
 // ---------- boot ----------
 function boot(){
-  applyLanguage();renderCharacterDialog();initMap();
+  applyLanguage();renderCharacterDialog();
+  try{initMap();}catch(error){
+    console.error('World map initialization failed',error);
+    $('#villageLoading').innerHTML='<strong>세계지도를 시작하지 못했어요. 브라우저를 완전히 닫고 다시 열어 주세요.</strong>';
+    return;
+  }
   try{buildWorld();}catch(error){console.error('3D village failed',error);$('#villageLoading').innerHTML='<strong>3D 마을을 시작하지 못했어요. WebGL과 인터넷 연결을 확인해 주세요.</strong>';}
   $('#voiceButton').textContent=state.audio?'🔊':'🔈';$('#voiceButton').setAttribute('aria-pressed',String(state.audio));
   setupFullscreen();setupInstallBanner();registerServiceWorker();

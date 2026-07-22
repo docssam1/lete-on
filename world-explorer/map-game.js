@@ -120,7 +120,12 @@ export class WorldMapGame {
     if (['find-country', 'flag-map'].includes(this.challengeType)) { this.hideTooltip(); return; }
     const rect = this.svgEl.getBoundingClientRect();
     tip.hidden = false;
-    tip.textContent = `${c.flag} ${c.names[document.documentElement.dataset.lang || 'ko'] || c.names.en}`;
+    const flag = document.createElement('img');
+    flag.src = `./assets/flags/${c.id.toLowerCase()}.svg`;
+    flag.alt = '';
+    const name = document.createElement('span');
+    name.textContent = c.names[document.documentElement.dataset.lang || 'ko'] || c.names.en;
+    tip.replaceChildren(flag, name);
     tip.style.left = `${event.clientX - rect.left}px`;
     tip.style.top = `${event.clientY - rect.top}px`;
   }
