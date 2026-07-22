@@ -29,6 +29,7 @@ const defaultState = {
 };
 
 let activeAccountId = null;
+let villageLoadingStartedAt = 0;
 function gameKey() { return activeAccountId ? `${GAME_KEY}:${activeAccountId}` : GAME_KEY; }
 function loadGameState() {
   try {
@@ -236,6 +237,13 @@ const colliders = [];
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+
+function finishVillageLoading() {
+  const loading = $('#villageLoading');
+  const elapsed = performance.now() - villageLoadingStartedAt;
+  const remaining = Math.max(0, 1600 - elapsed);
+  window.setTimeout(() => loading.classList.add('done'), remaining);
+}
 
 const zoneDefinitions = [
   { id: 'flag', mode: 'flag', icon: '🏳️', x: -12, z: -7, radius: 3.35, labelKey: 'flagZone', descriptionKey: 'flagDescription', color: 0xe65f52 },
@@ -446,7 +454,7 @@ function buildWorld() {
   clock = new THREE.Clock();
   renderer.setAnimationLoop(animateVillage);
   worldReady = true;
-  $('#villageLoading').classList.add('done');
+  finishVillageLoading();
   updateCameraLabel(); updateVillageUi();
 }
 
@@ -778,6 +786,9 @@ function completeLogin(accountId,name){
   if(!characterState.playerName){characterState.playerName=name;saveCharacterState(characterState,accountId);}
   $('#introScreen').hidden=true;$('#loginScreen').hidden=true;
   $('#villageScreen').hidden=false;$('#villageScreen').classList.add('active');
+  const loading = $('#villageLoading');
+  loading.classList.remove('done');
+  villageLoadingStartedAt = performance.now();
   boot();
 }
 async function requestAppFullscreen(){
