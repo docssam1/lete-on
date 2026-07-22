@@ -129,3 +129,41 @@ body{font-size:16px}
   .question-copy h2{font-size:1.24rem}
   .answer-grid button{font-size:1rem}
 }
+
+/* v7 intro/fullscreen pass: the app must feel like a game, not a tiny web landing page. */
+html,body{width:100vw;height:100vh;min-height:100dvh;overscroll-behavior:none}
+.pre-screen{width:100vw;height:100vh;min-height:100dvh;padding:max(18px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left))}
+.intro-screen{isolation:isolate;overflow:hidden;background:#0e2a38;color:#fff}
+.intro-video{position:absolute;z-index:0;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;background:#0e2a38;filter:saturate(1.08) contrast(1.03)}
+.intro-vignette{position:absolute;z-index:1;inset:0;background:radial-gradient(circle at 50% 42%,rgba(10,29,38,.05),rgba(7,23,32,.38) 62%,rgba(7,23,32,.78)),linear-gradient(180deg,rgba(4,18,27,.18),rgba(4,18,27,.55))}
+.intro-screen .game-logo,.intro-screen .intro-tagline,.intro-screen .pre-primary-button{position:relative;z-index:2}
+.intro-screen .game-logo{margin-top:auto;margin-bottom:10px;transform:translateY(6vh)}
+.intro-screen .game-logo .lg{font-size:clamp(2.4rem,8.2vw,6rem);-webkit-text-stroke:3px #2b1a0e;text-shadow:4px 4px 0 #2b1a0e,8px 8px 0 rgba(0,0,0,.3)}
+.intro-screen .intro-tagline{transform:translateY(6vh);font-size:clamp(1.05rem,2.4vw,1.55rem);color:#fff7d5;text-shadow:0 3px 8px rgba(0,0,0,.65)}
+.intro-screen .pre-primary-button{transform:translateY(6vh);min-width:190px;min-height:62px;margin-bottom:auto;border-width:3px;border-color:#fff3b5;border-radius:999px;background:linear-gradient(#72c98e,#2f7b57);font-size:clamp(1.05rem,2.1vw,1.35rem);box-shadow:0 16px 38px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.35)}
+.login-screen{background:radial-gradient(circle at 50% 25%,rgba(255,248,225,.9),rgba(157,216,230,.82) 38%,#4a91a8 100%);overflow:hidden}
+.login-screen::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,41,55,.38),rgba(12,41,55,.12));pointer-events:none}
+.login-screen>h2,.login-screen>.language-switch,.login-screen>.profile-grid,.login-screen>.profile-card,.login-screen>.login-step{position:relative;z-index:1}
+.login-screen h2{font-size:clamp(2rem,4.5vw,4rem)!important;color:#fff7d5!important;text-shadow:0 5px 18px rgba(0,0,0,.55)}
+.login-language-switch{margin-top:4px;transform:scale(1.15)}
+.profile-grid{max-width:min(880px,92vw)!important;gap:16px!important}
+.profile-card{min-width:clamp(150px,18vw,220px)!important;min-height:clamp(106px,18vh,150px)!important;font-size:clamp(1.05rem,2vw,1.35rem)!important}
+.profile-card .profile-avatar{width:clamp(58px,9vw,86px)!important;height:clamp(58px,9vw,86px)!important;font-size:clamp(1.7rem,4vw,2.7rem)!important}
+.login-step{width:min(520px,88vw)!important;padding:clamp(20px,3vw,34px)!important}
+.login-step p{font-size:clamp(1.05rem,2vw,1.35rem)!important}
+.login-step input{min-height:clamp(56px,9vh,72px)!important;font-size:clamp(1.3rem,3vw,2rem)!important}
+.login-step-actions button{min-height:clamp(50px,8vh,66px)!important;font-size:clamp(1rem,2vw,1.28rem)!important}
+.village-loading{display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;gap:18px}
+.village-loading .game-logo .lg{font-size:clamp(2rem,6vw,4.8rem)}
+.village-loading .compass{width:clamp(90px,12vw,140px);height:clamp(90px,12vw,140px);font-size:clamp(2.6rem,5vw,4.4rem)}
+.village-loading strong{font-size:clamp(1.35rem,3vw,2.4rem);color:#123244;text-shadow:0 2px 0 rgba(255,255,255,.45)}
+.village-loading i{width:min(360px,48vw);height:12px}
+@media(orientation:landscape) and (max-height:520px){
+  .intro-screen .game-logo{transform:translateY(4vh)}
+  .intro-screen .game-logo .lg{font-size:clamp(1.9rem,6vw,3.7rem);-webkit-text-stroke:2px #2b1a0e}
+  .intro-screen .intro-tagline{transform:translateY(4vh);font-size:1rem}
+  .intro-screen .pre-primary-button{transform:translateY(4vh);min-height:50px;font-size:1rem}
+  .login-screen h2{font-size:clamp(1.45rem,4vw,2.2rem)!important}
+  .profile-card{min-height:88px!important}
+  .village-loading strong{font-size:clamp(1.2rem,3vw,1.8rem)}
+}

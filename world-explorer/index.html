@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
   <meta name="theme-color" content="#17394a" />
   <title>GFIELD World Explorer MAX</title>
-  <link rel="stylesheet" href="./styles.css?v=6" />
+  <link rel="stylesheet" href="./styles.css?v=7" />
   <link rel="manifest" href="/world-explorer/manifest.webmanifest" />
+  <link rel="icon" href="/world-explorer/assets/icons/icon-192.png" type="image/png" />
   <link rel="apple-touch-icon" href="/world-explorer/assets/icons/apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -21,6 +22,10 @@
   <div id="fadeLayer" class="fade-layer" aria-hidden="true"></div>
 
   <section id="introScreen" class="pre-screen intro-screen">
+    <video id="introVideo" class="intro-video" autoplay muted playsinline preload="auto" poster="./assets/icons/icon-512.png">
+      <source src="./assets/intro/gfield-world-explorer-intro.mp4" type="video/mp4" />
+    </video>
+    <div class="intro-vignette" aria-hidden="true"></div>
     <h1 class="game-logo" aria-label="GFIELD World Explorer">
       <span class="lg-word"><span class="lg" style="--i:0">G</span><span class="lg" style="--i:1">F</span><span class="lg" style="--i:2">I</span><span class="lg" style="--i:3">E</span><span class="lg" style="--i:4">L</span><span class="lg" style="--i:5">D</span></span>
       <span class="lg-word"><span class="lg" style="--i:6">W</span><span class="lg" style="--i:7">o</span><span class="lg" style="--i:8">r</span><span class="lg" style="--i:9">l</span><span class="lg" style="--i:10">d</span></span>
@@ -188,6 +193,6 @@
     </article>
   </dialog>
 
-  <script type="module" src="./app.js?v=6"></script>
+  <script type="module" src="./app.js?v=7"></script>
 </body>
 </html>

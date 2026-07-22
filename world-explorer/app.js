@@ -780,10 +780,26 @@ function completeLogin(accountId,name){
   $('#villageScreen').hidden=false;$('#villageScreen').classList.add('active');
   boot();
 }
-$('#introStartButton').addEventListener('click',()=>{
+async function requestAppFullscreen(){
+  const target = document.documentElement;
+  const request = target.requestFullscreen || target.webkitRequestFullscreen || target.msRequestFullscreen;
+  if (!request || document.fullscreenElement || document.webkitFullscreenElement) return;
+  try { await request.call(target); } catch {}
+}
+function enterLoginFromIntro(){
+  const video = $('#introVideo');
+  if (video) { try { video.pause(); } catch {} }
   $('#introScreen').hidden=true;$('#loginScreen').hidden=false;
   renderProfileGrid();showLoginStep('grid');
+}
+$('#introStartButton').addEventListener('click',async()=>{
+  await requestAppFullscreen();
+  enterLoginFromIntro();
 });
+if ($('#introVideo')) {
+  $('#introVideo').addEventListener('ended', enterLoginFromIntro);
+  $('#introVideo').play().catch(()=>{});
+}
 $('#newProfileButton').addEventListener('click',startCreateFlow);
 $('#nameStepBack').addEventListener('click',()=>showLoginStep('grid'));
 $('#nameStepNext').addEventListener('click',()=>{
