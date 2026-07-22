@@ -113,6 +113,15 @@ function tr(key, vars = {}) {
 }
 
 function countryName(country) { return country?.names?.[state.lang] || country?.names?.en || country?.id || ''; }
+function flagAssetPath(country) { return `./assets/flags/${country.id.toLowerCase()}.svg`; }
+function setFlagImage(image, country) {
+  image.src = flagAssetPath(country);
+  image.alt = `${countryName(country)} flag`;
+  image.title = countryName(country);
+}
+function flagImageMarkup(country, className = '') {
+  return `<img${className ? ` class="${className}"` : ''} src="${flagAssetPath(country)}" alt="${countryName(country)} flag">`;
+}
 function regionName(country) { return subregionNames[state.lang]?.[country.subregion] || country.subregion || tr('continents')[country.continent] || country.continent; }
 function populationName(country) { return tr('populationBands')[country.populationBand] || country.populationBand; }
 function areaName(country) { return tr('areaBands')[country.areaBand] || country.areaBand; }
@@ -462,10 +471,10 @@ function npcFact(lang) {
   const c = randomItem(countries195);
   const region = regionName(c), pop = populationName(c), area = areaName(c);
   const templates = {
-    ko: [`${c.flag} ${countryName(c)}의 수도는 ${c.capital}이에요!`, `${c.flag} ${countryName(c)}은(는) ${region}에 있어요.`, `${c.flag} ${countryName(c)}은(는) ${area}이고 인구는 ${pop} 정도예요.`],
-    zh: [`${c.flag} ${countryName(c)}的首都是${c.capital}！`, `${c.flag} ${countryName(c)}位于${region}。`, `${c.flag} ${countryName(c)}是${area}，人口约为${pop}。`],
-    ja: [`${c.flag} ${countryName(c)}の首都は${c.capital}だよ！`, `${c.flag} ${countryName(c)}は${region}にあるよ。`, `${c.flag} ${countryName(c)}は${area}で、人口は${pop}くらいだよ。`],
-    en: [`${c.flag} The capital of ${countryName(c)} is ${c.capital}!`, `${c.flag} ${countryName(c)} is in ${region}.`, `${c.flag} ${countryName(c)} is ${area}, with about ${pop} people.`]
+    ko: [`${countryName(c)}의 수도는 ${c.capital}이에요!`, `${countryName(c)}은(는) ${region}에 있어요.`, `${countryName(c)}은(는) ${area}이고 인구는 ${pop} 정도예요.`],
+    zh: [`${countryName(c)}的首都是${c.capital}！`, `${countryName(c)}位于${region}。`, `${countryName(c)}是${area}，人口约为${pop}。`],
+    ja: [`${countryName(c)}の首都は${c.capital}だよ！`, `${countryName(c)}は${region}にあるよ。`, `${countryName(c)}は${area}で、人口は${pop}くらいだよ。`],
+    en: [`The capital of ${countryName(c)} is ${c.capital}!`, `${countryName(c)} is in ${region}.`, `${countryName(c)} is ${area}, with about ${pop} people.`]
   };
   const list = templates[lang] || templates.ko;
   return randomItem(list);
@@ -546,8 +555,12 @@ function moveToWorldPoint(clientX, clientY) {
 
 function navigateToZone(id) {
   const zone = zoneDefinitions.find(z => z.id === id); if (!zone) return;
-  targetPoint = resolvePosition(zone.entry.clone().add(new THREE.Vector3(0,0,1.05)));
-  $('#villageGuide').textContent = `${tr(zone.labelKey)} →`;
+  targetPoint = null;
+  player.position.copy(zone.entry.clone());
+  playerVelocity.set(0, 0, 0);
+  activeZone = zone;
+  renderZonePrompt();
+  $('#villageGuide').textContent = `${tr(zone.labelKey)} · ${tr(zone.descriptionKey)}`;
 }
 
 function bindVillageControls() {
@@ -693,6 +706,7 @@ function completeLogin(accountId,name){
   characterState=loadCharacterState(accountId);
   if(!characterState.playerName){characterState.playerName=name;saveCharacterState(characterState,accountId);}
   $('#introScreen').hidden=true;$('#loginScreen').hidden=true;
+  $('#villageScreen').hidden=false;$('#villageScreen').classList.add('active');
   boot();
 }
 $('#introStartButton').addEventListener('click',()=>{
@@ -789,7 +803,7 @@ function returnVillage(){
 function nextQuestion(){
   if(game.index>=game.total){showSessionResult();return;}
   game.index+=1;game.target=chooseTarget(game.mode==='location'&&game.mapMode==='shape-name');game.choices=choicePool(game.target);game.hintLevel=0;game.selectedMap=null;game.locked=false;
-  $('#hintBox').hidden=true;$('#confirmMap').disabled=true;$('#feedbackOverlay').hidden=true;renderQuestion();
+  $('#hintBox').hidden=true;$('#confirmMap').disabled=true;$('#feedbackOverlay').hidden=true;$('#mapSelectionLabel').hidden=true;renderQuestion();
 }
 
 function renderQuestion(preserve=false){
@@ -799,7 +813,7 @@ function renderQuestion(preserve=false){
   $('#flagVisual').hidden=true;$('#clueVisual').hidden=true;$('#shapeVisual').hidden=true;$('#mapStage').hidden=true;$('#mapSubmodeTabs').hidden=game.mode!=='location';$('#answers').innerHTML='';$('#confirmMap').hidden=true;$('#questionSupport').textContent='';
   $$('#mapSubmodeTabs button').forEach(b=>b.classList.toggle('active',b.dataset.mapMode===game.mapMode));
   if(game.mode==='flag'){
-    $('#gameModeIcon').textContent='🏳️';$('#gameModeLabel').textContent='FLAG PLAZA';$('#gameQuestionTitle').textContent=tr('flagTitle');$('#questionPrompt').textContent=tr('flagPrompt');$('#questionSupport').textContent=tr('selectAnswer');$('#flagVisual').hidden=false;$('#bigFlag').textContent=c.flag;renderAnswers();
+    $('#gameModeIcon').textContent='🏳️';$('#gameModeLabel').textContent='FLAG PLAZA';$('#gameQuestionTitle').textContent=tr('flagTitle');$('#questionPrompt').textContent=tr('flagPrompt');$('#questionSupport').textContent=tr('selectAnswer');$('#flagVisual').hidden=false;setFlagImage($('#bigFlag'),c);renderAnswers();
   }else if(game.mode==='clue'){
     $('#gameModeIcon').textContent='📚';$('#gameModeLabel').textContent='WORLD LIBRARY';$('#gameQuestionTitle').textContent=tr('clueTitle');$('#questionPrompt').textContent=tr('cluePrompt');$('#questionSupport').textContent=tr('selectAnswer');$('#clueVisual').hidden=false;$('#clueText').textContent=clueFor(c);renderAnswers();
   }else{
@@ -811,7 +825,7 @@ function renderQuestion(preserve=false){
 function renderLocationQuestion(){
   const c=game.target;mapGame.setSolved(state.solved);mapGame.clearSelection();game.selectedMap=null;
   if(game.mapMode==='find-country'){$('#questionPrompt').textContent=tr('findPrompt',{country:countryName(c)});$('#questionSupport').textContent=tr('selectOnMap');$('#mapStage').hidden=false;$('#confirmMap').hidden=false;mapGame.setChallenge({type:'find-country',targetId:c.id});}
-  else if(game.mapMode==='flag-map'){$('#questionPrompt').textContent=tr('flagMapPrompt',{flag:c.flag});$('#questionSupport').textContent=tr('selectOnMap');$('#mapStage').hidden=false;$('#confirmMap').hidden=false;mapGame.setChallenge({type:'flag-map',targetId:c.id});}
+  else if(game.mapMode==='flag-map'){$('#questionPrompt').innerHTML=`${flagImageMarkup(c,'prompt-flag')}<span>${tr('flagMapPrompt',{flag:''}).trim()}</span>`;$('#questionSupport').textContent=tr('selectOnMap');$('#mapStage').hidden=false;$('#confirmMap').hidden=false;mapGame.setChallenge({type:'flag-map',targetId:c.id});}
   else if(game.mapMode==='highlight-name'){$('#questionPrompt').textContent=tr('highlightedPrompt');$('#questionSupport').textContent=tr('selectAnswer');$('#mapStage').hidden=false;mapGame.setChallenge({type:'highlight-name',targetId:c.id});renderAnswers();}
   else{$('#questionPrompt').textContent=tr('shapePrompt');$('#questionSupport').textContent=tr('selectAnswer');$('#shapeVisual').hidden=false;mapGame.setChallenge({type:'shape-name',targetId:c.id});mapGame.renderShape(c.id,$('#shapeSvg'));renderAnswers();}
 }
@@ -829,7 +843,7 @@ function submitAnswer(id,button=null){
 
 function showFeedback(correct,gained,first){
   const c=game.target;$('#feedbackIcon').textContent=correct?'✅':'🧭';$('#feedbackTitle').textContent=tr(correct?'correct':'wrong');$('#feedbackText').textContent=tr(correct?'correctBody':'wrongBody',{country:countryName(c),points:gained})+(correct&&first?` ${tr('firstDiscovery')}`:'');
-  $('#countryMiniCard').innerHTML=`<span class="mini-flag">${c.flag}</span><div><h3>${countryName(c)}</h3><p><b>${tr('capital')}:</b> ${c.capital||'-'} · <b>${tr('region')}:</b> ${regionName(c)}<br><b>${tr('population')}:</b> ${populationName(c)} · <b>${tr('area')}:</b> ${areaName(c)}</p></div>`;
+  $('#countryMiniCard').innerHTML=`${flagImageMarkup(c,'mini-flag')}<div><h3>${countryName(c)}</h3><p><b>${tr('capital')}:</b> ${c.capital||'-'} · <b>${tr('region')}:</b> ${regionName(c)}<br><b>${tr('population')}:</b> ${populationName(c)} · <b>${tr('area')}:</b> ${areaName(c)}</p></div>`;
   $('#feedbackOverlay').hidden=false;speak(correct?`${countryName(c)}!`:countryName(c));
 }
 
@@ -837,7 +851,15 @@ function hintText(level){const c=game.target,name=countryName(c),letters=[...nam
 function showHint(){if(game.locked)return;const level=Math.min(game.hintLevel,3),text=hintText(level);$('#hintBox').hidden=false;$('#hintStep').textContent=`${level+1}/4`;$('#hintText').textContent=text;if(game.mode==='location')mapGame.hint(level,game.target);if(game.hintLevel<3)game.hintLevel+=1;speak(text);}
 function showSessionResult(){state.sessions+=1;saveState();$('#feedbackOverlay').hidden=true;$('#resultCorrect').textContent=`${game.correct}/${game.total}`;$('#resultPoints').textContent=`+${game.earned}`;$('#resultNew').textContent=game.newCountries;$('#sessionResult').hidden=false;}
 
-function onMapCountryClick(id){if(game.mode!=='location'||game.locked||!['find-country','flag-map'].includes(game.mapMode))return;game.selectedMap=id;mapGame.markSelection(id);$('#confirmMap').disabled=false;}
+function onMapCountryClick(id){
+  if(game.mode!=='location'||game.locked||!['find-country','flag-map'].includes(game.mapMode))return;
+  const selected=countryById.get(id);
+  if(!selected)return;
+  game.selectedMap=id;mapGame.markSelection(id);$('#confirmMap').disabled=false;
+  const label=$('#mapSelectionLabel');
+  label.innerHTML=`${flagImageMarkup(selected,'selected-flag')}<span>${countryName(selected)}</span>`;
+  label.hidden=false;
+}
 
 function initMap(){mapGame=new WorldMapGame({svg:$('#worldSvg'),countries:countries195,geojson:worldGeoJSON,onCountryClick:onMapCountryClick});mapGame.setSolved(state.solved);}
 

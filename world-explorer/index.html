@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
   <meta name="theme-color" content="#17394a" />
   <title>GFIELD World Explorer MAX</title>
-  <link rel="stylesheet" href="./styles.css?v=2" />
+  <link rel="stylesheet" href="./styles.css?v=4" />
   <link rel="manifest" href="/world-explorer/manifest.webmanifest" />
   <link rel="apple-touch-icon" href="/world-explorer/assets/icons/apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -57,7 +57,7 @@
     </div>
   </section>
 
-  <section id="villageScreen" class="screen village-screen active" aria-label="3D 세계 탐험 마을">
+  <section id="villageScreen" class="screen village-screen" aria-label="3D 세계 탐험 마을" hidden>
     <div id="villageViewport" class="village-viewport"></div>
 
     <header class="hud top-hud">
@@ -136,12 +136,13 @@
           <button type="button" data-map-mode="flag-map" data-i18n="flagMap">국기로 찾기</button>
         </div>
 
-        <div id="flagVisual" class="center-visual" hidden><div id="bigFlag" class="big-flag">🇰🇷</div></div>
+        <div id="flagVisual" class="center-visual" hidden><img id="bigFlag" class="big-flag" src="./assets/flags/kr.svg" alt="대한민국 국기" /></div>
         <div id="clueVisual" class="center-visual" hidden><article class="clue-book"><span>📖</span><p id="clueText"></p></article></div>
         <div id="shapeVisual" class="center-visual" hidden><svg id="shapeSvg" viewBox="0 0 500 290" role="img" aria-label="국가 윤곽 지도"></svg></div>
         <div id="mapStage" class="map-stage" hidden>
           <svg id="worldSvg" viewBox="0 0 1000 520" role="img" aria-label="195개국 세계지도"></svg>
           <div id="mapTooltip" class="map-tooltip" hidden></div>
+          <div id="mapSelectionLabel" class="map-selection-label" hidden aria-live="polite"></div>
           <div class="map-toolbar"><button id="mapZoomIn" type="button">＋</button><button id="mapZoomOut" type="button">−</button><button id="mapReset" type="button">⌂</button></div>
           <div class="map-legend"><span><i class="legend-unseen"></i><b data-i18n="unseen">미발견</b></span><span><i class="legend-solved"></i><b data-i18n="solved">발견</b></span><span><i class="legend-target"></i><b data-i18n="target">문제</b></span></div>
         </div>
@@ -184,6 +185,6 @@
     </article>
   </dialog>
 
-  <script type="module" src="./app.js?v=2"></script>
+  <script type="module" src="./app.js?v=4"></script>
 </body>
 </html>
