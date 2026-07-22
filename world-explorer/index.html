@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
   <meta name="theme-color" content="#17394a" />
   <title>GFIELD World Explorer MAX</title>
-  <link rel="stylesheet" href="./styles.css?v=4" />
+  <link rel="stylesheet" href="./styles.css?v=5" />
   <link rel="manifest" href="/world-explorer/manifest.webmanifest" />
   <link rel="apple-touch-icon" href="/world-explorer/assets/icons/apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -32,6 +32,9 @@
 
   <section id="loginScreen" class="pre-screen login-screen" hidden>
     <h2 data-i18n="loginTitle">탐험가 로그인</h2>
+    <div class="language-switch login-language-switch" role="group" aria-label="Language">
+      <button type="button" data-lang="ko" class="active">한</button><button type="button" data-lang="zh">中</button><button type="button" data-lang="ja">日</button><button type="button" data-lang="en">EN</button>
+    </div>
     <div id="profileGrid" class="profile-grid"></div>
     <button id="newProfileButton" class="profile-card new-profile" type="button">
       <span class="profile-avatar">➕</span><span data-i18n="newProfile">새 탐험가 만들기</span>
@@ -185,6 +188,6 @@
     </article>
   </dialog>
 
-  <script type="module" src="./app.js?v=4"></script>
+  <script type="module" src="./app.js?v=5"></script>
 </body>
 </html>
