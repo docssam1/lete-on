@@ -141,6 +141,9 @@ html,body{width:100vw;height:100vh;min-height:100dvh;overscroll-behavior:none}
 .intro-screen .game-logo .lg{font-size:clamp(2.4rem,8.2vw,6rem);-webkit-text-stroke:3px #2b1a0e;text-shadow:4px 4px 0 #2b1a0e,8px 8px 0 rgba(0,0,0,.3)}
 .intro-screen .intro-tagline{transform:translateY(6vh);font-size:clamp(1.05rem,2.4vw,1.55rem);color:#fff7d5;text-shadow:0 3px 8px rgba(0,0,0,.65)}
 .intro-screen .pre-primary-button{transform:translateY(6vh);min-width:190px;min-height:62px;margin-bottom:auto;border-width:3px;border-color:#fff3b5;border-radius:999px;background:linear-gradient(#72c98e,#2f7b57);font-size:clamp(1.05rem,2.1vw,1.35rem);box-shadow:0 16px 38px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.35)}
+/* v9: the first screen is the supplied MP4 itself. Keep only a small start/skip button over the video. */
+.intro-screen .game-logo,.intro-screen .intro-tagline{display:none!important}
+.intro-screen .pre-primary-button{position:absolute;left:50%;bottom:max(24px,calc(env(safe-area-inset-bottom) + 24px));z-index:3;transform:translateX(-50%);min-width:clamp(150px,18vw,220px);min-height:clamp(48px,8vh,64px);margin:0;border-color:rgba(255,244,185,.95);background:linear-gradient(180deg,rgba(105,197,135,.96),rgba(45,124,86,.96));box-shadow:0 18px 42px rgba(0,0,0,.45),inset 0 1px rgba(255,255,255,.42);backdrop-filter:blur(6px)}
 .login-screen{background:radial-gradient(circle at 50% 25%,rgba(255,248,225,.9),rgba(157,216,230,.82) 38%,#4a91a8 100%);overflow:hidden}
 .login-screen::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,41,55,.38),rgba(12,41,55,.12));pointer-events:none}
 .login-screen>h2,.login-screen>.language-switch,.login-screen>.profile-grid,.login-screen>.profile-card,.login-screen>.login-step{position:relative;z-index:1}
