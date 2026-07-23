@@ -1,10 +1,11 @@
-name: Deploy Reading World to GitHub Pages
+name: Deploy Lete-on apps to GitHub Pages
 
 on:
   push:
     branches: [main]
     paths:
       - 'reading-world/**'
+      - 'yubin-yujun-store/**'
       - '.github/pages-index.html'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
@@ -26,10 +27,12 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Stage site (app under /reading-world, landing menu at root)
+      - name: Stage sites and landing menu
         run: |
           mkdir -p _site/reading-world
+          mkdir -p _site/yubin-yujun-store
           cp -R reading-world/. _site/reading-world/
+          cp -R yubin-yujun-store/. _site/yubin-yujun-store/
           cp .github/pages-index.html _site/index.html
           cp reading-world/robots.txt _site/robots.txt
       - name: Configure Pages
