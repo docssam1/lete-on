@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#6d4de8" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>유빈유준 편의점</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">우리 집 과자 재고장</p>
+      <h1>🍪 유빈유준 편의점</h1>
+      <p class="subtitle">5칸 수납장 · 유통기한 · 남은 양을 한눈에</p>
+    </div>
+    <button class="primary" id="openAddBtn" type="button">＋ 과자 등록</button>
+  </header>
+
+  <main>
+    <section class="summary-grid" aria-label="재고 요약">
+      <article class="summary-card urgent">
+        <span>먼저 먹기</span>
+        <strong id="urgentCount">0</strong>
+        <small>30일 이내 또는 기한 지남</small>
+      </article>
+      <article class="summary-card">
+        <span>전체 과자</span>
+        <strong id="totalCount">0</strong>
+        <small id="unitCount">총 0개</small>
+      </article>
+      <article class="summary-card">
+        <span>절반 이하</span>
+        <strong id="halfCount">0</strong>
+        <small>보충하거나 먼저 비우기</small>
+      </article>
+    </section>
+
+    <section class="priority-panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">유통기한 순서</p>
+          <h2>🚨 빨리 먹어야 하는 과자</h2>
+        </div>
+        <button class="ghost" id="showAllBtn" type="button">전체 보기</button>
+      </div>
+      <div id="priorityList" class="priority-list empty-box">등록된 과자가 없습니다.</div>
+    </section>
+
+    <section class="toolbar" aria-label="검색과 분류">
+      <label class="search-box">
+        <span>🔎</span>
+        <input id="searchInput" type="search" placeholder="과자 이름 검색" autocomplete="off" />
+      </label>
+      <select id="categoryFilter" aria-label="종류 선택">
+        <option value="all">모든 종류</option>
+        <option value="쿠키">쿠키</option>
+        <option value="사탕">사탕</option>
+        <option value="초콜릿">초콜릿</option>
+        <option value="스낵">스낵</option>
+        <option value="젤리">젤리</option>
+        <option value="기타">기타</option>
+      </select>
+      <select id="sortSelect" aria-label="정렬 방식">
+        <option value="expiry">유통기한 빠른 순</option>
+        <option value="shelf">층수 순</option>
+        <option value="name">이름 순</option>
+        <option value="recent">최근 등록 순</option>
+      </select>
+    </section>
+
+    <nav class="shelf-tabs" id="shelfTabs" aria-label="수납장 층 선택">
+      <button class="active" data-shelf="all" type="button">전체</button>
+      <button data-shelf="1" type="button">1층 <small>맨 위</small></button>
+      <button data-shelf="2" type="button">2층</button>
+      <button data-shelf="3" type="button">3층</button>
+      <button data-shelf="4" type="button">4층</button>
+      <button data-shelf="5" type="button">5층 <small>맨 아래</small></button>
+    </nav>
+
+    <section id="shelfOverview" class="shelf-overview hidden">
+      <div class="shelf-photo-wrap">
+        <img id="shelfPhoto" alt="선택한 층의 보관 모습" />
+        <div id="shelfPhotoEmpty" class="photo-empty">📷<br />층 전체 사진을 올리면 위치를 바로 확인할 수 있어요.</div>
+      </div>
+      <div>
+        <h2 id="shelfTitle">1층</h2>
+        <p id="shelfStats">0종 · 0개</p>
+        <label class="secondary file-label">
+          층 전체 사진 등록
+          <input id="shelfPhotoInput" type="file" accept="image/*" capture="environment" hidden />
+        </label>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading list-title">
+        <div>
+          <p class="eyebrow">현재 재고</p>
+          <h2 id="inventoryTitle">전체 과자</h2>
+        </div>
+        <span id="resultCount" class="result-count">0종</span>
+      </div>
+      <div id="inventoryGrid" class="inventory-grid"></div>
+      <div id="inventoryEmpty" class="empty-state">
+        <div>🛒</div>
+        <h3>아직 등록된 과자가 없어요</h3>
+        <p>포장 앞면과 유통기한 면을 찍어 첫 과자를 등록해 보세요.</p>
+        <button class="primary" type="button" id="emptyAddBtn">첫 과자 등록</button>
+      </div>
+    </section>
+
+    <section class="category-panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">종류별 남은 양</p>
+          <h2>📦 과자 종류별 재고</h2>
+        </div>
+      </div>
+      <div id="categorySummary" class="category-summary"></div>
+    </section>
+
+    <section class="backup-panel">
+      <div>
+        <h2>데이터 보관</h2>
+        <p>이 버전은 사진과 재고를 현재 기기에 저장합니다. 휴대폰 변경 전 백업 파일을 내려받으세요.</p>
+      </div>
+      <div class="backup-actions">
+        <button class="secondary" id="exportBtn" type="button">백업 저장</button>
+        <label class="secondary file-label">백업 불러오기<input id="importInput" type="file" accept="application/json" hidden /></label>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="snackDialog">
+    <form id="snackForm" method="dialog">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">새 재고</p>
+          <h2 id="dialogTitle">과자 등록</h2>
+        </div>
+        <button class="icon-btn" type="button" id="closeDialogBtn" aria-label="닫기">✕</button>
+      </div>
+
+      <input id="snackId" type="hidden" />
+
+      <div class="photo-grid">
+        <label class="photo-picker">
+          <input id="frontPhotoInput" type="file" accept="image/*" capture="environment" hidden />
+          <img id="frontPreview" alt="과자 앞면 미리보기" />
+          <span id="frontPlaceholder">📸<b>포장 앞면</b><small>이름·종류 인식</small></span>
+        </label>
+        <label class="photo-picker">
+          <input id="expiryPhotoInput" type="file" accept="image/*" capture="environment" hidden />
+          <img id="expiryPreview" alt="유통기한 면 미리보기" />
+          <span id="expiryPlaceholder">🗓️<b>유통기한 면</b><small>날짜 인식</small></span>
+        </label>
+      </div>
+
+      <div id="recognitionStatus" class="recognition-status hidden" aria-live="polite"></div>
+
+      <div class="form-grid">
+        <label class="wide">과자 이름
+          <input id="nameInput" required maxlength="60" placeholder="예: 초코칩 쿠키" />
+        </label>
+        <label>종류
+          <select id="categoryInput" required>
+            <option>쿠키</option><option>사탕</option><option>초콜릿</option><option>스낵</option><option>젤리</option><option>기타</option>
+          </select>
+        </label>
+        <label>보관 위치
+          <select id="shelfInput" required>
+            <option value="1">1층 (맨 위)</option><option value="2">2층</option><option value="3">3층</option><option value="4">4층</option><option value="5">5층 (맨 아래)</option>
+          </select>
+        </label>
+        <label>유통기한
+          <input id="expiryInput" type="date" required />
+        </label>
+        <label>현재 개수
+          <input id="quantityInput" type="number" min="0" max="999" value="1" required inputmode="numeric" />
+        </label>
+        <label>처음 산 개수
+          <input id="initialQuantityInput" type="number" min="1" max="999" value="1" required inputmode="numeric" />
+        </label>
+        <label>봉지 안 남은 양
+          <select id="remainingInput">
+            <option value="1">가득</option>
+            <option value="0.75">약 3/4</option>
+            <option value="0.5">절반</option>
+            <option value="0.25">약 1/4</option>
+            <option value="0.1">거의 없음</option>
+          </select>
+        </label>
+        <label class="wide">메모
+          <input id="noteInput" maxlength="100" placeholder="예: 유빈이 것 / 매운맛 / 냉장 보관" />
+        </label>
+      </div>
+
+      <div id="dateCandidates" class="date-candidates hidden"></div>
+
+      <div class="dialog-actions">
+        <button id="deleteBtn" class="danger hidden" type="button">삭제</button>
+        <span class="spacer"></span>
+        <button class="ghost" type="button" id="cancelBtn">취소</button>
+        <button class="primary" type="submit">저장</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
