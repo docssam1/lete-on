@@ -16,6 +16,7 @@
   <script src="inventory-fix-2f-v2.js?v=1" defer></script>
   <script src="inventory-fix-mango-v1.js?v=1" defer></script>
   <script src="inventory-fix-layout-v1.js?v=1" defer></script>
+  <script src="inventory-reset-empty-v1.js?v=1" defer></script>
   <script src="app.js?v=4" defer></script>
 </head>
 <body>
@@ -25,7 +26,7 @@
     <div class="mini-cabinet" aria-hidden="true"><div><b>5층</b><small>맨 위</small></div><div><b>4층</b></div><div><b>3층</b></div><div><b>2층</b></div><div class="ground"><b>1층</b><small>맨 아래</small></div></div>
     <div><p class="eyebrow">사진 기준으로 다시 고정</p><h2>아래에서 위로 1 · 2 · 3 · 4 · 5층</h2><p>사진의 제일 아래 빈 칸이 1층입니다. 화면도 실제 수납장처럼 위에서부터 5층 → 1층 순서로 보여줍니다.</p><button class="button secondary" id="restoreSeedBtn" type="button">정리한 재고 다시 합치기</button></div>
   </section>
-  <section class="preserve-banner"><span class="preserve-icon">✓</span><div><strong>오늘 1시간 동안 입력한 재고는 지우지 않습니다.</strong><p>기존 로컬 재고와 저장한 사진을 유지하고 누락된 정리본만 합칩니다.</p></div></section>
+  <section class="preserve-banner"><span class="preserve-icon">✓</span><div><strong>오늘 1시간 동안 입력한 재고는 지우지 않습니다.</strong><p>초기화 전 재고는 브라우저 백업에 보존하고, 화면 재고만 0개부터 다시 시작합니다.</p></div></section>
   <section class="summary-grid">
     <button class="summary-card" data-view="all" type="button"><span class="summary-icon purple">🛍️</span><span><small>전체 품목</small><strong id="totalCount">0</strong><em id="unitCount">총 0개</em></span></button>
     <button class="summary-card" data-view="urgent" type="button"><span class="summary-icon amber">⏰</span><span><small>먼저 먹기</small><strong id="urgentCount">0</strong><em>90일 이내</em></span></button>
