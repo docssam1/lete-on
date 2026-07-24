@@ -2,7 +2,7 @@ name: Build Geometry World APK
 
 on:
   push:
-    branches: [agent/geometry-world-apk]
+    branches: [main, agent/geometry-world-apk]
     paths:
       - 'android/geometry-world/**'
       - '.github/workflows/build-geometry-world-apk.yml'
