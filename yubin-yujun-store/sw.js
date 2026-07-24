@@ -1,4 +1,4 @@
-const CACHE='yubin-yujun-store-v8';
+const CACHE='yubin-yujun-store-v9';
 const ASSETS=['./','./index.html','./styles.css?v=4','./app.js?v=4','./layout-confirmed.js?v=4','./manifest.webmanifest'];
 self.addEventListener('install',(event)=>{self.skipWaiting();event.waitUntil(caches.open(CACHE).then((cache)=>cache.addAll(ASSETS)));});
 self.addEventListener('activate',(event)=>{event.waitUntil(Promise.all([caches.keys().then((keys)=>Promise.all(keys.filter((key)=>key!==CACHE).map((key)=>caches.delete(key)))),self.clients.claim()]));});
