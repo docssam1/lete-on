@@ -2,7 +2,7 @@
 //
 // Level model (per the project owner):
 //  * You LEVEL UP each time you CLEAR a whole game level — finish all of a
-//    level's problems ("1레벨 끕나면 level up"), not every N problems.
+//    level's problems ("1레벨 끝나면 level up"), not every N problems.
 //  * Player Level = 1 + (number of cleared levels). Start at Lv.1.
 //  * A cleared level fires a FLASHY level-up celebration (confetti + burst),
 //    a persistent "Lv.N" badge stays at the top of the screen, and Cubi visibly
@@ -63,7 +63,7 @@ const TEXT = {
   ko: {
     levelUp: "캐릭터 레벨 업!", level: "Lv.{n}", charLevel: "캐릭터 Lv.{n}",
     gift: "새 아이템 “{item}” 획득!",
-    stageName: { 1: "새쌈 탐험가", 2: "호기심 관찰가", 3: "쌓기 명탐정", 4: "반짝이는 도형가", 5: "큐브 기사", 6: "도형 연구가", 7: "마법 건축가", 8: "큐브 마스터" },
+    stageName: { 1: "새싹 탐험가", 2: "호기심 관찰가", 3: "쌓기 명탐정", 4: "반짝이는 도형가", 5: "큐브 기사", 6: "도형 연구가", 7: "마법 건축가", 8: "큐브 마스터" },
     itemName: { cap: "탐험 모자", glasses: "둥근 안경", telescope: "관찰 망원경", sparkles: "반짝 효과", crown: "황금 왕관", goggles: "연구 고글", wand: "마법봉", medal: "도전 메달" }
   },
   zh: {
@@ -163,7 +163,7 @@ export function syncEvolution() {
   profile.equipped = (profile.equipped && typeof profile.equipped === "object") ? profile.equipped : {};
   const gifts = (prev.gifts && typeof prev.gifts === "object") ? { ...prev.gifts } : {};
   let autoColor = typeof prev.autoColor === "string" ? prev.autoColor : null;
-  const colorLocked = Boolean(prev.colorLocked); // child chose their own colour → never override
+  const colorLocked = Boolean(prev.colorLocked); // child chose their own colour — never override
 
   const earnedGifts = [];
   for (let s = 1; s <= stage; s += 1) {
@@ -213,14 +213,14 @@ export function getEvolution() {
   };
 }
 
-// Child equipped/removed a cosmetic themselves → stop auto-managing that slot.
+// Child equipped/removed a cosmetic themselves — stop auto-managing that slot.
 export function releaseGiftSlot(profile, category) {
   if (profile && profile.evolution && profile.evolution.gifts) {
     delete profile.evolution.gifts[category];
   }
 }
 
-// Child picked their own colour → lock it so evolution never recolours again.
+// Child picked their own colour — lock it so evolution never recolours again.
 export function releaseColorLock(profile) {
   if (profile && profile.evolution && typeof profile.evolution === "object") {
     profile.evolution.colorLocked = true;
