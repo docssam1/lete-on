@@ -27,7 +27,7 @@ export const games = [
     description: { ko: "직육면체 상자를 가득 채우려면 몇 개가 더 필요한지 구해요.", zh: "计算填满长方体盒子还需要多少方块。", ja: "直方体の箱を満たすのにあと何個必要か考えます。", en: "Work out how many more cubes are needed to fill the box." }
   },
   {
-    id: "tunnel", group: "counting", number: "05", ready: true, href: "../games/cube-tunnel/?v=1", thumb: "tunnel", levels: "Lv. 2–5",
+    id: "tunnel", group: "counting", number: "05", ready: true, href: "../games/cube-tunnel/?v=2", thumb: "tunnel", levels: "Lv. 2–6",
     name: { ko: "큐브 터널", zh: "方块隧道", ja: "キューブトンネル", en: "Cube Tunnels" },
     description: { ko: "반대편까지 뚫린 구멍을 층별로 표시하고 남은 개수를 세요.", zh: "逐层标出贯通的孔洞并计算剩余方块。", ja: "反対側まで通る穴を層ごとに示して残りを数えます。", en: "Mark through-tunnels layer by layer and count what remains." }
   },
@@ -37,7 +37,7 @@ export const games = [
     description: { ko: "여러 조각을 회전하고 이어 붙여 목표 모양을 만들어요.", zh: "旋转并组合多个部件，完成目标形状。", ja: "ピースを回してつなぎ、目標の形を作ります。", en: "Rotate and join pieces to create the target solid." }
   },
   {
-    id: "memory", group: "transform", number: "07", ready: true, href: "../games/cube-memory/?v=1", thumb: "memory", levels: "Lv. 1–4",
+    id: "memory", group: "transform", number: "07", ready: true, href: "../games/cube-memory/?v=2", thumb: "memory", levels: "Lv. 1–5",
     name: { ko: "큐브 메모리", zh: "方块记忆", ja: "キューブメモリー", en: "Cube Memory" },
     description: { ko: "10초 동안 본 모양과 색을 기억해 똑같이 재현해요.", zh: "记住十秒内看到的形状和颜色并重现。", ja: "10秒間見た形と色を覚えて再現します。", en: "Remember the shape and colors for ten seconds, then rebuild it." }
   },
@@ -47,7 +47,7 @@ export const games = [
     description: { ko: "앞·옆·위에서 본 모양을 표에 직접 색칠해요.", zh: "在表格中画出前视图、侧视图和俯视图。", ja: "前・横・上から見た形を表に塗ります。", en: "Color the front, side, and top views on matching grids." }
   },
   {
-    id: "transparent", group: "reasoning", number: "09", ready: true, href: "../games/crystal-cubes/?v=1", thumb: "transparent", levels: "Lv. 2–5",
+    id: "transparent", group: "reasoning", number: "09", ready: false, thumb: "transparent", levels: "Lv. 2–5",
     name: { ko: "크리스털 큐브", zh: "水晶方块", ja: "クリスタルキューブ", en: "Crystal Cubes" },
     description: { ko: "투명 케이스의 세 방향 카드를 만족하는 모양을 만들어요.", zh: "搭出满足透明盒三方向卡片的形状。", ja: "透明ケースの三方向カードに合う形を作ります。", en: "Build a solid that matches all three cards in a clear case." }
   },

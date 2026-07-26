@@ -145,11 +145,27 @@
 
 /* Tight landscape phones: shrink controls so everything fits above the fold. */
 @media (orientation: landscape) and (max-height: 560px) {
-  .memory-shell .memory-stage { padding: 6px 8px 4px; gap: 6px; }
+  .memory-shell .memory-stage {
+    padding: 6px 8px 4px;
+    gap: 6px;
+    /* When the shell is too short for every control, let the studio scroll
+       instead of pushing the 확인 button off-screen where it can't be tapped. */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
   .memory-status { padding: 5px 8px; }
   .memory-status strong { font-size: clamp(22px, 6vh, 34px); }
   .swatch { width: 34px; height: 34px; border-radius: 9px; }
   .rebuild-grid { width: min(100%, 210px); gap: 4px; padding: 3px; }
+  .memory-actions {
+    /* Keep the clear/check buttons pinned to the bottom edge and always visible,
+       even while the grid above scrolls. */
+    position: sticky;
+    bottom: 0;
+    margin-top: auto;
+    padding-top: 4px;
+    background: linear-gradient(180deg, rgba(255,251,242,0), #fdf7ec 42%);
+  }
   .memory-actions button { min-height: 34px; }
   .countdown { width: 46px; height: 46px; font-size: 22px; top: 8px; }
 }
