@@ -2,7 +2,7 @@
 //
 // Level model (per the project owner):
 //  * You LEVEL UP each time you CLEAR a whole game level — finish all of a
-//    level's problems ("1레벨 끝나면 level up"), not every N problems.
+//    level's problems ("1레벨 끕나면 level up"), not every N problems.
 //  * Player Level = 1 + (number of cleared levels). Start at Lv.1.
 //  * A cleared level fires a FLASHY level-up celebration (confetti + burst),
 //    a persistent "Lv.N" badge stays at the top of the screen, and Cubi visibly
@@ -26,7 +26,22 @@ const REWARD_KEY = "gfield-rewarded-games";
 const COPY_LEVELS = 3, COPY_PER_LEVEL = 10;
 const COUNT_LEVELS = 5, COUNT_PER_LEVEL = 5;
 const SHAPE_LEVELS = [4, 5], SHAPE_PER_LEVEL = 5;
-export const MAX_LEVELS = COPY_LEVELS + COUNT_LEVELS + SHAPE_LEVELS.length; // 10 clearable levels → up to Lv.11
+
+// Newer games all use reward ids shaped "<prefix>:<stem>-l<n>-<nn>". A level is
+// cleared once every one of its problems is solved. Keep `per` in sync with each
+// game's levels.js — when a difficulty level is added there, update it here too,
+// otherwise clearing that level won't advance the character level.
+const NEWER_GAMES = [
+  { prefix: "hidden-cubes",   stem: "hidden", levels: [1, 2, 3, 4, 5, 6], per: 5 },
+  { prefix: "cube-tunnel",    stem: "tunnel", levels: [2, 3, 4, 5, 6],    per: 5 },
+  { prefix: "cube-piece-lab", stem: "piece",  levels: [1, 2, 3, 4, 5],    per: 4 },
+  { prefix: "three-views",    stem: "view",   levels: [1, 2, 3, 4, 5],    per: 4 },
+  { prefix: "fill-box",       stem: "fill",   levels: [1, 2, 3, 4],       per: 5 },
+  { prefix: "cube-memory",    stem: "mem",    levels: [1, 2, 3, 4, 5],    per: 4 }
+];
+const NEWER_LEVELS = NEWER_GAMES.reduce((sum, g) => sum + g.levels.length, 0);
+
+export const MAX_LEVELS = COPY_LEVELS + COUNT_LEVELS + SHAPE_LEVELS.length + NEWER_LEVELS; // total clearable levels across every game
 
 // One evolution step per cleared level. Each grants an accessory (dropped into an
 // empty slot) and a display colour + aura tier so Cubi visibly changes.
@@ -48,7 +63,7 @@ const TEXT = {
   ko: {
     levelUp: "캐릭터 레벨 업!", level: "Lv.{n}", charLevel: "캐릭터 Lv.{n}",
     gift: "새 아이템 “{item}” 획득!",
-    stageName: { 1: "새싹 탐험가", 2: "호기심 관찰가", 3: "쌓기 명탐정", 4: "반짝이는 도형가", 5: "큐브 기사", 6: "도형 연구가", 7: "마법 건축가", 8: "큐브 마스터" },
+    stageName: { 1: "새쌈 탐험가", 2: "호기심 관찰가", 3: "쌓기 명탐정", 4: "반짝이는 도형가", 5: "큐브 기사", 6: "도형 연구가", 7: "마법 건축가", 8: "큐브 마스터" },
     itemName: { cap: "탐험 모자", glasses: "둥근 안경", telescope: "관찰 망원경", sparkles: "반짝 효과", crown: "황금 왕관", goggles: "연구 고글", wand: "마법봉", medal: "도전 메달" }
   },
   zh: {
@@ -109,6 +124,20 @@ export function computeClearedLevels() {
       if (solved.has(`shape-build:${lv}:${pi}`)) count += 1;
     }
     if (count >= SHAPE_PER_LEVEL) cleared += 1;
+  }
+
+  // Newer games (hidden-count, cube-tunnel, cube-piece-lab, three-views,
+  // fill-box, cube-memory). A level clears when all its problems are solved,
+  // which advances the character level and fires the level-up celebration.
+  for (const game of NEWER_GAMES) {
+    for (const n of game.levels) {
+      const mark = `${game.prefix}:${game.stem}-l${n}-`;
+      let count = 0;
+      for (const id of solved) {
+        if (id.startsWith(mark)) count += 1;
+      }
+      if (count >= game.per) cleared += 1;
+    }
   }
 
   return cleared;
