@@ -111,16 +111,35 @@ export const levels = [
         { x: 0, z: 1, color: 1 }, { x: 1, z: 0, color: 4 }, { x: 2, z: 2, color: 0 }, { x: 3, z: 1, color: 2 }, { x: 1, z: 3, color: 3 }, { x: 3, z: 3, color: 4 }, { x: 2, z: 0, color: 3 }
       ])
     ]
+  },
+  {
+    level: 5,
+    stars: 5,
+    problems: [
+      // 5×5, eight or nine cubes, all five colors, a quick 4s look.
+      makeProblem("mem-l5-01", 5, [5, 5], 4000, [
+        { x: 0, z: 0, color: 0 }, { x: 4, z: 0, color: 1 }, { x: 2, z: 1, color: 2 }, { x: 0, z: 2, color: 3 }, { x: 4, z: 2, color: 4 }, { x: 1, z: 3, color: 0 }, { x: 3, z: 4, color: 1 }, { x: 2, z: 2, color: 3 }
+      ]),
+      makeProblem("mem-l5-02", 5, [5, 5], 4000, [
+        { x: 1, z: 0, color: 4 }, { x: 3, z: 0, color: 2 }, { x: 0, z: 1, color: 0 }, { x: 4, z: 1, color: 3 }, { x: 2, z: 2, color: 1 }, { x: 0, z: 3, color: 4 }, { x: 4, z: 3, color: 0 }, { x: 2, z: 4, color: 2 }
+      ]),
+      makeProblem("mem-l5-03", 5, [5, 5], 4000, [
+        { x: 0, z: 0, color: 1 }, { x: 2, z: 0, color: 3 }, { x: 4, z: 0, color: 0 }, { x: 1, z: 2, color: 2 }, { x: 3, z: 2, color: 4 }, { x: 0, z: 4, color: 1 }, { x: 2, z: 4, color: 0 }, { x: 4, z: 4, color: 3 }, { x: 2, z: 2, color: 2 }
+      ]),
+      makeProblem("mem-l5-04", 5, [5, 5], 4000, [
+        { x: 0, z: 1, color: 2 }, { x: 1, z: 0, color: 4 }, { x: 2, z: 2, color: 0 }, { x: 3, z: 1, color: 1 }, { x: 4, z: 3, color: 3 }, { x: 1, z: 3, color: 2 }, { x: 3, z: 3, color: 4 }, { x: 0, z: 4, color: 0 }, { x: 4, z: 0, color: 1 }
+      ])
+    ]
   }
 ];
 
 export function validateLevels() {
-  if (levels.length !== 4) throw new Error("cube-memory requires four levels");
+  if (levels.length !== 5) throw new Error("cube-memory requires five levels");
   levels.forEach((level) => {
     if (level.problems.length < 4) throw new Error(`level ${level.level} needs at least four problems`);
     level.problems.forEach((problem) => {
       const [width, depth] = problem.grid;
-      if (width > 4 || depth > 4) throw new Error(`${problem.id} grid exceeds 4x4`);
+      if (width > 5 || depth > 5) throw new Error(`${problem.id} grid exceeds 5x5`);
       if (problem.cells.length < 3) throw new Error(`${problem.id} needs at least three cubes`);
       if (problem.viewMs < 2000 || problem.viewMs > 12000) throw new Error(`${problem.id} viewMs out of range`);
       const seen = new Set();
