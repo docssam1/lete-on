@@ -95,11 +95,25 @@ export const levels = [
       makeProblem("tunnel-l5-04", 5, [4, 4, 4], [{ axis: "z", x: 1, y: 1 }, { axis: "z", x: 2, y: 1 }, { axis: "x", y: 1, z: 1 }, { axis: "x", y: 1, z: 2 }]),
       makeProblem("tunnel-l5-05", 5, [4, 4, 4], [{ axis: "z", x: 1, y: 2 }, { axis: "z", x: 2, y: 1 }, { axis: "x", y: 0, z: 1 }, { axis: "y", x: 3, z: 3 }, { axis: "y", x: 0, z: 0 }])
     ]
+  },
+  {
+    // Expert: dense 4×4×4 blocks with five or six tunnels across all three axes.
+    // Overlapping channels share cells, so the child must count the removed cells
+    // as a set rather than adding tunnel lengths.
+    level: 6,
+    stars: 5,
+    problems: [
+      makeProblem("tunnel-l6-01", 6, [4, 4, 4], [{ axis: "z", x: 1, y: 1 }, { axis: "z", x: 2, y: 2 }, { axis: "x", y: 1, z: 2 }, { axis: "x", y: 2, z: 1 }, { axis: "y", x: 0, z: 0 }]),
+      makeProblem("tunnel-l6-02", 6, [4, 4, 4], [{ axis: "z", x: 0, y: 0 }, { axis: "z", x: 3, y: 3 }, { axis: "x", y: 0, z: 3 }, { axis: "x", y: 3, z: 0 }, { axis: "y", x: 1, z: 1 }, { axis: "y", x: 2, z: 2 }]),
+      makeProblem("tunnel-l6-03", 6, [4, 4, 4], [{ axis: "z", x: 1, y: 2 }, { axis: "z", x: 2, y: 1 }, { axis: "x", y: 0, z: 0 }, { axis: "x", y: 3, z: 3 }, { axis: "y", x: 0, z: 3 }]),
+      makeProblem("tunnel-l6-04", 6, [4, 4, 4], [{ axis: "z", x: 0, y: 3 }, { axis: "z", x: 3, y: 0 }, { axis: "z", x: 1, y: 1 }, { axis: "x", y: 2, z: 2 }, { axis: "y", x: 2, z: 1 }, { axis: "y", x: 3, z: 3 }]),
+      makeProblem("tunnel-l6-05", 6, [4, 4, 4], [{ axis: "z", x: 2, y: 2 }, { axis: "x", y: 1, z: 1 }, { axis: "x", y: 2, z: 2 }, { axis: "y", x: 0, z: 0 }, { axis: "y", x: 3, z: 0 }, { axis: "y", x: 1, z: 3 }])
+    ]
   }
 ];
 
 export function validateLevels() {
-  if (levels.length !== 4) throw new Error("cube-tunnel requires four levels");
+  if (levels.length !== 5) throw new Error("cube-tunnel requires five levels");
   levels.forEach((level) => {
     if (level.problems.length !== 5) throw new Error(`level ${level.level} requires five problems`);
     level.problems.forEach((problem) => {
