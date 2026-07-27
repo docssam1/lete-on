@@ -1,3 +1,12 @@
+@import "./assets/thumbs/copy.css";
+@import "./assets/thumbs/count.css";
+@import "./assets/thumbs/hidden.css";
+@import "./assets/thumbs/fill.css";
+@import "./assets/thumbs/tunnel.css";
+@import "./assets/thumbs/pieces.css";
+@import "./assets/thumbs/memory.css";
+@import "./assets/thumbs/views.css";
+@import "./assets/thumbs/transparent.css";
 :root {
   --navy:#172653; --ink:#24313b; --muted:#68736f; --paper:#fffdf5; --line:#d9d7ca; --green:#29945b;
   font-family:"Pretendard","Noto Sans KR","Noto Sans CJK KR",system-ui,sans-serif;
