@@ -143,29 +143,24 @@
 .memory-shell .level-list { grid-template-columns: repeat(4, 1fr); }
 @media (max-width: 720px) { .memory-shell .level-list { grid-template-columns: repeat(2, 1fr); } }
 
-/* Tight landscape phones: shrink controls so everything fits above the fold. */
+/* Tight landscape phones: shrink every control so the whole studio — status,
+   palette, grid AND the clear/confirm buttons — fits on screen at once, with no
+   scrolling and nothing overlapping the grid. The grid's size follows the
+   viewport height so it always leaves room for the buttons below it. */
 @media (orientation: landscape) and (max-height: 560px) {
   .memory-shell .memory-stage {
-    padding: 6px 8px 4px;
-    gap: 6px;
-    /* When the shell is too short for every control, let the studio scroll
-       instead of pushing the 확인 button off-screen where it can't be tapped. */
-    overflow-y: auto;
-    overscroll-behavior: contain;
+    padding: 5px 8px 6px;
+    gap: 5px;
+    justify-content: center;
+    overflow: hidden;
   }
-  .memory-status { padding: 5px 8px; }
-  .memory-status strong { font-size: clamp(22px, 6vh, 34px); }
-  .swatch { width: 34px; height: 34px; border-radius: 9px; }
-  .rebuild-grid { width: min(100%, 210px); gap: 4px; padding: 3px; }
-  .memory-actions {
-    /* Keep the clear/check buttons pinned to the bottom edge and always visible,
-       even while the grid above scrolls. */
-    position: sticky;
-    bottom: 0;
-    margin-top: auto;
-    padding-top: 4px;
-    background: linear-gradient(180deg, rgba(255,251,242,0), #fdf7ec 42%);
-  }
-  .memory-actions button { min-height: 34px; }
-  .countdown { width: 46px; height: 46px; font-size: 22px; top: 8px; }
+  .memory-status { padding: 4px 8px; }
+  .memory-status strong { font-size: clamp(16px, 4.6vh, 26px); }
+  .memory-shell .number-prompt { min-height: 0; padding: 2px 6px; font-size: 10px; }
+  .color-palette { gap: 6px; padding: 1px; }
+  .swatch { width: clamp(24px, 6vh, 32px); height: clamp(24px, 6vh, 32px); border-radius: 8px; }
+  .rebuild-grid { width: min(44vh, 168px); gap: 4px; padding: 2px; }
+  .memory-actions { padding: 2px 2px 0; }
+  .memory-actions button { min-height: 32px; }
+  .countdown { width: 44px; height: 44px; font-size: 20px; top: 6px; }
 }
