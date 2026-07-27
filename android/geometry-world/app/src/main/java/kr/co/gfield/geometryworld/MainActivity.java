@@ -33,7 +33,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
     private static final String START_URL =
-            "https://docssam1.github.io/lete-on/geometry/world-map/";
+            "https://lete-on.gfieldacademy.net/geometry/world-map/";
     private static final int FILE_CHOOSER_REQUEST = 2201;
     private static final int STORAGE_PERMISSION_REQUEST = 2202;
 
