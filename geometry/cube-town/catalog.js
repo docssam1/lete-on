@@ -47,7 +47,7 @@ export const games = [
     description: { ko: "앞·옆·위에서 본 모양을 표에 직접 색칠해요.", zh: "在表格中画出前视图、侧视图和俯视图。", ja: "前・横・上から見た形を表に塗ります。", en: "Color the front, side, and top views on matching grids." }
   },
   {
-    id: "transparent", group: "reasoning", number: "09", ready: false, thumb: "transparent", levels: "Lv. 2–5",
+    id: "transparent", group: "reasoning", number: "09", ready: true, href: "../games/crystal-cubes/?v=1", thumb: "transparent", levels: "Lv. 2–5",
     name: { ko: "크리스털 큐브", zh: "水晶方块", ja: "クリスタルキューブ", en: "Crystal Cubes" },
     description: { ko: "투명 케이스의 세 방향 카드를 만족하는 모양을 만들어요.", zh: "搭出满足透明盒三方向卡片的形状。", ja: "透明ケースの三方向カードに合う形を作ります。", en: "Build a solid that matches all three cards in a clear case." }
   },
