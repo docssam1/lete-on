@@ -92,6 +92,25 @@
       document.addEventListener("fullscreenchange", function () { btn.classList.toggle("on", !!isFs()); });
       document.body.appendChild(btn);
     });
+
+    // Auto-enter fullscreen on the first tap (touch devices, not installed).
+    // Browsers forbid going fullscreen on load without a user gesture, so we arm
+    // a one-shot listener that fires on the very first interaction and then
+    // removes itself — we never re-force it, so a child who deliberately leaves
+    // fullscreen is left alone.
+    var coarse = false;
+    try { coarse = !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches); } catch (e) {}
+    if (coarse) {
+      var armFs = function () {
+        document.removeEventListener("pointerdown", armFs, true);
+        document.removeEventListener("touchend", armFs, true);
+        document.removeEventListener("click", armFs, true);
+        try { if (!isFs()) (docEl.requestFullscreen || docEl.webkitRequestFullscreen).call(docEl); } catch (e) {}
+      };
+      document.addEventListener("pointerdown", armFs, true);
+      document.addEventListener("touchend", armFs, true);
+      document.addEventListener("click", armFs, true);
+    }
   }
 
   // --- 2. install banner ---------------------------------------------------
