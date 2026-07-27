@@ -580,3 +580,15 @@ body { background: #fdf8d8; color: var(--ink); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* Landscape: fill the whole screen (cover) instead of letterboxing.
+   Top-anchored so the title, Cube Town castle and toolbar stay visible;
+   only decorative bottom/edge scenery is cropped. Portrait is handled by
+   the max-aspect-ratio rule above (fills height, pans horizontally). */
+@media (orientation: landscape) {
+  .map-stage {
+    width: max(100vw, calc(var(--app-dvh) * 1.49334));
+    top: 0;
+    transform: translate(-50%, 0);
+  }
+}
