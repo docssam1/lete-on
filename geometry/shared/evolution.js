@@ -37,7 +37,8 @@ const NEWER_GAMES = [
   { prefix: "cube-piece-lab", stem: "piece",  levels: [1, 2, 3, 4, 5],    per: 4 },
   { prefix: "three-views",    stem: "view",   levels: [1, 2, 3, 4, 5],    per: 4 },
   { prefix: "fill-box",       stem: "fill",   levels: [1, 2, 3, 4],       per: 5 },
-  { prefix: "cube-memory",    stem: "mem",    levels: [1, 2, 3, 4, 5],    per: 4 }
+  { prefix: "cube-memory",    stem: "mem",    levels: [1, 2, 3, 4, 5],    per: 4 },
+  { prefix: "crystal-cubes",  stem: "crystal", levels: [2, 3, 4, 5],      per: 4 }
 ];
 const NEWER_LEVELS = NEWER_GAMES.reduce((sum, g) => sum + g.levels.length, 0);
 
@@ -127,8 +128,8 @@ export function computeClearedLevels() {
   }
 
   // Newer games (hidden-count, cube-tunnel, cube-piece-lab, three-views,
-  // fill-box, cube-memory). A level clears when all its problems are solved,
-  // which advances the character level and fires the level-up celebration.
+  // fill-box, cube-memory, crystal-cubes). A level clears when all its problems
+  // are solved, which advances the character level and fires the celebration.
   for (const game of NEWER_GAMES) {
     for (const n of game.levels) {
       const mark = `${game.prefix}:${game.stem}-l${n}-`;
