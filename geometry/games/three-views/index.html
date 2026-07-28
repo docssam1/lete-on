@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town - Three-View Station</title>
     <link rel="stylesheet" href="./styles.css?v=views-1" />
+    <link rel="stylesheet" href="../../shared/game-rail.css?v=1" />
     <link rel="stylesheet" href="../../shared/portrait-lock.css?v=1" />
     <script type="importmap">
       {
@@ -55,7 +56,7 @@
         <div>
           <div id="stars" class="stars" aria-label="difficulty">★☆☆☆☆</div>
           <h2 data-i18n="title">세 방향 관찰소</h2>
-          <p data-i18n="instruction">쌓기나무를 앞·옆·위에서 본 모양을 표에 똑같이 색칠해 보세요.</p>
+          <p data-i18n="instruction">쌓기나무를 앞·옥·위에서 본 모양을 표에 동일하게 색칠해 보세요.</p>
         </div>
       </section>
 
@@ -69,7 +70,7 @@
             </div>
             <div class="camera-tools">
               <button type="button" data-view="front" data-i18n="front">앞</button>
-              <button id="xrayToggle" type="button" class="xray-button" data-i18n="revealShow">옆</button>
+              <button id="xrayToggle" type="button" class="xray-button" data-i18n="revealShow">옷</button>
               <button type="button" data-view="top" data-i18n="top">위</button>
               <button type="button" data-view="free" data-i18n="free">돌려보기</button>
             </div>
@@ -83,7 +84,7 @@
         <article class="answer-panel views-answer">
           <header>
             <h2 data-i18n="answerTitle">세 방향에서 본 모양</h2>
-            <button id="xrayToggleWide" type="button" class="xray-button wide" data-i18n="revealShow">옆</button>
+            <button id="xrayToggleWide" type="button" class="xray-button wide" data-i18n="revealShow">옷</button>
           </header>
           <div class="views-stage">
             <div id="numberPrompt" class="number-prompt" data-i18n="paintPrompt">각 방향에서 본 모양을 칸에 색칠해 보세요.</div>
@@ -93,7 +94,7 @@
                 <div id="frontView" class="view-grid" aria-label="front view"></div>
               </div>
               <div class="view-block">
-                <span class="view-label" data-i18n="viewSide">옆에서 본 모양</span>
+                <span class="view-label" data-i18n="viewSide">옷에서 본 모양</span>
                 <div id="sideView" class="view-grid" aria-label="side view"></div>
               </div>
               <div class="view-block">
@@ -112,9 +113,10 @@
       <footer class="action-bar">
         <button id="audio" class="icon-action" type="button" aria-pressed="false" aria-label="음소거">🔊</button>
         <button id="hint" type="button" data-i18n="hint">힌트</button>
+        <button class="rail-level" type="button" data-i18n="level">레벨 선택</button>
         <button class="mobile-view-action" type="button" data-view="front"><b aria-hidden="true">↑</b><span data-i18n="front">앞</span></button>
         <button class="mobile-view-action" type="button" data-view="top"><b aria-hidden="true">◆</b><span data-i18n="top">위</span></button>
-        <button id="xrayToggleMobile" class="mobile-view-action xray-mobile" type="button"><b aria-hidden="true">▤</b><span data-i18n="revealShow">옆</span></button>
+        <button id="xrayToggleMobile" class="mobile-view-action" type="button" data-view="side"><b aria-hidden="true">→</b><span data-i18n="side">옷</span></button>
         <button id="reset" type="button" data-i18n="reset">다시</button>
         <button id="next" type="button" data-i18n="next">다음 문제</button>
         <a class="exit-action" href="../../cube-town/" aria-label="나가기">⌂<small>나가기</small></a>
@@ -134,7 +136,7 @@
 
       <aside class="docssam" aria-live="polite">
         <div class="speech-bubble">
-          <p id="guide" data-i18n="guideStart">쌓기나무를 돌려 보며 앞·옆·위에서 어떻게 보이는지 살펴보자.</p>
+          <p id="guide" data-i18n="guideStart">쌓기나무를 돌려 보며 앞·옷·위에서 어떻게 보이는지 살펴보자.</p>
         </div>
         <button class="cubi-sprite" type="button" aria-label="큐비"></button>
       </aside>
@@ -160,5 +162,6 @@
       </div>
     </main>
     <script type="module" src="./app.js?v=views-1"></script>
+    <script src="../../shared/game-flow.js?v=1" defer></script>
   </body>
 </html>
