@@ -40,7 +40,7 @@ window.BOOK_CATALOG = [
   },
   {
     id: 'wonderskills-adv3',
-    category: 'textbook', totalLessons: 0,
+    category: 'textbook', totalLessons: 12,
     title: 'WonderSkills',
     subtitle: 'Reading Adv. 3',
     fullTitle: 'WonderSkills Reading Advanced 3',
@@ -55,11 +55,11 @@ window.BOOK_CATALOG = [
     grade: 'G3',
     band: 'G3',
     isbn: 'ISBN 978-0-0766-XXXX-Z',
-    available: false,
+    available: true,
   },
   {
     id: 'subject-link-4',
-    category: 'textbook', totalLessons: 0,
+    category: 'textbook', totalLessons: 16,
     title: 'Subject Link',
     subtitle: 'Level 4',
     fullTitle: 'Subject Link 4',
@@ -74,7 +74,7 @@ window.BOOK_CATALOG = [
     grade: 'G4–5',
     band: 'G4',
     isbn: 'ISBN 978-8-9625-XXXX-W',
-    available: false,
+    available: true,
   },
   {
     id: '180days-reading-g3',

@@ -1,0 +1,10 @@
+{
+  "name": "유빈유준 편의점",
+  "short_name": "유빈유준 편의점",
+  "description": "우리 집 5칸 과자 수납장 재고와 유통기한 관리",
+  "lang": "ko",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f5ff",
+  "theme_color": "#6d4de8"
+}

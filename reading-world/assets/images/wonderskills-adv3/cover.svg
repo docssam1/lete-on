@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 400" width="320" height="400" role="img" aria-label="WonderSkills Reading Advanced 3">
+  <defs>
+    <linearGradient id="ws" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#001a5e"/>
+      <stop offset="0.45" stop-color="#003087"/>
+      <stop offset="0.8" stop-color="#0052cc"/>
+      <stop offset="1" stop-color="#4d94ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="400" rx="14" fill="url(#ws)"/>
+  <rect x="18" y="18" width="284" height="364" rx="10" fill="none" stroke="#ffd700" stroke-opacity="0.4" stroke-width="2"/>
+  <text x="160" y="100" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="15" fill="#b3cfff" letter-spacing="3">McGraw-Hill</text>
+  <text x="160" y="172" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="42" fill="#ffffff">Wonder</text>
+  <text x="160" y="222" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="42" fill="#ffd700">Skills</text>
+  <text x="160" y="266" text-anchor="middle" font-family="Georgia, serif" font-size="17" fill="#b3cfff" letter-spacing="1">Reading</text>
+  <rect x="126" y="288" width="68" height="68" rx="12" fill="#ffd700" fill-opacity="0.15"/>
+  <text x="160" y="335" text-anchor="middle" font-family="Georgia, serif" font-weight="800" font-size="30" fill="#ffd700">Adv. 3</text>
+  <text x="160" y="374" text-anchor="middle" font-family="Georgia, serif" font-size="12" fill="#b3cfff" letter-spacing="2">READING · THINKING · ACHIEVING</text>
+</svg>

@@ -1,5 +1,109 @@
 {
   "types": {
+    "number_split": {
+      "name": "수 가르기",
+      "difficulties": [
+        1,
+        2
+      ],
+      "count_per_level": 20
+    },
+    "number_disk": {
+      "name": "숫자 유비추론(원판)",
+      "difficulties": [
+        1,
+        2
+      ],
+      "count_per_level": 20
+    },
+    "number_triangle": {
+      "name": "숫자 유비추론(삼각형)",
+      "difficulties": [
+        1,
+        2
+      ],
+      "count_per_level": 20
+    },
+    "table_sum": {
+      "name": "표 합 추론",
+      "difficulties": [
+        1,
+        2
+      ],
+      "count_per_level": 20
+    },
+    "symbol_pattern": {
+      "name": "도형 패턴",
+      "difficulties": [
+        1,
+        2
+      ],
+      "count_per_level": 20
+    },
+    "binary_repr": {
+      "name": "색칠 수 표현",
+      "difficulties": [
+        1,
+        2
+      ],
+      "count_per_level": 20
+    },
+    "magic_square": {
+      "name": "마방진",
+      "difficulties": [
+        1,
+        2
+      ],
+      "count_per_level": 20
+    },
+    "number_pyramid": {
+      "name": "수 피라미드",
+      "difficulties": [
+        1,
+        2
+      ],
+      "count_per_level": 20
+    },
+    "number_placement": {
+      "name": "숫자 배치",
+      "difficulties": [
+        1,
+        2
+      ],
+      "count_per_level": 20
+    },
+    "grid_arrow": {
+      "name": "화살표 배열",
+      "difficulties": [
+        1,
+        2
+      ],
+      "count_per_level": 20
+    },
+    "triangle_paper": {
+      "name": "삼각형 색종이",
+      "difficulties": [
+        1,
+        2
+      ],
+      "count_per_level": 20
+    },
+    "triangle_stones": {
+      "name": "바둑돌 삼각형",
+      "difficulties": [
+        1,
+        2
+      ],
+      "count_per_level": 20
+    },
+    "target_score": {
+      "name": "과녁 점수",
+      "difficulties": [
+        1,
+        2
+      ],
+      "count_per_level": 20
+    },
     "paper_fold": {
       "name": "색종이 접기",
       "difficulties": [
@@ -27,8 +131,23 @@
   },
   "exams": {
     "진단모의고사": {
+      "q1": "number_split",
       "q4": "paper_fold",
       "q8": "seesaw",
+      "q9": [
+        "number_disk",
+        "number_triangle"
+      ],
+      "q10": "table_sum",
+      "q12": "symbol_pattern",
+      "q13": "binary_repr",
+      "q14": "magic_square",
+      "q16": "number_pyramid",
+      "q17": "number_placement",
+      "q19": "table_sum",
+      "q21": "grid_arrow",
+      "q22": "triangle_paper",
+      "q23": "triangle_stones",
       "q25": "stacking_rule"
     }
   }

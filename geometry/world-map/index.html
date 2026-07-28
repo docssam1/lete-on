@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>GFIELD Geometry World</title>
+    <link rel="preload" href="./assets/geometry-intro-poster.webp" as="image" fetchpriority="high" />
+    <link rel="preload" href="./assets/geometry-world-gateway.webp" as="image" />
+    <link rel="preload" href="./assets/geometry-world-map.webp" as="image" />
+    <link rel="stylesheet" href="./styles.css?v=calm-20260719a" />
+    <link rel="stylesheet" href="../shared/pwa.css?v=1" />
+    <script src="../shared/viewport-fit.js?v=1"></script>
+    <link rel="manifest" href="/geometry/manifest.webmanifest" />
+    <meta name="theme-color" content="#2b1a0e" />
+    <link rel="apple-touch-icon" href="/geometry/assets/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  </head>
+  <body>
+    <section id="intro" class="intro" aria-label="Geometry World intro">
+      <video id="introVideo" src="./assets/geometry-intro.mp4" poster="./assets/geometry-intro-poster.webp" autoplay muted playsinline preload="auto"></video>
+      <div class="intro-controls">
+        <button id="introSound" type="button" aria-label="intro sound">♪</button>
+        <button id="skipIntro" type="button" data-i18n="skipIntro">건너뛰기 ›</button>
+      </div>
+    </section>
+
+    <section id="worldGate" class="world-gate" aria-live="polite" aria-hidden="true">
+      <img src="./assets/geometry-world-gateway.webp" alt="Geometry World 친구들과 마을" />
+      <div class="world-gate-copy">
+        <p>GFIELD GEOMETRY WORLD</p>
+        <h1 data-i18n="gatewayTitle">지오메트리 월드로 이동 중…</h1>
+        <div class="gateway-progress" aria-hidden="true"><i></i></div>
+        <span data-i18n="gatewayHint">도형 친구들이 기다리고 있어요</span>
+      </div>
+    </section>
+
+    <main class="world" aria-label="GFIELD Geometry World">
+      <section class="map-stage" aria-label="Geometry World map">
+        <img src="./assets/geometry-world-map.webp" alt="Geometry World 마을 지도" fetchpriority="high" />
+
+        <button id="cubeCastle" class="place-hotspot cube-castle" type="button" aria-label="GFIELD Cube Town">
+          <span>GFIELD<br />CUBE TOWN</span>
+        </button>
+
+        <div id="walkers" class="walkers" aria-hidden="true"></div>
+
+        <div class="map-toolbar">
+          <button id="profileButton" class="profile-button" type="button" aria-label="character">
+            <span id="profileAvatar" class="character-sprite sprite-0"></span>
+          </button>
+          <span id="toolbarName" class="toolbar-name"></span>
+          <div class="point-display" aria-label="points">
+            <svg class="point-icon" aria-hidden="true" focusable="false"><use href="./assets/point-mall-icons.svg#cat-gem"></use></svg>
+            <strong class="point-value">120</strong>
+          </div>
+          <button id="soundToggle" type="button" aria-label="sound">♪</button>
+          <div class="language-menu" aria-label="Language">
+            <button type="button" data-lang="ko" class="active">한</button>
+            <button type="button" data-lang="zh">中</button>
+            <button type="button" data-lang="ja">日</button>
+            <button type="button" data-lang="en">EN</button>
+          </div>
+        </div>
+
+        <div id="mapGuide" class="map-guide" aria-live="polite">
+          <strong id="guideName">큐비</strong>
+          <p data-i18n="mapGuide">쌓기나무 성에 새로운 게임이 있어!</p>
+        </div>
+      </section>
+
+      <section id="characterModal" class="character-modal" aria-labelledby="characterTitle" hidden>
+        <div class="character-dialog">
+          <header>
+            <div>
+              <p data-i18n="myPartner">나의 도형 파트너</p>
+              <h2 id="characterTitle" data-i18n="chooseCharacter">캐릭터 선택</h2>
+            </div>
+            <div class="language-menu character-language-menu" aria-label="Language">
+              <button type="button" data-lang="ko" class="active">한</button>
+              <button type="button" data-lang="zh">中</button>
+              <button type="button" data-lang="ja">日</button>
+              <button type="button" data-lang="en">EN</button>
+            </div>
+            <div class="dialog-points">
+              <svg class="point-icon" aria-hidden="true" focusable="false"><use href="./assets/point-mall-icons.svg#cat-gem"></use></svg>
+              <strong class="point-value">120</strong>
+            </div>
+            <button id="closeCharacter" type="button" aria-label="close">×</button>
+          </header>
+
+          <div class="character-content">
+            <section class="selected-character">
+              <div class="preview-stage">
+                <span id="selectedSprite" class="character-sprite sprite-0"></span>
+                <span id="equippedItems" class="equipped-items" aria-hidden="true"></span>
+              </div>
+              <h3 id="selectedName">큐비</h3>
+              <p id="selectedRole">Cube Town Guide</p>
+              <label class="player-name-field" for="playerName">
+                <span data-i18n="playerName">내 이름</span>
+                <input id="playerName" type="text" maxlength="16" autocomplete="nickname" data-i18n-placeholder="namePlaceholder" placeholder="이름이나 별명" />
+              </label>
+              <small id="nameHint" class="name-hint" data-i18n="nameHint">이 이름으로 학습 기록이 저장돼요.</small>
+            </section>
+
+            <section class="character-options">
+              <h3 data-i18n="friends">도형 친구들</h3>
+              <div id="characterGrid" class="character-grid"></div>
+
+              <h3 data-i18n="color">색상</h3>
+              <div id="colorPalette" class="color-palette"></div>
+
+              <div class="item-heading">
+                <h3 data-i18n="items">포인트 몰</h3>
+                <span data-i18n="itemHint">포인트로 해금하고 장착해요</span>
+              </div>
+              <nav id="itemCategories" class="item-categories" aria-label="item categories"></nav>
+              <div id="itemGrid" class="item-grid"></div>
+              <button id="saveProfile" class="save-profile" type="button" data-i18n="saveProfile">이 이름으로 시작하기</button>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./app.js?v=evolve4-20260720a"></script>
+    <script src="../shared/pwa.js?v=1" defer></script>
+  </body>
+</html>

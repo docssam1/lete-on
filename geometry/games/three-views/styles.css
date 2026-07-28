@@ -1,0 +1,110 @@
+/* Three-View Station shares the Cube Town shell (layout, panels, character,
+   success burst, dialogs, responsive rules) with the other games. The shell
+   base is imported here so there is a single source of truth; only the three
+   view-grids and this game theming live below. */
+@import url("../fill-box/styles.css?v=fill-1");
+
+/* =========================================================================
+   세 방향 관찰소 (Three-View Station)
+   The answer panel holds three paint grids — 앞 / 옆 / 위 — that the child fills
+   to match how the 3D stack looks from each direction. The 옆 button in the
+   viewer header snaps the camera to the right-side view.
+   ========================================================================= */
+.views-shell .views-answer > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.views-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px 6px;
+  overflow: auto;
+}
+
+.views-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 14px;
+}
+.view-block { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.view-label { font-weight: 850; font-size: clamp(12px, 1.4vw, 15px); color: #4f5c65; text-align: center; }
+
+.view-grid {
+  --cols: 3;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  gap: 4px;
+  padding: 7px;
+  background: #fffdf7;
+  border: 1px solid #e0d3b8;
+  border-radius: 10px;
+  box-shadow: inset 0 2px 6px rgba(120, 84, 40, .08);
+}
+.view-cell {
+  width: clamp(24px, 3vw, 34px);
+  height: clamp(24px, 3vw, 34px);
+  border: 2px solid #cfc0a0;
+  border-radius: 6px;
+  background: #fbf6ea;
+  cursor: pointer;
+  transition: transform .08s ease, background .12s ease, border-color .12s ease;
+}
+.view-cell:hover { border-color: #9a7a4e; }
+.view-cell.filled {
+  background: linear-gradient(#5b78a8, #3c5788);
+  border-color: #2f477a;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, .22);
+}
+.view-cell.right { outline: 3px solid #35a13f; outline-offset: -1px; }
+.view-cell.wrong { outline: 3px solid #d9473f; outline-offset: -1px; animation: wrong-shake .34s ease; }
+.view-cell:disabled { cursor: default; }
+
+/* Action row — clear + confirm (shared visual language with the other games). */
+.views-actions { display: grid; grid-template-columns: 1fr 1.4fr; gap: 9px; padding: 2px 4px 0; margin-top: auto; }
+.views-actions button {
+  min-height: 46px;
+  border-radius: 9px;
+  border: 1px solid #cdb188;
+  font-weight: 850;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #d9c09a;
+}
+.views-actions .clear-btn { background: #fff4f0; color: #9b4035; border-color: #e6b7ab; box-shadow: 0 3px 0 #e0b3a6; }
+.views-actions .check-btn { background: linear-gradient(#8fd06f, #4fae3f); color: #14380f; border-color: #3d9130; box-shadow: 0 3px 0 #2f7d24; }
+.views-actions button:active { transform: translateY(2px); box-shadow: 0 1px 0 #d9c09a; }
+.views-actions button:disabled { opacity: .42; cursor: default; transform: none; }
+
+/* The 옆 (side) camera button reuses the shell's amber toggle look but acts as a
+   momentary view button, so it never shows a pressed state. */
+.views-shell .xray-button {
+  border: 1px solid #bd8f5e;
+  border-radius: 7px;
+  background: linear-gradient(#fffaf0, #efd0a4);
+  color: #6b4423;
+  font-weight: 800;
+  padding: 8px 14px;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #a76d38;
+}
+.views-shell .xray-button.wide { min-height: 34px; padding: 6px 16px; }
+
+/* Roomier level picker: 5 levels in one row on wide screens. */
+.views-shell .level-list { grid-template-columns: repeat(5, 1fr); }
+@media (max-width: 720px) { .views-shell .level-list { grid-template-columns: repeat(3, 1fr); } }
+
+/* Tight landscape phones: shrink cells and gaps so all three grids fit. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .views-stage { padding: 6px 8px 4px; gap: 6px; }
+  .views-row { gap: 8px; }
+  .view-label { font-size: 10px; }
+  .view-grid { padding: 4px; gap: 3px; border-radius: 8px; }
+  .view-cell { width: 20px; height: 20px; border-radius: 5px; }
+  .views-actions button { min-height: 34px; }
+}

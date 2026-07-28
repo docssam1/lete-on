@@ -258,7 +258,10 @@ function libProgress(bookId){return libEnsure()&&profile.library[bookId];}
 function openLibraryBook(bookId){
  const meta=libBookMeta(bookId);if(!meta)return;
  const saved=libProgress(bookId);
- const stage=(saved&&saved.introSeen)?'read':(meta.background?'intro':(meta.vocab&&meta.vocab.length?'vocab':'read'));
+ // Prefer the real book pages (원본 보기) as the reading view when a source PDF
+ // exists; the reflow "읽기" tab stays available for phones / PDF-less books.
+ const readStage=meta.sourceFile?'original':'read';
+ const stage=(saved&&saved.introSeen)?readStage:(meta.background?'intro':(meta.vocab&&meta.vocab.length?'vocab':readStage));
  lib={view:'book',bookId,pages:null,loading:true,loadError:false,spread:(saved&&typeof saved.spread==='number')?saved.spread:-1,stage,quizIndex:0,quizAnswers:[],quizFeedback:null};
  atTown=true;townView='library';render();window.scrollTo({top:0});
  libFetchPages(bookId);
@@ -285,11 +288,10 @@ function libGoSpread(delta){if(!lib||lib.view!=='book')return;const meta=libBook
 // namespaced by page index so multiple visible pages don't collide.
 function libPageBody(page,pageIdx){
  if(!page)return '';
- const paras=page.paragraphs||[];
- // Real book pagination: a chapter doesn't always start at the top of a page (the
- // previous chapter's tail may share the page). chapterTitleAt is the paragraph
- // index the heading prints before; defaults to 0 (top of page) when unset.
- const titleAt=page.chapterTitle?(page.chapterTitleAt||0):-1;
+ // Pages from Supabase may be plain strings (newer books) or {paragraphs:[]} objects (mth1).
+ const isStr=typeof page==='string';
+ const paras=isStr?page.split('\n').filter(p=>p.trim()):(page.paragraphs||[]);
+ const titleAt=isStr?-1:(page.chapterTitle?(page.chapterTitleAt||0):-1);
  // Illustration for this page, supplied by the director (not the licensed book's
  // own art) — served from private-facing Supabase Storage, never bundled into
  // git/GitHub Pages. Convention: {bookId}/page{N}.jpg (1-indexed to match the
@@ -302,7 +304,7 @@ function libPageBody(page,pageIdx){
  }
  let offset=0;
  const html=paras.map((p,pi)=>{
-  const heading=pi===titleAt?`<h3 class="lib-ch-title">${esc(page.chapterTitle)}</h3>`:'';
+  const heading=pi===titleAt?`<h3 class="lib-ch-title">${esc(isStr?'':page.chapterTitle)}</h3>`:'';
   const sentences=splitSentences(p);
   const inner=sentences.map(s=>{const start=offset;const end=start+s.length;offset=end+1;return `<span class="sentence-line" data-libpage="${pageIdx}" data-start="${start}" data-end="${end}">${esc(s)} </span>`;}).join('');
   offset+=1;return `${heading}<p>${inner}</p>`;
@@ -376,7 +378,8 @@ function renderLibraryPdfSentenceOverlay(page,viewport,idx){
   items.forEach((it,i)=>{const s=it.str||'';const start=text.length;text+=s;if(!/\s$/.test(s))text+=' ';ranges.push({start,end:start+s.length,span:spans[i]});});
   const {norm,map}=libNormMap(text);
   let searchFrom=0,offset=0;
-  (pageData.paragraphs||[]).forEach(p=>{
+  const pdParas=typeof pageData==='string'?pageData.split('\n').filter(p=>p.trim()):(pageData.paragraphs||[]);
+  pdParas.forEach(p=>{
    splitSentences(p).forEach(sentence=>{
     const start=offset;const end=start+sentence.length;offset=end+1;
     const needle=libNormMap(sentence).norm;if(!needle)return;
@@ -783,7 +786,7 @@ function libraryScreen(){
  return libReaderScreen();
 }
 function bindLibraryAudio(){
- app.querySelectorAll('[data-act="lib-listen"]').forEach(b=>{b.onclick=()=>{const idx=+b.dataset.page;const pg=(lib.pages||[])[idx];if(!pg)return;const text=(pg.paragraphs||[]).join(' ');libSpeakPage(idx,text);};});
+ app.querySelectorAll('[data-act="lib-listen"]').forEach(b=>{b.onclick=()=>{const idx=+b.dataset.page;const pg=(lib.pages||[])[idx];if(!pg)return;const text=typeof pg==='string'?pg:(pg.paragraphs||[]).join(' ');libSpeakPage(idx,text);};});
 }
 function handleLibrary(b){const act=b.dataset.act;
  if(act==='lib-back'){lib=null;stopSpeak();atTown=true;townView=landingView();render();window.scrollTo({top:0});return;}
@@ -793,9 +796,9 @@ function handleLibrary(b){const act=b.dataset.act;
  if(act==='lib-next'){libGoSpread(1);return;}
  if(act==='lib-pdf-prev'){stopSpeak();lib.pdfPageIndex=Math.max(0,(lib.pdfPageIndex||0)-1);render();window.scrollTo({top:0});return;}
  if(act==='lib-pdf-next'){stopSpeak();const total=(lib.pages||[]).length;lib.pdfPageIndex=Math.min(total-1,(lib.pdfPageIndex||0)+1);render();window.scrollTo({top:0});return;}
- if(act==='lib-pdf-listen'){const idx=lib.pdfPageIndex||0;const pg=(lib.pages||[])[idx];if(pg)libSpeakPage(idx,(pg.paragraphs||[]).join(' '));return;}
- if(act==='lib-intro-next'){const meta=libBookMeta(lib.bookId);libSaveProgress({introSeen:true});lib.stage=(meta&&meta.vocab&&meta.vocab.length)?'vocab':'read';stopSpeak();render();window.scrollTo({top:0});return;}
- if(act==='lib-vocab-next'){lib.stage='read';stopSpeak();render();window.scrollTo({top:0});return;}
+ if(act==='lib-pdf-listen'){const idx=lib.pdfPageIndex||0;const pg=(lib.pages||[])[idx];if(pg)libSpeakPage(idx,typeof pg==='string'?pg:(pg.paragraphs||[]).join(' '));return;}
+ if(act==='lib-intro-next'){const meta=libBookMeta(lib.bookId);libSaveProgress({introSeen:true});lib.stage=(meta&&meta.vocab&&meta.vocab.length)?'vocab':((meta&&meta.sourceFile)?'original':'read');stopSpeak();render();window.scrollTo({top:0});return;}
+ if(act==='lib-vocab-next'){const meta=libBookMeta(lib.bookId);lib.stage=(meta&&meta.sourceFile)?'original':'read';stopSpeak();render();window.scrollTo({top:0});return;}
  if(act==='lib-word-speak'){const meta=libBookMeta(lib.bookId);const w=(meta&&meta.vocab||[])[+b.dataset.i];if(w)speakText(w[0]);return;}
  if(act==='lib-word-save'){const meta=libBookMeta(lib.bookId);const w=(meta&&meta.vocab||[])[+b.dataset.i];if(w)toggleSaveWord(w,{type:'ebook',bookId:lib.bookId});render();return;}
  if(act==='lib-goto'){const meta=libBookMeta(lib.bookId);let stage=b.dataset.stage;if(stage==='quiz'&&meta){const total=(meta.quiz||[]).length;if(total>0&&lib.quizAnswers.length===total)stage='quizResult';}lib.stage=stage;stopSpeak();render();window.scrollTo({top:0});return;}

@@ -1,0 +1,113 @@
+/* GFIELD Cube Town — hard portrait lock.
+   The games are landscape-only. In ANY portrait-shaped viewport (phones,
+   tablets, split-screen windows) the game itself must be completely hidden
+   behind an opaque backdrop, with only the rotate-to-landscape guard visible.
+
+   Loaded AFTER each game's own stylesheet so these rules win the cascade.
+   (Fixes: the game's later `.app-shell { display: grid }` used to override the
+   guard's `display: none`, letting the boards/cubes peek through in portrait.) */
+
+@media (orientation: portrait) {
+  html, body {
+    min-height: var(--app-dvh, 100vh);
+    overflow: hidden;
+  }
+
+  /* Opaque backdrop — nothing of the game shows through. */
+  body {
+    background:
+      linear-gradient(rgba(47, 26, 12, .84), rgba(31, 17, 9, .97)),
+      url("../world-map/assets/geometry-world-map.webp") center / cover no-repeat;
+  }
+
+  body::before,
+  body::after,
+  .app-shell,
+  .game-shell {
+    display: none !important;
+  }
+
+  .portrait-guard {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid !important;
+    grid-template-rows: auto 1fr auto;
+    min-height: var(--app-dvh, 100vh);
+    padding:
+      max(22px, env(safe-area-inset-top))
+      max(22px, env(safe-area-inset-right))
+      max(28px, env(safe-area-inset-bottom))
+      max(22px, env(safe-area-inset-left));
+    color: #fff5dc;
+  }
+}
+
+/* Wider portrait viewports (tablets, split-screen ≥ 821px) never matched the
+   games' own guard styling block, so give the guard a clean look here. */
+@media (orientation: portrait) and (min-width: 821px) {
+  .portrait-brand {
+    font-size: clamp(26px, 4.4vw, 40px);
+    font-weight: 1000;
+  }
+
+  .portrait-brand span {
+    color: #efc57d;
+    font-size: .72em;
+  }
+
+  .rotate-phone {
+    position: relative;
+    place-self: center;
+    width: clamp(150px, 24vw, 220px);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+  }
+
+  .rotate-phone-device {
+    width: 46%;
+    height: 74%;
+    border: 4px solid #ffe9bd;
+    border-radius: 16px;
+    background: rgba(63, 38, 18, .85);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, .4);
+    animation: portrait-lock-turn 2.2s ease-in-out infinite;
+  }
+
+  .rotate-phone-arrow {
+    position: absolute;
+    right: 6%;
+    top: 24%;
+    color: #ffd75e;
+    font-size: clamp(30px, 4.4vw, 44px);
+    font-weight: 900;
+  }
+
+  .portrait-guide {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border: 2px solid rgba(255, 233, 189, .6);
+    border-radius: 14px;
+    background: rgba(43, 26, 14, .72);
+  }
+
+  .portrait-guide strong {
+    display: block;
+    font-size: clamp(20px, 2.8vw, 27px);
+  }
+
+  .portrait-guide p {
+    margin: 6px 0 0;
+    color: #efdcb4;
+    font-size: clamp(13px, 1.9vw, 17px);
+  }
+
+  @keyframes portrait-lock-turn {
+    0%, 18% { transform: rotate(0deg); }
+    55%, 82% { transform: rotate(90deg); }
+    100% { transform: rotate(90deg); }
+  }
+}

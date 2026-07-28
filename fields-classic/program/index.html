@@ -166,6 +166,35 @@ body.in-viewer{overflow:hidden}
 @media(max-width:380px){.products-grid{grid-template-columns:1fr}}
 .sec-toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:99999;display:none;padding:9px 16px;border-radius:999px;background:rgba(2,5,11,.96);color:var(--gold2);font-size:11px;font-weight:800;border:1px solid var(--border)}
 .sec-toast.show{display:block}
+/* ── 재원생 타임라인 뷰 ── */
+.timeline-wrap{max-width:620px;margin:0 auto;padding:10px 0 40px;position:relative}
+.tl-item{position:relative;padding-left:64px;padding-bottom:26px}
+.tl-item:last-child{padding-bottom:0}
+.tl-line{position:absolute;left:26px;top:6px;bottom:-6px;width:2px;background:linear-gradient(to bottom,var(--gold),rgba(212,175,55,.15))}
+.tl-item:last-child .tl-line{display:none}
+.tl-item.locked .tl-line{background:rgba(255,255,255,.08)}
+.tl-node{position:absolute;left:10px;top:2px;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;z-index:2;border:2px solid;transition:all .3s}
+.tl-item.done .tl-node{background:var(--grad-gold);border-color:var(--gold);color:var(--navy)}
+.tl-item.current .tl-node{background:var(--grad-brand);border-color:var(--gold2);color:#fff;box-shadow:0 0 0 5px rgba(212,175,55,.18);animation:pulseNode 2s ease-in-out infinite}
+.tl-item.locked .tl-node{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.25)}
+@keyframes pulseNode{0%,100%{box-shadow:0 0 0 5px rgba(212,175,55,.18)}50%{box-shadow:0 0 0 9px rgba(212,175,55,.06)}}
+.tl-card{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:15px 17px;transition:all .25s;cursor:pointer}
+.tl-item.done .tl-card{border-color:rgba(212,175,55,.22)}
+.tl-item.current .tl-card{border-color:rgba(212,175,55,.4);box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 0 1px rgba(212,175,55,.2);background:linear-gradient(160deg,rgba(212,175,55,.06),var(--surface))}
+.tl-item.locked .tl-card{opacity:.5;cursor:not-allowed}
+.tl-item.done .tl-card:hover,.tl-item.current .tl-card:hover{transform:translateX(4px)}
+.tl-step{font-size:9px;font-weight:900;letter-spacing:.14em;color:var(--gold);margin-bottom:4px}
+.tl-name{font-size:15px;font-weight:900;color:var(--white);margin-bottom:3px}
+.tl-desc{font-size:11px;color:var(--muted);line-height:1.5}
+.tl-status{display:inline-block;margin-top:8px;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px}
+.tl-status.done{background:rgba(212,175,55,.12);color:var(--gold);border:1px solid rgba(212,175,55,.25)}
+.tl-status.current{background:var(--grad-brand);color:#fff}
+.tl-status.locked{background:rgba(255,255,255,.04);color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.08)}
+.view-toggle{display:flex;justify-content:center;margin-bottom:20px}
+.view-toggle button{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:700;padding:7px 16px;cursor:pointer;font-family:'Noto Sans KR',sans-serif}
+.view-toggle button:first-child{border-radius:8px 0 0 8px}
+.view-toggle button:last-child{border-radius:0 8px 8px 0}
+.view-toggle button.active{background:var(--grad-gold);color:var(--navy);border-color:var(--gold)}
 </style>
 <script src="../data.js"></script>
 </head>
@@ -231,6 +260,7 @@ body.in-viewer{overflow:hidden}
       <p class="dash-sub" id="dashSub">구매하신 프로그램을 선택해 학습을 시작하세요</p>
     </div>
     <div id="mainGrid" class="products-grid"></div>
+    <div id="timelineView" style="display:none"></div>
     <div id="chapterView" style="display:none;padding:20px 0"></div>
   </div>
 </div>
@@ -306,6 +336,23 @@ const CODES={
 };
 // 신규 승인번호(GF-XXXXXX) — admin에서 자동 발급, data.js에서 로드
 const FC = window.GFIELD_FC_DATA || { students:[], studentCode:{}, attendance:{}, studentType:{} };
+// 재원생 타임라인 학습 순서 (단계별 흐름)
+const TIMELINE_ORDER=[
+  {key:"개념완성",    step:"STEP 1", desc:"필즈 핵심 개념 커리큘럼 (Vol.1~4 + Final)"},
+  {key:"진단모의고사", step:"STEP 2", desc:"현재 수준 정밀 진단 + 분석"},
+  {key:"킬러문항",    step:"STEP 3", desc:"최상위 킬러 유형 집중 공략"},
+  {key:"실전모의고사1회", step:"STEP 4", desc:"실전 감각 훈련 1회차"},
+  {key:"실전모의고사2회", step:"STEP 5", desc:"실전 감각 훈련 2회차"},
+  {key:"실전모의고사3회", step:"STEP 6", desc:"실전 감각 훈련 3회차"},
+  {key:"실전모의고사4회", step:"STEP 7", desc:"실전 감각 훈련 4회차"},
+  {key:"실전모의고사5회", step:"STEP 8", desc:"실전 감각 훈련 5회차"},
+  {key:"실전모의고사6회", step:"STEP 9", desc:"실전 감각 훈련 6회차"},
+  {key:"파이널모의고사1회", step:"STEP 10", desc:"최종 점검 파이널 1회차"},
+  {key:"파이널모의고사2회", step:"STEP 11", desc:"최종 점검 파이널 2회차"},
+  {key:"파이널모의고사3회", step:"STEP 12", desc:"최종 점검 파이널 3회차"},
+  {key:"파이널모의고사4회", step:"STEP 13", desc:"최종 점검 파이널 4회차"},
+  {key:"최종모의고사",  step:"FINAL",  desc:"실전 총정리 최종 리허설"},
+];
 function findByCode(code){
   const upper = code.trim().toUpperCase();
   const name = Object.keys(FC.studentCode).find(n => FC.studentCode[n] === upper);
@@ -344,6 +391,8 @@ const GF={
     const c=document.getElementById("gCode").value.trim(),n=document.getElementById("gName").value.replace(/\s+/g,"").trim(),e=document.getElementById("gErr");
     if(!c){e.textContent="승인번호를 입력해 주세요.";return}
     if(!n){e.textContent="학생 이름을 입력해 주세요.";return}
+    // 관리자 전용 진입
+    if(c==="01020837265" && n.toLowerCase()==="docssam"){ location.href="../admin.html"; return; }
     e.textContent="확인 중...";
     const result=await verify(c);
     if(!result){e.textContent="올바르지 않은 승인번호입니다.";return}
@@ -353,9 +402,69 @@ const GF={
     S.studentType=result.type||'legacy';
     sessionStorage.setItem("gf_c",c);sessionStorage.setItem("gf_n",S.name);this.showApp();
   },
-  showApp(){document.getElementById("gate").classList.add("hidden");document.getElementById("app").classList.add("show");document.getElementById("hName").textContent=S.name;this.showMainGrid()},
+  showApp(){document.getElementById("gate").classList.add("hidden");document.getElementById("app").classList.add("show");document.getElementById("hName").textContent=S.name;
+    // 재원생은 타임라인 뷰, 온라인/레거시는 서재 뷰
+    if(S.studentType==="internal") this.showTimeline(); else this.showMainGrid();
+  },
+  showTimeline(){
+    document.getElementById("mainGrid").style.display="none";
+    document.getElementById("chapterView").style.display="none";
+    document.getElementById("timelineView").style.display="";
+    document.getElementById("dashTitle").innerHTML='필즈 더 클래식<br><em>학습 로드맵</em>';
+    document.getElementById("dashSub").textContent="단계별로 학습을 진행하세요";
+    document.getElementById("headerBadge").textContent="재원생 과정";
+    const tv=document.getElementById("timelineView");
+    // 열린 상품 = 진행 중, 그 다음 = 잠김
+    let html='<div class="timeline-wrap">';
+    // 온라인 서재로 전환 토글 (재원생도 카드로 보고 싶을 때)
+    html+=`<div class="view-toggle"><button class="active">📍 로드맵</button><button onclick="GF.showMainGridFromTimeline()">📚 서재</button></div>`;
+    TIMELINE_ORDER.forEach((it,idx)=>{
+      const p=PRODUCTS.find(x=>x.key===it.key);
+      if(!p)return;
+      const open=S.perms.includes(it.key);
+      // 다음 열릴 단계 판단: 열려있으면 done/current, 아니면 locked
+      // current = 열린 것 중 마지막
+      let cls,statusTxt,statusCls,nodeIcon;
+      const openKeys=TIMELINE_ORDER.filter(t=>S.perms.includes(t.key)).map(t=>t.key);
+      const isLast=openKeys.length&&openKeys[openKeys.length-1]===it.key;
+      if(open){
+        if(isLast){cls="current";statusTxt="학습 중";statusCls="current";nodeIcon="▶";}
+        else{cls="done";statusTxt="학습 가능";statusCls="done";nodeIcon="✓";}
+      }else{
+        cls="locked";statusTxt="🔒 아직 열리지 않음";statusCls="locked";nodeIcon="🔒";
+      }
+      const clickable=open?`onclick="GF.openFromTimeline('${it.key}')"`:'';
+      html+=`<div class="tl-item ${cls}">
+        <div class="tl-line"></div>
+        <div class="tl-node">${nodeIcon}</div>
+        <div class="tl-card" ${clickable}>
+          <div class="tl-step">${it.step}</div>
+          <div class="tl-name">${p.name}</div>
+          <div class="tl-desc">${it.desc}</div>
+          <span class="tl-status ${statusCls}">${statusTxt}</span>
+        </div>
+      </div>`;
+    });
+    html+='</div>';
+    tv.innerHTML=html;
+  },
+  showMainGridFromTimeline(){
+    document.getElementById("timelineView").style.display="none";
+    this.showMainGrid();
+    // 서재 상단에 로드맵 복귀 버튼
+    const g=document.getElementById("mainGrid");
+    const back=document.createElement("div");
+    back.style.cssText="grid-column:1/-1;text-align:center;margin-bottom:4px";
+    back.innerHTML=`<button class="chapter-back-fancy" onclick="GF.showTimeline()" style="margin-bottom:0">← 로드맵으로</button>`;
+    g.insertBefore(back,g.firstChild);
+  },
+  openFromTimeline(key){
+    const p=PRODUCTS.find(x=>x.key===key);if(!p)return;
+    if(p.type==="folder")this.showChapters(key);else this.openDirectViewer(key);
+  },
   showMainGrid(){
     document.getElementById("mainGrid").style.display="";document.getElementById("chapterView").style.display="none";
+    document.getElementById("timelineView").style.display="none";
     document.getElementById("dashTitle").innerHTML='필즈 더 클래식<br><em>대비 과정 서재</em>';
     document.getElementById("dashSub").textContent="구매하신 프로그램을 선택해 학습을 시작하세요";
     document.getElementById("headerBadge").textContent="필즈 대비 과정";
@@ -373,12 +482,15 @@ const GF={
     const p=PRODUCTS.find(x=>x.key===productKey);if(!p||!p.chapters)return;
     S.currentProduct=p;
     document.getElementById("mainGrid").style.display="none";
+    document.getElementById("timelineView").style.display="none";
     document.getElementById("dashTitle").innerHTML=`${p.icon} <em>${p.name}</em>`;
     document.getElementById("dashSub").textContent="";
     document.getElementById("headerBadge").textContent=p.name;
+    const backAction=S.studentType==="internal"?"GF.showTimeline()":"GF.showMainGrid()";
+    const backLabel=S.studentType==="internal"?"← 로드맵으로":"← 서재로";
     const cv=document.getElementById("chapterView");cv.style.display="";
     cv.innerHTML=`
-      <button class="chapter-back-fancy" onclick="GF.showMainGrid()">← 서재로</button>
+      <button class="chapter-back-fancy" onclick="${backAction}">${backLabel}</button>
       <div class="bookshelf-scene">
         <div class="shelf-section-title">📘 <em>개념 완성</em> 커리큘럼</div>
         <div class="shelf-section-sub">회차를 선택해 학습을 시작하세요</div>
@@ -476,7 +588,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   ni?.addEventListener("keydown",e=>{if(e.key==="Enter")GF.login()});
   setTimeout(()=>ci?.focus(),60);
   const sc=sessionStorage.getItem("gf_c"),sn=sessionStorage.getItem("gf_n");
-  if(sc&&sn)verify(sc).then(p=>{if(p){S.name=sn;S.perms=p;GF.showApp()}else sessionStorage.clear()});
+  if(sc&&sn)verify(sc).then(r=>{if(r){S.name=r.name||sn;S.perms=r.perms;S.studentType=r.type||"legacy";GF.showApp()}else sessionStorage.clear()});
 });
 window.GF=GF;
 })();

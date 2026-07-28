@@ -1,0 +1,94 @@
+/* Cube Piece Lab shares the Cube Town shell (layout, panels, character,
+   success burst, dialogs, responsive rules) with the other games. The shell
+   base is imported here so there is a single source of truth; only the
+   piece-chooser and this game theming live below. */
+@import url("../fill-box/styles.css?v=fill-1");
+
+/* =========================================================================
+   큐브 조각 연구소 (Cube Piece Lab)
+   The number pad is replaced by a piece-chooser: three loose-piece cards, each
+   showing a 3D wood thumbnail the child rotates in their head to match the hole.
+   The reveal toggle ("빈 자리 보기") glows the empty socket instead of gaps.
+   ========================================================================= */
+.piece-chooser {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 0 16px 4px;
+  align-content: stretch;
+}
+.piece-option {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 4px;
+  padding: 8px 6px 6px;
+  border: 2px solid #cdb188;
+  border-radius: 13px;
+  background: linear-gradient(#fffdf7, #f6e7cd);
+  cursor: pointer;
+  box-shadow: 0 3px 0 #d9c09a;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
+}
+.piece-option:hover { border-color: var(--mint-strong, #59c6b0); background: linear-gradient(#f4fffb, #dcf3ec); }
+.piece-option:active { transform: translateY(2px); box-shadow: 0 1px 0 #d9c09a; }
+.piece-option:focus-visible { outline: 3px solid #6db4f4; outline-offset: 2px; }
+.piece-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  object-fit: contain;
+  border-radius: 9px;
+  background: radial-gradient(120% 120% at 50% 22%, #fffef9 0%, #f0e0c4 78%, #e6d2ad 100%);
+  pointer-events: none;
+}
+.piece-num {
+  font-weight: 900;
+  font-size: clamp(12px, 1.5vw, 15px);
+  color: #6b4423;
+  letter-spacing: .01em;
+}
+.piece-option.chosen { border-color: #2f7ad1; background: linear-gradient(#eaf4ff, #cfe6ff); box-shadow: 0 3px 0 #1c528f; }
+.piece-option.correct {
+  border-color: #2f9e3a;
+  background: linear-gradient(#e7f9e3, #bfeeb2);
+  box-shadow: 0 3px 0 #2f9e3a;
+  animation: piece-pop .34s ease;
+}
+.piece-option.correct .piece-num { color: #227a2c; }
+.piece-option.wrong { animation: wrong-shake .34s ease; border-color: #d9473f; background: linear-gradient(#fff1ef, #ffdcd6); }
+.piece-option:disabled { cursor: default; }
+.piece-option:disabled:not(.correct):not(.chosen) { opacity: .42; }
+@keyframes piece-pop {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+/* The status card shows a check when solved instead of a number. */
+.piece-status strong { font-size: clamp(30px, 4.4vw, 52px); }
+.piece-status.solved { border-color: #2f9e3a; background: #edfbe9; }
+.piece-status.solved strong { color: #2f9e3a; }
+
+/* Reveal toggle: pressed state glows amber to match the highlighted socket
+   (this game has no blue gaps, so override fill-box's blue pressed style). */
+.piece-shell .xray-button[aria-pressed="true"] {
+  background: linear-gradient(#ffd98a, #f2a63c);
+  border-color: #c9791f;
+  color: #5b3410;
+  box-shadow: 0 3px 0 #b06a1b;
+}
+.piece-shell .xray-mobile[aria-pressed="true"] { color: #5b3410; }
+.piece-shell .xray-mobile[aria-pressed="true"] b { color: #7a4a12; }
+
+/* Roomier level picker: 5 levels in one row on wide screens. */
+.piece-shell .level-list { grid-template-columns: repeat(5, 1fr); }
+@media (max-width: 720px) { .piece-shell .level-list { grid-template-columns: repeat(3, 1fr); } }
+
+/* Tight landscape phones: shrink the cards so all three fit above the fold. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .piece-chooser { grid-row: auto; gap: 6px; padding: 0 6px 2px; }
+  .piece-option { padding: 4px 4px 3px; border-radius: 9px; gap: 2px; }
+  .piece-num { font-size: 10px; }
+  .answer-panel.hidden-answer .number-prompt { min-height: 0; padding: 2px; font-size: 10px; }
+}

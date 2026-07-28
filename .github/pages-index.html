@@ -14,12 +14,14 @@
   .brand{font-weight:900;letter-spacing:.02em;color:#0f9f92;font-size:14px}
   h1{margin:6px 0 4px;font-size:30px;letter-spacing:-.5px}
   p{margin:0 0 22px;color:#5a6b88;font-size:15px;line-height:1.6}
+  .apps{display:grid;gap:12px}
   .card{display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;
     background:#fff;border:1px solid #e4e9f0;border-radius:18px;padding:18px 20px;text-align:left;
     box-shadow:0 10px 26px rgba(30,50,90,.10);transition:transform .15s,box-shadow .15s}
   .card:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(30,50,90,.16)}
   .ico{flex:0 0 auto;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;
     font-size:26px;background:linear-gradient(135deg,#11aa9b,#6d4de8);color:#fff}
+  .store .ico{background:linear-gradient(135deg,#ffb33c,#6d4de8)}
   .card b{display:block;font-size:17px}
   .card small{color:#7386a4;font-size:13px}
   .go{margin-left:auto;color:#0f9f92;font-weight:800}
@@ -28,13 +30,20 @@
 <body>
   <div class="wrap">
     <div class="brand">G-FIELD ONLINE</div>
-    <h1>G-FIELD 학습</h1>
-    <p>아래에서 앱을 선택해 시작하세요.</p>
-    <a class="card" href="reading-world/">
-      <span class="ico">📚</span>
-      <span><b>Gfield Reading Town</b><small>CARS · Level B 영어 독해 + 마을 게임</small></span>
-      <span class="go">→</span>
-    </a>
-    <footer>© G-FIELD · 개인 학습용</footer>
+    <h1>G-FIELD 앱</h1>
+    <p>아래에서 사용할 앱을 선택하세요.</p>
+    <div class="apps">
+      <a class="card" href="reading-world/">
+        <span class="ico">📚</span>
+        <span><b>Gfield Reading Town</b><small>CARS · Level B 영어 독해 + 마을 게임</small></span>
+        <span class="go">→</span>
+      </a>
+      <a class="card store" href="yubin-yujun-store/">
+        <span class="ico">🍪</span>
+        <span><b>유빈유준 편의점</b><small>5칸 과자 재고 · 유통기한 · 사진 관리</small></span>
+        <span class="go">→</span>
+      </a>
+    </div>
+    <footer>© G-FIELD · 개인 사용용</footer>
   </div>
 </body></html>

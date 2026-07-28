@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 400" width="320" height="400" role="img" aria-label="Subject Link Level 4">
+  <defs>
+    <linearGradient id="sl" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0d3d12"/>
+      <stop offset="0.45" stop-color="#1b5e20"/>
+      <stop offset="0.8" stop-color="#2e7d32"/>
+      <stop offset="1" stop-color="#66bb6a"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="400" rx="14" fill="url(#sl)"/>
+  <rect x="18" y="18" width="284" height="364" rx="10" fill="none" stroke="#c8e6c9" stroke-opacity="0.4" stroke-width="2"/>
+  <text x="160" y="100" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="15" fill="#a5d6a7" letter-spacing="3">NE Build &amp; Grow</text>
+  <text x="160" y="175" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="42" fill="#ffffff">Subject</text>
+  <text x="160" y="225" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="42" fill="#c8e6c9">Link</text>
+  <rect x="126" y="255" width="68" height="68" rx="12" fill="#ffffff" fill-opacity="0.1"/>
+  <text x="160" y="298" text-anchor="middle" font-family="Georgia, serif" font-weight="800" font-size="34" fill="#a5d6a7">4</text>
+  <text x="160" y="374" text-anchor="middle" font-family="Georgia, serif" font-size="12" fill="#a5d6a7" letter-spacing="2">CONTENT-BASED ENGLISH READING</text>
+</svg>
