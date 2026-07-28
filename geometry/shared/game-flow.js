@@ -52,7 +52,7 @@
   var SUBTITLES = {
     ko: "정말 잘했어! 이제 어떻게 할까?",
     zh: "太棒了！接下来做什么？",
-    ja: "よくできたね!次はどうする?",
+    ja: "よくできたね！次はどうする？",
     en: "Great job! What's next?"
   };
   var PRIMARY_NEXT_LEVEL = {
