@@ -17,6 +17,17 @@
       last "다음 문제" press raises a celebration with 다음 레벨로 가기 and
       한번 더 연습하기 instead.
 
+   3. 한번 더 연습하기 used to replay the very same five problems in the very
+      same order (selectLevel() just re-clicks the level button, which resets
+      problemIndex to 0 without changing anything else). Each level's levels.js
+      now pulls its five problems for the sitting out of a larger pool via
+      shared/problem-pool.js, keyed off "?practice=1" in the URL. So instead of
+      re-clicking the level in place, 한번 더 연습하기 now reloads with
+      "?level=N&practice=1" — that advances the stored pool cursor for this
+      level and hands back a fresh, non-overlapping set of problems. 다음 레벨로
+      가기 still uses selectLevel() in place, since moving to a new level
+      already starts that level's first (untouched) round.
+
    Nothing in the game engines is touched. Everything works by reading the
    #progress label and clicking the buttons the games already render into
    #levelList, so each game keeps its own localized level names and its own
@@ -41,7 +52,7 @@
   var SUBTITLES = {
     ko: "정말 잘했어! 이제 어떻게 할까?",
     zh: "太棒了！接下来做什么？",
-    ja: "よくできたね！次はどうする？",
+    ja: "よくできたね!次はどうする?",
     en: "Great job! What's next?"
   };
   var PRIMARY_NEXT_LEVEL = {
@@ -259,11 +270,10 @@
       else window.location.href = "../../cube-town/";
     };
     ov.secondaryBtn.onclick = function () {
-      ov.backdrop.hidden = true;
-      if (!selectLevel(level)) {
-        bypass = true;
-        document.getElementById("next").click();
-      }
+      // Reload (not selectLevel-in-place) so this level's levels.js re-reads
+      // "?practice=1" and problem-pool.js hands back the next, non-overlapping
+      // slice of its pool instead of the same five problems again.
+      window.location.href = window.location.pathname + "?level=" + level + "&practice=1";
     };
 
     ov.backdrop.hidden = false;
