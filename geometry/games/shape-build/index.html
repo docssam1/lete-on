@@ -6,7 +6,7 @@
     <title>GFIELD Cube Town - Shape Build</title>
     <link rel="stylesheet" href="../../styles.css?v=menu-cleanup-20260719a" />
     <link rel="stylesheet" href="../../shared/portrait-lock.css?v=1" />
-    <link rel="stylesheet" href="./shape-build.css?v=shape-build-20260716d" />
+    <link rel="stylesheet" href="./shape-build.css?v=shape-build-20260728a" />
     <script type="importmap">
       {
         "imports": {
@@ -61,6 +61,10 @@
         </article>
         <article class="viewer build-view">
           <div class="viewer-heading"><h2 id="buildTitle">내가 만든 모양</h2></div>
+          <nav class="build-utilities" aria-label="Game settings">
+            <button id="audioToggle" class="utility-button" type="button" aria-pressed="false" aria-label="Mute"><span aria-hidden="true">🔊</span></button>
+            <a class="utility-button menu-exit" href="../../cube-town/" aria-label="나가기" data-i18n-aria="exit"><span class="exit-icon" aria-hidden="true">⌂</span><small data-i18n="exit">나가기</small></a>
+          </nav>
           <div id="buildCanvas" class="canvas-wrap interactive"></div>
         </article>
       </section>
@@ -76,13 +80,13 @@
       </section>
 
       <section class="control-strip shape-controls">
-        <button id="checkAnswer" class="primary" type="button">확인</button>
-        <button id="nextStep" type="button">다음 문제</button>
-        <button id="resetBuild" type="button">처음부터</button>
-        <button id="rotatePiece" type="button">방향</button>
-        <button id="viewFront" type="button">앞</button>
-        <button id="viewTop" type="button">위</button>
-        <button id="captureBuild" type="button">사진</button>
+        <button id="viewFront" class="rail-button" type="button"><b aria-hidden="true">↑</b><span data-i18n="front">앞</span></button>
+        <button id="viewRight" class="rail-button" type="button"><b aria-hidden="true">→</b><span data-i18n="right">오른쪽</span></button>
+        <button id="viewTop" class="rail-button" type="button"><b aria-hidden="true">◆</b><span data-i18n="top">위</span></button>
+        <button id="resetBuild" class="rail-button" type="button"><b aria-hidden="true">⌫</b><span data-i18n="reset">처음부터</span></button>
+        <button id="rotatePiece" class="rail-button" type="button"><b aria-hidden="true">↻</b><span data-i18n="rotate">방향</span></button>
+        <button id="checkAnswer" class="rail-button primary" type="button"><b aria-hidden="true">✓</b><span data-i18n="check">확인</span></button>
+        <button id="nextStep" class="rail-button" type="button"><b aria-hidden="true">➜</b><span data-i18n="next">다음 문제</span></button>
       </section>
 
       <div id="levelDialog" class="level-dialog" hidden>
@@ -100,7 +104,6 @@
         <div class="guide-bubble">
           <div class="guide-head">
             <strong class="guide-title">큐비</strong>
-            <button id="audioToggle" class="guide-audio" type="button" aria-pressed="false">음성 켜기</button>
           </div>
           <p id="guideMessage">조각의 모양과 방향을 잘 살펴보자!</p>
         </div>
@@ -116,6 +119,6 @@
       </div>
     </main>
 
-    <script type="module" src="./shape-build.js?v=track-graphics-popup-20260720a"></script>
+    <script type="module" src="./shape-build.js?v=rail-fix-colors-20260728a"></script>
   </body>
 </html>
