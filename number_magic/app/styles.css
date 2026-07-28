@@ -280,11 +280,26 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-result-code code{font-family:monospace;background:#f0f0f0;padding:2px 8px;border-radius:4px;color:#374151}
 
 /* ============================================================
-   ── 데스크탑 전용(768px+): 학습 화면(등급목록/유닛)만 중앙 640px로 좁힘.
-      마을(지도)은 위에서 이미 폭 제한이 없으므로 항상 화면 전체를 채움. ──
+   ── 데스크탑 전용(768px+): 학습 화면(등급목록/유닛)을 넓게 채움.
+      마을(지도)은 위에서 이미 폭 제한이 없으므로 항상 화면 전체를 채움.
+      (2026-07-21 수정: 640px는 모바일 그대로 늘린 것처럼 양옆이 텅 비어
+      보인다는 피드백 → 900px로 넓히고, 안의 핵심 요소도 데스크탑에서
+      살짝 키워 "꽉 찬" 느낌으로) ──
    ============================================================ */
 @media (min-width:768px){
-  .nm-map,.nm-unit-view{max-width:640px;margin-left:auto;margin-right:auto;width:100%}
+  .nm-map,.nm-unit-view{max-width:900px;margin-left:auto;margin-right:auto;width:100%}
+  .nm-numi{width:64px}
+  .nm-numi.big{width:92px}
+  .nm-bubble{font-size:17px;padding:14px 20px;max-width:560px}
+  .nm-numpad{max-width:340px;gap:10px}
+  .nm-key{font-size:24px;padding:14px 0}
+  .nm-numpad-screen{font-size:34px}
+  .nm-card{padding:26px 30px}
+  .nm-card-h{font-size:17px}
+  .nm-tile{min-width:58px;height:58px;font-size:26px}
+}
+@media (min-width:1100px){
+  .nm-map,.nm-unit-view{max-width:1040px}
 }
 
 /* ============================================================
