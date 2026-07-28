@@ -112,11 +112,28 @@
   }
 }
 
-/* --- floating fullscreen toggle ------------------------------------------- */
+/* --- floating fullscreen toggle -------------------------------------------
+   Top-right, not bottom-left: the intro screen (world-map's #intro) has its
+   own sound-toggle button sitting in the bottom-left corner, and this button
+   used to float in that exact spot too — same corner, same size, drawn on
+   top, so a child saw two icons stacked on each other.
+
+   The top offset has to clear whichever host page's own top bar is tallest,
+   and that varies a lot: world-map's .map-toolbar stays ~40px at every
+   width, but cube-town's .topbar wraps onto two rows on narrow/medium
+   screens and measures ~91px up to 560px wide, ~131px between 561-900px
+   (its widest state — bigger fonts/buttons than the <=560px variant), and
+   back down to ~70px single-row above 900px. The landscape/short-height
+   query cube-town itself uses (max-height:640px) shrinks its topbar to
+   ~46px regardless of width, so that case gets its own smaller offset
+   below. Each breakpoint below adds ~10px margin past the measured topbar
+   height so this never just trades one collision for another. */
 .gf-fullscreen-btn {
   position: fixed;
-  left: calc(14px + env(safe-area-inset-left, 0px));
-  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  right: calc(14px + env(safe-area-inset-right, 0px));
+  top: calc(100px + env(safe-area-inset-top, 0px));
+  left: auto;
+  bottom: auto;
   z-index: 8500;
   width: 44px;
   height: 44px;
@@ -134,6 +151,15 @@
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   opacity: 0.62;
   transition: opacity 0.16s ease, transform 0.12s ease, background 0.16s ease;
+}
+@media (min-width: 561px) and (max-width: 900px) {
+  .gf-fullscreen-btn { top: calc(145px + env(safe-area-inset-top, 0px)); }
+}
+@media (min-width: 901px) {
+  .gf-fullscreen-btn { top: calc(80px + env(safe-area-inset-top, 0px)); }
+}
+@media (orientation: landscape) and (max-height: 640px) {
+  .gf-fullscreen-btn { top: calc(60px + env(safe-area-inset-top, 0px)); }
 }
 .gf-fullscreen-btn:hover { opacity: 1; }
 .gf-fullscreen-btn:active { transform: scale(0.94); }
