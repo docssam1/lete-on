@@ -1,115 +1,108 @@
-# Numbers of Magic — 인수인계서
+# Numbers of Magic — 인수인계서 (통합본)
 
 > 이 파일은 세션 간 기억 대체용입니다. 작업 시작 전 반드시 읽으세요.
-> Last updated: 2026-07-10
+> Last updated: 2026-07-28 — **원래 작업자(마을·커리큘럼 설계) 인수인계 + 수의 나라(유아) 세션 작업을 결합한 통합본**
+> 함께 읽을 문서: `CURRICULUM_DESIGN.md`(전면 재설계, §9 결정 확정됨) · `DESIGN-LEARNING-MODE.md`(유아 구현 체크리스트) · `data/domain-map-reference.md`(국가교육과정 4영역 매핑)
+
+> 🧭 **모델 역할 분담 (원장 지시, 2026-07-28)**: **설계·검토 = Opus/Fable**,
+> **구현(코딩·반복 작업) = Sonnet**. 설계 문서 확정 후 Sonnet 세션/Workflow에 넘겨 구현하고,
+> 결과 검증·다음 설계는 다시 Opus/Fable이 맡는다.
 
 ---
 
 ## 프로젝트 개요
 
-**Numbers of Magic (수의 마법)** — 5~7세 대상 사고력 수학(창의수연 계열) 학습 웹앱.
+**Numbers of Magic (수의 마법)** — 5세~초등 대상 사고력 수학(창의수연 계열) 학습 웹앱.
 `docssam1/lete-on` 저장소의 `/number_magic/` 경로. 같은 저장소의 `reading-world`(영어 독해 앱)와
-아키텍처를 미러링해서 만듦(상태관리/저장/i18n `t()`/STEP flow 패턴 동일).
+아키텍처를 미러링(상태관리/저장/i18n `t()`/STEP flow 패턴 동일).
 
 - **운영 URL**: `https://lete-on.gfieldacademy.net/number_magic/`
 - **GitHub Pages 대체 경로**: `https://docssam1.github.io/lete-on/number_magic/`
-- 단일 HTML 앱(SPA, no build tool, vanilla JS). localStorage만 사용, Supabase 미연동(추후 필요시 reading-world 패턴 참고).
+- 단일 HTML 앱(SPA, no build tool, vanilla JS). localStorage(`nm_state_v1`) + nm_profiles 클라우드 동기화.
+
+### 브랜치 상태 (2026-07-28 병합 완료)
+- 유아(수의 나라) 작업은 `claude/patch-number-magic-map-4ow1mr` 브랜치에서 진행됨.
+- 2026-07-28 `origin/main`(설계 확정·화면폭 수정·domain-map)을 이 브랜치로 **merge 완료** — 양쪽 작업 모두 보존.
+- **main 반영(배포)은 아직 안 됨** — 이 브랜치를 main에 병합해야 유아 콘텐츠가 라이브에 나감.
 
 ---
 
-## 디렉토리 구조
+## 등급 구조와 구현 현황 (2026-07-28 기준)
 
-```
-/number_magic/
-  index.html            — 메인 진입점 (인트로 영상 → 마을 앱). app.html 내용을 흡수해 승격시킴(2026-07-10)
-  app.html               — 구버전 진입점(레거시, index.html과 내용 중복 — 정리 필요)
-  town_proto.html         — 마을 프로토타입(레거시). 실제 마을은 main.js의 screenTown()에 통합됨 — 삭제 후보
-  book.html / chapter.html / concept_proto.html / print.html / proto.html
-                          — 초기 프로토타입 파일들. 용도 불명확, 실제 앱과 연결 안 됨 — 정리 필요
-  app/
-    main.js               — 앱 전체 엔진(가장 큰 파일). 마을+등급선택+유닛 6단계 전부 여기 있음
-    styles.css            — 전체 스타일(마을 애니메이션 CSS 포함)
-  data/
-    curriculum.js         — 등급(tier)→단계(level)→유닛(unit) 3계층 카탈로그 (window.NM_CURRICULUM)
-    curriculum.json        — 레거시로 추정, curriculum.js와 별개 파일 — 용도 확인 필요
-    units/A-01.js          — 실제 유닛 데이터. 현재 A-01 딱 하나만 존재
-    chapters/A-01.json     — 레거시로 추정 — 용도 확인 필요
-  engine/
-    generators.js          — 문제 생성기(pair10 등)
-  assets/
-    map.jpg                 — 마을 배경 지도 (1024×687 기준 좌표 설계)
-    gemini_generated_video_c12e6123.mp4 — 인트로 영상
-```
-
-⚠️ **정리 필요**: `app.html`, `town_proto.html`, `book.html`, `chapter.html`, `concept_proto.html`,
-`print.html`, `proto.html`, `data/curriculum.json`, `data/chapters/A-01.json`은 실제 서비스 흐름과
-무관하거나 중복된 레거시 파일일 가능성이 높음. 다음 세션에서 실제 사용 여부 확인 후 정리 권장.
+| 등급 | 부제 | 콘텐츠 현황 |
+|------|------|------------|
+| **BASIC** | 수의 나라 (유아 5~7세) | ✅ **N-01~N-15 전체 15유닛 구현·검증 완료** (NL-1~NL-5 다섯 레벨, 로드맵 N0~N4 챕터) |
+| **PRIME** | 초급 (창의수연 A~I) | ✅ A-01~A-38 38유닛 존재 |
+| **ADVANCE** | 중급 (구구 기초 B-01~B-23 + 창의수연 C-01~C-25) | ✅ 유닛 파일 존재. ⚠️ 구구 파트가 실제 창의수연 중급 목차인지 원장 확인 필요 |
+| **CHALLENGE** | 고급 | ❌ 미구현 (중1 연산까지 상한 — 정수·유리수·지수법칙 스레드 추가 필요, 원장 지시 있음) |
 
 ---
 
-## 확정된 결정사항
+## ⭐ 수의 나라 (BASIC · 유아) — 2026-07-16 세션에서 전체 구현
 
-### 등급명 (curriculum.js에 반영됨)
+> 세부 체크리스트·설계 원칙은 `DESIGN-LEARNING-MODE.md` §9-5 참고.
 
-| 등급 | 한글 부제 | 급수 |
-|------|-----------|------|
-| BASIC | 수의 나라 (9까지의 수) | 0급 |
-| PRIME | 초급 (창의수연 A~I) | 1급 |
-| ADVANCE | 중급 | 2급 |
-| CHALLENGE | 고급 | 3급 |
+### 구조
+- **경량 플로우**: `tier:'basic'` 유닛은 practice → discover(1스테이지) → lab → stamp
+  (check·arena 생략 — main.js `unitFlowOf()`/`afterLabKey()` 분기). 도장 시 +20코인.
+- **프롬프트 TTS 자동 낭독** (`say()`) — 유아는 글을 못 읽으므로 필수. storyCard엔 🔊 다시듣기 버튼.
+- **생성기**: `engine/threads/nl.js` — 시드 RNG 계약(`NM_TGEN[key]=(params,rng)=>problem`),
+  Math.random 금지. 전 생성기 500~2000시드 퍼즈 테스트 통과.
+- **콘텐츠는 전부 창작**(이모지 장면·오리지널 도형 좌표) — 라이선스 교재(G1 PDF)는 구조 참고만.
 
-### 마을 건물 ↔ 등급 매핑 (여러 차례 수정 끝에 확정)
+### 챕터·유닛 매핑 (roadmap.js N0~N4 = curriculum.js NL-1~NL-5)
+| 챕터 | 유닛 | 생성기 | 위젯 |
+|------|------|--------|------|
+| N0 수 세기와 개수 | N-01·N-06·N-07 | nl1_count, nl4_bond, nl7_relation | tapCount, tapMake, numberBond, tenframe(재사용) |
+| N1 순서와 뛰어세기 | N-02·N-09·N-11 | nl2_seq, nl9_chain, nl11_arrange | seqFill, dotToDot, pyramid, matchLine, tapCount(step:10) |
+| N2 몇째와 크기 비교 | N-03·N-05·N-12 | nl3_ordinal, nl5_story, nl4_ladybug+nl12_scale | gridPaint, storyCard, numberBond(재사용), balanceScale |
+| N3 수 퍼즐과 논리 | N-08·N-13·N-15 | nl8_machine, nl13_puzzle, nl15_logic | numberMachine, crossSum, dotToDot(재사용), sortBasket |
+| N4 수의 여러 표현 | N-04·N-10·N-14 | nl_tallybuild, nl10_data, nl14_pattern | tallyBuild, matchLine(tally), sortBasket(compare), seqFill(재사용) |
 
-| 건물 | 등급 | 상태 |
-|------|------|------|
-| 📖 왼쪽 위 책 건물 (Numbers Library) | BASIC | 🔒 잠김 |
-| 🏛️ 빨간 TOWN HALL (중앙) | PRIME | ✅ 열림 — 클릭 시 유닛 목록 → app.html(학습) 이동 |
-| ⛰️ 오른쪽 정자 | CHALLENGE | 🔒 잠김 |
-| 🏠 CHALLENGE 오른쪽 아래 집 | ADVANCE | 🔒 잠김 (처음엔 가운데 시계탑이었으나 "다른 건물로" 요청 받아 이동함) |
-| 🎬 Magic Theater (주황 극장) | 별도 영상관(등급 아님) | 준비중 — 유튜브 영상 예정 |
+### 유아 위젯 12종 (widgets.js / widgets.css · styles.css)
+tapCount(step 확장) · tapMake · numberBond · seqFill · dotToDot · pyramid · matchLine(dot/tally) ·
+gridPaint(single/count) · storyCard(tap/numpad, 🔊) · balanceScale · numberMachine(apply/guess) ·
+crossSum · sortBasket(count/compare) · tallyBuild(build/read)
 
-건물 좌표는 `main.js`의 `TOWN_SPOTS` 배열(% 기준)에 있음. 데스크탑 스크린샷으로 확인하며
-눈대중 조정한 값이라 정밀하지 않을 수 있음 — 폰/PC로 직접 보고 필요시 미세조정.
+### 세션 중 발견·수정한 실버그 (재발 주의)
+1. **SVG `className` 대입 금지** — `svg.className='…'`는 실브라우저에서 TypeError(getter-only).
+   반드시 `setAttribute('class',…)`. (matchLine에서 발견, N-04 세션에서 수정)
+2. **화면 높이 초과 주의** — 유닛 화면은 스크롤 없는 고정 높이. 세로로 긴 위젯(계단)+numpad 조합이
+   메모입력창에 가려 버튼 클릭이 막혔던 사례(N-05) → 가로 배치 + 위젯 전용 축소 numpad(`.nm-sc-pad` 패턴)로 해결.
+3. **위젯에 목표값 항상 표시** — 프롬프트 문구에만 의존하면 인트로 문구에 가려질 때 목표를 알 수 없음
+   (gridPaint 🎯 배지 사례).
 
-### 구조 흐름
-
-```
-인트로 영상(index.html) → 마을(screenTown, 건물 클릭)
-  → 등급 유닛목록(screenTier)
-  → 유닛 6단계: practice → discover → check → lab → arena → stamp
-```
-
-- 진단 스킵(B안): practice 진입 시 "바로 넘어갈래? / 한번 볼래?" 질문으로 스킵 허용
-- 완료 시 코인(누미 코인) 지급, localStorage(`nm_state_v1`)에 저장
-
----
-
-## 마을(Living Town) 구현 세부사항
-
-- **드래그/핀치줌/휠줌** 가능한 1024×687 캔버스 위에 `map.jpg` 배경
-- **카메라 피팅 로직** (2026-07-10, 모바일 대응 수정):
-  화면을 꽉 채우는 배율(cover)과 "건물 5곳이 항상 화면 안에 들어오는" 배율(bbox-contain) 중
-  **더 작은(더 안전한) 값**을 사용. 데스크탑처럼 화면비가 지도와 비슷하면 cover와 같아 화면이 꽉 차고,
-  세로로 매우 긴 모바일에서는 bbox 쪽이 이겨서 건물이 화면 밖으로 밀리지 않음.
-  (`main.js`의 `computeContentBBox()` / `initTownWorld()`의 `fit()`/`center()` 참고)
-- **장식 애니메이션**: 하늘에 떠다니는 숫자 구름(7·10·5), 분수에서 솟는 0, 반짝임 파티클,
-  마을을 걸어다니는 숫자 캐릭터 3개(3·5·2, 탭하면 말풍선+TTS)
-- **배경음(2026-07-10 추가)**: 실제 음원 파일 없이 **Web Audio API로 직접 합성**.
-  브라운노이즈+대역통과 필터로 만든 물소리 + 오음계(C D E G A) 벨 아르페지오(딜레이 잔향)로
-  "신비한 느낌" 연출. 우측 하단 스피커 버튼(🔇/🔈)으로 토글, 브라우저 정책상 사용자가 버튼을
-  한 번 눌러야 재생됨. 마을 화면을 나가면 자동 정지. **사용자 피드백 대기 중**(톤/볼륨 적절한지).
-- **건물 클릭 시**: 팝업 모달로 이름/설명 표시. 열린 건물은 "유닛 보러가기 →" 버튼으로 `app.html` 이동,
-  잠긴 건물은 잠김 안내만.
+### 유아 디자인 패스 (진행 중, "이건 유아잖아" — 원장 지시)
+- 1차 완료: 터치 타깃 확대(칩·셀 50~58px), 정답 시 `tc-pop` 바운스 전 위젯 통일.
+- matchLine 연결선 = 굵은 보라 **곡선 점선**(유아 리딩앱 레퍼런스 참고, 라이선스 자산 미복제).
+- 2차 후보: 색상 대비, 오답 피드백(소리·표정), 구식 위젯 타깃 재검토, 유아 탭 한정 공통 UI 확대.
 
 ---
 
-## ⭐ 커리큘럼 전면 재설계 진행 중 (2026-07-12)
+## 마을(Living Town) — 확정 사항 (되돌리지 말 것)
 
-**`CURRICULUM_DESIGN.md`를 반드시 읽을 것.** 참고 팜플렛(두뇌로 영재수학) 분석을 바탕으로
-직렬 유닛 구조 → **스레드 병행(나선형) 과정 구조**로 재설계함. 핵심:
-스킬 스레드 체계(NS/AD/SB/ML/DV/FR/DC/MX) · 과정=4세션(새 마법 1+복습 드릴 3~5, 세션4=Test) ·
-계산기형 입력 금지(단계 채우기 등 위젯 5종) · 시험 모드+인쇄 학습지(시드 코드, 정답지 분리) ·
-전제 스킬 안내(잠금 아님). 설계 승인 후 Workflow 파이프라인으로 일괄 구현 예정(§8).
+- **드래그/핀치줌/휠줌** 1024×687 캔버스 + `map.jpg`, **bbox 하이브리드 카메라 피팅**
+  (cover vs 건물 5곳 contain 중 안전한 쪽 — 모바일에서 건물이 화면 밖으로 안 밀림).
+- **ADVANCE = 우하단 집(left:74%)이 확정** — 처음 시계탑(29%)이었으나 **원장 요청으로 이동**.
+  ("29%가 맞다"는 과거 비교표는 이 결정 이전의 낡은 정보이므로 무시. 51% 버전은 어느 브랜치에도 없음.)
+- 장식: 숫자 구름·분수·걷는 숫자 캐릭터(탭=말풍선+TTS)·Web Audio 합성 배경음(🔇/🔈 토글).
+- 건물 매핑: 📖BASIC(좌상 책건물·**이제 열림**) · 🏛️PRIME(TOWN HALL) · ⛰️CHALLENGE(정자·잠김) ·
+  🏠ADVANCE(우하단 집) · 🎬Magic Theater(영상·준비중).
+
+---
+
+## 커리큘럼 전면 재설계 (CURRICULUM_DESIGN.md) — §9 결정 확정됨
+
+원장 확정(다른 세션, 2026-07 하순): ① §3 과정 편성표 그대로 진행 ② 시험 통과 80% + 실패 시 재시험만
+③ 인쇄 학습지 기본 20문항 ④ **BASIC(수의 나라)도 파이프라인에 포함**.
+→ §8 구현 파이프라인(Workflow) 착수 가능 상태. 스레드 체계(NS/AD/SB/ML/DV/FR/DC/MX)는
+engine/threads/*.js 로 구현되어 있고, 유아용 NL 스레드(nl.js)가 이번에 추가됨.
+
+## 문장제·문제은행 (다른 세션 진행분)
+- `data/domain-map-reference.md` — DECK6(국가교육과정 math.json)에서 **구조·순서만** 참고해
+  4영역(수와연산/변화와관계/도형과측정/자료와가능성)을 우리 등급에 매핑. 텍스트는 전부 창작 방침.
+- `NM_WORDPROBLEMS` 스키마 초안 제안 상태 — 구현은 §8 이후 별도 안건.
+- 유아 문장제는 이미 수의 나라 storyCard(N-05·N-15)로 일부 구현됨 — 확장 시 이 패턴 재사용 권장.
 
 ---
 
@@ -117,28 +110,20 @@
 
 | 항목 | 상태 |
 |------|------|
-| 포인트 시스템(적립→상점 교환, 리딩타운 방식) | ❌ 미구현. reading-world의 코인/장식 패턴(`game-store.js`) 참고 예정이었으나 진행 안 됨 |
-| A~I 단계 중 실제 콘텐츠 | A단계만 A-01 유닛 하나 존재. B~I는 `curriculum.js`에 `available:false` placeholder만 있음 |
-| BASIC/ADVANCE/CHALLENGE 실제 학습 콘텐츠 | 전부 없음(레벨 자체가 `available:false`) — 건물은 계속 잠긴 상태로 보임 |
-| Magic Theater 영상 콘텐츠 | 없음, 준비중 안내만 |
-| A~I 단계 주제가 창의수연 PDF 목차 기준인지 확인 | 사용자에게 물어봤으나 답변 못 받음 — 다음 세션에서 확인 필요 |
-| 레거시 프로토타입 파일 정리 | `app.html`/`town_proto.html`/`book.html`/`chapter.html`/`concept_proto.html`/`print.html`/`proto.html` 등 실사용 여부 확인 후 삭제 검토 |
-| 배경음 피드백 반영 | 볼륨/톤 사용자 확인 대기 중 |
-| 건물 좌표 미세조정 | 폰 실기기로 확인 후 필요시 조정 |
-
----
-
-## 세션 작업 이력 (요약)
-
-- **2026-07-10**: `town_proto.html` 작성 → GitHub MCP 연결 문제로 실패 반복 → 재연결 후 업로드.
-  이후 이전 세션 버전(더 정확한 좌표)으로 교체. → `main.js`/`styles.css`에 마을 로직 통합,
-  `index.html`을 `app.html` 내용으로 승격. → PRIME 금빛 표시 순화, 화면 꽉 채우기(cover)↔전체
-  지도 보이기(contain) 사이 왔다갔다 하다가 **bbox 기반 하이브리드**로 최종 해결. → ADVANCE 건물을
-  시계탑에서 우하단 집으로 이동. → Web Audio 배경음(물소리+마법벨) 추가.
+| **이 브랜치 → main 병합(배포)** | ⭐ 최우선. 유아 15유닛이 main에 없어 라이브 미반영 |
+| CHALLENGE 콘텐츠 (중1 연산 상한: 정수·유리수·지수) | 미구현 — 스레드 추가 설계 필요 |
+| ADVANCE 구구 파트가 창의수연 중급 목차인지 | 원장 확인 대기 ("창의적 연산 단계를 확장한 것"이라는 답변까지 받음) |
+| 유아 2차 디자인 패스 | 후보 목록은 DESIGN-LEARNING-MODE.md 참고 |
+| N-15 완료 시 R0(연산 첫걸음) 추천 배너 | 미구현 (부가 기능) |
+| §8 Workflow 파이프라인 실행 (시험모드·인쇄 학습지 포함) | §9 확정으로 착수 가능 |
+| 문장제 문제은행(NM_WORDPROBLEMS) 구현 | §8 이후 별도 안건 |
+| 레거시 프로토 파일 정리 (app.html·town_proto.html·book/chapter/concept_proto/print/proto.html 등) | 실사용 여부 확인 후 삭제 검토 |
+| 배경음 톤/볼륨 피드백 | 원장 확인 대기 |
+| Magic Theater 영상 | 준비중 안내만 |
 
 ---
 
 ## 알려진 이슈
-
-- GitHub API가 간헐적으로 502 에러 발생 — 재시도하면 해결됨.
-- 이 세션은 Claude Code(데스크탑 앱)에서 진행되어 모바일 Claude.ai 앱 채팅 목록에는 뜨지 않음(별개 제품).
+- GitHub API 간헐 502 — 재시도로 해결.
+- 여러 세션이 병행 작업 중이므로 **파일 수정 전 반드시 최신 상태 확인**(과거 SHA 충돌로 덮어쓰기 사고를 막은 전례 있음).
+- 외부 CDN(폰트·KaTeX)이 일부 환경에서 차단될 수 있음 — 앱은 폴백으로 동작.
