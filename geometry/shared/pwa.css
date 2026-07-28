@@ -138,19 +138,20 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 1px solid rgba(226, 178, 108, 0.5);
-  background: rgba(43, 26, 14, 0.72);
+  border: none;
+  background: transparent;
   color: #ffe0a6;
-  font-size: 20px;
+  font-size: 22px;
   line-height: 1;
   display: grid;
   place-items: center;
   cursor: pointer;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-  opacity: 0.62;
-  transition: opacity 0.16s ease, transform 0.12s ease, background 0.16s ease;
+  /* No solid backdrop — the glyph sits directly over whatever page content is
+     underneath, so a drop-shadow (not a box-shadow, which needs a filled box)
+     keeps it legible against both light and dark art. */
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.55));
+  opacity: 0.72;
+  transition: opacity 0.16s ease, transform 0.12s ease, color 0.16s ease;
 }
 @media (min-width: 561px) and (max-width: 900px) {
   .gf-fullscreen-btn { top: calc(145px + env(safe-area-inset-top, 0px)); }
@@ -164,8 +165,7 @@
 .gf-fullscreen-btn:hover { opacity: 1; }
 .gf-fullscreen-btn:active { transform: scale(0.94); }
 .gf-fullscreen-btn.on {
-  background: rgba(63, 174, 83, 0.82);
-  color: #eafff0;
+  color: #7be08f;
   opacity: 0.95;
 }
 
