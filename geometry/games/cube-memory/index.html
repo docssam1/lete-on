@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town - Cube Memory</title>
     <link rel="stylesheet" href="./styles.css?v=memory-1" />
+    <link rel="stylesheet" href="../../shared/game-rail.css?v=1" />
     <link rel="stylesheet" href="../../shared/portrait-lock.css?v=1" />
     <script type="importmap">
       {
@@ -55,7 +56,7 @@
         <div>
           <div id="stars" class="stars" aria-label="difficulty">★☆☆☆☆</div>
           <h2 data-i18n="title">큐브 메모리</h2>
-          <p data-i18n="instruction">잠깐 보여 주는 색깔 쌓기나무를 기억했다가 똑같이 다시 놓아 보세요.</p>
+          <p data-i18n="instruction">잠깐 보여 주는 색깔 쌓기나무를 기억했다가 돕같이 다시 놓아 보세요.</p>
         </div>
       </section>
 
@@ -85,7 +86,7 @@
 
         <article class="answer-panel hidden-answer">
           <header>
-            <h2 data-i18n="answerTitle">똑같이 놓기</h2>
+            <h2 data-i18n="answerTitle">동일 놓기</h2>
             <button id="xrayToggleWide" type="button" class="xray-button wide" aria-pressed="false" data-i18n="revealShow">다시 보기</button>
           </header>
           <div class="hidden-stage memory-stage">
@@ -93,7 +94,7 @@
               <span id="phaseLabel" data-i18n="memorize">기억하기</span>
               <strong id="hiddenValue">?</strong>
             </div>
-            <div id="numberPrompt" class="number-prompt" data-i18n="rebuildPrompt">색을 고르고, 본 자리에 똑같이 놓아 보세요.</div>
+            <div id="numberPrompt" class="number-prompt" data-i18n="rebuildPrompt">색을 고르고, 본 자리에 동일하게 놓아 보세요.</div>
             <div id="colorPalette" class="color-palette" aria-label="color palette"></div>
             <div id="rebuildGrid" class="rebuild-grid" aria-label="rebuild grid"></div>
             <div class="memory-actions">
@@ -107,7 +108,9 @@
       <footer class="action-bar">
         <button id="audio" class="icon-action" type="button" aria-pressed="false" aria-label="음소거">🔊</button>
         <button id="hint" type="button" data-i18n="hint">힌트</button>
+        <button class="rail-level" type="button" data-i18n="level">레벨 선택</button>
         <button class="mobile-view-action" type="button" data-view="front"><b aria-hidden="true">↑</b><span data-i18n="front">앞</span></button>
+        <button class="mobile-view-action" type="button" data-view="right"><b aria-hidden="true">→</b><span data-i18n="right">오른쪽</span></button>
         <button class="mobile-view-action" type="button" data-view="top"><b aria-hidden="true">◆</b><span data-i18n="top">위</span></button>
         <button id="xrayToggleMobile" class="mobile-view-action xray-mobile" type="button"><b aria-hidden="true">◉</b><span data-i18n="revealShow">다시 보기</span></button>
         <button id="reset" type="button" data-i18n="reset">다시</button>
@@ -155,5 +158,6 @@
       </div>
     </main>
     <script type="module" src="./app.js?v=memory-1"></script>
+    <script src="../../shared/game-flow.js?v=1" defer></script>
   </body>
 </html>
