@@ -3,6 +3,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
+import { sessionProblems } from "../../shared/problem-pool.js";
 
 const BOARD_SIZE = 4;
 const MAX_HEIGHT = 4;
@@ -78,7 +79,7 @@ const UI_TEXT = {
 // Piece counts ramp from 3 up to 7 across the list, and from problem 4 on we
 // mix in coloured cuboids (standing + lying) so direction AND colour both
 // have to be matched — see p()'s optional `color` argument.
-const level4Problems = [
+const level4Pool = [
   {
     name: "직육면체 방향 익히기",
     pieces: [
@@ -128,30 +129,116 @@ const level4Problems = [
       p("cuboid", 0, 2, 0, 0), p("cuboid", 2, 2, 0, 0), p("cuboid", 1, 0, 1, 2)
     ]
   }
-];
-
-const level5Problems = [
+,
   {
+    name: "구름다리 1",
+    pieces: [
+      p("cuboid", 0, 0, 2, 2), p("cuboid", 0, 2, 2, 0), p("cuboid", 2, 0, 3, 0), p("cuboid", 2, 1, 3, 0)
+    ]
+  },
+  {
+    name: "네모 계단 1",
+    pieces: [
+      p("cuboid", 1, 0, 2, 0), p("cuboid", 2, 0, 1, 0), p("cuboid", 2, 1, 1, 2, "rose"), p("cuboid", 2, 3, 1, 0), p("cuboid", 2, 1, 2, 0)
+    ]
+  },
+  {
+    name: "쌍둥이 기둥 1",
+    pieces: [
+      p("cuboid", 0, 0, 1, 1), p("cuboid", 1, 0, 0, 2), p("cuboid", 1, 0, 2, 1), p("cuboid", 2, 0, 1, 1), p("cuboid", 1, 1, 1, 0), p("cuboid", 1, 1, 2, 0, "yellow")
+    ]
+  },
+  {
+    name: "색깔 성벽 1",
+    pieces: [
+      p("cuboid", 2, 0, 2, 0, "yellow"), p("cuboid", 0, 0, 2, 2), p("cuboid", 1, 0, 1, 2, "yellow"), p("cuboid", 2, 1, 1, 1), p("cuboid", 1, 0, 2, 2), p("cuboid", 1, 2, 1, 0, "blue"), p("cuboid", 2, 0, 0, 2)
+    ]
+  },
+  {
+    name: "지그재그 담장 1",
+    pieces: [
+      p("cuboid", 0, 0, 1, 1), p("cuboid", 3, 0, 2, 1), p("cuboid", 1, 0, 1, 0), p("cuboid", 1, 0, 2, 0)
+    ]
+  },
+  {
+    name: "무지개 계단 1",
+    pieces: [
+      p("cuboid", 0, 0, 2, 1, "blue"), p("cuboid", 0, 1, 2, 0), p("cuboid", 2, 0, 0, 1, "blue"), p("cuboid", 0, 2, 1, 1), p("cuboid", 0, 3, 2, 0, "green"), p("cuboid", 2, 0, 3, 0)
+    ]
+  },
+  {
+    name: "쌓기 퍼즐 1",
+    pieces: [
+      p("cuboid", 3, 0, 0, 1), p("cuboid", 2, 0, 3, 0), p("cuboid", 0, 0, 2, 2, "rose"), p("cuboid", 1, 0, 2, 1), p("cuboid", 0, 0, 3, 2, "blue")
+    ]
+  },
+  {
+    name: "구름다리 2",
+    pieces: [
+      p("cuboid", 2, 0, 2, 2), p("cuboid", 0, 0, 1, 2, "yellow"), p("cuboid", 3, 0, 2, 1, "rose"), p("cuboid", 2, 1, 3, 0), p("cuboid", 1, 0, 2, 1, "yellow"), p("cuboid", 3, 0, 0, 1), p("cuboid", 2, 2, 2, 0)
+    ]
+  },
+  {
+    name: "네모 계단 2",
+    pieces: [
+      p("cuboid", 3, 0, 3, 2), p("cuboid", 2, 0, 0, 1), p("cuboid", 2, 0, 2, 0), p("cuboid", 1, 0, 3, 0)
+    ]
+  },
+  {
+    name: "쌍둥이 기둥 2",
+    pieces: [
+      p("cuboid", 1, 0, 3, 0, "rose"), p("cuboid", 2, 0, 0, 1, "yellow"), p("cuboid", 1, 0, 0, 1, "blue"), p("cuboid", 2, 1, 3, 2), p("cuboid", 0, 1, 0, 0), p("cuboid", 2, 0, 2, 2)
+    ]
+  },
+  {
+    name: "색깔 성벽 2",
+    pieces: [
+      p("cuboid", 2, 0, 3, 2, "blue"), p("cuboid", 1, 0, 2, 0, "rose"), p("cuboid", 1, 0, 1, 0, "green"), p("cuboid", 1, 1, 1, 0), p("cuboid", 1, 2, 3, 0, "yellow")
+    ]
+  },
+  {
+    name: "지그재그 담장 2",
+    pieces: [
+      p("cuboid", 2, 0, 0, 2, "rose"), p("cuboid", 0, 0, 2, 0, "yellow"), p("cuboid", 2, 2, 0, 1), p("cuboid", 2, 0, 2, 1), p("cuboid", 3, 0, 0, 1, "rose"), p("cuboid", 0, 0, 3, 2), p("cuboid", 1, 0, 0, 1)
+    ]
+  },
+  {
+    name: "무지개 계단 2",
+    pieces: [
+      p("cuboid", 1, 0, 0, 2, "blue"), p("cuboid", 2, 0, 2, 0, "yellow"), p("cuboid", 3, 0, 1, 2), p("cuboid", 2, 0, 0, 0), p("cuboid", 2, 1, 2, 1, "green"), p("cuboid", 2, 0, 3, 0)
+    ]
+  },
+  {
+    name: "쌓기 퍼즐 2",
+    pieces: [
+      p("cuboid", 3, 0, 2, 2), p("cuboid", 2, 0, 1, 0), p("cuboid", 3, 2, 1, 1), p("cuboid", 3, 3, 1, 1), p("cuboid", 2, 1, 0, 1)
+    ]
+  }
+];
+const level4Problems = sessionProblems("shape-build-4", 4, level4Pool, 7);
+
+const level5RegularPool = [
+{
     name: "지붕이 있는 집",
     pieces: [
       p("cube", 1, 0, 1), p("cube", 2, 0, 1), p("cuboid", 1, 1, 1, 0), p("wedge", 1, 2, 1, 0), p("wedge", 2, 2, 1, 2)
     ]
   },
-  {
+{
     name: "작은 성문",
     pieces: [
       p("cuboid", 0, 0, 1, 2), p("cuboid", 3, 0, 1, 2), p("cuboid", 0, 2, 1, 0),
       p("pyramid", 0, 3, 1), p("pyramid", 3, 2, 1), p("cube", 1, 0, 1), p("cube", 2, 0, 1)
     ]
   },
-  {
+{
     name: "로켓",
     pieces: [
       p("cuboid", 1, 0, 1, 2), p("cuboid", 1, 2, 1, 0), p("cone", 1, 3, 1),
       p("wedge", 0, 0, 1, 1), p("wedge", 2, 0, 1, 3)
     ]
   },
-  {
+{
     name: "입체 다리",
     pieces: [
       p("cuboid", 0, 0, 1, 2), p("cuboid", 3, 0, 1, 2), p("cuboid", 0, 2, 1, 0),
@@ -159,12 +246,109 @@ const level5Problems = [
     ]
   },
   {
+    name: "작은 마을 1",
+    pieces: [
+      p("cube", 2, 0, 1, 0), p("cube", 1, 0, 1, 0), p("pyramid", 3, 0, 1, 0), p("cone", 1, 0, 0, 0), p("wedge", 3, 0, 0, 0)
+    ]
+  },
+  {
+    name: "언덕 위 집 1",
+    pieces: [
+      p("cube", 3, 0, 0, 0), p("cuboid", 0, 0, 1, 0), p("cone", 0, 0, 0, 0), p("cuboid", 0, 0, 3, 0), p("wedge", 0, 1, 1, 0), p("wedge", 3, 0, 2, 0)
+    ]
+  },
+  {
+    name: "우주 기지 1",
+    pieces: [
+      p("cube", 1, 0, 1, 0), p("cube", 2, 0, 2, 0), p("pyramid", 3, 0, 2, 0), p("cuboid", 0, 0, 3, 0, "blue"), p("cube", 1, 1, 1, 0), p("cube", 0, 0, 0, 0), p("cone", 2, 0, 0, 0)
+    ]
+  },
+  {
+    name: "다리와 탑 1",
+    pieces: [
+      p("cube", 1, 0, 2, 0), p("cuboid", 0, 0, 0, 1, "yellow"), p("cuboid", 0, 1, 0, 1), p("cube", 1, 1, 2, 0), p("cuboid", 2, 0, 1, 1, "rose"), p("cube", 3, 0, 2, 0)
+    ]
+  },
+  {
+    name: "동화 속 성 1",
+    pieces: [
+      p("cone", 2, 0, 2, 0), p("cube", 3, 0, 3, 0), p("cuboid", 1, 0, 3, 2), p("cuboid", 0, 0, 1, 1), p("cube", 0, 0, 3, 0)
+    ]
+  },
+  {
+    name: "작은 마을 2",
+    pieces: [
+      p("wedge", 3, 0, 0, 0), p("wedge", 2, 0, 3, 0), p("cuboid", 3, 1, 0, 1), p("cube", 3, 0, 3, 0), p("pyramid", 2, 0, 0, 0), p("cube", 3, 0, 1, 0)
+    ]
+  },
+  {
+    name: "언덕 위 집 2",
+    pieces: [
+      p("cube", 3, 0, 0, 0), p("cube", 1, 0, 1, 0), p("cone", 3, 0, 2, 0), p("cube", 1, 0, 0, 0), p("cube", 0, 0, 3, 0), p("cuboid", 1, 0, 3, 0), p("cube", 2, 0, 1, 0)
+    ]
+  },
+  {
+    name: "우주 기지 2",
+    pieces: [
+      p("wedge", 1, 0, 1, 0), p("wedge", 3, 0, 0, 0), p("cube", 0, 0, 1, 0), p("pyramid", 1, 0, 0, 0), p("cube", 0, 0, 3, 0), p("cuboid", 2, 0, 2, 2)
+    ]
+  },
+  {
+    name: "다리와 탑 2",
+    pieces: [
+      p("cuboid", 2, 0, 1, 2), p("wedge", 3, 0, 1, 0), p("cube", 3, 0, 3, 0), p("cuboid", 0, 0, 2, 2), p("wedge", 2, 0, 0, 0)
+    ]
+  },
+  {
+    name: "동화 속 성 2",
+    pieces: [
+      p("cube", 3, 0, 3, 0), p("cube", 3, 0, 0, 0), p("wedge", 1, 0, 2, 0), p("pyramid", 0, 0, 1, 0), p("cube", 0, 0, 2, 0), p("wedge", 1, 0, 0, 0)
+    ]
+  },
+  {
+    name: "작은 마을 3",
+    pieces: [
+      p("cube", 1, 0, 3, 0), p("pyramid", 1, 0, 0, 0), p("cuboid", 1, 0, 1, 0), p("wedge", 2, 0, 0, 0), p("cuboid", 0, 0, 0, 1), p("pyramid", 2, 1, 0, 0), p("cube", 1, 1, 3, 0)
+    ]
+  },
+  {
+    name: "언덕 위 집 3",
+    pieces: [
+      p("cube", 1, 0, 1, 0), p("pyramid", 3, 0, 1, 0), p("pyramid", 2, 0, 1, 0), p("cuboid", 1, 1, 1, 1), p("cuboid", 2, 0, 2, 1), p("cube", 3, 0, 0, 0)
+    ]
+  },
+  {
+    name: "우주 기지 3",
+    pieces: [
+      p("pyramid", 2, 0, 2, 0), p("cuboid", 1, 0, 2, 2, "blue"), p("wedge", 3, 0, 1, 0), p("cube", 0, 0, 3, 0), p("wedge", 2, 1, 2, 0)
+    ]
+  },
+  {
+    name: "다리와 탑 3",
+    pieces: [
+      p("wedge", 2, 0, 1, 0), p("cube", 0, 0, 0, 0), p("cuboid", 1, 1, 1, 0), p("cube", 1, 0, 0, 0), p("cone", 0, 1, 0, 0), p("cuboid", 0, 2, 0, 1)
+    ]
+  },
+  {
+    name: "동화 속 성 3",
+    pieces: [
+      p("cuboid", 2, 0, 2, 0), p("cuboid", 2, 0, 3, 0), p("wedge", 3, 0, 0, 0), p("pyramid", 0, 0, 2, 0), p("cube", 1, 0, 3, 0), p("cube", 2, 0, 1, 0), p("cube", 2, 0, 0, 0)
+    ]
+  },
+  {
+    name: "작은 마을 4",
+    pieces: [
+      p("cube", 1, 0, 0, 0), p("cone", 0, 0, 2, 0), p("cube", 2, 0, 0, 0), p("pyramid", 1, 1, 0, 0), p("pyramid", 0, 0, 1, 0), p("cuboid", 0, 0, 3, 0)
+    ]
+  }
+];
+const level5Creative = {
     name: "자유 작품",
     creative: true,
     inventory: { cube: 8, cuboid: 6, wedge: 4, pyramid: 3, cone: 3 },
     pieces: []
-  }
-];
+  };
+const level5Problems = [...sessionProblems("shape-build-5", 5, level5RegularPool, 4), level5Creative];
 
 function p(type, x, y, z, rotation = 0, color = null) {
   return { id: `${type}-${color || "wood"}-${x}-${y}-${z}-${rotation}`, type, x, y, z, rotation, color };
@@ -287,7 +471,7 @@ function init() {
 }
 
 function validateProblemBank() {
-  [...level4Problems, ...level5Problems].forEach((problem) => {
+  [...level4Pool, ...level5RegularPool, ...level5Problems].forEach((problem) => {
     if (problem.creative) return;
     const occupied = new Set();
     problem.pieces.forEach((piece) => {
@@ -884,8 +1068,20 @@ function showSuccess() {
 
 function nextProblem() {
   const problems = getProblems();
-  state.problemIndex = (state.problemIndex + 1) % problems.length;
-  loadProblem();
+  const problem = getProblem();
+  if (problem && problem.creative) {
+    state.problemIndex = (state.problemIndex + 1) % problems.length;
+    loadProblem();
+    return;
+  }
+  if (state.problemIndex + 1 < problems.length) {
+    state.problemIndex += 1;
+    loadProblem();
+    return;
+  }
+  // Finished the whole set — hand back a fresh, non-overlapping slice of the
+  // pool next time instead of silently replaying the same problems.
+  window.location.href = `${window.location.pathname}?level=${state.level}&practice=1`;
 }
 
 function resetBuild() {
