@@ -36,10 +36,10 @@
   };
 
   var SECONDARY = {
-    ko: "🔁 이 레벨 더 연습하기",
-    zh: "🔁 再练习本级",
-    ja: "🔁 このレベルをもっと練習",
-    en: "🔁 Practice This Level Again"
+    ko: "🔁 한번 더 연습하기",
+    zh: "🔁 再练习一次",
+    ja: "🔁 もういちど練習",
+    en: "🔁 Practice One More Time"
   };
 
   var EMOJI_CELEBRATE = "🎉";
