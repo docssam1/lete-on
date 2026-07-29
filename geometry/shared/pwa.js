@@ -72,11 +72,16 @@
   }
 
   // --- 3. fullscreen toggle (added first so it exists on the hub) ----------
+  // Only the map (world-map's #intro/.map-toolbar page) gets this button —
+  // it's inserted into .map-toolbar itself, right after the language menu,
+  // so on any page without that toolbar (e.g. cube-town) nothing is added.
   var docEl = document.documentElement;
   var canFs = !!(docEl.requestFullscreen || docEl.webkitRequestFullscreen);
   function isFs() { return document.fullscreenElement || document.webkitFullscreenElement; }
   if (canFs && !standalone) {
     ready(function () {
+      var toolbar = document.querySelector(".map-toolbar");
+      if (!toolbar) return;
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "gf-fullscreen-btn";
@@ -90,7 +95,12 @@
         } catch (e) {}
       });
       document.addEventListener("fullscreenchange", function () { btn.classList.toggle("on", !!isFs()); });
-      document.body.appendChild(btn);
+      var langMenu = toolbar.querySelector(".language-menu");
+      if (langMenu && langMenu.parentNode === toolbar) {
+        toolbar.insertBefore(btn, langMenu.nextSibling);
+      } else {
+        toolbar.appendChild(btn);
+      }
     });
 
     // Auto-enter fullscreen on the first tap (touch devices, not installed).
