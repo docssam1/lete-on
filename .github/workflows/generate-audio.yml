@@ -8,6 +8,8 @@ on:
       - 'reading-world/data/lc*.js'
       - 'reading-world/data/lesson*.js'
       - 'reading-world/data/rp*.js'
+      - 'reading-world/data/ws*.js'
+      - 'reading-world/data/sl*.js'
 
 jobs:
   generate:

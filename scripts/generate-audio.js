@@ -54,6 +54,22 @@ for (let i = 2; i <= 10; i++) {
   }
 }
 
+// WonderSkills Advanced 3 (ws1~ws12)
+for (let i = 1; i <= 12; i++) {
+  const file = path.join(dataDir, `ws${i}.js`);
+  if (fs.existsSync(file)) {
+    try { eval(fs.readFileSync(file, 'utf8')); } catch(e) { console.warn(`⚠  ws${i}.js eval error:`, e.message); }
+  }
+}
+
+// Subject Link 4 (sl1~sl16)
+for (let i = 1; i <= 16; i++) {
+  const file = path.join(dataDir, `sl${i}.js`);
+  if (fs.existsSync(file)) {
+    try { eval(fs.readFileSync(file, 'utf8')); } catch(e) { console.warn(`⚠  sl${i}.js eval error:`, e.message); }
+  }
+}
+
 // Level B lesson1 uses the legacy flat shape (window.LESSON1 with
 // originalExtraPassage / extraPassage) instead of window.LESSONS[...].extraLearning /
 // newPassage, so it must be loaded and handled on its own or its created passages
