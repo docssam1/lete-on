@@ -24,3 +24,33 @@
     window.visualViewport.addEventListener("scroll", apply);
   }
 })();
+
+/* Load the PWA helper (install banner + floating fullscreen toggle) on any page
+ * that doesn't already include it explicitly. The hubs add pwa.js themselves;
+ * every game loads this shared file, so they get the in-game fullscreen button
+ * here without each game page having to be edited. */
+(function () {
+  function inject() {
+    if (document.querySelector('script[data-gf-pwa]') ||
+        document.querySelector('script[src*="shared/pwa.js"]')) return;
+    var vf = document.querySelector('script[src*="shared/viewport-fit.js"]');
+    var href = vf ? vf.getAttribute("src") : "../shared/viewport-fit.js";
+    var prefix = href.replace(/viewport-fit\.js.*$/, ""); // ".../shared/"
+    if (!document.querySelector('link[href*="shared/pwa.css"]')) {
+      var link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = prefix + "pwa.css?v=1";
+      document.head.appendChild(link);
+    }
+    var s = document.createElement("script");
+    s.src = prefix + "pwa.js?v=1";
+    s.defer = true;
+    s.setAttribute("data-gf-pwa", "1");
+    document.body.appendChild(s);
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", inject);
+  } else {
+    inject();
+  }
+})();

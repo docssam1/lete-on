@@ -6,7 +6,7 @@
     <title>GFIELD Cube Town - Shape Build</title>
     <link rel="stylesheet" href="../../styles.css?v=menu-cleanup-20260719a" />
     <link rel="stylesheet" href="../../shared/portrait-lock.css?v=1" />
-    <link rel="stylesheet" href="./shape-build.css?v=shape-build-20260716d" />
+    <link rel="stylesheet" href="./shape-build.css?v=shape-build-20260728a" />
     <script type="importmap">
       {
         "imports": {
@@ -61,6 +61,10 @@
         </article>
         <article class="viewer build-view">
           <div class="viewer-heading"><h2 id="buildTitle">내가 만든 모양</h2></div>
+          <nav class="build-utilities" aria-label="Game settings">
+            <button id="audioToggle" class="utility-button" type="button" aria-pressed="false" aria-label="Mute"><span aria-hidden="true">🔊</span></button>
+            <a class="utility-button menu-exit" href="../../cube-town/" aria-label="나가기" data-i18n-aria="exit"><span class="exit-icon" aria-hidden="true">⌂</span><small data-i18n="exit">나가기</small></a>
+          </nav>
           <div id="buildCanvas" class="canvas-wrap interactive"></div>
         </article>
       </section>
@@ -76,13 +80,13 @@
       </section>
 
       <section class="control-strip shape-controls">
-        <button id="checkAnswer" class="primary" type="button">확인</button>
-        <button id="nextStep" type="button">다음 문제</button>
-        <button id="resetBuild" type="button">처음부터</button>
-        <button id="rotatePiece" type="button">방향</button>
-        <button id="viewFront" type="button">앞</button>
-        <button id="viewTop" type="button">위</button>
-        <button id="captureBuild" type="button">사진</button>
+        <button id="viewFront" class="rail-button" type="button"><b aria-hidden="true">↑</b><span data-i18n="front">앞</span></button>
+        <button id="viewRight" class="rail-button" type="button"><b aria-hidden="true">→</b><span data-i18n="right">오른쪽</span></button>
+        <button id="viewTop" class="rail-button" type="button"><b aria-hidden="true">◆</b><span data-i18n="top">위</span></button>
+        <button id="resetBuild" class="rail-button" type="button"><b aria-hidden="true">⌫</b><span data-i18n="reset">처음부터</span></button>
+        <button id="rotatePiece" class="rail-button" type="button"><b aria-hidden="true">↻</b><span data-i18n="rotate">방향</span></button>
+        <button id="checkAnswer" class="rail-button primary" type="button"><b aria-hidden="true">✓</b><span data-i18n="check">확인</span></button>
+        <button id="nextStep" class="rail-button" type="button"><b aria-hidden="true">➜</b><span data-i18n="next">다음 문제</span></button>
       </section>
 
       <div id="levelDialog" class="level-dialog" hidden>
@@ -100,7 +104,6 @@
         <div class="guide-bubble">
           <div class="guide-head">
             <strong class="guide-title">큐비</strong>
-            <button id="audioToggle" class="guide-audio" type="button" aria-pressed="false">음성 켜기</button>
           </div>
           <p id="guideMessage">조각의 모양과 방향을 잘 살펴보자!</p>
         </div>
@@ -116,6 +119,42 @@
       </div>
     </main>
 
-    <script type="module" src="./shape-build.js?v=track-graphics-popup-20260720a"></script>
+    <script type="module" src="./shape-build.js?v=rail-fix-colors-20260728a"></script>
+    <script>
+      window.GF_TUTORIAL = {
+        key: "gfield-shape-build-tutorial-v1",
+        steps: {
+          ko: [
+            "왼쪽은 문제 모양이야. 오른쪽에 똑같은 모양을 만들면 돼!",
+            "아래 보관함에서 조각을 끌어다 놓아 보자. 정육면체도 있고 길쭉한 직육면체도 있어.",
+            "직육면체는 눕힌 방향과 세운 방향이 달라. 놓은 조각을 톡 누르면 방향을 바꿀 수 있어!",
+            "색깔이 다른 조각도 있어. 색깔까지 문제 모양과 똑같이 맞춰 보자.",
+            "앞·오른쪽·위 버튼을 누르면 여러 방향에서 살펴볼 수 있어. 이제 시작해 볼까?"
+          ],
+          zh: [
+            "左边是目标形状，在右边做出一模一样的形状就可以了！",
+            "从下面的托盘把积木拖过来吧。有正方体，也有长长的长方体。",
+            "长方体躺着和立着方向不同。轻点放好的积木就能改变方向！",
+            "还有颜色不同的积木。颜色也要和目标形状一样哦。",
+            "按前面·右侧·上面按钮，可以从各个方向观察。现在开始吧！"
+          ],
+          ja: [
+            "左が問題の形だよ。右に同じ形を作ればいいんだ！",
+            "下のトレイからブロックをドラッグしてみよう。立方体も、細長い直方体もあるよ。",
+            "直方体はねかせた向きとたてた向きがちがうよ。置いたブロックをトンと押すと向きを変えられる！",
+            "色のちがうブロックもあるよ。色まで問題の形と同じにそろえてみよう。",
+            "前・右側・上のボタンでいろいろな向きから見られるよ。さあ、始めよう！"
+          ],
+          en: [
+            "The target shape is on the left. Build the same shape on the right!",
+            "Drag pieces from the tray below. There are cubes and long cuboids.",
+            "A cuboid lying down faces a different way than one standing up. Tap a placed piece to turn it!",
+            "Some pieces have different colours. Match the colours to the target shape too.",
+            "Use the Front, Right and Top buttons to look from every side. Ready to start?"
+          ]
+        }
+      };
+    </script>
+    <script src="../../shared/concept-tutorial.js?v=1" defer></script>
   </body>
 </html>

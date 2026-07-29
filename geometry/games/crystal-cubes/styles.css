@@ -1,0 +1,140 @@
+/* Crystal Cubes shares the Cube Town shell (layout, panels, character, success
+   burst, dialogs, responsive rules) with the other games. The shell base is
+   imported here so there is a single source of truth; only the view cards and
+   the height-build grid live below. */
+@import url("../fill-box/styles.css?v=fill-1");
+
+/* =========================================================================
+   크리스털 큐브 (Crystal Cubes)
+   The answer panel shows three read-only view cards (앞/옆/위) as the goal, plus
+   a height-build grid the child taps to raise cube stacks inside the case. A
+   build is accepted when its own three views match all three cards.
+   ========================================================================= */
+.crystal-shell .crystal-answer > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.crystal-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 14px 6px;
+  overflow: auto;
+}
+.cards-title { font-weight: 850; font-size: clamp(11px, 1.3vw, 14px); color: #4f5c65; text-align: center; }
+
+.cards-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+}
+.card-block { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.view-label { font-weight: 800; font-size: clamp(10px, 1.1vw, 12px); color: #5b6a74; text-align: center; }
+
+/* Read-only view cards. */
+.view-grid.card {
+  --cols: 3;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  gap: 3px;
+  padding: 6px;
+  background: #f3f8ff;
+  border: 1px solid #c3d3e8;
+  border-radius: 9px;
+}
+.view-grid.card.mismatch { border-color: #d9473f; box-shadow: 0 0 0 3px rgba(217, 71, 63, .18); }
+.view-grid.card.matched { border-color: #35a13f; box-shadow: 0 0 0 3px rgba(53, 161, 63, .16); }
+.card-cell {
+  width: clamp(15px, 1.9vw, 21px);
+  height: clamp(15px, 1.9vw, 21px);
+  border-radius: 4px;
+  background: #eaf1fb;
+  border: 1px solid #d3deee;
+}
+.card-cell.filled { background: linear-gradient(#5b78a8, #3c5788); border-color: #2f477a; }
+
+/* Interactive height-build grid: tap a cell to cycle its stack height. */
+.build-grid {
+  --cols: 3;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  gap: 5px;
+  width: min(100%, 244px);
+  margin: 2px auto 0;
+  padding: 6px;
+  background: #fffdf7;
+  border: 1px solid #e0d3b8;
+  border-radius: 10px;
+  box-shadow: inset 0 2px 6px rgba(120, 84, 40, .08);
+}
+.build-cell {
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  border: 2px solid #c3aa82;
+  border-radius: 8px;
+  background: repeating-linear-gradient(45deg, #fbf3e2 0 7px, #f3e7cf 7px 14px);
+  font-weight: 950;
+  font-size: clamp(13px, 1.7vw, 19px);
+  color: #6b4423;
+  cursor: pointer;
+  transition: transform .08s ease, background .12s ease, border-color .12s ease;
+}
+.build-cell:hover { border-color: #9a7a4e; }
+.build-cell:active { transform: translateY(2px); }
+.build-cell[data-h="0"] { color: transparent; }
+.build-cell[data-h="1"] { background: linear-gradient(#fff2d6, #ffdfa0); border-color: #d8b06a; background-image: none; }
+.build-cell[data-h="2"] { background: linear-gradient(#ffdf9f, #f5c060); border-color: #cf9a3d; background-image: none; }
+.build-cell[data-h="3"] { background: linear-gradient(#f6bf5f, #e79a2f); border-color: #bd7c1e; color: #4a2c07; background-image: none; }
+.build-cell[data-h="4"] { background: linear-gradient(#ec9f38, #d97f18); border-color: #a9640f; color: #3a2205; background-image: none; }
+.build-cell.right { outline: 3px solid #35a13f; outline-offset: -1px; }
+.build-cell:disabled { cursor: default; }
+
+.crystal-actions { display: grid; grid-template-columns: 1fr 1.4fr; gap: 9px; padding: 6px 4px 0; margin-top: 4px; }
+.crystal-actions button {
+  min-height: 46px;
+  border-radius: 9px;
+  border: 1px solid #cdb188;
+  font-weight: 850;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #d9c09a;
+}
+.crystal-actions .clear-btn { background: #fff4f0; color: #9b4035; border-color: #e6b7ab; box-shadow: 0 3px 0 #e0b3a6; }
+.crystal-actions .check-btn { background: linear-gradient(#8fd06f, #4fae3f); color: #14380f; border-color: #3d9130; box-shadow: 0 3px 0 #2f7d24; }
+.crystal-actions button:active { transform: translateY(2px); box-shadow: 0 1px 0 #d9c09a; }
+.crystal-actions button:disabled { opacity: .42; cursor: default; transform: none; }
+
+/* The 옆 (side) camera button reuses the shell's amber toggle look but is a
+   momentary view button, so it never shows a pressed state. */
+.crystal-shell .xray-button {
+  border: 1px solid #bd8f5e;
+  border-radius: 7px;
+  background: linear-gradient(#fffaf0, #efd0a4);
+  color: #6b4423;
+  font-weight: 800;
+  padding: 8px 14px;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #a76d38;
+}
+.crystal-shell .xray-button.wide { min-height: 34px; padding: 6px 16px; }
+
+/* Roomier level picker: 4 levels in one row on wide screens. */
+.crystal-shell .level-list { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 720px) { .crystal-shell .level-list { grid-template-columns: repeat(2, 1fr); } }
+
+/* Tight landscape phones: shrink cards and the build grid so everything fits. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .crystal-stage { padding: 5px 8px 4px; gap: 5px; }
+  .cards-row { gap: 7px; }
+  .view-label { font-size: 9px; }
+  .card-cell { width: 15px; height: 15px; border-radius: 3px; }
+  .build-grid { width: min(100%, 200px); gap: 4px; padding: 4px; }
+  .build-cell { font-size: 14px; border-radius: 6px; }
+  .crystal-actions button { min-height: 32px; }
+}

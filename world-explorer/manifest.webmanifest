@@ -1,0 +1,20 @@
+{
+  "id": "/world-explorer/",
+  "name": "GFIELD World Explorer",
+  "short_name": "World Explorer",
+  "description": "195개국 지도·국기·문화를 탐험하는 3D 세계 탐험 마을",
+  "lang": "ko",
+  "start_url": "/world-explorer/",
+  "scope": "/world-explorer/",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
+  "orientation": "landscape",
+  "background_color": "#9fd6e6",
+  "theme_color": "#17394a",
+  "icons": [
+    { "src": "/world-explorer/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/world-explorer/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/world-explorer/assets/icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/world-explorer/assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

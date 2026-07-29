@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town - Find Hidden Cubes</title>
-    <link rel="stylesheet" href="./styles.css?v=hidden-2" />
+    <link rel="stylesheet" href="./styles.css?v=hidden-4" />
+    <link rel="stylesheet" href="../../shared/game-rail.css?v=1" />
     <link rel="stylesheet" href="../../shared/portrait-lock.css?v=1" />
     <script type="importmap">
       {
@@ -86,12 +87,22 @@
             <button id="xrayToggleWide" type="button" class="xray-button wide" aria-pressed="false" data-i18n="xrayShow">속 보기</button>
           </header>
           <div class="hidden-stage">
-            <button id="hiddenDisplay" class="hidden-display" type="button">
-              <span data-i18n="hiddenQuestion">숨은 쌓기나무는 몇 개?</span>
-              <strong id="hiddenValue">?</strong>
-            </button>
-            <div id="numberPrompt" class="number-prompt" data-i18n="chooseHidden">숨은 쌓기나무 개수를 숫자로 써 보세요.</div>
-            <div id="numberPad" class="number-pad" aria-label="number pad"></div>
+            <div class="hidden-work-col">
+              <div class="mode-switch" role="tablist" aria-label="solve mode">
+                <button type="button" role="tab" class="active" data-mode="subtract" data-i18n="modeSubtract">빼서 풀기</button>
+                <button type="button" role="tab" data-mode="layers" data-i18n="modeLayers">층별로 풀기</button>
+                <button type="button" role="tab" data-mode="direct" data-i18n="modeDirect">바로 쓰기</button>
+              </div>
+              <div id="workArea" class="work-area"></div>
+            </div>
+            <div class="hidden-answer-col">
+              <button id="hiddenDisplay" class="hidden-display" type="button">
+                <span data-i18n="hiddenQuestion">숨은 쌓기나무는 몇 개?</span>
+                <strong id="hiddenValue">?</strong>
+              </button>
+              <div id="numberPrompt" class="number-prompt" data-i18n="chooseHidden">숨은 쌓기나무 개수를 숫자로 써 보세요.</div>
+              <div id="numberPad" class="number-pad" aria-label="number pad"></div>
+            </div>
           </div>
         </article>
       </section>
@@ -99,7 +110,9 @@
       <footer class="action-bar">
         <button id="audio" class="icon-action" type="button" aria-pressed="false" aria-label="음소거">🔊</button>
         <button id="hint" type="button" data-i18n="hint">힌트</button>
+        <button class="rail-level" type="button" data-i18n="level">레벨 선택</button>
         <button class="mobile-view-action" type="button" data-view="front"><b aria-hidden="true">↑</b><span data-i18n="front">앞</span></button>
+        <button class="mobile-view-action" type="button" data-view="right"><b aria-hidden="true">→</b><span data-i18n="right">오른쪽</span></button>
         <button class="mobile-view-action" type="button" data-view="top"><b aria-hidden="true">◆</b><span data-i18n="top">위</span></button>
         <button id="xrayToggleMobile" class="mobile-view-action xray-mobile" type="button"><b aria-hidden="true">◎</b><span data-i18n="xrayShow">속 보기</span></button>
         <button id="reset" type="button" data-i18n="reset">다시</button>
@@ -146,6 +159,7 @@
         <i></i><i></i><i></i><i></i><i></i><i></i>
       </div>
     </main>
-    <script type="module" src="./app.js?v=hidden-2"></script>
+    <script type="module" src="./app.js?v=hidden-4"></script>
+    <script src="../../shared/game-flow.js?v=1" defer></script>
   </body>
 </html>
