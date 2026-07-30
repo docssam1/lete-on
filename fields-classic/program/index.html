@@ -160,7 +160,7 @@ body.in-viewer{overflow:hidden}
 .book-stage{flex:1;overflow:auto;padding:18px;display:flex;align-items:flex-start;justify-content:center}
 .book-page-wrap{position:relative;line-height:0;background:#fff;box-shadow:0 16px 50px rgba(0,0,0,.45)}
 #bookPageImg{display:block;max-width:min(100%,920px);height:auto;user-select:none;-webkit-user-drag:none}
-.book-watermark{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:2}
+.book-watermark{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:2;display:none}
 .book-watermark span{position:absolute;color:rgba(22,34,51,.13);font-size:24px;font-weight:900;white-space:nowrap;transform:rotate(-28deg);letter-spacing:.02em}
 .book-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#526070;font-size:13px;font-weight:900;background:#f8fafc;z-index:3}
 .book-status:empty{display:none}
@@ -169,6 +169,7 @@ body.in-viewer{overflow:hidden}
   #viewer{position:relative!important;display:block!important}.viewer-body{display:block!important}
   .bpanel{overflow:visible!important;background:white!important;display:block!important}
   .book-toolbar{display:none!important}.book-stage{display:block!important;padding:0!important;overflow:visible!important}
+  .book-watermark{display:block!important}
   #bookPageImg{width:100%!important;height:auto!important}
   @page{margin:0}
 }
@@ -222,7 +223,7 @@ body.in-viewer{overflow:hidden}
       <input class="gate-input" id="gName" type="text" autocomplete="off" placeholder="학생 이름">
       <button class="gate-btn" onclick="GF.login()">입장하기 →</button>
       <div class="gate-error" id="gErr"></div>
-      <p class="gate-note">승인번호는 구매 후 카카오톡으로 전달됩니다.<br>이름은 교재 워터마크에만 사용됩니다.</p>
+      <p class="gate-note">승인번호는 구매 후 카카오톡으로 전달됩니다.<br>이름은 인쇄 워터마크에만 사용됩니다.</p>
     </div>
   </div>
 </div>
