@@ -1,0 +1,55 @@
+# 필즈 약점 유형 처방전 문제 은행
+
+학생의 진단 오답 유형마다 확정 문제 3개를 인쇄하는 고정 문제 은행입니다.
+브라우저에서 무작위 문제를 만들지 않으며, 검토가 끝난 문제와 정답만 사용합니다.
+
+## 저장 위치
+
+- 문제 데이터와 정답: `prescription-data.js`
+- 유형별 그림: `q01/`부터 `q25/`
+- 16~24번 그림 생성기: `scripts/generate_assets.py`
+- 25번 Geometry 3D 생성기: `scripts/q25_renderer.html`, `scripts/q25_renderer.js`
+- 기존 1~14번 확정 생성 원본: `scripts/confirmed_sources/`
+- 인쇄 화면: `../../prescription/index.html`
+- 진단 결과 연결: `../../mock/index.html`
+
+그림이 필요 없는 2번, 7번, 15번은 문제 문장과 정답만
+`prescription-data.js`에 저장합니다.
+
+## 운영 원칙
+
+1. 한 유형에는 확정 문제를 정확히 3개 둡니다.
+2. 세 문제의 정답을 모두 같게 만들지 않습니다.
+3. 정답은 그림에 적은 값이 아니라 계산 또는 완전 탐색으로 검증합니다.
+4. 문제 문장, 그림 파일명, 정답, 풀이의 순서를 함께 변경합니다.
+5. 새 그림은 기존 `generated/` 폴더가 아니라 이 `prescription/` 폴더에만 저장합니다.
+6. 25번은 임시 2D 그림을 사용하지 않고 GitHub의 Geometry World 재질과 조명을 재사용합니다.
+
+## 그림 다시 만들기
+
+16~24번:
+
+```powershell
+python scripts/generate_assets.py
+```
+
+25번:
+
+1. 저장소 루트에서 로컬 웹 서버를 엽니다.
+2. `scripts/q25_renderer.html?target=4` 형식으로 엽니다.
+3. 두 번째 문제처럼 왼쪽 위에 맞춘 모양은
+   `&alignment=upper-left`를 추가합니다.
+4. 1360 x 900 크기로 각각 `q25_01.png`부터 `q25_03.png`까지 저장합니다.
+
+`confirmed_sources/`는 인수인계 ZIP의 1~14번 확정 원본을 그대로 보관한
+참고 자료입니다. 원본 제작 환경의 Linux 글꼴과 `/tmp` 출력 경로를 사용하므로,
+다른 운영체제에서 다시 실행할 때는 글꼴과 출력 경로를 먼저 조정해야 합니다.
+
+## 인쇄 주소
+
+```text
+fields-classic/prescription/?student=학생이름&types=1,7,14
+```
+
+진단 결과의 `약점 처방전 열기` 버튼이 학생 이름과 오답 문항 번호를
+자동으로 이 주소에 전달합니다.
