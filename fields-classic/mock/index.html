@@ -388,6 +388,13 @@ function openOcr(){document.getElementById('ocrModal').classList.add('show');}
 function closeOcr(){document.getElementById('ocrModal').classList.remove('show');}
 window.enterGate=enterGate;window.setMode=setMode;window.openOcr=openOcr;window.closeOcr=closeOcr;
 
+const params=new URLSearchParams(location.search);
+const presetStudent=(params.get('student')||'').trim();
+if(presetStudent){
+  document.getElementById('nameInp').value=presetStudent;
+  setTimeout(enterGate,0);
+}
+
 const OX_STATE={};
 function setOX(i){
   const c=document.getElementById('qc'+i);
