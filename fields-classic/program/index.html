@@ -152,13 +152,24 @@ body.in-viewer{overflow:hidden}
 .vpanel-meta{font-size:10px;color:var(--muted)}
 .vframe-box{position:relative;width:100%;aspect-ratio:16/9;background:#000;flex-shrink:0}
 #videoIframe{position:absolute;inset:0;width:100%;height:100%;border:none}
-.bpanel{overflow:hidden;min-height:0;display:flex;flex-direction:column;background:#525659}
-#pdfIframe{flex:1;width:100%;border:none;min-height:0}
+.bpanel{overflow:hidden;min-height:0;display:flex;flex-direction:column;background:#343941}
+.book-toolbar{height:36px;display:flex;align-items:center;justify-content:center;gap:8px;background:#202630;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.book-page-label{min-width:72px;text-align:center;color:#d8dee9;font-size:11px;font-weight:800}
+.book-nav{height:24px;padding:0 10px;border-radius:7px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#d8dee9;font-size:11px;font-weight:800;font-family:'Noto Sans KR',sans-serif;cursor:pointer}
+.book-nav:disabled{opacity:.35;cursor:not-allowed}
+.book-stage{flex:1;overflow:auto;padding:18px;display:flex;align-items:flex-start;justify-content:center}
+.book-page-wrap{position:relative;line-height:0;background:#fff;box-shadow:0 16px 50px rgba(0,0,0,.45)}
+#bookPageImg{display:block;max-width:min(100%,920px);height:auto;user-select:none;-webkit-user-drag:none}
+.book-watermark{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:2}
+.book-watermark span{position:absolute;color:rgba(22,34,51,.13);font-size:24px;font-weight:900;white-space:nowrap;transform:rotate(-28deg);letter-spacing:.02em}
+.book-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#526070;font-size:13px;font-weight:900;background:#f8fafc;z-index:3}
+.book-status:empty{display:none}
 @media print{
   #gate,#app,#rotateHint,#commentModal,#viewer .viewer-header,#viewer .viewer-tabs,#viewer .vpanel,.sec-toast{display:none!important}
   #viewer{position:relative!important;display:block!important}.viewer-body{display:block!important}
   .bpanel{overflow:visible!important;background:white!important;display:block!important}
-  #pdfIframe{width:100%;height:297mm;display:block}
+  .book-toolbar{display:none!important}.book-stage{display:block!important;padding:0!important;overflow:visible!important}
+  #bookPageImg{width:100%!important;height:auto!important}
   @page{margin:0}
 }
 @media(max-height:500px) and (orientation:landscape){.viewer-header{padding:5px 10px}.viewer-tabs{padding:3px 8px}.tab-btn{padding:4px 10px;font-size:10px}}
@@ -270,7 +281,6 @@ body.in-viewer{overflow:hidden}
     <span class="viewer-title" id="vTitle"></span>
     <div class="viewer-acts">
       <button class="v-btn" onclick="window.print()">🖨 인쇄</button>
-      <a class="v-btn" id="pdfOpenBtn" target="_blank" rel="noopener" style="display:none">📄 교재</a>
       <button class="v-btn gold" id="vYtBtn" onclick="GF.openYt()" style="display:none">▶ 새 창</button>
     </div>
   </div>
@@ -286,7 +296,18 @@ body.in-viewer{overflow:hidden}
       </div>
     </div>
     <div class="bpanel" id="bPanel">
-      <iframe id="pdfIframe" title="교재"></iframe>
+      <div class="book-toolbar">
+        <button class="book-nav" id="bookPrev" onclick="GF.prevBookPage()">← 이전</button>
+        <span class="book-page-label" id="bookPageLabel">- / -</span>
+        <button class="book-nav" id="bookNext" onclick="GF.nextBookPage()">다음 →</button>
+      </div>
+      <div class="book-stage">
+        <div class="book-page-wrap">
+          <img id="bookPageImg" alt="교재 페이지">
+          <div class="book-watermark" id="bookWatermark"></div>
+          <div class="book-status" id="bookStatus"></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -296,13 +317,13 @@ body.in-viewer{overflow:hidden}
 /* ── 이미지 경로 (concept/ 직접) ── */
 const COVER_BASE='https://docssam1.github.io/lete-on/fields-classic/assets/concept/';
 const COVER_MAP={vol1:'vol1.png',vol2:'vol2.png',vol3:'vol3.png',vol4:'vol4.png',final:'final.png'};
-const PDF_CONCEPT="https://docssam1.github.io/lete-on/fields-classic/assets/concept/%ED%83%84%ED%83%84%20%ED%95%84%EC%A6%88%EB%8C%80%EB%B9%84%20%EA%B0%9C%EB%85%90%20SET.pdf";
+const CONCEPT_PAGES="../assets/concept/pages/";
 const ALL=["개념완성","진단모의고사","킬러문항",
   "실전모의고사1회","실전모의고사2회","실전모의고사3회","실전모의고사4회","실전모의고사5회","실전모의고사6회",
   "파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","파이널모의고사4회",
   "최종모의고사","자료실"];
 const PRODUCTS=[
-  {key:"개념완성",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",icon:"📘",theme:"theme-concept",type:"folder",pdf:PDF_CONCEPT,
+  {key:"개념완성",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",icon:"📘",theme:"theme-concept",type:"folder",pagesBase:CONCEPT_PAGES,pageCount:75,
    chapters:[
     {key:"vol1",vol:"Vol.1",title:"수와 규칙",subtitle:"1회차 · 필즈 대비 개념",topics:["수 피라미드","줄 세우기, 자리찾기","도형이 나타내는 수"],comment:"필즈 테스트 시 연산은 첫 페이지에 있는 연산을 틀리지 않으면 됩니다. 다만 도형이 나타내는 수와 같이 구구단 정도는 반드시 필요하니 받아내림, 받아올림, 구구단은 실수없이 할 수 있도록 해주세요.",videos:[{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/7aPj5IJUzQM",pdfPage:2},{key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/itmV6EXWQA4",pdfPage:15}]},
     {key:"vol2",vol:"Vol.2",title:"저울과 패턴",subtitle:"2회차 · 필즈 대비 개념",topics:["양팔저울","양팔저울의 활용","조건에 알맞은 수","패턴 도형 규칙"],comment:null,videos:[{key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/WoN9Ie8Fn8s",pdfPage:21},{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/WoN9Ie8Fn8s?t=318",pdfPage:24},{key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/vBgZ_lZ_XiA",pdfPage:34}]},
@@ -374,18 +395,54 @@ async function verify(code){
 function toast(){const t=document.getElementById("secToast");t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),1500)}
 function security(){document.addEventListener("contextmenu",e=>{e.preventDefault();toast()});document.addEventListener("copy",e=>{e.preventDefault();toast()});document.addEventListener("cut",e=>{e.preventDefault();toast()});document.addEventListener("dragstart",e=>e.preventDefault());document.addEventListener("keydown",e=>{const k=String(e.key||"").toLowerCase();if(k==="f12"||(e.ctrlKey&&["u","s"].includes(k))||(e.ctrlKey&&e.shiftKey&&["i","j","c"].includes(k))){e.preventDefault();e.stopPropagation();toast()}},true)}
 function embed(url){if(!url)return"";try{const p=new URL(url);let id="",s=0;if(p.hostname.includes("youtu.be"))id=p.pathname.replace(/^\//,"");else if(p.hostname.includes("youtube.com"))id=p.searchParams.get("v")||"";const t=p.searchParams.get("t")||"";if(/^\d+$/.test(t))s=Number(t);return id?"https://www.youtube.com/embed/"+id+"?rel=0&modestbranding=1&playsinline=1"+(s?"&start="+s:""):url}catch{return url}}
-let _pdfBase="";
-function setPdfPage(pdfUrl,page){
-  const fr=document.getElementById("pdfIframe"),ob=document.getElementById("pdfOpenBtn");if(!fr)return;
-  _pdfBase=pdfUrl;
-  const gdocs="https://docs.google.com/viewer?url="+encodeURIComponent(pdfUrl)+"&embedded=true";
-  if(fr.src!==gdocs)fr.src=gdocs;
-  if(ob){ob.href=pdfUrl+"#page="+page;ob.style.display="inline-flex"}
+let _bookPage=1;
+function bookUrl(page){
+  const base=S.currentProduct?.pagesBase||"";
+  return base+"page_"+String(page).padStart(3,"0")+".webp";
+}
+function renderBookWatermark(){
+  const wm=document.getElementById("bookWatermark"),wrap=document.querySelector(".book-page-wrap"),img=document.getElementById("bookPageImg");
+  if(!wm||!wrap||!img||!img.getAttribute("src"))return;
+  const w=wrap.clientWidth||img.clientWidth,h=wrap.clientHeight||img.clientHeight;
+  if(!w||!h)return;
+  const label=(S.name||"학생")+" 학생 · GFIELD";
+  wm.innerHTML="";
+  for(let y=-70;y<h+120;y+=145){
+    for(let x=-120;x<w+260;x+=235){
+      const s=document.createElement("span");
+      s.textContent=label;
+      s.style.left=x+"px";
+      s.style.top=y+"px";
+      wm.appendChild(s);
+    }
+  }
+}
+function setBookEmpty(msg){
+  const img=document.getElementById("bookPageImg"),wm=document.getElementById("bookWatermark"),st=document.getElementById("bookStatus"),lb=document.getElementById("bookPageLabel");
+  if(img)img.removeAttribute("src");
+  if(wm)wm.innerHTML="";
+  if(st)st.textContent=msg||"교재 준비 중";
+  if(lb)lb.textContent="- / -";
+  ["bookPrev","bookNext"].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=true;});
+}
+function setBookPage(page){
+  const img=document.getElementById("bookPageImg"),st=document.getElementById("bookStatus"),lb=document.getElementById("bookPageLabel");
+  const total=S.currentProduct?.pageCount||0;
+  if(!img||!total||!S.currentProduct?.pagesBase){setBookEmpty();return;}
+  _bookPage=Math.max(1,Math.min(total,Number(page)||1));
+  if(st)st.textContent="교재를 불러오는 중...";
+  if(lb)lb.textContent=_bookPage+" / "+total;
+  const prev=document.getElementById("bookPrev"),next=document.getElementById("bookNext");
+  if(prev)prev.disabled=_bookPage<=1;
+  if(next)next.disabled=_bookPage>=total;
+  img.onload=()=>{if(st)st.textContent="";requestAnimationFrame(renderBookWatermark);};
+  img.onerror=()=>{if(st)st.textContent="교재 페이지를 불러오지 못했습니다.";};
+  img.src=bookUrl(_bookPage);
 }
 let S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};
 function checkOrientation(){if(!S.viewerOpen)return;const p=window.innerHeight>window.innerWidth;document.getElementById("rotateHint").classList.toggle("show",p);document.getElementById("viewer").style.visibility=p?"hidden":"visible"}
-window.addEventListener("resize",checkOrientation);
-window.addEventListener("orientationchange",()=>setTimeout(checkOrientation,100));
+window.addEventListener("resize",()=>{checkOrientation();renderBookWatermark();});
+window.addEventListener("orientationchange",()=>setTimeout(()=>{checkOrientation();renderBookWatermark();},100));
 const GF={
   async login(){
     const c=document.getElementById("gCode").value.trim(),n=document.getElementById("gName").value.replace(/\s+/g,"").trim(),e=document.getElementById("gErr");
@@ -547,7 +604,7 @@ const GF={
     document.getElementById("vPanelTitle").textContent=v.label.replace(/^[^\s]+\s/,"");
     document.getElementById("vPanelMeta").textContent=v.url?"준비됨":"준비 중";
     document.getElementById("videoIframe").src=v.url?embed(v.url):"";
-    const pdfUrl=S.currentProduct?.pdf||"";if(pdfUrl&&v.pdfPage)setPdfPage(pdfUrl,v.pdfPage);
+    if(S.currentProduct?.pagesBase&&v.pdfPage)setBookPage(v.pdfPage);else setBookEmpty();
   },
   openMock(p){
     const name=encodeURIComponent(S.name||"");
@@ -562,27 +619,28 @@ const GF={
     document.getElementById("vBody").className="viewer-body "+(hasVid?"has-video":"no-video");
     document.getElementById("vPanel").style.display=hasVid?"flex":"none";
     const tabs=document.getElementById("vTabs");tabs.innerHTML="";
-    (p.lessons||[]).forEach(l=>{const b=document.createElement("button");b.className="tab-btn";b.textContent=l.label;b.dataset.k=l.key;b.dataset.type=l.type||"concept";b.addEventListener("click",()=>{document.querySelectorAll(".tab-btn").forEach(x=>x.classList.toggle("active",x.dataset.k===l.key));document.getElementById("videoIframe").src=l.url?embed(l.url):"";if(p.pdf&&l.pdfPage)setPdfPage(p.pdf,l.pdfPage);S.currentVideo={url:l.url}});tabs.appendChild(b)});
-    if(p.lessons?.length){const first=p.lessons[0];document.getElementById("videoIframe").src=first.url?embed(first.url):"";if(p.pdf&&first.pdfPage)setPdfPage(p.pdf,first.pdfPage);tabs.querySelector(".tab-btn")?.classList.add("active")}
+    (p.lessons||[]).forEach(l=>{const b=document.createElement("button");b.className="tab-btn";b.textContent=l.label;b.dataset.k=l.key;b.dataset.type=l.type||"concept";b.addEventListener("click",()=>{document.querySelectorAll(".tab-btn").forEach(x=>x.classList.toggle("active",x.dataset.k===l.key));document.getElementById("videoIframe").src=l.url?embed(l.url):"";if(p.pagesBase&&l.pdfPage)setBookPage(l.pdfPage);else setBookEmpty();S.currentVideo={url:l.url}});tabs.appendChild(b)});
+    if(p.lessons?.length){const first=p.lessons[0];document.getElementById("videoIframe").src=first.url?embed(first.url):"";if(p.pagesBase&&first.pdfPage)setBookPage(first.pdfPage);else setBookEmpty();tabs.querySelector(".tab-btn")?.classList.add("active")}
     document.getElementById("viewer").classList.add("show");document.body.classList.add("in-viewer");checkOrientation();
   },
+  prevBookPage(){if(_bookPage>1)setBookPage(_bookPage-1)},
+  nextBookPage(){const total=S.currentProduct?.pageCount||0;if(_bookPage<total)setBookPage(_bookPage+1)},
   openYt(){if(S.currentVideo?.url)window.open(S.currentVideo.url,"_blank","noopener")},
   closeViewer(){
-    S.viewerOpen=false;_pdfBase="";
+    S.viewerOpen=false;
     document.getElementById("viewer").classList.remove("show");document.getElementById("viewer").style.visibility="";
     document.getElementById("rotateHint").classList.remove("show");document.body.classList.remove("in-viewer");
-    document.getElementById("videoIframe").src="";document.getElementById("pdfIframe").src="";
-    const ob=document.getElementById("pdfOpenBtn");if(ob)ob.style.display="none";
+    document.getElementById("videoIframe").src="";setBookEmpty("");
     S.currentChapter=null;S.currentVideo=null;
   },
   logout(){
-    S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};_pdfBase="";
+    S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};
     sessionStorage.clear();
     document.getElementById("gate").classList.remove("hidden");document.getElementById("app").classList.remove("show");
     document.getElementById("viewer").classList.remove("show");document.getElementById("viewer").style.visibility="";
     document.getElementById("rotateHint").classList.remove("show");document.getElementById("commentModal").classList.remove("show");
     document.body.classList.remove("in-viewer");
-    document.getElementById("videoIframe").src="";document.getElementById("pdfIframe").src="";
+    document.getElementById("videoIframe").src="";setBookEmpty("");
     document.getElementById("gCode").value="";document.getElementById("gName").value="";document.getElementById("gErr").textContent="";
   }
 };
