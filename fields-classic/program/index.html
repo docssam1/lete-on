@@ -321,7 +321,7 @@ body.in-viewer{overflow:hidden}
 <div id="rotateHint">
   <div class="rotate-icon">📱</div>
   <div class="rotate-title">가로로 돌려주세요</div>
-  <div class="rotate-desc">뷰어는 가로 화면에서만 이용할 수 있습니다.</div>
+  <div class="rotate-desc">서재와 학습 화면은 가로보기로 이용해 주세요.</div>
 </div>
 <div id="app">
   <header class="app-header">
@@ -542,7 +542,13 @@ function setBookPage(page){
   }));
 }
 let S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};
-function checkOrientation(){if(!S.viewerOpen)return;const p=window.innerHeight>window.innerWidth;document.getElementById("rotateHint").classList.toggle("show",p);document.getElementById("viewer").style.visibility=p?"hidden":"visible"}
+function checkOrientation(){
+  const app=document.getElementById("app"),viewer=document.getElementById("viewer"),hint=document.getElementById("rotateHint");
+  const libraryOpen=app?.classList.contains("show"),portrait=!!libraryOpen&&window.innerHeight>window.innerWidth;
+  hint?.classList.toggle("show",portrait);
+  if(app)app.style.visibility=portrait?"hidden":"";
+  if(viewer)viewer.style.visibility=S.viewerOpen&&portrait?"hidden":"";
+}
 window.addEventListener("resize",checkOrientation);
 window.addEventListener("orientationchange",()=>setTimeout(checkOrientation,100));
 document.querySelector(".book-stage")?.addEventListener("scroll",()=>{cancelAnimationFrame(_bookScrollFrame);_bookScrollFrame=requestAnimationFrame(syncBookPageFromScroll);},{passive:true});
@@ -565,6 +571,7 @@ const GF={
   showApp(){document.getElementById("gate").classList.add("hidden");document.getElementById("app").classList.add("show");document.getElementById("hName").textContent=S.name;
     // 재원생은 타임라인 뷰, 온라인/레거시는 서재 뷰
     if(S.studentType==="internal") this.showTimeline(); else this.showMainGrid();
+    checkOrientation();
   },
   showTimeline(){
     document.getElementById("mainGrid").style.display="none";
@@ -733,9 +740,10 @@ const GF={
   closeViewer(){
     S.viewerOpen=false;
     document.getElementById("viewer").classList.remove("show");document.getElementById("viewer").style.visibility="";
-    document.getElementById("rotateHint").classList.remove("show");document.body.classList.remove("in-viewer");
+    document.body.classList.remove("in-viewer");
     document.getElementById("videoIframe").src="";setBookEmpty("");
     S.currentChapter=null;S.currentVideo=null;
+    checkOrientation();
   },
   logout(){
     S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};
@@ -743,6 +751,7 @@ const GF={
     document.getElementById("gate").classList.remove("hidden");document.getElementById("app").classList.remove("show");
     document.getElementById("viewer").classList.remove("show");document.getElementById("viewer").style.visibility="";
     document.getElementById("rotateHint").classList.remove("show");document.getElementById("commentModal").classList.remove("show");
+    document.getElementById("app").style.visibility="";
     document.body.classList.remove("in-viewer");
     document.getElementById("videoIframe").src="";setBookEmpty("");
     document.getElementById("gCode").value="";document.getElementById("gName").value="";document.getElementById("gErr").textContent="";
