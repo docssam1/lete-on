@@ -144,6 +144,9 @@ body.in-viewer{overflow:hidden}
 .shelf-slot.is-final:hover .shelf-book-3d{filter:drop-shadow(0 28px 40px rgba(212,175,55,.55)) drop-shadow(0 0 32px rgba(212,175,55,.35))}
 .shelf-book-front{position:absolute;inset:0;border-radius:2px 7px 7px 2px;overflow:hidden;transform:translateZ(calc(var(--shelf-depth)/2));backface-visibility:hidden;box-shadow:inset -3px 0 8px rgba(0,0,0,.4),inset 10px 0 10px rgba(255,255,255,.06)}
 .shelf-book-front img{width:100%;height:100%;object-fit:cover;display:block}
+.shelf-book-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;text-align:center;background:linear-gradient(155deg,#173b59,#081a2c 70%);color:var(--gold);border:1px solid rgba(212,175,55,.3)}
+.shelf-book-placeholder span{font-size:10px;font-weight:900;letter-spacing:.12em}
+.shelf-book-placeholder strong{font-size:13px;line-height:1.35}
 .shelf-book-back{position:absolute;inset:0;border-radius:2px 7px 7px 2px;transform:rotateY(180deg) translateZ(calc(var(--shelf-depth)/2));background:linear-gradient(145deg,#102b43,#071421);border:1px solid rgba(212,175,55,.18);backface-visibility:hidden}
 .shelf-book-spine{position:absolute;top:0;left:0;width:var(--shelf-depth);height:100%;background:linear-gradient(to right,#020408,#0a1628);border-radius:2px 0 0 2px;transform:translateZ(calc(var(--shelf-depth)/2)) rotateY(-90deg);transform-origin:left center;box-shadow:inset -2px 0 4px rgba(255,255,255,.16)}
 .shelf-book-pages{position:absolute;top:3px;right:0;width:var(--shelf-depth);height:calc(100% - 6px);transform:translateZ(calc(var(--shelf-depth)/2)) rotateY(90deg);transform-origin:right center;background:repeating-linear-gradient(to bottom,#f4ecd9 0 2px,#d1c7b4 2px 3px);box-shadow:inset 0 0 4px rgba(0,0,0,.3)}
@@ -382,7 +385,7 @@ body.in-viewer{overflow:hidden}
 (function(){"use strict";
 /* ── 이미지 경로 (concept/ 직접) ── */
 const COVER_BASE='../assets/concept/';
-const COVER_MAP={vol1:'vol1.png',vol2:'vol2.png',vol3:'pages/page_039.webp',vol4:'vol4.png',final:'final.png'};
+const COVER_MAP={vol1:'vol1.png',vol2:'vol2.png',vol3:'',vol4:'vol4.png',final:'final.png'};
 const CONCEPT_PAGES="../assets/concept/pages/";
 const ALL=["개념완성","진단모의고사","킬러문항",
   "실전모의고사1회","실전모의고사2회","실전모의고사3회","실전모의고사4회","실전모의고사5회","실전모의고사6회",
@@ -620,11 +623,10 @@ const GF={
         <div class="shelf-section-sub">회차를 선택해 학습을 시작하세요</div>
         <div class="bookshelf-row">
           ${p.chapters.map(ch=>{
-            const imgFile=COVER_MAP[ch.key]||'vol1.png';
             return `<div class="shelf-slot${ch.key==='final'?' is-final':''}" onclick="GF.showChapterModal('${productKey}','${ch.key}')">
               <div class="shelf-book-wrap">
                 <div class="shelf-book-3d">
-                  <div class="shelf-book-front"><img src="${COVER_BASE}${imgFile}" alt="${ch.title}" loading="lazy"></div>
+                  <div class="shelf-book-front">${coverMarkup(ch)}</div>
                   <div class="shelf-book-back"></div>
                   <div class="shelf-book-spine"></div>
                   <div class="shelf-book-pages"></div>
@@ -713,6 +715,12 @@ const GF={
   }
 };
 function h(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+function coverMarkup(ch,decorative=false){
+  const imgFile=COVER_MAP[ch.key];
+  return imgFile
+    ? `<img src="${COVER_BASE}${imgFile}" alt="${decorative?"":h(ch.title)}" loading="lazy">`
+    : `<div class="shelf-book-placeholder"><span>${h(ch.vol)}</span><strong>${h(ch.title)}</strong></div>`;
+}
 function pOk(p){return !!p&&S.perms.includes(p.key)}
 function lessonKey(p){return p?.lessons?.[0]?.key||""}
 function programGroups(){
@@ -757,9 +765,8 @@ function renderProgramPanel(id){
     body=`<div class="concept-showcase-host" id="conceptShowcase"></div>
     <div class="program-book-row">
       ${(p.chapters||[]).map(ch=>{
-        const imgFile=COVER_MAP[ch.key]||"vol1.png";
         return `<button class="shelf-slot${ch.key==="final"?" is-final":""} ${ok?"":"locked"}" data-chapter-key="${h(ch.key)}" onclick="GF.previewProgramChapter(${PRODUCTS.indexOf(p)},'${h(ch.key)}')">
-          <div class="shelf-book-wrap"><div class="shelf-book-3d"><div class="shelf-book-front"><img src="${COVER_BASE}${imgFile}" alt="${h(ch.title)}" loading="lazy"></div><div class="shelf-book-back"></div><div class="shelf-book-spine"></div><div class="shelf-book-pages"></div><div class="shelf-book-shadow"></div></div></div>
+          <div class="shelf-book-wrap"><div class="shelf-book-3d"><div class="shelf-book-front">${coverMarkup(ch)}</div><div class="shelf-book-back"></div><div class="shelf-book-spine"></div><div class="shelf-book-pages"></div><div class="shelf-book-shadow"></div></div></div>
           <div class="shelf-label"><div class="shelf-vol-text">${h(ch.vol)}</div><div class="shelf-title-text">${h(ch.title)}</div><div class="shelf-videos">${ok?"영상 "+ch.videos.length+"개":"🔒 열람 제한"}</div></div>
         </button>`;
       }).join("")}
@@ -794,14 +801,14 @@ Object.assign(GF,{
   previewProgramChapter(productIndex,chapterKey){
     const p=PRODUCTS[productIndex],ch=p?.chapters?.find(c=>c.key===chapterKey);
     const host=document.getElementById("conceptShowcase");if(!p||!ch||!host)return;
-    const ok=pOk(p),imgFile=COVER_MAP[ch.key]||"vol1.png";
+    const ok=pOk(p);
     document.querySelectorAll(".program-book-row .shelf-slot").forEach(b=>b.classList.toggle("selected",b.dataset.chapterKey===chapterKey));
     const topicItems=(ch.topics||[]).map(t=>`<li>${h(t)}</li>`).join("");
     const detailCopy=ch.comment||`${ch.title}에서 꼭 알아야 할 개념과 대표 유형을 차례대로 학습합니다.`;
     host.innerHTML=`<section class="concept-showcase">
       <div class="concept-book-stage" aria-hidden="true">
         <div class="concept-book-3d">
-          <div class="concept-book-face concept-book-front"><img src="${COVER_BASE}${imgFile}" alt=""></div>
+          <div class="concept-book-face concept-book-front">${coverMarkup(ch,true)}</div>
           <div class="concept-book-face concept-book-back"></div>
           <div class="concept-book-face concept-book-spine"></div>
           <div class="concept-book-face concept-book-pages"></div>
