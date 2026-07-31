@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'fields-classic/**'
+      - 'geometry/**'
       - 'reading-world/**'
       - 'yubin-yujun-store/**'
       - '.github/pages-index.html'
@@ -31,9 +32,11 @@ jobs:
       - name: Stage sites and landing menu
         run: |
           mkdir -p _site/fields-classic
+          mkdir -p _site/geometry
           mkdir -p _site/reading-world
           mkdir -p _site/yubin-yujun-store
           cp -R fields-classic/. _site/fields-classic/
+          cp -R geometry/. _site/geometry/
           cp -R reading-world/. _site/reading-world/
           cp -R yubin-yujun-store/. _site/yubin-yujun-store/
           cp .github/pages-index.html _site/index.html
