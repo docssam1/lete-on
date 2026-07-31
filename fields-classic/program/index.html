@@ -64,6 +64,27 @@ body.in-viewer{overflow:hidden}
 .program-panel-title em{color:var(--gold);font-style:italic}
 .program-panel-desc{font-size:12px;color:var(--muted);line-height:1.65;max-width:420px;text-align:right}
 .program-book-row{display:flex;gap:clamp(14px,2.4vw,28px);align-items:flex-end;flex-wrap:wrap;justify-content:center;padding:8px 6px 18px}
+.concept-showcase-host:empty{display:none}
+.concept-showcase{display:grid;grid-template-columns:minmax(190px,260px) minmax(0,1fr);gap:28px;align-items:center;margin:-6px -22px 24px;padding:28px 30px 30px;border-bottom:1px solid var(--border);background:linear-gradient(105deg,rgba(212,175,55,.09),rgba(255,255,255,.025) 45%,rgba(0,0,0,.16));animation:conceptSlide .52s cubic-bezier(.22,1,.36,1)}
+@keyframes conceptSlide{from{opacity:0;transform:translateY(-24px);clip-path:inset(0 0 100% 0)}to{opacity:1;transform:none;clip-path:inset(0)}}
+.concept-book-stage{height:230px;display:grid;place-items:center;perspective:950px}
+.concept-book-3d{--w:136px;--h:190px;--d:18px;width:var(--w);height:var(--h);position:relative;transform-style:preserve-3d;animation:bookTurn 7s linear infinite;filter:drop-shadow(0 24px 30px rgba(0,0,0,.62))}
+@keyframes bookTurn{0%{transform:rotateX(4deg) rotateY(-24deg)}45%{transform:rotateX(4deg) rotateY(150deg)}55%{transform:rotateX(4deg) rotateY(210deg)}100%{transform:rotateX(4deg) rotateY(336deg)}}
+.concept-book-face{position:absolute;backface-visibility:hidden}
+.concept-book-front,.concept-book-back{inset:0;border-radius:2px 8px 8px 2px}
+.concept-book-front{transform:translateZ(calc(var(--d)/2));overflow:hidden;background:#0b2135;box-shadow:inset 10px 0 14px rgba(255,255,255,.06),inset -6px 0 10px rgba(0,0,0,.35)}
+.concept-book-front img{width:100%;height:100%;object-fit:cover;display:block}
+.concept-book-back{transform:rotateY(180deg) translateZ(calc(var(--d)/2));background:linear-gradient(145deg,#102b43,#071421);border:1px solid rgba(212,175,55,.3)}
+.concept-book-back::after{content:'G-FIELD';position:absolute;inset:0;display:grid;place-items:center;color:rgba(212,175,55,.7);font:800 13px 'Noto Sans KR',sans-serif;letter-spacing:.16em}
+.concept-book-spine{top:0;left:0;width:var(--d);height:100%;transform-origin:left center;transform:translateZ(calc(var(--d)/2)) rotateY(-90deg);background:linear-gradient(90deg,#02070d,#143550 46%,#06111d);border-left:1px solid rgba(212,175,55,.2)}
+.concept-book-pages{top:4px;right:0;width:var(--d);height:calc(100% - 8px);transform-origin:right center;transform:translateZ(calc(var(--d)/2)) rotateY(90deg);background:repeating-linear-gradient(to bottom,#f4ecd9 0 2px,#d6cdbb 2px 3px);box-shadow:inset 0 0 5px rgba(0,0,0,.28)}
+.concept-detail-kicker{font-size:10px;font-weight:900;letter-spacing:.14em;color:var(--gold);margin-bottom:7px}
+.concept-detail-title{font-family:'DM Serif Display','Noto Sans KR',sans-serif;font-size:clamp(24px,3vw,34px);line-height:1.15;color:var(--white);margin-bottom:12px}
+.concept-topic-list{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 14px;padding:0;list-style:none}
+.concept-topic-list li{font-size:11px;font-weight:800;color:#d7e5f3;border:1px solid rgba(147,197,253,.2);background:rgba(147,197,253,.07);border-radius:6px;padding:6px 9px}
+.concept-detail-copy{font-size:11px;color:var(--muted);line-height:1.75;margin-bottom:16px;max-width:620px}
+.concept-start{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:7px;padding:10px 16px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:900;cursor:pointer}
+.concept-start:disabled{background:rgba(255,255,255,.06);color:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.1);cursor:not-allowed}
 .program-run-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
 .program-run-card{min-height:132px;border:1px solid var(--border2);border-radius:14px;background:rgba(255,255,255,.035);padding:14px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:transform .16s,border-color .16s,background .16s}
 .program-run-card:hover{transform:translateY(-3px);border-color:rgba(212,175,55,.36);background:rgba(212,175,55,.055)}
@@ -81,7 +102,8 @@ body.in-viewer{overflow:hidden}
 .program-run-desc{font-size:11px;color:var(--muted);line-height:1.45;margin-top:auto}
 .program-lock{display:inline-flex;align-items:center;gap:4px;width:max-content;font-size:10px;font-weight:900;color:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:3px 8px;background:rgba(255,255,255,.035)}
 .program-empty{min-height:240px;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:13px;line-height:1.7}
-@media(max-width:820px){.program-shelf{grid-template-columns:1fr}.program-menu{position:relative;top:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.program-panel-head{display:block}.program-panel-desc{text-align:left;margin-top:8px}.program-menu-card{min-height:68px}}
+@media(max-width:820px){.program-shelf{grid-template-columns:1fr}.program-menu{position:relative;top:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.program-panel-head{display:block}.program-panel-desc{text-align:left;margin-top:8px}.program-menu-card{min-height:68px}.concept-showcase{grid-template-columns:210px minmax(0,1fr)}}
+@media(max-width:600px){.concept-showcase{grid-template-columns:1fr;margin:-4px -14px 22px;padding:22px 18px}.concept-book-stage{height:205px}.concept-book-3d{--w:118px;--h:166px}.concept-detail{text-align:center}.concept-topic-list{justify-content:center}.concept-detail-copy{text-align:left}}
 @media(max-width:500px){.program-menu{grid-template-columns:1fr}.program-detail{border-radius:14px}.program-panel{padding:18px 14px}.program-book-row{gap:12px}.program-run-grid{grid-template-columns:1fr 1fr}}
 .product-card{position:relative;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:20px 16px 16px;display:flex;flex-direction:column;gap:14px;transition:all .3s cubic-bezier(.22,1,.36,1);overflow:hidden;cursor:pointer}
 .product-card.unlocked{border-color:rgba(212,175,55,.2)}
@@ -113,17 +135,20 @@ body.in-viewer{overflow:hidden}
 /* ── 3D 책장 챕터 뷰 ── */
 .bookshelf-scene{padding:20px 0 40px;width:100%}
 .bookshelf-row{display:flex;gap:clamp(12px,3vw,28px);justify-content:center;flex-wrap:wrap;align-items:flex-end;padding:0 10px}
-.shelf-slot{display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;flex:0 0 auto}
-.shelf-slot.locked{opacity:.46;cursor:not-allowed;filter:saturate(.55)}
+.shelf-slot{display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;flex:0 0 auto;border:0;background:transparent;padding:0;font-family:'Noto Sans KR',sans-serif}
+.shelf-slot.locked{opacity:.62;filter:saturate(.62)}
+.shelf-slot.selected .shelf-book-3d{transform:rotateY(-5deg) rotateX(1deg) translateY(-10px) scale(1.04);filter:drop-shadow(0 25px 36px rgba(212,175,55,.36))}
 .shelf-book-wrap{perspective:800px}
-.shelf-book-3d{width:clamp(82px,13vw,118px);height:clamp(116px,18vw,166px);position:relative;transform-style:preserve-3d;transform:rotateY(-22deg) rotateX(4deg);transition:transform .45s cubic-bezier(.22,1,.36,1),filter .45s ease;filter:drop-shadow(0 16px 28px rgba(0,0,0,.7))}
+.shelf-book-3d{--shelf-depth:14px;width:104px;height:148px;position:relative;transform-style:preserve-3d;transform:rotateY(-22deg) rotateX(4deg);transition:transform .45s cubic-bezier(.22,1,.36,1),filter .45s ease;filter:drop-shadow(0 16px 28px rgba(0,0,0,.7))}
 .shelf-slot:hover .shelf-book-3d{transform:rotateY(-6deg) rotateX(1deg) translateY(-14px) scale(1.06);filter:drop-shadow(0 28px 40px rgba(212,175,55,.35)) drop-shadow(0 0 20px rgba(212,175,55,.15))}
 .shelf-slot.is-final:hover .shelf-book-3d{filter:drop-shadow(0 28px 40px rgba(212,175,55,.55)) drop-shadow(0 0 32px rgba(212,175,55,.35))}
-.shelf-book-front{position:absolute;inset:0;border-radius:2px 7px 7px 2px;overflow:hidden;box-shadow:inset -3px 0 8px rgba(0,0,0,.4),inset 10px 0 10px rgba(255,255,255,.06)}
+.shelf-book-front{position:absolute;inset:0;border-radius:2px 7px 7px 2px;overflow:hidden;transform:translateZ(calc(var(--shelf-depth)/2));backface-visibility:hidden;box-shadow:inset -3px 0 8px rgba(0,0,0,.4),inset 10px 0 10px rgba(255,255,255,.06)}
 .shelf-book-front img{width:100%;height:100%;object-fit:cover;display:block}
-.shelf-book-spine{position:absolute;top:0;left:0;width:12px;height:100%;background:linear-gradient(to right,#020408,#0a1628);border-radius:2px 0 0 2px;transform:rotateY(-90deg) translateX(-6px);transform-origin:left center;box-shadow:inset -2px 0 4px rgba(255,255,255,.16)}
+.shelf-book-back{position:absolute;inset:0;border-radius:2px 7px 7px 2px;transform:rotateY(180deg) translateZ(calc(var(--shelf-depth)/2));background:linear-gradient(145deg,#102b43,#071421);border:1px solid rgba(212,175,55,.18);backface-visibility:hidden}
+.shelf-book-spine{position:absolute;top:0;left:0;width:var(--shelf-depth);height:100%;background:linear-gradient(to right,#020408,#0a1628);border-radius:2px 0 0 2px;transform:translateZ(calc(var(--shelf-depth)/2)) rotateY(-90deg);transform-origin:left center;box-shadow:inset -2px 0 4px rgba(255,255,255,.16)}
+.shelf-book-pages{position:absolute;top:3px;right:0;width:var(--shelf-depth);height:calc(100% - 6px);transform:translateZ(calc(var(--shelf-depth)/2)) rotateY(90deg);transform-origin:right center;background:repeating-linear-gradient(to bottom,#f4ecd9 0 2px,#d1c7b4 2px 3px);box-shadow:inset 0 0 4px rgba(0,0,0,.3)}
 .shelf-book-shadow{position:absolute;bottom:-14px;left:8%;right:8%;height:14px;background:radial-gradient(ellipse,rgba(0,0,0,.7),transparent 70%);filter:blur(6px)}
-.shelf-label{text-align:center;max-width:clamp(82px,13vw,118px)}
+.shelf-label{text-align:center;width:104px}
 .shelf-vol-text{font-size:9px;font-weight:900;color:var(--gold);letter-spacing:.12em;margin-bottom:3px}
 .shelf-title-text{font-size:clamp(11px,2vw,13px);font-weight:900;color:var(--white);line-height:1.3}
 .shelf-videos{font-size:10px;color:var(--muted);margin-top:3px}
@@ -133,7 +158,7 @@ body.in-viewer{overflow:hidden}
 .shelf-section-title{font-family:'DM Serif Display',serif;font-size:clamp(18px,3vw,24px);color:var(--white);text-align:center;margin-bottom:6px}
 .shelf-section-title em{color:var(--gold);font-style:italic}
 .shelf-section-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:32px}
-@media(max-width:500px){.bookshelf-row{gap:8px}.shelf-label{max-width:72px}}
+@media(max-width:500px){.bookshelf-row{gap:8px}.shelf-book-3d{width:88px;height:126px}.shelf-label{width:88px}}
 #commentModal{display:none;position:fixed;inset:0;z-index:500;padding:20px;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);align-items:center;justify-content:center}
 #commentModal.show{display:flex}
 .modal-card{width:min(480px,95vw);background:rgba(8,13,20,.98);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.8);animation:modalIn .25s cubic-bezier(.22,1,.36,1)}
@@ -356,7 +381,7 @@ body.in-viewer{overflow:hidden}
 <script>
 (function(){"use strict";
 /* ── 이미지 경로 (concept/ 직접) ── */
-const COVER_BASE='https://docssam1.github.io/lete-on/fields-classic/assets/concept/';
+const COVER_BASE='../assets/concept/';
 const COVER_MAP={vol1:'vol1.png',vol2:'vol2.png',vol3:'vol3.png',vol4:'vol4.png',final:'final.png'};
 const CONCEPT_PAGES="../assets/concept/pages/";
 const ALL=["개념완성","진단모의고사","킬러문항",
@@ -600,7 +625,9 @@ const GF={
               <div class="shelf-book-wrap">
                 <div class="shelf-book-3d">
                   <div class="shelf-book-front"><img src="${COVER_BASE}${imgFile}" alt="${ch.title}" loading="lazy"></div>
+                  <div class="shelf-book-back"></div>
                   <div class="shelf-book-spine"></div>
+                  <div class="shelf-book-pages"></div>
                   <div class="shelf-book-shadow"></div>
                 </div>
               </div>
@@ -727,13 +754,14 @@ function renderProgramPanel(id){
   let body="";
   if(g.kind==="chapters"){
     const p=g.product,ok=pOk(p);
-    body=`<div class="program-book-row">
+    body=`<div class="concept-showcase-host" id="conceptShowcase"></div>
+    <div class="program-book-row">
       ${(p.chapters||[]).map(ch=>{
         const imgFile=COVER_MAP[ch.key]||"vol1.png";
-        return `<div class="shelf-slot${ch.key==="final"?" is-final":""} ${ok?"":"locked"}" onclick="GF.openProgramChapter(${PRODUCTS.indexOf(p)},'${h(ch.key)}')">
-          <div class="shelf-book-wrap"><div class="shelf-book-3d"><div class="shelf-book-front"><img src="${COVER_BASE}${imgFile}" alt="${h(ch.title)}" loading="lazy"></div><div class="shelf-book-spine"></div><div class="shelf-book-shadow"></div></div></div>
+        return `<button class="shelf-slot${ch.key==="final"?" is-final":""} ${ok?"":"locked"}" data-chapter-key="${h(ch.key)}" onclick="GF.previewProgramChapter(${PRODUCTS.indexOf(p)},'${h(ch.key)}')">
+          <div class="shelf-book-wrap"><div class="shelf-book-3d"><div class="shelf-book-front"><img src="${COVER_BASE}${imgFile}" alt="${h(ch.title)}" loading="lazy"></div><div class="shelf-book-back"></div><div class="shelf-book-spine"></div><div class="shelf-book-pages"></div><div class="shelf-book-shadow"></div></div></div>
           <div class="shelf-label"><div class="shelf-vol-text">${h(ch.vol)}</div><div class="shelf-title-text">${h(ch.title)}</div><div class="shelf-videos">${ok?"영상 "+ch.videos.length+"개":"🔒 열람 제한"}</div></div>
-        </div>`;
+        </button>`;
       }).join("")}
     </div><div class="shelf-rail"></div>`;
   }else{
@@ -762,6 +790,37 @@ Object.assign(GF,{
   selectProgramSection(id){
     document.querySelectorAll(".program-menu-card").forEach(b=>b.classList.toggle("active",b.dataset.section===id));
     renderProgramPanel(id);
+  },
+  previewProgramChapter(productIndex,chapterKey){
+    const p=PRODUCTS[productIndex],ch=p?.chapters?.find(c=>c.key===chapterKey);
+    const host=document.getElementById("conceptShowcase");if(!p||!ch||!host)return;
+    const ok=pOk(p),imgFile=COVER_MAP[ch.key]||"vol1.png";
+    document.querySelectorAll(".program-book-row .shelf-slot").forEach(b=>b.classList.toggle("selected",b.dataset.chapterKey===chapterKey));
+    const topicItems=(ch.topics||[]).map(t=>`<li>${h(t)}</li>`).join("");
+    const detailCopy=ch.comment||`${ch.title}에서 꼭 알아야 할 개념과 대표 유형을 차례대로 학습합니다.`;
+    host.innerHTML=`<section class="concept-showcase">
+      <div class="concept-book-stage" aria-hidden="true">
+        <div class="concept-book-3d">
+          <div class="concept-book-face concept-book-front"><img src="${COVER_BASE}${imgFile}" alt=""></div>
+          <div class="concept-book-face concept-book-back"></div>
+          <div class="concept-book-face concept-book-spine"></div>
+          <div class="concept-book-face concept-book-pages"></div>
+        </div>
+      </div>
+      <div class="concept-detail">
+        <div class="concept-detail-kicker">${h(ch.vol)} · ${h(ch.subtitle)}</div>
+        <div class="concept-detail-title">${h(ch.title)}</div>
+        <ul class="concept-topic-list">${topicItems}</ul>
+        <p class="concept-detail-copy">${h(detailCopy)}</p>
+        <button class="concept-start" ${ok?`onclick="GF.launchProgramChapter(${productIndex},'${h(ch.key)}')"`:"disabled"}>${ok?"▶ 학습 시작":"🔒 구매 후 열람 가능"}</button>
+      </div>
+    </section>`;
+  },
+  launchProgramChapter(productIndex,chapterKey){
+    const p=PRODUCTS[productIndex],ch=p?.chapters?.find(c=>c.key===chapterKey);
+    if(!p||!ch||!pOk(p)){toast();return;}
+    S.currentProduct=p;S.currentChapter=ch;
+    this.openChapterViewer(ch);
   },
   openProgramChapter(productIndex,chapterKey){
     const p=PRODUCTS[productIndex];if(!p||!pOk(p)){toast();return;}
