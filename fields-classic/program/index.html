@@ -212,7 +212,7 @@ body.in-viewer{overflow:hidden}
 .tab-btn:not(.active)[data-type="practice"]{color:rgba(67,233,123,.7)}
 .tab-btn:not(.active)[data-type="final"]{color:var(--gold)}
 .viewer-body{flex:1;display:grid;overflow:hidden;min-height:0}
-.viewer-body.has-video{grid-template-columns:42% 58%}
+.viewer-body.has-video{grid-template-columns:46% 54%}
 .viewer-body.no-video{grid-template-columns:1fr}
 .vpanel{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden;min-height:0}
 .vpanel-head{padding:7px 11px;background:linear-gradient(135deg,var(--navy),#132030);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
@@ -225,21 +225,26 @@ body.in-viewer{overflow:hidden}
 .book-page-label{min-width:72px;text-align:center;color:#d8dee9;font-size:11px;font-weight:800}
 .book-nav{height:24px;padding:0 10px;border-radius:7px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#d8dee9;font-size:11px;font-weight:800;font-family:'Noto Sans KR',sans-serif;cursor:pointer}
 .book-nav:disabled{opacity:.35;cursor:not-allowed}
-.book-stage{flex:1;overflow:auto;padding:18px;display:flex;align-items:flex-start;justify-content:center}
-.book-page-wrap{position:relative;line-height:0;background:#fff;box-shadow:0 16px 50px rgba(0,0,0,.45)}
-#bookPageImg{display:block;max-width:min(100%,920px);height:auto;user-select:none;-webkit-user-drag:none}
+.book-stage{position:relative;flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;padding:12px 8px 28px;scroll-behavior:smooth;scrollbar-gutter:stable both-edges}
+.book-pages{width:100%;display:flex;flex-direction:column;align-items:center;gap:18px}
+.book-sheet{position:relative;width:min(100%,820px);aspect-ratio:1075/1521;line-height:0;background:#fff;box-shadow:0 12px 34px rgba(0,0,0,.35);flex:none}
+.viewer-body.no-video .book-sheet{width:min(100%,920px)}
+.book-page-img{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
 .book-watermark{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:2;display:none}
-.book-watermark span{position:absolute;color:rgba(22,34,51,.13);font-size:24px;font-weight:900;white-space:nowrap;transform:rotate(-28deg);letter-spacing:.02em}
-.book-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#526070;font-size:13px;font-weight:900;background:#f8fafc;z-index:3}
+.book-watermark span{position:absolute;left:50%;color:rgba(22,34,51,.15);font-size:38pt;font-weight:900;white-space:nowrap;transform:translate(-50%,-50%) rotate(-34deg);letter-spacing:0}
+.book-watermark .wm-r1{top:26%}.book-watermark .wm-r2{top:50%}.book-watermark .wm-r3{top:74%}
+.book-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#526070;font-size:13px;font-weight:900;background:#f8fafc;z-index:3;pointer-events:none}
 .book-status:empty{display:none}
 @media print{
   #gate,#app,#rotateHint,#commentModal,#viewer .viewer-header,#viewer .viewer-tabs,#viewer .vpanel,.sec-toast{display:none!important}
   #viewer{position:relative!important;display:block!important}.viewer-body{display:block!important}
   .bpanel{overflow:visible!important;background:white!important;display:block!important}
-  .book-toolbar{display:none!important}.book-stage{display:block!important;padding:0!important;overflow:visible!important}
+  .book-toolbar,.book-status{display:none!important}.book-stage{display:block!important;padding:0!important;overflow:visible!important}
+  .book-pages{display:block!important}
+  .book-sheet{width:210mm!important;height:297mm!important;aspect-ratio:auto!important;margin:0!important;box-shadow:none!important;break-after:page!important;page-break-after:always!important;overflow:hidden!important}
   .book-watermark{display:block!important}
-  #bookPageImg{width:100%!important;height:auto!important}
-  @page{margin:0}
+  .book-page-img{width:210mm!important;height:297mm!important;object-fit:fill!important}
+  @page{size:A4;margin:0}
 }
 @media(max-height:500px) and (orientation:landscape){.viewer-header{padding:5px 10px}.viewer-tabs{padding:3px 8px}.tab-btn{padding:4px 10px;font-size:10px}}
 @media(max-width:600px){.products-grid{grid-template-columns:1fr 1fr}#dashboard{padding:0 12px 40px}}
@@ -366,16 +371,13 @@ body.in-viewer{overflow:hidden}
     </div>
     <div class="bpanel" id="bPanel">
       <div class="book-toolbar">
-        <button class="book-nav" id="bookPrev" onclick="GF.prevBookPage()">← 이전</button>
+        <button class="book-nav" id="bookPrev" onclick="GF.prevBookPage()">↑ 이전 쪽</button>
         <span class="book-page-label" id="bookPageLabel">- / -</span>
-        <button class="book-nav" id="bookNext" onclick="GF.nextBookPage()">다음 →</button>
+        <button class="book-nav" id="bookNext" onclick="GF.nextBookPage()">다음 쪽 ↓</button>
       </div>
       <div class="book-stage">
-        <div class="book-page-wrap">
-          <img id="bookPageImg" alt="교재 페이지">
-          <div class="book-watermark" id="bookWatermark"></div>
-          <div class="book-status" id="bookStatus"></div>
-        </div>
+        <div class="book-pages" id="bookPages"></div>
+        <div class="book-status" id="bookStatus"></div>
       </div>
     </div>
   </div>
@@ -464,54 +466,89 @@ async function verify(code){
 function toast(){const t=document.getElementById("secToast");t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),1500)}
 function security(){document.addEventListener("contextmenu",e=>{e.preventDefault();toast()});document.addEventListener("copy",e=>{e.preventDefault();toast()});document.addEventListener("cut",e=>{e.preventDefault();toast()});document.addEventListener("dragstart",e=>e.preventDefault());document.addEventListener("keydown",e=>{const k=String(e.key||"").toLowerCase();if(k==="f12"||(e.ctrlKey&&["u","s"].includes(k))||(e.ctrlKey&&e.shiftKey&&["i","j","c"].includes(k))){e.preventDefault();e.stopPropagation();toast()}},true)}
 function embed(url){if(!url)return"";try{const p=new URL(url);let id="",s=0;if(p.hostname.includes("youtu.be"))id=p.pathname.replace(/^\//,"");else if(p.hostname.includes("youtube.com"))id=p.searchParams.get("v")||"";const t=p.searchParams.get("t")||"";if(/^\d+$/.test(t))s=Number(t);return id?"https://www.youtube.com/embed/"+id+"?rel=0&modestbranding=1&playsinline=1"+(s?"&start="+s:""):url}catch{return url}}
-let _bookPage=1;
+let _bookPage=1,_bookRenderKey="",_bookScrollFrame=0;
 function bookUrl(page){
   const base=S.currentProduct?.pagesBase||"";
   return base+"page_"+String(page).padStart(3,"0")+".webp";
 }
-function renderBookWatermark(){
-  const wm=document.getElementById("bookWatermark"),wrap=document.querySelector(".book-page-wrap"),img=document.getElementById("bookPageImg");
-  if(!wm||!wrap||!img||!img.getAttribute("src"))return;
-  const w=wrap.clientWidth||img.clientWidth,h=wrap.clientHeight||img.clientHeight;
-  if(!w||!h)return;
+function makeBookWatermark(){
+  const wm=document.createElement("div");
+  wm.className="book-watermark";
+  wm.setAttribute("aria-hidden","true");
   const label=(S.name||"학생")+" 학생 · GFIELD";
-  wm.innerHTML="";
-  for(let y=-70;y<h+120;y+=145){
-    for(let x=-120;x<w+260;x+=235){
-      const s=document.createElement("span");
-      s.textContent=label;
-      s.style.left=x+"px";
-      s.style.top=y+"px";
-      wm.appendChild(s);
-    }
+  ["wm-r1","wm-r2","wm-r3"].forEach(cls=>{const row=document.createElement("span");row.className=cls;row.textContent=label;wm.appendChild(row);});
+  return wm;
+}
+function updateBookControls(page){
+  const total=S.currentProduct?.pageCount||0;
+  _bookPage=Math.max(1,Math.min(total||1,Number(page)||1));
+  const lb=document.getElementById("bookPageLabel"),prev=document.getElementById("bookPrev"),next=document.getElementById("bookNext");
+  if(lb)lb.textContent=total?_bookPage+" / "+total:"- / -";
+  if(prev)prev.disabled=!total||_bookPage<=1;
+  if(next)next.disabled=!total||_bookPage>=total;
+}
+function renderBookPages(){
+  const pages=document.getElementById("bookPages"),st=document.getElementById("bookStatus");
+  const total=S.currentProduct?.pageCount||0,base=S.currentProduct?.pagesBase||"";
+  if(!pages||!total||!base)return false;
+  const key=base+"|"+total+"|"+(S.name||"");
+  if(_bookRenderKey===key&&pages.children.length===total)return true;
+  if(st)st.textContent="교재를 불러오는 중...";
+  pages.innerHTML="";
+  const frag=document.createDocumentFragment();
+  for(let page=1;page<=total;page++){
+    const sheet=document.createElement("div");
+    sheet.className="book-sheet";
+    sheet.dataset.page=String(page);
+    const img=document.createElement("img");
+    img.className="book-page-img";
+    img.alt="교재 "+page+"쪽";
+    img.decoding="async";
+    img.src=bookUrl(page);
+    img.addEventListener("load",()=>{if(page===_bookPage&&st)st.textContent="";},{once:true});
+    img.addEventListener("error",()=>{sheet.classList.add("load-error");if(page===_bookPage&&st)st.textContent="교재 "+page+"쪽을 불러오지 못했습니다.";},{once:true});
+    sheet.append(img,makeBookWatermark());
+    frag.appendChild(sheet);
   }
+  pages.appendChild(frag);
+  _bookRenderKey=key;
+  return true;
+}
+function syncBookPageFromScroll(){
+  const stage=document.querySelector(".book-stage");
+  if(!stage)return;
+  const marker=stage.scrollTop+Math.max(20,stage.clientHeight*.22);
+  let page=1;
+  stage.querySelectorAll(".book-sheet").forEach(sheet=>{if(sheet.offsetTop<=marker)page=Number(sheet.dataset.page)||page;});
+  updateBookControls(page);
 }
 function setBookEmpty(msg){
-  const img=document.getElementById("bookPageImg"),wm=document.getElementById("bookWatermark"),st=document.getElementById("bookStatus"),lb=document.getElementById("bookPageLabel");
-  if(img)img.removeAttribute("src");
-  if(wm)wm.innerHTML="";
+  const pages=document.getElementById("bookPages"),st=document.getElementById("bookStatus"),lb=document.getElementById("bookPageLabel");
+  if(pages)pages.innerHTML="";
+  _bookRenderKey="";
   if(st)st.textContent=msg||"교재 준비 중";
   if(lb)lb.textContent="- / -";
   ["bookPrev","bookNext"].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=true;});
 }
 function setBookPage(page){
-  const img=document.getElementById("bookPageImg"),st=document.getElementById("bookStatus"),lb=document.getElementById("bookPageLabel");
+  const stage=document.querySelector(".book-stage"),st=document.getElementById("bookStatus");
   const total=S.currentProduct?.pageCount||0;
-  if(!img||!total||!S.currentProduct?.pagesBase){setBookEmpty();return;}
-  _bookPage=Math.max(1,Math.min(total,Number(page)||1));
+  if(!stage||!total||!S.currentProduct?.pagesBase){setBookEmpty();return;}
+  updateBookControls(page);
   if(st)st.textContent="교재를 불러오는 중...";
-  if(lb)lb.textContent=_bookPage+" / "+total;
-  const prev=document.getElementById("bookPrev"),next=document.getElementById("bookNext");
-  if(prev)prev.disabled=_bookPage<=1;
-  if(next)next.disabled=_bookPage>=total;
-  img.onload=()=>{if(st)st.textContent="";requestAnimationFrame(renderBookWatermark);};
-  img.onerror=()=>{if(st)st.textContent="교재 페이지를 불러오지 못했습니다.";};
-  img.src=bookUrl(_bookPage);
+  if(!renderBookPages())return;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const sheet=stage.querySelector(`.book-sheet[data-page="${_bookPage}"]`);
+    if(sheet)stage.scrollTo({top:Math.max(0,sheet.offsetTop-10),behavior:"smooth"});
+    const img=sheet?.querySelector("img");
+    if(img?.complete&&img.naturalWidth&&st)st.textContent="";
+  }));
 }
 let S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};
 function checkOrientation(){if(!S.viewerOpen)return;const p=window.innerHeight>window.innerWidth;document.getElementById("rotateHint").classList.toggle("show",p);document.getElementById("viewer").style.visibility=p?"hidden":"visible"}
-window.addEventListener("resize",()=>{checkOrientation();renderBookWatermark();});
-window.addEventListener("orientationchange",()=>setTimeout(()=>{checkOrientation();renderBookWatermark();},100));
+window.addEventListener("resize",checkOrientation);
+window.addEventListener("orientationchange",()=>setTimeout(checkOrientation,100));
+document.querySelector(".book-stage")?.addEventListener("scroll",()=>{cancelAnimationFrame(_bookScrollFrame);_bookScrollFrame=requestAnimationFrame(syncBookPageFromScroll);},{passive:true});
 const GF={
   async login(){
     const c=document.getElementById("gCode").value.trim(),n=document.getElementById("gName").value.replace(/\s+/g,"").trim(),e=document.getElementById("gErr");
