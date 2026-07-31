@@ -26,7 +26,7 @@ body.in-viewer{overflow:hidden}
 .gate-btn:active{transform:scale(.97)}
 .gate-error{min-height:18px;color:#e74c3c;font-size:12px;font-weight:700;margin-top:6px}
 .gate-note{font-size:10px;color:rgba(255,255,255,.25);margin-top:12px;line-height:1.6}
-#app{display:none;min-height:100vh;flex-direction:column}
+#app{display:none;width:100%;height:100dvh;min-height:100vh;overflow:hidden;flex-direction:column}
 #app.show{display:flex}
 .app-header{position:sticky;top:0;z-index:100;padding:10px 20px;background:rgba(2,5,11,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
 .header-left{display:flex;align-items:center;gap:10px}
@@ -542,6 +542,19 @@ function setBookPage(page){
   }));
 }
 let S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};
+function requestStudyFullscreen(){
+  const root=document.documentElement,active=document.fullscreenElement||document.webkitFullscreenElement;
+  const lockLandscape=()=>{try{const p=screen.orientation?.lock?.("landscape");p?.catch?.(()=>{});}catch{}};
+  if(active){lockLandscape();return;}
+  try{
+    const p=root.requestFullscreen?root.requestFullscreen({navigationUI:"hide"}):root.webkitRequestFullscreen?.();
+    p?.then?.(lockLandscape)?.catch?.(()=>{});
+  }catch{}
+}
+function exitStudyFullscreen(){
+  try{screen.orientation?.unlock?.();}catch{}
+  try{const p=document.fullscreenElement?document.exitFullscreen():document.webkitFullscreenElement?document.webkitExitFullscreen?.():null;p?.catch?.(()=>{});}catch{}
+}
 function checkOrientation(){
   const app=document.getElementById("app"),viewer=document.getElementById("viewer"),hint=document.getElementById("rotateHint");
   const libraryOpen=app?.classList.contains("show"),portrait=!!libraryOpen&&window.innerHeight>window.innerWidth;
@@ -551,6 +564,7 @@ function checkOrientation(){
 }
 window.addEventListener("resize",checkOrientation);
 window.addEventListener("orientationchange",()=>setTimeout(checkOrientation,100));
+document.addEventListener("fullscreenchange",checkOrientation);
 document.querySelector(".book-stage")?.addEventListener("scroll",()=>{cancelAnimationFrame(_bookScrollFrame);_bookScrollFrame=requestAnimationFrame(syncBookPageFromScroll);},{passive:true});
 const GF={
   async login(){
@@ -559,9 +573,10 @@ const GF={
     if(!n){e.textContent="학생 이름을 입력해 주세요.";return}
     // 관리자 전용 진입
     if(c==="01020837265" && n.toLowerCase()==="docssam"){ location.href="../admin.html"; return; }
+    requestStudyFullscreen();
     e.textContent="확인 중...";
     const result=await verify(c);
-    if(!result){e.textContent="올바르지 않은 승인번호입니다.";return}
+    if(!result){e.textContent="올바르지 않은 승인번호입니다.";exitStudyFullscreen();return}
     // 신규 승인번호는 admin에 등록된 이름을 우선 사용, 레거시는 입력한 이름 사용
     S.name=result.name||n;
     S.perms=result.perms;
@@ -755,6 +770,7 @@ const GF={
     document.body.classList.remove("in-viewer");
     document.getElementById("videoIframe").src="";setBookEmpty("");
     document.getElementById("gCode").value="";document.getElementById("gName").value="";document.getElementById("gErr").textContent="";
+    exitStudyFullscreen();
   }
 };
 function h(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
