@@ -144,9 +144,6 @@ body.in-viewer{overflow:hidden}
 .shelf-slot.is-final:hover .shelf-book-3d{filter:drop-shadow(0 28px 40px rgba(212,175,55,.55)) drop-shadow(0 0 32px rgba(212,175,55,.35))}
 .shelf-book-front{position:absolute;inset:0;border-radius:2px 7px 7px 2px;overflow:hidden;transform:translateZ(calc(var(--shelf-depth)/2));backface-visibility:hidden;box-shadow:inset -3px 0 8px rgba(0,0,0,.4),inset 10px 0 10px rgba(255,255,255,.06)}
 .shelf-book-front img{width:100%;height:100%;object-fit:cover;display:block}
-.shelf-book-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;text-align:center;background:linear-gradient(155deg,#173b59,#081a2c 70%);color:var(--gold);border:1px solid rgba(212,175,55,.3)}
-.shelf-book-placeholder span{font-size:10px;font-weight:900;letter-spacing:.12em}
-.shelf-book-placeholder strong{font-size:13px;line-height:1.35}
 .shelf-book-back{position:absolute;inset:0;border-radius:2px 7px 7px 2px;transform:rotateY(180deg) translateZ(calc(var(--shelf-depth)/2));background:linear-gradient(145deg,#102b43,#071421);border:1px solid rgba(212,175,55,.18);backface-visibility:hidden}
 .shelf-book-spine{position:absolute;top:0;left:0;width:var(--shelf-depth);height:100%;background:linear-gradient(to right,#020408,#0a1628);border-radius:2px 0 0 2px;transform:translateZ(calc(var(--shelf-depth)/2)) rotateY(-90deg);transform-origin:left center;box-shadow:inset -2px 0 4px rgba(255,255,255,.16)}
 .shelf-book-pages{position:absolute;top:3px;right:0;width:var(--shelf-depth);height:calc(100% - 6px);transform:translateZ(calc(var(--shelf-depth)/2)) rotateY(90deg);transform-origin:right center;background:repeating-linear-gradient(to bottom,#f4ecd9 0 2px,#d1c7b4 2px 3px);box-shadow:inset 0 0 4px rgba(0,0,0,.3)}
@@ -387,7 +384,7 @@ body.in-viewer{overflow:hidden}
 (function(){"use strict";
 /* ── 이미지 경로 (concept/ 직접) ── */
 const COVER_BASE='../assets/concept/';
-const COVER_MAP={vol1:'vol1.png',vol2:'vol2.png',vol3:'',vol4:'vol4.png',final:'final.png'};
+const COVER_MAP={vol1:'vol1.png',vol2:'vol2.png',vol3:'vol3-cover.png',vol4:'vol4.png',final:'final.png'};
 const CONCEPT_PAGES="../assets/concept/pages/";
 const ALL=["개념완성","진단모의고사","킬러문항",
   "실전모의고사1회","실전모의고사2회","실전모의고사3회","실전모의고사4회","실전모의고사5회","실전모의고사6회",
@@ -755,8 +752,8 @@ function h(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;
 function coverMarkup(ch,decorative=false){
   const imgFile=COVER_MAP[ch.key];
   return imgFile
-    ? `<img src="${COVER_BASE}${imgFile}" alt="${decorative?"":h(ch.title)}" loading="lazy">`
-    : `<div class="shelf-book-placeholder"><span>${h(ch.vol)}</span><strong>${h(ch.title)}</strong></div>`;
+    ? `<img src="${COVER_BASE}${imgFile}" alt="${decorative?"":h(ch.title)}" loading="lazy" onerror="this.hidden=true">`
+    : "";
 }
 function pOk(p){return !!p&&S.perms.includes(p.key)}
 function lessonKey(p){return p?.lessons?.[0]?.key||""}
