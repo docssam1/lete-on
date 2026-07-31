@@ -6,7 +6,12 @@ on:
     paths:
       - 'fields-classic/**'
       - 'geometry/**'
+      - 'hyper-focus/**'
+      - 'number_magic/**'
+      - 'personality/**'
       - 'reading-world/**'
+      - 'roadmap/**'
+      - 'world-explorer/**'
       - 'yubin-yujun-store/**'
       - '.github/pages-index.html'
       - '.github/workflows/deploy-pages.yml'
@@ -33,11 +38,21 @@ jobs:
         run: |
           mkdir -p _site/fields-classic
           mkdir -p _site/geometry
+          mkdir -p _site/hyper-focus
+          mkdir -p _site/number_magic
+          mkdir -p _site/personality
           mkdir -p _site/reading-world
+          mkdir -p _site/roadmap
+          mkdir -p _site/world-explorer
           mkdir -p _site/yubin-yujun-store
           cp -R fields-classic/. _site/fields-classic/
           cp -R geometry/. _site/geometry/
+          cp -R hyper-focus/. _site/hyper-focus/
+          cp -R number_magic/. _site/number_magic/
+          cp -R personality/. _site/personality/
           cp -R reading-world/. _site/reading-world/
+          cp -R roadmap/. _site/roadmap/
+          cp -R world-explorer/. _site/world-explorer/
           cp -R yubin-yujun-store/. _site/yubin-yujun-store/
           cp .github/pages-index.html _site/index.html
           cp reading-world/robots.txt _site/robots.txt
