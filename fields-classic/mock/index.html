@@ -588,7 +588,7 @@ function submitAll(){
   BA_ORDER.forEach(b=>{const{tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)<50)insights.push({cls:'i-warn',icon:'📌',txt:`행동영역 [${BA_LBL[b]}] 정답률 ${pct(ok,tot)}% — 집중 훈련이 필요합니다.`});});
   BA_ORDER.forEach(b=>{const{tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)===100)insights.push({cls:'i-ok',icon:'⭐',txt:`행동영역 [${BA_LBL[b]}] 100% 정답 — 강점 영역입니다.`});});
   const wq=QS.filter((q,i)=>!mg[i]);
-  const prescriptionEnabled=(FC_DATA.attendance?.[nm2]||[]).includes('약점처방전');
+  const prescriptionEnabled=(FC_DATA.attendance?.[nm2]||[]).includes('진단약점클리닉');
   const prescribedTypes=prescriptionEnabled
     ? [...new Set(wq.map(q=>q.id))].sort((a,b)=>a-b)
     : [];

@@ -127,7 +127,7 @@ const BRANCH = "main";
 const PRODUCTS = [
   {id:"개념완성",       name:"개념완성"},
   {id:"진단모의고사",    name:"진단모의고사"},
-  {id:"약점처방전",      name:"약점 처방전", manualOnly:true},
+  {id:"진단약점클리닉",  name:"온라인 모의고사+진단+풀이 1회분+유사 약점유형 클리닉", manualOnly:true, grants:["진단모의고사"]},
   {id:"킬러문항",       name:"킬러문항"},
   {id:"실전모의고사1회", name:"실전모의고사 1회"},
   {id:"실전모의고사2회", name:"실전모의고사 2회"},
@@ -173,6 +173,11 @@ function cObj(pid){
 
 function ensureStudent(name){
   if(!S.attendance[name]) S.attendance[name] = [];
+  if(S.attendance[name].includes('약점처방전')){
+    S.attendance[name] = S.attendance[name].filter(id=>id!=='약점처방전');
+    if(!S.attendance[name].includes('진단약점클리닉')) S.attendance[name].push('진단약점클리닉');
+    if(!S.attendance[name].includes('진단모의고사')) S.attendance[name].push('진단모의고사');
+  }
   if(!S.studentType[name]) S.studentType[name] = 'internal';
   if(!S.studentCode[name]) S.studentCode[name] = genCode();
 }
@@ -342,9 +347,14 @@ function renderArchive(){
 function toggleCell(name, pid, el){
   ensureStudent(name);
   const arr = S.attendance[name];
+  const product=PRODUCTS.find(p=>p.id===pid);
   const i = arr.indexOf(pid);
-  if(i >= 0){ arr.splice(i,1); el.className='cell off'; }
-  else { arr.push(pid); el.className='cell on'; }
+  if(i >= 0){ arr.splice(i,1); }
+  else {
+    arr.push(pid);
+    (product?.grants||[]).forEach(grant=>{if(!arr.includes(grant))arr.push(grant);});
+  }
+  renderMatrix();
   dirty();
 }
 
