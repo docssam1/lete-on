@@ -297,27 +297,6 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
   </div>
 </div>
 
-<div id="similarModal">
-  <div class="similar-card">
-    <div class="similar-header">
-      <div class="similar-title" id="similarModalTitle">유사문제</div>
-      <button class="similar-close" onclick="closeSimilar()">✕</button>
-    </div>
-    <div class="similar-lv">
-      <button class="lv-chip active" onclick="setSimilarLv(1)">기본</button>
-      <button class="lv-chip" onclick="setSimilarLv(2)">심화</button>
-      <button class="lv-chip" onclick="setSimilarLv(3)">최고</button>
-    </div>
-    <div class="similar-problem" id="similarProblemArea">
-      <div class="similar-problem-text" id="similarProblemText">문제 생성 중...</div>
-    </div>
-    <input class="similar-input" type="text" id="similarAnswer" placeholder="답을 입력하세요" onkeydown="if(event.key==='Enter')checkSimilar()">
-    <button class="similar-check-btn" onclick="checkSimilar()">채점하기</button>
-    <div class="similar-result" id="similarResult"></div>
-    <div class="similar-hint" id="similarHint"></div>
-    <button class="similar-next" id="similarNextBtn" onclick="nextSimilar()" style="display:none">다음 문제 →</button>
-  </div>
-</div>
 <header class="premium-header" id="mainHeader" style="display:none">
   <div class="header-inner">
     <div>
@@ -649,16 +628,9 @@ ${insights.length?`<div class="r-card"><div class="r-ct">심층 분석 인사이
 <div class="strategy-card"><div class="strategy-title">학습 전략</div>
   <div class="strategy-body">안녕하세요. 지필드 영재교육입니다. <b>${nm2}</b> 학생의 필즈 대비 선발 모의 진단 레벨은 <b>${sc}점</b>으로 <b>${li.lv}</b>입니다.<br><br>${li.tx}<br><br>${CD.comment}<br><br>당부 드리고 싶은 건 학원이 중요한 것이 아니라 <b>연산 → 교과 → 사고력</b> 순으로 균형이 맞아야 합니다. 필즈에 입학하게 되면 E1반은 <b>필즈 입문</b>, E2반은 <b>필즈 베이직</b>이 부교재로 진행됩니다. 입문 정도라면 <b>교과 3-1 과정 + 기적의 계산법 5권</b> 정도의 연산이 필요하고, 베이직은 <b>교과 2-1 과정 + 기적의 계산법 3·4권</b> 정도의 수행률이 필요합니다.</div>
 </div>
-${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div></div><a class="wrong-link" href="${EXPLAIN_YT+EXPLAIN_TS[q.id]}" target="_blank" rel="noopener">▶ 해설</a>
-<button class="similar-btn" onclick="openSimilar(${q.id},'${q.t}')">✏️ 유사문제</button></div>`).join('')}</div>`:''}
-${(()=>{const pts=[...new Map(wq.filter(q=>PNG_TYPE_MAP[q.id]).map(q=>[q.id,{id:q.id,name:PNG_TYPE_MAP[q.id].name}])).values()];
-return pts.length?`<div class="r-card"><div class="r-ct">🎯 약점 유형 연습하기</div>
-<div style="font-size:12px;color:#64748b;margin-bottom:4px">틀린 유형을 선택하면(최대 5개) 비슷한 문제를 계속 연습할 수 있습니다.</div>
-<div class="pt-select">${pts.map(p=>`<label class="pt-chip" data-qid="${p.id}" onclick="event.preventDefault();ptToggle(this)">Q${p.id} ${p.name}</label>`).join('')}</div>
-<button class="pt-start" id="ptStartBtn" disabled onclick="ptStart()">유형을 선택하세요</button>
-<div class="pt-hint">문제는 매번 새로 만들어집니다 · 무제한 연습</div></div>`:''})()}
+${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div></div><a class="wrong-link" href="${EXPLAIN_YT+EXPLAIN_TS[q.id]}" target="_blank" rel="noopener">▶ 해설</a></div>`).join('')}</div>`:''}
 <div class="res-actions">
-  ${wq.length?`<a class="res-prescription" href="${prescriptionUrl}" target="_blank" rel="noopener">약점 처방전 열기</a>`:''}
+  ${wq.length?`<a class="res-prescription" href="${prescriptionUrl}" target="_blank" rel="noopener">검수된 유사문제 3문제씩 열기</a>`:''}
   <button class="res-print" onclick="window.print()">🖨 진단지 인쇄</button>
   <a class="res-consult" href="https://naver.me/Ge7B7WcJ" target="_blank" rel="noopener">상담 신청하기 →</a>
 </div>`;
@@ -808,25 +780,6 @@ window.setSimilarLv=setSimilarLv;window.checkSimilar=checkSimilar;window.nextSim
 
 })();
 </script>
-
-<!-- 약점 유형 연습 모달 -->
-<div id="practiceModal">
-  <div class="pm-card">
-    <div class="pm-head">
-      <span class="pm-title">✏️ 약점 유형 연습</span>
-      <span class="pm-score" id="pmScore">0 / 0</span>
-      <button class="pm-close" onclick="Practice.close()">✕ 닫기</button>
-    </div>
-    <span class="pm-type" id="pmType"></span>
-    <div class="pm-problem" id="pmProblem"></div>
-    <div class="pm-row">
-      <input class="pm-input" id="pmAnswer" type="text" inputmode="numeric" placeholder="답 입력" onkeydown="if(event.key==='Enter')Practice.check()">
-      <button class="pm-check" id="pmCheckBtn" onclick="Practice.check()">채점</button>
-      <button class="pm-next" id="pmNextBtn" onclick="Practice.next()">다음 →</button>
-    </div>
-    <div class="pm-result" id="pmResult"></div>
-  </div>
-</div>
 
 <script>
 /* ══════════ 약점 유형 연습 시스템 ══════════ */
