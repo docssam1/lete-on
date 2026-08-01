@@ -12,6 +12,7 @@ html,body{margin:0;min-height:100%;font-family:Pretendard,sans-serif;background:
 .title{font-size:16px;font-weight:900;color:#16417c}.meta{font-size:11px;font-weight:700;color:#64748b;margin-top:3px}
 .actions{display:flex;gap:8px}.btn{min-height:40px;padding:0 15px;border-radius:8px;border:1.5px solid #cbd5e1;background:#fff;color:#334155;font-family:inherit;font-size:12px;font-weight:900;cursor:pointer}
 .btn.primary{background:#16417c;border-color:#16417c;color:#fff}.btn:disabled{opacity:.45;cursor:wait}
+.course-summary{width:min(980px,100%);margin:14px auto 0;padding:14px 16px;background:#fff;border:1px solid #cbd5e1;border-radius:8px;box-shadow:0 4px 14px rgba(15,23,42,.07)}.course-summary-title{font-size:13px;font-weight:900;color:#16417c}.course-topics{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0 0;padding:0;list-style:none}.course-topics li{padding:5px 8px;border-radius:5px;background:#edf3f8;color:#334155;font-size:11px;font-weight:800}
 .status{padding:22px;text-align:center;color:#64748b;font-size:13px;font-weight:800}
 .pages{width:min(980px,100%);margin:0 auto;padding:20px 12px 50px;display:grid;gap:18px}
 .page{position:relative;width:100%;background:#fff;box-shadow:0 8px 28px rgba(15,23,42,.16);overflow:hidden}
@@ -23,7 +24,7 @@ html,body{margin:0;min-height:100%;font-family:Pretendard,sans-serif;background:
 @page{size:A4;margin:0}
 @media print{
   html,body{background:#fff}
-  .toolbar,.status{display:none!important}
+  .toolbar,.status,.course-summary{display:none!important}
   .pages{display:block;width:auto;margin:0;padding:0}
   .page{width:210mm;margin:0;box-shadow:none;break-after:page;page-break-after:always}
   .page:last-child{break-after:auto;page-break-after:auto}
@@ -36,9 +37,12 @@ html,body{margin:0;min-height:100%;font-family:Pretendard,sans-serif;background:
   <div><div class="title" id="title">인쇄 자료</div><div class="meta" id="meta">문서를 준비하고 있습니다.</div></div>
   <div class="actions">
     <button class="btn" type="button" onclick="history.back()">돌아가기</button>
+    <button class="btn" id="videoBtn" type="button" style="display:none" onclick="openLessonVideo()">▶ 학습영상</button>
+    <button class="btn" id="answerBtn" type="button" style="display:none" onclick="openAnswerGuide()">☑ 정답·풀이</button>
     <button class="btn primary" id="printBtn" type="button" onclick="window.print()" disabled>인쇄</button>
   </div>
 </header>
+<section class="course-summary" id="courseSummary" style="display:none"><div class="course-summary-title">집중 유형</div><ul class="course-topics" id="courseTopics"></ul></section>
 <div class="status" id="status">PDF를 불러오는 중입니다.</div>
 <main class="pages" id="pages"></main>
 
@@ -49,11 +53,28 @@ const documentKey=params.get("doc")||"";
 const source=window.GFIELD_PRINT_DOCUMENTS?.[documentKey];
 const title=(source?.title||"인쇄 자료").slice(0,80);
 const student=(params.get("student")||"학생").trim().slice(0,30);
+const lessonVideo=params.get("video")||"";
+const topics=(params.get("topics")||"").split("|").map(v=>v.trim()).filter(Boolean);
 const status=document.getElementById("status");
 const pages=document.getElementById("pages");
 const printBtn=document.getElementById("printBtn");
 document.getElementById("title").textContent=title;
 document.title=title+" | GFIELD";
+if(lessonVideo)document.getElementById("videoBtn").style.display="";
+if(documentKey==="killer")document.getElementById("answerBtn").style.display="";
+if(topics.length){
+  document.getElementById("courseSummary").style.display="";
+  const topicList=document.getElementById("courseTopics");
+  topics.forEach(topic=>{const item=document.createElement("li");item.textContent=topic;topicList.appendChild(item);});
+}
+function openLessonVideo(){
+  const url=`../video-viewer/?video=${encodeURIComponent(lessonVideo)}&title=${encodeURIComponent(title+" 학습영상")}&student=${encodeURIComponent(student)}`;
+  window.open(url,"_blank","noopener");
+}
+function openAnswerGuide(){
+  const url=`../killer-answer/?student=${encodeURIComponent(student)}`;
+  window.open(url,"_blank","noopener");
+}
 
 function watermark(){
   const layer=document.createElement("div");
