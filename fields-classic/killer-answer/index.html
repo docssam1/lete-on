@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>탑시크릿 킬러문항 해제 정답·풀이</title>
+<title>탑시크릿 킬러문항 해제 유형별 풀이</title>
 <style>
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#eef3f7;color:#172033;font-family:Pretendard,sans-serif}.toolbar{position:sticky;top:0;z-index:10;min-height:60px;padding:10px 18px;background:#fff;border-bottom:1px solid #cbd5e1;display:flex;align-items:center;justify-content:space-between;gap:12px}.title{font-size:16px;font-weight:900;color:#16417c}.meta{margin-top:3px;color:#64748b;font-size:11px;font-weight:700}.back{height:38px;padding:0 13px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#334155;font:900 12px Pretendard,sans-serif;cursor:pointer}.guide{width:min(940px,100%);margin:0 auto;padding:22px 14px 46px}.intro{padding:18px 20px;background:#fff;border:1px solid #cbd5e1;border-radius:8px;box-shadow:0 4px 14px rgba(15,23,42,.07)}.intro h1{margin:0;color:#16417c;font-size:22px}.intro p{margin:8px 0 0;color:#475569;font-size:13px;font-weight:700;line-height:1.7}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:16px}.card{position:relative;overflow:hidden;padding:18px;background:#fff;border:1px solid #cbd5e1;border-radius:8px;box-shadow:0 4px 14px rgba(15,23,42,.07)}.card h2{margin:0;color:#16417c;font-size:16px}.rule{margin:10px 0 12px;color:#334155;font-size:13px;font-weight:800;line-height:1.7}.steps{margin:0;padding-left:18px;color:#64748b;font-size:12px;font-weight:700;line-height:1.7}.watch{display:inline-flex;margin-top:14px;padding:8px 10px;border-radius:7px;background:#16417c;color:#fff;text-decoration:none;font-size:11px;font-weight:900}.watermark{position:fixed;inset:60px 0 0;z-index:3;pointer-events:none;overflow:hidden}.watermark span{position:absolute;left:50%;transform:translate(-50%,-50%) rotate(-32deg);color:rgba(22,65,124,.10);font-size:clamp(24px,3vw,42px);font-weight:900;white-space:nowrap}.watermark span:nth-child(1){top:24%}.watermark span:nth-child(2){top:50%}.watermark span:nth-child(3){top:76%}@media(max-width:600px){.toolbar{padding:9px 12px}.title{font-size:14px}.guide{padding:14px 10px 30px}.intro h1{font-size:19px}.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header class="toolbar"><div><div class="title">탑시크릿 킬러문항 해제 정답·풀이</div><div class="meta" id="meta"></div></div><button class="back" type="button" onclick="history.back()">돌아가기</button></header>
+<header class="toolbar"><div><div class="title">탑시크릿 킬러문항 해제 유형별 풀이</div><div class="meta" id="meta"></div></div><button class="back" type="button" onclick="history.back()">돌아가기</button></header>
 <div class="watermark" id="watermark" aria-hidden="true"></div>
-<main class="guide"><section class="intro"><h1>유형별 정답 원리</h1><p>답을 적기 전에 어떤 규칙을 사용해야 하는지 확인하세요. 각 유형의 영상 버튼을 누르면 해당 풀이 구간부터 재생됩니다.</p></section><section class="grid" id="cards"></section></main>
+<main class="guide"><section class="intro"><h1>유형별 풀이 원리</h1><p>각 유형을 푸는 데 필요한 규칙과 순서를 확인하세요. 영상 버튼을 누르면 해당 풀이 구간부터 재생됩니다.</p></section><section class="grid" id="cards"></section></main>
 <script>
 const params=new URLSearchParams(location.search);
 const student=(params.get('student')||'학생').trim().slice(0,30);
