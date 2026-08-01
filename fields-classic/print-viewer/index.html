@@ -93,11 +93,12 @@ async function render(){
   document.getElementById("meta").textContent=`${student} 학생 · ${source.pageCount}쪽 · 화면 및 인쇄 워터마크 적용`;
   const images=[];
   for(let number=1;number<=source.pageCount;number++){
+    const sourcePage=(source.startPage||1)+number-1;
     status.textContent=`${number} / ${source.pageCount}쪽을 준비하고 있습니다.`;
     const sheet=document.createElement("section");
     sheet.className="page";
     const image=document.createElement("img");
-    image.src=`${source.pagesBase}${String(number).padStart(3,"0")}.webp`;
+    image.src=`${source.pagesBase}${String(sourcePage).padStart(3,"0")}.webp`;
     image.alt=`${title} ${number}쪽`;
     image.decoding="async";
     image.loading="eager";
