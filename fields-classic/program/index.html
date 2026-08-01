@@ -68,7 +68,7 @@ body.in-viewer{overflow:hidden}
 .concept-showcase{display:grid;grid-template-columns:minmax(190px,260px) minmax(0,1fr);gap:28px;align-items:center;margin:-6px -22px 24px;padding:28px 30px 30px;border-bottom:1px solid var(--border);background:linear-gradient(105deg,rgba(212,175,55,.09),rgba(255,255,255,.025) 45%,rgba(0,0,0,.16));animation:conceptSlide .52s cubic-bezier(.22,1,.36,1)}
 @keyframes conceptSlide{from{opacity:0;transform:translateY(-24px);clip-path:inset(0 0 100% 0)}to{opacity:1;transform:none;clip-path:inset(0)}}
 .concept-book-stage{height:230px;display:grid;place-items:center;perspective:950px}
-.concept-book-3d{--w:136px;--h:190px;--d:18px;width:var(--w);height:var(--h);position:relative;transform-style:preserve-3d;animation:bookTurn 7s linear infinite;filter:drop-shadow(0 24px 30px rgba(0,0,0,.62))}
+.concept-book-3d{--w:136px;--h:190px;--d:34px;width:var(--w);height:var(--h);position:relative;transform-style:preserve-3d;animation:bookTurn 7s linear infinite;filter:drop-shadow(0 28px 34px rgba(0,0,0,.68))}
 @keyframes bookTurn{0%{transform:rotateX(4deg) rotateY(-24deg)}45%{transform:rotateX(4deg) rotateY(150deg)}55%{transform:rotateX(4deg) rotateY(210deg)}100%{transform:rotateX(4deg) rotateY(336deg)}}
 .concept-book-face{position:absolute;backface-visibility:hidden}
 .concept-book-front,.concept-book-back{inset:0;border-radius:2px 8px 8px 2px}
@@ -76,8 +76,11 @@ body.in-viewer{overflow:hidden}
 .concept-book-front img{width:100%;height:100%;object-fit:cover;display:block}
 .concept-book-back{transform:rotateY(180deg) translateZ(calc(var(--d)/2));background:linear-gradient(145deg,#102b43,#071421);border:1px solid rgba(212,175,55,.3)}
 .concept-book-back::after{content:'G-FIELD';position:absolute;inset:0;display:grid;place-items:center;color:rgba(212,175,55,.7);font:800 13px 'Noto Sans KR',sans-serif;letter-spacing:.16em}
-.concept-book-spine{top:0;left:0;width:var(--d);height:100%;transform-origin:left center;transform:translateZ(calc(var(--d)/2)) rotateY(-90deg);background:linear-gradient(90deg,#02070d,#143550 46%,#06111d);border-left:1px solid rgba(212,175,55,.2)}
-.concept-book-pages{top:4px;right:0;width:var(--d);height:calc(100% - 8px);transform-origin:right center;transform:translateZ(calc(var(--d)/2)) rotateY(90deg);background:repeating-linear-gradient(to bottom,#f4ecd9 0 2px,#d6cdbb 2px 3px);box-shadow:inset 0 0 5px rgba(0,0,0,.28)}
+.concept-book-spine{top:0;left:0;width:var(--d);height:100%;transform-origin:left center;transform:rotateY(-90deg) translateX(calc(var(--d)/-2));background:linear-gradient(90deg,#02070d,#173c5a 48%,#06111d);border-left:1px solid rgba(212,175,55,.28);box-shadow:inset -4px 0 7px rgba(255,255,255,.1),inset 5px 0 8px rgba(0,0,0,.45)}
+.concept-book-pages{top:4px;right:0;width:var(--d);height:calc(100% - 8px);transform-origin:right center;transform:rotateY(90deg) translateX(calc(var(--d)/2));background:repeating-linear-gradient(to bottom,#fffaf0 0 2px,#d7cdb9 2px 3px);box-shadow:inset 0 0 7px rgba(0,0,0,.35)}
+.concept-book-top,.concept-book-bottom{left:3px;width:calc(100% - 6px);height:var(--d);background:repeating-linear-gradient(to right,#fffaf0 0 3px,#d9cfbc 3px 4px);box-shadow:inset 0 0 5px rgba(0,0,0,.24)}
+.concept-book-top{top:0;transform-origin:top center;transform:rotateX(90deg) translateY(calc(var(--d)/-2))}
+.concept-book-bottom{bottom:0;transform-origin:bottom center;transform:rotateX(-90deg) translateY(calc(var(--d)/2))}
 .concept-detail-kicker{font-size:10px;font-weight:900;letter-spacing:.14em;color:var(--gold);margin-bottom:7px}
 .concept-detail-title{font-family:'DM Serif Display','Noto Sans KR',sans-serif;font-size:clamp(24px,3vw,34px);line-height:1.15;color:var(--white);margin-bottom:12px}
 .concept-topic-list{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 14px;padding:0;list-style:none}
@@ -89,11 +92,16 @@ body.in-viewer{overflow:hidden}
 .program-run-card{min-height:132px;border:1px solid var(--border2);border-radius:14px;background:rgba(255,255,255,.035);padding:14px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:transform .16s,border-color .16s,background .16s}
 .program-run-card:hover{transform:translateY(-3px);border-color:rgba(212,175,55,.36);background:rgba(212,175,55,.055)}
 .program-run-card.locked{opacity:.45;cursor:not-allowed}
-.program-run-book{width:54px;height:74px;position:relative;transform-style:preserve-3d;transform:rotateY(-20deg) rotateX(4deg);filter:drop-shadow(0 10px 16px rgba(0,0,0,.45));margin-bottom:2px}
-.program-run-cover{position:absolute;inset:0;border-radius:2px 7px 7px 2px;background:linear-gradient(160deg,#173555,#0d1b2a);display:grid;place-items:center;font-size:20px;box-shadow:inset 8px 0 10px rgba(255,255,255,.06),inset -7px 0 10px rgba(0,0,0,.28)}
+.program-run-book{--run-depth:14px;width:54px;height:74px;position:relative;transform-style:preserve-3d;transform:rotateY(-24deg) rotateX(5deg);filter:drop-shadow(0 12px 17px rgba(0,0,0,.58));margin-bottom:4px}
+.program-run-cover{position:absolute;inset:0;border-radius:2px 7px 7px 2px;background:linear-gradient(160deg,#173555,#0d1b2a);display:grid;place-items:center;font-size:20px;transform:translateZ(calc(var(--run-depth)/2));backface-visibility:hidden;box-shadow:inset 8px 0 10px rgba(255,255,255,.06),inset -7px 0 10px rgba(0,0,0,.28)}
 .program-run-cover::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.18),transparent 28%,rgba(0,0,0,.2)),repeating-linear-gradient(105deg,rgba(255,255,255,.06) 0 1px,transparent 1px 6px);border-radius:inherit}
 .program-run-cover::after{content:'';position:absolute;right:0;top:0;width:7px;height:100%;background:linear-gradient(to right,rgba(255,255,255,.38),rgba(0,0,0,.24));border-radius:0 7px 7px 0}
-.program-run-spine{position:absolute;top:0;left:0;width:8px;height:100%;border-radius:2px 0 0 2px;background:#07111e;transform:rotateY(-90deg) translateX(-4px);transform-origin:left center}
+.program-run-back{position:absolute;inset:0;border-radius:2px 7px 7px 2px;background:#091624;transform:rotateY(180deg) translateZ(calc(var(--run-depth)/2));backface-visibility:hidden}
+.program-run-spine{position:absolute;top:0;left:0;width:var(--run-depth);height:100%;border-radius:2px 0 0 2px;background:linear-gradient(90deg,#040a12,#15304a,#07111e);transform:rotateY(-90deg) translateX(calc(var(--run-depth)/-2));transform-origin:left center;box-shadow:inset -2px 0 3px rgba(255,255,255,.16)}
+.program-run-pages{position:absolute;top:2px;right:0;width:var(--run-depth);height:calc(100% - 4px);transform:rotateY(90deg) translateX(calc(var(--run-depth)/2));transform-origin:right center;background:repeating-linear-gradient(to bottom,#fffaf0 0 1px,#d4cab8 1px 2px)}
+.program-run-top,.program-run-bottom{position:absolute;left:2px;width:calc(100% - 4px);height:var(--run-depth);background:repeating-linear-gradient(to right,#fffaf0 0 2px,#d4cab8 2px 3px)}
+.program-run-top{top:0;transform-origin:top center;transform:rotateX(90deg) translateY(calc(var(--run-depth)/-2))}
+.program-run-bottom{bottom:0;transform-origin:bottom center;transform:rotateX(-90deg) translateY(calc(var(--run-depth)/2))}
 .program-run-card.theme-killer .program-run-cover{background:linear-gradient(160deg,#4a1a1a,#200909)}
 .program-run-card.theme-mock .program-run-cover{background:linear-gradient(160deg,#2a1a4a,#160925)}
 .program-run-card.theme-final .program-run-cover{background:linear-gradient(160deg,#173819,#091b10)}
@@ -113,8 +121,8 @@ body.in-viewer{overflow:hidden}
   .pm-icon{width:28px;height:28px;border-radius:8px;font-size:15px}.pm-title{font-size:11px}.pm-sub{font-size:8px;margin-top:1px}
   .program-detail{min-height:calc(100dvh - 126px);border-radius:12px}.program-panel{padding:12px 10px 16px}.program-panel-head{display:flex;align-items:flex-end;margin-bottom:12px;padding-bottom:10px}.program-panel-title{font-size:20px}.program-panel-desc{font-size:9px;text-align:right;margin-top:0}
   .program-book-row{justify-content:flex-start;flex-wrap:nowrap;gap:9px;padding:4px 6px 12px;overflow-x:auto;scrollbar-width:thin}
-  .program-book-row .shelf-book-3d{--shelf-depth:10px;width:74px;height:106px}.program-book-row .shelf-label{width:74px}.program-book-row .shelf-title-text{font-size:10px}.program-book-row .shelf-videos{font-size:8px}
-  .concept-showcase{grid-template-columns:150px minmax(0,1fr);gap:14px;margin:-2px -10px 16px;padding:16px}.concept-book-stage{height:170px}.concept-book-3d{--w:92px;--h:130px}.concept-detail{text-align:left}.concept-topic-list{justify-content:flex-start}.concept-detail-copy{text-align:left}
+  .program-book-row .shelf-book-3d{--shelf-depth:18px;width:74px;height:106px}.program-book-row .shelf-label{width:74px}.program-book-row .shelf-title-text{font-size:10px}.program-book-row .shelf-videos{font-size:8px}
+  .concept-showcase{grid-template-columns:150px minmax(0,1fr);gap:14px;margin:-2px -10px 16px;padding:16px}.concept-book-stage{height:170px}.concept-book-3d{--w:92px;--h:130px;--d:24px}.concept-detail{text-align:left}.concept-topic-list{justify-content:flex-start}.concept-detail-copy{text-align:left}
 }
 .product-card{position:relative;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:20px 16px 16px;display:flex;flex-direction:column;gap:14px;transition:all .3s cubic-bezier(.22,1,.36,1);overflow:hidden;cursor:pointer}
 .product-card.unlocked{border-color:rgba(212,175,55,.2)}
@@ -122,12 +130,17 @@ body.in-viewer{overflow:hidden}
 .product-card.locked{opacity:.45;cursor:not-allowed}
 .lock-icon{position:absolute;top:12px;right:12px;font-size:14px;opacity:.6}
 .book-wrap{perspective:700px;height:150px;display:flex;align-items:center;justify-content:center}
-.book-3d{width:90px;height:128px;position:relative;transform-style:preserve-3d;transform:rotateY(-16deg) rotateX(3deg);transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.book-3d{--book-depth:22px;width:90px;height:128px;position:relative;transform-style:preserve-3d;transform:rotateY(-22deg) rotateX(4deg);transition:transform .5s cubic-bezier(.22,1,.36,1);filter:drop-shadow(0 16px 22px rgba(0,0,0,.58))}
 .product-card.unlocked:hover .book-3d{transform:rotateY(-26deg) rotateX(7deg) translateY(-4px)}
-.book-front{position:absolute;inset:0;border-radius:2px 7px 7px 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px;box-shadow:4px 8px 24px rgba(0,0,0,.6)}
+.book-front{position:absolute;inset:0;border-radius:2px 7px 7px 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px;transform:translateZ(calc(var(--book-depth)/2));backface-visibility:hidden;box-shadow:4px 8px 24px rgba(0,0,0,.6)}
 .book-front::before,.shelf-book-front::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.16),transparent 18%,transparent 74%,rgba(0,0,0,.24)),repeating-linear-gradient(105deg,rgba(255,255,255,.055) 0 1px,transparent 1px 7px);mix-blend-mode:screen;pointer-events:none}
 .book-front::after,.shelf-book-front::after{content:'';position:absolute;top:0;right:0;width:9px;height:100%;background:linear-gradient(to right,rgba(255,255,255,.42),rgba(255,255,255,.08),rgba(0,0,0,.26));opacity:.75;pointer-events:none}
-.book-spine{position:absolute;top:0;left:0;width:10px;height:100%;border-radius:2px 0 0 2px;transform:rotateY(-90deg) translateX(-5px);transform-origin:left center}
+.book-back{position:absolute;inset:0;border-radius:2px 7px 7px 2px;background:#091523;transform:rotateY(180deg) translateZ(calc(var(--book-depth)/2));backface-visibility:hidden}
+.book-spine{position:absolute;top:0;left:0;width:var(--book-depth);height:100%;border-radius:2px 0 0 2px;transform:rotateY(-90deg) translateX(calc(var(--book-depth)/-2));transform-origin:left center;box-shadow:inset -3px 0 5px rgba(255,255,255,.14)}
+.book-pages{position:absolute;top:3px;right:0;width:var(--book-depth);height:calc(100% - 6px);transform:rotateY(90deg) translateX(calc(var(--book-depth)/2));transform-origin:right center;background:repeating-linear-gradient(to bottom,#fffaf0 0 2px,#d4cab8 2px 3px)}
+.book-top,.book-bottom{position:absolute;left:3px;width:calc(100% - 6px);height:var(--book-depth);background:repeating-linear-gradient(to right,#fffaf0 0 3px,#d4cab8 3px 4px)}
+.book-top{top:0;transform-origin:top center;transform:rotateX(90deg) translateY(calc(var(--book-depth)/-2))}
+.book-bottom{bottom:0;transform-origin:bottom center;transform:rotateX(-90deg) translateY(calc(var(--book-depth)/2))}
 .book-shadow{position:absolute;bottom:-10px;left:5%;right:5%;height:10px;background:radial-gradient(ellipse,rgba(0,0,0,.5),transparent 70%);filter:blur(3px)}
 .book-icon{font-size:26px}
 .book-label{font-size:8px;font-weight:900;text-align:center;line-height:1.3;letter-spacing:.05em}
@@ -150,14 +163,17 @@ body.in-viewer{overflow:hidden}
 .shelf-slot.locked{opacity:.62;filter:saturate(.62)}
 .shelf-slot.selected .shelf-book-3d{transform:rotateY(-5deg) rotateX(1deg) translateY(-10px) scale(1.04);filter:drop-shadow(0 25px 36px rgba(212,175,55,.36))}
 .shelf-book-wrap{perspective:800px}
-.shelf-book-3d{--shelf-depth:14px;width:104px;height:148px;position:relative;transform-style:preserve-3d;transform:rotateY(-22deg) rotateX(4deg);transition:transform .45s cubic-bezier(.22,1,.36,1),filter .45s ease;filter:drop-shadow(0 16px 28px rgba(0,0,0,.7))}
+.shelf-book-3d{--shelf-depth:26px;width:104px;height:148px;position:relative;transform-style:preserve-3d;transform:rotateY(-24deg) rotateX(5deg);transition:transform .45s cubic-bezier(.22,1,.36,1),filter .45s ease;filter:drop-shadow(0 20px 30px rgba(0,0,0,.72))}
 .shelf-slot:hover .shelf-book-3d{transform:rotateY(-6deg) rotateX(1deg) translateY(-14px) scale(1.06);filter:drop-shadow(0 28px 40px rgba(212,175,55,.35)) drop-shadow(0 0 20px rgba(212,175,55,.15))}
 .shelf-slot.is-final:hover .shelf-book-3d{filter:drop-shadow(0 28px 40px rgba(212,175,55,.55)) drop-shadow(0 0 32px rgba(212,175,55,.35))}
 .shelf-book-front{position:absolute;inset:0;border-radius:2px 7px 7px 2px;overflow:hidden;transform:translateZ(calc(var(--shelf-depth)/2));backface-visibility:hidden;box-shadow:inset -3px 0 8px rgba(0,0,0,.4),inset 10px 0 10px rgba(255,255,255,.06)}
 .shelf-book-front img{width:100%;height:100%;object-fit:cover;display:block}
 .shelf-book-back{position:absolute;inset:0;border-radius:2px 7px 7px 2px;transform:rotateY(180deg) translateZ(calc(var(--shelf-depth)/2));background:linear-gradient(145deg,#102b43,#071421);border:1px solid rgba(212,175,55,.18);backface-visibility:hidden}
-.shelf-book-spine{position:absolute;top:0;left:0;width:var(--shelf-depth);height:100%;background:linear-gradient(to right,#020408,#0a1628);border-radius:2px 0 0 2px;transform:translateZ(calc(var(--shelf-depth)/2)) rotateY(-90deg);transform-origin:left center;box-shadow:inset -2px 0 4px rgba(255,255,255,.16)}
-.shelf-book-pages{position:absolute;top:3px;right:0;width:var(--shelf-depth);height:calc(100% - 6px);transform:translateZ(calc(var(--shelf-depth)/2)) rotateY(90deg);transform-origin:right center;background:repeating-linear-gradient(to bottom,#f4ecd9 0 2px,#d1c7b4 2px 3px);box-shadow:inset 0 0 4px rgba(0,0,0,.3)}
+.shelf-book-spine{position:absolute;top:0;left:0;width:var(--shelf-depth);height:100%;background:linear-gradient(to right,#020408,#0a1628);border-radius:2px 0 0 2px;transform:rotateY(-90deg) translateX(calc(var(--shelf-depth)/-2));transform-origin:left center;box-shadow:inset -2px 0 4px rgba(255,255,255,.16)}
+.shelf-book-pages{position:absolute;top:3px;right:0;width:var(--shelf-depth);height:calc(100% - 6px);transform:rotateY(90deg) translateX(calc(var(--shelf-depth)/2));transform-origin:right center;background:repeating-linear-gradient(to bottom,#f4ecd9 0 2px,#d1c7b4 2px 3px);box-shadow:inset 0 0 4px rgba(0,0,0,.3)}
+.shelf-book-top,.shelf-book-bottom{position:absolute;left:3px;width:calc(100% - 6px);height:var(--shelf-depth);background:repeating-linear-gradient(to right,#fffaf0 0 3px,#d5cab7 3px 4px);box-shadow:inset 0 0 5px rgba(0,0,0,.25)}
+.shelf-book-top{top:0;transform-origin:top center;transform:rotateX(90deg) translateY(calc(var(--shelf-depth)/-2))}
+.shelf-book-bottom{bottom:0;transform-origin:bottom center;transform:rotateX(-90deg) translateY(calc(var(--shelf-depth)/2))}
 .shelf-book-shadow{position:absolute;bottom:-14px;left:8%;right:8%;height:14px;background:radial-gradient(ellipse,rgba(0,0,0,.7),transparent 70%);filter:blur(6px)}
 .shelf-label{text-align:center;width:104px}
 .shelf-vol-text{font-size:9px;font-weight:900;color:var(--gold);letter-spacing:.12em;margin-bottom:3px}
@@ -667,7 +683,7 @@ const GF={
       const el=document.createElement("div");
       el.className="product-card "+p.theme+(ok?" unlocked":" locked");
       const actionLabel=p.type==="folder"?"📂 목록 보기":p.type==="mock"?"🔍 진단 시작":"📖 학습 시작";
-      el.innerHTML=`${!ok?'<span class="lock-icon">🔒</span>':""}<div class="book-wrap"><div class="book-3d"><div class="book-front"><div class="book-icon">${p.icon}</div><div class="book-label">${p.name}</div></div><div class="book-spine"></div><div class="book-shadow"></div></div></div><div><div class="product-badge">${p.key}</div><div class="product-name">${p.name}</div><div class="product-desc">${p.desc}</div></div><div class="product-action"><button class="product-btn ${ok?"open":"locked"}" ${ok?"":"disabled"}>${ok?actionLabel:"🔒 구매 후 이용 가능"}</button></div>`;
+      el.innerHTML=`${!ok?'<span class="lock-icon">🔒</span>':""}<div class="book-wrap"><div class="book-3d"><div class="book-front"><div class="book-icon">${p.icon}</div><div class="book-label">${p.name}</div></div><div class="book-back"></div><div class="book-spine"></div><div class="book-pages"></div><div class="book-top"></div><div class="book-bottom"></div><div class="book-shadow"></div></div></div><div><div class="product-badge">${p.key}</div><div class="product-name">${p.name}</div><div class="product-desc">${p.desc}</div></div><div class="product-action"><button class="product-btn ${ok?"open":"locked"}" ${ok?"":"disabled"}>${ok?actionLabel:"🔒 구매 후 이용 가능"}</button></div>`;
       if(ok){if(p.type==="folder")el.addEventListener("click",()=>GF.showChapters(p.key));else if(p.type==="mock")el.addEventListener("click",()=>GF.openMock(p));else el.addEventListener("click",()=>GF.openDirectViewer(p.key))}
       g.appendChild(el);
     });
@@ -697,6 +713,8 @@ const GF={
                   <div class="shelf-book-back"></div>
                   <div class="shelf-book-spine"></div>
                   <div class="shelf-book-pages"></div>
+                  <div class="shelf-book-top"></div>
+                  <div class="shelf-book-bottom"></div>
                   <div class="shelf-book-shadow"></div>
                 </div>
               </div>
@@ -819,7 +837,7 @@ function runCard(p){
   if(!p)return "";
   const ok=pOk(p),idx=PRODUCTS.indexOf(p);
   return `<button class="program-run-card ${h(p.theme||"")} ${ok?"":"locked"}" onclick="GF.openProgramProduct(${idx})">
-    <div class="program-run-book"><div class="program-run-cover">${h(p.icon||"")}</div><div class="program-run-spine"></div></div>
+    <div class="program-run-book"><div class="program-run-cover">${h(p.icon||"")}</div><div class="program-run-back"></div><div class="program-run-spine"></div><div class="program-run-pages"></div><div class="program-run-top"></div><div class="program-run-bottom"></div></div>
     <div class="program-run-name">${h(p.name)}</div>
     <div class="program-run-desc">${h(p.desc||"")}</div>
     ${ok?"":'<span class="program-lock">🔒 열람 제한</span>'}
@@ -836,7 +854,7 @@ function renderProgramPanel(id){
     <div class="program-book-row">
       ${(p.chapters||[]).map(ch=>{
         return `<button class="shelf-slot${ch.key==="final"?" is-final":""} ${ok?"":"locked"}" data-chapter-key="${h(ch.key)}" onclick="GF.previewProgramChapter(${PRODUCTS.indexOf(p)},'${h(ch.key)}')">
-          <div class="shelf-book-wrap"><div class="shelf-book-3d"><div class="shelf-book-front">${coverMarkup(ch)}</div><div class="shelf-book-back"></div><div class="shelf-book-spine"></div><div class="shelf-book-pages"></div><div class="shelf-book-shadow"></div></div></div>
+          <div class="shelf-book-wrap"><div class="shelf-book-3d"><div class="shelf-book-front">${coverMarkup(ch)}</div><div class="shelf-book-back"></div><div class="shelf-book-spine"></div><div class="shelf-book-pages"></div><div class="shelf-book-top"></div><div class="shelf-book-bottom"></div><div class="shelf-book-shadow"></div></div></div>
           <div class="shelf-label"><div class="shelf-vol-text">${h(ch.vol)}</div><div class="shelf-title-text">${h(ch.title)}</div><div class="shelf-videos">${ok?"영상 "+ch.videos.length+"개":"🔒 열람 제한"}</div></div>
         </button>`;
       }).join("")}
@@ -882,6 +900,8 @@ Object.assign(GF,{
           <div class="concept-book-face concept-book-back"></div>
           <div class="concept-book-face concept-book-spine"></div>
           <div class="concept-book-face concept-book-pages"></div>
+          <div class="concept-book-face concept-book-top"></div>
+          <div class="concept-book-face concept-book-bottom"></div>
         </div>
       </div>
       <div class="concept-detail">
