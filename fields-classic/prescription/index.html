@@ -48,6 +48,22 @@
     .toolbar-brand { font-size: 15px; font-weight: 900; }
     .toolbar-meta { color: #dbe7f4; font-size: 12px; }
     .toolbar-actions { display: flex; gap: 8px; }
+    .variant-links { display: flex; gap: 6px; }
+    .variant-link {
+      display: inline-flex;
+      min-height: 38px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      border: 1px solid rgba(255, 255, 255, .28);
+      border-radius: 6px;
+      color: #dbe7f4;
+      background: rgba(255, 255, 255, .06);
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .variant-link.active { border-color: var(--gold); color: #182739; background: #f0cf94; }
 
     .toolbar button {
       min-height: 38px;
@@ -82,6 +98,31 @@
       background: var(--paper);
       box-shadow: 0 10px 34px rgba(35, 48, 61, .16);
     }
+
+    .page-watermark {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .page-watermark span {
+      position: absolute;
+      left: 50%;
+      color: rgba(23, 63, 112, .14);
+      font-size: 27pt;
+      font-weight: 900;
+      letter-spacing: 0;
+      white-space: nowrap;
+      transform: translate(-50%, -50%) rotate(-34deg);
+    }
+
+    .page-watermark .wm-r1 { top: 27%; }
+    .page-watermark .wm-r2 { top: 50%; }
+    .page-watermark .wm-r3 { top: 73%; }
+    .cover .page-watermark span { color: rgba(240, 207, 148, .18); }
 
     .cover {
       display: flex;
@@ -181,6 +222,20 @@
       display: grid;
       gap: 5mm;
       margin-top: 6mm;
+    }
+
+    .mixed-problem-list {
+      display: grid;
+      gap: 5mm;
+      margin-top: 6mm;
+    }
+
+    .mixed-problem {
+      min-height: 76mm;
+    }
+
+    .mixed-problem .problem-label {
+      color: var(--navy);
     }
 
     .problem {
@@ -368,6 +423,7 @@
         break-after: auto;
         page-break-after: auto;
       }
+      .page-watermark { display: block; }
     }
   </style>
 </head>
@@ -378,6 +434,7 @@
       <div class="toolbar-meta" id="toolbarMeta"></div>
     </div>
     <div class="toolbar-actions">
+      <div class="variant-links" id="variantLinks"></div>
       <button type="button" onclick="history.back()">돌아가기</button>
       <button class="primary" type="button" onclick="window.print()">인쇄</button>
     </div>
@@ -390,12 +447,26 @@
     (() => {
       const params = new URLSearchParams(location.search);
       const student = (params.get("student") || "학생").trim().slice(0, 30);
+      const view = params.get("view") === "mixed" ? "mixed" : "type";
       const selected = [...new Set((params.get("types") || "")
         .split(",")
         .map(value => Number.parseInt(value, 10))
         .filter(value => Number.isInteger(value) && value >= 1 && value <= 25))];
       const bank = window.PRESCRIPTION_BANK?.types || {};
-      const types = selected.map(id => ({ id, ...bank[id] })).filter(type => type.title);
+      const seedOrder = (items, seed) => {
+        const result = [...items];
+        let state = Math.abs(seed) + 17;
+        for (let index = result.length - 1; index > 0; index -= 1) {
+          state = (state * 1664525 + 1013904223) >>> 0;
+          const swapIndex = state % (index + 1);
+          [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+        }
+        return result;
+      };
+      const types = selected.map(id => ({ id, ...bank[id] })).filter(type => type.title).map(type => ({
+        ...type,
+        problems: [...(type.problems || [])]
+      }));
       const documentRoot = document.getElementById("document");
       const date = new Intl.DateTimeFormat("ko-KR", {
         year: "numeric",
@@ -410,8 +481,25 @@
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
 
+      const watermark = `<div class="page-watermark" aria-hidden="true">
+        <span class="wm-r1">${escapeHtml(student)} 학생 · GFIELD</span>
+        <span class="wm-r2">${escapeHtml(student)} 학생 · GFIELD</span>
+        <span class="wm-r3">${escapeHtml(student)} 학생 · GFIELD</span>
+      </div>`;
+
+      const variantLinks = document.getElementById("variantLinks");
+      const viewUrl = value => {
+        const next = new URL(location.href);
+        next.searchParams.set("view", value);
+        next.searchParams.delete("variant");
+        return `${next.pathname}${next.search}`;
+      };
+      variantLinks.innerHTML = [["type", "유형별로 보기"], ["mixed", "섞어서 보기"]].map(([value, label]) =>
+        `<a class="variant-link${value === view ? " active" : ""}" href="${escapeHtml(viewUrl(value))}">${label}</a>`
+      ).join("");
+
       document.getElementById("toolbarMeta").textContent =
-        `${student} · ${types.length}개 약점 유형 · ${types.length * 3}문제`;
+        `${student} · ${view === "mixed" ? "섞어서 보기" : "유형별로 보기"} · ${types.length}개 약점 유형 · ${types.length * 3}문제`;
 
       if (!types.length) {
         documentRoot.innerHTML = `
@@ -426,6 +514,7 @@
 
       const cover = `
         <section class="page cover">
+          ${watermark}
           <div class="cover-brand">GFIELD
             <span>GIFTED EDUCATION</span>
           </div>
@@ -440,10 +529,11 @@
           </div>
         </section>`;
 
-      const problemPages = types.map((type, pageIndex) => {
+      const typeProblemPages = types.map((type, pageIndex) => {
         if (type.id === 25) {
           return type.problems.map((problem, index) => `
             <section class="page visual-page">
+              ${watermark}
               <div class="page-head">
                 <div>
                   <div class="type-number">Q25 약점 유형 · 문제 ${index + 1}</div>
@@ -479,6 +569,7 @@
 
         return `
           <section class="page">
+            ${watermark}
             <div class="page-head">
               <div>
                 <div class="type-number">Q${String(type.id).padStart(2, "0")} 약점 유형</div>
@@ -490,6 +581,43 @@
             <div class="page-foot">${pageIndex + 1}</div>
           </section>`;
       }).join("");
+
+      const mixedItems = seedOrder(
+        types.flatMap(type => type.problems.map((problem, index) => ({ type, problem, index }))),
+        selected.reduce((sum, id) => sum + id, 0) + 7919
+      );
+      const mixedPages = [];
+      for (let index = 0; index < mixedItems.length; index += 3) {
+        const chunk = mixedItems.slice(index, index + 3);
+        const cards = chunk.map(({ type, problem, index: problemIndex }) => {
+          const image = problem.image
+            ? `<div class="problem-image-wrap"><img class="problem-image" src="../problem-bank/prescription/${escapeHtml(problem.image)}" alt="Q${type.id} ${problemIndex + 1}번 문제 그림"></div>`
+            : "";
+          return `
+            <article class="problem mixed-problem${problem.image ? "" : " text-only"}">
+              <div>
+                <div class="problem-label">Q${String(type.id).padStart(2, "0")} · ${escapeHtml(type.title)} · 문제 ${problemIndex + 1}</div>
+                <div class="problem-prompt">${escapeHtml(problem.prompt)}</div>
+              </div>
+              ${image}
+              <div class="answer-line">답</div>
+            </article>`;
+        }).join("");
+        mixedPages.push(`
+          <section class="page">
+            ${watermark}
+            <div class="page-head">
+              <div>
+                <div class="type-number">필즈 약점 처방전 · 섞어서 보기</div>
+                <h2>문제 ${index + 1}~${index + chunk.length}</h2>
+              </div>
+              <div class="category">유형 혼합</div>
+            </div>
+            <div class="mixed-problem-list">${cards}</div>
+            <div class="page-foot">혼합 ${Math.floor(index / 3) + 1}</div>
+          </section>`);
+      }
+      const problemPages = view === "mixed" ? mixedPages.join("") : typeProblemPages;
 
       const chunks = [];
       for (let index = 0; index < types.length; index += 8) {
@@ -511,6 +639,7 @@
           </section>`).join("");
         return `
           <section class="page">
+            ${watermark}
             <h2 class="answers-title">정답과 확인</h2>
             <div class="answer-grid">${boxes}</div>
             <div class="page-foot">정답 ${pageIndex + 1}</div>

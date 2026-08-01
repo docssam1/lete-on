@@ -88,14 +88,20 @@ body.in-viewer{overflow:hidden}
 .concept-detail-copy{font-size:11px;color:var(--muted);line-height:1.75;margin-bottom:16px;max-width:620px}
 .concept-start{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:7px;padding:10px 16px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:900;cursor:pointer}
 .concept-start:disabled{background:rgba(255,255,255,.06);color:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.1);cursor:not-allowed}
-.program-run-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.program-run-card{min-height:132px;border:1px solid var(--border2);border-radius:14px;background:rgba(255,255,255,.035);padding:14px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:transform .16s,border-color .16s,background .16s}
-.program-run-card:hover{transform:translateY(-3px);border-color:rgba(212,175,55,.36);background:rgba(212,175,55,.055)}
+.program-run-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;align-items:stretch}
+.program-run-card{min-height:326px;border:1px solid var(--border2);border-radius:16px;background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.025) 45%,rgba(0,0,0,.18));padding:22px 18px 18px;display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;transition:transform .22s cubic-bezier(.22,1,.36,1),border-color .22s,background .22s,box-shadow .22s;box-shadow:0 16px 28px rgba(0,0,0,.22)}
+.program-run-card:hover{transform:translateY(-7px);border-color:rgba(212,175,55,.52);background:linear-gradient(160deg,rgba(212,175,55,.13),rgba(255,255,255,.035) 52%,rgba(0,0,0,.2));box-shadow:0 28px 48px rgba(0,0,0,.42),0 0 0 1px rgba(212,175,55,.12)}
 .program-run-card.locked{opacity:.45;cursor:not-allowed}
-.program-run-book{--run-depth:14px;width:54px;height:74px;position:relative;transform-style:preserve-3d;transform:rotateY(-24deg) rotateX(5deg);filter:drop-shadow(0 12px 17px rgba(0,0,0,.58));margin-bottom:4px}
-.program-run-cover{position:absolute;inset:0;border-radius:2px 7px 7px 2px;background:linear-gradient(160deg,#173555,#0d1b2a);display:grid;place-items:center;font-size:20px;transform:translateZ(calc(var(--run-depth)/2));backface-visibility:hidden;box-shadow:inset 8px 0 10px rgba(255,255,255,.06),inset -7px 0 10px rgba(0,0,0,.28)}
+.program-run-book{--run-depth:30px;width:126px;height:178px;position:relative;transform-style:preserve-3d;transform:rotateY(-24deg) rotateX(5deg);filter:drop-shadow(0 24px 28px rgba(0,0,0,.7));margin:4px 0 7px;transition:transform .45s cubic-bezier(.22,1,.36,1),filter .45s ease}
+.program-run-card:hover .program-run-book{transform:rotateY(-10deg) rotateX(2deg) translateY(-8px) scale(1.045);filter:drop-shadow(0 30px 38px rgba(0,0,0,.72)) drop-shadow(0 0 20px rgba(212,175,55,.18))}
+.program-run-cover{position:absolute;inset:0;border-radius:2px 9px 9px 2px;background:linear-gradient(160deg,#173555,#0d1b2a);display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;padding:16px 10px 13px;transform:translateZ(calc(var(--run-depth)/2));backface-visibility:hidden;box-shadow:inset 11px 0 15px rgba(255,255,255,.06),inset -8px 0 12px rgba(0,0,0,.3)}
 .program-run-cover::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.18),transparent 28%,rgba(0,0,0,.2)),repeating-linear-gradient(105deg,rgba(255,255,255,.06) 0 1px,transparent 1px 6px);border-radius:inherit}
-.program-run-cover::after{content:'';position:absolute;right:0;top:0;width:7px;height:100%;background:linear-gradient(to right,rgba(255,255,255,.38),rgba(0,0,0,.24));border-radius:0 7px 7px 0}
+.program-run-cover::after{content:'';position:absolute;right:0;top:0;width:10px;height:100%;background:linear-gradient(to right,rgba(255,255,255,.38),rgba(0,0,0,.24));border-radius:0 9px 9px 0}
+.program-run-cover > *{position:relative;z-index:1}
+.program-run-kicker{font-size:8px;font-weight:900;letter-spacing:.16em;color:rgba(255,255,255,.72);text-transform:uppercase}
+.program-run-cover strong{font-family:'DM Serif Display','Noto Sans KR',sans-serif;font-size:17px;line-height:1.2;color:#fff;word-break:keep-all;text-shadow:0 2px 9px rgba(0,0,0,.45)}
+.program-run-icon{font-size:38px;line-height:1;filter:drop-shadow(0 7px 7px rgba(0,0,0,.28))}
+.program-run-mark{font-size:8px;font-weight:900;letter-spacing:.2em;color:rgba(234,201,150,.82)}
 .program-run-back{position:absolute;inset:0;border-radius:2px 7px 7px 2px;background:#091624;transform:rotateY(180deg) translateZ(calc(var(--run-depth)/2));backface-visibility:hidden}
 .program-run-spine{position:absolute;top:0;left:0;width:var(--run-depth);height:100%;border-radius:2px 0 0 2px;background:linear-gradient(90deg,#040a12,#15304a,#07111e);transform:rotateY(-90deg) translateX(calc(var(--run-depth)/-2));transform-origin:left center;box-shadow:inset -2px 0 3px rgba(255,255,255,.16)}
 .program-run-pages{position:absolute;top:2px;right:0;width:var(--run-depth);height:calc(100% - 4px);transform:rotateY(90deg) translateX(calc(var(--run-depth)/2));transform-origin:right center;background:repeating-linear-gradient(to bottom,#fffaf0 0 1px,#d4cab8 1px 2px)}
@@ -106,13 +112,13 @@ body.in-viewer{overflow:hidden}
 .program-run-card.theme-mock .program-run-cover{background:linear-gradient(160deg,#2a1a4a,#160925)}
 .program-run-card.theme-final .program-run-cover{background:linear-gradient(160deg,#173819,#091b10)}
 .program-run-card.theme-archive .program-run-cover{background:linear-gradient(160deg,#332b10,#111108)}
-.program-run-name{font-size:13px;font-weight:900;color:var(--white);line-height:1.35}
-.program-run-desc{font-size:11px;color:var(--muted);line-height:1.45;margin-top:auto}
+.program-run-name{font-size:15px;font-weight:900;color:var(--white);line-height:1.35;text-align:center;word-break:keep-all}
+.program-run-desc{font-size:11px;color:var(--muted);line-height:1.5;text-align:center;max-width:190px;margin-top:auto;word-break:keep-all}
 .program-lock{display:inline-flex;align-items:center;gap:4px;width:max-content;font-size:10px;font-weight:900;color:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:3px 8px;background:rgba(255,255,255,.035)}
 .program-empty{min-height:240px;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:13px;line-height:1.7}
 @media(max-width:820px){.program-shelf{grid-template-columns:1fr}.program-menu{position:relative;top:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.program-panel-head{display:block}.program-panel-desc{text-align:left;margin-top:8px}.program-menu-card{min-height:68px}.concept-showcase{grid-template-columns:210px minmax(0,1fr)}}
 @media(max-width:600px){.concept-showcase{grid-template-columns:1fr;margin:-4px -14px 22px;padding:22px 18px}.concept-book-stage{height:205px}.concept-book-3d{--w:118px;--h:166px}.concept-detail{text-align:center}.concept-topic-list{justify-content:center}.concept-detail-copy{text-align:left}}
-@media(max-width:500px){.program-menu{grid-template-columns:1fr}.program-detail{border-radius:14px}.program-panel{padding:18px 14px}.program-book-row{gap:12px}.program-run-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.program-menu{grid-template-columns:1fr}.program-detail{border-radius:14px}.program-panel{padding:18px 14px}.program-book-row{gap:12px}.program-run-grid{grid-template-columns:1fr 1fr;gap:10px}.program-run-card{min-height:275px;padding:16px 10px 14px}.program-run-book{--run-depth:23px;width:96px;height:136px}.program-run-cover{padding:12px 7px 10px}.program-run-cover strong{font-size:13px}.program-run-icon{font-size:30px}.program-run-name{font-size:12px}.program-run-desc{font-size:10px}}
 @media(max-width:900px) and (orientation:landscape){
   #dashboard{padding:0 10px 24px}.dash-hero{padding:14px 0 12px}.dash-eyebrow{margin-bottom:4px}.dash-title{font-size:21px;margin-bottom:2px}.dash-sub{font-size:10px}
   .program-shelf{grid-template-columns:minmax(150px,24vw) minmax(0,1fr);gap:10px;align-items:start}
@@ -123,6 +129,7 @@ body.in-viewer{overflow:hidden}
   .program-book-row{justify-content:flex-start;flex-wrap:nowrap;gap:9px;padding:4px 6px 12px;overflow-x:auto;scrollbar-width:thin}
   .program-book-row .shelf-book-3d{--shelf-depth:18px;width:74px;height:106px}.program-book-row .shelf-label{width:74px}.program-book-row .shelf-title-text{font-size:10px}.program-book-row .shelf-videos{font-size:8px}
   .concept-showcase{grid-template-columns:150px minmax(0,1fr);gap:14px;margin:-2px -10px 16px;padding:16px}.concept-book-stage{height:170px}.concept-book-3d{--w:92px;--h:130px;--d:24px}.concept-detail{text-align:left}.concept-topic-list{justify-content:flex-start}.concept-detail-copy{text-align:left}
+  .program-run-grid{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.program-run-card{min-height:260px;padding:13px 10px 12px}.program-run-book{--run-depth:24px;width:100px;height:142px}.program-run-cover{padding:12px 8px 10px}.program-run-cover strong{font-size:14px}.program-run-icon{font-size:31px}.program-run-name{font-size:12px}.program-run-desc{font-size:9px}.program-run-card .program-lock{font-size:8px;padding:2px 6px}
 }
 .product-card{position:relative;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:20px 16px 16px;display:flex;flex-direction:column;gap:14px;transition:all .3s cubic-bezier(.22,1,.36,1);overflow:hidden;cursor:pointer}
 .product-card.unlocked{border-color:rgba(212,175,55,.2)}
@@ -469,13 +476,13 @@ const PRODUCTS=[
     {key:"final",vol:"Final",title:"종합 체크",subtitle:"마무리 체크체크",topics:["지금까지 배운 전체 유형 종합 테스트"],comment:null,videos:[{key:"final",type:"final",label:"🏆 학습영상",url:"https://youtu.be/FC4W2bRJwKc",pdfPage:65}]}
   ]},
   {key:"진단모의고사",name:"진단 모의고사",desc:"현재 수준 정밀 진단 + 분석",icon:"🔍",theme:"theme-mock",type:"mock",mockUrl:"../mock/"},
-  {key:"킬러문항",name:"킬러문항 완전 해제",desc:"필즈 기출에서 실수가 많았던 9개 유형 정리",icon:"🎯",theme:"theme-killer",type:"direct",printDoc:"killer",videoUrl:"https://youtu.be/_x-NIjvBxMQ",topics:["복면산","수직선에서의 길이·단위길이","도형수","마방진·삼각진","도형이 나타내는 수","주고받기","양팔저울","수·도형 규칙","약속·암호"],lessons:[{key:"k1",label:"킬러 유형",title:"킬러문항 완전 해제",type:"concept",url:"https://youtu.be/_x-NIjvBxMQ",pdfPage:1}]},
-  {key:"실전모의고사1회",name:"실전 모의고사 1회",desc:"6세 선발 모의고사 세트 1회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set",lessons:[{key:"p1",label:"1회",title:"실전 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사2회",name:"실전 모의고사 2회",desc:"6세 선발 모의고사 세트 2회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set",lessons:[{key:"p2",label:"2회",title:"실전 모의고사 2회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사3회",name:"실전 모의고사 3회",desc:"6세 선발 모의고사 세트 3회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set",lessons:[{key:"p3",label:"3회",title:"실전 모의고사 3회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사4회",name:"실전 모의고사 4회",desc:"6세 선발 모의고사 세트 4회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set",lessons:[{key:"p4",label:"4회",title:"실전 모의고사 4회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사5회",name:"실전 모의고사 5회",desc:"6세 선발 모의고사 세트 5회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set",lessons:[{key:"p5",label:"5회",title:"실전 모의고사 5회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사6회",name:"실전 모의고사 6회",desc:"6세 선발 모의고사 세트 6회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set",lessons:[{key:"p6",label:"6회",title:"실전 모의고사 6회",type:"concept",url:"",pdfPage:1}]},
+  {key:"킬러문항",name:"킬러문항 완전 해제",desc:"필즈 기출에서 실수가 많았던 9개 유형 정리",icon:"🎯",theme:"theme-killer",type:"direct",viewerMode:"inline",printDoc:"killer",pagesBase:"../assets/print/killer/page_",pageCount:32,videoUrl:"https://youtu.be/_x-NIjvBxMQ",topics:["복면산","수직선에서의 길이·단위길이","도형수","마방진·삼각진","도형이 나타내는 수","주고받기","양팔저울","수·도형 규칙","약속·암호"],lessons:[{key:"k1",label:"킬러 유형",title:"킬러문항 완전 해제",type:"concept",url:"https://youtu.be/_x-NIjvBxMQ",pdfPage:1}]},
+  {key:"실전모의고사1회",name:"실전 모의고사 1회",desc:"6세 선발 모의고사 세트 1회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set-1",lessons:[{key:"p1",label:"1회",title:"실전 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사2회",name:"실전 모의고사 2회",desc:"6세 선발 모의고사 세트 2회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set-2",lessons:[{key:"p2",label:"2회",title:"실전 모의고사 2회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사3회",name:"실전 모의고사 3회",desc:"6세 선발 모의고사 세트 3회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set-3",lessons:[{key:"p3",label:"3회",title:"실전 모의고사 3회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사4회",name:"실전 모의고사 4회",desc:"6세 선발 모의고사 세트 4회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set-4",lessons:[{key:"p4",label:"4회",title:"실전 모의고사 4회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사5회",name:"실전 모의고사 5회",desc:"6세 선발 모의고사 세트 5회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set-5",lessons:[{key:"p5",label:"5회",title:"실전 모의고사 5회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사6회",name:"실전 모의고사 6회",desc:"6세 선발 모의고사 세트 6회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set-6",lessons:[{key:"p6",label:"6회",title:"실전 모의고사 6회",type:"concept",url:"",pdfPage:1}]},
   {key:"파이널모의고사1회",name:"파이널 모의고사 1회",desc:"최종 점검 파이널 1회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
   {key:"파이널모의고사2회",name:"파이널 모의고사 2회",desc:"최종 점검 파이널 2회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi2",label:"2회",title:"파이널 모의고사 2회",type:"concept",url:"",pdfPage:1}]},
   {key:"파이널모의고사3회",name:"파이널 모의고사 3회",desc:"최종 점검 파이널 3회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi3",label:"3회",title:"파이널 모의고사 3회",type:"concept",url:"",pdfPage:1}]},
@@ -809,7 +816,7 @@ const GF={
   },
   openDirectViewer(productKey){
     const p=PRODUCTS.find(x=>x.key===productKey);if(!p)return;
-    if(p.printDoc){
+    if(p.printDoc&&p.viewerMode!=="inline"){
       const url=new URL("../print-viewer/",location.href);
       url.searchParams.set("doc",p.printDoc);
       url.searchParams.set("student",S.name||"학생");
@@ -888,7 +895,7 @@ function runCard(p){
   if(!p)return "";
   const ok=pOk(p),idx=PRODUCTS.indexOf(p);
   return `<button class="program-run-card ${h(p.theme||"")} ${ok?"":"locked"}" onclick="GF.openProgramProduct(${idx})">
-    <div class="program-run-book"><div class="program-run-cover">${h(p.icon||"")}</div><div class="program-run-back"></div><div class="program-run-spine"></div><div class="program-run-pages"></div><div class="program-run-top"></div><div class="program-run-bottom"></div></div>
+    <div class="program-run-book" aria-hidden="true"><div class="program-run-cover"><span class="program-run-kicker">필즈 더 클래식</span><strong>${h(p.name)}</strong><span class="program-run-icon">${h(p.icon||"")}</span><span class="program-run-mark">지필드 영재교육</span></div><div class="program-run-back"></div><div class="program-run-spine"></div><div class="program-run-pages"></div><div class="program-run-top"></div><div class="program-run-bottom"></div></div>
     <div class="program-run-name">${h(p.name)}</div>
     <div class="program-run-desc">${h(p.desc||"")}</div>
     ${ok?"":'<span class="program-lock">🔒 열람 제한</span>'}

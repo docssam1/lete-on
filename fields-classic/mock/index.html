@@ -693,7 +693,7 @@ ${insights.length?`<div class="r-card"><div class="r-ct">심층 분석 인사이
 </div>
 ${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div></div><a class="wrong-link" href="${explanationUrl(q.id)}" target="_blank" rel="noopener">▶ 해설</a></div>`).join('')}</div>`:''}
 <div class="res-actions">
-  ${prescribedTypes.length?`<a class="res-prescription" href="${prescriptionUrl}" target="_blank" rel="noopener">약점 처방전 · ${prescribedTypes.length}개 유형 · ${prescribedTypes.length*3}문제</a>`:''}
+  ${prescribedTypes.length?`<a class="res-prescription" href="${prescriptionUrl}&view=type" target="_blank" rel="noopener">약점 처방전 · 유형별로 보기</a><a class="res-prescription" href="${prescriptionUrl}&view=mixed" target="_blank" rel="noopener">약점 처방전 · 섞어서 보기</a>`:''}
   <button class="res-print" onclick="window.print()">🖨 진단지 인쇄</button>
   <a class="res-consult" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">약점 유사 문제 및 상담 신청하기 →</a>
 </div>`;
