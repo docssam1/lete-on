@@ -53,6 +53,8 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 .exam-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:22px}
 .exam-action{min-height:48px;border:1.5px solid #cbd7e5;border-radius:10px;background:#fff;color:var(--g-blue);font-family:inherit;font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;padding:8px 10px;box-shadow:var(--sh-sm)}
 .exam-action.primary{background:var(--g-blue);border-color:var(--g-blue);color:#fff}
+.answer-modal{position:fixed;inset:0;z-index:80;background:rgba(7,17,31,.68);padding:20px;display:none;align-items:center;justify-content:center}
+.answer-modal.show{display:flex}.answer-sheet{width:min(100%,880px);max-height:calc(100vh - 40px);overflow:auto;position:relative;background:#fff;border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.35);padding:24px}.answer-watermark{position:absolute;inset:0;overflow:hidden;pointer-events:none}.answer-watermark span{position:absolute;left:50%;transform:translate(-50%,-50%) rotate(-28deg);color:rgba(22,65,124,.07);font-size:32px;font-weight:900;white-space:nowrap}.answer-watermark span:nth-child(1){top:25%}.answer-watermark span:nth-child(2){top:50%}.answer-watermark span:nth-child(3){top:75%}.answer-sheet>*:not(.answer-watermark){position:relative}.answer-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}.answer-sheet-title{font-size:19px;font-weight:900;color:var(--g-blue)}.answer-sheet-sub{margin-top:5px;color:var(--g-muted);font-size:12px;font-weight:700}.answer-close{width:34px;height:34px;border:1px solid #cbd7e5;border-radius:8px;background:#fff;color:var(--g-blue);font-size:20px;font-weight:900;cursor:pointer}.detail-link{display:inline-flex;align-items:center;justify-content:center;padding:4px 7px;border-radius:6px;background:rgba(22,65,124,.08);color:var(--g-blue);font-size:9.5px;font-weight:900;text-decoration:none;white-space:nowrap}.detail-link:hover{background:var(--g-blue);color:#fff}
 .exam-action.gold{background:#fff8e9;border-color:#d5ad67;color:#173f70}
 .exam-action:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(22,65,124,.13)}
 .mode-select{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
@@ -79,6 +81,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 @media(max-width:600px){.q-grid{grid-template-columns:repeat(5,1fr);gap:5px}}
 @media(max-width:600px){#cGrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:600px){.exam-actions{grid-template-columns:1fr}.exam-action{min-height:44px}}
+@media(max-width:600px){.answer-modal{padding:10px}.answer-sheet{max-height:calc(100vh - 20px);padding:16px}.answer-sheet-title{font-size:16px}}
 .q-card{background:#fff;border:2px solid #e8edf5;border-radius:10px;padding:6px;transition:all .2s;position:relative;overflow:hidden;cursor:pointer;user-select:none}
 .q-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .2s}
 .q-card.ok{border-color:rgba(34,197,94,.4);background:var(--ok-bg)}.q-card.ok::before{background:var(--ok);opacity:1}
@@ -192,7 +195,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 .ocr-close-btn{width:100%;height:44px;background:none;border:2px solid #e2e8f0;border-radius:12px;color:var(--g-muted);font-size:14px;font-weight:700;font-family:Pretendard,sans-serif;cursor:pointer}
 @media print{
   body{background:#fff!important}
-  #accessGate,.premium-header,.exam-actions,.mode-select,.ocr-banner,.submit-area,.res-actions,#ocrModal,.wrong-link,.s-link{display:none!important}
+  #accessGate,.premium-header,.exam-actions,.mode-select,.ocr-banner,.submit-area,.res-actions,#ocrModal,.answer-modal,.wrong-link,.s-link{display:none!important}
   #result{display:block!important;margin:0!important}
   .res-hero{background:#16417C!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .r-card{background:#f9f9f9!important;border-color:#e0e0e0!important}
@@ -317,7 +320,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 <main id="mainContent" style="display:none">
   <div class="exam-actions" aria-label="진단 자료">
     <button class="exam-action primary" type="button" onclick="openPrintAsset('exam')">🖨 모의고사 시험지 인쇄</button>
-    <button class="exam-action gold" type="button" onclick="openPrintAsset('answer')">🖨 답안지 인쇄</button>
+    <button class="exam-action gold" type="button" onclick="openAnswerSheet()">☑ 답안 보기</button>
     <button class="exam-action" type="button" onclick="openFullVideo()">▶ 전체 수업 영상 보기</button>
   </div>
   <div class="sec">입력 방식 선택</div>
@@ -355,6 +358,13 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
   </div>
   <div id="result"></div>
 </main>
+<div class="answer-modal" id="answerModal" role="dialog" aria-modal="true" aria-labelledby="answerSheetTitle">
+  <div class="answer-sheet" id="answerSheet">
+    <div class="answer-watermark" id="answerWatermark" aria-hidden="true"></div>
+    <div class="answer-sheet-head"><div><div class="answer-sheet-title" id="answerSheetTitle">진단 모의고사 정답 · 해설</div><div class="answer-sheet-sub">문항별 정답을 확인하고 해설 영상을 볼 수 있습니다.</div></div><button class="answer-close" type="button" onclick="closeAnswerSheet()" aria-label="닫기">×</button></div>
+    <div style="overflow-x:auto"><table class="detail-table" id="answerTable"></table></div>
+  </div>
+</div>
 <script>
 (function(){
 let studentName='';
@@ -363,8 +373,7 @@ const FC_DATA=window.GFIELD_FC_DATA||{};
 
 function openPrintAsset(kind){
   const assets={
-    exam:{doc:'diagnostic'},
-    answer:{doc:'answer'}
+    exam:{doc:'diagnostic'}
   };
   const asset=assets[kind];
   if(!asset)return;
@@ -376,6 +385,21 @@ function openFullVideo(){
   const url=`../video-viewer/?video=${encodeURIComponent('https://www.youtube.com/watch?v=DRVcC6pCZcw')}&title=${encodeURIComponent('필즈 대비 선발 모의고사 전체 풀이')}&student=${encodeURIComponent(studentName||'학생')}`;
   window.open(url,'_blank','noopener');
 }
+
+function explanationUrl(questionId){
+  const seconds=Number((EXPLAIN_TS[questionId]||'').match(/\d+/)?.[0]||0);
+  return `../video-viewer/?video=${encodeURIComponent(EXPLAIN_YT)}&start=${seconds}&title=${encodeURIComponent(`Q${questionId} 해설`)}&student=${encodeURIComponent(studentName||'학생')}`;
+}
+
+function openAnswerSheet(){
+  const table=document.getElementById('answerTable');
+  table.innerHTML=`<tr><th>번호</th><th>정답</th><th>분류</th><th>유형</th><th>해설</th></tr>${QS.map(q=>`<tr><td>${q.id}</td><td class="dim">${q.a}</td><td class="dim">${q.t}</td><td class="tp-cell">${q.tp}</td><td><a class="detail-link" href="${explanationUrl(q.id)}" target="_blank" rel="noopener">▶ 해설</a></td></tr>`).join('')}`;
+  const watermark=document.getElementById('answerWatermark');
+  watermark.innerHTML='';
+  for(let row=0;row<3;row++){const label=document.createElement('span');label.textContent=`${studentName||'학생'} 학생 · GFIELD`;watermark.appendChild(label);}
+  document.getElementById('answerModal').classList.add('show');
+}
+function closeAnswerSheet(){document.getElementById('answerModal').classList.remove('show');}
 
 function enterGate(){
   const v=document.getElementById('nameInp').value.trim();
@@ -395,7 +419,7 @@ function setMode(m){
 }
 function openOcr(){document.getElementById('ocrModal').classList.add('show');}
 function closeOcr(){document.getElementById('ocrModal').classList.remove('show');}
-window.enterGate=enterGate;window.setMode=setMode;window.openOcr=openOcr;window.closeOcr=closeOcr;window.openPrintAsset=openPrintAsset;window.openFullVideo=openFullVideo;
+window.enterGate=enterGate;window.setMode=setMode;window.openOcr=openOcr;window.closeOcr=closeOcr;window.openPrintAsset=openPrintAsset;window.openFullVideo=openFullVideo;window.openAnswerSheet=openAnswerSheet;window.closeAnswerSheet=closeAnswerSheet;
 
 const params=new URLSearchParams(location.search);
 const presetStudent=(params.get('student')||'').trim();
@@ -622,11 +646,11 @@ function submitAll(){
 </div>
 <div class="r-card"><div class="r-ct">문항별 상세 분석</div>
   <div style="overflow-x:auto"><table class="detail-table">
-    <tr><th>번호</th><th>정답</th>${inputMode==='subj'?'<th>학생 답안</th>':''}<th>O X</th><th>문항 수준</th><th>분류</th><th>유형</th></tr>
+    <tr><th>번호</th><th>정답</th>${inputMode==='subj'?'<th>학생 답안</th>':''}<th>O X</th><th>문항 수준</th><th>분류</th><th>유형</th><th>해설</th></tr>
     ${QS.map((q,i)=>{
       const isOk=mg[i];
       const sv=inputMode==='subj'?(getVal(i)||'—'):'';
-      return `<tr class="${isOk?'':'row-x'}"><td>${q.id}</td><td class="dim">${q.a}</td>${inputMode==='subj'?`<td>${sv==='__wrong__'?'—':sv}</td>`:''}<td class="${isOk?'d-o':'d-x'}">${isOk?'○':'✗'}</td><td class="dim">${q.lv}</td><td class="dim">${q.t}</td><td class="tp-cell">${q.tp}</td></tr>`;
+      return `<tr class="${isOk?'':'row-x'}"><td>${q.id}</td><td class="dim">${q.a}</td>${inputMode==='subj'?`<td>${sv==='__wrong__'?'—':sv}</td>`:''}<td class="${isOk?'d-o':'d-x'}">${isOk?'○':'✗'}</td><td class="dim">${q.lv}</td><td class="dim">${q.t}</td><td class="tp-cell">${q.tp}</td><td><a class="detail-link" href="${explanationUrl(q.id)}" target="_blank" rel="noopener">▶ 해설</a></td></tr>`;
     }).join('')}
   </table></div>
 </div>
@@ -662,7 +686,7 @@ ${insights.length?`<div class="r-card"><div class="r-ct">심층 분석 인사이
 <div class="strategy-card"><div class="strategy-title">학습 전략</div>
   <div class="strategy-body">안녕하세요. 지필드 영재교육입니다. <b>${nm2}</b> 학생의 필즈 대비 선발 모의 진단 레벨은 <b>${sc}점</b>으로 <b>${li.lv}</b>입니다.<br><br>${li.tx}<br><br>${CD.comment}<br><br>당부 드리고 싶은 건 학원이 중요한 것이 아니라 <b>연산 → 교과 → 사고력</b> 순으로 균형이 맞아야 합니다. 필즈에 입학하게 되면 E1반은 <b>필즈 입문</b>, E2반은 <b>필즈 베이직</b>이 부교재로 진행됩니다. 입문 정도라면 <b>교과 3-1 과정 + 기적의 계산법 5권</b> 정도의 연산이 필요하고, 베이직은 <b>교과 2-1 과정 + 기적의 계산법 3·4권</b> 정도의 수행률이 필요합니다.</div>
 </div>
-${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div></div><a class="wrong-link" href="${EXPLAIN_YT+EXPLAIN_TS[q.id]}" target="_blank" rel="noopener">▶ 해설</a></div>`).join('')}</div>`:''}
+${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div></div><a class="wrong-link" href="${explanationUrl(q.id)}" target="_blank" rel="noopener">▶ 해설</a></div>`).join('')}</div>`:''}
 <div class="res-actions">
   ${prescribedTypes.length?`<a class="res-prescription" href="${prescriptionUrl}" target="_blank" rel="noopener">약점 처방전 · ${prescribedTypes.length}개 유형 · ${prescribedTypes.length*3}문제</a>`:''}
   <button class="res-print" onclick="window.print()">🖨 진단지 인쇄</button>
