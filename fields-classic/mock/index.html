@@ -54,7 +54,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 .exam-action{min-height:48px;border:1.5px solid #cbd7e5;border-radius:10px;background:#fff;color:var(--g-blue);font-family:inherit;font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;padding:8px 10px;box-shadow:var(--sh-sm)}
 .exam-action.primary{background:var(--g-blue);border-color:var(--g-blue);color:#fff}
 .answer-modal{position:fixed;inset:0;z-index:80;background:rgba(7,17,31,.68);padding:20px;display:none;align-items:center;justify-content:center}
-.answer-modal.show{display:flex}.answer-sheet{width:min(100%,880px);max-height:calc(100vh - 40px);overflow:auto;position:relative;background:#fff;border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.35);padding:24px}.answer-watermark{position:absolute;inset:0;overflow:hidden;pointer-events:none}.answer-watermark span{position:absolute;left:50%;transform:translate(-50%,-50%) rotate(-28deg);color:rgba(22,65,124,.07);font-size:32px;font-weight:900;white-space:nowrap}.answer-watermark span:nth-child(1){top:25%}.answer-watermark span:nth-child(2){top:50%}.answer-watermark span:nth-child(3){top:75%}.answer-sheet>*:not(.answer-watermark){position:relative}.answer-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}.answer-sheet-title{font-size:19px;font-weight:900;color:var(--g-blue)}.answer-sheet-sub{margin-top:5px;color:var(--g-muted);font-size:12px;font-weight:700}.answer-close{width:34px;height:34px;border:1px solid #cbd7e5;border-radius:8px;background:#fff;color:var(--g-blue);font-size:20px;font-weight:900;cursor:pointer}.detail-link{display:inline-flex;align-items:center;justify-content:center;padding:4px 7px;border-radius:6px;background:rgba(22,65,124,.08);color:var(--g-blue);font-size:9.5px;font-weight:900;text-decoration:none;white-space:nowrap}.detail-link:hover{background:var(--g-blue);color:#fff}
+.answer-modal.show{display:flex}.answer-sheet{width:min(100%,880px);max-height:calc(100vh - 40px);overflow:auto;position:relative;background:#fff;border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.35);padding:24px}.answer-watermark{position:absolute;inset:0;overflow:hidden;pointer-events:none}.answer-watermark span{position:absolute;left:50%;transform:translate(-50%,-50%) rotate(-28deg);color:rgba(22,65,124,.07);font-size:32px;font-weight:900;white-space:nowrap}.answer-watermark span:nth-child(1){top:25%}.answer-watermark span:nth-child(2){top:50%}.answer-watermark span:nth-child(3){top:75%}.answer-sheet>*:not(.answer-watermark){position:relative}.answer-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}.answer-sheet-title{font-size:19px;font-weight:900;color:var(--g-blue)}.answer-sheet-sub{margin-top:5px;color:var(--g-muted);font-size:12px;font-weight:700}.answer-section-title{margin:20px 0 8px;color:var(--g-blue);font-size:13px;font-weight:900}.answer-section-title:first-of-type{margin-top:0}.answer-close{width:34px;height:34px;border:1px solid #cbd7e5;border-radius:8px;background:#fff;color:var(--g-blue);font-size:20px;font-weight:900;cursor:pointer}.detail-link{display:inline-flex;align-items:center;justify-content:center;padding:4px 7px;border-radius:6px;background:rgba(22,65,124,.08);color:var(--g-blue);font-size:9.5px;font-weight:900;text-decoration:none;white-space:nowrap}.detail-link:hover{background:var(--g-blue);color:#fff}
 .exam-action.gold{background:#fff8e9;border-color:#d5ad67;color:#173f70}
 .exam-action:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(22,65,124,.13)}
 .mode-select{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
@@ -362,7 +362,10 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
   <div class="answer-sheet" id="answerSheet">
     <div class="answer-watermark" id="answerWatermark" aria-hidden="true"></div>
     <div class="answer-sheet-head"><div><div class="answer-sheet-title" id="answerSheetTitle">진단 모의고사 정답 · 해설</div><div class="answer-sheet-sub">문항별 정답을 확인하고 해설 영상을 볼 수 있습니다.</div></div><button class="answer-close" type="button" onclick="closeAnswerSheet()" aria-label="닫기">×</button></div>
+    <div class="answer-section-title">사고력 정답 · 해설</div>
     <div style="overflow-x:auto"><table class="detail-table" id="answerTable"></table></div>
+    <div class="answer-section-title">연산 정답</div>
+    <div style="overflow-x:auto"><table class="detail-table" id="calculationAnswerTable"></table></div>
   </div>
 </div>
 <script>
@@ -394,6 +397,8 @@ function explanationUrl(questionId){
 function openAnswerSheet(){
   const table=document.getElementById('answerTable');
   table.innerHTML=`<tr><th>번호</th><th>정답</th><th>분류</th><th>유형</th><th>해설</th></tr>${QS.map(q=>`<tr><td>${q.id}</td><td class="dim">${q.a}</td><td class="dim">${q.t}</td><td class="tp-cell">${q.tp}</td><td><a class="detail-link" href="${explanationUrl(q.id)}" target="_blank" rel="noopener">▶ 해설</a></td></tr>`).join('')}`;
+  const calculations=[...CA.map((q,i)=>({...q,no:`덧셈 ${i+1}`})),...CS.map((q,i)=>({...q,no:`뺄셈 ${i+1}`}))];
+  document.getElementById('calculationAnswerTable').innerHTML=`<tr><th>구분</th><th>식</th><th>정답</th><th>유형</th></tr>${calculations.map(q=>`<tr><td>${q.no}</td><td style="font-weight:900">${q.e}</td><td class="dim">${q.a}</td><td class="tp-cell">${q.tp}</td></tr>`).join('')}`;
   const watermark=document.getElementById('answerWatermark');
   watermark.innerHTML='';
   for(let row=0;row<3;row++){const label=document.createElement('span');label.textContent=`${studentName||'학생'} 학생 · GFIELD`;watermark.appendChild(label);}
