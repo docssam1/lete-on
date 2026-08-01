@@ -124,6 +124,5 @@ window.GFIELD_FC_DATA = {
   },
   "archiveFolders": [],
   "archiveAccess": {},
-  "books": [],
-  "prescriptionAccess": {}
+  "books": []
 };
