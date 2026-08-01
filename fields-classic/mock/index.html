@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>필즈 선발 대비 모의고사 | G-FIELD</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../data.js"></script>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
 </script>
@@ -49,6 +50,11 @@ html,body{font-family:'Pretendard',sans-serif;background:var(--g-bg);color:var(-
 .header-sub{font-size:11px;color:var(--g-muted);font-weight:600}
 .header-name{font-size:13px;font-weight:900;color:var(--g-blue);background:rgba(22,65,124,.08);padding:5px 12px;border-radius:20px}
 main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
+.exam-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:22px}
+.exam-action{min-height:48px;border:1.5px solid #cbd7e5;border-radius:10px;background:#fff;color:var(--g-blue);font-family:inherit;font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;padding:8px 10px;box-shadow:var(--sh-sm)}
+.exam-action.primary{background:var(--g-blue);border-color:var(--g-blue);color:#fff}
+.exam-action.gold{background:#fff8e9;border-color:#d5ad67;color:#173f70}
+.exam-action:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(22,65,124,.13)}
 .mode-select{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
 .mode-card{background:#fff;border:2.5px solid #e2e8f0;border-radius:18px;padding:20px 16px;cursor:pointer;transition:all .2s;text-align:center}
 .mode-card:hover{border-color:var(--g-blue);background:rgba(22,65,124,.03)}
@@ -71,6 +77,8 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 .ocr-btn{padding:7px 14px;background:linear-gradient(135deg,var(--g-gold),#f5d9a8);color:var(--g-blue);font-size:11px;font-weight:900;border-radius:20px;border:none;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap}
 .q-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:6px}
 @media(max-width:600px){.q-grid{grid-template-columns:repeat(5,1fr);gap:5px}}
+@media(max-width:600px){#cGrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:600px){.exam-actions{grid-template-columns:1fr}.exam-action{min-height:44px}}
 .q-card{background:#fff;border:2px solid #e8edf5;border-radius:10px;padding:6px;transition:all .2s;position:relative;overflow:hidden;cursor:pointer;user-select:none}
 .q-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .2s}
 .q-card.ok{border-color:rgba(34,197,94,.4);background:var(--ok-bg)}.q-card.ok::before{background:var(--ok);opacity:1}
@@ -184,7 +192,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 .ocr-close-btn{width:100%;height:44px;background:none;border:2px solid #e2e8f0;border-radius:12px;color:var(--g-muted);font-size:14px;font-weight:700;font-family:Pretendard,sans-serif;cursor:pointer}
 @media print{
   body{background:#fff!important}
-  #accessGate,.premium-header,.mode-select,.ocr-banner,.submit-area,.res-actions,#ocrModal,.wrong-link,.s-link{display:none!important}
+  #accessGate,.premium-header,.exam-actions,.mode-select,.ocr-banner,.submit-area,.res-actions,#ocrModal,.wrong-link,.s-link{display:none!important}
   #result{display:block!important;margin:0!important}
   .res-hero{background:#16417C!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .r-card{background:#f9f9f9!important;border-color:#e0e0e0!important}
@@ -235,7 +243,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
   font-size:14px;font-weight:700;font-family:Pretendard,sans-serif;border-radius:12px;cursor:pointer;margin-top:8px}
 .similar-hint{font-size:11px;color:var(--g-muted);margin-top:6px;display:none}
 
-/* ── 약점 유형 연습하기 ── */
+/* Legacy practice styles; no user entry point is rendered. */
 .pt-select{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px}
 .pt-chip{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;border:1.5px solid rgba(22,65,124,.18);background:#fff;font-size:12px;font-weight:800;color:#16417C;cursor:pointer;user-select:none;transition:.15s}
 .pt-chip.on{background:#16417C;color:#fff;border-color:#16417C}
@@ -307,6 +315,11 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
   </div>
 </header>
 <main id="mainContent" style="display:none">
+  <div class="exam-actions" aria-label="진단 자료">
+    <button class="exam-action primary" type="button" onclick="openPrintAsset('exam')">🖨 모의고사 시험지 인쇄</button>
+    <button class="exam-action gold" type="button" onclick="openPrintAsset('answer')">🖨 답안지 인쇄</button>
+    <a class="exam-action" href="https://www.youtube.com/watch?v=DRVcC6pCZcw" target="_blank" rel="noopener">▶ 전체 수업 영상 보기</a>
+  </div>
   <div class="sec">입력 방식 선택</div>
   <div class="mode-select" id="modeSelect">
     <div class="mode-card active" id="modeOx" onclick="setMode('ox')">
@@ -346,6 +359,18 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 (function(){
 let studentName='';
 let inputMode='ox';
+const FC_DATA=window.GFIELD_FC_DATA||{};
+
+function openPrintAsset(kind){
+  const assets={
+    exam:{file:'../assets/mock/필즈 대비 선발 모의고사 진단.pdf',title:'필즈 대비 선발 모의고사 진단'},
+    answer:{file:'../assets/final/필즈온라인셋트답지.pdf',title:'필즈 온라인 세트 답지'}
+  };
+  const asset=assets[kind];
+  if(!asset)return;
+  const url=`../print-viewer/?file=${encodeURIComponent(asset.file)}&title=${encodeURIComponent(asset.title)}&student=${encodeURIComponent(studentName||'학생')}`;
+  window.open(url,'_blank','noopener');
+}
 
 function enterGate(){
   const v=document.getElementById('nameInp').value.trim();
@@ -365,7 +390,7 @@ function setMode(m){
 }
 function openOcr(){document.getElementById('ocrModal').classList.add('show');}
 function closeOcr(){document.getElementById('ocrModal').classList.remove('show');}
-window.enterGate=enterGate;window.setMode=setMode;window.openOcr=openOcr;window.closeOcr=closeOcr;
+window.enterGate=enterGate;window.setMode=setMode;window.openOcr=openOcr;window.closeOcr=closeOcr;window.openPrintAsset=openPrintAsset;
 
 const params=new URLSearchParams(location.search);
 const presetStudent=(params.get('student')||'').trim();
@@ -563,7 +588,9 @@ function submitAll(){
   BA_ORDER.forEach(b=>{const{tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)<50)insights.push({cls:'i-warn',icon:'📌',txt:`행동영역 [${BA_LBL[b]}] 정답률 ${pct(ok,tot)}% — 집중 훈련이 필요합니다.`});});
   BA_ORDER.forEach(b=>{const{tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)===100)insights.push({cls:'i-ok',icon:'⭐',txt:`행동영역 [${BA_LBL[b]}] 100% 정답 — 강점 영역입니다.`});});
   const wq=QS.filter((q,i)=>!mg[i]);
-  const prescriptionTypes=[...new Set(wq.map(q=>q.id))].join(',');
+  const prescribedTypes=[...new Set((FC_DATA.prescriptions?.[nm2]||[]).map(Number)
+    .filter(id=>Number.isInteger(id)&&id>=1&&id<=25))].sort((a,b)=>a-b);
+  const prescriptionTypes=prescribedTypes.join(',');
   const prescriptionUrl=`../prescription/?student=${encodeURIComponent(nm2)}&types=${prescriptionTypes}`;
   document.getElementById('scoreSum').innerHTML=`<span class="sc-ok">✓ ${mg.filter(Boolean).length}문항</span><span class="sc-no">✗ ${mg.filter(v=>!v).length}문항</span><span>→ ${sc}점</span>`;
   const _now=new Date();const _mon=_now.getMonth()+1;
@@ -630,7 +657,7 @@ ${insights.length?`<div class="r-card"><div class="r-ct">심층 분석 인사이
 </div>
 ${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div></div><a class="wrong-link" href="${EXPLAIN_YT+EXPLAIN_TS[q.id]}" target="_blank" rel="noopener">▶ 해설</a></div>`).join('')}</div>`:''}
 <div class="res-actions">
-  ${wq.length?`<a class="res-prescription" href="${prescriptionUrl}" target="_blank" rel="noopener">검수된 유사문제 3문제씩 열기</a>`:''}
+  ${prescribedTypes.length?`<a class="res-prescription" href="${prescriptionUrl}" target="_blank" rel="noopener">관리자 지정 약점 처방전 · ${prescribedTypes.length*3}문제</a>`:''}
   <button class="res-print" onclick="window.print()">🖨 진단지 인쇄</button>
   <a class="res-consult" href="https://naver.me/Ge7B7WcJ" target="_blank" rel="noopener">상담 신청하기 →</a>
 </div>`;

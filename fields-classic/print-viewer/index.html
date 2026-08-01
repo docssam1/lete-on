@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GFIELD 인쇄 뷰어</title>
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Pretendard,sans-serif;background:#dfe7ef;color:#0f172a}
+.toolbar{position:sticky;top:0;z-index:20;min-height:64px;padding:10px 18px;background:#fff;border-bottom:1px solid #cbd5e1;display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 4px 18px rgba(15,23,42,.09)}
+.title{font-size:16px;font-weight:900;color:#16417c}.meta{font-size:11px;font-weight:700;color:#64748b;margin-top:3px}
+.actions{display:flex;gap:8px}.btn{min-height:40px;padding:0 15px;border-radius:8px;border:1.5px solid #cbd5e1;background:#fff;color:#334155;font-family:inherit;font-size:12px;font-weight:900;cursor:pointer}
+.btn.primary{background:#16417c;border-color:#16417c;color:#fff}.btn:disabled{opacity:.45;cursor:wait}
+.status{padding:22px;text-align:center;color:#64748b;font-size:13px;font-weight:800}
+.pages{width:min(980px,100%);margin:0 auto;padding:20px 12px 50px;display:grid;gap:18px}
+.page{position:relative;width:100%;background:#fff;box-shadow:0 8px 28px rgba(15,23,42,.16);overflow:hidden}
+.page canvas{display:block;width:100%;height:auto}
+.watermark{display:none;position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+.watermark span{position:absolute;left:50%;transform:translate(-50%,-50%) rotate(-32deg);font-size:34pt;font-weight:900;color:rgba(22,65,124,.14);white-space:nowrap;letter-spacing:0}
+.watermark span:nth-child(1){top:25%}.watermark span:nth-child(2){top:50%}.watermark span:nth-child(3){top:75%}
+@media(max-width:640px){.toolbar{align-items:flex-start}.title{font-size:14px}.btn{padding:0 10px}.pages{padding:10px 5px 30px;gap:8px}}
+@page{size:A4;margin:0}
+@media print{
+  html,body{background:#fff}
+  .toolbar,.status{display:none!important}
+  .pages{display:block;width:auto;margin:0;padding:0}
+  .page{width:210mm;margin:0;box-shadow:none;break-after:page;page-break-after:always}
+  .page:last-child{break-after:auto;page-break-after:auto}
+  .watermark{display:block!important}
+}
+</style>
+</head>
+<body>
+<header class="toolbar">
+  <div><div class="title" id="title">인쇄 자료</div><div class="meta" id="meta">문서를 준비하고 있습니다.</div></div>
+  <div class="actions">
+    <button class="btn" type="button" onclick="history.back()">돌아가기</button>
+    <button class="btn primary" id="printBtn" type="button" onclick="window.print()" disabled>인쇄</button>
+  </div>
+</header>
+<div class="status" id="status">PDF를 불러오는 중입니다.</div>
+<main class="pages" id="pages"></main>
+
+<script type="module">
+import * as pdfjsLib from "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs";
+pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
+
+const params=new URLSearchParams(location.search);
+const file=params.get("file")||"";
+const title=(params.get("title")||"인쇄 자료").slice(0,80);
+const student=(params.get("student")||"학생").trim().slice(0,30);
+const status=document.getElementById("status");
+const pages=document.getElementById("pages");
+const printBtn=document.getElementById("printBtn");
+document.getElementById("title").textContent=title;
+document.title=title+" | GFIELD";
+
+function watermark(){
+  const layer=document.createElement("div");
+  layer.className="watermark";
+  layer.setAttribute("aria-hidden","true");
+  for(let row=0;row<3;row++){
+    const text=document.createElement("span");
+    text.textContent=`${student} 학생 · GFIELD`;
+    layer.appendChild(text);
+  }
+  return layer;
+}
+
+async function render(){
+  if(!file.startsWith("../assets/")||!file.toLowerCase().endsWith(".pdf"))throw new Error("인쇄할 문서 경로가 올바르지 않습니다.");
+  const pdf=await pdfjsLib.getDocument(file).promise;
+  document.getElementById("meta").textContent=`${student} 학생 · ${pdf.numPages}쪽 · 인쇄 시 워터마크 적용`;
+  for(let number=1;number<=pdf.numPages;number++){
+    status.textContent=`${number} / ${pdf.numPages}쪽을 준비하고 있습니다.`;
+    const page=await pdf.getPage(number);
+    const base=page.getViewport({scale:1});
+    const scale=Math.min(2,1600/base.width);
+    const viewport=page.getViewport({scale});
+    const sheet=document.createElement("section");
+    sheet.className="page";
+    const canvas=document.createElement("canvas");
+    canvas.width=Math.ceil(viewport.width);
+    canvas.height=Math.ceil(viewport.height);
+    canvas.setAttribute("aria-label",`${title} ${number}쪽`);
+    sheet.append(canvas,watermark());
+    pages.appendChild(sheet);
+    await page.render({canvasContext:canvas.getContext("2d",{alpha:false}),viewport}).promise;
+  }
+  status.style.display="none";
+  printBtn.disabled=false;
+}
+
+render().catch(error=>{
+  status.textContent="문서를 불러오지 못했습니다. "+error.message;
+  status.style.color="#b91c1c";
+});
+</script>
+</body>
+</html>

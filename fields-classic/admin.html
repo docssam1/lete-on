@@ -55,6 +55,17 @@ td.name{text-align:left;font-weight:700;padding-left:10px}
 .book-row input.title{width:150px}
 .book-row input.url{flex:1;min-width:150px}
 .book-row .btn{height:30px;font-size:11px;padding:0 8px}
+.rx-student{border:1.5px solid #e2e8f0;border-radius:10px;margin-bottom:10px;background:#fbfdff;overflow:hidden}
+.rx-student summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;cursor:pointer;font-size:13px;font-weight:900;color:#16417C;list-style:none}
+.rx-student summary::-webkit-details-marker{display:none}
+.rx-count{font-size:11px;color:#64748b;font-weight:800}
+.rx-body{padding:0 14px 14px;border-top:1px solid #edf2f7}
+.rx-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:12px 0}
+.rx-chip{min-height:38px;border:1.5px solid #dbe4ee;border-radius:7px;background:#fff;color:#475569;font-size:10.5px;font-weight:800;cursor:pointer;padding:5px;line-height:1.25}
+.rx-chip.on{background:#16417C;border-color:#16417C;color:#fff}
+.rx-preview{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 12px;border:1.5px solid #c89b51;border-radius:7px;background:#fff8e9;color:#16417C;font-size:11px;font-weight:900;text-decoration:none}
+.rx-preview.disabled{pointer-events:none;opacity:.45}
+@media(max-width:720px){.rx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -95,6 +106,15 @@ td.name{text-align:left;font-weight:700;padding-left:10px}
   </div>
 </div>
 
+<!-- 학생별 약점 처방 -->
+<div class="card">
+  <h2>🩺 학생별 약점 처방 유형</h2>
+  <div style="font-size:11px;color:#64748b;margin-bottom:12px">
+    처방을 희망한 학생만 열어 유형을 선택하세요. 유형마다 검수 완료 문제 3개가 제공됩니다.
+  </div>
+  <div id="prescription-list"></div>
+</div>
+
 <!-- 회차별 콘텐츠 관리 -->
 <div class="card">
   <h2>📘 회차별 콘텐츠 (공지·과제·교재)</h2>
@@ -117,6 +137,8 @@ td.name{text-align:left;font-weight:700;padding-left:10px}
   <div id="archive-list"></div>
 </div>
 
+<script src="./data.js"></script>
+<script src="./problem-bank/prescription/prescription-data.js"></script>
 <script>
 const REPO = "docssam1/lete-on";
 const FILE_PATH = "fields-classic/data.js";
@@ -149,8 +171,14 @@ let S = window.GFIELD_FC_DATA || {
   content: {},
   archiveFolders: [],           // ["약점유형 보충자료", ...]
   archiveAccess: {},            // { "폴더명": ["*"] 또는 ["학생명",...] }
-  books: []                     // [{folder, title, pdf, video, date}]
+  books: [],                    // [{folder, title, pdf, video, date}]
+  prescriptions: {}            // {"학생 이름":[1,4,25]}
 };
+S.prescriptions = S.prescriptions || {};
+
+const PRESCRIPTION_TYPES = Object.entries(window.PRESCRIPTION_BANK?.types||{})
+  .map(([id,type])=>({id:Number(id),title:type.title}))
+  .sort((a,b)=>a.id-b.id);
 
 function genCode(){
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXY23456789'; // 헷갈리는 문자(0,O,1,I) 제외
@@ -173,6 +201,7 @@ function ensureStudent(name){
   if(!S.attendance[name]) S.attendance[name] = [];
   if(!S.studentType[name]) S.studentType[name] = 'internal';
   if(!S.studentCode[name]) S.studentCode[name] = genCode();
+  if(!Array.isArray(S.prescriptions[name])) S.prescriptions[name] = [];
 }
 
 function renderMatrix(){
@@ -194,6 +223,38 @@ function renderMatrix(){
   });
   html += '</tbody>';
   document.getElementById('matrix').innerHTML = html;
+}
+
+function prescriptionArr(name){
+  ensureStudent(name);
+  S.prescriptions[name] = [...new Set(S.prescriptions[name].map(Number)
+    .filter(id=>Number.isInteger(id)&&id>=1&&id<=25))].sort((a,b)=>a-b);
+  return S.prescriptions[name];
+}
+
+function togglePrescription(name,id){
+  const arr=prescriptionArr(name);
+  const i=arr.indexOf(id);
+  if(i>=0)arr.splice(i,1);else arr.push(id);
+  arr.sort((a,b)=>a-b);
+  renderPrescriptions();
+  dirty();
+}
+
+function renderPrescriptions(){
+  const root=document.getElementById('prescription-list');
+  if(!S.students.length){root.innerHTML='<div style="font-size:12px;color:#94a3b8">학생을 먼저 추가해 주세요.</div>';return;}
+  root.innerHTML=S.students.map(name=>{
+    const selected=prescriptionArr(name);
+    const preview=`./prescription/?student=${encodeURIComponent(name)}&types=${selected.join(',')}`;
+    return `<details class="rx-student">
+      <summary><span>${esc(name)} 학생</span><span class="rx-count">${selected.length}개 유형 · ${selected.length*3}문제</span></summary>
+      <div class="rx-body">
+        <div class="rx-grid">${PRESCRIPTION_TYPES.map(type=>`<button type="button" class="rx-chip ${selected.includes(type.id)?'on':''}" onclick='togglePrescription(${JSON.stringify(name)},${type.id})'>Q${type.id}<br>${type.title}</button>`).join('')}</div>
+        <a class="rx-preview ${selected.length?'':'disabled'}" href="${preview}" target="_blank" rel="noopener">처방전 미리보기</a>
+      </div>
+    </details>`;
+  }).join('');
 }
 
 function copyCode(code){
@@ -368,6 +429,7 @@ function addStudent(){
   });
   nameEl.value = '';
   renderMatrix();
+  renderPrescriptions();
   if(added>0) dirty();
   if(issuedCodes.length) alert('승인번호가 발급되었습니다 (카카오톡으로 전달해주세요):\n\n' + issuedCodes.join('\n'));
   if(skipped.length) alert('이미 있어서 건너뜀: ' + skipped.join(', '));
@@ -378,7 +440,9 @@ function removeStudent(name){
   S.students = S.students.filter(s => s !== name);
   delete S.attendance[name];
   delete S.studentType[name];
+  delete S.prescriptions[name];
   renderMatrix();
+  renderPrescriptions();
   dirty();
 }
 
@@ -454,6 +518,7 @@ async function saveToGitHub(){
 
 // 초기화
 renderMatrix();
+renderPrescriptions();
 renderContent();
 renderArchive();
 const savedToken = ghKeyGet();
