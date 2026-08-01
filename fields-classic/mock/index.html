@@ -318,7 +318,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
   <div class="exam-actions" aria-label="진단 자료">
     <button class="exam-action primary" type="button" onclick="openPrintAsset('exam')">🖨 모의고사 시험지 인쇄</button>
     <button class="exam-action gold" type="button" onclick="openPrintAsset('answer')">🖨 답안지 인쇄</button>
-    <a class="exam-action" href="https://www.youtube.com/watch?v=DRVcC6pCZcw" target="_blank" rel="noopener">▶ 전체 수업 영상 보기</a>
+    <button class="exam-action" type="button" onclick="openFullVideo()">▶ 전체 수업 영상 보기</button>
   </div>
   <div class="sec">입력 방식 선택</div>
   <div class="mode-select" id="modeSelect">
@@ -372,6 +372,11 @@ function openPrintAsset(kind){
   window.open(url,'_blank','noopener');
 }
 
+function openFullVideo(){
+  const url=`../video-viewer/?video=${encodeURIComponent('https://www.youtube.com/watch?v=DRVcC6pCZcw')}&title=${encodeURIComponent('필즈 대비 선발 모의고사 전체 풀이')}&student=${encodeURIComponent(studentName||'학생')}`;
+  window.open(url,'_blank','noopener');
+}
+
 function enterGate(){
   const v=document.getElementById('nameInp').value.trim();
   if(!v){document.getElementById('gateError').textContent='이름을 입력해 주세요.';return;}
@@ -390,7 +395,7 @@ function setMode(m){
 }
 function openOcr(){document.getElementById('ocrModal').classList.add('show');}
 function closeOcr(){document.getElementById('ocrModal').classList.remove('show');}
-window.enterGate=enterGate;window.setMode=setMode;window.openOcr=openOcr;window.closeOcr=closeOcr;window.openPrintAsset=openPrintAsset;
+window.enterGate=enterGate;window.setMode=setMode;window.openOcr=openOcr;window.closeOcr=closeOcr;window.openPrintAsset=openPrintAsset;window.openFullVideo=openFullVideo;
 
 const params=new URLSearchParams(location.search);
 const presetStudent=(params.get('student')||'').trim();

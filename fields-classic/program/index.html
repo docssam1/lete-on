@@ -459,6 +459,8 @@ const ALL=["개념완성","진단모의고사","킬러문항",
   "실전모의고사1회","실전모의고사2회","실전모의고사3회","실전모의고사4회","실전모의고사5회","실전모의고사6회",
   "파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","파이널모의고사4회",
   "최종모의고사","자료실"];
+const KILLER_PDF="../assets/killer/필즈대비 킬러문항 해제.pdf";
+const MOCK_SET_PDF="../assets/final/필즈더클래식6세선발모의고사SET.pdf";
 const PRODUCTS=[
   {key:"개념완성",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",icon:"📘",theme:"theme-concept",type:"folder",pagesBase:CONCEPT_PAGES,pageCount:75,
    chapters:[
@@ -469,13 +471,13 @@ const PRODUCTS=[
     {key:"final",vol:"Final",title:"종합 체크",subtitle:"마무리 체크체크",topics:["지금까지 배운 전체 유형 종합 테스트"],comment:null,videos:[{key:"final",type:"final",label:"🏆 학습영상",url:"https://youtu.be/FC4W2bRJwKc",pdfPage:65}]}
   ]},
   {key:"진단모의고사",name:"진단 모의고사",desc:"현재 수준 정밀 진단 + 분석",icon:"🔍",theme:"theme-mock",type:"mock",mockUrl:"../mock/"},
-  {key:"킬러문항",name:"킬러문항 완전 해제",desc:"최상위 킬러 유형 집중 공략",icon:"🎯",theme:"theme-killer",type:"direct",lessons:[{key:"k1",label:"킬러 유형 1",title:"킬러 유형 해제 1",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사1회",name:"실전 모의고사 1회",desc:"실전 감각 훈련 1회차",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"p1",label:"1회",title:"실전 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사2회",name:"실전 모의고사 2회",desc:"실전 감각 훈련 2회차",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"p2",label:"2회",title:"실전 모의고사 2회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사3회",name:"실전 모의고사 3회",desc:"실전 감각 훈련 3회차",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"p3",label:"3회",title:"실전 모의고사 3회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사4회",name:"실전 모의고사 4회",desc:"실전 감각 훈련 4회차",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"p4",label:"4회",title:"실전 모의고사 4회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사5회",name:"실전 모의고사 5회",desc:"실전 감각 훈련 5회차",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"p5",label:"5회",title:"실전 모의고사 5회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사6회",name:"실전 모의고사 6회",desc:"실전 감각 훈련 6회차",icon:"📝",theme:"theme-final",type:"direct",lessons:[{key:"p6",label:"6회",title:"실전 모의고사 6회",type:"concept",url:"",pdfPage:1}]},
+  {key:"킬러문항",name:"킬러문항 완전 해제",desc:"최상위 킬러 유형 집중 공략",icon:"🎯",theme:"theme-killer",type:"direct",pdf:KILLER_PDF,pdfTitle:"필즈 대비 킬러문항 해제",lessons:[{key:"k1",label:"킬러 유형 1",title:"킬러 유형 해제 1",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사1회",name:"실전 모의고사 1회",desc:"6세 선발 모의고사 세트 1회차",icon:"📝",theme:"theme-final",type:"direct",pdf:MOCK_SET_PDF,pdfTitle:"필즈 더 클래식 6세 선발 모의고사 SET",lessons:[{key:"p1",label:"1회",title:"실전 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사2회",name:"실전 모의고사 2회",desc:"6세 선발 모의고사 세트 2회차",icon:"📝",theme:"theme-final",type:"direct",pdf:MOCK_SET_PDF,pdfTitle:"필즈 더 클래식 6세 선발 모의고사 SET",lessons:[{key:"p2",label:"2회",title:"실전 모의고사 2회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사3회",name:"실전 모의고사 3회",desc:"6세 선발 모의고사 세트 3회차",icon:"📝",theme:"theme-final",type:"direct",pdf:MOCK_SET_PDF,pdfTitle:"필즈 더 클래식 6세 선발 모의고사 SET",lessons:[{key:"p3",label:"3회",title:"실전 모의고사 3회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사4회",name:"실전 모의고사 4회",desc:"6세 선발 모의고사 세트 4회차",icon:"📝",theme:"theme-final",type:"direct",pdf:MOCK_SET_PDF,pdfTitle:"필즈 더 클래식 6세 선발 모의고사 SET",lessons:[{key:"p4",label:"4회",title:"실전 모의고사 4회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사5회",name:"실전 모의고사 5회",desc:"6세 선발 모의고사 세트 5회차",icon:"📝",theme:"theme-final",type:"direct",pdf:MOCK_SET_PDF,pdfTitle:"필즈 더 클래식 6세 선발 모의고사 SET",lessons:[{key:"p5",label:"5회",title:"실전 모의고사 5회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사6회",name:"실전 모의고사 6회",desc:"6세 선발 모의고사 세트 6회차",icon:"📝",theme:"theme-final",type:"direct",pdf:MOCK_SET_PDF,pdfTitle:"필즈 더 클래식 6세 선발 모의고사 SET",lessons:[{key:"p6",label:"6회",title:"실전 모의고사 6회",type:"concept",url:"",pdfPage:1}]},
   {key:"파이널모의고사1회",name:"파이널 모의고사 1회",desc:"최종 점검 파이널 1회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
   {key:"파이널모의고사2회",name:"파이널 모의고사 2회",desc:"최종 점검 파이널 2회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi2",label:"2회",title:"파이널 모의고사 2회",type:"concept",url:"",pdfPage:1}]},
   {key:"파이널모의고사3회",name:"파이널 모의고사 3회",desc:"최종 점검 파이널 3회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi3",label:"3회",title:"파이널 모의고사 3회",type:"concept",url:"",pdfPage:1}]},
@@ -809,6 +811,11 @@ const GF={
   },
   openDirectViewer(productKey){
     const p=PRODUCTS.find(x=>x.key===productKey);if(!p)return;
+    if(p.pdf){
+      const url=`../print-viewer/?file=${encodeURIComponent(p.pdf)}&title=${encodeURIComponent(p.pdfTitle||p.name)}&student=${encodeURIComponent(S.name||'학생')}`;
+      window.open(url,"_blank","noopener");
+      return;
+    }
     S.viewerOpen=true;S.currentProduct=p;
     document.getElementById("vTitle").textContent=p.icon+" "+p.name;
     const hasVid=p.hasVideo!==false;
