@@ -363,12 +363,12 @@ const FC_DATA=window.GFIELD_FC_DATA||{};
 
 function openPrintAsset(kind){
   const assets={
-    exam:{file:'../assets/mock/필즈 대비 선발 모의고사 진단.pdf',title:'필즈 대비 선발 모의고사 진단'},
-    answer:{file:'../assets/final/필즈온라인셋트답지.pdf',title:'필즈 온라인 세트 답지'}
+    exam:{doc:'diagnostic'},
+    answer:{doc:'answer'}
   };
   const asset=assets[kind];
   if(!asset)return;
-  const url=`../print-viewer/?file=${encodeURIComponent(asset.file)}&title=${encodeURIComponent(asset.title)}&student=${encodeURIComponent(studentName||'학생')}`;
+  const url=`../print-viewer/?doc=${encodeURIComponent(asset.doc)}&student=${encodeURIComponent(studentName||'학생')}`;
   window.open(url,'_blank','noopener');
 }
 

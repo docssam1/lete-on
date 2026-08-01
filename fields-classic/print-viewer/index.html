@@ -15,7 +15,7 @@ html,body{margin:0;min-height:100%;font-family:Pretendard,sans-serif;background:
 .status{padding:22px;text-align:center;color:#64748b;font-size:13px;font-weight:800}
 .pages{width:min(980px,100%);margin:0 auto;padding:20px 12px 50px;display:grid;gap:18px}
 .page{position:relative;width:100%;background:#fff;box-shadow:0 8px 28px rgba(15,23,42,.16);overflow:hidden}
-.page canvas{display:block;width:100%;height:auto}
+.page canvas,.page img{display:block;width:100%;height:auto}
 .watermark{display:block;position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}
 .watermark span{position:absolute;left:50%;transform:translate(-50%,-50%) rotate(-32deg);font-size:34pt;font-weight:900;color:rgba(22,65,124,.14);white-space:nowrap;letter-spacing:0}
 .watermark span:nth-child(1){top:25%}.watermark span:nth-child(2){top:50%}.watermark span:nth-child(3){top:75%}
@@ -42,13 +42,12 @@ html,body{margin:0;min-height:100%;font-family:Pretendard,sans-serif;background:
 <div class="status" id="status">PDF를 불러오는 중입니다.</div>
 <main class="pages" id="pages"></main>
 
-<script type="module">
-import * as pdfjsLib from "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs";
-pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
-
+<script src="./documents.js"></script>
+<script>
 const params=new URLSearchParams(location.search);
-const file=params.get("file")||"";
-const title=(params.get("title")||"인쇄 자료").slice(0,80);
+const documentKey=params.get("doc")||"";
+const source=window.GFIELD_PRINT_DOCUMENTS?.[documentKey];
+const title=(source?.title||"인쇄 자료").slice(0,80);
 const student=(params.get("student")||"학생").trim().slice(0,30);
 const status=document.getElementById("status");
 const pages=document.getElementById("pages");
@@ -69,25 +68,27 @@ function watermark(){
 }
 
 async function render(){
-  if(!file.startsWith("../assets/")||!file.toLowerCase().endsWith(".pdf"))throw new Error("인쇄할 문서 경로가 올바르지 않습니다.");
-  const pdf=await pdfjsLib.getDocument(file).promise;
-  document.getElementById("meta").textContent=`${student} 학생 · ${pdf.numPages}쪽 · 인쇄 시 워터마크 적용`;
-  for(let number=1;number<=pdf.numPages;number++){
-    status.textContent=`${number} / ${pdf.numPages}쪽을 준비하고 있습니다.`;
-    const page=await pdf.getPage(number);
-    const base=page.getViewport({scale:1});
-    const scale=Math.min(2,1600/base.width);
-    const viewport=page.getViewport({scale});
+  if(!source)throw new Error("인쇄할 자료를 찾을 수 없습니다.");
+  document.getElementById("meta").textContent=`${student} 학생 · ${source.pageCount}쪽 · 화면 및 인쇄 워터마크 적용`;
+  const images=[];
+  for(let number=1;number<=source.pageCount;number++){
+    status.textContent=`${number} / ${source.pageCount}쪽을 준비하고 있습니다.`;
     const sheet=document.createElement("section");
     sheet.className="page";
-    const canvas=document.createElement("canvas");
-    canvas.width=Math.ceil(viewport.width);
-    canvas.height=Math.ceil(viewport.height);
-    canvas.setAttribute("aria-label",`${title} ${number}쪽`);
-    sheet.append(canvas,watermark());
+    const image=document.createElement("img");
+    image.src=`${source.pagesBase}${String(number).padStart(3,"0")}.webp`;
+    image.alt=`${title} ${number}쪽`;
+    image.decoding="async";
+    image.loading="eager";
+    sheet.append(image,watermark());
     pages.appendChild(sheet);
-    await page.render({canvasContext:canvas.getContext("2d",{alpha:false}),viewport}).promise;
+    images.push(image);
   }
+  await Promise.all(images.map(image=>new Promise((resolve,reject)=>{
+    if(image.complete&&image.naturalWidth){resolve();return;}
+    image.addEventListener("load",resolve,{once:true});
+    image.addEventListener("error",()=>reject(new Error("페이지 이미지를 불러오지 못했습니다.")),{once:true});
+  })));
   status.style.display="none";
   printBtn.disabled=false;
 }
