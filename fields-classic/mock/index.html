@@ -588,8 +588,10 @@ function submitAll(){
   BA_ORDER.forEach(b=>{const{tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)<50)insights.push({cls:'i-warn',icon:'📌',txt:`행동영역 [${BA_LBL[b]}] 정답률 ${pct(ok,tot)}% — 집중 훈련이 필요합니다.`});});
   BA_ORDER.forEach(b=>{const{tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)===100)insights.push({cls:'i-ok',icon:'⭐',txt:`행동영역 [${BA_LBL[b]}] 100% 정답 — 강점 영역입니다.`});});
   const wq=QS.filter((q,i)=>!mg[i]);
-  const prescribedTypes=[...new Set((FC_DATA.prescriptions?.[nm2]||[]).map(Number)
-    .filter(id=>Number.isInteger(id)&&id>=1&&id<=25))].sort((a,b)=>a-b);
+  const prescriptionEnabled=FC_DATA.prescriptionAccess?.[nm2]===true;
+  const prescribedTypes=prescriptionEnabled
+    ? [...new Set(wq.map(q=>q.id))].sort((a,b)=>a-b)
+    : [];
   const prescriptionTypes=prescribedTypes.join(',');
   const prescriptionUrl=`../prescription/?student=${encodeURIComponent(nm2)}&types=${prescriptionTypes}`;
   document.getElementById('scoreSum').innerHTML=`<span class="sc-ok">✓ ${mg.filter(Boolean).length}문항</span><span class="sc-no">✗ ${mg.filter(v=>!v).length}문항</span><span>→ ${sc}점</span>`;
@@ -657,7 +659,7 @@ ${insights.length?`<div class="r-card"><div class="r-ct">심층 분석 인사이
 </div>
 ${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div></div><a class="wrong-link" href="${EXPLAIN_YT+EXPLAIN_TS[q.id]}" target="_blank" rel="noopener">▶ 해설</a></div>`).join('')}</div>`:''}
 <div class="res-actions">
-  ${prescribedTypes.length?`<a class="res-prescription" href="${prescriptionUrl}" target="_blank" rel="noopener">관리자 지정 약점 처방전 · ${prescribedTypes.length*3}문제</a>`:''}
+  ${prescribedTypes.length?`<a class="res-prescription" href="${prescriptionUrl}" target="_blank" rel="noopener">약점 처방전 · ${prescribedTypes.length}개 유형 · ${prescribedTypes.length*3}문제</a>`:''}
   <button class="res-print" onclick="window.print()">🖨 진단지 인쇄</button>
   <a class="res-consult" href="https://naver.me/Ge7B7WcJ" target="_blank" rel="noopener">상담 신청하기 →</a>
 </div>`;

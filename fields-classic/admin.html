@@ -55,17 +55,10 @@ td.name{text-align:left;font-weight:700;padding-left:10px}
 .book-row input.title{width:150px}
 .book-row input.url{flex:1;min-width:150px}
 .book-row .btn{height:30px;font-size:11px;padding:0 8px}
-.rx-student{border:1.5px solid #e2e8f0;border-radius:10px;margin-bottom:10px;background:#fbfdff;overflow:hidden}
-.rx-student summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;cursor:pointer;font-size:13px;font-weight:900;color:#16417C;list-style:none}
-.rx-student summary::-webkit-details-marker{display:none}
-.rx-count{font-size:11px;color:#64748b;font-weight:800}
-.rx-body{padding:0 14px 14px;border-top:1px solid #edf2f7}
-.rx-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:12px 0}
-.rx-chip{min-height:38px;border:1.5px solid #dbe4ee;border-radius:7px;background:#fff;color:#475569;font-size:10.5px;font-weight:800;cursor:pointer;padding:5px;line-height:1.25}
-.rx-chip.on{background:#16417C;border-color:#16417C;color:#fff}
-.rx-preview{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 12px;border:1.5px solid #c89b51;border-radius:7px;background:#fff8e9;color:#16417C;font-size:11px;font-weight:900;text-decoration:none}
-.rx-preview.disabled{pointer-events:none;opacity:.45}
-@media(max-width:720px){.rx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.rx-student{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1.5px solid #e2e8f0;border-radius:10px;margin-bottom:8px;padding:11px 14px;background:#fbfdff}
+.rx-name{font-size:13px;font-weight:900;color:#16417C}
+.rx-toggle{min-width:126px;height:34px;border:1.5px solid #dbe4ee;border-radius:7px;background:#fff;color:#64748b;font-size:11px;font-weight:900;cursor:pointer}
+.rx-toggle.on{background:#16417C;border-color:#16417C;color:#fff}
 </style>
 </head>
 <body>
@@ -108,9 +101,9 @@ td.name{text-align:left;font-weight:700;padding-left:10px}
 
 <!-- 학생별 약점 처방 -->
 <div class="card">
-  <h2>🩺 학생별 약점 처방 유형</h2>
+  <h2>🩺 학생별 약점 처방전 제공</h2>
   <div style="font-size:11px;color:#64748b;margin-bottom:12px">
-    처방을 희망한 학생만 열어 유형을 선택하세요. 유형마다 검수 완료 문제 3개가 제공됩니다.
+    처방을 희망한 학생만 켜주세요. 진단에서 틀린 유형마다 검수 완료 문제 3개가 자동 제공됩니다.
   </div>
   <div id="prescription-list"></div>
 </div>
@@ -138,7 +131,6 @@ td.name{text-align:left;font-weight:700;padding-left:10px}
 </div>
 
 <script src="./data.js"></script>
-<script src="./problem-bank/prescription/prescription-data.js"></script>
 <script>
 const REPO = "docssam1/lete-on";
 const FILE_PATH = "fields-classic/data.js";
@@ -172,13 +164,9 @@ let S = window.GFIELD_FC_DATA || {
   archiveFolders: [],           // ["약점유형 보충자료", ...]
   archiveAccess: {},            // { "폴더명": ["*"] 또는 ["학생명",...] }
   books: [],                    // [{folder, title, pdf, video, date}]
-  prescriptions: {}            // {"학생 이름":[1,4,25]}
+  prescriptionAccess: {}       // {"학생 이름":true}
 };
-S.prescriptions = S.prescriptions || {};
-
-const PRESCRIPTION_TYPES = Object.entries(window.PRESCRIPTION_BANK?.types||{})
-  .map(([id,type])=>({id:Number(id),title:type.title}))
-  .sort((a,b)=>a.id-b.id);
+S.prescriptionAccess = S.prescriptionAccess || {};
 
 function genCode(){
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXY23456789'; // 헷갈리는 문자(0,O,1,I) 제외
@@ -201,7 +189,7 @@ function ensureStudent(name){
   if(!S.attendance[name]) S.attendance[name] = [];
   if(!S.studentType[name]) S.studentType[name] = 'internal';
   if(!S.studentCode[name]) S.studentCode[name] = genCode();
-  if(!Array.isArray(S.prescriptions[name])) S.prescriptions[name] = [];
+  if(typeof S.prescriptionAccess[name] !== 'boolean') S.prescriptionAccess[name] = false;
 }
 
 function renderMatrix(){
@@ -225,18 +213,9 @@ function renderMatrix(){
   document.getElementById('matrix').innerHTML = html;
 }
 
-function prescriptionArr(name){
+function togglePrescriptionAccess(name){
   ensureStudent(name);
-  S.prescriptions[name] = [...new Set(S.prescriptions[name].map(Number)
-    .filter(id=>Number.isInteger(id)&&id>=1&&id<=25))].sort((a,b)=>a-b);
-  return S.prescriptions[name];
-}
-
-function togglePrescription(name,id){
-  const arr=prescriptionArr(name);
-  const i=arr.indexOf(id);
-  if(i>=0)arr.splice(i,1);else arr.push(id);
-  arr.sort((a,b)=>a-b);
+  S.prescriptionAccess[name]=!S.prescriptionAccess[name];
   renderPrescriptions();
   dirty();
 }
@@ -245,15 +224,9 @@ function renderPrescriptions(){
   const root=document.getElementById('prescription-list');
   if(!S.students.length){root.innerHTML='<div style="font-size:12px;color:#94a3b8">학생을 먼저 추가해 주세요.</div>';return;}
   root.innerHTML=S.students.map(name=>{
-    const selected=prescriptionArr(name);
-    const preview=`./prescription/?student=${encodeURIComponent(name)}&types=${selected.join(',')}`;
-    return `<details class="rx-student">
-      <summary><span>${esc(name)} 학생</span><span class="rx-count">${selected.length}개 유형 · ${selected.length*3}문제</span></summary>
-      <div class="rx-body">
-        <div class="rx-grid">${PRESCRIPTION_TYPES.map(type=>`<button type="button" class="rx-chip ${selected.includes(type.id)?'on':''}" onclick='togglePrescription(${JSON.stringify(name)},${type.id})'>Q${type.id}<br>${type.title}</button>`).join('')}</div>
-        <a class="rx-preview ${selected.length?'':'disabled'}" href="${preview}" target="_blank" rel="noopener">처방전 미리보기</a>
-      </div>
-    </details>`;
+    ensureStudent(name);
+    const enabled=S.prescriptionAccess[name];
+    return `<div class="rx-student"><span class="rx-name">${esc(name)} 학생</span><button type="button" class="rx-toggle ${enabled?'on':''}" onclick='togglePrescriptionAccess(${JSON.stringify(name)})'>${enabled?'처방전 제공':'처방전 미제공'}</button></div>`;
   }).join('');
 }
 
@@ -440,7 +413,7 @@ function removeStudent(name){
   S.students = S.students.filter(s => s !== name);
   delete S.attendance[name];
   delete S.studentType[name];
-  delete S.prescriptions[name];
+  delete S.prescriptionAccess[name];
   renderMatrix();
   renderPrescriptions();
   dirty();
