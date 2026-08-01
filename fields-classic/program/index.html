@@ -332,6 +332,21 @@ body.in-viewer{overflow:hidden}
 .chapter-back-fancy{background:#fff;border-color:rgba(20,40,62,.13);color:#627187;box-shadow:0 2px 3px -1px rgba(20,40,62,.08)}.chapter-back-fancy:hover{background:#fff9e8}
 #commentModal{background:rgba(16,43,70,.28)}.modal-card{background:linear-gradient(180deg,#fff,#f2f6f9);border-color:rgba(20,40,62,.13);box-shadow:0 30px 60px rgba(20,40,62,.24),inset 0 1px 0 #fff}.modal-topics{background:#eef3f7;border-color:rgba(20,40,62,.1)}.modal-comment{background:#fff9e8}.modal-comment p{color:#52647a}.modal-close{background:#e9eef3;border-color:rgba(20,40,62,.12);color:#627187}
 .tl-item.locked .tl-line{background:rgba(20,40,62,.12)}.tl-item.locked .tl-node{background:#e5ebf0;border-color:#c4cdd6;color:#7c8997}.tl-item.current .tl-card{background:linear-gradient(160deg,#fff9e8,#fff);box-shadow:0 12px 24px rgba(20,40,62,.12)}.tl-status.locked{background:#e5ebf0;color:#7c8997;border-color:#c4cdd6}.view-toggle button{background:#eef3f7;border-color:rgba(20,40,62,.14)}
+
+/* Stronger type scale for parents and students scanning the library. */
+#gate .gate-title,#app .dash-title,#app .program-panel-title,#app .concept-detail-title,#app .shelf-section-title,#commentModal .modal-title{font-family:'Noto Sans KR',sans-serif;font-weight:900;letter-spacing:0}
+.gate-tag{font-size:11px;font-weight:900}.gate-title{font-size:30px;line-height:1.3;margin-bottom:10px}.gate-desc{font-size:14px;font-weight:700;line-height:1.65;margin-bottom:24px}.gate-input{height:50px;font-size:16px;font-weight:900}.gate-input::placeholder{font-size:14px;font-weight:700}.gate-btn{height:50px;font-size:16px}
+.header-badge{font-size:11px}.header-student{font-size:13px;font-weight:700}.header-logout{font-size:12px;font-weight:800}
+.dash-eyebrow{font-size:11px}.dash-title{font-size:clamp(28px,4vw,44px);font-weight:900}.dash-sub{font-size:14px;font-weight:700}.dash-sub:empty{display:none}
+.program-menu-card{min-height:80px}.pm-title{font-size:15px;font-weight:900;line-height:1.35}.pm-sub{font-size:11px;font-weight:700;line-height:1.45}
+.program-panel-kicker{font-size:11px}.program-panel-title{font-size:clamp(28px,3vw,38px)}.program-panel-desc{font-size:13px;font-weight:700;line-height:1.7}
+.concept-detail-kicker{font-size:11px}.concept-detail-title{font-size:clamp(28px,3vw,38px)}.concept-topic-list li{font-size:12px}.concept-detail-copy{font-size:13px;font-weight:700}.concept-start{font-size:13px}
+.shelf-vol-text{font-size:10px}.shelf-title-text{font-size:14px;font-weight:900}.shelf-videos{font-size:11px;font-weight:700}
+.program-run-card{min-height:150px}.program-run-name{font-size:15px}.program-run-desc{font-size:12px;font-weight:700;line-height:1.55}.program-lock{font-size:11px}
+.product-name{font-size:15px}.product-desc{font-size:12px;font-weight:700}.tl-name{font-size:16px}.tl-desc{font-size:12px;font-weight:700}
+@media(max-width:900px) and (orientation:landscape){
+  .dash-title{font-size:24px}.dash-eyebrow{font-size:10px}.program-menu-card{min-height:66px}.pm-title{font-size:12px}.pm-sub{font-size:9px;line-height:1.35}.program-panel-title{font-size:23px}.program-panel-desc{font-size:10px;line-height:1.5}.program-book-row .shelf-title-text{font-size:11px}.program-book-row .shelf-videos{font-size:9px}.program-run-name{font-size:13px}.program-run-desc{font-size:10px}
+}
 </style>
 <script src="../data.js"></script>
 </head>
@@ -348,7 +363,6 @@ body.in-viewer{overflow:hidden}
       <input class="gate-input" id="gName" type="text" autocomplete="off" placeholder="학생 이름">
       <button class="gate-btn" onclick="GF.login()">입장하기 →</button>
       <div class="gate-error" id="gErr"></div>
-      <p class="gate-note">승인번호는 구매 후 카카오톡으로 전달됩니다.<br>이름은 인쇄 워터마크에만 사용됩니다.</p>
     </div>
   </div>
 </div>
@@ -394,7 +408,7 @@ body.in-viewer{overflow:hidden}
     <div class="dash-hero">
       <div class="dash-eyebrow">GFIELD GIFTED EDUCATION</div>
       <h1 class="dash-title" id="dashTitle">필즈 더 클래식<br><em>대비 과정 서재</em></h1>
-      <p class="dash-sub" id="dashSub">구매하신 프로그램을 선택해 학습을 시작하세요</p>
+      <p class="dash-sub" id="dashSub"></p>
     </div>
     <div id="mainGrid" class="products-grid"></div>
     <div id="timelineView" style="display:none"></div>
@@ -902,7 +916,7 @@ Object.assign(GF,{
     document.getElementById("chapterView").style.display="none";
     document.getElementById("timelineView").style.display="none";
     document.getElementById("dashTitle").innerHTML='필즈 더 클래식<br><em>프로그램 서재</em>';
-    document.getElementById("dashSub").textContent="전체 프로그램은 보이고, 구매한 항목만 열립니다.";
+    document.getElementById("dashSub").textContent="";
     document.getElementById("headerBadge").textContent="필즈 프로그램 서재";
     const groups=programGroups(),active=groups[0]?.id||"concept";
     const menu=groups.map(g=>`<button class="program-menu-card ${g.id===active?"active":""}" data-section="${g.id}" onclick="GF.selectProgramSection('${g.id}')"><span class="pm-icon">${h(g.icon)}</span><span><span class="pm-title">${h(g.title)}</span><span class="pm-sub">${h(g.sub)}${sectionUnlocked(g)?"":" · 열람 제한"}</span></span></button>`).join("");
