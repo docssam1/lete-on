@@ -256,6 +256,9 @@ function setMode(mode) {
   renderAnswers();
   renderNumberPad();
   updatePrompt();
+  // Switching into the top-board view can change its box (model-prompt no
+  // longer overlaps it), so re-measure once that layout settles.
+  requestAnimationFrame(fitTopBoard);
   controls.enabled = true;
   $$(".camera-tools button").forEach((button) => {
     button.disabled = false;
@@ -290,7 +293,8 @@ function selectTotal() {
 function renderTopBoard() {
   const [width, depth] = currentProblem().board;
   elements.topBoard.style.setProperty("--cols", width);
-  elements.topBoard.style.setProperty("--cell-size", width >= 4 ? "20px" : width === 3 ? "26px" : "34px");
+  elements.topBoard.dataset.cols = String(width);
+  elements.topBoard.dataset.rows = String(depth);
   elements.topBoard.replaceChildren();
   for (let z = 0; z < depth; z += 1) {
     for (let x = 0; x < width; x += 1) {
@@ -319,6 +323,27 @@ function renderTopBoard() {
       elements.topBoard.append(button);
     }
   }
+  // Cells are built at their natural size first; measure once layout settles
+  // so fitTopBoard reads real box dimensions instead of a pre-paint 0x0.
+  requestAnimationFrame(fitTopBoard);
+}
+
+// Picks the largest square cell that fits the measured top-board box, so
+// kids get finger-sized targets instead of the old fixed 20-34px cells.
+function fitTopBoard() {
+  const board = elements.topBoard;
+  if (board.hidden || !board.clientWidth || !board.clientHeight) return;
+  const cols = Number(board.dataset.cols) || 1;
+  const rows = Number(board.dataset.rows) || 1;
+  const computed = getComputedStyle(board);
+  const padX = parseFloat(computed.paddingLeft) + parseFloat(computed.paddingRight);
+  const padY = parseFloat(computed.paddingTop) + parseFloat(computed.paddingBottom);
+  const gap = parseFloat(computed.gap || computed.columnGap) || 0;
+  const cellFromWidth = (board.clientWidth - padX - (cols - 1) * gap) / cols;
+  const cellFromHeight = (board.clientHeight - padY - (rows - 1) * gap) / rows;
+  let cell = Math.floor(Math.min(cellFromWidth, cellFromHeight));
+  cell = Math.max(24, Math.min(72, cell));
+  board.style.setProperty("--cell-size", `${cell}px`);
 }
 
 function renderAnswers() {
@@ -894,6 +919,9 @@ renderer.domElement.addEventListener("pointerup", (event) => {
 });
 
 new ResizeObserver(resizeScene).observe(elements.scene);
+// Separate observer for the top-board: orientation changes and on-screen
+// keyboard/toolbar shifts resize it independently of the 3D scene.
+new ResizeObserver(fitTopBoard).observe(elements.topBoard);
 function animate() {
   // Gently drifting sun, matching copy-build's living "sunlight".
   const time = performance.now() * 0.001;
