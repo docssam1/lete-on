@@ -4,16 +4,16 @@
 
   var TEXT = {
     ko: {
-      title: "앱처럼 설치하기",
-      body: "홈 화면에 추가하면 주소창 없이 앱처럼 전체 화면으로 실행할 수 있어요.",
-      iosBody: "하단의 공유 버튼을 누른 뒤 '홈 화면에 추가'를 선택해 주세요.",
-      inAppTitle: "Chrome으로 열어 주세요",
-      inAppBody: "카카오톡 안에서는 앱 설치가 되지 않습니다. 오른쪽 위 메뉴에서 Chrome으로 열어 주세요.",
-      androidGuide: "Chrome 오른쪽 위 메뉴에서 '앱 설치'를 눌러 주세요.",
-      install: "설치하기",
-      later: "다음에",
-      close: "확인",
-      fullscreen: "전체 화면"
+      title: "&#92;uC571&#92;uCC98&#92;uB7FC &#92;uC124&#92;uCE58&#92;uD558&#92;uAE30",
+      body: "&#92;uD648 &#92;uD654&#92;uBA74&#92;uC5D0 &#92;uCD94&#92;uAC00&#92;uD558&#92;uBA74 &#92;uC8FC&#92;uC18C&#92;uCC3D &#92;uC5C6&#92;uC774 &#92;uC571&#92;uCC98&#92;uB7FC &#92;uC804&#92;uCCB4 &#92;uD654&#92;uBA74&#92;uC73C&#92;uB85C &#92;uC2E4&#92;uD589&#92;uD560 &#92;uC218 &#92;uC788&#92;uC5B4&#92;uC694.",
+      iosBody: "&#92;uD558&#92;uB2E8&#92;uC758 &#92;uACF5&#92;uC720 &#92;uBC84&#92;uD2BC&#92;uC744 &#92;uB204&#92;uB978 &#92;uB4A4 '&#92;uD648 &#92;uD654&#92;uBA74&#92;uC5D0 &#92;uCD94&#92;uAC00'&#92;uB97C &#92;uC120&#92;uD0DD&#92;uD574 &#92;uC8FC&#92;uC138&#92;uC694.",
+      inAppTitle: "Chrome&#92;uC73C&#92;uB85C &#92;uC5F4&#92;uC5B4 &#92;uC8FC&#92;uC138&#92;uC694",
+      inAppBody: "&#92;uCE74&#92;uCE74&#92;uC624&#92;uD1A1 &#92;uC548&#92;uC5D0&#92;uC11C&#92;uB294 &#92;uC571 &#92;uC124&#92;uCE58&#92;uAC00 &#92;uB418&#92;uC9C0 &#92;uC54A&#92;uC2B5&#92;uB2C8&#92;uB2E4. &#92;uC624&#92;uB978&#92;uCABD &#92;uC704 &#92;uBA54&#92;uB274&#92;uC5D0&#92;uC11C Chrome&#92;uC73C&#92;uB85C &#92;uC5F4&#92;uC5B4 &#92;uC8FC&#92;uC138&#92;uC694.",
+      androidGuide: "Chrome &#92;uC624&#92;uB978&#92;uCABD &#92;uC704 &#92;uBA54&#92;uB274&#92;uC5D0&#92;uC11C '&#92;uC571 &#92;uC124&#92;uCE58'&#92;uB97C &#92;uB20C&#92;uB7EC &#92;uC8FC&#92;uC138&#92;uC694.",
+      install: "&#92;uC124&#92;uCE58&#92;uD558&#92;uAE30",
+      later: "&#92;uB2E4&#92;uC74C&#92;uC5D0",
+      close: "&#92;uD655&#92;uC778",
+      fullscreen: "&#92;uC804&#92;uCCB4 &#92;uD654&#92;uBA74"
     },
     en: {
       title: "Install like an app",
