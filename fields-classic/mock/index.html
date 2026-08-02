@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>필즈 선발 대비 모의고사 | G-FIELD</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../data.js"></script>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
 </script>
@@ -49,6 +50,13 @@ html,body{font-family:'Pretendard',sans-serif;background:var(--g-bg);color:var(-
 .header-sub{font-size:11px;color:var(--g-muted);font-weight:600}
 .header-name{font-size:13px;font-weight:900;color:var(--g-blue);background:rgba(22,65,124,.08);padding:5px 12px;border-radius:20px}
 main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
+.exam-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:22px}
+.exam-action{min-height:48px;border:1.5px solid #cbd7e5;border-radius:10px;background:#fff;color:var(--g-blue);font-family:inherit;font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;padding:8px 10px;box-shadow:var(--sh-sm)}
+.exam-action.primary{background:var(--g-blue);border-color:var(--g-blue);color:#fff}
+.answer-modal{position:fixed;inset:0;z-index:80;background:rgba(7,17,31,.68);padding:20px;display:none;align-items:center;justify-content:center}
+.answer-modal.show{display:flex}.answer-sheet{width:min(100%,880px);max-height:calc(100vh - 40px);overflow:auto;position:relative;background:#fff;border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.35);padding:24px}.answer-watermark{position:absolute;inset:0;overflow:hidden;pointer-events:none}.answer-watermark span{position:absolute;left:50%;transform:translate(-50%,-50%) rotate(-28deg);color:rgba(22,65,124,.07);font-size:32px;font-weight:900;white-space:nowrap}.answer-watermark span:nth-child(1){top:25%}.answer-watermark span:nth-child(2){top:50%}.answer-watermark span:nth-child(3){top:75%}.answer-sheet>*:not(.answer-watermark){position:relative}.answer-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}.answer-sheet-title{font-size:19px;font-weight:900;color:var(--g-blue)}.answer-sheet-sub{margin-top:5px;color:var(--g-muted);font-size:12px;font-weight:700}.answer-section-title{margin:20px 0 8px;color:var(--g-blue);font-size:13px;font-weight:900}.answer-section-title:first-of-type{margin-top:0}.answer-close{width:34px;height:34px;border:1px solid #cbd7e5;border-radius:8px;background:#fff;color:var(--g-blue);font-size:20px;font-weight:900;cursor:pointer}.detail-link{display:inline-flex;align-items:center;justify-content:center;padding:4px 7px;border-radius:6px;background:rgba(22,65,124,.08);color:var(--g-blue);font-size:9.5px;font-weight:900;text-decoration:none;white-space:nowrap}.detail-link:hover{background:var(--g-blue);color:#fff}
+.exam-action.gold{background:#fff8e9;border-color:#d5ad67;color:#173f70}
+.exam-action:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(22,65,124,.13)}
 .mode-select{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
 .mode-card{background:#fff;border:2.5px solid #e2e8f0;border-radius:18px;padding:20px 16px;cursor:pointer;transition:all .2s;text-align:center}
 .mode-card:hover{border-color:var(--g-blue);background:rgba(22,65,124,.03)}
@@ -71,6 +79,9 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 .ocr-btn{padding:7px 14px;background:linear-gradient(135deg,var(--g-gold),#f5d9a8);color:var(--g-blue);font-size:11px;font-weight:900;border-radius:20px;border:none;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap}
 .q-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:6px}
 @media(max-width:600px){.q-grid{grid-template-columns:repeat(5,1fr);gap:5px}}
+@media(max-width:600px){#cGrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:600px){.exam-actions{grid-template-columns:1fr}.exam-action{min-height:44px}}
+@media(max-width:600px){.answer-modal{padding:10px}.answer-sheet{max-height:calc(100vh - 20px);padding:16px}.answer-sheet-title{font-size:16px}}
 .q-card{background:#fff;border:2px solid #e8edf5;border-radius:10px;padding:6px;transition:all .2s;position:relative;overflow:hidden;cursor:pointer;user-select:none}
 .q-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .2s}
 .q-card.ok{border-color:rgba(34,197,94,.4);background:var(--ok-bg)}.q-card.ok::before{background:var(--ok);opacity:1}
@@ -161,7 +172,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 .calc-lv-chip{display:inline-block;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(22,65,124,.08);border:1px solid rgba(22,65,124,.2);color:var(--g-blue);margin-left:6px}
 .r-comment{font-size:12px;color:#374151;line-height:1.8;background:rgba(22,65,124,.04);border-left:3px solid var(--g-blue);padding:12px 14px;border-radius:0 10px 10px 0;margin-top:10px}
 .wrong-item{background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.12);border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
-.wrong-left{flex:1}.wrong-num{font-size:11px;font-weight:900;color:var(--no)}.wrong-topic{font-size:12px;font-weight:700;color:var(--g-ink);margin:2px 0}.wrong-area{font-size:10px;color:var(--g-muted)}
+.wrong-left{flex:1}.wrong-num{font-size:11px;font-weight:900;color:var(--no)}.wrong-topic{font-size:12px;font-weight:700;color:var(--g-ink);margin:2px 0}.wrong-area{font-size:10px;color:var(--g-muted)}.wrong-key{margin-top:5px;color:#475569;font-size:10px;line-height:1.55}
 .wrong-link{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;background:var(--g-blue);color:#fff;text-decoration:none;font-size:11px;font-weight:900;white-space:nowrap;flex-shrink:0}
 .s-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1.5px solid #f1f5f9}
 .s-item:last-child{border-bottom:none}
@@ -169,6 +180,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 .s-link{font-size:11px;font-weight:900;color:var(--g-blue);background:rgba(22,65,124,.08);border:1.5px solid rgba(22,65,124,.2);padding:5px 12px;border-radius:8px;text-decoration:none;white-space:nowrap}
 .res-actions{display:flex;gap:10px;padding:14px 0;flex-wrap:wrap}
 .res-print{flex:1;height:48px;background:var(--grad-brand);color:#fff;font-size:14px;font-weight:900;font-family:Pretendard,sans-serif;border:none;border-radius:12px;cursor:pointer}
+.res-prescription{flex:1;min-width:180px;height:48px;background:#eac996;color:#173f70;font-size:14px;font-weight:900;font-family:Pretendard,sans-serif;border:1px solid #c89b51;border-radius:12px;text-decoration:none;display:flex;align-items:center;justify-content:center}
 .res-consult{flex:1;height:48px;background:#fff;border:2px solid #e2e8f0;color:var(--g-muted);font-size:13px;font-weight:700;font-family:Pretendard,sans-serif;border-radius:12px;text-decoration:none;display:flex;align-items:center;justify-content:center}
 #ocrModal{display:none;position:fixed;inset:0;z-index:9000;background:rgba(15,23,42,.7);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
 #ocrModal.show{display:flex}
@@ -183,7 +195,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 .ocr-close-btn{width:100%;height:44px;background:none;border:2px solid #e2e8f0;border-radius:12px;color:var(--g-muted);font-size:14px;font-weight:700;font-family:Pretendard,sans-serif;cursor:pointer}
 @media print{
   body{background:#fff!important}
-  #accessGate,.premium-header,.mode-select,.ocr-banner,.submit-area,.res-actions,#ocrModal,.wrong-link,.s-link{display:none!important}
+  #accessGate,.premium-header,.exam-actions,.mode-select,.ocr-banner,.submit-area,.res-actions,#ocrModal,.answer-modal,.wrong-link,.s-link{display:none!important}
   #result{display:block!important;margin:0!important}
   .res-hero{background:#16417C!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .r-card{background:#f9f9f9!important;border-color:#e0e0e0!important}
@@ -234,7 +246,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
   font-size:14px;font-weight:700;font-family:Pretendard,sans-serif;border-radius:12px;cursor:pointer;margin-top:8px}
 .similar-hint{font-size:11px;color:var(--g-muted);margin-top:6px;display:none}
 
-/* ── 약점 유형 연습하기 ── */
+/* Legacy practice styles; no user entry point is rendered. */
 .pt-select{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px}
 .pt-chip{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;border:1.5px solid rgba(22,65,124,.18);background:#fff;font-size:12px;font-weight:800;color:#16417C;cursor:pointer;user-select:none;transition:.15s}
 .pt-chip.on{background:#16417C;color:#fff;border-color:#16417C}
@@ -296,27 +308,6 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
   </div>
 </div>
 
-<div id="similarModal">
-  <div class="similar-card">
-    <div class="similar-header">
-      <div class="similar-title" id="similarModalTitle">유사문제</div>
-      <button class="similar-close" onclick="closeSimilar()">✕</button>
-    </div>
-    <div class="similar-lv">
-      <button class="lv-chip active" onclick="setSimilarLv(1)">기본</button>
-      <button class="lv-chip" onclick="setSimilarLv(2)">심화</button>
-      <button class="lv-chip" onclick="setSimilarLv(3)">최고</button>
-    </div>
-    <div class="similar-problem" id="similarProblemArea">
-      <div class="similar-problem-text" id="similarProblemText">문제 생성 중...</div>
-    </div>
-    <input class="similar-input" type="text" id="similarAnswer" placeholder="답을 입력하세요" onkeydown="if(event.key==='Enter')checkSimilar()">
-    <button class="similar-check-btn" onclick="checkSimilar()">채점하기</button>
-    <div class="similar-result" id="similarResult"></div>
-    <div class="similar-hint" id="similarHint"></div>
-    <button class="similar-next" id="similarNextBtn" onclick="nextSimilar()" style="display:none">다음 문제 →</button>
-  </div>
-</div>
 <header class="premium-header" id="mainHeader" style="display:none">
   <div class="header-inner">
     <div>
@@ -327,6 +318,11 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
   </div>
 </header>
 <main id="mainContent" style="display:none">
+  <div class="exam-actions" aria-label="진단 자료">
+    <button class="exam-action primary" type="button" onclick="openPrintAsset('exam')">🖨 모의고사 시험지 인쇄</button>
+    <button class="exam-action gold" type="button" onclick="openAnswerSheet()">☑ 답안 보기</button>
+    <button class="exam-action" type="button" onclick="openFullVideo()">▶ 전체 수업 영상 보기</button>
+  </div>
   <div class="sec">입력 방식 선택</div>
   <div class="mode-select" id="modeSelect">
     <div class="mode-card active" id="modeOx" onclick="setMode('ox')">
@@ -362,10 +358,53 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
   </div>
   <div id="result"></div>
 </main>
+<div class="answer-modal" id="answerModal" role="dialog" aria-modal="true" aria-labelledby="answerSheetTitle">
+  <div class="answer-sheet" id="answerSheet">
+    <div class="answer-watermark" id="answerWatermark" aria-hidden="true"></div>
+    <div class="answer-sheet-head"><div><div class="answer-sheet-title" id="answerSheetTitle">진단 모의고사 정답 · 해설</div><div class="answer-sheet-sub">문항별 정답을 확인하고 해설 영상을 볼 수 있습니다.</div></div><button class="answer-close" type="button" onclick="closeAnswerSheet()" aria-label="닫기">×</button></div>
+    <div class="answer-section-title">사고력 정답 · 해설</div>
+    <div style="overflow-x:auto"><table class="detail-table" id="answerTable"></table></div>
+    <div class="answer-section-title">연산 정답</div>
+    <div style="overflow-x:auto"><table class="detail-table" id="calculationAnswerTable"></table></div>
+  </div>
+</div>
 <script>
 (function(){
 let studentName='';
 let inputMode='ox';
+const FC_DATA=window.GFIELD_FC_DATA||{};
+
+function openPrintAsset(kind){
+  const assets={
+    exam:{doc:'diagnostic'}
+  };
+  const asset=assets[kind];
+  if(!asset)return;
+  const url=`../print-viewer/?doc=${encodeURIComponent(asset.doc)}&student=${encodeURIComponent(studentName||'학생')}`;
+  window.open(url,'_blank','noopener');
+}
+
+function openFullVideo(){
+  const url=`../video-viewer/?video=${encodeURIComponent('https://www.youtube.com/watch?v=DRVcC6pCZcw')}&title=${encodeURIComponent('필즈 대비 선발 모의고사 전체 풀이')}&student=${encodeURIComponent(studentName||'학생')}`;
+  window.open(url,'_blank','noopener');
+}
+
+function explanationUrl(questionId){
+  const seconds=Number((EXPLAIN_TS[questionId]||'').match(/\d+/)?.[0]||0);
+  return `../video-viewer/?video=${encodeURIComponent(EXPLAIN_YT)}&start=${seconds}&title=${encodeURIComponent(`Q${questionId} 해설`)}&student=${encodeURIComponent(studentName||'학생')}`;
+}
+
+function openAnswerSheet(){
+  const table=document.getElementById('answerTable');
+  table.innerHTML=`<tr><th>번호</th><th>정답</th><th>분류</th><th>유형</th><th>풀이 핵심</th><th>해설</th></tr>${QS.map(q=>`<tr><td>${q.id}</td><td class="dim">${q.a}</td><td class="dim">${q.t}</td><td class="tp-cell">${q.tp}</td><td style="text-align:left;min-width:220px">${keyPoint(q)}</td><td><a class="detail-link" href="${explanationUrl(q.id)}" target="_blank" rel="noopener">▶ 해설</a></td></tr>`).join('')}`;
+  const calculations=[...CA.map((q,i)=>({...q,no:`덧셈 ${i+1}`})),...CS.map((q,i)=>({...q,no:`뺄셈 ${i+1}`}))];
+  document.getElementById('calculationAnswerTable').innerHTML=`<tr><th>구분</th><th>식</th><th>정답</th><th>유형</th></tr>${calculations.map(q=>`<tr><td>${q.no}</td><td style="font-weight:900">${q.e}</td><td class="dim">${q.a}</td><td class="tp-cell">${q.tp}</td></tr>`).join('')}`;
+  const watermark=document.getElementById('answerWatermark');
+  watermark.innerHTML='';
+  for(let row=0;row<3;row++){const label=document.createElement('span');label.textContent=`${studentName||'학생'} 학생 · GFIELD`;watermark.appendChild(label);}
+  document.getElementById('answerModal').classList.add('show');
+}
+function closeAnswerSheet(){document.getElementById('answerModal').classList.remove('show');}
 
 function enterGate(){
   const v=document.getElementById('nameInp').value.trim();
@@ -385,7 +424,14 @@ function setMode(m){
 }
 function openOcr(){document.getElementById('ocrModal').classList.add('show');}
 function closeOcr(){document.getElementById('ocrModal').classList.remove('show');}
-window.enterGate=enterGate;window.setMode=setMode;window.openOcr=openOcr;window.closeOcr=closeOcr;
+window.enterGate=enterGate;window.setMode=setMode;window.openOcr=openOcr;window.closeOcr=closeOcr;window.openPrintAsset=openPrintAsset;window.openFullVideo=openFullVideo;window.openAnswerSheet=openAnswerSheet;window.closeAnswerSheet=closeAnswerSheet;
+
+const params=new URLSearchParams(location.search);
+const presetStudent=(params.get('student')||'').trim();
+if(presetStudent){
+  document.getElementById('nameInp').value=presetStudent;
+  setTimeout(enterGate,0);
+}
 
 const OX_STATE={};
 function setOX(i){
@@ -404,8 +450,8 @@ function setCOX(i){
 }
 window.setOX=setOX;window.setCOX=setCOX;
 
-const YT='https://www.youtube.com/watch?v=DRVcC6pCZcw';
-const TS={1:'&t=9s',2:'&t=61s',3:'&t=107s',4:'&t=157s',5:'&t=205s',6:'&t=257s',7:'&t=309s',8:'&t=359s',9:'&t=415s',10:'&t=468s',11:'&t=522s',12:'&t=522s',13:'&t=577s',14:'&t=624s',15:'&t=677s',16:'&t=729s',17:'&t=775s',18:'&t=827s',19:'&t=876s',20:'&t=924s',21:'&t=980s',22:'&t=980s',23:'&t=1035s',24:'&t=1144s',25:'&t=1253s'};
+const EXPLAIN_YT='https://www.youtube.com/watch?v=DRVcC6pCZcw';
+const EXPLAIN_TS={1:'&t=9s',2:'&t=61s',3:'&t=107s',4:'&t=157s',5:'&t=205s',6:'&t=257s',7:'&t=309s',8:'&t=359s',9:'&t=415s',10:'&t=468s',11:'&t=522s',12:'&t=522s',13:'&t=577s',14:'&t=624s',15:'&t=677s',16:'&t=729s',17:'&t=775s',18:'&t=827s',19:'&t=876s',20:'&t=924s',21:'&t=980s',22:'&t=980s',23:'&t=1035s',24:'&t=1144s',25:'&t=1253s'};
 const QS=[
   {id:1,t:'식의계산',lv:'키즈 팩토',tp:'막대의 길이(수 채우기)',ba:'지문이해',a:'8',in:'num',ph:'숫자'},
   {id:2,t:'식의계산',lv:'키즈 팩토',tp:'조건에 따른 수 구하기(대화·문장제)',ba:'지문이해',a:'8',in:'num',ph:'숫자'},
@@ -433,6 +479,34 @@ const QS=[
   {id:24,t:'수',lv:'1031 입문 심화',tp:'도형이 나타낸 수',ba:'수관계',a:'15',in:'num',ph:'□값'},
   {id:25,t:'도형',lv:'1031 입문 심화',tp:'쌓기나무 규칙',ba:'대칭·공간',a:'55',in:'num',ph:'개'},
 ];
+const Q_KEYPOINTS={
+  1:'기준이 되는 막대의 길이를 1로 놓고 같은 단위로 바꿉니다.',
+  2:'문장 속 조건을 식으로 바꾼 뒤 주어진 수와 비교해 빈칸을 구합니다.',
+  3:'전체 양과 차이를 식으로 세워 두 사람의 양을 구합니다.',
+  4:'한 번 접을 때마다 겹친 장수가 2배가 되는지 확인합니다.',
+  5:'두 양의 차이와 전체 양을 함께 식으로 정리합니다.',
+  6:'앞뒤 위치를 수직선에 표시하고 사이의 사람 수를 셉니다.',
+  7:'전체 인원에서 겹치는 인원을 한 번 빼 중복을 없앱니다.',
+  8:'가벼운 것부터 기준값을 정하고 저울의 균형을 식으로 비교합니다.',
+  9:'조건을 만족하는 수를 작은 수부터 적어 누락과 중복을 확인합니다.',
+  10:'같은 모양은 같은 수로 두고 행과 열의 식을 비교합니다.',
+  11:'모양·색·개수의 반복 주기를 각각 찾아 해당 번째 수를 구합니다.',
+  12:'대칭축이나 회전 방향을 먼저 정하고 모양을 이동해 그립니다.',
+  13:'가장 단순한 식부터 같은 모양에 같은 수를 대입합니다.',
+  14:'가운데 수와 한 줄의 합 관계를 이용해 마방진을 완성합니다.',
+  15:'타고 내린 사람을 순서대로 더하고 빼며 현재 인원을 갱신합니다.',
+  16:'아래층 또는 마지막 식부터 거꾸로 계산합니다.',
+  17:'표를 만들고 한 사람·한 동물만 남도록 행과 열을 지웁니다.',
+  18:'십의 자리와 일의 자리 조건을 나누어 가능한 수를 확인합니다.',
+  19:'도형별 값을 먼저 정한 뒤 같은 도형이 있는 식에 대입합니다.',
+  20:'일의 자리부터 계산하고 10이 넘으면 받아올림을 옮깁니다.',
+  21:'화살표 방향별 증가량을 따로 확인해 기준 칸에서 이동합니다.',
+  22:'크기별 도형을 1개·2개·3개 단위로 분류해 빠짐없이 셉니다.',
+  23:'반복 묶음의 길이와 색·모양 순서를 따로 세어 해당 번째 수를 찾습니다.',
+  24:'기호의 연산 약속을 식으로 바꾼 뒤 계산합니다.',
+  25:'각 층의 높이를 적고 층별 개수를 더해 블록 수를 셉니다.'
+};
+function keyPoint(q){return Q_KEYPOINTS[q.id]||'조건을 식과 그림으로 정리한 뒤 단계별로 계산합니다.';}
 const CA=[
   {e:'5+□=13',a:'8',tp:'역연산'},{e:'8+21=□',a:'29',tp:'받아올림없음'},
   {e:'35+7=□',a:'42',tp:'받아올림'},{e:'6+18=□',a:'24',tp:'받아올림'},
@@ -463,7 +537,6 @@ const LVLS=[
   {mn:52,mx:59,lv:'주 1회 높은 반',cls:'lv-j',tx:'주 1회 높은 반 레벨이지만 시험 대비를 집중하면 주 2회도 충분히 가능한 점수입니다. 남은 기간 집중적으로 복습과 예습에 힘써 주세요. 만약 연산이 잘 되어 있고 선행이 되어 있다면 대치의 경우 1달 안에도 E1반으로 승급될 가능성이 높습니다. 개념은 알지만 시험 스킬 연습이 덜 되어 있어 시간 관리가 안 되어 있을 수도 있습니다. 연산 → 교과 → 사고력 순서로 빈 구멍이 있지는 않은지 확인해 주세요.'},
   {mn:0,mx:51,lv:'주 1회 낮은 반',cls:'lv-j',tx:'주 1회 낮은 반 레벨이지만 충분히 연습하면 주 2회도 나올 수 있습니다. 다만 아직 덜 채워진 교과·사고력 학습이 필요할 수 있습니다. 주 2회 합격하더라도 필즈와 소마를 병행하기보다는 자녀의 성향과 목표에 맞춘 학습을 권장합니다. 복습량이나 선행 학습량이 부족한 경우, 필즈와 소마를 병행하여 주 2~3일을 소비하기보다는 한 곳을 선택하여 학습에 집중하는 것이 더 효과적입니다. 한 곳에 집중한다면 소마의 챌린지 이상을 목표로 하거나, 계산력이 빠르고 발표를 좋아하며 타 학원의 선행 학습 시간을 소화할 수 있는 경우라면 필즈를 선택하는 것을 추천합니다. 교재는 키즈팩토 → 초등팩토 → 프리1031 순서로, 건너뛰지 말고 차근차근 진행해 주세요.'},
 ];
-const TV={'식의계산':{vol:'Vol.1·Vol.2',url:'https://youtu.be/7aPj5IJUzQM'},'수':{vol:'Vol.3·Vol.4',url:'https://youtu.be/mq-1VxjLzMk'},'논리추리':{vol:'Vol.2',url:'https://youtu.be/TOHw8sCumHY'},'도형':{vol:'Final',url:'https://youtu.be/FC4W2bRJwKc'},'규칙':{vol:'Vol.4',url:'https://youtu.be/neRIODxo13I'}};
 let anim=[],s12=['',''],charts=[];
 function nm(s){return String(s||'').trim().replace(/\s+/g,'').replace(/，/g,',');}
 function match(u,c){return nm(u)===nm(c);}
@@ -577,7 +650,12 @@ function submitAll(){
   BA_ORDER.forEach(b=>{const{tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)<50)insights.push({cls:'i-warn',icon:'📌',txt:`행동영역 [${BA_LBL[b]}] 정답률 ${pct(ok,tot)}% — 집중 훈련이 필요합니다.`});});
   BA_ORDER.forEach(b=>{const{tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)===100)insights.push({cls:'i-ok',icon:'⭐',txt:`행동영역 [${BA_LBL[b]}] 100% 정답 — 강점 영역입니다.`});});
   const wq=QS.filter((q,i)=>!mg[i]);
-  const weak=TY.filter(t=>ts[t].tot>0&&pct(ts[t].ok,ts[t].tot)<70);
+  const prescriptionEnabled=(FC_DATA.attendance?.[nm2]||[]).includes('진단약점클리닉');
+  const prescribedTypes=prescriptionEnabled
+    ? [...new Set(wq.map(q=>q.id))].sort((a,b)=>a-b)
+    : [];
+  const prescriptionTypes=prescribedTypes.join(',');
+  const prescriptionUrl=`../prescription/?student=${encodeURIComponent(nm2)}&types=${prescriptionTypes}`;
   document.getElementById('scoreSum').innerHTML=`<span class="sc-ok">✓ ${mg.filter(Boolean).length}문항</span><span class="sc-no">✗ ${mg.filter(v=>!v).length}문항</span><span>→ ${sc}점</span>`;
   const _now=new Date();const _mon=_now.getMonth()+1;
   const _left=Math.max(0,Math.min(5,11-_mon));
@@ -601,11 +679,11 @@ function submitAll(){
 </div>
 <div class="r-card"><div class="r-ct">문항별 상세 분석</div>
   <div style="overflow-x:auto"><table class="detail-table">
-    <tr><th>번호</th><th>정답</th>${inputMode==='subj'?'<th>학생 답안</th>':''}<th>O X</th><th>문항 수준</th><th>분류</th><th>유형</th></tr>
+    <tr><th>번호</th><th>정답</th>${inputMode==='subj'?'<th>학생 답안</th>':''}<th>O X</th><th>문항 수준</th><th>분류</th><th>유형</th><th>풀이 핵심</th><th>해설</th></tr>
     ${QS.map((q,i)=>{
       const isOk=mg[i];
       const sv=inputMode==='subj'?(getVal(i)||'—'):'';
-      return `<tr class="${isOk?'':'row-x'}"><td>${q.id}</td><td class="dim">${q.a}</td>${inputMode==='subj'?`<td>${sv==='__wrong__'?'—':sv}</td>`:''}<td class="${isOk?'d-o':'d-x'}">${isOk?'○':'✗'}</td><td class="dim">${q.lv}</td><td class="dim">${q.t}</td><td class="tp-cell">${q.tp}</td></tr>`;
+      return `<tr class="${isOk?'':'row-x'}"><td>${q.id}</td><td class="dim">${q.a}</td>${inputMode==='subj'?`<td>${sv==='__wrong__'?'—':sv}</td>`:''}<td class="${isOk?'d-o':'d-x'}">${isOk?'○':'✗'}</td><td class="dim">${q.lv}</td><td class="dim">${q.t}</td><td class="tp-cell">${q.tp}</td><td style="text-align:left;min-width:220px">${keyPoint(q)}</td><td><a class="detail-link" href="${explanationUrl(q.id)}" target="_blank" rel="noopener">▶ 해설</a></td></tr>`;
     }).join('')}
   </table></div>
 </div>
@@ -641,18 +719,11 @@ ${insights.length?`<div class="r-card"><div class="r-ct">심층 분석 인사이
 <div class="strategy-card"><div class="strategy-title">학습 전략</div>
   <div class="strategy-body">안녕하세요. 지필드 영재교육입니다. <b>${nm2}</b> 학생의 필즈 대비 선발 모의 진단 레벨은 <b>${sc}점</b>으로 <b>${li.lv}</b>입니다.<br><br>${li.tx}<br><br>${CD.comment}<br><br>당부 드리고 싶은 건 학원이 중요한 것이 아니라 <b>연산 → 교과 → 사고력</b> 순으로 균형이 맞아야 합니다. 필즈에 입학하게 되면 E1반은 <b>필즈 입문</b>, E2반은 <b>필즈 베이직</b>이 부교재로 진행됩니다. 입문 정도라면 <b>교과 3-1 과정 + 기적의 계산법 5권</b> 정도의 연산이 필요하고, 베이직은 <b>교과 2-1 과정 + 기적의 계산법 3·4권</b> 정도의 수행률이 필요합니다.</div>
 </div>
-${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 해설 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div></div><a class="wrong-link" href="${YT+TS[q.id]}" target="_blank" rel="noopener">▶ 해설</a>
-<button class="similar-btn" onclick="openSimilar(${q.id},'${q.t}')">✏️ 유사문제</button></div>`).join('')}</div>`:''}
-${(()=>{const pts=[...new Map(wq.filter(q=>PNG_TYPE_MAP[q.id]).map(q=>[q.id,{id:q.id,name:PNG_TYPE_MAP[q.id].name}])).values()];
-return pts.length?`<div class="r-card"><div class="r-ct">🎯 약점 유형 연습하기</div>
-<div style="font-size:12px;color:#64748b;margin-bottom:4px">틀린 유형을 선택하면(최대 5개) 비슷한 문제를 계속 연습할 수 있습니다.</div>
-<div class="pt-select">${pts.map(p=>`<label class="pt-chip" data-qid="${p.id}" onclick="event.preventDefault();ptToggle(this)">Q${p.id} ${p.name}</label>`).join('')}</div>
-<button class="pt-start" id="ptStartBtn" disabled onclick="ptStart()">유형을 선택하세요</button>
-<div class="pt-hint">문제는 매번 새로 만들어집니다 · 무제한 연습</div></div>`:''})()}
-${weak.length?`<div class="r-card"><div class="r-ct">약점 유형 강의</div>${weak.map(t=>`<div class="s-item"><div><div class="s-tn">${t}</div><div class="s-vol">FC-CONCEPT ${TV[t].vol}</div></div><a class="s-link" href="${TV[t].url}" target="_blank" rel="noopener">▶ 강의 보기</a></div>`).join('')}</div>`:''}
+${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div><div class="wrong-key"><b>풀이 핵심</b> · ${keyPoint(q)}</div></div><a class="wrong-link" href="${explanationUrl(q.id)}" target="_blank" rel="noopener">▶ 해설</a></div>`).join('')}</div>`:''}
 <div class="res-actions">
+  ${prescribedTypes.length?`<a class="res-prescription" href="${prescriptionUrl}&view=type" target="_blank" rel="noopener">약점 처방전 · 유형별로 보기</a><a class="res-prescription" href="${prescriptionUrl}&view=mixed" target="_blank" rel="noopener">약점 처방전 · 섞어서 보기</a>`:''}
   <button class="res-print" onclick="window.print()">🖨 진단지 인쇄</button>
-  <a class="res-consult" href="https://naver.me/Ge7B7WcJ" target="_blank" rel="noopener">상담 신청하기 →</a>
+  <a class="res-consult" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">약점 유사 문제 및 상담 신청하기 →</a>
 </div>`;
   setTimeout(()=>{
     const tCtx=document.getElementById('cTY')?.getContext('2d');
@@ -800,25 +871,6 @@ window.setSimilarLv=setSimilarLv;window.checkSimilar=checkSimilar;window.nextSim
 
 })();
 </script>
-
-<!-- 약점 유형 연습 모달 -->
-<div id="practiceModal">
-  <div class="pm-card">
-    <div class="pm-head">
-      <span class="pm-title">✏️ 약점 유형 연습</span>
-      <span class="pm-score" id="pmScore">0 / 0</span>
-      <button class="pm-close" onclick="Practice.close()">✕ 닫기</button>
-    </div>
-    <span class="pm-type" id="pmType"></span>
-    <div class="pm-problem" id="pmProblem"></div>
-    <div class="pm-row">
-      <input class="pm-input" id="pmAnswer" type="text" inputmode="numeric" placeholder="답 입력" onkeydown="if(event.key==='Enter')Practice.check()">
-      <button class="pm-check" id="pmCheckBtn" onclick="Practice.check()">채점</button>
-      <button class="pm-next" id="pmNextBtn" onclick="Practice.next()">다음 →</button>
-    </div>
-    <div class="pm-result" id="pmResult"></div>
-  </div>
-</div>
 
 <script>
 /* ══════════ 약점 유형 연습 시스템 ══════════ */

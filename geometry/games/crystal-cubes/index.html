@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town - Crystal Cubes</title>
     <link rel="stylesheet" href="./styles.css?v=crystal-1" />
+    <link rel="stylesheet" href="../../shared/game-rail.css?v=2" />
     <link rel="stylesheet" href="../../shared/portrait-lock.css?v=1" />
     <script type="importmap">
       {
@@ -114,9 +115,10 @@
       <footer class="action-bar">
         <button id="audio" class="icon-action" type="button" aria-pressed="false" aria-label="음소거">🔊</button>
         <button id="hint" type="button" data-i18n="hint">힌트</button>
+        <button class="rail-level" type="button" data-i18n="level">레벨 선택</button>
         <button class="mobile-view-action" type="button" data-view="front"><b aria-hidden="true">↑</b><span data-i18n="front">앞</span></button>
         <button class="mobile-view-action" type="button" data-view="top"><b aria-hidden="true">◆</b><span data-i18n="top">위</span></button>
-        <button id="xrayToggleMobile" class="mobile-view-action xray-mobile" type="button"><b aria-hidden="true">◈</b><span data-i18n="revealShow">옆</span></button>
+        <button id="xrayToggleMobile" class="mobile-view-action" type="button" data-view="side"><b aria-hidden="true">→</b><span data-i18n="side">옆</span></button>
         <button id="reset" type="button" data-i18n="reset">다시</button>
         <button id="next" type="button" data-i18n="next">다음 문제</button>
         <a class="exit-action" href="../../cube-town/" aria-label="나가기">⌂<small>나가기</small></a>
@@ -162,5 +164,6 @@
       </div>
     </main>
     <script type="module" src="./app.js?v=crystal-1"></script>
+    <script src="../../shared/game-flow.js?v=1" defer></script>
   </body>
 </html>

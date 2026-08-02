@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GFIELD 약점 유형 처방전</title>
+  <style>
+    :root {
+      --navy: #173f70;
+      --navy-deep: #102f55;
+      --gold: #c89b51;
+      --ink: #202a35;
+      --muted: #667383;
+      --line: #d9e0e7;
+      --paper: #ffffff;
+      --wash: #f3f6f9;
+      --danger: #b63a3a;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { background: #e8edf2; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, input { font: inherit; }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 58px;
+      padding: 9px 18px;
+      color: #fff;
+      background: var(--navy-deep);
+      box-shadow: 0 4px 16px rgba(16, 47, 85, .2);
+    }
+
+    .toolbar-brand { font-size: 15px; font-weight: 900; }
+    .toolbar-meta { color: #dbe7f4; font-size: 12px; }
+    .toolbar-actions { display: flex; gap: 8px; }
+    .variant-links { display: flex; gap: 6px; }
+    .variant-link {
+      display: inline-flex;
+      min-height: 38px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      border: 1px solid rgba(255, 255, 255, .28);
+      border-radius: 6px;
+      color: #dbe7f4;
+      background: rgba(255, 255, 255, .06);
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .variant-link.active { border-color: var(--gold); color: #182739; background: #f0cf94; }
+
+    .toolbar button {
+      min-height: 38px;
+      padding: 0 15px;
+      border: 1px solid rgba(255, 255, 255, .28);
+      border-radius: 6px;
+      color: #fff;
+      background: transparent;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .toolbar .primary {
+      border-color: var(--gold);
+      color: #182739;
+      background: #f0cf94;
+    }
+
+    .document {
+      display: grid;
+      gap: 22px;
+      justify-content: center;
+      padding: 26px 14px 60px;
+    }
+
+    .page {
+      position: relative;
+      width: 210mm;
+      min-height: 297mm;
+      padding: 16mm 15mm 14mm;
+      overflow: hidden;
+      background: var(--paper);
+      box-shadow: 0 10px 34px rgba(35, 48, 61, .16);
+    }
+
+    .page-watermark {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .page-watermark span {
+      position: absolute;
+      left: 50%;
+      color: rgba(23, 63, 112, .14);
+      font-size: 27pt;
+      font-weight: 900;
+      letter-spacing: 0;
+      white-space: nowrap;
+      transform: translate(-50%, -50%) rotate(-34deg);
+    }
+
+    .page-watermark .wm-r1 { top: 27%; }
+    .page-watermark .wm-r2 { top: 50%; }
+    .page-watermark .wm-r3 { top: 73%; }
+    .cover .page-watermark span { color: rgba(240, 207, 148, .18); }
+
+    .cover {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #fff;
+      background: var(--navy-deep);
+    }
+
+    .cover::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 12mm;
+      background: var(--gold);
+    }
+
+    .cover-brand {
+      position: relative;
+      margin-top: 16mm;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .cover-brand span {
+      display: block;
+      margin-top: 7px;
+      color: #c9d8e8;
+      font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .cover-main { padding-bottom: 28mm; }
+
+    .cover-kicker {
+      margin-bottom: 8mm;
+      color: #f0cf94;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .cover h1 {
+      max-width: 158mm;
+      margin: 0;
+      font-size: 35px;
+      line-height: 1.28;
+    }
+
+    .cover-student {
+      margin-top: 16mm;
+      padding-top: 9mm;
+      border-top: 1px solid rgba(255, 255, 255, .28);
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .cover-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      color: #c9d8e8;
+      font-size: 11px;
+    }
+
+    .page-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 5mm;
+      border-bottom: 2px solid var(--navy);
+    }
+
+    .type-number {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .page h2 {
+      margin: 2px 0 0;
+      color: var(--navy-deep);
+      font-size: 23px;
+      line-height: 1.2;
+    }
+
+    .category {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .problem-list {
+      display: grid;
+      gap: 5mm;
+      margin-top: 6mm;
+    }
+
+    .mixed-problem-list {
+      display: grid;
+      gap: 5mm;
+      margin-top: 6mm;
+    }
+
+    .mixed-problem {
+      min-height: 76mm;
+    }
+
+    .mixed-problem .problem-label {
+      color: var(--navy);
+    }
+
+    .problem {
+      min-height: 71mm;
+      padding: 5mm 6mm;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--gold);
+      border-radius: 5px;
+      break-inside: avoid;
+    }
+
+    .problem.text-only {
+      display: flex;
+      min-height: 71mm;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .problem-label {
+      color: var(--navy);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .problem-prompt {
+      margin-top: 3mm;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.65;
+      white-space: pre-line;
+    }
+
+    .problem-image-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 42mm;
+      margin-top: 2mm;
+      overflow: hidden;
+    }
+
+    .problem-image {
+      display: block;
+      max-width: 100%;
+      max-height: 41mm;
+      object-fit: contain;
+    }
+
+    .visual-problem {
+      display: flex;
+      min-height: 220mm;
+      align-items: center;
+      justify-content: center;
+      margin-top: 6mm;
+    }
+
+    .visual-problem-image {
+      display: block;
+      width: 100%;
+      max-height: 190mm;
+      object-fit: contain;
+    }
+
+    .answer-line {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 5px;
+      margin-top: 3mm;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .answer-line::after {
+      content: "";
+      width: 42mm;
+      border-bottom: 1px solid #7d8792;
+    }
+
+    .page-foot {
+      position: absolute;
+      right: 15mm;
+      bottom: 8mm;
+      color: #8a96a3;
+      font-size: 9px;
+    }
+
+    .answers-title {
+      margin: 0 0 8mm;
+      color: var(--navy-deep);
+      font-size: 25px;
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 5mm;
+    }
+
+    .answer-box {
+      padding: 5mm;
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--navy);
+      border-radius: 5px;
+      break-inside: avoid;
+    }
+
+    .answer-box h3 {
+      margin: 0 0 3mm;
+      color: var(--navy);
+      font-size: 13px;
+    }
+
+    .answer-item {
+      display: grid;
+      grid-template-columns: 7mm 1fr;
+      gap: 2mm;
+      padding: 2mm 0;
+      border-top: 1px solid #edf0f3;
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .answer-item:first-of-type { border-top: 0; }
+    .answer-value { font-weight: 900; }
+    .answer-solution { color: var(--muted); }
+
+    .empty-state {
+      display: grid;
+      min-height: 60vh;
+      place-items: center;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .empty-state h1 { color: var(--navy); font-size: 24px; }
+    .empty-state p { color: var(--muted); line-height: 1.7; }
+
+    @media (max-width: 840px) {
+      .toolbar { align-items: flex-start; flex-direction: column; }
+      .toolbar-actions { width: 100%; }
+      .toolbar button { flex: 1; }
+      .document {
+        display: block;
+        padding: 0;
+      }
+      .page {
+        width: 100%;
+        min-height: 0;
+        padding: 24px 18px 34px;
+        box-shadow: none;
+      }
+      .page + .page { border-top: 10px solid #e8edf2; }
+      .cover { min-height: calc(100vh - 112px); }
+      .problem { min-height: 0; }
+      .problem-image-wrap { height: auto; min-height: 180px; }
+      .visual-problem { min-height: 0; margin-top: 24px; }
+      .visual-problem-image { max-height: none; }
+      .answer-grid { grid-template-columns: 1fr; }
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    @media print {
+      html, body { background: #fff; }
+      .toolbar { display: none !important; }
+      .document {
+        display: block;
+        padding: 0;
+      }
+      .page {
+        width: 210mm;
+        height: 297mm;
+        min-height: 297mm;
+        margin: 0;
+        box-shadow: none;
+        break-after: page;
+        page-break-after: always;
+      }
+      .page:last-child {
+        break-after: auto;
+        page-break-after: auto;
+      }
+      .page-watermark { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <header class="toolbar">
+    <div>
+      <div class="toolbar-brand">GFIELD 약점 유형 처방전</div>
+      <div class="toolbar-meta" id="toolbarMeta"></div>
+    </div>
+    <div class="toolbar-actions">
+      <div class="variant-links" id="variantLinks"></div>
+      <button type="button" onclick="history.back()">돌아가기</button>
+      <button class="primary" type="button" onclick="window.print()">인쇄</button>
+    </div>
+  </header>
+
+  <main class="document" id="document"></main>
+
+  <script src="../problem-bank/prescription/prescription-data.js"></script>
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const student = (params.get("student") || "학생").trim().slice(0, 30);
+      const view = params.get("view") === "mixed" ? "mixed" : "type";
+      const bank = window.PRESCRIPTION_BANK?.types || {};
+      const selected = [...new Set((params.get("types") || "")
+        .split(",")
+        .map(value => Number.parseInt(value, 10))
+        .filter(value => Number.isInteger(value) && Object.prototype.hasOwnProperty.call(bank, value)))];
+      const seedOrder = (items, seed) => {
+        const result = [...items];
+        let state = Math.abs(seed) + 17;
+        for (let index = result.length - 1; index > 0; index -= 1) {
+          state = (state * 1664525 + 1013904223) >>> 0;
+          const swapIndex = state % (index + 1);
+          [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+        }
+        return result;
+      };
+      const types = selected.map(id => ({ id, ...bank[id] })).filter(type => type.title).map(type => ({
+        ...type,
+        problems: [...(type.problems || [])]
+      }));
+      const documentRoot = document.getElementById("document");
+      const date = new Intl.DateTimeFormat("ko-KR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      }).format(new Date());
+
+      const escapeHtml = value => String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+      const watermark = `<div class="page-watermark" aria-hidden="true">
+        <span class="wm-r1">${escapeHtml(student)} 학생 · GFIELD</span>
+        <span class="wm-r2">${escapeHtml(student)} 학생 · GFIELD</span>
+        <span class="wm-r3">${escapeHtml(student)} 학생 · GFIELD</span>
+      </div>`;
+
+      const variantLinks = document.getElementById("variantLinks");
+      const viewUrl = value => {
+        const next = new URL(location.href);
+        next.searchParams.set("view", value);
+        next.searchParams.delete("variant");
+        return `${next.pathname}${next.search}`;
+      };
+      variantLinks.innerHTML = [["type", "유형별로 보기"], ["mixed", "섞어서 보기"]].map(([value, label]) =>
+        `<a class="variant-link${value === view ? " active" : ""}" href="${escapeHtml(viewUrl(value))}">${label}</a>`
+      ).join("");
+
+      const totalProblems = types.reduce((sum, type) => sum + type.problems.length, 0);
+      document.getElementById("toolbarMeta").textContent =
+        `${student} · ${view === "mixed" ? "섞어서 보기" : "유형별로 보기"} · ${types.length}개 약점 유형 · ${totalProblems}문제`;
+
+      if (!types.length) {
+        documentRoot.innerHTML = `
+          <section class="page empty-state">
+            <div>
+              <h1>선택된 약점 유형이 없습니다.</h1>
+              <p>진단 결과에서 처방전 인쇄를 선택하거나<br>주소에 types=1,7,14 형식으로 유형 번호를 넣어 주세요.</p>
+            </div>
+          </section>`;
+        return;
+      }
+
+      const cover = `
+        <section class="page cover">
+          ${watermark}
+          <div class="cover-brand">GFIELD
+            <span>GIFTED EDUCATION</span>
+          </div>
+          <div class="cover-main">
+            <div class="cover-kicker">필즈 더 클래식 · 진단모의고사</div>
+            <h1>약점 유형<br>학습 처방전</h1>
+            <div class="cover-student">${escapeHtml(student)} 학생</div>
+          </div>
+          <div class="cover-footer">
+            <span>${escapeHtml(date)}</span>
+            <span>${types.length}개 유형 · ${totalProblems}문제</span>
+          </div>
+        </section>`;
+
+      const typeProblemPages = types.map((type, pageIndex) => {
+        if (type.visualOnly) {
+          return type.problems.map((problem, index) => `
+            <section class="page visual-page">
+              ${watermark}
+              <div class="page-head">
+                <div>
+                  <div class="type-number">Q25 약점 유형 · 문제 ${index + 1}</div>
+                  <h2>${escapeHtml(type.title)}</h2>
+                </div>
+                <div class="category">${escapeHtml(type.category)}</div>
+              </div>
+              <div class="visual-problem">
+                <img
+                  class="visual-problem-image"
+                  src="../problem-bank/prescription/${escapeHtml(problem.image)}"
+                  alt="Q25 ${index + 1}번 쌓기나무 문제"
+                >
+              </div>
+              <div class="page-foot">${pageIndex + 1}-${index + 1}</div>
+            </section>`).join("");
+        }
+
+        const problems = type.problems.map((problem, index) => {
+          const image = problem.image
+            ? `<div class="problem-image-wrap"><img class="problem-image" src="../problem-bank/prescription/${escapeHtml(problem.image)}" alt="Q${type.id} ${index + 1}번 문제 그림"></div>`
+            : "";
+          const prompt = type.promptInImage ? "" : `<div class="problem-prompt">${escapeHtml(problem.prompt)}</div>`;
+          return `
+            <article class="problem${problem.image ? "" : " text-only"}">
+              <div>
+                <div class="problem-label">문제 ${index + 1}</div>
+                ${prompt}
+              </div>
+              ${image}
+              <div class="answer-line">답</div>
+            </article>`;
+        }).join("");
+
+        return `
+          <section class="page">
+            ${watermark}
+            <div class="page-head">
+              <div>
+                <div class="type-number">Q${String(type.id).padStart(2, "0")} 약점 유형</div>
+                <h2>${escapeHtml(type.title)}</h2>
+              </div>
+              <div class="category">${escapeHtml(type.category)}</div>
+            </div>
+            <div class="problem-list">${problems}</div>
+            <div class="page-foot">${pageIndex + 1}</div>
+          </section>`;
+      }).join("");
+
+      const mixedItems = seedOrder(
+        types.flatMap(type => type.problems.map((problem, index) => ({ type, problem, index }))),
+        selected.reduce((sum, id) => sum + id, 0) + 7919
+      );
+      const mixedPages = [];
+      for (let index = 0; index < mixedItems.length; index += 3) {
+        const chunk = mixedItems.slice(index, index + 3);
+        const cards = chunk.map(({ type, problem, index: problemIndex }) => {
+          const image = problem.image
+            ? `<div class="problem-image-wrap"><img class="problem-image" src="../problem-bank/prescription/${escapeHtml(problem.image)}" alt="Q${type.id} ${problemIndex + 1}번 문제 그림"></div>`
+            : "";
+          const prompt = type.promptInImage ? "" : `<div class="problem-prompt">${escapeHtml(problem.prompt)}</div>`;
+          return `
+            <article class="problem mixed-problem${problem.image ? "" : " text-only"}">
+              <div>
+                <div class="problem-label">Q${String(type.id).padStart(2, "0")} · ${escapeHtml(type.title)} · 문제 ${problemIndex + 1}</div>
+                ${prompt}
+              </div>
+              ${image}
+              <div class="answer-line">답</div>
+            </article>`;
+        }).join("");
+        mixedPages.push(`
+          <section class="page">
+            ${watermark}
+            <div class="page-head">
+              <div>
+                <div class="type-number">필즈 약점 처방전 · 섞어서 보기</div>
+                <h2>문제 ${index + 1}~${index + chunk.length}</h2>
+              </div>
+              <div class="category">유형 혼합</div>
+            </div>
+            <div class="mixed-problem-list">${cards}</div>
+            <div class="page-foot">혼합 ${Math.floor(index / 3) + 1}</div>
+          </section>`);
+      }
+      const problemPages = view === "mixed" ? mixedPages.join("") : typeProblemPages;
+
+      const chunks = [];
+      for (let index = 0; index < types.length; index += 8) {
+        chunks.push(types.slice(index, index + 8));
+      }
+
+      const answerPages = chunks.map((chunk, pageIndex) => {
+        const boxes = chunk.map(type => `
+          <section class="answer-box">
+            <h3>Q${String(type.id).padStart(2, "0")} ${escapeHtml(type.title)}</h3>
+            ${type.problems.map((problem, index) => `
+              <div class="answer-item">
+                <strong>${index + 1}</strong>
+                <div>
+                  <div class="answer-value">${escapeHtml(problem.answer)}</div>
+                  <div class="answer-solution">${escapeHtml(problem.solution)}</div>
+                </div>
+              </div>`).join("")}
+          </section>`).join("");
+        return `
+          <section class="page">
+            ${watermark}
+            <h2 class="answers-title">정답과 확인</h2>
+            <div class="answer-grid">${boxes}</div>
+            <div class="page-foot">정답 ${pageIndex + 1}</div>
+          </section>`;
+      }).join("");
+
+      documentRoot.innerHTML = cover + problemPages + answerPages;
+    })();
+  </script>
+</body>
+</html>

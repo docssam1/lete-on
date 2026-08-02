@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GFIELD 인쇄 뷰어</title>
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Pretendard,sans-serif;background:#dfe7ef;color:#0f172a}
+.toolbar{position:sticky;top:0;z-index:20;min-height:64px;padding:10px 18px;background:#fff;border-bottom:1px solid #cbd5e1;display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 4px 18px rgba(15,23,42,.09)}
+.title{font-size:16px;font-weight:900;color:#16417c}.meta{font-size:11px;font-weight:700;color:#64748b;margin-top:3px}
+.actions{display:flex;gap:8px}.btn{min-height:40px;padding:0 15px;border-radius:8px;border:1.5px solid #cbd5e1;background:#fff;color:#334155;font-family:inherit;font-size:12px;font-weight:900;cursor:pointer}
+.btn.primary{background:#16417c;border-color:#16417c;color:#fff}.btn:disabled{opacity:.45;cursor:wait}
+.course-summary{width:min(980px,100%);margin:14px auto 0;padding:14px 16px;background:#fff;border:1px solid #cbd5e1;border-radius:8px;box-shadow:0 4px 14px rgba(15,23,42,.07)}.course-summary-title{font-size:13px;font-weight:900;color:#16417c}.course-topics{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0 0;padding:0;list-style:none}.course-topics li{padding:5px 8px;border-radius:5px;background:#edf3f8;color:#334155;font-size:11px;font-weight:800}
+.status{padding:22px;text-align:center;color:#64748b;font-size:13px;font-weight:800}
+.pages{width:min(980px,100%);margin:0 auto;padding:20px 12px 50px;display:grid;gap:18px}
+.page{position:relative;width:100%;background:#fff;box-shadow:0 8px 28px rgba(15,23,42,.16);overflow:hidden}
+.page canvas,.page img{display:block;width:100%;height:auto}
+.watermark{display:block;position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+.watermark span{position:absolute;left:50%;transform:translate(-50%,-50%) rotate(-32deg);font-size:34pt;font-weight:900;color:rgba(22,65,124,.14);white-space:nowrap;letter-spacing:0}
+.watermark span:nth-child(1){top:25%}.watermark span:nth-child(2){top:50%}.watermark span:nth-child(3){top:75%}
+@media(max-width:640px){.toolbar{align-items:flex-start}.title{font-size:14px}.btn{padding:0 10px}.pages{padding:10px 5px 30px;gap:8px}}
+@page{size:A4;margin:0}
+@media print{
+  html,body{background:#fff}
+  .toolbar,.status,.course-summary{display:none!important}
+  .pages{display:block;width:auto;margin:0;padding:0}
+  .page{width:210mm;margin:0;box-shadow:none;break-after:page;page-break-after:always}
+  .page:last-child{break-after:auto;page-break-after:auto}
+  .watermark{display:block!important}
+}
+</style>
+</head>
+<body>
+<header class="toolbar">
+  <div><div class="title" id="title">인쇄 자료</div><div class="meta" id="meta">문서를 준비하고 있습니다.</div></div>
+  <div class="actions">
+    <button class="btn" type="button" onclick="history.back()">돌아가기</button>
+    <button class="btn" id="videoBtn" type="button" style="display:none" onclick="openLessonVideo()">▶ 학습영상</button>
+    <button class="btn" id="answerBtn" type="button" style="display:none" onclick="openAnswerGuide()">☑ 유형별 풀이</button>
+    <button class="btn primary" id="printBtn" type="button" onclick="window.print()" disabled>인쇄</button>
+  </div>
+</header>
+<section class="course-summary" id="courseSummary" style="display:none"><div class="course-summary-title">집중 유형</div><ul class="course-topics" id="courseTopics"></ul></section>
+<div class="status" id="status">PDF를 불러오는 중입니다.</div>
+<main class="pages" id="pages"></main>
+
+<script src="./documents.js"></script>
+<script>
+const params=new URLSearchParams(location.search);
+const documentKey=params.get("doc")||"";
+const source=window.GFIELD_PRINT_DOCUMENTS?.[documentKey];
+const title=(source?.title||"인쇄 자료").slice(0,80);
+const student=(params.get("student")||"학생").trim().slice(0,30);
+const lessonVideo=params.get("video")||"";
+const topics=(params.get("topics")||"").split("|").map(v=>v.trim()).filter(Boolean);
+const status=document.getElementById("status");
+const pages=document.getElementById("pages");
+const printBtn=document.getElementById("printBtn");
+document.getElementById("title").textContent=title;
+document.title=title+" | GFIELD";
+if(lessonVideo)document.getElementById("videoBtn").style.display="";
+if(documentKey==="killer")document.getElementById("answerBtn").style.display="";
+if(topics.length){
+  document.getElementById("courseSummary").style.display="";
+  const topicList=document.getElementById("courseTopics");
+  topics.forEach(topic=>{const item=document.createElement("li");item.textContent=topic;topicList.appendChild(item);});
+}
+function openLessonVideo(){
+  const url=`../video-viewer/?video=${encodeURIComponent(lessonVideo)}&title=${encodeURIComponent(title+" 학습영상")}&student=${encodeURIComponent(student)}`;
+  window.open(url,"_blank","noopener");
+}
+function openAnswerGuide(){
+  const url=`../killer-answer/?student=${encodeURIComponent(student)}`;
+  window.open(url,"_blank","noopener");
+}
+
+function watermark(){
+  const layer=document.createElement("div");
+  layer.className="watermark";
+  layer.setAttribute("aria-hidden","true");
+  for(let row=0;row<3;row++){
+    const text=document.createElement("span");
+    text.textContent=`${student} 학생 · GFIELD`;
+    layer.appendChild(text);
+  }
+  return layer;
+}
+
+async function render(){
+  if(!source)throw new Error("인쇄할 자료를 찾을 수 없습니다.");
+  document.getElementById("meta").textContent=`${student} 학생 · ${source.pageCount}쪽 · 화면 및 인쇄 워터마크 적용`;
+  const images=[];
+  for(let number=1;number<=source.pageCount;number++){
+    const sourcePage=(source.startPage||1)+number-1;
+    status.textContent=`${number} / ${source.pageCount}쪽을 준비하고 있습니다.`;
+    const sheet=document.createElement("section");
+    sheet.className="page";
+    const image=document.createElement("img");
+    image.src=`${source.pagesBase}${String(sourcePage).padStart(3,"0")}.webp`;
+    image.alt=`${title} ${number}쪽`;
+    image.decoding="async";
+    image.loading="eager";
+    sheet.append(image,watermark());
+    pages.appendChild(sheet);
+    images.push(image);
+  }
+  await Promise.all(images.map(image=>new Promise((resolve,reject)=>{
+    if(image.complete&&image.naturalWidth){resolve();return;}
+    image.addEventListener("load",resolve,{once:true});
+    image.addEventListener("error",()=>reject(new Error("페이지 이미지를 불러오지 못했습니다.")),{once:true});
+  })));
+  status.style.display="none";
+  printBtn.disabled=false;
+}
+
+render().catch(error=>{
+  status.textContent="문서를 불러오지 못했습니다. "+error.message;
+  status.style.color="#b91c1c";
+});
+</script>
+</body>
+</html>

@@ -1,3 +1,5 @@
+import { sessionProblems } from "../../shared/problem-pool.js";
+
 // 크리스털 큐브 (Crystal Cubes)
 //
 // The reverse of the Three-View Station. The child is given three view cards —
@@ -106,7 +108,7 @@ const makeProblem = (id, level, grid, stacks) => {
   return { id, level, grid, maxH: height, reference: map, target };
 };
 
-export const levels = [
+const pools = [
   {
     level: 2,
     stars: 2,
@@ -114,7 +116,23 @@ export const levels = [
       makeProblem("crystal-l2-01", 2, [2, 2], [{ x: 0, z: 0, h: 2 }, { x: 1, z: 0, h: 1 }, { x: 0, z: 1, h: 1 }]),
       makeProblem("crystal-l2-02", 2, [3, 2], [{ x: 0, z: 0, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 2, z: 1, h: 1 }]),
       makeProblem("crystal-l2-03", 2, [3, 2], [{ x: 0, z: 0, h: 2 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 1, h: 1 }]),
-      makeProblem("crystal-l2-04", 2, [2, 2], [{ x: 0, z: 0, h: 2 }, { x: 1, z: 1, h: 2 }, { x: 1, z: 0, h: 1 }])
+      makeProblem("crystal-l2-04", 2, [2, 2], [{ x: 0, z: 0, h: 2 }, { x: 1, z: 1, h: 2 }, { x: 1, z: 0, h: 1 }]),
+      makeProblem("crystal-l2-05", 2, [2, 2], [{ x: 1, z: 1, h: 1 }, { x: 1, z: 0, h: 1 }, { x: 0, z: 0, h: 2 }]),
+      makeProblem("crystal-l2-06", 2, [2, 2], [{ x: 0, z: 1, h: 1 }, { x: 1, z: 0, h: 1 }, { x: 1, z: 1, h: 2 }]),
+      makeProblem("crystal-l2-07", 2, [2, 2], [{ x: 0, z: 0, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 1, z: 1, h: 2 }]),
+      makeProblem("crystal-l2-08", 2, [2, 2], [{ x: 0, z: 0, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 1, z: 1, h: 1 }]),
+      makeProblem("crystal-l2-09", 2, [3, 2], [{ x: 0, z: 1, h: 1 }, { x: 0, z: 0, h: 2 }, { x: 2, z: 1, h: 2 }]),
+      makeProblem("crystal-l2-10", 2, [2, 2], [{ x: 0, z: 1, h: 2 }, { x: 1, z: 0, h: 2 }, { x: 1, z: 1, h: 1 }]),
+      makeProblem("crystal-l2-11", 2, [2, 2], [{ x: 1, z: 1, h: 2 }, { x: 0, z: 1, h: 1 }, { x: 1, z: 0, h: 2 }]),
+      makeProblem("crystal-l2-12", 2, [3, 2], [{ x: 1, z: 0, h: 1 }, { x: 2, z: 1, h: 2 }, { x: 0, z: 0, h: 2 }]),
+      makeProblem("crystal-l2-13", 2, [3, 2], [{ x: 0, z: 1, h: 1 }, { x: 2, z: 1, h: 2 }, { x: 0, z: 0, h: 1 }]),
+      makeProblem("crystal-l2-14", 2, [3, 2], [{ x: 0, z: 0, h: 2 }, { x: 0, z: 1, h: 1 }, { x: 1, z: 1, h: 2 }]),
+      makeProblem("crystal-l2-15", 2, [3, 2], [{ x: 2, z: 0, h: 2 }, { x: 2, z: 1, h: 1 }, { x: 1, z: 1, h: 2 }]),
+      makeProblem("crystal-l2-16", 2, [3, 2], [{ x: 2, z: 1, h: 2 }, { x: 1, z: 0, h: 1 }, { x: 0, z: 1, h: 1 }]),
+      makeProblem("crystal-l2-17", 2, [2, 2], [{ x: 0, z: 0, h: 2 }, { x: 1, z: 1, h: 1 }, { x: 0, z: 1, h: 2 }]),
+      makeProblem("crystal-l2-18", 2, [3, 2], [{ x: 0, z: 1, h: 2 }, { x: 2, z: 1, h: 1 }, { x: 1, z: 1, h: 2 }]),
+      makeProblem("crystal-l2-19", 2, [3, 2], [{ x: 2, z: 0, h: 2 }, { x: 0, z: 0, h: 1 }, { x: 0, z: 1, h: 2 }]),
+      makeProblem("crystal-l2-20", 2, [3, 2], [{ x: 2, z: 1, h: 1 }, { x: 0, z: 1, h: 2 }, { x: 0, z: 0, h: 2 }])
     ]
   },
   {
@@ -124,7 +142,23 @@ export const levels = [
       makeProblem("crystal-l3-01", 3, [3, 3], [{ x: 0, z: 0, h: 2 }, { x: 1, z: 0, h: 1 }, { x: 1, z: 1, h: 3 }, { x: 2, z: 2, h: 1 }, { x: 0, z: 2, h: 2 }]),
       makeProblem("crystal-l3-02", 3, [3, 3], [{ x: 0, z: 0, h: 3 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 1, h: 1 }, { x: 0, z: 2, h: 1 }, { x: 2, z: 2, h: 2 }]),
       makeProblem("crystal-l3-03", 3, [3, 3], [{ x: 1, z: 0, h: 3 }, { x: 0, z: 1, h: 2 }, { x: 2, z: 1, h: 1 }, { x: 1, z: 2, h: 2 }, { x: 0, z: 0, h: 1 }]),
-      makeProblem("crystal-l3-04", 3, [3, 3], [{ x: 2, z: 0, h: 2 }, { x: 0, z: 0, h: 3 }, { x: 1, z: 1, h: 2 }, { x: 2, z: 2, h: 3 }, { x: 0, z: 2, h: 1 }])
+      makeProblem("crystal-l3-04", 3, [3, 3], [{ x: 2, z: 0, h: 2 }, { x: 0, z: 0, h: 3 }, { x: 1, z: 1, h: 2 }, { x: 2, z: 2, h: 3 }, { x: 0, z: 2, h: 1 }]),
+      makeProblem("crystal-l3-05", 3, [3, 3], [{ x: 1, z: 2, h: 2 }, { x: 0, z: 1, h: 3 }, { x: 2, z: 2, h: 1 }, { x: 2, z: 0, h: 3 }, { x: 0, z: 2, h: 1 }]),
+      makeProblem("crystal-l3-06", 3, [3, 3], [{ x: 2, z: 1, h: 2 }, { x: 0, z: 2, h: 1 }, { x: 1, z: 0, h: 3 }, { x: 2, z: 2, h: 1 }, { x: 1, z: 1, h: 3 }]),
+      makeProblem("crystal-l3-07", 3, [3, 3], [{ x: 2, z: 1, h: 1 }, { x: 2, z: 2, h: 2 }, { x: 1, z: 0, h: 2 }, { x: 1, z: 2, h: 2 }, { x: 0, z: 2, h: 3 }]),
+      makeProblem("crystal-l3-08", 3, [3, 3], [{ x: 2, z: 1, h: 3 }, { x: 1, z: 0, h: 2 }, { x: 0, z: 0, h: 2 }, { x: 2, z: 2, h: 3 }, { x: 1, z: 1, h: 1 }]),
+      makeProblem("crystal-l3-09", 3, [3, 3], [{ x: 1, z: 0, h: 2 }, { x: 1, z: 2, h: 3 }, { x: 2, z: 0, h: 2 }, { x: 0, z: 2, h: 1 }, { x: 2, z: 1, h: 1 }]),
+      makeProblem("crystal-l3-10", 3, [3, 3], [{ x: 0, z: 1, h: 2 }, { x: 0, z: 2, h: 3 }, { x: 0, z: 0, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 2, z: 1, h: 3 }]),
+      makeProblem("crystal-l3-11", 3, [3, 3], [{ x: 1, z: 0, h: 2 }, { x: 0, z: 2, h: 3 }, { x: 2, z: 2, h: 3 }, { x: 2, z: 0, h: 1 }, { x: 0, z: 0, h: 2 }]),
+      makeProblem("crystal-l3-12", 3, [3, 3], [{ x: 0, z: 2, h: 3 }, { x: 1, z: 0, h: 1 }, { x: 0, z: 1, h: 2 }, { x: 2, z: 0, h: 1 }, { x: 1, z: 2, h: 3 }]),
+      makeProblem("crystal-l3-13", 3, [3, 3], [{ x: 0, z: 0, h: 2 }, { x: 1, z: 2, h: 1 }, { x: 1, z: 0, h: 3 }, { x: 2, z: 0, h: 3 }, { x: 0, z: 2, h: 2 }]),
+      makeProblem("crystal-l3-14", 3, [3, 3], [{ x: 1, z: 2, h: 3 }, { x: 0, z: 2, h: 2 }, { x: 0, z: 0, h: 1 }, { x: 2, z: 2, h: 3 }, { x: 2, z: 1, h: 1 }]),
+      makeProblem("crystal-l3-15", 3, [3, 3], [{ x: 2, z: 2, h: 2 }, { x: 0, z: 2, h: 1 }, { x: 2, z: 0, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 1, z: 1, h: 3 }]),
+      makeProblem("crystal-l3-16", 3, [3, 3], [{ x: 1, z: 0, h: 2 }, { x: 0, z: 0, h: 2 }, { x: 2, z: 0, h: 1 }, { x: 0, z: 1, h: 2 }, { x: 2, z: 1, h: 3 }]),
+      makeProblem("crystal-l3-17", 3, [3, 3], [{ x: 0, z: 0, h: 3 }, { x: 0, z: 1, h: 1 }, { x: 0, z: 2, h: 3 }, { x: 1, z: 1, h: 2 }, { x: 2, z: 0, h: 2 }]),
+      makeProblem("crystal-l3-18", 3, [3, 3], [{ x: 0, z: 0, h: 3 }, { x: 1, z: 0, h: 2 }, { x: 0, z: 1, h: 3 }, { x: 2, z: 0, h: 1 }, { x: 2, z: 2, h: 2 }]),
+      makeProblem("crystal-l3-19", 3, [3, 3], [{ x: 0, z: 1, h: 2 }, { x: 1, z: 1, h: 2 }, { x: 1, z: 0, h: 3 }, { x: 2, z: 2, h: 1 }, { x: 0, z: 0, h: 2 }]),
+      makeProblem("crystal-l3-20", 3, [3, 3], [{ x: 1, z: 2, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 2, z: 0, h: 3 }, { x: 2, z: 2, h: 1 }, { x: 0, z: 0, h: 2 }])
     ]
   },
   {
@@ -134,7 +168,23 @@ export const levels = [
       makeProblem("crystal-l4-01", 4, [4, 3], [{ x: 0, z: 0, h: 3 }, { x: 1, z: 0, h: 1 }, { x: 2, z: 1, h: 2 }, { x: 3, z: 2, h: 3 }, { x: 1, z: 2, h: 1 }, { x: 3, z: 0, h: 2 }]),
       makeProblem("crystal-l4-02", 4, [4, 3], [{ x: 0, z: 1, h: 2 }, { x: 1, z: 1, h: 3 }, { x: 2, z: 0, h: 1 }, { x: 3, z: 1, h: 2 }, { x: 1, z: 2, h: 1 }, { x: 0, z: 0, h: 1 }]),
       makeProblem("crystal-l4-03", 4, [3, 3], [{ x: 0, z: 0, h: 3 }, { x: 1, z: 0, h: 2 }, { x: 2, z: 1, h: 3 }, { x: 0, z: 2, h: 1 }, { x: 1, z: 2, h: 2 }, { x: 2, z: 2, h: 1 }]),
-      makeProblem("crystal-l4-04", 4, [4, 3], [{ x: 0, z: 0, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 2, z: 0, h: 3 }, { x: 3, z: 1, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 0, z: 2, h: 2 }])
+      makeProblem("crystal-l4-04", 4, [4, 3], [{ x: 0, z: 0, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 2, z: 0, h: 3 }, { x: 3, z: 1, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 0, z: 2, h: 2 }]),
+      makeProblem("crystal-l4-05", 4, [4, 3], [{ x: 2, z: 0, h: 1 }, { x: 1, z: 1, h: 1 }, { x: 0, z: 0, h: 3 }, { x: 1, z: 2, h: 2 }, { x: 3, z: 2, h: 3 }, { x: 2, z: 2, h: 2 }]),
+      makeProblem("crystal-l4-06", 4, [3, 3], [{ x: 2, z: 2, h: 1 }, { x: 1, z: 0, h: 1 }, { x: 2, z: 0, h: 1 }, { x: 2, z: 1, h: 3 }, { x: 0, z: 0, h: 3 }, { x: 0, z: 1, h: 1 }]),
+      makeProblem("crystal-l4-07", 4, [4, 3], [{ x: 2, z: 2, h: 3 }, { x: 0, z: 2, h: 3 }, { x: 2, z: 0, h: 1 }, { x: 3, z: 2, h: 2 }, { x: 1, z: 0, h: 1 }, { x: 0, z: 0, h: 2 }]),
+      makeProblem("crystal-l4-08", 4, [4, 3], [{ x: 1, z: 2, h: 2 }, { x: 3, z: 2, h: 3 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 1, h: 3 }, { x: 0, z: 0, h: 1 }, { x: 3, z: 1, h: 1 }]),
+      makeProblem("crystal-l4-09", 4, [4, 3], [{ x: 1, z: 1, h: 2 }, { x: 0, z: 2, h: 1 }, { x: 0, z: 0, h: 1 }, { x: 1, z: 0, h: 3 }, { x: 3, z: 1, h: 3 }, { x: 3, z: 2, h: 2 }]),
+      makeProblem("crystal-l4-10", 4, [4, 3], [{ x: 3, z: 0, h: 2 }, { x: 3, z: 2, h: 2 }, { x: 0, z: 0, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 2, h: 1 }, { x: 2, z: 1, h: 3 }]),
+      makeProblem("crystal-l4-11", 4, [3, 3], [{ x: 2, z: 1, h: 2 }, { x: 0, z: 1, h: 1 }, { x: 1, z: 2, h: 1 }, { x: 0, z: 0, h: 3 }, { x: 2, z: 2, h: 2 }, { x: 2, z: 0, h: 3 }]),
+      makeProblem("crystal-l4-12", 4, [4, 3], [{ x: 0, z: 1, h: 1 }, { x: 1, z: 1, h: 3 }, { x: 3, z: 2, h: 1 }, { x: 2, z: 2, h: 3 }, { x: 1, z: 2, h: 3 }, { x: 3, z: 1, h: 1 }]),
+      makeProblem("crystal-l4-13", 4, [3, 3], [{ x: 2, z: 0, h: 3 }, { x: 2, z: 1, h: 1 }, { x: 1, z: 0, h: 2 }, { x: 0, z: 0, h: 2 }, { x: 1, z: 2, h: 1 }, { x: 1, z: 1, h: 2 }]),
+      makeProblem("crystal-l4-14", 4, [3, 3], [{ x: 2, z: 0, h: 3 }, { x: 1, z: 2, h: 1 }, { x: 0, z: 1, h: 3 }, { x: 1, z: 1, h: 1 }, { x: 1, z: 0, h: 3 }, { x: 2, z: 2, h: 1 }]),
+      makeProblem("crystal-l4-15", 4, [4, 3], [{ x: 2, z: 1, h: 2 }, { x: 0, z: 1, h: 3 }, { x: 2, z: 2, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 1, h: 3 }, { x: 0, z: 2, h: 1 }]),
+      makeProblem("crystal-l4-16", 4, [4, 3], [{ x: 3, z: 0, h: 1 }, { x: 1, z: 1, h: 3 }, { x: 2, z: 0, h: 1 }, { x: 2, z: 2, h: 2 }, { x: 3, z: 1, h: 2 }, { x: 2, z: 1, h: 1 }]),
+      makeProblem("crystal-l4-17", 4, [3, 3], [{ x: 0, z: 2, h: 3 }, { x: 0, z: 1, h: 1 }, { x: 1, z: 1, h: 3 }, { x: 0, z: 0, h: 1 }, { x: 1, z: 0, h: 1 }, { x: 1, z: 2, h: 3 }]),
+      makeProblem("crystal-l4-18", 4, [3, 3], [{ x: 1, z: 1, h: 1 }, { x: 1, z: 2, h: 1 }, { x: 0, z: 0, h: 2 }, { x: 2, z: 1, h: 3 }, { x: 1, z: 0, h: 1 }, { x: 2, z: 0, h: 2 }]),
+      makeProblem("crystal-l4-19", 4, [4, 3], [{ x: 0, z: 1, h: 1 }, { x: 1, z: 2, h: 1 }, { x: 3, z: 1, h: 3 }, { x: 3, z: 0, h: 2 }, { x: 3, z: 2, h: 3 }, { x: 2, z: 0, h: 2 }]),
+      makeProblem("crystal-l4-20", 4, [4, 3], [{ x: 2, z: 2, h: 1 }, { x: 3, z: 2, h: 3 }, { x: 0, z: 0, h: 1 }, { x: 1, z: 2, h: 1 }, { x: 3, z: 0, h: 3 }, { x: 0, z: 1, h: 1 }])
     ]
   },
   {
@@ -144,10 +194,38 @@ export const levels = [
       makeProblem("crystal-l5-01", 5, [4, 4], [{ x: 0, z: 0, h: 4 }, { x: 1, z: 1, h: 2 }, { x: 2, z: 2, h: 3 }, { x: 3, z: 3, h: 1 }, { x: 3, z: 0, h: 2 }, { x: 0, z: 3, h: 1 }, { x: 1, z: 3, h: 2 }]),
       makeProblem("crystal-l5-02", 5, [4, 4], [{ x: 1, z: 1, h: 4 }, { x: 0, z: 0, h: 2 }, { x: 3, z: 0, h: 2 }, { x: 2, z: 2, h: 3 }, { x: 0, z: 3, h: 2 }, { x: 3, z: 3, h: 1 }, { x: 2, z: 0, h: 1 }]),
       makeProblem("crystal-l5-03", 5, [4, 4], [{ x: 0, z: 0, h: 3 }, { x: 1, z: 0, h: 4 }, { x: 2, z: 1, h: 2 }, { x: 3, z: 2, h: 3 }, { x: 1, z: 3, h: 1 }, { x: 0, z: 2, h: 2 }, { x: 3, z: 0, h: 2 }]),
-      makeProblem("crystal-l5-04", 5, [4, 4], [{ x: 3, z: 0, h: 4 }, { x: 0, z: 0, h: 2 }, { x: 1, z: 1, h: 3 }, { x: 2, z: 2, h: 2 }, { x: 0, z: 3, h: 3 }, { x: 3, z: 3, h: 1 }, { x: 2, z: 0, h: 1 }])
+      makeProblem("crystal-l5-04", 5, [4, 4], [{ x: 3, z: 0, h: 4 }, { x: 0, z: 0, h: 2 }, { x: 1, z: 1, h: 3 }, { x: 2, z: 2, h: 2 }, { x: 0, z: 3, h: 3 }, { x: 3, z: 3, h: 1 }, { x: 2, z: 0, h: 1 }]),
+      makeProblem("crystal-l5-05", 5, [4, 4], [{ x: 2, z: 1, h: 4 }, { x: 1, z: 2, h: 3 }, { x: 2, z: 2, h: 4 }, { x: 0, z: 1, h: 1 }, { x: 1, z: 1, h: 3 }, { x: 2, z: 3, h: 1 }, { x: 2, z: 0, h: 1 }]),
+      makeProblem("crystal-l5-06", 5, [4, 4], [{ x: 2, z: 1, h: 2 }, { x: 2, z: 2, h: 2 }, { x: 1, z: 1, h: 1 }, { x: 0, z: 2, h: 4 }, { x: 0, z: 1, h: 3 }, { x: 0, z: 0, h: 1 }, { x: 3, z: 0, h: 2 }]),
+      makeProblem("crystal-l5-07", 5, [4, 4], [{ x: 0, z: 2, h: 3 }, { x: 1, z: 0, h: 1 }, { x: 0, z: 3, h: 3 }, { x: 2, z: 2, h: 1 }, { x: 2, z: 0, h: 4 }, { x: 1, z: 1, h: 1 }, { x: 3, z: 3, h: 3 }]),
+      makeProblem("crystal-l5-08", 5, [4, 4], [{ x: 0, z: 2, h: 1 }, { x: 3, z: 1, h: 3 }, { x: 2, z: 3, h: 4 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 2, h: 1 }, { x: 1, z: 3, h: 1 }, { x: 3, z: 0, h: 3 }]),
+      makeProblem("crystal-l5-09", 5, [4, 4], [{ x: 1, z: 1, h: 2 }, { x: 0, z: 1, h: 2 }, { x: 2, z: 2, h: 2 }, { x: 0, z: 0, h: 1 }, { x: 3, z: 1, h: 2 }, { x: 0, z: 3, h: 4 }, { x: 2, z: 1, h: 2 }]),
+      makeProblem("crystal-l5-10", 5, [4, 4], [{ x: 2, z: 3, h: 2 }, { x: 3, z: 0, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 0, z: 3, h: 3 }, { x: 1, z: 2, h: 2 }, { x: 0, z: 1, h: 1 }, { x: 3, z: 1, h: 4 }]),
+      makeProblem("crystal-l5-11", 5, [4, 4], [{ x: 1, z: 0, h: 1 }, { x: 0, z: 3, h: 2 }, { x: 3, z: 2, h: 3 }, { x: 1, z: 3, h: 2 }, { x: 0, z: 2, h: 4 }, { x: 1, z: 1, h: 4 }, { x: 2, z: 1, h: 1 }]),
+      makeProblem("crystal-l5-12", 5, [4, 4], [{ x: 0, z: 1, h: 4 }, { x: 2, z: 0, h: 1 }, { x: 1, z: 3, h: 1 }, { x: 0, z: 0, h: 2 }, { x: 2, z: 3, h: 1 }, { x: 0, z: 2, h: 4 }, { x: 0, z: 3, h: 2 }]),
+      makeProblem("crystal-l5-13", 5, [4, 4], [{ x: 3, z: 0, h: 2 }, { x: 3, z: 3, h: 4 }, { x: 1, z: 3, h: 2 }, { x: 0, z: 2, h: 4 }, { x: 3, z: 1, h: 2 }, { x: 1, z: 2, h: 1 }, { x: 2, z: 1, h: 2 }]),
+      makeProblem("crystal-l5-14", 5, [4, 4], [{ x: 3, z: 0, h: 4 }, { x: 2, z: 3, h: 3 }, { x: 3, z: 3, h: 2 }, { x: 1, z: 3, h: 1 }, { x: 0, z: 2, h: 1 }, { x: 0, z: 1, h: 4 }, { x: 2, z: 1, h: 1 }]),
+      makeProblem("crystal-l5-15", 5, [4, 4], [{ x: 0, z: 0, h: 2 }, { x: 2, z: 3, h: 2 }, { x: 2, z: 0, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 3, z: 1, h: 3 }, { x: 1, z: 2, h: 4 }, { x: 2, z: 1, h: 2 }]),
+      makeProblem("crystal-l5-16", 5, [4, 4], [{ x: 1, z: 1, h: 4 }, { x: 3, z: 3, h: 4 }, { x: 1, z: 3, h: 1 }, { x: 0, z: 2, h: 2 }, { x: 3, z: 1, h: 1 }, { x: 3, z: 0, h: 2 }, { x: 2, z: 3, h: 3 }]),
+      makeProblem("crystal-l5-17", 5, [4, 4], [{ x: 1, z: 1, h: 3 }, { x: 0, z: 2, h: 2 }, { x: 3, z: 2, h: 2 }, { x: 0, z: 3, h: 2 }, { x: 3, z: 3, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 3, h: 4 }]),
+      makeProblem("crystal-l5-18", 5, [4, 4], [{ x: 3, z: 1, h: 2 }, { x: 1, z: 3, h: 3 }, { x: 1, z: 1, h: 2 }, { x: 1, z: 0, h: 2 }, { x: 3, z: 0, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 0, z: 0, h: 4 }]),
+      makeProblem("crystal-l5-19", 5, [4, 4], [{ x: 0, z: 0, h: 2 }, { x: 0, z: 2, h: 1 }, { x: 1, z: 2, h: 4 }, { x: 0, z: 1, h: 2 }, { x: 3, z: 0, h: 3 }, { x: 3, z: 2, h: 1 }, { x: 1, z: 0, h: 3 }]),
+      makeProblem("crystal-l5-20", 5, [4, 4], [{ x: 1, z: 2, h: 1 }, { x: 0, z: 1, h: 4 }, { x: 2, z: 2, h: 4 }, { x: 2, z: 0, h: 4 }, { x: 2, z: 3, h: 1 }, { x: 2, z: 1, h: 1 }, { x: 0, z: 0, h: 2 }])
     ]
   }
 ];
+
+// Same fix as cube-tunnel's levels.js: the pool-cache key must use the
+// level's ARRAY POSITION (index + 1), not its raw `level` number — this
+// game's first playable level is numbered 2 as well, but game-flow.js's
+// "?level=N" practice reload always sends the 1-based position shown in the
+// level picker.
+export const levels = pools.map((entry, index) => ({
+  level: entry.level,
+  stars: entry.stars,
+  pool: entry.problems,
+  problems: sessionProblems("crystal-cubes", index + 1, entry.problems, 5)
+}));
 
 export function validateLevels() {
   if (levels.length !== 4) throw new Error("crystal-cubes requires four levels");

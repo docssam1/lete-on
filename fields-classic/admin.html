@@ -55,6 +55,20 @@ td.name{text-align:left;font-weight:700;padding-left:10px}
 .book-row input.title{width:150px}
 .book-row input.url{flex:1;min-width:150px}
 .book-row .btn{height:30px;font-size:11px;padding:0 8px}
+.archive-book{display:grid;grid-template-columns:minmax(160px,.8fr) minmax(220px,1.2fr) auto;gap:8px 10px;align-items:center;padding:12px;margin-bottom:10px}
+.archive-book .title{width:100%}
+.archive-book .url{width:100%;min-width:0}
+.archive-book .video-input{grid-column:1/3}
+.archive-book .pdf-link{grid-column:1/3}
+.archive-book .book-actions{grid-column:3;grid-row:1/4;display:flex;flex-direction:column;gap:7px;align-self:stretch;justify-content:center}
+.pdf-drop{min-height:34px;border:1.5px dashed #94a3b8;border-radius:8px;background:#f8fafc;color:#16417C;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:7px 10px;cursor:pointer;text-align:center}
+.pdf-drop:hover,.pdf-drop.drag{border-color:#16a34a;background:#f0fdf4;color:#166534}
+.pdf-drop input{display:none}
+.split-state{grid-column:1/3;font-size:11px;color:#64748b;line-height:1.45;min-height:16px}
+.split-state.done{color:#15803d;font-weight:800}
+.archive-help{font-size:11px;color:#64748b;line-height:1.65;margin-bottom:14px;padding:10px 12px;border:1px solid #dbe5ef;border-radius:9px;background:#f8fafc}
+.archive-help b{color:#16417C}
+@media(max-width:760px){.archive-book{grid-template-columns:1fr}.archive-book .video-input,.archive-book .pdf-link,.archive-book .split-state,.archive-book .book-actions{grid-column:1;grid-row:auto}.archive-book .book-actions{flex-direction:row;justify-content:flex-end}}
 </style>
 </head>
 <body>
@@ -107,16 +121,20 @@ td.name{text-align:left;font-weight:700;padding-left:10px}
 <!-- 자료실 -->
 <div class="card">
   <h2>🗂 자료실</h2>
-  <div style="font-size:11px;color:#64748b;margin-bottom:14px">
-    폴더를 만들고 원하는 자료(PDF·영상·문제은행 등)를 자유롭게 추가하세요. 공개 대상은 전체 또는 특정 학생만 선택 가능합니다.
+  <div class="archive-help">
+    새 메뉴 이름을 입력하면 학생 서재 왼쪽에 같은 이름의 메뉴가 자동으로 생기고, 그 메뉴의 자료가 오른쪽에 책 썸네일로 표시됩니다.<br>
+    PDF를 선택하거나 끌어 놓으면 <b>브라우저에서 페이지 이미지로 자동 변환</b>한 뒤 GitHub에 장별로 올립니다. 원본 PDF 전체를 올리지 않아 큰 파일도 처리할 수 있습니다.<br>
+    영상 주소를 함께 넣으면 학생 화면에서 <b>왼쪽 영상 · 오른쪽 워터마크 교재</b>로 열립니다. 변환 후 아래의 <b>GitHub에 저장</b>도 눌러 목록을 반영하세요.
   </div>
   <div class="add-row">
-    <input id="newFolder" placeholder="새 폴더 이름 (예: 약점유형 보충자료)">
-    <button class="btn" onclick="addFolder()">+ 폴더 추가</button>
+    <input id="newFolder" placeholder="새 메뉴 이름 (예: 보충학습)">
+    <button class="btn" onclick="addFolder()">+ 자료실 메뉴 추가</button>
   </div>
   <div id="archive-list"></div>
 </div>
 
+<script src="../reading-world/vendor/pdfjs/pdf.min.js"></script>
+<script src="./data.js"></script>
 <script>
 const REPO = "docssam1/lete-on";
 const FILE_PATH = "fields-classic/data.js";
@@ -126,6 +144,7 @@ const BRANCH = "main";
 const PRODUCTS = [
   {id:"개념완성",       name:"개념완성"},
   {id:"진단모의고사",    name:"진단모의고사"},
+  {id:"진단약점클리닉",  name:"온라인 모의고사+진단+풀이 1회분+유사 약점유형 클리닉", manualOnly:true, grants:["진단모의고사"]},
   {id:"킬러문항",       name:"킬러문항"},
   {id:"실전모의고사1회", name:"실전모의고사 1회"},
   {id:"실전모의고사2회", name:"실전모의고사 2회"},
@@ -151,6 +170,9 @@ let S = window.GFIELD_FC_DATA || {
   archiveAccess: {},            // { "폴더명": ["*"] 또는 ["학생명",...] }
   books: []                     // [{folder, title, pdf, video, date}]
 };
+S.archiveFolders = Array.isArray(S.archiveFolders) ? S.archiveFolders : [];
+S.archiveAccess = S.archiveAccess && typeof S.archiveAccess === 'object' ? S.archiveAccess : {};
+S.books = Array.isArray(S.books) ? S.books : [];
 
 function genCode(){
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXY23456789'; // 헷갈리는 문자(0,O,1,I) 제외
@@ -171,6 +193,11 @@ function cObj(pid){
 
 function ensureStudent(name){
   if(!S.attendance[name]) S.attendance[name] = [];
+  if(S.attendance[name].includes('약점처방전')){
+    S.attendance[name] = S.attendance[name].filter(id=>id!=='약점처방전');
+    if(!S.attendance[name].includes('진단약점클리닉')) S.attendance[name].push('진단약점클리닉');
+    if(!S.attendance[name].includes('진단모의고사')) S.attendance[name].push('진단모의고사');
+  }
   if(!S.studentType[name]) S.studentType[name] = 'internal';
   if(!S.studentCode[name]) S.studentCode[name] = genCode();
 }
@@ -205,7 +232,7 @@ function copyCode(code){
 
 function renderContent(){
   let html = '';
-  PRODUCTS.forEach(p => {
+  PRODUCTS.filter(p=>!p.manualOnly).forEach(p => {
     const c = cObj(p.id);
     let tbRows = '';
     c.textbooks.forEach((t,i) => {
@@ -287,7 +314,7 @@ function toggleStudentAccess(folder, name){
 }
 
 function addBook(folder){
-  S.books.push({folder, title:'', pdf:'', video:'', date: new Date().toISOString().slice(0,10)});
+  S.books.push({folder, title:'', pdf:'', video:'', date: new Date().toISOString().slice(0,10), imgdir:'', pages:0, imageExt:'jpg', fileName:''});
   renderArchive();
   dirty();
 }
@@ -298,40 +325,93 @@ function setBook(idx, field, val){
 }
 
 function delBook(idx){
+  if(!confirm('이 자료를 목록에서 삭제할까요?')) return;
   S.books.splice(idx,1);
   renderArchive();
   dirty();
 }
 
+function removeFolderAt(index){
+  const folder = S.archiveFolders[index];
+  if(folder) removeFolder(folder);
+}
+
+function toggleAccessAllAt(index, checked){
+  const folder = S.archiveFolders[index];
+  if(folder) toggleAccessAll(folder, checked);
+}
+
+function toggleStudentAccessAt(folderIndex, studentIndex){
+  const folder = S.archiveFolders[folderIndex];
+  const name = S.students[studentIndex];
+  if(folder && name) toggleStudentAccess(folder, name);
+}
+
+function addBookAt(folderIndex){
+  const folder = S.archiveFolders[folderIndex];
+  if(folder) addBook(folder);
+}
+
+function archiveDragOver(event){
+  event.preventDefault();
+  event.currentTarget.classList.add('drag');
+}
+
+function archiveDragLeave(event){
+  event.currentTarget.classList.remove('drag');
+}
+
+function archiveDrop(event, index){
+  event.preventDefault();
+  event.currentTarget.classList.remove('drag');
+  const file = event.dataTransfer?.files?.[0];
+  if(file) uploadBookFile(index, file);
+}
+
+function formatBytes(bytes){
+  const n=Number(bytes)||0;
+  if(n<1024*1024) return Math.max(1,Math.round(n/1024))+'KB';
+  return (n/(1024*1024)).toFixed(n>=10*1024*1024?0:1)+'MB';
+}
+
 function renderArchive(){
   let html = '';
-  S.archiveFolders.forEach(folder => {
+  S.archiveFolders.forEach((folder, folderIndex) => {
     const access = accArr(folder);
     const isAll = access.includes("*");
     const booksInFolder = S.books.map((b,i)=>({...b,idx:i})).filter(b => b.folder === folder);
 
     html += `<div class="folder-card">
       <div class="folder-head">
-        <span class="folder-name">📁 ${folder}</span>
-        <button class="del-btn" onclick="removeFolder('${folder}')">✕ 폴더삭제</button>
+        <span class="folder-name">📁 ${esc(folder)}</span>
+        <button class="del-btn" onclick="removeFolderAt(${folderIndex})">✕ 폴더삭제</button>
       </div>
       <div class="access-row">
         <label style="font-size:11px;display:flex;align-items:center;gap:4px">
-          <input type="checkbox" ${isAll?'checked':''} onchange="toggleAccessAll('${folder}',this.checked)"> 전체 공개
+          <input type="checkbox" ${isAll?'checked':''} onchange="toggleAccessAllAt(${folderIndex},this.checked)"> 전체 공개
         </label>
-        ${!isAll ? S.students.map(name=>`
+        ${!isAll ? S.students.map((name, studentIndex)=>`
           <label style="font-size:11px;display:flex;align-items:center;gap:3px">
-            <input type="checkbox" ${access.includes(name)?'checked':''} onchange="toggleStudentAccess('${folder}','${name}')">${name}
+            <input type="checkbox" ${access.includes(name)?'checked':''} onchange="toggleStudentAccessAt(${folderIndex},${studentIndex})">${esc(name)}
           </label>`).join('') : ''}
       </div>
       ${booksInFolder.map(b => `
-        <div class="book-row">
+        <div class="book-row archive-book">
           <input class="title" type="text" value="${esc(b.title)}" oninput="setBook(${b.idx},'title',this.value)" placeholder="자료 제목">
-          <input class="url" type="url" value="${esc(b.pdf)}" oninput="setBook(${b.idx},'pdf',this.value)" placeholder="PDF 링크">
-          <input class="url" type="url" value="${esc(b.video)}" oninput="setBook(${b.idx},'video',this.value)" placeholder="영상 링크 (선택)">
-          <button class="btn del" onclick="delBook(${b.idx})">삭제</button>
+          <label class="pdf-drop" ondragover="archiveDragOver(event)" ondragleave="archiveDragLeave(event)" ondrop="archiveDrop(event,${b.idx})">
+            <input type="file" accept="application/pdf,.pdf" onchange="uploadBookPdf(${b.idx},this)">
+            <span>📄 PDF 파일 선택 또는 끌어 놓기</span>
+          </label>
+          <input class="url pdf-link" type="url" value="${esc(b.pdf)}" oninput="setBook(${b.idx},'pdf',this.value)" placeholder="PDF 웹 링크 (선택 · 링크 변환용)">
+          <input class="url video-input" type="url" value="${esc(b.video)}" oninput="setBook(${b.idx},'video',this.value)" placeholder="영상 링크 (선택 · 유튜브 주소)">
+          <span class="split-state${b.imgdir&&b.pages?' done':''}" id="bspl-${b.idx}">${b.imgdir&&b.pages?`✅ 이미지 ${Number(b.pages)}쪽 준비됨${b.fileName?' · '+esc(b.fileName):''}`:'PDF를 선택하면 페이지 이미지로 자동 변환됩니다.'}</span>
+          <div class="book-actions">
+            <input type="date" value="${esc(b.date||'')}" oninput="setBook(${b.idx},'date',this.value)" aria-label="자료 날짜">
+            <button class="btn" onclick="splitBookFromUrl(${b.idx})">링크 PDF 변환</button>
+            <button class="btn del" onclick="delBook(${b.idx})">삭제</button>
+          </div>
         </div>`).join('')}
-      <button class="btn add sm" onclick="addBook('${folder}')">＋ 자료 추가</button>
+      <button class="btn add sm" onclick="addBookAt(${folderIndex})">＋ 자료 추가</button>
     </div>`;
   });
   document.getElementById('archive-list').innerHTML = html || '<div style="font-size:12px;color:#94a3b8">폴더를 추가해 주세요.</div>';
@@ -340,9 +420,14 @@ function renderArchive(){
 function toggleCell(name, pid, el){
   ensureStudent(name);
   const arr = S.attendance[name];
+  const product=PRODUCTS.find(p=>p.id===pid);
   const i = arr.indexOf(pid);
-  if(i >= 0){ arr.splice(i,1); el.className='cell off'; }
-  else { arr.push(pid); el.className='cell on'; }
+  if(i >= 0){ arr.splice(i,1); }
+  else {
+    arr.push(pid);
+    (product?.grants||[]).forEach(grant=>{if(!arr.includes(grant))arr.push(grant);});
+  }
+  renderMatrix();
   dirty();
 }
 
@@ -362,7 +447,7 @@ function addStudent(){
     S.studentType[name] = type;
     S.studentCode[name] = genCode();
     // 온라인 학생은 구매 즉시 전체 상품 오픈, 재원생은 빈 상태(진도별로 열어줌)
-    S.attendance[name] = type === 'online' ? PRODUCTS.map(p=>p.id) : [];
+    S.attendance[name] = type === 'online' ? PRODUCTS.filter(p=>!p.manualOnly).map(p=>p.id) : [];
     issuedCodes.push(`${name}: ${S.studentCode[name]}`);
     added++;
   });
@@ -398,6 +483,119 @@ function buildFile(){
 function ghKeyGet(){ try{ return localStorage.getItem('gfield_fc_gh_token')||''; }catch(e){ return ''; } }
 function ghKeySet(v){ try{ localStorage.setItem('gfield_fc_gh_token', v); }catch(e){} }
 function ghToken(){ return ghKeyGet(); }
+
+async function ghPutArchiveImage(path, b64, message){
+  const token = ghToken();
+  if(!token) return {err:'GitHub 토큰이 필요합니다.'};
+  const response = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+    method:'PUT',
+    headers:{Authorization:'token '+token, Accept:'application/vnd.github+json'},
+    body:JSON.stringify({message, content:b64, branch:BRANCH})
+  });
+  if(response.ok) return {ok:true};
+  const error = await response.json().catch(()=>({}));
+  if(response.status===401 || response.status===403) return {err:'토큰의 Contents 쓰기 권한을 확인하세요.'};
+  return {err:error.message||('업로드 오류 '+response.status)};
+}
+
+function setBookProgress(index, message, done){
+  const el=document.getElementById('bspl-'+index);
+  if(!el) return;
+  el.textContent=message;
+  el.classList.toggle('done',!!done);
+}
+
+async function convertAndUploadBook(index, pdfData, fileName, keepPdfLink){
+  const token=ghToken();
+  if(!token){ alert('먼저 GitHub 토큰을 저장하세요.'); return false; }
+  if(!window.pdfjsLib){ alert('PDF 변환 기능을 불러오지 못했습니다. 새로고침 후 다시 시도하세요.'); return false; }
+  const book=S.books[index];
+  if(!book) return false;
+  try{
+    pdfjsLib.GlobalWorkerOptions.workerSrc=new URL('../reading-world/vendor/pdfjs/pdf.worker.min.js',location.href).href;
+    setBookProgress(index,'PDF를 읽는 중…');
+    const pdf=await pdfjsLib.getDocument({data:pdfData}).promise;
+    const total=pdf.numPages;
+    if(!total) throw new Error('PDF 페이지를 찾지 못했습니다.');
+    const folder='fc_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);
+    for(let pageNo=1;pageNo<=total;pageNo++){
+      setBookProgress(index,`이미지 변환·업로드 중… ${pageNo}/${total} (${Math.round(pageNo/total*100)}%)`);
+      const page=await pdf.getPage(pageNo);
+      const base=page.getViewport({scale:1});
+      const scale=Math.min(2.2,1400/base.width);
+      const viewport=page.getViewport({scale});
+      const canvas=document.createElement('canvas');
+      canvas.width=Math.round(viewport.width);
+      canvas.height=Math.round(viewport.height);
+      const context=canvas.getContext('2d',{alpha:false});
+      context.fillStyle='#fff';
+      context.fillRect(0,0,canvas.width,canvas.height);
+      await page.render({canvasContext:context,viewport}).promise;
+      const b64=canvas.toDataURL('image/jpeg',0.84).split(',')[1];
+      const pageName=String(pageNo).padStart(3,'0')+'.jpg';
+      const path='fields-classic/assets/archive/'+folder+'/'+pageName;
+      const uploaded=await ghPutArchiveImage(path,b64,`자료실 ${fileName||book.title||'교재'} ${pageNo}/${total}`);
+      page.cleanup?.();
+      canvas.width=1;
+      canvas.height=1;
+      if(uploaded.err) throw new Error(uploaded.err);
+    }
+    book.imgdir=folder;
+    book.pages=total;
+    book.imageExt='jpg';
+    book.fileName=fileName||book.fileName||'';
+    if(!keepPdfLink) book.pdf='';
+    if(!book.title && fileName) book.title=fileName.replace(/\.pdf$/i,'');
+    if(!book.date) book.date=new Date().toISOString().slice(0,10);
+    dirty();
+    renderArchive();
+    alert(`이미지 변환 완료 ✅\n\n${total}쪽이 자료실에 준비되었습니다.\n마지막으로 위의 [GitHub에 저장]을 눌러 목록을 반영하세요.`);
+    return true;
+  }catch(error){
+    setBookProgress(index,'변환 실패: '+(error?.message||error));
+    alert('PDF 변환에 실패했습니다.\n\n'+(error?.message||error));
+    return false;
+  }
+}
+
+async function uploadBookFile(index, file){
+  if(!file) return;
+  if(!/\.pdf$/i.test(file.name) && file.type!=='application/pdf'){
+    alert('PDF 파일만 선택할 수 있습니다.');
+    return;
+  }
+  if(!ghToken()){
+    alert('먼저 위에서 GitHub 토큰을 저장하세요.');
+    return;
+  }
+  const book=S.books[index];
+  if(!book) return;
+  setBookProgress(index,`${file.name} (${formatBytes(file.size)}) 읽는 중…`);
+  const data=await file.arrayBuffer();
+  await convertAndUploadBook(index,data,file.name,false);
+}
+
+async function uploadBookPdf(index, input){
+  const file=input.files?.[0];
+  if(file) await uploadBookFile(index,file);
+  input.value='';
+}
+
+async function splitBookFromUrl(index){
+  const book=S.books[index];
+  if(!book?.pdf){ alert('먼저 PDF 웹 링크를 입력하세요.'); return; }
+  try{
+    setBookProgress(index,'링크의 PDF를 불러오는 중…');
+    const response=await fetch(book.pdf);
+    if(!response.ok) throw new Error('PDF 불러오기 오류 '+response.status);
+    const data=await response.arrayBuffer();
+    const name=(book.pdf.split('/').pop()||book.title||'교재.pdf').split('?')[0];
+    await convertAndUploadBook(index,data,name,true);
+  }catch(error){
+    setBookProgress(index,'링크 변환 실패: '+(error?.message||error));
+    alert('링크 PDF를 불러오지 못했습니다.\n외부 사이트가 변환을 막는 경우에는 PDF 파일을 직접 선택하세요.\n\n'+(error?.message||error));
+  }
+}
 
 function saveGhKey(){
   const el = document.getElementById('ghKey');

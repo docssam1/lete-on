@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>25번 쌓기나무 규칙</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.166.1/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.166.1/examples/jsm/"
+        }
+      }
+    </script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1360px;
+        height: 900px;
+        margin: 0;
+        overflow: hidden;
+        background: #ffffff;
+        color: #26364a;
+        font-family: "Malgun Gothic", "Noto Sans KR", sans-serif;
+        letter-spacing: 0;
+      }
+
+      main {
+        width: 100%;
+        height: 100%;
+        padding: 36px 58px 30px;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: 66px 1fr;
+        gap: 18px;
+        align-items: start;
+      }
+
+      .number {
+        color: #16417c;
+        font-size: 45px;
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 29px;
+        font-weight: 500;
+        line-height: 1.55;
+      }
+
+      .sequence {
+        display: grid;
+        grid-template-columns: 1fr 42px 1fr 42px 1fr 58px 0.82fr;
+        align-items: center;
+        gap: 8px;
+        margin-top: 28px;
+        min-height: 530px;
+      }
+
+      figure {
+        width: 100%;
+        margin: 0;
+        text-align: center;
+      }
+
+      .scene {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        min-height: 290px;
+        overflow: hidden;
+        border: 1px solid #eadcca;
+        border-radius: 8px;
+        background: #f7e8cf;
+      }
+
+      .scene canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      figcaption {
+        margin-top: 13px;
+        color: #16417c;
+        font-size: 21px;
+        font-weight: 800;
+        line-height: 1.4;
+      }
+
+      figcaption span {
+        display: block;
+        margin-top: 3px;
+        color: #6d563d;
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .arrow {
+        color: #16417c;
+        font-size: 34px;
+        font-weight: 900;
+        text-align: center;
+      }
+
+      .ellipsis {
+        color: #16417c;
+        font-size: 36px;
+        font-weight: 900;
+        letter-spacing: 4px;
+        text-align: center;
+      }
+
+      .target {
+        display: grid;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        min-height: 235px;
+        place-items: center;
+        border: 3px dashed #16417c;
+        border-radius: 8px;
+        background: #eef5fc;
+        color: #16417c;
+      }
+
+      .target strong {
+        display: block;
+        font-size: 76px;
+        line-height: 1;
+      }
+
+      .target span {
+        display: block;
+        margin-top: 17px;
+        font-size: 22px;
+        font-weight: 800;
+      }
+
+      .answer {
+        margin: 1px 0 0;
+        text-align: center;
+        color: #26364a;
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      .answer-line {
+        display: inline-block;
+        width: 210px;
+        height: 32px;
+        margin-left: 13px;
+        border-bottom: 2px solid #26364a;
+        vertical-align: bottom;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="number">25</div>
+        <h1>
+          그림과 같은 규칙으로 쌓기나무를 쌓습니다.<br />
+          <span id="questionTarget"></span>번째 모양의 쌓기나무는 모두 몇 개인지 구하세요.
+        </h1>
+      </header>
+
+      <section class="sequence" aria-label="쌓기나무 규칙">
+        <figure>
+          <div class="scene" data-order="1"></div>
+          <figcaption>1번째 모양<span>1개</span></figcaption>
+        </figure>
+        <div class="arrow" aria-hidden="true">→</div>
+        <figure>
+          <div class="scene" data-order="2"></div>
+          <figcaption>2번째 모양<span>5개</span></figcaption>
+        </figure>
+        <div class="arrow" aria-hidden="true">→</div>
+        <figure>
+          <div class="scene" data-order="3"></div>
+          <figcaption>3번째 모양<span>14개</span></figcaption>
+        </figure>
+        <div class="ellipsis" aria-hidden="true">…</div>
+        <div class="target">
+          <div>
+            <strong>?</strong>
+            <span><b id="targetLabel"></b>번째 모양</span>
+          </div>
+        </div>
+      </section>
+
+      <p class="answer">답 <span class="answer-line"></span> 개</p>
+    </main>
+    <script type="module" src="./q25_renderer.js"></script>
+  </body>
+</html>

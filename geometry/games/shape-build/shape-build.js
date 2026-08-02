@@ -3,6 +3,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
+import { sessionProblems } from "../../shared/problem-pool.js";
 
 const BOARD_SIZE = 4;
 const MAX_HEIGHT = 4;
@@ -21,10 +22,21 @@ const TYPE_LABELS = {
   en: { cube: "Cube", cuboid: "Cuboid", wedge: "Prism", pyramid: "Pyramid", cone: "Cone" }
 };
 
+// Optional colour variants for cuboids (mirrors copy-build's cube palette in
+// ../../app.js: green/blue/yellow/rose). A piece with no `color` keeps the
+// original wood look everywhere below.
+const CUBOID_COLOR_HEX = { green: 0x73bd81, blue: 0x4ea6ce, yellow: 0xf0ce4e, rose: 0xdf6d71 };
+const COLOR_LABELS = {
+  ko: { green: "초록", blue: "파랑", yellow: "노랑", rose: "분홍" },
+  zh: { green: "绿色", blue: "蓝色", yellow: "黄色", rose: "粉色" },
+  ja: { green: "みどり", blue: "あお", yellow: "きいろ", rose: "ピンク" },
+  en: { green: "Green", blue: "Blue", yellow: "Yellow", rose: "Pink" }
+};
+
 const UI_TEXT = {
   ko: {
     target: "문제 모양", creative: "나만의 작품", build: "내가 만든 모양", check: "확인", finish: "완성",
-    next: "다음 문제", reset: "처음부터", rotate: "방향", front: "앞", right: "오른쪽", top: "위", capture: "사진",
+    next: "다음 문제", reset: "처음부터", rotate: "방향", front: "앞", right: "오른쪽", top: "위", capture: "사진", exit: "나가기",
     audioOn: "음성 끄기", audioOff: "음성 켜기", guide4: "직육면체의 방향까지 똑같이 놓아 보자!",
     guide5: "여러 입체를 골라 멋진 모양을 만들어 보자!", guideCreative: "주어진 조각으로 나만의 작품을 만들어 보자!",
     guideTapRotate: "놓은 조각을 톡 누르면 방향을 바꿀 수 있어!",
@@ -34,7 +46,7 @@ const UI_TEXT = {
   },
   zh: {
     target: "目标形状", creative: "我的作品", build: "我的形状", check: "确认", finish: "完成",
-    next: "下一题", reset: "重新开始", rotate: "旋转", front: "前面", right: "右侧", top: "上面", capture: "拍照",
+    next: "下一题", reset: "重新开始", rotate: "旋转", front: "前面", right: "右侧", top: "上面", capture: "拍照", exit: "退出",
     audioOn: "关闭语音", audioOff: "开启语音", guide4: "连长方体的方向也要摆得一样！",
     guide5: "选择不同立体，做出漂亮的形状！", guideCreative: "用给出的积木创作自己的作品吧！",
     guideTapRotate: "轻点放好的积木就能改变方向！",
@@ -44,7 +56,7 @@ const UI_TEXT = {
   },
   ja: {
     target: "問題の形", creative: "わたしの作品", build: "作った形", check: "確認", finish: "完成",
-    next: "次の問題", reset: "最初から", rotate: "向き", front: "前", right: "右側", top: "上", capture: "写真",
+    next: "次の問題", reset: "最初から", rotate: "向き", front: "前", right: "右側", top: "上", capture: "写真", exit: "出る",
     audioOn: "音声オフ", audioOff: "音声オン", guide4: "直方体の向きまで同じに置こう！",
     guide5: "いろいろな立体で素敵な形を作ろう！", guideCreative: "決められたブロックで自分の作品を作ろう！",
     guideTapRotate: "置いたブロックをトンと押すと向きを変えられるよ！",
@@ -54,7 +66,7 @@ const UI_TEXT = {
   },
   en: {
     target: "Target Shape", creative: "My Creation", build: "My Build", check: "Check", finish: "Finish",
-    next: "Next", reset: "Retry", rotate: "Rotate", front: "Front", right: "Right", top: "Top", capture: "Photo",
+    next: "Next", reset: "Retry", rotate: "Rotate", front: "Front", right: "Right", top: "Top", capture: "Photo", exit: "Exit",
     audioOn: "Voice off", audioOff: "Voice on", guide4: "Match every cuboid position and direction!",
     guide5: "Choose different solids and build a wonderful shape!", guideCreative: "Use the given pieces to make your own creation!",
     guideTapRotate: "Tap a placed piece to change its direction!",
@@ -64,7 +76,10 @@ const UI_TEXT = {
   }
 };
 
-const level4Problems = [
+// Piece counts ramp from 3 up to 7 across the list, and from problem 4 on we
+// mix in coloured cuboids (standing + lying) so direction AND colour both
+// have to be matched — see p()'s optional `color` argument.
+const level4Pool = [
   {
     name: "직육면체 방향 익히기",
     pieces: [
@@ -84,42 +99,146 @@ const level4Problems = [
     ]
   },
   {
-    name: "직육면체 바람개비",
+    name: "무지개 다리",
     pieces: [
-      p("cuboid", 0, 0, 0, 0), p("cuboid", 2, 0, 0, 1), p("cuboid", 1, 0, 2, 0), p("cuboid", 0, 0, 1, 1)
+      p("cuboid", 0, 0, 1, 2, "green"), p("cuboid", 3, 0, 1, 2),
+      p("cuboid", 0, 2, 1, 0), p("cuboid", 2, 2, 1, 0),
+      p("cuboid", 1, 0, 2, 1, "blue")
     ]
   },
   {
     name: "직육면체 탑",
     pieces: [
-      p("cuboid", 0, 0, 1, 0), p("cuboid", 2, 0, 0, 2), p("cuboid", 1, 0, 0, 2),
-      p("cuboid", 1, 2, 0, 1), p("cuboid", 2, 2, 0, 1)
+      p("cuboid", 0, 0, 1, 0), p("cuboid", 2, 0, 0, 2, "green"), p("cuboid", 1, 0, 0, 2, "blue"),
+      p("cuboid", 1, 2, 0, 1), p("cuboid", 2, 2, 0, 1), p("cuboid", 1, 0, 3, 0, "yellow")
+    ]
+  },
+  {
+    name: "이층집",
+    pieces: [
+      p("cuboid", 0, 0, 0, 0), p("cuboid", 2, 0, 0, 0, "blue"),
+      p("cuboid", 0, 0, 2, 0, "green"), p("cuboid", 2, 0, 2, 0, "rose"),
+      p("cuboid", 0, 1, 0, 1), p("cuboid", 2, 1, 2, 1, "yellow")
+    ]
+  },
+  {
+    name: "무지개 성",
+    pieces: [
+      p("cuboid", 0, 0, 0, 2, "green"), p("cuboid", 3, 0, 0, 2, "blue"),
+      p("cuboid", 0, 0, 3, 2, "yellow"), p("cuboid", 3, 0, 3, 2, "rose"),
+      p("cuboid", 0, 2, 0, 0), p("cuboid", 2, 2, 0, 0), p("cuboid", 1, 0, 1, 2)
+    ]
+  }
+,
+  {
+    name: "구름다리 1",
+    pieces: [
+      p("cuboid", 0, 0, 2, 2), p("cuboid", 0, 2, 2, 0), p("cuboid", 2, 0, 3, 0), p("cuboid", 2, 1, 3, 0)
+    ]
+  },
+  {
+    name: "네모 계단 1",
+    pieces: [
+      p("cuboid", 1, 0, 2, 0), p("cuboid", 2, 0, 1, 0), p("cuboid", 2, 1, 1, 2, "rose"), p("cuboid", 2, 3, 1, 0), p("cuboid", 2, 1, 2, 0)
+    ]
+  },
+  {
+    name: "쌍둥이 기둥 1",
+    pieces: [
+      p("cuboid", 0, 0, 1, 1), p("cuboid", 1, 0, 0, 2), p("cuboid", 1, 0, 2, 1), p("cuboid", 2, 0, 1, 1), p("cuboid", 1, 1, 1, 0), p("cuboid", 1, 1, 2, 0, "yellow")
+    ]
+  },
+  {
+    name: "색깔 성벽 1",
+    pieces: [
+      p("cuboid", 2, 0, 2, 0, "yellow"), p("cuboid", 0, 0, 2, 2), p("cuboid", 1, 0, 1, 2, "yellow"), p("cuboid", 2, 1, 1, 1), p("cuboid", 1, 0, 2, 2), p("cuboid", 1, 2, 1, 0, "blue"), p("cuboid", 2, 0, 0, 2)
+    ]
+  },
+  {
+    name: "지그재그 담장 1",
+    pieces: [
+      p("cuboid", 0, 0, 1, 1), p("cuboid", 3, 0, 2, 1), p("cuboid", 1, 0, 1, 0), p("cuboid", 1, 0, 2, 0)
+    ]
+  },
+  {
+    name: "무지개 계단 1",
+    pieces: [
+      p("cuboid", 0, 0, 2, 1, "blue"), p("cuboid", 0, 1, 2, 0), p("cuboid", 2, 0, 0, 1, "blue"), p("cuboid", 0, 2, 1, 1), p("cuboid", 0, 3, 2, 0, "green"), p("cuboid", 2, 0, 3, 0)
+    ]
+  },
+  {
+    name: "쌓기 퍼즐 1",
+    pieces: [
+      p("cuboid", 3, 0, 0, 1), p("cuboid", 2, 0, 3, 0), p("cuboid", 0, 0, 2, 2, "rose"), p("cuboid", 1, 0, 2, 1), p("cuboid", 0, 0, 3, 2, "blue")
+    ]
+  },
+  {
+    name: "구름다리 2",
+    pieces: [
+      p("cuboid", 2, 0, 2, 2), p("cuboid", 0, 0, 1, 2, "yellow"), p("cuboid", 3, 0, 2, 1, "rose"), p("cuboid", 2, 1, 3, 0), p("cuboid", 1, 0, 2, 1, "yellow"), p("cuboid", 3, 0, 0, 1), p("cuboid", 2, 2, 2, 0)
+    ]
+  },
+  {
+    name: "네모 계단 2",
+    pieces: [
+      p("cuboid", 3, 0, 3, 2), p("cuboid", 2, 0, 0, 1), p("cuboid", 2, 0, 2, 0), p("cuboid", 1, 0, 3, 0)
+    ]
+  },
+  {
+    name: "쌍둥이 기둥 2",
+    pieces: [
+      p("cuboid", 1, 0, 3, 0, "rose"), p("cuboid", 2, 0, 0, 1, "yellow"), p("cuboid", 1, 0, 0, 1, "blue"), p("cuboid", 2, 1, 3, 2), p("cuboid", 0, 1, 0, 0), p("cuboid", 2, 0, 2, 2)
+    ]
+  },
+  {
+    name: "색깔 성벽 2",
+    pieces: [
+      p("cuboid", 2, 0, 3, 2, "blue"), p("cuboid", 1, 0, 2, 0, "rose"), p("cuboid", 1, 0, 1, 0, "green"), p("cuboid", 1, 1, 1, 0), p("cuboid", 1, 2, 3, 0, "yellow")
+    ]
+  },
+  {
+    name: "지그재그 담장 2",
+    pieces: [
+      p("cuboid", 2, 0, 0, 2, "rose"), p("cuboid", 0, 0, 2, 0, "yellow"), p("cuboid", 2, 2, 0, 1), p("cuboid", 2, 0, 2, 1), p("cuboid", 3, 0, 0, 1, "rose"), p("cuboid", 0, 0, 3, 2), p("cuboid", 1, 0, 0, 1)
+    ]
+  },
+  {
+    name: "무지개 계단 2",
+    pieces: [
+      p("cuboid", 1, 0, 0, 2, "blue"), p("cuboid", 2, 0, 2, 0, "yellow"), p("cuboid", 3, 0, 1, 2), p("cuboid", 2, 0, 0, 0), p("cuboid", 2, 1, 2, 1, "green"), p("cuboid", 2, 0, 3, 0)
+    ]
+  },
+  {
+    name: "쌓기 퍼즐 2",
+    pieces: [
+      p("cuboid", 3, 0, 2, 2), p("cuboid", 2, 0, 1, 0), p("cuboid", 3, 2, 1, 1), p("cuboid", 3, 3, 1, 1), p("cuboid", 2, 1, 0, 1)
     ]
   }
 ];
+const level4Problems = sessionProblems("shape-build-4", 4, level4Pool, 7);
 
-const level5Problems = [
-  {
+const level5RegularPool = [
+{
     name: "지붕이 있는 집",
     pieces: [
       p("cube", 1, 0, 1), p("cube", 2, 0, 1), p("cuboid", 1, 1, 1, 0), p("wedge", 1, 2, 1, 0), p("wedge", 2, 2, 1, 2)
     ]
   },
-  {
+{
     name: "작은 성문",
     pieces: [
       p("cuboid", 0, 0, 1, 2), p("cuboid", 3, 0, 1, 2), p("cuboid", 0, 2, 1, 0),
       p("pyramid", 0, 3, 1), p("pyramid", 3, 2, 1), p("cube", 1, 0, 1), p("cube", 2, 0, 1)
     ]
   },
-  {
+{
     name: "로켓",
     pieces: [
       p("cuboid", 1, 0, 1, 2), p("cuboid", 1, 2, 1, 0), p("cone", 1, 3, 1),
       p("wedge", 0, 0, 1, 1), p("wedge", 2, 0, 1, 3)
     ]
   },
-  {
+{
     name: "입체 다리",
     pieces: [
       p("cuboid", 0, 0, 1, 2), p("cuboid", 3, 0, 1, 2), p("cuboid", 0, 2, 1, 0),
@@ -127,15 +246,123 @@ const level5Problems = [
     ]
   },
   {
+    name: "작은 마을 1",
+    pieces: [
+      p("cube", 2, 0, 1, 0), p("cube", 1, 0, 1, 0), p("pyramid", 3, 0, 1, 0), p("cone", 1, 0, 0, 0), p("wedge", 3, 0, 0, 0)
+    ]
+  },
+  {
+    name: "언덕 위 집 1",
+    pieces: [
+      p("cube", 3, 0, 0, 0), p("cuboid", 0, 0, 1, 0), p("cone", 0, 0, 0, 0), p("cuboid", 0, 0, 3, 0), p("wedge", 0, 1, 1, 0), p("wedge", 3, 0, 2, 0)
+    ]
+  },
+  {
+    name: "우주 기지 1",
+    pieces: [
+      p("cube", 1, 0, 1, 0), p("cube", 2, 0, 2, 0), p("pyramid", 3, 0, 2, 0), p("cuboid", 0, 0, 3, 0, "blue"), p("cube", 1, 1, 1, 0), p("cube", 0, 0, 0, 0), p("cone", 2, 0, 0, 0)
+    ]
+  },
+  {
+    name: "다리와 탑 1",
+    pieces: [
+      p("cube", 1, 0, 2, 0), p("cuboid", 0, 0, 0, 1, "yellow"), p("cuboid", 0, 1, 0, 1), p("cube", 1, 1, 2, 0), p("cuboid", 2, 0, 1, 1, "rose"), p("cube", 3, 0, 2, 0)
+    ]
+  },
+  {
+    name: "동화 속 성 1",
+    pieces: [
+      p("cone", 2, 0, 2, 0), p("cube", 3, 0, 3, 0), p("cuboid", 1, 0, 3, 2), p("cuboid", 0, 0, 1, 1), p("cube", 0, 0, 3, 0)
+    ]
+  },
+  {
+    name: "작은 마을 2",
+    pieces: [
+      p("wedge", 3, 0, 0, 0), p("wedge", 2, 0, 3, 0), p("cuboid", 3, 1, 0, 1), p("cube", 3, 0, 3, 0), p("pyramid", 2, 0, 0, 0), p("cube", 3, 0, 1, 0)
+    ]
+  },
+  {
+    name: "언덕 위 집 2",
+    pieces: [
+      p("cube", 3, 0, 0, 0), p("cube", 1, 0, 1, 0), p("cone", 3, 0, 2, 0), p("cube", 1, 0, 0, 0), p("cube", 0, 0, 3, 0), p("cuboid", 1, 0, 3, 0), p("cube", 2, 0, 1, 0)
+    ]
+  },
+  {
+    name: "우주 기지 2",
+    pieces: [
+      p("wedge", 1, 0, 1, 0), p("wedge", 3, 0, 0, 0), p("cube", 0, 0, 1, 0), p("pyramid", 1, 0, 0, 0), p("cube", 0, 0, 3, 0), p("cuboid", 2, 0, 2, 2)
+    ]
+  },
+  {
+    name: "다리와 탑 2",
+    pieces: [
+      p("cuboid", 2, 0, 1, 2), p("wedge", 3, 0, 1, 0), p("cube", 3, 0, 3, 0), p("cuboid", 0, 0, 2, 2), p("wedge", 2, 0, 0, 0)
+    ]
+  },
+  {
+    name: "동화 속 성 2",
+    pieces: [
+      p("cube", 3, 0, 3, 0), p("cube", 3, 0, 0, 0), p("wedge", 1, 0, 2, 0), p("pyramid", 0, 0, 1, 0), p("cube", 0, 0, 2, 0), p("wedge", 1, 0, 0, 0)
+    ]
+  },
+  {
+    name: "작은 마을 3",
+    pieces: [
+      p("cube", 1, 0, 3, 0), p("pyramid", 1, 0, 0, 0), p("cuboid", 1, 0, 1, 0), p("wedge", 2, 0, 0, 0), p("cuboid", 0, 0, 0, 1), p("pyramid", 2, 1, 0, 0), p("cube", 1, 1, 3, 0)
+    ]
+  },
+  {
+    name: "언덕 위 집 3",
+    pieces: [
+      p("cube", 1, 0, 1, 0), p("pyramid", 3, 0, 1, 0), p("pyramid", 2, 0, 1, 0), p("cuboid", 1, 1, 1, 1), p("cuboid", 2, 0, 2, 1), p("cube", 3, 0, 0, 0)
+    ]
+  },
+  {
+    name: "우주 기지 3",
+    pieces: [
+      p("pyramid", 2, 0, 2, 0), p("cuboid", 1, 0, 2, 2, "blue"), p("wedge", 3, 0, 1, 0), p("cube", 0, 0, 3, 0), p("wedge", 2, 1, 2, 0)
+    ]
+  },
+  {
+    name: "다리와 탑 3",
+    pieces: [
+      p("wedge", 2, 0, 1, 0), p("cube", 0, 0, 0, 0), p("cuboid", 1, 1, 1, 0), p("cube", 1, 0, 0, 0), p("cone", 0, 1, 0, 0), p("cuboid", 0, 2, 0, 1)
+    ]
+  },
+  {
+    name: "동화 속 성 3",
+    pieces: [
+      p("cuboid", 2, 0, 2, 0), p("cuboid", 2, 0, 3, 0), p("wedge", 3, 0, 0, 0), p("pyramid", 0, 0, 2, 0), p("cube", 1, 0, 3, 0), p("cube", 2, 0, 1, 0), p("cube", 2, 0, 0, 0)
+    ]
+  },
+  {
+    name: "작은 마을 4",
+    pieces: [
+      p("cube", 1, 0, 0, 0), p("cone", 0, 0, 2, 0), p("cube", 2, 0, 0, 0), p("pyramid", 1, 1, 0, 0), p("pyramid", 0, 0, 1, 0), p("cuboid", 0, 0, 3, 0)
+    ]
+  }
+];
+const level5Creative = {
     name: "자유 작품",
     creative: true,
     inventory: { cube: 8, cuboid: 6, wedge: 4, pyramid: 3, cone: 3 },
     pieces: []
-  }
-];
+  };
+const level5Problems = [...sessionProblems("shape-build-5", 5, level5RegularPool, 4), level5Creative];
 
-function p(type, x, y, z, rotation = 0) {
-  return { id: `${type}-${x}-${y}-${z}-${rotation}`, type, x, y, z, rotation };
+function p(type, x, y, z, rotation = 0, color = null) {
+  return { id: `${type}-${color || "wood"}-${x}-${y}-${z}-${rotation}`, type, x, y, z, rotation, color };
+}
+
+// Pieces are grouped in the tray/inventory by type, plus colour when a piece
+// carries one (colourless pieces just fall back to the plain type key so
+// every pre-existing problem behaves exactly as before).
+function pieceKey(type, color) {
+  return color ? `${type}:${color}` : type;
+}
+
+function getColorLabel(color) {
+  return COLOR_LABELS[state.lang]?.[color] || COLOR_LABELS.ko[color] || color;
 }
 
 const params = new URLSearchParams(window.location.search);
@@ -150,6 +377,7 @@ const state = {
   problemIndex: Number(shapeProgress.level) === startingShapeLevel ? Math.max(0, Number(shapeProgress.problemIndex) || 0) : 0,
   pieces: [],
   selectedType: startingShapeLevel === 4 ? TYPES.CUBOID : TYPES.CUBE,
+  selectedColor: null,
   selectedRotation: 0,
   drag: null,
   audio: localStorage.getItem("gfield-audio-muted") !== "true",
@@ -193,6 +421,16 @@ const materials = {
   pyramid: makeMaterial(0xe6b941),
   cone: makeMaterial(0xcf7057)
 };
+// Coloured cuboid materials are created lazily/once and cached, same
+// woodTexture-lit look as the plain materials above.
+const coloredCuboidMaterials = {};
+function getMaterial(type, color) {
+  if (color && type === TYPES.CUBOID && CUBOID_COLOR_HEX[color]) {
+    if (!coloredCuboidMaterials[color]) coloredCuboidMaterials[color] = makeMaterial(CUBOID_COLOR_HEX[color]);
+    return coloredCuboidMaterials[color];
+  }
+  return materials[type] || materials.cube;
+}
 // Crisp wood-grain edge lines on box-like pieces, matching copy-build/count-heights.
 const edgeMaterial = new THREE.LineBasicMaterial({
   color: 0x87552d,
@@ -225,6 +463,7 @@ function init() {
   addEvents();
   renderLevelOptions();
   loadProblem();
+  updateAudioButton();
   resizeAll();
   syncEvolution();
   updateLevelBadge(state.lang, BADGE_POS);
@@ -232,7 +471,7 @@ function init() {
 }
 
 function validateProblemBank() {
-  [...level4Problems, ...level5Problems].forEach((problem) => {
+  [...level4Pool, ...level5RegularPool, ...level5Problems].forEach((problem) => {
     if (problem.creative) return;
     const occupied = new Set();
     problem.pieces.forEach((piece) => {
@@ -299,14 +538,14 @@ function loadProblem() {
   state.drag = null;
   state.successPending = false;
   state.selectedType = state.level === 4 ? TYPES.CUBOID : TYPES.CUBE;
+  state.selectedColor = null;
   state.selectedRotation = 0;
   dropPreview.visible = false;
   const problem = getProblem();
   document.querySelector("#shapeGuide").className = `floating-guide level-${state.level}`;
-  document.querySelector("#captureBuild").hidden = state.level !== 5;
   document.querySelector("#targetTitle").textContent = problem.creative ? getText("creative") : getText("target");
   document.querySelector("#buildTitle").textContent = getText("build");
-  document.querySelector("#checkAnswer").textContent = problem.creative ? getText("finish") : getText("check");
+  document.querySelector("#checkAnswer span").textContent = problem.creative ? getText("finish") : getText("check");
   setGuide(problem.creative ? "guideCreative" : shouldShowTapHint() ? "guideTapRotate" : state.level === 4 ? "guide4" : "guide5");
   closePiecePopup();
   renderTarget();
@@ -325,15 +564,28 @@ function renderBuild() {
   renderTray();
 }
 
+// For level 4, the tray shows a wood cuboid slot plus one slot per distinct
+// colour the current problem actually uses (most problems stay wood-only).
+// Level 5 keeps its original fixed five-slot catalogue untouched.
+function getAllowedVariants() {
+  if (state.level === 4) {
+    const colors = new Set(getProblem().pieces.map((piece) => piece.color || null));
+    const variants = [];
+    if (colors.has(null) || colors.size === 0) variants.push({ type: TYPES.CUBOID, color: null });
+    [...colors].filter(Boolean).forEach((color) => variants.push({ type: TYPES.CUBOID, color }));
+    return variants;
+  }
+  return [TYPES.CUBE, TYPES.CUBOID, TYPES.WEDGE, TYPES.PYRAMID, TYPES.CONE].map((type) => ({ type, color: null }));
+}
+
 function renderTray() {
-  const allowed = state.level === 4
-    ? [TYPES.CUBOID]
-    : [TYPES.CUBE, TYPES.CUBOID, TYPES.WEDGE, TYPES.PYRAMID, TYPES.CONE];
+  const allowed = getAllowedVariants();
   const inventory = getInventory();
   const used = getUsedCounts();
   shapeTray.replaceChildren();
-  allowed.forEach((type) => {
-    const remaining = Math.max(0, (inventory[type] || 0) - (used[type] || 0));
+  allowed.forEach(({ type, color }) => {
+    const key = pieceKey(type, color);
+    const remaining = Math.max(0, (inventory[key] || 0) - (used[key] || 0));
     const button = document.createElement("button");
     const icon = document.createElement("span");
     const label = document.createElement("strong");
@@ -341,14 +593,15 @@ function renderTray() {
     button.type = "button";
     button.className = "shape-piece";
     button.dataset.shape = type;
-    button.classList.toggle("active", state.selectedType === type);
+    if (color) button.dataset.color = color;
+    button.classList.toggle("active", state.selectedType === type && (state.selectedColor || null) === (color || null));
     button.disabled = remaining <= 0 && !state.drag?.sourceId;
     icon.className = "shape-icon";
-    label.textContent = getTypeLabel(type);
+    label.textContent = color ? `${getTypeLabel(type)} ${getColorLabel(color)}` : getTypeLabel(type);
     count.textContent = `x${remaining}`;
     button.append(icon, label, count);
-    button.addEventListener("click", () => selectType(type));
-    button.addEventListener("pointerdown", (event) => startTrayDrag(event, type));
+    button.addEventListener("click", () => selectType(type, color));
+    button.addEventListener("pointerdown", (event) => startTrayDrag(event, type, color));
     shapeTray.appendChild(button);
   });
 }
@@ -356,20 +609,23 @@ function renderTray() {
 function getInventory() {
   if (getProblem().creative) return getProblem().inventory;
   return getProblem().pieces.reduce((counts, piece) => {
-    counts[piece.type] = (counts[piece.type] || 0) + 1;
+    const key = pieceKey(piece.type, piece.color || null);
+    counts[key] = (counts[key] || 0) + 1;
     return counts;
   }, {});
 }
 
 function getUsedCounts() {
   return state.pieces.reduce((counts, piece) => {
-    counts[piece.type] = (counts[piece.type] || 0) + 1;
+    const key = pieceKey(piece.type, piece.color || null);
+    counts[key] = (counts[key] || 0) + 1;
     return counts;
   }, {});
 }
 
-function selectType(type) {
+function selectType(type, color = null) {
   state.selectedType = type;
+  state.selectedColor = color;
   state.selectedRotation = 0;
   renderTray();
 }
@@ -434,18 +690,21 @@ function findDropHeight(x, z, type, rotation, ignoreId = null) {
   return -1;
 }
 
-function startTrayDrag(event, type) {
+function startTrayDrag(event, type, color = null) {
   if (event.button !== undefined && event.button !== 0) return;
   const inventory = getInventory();
   const used = getUsedCounts();
-  if ((inventory[type] || 0) - (used[type] || 0) <= 0) return;
+  const key = pieceKey(type, color);
+  if ((inventory[key] || 0) - (used[key] || 0) <= 0) return;
   event.preventDefault();
   event.stopPropagation();
   closePiecePopup();
   state.selectedType = type;
+  state.selectedColor = color;
   state.selectedRotation %= getRotationVariants(type);
   beginDrag(event, {
     type,
+    color,
     rotation: state.selectedRotation,
     sourceId: null
   });
@@ -476,8 +735,9 @@ function startPieceDrag(event) {
     document.removeEventListener("pointerup", up);
     document.removeEventListener("pointercancel", cancel);
     state.selectedType = piece.type;
+    state.selectedColor = piece.color || null;
     state.selectedRotation = piece.rotation || 0;
-    beginDrag(moveEvent, { type: piece.type, rotation: piece.rotation || 0, sourceId: piece.id });
+    beginDrag(moveEvent, { type: piece.type, color: piece.color || null, rotation: piece.rotation || 0, sourceId: piece.id });
   };
   const up = (upEvent) => {
     if (resolved) return;
@@ -505,7 +765,9 @@ function beginDrag(event, drag) {
   state.drag = { ...drag, clientX: event.clientX, clientY: event.clientY, target: null, overTray: false };
   buildViewer.controls.enabled = false;
   dragGhost.dataset.shape = drag.type;
-  dragGhost.textContent = getTypeLabel(drag.type);
+  if (drag.color) dragGhost.dataset.color = drag.color;
+  else delete dragGhost.dataset.color;
+  dragGhost.textContent = drag.color ? `${getTypeLabel(drag.type)} ${getColorLabel(drag.color)}` : getTypeLabel(drag.type);
   dragGhost.classList.add("show");
   updateDragPreview(event.clientX, event.clientY);
   const move = (moveEvent) => updateDragPreview(moveEvent.clientX, moveEvent.clientY);
@@ -560,6 +822,7 @@ function finishDrag() {
     const next = {
       id: drag.sourceId || `piece-${nextPieceId++}`,
       type: drag.type,
+      color: drag.color || null,
       rotation: drag.rotation,
       ...drag.target
     };
@@ -763,7 +1026,7 @@ function checkAnswer() {
 
 function normalizePieces(pieces) {
   return pieces
-    .map((piece) => `${piece.type}:${piece.x}:${piece.y}:${piece.z}:${piece.rotation || 0}`)
+    .map((piece) => `${piece.type}:${piece.x}:${piece.y}:${piece.z}:${piece.rotation || 0}:${piece.color || "wood"}`)
     .sort();
 }
 
@@ -805,8 +1068,20 @@ function showSuccess() {
 
 function nextProblem() {
   const problems = getProblems();
-  state.problemIndex = (state.problemIndex + 1) % problems.length;
-  loadProblem();
+  const problem = getProblem();
+  if (problem && problem.creative) {
+    state.problemIndex = (state.problemIndex + 1) % problems.length;
+    loadProblem();
+    return;
+  }
+  if (state.problemIndex + 1 < problems.length) {
+    state.problemIndex += 1;
+    loadProblem();
+    return;
+  }
+  // Finished the whole set — hand back a fresh, non-overlapping slice of the
+  // pool next time instead of silently replaying the same problems.
+  window.location.href = `${window.location.pathname}?level=${state.level}&practice=1`;
 }
 
 function resetBuild() {
@@ -819,37 +1094,11 @@ function resetBuild() {
 function setView(mode) {
   [targetViewer, buildViewer].forEach((viewer) => {
     if (mode === "front") viewer.camera.position.set(0, 3.4, 8.8);
+    if (mode === "right") viewer.camera.position.set(8.8, 3.4, 0);
     if (mode === "top") viewer.camera.position.set(0.01, 10.4, 0.01);
     viewer.controls.target.set(0, 1.15, 0);
     viewer.controls.update();
   });
-}
-
-async function captureBuild() {
-  buildViewer.renderer.render(buildViewer.scene, buildViewer.camera);
-  const blob = await new Promise((resolve) => buildViewer.renderer.domElement.toBlob(resolve, "image/png"));
-  if (!blob) return;
-  const file = new File([blob], `gfield-shape-${Date.now()}.png`, { type: "image/png" });
-  const canUseMobileShare = navigator.maxTouchPoints > 0 && navigator.share && navigator.canShare?.({ files: [file] });
-  if (canUseMobileShare) {
-    try {
-      await navigator.share({ title: "GFIELD Cube Town", files: [file] });
-      return;
-    } catch (error) {
-      if (error?.name !== "AbortError") console.warn("Native share failed; saving PNG instead.", error);
-    }
-  }
-  downloadBlob(blob, file.name);
-}
-
-function downloadBlob(blob, filename) {
-  const link = document.createElement("a");
-  link.download = filename;
-  link.href = URL.createObjectURL(blob);
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  window.setTimeout(() => URL.revokeObjectURL(link.href), 1000);
 }
 
 function renderLevelOptions() {
@@ -865,7 +1114,8 @@ function renderLevelOptions() {
     button.classList.toggle("active", level === state.level);
     title.textContent = `레벨 ${level}`;
     stars.textContent = `${"★".repeat(level)}${"☆".repeat(5 - level)}`;
-    count.textContent = level <= 3 ? "10문제" : "5문제";
+    const problemCount = level <= 3 ? 10 : level === 4 ? level4Problems.length : level5Problems.length;
+    count.textContent = `${problemCount}문제`;
     button.append(title, stars, count);
     button.addEventListener("click", () => {
       if (level <= 3) {
@@ -895,14 +1145,15 @@ function setLanguage(lang) {
   state.lang = lang;
   document.documentElement.lang = lang;
   document.querySelectorAll("[data-lang]").forEach((button) => button.classList.toggle("active", button.dataset.lang === lang));
-  document.querySelector("#nextStep").textContent = getText("next");
-  document.querySelector("#resetBuild").textContent = getText("reset");
-  document.querySelector("#rotatePiece").textContent = getText("rotate");
-  document.querySelector("#viewFront").textContent = getText("front");
-  document.querySelector("#viewTop").textContent = getText("top");
-  document.querySelector("#captureBuild").textContent = getText("capture");
-  document.querySelector("#audioToggle").textContent = getText(state.audio ? "audioOn" : "audioOff");
-  document.querySelector("#audioToggle").setAttribute("aria-pressed", String(state.audio));
+  document.querySelector("#nextStep span").textContent = getText("next");
+  document.querySelector("#resetBuild span").textContent = getText("reset");
+  document.querySelector("#rotatePiece span").textContent = getText("rotate");
+  document.querySelector("#viewFront span").textContent = getText("front");
+  document.querySelector("#viewRight span").textContent = getText("right");
+  document.querySelector("#viewTop span").textContent = getText("top");
+  document.querySelector(".menu-exit small").textContent = getText("exit");
+  document.querySelector(".menu-exit").setAttribute("aria-label", getText("exit"));
+  updateAudioButton();
   refreshBoardLabels(targetViewer);
   refreshBoardLabels(buildViewer);
   updateLevelBadge(state.lang, BADGE_POS);
@@ -912,10 +1163,21 @@ function setLanguage(lang) {
 function toggleAudio() {
   state.audio = !state.audio;
   localStorage.setItem("gfield-audio-muted", String(!state.audio));
-  document.querySelector("#audioToggle").setAttribute("aria-pressed", String(state.audio));
-  document.querySelector("#audioToggle").textContent = getText(state.audio ? "audioOn" : "audioOff");
+  updateAudioButton();
   if (state.audio) speak(document.querySelector("#guideMessage").textContent);
   else window.speechSynthesis?.cancel();
+}
+
+// Mirrors copy-build's updateAudioButton() (../../app.js): swap the emoji,
+// keep aria-pressed/aria-label in sync so the icon-only utility button in
+// nav.build-utilities always reflects the current mute state.
+function updateAudioButton() {
+  const button = document.querySelector("#audioToggle");
+  if (!button) return;
+  const icon = button.querySelector("span");
+  if (icon) icon.textContent = state.audio ? "🔊" : "🔇";
+  button.setAttribute("aria-pressed", String(state.audio));
+  button.setAttribute("aria-label", getText(state.audio ? "audioOn" : "audioOff"));
 }
 
 function setGuide(key) {
@@ -958,8 +1220,8 @@ function addEvents() {
   document.querySelector("#resetBuild").addEventListener("click", resetBuild);
   document.querySelector("#rotatePiece").addEventListener("click", rotateSelected);
   document.querySelector("#viewFront").addEventListener("click", () => setView("front"));
+  document.querySelector("#viewRight").addEventListener("click", () => setView("right"));
   document.querySelector("#viewTop").addEventListener("click", () => setView("top"));
-  document.querySelector("#captureBuild").addEventListener("click", captureBuild);
   document.querySelector("#topLevelPickerButton").addEventListener("click", openLevelDialog);
   document.querySelector("#closeLevelDialog").addEventListener("click", closeLevelDialog);
   document.querySelector("#levelDialog").addEventListener("click", (event) => {
@@ -1075,7 +1337,7 @@ function createPieceMesh(piece, interactive, materialOverride = null) {
   else if (piece.type === TYPES.PYRAMID) geometry = new THREE.ConeGeometry(.66, .94, 4);
   else if (piece.type === TYPES.CONE) geometry = new THREE.ConeGeometry(.47, .94, 24);
   else geometry = new RoundedBoxGeometry(width * .94, height * .94, depth * .94, 5, .065);
-  const material = materialOverride || materials[piece.type] || materials.cube;
+  const material = materialOverride || getMaterial(piece.type, piece.color);
   const mesh = new THREE.Mesh(geometry, material);
   const offset = (BOARD_SIZE - 1) / 2;
   mesh.position.x = piece.x + (width - 1) / 2 - offset;

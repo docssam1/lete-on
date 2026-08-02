@@ -34,6 +34,8 @@ export const messages = {
     tutorialHidden1: "쌓기나무를 쌓으면 다른 나무에 가려 보이지 않는 나무가 생겨.",
     tutorialHidden2: "위·앞·오른쪽 어디에서도 안 보이면 숨은 쌓기나무야. 속 보기로 확인할 수 있어.",
     tutorialHidden3: "숨은 쌓기나무가 몇 개인지 세어 숫자로 써 보자. 시작해 볼까?",
+    tutorialHidden4: "층마다 쌓기나무가 몇 개인지 세어 전체를 구하고, 보이는 개수를 빼면 숨은 개수를 알 수 있어.",
+    tutorialHidden5: "층마다 숨은 쌓기나무를 세어 더해도 돼. 네가 좋아하는 방법을 골라 봐!",
     tutorialNext: "다음",
     tutorialStart: "시작",
     audioOn: "음성 켜짐",
@@ -41,7 +43,19 @@ export const messages = {
     docssam: "큐비",
     close: "닫기",
     levelName: "레벨 {level}",
-    problemCount: "5문제"
+    problemCount: "5문제",
+    modeSubtract: "빼서 풀기",
+    modeLayers: "층별로 풀기",
+    modeDirect: "바로 쓰기",
+    layerLabel: "{n}층",
+    layerHiddenLabel: "{n}층 숨은",
+    totalQuestion: "전체는 몇 개?",
+    visibleQuestion: "보이는 쌓기나무는 몇 개?",
+    equationHint: "전체 − 보이는 = 숨은 개수",
+    wrongWork: "다시 세어 볼까?",
+    guideModeSubtract: "층마다 쌓기나무가 몇 개인지 써서 전체를 구하고, 보이는 개수를 빼면 숨은 개수야!",
+    guideModeLayers: "층마다 숨어 있는 쌓기나무가 몇 개인지 세어서 더해 보자!",
+    guideModeDirect: "숨은 쌓기나무 개수를 바로 써도 좋아!"
   },
   zh: {
     world: "GFIELD Geometry World", town: "GFIELD Cube Town", title: "寻找隐藏方块",
@@ -59,8 +73,17 @@ export const messages = {
     tutorialHidden1: "积木叠起来时，会有被其他积木挡住而看不见的积木。",
     tutorialHidden2: "从上、前、右都看不到，就是隐藏的积木。可以用透视看确认。",
     tutorialHidden3: "数一数隐藏的积木有几块，再写出来。开始吧！",
+    tutorialHidden4: "数一数每层有几块，加起来就是总数，再减去看得见的，就能知道隐藏了几块。",
+    tutorialHidden5: "也可以数一数每层藏着几块再加起来。选你喜欢的方法吧！",
     tutorialNext: "下一步", tutorialStart: "开始",
-    audioOn: "语音已开", audioOff: "开启语音", docssam: "Cubi", close: "关闭", levelName: "等级 {level}", problemCount: "5题"
+    audioOn: "语音已开", audioOff: "开启语音", docssam: "Cubi", close: "关闭", levelName: "等级 {level}", problemCount: "5题",
+    modeSubtract: "用减法解", modeLayers: "按层数解", modeDirect: "直接写",
+    layerLabel: "第{n}层", layerHiddenLabel: "第{n}层隐藏",
+    totalQuestion: "总共有几块？", visibleQuestion: "看得见的积木有几块？",
+    equationHint: "总数 − 看得见 = 隐藏的数量", wrongWork: "再数一次看看？",
+    guideModeSubtract: "写出每层有几块积木求出总数，再减去看得见的数量，就是隐藏的数量！",
+    guideModeLayers: "数一数每层藏着几块积木，再加起来吧！",
+    guideModeDirect: "也可以直接写出隐藏积木的数量！"
   },
   ja: {
     world: "GFIELD Geometry World", town: "GFIELD Cube Town", title: "かくれたつみきを探す",
@@ -78,8 +101,17 @@ export const messages = {
     tutorialHidden1: "積み木を積むと、他の積み木にかくれて見えない積み木ができるよ。",
     tutorialHidden2: "上・前・右のどこからも見えなければ、かくれた積み木だよ。中を見るで確認できるよ。",
     tutorialHidden3: "かくれた積み木が何個か数えて書こう。始めよう！",
+    tutorialHidden4: "だんごとに何個あるか数えて全部の数を求め、見える数を引けばかくれた数がわかるよ。",
+    tutorialHidden5: "だんごとにかくれた積み木を数えて足してもいいよ。好きなやり方を選んでね！",
     tutorialNext: "次へ", tutorialStart: "スタート",
-    audioOn: "音声オン", audioOff: "音声を聞く", docssam: "Cubi", close: "閉じる", levelName: "レベル {level}", problemCount: "5問"
+    audioOn: "音声オン", audioOff: "音声を聞く", docssam: "Cubi", close: "閉じる", levelName: "レベル {level}", problemCount: "5問",
+    modeSubtract: "ひき算で解く", modeLayers: "だん別に解く", modeDirect: "直接書く",
+    layerLabel: "{n}だん", layerHiddenLabel: "{n}だん かくれ",
+    totalQuestion: "全部で何個？", visibleQuestion: "見える積み木は何個？",
+    equationHint: "全部 − 見える = かくれた数", wrongWork: "もう一度数えてみようか？",
+    guideModeSubtract: "だんごとに積み木の数を書いて全部の数を求め、見える数を引くとかくれた数になるよ！",
+    guideModeLayers: "だんごとにかくれた積み木が何個か数えて足してみよう！",
+    guideModeDirect: "かくれた積み木の数を直接書いてもいいよ！"
   },
   en: {
     world: "GFIELD Geometry World", town: "GFIELD Cube Town", title: "Find Hidden Cubes",
@@ -97,8 +129,17 @@ export const messages = {
     tutorialHidden1: "When cubes are stacked, some get blocked by others and can't be seen.",
     tutorialHidden2: "If it can't be seen from the top, front, or right, it's a hidden cube. Use See Inside to check.",
     tutorialHidden3: "Count how many cubes are hidden and write the number. Let's start!",
+    tutorialHidden4: "Count how many cubes are in each layer to find the total, then subtract the visible ones to find how many are hidden.",
+    tutorialHidden5: "You can also count the hidden cubes in each layer and add them up. Pick the way you like best!",
     tutorialNext: "Next", tutorialStart: "Start",
-    audioOn: "Voice on", audioOff: "Voice", docssam: "Cubi", close: "Close", levelName: "Level {level}", problemCount: "5 challenges"
+    audioOn: "Voice on", audioOff: "Voice", docssam: "Cubi", close: "Close", levelName: "Level {level}", problemCount: "5 challenges",
+    modeSubtract: "Subtract", modeLayers: "By Layer", modeDirect: "Direct",
+    layerLabel: "Layer {n}", layerHiddenLabel: "Layer {n} hidden",
+    totalQuestion: "How many in total?", visibleQuestion: "How many cubes can you see?",
+    equationHint: "Total − Visible = Hidden", wrongWork: "Want to count again?",
+    guideModeSubtract: "Write how many cubes are in each layer to find the total, then subtract the visible ones — that's the hidden count!",
+    guideModeLayers: "Count how many hidden cubes are in each layer and add them up!",
+    guideModeDirect: "You can also write the hidden count directly!"
   }
 };
 

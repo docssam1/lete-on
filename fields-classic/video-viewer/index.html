@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GFIELD 영상 보기</title>
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#07111f;color:#fff;font-family:Pretendard,sans-serif}
+.toolbar{height:60px;padding:0 18px;background:#0b1728;border-bottom:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.title{font-size:14px;font-weight:900}.meta{margin-top:2px;font-size:11px;color:#aab7c7;font-weight:700}.back{height:36px;padding:0 12px;border:1px solid rgba(255,255,255,.25);border-radius:7px;background:transparent;color:#fff;font:800 12px Pretendard,sans-serif;cursor:pointer}
+.stage{width:min(1280px,100%);margin:0 auto;padding:18px;min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center}
+.video-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;box-shadow:0 18px 50px rgba(0,0,0,.42);overflow:hidden}
+iframe{display:block;width:100%;height:100%;border:0}.watermark{position:absolute;inset:0;z-index:2;overflow:hidden;pointer-events:none}
+.watermark span{position:absolute;left:50%;transform:translate(-50%,-50%) rotate(-32deg);color:rgba(255,255,255,.26);font-size:clamp(22px,3vw,46px);font-weight:900;white-space:nowrap;letter-spacing:0}.watermark span:nth-child(1){top:24%}.watermark span:nth-child(2){top:50%}.watermark span:nth-child(3){top:76%}
+.notice{position:absolute;right:12px;bottom:10px;z-index:3;padding:5px 8px;border-radius:5px;background:rgba(0,0,0,.5);color:rgba(255,255,255,.7);font-size:10px;font-weight:800}
+@media(max-width:600px){.toolbar{height:54px;padding:0 12px}.stage{padding:0;align-items:flex-start}.video-wrap{margin-top:20px}.title{font-size:12px}}
+</style>
+</head>
+<body>
+<header class="toolbar"><div><div class="title" id="title">전체 수업 영상</div><div class="meta" id="meta"></div></div><button class="back" type="button" onclick="history.back()">돌아가기</button></header>
+<main class="stage"><div class="video-wrap" id="videoWrap"><iframe id="video" title="전체 수업 영상" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><div class="watermark" id="watermark" aria-hidden="true"></div><div class="notice">학생 전용 영상</div></div></main>
+<script>
+const params=new URLSearchParams(location.search);
+const student=(params.get('student')||'학생').trim().slice(0,30);
+const title=(params.get('title')||'전체 수업 영상').trim().slice(0,80);
+const source=params.get('video')||'';
+const start=Math.max(0,Number.parseInt(params.get('start')||'0',10)||0);
+function embed(url){try{const parsed=new URL(url);let id='';if(parsed.hostname.includes('youtu.be'))id=parsed.pathname.slice(1);else if(parsed.hostname.includes('youtube.com'))id=parsed.searchParams.get('v')||'';return /^[A-Za-z0-9_-]{11}$/.test(id)?`https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&playsinline=1${start?`&start=${start}`:''}`:'';}catch{return'';}}
+document.getElementById('title').textContent=title;
+document.getElementById('meta').textContent=`${student} 학생 전용`;
+document.title=`${title} | GFIELD`;
+document.getElementById('video').src=embed(source);
+const watermark=document.getElementById('watermark');
+for(let row=0;row<3;row++){const label=document.createElement('span');label.textContent=`${student} 학생 · GFIELD`;watermark.appendChild(label);}
+</script>
+</body>
+</html>

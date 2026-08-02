@@ -3,8 +3,42 @@
   align-content: center;
 }
 
+/* shape-controls carries 7 buttons (5 shared view/reset/rotate + 2
+   game-specific), one more than copy-build's rail. On tall/desktop viewports
+   the shared .control-strip / .rail-button rules from ../../styles.css (sized
+   for ~5 buttons) still have plenty of room for 7, so no override is needed
+   there. overflow-y:auto is a safety net regardless of viewport. */
 .shape-build-page .shape-controls {
-  grid-template-columns: repeat(7, minmax(64px, 1fr));
+  overflow-y: auto;
+}
+
+/* Short landscape phones (the same breakpoint ../../styles.css itself
+   switches to its compact mobile rail at) don't have room for 7 buttons at
+   the shared 56px size, so shrink just shape-build's rail here. Every rule
+   below is scoped to .shape-controls so no other game is affected. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .shape-build-page .shape-controls {
+    width: 58px;
+    gap: 4px;
+    padding: 6px;
+  }
+
+  .shape-build-page .shape-controls .rail-button {
+    flex: 0 0 32px;
+    width: 100%;
+    height: 32px;
+    min-width: 0;
+    min-height: 0;
+    grid-template-rows: 13px 1fr;
+    gap: 0;
+    padding: 2px 1px;
+    border-radius: 8px;
+    font-size: 7px;
+  }
+
+  .shape-build-page .shape-controls .rail-button b {
+    font-size: 13px;
+  }
 }
 
 .shape-tray {
@@ -55,6 +89,13 @@
   height: 27px;
   background: #e7c28f;
 }
+
+/* Coloured cuboid variants (mirrors ../../app.js's cube palette: green/blue/
+   yellow/rose) so the tray swatch matches the piece the child will place. */
+.shape-piece[data-color="green"] .shape-icon { background: #73bd81; }
+.shape-piece[data-color="blue"] .shape-icon { background: #4ea6ce; }
+.shape-piece[data-color="yellow"] .shape-icon { background: #f0ce4e; }
+.shape-piece[data-color="rose"] .shape-icon { background: #df6d71; }
 
 .shape-piece[data-shape="wedge"] .shape-icon {
   width: 44px;
@@ -112,20 +153,17 @@
 .shape-drag-ghost[data-shape="pyramid"] { background: #e7b943; }
 .shape-drag-ghost[data-shape="cone"] { background: #dc795f; }
 
+.shape-drag-ghost[data-color="green"] { background: #73bd81; }
+.shape-drag-ghost[data-color="blue"] { background: #4ea6ce; }
+.shape-drag-ghost[data-color="yellow"] { background: #f0ce4e; }
+.shape-drag-ghost[data-color="rose"] { background: #df6d71; }
+
 #shapePile.drop-target {
   outline: 4px solid rgba(224, 70, 70, .68);
   outline-offset: -4px;
 }
 
-#captureBuild[hidden] {
-  display: none;
-}
-
 @media (orientation: landscape) and (max-height: 520px) {
-  .shape-build-page .shape-controls {
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-  }
-
   .shape-build-page .shape-tray {
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 3px;

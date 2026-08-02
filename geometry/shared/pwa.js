@@ -1,180 +1,167 @@
-/* GFIELD Geometry World — PWA helper.
- *
- * Three jobs, all optional and self-contained:
- *   1. Register the service worker (enables install + offline).
- *   2. Show an install banner with a guide message:
- *        - Android / desktop Chromium: a real "Install" button (beforeinstallprompt).
- *        - iOS Safari: a "Share → Add to Home Screen" instruction (no JS install API).
- *   3. Add a floating fullscreen toggle (hidden where the Fullscreen API is
- *      unavailable, e.g. iPhone Safari, and inside an already-installed app).
- *
- * Text follows the site's saved language (gfield-language). A dismissed banner
- * stays hidden for two weeks (gfield-pwa-hide-until), then may reappear.
- */
+/* Geometry World PWA install helper. */
 (function () {
   "use strict";
 
-  var STRINGS = {
+  var TEXT = {
     ko: {
-      title: "앱처럼 설치하기",
-      body: "홈 화면에 추가하면 주소창 없이 전체화면으로, 앱처럼 즐길 수 있어요.",
-      iosBody: "아래 공유 버튼 📤 을 누르고 “홈 화면에 추가”를 선택하면 앱이 돼요.",
-      install: "설치하기",
-      later: "나중에",
-      fullscreen: "전체화면"
+      title: "\uC571\uCC98\uB7FC \uC124\uCE58\uD558\uAE30",
+      body: "\uD648 \uD654\uBA74\uC5D0 \uCD94\uAC00\uD558\uBA74 \uC8FC\uC18C\uCC3D \uC5C6\uC774 \uC571\uCC98\uB7FC \uC804\uCCB4 \uD654\uBA74\uC73C\uB85C \uC2E4\uD589\uD560 \uC218 \uC788\uC5B4\uC694.",
+      iosBody: "\uD558\uB2E8\uC758 \uACF5\uC720 \uBC84\uD2BC\uC744 \uB204\uB978 \uB4A4 '\uD648 \uD654\uBA74\uC5D0 \uCD94\uAC00'\uB97C \uC120\uD0DD\uD574 \uC8FC\uC138\uC694.",
+      inAppTitle: "Chrome\uC73C\uB85C \uC5F4\uC5B4 \uC8FC\uC138\uC694",
+      inAppBody: "\uCE74\uCE74\uC624\uD1A1 \uC548\uC5D0\uC11C\uB294 \uC571 \uC124\uCE58\uAC00 \uB418\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uC624\uB978\uCABD \uC704 \uBA54\uB274\uC5D0\uC11C Chrome\uC73C\uB85C \uC5F4\uC5B4 \uC8FC\uC138\uC694.",
+      androidGuide: "Chrome \uC624\uB978\uCABD \uC704 \uBA54\uB274\uC5D0\uC11C '\uC571 \uC124\uCE58'\uB97C \uB20C\uB7EC \uC8FC\uC138\uC694.",
+      install: "\uC124\uCE58\uD558\uAE30",
+      later: "\uB2E4\uC74C\uC5D0",
+      close: "\uD655\uC778",
+      fullscreen: "\uC804\uCCB4 \uD654\uBA74"
     },
     en: {
       title: "Install like an app",
-      body: "Add it to your home screen to play fullscreen — no address bar, just like an app.",
-      iosBody: "Tap the Share button 📤 below, then choose “Add to Home Screen”.",
+      body: "Add Geometry World to your home screen and play without a browser bar.",
+      iosBody: "Use Share, then choose Add to Home Screen.",
+      inAppTitle: "Open in Chrome",
+      inAppBody: "This in-app browser cannot install Geometry World. Open this page in Chrome or Safari.",
+      androidGuide: "Open Chrome's menu and choose Install app.",
       install: "Install",
       later: "Later",
+      close: "OK",
       fullscreen: "Fullscreen"
-    },
-    zh: {
-      title: "像应用一样安装",
-      body: "添加到主屏幕，就能全屏、无地址栏，像应用一样玩。",
-      iosBody: "点下方的分享按钮 📤，再选择“添加到主屏幕”。",
-      install: "安装",
-      later: "以后",
-      fullscreen: "全屏"
-    },
-    ja: {
-      title: "アプリのように使う",
-      body: "ホーム画面に追加すると、アドレスバーなしの全画面でアプリのように遊べます。",
-      iosBody: "下の共有ボタン 📤 を押して「ホーム画面に追加」を選んでね。",
-      install: "インストール",
-      later: "あとで",
-      fullscreen: "全画面"
     }
   };
-  var lang = "ko";
-  try { lang = localStorage.getItem("gfield-language") || "ko"; } catch (e) { lang = "ko"; }
-  var t = STRINGS[lang] || STRINGS.ko;
 
-  var standalone = false;
-  try {
-    standalone = (window.matchMedia && (window.matchMedia("(display-mode: standalone)").matches
-      || window.matchMedia("(display-mode: fullscreen)").matches))
-      || window.navigator.standalone === true;
-  } catch (e) { standalone = false; }
-
-  function ready(fn) {
-    if (document.body) fn();
-    else document.addEventListener("DOMContentLoaded", fn);
-  }
-
-  // --- 1. service worker ---------------------------------------------------
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-      navigator.serviceWorker.register("/geometry/sw.js", { scope: "/geometry/" }).catch(function () {});
-    });
-  }
-
-  // --- 3. fullscreen toggle (added first so it exists on the hub) ----------
-  var docEl = document.documentElement;
-  var canFs = !!(docEl.requestFullscreen || docEl.webkitRequestFullscreen);
-  function isFs() { return document.fullscreenElement || document.webkitFullscreenElement; }
-  if (canFs && !standalone) {
-    ready(function () {
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "gf-fullscreen-btn";
-      btn.setAttribute("aria-label", t.fullscreen);
-      btn.title = t.fullscreen;
-      btn.innerHTML = "<span aria-hidden=\"true\">⛶</span>";
-      btn.addEventListener("click", function () {
-        try {
-          if (isFs()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
-          else { (docEl.requestFullscreen || docEl.webkitRequestFullscreen).call(docEl); }
-        } catch (e) {}
-      });
-      document.addEventListener("fullscreenchange", function () { btn.classList.toggle("on", !!isFs()); });
-      document.body.appendChild(btn);
-    });
-
-    // Auto-enter fullscreen on the first tap (touch devices, not installed).
-    // Browsers forbid going fullscreen on load without a user gesture, so we arm
-    // a one-shot listener that fires on the very first interaction and then
-    // removes itself — we never re-force it, so a child who deliberately leaves
-    // fullscreen is left alone.
-    var coarse = false;
-    try { coarse = !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches); } catch (e) {}
-    if (coarse) {
-      var armFs = function () {
-        document.removeEventListener("pointerdown", armFs, true);
-        document.removeEventListener("touchend", armFs, true);
-        document.removeEventListener("click", armFs, true);
-        try { if (!isFs()) (docEl.requestFullscreen || docEl.webkitRequestFullscreen).call(docEl); } catch (e) {}
-      };
-      document.addEventListener("pointerdown", armFs, true);
-      document.addEventListener("touchend", armFs, true);
-      document.addEventListener("click", armFs, true);
-    }
-  }
-
-  // --- 2. install banner ---------------------------------------------------
-  if (standalone) return;              // already installed → nothing to prompt
-  try {
-    var until = Number(localStorage.getItem("gfield-pwa-hide-until") || 0);
-    if (until && Date.now() < until) return;
-  } catch (e) {}
-
-  var deferredPrompt = null;
-
-  function dismiss() {
-    var el = document.getElementById("gf-install-banner");
-    if (el) { el.classList.remove("show"); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 300); }
-    try { localStorage.setItem("gfield-pwa-hide-until", String(Date.now() + 14 * 24 * 60 * 60 * 1000)); } catch (e) {}
-  }
-
-  function showBanner(kind) {          // kind: "android" | "ios"
-    if (document.getElementById("gf-install-banner")) return;
-    var body = kind === "ios" ? t.iosBody : t.body;
-    var wrap = document.createElement("div");
-    wrap.id = "gf-install-banner";
-    wrap.className = "gf-install-banner";
-    wrap.setAttribute("role", "dialog");
-    wrap.setAttribute("aria-label", t.title);
-    var html = "";
-    html += "<span class=\"gf-ib-icon\" aria-hidden=\"true\">◆</span>";
-    html += "<div class=\"gf-ib-text\"><strong></strong><span></span></div>";
-    html += "<div class=\"gf-ib-actions\">";
-    if (kind === "android") html += "<button type=\"button\" class=\"gf-ib-install\"></button>";
-    html += "<button type=\"button\" class=\"gf-ib-later\"></button>";
-    html += "</div>";
-    wrap.innerHTML = html;
-    // Set text via textContent to avoid any injection.
-    wrap.querySelector(".gf-ib-text strong").textContent = t.title;
-    wrap.querySelector(".gf-ib-text span").textContent = body;
-    var laterBtn = wrap.querySelector(".gf-ib-later");
-    laterBtn.textContent = t.later;
-    laterBtn.addEventListener("click", dismiss);
-    var installBtn = wrap.querySelector(".gf-ib-install");
-    if (installBtn) {
-      installBtn.textContent = t.install;
-      installBtn.addEventListener("click", function () {
-        if (!deferredPrompt) { dismiss(); return; }
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(function () { deferredPrompt = null; dismiss(); }).catch(function () { dismiss(); });
-      });
-    }
-    document.body.appendChild(wrap);
-    requestAnimationFrame(function () { wrap.classList.add("show"); });
-  }
-
-  window.addEventListener("beforeinstallprompt", function (e) {
-    e.preventDefault();
-    deferredPrompt = e;
-    ready(function () { showBanner("android"); });
-  });
-  window.addEventListener("appinstalled", function () { dismiss(); });
-
-  // iOS Safari has no beforeinstallprompt — show the manual guide there.
+  var language = "ko";
+  try { language = localStorage.getItem("gfield-language") || "ko"; } catch (error) {}
+  var text = TEXT[language] || TEXT.ko;
   var ua = navigator.userAgent || "";
   var isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   var isSafari = /safari/i.test(ua) && !/crios|fxios|edgios|chrome|android/i.test(ua);
-  if (isIOS && isSafari) {
-    ready(function () { setTimeout(function () { showBanner("ios"); }, 1400); });
+  var isAndroid = /android/i.test(ua);
+  var isInApp = /kakaotalk|kakaostory|naver|daumapps|instagram|fban|fbav|line\//i.test(ua);
+  var standalone = false;
+  var deferredPrompt = null;
+
+  try {
+    standalone = !!(window.matchMedia && (window.matchMedia("(display-mode: standalone)").matches || window.matchMedia("(display-mode: fullscreen)").matches)) || window.navigator.standalone === true;
+  } catch (error) {}
+
+  function whenReady(callback) {
+    if (document.body) callback();
+    else document.addEventListener("DOMContentLoaded", callback, { once: true });
   }
+
+  function isDismissed() {
+    try { return Number(localStorage.getItem("gfield-pwa-hide-until") || 0) > Date.now(); } catch (error) { return false; }
+  }
+
+  function dismiss() {
+    var banner = document.getElementById("gf-install-banner");
+    if (banner) {
+      banner.classList.remove("show");
+      window.setTimeout(function () { if (banner.parentNode) banner.parentNode.removeChild(banner); }, 300);
+    }
+    try { localStorage.setItem("gfield-pwa-hide-until", String(Date.now() + 3 * 24 * 60 * 60 * 1000)); } catch (error) {}
+  }
+
+  function showBanner(kind) {
+    if (standalone || isDismissed()) return;
+    var banner = document.getElementById("gf-install-banner");
+    if (!banner) {
+      banner = document.createElement("div");
+      banner.id = "gf-install-banner";
+      banner.className = "gf-install-banner";
+      banner.setAttribute("role", "dialog");
+      document.body.appendChild(banner);
+    }
+
+    var title = text.title;
+    var body = text.body;
+    var action = "install";
+    if (kind === "ios") { body = text.iosBody; action = "close"; }
+    if (kind === "in-app") { title = text.inAppTitle; body = text.inAppBody; action = "close"; }
+    if (kind === "android-guide") { body = text.androidGuide; action = "close"; }
+
+    banner.setAttribute("aria-label", title);
+    banner.replaceChildren();
+    var icon = document.createElement("span");
+    icon.className = "gf-ib-icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.innerHTML = "&#x25A0;";
+
+    var copy = document.createElement("div");
+    copy.className = "gf-ib-text";
+    var heading = document.createElement("strong");
+    heading.textContent = title;
+    var description = document.createElement("span");
+    description.textContent = body;
+    copy.append(heading, description);
+
+    var actions = document.createElement("div");
+    actions.className = "gf-ib-actions";
+    if (action === "install") {
+      var install = document.createElement("button");
+      install.type = "button";
+      install.className = "gf-ib-install";
+      install.textContent = text.install;
+      install.addEventListener("click", function () {
+        if (!deferredPrompt) return showBanner("android-guide");
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function () { deferredPrompt = null; dismiss(); }).catch(dismiss);
+      });
+      actions.appendChild(install);
+    }
+    var close = document.createElement("button");
+    close.type = "button";
+    close.className = "gf-ib-later";
+    close.textContent = action === "install" ? text.later : text.close;
+    close.addEventListener("click", dismiss);
+    actions.appendChild(close);
+    banner.append(icon, copy, actions);
+    requestAnimationFrame(function () { banner.classList.add("show"); });
+  }
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("/geometry/sw.js", { scope: "/geometry/" }).catch(function () {});
+    }, { once: true });
+  }
+
+  var root = document.documentElement;
+  var canFullscreen = !!(root.requestFullscreen || root.webkitRequestFullscreen);
+  function isFullscreen() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+  if (canFullscreen && !standalone) {
+    whenReady(function () {
+      var toolbar = document.querySelector(".map-toolbar");
+      if (!toolbar) return;
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "gf-fullscreen-btn";
+      button.setAttribute("aria-label", text.fullscreen);
+      button.title = text.fullscreen;
+      button.innerHTML = "&#x26F6;";
+      button.addEventListener("click", function () {
+        try {
+          if (isFullscreen()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+          else (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+        } catch (error) {}
+      });
+      document.addEventListener("fullscreenchange", function () { button.classList.toggle("on", isFullscreen()); });
+      toolbar.appendChild(button);
+    });
+  }
+
+  if (standalone) return;
+  whenReady(function () {
+    if (isInApp) return window.setTimeout(function () { showBanner("in-app"); }, 700);
+    if (isIOS && isSafari) return window.setTimeout(function () { showBanner("ios"); }, 1000);
+    if (isAndroid) window.setTimeout(function () {
+      if (!deferredPrompt) showBanner("android-guide");
+    }, 2500);
+  });
+
+  window.addEventListener("beforeinstallprompt", function (event) {
+    event.preventDefault();
+    deferredPrompt = event;
+    whenReady(function () { showBanner("install"); });
+  });
+  window.addEventListener("appinstalled", dismiss);
 })();

@@ -112,35 +112,23 @@
   }
 }
 
-/* --- floating fullscreen toggle ------------------------------------------- */
+/* --- fullscreen toggle ------------------------------------------------
+   No longer a floating button: pwa.js only inserts this into .map-toolbar
+   (right after the language menu), and only world-map has that toolbar —
+   cube-town and every other page that loads this stylesheet get nothing.
+   That's also why this used to need viewport-based positioning to dodge
+   cube-town's topbar and doesn't anymore. Box sizing/border/background
+   come from world-map/styles.css's ".map-toolbar > button" rule, which is
+   more specific than the single class here, so this only needs to size the
+   glyph and restyle the "in fullscreen" (.on) state. */
 .gf-fullscreen-btn {
-  position: fixed;
-  left: calc(14px + env(safe-area-inset-left, 0px));
-  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
-  z-index: 8500;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid rgba(226, 178, 108, 0.5);
-  background: rgba(43, 26, 14, 0.72);
-  color: #ffe0a6;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-  opacity: 0.62;
-  transition: opacity 0.16s ease, transform 0.12s ease, background 0.16s ease;
 }
-.gf-fullscreen-btn:hover { opacity: 1; }
-.gf-fullscreen-btn:active { transform: scale(0.94); }
 .gf-fullscreen-btn.on {
   background: rgba(63, 174, 83, 0.82);
   color: #eafff0;
-  opacity: 0.95;
+  border-color: rgba(63, 174, 83, 0.9);
 }
 
 @media print {
