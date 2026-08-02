@@ -109,6 +109,7 @@ body.in-viewer{overflow:hidden}
 .program-run-top{top:0;transform-origin:top center;transform:rotateX(90deg) translateY(calc(var(--run-depth)/-2))}
 .program-run-bottom{bottom:0;transform-origin:bottom center;transform:rotateX(-90deg) translateY(calc(var(--run-depth)/2))}
 .program-run-card.theme-killer .program-run-cover{background:linear-gradient(160deg,#4a1a1a,#200909)}
+.program-run-card.theme-calculation .program-run-cover{background:linear-gradient(160deg,#155e75,#0b293d)}
 .program-run-card.theme-mock .program-run-cover{background:linear-gradient(160deg,#2a1a4a,#160925)}
 .program-run-card.theme-final .program-run-cover{background:linear-gradient(160deg,#173819,#091b10)}
 .program-run-card.theme-archive .program-run-cover{background:linear-gradient(160deg,#332b10,#111108)}
@@ -167,6 +168,7 @@ body.in-viewer{overflow:hidden}
 .book-icon{font-size:26px}
 .book-label{font-size:8px;font-weight:900;text-align:center;line-height:1.3;letter-spacing:.05em}
 .theme-concept .book-front{background:linear-gradient(160deg,#1a3a5c,#0d2040)}.theme-concept .book-spine{background:#0f2535}.theme-concept .book-label{color:#93c5fd}
+.theme-calculation .book-front{background:linear-gradient(160deg,#155e75,#0b293d)}.theme-calculation .book-spine{background:#082e3d}.theme-calculation .book-label{color:#a5f3fc}
 .theme-killer .book-front{background:linear-gradient(160deg,#4a1a1a,#2d0a0a)}.theme-killer .book-spine{background:#380f0f}.theme-killer .book-label{color:#fca5a5}
 .theme-final .book-front{background:linear-gradient(160deg,#1a3a1a,#0a2010)}.theme-final .book-spine{background:#102510}.theme-final .book-label{color:#86efac}
 .theme-mock .book-front{background:linear-gradient(160deg,#2a1a4a,#170a30)}.theme-mock .book-spine{background:#1a1030}.theme-mock .book-label{color:#d8b4fe}
@@ -475,7 +477,7 @@ body.in-viewer{overflow:hidden}
 (function(){"use strict";
 /* ── 이미지 경로 (concept/ 직접) ── */
 const CONCEPT_PAGES="";
-const ALL=["개념완성","진단모의고사","킬러문항",
+const ALL=["개념완성","연산연습","진단모의고사","킬러문항",
   "실전모의고사1회","실전모의고사2회","실전모의고사3회","실전모의고사4회","실전모의고사5회","실전모의고사6회",
   "파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","파이널모의고사4회",
   "최종모의고사","자료실"];
@@ -488,6 +490,7 @@ const PRODUCTS=[
     {key:"vol4",vol:"Vol.4",title:"바둑돌의 비밀",subtitle:"4회차 · 필즈 대비 개념",topics:["바둑돌 규칙","마디 끊기 연습"],comment:"시험에서 가장 어려워하는 바둑돌 규칙에 대한 개념입니다. 마디를 끊는 연습도 반드시 해주세요.",videos:[{key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/ESmcuckBYIw",pdfPage:55},{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/neRIODxo13I",pdfPage:57}]},
     {key:"final",vol:"Final",title:"종합 체크",subtitle:"마무리 체크체크",topics:["지금까지 배운 전체 유형 종합 테스트"],comment:null,videos:[{key:"final",type:"final",label:"🏆 학습영상",url:"https://youtu.be/FC4W2bRJwKc",pdfPage:65}]}
   ]},
+  {key:"연산연습",name:"필즈 연산 연습",desc:"덧셈·뺄셈·받아올림·받아내림",icon:"🔢",theme:"theme-calculation",type:"practice",practiceUrl:"../arithmetic/"},
   {key:"진단모의고사",name:"진단 모의고사",desc:"현재 수준 정밀 진단 + 분석",icon:"🔍",theme:"theme-mock",type:"mock",mockUrl:"../mock/"},
   {key:"킬러문항",name:"킬러문항 완전 해제",desc:"필즈 기출에서 실수가 많았던 9개 유형 정리",icon:"🎯",theme:"theme-killer",type:"direct",viewerMode:"inline",printDoc:"killer",pagesBase:"../assets/print/killer/page_",pageCount:32,videoUrl:"https://youtu.be/_x-NIjvBxMQ",topics:["복면산","수직선에서의 길이·단위길이","도형수","마방진·삼각진","도형이 나타내는 수","주고받기","양팔저울","수·도형 규칙","약속·암호"],lessons:[{key:"k1",label:"킬러 유형",title:"킬러문항 완전 해제",type:"concept",url:"https://youtu.be/_x-NIjvBxMQ",pdfPage:1}]},
   {key:"실전모의고사1회",name:"실전 모의고사 1회",desc:"6세 선발 모의고사 세트 1회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set-1",lessons:[{key:"p1",label:"1회",title:"실전 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
@@ -766,7 +769,7 @@ const GF={
       el.className="product-card "+p.theme+(ok?" unlocked":" locked");
       const actionLabel=p.type==="folder"?"📂 목록 보기":p.type==="mock"?"🔍 진단 시작":"📖 학습 시작";
       el.innerHTML=`${!ok?'<span class="lock-icon">🔒</span>':""}<div class="book-wrap"><div class="book-3d"><div class="book-front"><div class="book-icon">${p.icon}</div><div class="book-label">${p.name}</div></div><div class="book-back"></div><div class="book-spine"></div><div class="book-pages"></div><div class="book-top"></div><div class="book-bottom"></div><div class="book-shadow"></div></div></div><div><div class="product-badge">${p.key}</div><div class="product-name">${p.name}</div><div class="product-desc">${p.desc}</div></div><div class="product-action"><button class="product-btn ${ok?"open":"locked"}" ${ok?"":"disabled"}>${ok?actionLabel:"🔒 구매 후 이용 가능"}</button></div>`;
-      if(ok){if(p.type==="folder")el.addEventListener("click",()=>GF.showChapters(p.key));else if(p.type==="mock")el.addEventListener("click",()=>GF.openMock(p));else el.addEventListener("click",()=>GF.openDirectViewer(p.key))}
+      if(ok){if(p.type==="folder")el.addEventListener("click",()=>GF.showChapters(p.key));else if(p.type==="mock")el.addEventListener("click",()=>GF.openMock(p));else if(p.type==="practice")el.addEventListener("click",()=>GF.openPractice(p));else el.addEventListener("click",()=>GF.openDirectViewer(p.key))}
       g.appendChild(el);
     });
   },
@@ -848,6 +851,10 @@ const GF={
   openMock(p){
     const name=encodeURIComponent(S.name||"");
     location.href=(p.mockUrl||"../mock/")+(name?`?student=${name}`:"");
+  },
+  openPractice(p){
+    const name=encodeURIComponent(S.name||"");
+    location.href=(p.practiceUrl||"../arithmetic/")+(name?`?student=${name}`:"");
   },
   openDirectViewer(productKey){
     const p=PRODUCTS.find(x=>x.key===productKey);if(!p)return;
@@ -969,6 +976,7 @@ function programGroups(){
   const ultimate=PRODUCTS.find(p=>lessonKey(p)==="u1");
   const groups=[
     {id:"concept",icon:"📘",title:"TOP SECRET 개념",sub:"개념 교재 Vol.1~Final",kind:"chapters",product:concept,kicker:"TOP SECRET",head:"개념 완성",desc:"개념 책을 고르면 영상과 교재가 함께 열립니다."},
+    {id:"arithmetic",icon:"🔢",title:"연산 연습",sub:"덧셈·뺄셈·받아올림",kind:"products",items:[PRODUCTS.find(p=>p.key==="연산연습")],kicker:"CALCULATION",head:"필즈 연산 연습",desc:"사고력 문제은행과 분리된 연산을 유형별로 반복합니다."},
     {id:"killer",icon:"🎯",title:"킬러문항 완전 해제",sub:"최상위 유형 공략",kind:"products",items:[killer],kicker:"KILLER",head:"킬러문항 완전 해제",desc:"문항 유형은 보이지만 구매 권한이 있을 때만 열립니다."},
     {id:"diagnostic",icon:"🔍",title:"진단모의고사",sub:"진단 및 분석",kind:"products",items:[diagnostic],kicker:"DIAGNOSTIC",head:"진단모의고사",desc:"진단지는 선택 후 별도 모의고사 화면으로 이동합니다."},
     {id:"practice",icon:"📝",title:"실전 모의고사",sub:"1회~6회",kind:"products",items:practice,kicker:"PRACTICE",head:"실전 모의고사",desc:"각 회차를 확인하고 권한이 있는 회차만 학습할 수 있습니다."},
@@ -1125,7 +1133,7 @@ Object.assign(GF,{
   },
   openProgramProduct(productIndex){
     const p=PRODUCTS[productIndex];if(!p||!pOk(p)){toast();return;}
-    if(p.type==="mock")this.openMock(p);else if(p.type==="folder")this.showChapters(p.key);else this.openDirectViewer(p.key);
+    if(p.type==="mock")this.openMock(p);else if(p.type==="practice")this.openPractice(p);else if(p.type==="folder")this.showChapters(p.key);else this.openDirectViewer(p.key);
   }
 });
 document.addEventListener("DOMContentLoaded",()=>{

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#123b61">
+<title>필즈 연산 연습</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700;800;900&display=swap');
+:root{--navy:#123b61;--blue:#1d6fa5;--sky:#eaf5fb;--gold:#c28c18;--ink:#17324b;--muted:#6f8092;--line:#d9e4ed;--good:#138a5b;--bad:#c0473e;--white:#fff}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:'Noto Sans KR',system-ui,sans-serif;color:var(--ink);background:linear-gradient(145deg,#edf6fa,#fdfbf6 58%,#edf2f7)}
+button,input,select{font:inherit}button{cursor:pointer}a{color:inherit}
+.gate{min-height:100vh;display:grid;place-items:center;padding:24px}.gate-card{width:min(430px,100%);padding:30px;border:1px solid #d4e1eb;border-radius:22px;background:#fff;box-shadow:0 24px 60px rgba(19,59,97,.13)}
+.eyebrow{color:var(--gold);font-size:11px;font-weight:900;letter-spacing:.12em}.gate h1{margin:10px 0 8px;font-size:30px}.gate p{margin:0 0 22px;color:var(--muted);font-size:14px;line-height:1.7}.name-input{width:100%;height:52px;padding:0 15px;border:1px solid #ccdbe7;border-radius:11px;outline:none;color:var(--ink);font-weight:800}.name-input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(29,111,165,.12)}
+.primary{border:0;border-radius:11px;background:var(--navy);color:#fff;font-weight:900;padding:14px 18px;box-shadow:0 8px 18px rgba(18,59,97,.2)}.primary:hover{background:#0b2b49}.gate .primary{width:100%;margin-top:12px}.error{min-height:22px;margin-top:8px;color:var(--bad);font-size:12px;font-weight:800}
+.app{display:none;min-height:100vh}.app.show{display:block}.topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px max(18px,calc((100vw - 1180px)/2));background:rgba(255,255,255,.93);border-bottom:1px solid rgba(18,59,97,.12);backdrop-filter:blur(12px)}.back{border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--navy);padding:9px 12px;font-size:13px;font-weight:900;text-decoration:none}.brand{font-size:14px;font-weight:900;color:var(--navy)}.student{font-size:13px;font-weight:800;color:var(--muted)}
+.wrap{width:min(1120px,calc(100% - 32px));margin:0 auto;padding:34px 0 64px}.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:22px}.hero h1{margin:6px 0 6px;font-size:clamp(28px,4vw,46px);line-height:1.15}.hero p{margin:0;color:var(--muted);font-weight:700;line-height:1.7}.hero-mark{min-width:110px;padding:18px;border-radius:18px;background:linear-gradient(145deg,#174c78,#75b1ce);color:#fff;text-align:center;box-shadow:0 14px 24px rgba(29,111,165,.2)}.hero-mark strong{display:block;font-size:30px}.hero-mark span{font-size:11px;font-weight:900}
+.control-panel{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:17px 19px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.8);box-shadow:0 8px 20px rgba(18,59,97,.06)}.control-group{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.control-label{font-size:12px;font-weight:900;color:var(--muted)}.segmented{display:flex;gap:5px}.segmented button,.select{height:38px;padding:0 13px;border:1px solid var(--line);border-radius:9px;background:#f6f9fb;color:var(--navy);font-size:12px;font-weight:900}.segmented button.active{background:var(--navy);border-color:var(--navy);color:#fff}.select{outline:none}.control-actions{display:flex;gap:8px}.secondary{border:1px solid #cddbe6;border-radius:9px;background:#fff;color:var(--navy);padding:10px 13px;font-size:12px;font-weight:900}.secondary:hover{background:var(--sky)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.stat{padding:15px 17px;border:1px solid var(--line);border-radius:13px;background:#fff}.stat-label{color:var(--muted);font-size:11px;font-weight:800}.stat-value{margin-top:4px;color:var(--navy);font-size:23px;font-weight:900}.progress{height:10px;margin:20px 0 24px;border-radius:999px;background:#dfeaf1;overflow:hidden}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#2d8abb,#c28c18);transition:width .25s ease}
+.sheet-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:28px 0 12px}.sheet-head h2{margin:0;font-size:20px}.sheet-head p{margin:4px 0 0;color:var(--muted);font-size:12px;font-weight:700}.sheet-note{color:var(--muted);font-size:12px;font-weight:800}.question-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.question{position:relative;min-height:144px;padding:17px 18px;border:1px solid var(--line);border-radius:15px;background:#fff;box-shadow:0 5px 13px rgba(18,59,97,.045);transition:.2s}.question:focus-within{border-color:#84bad4;box-shadow:0 0 0 4px rgba(29,111,165,.1)}.question.correct{border-color:#83c7aa;background:#f3fcf7}.question.wrong{border-color:#e5aaa4;background:#fff8f7}.q-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.q-no{color:var(--navy);font-size:12px;font-weight:900}.q-type{padding:4px 7px;border-radius:999px;background:#edf5fa;color:var(--blue);font-size:10px;font-weight:900}.expression{display:flex;align-items:center;gap:10px;margin:20px 0 17px;font-size:26px;font-weight:900;letter-spacing:0}.answer{width:78px;height:42px;border:0;border-bottom:3px solid var(--gold);border-radius:6px 6px 0 0;background:#fffaf0;color:var(--navy);outline:none;text-align:center;font-size:24px;font-weight:900}.answer:focus{background:#fff3cf}.feedback{min-height:18px;color:var(--muted);font-size:11px;font-weight:800}.question.correct .feedback{color:var(--good)}.question.wrong .feedback{color:var(--bad)}
+.submit-row{display:flex;justify-content:center;gap:10px;margin:25px 0}.submit-row .primary{min-width:190px}.result{display:none;margin-top:22px;padding:22px;border:1px solid #d7e3eb;border-radius:16px;background:linear-gradient(135deg,#fff,#f2f8fb)}.result.show{display:block}.result h2{margin:0 0 4px;color:var(--navy);font-size:22px}.result p{margin:0;color:var(--muted);font-size:13px;font-weight:700}.result-actions{display:flex;gap:8px;margin-top:15px}.result-actions button{padding:10px 13px;border-radius:9px;font-size:12px;font-weight:900}.tips{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:25px}.tip{padding:14px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.65)}.tip strong{display:block;margin-bottom:4px;color:var(--navy);font-size:12px}.tip span{color:var(--muted);font-size:11px;line-height:1.6;font-weight:700}
+.hidden{display:none!important}@media(max-width:720px){.topbar{padding:11px 14px}.brand{font-size:12px}.student{font-size:11px}.wrap{width:min(100% - 24px,560px);padding-top:24px}.hero{align-items:flex-start}.hero-mark{display:none}.control-panel{align-items:stretch;flex-direction:column}.control-actions{width:100%}.control-actions button{flex:1}.stats{gap:8px}.stat{padding:12px}.stat-value{font-size:20px}.question-grid{grid-template-columns:1fr}.question{min-height:132px}.tips{grid-template-columns:1fr}.sheet-head{align-items:flex-start;flex-direction:column}.expression{margin-top:16px}}
+@media print{body{background:#fff}.topbar,.hero,.control-panel,.stats,.progress,.sheet-head p,.sheet-note,.submit-row,.result,.tips{display:none!important}.wrap{width:100%;padding:0}.sheet-head{display:block;margin:0 0 16px}.sheet-head h2{font-size:18px}.question-grid{grid-template-columns:repeat(2,1fr);gap:8px}.question{min-height:120px;box-shadow:none;break-inside:avoid}.answer{border:1px solid #333;background:#fff}.feedback{display:none}}
+</style>
+</head>
+<body>
+<section class="gate" id="gate">
+  <div class="gate-card">
+    <div class="eyebrow">GFIELD · FIELDS THE CLASSIC</div>
+    <h1>연산 연습</h1>
+    <p>필즈 사고력 문제은행과 분리된 연산 훈련입니다.<br>학생 이름을 입력하면 연습을 시작합니다.</p>
+    <input class="name-input" id="gateName" type="text" autocomplete="name" placeholder="학생 이름">
+    <button class="primary" id="gateStart">연습 시작</button>
+    <div class="error" id="gateError"></div>
+  </div>
+</section>
+
+<main class="app" id="app">
+  <header class="topbar">
+    <a class="back" id="backLink" href="../program/">← 서재</a>
+    <div class="brand">필즈 연산 연습</div>
+    <div class="student"><span id="studentName"></span> 학생</div>
+  </header>
+  <div class="wrap">
+    <section class="hero">
+      <div><div class="eyebrow">SEPARATE PRACTICE</div><h1>필즈 연산 연습</h1><p>덧셈과 뺄셈을 빠르고 정확하게.<br>역연산, 받아올림, 받아내림을 유형별로 반복합니다.</p></div>
+      <div class="hero-mark"><strong>+</strong><span>− × ÷</span></div>
+    </section>
+    <section class="control-panel">
+      <div class="control-group"><span class="control-label">문제 수</span><div class="segmented" id="countButtons"><button data-count="14" class="active">14문제</button><button data-count="20">20문제</button></div></div>
+      <div class="control-group"><span class="control-label">연습 범위</span><select class="select" id="modeSelect"><option value="mixed">덧셈 + 뺄셈</option><option value="add">덧셈 집중</option><option value="sub">뺄셈 집중</option></select></div>
+      <div class="control-actions"><button class="secondary" id="newButton">새 문제</button><button class="secondary" id="printButton">인쇄</button></div>
+    </section>
+    <section class="stats"><div class="stat"><div class="stat-label">이번 점수</div><div class="stat-value" id="scoreValue">-</div></div><div class="stat"><div class="stat-label">맞힌 문항</div><div class="stat-value" id="correctValue">0 / 0</div></div><div class="stat"><div class="stat-label">최고 점수</div><div class="stat-value" id="bestValue">-</div></div></section>
+    <div class="progress" aria-label="입력 진행률"><span id="progressBar"></span></div>
+    <section class="sheet-head"><div><h2>오늘의 연산</h2><p>답을 입력한 뒤 채점하기를 눌러 보세요.</p></div><div class="sheet-note" id="sheetNote">14문제 · 미채점</div></section>
+    <section class="question-grid" id="questionGrid"></section>
+    <div class="submit-row"><button class="primary" id="checkButton">채점하기</button><button class="secondary" id="resetButton">다시 풀기</button></div>
+    <section class="result" id="result"><h2 id="resultTitle"></h2><p id="resultText"></p><div class="result-actions"><button class="primary" id="resultNew">새 문제 풀기</button><button class="secondary" id="resultPrint">문제지 인쇄</button></div></section>
+    <section class="tips"><div class="tip"><strong>역연산</strong><span>□가 있는 식은 알고 있는 수를 반대 연산으로 옮겨 보세요.</span></div><div class="tip"><strong>받아올림</strong><span>일의 자리 합이 10 이상이면 십의 자리로 1을 올립니다.</span></div><div class="tip"><strong>받아내림</strong><span>일의 자리에서 부족하면 십의 자리에서 1을 빌려옵니다.</span></div></section>
+  </div>
+</main>
+<script>
+(function(){
+  'use strict';
+  const state={name:'',count:14,mode:'mixed',questions:[],checked:false};
+  const $=id=>document.getElementById(id);
+  const rand=(min,max)=>Math.floor(Math.random()*(max-min+1))+min;
+  const digit=n=>n%10;
+  const tens=n=>Math.floor(n/10);
+  const pick=list=>list[rand(0,list.length-1)];
+  function addQuestion(kind){
+    if(kind==='inverse'){
+      const a=rand(4,39),b=rand(2,9);
+      return {op:'+',display:`${a} + □ = ${a+b}`,answer:b,type:'역연산'};
+    }
+    const carry=kind==='carry';
+    let a,b;
+    do{a=rand(12,68);b=rand(3,29)}while((digit(a)+digit(b)>=10)!==carry || a+b>99);
+    return {op:'+',display:`${a} + ${b} =`,answer:a+b,type:carry?'받아올림':'받아올림 없음'};
+  }
+  function subQuestion(kind){
+    if(kind==='inverse'){
+      const b=rand(3,29),c=rand(4,49);
+      return {op:'−',display:`□ − ${b} = ${c}`,answer:b+c,type:'역연산'};
+    }
+    const borrow=kind==='borrow';
+    let a,b;
+    do{a=rand(24,89);b=rand(3,39)}while(a<=b || (digit(a)<digit(b))!==borrow);
+    return {op:'−',display:`${a} − ${b} =`,answer:a-b,type:borrow?'받아내림':'받아내림 없음'};
+  }
+  function generate(){
+    const kinds=['inverse','plain','carry','plain','borrow'];
+    const list=[];
+    for(let i=0;i<state.count;i++){
+      let op=state.mode;
+      if(op==='mixed')op=i%2===0?'add':'sub';
+      const kind=kinds[(i+rand(0,2))%kinds.length];
+      list.push(op==='add'?addQuestion(kind==='borrow'?'plain':kind):subQuestion(kind==='carry'?'plain':kind));
+    }
+    state.questions=list;state.checked=false;render();
+  }
+  function render(){
+    $('questionGrid').innerHTML=state.questions.map((q,i)=>{const input=`<input class="answer" inputmode="numeric" aria-label="Q${i+1} 정답" autocomplete="off">`;const expression=q.display.includes('□')?q.display.replace('□',input):`${q.display} ${input}`;return `<article class="question" data-index="${i}"><div class="q-top"><span class="q-no">Q${String(i+1).padStart(2,'0')}</span><span class="q-type">${q.type}</span></div><div class="expression"><span>${expression}</span></div><div class="feedback">답을 입력하세요.</div></article>`;}).join('');
+    document.querySelectorAll('.answer').forEach((input,index)=>{input.addEventListener('input',updateProgress);input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const next=document.querySelectorAll('.answer')[index+1];if(next)next.focus();else check();}})});
+    $('sheetNote').textContent=`${state.count}문제 · 미채점`;$('scoreValue').textContent='-';$('correctValue').textContent=`0 / ${state.count}`;$('result').classList.remove('show');updateProgress();
+  }
+  function updateProgress(){const inputs=[...document.querySelectorAll('.answer')];const filled=inputs.filter(x=>x.value.trim()!=='').length;$('progressBar').style.width=`${Math.round(filled/Math.max(inputs.length,1)*100)}%`;}
+  function storageKey(){return `gfield-arithmetic-best-${state.name||'guest'}`;}
+  function loadBest(){const value=localStorage.getItem(storageKey());$('bestValue').textContent=value?`${value}점`:'-';}
+  function check(){
+    let correct=0;const inputs=[...document.querySelectorAll('.answer')];
+    inputs.forEach((input,i)=>{const card=input.closest('.question'),value=input.value.trim(),ok=value!==''&&Number(value)===state.questions[i].answer;if(ok)correct++;card.classList.toggle('correct',ok);card.classList.toggle('wrong',!ok);card.querySelector('.feedback').textContent=ok?'정답입니다.':`정답: ${state.questions[i].answer}`;});
+    const score=Math.round(correct/state.questions.length*100);state.checked=true;$('scoreValue').textContent=`${score}점`;$('correctValue').textContent=`${correct} / ${state.count}`;$('sheetNote').textContent=`${state.count}문제 · 채점 완료`;
+    const best=Number(localStorage.getItem(storageKey())||0);if(score>best)localStorage.setItem(storageKey(),String(score));loadBest();$('resultTitle').textContent=score===100?'완벽해요!':score>=80?'잘했어요!':'한 번 더 연습해 봐요';$('resultText').textContent=`${state.count}문제 중 ${correct}문제를 맞혔습니다. 틀린 문제는 정답의 계산 과정을 다시 확인해 보세요.`;$('result').classList.add('show');$('result').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+  function start(name){state.name=name;sessionStorage.setItem('gfield_arithmetic_student',name);$('studentName').textContent=name;$('backLink').href=`../program/?student=${encodeURIComponent(name)}`;$('gate').classList.add('hidden');$('app').classList.add('show');loadBest();generate();}
+  function reset(){state.checked=false;render();}
+  $('gateStart').addEventListener('click',()=>{const name=$('gateName').value.trim();if(!name){$('gateError').textContent='학생 이름을 입력해 주세요.';return}start(name)});
+  $('gateName').addEventListener('keydown',e=>{if(e.key==='Enter')$('gateStart').click()});
+  document.querySelectorAll('#countButtons button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#countButtons button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');state.count=Number(btn.dataset.count);generate();}));
+  $('modeSelect').addEventListener('change',e=>{state.mode=e.target.value;generate()});$('newButton').addEventListener('click',generate);$('checkButton').addEventListener('click',check);$('resetButton').addEventListener('click',reset);$('resultNew').addEventListener('click',generate);$('printButton').addEventListener('click',()=>window.print());$('resultPrint').addEventListener('click',()=>window.print());
+  const params=new URLSearchParams(location.search);const preset=(params.get('student')||sessionStorage.getItem('gfield_arithmetic_student')||'').trim();if(preset)start(preset);else $('gateName').focus();
+})();
+</script>
+</body>
+</html>
