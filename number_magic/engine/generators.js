@@ -307,7 +307,9 @@ function move10_2d(opts){
   }
   const ones=pick([8,9]); const tens=R(2,8); const a=tens*10+ones;
   const need=10-ones;
-  const b=R(need+2, 55);
+  /* b의 일의 자리가 need 이상이어야 "일의 자리에서 이사"가 성립.
+     (예전엔 b=30 같은 우수리 0도 나와서 30에서 1을 깨오는 부자연스러운 문제가 출제됨) */
+  const b=R(1,4)*10+R(need,9);
   const rest=b-need;
   const nextTen=a+need;
   const ans=nextTen+rest;
@@ -316,7 +318,14 @@ function move10_2d(opts){
     a,b,need,rest,nextTen, answer:ans,
     prompt:{ko:`${b}에서 ${need}을 이사보내 ${a}를 ${nextTen}으로 만들어요`,en:`Move ${need} from ${b} to round ${a} up to ${nextTen}`,zh:`从${b}里搬${need}过去，把${a}凑成${nextTen}`},
     tex:`${a}+${b} = ${a}+${need}+${rest} = ${nextTen}+${rest} = ${ans}`,
-    steps:[`${a}+${b}`,`${nextTen}+${rest}`,`${ans}`],
+    /* 매직랩: 전략을 단계 카드로 직접 밟는다(계산기형 최종답 입력 금지 원칙).
+       아레나는 자체 numpad UI라 widget 필드를 무시하고 즉답 배틀 유지. */
+    widget:'steps',
+    steps:[
+      {tex:`${a}+${need} = \\square`, blank:nextTen},
+      {tex:`${b}-${need} = \\square`, blank:rest},
+      {tex:`${nextTen}+${rest} = \\square`, blank:ans}
+    ],
     answerType:'number'
   };
 }

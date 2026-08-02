@@ -1440,7 +1440,8 @@ function stepLabWidget(body,u){
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
   const origLbl=S.lang==='zh'?'怎么算？':S.lang==='en'?'How do we solve?':'어떻게 구할까?';
   const origTex=cur.tex?`${esc(cur.tex.split('=')[0].trim())} = \\square`:'';
-  body.innerHTML=`<div class="nm-dialog">
+  /* steps(단계 카드) 위젯은 세로 공간을 많이 쓰므로 모바일 압축용 클래스를 단다 */
+  body.innerHTML=`<div class="nm-dialog${cur.widget==='steps'?' steps-mode':''}">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     ${origTex?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span><span data-tex="${origTex}"></span></div>`:''}

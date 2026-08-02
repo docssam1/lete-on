@@ -715,6 +715,21 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   .nm-numpad{gap:4px}
 }
 
+/* ── 매직랩 steps(단계 카드) 모드 — 모바일에서 카드 2~3장이 안 잘리게 ──
+   단계 카드+숫자패드가 세로 공간을 많이 쓰므로, 짧은 화면에선 누미 캐릭터와
+   메모칸을 숨기고 말풍선·카드를 압축해 스크롤 없이 진행 흐름이 보이게 한다. */
+@media(max-height:820px){
+  .nm-dialog.steps-mode .nm-numi{display:none}
+  .nm-dialog.steps-mode .nm-memo-wrap{display:none}
+  .nm-dialog.steps-mode .nm-bubble{font-size:12.5px;padding:6px 12px;margin:2px auto 0}
+  .nm-dialog.steps-mode .nm-lab-orig{margin:2px 0}
+  .nm-dialog.steps-mode .nm-w-step-card{padding:8px 12px;border-radius:11px}
+  .nm-dialog.steps-mode .nm-w-step-ktx .katex{font-size:clamp(15px,4.2vw,19px)}
+  .nm-dialog.steps-mode .nm-w-steps-scroll{gap:6px}
+  .nm-dialog.steps-mode .nm-numpad{max-width:240px}
+  .nm-dialog.steps-mode .nm-key{padding:4px 0;font-size:16px}
+}
+
 /* ============================================================
    인쇄 학습지 (11math 세로셈 스타일)
    ============================================================ */
