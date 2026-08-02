@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-labelledby="title desc">
+  <title id="title">4x4 수판</title>
+  <desc id="desc">3 6 4 4, 5 5 7 1, 8 7 9 6, 2 4 3 6</desc>
+  <rect width="600" height="600" fill="#fff"/>
+  <rect x="70" y="70" width="460" height="460" rx="4" fill="#f9fbfd" stroke="#173d6d" stroke-width="5"/>
+  <g stroke="#8ea5bd" stroke-width="3" stroke-dasharray="10 9">
+    <path d="M185 70V530M300 70V530M415 70V530"/>
+    <path d="M70 185H530M70 300H530M70 415H530"/>
+  </g>
+  <g fill="#1f2e42" font-family="Arial, sans-serif" font-size="48" text-anchor="middle" dominant-baseline="middle">
+    <text x="127.5" y="127.5">3</text><text x="242.5" y="127.5">6</text><text x="357.5" y="127.5">4</text><text x="472.5" y="127.5">4</text>
+    <text x="127.5" y="242.5">5</text><text x="242.5" y="242.5">5</text><text x="357.5" y="242.5">7</text><text x="472.5" y="242.5">1</text>
+    <text x="127.5" y="357.5">8</text><text x="242.5" y="357.5">7</text><text x="357.5" y="357.5">9</text><text x="472.5" y="357.5">6</text>
+    <text x="127.5" y="472.5">2</text><text x="242.5" y="472.5">4</text><text x="357.5" y="472.5">3</text><text x="472.5" y="472.5">6</text>
+  </g>
+</svg>
