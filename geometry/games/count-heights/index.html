@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town - Count the Cubes</title>
-    <link rel="stylesheet" href="./styles.css?v=count-fit-20260720a" />
+    <link rel="stylesheet" href="./styles.css?v=count-fit-20260802a" />
     <link rel="stylesheet" href="../../shared/game-rail.css?v=2" />
     <link rel="stylesheet" href="../../shared/portrait-lock.css?v=1" />
     <script type="importmap">
@@ -56,7 +56,7 @@
         <div>
           <div id="stars" class="stars" aria-label="difficulty">★☆☆☆☆</div>
           <h2 data-i18n="title">쌓기나무 개수 세기</h2>
-          <p data-i18n="instruction">쌓기나무의 맨 위를 눌러 각 기둥의 수를 쓰고, 모두 더해 보세요.</p>
+          <p data-i18n="instruction">쌓기나무의 맞위를 눌러 각 기둥의 수를 쓰고, 모두 더해 보세요.</p>
         </div>
       </section>
 
@@ -90,7 +90,7 @@
           </header>
           <div class="input-canvas">
             <div id="modelPrompt" class="model-prompt">
-              <strong data-i18n="selectColumn">숫자를 쓸 쌓기나무의 맨 위를 눌러 보자!</strong>
+              <strong data-i18n="selectColumn">숫자를 쓸 쌓기나무의 맞위를 눌러 보자!</strong>
             </div>
             <div id="topBoard" class="top-board" aria-label="위에서 본 바탕그림"></div>
           </div>
@@ -103,7 +103,7 @@
             </button>
           </section>
 
-          <div id="numberPrompt" class="number-prompt" data-i18n="chooseNumber">맨 위에 쓸 수를 골라요.</div>
+          <div id="numberPrompt" class="number-prompt" data-i18n="chooseNumber">맞위에 쓸 수를 골라요.</div>
           <div id="numberPad" class="number-pad" aria-label="number pad"></div>
         </article>
       </section>
@@ -135,7 +135,7 @@
 
       <aside class="docssam" aria-live="polite">
         <div class="speech-bubble">
-          <p id="guide" data-i18n="guideStart">쌓기나무 맨 위에 쓰는 수가 그 자리의 개수야.</p>
+          <p id="guide" data-i18n="guideStart">쌓기나무 맞위에 쓰는 수가 그 자리의 개수야.</p>
         </div>
         <button class="cubi-sprite" type="button" aria-label="큐비"></button>
       </aside>
@@ -160,7 +160,7 @@
         <i></i><i></i><i></i><i></i><i></i><i></i>
       </div>
     </main>
-    <script type="module" src="./app.js?v=graphics-parity-20260720c"></script>
+    <script type="module" src="./app.js?v=count-fit-20260802a"></script>
     <script src="../../shared/game-flow.js?v=1" defer></script>
   </body>
 </html>
