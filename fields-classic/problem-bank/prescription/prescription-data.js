@@ -139,6 +139,7 @@ window.PRESCRIPTION_BANK = {
     16: {
       title: "수 피라미드",
       category: "수",
+      promptInImage: true,
       problems: [
         { prompt: "첫째 줄에 1, 2, 5를 한 번씩 써넣습니다. 이웃한 두 수를 더해 아래 칸에 쓰는 일을 두 번 했을 때 맨 아래 수가 9가 되도록 하려면 ㉠에 어떤 수를 써야 합니까?", image: "q16/q16_01.png", answer: "1", solution: "맨 아래 수는 세 수의 합에 가운데 수를 한 번 더한 값입니다. 1 + 2 + 5 + 1 = 9입니다." },
         { prompt: "첫째 줄에 2, 4, 7을 한 번씩 써넣습니다. 두 번 모으기 한 값이 17이 되도록 하려면 ㉠에 어떤 수를 써야 합니까?", image: "q16/q16_02.png", answer: "4", solution: "2 + 4 + 7 + 4 = 17입니다." },
@@ -148,6 +149,7 @@ window.PRESCRIPTION_BANK = {
     17: {
       title: "숫자 배치 규칙",
       category: "논리추리",
+      promptInImage: true,
       problems: [
         { prompt: "1, 2, 3을 같은 수끼리 서로 이웃하지 않도록 써넣을 때 ㉠에 들어갈 수를 구하세요.", image: "q17/q17_01.png", answer: "3", solution: "주어진 수에서 시작해 이웃한 칸마다 다른 수를 차례로 배치하면 3입니다." },
         { prompt: "1, 2, 3을 같은 수끼리 서로 이웃하지 않도록 써넣을 때 ㉠에 들어갈 수를 구하세요.", image: "q17/q17_02.png", answer: "1", solution: "삼각형의 세 방향에서 같은 수가 맞닿지 않도록 채우면 1입니다." },
@@ -157,6 +159,7 @@ window.PRESCRIPTION_BANK = {
     18: {
       title: "조건에 맞는 두 자리 수",
       category: "수",
+      promptInImage: true,
       problems: [
         { prompt: "조건표를 보고 알맞은 두 자리 수를 구하세요.", image: "q18/q18_01.png", answer: "94", solution: "두 숫자는 9와 4이므로 두 자리 수는 94입니다." },
         { prompt: "조건표를 보고 알맞은 두 자리 수를 구하세요.", image: "q18/q18_02.png", answer: "74", solution: "두 숫자는 7과 4이므로 두 자리 수는 74입니다." },
@@ -166,6 +169,7 @@ window.PRESCRIPTION_BANK = {
     19: {
       title: "표 안의 도형 수",
       category: "식의 계산",
+      promptInImage: true,
       problems: [
         { prompt: "같은 도형의 값을 차례로 찾아 ㉠ 열의 합을 구하세요.", image: "q19/q19_01.png", answer: "20", solution: "□=6, △=8이므로 ㉠은 6+8+6=20입니다." },
         { prompt: "같은 도형의 값을 차례로 찾아 ㉠ 열의 합을 구하세요.", image: "q19/q19_02.png", answer: "24", solution: "☆=5, □=6, △=8이므로 ㉠은 5+5+8+6=24입니다." },
@@ -175,6 +179,7 @@ window.PRESCRIPTION_BANK = {
     20: {
       title: "복면산",
       category: "식의 계산",
+      promptInImage: true,
       problems: [
         { prompt: "세로 계산식이 맞도록 □와 ○가 나타내는 숫자를 각각 구하세요.", image: "q20/q20_01.png", answer: "□=9, ○=1", solution: "94 + 19 = 113이므로 □=9, ○=1입니다." },
         { prompt: "세로 계산식이 맞도록 □와 ○가 나타내는 숫자를 각각 구하세요.", image: "q20/q20_02.png", answer: "□=6, ○=3", solution: "32 + 33 = 65이므로 □=6, ○=3입니다." },
@@ -184,6 +189,7 @@ window.PRESCRIPTION_BANK = {
     21: {
       title: "화살표 수 배열",
       category: "규칙",
+      promptInImage: true,
       problems: [
         { prompt: "[보기]의 화살표 규칙을 찾아 ㉠에 알맞은 수를 구하세요.", image: "q21/q21_01.png", answer: "28", solution: "57 → 58 → 48 → 49 → 50 → 40 → 39 → 38 → 28" },
         { prompt: "같은 화살표 규칙을 따라 ㉠에 알맞은 수를 구하세요.", image: "q21/q21_02.png", answer: "36", solution: "43 → 33 → 34 → 35 → 45 → 46 → 36" },
@@ -193,6 +199,7 @@ window.PRESCRIPTION_BANK = {
     22: {
       title: "도형 증가 규칙",
       category: "규칙",
+      promptInImage: true,
       problems: [
         { prompt: "작은 정삼각형을 이어 붙여 규칙에 따라 모양을 만듭니다. 5번째 모양에는 작은 정삼각형이 몇 장 필요합니까?", image: "q22/q22_01.png", answer: "25장", solution: "n번째 모양은 n²장이므로 5² = 25입니다." },
         { prompt: "작은 정삼각형을 이어 붙여 규칙에 따라 모양을 만듭니다. 6번째 모양에는 작은 정삼각형이 몇 장 필요합니까?", image: "q22/q22_02.png", answer: "36장", solution: "6² = 36입니다." },
@@ -202,6 +209,7 @@ window.PRESCRIPTION_BANK = {
     23: {
       title: "바둑돌 규칙",
       category: "규칙",
+      promptInImage: true,
       problems: [
         { prompt: "그림과 같은 규칙으로 바둑돌을 놓습니다. 검은 돌이 흰 돌보다 8개 더 많다면 몇 번째 모양입니까?", image: "q23/q23_01.png", answer: "15번째", solution: "홀수 번째 모양에서 차이는 (n+1)÷2이므로 (n+1)÷2=8, n=15입니다." },
         { prompt: "그림과 같은 규칙으로 바둑돌을 놓습니다. 흰 돌이 검은 돌보다 12개 더 많다면 몇 번째 모양입니까?", image: "q23/q23_02.png", answer: "24번째", solution: "짝수 번째 모양에서 흰 돌과 검은 돌의 차이는 n÷2이므로 n÷2=12, n=24입니다." },
@@ -211,6 +219,7 @@ window.PRESCRIPTION_BANK = {
     24: {
       title: "도형이 나타낸 수",
       category: "식의 계산",
+      promptInImage: true,
       problems: [
         { prompt: "☆, ○, △는 서로 다른 한 자리 수입니다. 식을 만족할 때 ㉠에 알맞은 수를 구하세요.", image: "q24/q24_01.png", answer: "7", solution: "☆=2, ○=3, △=5이므로 ☆+△=7입니다." },
         { prompt: "☆, ○, △는 서로 다른 한 자리 수입니다. 식을 만족할 때 ㉠에 알맞은 수를 구하세요.", image: "q24/q24_02.png", answer: "15", solution: "☆=8, ○=6, △=7이므로 ☆+△=15입니다." },
@@ -220,6 +229,7 @@ window.PRESCRIPTION_BANK = {
     25: {
       title: "쌓기나무 규칙",
       category: "규칙",
+      promptInImage: true,
       problems: [
         { prompt: "그림과 같은 규칙으로 쌓기나무를 쌓습니다. 4번째 모양의 쌓기나무는 모두 몇 개입니까?", image: "q25/q25_01.png", answer: "30개", solution: "1² + 2² + 3² + 4² = 30입니다." },
         { prompt: "그림과 같은 규칙으로 쌓기나무를 쌓습니다. 5번째 모양의 쌓기나무는 모두 몇 개입니까?", image: "q25/q25_02.png", answer: "55개", solution: "1² + 2² + 3² + 4² + 5² = 55입니다." },
