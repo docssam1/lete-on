@@ -18,6 +18,9 @@ const elements = {
   frontView: $("#frontView"),
   sideView: $("#sideView"),
   topView: $("#topView"),
+  viewsTabs: $("#viewsTabs"),
+  viewsStage: $(".views-stage"),
+  viewsRow: $(".views-row"),
   checkBtn: $("#checkBtn"),
   clearBtn: $("#clearBtn"),
   hint: $("#hint"),
@@ -51,6 +54,7 @@ const state = {
   levelIndex: Math.max(0, Math.min(levels.length - 1, savedLevel)),
   problemIndex: Math.max(0, Number(gameProgress.problemIndex) || 0),
   painted: { front: [], side: [], top: [] },
+  activeView: "front",
   solved: false,
   hintsUsed: 0,
   wrongAttempts: 0,
@@ -79,8 +83,18 @@ function applyLanguage() {
   updateProgress();
   renderLevelList();
   renderAllViews();
+  applyViewTabLabels();
   updatePrompt();
   if (state.tutorialStep >= 0) renderConceptTutorial();
+}
+
+// The tabs reuse the same front/side/top strings as the .view-label spans
+// (and the camera-tools buttons) instead of adding new i18n entries.
+function applyViewTabLabels() {
+  if (!elements.viewsTabs) return;
+  [...elements.viewsTabs.querySelectorAll("button")].forEach((button) => {
+    button.textContent = text(state.lang, button.dataset.view);
+  });
 }
 
 function updateAudioButton() {
@@ -208,6 +222,9 @@ function loadProblem() {
   state.solved = false;
   state.hintsUsed = 0;
   state.wrongAttempts = 0;
+  // Every new problem starts back on the "front" tab with a clean slate —
+  // otherwise a solved-and-done tab mark would carry over to the next shape.
+  setActiveView("front");
   updateProgress();
   renderAllViews();
   updatePrompt();
@@ -222,6 +239,61 @@ function loadProblem() {
 // ---------------------------------------------------------------------------
 function renderAllViews() {
   VIEW_NAMES.forEach((name) => renderViewGrid(name));
+  updateTabDoneMarks();
+  requestAnimationFrame(fitViewCells);
+}
+
+// Switches which single grid is shown in compact-landscape tab mode (a
+// no-op visually on desktop, where .views-tabs is display:none).
+function setActiveView(name) {
+  state.activeView = name;
+  if (elements.viewsStage) elements.viewsStage.dataset.activeView = name;
+  if (elements.viewsTabs) {
+    [...elements.viewsTabs.querySelectorAll("button")].forEach((button) => {
+      button.classList.toggle("active", button.dataset.view === name);
+    });
+  }
+  requestAnimationFrame(fitViewCells);
+}
+
+// A tab gets a checkmark once its grid has at least one painted cell, so
+// kids can see at a glance which of the three views they still need to do.
+function updateTabDoneMarks() {
+  if (!elements.viewsTabs) return;
+  VIEW_NAMES.forEach((name) => {
+    const hasPaint = state.painted[name]?.some((row) => row.some((value) => value));
+    const button = elements.viewsTabs.querySelector(`button[data-view="${name}"]`);
+    if (button) button.classList.toggle("done", !!hasPaint);
+  });
+}
+
+// Sizes the single visible grid's cells (compact-landscape tab mode only) to
+// fill the space freed up by hiding the other two — same fit-to-box approach
+// as count-heights' fitTopBoard().
+function fitViewCells() {
+  const tabsEl = elements.viewsTabs;
+  const stage = elements.viewsStage;
+  if (!tabsEl || !stage || getComputedStyle(tabsEl).display === "none") return;
+  const block = stage.querySelector(`.view-block[data-view="${state.activeView}"]`);
+  const grid = block?.querySelector(".view-grid");
+  if (!block || !grid || !block.clientWidth || !block.clientHeight) return;
+  const cols = Number(getComputedStyle(grid).getPropertyValue("--cols")) || grid.children.length || 1;
+  const rows = Math.max(1, Math.round(grid.children.length / cols));
+  const label = block.querySelector(".view-label");
+  const blockStyle = getComputedStyle(block);
+  const labelSpace = (label ? label.getBoundingClientRect().height : 0) + (parseFloat(blockStyle.gap) || 0);
+  const gridStyle = getComputedStyle(grid);
+  const padX = parseFloat(gridStyle.paddingLeft) + parseFloat(gridStyle.paddingRight);
+  const padY = parseFloat(gridStyle.paddingTop) + parseFloat(gridStyle.paddingBottom);
+  const gap = parseFloat(gridStyle.gap || gridStyle.columnGap) || 0;
+  const availW = block.clientWidth - padX;
+  const availH = block.clientHeight - labelSpace - padY;
+  if (availW <= 0 || availH <= 0) return;
+  const cellW = (availW - (cols - 1) * gap) / cols;
+  const cellH = (availH - (rows - 1) * gap) / rows;
+  let cell = Math.floor(Math.min(cellW, cellH));
+  cell = Math.max(24, Math.min(60, cell));
+  stage.style.setProperty("--tv-cell", `${cell}px`);
 }
 
 function renderViewGrid(name) {
@@ -254,6 +326,7 @@ function toggleCell(name, r, c) {
   const cell = cellAt(name, r, c);
   cell.classList.toggle("filled", !!state.painted[name][r][c]);
   cell.classList.remove("wrong", "right");
+  updateTabDoneMarks();
 }
 
 function clearAll() {
@@ -645,6 +718,9 @@ function resizeScene() {
 }
 
 new ResizeObserver(resizeScene).observe(elements.scene);
+// Re-fit the single visible grid whenever the row's box changes (rotation,
+// on-screen keyboard, browser chrome). No-op on desktop (tabs hidden there).
+if (elements.viewsRow) new ResizeObserver(fitViewCells).observe(elements.viewsRow);
 function animate() {
   const time = performance.now() * 0.001;
   sunlight.position.x = 5 + Math.sin(time * 0.32) * 0.42;
@@ -661,6 +737,11 @@ elements.reset.addEventListener("click", resetProblem);
 elements.next.addEventListener("click", nextProblem);
 elements.checkBtn.addEventListener("click", checkAnswer);
 elements.clearBtn.addEventListener("click", clearAll);
+if (elements.viewsTabs) {
+  [...elements.viewsTabs.querySelectorAll("button")].forEach((button) => {
+    button.addEventListener("click", () => setActiveView(button.dataset.view));
+  });
+}
 elements.audio.addEventListener("click", () => {
   state.audioEnabled = !state.audioEnabled;
   localStorage.setItem("gfield-audio-muted", String(!state.audioEnabled));

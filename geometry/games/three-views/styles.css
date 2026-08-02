@@ -26,6 +26,10 @@
   overflow: auto;
 }
 
+/* Tabs are desktop-hidden: three grids side-by-side already fit wide screens,
+   the compact-landscape media query below switches to one-at-a-time tabs. */
+.views-tabs { display: none; }
+
 .views-row {
   display: flex;
   flex-wrap: wrap;
@@ -99,12 +103,66 @@
 .views-shell .level-list { grid-template-columns: repeat(5, 1fr); }
 @media (max-width: 720px) { .views-shell .level-list { grid-template-columns: repeat(3, 1fr); } }
 
-/* Tight landscape phones: shrink cells and gaps so all three grids fit. */
+/* Tight landscape phones: 20px cells were too small for little fingers, so
+   instead of shrinking all three grids to fit side by side, show one grid at
+   a time behind tabs (front/side/top) and let fitViewCells() in app.js size
+   that single grid's cells to fill the freed-up space. Desktop is untouched. */
 @media (orientation: landscape) and (max-height: 560px) {
+  /* The shell base (imported from fill-box) turns .answer-panel into a grid
+     whose row tracks are shaped for the number-pad games; three-views only has
+     the stage inside the panel, so those tracks strangle it to ~170px tall.
+     Restore a plain column here so the stage — and the single visible tab
+     grid — can spread over the whole panel height. */
+  .views-shell .views-answer { display: flex; flex-direction: column; min-height: 0; }
+
   .views-stage { padding: 6px 8px 4px; gap: 6px; }
-  .views-row { gap: 8px; }
+
+  .views-tabs {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+    padding: 4px;
+    border: 1px solid #c89a67;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #fffaf0, #f5dfbd);
+  }
+  .views-tabs button {
+    flex: 1;
+    min-height: 34px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: inherit;
+    font-weight: 800;
+    font-size: clamp(11px, 1.3vw, 14px);
+    padding: 4px 6px;
+    cursor: pointer;
+  }
+  .views-tabs button.active { color: #fff; background: #34759a; }
+  .views-tabs button.done::after { content: " ✓"; color: #2e9f4f; }
+
+  .views-row {
+    flex: 1;
+    min-height: 0;
+    justify-content: center;
+    align-items: stretch;
+    gap: 8px;
+  }
+  /* Only the tab whose name matches data-active-view stays in the layout —
+     the others keep their painted DOM state (needed by checkAnswer) but are
+     display:none so they don't take up space or get measured. */
+  .views-row .view-block { display: none; }
+  .views-stage[data-active-view="front"] .view-block[data-view="front"],
+  .views-stage[data-active-view="side"] .view-block[data-view="side"],
+  .views-stage[data-active-view="top"] .view-block[data-view="top"] {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+  }
+
   .view-label { font-size: 10px; }
   .view-grid { padding: 4px; gap: 3px; border-radius: 8px; }
-  .view-cell { width: 20px; height: 20px; border-radius: 5px; }
+  .view-cell { width: var(--tv-cell, 44px); height: var(--tv-cell, 44px); border-radius: 5px; }
   .views-actions button { min-height: 34px; }
 }

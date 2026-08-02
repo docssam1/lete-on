@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town - Three-View Station</title>
-    <link rel="stylesheet" href="./styles.css?v=views-1" />
+    <link rel="stylesheet" href="./styles.css?v=views-2" />
     <link rel="stylesheet" href="../../shared/game-rail.css?v=2" />
     <link rel="stylesheet" href="../../shared/portrait-lock.css?v=1" />
     <script type="importmap">
@@ -86,18 +86,23 @@
             <h2 data-i18n="answerTitle">세 방향에서 본 모양</h2>
             <button id="xrayToggleWide" type="button" class="xray-button wide" data-i18n="revealShow">옆</button>
           </header>
-          <div class="views-stage">
+          <div class="views-stage" data-active-view="front">
             <div id="numberPrompt" class="number-prompt" data-i18n="paintPrompt">각 방향에서 본 모양을 칸에 색칠해 보세요.</div>
+            <div class="views-tabs" id="viewsTabs">
+              <button type="button" data-view="front"></button>
+              <button type="button" data-view="side"></button>
+              <button type="button" data-view="top"></button>
+            </div>
             <div class="views-row">
-              <div class="view-block">
+              <div class="view-block" data-view="front">
                 <span class="view-label" data-i18n="viewFront">앞에서 본 모양</span>
                 <div id="frontView" class="view-grid" aria-label="front view"></div>
               </div>
-              <div class="view-block">
+              <div class="view-block" data-view="side">
                 <span class="view-label" data-i18n="viewSide">옆에서 본 모양</span>
                 <div id="sideView" class="view-grid" aria-label="side view"></div>
               </div>
-              <div class="view-block">
+              <div class="view-block" data-view="top">
                 <span class="view-label" data-i18n="viewTop">위에서 본 모양</span>
                 <div id="topView" class="view-grid" aria-label="top view"></div>
               </div>
@@ -161,7 +166,7 @@
         <i></i><i></i><i></i><i></i><i></i><i></i>
       </div>
     </main>
-    <script type="module" src="./app.js?v=views-1"></script>
+    <script type="module" src="./app.js?v=views-2"></script>
     <script src="../../shared/game-flow.js?v=1" defer></script>
   </body>
 </html>
