@@ -22,16 +22,15 @@ window.NM_UNITS['N-04'] = {
     stages:[
       { tag:{ko:'① 같은 수도 여러 모습이 있어요!',en:'1) The same number has many looks!',zh:'① 同一个数有很多种样子！'},
         head:{ko:'숫자 "5"와 탤리 막대는 같은 수예요',en:'The numeral "5" and tally marks are the same number',zh:'数字"5"和计数符号是同一个数'},
-        desc:{ko:'수 <b>5</b>는 숫자 "5"로 쓸 수도 있고, 막대 <b>||||</b>에 사선 하나를 <b>더 그어서</b> 묶음으로 나타낼 수도 있어요! 왜 사선으로 묶을까요? <b>넷</b>까지 세다가 <b>다섯째</b> 막대를 사선으로 그으면, 나중에 한눈에 <b>5개씩 묶어서</b> 빠르게 셀 수 있거든요. 6, 7, 8, 9는 그 묶음 옆에 막대를 <b>하나씩 더</b> 그으면 돼요. 그리고 수와 탤리 그림을 이을 땐 막대를 <b>하나하나 세어서</b> 같은 수끼리 짝지어요!',
-          en:'The number <b>5</b> can be written as "5", or shown as four strokes <b>||||</b> with one more stroke <b>drawn across</b> them as a bundle! Why bundle with a diagonal? Count to <b>four</b>, then draw the <b>fifth</b> stroke across — later you can count fast by <b>groups of 5</b> at a glance. For 6, 7, 8, 9, just draw <b>one more stroke</b> next to the bundle. And to match numbers with tally pictures, <b>count the strokes one by one</b> and pair up the same amount!',
-          zh:'数字<b>5</b>可以写成"5"，也可以用四笔<b>||||</b>加一笔<b>斜着划过</b>组成一捆！为什么要斜着捆一下？数到<b>四</b>笔后，把<b>第五</b>笔斜着划过——以后就能一眼按<b>5个一捆</b>快速数数。6、7、8、9只要在捆旁边<b>再加一笔</b>就行。连数字和计数图时，<b>一笔一笔地数</b>，配对相同数量的！'},
+        desc:{ko:'막대 4개는 그대로, 5번째는 사선으로 묶어요!',
+          en:'Four strokes plain, the 5th bundled with a line!',
+          zh:'四笔直接画，第五笔斜着捆一下！'},
         mathSteps:['1,2,3,4 (막대 4개)','5번째는 사선으로 묶어요','6,7,8,9는 옆에 하나씩 더!'],
-        result:{ko:'수는 숫자로도, 막대로도 나타낼 수 있어요!',en:'A number can be shown as a numeral or as tally strokes!',zh:'数字既能写成数字，也能画成计数符号！'},
-        book:{ko:'탤리 세기는 나중에 통계·그래프 읽기의 기초가 돼요!',en:'Tally counting is a foundation for reading graphs and statistics later!',zh:'计数符号是以后读统计图表的基础！'} }
+        result:{ko:'수는 숫자로도, 막대로도 나타내요!',en:'A number can look like this or that!',zh:'数字可以写成数字，也能画成符号！'} }
     ],
-    rule:{ ko:'① 막대 4개까지는 그대로 ② 5번째는 사선으로 묶어요 ③ 세어서 같은 수끼리 이어요!',
-      en:'① Up to 4 strokes stay plain ② The 5th is bundled with a diagonal ③ Count and match the same amount!',
-      zh:'① 4笔以内直接画 ② 第5笔斜着捆一下 ③ 数一数，连相同数量！' }
+    rule:{ ko:'4개는 그대로, 5번째는 사선으로 묶어요!',
+      en:'Four stay plain, the 5th is bundled!',
+      zh:'4笔直接画，第5笔捆一下！' }
   },
 
   lab:{ generator:'nl_tallybuild', level:'main', count:4, params:{ mode:'match' },

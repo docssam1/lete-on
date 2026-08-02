@@ -22,16 +22,15 @@ window.NM_UNITS['N-10'] = {
     stages:[
       { tag:{ko:'① 나누면 비교하기 쉬워요!',en:'1) Sorting makes comparing easy!',zh:'① 分类后更容易比较！'},
         head:{ko:'종류별로 나누면 어느 쪽이 많은지 한눈에 보여요',en:'Sort by kind and you can see which has more at a glance',zh:'按种类分开，一眼就能看出谁更多'},
-        desc:{ko:'강아지와 고양이가 <b>섞여 있으면</b> 세기 어려워요. 그런데 강아지는 강아지 바구니로, 고양이는 고양이 바구니로 <b>나눠 담으면</b> — 각 바구니의 개수를 세어 <b>비교</b>하기 쉬워져요! "강아지 바구니에 <b>5마리</b>, 고양이 바구니에 <b>3마리</b>" — 그럼 강아지가 <b>더 많다</b>는 걸 바로 알 수 있어요. 이렇게 나누어 세는 것을 <b>분류</b>라고 해요!',
-          en:'When dogs and cats are <b>mixed together</b>, it\'s hard to count. But sort dogs into the dog basket and cats into the cat basket — then counting each basket makes <b>comparing</b> easy! "5 dogs, 3 cats" — you can instantly tell dogs are <b>more</b>. This kind of sorting is called <b>classification</b>!',
-          zh:'小狗和小猫<b>混在一起</b>时很难数。但把小狗分到狗篮子，小猫分到猫篮子——数一数每个篮子，<b>比较</b>就容易多了！"狗篮子5只，猫篮子3只"——马上就知道狗<b>更多</b>。这样分开数叫做<b>分类</b>！'},
-        mathSteps:['섞여 있으면 → 종류별로 나눠요','각 바구니를 세어요','개수를 비교해요!'],
-        result:{ko:'분류하면 비교가 훨씬 쉬워져요!',en:'Sorting makes comparing much easier!',zh:'分类后比较容易多了！'},
-        book:{ko:'분류와 세기는 나중에 그래프와 표 읽기의 기초가 돼요!',en:'Sorting and counting are the foundation for reading graphs and tables later!',zh:'分类和数数是以后读图表的基础！'} }
+        desc:{ko:'🐶는 🐶끼리, 🐱는 🐱끼리! 나누면 세기 쉬워요.',
+          en:'Dogs with dogs, cats with cats! Sorting makes counting easy.',
+          zh:'🐶跟🐶一起，🐱跟🐱一起！分开就好数了。'},
+        mathSteps:['종류별로 나눠요','각 바구니를 세어요','어느 쪽이 많은지 비교!'],
+        result:{ko:'나누면 비교가 쉬워요!',en:'Sorting makes comparing easy!',zh:'分类后比较容易！'} }
     ],
-    rule:{ ko:'① 섞였으면 종류별로 나눠요 ② 각 바구니를 세어요 ③ 개수를 비교해요!',
-      en:'① Mixed? Sort by kind ② Count each basket ③ Compare the amounts!',
-      zh:'① 混在一起就分类 ② 数一数每个篮子 ③ 比较数量！' }
+    rule:{ ko:'나눠 담고, 세고, 비교해요!',
+      en:'Sort, count, compare!',
+      zh:'分一分、数一数、比一比！' }
   },
 
   lab:{ generator:'nl10_data', level:'main', count:4, params:{ mode:'compare' },

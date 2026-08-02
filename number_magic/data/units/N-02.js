@@ -22,16 +22,15 @@ window.NM_UNITS['N-02'] = {
     stages:[
       { tag:{ko:'① 수의 줄서기',en:'1) Numbers in line',zh:'① 数字排队'},
         head:{ko:'앞으로도, 거꾸로도, 건너뛰며도!',en:'Forward, backward, and skipping!',zh:'往前、倒着、还能跳着数！'},
-        desc:{ko:'수는 언제나 <b>같은 순서</b>로 줄을 서요: 1, 2, 3, 4, 5… 계단을 오르듯 <b>앞으로</b> 세고, 내려오듯 <b>거꾸로</b>(5, 4, 3, 2, 1) 셀 수도 있어요. 폴짝폴짝 <b>2씩 건너뛰면</b>? 2, 4, 6, 8, 10! 순서만 알면 다음 수가 항상 보여요. 점 잇기 그림도 순서의 마법 — 1부터 차례대로 이으면 숨은 그림이 짠!',
-          en:'Numbers always stand in the <b>same order</b>: 1, 2, 3, 4, 5… Count <b>forward</b> like climbing stairs, or <b>backward</b> (5, 4, 3, 2, 1) like coming down. <b>Skip by 2</b>? 2, 4, 6, 8, 10! Know the order and the next number always shows itself. Dot-to-dot is order magic too — connect from 1 and a hidden picture appears!',
-          zh:'数字总是按<b>同样的顺序</b>排队：1、2、3、4、5……像上楼梯一样<b>往前</b>数，也能像下楼梯一样<b>倒着</b>数(5、4、3、2、1)。<b>两个两个跳</b>呢？2、4、6、8、10！记住顺序，下一个数总会出现。连点画也是顺序的魔法——从1开始连，藏着的图案就出现啦！'},
+        desc:{ko:'1,2,3,4,5… 앞으로! 5,4,3,2,1… 거꾸로!',
+          en:'1,2,3,4,5… forward! 5,4,3,2,1… backward!',
+          zh:'1、2、3、4、5……往前！5、4、3、2、1……倒着！'},
         mathSteps:['1→2→3→4→5 (앞으로)','5→4→3→2→1 (거꾸로)','2→4→6→8→10 (2씩 폴짝!)'],
-        result:{ko:'순서를 알면 다음 수가 보여요!',en:'Know the order — see the next number!',zh:'记住顺序，就能看到下一个数！'},
-        book:{ko:'거꾸로 세기는 나중에 빼기의 첫걸음이 돼요!',en:'Counting backward becomes the first step of subtraction!',zh:'倒着数是以后学减法的第一步！'} }
+        result:{ko:'순서를 알면 다음 수가 보여요!',en:'Know the order — see the next!',zh:'记住顺序，就能猜到下一个！'} }
     ],
-    rule:{ ko:'① 앞으로: 1씩 커져요 ② 거꾸로: 1씩 작아져요 ③ 뛰어세기: 같은 걸음으로 폴짝!',
-      en:'① Forward: grows by 1 ② Backward: shrinks by 1 ③ Skip-counting: equal hops!',
-      zh:'① 往前：每次大1 ② 倒着：每次小1 ③ 跳着数：步子一样大！' }
+    rule:{ ko:'앞으로는 1씩 커지고, 거꾸로는 1씩 작아져요!',
+      en:'Forward grows by 1, backward shrinks by 1!',
+      zh:'往前每次大1，倒着每次小1！' }
   },
 
   lab:{ generator:'nl2_seq', level:'main', count:3, params:{ mode:'dots' },

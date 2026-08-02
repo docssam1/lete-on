@@ -22,16 +22,15 @@ window.NM_UNITS['N-08'] = {
     stages:[
       { tag:{ko:'① 수 기계는 규칙대로 바꿔요!',en:'1) The machine changes numbers by a rule!',zh:'① 数字机器按规则变化！'},
         head:{ko:'넣은 수에 규칙을 적용하면 나오는 수가 돼요',en:'Apply the rule to the input and get the output',zh:'把规则用在放入的数上，就得到出来的数'},
-        desc:{ko:'수 기계에 <b>5</b>를 넣고 규칙이 <b>"+2"</b>라면? 5에 2를 더해서 <b>7</b>이 나와요! 규칙이 <b>"-1"</b>이라면 5에서 1을 빼서 <b>4</b>가 나오죠. 그런데 어떤 기계는 규칙을 <b>숨기고</b> 있어요! 그럴 땐 미리 나온 예시 두 개를 잘 보고 — "3을 넣으면 5가 나왔네? 2를 넣으면 4가 나왔고? 아하, <b>+2</b>구나!" 하고 <b>비밀 규칙을 추리</b>해야 해요.',
-          en:'Put <b>5</b> into the machine with the rule <b>"+2"</b>? Add 2 to 5 and get <b>7</b>! With the rule <b>"-1"</b>, subtract 1 from 5 to get <b>4</b>. But some machines <b>hide</b> the rule! Then look closely at two examples — "3 went in, 5 came out? 2 went in, 4 came out? Aha, it\'s <b>+2</b>!" — and <b>guess the secret rule</b>.',
-          zh:'把<b>5</b>放进机器，规则是<b>"+2"</b>？5加2得<b>7</b>！规则是<b>"-1"</b>的话，5减1得<b>4</b>。但有些机器会<b>藏起</b>规则！这时要仔细看两个例子——"放进3，出来5？放进2，出来4？啊哈，是<b>+2</b>！"——<b>猜出秘密规则</b>。'},
-        mathSteps:['규칙이 보이면: 입력에 규칙 바로 적용','규칙이 숨으면: 예시 2개로 규칙 추리','추리한 규칙을 새 입력에 적용!'],
-        result:{ko:'규칙만 알면 어떤 수가 들어와도 답할 수 있어요!',en:'Know the rule and you can answer for any number!',zh:'只要知道规则，什么数进去都能算出来！'},
-        book:{ko:'수 기계는 나중에 함수와 규칙 찾기로 이어지는 첫걸음이에요!',en:'Number machines are a first step toward functions and pattern-finding!',zh:'数字机器是以后学习函数和找规律的第一步！'} }
+        desc:{ko:'5를 넣고 규칙이 +2라면? 7이 나와요!',
+          en:'Put in 5 with rule +2? Out comes 7!',
+          zh:'放进5，规则是+2？出来7！'},
+        mathSteps:['5 넣기 → +2 → 7 나오기!','규칙이 숨으면 예시를 봐요','아하, +2구나!'],
+        result:{ko:'규칙만 알면 다 맞힐 수 있어요!',en:'Know the rule, know the answer!',zh:'知道规则就都能答对！'} }
     ],
-    rule:{ ko:'① 규칙이 보이면 바로 계산해요 ② 규칙이 숨으면 예시로 추리해요 ③ 추리한 규칙을 그대로 적용!',
-      en:'① If the rule is shown, calculate directly ② If hidden, guess from examples ③ Apply the guessed rule!',
-      zh:'① 规则显示就直接算 ② 规则隐藏就靠例子猜 ③ 把猜到的规则用上去！' }
+    rule:{ ko:'기계는 규칙대로 수를 바꿔요!',
+      en:'The machine changes numbers by its rule!',
+      zh:'机器按规则变数字！' }
   },
 
   lab:{ generator:'nl8_machine', level:'main', count:4, params:{ mode:'guess' },

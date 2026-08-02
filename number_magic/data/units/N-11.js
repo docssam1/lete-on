@@ -22,16 +22,15 @@ window.NM_UNITS['N-11'] = {
     stages:[
       { tag:{ko:'① 수와 점은 쌍둥이!',en:'1) Numbers and dots are twins!',zh:'① 数字和点点是双胞胎！'},
         head:{ko:'같은 수를 다르게 보여주는 두 가지 방법',en:'Two ways to show the same amount',zh:'展示同样数量的两种方式'},
-        desc:{ko:'수 <b>4</b>는 숫자 "4"로도, 점 네 개 ⠿ 로도 나타낼 수 있어요! 수 배열판에서 수들은 항상 <b>1씩 커지는 순서</b>로 줄을 서요 — 1, 2, 3, 4, 5… 빈 칸이 보이면 <b>앞 수에서 1을 더하면</b> 바로 답이 나와요! 점 그림과 수를 이을 때는 점을 하나하나 세어서 같은 수끼리 짝 지어요.',
-          en:'<b>4</b> can be shown as the numeral "4" or as four dots! In a number array, numbers always grow by <b>1 at a time</b> — 1, 2, 3, 4, 5… If you see a blank, just <b>add 1 to the number before it</b>! To match dots and numbers, count the dots one by one and pair them up.',
-          zh:'数字<b>4</b>可以写成"4"，也可以画成四个点！数字排列里，数<b>每次加1</b>依次增大——1、2、3、4、5……看到空格，只要<b>在前面的数上加1</b>就是答案！连点图和数字时，一个一个数点，找到一样多的配对。'},
+        desc:{ko:'빈 칸은 앞 수에 1을 더하면 돼요!',
+          en:'For a blank, just add 1 to the number before!',
+          zh:'空格就是前面的数加1！'},
         mathSteps:['앞 수 + 1 = 빈 칸','점을 세어요','같은 수끼리 이어요!'],
-        result:{ko:'수와 점 그림은 같은 양을 말하는 쌍둥이예요!',en:'Numbers and dot pictures are twins showing the same amount!',zh:'数字和点图是表示同样数量的双胞胎！'},
-        book:{ko:'이어 세기(+1)는 나중에 덧셈의 씨앗이 된답니다!',en:'Counting on (+1) plants the seed of addition!',zh:'接着数（+1）是以后加法的种子！'} }
+        result:{ko:'수 4와 점 4개는 쌍둥이!',en:'The number 4 and four dots are twins!',zh:'数字4和4个点是双胞胎！'} }
     ],
-    rule:{ ko:'① 이어 세기: 앞 수 +1 = 빈 칸 ② 점 매칭: 점을 세어 같은 수 카드와 이어요',
-      en:'① Count on: prev +1 = blank ② Dot match: count dots, connect to the same number card',
-      zh:'① 接着数：前一个+1＝空格 ② 点匹配：数点，与相同数量的数字卡连线' }
+    rule:{ ko:'앞 수 +1! 점은 세어서 같은 수와 이어요!',
+      en:'Prev +1! Count dots and match the same number!',
+      zh:'前一个加1！点数一数，连一样的数！' }
   },
 
   lab:{ generator:'nl11_arrange', level:'main', count:4, params:{ mode:'match' },

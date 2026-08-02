@@ -22,16 +22,15 @@ window.NM_UNITS['N-01'] = {
     stages:[
       { tag:{ko:'① 하나씩 짚어요',en:'1) Touch one by one',zh:'① 一个一个点'},
         head:{ko:'짚은 것마다 수 이름 하나!',en:'One number name for each touch!',zh:'点一个说一个数！'},
-        desc:{ko:'병아리 🐤🐤🐤를 세어 볼까요? 손가락으로 <b>하나씩 짚으면서</b> "하나, 둘, 셋" 하고 말해요. 한 번 짚은 병아리는 또 세지 않아요! 그리고 <b>마지막에 말한 수</b>가 바로 전체 개수예요 — 셋!',
-          en:'Count the chicks 🐤🐤🐤! Touch them <b>one at a time</b> saying "one, two, three." Never count the same chick twice! The <b>last number you say</b> is how many there are — three!',
-          zh:'来数小鸡🐤🐤🐤！<b>一个一个地点</b>，边点边说"一、二、三"。点过的小鸡不再数！<b>最后说的数</b>就是一共有几个——三！'},
+        desc:{ko:'🐤 하나씩 짚으며 "하나, 둘, 셋!"',
+          en:'Touch one by one: "one, two, three!"',
+          zh:'一个一个点："一、二、三！"'},
         mathSteps:['🐤 하나','🐤🐤 둘','🐤🐤🐤 셋 → 모두 3!'],
-        result:{ko:'마지막 수 = 모두 몇 개!',en:'The last number = how many in all!',zh:'最后的数＝一共几个！'},
-        book:{ko:'섞여 있어도 괜찮아요 — 세고 싶은 것만 골라서 짚으면 돼요!',en:'Mixed-up things are fine — just touch only the ones you want to count!',zh:'混在一起也没关系——只点你要数的就行！'} }
+        result:{ko:'마지막 수 = 모두 몇 개!',en:'Last number = how many!',zh:'最后的数＝一共几个！'} }
     ],
-    rule:{ ko:'① 하나씩 짚으며 세요 ② 같은 건 두 번 세지 않아요 ③ 마지막 수가 전체 개수!',
-      en:'① Touch and count one by one ② Never count twice ③ The last number is the total!',
-      zh:'① 一个一个点着数 ② 不重复数 ③ 最后的数就是总数！' }
+    rule:{ ko:'하나씩 짚어요! 마지막 수가 전체 개수예요.',
+      en:'Touch one by one! The last number is the total!',
+      zh:'一个一个点！最后的数就是总数！' }
   },
 
   lab:{ generator:'nl1_count', level:'main', count:4, params:{ mode:'make' },

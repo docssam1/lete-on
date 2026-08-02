@@ -22,16 +22,15 @@ window.NM_UNITS['N-06'] = {
     stages:[
       { tag:{ko:'① 가르기 나무',en:'1) The split tree',zh:'① 分分树'},
         head:{ko:'하나의 수가 두 갈래로!',en:'One number splits into two branches!',zh:'一个数分成两枝！'},
-        desc:{ko:'사탕 🍬 5개를 두 손에 나눠 쥐어요. 1개와 4개, 2개와 3개… 나누는 방법이 여러 가지죠? 이걸 <b>가르기</b>라고 해요. 반대로 두 손의 사탕을 합치는 건 <b>모으기</b> — 갈라도 모아도 <b>전체는 그대로 5개</b>예요! 그리고 한 손에 하나도 없으면? 그게 바로 <b>0</b>! 5는 5와 0으로도 가를 수 있어요.',
-          en:'Hold 5 candies 🍬 in two hands: 1 and 4, 2 and 3… many ways! That\'s <b>splitting</b>. Putting them back together is <b>joining</b> — split or join, <b>the total stays 5</b>! And an empty hand? That\'s <b>zero</b>! 5 can split into 5 and 0 too.',
-          zh:'把5个糖🍬分到两只手里：1和4、2和3……有好多种分法！这叫<b>分</b>。把两只手的糖放回一起叫<b>合</b>——不管怎么分怎么合，<b>总数还是5</b>！要是一只手空空的呢？那就是<b>0</b>！5也可以分成5和0。'},
+        desc:{ko:'5는 1과 4, 2와 3! 나눠도 합쳐도 5예요.',
+          en:'5 is 1&4, or 2&3! Split or joined, still 5!',
+          zh:'5是1和4，也是2和3！分开合起来都是5！'},
         mathSteps:['🍬🍬🍬🍬🍬 = 5','1과 4 · 2와 3 · 5와 0','모으면 다시 5!'],
-        result:{ko:'갈라도 모아도 전체는 그대로!',en:'Split or join — the total never changes!',zh:'分也好合也好，总数不变！'},
-        book:{ko:'빈 손 = 0이에요. 0도 어엿한 수랍니다!',en:'An empty hand = 0. Zero is a real number too!',zh:'空手＝0。0也是真正的数哦！'} }
+        result:{ko:'갈라도 모아도 전체는 그대로!',en:'Split or join — still the same!',zh:'分也好合也好，总数不变！'} }
     ],
-    rule:{ ko:'① 가르기 = 두 갈래로 나누기 ② 모으기 = 다시 합치기 ③ 하나도 없으면 0!',
-      en:'① Split = break into two ② Join = put back together ③ Nothing at all = 0!',
-      zh:'① 分＝分成两份 ② 合＝放回一起 ③ 一个都没有＝0！' }
+    rule:{ ko:'가르고 모아도 전체 수는 변하지 않아요!',
+      en:'Split or join — the total never changes!',
+      zh:'分开合起来，总数都不变！' }
   },
 
   lab:{ generator:'nl4_bond', level:'main', count:4, params:{ mode:'split' },

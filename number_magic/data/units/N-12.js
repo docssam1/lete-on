@@ -22,16 +22,15 @@ window.NM_UNITS['N-12'] = {
     stages:[
       { tag:{ko:'① 가르기는 늘 반반이 아니에요!',en:'1) Splitting isn\'t always even!',zh:'① 分开不总是一半一半！'},
         head:{ko:'무당벌레 날개는 다양하게 나뉘어요',en:'Ladybug wings split in many different ways',zh:'瓢虫的翅膀有很多种分法'},
-        desc:{ko:'무당벌레 등에 점이 <b>6개</b> 있다고 해요. 왼쪽 날개에 <b>1개</b>, 오른쪽 날개에 <b>5개</b>일 수도 있고, <b>3개</b>와 <b>3개</b>로 딱 반반일 수도 있어요 — 가르기는 <b>정해진 답이 하나가 아니에요</b>! 그리고 양팔저울은 어느 쪽에 <b>더 많이</b> 있는지 눈으로 바로 비교하게 해줘요. 접시에 놓인 걸 세어 보면, 개수가 <b>많은 쪽</b>이 아래로 <b>기울어요</b> — 마치 그 쪽이 더 무거운 것처럼요!',
-          en:'Say a ladybug has <b>6</b> spots. The left wing could have <b>1</b> and the right <b>5</b>, or it could be an even <b>3</b> and <b>3</b> — splitting doesn\'t have just <b>one fixed answer</b>! A balance scale lets you compare which side has <b>more</b>, just by looking. Count what\'s on each pan — the side with <b>more</b> tips <b>down</b>, as if it were heavier!',
-          zh:'假设瓢虫背上有<b>6个</b>点。左边翅膀可能有<b>1个</b>，右边有<b>5个</b>，也可能刚好<b>3个</b>和<b>3个</b>——分开的方法<b>不止一种</b>！天平能让你一眼比较哪边<b>更多</b>。数一数盘子里的东西，<b>更多</b>的那边会<b>往下沉</b>，就像那边更重一样！'},
-        mathSteps:['점 6개 = 1+5 또는 2+4 또는 3+3…','저울: 개수가 많은 쪽이 아래로','비교해서 답해요!'],
-        result:{ko:'가르기도, 저울도 — 비교하고 확인하는 마법이에요!',en:'Splitting and scales — both are magic for comparing!',zh:'分开和天平——都是用来比较的魔法！'},
-        book:{ko:'양팔저울 비교는 나중에 부등호(< >) 배우기로 이어져요!',en:'Balance-scale comparing later leads to learning < and >!',zh:'天平比较以后会用在学习大于号、小于号上！'} }
+        desc:{ko:'🐞 점 6개는 1과 5, 3과 3! 여러 가지로 갈라져요.',
+          en:'Six spots can split 1&5 or 3&3 — many ways!',
+          zh:'🐞 6个点能分成1和5，也能3和3！'},
+        mathSteps:['점 6개 = 1+5 또는 3+3','저울: 많은 쪽이 아래로','비교해서 답해요!'],
+        result:{ko:'많은 쪽이 아래로 기울어요!',en:'The side with more tips down!',zh:'多的那边往下沉！'} }
     ],
-    rule:{ ko:'① 가르기는 답이 여러 가지예요 ② 저울: 개수 많은 쪽이 아래로 기울어요 ③ 잘 보고 비교해요!',
-      en:'① Splitting has many right answers ② Scale: the side with more tips down ③ Look carefully and compare!',
-      zh:'① 分开的答案不止一种 ② 天平：更多的一边往下沉 ③ 仔细看再比较！' }
+    rule:{ ko:'저울은 많은 쪽이 아래로 기울어요!',
+      en:'The scale tips down on the side with more!',
+      zh:'天平往多的那边沉！' }
   },
 
   lab:{ generator:'nl12_scale', level:'main', count:4,

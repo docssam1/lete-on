@@ -22,16 +22,15 @@ window.NM_UNITS['N-03'] = {
     stages:[
       { tag:{ko:'① 몇 개와 몇째는 달라요!',en:'1) How many vs. which one!',zh:'① 几个和第几个不一样！'},
         head:{ko:'개수(몇 개)와 순서(몇째)를 구별해요',en:'Telling apart amount and order',zh:'区分数量和顺序'},
-        desc:{ko:'"사탕이 <b>3개</b>야"는 <b>개수</b>를 말해요. 그런데 "왼쪽에서 <b>셋째</b> 칸"은 <b>자리(순서)</b>를 말해요 — 완전히 달라요! 몇째를 찾을 땐 <b>어느 쪽에서 시작</b>하는지가 중요해요: 왼쪽에서 세면 👉 방향으로, 오른쪽에서 세면 👈 방향으로 하나, 둘, 셋… 세어가요. 칸을 정확히 몇 개만 칠할 땐 방향은 상관없이 <b>개수</b>만 딱 맞으면 돼요!',
-          en:'"There are <b>3</b> candies" tells the <b>amount</b>. But "the <b>third</b> box from the left" tells the <b>position</b> — totally different! To find "which one," it matters <b>which side you start from</b>: count 👉 from the left, or 👈 from the right — one, two, three… When painting an exact amount of boxes, direction does not matter — only the <b>count</b> needs to be right!',
-          zh:'"有<b>3个</b>糖果"说的是<b>数量</b>。但"从左边数第<b>三</b>个格子"说的是<b>位置</b>——完全不一样！找"第几个"时，<b>从哪边开始数</b>很重要：从左边数就往👉方向，从右边数就往👈方向，一、二、三……正好涂几格时，方向不重要，只要<b>数量</b>对就行！'},
-        mathSteps:['몇 개? → 개수를 세요','몇째? → 방향을 정하고 순서로 세요','정확히 N개 칠하기 → 개수만 확인!'],
-        result:{ko:'개수는 "얼마나 많이", 순서는 "어디에"!',en:'Amount is "how many", order is "where"!',zh:'数量是"多少个"，顺序是"在哪里"！'},
-        book:{ko:'몇째(서수) 개념은 나중에 등수·날짜·자리 읽기에 쓰여요!',en:'Ordinal numbers are later used for ranks, dates, and seats!',zh:'序数概念以后会用在名次、日期和座位上！'} }
+        desc:{ko:'왼쪽에서부터 하나, 둘, 셋… 세어 몇째인지 찾아요!',
+          en:'Count from the left: one, two, three… find which one!',
+          zh:'从左边数：一、二、三……找出第几个！'},
+        mathSteps:['몇 개? → 개수를 세요','몇째? → 방향 정하고 순서로 세요'],
+        result:{ko:'몇 개는 "얼마나", 몇째는 "어디"!',en:'How many vs. which one!',zh:'几个是"多少"，第几个是"哪里"！'} }
     ],
-    rule:{ ko:'① 몇 개 = 개수 ② 몇째 = 방향을 정하고 순서로 세기 ③ 색칠은 개수만 딱 맞으면 OK!',
-      en:'① How many = amount ② Which one = pick a direction, count in order ③ Painting only needs the right count!',
-      zh:'① 几个＝数量 ② 第几个＝定方向按顺序数 ③ 涂色只要数量对就行！' }
+    rule:{ ko:'방향을 정하고 순서대로 세어요!',
+      en:'Pick a direction, then count in order!',
+      zh:'先定方向，再按顺序数！' }
   },
 
   lab:{ generator:'nl3_ordinal', level:'main', count:4, params:{ mode:'paint' },

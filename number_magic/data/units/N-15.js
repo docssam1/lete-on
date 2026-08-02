@@ -22,16 +22,15 @@ window.NM_UNITS['N-15'] = {
     stages:[
       { tag:{ko:'① 이야기 속에 수학이 숨어있어요!',en:'1) Math hides inside stories!',zh:'① 故事里藏着数学！'},
         head:{ko:'더 받았으면 더하고, 나눠줬으면 빼요',en:'Got more? Add. Gave some away? Subtract.',zh:'得到更多就加，送出去就减'},
-        desc:{ko:'"사탕이 <b>4개</b> 있었는데 <b>2개</b>를 더 받았어요" — 그럼 <b>더해요</b>! 4+2=<b>6개</b>. "사탕이 <b>5개</b> 있었는데 <b>2개</b>를 줬어요" — 그럼 <b>빼요</b>! 5-2=<b>3개</b>. 그리고 여러 가지가 <b>섞여 있을 때</b>는 종류별로 <b>나눠서</b> 세면 훨씬 쉬워요 — 사과랑 바나나가 섞여 있으면, 사과는 사과 바구니로, 바나나는 바나나 바구니로 나눈 다음 세어 보는 거예요!',
-          en:'"There were <b>4</b> candies and got <b>2</b> more" — that means <b>add</b>! 4+2=<b>6</b>. "There were <b>5</b> candies and gave away <b>2</b>" — that means <b>subtract</b>! 5-2=<b>3</b>. And when things are <b>mixed together</b>, it\'s much easier to <b>sort them</b> by kind first — apples go in the apple basket, bananas in the banana basket, then count each!',
-          zh:'"有<b>4颗</b>糖，又得到<b>2颗</b>"——那就<b>加</b>！4+2=<b>6颗</b>。"有<b>5颗</b>糖，送出去<b>2颗</b>"——那就<b>减</b>！5-2=<b>3颗</b>。东西<b>混在一起</b>时，先按种类<b>分类</b>会容易很多——苹果放苹果篮，香蕉放香蕉篮，再数一数！'},
+        desc:{ko:'🍬 더 받으면 더하고, 나눠주면 빼요!',
+          en:'Got more? Add! Gave away? Subtract!',
+          zh:'🍬 得到就加，送出去就减！'},
         mathSteps:['더 받았어요 → 더해요(+)','나눠줬어요 → 빼요(-)','섞였어요 → 나눠서 세어요!'],
-        result:{ko:'이야기를 잘 들으면 더할지 뺄지 알 수 있어요!',en:'Listen carefully and you\'ll know whether to add or subtract!',zh:'仔细听故事，就知道该加还是该减！'},
-        book:{ko:'이런 문장제는 나중에 수학 서술형 문제 풀이의 기초가 돼요!',en:'These word problems are the foundation for solving math problems later!',zh:'这种应用题是以后解数学题的基础！'} }
+        result:{ko:'이야기를 잘 들으면 답이 보여요!',en:'Listen well and the answer appears!',zh:'听好故事，答案就出来！'} }
     ],
-    rule:{ ko:'① 더 받으면 더해요 ② 나눠주면 빼요 ③ 섞였으면 나눠서 세어요!',
-      en:'① Get more → add ② Give away → subtract ③ Mixed together → sort then count!',
-      zh:'① 得到更多就加 ② 送出去就减 ③ 混在一起就分类数！' }
+    rule:{ ko:'더 받으면 더하고, 나눠주면 빼요!',
+      en:'Get more → add. Give away → subtract!',
+      zh:'得到就加，送出去就减！' }
   },
 
   lab:{ generator:'nl15_logic', level:'main', count:4, params:{ mode:'sort' },

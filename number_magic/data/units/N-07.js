@@ -22,16 +22,15 @@ window.NM_UNITS['N-07'] = {
     stages:[
       { tag:{ko:'① 수는 이웃이 있어요',en:'1) Numbers have neighbors',zh:'① 数有邻居'},
         head:{ko:'1 큰 수, 1 작은 수 — 그리고 10 짝꿍!',en:'One more, one less — and partners of 10!',zh:'大1、小1——还有凑十朋友！'},
-        desc:{ko:'수들은 나란히 줄 서 있는 이웃이에요. 5의 <b>1 큰 수</b>는 6, <b>1 작은 수</b>는 4 — 한 칸 앞뒤 이웃이죠! 그리고 10칸 판(텐프레임)에서 7을 놓으면 빈 칸이 3개 — <b>7과 3은 10을 만드는 짝꿍</b>이에요. 1과 9, 2와 8, 3과 7, 4와 6, 5와 5… 짝꿍을 알면 나중에 덧셈이 훨씬 쉬워져요!',
-          en:'Numbers stand in a line like neighbors. One more than 5 is 6, one less is 4 — next-door friends! And on a ten-frame, 7 leaves 3 empty squares — <b>7 and 3 are partners that make 10</b>: 1&9, 2&8, 3&7, 4&6, 5&5… Knowing the partners makes addition much easier later!',
-          zh:'数像邻居一样排成一排。比5大1的是6，小1的是4——前后邻居！在十格板上摆7个，空3格——<b>7和3是凑成10的好朋友</b>：1和9、2和8、3和7、4和6、5和5……记住这些朋友，以后加法会容易得多！'},
+        desc:{ko:'5의 1 큰 수는 6, 1 작은 수는 4예요!',
+          en:'One more than 5 is 6, one less is 4!',
+          zh:'比5大1是6，小1是4！'},
         mathSteps:['4 ← 5 → 6 (이웃)','7 + □ = 10','짝꿍: 1·9, 2·8, 3·7, 4·6, 5·5'],
-        result:{ko:'이웃 수와 10 짝꿍 — 수 사이의 길이 보여요!',en:'Neighbors and partners of 10 — you can see the paths between numbers!',zh:'邻居数和凑十朋友——能看到数与数之间的路！'},
-        book:{ko:'10 짝꿍은 받아올림 덧셈(8+5)의 비밀 열쇠가 돼요!',en:'Partners of 10 become the secret key to carrying (like 8+5)!',zh:'凑十朋友是进位加法(比如8+5)的秘密钥匙！'} }
+        result:{ko:'이웃 수와 10 짝꿍을 찾아봐요!',en:'Find neighbors and partners of 10!',zh:'找找邻居数和凑十朋友！'} }
     ],
-    rule:{ ko:'① 1 큰 수 = 바로 다음 수 ② 1 작은 수 = 바로 앞 수 ③ 10 짝꿍: 채운 칸 + 빈 칸 = 10',
-      en:'① One more = the next number ② One less = the number before ③ Partners: filled + empty = 10',
-      zh:'① 大1＝后一个数 ② 小1＝前一个数 ③ 凑十朋友：已填＋空格＝10' }
+    rule:{ ko:'채운 칸 + 빈 칸 = 10이에요!',
+      en:'Filled + empty = 10!',
+      zh:'已填的加空的等于10！' }
   },
 
   lab:{ generator:'nl7_relation', level:'main', count:4, params:{ mode:'oneStep' },

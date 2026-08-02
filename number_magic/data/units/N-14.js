@@ -22,16 +22,15 @@ window.NM_UNITS['N-14'] = {
     stages:[
       { tag:{ko:'① 세는 것과 규칙 찾기!',en:'1) Counting and finding rules!',zh:'① 数数和找规律！'},
         head:{ko:'묶음으로 세면 빠르고, 화살표는 규칙을 보여줘요',en:'Bundles make counting fast, arrows show the rule',zh:'成捆数得快，箭头能看出规律'},
-        desc:{ko:'탤리 막대가 <b>묶음(5개)</b> 하나에 <b>낱개 3개</b>가 더 있으면? 5+3=<b>8</b>이에요! 묶음 수부터 세고 낱개를 더하면 훨씬 빨라요. 그리고 수열에서 화살표를 따라가면 <b>규칙</b>이 보여요 — "1, 2, 3, 4, 5" 처럼 <b>화살표(→)</b>마다 <b>1씩 늘어나거나</b>, 반대로 <b>1씩 줄어들 수도</b> 있어요. 빈 칸을 채울 땐 <b>바로 앞 수</b>에서 규칙을 그대로 적용하면 돼요!',
-          en:'Tally marks: one <b>bundle (5)</b> plus <b>3 more single</b> strokes? 5+3=<b>8</b>! Count bundles first, then add the singles — much faster. And following the arrows in a sequence shows the <b>rule</b> — like "1, 2, 3, 4, 5" where each <b>arrow (→)</b> means it <b>grows by 1</b>, or it could <b>shrink by 1</b> instead. To fill a blank, just apply the rule to the <b>number right before it</b>!',
-          zh:'计数符号：一<b>捆(5个)</b>加<b>3个</b>单独的？5+3=<b>8</b>！先数捆数，再加单个，快多了！沿着数列的箭头看，就能看出<b>规律</b>——像"1、2、3、4、5"这样，每个<b>箭头(→)</b>表示<b>加1</b>，也可能是<b>减1</b>。填空格时，只要在<b>前一个数</b>上应用规律就行！'},
-        mathSteps:['묶음 1개 + 낱개 3개 = 8','1→2→3→4→5 (화살표마다 +1)','앞 수에 규칙을 적용해 빈칸 채우기!'],
-        result:{ko:'묶어 세기와 규칙 찾기는 모두 빠른 계산의 비결이에요!',en:'Bundling and rule-finding are both secrets to fast calculation!',zh:'成捆数和找规律都是快速计算的诀窍！'},
-        book:{ko:'규칙 찾기는 나중에 수열과 패턴 문제의 기초가 돼요!',en:'Rule-finding is the foundation for sequences and pattern problems later!',zh:'找规律是以后学数列和规律题的基础！'} }
+        desc:{ko:'묶음 5 + 낱개 3 = 8! 화살표는 1씩 커져요.',
+          en:'Bundle 5 + 3 singles = 8! Arrows grow by 1.',
+          zh:'一捆5加3个＝8！箭头每次加1。'},
+        mathSteps:['묶음 5 + 낱개 3 = 8','1→2→3→4→5 (+1씩!)','앞 수에 규칙을 적용!'],
+        result:{ko:'묶음부터 세면 빨라요!',en:'Count bundles first — faster!',zh:'先数捆，快多了！'} }
     ],
-    rule:{ ko:'① 묶음(5)부터 세고 낱개를 더해요 ② 화살표는 규칙을 보여줘요 ③ 앞 수에 규칙을 적용해요!',
-      en:'① Count bundles(5) first, then add singles ② Arrows show the rule ③ Apply the rule to the number before!',
-      zh:'① 先数捆(5)再加单个 ② 箭头显示规律 ③ 对前一个数应用规律！' }
+    rule:{ ko:'묶음(5)부터 세고, 화살표 규칙을 따라가요!',
+      en:'Count bundles first, then follow the arrow rule!',
+      zh:'先数捆(5)，再跟着箭头规律走！' }
   },
 
   lab:{ generator:'nl14_pattern', level:'main', count:4, params:{ mode:'arrow' },

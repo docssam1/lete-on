@@ -216,6 +216,29 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-mstep-line .katex{font-size:clamp(16px,4.6vw,20px)}
 .nm-mstep-arrow{color:var(--gold-deep);font-weight:900;font-size:14px;line-height:1}
 
+/* ───── 유아용 마법 노트 (tier:basic) — 큰 그림·큰 글씨·알록달록 스텝 칩 ───── */
+.nm-card.kid-note{background:linear-gradient(180deg,#fffdf6,#fdf7ea);border:2px solid #f2ddb3;border-radius:22px}
+.nm-kid-hero{font-size:58px;line-height:1;text-align:center;margin:4px 0 8px;
+  filter:drop-shadow(0 4px 8px rgba(201,160,99,.28));animation:kidFloat 2.6s ease-in-out infinite}
+@keyframes kidFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-7px) rotate(3deg)}}
+.kid-note .nm-card-h{text-align:center;font-size:15px}
+.kid-note .nm-cstage{border-bottom:none;padding-bottom:6px;margin-bottom:10px;text-align:center}
+.kid-note .nm-ctag{font-size:12.5px;padding:5px 14px;background:linear-gradient(90deg,#8A5CD0,#B07CE8)}
+.kid-note .nm-ch{font-size:17px;margin:6px 0}
+.kid-note .nm-cdesc{font-size:16.5px;font-weight:800;color:var(--ink);line-height:1.65;margin-bottom:12px}
+.kid-note .nm-mstep-box.kid{border:none;background:none;padding:6px 0;display:flex;flex-direction:column;gap:7px;align-items:center}
+.kid-note .nm-mstep-line.kid{font-size:15.5px;font-weight:800;color:var(--blue-deep);
+  background:#fff;border-radius:99px;padding:9px 18px;box-shadow:0 2px 6px rgba(22,65,124,.10);
+  border:1.5px solid #e8effa;max-width:100%}
+.kid-note .nm-mstep-line.kid:nth-child(1){background:#eef6ff;border-color:#cfe4fb}
+.kid-note .nm-mstep-line.kid:nth-child(3){background:#effaf1;border-color:#cdeed6}
+.kid-note .nm-mstep-line.kid:nth-child(5){background:#fff4ec;border-color:#f8dcc4}
+.kid-note .nm-mstep-arrow{font-size:15px}
+.kid-note .nm-cresult{font-size:16px;margin-top:8px}
+.kid-note .nm-rule{border-radius:18px;text-align:center;background:linear-gradient(135deg,#16417C,#3d1a5c)}
+.kid-note .nm-rule p{font-size:17px;line-height:1.5}
+@media(prefers-reduced-motion:reduce){.nm-kid-hero{animation:none}}
+
 /* 매직랩 — 숫자패드 모드(move10/add10sub/stairAdd) 문제 표시 */
 .nm-lab-expr{text-align:center;font-weight:900;color:var(--blue-deep);margin:10px 0;overflow-x:auto}
 .nm-lab-expr .katex{font-size:clamp(20px,5.6vw,26px)}

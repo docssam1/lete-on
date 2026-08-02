@@ -22,16 +22,15 @@ window.NM_UNITS['N-05'] = {
     stages:[
       { tag:{ko:'① 생활 속의 몇째!',en:'1) Ordinals in daily life!',zh:'① 生活中的第几个！'},
         head:{ko:'줄서기와 계단에서도 몇째를 써요',en:'We use ordinals in lines and on stairs too',zh:'排队和台阶上也会用到第几个'},
-        desc:{ko:'놀이터에서 줄을 설 때 "나는 앞에서 <b>넷째</b>야!"라고 말하죠? 이게 바로 <b>서수</b>예요. 버스 정류장, 매표소 어디서나 줄을 서면 몇째인지 셀 수 있어요. 계단이나 건물의 층도 마찬가지예요 — 다람쥐가 <b>아래에서부터 세 번째 계단</b>에 있다면, 손가락으로 하나씩 짚으며 세어서 <b>숫자 3</b>을 답으로 써요. 이야기가 길면 <b>🔊 버튼</b>을 눌러 다시 들어도 괜찮아요!',
-          en:'When lining up at the playground, you might say "I\'m <b>fourth</b> from the front!" That\'s an <b>ordinal number</b>. At bus stops, ticket booths — anywhere there\'s a line — you can count your place. Stairs and building floors work the same way — if a squirrel is on the <b>3rd step from the bottom</b>, count with your finger step by step and answer with the <b>number 3</b>. If the story is long, it\'s okay to press <b>🔊</b> and listen again!',
-          zh:'在游乐场排队时，你可能会说"我是从前面数第<b>四</b>个！"这就是<b>序数</b>。公交站、售票口——只要排队，就能数出自己的位置。台阶和楼层也一样——如果松鼠在<b>从下面数第3级</b>台阶上，就用手指一个一个数，答案写<b>数字3</b>。如果故事有点长，按<b>🔊</b>再听一次也没关系！'},
-        mathSteps:['줄서기: 방향을 정하고 몇째인지 세요','계단: 아래에서부터 하나씩 세요','답은 숫자로!'],
-        result:{ko:'생활 속 어디서나 서수를 쓸 수 있어요!',en:'Ordinals show up everywhere in daily life!',zh:'生活中到处都能用到序数！'},
-        book:{ko:'서수 읽기는 나중에 순위표·달력·건물 안내판 읽기로 이어져요!',en:'Reading ordinals later helps with rankings, calendars, and building signs!',zh:'读序数以后会用在排行榜、日历和楼层指示牌上！'} }
+        desc:{ko:'줄에서도 계단에서도 몇째인지 세어 봐요!',
+          en:'Count "which one" in lines and on stairs too!',
+          zh:'排队和台阶上也数一数第几个！'},
+        mathSteps:['줄서기: 방향을 정하고 세어요','계단: 아래에서부터 세어요','답은 숫자로!'],
+        result:{ko:'생활 속 어디서나 서수를 써요!',en:'Ordinals are everywhere!',zh:'生活中到处都能用序数！'} }
     ],
-    rule:{ ko:'① 줄서기 = 방향을 정하고 순서로 세기 ② 계단 = 아래에서부터 세기 ③ 답은 숫자로 써요!',
-      en:'① Lines = pick a direction, count in order ② Stairs = count from the bottom ③ Answer with a number!',
-      zh:'① 排队＝定方向按顺序数 ② 台阶＝从下往上数 ③ 用数字回答！' }
+    rule:{ ko:'줄서기는 방향대로, 계단은 아래에서부터 세어요!',
+      en:'Lines: pick a direction. Stairs: count from the bottom!',
+      zh:'排队按方向数，台阶从下往上数！' }
   },
 
   lab:{ generator:'nl5_story', level:'main', count:4, params:{ mode:'stairs' },

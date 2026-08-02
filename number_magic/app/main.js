@@ -1356,7 +1356,10 @@ function stepDiscover(body,u){
   // 범위 선택 자체가 없는 유닛(A-02~04)은 모든 단계를 그대로 보여줌.
   const two = S.range==='twoDigit';
   const stages = u.ranges ? d.stages.filter(s=> two || s.kind==='one') : d.stages;
-  body.innerHTML=`<div class="nm-card"><div class="nm-card-h">📓 ${L(d.title)}</div><div id="cstages"></div>
+  const kid = u.tier==='basic';
+  body.innerHTML=`<div class="nm-card${kid?' kid-note':''}">
+    ${kid?`<div class="nm-kid-hero">${u.icon||'📓'}</div>`:''}
+    <div class="nm-card-h">📓 ${L(d.title)}</div><div id="cstages"></div>
     <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
     <button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
   const host=body.querySelector('#cstages');
@@ -1367,7 +1370,7 @@ function stepDiscover(body,u){
       <div class="nm-cdesc">${L(s.desc)}</div>`;
     host.appendChild(wrap);
     if(s.terms)conceptExpr(wrap, s.terms);
-    else if(s.mathSteps)mathStepsExpr(wrap, s.mathSteps);
+    else if(s.mathSteps)mathStepsExpr(wrap, s.mathSteps, kid);
     const res=document.createElement('div');res.className='nm-cresult';res.textContent=L(s.result);wrap.appendChild(res);
     if(s.book){const bk=document.createElement('div');bk.className='nm-cbook';bk.innerHTML='📖 '+L(s.book);wrap.appendChild(bk);}
   });
@@ -1375,11 +1378,14 @@ function stepDiscover(body,u){
 }
 
 /* 개념 렌더(계단식): 세로로 이어지는 수식 스텝(mathSteps: tex 문자열 배열), 화살표로 연결 */
-function mathStepsExpr(container, steps){
-  const box=document.createElement('div');box.className='nm-mstep-box';
+function mathStepsExpr(container, steps, kid){
+  const box=document.createElement('div');box.className='nm-mstep-box'+(kid?' kid':'');
   steps.forEach((tex,i)=>{
     if(i){const arrow=document.createElement('div');arrow.className='nm-mstep-arrow';arrow.textContent='↓';box.appendChild(arrow);}
-    const line=document.createElement('div');line.className='nm-mstep-line';line.setAttribute('data-tex',tex);box.appendChild(line);
+    const line=document.createElement('div');line.className='nm-mstep-line'+(kid?' kid':'');
+    // 유아 노트: 한글 문장을 KaTeX 수식 폰트로 그리면 어색 → 앱 폰트 텍스트 칩으로 표시
+    if(kid)line.textContent=tex; else line.setAttribute('data-tex',tex);
+    box.appendChild(line);
   });
   container.appendChild(box);
 }

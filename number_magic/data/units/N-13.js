@@ -22,16 +22,15 @@ window.NM_UNITS['N-13'] = {
     stages:[
       { tag:{ko:'① 십자 퍼즐의 비밀!',en:'1) The secret of the cross puzzle!',zh:'① 十字谜题的秘密！'},
         head:{ko:'위+아래는 왼쪽+오른쪽과 같아요',en:'Top+bottom equals left+right',zh:'上+下等于左+右'},
-        desc:{ko:'십자 모양으로 수가 4개 놓여 있어요. <b>위</b>와 <b>아래</b>를 더한 값이, <b>왼쪽</b>과 <b>오른쪽</b>을 더한 값과 <b>똑같아야</b> 해요! 예를 들어 위가 <b>2</b>, 아래가 <b>3</b>이면 위+아래는 <b>5</b>예요. 왼쪽이 <b>2</b>라면, 오른쪽은 5에서 2를 뺀 <b>3</b>이어야 딱 맞아요. 격자 길잇기도 비슷해요 — <b>순서</b>를 잘 보고 다음 칸이 어디인지 <b>추리</b>하는 거예요!',
-          en:'Four numbers sit in a cross shape. <b>Top</b> plus <b>bottom</b> must be the <b>same</b> as <b>left</b> plus <b>right</b>! If top is <b>2</b> and bottom is <b>3</b>, top+bottom is <b>5</b>. If left is <b>2</b>, then right must be <b>3</b> (5 minus 2) to make it match. Grid path-connecting is similar — look carefully at the <b>order</b> and <b>reason out</b> where the next spot is!',
-          zh:'十字形状里放着4个数。<b>上</b>加<b>下</b>必须和<b>左</b>加<b>右</b><b>相等</b>！如果上是<b>2</b>，下是<b>3</b>，上+下就是<b>5</b>。如果左是<b>2</b>，那右边就要是5减2＝<b>3</b>才对。连格子路也差不多——仔细看<b>顺序</b>，<b>推理</b>出下一个点在哪里！'},
-        mathSteps:['위+아래 = 왼쪽+오른쪽','한쪽 합을 구해요','다른 쪽에서 빈칸을 거꾸로 계산!'],
-        result:{ko:'퍼즐은 규칙을 찾아 거꾸로 계산하는 마법이에요!',en:'Puzzles are magic for finding rules and working backward!',zh:'谜题是找规律、倒着算的魔法！'},
-        book:{ko:'이런 추론은 나중에 방정식 풀이의 첫걸음이 돼요!',en:'This kind of reasoning is a first step toward solving equations!',zh:'这种推理是以后解方程的第一步！'} }
+        desc:{ko:'위 2 + 아래 3 = 5! 왼쪽+오른쪽도 5가 되게!',
+          en:'Top 2 + bottom 3 = 5! Left+right must be 5 too!',
+          zh:'上2＋下3＝5！左＋右也要是5！'},
+        mathSteps:['위+아래 = 왼쪽+오른쪽','한쪽 합을 구해요','빈칸을 거꾸로 계산!'],
+        result:{ko:'양쪽 합이 똑같아야 해요!',en:'Both sums must match!',zh:'两边的和要一样！'} }
     ],
-    rule:{ ko:'① 위+아래 = 왼쪽+오른쪽 ② 아는 쪽 합을 먼저 구해요 ③ 거꾸로 빼서 빈칸을 채워요!',
-      en:'① Top+bottom = left+right ② Find the known side\'s sum first ③ Subtract backward to fill the blank!',
-      zh:'① 上+下＝左+右 ② 先算出已知的一边 ③ 倒着减，填空格！' }
+    rule:{ ko:'위+아래 = 왼쪽+오른쪽!',
+      en:'Top+bottom = left+right!',
+      zh:'上＋下＝左＋右！' }
   },
 
   lab:{ generator:'nl13_puzzle', level:'main', count:4, params:{ mode:'cross' },

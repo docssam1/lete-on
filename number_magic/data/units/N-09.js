@@ -22,16 +22,15 @@ window.NM_UNITS['N-09'] = {
     stages:[
       { tag:{ko:'① 모으기가 쌓이면 탑!',en:'1) Joins stack into a tower!',zh:'① 合起来叠成塔！'},
         head:{ko:'이웃 두 돌을 모으면 위 돌이 돼요',en:'Two neighbor stones join into the stone above',zh:'相邻两块石头合起来就是上面那块'},
-        desc:{ko:'가르기 나무를 기억하죠? 수 피라미드는 <b>모으기를 층층이 쌓은 탑</b>이에요! 바닥에 1, 2, 1이 있으면 — 이웃끼리 모아서 <b>1+2=3</b>, <b>2+1=3</b>이 가운데 층, 다시 <b>3+3=6</b>이 꼭대기! 그리고 동전 세기도 모으기의 친구예요. 10원 동전은 한 닢이 <b>10</b>이라서 하나, 둘, 셋이 아니라 <b>10, 20, 30</b>으로 폴짝폴짝 뛰어세요!',
-          en:'Remember the split tree? A number pyramid is <b>joins stacked into a tower</b>! With 1, 2, 1 on the bottom — neighbors join: <b>1+2=3</b> and <b>2+1=3</b> in the middle, then <b>3+3=6</b> on top! Coin counting is a friend of joining too: each ten-coin is worth <b>10</b>, so we hop <b>10, 20, 30</b> instead of 1, 2, 3!',
-          zh:'还记得分分树吗？数字金字塔就是<b>把"合"一层层叠成塔</b>！底层是1、2、1——邻居合起来：<b>1+2=3</b>、<b>2+1=3</b>是中层，再<b>3+3=6</b>就是塔顶！数硬币也是"合"的朋友：一枚10元硬币是<b>10</b>，所以不数1、2、3，而是<b>10、20、30</b>跳着数！'},
+        desc:{ko:'이웃 돌 둘을 모으면 위 돌! 동전은 10, 20, 30!',
+          en:'Two neighbor stones make the top one! Coins go 10, 20, 30!',
+          zh:'相邻两块合成上面那块！硬币10、20、30！'},
         mathSteps:['바닥: 1, 2, 1','가운데: 1+2=3, 2+1=3','꼭대기: 3+3=6!'],
-        result:{ko:'모으기를 쌓으면 피라미드, 10씩 모으면 동전 세기!',en:'Stack joins → pyramid; join tens → coin counting!',zh:'把合叠起来是金字塔，10个10个合是数硬币！'},
-        book:{ko:'10, 20, 30… 뛰어세기는 나중에 곱셈의 씨앗이 된답니다!',en:'Hop-counting 10, 20, 30… plants the seed of multiplication!',zh:'10、20、30……跳着数是以后乘法的种子！'} }
+        result:{ko:'층층이 쌓으면 꼭대기까지!',en:'Stack up to the top!',zh:'一层层叠到塔顶！'} }
     ],
-    rule:{ ko:'① 이웃 두 돌의 모으기 = 위 돌 ② 층층이 쌓으면 꼭대기까지 ③ 10원은 10, 20, 30으로 세요!',
-      en:'① Join two neighbors = stone above ② Stack layer by layer to the top ③ Count ten-coins 10, 20, 30!',
-      zh:'① 相邻两块合起来＝上面那块 ② 一层层叠到塔顶 ③ 10元硬币按10、20、30数！' }
+    rule:{ ko:'이웃 두 돌을 모으면 위 돌이에요!',
+      en:'Join two neighbors to make the stone above!',
+      zh:'相邻两块合起来就是上面那块！' }
   },
 
   lab:{ generator:'nl9_chain', level:'main', count:4, params:{ mode:'pyramid' },
