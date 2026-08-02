@@ -827,7 +827,20 @@ function setSimilarLv(lv){
 async function generateSimilar(){
   const area=document.getElementById('similarProblemArea');
   const pngInfo=PNG_TYPE_MAP[_simId];
-  if(pngInfo){
+  if(pngInfo && window.LiveGen && (_simId===4||_simId===25)){
+    // 라이브 생성 유형: Canvas/이미지 실시간 렌더 (정답 다양성 보장)
+    if(_simId===4){
+      const d=LiveGen.genFold();
+      _simQ={text:'',answer:String(d.answer),hint:`구멍 ${d.nHoles}개 × ${d.mult} = ${d.answer}`,isPng:true};
+      area.innerHTML='<div class="similar-problem-text" style="margin-bottom:10px">색종이를 '+(d.folds===1?'반으로 접은':'반으로 두 번 접은')+' 다음 구멍을 뚫었습니다. 펼치면 구멍은 모두 몇 개입니까?</div>';
+      LiveGen.renderFold(area,d);
+    } else {
+      const n=4+Math.floor(Math.random()*4);let s=0;for(let i=1;i<=n;i++)s+=i*i;
+      _simQ={text:'',answer:String(s),hint:`1²+2²+…+${n}² = ${s}`,isPng:true};
+      area.innerHTML='<div class="similar-problem-text" style="margin-bottom:10px">다음 규칙으로 쌓기나무를 쌓을 때, '+n+'번째 모양의 쌓기나무는 모두 몇 개입니까?</div>';
+      await LiveGen.renderStack(area,n);
+    }
+  } else if(pngInfo){
     // 그림 유형: PNG 랜덤 로드
     const lv=Math.min(_simLv,2); // PNG는 난이도 1,2만 존재
     const num=Math.floor(Math.random()*PNG_COUNT)+1;
@@ -1101,6 +1114,7 @@ const Practice={
   }
 };
 window.Practice=Practice;
+window.LiveGen={genFold,renderFold,renderStack};
 
 /* 결과 화면 체크박스 → 연습 시작 */
 window.ptToggle=function(el){
