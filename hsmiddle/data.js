@@ -11,7 +11,10 @@ window.HSMIDDLE_DATA = {
   },
   videos: {
     "mock-1": "https://www.youtube.com/watch?v=x5h7yA7Qq48&list=PLIoMMeekHvSmh2ALIr8OyrkwKRjq7cwTK&index=4&t=1s",
-    "mock-2": "https://www.youtube.com/watch?v=-V1a-nL-GDU&list=PLIoMMeekHvSmh2ALIr8OyrkwKRjq7cwTK&index=7&t=8s"
+    "mock-2": "https://www.youtube.com/watch?v=-V1a-nL-GDU&list=PLIoMMeekHvSmh2ALIr8OyrkwKRjq7cwTK&index=7&t=8s",
+    "mock-3": "https://www.youtube.com/watch?v=zqvcyQKsLvw&list=PLIoMMeekHvSmh2ALIr8OyrkwKRjq7cwTK&index=3",
+    "final": "https://youtu.be/ZbnvlZ4j5mo?si=5fldkS7y9Q4n1xlI",
+    "final-review": "https://youtu.be/joS_ZH5gAig?si=Sqs9v_LZNDQ_5obr"
   },
   video: "https://youtu.be/3NzakkPc9zg",
   similarPages: [6,4,5,7,6,3,6,4,6,6,4,4,6,5,6,4,4,6,4,4,3,3,6,5,4,4,4,8,4,8,3,7,4,4,4,4,3,5,4,4],
