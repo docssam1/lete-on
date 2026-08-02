@@ -4,16 +4,16 @@
 
   var TEXT = {
     ko: {
-      title: "\\uC571\\uCC98\\uB7FC \\uC124\\uCE58\\uD558\\uAE30",
-      body: "\\uD648 \\uD654\\uBA74\\uC5D0 \\uCD94\\uAC00\\uD558\\uBA74 \\uC8FC\\uC18C\\uCC3D \\uC5C6\\uC774 \\uC571\\uCC98\\uB7FC \\uC804\\uCCB4 \\uD654\\uBA74\\uC73C\\uB85C \\uC2E4\\uD589\\uD560 \\uC218 \\uC788\\uC5B4\\uC694.",
-      iosBody: "\\uD558\\uB2E8\\uC758 \\uACF5\\uC720 \\uBC84\\uD2BC\\uC744 \\uB204\\uB978 \\uB4A4 '\\uD648 \\uD654\\uBA74\\uC5D0 \\uCD94\\uAC00'\\uB97C \\uC120\\uD0DD\\uD574 \\uC8FC\\uC138\\uC694.",
-      inAppTitle: "Chrome\\uC73C\\uB85C \\uC5F4\\uC5B4 \\uC8FC\\uC138\\uC694",
-      inAppBody: "\\uCE74\\uCE74\\uC624\\uD1A1 \\uC548\\uC5D0\\uC11C\\uB294 \\uC571 \\uC124\\uCE58\\uAC00 \\uB418\\uC9C0 \\uC54A\\uC2B5\\uB2C8\\uB2E4. \\uC624\\uB978\\uCABD \\uC704 \\uBA54\\uB274\\uC5D0\\uC11C Chrome\\uC73C\\uB85C \\uC5F4\\uC5B4 \\uC8FC\\uC138\\uC694.",
-      androidGuide: "Chrome \\uC624\\uB978\\uCABD \\uC704 \\uBA54\\uB274\\uC5D0\\uC11C '\\uC571 \\uC124\\uCE58'\\uB97C \\uB20C\\uB7EC \\uC8FC\\uC138\\uC694.",
-      install: "\\uC124\\uCE58\\uD558\\uAE30",
-      later: "\\uB2E4\\uC74C\\uC5D0",
-      close: "\\uD655\\uC778",
-      fullscreen: "\\uC804\\uCCB4 \\uD654\\uBA74"
+      title: "앱처럼 설치하기",
+      body: "홈 화면에 추가하면 주소창 없이 앱처럼 전체 화면으로 실행할 수 있어요.",
+      iosBody: "하단의 공유 버튼을 누른 뒤 '홈 화면에 추가'를 선택해 주세요.",
+      inAppTitle: "Chrome으로 열어 주세요",
+      inAppBody: "카카오톡 안에서는 앱 설치가 되지 않습니다. 오른쪽 위 메뉴에서 Chrome으로 열어 주세요.",
+      androidGuide: "Chrome 오른쪽 위 메뉴에서 '앱 설치'를 눌러 주세요.",
+      install: "설치하기",
+      later: "다음에",
+      close: "확인",
+      fullscreen: "전체 화면"
     },
     en: {
       title: "Install like an app",
