@@ -15,6 +15,13 @@ OUT_DIR = Path(__file__).parent.parent.parent / "hyper-focus" / "problem-bank" /
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
+# ─── 조사 처리 ────────────────────────────────────────────────────────────────
+def josa(n, pair):
+    """숫자 끝자리 발음 받침: 0,1,3,6,7,8 받침有 / 2,4,5,9 받침無"""
+    has = str(n)[-1] in '013678'
+    return pair[0] if has else pair[1]
+
+
 # ─── 유형 23: 뛰어세기 ──────────────────────────────────────────────────────
 def make_q23():
     def solve_easy(p):
@@ -106,7 +113,7 @@ def make_q26():
     def gen_easy():
         pairs = [(a, b) for a in range(1, 10) for b in range(1, 10) if a != b]
         selected = random.sample(pairs, 3)
-        return [{"text": f"{a}와 {b} 중 더 큰 수는 얼마인가요?",
+        return [{"text": f"{a}{josa(a, ('과', '와'))} {b} 중 더 큰 수는 얼마인가요?",
                  "answer": solve({'a': a, 'b': b}),
                  "params": {'a': a, 'b': b}} for a, b in selected]
 
@@ -117,7 +124,7 @@ def make_q26():
                  for a, b in [(t * 10 + u, u * 10 + t)]
                  if b >= 10]
         selected = random.sample(pairs, 3)
-        return [{"text": f"{a}와 {b} 중 더 큰 수는 얼마인가요?",
+        return [{"text": f"{a}{josa(a, ('과', '와'))} {b} 중 더 큰 수는 얼마인가요?",
                  "answer": solve({'a': a, 'b': b}),
                  "params": {'a': a, 'b': b}} for a, b in selected]
 
@@ -211,13 +218,13 @@ def make_q30():
     def gen_easy():
         pairs = [(a, b) for a in range(1, 6) for b in range(1, 6)]
         selected = random.sample(pairs, 3)
-        return [{"text": f"{a}과 {b}를 모으면 얼마가 되나요?",
+        return [{"text": f"{a}{josa(a, ('과', '와'))} {b}{josa(b, ('을', '를'))} 모으면 얼마가 되나요?",
                  "answer": solve_easy({'a': a, 'b': b}),
                  "params": {'a': a, 'b': b}} for a, b in selected]
 
     def gen_hard():
         totals = random.sample(range(6, 19, 2), 3)
-        return [{"text": f"{total}을 똑같이 둘로 가르면 한 쪽은 얼마인가요?",
+        return [{"text": f"{total}{josa(total, ('을', '를'))} 똑같이 둘로 가르면 한 쪽은 얼마인가요?",
                  "answer": solve_hard({'total': total}),
                  "params": {'total': total}} for total in totals]
 
@@ -236,7 +243,7 @@ def make_q31():
         evens = [n for n in pool if n % 2 == 0]
         chosen = [random.choice(odds), random.choice(evens), random.choice(pool)]
         random.shuffle(chosen)
-        return [{"text": f"{n}은 홀수인가요, 짝수인가요?",
+        return [{"text": f"{n}{josa(n, ('은', '는'))} 홀수인가요, 짝수인가요?",
                  "answer": solve({'n': n}),
                  "params": {'n': n}} for n in chosen]
 
@@ -248,7 +255,8 @@ def make_q31():
 
 # ─── 유형 32: 반으로 ────────────────────────────────────────────────────────
 def make_q32():
-    OBJS = ["피자", "케이크", "리본", "종이", "초콜릿"]
+    # 받침 없는 소재만 사용 → "를" 고정
+    OBJS = ["피자", "케이크", "사과", "두부", "종이"]
 
     def solve_easy(p):
         return str(p['n'] // 2)
@@ -258,7 +266,7 @@ def make_q32():
 
     def gen_easy():
         evens = random.sample(range(4, 21, 2), 3)
-        return [{"text": f"{n}을 반으로 나누면 얼마인가요?",
+        return [{"text": f"{n}{josa(n, ('을', '를'))} 반으로 나누면 얼마인가요?",
                  "answer": solve_easy({'n': n}),
                  "params": {'n': n}} for n in evens]
 
@@ -285,14 +293,14 @@ def make_q43():
 
     def gen_easy():
         hours = random.sample(range(1, 13), 3)
-        return [{"text": f"긴 바늘이 12를 가리키고, 짧은 바늘이 {h}를 가리킵니다. 몇 시인가요?",
+        return [{"text": f"긴 바늘이 12를 가리키고, 짧은 바늘이 {h}{josa(h, ('을', '를'))} 가리킵니다. 몇 시인가요?",
                  "answer": solve_easy({'hour': h}),
                  "params": {'hour': h}} for h in hours]
 
     def gen_hard():
         combos = [(h, m) for h in range(1, 12) for m in [3, 6, 9]]
         selected = random.sample(combos, 3)
-        return [{"text": f"짧은 바늘이 {h}와 {h + 1} 사이, 긴 바늘이 {m}을 가리킵니다. 몇 시 몇 분인가요?",
+        return [{"text": f"짧은 바늘이 {h}{josa(h, ('과', '와'))} {h + 1} 사이, 긴 바늘이 {m}{josa(m, ('을', '를'))} 가리킵니다. 몇 시 몇 분인가요?",
                  "answer": solve_hard({'hour': h, 'minute': MINUTE_MAP[m]}),
                  "params": {'hour': h, 'minute': MINUTE_MAP[m], 'needle_pos': m}}
                 for h, m in selected]
@@ -316,7 +324,7 @@ def make_q44():
             d, k = random.randint(1, 20), random.randint(1, 7)
             if d + k <= 28 and (d, k) not in seen:
                 seen.add((d, k))
-                items.append({"text": f"오늘은 {d}일입니다. {k}일 뒤는 몇 일인가요?",
+                items.append({"text": f"오늘은 {d}일입니다. {k}일 뒤는 며칠인가요?",
                                "answer": solve_easy({'d': d, 'k': k}),
                                "params": {'d': d, 'k': k}})
         return items
@@ -328,7 +336,7 @@ def make_q44():
             d = random.randint(1, 31 - 7 * weeks)
             if (d, weeks) not in seen:
                 seen.add((d, weeks))
-                items.append({"text": f"오늘은 {d}일입니다. {weeks}주 뒤는 몇 일인가요?",
+                items.append({"text": f"오늘은 {d}일입니다. {weeks}주 뒤는 며칠인가요?",
                                "answer": solve_hard({'d': d, 'weeks': weeks}),
                                "params": {'d': d, 'weeks': weeks}})
         return items
@@ -340,7 +348,13 @@ def make_q44():
 
 # ─── 유형 45: 경우의 수 ─────────────────────────────────────────────────────
 def make_q45():
-    OUTCOMES = {"동전 1개": 2, "주사위 1개": 6}
+    # source별 (경우의 수, 텍스트 동사 형태)
+    SOURCES = [
+        {"source": "동전 1개", "outcomes": 2, "verb_text": "를 던질 때"},
+        {"source": "주사위 1개", "outcomes": 6, "verb_text": "를 던질 때"},
+        {"source": "가위바위보 1번", "outcomes": 3, "verb_text": "을 낼 때"},
+    ]
+    OUTCOMES = {s['source']: s['outcomes'] for s in SOURCES}
 
     def solve_easy(p):
         return str(OUTCOMES[p['source']])
@@ -349,16 +363,15 @@ def make_q45():
         return str(math.factorial(p['n']))
 
     def gen_easy():
-        # 동전(2)×2 + 주사위(6)×1 → 다양성 보장
-        specs = ["동전 1개", "주사위 1개", "동전 1개"]
+        specs = list(SOURCES)
         random.shuffle(specs)
-        return [{"text": f"{src}를 던질 때 나올 수 있는 경우는 몇 가지인가요?",
-                 "answer": solve_easy({'source': src}),
-                 "params": {'source': src}} for src in specs]
+        return [{"text": f"{s['source']}{s['verb_text']} 나올 수 있는 경우는 몇 가지인가요?",
+                 "answer": solve_easy({'source': s['source']}),
+                 "params": {'source': s['source']}} for s in specs]
 
     def gen_hard():
-        # n=3(6가지)×2 + n=4(24가지)×1 → 다양성 보장
-        ns = [3, 4, 3]
+        # n∈{3,4,5} → 6, 24, 120 (다양성 ✓, params 유일 ✓)
+        ns = [3, 4, 5]
         random.shuffle(ns)
         return [{"text": f"{n}명이 한 줄로 서는 방법은 모두 몇 가지인가요?",
                  "answer": solve_hard({'n': n}),
@@ -439,7 +452,8 @@ def make_q52():
         return str(p['c'] // p['b'] + p['a'])
 
     def gen_easy():
-        ns = [5, 10, 5]
+        # n∈{4,5,10} → 10, 15, 55 (다양성 ✓, params 유일 ✓)
+        ns = [4, 5, 10]
         random.shuffle(ns)
         return [{"text": f"1부터 {n}까지 모두 더하면 얼마인가요?",
                  "answer": solve_easy({'n': n}),
@@ -454,9 +468,13 @@ def make_q52():
             c = (x - a) * b
             if (a, b, c) not in seen:
                 seen.add((a, b, c))
-                items.append({"text": f"어떤 수에서 {a}를 빼고 {b}를 곱하면 {c}가 됩니다. 어떤 수는 얼마인가요?",
-                               "answer": solve_hard({'a': a, 'b': b, 'c': c}),
-                               "params": {'a': a, 'b': b, 'c': c}})
+                items.append({
+                    "text": (f"어떤 수에서 {a}{josa(a, ('을', '를'))} 빼고 "
+                             f"{b}{josa(b, ('을', '를'))} 곱하면 "
+                             f"{c}{josa(c, ('이', '가'))} 됩니다. 어떤 수는 얼마인가요?"),
+                    "answer": solve_hard({'a': a, 'b': b, 'c': c}),
+                    "params": {'a': a, 'b': b, 'c': c},
+                })
         return items
 
     return {"typeId": 52, "title": "전략",
@@ -500,9 +518,9 @@ def make_q53():
 # ─── 유형 54: 동전 ──────────────────────────────────────────────────────────
 def make_q54():
     EASY_SPECS = [
-        {'from_amount': 500,  'label': '500원 1개',  'to_unit': 100},
-        {'from_amount': 1000, 'label': '1000원 1장', 'to_unit': 100},
-        {'from_amount': 200,  'label': '200원',      'to_unit': 100},
+        {'from_amount': 500,  'to_unit': 100},
+        {'from_amount': 1000, 'to_unit': 100},
+        {'from_amount': 200,  'to_unit': 100},
     ]
 
     def solve_easy(p):
@@ -514,7 +532,7 @@ def make_q54():
     def gen_easy():
         specs = list(EASY_SPECS)
         random.shuffle(specs)
-        return [{"text": f"{s['label']}는 100원짜리 몇 개와 같은가요?",
+        return [{"text": f"{s['from_amount']}원{josa(s['from_amount'], ('은', '는'))} 100원짜리 몇 개와 같은가요?",
                  "answer": solve_easy({'from_amount': s['from_amount'], 'to_unit': s['to_unit']}),
                  "params": {'from_amount': s['from_amount'], 'to_unit': s['to_unit']}}
                 for s in specs]
@@ -557,6 +575,9 @@ def validate_and_save(data):
         answers = [p['answer'] for p in problems]
         assert len(set(answers)) >= 2, f"q{tid} {lv} 다양성 실패: {answers}"
 
+        assert len({json.dumps(p['params'], sort_keys=True) for p in problems}) == 3, \
+            f"q{tid} {lv} params 중복: {[p['params'] for p in problems]}"
+
         solver = solvers[lv]
         for i, prob in enumerate(problems):
             expected = solver(prob['params'])
@@ -566,6 +587,7 @@ def validate_and_save(data):
             )
             assert 'params' in prob, f"q{tid} {lv}[{i}] params 누락"
             assert '그림과 같이' not in prob['text'], f"q{tid} {lv}[{i}] 그림 참조 금지"
+            assert '몇 일' not in prob['text'], f"q{tid} {lv}[{i}] '몇 일' 금지 → '며칠' 사용"
 
         report.append(answers)
 
@@ -587,7 +609,7 @@ def main():
         all_results.append((tid, title, report))
         print(f"✓ q{tid} {title}")
 
-    print("\n전 유형 다양성·solver 검증 통과\n")
+    print("\n전 유형 다양성·solver·params유일성 검증 통과\n")
     print("=" * 60)
     print(f"{'유형':>4}  {'제목':<12}  {'레벨':<5}  정답 목록")
     print("-" * 60)
