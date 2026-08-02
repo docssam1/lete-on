@@ -244,12 +244,21 @@ function pair10_2d(opts){
   // main: 4 two-digit nums, 2 pairs with ones summing to 10
   const o1=R(1,9); const o2=10-o1;
   const o3=R(1,9); const o4=10-o3;
-  const nums=shuffle([R(1,8)*10+o1, R(1,8)*10+o2, R(1,8)*10+o3, R(1,8)*10+o4]);
+  const p1a=R(1,8)*10+o1, p1b=R(1,8)*10+o2;
+  const p2a=R(1,8)*10+o3, p2b=R(1,8)*10+o4;
+  const nums=shuffle([p1a, p1b, p2a, p2b]);
   const sum=nums.reduce((s,n)=>s+n,0);
+  const pairSum1=p1a+p1b, pairSum2=p2a+p2b;
   return {
     gen:'pair10_2d', mode:'main', nums, sum, pairCount:2,
     prompt:{ko:'일의 자리가 10이 되는 짝을 먼저 더해요',en:'Pair ones that make 10, add them first',zh:'个位凑成10的先相加'},
     tex:nums.join(' + '),
+    widget:'steps',
+    steps:[
+      {tex:`${p1a}+${p1b} = \\square`, blank:pairSum1},
+      {tex:`${p2a}+${p2b} = \\square`, blank:pairSum2},
+      {tex:`${pairSum1}+${pairSum2} = \\square`, blank:sum}
+    ],
     answerType:'number', answer:sum
   };
 }
@@ -274,14 +283,21 @@ function splitPlace(opts){
   const count=opts.count||R(3,4);
   const nums=[];
   for(let i=0;i<count;i++) nums.push(R(21,87));
-  const tensSum=nums.reduce((s,n)=>s+Math.floor(n/10)*10,0);
-  const onesSum=nums.reduce((s,n)=>s+n%10,0);
+  const tensParts=nums.map(n=>Math.floor(n/10)*10);
+  const onesParts=nums.map(n=>n%10);
+  const tensSum=tensParts.reduce((s,n)=>s+n,0);
+  const onesSum=onesParts.reduce((s,n)=>s+n,0);
   const total=tensSum+onesSum;
   return {
     gen:'splitPlace', mode:'main', nums, tensSum, onesSum, answer:total,
     prompt:{ko:'십의 자리끼리, 일의 자리끼리 따로 더해요',en:'Add tens together and ones together, then combine',zh:'十位加十位，个位加个位，再相加'},
     tex:`${nums.join(' + ')} = ${total}`,
-    steps:[nums.join(' + '), `${tensSum} + ${onesSum}`, `${total}`],
+    widget:'steps',
+    steps:[
+      {tex:`${tensParts.join('+')} = \\square`, blank:tensSum},
+      {tex:`${onesParts.join('+')} = \\square`, blank:onesSum},
+      {tex:`${tensSum}+${onesSum} = \\square`, blank:total}
+    ],
     answerType:'number'
   };
 }
@@ -353,10 +369,17 @@ function jumpAdd(opts){
   const b1=R(11,79), b2=R(11,79);
   const nums=shuffle([a1,a2,b1,b2]);
   const sum=nums.reduce((s,n)=>s+n,0);
+  const pairSum=a1+a2, s2=pairSum+b1;
   return {
     gen:'jumpAdd', mode:'main', nums, sum,
     prompt:{ko:'더하기 쉬운 짝을 찾아 먼저 새치기해요',en:'Find easy pairs and let them jump the queue',zh:'找出好算的配对，让它们先"插队"'},
     tex:nums.join(' + '),
+    widget:'steps',
+    steps:[
+      {tex:`${a1}+${a2} = \\square`, blank:pairSum},
+      {tex:`${pairSum}+${b1} = \\square`, blank:s2},
+      {tex:`${s2}+${b2} = \\square`, blank:sum}
+    ],
     answerType:'number', answer:sum
   };
 }
