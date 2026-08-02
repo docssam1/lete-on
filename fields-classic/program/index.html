@@ -474,9 +474,7 @@ body.in-viewer{overflow:hidden}
 <script>
 (function(){"use strict";
 /* ── 이미지 경로 (concept/ 직접) ── */
-const COVER_BASE='../assets/concept/';
-const COVER_MAP={vol1:'vol1.png',vol2:'vol2.png',vol3:'vol3.png',vol4:'vol4.png',final:'final.png'};
-const CONCEPT_PAGES="../assets/concept/pages/";
+const CONCEPT_PAGES="";
 const ALL=["개념완성","진단모의고사","킬러문항",
   "실전모의고사1회","실전모의고사2회","실전모의고사3회","실전모의고사4회","실전모의고사5회","실전모의고사6회",
   "파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","파이널모의고사4회",
@@ -900,7 +898,7 @@ const GF={
 };
 function h(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
 function coverMarkup(ch,decorative=false){
-  const src=ch.cover||((COVER_MAP[ch.key])?COVER_BASE+COVER_MAP[ch.key]:"");
+  const src=ch.cover||"";
   return src
     ? `<img src="${h(src)}" alt="${decorative?"":h(ch.title)}" loading="lazy" onerror="this.hidden=true">`
     : "";
