@@ -323,6 +323,22 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   .nm-card{padding:26px 30px}
   .nm-card-h{font-size:17px}
   .nm-tile{min-width:58px;height:58px;font-size:26px}
+  /* 학습 대화(연습/랩)를 세로로도 채움: 내용이 짧으면 화면 가운데로,
+     길면 safe 폴백으로 위에서부터(잘림 없음) */
+  .nm-dialog{justify-content:safe center;gap:4px}
+}
+/* 데스크탑에서 위젯이 모바일 크기 그대로면 아래가 텅 빔 → 화면이 충분히
+   크면 위젯 전체(터치 영역 포함)를 확대해 "꽉 찬" 느낌으로 */
+@media (min-width:768px) and (min-height:620px){
+  .nm-lab-widget{zoom:1.3}
+  /* 스텝 카드가 화면 전체 폭으로 늘어나면 어색 → 읽기 좋은 폭으로 제한 */
+  .nm-lab-widget .nm-w-steps{max-width:520px;margin-left:auto;margin-right:auto;width:100%}
+}
+@media (min-width:1100px) and (min-height:680px){
+  .nm-lab-widget{zoom:1.55}
+}
+@media (min-width:1100px) and (min-height:850px){
+  .nm-lab-widget{zoom:1.75}
 }
 @media (min-width:1100px){
   .nm-map,.nm-unit-view{max-width:1040px}
