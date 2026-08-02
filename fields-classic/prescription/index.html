@@ -556,11 +556,12 @@
           const image = problem.image
             ? `<div class="problem-image-wrap"><img class="problem-image" src="../problem-bank/prescription/${escapeHtml(problem.image)}" alt="Q${type.id} ${index + 1}번 문제 그림"></div>`
             : "";
+          const prompt = type.promptInImage ? "" : `<div class="problem-prompt">${escapeHtml(problem.prompt)}</div>`;
           return `
             <article class="problem${problem.image ? "" : " text-only"}">
               <div>
                 <div class="problem-label">문제 ${index + 1}</div>
-                <div class="problem-prompt">${escapeHtml(problem.prompt)}</div>
+                ${prompt}
               </div>
               ${image}
               <div class="answer-line">답</div>
@@ -593,11 +594,12 @@
           const image = problem.image
             ? `<div class="problem-image-wrap"><img class="problem-image" src="../problem-bank/prescription/${escapeHtml(problem.image)}" alt="Q${type.id} ${problemIndex + 1}번 문제 그림"></div>`
             : "";
+          const prompt = type.promptInImage ? "" : `<div class="problem-prompt">${escapeHtml(problem.prompt)}</div>`;
           return `
             <article class="problem mixed-problem${problem.image ? "" : " text-only"}">
               <div>
                 <div class="problem-label">Q${String(type.id).padStart(2, "0")} · ${escapeHtml(type.title)} · 문제 ${problemIndex + 1}</div>
-                <div class="problem-prompt">${escapeHtml(problem.prompt)}</div>
+                ${prompt}
               </div>
               ${image}
               <div class="answer-line">답</div>
