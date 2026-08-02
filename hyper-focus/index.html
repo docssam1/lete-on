@@ -494,7 +494,7 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
     <div class="login-card">
       <h3>진단 시작하기</h3>
       <div class="input-group"><label>학생 이름</label><input type="text" id="studentName" placeholder="이름을 입력하세요"></div>
-      <div class="input-group"><label>학부모 연락처</label><input type="tel" id="parentPhone" placeholder="010-0000-0000"></div>
+      <div class="input-group"><label>학부모 연락처</label><input type="tel" id="parentPhone" placeholder="010-0000-0000"><small style="display:block;margin-top:6px;font-size:.72rem;color:rgba(255,255,255,.4);letter-spacing:.02em;line-height:1.4;">이름과 접속코드는 자동으로 입력되어 있습니다. 전화번호를 기준으로 저장됩니다.</small></div>
       <div class="input-group"><label>승인 번호</label><input type="password" id="authCode" placeholder="승인번호를 입력하세요"></div>
       <button class="btn-primary" onclick="checkAuth()">약점 유형 진단하기 →</button>
       <a href="https://open.kakao.com/me/gfield" target="_blank" class="btn-primary" style="background:#FEE500;color:#3C1E1E;display:flex;justify-content:center;align-items:center;gap:8px;text-decoration:none;margin-top:12px;border:1px solid #FEE500;">
