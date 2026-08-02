@@ -2,6 +2,16 @@ window.HSMIDDLE_DATA = {
   students: ["DEMO"],
   studentCode: { DEMO: "HS-DEMO" },
   access: { DEMO: ["diagnostic"] },
+  exams: {
+    diagnostic: "중등 성취도 진단 + 클리닉",
+    "mock-1": "실전 모의고사 1회",
+    "mock-2": "실전 모의고사 2회",
+    "mock-3": "실전 모의고사 3회",
+    final: "최종 모의고사"
+  },
+  videos: {
+    "mock-1": "https://www.youtube.com/watch?v=x5h7yA7Qq48&list=PLIoMMeekHvSmh2ALIr8OyrkwKRjq7cwTK&index=4&t=1s"
+  },
   video: "https://youtu.be/3NzakkPc9zg",
   similarPages: [6,4,5,7,6,3,6,4,6,6,4,4,6,5,6,4,4,6,4,4,3,3,6,5,4,4,4,8,4,8,3,7,4,4,4,4,3,5,4,4],
   questions: [
