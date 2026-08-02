@@ -6,13 +6,13 @@
  * deploy; the cache is only a fallback when the network is unavailable. This
  * deliberately avoids the classic "PWA keeps serving an old version" trap.
  */
-const CACHE = "gfield-geo-v1";
+const CACHE = "gfield-geo-v2";
 const CORE = [
   "/geometry/world-map/",
   "/geometry/cube-town/",
   "/geometry/manifest.webmanifest",
-  "/geometry/shared/pwa.css?v=1",
-  "/geometry/shared/pwa.js?v=1",
+  "/geometry/shared/pwa.css?v=2",
+  "/geometry/shared/pwa.js?v=2",
   "/geometry/assets/icons/icon-192.png",
   "/geometry/assets/icons/icon-512.png"
 ];
@@ -49,7 +49,7 @@ self.addEventListener("fetch", (event) => {
       const cached = await caches.match(req);
       if (cached) return cached;
       if (req.mode === "navigate") {
-        const fallback = await caches.match("/geometry/cube-town/");
+        const fallback = await caches.match("/geometry/world-map/");
         if (fallback) return fallback;
       }
       throw err;

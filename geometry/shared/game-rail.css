@@ -82,7 +82,18 @@
 /* The rail is fixed-position, so the shell and the mascot have to step aside
    by exactly the extra width it just gained (52 -> 106). */
 .game-shell { padding-right: 118px; }
-.docssam { right: calc(116px + env(safe-area-inset-right)); }
+.docssam {
+  right: calc(116px + env(safe-area-inset-right));
+  pointer-events: none;
+}
+
+/* Cubi is decorative during play. Let taps pass through the sprite and keep
+   every answer control visibly above it, even on short landscape phones. */
+.docssam .cubi-sprite { pointer-events: none; }
+.answer-panel button {
+  position: relative;
+  z-index: 25;
+}
 
 @media (orientation: landscape) and (max-height: 560px) {
   .action-bar {
