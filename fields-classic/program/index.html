@@ -116,6 +116,21 @@ body.in-viewer{overflow:hidden}
 .program-run-desc{font-size:11px;color:var(--muted);line-height:1.5;text-align:center;max-width:190px;margin-top:auto;word-break:keep-all}
 .program-lock{display:inline-flex;align-items:center;gap:4px;width:max-content;font-size:10px;font-weight:900;color:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:3px 8px;background:rgba(255,255,255,.035)}
 .program-empty{min-height:240px;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:13px;line-height:1.7}
+.archive-library{display:flex;flex-direction:column;gap:24px}
+.archive-folder-section{padding-bottom:22px;border-bottom:1px solid var(--border2)}
+.archive-folder-section:last-child{padding-bottom:0;border-bottom:0}
+.archive-folder-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.archive-folder-title{font-size:15px;font-weight:900;color:var(--white)}
+.archive-folder-count{font-size:10px;font-weight:900;color:var(--gold);border:1px solid var(--border);border-radius:999px;padding:4px 9px;background:rgba(212,175,55,.07)}
+.archive-book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+.archive-book-card{min-height:310px;padding:20px 14px 16px}
+.archive-book-card .program-run-cover{padding:0;overflow:hidden;background:linear-gradient(160deg,#332b10,#111108)}
+.archive-cover-img{position:absolute;inset:0;z-index:2;width:100%;height:100%;object-fit:cover;background:#fff}
+.archive-cover-fallback{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:14px;color:var(--gold2);font-size:12px;font-weight:900;line-height:1.45;text-align:center}
+.archive-cover-fallback::before{content:'GFIELD ARCHIVE';font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.52)}
+.archive-media-tag{font-size:9px;font-weight:900;color:var(--gold);border:1px solid var(--border);border-radius:999px;padding:3px 8px;background:rgba(212,175,55,.07)}
+.archive-book-date{font-size:9px;color:var(--muted);min-height:14px}
+.archive-book-card.locked .archive-cover-img{filter:grayscale(.6);opacity:.55}
 @media(max-width:820px){.program-shelf{grid-template-columns:1fr}.program-menu{position:relative;top:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.program-panel-head{display:block}.program-panel-desc{text-align:left;margin-top:8px}.program-menu-card{min-height:68px}.concept-showcase{grid-template-columns:210px minmax(0,1fr)}}
 @media(max-width:600px){.concept-showcase{grid-template-columns:1fr;margin:-4px -14px 22px;padding:22px 18px}.concept-book-stage{height:205px}.concept-book-3d{--w:118px;--h:166px}.concept-detail{text-align:center}.concept-topic-list{justify-content:center}.concept-detail-copy{text-align:left}}
 @media(max-width:500px){.program-menu{grid-template-columns:1fr}.program-detail{border-radius:14px}.program-panel{padding:18px 14px}.program-book-row{gap:12px}.program-run-grid{grid-template-columns:1fr 1fr;gap:10px}.program-run-card{min-height:275px;padding:16px 10px 14px}.program-run-book{--run-depth:23px;width:96px;height:136px}.program-run-cover{padding:12px 7px 10px}.program-run-cover strong{font-size:13px}.program-run-icon{font-size:30px}.program-run-name{font-size:12px}.program-run-desc{font-size:10px}}
@@ -261,7 +276,7 @@ body.in-viewer{overflow:hidden}
 .book-sheet{position:relative;width:min(100%,820px);aspect-ratio:1075/1521;line-height:0;background:#fff;box-shadow:0 12px 34px rgba(0,0,0,.35);flex:none}
 .viewer-body.no-video .book-sheet{width:min(100%,920px)}
 .book-page-img{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
-.book-watermark{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:2;display:none}
+.book-watermark{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:2;display:block}
 .book-watermark span{position:absolute;left:50%;color:rgba(22,34,51,.15);font-size:38pt;font-weight:900;white-space:nowrap;transform:translate(-50%,-50%) rotate(-34deg);letter-spacing:0}
 .book-watermark .wm-r1{top:26%}.book-watermark .wm-r2{top:50%}.book-watermark .wm-r3{top:74%}
 .book-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#526070;font-size:13px;font-weight:900;background:#f8fafc;z-index:3;pointer-events:none}
@@ -355,7 +370,6 @@ body.in-viewer{overflow:hidden}
   .dash-title{font-size:24px}.dash-eyebrow{font-size:10px}.program-menu-card{min-height:66px}.pm-title{font-size:12px}.pm-sub{font-size:9px;line-height:1.35}.program-panel-title{font-size:23px}.program-panel-desc{font-size:10px;line-height:1.5}.program-book-row .shelf-title-text{font-size:11px}.program-book-row .shelf-videos{font-size:9px}.program-run-name{font-size:13px}.program-run-desc{font-size:10px}
 }
 </style>
-<script src="../data.js"></script>
 </head>
 <body>
 <div id="gate">
@@ -427,7 +441,7 @@ body.in-viewer{overflow:hidden}
     <button class="viewer-back" onclick="GF.closeViewer()">← 목록으로</button>
     <span class="viewer-title" id="vTitle"></span>
     <div class="viewer-acts">
-      <button class="v-btn" onclick="window.print()">🖨 인쇄</button>
+      <button class="v-btn" id="vPrintBtn" onclick="window.print()">🖨 인쇄</button>
       <button class="v-btn gold" id="vYtBtn" onclick="GF.openYt()" style="display:none">▶ 새 창</button>
     </div>
   </div>
@@ -456,6 +470,7 @@ body.in-viewer{overflow:hidden}
   </div>
 </div>
 <div class="sec-toast" id="secToast">🔒 학생 전용 보안 자료입니다.</div>
+<script>document.write('<script src="../data.js?v='+Date.now()+'"><\/script>')</script>
 <script>
 (function(){"use strict";
 /* ── 이미지 경로 (concept/ 직접) ── */
@@ -490,7 +505,22 @@ const PRODUCTS=[
   {key:"최종모의고사",name:"최종 모의고사",desc:"실전 총정리 최종 리허설",icon:"🏆",theme:"theme-final",type:"direct",lessons:[{key:"u1",label:"최종",title:"최종 모의고사",type:"concept",url:"",pdfPage:1}]},
   {key:"자료실",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
 ];
-const SALT="gfield-fields-classic-2026-v1";
+ const CONCEPT_CHAPTER_ASSETS={
+   vol1:{pagesBase:"../assets/concept/vol1/",pageCount:19,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol1/001.jpg"},
+   vol2:{pagesBase:"../assets/concept/vol2/",pageCount:19,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol2/001.jpg"},
+   vol3:{pagesBase:"../assets/concept/vol3/",pageCount:16,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol3/001.jpg"},
+   vol4:{pagesBase:"../assets/concept/vol4/",pageCount:10,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol4/001.jpg"},
+   final:{pagesBase:"../assets/concept/final/",pageCount:11,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/final/001.jpg"}
+ };
+ const CONCEPT_VIDEO_PAGES={vol1:{concept:2,practice:15},vol2:{check:2,concept:5,practice:15},vol3:{check:2,concept:7,practice:12},vol4:{check:2,concept:6},final:{final:2}};
+ const conceptProduct=PRODUCTS.find(p=>p.type==="folder");
+ conceptProduct?.chapters?.forEach(ch=>{
+   const asset=CONCEPT_CHAPTER_ASSETS[ch.key];
+   if(asset)Object.assign(ch,asset);
+   const pageMap=CONCEPT_VIDEO_PAGES[ch.key]||{};
+   (ch.videos||[]).forEach(video=>{if(pageMap[video.key])video.pdfPage=pageMap[video.key];});
+ });
+ const SALT="gfield-fields-classic-2026-v1";
 // 레거시 승인번호(해시 방식) — 기존 판매분 호환용으로 유지
 const CODES={
   "bbbdc79775916a1a6f7675f3db54cba1f33f26e1dffda97fcb685e1c993df7c7":["개념완성"],
@@ -501,6 +531,9 @@ const CODES={
 };
 // 신규 승인번호(GF-XXXXXX) — admin에서 자동 발급, data.js에서 로드
 const FC = window.GFIELD_FC_DATA || { students:[], studentCode:{}, attendance:{}, studentType:{} };
+FC.archiveFolders = Array.isArray(FC.archiveFolders) ? FC.archiveFolders : [];
+FC.archiveAccess = FC.archiveAccess && typeof FC.archiveAccess === "object" ? FC.archiveAccess : {};
+FC.books = Array.isArray(FC.books) ? FC.books : [];
 // 재원생 타임라인 학습 순서 (단계별 흐름)
 const TIMELINE_ORDER=[
   {key:"개념완성",    step:"STEP 1", desc:"필즈 핵심 개념 커리큘럼 (Vol.1~4 + Final)"},
@@ -542,7 +575,9 @@ function embed(url){if(!url)return"";try{const p=new URL(url);let id="",s=0;if(p
 let _bookPage=1,_bookRenderKey="",_bookScrollFrame=0;
 function bookUrl(page){
   const base=S.currentProduct?.pagesBase||"";
-  return base+"page_"+String(page).padStart(3,"0")+".webp";
+  const prefix=S.currentProduct?.pagePrefix??(base.endsWith("page_")?"":"page_");
+  const ext=S.currentProduct?.pageExt||"webp";
+  return base+prefix+String(page).padStart(3,"0")+"."+ext;
 }
 function makeBookWatermark(){
   const wm=document.createElement("div");
@@ -791,12 +826,14 @@ const GF={
   closeModal(){document.getElementById("commentModal").classList.remove("show")},
   startFromModal(){this.closeModal();if(S.currentChapter)this.openChapterViewer(S.currentChapter)},
   openChapterViewer(ch){
+    S.currentProduct=Object.assign({},S.currentProduct||{},ch.pagesBase?{pagesBase:ch.pagesBase,pageCount:ch.pageCount,pagePrefix:ch.pagePrefix||"",pageExt:ch.pageExt||"jpg"}:{});
     S.viewerOpen=true;
     document.getElementById("vTitle").textContent=ch.vol+" · "+ch.title;
     document.getElementById("vYtBtn").style.display="block";
+    document.getElementById("vPrintBtn").style.display="block";
     document.getElementById("vBody").className="viewer-body has-video";
     document.getElementById("vPanel").style.display="flex";
-    const tabs=document.getElementById("vTabs");tabs.innerHTML="";
+    const tabs=document.getElementById("vTabs");tabs.style.display="";tabs.innerHTML="";
     ch.videos.forEach(v=>{const b=document.createElement("button");b.className="tab-btn";b.textContent=v.label;b.dataset.k=v.key;b.dataset.type=v.type;b.addEventListener("click",()=>GF.selectVideo(ch,v.key));tabs.appendChild(b)});
     if(ch.videos.length)this.selectVideo(ch,ch.videos[0].key);
     document.getElementById("viewer").classList.add("show");document.body.classList.add("in-viewer");checkOrientation();
@@ -829,11 +866,12 @@ const GF={
     document.getElementById("vTitle").textContent=p.icon+" "+p.name;
     const hasVid=p.hasVideo!==false;
     document.getElementById("vYtBtn").style.display=hasVid?"block":"none";
+    document.getElementById("vPrintBtn").style.display=p.pagesBase?"block":"none";
     document.getElementById("vBody").className="viewer-body "+(hasVid?"has-video":"no-video");
     document.getElementById("vPanel").style.display=hasVid?"flex":"none";
-    const tabs=document.getElementById("vTabs");tabs.innerHTML="";
+    const tabs=document.getElementById("vTabs");tabs.style.display="";tabs.innerHTML="";
     (p.lessons||[]).forEach(l=>{const b=document.createElement("button");b.className="tab-btn";b.textContent=l.label;b.dataset.k=l.key;b.dataset.type=l.type||"concept";b.addEventListener("click",()=>{document.querySelectorAll(".tab-btn").forEach(x=>x.classList.toggle("active",x.dataset.k===l.key));document.getElementById("videoIframe").src=l.url?embed(l.url):"";if(p.pagesBase&&l.pdfPage)setBookPage(l.pdfPage);else setBookEmpty();S.currentVideo={url:l.url}});tabs.appendChild(b)});
-    if(p.lessons?.length){const first=p.lessons[0];document.getElementById("videoIframe").src=first.url?embed(first.url):"";if(p.pagesBase&&first.pdfPage)setBookPage(first.pdfPage);else setBookEmpty();tabs.querySelector(".tab-btn")?.classList.add("active")}
+    if(p.lessons?.length){const first=p.lessons[0];S.currentVideo={url:first.url};document.getElementById("videoIframe").src=first.url?embed(first.url):"";if(p.pagesBase&&first.pdfPage)setBookPage(first.pdfPage);else setBookEmpty();tabs.querySelector(".tab-btn")?.classList.add("active")}
     document.getElementById("viewer").classList.add("show");document.body.classList.add("in-viewer");checkOrientation();
   },
   prevBookPage(){if(_bookPage>1)setBookPage(_bookPage-1)},
@@ -862,13 +900,68 @@ const GF={
 };
 function h(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
 function coverMarkup(ch,decorative=false){
-  const imgFile=COVER_MAP[ch.key];
-  return imgFile
-    ? `<img src="${COVER_BASE}${imgFile}" alt="${decorative?"":h(ch.title)}" loading="lazy" onerror="this.hidden=true">`
+  const src=ch.cover||((COVER_MAP[ch.key])?COVER_BASE+COVER_MAP[ch.key]:"");
+  return src
+    ? `<img src="${h(src)}" alt="${decorative?"":h(ch.title)}" loading="lazy" onerror="this.hidden=true">`
     : "";
 }
 function pOk(p){return !!p&&S.perms.includes(p.key)}
 function lessonKey(p){return p?.lessons?.[0]?.key||""}
+function archiveFolderNames(){
+  const names=[];
+  (FC.archiveFolders||[]).forEach(folder=>{if(folder&&!names.includes(folder))names.push(folder)});
+  (FC.books||[]).forEach(book=>{const folder=book?.folder||"기타 자료";if(!names.includes(folder))names.push(folder)});
+  return names;
+}
+function archiveBooks(folder){
+  return (FC.books||[]).map((book,index)=>({book,index})).filter(({book})=>{
+    if(!book||(book.folder||"기타 자료")!==folder)return false;
+    return !!(book.title||book.imgdir||book.pdf||book.video);
+  });
+}
+function archiveCanOpen(folder){
+  const access=FC.archiveAccess?.[folder];
+  if(Array.isArray(access))return access.includes("*")||access.includes(S.name);
+  return S.perms.includes("자료실");
+}
+function archiveBookBase(book){
+  if(book?.pagesBase)return book.pagesBase;
+  return book?.imgdir?"../assets/archive/"+encodeURIComponent(book.imgdir)+"/":"";
+}
+function archiveBookPageUrl(book,page=1){
+  if(page===1&&book?.cover)return book.cover;
+  const base=archiveBookBase(book);if(!base)return "";
+  const prefix=book?.pagePrefix??"";
+  const ext=book?.imageExt||"jpg";
+  return base+prefix+String(page).padStart(3,"0")+"."+ext;
+}
+function archiveMediaLabel(book){
+  const pages=Number(book?.pages)||0;
+  if(book?.video&&pages)return "영상 + 교재";
+  if(book?.video)return "영상";
+  if(pages)return pages+"쪽 교재";
+  if(book?.pdf)return "PDF 링크";
+  return "자료";
+}
+function archiveFolderMarkup(folder){
+  if(!folder)return '<div class="program-empty">\uC790\uB8CC\uC2E4 \uBA54\uB274\uB97C \uC900\uBE44 \uC911\uC785\uB2C8\uB2E4.</div>';
+  const entries=archiveBooks(folder);
+  const cards=entries.map(({book,index})=>{
+    const open=archiveCanOpen(folder),cover=archiveBookPageUrl(book,1);
+    const media=archiveMediaLabel(book),date=book.date||"";
+    return `<button class="program-run-card archive-book-card theme-archive ${open?"":"locked"}" onclick="GF.openArchiveBook(${index})">
+      <div class="program-run-book" aria-hidden="true">
+        <div class="program-run-cover"><span class="archive-cover-fallback">${h(book.title||"\uC790\uB8CC")}</span>${cover?`<img class="archive-cover-img" src="${h(cover)}" alt="${h(book.title||"\uC790\uB8CC")} \uD45C\uC9C0" loading="lazy" onerror="this.remove()">`:""}</div>
+        <div class="program-run-back"></div><div class="program-run-spine"></div><div class="program-run-pages"></div><div class="program-run-top"></div><div class="program-run-bottom"></div>
+      </div>
+      <div class="program-run-name">${h(book.title||"\uC790\uB8CC")}</div>
+      <span class="archive-media-tag">${h(media)}</span>
+      <div class="archive-book-date">${h(date)}</div>
+      ${open?"":'<span class="program-lock">&#128274; \uC5F4\uB78C \uC81C\uD55C</span>'}
+    </button>`;
+  }).join("");
+  return cards?`<div class="archive-book-grid">${cards}</div>`:'<div class="program-empty">\uB4F1\uB85D\uB41C \uC790\uB8CC\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4.</div>';
+}
 function programGroups(){
   const concept=PRODUCTS.find(p=>p.type==="folder");
   const diagnostic=PRODUCTS.find(p=>p.type==="mock");
@@ -876,18 +969,30 @@ function programGroups(){
   const practice=PRODUCTS.filter(p=>/^p\d+/.test(lessonKey(p)));
   const finals=PRODUCTS.filter(p=>/^fi\d+/.test(lessonKey(p)));
   const ultimate=PRODUCTS.find(p=>lessonKey(p)==="u1");
-  const archive=PRODUCTS.find(p=>lessonKey(p)==="a1");
-  return [
+  const groups=[
     {id:"concept",icon:"📘",title:"TOP SECRET 개념",sub:"개념 교재 Vol.1~Final",kind:"chapters",product:concept,kicker:"TOP SECRET",head:"개념 완성",desc:"개념 책을 고르면 영상과 교재가 함께 열립니다."},
     {id:"killer",icon:"🎯",title:"킬러문항 완전 해제",sub:"최상위 유형 공략",kind:"products",items:[killer],kicker:"KILLER",head:"킬러문항 완전 해제",desc:"문항 유형은 보이지만 구매 권한이 있을 때만 열립니다."},
     {id:"diagnostic",icon:"🔍",title:"진단모의고사",sub:"진단 및 분석",kind:"products",items:[diagnostic],kicker:"DIAGNOSTIC",head:"진단모의고사",desc:"진단지는 선택 후 별도 모의고사 화면으로 이동합니다."},
     {id:"practice",icon:"📝",title:"실전 모의고사",sub:"1회~6회",kind:"products",items:practice,kicker:"PRACTICE",head:"실전 모의고사",desc:"각 회차를 확인하고 권한이 있는 회차만 학습할 수 있습니다."},
     {id:"final",icon:"🏁",title:"파이널 모의고사",sub:"1회~4회",kind:"products",items:finals,kicker:"FINAL",head:"파이널 모의고사",desc:"파이널 회차가 책처럼 펼쳐집니다."},
-    {id:"ultimate",icon:"🏆",title:"최종 모의고사",sub:"최종 리허설",kind:"products",items:[ultimate],kicker:"LAST CHECK",head:"최종 모의고사",desc:"마지막 실전 점검용 모의고사입니다."},
-    {id:"archive",icon:"📁",title:"자료실",sub:"자료 및 출력",kind:"products",items:[archive],kicker:"ARCHIVE",head:"자료실",desc:"제공 자료 목록은 보이고, 열람은 권한이 있을 때 가능합니다."}
-  ].filter(g=>g.product||g.items?.some(Boolean));
+    {id:"ultimate",icon:"🏆",title:"최종 모의고사",sub:"최종 리허설",kind:"products",items:[ultimate],kicker:"LAST CHECK",head:"최종 모의고사",desc:"마지막 실전 점검용 모의고사입니다."}
+  ];
+  const mainGroups=groups.filter(g=>g.product||g.items?.some(Boolean));
+  archiveFolderNames().forEach((folder,index)=>mainGroups.push({
+    id:`archive-${index}`,
+    icon:"\uD83D\uDCC1",
+    title:folder,
+    sub:`\uC790\uB8CC ${archiveBooks(folder).length}\uAC1C`,
+    kind:"archive",
+    folder,
+    kicker:"ARCHIVE",
+    head:folder,
+    desc:"\uB4F1\uB85D\uB41C \uC790\uB8CC\uB294 \uBAA8\uB450 \uBCF4\uC774\uBA70, \uC774\uC6A9 \uAD8C\uD55C\uC774 \uC788\uB294 \uC790\uB8CC\uB9CC \uC5F4\uB9BD\uB2C8\uB2E4."
+  }));
+  return mainGroups;
 }
 function sectionUnlocked(g){
+  if(g.kind==="archive")return !!g.folder&&archiveCanOpen(g.folder);
   if(g.product)return pOk(g.product);
   return (g.items||[]).some(pOk);
 }
@@ -917,6 +1022,8 @@ function renderProgramPanel(id){
         </button>`;
       }).join("")}
     </div><div class="shelf-rail"></div>`;
+  }else if(g.kind==="archive"){
+    body=archiveFolderMarkup(g.folder);
   }else{
     const cards=(g.items||[]).map(runCard).join("");
     body=cards?`<div class="program-run-grid">${cards}</div>`:`<div class="program-empty">준비 중입니다.</div>`;
@@ -980,6 +1087,43 @@ Object.assign(GF,{
   openProgramChapter(productIndex,chapterKey){
     const p=PRODUCTS[productIndex];if(!p||!pOk(p)){toast();return;}
     this.showChapterModal(p.key,chapterKey);
+  },
+  openArchiveBook(index){
+    const book=FC.books?.[index];if(!book)return;
+    const folder=book.folder||"기타 자료";
+    if(!archiveCanOpen(folder)){toast();return;}
+    const pageCount=Number(book.pages)||0;
+    const hasPages=!!(archiveBookBase(book)&&pageCount);
+    const hasVideo=!!book.video;
+    if(!hasPages&&!hasVideo){
+      alert('이 자료는 아직 이미지 뷰어로 변환되지 않았습니다.');
+      return;
+    }
+    S.viewerOpen=true;
+    S.currentProduct={
+      key:"자료실",
+      name:book.title||"자료",
+      pagesBase:archiveBookBase(book),
+      pageCount,
+      pagePrefix:book.pagePrefix??"",
+      pageExt:book.imageExt||"jpg"
+    };
+    S.currentVideo=hasVideo?{url:book.video}:null;
+    document.getElementById("vTitle").textContent="📁 "+(book.title||"자료");
+    document.getElementById("vYtBtn").style.display=hasVideo?"block":"none";
+    document.getElementById("vPrintBtn").style.display=hasPages?"block":"none";
+    document.getElementById("vBody").className="viewer-body "+(hasVideo?"has-video":"no-video");
+    document.getElementById("vPanel").style.display=hasVideo?"flex":"none";
+    const tabs=document.getElementById("vTabs");
+    tabs.style.display=hasVideo?"":"none";
+    tabs.innerHTML=hasVideo?'<button class="tab-btn active" data-type="concept">🎬 강의 영상</button>':"";
+    document.getElementById("vPanelTitle").textContent=book.title||"강의";
+    document.getElementById("vPanelMeta").textContent=hasPages?"영상 · 교재":"영상";
+    document.getElementById("videoIframe").src=hasVideo?embed(book.video):"";
+    if(hasPages)setBookPage(1);else setBookEmpty("교재 이미지 준비 중");
+    document.getElementById("viewer").classList.add("show");
+    document.body.classList.add("in-viewer");
+    checkOrientation();
   },
   openProgramProduct(productIndex){
     const p=PRODUCTS[productIndex];if(!p||!pOk(p)){toast();return;}
