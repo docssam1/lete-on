@@ -230,6 +230,7 @@ window.PRESCRIPTION_BANK = {
       title: "쌓기나무 규칙",
       category: "규칙",
       promptInImage: true,
+      visualOnly: true,
       problems: [
         { prompt: "그림과 같은 규칙으로 쌓기나무를 쌓습니다. 4번째 모양의 쌓기나무는 모두 몇 개입니까?", image: "q25/q25_01.png", answer: "30개", solution: "1² + 2² + 3² + 4² = 30입니다." },
         { prompt: "그림과 같은 규칙으로 쌓기나무를 쌓습니다. 5번째 모양의 쌓기나무는 모두 몇 개입니까?", image: "q25/q25_02.png", answer: "55개", solution: "1² + 2² + 3² + 4² + 5² = 55입니다." },

@@ -448,11 +448,11 @@
       const params = new URLSearchParams(location.search);
       const student = (params.get("student") || "학생").trim().slice(0, 30);
       const view = params.get("view") === "mixed" ? "mixed" : "type";
+      const bank = window.PRESCRIPTION_BANK?.types || {};
       const selected = [...new Set((params.get("types") || "")
         .split(",")
         .map(value => Number.parseInt(value, 10))
-        .filter(value => Number.isInteger(value) && value >= 1 && value <= 25))];
-      const bank = window.PRESCRIPTION_BANK?.types || {};
+        .filter(value => Number.isInteger(value) && Object.prototype.hasOwnProperty.call(bank, value)))];
       const seedOrder = (items, seed) => {
         const result = [...items];
         let state = Math.abs(seed) + 17;
@@ -498,8 +498,9 @@
         `<a class="variant-link${value === view ? " active" : ""}" href="${escapeHtml(viewUrl(value))}">${label}</a>`
       ).join("");
 
+      const totalProblems = types.reduce((sum, type) => sum + type.problems.length, 0);
       document.getElementById("toolbarMeta").textContent =
-        `${student} · ${view === "mixed" ? "섞어서 보기" : "유형별로 보기"} · ${types.length}개 약점 유형 · ${types.length * 3}문제`;
+        `${student} · ${view === "mixed" ? "섞어서 보기" : "유형별로 보기"} · ${types.length}개 약점 유형 · ${totalProblems}문제`;
 
       if (!types.length) {
         documentRoot.innerHTML = `
@@ -525,12 +526,12 @@
           </div>
           <div class="cover-footer">
             <span>${escapeHtml(date)}</span>
-            <span>${types.length}개 유형 · ${types.length * 3}문제</span>
+            <span>${types.length}개 유형 · ${totalProblems}문제</span>
           </div>
         </section>`;
 
       const typeProblemPages = types.map((type, pageIndex) => {
-        if (type.id === 25) {
+        if (type.visualOnly) {
           return type.problems.map((problem, index) => `
             <section class="page visual-page">
               ${watermark}
