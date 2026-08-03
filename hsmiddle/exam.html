@@ -28,7 +28,7 @@ if(exam.locked){document.getElementById('notice').textContent='답안 PDF 검수
 function norm(v){return String(v||'').replace(/\s/g,'').replaceAll('㎡','m²').replaceAll('제곱센티미터','cm²').toLowerCase()}
 function matches(given,expected){if(!expected||expected==='수동'||expected==='복수·수동')return null;const g=norm(given),e=norm(expected);if(g===e)return true;if(e.includes(','))return e.split(',').map(norm).includes(g);if(e.includes('또는'))return e.split('또는').map(norm).includes(g);return false}
 function grade(){if(exam.locked)return;let correct=0,checked=0,manual=0;exam.answers.forEach((expected,i)=>{const given=document.getElementById(`a-${i+1}`).value;if(!given)return;checked++;const state=matches(given,expected);if(state===true)correct++;if(state===null)manual++});document.getElementById('result').innerHTML=`입력 ${checked}/${exam.questions}문항 · 자동 정답 ${correct}문항 · 수동 확인 ${manual}문항<br><span class="hint">검수 보류 문항은 풀이와 함께 확인해야 최종 점수가 확정됩니다.</span>`}
-function showAnswers(){if(exam.locked)return;document.getElementById('result').innerHTML='<b>검수 답안</b><br>'+exam.answers.map((a,i)=>`${i+1}. ${a}`).join(' · ')}
+function showAnswers(){if(exam.locked)return;document.getElementById('result').innerHTML='<b>검수 답안</b><br>'+exam.answers.map((a,i)=>{const n=i+1,img=exam.answerImages&&exam.answerImages[n];return `<div>${n}. ${a}${img?`<br><img src="${img}" alt="${n}번 답안 풀이 이미지" style="display:block;width:100%;max-width:720px;margin:8px 0;border:1px solid #d5dfeb">`:''}</div>`}).join('')}
 function watch(){const url=HSMIDDLE_DATA.videos[key==='final-review'?'final-review':key];if(url)window.open(url,'_blank','noopener')}
 </script>
 </body></html>
