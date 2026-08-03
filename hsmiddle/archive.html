@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GFIELD | hsmiddle 자료실</title>
+<meta name="description" content="생각하는 황소 중등 성취도 진단 + 클리닉 자료실">
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+:root{
+  --navy:#173a6b;
+  --gold:#d4af37;
+  --bg:#f4f7fb;
+  --line:#cfd9e6;
+  --line-2:#e2e9f2;
+  --text:#15253c;
+  --muted:#5e728c;
+  --green:#107a4d;
+  --coral:#c53d4a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Pretendard,system-ui,sans-serif}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+button,input{font:inherit}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;background:#fff;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.mark{width:40px;height:40px;border-radius:8px;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:950;font-size:16px;flex:none}
+.brand-copy b{display:block;font-size:17px;line-height:1.2;font-weight:950}
+.brand-copy span{display:block;margin-top:4px;color:var(--muted);font-size:12px;font-weight:700}
+.top-links{display:flex;gap:10px;flex-wrap:wrap}
+.top-links a,.top-links button{min-height:38px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--navy);font-size:13px;font-weight:850;cursor:pointer}
+.top-links a.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.top-links button.logout{border-color:#efc2c8;color:var(--coral)}
+.shell{width:min(1220px,calc(100% - 32px));margin:22px auto 40px}
+.login-card{width:min(480px,100%);margin:56px auto;padding:30px;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 18px 48px rgba(19,37,60,.08)}
+.login-card h1{margin:0;font-size:24px;font-weight:950}
+.login-card p{color:var(--muted);font-size:14px;line-height:1.7;margin-top:10px}
+.form{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-top:18px}
+input{width:100%;height:44px;padding:0 12px;border:1px solid var(--line);border-radius:8px;font:700 14px Pretendard,sans-serif}
+.btn{height:42px;padding:0 16px;border:0;border-radius:8px;background:var(--navy);color:#fff;font:900 13px Pretendard,sans-serif;cursor:pointer}
+.error{color:var(--coral);font-size:13px;font-weight:850;margin-top:8px}
+.hidden{display:none!important}
+.section{margin-top:22px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:22px}
+.section.locked{opacity:.92}
+.section h2{margin:0;font-size:20px;font-weight:950;display:flex;align-items:center;gap:8px}
+.section .lockbadge{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:#fdecef;color:var(--coral);font-size:11px;font-weight:900}
+.section .openbadge{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:#eaf7f0;color:var(--green);font-size:11px;font-weight:900}
+.section p.desc{color:var(--muted);font-size:13px;line-height:1.7;margin:8px 0 14px}
+.actions-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.actions-row a,.actions-row button{display:inline-flex;align-items:center;height:38px;padding:0 14px;border-radius:8px;border:1px solid var(--navy);background:var(--navy);color:#fff;font-size:12.5px;font-weight:900;cursor:pointer}
+.actions-row a.secondary,.actions-row button.secondary{background:#fff;color:var(--navy);border-color:var(--line)}
+.actions-row a.gold{background:var(--gold);border-color:var(--gold);color:#17253a}
+.videowrap{position:relative;width:100%;max-width:640px;aspect-ratio:16/9;background:#0c1d34;border-radius:8px;overflow:hidden;cursor:pointer;margin-bottom:14px}
+.videowrap iframe{width:100%;height:100%;border:0}
+.playbtn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:900;background:linear-gradient(rgba(12,29,52,.35),rgba(12,29,52,.55))}
+.qgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:8px;margin-top:8px}
+@media(max-width:900px){.qgrid{grid-template-columns:repeat(8,1fr)}}
+@media(max-width:640px){.qgrid{grid-template-columns:repeat(5,1fr)}}
+.qcell{display:flex;flex-direction:column;align-items:center;gap:4px}
+.qcell button{width:100%;height:34px;border:1px solid var(--line);border-radius:6px;background:#f6f8fc;color:var(--navy);font-weight:900;font-size:12.5px;cursor:pointer}
+.qcell a{font-size:10px;color:var(--muted);font-weight:700}
+.fineprint{width:min(1220px,calc(100% - 32px));margin:0 auto 30px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12px;line-height:1.7;font-weight:650}
+.fineprint a{color:var(--navy);font-weight:850}
+.watermark{margin-top:8px;text-align:right;color:#9aabbf;font-size:12px;font-weight:800}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <div class="mark">G</div>
+    <div class="brand-copy">
+      <b>GFIELD 자료실</b>
+      <span>생각하는 황소 중등 성취도 진단 + 클리닉</span>
+    </div>
+  </div>
+  <div class="top-links" id="topLinks">
+    <a href="./library.html">서재</a>
+    <button class="logout hidden" id="logoutBtn" onclick="logout()">로그아웃</button>
+  </div>
+</header>
+
+<main class="shell">
+  <section class="login-card" id="login">
+    <h1>승인 확인</h1>
+    <p>관리자에게 전달받은 이름과 승인번호를 입력하세요. 자료실은 서재와 같은 승인번호를 사용합니다.</p>
+    <div class="form">
+      <input id="name" placeholder="학생 이름">
+      <input id="code" placeholder="승인번호">
+      <button class="btn" onclick="signIn()">입장</button>
+    </div>
+    <p class="error hidden" id="error">이름 또는 승인번호를 확인해 주세요.</p>
+  </section>
+
+  <div class="hidden" id="app"></div>
+</main>
+
+<div class="fineprint">
+  <span>승인번호는 구매 후 카카오톡으로 전달됩니다. 이름은 워터마크에만 사용됩니다.</span>
+  <span><a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">카카오톡 문의</a> · <a href="./library.html">서재로</a></span>
+</div>
+
+<script src="./data.js"></script>
+<script src="./shared-auth.js"></script>
+<script>
+const byId=id=>document.getElementById(id);
+let student='';
+
+const videoStarts=[60,138,208,315,384,465,507,574,679,750,809,856,931,1107,1198,1252,1297,1359,1420,1531,1578,1649,1711,1780,1930,1983,2105,2187,2305,2400,2595,2705,2821,3067,3152,3260,3336,3454,3548,3654];
+
+function signIn(){
+  const name=byId('name').value.trim(),code=byId('code').value.trim().toUpperCase();
+  if(!HSMIDDLE_AUTH.isValidStudent(name,code)){byId('error').classList.remove('hidden');return}
+  HSMIDDLE_AUTH.writeSession(name,code);
+  enter(name);
+}
+function logout(){HSMIDDLE_AUTH.clearSession();location.reload()}
+
+const savedSession=HSMIDDLE_AUTH.readSession();
+if(savedSession.valid){enter(savedSession.name)}
+
+function loadVideo(el){
+  const src=el.dataset.src;
+  const iframe=document.createElement('iframe');
+  iframe.src=src;
+  iframe.allow='autoplay; encrypted-media; fullscreen';
+  iframe.allowFullscreen=true;
+  el.innerHTML='';
+  el.appendChild(iframe);
+  el.onclick=null;
+  el.style.cursor='default';
+}
+
+function enter(name){
+  student=name;
+  byId('login').classList.add('hidden');
+  byId('logoutBtn').classList.remove('hidden');
+  const app=byId('app');
+  app.classList.remove('hidden');
+  const D=window.HSMIDDLE_DATA;
+  const access=new Set((D.access&&D.access[student])||[]);
+  const isOpen=key=>access.has(key);
+
+  const diagnosticQGrid=Array.from({length:40},(_,i)=>{
+    const n=i+1,q=D.questions[i],start=videoStarts[i];
+    return `<div class="qcell">
+      <button title="${q?q[5]:''}" onclick="openSimilar(${n})">${n}</button>
+      <a href="https://youtu.be/3NzakkPc9zg?t=${start}" target="_blank" rel="noopener">영상</a>
+    </div>`;
+  }).join('');
+
+  const diagnosticOpen=isOpen('diagnostic');
+  const diagnosticSection=`
+    <section class="section ${diagnosticOpen?'':'locked'}">
+      <h2>진단 <span class="${diagnosticOpen?'openbadge':'lockbadge'}">${diagnosticOpen?'열림':'잠김'}</span></h2>
+      <p class="desc">중등 성취도 진단 + 클리닉. 풀이 강의 전체 영상, 채점, 분석지, 문항별 유사문제 40세트를 한 화면에서 확인합니다.</p>
+      ${diagnosticOpen?`
+        <div class="videowrap" data-src="https://www.youtube.com/embed/3NzakkPc9zg" onclick="loadVideo(this)">
+          <div class="playbtn">▶ 풀이 강의 전체 영상 재생</div>
+        </div>
+        <div class="actions-row">
+          <a href="./diagnostic.html">진단 채점</a>
+          <a class="secondary" href="./report.html">진단분석지</a>
+          <a class="secondary" href="./viewer.html?doc=diagnostic&student=${encodeURIComponent(student)}">진단 시험지 보기</a>
+        </div>
+        <p class="desc" style="margin:14px 0 4px"><b>문항별 유사문제 40세트</b> — 번호에 마우스를 올리면 유형이 보입니다.</p>
+        <div class="qgrid">${diagnosticQGrid}</div>
+      `:`
+        <div class="actions-row">
+          <button class="secondary" disabled>🔒 잠김</button>
+          <a class="gold" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">카카오톡 문의</a>
+        </div>
+      `}
+    </section>`;
+
+  const examMeta=[
+    {key:'mock-1',title:'실전 모의고사 1회'},
+    {key:'mock-2',title:'실전 모의고사 2회'},
+    {key:'mock-3',title:'실전 모의고사 3회'},
+    {key:'final',title:'최종 모의고사 · 파이널'}
+  ];
+  const examSections=examMeta.map(e=>{
+    const open=isOpen(e.key);
+    const videoUrl=D.videos&&D.videos[e.key];
+    return `<section class="section ${open?'':'locked'}">
+      <h2>${e.title} <span class="${open?'openbadge':'lockbadge'}">${open?'열림':'잠김'}</span></h2>
+      ${open?`
+        <p class="desc">${videoUrl?`<a href="${videoUrl}" target="_blank" rel="noopener">→ 전체 수업 영상 보기</a>`:'전체 수업 영상이 아직 준비되지 않았습니다.'}</p>
+        <div class="actions-row">
+          <a href="./exam.html?exam=${e.key}">응시 · 채점</a>
+          <a class="secondary" href="./report.html?exam=${e.key}">분석지</a>
+        </div>
+      `:`
+        <p class="desc">승인된 회차만 열립니다.</p>
+        <div class="actions-row">
+          <button class="secondary" disabled>🔒 잠김</button>
+          <a class="gold" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">카카오톡 문의</a>
+        </div>
+      `}
+    </section>`;
+  }).join('');
+
+  app.innerHTML=diagnosticSection+examSections+`<div class="watermark">${student} 학생 · GFIELD</div>`;
+}
+
+function openSimilar(n){open(`./viewer.html?doc=similar&qs=${n}&student=${encodeURIComponent(student)}`,'_blank','noopener')}
+</script>
+</body>
+</html>
