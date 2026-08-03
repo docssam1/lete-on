@@ -14,7 +14,7 @@
   <header class="mast"><div><p class="eyebrow">GFIELD DIAGNOSTIC CLINIC</p><h1>생각하는 황소 중등 성취도 진단 + 클리닉</h1></div><p>40문항 진단 시험지 · 풀이 강의 · 유사문제</p></header>
   <section class="panel login" id="login"><h2>승인 확인</h2><p>관리자에게 전달받은 이름과 승인번호를 입력하세요.</p><div class="form"><input id="name" placeholder="학생 이름"><input id="code" placeholder="승인번호"><button onclick="signIn()">입장</button></div><p class="hint">승인번호는 구매 후 카카오톡으로 전달됩니다. 이름은 워터마크에만 사용됩니다.</p><p class="error hidden" id="error">이름 또는 승인번호를 확인해 주세요.</p></section>
   <section class="hidden" id="app">
-    <section class="panel intro"><div class="toolbar"><div><b>생각하는 황소 중등 성취도 진단 + 클리닉 시험지</b><br>이 시험지는 200명 이상의 성취도 분석을 바탕으로 구성했습니다. 시험 후에는 풀이 강의와 문항별 유사문제로 약점을 보완하며 실전까지 대비합니다. 70점 이상이면서 4·5·6학년 과정 수행이 안정적이면 심화 유형 학습을 권합니다. 특정 개념이나 4학년 유형에서 공백이 보이면 한 단계 위 교재의 개념 탐구와 미션을 먼저 정리해 주세요.</div><button class="secondary" onclick="openDiagnostic()">진단 시험지 보기</button></div></section>
+    <section class="panel intro"><div class="toolbar"><div><b>생각하는 황소 중등 성취도 진단 + 클리닉 시험지</b><br>이 시험지는 200명 이상의 성취도 분석을 바탕으로 구성했습니다. 시험 후에는 풀이 강의와 문항별 유사문제로 약점을 보완하며 실전까지 대비합니다. 70점 이상이면서 4·5·6학년 과정 수행이 안정적이면 심화 유형 학습을 권합니다. 특정 개념이나 4학년 유형에서 공백이 보이면 한 단계 위 교재의 개념 탐구와 미션을 먼저 정리해 주세요.</div><div style="display:flex;gap:8px"><button class="secondary" onclick="openDiagnostic()">진단 시험지 보기</button><button class="secondary" onclick="openReport()">진단분석지 보기</button></div></div></section>
     <section class="panel">
       <div class="toolbar"><div class="tabs"><button class="active" data-tab="problem" onclick="setTab('problem')">문제</button><button data-tab="solution" onclick="setTab('solution')">풀이</button></div><div class="mark-mode"><button class="active" data-mark="answer" onclick="setMark('answer')">답안 입력</button><button data-mark="ox" onclick="setMark('ox')">O/X 체크</button></div><div class="modes" id="modes"><button class="active" data-mode="each" onclick="setMode('each')">문항별 유사문제</button><button data-mode="merged" onclick="setMode('merged')">오답 유사유형 모아 풀기</button></div></div>
       <div class="summary"><div class="score"><span>현재 점수</span><b id="score">0</b><span>/ 100점</span></div><div class="comment" id="comment"></div></div>
@@ -22,7 +22,7 @@
     </section>
   </section>
 </main><div class="watermark hidden" id="watermark"></div>
-<script src="./data.js"></script><script src="./shared-auth.js"></script>
+<script src="./data.js"></script><script src="./shared-auth.js"></script><script src="./grading.js"></script>
 <script>
 const D=window.HSMIDDLE_DATA,byId=id=>document.getElementById(id);
 const units={1:'1단원 큰수',2:'6단원 규칙찾기',3:'3단원 곱셈과 나눗셈',4:'3단원 곱셈과 나눗셈',5:'2단원 각도',6:'2단원 각도',7:'2단원 분수의 곱셈',8:'3단원 소수의 덧셈과 뺄셈',9:'4단원 소수의 곱셈',10:'4단원 사각형',11:'4단원 사각형',12:'2단원 약수와 배수',13:'2단원 약수와 배수',14:'3단원 규칙과 대응',15:'3단원 규칙과 대응',16:'3단원 곱셈과 나눗셈',17:'2단원 약수와 배수',18:'2단원 약수와 배수',19:'5단원 직육면체',20:'4단원 약분과 통분',21:'4단원 약분과 통분',22:'5단원 분수의 덧셈과 뺄셈',23:'5단원 분수의 덧셈과 뺄셈',24:'2단원 분수의 곱셈',25:'6단원 다각형의 둘레와 넓이',26:'6단원 다각형의 둘레와 넓이',27:'2단원 분수의 곱셈',28:'2단원 분수의 곱셈',29:'2단원 소수의 나눗셈',30:'3단원 합동과 대칭',31:'4단원 비와 비율',32:'2단원 소수의 나눗셈',33:'2단원 소수의 나눗셈',34:'4단원 비와 비율',35:'5단원 원의 넓이',36:'6단원 직육면체의 겉넓이와 부피',37:'2단원 각기둥과 각뿔',38:'4단원 비례식과 비례배분',39:'4단원 소수의 곱셈',40:'3단원 합동과 대칭'};
@@ -76,11 +76,12 @@ function signIn(){const name=byId('name').value.trim(),code=byId('code').value.t
 const savedDiagnosticSession=HSMIDDLE_AUTH.readSession();
 if(savedDiagnosticSession.valid&&savedDiagnosticSession.access.includes('diagnostic')){student=savedDiagnosticSession.name;byId('login').classList.add('hidden');byId('app').classList.remove('hidden');byId('watermark').textContent=`${student} 학생 · GFIELD`;byId('watermark').classList.remove('hidden');render()}
 function openDiagnostic(){open(`./viewer.html?doc=diagnostic&student=${encodeURIComponent(student)}`,'_blank','noopener')}
+function openReport(){open('./report.html','_blank','noopener')}
 function openPractice(numbers){open(`./viewer.html?doc=similar&qs=${numbers.join(',')}&student=${encodeURIComponent(student)}`,'_blank','noopener')}
 function setTab(v){tab=v;document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===v));byId('modes').classList.toggle('hidden',v!=='problem');render()}
 function setMode(v){mode=v;document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===v));render()}
 function setMark(v){mark=v;document.querySelectorAll('[data-mark]').forEach(b=>b.classList.toggle('active',b.dataset.mark===v));render()}
-function state(q){const value=sessionStorage.getItem(key(q));if(value===null||value==='')return null;return mark==='ox'?value==='o':norm(value)===norm(q[1])}
+function state(q){const value=sessionStorage.getItem(key(q));if(value===null||value==='')return null;return mark==='ox'?value==='o':HSMIDDLE_GRADING.isCorrect(q,value)}
 function setOX(n,value){sessionStorage.setItem(`hsm-ox-${n}`,value);render()}
 function setAnswer(el){sessionStorage.setItem(`hsm-answer-${el.dataset.q}`,el.value);render()}
 function grade(score){if(score>=82.5)return ['챌린지','고난도 문제에서 풀이 과정을 정리하며 완성도를 높여 주세요.'];if(score>=72.5)return ['에센스','에센스 이상 과정이 가능합니다. 약한 유형은 오답 유사문제로 보완해 주세요.'];if(score>=62.5)return ['어드밴스',`에센스까지 ${72.5-score}점 더 득점이 필요합니다.`];if(score>=50)return ['프라임',`어드밴스까지 ${62.5-score}점 더 득점이 필요합니다.`];if(score>=37.5)return ['프라임 컷',`프라임까지 ${50-score}점 더 득점이 필요합니다.`];return ['노력 요함',`프라임 컷까지 ${37.5-score}점 더 득점이 필요합니다.`]}

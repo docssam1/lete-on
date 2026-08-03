@@ -14,7 +14,7 @@
 </style>
 </head>
 <body>
-<header class="top"><div><b id="title">중등 모의고사</b><span id="student"></span></div><div class="actions"><button class="btn dark" onclick="location.href='./library.html'">목록</button><button class="btn dark" onclick="print()">답안·시험지 인쇄</button></div></header>
+<header class="top"><div><b id="title">중등 모의고사</b><span id="student"></span></div><div class="actions"><button class="btn dark" onclick="location.href='./library.html'">목록</button><button class="btn dark" onclick="openReport()">분석지 보기</button><button class="btn dark" onclick="print()">답안·시험지 인쇄</button></div></header>
 <main class="shell"><div class="layout"><section class="viewer" id="viewer"></section><aside class="panel"><h2>답안 입력</h2><p class="hint" id="notice">40문항을 입력하면 검수된 문항만 채점합니다.</p><div class="actions"><button class="btn" onclick="grade()">채점하기</button><button class="btn dark" onclick="showAnswers()">답안 보기</button><button class="btn dark" onclick="watch()">전체 수업 영상</button></div><div class="answer-grid" id="answers"></div><div class="result" id="result">아직 채점하지 않았습니다.</div><div id="video"></div></aside></div></main>
 <script src="./data.js"></script><script src="./exam-data.js"></script><script src="./shared-auth.js"></script>
 <script>
@@ -44,5 +44,6 @@ function grade(){if(exam.locked)return;let correct=0,checked=0,manual=0;exam.ans
 function showAnswers(){if(exam.locked)return;document.getElementById('result').innerHTML='<b>검수 답안</b><br>'+exam.answers.map((a,i)=>{const n=i+1,img=exam.answerImages&&exam.answerImages[n];return `<div>${n}. ${a}${img?`<br><img src="${img}" alt="${n}번 답안 풀이 이미지" style="display:block;width:100%;max-width:720px;margin:8px 0;border:1px solid #d5dfeb">`:''}</div>`}).join('')}
 function showAnswers(){if(exam.locked)return;document.getElementById('result').innerHTML='<b>검수 답안</b><br>'+exam.answers.map((a,i)=>{const n=i+1,img=exam.answerImages&&exam.answerImages[n],note=exam.answerNotes&&exam.answerNotes[n];return `<div>${n}. ${a}${note?`<pre style="white-space:pre-wrap;margin:8px 0;padding:10px;background:#f4f7fb;border-radius:5px;font:700 12px/1.7 Pretendard">${note}</pre>`:''}${img?`<br><img src="${img}" alt="${n}번 답안 풀이 이미지" style="display:block;width:100%;max-width:720px;margin:8px 0;border:1px solid #d5dfeb">`:''}</div>`}).join('')}
 function watch(){const url=HSMIDDLE_DATA.videos[key];if(url)window.open(url,'_blank','noopener')}
+function openReport(){window.open(`./report.html?exam=${key}`,'_blank','noopener')}
 </script>
 </body></html>
