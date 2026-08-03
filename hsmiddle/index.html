@@ -1,21 +1,498 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>생각하는 황소 중등 대비 | GFIELD</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GFIELD | 생각하는 황소 중등 성취도 진단 + 클리닉</title>
+<meta name="description" content="생각하는 황소 중등 성취도 진단 + 클리닉. 200명 이상의 성취도 분석, 풀이 강의, 오답 유사문제를 함께 제공합니다.">
 <style>
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
-*{box-sizing:border-box}body{margin:0;background:#eef3f8;color:#14243b;font-family:Pretendard,sans-serif}.shell{width:min(1160px,calc(100% - 36px));margin:0 auto}.top{height:72px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #c9d6e5}.brand{font-size:17px;font-weight:950;color:#173a6b}.brand small{display:block;margin-top:3px;color:#8090a3;font-size:10px;letter-spacing:1px}.top a{color:#173a6b;font-size:13px;font-weight:850;text-decoration:none}.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center;min-height:500px;padding:55px 0}.eyebrow{margin:0 0 13px;color:#a67500;font-size:13px;font-weight:950;letter-spacing:1px}.hero h1{margin:0;font-size:44px;line-height:1.22;letter-spacing:0;font-weight:950}.hero p{max-width:620px;margin:20px 0 0;color:#50627a;font-size:17px;line-height:1.8;font-weight:650}.actions{display:flex;gap:10px;margin-top:27px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 19px;border-radius:6px;background:#173a6b;color:#fff;text-decoration:none;font-size:14px;font-weight:900}.btn.subtle{background:#dfe9f5;color:#173a6b}.preview{position:relative;justify-self:center;width:min(300px,100%);filter:drop-shadow(12px 18px 18px rgba(20,43,73,.2))}.preview img{display:block;width:100%;border:1px solid #bfccd9;background:#fff}.section{padding:32px 0 64px;border-top:1px solid #ccd7e5}.section h2{margin:0;font-size:24px;font-weight:950}.section>p{margin:10px 0 20px;color:#60738c;line-height:1.7}.exams{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}.exam{display:grid;grid-template-columns:84px 1fr;gap:14px;align-items:center;padding:18px;background:#fff;border:1px solid #d5e0ed;border-radius:8px}.exam .number{display:grid;place-items:center;width:84px;height:104px;background:#173a6b;color:#fff;font-size:30px;font-weight:950}.exam h3{margin:0;font-size:18px}.exam p{margin:7px 0 12px;color:#60718a;font-size:13px;line-height:1.55}.exam a{color:#173a6b;font-size:13px;font-weight:900;text-decoration:none}@media(max-width:720px){.shell{width:min(100% - 24px,1160px)}.hero{grid-template-columns:1fr;gap:25px;min-height:auto;padding:45px 0}.hero h1{font-size:33px}.preview{width:210px;grid-row:1}.exam{grid-template-columns:68px 1fr}.exam .number{width:68px;height:90px}}
+:root{
+  --navy:#173a6b;
+  --navy-2:#0f2747;
+  --gold:#d4af37;
+  --gold-soft:#f5df91;
+  --bg:#f4f7fb;
+  --line:#cfd9e6;
+  --line-2:#e2e9f2;
+  --text:#15253c;
+  --muted:#5e728c;
+  --green:#107a4d;
+  --coral:#c53d4a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Pretendard,system-ui,sans-serif;letter-spacing:0}
+body{min-height:100vh}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+button{font:inherit}
+.wrap{min-height:100vh}
+.top{
+  position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:16px 24px;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)
+}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.mark{
+  width:40px;height:40px;border-radius:8px;background:var(--navy);color:#fff;display:grid;place-items:center;
+  font-weight:950;font-size:16px;flex:none
+}
+.brand-copy{min-width:0}
+.brand-copy b{display:block;font-size:17px;line-height:1.2;font-weight:950}
+.brand-copy span{display:block;margin-top:4px;color:var(--muted);font-size:12px;font-weight:700}
+.nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.nav a{
+  min-height:38px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px;
+  border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--navy);font-size:13px;font-weight:850
+}
+.nav a.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.nav a.gold{background:var(--gold);border-color:var(--gold);color:#17253a}
+.hero{
+  width:min(1240px,calc(100% - 32px));margin:0 auto;padding:28px 0 18px;
+  display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center
+}
+.hero-copy{
+  padding:10px 0 10px
+}
+.eyebrow{
+  color:var(--gold);font-size:12px;font-weight:950;letter-spacing:.18em
+}
+.hero h1{
+  margin:14px 0 0;font-size:42px;line-height:1.18;font-weight:950;letter-spacing:0;word-break:keep-all
+}
+.hero .lead{
+  margin:18px 0 0;max-width:700px;color:var(--muted);font-size:16px;line-height:1.85;font-weight:600
+}
+.hero .lead strong{color:var(--navy)}
+.cta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 18px;
+  border-radius:8px;border:1px solid var(--navy);background:var(--navy);color:#fff;font-size:14px;font-weight:900
+}
+.btn.secondary{background:#fff;color:var(--navy);border-color:var(--line)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#17253a}
+.trust{
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:18px
+}
+.pill{
+  display:inline-flex;align-items:center;min-height:32px;padding:0 11px;border-radius:999px;border:1px solid var(--line-2);
+  background:#f7f9fc;color:var(--navy);font-size:12px;font-weight:850
+}
+.pill.green{background:#ecf8f1;border-color:#bfe7cf;color:var(--green)}
+.pill.coral{background:#fdecef;border-color:#f1c1ca;color:var(--coral)}
+.hero-visual{
+  display:grid;gap:12px;align-self:stretch;padding:18px;background:#fff;border:1px solid var(--line);border-radius:8px;
+  box-shadow:0 14px 36px rgba(19,37,60,.07)
+}
+.hero-main{
+  overflow:hidden;border:1px solid var(--line-2);border-radius:8px;background:#fff;
+  box-shadow:0 14px 30px rgba(19,37,60,.08)
+}
+.hero-main img{width:100%;height:340px;object-fit:contain;object-position:top center}
+.hero-stack{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.stack-card{border:1px solid var(--line-2);border-radius:8px;overflow:hidden;background:#fff}
+.stack-card img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.stack-card span{display:block;padding:9px 10px;border-top:1px solid var(--line-2);font-size:11px;font-weight:850;color:var(--navy)}
+.section{
+  width:min(1240px,calc(100% - 32px));margin:0 auto;padding:28px 0
+}
+.section-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px}
+.section-head h2{margin:0;font-size:24px;line-height:1.2;font-weight:950}
+.section-head p{margin:0;color:var(--muted);font-size:13px;line-height:1.7;font-weight:600}
+.proof-grid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px
+}
+.proof{
+  background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px
+}
+.proof b{display:block;font-size:18px;line-height:1.25;font-weight:950;color:var(--navy)}
+.proof p{margin:10px 0 0;color:var(--muted);font-size:14px;line-height:1.75;font-weight:600}
+.evidence{
+  display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:start
+}
+.panel{
+  background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px
+}
+.checklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.check{
+  padding:14px;border:1px solid var(--line-2);border-radius:8px;background:#fbfcfe
+}
+.check b{display:block;color:var(--navy);font-size:14px;font-weight:950}
+.check p{margin:8px 0 0;color:var(--muted);font-size:13px;line-height:1.7;font-weight:600}
+.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.analysis-preview{margin-top:16px;padding:16px;border:1px solid var(--line-2);border-radius:8px;background:#fbfcfe}
+.analysis-preview h3{margin:0;color:var(--navy);font-size:15px;font-weight:950}
+.analysis-preview p{margin:6px 0 12px;color:var(--muted);font-size:12px;line-height:1.6;font-weight:600}
+.analysis-preview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.analysis-preview-card{padding:11px;border:1px solid var(--line);border-radius:6px;background:#fff}
+.analysis-preview-card b{display:block;color:var(--navy);font-size:12px;font-weight:950}
+.analysis-preview-card span{display:block;margin-top:8px;color:var(--muted);font-size:11px;font-weight:700}
+.analysis-preview-bar{height:7px;margin-top:10px;border-radius:6px;background:#e8eef5;overflow:hidden}
+.analysis-preview-bar i{display:block;width:100%;height:100%;background:#dbe5ef}
+.shot{
+  border:1px solid var(--line-2);border-radius:8px;overflow:hidden;background:#fff
+}
+.shot img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.shot span{
+  display:block;padding:10px 11px;border-top:1px solid var(--line-2);font-size:12px;font-weight:850;color:var(--navy)
+}
+.pricing{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th,td{padding:14px 16px;border-bottom:1px solid var(--line-2);vertical-align:top;text-align:left}
+th{background:#f8fbff;color:var(--navy);font-size:12px;letter-spacing:0;font-weight:950}
+td{font-size:14px;line-height:1.7}
+.money{font-size:18px;font-weight:950;color:var(--navy)}
+.row-note{color:var(--muted);font-size:13px;font-weight:600}
+.table-btn{
+  display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 13px;border-radius:8px;
+  border:1px solid var(--navy);background:var(--navy);color:#fff;font-size:13px;font-weight:900
+}
+.table-btn.secondary{background:#fff;color:var(--navy);border-color:var(--line)}
+.flow-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.flow{
+  background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px
+}
+.flow .num{color:var(--gold);font-size:12px;font-weight:950;letter-spacing:.16em}
+.flow b{display:block;margin-top:8px;font-size:18px;font-weight:950}
+.flow p{margin:10px 0 0;color:var(--muted);font-size:14px;line-height:1.8;font-weight:600}
+.faq{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.faq-item{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px}
+.faq-item b{display:block;font-size:15px;font-weight:950;color:var(--navy)}
+.faq-item p{margin:10px 0 0;color:var(--muted);font-size:14px;line-height:1.8;font-weight:600}
+.closing{
+  width:min(1240px,calc(100% - 32px));margin:4px auto 34px;padding:22px 20px;background:#fff;border:1px solid var(--line);border-radius:8px;
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center
+}
+.closing b{display:block;font-size:18px;line-height:1.35;font-weight:950}
+.closing p{margin:8px 0 0;color:var(--muted);font-size:13px;line-height:1.7;font-weight:600}
+.closing .cta-row{margin:0}
+.footer{
+  width:min(1240px,calc(100% - 32px));margin:0 auto 30px;padding:0 0 4px;
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:12px;line-height:1.7;font-weight:650
+}
+.footer a{color:var(--navy);font-weight:850}
+@media (max-width: 1020px){
+  .hero,.evidence{grid-template-columns:1fr}
+  .proof-grid,.flow-grid,.faq{grid-template-columns:1fr 1fr}
+}
+@media (max-width: 700px){
+  .top{padding:15px 16px}
+  .brand-copy b{font-size:15px}
+  .brand-copy span{font-size:11px}
+  .nav{display:none}
+  .hero,.section,.closing,.footer{width:min(100% - 20px,1240px)}
+  .hero{padding:18px 0 12px}
+  .hero h1{font-size:28px}
+  .hero .lead{font-size:15px}
+  .hero-stack,.proof-grid,.checklist,.gallery,.flow-grid,.faq{grid-template-columns:1fr}
+  .analysis-preview-grid{grid-template-columns:1fr 1fr}
+  .stack-card{min-width:0}
+  .section{padding:22px 0}
+  .section-head h2{font-size:20px}
+  table,thead,tbody,tr,th,td{display:block;width:100%}
+  thead{display:none}
+  tr{border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:12px}
+  td{border-bottom:1px solid var(--line-2)}
+  td:last-child{border-bottom:0}
+  .closing{padding:18px 16px}
+}
 </style>
 </head>
 <body>
-<div class="shell"><header class="top"><div class="brand">GFIELD<small>THINKING BULL MIDDLE PREP</small></div><a href="./admin.html">승인 관리</a></header>
-<main><section class="hero"><div><p class="eyebrow">THINKING BULL MIDDLE PREP</p><h1>생각하는 황소 중등 대비<br>진단 시험지</h1><p>시험지별 진단 결과를 바탕으로 풀이 강의와 유사문제를 연결합니다. 학생의 현재 성취도를 확인하고, 부족 유형을 클리닉하며 실전 대비를 이어갑니다.</p><div class="actions"><a class="btn" href="#exams">시험지 선택</a><a class="btn subtle" href="./admin.html">승인번호 관리</a></div></div><div class="preview"><img src="./assets/print/diagnostic/page-01.png" alt="중등 선발 모의고사 사전 점검 모의고사 시험지"></div></section>
-<section class="section" id="exams"><h2>중등 대비 시험지</h2><p>구매하거나 승인된 시험지만 열립니다.</p><div class="exams"><article class="exam"><div class="number">01</div><div><h3>중등 성취도 진단 + 클리닉</h3><p>200명 이상의 성취도 분석을 바탕으로 한 40문항 진단, 풀이 강의, 오답 유사문제 클리닉</p><a href="./diagnostic.html">진단 시작하기 →</a></div></article><article class="exam"><div class="number">02</div><div><h3>실전 모의고사</h3><p>실전 1회, 실전 2회, 실전 3회로 구성된 중등 선발 대비 모의고사</p><span class="hint">3회분 분석표 및 뷰어 구성 중</span></div></article><article class="exam"><div class="number">03</div><div><h3>최종 모의고사</h3><p>파이널 모의고사로 최종 실전 감각을 점검하는 과정</p><span class="hint">최종 분석표 및 뷰어 구성 중</span></div></article></div></section>
-</main></div>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="mark">G</div>
+      <div class="brand-copy">
+        <b>GFIELD</b>
+        <span>생각하는 황소 중등 성취도 진단 + 클리닉</span>
+      </div>
+    </div>
+    <nav class="nav" aria-label="페이지 이동">
+      <a href="#proof">프로그램</a>
+      <a href="#evidence">화면 예시</a>
+      <a href="#pricing">구성</a>
+      <a href="#faq">FAQ</a>
+      <a href="./login.html" class="primary" id="loginLink">로그인</a>
+      <a href="https://naver.me/5SSSmKvM" target="_blank" rel="noopener" class="gold">신청하기</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">THINKING BULL MIDDLE CLINIC</div>
+        <h1>생각하는 황소 중등 성취도 진단 + 클리닉</h1>
+        <p class="lead">
+          <strong>200명 이상의 성취도 분석</strong>을 바탕으로 풀이 강의와 오답 유사문제까지 한 흐름으로 연결합니다.
+          진단 모의고사 기준으로는 문항 유형 적중률이 <strong>70%대</strong>까지 확인된 편이지만, 결과를 보장하는 서비스는 아닙니다.
+        </p>
+        <div class="cta-row">
+          <a class="btn" href="./login.html" id="heroLogin">로그인</a>
+          <a class="btn secondary" href="https://naver.me/5SSSmKvM" target="_blank" rel="noopener">신청하기</a>
+          <a class="btn gold" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">카카오톡 문의</a>
+        </div>
+        <div class="trust">
+          <span class="pill green">진단 40문항</span>
+          <span class="pill">O/X 또는 답안 입력</span>
+          <span class="pill">학기·영역·난이도·단원 분석</span>
+          <span class="pill coral">오답 유사문제</span>
+        </div>
+      </div>
+      <div class="hero-visual" aria-label="진단지 미리보기">
+        <figure class="hero-main">
+          <img src="./assets/print/diagnostic/page-01.png" alt="중등 선발 대비 모의고사 사전 점검 모의고사 첫 페이지">
+        </figure>
+        <div class="hero-stack">
+          <figure class="stack-card">
+            <img src="./assets/print/mock-1/page-01.png" alt="실전 모의고사 1회 첫 페이지">
+            <span>실전 1회</span>
+          </figure>
+          <figure class="stack-card">
+            <img src="./assets/answers/mock-1/q20.png" alt="실전 1회 답안 예시">
+            <span>답안 예시</span>
+          </figure>
+          <figure class="stack-card">
+            <img src="./assets/print/mock-3/page-01.png" alt="실전 모의고사 3회 첫 페이지">
+            <span>실전 3회</span>
+          </figure>
+          <figure class="stack-card">
+            <img src="./assets/print/final/page-01.png" alt="파이널 모의고사 첫 페이지">
+            <span>파이널</span>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="proof">
+      <div class="section-head">
+        <div>
+          <h2>프로그램에서 바로 확인되는 것</h2>
+          <p>문항별 답안 입력부터 학기·영역·난이도·단원 분석, 코멘트, 오답 유형, 워터마크 인쇄 흐름까지 이어집니다.</p>
+        </div>
+      </div>
+      <div class="proof-grid">
+        <article class="proof">
+          <b>40문항 진단</b>
+          <p>실제 진단지와 같은 형식으로 시작해, O/X 또는 답안 입력 방식으로 채점할 수 있습니다.</p>
+        </article>
+        <article class="proof">
+          <b>정밀 분석</b>
+          <p>학기별, 영역별, 난이도별, 단원별 수행률을 함께 봐서 취약 지점을 좁혀 갑니다.</p>
+        </article>
+        <article class="proof">
+          <b>코멘트와 유사문제</b>
+          <p>문항별 코멘트와 오답 유사문제를 연결해, 한 번의 진단이 복습으로 끝나지 않게 합니다.</p>
+        </article>
+        <article class="proof">
+          <b>워터마크 인쇄</b>
+          <p>시험지와 답안을 인쇄할 때 워터마크가 들어가며, 뷰어와 출력 흐름을 분리해 관리할 수 있습니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="evidence">
+      <div class="section-head">
+        <div>
+          <h2>실제 화면 예시</h2>
+          <p>새 이미지를 만들지 않고, 현재 레포의 진짜 페이지와 답안 이미지를 그대로 사용합니다.</p>
+        </div>
+      </div>
+      <div class="evidence">
+        <div class="panel">
+          <div class="checklist">
+            <article class="check">
+              <b>답안 입력</b>
+              <p>진단지에서는 O/X와 숫자 답안 입력을 모두 지원합니다.</p>
+            </article>
+            <article class="check">
+              <b>답안 확인</b>
+              <p>채점 전에도 정답표와 해설을 함께 볼 수 있습니다.</p>
+            </article>
+            <article class="check">
+              <b>오답 유사문제</b>
+              <p>오답 하나를 유사유형 모음으로 연결해 반복 학습할 수 있습니다.</p>
+            </article>
+            <article class="check">
+              <b>실전 회차</b>
+              <p>실전 1회, 2회, 3회와 파이널을 같은 뷰어 흐름으로 엽니다.</p>
+            </article>
+            <article class="check">
+              <b>문항별 코멘트</b>
+              <p>대본과 문제 유형을 바탕으로, 문항마다 짧고 직접적인 코멘트를 붙입니다.</p>
+            </article>
+            <article class="check">
+              <b>분석지</b>
+              <p>학기·영역·난이도·단원 분석을 한눈에 보는 형태로 보여 줍니다.</p>
+            </article>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="gallery">
+            <figure class="shot">
+              <img src="./assets/print/diagnostic/page-01.png" alt="진단 모의고사 첫 페이지">
+              <span>진단지</span>
+            </figure>
+            <figure class="shot">
+              <img src="./assets/answers/mock-1/q20.png" alt="답안 예시 이미지">
+              <span>답안 예시</span>
+            </figure>
+            <figure class="shot">
+              <img src="./assets/print/mock-2/page-01.png" alt="실전 2회 첫 페이지">
+              <span>실전 2회</span>
+            </figure>
+            <figure class="shot">
+              <img src="./assets/print/final/page-01.png" alt="파이널 모의고사 첫 페이지">
+              <span>파이널</span>
+            </figure>
+          </div>
+        </div>
+      </div>
+      <div class="analysis-preview" aria-label="분석 화면 구성 예시">
+        <h3>분석 화면 구성 예시</h3>
+        <p>학생별 실제 결과를 임의로 표시하지 않고, 분석지에서 제공하는 네 가지 분류 화면의 구조만 보여 줍니다.</p>
+        <div class="analysis-preview-grid">
+          <div class="analysis-preview-card"><b>학기별 수행률</b><span>4-1 · 4-2 · 5-1 · 5-2 · 6-1 · 6-2</span><div class="analysis-preview-bar"><i style="width:72%"></i></div></div>
+          <div class="analysis-preview-card"><b>영역별 수행률</b><span>수 · 식의 계산 · 도형 · 규칙찾기</span><div class="analysis-preview-bar"><i style="width:58%"></i></div></div>
+          <div class="analysis-preview-card"><b>난이도별 수행률</b><span>하 · 중 · 상 · 최상</span><div class="analysis-preview-bar"><i style="width:64%"></i></div></div>
+          <div class="analysis-preview-card"><b>단원별 수행률</b><span>문항 연결 단원과 약점 유형</span><div class="analysis-preview-bar"><i style="width:46%"></i></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <div class="section-head">
+        <div>
+          <h2>선택 상품</h2>
+          <p>현재 안내 중인 네 가지 구성만 정확히 보여 줍니다.</p>
+        </div>
+      </div>
+      <div class="pricing">
+        <table>
+          <thead>
+            <tr>
+              <th>상품</th>
+              <th>구성</th>
+              <th>금액</th>
+              <th>신청</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. 온라인 모의고사 + 진단 + 풀이 + 유사문제 학습</strong></td>
+              <td class="row-note">진단지, 풀이 강의, 오답 유사문제 학습</td>
+              <td class="money">12만원</td>
+              <td><a class="table-btn" href="https://naver.me/5SSSmKvM" target="_blank" rel="noopener">신청하기</a></td>
+            </tr>
+            <tr>
+              <td><strong>2. 1번 + 비대면 상담 및 학년별 주요 문항 또는 파이널 1회</strong></td>
+              <td class="row-note">상담과 회차 1회가 추가됩니다.</td>
+              <td class="money">20만원</td>
+              <td><a class="table-btn" href="https://naver.me/5SSSmKvM" target="_blank" rel="noopener">신청하기</a></td>
+            </tr>
+            <tr>
+              <td><strong>3. 2번 + 온라인 추가 실전 모의고사 풀세트 (진단+실전 4회)</strong></td>
+              <td class="row-note">진단 + 실전 4회 세트로 확장됩니다.</td>
+              <td class="money">32만원</td>
+              <td><a class="table-btn" href="https://naver.me/5SSSmKvM" target="_blank" rel="noopener">신청하기</a></td>
+            </tr>
+            <tr>
+              <td><strong>4. 파이널</strong></td>
+              <td class="row-note">1·2·3번 구매자만 신청 가능합니다. 1·2·3번에 대한 종합 확인입니다.</td>
+              <td class="money">4만원</td>
+              <td><a class="table-btn secondary" href="https://naver.me/5SSSmKvM" target="_blank" rel="noopener">신청하기</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="flow">
+      <div class="section-head">
+        <div>
+          <h2>이용 흐름</h2>
+          <p>홍보 홈에서 로그인까지의 동선을 짧게 유지했습니다.</p>
+        </div>
+      </div>
+      <div class="flow-grid">
+        <article class="flow">
+          <div class="num">STEP 01</div>
+          <b>신청하기</b>
+          <p>신청 링크로 접수하면 승인번호를 카카오톡으로 전달합니다.</p>
+        </article>
+        <article class="flow">
+          <div class="num">STEP 02</div>
+          <b>로그인</b>
+          <p>이름과 승인번호를 입력하면 서재로 바로 연결됩니다.</p>
+        </article>
+        <article class="flow">
+          <div class="num">STEP 03</div>
+          <b>서재 열기</b>
+          <p>구매한 항목만 열리고, 나머지는 잠금 상태로 투명하게 보입니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="section-head">
+        <div>
+          <h2>FAQ</h2>
+          <p>공용 페이지에서 자주 보는 질문만 짧게 정리했습니다.</p>
+        </div>
+      </div>
+      <div class="faq">
+        <article class="faq-item">
+          <b>문항 유형 적중률이 100%인가요?</b>
+          <p>아닙니다. 진단 모의고사 기준으로 70%대 적중률을 확인한 편이며, 보장 문구로 쓰지 않도록 했습니다.</p>
+        </article>
+        <article class="faq-item">
+              <b>구매한 상품만 열리나요?</b>
+              <p>네. 전체 구성은 서재에서 확인할 수 있고, 승인된 상품만 실제 뷰어로 열립니다.</p>
+        </article>
+        <article class="faq-item">
+          <b>전체 프로그램이 다 보이나요?</b>
+          <p>네. 서재에서는 전체 상품을 모두 보여 주고, 구매한 항목만 실제로 열립니다.</p>
+        </article>
+        <article class="faq-item">
+          <b>답안과 해설은 어디서 보나요?</b>
+          <p>서재와 기존 뷰어에서 연결합니다. 정답표, 해설, 워터마크 인쇄 흐름은 현재 레포의 페이지를 그대로 사용합니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="closing">
+      <div>
+        <b>지금 구조는 홍보 홈 -> 로그인 -> 서재 -> 기존 뷰어로 이어집니다.</b>
+        <p>정답표, 분석지, 유사문제, 실전 회차를 같은 문맥으로 연결하는 것이 핵심입니다.</p>
+      </div>
+      <div class="cta-row">
+        <a class="btn secondary" href="./login.html" id="closingLogin">로그인</a>
+        <a class="btn" href="https://naver.me/5SSSmKvM" target="_blank" rel="noopener">신청하기</a>
+        <a class="btn gold" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">카카오톡 문의</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>승인번호는 구매 후 카카오톡으로 전달됩니다. 이름은 인쇄 워터마크에만 사용됩니다.</span>
+    <span><a href="./login.html">로그인</a> · <a href="./library.html">서재</a> · <a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">문의</a></span>
+  </footer>
+</div>
+<script src="./data.js"></script>
+<script src="./shared-auth.js"></script>
 <script>
-const examCards=document.querySelectorAll('.exam');
-if(examCards[1]) examCards[1].querySelector('.hint').outerHTML='<div class="actions"><a class="btn" href="./exam.html?exam=mock-1">실전 1회</a><a class="btn" href="./exam.html?exam=mock-2">실전 2회</a><a class="btn" href="./exam.html?exam=mock-3">실전 3회</a></div>';
-if(examCards[2]) examCards[2].querySelector('.hint').outerHTML='<div class="actions"><a class="btn" href="./exam.html?exam=final">파이널 모의고사</a></div>';
+const session = HSMIDDLE_AUTH.readSession();
+const loginLink = document.getElementById("loginLink");
+const heroLogin = document.getElementById("heroLogin");
+const closingLogin = document.getElementById("closingLogin");
+if (session.valid && session.access.length) {
+  loginLink.textContent = "서재";
+  loginLink.href = "./library.html";
+  heroLogin.textContent = "서재로 이동";
+  heroLogin.href = "./library.html";
+  closingLogin.textContent = "서재로 이동";
+  closingLogin.href = "./library.html";
+}
 </script>
-</body></html>
+</body>
+</html>

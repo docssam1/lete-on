@@ -22,7 +22,7 @@
     </section>
   </section>
 </main><div class="watermark hidden" id="watermark"></div>
-<script src="./data.js"></script>
+<script src="./data.js"></script><script src="./shared-auth.js"></script>
 <script>
 const D=window.HSMIDDLE_DATA,byId=id=>document.getElementById(id);
 const units={1:'1단원 큰수',2:'6단원 규칙찾기',3:'3단원 곱셈과 나눗셈',4:'3단원 곱셈과 나눗셈',5:'2단원 각도',6:'2단원 각도',7:'2단원 분수의 곱셈',8:'3단원 소수의 덧셈과 뺄셈',9:'4단원 소수의 곱셈',10:'4단원 사각형',11:'4단원 사각형',12:'2단원 약수와 배수',13:'2단원 약수와 배수',14:'3단원 규칙과 대응',15:'3단원 규칙과 대응',16:'3단원 곱셈과 나눗셈',17:'2단원 약수와 배수',18:'2단원 약수와 배수',19:'5단원 직육면체',20:'4단원 약분과 통분',21:'4단원 약분과 통분',22:'5단원 분수의 덧셈과 뺄셈',23:'5단원 분수의 덧셈과 뺄셈',24:'2단원 분수의 곱셈',25:'6단원 다각형의 둘레와 넓이',26:'6단원 다각형의 둘레와 넓이',27:'2단원 분수의 곱셈',28:'2단원 분수의 곱셈',29:'2단원 소수의 나눗셈',30:'3단원 합동과 대칭',31:'4단원 비와 비율',32:'2단원 소수의 나눗셈',33:'2단원 소수의 나눗셈',34:'4단원 비와 비율',35:'5단원 원의 넓이',36:'6단원 직육면체의 겉넓이와 부피',37:'2단원 각기둥과 각뿔',38:'4단원 비례식과 비례배분',39:'4단원 소수의 곱셈',40:'3단원 합동과 대칭'};
@@ -72,7 +72,9 @@ const videoStarts=[60,138,208,315,384,465,507,574,679,750,809,856,931,1107,1198,
 let student='',tab='problem',mode='each',mark='answer';
 const norm=s=>String(s||'').replaceAll(' ','').replaceAll(',','').toLowerCase();
 const key=q=>`hsm-${mark}-${q[0]}`;
-function signIn(){const name=byId('name').value.trim(),code=byId('code').value.trim().toUpperCase();if(D.studentCode[name]!==code||!(D.access[name]||[]).includes('diagnostic')){byId('error').classList.remove('hidden');return}student=name;byId('login').classList.add('hidden');byId('app').classList.remove('hidden');byId('watermark').textContent=`${student} 학생 · GFIELD`;byId('watermark').classList.remove('hidden');render()}
+function signIn(){const name=byId('name').value.trim(),code=byId('code').value.trim().toUpperCase();if(!HSMIDDLE_AUTH.isValidStudent(name,code)||!HSMIDDLE_AUTH.canAccess(name,'diagnostic')){byId('error').classList.remove('hidden');return}HSMIDDLE_AUTH.writeSession(name,code);student=name;byId('login').classList.add('hidden');byId('app').classList.remove('hidden');byId('watermark').textContent=`${student} 학생 · GFIELD`;byId('watermark').classList.remove('hidden');render()}
+const savedDiagnosticSession=HSMIDDLE_AUTH.readSession();
+if(savedDiagnosticSession.valid&&savedDiagnosticSession.access.includes('diagnostic')){student=savedDiagnosticSession.name;byId('login').classList.add('hidden');byId('app').classList.remove('hidden');byId('watermark').textContent=`${student} 학생 · GFIELD`;byId('watermark').classList.remove('hidden');render()}
 function openDiagnostic(){open(`./viewer.html?doc=diagnostic&student=${encodeURIComponent(student)}`,'_blank','noopener')}
 function openPractice(numbers){open(`./viewer.html?doc=similar&qs=${numbers.join(',')}&student=${encodeURIComponent(student)}`,'_blank','noopener')}
 function setTab(v){tab=v;document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===v));byId('modes').classList.toggle('hidden',v!=='problem');render()}
