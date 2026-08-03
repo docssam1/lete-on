@@ -61,7 +61,7 @@ const printBtn=document.getElementById("printBtn");
 document.getElementById("title").textContent=title;
 document.title=title+" | GFIELD";
 if(lessonVideo)document.getElementById("videoBtn").style.display="";
-if(documentKey==="killer")document.getElementById("answerBtn").style.display="";
+if(documentKey==="killer"||documentKey.startsWith("mock-set")||documentKey==="diagnostic")document.getElementById("answerBtn").style.display="";
 if(topics.length){
   document.getElementById("courseSummary").style.display="";
   const topicList=document.getElementById("courseTopics");
@@ -72,7 +72,9 @@ function openLessonVideo(){
   window.open(url,"_blank","noopener");
 }
 function openAnswerGuide(){
-  const url=`../killer-answer/?student=${encodeURIComponent(student)}`;
+  const url=documentKey==="killer"
+    ? `../killer-answer/?student=${encodeURIComponent(student)}`
+    : `./?doc=answer&student=${encodeURIComponent(student)}`;
   window.open(url,"_blank","noopener");
 }
 
