@@ -145,7 +145,8 @@ button,input{font:inherit}
       </div>
     </div>
     <div class="top-links">
-      <a href="./index.html">홍보 페이지</a>
+      <a href="./promo/index.html">홍보 페이지</a>
+      <a href="./archive.html">자료실</a>
       <a href="./login.html" class="secondary">다른 이름으로 로그인</a>
       <a class="primary" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">카카오톡 문의</a>
       <button class="btn logout" type="button" onclick="logout()">로그아웃</button>
@@ -196,7 +197,7 @@ button,input{font:inherit}
 
   <div class="fineprint">
     <span>승인번호는 구매 후 카카오톡으로 전달됩니다.</span>
-    <span><a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">문의 바로가기</a> · <a href="./index.html">홍보 홈</a></span>
+    <span><a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">문의 바로가기</a> · <a href="./promo/index.html">홍보 홈</a></span>
   </div>
 </div>
 
@@ -258,7 +259,7 @@ const catalog = [
     key: "mock-2",
     title: "실전 모의고사 2회",
     image: "./assets/print/mock-2/page-01.png",
-    copy: "채점 후 약점 유형을 확인하고, 답안 확인과 분석 흐름을 이어갑니다.",
+    copy: "채점 후 약점 유형을 확인하고, 답안 확인과 분석 흐름을 이어겑니다.",
     chips: ["실전 2회", "약점 분석", "답안 확인"],
     route: productRoutes["mock-2"],
   },
@@ -313,7 +314,7 @@ document.getElementById("catalog").innerHTML = catalog.map(item => {
 
 window.addEventListener("keydown", e => {
   if (e.key === "Escape") {
-    location.href = "./index.html";
+    location.href = "./promo/index.html";
   }
 });
 </script>
