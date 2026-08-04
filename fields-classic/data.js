@@ -1,7 +1,7 @@
 /* =========================================================
  * 지필드 영재교육 · 필즈 더 클래식 대비 과정
  * 공용 데이터 파일 — 관리자 콘솔에서 자동 생성됨
- * 생성: 2026. 8. 4. 오후 7:33:15
+ * 생성: 2026. 8. 4. 오후 7:34:21
  * ========================================================= */
 window.GFIELD_FC_DATA = {
   "students": [
@@ -13,7 +13,8 @@ window.GFIELD_FC_DATA = {
     "남유준",
     "김리하",
     "gfield",
-    "김채원"
+    "김채원",
+    "전윤찬"
   ],
   "studentCode": {
     "최연윤": "GF8QSMMW",
@@ -25,7 +26,8 @@ window.GFIELD_FC_DATA = {
     "김리하": "GF6SAAXH",
     "남유준": "GFBSDB6G",
     "gfield": "GFBF4J7X",
-    "김채원": "GFHPEGHY"
+    "김채원": "GFHPEGHY",
+    "전윤찬": "GFPNYS6Y"
   },
   "studentType": {
     "최연우": "internal",
@@ -36,7 +38,8 @@ window.GFIELD_FC_DATA = {
     "남유준": "internal",
     "김리하": "online",
     "gfield": "internal",
-    "김채원": "internal"
+    "김채원": "internal",
+    "전윤찬": "internal"
   },
   "attendance": {
     "최연우": [
@@ -93,6 +96,10 @@ window.GFIELD_FC_DATA = {
       "실전모의고사3회"
     ],
     "김채원": [
+      "개념완성",
+      "연산연습"
+    ],
+    "전윤찬": [
       "개념완성",
       "연산연습"
     ]
