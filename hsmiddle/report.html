@@ -229,7 +229,14 @@ function grade(score){if(score>=82.5)return ['챌린지','고난도 문제에서
 
 function aggregate(label,values){const map={};D.questions.forEach(q=>{const k=values(q),s=state(q);if(!map[k])map[k]={label:k,total:0,done:0,correct:0};map[k].total++;if(s!==null){map[k].done++;if(s)map[k].correct++}});return {label,rows:Object.values(map)}}
 function rate(row){return row.done?Math.round(row.correct/row.done*100):null}
-function chart(data){return `<section class="chart"><h3>${data.label}</h3>${data.rows.map(r=>{const rt=r.done?Math.round(r.correct/r.done*100):0;return `<div class="bar-row"><span>${r.label}</span><div class="track"><div class="fill" style="width:${rt}%"></div></div><b>${r.correct}/${r.total}</b></div>`}).join('')}</section>`}
+const DIFF_ORDER={'하':1,'중':2,'상':3,'최상':4};
+function chartOrder(rows){
+  if(rows.length&&rows.every(r=>DIFF_ORDER[r.label]))return [...rows].sort((a,b)=>DIFF_ORDER[a.label]-DIFF_ORDER[b.label]);
+  const semOf=l=>{const m=String(l).match(/([456])-([12])/);return m?(+m[1])*10+(+m[2]):99};
+  const unitOf=l=>{const m=String(l).match(/(\d+)단원/);return m?+m[1]:0};
+  return [...rows].sort((a,b)=>semOf(a.label)-semOf(b.label)||unitOf(a.label)-unitOf(b.label));
+}
+function chart(data){return `<section class="chart"><h3>${data.label}</h3>${chartOrder(data.rows).map(r=>{const rt=r.done?Math.round(r.correct/r.done*100):0;return `<div class="bar-row"><span>${r.label}</span><div class="track"><div class="fill" style="width:${rt}%"></div></div><b>${r.correct}/${r.total}</b></div>`}).join('')}</section>`}
 function analysisComments(score,sem,area,unit){const sampled=[...sem.rows,...area.rows,...unit.rows].filter(r=>r.done);if(!sampled.length)return ['답안 입력 또는 O/X 체크를 시작하면 학기·영역·단원별 코멘트가 자동으로 작성됩니다.','40문항은 문항당 2.5점이며, 현재 입력한 문항만 수행률 계산에 반영합니다.'];const weak=[...sampled].sort((a,b)=>rate(a)-rate(b))[0],strong=[...sampled].sort((a,b)=>rate(b)-rate(a))[0],c=[];c.push(`${weak.label} 수행률은 ${rate(weak)}%입니다. ${rate(weak)<60?'개념을 다시 확인한 뒤 해당 유형의 유사문제를 순서대로 풀어 보세요.':rate(weak)<80?'핵심 개념은 이해했지만 조건을 빠뜨리는지 풀이 과정을 점검해 보세요.':'현재 입력 기준으로 안정적입니다. 고난도 유형으로 확장해도 좋습니다.'}`);if(strong.label!==weak.label)c.push(`${strong.label}은 ${rate(strong)}%로 가장 안정적입니다. 이 영역은 풀이 속도와 검산 습관을 유지하면 됩니다.`);c.push(score>=70?'70점 이상입니다. 4·5·6학년 과정의 약점 단원만 보완한 뒤 심화 유형 드릴로 넘어갈 수 있습니다.':'70점 미만입니다. 부분분수·번분수처럼 낯선 개념이거나 4학년 유형의 공백이 있는지 먼저 확인하고, 한 단계 위 교재의 개념 탐구와 미션을 병행해 주세요.');return c}
 
 /* ---- 리포트 전용 렌더링 ---- */
@@ -247,8 +254,11 @@ function signIn(){
   HSMIDDLE_AUTH.writeSession(name,code);
   enter(name);
 }
-const savedSession=HSMIDDLE_AUTH.readSession();
-if(savedSession.valid&&savedSession.access.includes(accessKey)){enter(savedSession.name)}
+/* 자동 로그인은 스크립트 전체 선언이 끝난 뒤 실행해야 한다 (TDZ 방지) */
+window.addEventListener('DOMContentLoaded',()=>{
+  const savedSession=HSMIDDLE_AUTH.readSession();
+  if(savedSession.valid&&HSMIDDLE_AUTH.canAccess(savedSession.name,accessKey)){enter(savedSession.name)}
+});
 
 function enter(name){
   student=name;
@@ -313,6 +323,15 @@ function targetComment(score){
   return score>=65?'목표 65점을 달성했습니다.':`목표 65점까지 ${65-score}점 남았습니다.`;
 }
 const COMMON_ADVICE="중등 진입 후 첫 고비는 '정수와 유리수 → 문자와 식' 단원입니다. 답만 쓰고 풀이 과정을 쓰지 않는 습관이 있다면, 지금부터 풀이를 손으로 정리하는 훈련을 병행하세요.";
+
+/* 실전 모의고사에는 유사문제가 없으므로 처방 문구를 풀이 영상 기준으로 치환 */
+function noSimilar(s){
+  return String(s)
+    .replaceAll('약한 유형은 오답 유사문제로 보완해 주세요','약한 유형은 풀이 영상으로 보완해 주세요')
+    .replaceAll('약한 유형을 유사문제로 보완한 뒤','약한 유형을 풀이 영상으로 보완한 뒤')
+    .replaceAll('해당 유형의 유사문제를 순서대로 풀어 보세요','풀이 영상으로 개념을 다시 확인해 보세요')
+    .replaceAll('유사문제','풀이 영상');
+}
 
 function errorTable(errors){
   if(!errors.length)return '<p class="hint">오답 문항이 없습니다. 현재 입력 기준으로 채점된 문항은 모두 정답입니다.</p>';
@@ -456,7 +475,7 @@ function renderDiagnostic(){
   const sem=aggregate('학기별 수행률',q=>q[3]);
   const area=aggregate('영역별 수행률',q=>q[4]);
   const hard=aggregate('난이도별 수행률',q=>q[2]);
-  const unit=aggregate('단원별 수행률',q=>units[q[0]]);
+  const unit=aggregate('단원별 수행률',q=>`${q[3]} ${units[q[0]]}`);
   const errors=D.questions.filter(q=>state(q)===false);
   const comments=[...analysisComments(score,sem,area,unit),levelAdvice(level,score),targetComment(score),COMMON_ADVICE];
 
@@ -699,15 +718,16 @@ function renderExam(){
   }
 
   const score=Math.round(analysis.correct*2.5*100)/100;
-  const [level,gapText]=grade(score);
+  const [level,gapTextRaw]=grade(score);
+  const gapText=noSimilar(gapTextRaw);
 
   let metaSection='';
   if(meta){
     const sem=examAggregate(meta,'학기별 수행률',m=>m.sem,analysis.states,analysis.questions);
     const area=examAggregate(meta,'영역별 수행률',m=>m.area,analysis.states,analysis.questions);
     const hard=examAggregate(meta,'난이도별 수행률',m=>m.diff,analysis.states,analysis.questions);
-    const unit=examAggregate(meta,'단원별 수행률',m=>m.unit,analysis.states,analysis.questions);
-    const comments=[...analysisComments(score,sem,area,unit),levelAdvice(level,score),targetComment(score),COMMON_ADVICE];
+    const unit=examAggregate(meta,'단원별 수행률',m=>`${m.sem} ${m.unit}`,analysis.states,analysis.questions);
+    const comments=[...analysisComments(score,sem,area,unit),levelAdvice(level,score),targetComment(score),COMMON_ADVICE].map(noSimilar);
     metaSection=`<section class="panel">
       <div class="chart-grid">${chart(sem)}${chart(area)}${chart(hard)}${chart(unit)}</div>
       <section class="detail">

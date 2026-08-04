@@ -1,16 +1,16 @@
-// 실전 모의고사 문항드 메타데이터 — 시험지 원본 기반 자동 분류 (검수 가능)
+// 실전 모의고사 문항 메타데이터 — 시험지 원본 기반 자동 분류 (검수 가능)
 // area: 수/식의 계산/도형/규칙찾기 · diff: 하/중/상/최상 · sem: 학기 · unit: 단원
 window.HSMIDDLE_EXAM_META = {
   "mock-1": {
     1: {sem:"4-1", unit:"1단원 큰수", area:"수", diff:"하"},
-    2: {sem:"4-1", unit:"3단원 곱셈과 나눗셈", area:"식의 계산", diff:"중"},
-    3: {sem:"4-1", unit:"3단원 곱셈과 나눗셈", area:"식의 계산", diff:"중"},
-    4: {sem:"4-1", unit:"6단원 규칙찾기", area:"규칙찾기", diff:"중"},
+    2: {sem:"4-1", unit:"3단원 곱셈과 나눗셈", area:"식의 계산", diff:"하"},
+    3: {sem:"4-1", unit:"3단원 곱셈과 나눗셈", area:"식의 계산", diff:"하"},
+    4: {sem:"4-1", unit:"6단원 규칙찾기", area:"규칙찾기", diff:"하"},
     5: {sem:"4-2", unit:"2단원 삼각형", area:"도형", diff:"중"},
-    6: {sem:"4-1", unit:"2단원 각도", area:"도형", diff:"중"},
+    6: {sem:"4-1", unit:"2단원 각도", area:"도형", diff:"하"},
     7: {sem:"5-1", unit:"5단원 분수의 덧셈과 뺄셈", area:"규칙찾기", diff:"중"},
     8: {sem:"5-1", unit:"3단원 규칙과 대응", area:"규칙찾기", diff:"중"},
-    9: {sem:"4-2", unit:"3단원 소수의 덧셈과 뺄셈", area:"수", diff:"중"},
+    9: {sem:"4-2", unit:"3단원 소수의 덧셈과 뺄셈", area:"수", diff:"하"},
     10: {sem:"5-1", unit:"6단원 다각형의 둘레와 넓이", area:"도형", diff:"중"},
     11: {sem:"4-2", unit:"2단원 삼각형", area:"도형", diff:"중"},
     12: {sem:"4-2", unit:"4단원 사각형", area:"도형", diff:"중"},
@@ -90,8 +90,8 @@ window.HSMIDDLE_EXAM_META = {
     2: {sem:"4-1", unit:"2단원 각도", area:"도형", diff:"하"},
     3: {sem:"4-1", unit:"2단원 각도", area:"도형", diff:"하"},
     4: {sem:"4-1", unit:"3단원 곱셈과 나눗셈", area:"식의 계산", diff:"하"},
-    5: {sem:"4-1", unit:"3단원 곱셈과 나눗셈", area:"식의 계산", diff:"중"},
-    6: {sem:"4-1", unit:"3단원 곱셈과 나눗셈", area:"식의 계산", diff:"중"},
+    5: {sem:"4-1", unit:"3단원 곱셈과 나눗셈", area:"식의 계산", diff:"하"},
+    6: {sem:"4-1", unit:"3단원 곱셈과 나눗셈", area:"식의 계산", diff:"하"},
     7: {sem:"4-1", unit:"6단원 규칙찾기", area:"규칙찾기", diff:"중"},
     8: {sem:"4-1", unit:"6단원 규칙찾기", area:"규칙찾기", diff:"중"},
     9: {sem:"5-2", unit:"4단원 소수의 곱셈", area:"식의 계산", diff:"중"},
@@ -129,10 +129,10 @@ window.HSMIDDLE_EXAM_META = {
   },
   "final": {
     1: {sem:"4-1", unit:"3단원 곱셈과 나눗셈", area:"식의 계산", diff:"하"},
-    2: {sem:"4-2", unit:"3단원 소수의 덧셈과 뺄셈", area:"수", diff:"중"},
-    3: {sem:"4-2", unit:"4단원 사각형", area:"도형", diff:"중"},
-    4: {sem:"5-1", unit:"4단원 약분과 통분", area:"수", diff:"중"},
-    5: {sem:"4-1", unit:"3단원 곱셈과 나눗셈", area:"식의 계산", diff:"중"},
+    2: {sem:"4-2", unit:"3단원 소수의 덧셈과 뺄셈", area:"수", diff:"하"},
+    3: {sem:"4-2", unit:"4단원 사각형", area:"도형", diff:"하"},
+    4: {sem:"5-1", unit:"4단원 약분과 통분", area:"수", diff:"하"},
+    5: {sem:"4-1", unit:"3단원 곱셈과 나눗셈", area:"식의 계산", diff:"하"},
     6: {sem:"5-1", unit:"6단원 다각형의 둘레와 넓이", area:"도형", diff:"상"},
     7: {sem:"5-1", unit:"6단원 다각형의 둘레와 넓이", area:"도형", diff:"중"},
     8: {sem:"6-2", unit:"2단원 소수의 나눗셈", area:"식의 계산", diff:"중"},
