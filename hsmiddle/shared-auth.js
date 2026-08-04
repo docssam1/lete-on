@@ -20,6 +20,11 @@
     return accessList(name).includes(examKey);
   };
 
+  const isAdmin = name => {
+    const list = data().admins;
+    return Array.isArray(list) && list.includes(normalizeName(name));
+  };
+
   const isValidStudent = (name, code) => {
     const normalizedName = normalizeName(name);
     const normalizedCode = normalizeCode(code);
@@ -60,6 +65,7 @@
     normalizeCode,
     accessList,
     canAccess,
+    isAdmin,
     isValidStudent,
     readSession,
     writeSession,

@@ -1,7 +1,12 @@
 window.HSMIDDLE_DATA = {
-  students: ["DEMO", "오지민"],
-  studentCode: { DEMO: "HS-DEMO", "오지민": "1329" },
-  access: { DEMO: ["diagnostic"], "오지민": ["mock-1", "mock-2"] },
+  students: ["DEMO", "docssam", "오지민"],
+  studentCode: { DEMO: "HS-DEMO", docssam: "01020837265", "오지민": "1329" },
+  access: {
+    DEMO: ["diagnostic"],
+    docssam: ["diagnostic", "mock-1", "mock-2", "mock-3", "final"],
+    "오지민": ["mock-1", "mock-2"]
+  },
+  admins: ["docssam"],
   exams: {
     diagnostic: "중등 성취도 진단 + 클리닉",
     "mock-1": "실전 모의고사 1회",
