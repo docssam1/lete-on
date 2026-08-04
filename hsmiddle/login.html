@@ -173,7 +173,7 @@ button,input{font:inherit}
       <div class="preview-note">
         <div class="brand-mark" aria-hidden="true" style="width:34px;height:34px;font-size:14px">W</div>
         <div>
-          <b>워터마크 인쇄와 답안 확인이 같은 흐름으로 이어집니다.</b>
+          <b>워터마크 인쇄과 답안 확인이 같은 흐름으로 이어집니다.</b>
           <p>구매 후 전달되는 승인번호로만 서재에 들어가며, 이름은 인쇄 워터마크에만 사용됩니다.</p>
         </div>
       </div>
@@ -215,7 +215,7 @@ button,input{font:inherit}
 <script>
 const session = HSMIDDLE_AUTH.readSession();
 if (session.valid && session.access.length) {
-  location.replace("./library.html");
+  location.replace(HSMIDDLE_AUTH.isAdmin(session.name) ? "./admin.html" : "./library.html");
 }
 
 const form = document.getElementById("loginForm");
@@ -238,8 +238,9 @@ form.addEventListener("submit", event => {
     return;
   }
   HSMIDDLE_AUTH.writeSession(name, code);
-  setStatus("확인되었습니다. 서재로 이동합니다.", "ok");
-  location.href = "./library.html";
+  const admin = HSMIDDLE_AUTH.isAdmin(name);
+  setStatus(admin ? "관리자로 확인되었습니다. 승인 관리로 이동합니다." : "확인되었습니다. 서재로 이동합니다.", "ok");
+  location.href = admin ? "./admin.html" : "./library.html";
 });
 
 nameInput.addEventListener("keydown", e => {
