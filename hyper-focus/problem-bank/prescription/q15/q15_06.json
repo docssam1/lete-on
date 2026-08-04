@@ -1,0 +1,41 @@
+{
+  "pattern": [
+    "triangle",
+    "star",
+    "square"
+  ],
+  "colors": [
+    "#3498DB",
+    "#E74C3C",
+    "#27AE60"
+  ],
+  "sizes": [
+    0.1,
+    0.06,
+    0.06
+  ],
+  "period": 3,
+  "seq_len": 9,
+  "choices_raw": [
+    [
+      "triangle",
+      "#3498DB",
+      0.06
+    ],
+    [
+      "triangle",
+      "#9B59B6",
+      0.1
+    ],
+    [
+      "triangle",
+      "#3498DB",
+      0.1
+    ],
+    [
+      "star",
+      "#3498DB",
+      0.1
+    ]
+  ]
+}

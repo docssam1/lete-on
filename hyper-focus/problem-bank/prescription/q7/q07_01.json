@@ -1,0 +1,24 @@
+{
+  "same_sh": "square",
+  "same_col": "#27AE60",
+  "diff_sh": "pentagon",
+  "opts": [
+    [
+      "square",
+      "#27AE60"
+    ],
+    [
+      "pentagon",
+      "#27AE60"
+    ],
+    [
+      "square",
+      "#27AE60"
+    ],
+    [
+      "square",
+      "#27AE60"
+    ]
+  ],
+  "diff_idx": 1
+}
