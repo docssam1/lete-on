@@ -7,7 +7,7 @@ window.HSMIDDLE_DATA = {
   "studentCode": {
     "DEMO": "HS-DEMO",
     "docssam": "01020837265",
-    "오지민": "HS1329"
+    "오지민": "HS-1329"
   },
   "access": {
     "DEMO": [
