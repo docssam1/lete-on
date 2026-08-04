@@ -324,6 +324,16 @@ function targetComment(score){
 }
 const COMMON_ADVICE="중등 진입 후 첫 고비는 '정수와 유리수 → 문자와 식' 단원입니다. 답만 쓰고 풀이 과정을 쓰지 않는 습관이 있다면, 지금부터 풀이를 손으로 정리하는 훈련을 병행하세요.";
 
+/* 도형 영역이 약할 때 — 황소 기하는 중2·3 수준 난이도까지 출제된다 */
+function geometryAdvice(area){
+  if(!area||!area.rows)return '';
+  const geo=area.rows.find(r=>r.label==='도형');
+  if(!geo||!geo.done)return '';
+  const r=rate(geo);
+  if(r>=80)return '';
+  return `도형 수행률이 ${r}%입니다. 생각하는 황소의 기하 문항은 초등 교육과정 범위 안에서 출제되더라도 중2·3 수준의 난이도까지 다루기 때문에, 단원 복습만으로는 부족할 수 있습니다. 보조선 긋기·등적변형·닮음비 감각을 별도 훈련으로 잡아 주세요.`;
+}
+
 /* 실전 모의고사에는 유사문제가 없으므로 처방 문구를 풀이 영상 기준으로 치환 */
 function noSimilar(s){
   return String(s)
@@ -477,7 +487,7 @@ function renderDiagnostic(){
   const hard=aggregate('난이도별 수행률',q=>q[2]);
   const unit=aggregate('단원별 수행률',q=>`${q[3]} ${units[q[0]]}`);
   const errors=D.questions.filter(q=>state(q)===false);
-  const comments=[...analysisComments(score,sem,area,unit),levelAdvice(level,score),targetComment(score),COMMON_ADVICE];
+  const comments=[...analysisComments(score,sem,area,unit),geometryAdvice(area),levelAdvice(level,score),targetComment(score),COMMON_ADVICE].filter(Boolean);
 
   body.innerHTML=`
     <section class="panel">
@@ -731,7 +741,7 @@ function renderExam(){
     const area=examAggregate(meta,'영역별 수행률',m=>m.area,analysis.states,analysis.questions);
     const hard=examAggregate(meta,'난이도별 수행률',m=>m.diff,analysis.states,analysis.questions);
     const unit=examAggregate(meta,'단원별 수행률',m=>`${m.sem} ${m.unit}`,analysis.states,analysis.questions);
-    const comments=[...analysisComments(score,sem,area,unit),levelAdvice(level,score),targetComment(score),COMMON_ADVICE].map(noSimilar);
+    const comments=[...analysisComments(score,sem,area,unit),geometryAdvice(area),levelAdvice(level,score),targetComment(score),COMMON_ADVICE].filter(Boolean).map(noSimilar);
     metaSection=`<section class="panel">
       <div class="chart-grid">${chart(sem)}${chart(area)}${chart(hard)}${chart(unit)}</div>
       <section class="detail">
