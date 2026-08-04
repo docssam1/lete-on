@@ -211,6 +211,10 @@ if (!session.valid || !session.access.length) {
 
 const access = new Set(session.access);
 function logout(){HSMIDDLE_AUTH.clearSession();location.replace('./login.html')}
+if(HSMIDDLE_AUTH.isAdmin(session.name)){
+  const a=document.createElement("a");a.href="./admin.html";a.textContent="승인 관리";a.className="primary";
+  document.querySelector(".top-links").prepend(a);
+}
 const isOpen = key => access.has(key);
 const name = session.name;
 const totalProducts = 5;
@@ -259,7 +263,7 @@ const catalog = [
     key: "mock-2",
     title: "실전 모의고사 2회",
     image: "./assets/print/mock-2/page-01.png",
-    copy: "채점 후 약점 유형을 확인하고, 답안 확인과 분석 흐름을 이어겑니다.",
+    copy: "채점 후 약점 유형을 확인하고, 답안 확인과 분석 흐름을 이어갑니다.",
     chips: ["실전 2회", "약점 분석", "답안 확인"],
     route: productRoutes["mock-2"],
   },

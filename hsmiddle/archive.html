@@ -60,6 +60,8 @@ input{width:100%;height:44px;padding:0 12px;border:1px solid var(--line);border-
 .qcell{display:flex;flex-direction:column;align-items:center;gap:4px}
 .qcell button{width:100%;height:34px;border:1px solid var(--line);border-radius:6px;background:#f6f8fc;color:var(--navy);font-weight:900;font-size:12.5px;cursor:pointer}
 .qcell a{font-size:10px;color:var(--muted);font-weight:700}
+.qcell a.qjump{display:flex;align-items:center;justify-content:center;width:100%;height:34px;border:1px solid var(--line);border-radius:6px;background:#f6f8fc;color:var(--navy);font-size:12.5px;font-weight:900}
+.qcell a.qjump:hover{border-color:var(--gold);background:#fffdf4}
 .fineprint{width:min(1220px,calc(100% - 32px));margin:0 auto 30px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12px;line-height:1.7;font-weight:650}
 .fineprint a{color:var(--navy);font-weight:850}
 .watermark{margin-top:8px;text-align:right;color:#9aabbf;font-size:12px;font-weight:800}
@@ -102,6 +104,7 @@ input{width:100%;height:44px;padding:0 12px;border:1px solid var(--line);border-
 
 <script src="./data.js"></script>
 <script src="./shared-auth.js"></script>
+<script src="./exam-meta.js"></script>
 <script>
 const byId=id=>document.getElementById(id);
 let student='';
@@ -115,6 +118,11 @@ function signIn(){
   enter(name);
 }
 function logout(){HSMIDDLE_AUTH.clearSession();location.reload()}
+function showAdminLink(name){
+  if(!HSMIDDLE_AUTH.isAdmin(name))return;
+  const a=document.createElement('a');a.href='./admin.html';a.textContent='승인 관리';a.className='primary';
+  document.getElementById('topLinks').prepend(a);
+}
 
 const savedSession=HSMIDDLE_AUTH.readSession();
 if(savedSession.valid){enter(savedSession.name)}
@@ -135,6 +143,7 @@ function enter(name){
   student=name;
   byId('login').classList.add('hidden');
   byId('logoutBtn').classList.remove('hidden');
+  showAdminLink(name);
   const app=byId('app');
   app.classList.remove('hidden');
   const D=window.HSMIDDLE_DATA;
@@ -182,6 +191,12 @@ function enter(name){
   const examSections=examMeta.map(e=>{
     const open=isOpen(e.key);
     const videoUrl=D.videos&&D.videos[e.key];
+    const M=(window.HSMIDDLE_EXAM_META&&HSMIDDLE_EXAM_META[e.key])||null;
+    const vid=videoUrl?((videoUrl.match(/[?&]v=([\w-]{6,})/)||videoUrl.match(/youtu\.be\/([\w-]{6,})/)||[])[1]):'';
+    const qGrid=(M&&vid)?Array.from({length:40},(_,i)=>{
+      const n=i+1,m=M[n];
+      return `<div class="qcell"><a class="qjump" title="${m?m.unit:''}" href="https://youtu.be/${vid}?t=${m.t}" target="_blank" rel="noopener">${n}</a></div>`;
+    }).join(''):'';
     return `<section class="section ${open?'':'locked'}">
       <h2>${e.title} <span class="${open?'openbadge':'lockbadge'}">${open?'열림':'잠김'}</span></h2>
       ${open?`
@@ -190,6 +205,7 @@ function enter(name){
           <a href="./exam.html?exam=${e.key}">응시 · 채점</a>
           <a class="secondary" href="./report.html?exam=${e.key}">분석지</a>
         </div>
+        ${qGrid?`<p class="desc" style="margin:14px 0 4px"><b>문항별 풀이 영상</b> — 번호를 누르면 해당 문항 설명 시점부터 재생됩니다.</p><div class="qgrid">${qGrid}</div>`:''}
       `:`
         <p class="desc">승인된 회차만 열립니다.</p>
         <div class="actions-row">
