@@ -396,7 +396,7 @@ td.video a:hover{text-decoration:underline}
     var html = "";
     for (var p = 1; p <= pages; p++) {
       var num = p < 10 ? "0" + p : String(p);
-      html += '<img src="./assets/print/' + folder + "/page-" + num + '.png" alt="' + esc(exam.title) + " " + p + "쾽" + '" loading="lazy">';
+      html += '<img src="./assets/print/' + folder + "/page-" + num + '.png" alt="' + esc(exam.title) + " " + p + "쪽" + '" loading="lazy">';
     }
     modalImages.innerHTML = html;
     modalBack.classList.add("open");
