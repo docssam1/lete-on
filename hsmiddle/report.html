@@ -629,6 +629,13 @@ function examErrorTable(analysis){
   if(!wrongNums.length)return manualNote+'<p class="hint">자동 채점 기준으로 오답 문항이 없습니다.</p>';
   const tipMeta=(window.HSMIDDLE_EXAM_META&&HSMIDDLE_EXAM_META[examKey])||null;
   const hasTips=!!(tipMeta&&wrongNums.some(n=>tipMeta[n]&&tipMeta[n].tip));
+  const videoBase=(D.videos&&D.videos[examKey])||'';
+  const vid=(videoBase.match(/[?&]v=([\w-]{6,})/)||videoBase.match(/youtu\.be\/([\w-]{6,})/)||[])[1];
+  const jump=n=>{
+    const t=tipMeta&&tipMeta[n]&&tipMeta[n].t;
+    if(!vid||typeof t!=='number')return '';
+    return `<div><a href="https://youtu.be/${vid}?t=${t}" target="_blank" rel="noopener">▶ ${n}번 풀이 영상</a></div>`;
+  };
   const rows=wrongNums.map(n=>{
     const fields=exam.answerFields&&exam.answerFields[n];
     const mine=fields?fields.map((f,i)=>sessionStorage.getItem(`hs-${examKey}-${n}-${i}`)||'').join(' / '):(sessionStorage.getItem(`hs-${examKey}-${n}`)||'');
@@ -637,7 +644,8 @@ function examErrorTable(analysis){
     const noteHtml=note?`<details><summary>풀이 보기</summary><pre style="white-space:pre-wrap;margin:6px 0 0;font:700 12px/1.6 Pretendard,sans-serif">${note}</pre></details>`:'';
     const imgHtml=img?`<div><a href="${img}" target="_blank" rel="noopener">답안 이미지 보기</a></div>`:'';
     const tipTd=hasTips?`<td>${tipMeta[n]&&tipMeta[n].tip?tipMeta[n].tip:'-'}</td>`:'';
-    return `<tr><td class="num">${n}</td><td>${mine}</td><td>${exam.answers[n-1]}</td>${tipTd}<td>${noteHtml}${imgHtml}${!note&&!img?'-':''}</td></tr>`;
+    const jumpHtml=jump(n);
+    return `<tr><td class="num">${n}</td><td>${mine}</td><td>${exam.answers[n-1]}</td>${tipTd}<td>${jumpHtml}${noteHtml}${imgHtml}${!note&&!img&&!jumpHtml?'-':''}</td></tr>`;
   }).join('');
   const tipTh=hasTips?'<th>처방</th>':'';
   return `${manualNote}<table class="errtable"><thead><tr><th>번호</th><th>내 답안</th><th>정답</th>${tipTh}<th>비고</th></tr></thead><tbody>${rows}</tbody></table>`;
