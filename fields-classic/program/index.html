@@ -443,7 +443,7 @@ body.in-viewer{overflow:hidden}
     <button class="viewer-back" onclick="GF.closeViewer()">← 목록으로</button>
     <span class="viewer-title" id="vTitle"></span>
     <div class="viewer-acts">
-      <button class="v-btn" id="vPrintBtn" onclick="window.print()">🖨 인쇄</button>
+      <button class="v-btn" id="vPrintBtn" onclick="GF.printCurrent()">🖨 인쇄</button>
       <button class="v-btn gold" id="vYtBtn" onclick="GF.openYt()" style="display:none">▶ 새 창</button>
     </div>
   </div>
@@ -890,6 +890,17 @@ const GF={
   },
   prevBookPage(){if(_bookPage>1)setBookPage(_bookPage-1)},
   nextBookPage(){const total=S.currentProduct?.pageCount||0;if(_bookPage<total)setBookPage(_bookPage+1)},
+  printCurrent(){
+    const p=S.currentProduct,ch=S.currentChapter;
+    let doc=p?.printDoc||"";
+    if(!doc&&p?.key==="개념완성"&&ch?.key)doc="concept-"+ch.key;
+    if(!doc){window.print();return;}
+    const url=new URL("../print-viewer/",location.href);
+    url.searchParams.set("doc",doc);
+    url.searchParams.set("student",S.name||"학생");
+    url.searchParams.set("autoprint","1");
+    window.open(url.toString(),"_blank","noopener");
+  },
   openYt(){if(S.currentVideo?.url)window.open(S.currentVideo.url,"_blank","noopener")},
   closeViewer(){
     S.viewerOpen=false;
