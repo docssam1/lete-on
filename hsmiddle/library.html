@@ -154,6 +154,7 @@ button,input{font:inherit}
 
 <script src="./data.js"></script>
 <script src="./shared-auth.js"></script>
+<script src="./hsm-cloud.js"></script>
 <script>
 const session = HSMIDDLE_AUTH.readSession();
 if (!session.valid || !session.access.length) {
@@ -190,18 +191,18 @@ if (HSMIDDLE_AUTH.isAdmin(name)) {
   document.getElementById("links").prepend(a);
 }
 
-if (HSMIDDLE_AUTH.isExpired(name)) {
-  showExpired();
-  throw new Error("이용 기간 만료로 진행을 중단합니다.");
-}
-
-if (!HSMIDDLE_AUTH.isAdmin(name)) {
-  document.getElementById("usagePeriod").textContent = `이용 기간 D-${HSMIDDLE_AUTH.daysLeft(name)}`;
-}
-
-function attemptCount(key){
+function attemptCountLocal(key){
   const historyKey = key === "diagnostic" ? `hsm-history-diagnostic-${name}` : `hsm-history-${key}-${name}`;
   try { return (JSON.parse(localStorage.getItem(historyKey) || "[]")).length; } catch (e) { return 0; }
+}
+
+/* 서버 개수를 우선 사용하고, 실패 시(null 반환) 로컬 개수로 폴백한다 */
+async function attemptCount(key){
+  if (window.HSMIDDLE_CLOUD) {
+    const list = await HSMIDDLE_CLOUD.listAttempts(name, key);
+    if (Array.isArray(list)) return list.length;
+  }
+  return attemptCountLocal(key);
 }
 
 const catalog = [
@@ -242,30 +243,56 @@ const catalog = [
   }
 ];
 
-const openCount = catalog.filter(c => isOpen(c.key)).length;
-document.getElementById("greeting").textContent = `${name} 학생, 어서 오세요.`;
-document.getElementById("pnum").textContent = `${openCount} / ${catalog.length}`;
-document.getElementById("pfill").style.width = Math.round(openCount / catalog.length * 100) + "%";
+async function init(){
+  /* 이용 기간 보정: 서버에 기록된 첫 로그인 시각이 있으면(더 이르면) 로컬 값을 덮어쓴다 */
+  if (window.HSMIDDLE_CLOUD && !HSMIDDLE_AUTH.isAdmin(name)) {
+    try {
+      const serverStart = await HSMIDDLE_CLOUD.getStart(name);
+      if (serverStart) HSMIDDLE_AUTH.syncStart(name, serverStart);
+    } catch (e) {}
+  }
 
-document.getElementById("catalog").innerHTML = catalog.map(item => {
-  const open = isOpen(item.key);
-  return `
-    <article class="card ${open ? "open" : "locked"}">
-      <div class="card-top">
-        <div class="tile" style="--accent:${item.accent}">${item.tile}</div>
-        <span class="state ${open ? "on" : "off"}">${open ? "열림" : "잠김"}</span>
-      </div>
-      <h2>${item.title}</h2>
-      <p>${item.copy}</p>
-      <div class="chips">${item.chips.map(c => `<span>${c}</span>`).join("")}${open ? `<span>응시 ${attemptCount(item.key)}/3</span>` : ""}</div>
-      <div class="acts">
-        ${open
-          ? `<a href="${item.take}">응시 · 채점</a><a class="ghost" href="${item.report}">분석지</a>`
-          : `<button class="off" type="button" disabled>잠김</button><a class="ask" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">신청 문의</a>`}
-      </div>
-    </article>
-  `;
-}).join("");
+  if (HSMIDDLE_AUTH.isExpired(name)) {
+    showExpired();
+    return;
+  }
+
+  if (!HSMIDDLE_AUTH.isAdmin(name)) {
+    document.getElementById("usagePeriod").textContent = `이용 기간 D-${HSMIDDLE_AUTH.daysLeft(name)}`;
+  }
+
+  const openCount = catalog.filter(c => isOpen(c.key)).length;
+  document.getElementById("greeting").textContent = `${name} 학생, 어서 오세요.`;
+  document.getElementById("pnum").textContent = `${openCount} / ${catalog.length}`;
+  document.getElementById("pfill").style.width = Math.round(openCount / catalog.length * 100) + "%";
+
+  const counts = {};
+  await Promise.all(catalog.filter(item => isOpen(item.key)).map(async item => {
+    counts[item.key] = await attemptCount(item.key);
+  }));
+
+  document.getElementById("catalog").innerHTML = catalog.map(item => {
+    const open = isOpen(item.key);
+    return `
+      <article class="card ${open ? "open" : "locked"}">
+        <div class="card-top">
+          <div class="tile" style="--accent:${item.accent}">${item.tile}</div>
+          <span class="state ${open ? "on" : "off"}">${open ? "열림" : "잠김"}</span>
+        </div>
+        <h2>${item.title}</h2>
+        <p>${item.copy}</p>
+        <div class="chips">${item.chips.map(c => `<span>${c}</span>`).join("")}${open ? `<span>응시 ${counts[item.key]}/3</span>` : ""}</div>
+        <div class="acts">
+          ${open
+            ? `<a href="${item.take}">응시 · 채점</a><a class="ghost" href="${item.report}">분석지</a>`
+            : `<button class="off" type="button" disabled>잠김</button><a class="ask" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">신청 문의</a>`}
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+init();
 </script>
 </body>
 </html>

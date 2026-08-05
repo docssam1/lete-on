@@ -106,6 +106,22 @@
     return daysLeft(name) <= 0;
   };
 
+  /* ================= 서버 첫 로그인 시각 반영 =================
+     서버(hsm_students.started_at)가 로컬보다 이른 값을 갖고 있으면 로컬 값을
+     서버 값으로 덮어써 이용 기간을 정확히 맞춘다(학생이 로컬을 지워 기간을
+     늘리는 것을 막는다). 로컬에 값이 없으면 서버 값을 그대로 저장한다. */
+  const syncStart = (name, isoString) => {
+    if (!isoString) return;
+    const serverTime = new Date(isoString).getTime();
+    if (Number.isNaN(serverTime)) return;
+    const k = STARTED_PREFIX + normalizeName(name);
+    const localVal = localStorage.getItem(k);
+    const localTime = localVal ? new Date(localVal).getTime() : NaN;
+    if (!localVal || Number.isNaN(localTime) || serverTime < localTime) {
+      localStorage.setItem(k, new Date(serverTime).toISOString());
+    }
+  };
+
   window.HSMIDDLE_AUTH = {
     NAME_KEY,
     CODE_KEY,
@@ -120,6 +136,7 @@
     clearSession,
     startedAt,
     markStart,
+    syncStart,
     daysLeft,
     isExpired,
   };

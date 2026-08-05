@@ -29,7 +29,7 @@
 <body>
 <header class="top"><div><b id="title">중등 모의고사</b><span id="student"></span></div><div class="actions"><button class="btn dark" onclick="location.href='./library.html'">목록</button><button class="btn dark" onclick="openReport()">분석지 보기</button><button class="btn dark" onclick="printPaper()">시험지 인쇄</button><button class="btn dark" onclick="printAnswers()">답안 인쇄</button></div></header>
 <main class="shell"><div class="layout"><section class="viewer" id="viewer"></section><aside class="panel"><h2>답안 입력</h2><p class="hint" id="notice">40문항을 입력하면 검수된 문항만 채점합니다.</p><div class="actions"><button class="btn" onclick="grade()">채점하기</button><button class="btn dark" onclick="showAnswers()">답안 보기</button><button class="btn dark" onclick="watch()">전체 수업 영상</button></div><div class="answer-grid" id="answers"></div><div class="result" id="result">아직 채점하지 않았습니다.</div><div id="video"></div></aside></div></main>
-<script src="./data.js"></script><script src="./exam-data.js"></script><script src="./shared-auth.js"></script>
+<script src="./data.js"></script><script src="./exam-data.js"></script><script src="./shared-auth.js"></script><script src="./hsm-cloud.js"></script>
 <script>
 const p=new URLSearchParams(location.search),key=p.get('exam')||'mock-1',exam=HSMIDDLE_EXAMS[key]||HSMIDDLE_EXAMS['mock-1'];let student=(p.get('student')||localStorage.getItem('hs-student')||'학생').slice(0,30);const viewer=document.getElementById('viewer'),answers=document.getElementById('answers');
 document.getElementById('title').textContent=exam.title;document.getElementById('student').textContent=`${student} · 시험지와 답안 검수 화면`;
