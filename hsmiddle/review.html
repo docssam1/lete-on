@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GFIELD | 문항 데이터 검수</title>
+<meta name="description" content="모의고사 문항 자동 분류·처방 코멘트 검수 화면 (관리자 전용)">
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+:root{
+  --navy:#173a6b; --navy-d:#0f2747; --gold:#b58b1f;
+  --bg:#eef3f9; --card:#fff;
+  --line:#dde5f0; --line-2:#e8eef6;
+  --text:#15253c; --muted:#63768e;
+  --green:#0f7a4d; --green-bg:#e8f6ef;
+  --coral:#c53d4a; --coral-bg:#fdecef;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:Pretendard,system-ui,sans-serif;color:var(--text);min-height:100vh;
+  background:radial-gradient(900px 460px at 50% -12%,#dfeaf7,transparent 60%),var(--bg);
+  padding-bottom:64px;
+}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+
+/* 상단바 (library.html과 동일 토큰) */
+.top{
+  position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding:14px 22px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.mark{
+  width:38px;height:38px;border-radius:11px;flex:none;display:grid;place-items:center;
+  background:linear-gradient(160deg,var(--navy),var(--navy-d));color:#fff;font-weight:950;font-size:16px;
+}
+.brand b{display:block;font-size:15.5px;font-weight:950;letter-spacing:-.03em;line-height:1.25}
+.brand span{display:block;margin-top:2px;color:var(--muted);font-size:11.5px;font-weight:700}
+.links{display:flex;gap:7px;flex-wrap:wrap}
+.links a,.links button{
+  height:36px;display:inline-flex;align-items:center;padding:0 13px;border-radius:9px;
+  border:1px solid var(--line);background:#fff;color:var(--navy);font-size:12.5px;font-weight:850;cursor:pointer;
+  transition:border-color .15s,background .15s;
+}
+.links a:hover,.links button:hover{border-color:#b9c9dd;background:#f7fafd}
+.links a.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.links a.primary:hover{background:var(--navy-d)}
+.links button.out{color:var(--coral);border-color:#f0cdd2}
+
+.shell{width:min(1280px,calc(100% - 32px));margin:0 auto}
+
+.head{padding:30px 0 4px}
+.head h1{margin:0;font-size:clamp(21px,3vw,27px);font-weight:950;letter-spacing:-.04em}
+.head p{margin:9px 0 0;color:var(--muted);font-size:13.5px;line-height:1.7;font-weight:600}
+
+/* 탭 */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 4px}
+.tabs button{
+  height:40px;padding:0 18px;border-radius:10px;border:1px solid var(--line);background:#fff;
+  color:var(--navy);font-size:13.5px;font-weight:900;cursor:pointer;transition:background .15s,border-color .15s;
+}
+.tabs button:hover{border-color:#b9c9dd;background:#f7fafd}
+.tabs button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 0}
+.toolbar .info{color:var(--muted);font-size:12.5px;font-weight:700}
+.btn{
+  height:38px;padding:0 15px;border-radius:9px;border:1px solid var(--navy);background:var(--navy);
+  color:#fff;font-size:12.5px;font-weight:900;cursor:pointer;transition:background .15s;
+}
+.btn:hover{background:var(--navy-d)}
+.btn.ghost{background:#fff;color:var(--navy);border-color:var(--line)}
+.btn.ghost:hover{background:#f5f9fd}
+.btn.danger{background:#fff;color:var(--coral);border-color:#f0cdd2}
+.btn.danger:hover{background:var(--coral-bg)}
+
+/* 표 */
+.tablewrap{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  box-shadow:0 8px 22px rgba(19,37,60,.05);overflow-x:auto;
+}
+table{border-collapse:collapse;width:100%;min-width:1180px}
+thead th{
+  position:sticky;top:0;background:#f6f9fd;color:var(--muted);font-size:11.5px;font-weight:900;
+  text-align:left;padding:11px 10px;border-bottom:1px solid var(--line);white-space:nowrap;
+}
+tbody td{padding:11px 10px;border-bottom:1px solid var(--line-2);font-size:12.5px;vertical-align:top;break-inside:avoid}
+tbody tr{break-inside:avoid}
+tbody tr.flag{background:#fff8e6;box-shadow:inset 3px 0 0 var(--gold)}
+td.num{font-weight:900;color:var(--navy);white-space:nowrap}
+td.ans{font-weight:850;white-space:nowrap}
+td.ans.manual{color:var(--muted);font-weight:700}
+td.tip{min-width:320px;line-height:1.7;color:var(--text)}
+td.video a{color:var(--navy);font-weight:850;white-space:nowrap}
+td.video a:hover{text-decoration:underline}
+.chk-cell{display:flex;flex-direction:column;gap:5px;white-space:nowrap}
+.chk-cell label{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--muted)}
+
+.empty{padding:40px 20px;text-align:center;color:var(--muted);font-size:13.5px;font-weight:700}
+
+/* 시험지 보기 모달 */
+.modal-back{
+  position:fixed;inset:0;background:rgba(10,18,30,.86);z-index:50;display:none;
+  flex-direction:column;align-items:center;overflow-y:auto;padding:20px 0 60px;
+}
+.modal-back.open{display:flex}
+.modal-bar{
+  position:sticky;top:0;width:100%;display:flex;justify-content:center;padding:10px 0;z-index:2;
+}
+.modal-close{
+  height:42px;padding:0 18px;border-radius:10px;border:1px solid rgba(255,255,255,.3);
+  background:rgba(255,255,255,.1);color:#fff;font-size:13px;font-weight:900;cursor:pointer;
+}
+.modal-close:hover{background:rgba(255,255,255,.2)}
+.modal-back img{width:min(880px,94%);margin:8px auto;display:block;border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+
+/* 하단 요약 바 */
+.summary{
+  position:sticky;bottom:0;z-index:6;display:flex;align-items:center;justify-content:space-between;
+  gap:14px;flex-wrap:wrap;margin-top:20px;padding:14px 18px;background:rgba(255,255,255,.95);
+  backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:14px;
+  box-shadow:0 -6px 20px rgba(19,37,60,.06);
+}
+.summary .counts{font-size:13px;font-weight:900;color:var(--navy)}
+.summary .counts b{color:var(--coral)}
+.summary .acts{display:flex;gap:8px;flex-wrap:wrap}
+.copy-status{font-size:11.5px;color:var(--muted);font-weight:700}
+
+@media (max-width:640px){
+  .top{padding:12px 16px}
+  .links a:not(.primary):not(.keep),.links button:not(.out){display:none}
+  .head{padding:22px 0 2px}
+  .summary{flex-direction:column;align-items:stretch}
+}
+@media print{
+  .top,.tabs,.toolbar,.summary,.modal-back{display:none!important}
+  body{padding-bottom:0;background:#fff}
+  .tablewrap{border:none;box-shadow:none;overflow:visible}
+  table{min-width:0}
+  tr{break-inside:avoid}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <div class="mark">G</div>
+    <div>
+      <b>GFIELD 검수</b>
+      <span>문항 데이터 관리자 전용</span>
+    </div>
+  </div>
+  <div class="links" id="links">
+    <a href="./admin.html">승인 관리</a>
+    <a href="./library.html">서재</a>
+    <button class="out" type="button" onclick="logout()">나가기</button>
+  </div>
+</header>
+
+<div class="shell">
+  <section class="head">
+    <h1>문항 데이터 검수</h1>
+    <p>자동 생성된 단원 분류·난이도·처방 코멘트와 영상 시점을 확인하는 화면입니다. 학생에게는 보이지 않습니다.</p>
+  </section>
+
+  <nav class="tabs" id="tabs"></nav>
+
+  <div class="toolbar">
+    <span class="info" id="examInfo"></span>
+    <button class="btn ghost" type="button" id="viewSheetBtn">시험지 보기</button>
+  </div>
+
+  <div class="tablewrap" id="tablewrap"></div>
+
+  <div class="summary">
+    <span class="counts" id="counts">분류 이상 0건 · 코멘트 이상 0건</span>
+    <div class="acts">
+      <span class="copy-status" id="copyStatus"></span>
+      <button class="btn ghost" type="button" id="copyBtn">표시한 항목 복사</button>
+      <button class="btn danger" type="button" id="resetBtn">표시 초기화</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-back" id="modalBack">
+  <div class="modal-bar"><button class="modal-close" type="button" id="modalCloseBtn">닫기 ×</button></div>
+  <div id="modalImages"></div>
+</div>
+
+<textarea id="copyFallback" style="position:fixed;top:-9999px;left:-9999px"></textarea>
+
+<script src="./data.js"></script>
+<script src="./exam-data.js"></script>
+<script src="./exam-meta.js"></script>
+<script src="./shared-auth.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* ---- 접근 제한 ---- */
+  var session = HSMIDDLE_AUTH.readSession();
+  if (!session.valid || !HSMIDDLE_AUTH.isAdmin(session.name)) {
+    location.replace("./login.html");
+    return;
+  }
+
+  function logout(){ HSMIDDLE_AUTH.clearSession(); location.replace("./login.html"); }
+  window.logout = logout;
+
+  var TABS = [
+    { key: "mock-1", label: "실전 1회" },
+    { key: "mock-2", label: "실전 2회" },
+    { key: "mock-3", label: "실전 3회" },
+    { key: "final", label: "최종" }
+  ];
+
+  var EXAMS = window.HSMIDDLE_EXAMS || {};
+  var META = window.HSMIDDLE_EXAM_META || null;
+  var VIDEOS = (window.HSMIDDLE_DATA && window.HSMIDDLE_DATA.videos) || {};
+
+  var currentKey = TABS[0].key;
+
+  var tabsEl = document.getElementById("tabs");
+  var tablewrapEl = document.getElementById("tablewrap");
+  var examInfoEl = document.getElementById("examInfo");
+  var countsEl = document.getElementById("counts");
+  var copyStatusEl = document.getElementById("copyStatus");
+
+  function esc(v){
+    return String(v == null ? "" : v).replace(/[&<>"']/g, function(c){
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+    });
+  }
+
+  /* ---- localStorage ---- */
+  function storeKey(key){ return "hsm-review-" + key; }
+
+  function loadFlags(key){
+    try {
+      var raw = localStorage.getItem(storeKey(key));
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+
+  function saveFlags(key, flags){
+    try { localStorage.setItem(storeKey(key), JSON.stringify(flags)); } catch (e) {}
+  }
+
+  function setFlag(key, n, field, value){
+    var flags = loadFlags(key);
+    var entry = flags[n] || {};
+    entry[field] = value;
+    if (!entry.cls && !entry.tip) {
+      delete flags[n];
+    } else {
+      flags[n] = entry;
+    }
+    saveFlags(key, flags);
+    return flags;
+  }
+
+  /* ---- 영상 링크 ---- */
+  function videoIdFrom(url){
+    if (!url) return null;
+    var m = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?&/]+)/);
+    return m ? m[1] : null;
+  }
+
+  function mmss(t){
+    t = Number(t) || 0;
+    var m = Math.floor(t / 60);
+    var s = t % 60;
+    return m + ":" + (s < 10 ? "0" + s : String(s));
+  }
+
+  function videoCell(key, n, meta){
+    var vid = videoIdFrom(VIDEOS[key]);
+    if (!vid || !meta || meta.t == null) return "-";
+    var href = "https://youtu.be/" + vid + "?t=" + meta.t;
+    return '<a href="' + href + '" target="_blank" rel="noopener">▶ ' + mmss(meta.t) + "</a>";
+  }
+
+  /* ---- 정답 셀 ---- */
+  function answerCell(exam, n){
+    var ans = (exam && exam.answers && exam.answers[n - 1] != null) ? exam.answers[n - 1] : "-";
+    var manual = String(ans).indexOf("수동") !== -1;
+    if (manual) return '<td class="ans manual">수동 채점</td>';
+    return '<td class="ans">' + esc(ans) + "</td>";
+  }
+
+  /* ---- 표 렌더 ---- */
+  function renderTable(key){
+    var exam = EXAMS[key];
+    examInfoEl.textContent = exam ? exam.title + " · 40문항" : "";
+
+    if (!META) {
+      tablewrapEl.innerHTML = '<p class="empty">문항 메타데이터를 불러오지 못했습니다.</p>';
+      countsEl.textContent = "분류 이상 0건 · 코멘트 이상 0건";
+      return;
+    }
+
+    var metaForExam = META[key] || {};
+    var flags = loadFlags(key);
+    var total = (exam && exam.questions) || 40;
+
+    var rows = "";
+    var clsCount = 0, tipCount = 0;
+
+    for (var n = 1; n <= total; n++) {
+      var meta = metaForExam[n] || {};
+      var flag = flags[n] || {};
+      if (flag.cls) clsCount++;
+      if (flag.tip) tipCount++;
+      var flagged = flag.cls || flag.tip;
+
+      rows += '<tr class="' + (flagged ? "flag" : "") + '" data-n="' + n + '">';
+      rows += '<td class="num">' + n + "</td>";
+      rows += answerCell(exam, n);
+      rows += "<td>" + esc(meta.sem || "-") + "</td>";
+      rows += "<td>" + esc(meta.unit || "-") + "</td>";
+      rows += "<td>" + esc(meta.area || "-") + "</td>";
+      rows += "<td>" + esc(meta.diff || "-") + "</td>";
+      rows += '<td class="video">' + videoCell(key, n, meta) + "</td>";
+      rows += '<td class="tip">' + esc(meta.tip || "-") + "</td>";
+      rows += '<td class="chk-cell">';
+      rows += '<label><input type="checkbox" data-n="' + n + '" data-field="cls" ' + (flag.cls ? "checked" : "") + '> 분류 이상</label>';
+      rows += '<label><input type="checkbox" data-n="' + n + '" data-field="tip" ' + (flag.tip ? "checked" : "") + '> 코멘트 이상</label>';
+      rows += "</td>";
+      rows += "</tr>";
+    }
+
+    tablewrapEl.innerHTML =
+      '<table><thead><tr>' +
+      "<th>번호</th><th>정답</th><th>학기</th><th>단원</th><th>영역</th><th>난이도</th>" +
+      "<th>영상</th><th>처방 코멘트</th><th>확인</th>" +
+      "</tr></thead><tbody>" + rows + "</tbody></table>";
+
+    updateCounts(clsCount, tipCount);
+
+    tablewrapEl.querySelectorAll('input[type="checkbox"]').forEach(function(box){
+      box.addEventListener("change", function(){
+        var n = box.getAttribute("data-n");
+        var field = box.getAttribute("data-field");
+        var flags2 = setFlag(currentKey, n, field, box.checked);
+        var tr = box.closest("tr");
+        var entry = flags2[n] || {};
+        tr.classList.toggle("flag", !!(entry.cls || entry.tip));
+        recountCurrent();
+      });
+    });
+  }
+
+  function recountCurrent(){
+    var flags = loadFlags(currentKey);
+    var cls = 0, tip = 0;
+    Object.keys(flags).forEach(function(n){
+      if (flags[n].cls) cls++;
+      if (flags[n].tip) tip++;
+    });
+    updateCounts(cls, tip);
+  }
+
+  function updateCounts(cls, tip){
+    countsEl.innerHTML = "분류 이상 <b>" + cls + "</b>건 · 코멘트 이상 <b>" + tip + "</b>건";
+  }
+
+  /* ---- 탭 ---- */
+  function renderTabs(){
+    tabsEl.innerHTML = TABS.map(function(t){
+      return '<button type="button" data-key="' + t.key + '" class="' + (t.key === currentKey ? "on" : "") + '">' + t.label + "</button>";
+    }).join("");
+    tabsEl.querySelectorAll("button").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        currentKey = btn.getAttribute("data-key");
+        renderTabs();
+        renderTable(currentKey);
+      });
+    });
+  }
+
+  /* ---- 시험지 보기 모달 ---- */
+  var modalBack = document.getElementById("modalBack");
+  var modalImages = document.getElementById("modalImages");
+  var modalCloseBtn = document.getElementById("modalCloseBtn");
+  var viewSheetBtn = document.getElementById("viewSheetBtn");
+
+  function openModal(){
+    var exam = EXAMS[currentKey];
+    if (!exam) return;
+    var folder = exam.folder;
+    var pages = exam.pages || 0;
+    var html = "";
+    for (var p = 1; p <= pages; p++) {
+      var num = p < 10 ? "0" + p : String(p);
+      html += '<img src="./assets/print/' + folder + "/page-" + num + '.png" alt="' + esc(exam.title) + " " + p + "쾽" + '" loading="lazy">';
+    }
+    modalImages.innerHTML = html;
+    modalBack.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal(){
+    modalBack.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  viewSheetBtn.addEventListener("click", openModal);
+  modalCloseBtn.addEventListener("click", closeModal);
+  modalBack.addEventListener("click", function(e){
+    if (e.target === modalBack) closeModal();
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape" && modalBack.classList.contains("open")) closeModal();
+  });
+
+  /* ---- 복사 ---- */
+  var copyBtn = document.getElementById("copyBtn");
+  var resetBtn = document.getElementById("resetBtn");
+  var copyFallback = document.getElementById("copyFallback");
+
+  function buildCopyText(){
+    var label = TABS.filter(function(t){ return t.key === currentKey; })[0];
+    label = label ? label.label : currentKey;
+    var flags = loadFlags(currentKey);
+    var metaForExam = (META && META[currentKey]) || {};
+    var lines = ["[" + label + "]"];
+    var nums = Object.keys(flags).map(Number).sort(function(a, b){ return a - b; });
+    nums.forEach(function(n){
+      var entry = flags[n];
+      var meta = metaForExam[n] || {};
+      if (entry.cls) {
+        lines.push(n + "번 분류 이상 (현재: " + [meta.sem, meta.unit].filter(Boolean).join(" ") + " / " + (meta.area || "") + " / " + (meta.diff || "") + ")");
+      }
+      if (entry.tip) {
+        lines.push(n + "번 코멘트 이상");
+      }
+    });
+    return lines.join("\n");
+  }
+
+  copyBtn.addEventListener("click", function(){
+    var text = buildCopyText();
+    var lineCount = text.split("\n").length - 1;
+    if (lineCount <= 0) {
+      copyStatusEl.textContent = "표시된 항목이 없습니다.";
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        copyStatusEl.textContent = "복사했습니다.";
+      }, function(){
+        fallbackCopy(text);
+      });
+    } else {
+      fallbackCopy(text);
+    }
+  });
+
+  function fallbackCopy(text){
+    copyFallback.value = text;
+    copyFallback.style.top = "0";
+    copyFallback.focus();
+    copyFallback.select();
+    try {
+      document.execCommand("copy");
+      copyStatusEl.textContent = "복사했습니다.";
+    } catch (e) {
+      copyStatusEl.textContent = "복사에 실패했습니다.";
+    }
+    copyFallback.style.top = "-9999px";
+  }
+
+  resetBtn.addEventListener("click", function(){
+    var label = TABS.filter(function(t){ return t.key === currentKey; })[0];
+    label = label ? label.label : currentKey;
+    if (!confirm(label + " 표시 기록을 모두 삭제할까요?")) return;
+    try { localStorage.removeItem(storeKey(currentKey)); } catch (e) {}
+    renderTable(currentKey);
+    copyStatusEl.textContent = "";
+  });
+
+  /* ---- 관리자 표시 ---- */
+  var nameSpan = document.querySelector(".brand span");
+  if (nameSpan) nameSpan.textContent = session.name + " 관리자";
+
+  renderTabs();
+  renderTable(currentKey);
+})();
+</script>
+</body>
+</html>
