@@ -1,39 +1,1161 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>필즈 더 클래식 대비 과정 | 지필드 영재교육</title>
-<meta http-equiv="refresh" content="0; url=./program/?v=1cf5ac7">
-<link rel="canonical" href="./program/">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
+:root{--bg:#02050b;--surface:#080d14;--gold:#d4af37;--gold2:#f8dd83;--gold-glow:rgba(212,175,55,.2);--white:#f0ece2;--muted:#7a8a9a;--border:rgba(212,175,55,.15);--border2:rgba(255,255,255,.07);--navy:#0d1b2a}
 *{margin:0;padding:0;box-sizing:border-box}
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;
-  background:radial-gradient(circle at 20% 20%,rgba(212,175,55,.1),transparent 40%),#02050b;
-  font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;color:#f0ece2}
-.wrap{text-align:center;padding:20px}
-.logo{width:56px;border-radius:10px;margin:0 auto 16px;display:block;
-  filter:drop-shadow(0 0 12px rgba(212,175,55,.2))}
-.tag{font-size:10px;font-weight:900;letter-spacing:3px;color:#d4af37;margin-bottom:8px}
-.title{font-size:20px;font-weight:700;margin-bottom:14px}
-.msg{font-size:13px;color:#7a8a9a;line-height:1.7;margin-bottom:20px}
-.spinner{width:28px;height:28px;margin:0 auto 18px;border:3px solid rgba(212,175,55,.2);
-  border-top-color:#d4af37;border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.link{display:inline-block;padding:12px 24px;border-radius:10px;
-  background:linear-gradient(135deg,#d4af37,#f8dd83);color:#0d1b2a;
-  font-size:14px;font-weight:900;text-decoration:none}
+html,body{width:100%;min-height:100%;background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--white);overflow-x:hidden}
+body.in-viewer{overflow:hidden}
+#gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 20% 20%,rgba(212,175,55,.1),transparent 40%),var(--bg)}
+#gate.hidden{display:none}
+.gate-card{width:min(420px,95vw);background:rgba(8,13,20,.97);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.7)}
+.gate-bar{height:4px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold))}
+.gate-body{padding:32px 28px 24px;text-align:center}
+.gate-logo{width:56px;border-radius:10px;margin:0 auto 14px;display:block;filter:drop-shadow(0 0 12px var(--gold-glow))}
+.gate-tag{font-size:10px;font-weight:900;letter-spacing:3px;color:var(--gold);margin-bottom:6px}
+.gate-title{font-family:'DM Serif Display',serif;font-size:24px;color:var(--white);margin-bottom:6px}
+.gate-desc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px}
+.gate-input{width:100%;height:46px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:11px;color:var(--white);font-size:14px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:0 14px;text-align:center;outline:none;margin-bottom:8px;transition:border-color .2s}
+.gate-input:focus{border-color:var(--gold)}
+.gate-input::placeholder{color:rgba(255,255,255,.2);font-weight:400;font-size:12px}
+.gate-btn{width:100%;height:46px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:14px;font-weight:900;font-family:'Noto Sans KR',sans-serif;border:none;border-radius:11px;cursor:pointer;margin-top:4px}
+.gate-btn:active{transform:scale(.97)}
+.gate-error{min-height:18px;color:#e74c3c;font-size:12px;font-weight:700;margin-top:6px}
+.gate-note{font-size:10px;color:rgba(255,255,255,.25);margin-top:12px;line-height:1.6}
+#app{display:none;width:100%;height:100dvh;min-height:100vh;overflow:hidden;flex-direction:column}
+#app.show{display:flex}
+.app-header{position:sticky;top:0;z-index:100;padding:10px 20px;background:rgba(2,5,11,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
+.header-left{display:flex;align-items:center;gap:10px}
+.header-logo{width:90px;filter:brightness(0) invert(1);opacity:.9}
+.header-sep{width:1px;height:22px;background:var(--border)}
+.header-badge{font-size:10px;font-weight:900;color:var(--gold);background:rgba(212,175,55,.08);border:1px solid var(--border);padding:3px 10px;border-radius:20px;letter-spacing:.05em}
+.header-right{display:flex;align-items:center;gap:8px}
+.header-student{font-size:12px;color:var(--muted)}
+.header-student b{color:var(--gold)}
+.header-logout{background:none;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);font-size:11px;font-weight:700;padding:5px 10px;border-radius:7px;cursor:pointer;font-family:'Noto Sans KR',sans-serif}
+.header-logout:hover{border-color:var(--gold);color:var(--gold)}
+#dashboard{flex:1;overflow-y:auto;padding:0 20px 60px}
+.dash-hero{padding:36px 0 28px;text-align:center;position:relative}
+.dash-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(212,175,55,.05),transparent 70%);pointer-events:none}
+.dash-eyebrow{font-size:10px;font-weight:900;letter-spacing:3px;color:var(--gold);margin-bottom:10px}
+.dash-title{font-family:'DM Serif Display',serif;font-size:clamp(22px,4vw,38px);color:var(--white);line-height:1.25;margin-bottom:6px}
+.dash-title em{font-style:italic;color:var(--gold)}
+.dash-sub{font-size:13px;color:var(--muted)}
+.products-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.program-shelf{grid-column:1/-1;width:100%;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:270px minmax(0,1fr);gap:18px;align-items:start}
+.program-menu{display:flex;flex-direction:column;gap:9px;position:sticky;top:74px}
+.program-menu-card{width:100%;min-height:74px;border:1px solid var(--border2);border-radius:14px;background:rgba(8,13,20,.9);color:var(--white);font-family:'Noto Sans KR',sans-serif;text-align:left;padding:13px 14px;display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;cursor:pointer;transition:transform .18s,border-color .18s,background .18s,box-shadow .18s}
+.program-menu-card:hover{transform:translateX(3px);border-color:rgba(212,175,55,.32);background:rgba(212,175,55,.05)}
+.program-menu-card.active{border-color:rgba(212,175,55,.62);background:linear-gradient(135deg,rgba(212,175,55,.16),rgba(255,255,255,.035));box-shadow:0 16px 36px rgba(0,0,0,.32),inset 0 0 0 1px rgba(212,175,55,.08)}
+.program-menu-card.locked{opacity:.45;cursor:not-allowed}
+.pm-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.055);font-size:18px}
+.pm-title{font-size:13px;font-weight:900;line-height:1.3}
+.pm-sub{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.35}
+.program-detail{min-height:430px;border:1px solid var(--border);border-radius:18px;background:linear-gradient(160deg,rgba(255,255,255,.045),rgba(8,13,20,.84) 42%,rgba(2,5,11,.96));box-shadow:0 28px 70px rgba(0,0,0,.38);overflow:hidden}
+.program-panel{padding:22px 22px 24px;animation:panelSlide .24s cubic-bezier(.22,1,.36,1)}
+@keyframes panelSlide{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+.program-panel-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px;border-bottom:1px solid var(--border2);padding-bottom:16px}
+.program-panel-kicker{font-size:10px;font-weight:900;letter-spacing:.18em;color:var(--gold);margin-bottom:6px}
+.program-panel-title{font-family:'DM Serif Display',serif;font-size:clamp(22px,3vw,32px);line-height:1.12;color:var(--white)}
+.program-panel-title em{color:var(--gold);font-style:italic}
+.program-panel-desc{font-size:12px;color:var(--muted);line-height:1.65;max-width:420px;text-align:right}
+.program-book-row{display:flex;gap:clamp(14px,2.4vw,28px);align-items:flex-end;flex-wrap:wrap;justify-content:center;padding:8px 6px 18px}
+.concept-showcase-host:empty{display:none}
+.concept-showcase{display:grid;grid-template-columns:minmax(190px,260px) minmax(0,1fr);gap:28px;align-items:center;margin:-6px -22px 24px;padding:28px 30px 30px;border-bottom:1px solid var(--border);background:linear-gradient(105deg,rgba(212,175,55,.09),rgba(255,255,255,.025) 45%,rgba(0,0,0,.16));animation:conceptSlide .52s cubic-bezier(.22,1,.36,1)}
+@keyframes conceptSlide{from{opacity:0;transform:translateY(-24px);clip-path:inset(0 0 100% 0)}to{opacity:1;transform:none;clip-path:inset(0)}}
+.concept-book-stage{height:230px;display:grid;place-items:center;perspective:950px}
+.concept-book-3d{--w:136px;--h:190px;--d:34px;width:var(--w);height:var(--h);position:relative;transform-style:preserve-3d;animation:bookTurn 7s linear infinite;filter:drop-shadow(0 28px 34px rgba(0,0,0,.68))}
+@keyframes bookTurn{0%{transform:rotateX(4deg) rotateY(-24deg)}45%{transform:rotateX(4deg) rotateY(150deg)}55%{transform:rotateX(4deg) rotateY(210deg)}100%{transform:rotateX(4deg) rotateY(336deg)}}
+.concept-book-face{position:absolute;backface-visibility:hidden}
+.concept-book-front,.concept-book-back{inset:0;border-radius:2px 8px 8px 2px}
+.concept-book-front{transform:translateZ(calc(var(--d)/2));overflow:hidden;background:#0b2135;box-shadow:inset 10px 0 14px rgba(255,255,255,.06),inset -6px 0 10px rgba(0,0,0,.35)}
+.concept-book-front img{width:100%;height:100%;object-fit:cover;display:block}
+.concept-book-back{transform:rotateY(180deg) translateZ(calc(var(--d)/2));background:linear-gradient(145deg,#102b43,#071421);border:1px solid rgba(212,175,55,.3)}
+.concept-book-back::after{content:'G-FIELD';position:absolute;inset:0;display:grid;place-items:center;color:rgba(212,175,55,.7);font:800 13px 'Noto Sans KR',sans-serif;letter-spacing:.16em}
+.concept-book-spine{top:0;left:0;width:var(--d);height:100%;transform-origin:left center;transform:rotateY(-90deg) translateX(calc(var(--d)/-2));background:linear-gradient(90deg,#02070d,#173c5a 48%,#06111d);border-left:1px solid rgba(212,175,55,.28);box-shadow:inset -4px 0 7px rgba(255,255,255,.1),inset 5px 0 8px rgba(0,0,0,.45)}
+.concept-book-pages{top:4px;right:0;width:var(--d);height:calc(100% - 8px);transform-origin:right center;transform:rotateY(90deg) translateX(calc(var(--d)/2));background:repeating-linear-gradient(to bottom,#fffaf0 0 2px,#d7cdb9 2px 3px);box-shadow:inset 0 0 7px rgba(0,0,0,.35)}
+.concept-book-top,.concept-book-bottom{left:3px;width:calc(100% - 6px);height:var(--d);background:repeating-linear-gradient(to right,#fffaf0 0 3px,#d9cfbc 3px 4px);box-shadow:inset 0 0 5px rgba(0,0,0,.24)}
+.concept-book-top{top:0;transform-origin:top center;transform:rotateX(90deg) translateY(calc(var(--d)/-2))}
+.concept-book-bottom{bottom:0;transform-origin:bottom center;transform:rotateX(-90deg) translateY(calc(var(--d)/2))}
+.concept-detail-kicker{font-size:10px;font-weight:900;letter-spacing:.14em;color:var(--gold);margin-bottom:7px}
+.concept-detail-title{font-family:'DM Serif Display','Noto Sans KR',sans-serif;font-size:clamp(24px,3vw,34px);line-height:1.15;color:var(--white);margin-bottom:12px}
+.concept-topic-list{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 14px;padding:0;list-style:none}
+.concept-topic-list li{font-size:11px;font-weight:800;color:#d7e5f3;border:1px solid rgba(147,197,253,.2);background:rgba(147,197,253,.07);border-radius:6px;padding:6px 9px}
+.concept-detail-copy{font-size:11px;color:var(--muted);line-height:1.75;margin-bottom:16px;max-width:620px}
+.concept-start{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:7px;padding:10px 16px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:900;cursor:pointer}
+.concept-start:disabled{background:rgba(255,255,255,.06);color:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.1);cursor:not-allowed}
+.program-run-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;align-items:stretch}
+.program-run-card{min-height:326px;border:1px solid var(--border2);border-radius:16px;background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.025) 45%,rgba(0,0,0,.18));padding:22px 18px 18px;display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;transition:transform .22s cubic-bezier(.22,1,.36,1),border-color .22s,background .22s,box-shadow .22s;box-shadow:0 16px 28px rgba(0,0,0,.22)}
+.program-run-card:hover{transform:translateY(-7px);border-color:rgba(212,175,55,.52);background:linear-gradient(160deg,rgba(212,175,55,.13),rgba(255,255,255,.035) 52%,rgba(0,0,0,.2));box-shadow:0 28px 48px rgba(0,0,0,.42),0 0 0 1px rgba(212,175,55,.12)}
+.program-run-card.locked{opacity:.45;cursor:not-allowed}
+.program-run-book{--run-depth:30px;width:126px;height:178px;position:relative;transform-style:preserve-3d;transform:rotateY(-24deg) rotateX(5deg);filter:drop-shadow(0 24px 28px rgba(0,0,0,.7));margin:4px 0 7px;transition:transform .45s cubic-bezier(.22,1,.36,1),filter .45s ease}
+.program-run-card:hover .program-run-book{transform:rotateY(-10deg) rotateX(2deg) translateY(-8px) scale(1.045);filter:drop-shadow(0 30px 38px rgba(0,0,0,.72)) drop-shadow(0 0 20px rgba(212,175,55,.18))}
+.program-run-cover{position:absolute;inset:0;border-radius:2px 9px 9px 2px;background:linear-gradient(160deg,#173555,#0d1b2a);display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;padding:16px 10px 13px;transform:translateZ(calc(var(--run-depth)/2));backface-visibility:hidden;box-shadow:inset 11px 0 15px rgba(255,255,255,.06),inset -8px 0 12px rgba(0,0,0,.3)}
+.program-run-cover::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.18),transparent 28%,rgba(0,0,0,.2)),repeating-linear-gradient(105deg,rgba(255,255,255,.06) 0 1px,transparent 1px 6px);border-radius:inherit}
+.program-run-cover::after{content:'';position:absolute;right:0;top:0;width:10px;height:100%;background:linear-gradient(to right,rgba(255,255,255,.38),rgba(0,0,0,.24));border-radius:0 9px 9px 0}
+.program-run-cover > *{position:relative;z-index:1}
+.program-run-kicker{font-size:8px;font-weight:900;letter-spacing:.16em;color:rgba(255,255,255,.72);text-transform:uppercase}
+.program-run-cover strong{font-family:'DM Serif Display','Noto Sans KR',sans-serif;font-size:17px;line-height:1.2;color:#fff;word-break:keep-all;text-shadow:0 2px 9px rgba(0,0,0,.45)}
+.program-run-icon{font-size:38px;line-height:1;filter:drop-shadow(0 7px 7px rgba(0,0,0,.28))}
+.program-run-mark{font-size:8px;font-weight:900;letter-spacing:.2em;color:rgba(234,201,150,.82)}
+.program-run-back{position:absolute;inset:0;border-radius:2px 7px 7px 2px;background:#091624;transform:rotateY(180deg) translateZ(calc(var(--run-depth)/2));backface-visibility:hidden}
+.program-run-spine{position:absolute;top:0;left:0;width:var(--run-depth);height:100%;border-radius:2px 0 0 2px;background:linear-gradient(90deg,#040a12,#15304a,#07111e);transform:rotateY(-90deg) translateX(calc(var(--run-depth)/-2));transform-origin:left center;box-shadow:inset -2px 0 3px rgba(255,255,255,.16)}
+.program-run-pages{position:absolute;top:2px;right:0;width:var(--run-depth);height:calc(100% - 4px);transform:rotateY(90deg) translateX(calc(var(--run-depth)/2));transform-origin:right center;background:repeating-linear-gradient(to bottom,#fffaf0 0 1px,#d4cab8 1px 2px)}
+.program-run-top,.program-run-bottom{position:absolute;left:2px;width:calc(100% - 4px);height:var(--run-depth);background:repeating-linear-gradient(to right,#fffaf0 0 2px,#d4cab8 2px 3px)}
+.program-run-top{top:0;transform-origin:top center;transform:rotateX(90deg) translateY(calc(var(--run-depth)/-2))}
+.program-run-bottom{bottom:0;transform-origin:bottom center;transform:rotateX(-90deg) translateY(calc(var(--run-depth)/2))}
+.program-run-card.theme-killer .program-run-cover{background:linear-gradient(160deg,#4a1a1a,#200909)}
+.program-run-card.theme-calculation .program-run-cover{background:linear-gradient(160deg,#155e75,#0b293d)}
+.program-run-card.theme-mock .program-run-cover{background:linear-gradient(160deg,#2a1a4a,#160925)}
+.program-run-card.theme-final .program-run-cover{background:linear-gradient(160deg,#173819,#091b10)}
+.program-run-card.theme-archive .program-run-cover{background:linear-gradient(160deg,#332b10,#111108)}
+.program-run-name{font-size:15px;font-weight:900;color:var(--white);line-height:1.35;text-align:center;word-break:keep-all}
+.program-run-desc{font-size:11px;color:var(--muted);line-height:1.5;text-align:center;max-width:190px;margin-top:auto;word-break:keep-all}
+.program-lock{display:inline-flex;align-items:center;gap:4px;width:max-content;font-size:10px;font-weight:900;color:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:3px 8px;background:rgba(255,255,255,.035)}
+.program-empty{min-height:240px;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:13px;line-height:1.7}
+.archive-library{display:flex;flex-direction:column;gap:24px}
+.archive-folder-section{padding-bottom:22px;border-bottom:1px solid var(--border2)}
+.archive-folder-section:last-child{padding-bottom:0;border-bottom:0}
+.archive-folder-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.archive-folder-title{font-size:15px;font-weight:900;color:var(--white)}
+.archive-folder-count{font-size:10px;font-weight:900;color:var(--gold);border:1px solid var(--border);border-radius:999px;padding:4px 9px;background:rgba(212,175,55,.07)}
+.archive-book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+.archive-book-card{min-height:310px;padding:20px 14px 16px}
+.archive-book-card .program-run-cover{padding:0;overflow:hidden;background:linear-gradient(160deg,#332b10,#111108)}
+.archive-cover-img{position:absolute;inset:0;z-index:2;width:100%;height:100%;object-fit:cover;background:#fff}
+.archive-cover-fallback{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:14px;color:var(--gold2);font-size:12px;font-weight:900;line-height:1.45;text-align:center}
+.archive-cover-fallback::before{content:'GFIELD ARCHIVE';font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.52)}
+.archive-media-tag{font-size:9px;font-weight:900;color:var(--gold);border:1px solid var(--border);border-radius:999px;padding:3px 8px;background:rgba(212,175,55,.07)}
+.archive-book-date{font-size:9px;color:var(--muted);min-height:14px}
+.archive-book-card.locked .archive-cover-img{filter:grayscale(.6);opacity:.55}
+@media(max-width:820px){.program-shelf{grid-template-columns:1fr}.program-menu{position:relative;top:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.program-panel-head{display:block}.program-panel-desc{text-align:left;margin-top:8px}.program-menu-card{min-height:68px}.concept-showcase{grid-template-columns:210px minmax(0,1fr)}}
+@media(max-width:600px){.concept-showcase{grid-template-columns:1fr;margin:-4px -14px 22px;padding:22px 18px}.concept-book-stage{height:205px}.concept-book-3d{--w:118px;--h:166px}.concept-detail{text-align:center}.concept-topic-list{justify-content:center}.concept-detail-copy{text-align:left}}
+@media(max-width:500px){.program-menu{grid-template-columns:1fr}.program-detail{border-radius:14px}.program-panel{padding:18px 14px}.program-book-row{gap:12px}.program-run-grid{grid-template-columns:1fr 1fr;gap:10px}.program-run-card{min-height:275px;padding:16px 10px 14px}.program-run-book{--run-depth:23px;width:96px;height:136px}.program-run-cover{padding:12px 7px 10px}.program-run-cover strong{font-size:13px}.program-run-icon{font-size:30px}.program-run-name{font-size:12px}.program-run-desc{font-size:10px}}
+@media(max-width:900px) and (orientation:landscape){
+  #dashboard{padding:0 10px 24px}.dash-hero{padding:14px 0 12px}.dash-eyebrow{margin-bottom:4px}.dash-title{font-size:21px;margin-bottom:2px}.dash-sub{font-size:10px}
+  .program-shelf{grid-template-columns:minmax(150px,24vw) minmax(0,1fr);gap:10px;align-items:start}
+  .program-menu{position:sticky;top:52px;display:flex;flex-direction:column;gap:6px;max-height:calc(100dvh - 64px);overflow-y:auto}
+  .program-menu-card{min-height:48px;padding:7px 8px;border-radius:10px;grid-template-columns:28px minmax(0,1fr);gap:7px}
+  .pm-icon{width:28px;height:28px;border-radius:8px;font-size:15px}.pm-title{font-size:11px}.pm-sub{font-size:8px;margin-top:1px}
+  .program-detail{min-height:calc(100dvh - 126px);border-radius:12px}.program-panel{padding:12px 10px 16px}.program-panel-head{display:flex;align-items:flex-end;margin-bottom:12px;padding-bottom:10px}.program-panel-title{font-size:20px}.program-panel-desc{font-size:9px;text-align:right;margin-top:0}
+  .program-book-row{justify-content:flex-start;flex-wrap:nowrap;gap:9px;padding:4px 6px 12px;overflow-x:auto;scrollbar-width:thin}
+  .program-book-row .shelf-book-3d{--shelf-depth:18px;width:74px;height:106px}.program-book-row .shelf-label{width:74px}.program-book-row .shelf-title-text{font-size:10px}.program-book-row .shelf-videos{font-size:8px}
+  .concept-showcase{grid-template-columns:150px minmax(0,1fr);gap:14px;margin:-2px -10px 16px;padding:16px}.concept-book-stage{height:170px}.concept-book-3d{--w:92px;--h:130px;--d:24px}.concept-detail{text-align:left}.concept-topic-list{justify-content:flex-start}.concept-detail-copy{text-align:left}
+  .program-run-grid{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.program-run-card{min-height:260px;padding:13px 10px 12px}.program-run-book{--run-depth:24px;width:100px;height:142px}.program-run-cover{padding:12px 8px 10px}.program-run-cover strong{font-size:14px}.program-run-icon{font-size:31px}.program-run-name{font-size:12px}.program-run-desc{font-size:9px}.program-run-card .program-lock{font-size:8px;padding:2px 6px}
+}
+.product-card{position:relative;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:20px 16px 16px;display:flex;flex-direction:column;gap:14px;transition:all .3s cubic-bezier(.22,1,.36,1);overflow:hidden;cursor:pointer}
+.product-card.unlocked{border-color:rgba(212,175,55,.2)}
+.product-card.unlocked:hover{transform:translateY(-5px);box-shadow:0 24px 48px rgba(0,0,0,.5),0 0 0 1px rgba(212,175,55,.25);border-color:rgba(212,175,55,.35)}
+.product-card.locked{opacity:.45;cursor:not-allowed}
+.lock-icon{position:absolute;top:12px;right:12px;font-size:14px;opacity:.6}
+.book-wrap{perspective:700px;height:150px;display:flex;align-items:center;justify-content:center}
+.book-3d{--book-depth:22px;width:90px;height:128px;position:relative;transform-style:preserve-3d;transform:rotateY(-22deg) rotateX(4deg);transition:transform .5s cubic-bezier(.22,1,.36,1);filter:drop-shadow(0 16px 22px rgba(0,0,0,.58))}
+.product-card.unlocked:hover .book-3d{transform:rotateY(-26deg) rotateX(7deg) translateY(-4px)}
+.book-front{position:absolute;inset:0;border-radius:2px 7px 7px 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px;transform:translateZ(calc(var(--book-depth)/2));backface-visibility:hidden;box-shadow:4px 8px 24px rgba(0,0,0,.6)}
+.book-front::before,.shelf-book-front::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.16),transparent 18%,transparent 74%,rgba(0,0,0,.24)),repeating-linear-gradient(105deg,rgba(255,255,255,.055) 0 1px,transparent 1px 7px);mix-blend-mode:screen;pointer-events:none}
+.book-front::after,.shelf-book-front::after{content:'';position:absolute;top:0;right:0;width:9px;height:100%;background:linear-gradient(to right,rgba(255,255,255,.42),rgba(255,255,255,.08),rgba(0,0,0,.26));opacity:.75;pointer-events:none}
+.book-back{position:absolute;inset:0;border-radius:2px 7px 7px 2px;background:#091523;transform:rotateY(180deg) translateZ(calc(var(--book-depth)/2));backface-visibility:hidden}
+.book-spine{position:absolute;top:0;left:0;width:var(--book-depth);height:100%;border-radius:2px 0 0 2px;transform:rotateY(-90deg) translateX(calc(var(--book-depth)/-2));transform-origin:left center;box-shadow:inset -3px 0 5px rgba(255,255,255,.14)}
+.book-pages{position:absolute;top:3px;right:0;width:var(--book-depth);height:calc(100% - 6px);transform:rotateY(90deg) translateX(calc(var(--book-depth)/2));transform-origin:right center;background:repeating-linear-gradient(to bottom,#fffaf0 0 2px,#d4cab8 2px 3px)}
+.book-top,.book-bottom{position:absolute;left:3px;width:calc(100% - 6px);height:var(--book-depth);background:repeating-linear-gradient(to right,#fffaf0 0 3px,#d4cab8 3px 4px)}
+.book-top{top:0;transform-origin:top center;transform:rotateX(90deg) translateY(calc(var(--book-depth)/-2))}
+.book-bottom{bottom:0;transform-origin:bottom center;transform:rotateX(-90deg) translateY(calc(var(--book-depth)/2))}
+.book-shadow{position:absolute;bottom:-10px;left:5%;right:5%;height:10px;background:radial-gradient(ellipse,rgba(0,0,0,.5),transparent 70%);filter:blur(3px)}
+.book-icon{font-size:26px}
+.book-label{font-size:8px;font-weight:900;text-align:center;line-height:1.3;letter-spacing:.05em}
+.theme-concept .book-front{background:linear-gradient(160deg,#1a3a5c,#0d2040)}.theme-concept .book-spine{background:#0f2535}.theme-concept .book-label{color:#93c5fd}
+.theme-calculation .book-front{background:linear-gradient(160deg,#155e75,#0b293d)}.theme-calculation .book-spine{background:#082e3d}.theme-calculation .book-label{color:#a5f3fc}
+.theme-killer .book-front{background:linear-gradient(160deg,#4a1a1a,#2d0a0a)}.theme-killer .book-spine{background:#380f0f}.theme-killer .book-label{color:#fca5a5}
+.theme-final .book-front{background:linear-gradient(160deg,#1a3a1a,#0a2010)}.theme-final .book-spine{background:#102510}.theme-final .book-label{color:#86efac}
+.theme-mock .book-front{background:linear-gradient(160deg,#2a1a4a,#170a30)}.theme-mock .book-spine{background:#1a1030}.theme-mock .book-label{color:#d8b4fe}
+.theme-archive .book-front{background:linear-gradient(160deg,#1a1a0a,#0f0f05)}.theme-archive .book-spine{background:#111108}.theme-archive .book-label{color:var(--gold)}
+.product-badge{font-size:9px;font-weight:900;letter-spacing:.1em;color:var(--gold);background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.18);padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:6px}
+.product-name{font-size:13px;font-weight:900;color:var(--white);line-height:1.35;margin-bottom:4px}
+.product-desc{font-size:11px;color:var(--muted);line-height:1.55}
+.product-action{margin-top:auto;padding-top:10px;border-top:1px solid var(--border2)}
+.product-btn{width:100%;padding:9px;border-radius:9px;font-size:11px;font-weight:800;font-family:'Noto Sans KR',sans-serif;border:none;cursor:pointer;transition:opacity .15s}
+.product-btn.open{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)}
+.product-btn.locked{background:rgba(255,255,255,.04);color:rgba(255,255,255,.25);cursor:not-allowed;border:1px solid rgba(255,255,255,.06)}
+/* ── 3D 책장 챕터 뷰 ── */
+.bookshelf-scene{padding:20px 0 40px;width:100%}
+.bookshelf-row{display:flex;gap:clamp(12px,3vw,28px);justify-content:center;flex-wrap:wrap;align-items:flex-end;padding:0 10px}
+.shelf-slot{display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;flex:0 0 auto;border:0;background:transparent;padding:0;font-family:'Noto Sans KR',sans-serif}
+.shelf-slot.locked{opacity:.62;filter:saturate(.62)}
+.shelf-slot.selected .shelf-book-3d{transform:rotateY(-5deg) rotateX(1deg) translateY(-10px) scale(1.04);filter:drop-shadow(0 25px 36px rgba(212,175,55,.36))}
+.shelf-book-wrap{perspective:800px}
+.shelf-book-3d{--shelf-depth:26px;width:104px;height:148px;position:relative;transform-style:preserve-3d;transform:rotateY(-24deg) rotateX(5deg);transition:transform .45s cubic-bezier(.22,1,.36,1),filter .45s ease;filter:drop-shadow(0 20px 30px rgba(0,0,0,.72))}
+.shelf-slot:hover .shelf-book-3d{transform:rotateY(-6deg) rotateX(1deg) translateY(-14px) scale(1.06);filter:drop-shadow(0 28px 40px rgba(212,175,55,.35)) drop-shadow(0 0 20px rgba(212,175,55,.15))}
+.shelf-slot.is-final:hover .shelf-book-3d{filter:drop-shadow(0 28px 40px rgba(212,175,55,.55)) drop-shadow(0 0 32px rgba(212,175,55,.35))}
+.shelf-book-front{position:absolute;inset:0;border-radius:2px 7px 7px 2px;overflow:hidden;transform:translateZ(calc(var(--shelf-depth)/2));backface-visibility:hidden;box-shadow:inset -3px 0 8px rgba(0,0,0,.4),inset 10px 0 10px rgba(255,255,255,.06)}
+.shelf-book-front img{width:100%;height:100%;object-fit:cover;display:block}
+.shelf-book-back{position:absolute;inset:0;border-radius:2px 7px 7px 2px;transform:rotateY(180deg) translateZ(calc(var(--shelf-depth)/2));background:linear-gradient(145deg,#102b43,#071421);border:1px solid rgba(212,175,55,.18);backface-visibility:hidden}
+.shelf-book-spine{position:absolute;top:0;left:0;width:var(--shelf-depth);height:100%;background:linear-gradient(to right,#020408,#0a1628);border-radius:2px 0 0 2px;transform:rotateY(-90deg) translateX(calc(var(--shelf-depth)/-2));transform-origin:left center;box-shadow:inset -2px 0 4px rgba(255,255,255,.16)}
+.shelf-book-pages{position:absolute;top:3px;right:0;width:var(--shelf-depth);height:calc(100% - 6px);transform:rotateY(90deg) translateX(calc(var(--shelf-depth)/2));transform-origin:right center;background:repeating-linear-gradient(to bottom,#f4ecd9 0 2px,#d1c7b4 2px 3px);box-shadow:inset 0 0 4px rgba(0,0,0,.3)}
+.shelf-book-top,.shelf-book-bottom{position:absolute;left:3px;width:calc(100% - 6px);height:var(--shelf-depth);background:repeating-linear-gradient(to right,#fffaf0 0 3px,#d5cab7 3px 4px);box-shadow:inset 0 0 5px rgba(0,0,0,.25)}
+.shelf-book-top{top:0;transform-origin:top center;transform:rotateX(90deg) translateY(calc(var(--shelf-depth)/-2))}
+.shelf-book-bottom{bottom:0;transform-origin:bottom center;transform:rotateX(-90deg) translateY(calc(var(--shelf-depth)/2))}
+.shelf-book-shadow{position:absolute;bottom:-14px;left:8%;right:8%;height:14px;background:radial-gradient(ellipse,rgba(0,0,0,.7),transparent 70%);filter:blur(6px)}
+.shelf-label{text-align:center;width:104px}
+.shelf-vol-text{font-size:9px;font-weight:900;color:var(--gold);letter-spacing:.12em;margin-bottom:3px}
+.shelf-title-text{font-size:clamp(11px,2vw,13px);font-weight:900;color:var(--white);line-height:1.3}
+.shelf-videos{font-size:10px;color:var(--muted);margin-top:3px}
+.shelf-rail{width:100%;height:10px;background:linear-gradient(to bottom,#1a2d44,#080f1a);border-radius:5px;margin-top:20px;box-shadow:0 10px 30px rgba(0,0,0,.6),0 -1px 0 rgba(212,175,55,.1)}
+.chapter-back-fancy{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:rgba(255,255,255,.6);font-size:12px;font-weight:700;padding:8px 16px;border-radius:10px;cursor:pointer;margin-bottom:28px;font-family:'Noto Sans KR',sans-serif;transition:all .2s}
+.chapter-back-fancy:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,175,55,.06)}
+.shelf-section-title{font-family:'DM Serif Display',serif;font-size:clamp(18px,3vw,24px);color:var(--white);text-align:center;margin-bottom:6px}
+.shelf-section-title em{color:var(--gold);font-style:italic}
+.shelf-section-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:32px}
+@media(max-width:500px){.bookshelf-row{gap:8px}.shelf-book-3d{width:88px;height:126px}.shelf-label{width:88px}}
+#commentModal{display:none;position:fixed;inset:0;z-index:500;padding:20px;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);align-items:center;justify-content:center}
+#commentModal.show{display:flex}
+.modal-card{width:min(480px,95vw);background:rgba(8,13,20,.98);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.8);animation:modalIn .25s cubic-bezier(.22,1,.36,1)}
+@keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(16px)}to{opacity:1;transform:none}}
+.modal-bar{height:4px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold))}
+.modal-body{padding:24px 22px 20px}
+.modal-vol{font-size:10px;font-weight:900;letter-spacing:3px;color:var(--gold);margin-bottom:6px}
+.modal-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--white);margin-bottom:14px}
+.modal-topics{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;margin-bottom:14px}
+.modal-topics-head{font-size:10px;font-weight:900;color:var(--muted);letter-spacing:.08em;margin-bottom:8px}
+.modal-topics ul{list-style:none}
+.modal-topics li{font-size:12px;color:var(--white);line-height:1.8;padding-left:14px;position:relative}
+.modal-topics li::before{content:'▸';position:absolute;left:0;color:var(--gold);font-size:10px}
+.modal-comment{background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:12px 14px;margin-bottom:18px}
+.modal-comment-head{font-size:10px;font-weight:900;color:var(--gold);margin-bottom:6px}
+.modal-comment p{font-size:12px;color:rgba(255,255,255,.75);line-height:1.75}
+.modal-actions{display:flex;gap:10px}
+.modal-close{flex:1;padding:12px;border-radius:10px;border:1px solid var(--border2);background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);font-size:13px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer}
+.modal-go{flex:2;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:14px;font-weight:900;font-family:'Noto Sans KR',sans-serif;cursor:pointer}
+.modal-go:active{transform:scale(.97)}
+#rotateHint{display:none;position:fixed;inset:0;z-index:9998;background:linear-gradient(135deg,#02050b,#0d1b2a);flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:20px}
+#rotateHint.show{display:flex}
+.rotate-icon{font-size:64px;animation:rotateAnim 1.5s ease-in-out infinite}
+@keyframes rotateAnim{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
+.rotate-title{font-size:18px;font-weight:900;color:var(--gold2)}
+.rotate-desc{font-size:13px;color:var(--muted);line-height:1.7}
+#viewer{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);flex-direction:column}
+#viewer.show{display:flex}
+.viewer-header{padding:8px 12px;background:rgba(2,5,11,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0}
+.viewer-back{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.05);border:1px solid var(--border2);color:rgba(255,255,255,.65);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:5px 10px;border-radius:7px;cursor:pointer}
+.viewer-back:hover{border-color:var(--gold);color:var(--gold)}
+.viewer-title{font-size:12px;font-weight:900;color:var(--gold2);flex:1;text-align:center}
+.viewer-acts{display:flex;gap:6px}
+.v-btn{background:rgba(255,255,255,.05);border:1px solid var(--border2);color:rgba(255,255,255,.65);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;padding:5px 10px;border-radius:7px;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
+.v-btn:hover{border-color:var(--gold);color:var(--gold)}
+.v-btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none}
+.viewer-tabs{padding:5px 8px;background:rgba(8,13,20,.92);border-bottom:1px solid var(--border);display:flex;gap:4px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+.viewer-tabs::-webkit-scrollbar{display:none}
+.tab-btn{flex-shrink:0;padding:5px 13px;border-radius:8px;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:rgba(255,255,255,.55);font-size:11px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;white-space:nowrap;transition:all .14s}
+.tab-btn:hover{border-color:rgba(212,175,55,.3);color:var(--gold2)}
+.tab-btn.active{color:var(--navy);border-color:transparent;font-weight:900}
+.tab-btn[data-type="check"].active{background:linear-gradient(135deg,#f093fb,#f5576c)}
+.tab-btn[data-type="concept"].active{background:linear-gradient(135deg,#4facfe,#00f2fe)}
+.tab-btn[data-type="practice"].active{background:linear-gradient(135deg,#43e97b,#38f9d7)}
+.tab-btn[data-type="final"].active{background:linear-gradient(135deg,var(--gold),var(--gold2))}
+.tab-btn:not(.active)[data-type="check"]{color:rgba(245,87,108,.7)}
+.tab-btn:not(.active)[data-type="concept"]{color:rgba(79,172,254,.7)}
+.tab-btn:not(.active)[data-type="practice"]{color:rgba(67,233,123,.7)}
+.tab-btn:not(.active)[data-type="final"]{color:var(--gold)}
+.viewer-body{flex:1;display:grid;overflow:hidden;min-height:0}
+.viewer-body.has-video{grid-template-columns:46% 54%}
+.viewer-body.no-video{grid-template-columns:1fr}
+.vpanel{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden;min-height:0}
+.vpanel-head{padding:7px 11px;background:linear-gradient(135deg,var(--navy),#132030);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.vpanel-title{font-size:12px;font-weight:900;color:var(--gold2)}
+.vpanel-meta{font-size:10px;color:var(--muted)}
+.vframe-box{position:relative;width:100%;flex:1;min-height:0;background:#000}
+#videoIframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.bpanel{overflow:hidden;min-height:0;display:flex;flex-direction:column;background:#343941}
+.book-toolbar{height:36px;display:flex;align-items:center;justify-content:center;gap:8px;background:#202630;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.book-page-label{min-width:72px;text-align:center;color:#d8dee9;font-size:11px;font-weight:800}
+.book-nav{height:24px;padding:0 10px;border-radius:7px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#d8dee9;font-size:11px;font-weight:800;font-family:'Noto Sans KR',sans-serif;cursor:pointer}
+.book-nav:disabled{opacity:.35;cursor:not-allowed}
+.book-stage{position:relative;flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;padding:12px 8px 28px;scroll-behavior:smooth;scrollbar-gutter:stable both-edges}
+.book-pages{width:100%;display:flex;flex-direction:column;align-items:center;gap:18px}
+.book-sheet{position:relative;width:min(100%,820px);aspect-ratio:1075/1521;line-height:0;background:#fff;box-shadow:0 12px 34px rgba(0,0,0,.35);flex:none}
+.viewer-body.no-video .book-sheet{width:min(100%,920px)}
+.book-page-img{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
+.book-watermark{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:2;display:block}
+.book-watermark span{position:absolute;left:50%;color:rgba(22,34,51,.15);font-size:38pt;font-weight:900;white-space:nowrap;transform:translate(-50%,-50%) rotate(-34deg);letter-spacing:0}
+.book-watermark .wm-r1{top:26%}.book-watermark .wm-r2{top:50%}.book-watermark .wm-r3{top:74%}
+.book-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#526070;font-size:13px;font-weight:900;background:#f8fafc;z-index:3;pointer-events:none}
+.book-status:empty{display:none}
+@media print{
+  #gate,#app,#rotateHint,#commentModal,#viewer .viewer-header,#viewer .viewer-tabs,#viewer .vpanel,.sec-toast{display:none!important}
+  #viewer{position:relative!important;display:block!important}.viewer-body{display:block!important}
+  .bpanel{overflow:visible!important;background:white!important;display:block!important}
+  .book-toolbar,.book-status{display:none!important}.book-stage{display:block!important;padding:0!important;overflow:visible!important}
+  .book-pages{display:block!important}
+  .book-sheet{width:210mm!important;height:297mm!important;aspect-ratio:auto!important;margin:0!important;box-shadow:none!important;break-after:page!important;page-break-after:always!important;overflow:hidden!important}
+  .book-watermark{display:block!important}
+  .book-page-img{width:210mm!important;height:297mm!important;object-fit:fill!important}
+  @page{size:A4;margin:0}
+}
+@media(max-height:500px) and (orientation:landscape){.viewer-header{padding:5px 10px}.viewer-tabs{padding:3px 8px}.tab-btn{padding:4px 10px;font-size:10px}}
+@media(max-width:600px){.products-grid{grid-template-columns:1fr 1fr}#dashboard{padding:0 12px 40px}}
+@media(max-width:380px){.products-grid{grid-template-columns:1fr}}
+.sec-toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:99999;display:none;padding:9px 16px;border-radius:999px;background:rgba(2,5,11,.96);color:var(--gold2);font-size:11px;font-weight:800;border:1px solid var(--border)}
+.sec-toast.show{display:block}
+/* ── 재원생 타임라인 뷰 ── */
+.timeline-wrap{max-width:620px;margin:0 auto;padding:10px 0 40px;position:relative}
+.tl-item{position:relative;padding-left:64px;padding-bottom:26px}
+.tl-item:last-child{padding-bottom:0}
+.tl-line{position:absolute;left:26px;top:6px;bottom:-6px;width:2px;background:linear-gradient(to bottom,var(--gold),rgba(212,175,55,.15))}
+.tl-item:last-child .tl-line{display:none}
+.tl-item.locked .tl-line{background:rgba(255,255,255,.08)}
+.tl-node{position:absolute;left:10px;top:2px;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;z-index:2;border:2px solid;transition:all .3s}
+.tl-item.done .tl-node{background:var(--grad-gold);border-color:var(--gold);color:var(--navy)}
+.tl-item.current .tl-node{background:var(--grad-brand);border-color:var(--gold2);color:#fff;box-shadow:0 0 0 5px rgba(212,175,55,.18);animation:pulseNode 2s ease-in-out infinite}
+.tl-item.locked .tl-node{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.25)}
+@keyframes pulseNode{0%,100%{box-shadow:0 0 0 5px rgba(212,175,55,.18)}50%{box-shadow:0 0 0 9px rgba(212,175,55,.06)}}
+.tl-card{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:15px 17px;transition:all .25s;cursor:pointer}
+.tl-item.done .tl-card{border-color:rgba(212,175,55,.22)}
+.tl-item.current .tl-card{border-color:rgba(212,175,55,.4);box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 0 1px rgba(212,175,55,.2);background:linear-gradient(160deg,rgba(212,175,55,.06),var(--surface))}
+.tl-item.locked .tl-card{opacity:.5;cursor:not-allowed}
+.tl-item.done .tl-card:hover,.tl-item.current .tl-card:hover{transform:translateX(4px)}
+.tl-step{font-size:9px;font-weight:900;letter-spacing:.14em;color:var(--gold);margin-bottom:4px}
+.tl-name{font-size:15px;font-weight:900;color:var(--white);margin-bottom:3px}
+.tl-desc{font-size:11px;color:var(--muted);line-height:1.5}
+.tl-status{display:inline-block;margin-top:8px;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px}
+.tl-status.done{background:rgba(212,175,55,.12);color:var(--gold);border:1px solid rgba(212,175,55,.25)}
+.tl-status.current{background:var(--grad-brand);color:#fff}
+.tl-status.locked{background:rgba(255,255,255,.04);color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.08)}
+.view-toggle{display:flex;justify-content:center;margin-bottom:20px}
+.view-toggle button{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:700;padding:7px 16px;cursor:pointer;font-family:'Noto Sans KR',sans-serif}
+.view-toggle button:first-child{border-radius:8px 0 0 8px}
+.view-toggle button:last-child{border-radius:0 8px 8px 0}
+.view-toggle button.active{background:var(--grad-gold);color:var(--navy);border-color:var(--gold)}
+
+/* Light library theme: paper-white surfaces, navy type, restrained gold accents. */
+#gate,#app,#commentModal{--bg:#e9eff5;--surface:#fff;--gold:#8f6400;--gold2:#d6aa28;--gold-glow:rgba(143,100,0,.14);--white:#14283e;--muted:#627187;--border:rgba(143,100,0,.22);--border2:rgba(20,40,62,.12);--navy:#102b46}
+#gate{background:linear-gradient(145deg,#e6edf4,#f8fafc 52%,#edf2f7)}
+.gate-card{background:linear-gradient(180deg,#fff,#f5f8fb);border-color:rgba(20,40,62,.13);box-shadow:0 2.8px 2.2px rgba(20,40,62,.025),0 6.7px 5.3px rgba(20,40,62,.035),0 12.5px 10px rgba(20,40,62,.045),0 22.3px 17.9px rgba(20,40,62,.055),0 41.8px 33.4px rgba(20,40,62,.065),0 72px 60px rgba(20,40,62,.08),inset 0 1px 0 #fff}
+.gate-logo{filter:drop-shadow(0 8px 12px rgba(20,40,62,.15))}.gate-input{background:#f3f6f9;border-color:rgba(20,40,62,.15);color:var(--white);box-shadow:inset 0 2px 5px rgba(20,40,62,.06),0 1px 0 #fff}.gate-input::placeholder{color:rgba(20,40,62,.35)}.gate-note{color:rgba(20,40,62,.48)}
+#app{background:linear-gradient(180deg,#f5f8fb 0,#e7edf4 100%);color:var(--white)}
+.app-header{background:rgba(255,255,255,.92);border-bottom-color:rgba(20,40,62,.12);box-shadow:0 2px 3px -1px rgba(20,40,62,.08),0 1px 0 rgba(255,255,255,.9)}
+.header-logo{filter:none;opacity:1}.header-badge{background:#fff9e8}.header-logout{background:#f4f7fa;border-color:rgba(20,40,62,.14);color:#627187}.header-logout:hover{background:#fff;border-color:var(--gold)}
+#dashboard{background:linear-gradient(180deg,#f5f8fb 0,#e7edf4 100%)}
+.dash-hero::before{background:linear-gradient(180deg,rgba(255,255,255,.7),transparent)}
+.program-menu-card{background:linear-gradient(180deg,#fff,#eef3f7);border-color:rgba(20,40,62,.12);box-shadow:0 2px 3px -1px rgba(20,40,62,.08),0 1px 0 #fff,inset 0 -1px 0 rgba(20,40,62,.05)}
+.program-menu-card:hover{background:#fff;box-shadow:0 6px 12px rgba(20,40,62,.1);border-color:rgba(168,121,8,.35)}
+.program-menu-card.active{background:linear-gradient(180deg,#fffdf7,#f7edd1);border-color:rgba(168,121,8,.5);box-shadow:inset 0 3px 8px rgba(20,40,62,.08),inset 0 -1px 0 #fff,0 4px 10px rgba(20,40,62,.08)}
+.pm-icon{background:linear-gradient(180deg,#fff,#e5ebf1);box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(20,40,62,.12),0 2px 4px rgba(20,40,62,.08)}
+.program-detail{background:linear-gradient(180deg,#fff,#f3f6f9);border-color:rgba(20,40,62,.13);box-shadow:0 0 0 1px rgba(20,40,62,.03),0 1px 1px -.5px rgba(20,40,62,.05),0 6px 6px -3px rgba(20,40,62,.07),0 18px 24px -12px rgba(20,40,62,.14),inset 0 1px 0 #fff}
+.concept-showcase{background:linear-gradient(105deg,#eaf2f8,#fff 48%,#f8f1dd);border-bottom-color:rgba(20,40,62,.1)}
+.concept-topic-list li{color:#29445f;border-color:rgba(41,68,95,.16);background:#edf3f8}
+.concept-start:disabled{background:#e3e8ed;color:#8a96a3;border-color:rgba(20,40,62,.1)}
+.program-run-card,.product-card,.tl-card{background:linear-gradient(180deg,#fff,#eef3f7);border-color:rgba(20,40,62,.12);box-shadow:0 2px 3px -1px rgba(20,40,62,.08),0 1px 0 #fff,inset 0 -1px 0 rgba(20,40,62,.05)}
+.program-run-card:hover,.product-card.unlocked:hover{background:#fff;border-color:rgba(168,121,8,.35);box-shadow:0 0 0 1px rgba(20,40,62,.04),0 6px 6px -3px rgba(20,40,62,.08),0 18px 24px -12px rgba(20,40,62,.16)}
+.program-lock{color:#788696;border-color:rgba(20,40,62,.12);background:#e9eef3}.product-btn.locked{background:#e6ebf0;color:#8995a2;border-color:rgba(20,40,62,.1)}
+#app .concept-book-3d{filter:drop-shadow(0 24px 24px rgba(20,40,62,.28))}#app .shelf-book-3d{filter:drop-shadow(0 18px 20px rgba(20,40,62,.28))}#app .program-run-book{filter:drop-shadow(0 10px 12px rgba(20,40,62,.28))}
+.shelf-slot.selected .shelf-book-3d,.shelf-slot:hover .shelf-book-3d{filter:drop-shadow(0 22px 24px rgba(20,40,62,.24))}.shelf-slot.is-final:hover .shelf-book-3d{filter:drop-shadow(0 22px 26px rgba(168,121,8,.32))}
+.shelf-rail{background:linear-gradient(180deg,#cbd4de,#8d9aaa);box-shadow:0 8px 16px rgba(20,40,62,.16),inset 0 1px 0 #fff,inset 0 -1px 0 rgba(20,40,62,.18)}
+.chapter-back-fancy{background:#fff;border-color:rgba(20,40,62,.13);color:#627187;box-shadow:0 2px 3px -1px rgba(20,40,62,.08)}.chapter-back-fancy:hover{background:#fff9e8}
+#commentModal{background:rgba(16,43,70,.28)}.modal-card{background:linear-gradient(180deg,#fff,#f2f6f9);border-color:rgba(20,40,62,.13);box-shadow:0 30px 60px rgba(20,40,62,.24),inset 0 1px 0 #fff}.modal-topics{background:#eef3f7;border-color:rgba(20,40,62,.1)}.modal-comment{background:#fff9e8}.modal-comment p{color:#52647a}.modal-close{background:#e9eef3;border-color:rgba(20,40,62,.12);color:#627187}
+.tl-item.locked .tl-line{background:rgba(20,40,62,.12)}.tl-item.locked .tl-node{background:#e5ebf0;border-color:#c4cdd6;color:#7c8997}.tl-item.current .tl-card{background:linear-gradient(160deg,#fff9e8,#fff);box-shadow:0 12px 24px rgba(20,40,62,.12)}.tl-status.locked{background:#e5ebf0;color:#7c8997;border-color:#c4cdd6}.view-toggle button{background:#eef3f7;border-color:rgba(20,40,62,.14)}
+
+/* Stronger type scale for parents and students scanning the library. */
+#gate .gate-title,#app .dash-title,#app .program-panel-title,#app .concept-detail-title,#app .shelf-section-title,#commentModal .modal-title{font-family:'Noto Sans KR',sans-serif;font-weight:900;letter-spacing:0}
+.gate-tag{font-size:11px;font-weight:900}.gate-title{font-size:30px;line-height:1.3;margin-bottom:10px}.gate-desc{font-size:14px;font-weight:700;line-height:1.65;margin-bottom:24px}.gate-input{height:50px;font-size:16px;font-weight:900}.gate-input::placeholder{font-size:14px;font-weight:700}.gate-btn{height:50px;font-size:16px}
+.header-badge{font-size:11px}.header-student{font-size:13px;font-weight:700}.header-logout{font-size:12px;font-weight:800}
+.dash-eyebrow{font-size:11px}.dash-title{font-size:clamp(28px,4vw,44px);font-weight:900}.dash-sub{font-size:14px;font-weight:700}.dash-sub:empty{display:none}
+.program-menu-card{min-height:80px}.pm-title{font-size:15px;font-weight:900;line-height:1.35}.pm-sub{font-size:11px;font-weight:700;line-height:1.45}
+.program-panel-kicker{font-size:11px}.program-panel-title{font-size:clamp(28px,3vw,38px)}.program-panel-desc{font-size:13px;font-weight:700;line-height:1.7}
+.concept-detail-kicker{font-size:11px}.concept-detail-title{font-size:clamp(28px,3vw,38px)}.concept-topic-list li{font-size:12px}.concept-detail-copy{font-size:13px;font-weight:700}.concept-start{font-size:13px}
+.shelf-vol-text{font-size:10px}.shelf-title-text{font-size:14px;font-weight:900}.shelf-videos{font-size:11px;font-weight:700}
+.program-run-card{min-height:150px}.program-run-name{font-size:15px}.program-run-desc{font-size:12px;font-weight:700;line-height:1.55}.program-lock{font-size:11px}
+.product-name{font-size:15px}.product-desc{font-size:12px;font-weight:700}.tl-name{font-size:16px}.tl-desc{font-size:12px;font-weight:700}
+@media(max-width:900px) and (orientation:landscape){
+  .dash-title{font-size:24px}.dash-eyebrow{font-size:10px}.program-menu-card{min-height:66px}.pm-title{font-size:12px}.pm-sub{font-size:9px;line-height:1.35}.program-panel-title{font-size:23px}.program-panel-desc{font-size:10px;line-height:1.5}.program-book-row .shelf-title-text{font-size:11px}.program-book-row .shelf-videos{font-size:9px}.program-run-name{font-size:13px}.program-run-desc{font-size:10px}
+}
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <img class="logo" src="https://lh3.googleusercontent.com/d/1c2yx_O6sKcTF9-YoTKxnQ2lWOqfWiUCL" alt="G-FIELD">
-    <div class="tag">FIELDS THE CLASSIC</div>
-    <div class="title">필즈 더 클래식 대비 과정</div>
-    <div class="spinner"></div>
-    <p class="msg">학습 페이지로 이동하고 있습니다…</p>
-    <a class="link" href="./program/?v=1cf5ac7">바로 이동하기 →</a>
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-bar"></div>
+    <div class="gate-body">
+      <img class="gate-logo" src="https://lh3.googleusercontent.com/d/1c2yx_O6sKcTF9-YoTKxnQ2lWOqfWiUCL" alt="G-FIELD">
+      <div class="gate-tag">FIELDS THE CLASSIC · ONLINE PROGRAM</div>
+      <div class="gate-title">필즈 더 클래식 대비 과정</div>
+      <p class="gate-desc">승인번호와 학생 이름을 입력하면<br>구매하신 프로그램이 열립니다.</p>
+      <input class="gate-input" id="gCode" type="text" autocomplete="off" placeholder="승인번호">
+      <input class="gate-input" id="gName" type="text" autocomplete="off" placeholder="학생 이름">
+      <button class="gate-btn" onclick="GF.login()">입장하기 →</button>
+      <div class="gate-error" id="gErr"></div>
+    </div>
   </div>
-<script>location.replace('./program/?v=1cf5ac7');</script>
+</div>
+<div id="commentModal">
+  <div class="modal-card">
+    <div class="modal-bar"></div>
+    <div class="modal-body">
+      <div class="modal-vol" id="modalVol"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-topics">
+        <div class="modal-topics-head">이번 회차 학습 내용</div>
+        <ul id="modalTopics"></ul>
+      </div>
+      <div class="modal-comment" id="modalCommentBox" style="display:none">
+        <div class="modal-comment-head">💬 원장님 코멘트</div>
+        <p id="modalComment"></p>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-close" onclick="GF.closeModal()">닫기</button>
+        <button class="modal-go" onclick="GF.startFromModal()">학습 시작 →</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="rotateHint">
+  <div class="rotate-icon">📱</div>
+  <div class="rotate-title">가로로 돌려주세요</div>
+  <div class="rotate-desc">서재와 학습 화면은 가로보기로 이용해 주세요.</div>
+</div>
+<div id="app">
+  <header class="app-header">
+    <div class="header-left">
+      <img class="header-logo" src="https://lh3.googleusercontent.com/d/1c2yx_O6sKcTF9-YoTKxnQ2lWOqfWiUCL" alt="G-FIELD">
+      <div class="header-sep"></div>
+      <span class="header-badge" id="headerBadge">필즈 대비 과정</span>
+    </div>
+    <div class="header-right">
+      <span class="header-student"><b id="hName"></b> 학생</span>
+      <button class="header-logout" onclick="GF.logout()">로그아웃</button>
+    </div>
+  </header>
+  <div id="dashboard">
+    <div class="dash-hero">
+      <div class="dash-eyebrow">GFIELD GIFTED EDUCATION</div>
+      <h1 class="dash-title" id="dashTitle">필즈 더 클래식<br><em>대비 과정 서재</em></h1>
+      <p class="dash-sub" id="dashSub"></p>
+    </div>
+    <div id="mainGrid" class="products-grid"></div>
+    <div id="timelineView" style="display:none"></div>
+    <div id="chapterView" style="display:none;padding:20px 0"></div>
+  </div>
+</div>
+<div id="viewer">
+  <div class="viewer-header">
+    <button class="viewer-back" onclick="GF.closeViewer()">← 목록으로</button>
+    <span class="viewer-title" id="vTitle"></span>
+    <div class="viewer-acts">
+      <button class="v-btn" id="vPrintBtn" onclick="window.print()">🖨 인쇄</button>
+      <button class="v-btn gold" id="vYtBtn" onclick="GF.openYt()" style="display:none">▶ 새 창</button>
+    </div>
+  </div>
+  <div class="viewer-tabs" id="vTabs"></div>
+  <div class="viewer-body has-video" id="vBody">
+    <div class="vpanel" id="vPanel">
+      <div class="vpanel-head">
+        <span class="vpanel-title" id="vPanelTitle">강의</span>
+        <span class="vpanel-meta" id="vPanelMeta"></span>
+      </div>
+      <div class="vframe-box">
+        <iframe id="videoIframe" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+    <div class="bpanel" id="bPanel">
+      <div class="book-toolbar">
+        <button class="book-nav" id="bookPrev" onclick="GF.prevBookPage()">↑ 이전 쪽</button>
+        <span class="book-page-label" id="bookPageLabel">- / -</span>
+        <button class="book-nav" id="bookNext" onclick="GF.nextBookPage()">다음 쪽 ↓</button>
+      </div>
+      <div class="book-stage">
+        <div class="book-pages" id="bookPages"></div>
+        <div class="book-status" id="bookStatus"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="sec-toast" id="secToast">🔒 학생 전용 보안 자료입니다.</div>
+<script>document.write('<script src="../data.js?v='+Date.now()+'"><\/script>')</script>
+<script>
+(function(){"use strict";
+/* ── 이미지 경로 (concept/ 직접) ── */
+const CONCEPT_PAGES="../assets/concept/";
+const ALL=["개념완성","연산연습","진단모의고사","킬러문항",
+  "실전모의고사1회","실전모의고사2회","실전모의고사3회","실전모의고사4회","실전모의고사5회","실전모의고사6회",
+  "파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","파이널모의고사4회",
+  "최종모의고사","자료실"];
+const PRODUCTS=[
+  {key:"개념완성",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",icon:"📘",theme:"theme-concept",type:"folder",pagesBase:CONCEPT_PAGES,pageCount:75,pageSegments:[{base:"../assets/concept/vol1/",count:19},{base:"../assets/concept/vol2/",count:19},{base:"../assets/concept/vol3/",count:16},{base:"../assets/concept/vol4/",count:10},{base:"../assets/concept/final/",count:11}],pageExt:"jpg",pagePrefix:"",
+   chapters:[
+    {key:"vol1",vol:"Vol.1",title:"수와 규칙",subtitle:"1회차 · 필즈 대비 개념",topics:["수 피라미드","줄 세우기, 자리찾기","도형이 나타내는 수"],comment:"필즈 테스트 시 연산은 첫 페이지에 있는 연산을 틀리지 않으면 됩니다. 다만 도형이 나타내는 수와 같이 구구단 정도는 반드시 필요하니 받아내림, 받아올림, 구구단은 실수없이 할 수 있도록 해주세요.",videos:[{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/7aPj5IJUzQM",pdfPage:2},{key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/itmV6EXWQA4",pdfPage:15}]},
+    {key:"vol2",vol:"Vol.2",title:"저울과 패턴",subtitle:"2회차 · 필즈 대비 개념",topics:["양팔저울","양팔저울의 활용","조건에 알맞은 수","패턴 도형 규칙"],comment:null,videos:[{key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/WoN9Ie8Fn8s",pdfPage:21},{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/WoN9Ie8Fn8s?t=318",pdfPage:24},{key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/vBgZ_lZ_XiA",pdfPage:34}]},
+    {key:"vol3",vol:"Vol.3",title:"숨겨진 수",subtitle:"3회차 · 필즈 대비 개념",topics:["도형으로 수 나타내기","어떤 수 구하기"],comment:"체크체크에서는 지금까지 배운 유형을 계속 누적하여 확인하고 있습니다. 지금까지 배운 내용은 수피라미드, 양팔저울, 도형규칙, 도형이 나타내는 수, 줄세우기, 조건에 알맞은 수입니다. 부족한 유형은 반드시 복습해주세요. 줄세우기 문제 풀 때 동그라미 그리는 연습이 필요합니다.",videos:[{key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/TOHw8sCumHY",pdfPage:40},{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/mq-1VxjLzMk",pdfPage:45},{key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/jhjqxBZ40UQ",pdfPage:50}]},
+    {key:"vol4",vol:"Vol.4",title:"바둑돌의 비밀",subtitle:"4회차 · 필즈 대비 개념",topics:["바둑돌 규칙","마디 끊기 연습"],comment:"시험에서 가장 어려워하는 바둑돌 규칙에 대한 개념입니다. 마디를 끊는 연습도 반드시 해주세요.",videos:[{key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/ESmcuckBYIw",pdfPage:55},{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/neRIODxo13I",pdfPage:57}]},
+    {key:"final",vol:"Final",title:"종합 체크",subtitle:"마무리 체크체크",topics:["지금까지 배운 전체 유형 종합 테스트"],comment:null,videos:[{key:"final",type:"final",label:"🏆 학습영상",url:"https://youtu.be/FC4W2bRJwKc",pdfPage:65}]}
+  ]},
+  {key:"연산연습",name:"필즈 연산 연습",desc:"덧셈·뺄셈·받아올림·받아내림",icon:"🔢",theme:"theme-calculation",type:"practice",practiceUrl:"../arithmetic/"},
+  {key:"진단모의고사",name:"진단 모의고사",desc:"현재 수준 정밀 진단 + 분석",icon:"🔍",theme:"theme-mock",type:"mock",mockUrl:"../mock/"},
+  {key:"킬러문항",name:"킬러문항 완전 해제",desc:"필즈 기출에서 실수가 많았던 9개 유형 정리",icon:"🎯",theme:"theme-killer",type:"direct",viewerMode:"inline",printDoc:"killer",pagesBase:"../assets/print/killer/page_",pageCount:32,videoUrl:"https://youtu.be/_x-NIjvBxMQ",topics:["복면산","수직선에서의 길이·단위길이","도형수","마방진·삼각진","도형이 나타내는 수","주고받기","양팔저울","수·도형 규칙","약속·암호"],lessons:[{key:"k1",label:"킬러 유형",title:"킬러문항 완전 해제",type:"concept",url:"https://youtu.be/_x-NIjvBxMQ",pdfPage:1}]},
+  {key:"실전모의고사1회",name:"실전 모의고사 1회",desc:"6세 선발 모의고사 세트 1회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/41mXpws-gng",printDoc:"mock-set-1",lessons:[{key:"p1",label:"1회",title:"실전 모의고사 1회",type:"concept",url:"https://youtu.be/41mXpws-gng",pdfPage:1}]},
+  {key:"실전모의고사2회",name:"실전 모의고사 2회",desc:"6세 선발 모의고사 세트 2회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/S-P096L75ps",printDoc:"mock-set-2",lessons:[{key:"p2",label:"2회",title:"실전 모의고사 2회",type:"concept",url:"https://youtu.be/S-P096L75ps",pdfPage:1}]},
+  {key:"실전모의고사3회",name:"실전 모의고사 3회",desc:"6세 선발 모의고사 세트 3회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/6YU0_X5ixEQ",printDoc:"mock-set-3",lessons:[{key:"p3",label:"3회",title:"실전 모의고사 3회",type:"concept",url:"https://youtu.be/6YU0_X5ixEQ",pdfPage:1}]},
+  {key:"실전모의고사4회",name:"실전 모의고사 4회",desc:"6세 선발 모의고사 세트 4회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/KLQH2Mrjm8c",printDoc:"mock-set-4",lessons:[{key:"p4",label:"4회",title:"실전 모의고사 4회",type:"concept",url:"https://youtu.be/KLQH2Mrjm8c",pdfPage:1}]},
+  {key:"실전모의고사5회",name:"실전 모의고사 5회",desc:"6세 선발 모의고사 세트 5회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/kyHuxpZhcTQ",printDoc:"mock-set-5",lessons:[{key:"p5",label:"5회",title:"실전 모의고사 5회",type:"concept",url:"https://youtu.be/kyHuxpZhcTQ",pdfPage:1}]},
+  {key:"실전모의고사6회",name:"실전 모의고사 6회",desc:"6세 선발 모의고사 세트 6회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/uBSJ_-2IhR8",printDoc:"mock-set-6",lessons:[{key:"p6",label:"6회",title:"실전 모의고사 6회",type:"concept",url:"https://youtu.be/uBSJ_-2IhR8",pdfPage:1}]},
+  {key:"파이널모의고사1회",name:"파이널 모의고사 1회",desc:"최종 점검 파이널 1회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/obRvM_ymsM8",lessons:[{key:"fi1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"https://youtu.be/obRvM_ymsM8",pdfPage:1}]},
+  {key:"파이널모의고사2회",name:"파이널 모의고사 2회",desc:"최종 점검 파이널 2회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/VC_jgwrMH_k",lessons:[{key:"fi2",label:"2회",title:"파이널 모의고사 2회",type:"concept",url:"https://youtu.be/VC_jgwrMH_k",pdfPage:1}]},
+  {key:"파이널모의고사3회",name:"파이널 모의고사 3회",desc:"최종 점검 파이널 3회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/ihp5SqAqc00",lessons:[{key:"fi3",label:"3회",title:"파이널 모의고사 3회",type:"concept",url:"https://youtu.be/ihp5SqAqc00",pdfPage:1}]},
+  {key:"파이널모의고사4회",name:"파이널 모의고사 4회",desc:"최종 점검 파이널 4회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/5_Aye2oZhVc",lessons:[{key:"fi4",label:"4회",title:"파이널 모의고사 4회",type:"concept",url:"https://youtu.be/5_Aye2oZhVc",pdfPage:1}]},
+  {key:"최종모의고사",name:"최종 모의고사",desc:"실전 총정리 최종 리허설",icon:"🏆",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/ap5e_5NQwzk",lessons:[{key:"u1",label:"최종",title:"최종 모의고사",type:"concept",url:"https://youtu.be/ap5e_5NQwzk",pdfPage:1}]},
+  {key:"자료실",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
+];
+ const CONCEPT_CHAPTER_ASSETS={
+   vol1:{pagesBase:"../assets/concept/vol1/",pageCount:19,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol1/001.jpg"},
+   vol2:{pagesBase:"../assets/concept/vol2/",pageCount:19,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol2/001.jpg"},
+   vol3:{pagesBase:"../assets/concept/vol3/",pageCount:16,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol3/001.jpg"},
+   vol4:{pagesBase:"../assets/concept/vol4/",pageCount:10,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol4/001.jpg"},
+   final:{pagesBase:"../assets/concept/final/",pageCount:11,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/final/001.jpg"}
+ };
+ const CONCEPT_VIDEO_PAGES={vol1:{concept:2,practice:15},vol2:{check:2,concept:5,practice:15},vol3:{check:2,concept:7,practice:12},vol4:{check:2,concept:6},final:{final:2}};
+ const conceptProduct=PRODUCTS.find(p=>p.type==="folder");
+ conceptProduct?.chapters?.forEach(ch=>{
+   const asset=CONCEPT_CHAPTER_ASSETS[ch.key];
+   if(asset)Object.assign(ch,asset);
+   const pageMap=CONCEPT_VIDEO_PAGES[ch.key]||{};
+   (ch.videos||[]).forEach(video=>{if(pageMap[video.key])video.pdfPage=pageMap[video.key];});
+ });
+ const SALT="gfield-fields-classic-2026-v1";
+// 레거시 승인번호(해시 방식) — 기존 판매분 호환용으로 유지
+const CODES={
+  "bbbdc79775916a1a6f7675f3db54cba1f33f26e1dffda97fcb685e1c993df7c7":["개념완성"],
+  "c5e2beda61041ffeeb6056cb9d2167786d179a219e79e864e6216ecedf620984":["킬러문항"],
+  "d769a92ca39f255ea72854ca13e7c1d9309e811cd1c52f71567bfef4a63d9b9c":["파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","파이널모의고사4회"],
+  "fcee3d55de77d92a5e3014b3c4dc874ae825fbbf0e0970399766d0a16841d50b":["진단모의고사"],
+  "7952b6a2f87c81cf4049e69cf7ece810f2a281c4199483ab39829d9e16dead33":ALL
+};
+// 신규 승인번호(GF-XXXXXX) — admin에서 자동 발급, data.js에서 로드
+const FC = window.GFIELD_FC_DATA || { students:[], studentCode:{}, attendance:{}, studentType:{} };
+FC.archiveFolders = Array.isArray(FC.archiveFolders) ? FC.archiveFolders : [];
+FC.archiveAccess = FC.archiveAccess && typeof FC.archiveAccess === "object" ? FC.archiveAccess : {};
+FC.books = Array.isArray(FC.books) ? FC.books : [];
+// 재원생 타임라인 학습 순서 (단계별 흐름)
+const TIMELINE_ORDER=[
+  {key:"개념완성",    step:"5주차", desc:"필즈 핵심 개념 커리큘럼 (Vol.1~4 + Final)"},
+  {key:"진단모의고사", step:"STEP 2", desc:"현재 수준 정밀 진단 + 분석"},
+  {key:"킬러문항",    step:"STEP 3", desc:"최상위 킬러 유형 집중 공략"},
+  {key:"실전모의고사1회", step:"STEP 4", desc:"실전 감각 훈련 1회차"},
+  {key:"실전모의고사2회", step:"STEP 5", desc:"실전 감각 훈련 2회차"},
+  {key:"실전모의고사3회", step:"STEP 6", desc:"실전 감각 훈련 3회차"},
+  {key:"실전모의고사4회", step:"STEP 7", desc:"실전 감각 훈련 4회차"},
+  {key:"실전모의고사5회", step:"STEP 8", desc:"실전 감각 훈련 5회차"},
+  {key:"실전모의고사6회", step:"STEP 9", desc:"실전 감각 훈련 6회차"},
+  {key:"파이널모의고사1회", step:"STEP 10", desc:"최종 점검 파이널 1회차"},
+  {key:"파이널모의고사2회", step:"STEP 11", desc:"최종 점검 파이널 2회차"},
+  {key:"파이널모의고사3회", step:"STEP 12", desc:"최종 점검 파이널 3회차"},
+  {key:"파이널모의고사4회", step:"STEP 13", desc:"최종 점검 파이널 4회차"},
+  {key:"최종모의고사",  step:"FINAL",  desc:"실전 총정리 최종 리허설"},
+];
+function findByCode(code){
+  const upper = code.trim().toUpperCase();
+  const name = Object.keys(FC.studentCode).find(n => FC.studentCode[n] === upper);
+  if(!name) return null;
+  return { name, perms: FC.attendance[name] || [], type: FC.studentType[name] || 'internal' };
+}
+async function sha256(m){const b=new TextEncoder().encode(m);if(window.crypto?.subtle){const d=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,"0")).join("")}return fb(m)}
+function fb(s){function rr(v,a){return v>>>a|v<<32-a}const mp=Math.pow,mw=mp(2,32);let r="",w=[],al=s.length*8;let h=fb.h=fb.h||[],k=fb.k=fb.k||[],pc=k.length;const ic={};for(let c=2;pc<64;c++){if(!ic[c]){for(let i=0;i<313;i+=c)ic[i]=c;h[pc]=mp(c,.5)*mw|0;k[pc++]=mp(c,1/3)*mw|0}}s+="\x80";while(s.length%64-56)s+="\x00";for(let i=0;i<s.length;i++){const j=s.charCodeAt(i);if(j>>8)return"";w[i>>2]|=j<<(3-i%4)*8}w[w.length]=al/mw|0;w[w.length]=al;for(let j=0;j<w.length;){const wd=w.slice(j,j+=16),oh=h.slice(0);for(let i=0;i<64;i++){const w15=wd[i-15],w2=wd[i-2],a=h[0],e=h[4];const t1=h[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&h[5])^(~e&h[6]))+k[i]+(wd[i]=i<16?wd[i]:wd[i-16]+(rr(w15,7)^rr(w15,18)^w15>>>3)+wd[i-7]+(rr(w2,17)^rr(w2,19)^w2>>>10)|0);const t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&h[1])^(a&h[2])^(h[1]&h[2]));h=[t1+t2|0].concat(h);h[4]=h[4]+t1|0;h.pop()}for(let i=0;i<8;i++)h[i]=h[i]+oh[i]|0}for(let i=0;i<8;i++)for(let j=3;j+1;j--){const b=h[i]>>j*8&255;r+=(b<16?0:"")+b.toString(16)}return r}
+async function verify(code){
+  // 1순위: 신규 승인번호(GF-XXXXXX) 확인
+  const found = findByCode(code);
+  if(found) return { perms: found.perms, name: found.name, type: found.type };
+  // 2순위: 레거시 해시 승인번호 확인
+  const h=await sha256(SALT+":"+code.trim().toUpperCase());
+  const legacyPerms = CODES[h];
+  if(legacyPerms) return { perms: legacyPerms, name: null, type: 'legacy' };
+  return null;
+}
+function toast(){const t=document.getElementById("secToast");t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),1500)}
+function security(){document.addEventListener("contextmenu",e=>{e.preventDefault();toast()});document.addEventListener("copy",e=>{e.preventDefault();toast()});document.addEventListener("cut",e=>{e.preventDefault();toast()});document.addEventListener("dragstart",e=>e.preventDefault());document.addEventListener("keydown",e=>{const k=String(e.key||"").toLowerCase();if(k==="f12"||(e.ctrlKey&&["u","s"].includes(k))||(e.ctrlKey&&e.shiftKey&&["i","j","c"].includes(k))){e.preventDefault();e.stopPropagation();toast()}},true)}
+function embed(url){if(!url)return"";try{const p=new URL(url);let id="",s=0;if(p.hostname.includes("youtu.be"))id=p.pathname.replace(/^\//,"");else if(p.hostname.includes("youtube.com"))id=p.searchParams.get("v")||"";const t=p.searchParams.get("t")||"";if(/^\d+$/.test(t))s=Number(t);return id?"https://www.youtube.com/embed/"+id+"?rel=0&modestbranding=1&playsinline=1"+(s?"&start="+s:""):url}catch{return url}}
+let _bookPage=1,_bookRenderKey="",_bookScrollFrame=0;
+function bookUrl(page){
+  const base=S.currentProduct?.pagesBase||"";
+  const segs=S.currentProduct?.pageSegments;
+  const ext0=S.currentProduct?.pageExt||"webp";
+  if(Array.isArray(segs)&&segs.length){
+    let acc=0;
+    for(const s of segs){
+      if(page<=acc+s.count)return s.base+String(page-acc).padStart(3,"0")+"."+(s.ext||ext0);
+      acc+=s.count;
+    }
+    return "";
+  }
+  const prefix=S.currentProduct?.pagePrefix??(base.endsWith("page_")?"":"page_");
+  return base+prefix+String(page).padStart(3,"0")+"."+ext0;
+}
+function makeBookWatermark(){
+  const wm=document.createElement("div");
+  wm.className="book-watermark";
+  wm.setAttribute("aria-hidden","true");
+  const label=(S.name||"학생")+" 학생 · GFIELD";
+  ["wm-r1","wm-r2","wm-r3"].forEach(cls=>{const row=document.createElement("span");row.className=cls;row.textContent=label;wm.appendChild(row);});
+  return wm;
+}
+function updateBookControls(page){
+  const total=S.currentProduct?.pageCount||0;
+  _bookPage=Math.max(1,Math.min(total||1,Number(page)||1));
+  const lb=document.getElementById("bookPageLabel"),prev=document.getElementById("bookPrev"),next=document.getElementById("bookNext");
+  if(lb)lb.textContent=total?_bookPage+" / "+total:"- / -";
+  if(prev)prev.disabled=!total||_bookPage<=1;
+  if(next)next.disabled=!total||_bookPage>=total;
+}
+function renderBookPages(){
+  const pages=document.getElementById("bookPages"),st=document.getElementById("bookStatus");
+  const total=S.currentProduct?.pageCount||0,base=S.currentProduct?.pagesBase||"";
+  if(!pages||!total||!base)return false;
+  const key=base+"|"+total+"|"+(S.name||"");
+  if(_bookRenderKey===key&&pages.children.length===total)return true;
+  if(st)st.textContent="교재를 불러오는 중...";
+  pages.innerHTML="";
+  const frag=document.createDocumentFragment();
+  for(let page=1;page<=total;page++){
+    const sheet=document.createElement("div");
+    sheet.className="book-sheet";
+    sheet.dataset.page=String(page);
+    const img=document.createElement("img");
+    img.className="book-page-img";
+    img.alt="교재 "+page+"쪽";
+    img.decoding="async";
+    img.src=bookUrl(page);
+    img.addEventListener("load",()=>{if(page===_bookPage&&st)st.textContent="";},{once:true});
+    img.addEventListener("error",()=>{sheet.classList.add("load-error");if(page===_bookPage&&st)st.textContent="교재 "+page+"쪽을 불러오지 못했습니다.";},{once:true});
+    sheet.append(img,makeBookWatermark());
+    frag.appendChild(sheet);
+  }
+  pages.appendChild(frag);
+  _bookRenderKey=key;
+  return true;
+}
+function syncBookPageFromScroll(){
+  const stage=document.querySelector(".book-stage");
+  if(!stage)return;
+  const marker=stage.scrollTop+Math.max(20,stage.clientHeight*.22);
+  let page=1;
+  stage.querySelectorAll(".book-sheet").forEach(sheet=>{if(sheet.offsetTop<=marker)page=Number(sheet.dataset.page)||page;});
+  updateBookControls(page);
+}
+function setBookEmpty(msg){
+  const pages=document.getElementById("bookPages"),st=document.getElementById("bookStatus"),lb=document.getElementById("bookPageLabel");
+  if(pages)pages.innerHTML="";
+  _bookRenderKey="";
+  if(st)st.textContent=msg||"교재 준비 중";
+  if(lb)lb.textContent="- / -";
+  ["bookPrev","bookNext"].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=true;});
+}
+function setBookPage(page){
+  const stage=document.querySelector(".book-stage"),st=document.getElementById("bookStatus");
+  const total=S.currentProduct?.pageCount||0;
+  if(!stage||!total||!S.currentProduct?.pagesBase){setBookEmpty();return;}
+  updateBookControls(page);
+  if(st)st.textContent="교재를 불러오는 중...";
+  if(!renderBookPages())return;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const sheet=stage.querySelector(`.book-sheet[data-page="${_bookPage}"]`);
+    if(sheet)stage.scrollTo({top:Math.max(0,sheet.offsetTop-10),behavior:"smooth"});
+    const img=sheet?.querySelector("img");
+    if(img?.complete&&img.naturalWidth&&st)st.textContent="";
+  }));
+}
+let S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};
+function requestStudyFullscreen(){
+  const root=document.documentElement,active=document.fullscreenElement||document.webkitFullscreenElement;
+  const lockLandscape=()=>{try{const p=screen.orientation?.lock?.("landscape");p?.catch?.(()=>{});}catch{}};
+  if(active){lockLandscape();return;}
+  try{
+    const p=root.requestFullscreen?root.requestFullscreen({navigationUI:"hide"}):root.webkitRequestFullscreen?.();
+    p?.then?.(lockLandscape)?.catch?.(()=>{});
+  }catch{}
+}
+function exitStudyFullscreen(){
+  try{screen.orientation?.unlock?.();}catch{}
+  try{const p=document.fullscreenElement?document.exitFullscreen():document.webkitFullscreenElement?document.webkitExitFullscreen?.():null;p?.catch?.(()=>{});}catch{}
+}
+function checkOrientation(){
+  const app=document.getElementById("app"),viewer=document.getElementById("viewer"),hint=document.getElementById("rotateHint");
+  const libraryOpen=app?.classList.contains("show"),portrait=!!libraryOpen&&window.innerHeight>window.innerWidth;
+  hint?.classList.toggle("show",portrait);
+  if(app)app.style.visibility=portrait?"hidden":"";
+  if(viewer)viewer.style.visibility=S.viewerOpen&&portrait?"hidden":"";
+}
+window.addEventListener("resize",checkOrientation);
+window.addEventListener("orientationchange",()=>setTimeout(checkOrientation,100));
+document.addEventListener("fullscreenchange",checkOrientation);
+document.querySelector(".book-stage")?.addEventListener("scroll",()=>{cancelAnimationFrame(_bookScrollFrame);_bookScrollFrame=requestAnimationFrame(syncBookPageFromScroll);},{passive:true});
+const GF={
+  async login(){
+    const c=document.getElementById("gCode").value.trim(),n=document.getElementById("gName").value.replace(/\s+/g,"").trim(),e=document.getElementById("gErr");
+    if(!c){e.textContent="승인번호를 입력해 주세요.";return}
+    if(!n){e.textContent="학생 이름을 입력해 주세요.";return}
+    // 관리자 전용 진입
+    if(c==="01020837265" && n.toLowerCase()==="docssam"){ location.href="../admin.html"; return; }
+    requestStudyFullscreen();
+    e.textContent="확인 중...";
+    const result=await verify(c);
+    if(!result){e.textContent="올바르지 않은 승인번호입니다.";exitStudyFullscreen();return}
+    // 신규 승인번호는 admin에 등록된 이름을 우선 사용, 레거시는 입력한 이름 사용
+    S.name=result.name||n;
+    S.perms=result.perms;
+    S.studentType=result.type||'legacy';
+    sessionStorage.setItem("gf_c",c);sessionStorage.setItem("gf_n",S.name);this.showApp();
+  },
+  showApp(){document.getElementById("gate").classList.add("hidden");document.getElementById("app").classList.add("show");document.getElementById("hName").textContent=S.name;
+    // 재원생은 타임라인 뷰, 온라인/레거시는 서재 뷰
+    if(S.studentType==="internal") this.showTimeline(); else this.showMainGrid();
+    checkOrientation();
+  },
+  showTimeline(){
+    document.getElementById("mainGrid").style.display="none";
+    document.getElementById("chapterView").style.display="none";
+    document.getElementById("timelineView").style.display="";
+    document.getElementById("dashTitle").innerHTML='필즈 더 클래식<br><em>학습 로드맵</em>';
+    document.getElementById("dashSub").textContent="단계별로 학습을 진행하세요";
+    document.getElementById("headerBadge").textContent="재원생 과정";
+    const tv=document.getElementById("timelineView");
+    // 열린 상품 = 진행 중, 그 다음 = 잠김
+    let html='<div class="timeline-wrap">';
+    // 온라인 서재로 전환 토글 (재원생도 카드로 보고 싶을 때)
+    html+=`<div class="view-toggle"><button class="active">📍 로드맵</button><button onclick="GF.showMainGridFromTimeline()">📚 서재</button></div>`;
+    TIMELINE_ORDER.forEach((it,idx)=>{
+      const p=PRODUCTS.find(x=>x.key===it.key);
+      if(!p)return;
+      const open=S.perms.includes(it.key);
+      // 다음 열릴 단계 판단: 열려있으면 done/current, 아니면 locked
+      // current = 열린 것 중 마지막
+      let cls,statusTxt,statusCls,nodeIcon;
+      const openKeys=TIMELINE_ORDER.filter(t=>S.perms.includes(t.key)).map(t=>t.key);
+      const isLast=openKeys.length&&openKeys[openKeys.length-1]===it.key;
+      if(open){
+        if(isLast){cls="current";statusTxt="학습 중";statusCls="current";nodeIcon="▶";}
+        else{cls="done";statusTxt="학습 가능";statusCls="done";nodeIcon="✓";}
+      }else{
+        cls="locked";statusTxt="🔒 아직 열리지 않음";statusCls="locked";nodeIcon="🔒";
+      }
+      const clickable=open?`onclick="GF.openFromTimeline('${it.key}')"`:'';
+      html+=`<div class="tl-item ${cls}">
+        <div class="tl-line"></div>
+        <div class="tl-node">${nodeIcon}</div>
+        <div class="tl-card" ${clickable}>
+          <div class="tl-step">${it.step}</div>
+          <div class="tl-name">${p.name}</div>
+          <div class="tl-desc">${it.desc}</div>
+          <span class="tl-status ${statusCls}">${statusTxt}</span>
+        </div>
+      </div>`;
+    });
+    html+='</div>';
+    tv.innerHTML=html;
+  },
+  showMainGridFromTimeline(){
+    document.getElementById("timelineView").style.display="none";
+    this.showMainGrid();
+    // 서재 상단에 로드맵 복귀 버튼
+    const g=document.getElementById("mainGrid");
+    const back=document.createElement("div");
+    back.style.cssText="grid-column:1/-1;text-align:center;margin-bottom:4px";
+    back.innerHTML=`<button class="chapter-back-fancy" onclick="GF.showTimeline()" style="margin-bottom:0">← 로드맵으로</button>`;
+    g.insertBefore(back,g.firstChild);
+  },
+  openFromTimeline(key){
+    const p=PRODUCTS.find(x=>x.key===key);if(!p)return;
+    if(p.type==="mock")this.openMock(p);else if(p.type==="practice")this.openPractice(p);else if(p.type==="folder")this.showChapters(key);else this.openDirectViewer(key);
+  },
+  showMainGrid(){
+    document.getElementById("mainGrid").style.display="";document.getElementById("chapterView").style.display="none";
+    document.getElementById("timelineView").style.display="none";
+    document.getElementById("dashTitle").innerHTML='필즈 더 클래식<br><em>대비 과정 서재</em>';
+    document.getElementById("dashSub").textContent="구매하신 프로그램을 선택해 학습을 시작하세요";
+    document.getElementById("headerBadge").textContent="필즈 대비 과정";
+    const g=document.getElementById("mainGrid");g.innerHTML="";
+    PRODUCTS.forEach(p=>{
+      const ok=S.perms.includes(p.key);
+      const el=document.createElement("div");
+      el.className="product-card "+p.theme+(ok?" unlocked":" locked");
+      const actionLabel=p.type==="folder"?"📂 목록 보기":p.type==="mock"?"🔍 진단 시작":"📖 학습 시작";
+      el.innerHTML=`${!ok?'<span class="lock-icon">🔒</span>':""}<div class="book-wrap"><div class="book-3d"><div class="book-front"><div class="book-icon">${p.icon}</div><div class="book-label">${p.name}</div></div><div class="book-back"></div><div class="book-spine"></div><div class="book-pages"></div><div class="book-top"></div><div class="book-bottom"></div><div class="book-shadow"></div></div></div><div><div class="product-badge">${p.key}</div><div class="product-name">${p.name}</div><div class="product-desc">${p.desc}</div></div><div class="product-action"><button class="product-btn ${ok?"open":"locked"}" ${ok?"":"disabled"}>${ok?actionLabel:"🔒 구매 후 이용 가능"}</button></div>`;
+      if(ok){if(p.type==="folder")el.addEventListener("click",()=>GF.showChapters(p.key));else if(p.type==="mock")el.addEventListener("click",()=>GF.openMock(p));else if(p.type==="practice")el.addEventListener("click",()=>GF.openPractice(p));else el.addEventListener("click",()=>GF.openDirectViewer(p.key))}
+      g.appendChild(el);
+    });
+  },
+  showChapters(productKey){
+    const p=PRODUCTS.find(x=>x.key===productKey);if(!p||!p.chapters)return;
+    S.currentProduct=p;
+    document.getElementById("mainGrid").style.display="none";
+    document.getElementById("timelineView").style.display="none";
+    document.getElementById("dashTitle").innerHTML=`${p.icon} <em>${p.name}</em>`;
+    document.getElementById("dashSub").textContent="";
+    document.getElementById("headerBadge").textContent=p.name;
+    const backAction=S.studentType==="internal"?"GF.showTimeline()":"GF.showMainGrid()";
+    const backLabel=S.studentType==="internal"?"← 로드맵으로":"← 서재로";
+    const cv=document.getElementById("chapterView");cv.style.display="";
+    cv.innerHTML=`
+      <button class="chapter-back-fancy" onclick="${backAction}">${backLabel}</button>
+      <div class="bookshelf-scene">
+        <div class="shelf-section-title">📘 <em>개념 완성</em> 커리큘럼</div>
+        <div class="shelf-section-sub">회차를 선택해 학습을 시작하세요</div>
+        <div class="bookshelf-row">
+          ${p.chapters.map(ch=>{
+            return `<div class="shelf-slot${ch.key==='final'?' is-final':''}" onclick="GF.showChapterModal('${productKey}','${ch.key}')">
+              <div class="shelf-book-wrap">
+                <div class="shelf-book-3d">
+                  <div class="shelf-book-front">${coverMarkup(ch)}</div>
+                  <div class="shelf-book-back"></div>
+                  <div class="shelf-book-spine"></div>
+                  <div class="shelf-book-pages"></div>
+                  <div class="shelf-book-top"></div>
+                  <div class="shelf-book-bottom"></div>
+                  <div class="shelf-book-shadow"></div>
+                </div>
+              </div>
+              <div class="shelf-label">
+                <div class="shelf-vol-text">${ch.vol}</div>
+                <div class="shelf-title-text">${ch.title}</div>
+                <div class="shelf-videos">영상 ${ch.videos.length}개</div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="shelf-rail"></div>
+      </div>`;
+  },
+  showChapterModal(productKey,chapterKey){
+    const p=PRODUCTS.find(x=>x.key===productKey);const ch=p?.chapters.find(c=>c.key===chapterKey);if(!ch)return;
+    S.currentChapter=ch;S.currentProduct=p;
+    document.getElementById("modalVol").textContent=ch.vol+" · "+ch.subtitle;
+    document.getElementById("modalTitle").textContent=ch.title;
+    document.getElementById("modalTopics").innerHTML=ch.topics.map(t=>`<li>${t}</li>`).join("");
+    const cb=document.getElementById("modalCommentBox");
+    if(ch.comment){cb.style.display="";document.getElementById("modalComment").textContent=ch.comment}else cb.style.display="none";
+    document.getElementById("commentModal").classList.add("show");
+  },
+  closeModal(){document.getElementById("commentModal").classList.remove("show")},
+  startFromModal(){this.closeModal();if(S.currentChapter)this.openChapterViewer(S.currentChapter)},
+  openChapterViewer(ch){
+    S.currentProduct=Object.assign({},S.currentProduct||{},ch.pagesBase?{pagesBase:ch.pagesBase,pageCount:ch.pageCount,pagePrefix:ch.pagePrefix||"",pageExt:ch.pageExt||"jpg"}:{});
+    S.viewerOpen=true;
+    document.getElementById("vTitle").textContent=ch.vol+" · "+ch.title;
+    document.getElementById("vYtBtn").style.display="block";
+    document.getElementById("vPrintBtn").style.display="block";
+    document.getElementById("vBody").className="viewer-body has-video";
+    document.getElementById("vPanel").style.display="flex";
+    const tabs=document.getElementById("vTabs");tabs.style.display="";tabs.innerHTML="";
+    ch.videos.forEach(v=>{const b=document.createElement("button");b.className="tab-btn";b.textContent=v.label;b.dataset.k=v.key;b.dataset.type=v.type;b.addEventListener("click",()=>GF.selectVideo(ch,v.key));tabs.appendChild(b)});
+    if(ch.videos.length)this.selectVideo(ch,ch.videos[0].key);
+    document.getElementById("viewer").classList.add("show");document.body.classList.add("in-viewer");checkOrientation();
+  },
+  selectVideo(ch,key){
+    const v=ch.videos.find(x=>x.key===key);S.currentVideo=v;
+    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b.dataset.k===key));
+    if(!v)return;
+    document.getElementById("vPanelTitle").textContent=v.label.replace(/^[^\s]+\s/,"");
+    document.getElementById("vPanelMeta").textContent=v.url?"준비됨":"준비 중";
+    document.getElementById("videoIframe").src=v.url?embed(v.url):"";
+    if(S.currentProduct?.pagesBase&&v.pdfPage)setBookPage(v.pdfPage);else setBookEmpty();
+  },
+  openMock(p){
+    const name=encodeURIComponent(S.name||"");
+    location.href=(p.mockUrl||"../mock/")+(name?`?student=${name}`:"");
+  },
+  openPractice(p){
+    const name=encodeURIComponent(S.name||"");
+    location.href=(p.practiceUrl||"../arithmetic/")+(name?`?student=${name}`:"");
+  },
+  openDirectViewer(productKey){
+    const p=PRODUCTS.find(x=>x.key===productKey);if(!p)return;
+    if(p.printDoc&&p.viewerMode!=="inline"){
+      const url=new URL("../print-viewer/",location.href);
+      url.searchParams.set("doc",p.printDoc);
+      url.searchParams.set("student",S.name||"학생");
+      if(p.videoUrl)url.searchParams.set("video",p.videoUrl);
+      if(p.topics?.length)url.searchParams.set("topics",p.topics.join("|"));
+      window.open(url,"_blank","noopener");
+      return;
+    }
+    S.viewerOpen=true;S.currentProduct=p;
+    document.getElementById("vTitle").textContent=p.icon+" "+p.name;
+    const hasVid=p.hasVideo!==false;
+    document.getElementById("vYtBtn").style.display=hasVid?"block":"none";
+    document.getElementById("vPrintBtn").style.display=p.pagesBase?"block":"none";
+    document.getElementById("vBody").className="viewer-body "+(hasVid?"has-video":"no-video");
+    document.getElementById("vPanel").style.display=hasVid?"flex":"none";
+    const tabs=document.getElementById("vTabs");tabs.style.display="";tabs.innerHTML="";
+    (p.lessons||[]).forEach(l=>{const b=document.createElement("button");b.className="tab-btn";b.textContent=l.label;b.dataset.k=l.key;b.dataset.type=l.type||"concept";b.addEventListener("click",()=>{document.querySelectorAll(".tab-btn").forEach(x=>x.classList.toggle("active",x.dataset.k===l.key));document.getElementById("videoIframe").src=l.url?embed(l.url):"";if(p.pagesBase&&l.pdfPage)setBookPage(l.pdfPage);else setBookEmpty();S.currentVideo={url:l.url}});tabs.appendChild(b)});
+    if(p.lessons?.length){const first=p.lessons[0];S.currentVideo={url:first.url};document.getElementById("videoIframe").src=first.url?embed(first.url):"";if(p.pagesBase&&first.pdfPage)setBookPage(first.pdfPage);else setBookEmpty();tabs.querySelector(".tab-btn")?.classList.add("active")}
+    document.getElementById("viewer").classList.add("show");document.body.classList.add("in-viewer");checkOrientation();
+  },
+  prevBookPage(){if(_bookPage>1)setBookPage(_bookPage-1)},
+  nextBookPage(){const total=S.currentProduct?.pageCount||0;if(_bookPage<total)setBookPage(_bookPage+1)},
+  openYt(){if(S.currentVideo?.url)window.open(S.currentVideo.url,"_blank","noopener")},
+  closeViewer(){
+    S.viewerOpen=false;
+    document.getElementById("viewer").classList.remove("show");document.getElementById("viewer").style.visibility="";
+    document.body.classList.remove("in-viewer");
+    document.getElementById("videoIframe").src="";setBookEmpty("");
+    S.currentChapter=null;S.currentVideo=null;
+    checkOrientation();
+  },
+  logout(){
+    S={name:"",perms:[],viewerOpen:false,currentChapter:null,currentVideo:null,currentProduct:null};
+    sessionStorage.clear();
+    document.getElementById("gate").classList.remove("hidden");document.getElementById("app").classList.remove("show");
+    document.getElementById("viewer").classList.remove("show");document.getElementById("viewer").style.visibility="";
+    document.getElementById("rotateHint").classList.remove("show");document.getElementById("commentModal").classList.remove("show");
+    document.getElementById("app").style.visibility="";
+    document.body.classList.remove("in-viewer");
+    document.getElementById("videoIframe").src="";setBookEmpty("");
+    document.getElementById("gCode").value="";document.getElementById("gName").value="";document.getElementById("gErr").textContent="";
+    exitStudyFullscreen();
+  }
+};
+function h(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+function coverMarkup(ch,decorative=false){
+  const src=ch.cover||"";
+  return src
+    ? `<img src="${h(src)}" alt="${decorative?"":h(ch.title)}" loading="lazy" onerror="this.hidden=true">`
+    : "";
+}
+function pOk(p){return !!p&&S.perms.includes(p.key)}
+function lessonKey(p){return p?.lessons?.[0]?.key||""}
+function archiveFolderNames(){
+  const names=[];
+  (FC.archiveFolders||[]).forEach(folder=>{if(folder&&!names.includes(folder))names.push(folder)});
+  (FC.books||[]).forEach(book=>{const folder=book?.folder||"기타 자료";if(!names.includes(folder))names.push(folder)});
+  return names;
+}
+function archiveBooks(folder){
+  return (FC.books||[]).map((book,index)=>({book,index})).filter(({book})=>{
+    if(!book||(book.folder||"기타 자료")!==folder)return false;
+    return !!(book.title||book.imgdir||book.pdf||book.video);
+  });
+}
+function archiveCanOpen(folder){
+  const access=FC.archiveAccess?.[folder];
+  if(Array.isArray(access))return access.includes("*")||access.includes(S.name);
+  return S.perms.includes("자료실");
+}
+function archiveBookBase(book){
+  if(book?.pagesBase)return book.pagesBase;
+  return book?.imgdir?"../assets/archive/"+encodeURIComponent(book.imgdir)+"/":"";
+}
+function archiveBookPageUrl(book,page=1){
+  if(page===1&&book?.cover)return book.cover;
+  const base=archiveBookBase(book);if(!base)return "";
+  const prefix=book?.pagePrefix??"";
+  const ext=book?.imageExt||"jpg";
+  return base+prefix+String(page).padStart(3,"0")+"."+ext;
+}
+function archiveMediaLabel(book){
+  const pages=Number(book?.pages)||0;
+  if(book?.video&&pages)return "영상 + 교재";
+  if(book?.video)return "영상";
+  if(pages)return pages+"쪽 교재";
+  if(book?.pdf)return "PDF 링크";
+  return "자료";
+}
+function archiveFolderMarkup(folder){
+  if(!folder)return '<div class="program-empty">\uC790\uB8CC\uC2E4 \uBA54\uB274\uB97C \uC900\uBE44 \uC911\uC785\uB2C8\uB2E4.</div>';
+  const entries=archiveBooks(folder);
+  const cards=entries.map(({book,index})=>{
+    const open=archiveCanOpen(folder),cover=archiveBookPageUrl(book,1);
+    const media=archiveMediaLabel(book),date=book.date||"";
+    return `<button class="program-run-card archive-book-card theme-archive ${open?"":"locked"}" onclick="GF.openArchiveBook(${index})">
+      <div class="program-run-book" aria-hidden="true">
+        <div class="program-run-cover"><span class="archive-cover-fallback">${h(book.title||"\uC790\uB8CC")}</span>${cover?`<img class="archive-cover-img" src="${h(cover)}" alt="${h(book.title||"\uC790\uB8CC")} \uD45C\uC9C0" loading="lazy" onerror="this.remove()">`:""}</div>
+        <div class="program-run-back"></div><div class="program-run-spine"></div><div class="program-run-pages"></div><div class="program-run-top"></div><div class="program-run-bottom"></div>
+      </div>
+      <div class="program-run-name">${h(book.title||"\uC790\uB8CC")}</div>
+      <span class="archive-media-tag">${h(media)}</span>
+      <div class="archive-book-date">${h(date)}</div>
+      ${open?"":'<span class="program-lock">&#128274; \uC5F4\uB78C \uC81C\uD55C</span>'}
+    </button>`;
+  }).join("");
+  return cards?`<div class="archive-book-grid">${cards}</div>`:'<div class="program-empty">\uB4F1\uB85D\uB41C \uC790\uB8CC\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4.</div>';
+}
+function programGroups(){
+  const concept=PRODUCTS.find(p=>p.type==="folder");
+  const diagnostic=PRODUCTS.find(p=>p.type==="mock");
+  const killer=PRODUCTS.find(p=>lessonKey(p)==="k1")||PRODUCTS.find(p=>p.theme==="theme-killer");
+  const practice=PRODUCTS.filter(p=>/^p\d+/.test(lessonKey(p)));
+  const finals=PRODUCTS.filter(p=>/^fi\d+/.test(lessonKey(p)));
+  const ultimate=PRODUCTS.find(p=>lessonKey(p)==="u1");
+  const groups=[
+    {id:"concept",icon:"📘",title:"TOP SECRET 개념",sub:"개념 교재 Vol.1~Final",kind:"chapters",product:concept,kicker:"TOP SECRET",head:"개념 완성",desc:"개념 책을 고르면 영상과 교재가 함께 열립니다."},
+    {id:"arithmetic",icon:"🔢",title:"연산 연습",sub:"덧셈·뺄셈·받아올림",kind:"products",items:[PRODUCTS.find(p=>p.key==="연산연습")],kicker:"CALCULATION",head:"필즈 연산 연습",desc:"사고력 문제은행과 분리된 연산을 유형별로 반복합니다."},
+    {id:"killer",icon:"🎯",title:"킬러문항 완전 해제",sub:"최상위 유형 공략",kind:"products",items:[killer],kicker:"KILLER",head:"킬러문항 완전 해제",desc:"문항 유형은 보이지만 구매 권한이 있을 때만 열립니다."},
+    {id:"diagnostic",icon:"🔍",title:"진단모의고사",sub:"진단 및 분석",kind:"products",items:[diagnostic],kicker:"DIAGNOSTIC",head:"진단모의고사",desc:"진단지는 선택 후 별도 모의고사 화면으로 이동합니다."},
+    {id:"practice",icon:"📝",title:"실전 모의고사",sub:"1회~6회",kind:"products",items:practice,kicker:"PRACTICE",head:"실전 모의고사",desc:"각 회차를 확인하고 권한이 있는 회차만 학습할 수 있습니다."},
+    {id:"final",icon:"🏁",title:"파이널 모의고사",sub:"1회~4회",kind:"products",items:finals,kicker:"FINAL",head:"파이널 모의고사",desc:"파이널 회차가 책처럼 펼쳐집니다."},
+    {id:"ultimate",icon:"🏆",title:"최종 모의고사",sub:"최종 리허설",kind:"products",items:[ultimate],kicker:"LAST CHECK",head:"최종 모의고사",desc:"마지막 실전 점검용 모의고사입니다."}
+  ];
+  const mainGroups=groups.filter(g=>g.product||g.items?.some(Boolean));
+  archiveFolderNames().forEach((folder,index)=>mainGroups.push({
+    id:`archive-${index}`,
+    icon:"\uD83D\uDCC1",
+    title:folder,
+    sub:`\uC790\uB8CC ${archiveBooks(folder).length}\uAC1C`,
+    kind:"archive",
+    folder,
+    kicker:"ARCHIVE",
+    head:folder,
+    desc:"\uB4F1\uB85D\uB41C \uC790\uB8CC\uB294 \uBAA8\uB450 \uBCF4\uC774\uBA70, \uC774\uC6A9 \uAD8C\uD55C\uC774 \uC788\uB294 \uC790\uB8CC\uB9CC \uC5F4\uB9BD\uB2C8\uB2E4."
+  }));
+  return mainGroups;
+}
+function sectionUnlocked(g){
+  if(g.kind==="archive")return !!g.folder&&archiveCanOpen(g.folder);
+  if(g.product)return pOk(g.product);
+  return (g.items||[]).some(pOk);
+}
+function runCard(p){
+  if(!p)return "";
+  const ok=pOk(p),idx=PRODUCTS.indexOf(p);
+  return `<button class="program-run-card ${h(p.theme||"")} ${ok?"":"locked"}" onclick="GF.openProgramProduct(${idx})">
+    <div class="program-run-book" aria-hidden="true"><div class="program-run-cover"><span class="program-run-kicker">필즈 더 클래식</span><strong>${h(p.name)}</strong><span class="program-run-icon">${h(p.icon||"")}</span><span class="program-run-mark">지필드 영재교육</span></div><div class="program-run-back"></div><div class="program-run-spine"></div><div class="program-run-pages"></div><div class="program-run-top"></div><div class="program-run-bottom"></div></div>
+    <div class="program-run-name">${h(p.name)}</div>
+    <div class="program-run-desc">${h(p.desc||"")}</div>
+    ${ok?"":'<span class="program-lock">🔒 열람 제한</span>'}
+  </button>`;
+}
+function renderProgramPanel(id){
+  const groups=programGroups();
+  const g=groups.find(x=>x.id===id)||groups[0];
+  const target=document.getElementById("programDetail");if(!target||!g)return;
+  let body="";
+  if(g.kind==="chapters"){
+    const p=g.product,ok=pOk(p);
+    body=`<div class="concept-showcase-host" id="conceptShowcase"></div>
+    <div class="program-book-row">
+      ${(p.chapters||[]).map(ch=>{
+        return `<button class="shelf-slot${ch.key==="final"?" is-final":""} ${ok?"":"locked"}" data-chapter-key="${h(ch.key)}" onclick="GF.previewProgramChapter(${PRODUCTS.indexOf(p)},'${h(ch.key)}')">
+          <div class="shelf-book-wrap"><div class="shelf-book-3d"><div class="shelf-book-front">${coverMarkup(ch)}</div><div class="shelf-book-back"></div><div class="shelf-book-spine"></div><div class="shelf-book-pages"></div><div class="shelf-book-top"></div><div class="shelf-book-bottom"></div><div class="shelf-book-shadow"></div></div></div>
+          <div class="shelf-label"><div class="shelf-vol-text">${h(ch.vol)}</div><div class="shelf-title-text">${h(ch.title)}</div><div class="shelf-videos">${ok?"영상 "+ch.videos.length+"개":"🔒 열람 제한"}</div></div>
+        </button>`;
+      }).join("")}
+    </div><div class="shelf-rail"></div>`;
+  }else if(g.kind==="archive"){
+    body=archiveFolderMarkup(g.folder);
+  }else{
+    const cards=(g.items||[]).map(runCard).join("");
+    body=cards?`<div class="program-run-grid">${cards}</div>`:`<div class="program-empty">준비 중입니다.</div>`;
+  }
+  target.innerHTML=`<div class="program-panel">
+    <div class="program-panel-head"><div><div class="program-panel-kicker">${h(g.kicker)}</div><div class="program-panel-title"><em>${h(g.head)}</em></div></div><p class="program-panel-desc">${h(g.desc)}</p></div>
+    ${body}
+  </div>`;
+}
+Object.assign(GF,{
+  showMainGrid(){
+    document.getElementById("mainGrid").style.display="";
+    document.getElementById("chapterView").style.display="none";
+    document.getElementById("timelineView").style.display="none";
+    document.getElementById("dashTitle").innerHTML='필즈 더 클래식<br><em>프로그램 서재</em>';
+    document.getElementById("dashSub").textContent="";
+    document.getElementById("headerBadge").textContent="필즈 프로그램 서재";
+    const groups=programGroups(),active=groups[0]?.id||"concept";
+    const menu=groups.map(g=>`<button class="program-menu-card ${g.id===active?"active":""}" data-section="${g.id}" onclick="GF.selectProgramSection('${g.id}')"><span class="pm-icon">${h(g.icon)}</span><span><span class="pm-title">${h(g.title)}</span><span class="pm-sub">${h(g.sub)}${sectionUnlocked(g)?"":" · 열람 제한"}</span></span></button>`).join("");
+    const grid=document.getElementById("mainGrid");
+    grid.innerHTML=`<div class="program-shelf"><nav class="program-menu">${menu}</nav><section class="program-detail" id="programDetail"></section></div>`;
+    renderProgramPanel(active);
+  },
+  selectProgramSection(id){
+    document.querySelectorAll(".program-menu-card").forEach(b=>b.classList.toggle("active",b.dataset.section===id));
+    renderProgramPanel(id);
+  },
+  previewProgramChapter(productIndex,chapterKey){
+    const p=PRODUCTS[productIndex],ch=p?.chapters?.find(c=>c.key===chapterKey);
+    const host=document.getElementById("conceptShowcase");if(!p||!ch||!host)return;
+    const ok=pOk(p);
+    document.querySelectorAll(".program-book-row .shelf-slot").forEach(b=>b.classList.toggle("selected",b.dataset.chapterKey===chapterKey));
+    const topicItems=(ch.topics||[]).map(t=>`<li>${h(t)}</li>`).join("");
+    const detailCopy=ch.comment||`${ch.title}에서 꼭 알아야 할 개념과 대표 유형을 차례대로 학습합니다.`;
+    host.innerHTML=`<section class="concept-showcase">
+      <div class="concept-book-stage" aria-hidden="true">
+        <div class="concept-book-3d">
+          <div class="concept-book-face concept-book-front">${coverMarkup(ch,true)}</div>
+          <div class="concept-book-face concept-book-back"></div>
+          <div class="concept-book-face concept-book-spine"></div>
+          <div class="concept-book-face concept-book-pages"></div>
+          <div class="concept-book-face concept-book-top"></div>
+          <div class="concept-book-face concept-book-bottom"></div>
+        </div>
+      </div>
+      <div class="concept-detail">
+        <div class="concept-detail-kicker">${h(ch.vol)} · ${h(ch.subtitle)}</div>
+        <div class="concept-detail-title">${h(ch.title)}</div>
+        <ul class="concept-topic-list">${topicItems}</ul>
+        <p class="concept-detail-copy">${h(detailCopy)}</p>
+        <button class="concept-start" ${ok?`onclick="GF.launchProgramChapter(${productIndex},'${h(ch.key)}')"`:"disabled"}>${ok?"▶ 학습 시작":"🔒 구매 후 열람 가능"}</button>
+      </div>
+    </section>`;
+  },
+  launchProgramChapter(productIndex,chapterKey){
+    const p=PRODUCTS[productIndex],ch=p?.chapters?.find(c=>c.key===chapterKey);
+    if(!p||!ch||!pOk(p)){toast();return;}
+    S.currentProduct=p;S.currentChapter=ch;
+    this.openChapterViewer(ch);
+  },
+  openProgramChapter(productIndex,chapterKey){
+    const p=PRODUCTS[productIndex];if(!p||!pOk(p)){toast();return;}
+    this.showChapterModal(p.key,chapterKey);
+  },
+  openArchiveBook(index){
+    const book=FC.books?.[index];if(!book)return;
+    const folder=book.folder||"기타 자료";
+    if(!archiveCanOpen(folder)){toast();return;}
+    const pageCount=Number(book.pages)||0;
+    const hasPages=!!(archiveBookBase(book)&&pageCount);
+    const hasVideo=!!book.video;
+    if(!hasPages&&!hasVideo){
+      alert('이 자료는 아직 이미지 뷰어로 변환되지 않았습니다.');
+      return;
+    }
+    S.viewerOpen=true;
+    S.currentProduct={
+      key:"자료실",
+      name:book.title||"자료",
+      pagesBase:archiveBookBase(book),
+      pageCount,
+      pagePrefix:book.pagePrefix??"",
+      pageExt:book.imageExt||"jpg"
+    };
+    S.currentVideo=hasVideo?{url:book.video}:null;
+    document.getElementById("vTitle").textContent="📁 "+(book.title||"자료");
+    document.getElementById("vYtBtn").style.display=hasVideo?"block":"none";
+    document.getElementById("vPrintBtn").style.display=hasPages?"block":"none";
+    document.getElementById("vBody").className="viewer-body "+(hasVideo?"has-video":"no-video");
+    document.getElementById("vPanel").style.display=hasVideo?"flex":"none";
+    const tabs=document.getElementById("vTabs");
+    tabs.style.display=hasVideo?"":"none";
+    tabs.innerHTML=hasVideo?'<button class="tab-btn active" data-type="concept">🎬 강의 영상</button>':"";
+    document.getElementById("vPanelTitle").textContent=book.title||"강의";
+    document.getElementById("vPanelMeta").textContent=hasPages?"영상 · 교재":"영상";
+    document.getElementById("videoIframe").src=hasVideo?embed(book.video):"";
+    if(hasPages)setBookPage(1);else setBookEmpty("교재 이미지 준비 중");
+    document.getElementById("viewer").classList.add("show");
+    document.body.classList.add("in-viewer");
+    checkOrientation();
+  },
+  openProgramProduct(productIndex){
+    const p=PRODUCTS[productIndex];if(!p||!pOk(p)){toast();return;}
+    if(p.type==="mock")this.openMock(p);else if(p.type==="practice")this.openPractice(p);else if(p.type==="folder")this.showChapters(p.key);else this.openDirectViewer(p.key);
+  }
+});
+document.addEventListener("DOMContentLoaded",()=>{
+  security();
+  const ci=document.getElementById("gCode"),ni=document.getElementById("gName");
+  ci?.addEventListener("keydown",e=>{if(e.key==="Enter")ni?.focus()});
+  ni?.addEventListener("keydown",e=>{if(e.key==="Enter")GF.login()});
+  setTimeout(()=>ci?.focus(),60);
+  const sc=sessionStorage.getItem("gf_c"),sn=sessionStorage.getItem("gf_n");
+  if(sc&&sn)verify(sc).then(r=>{if(r){S.name=r.name||sn;S.perms=r.perms;S.studentType=r.type||"legacy";GF.showApp()}else sessionStorage.clear()});
+});
+window.GF=GF;
+})();
+</script>
 </body>
 </html>
