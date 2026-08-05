@@ -1,0 +1,48 @@
+name: Apply exam viewer routing
+
+on:
+  push:
+    branches:
+      - agent/exam-scoring-viewer
+
+permissions:
+  contents: write
+
+jobs:
+  patch-program:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/exam-scoring-viewer
+          fetch-depth: 0
+      - name: Route practical exams to scoring viewer
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('fields-classic/program/index.html')
+          text = path.read_text(encoding='utf-8')
+          old = 'theme:"theme-final",type:"direct",videoUrl:'
+          new = 'theme:"theme-final",type:"mock",mockUrl:"../exam/",videoUrl:'
+          if text.count(old) < 6:
+              raise SystemExit(f'Expected at least 6 practical exam routes, found {text.count(old)}')
+          text = text.replace(old, new, 6)
+          for round_no in range(1, 7):
+              marker = f'key:"실전모의고사{round_no}회"'
+              start = text.index(marker)
+              end = text.index('\n', start)
+              line = text[start:end]
+              if 'type:"mock"' not in line or 'mockUrl:"../exam/"' not in line:
+                  raise SystemExit(f'Round {round_no} route validation failed')
+          path.write_text(text, encoding='utf-8')
+          PY
+      - name: Remove one-time workflow
+        run: rm .github/workflows/apply-exam-router.yml
+      - name: Commit routing change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add fields-classic/program/index.html .github/workflows/apply-exam-router.yml
+          git commit -m "Route practical exams to scoring viewer"
+          git push origin HEAD:agent/exam-scoring-viewer
