@@ -204,7 +204,7 @@ td.video a:hover{text-decoration:underline}
   /* ---- 접근 제한 ---- */
   var session = HSMIDDLE_AUTH.readSession();
   if (!session.valid || !HSMIDDLE_AUTH.isAdmin(session.name)) {
-    location.replace("./login.html");
+    location.replace("./login.html?next=review");
     return;
   }
 

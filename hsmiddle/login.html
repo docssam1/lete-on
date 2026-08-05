@@ -117,9 +117,21 @@ function setStatus(message, type){
   statusEl.className = "status" + (type ? " " + type : "");
 }
 
+/* 로그인 후 돌아갈 곳 — ?next=review 처럼 지정된 경우 그곳으로 보낸다 */
+const NEXT_PAGES = { review: "./review.html", admin: "./admin.html", library: "./library.html", archive: "./archive.html" };
+const nextParam = new URLSearchParams(location.search).get("next");
+function destination(name){
+  const wanted = NEXT_PAGES[nextParam];
+  if (wanted) {
+    const adminOnly = nextParam === "review" || nextParam === "admin";
+    if (!adminOnly || HSMIDDLE_AUTH.isAdmin(name)) return wanted;
+  }
+  return HSMIDDLE_AUTH.isAdmin(name) ? "./admin.html" : "./library.html";
+}
+
 const session = HSMIDDLE_AUTH.readSession();
 if (session.valid && session.access.length) {
-  location.replace(HSMIDDLE_AUTH.isAdmin(session.name) ? "./admin.html" : "./library.html");
+  location.replace(destination(session.name));
 }
 if (session.name) nameInput.value = session.name;
 
@@ -136,8 +148,9 @@ form.addEventListener("submit", event => {
   }
   HSMIDDLE_AUTH.writeSession(name, code);
   const admin = HSMIDDLE_AUTH.isAdmin(name);
-  setStatus(admin ? "관리자로 확인되었습니다. 승인 관리로 이동합니다." : "확인되었습니다. 서재로 이동합니다.", "ok");
-  location.href = admin ? "./admin.html" : "./library.html";
+  const go = destination(name);
+  setStatus(admin ? "관리자로 확인되었습니다. 이동합니다." : "확인되었습니다. 서재로 이동합니다.", "ok");
+  location.href = go;
 });
 
 nameInput.addEventListener("keydown", e => {
