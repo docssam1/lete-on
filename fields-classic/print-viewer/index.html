@@ -100,7 +100,7 @@ async function render(){
     const sheet=document.createElement("section");
     sheet.className="page";
     const image=document.createElement("img");
-    image.src=`${source.pagesBase}${String(sourcePage).padStart(3,"0")}.webp`;
+    image.src=`${source.pagesBase}${source.pagePrefix??""}${String(sourcePage).padStart(3,"0")}.${source.pageExt||"webp"}`;
     image.alt=`${title} ${number}쪽`;
     image.decoding="async";
     image.loading="eager";
