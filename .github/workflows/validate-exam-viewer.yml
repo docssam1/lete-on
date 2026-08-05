@@ -1,0 +1,65 @@
+name: Validate exam scoring viewer
+
+on:
+  push:
+    branches:
+      - agent/exam-scoring-viewer
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/exam-scoring-viewer
+          fetch-depth: 0
+      - name: Check HTML data and JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path('fields-classic/exam/index.html').read_text(encoding='utf-8')
+          scripts = re.findall(r'<script>(.*?)</script>', html, re.S)
+          if len(scripts) != 1:
+              raise SystemExit(f'Expected one inline script, found {len(scripts)}')
+          Path('/tmp/exam-viewer.js').write_text(scripts[0], encoding='utf-8')
+          required = ['const Q_KEYPOINTS={};', "mockUrl:\"../exam/\"", '정답 미확정', '해설 영상']
+          program = Path('fields-classic/program/index.html').read_text(encoding='utf-8')
+          if required[0] not in html or required[2] not in html or required[3] not in html:
+              raise SystemExit('Required viewer features are missing')
+          if program.count(required[1]) < 6:
+              raise SystemExit('Practical exam routes are incomplete')
+          PY
+          node --check /tmp/exam-viewer.js
+          node - <<'NODE'
+          const fs=require('fs'),vm=require('vm');
+          const html=fs.readFileSync('fields-classic/exam/index.html','utf8');
+          const start=html.indexOf('const EXAMS=')+'const EXAMS='.length;
+          const end=html.indexOf(';\n// 문항',start);
+          if(start<14||end<start)throw new Error('EXAMS data block not found');
+          const exams=vm.runInNewContext('('+html.slice(start,end)+')');
+          const expectedUnknown={1:0,2:0,3:0,4:0,5:3,6:8};
+          for(let r=1;r<=6;r++){
+            if(exams[r].answers.length!==20)throw new Error(`Round ${r} answer count mismatch`);
+            const unknown=exams[r].answers.filter(x=>!x).length;
+            if(unknown!==expectedUnknown[r])throw new Error(`Round ${r} unknown count mismatch`);
+          }
+          const calcCounts={1:14,2:14,3:6,4:0,5:0,6:0};
+          for(let r=1;r<=6;r++){
+            const count=(exams[r].calcA||[]).length+(exams[r].calcS||[]).length+(exams[r].calcM||[]).length;
+            if(count!==calcCounts[r])throw new Error(`Round ${r} calculation count mismatch`);
+          }
+          NODE
+      - name: Remove one-time workflow
+        run: rm .github/workflows/validate-exam-viewer.yml
+      - name: Commit validation cleanup
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/validate-exam-viewer.yml
+          git commit -m "Validate exam scoring viewer"
+          git push origin HEAD:agent/exam-scoring-viewer
