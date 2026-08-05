@@ -1,4 +1,39 @@
 window.GFIELD_PRINT_DOCUMENTS = {
+  "concept-vol1": {
+    title: "TOP SECRET 개념 완성 Vol.1 수와 규칙",
+    pageCount: 19,
+    pagesBase: "../assets/concept/vol1/",
+    pagePrefix: "",
+    pageExt: "jpg"
+  },
+  "concept-vol2": {
+    title: "TOP SECRET 개념 완성 Vol.2 저울과 패턴",
+    pageCount: 19,
+    pagesBase: "../assets/concept/vol2/",
+    pagePrefix: "",
+    pageExt: "jpg"
+  },
+  "concept-vol3": {
+    title: "TOP SECRET 개념 완성 Vol.3 숨겨진 수",
+    pageCount: 16,
+    pagesBase: "../assets/concept/vol3/",
+    pagePrefix: "",
+    pageExt: "jpg"
+  },
+  "concept-vol4": {
+    title: "TOP SECRET 개념 완성 Vol.4",
+    pageCount: 10,
+    pagesBase: "../assets/concept/vol4/",
+    pagePrefix: "",
+    pageExt: "jpg"
+  },
+  "concept-final": {
+    title: "TOP SECRET 개념 완성 파이널",
+    pageCount: 11,
+    pagesBase: "../assets/concept/final/",
+    pagePrefix: "",
+    pageExt: "jpg"
+  },
   diagnostic: {
     title: "필즈 대비 선발 모의고사 진단",
     pageCount: 13,
