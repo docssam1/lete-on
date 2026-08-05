@@ -6,62 +6,574 @@
 <title>필즈 실전 모의고사 채점 | G-FIELD</title>
 <style>
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
-:root{--b:#16417c;--b2:#0d2b55;--g:#eac996;--ink:#0f172a;--muted:#64748b;--bg:#eef3f8;--line:#dbe4ee;--ok:#16a34a;--no:#dc2626;--wait:#d97706}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}html,body{min-height:100%;font-family:Pretendard,"Noto Sans KR",sans-serif;background:var(--bg);color:var(--ink)}button,input{font:inherit}button{cursor:pointer}.hidden{display:none!important}
-#gate{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:linear-gradient(140deg,var(--b2),var(--b))}.gate{width:min(430px,94vw);background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 28px 80px #0006}.bar{height:6px;background:linear-gradient(90deg,var(--b),var(--g))}.gate-body{padding:34px 28px;text-align:center}.logo{font-size:21px;font-weight:900;color:var(--b);margin-bottom:7px}.logo i{font-style:normal;background:var(--b);color:var(--g);padding:2px 8px;border-radius:7px}.kicker{font-size:10px;font-weight:900;letter-spacing:2px;color:#a66a12}.gate h1{font-size:24px;margin:10px 0 8px}.gate p{font-size:13px;line-height:1.7;color:var(--muted);margin-bottom:18px}.gate input{width:100%;height:50px;border:2px solid var(--line);border-radius:13px;text-align:center;font-size:16px;font-weight:800;outline:none}.gate input:focus{border-color:var(--b)}.primary{border:0;background:linear-gradient(135deg,var(--b),#1e3a6b);color:#fff;font-weight:900;border-radius:13px}.gate button{width:100%;height:51px;margin-top:10px}.error{min-height:20px;color:var(--no);font-size:12px;font-weight:800;margin-top:6px}
-header{position:sticky;top:0;z-index:20;background:#fffffff0;backdrop-filter:blur(14px);border-bottom:1px solid #16417c22}.head{max-width:980px;margin:auto;padding:10px 15px;display:flex;justify-content:space-between;align-items:center}.brand{font-weight:900;color:var(--b)}.student{font-size:12px;font-weight:900;color:var(--b);background:#16417c12;padding:6px 11px;border-radius:999px}
-main{max-width:980px;margin:auto;padding:22px 14px 60px}.hero{background:linear-gradient(145deg,var(--b2),var(--b));color:#fff;border-radius:21px;padding:24px;box-shadow:0 14px 35px #0f172a1c}.hero small{color:var(--g);font-weight:900;letter-spacing:.15em}.hero h2{font-size:clamp(23px,5vw,34px);margin-top:7px}.hero p{font-size:12px;color:#ffffffb3;margin-top:6px}.sec{display:flex;align-items:center;gap:9px;color:var(--b);font-size:11px;font-weight:900;letter-spacing:.1em;margin:22px 0 11px}.sec:after{content:"";height:1px;background:#16417c2b;flex:1}
-.rounds{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.round{min-height:91px;border:2px solid #e1e8f0;background:#fff;border-radius:14px;padding:10px 6px;text-align:center}.round.active{border-color:var(--b);background:#16417c0c}.round strong{display:block;font-size:22px;color:var(--b)}.round span{font-size:10px;color:var(--muted);font-weight:700}.round em{display:inline-block;font-style:normal;font-size:9px;font-weight:900;margin-top:6px;padding:2px 7px;border-radius:999px;background:#16417c12;color:var(--b)}.round em.pending{background:#d9770617;color:var(--wait)}
-.toolbar{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin:16px 0}.mode,.reset{min-height:47px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--b);font-weight:900;padding:8px}.mode.active{border-color:var(--b);background:#16417c0c}.meta{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:10px;font-weight:800;color:var(--muted);background:#fff;border:1px solid var(--line);padding:5px 9px;border-radius:999px}.chip.warn{color:var(--wait);border-color:#d9770640;background:#d977060d}
-.qgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.q,.calc{min-height:94px;background:#fff;border:2px solid #e4eaf1;border-radius:12px;padding:9px}.q.ox,.calc.ox{cursor:pointer;user-select:none}.q.ok,.calc.ok{border-color:#16a34a7a;background:#16a34a0d}.q.no,.calc.no{border-color:#dc262673;background:#dc26260b}.q.pending{border-style:dashed;background:#f8fafc;color:#94a3b8}.qno{font-size:11px;font-weight:900;color:var(--b)}.type{font-size:8.5px;font-weight:800;color:var(--muted);margin:4px 0 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.inp{width:100%;height:34px;border:2px solid var(--line);border-radius:8px;text-align:center;font-size:12px;font-weight:800;padding:0 4px;outline:none}.inp:focus{border-color:var(--b)}.mark{font-size:24px;font-weight:900;text-align:center;line-height:32px;color:#cbd5e1}.ok .mark{color:var(--ok)}.pending-t{font-size:10px;font-weight:800;text-align:center;margin-top:12px;color:var(--wait)}
-.calcbox{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:9px}.calchead{font-size:12px;font-weight:900;color:var(--b);margin-bottom:8px}.calcgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.calc{min-height:68px;text-align:center;padding:7px}.calc label{display:block;font-size:9px;font-weight:900;color:var(--b);margin-bottom:5px}.submit{text-align:center;margin:25px 0}.submit button{width:min(370px,100%);height:55px}.progress{font-size:11px;color:var(--muted);font-weight:700;margin-top:8px}
-#result{margin-top:28px}.scorebox{background:linear-gradient(145deg,var(--b2),var(--b));color:#fff;border-radius:21px;padding:27px;text-align:center}.scorebox small{color:#ffffffaa}.score{font-size:70px;line-height:1;font-weight:900;color:var(--g);margin:6px 0}.grade{display:inline-block;margin-top:11px;border:1px solid #eac99677;background:#eac9961c;color:var(--g);font-weight:900;padding:7px 17px;border-radius:999px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:16px;margin-top:10px}.card h3{display:flex;align-items:center;gap:8px;color:var(--b);font-size:11px;letter-spacing:.1em;margin-bottom:12px}.card h3:after{content:"";height:1px;background:#16417c1f;flex:1}.stat{display:grid;grid-template-columns:85px 1fr 45px;gap:8px;align-items:center;margin:9px 0;font-size:11px;font-weight:800}.track{height:8px;background:#e8edf3;border-radius:999px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--b),#3b82f6)}.weak{display:flex;justify-content:space-between;gap:10px;padding:10px;margin-top:7px;border:1px solid #dc262622;background:#dc26260b;border-radius:10px}.weak b{font-size:12px;color:var(--no)}.weak small{display:block;color:var(--muted);margin-top:3px}.detail{overflow-x:auto}table{width:100%;min-width:640px;border-collapse:collapse;font-size:10px}th,td{border:1px solid var(--line);padding:7px 5px;text-align:center}th{background:#16417c12;color:var(--b)}tr.wrong{background:#dc262609}.o{color:var(--ok);font-weight:900}.x{color:var(--no);font-weight:900}.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:12px}.actions a,.actions button{min-height:45px;border-radius:11px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-weight:900}.actions a{background:var(--b);color:#fff;border:0}.actions button{background:#fff;color:var(--b);border:2px solid var(--line)}
-@media(max-width:720px){.rounds{grid-template-columns:repeat(3,1fr)}.qgrid{grid-template-columns:repeat(4,1fr)}.calcgrid{grid-template-columns:repeat(4,1fr)}}@media(max-width:480px){.qgrid{grid-template-columns:repeat(3,1fr)}.toolbar{grid-template-columns:1fr 1fr}.reset{grid-column:1/-1}.calcgrid{grid-template-columns:repeat(3,1fr)}}@media print{#gate,header,.hero,.rounds,.toolbar,.submit,.actions{display:none!important}main{max-width:none;padding:0}.card,.scorebox{box-shadow:none;break-inside:avoid}}
+:root{
+  --blue:#16417c;--blue2:#0d2b55;--blue3:#1e3a6b;--gold:#eac996;--ink:#0f172a;
+  --muted:#64748b;--bg:#eef3f8;--line:#dbe4ee;--ok:#16a34a;--no:#dc2626;--wait:#d97706;
+  --shadow:0 12px 34px rgba(15,23,42,.12);--radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;font-family:Pretendard,"Noto Sans KR",sans-serif;background:var(--bg);color:var(--ink)}
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+#gate{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:20px;background:linear-gradient(140deg,var(--blue2),var(--blue) 58%,var(--blue3))}
+.gate-card{width:min(440px,94vw);background:#fff;border-radius:26px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.35)}
+.gate-bar{height:6px;background:linear-gradient(90deg,var(--blue),var(--gold))}
+.gate-body{padding:34px 30px 28px;text-align:center}
+.logo{font-size:21px;font-weight:900;color:var(--blue);letter-spacing:-.7px;margin-bottom:6px}
+.logo span{display:inline-grid;place-items:center;background:var(--blue);color:var(--gold);width:31px;height:28px;border-radius:7px;margin-right:5px}
+.kicker{font-size:10px;font-weight:900;letter-spacing:2.3px;color:#b7791f;margin-bottom:10px}
+.gate-title{font-size:24px;font-weight:900;letter-spacing:-1px;margin-bottom:9px}
+.gate-desc{font-size:13px;line-height:1.7;color:var(--muted);word-break:keep-all;margin-bottom:20px}
+.gate-input{width:100%;height:50px;border:2px solid var(--line);border-radius:13px;padding:0 15px;text-align:center;font-size:16px;font-weight:800;outline:none}
+.gate-input:focus{border-color:var(--blue)}
+.primary{border:0;background:linear-gradient(135deg,var(--blue),var(--blue3));color:#fff;font-weight:900;border-radius:13px;box-shadow:0 8px 22px rgba(22,65,124,.22)}
+.gate-btn{width:100%;height:52px;margin-top:10px}
+.gate-error{min-height:20px;margin-top:7px;color:var(--no);font-size:12px;font-weight:800}
+.gate-note{font-size:10px;color:#94a3b8;margin-top:7px}
+header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-bottom:1px solid rgba(22,65,124,.15);box-shadow:0 3px 16px rgba(15,23,42,.07)}
+.header-inner{max-width:980px;margin:auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.header-logo{font-weight:900;color:var(--blue)}
+.header-logo span{background:var(--blue);color:var(--gold);padding:2px 7px;border-radius:5px;margin-right:4px}
+.header-sub{font-size:10px;color:var(--muted);font-weight:700;margin-top:2px}
+.header-name{font-size:12px;font-weight:900;color:var(--blue);background:rgba(22,65,124,.08);padding:6px 11px;border-radius:999px}
+main{max-width:980px;margin:auto;padding:22px 14px 64px}
+.hero{background:linear-gradient(145deg,var(--blue2),var(--blue));color:#fff;border-radius:22px;padding:24px;margin-bottom:17px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;inset:auto -60px -90px auto;width:240px;height:240px;border-radius:50%;background:rgba(234,201,150,.13)}
+.hero-kicker{font-size:10px;font-weight:900;letter-spacing:.16em;color:var(--gold);margin-bottom:7px}
+.hero-title{font-size:clamp(23px,5vw,34px);font-weight:900;letter-spacing:-1px}
+.hero-desc{font-size:12px;color:rgba(255,255,255,.7);margin-top:6px;line-height:1.65}
+.section-title{display:flex;align-items:center;gap:9px;margin:22px 0 11px;color:var(--blue);font-size:11px;font-weight:900;letter-spacing:.12em}
+.section-title:after{content:"";height:1px;background:rgba(22,65,124,.18);flex:1}
+.round-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:9px}
+.round-card{min-height:92px;border:2px solid #e1e8f0;background:#fff;border-radius:15px;padding:11px 8px;text-align:center;box-shadow:0 3px 12px rgba(15,23,42,.05);transition:.18s}
+.round-card:hover{transform:translateY(-2px);border-color:rgba(22,65,124,.45)}
+.round-card.active{border-color:var(--blue);background:rgba(22,65,124,.055);box-shadow:0 8px 22px rgba(22,65,124,.13)}
+.round-no{font-size:22px;font-weight:900;color:var(--blue)}
+.round-label{font-size:10px;color:var(--muted);font-weight:700;margin-top:3px}
+.round-status{display:inline-block;font-size:9px;font-weight:900;margin-top:6px;padding:2px 7px;border-radius:999px;background:rgba(22,65,124,.08);color:var(--blue)}
+.round-status.pending{background:rgba(217,119,6,.1);color:var(--wait)}
+.exam-toolbar{display:grid;grid-template-columns:1fr 1fr auto;gap:9px;margin:16px 0}
+.mode-btn,.tool-btn{min-height:48px;border:2px solid var(--line);border-radius:13px;background:#fff;color:var(--blue);font-weight:900;padding:8px 12px}
+.mode-btn.active{border-color:var(--blue);background:rgba(22,65,124,.06)}
+.tool-btn{white-space:nowrap}
+.exam-meta{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 4px}
+.meta-chip{font-size:10px;font-weight:800;color:var(--muted);background:#fff;border:1px solid var(--line);padding:5px 9px;border-radius:999px}
+.meta-chip.warn{color:var(--wait);border-color:rgba(217,119,6,.28);background:rgba(217,119,6,.06)}
+.q-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.q-card{position:relative;min-height:95px;background:#fff;border:2px solid #e4eaf1;border-radius:13px;padding:9px;transition:.16s}
+.q-card.ox{cursor:pointer;user-select:none}
+.q-card.ok{border-color:rgba(22,163,74,.48);background:rgba(22,163,74,.055)}
+.q-card.no{border-color:rgba(220,38,38,.45);background:rgba(220,38,38,.045)}
+.q-card.pending{border-style:dashed;background:#f8fafc;color:#94a3b8}
+.q-num{font-size:11px;font-weight:900;color:var(--blue)}
+.q-type{font-size:8.5px;font-weight:800;color:var(--muted);margin:4px 0 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q-input{width:100%;height:34px;border:2px solid var(--line);border-radius:8px;text-align:center;font-size:12px;font-weight:800;padding:0 5px;outline:none;background:#fff}
+.q-input:focus{border-color:var(--blue)}
+.q-card.ok .q-input{border-color:rgba(22,163,74,.5)}
+.q-card.no .q-input{border-color:rgba(220,38,38,.5)}
+.q-mark{font-size:24px;font-weight:900;text-align:center;line-height:32px;color:#cbd5e1}
+.q-card.ok .q-mark{color:var(--ok)}
+.pending-text{font-size:10px;font-weight:800;text-align:center;margin-top:11px;color:var(--wait)}
+.calc-section{margin-top:14px}
+.calc-group{background:#fff;border:1px solid var(--line);border-radius:15px;padding:12px;margin-bottom:9px}
+.calc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.calc-title{font-size:12px;font-weight:900;color:var(--blue)}
+.calc-note{font-size:9px;color:var(--muted)}
+.calc-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.calc-card{border:2px solid #e4eaf1;border-radius:10px;padding:7px;background:#fff;text-align:center}
+.calc-card.ox{cursor:pointer}
+.calc-card.ok{border-color:rgba(22,163,74,.45);background:rgba(22,163,74,.05)}
+.calc-card.no{border-color:rgba(220,38,38,.45);background:rgba(220,38,38,.04)}
+.calc-label{font-size:9px;font-weight:900;color:var(--blue);margin-bottom:5px}
+.calc-input{width:100%;height:31px;border:2px solid var(--line);border-radius:7px;text-align:center;font-size:12px;font-weight:800;outline:none}
+.calc-card.ok .calc-input{border-color:rgba(22,163,74,.48)}
+.calc-card.no .calc-input{border-color:rgba(220,38,38,.48)}
+.submit-area{text-align:center;margin:25px 0 8px}
+.submit-btn{min-width:min(360px,100%);height:56px;border:0}
+.progress{font-size:11px;color:var(--muted);margin-top:9px;font-weight:700}
+#result{margin-top:28px;animation:up .35s ease}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.result-hero{background:linear-gradient(145deg,var(--blue2),var(--blue));color:#fff;border-radius:22px;padding:27px;text-align:center;box-shadow:var(--shadow)}
+.result-name{font-size:12px;color:rgba(255,255,255,.68)}
+.result-score{font-size:72px;line-height:1.05;font-weight:900;color:var(--gold);margin-top:5px}
+.result-denom{font-size:11px;color:rgba(255,255,255,.62)}
+.result-grade{display:inline-block;margin-top:12px;border:1px solid rgba(234,201,150,.45);background:rgba(234,201,150,.12);color:var(--gold);font-size:14px;font-weight:900;padding:7px 18px;border-radius:999px}
+.result-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px;margin-top:11px;box-shadow:0 3px 13px rgba(15,23,42,.05)}
+.result-title{display:flex;align-items:center;gap:8px;color:var(--blue);font-size:11px;font-weight:900;letter-spacing:.1em;margin-bottom:13px}
+.result-title:after{content:"";height:1px;background:rgba(22,65,124,.13);flex:1}
+.stat-row{display:grid;grid-template-columns:82px 1fr 45px;gap:9px;align-items:center;margin:9px 0}
+.stat-name{font-size:11px;font-weight:800}
+.stat-bg{height:8px;border-radius:999px;background:#e8edf3;overflow:hidden}
+.stat-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue),#3b82f6)}
+.stat-pct{text-align:right;font-size:11px;font-weight:900;color:var(--blue)}
+.weak-list{display:grid;gap:8px}
+.weak-item{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:11px;border-radius:11px;background:rgba(220,38,38,.045);border:1px solid rgba(220,38,38,.13)}
+.weak-name{font-size:12px;font-weight:900;color:var(--no)}
+.weak-desc{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.5}
+.weak-rate{font-size:12px;font-weight:900;white-space:nowrap}
+.detail-wrap{overflow-x:auto}
+.detail-table{width:100%;border-collapse:collapse;font-size:10px;min-width:670px}
+.detail-table th{background:rgba(22,65,124,.08);color:var(--blue);padding:7px 5px;border:1px solid var(--line);font-weight:900}
+.detail-table td{padding:7px 5px;border:1px solid var(--line);text-align:center}
+.detail-table tr.wrong{background:rgba(220,38,38,.035)}
+.detail-table tr.pending{background:#f8fafc;color:#94a3b8}
+.answer-cell{text-align:left!important;max-width:250px;word-break:break-all}
+.figure-q{grid-column:span 2;min-height:270px}
+.figure-answer{width:100%;max-width:270px;margin:7px auto 8px;padding:7px;background:#fff;border:1px solid var(--line);border-radius:10px}
+.figure-answer svg{display:block;width:100%;height:auto}
+.figure-answer .source-figure{display:grid;gap:7px}
+.figure-answer .source-figure img{display:block;width:100%;height:150px;object-fit:cover;object-position:center 76%;border-radius:7px;border:1px solid var(--line);background:#f8fafc}
+.figure-choice-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.figure-choice-row span{display:grid;place-items:center;min-height:39px;border:2px solid var(--blue);border-radius:10px;background:rgba(22,65,124,.07);color:var(--blue);font-size:21px;font-weight:900}
+.figure-choice-caption{text-align:center;color:var(--blue);font-size:10px;font-weight:900}
+.figure-answer.mini{width:150px;min-width:150px;margin:0 auto;padding:4px}
+.figure-note{text-align:center;font-size:10px;line-height:1.45;color:var(--muted);font-weight:700;margin:4px 0 8px}
+.manual-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.manual-choice{height:41px;border:2px solid var(--line);border-radius:10px;background:#fff;font-size:18px;font-weight:900;color:var(--muted)}
+.manual-choice.o.active{border-color:var(--ok);background:rgba(22,163,74,.09);color:var(--ok)}
+.manual-choice.x.active{border-color:var(--no);background:rgba(220,38,38,.08);color:var(--no)}
+.figure-label{font-size:9px;font-weight:900;color:var(--blue);text-align:center;margin-bottom:3px}
+.o{color:var(--ok);font-weight:900}.x{color:var(--no);font-weight:900}.dash{color:#94a3b8;font-weight:900}
+.video-actions{display:grid;grid-template-columns:2fr 1fr 1fr;gap:9px;margin-top:12px}
+.action-link,.action-btn{min-height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:13px;font-weight:900;border:0}
+.action-link{background:linear-gradient(135deg,var(--blue),var(--blue3));color:#fff}
+.action-btn{background:#fff;border:2px solid var(--line);color:var(--blue)}
+.empty-note{font-size:12px;color:var(--muted);line-height:1.7}
+@media(max-width:720px){
+  .round-grid{grid-template-columns:repeat(3,1fr)}
+  .q-grid{grid-template-columns:repeat(4,1fr)}
+  .calc-grid{grid-template-columns:repeat(4,1fr)}
+  .exam-toolbar{grid-template-columns:1fr 1fr}.tool-btn{grid-column:1/-1}
+}
+@media(max-width:480px){
+  .q-grid{grid-template-columns:repeat(2,1fr)}
+  .round-grid{grid-template-columns:repeat(3,1fr)}
+  .video-actions{grid-template-columns:1fr}
+  .hero{padding:20px}
+}
+@media print{
+  #gate,header,.hero,.round-picker,.exam-toolbar,.exam-meta,#answerArea,.submit-area,.video-actions{display:none!important}
+  body{background:#fff}main{max-width:none;padding:0}#result{display:block!important;margin:0}
+  .result-card,.result-hero{break-inside:avoid;box-shadow:none}
+  @page{margin:12mm}
+}
 </style>
 </head>
 <body>
-<div id="gate"><div class="gate"><div class="bar"></div><div class="gate-body"><div class="logo"><i>G</i> G-FIELD</div><div class="kicker">FIELDS THE CLASSIC · PRACTICE TEST</div><h1>실전 모의고사 채점</h1><p>학생 이름을 입력한 뒤 회차를 선택하면<br>채점·결과 분석·약점 확인을 진행합니다.</p><input id="studentInput" autocomplete="off" placeholder="학생 이름"><button class="primary" onclick="enterViewer()">채점 시작 →</button><div class="error" id="gateError"></div></div></div></div>
-<header id="header" class="hidden"><div class="head"><div class="brand">G-FIELD · 실전 모의고사</div><div class="student" id="headerName"></div></div></header>
-<main id="app" class="hidden"><section class="hero"><small>GFIELD GIFTED EDUCATION</small><h2>실전 모의고사 채점 뷰어</h2><p>1~6회 답안을 채점하고 유형별 결과와 해설 영상을 확인합니다.</p></section><div class="sec">회차 선택</div><div class="rounds" id="roundGrid"></div><section id="examPanel" class="hidden"><div class="toolbar"><button id="modeOx" class="mode active" onclick="setMode('ox')">빠른 OX 채점</button><button id="modeInput" class="mode" onclick="setMode('input')">학생 답안 입력</button><button class="reset" onclick="resetCurrent()">초기화</button></div><div class="meta" id="examMeta"></div><div id="answerArea"></div><div class="submit"><button class="primary" onclick="submitExam()">채점하고 결과 분석하기</button><div class="progress" id="progress"></div></div></section><section id="result" class="hidden"></section></main>
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-bar"></div>
+    <div class="gate-body">
+      <div class="logo"><span>G</span>FIELD 지필드 영재교육</div>
+      <div class="kicker">FIELDS THE CLASSIC · PRACTICE EXAM</div>
+      <div class="gate-title">실전 모의고사 채점</div>
+      <p class="gate-desc">학생 이름을 입력한 뒤 1~6회 중 채점할 회차를 선택하세요.<br>입력한 답안은 이 기기에만 임시 저장됩니다.</p>
+      <input id="studentInput" class="gate-input" type="text" placeholder="학생 이름" autocomplete="off">
+      <button class="gate-btn primary" onclick="enterViewer()">채점 시작하기 →</button>
+      <div id="gateError" class="gate-error"></div>
+      <div class="gate-note">미확정 문항은 점수 계산에서 자동 제외됩니다.</div>
+    </div>
+  </div>
+</div>
+
+<header id="header" class="hidden">
+  <div class="header-inner">
+    <div><div class="header-logo"><span>G</span>FIELD</div><div class="header-sub">필즈 실전 모의고사 채점 · 분석</div></div>
+    <div id="headerName" class="header-name"></div>
+  </div>
+</header>
+
+<main id="app" class="hidden">
+  <section class="hero">
+    <div class="hero-kicker">PRACTICE EXAM SCORING VIEWER</div>
+    <div class="hero-title">실전 모의고사 1~6회</div>
+    <p class="hero-desc">회차 선택 → 답안 채점 → 결과 분석 → 약점 유형 확인 → 해설 영상 학습</p>
+  </section>
+
+  <section class="round-picker">
+    <div class="section-title">회차 선택</div>
+    <div id="roundGrid" class="round-grid"></div>
+  </section>
+
+  <section id="examPanel" class="hidden">
+    <div class="exam-toolbar">
+      <button id="modeOx" class="mode-btn active" onclick="setMode('ox')">⚡ 빠른 OX 채점</button>
+      <button id="modeInput" class="mode-btn" onclick="setMode('input')">✏️ 학생 답안 입력</button>
+      <button class="tool-btn" onclick="resetCurrent()">↻ 현재 회차 초기화</button>
+    </div>
+    <div id="examMeta" class="exam-meta"></div>
+    <div id="answerArea"></div>
+    <div class="submit-area">
+      <button class="submit-btn primary" onclick="submitExam()">채점하고 결과 분석 보기 →</button>
+      <div id="progress" class="progress"></div>
+    </div>
+  </section>
+  <section id="result" class="hidden"></section>
+</main>
+
 <script>
-(()=>{'use strict';
-const EXAMS={
-1:{answers:['▲검은세모','9,8,6,7','4','3','2등','69','21','14','14','6','17명','14','27','62','4개','49개','13','35','41번째','23'],videoUrl:'https://youtu.be/41mXpws-gng',hasCalc:true,calcA:[8,29,42,24,57,81,102],calcS:[26,4,18,23,33,24,17]},
-2:{answers:['5,7,6,8','4','△','3','2등','25','57','11','6','12개','38','19','18명','26','35','64개','4개','13','16','36번째'],videoUrl:'https://youtu.be/S-P096L75ps',hasCalc:true,calcA:[29,42,57,81],calcS:[4,18,33,24],calcM:[28,56,54,4,7,9]},
-3:{answers:['23개','15명','6개','5번','16','(1)138(2)420','연수:새,애나:원숭이,재훈:고양이,수현:강아지','36','(1)16,22(2)32,64','14조각','민트2개','12개','5,4,5,7','+,+,-/+,-,+/-,+,-','15,16','16개','20,21,24,27,10,12,14,17','21지우기/10지우기','8개','마방진합45'],videoUrl:'https://youtu.be/6YU0_X5ixEQ',hasCalc:true,calcA:[90,120,120],calcS:[19,62,59]},
-4:{answers:['5개','나8다4라3cm','2+9=11,7×2=14,5,6','18','5,3,1,6','8','세윤203현희193도연192','6개','7','10,1','10개','9명','85','흰7개더많음','스페이드9별1하트8','21','10,12,3,26','사과5바나나15포도12','동하최대영혜최소','주연:햄스터,유빈:원숭이,유준:고양이,관호:강아지'],videoUrl:'https://youtu.be/KLQH2Mrjm8c',hasCalc:false},
-5:{answers:['11,8','27,47,5,28','','6,7,10,11,4,9,10','꼭짓점3,5,7/나머지6,2,4','A=9,B=1,C=2','검은동그라미2개','17','세모6개','5개','10개','','5명','9개','10개','21개','미나','5','11명',''],videoUrl:'https://youtu.be/kyHuxpZhcTQ',hasCalc:false},
-6:{answers:['각조각17씩','15','','4,0,1,2','7','','','','2','5,3,7,1','4,2,4,2,3,2','50명40명','13,10,7,4','11=18-7/15=7+8','','A=16,B=18','5개,6개','','',''],videoUrl:'https://youtu.be/uBSJ_-2IhR8',hasCalc:false}};
-// 문항 내용을 확인한 뒤 '회차-문항번호' 형식으로 추가합니다.
-const Q_KEYPOINTS={};
-let studentName='',currentRound=0,inputMode='ox',QS=[],CALCS=[];const answerState={},oxState={};
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function norm(v){return String(v??'').trim().toLowerCase().replace(/\s+/g,'').replace(/[，、]/g,',').replace(/：/g,':').replace(/／/g,'/').replace(/[－−]/g,'-').replace(/[＊xｘ]/g,'×').replace(/㉠|①/g,'(1)').replace(/㉡|②/g,'(2)').replace(/[\.。]/g,'')}
-function correct(user,answer){if(!answer)return null;return String(answer).split('||').some(a=>norm(user)===norm(a))}
-function infer(a,i){a=String(a||'');if(!a)return'정답 미확정';if(/[도형세모동그라미꼭짓점스페이드하트별cm조각▲△]/i.test(a))return'도형·공간';if(/[연수애나재훈수현세윤현희도연주연유빈유준관호동하영혜미나새원숭이고양이강아지햄스터등명번째최대최소지우기]/.test(a))return'논리·추리';if(/[+\-×=\/]|마방진|A=|B=|C=/.test(a))return'규칙·식';if(a.includes(',')||/\d개|\d번|\d명|\d조각/.test(a))return'수·규칙';return i<5?'기초 사고력':'종합 사고력'}
-function build(round){const e=EXAMS[round];QS=e.answers.map((answer,i)=>({id:i+1,answer,confirmed:answer!=='',type:infer(answer,i),keyPoint:Q_KEYPOINTS[`${round}-${i+1}`]||''}));CALCS=[];[['덧셈','calcA'],['뺄셈','calcS'],['곱셈','calcM']].forEach(([label,key])=>(e[key]||[]).forEach((answer,i)=>CALCS.push({id:`${key}-${i}`,group:key,label,no:i+1,answer:String(answer)})))}
-const sk=()=>`gfield-exam:${studentName}:${currentRound}`;
-function save(){if(!currentRound)return;sessionStorage.setItem(sk(),JSON.stringify({inputMode,answers:answerState[currentRound]||{},ox:oxState[currentRound]||{}}))}
-function load(){answerState[currentRound]={};oxState[currentRound]={};try{const x=JSON.parse(sessionStorage.getItem(sk())||'null');if(x){answerState[currentRound]=x.answers||{};oxState[currentRound]=x.ox||{};if(['ox','input'].includes(x.inputMode))inputMode=x.inputMode}}catch(_){}}
-function enterViewer(){const v=document.getElementById('studentInput').value.trim();if(!v){gateError.textContent='학생 이름을 입력해 주세요.';return}studentName=v;gate.classList.add('hidden');header.classList.remove('hidden');app.classList.remove('hidden');headerName.textContent=`${v} 학생`;renderRounds();const r=Number(new URLSearchParams(location.search).get('round'));selectRound(r>=1&&r<=6?r:1)}
-function renderRounds(){roundGrid.innerHTML=Object.keys(EXAMS).map(k=>{const r=+k,p=EXAMS[r].answers.filter(a=>!a).length;return`<button class="round ${r===currentRound?'active':''}" onclick="selectRound(${r})"><strong>${r}</strong><span>실전 모의고사</span><em class="${p?'pending':''}">${p?`미확정 ${p}문항`:'정답 확정'}</em></button>`}).join('')}
-function selectRound(r){if(!EXAMS[r])return;if(currentRound)save();currentRound=r;build(r);load();examPanel.classList.remove('hidden');result.classList.add('hidden');renderRounds();renderExam();history.replaceState(null,'',`${location.pathname}?round=${r}&student=${encodeURIComponent(studentName)}`)}
-function setMode(m){inputMode=m;result.classList.add('hidden');renderExam();save()}
-function renderExam(){modeOx.classList.toggle('active',inputMode==='ox');modeInput.classList.toggle('active',inputMode==='input');const e=EXAMS[currentRound],pending=QS.filter(q=>!q.confirmed).length;examMeta.innerHTML=`<span class="chip">실전 모의고사 ${currentRound}회</span><span class="chip">사고력 ${QS.length}문항</span><span class="chip">채점 가능 ${QS.length-pending}문항</span>${e.hasCalc?`<span class="chip">연산 ${CALCS.length}문항</span>`:''}${pending?`<span class="chip warn">정답 미확정 ${pending}문항 · 점수 제외</span>`:''}`;answerArea.innerHTML=`<div class="sec">사고력 답안</div><div class="qgrid">${QS.map(renderQ).join('')}</div>${e.hasCalc?renderCalcs():''}`;progressText()}
-function renderQ(q){if(!q.confirmed)return`<div class="q pending"><div class="qno">Q${String(q.id).padStart(2,'0')}</div><div class="type">정답 미확정</div><div class="pending-t">채점 제외</div></div>`;const key=`q${q.id}`,v=(answerState[currentRound]||{})[key]||'',on=(oxState[currentRound]||{})[key];if(inputMode==='ox')return`<div class="q ox ${on?'ok':''}" onclick="toggleOx('${key}')"><div class="qno">Q${String(q.id).padStart(2,'0')}</div><div class="type">${esc(q.type)}</div><div class="mark">${on?'○':'탭'}</div></div>`;const state=v===''?'':correct(v,q.answer)?'ok':'no';return`<div class="q ${state}"><div class="qno">Q${String(q.id).padStart(2,'0')}</div><div class="type">${esc(q.type)}</div><input class="inp" value="${esc(v)}" placeholder="답 입력" oninput="setAnswer('${key}',this.value,this)"></div>`}
-function renderCalcs(){const groups=[...new Set(CALCS.map(c=>c.group))];return`<div class="sec">연산 답안</div>${groups.map(g=>{const a=CALCS.filter(c=>c.group===g);return`<div class="calcbox"><div class="calchead">${a[0].label} · ${a.length}문항</div><div class="calcgrid">${a.map(renderCalc).join('')}</div></div>`}).join('')}`}
-function renderCalc(c){const key=`c-${c.id}`,v=(answerState[currentRound]||{})[key]||'',on=(oxState[currentRound]||{})[key];if(inputMode==='ox')return`<div class="calc ox ${on?'ok':''}" onclick="toggleOx('${key}')"><label>${c.label} ${c.no}</label><div class="mark">${on?'○':'탭'}</div></div>`;const state=v===''?'':correct(v,c.answer)?'ok':'no';return`<div class="calc ${state}"><label>${c.label} ${c.no}</label><input class="inp" value="${esc(v)}" placeholder="답" oninput="setAnswer('${key}',this.value,this)"></div>`}
-function toggleOx(key){oxState[currentRound]=oxState[currentRound]||{};oxState[currentRound][key]=!oxState[currentRound][key];renderExam();save()}
-function answerFor(key){if(key.startsWith('q'))return QS.find(q=>`q${q.id}`===key)?.answer||'';return CALCS.find(c=>`c-${c.id}`===key)?.answer||''}
-function setAnswer(key,v,el){answerState[currentRound]=answerState[currentRound]||{};answerState[currentRound][key]=v;const card=el.closest('.q,.calc'),a=answerFor(key);card.classList.remove('ok','no');if(v.trim()&&a)card.classList.add(correct(v,a)?'ok':'no');progressText();save()}
-function progressText(){const total=QS.filter(q=>q.confirmed).length+CALCS.length,entered=inputMode==='ox'?Object.values(oxState[currentRound]||{}).filter(Boolean).length:Object.values(answerState[currentRound]||{}).filter(v=>String(v).trim()).length;progress.textContent=inputMode==='ox'?`맞은 것으로 표시한 문항 ${entered}개 · 표시하지 않은 문항은 오답입니다.`:`${entered} / ${total}문항 입력 · 빈 답안은 오답입니다.`}
-function resetCurrent(){if(!confirm(`${currentRound}회 답안을 모두 지울까요?`))return;answerState[currentRound]={};oxState[currentRound]={};sessionStorage.removeItem(sk());result.classList.add('hidden');renderExam()}
-function mainResults(){return QS.map(q=>{if(!q.confirmed)return{...q,status:null,user:''};const key=`q${q.id}`;if(inputMode==='ox')return{...q,status:!!(oxState[currentRound]||{})[key],user:''};const user=(answerState[currentRound]||{})[key]||'';return{...q,status:correct(user,q.answer),user}})}
-function calcResults(){return CALCS.map(c=>{const key=`c-${c.id}`;if(inputMode==='ox')return{...c,status:!!(oxState[currentRound]||{})[key],user:''};const user=(answerState[currentRound]||{})[key]||'';return{...c,status:correct(user,c.answer),user}})}
-function grade(s){return s>=90?'실전 준비 매우 우수':s>=80?'실전 합격권':s>=70?'보완 후 합격권':s>=60?'약점 유형 집중 필요':'기초 유형 재점검 필요'}
-function videoUrl(){const e=EXAMS[currentRound];return`../video-viewer/?video=${encodeURIComponent(e.videoUrl)}&title=${encodeURIComponent(`실전 모의고사 ${currentRound}회 해설`)}&student=${encodeURIComponent(studentName)}`}
-function submitExam(){const main=mainResults(),calc=calcResults(),graded=main.filter(x=>x.status!==null),all=[...graded,...calc],ok=all.filter(x=>x.status).length,total=all.length,score=total?Math.round(ok/total*100):0,map={};graded.forEach(x=>{map[x.type]??={total:0,ok:0,wrong:[]};map[x.type].total++;if(x.status)map[x.type].ok++;else map[x.type].wrong.push(x.id)});const rows=Object.entries(map).map(([name,d])=>({name,...d,pct:Math.round(d.ok/d.total*100)})).sort((a,b)=>a.pct-b.pct),weak=rows.filter(x=>x.ok<x.total).slice(0,3),calcWrong=calc.filter(x=>!x.status);result.innerHTML=`<div class="scorebox"><small>${esc(studentName)} 학생 · 실전 모의고사 ${currentRound}회</small><div class="score">${score}</div><small>/ 100점 · ${ok}/${total}문항 정답${QS.some(q=>!q.confirmed)?' · 미확정 제외':''}</small><div class="grade">${grade(score)}</div></div><div class="card"><h3>유형별 결과 분석</h3>${rows.map(x=>`<div class="stat"><span>${esc(x.name)}</span><div class="track"><div class="fill" style="width:${x.pct}%"></div></div><b>${x.ok}/${x.total}</b></div>`).join('')}</div><div class="card"><h3>약점 유형</h3>${weak.length?weak.map(x=>`<div class="weak"><div><b>${esc(x.name)}</b><small>오답: ${x.wrong.map(n=>`Q${n}`).join(', ')}</small></div><strong>${x.pct}%</strong></div>`).join(''):'<small>채점 가능한 사고력 문항에서 약점 유형이 확인되지 않았습니다.</small>'}</div>${EXAMS[currentRound].hasCalc?`<div class="card"><h3>연산 분석</h3><div class="stat"><span>연산 전체</span><div class="track"><div class="fill" style="width:${calc.length?Math.round((calc.length-calcWrong.length)/calc.length*100):0}%"></div></div><b>${calc.length-calcWrong.length}/${calc.length}</b></div><small>${calcWrong.length?`틀린 연산: ${calcWrong.map(c=>`${c.label} ${c.no}`).join(', ')}`:'연산 문항을 모두 맞았습니다.'}</small></div>`:''}<div class="card"><h3>문항별 채점 결과</h3><div class="detail"><table><tr><th>번호</th><th>유형</th><th>정답</th>${inputMode==='input'?'<th>학생 답안</th>':''}<th>결과</th></tr>${main.map(x=>x.status===null?`<tr><td>Q${x.id}</td><td>정답 미확정</td><td>—</td>${inputMode==='input'?'<td>—</td>':''}<td>제외</td></tr>`:`<tr class="${x.status?'':'wrong'}"><td>Q${x.id}</td><td>${esc(x.type)}</td><td>${esc(x.answer)}</td>${inputMode==='input'?`<td>${esc(x.user||'—')}</td>`:''}<td class="${x.status?'o':'x'}">${x.status?'○':'✕'}</td></tr>`).join('')}</table></div></div><div class="actions"><a href="${videoUrl()}" target="_blank" rel="noopener">▶ ${currentRound}회 해설 영상</a><button onclick="window.print()">🖨 결과 인쇄</button><button onclick="examPanel.scrollIntoView({behavior:'smooth'})">답안 수정</button></div>`;result.classList.remove('hidden');result.scrollIntoView({behavior:'smooth'});save()}
-Object.assign(window,{enterViewer,selectRound,setMode,toggleOx,setAnswer,resetCurrent,submitExam});const params=new URLSearchParams(location.search),preset=(params.get('student')||'').trim();if(preset){studentInput.value=preset;setTimeout(enterViewer,0)}studentInput.addEventListener('keydown',e=>{if(e.key==='Enter')enterViewer()});
+(() => {
+'use strict';
+
+const EXAMS = {
+  1:{
+    answers:['▲검은세모','9,8,6,7','4','3','2등','69','21','14','14','6','17명','14','27','62','4개','49개','13','35','41번째','23'],
+    videoUrl:'https://youtu.be/41mXpws-gng',hasCalc:true,
+    calcA:[8,29,42,24,57,81,102],calcS:[26,4,18,23,33,24,17]
+  },
+  2:{
+    answers:['5,7,6,8','4','△','3','2등','25','57','11','6','12개','38','19','18명','26','35','64개','4개','13','16','36번째'],
+    videoUrl:'https://youtu.be/S-P096L75ps',hasCalc:true,
+    calcA:[29,42,57,81],calcS:[4,18,33,24],calcM:[28,56,54,4,7,9]
+  },
+  3:{
+    answers:['23개','15명','6개','5번','16','(1)138(2)420','연수:새,애나:원숭이,재훈:고양이,수현:강아지','36','(1)16,22(2)32,64','14조각','민트2개','12개','5,4,5,7','+,+,-/+,-,+/-,+,-','15,16','16개','20,21,24,27,10,12,14,17','21지우기/10지우기','8개','마방진합45'],
+    videoUrl:'https://youtu.be/6YU0_X5ixEQ',hasCalc:true,
+    calcA:[90,120,120],calcS:[19,62,59]
+  },
+  4:{
+    answers:['5개','나8다4라3cm','2+9=11,7×2=14,5,6','18','5,3,1,6','8','세윤203현희193도연192','6개','7','10,1','10개','9명','85','흰7개더많음','스페이드9별1하트8','21','10,12,3,26','사과5바나나15포도12','동하최대영혜최소','주연:햄스터,유빈:원숭이,유준:고양이,관호:강아지'],
+    videoUrl:'https://youtu.be/KLQH2Mrjm8c',hasCalc:false
+  },
+  5:{
+    answers:['11,8','27,47,5,28','7','6,7,10,11,4,9,10','꼭짓점3,5,7/나머지6,2,4','A=9,B=1,C=2','검은동그라미2개','17','세모6개','5개','10개','그림 정답','5명','9개','10개','21개','미나','5','11명','8'],
+    videoUrl:'https://youtu.be/kyHuxpZhcTQ',hasCalc:false
+  },
+  6:{
+    answers:['각조각17씩','15','12','4,0,1,2','7','그림 정답','유리,소이,송이,예린,여울','','2','5,3,7,1','4,2,4,2,3,2','50명40명','13,10,7,4','11=18-7/15=7+8','17명','A=16,B=18','5개,6개','A=16,B=18,C=14','4개','그림 정답'],
+    videoUrl:'https://youtu.be/uBSJ_-2IhR8',hasCalc:false
+  }
+};
+
+// 풀이 핵심은 문항 내용 확인 후 이 객체에 회차-문항 키로 추가합니다.
+// 예: '1-3':'전체 수와 차를 먼저 정리합니다.'
+const Q_KEYPOINTS = {};
+const FIGURE_ANSWERS = {
+  '5-12':`<svg viewBox="0 0 220 180" role="img" aria-label="왼쪽 위 정사각형, 오른쪽 위 원, 왼쪽 아래 마름모, 오른쪽 아래 오른쪽을 향한 삼각형">
+    <rect x="10" y="10" width="200" height="160" rx="2" fill="#fff" stroke="#111827" stroke-width="4"/>
+    <rect x="40" y="34" width="40" height="40" fill="none" stroke="#ef4444" stroke-width="5" stroke-linejoin="round"/>
+    <circle cx="160" cy="54" r="21" fill="none" stroke="#ef4444" stroke-width="5"/>
+    <polygon points="60,101 85,126 60,151 35,126" fill="none" stroke="#ef4444" stroke-width="5" stroke-linejoin="round"/>
+    <polygon points="143,101 181,126 143,151" fill="none" stroke="#ef4444" stroke-width="5" stroke-linejoin="round"/>
+  </svg>`,
+  '6-6':`<div class="source-figure"><img src="../assets/print/mock-set/page_056.webp" alt="6회 6번 문제의 도형 보기"><div class="figure-choice-row"><span>②</span><span>④</span><span>⑦</span></div><div class="figure-choice-caption">정답 모양 ② · ④ · ⑦</div></div>`,
+  '6-20':`<svg viewBox="0 0 240 190" role="img" aria-label="3행 3열에서 왼쪽 열과 오른쪽 열을 모두 색칠한 모양">
+    <rect x="30" y="16" width="180" height="162" rx="3" fill="#fff" stroke="#111827" stroke-width="4"/>
+    <rect x="30" y="16" width="60" height="162" fill="#60a5fa"/>
+    <rect x="150" y="16" width="60" height="162" fill="#60a5fa"/>
+    <path d="M90 16V178M150 16V178M30 70H210M30 124H210" fill="none" stroke="#334155" stroke-width="3"/>
+  </svg>`
+};
+function figureAnswer(round,id){return FIGURE_ANSWERS[`${round}-${id}`]||'';}
+function hasOwn(obj,key){return Object.prototype.hasOwnProperty.call(obj||{},key);}
+
+let studentName = '';
+let currentRound = 0;
+let inputMode = 'ox';
+let QS = [];
+let CALCS = [];
+const answerState = {};
+const oxState = {};
+
+function escapeHtml(value){
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function normalize(value){
+  return String(value ?? '')
+    .trim().toLowerCase()
+    .replace(/\s+/g,'')
+    .replace(/[，、]/g,',')
+    .replace(/[：]/g,':')
+    .replace(/[／]/g,'/')
+    .replace(/[－−]/g,'-')
+    .replace(/[＊xｘ]/g,'×')
+    .replace(/[㉠①]/g,'(1)')
+    .replace(/[㉡②]/g,'(2)')
+    .replace(/[\.。]/g,'');
+}
+function isCorrect(user, answer){
+  if(!answer)return null;
+  const choices=String(answer).split('||');
+  return choices.some(choice => normalize(user) === normalize(choice));
+}
+function inferType(answer, index){
+  const a=String(answer||'');
+  if(!a)return '정답 미확정';
+  if(/[도형세모동그라미꼭짓점스페이드하트별cm조각▲△]/i.test(a))return '도형·공간';
+  if(/[연수애나재훈수현세윤현희도연주연유빈유준관호동하영혜미나유리소이송이예린여울새원숭이고양이강아지햄스터등명번째최대최소지우기]/.test(a))return '논리·추리';
+  if(/[+\-×=\/]|마방진|A=|B=|C=/.test(a))return '규칙·식';
+  if(a.includes(',') || /\d개|\d번|\d명|\d조각/.test(a))return '수·규칙';
+  return index < 5 ? '기초 사고력' : '종합 사고력';
+}
+function buildQS(round){
+  const exam=EXAMS[round];
+  QS=exam.answers.map((answer,index)=>({
+    id:index+1,
+    answer,
+    confirmed:answer !== '',
+    type:figureAnswer(round,index+1)?'도형·공간':inferType(answer,index),
+    keyPoint:Q_KEYPOINTS[`${round}-${index+1}`]||''
+  }));
+  CALCS=[];
+  const groups=[['덧셈','calcA'],['뺄셈','calcS'],['곱셈','calcM']];
+  groups.forEach(([label,key])=>{
+    (exam[key]||[]).forEach((answer,index)=>CALCS.push({
+      id:`${key}-${index}`,
+      group:key,
+      groupLabel:label,
+      no:index+1,
+      answer:String(answer)
+    }));
+  });
+}
+function storageKey(){return `gfield-exam:${studentName}:${currentRound}`;}
+function saveState(){
+  if(!currentRound)return;
+  const data={inputMode,answers:answerState[currentRound]||{},ox:oxState[currentRound]||{}};
+  sessionStorage.setItem(storageKey(),JSON.stringify(data));
+}
+function loadState(){
+  answerState[currentRound]={};
+  oxState[currentRound]={};
+  try{
+    const saved=JSON.parse(sessionStorage.getItem(storageKey())||'null');
+    if(saved){
+      answerState[currentRound]=saved.answers||{};
+      oxState[currentRound]=saved.ox||{};
+      if(saved.inputMode==='input'||saved.inputMode==='ox')inputMode=saved.inputMode;
+    }
+  }catch(_){}
+}
+function enterViewer(){
+  const value=document.getElementById('studentInput').value.trim();
+  if(!value){document.getElementById('gateError').textContent='학생 이름을 입력해 주세요.';return;}
+  studentName=value;
+  document.getElementById('gate').classList.add('hidden');
+  document.getElementById('header').classList.remove('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('headerName').textContent=`${studentName} 학생`;
+  renderRounds();
+  const requested=Number(new URLSearchParams(location.search).get('round'));
+  selectRound(requested>=1&&requested<=6?requested:1);
+}
+function renderRounds(){
+  const grid=document.getElementById('roundGrid');
+  grid.innerHTML=Object.keys(EXAMS).map(key=>{
+    const round=Number(key),pending=EXAMS[round].answers.filter(a=>!a).length;
+    return `<button class="round-card ${round===currentRound?'active':''}" onclick="selectRound(${round})">
+      <div class="round-no">${round}</div><div class="round-label">실전 모의고사</div>
+      <span class="round-status ${pending?'pending':''}">${pending?`미확정 ${pending}문항`:'정답 확정'}</span>
+    </button>`;
+  }).join('');
+}
+function selectRound(round){
+  if(!EXAMS[round])return;
+  if(currentRound)saveState();
+  currentRound=round;
+  buildQS(round);
+  loadState();
+  document.getElementById('examPanel').classList.remove('hidden');
+  document.getElementById('result').classList.add('hidden');
+  renderRounds();
+  renderExam();
+  history.replaceState(null,'',`${location.pathname}?round=${round}&student=${encodeURIComponent(studentName)}`);
+}
+function setMode(mode){
+  inputMode=mode;
+  document.getElementById('result').classList.add('hidden');
+  renderExam();
+  saveState();
+}
+function renderExam(){
+  document.getElementById('modeOx').classList.toggle('active',inputMode==='ox');
+  document.getElementById('modeInput').classList.toggle('active',inputMode==='input');
+  const exam=EXAMS[currentRound],pending=QS.filter(q=>!q.confirmed).length,confirmed=QS.length-pending;
+  document.getElementById('examMeta').innerHTML=`
+    <span class="meta-chip">실전 모의고사 ${currentRound}회</span>
+    <span class="meta-chip">사고력 ${QS.length}문항</span>
+    <span class="meta-chip">채점 가능 ${confirmed}문항</span>
+    ${exam.hasCalc?`<span class="meta-chip">연산 ${CALCS.length}문항</span>`:''}
+    ${pending?`<span class="meta-chip warn">정답 미확정 ${pending}문항 · 점수 제외</span>`:''}`;
+  const mainHtml=`<div class="section-title">사고력 답안</div><div class="q-grid">${QS.map(renderQuestion).join('')}</div>`;
+  const calcHtml=exam.hasCalc?renderCalculations():'';
+  document.getElementById('answerArea').innerHTML=mainHtml+calcHtml;
+  updateProgress();
+}
+function renderQuestion(q){
+  if(!q.confirmed)return `<div class="q-card pending"><div class="q-num">Q${String(q.id).padStart(2,'0')}</div><div class="q-type">정답 미확정</div><div class="pending-text">채점 제외</div></div>`;
+  const key=`q${q.id}`,value=(answerState[currentRound]||{})[key]||'',stateMap=oxState[currentRound]||{};
+  const figure=figureAnswer(currentRound,q.id);
+  if(figure){
+    const chosen=hasOwn(stateMap,key),selected=stateMap[key];
+    return `<div class="q-card figure-q ${chosen?(selected?'ok':'no'):''}"><div class="q-num">Q${String(q.id).padStart(2,'0')}</div><div class="q-type">${escapeHtml(q.type)} · 그림 판정</div><div class="figure-label">정답 그림</div><div class="figure-answer">${figure}</div><div class="figure-note">학생이 그린 답과 비교하여 맞으면 O, 틀리면 X를 선택하세요.</div><div class="manual-choices"><button type="button" class="manual-choice o ${chosen&&selected?'active':''}" onclick="setOxChoice('${key}',true)">O</button><button type="button" class="manual-choice x ${chosen&&!selected?'active':''}" onclick="setOxChoice('${key}',false)">X</button></div></div>`;
+  }
+  const selected=stateMap[key]===true;
+  if(inputMode==='ox'){
+    return `<div class="q-card ox ${selected?'ok':''}" onclick="toggleOx('${key}')"><div class="q-num">Q${String(q.id).padStart(2,'0')}</div><div class="q-type">${escapeHtml(q.type)}</div><div class="q-mark">${selected?'○':'탭'}</div></div>`;
+  }
+  const state=value===''?'':(isCorrect(value,q.answer)?'ok':'no');
+  return `<div class="q-card ${state}"><div class="q-num">Q${String(q.id).padStart(2,'0')}</div><div class="q-type">${escapeHtml(q.type)}</div><input class="q-input" id="${key}" value="${escapeHtml(value)}" placeholder="답 입력" oninput="setAnswer('${key}',this.value)"></div>`;
+}
+function renderCalculations(){
+  const groups=[...new Set(CALCS.map(c=>c.group))];
+  return `<div class="section-title">연산 답안</div><div class="calc-section">${groups.map(group=>{
+    const items=CALCS.filter(c=>c.group===group);
+    return `<div class="calc-group"><div class="calc-head"><div class="calc-title">${items[0].groupLabel}</div><div class="calc-note">${items.length}문항</div></div><div class="calc-grid">${items.map(renderCalc).join('')}</div></div>`;
+  }).join('')}</div>`;
+}
+function renderCalc(calc){
+  const key=`c-${calc.id}`,value=(answerState[currentRound]||{})[key]||'',selected=(oxState[currentRound]||{})[key];
+  if(inputMode==='ox'){
+    return `<div class="calc-card ox ${selected?'ok':''}" onclick="toggleOx('${key}')"><div class="calc-label">${calc.groupLabel} ${calc.no}</div><div class="q-mark">${selected?'○':'탭'}</div></div>`;
+  }
+  const state=value===''?'':(isCorrect(value,calc.answer)?'ok':'no');
+  return `<div class="calc-card ${state}"><div class="calc-label">${calc.groupLabel} ${calc.no}</div><input class="calc-input" value="${escapeHtml(value)}" placeholder="답" oninput="setAnswer('${key}',this.value)"></div>`;
+}
+function toggleOx(key){
+  oxState[currentRound]=oxState[currentRound]||{};
+  if(oxState[currentRound][key]===true)delete oxState[currentRound][key];
+  else oxState[currentRound][key]=true;
+  document.getElementById('result').classList.add('hidden');
+  renderExam();saveState();
+}
+function setOxChoice(key,value){
+  oxState[currentRound]=oxState[currentRound]||{};
+  oxState[currentRound][key]=value;
+  document.getElementById('result').classList.add('hidden');
+  renderExam();saveState();
+}
+function setAnswer(key,value){
+  answerState[currentRound]=answerState[currentRound]||{};
+  answerState[currentRound][key]=value;
+  renderExam();saveState();
+}
+function updateProgress(){
+  const confirmed=QS.filter(q=>q.confirmed).length+CALCS.length;
+  const ox=oxState[currentRound]||{};
+  let entered=0;
+  if(inputMode==='ox')entered=Object.keys(ox).length;
+  else entered=Object.values(answerState[currentRound]||{}).filter(v=>String(v).trim()).length+QS.filter(q=>figureAnswer(currentRound,q.id)&&hasOwn(ox,`q${q.id}`)).length;
+  document.getElementById('progress').textContent=inputMode==='ox'
+    ? `채점 표시한 문항 ${entered}개 · 표시하지 않은 일반 문항은 오답으로 채점됩니다.`
+    : `${entered} / ${confirmed}문항 입력 · 그림 문항은 정답 그림과 비교해 O/X를 선택하세요.`;
+}
+function resetCurrent(){
+  if(!confirm(`${currentRound}회 답안 입력을 모두 지울까요?`))return;
+  answerState[currentRound]={};oxState[currentRound]={};
+  sessionStorage.removeItem(storageKey());
+  document.getElementById('result').classList.add('hidden');
+  renderExam();
+}
+function getMainResults(){
+  return QS.map(q=>{
+    if(!q.confirmed)return {...q,status:null,user:''};
+    const key=`q${q.id}`,ox=oxState[currentRound]||{};
+    if(figureAnswer(currentRound,q.id)){
+      const chosen=hasOwn(ox,key);
+      return {...q,status:chosen?ox[key]:false,user:chosen?(ox[key]?'O':'X'):'미선택'};
+    }
+    if(inputMode==='ox')return {...q,status:ox[key]===true,user:''};
+    const user=(answerState[currentRound]||{})[key]||'';
+    return {...q,status:isCorrect(user,q.answer),user};
+  });
+}
+function getCalcResults(){
+  return CALCS.map(calc=>{
+    const key=`c-${calc.id}`;
+    if(inputMode==='ox')return {...calc,status:!!(oxState[currentRound]||{})[key],user:''};
+    const user=(answerState[currentRound]||{})[key]||'';
+    return {...calc,status:isCorrect(user,calc.answer),user};
+  });
+}
+function gradeLabel(score){
+  if(score>=90)return '실전 준비 매우 우수';
+  if(score>=80)return '실전 합격권';
+  if(score>=70)return '보완 후 합격권';
+  if(score>=60)return '약점 유형 집중 필요';
+  return '기초 유형 재점검 필요';
+}
+function videoViewerUrl(){
+  const exam=EXAMS[currentRound];
+  return `../video-viewer/?video=${encodeURIComponent(exam.videoUrl)}&title=${encodeURIComponent(`실전 모의고사 ${currentRound}회 해설`)}&student=${encodeURIComponent(studentName||'학생')}`;
+}
+function renderCorrectAnswer(result){
+  const figure=figureAnswer(currentRound,result.id);
+  return figure?`<div class="figure-answer mini">${figure}</div>`:escapeHtml(result.answer);
+}
+function submitExam(){
+  const main=getMainResults(),calc=getCalcResults();
+  const gradedMain=main.filter(r=>r.status!==null);
+  const all=[...gradedMain,...calc];
+  const ok=all.filter(r=>r.status===true).length;
+  const total=all.length;
+  const score=total?Math.round(ok/total*100):0;
+  const typeMap={};
+  gradedMain.forEach(r=>{
+    typeMap[r.type]=typeMap[r.type]||{total:0,ok:0,wrong:[]};
+    typeMap[r.type].total++;
+    if(r.status)typeMap[r.type].ok++;else typeMap[r.type].wrong.push(r.id);
+  });
+  const typeRows=Object.entries(typeMap).map(([name,data])=>({
+    name,...data,pct:data.total?Math.round(data.ok/data.total*100):0
+  })).sort((a,b)=>a.pct-b.pct||b.total-a.total);
+  const weaknesses=typeRows.filter(x=>x.ok<x.total).slice(0,3);
+  const mainWrong=gradedMain.filter(r=>!r.status);
+  const calcWrong=calc.filter(r=>!r.status);
+  const result=document.getElementById('result');
+  result.innerHTML=`
+    <div class="result-hero">
+      <div class="result-name">${escapeHtml(studentName)} 학생 · 실전 모의고사 ${currentRound}회</div>
+      <div class="result-score">${score}</div>
+      <div class="result-denom">/ 100점 · ${ok}/${total}문항 정답${QS.some(q=>!q.confirmed)?' · 미확정 문항 제외':''}</div>
+      <div class="result-grade">${gradeLabel(score)}</div>
+    </div>
+    <div class="result-card"><div class="result-title">유형별 결과 분석</div>
+      ${typeRows.map(x=>`<div class="stat-row"><div class="stat-name">${escapeHtml(x.name)}</div><div class="stat-bg"><div class="stat-fill" style="width:${x.pct}%"></div></div><div class="stat-pct">${x.ok}/${x.total}</div></div>`).join('')}
+    </div>
+    <div class="result-card"><div class="result-title">약점 유형</div>
+      ${weaknesses.length?`<div class="weak-list">${weaknesses.map(x=>`<div class="weak-item"><div><div class="weak-name">${escapeHtml(x.name)}</div><div class="weak-desc">오답 문항: ${x.wrong.map(n=>`Q${n}`).join(', ')}</div></div><div class="weak-rate">${x.pct}%</div></div>`).join('')}</div>`:'<div class="empty-note">현재 채점 가능한 사고력 문항에서 약점 유형이 확인되지 않았습니다.</div>'}
+    </div>
+    ${EXAMS[currentRound].hasCalc?`<div class="result-card"><div class="result-title">연산 분석</div>
+      <div class="stat-row"><div class="stat-name">연산 전체</div><div class="stat-bg"><div class="stat-fill" style="width:${calc.length?Math.round((calc.length-calcWrong.length)/calc.length*100):0}%"></div></div><div class="stat-pct">${calc.length-calcWrong.length}/${calc.length}</div></div>
+      <div class="empty-note">${calcWrong.length?`틀린 연산: ${calcWrong.map(c=>`${c.groupLabel} ${c.no}`).join(', ')}`:'연산 문항을 모두 맞았습니다.'}</div>
+    </div>`:''}
+    <div class="result-card"><div class="result-title">문항별 채점 결과</div><div class="detail-wrap"><table class="detail-table">
+      <tr><th>번호</th><th>유형</th><th>정답</th>${inputMode==='input'?'<th>학생 답안</th>':''}<th>결과</th></tr>
+      ${main.map(r=>{
+        if(r.status===null)return `<tr class="pending"><td>Q${r.id}</td><td>정답 미확정</td><td>—</td>${inputMode==='input'?'<td>—</td>':''}<td class="dash">제외</td></tr>`;
+        return `<tr class="${r.status?'':'wrong'}"><td>Q${r.id}</td><td>${escapeHtml(r.type)}</td><td class="answer-cell">${renderCorrectAnswer(r)}</td>${inputMode==='input'?`<td class="answer-cell">${escapeHtml(r.user||'—')}</td>`:''}<td class="${r.status?'o':'x'}">${r.status?'○':'✕'}</td></tr>`;
+      }).join('')}
+    </table></div></div>
+    <div class="video-actions">
+      <a class="action-link" href="${videoViewerUrl()}" target="_blank" rel="noopener">▶ ${currentRound}회 해설 영상 보기</a>
+      <button class="action-btn" onclick="window.print()">🖨 결과 인쇄</button>
+      <button class="action-btn" onclick="scrollToAnswers()">답안 수정</button>
+    </div>`;
+  result.classList.remove('hidden');
+  result.scrollIntoView({behavior:'smooth',block:'start'});
+  saveState();
+}
+function scrollToAnswers(){
+  document.getElementById('examPanel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+window.enterViewer=enterViewer;
+window.selectRound=selectRound;
+window.setMode=setMode;
+window.toggleOx=toggleOx;
+window.setOxChoice=setOxChoice;
+window.setAnswer=setAnswer;
+window.resetCurrent=resetCurrent;
+window.submitExam=submitExam;
+window.scrollToAnswers=scrollToAnswers;
+
+const params=new URLSearchParams(location.search);
+const preset=(params.get('student')||'').trim();
+if(preset){
+  document.getElementById('studentInput').value=preset;
+  setTimeout(enterViewer,0);
+}
+document.getElementById('studentInput').addEventListener('keydown',e=>{if(e.key==='Enter')enterViewer();});
 })();
 </script>
 </body>
