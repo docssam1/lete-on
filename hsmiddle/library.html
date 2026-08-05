@@ -140,6 +140,7 @@ button,input{font:inherit}
     <div class="progress">
       <div class="pbar"><span id="pfill" style="width:0%"></span></div>
       <div class="pnum" id="pnum">0 / 5</div>
+      <span id="usagePeriod" style="font-size:11px;color:var(--muted);font-weight:800"></span>
     </div>
   </section>
 
@@ -165,10 +166,42 @@ const name = session.name;
 
 function logout(){ HSMIDDLE_AUTH.clearSession(); location.replace("./login.html"); }
 
+/* 이용 기간(6개월) 만료 시 본문을 안내로 교체하고 진행을 중단한다.
+   서버가 없으므로 기기·브라우저 단위로만 관리된다. */
+function showExpired(){
+  document.querySelector(".shell").innerHTML = `
+    <section class="head">
+      <h1>이용 기간이 종료되었습니다</h1>
+      <p>첫 로그인일로부터 6개월간 이용하실 수 있습니다. 연장이 필요하시면 카카오톡으로 문의해 주세요.</p>
+    </section>
+    <main class="grid">
+      <article class="card open">
+        <div class="acts">
+          <a class="ask" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">카카오톡 문의</a>
+          <button type="button" onclick="logout()">나가기</button>
+        </div>
+      </article>
+    </main>`;
+}
+
 if (HSMIDDLE_AUTH.isAdmin(name)) {
   const a = document.createElement("a");
   a.href = "./admin.html"; a.textContent = "승인 관리"; a.className = "primary keep";
   document.getElementById("links").prepend(a);
+}
+
+if (HSMIDDLE_AUTH.isExpired(name)) {
+  showExpired();
+  throw new Error("이용 기간 만료로 진행을 중단합니다.");
+}
+
+if (!HSMIDDLE_AUTH.isAdmin(name)) {
+  document.getElementById("usagePeriod").textContent = `이용 기간 D-${HSMIDDLE_AUTH.daysLeft(name)}`;
+}
+
+function attemptCount(key){
+  const historyKey = key === "diagnostic" ? `hsm-history-diagnostic-${name}` : `hsm-history-${key}-${name}`;
+  try { return (JSON.parse(localStorage.getItem(historyKey) || "[]")).length; } catch (e) { return 0; }
 }
 
 const catalog = [
@@ -224,7 +257,7 @@ document.getElementById("catalog").innerHTML = catalog.map(item => {
       </div>
       <h2>${item.title}</h2>
       <p>${item.copy}</p>
-      <div class="chips">${item.chips.map(c => `<span>${c}</span>`).join("")}</div>
+      <div class="chips">${item.chips.map(c => `<span>${c}</span>`).join("")}${open ? `<span>응시 ${attemptCount(item.key)}/3</span>` : ""}</div>
       <div class="acts">
         ${open
           ? `<a href="${item.take}">응시 · 채점</a><a class="ghost" href="${item.report}">분석지</a>`

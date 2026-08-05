@@ -148,6 +148,7 @@ form.addEventListener("submit", event => {
   }
   HSMIDDLE_AUTH.writeSession(name, code);
   const admin = HSMIDDLE_AUTH.isAdmin(name);
+  if (!admin) HSMIDDLE_AUTH.markStart(name);
   const go = destination(name);
   setStatus(admin ? "관리자로 확인되었습니다. 이동합니다." : "확인되었습니다. 서재로 이동합니다.", "ok");
   location.href = go;

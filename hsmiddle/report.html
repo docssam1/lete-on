@@ -26,6 +26,8 @@ body{margin:0;background:#f1f5f9;color:#14243b;font-family:Pretendard,sans-serif
 .form{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-top:18px}
 input{width:100%;height:44px;padding:0 12px;border:1px solid #b8c8da;border-radius:6px;font:700 14px Pretendard,sans-serif}
 button{height:42px;padding:0 14px;border:0;border-radius:6px;background:#173a6b;color:#fff;font:900 13px Pretendard,sans-serif;cursor:pointer}
+button.secondary{background:#e8f0f9;color:#173a6b}
+button:disabled{background:#c7d2e0;color:#5f7291;cursor:not-allowed}
 .hidden{display:none!important}
 .error{color:#bb2630;font-size:13px;font-weight:850}
 .hint,.meta{font-size:12px;color:#667991}
@@ -52,6 +54,8 @@ button{height:42px;padding:0 14px;border:0;border-radius:6px;background:#173a6b;
 .rm-target-row span{position:absolute;transform:translateX(-50%);white-space:nowrap}
 
 .chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:0}
+.chart-grid.chart-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:900px){.chart-grid.chart-grid-3{grid-template-columns:1fr}}
 .chart{border:1px solid #dce5ef;border-radius:7px;padding:15px}
 .chart h3{margin:0 0 12px;font-size:15px}
 .bar-row{display:grid;grid-template-columns:minmax(96px,1fr) 2fr 45px;gap:8px;align-items:center;margin:9px 0;font-size:12px}
@@ -111,13 +115,18 @@ table.errtable a{color:#1d679f;font-weight:850}
 }
 
 @media print{
-  body{background:#fff}
-  .topbar,.no-print{display:none!important}
-  .shell{width:100%;margin:0;padding:0 8mm}
+  @page{size:A4;margin:12mm}
+  body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .topbar,.no-print,.history-actions button{display:none!important}
+  .shell{width:100%;max-width:none;margin:0;padding:0}
   .panel{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
-  .chart-grid{break-inside:avoid}
+  .chart-grid,.chart,.qgroup,.gradegrid,.detail{break-inside:avoid}
+  .mast{break-after:avoid}
+  table.errtable{break-inside:auto}
+  table.errtable tr{break-inside:avoid;break-after:auto}
+  table.errtable thead{display:table-header-group}
+  table.errtable tfoot{display:table-footer-group}
   a{color:#173a6b!important;text-decoration:none}
-  @page{size:A4;margin:10mm}
 }
 </style>
 </head>
@@ -125,8 +134,9 @@ table.errtable a{color:#1d679f;font-weight:850}
 <main class="shell">
   <div class="topbar no-print">
     <a href="./diagnostic.html">← 진단으로 돌아가기</a>
-    <div style="display:flex;gap:8px">
-      <button onclick="recordSession()">이번 회차 기록 저장</button>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="hint" id="recordHint"></span>
+      <button id="recordBtn" onclick="recordSession()">이번 회차 기록 저장</button>
       <button onclick="window.print()">인쇄 / PDF 저장</button>
     </div>
   </div>
@@ -217,10 +227,10 @@ const norm=s=>String(s||'').replaceAll(' ','').replaceAll(',','').toLowerCase();
 
 /* 리포트 전용: 답안 입력/O·X 두 모드를 모두 읽어 O/X를 우선한다 */
 function state(q){
-  const oxVal=sessionStorage.getItem(`hsm-ox-${q[0]}`);
+  const oxVal=localStorage.getItem(`hsm-ox-${q[0]}`);
   if(oxVal==='o')return true;
   if(oxVal==='x')return false;
-  const ansVal=sessionStorage.getItem(`hsm-answer-${q[0]}`);
+  const ansVal=localStorage.getItem(`hsm-answer-${q[0]}`);
   if(ansVal===null||ansVal==='')return null;
   return HSMIDDLE_GRADING.isCorrect(q,ansVal);
 }
@@ -260,8 +270,19 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(savedSession.valid&&HSMIDDLE_AUTH.canAccess(savedSession.name,accessKey)){enter(savedSession.name)}
 });
 
+/* 이용 기간(6개월) 만료 시 본문을 안내로 교체하고 진행을 중단한다.
+   서버가 없으므로 기기·브라우저 단위로만 관리된다. */
+function showExpired(){
+  byId('login').classList.add('hidden');
+  byId('app').classList.add('hidden');
+  let el=byId('expired');
+  if(!el){el=document.createElement('section');el.id='expired';el.className='panel login';document.querySelector('main.shell').appendChild(el)}
+  el.innerHTML=`<h2>이용 기간이 종료되었습니다</h2><p>첫 로그인일로부터 6개월간 이용하실 수 있습니다. 연장이 필요하시면 카카오톡으로 문의해 주세요.</p><div class="form" style="grid-template-columns:1fr 1fr"><button class="secondary" onclick="window.open('https://open.kakao.com/me/gfield','_blank','noopener')">카카오톡 문의</button><button onclick="HSMIDDLE_AUTH.clearSession();location.href='./login.html'">나가기</button></div>`;
+  el.classList.remove('hidden');
+}
 function enter(name){
   student=name;
+  if(HSMIDDLE_AUTH.isExpired(student)){showExpired();return}
   byId('login').classList.add('hidden');
   byId('app').classList.remove('hidden');
   byId('whoName').textContent=`${student} 학생`;
@@ -278,6 +299,27 @@ function enter(name){
 function render(){
   if(examKey)renderExam();
   else renderDiagnostic();
+  updateRecordButton();
+}
+
+/* 회차당 최대 응시(기록 저장) 3회 제한에 맞춰 상단 저장 버튼 상태를 갱신한다.
+   "응시 1회" = 분석지에서 "이번 회차 기록 저장"을 누른 것으로 정의한다. */
+function currentHistoryList(){
+  return examKey ? loadHistoryExam() : loadHistory();
+}
+function updateRecordButton(){
+  const btn=byId('recordBtn'),hint=byId('recordHint');
+  if(!btn)return;
+  const count=currentHistoryList().length;
+  if(count>=3){
+    btn.disabled=true;
+    btn.textContent='응시 기록 3회 완료';
+    if(hint)hint.textContent='한 회차는 3회까지 기록할 수 있습니다.';
+  }else{
+    btn.disabled=false;
+    btn.textContent=`이번 회차 기록 저장 (${count}/3)`;
+    if(hint)hint.textContent='';
+  }
 }
 
 function recordSession(){
@@ -380,8 +422,17 @@ function weakTypeCards(errors){
 }
 
 /* ---- 2e. 응시 기록 · 회차 비교 (진단) ---- */
-function historyKey(){return `hsm-history-${student}`}
-function loadHistory(){try{return JSON.parse(localStorage.getItem(historyKey())||'[]')}catch(e){return []}}
+function historyKey(){return `hsm-history-diagnostic-${student}`}
+/* 기존 hsm-history-{이름} 키가 있으면 새 키(hsm-history-diagnostic-{이름})로 1회 이관 후 삭제한다 */
+function migrateHistoryKey(){
+  const oldKey=`hsm-history-${student}`;
+  const newKey=historyKey();
+  const oldVal=localStorage.getItem(oldKey);
+  if(oldVal===null)return;
+  if(localStorage.getItem(newKey)===null)localStorage.setItem(newKey,oldVal);
+  localStorage.removeItem(oldKey);
+}
+function loadHistory(){migrateHistoryKey();try{return JSON.parse(localStorage.getItem(historyKey())||'[]')}catch(e){return []}}
 function saveHistoryList(list){localStorage.setItem(historyKey(),JSON.stringify(list))}
 
 function recordSessionDiagnostic(){
@@ -400,13 +451,13 @@ function recordSessionDiagnostic(){
   const correct=D.questions.filter(q=>state(q)===true).length;
   const score=correct*2.5;
   list.push({date,score,correct,answered:answeredCount,states});
-  while(list.length>10)list.shift();
+  while(list.length>3)list.shift();
   saveHistoryList(list);
   render();
 }
 
 function clearHistoryDiagnostic(){
-  if(!confirm('저장된 응시 기록을 모두 삭제할까요? 이 작업은 되돌릴 수 없습니다.'))return;
+  if(!confirm('저장된 응시 기록을 모두 삭제할까요? 이 작업은 되돌릴 수 없습니다. 초기화하면 응시 횟수도 함께 초기화됩니다.'))return;
   localStorage.removeItem(historyKey());
   render();
 }
@@ -507,8 +558,8 @@ function renderDiagnostic(){
     </section>
 
     <section class="panel">
-      <div class="chart-grid">
-        ${chart(sem)}${chart(area)}${chart(hard)}${chart(unit)}
+      <div class="chart-grid chart-grid-3">
+        ${chart(sem)}${chart(area)}${chart(hard)}
       </div>
       <section class="detail">
         <h3>학습 코멘트</h3>
@@ -564,7 +615,7 @@ function examAnalyze(){
     const isOx=exam.oxQuestions&&exam.oxQuestions.includes(n);
     const fields=exam.answerFields&&exam.answerFields[n];
     if(isOx){
-      const v=sessionStorage.getItem(`hs-${examKey}-${n}`);
+      const v=localStorage.getItem(`hs-${examKey}-${n}`);
       if(v==null||v===''){states[n]=null;continue}
       checked++;
       const ok=v==='o';
@@ -573,7 +624,7 @@ function examAnalyze(){
       continue;
     }
     if(fields){
-      const values=fields.map((f,i)=>sessionStorage.getItem(`hs-${examKey}-${n}-${i}`));
+      const values=fields.map((f,i)=>localStorage.getItem(`hs-${examKey}-${n}-${i}`));
       if(values.some(v=>v==null||String(v).trim()==='')){states[n]=null;continue}
       checked++;
       const ok=fields.every((f,i)=>examMatches(values[i],f.answer)===true);
@@ -581,7 +632,7 @@ function examAnalyze(){
       if(ok)correct++;
       continue;
     }
-    const v=sessionStorage.getItem(`hs-${examKey}-${n}`);
+    const v=localStorage.getItem(`hs-${examKey}-${n}`);
     if(v==null||String(v).trim()===''){states[n]=null;continue}
     checked++;
     const m=examMatches(v,exam.answers[n-1]);
@@ -638,7 +689,7 @@ function examErrorTable(analysis){
   };
   const rows=wrongNums.map(n=>{
     const fields=exam.answerFields&&exam.answerFields[n];
-    const mine=fields?fields.map((f,i)=>sessionStorage.getItem(`hs-${examKey}-${n}-${i}`)||'').join(' / '):(sessionStorage.getItem(`hs-${examKey}-${n}`)||'');
+    const mine=fields?fields.map((f,i)=>localStorage.getItem(`hs-${examKey}-${n}-${i}`)||'').join(' / '):(localStorage.getItem(`hs-${examKey}-${n}`)||'');
     const note=exam.answerNotes&&exam.answerNotes[n];
     const img=exam.answerImages&&exam.answerImages[n];
     const noteHtml=note?`<details><summary>풀이 보기</summary><pre style="white-space:pre-wrap;margin:6px 0 0;font:700 12px/1.6 Pretendard,sans-serif">${note}</pre></details>`:'';
@@ -671,13 +722,13 @@ function recordSessionExam(){
   });
   const score=Math.round(analysis.correct*2.5*100)/100;
   list.push({date,score,correct:analysis.correct,answered:analysis.checked,states});
-  while(list.length>10)list.shift();
+  while(list.length>3)list.shift();
   saveHistoryExam(list);
   render();
 }
 
 function clearHistoryExam(){
-  if(!confirm('저장된 응시 기록을 모두 삭제할까요? 이 작업은 되돌릴 수 없습니다.'))return;
+  if(!confirm('저장된 응시 기록을 모두 삭제할까요? 이 작업은 되돌릴 수 없습니다. 초기화하면 응시 횟수도 함께 초기화됩니다.'))return;
   localStorage.removeItem(historyKeyExam());
   render();
 }

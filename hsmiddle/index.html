@@ -816,7 +816,7 @@ footer strong{color:#94a3b8}
 /* ================= 로그인 버튼 세션 인식 ================= */
 (function(){
   try{
-    if(sessionStorage.getItem('hs-student')){
+    if(localStorage.getItem('hs-student')){
       const nav=document.getElementById('navLogin');
       if(nav){nav.textContent='서재';nav.href='./library.html';}
       const hero=document.getElementById('heroLogin');
