@@ -26,7 +26,7 @@
     return s;
   }
 
-  /* 공통 정규화: trim, 전각->반각, 소문자화, 내부 공백 제거, 단위 꿀리 제거 */
+  /* 공통 정규화: trim, 전각->반각, 소문자화, 내부 공백 제거, 단위 꼬리 제거 */
   function normBase(raw) {
     var s = toHalfWidth(String(raw == null ? '' : raw)).trim().toLowerCase();
     s = s.replace(/\s+/g, '');
@@ -106,7 +106,7 @@
     var b = normBase(rawB).replace(/,/g, '');
     if (a === '' || b === '') return false;
     if (/e/.test(a) !== /e/.test(b)) {
-      /* 지수 표기 유무가 다르면(정밀도 손실 우려) 문자열이 완전히 같을 때만 통과 */
+      /* 지수 표기 유무가 다르면(정밀도 소실 우려) 문자열이 완전히 같을 때만 통과 */
       return a === b;
     }
     var fa = parseFloat(a), fb = parseFloat(b);
