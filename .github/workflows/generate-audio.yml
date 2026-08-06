@@ -5,6 +5,7 @@ on:
   push:
     branches: [main]
     paths:
+      - '.github/workflows/generate-audio.yml'
       - 'reading-world/data/lc*.js'
       - 'reading-world/data/lesson*.js'
       - 'reading-world/data/rp*.js'
