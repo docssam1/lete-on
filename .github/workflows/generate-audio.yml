@@ -25,12 +25,12 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Generate and upload existing Reading World MP3s
-        env:
-          GOOGLE_TTS_KEY: ${{ secrets.GOOGLE_TTS_KEY }}
-        run: node scripts/generate-audio.js
-
       - name: Generate and upload CARS Plus Level D MP3s
         env:
           GOOGLE_TTS_KEY: ${{ secrets.GOOGLE_TTS_KEY }}
         run: node scripts/generate-cars-d-audio.js
+
+      - name: Generate and upload existing Reading World MP3s
+        env:
+          GOOGLE_TTS_KEY: ${{ secrets.GOOGLE_TTS_KEY }}
+        run: node scripts/generate-audio.js
