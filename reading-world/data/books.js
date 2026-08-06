@@ -55,7 +55,7 @@ window.BOOK_CATALOG = [
     grade: 'G4',
     band: 'G4',
     isbn: 'ISBN 978-1-923147-04-1',
-    available: false,
+    available: true,
   },
   {
     id: 'wonderskills-adv3',
