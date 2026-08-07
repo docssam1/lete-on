@@ -9,6 +9,7 @@
  * - Pass the private metadata JSON as a local file that is NOT committed to Git.
  * - Existing original_passage and question items are preserved.
  * - Default mode is dry-run; pass --apply to write.
+ * - --apply writes a local backup of original_questions before any PATCH runs.
  *
  * Usage:
  *   SUPABASE_URL=... SUPABASE_KEY=... \
@@ -141,10 +142,16 @@ async function patchRow(id, originalQuestions) {
   if (!res.ok) throw new Error(`${id}: PATCH failed ${res.status} ${await res.text()}`);
 }
 
+function backupPath() {
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  return path.join(path.dirname(inputPath), `${bookId}-${stamp}.cars-d-meta-backup.json`);
+}
+
 (async () => {
   console.log(`CARS D private metadata: ${ids.length} lesson(s), mode=${apply ? 'APPLY' : 'DRY-RUN'}`);
-  let changed = 0;
 
+  // Phase 1: read and validate every row before any write can happen.
+  const prepared = [];
   for (const id of ids) {
     const incoming = lessons[id];
     validateLessonMeta(id, incoming);
@@ -162,11 +169,29 @@ async function patchRow(id, originalQuestions) {
     const mediaCount = Array.isArray(mergedMeta.media) ? mergedMeta.media.length : 0;
     console.log(`${id}: questions=${items.length}, visualMeta=${visualCount}, mediaMeta=${mediaCount}${mergedMeta.instruction ? ', instruction=yes' : ''}`);
 
-    if (apply) await patchRow(id, next);
-    changed++;
+    prepared.push({ id, raw, next });
   }
 
-  console.log(`${apply ? 'Updated' : 'Validated'} ${changed} lesson(s). Private text was not printed.`);
+  if (!apply) {
+    console.log(`Validated ${prepared.length} lesson(s). No Supabase rows were changed. Private text was not printed.`);
+    return;
+  }
+
+  // Keep a local rollback snapshot. It may contain licensed question data, so the
+  // repository .gitignore excludes *.cars-d-meta-backup.json.
+  const out = backupPath();
+  fs.writeFileSync(out, JSON.stringify({ bookId, createdAt: new Date().toISOString(), rows: prepared.map(x => ({ lessonId: x.id, original_questions: x.raw })) }, null, 2));
+  console.log(`Backup written: ${out}`);
+
+  // Phase 2: write only after every source row passed validation.
+  let changed = 0;
+  for (const item of prepared) {
+    await patchRow(item.id, item.next);
+    changed++;
+    console.log(`${item.id}: updated`);
+  }
+
+  console.log(`Updated ${changed} lesson(s). Private text was not printed.`);
 })().catch(err => {
   console.error(err.message || err);
   process.exit(1);
