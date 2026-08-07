@@ -95,6 +95,19 @@ For two-column pages, supply the paragraph index after which the left column end
 
 This keeps OCR text as live HTML while allowing a recreated illustration to be placed at the top of the right column. If this field is absent, the renderer falls back to normal CSS columns.
 
+## Private import workflow
+
+Keep the completed metadata JSON outside the repository, then merge it into the existing Supabase rows with:
+
+```bash
+SUPABASE_URL=... SUPABASE_KEY=... \
+  node scripts/apply-cars-d-private-meta.js /private/path/cars-d-private-meta.json
+```
+
+The first run is a dry-run. Add `--apply` only after all 15 rows validate. Apply mode writes a local rollback backup before it patches any row. The importer does not print the private OCR wording to the console and preserves the existing 12 question items.
+
+The repository `.gitignore` excludes `*.cars-d-private-meta.json` and `*.cars-d-meta-backup.json` so licensed metadata and rollback snapshots are not accidentally committed.
+
 ## Images
 
 Recreated images are separate assets. They must not contain answer circles, handwriting, page numbers, copyright lines, or scanned textbook text. Text that students need to read should stay in HTML whenever practical.

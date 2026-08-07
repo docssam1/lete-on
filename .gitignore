@@ -1,0 +1,4 @@
+# Private licensed-source metadata must stay out of public Git.
+reading-world/private/
+*.cars-d-private-meta.json
+*.cars-d-meta-backup.json
