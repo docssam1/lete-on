@@ -75,6 +75,29 @@
     }
   }
 
+  // Optional exact two-column split. OCR text remains the actual HTML; only its
+  // containers move. If private meta has no split point, CSS columns remain the fallback.
+  function applyExactColumns(lessonCfg, meta){
+    const passage = originalPassage();
+    if (!passage || !lessonCfg.original || lessonCfg.original.columns !== 2) return;
+    if (passage.querySelector(':scope > .cars-column-grid')) return;
+    const breakAfter = Number(meta.columnBreakAfterParagraph);
+    if (!Number.isInteger(breakAfter) || breakAfter < 0) return;
+    const paras = [...passage.querySelectorAll(':scope > .sentence-paragraph')];
+    if (paras.length < 2 || breakAfter >= paras.length - 1) return;
+
+    const grid = document.createElement('div');
+    grid.className = 'cars-column-grid';
+    const left = document.createElement('div');
+    const right = document.createElement('div');
+    left.className = 'cars-column cars-column-left';
+    right.className = 'cars-column cars-column-right';
+    grid.append(left, right);
+    paras[0].parentNode.insertBefore(grid, paras[0]);
+    paras.forEach((p, i) => (i <= breakAfter ? left : right).appendChild(p));
+    passage.classList.add('cars-exact-columns');
+  }
+
   function applyBasePassage(lessonId, lessonCfg, meta){
     const passage = originalPassage();
     if (!passage || !lessonCfg || !lessonCfg.original) return;
@@ -87,13 +110,14 @@
     const story = passage.closest('.story');
     if (story) story.classList.add('cars-d-story');
 
-    // CARS D art is positioned from the source map. Never show the generic Level B
-    // fallback thumbnail that main.js uses when a lesson image is empty.
+    // Source-specific art replaces the generic lesson thumbnail. Scanned textbook
+    // pages are never displayed as the exercise UI.
     const defaultArt = story && story.querySelector(':scope > .art-stack');
     if (defaultArt) defaultArt.classList.add('cars-default-art-hidden');
 
     ensureSourceHead(lessonId, lessonCfg, meta);
     applySpecialParagraphRoles(lessonCfg, meta);
+    applyExactColumns(lessonCfg, meta);
   }
 
   function applyPoster(lessonCfg){
@@ -104,12 +128,13 @@
     const paras = [...passage.querySelectorAll('.sentence-paragraph')];
     if (!paras.length) return;
 
+    let rulesTitle = null;
     paras.forEach((p, i) => {
       const txt = norm(p.textContent);
       p.classList.add('cars-poster-line');
       p.classList.remove('cars-poster-kicker','cars-poster-headline','cars-poster-rules-title','cars-poster-rule','cars-poster-callout','cars-poster-copy');
       if (/^hey\s*,?\s*kids/i.test(txt)) p.classList.add('cars-poster-kicker');
-      else if (/^rules\b/i.test(txt)) p.classList.add('cars-poster-rules-title');
+      else if (/^rules\b/i.test(txt)) { p.classList.add('cars-poster-rules-title'); rulesTitle = p; }
       else if (/^\d+[.)]\s*/.test(txt)) p.classList.add('cars-poster-rule');
       else if (/time\s+is\s+running\s+out/i.test(txt) || i === paras.length - 1) p.classList.add('cars-poster-callout');
       else if (i <= 2) p.classList.add('cars-poster-headline');
@@ -121,7 +146,8 @@
       art.className = 'cars-poster-art';
       art.setAttribute('aria-hidden', 'true');
       art.innerHTML = '<div class="cars-magazine"><b>KIDS</b><strong>TODAY</strong><span class="cars-magazine-lines"></span></div><div class="cars-pencil"></div>';
-      passage.appendChild(art);
+      if (rulesTitle) rulesTitle.insertAdjacentElement('afterend', art);
+      else passage.appendChild(art);
     }
   }
 
@@ -178,8 +204,8 @@
     if (old) old.remove();
 
     const payload = visualPayload(lessonId, qNo, meta);
-    // Licensed diagram wording is private. Until that payload exists, leave the
-    // ordinary question untouched rather than inventing incomplete boxes.
+    // The scan is a visual reference only. OCR/private source text is inserted as
+    // real HTML in the reconstructed boxes, so answer circles/red marks never carry over.
     if (!payload) return;
 
     let html = '';
@@ -213,15 +239,48 @@
     return media.src || `assets/images/cars-level-d/${lessonId}-${media.type}.png`;
   }
 
+  function timelineNode(media){
+    if (!Array.isArray(media.items) || !media.items.length) return null;
+    const fig = document.createElement('figure');
+    fig.className = 'cars-html-timeline';
+    fig.setAttribute('aria-label', media.ariaLabel || 'Timeline');
+    const track = document.createElement('div');
+    track.className = 'cars-timeline-track';
+    media.items.forEach((item, i) => {
+      const stop = document.createElement('div');
+      stop.className = `cars-timeline-stop ${item.side === 'bottom' ? 'is-bottom' : 'is-top'}`;
+      stop.innerHTML = `<div class="cars-timeline-text">${esc(item.text || '')}</div><div class="cars-timeline-year">${esc(item.year || '')}</div><span class="cars-timeline-tick" aria-hidden="true"></span>`;
+      stop.style.setProperty('--cars-stop-index', String(i));
+      track.appendChild(stop);
+    });
+    fig.appendChild(track);
+    return fig;
+  }
+
   function insertMediaNode(passage, node, media){
     const paras = [...passage.querySelectorAll(':scope > .sentence-paragraph')];
     const journal = passage.querySelector('.cars-journal-inset');
+    const exactRight = passage.querySelector('.cars-column-right');
     const placement = media.placement || 'bottom';
 
-    if (placement === 'float-right-top' || placement === 'float-left-top' || placement === 'float-right') {
+    if (placement === 'column-right-top' && exactRight) {
+      node.classList.add('cars-column-figure');
+      exactRight.prepend(node);
+      return;
+    }
+
+    if (placement === 'column-right-top') {
+      // Fallback when exact private column split metadata has not been supplied yet.
+      node.classList.add('cars-float-right','cars-column-figure-fallback');
+      passage.prepend(node);
+      return;
+    }
+
+    if (placement === 'float-right-top' || placement === 'float-left-top' || placement === 'float-right' || placement === 'float-right-middle') {
       const anchorIndex = Number.isInteger(media.afterParagraph) ? media.afterParagraph : 0;
       const anchor = paras[Math.max(0, Math.min(anchorIndex, paras.length - 1))];
       node.classList.add(placement === 'float-left-top' ? 'cars-float-left' : 'cars-float-right');
+      if (placement === 'float-right-middle') node.classList.add('cars-media-middle');
       if (anchor) anchor.parentNode.insertBefore(node, anchor);
       else passage.prepend(node);
       return;
@@ -263,22 +322,28 @@
     byType.forEach(media => {
       const key = `${lessonId}-${media.type}`;
       if (passage.querySelector(`[data-cars-media="${key}"]`)) return;
-      const figure = document.createElement('figure');
-      figure.className = `cars-inline-media cars-media-${media.type} cars-media-${media.width||'auto'}`;
+
+      let figure = null;
+      if (media.render === 'html-timeline') figure = timelineNode(media);
+
+      if (!figure) {
+        figure = document.createElement('figure');
+        figure.className = `cars-inline-media cars-media-${media.type} cars-media-${media.width||'auto'}`;
+        const img = document.createElement('img');
+        img.src = mediaAsset(lessonId, media);
+        img.alt = media.alt || '';
+        img.loading = 'lazy';
+        img.onerror = () => figure.remove();
+        figure.appendChild(img);
+        if (media.caption) {
+          const cap = document.createElement('figcaption');
+          cap.textContent = media.caption;
+          figure.appendChild(cap);
+        }
+      }
+
       figure.dataset.carsMedia = key;
       if (media.essential) figure.dataset.essential = 'true';
-
-      const img = document.createElement('img');
-      img.src = mediaAsset(lessonId, media);
-      img.alt = media.alt || '';
-      img.loading = 'lazy';
-      img.onerror = () => figure.remove();
-      figure.appendChild(img);
-      if (media.caption) {
-        const cap = document.createElement('figcaption');
-        cap.textContent = media.caption;
-        figure.appendChild(cap);
-      }
       insertMediaNode(passage, figure, media);
     });
   }
