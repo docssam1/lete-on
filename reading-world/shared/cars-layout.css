@@ -1,91 +1,203 @@
-/* CARS shared layout layer — visual hierarchy + reusable textbook structures. */
+/* CARS shared layout layer — source hierarchy + reusable textbook structures. */
+html[data-cars-book="cars-level-d"] .cars-d-wrap{--cars-ink:#151515;--cars-line:#292929}
+html[data-cars-book="cars-level-d"] .cars-d-story{display:block!important}
+html[data-cars-book="cars-level-d"] .cars-default-art-hidden{display:none!important}
 html[data-cars-book="cars-level-d"] .cars-d-original{
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 17px;
-  line-height: 1.48;
-  color:#111;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:17px;
+  line-height:1.42;
+  color:var(--cars-ink);
   background:#fff;
+  max-height:none!important;
+  overflow:visible!important;
+  padding:18px 22px 22px;
+  border:1px solid #c8c8c8;
+  border-radius:2px;
 }
-html[data-cars-book="cars-level-d"] .cars-d-original .sentence-paragraph{margin:0 0 14px}
+html[data-cars-book="cars-level-d"] .cars-d-original .sentence-paragraph{margin:0 0 13px}
 html[data-cars-book="cars-level-d"] .cars-d-original .sentence-line{font-family:inherit}
 html[data-cars-book="cars-level-d"] .question-study .strategy{
-  font-family: Georgia,"Times New Roman",serif;
-  font-weight:700;
-  letter-spacing:.01em;
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:800;
+  letter-spacing:.005em;
+  color:#1b1b1b;
+  font-size:16px;
 }
 html[data-cars-book="cars-level-d"] .question-study .prompt{
-  font-family: Arial,Helvetica,sans-serif;
-  font-weight:700;
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:500;
+  font-size:18px;
+  line-height:1.35;
+  color:#111;
+}
+html[data-cars-book="cars-level-d"] .question-study .choice{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:16px;
+  line-height:1.35;
 }
 
-/* POST TEST 2: keep the poster appearance while every sentence remains real text. */
-html[data-cars-lesson="cd12"] .cars-poster{
-  position:relative;
-  max-width:760px;
-  margin:12px auto 20px;
-  padding:28px 210px 30px 34px;
-  border:3px solid #161616;
-  border-radius:2px;
-  overflow:visible;
-  background:#fff;
-  font-family:"Comic Sans MS","Trebuchet MS",Arial,sans-serif;
-}
-.cars-poster-line{position:relative;z-index:2}
-.cars-poster-kicker{
-  font-family:"Comic Sans MS","Trebuchet MS",cursive!important;
-  font-size:1.55rem;
-  line-height:1.05;
-  font-weight:800;
-  transform:rotate(-1deg);
-  margin-bottom:4px!important;
-}
-.cars-poster-headline{
-  font-family:"Comic Sans MS","Trebuchet MS",cursive!important;
-  font-size:1.32rem;
-  line-height:1.12;
-  font-weight:800;
+/* Source chrome: the app title stays as navigation; this reproduces the hierarchy
+   printed immediately above/inside each original passage. */
+.cars-source-head{max-width:900px;margin:16px auto 8px;color:#111}
+.cars-source-label{
+  display:inline-block;
+  min-width:190px;
+  padding:9px 20px 8px;
+  margin-bottom:13px;
+  color:#fff;
+  background:linear-gradient(90deg,#585858,#353535);
+  font:900 20px/1 Arial,Helvetica,sans-serif;
   letter-spacing:-.02em;
 }
-.cars-poster-rules-title{
-  margin-top:16px!important;
-  font-family:Georgia,"Times New Roman",serif!important;
-  font-size:1.22rem;
+.cars-source-instruction{
+  max-width:820px;
+  margin:0 0 16px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:17px;
+  line-height:1.2;
   font-weight:800;
-  letter-spacing:.08em;
+}
+.cars-source-title{
+  margin:4px 0 10px;
+  text-align:center;
+  color:#111;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:21px;
+  line-height:1.15;
+  font-weight:800;
+  letter-spacing:-.01em;
+}
+
+/* Printed article variants. */
+.cars-layout-two-column-article.cars-two-column{
+  column-count:2;
+  column-gap:34px;
+  column-rule:1px solid #333;
+}
+.cars-layout-two-column-article.cars-two-column .sentence-paragraph{break-inside:avoid-column}
+.cars-layout-poem{font-size:18px;line-height:1.55;padding-right:20px}
+.cars-layout-feature-list .cars-special-heading{
+  text-align:center;
+  margin:17px 0 8px!important;
+  font-family:"Segoe Print","Comic Sans MS","Bradley Hand",cursive!important;
+  font-size:20px;
+  font-weight:800;
+}
+.cars-layout-biography,.cars-layout-two-page-story,.cars-layout-tale{border-left:5px double #444}
+
+/* Benchmark 5 journal: the journal remains real selectable/TTS-readable text. */
+.cars-journal-inset{
+  position:relative;
+  clear:both;
+  margin:26px -4px 2px;
+  padding:28px 26px 130px 46px;
+  border:2px solid #222;
+  background:#fff;
+  transform:rotate(-.6deg);
+  font-family:"Segoe Print","Comic Sans MS","Bradley Hand",cursive;
+  font-size:16px;
+  line-height:1.55;
+  box-shadow:2px 3px 0 #0001;
+}
+.cars-journal-inset:before,.cars-journal-inset:after{
+  content:"";position:absolute;left:13px;width:20px;height:20px;border:2px solid #222;border-radius:50%;background:#fff
+}
+.cars-journal-inset:before{top:72px}.cars-journal-inset:after{bottom:73px}
+.cars-journal-inset .sentence-paragraph{font:inherit!important;margin-bottom:10px!important}
+
+/* Recreated source illustrations. They are intentionally separate from text so
+   text stays selectable/readable and images may be replaced without touching OCR. */
+.cars-inline-media{display:block;margin:18px auto;break-inside:avoid;filter:grayscale(1)}
+.cars-inline-media img{display:block;width:100%;height:auto;border:1px solid #999;background:#fff}
+.cars-inline-media figcaption{margin-top:5px;text-align:center;font:700 12px/1.2 Arial,sans-serif;color:#222}
+.cars-media-portrait{max-width:205px}.cars-media-medium{max-width:330px}.cars-media-wide{max-width:760px}.cars-media-auto{max-width:100%}
+.cars-float-right{float:right;margin:2px 0 16px 22px}.cars-float-left{float:left;margin:2px 22px 16px 0}.cars-media-low{margin-top:20px}
+.cars-journal-art{position:absolute;right:18px;bottom:12px;width:240px!important;margin:0!important}
+.cars-journal-art img{border:0}
+.cars-media-moon-phases{clear:both;max-width:760px;background:#080808;border:2px solid #111;padding:5px}
+.cars-media-moon-phases img{border:0;background:#080808}
+.cars-media-timeline{clear:both;max-width:800px}
+.cars-media-rainforest-layers{max-width:360px}
+
+/* POST TEST 2: poster design is preserved, but every meaningful word is live HTML
+   text. The small tilted magazine/pencil remains decorative art. */
+html[data-cars-lesson="cd12"] .cars-poster{
+  position:relative;
+  max-width:790px;
+  margin:12px auto 20px;
+  padding:28px 205px 32px 30px;
+  border:4px double #171717;
+  border-radius:1px;
+  overflow:visible!important;
+  background:#fff;
+  font-family:"Segoe Print","Comic Sans MS","Bradley Hand","Trebuchet MS",sans-serif;
+  font-size:17px;
+  line-height:1.22;
+}
+.cars-poster-line{position:relative;z-index:2;margin-bottom:8px!important}
+.cars-poster-kicker{
+  text-align:center;
+  font-family:"Segoe Print","Comic Sans MS",cursive!important;
+  font-size:1.6rem;
+  line-height:1.05;
+  font-weight:800;
+  margin-bottom:5px!important;
+}
+.cars-poster-headline{
+  text-align:center;
+  font-family:"Segoe Print","Comic Sans MS",cursive!important;
+  font-size:1.34rem;
+  line-height:1.12;
+  font-weight:900;
+  letter-spacing:-.025em;
+}
+.cars-poster-rules-title{
+  text-align:center;
+  margin-top:17px!important;
+  font-family:"Segoe Print","Comic Sans MS",cursive!important;
+  font-size:1.18rem;
+  font-weight:600;
+  letter-spacing:.03em;
 }
 .cars-poster-rule{
-  font-family:"Trebuchet MS",Arial,sans-serif!important;
+  font-family:"Segoe Print","Comic Sans MS","Trebuchet MS",sans-serif!important;
   font-size:1rem;
-  line-height:1.28;
+  line-height:1.25;
   margin-bottom:8px!important;
 }
 .cars-poster-callout{
+  clear:both;
+  text-align:center;
   margin-top:18px!important;
-  font-family:"Comic Sans MS","Trebuchet MS",cursive!important;
-  font-size:1.35rem;
+  font-family:"Segoe Print","Comic Sans MS",cursive!important;
+  font-size:1.38rem;
   line-height:1.1;
   font-weight:900;
 }
-.cars-poster-art{position:absolute;right:25px;top:88px;width:155px;height:235px;z-index:1;pointer-events:none}
-.cars-magazine{position:absolute;right:5px;top:0;width:128px;height:170px;border:3px solid #111;background:#f5f5f2;transform:rotate(8deg);box-shadow:4px 5px 0 #1112;padding:13px 8px;text-align:center;font-family:Arial,sans-serif}
-.cars-magazine b,.cars-magazine strong{display:block;line-height:.9;font-size:20px;letter-spacing:.06em}.cars-magazine strong{font-size:24px}.cars-magazine span{display:block;width:72px;height:72px;margin:14px auto 0;border-radius:50%;border:2px solid #111;background:radial-gradient(circle at 40% 35%,#fff 0 15%,#777 16% 19%,#ddd 20% 42%,#222 43% 46%,#bbb 47% 100%);filter:grayscale(1)}
-.cars-pencil{position:absolute;right:112px;top:115px;width:15px;height:145px;background:linear-gradient(90deg,#eee 0 24%,#777 25% 34%,#fafafa 35% 66%,#777 67% 76%,#eee 77%);border:1px solid #333;transform:rotate(-25deg);transform-origin:center;border-radius:2px}.cars-pencil:after{content:"";position:absolute;left:0;bottom:-20px;border-left:7px solid transparent;border-right:7px solid transparent;border-top:20px solid #c7b38f}
+.cars-poster-art{position:absolute;right:24px;top:145px;width:155px;height:235px;z-index:1;pointer-events:none}
+.cars-magazine{position:absolute;right:5px;top:0;width:128px;height:170px;border:3px solid #111;background:#fafafa;transform:rotate(-13deg);box-shadow:3px 4px 0 #1112;padding:15px 8px;text-align:center;font-family:Georgia,"Times New Roman",serif}
+.cars-magazine b,.cars-magazine strong{display:block;line-height:.88;font-size:20px;letter-spacing:.03em}.cars-magazine strong{font-size:24px}.cars-magazine-lines{display:block;margin:15px auto 0;width:75%;height:48px;border-top:3px solid #222;border-bottom:3px solid #222;background:repeating-linear-gradient(0deg,transparent 0 7px,#777 8px 9px)}
+.cars-pencil{position:absolute;right:105px;top:120px;width:15px;height:140px;background:linear-gradient(90deg,#eee 0 24%,#777 25% 34%,#fafafa 35% 66%,#777 67% 76%,#eee 77%);border:1px solid #333;transform:rotate(24deg);transform-origin:center;border-radius:2px}.cars-pencil:after{content:"";position:absolute;left:0;bottom:-20px;border-left:7px solid transparent;border-right:7px solid transparent;border-top:20px solid #c7b38f}
 
-/* Reusable visual-question structures. Text is supplied privately; public Git stores only layout rules. */
-.cars-question-visual{margin:10px 0 22px}
+/* Reusable visual-question structures. Licensed labels/box wording arrive only
+   through the private source payload. */
+.cars-question-visual{margin:12px 0 18px}
+.cars-visual-intro,.cars-visual-followup{display:block}.cars-visual-intro{margin-bottom:11px}.cars-visual-followup{margin-top:12px}
 .cars-visual{font-family:Georgia,"Times New Roman",serif;color:#111}
-.cars-visual-box{min-height:82px;border:2px solid #222;background:#fff;padding:12px 14px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:15px;line-height:1.25}
+.cars-visual-box{min-height:82px;border:2px solid #222;background:#fff;padding:10px 11px;display:flex;align-items:center;justify-content:center;text-align:left;font-size:15px;line-height:1.15}
 .cars-visual-box.is-blank,.cars-branch-child.is-blank{background:#fff}
-.cars-sequence{display:flex;align-items:center;justify-content:center;gap:10px}.cars-seq-cell{flex:1;min-width:0}.cars-seq-cell small{display:block;text-align:center;margin-top:5px;font:700 14px Georgia,serif}.cars-arrow{font-family:Arial,sans-serif;font-size:28px;font-weight:700;line-height:1}
-.cars-cause-effect{display:grid;grid-template-columns:minmax(0,1fr) 36px minmax(0,1fr);align-items:end;gap:8px}.cars-ce-col>b{display:block;text-align:center;font:700 18px Georgia,serif;margin-bottom:7px}.cars-cause-effect>.cars-arrow{align-self:center;text-align:center;margin-top:25px}
-.cars-branch{max-width:720px;margin:auto;position:relative;padding-top:4px}.cars-branch-root{width:42%;margin:auto;border:2px solid #222;padding:11px;text-align:center;font:700 17px Georgia,serif;background:#fff}.cars-branch-stem{height:34px;width:2px;background:#222;margin:auto;position:relative}.cars-branch-stem:after{content:"";position:absolute;left:-240px;width:480px;top:32px;border-top:2px solid #222}.cars-branch-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;position:relative}.cars-branch-child{border:2px solid #222;min-height:70px;padding:10px;display:flex;align-items:center;justify-content:center;text-align:center;font:15px/1.2 Georgia,serif;background:#fff}
-.cars-inline-media{display:block;max-width:100%;height:auto;margin:18px auto;border:1px solid #aaa;filter:grayscale(1)}
-.cars-media-moon-phases{max-width:760px}.cars-media-timeline{max-width:760px}.cars-media-rainforest-layers{max-width:620px}
+.cars-sequence{display:flex;align-items:center;justify-content:center;gap:8px;max-width:700px}.cars-seq-cell{flex:1;min-width:0}.cars-seq-cell small{display:block;text-align:center;margin-top:5px;font:700 14px Georgia,serif}.cars-arrow{font-family:Arial,sans-serif;font-size:25px;font-weight:500;line-height:1}
+.cars-cause-effect{display:grid;grid-template-columns:minmax(0,1fr) 32px minmax(0,1fr);align-items:end;gap:7px;max-width:620px}.cars-ce-col>b{display:block;text-align:center;font:700 18px Georgia,serif;margin-bottom:7px}.cars-cause-effect>.cars-arrow{align-self:center;text-align:center;margin-top:25px}
+.cars-branch{max-width:720px;margin:4px auto 0;position:relative;padding-top:4px}.cars-branch-root{width:32%;min-width:130px;margin:auto;border:2px solid #222;padding:7px;text-align:center;font:700 16px Georgia,serif;background:#fff}.cars-branch-lines{height:42px;position:relative}.cars-branch-lines:before{content:"";position:absolute;left:50%;top:0;height:20px;border-left:2px solid #222}.cars-branch-lines:after{content:"";position:absolute;left:12.5%;right:12.5%;top:20px;border-top:2px solid #222}.cars-branch-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;position:relative}.cars-branch-child{position:relative;border:2px solid #222;min-height:65px;padding:8px;display:flex;align-items:center;justify-content:center;text-align:center;font:14px/1.15 Georgia,serif;background:#fff}.cars-branch-child:before{content:"";position:absolute;left:50%;top:-22px;height:20px;border-left:2px solid #222}
 
 @media(max-width:760px){
-  html[data-cars-lesson="cd12"] .cars-poster{padding:24px 22px 210px}.cars-poster-art{top:auto;right:50%;bottom:18px;transform:translateX(50%);height:170px}.cars-magazine{width:104px;height:138px}.cars-magazine b{font-size:16px}.cars-magazine strong{font-size:19px}.cars-magazine span{width:55px;height:55px;margin-top:10px}.cars-pencil{right:90px;top:78px;height:105px}
-  .cars-sequence{gap:5px}.cars-arrow{font-size:21px}.cars-visual-box{min-height:72px;padding:8px;font-size:12.5px}
-  .cars-cause-effect{grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr)}
-  .cars-branch-stem:after{left:-40vw;width:80vw;max-width:480px}
-  .cars-branch-row{gap:5px}.cars-branch-child{font-size:11px;padding:5px;min-height:66px}
+  html[data-cars-book="cars-level-d"] .cars-d-original{padding:15px 14px;font-size:16px}
+  .cars-source-label{min-width:150px;font-size:17px}.cars-source-instruction{font-size:15px}.cars-source-title{font-size:19px}
+  .cars-layout-two-column-article.cars-two-column{column-count:1;column-rule:0}
+  .cars-float-right,.cars-float-left{float:none;margin:14px auto;max-width:min(100%,380px)}
+  .cars-journal-inset{padding:24px 18px 130px 42px;font-size:15px}.cars-journal-art{width:210px!important}
+  html[data-cars-lesson="cd12"] .cars-poster{padding:22px 18px 205px;font-size:15.5px}.cars-poster-art{top:auto;right:50%;bottom:15px;transform:translateX(50%);height:165px}.cars-magazine{width:104px;height:138px}.cars-magazine b{font-size:16px}.cars-magazine strong{font-size:19px}.cars-magazine-lines{height:38px;margin-top:10px}.cars-pencil{right:90px;top:75px;height:104px}
+  .cars-sequence{gap:4px}.cars-arrow{font-size:19px}.cars-visual-box{min-height:70px;padding:7px;font-size:12px}
+  .cars-cause-effect{grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr)}.cars-ce-col>b{font-size:15px}
+  .cars-branch-row{gap:4px}.cars-branch-child{font-size:10.5px;padding:4px;min-height:62px}.cars-branch-root{font-size:14px;min-width:110px}
 }
