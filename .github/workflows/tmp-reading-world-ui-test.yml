@@ -22,7 +22,6 @@ jobs:
         run: |
           node <<'NODE'
           const puppeteer = require('puppeteer-core');
-          const fs = require('fs');
           const cp = require('child_process');
           function findChrome(){
             for (const c of ['google-chrome','google-chrome-stable','chromium','chromium-browser']) {
@@ -39,58 +38,51 @@ jobs:
               return null;
             },re.source,re.flags);
           }
-          async function text(page){return await page.evaluate(()=>document.body.innerText)}
+          async function bodyText(page){return await page.evaluate(()=>document.body.innerText)}
           (async()=>{
             const browser=await puppeteer.launch({executablePath:findChrome(),headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
             const page=await browser.newPage();
             await page.setViewport({width:390,height:844,deviceScaleFactor:1});
-            const url='https://lete-on.gfieldacademy.net/reading-world/?uiTest='+Date.now();
-            const resp=await page.goto(url,{waitUntil:'networkidle2',timeout:60000});
+            const resp=await page.goto('https://lete-on.gfieldacademy.net/reading-world/?uiTest='+Date.now(),{waitUntil:'networkidle2',timeout:60000});
             console.log('HTTP_STATUS='+(resp&&resp.status()));
             await new Promise(r=>setTimeout(r,2500));
-            let body=await text(page);
+            let body=await bodyText(page);
             console.log('INITIAL_TEXT='+body.slice(0,1500).replace(/\n/g,' | '));
 
-            // Try to pass a first-run student/profile screen if one is shown.
             if(/학생|이름|Student|Reader/i.test(body) && !/Level D/i.test(body)){
               const input=await page.$('input[type="text"],input:not([type])');
-              if(input){await input.type('UITest');}
-              const c=await clickText(page,/시작|등록|확인|계속|Start|Enter/i); if(c) console.log('PROFILE_CLICK='+c);
+              if(input) await input.type('UITest');
+              const p=await clickText(page,/시작|등록|확인|계속|Start|Enter/i); if(p) console.log('PROFILE_CLICK='+p);
               await new Promise(r=>setTimeout(r,1500));
-              body=await text(page);
+              body=await bodyText(page);
             }
 
-            // Open/select Level D.
             let c=await clickText(page,/Level\s*D|CARS Plus.*D/i); console.log('LEVEL_D_CLICK='+(c||'NONE'));
-            await new Promise(r=>setTimeout(r,1500));
-            body=await text(page);
-            console.log('AFTER_LEVEL_D='+body.slice(0,1800).replace(/\n/g,' | '));
+            await new Promise(r=>setTimeout(r,1600));
+            body=await bodyText(page); console.log('AFTER_LEVEL_D='+body.slice(0,1800).replace(/\n/g,' | '));
 
-            // Select first CARS D lesson if needed.
-            c=await clickText(page,/Pretest\s*1|Lesson\s*1|cd1|Why the Bat|bat/i); console.log('LESSON_CLICK='+(c||'NONE'));
+            c=await clickText(page,/Pretest\s*1|Lesson\s*1|cd1|bat/i); console.log('LESSON_CLICK='+(c||'NONE'));
             await new Promise(r=>setTimeout(r,1500));
 
-            // Open STEP 2.
             c=await clickText(page,/STEP\s*2|교재\s*풀기|Read the Book/i); console.log('STEP2_CLICK='+(c||'NONE'));
-            await new Promise(r=>setTimeout(r,2500));
+            await new Promise(r=>setTimeout(r,3000));
             const s2=await page.evaluate(()=>({
-              text:document.body.innerText.slice(0,3500),
               passage:!!document.querySelector('#original-passage'),
               paragraphs:document.querySelectorAll('#original-passage .sentence-paragraph').length,
               carsOriginal:!!document.querySelector('#original-passage.cars-d-original'),
-              imgs:[...document.querySelectorAll('#original-passage img')].map(x=>x.getAttribute('src')),
-              missing:/아직 연결되지|원문을 아직 불러오지|not connected/i.test(document.body.innerText)
+              media:[...document.querySelectorAll('#original-passage img, #original-passage figure')].map(x=>x.getAttribute('src')||x.className),
+              missing:/아직 연결되지|원문을 아직 불러오지|not connected/i.test(document.body.innerText),
+              excerpt:document.body.innerText.slice(0,2500)
             }));
             console.log('STEP2='+JSON.stringify(s2));
 
-            // Open STEP 3.
             c=await clickText(page,/STEP\s*3|교재\s*학습|Book Study/i); console.log('STEP3_CLICK='+(c||'NONE'));
-            await new Promise(r=>setTimeout(r,2000));
+            await new Promise(r=>setTimeout(r,2200));
             const s3=await page.evaluate(()=>({
-              text:document.body.innerText.slice(0,3000),
               qcard:!!document.querySelector('.qcard,.question-study'),
               prompt:document.querySelector('.qcard .prompt,.question-study .prompt')?.innerText||'',
-              missing:/아직 연결되지|원문을 아직 불러오지|not connected/i.test(document.body.innerText)
+              missing:/아직 연결되지|원문을 아직 불러오지|not connected/i.test(document.body.innerText),
+              excerpt:document.body.innerText.slice(0,2500)
             }));
             console.log('STEP3='+JSON.stringify(s3));
             await page.screenshot({path:'reading-world-cars-d-mobile.png',fullPage:true});
@@ -107,3 +99,4 @@ jobs:
           name: reading-world-cars-d-mobile
           path: reading-world-cars-d-mobile.png
           if-no-files-found: ignore
+# branch trigger
