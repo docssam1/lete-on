@@ -23,7 +23,7 @@ jobs:
           node-version: '20'
       - name: Verify CARS D lesson_content counts
         run: |
-          node <<'NODE'
+          node --input-type=commonjs <<'NODE'
           const fs = require('fs');
           const src = fs.readFileSync('reading-world/app/store.js','utf8');
           const url = (src.match(/url:\s*'([^']+)'/)||[])[1];
@@ -49,5 +49,3 @@ jobs:
           console.log(`VERIFIED_QUESTIONS=${total}`);
           console.log('CARS_D_SOURCE_READY=true');
           NODE
-
-# verification trigger
