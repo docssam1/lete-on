@@ -6,6 +6,9 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/verify-cars-d-data.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/verify-cars-d-data.yml'
 
 permissions:
   contents: read
