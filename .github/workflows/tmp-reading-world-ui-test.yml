@@ -23,8 +23,8 @@ jobs:
           const puppeteer=require('puppeteer-core'),cp=require('child_process');
           const sleep=ms=>new Promise(r=>setTimeout(r,ms));
           function chrome(){for(const c of ['google-chrome','google-chrome-stable','chromium','chromium-browser']){try{return cp.execFileSync('which',[c],{encoding:'utf8'}).trim()}catch(e){}}throw Error('Chrome not found')}
-          async function clickText(page,re){return page.evaluate((s,f)=>{const r=new RegExp(s,f),vis=x=>x.offsetParent!==null,txt=x=>(x.innerText||x.textContent||x.value||'').trim();let e=[...document.querySelectorAll('button,a,[role="button"],input[type="submit"],input[type="button"]')].filter(vis).find(x=>r.test(txt(x)));if(!e)e=[...document.querySelectorAll('.btn,.book-card,.lesson-card,.step-card,.book-pill,.level-card')].filter(vis).find(x=>r.test(txt(x)));if(!e)return null;const t=txt(e).slice(0,180);e.click();return t},re.source,re.flags)}
-          async function dump(page,label){const b=await page.evaluate(()=>document.body.innerText);console.log(label+'='+b.slice(0,3200).replace(/\n/g,' | '));return b}
+          async function clickText(page,re){return page.evaluate((s,f)=>{const r=new RegExp(s,f),vis=x=>x.offsetParent!==null,txt=x=>(x.innerText||x.textContent||x.value||'').trim();let e=[...document.querySelectorAll('button,a,[role="button"],input[type="submit"],input[type="button"]')].filter(vis).find(x=>r.test(txt(x)));if(!e)e=[...document.querySelectorAll('.btn,.book-card,.lesson-card,.step-card,.book-pill,.level-card,.list-card')].filter(vis).find(x=>r.test(txt(x)));if(!e)return null;const t=txt(e).slice(0,180);e.click();return t},re.source,re.flags)}
+          async function dump(page,label){const b=await page.evaluate(()=>document.body.innerText);console.log(label+'='+b.slice(0,3600).replace(/\n/g,' | '));return b}
           (async()=>{
             const browser=await puppeteer.launch({executablePath:chrome(),headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
             const page=await browser.newPage();await page.setViewport({width:390,height:844,deviceScaleFactor:1});
@@ -35,17 +35,16 @@ jobs:
             if(/어떤 친구로 시작할까요|avatar/i.test(body)){console.log('AVATAR='+(await clickText(page,/이걸로 시작|Start with this/i)||'NONE'));await sleep(1800);body=await dump(page,'AFTER_AVATAR')}
             if(/리딩 진단|나의 레벨을 찾아봐요/i.test(body)){console.log('DIAG_SKIP='+(await clickText(page,/건너뛰고 자유롭게 고르기|자유롭게 고르기|Skip.*choose/i)||'NONE'));await sleep(2200);body=await dump(page,'AFTER_DIAG')}
 
-            // Find/open the book selector, then Level D.
-            let c=await clickText(page,/Level\s*B(?:\s*[·\/&]\s*C)?|교재 선택|책 선택/i);console.log('BOOK_SELECTOR='+(c||'NONE'));await sleep(900);body=await dump(page,'BOOKS');
-            c=await clickText(page,/Level\s*D|CARS Plus.*D|CARS.*Level D/i);console.log('LEVEL_D='+(c||'NONE'));await sleep(1800);body=await dump(page,'LEVEL_D_HOME');
+            let c=await clickText(page,/목록|List/i);console.log('LIST_CLICK='+(c||'NONE'));await sleep(1300);body=await dump(page,'LIST_VIEW');
+            c=await clickText(page,/Level\s*D|CARS Plus.*D|CARS.*Level D|\bD\b.*G4/i);console.log('LEVEL_D='+(c||'NONE'));await sleep(1800);body=await dump(page,'LEVEL_D_HOME');
             c=await clickText(page,/Pretest\s*1|Lesson\s*1|cd1|African|folktale|bat/i);console.log('LESSON1='+(c||'NONE'));await sleep(1500);body=await dump(page,'LESSON1_HOME');
 
             c=await clickText(page,/STEP\s*2|교재\s*풀기|Read the Book/i);console.log('STEP2_CLICK='+(c||'NONE'));await sleep(3200);
-            const s2=await page.evaluate(()=>({passage:!!document.querySelector('#original-passage'),paragraphs:document.querySelectorAll('#original-passage .sentence-paragraph').length,carsOriginal:!!document.querySelector('#original-passage.cars-d-original'),sourceHead:document.querySelector('.cars-source-head')?.innerText||'',media:[...document.querySelectorAll('#original-passage img,#original-passage figure')].map(x=>x.getAttribute('src')||x.className),missing:/아직 연결되지|원문을 아직 불러오지|not connected/i.test(document.body.innerText),excerpt:document.body.innerText.slice(0,3000)}));console.log('STEP2='+JSON.stringify(s2));
+            const s2=await page.evaluate(()=>({book:document.documentElement.dataset.carsBook||'',lesson:document.documentElement.dataset.carsLesson||'',passage:!!document.querySelector('#original-passage'),paragraphs:document.querySelectorAll('#original-passage .sentence-paragraph').length,carsOriginal:!!document.querySelector('#original-passage.cars-d-original'),sourceHead:document.querySelector('.cars-source-head')?.innerText||'',media:[...document.querySelectorAll('#original-passage img,#original-passage figure')].map(x=>x.getAttribute('src')||x.className),missing:/아직 연결되지|원문을 아직 불러오지|not connected/i.test(document.body.innerText),excerpt:document.body.innerText.slice(0,3200)}));console.log('STEP2='+JSON.stringify(s2));
             c=await clickText(page,/STEP\s*3|교재\s*학습|Book Study/i);console.log('STEP3_CLICK='+(c||'NONE'));if(!c)console.log('STEP3_START='+(await clickText(page,/교재\s*학습\s*시작|Start Book Study/i)||'NONE'));await sleep(2500);
-            const s3=await page.evaluate(()=>({qcard:!!document.querySelector('.qcard,.question-study'),prompt:document.querySelector('.qcard .prompt,.question-study .prompt')?.innerText||'',badge:document.querySelector('.qcard .badge,.question-study .badge')?.innerText||'',missing:/아직 연결되지|원문을 아직 불러오지|not connected/i.test(document.body.innerText),excerpt:document.body.innerText.slice(0,3000)}));console.log('STEP3='+JSON.stringify(s3));
+            const s3=await page.evaluate(()=>({qcard:!!document.querySelector('.qcard,.question-study'),prompt:document.querySelector('.qcard .prompt,.question-study .prompt')?.innerText||'',badge:document.querySelector('.qcard .badge,.question-study .badge')?.innerText||'',missing:/아직 연결되지|원문을 아직 불러오지|not connected/i.test(document.body.innerText),excerpt:document.body.innerText.slice(0,3200)}));console.log('STEP3='+JSON.stringify(s3));
             await page.screenshot({path:'reading-world-cars-d-mobile.png',fullPage:true});
-            if(!s2.passage||s2.paragraphs<1||s2.missing)throw Error('STEP 2 original passage did not render');if(!s3.qcard||s3.missing)throw Error('STEP 3 book study did not render');console.log('LIVE_UI_READY=true');await browser.close();
+            if(!/Level D|Pretest 1/i.test(s2.excerpt))throw Error('Level D was not selected');if(!s2.passage||s2.paragraphs<1||s2.missing)throw Error('STEP 2 original passage did not render');if(!s3.qcard||s3.missing)throw Error('STEP 3 book study did not render');console.log('CARS_D_LIVE_UI_READY=true');await browser.close();
           })().catch(e=>{console.error('TEST_ERROR='+e.stack);process.exit(1)});
           NODE
       - uses: actions/upload-artifact@v4
@@ -54,4 +53,4 @@ jobs:
           name: reading-world-cars-d-mobile
           path: reading-world-cars-d-mobile.png
           if-no-files-found: ignore
-# branch trigger v5
+# branch trigger v6
