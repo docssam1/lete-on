@@ -33,65 +33,57 @@ jobs:
           async function clickText(page, re){
             return await page.evaluate((src,flags)=>{
               const re=new RegExp(src,flags);
-              const els=[...document.querySelectorAll('button,a,[role="button"],.btn,.card,.lesson-card,.book-card,.book-pill,.step-card,div')];
-              const el=els.find(x=>re.test((x.innerText||x.textContent||'').trim()) && x.offsetParent!==null && (x.tagName==='BUTTON'||x.tagName==='A'||x.getAttribute('role')==='button'||/btn|card|pill/i.test(x.className||'')));
-              if(el){el.click();return (el.innerText||el.textContent||'').trim().slice(0,160)}
+              const visible=x=>x.offsetParent!==null;
+              const text=x=>(x.innerText||x.textContent||x.value||'').trim();
+              const primary=[...document.querySelectorAll('button,a,[role="button"],input[type="submit"],input[type="button"]')].filter(visible);
+              let el=primary.find(x=>re.test(text(x)));
+              if(!el){
+                const secondary=[...document.querySelectorAll('.btn,.book-card,.lesson-card,.step-card,.book-pill')].filter(visible);
+                el=secondary.find(x=>re.test(text(x)));
+              }
+              if(el){const t=text(el).slice(0,160);el.click();return t;}
               return null;
             },re.source,re.flags);
           }
           async function bodyText(page){return await page.evaluate(()=>document.body.innerText)}
-          async function logBody(page,label){const b=await bodyText(page);console.log(label+'='+b.slice(0,2200).replace(/\n/g,' | '));return b;}
+          async function logBody(page,label){const b=await bodyText(page);console.log(label+'='+b.slice(0,2400).replace(/\n/g,' | '));return b;}
           (async()=>{
             const browser=await puppeteer.launch({executablePath:findChrome(),headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
             const page=await browser.newPage();
             await page.setViewport({width:390,height:844,deviceScaleFactor:1});
             const resp=await page.goto('https://lete-on.gfieldacademy.net/reading-world/?uiTest='+Date.now(),{waitUntil:'networkidle2',timeout:60000});
             console.log('HTTP_STATUS='+(resp&&resp.status()));
-            await sleep(1800);
+            await sleep(1600);
             let body=await logBody(page,'INITIAL_TEXT');
 
-            // First-run audio intro.
             if(/화면을 탭하면 소리|건너뛰기/i.test(body)){
               const c=await clickText(page,/건너뛰기|Skip/i); console.log('INTRO_SKIP='+(c||'NONE'));
-              await sleep(1200); body=await logBody(page,'AFTER_INTRO');
+              await sleep(1000); body=await logBody(page,'AFTER_INTRO');
             }
 
-            // New student/profile screen.
-            let input=await page.$('input[type="text"],input:not([type])');
+            const input=await page.$('input[type="text"],input:not([type])');
             if(input){
               await input.click({clickCount:3}); await input.type('UITest');
-              const c=await clickText(page,/시작하기|시작|등록|확인|계속|Start|Enter/i); console.log('PROFILE_CLICK='+(c||'NONE'));
+              const c=await clickText(page,/^시작하기|^Start/i); console.log('PROFILE_CLICK='+(c||'NONE'));
               await sleep(1800); body=await logBody(page,'AFTER_PROFILE');
             }
 
-            // If a tutorial/help overlay appears, dismiss it.
-            for(const re of [/닫기|건너뛰기|나중에|확인|Close|Skip/i]){
-              const txt=await bodyText(page);
-              if(/사용법|튜토리얼|도움말|처음/i.test(txt)) { const c=await clickText(page,re); if(c){console.log('HELP_DISMISS='+c);await sleep(700);} }
+            // Dismiss only explicit tutorial controls if one appears.
+            if(/사용법|튜토리얼|도움말/i.test(body)){
+              const c=await clickText(page,/닫기|건너뛰기|나중에|Close|Skip/i); if(c){console.log('HELP_DISMISS='+c);await sleep(700);}
             }
             body=await logBody(page,'HOME');
 
-            // Open book selector when current Level B/C badge is clickable.
-            let c=await clickText(page,/Level\s*B\s*[·\/&]?\s*C|Level\s*B/i); console.log('BOOK_SELECTOR_CLICK='+(c||'NONE'));
-            await sleep(900);
-            body=await logBody(page,'BOOK_SELECTOR');
+            let c=await clickText(page,/Level\s*B(?:\s*[·\/&]\s*C)?/i); console.log('BOOK_SELECTOR_CLICK='+(c||'NONE'));
+            await sleep(900); body=await logBody(page,'BOOK_SELECTOR');
 
             c=await clickText(page,/Level\s*D|CARS Plus.*D|CARS.*Level D/i); console.log('LEVEL_D_CLICK='+(c||'NONE'));
-            await sleep(1800);
-            body=await logBody(page,'AFTER_LEVEL_D');
+            await sleep(1800); body=await logBody(page,'AFTER_LEVEL_D');
 
-            // Pick first Level D lesson.
-            c=await clickText(page,/Pretest\s*1|cd1|African|folktale|bat/i); console.log('LESSON_CLICK='+(c||'NONE'));
-            await sleep(1500);
-            body=await logBody(page,'LESSON_HOME');
+            c=await clickText(page,/Pretest\s*1|Lesson\s*1|cd1|African|folktale|bat/i); console.log('LESSON_CLICK='+(c||'NONE'));
+            await sleep(1500); body=await logBody(page,'LESSON_HOME');
 
-            // If STEP 2 is locked behind STEP 1, open STEP 1 then use its finish/next action if available.
             c=await clickText(page,/STEP\s*2|교재\s*풀기|Read the Book/i); console.log('STEP2_CLICK='+(c||'NONE'));
-            if(!c){
-              const w=await clickText(page,/STEP\s*1|단어\s*배우기|Learn Words/i); console.log('STEP1_CLICK='+(w||'NONE')); await sleep(600);
-              const fin=await clickText(page,/교재\s*풀기|Read the Book|학습\s*완료/i); console.log('STEP1_FINISH='+(fin||'NONE')); await sleep(900);
-              c=await clickText(page,/STEP\s*2|교재\s*풀기|Read the Book/i); console.log('STEP2_RETRY='+(c||'NONE'));
-            }
             await sleep(3200);
             const s2=await page.evaluate(()=>({
               passage:!!document.querySelector('#original-passage'),
@@ -100,7 +92,7 @@ jobs:
               sourceHead:document.querySelector('.cars-source-head')?.innerText||'',
               media:[...document.querySelectorAll('#original-passage img, #original-passage figure')].map(x=>x.getAttribute('src')||x.className),
               missing:/아직 연결되지|원문을 아직 불러오지|not connected/i.test(document.body.innerText),
-              excerpt:document.body.innerText.slice(0,2600)
+              excerpt:document.body.innerText.slice(0,2800)
             }));
             console.log('STEP2='+JSON.stringify(s2));
 
@@ -112,7 +104,7 @@ jobs:
               prompt:document.querySelector('.qcard .prompt,.question-study .prompt')?.innerText||'',
               badge:document.querySelector('.qcard .badge,.question-study .badge')?.innerText||'',
               missing:/아직 연결되지|원문을 아직 불러오지|not connected/i.test(document.body.innerText),
-              excerpt:document.body.innerText.slice(0,2600)
+              excerpt:document.body.innerText.slice(0,2800)
             }));
             console.log('STEP3='+JSON.stringify(s3));
             await page.screenshot({path:'reading-world-cars-d-mobile.png',fullPage:true});
@@ -129,4 +121,4 @@ jobs:
           name: reading-world-cars-d-mobile
           path: reading-world-cars-d-mobile.png
           if-no-files-found: ignore
-# branch trigger v2
+# branch trigger v3
