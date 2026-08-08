@@ -38,10 +38,22 @@
     if(!isLevelD()) return;
     document.querySelectorAll('h1,h2,h3').forEach(h=>{
       const t=(h.textContent||'').trim();
-      if(t==='교재 자료가 아직 연결되지 않았어요.' || t==='The book content is not connected yet.' || t==='教材内容尚未连接。'){
+      if(t==='교재 자료가 아직 연결되지 않았어요.' || t==='The book content is not connected yet.' || t==='教材内容尚未连接。' || t==='CARS D 교재 원문을 아직 불러오지 못했어요.'){
         h.textContent='CARS D 교재 원문을 아직 불러오지 못했어요.';
         const p=h.nextElementSibling;
-        if(p&&p.matches('p,.sub')) p.textContent='교재 원문은 Supabase 비공개 자료에서 불러옵니다. 연결이 완료되면 STEP 2 교재 풀기와 STEP 3 교재 학습이 열립니다.';
+        if(p&&p.matches('p,.sub')) p.textContent='교재 원문은 Supabase 비공개 자료에서 불러옵니다. 원문이 연결되면 STEP 2 교재 풀기와 STEP 3 교재 학습이 자동으로 열립니다.';
+        const panel=h.closest('.card,.panel,section')||h.parentElement;
+        if(panel&&!panel.querySelector('[data-cars-check-link]')){
+          const tools=panel.querySelector('.tools')||panel;
+          const a=document.createElement('a');
+          a.href='cars-d-check.html';
+          a.target='_blank';
+          a.rel='noopener';
+          a.dataset.carsCheckLink='1';
+          a.className='btn';
+          a.textContent='연결 상태 확인';
+          tools.appendChild(a);
+        }
       }
     });
   }
