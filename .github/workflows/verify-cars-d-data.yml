@@ -49,3 +49,5 @@ jobs:
           console.log(`VERIFIED_QUESTIONS=${total}`);
           console.log('CARS_D_SOURCE_READY=true');
           NODE
+
+# verification trigger
