@@ -1,0 +1,68 @@
+{
+  "typeId": 44,
+  "title": "주어진 숫자 카드를 사용하여 조건에 맞는 세 자리 수의 개수 구하기",
+  "easy": [
+    {
+      "text": "다음 조건을 모두 만족하는 세 자리 수를 모두 구하세요.\n• 세 자리 숫자의 합이 9\n• 백의 자리 숫자가 일의 자리보다 작다\n• 숫자 0을 포함한다",
+      "answer": "108, 207, 306, 405",
+      "params": {
+        "digit_sum": 9,
+        "hundreds_lt_units": true,
+        "must_have_zero": true,
+        "all_diff": false
+      }
+    },
+    {
+      "text": "다음 조건을 모두 만족하는 세 자리 수를 모두 구하세요.\n• 세 자리 숫자의 합이 11\n• 백의 자리 숫자가 일의 자리보다 작다\n• 숫자 0을 포함한다",
+      "answer": "209, 308, 407, 506",
+      "params": {
+        "digit_sum": 11,
+        "hundreds_lt_units": true,
+        "must_have_zero": true,
+        "all_diff": false
+      }
+    },
+    {
+      "text": "다음 조건을 모두 만족하는 세 자리 수를 모두 구하세요.\n• 세 자리 숫자의 합이 12\n• 백의 자리 숫자가 일의 자리보다 작다\n• 숫자 0을 포함한다",
+      "answer": "309, 408, 507",
+      "params": {
+        "digit_sum": 12,
+        "hundreds_lt_units": true,
+        "must_have_zero": true,
+        "all_diff": false
+      }
+    }
+  ],
+  "hard": [
+    {
+      "text": "다음 조건을 모두 만족하는 세 자리 수를 모두 구하세요.\n• 세 자리 숫자의 합이 13\n• 백의 자리 숫자가 일의 자리보다 작다\n• 숫자 0을 포함한다",
+      "answer": "409, 508, 607",
+      "params": {
+        "digit_sum": 13,
+        "hundreds_lt_units": true,
+        "must_have_zero": true,
+        "all_diff": false
+      }
+    },
+    {
+      "text": "다음 조건을 모두 만족하는 세 자리 수를 모두 구하세요.\n• 세 자리 숫자의 합이 14\n• 백의 자리 숫자가 일의 자리보다 작다\n• 숫자 0을 포함한다",
+      "answer": "509, 608",
+      "params": {
+        "digit_sum": 14,
+        "hundreds_lt_units": true,
+        "must_have_zero": true,
+        "all_diff": false
+      }
+    },
+    {
+      "text": "다음 조건을 모두 만족하는 세 자리 수를 모두 구하세요.\n• 세 자리 숫자의 합이 10\n• 백의 자리 숫자가 일의 자리보다 작다\n• 숫자 0을 포함한다",
+      "answer": "109, 208, 307, 406",
+      "params": {
+        "digit_sum": 10,
+        "hundreds_lt_units": true,
+        "must_have_zero": true,
+        "all_diff": false
+      }
+    }
+  ]
+}
