@@ -143,6 +143,30 @@ ol.qs>li{break-inside:avoid;margin:0 0 4mm}
 ol.qs>li>.qt{font-weight:700;display:flex;gap:6px}
 ol.qs>li>.qt .qn{flex:none;min-width:6mm}
 ol.qs>li .strat{font-weight:600;font-size:8.5pt;color:#6a7a70;display:block;margin-top:1px}
+ol.qs>li>.qt .qbody{flex:1;min-width:0}
+/* Diagram questions. Drawn with borders, never background fills, so they print
+   from an office printer whether or not "background graphics" is ticked. */
+.vis{margin:2.5mm 0 1.5mm;font-size:9.6pt;line-height:1.35;font-weight:400}
+.vis-seq,.vis-ce{display:flex;align-items:stretch;gap:1.5mm}
+.vcell,.vcol{display:flex;flex-direction:column;flex:1;min-width:0}
+.vcell{align-items:center}
+.vcell small{font-size:8pt;color:#6b7a71;margin-top:.8mm;font-weight:700}
+.vcol b{font-size:9pt;margin-bottom:1mm;text-align:center}
+.vbox{display:block;width:100%;border:1px solid #555;border-radius:1mm;
+  padding:1.8mm 2.2mm;min-height:11mm}
+.varr{align-self:center;font-size:13pt;color:#444;flex:none;padding:0 .5mm}
+.vafter{margin-top:1.5mm;font-weight:700}
+/* root ─ stem ─ crossbar ─ drop lines ─ children */
+.vis-branch{display:flex;flex-direction:column;align-items:center}
+.vroot{border:1px solid #555;border-radius:1mm;padding:1.4mm 5mm;font-weight:700}
+.vstem{display:block;width:0;height:3.5mm;border-left:1px solid #555}
+/* The crossbar reaches the centre of the outer children, not the edge of the
+   row — inset by half a child, which --n carries from the renderer. */
+.vrow{display:flex;gap:1.5mm;width:100%;position:relative}
+.vrow::before{content:"";position:absolute;top:0;height:0;border-top:1px solid #555;
+  left:calc(50% / var(--n,4));right:calc(50% / var(--n,4))}
+.vkid{flex:1;display:flex;flex-direction:column;align-items:center;min-width:0}
+.vkid::before{content:"";width:0;height:3.5mm;border-left:1px solid #555}
 ol.ch{list-style:none;padding:0 0 0 6mm;margin:1.5mm 0 0;display:grid;gap:1mm}
 ol.ch li{display:flex;gap:5px;font-size:10.6pt}
 ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
@@ -666,6 +690,9 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
 <script src="data/cd10-data.js"></script><script src="data/cd11-data.js"></script>
 <script src="data/cd12-data.js"></script><script src="data/cd13-data.js"></script>
 <script src="data/cd14-data.js"></script><script src="data/cd15-data.js"></script>
+<!-- Structure only (which question is a diagram, which box is blank). The box
+     wording travels with the licensed questions from Supabase, never from here. -->
+<script src="data/cars-d-layouts.js"></script>
 <script>
 (function(){
 'use strict';
@@ -972,11 +999,65 @@ function passageHtml(ps,art){
   return '<div class="psg">'+(art||'')+(ps||[]).map(function(p){
     return '<p>'+esc(p).replace(/\n/g,'<br>')+'</p>';}).join('')+'</div>';
 }
-function questionsHtml(list){
+/* ---------- diagram questions ----------
+   Some questions are a picture with a gap in it — a sequence of boxes, a
+   cause/effect pair, a branching chart. Printing only the stem ("Which of these
+   belongs in the empty box?") leaves nothing to answer. The shape comes from
+   CARS_D_LAYOUTS (public), the wording from the licensed row (job.vis). */
+function boxCell(txt,blank){
+  return '<span class="vbox'+(blank?' blank':'')+'">'+(blank?'':esc(txt||''))+'</span>';
+}
+function visualHtml(layout,p){
+  var arrow='<span class="varr" aria-hidden="true">&#8594;</span>';
+  if(layout.type==='sequence'){
+    var n=layout.boxCount||3, boxes=p.boxes||[], step=layout.showStepNumbers;
+    var cells=[];
+    for(var i=0;i<n;i++){
+      cells.push('<span class="vcell">'+boxCell(boxes[i],i===layout.blankIndex)+
+        (step?'<small>'+(i+1)+'</small>':'')+'</span>');
+    }
+    return '<div class="vis vis-seq">'+cells.join(arrow)+'</div>';
+  }
+  if(layout.type==='cause-effect'){
+    return '<div class="vis vis-ce">'+
+      '<span class="vcol"><b>'+esc(p.causeLabel||'Cause')+'</b>'+
+        boxCell(p.cause,layout.blankIndex===0)+'</span>'+arrow+
+      '<span class="vcol"><b>'+esc(p.effectLabel||'Effect')+'</b>'+
+        boxCell(p.effect,layout.blankIndex===1)+'</span></div>';
+  }
+  if(layout.type==='branch-map'){
+    var kids=p.children||[];
+    return '<div class="vis vis-branch"><span class="vroot">'+esc(p.root||'')+'</span>'+
+      '<span class="vstem" aria-hidden="true"></span>'+
+      '<span class="vrow" style="--n:'+kids.length+'">'+kids.map(function(c,i){
+        return '<span class="vkid">'+boxCell(c,i===layout.blankIndex)+'</span>';}).join('')+
+      '</span></div>';
+  }
+  return '';
+}
+// Returns {before, diagram, after} when question n of this job is a diagram.
+function visualFor(j,n){
+  if(!j||!j.vis||!j.lessonId)return null;
+  var cfg=(window.CARS_D_LAYOUTS||{}).lessons||{};
+  var layout=((cfg[j.lessonId]||{}).questions||{})[n];
+  var p=j.vis[n]||j.vis[String(n)];
+  if(!layout||!p||layout.type==='standard')return null;
+  var html=visualHtml(layout,p);
+  return html?{before:p.before||'',after:p.after||'',html:html}:null;
+}
+function questionsHtml(list,j){
   return '<ol class="qs">'+list.map(function(o){
     var q=o.q, strat=opt('optStrategy')?'<span class="strat">'+esc(q[0])+'</span>':'';
+    var v=visualFor(j,o.n);
+    // before / diagram / after replaces the flattened stem, which reads as one
+    // run-on sentence once the picture it refers to is missing.
+    // .qt is a flex row, so the whole stem must stay one flex item.
+    var body=v
+      ? '<div class="qbody">'+(v.before?esc(v.before):'')+strat+v.html+
+        (v.after?'<div class="vafter">'+esc(v.after)+'</div>':'')+'</div>'
+      : '<span>'+esc(q[1])+strat+'</span>';
     return '<li style="counter-increment:none"><div class="qt"><span class="qn">'+o.n+'.</span>'+
-      '<span>'+esc(q[1])+strat+'</span></div><ol class="ch">'+
+      body+'</div><ol class="ch">'+
       (q[2]||[]).map(function(c,i){return '<li><i>'+LET[i]+'.</i><span>'+esc(c)+'</span></li>';}).join('')+
       '</ol></li>';}).join('')+'</ol>';
 }
@@ -1163,7 +1244,10 @@ function jobs(){
           out.push({kind:'passage',licensed:true,group:b.label,book:b,le:le,
             label:lessonRef(b,le)+' · '+pTxt('original'),src:b.label+' · Lesson '+le.num,
             title:(o.title||le.title)+' — '+pTxt('original'),art:le.L.image,
-            intro:o.instruction,passage:o.passage,questions:o.questions});
+            intro:o.instruction,passage:o.passage,questions:o.questions,
+            // Level D's sequence / cause-effect / branch questions are unanswerable
+            // without their diagram, so the wording travels with the job.
+            vis:(o.meta&&o.meta.visualQuestions)||null,lessonId:le.id});
           return;
         }
         var d=p.get(le.L);if(!d)return;
@@ -1212,14 +1296,14 @@ function paperSheets(j){
   var qSheets=chunks.map(function(c,i){
     var of=chunks.length>1?' ('+(i+1)+'/'+chunks.length+')':'';
     return '<section class="sheet paper">'+head(tag,j.title+' — '+T('qs')+of,j.src,true)+
-      (i?'':intro)+questionsHtml(c)+foot(j.label+' · '+T('qs')+of)+'</section>';
+      (i?'':intro)+questionsHtml(c,j)+foot(j.label+' · '+T('qs')+of)+'</section>';
   }).join('');
   // "한 장에 몰아서" only survives while the questions actually fit under the
   // passage; past that the passage takes its own sheet rather than pushing the
   // tail of the question list off the page.
   if(!opt('optSplit')&&chunks.length===1)
     return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+
-      passageHtml(j.passage,artHtml(j))+intro+questionsHtml(qlist)+foot(j.label)+'</section>';
+      passageHtml(j.passage,artHtml(j))+intro+questionsHtml(qlist,j)+foot(j.label)+'</section>';
   return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+
     passageHtml(j.passage,artHtml(j))+foot(j.label+' · '+T('psg'))+'</section>'+qSheets;
 }
