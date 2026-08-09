@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" role="img" aria-labelledby="title desc">
+  <title id="title">자르고 남은 조각 수 3</title>
+  <desc id="desc">8개의 과일을 반으로 자르고, 7조각을 먹은 뒤, 남은 조각을 다시 반으로 자르는 과정</desc>
+  <rect width="900" height="420" fill="#fff"/>
+  <style>
+    .label{font-family:Arial,sans-serif;font-size:22px;font-weight:700;fill:#173d6d}
+    .small{font-family:Arial,sans-serif;font-size:18px;fill:#48627a}
+    .fruit{fill:#ff9a3d;stroke:#173d6d;stroke-width:3}
+    .piece{fill:#ffe2b8;stroke:#173d6d;stroke-width:2.5}
+    .eat{stroke:#d7263d;stroke-width:4;stroke-linecap:round}
+    .arrow{stroke:#8aa6bd;stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#8aa6bd"/>
+    </marker>
+  </defs>
+  <text class="label" x="95" y="54" text-anchor="middle">처음</text>
+  <text class="label" x="330" y="54" text-anchor="middle">반으로 자름</text>
+  <text class="label" x="570" y="54" text-anchor="middle">7조각 먹음</text>
+  <text class="label" x="790" y="54" text-anchor="middle">다시 반으로</text>
+  <g transform="translate(24 90)">
+    <circle class="fruit" cx="35" cy="35" r="22"/><circle class="fruit" cx="83" cy="35" r="22"/><circle class="fruit" cx="131" cy="35" r="22"/>
+    <circle class="fruit" cx="35" cy="86" r="22"/><circle class="fruit" cx="83" cy="86" r="22"/><circle class="fruit" cx="131" cy="86" r="22"/>
+    <circle class="fruit" cx="59" cy="137" r="22"/><circle class="fruit" cx="107" cy="137" r="22"/>
+    <text class="small" x="83" y="200" text-anchor="middle">8개</text>
+  </g>
+  <path class="arrow" d="M190 180 H245" marker-end="url(#arrow)"/>
+  <g transform="translate(248 82)">
+    <path class="piece" d="M0 0 A16 16 0 0 1 32 0 L16 28 Z"/><path class="piece" d="M38 0 A16 16 0 0 1 70 0 L54 28 Z"/><path class="piece" d="M76 0 A16 16 0 0 1 108 0 L92 28 Z"/><path class="piece" d="M114 0 A16 16 0 0 1 146 0 L130 28 Z"/>
+    <path class="piece" d="M152 0 A16 16 0 0 1 184 0 L168 28 Z"/><path class="piece" d="M0 46 A16 16 0 0 1 32 46 L16 74 Z"/><path class="piece" d="M38 46 A16 16 0 0 1 70 46 L54 74 Z"/><path class="piece" d="M76 46 A16 16 0 0 1 108 46 L92 74 Z"/>
+    <path class="piece" d="M114 46 A16 16 0 0 1 146 46 L130 74 Z"/><path class="piece" d="M152 46 A16 16 0 0 1 184 46 L168 74 Z"/><path class="piece" d="M0 92 A16 16 0 0 1 32 92 L16 120 Z"/><path class="piece" d="M38 92 A16 16 0 0 1 70 92 L54 120 Z"/>
+    <path class="piece" d="M76 92 A16 16 0 0 1 108 92 L92 120 Z"/><path class="piece" d="M114 92 A16 16 0 0 1 146 92 L130 120 Z"/><path class="piece" d="M38 138 A16 16 0 0 1 70 138 L54 166 Z"/><path class="piece" d="M76 138 A16 16 0 0 1 108 138 L92 166 Z"/>
+    <text class="small" x="92" y="218" text-anchor="middle">16조각</text>
+  </g>
+  <path class="arrow" d="M480 180 H525" marker-end="url(#arrow)"/>
+  <g transform="translate(532 84)">
+    <path class="piece" d="M0 0 A15 15 0 0 1 30 0 L15 26 Z"/><path class="piece" d="M36 0 A15 15 0 0 1 66 0 L51 26 Z"/><path class="piece" d="M72 0 A15 15 0 0 1 102 0 L87 26 Z"/><path class="piece" d="M108 0 A15 15 0 0 1 138 0 L123 26 Z"/>
+    <path class="piece" d="M0 44 A15 15 0 0 1 30 44 L15 70 Z"/><path class="piece" d="M36 44 A15 15 0 0 1 66 44 L51 70 Z"/><path class="piece" d="M72 44 A15 15 0 0 1 102 44 L87 70 Z"/>
+    <path class="piece" d="M108 44 A15 15 0 0 1 138 44 L123 70 Z"/><path class="piece" d="M18 88 A15 15 0 0 1 48 88 L33 114 Z"/><path class="piece" d="M54 88 A15 15 0 0 1 84 88 L69 114 Z"/>
+    <path class="eat" d="M-4 -8 L34 35M32 -8 L70 35M68 -8 L106 35M104 -8 L142 35M-4 36 L34 79M32 36 L70 79M68 36 L106 79"/>
+    <text class="small" x="70" y="168" text-anchor="middle">9조각 남음</text>
+  </g>
+  <path class="arrow" d="M695 180 H740" marker-end="url(#arrow)"/>
+  <g transform="translate(760 118)">
+    <text class="label" x="62" y="45" text-anchor="middle">9 x 2</text>
+    <rect x="8" y="75" width="108" height="70" rx="12" fill="#fff7d6" stroke="#f0bd3d" stroke-width="4"/>
+    <text class="label" x="62" y="118" text-anchor="middle">?</text>
+  </g>
+</svg>

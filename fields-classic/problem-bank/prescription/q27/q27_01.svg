@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" role="img" aria-labelledby="title desc">
+  <title id="title">자르고 남은 조각 수 1</title>
+  <desc id="desc">5개의 과일을 반으로 자르고, 3조각을 먹은 뒤, 남은 조각을 다시 반으로 자르는 과정</desc>
+  <rect width="900" height="420" fill="#fff"/>
+  <style>
+    .label{font-family:Arial,sans-serif;font-size:22px;font-weight:700;fill:#173d6d}
+    .small{font-family:Arial,sans-serif;font-size:18px;fill:#48627a}
+    .fruit{fill:#ff6b5f;stroke:#173d6d;stroke-width:3}
+    .piece{fill:#ffd8b5;stroke:#173d6d;stroke-width:2.5}
+    .eat{stroke:#d7263d;stroke-width:4;stroke-linecap:round}
+    .arrow{stroke:#8aa6bd;stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#8aa6bd"/>
+    </marker>
+  </defs>
+  <text class="label" x="95" y="54" text-anchor="middle">처음</text>
+  <text class="label" x="330" y="54" text-anchor="middle">반으로 자름</text>
+  <text class="label" x="570" y="54" text-anchor="middle">3조각 먹음</text>
+  <text class="label" x="790" y="54" text-anchor="middle">다시 반으로</text>
+  <g transform="translate(32 92)">
+    <circle class="fruit" cx="38" cy="40" r="25"/><circle class="fruit" cx="94" cy="40" r="25"/><circle class="fruit" cx="150" cy="40" r="25"/>
+    <circle class="fruit" cx="66" cy="100" r="25"/><circle class="fruit" cx="122" cy="100" r="25"/>
+    <text class="small" x="94" y="170" text-anchor="middle">5개</text>
+  </g>
+  <path class="arrow" d="M190 180 H245" marker-end="url(#arrow)"/>
+  <g transform="translate(270 100)">
+    <path class="piece" d="M0 0 A20 20 0 0 1 40 0 L20 35 Z"/><path class="piece" d="M48 0 A20 20 0 0 1 88 0 L68 35 Z"/>
+    <path class="piece" d="M96 0 A20 20 0 0 1 136 0 L116 35 Z"/><path class="piece" d="M144 0 A20 20 0 0 1 184 0 L164 35 Z"/>
+    <path class="piece" d="M0 58 A20 20 0 0 1 40 58 L20 93 Z"/><path class="piece" d="M48 58 A20 20 0 0 1 88 58 L68 93 Z"/>
+    <path class="piece" d="M96 58 A20 20 0 0 1 136 58 L116 93 Z"/><path class="piece" d="M144 58 A20 20 0 0 1 184 58 L164 93 Z"/>
+    <path class="piece" d="M48 116 A20 20 0 0 1 88 116 L68 151 Z"/><path class="piece" d="M96 116 A20 20 0 0 1 136 116 L116 151 Z"/>
+    <text class="small" x="92" y="200" text-anchor="middle">10조각</text>
+  </g>
+  <path class="arrow" d="M485 180 H530" marker-end="url(#arrow)"/>
+  <g transform="translate(540 106)">
+    <path class="piece" d="M0 0 A18 18 0 0 1 36 0 L18 31 Z"/><path class="piece" d="M44 0 A18 18 0 0 1 80 0 L62 31 Z"/><path class="piece" d="M88 0 A18 18 0 0 1 124 0 L106 31 Z"/>
+    <path class="piece" d="M0 52 A18 18 0 0 1 36 52 L18 83 Z"/><path class="piece" d="M44 52 A18 18 0 0 1 80 52 L62 83 Z"/><path class="piece" d="M88 52 A18 18 0 0 1 124 52 L106 83 Z"/>
+    <path class="piece" d="M22 104 A18 18 0 0 1 58 104 L40 135 Z"/><path class="piece" d="M66 104 A18 18 0 0 1 102 104 L84 135 Z"/>
+    <path class="eat" d="M-5 -10 L41 43M39 -10 L85 43M83 -10 L129 43"/>
+    <text class="small" x="62" y="184" text-anchor="middle">7조각 남음</text>
+  </g>
+  <path class="arrow" d="M690 180 H735" marker-end="url(#arrow)"/>
+  <g transform="translate(755 118)">
+    <text class="label" x="70" y="45" text-anchor="middle">7 x 2</text>
+    <rect x="12" y="75" width="116" height="70" rx="12" fill="#fff7d6" stroke="#f0bd3d" stroke-width="4"/>
+    <text class="label" x="70" y="118" text-anchor="middle">?</text>
+  </g>
+</svg>

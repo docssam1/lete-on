@@ -6,7 +6,7 @@
 ## 저장 위치
 
 - 문제 데이터와 정답: `prescription-data.js`
-- 유형별 그림: `q01/`부터 `q25/`
+- 유형별 그림: `q01/`부터 `q27/`
 - 16~24번 그림 생성기: `scripts/generate_assets.py`
 - 25번 Geometry 3D 생성기: `scripts/q25_renderer.html`, `scripts/q25_renderer.js`
 - 기존 1~14번 확정 생성 원본: `scripts/confirmed_sources/`
@@ -15,6 +15,10 @@
 
 그림이 필요 없는 2번, 7번, 15번은 문제 문장과 정답만
 `prescription-data.js`에 저장합니다.
+
+27번은 `q27/`의 SVG 3개를 사용합니다. 원본 유형은 실전 3회 Q10이며,
+반으로 자른 조각에서 먹은 조각을 뺀 뒤 남은 조각을 다시 반으로 자르는 구조입니다.
+계산은 `(처음 개수×2 - 먹은 조각 수) × 2`로 검산합니다.
 
 ## 운영 원칙
 
