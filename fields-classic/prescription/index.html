@@ -363,6 +363,13 @@
     .answer-item:first-of-type { border-top: 0; }
     .answer-value { font-weight: 900; }
     .answer-solution { color: var(--muted); }
+    .answer-solution-image {
+      display: block;
+      width: 100%;
+      max-height: 25mm;
+      margin-top: 2mm;
+      object-fit: contain;
+    }
 
     .empty-state {
       display: grid;
@@ -637,6 +644,7 @@
                 <div>
                   <div class="answer-value">${escapeHtml(problem.answer)}</div>
                   <div class="answer-solution">${escapeHtml(problem.solution)}</div>
+                  ${problem.solutionImage ? `<img class="answer-solution-image" src="../problem-bank/prescription/${escapeHtml(problem.solutionImage)}" alt="Q${type.id} ${index + 1}번 풀이 그림">` : ""}
                 </div>
               </div>`).join("")}
           </section>`).join("");
