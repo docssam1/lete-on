@@ -308,9 +308,13 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
       <h2>레벨 테스트 채점 · 분석지</h2>
       <p class="hint">학생이 푼 진단 답안을 입력하면 배치 결과와 전략별 강·약점 분석지가 만들어집니다. 위 <b>분석지</b> 탭에서 확인·인쇄하세요.</p>
       <label class="fld"><span>학생 이름</span><input type="text" id="gName" placeholder="예: 김민준"></label>
+      <div class="row" style="margin-bottom:8px">
+        <button class="mini gsrc on" data-gsrc="level">진단 레벨</button>
+        <button class="mini gsrc" data-gsrc="unit">교재 단원</button>
+      </div>
       <div class="row" style="gap:9px">
         <label class="fld" style="flex:1;margin:0"><span>응시일</span><input type="text" id="gDate" placeholder="2026-08-09"></label>
-        <label class="fld" style="flex:1;margin:0"><span>응시 레벨</span>
+        <label class="fld" style="flex:1;margin:0"><span id="gPickLabel">응시 레벨</span>
           <select id="gLevel" style="width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px"></select></label>
       </div>
       <div id="gGrid" class="ansgrid"></div>
@@ -543,7 +547,10 @@ function placement(levelId,score,n){
   if(score<th.down)return {verdict:'down',recommend:o[i-1]||levelId,capped:!o[i-1]};
   return {verdict:'fit',recommend:levelId,capped:false};
 }
-var grade={name:'',date:'',level:'',ans:{}};
+// The report runs off either a placement level or a single book unit. A unit test
+// is a mastery check, not a placement, so it reports strategy mastery instead of a
+// level verdict.
+var grade={name:'',date:'',src:'level',level:'',unit:'',ans:{}};
 
 var SCOPE=get('scope','volume'), ONLY=get('only','');
 var sel={diag:{},book:{},strat:{}};
@@ -664,8 +671,33 @@ function coverSheet(title,lvl){
 }
 /* ---------- analysis report ---------- */
 function levelById(id){return LEVELS.filter(function(l){return l.id===id;})[0]||null;}
-function gradeGrid(){
+// Every unit passage is a gradable source: book · lesson · which of the two
+// created passages.
+function unitSources(){
+  var out=[];
+  BOOKS.forEach(function(b){b.lessons.forEach(function(le){
+    [['extra','추가 학습 지문','extraLearning'],['similar','유사 지문','newPassage']].forEach(function(p){
+      var d=le.L[p[2]];
+      if(d&&(d.questions||[]).length) out.push({
+        v:b.id+':'+le.id+':'+p[0], label:b.label+' · '+le.num+'과 '+p[1],
+        book:b.label, le:le, part:p[1], title:d.title||le.title, questions:d.questions});
+    });});});
+  return out;
+}
+function unitById(v){return unitSources().filter(function(u){return u.v===v;})[0]||null;}
+// Whichever source is selected, the report only needs a question list and a title.
+function gradeSource(){
+  if(grade.src==='unit'){
+    var u=unitById(grade.unit);
+    return u?{kind:'unit',id:u.v,questions:u.questions,title:u.title,
+      where:u.book+' · '+u.le.num+'과 · '+u.part}:null;
+  }
   var lv=levelById(grade.level);
+  return lv?{kind:'level',id:lv.id,questions:lv.questions,title:lv.title,
+    grade:lv.grade,where:'레벨 '+lv.id+' ('+lv.grade+')'}:null;
+}
+function gradeGrid(){
+  var lv=gradeSource();
   var wrap=document.getElementById('gGrid'), sc=document.getElementById('gScore');
   if(!lv){wrap.innerHTML='';sc.textContent='';return;}
   var n=lv.questions.length, nOpt=(lv.questions[0][2]||[]).length;
@@ -679,20 +711,33 @@ function gradeGrid(){
   sc.textContent=done? (done+'/'+n+' 입력 · 정답 '+right+'개') : '답안을 입력하세요';
 }
 function reportSheet(){
-  var lv=levelById(grade.level);
-  if(!lv) return '<div class="empty">응시 레벨을 고르고 학생 답안을 입력하면<br>분석지가 여기에 만들어집니다.</div>';
+  var lv=gradeSource();
+  if(!lv) return '<div class="empty">응시 레벨 또는 교재 단원을 고르고 학생 답안을 입력하면<br>분석지가 여기에 만들어집니다.</div>';
   var qs=lv.questions, n=qs.length;
   var correct=[],missed=[];
   qs.forEach(function(q,i){(grade.ans[i]===q[3]?correct:missed).push(i);});
-  var score=correct.length, pl=placement(lv.id,score,n);
-  var vTitle={up:'상위 레벨 추천',fit:'현재 레벨 적합',down:'하위 레벨 추천'}[pl.verdict];
-  var vBody={
-    up:'이 레벨의 문항을 충분히 소화했습니다. 다음 레벨로 올라가 학습하기를 권합니다.',
-    fit:'이 레벨이 지금 학생에게 알맞습니다. 아래 약점 유형을 보완하며 진행하세요.',
-    down:'이 레벨은 아직 부담이 있습니다. 한 단계 아래에서 기초를 다진 뒤 올라오는 편이 좋습니다.'
-  }[pl.verdict];
-  if(pl.capped) vBody+=' (사다리의 끝 레벨이라 같은 레벨을 유지합니다.)';
-  var book=LEVEL_BOOK[pl.recommend];
+  var score=correct.length;
+  var vTitle,vBody,book='';
+  if(lv.kind==='unit'){
+    // A unit test measures whether this chapter stuck, so it is graded against
+    // mastery bands rather than the placement ladder.
+    var pct=Math.round(score/n*100);
+    if(pct>=90){vTitle='숙달 ('+pct+'%)';vBody='이 단원의 전략을 안정적으로 적용합니다. 다음 단원으로 진행하세요.';}
+    else if(pct>=70){vTitle='도달 ('+pct+'%)';vBody='대체로 이해했습니다. 아래 보완 유형만 짚고 다음 단원으로 넘어가세요.';}
+    else if(pct>=50){vTitle='보완 필요 ('+pct+'%)';vBody='절반 이상 맞혔지만 흔들립니다. 약점 유형 연습지로 같은 전략을 한 번 더 훈련하세요.';}
+    else {vTitle='재학습 권장 ('+pct+'%)';vBody='이 단원은 다시 다루는 편이 좋습니다. 낱말 학습부터 되짚어 주세요.';}
+    vBody+=' 단원 평가는 배치 판정이 아니므로 레벨은 바뀌지 않습니다.';
+  }else{
+    var pl=placement(lv.id,score,n);
+    vTitle={up:'상위 레벨 추천',fit:'현재 레벨 적합',down:'하위 레벨 추천'}[pl.verdict]+' → 레벨 '+pl.recommend;
+    vBody={
+      up:'이 레벨의 문항을 충분히 소화했습니다. 다음 레벨로 올라가 학습하기를 권합니다.',
+      fit:'이 레벨이 지금 학생에게 알맞습니다. 아래 약점 유형을 보완하며 진행하세요.',
+      down:'이 레벨은 아직 부담이 있습니다. 한 단계 아래에서 기초를 다진 뒤 올라오는 편이 좋습니다.'
+    }[pl.verdict];
+    if(pl.capped) vBody+=' (사다리의 끝 레벨이라 같은 레벨을 유지합니다.)';
+    book=LEVEL_BOOK[pl.recommend]||'';
+  }
   var rows=qs.map(function(q,i){
     var mine=grade.ans[i]||'—', ok=mine===q[3];
     return '<tr><td class="c">'+(i+1)+'</td><td>'+esc(q[0])+'</td>'+
@@ -704,20 +749,24 @@ function reportSheet(){
   var li=function(a){return a.length?uniq(a).map(function(x){return '<li>'+esc(x)+'</li>';}).join(''):'<li>—</li>';};
   var next=weak.length
     ? '이 학생은 <b>'+esc(uniq(weak).slice(0,3).join(' · '))+'</b> 유형에서 주로 놓쳤습니다. '+
-      (book?esc(book)+'의 ':'')+'해당 유형만 뽑은 <b>약점 유형 연습지</b>로 보완한 뒤 재진단을 권합니다.'
-    : '모든 유형을 정확히 풀었습니다. 상위 레벨로 진행해도 좋습니다.';
+      (book?esc(book)+'의 ':'')+'해당 유형만 뽑은 <b>약점 유형 연습지</b>로 보완한 뒤 다시 확인하세요.'
+    : (lv.kind==='unit'
+        ? '모든 유형을 정확히 풀었습니다. 다음 단원으로 진행하세요.'
+        : '모든 유형을 정확히 풀었습니다. 상위 레벨로 진행해도 좋습니다.');
+  var isUnit=lv.kind==='unit';
   return '<section class="sheet report">'+
-    head('Placement Report','레벨 테스트 분석지',
-      (grade.name?esc(grade.name)+' · ':'')+'레벨 '+esc(lv.id)+' ('+esc(lv.grade)+')'+(grade.date?' · '+esc(grade.date):''),false)+
+    head(isUnit?'Unit Report':'Placement Report', isUnit?'단원 평가 분석지':'레벨 테스트 분석지',
+      (grade.name?esc(grade.name)+' · ':'')+esc(lv.where)+(grade.date?' · '+esc(grade.date):''),false)+
     '<div class="rp-score"><div class="rp-big"><b>'+score+'</b><span>/ '+n+'</span></div>'+
-    '<div class="rp-verdict"><b>'+vTitle+' → 레벨 '+esc(pl.recommend)+'</b><p>'+vBody+
-    (book?'<br>추천 교재: <b>'+esc(book)+'</b>':'<br>해당 레벨의 학습 교재는 준비 중입니다.')+'</p></div></div>'+
+    '<div class="rp-verdict"><b>'+esc(vTitle)+'</b><p>'+vBody+
+    (isUnit?'<br>대상: <b>'+esc(lv.title)+'</b>'
+           :(book?'<br>추천 교재: <b>'+esc(book)+'</b>':'<br>해당 레벨의 학습 교재는 준비 중입니다.'))+'</p></div></div>'+
     '<table class="rt"><thead><tr><th style="width:9%">문항</th><th>읽기 전략</th>'+
     '<th style="width:11%">정답</th><th style="width:11%">학생답</th><th style="width:9%">채점</th></tr></thead><tbody>'+rows+'</tbody></table>'+
     '<div class="cols"><div><h3>강점 유형</h3><ul>'+li(strong)+'</ul></div>'+
     '<div><h3>보완이 필요한 유형</h3><ul>'+li(weak)+'</ul></div></div>'+
     '<div class="nextbox"><b>다음 학습 제안</b><br>'+next+'</div>'+
-    foot('분석지 · '+(grade.name||'학생')+' · 레벨 '+esc(lv.id))+'</section>';
+    foot('분석지 · '+(grade.name||'학생')+' · '+esc(lv.where))+'</section>';
 }
 
 function dividerSheet(book,le,bits){
@@ -905,7 +954,7 @@ document.addEventListener('change',function(e){
     fr.readAsDataURL(t.files[0]);return;
   }
   if(t.id==='unitPick'){ONLY=t.value;set('only',ONLY);return render();}
-  if(t.id==='gLevel'){grade.level=t.value;grade.ans={};return render();}
+  if(t.id==='gLevel'){grade[grade.src==='unit'?'unit':'level']=t.value;grade.ans={};return render();}
   if(t.id&&t.id.indexOf('opt')===0){t.closest('.chk').classList.toggle('on',t.checked);return render();}
 });
 document.addEventListener('input',function(e){
@@ -921,6 +970,9 @@ document.addEventListener('click',function(e){
   if(ga){var a=ga.split(':');grade.ans[+a[0]]=grade.ans[+a[0]]===a[1]?undefined:a[1];
     if(grade.ans[+a[0]]===undefined)delete grade.ans[+a[0]];return render();}
   if(b.id==='gClear'){grade.ans={};return render();}
+  if(b.dataset.gsrc){grade.src=b.dataset.gsrc;grade.ans={};
+    document.querySelectorAll('.mini.gsrc').forEach(function(x){x.classList.toggle('on',x===b);});
+    fillGradePick();return render();}
   if(b.id==='printReport'){setTimeout(function(){window.print();},60);return;}
   if(b.dataset.scope){SCOPE=b.dataset.scope;set('scope',SCOPE);
     document.querySelectorAll('.mini.scope').forEach(function(x){x.classList.toggle('on',x===b);});return render();}
@@ -971,9 +1023,22 @@ document.addEventListener('click',function(e){
 
 document.querySelectorAll('.mini.lang').forEach(function(x){x.classList.toggle('on',x.dataset.lang===LANG);});
 document.querySelectorAll('.mini.scope').forEach(function(x){x.classList.toggle('on',x.dataset.scope===SCOPE);});
+function fillGradePick(){
+  var selEl=document.getElementById('gLevel');
+  document.getElementById('gPickLabel').textContent=grade.src==='unit'?'교재 단원':'응시 레벨';
+  if(grade.src==='unit'){
+    var us=unitSources();
+    if(!us.some(function(u){return u.v===grade.unit;})) grade.unit=us.length?us[0].v:'';
+    selEl.innerHTML=us.map(function(u){
+      return '<option value="'+esc(u.v)+'"'+(u.v===grade.unit?' selected':'')+'>'+esc(u.label)+'</option>';}).join('');
+  }else{
+    if(!LEVELS.some(function(l){return l.id===grade.level;})) grade.level=(LEVELS[0]||{}).id||'';
+    selEl.innerHTML=LEVELS.map(function(l){
+      return '<option value="'+esc(l.id)+'"'+(l.id===grade.level?' selected':'')+'>레벨 '+esc(l.id)+' · '+esc(l.grade)+' ('+l.questions.length+'문항)</option>';}).join('');
+  }
+}
 grade.level=(LEVELS[0]||{}).id||'';
-document.getElementById('gLevel').innerHTML=LEVELS.map(function(l){
-  return '<option value="'+esc(l.id)+'"'+(l.id===grade.level?' selected':'')+'>레벨 '+esc(l.id)+' · '+esc(l.grade)+' ('+l.questions.length+'문항)</option>';}).join('');
+fillGradePick();
 applyBrand();gradeGrid();render();
 })();
 </script>
