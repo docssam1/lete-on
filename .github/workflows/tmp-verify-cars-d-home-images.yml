@@ -1,0 +1,56 @@
+name: Temporary CARS D Home Image Verification
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/tmp-verify-cars-d-home-images.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save puppeteer-core@24
+      - name: Verify live Level D home images
+        run: |
+          node <<'NODE'
+          const puppeteer=require('puppeteer-core'),cp=require('child_process');
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+          function chrome(){for(const c of ['google-chrome','google-chrome-stable','chromium','chromium-browser']){try{return cp.execFileSync('which',[c],{encoding:'utf8'}).trim()}catch(e){}}throw Error('Chrome not found')}
+          async function clickText(page,re){return page.evaluate((s,f)=>{const r=new RegExp(s,f),vis=x=>x.offsetParent!==null,txt=x=>(x.innerText||x.textContent||x.value||'').trim();let e=[...document.querySelectorAll('button,a,[role="button"],input[type="submit"],input[type="button"]')].filter(vis).find(x=>r.test(txt(x)));if(!e)e=[...document.querySelectorAll('.btn,.book-card,.lesson-card,.step-card,.book-pill,.level-card,.list-card')].filter(vis).find(x=>r.test(txt(x)));if(!e)return null;const t=txt(e).slice(0,180);e.click();return t},re.source,re.flags)}
+          async function body(page){return page.evaluate(()=>document.body.innerText)}
+          (async()=>{
+            const browser=await puppeteer.launch({executablePath:chrome(),headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+            const page=await browser.newPage();await page.setViewport({width:390,height:844,deviceScaleFactor:1});
+            const r=await page.goto('https://lete-on.gfieldacademy.net/reading-world/?imgVerify='+Date.now(),{waitUntil:'networkidle2',timeout:60000});
+            console.log('HTTP_STATUS='+(r&&r.status()));await sleep(1600);
+            let b=await body(page);
+            if(/화면을 탭하면 소리|건너뛰기/i.test(b)){await clickText(page,/건너뛰기|Skip/i);await sleep(900);b=await body(page)}
+            const input=await page.$('input[type="text"],input:not([type])');if(input){await input.type('ImgVerify');await clickText(page,/^시작하기|^Start/i);await sleep(1300);b=await body(page)}
+            if(/어떤 친구로 시작할까요|avatar/i.test(b)){await clickText(page,/이걸로 시작|Start with this/i);await sleep(1500);b=await body(page)}
+            if(/리딩 진단|나의 레벨을 찾아봐요/i.test(b)){await clickText(page,/건너뛰고 자유롭게 고르기|자유롭게 고르기|Skip.*choose/i);await sleep(1800);b=await body(page)}
+            await clickText(page,/목록|List/i);await sleep(1000);
+            await clickText(page,/Level\s*D|CARS Plus.*D|CARS.*Level D|\bD\b.*G4/i);await sleep(1600);
+            const list=await page.evaluate(()=>[...document.querySelectorAll('.lesson-stop img,.stop-thumb img')].map(x=>x.getAttribute('src')||''));
+            console.log('LEVEL_D_LIST_IMAGES='+JSON.stringify(list));
+            const bFallback=list.filter(x=>/cars-level-b/i.test(x));
+            const dAssets=list.filter(x=>/cars-level-d/i.test(x));
+            const inline=list.filter(x=>/^data:image\/svg\+xml/i.test(x));
+            console.log(`IMAGE_COUNTS total=${list.length} d=${dAssets.length} inline=${inline.length} bFallback=${bFallback.length}`);
+            const clicked=await clickText(page,/Lesson\s*1|Choosing Sides/i);console.log('LESSON1_CLICK='+(clicked||'NONE'));await sleep(1300);
+            const home=await page.evaluate(()=>({src:document.querySelector('.reading-card .bw-art,.reading-card img.bw-art')?.getAttribute('src')||'',all:[...document.querySelectorAll('.reading-card img')].map(x=>x.getAttribute('src')||'')}));
+            console.log('LESSON1_HOME='+JSON.stringify(home));
+            if(list.length!==15) throw Error('Expected 15 Level D thumbnails');
+            if(bFallback.length) throw Error('Level B fallback image still present in Level D list');
+            if(dAssets.length!==14||inline.length!==1) throw Error('Expected 14 Level D assets + 1 inline poster thumbnail');
+            if(!/cars-level-d\/cd1-folktale-scene\.webp/i.test(home.src)) throw Error('Lesson 1 home image is not the CARS D cd1 illustration');
+            console.log('CARS_D_HOME_IMAGES_READY=true');
+            await browser.close();
+          })().catch(e=>{console.error('TEST_ERROR='+e.stack);process.exit(1)});
+          NODE
