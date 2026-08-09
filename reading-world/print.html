@@ -52,6 +52,8 @@ label.chk:hover{border-color:#bcd3c4;background:#fbfdfb}
 label.chk input{margin:2px 0 0;flex:none;accent-color:var(--green)}
 label.chk.on{border-color:var(--green);background:#f1f8f3}
 label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
+.warn-lic{border-left:3px solid #b5342a;background:#fdf3f2;border-radius:0 8px 8px 0;
+  padding:8px 11px;margin:0 0 11px;font-size:12px;line-height:1.55;color:#7a2a23}
 .book{border:1px solid var(--line);border-radius:13px;padding:12px;margin-bottom:11px;background:#fdfcf8}
 .book-h{display:flex;align-items:baseline;gap:8px;margin-bottom:9px;flex-wrap:wrap}
 .book-h b{font-size:14.5px}.book-h span{font-size:12px;color:var(--muted)}
@@ -300,7 +302,8 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
 
     <div class="panel">
       <h2>2 · 교재별 워크시트</h2>
-      <p class="hint">챕터를 고르고, 각 챕터에서 인쇄할 구성을 선택하세요. 교재 원문 지문은 포함되지 않습니다 — 자체 제작한 낱말·추가 학습·유사 지문만 인쇄됩니다.</p>
+      <p class="hint">챕터를 고르고, 각 챕터에서 인쇄할 구성을 선택하세요.</p>
+      <div class="warn-lic">⚠ <b>원본 지문</b>은 교재 저작권사의 콘텐츠입니다. 교재를 보유한 학생의 수업용으로만 사용하시고, 외부 배포는 하지 마세요.</div>
       <div id="bookList"></div>
     </div>
 
@@ -366,6 +369,9 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
   </div>
 </div>
 
+<!-- store.js is loaded only for Store.pullOriginal(): the licensed passages and
+     questions live in Supabase and are fetched at print time, never bundled here. -->
+<script src="app/store.js"></script>
 <script src="data/diagnostic.js"></script>
 <script src="data/lesson1.js"></script>
 <script src="data/lesson2.js"></script><script src="data/lesson3.js"></script>
@@ -516,8 +522,35 @@ var BOOKS=[
     return L?{id:id,num:i+1,title:L.title||id,L:L}:null;}).filter(Boolean);
   return b;
 });
+/* ---------- licensed originals (fetched, never stored here) ---------- */
+// Level B and C store original_questions as a flat array; Level D wraps it as
+// {meta:{instruction,...}, items:[...]}. Both reduce to the same 5-tuple list.
+var origCache={}, origPending={};
+function normOriginal(row){
+  if(!row)return null;
+  var q=row.questions, items=null, meta=null;
+  if(Array.isArray(q)) items=q;
+  else if(q&&Array.isArray(q.items)){items=q.items;meta=q.meta||null;}
+  if(!items||!items.length)return null;
+  return {passage:row.passage||[], questions:items, meta:meta,
+    title:(meta&&meta.title)||'', instruction:(meta&&meta.instruction)||''};
+}
+function originalFor(bookId,lessonId){
+  var k=bookId+':'+lessonId;
+  if(origCache[k]!==undefined)return origCache[k];
+  if(!origPending[k]&&window.Store&&Store.pullOriginal){
+    origPending[k]=true;
+    Store.pullOriginal(bookId,lessonId).then(function(row){
+      origCache[k]=normOriginal(row)||null;render();
+    }).catch(function(){origCache[k]=null;render();});
+  }
+  return undefined;   // still loading
+}
+var BOOKID={b:'cars-level-b',c:'cars-level-c',d:'cars-level-d'};
+
 var PARTS=[
   {key:'vocab',label:'낱말',get:function(L){return (L.words||[]).length?{words:L.words}:null;}},
+  {key:'original',label:'원본 지문',lic:true,get:function(){return null;}},
   {key:'extra',label:'추가 학습 지문',get:function(L){return L.extraLearning&&(L.extraLearning.questions||[]).length?L.extraLearning:null;}},
   {key:'similar',label:'유사 지문',get:function(L){return L.newPassage&&(L.newPassage.questions||[]).length?L.newPassage:null;}}
 ];
@@ -811,6 +844,18 @@ function jobs(){
       if(!s.ch[le.id])return;
       PARTS.forEach(function(p){
         if(!s.parts[p.key])return;
+        if(p.key==='original'){
+          var o=originalFor(BOOKID[b.id],le.id);
+          if(o===undefined){out.push({kind:'loading',group:b.label,book:b,le:le,
+            label:b.label+' '+le.num+'과 · 원본',src:b.label+' · Lesson '+le.num,
+            title:le.title+' — 원본 불러오는 중'});return;}
+          if(!o)return;
+          out.push({kind:'passage',licensed:true,group:b.label,book:b,le:le,
+            label:b.label+' '+le.num+'과 · 원본 지문',src:b.label+' · Lesson '+le.num,
+            title:(o.title||le.title)+' — 원본',art:le.L.image,
+            intro:o.instruction,passage:o.passage,questions:o.questions});
+          return;
+        }
         var d=p.get(le.L);if(!d)return;
         if(p.key==='vocab') out.push({kind:'vocab',group:b.label,book:b,le:le,
           label:b.label+' '+le.num+'과 · 낱말',src:b.label+' · Lesson '+le.num,
@@ -839,6 +884,9 @@ function artHtml(j,small){
   return (opt('optArt')&&j.art)?'<img class="art'+(small?' sm':'')+'" src="'+esc(j.art)+'" alt="">':'';
 }
 function paperSheets(j){
+  if(j.kind==='loading')
+    return '<section class="sheet paper"><div style="display:grid;place-items:center;height:60mm;color:#7b877f">'+
+      esc(j.title)+'…</div></section>';
   if(j.kind==='vocab')
     return '<section class="sheet paper">'+head(T('wsheet'),j.title,j.src,true)+artHtml(j,true)+
       vocabHtml(j.words)+foot(j.label)+'</section>';
@@ -847,7 +895,9 @@ function paperSheets(j){
   // with it, so the placement levels (6 and 8 questions) always print in full.
   var qlist=j.kind==='diag'?j.questions.map(function(q,i){return {q:q,n:i+1};}):filterQs(j.questions);
   if(!qlist.length)return '';
-  var intro='<div class="sh-intro">'+T('read')+'</div>';
+  // Level D ships its own instruction line ("Read this tale adapted from ...") —
+  // use it when present rather than the generic one.
+  var intro='<div class="sh-intro">'+esc(j.intro||'')+(j.intro?'':T('read'))+'</div>';
   if(opt('optSplit'))
     return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+artHtml(j)+passageHtml(j.passage)+foot(j.label+' · '+T('psg'))+'</section>'+
            '<section class="sheet paper">'+head(tag,j.title+' — '+T('qs'),j.src,true)+intro+questionsHtml(qlist)+foot(j.label+' · '+T('qs'))+'</section>';
