@@ -171,12 +171,21 @@ table.errtable a{color:#1d679f;font-weight:850}
 <script src="./data.js"></script>
 <script src="./shared-auth.js"></script>
 <script src="./hsm-cloud.js"></script>
+<script src="./hsm-player.js"></script>
 <script src="./grading.js"></script>
 <script src="./stats.js"></script>
 <script src="./exam-data.js"></script>
 <script src="./exam-meta.js"></script>
 <script>
 const D=window.HSMIDDLE_DATA,byId=id=>document.getElementById(id);
+
+/* 풀이 영상 링크 클릭 → 모달 재생 (href는 유지, HSMIDDLE_PLAYER 없으면 기존 새 탭 동작으로 폴백) */
+function hsmPlayClick(e,videoId,start,title,subtitle){
+  if(!window.HSMIDDLE_PLAYER)return;
+  e.preventDefault();
+  HSMIDDLE_PLAYER.open({videoId,start,title,subtitle});
+}
+function hsmAttr(s){return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 
 /* ---- diagnostic.html에서 그대로 재사용하는 데이터/로직 ---- */
 const units={1:'1단원 큰수',2:'6단원 규칙찾기',3:'3단원 곱셈과 나눗셈',4:'3단원 곱셈과 나눗셈',5:'2단원 각도',6:'2단원 각도',7:'2단원 분수의 곱셈',8:'3단원 소수의 덧셈과 뺄셈',9:'4단원 소수의 곱셈',10:'4단원 사각형',11:'4단원 사각형',12:'2단원 약수와 배수',13:'2단원 약수와 배수',14:'3단원 규칙과 대응',15:'3단원 규칙과 대응',16:'3단원 곱셈과 나눗셈',17:'2단원 약수와 배수',18:'2단원 약수와 배수',19:'5단원 직육면체',20:'4단원 약분과 통분',21:'4단원 약분과 통분',22:'5단원 분수의 덧셈과 뺄셈',23:'5단원 분수의 덧셈과 뺄셈',24:'2단원 분수의 곱셈',25:'6단원 다각형의 둘레와 넓이',26:'6단원 다각형의 둘레와 넓이',27:'2단원 분수의 곱셈',28:'2단원 분수의 곱셈',29:'2단원 소수의 나눗셈',30:'3단원 합동과 대칭',31:'4단원 비와 비율',32:'2단원 소수의 나눗셈',33:'2단원 소수의 나눗셈',34:'4단원 비와 비율',35:'5단원 원의 넓이',36:'6단원 직육면체의 겉넓이와 부피',37:'2단원 각기둥과 각뿔',38:'4단원 비례식과 비례배분',39:'4단원 소수의 곱셈',40:'3단원 합동과 대칭'};
@@ -475,7 +484,7 @@ function errorTable(errors){
           rateTd=`<td>정답률 ${pct}%${badge}</td>`;
         }
       }
-      return `<tr><td class="num">${q[0]}</td><td>${units[q[0]]}</td><td>${q[5]}</td><td>${q[2]}</td>${rateTd}<td>${solutionNotes[q[0]-1]}</td><td><a href="https://youtu.be/3NzakkPc9zg?t=${start}" target="_blank" rel="noopener">${q[0]}번 영상</a></td></tr>`;
+      return `<tr><td class="num">${q[0]}</td><td>${units[q[0]]}</td><td>${q[5]}</td><td>${q[2]}</td>${rateTd}<td>${solutionNotes[q[0]-1]}</td><td><a href="https://youtu.be/3NzakkPc9zg?t=${start}" target="_blank" rel="noopener" onclick="hsmPlayClick(event,'3NzakkPc9zg',${start},'${hsmAttr(q[0]+'번 풀이 영상')}','${hsmAttr(units[q[0]])}')">${q[0]}번 영상</a></td></tr>`;
     }).join('')}
   </tbody></table>`;
 }
@@ -752,7 +761,8 @@ function examErrorTable(analysis){
   const jump=n=>{
     const t=tipMeta&&tipMeta[n]&&tipMeta[n].t;
     if(!vid||typeof t!=='number')return '';
-    return `<div><a href="https://youtu.be/${vid}?t=${t}" target="_blank" rel="noopener">▶ ${n}번 풀이 영상</a></div>`;
+    const subtitle=(tipMeta[n]&&tipMeta[n].unit)||'';
+    return `<div><a href="https://youtu.be/${vid}?t=${t}" target="_blank" rel="noopener" onclick="hsmPlayClick(event,'${vid}',${t},'${hsmAttr(n+'번 풀이 영상')}','${hsmAttr(subtitle)}')">▶ ${n}번 풀이 영상</a></div>`;
   };
   const rows=wrongNums.map(n=>{
     const fields=exam.answerFields&&exam.answerFields[n];
@@ -872,10 +882,11 @@ function renderExam(){
   }
 
   const videoUrl=D.videos&&D.videos[examKey];
+  const videoUrlVid=videoUrl&&(videoUrl.match(/[?&]v=([\w-]{6,})/)||videoUrl.match(/youtu\.be\/([\w-]{6,})/)||[])[1];
 
   body.innerHTML=`
     <section class="panel">
-      ${videoUrl?`<p class="hint" style="margin:0 0 12px"><a href="${videoUrl}" target="_blank" rel="noopener">→ ${exam.title} 전체 수업 영상</a></p>`:''}
+      ${videoUrl?`<p class="hint" style="margin:0 0 12px"><a href="${videoUrl}" target="_blank" rel="noopener"${videoUrlVid?` onclick="hsmPlayClick(event,'${videoUrlVid}',0,'${hsmAttr(exam.title)}','${hsmAttr('전체 수업 영상')}')"`:''}>→ ${exam.title} 전체 수업 영상</a></p>`:''}
       <div class="summary">
         <div class="score">
           <span>종합 점수</span>

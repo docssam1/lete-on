@@ -22,9 +22,17 @@
     </section>
   </section>
 </main><div class="watermark hidden" id="watermark"></div>
-<script src="./data.js"></script><script src="./shared-auth.js"></script><script src="./hsm-cloud.js"></script><script src="./grading.js"></script>
+<script src="./data.js"></script><script src="./shared-auth.js"></script><script src="./hsm-cloud.js"></script><script src="./hsm-player.js"></script><script src="./grading.js"></script>
 <script>
 const D=window.HSMIDDLE_DATA,byId=id=>document.getElementById(id);
+
+/* 풀이 영상 링크 클릭 → 모달 재생 (href는 유지, HSMIDDLE_PLAYER 없으면 기존 새 탭 동작으로 폴백) */
+function hsmPlayClick(e,videoId,start,title,subtitle){
+  if(!window.HSMIDDLE_PLAYER)return;
+  e.preventDefault();
+  HSMIDDLE_PLAYER.open({videoId,start,title,subtitle});
+}
+function hsmAttr(s){return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 const units={1:'1단원 큰수',2:'6단원 규칙찾기',3:'3단원 곱셈과 나눗셈',4:'3단원 곱셈과 나눗셈',5:'2단원 각도',6:'2단원 각도',7:'2단원 분수의 곱셈',8:'3단원 소수의 덧셈과 뺄셈',9:'4단원 소수의 곱셈',10:'4단원 사각형',11:'4단원 사각형',12:'2단원 약수와 배수',13:'2단원 약수와 배수',14:'3단원 규칙과 대응',15:'3단원 규칙과 대응',16:'3단원 곱셈과 나눗셈',17:'2단원 약수와 배수',18:'2단원 약수와 배수',19:'5단원 직육면체',20:'4단원 약분과 통분',21:'4단원 약분과 통분',22:'5단원 분수의 덧셈과 뺄셈',23:'5단원 분수의 덧셈과 뺄셈',24:'2단원 분수의 곱셈',25:'6단원 다각형의 둘레와 넓이',26:'6단원 다각형의 둘레와 넓이',27:'2단원 분수의 곱셈',28:'2단원 분수의 곱셈',29:'2단원 소수의 나눗셈',30:'3단원 합동과 대칭',31:'4단원 비와 비율',32:'2단원 소수의 나눗셈',33:'2단원 소수의 나눗셈',34:'4단원 비와 비율',35:'5단원 원의 넓이',36:'6단원 직육면체의 겉넓이와 부피',37:'2단원 각기둥과 각뿔',38:'4단원 비례식과 비례배분',39:'4단원 소수의 곱셈',40:'3단원 합동과 대칭'};
 const solutionNotes=[
   '16자리라는 조건부터 자리 수를 고정합니다. 2527조보다 작으면서 가장 큰 수이므로 앞자리부터 2527보다 작게 만들고, 남은 자리는 모두 9로 채우는 방법으로 비교하세요.',
@@ -102,7 +110,7 @@ function analysisComments(score,sem,area,unit){const sampled=[...sem.rows,...are
 function analytics(score){const sem=aggregate('학기별 수행률',q=>q[3]),area=aggregate('영역별 수행률',q=>q[4]),hard=aggregate('난이도별 수행률',q=>q[2]),unit=aggregate('단원별 수행률',q=>units[q[0]]);const wrong=D.questions.filter(q=>state(q)===false);const groups=Object.values(wrong.reduce((m,q)=>{(m[q[5]]??=[]).push(q);return m},{})),comments=analysisComments(score,sem,area,unit);byId('analytics').innerHTML=`<div class="chart-grid">${chart(sem)}${chart(area)}${chart(hard)}${chart(unit)}</div><section class="detail"><h3>학습 코멘트</h3><ul class="comments">${comments.map(c=>`<li>${c}</li>`).join('')}</ul></section><section class="detail"><h3>우선 보완 유형</h3><div class="weak">${groups.length?groups.map(g=>`<span>${g[0][5]} · ${g.map(q=>q[0]+'번').join(', ')}</span>`).join(''):'<span>오답을 체크하면 보완이 필요한 유형이 여기에 표시됩니다.</span>'}</div></section>`}
 function control(q){if(mark==='ox'){const v=localStorage.getItem(key(q));return `<div class="ox"><button class="${v==='o'?'good':''}" onclick="setOX(${q[0]},'o')">O</button><button class="${v==='x'?'bad':''}" onclick="setOX(${q[0]},'x')">X</button></div>`}return `<input aria-label="${q[0]}번 답" data-q="${q[0]}" placeholder="답안 입력" value="${localStorage.getItem(key(q))||''}" oninput="setAnswer(this)">`}
 function questionComment(q){return solutionNotes[q[0]-1]||'문제의 조건을 식과 그림으로 정리한 뒤 계산하세요.'}
-function card(q,solution=false){const start=videoStarts[q[0]-1];return `<article class="item"><div class="number">${q[0]}</div><div><b>${q[0]}번 풀이 핵심</b><div class="meta"><span class="tag">${q[3]} · ${units[q[0]]}</span><span class="tag">연결 유사유형: ${q[5]}</span></div>${solution?`<div class="solution"><b>정답 ${q[1]}</b><br>${questionComment(q)} <a href="https://youtu.be/3NzakkPc9zg?t=${start}" target="_blank" rel="noopener">${q[0]}번 영상</a></div>`:''}</div>${solution?`<button class="secondary" onclick="openPractice([${q[0]}])">유사문제</button>`:control(q)}</article>`}
+function card(q,solution=false){const start=videoStarts[q[0]-1];return `<article class="item"><div class="number">${q[0]}</div><div><b>${q[0]}번 풀이 핵심</b><div class="meta"><span class="tag">${q[3]} · ${units[q[0]]}</span><span class="tag">연결 유사유형: ${q[5]}</span></div>${solution?`<div class="solution"><b>정답 ${q[1]}</b><br>${questionComment(q)} <a href="https://youtu.be/3NzakkPc9zg?t=${start}" target="_blank" rel="noopener" onclick="hsmPlayClick(event,'3NzakkPc9zg',${start},'${hsmAttr(q[0]+'번 풀이 영상')}','${hsmAttr(units[q[0]])}')">${q[0]}번 영상</a></div>`:''}</div>${solution?`<button class="secondary" onclick="openPractice([${q[0]}])">유사문제</button>`:control(q)}</article>`}
 function render(){const answered=D.questions.filter(q=>state(q)!==null).length,correct=D.questions.filter(q=>state(q)===true).length,score=correct*2.5,[level,text]=grade(score);byId('score').textContent=score;byId('comment').innerHTML=`<b>${level}</b><br>${text}<br><span class="hint">${mark==='ox'?'O/X 체크':'답안 입력'} ${answered}/40문항 · 정답 ${correct}문항 · ${answered?Math.round(correct/answered*100):0}%</span>`;analytics(score);const list=byId('list'),errors=D.questions.filter(q=>state(q)===false);if(tab==='solution'){list.innerHTML=(errors.length?errors:D.questions.filter(q=>state(q)!==null)).map(q=>card(q,true)).join('')||'<p class="hint">먼저 문항을 채점해 주세요.</p>';return}if(mode==='merged'){const groups=Object.values(errors.reduce((m,q)=>{(m[q[5]]??=[]).push(q);return m},{}));list.innerHTML=groups.map(g=>`<article class="item"><div class="number">${g.length}</div><div><b>${g[0][5]}</b><div class="meta">${g.map(q=>q[0]+'번').join(', ')} · ${g[0][3]} · ${units[g[0][0]]}</div></div><button onclick="openPractice([${g.map(q=>q[0]).join(',')}])">문제 풀기</button></article>`).join('')||'<p class="hint">틀린 문항을 체크하면 오답 유형을 하나의 연습 세트로 묶을 수 있습니다.</p>';return}list.innerHTML=D.questions.map(q=>card(q)).join('')}
 </script>
 </body></html>

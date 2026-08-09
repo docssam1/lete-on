@@ -171,6 +171,7 @@ button,input{font:inherit}
 <script src="./data.js"></script>
 <script src="./shared-auth.js"></script>
 <script src="./hsm-cloud.js"></script>
+<script src="./hsm-player.js"></script>
 <script src="./exam-meta.js"></script>
 <script>
 const session = HSMIDDLE_AUTH.readSession();
@@ -184,6 +185,14 @@ const isOpen = key => access.has(key);
 const name = session.name;
 
 function logout(){ HSMIDDLE_AUTH.clearSession(); location.replace("./login.html"); }
+
+/* 풀이 영상 링크 클릭 → 모달 재생 (href는 유지, HSMIDDLE_PLAYER 없으면 기존 새 탭 동작으로 폴백) */
+function hsmPlayClick(e,videoId,start,title,subtitle){
+  if(!window.HSMIDDLE_PLAYER)return;
+  e.preventDefault();
+  HSMIDDLE_PLAYER.open({videoId,start,title,subtitle});
+}
+function hsmAttr(s){return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 
 /* 이용 기간(6개월) 만료 시 본문을 안내로 교체하고 진행을 중단한다.
    서버가 없으므로 기기·브라우저 단위로만 관리된다. */
@@ -243,9 +252,10 @@ function diagnosticCard(){
     const n = i + 1;
     const q = D.questions && D.questions[i];
     const start = videoStarts[i];
+    const subtitle = q ? q[5] : "";
     return `<div class="qcell">
       <button type="button" title="${q ? q[5] : ""}" onclick="openSimilar(${n})">${n}</button>
-      <a class="qvideo" href="https://youtu.be/3NzakkPc9zg?t=${start}" target="_blank" rel="noopener">영상</a>
+      <a class="qvideo" href="https://youtu.be/3NzakkPc9zg?t=${start}" target="_blank" rel="noopener" onclick="hsmPlayClick(event,'3NzakkPc9zg',${start},'${hsmAttr(n+"번 풀이 영상")}','${hsmAttr(subtitle)}')">영상</a>
     </div>`;
   }).join("");
 
@@ -287,21 +297,21 @@ const MOCKS = [
 function mockCard(m){
   const open = isOpen(m.key);
   const title = (D.exams && D.exams[m.key]) || m.key;
+  const videoUrl = D.videos && D.videos[m.key];
+  const vid = videoUrl
+    ? ((videoUrl.match(/[?&]v=([\w-]{6,})/) || videoUrl.match(/youtu\.be\/([\w-]{6,})/) || [])[1])
+    : "";
 
   let qGridHtml = "";
   if (open) {
-    const videoUrl = D.videos && D.videos[m.key];
     const META = window.HSMIDDLE_EXAM_META && window.HSMIDDLE_EXAM_META[m.key];
-    const vid = videoUrl
-      ? ((videoUrl.match(/[?&]v=([\w-]{6,})/) || videoUrl.match(/youtu\.be\/([\w-]{6,})/) || [])[1])
-      : "";
     if (META && vid) {
       const grid = Array.from({length:40}, (_, i) => {
         const n = i + 1;
         const meta = META[n];
         if (!meta) return `<div class="qcell"><a class="qjump" href="javascript:void(0)">${n}</a></div>`;
         return `<div class="qcell">
-          <a class="qjump" title="${meta.unit || ""}" href="https://youtu.be/${vid}?t=${meta.t}" target="_blank" rel="noopener">${n}</a>
+          <a class="qjump" title="${meta.unit || ""}" href="https://youtu.be/${vid}?t=${meta.t}" target="_blank" rel="noopener" onclick="hsmPlayClick(event,'${vid}',${meta.t},'${hsmAttr(n+"번 풀이 영상")}','${hsmAttr(meta.unit||"")}')">${n}</a>
         </div>`;
       }).join("");
       qGridHtml = `<div class="qlabel">문항별 풀이 영상 40 — 번호를 누르면 해당 문항 설명 시점부터 재생됩니다.</div><div class="qgrid">${grid}</div>`;
@@ -316,7 +326,7 @@ function mockCard(m){
       </div>
       <h2>${title}</h2>
       ${open ? `
-        <p class="desc">${(D.videos && D.videos[m.key]) ? `<a href="${D.videos[m.key]}" target="_blank" rel="noopener">전체 수업 영상 보기 →</a>` : "전체 수업 영상이 아직 준비되지 않았습니다."}</p>
+        <p class="desc">${videoUrl ? `<a href="${videoUrl}" target="_blank" rel="noopener"${vid ? ` onclick="hsmPlayClick(event,'${vid}',0,'${hsmAttr(title)}','${hsmAttr("전체 수업 영상")}')"` : ""}>전체 수업 영상 보기 →</a>` : "전체 수업 영상이 아직 준비되지 않았습니다."}</p>
         <div class="acts">
           <a href="./exam.html?exam=${m.key}">응시 · 채점</a>
           <a class="ghost" href="./report.html?exam=${m.key}">분석지</a>
