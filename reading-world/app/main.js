@@ -946,7 +946,12 @@ function migrateProfile(saved){if(!saved)return {lessons:{},points:0};if(saved.l
 function stForLesson(id,fallbackLang){const lp=profile&&profile.lessons?profile.lessons[id]:null;const s=normalizeState({...defaultState(),...(lp||{})});s.lang=(profile&&profile.lang)||fallbackLang||s.lang;return s;}
 function enterStudent(student){
  stopSpeak();const lang=st.lang;currentStudent=student;Store.setCurrentId(student.id);
- profile=migrateProfile(Store.load(student.id));ensureAvatar(profile);if(window.GameStore)GameStore.migrate(profile);currentBookId=(profile&&profile.currentBookId)||'cars-level-b';currentLessonId='lesson1';loadLesson('lesson1');
+ profile=migrateProfile(Store.load(student.id));ensureAvatar(profile);if(window.GameStore)GameStore.migrate(profile);
+ // A book picked on the UEP landing shelf is handed over through localStorage and
+ // consumed once, so it opens that book instead of whatever was last studied.
+ let handoff=null;try{handoff=localStorage.getItem('gfield.pendingBook');localStorage.removeItem('gfield.pendingBook');}catch(e){}
+ if(handoff&&availableBooks().some(b=>b.id===handoff))profile.currentBookId=handoff;
+ currentBookId=(profile&&profile.currentBookId)||'cars-level-b';currentLessonId='lesson1';loadLesson('lesson1');
  st=stForLesson('lesson1',lang);atTown=true;townView=(profile.avatar&&profile.avatar.picked)?landingView():'pick';save();render();window.scrollTo({top:0});flushLevelUp();
  if(Store.pull){Store.pull(student.id).then(remote=>{if(remote&&currentStudent&&currentStudent.id===student.id&&(remote.updatedAt||0)>(profile.updatedAt||0)){profile=migrateProfile(remote);st=stForLesson(currentLessonId,lang);render();}}).catch(()=>{});}
 }
