@@ -121,7 +121,13 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
 .sheet.key .ex b{font-family:var(--serif)}
 
 /* ---------------- covers ---------------- */
-.sheet.cover{padding:0;overflow:hidden;display:flex}
+/* Cover panels are painted with an inline <svg><rect>, not a CSS background.
+   Browsers print CSS backgrounds only when the user ticks "Background graphics",
+   which is off by default — a navy cover would come out of an office printer as
+   a blank white page. An SVG rect is foreground content and always prints. */
+.cvbg{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+.cv>*:not(.cvbg),.cv .bar>*:not(.cvbg){position:relative;z-index:1}
+.sheet.cover{padding:0;overflow:hidden;display:flex;print-color-adjust:exact;-webkit-print-color-adjust:exact}
 .cv{flex:1;display:flex;position:relative;color:#fff}
 .cv .lg{width:52mm;height:auto;display:block}
 .cv .lg.sm{width:30mm}
@@ -132,18 +138,18 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
 .cv .rule{height:2px;background:var(--brand2);border:0;width:38mm;margin:0}
 
 /* 1 crest */
-.cv.crest{background:var(--brand);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:26mm 20mm;gap:8mm}
+.cv.crest{flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:26mm 20mm;gap:8mm}
 .cv.crest::after{content:"";position:absolute;inset:8mm;border:1px solid rgba(255,255,255,.28)}
 .cv.crest h1{font-size:34pt}
 .cv.crest .lvl{font-size:13pt;letter-spacing:.24em;color:var(--brand2);text-transform:uppercase}
 /* 2 column */
 .cv.column{flex-direction:row}
-.cv.column .bar{width:62mm;background:var(--brand);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:20mm 10mm;text-align:center}
+.cv.column .bar{width:62mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:20mm 10mm;text-align:center}
 .cv.column .body{flex:1;background:#fff;color:#16202c;display:flex;flex-direction:column;justify-content:center;gap:6mm;padding:24mm 18mm}
 .cv.column h1{font-size:30pt;color:var(--brand)}
 .cv.column .lvl{font-size:11pt;letter-spacing:.2em;color:#6b7683;text-transform:uppercase}
 /* 3 plate */
-.cv.plate{background:#f7f4ea;color:#1f2a3d;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30mm 22mm;gap:7mm}
+.cv.plate{color:#1f2a3d;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30mm 22mm;gap:7mm}
 .cv.plate::after{content:"";position:absolute;inset:12mm;border:3px double var(--brand)}
 .cv.plate h1{font-size:29pt;color:var(--brand)}
 .cv.plate .lvl{font-size:10.5pt;letter-spacing:.26em;color:#8a6a22;text-transform:uppercase}
@@ -158,7 +164,7 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
 .cv.block .aca{color:var(--brand)}.cv.block .sub{color:#8b95a0}
 /* 5 arc */
 .cv.arc{background:#fff;color:#16202c;flex-direction:column;justify-content:flex-end;padding:20mm 18mm 24mm}
-.cv.arc .sky{position:absolute;left:-10%;right:-10%;top:-46%;height:96%;background:var(--brand);border-radius:0 0 50% 50%}
+.cv.arc .sky{position:absolute;left:-10%;right:-10%;top:-46%;height:96%;z-index:0}
 .cv.arc .capsule{position:relative;text-align:center;color:#fff;margin-bottom:auto;padding-top:16mm;display:flex;flex-direction:column;align-items:center;gap:5mm}
 .cv.arc h1{font-size:28pt;color:var(--brand)}
 .cv.arc .lvl{font-size:10.5pt;letter-spacing:.22em;color:#8a6a22;text-transform:uppercase}
@@ -227,6 +233,19 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
     </div>
 
     <div class="panel">
+      <h2>출력 단위</h2>
+      <p class="hint">한 권으로 묶을지, 단원 하나만 뽑을지 고릅니다.</p>
+      <div class="row" style="margin-bottom:8px">
+        <button class="mini scope on" data-scope="volume">책 한 권 (통권)</button>
+        <button class="mini scope" data-scope="unit">단원별</button>
+      </div>
+      <label class="fld" id="unitPickWrap" hidden><span>인쇄할 단원</span>
+        <select id="unitPick" style="width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px"></select>
+      </label>
+      <p class="hint" style="margin:0" id="scopeNote">앞표지 · 단원 속표지 · 전체 학습지 · 답안지가 한 번에 나옵니다.</p>
+    </div>
+
+    <div class="panel">
       <h2>표지</h2>
       <p class="hint">5가지 중 하나를 고르세요. 통권 PDF에는 앞표지가, 챕터마다 속표지가 들어갑니다.</p>
       <div class="grid" style="grid-template-columns:1fr;margin-bottom:9px">
@@ -280,7 +299,7 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
         <label class="chk"><input type="checkbox" id="optStrategy"><span>문항에 전략 이름 표시</span></label>
         <label class="chk on"><input type="checkbox" id="optExplain" checked><span>답안지에 해설 포함</span></label>
       </div>
-      <p class="hint" style="margin:12px 0 0">인쇄 대화상자에서 <b>대상을 “PDF로 저장”</b>으로, <b>배경 그래픽</b>을 켜고, 여백은 <b>없음</b>으로 두세요.</p>
+      <p class="hint" style="margin:12px 0 0">표지 색은 도형으로 그려서 <b>프린터로 바로 뽑아도 색이 나옵니다</b> — “배경 그래픽”을 켜지 않아도 돼요. 표 머리글의 옅은 음영만 그 설정을 따릅니다. 여백은 <b>없음</b>으로 두세요.</p>
     </div>
 
   </div>
@@ -423,6 +442,7 @@ var TXT={
 };
 function T(k){return (TXT[k]||['',''])[LANG==='en'?1:0];}
 
+var SCOPE=get('scope','volume'), ONLY=get('only','');
 var sel={diag:{},book:{},strat:{}};
 BOOKS.forEach(function(b){sel.book[b.id]={ch:{},parts:{vocab:false,extra:true,similar:false}};});
 function stratOn(){return STRATS.some(function(_,i){return sel.strat[i];});}
@@ -504,22 +524,30 @@ function vocabHtml(words){
 }
 
 /* ---------- covers ---------- */
+// Painted as SVG, not CSS background — see the .cvbg note in the stylesheet.
+function bg(color){
+  return '<svg class="cvbg" preserveAspectRatio="none" viewBox="0 0 10 10" aria-hidden="true">'+
+    '<rect width="10" height="10" fill="'+esc(color)+'"/></svg>';
+}
 function coverSheet(title,lvl){
   var k=brand.cover,L=logoTag('lg'),n=esc(brand.name),s=esc(brand.sub),t=esc(title),v=esc(lvl||'');
   var inner;
-  if(k==='crest') inner='<div class="cv crest">'+L+'<hr class="rule">'+
+  if(k==='crest') inner='<div class="cv crest">'+bg(brand.color)+L+'<hr class="rule">'+
       '<div><div class="aca">'+n+'</div><div class="sub">'+s+'</div></div>'+
       '<h1>'+t+'</h1><div class="lvl">'+v+'</div></div>';
-  else if(k==='column') inner='<div class="cv column"><div class="bar">'+L+
+  else if(k==='column') inner='<div class="cv column"><div class="bar">'+bg(brand.color)+L+
       '<div><div class="aca">'+n+'</div><div class="sub">'+s+'</div></div></div>'+
       '<div class="body"><div class="lvl">'+v+'</div><h1>'+t+'</h1><hr class="rule"></div></div>';
-  else if(k==='plate') inner='<div class="cv plate">'+logoTag('lg sm')+
+  else if(k==='plate') inner='<div class="cv plate">'+bg('#f7f4ea')+logoTag('lg sm')+
       '<div><div class="aca">'+n+'</div><div class="sub">'+s+'</div></div>'+
       '<hr class="rule"><h1>'+t+'</h1><div class="lvl">'+v+'</div></div>';
   else if(k==='block') inner='<div class="cv block"><div class="mark">'+esc((lvl||'R').slice(-1))+'</div>'+
       '<div>'+logoTag('lg sm')+'<div class="aca" style="margin-top:5mm">'+n+'</div><div class="sub">'+s+'</div></div>'+
       '<div><div class="lvl">'+v+'</div><h1>'+t+'</h1><hr class="rule" style="margin-top:6mm"></div></div>';
-  else inner='<div class="cv arc"><div class="sky"></div><div class="capsule">'+L+
+  else inner='<div class="cv arc">'+
+      '<svg class="cvbg" preserveAspectRatio="none" viewBox="0 0 100 140" aria-hidden="true">'+
+      '<ellipse cx="50" cy="8" rx="78" ry="58" fill="'+esc(brand.color)+'"/></svg>'+
+      '<div class="capsule">'+L+
       '<div><div class="aca">'+n+'</div><div class="sub">'+s+'</div></div></div>'+
       '<div><div class="lvl">'+v+'</div><h1>'+t+'</h1><hr class="rule"></div></div>';
   return '<section class="sheet cover">'+inner+'</section>';
@@ -558,7 +586,15 @@ function jobs(){
       });
     });
   });
+  // 단원별 mode narrows the run to a single chapter; 통권 keeps everything.
+  if(SCOPE==='unit'&&ONLY) out=out.filter(function(j){return j.le&&(j.book.id+':'+j.le.id)===ONLY;});
   return out;
+}
+function unitOptions(){
+  var o=[];
+  BOOKS.forEach(function(b){b.lessons.forEach(function(le){
+    if(sel.book[b.id].ch[le.id]) o.push({v:b.id+':'+le.id,t:b.label+' · '+le.num+'과 '+le.title});});});
+  return o;
 }
 
 // The illustration belongs with the passage, never with the question page — a
@@ -617,7 +653,9 @@ function volumeTitle(list){
 function build(mode,list){
   var html='',lastCh=null;
   if(mode==='key') return keySheets(list);
-  var wantCover=opt('optCover'), wantDiv=opt('optDivider')&&mode==='book';
+  // A single-unit run is a handout, not a bound book: no volume cover, no dividers.
+  var single=(SCOPE==='unit'&&ONLY);
+  var wantCover=opt('optCover')&&!single, wantDiv=opt('optDivider')&&mode==='book'&&!single;
   if(wantCover&&mode==='book') html+=coverSheet(volumeTitle(list),'Workbook · '+new Date().getFullYear());
   else if(wantCover&&mode==='paper') html+=coverSheet(volumeTitle(list),'Worksheets');
   list.forEach(function(j){
@@ -640,6 +678,17 @@ function render(){
   ['printPaper','printBook'].forEach(function(id){document.getElementById(id).disabled=!list.length;});
   document.getElementById('printKey').disabled=!qTotal;
   paintSwatches();
+  var opts=unitOptions(), selEl=document.getElementById('unitPick');
+  document.getElementById('unitPickWrap').hidden=(SCOPE!=='unit');
+  document.getElementById('scopeNote').textContent = SCOPE==='unit'
+    ? '고른 단원의 학습지만 나옵니다. 앞표지·속표지는 빠집니다.'
+    : '앞표지 · 단원 속표지 · 전체 학습지 · 답안지가 한 번에 나옵니다.';
+  if(SCOPE==='unit'){
+    if(!opts.some(function(o){return o.v===ONLY;})) ONLY=opts.length?opts[0].v:'';
+    selEl.innerHTML=opts.length?opts.map(function(o){
+      return '<option value="'+esc(o.v)+'"'+(o.v===ONLY?' selected':'')+'>'+esc(o.t)+'</option>';}).join('')
+      :'<option value="">먼저 챕터를 선택하세요</option>';
+  }
   if(!list.length){
     sheetsEl.innerHTML='<div class="empty">왼쪽에서 진단 레벨이나 교재 챕터를 선택하면<br>여기에 인쇄 미리보기가 나타납니다.</div>';
     document.getElementById('pvNote').textContent='미리보기';return;
@@ -671,6 +720,7 @@ document.addEventListener('change',function(e){
     fr.onload=function(){brand.logo=String(fr.result);set('logo',brand.logo);applyBrand();render();};
     fr.readAsDataURL(t.files[0]);return;
   }
+  if(t.id==='unitPick'){ONLY=t.value;set('only',ONLY);return render();}
   if(t.id&&t.id.indexOf('opt')===0){t.closest('.chk').classList.toggle('on',t.checked);return render();}
 });
 document.addEventListener('input',function(e){
@@ -680,6 +730,8 @@ document.addEventListener('input',function(e){
 document.addEventListener('click',function(e){
   var b=e.target.closest('button');if(!b)return;
   if(b.id==='bLogoClear'){brand.logo='';set('logo','');applyBrand();return render();}
+  if(b.dataset.scope){SCOPE=b.dataset.scope;set('scope',SCOPE);
+    document.querySelectorAll('.mini.scope').forEach(function(x){x.classList.toggle('on',x===b);});return render();}
   if(b.dataset.lang){LANG=b.dataset.lang;set('lang',LANG);
     document.querySelectorAll('.mini.lang').forEach(function(x){x.classList.toggle('on',x===b);});return render();}
   if(b.dataset.cover){brand.cover=b.dataset.cover;set('cover',brand.cover);
@@ -726,6 +778,7 @@ document.addEventListener('click',function(e){
 });
 
 document.querySelectorAll('.mini.lang').forEach(function(x){x.classList.toggle('on',x.dataset.lang===LANG);});
+document.querySelectorAll('.mini.scope').forEach(function(x){x.classList.toggle('on',x.dataset.scope===SCOPE);});
 applyBrand();render();
 })();
 </script>
