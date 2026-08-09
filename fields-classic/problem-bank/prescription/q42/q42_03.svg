@@ -6,9 +6,7 @@
     </style>
   </defs>
   <rect class="bg" width="980" height="560" rx="26"/>
-  <text class="title" x="48" y="52">삼각형의 왼쪽, 아래쪽으로 쓰인 수의 합이 삼각형 안의 수가 됩니다.</text>
-  <text class="sub" x="48" y="84">빈칸에 1부터 7까지의 수를 한 번씩만 써넣으세요.</text>
-  <g transform="translate(150 112)">
+  <g transform="translate(150 64)">
     <rect class="cell" x="112" y="0" width="112" height="112"/>
     <rect class="cell" x="0" y="112" width="112" height="112"/><text class="given" x="56" y="168">9</text>
     <rect class="cell" x="112" y="112" width="112" height="112"/>
