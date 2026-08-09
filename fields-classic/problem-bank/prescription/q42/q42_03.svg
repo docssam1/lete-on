@@ -1,27 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="430" viewBox="0 0 980 430">
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560">
   <defs>
     <style>
-      .bg{fill:#fffdf7}.title{font:700 26px Arial,sans-serif;fill:#17324d}.hint{font:600 20px Arial,sans-serif;fill:#55708c}
-      .cell{fill:#ffffff;stroke:#8fb7d4;stroke-width:3}.tri{fill:#fff4cf;stroke:#e0b94d;stroke-width:3}
-      .num{font:700 34px Arial,sans-serif;fill:#17324d;text-anchor:middle;dominant-baseline:middle}.sum{font:700 28px Arial,sans-serif;fill:#7a5600;text-anchor:middle;dominant-baseline:middle}
+      .bg{fill:#fffdf7}.title{font:700 27px Arial,"Noto Sans KR",sans-serif;fill:#17324d}.sub{font:600 19px Arial,"Noto Sans KR",sans-serif;fill:#55708c}
+      .cell{fill:#fff;stroke:#bfdc9d;stroke-width:3}.tri{fill:#fffde9;stroke:#d9e9a8;stroke-width:3}.given{font:700 31px Arial,sans-serif;fill:#17324d;text-anchor:middle;dominant-baseline:middle}.sum{font:700 25px Arial,sans-serif;fill:#17324d;text-anchor:middle;dominant-baseline:middle}
     </style>
   </defs>
-  <rect class="bg" width="980" height="430" rx="28"/>
-  <text class="title" x="50" y="58">빈칸에 1부터 7까지의 수를 한 번씩 써넣으세요.</text>
-  <text class="hint" x="50" y="94">삼각형 안의 수는 아래 두 칸의 수를 더한 값입니다.</text>
-  <g transform="translate(105 155)">
-    <polygon class="tri" points="55,0 95,70 15,70"/><text class="sum" x="55" y="45">10</text>
-    <polygon class="tri" points="165,0 205,70 125,70"/><text class="sum" x="165" y="45">7</text>
-    <polygon class="tri" points="275,0 315,70 235,70"/><text class="sum" x="275" y="45">8</text>
-    <polygon class="tri" points="385,0 425,70 345,70"/><text class="sum" x="385" y="45">9</text>
-    <polygon class="tri" points="495,0 535,70 455,70"/><text class="sum" x="495" y="45">7</text>
-    <polygon class="tri" points="605,0 645,70 565,70"/><text class="sum" x="605" y="45">8</text>
-    <rect class="cell" x="0" y="92" width="80" height="70" rx="10"/>
-    <rect class="cell" x="110" y="92" width="80" height="70" rx="10"/><text class="num" x="150" y="127">6</text>
-    <rect class="cell" x="220" y="92" width="80" height="70" rx="10"/>
-    <rect class="cell" x="330" y="92" width="80" height="70" rx="10"/>
-    <rect class="cell" x="440" y="92" width="80" height="70" rx="10"/><text class="num" x="480" y="127">2</text>
-    <rect class="cell" x="550" y="92" width="80" height="70" rx="10"/>
-    <rect class="cell" x="660" y="92" width="80" height="70" rx="10"/>
+  <rect class="bg" width="980" height="560" rx="26"/>
+  <text class="title" x="48" y="52">삼각형의 왼쪽, 아래쪽으로 쓰인 수의 합이 삼각형 안의 수가 됩니다.</text>
+  <text class="sub" x="48" y="84">빈칸에 1부터 7까지의 수를 한 번씩만 써넣으세요.</text>
+  <g transform="translate(150 112)">
+    <rect class="cell" x="112" y="0" width="112" height="112"/>
+    <rect class="cell" x="0" y="112" width="112" height="112"/><text class="given" x="56" y="168">9</text>
+    <rect class="cell" x="112" y="112" width="112" height="112"/>
+    <rect class="cell" x="224" y="112" width="112" height="112"/>
+    <rect class="cell" x="0" y="224" width="112" height="112"/>
+    <rect class="cell" x="112" y="224" width="112" height="112"/>
+    <rect class="cell" x="224" y="224" width="112" height="112"/>
+    <rect class="cell" x="0" y="336" width="112" height="112"/>
+    <rect class="cell" x="112" y="336" width="112" height="112"/><text class="given" x="168" y="392">8</text>
+    <polygon class="tri" points="0,112 112,112 112,0"/><text class="sum" x="66" y="76">16</text>
+    <polygon class="tri" points="112,0 224,0 224,-112"/><text class="sum" x="182" y="-54">13</text>
+    <polygon class="tri" points="224,0 336,0 224,112"/><text class="sum" x="262" y="46">6</text>
+    <polygon class="tri" points="336,112 448,112 336,224"/><text class="sum" x="391" y="160">14</text>
+    <polygon class="tri" points="336,224 448,224 336,336"/><text class="sum" x="391" y="272">15</text>
+    <polygon class="tri" points="224,448 336,336 336,448"/><text class="sum" x="285" y="407">12</text>
+    <polygon class="tri" points="224,112 336,0 336,112"/><text class="sum" x="300" y="77">9</text>
   </g>
 </svg>
