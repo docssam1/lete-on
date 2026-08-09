@@ -129,8 +129,14 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .sh-intro{font-size:10pt;color:#3c4a41;margin:0 0 4mm;padding:2.5mm 3mm;background:#f4f2ea;border-left:3px solid var(--brand)}
 .psg{font-family:var(--serif);font-size:11.6pt;line-height:1.75;margin-bottom:5mm}
 .psg p{margin:0 0 3mm}
-.art{display:block;max-width:100%;max-height:74mm;margin:0 auto 4mm;object-fit:contain}
-.art.sm{max-height:44mm}
+/* The lesson illustrations are portrait (about 1122x1402), so capping the height
+   squeezed the width to ~59mm and left the picture stranded in the middle of the
+   page. It now sits beside the opening paragraphs the way the source book sets
+   them, sized by width. .psg p.lead makes a block formatting context so the float
+   is measured inside its paragraph — the paginator depends on that height. */
+.art{max-width:100%;object-fit:contain}
+.art.fl{float:right;width:62mm;margin:1mm 0 3mm 6mm}
+.art.sm{display:block;width:52mm;margin:0 auto 4mm}
 .psg.numbered{counter-reset:pl}
 ol.qs{list-style:none;counter-reset:q;padding:0;margin:0}
 ol.qs>li{break-inside:avoid;margin:0 0 4mm}
@@ -959,8 +965,11 @@ function head(tag,title,src,forStudent){
 function foot(label){
   return '<div class="foot"><span>'+esc(label)+'</span><span>'+esc(brand.name||'Gfield Reading')+'</span></div>';
 }
-function passageHtml(ps){
-  return '<div class="psg">'+(ps||[]).map(function(p){
+// The illustration floats inside the passage, not above it, so every paragraph
+// wraps alongside instead of leaving a column of white space next to a short
+// opening line.
+function passageHtml(ps,art){
+  return '<div class="psg">'+(art||'')+(ps||[]).map(function(p){
     return '<p>'+esc(p).replace(/\n/g,'<br>')+'</p>';}).join('')+'</div>';
 }
 function questionsHtml(list){
@@ -1177,8 +1186,12 @@ function jobs(){
 
 // The illustration belongs with the passage, never with the question page — a
 // picture beside the questions would give away answers on the split layout.
+// j.showArt is set once per chapter: the artwork is the lesson's, so repeating it
+// on the vocabulary, extra and parallel sheets just printed the same picture three
+// times — and on the created passages it depicts the wrong scene.
 function artHtml(j,small){
-  return (opt('optArt')&&j.art)?'<img class="art'+(small?' sm':'')+'" src="'+esc(j.art)+'" alt="">':'';
+  return (opt('optArt')&&j.art&&j.showArt)
+    ? '<img class="art'+(small?' sm':' fl')+'" src="'+esc(j.art)+'" alt="">' : '';
 }
 function paperSheets(j){
   if(j.kind==='loading')
@@ -1205,10 +1218,10 @@ function paperSheets(j){
   // passage; past that the passage takes its own sheet rather than pushing the
   // tail of the question list off the page.
   if(!opt('optSplit')&&chunks.length===1)
-    return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+artHtml(j,true)+
-      passageHtml(j.passage)+intro+questionsHtml(qlist)+foot(j.label)+'</section>';
-  return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+artHtml(j)+
-    passageHtml(j.passage)+foot(j.label+' · '+T('psg'))+'</section>'+qSheets;
+    return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+
+      passageHtml(j.passage,artHtml(j))+intro+questionsHtml(qlist)+foot(j.label)+'</section>';
+  return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+
+    passageHtml(j.passage,artHtml(j))+foot(j.label+' · '+T('psg'))+'</section>'+qSheets;
 }
 // Split the question list into page-sized runs.
 function qChunks(list){
@@ -1303,7 +1316,13 @@ function render(){
   list.forEach(function(j){if(!j.le)return;var k=j.book.id+':'+j.le.id;(byCh[k]=byCh[k]||[]).push(j);});
   Object.keys(byCh).forEach(function(k){
     var bits=byCh[k].map(function(j){return j.title.split('— ').pop();});
-    byCh[k].forEach(function(j){j.bitsOf=bits.join(' · ');});
+    byCh[k].forEach(function(j){j.bitsOf=bits.join(' · ');j.showArt=false;});
+    // One picture per chapter, on the first sheet that can carry it — the original
+    // passage when it is being printed, otherwise whatever comes first.
+    var host=byCh[k].filter(function(j){return j.licensed;})[0]
+          || byCh[k].filter(function(j){return j.kind==='passage';})[0]
+          || byCh[k][0];
+    if(host)host.showArt=true;
   });
   var mode=document.body.dataset.print;
   sheetsEl.innerHTML=build(mode,list);
@@ -1335,7 +1354,22 @@ function atomsOf(block){
   if(block.classList.contains('psg')||block.classList.contains('ex')||
      (block.tagName==='OL'&&block.classList.contains('qs'))) kids=block.children;
   if(!kids||kids.length<2) return [{whole:block,h:outerH(block)}];
-  return [].slice.call(kids).map(function(k){return {host:block,node:k,h:outerH(k)};});
+  var list=[].slice.call(kids), lead=null;
+  // A floated illustration is out of flow: it has no place of its own in the
+  // sequence, it rides along with the paragraph it sits beside.
+  if(list.length&&list[0].tagName==='IMG'&&list[0].classList.contains('fl'))
+    lead=list.shift();
+  var atoms=list.map(function(k){return {host:block,node:k,h:outerH(k)};});
+  // Its height is deliberately not added: the paragraphs beside it are measured
+  // already wrapped, so counting the picture again would reserve space twice and
+  // push a paragraph onto a page that did not need to exist. A passage short
+  // enough for the float to be the tallest thing never splits in the first place.
+  if(lead&&atoms.length){
+    atoms[0].pre=lead;
+  }else if(lead){
+    atoms.push({host:block,node:lead,h:outerH(lead)});
+  }
+  return atoms;
 }
 function paginate(){
   sheetsEl.classList.add('measuring');
@@ -1379,6 +1413,7 @@ function splitSheet(s){
     page.forEach(function(a){
       if(a.whole){sheet.appendChild(a.whole);host=null;hostSrc=null;return;}
       if(hostSrc!==a.host){hostSrc=a.host;host=a.host.cloneNode(false);sheet.appendChild(host);}
+      if(a.pre)host.appendChild(a.pre);      // the float leads its paragraph
       host.appendChild(a.node);
     });
     if(foot)sheet.appendChild(pi?foot.cloneNode(true):foot);
