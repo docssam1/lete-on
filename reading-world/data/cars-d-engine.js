@@ -2,6 +2,26 @@ if (!window.LESSONS) window.LESSONS = {};
 (function(){
   const STRATEGIES=['Finding Main Idea','Recalling Facts and Details','Understanding Sequence','Recognising Cause and Effect','Comparing and Contrasting','Making Predictions','Finding Word Meaning in Context','Drawing Conclusions and Making Inferences','Distinguishing Between Fact and Opinion',"Identifying Author's Purpose",'Interpreting Figurative Language','Summarising'];
   const LETTERS='ABCD';
+  const HOME_IMAGES={
+    cd1:'assets/images/cars-level-d/cd1-folktale-scene.webp?v=49',
+    cd2:'assets/images/cars-level-d/cd2-author-portrait.webp?v=49',
+    cd3:'assets/images/cars-level-d/cd3-classroom-secret.webp?v=49',
+    cd4:'assets/images/cars-level-d/cd4-moon-phases.webp?v=49',
+    cd5:'assets/images/cars-level-d/cd5-animal-poem.webp?v=49',
+    cd6:'assets/images/cars-level-d/cd6-bear-scene.webp?v=49',
+    cd7:'assets/images/cars-level-d/cd7-edison-portrait.webp?v=49',
+    cd8:'assets/images/cars-level-d/cd8-school-play.webp?v=49',
+    cd9:'assets/images/cars-level-d/cd9-viking-longship.webp?v=49',
+    cd10:'assets/images/cars-level-d/cd10-grandma-gift.webp?v=49',
+    cd11:'assets/images/cars-level-d/cd11-whale-scene.webp?v=49',
+    cd12:'data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520"><rect width="800" height="520" rx="38" fill="#f5efe2"/><rect x="130" y="55" width="540" height="410" rx="24" fill="#fff" stroke="#2d3748" stroke-width="14"/><path d="M210 160h380M210 220h300M210 280h350" stroke="#8b6f47" stroke-width="18" stroke-linecap="round"/><path d="M520 335l96-96 34 34-96 96-55 20z" fill="#d8a24a" stroke="#2d3748" stroke-width="10"/><path d="M616 239l18-18 34 34-18 18" fill="#efc36a" stroke="#2d3748" stroke-width="10"/><text x="260" y="400" font-family="Arial,sans-serif" font-size="64" font-weight="700" fill="#2d3748">WRITE</text></svg>'),
+    cd13:'assets/images/cars-level-d/cd13-star-party.webp?v=49',
+    cd14:'assets/images/cars-level-d/cd14-pony-express.webp?v=49',
+    cd15:'assets/images/cars-level-d/cd15-rainforest-layers.webp?v=49'
+  };
+  function homeImage(id){return HOME_IMAGES[id]||'';}
+  if(window.LESSONS.cd1) window.LESSONS.cd1.image=homeImage('cd1');
+  window.CARS_D_HOME_IMAGES=HOME_IMAGES;
   function place(correct, wrongs, letter){
     const vals=[];
     (wrongs||[]).forEach(x=>{x=String(x||'').trim();if(x&&x!==correct&&!vals.includes(x))vals.push(x);});
@@ -24,5 +44,5 @@ if (!window.LESSONS) window.LESSONS = {};
     add(10,`What does the phrase '${p.figurative[0]}' mean in the passage?`,p.figurative[1],p.figurative_wrong||['The words should be understood only in their exact literal sense.','A magical event actually changed the object.','The speaker forgot what was happening.'],'The phrase is figurative and communicates this idea in a vivid way.');
     add(11,'Which sentence best summarises the passage?',p.summary,p.summary_wrong,'A good summary includes the central idea and the most important events or facts.');return q;
   }
-  window.CARS_D_REGISTER=function(list){(list||[]).forEach(l=>{const extra={...l.extra,questions:questions(l.extra,l.extra._pattern)};delete extra._pattern;const newer={...l.new,questions:questions(l.new,l.new._pattern)};delete newer._pattern;window.LESSONS[l.id]={bookId:'cars-level-d',levelId:'D',lessonId:l.id,chapter:l.chapter,chapterNumber:l.num,page:l.page,title:l.title,theme:l.theme,image:'',rewardPoints:{lessonComplete:40},words:l.words,extraLearning:extra,newPassage:newer};});};
+  window.CARS_D_REGISTER=function(list){(list||[]).forEach(l=>{const extra={...l.extra,questions:questions(l.extra,l.extra._pattern)};delete extra._pattern;const newer={...l.new,questions:questions(l.new,l.new._pattern)};delete newer._pattern;window.LESSONS[l.id]={bookId:'cars-level-d',levelId:'D',lessonId:l.id,chapter:l.chapter,chapterNumber:l.num,page:l.page,title:l.title,theme:l.theme,image:homeImage(l.id),rewardPoints:{lessonComplete:40},words:l.words,extraLearning:extra,newPassage:newer};});};
 })();
