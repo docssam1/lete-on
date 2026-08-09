@@ -18,7 +18,7 @@
   <path d="M480 145 H535" stroke="#2f6f8f" stroke-width="7" marker-end="url(#arrow)"/>
   <g transform="translate(550 78)" fill="#fff" stroke="#1b3d59" stroke-width="4">
     <rect x="0" y="0" width="160" height="160"/><path d="M80 0V160M0 80H160" fill="none"/>
-    <path d="M40 18 L62 62 H18 Z" fill="#9ad7ff"/><path d="M120 18 L146 40 L120 66 L94 40 Z" fill="#bba8ff"/>
+    <path d="M18 18 L18 62 L62 40 Z" fill="#9ad7ff"/><path d="M120 18 L146 40 L120 66 L94 40 Z" fill="#bba8ff"/>
     <circle cx="40" cy="120" r="22" fill="#ffd66b"/><rect x="98" y="98" width="44" height="44" rx="5" fill="#ff9a8a"/>
   </g>
 </svg>

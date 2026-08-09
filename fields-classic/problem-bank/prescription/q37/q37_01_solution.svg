@@ -19,6 +19,6 @@
   <g transform="translate(550 78)" fill="#fff" stroke="#1b3d59" stroke-width="4">
     <rect x="0" y="0" width="160" height="160"/><path d="M80 0V160M0 80H160" fill="none"/>
     <rect x="18" y="18" width="44" height="44" rx="5" fill="#ff9a8a"/><circle cx="120" cy="40" r="22" fill="#ffd66b"/>
-    <path d="M40 98 L66 120 L40 146 L14 120 Z" fill="#bba8ff"/><path d="M120 98 L142 142 H98 Z" fill="#9ad7ff"/>
+    <path d="M40 98 L66 120 L40 146 L14 120 Z" fill="#bba8ff"/><path d="M98 98 L98 142 L142 120 Z" fill="#9ad7ff"/>
   </g>
 </svg>
