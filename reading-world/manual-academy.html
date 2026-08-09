@@ -25,17 +25,31 @@ body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg);line
 
 .shell{max-width:1180px;margin:auto;padding:26px clamp(14px,3vw,26px) 80px;display:grid;
   grid-template-columns:224px 1fr;gap:34px;align-items:start}
-@media(max-width:900px){.shell{grid-template-columns:1fr;gap:18px}}
-nav{position:sticky;top:70px;font-size:13.5px}
+nav{position:sticky;top:calc(var(--barh,70px) + 10px);font-size:13.5px;
+  max-height:calc(100vh - var(--barh,70px) - 28px);overflow:auto}
 nav a{display:block;padding:6px 10px;color:var(--muted);text-decoration:none;border-left:2px solid transparent;border-radius:0 6px 6px 0}
 nav a:hover{color:var(--brand);background:#fff}
 nav a.h{font-weight:800;color:var(--ink);margin-top:12px}
+/* Single column: the TOC stacks above the article, so pinning it would leave it
+   floating over the text it links to. It becomes a plain card that scrolls away. */
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr;gap:18px}
+  nav{position:static;max-height:none;overflow:visible;background:var(--paper);
+    border:1px solid var(--line);border-radius:14px;padding:10px 8px;
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px}
+  nav a{border-left:0;border-radius:8px}
+  nav a.h{margin-top:0}
+}
 
 main{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:clamp(20px,3.4vw,46px)}
 h1{font-family:var(--serif);font-size:clamp(28px,4vw,40px);line-height:1.15;margin:0 0 6px;letter-spacing:-.5px}
 .lede{color:var(--muted);font-size:15.5px;margin:0 0 8px}
 h2{font-family:var(--serif);font-size:clamp(21px,2.6vw,27px);margin:46px 0 10px;padding-top:18px;border-top:2px solid var(--brand)}
 h2:first-of-type{border-top:0;padding-top:0}
+/* The header bar is sticky, so an anchor jump would otherwise park the heading
+   underneath it. --barh is measured at runtime because the bar wraps to two rows
+   on a narrow screen and its height nearly doubles. */
+h2[id]{scroll-margin-top:calc(var(--barh,70px) + 14px)}
 h3{font-size:16.5px;margin:26px 0 6px}
 h4{font-size:14.5px;margin:18px 0 4px;color:var(--brand)}
 p{margin:0 0 12px}
@@ -452,5 +466,20 @@ Level D 초판에서 30개 지문 전체가 아래와 같은 <b>공용 오답</b
 
 </main>
 </div>
+
+<script>
+// The sticky bar wraps to a second row on narrow screens, so its height is
+// measured rather than assumed — the TOC offset and the anchor scroll margin
+// both hang off it.
+(function(){
+  var bar=document.querySelector('.bar');
+  function sync(){
+    document.documentElement.style.setProperty('--barh',bar.offsetHeight+'px');
+  }
+  sync();
+  addEventListener('resize',sync);
+  if(window.ResizeObserver) new ResizeObserver(sync).observe(bar);
+})();
+</script>
 </body>
 </html>
