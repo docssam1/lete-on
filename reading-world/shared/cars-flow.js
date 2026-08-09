@@ -34,6 +34,29 @@
     });
   }
 
+  function patchVocabularyCopy(){
+    if(!isLevelD()) return;
+    document.querySelectorAll('body *').forEach(el=>{
+      if(el.children.length) return;
+      const raw=(el.textContent||'').trim();
+      let next=raw;
+      if(/^\d+개 핵심 단어를 먼저 배우고, 교재 지문을 들은 뒤 한 문제씩 천천히 풀어 보세요\.$/.test(raw)){
+        next='핵심 단어를 먼저 배우고, 교재 지문을 들은 뒤 한 문제씩 천천히 풀어 보세요.';
+      }else if(raw==='같은 12단어가 들어간 새 지문을 읽고 유사문제를 풀어요.'){
+        next='핵심 단어를 활용한 새 지문을 읽고 유사문제를 풀어요.';
+      }else if(/^Learn \d+ focus words, listen to the story, and solve questions one at a time\.$/.test(raw)){
+        next='Learn the focus words, listen to the story, and solve questions one at a time.';
+      }else if(raw==='Read a new story with the same 12 words and answer similar questions.'){
+        next='Read a new story using the focus words and answer similar questions.';
+      }else if(/^先学习 \d+ 个重点单词，再听课文，一次完成一道题。$/.test(raw)){
+        next='先学习重点单词，再听课文，一次完成一道题。';
+      }else if(raw==='阅读含有相同 12 个单词的新故事，再完成相似练习。'){
+        next='阅读运用重点单词的新故事，再完成相似练习。';
+      }
+      if(next!==raw) el.textContent=next;
+    });
+  }
+
   function patchMissingOriginal(){
     if(!isLevelD()) return;
     document.querySelectorAll('h1,h2,h3').forEach(h=>{
@@ -58,7 +81,7 @@
     });
   }
 
-  function patch(){ patchBreadcrumb(); patchMissingOriginal(); }
+  function patch(){ patchBreadcrumb(); patchVocabularyCopy(); patchMissingOriginal(); }
   let queued=false;
   function schedule(){ if(queued)return; queued=true; requestAnimationFrame(()=>{queued=false;patch();}); }
 
