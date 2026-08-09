@@ -1648,7 +1648,9 @@ function diagT(ko,en,zh){return st.lang==='ko'?ko:st.lang==='zh'?zh:en;}
 // Full CARS ladder, easy→hard. Only levels with loaded content take part in placement.
 const DIAG_ORDER=['P','AA','A','B','C','D','E','F','G','H'];
 // Levels that already have learning books in the app; others are placement-only (content TBD).
-const LEVEL_BOOK={B:'cars-level-b',C:'cars-level-c'};
+// D was added with cd1-cd15 but never listed here, so the diagnostic kept telling
+// students their recommended level was still being prepared.
+const LEVEL_BOOK={B:'cars-level-b',C:'cars-level-c',D:'cars-level-d'};
 function bookForLevel(id){return LEVEL_BOOK[id]||null;}
 function diagOrderPresent(){return DIAG_ORDER.filter(id=>diagLevel(id));}
 function firstLessonOf(bookId){const a=availableLessons(bookId);return (a&&a[0])||'lesson1';}

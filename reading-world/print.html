@@ -71,6 +71,33 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .cv-opt .sw{height:60px;display:block}
 .cv-opt b{display:block;font-size:11.5px;padding:5px 7px;font-weight:700}
 
+.ansgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:6px}
+.ansrow{border:1px solid var(--line);border-radius:9px;padding:5px 6px;background:#fff}
+.ansrow b{font-size:11.5px;color:#5a675e;display:block;margin-bottom:3px}
+.ansrow .ops{display:flex;gap:3px}
+.ansrow .ops button{flex:1;border:1px solid var(--line);background:#fbfaf5;border-radius:6px;padding:3px 0;
+  font-size:11.5px;font-weight:800;cursor:pointer;color:#5a675e}
+.ansrow .ops button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+
+/* analysis report */
+.sheet.report .rp-score{display:flex;gap:6mm;align-items:stretch;margin-bottom:5mm}
+.sheet.report .rp-big{border:2px solid var(--brand);border-radius:3mm;padding:4mm 6mm;text-align:center;min-width:38mm}
+.sheet.report .rp-big b{display:block;font-family:var(--serif);font-size:30pt;line-height:1;color:var(--brand)}
+.sheet.report .rp-big span{font-size:8.5pt;letter-spacing:.08em;text-transform:uppercase;color:#6b7a71}
+.sheet.report .rp-verdict{flex:1;border:1px solid #cfd6d0;border-radius:3mm;padding:4mm 5mm}
+.sheet.report .rp-verdict b{font-size:13pt;display:block;margin-bottom:1.5mm}
+.sheet.report .rp-verdict p{margin:0;font-size:10pt;color:#3f4c44;line-height:1.55}
+.sheet.report .rt{width:100%;border-collapse:collapse;margin-bottom:5mm}
+.sheet.report .rt th,.sheet.report .rt td{border:1px solid #bbb;padding:1.8mm 2mm;font-size:9.6pt;text-align:left}
+.sheet.report .rt th{background:#f1efe6;font-size:9pt}
+.sheet.report .rt td.c{text-align:center;font-weight:800;font-family:var(--serif)}
+.sheet.report .rt td.ok{color:#1c7a4b}.sheet.report .rt td.no{color:#b5342a}
+.sheet.report .cols{display:flex;gap:5mm;margin-bottom:5mm}
+.sheet.report .cols>div{flex:1;border:1px solid #cfd6d0;border-radius:3mm;padding:3.5mm 4mm}
+.sheet.report .cols h3{margin:0 0 2mm;font-size:10.5pt}
+.sheet.report .cols ul{margin:0;padding-left:4.5mm;font-size:9.6pt;line-height:1.6}
+.sheet.report .nextbox{border-left:3px solid var(--brand);background:#f4f2ea;padding:3mm 4mm;font-size:10pt;line-height:1.6}
+
 .pv{background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .pv-h{display:flex;gap:6px;align-items:center;padding:10px 13px;border-bottom:1px solid var(--line);background:#fffdf7;position:sticky;top:68px;z-index:5;flex-wrap:wrap}
 .tab{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;color:#5a675e}
@@ -127,6 +154,10 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
    a blank white page. An SVG rect is foreground content and always prints. */
 .cvbg{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
 .cv>*:not(.cvbg),.cv .bar>*:not(.cvbg){position:relative;z-index:1}
+/* A navy crest on a navy field disappears, so dark covers seat the logo on a
+   white badge — also an SVG rect, for the same printing reason. */
+.lgplate{position:relative;display:inline-block;padding:5mm 6mm;line-height:0}
+.lgplate img{position:relative;z-index:1}
 .sheet.cover{padding:0;overflow:hidden;display:flex;print-color-adjust:exact;-webkit-print-color-adjust:exact}
 .cv{flex:1;display:flex;position:relative;color:#fff}
 .cv .lg{width:52mm;height:auto;display:block}
@@ -205,6 +236,7 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
       <button class="btn" id="printKey">답안지 PDF</button>
       <button class="btn" id="printPaper">문제지 PDF</button>
       <button class="btn brandy" id="printBook">통권 PDF</button>
+      <button class="btn brandy" id="printReport" hidden>분석지 PDF</button>
     </div>
   </div>
 </div>
@@ -273,6 +305,20 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
     </div>
 
     <div class="panel">
+      <h2>레벨 테스트 채점 · 분석지</h2>
+      <p class="hint">학생이 푼 진단 답안을 입력하면 배치 결과와 전략별 강·약점 분석지가 만들어집니다. 위 <b>분석지</b> 탭에서 확인·인쇄하세요.</p>
+      <label class="fld"><span>학생 이름</span><input type="text" id="gName" placeholder="예: 김민준"></label>
+      <div class="row" style="gap:9px">
+        <label class="fld" style="flex:1;margin:0"><span>응시일</span><input type="text" id="gDate" placeholder="2026-08-09"></label>
+        <label class="fld" style="flex:1;margin:0"><span>응시 레벨</span>
+          <select id="gLevel" style="width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px"></select></label>
+      </div>
+      <div id="gGrid" class="ansgrid"></div>
+      <div class="row" style="margin-top:9px"><button class="mini" id="gClear">답안 지우기</button>
+        <span id="gScore" style="align-self:center;font-size:12px;color:var(--muted)"></span></div>
+    </div>
+
+    <div class="panel">
       <h2>3 · 약점 유형 연습</h2>
       <p class="hint">고른 전략의 문항만 뽑아 연습지를 만듭니다. 지문은 그대로 실리고 해당 유형 문항만 인쇄돼요. 전부 해제하면 12문항이 모두 나갑니다. <b>교재 워크시트에만</b> 적용됩니다.</p>
       <div class="row">
@@ -309,6 +355,7 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
       <button class="tab on" data-tab="paper">문제지</button>
       <button class="tab" data-tab="key">답안지</button>
       <button class="tab" data-tab="book">통권</button>
+      <button class="tab" data-tab="report">분석지</button>
       <span class="pv-note" id="pvNote">미리보기</span>
     </div>
     <div class="pv-body" id="sheets"><div class="empty">왼쪽에서 진단 레벨이나 교재 챕터를 선택하면<br>여기에 인쇄 미리보기가 나타납니다.</div></div>
@@ -371,14 +418,55 @@ function applyBrand(){
 function logoTag(cls){return brand.logo?'<img class="'+(cls||'')+'" src="'+esc(brand.logo)+'" alt="">':'';}
 // A logo committed to the repo is picked up automatically the first time, so an
 // academy that ships the file never has to upload it.
-(function probeLogo(){
-  if(brand.logo) return;
+// Knock the white paper out of a scanned/photographed logo so it sits cleanly on a
+// dark cover. Only white *connected to the border* is cleared — a plain
+// "every light pixel becomes transparent" pass would also erase the white
+// lettering and skyline inside the crest.
+function keyOutWhite(canvas){
+  var ctx=canvas.getContext('2d'), w=canvas.width, h=canvas.height, n=w*h;
+  var img=ctx.getImageData(0,0,w,h), d=img.data;
+  var seen=new Uint8Array(n), stack=new Int32Array(n), sp=0, i, x, y;
+  var white=function(k){var o=k*4;return d[o]>236&&d[o+1]>236&&d[o+2]>236;};
+  for(x=0;x<w;x++){stack[sp++]=x;stack[sp++]=(h-1)*w+x;}
+  for(y=0;y<h;y++){stack[sp++]=y*w;stack[sp++]=y*w+w-1;}
+  while(sp>0){
+    i=stack[--sp];
+    if(i<0||i>=n||seen[i])continue;
+    seen[i]=1;
+    if(!white(i))continue;
+    d[i*4+3]=0;
+    x=i%w; y=(i-x)/w;
+    if(x>0)stack[sp++]=i-1;
+    if(x<w-1)stack[sp++]=i+1;
+    if(y>0)stack[sp++]=i-w;
+    if(y<h-1)stack[sp++]=i+w;
+  }
+  ctx.putImageData(img,0,0);
+}
+function loadLogo(src,done){
   var im=new Image();
+  im.crossOrigin='anonymous';
+  im.onerror=function(){done(null);};
   im.onload=function(){
     var c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;
-    try{c.getContext('2d').drawImage(im,0,0);brand.logo=c.toDataURL('image/png');applyBrand();render();}catch(e){}
+    try{
+      c.getContext('2d').drawImage(im,0,0);
+      keyOutWhite(c);
+      done(c.toDataURL('image/png'));
+    }catch(e){done(src);}   // tainted canvas (file://) — keep the logo, skip the key-out
   };
-  im.src='assets/images/brand/logo.png';
+  im.src=src;
+}
+(function probeLogo(){
+  if(brand.logo) return;
+  var paths=['assets/images/ueplogo.png','assets/images/brand/logo.png'],i=0;
+  (function next(){
+    if(i>=paths.length)return;
+    loadLogo(paths[i++],function(uri){
+      if(!uri)return next();
+      brand.logo=uri;applyBrand();render();
+    });
+  })();
 })();
 
 /* ---------- books ---------- */
@@ -441,6 +529,21 @@ var TXT={
   lesson:['과','Lesson'], practice:['유형 연습','Skill Practice']
 };
 function T(k){return (TXT[k]||['',''])[LANG==='en'?1:0];}
+
+/* ---------- placement scoring (mirrors app/main.js) ---------- */
+var DIAG_ORDER=['P','AA','A','B','C','D','E','F','G','H'];
+var LEVEL_BOOK={B:'CARS Level B',C:'CARS Level C',D:'CARS Plus Level D'};
+function order(){return DIAG_ORDER.filter(function(id){return LEVELS.some(function(l){return l.id===id;});});}
+// Same rule as the app: 12Q needs 11+ to move up and under 6 to move down,
+// scaled down for the shorter 8- and 6-question levels.
+function thresholds(n){if(n>=12)return {up:11,down:6};if(n>=8)return {up:7,down:4};return {up:n,down:3};}
+function placement(levelId,score,n){
+  var o=order(),i=o.indexOf(levelId),th=thresholds(n||12);
+  if(score>=th.up)return {verdict:'up',recommend:o[i+1]||levelId,capped:!o[i+1]};
+  if(score<th.down)return {verdict:'down',recommend:o[i-1]||levelId,capped:!o[i-1]};
+  return {verdict:'fit',recommend:levelId,capped:false};
+}
+var grade={name:'',date:'',level:'',ans:{}};
 
 var SCOPE=get('scope','volume'), ONLY=get('only','');
 var sel={diag:{},book:{},strat:{}};
@@ -529,13 +632,20 @@ function bg(color){
   return '<svg class="cvbg" preserveAspectRatio="none" viewBox="0 0 10 10" aria-hidden="true">'+
     '<rect width="10" height="10" fill="'+esc(color)+'"/></svg>';
 }
+function plateLogo(cls){
+  if(!brand.logo) return '';
+  return '<div class="lgplate">'+
+    '<svg class="cvbg" preserveAspectRatio="none" viewBox="0 0 100 100" aria-hidden="true">'+
+    '<rect width="100" height="100" rx="5" fill="#ffffff"/></svg>'+
+    logoTag(cls||'lg')+'</div>';
+}
 function coverSheet(title,lvl){
   var k=brand.cover,L=logoTag('lg'),n=esc(brand.name),s=esc(brand.sub),t=esc(title),v=esc(lvl||'');
   var inner;
-  if(k==='crest') inner='<div class="cv crest">'+bg(brand.color)+L+'<hr class="rule">'+
+  if(k==='crest') inner='<div class="cv crest">'+bg(brand.color)+plateLogo()+'<hr class="rule">'+
       '<div><div class="aca">'+n+'</div><div class="sub">'+s+'</div></div>'+
       '<h1>'+t+'</h1><div class="lvl">'+v+'</div></div>';
-  else if(k==='column') inner='<div class="cv column"><div class="bar">'+bg(brand.color)+L+
+  else if(k==='column') inner='<div class="cv column"><div class="bar">'+bg(brand.color)+plateLogo()+
       '<div><div class="aca">'+n+'</div><div class="sub">'+s+'</div></div></div>'+
       '<div class="body"><div class="lvl">'+v+'</div><h1>'+t+'</h1><hr class="rule"></div></div>';
   else if(k==='plate') inner='<div class="cv plate">'+bg('#f7f4ea')+logoTag('lg sm')+
@@ -547,11 +657,69 @@ function coverSheet(title,lvl){
   else inner='<div class="cv arc">'+
       '<svg class="cvbg" preserveAspectRatio="none" viewBox="0 0 100 140" aria-hidden="true">'+
       '<ellipse cx="50" cy="8" rx="78" ry="58" fill="'+esc(brand.color)+'"/></svg>'+
-      '<div class="capsule">'+L+
+      '<div class="capsule">'+plateLogo()+
       '<div><div class="aca">'+n+'</div><div class="sub">'+s+'</div></div></div>'+
       '<div><div class="lvl">'+v+'</div><h1>'+t+'</h1><hr class="rule"></div></div>';
   return '<section class="sheet cover">'+inner+'</section>';
 }
+/* ---------- analysis report ---------- */
+function levelById(id){return LEVELS.filter(function(l){return l.id===id;})[0]||null;}
+function gradeGrid(){
+  var lv=levelById(grade.level);
+  var wrap=document.getElementById('gGrid'), sc=document.getElementById('gScore');
+  if(!lv){wrap.innerHTML='';sc.textContent='';return;}
+  var n=lv.questions.length, nOpt=(lv.questions[0][2]||[]).length;
+  wrap.innerHTML=lv.questions.map(function(q,i){
+    return '<div class="ansrow"><b>'+(i+1)+'. '+esc((q[0]||'').slice(0,22))+'</b><div class="ops">'+
+      LET.slice(0,nOpt).split('').map(function(L){
+        return '<button data-ga="'+i+':'+L+'"'+(grade.ans[i]===L?' class="on"':'')+'>'+L+'</button>';}).join('')+
+      '</div></div>';}).join('');
+  var done=Object.keys(grade.ans).length;
+  var right=lv.questions.filter(function(q,i){return grade.ans[i]===q[3];}).length;
+  sc.textContent=done? (done+'/'+n+' 입력 · 정답 '+right+'개') : '답안을 입력하세요';
+}
+function reportSheet(){
+  var lv=levelById(grade.level);
+  if(!lv) return '<div class="empty">응시 레벨을 고르고 학생 답안을 입력하면<br>분석지가 여기에 만들어집니다.</div>';
+  var qs=lv.questions, n=qs.length;
+  var correct=[],missed=[];
+  qs.forEach(function(q,i){(grade.ans[i]===q[3]?correct:missed).push(i);});
+  var score=correct.length, pl=placement(lv.id,score,n);
+  var vTitle={up:'상위 레벨 추천',fit:'현재 레벨 적합',down:'하위 레벨 추천'}[pl.verdict];
+  var vBody={
+    up:'이 레벨의 문항을 충분히 소화했습니다. 다음 레벨로 올라가 학습하기를 권합니다.',
+    fit:'이 레벨이 지금 학생에게 알맞습니다. 아래 약점 유형을 보완하며 진행하세요.',
+    down:'이 레벨은 아직 부담이 있습니다. 한 단계 아래에서 기초를 다진 뒤 올라오는 편이 좋습니다.'
+  }[pl.verdict];
+  if(pl.capped) vBody+=' (사다리의 끝 레벨이라 같은 레벨을 유지합니다.)';
+  var book=LEVEL_BOOK[pl.recommend];
+  var rows=qs.map(function(q,i){
+    var mine=grade.ans[i]||'—', ok=mine===q[3];
+    return '<tr><td class="c">'+(i+1)+'</td><td>'+esc(q[0])+'</td>'+
+      '<td class="c">'+esc(q[3])+'</td><td class="c">'+esc(mine)+'</td>'+
+      '<td class="c '+(ok?'ok':'no')+'">'+(ok?'O':'X')+'</td></tr>';}).join('');
+  var strong=correct.map(function(i){return qs[i][0];});
+  var weak=missed.map(function(i){return qs[i][0];});
+  var uniq=function(a){var s={},o=[];a.forEach(function(x){if(!s[x]){s[x]=1;o.push(x);}});return o;};
+  var li=function(a){return a.length?uniq(a).map(function(x){return '<li>'+esc(x)+'</li>';}).join(''):'<li>—</li>';};
+  var next=weak.length
+    ? '이 학생은 <b>'+esc(uniq(weak).slice(0,3).join(' · '))+'</b> 유형에서 주로 놓쳤습니다. '+
+      (book?esc(book)+'의 ':'')+'해당 유형만 뽑은 <b>약점 유형 연습지</b>로 보완한 뒤 재진단을 권합니다.'
+    : '모든 유형을 정확히 풀었습니다. 상위 레벨로 진행해도 좋습니다.';
+  return '<section class="sheet report">'+
+    head('Placement Report','레벨 테스트 분석지',
+      (grade.name?esc(grade.name)+' · ':'')+'레벨 '+esc(lv.id)+' ('+esc(lv.grade)+')'+(grade.date?' · '+esc(grade.date):''),false)+
+    '<div class="rp-score"><div class="rp-big"><b>'+score+'</b><span>/ '+n+'</span></div>'+
+    '<div class="rp-verdict"><b>'+vTitle+' → 레벨 '+esc(pl.recommend)+'</b><p>'+vBody+
+    (book?'<br>추천 교재: <b>'+esc(book)+'</b>':'<br>해당 레벨의 학습 교재는 준비 중입니다.')+'</p></div></div>'+
+    '<table class="rt"><thead><tr><th style="width:9%">문항</th><th>읽기 전략</th>'+
+    '<th style="width:11%">정답</th><th style="width:11%">학생답</th><th style="width:9%">채점</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+    '<div class="cols"><div><h3>강점 유형</h3><ul>'+li(strong)+'</ul></div>'+
+    '<div><h3>보완이 필요한 유형</h3><ul>'+li(weak)+'</ul></div></div>'+
+    '<div class="nextbox"><b>다음 학습 제안</b><br>'+next+'</div>'+
+    foot('분석지 · '+(grade.name||'학생')+' · 레벨 '+esc(lv.id))+'</section>';
+}
+
 function dividerSheet(book,le,bits){
   return '<section class="sheet divider"><div class="dv">'+logoTag('')+
     '<div class="no">'+esc(book)+' · Lesson '+le.num+'</div>'+
@@ -669,6 +837,19 @@ function build(mode,list){
   return html;
 }
 function render(){
+  var mode0=document.body.dataset.print;
+  // The answer grid lives in the side panel, so it has to track the chosen level
+  // on every render, not only while the report tab happens to be open.
+  gradeGrid();
+  if(mode0==='report'){
+    ['printPaper','printKey','printBook'].forEach(function(id){document.getElementById(id).disabled=true;});
+    document.getElementById('printReport').hidden=false;
+    document.getElementById('tally').innerHTML=grade.name?('분석지 · <b>'+esc(grade.name)+'</b>'):'분석지';
+    sheetsEl.innerHTML=reportSheet();
+    document.getElementById('pvNote').textContent='분석지 미리보기';
+    return;
+  }
+  document.getElementById('printReport').hidden=true;
   var list=jobs();
   var qTotal=list.reduce(function(s,j){return s+((j.questions||[]).length);},0);
   var wTotal=list.reduce(function(s,j){return s+((j.words||[]).length);},0);
@@ -717,19 +898,30 @@ document.addEventListener('change',function(e){
     sel.strat[+k]=t.checked;t.closest('.chk').classList.toggle('on',t.checked);return render();}
   if(t.id==='bLogo'&&t.files&&t.files[0]){
     var fr=new FileReader();
-    fr.onload=function(){brand.logo=String(fr.result);set('logo',brand.logo);applyBrand();render();};
+    fr.onload=function(){
+      loadLogo(String(fr.result),function(uri){
+        brand.logo=uri||String(fr.result);set('logo',brand.logo);applyBrand();render();});
+    };
     fr.readAsDataURL(t.files[0]);return;
   }
   if(t.id==='unitPick'){ONLY=t.value;set('only',ONLY);return render();}
+  if(t.id==='gLevel'){grade.level=t.value;grade.ans={};return render();}
   if(t.id&&t.id.indexOf('opt')===0){t.closest('.chk').classList.toggle('on',t.checked);return render();}
 });
 document.addEventListener('input',function(e){
   var t=e.target,m={bName:'name',bSub:'sub',bColor:'color',bColor2:'color2'};
-  if(m[t.id]){brand[m[t.id]]=t.value;set(m[t.id],t.value);applyBrand();render();}
+  if(m[t.id]){brand[m[t.id]]=t.value;set(m[t.id],t.value);applyBrand();render();return;}
+  if(t.id==='gName'||t.id==='gDate'){grade[t.id==='gName'?'name':'date']=t.value;
+    if(document.body.dataset.print==='report')render();}
 });
 document.addEventListener('click',function(e){
   var b=e.target.closest('button');if(!b)return;
   if(b.id==='bLogoClear'){brand.logo='';set('logo','');applyBrand();return render();}
+  var ga=b.getAttribute('data-ga');
+  if(ga){var a=ga.split(':');grade.ans[+a[0]]=grade.ans[+a[0]]===a[1]?undefined:a[1];
+    if(grade.ans[+a[0]]===undefined)delete grade.ans[+a[0]];return render();}
+  if(b.id==='gClear'){grade.ans={};return render();}
+  if(b.id==='printReport'){setTimeout(function(){window.print();},60);return;}
   if(b.dataset.scope){SCOPE=b.dataset.scope;set('scope',SCOPE);
     document.querySelectorAll('.mini.scope').forEach(function(x){x.classList.toggle('on',x===b);});return render();}
   if(b.dataset.lang){LANG=b.dataset.lang;set('lang',LANG);
@@ -779,7 +971,10 @@ document.addEventListener('click',function(e){
 
 document.querySelectorAll('.mini.lang').forEach(function(x){x.classList.toggle('on',x.dataset.lang===LANG);});
 document.querySelectorAll('.mini.scope').forEach(function(x){x.classList.toggle('on',x.dataset.scope===SCOPE);});
-applyBrand();render();
+grade.level=(LEVELS[0]||{}).id||'';
+document.getElementById('gLevel').innerHTML=LEVELS.map(function(l){
+  return '<option value="'+esc(l.id)+'"'+(l.id===grade.level?' selected':'')+'>레벨 '+esc(l.id)+' · '+esc(l.grade)+' ('+l.questions.length+'문항)</option>';}).join('');
+applyBrand();gradeGrid();render();
 })();
 </script>
 </body>
