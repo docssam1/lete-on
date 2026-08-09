@@ -572,6 +572,10 @@ var STRATS=[
 // English academy: worksheets default to English even though the console that
 // builds them stays in Korean for the teacher.
 var LANG=get('lang','en');
+var PART_KO={vocab:'낱말',original:'원본',extra:'추가 학습 지문',similar:'유사 지문'};
+var PART_EN={vocab:'Vocabulary',original:'Original',extra:'Extra Reading',similar:'Parallel Reading'};
+function pTxt(key){return LANG==='en'?(PART_EN[key]||key):(PART_KO[key]||key);}
+function lessonRef(b,le){return LANG==='en'?(b.label+' Lesson '+le.num):(b.label+' '+le.num+'과');}
 var TXT={
   name:['이름','Name'], date:['날짜','Date'],
   read:['지문을 읽고 물음에 답하세요. 각 문항에서 가장 알맞은 것을 하나 고르세요.',
@@ -835,7 +839,8 @@ function jobs(){
   var out=[];
   LEVELS.forEach(function(l){
     if(!sel.diag[l.id])return;
-    out.push({kind:'diag',group:'진단 테스트',label:'진단 테스트 레벨 '+l.id,
+    out.push({kind:'diag',group:LANG==='en'?'Placement Test':'진단 테스트',
+      label:(LANG==='en'?'Placement Test Level ':'진단 테스트 레벨 ')+l.id,
       src:'Placement Test · '+l.grade,title:l.title,passage:l.passage,questions:l.questions});
   });
   BOOKS.forEach(function(b){
@@ -847,22 +852,22 @@ function jobs(){
         if(p.key==='original'){
           var o=originalFor(BOOKID[b.id],le.id);
           if(o===undefined){out.push({kind:'loading',group:b.label,book:b,le:le,
-            label:b.label+' '+le.num+'과 · 원본',src:b.label+' · Lesson '+le.num,
-            title:le.title+' — 원본 불러오는 중'});return;}
+            label:lessonRef(b,le)+' · '+pTxt('original'),src:b.label+' · Lesson '+le.num,
+            title:le.title+(LANG==='en'?' — Loading…':' — 원본 불러오는 중')});return;}
           if(!o)return;
           out.push({kind:'passage',licensed:true,group:b.label,book:b,le:le,
-            label:b.label+' '+le.num+'과 · 원본 지문',src:b.label+' · Lesson '+le.num,
-            title:(o.title||le.title)+' — 원본',art:le.L.image,
+            label:lessonRef(b,le)+' · '+pTxt('original'),src:b.label+' · Lesson '+le.num,
+            title:(o.title||le.title)+' — '+pTxt('original'),art:le.L.image,
             intro:o.instruction,passage:o.passage,questions:o.questions});
           return;
         }
         var d=p.get(le.L);if(!d)return;
         if(p.key==='vocab') out.push({kind:'vocab',group:b.label,book:b,le:le,
-          label:b.label+' '+le.num+'과 · 낱말',src:b.label+' · Lesson '+le.num,
-          title:le.title+' — 낱말',art:le.L.image,words:d.words});
+          label:lessonRef(b,le)+' · '+pTxt('vocab'),src:b.label+' · Lesson '+le.num,
+          title:le.title+' — '+pTxt('vocab'),art:le.L.image,words:d.words});
         else out.push({kind:'passage',group:b.label,book:b,le:le,
-          label:b.label+' '+le.num+'과 · '+p.label,src:b.label+' · Lesson '+le.num,
-          title:(d.title||le.title)+' — '+p.label,art:le.L.image,
+          label:lessonRef(b,le)+' · '+pTxt(p.key),src:b.label+' · Lesson '+le.num,
+          title:(d.title||le.title)+' — '+pTxt(p.key),art:le.L.image,
           passage:d.passage,questions:d.questions});
       });
     });
@@ -996,7 +1001,7 @@ function render(){
   var byCh={};
   list.forEach(function(j){if(!j.le)return;var k=j.book.id+':'+j.le.id;(byCh[k]=byCh[k]||[]).push(j);});
   Object.keys(byCh).forEach(function(k){
-    var bits=byCh[k].map(function(j){return j.kind==='vocab'?'낱말':j.title.split('— ').pop();});
+    var bits=byCh[k].map(function(j){return j.title.split('— ').pop();});
     byCh[k].forEach(function(j){j.bitsOf=bits.join(' · ');});
   });
   var mode=document.body.dataset.print;
