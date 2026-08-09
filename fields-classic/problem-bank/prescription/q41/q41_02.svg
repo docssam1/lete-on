@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="470" viewBox="0 0 1100 470">
+  <defs>
+    <style>
+      .bg{fill:#fffaf0}.title{font:700 28px Arial,sans-serif;fill:#17324d}.label{font:700 26px Arial,sans-serif;fill:#17324d;text-anchor:middle}
+      .top{fill:#fff4cf}.left{fill:#e7c28e}.right{fill:#d7ad72}.line{stroke:#8f7148;stroke-width:1.6;stroke-linejoin:round}
+      .shadow{fill:#d8e0e7;opacity:.42}
+    </style>
+    <g id="cube">
+      <polygon class="top line" points="0,-28 24,-14 0,0 -24,-14"/>
+      <polygon class="left line" points="-24,-14 0,0 0,28 -24,14"/>
+      <polygon class="right line" points="24,-14 0,0 0,28 24,14"/>
+    </g>
+    <g id="base-l">
+      <ellipse class="shadow" cx="-10" cy="60" rx="78" ry="16"/>
+      <use href="#cube" x="0" y="0"/>
+      <use href="#cube" x="24" y="14"/>
+      <use href="#cube" x="-24" y="14"/>
+      <use href="#cube" x="-48" y="28"/>
+    </g>
+    <g id="stack-right">
+      <use href="#base-l"/>
+      <use href="#cube" x="24" y="-14"/>
+    </g>
+    <g id="stack-corner">
+      <use href="#base-l"/>
+      <use href="#cube" x="-24" y="-14"/>
+    </g>
+  </defs>
+  <rect class="bg" width="1100" height="470" rx="28"/>
+  <text class="title" x="60" y="60">보기 중 다른 하나를 고르세요.</text>
+  <g transform="translate(120 230)"><use href="#stack-right"/></g>
+  <g transform="translate(335 230)"><use href="#stack-right"/></g>
+  <g transform="translate(550 230)"><use href="#stack-corner"/></g>
+  <g transform="translate(765 230)"><use href="#stack-right"/></g>
+  <g transform="translate(980 230)"><use href="#stack-right"/></g>
+  <text class="label" x="120" y="390">①</text>
+  <text class="label" x="335" y="390">②</text>
+  <text class="label" x="550" y="390">③</text>
+  <text class="label" x="765" y="390">④</text>
+  <text class="label" x="980" y="390">⑤</text>
+</svg>
