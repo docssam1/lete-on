@@ -6,7 +6,7 @@ window.LESSONS['ws11'] = {
   page: null,
   title: 'The Story of Money',
   theme: 'How currency evolved from barter to digital exchange',
-  image: '',
+  image: 'assets/images/wonderskills-adv3/cover.svg',
   rewardPoints: { lessonComplete: 40 },
   words: [
     ['barter', 'to exchange goods or services directly without using money', '물물교환하다', '以物易物'],
