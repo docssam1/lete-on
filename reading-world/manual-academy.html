@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>학원 운영 매뉴얼 · 진단 테스트 &amp; CARS B·C·D</title>
+<style>
+:root{
+  --ink:#1c2530; --muted:#69757f; --line:#dfe1dc; --paper:#fff; --bg:#f3f1ea;
+  --brand:#1b2a6b; --brand2:#c98a1e; --ok:#1c7a4b; --no:#b5342a;
+  --sans:system-ui,-apple-system,"Noto Sans KR","Malgun Gothic",sans-serif;
+  --serif:"Iowan Old Style",Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg);line-height:1.7}
+
+.bar{position:sticky;top:0;z-index:30;background:#fffdf8;border-bottom:1px solid var(--line);
+  padding:11px clamp(14px,3vw,26px);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.bar b{font-size:16px}.bar small{color:var(--muted);font-size:12px}
+.bar .sp{margin-left:auto;display:flex;gap:8px}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 13px;
+  font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;color:var(--ink);text-decoration:none}
+.btn.p{background:var(--brand);border-color:var(--brand);color:#fff}
+
+.shell{max-width:1180px;margin:auto;padding:26px clamp(14px,3vw,26px) 80px;display:grid;
+  grid-template-columns:224px 1fr;gap:34px;align-items:start}
+@media(max-width:900px){.shell{grid-template-columns:1fr;gap:18px}}
+nav{position:sticky;top:70px;font-size:13.5px}
+nav a{display:block;padding:6px 10px;color:var(--muted);text-decoration:none;border-left:2px solid transparent;border-radius:0 6px 6px 0}
+nav a:hover{color:var(--brand);background:#fff}
+nav a.h{font-weight:800;color:var(--ink);margin-top:12px}
+
+main{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:clamp(20px,3.4vw,46px)}
+h1{font-family:var(--serif);font-size:clamp(28px,4vw,40px);line-height:1.15;margin:0 0 6px;letter-spacing:-.5px}
+.lede{color:var(--muted);font-size:15.5px;margin:0 0 8px}
+h2{font-family:var(--serif);font-size:clamp(21px,2.6vw,27px);margin:46px 0 10px;padding-top:18px;border-top:2px solid var(--brand)}
+h2:first-of-type{border-top:0;padding-top:0}
+h3{font-size:16.5px;margin:26px 0 6px}
+h4{font-size:14.5px;margin:18px 0 4px;color:var(--brand)}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:22px}
+li{margin-bottom:5px}
+code{background:#f1f0ea;border-radius:4px;padding:1px 5px;font-size:.9em}
+.note{border-left:3px solid var(--brand);background:#f5f4ee;padding:12px 16px;margin:16px 0;border-radius:0 8px 8px 0}
+.warn{border-left:3px solid var(--no);background:#fdf3f2;padding:12px 16px;margin:16px 0;border-radius:0 8px 8px 0}
+.good{border-left:3px solid var(--ok);background:#f2f8f4;padding:12px 16px;margin:16px 0;border-radius:0 8px 8px 0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f5f4ee;font-size:13px}
+td.c{text-align:center}
+.tag{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 8px;border-radius:999px;
+  background:#eef1f8;color:var(--brand);letter-spacing:.02em}
+.steps{counter-reset:s;list-style:none;padding:0}
+.steps>li{counter-increment:s;position:relative;padding-left:40px;margin-bottom:14px}
+.steps>li::before{content:counter(s);position:absolute;left:0;top:1px;width:26px;height:26px;border-radius:50%;
+  background:var(--brand);color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+@media(max-width:720px){.ba{grid-template-columns:1fr}}
+.ba>div{border:1px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px}
+.ba .x{border-color:#e6c4c0;background:#fdf6f5}
+.ba .o{border-color:#bfdccb;background:#f4faf6}
+.ba h5{margin:0 0 7px;font-size:13px;letter-spacing:.03em;text-transform:uppercase}
+.ba .x h5{color:var(--no)}.ba .o h5{color:var(--ok)}
+.ba ul{padding-left:18px;margin:0}
+.q{font-family:var(--serif);font-size:15px;background:#faf9f5;border:1px solid var(--line);
+  border-radius:8px;padding:12px 15px;margin:10px 0}
+.q b{display:block;margin-bottom:5px}
+.q ol{margin:0;padding-left:20px}
+.foot{margin-top:44px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+
+@media print{
+  @page{size:A4;margin:16mm 15mm}
+  body{background:#fff;font-size:10.4pt;line-height:1.55}
+  .bar,nav{display:none}
+  .shell{display:block;max-width:none;padding:0}
+  main{border:0;border-radius:0;padding:0}
+  h2{break-after:avoid;font-size:16pt;margin-top:24px}
+  h3,h4{break-after:avoid}
+  table,.q,.ba,.note,.warn,.good{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div><b>학원 운영 매뉴얼</b><br><small>진단 테스트 · CARS Level B · C · Plus D</small></div>
+  <div class="sp">
+    <a class="btn" href="print.html">인쇄 센터 열기</a>
+    <button class="btn p" onclick="window.print()">매뉴얼 인쇄</button>
+  </div>
+</div>
+
+<div class="shell">
+<nav>
+  <a class="h" href="#about">1. 프로그램 구성</a>
+  <a href="#start">2. 빠른 시작</a>
+  <a class="h" href="#test">3. 레벨 테스트 운영</a>
+  <a href="#report">4. 분석지 읽는 법</a>
+  <a class="h" href="#book">5. 교재 구조</a>
+  <a href="#strategy">6. 12가지 읽기 전략</a>
+  <a class="h" href="#design">7. 문항 설계 원칙</a>
+  <a href="#distractor">8. 오답 설계 방법론</a>
+  <a href="#bystrategy">9. 전략별 함정 설계</a>
+  <a href="#review">10. 문항 검수 체크리스트</a>
+  <a class="h" href="#print">11. 인쇄 센터 사용법</a>
+  <a href="#run">12. 수업 운영 예시</a>
+  <a href="#faq">13. 자주 묻는 질문</a>
+</nav>
+
+<main>
+
+<h1>학원 운영 매뉴얼</h1>
+<p class="lede">진단 테스트 · CARS Level B · C · Plus D — 레벨 배치부터 수업 운영, 문항 설계 기준까지</p>
+
+<h2 id="about">1. 프로그램 구성</h2>
+<p>이 프로그램은 <b>읽기 전략(Reading Strategies)</b> 중심의 독해 교육 과정입니다. 학생이 무엇을 못 읽는지를 12가지 전략으로 분해해 진단하고, 그 약점을 겨냥해 훈련합니다.</p>
+
+<table>
+  <tr><th style="width:26%">구성</th><th>내용</th></tr>
+  <tr><td><b>진단 테스트</b></td><td>P · AA · A · B · C · D · E · F · G · H — 10개 레벨 (유치~중3 수준). 지문 1편 + 문항 6~12개</td></tr>
+  <tr><td><b>CARS Level B</b></td><td>초등 2학년(G2) 수준 · 10개 단원</td></tr>
+  <tr><td><b>CARS Level C</b></td><td>초등 3학년(G3) 수준 · 10개 단원</td></tr>
+  <tr><td><b>CARS Plus Level D</b></td><td>초등 4학년(G4) 수준 · 15개 단원</td></tr>
+  <tr><td><b>인쇄 센터</b></td><td>학습지·답안지·통권 교재·분석지를 학원 브랜드로 출력하는 도구</td></tr>
+</table>
+
+<div class="note"><b>단원 하나의 구성</b><br>
+① 핵심 낱말 12개 &nbsp;·&nbsp; ② 추가 학습 지문 + 12문항 &nbsp;·&nbsp; ③ 유사 지문 + 12문항<br>
+②와 ③은 교재 원문과 같은 주제·형식·난이도로 <b>자체 제작</b>한 지문입니다. 원문을 이미 푼 학생에게 같은 전략을 다시 훈련시키기 위한 것입니다.</div>
+
+<h2 id="start">2. 빠른 시작</h2>
+<ol class="steps">
+  <li><b>브랜드 설정</b> — 인쇄 센터에서 학원 이름·부제·색상·로고를 한 번 입력합니다. 브라우저에 저장되어 이후 모든 출력물에 자동으로 들어갑니다.</li>
+  <li><b>레벨 테스트 인쇄</b> — 진단 레벨을 골라 문제지를 뽑습니다. 어느 레벨부터 시작할지 모르면 학년에 맞는 레벨로 시작하세요.</li>
+  <li><b>시행 &amp; 채점</b> — 학생 답안을 인쇄 센터에 입력하면 배치 결과와 분석지가 만들어집니다.</li>
+  <li><b>교재 출력</b> — 배치된 레벨의 교재를 단원별 또는 통권으로 인쇄합니다.</li>
+  <li><b>약점 보완</b> — 분석지에 나온 약한 전략만 뽑아 연습지를 만듭니다.</li>
+</ol>
+
+<h2 id="test">3. 레벨 테스트 운영</h2>
+
+<h3>시행 방법</h3>
+<ul>
+  <li><b>시간</b> — 6문항 15분 / 8문항 20분 / 12문항 30분 권장. 시간 압박보다 <b>끝까지 풀게 하는 것</b>이 중요합니다. 못 푼 문항은 진단 정보가 되지 않습니다.</li>
+  <li><b>사전 안내</b> — "점수를 매기는 시험이 아니라 맞는 책을 찾는 과정"이라고 알려주세요. 찍기를 줄여야 진단이 정확해집니다.</li>
+  <li><b>사전을 주지 마세요</b> — 문맥 추론 능력(전략 7)이 측정 대상입니다.</li>
+</ul>
+
+<h3>어느 레벨부터 시작할까</h3>
+<table>
+  <tr><th style="width:22%">학년</th><th>시작 권장 레벨</th></tr>
+  <tr><td>유치 · 초1</td><td>P 또는 AA</td></tr>
+  <tr><td>초2</td><td>A 또는 B</td></tr>
+  <tr><td>초3</td><td>B 또는 C</td></tr>
+  <tr><td>초4~5</td><td>C 또는 D</td></tr>
+  <tr><td>초6 이상</td><td>D 이상</td></tr>
+</table>
+<p>애매하면 <b>낮은 쪽</b>에서 시작하세요. 상향 판정이 나오면 한 단계 위로 재응시하면 되지만, 너무 어려운 레벨은 "다 모른다"는 결과만 남고 어떤 전략이 약한지 알려주지 않습니다.</p>
+
+<h3>배치 기준</h3>
+<table>
+  <tr><th>문항 수</th><th>상향 (다음 레벨)</th><th>적합 (현 레벨)</th><th>하향 (이전 레벨)</th></tr>
+  <tr><td class="c">12문항</td><td class="c">11개 이상</td><td class="c">6~10개</td><td class="c">6개 미만</td></tr>
+  <tr><td class="c">8문항</td><td class="c">7개 이상</td><td class="c">4~6개</td><td class="c">4개 미만</td></tr>
+  <tr><td class="c">6문항</td><td class="c">6개 (만점)</td><td class="c">3~5개</td><td class="c">3개 미만</td></tr>
+</table>
+<div class="note">이 기준은 앱의 진단 판정과 <b>완전히 동일</b>합니다. 인쇄 분석지와 앱 결과가 어긋나지 않습니다.</div>
+
+<h2 id="report">4. 분석지 읽는 법</h2>
+<p>분석지는 점수보다 <b>어떤 전략에서 무너졌는가</b>를 보기 위한 문서입니다.</p>
+<ul>
+  <li><b>점수와 배치 판정</b> — 상향/적합/하향과 추천 레벨, 그 레벨의 교재.</li>
+  <li><b>문항별 표</b> — 각 문항의 전략, 정답, 학생 답, O/X. <b>학생이 무엇을 골랐는지</b>가 핵심 정보입니다.</li>
+  <li><b>강점 · 보완 유형</b> — 전략별로 묶은 결과.</li>
+  <li><b>다음 학습 제안</b> — 약한 전략 상위 3개와 연습 방법.</li>
+</ul>
+
+<div class="good"><b>상담 활용 팁</b><br>
+"9개 맞았습니다"보다 <b>"사실 확인은 완벽한데, 추론과 예측에서 세 문제를 놓쳤습니다. 글에 안 쓰인 걸 끌어내는 훈련이 필요합니다"</b>가 학부모에게 훨씬 잘 전달됩니다. 분석지는 그 대화를 위한 자료입니다.</div>
+
+<div class="warn"><b>주의 — 한 번의 진단을 과신하지 마세요</b><br>
+12문항에서 전략당 문항은 <b>1개</b>입니다. 한 문항을 틀렸다고 그 전략이 약하다고 단정할 수 없습니다. 같은 전략을 <b>2~3개 단원에 걸쳐</b> 반복해서 틀릴 때 비로소 실제 약점입니다. 분석지는 가설이고, 교재 학습이 검증입니다.</div>
+
+<h2 id="book">5. 교재 구조</h2>
+<p>모든 단원이 같은 뼈대를 가집니다. 학생은 같은 형식을 반복하며 전략 자체에 익숙해집니다.</p>
+<table>
+  <tr><th style="width:20%">구성</th><th>용도</th><th style="width:16%">분량</th></tr>
+  <tr><td><b>낱말</b></td><td>지문의 핵심 어휘. 빈칸 시험지 또는 뜻이 인쇄된 학습지로 출력 가능</td><td>12개</td></tr>
+  <tr><td><b>추가 학습 지문</b></td><td>교재 원문과 같은 주제·형식을 이어가는 지문. 원문 학습 직후 같은 전략을 다시 적용</td><td>지문 + 12문항</td></tr>
+  <tr><td><b>유사 지문</b></td><td>같은 핵심 어휘를 쓰는 새 이야기. 전이(transfer) 확인용</td><td>지문 + 12문항</td></tr>
+</table>
+<p>세 구성은 <b>독립적으로 출력</b>할 수 있습니다. 숙제는 낱말만, 수업은 추가 학습 지문만, 시험은 유사 지문만 — 이런 식으로 운영하십시오.</p>
+
+<h2 id="strategy">6. 12가지 읽기 전략</h2>
+<p>모든 12문항 세트에서 <b>문항 번호 = 전략 번호</b>입니다. 3번은 언제나 순서, 8번은 언제나 추론입니다. 그래서 여러 단원의 결과를 겹쳐 보면 약점이 드러납니다.</p>
+<table>
+  <tr><th style="width:6%">#</th><th style="width:26%">전략</th><th>측정하는 능력</th></tr>
+  <tr><td class="c">1</td><td>주제 찾기</td><td>글 전체를 관통하는 중심 생각. 부분 사실과 구별하기</td></tr>
+  <tr><td class="c">2</td><td>세부 내용</td><td>글에 직접 쓰인 정보를 정확히 찾기</td></tr>
+  <tr><td class="c">3</td><td>일의 순서</td><td>글에 서술된 순서가 아니라 <b>실제 사건이 일어난 순서</b></td></tr>
+  <tr><td class="c">4</td><td>원인과 결과</td><td>두 사건의 인과를 단순 선후와 구별하기</td></tr>
+  <tr><td class="c">5</td><td>비교와 대조</td><td>두 대상의 공통점·차이점을 근거와 함께 파악</td></tr>
+  <tr><td class="c">6</td><td>예측하기</td><td>글의 흐름을 근거로 이후를 추론 (쓰인 내용 반복이 아님)</td></tr>
+  <tr><td class="c">7</td><td>문맥 속 어휘</td><td>주변 문장을 단서로 모르는 낱말의 뜻 추론</td></tr>
+  <tr><td class="c">8</td><td>추론하기</td><td>직접 쓰이지 않았지만 근거로 도출되는 결론</td></tr>
+  <tr><td class="c">9</td><td>사실과 의견</td><td>검증 가능한 진술과 판단·느낌 구별</td></tr>
+  <tr><td class="c">10</td><td>글쓴이의 목적</td><td>정보 전달 / 설득 / 재미 / 설명 중 무엇인가</td></tr>
+  <tr><td class="c">11</td><td>비유 표현</td><td>글자 그대로가 아닌 의미 읽기</td></tr>
+  <tr><td class="c">12</td><td>요약 · 사실과 상상</td><td>B·C는 현실/상상 구별, D는 요약 (레벨별 상이)</td></tr>
+</table>
+
+<h2 id="design">7. 문항 설계 원칙</h2>
+<p>이 교재의 모든 문항은 아래 규칙 위에서 제작·검수됩니다. 학원에서 문항을 추가로 만드실 때도 같은 기준을 쓰시길 권합니다.</p>
+
+<h3>가. 정답 분포</h3>
+<p>12문항 한 세트는 <b>정확히 3A / 3B / 3C / 3D</b>입니다. 순서는 세트마다 다릅니다.</p>
+<div class="warn"><b>왜 중요한가</b><br>
+정답이 특정 글자에 몰리면 학생은 지문이 아니라 <b>패턴을 학습</b>합니다. 실제로 이전 버전에서 B가 82.5%, D가 0%였던 세트가 있었고, 이 경우 아무거나 B로 찍는 학생이 8할을 맞습니다. 시험이 측정 도구로서 무너집니다.</div>
+
+<h3>나. 전략 순서 고정</h3>
+<p>1~12번이 항상 같은 전략 순서를 따릅니다. 이 규칙이 있어야 여러 단원의 결과를 누적해 약점을 추적할 수 있고, 인쇄 센터의 <b>약점 유형 연습</b> 기능도 이 순서에 기대어 동작합니다.</p>
+
+<h3>다. 지문 근거주의</h3>
+<p>모든 정답은 지문에서 근거를 짚을 수 있어야 합니다. 배경지식으로 맞힐 수 있는 문항은 독해력을 측정하지 못합니다.</p>
+
+<h2 id="distractor">8. 오답 설계 방법론</h2>
+<p class="lede" style="font-size:15px">문항의 품질은 정답이 아니라 <b>오답이 결정</b>합니다.</p>
+<p>정답을 아무리 잘 써도 나머지 세 개가 허술하면, 학생은 지문을 읽지 않고 <b>소거법</b>으로 정답에 도달합니다. 그 문항은 독해력이 아니라 요령을 측정합니다.</p>
+
+<div class="note"><b>핵심 원칙</b><br>
+오답은 “틀린 문장”이 아니라 <b>“지문을 잘못 읽었을 때 도달하는 지점”</b>이어야 합니다.<br>
+좋은 오답을 고른 학생을 보면 <b>어디서 어떻게 틀렸는지</b>가 보입니다. 그게 진단 정보입니다.</div>
+
+<h3>오답 다섯 가지 유형</h3>
+
+<h4>유형 1 · 사실은 맞고 자리가 틀림</h4>
+<p>지문에 <b>실제로 있는 내용</b>을 엉뚱한 질문의 답으로 놓습니다. 지문을 대충 읽고 아는 단어를 찾은 학생이 걸립니다.</p>
+<div class="q"><b>Q. 소피아는 왜 관리인에게 인솔을 부탁했나?</b>
+<ol type="A"><li>경험 있는 어른이 안전하게 안내하고 서식지를 설명해 줄 수 있어서 <span class="tag">정답</span></li>
+<li>관리인 없이는 습지 길에 들어갈 수 없어서</li>
+<li>민이 관찰 카드를 나눠줄 어른을 부탁해서</li>
+<li>표시된 세 지점에서 반딧불이를 셀 사람이 필요해서</li></ol></div>
+<p style="font-size:14px;color:var(--muted)">→ 관찰 카드·세 지점은 모두 지문에 실제로 나오는 사실입니다. 다만 이 질문의 답은 아닙니다.</p>
+
+<h4>유형 2 · 두 사실을 맞바꾸기</h4>
+<p>지문 속 두 대상의 속성을 서로 뒤집습니다. 누가 무엇을 했는지 헷갈린 학생이 걸립니다.</p>
+<div class="q"><b>Q. 왜가리와 수달의 움직임은 어떻게 다른가?</b>
+<ol type="A"><li>왜가리는 공중으로 날아오르고, 수달은 물속을 미끄러져 간다 <span class="tag">정답</span></li>
+<li>왜가리는 밤에 나타나고, 수달은 새벽에 보인다 <span style="color:var(--no)">← 시간이 반대</span></li>
+<li>왜가리는 화살처럼 빠르고, 수달은 천천히 떠다닌다 <span style="color:var(--no)">← 잠자리의 묘사</span></li></ol></div>
+
+<h4>유형 3 · 비유를 문자 그대로</h4>
+<p>비유 표현 문항(11번)의 오답은 <b>그 표현을 글자 그대로 이해한 버전</b>이어야 합니다.</p>
+<div class="q"><b>Q. "아이들을 몸을 앞으로 기울이게 만들었다"의 의미는?</b>
+<ol type="A"><li>아이들이 몹시 흥미를 느껴 더 듣고 싶어 했다 <span class="tag">정답</span></li>
+<li>아이들이 의자를 교실 앞쪽으로 당겨 앉았다</li>
+<li>이야기가 무서워 아이들이 고개를 숙였다</li>
+<li>선생님 목소리가 잘 안 들린다는 뜻이었다</li></ol></div>
+
+<h4>유형 4 · 지문이 반박하는 통념</h4>
+<p>정보 지문에서 특히 강력합니다. 학생이 <b>원래 갖고 있던 오개념</b>을 오답으로 씁니다.</p>
+<div class="q"><b>Q. 초승달 이후 달이 점점 밝아 보이는 이유는?</b>
+<ol type="A"><li>공전하면서 햇빛 받는 면이 더 많이 보이게 되어서 <span class="tag">정답</span></li>
+<li>태양이 달의 더 넓은 부분을 비추기 시작해서 <span style="color:var(--no)">← 대표적 오개념</span></li>
+<li>달이 지구에 더 가까워져서 <span style="color:var(--no)">← 대표적 오개념</span></li>
+<li>지구 그림자가 달에서 서서히 벗겨져서 <span style="color:var(--no)">← 월식과 혼동</span></li></ol></div>
+
+<h4>유형 5 · 참이지만 부분적인 요약</h4>
+<p>요약 문항(12번)의 오답은 <b>거짓이 아니라 “좁은” 문장</b>이어야 합니다. 글 전체를 보지 않고 인상적인 한 장면만 기억한 학생이 걸립니다.</p>
+<div class="q"><b>Q. 글 전체를 가장 잘 요약한 것은?</b>
+<ol type="A"><li>맹그로브는 적응한 뿌리로 해안 서식지를 만들고 많은 생물을 지탱하며, 전체 생태계 차원의 보전이 필요하다 <span class="tag">정답</span></li>
+<li>맹그로브의 얽힌 뿌리는 파도를 늦추고 퇴적물을 가둔다 <span style="color:var(--no)">← 사실이지만 일부</span></li>
+<li>어린 물고기와 게가 뿌리 사이에 숨어 지낸다 <span style="color:var(--no)">← 사실이지만 일부</span></li>
+<li>해안 개발·오염·벌채가 맹그로브를 위협한다 <span style="color:var(--no)">← 사실이지만 일부</span></li></ol></div>
+
+<h3>금지 사항</h3>
+<div class="ba">
+  <div class="x"><h5>쓰지 말 것</h5><ul>
+    <li><b>지문과 무관한 문장</b> — "글에서 이를 뒷받침하지 않는다" 같은 자기지시적 보기</li>
+    <li><b>유치한 불가능</b> — "동물이 말을 했다" 수준. 4학년은 즉시 지웁니다</li>
+    <li><b>극단어 남발</b> — 항상 · 절대 · 전혀 · 모든. 오답 표시로 굳어집니다</li>
+    <li><b>정답만 유독 긴 보기</b> — 길이로 정답이 드러납니다</li>
+    <li><b>서로 겹치는 두 보기</b> — 둘 다 맞거나 둘 다 틀립니다</li>
+  </ul></div>
+  <div class="o"><h5>이렇게</h5><ul>
+    <li>네 보기 모두 <b>지문의 어휘와 소재</b>로 쓰기</li>
+    <li>불가능을 넣어야 한다면 <b>물리적으로 불가능하되 그럴듯하게</b></li>
+    <li>단정 표현 대신 <b>구체적 상황</b>으로 서술</li>
+    <li>네 보기의 <b>길이와 문형을 비슷하게</b></li>
+    <li>각 오답이 <b>서로 다른 오독</b>을 대표하게</li>
+  </ul></div>
+</div>
+
+<div class="warn"><b>실제 사례</b><br>
+Level D 초판에서 30개 지문 전체가 아래와 같은 <b>공용 오답</b>을 쓰고 있었습니다.<br>
+<code>because the event happened by accident</code> · <code>Nothing at all would change.</code> · <code>to move in a noisy hurry</code> · <code>No one learned anything from the experience.</code><br>
+지문을 읽지 않아도 세 개가 지워집니다. 이후 210문항 · 630개 보기를 위 다섯 유형으로 전면 재작성했습니다. <b>지문·정답·정답 위치는 그대로 두고 오답만</b> 교체했습니다.</div>
+
+<h2 id="bystrategy">9. 전략별 함정 설계</h2>
+<p>전략마다 무너지기 쉬운 지점이 다릅니다. 문항을 만들거나 검수하실 때 참고하세요.</p>
+<table>
+  <tr><th style="width:8%">#</th><th style="width:20%">전략</th><th>흔한 실패와 처방</th></tr>
+  <tr><td class="c">3</td><td>일의 순서</td><td><b>글에 나온 순서</b>를 묻는 문항이 되기 쉽습니다. 회상·역순 서술이 있는 지문을 골라 <b>실제 사건 순서</b>를 묻게 하세요.</td></tr>
+  <tr><td class="c">4</td><td>원인과 결과</td><td>단순히 먼저 일어난 일을 원인으로 제시하면 안 됩니다. 오답에는 <b>선후 관계만 있고 인과는 없는</b> 사건을 넣으세요.</td></tr>
+  <tr><td class="c">6</td><td>예측하기</td><td><b>가장 자주 망가지는 문항.</b> 지문에 이미 쓰인 문장을 그대로 답으로 삼으면 예측이 아니라 사실 확인입니다. "비슷한 상황이 다시 오면"처럼 <b>지문 바깥</b>을 묻고, 오답은 근거를 절반만 쓴 추론으로 만드세요.</td></tr>
+  <tr><td class="c">8</td><td>추론하기</td><td>지문 요약이 정답이 되면 안 됩니다. <b>쓰이지 않았지만 도출되는</b> 것이어야 합니다. 오답은 그럴듯하지만 근거가 없는 추측으로.</td></tr>
+  <tr><td class="c">11</td><td>비유 표현</td><td>인용하는 표현은 <b>반드시 그 지문에 그대로 존재</b>해야 합니다. 오답은 문자 그대로 읽은 버전(유형 3).</td></tr>
+  <tr><td class="c">12</td><td>사실과 상상<br>(B·C)</td><td>불가능한 보기는 <b>물리적·과학적으로 불가능하되 그럴듯</b>해야 합니다. "강돌이 하룻밤 새 저절로 두 배가 되었다"는 좋고, "돌이 말을 했다"는 나쁩니다.</td></tr>
+  <tr><td class="c">12</td><td>요약<br>(D)</td><td>오답은 <b>참이지만 부분적인</b> 문장으로(유형 5). 거짓 문장은 너무 쉽게 지워집니다.</td></tr>
+  <tr><td class="c">7</td><td>문맥 속 어휘</td><td>묻는 낱말이 <b>지문에 실제로 등장</b>해야 하고, 주변 문장이 뜻을 알려줘야 합니다. 다의어를 고르면 오답 설계가 쉬워집니다(예: <i>limbs</i> — 나뭇가지 / 팔다리).</td></tr>
+</table>
+
+<h2 id="review">10. 문항 검수 체크리스트</h2>
+<p>새 문항을 만들거나 기존 문항을 점검할 때 순서대로 확인하세요.</p>
+<ol>
+  <li>이 세트의 정답 분포가 <b>3A/3B/3C/3D</b>인가?</li>
+  <li>문항 번호와 전략 순서가 <b>1~12로 일치</b>하는가?</li>
+  <li>정답의 근거를 지문에서 <b>문장으로 짚을 수 있는가</b>?</li>
+  <li><b>지문을 가리고</b> 풀어 보라. 정답이 보이면 오답이 약한 것이다.</li>
+  <li>각 오답에 대해 <b>"어떻게 잘못 읽으면 이걸 고르나?"</b>에 답할 수 있는가? 답할 수 없으면 그 보기는 버려라.</li>
+  <li>네 보기의 <b>길이·문형</b>이 비슷한가?</li>
+  <li>7번의 낱말이 <b>지문에 실제로 있는가</b>?</li>
+  <li>11번의 인용이 <b>지문에 그대로 있는가</b>?</li>
+  <li>6번이 지문 문장의 반복이 아니라 <b>진짜 추론</b>을 요구하는가?</li>
+</ol>
+<div class="good"><b>4번과 5번이 핵심입니다.</b> 이 두 가지만 지켜도 문항 품질의 대부분이 결정됩니다.</div>
+
+<h2 id="print">11. 인쇄 센터 사용법</h2>
+<p><a href="print.html">print.html</a> 을 브라우저로 엽니다. 설치할 것은 없습니다.</p>
+
+<h3>브랜드</h3>
+<p>학원 이름·부제·색상·로고를 설정합니다. <b>브라우저에 저장</b>되므로 한 번만 하면 됩니다. 로고는 파일 업로드하거나 <code>assets/images/ueplogo.png</code> 에 두면 자동으로 인식합니다. 사진으로 찍은 로고의 <b>흰 배경은 자동 제거</b>됩니다.</p>
+
+<h3>출력 단위</h3>
+<table>
+  <tr><th style="width:22%">통권</th><td>앞표지 + 단원 속표지 + 전체 학습지 + 답안지를 한 권으로</td></tr>
+  <tr><th>단원별</th><td>고른 단원 하나만. 표지 없이 학습지만</td></tr>
+</table>
+
+<h3>표지</h3>
+<p>문장형 · 세로 밴드 · 클래식 · 모던 · 아치 — 5종. 학원 색상이 자동 반영됩니다.</p>
+<div class="good"><b>프린터로 바로 뽑아도 표지 색이 나옵니다.</b><br>
+브라우저는 "배경 그래픽" 옵션이 기본 꺼짐이라 보통은 색 배경이 백지로 인쇄됩니다. 이 표지는 배경색이 아니라 <b>도형으로 그려서</b> 그 설정과 무관하게 인쇄됩니다. 여백만 <b>없음</b>으로 두세요.</div>
+
+<h3>약점 유형 연습</h3>
+<p>12전략 중 골라 체크하면 <b>지문은 그대로, 해당 유형 문항만</b> 인쇄됩니다. 문항 번호는 원래 번호(6·8·12…)를 유지하므로 어떤 전략인지 바로 알 수 있습니다. 전부 해제하면 12문항 전체가 나갑니다.</p>
+
+<h3>답안지</h3>
+<p>문제지와 분리해서 인쇄합니다. 정답표와 해설이 들어가며 <b>이름·날짜란이 없고</b> 교사용 표기가 붙습니다.</p>
+
+<h3>학습지 언어</h3>
+<p>영어가 기본입니다. 필요하면 한국어로 바꿀 수 있고, 낱말지의 우리말 칸도 켜고 끌 수 있습니다.</p>
+
+<h2 id="run">12. 수업 운영 예시</h2>
+<p>주 2회 · 회당 60분 기준의 한 단원 운영안입니다.</p>
+<table>
+  <tr><th style="width:14%">차시</th><th>수업</th><th>숙제</th></tr>
+  <tr><td><b>1차시</b></td><td>낱말 12개 학습 → 추가 학습 지문 읽기 → 12문항 풀이 → <b>오답 함께 분석</b></td><td>낱말 빈칸 시험지</td></tr>
+  <tr><td><b>2차시</b></td><td>낱말 확인 → 유사 지문 읽기 → 12문항 풀이 → 두 세트 결과 비교</td><td>틀린 전략의 약점 연습지</td></tr>
+</table>
+<div class="note"><b>오답 분석이 수업의 핵심입니다.</b><br>
+"정답은 C예요"로 끝내지 마세요. <b>"왜 B를 골랐어?"</b>를 물어야 합니다. 이 교재의 오답은 각각 특정한 오독을 대표하도록 설계되어 있어서, 학생이 고른 오답이 곧 <b>어디서 어긋났는지</b>를 알려줍니다.</div>
+<p>같은 전략을 2~3개 단원에서 반복해 틀리면 실제 약점입니다. 그때 약점 유형 연습지를 투입하세요.</p>
+
+<h2 id="faq">13. 자주 묻는 질문</h2>
+
+<h4>교재 원문 지문도 인쇄되나요?</h4>
+<p>아닙니다. 인쇄 센터는 <b>자체 제작 콘텐츠</b>(낱말·추가 학습 지문·유사 지문)만 출력합니다. 원문은 학생이 보유한 교재로 학습합니다.</p>
+
+<h4>진단에서 D를 추천받았는데 D 교재가 없다고 나옵니다.</h4>
+<p>구버전의 오류입니다. 현재는 B·C·D 모두 연결되어 있습니다.</p>
+
+<h4>레벨 E 이상은 언제 나오나요?</h4>
+<p>E~H는 <b>진단만</b> 제공됩니다. 해당 레벨의 학습 교재는 아직 없습니다. 진단 결과 E 이상이 나온 학생은 D를 심화로 운영하시거나 별도 교재를 병행하십시오.</p>
+
+<h4>문항을 저희가 추가해도 되나요?</h4>
+<p>가능합니다. 다만 <b>7~10장의 설계 원칙</b>을 지켜 주세요. 특히 정답 분포 3/3/3/3, 전략 순서 고정, 그리고 오답 다섯 유형입니다. 이 규칙이 깨지면 약점 유형 연습과 분석지가 부정확해집니다.</p>
+
+<h4>분석지를 학부모에게 그대로 드려도 되나요?</h4>
+<p>됩니다. 다만 상담에서 <b>“한 번의 진단은 가설”</b>이라는 점을 함께 설명해 주세요(4장 참고).</p>
+
+<h4>인터넷 없이 쓸 수 있나요?</h4>
+<p>인쇄 센터는 브라우저에서 로컬로 동작합니다. 다만 파일을 웹 서버로 열어야 로고 자동 인식이 됩니다. 파일을 직접 열면 로고는 업로드로 넣으세요.</p>
+
+<div class="foot">
+  본 매뉴얼은 학원 운영자·강사용입니다. 교재 원문은 저작권 보호 대상이며 이 프로그램에 포함되지 않습니다.<br>
+  문항 설계 원칙(7~10장)은 실제 문항 검수에 적용된 기준입니다.
+</div>
+
+</main>
+</div>
+</body>
+</html>
