@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="470" viewBox="0 0 1100 470">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="390" viewBox="0 0 1100 390">
   <defs>
     <style>
-      .bg{fill:#fffaf0}.title{font:700 28px Arial,sans-serif;fill:#17324d}.label{font:700 26px Arial,sans-serif;fill:#17324d;text-anchor:middle}
+      .bg{fill:#fffaf0}.label{font:700 26px Arial,sans-serif;fill:#17324d;text-anchor:middle}
       .top{fill:#fff4cf}.left{fill:#e7c28e}.right{fill:#d7ad72}.line{stroke:#8f7148;stroke-width:1.6;stroke-linejoin:round}
       .shadow{fill:#d8e0e7;opacity:.42}
     </style>
@@ -26,16 +26,15 @@
       <use href="#cube" x="-24" y="-14"/>
     </g>
   </defs>
-  <rect class="bg" width="1100" height="470" rx="28"/>
-  <text class="title" x="60" y="60">보기 중 다른 하나를 고르세요.</text>
-  <g transform="translate(120 230)"><use href="#stack-right"/></g>
-  <g transform="translate(335 230)"><use href="#stack-right"/></g>
-  <g transform="translate(550 230)"><use href="#stack-corner"/></g>
-  <g transform="translate(765 230)"><use href="#stack-right"/></g>
-  <g transform="translate(980 230)"><use href="#stack-right"/></g>
-  <text class="label" x="120" y="390">①</text>
-  <text class="label" x="335" y="390">②</text>
-  <text class="label" x="550" y="390">③</text>
-  <text class="label" x="765" y="390">④</text>
-  <text class="label" x="980" y="390">⑤</text>
+  <rect class="bg" width="1100" height="390" rx="28"/>
+  <g transform="translate(120 180)"><use href="#stack-right"/></g>
+  <g transform="translate(335 180)"><use href="#stack-right"/></g>
+  <g transform="translate(550 180)"><use href="#stack-corner"/></g>
+  <g transform="translate(765 180)"><use href="#stack-right"/></g>
+  <g transform="translate(980 180)"><use href="#stack-right"/></g>
+  <text class="label" x="120" y="330">①</text>
+  <text class="label" x="335" y="330">②</text>
+  <text class="label" x="550" y="330">③</text>
+  <text class="label" x="765" y="330">④</text>
+  <text class="label" x="980" y="330">⑤</text>
 </svg>
