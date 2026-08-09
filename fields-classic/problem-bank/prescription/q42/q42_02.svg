@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="430" viewBox="0 0 980 430">
+  <defs>
+    <style>
+      .bg{fill:#fffdf7}.title{font:700 26px Arial,sans-serif;fill:#17324d}.hint{font:600 20px Arial,sans-serif;fill:#55708c}
+      .cell{fill:#ffffff;stroke:#8fb7d4;stroke-width:3}.tri{fill:#fff4cf;stroke:#e0b94d;stroke-width:3}
+      .num{font:700 34px Arial,sans-serif;fill:#17324d;text-anchor:middle;dominant-baseline:middle}.sum{font:700 28px Arial,sans-serif;fill:#7a5600;text-anchor:middle;dominant-baseline:middle}
+    </style>
+  </defs>
+  <rect class="bg" width="980" height="430" rx="28"/>
+  <text class="title" x="50" y="58">빈칸에 1부터 7까지의 수를 한 번씩 써넣으세요.</text>
+  <text class="hint" x="50" y="94">삼각형 안의 수는 아래 두 칸의 수를 더한 값입니다.</text>
+  <g transform="translate(105 155)">
+    <polygon class="tri" points="55,0 95,70 15,70"/><text class="sum" x="55" y="45">6</text>
+    <polygon class="tri" points="165,0 205,70 125,70"/><text class="sum" x="165" y="45">7</text>
+    <polygon class="tri" points="275,0 315,70 235,70"/><text class="sum" x="275" y="45">8</text>
+    <polygon class="tri" points="385,0 425,70 345,70"/><text class="sum" x="385" y="45">9</text>
+    <polygon class="tri" points="495,0 535,70 455,70"/><text class="sum" x="495" y="45">10</text>
+    <polygon class="tri" points="605,0 645,70 565,70"/><text class="sum" x="605" y="45">7</text>
+    <rect class="cell" x="0" y="92" width="80" height="70" rx="10"/><text class="num" x="40" y="127">5</text>
+    <rect class="cell" x="110" y="92" width="80" height="70" rx="10"/>
+    <rect class="cell" x="220" y="92" width="80" height="70" rx="10"/>
+    <rect class="cell" x="330" y="92" width="80" height="70" rx="10"/><text class="num" x="370" y="127">2</text>
+    <rect class="cell" x="440" y="92" width="80" height="70" rx="10"/>
+    <rect class="cell" x="550" y="92" width="80" height="70" rx="10"/>
+    <rect class="cell" x="660" y="92" width="80" height="70" rx="10"/>
+  </g>
+</svg>
