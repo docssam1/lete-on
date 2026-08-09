@@ -1,13 +1,12 @@
 /* =========================================================
  * 지필드 영재교육 · 필즈 더 클래식 대비 과정
  * 공용 데이터 파일 — 관리자 콘솔에서 자동 생성됨
- * 생성: 2026. 8. 8. 오후 8:09:38
+ * 생성: 2026. 8. 9. 오전 10:25:28
  * ========================================================= */
 window.GFIELD_FC_DATA = {
   "students": [
     "최연우",
     "김시윤",
-    "전현준",
     "노관호",
     "DEMO",
     "남유준",
@@ -16,7 +15,8 @@ window.GFIELD_FC_DATA = {
     "김채원",
     "전윤찬",
     "안희서",
-    "오시엘"
+    "오시엘",
+    "권예준"
   ],
   "studentCode": {
     "최연윤": "GF8QSMMW",
@@ -31,12 +31,12 @@ window.GFIELD_FC_DATA = {
     "김채원": "GFHPEGHY",
     "전윤찬": "GFPNYS6Y",
     "안희서": "GFL2AEWC",
-    "오시엘": "GFLJFDXE"
+    "오시엘": "GFLJFDXE",
+    "권예준": "GFBE3NE2"
   },
   "studentType": {
     "최연우": "internal",
     "김시윤": "internal",
-    "전현준": "internal",
     "노관호": "online",
     "DEMO": "online",
     "남유준": "internal",
@@ -45,7 +45,8 @@ window.GFIELD_FC_DATA = {
     "김채원": "internal",
     "전윤찬": "internal",
     "안희서": "internal",
-    "오시엘": "internal"
+    "오시엘": "internal",
+    "권예준": "internal"
   },
   "attendance": {
     "최연우": [
@@ -53,10 +54,6 @@ window.GFIELD_FC_DATA = {
       "개념완성"
     ],
     "김시윤": [
-      "개념완성",
-      "연산연습"
-    ],
-    "전현준": [
       "개념완성",
       "연산연습"
     ],
@@ -122,7 +119,8 @@ window.GFIELD_FC_DATA = {
       "연산연습",
       "진단모의고사",
       "진단약점클리닉"
-    ]
+    ],
+    "권예준": []
   },
   "content": {
     "개념완성": {
