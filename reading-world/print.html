@@ -97,9 +97,9 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .art.sm{max-height:44mm}
 .psg.numbered{counter-reset:pl}
 ol.qs{list-style:none;counter-reset:q;padding:0;margin:0}
-ol.qs>li{counter-increment:q;break-inside:avoid;margin:0 0 4mm}
+ol.qs>li{break-inside:avoid;margin:0 0 4mm}
 ol.qs>li>.qt{font-weight:700;display:flex;gap:6px}
-ol.qs>li>.qt::before{content:counter(q) ".";flex:none;min-width:6mm}
+ol.qs>li>.qt .qn{flex:none;min-width:6mm}
 ol.qs>li .strat{font-weight:600;font-size:8.5pt;color:#6a7a70;display:block;margin-top:1px}
 ol.ch{list-style:none;padding:0 0 0 6mm;margin:1.5mm 0 0;display:grid;gap:1mm}
 ol.ch li{display:flex;gap:5px;font-size:10.6pt}
@@ -254,12 +254,29 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
     </div>
 
     <div class="panel">
-      <h2>3 · 인쇄 옵션</h2>
+      <h2>3 · 약점 유형 연습</h2>
+      <p class="hint">고른 전략의 문항만 뽑아 연습지를 만듭니다. 지문은 그대로 실리고 해당 유형 문항만 인쇄돼요. 전부 해제하면 12문항이 모두 나갑니다. <b>교재 워크시트에만</b> 적용됩니다.</p>
+      <div class="row">
+        <button class="mini" data-pick="st-all">전체</button>
+        <button class="mini" data-pick="st-none">해제 (12문항 전부)</button>
+      </div>
+      <div class="grid" style="grid-template-columns:1fr" id="stratList"></div>
+    </div>
+
+    <div class="panel">
+      <h2>4 · 인쇄 옵션</h2>
+      <label class="fld"><span>학습지 언어</span>
+        <div class="row" style="margin:0">
+          <button class="mini lang on" data-lang="ko">한국어</button>
+          <button class="mini lang" data-lang="en">English</button>
+        </div>
+      </label>
       <div class="grid" style="grid-template-columns:1fr">
         <label class="chk on"><input type="checkbox" id="optSplit" checked><span>지문과 문항을 다른 장에<small>교재처럼 지문 한 장, 문항 한 장으로 분리</small></span></label>
         <label class="chk on"><input type="checkbox" id="optArt" checked><span>삽화 넣기<small>지문 장에만 들어갑니다</small></span></label>
         <label class="chk on"><input type="checkbox" id="optName" checked><span>이름 · 날짜 기입란 넣기</span></label>
         <label class="chk on"><input type="checkbox" id="optBlankVocab" checked><span>낱말지를 빈칸 시험지로<small>해제하면 뜻이 인쇄된 학습용 낱말지</small></span></label>
+        <label class="chk"><input type="checkbox" id="optKoCol"><span>낱말지에 우리말 칸 넣기<small>영어 수업이면 꺼 두세요</small></span></label>
         <label class="chk"><input type="checkbox" id="optStrategy"><span>문항에 전략 이름 표시</span></label>
         <label class="chk on"><input type="checkbox" id="optExplain" checked><span>답안지에 해설 포함</span></label>
       </div>
@@ -377,14 +394,53 @@ var PARTS=[
 var LEVELS=((window.DIAGNOSTIC||{}).levels)||[];
 var COVERS=[{k:'crest',n:'문장형'},{k:'column',n:'세로 밴드'},{k:'plate',n:'클래식'},{k:'block',n:'모던'},{k:'arc',n:'아치'}];
 
-var sel={diag:{},book:{}};
+// Strategies are matched by position, never by name: Level D writes "Recognising
+// Cause and Effect" / "Identifying Author's Purpose" / "Summarising" where B and C
+// write "Recognizing" / "Understanding" / "Distinguishing Between Real and
+// Make-believe". The order of the twelve is identical in all three books.
+var STRATS=[
+  ['주제 찾기','Finding Main Idea'],['세부 내용','Recalling Facts and Details'],
+  ['일의 순서','Understanding Sequence'],['원인과 결과','Cause and Effect'],
+  ['비교와 대조','Comparing and Contrasting'],['예측하기','Making Predictions'],
+  ['문맥 속 어휘','Word Meaning in Context'],['추론하기','Conclusions and Inferences'],
+  ['사실과 의견','Fact and Opinion'],['글쓴이의 목적',"Author's Purpose"],
+  ['비유 표현','Figurative Language'],['요약 · 사실과 상상','Summarising / Real vs Make-believe']
+];
+// English academy: worksheets default to English even though the console that
+// builds them stays in Korean for the teacher.
+var LANG=get('lang','en');
+var TXT={
+  name:['이름','Name'], date:['날짜','Date'],
+  read:['지문을 읽고 물음에 답하세요. 각 문항에서 가장 알맞은 것을 하나 고르세요.',
+        'Read the passage and answer the questions. Choose the best answer for each one.'],
+  wWord:['Word','Word'], wFill:['뜻을 써 보세요','Write the meaning'],
+  wMean:['Meaning','Meaning'], wKo:['우리말','Korean'],
+  key:['답안지','Answer Key'], keyNote:['교사용 · 학생 배부 금지','Teacher copy — do not distribute'],
+  psg:['지문','Passage'], qs:['문항','Questions'], sets:['세트','sets'],
+  vocabT:['낱말','Vocabulary'], extraT:['추가 학습 지문','Extra Reading'], simT:['유사 지문','Parallel Reading'],
+  wsheet:['Worksheet','Worksheet'], ptest:['Placement Test','Placement Test'],
+  lesson:['과','Lesson'], practice:['유형 연습','Skill Practice']
+};
+function T(k){return (TXT[k]||['',''])[LANG==='en'?1:0];}
+
+var sel={diag:{},book:{},strat:{}};
 BOOKS.forEach(function(b){sel.book[b.id]={ch:{},parts:{vocab:false,extra:true,similar:false}};});
+function stratOn(){return STRATS.some(function(_,i){return sel.strat[i];});}
+// Keep the original question numbers so a practice sheet still tells the teacher
+// which of the twelve items each question is.
+function filterQs(qs){
+  if(!stratOn())return qs.map(function(q,i){return {q:q,n:i+1};});
+  return qs.map(function(q,i){return {q:q,n:i+1};}).filter(function(o){return sel.strat[o.n-1];});
+}
 
 /* ---------- panel ---------- */
 document.getElementById('diagList').innerHTML=LEVELS.map(function(l){
   return '<label class="chk" data-diag="'+esc(l.id)+'"><input type="checkbox" data-diag-cb="'+esc(l.id)+'">'+
     '<span><b>레벨 '+esc(l.id)+'</b><small>'+esc(l.grade)+' · '+((l.questions||[]).length)+'문항</small></span></label>';
 }).join('');
+document.getElementById('stratList').innerHTML=STRATS.map(function(s,i){
+  return '<label class="chk" data-st="'+i+'"><input type="checkbox" data-st-cb="'+i+'">'+
+    '<span><b>'+(i+1)+'. '+esc(s[0])+'</b><small>'+esc(s[1])+'</small></span></label>';}).join('');
 document.getElementById('coverPick').innerHTML=COVERS.map(function(c){
   return '<button class="cv-opt'+(brand.cover===c.k?' on':'')+'" data-cover="'+c.k+'">'+
     '<span class="sw" data-sw="'+c.k+'"></span><b>'+esc(c.n)+'</b></button>';}).join('');
@@ -420,7 +476,7 @@ function head(tag,title,src,forStudent){
   return '<div class="sh-top"><div class="sh-id">'+logoTag('')+
     '<div><div class="sh-tag">'+esc(tag)+'</div><h1>'+esc(title)+'</h1></div></div>'+
     '<div class="sh-src">'+esc(src)+'</div></div>'+
-    (forStudent&&opt('optName')?'<div class="sh-name">이름 <span></span> 날짜 <span></span></div>':'');
+    (forStudent&&opt('optName')?'<div class="sh-name">'+T('name')+' <span></span> '+T('date')+' <span></span></div>':'');
 }
 function foot(label){
   return '<div class="foot"><span>'+esc(label)+'</span><span>'+esc(brand.name||'Gfield Reading')+'</span></div>';
@@ -429,20 +485,22 @@ function passageHtml(ps){
   return '<div class="psg">'+(ps||[]).map(function(p){
     return '<p>'+esc(p).replace(/\n/g,'<br>')+'</p>';}).join('')+'</div>';
 }
-function questionsHtml(qs){
-  return '<ol class="qs">'+qs.map(function(q){
-    var strat=opt('optStrategy')?'<span class="strat">'+esc(q[0])+'</span>':'';
-    return '<li><div class="qt"><span>'+esc(q[1])+strat+'</span></div><ol class="ch">'+
+function questionsHtml(list){
+  return '<ol class="qs">'+list.map(function(o){
+    var q=o.q, strat=opt('optStrategy')?'<span class="strat">'+esc(q[0])+'</span>':'';
+    return '<li style="counter-increment:none"><div class="qt"><span class="qn">'+o.n+'.</span>'+
+      '<span>'+esc(q[1])+strat+'</span></div><ol class="ch">'+
       (q[2]||[]).map(function(c,i){return '<li><i>'+LET[i]+'.</i><span>'+esc(c)+'</span></li>';}).join('')+
       '</ol></li>';}).join('')+'</ol>';
 }
 function vocabHtml(words){
-  var blank=opt('optBlankVocab');
-  return '<table class="vg"><thead><tr><th>Word</th><th>'+(blank?'뜻을 써 보세요':'Meaning')+'</th><th>우리말</th></tr></thead><tbody>'+
+  var blank=opt('optBlankVocab'), ko=opt('optKoCol');
+  return '<table class="vg"><thead><tr><th>'+T('wWord')+'</th><th>'+(blank?T('wFill'):T('wMean'))+'</th>'+
+    (ko?'<th>'+T('wKo')+'</th>':'')+'</tr></thead><tbody>'+
     words.map(function(w){
       return '<tr><td class="w">'+esc(w[0])+'</td>'+
-        (blank?'<td class="blank"></td><td class="blank"></td>'
-             :'<td>'+esc(w[1])+'</td><td>'+esc(w[2]||'')+'</td>')+'</tr>';}).join('')+'</tbody></table>';
+        (blank?'<td class="blank"></td>'+(ko?'<td class="blank"></td>':'')
+             :'<td>'+esc(w[1])+'</td>'+(ko?'<td>'+esc(w[2]||'')+'</td>':''))+'</tr>';}).join('')+'</tbody></table>';
 }
 
 /* ---------- covers ---------- */
@@ -510,25 +568,32 @@ function artHtml(j,small){
 }
 function paperSheets(j){
   if(j.kind==='vocab')
-    return '<section class="sheet paper">'+head('Worksheet',j.title,j.src,true)+artHtml(j,true)+
+    return '<section class="sheet paper">'+head(T('wsheet'),j.title,j.src,true)+artHtml(j,true)+
       vocabHtml(j.words)+foot(j.label)+'</section>';
-  var tag=j.kind==='diag'?'Placement Test':'Worksheet';
-  var intro='<div class="sh-intro">지문을 읽고 물음에 답하세요. 각 문항에서 가장 알맞은 것을 하나 고르세요.</div>';
+  var tag=j.kind==='diag'?T('ptest'):T('wsheet');
+  // The strategy filter is index-based and only the 12-question book sets line up
+  // with it, so the placement levels (6 and 8 questions) always print in full.
+  var qlist=j.kind==='diag'?j.questions.map(function(q,i){return {q:q,n:i+1};}):filterQs(j.questions);
+  if(!qlist.length)return '';
+  var intro='<div class="sh-intro">'+T('read')+'</div>';
   if(opt('optSplit'))
-    return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+artHtml(j)+passageHtml(j.passage)+foot(j.label+' · 지문')+'</section>'+
-           '<section class="sheet paper">'+head(tag,j.title+' — 문항',j.src,true)+intro+questionsHtml(j.questions)+foot(j.label+' · 문항')+'</section>';
-  return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+artHtml(j,true)+passageHtml(j.passage)+intro+questionsHtml(j.questions)+foot(j.label)+'</section>';
+    return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+artHtml(j)+passageHtml(j.passage)+foot(j.label+' · '+T('psg'))+'</section>'+
+           '<section class="sheet paper">'+head(tag,j.title+' — '+T('qs'),j.src,true)+intro+questionsHtml(qlist)+foot(j.label+' · '+T('qs'))+'</section>';
+  return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+artHtml(j,true)+passageHtml(j.passage)+intro+questionsHtml(qlist)+foot(j.label)+'</section>';
+}
+function keyList(j){
+  return j.kind==='diag'?j.questions.map(function(q,i){return {q:q,n:i+1};}):filterQs(j.questions||[]);
 }
 function keyTable(j){
-  var qs=j.questions||[];
+  var L=keyList(j);
   return '<table class="kt"><caption>'+esc(j.label)+' — '+esc(j.title)+'</caption><tr>'+
-    qs.map(function(_,i){return '<th>'+(i+1)+'</th>';}).join('')+'</tr><tr>'+
-    qs.map(function(q){return '<td class="a">'+esc(q[3])+'</td>';}).join('')+'</tr></table>'+
-    (opt('optExplain')?'<ul class="ex">'+qs.map(function(q,i){
-      return '<li><b>'+(i+1)+'. '+esc(q[3])+'</b> — '+esc(q[4]||'')+'</li>';}).join('')+'</ul>':'');
+    L.map(function(o){return '<th>'+o.n+'</th>';}).join('')+'</tr><tr>'+
+    L.map(function(o){return '<td class="a">'+esc(o.q[3])+'</td>';}).join('')+'</tr></table>'+
+    (opt('optExplain')?'<ul class="ex">'+L.map(function(o){
+      return '<li><b>'+o.n+'. '+esc(o.q[3])+'</b> — '+esc(o.q[4]||'')+'</li>';}).join('')+'</ul>':'');
 }
 function keySheets(list){
-  var withQ=list.filter(function(j){return (j.questions||[]).length;});
+  var withQ=list.filter(function(j){return keyList(j).length;});
   if(!withQ.length)return '';
   // Explanations run long, so the key is split into fixed-size sheets instead of
   // one page that silently overflows.
@@ -536,8 +601,8 @@ function keySheets(list){
   for(i=0;i<withQ.length;i+=per){
     chunk=withQ.slice(i,i+per);n++;
     out.push('<section class="sheet key">'+
-      head('Answer Key','답안지'+(withQ.length>per?' ('+n+')':''),'교사용 · 학생 배부 금지',false)+
-      chunk.map(keyTable).join('')+foot('답안지 · '+chunk.length+'세트')+'</section>');
+      head('Answer Key',T('key')+(withQ.length>per?' ('+n+')':''),T('keyNote'),false)+
+      chunk.map(keyTable).join('')+foot(T('key')+' · '+chunk.length+' '+T('sets'))+'</section>');
   }
   return out.join('');
 }
@@ -599,6 +664,8 @@ document.addEventListener('change',function(e){
   if((k=t.getAttribute('data-diag-cb'))){sel.diag[k]=t.checked;t.closest('.chk').classList.toggle('on',t.checked);return render();}
   if((k=t.getAttribute('data-ch-cb'))){var a=k.split(':');sel.book[a[0]].ch[a[1]]=t.checked;t.closest('.chk').classList.toggle('on',t.checked);return render();}
   if((k=t.getAttribute('data-part-cb'))){var p=k.split(':');sel.book[p[0]].parts[p[1]]=t.checked;t.closest('.chk').classList.toggle('on',t.checked);return render();}
+  if((k=t.getAttribute('data-st-cb'))!==null&&k!==undefined&&t.hasAttribute('data-st-cb')){
+    sel.strat[+k]=t.checked;t.closest('.chk').classList.toggle('on',t.checked);return render();}
   if(t.id==='bLogo'&&t.files&&t.files[0]){
     var fr=new FileReader();
     fr.onload=function(){brand.logo=String(fr.result);set('logo',brand.logo);applyBrand();render();};
@@ -613,12 +680,19 @@ document.addEventListener('input',function(e){
 document.addEventListener('click',function(e){
   var b=e.target.closest('button');if(!b)return;
   if(b.id==='bLogoClear'){brand.logo='';set('logo','');applyBrand();return render();}
+  if(b.dataset.lang){LANG=b.dataset.lang;set('lang',LANG);
+    document.querySelectorAll('.mini.lang').forEach(function(x){x.classList.toggle('on',x===b);});return render();}
   if(b.dataset.cover){brand.cover=b.dataset.cover;set('cover',brand.cover);
     document.querySelectorAll('.cv-opt').forEach(function(x){x.classList.toggle('on',x===b);});return render();}
   var pick=b.getAttribute('data-pick');
   if(pick){
     var p=pick.split(':'),cmd=p[0],bid=p[1];
-    if(cmd.indexOf('diag')===0){
+    if(cmd.indexOf('st-')===0){
+      var onS=cmd==='st-all';
+      STRATS.forEach(function(_,i){sel.strat[i]=onS;
+        var cb=document.querySelector('[data-st-cb="'+i+'"]');
+        if(cb){cb.checked=onS;cb.closest('.chk').classList.toggle('on',onS);}});
+    }else if(cmd.indexOf('diag')===0){
       LEVELS.forEach(function(l){
         var on=cmd==='diag-all'?true:cmd==='diag-none'?false:(!!l.bookId||l.id==='D');
         sel.diag[l.id]=on;
@@ -651,6 +725,7 @@ document.addEventListener('click',function(e){
   }
 });
 
+document.querySelectorAll('.mini.lang').forEach(function(x){x.classList.toggle('on',x.dataset.lang===LANG);});
 applyBrand();render();
 })();
 </script>
