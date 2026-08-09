@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" width="760" height="360">
+  <rect width="760" height="360" rx="20" fill="#fffdf7"/>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2f6f8f"/>
+    </marker>
+  </defs>
+  <g font-family="Arial, sans-serif" font-weight="800" fill="#18354d" text-anchor="middle">
+    <text x="180" y="44" font-size="22">처음</text>
+    <text x="580" y="44" font-size="22">뒤집고 돌린 뒤</text>
+  </g>
+  <g transform="translate(90 80)" fill="#ffffff" stroke="#1b3d59" stroke-width="4">
+    <rect x="0" y="0" width="180" height="180" rx="8"/>
+    <path d="M90 0V180M0 90H180" fill="none"/>
+    <circle cx="45" cy="45" r="21" fill="#ffd66b"/>
+    <path d="M135 24 L160 66 H110 Z" fill="#9ad7ff"/>
+    <rect x="24" y="114" width="42" height="42" rx="5" fill="#ff9a8a"/>
+    <path d="M135 111 L161 135 L135 161 L109 135 Z" fill="#bba8ff"/>
+  </g>
+  <path d="M315 145 C360 95 400 95 445 145" fill="none" stroke="#2f6f8f" stroke-width="8" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M315 220 C360 270 400 270 445 220" fill="none" stroke="#2f6f8f" stroke-width="8" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <g transform="translate(490 80)" fill="#ffffff" stroke="#1b3d59" stroke-width="4">
+    <rect x="0" y="0" width="180" height="180" rx="8"/>
+    <path d="M90 0V180M0 90H180" fill="none"/>
+    <path d="M45 21 L71 45 L45 71 L19 45 Z" fill="#bba8ff"/>
+    <path d="M135 24 L160 66 H110 Z" fill="#9ad7ff"/>
+    <rect x="24" y="114" width="42" height="42" rx="5" fill="#ff9a8a"/>
+    <text x="135" y="151" font-family="Arial, sans-serif" font-size="42" font-weight="900" text-anchor="middle" fill="#18354d" stroke="none">㉠</text>
+  </g>
+</svg>
