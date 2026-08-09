@@ -6,6 +6,7 @@
 ## 저장 위치
 
 - 문제 데이터와 정답: `prescription-data.js`
+- 실제시험 회차·문항·유형 연결표: `source-catalog.js`
 - 유형별 그림: `q01/`부터 `q28/`, `q33/`, `q34/`, `q37/`, `q41/`, `q42/`
 - 16~24번 그림 생성기: `scripts/generate_assets.py`
 - 25번 Geometry 3D 생성기: `scripts/q25_renderer.html`, `scripts/q25_renderer.js`
@@ -89,6 +90,7 @@ Q04 색종이 접기와 달리 접힌 종이의 구멍 수가 아니라, 도형�
 5. 새 그림은 기존 `generated/` 폴더가 아니라 이 `prescription/` 폴더에만 저장합니다.
 6. 25번은 임시 2D 그림을 사용하지 않고 GitHub의 Geometry World 재질과 조명을 재사용합니다.
 7. 섞어서 보기는 새 문제를 생성하지 않고, 검토가 끝난 문제의 표시 순서만 바꿉니다.
+8. 문항 선택은 원본 회차·문제 번호를 먼저 기준으로 삼고, 유형 선택은 `source-catalog.js`의 `typeIds` 연결을 사용합니다.
 
 ## 그림 다시 만들기
 
