@@ -14,6 +14,10 @@
   --brand:#1b2a6b; --brand2:#f0a92c;
 }
 *{box-sizing:border-box}
+/* Screens, chips and print buttons are toggled with the hidden attribute, and
+   several of them carry a display rule of their own — which silently outranks
+   the UA's [hidden]{display:none}. Settle it once, here. */
+[hidden]{display:none!important}
 body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg)}
 button,input,select{font:inherit}
 
@@ -101,7 +105,10 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .sheet.report .nextbox{border-left:3px solid var(--brand);background:#f4f2ea;padding:3mm 4mm;font-size:10pt;line-height:1.6}
 
 .pv{background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-.pv-h{display:flex;gap:6px;align-items:center;padding:10px 13px;border-bottom:1px solid var(--line);background:#fffdf7;position:sticky;top:68px;z-index:5;flex-wrap:wrap}
+/* .pv has overflow:hidden, which makes it the sticky scrollport — a non-zero top
+   here would park the header that far down the panel permanently. The sheets
+   scroll inside .pv-body, so top:0 keeps the chips pinned above them. */
+.pv-h{display:flex;gap:6px;align-items:center;padding:10px 13px;border-bottom:1px solid var(--line);background:#fffdf7;position:sticky;top:0;z-index:5;flex-wrap:wrap}
 .tab{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;color:#5a675e}
 .tab.on{background:var(--green);border-color:var(--green);color:#fff}
 .pv-note{margin-left:auto;font-size:12px;color:var(--muted)}
@@ -210,8 +217,158 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
 .sheet.divider h1{font-size:26pt;color:#17202b}
 .sheet.divider .bits{font-size:10pt;color:#6d7a70}
 
-@media(max-width:1240px){.sheet{width:100%;min-height:0;padding:14mm 12mm}
+/* screen-only: a printed page is only ~794px wide, so without the `screen`
+   keyword this narrow-viewport rule also reshaped the paper — giving printed
+   sheets different padding and a different footer model than the layout was
+   measured against. */
+@media screen and (max-width:1240px){.sheet{width:100%;min-height:0;padding:14mm 12mm}
   .sheet.cover{min-height:250mm}.foot{position:static;margin-top:6mm;left:auto;right:auto}}
+/* Pagination measures at true page metrics even when the preview is squeezed. */
+.pv-body.measuring .sheet{width:210mm!important;min-height:296mm!important;padding:16mm 15mm!important}
+.pv-body.measuring .foot{position:absolute!important;margin-top:0!important;left:15mm!important;right:15mm!important}
+
+/* ---------------- screen A · course shelf ---------------- */
+/* The 3D volumes are lifted from uep.html so the teacher console and the student
+   front door show the same three books in the same shape. Named .book3 because
+   .book is already the chapter panel in the workshop sidebar. */
+.scr-a{min-height:100vh;display:flex;flex-direction:column;
+  background:radial-gradient(120% 78% at 50% -22%,#fbf9f2,var(--bg) 62%)}
+.sa-top{display:flex;gap:14px;align-items:center;padding:14px clamp(14px,3vw,28px);flex-wrap:wrap}
+.sa-top .sp{margin-left:auto;display:flex;gap:8px;align-items:center}
+.sa-hero{text-align:center;padding:clamp(16px,4vw,44px) 20px 0}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.3em;text-transform:uppercase;color:var(--brand2)}
+.sa-hero h1{font-family:var(--serif);font-size:clamp(27px,4.4vw,42px);margin:9px 0 6px;letter-spacing:-.6px}
+.sa-hero p{margin:0;color:var(--muted);font-size:15px}
+.resume{display:inline-flex;gap:7px;align-items:center;margin-top:16px;border:1px solid var(--line);
+  background:#fff;border-radius:999px;padding:7px 15px;font-size:13px;font-weight:700;cursor:pointer;color:var(--ink)}
+.resume:hover{border-color:var(--brand);color:var(--brand)}
+.shelf{display:flex;gap:clamp(18px,4vw,52px);justify-content:center;align-items:flex-end;
+  flex-wrap:wrap;perspective:1600px;padding:34px 20px 64px}
+.slot{width:196px;display:flex;flex-direction:column;align-items:center;margin:0}
+.slot figcaption{margin-top:15px;text-align:center}
+.slot figcaption b{display:block;font-size:15px}
+.slot figcaption span{font-size:12.5px;color:var(--muted)}
+.plank{width:214px;height:11px;border-radius:3px;margin-top:-4px;
+  background:linear-gradient(180deg,#c9b795,#8d7550);box-shadow:0 12px 20px rgba(40,30,10,.22)}
+.book3{position:relative;width:172px;height:232px;cursor:pointer;border:0;padding:0;background:none;
+  transform-style:preserve-3d;transform:rotateY(-24deg);transition:transform .5s cubic-bezier(.2,.7,.3,1)}
+.book3:hover,.book3:focus-visible{transform:rotateY(-6deg) translateY(-8px)}
+.book3:focus-visible{outline:3px solid var(--brand2);outline-offset:10px;border-radius:4px}
+.face{position:absolute;inset:0;border-radius:3px 6px 6px 3px;overflow:hidden;
+  box-shadow:0 22px 34px rgba(18,26,60,.34);display:flex;flex-direction:column;
+  justify-content:space-between;padding:19px 16px 16px;color:#fff;text-align:left;backface-visibility:hidden}
+.face::before{content:"";position:absolute;left:0;top:0;bottom:0;width:12px;
+  background:linear-gradient(90deg,rgba(0,0,0,.36),rgba(0,0,0,.06) 62%,rgba(255,255,255,.16))}
+.face::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(107deg,rgba(255,255,255,.2) 0 18%,transparent 40%)}
+.spine{position:absolute;top:0;bottom:0;left:0;width:24px;
+  transform:rotateY(90deg) translateX(-12px) translateZ(-12px);transform-origin:left center;border-radius:2px}
+.pages{position:absolute;top:5px;bottom:5px;right:-10px;width:11px;border-radius:0 3px 3px 0;
+  background:repeating-linear-gradient(90deg,#fff 0 1px,#e6e2d6 1px 2px);
+  transform:rotateY(90deg) translateX(6px);transform-origin:right center;box-shadow:1px 0 3px rgba(0,0,0,.2)}
+.face .lv{position:relative;font-size:10.5px;font-weight:800;letter-spacing:.2em;color:var(--brand2)}
+.face .ttl{position:relative;font-family:var(--serif);font-size:23px;line-height:1.12;letter-spacing:-.4px}
+.face .meta{position:relative;font-size:11px;color:rgba(255,255,255,.78);letter-spacing:.05em}
+.face .mark{position:absolute;right:-12px;bottom:-18px;font-family:var(--serif);font-weight:700;
+  font-size:120px;line-height:1;color:rgba(255,255,255,.09)}
+/* The placement test is not a book, so it reads as a clipped stack of loose
+   sheets — the thing a teacher actually hands out at a consultation. */
+.stack{position:relative;width:172px;height:232px;border:0;background:none;padding:0;cursor:pointer;
+  transition:transform .5s cubic-bezier(.2,.7,.3,1)}
+.stack:hover,.stack:focus-visible{transform:translateY(-9px)}
+.stack:focus-visible{outline:3px solid var(--brand2);outline-offset:10px;border-radius:4px}
+.stack .pg{position:absolute;inset:0;background:#fff;border:1px solid #e4e0d3;border-radius:3px;
+  box-shadow:0 16px 28px rgba(18,26,60,.17)}
+.stack .p3{transform:rotate(-6deg)}
+.stack .p2{transform:rotate(3.2deg)}
+.stack .p1{display:flex;flex-direction:column;justify-content:space-between;padding:28px 16px 17px;text-align:left}
+.stack .clip{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:54px;height:19px;
+  border-radius:5px;background:linear-gradient(180deg,#c3cad2,#8b949e);box-shadow:0 2px 5px rgba(0,0,0,.28)}
+.stack .clip::after{content:"";position:absolute;left:50%;top:6px;transform:translateX(-50%);
+  width:32px;height:7px;border-radius:3px;background:#f4f4f0}
+.stack .s-lv{font-size:9px;font-weight:800;letter-spacing:.1em;color:var(--brand2);line-height:1.5}
+.stack .s-ttl{font-family:var(--serif);font-size:20px;line-height:1.16;color:var(--brand)}
+.stack .s-meta{font-size:10.5px;color:#8b958d;letter-spacing:.06em}
+.stack .s-rule{height:2px;width:32px;background:var(--brand2);margin:6px 0 0}
+
+/* ---------------- screen B · workshop ---------------- */
+.crumb{display:flex;gap:10px;align-items:center;min-width:0}
+.crumb .back{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;
+  font-size:13px;font-weight:700;cursor:pointer;color:#5a675e;white-space:nowrap}
+.crumb .back:hover{border-color:#b9c9bf;color:var(--brand)}
+.crumb b{font-size:16px;letter-spacing:-.3px;white-space:nowrap}
+.sumchip{font-size:12px;color:var(--muted);border:1px solid var(--line);background:#fbfaf5;
+  border-radius:999px;padding:5px 11px;max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sumchip:empty{display:none}
+.wt-row{display:flex;gap:6px;margin-left:6px}
+.wt{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;
+  font-size:13.5px;font-weight:700;cursor:pointer;color:#5a675e}
+.wt.on{background:var(--brand);border-color:var(--brand);color:#fff}
+
+/* accordion steps */
+.step{background:var(--paper);border:1px solid var(--line);border-radius:16px;margin-bottom:11px;overflow:hidden}
+.step.open{border-color:#c4d4c9;box-shadow:0 2px 12px rgba(30,45,35,.07)}
+.st-h{display:flex;gap:11px;align-items:center;width:100%;border:0;background:none;
+  padding:13px 15px;cursor:pointer;text-align:left;color:inherit}
+.st-n{flex:none;width:25px;height:25px;border-radius:50%;background:var(--brand);color:#fff;
+  font-size:12.5px;font-weight:800;display:grid;place-items:center}
+.step.done .st-n{background:var(--green)}
+.st-t{font-weight:800;font-size:14.5px;white-space:nowrap}
+.st-s{margin-left:auto;font-size:12px;color:var(--muted);text-align:right;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.step:not(.open) .st-b{display:none}
+.st-b{padding:0 15px 15px}
+.seg{display:flex;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f8f7f1;margin-bottom:10px}
+.seg button{flex:1;border:0;background:none;padding:9px 6px;font-size:13px;font-weight:700;
+  cursor:pointer;color:#5a675e}
+.seg button.on{background:var(--brand);color:#fff}
+
+/* composition toggle cards */
+.tgl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tgl label{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;
+  padding:11px;cursor:pointer;background:#fff;font-size:13px;line-height:1.4}
+.tgl label:hover{border-color:#bcd3c4}
+.tgl label.on{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 6%,#fff)}
+.tgl input{position:absolute;opacity:0;pointer-events:none}
+.tgl .ic{font-size:18px;line-height:1.1;flex:none}
+.tgl b{display:block;font-size:13px}
+.tgl small{color:var(--muted);font-size:11px;display:block;margin-top:2px;line-height:1.45}
+@media(max-width:520px){.tgl{grid-template-columns:1fr}}
+.fold{border:1px solid var(--line);border-radius:11px;background:#fbfaf5;margin-top:10px}
+.fold>summary{cursor:pointer;padding:9px 12px;font-size:13px;font-weight:700;color:#4d5b52}
+.fold>div{padding:0 12px 12px}
+
+/* real cover thumbnails: a scaled-down coverSheet, not a colour swatch, so the
+   teacher picks by looking at the page they will actually get. 102px / 210mm. */
+.grid.cv{grid-template-columns:repeat(auto-fill,102px)}
+.cv-mini{display:block;width:102px;height:144px;overflow:hidden;position:relative;background:#fff}
+.cv-mini .sheet{position:absolute;top:0;left:0;margin:0;box-shadow:none;
+  width:210mm!important;min-height:296mm!important;height:296mm;transform:scale(.1285);transform-origin:0 0}
+.cv-opt .sw{height:60px;display:block}
+
+.pgsum{border:1px solid var(--line);border-radius:12px;background:#fbfaf5;padding:11px 13px;
+  font-size:12.5px;color:#4d5b52;margin-bottom:11px;line-height:1.6}
+.pgsum b{font-size:15px;color:var(--ink)}
+.st-b .row.go{margin:0}
+.st-b .row.go .btn{flex:1;min-width:110px}
+
+/* brand modal */
+.modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:18px;
+  background:rgba(22,30,26,.52)}
+.modal[hidden]{display:none}
+.mbox{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:19px 19px 21px;
+  width:100%;max-width:440px;max-height:88vh;overflow:auto;box-shadow:0 26px 64px rgba(20,30,25,.34)}
+.mbox h2{margin:0 0 3px;font-size:17px}
+.mbox .x{margin-left:auto}
+.mhead{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+
+.jump{display:none}
+@media(max-width:1020px){
+  .side{position:static;max-height:none;overflow:visible}
+  .jump{display:inline-flex;position:fixed;right:14px;bottom:14px;z-index:25;
+    box-shadow:0 8px 22px rgba(20,40,28,.28)}
+  .sumchip{max-width:100%}
+}
 
 /* ---------------- print ---------------- */
 @media print{
@@ -227,11 +384,40 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
 }
 </style>
 </head>
-<body data-print="paper">
+<body data-print="paper" data-course="">
+
+<!-- ============ Screen A · 과정 선택 ============ -->
+<div class="scr-a no-print" id="screenA">
+  <div class="sa-top">
+    <div class="brandbox"><img id="topLogo" alt="" hidden><div><b id="topName">교재 제작 센터</b><small>진단 테스트 · CARS Level B · C · Plus D</small></div></div>
+    <div class="sp">
+      <button class="btn" id="openBrand">⚙ 브랜드 설정</button>
+      <a class="btn" href="manual-academy.html">📖 운영 매뉴얼</a>
+    </div>
+  </div>
+  <div class="sa-hero">
+    <div class="eyebrow">Teacher Console</div>
+    <h1>어떤 과정을 준비할까요?</h1>
+    <p>과정을 고르면 그 과정에 필요한 것만 차례대로 보여 드립니다.</p>
+    <div><button class="resume" id="resumeBtn" hidden></button></div>
+  </div>
+  <div class="shelf" id="shelfRow"></div>
+</div>
+
+<!-- ============ Screen B · 작업실 ============ -->
+<div id="screenB" hidden>
 
 <div class="top no-print">
   <div class="top-in">
-    <div class="brandbox"><img id="topLogo" alt="" hidden><div><b id="topName">교재 제작 센터</b><small>진단 테스트 · CARS Level B · C · Plus D</small></div></div>
+    <div class="crumb">
+      <button class="back" id="backShelf">← 과정 선택</button>
+      <b id="courseName">교재 제작</b>
+      <span class="sumchip" id="sumChip"></span>
+    </div>
+    <div class="wt-row">
+      <button class="wt on" data-wt="print" id="wtPrint">교재 인쇄</button>
+      <button class="wt" data-wt="grade" id="wtGrade">단원 평가</button>
+    </div>
     <div class="top-actions">
       <span class="tally" id="tally">선택된 항목이 없습니다</span>
       <button class="btn ghost" id="reset">선택 해제</button>
@@ -246,118 +432,74 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
 <div class="wrap">
   <div class="side no-print">
 
-    <div class="panel">
-      <h2>학원 브랜드</h2>
-      <p class="hint">표지와 모든 학습지 머리글에 들어갑니다. 이 브라우저에 저장되므로 학원마다 각자 설정할 수 있어요.</p>
-      <label class="fld"><span>학원 이름</span><input type="text" id="bName" placeholder="UPPER EAST SIDE PREP"></label>
-      <label class="fld"><span>부제 (영문)</span><input type="text" id="bSub" placeholder="TALENTED AND GIFTED EDUCATION"></label>
-      <div class="row" style="align-items:center;gap:10px">
-        <label class="fld" style="margin:0"><span>브랜드 색</span><input type="color" id="bColor"></label>
-        <label class="fld" style="margin:0"><span>포인트 색</span><input type="color" id="bColor2"></label>
+    <!-- 진단 과정 · 시험지 인쇄 -->
+    <div id="stepsDiag" hidden>
+      <div class="step open" data-step="d1">
+        <button class="st-h"><span class="st-n">1</span><span class="st-t">레벨</span><span class="st-s"></span></button>
+        <div class="st-b" id="dgLevelSlot"></div>
       </div>
-      <span class="fld" style="margin-bottom:5px"><span>로고</span></span>
-      <div class="logo-drop">
-        <img id="bLogoPrev" alt="" hidden><div class="ph" id="bLogoPh">없음</div>
-        <div class="row" style="margin:0">
-          <label class="mini" style="cursor:pointer">파일 선택<input type="file" id="bLogo" accept="image/*" hidden></label>
-          <button class="mini" id="bLogoClear">지우기</button>
+      <div class="step" data-step="d2">
+        <button class="st-h"><span class="st-n">2</span><span class="st-t">옵션</span><span class="st-s"></span></button>
+        <div class="st-b" id="dgOptSlot"></div>
+      </div>
+      <div class="step" data-step="d3">
+        <button class="st-h"><span class="st-n">3</span><span class="st-t">인쇄</span><span class="st-s"></span></button>
+        <div class="st-b">
+          <div class="pgsum" id="pgSumDiag"></div>
+          <div class="row go">
+            <button class="btn brandy" data-go="paper">문제지 PDF</button>
+            <button class="btn" data-go="key">답안지 PDF</button>
+          </div>
         </div>
       </div>
-      <p class="hint" style="margin:9px 0 0">PNG·JPG·SVG 모두 가능합니다. <code>assets/images/brand/logo.png</code> 에 파일을 두면 처음부터 자동으로 불러옵니다.</p>
     </div>
 
-    <div class="panel">
-      <h2>출력 단위</h2>
-      <p class="hint">한 권으로 묶을지, 단원 하나만 뽑을지 고릅니다.</p>
-      <div class="row" style="margin-bottom:8px">
-        <button class="mini scope on" data-scope="volume">책 한 권 (통권)</button>
-        <button class="mini scope" data-scope="unit">단원별</button>
+    <!-- 교재 과정 · 교재 인쇄 -->
+    <div id="stepsBook" hidden>
+      <div class="step open" data-step="b1">
+        <button class="st-h"><span class="st-n">1</span><span class="st-t">범위</span><span class="st-s"></span></button>
+        <div class="st-b" id="bkRangeSlot"></div>
       </div>
-      <label class="fld" id="unitPickWrap" hidden><span>인쇄할 단원</span>
-        <select id="unitPick" style="width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px"></select>
-      </label>
-      <p class="hint" style="margin:0" id="scopeNote">앞표지 · 단원 속표지 · 전체 학습지 · 답안지가 한 번에 나옵니다.</p>
-    </div>
-
-    <div class="panel">
-      <h2>표지</h2>
-      <p class="hint">5가지 중 하나를 고르세요. 통권 PDF에는 앞표지가, 챕터마다 속표지가 들어갑니다.</p>
-      <div class="grid" style="grid-template-columns:1fr;margin-bottom:9px">
-        <label class="chk on"><input type="checkbox" id="optCover" checked><span>표지 넣기</span></label>
-        <label class="chk on"><input type="checkbox" id="optDivider" checked><span>챕터 속표지 넣기<small>통권으로 묶을 때 과 구분용</small></span></label>
+      <div class="step" data-step="b2">
+        <button class="st-h"><span class="st-n">2</span><span class="st-t">구성</span><span class="st-s"></span></button>
+        <div class="st-b" id="bkPartsSlot"></div>
       </div>
-      <div class="grid cv" id="coverPick"></div>
-    </div>
-
-    <div class="panel">
-      <h2>1 · 진단 테스트</h2>
-      <p class="hint">레벨 배치 시험으로 인쇄합니다. 지문 1편과 문항이 한 세트입니다.</p>
-      <div class="row">
-        <button class="mini" data-pick="diag-all">전체</button>
-        <button class="mini" data-pick="diag-books">학습서 있는 레벨 (B·C·D)</button>
-        <button class="mini" data-pick="diag-none">해제</button>
+      <div class="step" data-step="b3">
+        <button class="st-h"><span class="st-n">3</span><span class="st-t">표지 · 마감</span><span class="st-s"></span></button>
+        <div class="st-b" id="bkCoverSlot"></div>
       </div>
-      <div class="grid lv" id="diagList"></div>
-    </div>
-
-    <div class="panel">
-      <h2>2 · 교재별 워크시트</h2>
-      <p class="hint">챕터를 고르고, 각 챕터에서 인쇄할 구성을 선택하세요.</p>
-      <div class="warn-lic">⚠ <b>원본 지문</b>은 교재 저작권사의 콘텐츠입니다. 교재를 보유한 학생의 수업용으로만 사용하시고, 외부 배포는 하지 마세요.</div>
-      <div id="bookList"></div>
-    </div>
-
-    <div class="panel">
-      <h2>레벨 테스트 채점 · 분석지</h2>
-      <p class="hint">학생이 푼 진단 답안을 입력하면 배치 결과와 전략별 강·약점 분석지가 만들어집니다. 위 <b>분석지</b> 탭에서 확인·인쇄하세요.</p>
-      <label class="fld"><span>학생 이름</span><input type="text" id="gName" placeholder="예: 김민준"></label>
-      <div class="row" style="margin-bottom:8px">
-        <button class="mini gsrc on" data-gsrc="level">진단 레벨</button>
-        <button class="mini gsrc" data-gsrc="unit">교재 단원</button>
-      </div>
-      <div class="row" style="gap:9px">
-        <label class="fld" style="flex:1;margin:0"><span>응시일</span><input type="text" id="gDate" placeholder="2026-08-09"></label>
-        <label class="fld" style="flex:1;margin:0"><span id="gPickLabel">응시 레벨</span>
-          <select id="gLevel" style="width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px"></select></label>
-      </div>
-      <div id="gGrid" class="ansgrid"></div>
-      <div class="row" style="margin-top:9px"><button class="mini" id="gClear">답안 지우기</button>
-        <span id="gScore" style="align-self:center;font-size:12px;color:var(--muted)"></span></div>
-    </div>
-
-    <div class="panel">
-      <h2>3 · 약점 유형 연습</h2>
-      <p class="hint">고른 전략의 문항만 뽑아 연습지를 만듭니다. 지문은 그대로 실리고 해당 유형 문항만 인쇄돼요. 전부 해제하면 12문항이 모두 나갑니다. <b>교재 워크시트에만</b> 적용됩니다.</p>
-      <div class="row">
-        <button class="mini" data-pick="st-all">전체</button>
-        <button class="mini" data-pick="st-none">해제 (12문항 전부)</button>
-      </div>
-      <div class="grid" style="grid-template-columns:1fr" id="stratList"></div>
-    </div>
-
-    <div class="panel">
-      <h2>4 · 인쇄 옵션</h2>
-      <label class="fld"><span>학습지 언어</span>
-        <div class="row" style="margin:0">
-          <button class="mini lang on" data-lang="ko">한국어</button>
-          <button class="mini lang" data-lang="en">English</button>
+      <div class="step" data-step="b4">
+        <button class="st-h"><span class="st-n">4</span><span class="st-t">인쇄</span><span class="st-s"></span></button>
+        <div class="st-b">
+          <div class="pgsum" id="pgSumBook"></div>
+          <div class="row go">
+            <button class="btn brandy" data-go="book">통권 PDF</button>
+            <button class="btn" data-go="paper">문제지만</button>
+            <button class="btn" data-go="key">답안지만</button>
+          </div>
         </div>
-      </label>
-      <div class="grid" style="grid-template-columns:1fr">
-        <label class="chk on"><input type="checkbox" id="optSplit" checked><span>지문과 문항을 다른 장에<small>교재처럼 지문 한 장, 문항 한 장으로 분리</small></span></label>
-        <label class="chk on"><input type="checkbox" id="optArt" checked><span>삽화 넣기<small>지문 장에만 들어갑니다</small></span></label>
-        <label class="chk on"><input type="checkbox" id="optName" checked><span>이름 · 날짜 기입란 넣기</span></label>
-        <label class="chk on"><input type="checkbox" id="optBlankVocab" checked><span>낱말지를 빈칸 시험지로<small>해제하면 뜻이 인쇄된 학습용 낱말지</small></span></label>
-        <label class="chk"><input type="checkbox" id="optKoCol"><span>낱말지에 우리말 칸 넣기<small>영어 수업이면 꺼 두세요</small></span></label>
-        <label class="chk"><input type="checkbox" id="optStrategy"><span>문항에 전략 이름 표시</span></label>
-        <label class="chk on"><input type="checkbox" id="optExplain" checked><span>답안지에 해설 포함</span></label>
       </div>
-      <p class="hint" style="margin:12px 0 0">표지 색은 도형으로 그려서 <b>프린터로 바로 뽑아도 색이 나옵니다</b> — “배경 그래픽”을 켜지 않아도 돼요. 표 머리글의 옅은 음영만 그 설정을 따릅니다. 여백은 <b>없음</b>으로 두세요.</p>
+    </div>
+
+    <!-- 채점 · 분석지 (두 과정 공용) -->
+    <div id="stepsGrade" hidden>
+      <div class="step open" data-step="g1">
+        <button class="st-h"><span class="st-n">1</span><span class="st-t">채점</span><span class="st-s"></span></button>
+        <div class="st-b" id="gradeSlot"></div>
+      </div>
+      <div class="step" data-step="g2">
+        <button class="st-h"><span class="st-n">2</span><span class="st-t">인쇄</span><span class="st-s"></span></button>
+        <div class="st-b">
+          <p class="hint" style="margin:0 0 10px">오른쪽 미리보기가 곧 분석지입니다. 학생 이름과 응시일이 머리글에 들어갑니다.</p>
+          <div class="row go"><button class="btn brandy" data-go="report">분석지 PDF</button></div>
+        </div>
+      </div>
     </div>
 
   </div>
 
-  <div class="pv">
+
+  <div class="pv" id="pvBox">
     <div class="pv-h no-print">
       <button class="tab on" data-tab="paper">문제지</button>
       <button class="tab" data-tab="key">답안지</button>
@@ -365,7 +507,130 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
       <button class="tab" data-tab="report">분석지</button>
       <span class="pv-note" id="pvNote">미리보기</span>
     </div>
-    <div class="pv-body" id="sheets"><div class="empty">왼쪽에서 진단 레벨이나 교재 챕터를 선택하면<br>여기에 인쇄 미리보기가 나타납니다.</div></div>
+    <div class="pv-body" id="sheets"><div class="empty">왼쪽에서 선택하면<br>여기에 인쇄 미리보기가 나타납니다.</div></div>
+  </div>
+</div>
+
+<button class="btn brandy jump no-print" id="jumpPv">미리보기 보기 ↓</button>
+</div><!-- /screenB -->
+
+<!-- ============ 공용 블록 ============
+     One copy of every control, moved into whichever step needs it. The engine
+     reads these by id (opt('optSplit') and friends), so the ids must survive the
+     redesign — relocating the node keeps them unique and untouched. -->
+<div id="blocks" hidden>
+
+  <div id="diagBlock">
+    <p class="hint">레벨 배치 시험으로 인쇄합니다. 지문 1편과 문항이 한 세트입니다. 여러 레벨을 함께 고를 수 있어요.</p>
+    <div class="row">
+      <button class="mini" data-pick="diag-books">학습서 있는 레벨만</button>
+      <button class="mini" data-pick="diag-all">전체</button>
+      <button class="mini" data-pick="diag-none">해제</button>
+    </div>
+    <div class="grid lv" id="diagList"></div>
+  </div>
+
+  <div id="chBlock">
+    <div class="seg">
+      <button class="scope on" data-scope="volume">책 한 권 (통권)</button>
+      <button class="scope" data-scope="unit">단원 골라서</button>
+    </div>
+    <div id="chGridWrap">
+      <div class="row">
+        <button class="mini" id="chAll" data-pick="ch-all:b">전체</button>
+        <button class="mini" id="chNone" data-pick="ch-none:b">해제</button>
+      </div>
+      <div class="grid ch" id="chGrid"></div>
+    </div>
+    <p class="hint" style="margin:9px 0 0" id="scopeNote"></p>
+  </div>
+
+  <div id="partsBlock">
+    <p class="hint">이 과정에서 인쇄할 구성을 고르세요.</p>
+    <div class="tgl" id="partsGrid"></div>
+    <details class="fold" id="stratFold">
+      <summary>약점 유형만 뽑기</summary>
+      <div>
+        <p class="hint">고른 전략의 문항만 인쇄됩니다. 지문은 그대로 실리고, 문항 번호는 원래 번호를 유지해요. 전부 해제하면 12문항이 모두 나갑니다.</p>
+        <div class="row">
+          <button class="mini" data-pick="st-all">전체</button>
+          <button class="mini" data-pick="st-none">해제 (12문항 전부)</button>
+        </div>
+        <div class="grid" style="grid-template-columns:1fr" id="stratList"></div>
+      </div>
+    </details>
+  </div>
+
+  <div id="coverBlock">
+    <div class="grid" style="grid-template-columns:1fr;margin-bottom:10px">
+      <label class="chk on"><input type="checkbox" id="optCover" checked><span>표지 넣기</span></label>
+      <label class="chk on"><input type="checkbox" id="optDivider" checked><span>챕터 속표지 넣기<small>통권으로 묶을 때 과 구분용</small></span></label>
+    </div>
+    <div class="grid cv" id="coverPick"></div>
+  </div>
+
+  <div id="optBlock">
+    <label class="fld" style="margin-top:12px"><span>학습지 언어</span>
+      <div class="row" style="margin:0">
+        <button class="mini lang" data-lang="ko">한국어</button>
+        <button class="mini lang" data-lang="en">English</button>
+      </div>
+    </label>
+    <label class="fld"><span>한 장에 넣을 문항 수</span>
+      <select id="qpp" style="width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px">
+        <option value="0">자동 — 한 장에 들어가는 만큼 (권장)</option>
+        <option value="5">5문항씩</option>
+        <option value="4">4문항씩 — 여백을 넉넉히</option>
+      </select>
+    </label>
+    <p class="hint" style="margin:-4px 0 10px">지문·문항·해설이 한 장을 넘으면 <b>다음 장으로 자동으로 이어집니다</b>. 잘려 나가는 내용은 없습니다.</p>
+    <div class="grid" style="grid-template-columns:1fr">
+      <label class="chk on o-book"><input type="checkbox" id="optSplit" checked><span>지문과 문항을 다른 장에<small>교재처럼 지문 한 장, 문항 한 장으로 분리</small></span></label>
+      <label class="chk on o-book"><input type="checkbox" id="optArt" checked><span>삽화 넣기<small>지문 장에만 들어갑니다</small></span></label>
+      <label class="chk on"><input type="checkbox" id="optName" checked><span>이름 · 날짜 기입란 넣기</span></label>
+      <label class="chk on o-book"><input type="checkbox" id="optBlankVocab" checked><span>낱말지를 빈칸 시험지로<small>해제하면 뜻이 인쇄된 학습용 낱말지</small></span></label>
+      <label class="chk o-book"><input type="checkbox" id="optKoCol"><span>낱말지에 우리말 칸 넣기<small>영어 수업이면 꺼 두세요</small></span></label>
+      <label class="chk"><input type="checkbox" id="optStrategy"><span>문항에 전략 이름 표시</span></label>
+      <label class="chk on"><input type="checkbox" id="optExplain" checked><span>답안지에 해설 포함</span></label>
+    </div>
+    <p class="hint" style="margin:12px 0 0">표지 색은 도형으로 그려서 <b>프린터로 바로 뽑아도 색이 나옵니다</b> — “배경 그래픽”을 켜지 않아도 돼요. 여백은 <b>없음</b>으로 두세요.</p>
+  </div>
+
+  <div id="gradeBlock">
+    <p class="hint" id="gradeHint"></p>
+    <label class="fld"><span>학생 이름</span><input type="text" id="gName" placeholder="예: 김민준"></label>
+    <div class="row" style="gap:9px">
+      <label class="fld" style="flex:1;margin:0"><span>응시일</span><input type="text" id="gDate" placeholder="2026-08-09"></label>
+      <label class="fld" style="flex:1;margin:0"><span id="gPickLabel">응시 레벨</span>
+        <select id="gLevel" style="width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px"></select></label>
+    </div>
+    <div id="gGrid" class="ansgrid"></div>
+    <div class="row" style="margin-top:9px"><button class="mini" id="gClear">답안 지우기</button>
+      <span id="gScore" style="align-self:center;font-size:12px;color:var(--muted)"></span></div>
+  </div>
+
+</div>
+
+<!-- ============ 브랜드 모달 ============ -->
+<div class="modal no-print" id="brandModal" hidden>
+  <div class="mbox">
+    <div class="mhead"><h2>학원 브랜드</h2><button class="mini x" id="closeBrand">닫기</button></div>
+    <p class="hint">표지와 모든 학습지 머리글에 들어갑니다. 이 브라우저에 저장되므로 학원마다 각자 설정할 수 있어요.</p>
+    <label class="fld"><span>학원 이름</span><input type="text" id="bName" placeholder="UPPER EAST SIDE PREP"></label>
+    <label class="fld"><span>부제 (영문)</span><input type="text" id="bSub" placeholder="TALENTED AND GIFTED EDUCATION"></label>
+    <div class="row" style="align-items:center;gap:10px">
+      <label class="fld" style="margin:0"><span>브랜드 색</span><input type="color" id="bColor"></label>
+      <label class="fld" style="margin:0"><span>포인트 색</span><input type="color" id="bColor2"></label>
+    </div>
+    <span class="fld" style="margin-bottom:5px"><span>로고</span></span>
+    <div class="logo-drop">
+      <img id="bLogoPrev" alt="" hidden><div class="ph" id="bLogoPh">없음</div>
+      <div class="row" style="margin:0">
+        <label class="mini" style="cursor:pointer">파일 선택<input type="file" id="bLogo" accept="image/*" hidden></label>
+        <button class="mini" id="bLogoClear">지우기</button>
+      </div>
+    </div>
+    <p class="hint" style="margin:9px 0 0">PNG·JPG·SVG 모두 가능합니다. <code>assets/images/brand/logo.png</code> 에 파일을 두면 처음부터 자동으로 불러옵니다.</p>
   </div>
 </div>
 
@@ -424,6 +689,7 @@ function applyBrand(){
   if(brand.logo){t.src=pv.src=brand.logo;t.hidden=pv.hidden=false;ph.style.display='none';}
   else{t.hidden=pv.hidden=true;ph.style.display='grid';}
   document.getElementById('topName').textContent=brand.name||'교재 제작 센터';
+  if(document.getElementById('coverPick')) renderCoverPick();   // thumbnails are real covers
 }
 function logoTag(cls){return brand.logo?'<img class="'+(cls||'')+'" src="'+esc(brand.logo)+'" alt="">':'';}
 // A logo committed to the repo is picked up automatically the first time, so an
@@ -549,10 +815,14 @@ function originalFor(bookId,lessonId){
 var BOOKID={b:'cars-level-b',c:'cars-level-c',d:'cars-level-d'};
 
 var PARTS=[
-  {key:'vocab',label:'낱말',get:function(L){return (L.words||[]).length?{words:L.words}:null;}},
-  {key:'original',label:'원본 지문',lic:true,get:function(){return null;}},
-  {key:'extra',label:'추가 학습 지문',get:function(L){return L.extraLearning&&(L.extraLearning.questions||[]).length?L.extraLearning:null;}},
-  {key:'similar',label:'유사 지문',get:function(L){return L.newPassage&&(L.newPassage.questions||[]).length?L.newPassage:null;}}
+  {key:'original',label:'원본 지문',lic:true,icon:'📖',desc:'교재 원문 · 저작권 주의',
+   get:function(){return null;}},
+  {key:'vocab',label:'낱말',icon:'📝',desc:'핵심 어휘 12개',
+   get:function(L){return (L.words||[]).length?{words:L.words}:null;}},
+  {key:'extra',label:'추가 학습',icon:'➕',desc:'원문과 같은 주제 · 12문항',
+   get:function(L){return L.extraLearning&&(L.extraLearning.questions||[]).length?L.extraLearning:null;}},
+  {key:'similar',label:'유사 지문',icon:'🔁',desc:'같은 어휘의 새 이야기 · 12문항',
+   get:function(L){return L.newPassage&&(L.newPassage.questions||[]).length?L.newPassage:null;}}
 ];
 var LEVELS=((window.DIAGNOSTIC||{}).levels)||[];
 var COVERS=[{k:'crest',n:'문장형'},{k:'column',n:'세로 밴드'},{k:'plate',n:'클래식'},{k:'block',n:'모던'},{k:'arc',n:'아치'}];
@@ -572,6 +842,11 @@ var STRATS=[
 // English academy: worksheets default to English even though the console that
 // builds them stays in Korean for the teacher.
 var LANG=get('lang','en');
+// A4 leaves ~818px below the header, intro and name line; a four-choice question
+// runs ~124px, so six fill a page and the seventh would be silently guillotined
+// by @media print's .sheet{height:297mm;overflow:hidden}. Teachers with longer
+// stems can drop to four; 12 restores the old single-page behaviour on purpose.
+var QPP=parseInt(get('qpp','0'),10)||0;   // 0 = let the paginator decide
 var PART_KO={vocab:'낱말',original:'원본',extra:'추가 학습 지문',similar:'유사 지문'};
 var PART_EN={vocab:'Vocabulary',original:'Original',extra:'Extra Reading',similar:'Parallel Reading'};
 function pTxt(key){return LANG==='en'?(PART_EN[key]||key):(PART_KO[key]||key);}
@@ -608,7 +883,11 @@ function placement(levelId,score,n){
 // level verdict.
 var grade={name:'',date:'',src:'level',level:'',unit:'',ans:{}};
 
-var SCOPE=get('scope','volume'), ONLY=get('only','');
+var SCOPE=get('scope','volume');
+// '' = the shelf; otherwise the course being worked on. Everything downstream —
+// which jobs are built, which steps show, which report source is legal — hangs
+// off this one value.
+var course='', workTab='print';
 var sel={diag:{},book:{},strat:{}};
 BOOKS.forEach(function(b){sel.book[b.id]={ch:{},parts:{vocab:false,extra:true,similar:false}};});
 function stratOn(){return STRATS.some(function(_,i){return sel.strat[i];});}
@@ -619,41 +898,54 @@ function filterQs(qs){
   return qs.map(function(q,i){return {q:q,n:i+1};}).filter(function(o){return sel.strat[o.n-1];});
 }
 
-/* ---------- panel ---------- */
-document.getElementById('diagList').innerHTML=LEVELS.map(function(l){
-  return '<label class="chk" data-diag="'+esc(l.id)+'"><input type="checkbox" data-diag-cb="'+esc(l.id)+'">'+
-    '<span><b>레벨 '+esc(l.id)+'</b><small>'+esc(l.grade)+' · '+((l.questions||[]).length)+'문항</small></span></label>';
-}).join('');
-document.getElementById('stratList').innerHTML=STRATS.map(function(s,i){
-  return '<label class="chk" data-st="'+i+'"><input type="checkbox" data-st-cb="'+i+'">'+
-    '<span><b>'+(i+1)+'. '+esc(s[0])+'</b><small>'+esc(s[1])+'</small></span></label>';}).join('');
-document.getElementById('coverPick').innerHTML=COVERS.map(function(c){
-  return '<button class="cv-opt'+(brand.cover===c.k?' on':'')+'" data-cover="'+c.k+'">'+
-    '<span class="sw" data-sw="'+c.k+'"></span><b>'+esc(c.n)+'</b></button>';}).join('');
-document.getElementById('bookList').innerHTML=BOOKS.map(function(b){
-  var chips=PARTS.map(function(p){
-    return '<label class="chk'+(sel.book[b.id].parts[p.key]?' on':'')+'" data-part="'+b.id+':'+p.key+'">'+
-      '<input type="checkbox" data-part-cb="'+b.id+':'+p.key+'"'+(sel.book[b.id].parts[p.key]?' checked':'')+'>'+esc(p.label)+'</label>';}).join('');
-  var cells=b.lessons.map(function(le){
-    return '<label class="chk" data-ch="'+b.id+':'+le.id+'" title="'+esc(le.title)+'">'+
-      '<input type="checkbox" data-ch-cb="'+b.id+':'+le.id+'">'+
+/* ---------- pickers (rebuilt from state, never patched in place) ---------- */
+function bookOf(id){return BOOKS.filter(function(b){return b.id===id;})[0]||null;}
+var $=function(id){return document.getElementById(id);};
+
+function renderDiagList(){
+  $('diagList').innerHTML=LEVELS.map(function(l){
+    var on=!!sel.diag[l.id], has=!!l.bookId||l.id==='D';
+    return '<label class="chk'+(on?' on':'')+'" data-diag="'+esc(l.id)+'">'+
+      '<input type="checkbox" data-diag-cb="'+esc(l.id)+'"'+(on?' checked':'')+'>'+
+      '<span><b>레벨 '+esc(l.id)+'</b><small>'+esc(l.grade)+' · '+((l.questions||[]).length)+'문항'+
+      (has?' · 교재 연계':'')+'</small></span></label>';}).join('');
+}
+function renderStrat(){
+  $('stratList').innerHTML=STRATS.map(function(s,i){
+    var on=!!sel.strat[i];
+    return '<label class="chk'+(on?' on':'')+'" data-st="'+i+'">'+
+      '<input type="checkbox" data-st-cb="'+i+'"'+(on?' checked':'')+'>'+
+      '<span><b>'+(i+1)+'. '+esc(s[0])+'</b><small>'+esc(s[1])+'</small></span></label>';}).join('');
+}
+function renderChGrid(){
+  var b=bookOf(course);if(!b)return;
+  $('chAll').dataset.pick='ch-all:'+b.id;
+  $('chNone').dataset.pick='ch-none:'+b.id;
+  $('chGrid').innerHTML=b.lessons.map(function(le){
+    var on=!!sel.book[b.id].ch[le.id];
+    return '<label class="chk'+(on?' on':'')+'" data-ch="'+b.id+':'+le.id+'" title="'+esc(le.title)+'">'+
+      '<input type="checkbox" data-ch-cb="'+b.id+':'+le.id+'"'+(on?' checked':'')+'>'+
       '<span><b>'+le.num+'과</b><small>'+esc(le.title)+'</small></span></label>';}).join('');
-  return '<div class="book"><div class="book-h"><b>'+esc(b.label)+'</b><span>'+esc(b.grade)+' · '+b.lessons.length+'개 챕터</span></div>'+
-    '<div class="parts">'+chips+'</div>'+
-    '<div class="row"><button class="mini" data-pick="ch-all:'+b.id+'">챕터 전체</button>'+
-    '<button class="mini" data-pick="ch-none:'+b.id+'">해제</button></div>'+
-    '<div class="grid ch">'+cells+'</div></div>';}).join('');
-function paintSwatches(){
-  document.querySelectorAll('[data-sw]').forEach(function(el){
-    var k=el.getAttribute('data-sw'),b=brand.color,g=brand.color2;
-    el.style.background=
-      k==='crest'?b:
-      k==='column'?'linear-gradient(90deg,'+b+' 0 38%,#fff 38% 100%)':
-      k==='plate'?'#f7f4ea':
-      k==='block'?'#fff':
-      'radial-gradient(120% 78% at 50% -30%,'+b+' 0 62%,#fff 62%)';
-    el.style.borderBottom='3px solid '+g;
-  });
+}
+function renderParts(){
+  var b=bookOf(course);if(!b)return;
+  var s=sel.book[b.id];
+  $('partsGrid').innerHTML=PARTS.map(function(p){
+    var on=!!s.parts[p.key];
+    return '<label class="'+(on?'on':'')+'" data-part="'+b.id+':'+p.key+'">'+
+      '<input type="checkbox" data-part-cb="'+b.id+':'+p.key+'"'+(on?' checked':'')+'>'+
+      '<span class="ic">'+p.icon+'</span><span><b>'+esc(p.label)+'</b><small>'+esc(p.desc)+'</small></span></label>';
+  }).join('')+
+  '<div class="warn-lic" style="grid-column:1/-1;margin:2px 0 0">⚠ <b>원본 지문</b>은 교재 저작권사의 콘텐츠입니다. 교재를 보유한 학생의 수업용으로만 사용하시고, 외부 배포는 하지 마세요.</div>';
+}
+// The swatches became real pages: each thumbnail is an actual coverSheet scaled
+// down, so what the teacher picks is literally what prints.
+function renderCoverPick(){
+  var b=bookOf(course);
+  var t=b?b.label:'Placement Test', v=b?b.grade:'';
+  $('coverPick').innerHTML=COVERS.map(function(c){
+    return '<button class="cv-opt'+(brand.cover===c.k?' on':'')+'" data-cover="'+c.k+'">'+
+      '<span class="cv-mini">'+coverSheet(t,v,c.k)+'</span><b>'+esc(c.n)+'</b></button>';}).join('');
 }
 
 /* ---------- sheet pieces ---------- */
@@ -702,8 +994,10 @@ function plateLogo(cls){
     '<rect width="100" height="100" rx="5" fill="#ffffff"/></svg>'+
     logoTag(cls||'lg')+'</div>';
 }
-function coverSheet(title,lvl){
-  var k=brand.cover,L=logoTag('lg'),n=esc(brand.name),s=esc(brand.sub),t=esc(title),v=esc(lvl||'');
+// `kind` is only passed by the picker, which renders all five at once; every
+// other caller takes the chosen one.
+function coverSheet(title,lvl,kind){
+  var k=kind||brand.cover,L=logoTag('lg'),n=esc(brand.name),s=esc(brand.sub),t=esc(title),v=esc(lvl||'');
   var inner;
   if(k==='crest') inner='<div class="cv crest">'+bg(brand.color)+plateLogo()+'<hr class="rule">'+
       '<div><div class="aca">'+n+'</div><div class="sub">'+s+'</div></div>'+
@@ -729,9 +1023,11 @@ function coverSheet(title,lvl){
 function levelById(id){return LEVELS.filter(function(l){return l.id===id;})[0]||null;}
 // Every unit passage is a gradable source: book · lesson · which of the two
 // created passages.
-function unitSources(){
+// `only` scopes the picker to the course being worked on; unitById still looks
+// across every book so a saved selection resolves whatever course is open.
+function unitSources(only){
   var out=[];
-  BOOKS.forEach(function(b){b.lessons.forEach(function(le){
+  BOOKS.forEach(function(b){if(only&&b.id!==only)return;b.lessons.forEach(function(le){
     [['extra','추가 학습 지문','extraLearning'],['similar','유사 지문','newPassage']].forEach(function(p){
       var d=le.L[p[2]];
       if(d&&(d.questions||[]).length) out.push({
@@ -872,15 +1168,11 @@ function jobs(){
       });
     });
   });
-  // 단원별 mode narrows the run to a single chapter; 통권 keeps everything.
-  if(SCOPE==='unit'&&ONLY) out=out.filter(function(j){return j.le&&(j.book.id+':'+j.le.id)===ONLY;});
+  // The workshop only ever prints its own course, so the run is narrowed here
+  // rather than by unpicking everything else in the UI.
+  if(course==='diag') out=out.filter(function(j){return j.kind==='diag';});
+  else if(course) out=out.filter(function(j){return j.book&&j.book.id===course;});
   return out;
-}
-function unitOptions(){
-  var o=[];
-  BOOKS.forEach(function(b){b.lessons.forEach(function(le){
-    if(sel.book[b.id].ch[le.id]) o.push({v:b.id+':'+le.id,t:b.label+' · '+le.num+'과 '+le.title});});});
-  return o;
 }
 
 // The illustration belongs with the passage, never with the question page — a
@@ -903,10 +1195,26 @@ function paperSheets(j){
   // Level D ships its own instruction line ("Read this tale adapted from ...") —
   // use it when present rather than the generic one.
   var intro='<div class="sh-intro">'+esc(j.intro||'')+(j.intro?'':T('read'))+'</div>';
-  if(opt('optSplit'))
-    return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+artHtml(j)+passageHtml(j.passage)+foot(j.label+' · '+T('psg'))+'</section>'+
-           '<section class="sheet paper">'+head(tag,j.title+' — '+T('qs'),j.src,true)+intro+questionsHtml(qlist)+foot(j.label+' · '+T('qs'))+'</section>';
-  return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+artHtml(j,true)+passageHtml(j.passage)+intro+questionsHtml(qlist)+foot(j.label)+'</section>';
+  var chunks=qChunks(qlist);
+  var qSheets=chunks.map(function(c,i){
+    var of=chunks.length>1?' ('+(i+1)+'/'+chunks.length+')':'';
+    return '<section class="sheet paper">'+head(tag,j.title+' — '+T('qs')+of,j.src,true)+
+      (i?'':intro)+questionsHtml(c)+foot(j.label+' · '+T('qs')+of)+'</section>';
+  }).join('');
+  // "한 장에 몰아서" only survives while the questions actually fit under the
+  // passage; past that the passage takes its own sheet rather than pushing the
+  // tail of the question list off the page.
+  if(!opt('optSplit')&&chunks.length===1)
+    return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+artHtml(j,true)+
+      passageHtml(j.passage)+intro+questionsHtml(qlist)+foot(j.label)+'</section>';
+  return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+artHtml(j)+
+    passageHtml(j.passage)+foot(j.label+' · '+T('psg'))+'</section>'+qSheets;
+}
+// Split the question list into page-sized runs.
+function qChunks(list){
+  var per=QPP>0?QPP:list.length, out=[], i;
+  for(i=0;i<list.length;i+=per) out.push(list.slice(i,i+per));
+  return out.length?out:[list];
 }
 function keyList(j){
   return j.kind==='diag'?j.questions.map(function(q,i){return {q:q,n:i+1};}):filterQs(j.questions||[]);
@@ -944,9 +1252,9 @@ function volumeTitle(list){
 function build(mode,list){
   var html='',lastCh=null;
   if(mode==='key') return keySheets(list);
-  // A single-unit run is a handout, not a bound book: no volume cover, no dividers.
-  var single=(SCOPE==='unit'&&ONLY);
-  var wantCover=opt('optCover')&&!single, wantDiv=opt('optDivider')&&mode==='book'&&!single;
+  // A placement run is loose sheets by definition — no volume cover, no dividers.
+  var wantCover=opt('optCover')&&course!=='diag';
+  var wantDiv=opt('optDivider')&&mode==='book'&&course!=='diag';
   if(wantCover&&mode==='book') html+=coverSheet(volumeTitle(list),'Workbook · '+new Date().getFullYear());
   else if(wantCover&&mode==='paper') html+=coverSheet(volumeTitle(list),'Worksheets');
   list.forEach(function(j){
@@ -961,41 +1269,34 @@ function build(mode,list){
 }
 function render(){
   var mode0=document.body.dataset.print;
-  // The answer grid lives in the side panel, so it has to track the chosen level
-  // on every render, not only while the report tab happens to be open.
+  // The answer grid lives in a step, so it has to track the chosen source on
+  // every render, not only while the report happens to be showing.
   gradeGrid();
+  if(!course){sheetsEl.innerHTML='';return;}
   if(mode0==='report'){
-    ['printPaper','printKey','printBook'].forEach(function(id){document.getElementById(id).disabled=true;});
-    document.getElementById('printReport').hidden=false;
-    document.getElementById('tally').innerHTML=grade.name?('분석지 · <b>'+esc(grade.name)+'</b>'):'분석지';
+    ['printPaper','printKey','printBook'].forEach(function(id){$(id).disabled=true;});
+    $('printReport').hidden=false;
+    $('tally').innerHTML=grade.name?('분석지 · <b>'+esc(grade.name)+'</b>'):'분석지';
     sheetsEl.innerHTML=reportSheet();
-    document.getElementById('pvNote').textContent='분석지 미리보기';
+    $('pvNote').textContent='분석지 미리보기';
+    paintSummaries(null,null);
     return;
   }
-  document.getElementById('printReport').hidden=true;
+  $('printReport').hidden=true;
   var list=jobs();
   var qTotal=list.reduce(function(s,j){return s+((j.questions||[]).length);},0);
   var wTotal=list.reduce(function(s,j){return s+((j.words||[]).length);},0);
-  document.getElementById('tally').innerHTML=list.length
+  $('tally').innerHTML=list.length
     ? '학습지 <b>'+list.length+'</b>세트 · 문항 <b>'+qTotal+'</b>개'+(wTotal?' · 낱말 <b>'+wTotal+'</b>개':'')
     : '선택된 항목이 없습니다';
-  ['printPaper','printBook'].forEach(function(id){document.getElementById(id).disabled=!list.length;});
-  document.getElementById('printKey').disabled=!qTotal;
-  paintSwatches();
-  var opts=unitOptions(), selEl=document.getElementById('unitPick');
-  document.getElementById('unitPickWrap').hidden=(SCOPE!=='unit');
-  document.getElementById('scopeNote').textContent = SCOPE==='unit'
-    ? '고른 단원의 학습지만 나옵니다. 앞표지·속표지는 빠집니다.'
-    : '앞표지 · 단원 속표지 · 전체 학습지 · 답안지가 한 번에 나옵니다.';
-  if(SCOPE==='unit'){
-    if(!opts.some(function(o){return o.v===ONLY;})) ONLY=opts.length?opts[0].v:'';
-    selEl.innerHTML=opts.length?opts.map(function(o){
-      return '<option value="'+esc(o.v)+'"'+(o.v===ONLY?' selected':'')+'>'+esc(o.t)+'</option>';}).join('')
-      :'<option value="">먼저 챕터를 선택하세요</option>';
-  }
+  ['printPaper','printBook'].forEach(function(id){$(id).disabled=!list.length;});
+  $('printKey').disabled=!qTotal;
   if(!list.length){
-    sheetsEl.innerHTML='<div class="empty">왼쪽에서 진단 레벨이나 교재 챕터를 선택하면<br>여기에 인쇄 미리보기가 나타납니다.</div>';
-    document.getElementById('pvNote').textContent='미리보기';return;
+    paintSummaries(list,0,mode0);
+    sheetsEl.innerHTML='<div class="empty">'+(course==='diag'
+      ? '위에서 진단 레벨을 고르면<br>여기에 시험지 미리보기가 나타납니다.'
+      : '위에서 단원과 구성을 고르면<br>여기에 미리보기가 나타납니다.')+'</div>';
+    $('pvNote').textContent='미리보기';return;
   }
   // group labels for the chapter dividers
   var byCh={};
@@ -1006,19 +1307,307 @@ function render(){
   });
   var mode=document.body.dataset.print;
   sheetsEl.innerHTML=build(mode,list);
+  paginate();
+  // Counted after reflow, so the figure the teacher reads is the figure that
+  // comes out of the printer.
   var pages=sheetsEl.querySelectorAll('.sheet').length;
-  document.getElementById('pvNote').textContent=
+  paintSummaries(list,pages,mode);
+  $('pvNote').textContent=
     ({paper:'문제지',key:'답안지',book:'통권'}[mode]||'')+' 미리보기 · '+pages+'쪽';
 }
 
+/* ---------- pagination ----------
+   @media print pins every sheet to 297mm and hides the overflow, so anything a
+   sheet cannot hold is not pushed to the next page — it is silently cut off.
+   Long passages, twelve-question sets and explanation-heavy answer keys all
+   exceeded one page. After each render the sheets are measured at true page
+   metrics and whatever does not fit is reflowed onto continuation pages. */
+var PAGE_H=297/25.4*96;          // A4 height in CSS px
+var FOOT_RESERVE=30;             // the absolutely-positioned footer strip
+function outerH(el){
+  var cs=getComputedStyle(el);
+  return el.getBoundingClientRect().height+(parseFloat(cs.marginBottom)||0);
+}
+// Blocks that can be broken hand back their own children; everything else is
+// one indivisible lump.
+function atomsOf(block){
+  var kids=null;
+  if(block.classList.contains('psg')||block.classList.contains('ex')||
+     (block.tagName==='OL'&&block.classList.contains('qs'))) kids=block.children;
+  if(!kids||kids.length<2) return [{whole:block,h:outerH(block)}];
+  return [].slice.call(kids).map(function(k){return {host:block,node:k,h:outerH(k)};});
+}
+function paginate(){
+  sheetsEl.classList.add('measuring');
+  [].slice.call(sheetsEl.querySelectorAll('.sheet')).forEach(function(s){
+    if(s.classList.contains('cover')||s.classList.contains('divider'))return;
+    splitSheet(s);
+  });
+  sheetsEl.classList.remove('measuring');
+}
+function splitSheet(s){
+  var cs=getComputedStyle(s);
+  var limit=PAGE_H-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0)-FOOT_RESERVE;
+  // The masthead and the name line repeat on every continuation page.
+  var keep=[],flow=[],foot=null;
+  [].slice.call(s.children).forEach(function(c){
+    if(c.classList.contains('sh-top')||c.classList.contains('sh-name'))keep.push(c);
+    else if(c.classList.contains('foot'))foot=c;
+    else flow.push(c);
+  });
+  if(!flow.length)return;
+  var headH=keep.reduce(function(a,c){return a+outerH(c);},0);
+  var atoms=[];flow.forEach(function(bl){atoms=atoms.concat(atomsOf(bl));});
+  var avail=limit-headH, total=atoms.reduce(function(a,x){return a+x.h;},0);
+  if(total<=avail)return;                       // already fits
+  var pages=[[]],used=0;
+  atoms.forEach(function(a){
+    // An atom taller than a whole page cannot be helped by another break; let it
+    // start a page of its own rather than opening an empty one after it.
+    if(used>0&&used+a.h>avail){pages.push([]);used=0;}
+    pages[pages.length-1].push(a);used+=a.h;
+  });
+  if(pages.length<2)return;
+  // The first page is rebuilt in place — putting it inside a fragment and then
+  // replacing itself with that fragment is a cycle the DOM rejects.
+  var parent=s.parentNode, after=s.nextSibling;
+  [].slice.call(s.children).forEach(function(c){s.removeChild(c);});
+  pages.forEach(function(page,pi){
+    var sheet=pi===0?s:s.cloneNode(false);
+    keep.forEach(function(c){sheet.appendChild(pi?c.cloneNode(true):c);});
+    var host=null,hostSrc=null;
+    page.forEach(function(a){
+      if(a.whole){sheet.appendChild(a.whole);host=null;hostSrc=null;return;}
+      if(hostSrc!==a.host){hostSrc=a.host;host=a.host.cloneNode(false);sheet.appendChild(host);}
+      host.appendChild(a.node);
+    });
+    if(foot)sheet.appendChild(pi?foot.cloneNode(true):foot);
+    markContinued(sheet,pi,pages.length);
+    if(pi)parent.insertBefore(sheet,after);
+  });
+}
+// Only the page marker changes between continuation sheets, so a teacher
+// collating a stack can see 2/3 belongs after 1/3.
+function markContinued(sheet,i,n){
+  if(n<2)return;
+  var h=sheet.querySelector('.sh-top h1'), f=sheet.querySelector('.foot span');
+  var mark=' ('+(i+1)+'/'+n+')';
+  if(h)h.textContent=h.textContent.replace(/\s*\(\d+\/\d+\)$/,'')+mark;
+  if(f)f.textContent=f.textContent.replace(/\s*\(\d+\/\d+\)$/,'')+mark;
+}
+
+/* ---------- step summaries ---------- */
+function stepSum(key,text,done){
+  var el=document.querySelector('.step[data-step="'+key+'"]');
+  if(!el)return;
+  el.querySelector('.st-s').textContent=text||'';
+  el.classList.toggle('done',!!done);
+}
+function chosenChapters(){
+  var b=bookOf(course);if(!b)return [];
+  return b.lessons.filter(function(le){return sel.book[b.id].ch[le.id];});
+}
+var MODE_NAME={paper:'문제지',key:'답안지',book:'통권'};
+function pagesLine(pages,mode){
+  if(!pages) return '고른 것이 없어 아직 인쇄할 쪽이 없습니다.';
+  return (MODE_NAME[mode]||'')+' <b>'+pages+'쪽</b>'+
+    (mode==='book'?' — 표지 · 속표지 · 학습지 · 답안지를 한 권으로 묶습니다.'
+                  :' — 지금 미리보기에 보이는 그대로 인쇄됩니다.');
+}
+function paintSummaries(list,pages,mode){
+  if(workTab==='grade'){
+    var src=gradeSource(), done=Object.keys(grade.ans).length;
+    stepSum('g1',
+      src?((grade.name?grade.name+' · ':'')+done+'/'+src.questions.length+' 입력'):'대상을 고르세요',
+      !!src&&done>0);
+    $('sumChip').textContent=src?src.where:'';
+    return;
+  }
+  if(course==='diag'){
+    var lv=LEVELS.filter(function(l){return sel.diag[l.id];});
+    stepSum('d1',lv.length?lv.length+'개 레벨 · '+lv.map(function(l){return l.id;}).join('·'):'레벨을 고르세요',lv.length>0);
+    stepSum('d2',(LANG==='en'?'English':'한국어')+(opt('optName')?' · 이름란':'')+(opt('optExplain')?' · 해설':''),true);
+    $('pgSumDiag').innerHTML=pagesLine(pages,mode);
+    stepSum('d3',pages?(MODE_NAME[mode]||'')+' '+pages+'쪽':'',pages>0);
+    $('sumChip').textContent=lv.length
+      ? '레벨 '+lv.map(function(l){return l.id;}).join('·')+' · '+(LANG==='en'?'English':'한국어')+
+        ' · '+(MODE_NAME[mode]||'')+' '+pages+'쪽'
+      : '';
+    return;
+  }
+  var b=bookOf(course);if(!b)return;
+  var chs=chosenChapters();
+  stepSum('b1',
+    SCOPE==='volume' ? '통권 · '+chs.length+'개 단원'
+      : (chs.length? '단원 '+chs.length+'개 ('+chs.slice(0,3).map(function(l){return l.num;}).join('·')+
+          (chs.length>3?'…':'')+'과)' : '단원을 고르세요'),
+    chs.length>0);
+  var ps=PARTS.filter(function(p){return sel.book[b.id].parts[p.key];}).map(function(p){return p.label;});
+  var stN=STRATS.filter(function(_,i){return sel.strat[i];}).length;
+  stepSum('b2',(ps.length?ps.join(' + '):'구성을 고르세요')+(stN?' · '+stN+'개 유형만':''),ps.length>0);
+  var cvName=(COVERS.filter(function(c){return c.k===brand.cover;})[0]||{}).n||'';
+  stepSum('b3',(opt('optCover')?cvName+' 표지':'표지 없음')+(opt('optDivider')?' · 속표지':''),true);
+  $('pgSumBook').innerHTML=pagesLine(pages,mode);
+  stepSum('b4',pages?(MODE_NAME[mode]||'')+' '+pages+'쪽':'',pages>0);
+  $('sumChip').textContent=chs.length
+    ? (SCOPE==='volume'?'통권':chs.length+'개 단원')+' · '+(ps.join('+')||'구성 없음')+
+      ' · '+(opt('optCover')?cvName+' 표지':'표지 없음')+' · '+pages+'쪽'
+    : '';
+}
+
+/* ---------- screen A · shelf ---------- */
+var TONE={b:['#2f6f4f','#1d4a34'],c:['#8a4526','#5f2d17'],d:['#1b2a6b','#101a45']};
+function buildShelf(){
+  var levels=LEVELS.map(function(l){return l.id;}).join(' · ')||'P · AA · A · B · C · D · E · F · G · H';
+  var diag='<figure class="slot">'+
+    '<button class="stack" data-course="diag" aria-label="상담용 진단 테스트 열기">'+
+      '<span class="pg p3"></span><span class="pg p2"></span>'+
+      '<span class="pg p1"><span class="clip"></span>'+
+        '<span class="s-lv">'+esc(levels)+'</span>'+
+        '<span><span class="s-ttl">상담용<br>진단 테스트</span><span class="s-rule" style="display:block"></span></span>'+
+        '<span class="s-meta">'+LEVELS.length+' LEVELS</span>'+
+      '</span>'+
+    '</button><span class="plank"></span>'+
+    '<figcaption><b>상담용 진단 테스트</b><span>P~H '+LEVELS.length+'레벨 · 배치와 분석</span></figcaption></figure>';
+  var books=BOOKS.map(function(b){
+    var t=TONE[b.id]||TONE.d, letter=b.label.slice(-1);
+    // "CARS Plus Level D" reads as a spine when the level letter drops to its
+    // own line; breaking on every space would stack it four deep.
+    var w=b.label.split(' '), last=w.pop();
+    var ttl=esc(w.join(' '))+'<br>'+esc(last);
+    return '<figure class="slot">'+
+      '<button class="book3" data-course="'+esc(b.id)+'" aria-label="'+esc(b.label)+' 열기">'+
+        '<span class="spine" style="background:linear-gradient(180deg,'+t[0]+','+t[1]+')"></span>'+
+        '<span class="pages"></span>'+
+        '<span class="face" style="background:linear-gradient(150deg,'+t[0]+','+t[1]+')">'+
+          '<span class="mark">'+esc(letter)+'</span>'+
+          '<span class="lv">'+esc(b.grade)+'</span>'+
+          '<span class="ttl">'+ttl+'</span>'+
+          '<span class="meta">'+b.lessons.length+' UNITS</span>'+
+        '</span>'+
+      '</button><span class="plank"></span>'+
+      '<figcaption><b>'+esc(b.label)+'</b><span>'+esc(b.grade)+' · '+b.lessons.length+'개 단원</span></figcaption></figure>';
+  }).join('');
+  $('shelfRow').innerHTML=diag+books;
+  var last=get('course','');
+  var nm=last==='diag'?'상담용 진단 테스트':(bookOf(last)||{}).label;
+  var r=$('resumeBtn');
+  if(last&&nm){r.hidden=false;r.textContent='이어서: '+nm+' →';r.dataset.course=last;}
+  else r.hidden=true;
+}
+
+/* ---------- course routing ---------- */
+var COURSE_NAME={diag:'상담용 진단 테스트'};
+function courseLabel(c){return c==='diag'?COURSE_NAME.diag:((bookOf(c)||{}).label||'');}
+// One copy of every control exists; entering a course moves the ones it needs
+// into its steps. Ids stay unique because the node is relocated, not cloned.
+function mountSteps(){
+  var isDiag=course==='diag';
+  $('stepsDiag').hidden=!(isDiag&&workTab==='print');
+  $('stepsBook').hidden=!(!isDiag&&workTab==='print');
+  $('stepsGrade').hidden=(workTab!=='grade');
+  if(workTab==='grade'){
+    $('gradeSlot').appendChild($('gradeBlock'));
+  }else if(isDiag){
+    $('dgLevelSlot').appendChild($('diagBlock'));
+    $('dgOptSlot').appendChild($('optBlock'));
+  }else{
+    $('bkRangeSlot').appendChild($('chBlock'));
+    $('bkPartsSlot').appendChild($('partsBlock'));
+    $('bkCoverSlot').appendChild($('coverBlock'));
+    $('bkCoverSlot').appendChild($('optBlock'));
+  }
+}
+function openStep(key){
+  var el=document.querySelector('.step[data-step="'+key+'"]');
+  if(!el)return;
+  var grp=el.parentNode;
+  grp.querySelectorAll('.step').forEach(function(s){s.classList.toggle('open',s===el);});
+}
+function firstStep(){return workTab==='grade'?'g1':(course==='diag'?'d1':'b1');}
+function setWorkTab(t){
+  workTab=t;
+  document.querySelectorAll('.wt').forEach(function(x){x.classList.toggle('on',x.dataset.wt===t);});
+  if(t==='grade'){
+    // Each course grades only what it can legally produce: the placement ladder
+    // for the diagnostic, this book's own units for a course book.
+    grade.src=(course==='diag')?'level':'unit';
+    grade.ans={};
+    $('gradeHint').textContent=(course==='diag')
+      ? '학생이 푼 진단 답안을 입력하면 배치 결과와 전략별 강·약점 분석지가 만들어집니다.'
+      : '이 책의 단원 문항으로 채점합니다. 배치 판정이 아니라 숙달도만 보고합니다.';
+    fillGradePick();
+    document.body.dataset.print='report';
+  }else{
+    document.body.dataset.print=(course==='diag')?'paper':'book';
+  }
+  mountSteps();
+  syncTabs();
+  openStep(firstStep());
+  render();
+}
+// Preview chips double as the output picker, so only the outputs this course can
+// actually produce are offered.
+function syncTabs(){
+  var show={paper:workTab==='print',key:workTab==='print',
+            book:workTab==='print'&&course!=='diag',report:workTab==='grade'};
+  document.querySelectorAll('.tab').forEach(function(x){
+    x.hidden=!show[x.dataset.tab];
+    x.classList.toggle('on',x.dataset.tab===document.body.dataset.print);
+  });
+  var isDiag=course==='diag';
+  $('printBook').hidden=isDiag||workTab==='grade';
+  $('printPaper').hidden=workTab==='grade';
+  $('printKey').hidden=workTab==='grade';
+  $('printPaper').textContent=isDiag?'문제지 PDF':'문제지만';
+  $('printKey').textContent=isDiag?'답안지 PDF':'답안지만';
+  $('reset').hidden=workTab==='grade';
+}
+function setCourse(c){
+  course=c||'';
+  document.body.dataset.course=course;
+  $('screenA').hidden=!!course;
+  $('screenB').hidden=!course;
+  if(!course){buildShelf();return;}
+  set('course',course);
+  $('courseName').textContent=courseLabel(course);
+  $('wtPrint').textContent=course==='diag'?'시험지 인쇄':'교재 인쇄';
+  $('wtGrade').textContent=course==='diag'?'채점 · 분석지':'단원 평가';
+  if(course==='diag'){
+    renderDiagList();
+  }else{
+    // Entering a book with 통권 selected fills the whole table of contents, so a
+    // teacher who changes nothing already has a printable volume.
+    if(SCOPE==='volume') bookOf(course).lessons.forEach(function(le){sel.book[course].ch[le.id]=true;});
+    renderChGrid();renderParts();renderStrat();
+    $('chGridWrap').hidden=(SCOPE==='volume');
+    $('scopeNote').textContent=SCOPE==='volume'
+      ? '이 책의 모든 단원이 들어갑니다.' : '고른 단원만 인쇄됩니다.';
+    document.querySelectorAll('.seg .scope').forEach(function(x){x.classList.toggle('on',x.dataset.scope===SCOPE);});
+  }
+  renderCoverPick();
+  setWorkTab('print');
+  // On one column the workshop opens wherever the shelf was scrolled to, which
+  // lands the teacher in the middle of the preview instead of at step 1.
+  scrollTo(0,0);
+}
+function readHash(){var m=/c=(diag|b|c|d)/.exec(location.hash||'');return m?m[1]:'';}
+function applyHash(){setCourse(readHash());}
+addEventListener('hashchange',applyHash);
+
 /* ---------- events ---------- */
+function doPrint(mode){
+  document.body.dataset.print=mode;
+  syncTabs();render();
+  setTimeout(function(){window.print();},80);
+}
 document.addEventListener('change',function(e){
-  var t=e.target,k;
-  if((k=t.getAttribute('data-diag-cb'))){sel.diag[k]=t.checked;t.closest('.chk').classList.toggle('on',t.checked);return render();}
-  if((k=t.getAttribute('data-ch-cb'))){var a=k.split(':');sel.book[a[0]].ch[a[1]]=t.checked;t.closest('.chk').classList.toggle('on',t.checked);return render();}
-  if((k=t.getAttribute('data-part-cb'))){var p=k.split(':');sel.book[p[0]].parts[p[1]]=t.checked;t.closest('.chk').classList.toggle('on',t.checked);return render();}
-  if((k=t.getAttribute('data-st-cb'))!==null&&k!==undefined&&t.hasAttribute('data-st-cb')){
-    sel.strat[+k]=t.checked;t.closest('.chk').classList.toggle('on',t.checked);return render();}
+  var t=e.target,k,lab=t.closest('label');
+  if((k=t.getAttribute('data-diag-cb'))){sel.diag[k]=t.checked;if(lab)lab.classList.toggle('on',t.checked);return render();}
+  if((k=t.getAttribute('data-ch-cb'))){var a=k.split(':');sel.book[a[0]].ch[a[1]]=t.checked;if(lab)lab.classList.toggle('on',t.checked);return render();}
+  if((k=t.getAttribute('data-part-cb'))){var p=k.split(':');sel.book[p[0]].parts[p[1]]=t.checked;if(lab)lab.classList.toggle('on',t.checked);return render();}
+  if(t.hasAttribute('data-st-cb')){
+    sel.strat[+t.getAttribute('data-st-cb')]=t.checked;if(lab)lab.classList.toggle('on',t.checked);return render();}
   if(t.id==='bLogo'&&t.files&&t.files[0]){
     var fr=new FileReader();
     fr.onload=function(){
@@ -1027,9 +1616,9 @@ document.addEventListener('change',function(e){
     };
     fr.readAsDataURL(t.files[0]);return;
   }
-  if(t.id==='unitPick'){ONLY=t.value;set('only',ONLY);return render();}
+  if(t.id==='qpp'){QPP=parseInt(t.value,10)||0;set('qpp',String(QPP));return render();}
   if(t.id==='gLevel'){grade[grade.src==='unit'?'unit':'level']=t.value;grade.ans={};return render();}
-  if(t.id&&t.id.indexOf('opt')===0){t.closest('.chk').classList.toggle('on',t.checked);return render();}
+  if(t.id&&t.id.indexOf('opt')===0){if(lab)lab.classList.toggle('on',t.checked);return render();}
 });
 document.addEventListener('input',function(e){
   var t=e.target,m={bName:'name',bSub:'sub',bColor:'color',bColor2:'color2'};
@@ -1039,72 +1628,97 @@ document.addEventListener('input',function(e){
 });
 document.addEventListener('click',function(e){
   var b=e.target.closest('button');if(!b)return;
+
+  /* screen A */
+  if(b.dataset.course!==undefined&&b.dataset.course){location.hash='c='+b.dataset.course;return;}
+  if(b.id==='openBrand'){$('brandModal').hidden=false;return;}
+  if(b.id==='closeBrand'){$('brandModal').hidden=true;return;}
+  if(b.id==='backShelf'){location.hash='';return;}
+  if(b.id==='jumpPv'){$('pvBox').scrollIntoView({behavior:'smooth',block:'start'});return;}
+
+  /* accordion */
+  var head=b.closest('.st-h');
+  if(head){
+    var st=head.parentNode;
+    var wasOpen=st.classList.contains('open');
+    st.parentNode.querySelectorAll('.step').forEach(function(s){s.classList.remove('open');});
+    if(!wasOpen)st.classList.add('open');
+    return;
+  }
+  if(b.dataset.wt){if(b.dataset.wt!==workTab)setWorkTab(b.dataset.wt);return;}
+  if(b.dataset.go){return doPrint(b.dataset.go==='report'?'report':b.dataset.go);}
+
   if(b.id==='bLogoClear'){brand.logo='';set('logo','');applyBrand();return render();}
   var ga=b.getAttribute('data-ga');
-  if(ga){var a=ga.split(':');grade.ans[+a[0]]=grade.ans[+a[0]]===a[1]?undefined:a[1];
-    if(grade.ans[+a[0]]===undefined)delete grade.ans[+a[0]];return render();}
+  if(ga){var a2=ga.split(':');grade.ans[+a2[0]]=grade.ans[+a2[0]]===a2[1]?undefined:a2[1];
+    if(grade.ans[+a2[0]]===undefined)delete grade.ans[+a2[0]];return render();}
   if(b.id==='gClear'){grade.ans={};return render();}
-  if(b.dataset.gsrc){grade.src=b.dataset.gsrc;grade.ans={};
-    document.querySelectorAll('.mini.gsrc').forEach(function(x){x.classList.toggle('on',x===b);});
-    fillGradePick();return render();}
   if(b.id==='printReport'){setTimeout(function(){window.print();},60);return;}
-  if(b.dataset.scope){SCOPE=b.dataset.scope;set('scope',SCOPE);
-    document.querySelectorAll('.mini.scope').forEach(function(x){x.classList.toggle('on',x===b);});return render();}
+  if(b.dataset.scope){
+    var prev=SCOPE;SCOPE=b.dataset.scope;set('scope',SCOPE);
+    var bk=bookOf(course);
+    if(bk){
+      if(SCOPE==='volume') bk.lessons.forEach(function(le){sel.book[bk.id].ch[le.id]=true;});
+      // Coming from 통권 every chapter is ticked, which would make "골라서" mean
+      // the same thing — start from the first chapter so the choice is real.
+      else if(prev==='volume') bk.lessons.forEach(function(le,i){sel.book[bk.id].ch[le.id]=(i===0);});
+      renderChGrid();
+    }
+    $('chGridWrap').hidden=(SCOPE==='volume');
+    $('scopeNote').textContent=SCOPE==='volume'
+      ? '이 책의 모든 단원이 들어갑니다.' : '고른 단원만 인쇄됩니다.';
+    document.querySelectorAll('.seg .scope').forEach(function(x){x.classList.toggle('on',x===b);});
+    return render();
+  }
   if(b.dataset.lang){LANG=b.dataset.lang;set('lang',LANG);
-    document.querySelectorAll('.mini.lang').forEach(function(x){x.classList.toggle('on',x===b);});return render();}
+    document.querySelectorAll('.mini.lang').forEach(function(x){x.classList.toggle('on',x===b);});
+    renderCoverPick();return render();}
   if(b.dataset.cover){brand.cover=b.dataset.cover;set('cover',brand.cover);
     document.querySelectorAll('.cv-opt').forEach(function(x){x.classList.toggle('on',x===b);});return render();}
   var pick=b.getAttribute('data-pick');
   if(pick){
-    var p=pick.split(':'),cmd=p[0],bid=p[1];
+    var p2=pick.split(':'),cmd=p2[0],bid=p2[1];
     if(cmd.indexOf('st-')===0){
       var onS=cmd==='st-all';
-      STRATS.forEach(function(_,i){sel.strat[i]=onS;
-        var cb=document.querySelector('[data-st-cb="'+i+'"]');
-        if(cb){cb.checked=onS;cb.closest('.chk').classList.toggle('on',onS);}});
+      STRATS.forEach(function(_,i){sel.strat[i]=onS;});renderStrat();
     }else if(cmd.indexOf('diag')===0){
       LEVELS.forEach(function(l){
-        var on=cmd==='diag-all'?true:cmd==='diag-none'?false:(!!l.bookId||l.id==='D');
-        sel.diag[l.id]=on;
-        var cb=document.querySelector('[data-diag-cb="'+l.id+'"]');
-        if(cb){cb.checked=on;cb.closest('.chk').classList.toggle('on',on);}});
+        sel.diag[l.id]=cmd==='diag-all'?true:cmd==='diag-none'?false:(!!l.bookId||l.id==='D');});
+      renderDiagList();
     }else{
       var on2=cmd==='ch-all';
-      BOOKS.filter(function(x){return x.id===bid;})[0].lessons.forEach(function(le){
-        sel.book[bid].ch[le.id]=on2;
-        var cb=document.querySelector('[data-ch-cb="'+bid+':'+le.id+'"]');
-        if(cb){cb.checked=on2;cb.closest('.chk').classList.toggle('on',on2);}});
+      bookOf(bid).lessons.forEach(function(le){sel.book[bid].ch[le.id]=on2;});
+      renderChGrid();
     }
     return render();
   }
-  if(b.dataset.tab){
-    document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===b);});
-    document.body.dataset.print=b.dataset.tab;return render();
-  }
-  if(b.id==='printPaper'||b.id==='printKey'||b.id==='printBook'){
-    var mode=b.id==='printKey'?'key':b.id==='printBook'?'book':'paper';
-    document.body.dataset.print=mode;
-    document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x.dataset.tab===mode);});
-    render();setTimeout(function(){window.print();},80);return;
-  }
+  if(b.dataset.tab){document.body.dataset.print=b.dataset.tab;syncTabs();return render();}
+  if(b.id==='printPaper'||b.id==='printKey'||b.id==='printBook')
+    return doPrint(b.id==='printKey'?'key':b.id==='printBook'?'book':'paper');
   if(b.id==='reset'){
-    sel.diag={};BOOKS.forEach(function(x){sel.book[x.id].ch={};});
-    document.querySelectorAll('[data-diag-cb],[data-ch-cb]').forEach(function(cb){
-      cb.checked=false;cb.closest('.chk').classList.remove('on');});
+    if(course==='diag'){sel.diag={};renderDiagList();}
+    else if(course){sel.book[course].ch={};renderChGrid();}
     return render();
   }
 });
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&!$('brandModal').hidden)$('brandModal').hidden=true;
+});
+$('brandModal').addEventListener('click',function(e){
+  if(e.target===this)this.hidden=true;
+});
 
 document.querySelectorAll('.mini.lang').forEach(function(x){x.classList.toggle('on',x.dataset.lang===LANG);});
-document.querySelectorAll('.mini.scope').forEach(function(x){x.classList.toggle('on',x.dataset.scope===SCOPE);});
+$('qpp').value=String(QPP);
 function fillGradePick(){
-  var selEl=document.getElementById('gLevel');
-  document.getElementById('gPickLabel').textContent=grade.src==='unit'?'교재 단원':'응시 레벨';
+  var selEl=$('gLevel');
+  $('gPickLabel').textContent=grade.src==='unit'?'교재 단원':'응시 레벨';
   if(grade.src==='unit'){
-    var us=unitSources();
+    var us=unitSources(course);
     if(!us.some(function(u){return u.v===grade.unit;})) grade.unit=us.length?us[0].v:'';
-    selEl.innerHTML=us.map(function(u){
-      return '<option value="'+esc(u.v)+'"'+(u.v===grade.unit?' selected':'')+'>'+esc(u.label)+'</option>';}).join('');
+    selEl.innerHTML=us.length?us.map(function(u){
+      return '<option value="'+esc(u.v)+'"'+(u.v===grade.unit?' selected':'')+'>'+esc(u.label)+'</option>';}).join('')
+      :'<option value="">이 책에는 채점할 단원이 없습니다</option>';
   }else{
     if(!LEVELS.some(function(l){return l.id===grade.level;})) grade.level=(LEVELS[0]||{}).id||'';
     selEl.innerHTML=LEVELS.map(function(l){
@@ -1112,8 +1726,9 @@ function fillGradePick(){
   }
 }
 grade.level=(LEVELS[0]||{}).id||'';
-fillGradePick();
-applyBrand();gradeGrid();render();
+applyBrand();
+if(!get('name','')&&!get('logo','')) $('brandModal').hidden=false;   // first visit
+applyHash();
 })();
 </script>
 </body>
