@@ -164,6 +164,7 @@ node scripts/rebalance-answers.js cd6            # 3/3/3/3 자동 보정
 | 도구 | 하는 일 |
 |---|---|
 | `check-practice-sets.js` | 길이·어휘·문항수·전략순서·보기형식·분포 검사 + 키 중복 보고 |
+| `check-question-quality.js` | 기계 규칙이 못 잡는 것: Q7/Q11이 **지문에 실제로 있는** 낱말·비유를 인용하는지, Q6 정답이 지문 문장 되풀이가 아닌지, D 스캐폴드 상투구 오답이 남았는지. 결과는 **판정이 아니라 후보** |
 | `rebalance-answers.js` | 보기 **위치만** 바꿔 3/3/3/3로 맞춤(문장 불변) |
 | `patch-level-d-lesson.js` | D 레슨 파일 기록 + **전략명 자동 주입**(표기 드리프트 차단) |
 
