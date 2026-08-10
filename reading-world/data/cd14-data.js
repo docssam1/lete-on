@@ -1,1 +1,403 @@
-window.CARS_D_REGISTER([{"id":"cd14","chapter":"Post Test","num":4,"page":50,"title":"Messages on the Move","theme":"Relay systems and new technology used to deliver important messages quickly.","words":[["relay","a system in which people or machines take turns carrying something","계주식 전달","接力"],["route","a path from one place to another","경로","路线"],["station","a stopping place along a route","중계소","站点"],["deliver","to take something to its destination","배달하다","递送"],["urgent","needing immediate attention","긴급한","紧急的"],["peril","serious danger","위험","危险"],["efficient","working quickly without waste","효율적인","高效的"],["replace","to take the place of something","대체하다","取代"],["distance","space between two places","거리","距离"],["signal","information sent by sound, light, or electricity","신호","信号"],["network","connected people, places, or devices","망, 네트워크","网络"],["remote","far away from towns or services","외딴","偏远的"]],"extra":{"title":"Mountain Relay Messengers","passage":["Before reliable radio reached the High Ridge villages, urgent letters travelled by a mountain relay. No single runner crossed the entire route. Instead, messengers carried a sealed pouch from one shelter to the next.","The route climbed narrow paths and crossed cold streams. Shelters stood about eight kilometres apart. At each one, a rested runner waited. The arriving messenger reported trail conditions, handed over the pouch, and remained at the shelter until the next scheduled return.","Different runners had different skills. Some knew the steep forest path, while others were strongest on open rocky ground. In winter, teams used snowshoes. During heavy storms, the service stopped because protecting lives mattered more than speed.","The relay delivered medical instructions, government notices, and family news. Later, radio towers made most journeys unnecessary. The old system disappeared, but village festivals still include a safe relay race to remember the messengers who connected isolated communities."],"main":"A mountain relay used rested runners and shelters to carry urgent messages until radio replaced most of the service.","main_wrong":["One runner carried every message without stopping.","Villages used only boats to cross the mountains.","Radio towers made mountain travel more dangerous."],"detail_q":"How far apart were the shelters?","detail_a":"About eight kilometres.","detail_wrong":["About eighty metres.","Exactly one hundred kilometres.","They had no regular spacing."],"sequence":["A message was sealed in a pouch.","One runner carried it to a shelter.","A rested runner received it and trail information.","The message continued toward the next village."],"cause_q":"Why did the relay stop during heavy storms?","cause_a":"The community valued the runners’ safety more than fast delivery.","compare_q":"How were forest and rocky-route runners different?","compare_a":"They specialised in different kinds of terrain.","predict_q":"What would likely happen if one shelter had no rested runner?","predict_a":"The message would be delayed until another runner could continue.","vocab":["isolated","far from other places and difficult to reach"],"infer_q":"Why is a relay more efficient than one runner completing the whole route?","infer_a":"Each runner covers a shorter section while rested, allowing the pouch to keep moving.","facts":["Runners used snowshoes in winter.","The relay carried medical instructions.","Radio later replaced most journeys."],"opinion":"The festival relay is the most important event of the year.","purpose":"inform","figurative":["connected isolated communities","allowed distant villages to share messages and remain linked"],"summary":"Rested messengers carried a pouch between mountain shelters in a safe relay system that was later replaced by radio.","cause_wrong":["Sealed pouches were damaged by heavy rain and snow.","Snowshoes could not be used on the steep forest path.","The shelters were too far apart to reach in bad weather."],"compare_wrong":["Forest runners carried the pouch, while rocky-route runners reported trail conditions.","Forest runners worked in winter, while rocky-route runners worked in summer.","Forest runners rested at the shelters, while rocky-route runners returned home."],"predict_wrong":["The arriving messenger would carry the pouch to the following shelter.","The pouch would be left at the shelter until the next scheduled return.","The message would be sent back to the village it had come from."],"vocab_wrong":["divided into separate groups or sections","protected from bad weather by high ground","joined together by a single mountain path"],"infer_wrong":["A group of runners can carry a heavier pouch than one person.","Several runners are less likely to lose the sealed pouch.","Runners who know one section can travel it without a map."],"figurative_wrong":["built paths and bridges between mountain villages","carried villagers themselves between distant shelters","joined several small villages into one larger community"],"summary_wrong":["Shelters along the mountain route stood about eight kilometres apart.","Village festivals still include a safe relay race each year.","Runners used snowshoes in winter and reported trail conditions at each stop."],"_pattern":"ACDBACDBACDB"},"new":{"title":"Drones Deliver Medicine","passage":["Some remote health clinics are difficult to reach during floods or after roads are damaged. In several regions, small aircraft called drones are being tested to deliver lightweight medical supplies.","A clinic sends a digital request to a distribution centre. Workers pack items such as blood samples, vaccines, or emergency medicine into a secure container. A trained operator checks weather, battery power, and the approved route before launch.","The drone follows programmed coordinates but remains monitored. At some clinics it lands on a marked pad. At others, it lowers the package or releases it with a small parachute. Staff confirm that the delivery arrived safely.","Drones cannot replace every vehicle or health worker. They carry limited weight and may not fly in severe weather. However, when roads are blocked and an urgent small package is needed, a well-managed drone network can save valuable time."],"main":"Carefully operated drones can quickly carry small medical supplies to remote clinics when roads are difficult to use.","main_wrong":["Drones replace all doctors and hospitals.","Medical drones fly safely in every kind of weather.","Clinics use drones only to take photographs."],"detail_q":"What does an operator check before launch?","detail_a":"Weather, battery power, and the approved route.","detail_wrong":["The colour of every clinic wall.","Whether the package contains books.","How many cars are in a city."],"sequence":["A clinic sends a digital request.","Workers pack the medical items.","An operator checks conditions and launches the drone.","Clinic staff confirm safe arrival."],"cause_q":"Why can drones be especially useful after flooding?","cause_a":"Roads may be blocked while small urgent supplies still need to reach clinics.","compare_q":"How are drone and vehicle delivery different?","compare_a":"Drones can cross blocked ground routes quickly but carry less weight and face flight limits.","predict_q":"What is most likely during severe weather?","predict_a":"The flight will be delayed or cancelled for safety.","vocab":["coordinates","numbers that identify an exact location"],"infer_q":"Why must the drone remain monitored even on a programmed route?","infer_a":"Operators need to respond if weather, equipment, or safety conditions change.","facts":["Drones can carry vaccines.","Some packages use small parachutes.","Drones have limited carrying weight."],"opinion":"Drone delivery is more exciting than every other kind of transport.","purpose":"inform","figurative":["save valuable time","reduce delay when minutes may matter for health"],"summary":"A clinic requests a small medical package, trained workers prepare and monitor a drone flight, and the system speeds delivery when roads are blocked.","cause_wrong":["Floodwater is easier for a drone to fly across than dry ground.","Drones can carry heavier loads than trucks during an emergency.","Clinics lose their digital connection whenever roads are damaged."],"compare_wrong":["Drones need a marked landing pad, while vehicles can stop anywhere.","Drones are monitored by operators, while vehicles follow programmed routes.","Drones carry blood samples, while vehicles carry only vaccines and medicine."],"predict_wrong":["The drone will fly at a lower height to stay beneath the storm.","The package will be released with a parachute instead of landing.","The operator will programme a longer route around the weather."],"vocab_wrong":["instructions that tell a drone when to take off","measurements of the weight a drone is able to lift","settings that control the speed of a flight"],"infer_wrong":["Programmed routes are often entered into the drone incorrectly.","Clinic staff cannot confirm a delivery without an operator watching.","A monitored drone can carry more weight than one flying alone."],"figurative_wrong":["store medicine so that it can be used at a later date","keep an accurate record of each delivery time","allow health workers to spend less time travelling"],"summary_wrong":["A trained operator checks weather, battery power, and the approved route.","Drones carry limited weight and may not fly during severe weather.","Some clinics use a marked landing pad while others receive a parachute drop."],"_pattern":"DBCADBCADBCA"}}]);
+// Lesson cd14 — shared (non-licensed) content only. The licensed original
+// passage and questions live in Supabase (lesson_content), never here.
+// Both practice sets are written out in full rather than generated from the
+// scaffold in cars-d-engine.js.
+window.CARS_D_REGISTER([
+  {
+    "id": "cd14",
+    "chapter": "Post Test",
+    "num": 4,
+    "page": 50,
+    "title": "Messages on the Move",
+    "theme": "Relay systems and new technology used to deliver important messages quickly.",
+    "words": [
+      [
+        "relay",
+        "a system in which people or machines take turns carrying something",
+        "계주식 전달",
+        "接力"
+      ],
+      [
+        "route",
+        "a path from one place to another",
+        "경로",
+        "路线"
+      ],
+      [
+        "station",
+        "a stopping place along a route",
+        "중계소",
+        "站点"
+      ],
+      [
+        "deliver",
+        "to take something to its destination",
+        "배달하다",
+        "递送"
+      ],
+      [
+        "urgent",
+        "needing immediate attention",
+        "긴급한",
+        "紧急的"
+      ],
+      [
+        "peril",
+        "serious danger",
+        "위험",
+        "危险"
+      ],
+      [
+        "efficient",
+        "working quickly without waste",
+        "효율적인",
+        "高效的"
+      ],
+      [
+        "replace",
+        "to take the place of something",
+        "대체하다",
+        "取代"
+      ],
+      [
+        "distance",
+        "space between two places",
+        "거리",
+        "距离"
+      ],
+      [
+        "signal",
+        "information sent by sound, light, or electricity",
+        "신호",
+        "信号"
+      ],
+      [
+        "network",
+        "connected people, places, or devices",
+        "망, 네트워크",
+        "网络"
+      ],
+      [
+        "remote",
+        "far away from towns or services",
+        "외딴",
+        "偏远的"
+      ]
+    ],
+    "extra": {
+      "title": "The Wires That Replaced the Riders",
+      "passage": [
+        "The pony express ended on 26 October 1861, two days after the transcontinental telegraph line was finished. It had run for nineteen months.",
+        "Nothing about it had failed. The horses were fast, the riders were tough and the route worked. It was simply that a message which took ten days on horseback took a few minutes on a wire, and no amount of courage closes that gap.",
+        "The telegraph was built as a relay too, which is easy to miss. A signal cannot travel three thousand kilometres along a wire without weakening. Every so often along the line stood a station where an operator received the message, read it and sent it on again at full strength — the same idea as a fresh horse, working at the speed of electricity instead of the speed of a gallop.",
+        "Building it was its own kind of peril. Two crews set out in 1861, one from Nebraska heading west and one from Nevada heading east. They had to carry every pole with them across country where no trees grew, dig holes in ground frozen a metre deep, and string wire through remote passes in weather that killed livestock. They met at Salt Lake City on 24 October.",
+        "The pony express company had helped them. Its riders carried the telegraph crews’ own urgent messages back and forth while the line was going up, which means the riders spent their last summer delivering the news that would put them out of work.",
+        "What replaced them was not only faster but more efficient in a way that is easy to underrate: a wire carries a message any distance for the same effort, while a horse must be fed whether it is carrying anything or not.",
+        "Within ten years the network reached across the ocean. The pony express, which had covered that distance in ten days, is remembered far better than the telegraph that beat it — because a rider is a story, and a wire is not."
+      ],
+      "questions": [
+        [
+          "Finding Main Idea",
+          "What is this passage mostly about?",
+          [
+            "How telegraph poles were carried across country without trees",
+            "The dangers faced by pony express riders",
+            "Why the pony express is better remembered than the telegraph",
+            "How the telegraph ended the pony express, and how alike the two systems were"
+          ],
+          "D",
+          "The passage explains the ending and then shows the wire working on the same principle as the riders."
+        ],
+        [
+          "Recalling Facts and Details",
+          "When did the pony express end?",
+          [
+            "on 26 October 1861",
+            "in 1860, when it began",
+            "after ten years of service",
+            "on 24 October, at Salt Lake City"
+          ],
+          "A",
+          "The first line gives the date, two days after the line was completed."
+        ],
+        [
+          "Understanding Sequence",
+          "Which of these happened last?",
+          [
+            "The pony express stopped running.",
+            "Pony express riders carried messages for the telegraph crews.",
+            "Two telegraph crews set out from Nebraska and Nevada.",
+            "The crews met at Salt Lake City."
+          ],
+          "A",
+          "The service ended two days after the meeting at Salt Lake City completed the line."
+        ],
+        [
+          "Recognising Cause and Effect",
+          "Why did the pony express end?",
+          [
+            "A message on a wire took minutes instead of days.",
+            "Too many riders had been lost along the route.",
+            "The horses could not be fed through the winter.",
+            "The company had run out of stations."
+          ],
+          "A",
+          "The passage says nothing about it failed; it was simply beaten on time."
+        ],
+        [
+          "Comparing and Contrasting",
+          "How was a telegraph station like a pony express station?",
+          [
+            "Both were about twenty kilometres apart.",
+            "Both were staffed by teenage boys.",
+            "Both took a weakening message and sent it on again at full strength.",
+            "Both were built by the same three businessmen."
+          ],
+          "C",
+          "The passage draws exactly that comparison between an operator and a fresh horse."
+        ],
+        [
+          "Making Predictions",
+          "If the telegraph line had taken five more years to build, the pony express would most likely have",
+          [
+            "stopped running much sooner.",
+            "been replaced by stagecoaches again.",
+            "moved its route further south.",
+            "continued operating for those years."
+          ],
+          "D",
+          "It ended because the wire arrived, not because anything about it stopped working."
+        ],
+        [
+          "Finding Word Meaning in Context",
+          "In this passage, the word peril means",
+          [
+            "a long delay.",
+            "serious danger.",
+            "a heavy cost.",
+            "a difficult decision."
+          ],
+          "B",
+          "It introduces frozen ground, remote passes and weather that killed livestock."
+        ],
+        [
+          "Drawing Conclusions and Making Inferences",
+          "You can tell from the passage that the pony express riders",
+          [
+            "refused to help the telegraph crews.",
+            "helped build the thing that ended their own work.",
+            "were paid more than telegraph operators.",
+            "kept riding after the line was finished."
+          ],
+          "B",
+          "They carried the crews’ urgent messages while the line was going up."
+        ],
+        [
+          "Distinguishing Between Fact and Opinion",
+          "Which statement expresses an opinion?",
+          [
+            "The pony express ran for nineteen months.",
+            "A rider is a story, and a wire is not.",
+            "The crews met at Salt Lake City on 24 October.",
+            "The route was about three thousand kilometres long."
+          ],
+          "B",
+          "That is the writer explaining why we remember one and not the other."
+        ],
+        [
+          "Identifying Author's Purpose",
+          "The author’s main purpose in this passage is to",
+          [
+            "persuade readers that the telegraph was a mistake.",
+            "describe the daily work of a telegraph operator.",
+            "explain how and why one system replaced another.",
+            "tell the story of one rider’s last journey."
+          ],
+          "C",
+          "Every paragraph is part of that explanation, including the comparison between them."
+        ],
+        [
+          "Interpreting Figurative Language",
+          "The passage says \"no amount of courage closes that gap.\" This means the riders",
+          [
+            "were not brave enough for the work.",
+            "could not be trained any further.",
+            "had stopped trying to go faster.",
+            "could not beat the wire however hard they rode."
+          ],
+          "D",
+          "The gap is ten days against a few minutes, which effort cannot make up."
+        ],
+        [
+          "Summarising",
+          "Which sentence best summarises the passage?",
+          [
+            "Telegraph crews worked through frozen ground and remote passes in 1861.",
+            "The pony express carried mail from Missouri to California in ten days.",
+            "The pony express ended when the telegraph reached across the country, and the wire turned out to work on the same relay principle the riders had used.",
+            "A wire carries a message any distance for the same effort."
+          ],
+          "C",
+          "A summary needs the ending, the reason and the likeness between the two systems."
+        ]
+      ]
+    },
+    "new": {
+      "title": "The Blood Run",
+      "passage": [
+        "A clinic in the hills takes in a patient who is bleeding, and the nearest blood bank is four hours away by road. That is the problem. For a long time there was no good answer to it.",
+        "One answer now in use is a fixed-wing drone. It looks like a small white aeroplane and it is launched off a catapult at a station beside the blood bank. A clinic sends an urgent order by text message, a technician loads a padded box, and the aircraft is in the air within minutes.",
+        "It does not land at the far end. Landing on a hillside is difficult and slow, so instead the drone flies over the clinic, drops the box under a paper parachute onto a marked square of ground, and turns for home. The whole route, out and back, may be a hundred kilometres, and nobody has to drive any of it.",
+        "The system is a relay in a sense the pony express would have recognised. One aircraft cannot cover a whole country, so bases are placed to give overlapping circles, and an order goes to whichever base can deliver it fastest — the same reasoning that put a station every twenty kilometres in 1860.",
+        "Distance is not the only peril such a service removes. Blood is fragile and it expires. A small clinic that cannot store much of it has to guess how much it will need, and guessing wrongly costs lives at one end and wastes supply at the other. If delivery takes half an hour, a clinic does not have to guess.",
+        "The network is more efficient than the roads it replaces for one reason above all: a road washes out in the rainy season, and the air does not. When the signal comes in, the drone goes, and a remote clinic that once waited four hours now waits about twenty minutes."
+      ],
+      "questions": [
+        [
+          "Finding Main Idea",
+          "What is this passage mostly about?",
+          [
+            "How drones deliver blood to clinics that roads reach slowly",
+            "How a fixed-wing drone is built and launched",
+            "Why blood expires more quickly in warm weather",
+            "The history of the pony express"
+          ],
+          "A",
+          "The problem is set in the first line and the rest of the passage is the answer to it."
+        ],
+        [
+          "Recalling Facts and Details",
+          "How does the drone deliver the box?",
+          [
+            "It lands on a marked square beside the clinic.",
+            "It drops the box by parachute and flies on.",
+            "It is caught in a net by clinic staff.",
+            "It hovers while the box is lifted down."
+          ],
+          "B",
+          "The passage says landing on a hillside is slow, so it drops the box instead."
+        ],
+        [
+          "Understanding Sequence",
+          "What happens first when a clinic needs blood?",
+          [
+            "The clinic sends an urgent order by text message.",
+            "The drone is launched from a catapult.",
+            "A technician loads a padded box.",
+            "The box lands on a marked square."
+          ],
+          "A",
+          "The order comes in, and the loading and launch follow it."
+        ],
+        [
+          "Recognising Cause and Effect",
+          "Why is the drone network compared to the pony express?",
+          [
+            "Both were built by three businessmen.",
+            "Both place bases so that each can hand on to the next.",
+            "Both were replaced by the telegraph.",
+            "Both carry letters rather than supplies."
+          ],
+          "B",
+          "The passage draws the comparison to a station every twenty kilometres."
+        ],
+        [
+          "Comparing and Contrasting",
+          "Why does a small clinic have to guess how much blood it needs?",
+          [
+            "Blood is fragile and expires, and the clinic cannot store much.",
+            "The blood bank does not answer messages quickly.",
+            "Roads wash out during the rainy season.",
+            "Drones can only carry one box at a time."
+          ],
+          "A",
+          "The passage gives both the fragility and the limited storage as the reason."
+        ],
+        [
+          "Making Predictions",
+          "If a rainy season washed out every road to a hill clinic, the drone service would most likely",
+          [
+            "stop until the roads were repaired.",
+            "be able to carry twice as much.",
+            "continue as before.",
+            "have to land instead of dropping the box."
+          ],
+          "C",
+          "The passage says a road washes out and the air does not."
+        ],
+        [
+          "Finding Word Meaning in Context",
+          "In this passage, the word remote means",
+          [
+            "controlled from a distance.",
+            "recently built.",
+            "very small.",
+            "far away and hard to reach."
+          ],
+          "D",
+          "It describes the clinic that used to wait four hours for a delivery by road."
+        ],
+        [
+          "Drawing Conclusions and Making Inferences",
+          "You can tell from the passage that the greatest gain from this system is",
+          [
+            "that it is cheaper than building roads.",
+            "that clinics no longer have to predict what they will need.",
+            "that the drones are quieter than lorries.",
+            "that blood can now be stored for longer."
+          ],
+          "B",
+          "The passage says that if delivery takes half an hour, a clinic does not have to guess."
+        ],
+        [
+          "Distinguishing Between Fact and Opinion",
+          "Which statement expresses an opinion?",
+          [
+            "The route out and back may be a hundred kilometres.",
+            "Blood is fragile and it expires.",
+            "That is the problem.",
+            "The drone is launched off a catapult."
+          ],
+          "C",
+          "Naming something as the problem is the writer’s framing; the rest can be checked."
+        ],
+        [
+          "Identifying Author's Purpose",
+          "The author’s main purpose in this passage is to",
+          [
+            "persuade readers to donate blood.",
+            "describe what a fixed-wing drone looks like.",
+            "compare drones with the pony express in every respect.",
+            "explain how a delivery problem was solved."
+          ],
+          "D",
+          "It states a problem and works through the answer piece by piece."
+        ],
+        [
+          "Interpreting Figurative Language",
+          "The passage says the bases give \"overlapping circles.\" This means each base",
+          [
+            "can be seen from the next one.",
+            "flies its drones in a circular route.",
+            "covers an area that reaches into its neighbours’ areas.",
+            "sends every order to the same clinic."
+          ],
+          "C",
+          "That is why an order can go to whichever base can deliver it fastest."
+        ],
+        [
+          "Summarising",
+          "Which sentence best summarises the passage?",
+          [
+            "A drone drops a padded box under a paper parachute.",
+            "Roads to hill clinics wash out during the rainy season.",
+            "Blood expires, so clinics cannot store very much of it.",
+            "Drones flying from overlapping bases deliver blood to clinics in about twenty minutes, which removes both the distance and the guesswork that used to cost lives."
+          ],
+          "D",
+          "A summary needs the method, the speed and both problems it solves."
+        ]
+      ]
+    }
+  }
+]);

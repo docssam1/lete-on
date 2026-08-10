@@ -1,1 +1,415 @@
-window.CARS_D_REGISTER([{"id":"cd13","chapter":"Post Test","num":3,"page":47,"title":"A Night-Sky Event","theme":"Planning a group event around observing the night sky and preparing for weather and safety.","words":[["constellation","a recognised pattern of stars","별자리","星座"],["meteor","a bright streak caused by space material burning in the atmosphere","유성","流星"],["observe","to watch carefully","관찰하다","观察"],["enthusiastic","very interested and excited","열정적인","热情的"],["horizon","the line where earth and sky seem to meet","지평선","地平线"],["forecast","a prediction of future weather","예보","预报"],["equipment","tools needed for an activity","장비","设备"],["identify","to recognise and name","식별하다","识别"],["map","a drawing that shows positions or routes","지도","地图"],["adapt","to change a plan for new conditions","조정하다","适应"],["shelter","a protected place","피난처","避难处"],["schedule","a timed plan","일정","日程"]],"extra":{"title":"Night of the Fireflies","passage":["Sofia wanted her birthday gathering to be different. Instead of games indoors, she planned an evening walk at Willow Marsh, where hundreds of fireflies appeared in early summer. Her friend Min suggested making observation cards so guests could record when and where the flashes were brightest.","They checked the weather forecast and learned that the trail became muddy after rain. Sofia asked an adult ranger to lead the group. She also told guests to bring closed shoes, insect repellent, and small torches covered with red paper. Bright white light could make it harder to see the fireflies.","The group met before sunset for cake at a picnic shelter. As darkness fell, the ranger explained that fireflies use flashing patterns to communicate. Everyone walked quietly and counted flashes for one minute at three marked locations.","Clouds gathered, but the rain held off. Back at the shelter, the guests compared their cards and found the wet meadow had the most activity. Sofia said the best present was seeing her friends become as curious as she was."],"main":"Sofia carefully plans a safe birthday walk where friends observe and record firefly activity.","main_wrong":["Sofia collects fireflies and keeps them in jars.","A storm destroys a birthday picnic.","Guests spend the evening playing video games."],"detail_q":"Why were torches covered with red paper?","detail_a":"Bright white light could interfere with seeing the fireflies.","detail_wrong":["Red paper kept the batteries warm.","The ranger required red uniforms.","Fireflies cannot see red objects."],"sequence":["Sofia and Min prepared observation cards.","They checked weather and safety needs.","The group ate cake before sunset.","Guests counted flashes at marked locations."],"cause_q":"Why did Sofia ask a ranger to lead the walk?","cause_a":"An experienced adult could guide the group safely and explain the habitat.","compare_q":"How was the meadow different from the other observation locations?","compare_a":"It had the highest firefly activity.","predict_q":"What would the group most likely do if heavy rain began before the walk?","predict_a":"Stay in the shelter or reschedule rather than use the muddy trail.","vocab":["activity","the amount of action or movement happening"],"infer_q":"Why did Sofia call her friends’ curiosity the best present?","infer_a":"Sharing her interest mattered more to her than receiving an object.","facts":["The group used observation cards.","A ranger led the walk.","The wet meadow had the most flashes."],"opinion":"A firefly walk is the perfect birthday celebration for everyone.","purpose":"entertain","figurative":["the rain held off","the rain did not begin even though clouds gathered"],"summary":"A girl organises a birthday firefly survey with weather checks, safe equipment, an adult guide, and shared observations.","cause_wrong":["The marsh trail could not be entered without a ranger present.","Min had asked for an adult to hand out the observation cards.","Someone was needed to count the flashes at each marked location."],"compare_wrong":["It was the only location the group reached before sunset.","It was the driest of the three places the group visited.","It was the location where the ranger explained the flashing patterns."],"predict_wrong":["Walk the trail anyway, since everyone had brought closed shoes.","Ask the ranger to lead them along a shorter part of the trail.","Cover their torches with more red paper and continue counting."],"vocab_wrong":["a planned event that a group takes part in","the brightness of a single flash of light","the length of time an animal stays in one place"],"infer_wrong":["She had already received the presents she wanted earlier that day.","She thought the observation cards were more useful than gifts.","She hoped her friends would join the science club with her."],"figurative_wrong":["the rain stopped as soon as the group reached the shelter","the clouds trapped the rain above the marsh all evening","the guests held umbrellas over the observation cards"],"summary_wrong":["Guests count firefly flashes for one minute at three marked locations.","A ranger explains that fireflies use flashing patterns to communicate.","Sofia asks her guests to bring closed shoes, repellent, and covered torches."],"_pattern":"CABDCABDCABD"},"new":{"title":"Comet Watch Campout","passage":["Leo’s science club learned that a comet would be visible low in the western sky for several evenings. They planned a school campout on the oval, but their teacher explained that seeing the comet would require more than simply looking up.","The club used a sky map to find the correct direction and checked the sunset time. Trees blocked part of the horizon, so they chose the far end of the oval. Students brought binoculars, warm clothing, and reclining chairs. Only adults handled the small telescope.","On the first planned night, thick cloud covered the sky. Instead of giving up, the group used its backup date. The second evening was clear. After sunset, the students located a bright planet first, then moved their view to the comet’s predicted position.","A faint fuzzy point with a short tail appeared. It was not as dramatic as the drawings in some books, but the students cheered. Leo realised that successful observing depended on patience, preparation, and a willingness to adapt."],"main":"A science club uses maps, timing, equipment, and a backup date to successfully observe a comet.","main_wrong":["Students build a comet on the school oval.","A telescope removes clouds from the sky.","The club observes only during bright daylight."],"detail_q":"Why did the club choose the far end of the oval?","detail_a":"It had a clearer view of the western horizon.","detail_wrong":["It was closest to the school canteen.","The comet would land there.","The grass was a different colour."],"sequence":["The club studied a sky map and sunset time.","Clouds covered the first planned night.","The group used the backup date.","Students found the comet after locating a bright planet."],"cause_q":"Why was a backup date useful?","cause_a":"Cloudy weather made the first observing night impossible.","compare_q":"How did the real comet differ from some book drawings?","compare_a":"It appeared as a faint fuzzy point rather than a huge dramatic object.","predict_q":"What should the club do if trees grow and block the horizon next year?","predict_a":"Choose another safe place with a clear view.","vocab":["predicted","expected based on information or calculation"],"infer_q":"What did Leo learn about scientific observation?","infer_a":"Good results often require preparation, patience, and adapting to conditions.","facts":["The comet was low in the western sky.","Students brought warm clothing.","Adults handled the telescope."],"opinion":"The faint comet was more exciting than any bright planet.","purpose":"entertain","figurative":["a willingness to adapt","readiness to change the plan when conditions change"],"summary":"After clouds ruin the first night, a prepared science club uses its backup plan and careful directions to find a faint comet.","cause_wrong":["The comet was only visible on one evening of the year.","Trees blocked the horizon at the near end of the school oval.","The club needed extra time to borrow binoculars and warm clothing."],"compare_wrong":["It was visible high overhead rather than low in the western sky.","It appeared beside a bright planet instead of on its own.","It had a long bright tail rather than the short one shown in books."],"predict_wrong":["Use the small telescope so they can see over the treetops.","Watch from the same spot but arrive earlier in the evening.","Wait until the trees lose their leaves before observing again."],"vocab_wrong":["seen clearly through a pair of binoculars","marked on a sky map by an astronomer","reached after a long period of waiting"],"infer_wrong":["Faint objects are easier to find than bright ones.","A telescope is necessary for every kind of sky observation.","Scientific results are disappointing more often than not."],"figurative_wrong":["a decision to bring extra clothing in case it turned cold","a promise to keep watching the comet on later evenings","an agreement to let the adults handle the telescope"],"summary_wrong":["Students locate a bright planet before moving their view to the comet.","A science club chooses the far end of the oval because trees block the horizon.","A teacher explains that seeing a comet takes more than simply looking up."],"_pattern":"BDACBDACBDAC"}}]);
+// Lesson cd13 — shared (non-licensed) content only. The licensed original
+// passage and questions live in Supabase (lesson_content), never here.
+// Both practice sets are written out in full rather than generated from the
+// scaffold in cars-d-engine.js.
+window.CARS_D_REGISTER([
+  {
+    "id": "cd13",
+    "chapter": "Post Test",
+    "num": 3,
+    "page": 47,
+    "title": "A Night-Sky Event",
+    "theme": "Planning a group event around observing the night sky and preparing for weather and safety.",
+    "words": [
+      [
+        "constellation",
+        "a recognised pattern of stars",
+        "별자리",
+        "星座"
+      ],
+      [
+        "meteor",
+        "a bright streak caused by space material burning in the atmosphere",
+        "유성",
+        "流星"
+      ],
+      [
+        "observe",
+        "to watch carefully",
+        "관찰하다",
+        "观察"
+      ],
+      [
+        "enthusiastic",
+        "very interested and excited",
+        "열정적인",
+        "热情的"
+      ],
+      [
+        "horizon",
+        "the line where earth and sky seem to meet",
+        "지평선",
+        "地平线"
+      ],
+      [
+        "forecast",
+        "a prediction of future weather",
+        "예보",
+        "预报"
+      ],
+      [
+        "equipment",
+        "tools needed for an activity",
+        "장비",
+        "设备"
+      ],
+      [
+        "identify",
+        "to recognise and name",
+        "식별하다",
+        "识别"
+      ],
+      [
+        "map",
+        "a drawing that shows positions or routes",
+        "지도",
+        "地图"
+      ],
+      [
+        "adapt",
+        "to change a plan for new conditions",
+        "조정하다",
+        "适应"
+      ],
+      [
+        "shelter",
+        "a protected place",
+        "피난처",
+        "避难处"
+      ],
+      [
+        "schedule",
+        "a timed plan",
+        "일정",
+        "日程"
+      ]
+    ],
+    "extra": {
+      "title": "The Night of the Party",
+      "passage": [
+        "By seven o’clock on 9 August, Tom had checked the forecast four times.",
+        "\"It says clear,\" said Lisa. \"It said clear an hour ago as well.\"",
+        "\"Forecasts change.\"",
+        "They had spent the afternoon carrying equipment into the back garden: eleven folding chairs, a table for the cake set under the shelter of the porch in case of rain, and a cardboard box holding twelve star maps Tom had printed and cut out himself.",
+        "By eight the guests had arrived, and by nine the cake was cut and the presents opened, exactly according to the schedule Tom had written on the kitchen wall in marker pen.",
+        "Then a bank of cloud came up over the eastern horizon and covered half the sky.",
+        "\"Well,\" said Tom.",
+        "Nobody said anything. Somebody suggested going indoors.",
+        "It was Lisa who adapted the plan. \"Half the sky is still open,\" she said. \"Everyone lie down facing west. Tom, hand out the maps.\"",
+        "So eleven children lay on their backs in the grass with torches, and Tom went between them explaining how to observe: hold the map above your face and turn it slowly until it matches what is actually up there. It took a while. Then Priya found the Plough, and once you have found the Plough you can find the North Star, and after that the sky stops being a mess and starts being a place.",
+        "By half past ten they could identify four constellations between them. Nobody had gone indoors. The cloud never cleared, and they never saw a meteor at all.",
+        "\"Was it all right?\" Tom asked Lisa at the gate.",
+        "\"It was the best party I have been to,\" said Lisa, who was not usually enthusiastic about anything, \"and we only used half a sky. Do it again next year and book the whole one.\""
+      ],
+      "questions": [
+        [
+          "Finding Main Idea",
+          "What is this passage mostly about?",
+          [
+            "A star party that works even though the sky is half covered",
+            "A boy who checks the weather forecast too often",
+            "How to print and cut out a star map",
+            "Why the Plough is easy to find"
+          ],
+          "A",
+          "The cloud arrives halfway through and the rest of the passage is what they do about it."
+        ],
+        [
+          "Recalling Facts and Details",
+          "How many constellations had they identified by half past ten?",
+          [
+            "four",
+            "eleven",
+            "twelve",
+            "none"
+          ],
+          "A",
+          "The passage gives the number directly."
+        ],
+        [
+          "Understanding Sequence",
+          "What happened immediately after the cloud covered half the sky?",
+          [
+            "Priya found the Plough.",
+            "Tom handed out the maps.",
+            "Lisa said the party was the best she had been to.",
+            "Nobody spoke, and somebody suggested going indoors."
+          ],
+          "D",
+          "The silence comes first; Lisa’s plan and the maps follow it."
+        ],
+        [
+          "Recognising Cause and Effect",
+          "Why did Lisa tell everyone to lie down facing west?",
+          [
+            "The grass was driest on that side.",
+            "The cloud had covered the eastern half of the sky.",
+            "The North Star is in the west.",
+            "The torches worked better facing that way."
+          ],
+          "B",
+          "The cloud came up over the eastern horizon, so west was the half still open."
+        ],
+        [
+          "Comparing and Contrasting",
+          "How was the second half of the party different from the first?",
+          [
+            "It had to be worked out as it went along.",
+            "It happened indoors instead of in the garden.",
+            "Fewer guests were there for it.",
+            "It followed Tom’s written schedule instead of Lisa’s plan."
+          ],
+          "D",
+          "The cake and presents ran to the schedule; after the cloud, the plan was made up on the spot."
+        ],
+        [
+          "Making Predictions",
+          "If cloud comes over at next year’s party, Tom will most likely",
+          [
+            "cancel it and send everyone home.",
+            "wait indoors until the sky clears.",
+            "change the plan rather than give up.",
+            "check the forecast more often beforehand."
+          ],
+          "C",
+          "He has now seen the party work after exactly that happened."
+        ],
+        [
+          "Finding Word Meaning in Context",
+          "In this passage, the word adapted means",
+          [
+            "explained something clearly.",
+            "changed a plan to fit the situation.",
+            "cancelled an arrangement.",
+            "agreed with somebody else."
+          ],
+          "B",
+          "Lisa keeps the party going by changing where everyone looks."
+        ],
+        [
+          "Drawing Conclusions and Making Inferences",
+          "You can tell that Lisa",
+          [
+            "had wanted the party to be indoors from the start.",
+            "knows more about the stars than Tom does.",
+            "was disappointed not to see a meteor.",
+            "thinks quickly when a plan goes wrong."
+          ],
+          "D",
+          "She produces a workable idea while everyone else is silent."
+        ],
+        [
+          "Distinguishing Between Fact and Opinion",
+          "Which statement expresses an opinion?",
+          [
+            "The cake was cut by nine o’clock.",
+            "The cloud came up over the eastern horizon.",
+            "It was the best party I have been to.",
+            "They identified four constellations."
+          ],
+          "C",
+          "Which party was best is Lisa’s judgement; the other three could be checked."
+        ],
+        [
+          "Identifying Author's Purpose",
+          "The author’s main purpose in this passage is to",
+          [
+            "explain how to identify a constellation.",
+            "tell a story about a plan that survives being spoiled.",
+            "describe the equipment needed for stargazing.",
+            "persuade readers to hold a party outdoors."
+          ],
+          "B",
+          "The whole passage turns on what happens after the cloud arrives."
+        ],
+        [
+          "Interpreting Figurative Language",
+          "The passage says that after finding the Plough, \"the sky stops being a mess and starts being a place.\" This means the sky",
+          [
+            "grew brighter as the cloud thinned.",
+            "became easier to photograph.",
+            "began to make sense once there was something to start from.",
+            "seemed closer than it had before."
+          ],
+          "C",
+          "One known point lets the rest of the map be worked out from it."
+        ],
+        [
+          "Summarising",
+          "Which sentence best summarises the passage?",
+          [
+            "Cloud covers half the sky at Tom’s star party, and Lisa’s change of plan turns it into the best evening anyone there can remember.",
+            "Tom checks the weather forecast four times before his birthday party.",
+            "Eleven children lie in the grass with torches and star maps.",
+            "A group of children look for the North Star after finding the Plough."
+          ],
+          "A",
+          "A summary needs the setback, the response and the outcome together."
+        ]
+      ]
+    },
+    "new": {
+      "title": "The Night Walk",
+      "passage": [
+        "The Year Six astronomy club had been planning the night walk since March.",
+        "Mr Bakari had booked the field behind the school, borrowed six pairs of binoculars from the science department, and written a schedule on the whiteboard: meet at eight, walk out at half past, home by eleven.",
+        "On the day, the forecast turned. Rain from four o’clock, clearing after midnight.",
+        "\"So it is cancelled,\" said Ifeoma.",
+        "\"It is not cancelled,\" said Mr Bakari. \"It is adapted.\"",
+        "They met in the hall instead. He had brought the equipment anyway, and he set the binoculars out on a table so that everyone could handle them properly for once, which is a difficult thing to do in the dark.",
+        "Then he gave out star maps and taught them to use one indoors: find the date, find the hour, turn the wheel, and read off what should be above the horizon at that moment even when there is a roof in the way.",
+        "\"You can observe with a map,\" he said, \"and then check the map against the sky. That is the order most people get backwards.\"",
+        "By nine they could identify five constellations on paper. Ifeoma could find three of them with her eyes shut.",
+        "At ten past ten the rain stopped early. Mr Bakari looked out of the window, said one word, and eighteen children went out into a wet field in the dark with their coats over their heads.",
+        "They stood under the shelter of the oak at the edge of the field until the last drips had come off it. Then they came out, and the sky was clean, and Ifeoma found the constellation she had been practising in about four seconds.",
+        "Nobody saw a meteor. Everybody stayed until eleven. Mr Bakari, who is not an enthusiastic man, wrote in the club book afterwards: \"Best night we have had.\""
+      ],
+      "questions": [
+        [
+          "Finding Main Idea",
+          "What is this passage mostly about?",
+          [
+            "A teacher who refuses to cancel a rained-off night walk",
+            "How a pair of binoculars should be handled",
+            "Why a star map has a wheel that turns",
+            "A girl who can name constellations with her eyes shut"
+          ],
+          "A",
+          "The passage runs from the forecast turning to the field at eleven o’clock."
+        ],
+        [
+          "Recalling Facts and Details",
+          "What did Mr Bakari borrow from the science department?",
+          [
+            "a telescope",
+            "a set of star maps",
+            "a whiteboard",
+            "six pairs of binoculars"
+          ],
+          "D",
+          "The second paragraph names them among his preparations."
+        ],
+        [
+          "Understanding Sequence",
+          "What did the club do first after the rain stopped?",
+          [
+            "They stood under the oak until it had finished dripping.",
+            "Ifeoma found the constellation she had practised.",
+            "Mr Bakari wrote in the club book.",
+            "They identified five constellations on paper."
+          ],
+          "A",
+          "The oak comes before the open field, and the paper work came earlier in the evening."
+        ],
+        [
+          "Recognising Cause and Effect",
+          "Why did Mr Bakari lay the binoculars out on a table?",
+          [
+            "They are hard to handle properly in the dark.",
+            "The field was too wet to carry them across.",
+            "He wanted to count them before going out.",
+            "He was teaching the club how to clean them."
+          ],
+          "A",
+          "The passage gives that as the reason for doing it indoors."
+        ],
+        [
+          "Comparing and Contrasting",
+          "How was the indoor evening different from the walk he had planned?",
+          [
+            "Fewer children came to it.",
+            "The maps were read before the sky was looked at, instead of afterwards.",
+            "It used no equipment at all.",
+            "It finished earlier than eleven o’clock."
+          ],
+          "B",
+          "That is the order Mr Bakari says most people get backwards, and it is what the rain forced."
+        ],
+        [
+          "Making Predictions",
+          "The next time a club night is rained off, Ifeoma will most likely",
+          [
+            "assume it has been cancelled.",
+            "expect it to go ahead in some other form.",
+            "ask to stay at home.",
+            "bring her own binoculars."
+          ],
+          "B",
+          "She assumed cancellation this time and was corrected by what followed."
+        ],
+        [
+          "Finding Word Meaning in Context",
+          "In this passage, the word observe means",
+          [
+            "to obey a rule.",
+            "to make a remark.",
+            "to study something closely.",
+            "to wait for the weather to change."
+          ],
+          "C",
+          "Mr Bakari uses it for working carefully with a map and then with the sky."
+        ],
+        [
+          "Drawing Conclusions and Making Inferences",
+          "You can tell that Mr Bakari",
+          [
+            "had expected the rain to stop early.",
+            "thinks equipment matters more than knowledge.",
+            "was disappointed by how the evening went.",
+            "had prepared for the evening to go wrong."
+          ],
+          "D",
+          "He brings the equipment anyway and has an indoor lesson ready."
+        ],
+        [
+          "Distinguishing Between Fact and Opinion",
+          "Which statement expresses an opinion?",
+          [
+            "The rain stopped at ten past ten.",
+            "Eighteen children went out into the field.",
+            "Best night we have had.",
+            "The club met in the hall."
+          ],
+          "C",
+          "That is his verdict on the evening; the other three are matters of fact."
+        ],
+        [
+          "Identifying Author's Purpose",
+          "The author’s main purpose in this passage is to",
+          [
+            "explain how to use a star map indoors.",
+            "describe a field behind a school at night.",
+            "tell a story about a plan changed rather than abandoned.",
+            "persuade readers to join an astronomy club."
+          ],
+          "C",
+          "The line \"It is not cancelled. It is adapted\" is the hinge the passage turns on."
+        ],
+        [
+          "Interpreting Figurative Language",
+          "Mr Bakari says people get the order \"backwards.\" He means that most people",
+          [
+            "read a map from the bottom upwards.",
+            "look at the sky first and only then reach for a map.",
+            "go outdoors before checking the forecast.",
+            "learn the names of stars before the shapes."
+          ],
+          "B",
+          "He has just described using the map first and checking it against the sky afterwards."
+        ],
+        [
+          "Summarising",
+          "Which sentence best summarises the passage?",
+          [
+            "An astronomy club learns to read star maps indoors on a rainy evening.",
+            "A teacher borrows binoculars and books a field behind a school.",
+            "Rain stops early one night and a club goes out into a wet field.",
+            "A rained-off club night becomes an indoor lesson with maps, and when the rain stops early the children go out able to find what they have been practising."
+          ],
+          "D",
+          "A summary needs the change of plan and what it made possible later."
+        ]
+      ]
+    }
+  }
+]);
