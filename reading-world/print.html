@@ -976,7 +976,12 @@ var LEVEL_BOOK={B:'CARS Level B',C:'CARS Level C',D:'CARS Plus Level D'};
 function order(){return DIAG_ORDER.filter(function(id){return LEVELS.some(function(l){return l.id===id;});});}
 // Same rule as the app: 12Q needs 11+ to move up and under 6 to move down,
 // scaled down for the shorter 8- and 6-question levels.
-function thresholds(n){if(n>=12)return {up:11,down:6};if(n>=8)return {up:7,down:4};return {up:n,down:3};}
+// Straight from the CARS & STARS Plus Placement Book, not invented here:
+// levels B-H (12 questions) place down under six correct, on level at six to
+// ten, up at eleven or more. Level A (8 questions) sits on level at five to
+// six, so five is the floor - this used to say four. Levels P and AA (6
+// questions) require all six before a student moves up.
+function thresholds(n){if(n>=12)return {up:11,down:6};if(n>=8)return {up:7,down:5};return {up:n,down:3};}
 function placement(levelId,score,n){
   var o=order(),i=o.indexOf(levelId),th=thresholds(n||12);
   if(score>=th.up)return {verdict:'up',recommend:o[i+1]||levelId,capped:!o[i+1]};
@@ -1479,7 +1484,7 @@ function planBlock(rec,pri){
     row(RL('주 1회 · 2시간','Once a week, 2 hours'),w1)+
     row(RL('주 2회 · 2시간','Twice a week, 2 hours'),w2)+
     '</tbody></table><p class="rp-note">'+
-    RL(lessons+'개 단원에 약점 유형 보충 '+extra+'회를 더한 회차입니다. 주 2회로 하면 같은 분량을 절반의 기간에 끝냅니다.',
+    RL(lessons+'개 단원에 약점 유형 보충 '+extra+'회를 더한 회차입니다. 한 회(2시간)면 시험 45분(채점·해설 포함)에 전략 지도와 연습까지 넣을 수 있습니다. 주 2회로 하면 같은 분량을 절반의 기간에 끝냅니다.',
        lessons+' units plus '+extra+' catch-up sessions for the priority skills. Twice a week covers the same ground in half the time.')+
     '</p>';
 }
@@ -1536,6 +1541,8 @@ function reportSheet(){
       if(A.per[0].pl.capped) vBody+=RL(' (사다리의 끝 레벨이라 같은 레벨을 유지합니다.)',
                                        ' (End of the ladder, so the level is held.)');
     }
+    vBody+=RL(' 배치가 끝나면 그 레벨을 한 해 동안 유지하는 것이 원칙입니다. 특정 전략만 흔들리면 레벨을 내리지 말고 그 유형만 보충하고, 여유가 있으면 심화로 넓히세요.',
+              ' Once placed, a student stays on that level for the year. If only certain strategies wobble, re-train those rather than dropping a level; if the level is easy, extend sideways.');
   }
 
   // ── strategy rows, sorted weakest first so the eye lands on the problem ──
@@ -1597,6 +1604,8 @@ function reportSheet(){
     '<h3 class="rp-h">'+RL('전략 구성','Skill mix')+'</h3>'+pieSvg(rows)+
     (multi?'<h3 class="rp-h">'+RL('레벨별 성취','By level')+'</h3>'+levelBarsSvg(A.per):'')+
     '<h3 class="rp-h">'+RL('읽기 전략별 정답률','Accuracy by reading strategy')+'</h3>'+barsSvg(rows)+
+    '<p class="rp-note">'+RL('CARS & STARS Plus 교사용 평가 1·2(전략별 성취 집계와 막대그래프)를 자동으로 만든 것입니다.',
+      'This is Teacher Assessment 1 and 2 from CARS & STARS Plus — the per-strategy tally and its bar graph — produced automatically.')+'</p>'+
     '<h3 class="rp-h">'+RL('무엇을 어떻게 도울까','What to work on')+'</h3><div class="rp-dl">'+detail+'</div>'+
     (pri.length?'<div class="rp-pri"><b>'+RL('코칭 우선순위','Coaching priority')+'</b> '+
       esc(pri.map(function(r,i){return (i+1)+'. '+stratName(r.strat);}).join('   '))+'</div>':'')+
