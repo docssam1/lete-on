@@ -44,5 +44,16 @@ if (!window.LESSONS) window.LESSONS = {};
     add(10,`What does the phrase '${p.figurative[0]}' mean in the passage?`,p.figurative[1],p.figurative_wrong||['The words should be understood only in their exact literal sense.','A magical event actually changed the object.','The speaker forgot what was happening.'],'The phrase is figurative and communicates this idea in a vivid way.');
     add(11,'Which sentence best summarises the passage?',p.summary,p.summary_wrong,'A good summary includes the central idea and the most important events or facts.');return q;
   }
-  window.CARS_D_REGISTER=function(list){(list||[]).forEach(l=>{const extra={...l.extra,questions:questions(l.extra,l.extra._pattern)};delete extra._pattern;const newer={...l.new,questions:questions(l.new,l.new._pattern)};delete newer._pattern;window.LESSONS[l.id]={bookId:'cars-level-d',levelId:'D',lessonId:l.id,chapter:l.chapter,chapterNumber:l.num,page:l.page,title:l.title,theme:l.theme,image:homeImage(l.id),rewardPoints:{lessonComplete:40},words:l.words,extraLearning:extra,newPassage:newer};});};
+  // The generator above is a scaffold: it fills twelve slots from a few fields, so
+  // every lesson it builds shares the same stems, the same boilerplate explanations
+  // and one of four rotating answer keys. A lesson that has been written properly
+  // ships its own `questions` array, and that always wins. Lessons migrate one at a
+  // time; whatever still has no array keeps the scaffold until it is rewritten.
+  function build(part){
+    const out={...part};
+    if(!Array.isArray(part.questions)||!part.questions.length) out.questions=questions(part,part._pattern);
+    delete out._pattern;
+    return out;
+  }
+  window.CARS_D_REGISTER=function(list){(list||[]).forEach(l=>{const extra=build(l.extra);const newer=build(l.new);window.LESSONS[l.id]={bookId:'cars-level-d',levelId:'D',lessonId:l.id,chapter:l.chapter,chapterNumber:l.num,page:l.page,title:l.title,theme:l.theme,image:homeImage(l.id),rewardPoints:{lessonComplete:40},words:l.words,extraLearning:extra,newPassage:newer};});};
 })();
