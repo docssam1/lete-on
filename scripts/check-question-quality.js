@@ -57,14 +57,19 @@ const flat = arr => norm((arr || []).join(' '));
 const content = s => norm(s).toLowerCase().replace(/[^a-z0-9' ]/g, ' ')
   .split(/\s+/).filter(w => w.length > 2 && !STOP.has(w));
 
+// ws*.js assign into window.LESSONS without creating it, so it has to exist
+// before anything loads.
 function loadLessons() {
-  global.window = {};
+  global.window = { LESSONS: {} };
   const load = f => { try { require(path.join(DATA, f)); } catch (e) { /* optional */ } };
   for (let i = 1; i <= 10; i++) load(`lesson${i}.js`);
   for (let i = 1; i <= 10; i++) load(`lc${i}.js`);
   load('cd1.js');
   load('cars-d-engine.js');
   for (let i = 2; i <= 15; i++) load(`cd${i}-data.js`);
+  for (let i = 1; i <= 7; i++) load(`rp${i}.js`);
+  for (let i = 1; i <= 12; i++) load(`ws${i}.js`);
+  for (let i = 1; i <= 16; i++) load(`sl${i}.js`);
   return global.window;
 }
 
@@ -87,7 +92,10 @@ function setsFor(win, id) {
 // to the phrase and has to come off before searching the passage.
 function quoted(stem) {
   const s = norm(stem);
-  const m = s.match(/'([^']{2,80})'|"([^"]{2,80})"/)
+  // A possessive earlier in the stem ("the coach's word 'recharge'") must not be
+  // read as the opening quote, so the mark has to follow a non-letter.
+  const m = s.match(/(?:^|[^A-Za-z])'([^']{2,80})'/)
+    || s.match(/"([^"]{2,80})"/)
     || s.match(/\bthe (?:word|phrase) ([a-z][a-z'-]*)\b/i)
     // Level C also writes "In the story, a silo is" and "The story says Grace
     // paused before her turn", naming the word without marking it.
@@ -178,10 +186,10 @@ function checkLengthCue(questions) {
 
 function main() {
   const win = loadLessons();
+  const range = (p, n) => [...Array(n)].map((_, i) => `${p}${i + 1}`);
   const ids = process.argv.slice(2).length ? process.argv.slice(2)
-    : [...Array(10)].map((_, i) => `lesson${i + 1}`)
-      .concat([...Array(10)].map((_, i) => `lc${i + 1}`))
-      .concat([...Array(15)].map((_, i) => `cd${i + 1}`));
+    : range('lesson', 10).concat(range('lc', 10), range('cd', 15),
+        range('rp', 7), range('ws', 12), range('sl', 16));
 
   let flagged = 0;
   let sets = 0;
