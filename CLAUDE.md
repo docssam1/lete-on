@@ -225,8 +225,13 @@ after`로 갈아끼운다. 그래서 Supabase stem에는 ASCII 그림을 넣지 
   (`["","","Tom opens…"]` → `["","Tom opens…","Everyone goes outside…"]`).
   ⚠️ `cars-d-layouts.js`의 `pdfPrintedOffset: 3`은 **틀렸다 — 실제 +4**
   (PDF 51쪽 = 인쇄 47쪽). 페이지 찾을 때 주의.
-- **B·C는 원본 스캔이 없어 대조 못 함.** 기존 전사를 그대로 구조화했을 뿐이므로 cd13 같은
-  밀림이 남아 있을 수 있다. Level B/C PDF가 생기면 전수 대조할 것.
+- **Level B도 대조 완료(2026-08-10).** lesson1·3·5·10 Q3를 교재 사진과 대조 → **밀림 없음**.
+  대신 **전사 누락 2건**을 찾아 복원했다: lesson1은 도입문 "The boxes tell some things about
+  robins."가 통째로 빠져 있었고, lesson10은 보기 D의 안쪽 따옴표가 빠져 있었다
+  (`Owl said, No one tells me…` → `Owl said, "No one tells me what to do!"`). 정답 letter는
+  둘 다 원래 맞았고 손대지 않았다. 같은 사진으로 lesson7·8·9의 Q3가 다이어그램이 **아님**도
+  확인 — 레이아웃 맵의 분류가 옳았다.
+- **Level C만 미대조.** lc3·lc6은 아직 교재와 맞춰보지 못했다.
 - **lc6은 문항 문장이 통째로 유실**돼 있어(그림만 있고 질문 없음) 시리즈 표준 문구
   "Which of these belongs in the empty box?"로 채움 — 교재 대조 필요.
 
@@ -342,8 +347,9 @@ main: main (GitHub Pages 자동 배포, 직접 작업)
 |------|--------|------|
 | ~~`store.js` remoteUpsert 하드코딩~~ | ✅ 수정됨 (2026-07-08) | `remoteMeta(data)`가 프로필의 `currentBookId`·최근 학습 레슨(updatedAt 최대)에서 `book_id`/`lesson_id`를 도출 → analytics 컬럼이 실제 학습 반영 |
 | ~~Level C 커버 이미지~~ | ✅ 해결됨 (2026-07-08) | 실사 삽화 `cars-level-c/1.png`~`10.png` 적용(lcN→N.png). 옛 placeholder·illustrations/jpg 삭제 |
-| **B·C 다이어그램 문항 미대조** | 중 | 순서도 6개(B lesson1·3·5·10, C lc3·lc6 Q3)는 전사본을 구조화만 했고 교재 스캔과 대조 못 함. D는 대조해서 cd13 밀림을 잡았으므로 여기도 같은 오류가 남아 있을 수 있음. **Level B/C PDF 필요** |
-| **lc6 Q3 문구 임의 보충** | 중 | 문항 문장이 통째로 유실돼 있어 시리즈 표준 문구 "Which of these belongs in the empty box?"로 채움. **교재 대조 필요** |
+| ~~Level B 다이어그램 미대조~~ | ✅ 대조 완료 (2026-08-10) | lesson1·3·5·10 Q3를 교재 사진과 전수 대조. **상자 밀림 없음** — 내용·순서·빈칸 위치·정답 전부 일치. 전사 누락 2건 복원(아래) |
+| **Level C 다이어그램 미대조** | 중 | lc3·lc6 Q3는 아직 교재와 대조 못 함. **Level C 교재 페이지 필요** |
+| **lc6 Q3 문구 임의 보충** | 중 | 문항 문장이 통째로 유실돼 있어 시리즈 표준 문구 "Which of these belongs in the empty box?"로 채움. **교재 대조 필요** — lesson1에서 실제로 도입문이 통째로 빠져 있던 전례가 확인됐으므로 lc6에도 원문 문장이 따로 있을 가능성 높음 |
 | `cars-d-layouts.js` `pdfPrintedOffset: 3` | 하 | 실제는 **+4** (PDF 51쪽 = 인쇄 47쪽). 값은 아직 3으로 방치 |
 | 정답 키 중복 6쌍 | 하 | 서로 다른 레슨이 같은 12자 키를 공유(lc4·lc6 `ABCDABCDABCD` 등). 6~7세 대상이라 실질 영향 없다는 사용자 판단으로 미수정 |
 
