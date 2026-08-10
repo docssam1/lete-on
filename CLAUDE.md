@@ -231,7 +231,14 @@ after`로 갈아끼운다. 그래서 Supabase stem에는 ASCII 그림을 넣지 
   (`Owl said, No one tells me…` → `Owl said, "No one tells me what to do!"`). 정답 letter는
   둘 다 원래 맞았고 손대지 않았다. 같은 사진으로 lesson7·8·9의 Q3가 다이어그램이 **아님**도
   확인 — 레이아웃 맵의 분류가 옳았다.
-- **Level C만 미대조.** lc3·lc6은 아직 교재와 맞춰보지 못했다.
+- **Level C도 대조 완료(2026-08-10).** Drive의 교재 스캔(`CARS_C_pNNN_corrected.png`, lc3=p009,
+  lc6=p019)과 대조 → **밀림 없음**. 전사 누락 3건을 복원했다: lc3·lc6 모두 도입문이 통째로
+  빠져 있었고, **lc6은 3번 상자에 본문 문장("we do not eat with our coats on")이 들어가 있었다**
+  — 실제 상자 문구는 "Turtle told Spider that it was bad manners to eat with his coat on."이다.
+  lc6의 유실된 질문 문장을 시리즈 표준 문구로 임시 보충했던 것도 **틀렸음이 확인**됐다
+  (실제는 "What belongs in the empty box?"). 정답 letter는 6개 전부 원래 맞았고 손대지 않았다.
+- **결론: 다이어그램 문항 6개 전부 대조 완료.** 구조적 밀림은 D의 cd13 하나뿐이었고, B·C에서
+  나온 것은 전부 **전사 시 문구 유실**(도입문 4건·따옴표 1건·상자 문구 1건)이었다.
 - **lc6은 문항 문장이 통째로 유실**돼 있어(그림만 있고 질문 없음) 시리즈 표준 문구
   "Which of these belongs in the empty box?"로 채움 — 교재 대조 필요.
 
@@ -348,8 +355,8 @@ main: main (GitHub Pages 자동 배포, 직접 작업)
 | ~~`store.js` remoteUpsert 하드코딩~~ | ✅ 수정됨 (2026-07-08) | `remoteMeta(data)`가 프로필의 `currentBookId`·최근 학습 레슨(updatedAt 최대)에서 `book_id`/`lesson_id`를 도출 → analytics 컬럼이 실제 학습 반영 |
 | ~~Level C 커버 이미지~~ | ✅ 해결됨 (2026-07-08) | 실사 삽화 `cars-level-c/1.png`~`10.png` 적용(lcN→N.png). 옛 placeholder·illustrations/jpg 삭제 |
 | ~~Level B 다이어그램 미대조~~ | ✅ 대조 완료 (2026-08-10) | lesson1·3·5·10 Q3를 교재 사진과 전수 대조. **상자 밀림 없음** — 내용·순서·빈칸 위치·정답 전부 일치. 전사 누락 2건 복원(아래) |
-| **Level C 다이어그램 미대조** | 중 | lc3·lc6 Q3는 아직 교재와 대조 못 함. **Level C 교재 페이지 필요** |
-| **lc6 Q3 문구 임의 보충** | 중 | 문항 문장이 통째로 유실돼 있어 시리즈 표준 문구 "Which of these belongs in the empty box?"로 채움. **교재 대조 필요** — lesson1에서 실제로 도입문이 통째로 빠져 있던 전례가 확인됐으므로 lc6에도 원문 문장이 따로 있을 가능성 높음 |
+| ~~Level C 다이어그램 미대조~~ | ✅ 대조 완료 (2026-08-10) | lc3·lc6 Q3를 교재 스캔(Drive)과 대조. **상자 밀림 없음**. 전사 누락 3건 복원(아래) |
+| ~~lc6 Q3 문구 임의 보충~~ | ✅ 교체됨 (2026-08-10) | 임시로 채웠던 "Which of these belongs in the empty box?"는 **틀렸다**. 실제 교재는 "What belongs in the empty box?"이고 도입문도 따로 있었다. 3번 상자 문구도 본문 문장이 잘못 들어가 있어 교체 |
 | `cars-d-layouts.js` `pdfPrintedOffset: 3` | 하 | 실제는 **+4** (PDF 51쪽 = 인쇄 47쪽). 값은 아직 3으로 방치 |
 | 정답 키 중복 6쌍 | 하 | 서로 다른 레슨이 같은 12자 키를 공유(lc4·lc6 `ABCDABCDABCD` 등). 6~7세 대상이라 실질 영향 없다는 사용자 판단으로 미수정 |
 
