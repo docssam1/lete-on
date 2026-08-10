@@ -119,6 +119,8 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .sheet.report .rp-leg{list-style:none;margin:0;padding:0;font-size:9.6pt}
 .sheet.report .rp-leg li{display:flex;align-items:center;gap:2mm;margin-bottom:1.4mm}
 .sheet.report .rp-leg i{width:3.4mm;height:3.4mm;border-radius:1mm;display:inline-block}
+.sheet.report .rp-up{border:1px solid var(--brand);border-radius:2mm;padding:2.5mm 3mm;margin-bottom:5mm;break-inside:avoid}
+.sheet.report .rp-up ul{margin:0;padding-left:5mm;font-size:9.8pt;line-height:1.7}
 .sheet.report .rp-pri{font-size:9.8pt;margin-bottom:4mm;padding:2mm 3mm;border:1px solid var(--brand);border-radius:2mm}
 .sheet.report .rp-pri b{color:var(--brand);margin-right:2mm}
 .sheet.report .rt.pl td{font-size:9.8pt}
@@ -157,7 +159,7 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .sh-name{display:flex;gap:16px;font-size:9.5pt;color:#333;margin-bottom:6mm}
 .sh-name span{border-bottom:1px solid #999;min-width:46mm;padding-bottom:1px}
 .sh-intro{font-size:10pt;color:#3c4a41;margin:0 0 4mm;padding:2.5mm 3mm;background:#f4f2ea;border-left:3px solid var(--brand)}
-.psg{font-family:var(--serif);font-size:11.6pt;line-height:1.75;margin-bottom:5mm}
+.psg{font-family:var(--serif);font-size:var(--fs-psg,11.6pt);line-height:1.75;margin-bottom:5mm}
 .psg p{margin:0 0 3mm}
 /* The lesson illustrations are portrait (about 1122x1402), so capping the height
    squeezed the width to ~59mm and left the picture stranded in the middle of the
@@ -169,6 +171,7 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .art.sm{display:block;width:52mm;margin:0 auto 4mm}
 .psg.numbered{counter-reset:pl}
 ol.qs{list-style:none;counter-reset:q;padding:0;margin:0}
+ol.qs{font-size:var(--fs-qs,11.2pt)}
 ol.qs>li{break-inside:avoid;margin:0 0 4mm}
 ol.qs>li>.qt{font-weight:700;display:flex;gap:6px}
 ol.qs>li>.qt .qn{flex:none;min-width:6mm}
@@ -650,6 +653,15 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
       <label class="chk on"><input type="checkbox" id="optName" checked><span>이름 · 날짜 기입란 넣기</span></label>
       <label class="chk on o-book"><input type="checkbox" id="optBlankVocab" checked><span>낱말지를 빈칸 시험지로<small>해제하면 뜻이 인쇄된 학습용 낱말지</small></span></label>
       <label class="chk o-book"><input type="checkbox" id="optKoCol"><span>낱말지에 우리말 칸 넣기<small>영어 수업이면 꺼 두세요</small></span></label>
+      <label class="fld" style="margin:0 0 8px"><span>지문 글자 크기</span>
+        <select id="fsPsg" style="width:100%;border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:13px">
+          <option value="">기본 (11.6pt)</option><option value="10.4pt">작게</option>
+          <option value="12.8pt">크게</option><option value="14pt">아주 크게</option></select></label>
+      <label class="fld" style="margin:0 0 8px"><span>문항 글자 크기</span>
+        <select id="fsQs" style="width:100%;border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:13px">
+          <option value="">기본 (11.2pt)</option><option value="10pt">작게</option>
+          <option value="12.4pt">크게</option><option value="13.6pt">아주 크게</option></select></label>
+      <label class="chk o-book"><input type="checkbox" id="optPartsBack"><span>추가 학습 · 유사 지문을 책 뒤에 모으기<small>해제하면 각 단원 뒤에 붙습니다</small></span></label>
       <label class="chk"><input type="checkbox" id="optStrategy"><span>문항에 전략 이름 표시</span></label>
       <label class="chk on"><input type="checkbox" id="optExplain" checked><span>답안지에 해설 포함</span></label>
     </div>
@@ -969,6 +981,9 @@ var TXT={
   lesson:['과','Lesson'], practice:['유형 연습','Skill Practice']
 };
 function T(k){return (TXT[k]||['',''])[LANG==='en'?1:0];}
+// Grade bands are US reading grades, not Korean school years — a seven-year-old
+// here can sit at Gr 3 — so they print as "Gr 3" rather than a bare G3.
+function gradeLabel(g){return String(g||'').replace(/^G\s*/,'Gr ');}
 
 /* ---------- placement scoring (mirrors app/main.js) ---------- */
 var DIAG_ORDER=['P','AA','A','B','C','D','E','F','G','H'];
@@ -995,6 +1010,14 @@ var grade={name:'',date:'',src:'level',level:'',unit:'',levels:[],ans:{}};
 // The analysis sheet carries its own language so an academy can print an
 // English test and hand the parent a Korean report.
 var RLANG=get('rlang','ko');
+// Passage and question type size independently: a young reader often needs a
+// bigger passage while the questions stay compact enough to fit the page.
+var FS={psg:get('fsPsg',''),qs:get('fsQs','')};
+function applyFont(){
+  var r=document.documentElement.style;
+  FS.psg?r.setProperty('--fs-psg',FS.psg):r.removeProperty('--fs-psg');
+  FS.qs?r.setProperty('--fs-qs',FS.qs):r.removeProperty('--fs-qs');
+}
 var LADDER=DIAG_ORDER;
 
 var SCOPE=get('scope','volume');
@@ -1350,7 +1373,7 @@ function gradeSources(){
   return (grade.levels||[]).map(function(id){
     var lv=levelById(id);
     return lv?{key:id,kind:'level',id:id,questions:lv.questions,title:lv.title,
-      grade:lv.grade,where:RL('레벨 ','Level ')+id+' ('+lv.grade+')',label:RL('레벨 ','Level ')+id}:null;
+      grade:lv.grade,where:RL('레벨 ','Level ')+id+' ('+gradeLabel(lv.grade)+')',label:RL('레벨 ','Level ')+id}:null;
   }).filter(Boolean);
 }
 function ansFor(key){return (grade.ans[key]=grade.ans[key]||{});}
@@ -1470,6 +1493,24 @@ function factLine(r){
 // How many two-hour sessions the recommended level needs: one per lesson, plus
 // one for each priority skill that has to be re-trained.
 var LEVEL_LESSONS={B:10,C:10,D:15};
+// What moving up actually requires, in this student's numbers.
+function levelUpBlock(per,pri){
+  if(!per.length) return '';
+  var top=per[per.length-1], n=top.n, th=thresholds(n), need=th.up, have=top.right;
+  var o=order(), i=o.indexOf(top.src.id), nxt=o[i+1];
+  if(!nxt) return '';
+  var gap=Math.max(0,need-have);
+  var blockers=pri.slice(0,2).map(function(r){return stratName(r.strat);}).join(' · ');
+  return '<h3 class="rp-h">'+RL('다음 레벨로 올라가려면','Moving up to the next level')+'</h3>'+
+    '<div class="rp-up"><ul>'+
+    '<li>'+RL('목표','Target')+': <b>'+RL('레벨 ','Level ')+esc(nxt)+'</b></li>'+
+    '<li>'+RL('조건','Requirement')+': '+RL(esc(top.src.label)+' 시험에서 '+n+'문항 중 <b>'+need+'개 이상</b>',
+        need+' or more of '+n+' on the '+esc(top.src.label)+' test')+'</li>'+
+    '<li>'+RL('현재','Now')+': '+have+' / '+n+
+      (gap?' — '+RL('<b>'+gap+'문항</b> 부족','<b>'+gap+'</b> short'):' — '+RL('조건 충족','met'))+'</li>'+
+    (blockers?'<li>'+RL('막고 있는 유형','What is blocking it')+': <b>'+esc(blockers)+'</b></li>':'')+
+    '</ul></div>';
+}
 function planBlock(rec,pri){
   var lessons=LEVEL_LESSONS[rec]||0;
   if(!lessons) return '';
@@ -1541,8 +1582,8 @@ function reportSheet(){
       if(A.per[0].pl.capped) vBody+=RL(' (사다리의 끝 레벨이라 같은 레벨을 유지합니다.)',
                                        ' (End of the ladder, so the level is held.)');
     }
-    vBody+=RL(' 배치가 끝나면 그 레벨을 한 해 동안 유지하는 것이 원칙입니다. 특정 전략만 흔들리면 레벨을 내리지 말고 그 유형만 보충하고, 여유가 있으면 심화로 넓히세요.',
-              ' Once placed, a student stays on that level for the year. If only certain strategies wobble, re-train those rather than dropping a level; if the level is easy, extend sideways.');
+    vBody+=RL(' 이 레벨은 출발점입니다. 아래에 다음 레벨로 올라가는 조건과 남은 거리를 적어 두었습니다.',
+              ' This level is the starting point. What it takes to move up, and how far off it is, is set out below.');
   }
 
   // ── strategy rows, sorted weakest first so the eye lands on the problem ──
@@ -1609,6 +1650,7 @@ function reportSheet(){
     '<h3 class="rp-h">'+RL('무엇을 어떻게 도울까','What to work on')+'</h3><div class="rp-dl">'+detail+'</div>'+
     (pri.length?'<div class="rp-pri"><b>'+RL('코칭 우선순위','Coaching priority')+'</b> '+
       esc(pri.map(function(r,i){return (i+1)+'. '+stratName(r.strat);}).join('   '))+'</div>':'')+
+    (isUnit?'':levelUpBlock(A.per,pri))+
     (isUnit?'':planBlock(runVerdict(A.per),pri))+homeBlock(pri)+
     (strong.length?'<div class="rp-strong"><b>'+RL('강점','Strengths')+'</b> '+
       esc(strong.slice(0,5).map(function(r){return stratName(r.strat);}).join(' · '))+'</div>':'')+
@@ -1667,6 +1709,22 @@ function jobs(){
       });
     });
   });
+  // Two ways to bind a multi-chapter volume: each chapter followed by its own
+  // created passages, or the whole book first and the created passages gathered
+  // at the back as a practice section. With one chapter the two are identical.
+  if(opt('optPartsBack')){
+    var created={extra:1,similar:1};
+    var isCreated=function(j){
+      return j.book && j.label && (/추가 학습|Extra Reading|유사 지문|Parallel Reading/.test(j.label));
+    };
+    var lessons={};
+    out.forEach(function(j){if(j.book&&j.le)lessons[j.book.id+':'+j.le.id]=1;});
+    if(Object.keys(lessons).length>1){
+      var front=out.filter(function(j){return !isCreated(j);});
+      var back=out.filter(isCreated);
+      out=front.concat(back);
+    }
+  }
   // The workshop only ever prints its own course, so the run is narrowed here
   // rather than by unpicking everything else in the UI.
   if(course==='diag') out=out.filter(function(j){return j.kind==='diag';});
@@ -2145,6 +2203,8 @@ document.addEventListener('change',function(e){
   }
   if(t.id==='qpp'){QPP=parseInt(t.value,10)||0;set('qpp',String(QPP));return render();}
   if(t.id==='gLevel'){grade.unit=t.value;grade.ans={};return render();}
+  if(t.id==='fsPsg'||t.id==='fsQs'){var k=t.id==='fsPsg'?'psg':'qs';
+    FS[k]=t.value;set(t.id,t.value);applyFont();return render();}
   if(t.id&&t.id.indexOf('opt')===0){if(lab)lab.classList.toggle('on',t.checked);return render();}
 });
 document.addEventListener('input',function(e){
@@ -2267,7 +2327,8 @@ function fillGradePick(){
       esc(l.id)+' <small>'+l.questions.length+'</small></button>';}).join('');
 }
 grade.levels=LEVELS.length?[LEVELS[0].id]:[];
-applyBrand();
+applyBrand();applyFont();
+$('fsPsg').value=FS.psg;$('fsQs').value=FS.qs;
 if(!get('name','')&&!get('logo','')) $('brandModal').hidden=false;   // first visit
 applyHash();
 })();
