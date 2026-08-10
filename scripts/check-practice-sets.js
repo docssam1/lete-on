@@ -67,6 +67,7 @@ const range = (prefix, n) => Array.from({ length: n }, (_, i) => `${prefix}${i +
 const ALL_LESSONS = [
   ...range('lesson', 10), ...range('lc', 10), ...range('cd', 15),
   ...range('rp', 7), ...range('ws', 12), ...range('sl', 16),
+  ...range('br', 20),
 ];
 
 const STRATEGIES = {
@@ -90,6 +91,13 @@ STRATEGIES['cars-level-c'] = STRATEGIES['cars-level-b'];
 STRATEGIES['reading-prime-1'] = STRATEGIES['cars-level-b'];
 STRATEGIES['wonderskills-adv3'] = STRATEGIES['cars-level-b'];
 STRATEGIES['subject-link-4'] = STRATEGIES['cars-level-b'];
+// Bricks Reading asks nine questions of its own — one MCQ, three true/false,
+// four MCQ, one MCQ, three options throughout — and labels no strategy per
+// question. That shape belongs to the licensed original. The created sets are
+// written to the CARS twelve on instruction, so they are checked against it.
+// Ten Word Box words per unit rather than twelve; rule 2 counts whatever the
+// lesson teaches, so nothing there needs changing.
+STRATEGIES['bricks-reading-250-1'] = STRATEGIES['cars-level-b'];
 
 const MIN_PCT = 85;
 const MAX_PCT = 125;
@@ -115,6 +123,7 @@ function loadLessons() {
   for (let i = 1; i <= 7; i++) load(`rp${i}.js`);
   for (let i = 1; i <= 12; i++) load(`ws${i}.js`);
   for (let i = 1; i <= 16; i++) load(`sl${i}.js`);
+  for (let i = 1; i <= 20; i++) load(`br${i}.js`);
   return global.window;
 }
 

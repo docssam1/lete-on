@@ -152,4 +152,27 @@ window.BOOK_CATALOG = [
     isbn: 'ISBN 978-1-2345-XXXX-T',
     available: true,
   },
+  {
+    // 20 units in ten themed pairs: the odd unit is nonfiction, the even one a
+    // story on the same subject. Ten Word Box words per unit, not twelve —
+    // counted off the publisher's own word list, not assumed from CARS.
+    // Bricks publishes CEFR, not AR or Lexile; do not invent one.
+    id: 'bricks-reading-250-1',
+    category: 'textbook', totalLessons: 20,
+    title: 'Bricks Reading 250',
+    subtitle: 'Level 1',
+    fullTitle: 'Bricks Reading 250 Level 1',
+    series: 'Bricks Reading',
+    publisher: 'Bricks Education',
+    publisherAbbr: 'BR',
+    publisherColor: '#c1502e',
+    spineColor: '#8c3a1f',
+    coverGradient: 'linear-gradient(160deg, #5e2513 0%, #c1502e 45%, #e07a4f 80%, #f3b89f 100%)',
+    accentColor: '#ffe9d6',
+    level: 'Level 1',
+    grade: 'G4–6',
+    band: 'G4',
+    isbn: 'ISBN 978-89-6435-XXXX-X',
+    available: false,   // flip once every unit's data file is in
+  },
 ];
