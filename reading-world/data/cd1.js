@@ -10,16 +10,407 @@ window.LESSONS["cd1"] = {
   "title": "Choosing Sides",
   "theme": "Loyalty, honesty, and the consequences of changing sides for personal gain.",
   "image": "",
-  "rewardPoints": {"lessonComplete": 40},
-  "words": [["loyal","faithful to a person, group, or promise","충실한","忠诚的"],["side","one group in a disagreement or contest","편, 쪽","一方"],["desert","to leave a person or group that depends on you","버리다, 이탈하다","抛弃"],["victory","success in a contest or struggle","승리","胜利"],["outcast","a person or animal not accepted by a group","따돌림받는 존재","被排斥者"],["claim","to say something is true","주장하다","声称"],["trust","belief that someone is honest and reliable","신뢰","信任"],["betray","to be disloyal to someone who trusts you","배신하다","背叛"],["accept","to welcome someone into a group","받아들이다","接受"],["consequence","a result that follows an action","결과","后果"],["hesitate","to pause because you are unsure","망설이다","犹豫"],["reputation","what others generally think about someone","평판","名声"]],
+  "rewardPoints": {
+    "lessonComplete": 40
+  },
+  "words": [
+    [
+      "loyal",
+      "faithful to a person, group, or promise",
+      "충실한",
+      "忠诚的"
+    ],
+    [
+      "side",
+      "one group in a disagreement or contest",
+      "편, 쪽",
+      "一方"
+    ],
+    [
+      "desert",
+      "to leave a person or group that depends on you",
+      "버리다, 이탈하다",
+      "抛弃"
+    ],
+    [
+      "victory",
+      "success in a contest or struggle",
+      "승리",
+      "胜利"
+    ],
+    [
+      "outcast",
+      "a person or animal not accepted by a group",
+      "따돌림받는 존재",
+      "被排斥者"
+    ],
+    [
+      "claim",
+      "to say something is true",
+      "주장하다",
+      "声称"
+    ],
+    [
+      "trust",
+      "belief that someone is honest and reliable",
+      "신뢰",
+      "信任"
+    ],
+    [
+      "betray",
+      "to be disloyal to someone who trusts you",
+      "배신하다",
+      "背叛"
+    ],
+    [
+      "accept",
+      "to welcome someone into a group",
+      "받아들이다",
+      "接受"
+    ],
+    [
+      "consequence",
+      "a result that follows an action",
+      "결과",
+      "后果"
+    ],
+    [
+      "hesitate",
+      "to pause because you are unsure",
+      "망설이다",
+      "犹豫"
+    ],
+    [
+      "reputation",
+      "what others generally think about someone",
+      "평판",
+      "名声"
+    ]
+  ],
   "extraLearning": {
-    "title": "The Fox at the Forest Games",
-    "passage": ["Every spring, the animals of Pine Hollow held a friendly set of forest games. This year the red team and the blue team were evenly matched. Fern the fox had not joined either team. She said she wanted to wait until she could tell which group would win.","During the first event, the red team raced ahead. Fern hurried over and claimed that red had always been her favourite colour. She cheered loudly and offered advice. Later, the blue team won two events in a row. Fern quietly removed her red ribbon and tied on a blue one. When the blue captain asked about the change, Fern said she had only borrowed the red ribbon.","By the final event, both teams had noticed Fern switching sides. The last challenge required every team member to carry part of a heavy log. Fern offered to join whichever team would accept her, but both captains refused. They explained that a strong team depends on trust, not just speed.","Fern watched from the edge of the field as the teams finished together and shook paws. She finally understood that her clever plan had cost her something more valuable than a medal. The next morning, she visited both captains, admitted what she had done, and asked how she could rebuild her reputation."],
-    "questions": [["Finding Main Idea","What is this passage mostly about?",["The red team wins every event without help.","The forest animals cancel their games because of rain.","Fern loses the trust of both teams because she keeps switching sides to follow the likely winner.","Fern teaches the teams how to carry a log."],"C","The passage develops this idea from beginning to end."],["Recalling Facts and Details","Why did Fern wait before joining a team?",["She wanted to see which team was most likely to win.","She had hurt her paw.","She could not tell red from blue.","She was in charge of judging the games."],"A","This detail is stated directly in the passage."],["Understanding Sequence","Which event happened first?",["Fern put on a red ribbon.","Fern waited to see which team would lead.","Fern changed to a blue ribbon.","Both captains refused to accept Fern."],"B","The passage presents this event before the other choices."],["Recognising Cause and Effect","Why did both captains refuse Fern before the final event?",["She had already promised to carry a log for the other team.","Both teams already had enough members to lift the heavy log.","She had returned the borrowed red ribbon far too late.","They no longer trusted her after she changed sides."],"D","The passage links this cause directly to the result."],["Comparing and Contrasting","How were the red and blue captains alike?",["Both wanted an extra runner more than they wanted a fair contest.","Both had invited Fern to join before the first event began.","Both believed that trust mattered more than gaining one extra player.","Both blamed the other team for letting Fern switch sides."],"C","The passage gives information that supports this comparison."],["Making Predictions","What will Fern most likely need to do to rebuild her reputation?",["Act honestly and remain loyal over time.","Join whichever team wins the games next spring.","Return the blue ribbon and wear the red one again.","Offer to carry the heaviest part of the log by herself."],"A","This prediction follows logically from the events and information in the passage."],["Finding Word Meaning in Context","In the passage, what does the word 'reputation' most likely mean?",["a prize awarded at the end of a contest","what other people generally think about someone","the team colour that a player chooses to wear","a promise made in front of a whole group"],"B","The surrounding sentence gives clues to this meaning."],["Drawing Conclusions and Making Inferences","What can you infer about Fern at the end of the story?",["She still believes that her plan was a clever one.","She has decided never to take part in the games again.","She blames the two captains for treating her unfairly.","She realises that winning is less important than being trustworthy."],"D","This conclusion is not stated word for word, but it is supported by the passage."],["Distinguishing Between Fact and Opinion","Which statement is an opinion?",["Fern wore a red ribbon during the games.","The final challenge involved carrying a heavy log.","Fern made the most foolish choice of any animal at the games.","Both captains refused Fern."],"C","This statement expresses a judgement or feeling rather than a fact that can be checked."],["Identifying Author's Purpose","What is the author's main purpose?",["to entertain readers with a story","to list scientific measurements","to advertise a product or service","to provide rules for entering a contest"],"A","The organisation and details of the passage match this purpose."],["Interpreting Figurative Language","What does the phrase 'cost her something more valuable than a medal' mean in the passage?",["She paid for both ribbons with money she had been saving.","caused her to lose trust and friendship, which mattered more than a prize","She lost a prize that was worth more than an ordinary medal.","She had to hand her own medal over to one of the captains."],"B","The phrase is figurative and communicates this idea in a vivid way."],["Summarising","Which sentence best summarises the passage?",["A fox swaps a red ribbon for a blue one after the blue team wins two events.","Two teams finish the forest games together and shake paws at the end.","A fox waits at the edge of the field because no team will accept her.","A fox follows whichever team is winning, loses everyone’s trust, and decides to earn it back through honesty."],"D","A good summary includes the central idea and the most important events or facts."]]
+    "title": "Why the Bat Flies at Night",
+    "passage": [
+      "Many seasons after the war, a young bat asked why their kind flew only after dark.",
+      "\"Because of one who would not choose,\" said the old bat. \"Sit still and I will tell you.\"",
+      "\"When the birds and the animals fought, one bat waited to see which side would win. He did not hesitate out of wisdom. He hesitated because he wanted to be on the winning side, and nothing more.\"",
+      "\"When victory leaned towards the birds, he spread his wings and claimed to be a bird. When it swung back, he deserted them, showed his teeth and claimed to be an animal. He betrayed each of them in turn, and he believed neither would find out.\"",
+      "\"Both found out. The animals turned their backs. The birds refused to let him into their camp. He was an outcast from that day.\"",
+      "The young bat thought about this for a while. \"But he never fought anyone. He never hurt a single bird.\"",
+      "\"No,\" said the old bat. \"That was the trouble. A creature who fights on one side may still be trusted by the other, because everyone knows where he stands. Nobody knew where he stood. That was the consequence.\"",
+      "\"Could he not have said he was sorry?\"",
+      "\"He tried. But a reputation is easier to lose than to build, and nobody will accept the word of a creature who has already given it twice.\"",
+      "\"So we fly at night.\"",
+      "\"So we fly at night,\" said the old bat, \"and we are loyal to one another, because he was loyal to nobody.\""
+    ],
+    "questions": [
+      [
+        "Finding Main Idea",
+        "What is this passage mostly about?",
+        [
+          "How bats learned to use their wings",
+          "An old bat explaining why bats are outcasts who fly after dark",
+          "A war fought between the birds and the animals",
+          "Why animals turn their backs on strangers"
+        ],
+        "B",
+        "The young bat asks one question, and the whole passage is the answer to it."
+      ],
+      [
+        "Recalling Facts and Details",
+        "According to the old bat, why did the first bat wait before choosing a side?",
+        [
+          "He was too young to fight.",
+          "He was loyal to both sides equally.",
+          "He had been asked to carry messages between them.",
+          "He wanted to be on the winning side."
+        ],
+        "D",
+        "The old bat says he did not hesitate out of wisdom, but to end up with the winners."
+      ],
+      [
+        "Understanding Sequence",
+        "Which of these did the bat do first?",
+        [
+          "He waited to see which side would win.",
+          "He showed his teeth to the animals.",
+          "He was refused entry by the birds.",
+          "He spread his wings and claimed to be a bird."
+        ],
+        "A",
+        "The waiting comes before either claim, and the refusal comes last of all."
+      ],
+      [
+        "Recognising Cause and Effect",
+        "Why would neither side take the bat back?",
+        [
+          "He had fought too fiercely against both of them.",
+          "He had lost his wings during the fighting.",
+          "Neither side could tell where he really stood.",
+          "The war had already ended by then."
+        ],
+        "C",
+        "The old bat says the trouble was that nobody knew where he stood."
+      ],
+      [
+        "Comparing and Contrasting",
+        "According to the old bat, how is a creature who fights on one side different from the bat?",
+        [
+          "He is braver in battle.",
+          "He is stronger than a bat is.",
+          "He can still be trusted, because everyone knows where he stands.",
+          "He is allowed to change sides once."
+        ],
+        "C",
+        "That is the distinction the old bat draws when the young one objects."
+      ],
+      [
+        "Making Predictions",
+        "If a young bat were asked to join one side of a quarrel, this story suggests he would",
+        [
+          "decide where he stands and say so.",
+          "wait until one side was clearly winning.",
+          "refuse to speak to either side ever again.",
+          "pretend to belong to both of them."
+        ],
+        "A",
+        "The tale is told as a warning, and its whole point is the cost of not choosing."
+      ],
+      [
+        "Finding Word Meaning in Context",
+        "In this passage, the word hesitate means",
+        [
+          "to fly in circles.",
+          "to argue loudly.",
+          "to change shape.",
+          "to hold back before acting."
+        ],
+        "D",
+        "The bat held back from choosing while he waited to see who would win."
+      ],
+      [
+        "Drawing Conclusions and Making Inferences",
+        "You can tell that the old bat",
+        [
+          "blames the birds for what happened.",
+          "tells the story so the young one will not repeat the mistake.",
+          "was alive during the war himself.",
+          "believes the first bat was treated unfairly."
+        ],
+        "B",
+        "He ends on what bats do now, and why, which is advice rather than history."
+      ],
+      [
+        "Distinguishing Between Fact and Opinion",
+        "Which statement expresses an opinion?",
+        [
+          "The animals turned their backs on him.",
+          "A reputation is easier to lose than to build.",
+          "The birds refused to let him into their camp.",
+          "He showed his teeth to the animals."
+        ],
+        "B",
+        "That is the old bat’s judgement; the other three report what happened."
+      ],
+      [
+        "Identifying Author's Purpose",
+        "The author’s main purpose in this passage is to",
+        [
+          "explain how bats hunt after dark.",
+          "describe a war between birds and animals.",
+          "use a story to show what happens to someone who will not commit.",
+          "persuade readers to keep away from bats."
+        ],
+        "C",
+        "The war is only the setting; the subject is the bat who would not choose."
+      ],
+      [
+        "Interpreting Figurative Language",
+        "The old bat says that \"victory leaned towards the birds.\" This means",
+        [
+          "the birds were beginning to win.",
+          "the birds were standing closer together.",
+          "the birds had grown taller than the animals.",
+          "the birds were growing tired of fighting."
+        ],
+        "A",
+        "Victory cannot really lean; the word pictures which way the fighting was going."
+      ],
+      [
+        "Summarising",
+        "Which sentence best summarises the passage?",
+        [
+          "A young bat asks a question and is given a long answer.",
+          "Birds and animals once fought a war that the animals won.",
+          "An old bat explains that bats are loyal to one another.",
+          "An old bat explains that one ancestor tried to belong to both sides of a war, and that bats have belonged to neither ever since."
+        ],
+        "D",
+        "A summary needs the cause and the lasting result, not one part on its own."
+      ]
+    ]
   },
   "newPassage": {
-    "title": "The Lantern Fish and the Two Reefs",
-    "passage": ["Two coral reefs lay on opposite sides of a clear lagoon. The north reef was famous for its strong swimmers, while the south reef was known for finding food in difficult places. Luma, a small lantern fish, wanted to belong to the reef that seemed more successful.","When a current brought plenty of plankton to the north reef, Luma told the northern fish that she had always admired their speed. A week later the current shifted, and food became scarce in the north. The southern fish discovered a rich feeding ground near the rocks. Luma swam south and claimed that she had never really felt at home in the north.","Soon a storm cloud darkened the lagoon. Both reefs needed messengers to warn young fish to hide among the coral. Luma volunteered, but neither group knew whether she would stay when the water became rough. Instead, the reefs worked together and sent two trusted messengers.","After the storm, Luma felt ashamed. She apologised to both groups and offered to help repair broken coral shelters. She worked steadily for many weeks without asking which reef would receive more food. Slowly, the other fish began to trust her again."],
-    "questions": [["Finding Main Idea","What is this passage mostly about?",["A storm permanently destroys two coral reefs.","Luma learns that trust is earned by steady actions, not by joining whichever reef is doing best.","The northern fish teach every fish to swim faster.","The southern reef keeps all food for itself."],"B","The passage develops this idea from beginning to end."],["Recalling Facts and Details","What made Luma move from the north reef to the south reef?",["The north reef ordered her to leave.","She wanted to hide from the storm before it arrived.","She had been chosen as the official messenger.","The south reef found a rich feeding ground when food became scarce in the north."],"D","This detail is stated directly in the passage."],["Understanding Sequence","Which event happened first?",["Luma joined the north reef when food was plentiful.","The current shifted and food became scarce.","Luma claimed she belonged with the south reef.","A storm tested whether the reefs could trust her."],"A","The passage presents this event before the other choices."],["Recognising Cause and Effect","Why did the reefs choose other messengers during the storm?",["Luma was too small to swim through the rough water.","Luma had already been sent to repair the coral shelters.","They were unsure that Luma would remain loyal when conditions became difficult.","Only fish born on a reef were allowed to carry its warnings."],"C","The passage links this cause directly to the result."],["Comparing and Contrasting","How were the two reefs different?",["The north reef had plenty of plankton, while the south reef had none at all.","The north reef was known for swimming strength, while the south reef was skilled at finding food.","The north reef sheltered young fish, while the south reef sheltered only adults.","The north reef lay beside the rocks, while the south reef lay in open water."],"B","The passage gives information that supports this comparison."],["Making Predictions","If Luma continues helping both reefs honestly, what will most likely happen?",["The reefs will ask her to choose one side permanently.","She will be given the richest feeding ground in the lagoon.","Both reefs will send her out as their only messenger.","More fish will trust her and accept her help."],"D","This prediction follows logically from the events and information in the passage."],["Finding Word Meaning in Context","In the passage, what does the word 'scarce' most likely mean?",["hard to find because there is not enough","carried away by a current that has shifted","shared out equally among every fish","hidden deep inside the coral shelters"],"A","The surrounding sentence gives clues to this meaning."],["Drawing Conclusions and Making Inferences","Why did Luma stop asking which reef would get more food?",["Both reefs had begun to receive exactly the same amount.","The reefs had told her never to raise the question again.","She had begun to value helpful work over choosing the most successful side.","She no longer needed to eat while repairing the shelters."],"C","This conclusion is not stated word for word, but it is supported by the passage."],["Distinguishing Between Fact and Opinion","Which statement is an opinion?",["The reefs were on opposite sides of a lagoon.","The south reef was clearly the more beautiful place to live.","The southern fish found food near rocks.","Luma helped repair coral shelters."],"B","This statement expresses a judgement or feeling rather than a fact that can be checked."],["Identifying Author's Purpose","What is the author's main purpose?",["to list scientific measurements","to advertise a product or service","to provide rules for entering a contest","to entertain readers with a story"],"D","The organisation and details of the passage match this purpose."],["Interpreting Figurative Language","What does the phrase 'the storm tested whether the reefs could trust her' mean in the passage?",["the difficult situation showed whether Luma had truly changed","the storm damaged the coral shelters belonging to both reefs","the reefs measured how strongly Luma could swim in rough water","the storm forced the two reefs to begin trusting each other"],"A","The phrase is figurative and communicates this idea in a vivid way."],["Summarising","Which sentence best summarises the passage?",["A small fish swims south after a shifting current makes food scarce in the north.","Two reefs work together and send two trusted messengers before a storm.","A fish repeatedly changes groups for advantage, is not trusted in a crisis, and earns trust back by working faithfully.","A lantern fish spends many weeks repairing coral shelters after a storm."],"C","A good summary includes the central idea and the most important events or facts."]]
+    "title": "The Dog Who Ran With Wolves",
+    "passage": [
+      "There was once a farm dog named Rusk who lived where the fields met the forest.",
+      "By day he guarded the sheep and the farmer fed him well. By night, when the wolves came down to the fence line, Rusk ran with them and came home before dawn.",
+      "\"You are one of us,\" said the wolves. \"You have our jaws.\"",
+      "\"I am,\" said Rusk.",
+      "\"You are mine,\" said the farmer. \"You have never lost me a lamb.\"",
+      "\"I am,\" said Rusk.",
+      "All winter he did not hesitate to say both, and both trusted him. He had a reputation on either side of the fence, and he thought himself the cleverest dog in the country.",
+      "Then one night the wolves took a lamb, and in the morning the farmer found Rusk’s tracks beside theirs in the snow.",
+      "The farmer did not shout. A man does not shout at a dog who has betrayed him. He set the food bowl down beyond the gate and closed it.",
+      "That evening Rusk went down to the fence line.",
+      "\"We share what we take after a victory,\" said the oldest wolf, \"but not with a creature who sleeps in a barn. You claim to be a wolf, yet you carry his smell. Which side did you desert tonight — ours, or his?\"",
+      "Rusk had no answer, and a creature with no answer is soon an outcast.",
+      "He lives now in the hedge between field and forest, loyal to nobody, because nobody is left who will accept him. That is the consequence of standing in two places at once."
+    ],
+    "questions": [
+      [
+        "Finding Main Idea",
+        "What is this passage mostly about?",
+        [
+          "A farmer who loses a lamb to wolves in winter",
+          "How wolves hunt along a fence line at night",
+          "A dog who belonged to two sides and ended with neither",
+          "Why dogs are loyal to the people who feed them"
+        ],
+        "C",
+        "Every event moves Rusk closer to the hedge he ends up in."
+      ],
+      [
+        "Recalling Facts and Details",
+        "What did the farmer find in the snow?",
+        [
+          "Rusk’s tracks beside the wolves’ tracks",
+          "The empty food bowl",
+          "A broken gate",
+          "Fur from the oldest wolf"
+        ],
+        "A",
+        "The passage says he found Rusk’s tracks beside theirs the morning after the lamb was taken."
+      ],
+      [
+        "Understanding Sequence",
+        "What happened right after the wolves took a lamb?",
+        [
+          "The wolves refused to share with Rusk.",
+          "Rusk moved into the hedge.",
+          "The farmer scratched Rusk’s ears.",
+          "The farmer found the tracks in the morning."
+        ],
+        "D",
+        "The refusal came that evening, and the hedge came later still."
+      ],
+      [
+        "Recognising Cause and Effect",
+        "Why did the farmer put the food bowl outside the gate?",
+        [
+          "Rusk had stopped guarding the sheep.",
+          "He had worked out that Rusk had betrayed him.",
+          "The wolves had asked him to.",
+          "Rusk preferred to eat outdoors."
+        ],
+        "B",
+        "The tracks told him, and the passage says a man does not shout at a dog who has betrayed him."
+      ],
+      [
+        "Comparing and Contrasting",
+        "How was Rusk’s winter different from the night the lamb was taken?",
+        [
+          "He guarded the sheep more carefully that night.",
+          "The wolves would not come to the fence that night.",
+          "He stopped running with the wolves after that night.",
+          "Both sides had trusted him before; afterwards neither did."
+        ],
+        "D",
+        "The whole winter rested on both sides believing him, and one night ended it."
+      ],
+      [
+        "Making Predictions",
+        "If another dog offered to run with the wolves, the oldest wolf would most likely",
+        [
+          "accept him at once.",
+          "share the next lamb with him.",
+          "ask him first which side he belongs to.",
+          "take him to the farmer."
+        ],
+        "C",
+        "His last words to Rusk are exactly that question, and he asks it before deciding anything."
+      ],
+      [
+        "Finding Word Meaning in Context",
+        "In this passage, the word desert means",
+        [
+          "to abandon those you belong to.",
+          "a dry and sandy place.",
+          "to earn what you deserve.",
+          "to hide from danger."
+        ],
+        "A",
+        "The wolf is asking which group Rusk walked out on that night."
+      ],
+      [
+        "Drawing Conclusions and Making Inferences",
+        "You can tell that Rusk",
+        [
+          "had planned to steal the lamb himself.",
+          "never expected the two sides to compare what they knew.",
+          "disliked the farmer from the beginning.",
+          "was too old to run with the wolves."
+        ],
+        "B",
+        "He thought himself the cleverest dog in the country, right up until the tracks were found."
+      ],
+      [
+        "Distinguishing Between Fact and Opinion",
+        "Which statement expresses an opinion?",
+        [
+          "The farmer set the bowl down beyond the gate.",
+          "He was the cleverest dog in the country.",
+          "The wolves took a lamb one night.",
+          "Rusk’s tracks lay beside theirs in the snow."
+        ],
+        "B",
+        "That is what Rusk thought of himself; the other three could be seen by anyone."
+      ],
+      [
+        "Identifying Author's Purpose",
+        "The author’s main purpose in this passage is to",
+        [
+          "explain how farm dogs guard sheep.",
+          "describe the habits of wolves in winter.",
+          "persuade readers to keep dogs indoors at night.",
+          "use a story to show the cost of belonging to two sides at once."
+        ],
+        "D",
+        "The last line states the lesson the events have been building towards."
+      ],
+      [
+        "Interpreting Figurative Language",
+        "The last line calls Rusk’s mistake \"standing in two places at once.\" This means he",
+        [
+          "moved between the field and the forest each night.",
+          "slept in the barn and ate beyond the gate.",
+          "tried to belong to two groups that could not both be his.",
+          "ran faster than the wolves could follow."
+        ],
+        "C",
+        "Nobody can really stand in two places; the phrase describes his double loyalty."
+      ],
+      [
+        "Summarising",
+        "Which sentence best summarises the passage?",
+        [
+          "A dog welcomed by both the farmer and the wolves loses both when each learns of the other, and ends up alone in the hedge between them.",
+          "A farmer stops feeding his dog after a lamb is taken.",
+          "Wolves come down to a fence line every night in winter.",
+          "A dog runs with wolves and returns home before dawn."
+        ],
+        "A",
+        "A summary needs the double life, the discovery and the result together."
+      ]
+    ]
   }
 };
