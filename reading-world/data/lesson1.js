@@ -88,7 +88,7 @@ window.LESSON1={
    "What is this passage mostly about?",
    [
     "How to build a nest for robins",
-    "A boy who wants to visit a city zoo",
+    "A boy who would rather visit the animals at a city zoo",
     "Mae showing her brother the animals in her backyard",
     "A notebook that Mae lost"
    ],
@@ -113,7 +113,7 @@ window.LESSON1={
    [
     "He wrote his number in the notebook.",
     "Mae showed him the robins’ nest.",
-    "He asked whether Mae wanted to keep an animal.",
+    "He asked whether Mae ever wanted to keep one of the animals.",
     "He saw two squirrels chase each other around the maple tree."
    ],
    "D",
@@ -123,7 +123,7 @@ window.LESSON1={
    "Recognizing Cause and Effect",
    "Why could Sam not find the crickets?",
    [
-    "It was too dark outside.",
+    "It was too dark under the tall grass to see them.",
     "Crickets stop singing when someone comes close.",
     "The crickets had left the yard.",
     "Mae had put them in a box."
@@ -159,7 +159,7 @@ window.LESSON1={
    "Finding Word Meaning in Context",
    "In this passage, the word free means",
    [
-    "costing no money.",
+    "costing no money to visit or to keep.",
     "able to come and go as they wish.",
     "moving very fast.",
     "friendly and kind."
@@ -172,7 +172,7 @@ window.LESSON1={
    "You can tell that Mae",
    [
     "wishes she could work at the city zoo.",
-    "is afraid of the animals that come at night.",
+    "is afraid of the skunks that come out after dinner.",
     "thinks Sam should stop visiting her.",
     "has watched her backyard animals for a long time."
    ],
@@ -197,7 +197,7 @@ window.LESSON1={
    [
     "teach readers how to catch crickets.",
     "tell a story about a girl sharing what she has noticed.",
-    "explain why zoos keep animals in cages.",
+    "explain why the animals in a city zoo must live in cages.",
     "describe how to fix a porch light."
    ],
    "B",
@@ -208,7 +208,7 @@ window.LESSON1={
    "The passage says the fireflies blink \"like tiny lamps.\" This means the fireflies",
    [
     "are made of glass.",
-    "hang from the porch.",
+    "hang in a row along the porch roof.",
     "give small flashes of light.",
     "never stop shining."
    ],
@@ -221,7 +221,7 @@ window.LESSON1={
    [
     "A chipmunk writes a number in Mae’s notebook.",
     "A squirrel runs around a tree trunk.",
-    "A skunk walks under a fence at night.",
+    "A skunk walks under the fence while two children stay still.",
     "A robin brings food to a nest."
    ],
    "A",
@@ -255,7 +255,7 @@ window.LESSON1={
    [
     "A grandmother who builds a playground",
     "A boy who discovers that his small garden is full of animals",
-    "A cat that chases birds away from a nest",
+    "A cat that keeps chasing the birds away from the nest in the tree",
     "How to write a list of animal names"
    ],
    "B",
@@ -340,7 +340,7 @@ window.LESSON1={
     "does not like animals in her garden.",
     "wanted Omar to stop asking questions.",
     "had watched this garden many times before.",
-    "was surprised by everything they saw."
+    "was seeing most of these animals for the first time."
    ],
    "C",
    "She knows what time to sit down, where each animal appears and why the crickets hide."
@@ -361,7 +361,7 @@ window.LESSON1={
    "Understanding Author's Purpose",
    "The author wrote this passage mainly to",
    [
-    "explain how squirrels climb down trees.",
+    "explain how squirrels climb down a tree head first.",
     "persuade readers to buy a ticket to a zoo.",
     "tell a story about learning to look closely.",
     "describe the rooms of a new house."
@@ -373,7 +373,7 @@ window.LESSON1={
    "Interpreting Figurative Language",
    "The passage says the sky \"turned the colour of orange peel.\" This tells you that",
    [
-    "someone was eating an orange in the garden.",
+    "someone was peeling an orange in the garden below.",
     "the sky had become cloudy and grey.",
     "it was early in the morning.",
     "the sky had turned a bright orange at sunset."
@@ -387,7 +387,7 @@ window.LESSON1={
    [
     "A cat jumps onto a garden wall.",
     "Fireflies light up a garden as brightly as the sun.",
-    "A robin chases a cat away from its nest.",
+    "A robin drops down and chases a cat away from its nest.",
     "Chipmunks carry seeds in their cheeks."
    ],
    "B",

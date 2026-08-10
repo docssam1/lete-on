@@ -110,8 +110,10 @@ function checkQuoted(passage, q, n, label) {
     : `Q${n} ${label}: '${phrase}' 지문에 없음`;
 }
 
-// A prediction that merely repeats a sentence the passage already contains.
-function checkPrediction(passage, q, n) {
+// A prediction or a conclusion that merely repeats a sentence the passage
+// already contains. Both strategies fail the same way: the answer can be found
+// by matching text instead of by thinking.
+function checkRestated(passage, q, n, label) {
   const answer = content(q[2]['ABCD'.indexOf(q[3])]);
   if (answer.length < 4) return null;
   const sentences = flat(passage).split(/(?<=[.!?])\s+/);
@@ -122,13 +124,56 @@ function checkPrediction(passage, q, n) {
     if (hit >= 0.8 && (!worst || hit > worst.hit)) worst = { hit, s: s.trim() };
   });
   return worst
-    ? `Q${n} 예측: 정답이 지문 문장을 되풀이함 (${Math.round(worst.hit * 100)}% 일치) — "${worst.s.slice(0, 70)}…"`
+    ? `Q${n} ${label}: 정답이 지문 문장을 되풀이함 (${Math.round(worst.hit * 100)}% 일치) — "${worst.s.slice(0, 70)}…"`
     : null;
 }
 
 function checkFiller(q, n) {
   const hits = (q[2] || []).filter(c => FILLER.includes(norm(c).trim()));
   return hits.length ? `Q${n} 오답: 스캐폴드 상투구 ${hits.length}개` : null;
+}
+
+// lc8's prediction failed this way: every wrong choice was a refusal, so the one
+// choice that was not a refusal stood out without reading anything. A question
+// whose distractors are all negative is answerable by shape alone.
+const NEGATIVE = /\b(never|refuse[sd]?|not|no one|nobody|nothing|stop(?:ped)?\s+(?:going|helping|trying)|throw\s+it\s+away|give\s+up|ignore[sd]?|forget|forgot)\b/i;
+function checkNegativeDistractors(q, n) {
+  const idx = 'ABCD'.indexOf(q[3]);
+  const wrongs = (q[2] || []).filter((_, i) => i !== idx);
+  if (wrongs.length !== 3) return null;
+  const neg = wrongs.filter(c => NEGATIVE.test(norm(c))).length;
+  if (neg === 3 && !NEGATIVE.test(norm(q[2][idx]))) {
+    return `Q${n} 오답: 오답 3개가 전부 부정형 — 정답만 긍정이라 읽지 않아도 골라짐`;
+  }
+  return null;
+}
+
+// CLAUDE.md's rule for Q12: a wrong choice must be plausible-but-impossible, not
+// the childish "an animal talks". A young reader dismisses those on sight.
+const TALKING_ANIMAL = /\b(dog|cat|cow|owl|spider|turtle|rabbit|bird|fish|horse|bear|elephant|whale|tree|flower)s?\b[^.]{0,40}\b(talk|talks|talked|speak|speaks|spoke|says|said|sings|sang|laughs|laughed|reads|read|writes|wrote)\b/i;
+function checkChildishDistractor(q, n) {
+  const idx = 'ABCD'.indexOf(q[3]);
+  const hits = (q[2] || []).filter((c, i) => i !== idx && TALKING_ANIMAL.test(norm(c)));
+  return hits.length ? `Q${n} 오답: 유치한 '동물이 말한다'류 ${hits.length}개 — ${JSON.stringify(hits[0])}` : null;
+}
+
+// Length is the oldest test-wise cue there is: if the longest choice is usually
+// the right one, a reader learns to pick the long one. One question proves
+// nothing, so this is judged over the whole set of twelve.
+function checkLengthCue(questions) {
+  let longest = 0;
+  questions.forEach(q => {
+    const lens = (q[2] || []).map(c => norm(c).length);
+    // "Who was the umpire?" answered with four names cannot be padded into
+    // fairness, and no child picks a name for being three letters longer. Only
+    // choices with room to differ are judged.
+    if (Math.max(...lens) < 25) return;
+    const max = Math.max(...lens);
+    if (lens[('ABCD').indexOf(q[3])] === max && lens.filter(l => l === max).length === 1) longest++;
+  });
+  return longest >= 6
+    ? `세트 전체: 12문항 중 ${longest}개에서 정답이 가장 긴 보기 — 길이만 보고 찍을 수 있음`
+    : null;
 }
 
 function main() {
@@ -150,8 +195,14 @@ function main() {
       const notes = [];
       notes.push(checkQuoted(passage, questions[6], 7, '어휘'));
       notes.push(checkQuoted(passage, questions[10], 11, '비유'));
-      notes.push(checkPrediction(passage, questions[5], 6));
-      questions.forEach((q, i) => notes.push(checkFiller(q, i + 1)));
+      notes.push(checkRestated(passage, questions[5], 6, '예측'));
+      notes.push(checkRestated(passage, questions[7], 8, '추론'));
+      notes.push(checkChildishDistractor(questions[11], 12));
+      notes.push(checkLengthCue(questions));
+      questions.forEach((q, i) => {
+        notes.push(checkFiller(q, i + 1));
+        notes.push(checkNegativeDistractors(q, i + 1));
+      });
       const real = notes.filter(Boolean);
       if (real.length) {
         flagged += real.length;
