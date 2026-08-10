@@ -23,7 +23,10 @@
         meta = raw.meta || raw.layout || null;
       }
 
-      if (bookId === 'cars-level-d') {
+      // Level D is always announced, with or without meta. A few Level B/C lessons
+      // now carry meta too, for the sequence questions whose boxes cannot be
+      // written as a plain sentence; those are announced only when meta is there.
+      if (bookId === 'cars-level-d' || meta) {
         window.CARS_SOURCE_META[lessonId] = meta || {};
         window.dispatchEvent(new CustomEvent('cars-source-meta', {
           detail: { bookId: bookId, lessonId: lessonId }

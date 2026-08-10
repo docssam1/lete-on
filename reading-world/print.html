@@ -693,6 +693,7 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
 <!-- Structure only (which question is a diagram, which box is blank). The box
      wording travels with the licensed questions from Supabase, never from here. -->
 <script src="data/cars-d-layouts.js"></script>
+<script src="data/cars-visual-layouts.js"></script>
 <script>
 (function(){
 'use strict';
@@ -1035,11 +1036,20 @@ function visualHtml(layout,p){
   }
   return '';
 }
+// Diagram shapes come from two public maps: Level D's own, and the shared one
+// covering the handful of Level B/C questions built the same way.
+function visualLayout(lessonId,n){
+  var maps=[(window.CARS_D_LAYOUTS||{}).lessons||{},(window.CARS_VISUAL_LAYOUTS||{}).lessons||{}];
+  for(var i=0;i<maps.length;i++){
+    var hit=((maps[i][lessonId]||{}).questions||{})[n];
+    if(hit)return hit;
+  }
+  return null;
+}
 // Returns {before, diagram, after} when question n of this job is a diagram.
 function visualFor(j,n){
   if(!j||!j.vis||!j.lessonId)return null;
-  var cfg=(window.CARS_D_LAYOUTS||{}).lessons||{};
-  var layout=((cfg[j.lessonId]||{}).questions||{})[n];
+  var layout=visualLayout(j.lessonId,n);
   var p=j.vis[n]||j.vis[String(n)];
   if(!layout||!p||layout.type==='standard')return null;
   var html=visualHtml(layout,p);

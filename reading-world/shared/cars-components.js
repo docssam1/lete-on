@@ -1,7 +1,14 @@
 (function(){
   'use strict';
 
+  // Level D carries a full layout map (passage shape, media, diagrams). Level B
+  // and C only need diagram shapes, so those live in a smaller shared map. Lesson
+  // ids never repeat across books, so one lookup covers both.
   const CFG = () => window.CARS_D_LAYOUTS || { lessons: {} };
+  const EXTRA_CFG = () => window.CARS_VISUAL_LAYOUTS || { lessons: {} };
+  function lessonCfgFor(lessonId){
+    return (CFG().lessons || {})[lessonId] || (EXTRA_CFG().lessons || {})[lessonId] || null;
+  }
   let scheduled = false;
 
   function norm(s){ return String(s || '').replace(/\s+/g, ' ').trim(); }
@@ -12,8 +19,19 @@
     const title = norm(titleEl && titleEl.textContent);
     if (!title) return null;
     const rows = Object.entries(window.LESSONS || {});
-    const hit = rows.find(([id, lesson]) => lesson && lesson.bookId === 'cars-level-d' && norm(lesson.title) === title);
-    return hit ? hit[0] : null;
+    // Titles can repeat across books, so a match only counts when that lesson id
+    // actually has a layout, and the layout agrees about which book it belongs to.
+    const hit = rows.find(([id, lesson]) => {
+      if (!lesson || norm(lesson.title) !== title) return false;
+      const cfg = lessonCfgFor(id);
+      return !!cfg && (!cfg.bookId || cfg.bookId === lesson.bookId);
+    });
+    if (hit) return hit[0];
+    // A lesson old enough to predate window.LESSONS declares its title on the
+    // layout entry instead, so its diagram still finds its way onto the card.
+    const legacy = Object.entries(EXTRA_CFG().lessons || {})
+      .find(([, cfg]) => cfg.title && norm(cfg.title) === title);
+    return legacy ? legacy[0] : null;
   }
 
   function sourceMeta(lessonId){
@@ -352,11 +370,15 @@
     scheduled = false;
     const lessonId = currentLessonId();
     if (!lessonId) { clearBookState(); return; }
-    const lessonCfg = CFG().lessons && CFG().lessons[lessonId];
+    const lessonCfg = lessonCfgFor(lessonId);
     if (!lessonCfg) { clearBookState(); return; }
     const meta = sourceMeta(lessonId);
 
-    document.documentElement.dataset.carsBook = 'cars-level-d';
+    // Level D styling keys off data-cars-book, so a B/C lesson must not claim to
+    // be one. The passage/poster/media steps all no-op without lessonCfg.original,
+    // which B and C never set — they only bring diagrams.
+    document.documentElement.dataset.carsBook =
+      lessonCfg.bookId || (window.LESSONS && window.LESSONS[lessonId] && window.LESSONS[lessonId].bookId) || 'cars-level-d';
     document.documentElement.dataset.carsLesson = lessonId;
     applyBasePassage(lessonId, lessonCfg, meta);
     applyPoster(lessonCfg);
