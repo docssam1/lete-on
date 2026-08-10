@@ -127,8 +127,8 @@ footer{background:var(--brand-d);color:#a9b6d8;text-align:center;padding:26px 20
   <div class="hero-in">
     <div class="crest"><img id="crest" alt="" hidden><span class="fallback" id="crestFb">UEP</span></div>
     <div>
-      <div class="eyebrow" id="acaSub">Talented and Gifted Education</div>
-      <h1 id="acaName">Upper East Side Prep</h1>
+      <div class="eyebrow" id="acaSub">English Academy Support Center</div>
+      <h1 id="acaName">Gfield</h1>
     </div>
     <hr class="rule">
     <p>읽기를 <b>12가지 전략</b>으로 나누어 진단하고, 약한 곳만 골라 훈련하는 독해 프로그램입니다.</p>
@@ -185,7 +185,7 @@ footer{background:var(--brand-d);color:#a9b6d8;text-align:center;padding:26px 20
 </section>
 
 <footer>
-  <div id="footName">UPPER EAST SIDE PREP</div>
+  <div id="footName">GFIELD</div>
   <div style="opacity:.7;margin-top:4px">Reading Strategies Program · 진단 · CARS Level B · C · Plus D</div>
 </footer>
 
@@ -200,8 +200,8 @@ var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){
 var get=function(k,d){try{var v=localStorage.getItem(LS+k);return v===null?d:v;}catch(e){return d;}};
 
 // Branding is shared with the print console, so an academy sets it once.
-var name=get('name','UPPER EAST SIDE PREP'),
-    sub=get('sub','TALENTED AND GIFTED EDUCATION'),
+var name=get('name','GFIELD'),
+    sub=get('sub','ENGLISH ACADEMY SUPPORT CENTER'),
     color=get('color','#1b2a6b'), gold=get('color2','#f0a92c'),
     logo=get('logo','');
 document.documentElement.style.setProperty('--brand',color);
@@ -216,7 +216,7 @@ function showLogo(src){
 if(logo) showLogo(logo);
 else{
   // Same lookup the print console uses, so the crest appears without any setup.
-  var paths=['assets/images/ueplogo.png','assets/images/brand/logo.png'],i=0;
+  var paths=['assets/images/brand/logo.png','assets/images/brand/logo.svg'],i=0;
   (function next(){
     if(i>=paths.length)return;
     var src=paths[i++],t=new Image();

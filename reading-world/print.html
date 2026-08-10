@@ -258,7 +258,7 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
 .pv-body.measuring .foot{position:absolute!important;margin-top:0!important;left:15mm!important;right:15mm!important}
 
 /* ---------------- screen A · course shelf ---------------- */
-/* The 3D volumes are lifted from uep.html so the teacher console and the student
+/* The 3D volumes are shared with the front door page so the teacher console and the student
    front door show the same three books in the same shape. Named .book3 because
    .book is already the chapter panel in the workshop sidebar. */
 .scr-a{min-height:100vh;display:flex;flex-direction:column;
@@ -646,8 +646,10 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
   <div class="mbox">
     <div class="mhead"><h2>학원 브랜드</h2><button class="mini x" id="closeBrand">닫기</button></div>
     <p class="hint">표지와 모든 학습지 머리글에 들어갑니다. 이 브라우저에 저장되므로 학원마다 각자 설정할 수 있어요.</p>
-    <label class="fld"><span>학원 이름</span><input type="text" id="bName" placeholder="UPPER EAST SIDE PREP"></label>
-    <label class="fld"><span>부제 (영문)</span><input type="text" id="bSub" placeholder="TALENTED AND GIFTED EDUCATION"></label>
+    <span class="fld" style="margin-bottom:5px"><span>등록된 학원</span></span>
+    <div class="row" id="brandPresets" style="margin:0 0 12px"></div>
+    <label class="fld"><span>학원 이름</span><input type="text" id="bName" placeholder="학원 이름을 입력하세요"></label>
+    <label class="fld"><span>부제 (영문)</span><input type="text" id="bSub" placeholder="영문 부제 (선택)"></label>
     <div class="row" style="align-items:center;gap:10px">
       <label class="fld" style="margin:0"><span>브랜드 색</span><input type="color" id="bColor"></label>
       <label class="fld" style="margin:0"><span>포인트 색</span><input type="color" id="bColor2"></label>
@@ -704,11 +706,21 @@ var get=function(k,d){try{var v=localStorage.getItem(LS+k);return v===null?d:v;}
 var set=function(k,v){try{localStorage.setItem(LS+k,v);}catch(e){}};
 
 /* ---------- brand ---------- */
+// The console is Gfield's, and each academy that uses it puts its own name on
+// the worksheets. Gfield is what an unconfigured browser shows; the rest are
+// registered academies. Adding one is a matter of appending to this list —
+// name, subtitle, two colours and an optional logo file under assets/images/brand.
+var BRAND_PRESETS=[
+  {key:'gfield',   label:'Gfield (기본)', name:'GFIELD',              sub:'ENGLISH ACADEMY SUPPORT CENTER', color:'#235f43', color2:'#c06a3d', logo:''},
+  {key:'uep',      label:'UEP',           name:'UPPER EAST SIDE PREP', sub:'TALENTED AND GIFTED EDUCATION',  color:'#1b2a6b', color2:'#f0a92c', logo:'assets/images/brand/uep.png'},
+  {key:'lisakeem', label:'Lisa · Keem',   name:'LISA \u00B7 KEEM',     sub:'ENGLISH & WECHSLER LAB',         color:'#2b5f96', color2:'#4a9cb8', logo:'assets/images/brand/lisa-keem.png'}
+];
+var DEFAULT_BRAND=BRAND_PRESETS[0];
 var brand={
-  name:get('name','UPPER EAST SIDE PREP'),
-  sub:get('sub','TALENTED AND GIFTED EDUCATION'),
-  color:get('color','#1b2a6b'),
-  color2:get('color2','#f0a92c'),
+  name:get('name',DEFAULT_BRAND.name),
+  sub:get('sub',DEFAULT_BRAND.sub),
+  color:get('color',DEFAULT_BRAND.color),
+  color2:get('color2',DEFAULT_BRAND.color2),
   logo:get('logo',''),
   cover:get('cover','crest')
 };
@@ -723,7 +735,29 @@ function applyBrand(){
   if(brand.logo){t.src=pv.src=brand.logo;t.hidden=pv.hidden=false;ph.style.display='none';}
   else{t.hidden=pv.hidden=true;ph.style.display='grid';}
   document.getElementById('topName').textContent=brand.name||'교재 제작 센터';
+  renderPresets();
   if(document.getElementById('coverPick')) renderCoverPick();   // thumbnails are real covers
+}
+function renderPresets(){
+  var box=document.getElementById('brandPresets');
+  if(!box)return;
+  box.innerHTML=BRAND_PRESETS.map(function(p){
+    var on=brand.name===p.name?' style="border-color:'+p.color+';color:'+p.color+'"':'';
+    return '<button class="mini" data-preset="'+p.key+'"'+on+'>'+esc(p.label)+'</button>';
+  }).join('');
+}
+function usePreset(key){
+  var p=BRAND_PRESETS.filter(function(x){return x.key===key;})[0];
+  if(!p)return;
+  ['name','sub','color','color2'].forEach(function(k){brand[k]=p[k];set(k,p[k]);});
+  brand.logo='';set('logo','');
+  applyBrand();renderPresets();render();
+  // The logo is optional: an academy that has not supplied a file simply prints
+  // its name, and nothing looks broken.
+  if(p.logo)loadLogo(p.logo,function(uri){
+    if(!uri)return;
+    brand.logo=uri;set('logo',uri);applyBrand();render();
+  });
 }
 function logoTag(cls){return brand.logo?'<img class="'+(cls||'')+'" src="'+esc(brand.logo)+'" alt="">':'';}
 // A logo committed to the repo is picked up automatically the first time, so an
@@ -788,7 +822,7 @@ function loadLogo(src,done){
 }
 (function probeLogo(){
   if(brand.logo) return;
-  var paths=['assets/images/ueplogo.png','assets/images/brand/logo.png'],i=0;
+  var paths=['assets/images/brand/logo.png','assets/images/brand/logo.svg'],i=0;   // an academy's own drop-in file
   (function next(){
     if(i>=paths.length)return;
     loadLogo(paths[i++],function(uri){
@@ -1760,6 +1794,7 @@ document.addEventListener('click',function(e){
 
   /* screen A */
   if(b.dataset.course!==undefined&&b.dataset.course){location.hash='c='+b.dataset.course;return;}
+  if(b.dataset.preset){usePreset(b.dataset.preset);return;}
   if(b.id==='openBrand'){$('brandModal').hidden=false;return;}
   if(b.id==='closeBrand'){$('brandModal').hidden=true;return;}
   if(b.id==='backShelf'){location.hash='';return;}
