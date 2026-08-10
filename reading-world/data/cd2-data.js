@@ -1,1 +1,410 @@
-window.CARS_D_REGISTER([{"id":"cd2","chapter":"Pretest","num":2,"page":7,"title":"A Writer’s Journey","theme":"How childhood experiences can shape a writer’s goals and work.","words":[["author","a person who writes books or articles","작가","作者"],["librarian","a person who works in a library","사서","图书管理员"],["character","a person or animal in a story","등장인물","人物"],["publish","to prepare and release writing for readers","출판하다","出版"],["inspire","to give someone an idea or desire to create","영감을 주다","激励"],["struggle","to have difficulty doing something","어려움을 겪다","挣扎"],["realistic","seeming like real life","현실적인","真实的"],["career","the work a person does over many years","직업 경력","职业"],["award","a prize for excellent work","상","奖项"],["audience","the people who read, watch, or listen","독자·청중","观众"],["manuscript","a written book before it is published","원고","手稿"],["observe","to watch carefully","관찰하다","观察"]],"extra":{"title":"A Writer Who Listened","passage":["Maya Torres grew up above her family’s busy bakery. Every afternoon, children came in after school and told stories while they waited for bread. Maya listened to their jokes, worries, and surprising ideas. She filled small notebooks with sentences she heard, but she never copied anyone’s private story.","At school, Maya loved reading, yet she noticed that many book characters solved problems too easily. Real children, she thought, often made mistakes before finding a solution. When her class had to write a short story, Maya created a character who forgot her lines in a play and learned to ask friends for help. Her classmates laughed in the right places and said the character felt real.","Maya later studied library science and worked in a neighbourhood library. She ran a weekly reading club and observed which scenes made children lean forward. At night she wrote her first manuscript, The Wednesday Mix-Up. It was rejected twice, but each editor gave advice. Maya revised the story until the characters’ choices felt natural.","The book was finally published and became popular with young readers. Maya said her greatest award was not the medal on her shelf. It was hearing children say, “That character sounds like someone in my class.”"],"main":"Maya becomes a successful children’s author by listening to real children and creating believable characters.","main_wrong":["Maya turns her family bakery into a large library.","Editors write Maya’s first book for her.","A school play wins a national contest."],"detail_q":"Where did Maya collect many of her early ideas?","detail_a":"In notebooks while listening to children at her family’s bakery.","detail_wrong":["From television advertisements.","From a travel guide she found on a train.","From letters sent by famous actors."],"sequence":["Maya listened to children in the bakery.","She wrote a school story about a play.","She worked in a neighbourhood library.","Her first book was published."],"cause_q":"Why did Maya revise her manuscript after it was rejected?","cause_a":"She used the editors’ advice to make the characters’ choices feel more natural.","compare_q":"How were the characters in Maya’s stories different from many characters she had read about?","compare_a":"Maya’s characters made believable mistakes before solving problems.","predict_q":"What would Maya most likely do before writing another children’s book?","predict_a":"Observe and listen to children to understand realistic concerns.","vocab":["manuscript","a written book before it has been published"],"infer_q":"Why did Maya value readers’ comments more than the medal?","infer_a":"Her main goal was to create characters children recognised and understood.","facts":["Maya grew up above a bakery.","Her manuscript was rejected twice.","She worked in a neighbourhood library."],"opinion":"The Wednesday Mix-Up is the funniest title any author has ever chosen.","purpose":"inform","figurative":["made children lean forward","made the children especially interested and eager to hear more"],"summary":"A girl listens closely to real children, becomes a librarian, improves a rejected manuscript, and writes believable books for young readers.","cause_wrong":["She wanted to add the private stories the bakery children had told her.","Her weekly reading club had voted for a different ending.","The editors told her the book was too short for young readers."],"compare_wrong":["Maya's characters solved their problems quickly and easily.","Maya's characters were adults rather than children.","Maya's characters were copied exactly from children she knew."],"predict_wrong":["Reread the books whose characters solved every problem easily.","Ask an editor to write the first draft of the story for her.","Display her medal where young readers would notice it."],"vocab_wrong":["a letter an editor sends to explain why a book was rejected","a printed copy of a book that is already sold in shops","a notebook of sentences collected from other people"],"infer_wrong":["She believed awards for children's books were chosen unfairly.","The medal reached her long after the book was published.","She planned to stop writing once the book became popular."],"figurative_wrong":["made the children move their chairs closer to the front of the room","made the children lower their heads because the story frightened them","showed that the children could not hear her voice clearly"],"summary_wrong":["A librarian runs a weekly reading club and writes down stories children tell her.","A young writer's manuscript is rejected twice, so she decides not to publish it.","A woman studies library science and becomes the manager of a neighbourhood library."],"_pattern":"ACDBACDBACDB"},"new":{"title":"From Library Helper to Storyteller","passage":["Arun Patel did not enjoy reading when he was young. The print seemed crowded, and the adventures in his school books felt far away from his life. His aunt, who managed a small mobile library, invited him to help arrange books in the van each Saturday.","While working, Arun discovered graphic novels and humorous science books. He began reading a few pages at a time. Soon he was recommending books to other children. He noticed that reluctant readers often wanted short chapters, clear pictures, and characters who faced ordinary problems.","As an adult, Arun became a primary teacher. He wrote tiny stories for students who said they hated reading. One story followed a boy trying to keep a classroom plant alive during a heatwave. The students asked for another chapter, so Arun expanded the story into a manuscript. He tested each chapter with his class and removed parts that confused them.","A publisher accepted the book, and Arun later wrote an entire series. During school visits, he always told students that reading ability can grow slowly. He compared it to building a bridge one plank at a time."],"main":"Arun’s own reading difficulties help him become a teacher and author who writes accessible stories for reluctant readers.","main_wrong":["Arun repairs a broken mobile library van.","A publisher asks Arun to stop teaching.","A classroom plant becomes a prize-winning tree."],"detail_q":"What kinds of books first interested Arun in the mobile library?","detail_a":"Graphic novels and humorous science books.","detail_wrong":["Long legal textbooks.","Old telephone directories.","Books written only in another language."],"sequence":["Arun helped arrange books in a mobile library.","He began recommending books to children.","He wrote short stories for his students.","A publisher accepted his book."],"cause_q":"Why did Arun remove parts of his manuscript?","cause_a":"His students found those parts confusing.","compare_q":"How was Arun as a young reader similar to some of his later students?","compare_a":"Both found many books difficult to enter and needed accessible stories.","predict_q":"How would Arun most likely respond to a student who reads slowly?","predict_a":"He would encourage the student to improve step by step.","vocab":["reluctant","not willing or eager to do something"],"infer_q":"Why did Arun test chapters with his class?","infer_a":"He respected young readers and wanted the story to work for them.","facts":["Arun helped in a mobile library van.","He became a primary teacher.","His first expanded story involved a classroom plant."],"opinion":"Graphic novels are always better than every other kind of book.","purpose":"inform","figurative":["building a bridge one plank at a time","developing reading skill gradually through many small steps"],"summary":"A boy who struggles with reading discovers suitable books, becomes a teacher, and writes clear stories that help other reluctant readers.","cause_wrong":["The publisher asked him to make the finished book shorter.","He wanted the book to look more like the graphic novels he enjoyed.","His aunt suggested the changes while they arranged books in the van."],"compare_wrong":["Both preferred long chapters with very few pictures.","Both learned to read by helping in a mobile library.","Both enjoyed reading from the time they first started school."],"predict_wrong":["He would tell the student to choose longer books to build up speed.","He would give the student the same book the rest of the class was reading.","He would explain that some readers never really improve."],"vocab_wrong":["reading much faster than the other students in a class","unable to see the words on a crowded page clearly","eager to try any new kind of book straight away"],"infer_wrong":["He needed his students' permission before sending the book to a publisher.","He wanted the class to write the remaining chapters for him.","He was checking whether the students had finished their reading homework."],"figurative_wrong":["Arun taught his students how to build a real bridge during class.","Reading improves only when someone carries you across the hard parts.","A reader should finish one whole book before starting another one."],"summary_wrong":["A boy helps his aunt arrange books in a mobile library van each Saturday.","A teacher writes a story about a classroom plant and reads it to his class.","A reluctant reader discovers graphic novels and becomes a librarian like his aunt."],"_pattern":"DBCADBCADBCA"}}]);
+// Lesson cd2 — shared (non-licensed) content only. The licensed original
+// passage and questions live in Supabase (lesson_content), never here.
+// Both practice sets are written out in full rather than generated from the
+// scaffold in cars-d-engine.js.
+window.CARS_D_REGISTER([
+  {
+    "id": "cd2",
+    "chapter": "Pretest",
+    "num": 2,
+    "page": 7,
+    "title": "A Writer’s Journey",
+    "theme": "How childhood experiences can shape a writer’s goals and work.",
+    "words": [
+      [
+        "author",
+        "a person who writes books or articles",
+        "작가",
+        "作者"
+      ],
+      [
+        "librarian",
+        "a person who works in a library",
+        "사서",
+        "图书管理员"
+      ],
+      [
+        "character",
+        "a person or animal in a story",
+        "등장인물",
+        "人物"
+      ],
+      [
+        "publish",
+        "to prepare and release writing for readers",
+        "출판하다",
+        "出版"
+      ],
+      [
+        "inspire",
+        "to give someone an idea or desire to create",
+        "영감을 주다",
+        "激励"
+      ],
+      [
+        "struggle",
+        "to have difficulty doing something",
+        "어려움을 겪다",
+        "挣扎"
+      ],
+      [
+        "realistic",
+        "seeming like real life",
+        "현실적인",
+        "真实的"
+      ],
+      [
+        "career",
+        "the work a person does over many years",
+        "직업 경력",
+        "职业"
+      ],
+      [
+        "award",
+        "a prize for excellent work",
+        "상",
+        "奖项"
+      ],
+      [
+        "audience",
+        "the people who read, watch, or listen",
+        "독자·청중",
+        "观众"
+      ],
+      [
+        "manuscript",
+        "a written book before it is published",
+        "원고",
+        "手稿"
+      ],
+      [
+        "observe",
+        "to watch carefully",
+        "관찰하다",
+        "观察"
+      ]
+    ],
+    "extra": {
+      "title": "The Author Who Listened",
+      "passage": [
+        "Ask Nadia Okonjo where her stories come from and she will tell you about a bus stop.",
+        "Okonjo was born in 1974 in a town where the rain came for four months of the year and everybody waited under the same shelter on the corner of Market Street. Her mother worked late. Nadia was collected by whoever was free, which meant she often waited an hour, and there is nothing to do at a bus stop except observe.",
+        "\"I heard everything,\" she says. \"Arguments. Bad jokes. People practising what they were going to say to somebody else. I did not know I was collecting anything. I thought I was bored.\"",
+        "At school she struggled with spelling and was moved into a lower group for two years. A librarian named Mr Adeyemi noticed that the girl who could not spell was reading three books a week, and began setting them aside for her.",
+        "\"He never once mentioned my spelling,\" Okonjo says. \"He asked me what I thought of the ending. That is a different question, and it changed things.\" She says he inspired her without ever intending to.",
+        "Her career began nowhere near a desk. She left school at eighteen and worked in a shoe shop, then a hospital kitchen, then a print works. She wrote in notebooks on the bus — notebooks that are less like diaries than like nets.",
+        "Her first manuscript was rejected by eleven publishers over four years. The twelfth accepted it, and The Corner of Market Street was published in 2003, when she was twenty-nine.",
+        "The book follows four children waiting for a bus that is always late. Reviewers called the characters unusually realistic. Okonjo says this is less a compliment than a description of her method: almost every line of dialogue in the novel is something she once heard somebody say.",
+        "She is now the author of nine books and has won two national awards, but she is careful about what she tells young readers who ask how to begin.",
+        "\"Do not start with a plot,\" she says. \"Start with a bench, and a notebook, and an hour you were not looking forward to. Your audience will recognise the truth in it. They always do.\""
+      ],
+      "questions": [
+        [
+          "Finding Main Idea",
+          "What is this passage mostly about?",
+          [
+            "How an author’s habit of listening became her way of writing",
+            "Why the bus on Market Street was always late",
+            "How a librarian taught a girl to spell correctly",
+            "The awards given to writers in one country"
+          ],
+          "A",
+          "The bus stop opens the passage and returns in her advice at the end."
+        ],
+        [
+          "Recalling Facts and Details",
+          "How many publishers rejected Okonjo’s first manuscript?",
+          [
+            "four",
+            "nine",
+            "eleven",
+            "twenty-nine"
+          ],
+          "C",
+          "The twelfth publisher accepted it, after eleven had turned it down."
+        ],
+        [
+          "Understanding Sequence",
+          "Which of these happened first?",
+          [
+            "Her first book was published.",
+            "Mr Adeyemi began setting books aside for her.",
+            "She worked in a hospital kitchen.",
+            "She won a national award."
+          ],
+          "B",
+          "The librarian belongs to her school years, before she left at eighteen."
+        ],
+        [
+          "Recognising Cause and Effect",
+          "Why did Okonjo spend so long at the bus stop as a child?",
+          [
+            "She preferred it to going home.",
+            "Her school finished earlier than the others.",
+            "She was waiting for the library to open.",
+            "Her mother worked late, so whoever was free collected her."
+          ],
+          "D",
+          "The passage gives that as the reason she often waited an hour."
+        ],
+        [
+          "Comparing and Contrasting",
+          "How was Mr Adeyemi different from her other teachers?",
+          [
+            "He taught her to spell correctly at last.",
+            "He asked about the books rather than about her spelling.",
+            "He moved her into a higher group.",
+            "He gave her a notebook to write in."
+          ],
+          "B",
+          "She says he never once mentioned her spelling, and that this changed things."
+        ],
+        [
+          "Making Predictions",
+          "If a young writer asked Okonjo for advice today, she would most likely tell them to",
+          [
+            "pay attention to the ordinary conversations around them.",
+            "plan the whole plot before writing anything.",
+            "send their work to as many publishers as they can.",
+            "read three books every week."
+          ],
+          "A",
+          "Her closing advice is a bench, a notebook and an hour of waiting."
+        ],
+        [
+          "Finding Word Meaning in Context",
+          "In this passage, the word observe means",
+          [
+            "to obey a rule.",
+            "to write a note in a book.",
+            "to watch and listen carefully.",
+            "to wait for a long time."
+          ],
+          "C",
+          "It is what there is to do at a bus stop, and it is how she gathered her dialogue."
+        ],
+        [
+          "Drawing Conclusions and Making Inferences",
+          "You can tell from the passage that Okonjo",
+          [
+            "resents the two years she spent in a lower group.",
+            "wishes she had gone to university instead.",
+            "believes talent matters more than practice.",
+            "thinks of her dialogue as collected rather than invented."
+          ],
+          "D",
+          "She calls realistic characters a description of her method, not a compliment."
+        ],
+        [
+          "Distinguishing Between Fact and Opinion",
+          "Which statement expresses an opinion?",
+          [
+            "The Corner of Market Street was published in 2003.",
+            "Okonjo left school at eighteen.",
+            "Her first manuscript was rejected eleven times.",
+            "The characters are unusually realistic."
+          ],
+          "D",
+          "That is what reviewers judged; the other three are matters of record."
+        ],
+        [
+          "Identifying Author's Purpose",
+          "The author’s main purpose in this passage is to",
+          [
+            "persuade readers to buy Okonjo’s novels.",
+            "explain how one writer’s early life shaped her work.",
+            "teach readers how to get a manuscript published.",
+            "describe the corner of Market Street."
+          ],
+          "B",
+          "Every fact given is chosen to connect her childhood to the way she writes."
+        ],
+        [
+          "Interpreting Figurative Language",
+          "The passage says her notebooks are \"less like diaries than like nets.\" This means the notebooks",
+          [
+            "caught whatever she happened to overhear.",
+            "were woven out of string.",
+            "were used for fishing on holidays.",
+            "recorded her own feelings each day."
+          ],
+          "A",
+          "A net catches what comes past it, which is what she was doing at the bus stop."
+        ],
+        [
+          "Summarising",
+          "Which sentence best summarises the passage?",
+          [
+            "A girl who could not spell is helped by a school librarian.",
+            "A writer describes the town she was born in and the rain that fell there.",
+            "An author who spent her childhood listening at a bus stop turned that habit into a first novel of overheard dialogue, and now tells young writers to begin by listening.",
+            "A first novel is rejected eleven times before a twelfth publisher accepts it."
+          ],
+          "C",
+          "A summary needs the habit, the book it produced and what she now says about it."
+        ]
+      ]
+    },
+    "new": {
+      "title": "The Illustrator Who Started Writing",
+      "passage": [
+        "For the first fifteen years of his career, Tomás Ferreira did not write a single word that anybody read.",
+        "He drew. He was an illustrator for a publisher of school science books, and his job was to turn other people’s paragraphs into pictures — a cross-section of a volcano, a beetle’s wing, the inside of a heart, all of it careful and realistic. He was good at it, and he was bored.",
+        "\"The words were always wrong,\" he says now. \"Not untrue. Just written by somebody who had never watched a child read them.\"",
+        "Ferreira had watched a great many children read them, because he had four of his own. He would bring home the proofs of a book he had illustrated and observe what happened when he left them on the kitchen table. His youngest daughter would struggle through four lines of a page about tides and then go and do something else.",
+        "\"That is the moment nobody in publishing ever sees,\" he says. \"I saw it every week.\"",
+        "He began rewriting the paragraphs in the margins, to find out whether she would finish the page. Eventually the margins were longer than the text. A librarian who visited the school where his wife taught read one of these marked-up proofs, laughed for a long time, and told him to send it somewhere.",
+        "His first manuscript came back twice. The third publisher asked whether he could illustrate it as well.",
+        "Why the Sea Comes In appeared in 2011. It has no characters and no story, and it is still one of the most borrowed science books in the country. Ferreira thinks he knows why.",
+        "\"A picture makes you look. A sentence makes you keep looking. If you have one without the other, half your audience leaves the page. A science book with dull sentences is a door with no handle.\"",
+        "He is now the author of fourteen books and has won an award for children’s non-fiction. But the thing that inspired him, he says, was not another book. It was a nine-year-old at a kitchen table who would not finish a page, and who has since read every one of his."
+      ],
+      "questions": [
+        [
+          "Finding Main Idea",
+          "What is this passage mostly about?",
+          [
+            "How a publisher chooses which science books to print",
+            "Why children stop reading at the age of nine",
+            "The difference between a drawing and a diagram",
+            "How an illustrator became a writer by watching his own children read"
+          ],
+          "D",
+          "The passage runs from his fifteen years of drawing to the fourteen books he has written."
+        ],
+        [
+          "Recalling Facts and Details",
+          "How many times did Ferreira’s first manuscript come back?",
+          [
+            "once",
+            "twice",
+            "three times",
+            "fourteen times"
+          ],
+          "B",
+          "The third publisher accepted it, after it had come back twice."
+        ],
+        [
+          "Understanding Sequence",
+          "What did Ferreira do before he began rewriting paragraphs in the margins?",
+          [
+            "He illustrated science books written by other people.",
+            "He sent a manuscript to a publisher.",
+            "He met the librarian from his wife’s school.",
+            "He published Why the Sea Comes In."
+          ],
+          "A",
+          "The illustrating came first; the margins were what he did with the proofs of that work."
+        ],
+        [
+          "Recognising Cause and Effect",
+          "Why did Ferreira start rewriting the paragraphs?",
+          [
+            "His publisher had asked him to.",
+            "He wanted to be paid more for the work.",
+            "He wanted to find out whether his daughter would finish the page.",
+            "The original writer had left the company."
+          ],
+          "C",
+          "The passage gives exactly that reason for the rewriting."
+        ],
+        [
+          "Comparing and Contrasting",
+          "According to Ferreira, what did people in publishing not see that he did?",
+          [
+            "The moment a child stops reading a page",
+            "How long an illustration takes to draw",
+            "Which books libraries buy most often",
+            "How many books a family owns"
+          ],
+          "A",
+          "He says it is the moment nobody in publishing ever sees, and that he saw it weekly."
+        ],
+        [
+          "Making Predictions",
+          "If Ferreira were asked to illustrate a book he thought children would not finish, he would most likely",
+          [
+            "refuse the work altogether.",
+            "draw more pictures than usual.",
+            "ask for the book to be cancelled.",
+            "suggest changes to the writing as well."
+          ],
+          "D",
+          "That is what he did with the proofs, and it is what his whole argument rests on."
+        ],
+        [
+          "Finding Word Meaning in Context",
+          "In this passage, the word observe means",
+          [
+            "to follow a rule carefully.",
+            "to watch what happens without interfering.",
+            "to write notes in a margin.",
+            "to explain something clearly."
+          ],
+          "B",
+          "He leaves the proofs on the table and watches what his children do with them."
+        ],
+        [
+          "Drawing Conclusions and Making Inferences",
+          "You can tell from the passage that Ferreira believes",
+          [
+            "pictures matter more than words in a science book.",
+            "children should read only books that have illustrations.",
+            "words and pictures have to work together.",
+            "school science books ought to be shorter."
+          ],
+          "C",
+          "He says that one without the other loses half the audience."
+        ],
+        [
+          "Distinguishing Between Fact and Opinion",
+          "Which statement expresses an opinion?",
+          [
+            "Why the Sea Comes In appeared in 2011.",
+            "Ferreira has written fourteen books.",
+            "The words were always wrong.",
+            "His first manuscript came back twice."
+          ],
+          "C",
+          "That is his judgement of other people’s writing; the rest can be checked."
+        ],
+        [
+          "Identifying Author's Purpose",
+          "The author’s main purpose in this passage is to",
+          [
+            "explain how one man’s job led him into a different one.",
+            "teach readers how tides work.",
+            "persuade readers to take up illustration.",
+            "describe the inside of a publishing house."
+          ],
+          "A",
+          "The passage follows one change of work and gives the reason for it."
+        ],
+        [
+          "Interpreting Figurative Language",
+          "Ferreira says a science book with dull sentences is \"a door with no handle.\" This means the book",
+          [
+            "is too heavy for a child to carry.",
+            "has pages that stick together.",
+            "was printed with a mistake in it.",
+            "cannot be got into, however much you want to."
+          ],
+          "D",
+          "A door you cannot open is a vivid way of describing a book a reader cannot enter."
+        ],
+        [
+          "Summarising",
+          "Which sentence best summarises the passage?",
+          [
+            "A man draws volcanoes and beetles’ wings for school science books.",
+            "An illustrator who watched his own children give up on the pages he had drawn began rewriting them, and became the author of fourteen science books.",
+            "A librarian laughs at a marked-up proof and tells a man to send it somewhere.",
+            "A science book with no characters becomes one of the most borrowed in the country."
+          ],
+          "B",
+          "A summary needs what he noticed, what he did about it and where it led."
+        ]
+      ]
+    }
+  }
+]);
