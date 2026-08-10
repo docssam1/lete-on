@@ -7,7 +7,7 @@ window.LESSONS['sl13'] = {
   page: null,
   title: 'The History of the Toilet',
   theme: 'How human sanitation systems have evolved from ancient civilizations to modern times',
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl13.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

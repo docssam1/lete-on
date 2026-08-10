@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Our Bodies and Salt">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#66bb6a" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M330 180h140l-16 40h-108z" fill="#dcedd9" stroke="#2d3748" stroke-width="9"/>
+<path d="M314 220h172l-26 200H340z" fill="#f4f1e6" stroke="#2d3748" stroke-width="9"/>
+<circle cx="370" cy="196" r="6" fill="#2d3748"/><circle cx="400" cy="196" r="6" fill="#2d3748"/><circle cx="430" cy="196" r="6" fill="#2d3748"/>
+<path d="M360 250h80M350 300h100M356 350h88" stroke="#66bb6a" stroke-width="9"/>
+<path d="M600 300q-30-42-62-12-30 28 62 92 92-64 62-92-32-30-62 12z" fill="#c8352c" stroke="#2d3748" stroke-width="9"/>
+<path d="M520 250h160" stroke="#1b5e20" stroke-width="9"/>
+</g>
+</svg>

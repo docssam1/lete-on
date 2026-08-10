@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Dyeing Naturally">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#66bb6a" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M130 430q60-140 130-190" fill="none" stroke="#1b5e20" stroke-width="12"/>
+<path d="M200 300q-70-40-60 30 50 26 60-30zM206 286q40-70 84-24-20 56-84 24z" fill="#2e7d32" stroke="#2d3748" stroke-width="8"/>
+<path d="M380 160q140-30 280 0v60q-140 34-280 0z" fill="#b0483f" stroke="#2d3748" stroke-width="8"/>
+<path d="M380 250q140-30 280 0v60q-140 34-280 0z" fill="#c8a02c" stroke="#2d3748" stroke-width="8"/>
+<path d="M380 340q140-30 280 0v60q-140 34-280 0z" fill="#2e7d32" stroke="#2d3748" stroke-width="8"/>
+<path d="M360 140v290M680 140v290" stroke="#2d3748" stroke-width="8" opacity=".5"/>
+</g>
+</svg>

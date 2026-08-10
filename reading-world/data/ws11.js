@@ -1,3 +1,4 @@
+if (!window.LESSONS) window.LESSONS = {};
 window.LESSONS['ws11'] = {
   bookId: 'wonderskills-adv3',
   levelId: 'adv3',
@@ -6,7 +7,7 @@ window.LESSONS['ws11'] = {
   page: null,
   title: 'The Story of Money',
   theme: 'How currency evolved from barter to digital exchange',
-  image: 'assets/images/wonderskills-adv3/cover.svg',
+  image: 'assets/images/wonderskills-adv3/ws11.svg',
   rewardPoints: { lessonComplete: 40 },
   words: [
     ['barter', 'to exchange goods or services directly without using money', '물물교환하다', '以物易物'],

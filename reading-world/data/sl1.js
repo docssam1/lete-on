@@ -6,7 +6,7 @@ window.LESSONS['sl1'] = {
   chapter: null, page: null,
   title: "How We See Color",
   theme: "White light contains all colors, and objects reflect only certain wavelengths into our eyes.",
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl1.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

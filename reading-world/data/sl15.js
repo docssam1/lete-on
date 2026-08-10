@@ -7,7 +7,7 @@ window.LESSONS['sl15'] = {
   page: null,
   title: 'The Journey of Wastewater',
   theme: 'How sewage treatment plants clean wastewater before returning it to the environment',
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl15.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

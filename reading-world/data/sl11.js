@@ -6,7 +6,7 @@ window.LESSONS['sl11'] = {
   chapter: null, page: null,
   title: "Listen to This!",
   theme: "Creative performers have discovered that everyday objects — from garbage cans to carrots — can become powerful musical instruments in the right hands.",
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl11.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

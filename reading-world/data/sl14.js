@@ -7,7 +7,7 @@ window.LESSONS['sl14'] = {
   page: null,
   title: 'A Toilet Museum',
   theme: 'Haewoojae — the toilet-shaped house in Suwon built by Mr. Toilet to promote global sanitation',
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl14.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

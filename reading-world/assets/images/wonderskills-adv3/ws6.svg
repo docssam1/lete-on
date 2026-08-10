@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="The Science of Sleep">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#4d94ff" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M300 130a150 150 0 1 0 150 220A170 170 0 0 1 300 130z" fill="#e3edff" stroke="#2d3748" stroke-width="9"/>
+<circle cx="600" cy="140" r="7" fill="#003087"/><circle cx="662" cy="200" r="5" fill="#003087"/>
+<circle cx="556" cy="204" r="5" fill="#003087"/><circle cx="700" cy="120" r="6" fill="#003087"/>
+<path d="M110 430h580" stroke="#2d3748" stroke-width="8" opacity=".35"/>
+<path d="M110 400q40 0 40-40t40 0 40-56 40 56 40 0 40 40 40-72 40 72 40 0 40-30 40 30 40 0 40 0" fill="none" stroke="#0052cc" stroke-width="9"/>
+</g>
+</svg>

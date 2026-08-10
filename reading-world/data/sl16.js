@@ -7,7 +7,7 @@ window.LESSONS['sl16'] = {
   page: null,
   title: 'Art from a Urinal',
   theme: 'How Marcel Duchamp\'s Fountain challenged the definition of art in the twentieth century',
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl16.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

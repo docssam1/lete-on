@@ -6,7 +6,7 @@ window.LESSONS['sl6'] = {
   chapter: null, page: null,
   title: "Our Bodies and Salt",
   theme: "Salt is a mineral the body cannot live without, but consuming too much of it becomes a serious danger to health.",
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl6.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

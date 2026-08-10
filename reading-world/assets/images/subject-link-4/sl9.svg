@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="How We Hear Sound">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#66bb6a" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M470 160q-140 0-140 130 0 90 60 100t46 70q46 20 74-30" fill="#dcedd9" stroke="#2d3748" stroke-width="9"/>
+<path d="M430 260q54-40 74 20t-56 62" fill="none" stroke="#2d3748" stroke-width="9"/>
+<path d="M290 180q-56 108 0 216M220 140q-84 148 0 296M150 100q-112 190 0 376" fill="none" stroke="#2e7d32" stroke-width="10" opacity=".8"/>
+<circle cx="600" cy="290" r="10" fill="#1b5e20"/>
+<path d="M630 250q40 40 0 80" fill="none" stroke="#1b5e20" stroke-width="8"/>
+</g>
+</svg>

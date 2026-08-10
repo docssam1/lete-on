@@ -6,7 +6,7 @@ window.LESSONS['sl4'] = {
   chapter: null, page: null,
   title: "Dyeing Naturally",
   theme: "Plants and minerals have provided fabric dyers with a rich palette of natural colors for thousands of years.",
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl4.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

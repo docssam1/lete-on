@@ -7,7 +7,7 @@ window.LESSONS['rp1'] = {
   chapter: null, page: null,
   title: "The Rubber Duck Project",
   theme: "A giant rubber duck spreads joy and healing",
-  image: 'assets/images/reading-prime/cover.svg',
+  image: 'assets/images/reading-prime/rp1.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["float", "to rest or move on top of a liquid", "뜨다, 떠다니다", "漂浮"], ["heal", "to make someone well or healthy again", "치유하다, 낫게 하다", "治愈"], ["friendly", "like a friend; nice and kind", "친근한, 다정한", "友好的"], ["appearance", "the way that someone or something looks", "겉모습, 외모", "外观, 外表"], ["culture", "the ideas and customs of a society", "문화", "文化"], ["cheer up", "to cause somebody to feel happier", "기운을 북돋우다, 격려하다", "使振作, 使高兴"], ["effective", "causing the right result", "효과적인", "有效的"], ["comfort", "to make someone feel less worried", "위로하다, 안심시키다", "安慰"], ["express", "to show or say one's thoughts or feelings", "표현하다", "表达"], ["interest", "a feeling of wanting to learn about something", "관심, 흥미", "兴趣"], ["benefit", "a good or helpful result of something", "이점, 이익", "好处, 益处"], ["suffer from", "to experience something unpleasant", "~로 고통받다, 시달리다", "遭受, 受…之苦"]],

@@ -1,3 +1,4 @@
+if (!window.LESSONS) window.LESSONS = {};
 window.LESSONS['ws7'] = {
   bookId: 'wonderskills-adv3',
   levelId: 'adv3',
@@ -5,7 +6,7 @@ window.LESSONS['ws7'] = {
   chapter: null, page: null,
   title: "The First Maps",
   theme: "From Ptolemy's ancient drawings to modern GPS satellites, maps have always helped humans explore, navigate, and understand the world.",
-  image: 'assets/images/wonderskills-adv3/cover.svg',
+  image: 'assets/images/wonderskills-adv3/ws7.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

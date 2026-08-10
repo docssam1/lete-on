@@ -6,7 +6,7 @@ window.LESSONS['sl9'] = {
   chapter: null, page: null,
   title: "How We Hear Sound",
   theme: "Sound travels as invisible pressure waves through molecules, and our ears are precision instruments that convert those waves into the signals our brains experience as hearing.",
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl9.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

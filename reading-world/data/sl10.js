@@ -6,7 +6,7 @@ window.LESSONS['sl10'] = {
   chapter: null, page: null,
   title: "Silent No More",
   theme: "Human activity fills the ocean with invisible noise that disrupts the ability of marine animals to communicate, navigate, and survive.",
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl10.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

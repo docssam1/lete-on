@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Come to the City Insect Museum!">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#ce93d8" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M110 200h580l-290-96z" fill="#4a148c" stroke="#2d3748" stroke-width="9"/>
+<path d="M150 200v230M290 200v230M510 200v230M650 200v230" stroke="#ce93d8" stroke-width="20"/>
+<path d="M110 430h580" stroke="#2d3748" stroke-width="10"/>
+<ellipse cx="400" cy="322" rx="22" ry="58" fill="#2d3748"/>
+<path d="M382 286q-96-72-118 4 -18 62 118 44z" fill="#7b1fa2" stroke="#2d3748" stroke-width="8"/>
+<path d="M418 286q96-72 118 4 18 62-118 44z" fill="#7b1fa2" stroke="#2d3748" stroke-width="8"/>
+<path d="M392 268l-22-34M408 268l22-34" stroke="#2d3748" stroke-width="7"/>
+</g>
+</svg>

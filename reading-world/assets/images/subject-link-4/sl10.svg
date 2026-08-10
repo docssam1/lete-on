@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Silent No More">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#66bb6a" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M60 160q80-30 160 0t160 0 160 0 160 0" fill="none" stroke="#66bb6a" stroke-width="9"/>
+<rect x="60" y="180" width="680" height="290" rx="20" fill="#dcedd9" opacity=".75"/>
+<path d="M300 210h180l30 30H270z" fill="#2d3748"/>
+<path d="M330 180h50v30h-50z" fill="#1b5e20" stroke="#2d3748" stroke-width="6"/>
+<path d="M180 380q120-90 240 0-120 90-240 0z" fill="#1b5e20" stroke="#2d3748" stroke-width="9"/>
+<path d="M420 380l60-40v80z" fill="#1b5e20" stroke="#2d3748" stroke-width="9"/>
+<circle cx="240" cy="362" r="9" fill="#f5efe2"/>
+<path d="M540 250q40 40 0 80M600 220q70 70 0 140M660 190q100 100 0 200" fill="none" stroke="#c8352c" stroke-width="9" opacity=".8"/>
+</g>
+</svg>

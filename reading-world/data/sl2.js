@@ -6,7 +6,7 @@ window.LESSONS['sl2'] = {
   chapter: null, page: null,
   title: "Chinese Beliefs About Colors",
   theme: "Colors carry powerful cultural meanings that vary widely from one society to another.",
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl2.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

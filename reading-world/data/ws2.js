@@ -1,3 +1,4 @@
+if (!window.LESSONS) window.LESSONS = {};
 window.LESSONS['ws2'] = {
   bookId: 'wonderskills-adv3',
   levelId: 'adv3',
@@ -5,7 +6,7 @@ window.LESSONS['ws2'] = {
   chapter: null, page: null,
   title: "When Corn Was Cash",
   theme: "People have traded goods and developed systems of exchange throughout history, from bartering to using money.",
-  image: 'assets/images/wonderskills-adv3/cover.svg',
+  image: 'assets/images/wonderskills-adv3/ws2.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

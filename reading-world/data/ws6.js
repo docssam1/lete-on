@@ -1,3 +1,4 @@
+if (!window.LESSONS) window.LESSONS = {};
 window.LESSONS['ws6'] = {
   bookId: 'wonderskills-adv3',
   levelId: 'adv3',
@@ -5,7 +6,7 @@ window.LESSONS['ws6'] = {
   chapter: null, page: null,
   title: "The Science of Sleep",
   theme: "Sleep is an active process during which the brain consolidates memories and the body restores itself, making quality sleep essential for learning and health.",
-  image: 'assets/images/wonderskills-adv3/cover.svg',
+  image: 'assets/images/wonderskills-adv3/ws6.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

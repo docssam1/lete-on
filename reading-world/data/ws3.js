@@ -1,3 +1,4 @@
+if (!window.LESSONS) window.LESSONS = {};
 window.LESSONS['ws3'] = {
   bookId: 'wonderskills-adv3',
   levelId: 'adv3',
@@ -6,7 +7,7 @@ window.LESSONS['ws3'] = {
   page: null,
   title: 'The Power of Laughter',
   theme: 'The science behind laughter and its benefits for health, mood, and social connection',
-  image: 'assets/images/wonderskills-adv3/cover.svg',
+  image: 'assets/images/wonderskills-adv3/ws3.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

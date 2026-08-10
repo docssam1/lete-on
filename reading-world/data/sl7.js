@@ -6,7 +6,7 @@ window.LESSONS['sl7'] = {
   chapter: null, page: null,
   title: "Salar de Uyuni",
   theme: "The world's largest salt flat creates remarkable optical illusions that have made it one of Earth's most photographed landscapes.",
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl7.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

@@ -7,7 +7,7 @@ window.LESSONS['sl12'] = {
   page: null,
   title: 'Echo and Narcissus',
   theme: 'A Greek myth about pride, vanity, and the consequences of rejecting others',
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl12.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

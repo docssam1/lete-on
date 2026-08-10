@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Our Place">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#4d94ff" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M80 420h640" stroke="#2d3748" stroke-width="10"/>
+<path d="M120 420V250l90-70 90 70v170z" fill="#e3edff" stroke="#2d3748" stroke-width="9"/>
+<rect x="176" y="316" width="68" height="104" fill="#0052cc" stroke="#2d3748" stroke-width="8"/>
+<path d="M400 420v-96" stroke="#2d3748" stroke-width="10"/>
+<circle cx="400" cy="270" r="66" fill="#4d94ff" stroke="#2d3748" stroke-width="9"/>
+<rect x="500" y="300" width="200" height="120" rx="14" fill="#e3edff" stroke="#2d3748" stroke-width="9"/>
+<path d="M530 300v120M600 300v120M670 300v120" stroke="#003087" stroke-width="8"/>
+<path d="M540 250q30-40 60 0t60 0" fill="none" stroke="#0052cc" stroke-width="9"/>
+</g>
+</svg>

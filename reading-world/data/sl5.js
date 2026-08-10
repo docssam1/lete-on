@@ -6,7 +6,7 @@ window.LESSONS['sl5'] = {
   chapter: null, page: null,
   title: "A History of Salt",
   theme: "Salt was once so rare and valuable that it shaped ancient trade routes, economies, and even the words we use today.",
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl5.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

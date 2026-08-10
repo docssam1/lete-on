@@ -1,3 +1,4 @@
+if (!window.LESSONS) window.LESSONS = {};
 window.LESSONS['ws9'] = {
   bookId: 'wonderskills-adv3',
   levelId: 'adv3',
@@ -5,7 +6,7 @@ window.LESSONS['ws9'] = {
   chapter: null, page: null,
   title: "The Music of Math",
   theme: "Mathematics and music are deeply connected through patterns, ratios, and frequency, and understanding one can help you appreciate and master the other.",
-  image: 'assets/images/wonderskills-adv3/cover.svg',
+  image: 'assets/images/wonderskills-adv3/ws9.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

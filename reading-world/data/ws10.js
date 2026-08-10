@@ -1,3 +1,4 @@
+if (!window.LESSONS) window.LESSONS = {};
 window.LESSONS['ws10'] = {
   bookId: 'wonderskills-adv3',
   levelId: 'adv3',
@@ -6,7 +7,7 @@ window.LESSONS['ws10'] = {
   page: null,
   title: 'Animal Architects',
   theme: 'How animals engineer remarkable structures using instinct',
-  image: 'assets/images/wonderskills-adv3/cover.svg',
+  image: 'assets/images/wonderskills-adv3/ws10.svg',
   rewardPoints: { lessonComplete: 40 },
   words: [
     ['construct', 'to build or put something together using parts or materials', '건설하다', '建造'],

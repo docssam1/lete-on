@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Healthy Banana Vinegar">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#ce93d8" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M120 176q34 176 176 200" fill="none" stroke="#e8b830" stroke-width="46" stroke-linecap="round"/>
+<path d="M168 158q34 176 176 200" fill="none" stroke="#f3cd55" stroke-width="46" stroke-linecap="round"/>
+<rect x="470" y="150" width="34" height="60" rx="8" fill="#ce93d8" stroke="#2d3748" stroke-width="8"/>
+<path d="M452 210h70l30 74v122a26 26 0 0 1-26 26h-78a26 26 0 0 1-26-26V284z" fill="#f3e5f5" stroke="#2d3748" stroke-width="9"/>
+<path d="M424 320h134v92a26 26 0 0 1-26 26h-82a26 26 0 0 1-26-26z" fill="#7b1fa2" opacity=".55"/>
+<path d="M600 300h96M600 344h96M600 388h64" stroke="#4a148c" stroke-width="10"/>
+</g>
+</svg>

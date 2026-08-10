@@ -7,7 +7,7 @@ window.LESSONS['rp4'] = {
   chapter: null, page: null,
   title: "The Longest Hot Dog in the World",
   theme: "Length — amazing record-breaking sizes and how far things can stretch",
-  image: 'assets/images/reading-prime/cover.svg',
+  image: 'assets/images/reading-prime/rp4.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["imagine", "to think of something in one's mind", "상상하다", "想象"], ["snack", "a food to eat between meals", "간식", "零食"], ["bake", "to cook something in an oven", "굽다", "烘烤"], ["company", "a business that sells goods or services", "회사", "公司"], ["celebrate", "to do something special for an event", "기념하다", "庆祝"], ["huge", "very great in size, amount, or degree", "거대한", "巨大的"], ["rocky", "being made of or having many rocks", "바위투성이의", "多岩石的"], ["stretch", "to extend a long way", "뻗다", "延伸"], ["connect", "to join one thing to another", "연결하다", "连接"], ["attraction", "something interesting that people visit or see", "명소", "景点"], ["thrill", "a strong feeling of excitement", "전율", "兴奋感"], ["cliff", "a high, steep natural wall", "절벽", "悬崖"]],
