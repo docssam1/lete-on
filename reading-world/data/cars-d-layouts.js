@@ -2,13 +2,14 @@
   'use strict';
 
   // Public structural map only. Licensed passage/question wording stays in Supabase.
-  // PDF pages are 3 higher than the printed page number in this scan.
+  // PDF pages are 4 higher than the printed page number in this scan
+  // (checked: PDF page 51 is printed page 47).
   // Full-page source images supplied for every illustrated passage are the visual
   // authority for placement; OCR supplies text, never layout guesses.
   window.CARS_D_LAYOUTS = {
     version: 4,
     bookId: 'cars-level-d',
-    pdfPrintedOffset: 3,
+    pdfPrintedOffset: 4,
     specialQuestionTypes: ['sequence','cause-effect','branch-map'],
     lessons: {
       cd1: {

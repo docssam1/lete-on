@@ -223,8 +223,8 @@ after`로 갈아끼운다. 그래서 Supabase stem에는 ASCII 그림을 넣지 
 ### 검증 상태 (중요)
 - **Level D는 PDF 스캔과 대조 완료.** 이 대조로 cd13 Q3의 상자 밀림 오류를 찾아 고쳤다
   (`["","","Tom opens…"]` → `["","Tom opens…","Everyone goes outside…"]`).
-  ⚠️ `cars-d-layouts.js`의 `pdfPrintedOffset: 3`은 **틀렸다 — 실제 +4**
-  (PDF 51쪽 = 인쇄 47쪽). 페이지 찾을 때 주의.
+  `cars-d-layouts.js`의 `pdfPrintedOffset`은 **4**다(PDF 51쪽 = 인쇄 47쪽). 한동안 3으로
+  잘못 적혀 있었으니, 옛 메모에 3이 보이면 그쪽이 틀린 것이다.
 - **Level B도 대조 완료(2026-08-10).** lesson1·3·5·10 Q3를 교재 사진과 대조 → **밀림 없음**.
   대신 **전사 누락 2건**을 찾아 복원했다: lesson1은 도입문 "The boxes tell some things about
   robins."가 통째로 빠져 있었고, lesson10은 보기 D의 안쪽 따옴표가 빠져 있었다
@@ -357,7 +357,7 @@ main: main (GitHub Pages 자동 배포, 직접 작업)
 | ~~Level B 다이어그램 미대조~~ | ✅ 대조 완료 (2026-08-10) | lesson1·3·5·10 Q3를 교재 사진과 전수 대조. **상자 밀림 없음** — 내용·순서·빈칸 위치·정답 전부 일치. 전사 누락 2건 복원(아래) |
 | ~~Level C 다이어그램 미대조~~ | ✅ 대조 완료 (2026-08-10) | lc3·lc6 Q3를 교재 스캔(Drive)과 대조. **상자 밀림 없음**. 전사 누락 3건 복원(아래) |
 | ~~lc6 Q3 문구 임의 보충~~ | ✅ 교체됨 (2026-08-10) | 임시로 채웠던 "Which of these belongs in the empty box?"는 **틀렸다**. 실제 교재는 "What belongs in the empty box?"이고 도입문도 따로 있었다. 3번 상자 문구도 본문 문장이 잘못 들어가 있어 교체 |
-| `cars-d-layouts.js` `pdfPrintedOffset: 3` | 하 | 실제는 **+4** (PDF 51쪽 = 인쇄 47쪽). 값은 아직 3으로 방치 |
+| ~~`pdfPrintedOffset: 3`~~ | ✅ 수정됨 (2026-08-10) | 실제 +4로 정정. cd13 인쇄 47~49쪽 → PDF 51~53쪽으로 검산 완료 |
 | 정답 키 중복 6쌍 | 하 | 서로 다른 레슨이 같은 12자 키를 공유(lc4·lc6 `ABCDABCDABCD` 등). 6~7세 대상이라 실질 영향 없다는 사용자 판단으로 미수정 |
 
 ---
