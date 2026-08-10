@@ -49,6 +49,7 @@ GitHub Pages 배포: `docssam1/lete-on` 저장소 → `/reading-world/` 경로.
   assets/images/
     cars-level-b/             — Level B 레슨 커버 이미지
     cars-level-c/             — Level C 레슨 커버 이미지 (현재 placeholder PNG)
+  scripts/                    — (저장소 루트) 창작 지문 검증·보정 도구 3종
   shared/
     cars-components.js        — 앱 쪽 CARS 데코레이터(본문 배치·다이어그램 주입)
     cars-layout.css           — 위 데코레이터용 CSS (.cars-*)
@@ -92,7 +93,8 @@ GitHub Pages 배포: `docssam1/lete-on` 저장소 → `/reading-world/` 경로.
 
 - **extraLearning** = 원문의 같은 주제/인물/형식을 이어가는 창작 지문 + 12문항 (git)
 - **newPassage** = 원문 핵심 어휘 12개를 쓰는 같은 레벨의 새 이야기 + 12문항 (git)
-- 어휘 12개 = 실제 원문에서 추출 · 레슨 커버 = 실제 교재 삽화(`assets/images/cars-level-c/illustrations/lcN.jpg`)
+- 어휘 12개 = 실제 원문에서 추출 · 레슨 커버 = `assets/images/cars-level-c/N.png` (lcN→N.png)
+  ※ 옛 `illustrations/lcN.jpg` 경로는 2026-07-08에 삭제됨 — 아래 '알려진 버그' 표 참조
 
 ---
 
@@ -145,6 +147,43 @@ STEP 7 — 유사 문항 (questionSimilar)
   각 세트는 여전히 3A/3B/3C/3D를 만족하지만 **고정 순서 패턴은 폐기** —
   이제 레슨마다 정답 순서가 자유롭게 섞여 있고 분포만 3/3/3/3으로 유지됨.
   (이전의 레슨별 고정 순서 표는 옛 콘텐츠용이라 삭제함.)
+
+---
+
+## 창작 지문 사양 + 검증 도구 (2026-08-10)
+
+**지문을 새로 쓰거나 고칠 때는 반드시 검사기를 돌릴 것.** 사양 전문은
+`scripts/check-practice-sets.js` 상단 주석에 있다.
+
+```bash
+node scripts/check-practice-sets.js              # 전체 70세트
+node scripts/check-practice-sets.js cd3 lesson7  # 지정 레슨만 (실패 시 exit 1)
+node scripts/rebalance-answers.js cd6            # 3/3/3/3 자동 보정
+```
+
+| 도구 | 하는 일 |
+|---|---|
+| `check-practice-sets.js` | 길이·어휘·문항수·전략순서·보기형식·분포 검사 + 키 중복 보고 |
+| `rebalance-answers.js` | 보기 **위치만** 바꿔 3/3/3/3로 맞춤(문장 불변) |
+| `patch-level-d-lesson.js` | D 레슨 파일 기록 + **전략명 자동 주입**(표기 드리프트 차단) |
+
+### 규칙 6가지 (요약)
+1. **길이** 원문의 85~125%. 짧으면 12전략을 지탱 못 함.
+2. **어휘** 유사 지문은 12개 전부, **가르치는 형태 그대로**. `reply`를 가르치는데
+   본문에 `replied`만 있으면 실패 — 이 유형만 실제로 5번 걸렸다.
+   추가 학습은 원문의 주제·형식을 잇는 게 역할이라 어휘 의무 없음(경고만).
+3. **형식** 원문이 시면 시, 대본이면 대본, 번호목록이면 번호목록.
+4. **문항** 12개, 책별 고정 전략 순서. B·C는 `Recognizing`/`Understanding Author's
+   Purpose`/`Distinguishing Between Real and Make-believe`, **D는** `Recognising`/
+   `Identifying Author's Purpose`/`Summarising`.
+5. **분포** 3A/3B/3C/3D. 편중되면 한 글자만 찍어도 통과된다(lesson1이 A만 찍어 58%였음).
+6. **키 중복** 레슨 간 12자 키 중복 금지(경미, 별도 보고).
+
+### 주의
+- **정답 letter는 쓰기 전에 배분할 것.** 자연스럽게 쓰면 거의 항상 편중된다.
+  사후 보정은 `rebalance-answers.js`가 하지만, 오답 설계가 letter 위치에 얽히면 곤란.
+- **원문(Supabase)은 절대 수정 금지.** 정답·보기 모두. 창작 콘텐츠(git)만 다룬다.
+- 실존 인물 전기가 원문일 땐 **인물을 가상으로** 바꾸고 형식만 유지(cd2·cd7 선례).
 
 ---
 
@@ -303,6 +342,10 @@ main: main (GitHub Pages 자동 배포, 직접 작업)
 |------|--------|------|
 | ~~`store.js` remoteUpsert 하드코딩~~ | ✅ 수정됨 (2026-07-08) | `remoteMeta(data)`가 프로필의 `currentBookId`·최근 학습 레슨(updatedAt 최대)에서 `book_id`/`lesson_id`를 도출 → analytics 컬럼이 실제 학습 반영 |
 | ~~Level C 커버 이미지~~ | ✅ 해결됨 (2026-07-08) | 실사 삽화 `cars-level-c/1.png`~`10.png` 적용(lcN→N.png). 옛 placeholder·illustrations/jpg 삭제 |
+| **B·C 다이어그램 문항 미대조** | 중 | 순서도 6개(B lesson1·3·5·10, C lc3·lc6 Q3)는 전사본을 구조화만 했고 교재 스캔과 대조 못 함. D는 대조해서 cd13 밀림을 잡았으므로 여기도 같은 오류가 남아 있을 수 있음. **Level B/C PDF 필요** |
+| **lc6 Q3 문구 임의 보충** | 중 | 문항 문장이 통째로 유실돼 있어 시리즈 표준 문구 "Which of these belongs in the empty box?"로 채움. **교재 대조 필요** |
+| `cars-d-layouts.js` `pdfPrintedOffset: 3` | 하 | 실제는 **+4** (PDF 51쪽 = 인쇄 47쪽). 값은 아직 3으로 방치 |
+| 정답 키 중복 6쌍 | 하 | 서로 다른 레슨이 같은 12자 키를 공유(lc4·lc6 `ABCDABCDABCD` 등). 6~7세 대상이라 실질 영향 없다는 사용자 판단으로 미수정 |
 
 ---
 
@@ -431,6 +474,22 @@ CARS의 12전략 문항 엔진과 별개인 **순수 독서 경험**. 마을 Lib
 
 ## 최근 주요 작업 이력
 
+- **2026-08-10 (창작 지문 50편 전면 재작성 — B 10레슨 + D 15레슨)** — 착수 전 진단:
+  **50편 중 44편이 원문 길이의 70% 미만**(B 26~49%, D 장문 레슨 23~30%). 그 외
+  ①lesson1이 7A/4B/1C/**0D** — D가 정답인 적이 없고 A만 찍으면 58% ②B lesson4~10의
+  14세트가 **동일한 정답 키** `ABCDCDABDABC` ③lesson3 창작 지문이 축구·피아노라 야구
+  어휘 12개를 하나도 안 씀 ④**원문 형식 무시**(원문이 시/대본/번호목록인데 전부 산문)
+  ⑤**Level D 30세트는 창작이 아니라 `cars-d-engine.js` 템플릿 생성물** — 문두·해설이
+  15개 레슨 동일, 오답 부족 시 `"The passage does not support this idea."`로 채움.
+  → 50편 전부 재작성. 원문 길이 85~125%, 유사 지문은 어휘 12개 전부 사용, **원문 형식
+  준수**(cd5 시→시, cd8 번호목록→번호목록, lesson7 대본→대본, lesson10 유래담→
+  `to this day`로 끝). D는 `questions` 배열을 직접 작성해 스캐폴드에서 이탈.
+  **Level C는 검사 결과 손댈 필요 없음**(길이 94~109%, 분포·형식 정상).
+  cd2·cd7은 원문이 실존 인물(Beverly Cleary·Edison) 전기라 **없는 이력을 지어내지 않도록
+  형식만 유지하고 인물은 가상**으로 씀.
+- **2026-08-10 (검증 도구 3종 추가)** — `scripts/` 참조. 작업 중 검사기가 **12건**을
+  잡음(어휘 활용형 5·분포 5·길이 2). 전부 "맞다"고 판단한 뒤 나온 것이라 자기보고는
+  근거가 못 됨.
 - **2026-08-10 (다이어그램 문항 B·C 이관)** — B·C의 순서도 문항 6개(lesson1·3·5·10,
   lc3·lc6의 Q3)가 `→ [ ___ ] →` ASCII로 stem에 박혀 있어 런온 문장으로 읽히고 인쇄도
   그대로 나가던 문제. Level D가 이미 쓰던 방식(모양=공개 맵, 문구=Supabase `meta`)으로
