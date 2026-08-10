@@ -56,6 +56,19 @@ const ORIGINAL_WORDS = {
   cd9: 680, cd10: 701, cd11: 310, cd12: 179, cd13: 270, cd14: 318, cd15: 335,
 };
 
+// Every lesson the checker looks at. This used to be derived from
+// ORIGINAL_WORDS, which quietly excluded the three books whose originals have
+// never been measured — Reading Prime, WonderSkills and Subject Link were
+// skipped in silence for as long as they have existed, and "70 sets all pass"
+// meant seventy sets were looked at rather than that the app was clean. The
+// list is explicit now, and a lesson missing from ORIGINAL_WORDS simply skips
+// the length rule (see checkSet) instead of vanishing.
+const range = (prefix, n) => Array.from({ length: n }, (_, i) => `${prefix}${i + 1}`);
+const ALL_LESSONS = [
+  ...range('lesson', 10), ...range('lc', 10), ...range('cd', 15),
+  ...range('rp', 7), ...range('ws', 12), ...range('sl', 16),
+];
+
 const STRATEGIES = {
   'cars-level-b': [
     'Finding Main Idea', 'Recalling Facts and Details', 'Understanding Sequence',
@@ -73,6 +86,10 @@ const STRATEGIES = {
   ],
 };
 STRATEGIES['cars-level-c'] = STRATEGIES['cars-level-b'];
+// The three non-CARS books follow the B/C spelling of the twelve strategies.
+STRATEGIES['reading-prime-1'] = STRATEGIES['cars-level-b'];
+STRATEGIES['wonderskills-adv3'] = STRATEGIES['cars-level-b'];
+STRATEGIES['subject-link-4'] = STRATEGIES['cars-level-b'];
 
 const MIN_PCT = 85;
 const MAX_PCT = 125;
@@ -86,13 +103,18 @@ const words = arr => (arr || []).reduce(
   (n, p) => n + String(p).split(/\s+/).filter(Boolean).length, 0);
 
 function loadLessons() {
-  global.window = {};
+  // ws*.js assign into window.LESSONS without creating it first, so it has to
+  // exist before anything is loaded.
+  global.window = { LESSONS: {} };
   const load = f => { try { require(path.join(DATA, f)); } catch (e) { /* optional */ } };
   for (let i = 1; i <= 10; i++) load(`lesson${i}.js`);
   for (let i = 1; i <= 10; i++) load(`lc${i}.js`);
   load('cd1.js');
   load('cars-d-engine.js');
   for (let i = 2; i <= 15; i++) load(`cd${i}-data.js`);
+  for (let i = 1; i <= 7; i++) load(`rp${i}.js`);
+  for (let i = 1; i <= 12; i++) load(`ws${i}.js`);
+  for (let i = 1; i <= 16; i++) load(`sl${i}.js`);
   return global.window;
 }
 
@@ -173,8 +195,7 @@ function checkSet(id, label, passage, questions, vocab, bookId) {
 function main() {
   const win = loadLessons();
   const requested = process.argv.slice(2);
-  const all = Object.keys(ORIGINAL_WORDS);
-  const ids = requested.length ? requested : all;
+  const ids = requested.length ? requested : ALL_LESSONS;
 
   let failures = 0;
   const keys = new Map();
@@ -193,7 +214,8 @@ function main() {
       }
       const status = r.problems.length ? r.problems.join(' · ')
         : (r.notes.length ? `OK  (참고: ${r.notes.join(' · ')})` : 'OK');
-      rows.push([id, label, r.n ? `${r.n}단어 ${r.pct}%` : '', r.dist || '', status]);
+      const size = r.n ? (r.pct === null ? `${r.n}단어` : `${r.n}단어 ${r.pct}%`) : '';
+      rows.push([id, label, size, r.dist || '', status]);
     });
   });
 
