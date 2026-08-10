@@ -445,6 +445,12 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
   body[data-print="paper"] .sheet.key{display:none}
   body[data-print="key"] .sheet:not(.key){display:none}
 }
+.madeby{font-size:12px;color:#5a675e;background:#f3f6f2;border:1px solid #dfe6e0;
+  border-radius:10px;padding:9px 11px;margin:0 0 10px;line-height:1.55}
+.madeby b{color:#235f43}
+.bstat{font-size:12px;border-radius:9px;padding:8px 10px;margin:-4px 0 10px;line-height:1.5}
+.bstat.ok{background:#eef7f0;border:1px solid #cfe3d4;color:#235f43}
+.bstat.new{background:#fff8e8;border:1px solid #f0e0b0;color:#8a6a12}
 </style>
 </head>
 <body data-print="paper" data-course="">
@@ -452,7 +458,7 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
 <!-- ============ Screen A · 과정 선택 ============ -->
 <div class="scr-a no-print" id="screenA">
   <div class="sa-top">
-    <div class="brandbox"><img id="topLogo" alt="" hidden><div><b id="topName">교재 제작 센터</b><small>진단 테스트 · CARS Level B · C · Plus D</small></div></div>
+    <div class="brandbox"><img id="topLogo" alt="" hidden><div><b id="topName">티처 콘솔</b><small>진단 테스트 · CARS Level B · C · Plus D</small></div></div>
     <div class="sp">
       <button class="btn" id="openBrand">⚙ 브랜드 설정</button>
       <a class="btn" href="manual-academy.html">📖 운영 매뉴얼</a>
@@ -694,10 +700,12 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
 <div class="modal no-print" id="brandModal" hidden>
   <div class="mbox">
     <div class="mhead"><h2>학원 브랜드</h2><button class="mini x" id="closeBrand">닫기</button></div>
+    <p class="madeby">GFIELD 영어 학원 지원 센터가 만든 프로그램입니다. 학원 이름을 설정하면 이후 모든 화면과 인쇄물에는 <b>학원 브랜드만</b> 나옵니다.</p>
     <p class="hint">표지와 모든 학습지 머리글에 들어갑니다. 이 브라우저에 저장되므로 학원마다 각자 설정할 수 있어요.</p>
     <span class="fld" style="margin-bottom:5px"><span>등록된 학원</span></span>
     <div class="row" id="brandPresets" style="margin:0 0 12px"></div>
-    <label class="fld"><span>학원 이름</span><input type="text" id="bName" placeholder="학원 이름을 입력하세요"></label>
+    <label class="fld"><span>학원명을 써주세요</span><input type="text" id="bName" placeholder="예: UPPER EAST SIDE PREP"></label>
+    <p class="bstat" id="bStat" hidden></p>
     <label class="fld"><span>부제 (영문)</span><input type="text" id="bSub" placeholder="영문 부제 (선택)"></label>
     <div class="row" style="align-items:center;gap:10px">
       <label class="fld" style="margin:0"><span>브랜드 색</span><input type="color" id="bColor"></label>
@@ -783,9 +791,30 @@ function applyBrand(){
   var t=document.getElementById('topLogo'),pv=document.getElementById('bLogoPrev'),ph=document.getElementById('bLogoPh');
   if(brand.logo){t.src=pv.src=brand.logo;t.hidden=pv.hidden=false;ph.style.display='none';}
   else{t.hidden=pv.hidden=true;ph.style.display='grid';}
-  document.getElementById('topName').textContent=brand.name||'교재 제작 센터';
-  renderPresets();
+  document.getElementById('topName').textContent=brand.name||DEFAULT_BRAND.name;
+  document.title=(brand.name||DEFAULT_BRAND.name)+' 티처 콘솔 · 진단 테스트 & CARS B·C·D';
+  renderPresets();checkName();
   if(document.getElementById('coverPick')) renderCoverPick();   // thumbnails are real covers
+}
+function normName(x){return String(x||'').toLowerCase().replace(/[^a-z0-9]/g,'');}
+function presetByName(n){
+  var k=normName(n); if(!k) return null;
+  return BRAND_PRESETS.filter(function(p){return normName(p.name)===k||normName(p.label)===k;})[0]||null;
+}
+function checkName(){
+  var el=document.getElementById('bStat'); if(!el) return;
+  var n=(document.getElementById('bName')||{}).value||'';
+  if(!n.trim()){el.hidden=true;return;}
+  var p=presetByName(n);
+  el.hidden=false;
+  if(p){
+    el.className='bstat ok';
+    el.innerHTML='<b>등록된 학원입니다.</b> 설정을 불러왔습니다 — 이대로 바로 진행하세요.';
+    if(brand.name!==p.name) usePreset(p.key);
+  }else{
+    el.className='bstat new';
+    el.innerHTML='<b>신규 등록 학원입니다.</b> 아래에서 <b>로고</b>부터 설정해 주세요. 색과 부제는 그다음입니다.';
+  }
 }
 function renderPresets(){
   var box=document.getElementById('brandPresets');
@@ -2209,7 +2238,9 @@ document.addEventListener('change',function(e){
 });
 document.addEventListener('input',function(e){
   var t=e.target,m={bName:'name',bSub:'sub',bColor:'color',bColor2:'color2'};
-  if(m[t.id]){brand[m[t.id]]=t.value;set(m[t.id],t.value);applyBrand();render();return;}
+  if(m[t.id]){brand[m[t.id]]=t.value;set(m[t.id],t.value);applyBrand();
+    if(t.id==='bName')checkName();
+    render();return;}
   if(t.id==='gName'||t.id==='gDate'){grade[t.id==='gName'?'name':'date']=t.value;
     if(document.body.dataset.print==='report')render();}
 });
