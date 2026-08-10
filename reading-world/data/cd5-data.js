@@ -1,1 +1,415 @@
-window.CARS_D_REGISTER([{"id":"cd5","chapter":"Pretest","num":5,"page":16,"title":"Animal Voices","theme":"Poetry about the variety of animal movement, homes, and sounds.","words":[["unique","different from all others","독특한","独特的"],["glide","to move smoothly and quietly","미끄러지듯 움직이다","滑翔"],["squawk","a loud harsh bird sound","꽥꽥 울다","嘎嘎叫"],["howl","a long loud cry made by some animals","길게 울부짖다","嚎叫"],["rhythm","a regular pattern of sounds or movements","리듬","节奏"],["chorus","many voices or sounds together","합창","合唱"],["habitat","the natural home of a plant or animal","서식지","栖息地"],["echo","a sound heard again after bouncing back","메아리","回声"],["flutter","to move with quick light wing movements","팔랑이다","振翅"],["rustle","a soft sound made by moving leaves or grass","바스락거리다","沙沙作响"],["creature","a living animal","생물","生物"],["listen","to pay attention to sound","귀 기울이다","聆听"]],"extra":{"title":"Voices of the Wetlands","passage":["At dawn the quiet wetland wakes, With silver mist on streams and lakes. A heron lifts on steady wings, While hidden reeds begin to sing.","The frogs tap out a bumpy beat, The crickets answer, sharp and sweet. A duck sends ripples through the glass, And dragonflies like arrows pass.","At noon the turtle finds a stone, A sunny island of its own. The otter slips beneath the blue, Then rises with a sparkling shoe.","At night the marsh becomes a choir, With owl calls floating higher, higher. Each creature adds a sound or sign— A living rhythm, line by line."],"main":"The poem describes the sights, movements, and sounds of wetland animals through one day.","main_wrong":["The poem explains how to drain a wetland.","The poem tells a turtle how to win a race.","The poem lists only animals that live in deserts."],"detail_q":"Where does the turtle rest at noon?","detail_a":"On a sunny stone.","detail_wrong":["Inside a tree hollow.","Under a classroom desk.","On top of a cloud."],"sequence":["Morning mist covers the wetland.","Frogs and crickets make sounds.","The turtle rests in the sun.","Owl calls rise at night."],"cause_q":"Why is the marsh compared to a choir at night?","cause_a":"Many animal sounds join together like voices in a group.","compare_q":"How do the heron and otter move differently?","compare_a":"The heron lifts into the air, while the otter slips through water.","predict_q":"If the wetland became completely dry, what would most likely happen?","predict_a":"Many of the animals described would lose the habitat they need.","vocab":["choir","a group of voices singing or sounding together"],"infer_q":"What feeling does the poet show toward the wetland?","infer_a":"Wonder and appreciation for its living variety.","facts":["A heron appears at dawn.","A turtle rests on a stone.","Owl calls are heard at night."],"opinion":"The cricket’s sound is the sweetest sound in nature.","purpose":"describe","figurative":["the marsh becomes a choir","the many night sounds seem like a group singing together"],"summary":"From dawn to night, wetland animals move and call, creating a changing natural rhythm.","cause_wrong":["The owls call at a higher pitch than the other night animals.","The animals take turns so that only one of them sounds at a time.","The night is quieter, so a single call carries further across the water."],"compare_wrong":["The heron wades among the reeds, while the otter climbs onto a stone.","The heron appears at night, while the otter is seen at dawn.","The heron passes quickly like an arrow, while the otter drifts slowly."],"predict_wrong":["The frogs and crickets would call more loudly to find one another.","The heron and the owl would stay because they can fly above the water.","Only the turtle would remain, since it already rests on a dry stone."],"vocab_wrong":["a single voice that echoes across open water","a place where singers gather to practise","a song that is repeated at the same time each night"],"infer_wrong":["Concern that the wetland's animals are slowly disappearing.","Amusement at how noisy and disorderly the marsh becomes.","Longing for the quiet the wetland holds at dawn."],"figurative_wrong":["a group of singers gathers beside the marsh after dark","the marsh grows quiet enough for one clear song to be heard","the animal calls all repeat the same note over and over"],"summary_wrong":["A heron, a turtle, and an otter each find a place of their own in the wetland.","Owl calls float higher and higher above the marsh after the sun sets.","The poet describes the wetland at dawn, when mist covers the streams and lakes."],"_pattern":"CABDCABDCABD"},"new":{"title":"Night Orchestra","passage":["When daylight folds its golden tent, The forest spends what silence lent. A cricket lifts a tiny bow, And plays where moonlit grasses grow.","The wind moves softly through the pine, A whisper running line by line. Two owls exchange a question deep; A fox steps light while rabbits sleep.","The stream keeps time on rounded stone, A steady drumbeat of its own. Bat wings flutter past the trees, Like pages turned by midnight breeze.","No conductor raises a hand, Yet music travels through the land. The night orchestra plays on, Until the first pale hint of dawn."],"main":"The poem imagines nighttime forest sounds as an orchestra.","main_wrong":["The poem gives instructions for joining a band.","The poem explains why forests have no animals.","The poem describes a noisy city at lunchtime."],"detail_q":"What keeps time on rounded stones?","detail_a":"The stream.","detail_wrong":["A school bell.","A woodpecker at noon.","A train crossing a bridge."],"sequence":["Daylight fades.","Crickets and wind begin making sounds.","Owls call and the stream keeps time.","The music continues until dawn."],"cause_q":"Why does the poet call the forest sounds an orchestra?","cause_a":"Different natural sounds seem to combine like instruments playing together.","compare_q":"How are the cricket and the stream alike in the poem?","compare_a":"Both are described as if they are making music.","predict_q":"What will most likely happen when dawn becomes bright?","predict_a":"The nighttime orchestra will fade as daytime sounds begin.","vocab":["conductor","a person who leads an orchestra"],"infer_q":"Why does the poem say no conductor raises a hand?","infer_a":"The natural sounds work together without a human leader.","facts":["The poem mentions two owls.","Bat wings pass the trees.","The stream moves over stones."],"opinion":"The forest makes better music than any concert hall.","purpose":"describe","figurative":["daylight folds its golden tent","sunlight disappears as evening begins"],"summary":"As night falls, insects, wind, owls, water, and bats create sounds that resemble an orchestra until dawn.","cause_wrong":["The forest animals have been trained to sound in time with one another.","The stream keeps a steady beat that every animal follows exactly.","The sounds grow louder and louder until dawn finally arrives."],"compare_wrong":["Both are described as moving through the moonlit grass.","Both fall silent as soon as the two owls begin to call.","Both are compared to pages turned by the midnight breeze."],"predict_wrong":["The stream will stop keeping time on the rounded stones.","A conductor will finally arrive to lead the forest music.","The owls and bats will call more loudly than they did at midnight."],"vocab_wrong":["a musician who plays the loudest instrument in a group","a person who writes the music that an orchestra performs","someone who collects tickets before a concert begins"],"infer_wrong":["The forest is too dark for the animals to see any signal.","The stream has taken the conductor's place by keeping the beat.","The music is far too quiet to need anyone to lead it."],"figurative_wrong":["campers take down a yellow tent before night arrives","golden leaves fall and cover the forest floor at sunset","the sun grows larger and warmer just before it sets"],"summary_wrong":["Two owls exchange calls while a fox steps past sleeping rabbits.","A stream keeps a steady beat against rounded stones all night long.","The poet explains how forest animals learn to make music by copying the wind."],"_pattern":"BDACBDACBDAC"}}]);
+// Lesson cd5 — shared (non-licensed) content only. The licensed original
+// passage and questions live in Supabase (lesson_content), never here.
+// Both practice sets are written out in full rather than generated from the
+// scaffold in cars-d-engine.js.
+window.CARS_D_REGISTER([
+  {
+    "id": "cd5",
+    "chapter": "Pretest",
+    "num": 5,
+    "page": 16,
+    "title": "Animal Voices",
+    "theme": "Poetry about the variety of animal movement, homes, and sounds.",
+    "words": [
+      [
+        "unique",
+        "different from all others",
+        "독특한",
+        "独特的"
+      ],
+      [
+        "glide",
+        "to move smoothly and quietly",
+        "미끄러지듯 움직이다",
+        "滑翔"
+      ],
+      [
+        "squawk",
+        "a loud harsh bird sound",
+        "꽥꽥 울다",
+        "嘎嘎叫"
+      ],
+      [
+        "howl",
+        "a long loud cry made by some animals",
+        "길게 울부짖다",
+        "嚎叫"
+      ],
+      [
+        "rhythm",
+        "a regular pattern of sounds or movements",
+        "리듬",
+        "节奏"
+      ],
+      [
+        "chorus",
+        "many voices or sounds together",
+        "합창",
+        "合唱"
+      ],
+      [
+        "habitat",
+        "the natural home of a plant or animal",
+        "서식지",
+        "栖息地"
+      ],
+      [
+        "echo",
+        "a sound heard again after bouncing back",
+        "메아리",
+        "回声"
+      ],
+      [
+        "flutter",
+        "to move with quick light wing movements",
+        "팔랑이다",
+        "振翅"
+      ],
+      [
+        "rustle",
+        "a soft sound made by moving leaves or grass",
+        "바스락거리다",
+        "沙沙作响"
+      ],
+      [
+        "creature",
+        "a living animal",
+        "생물",
+        "生物"
+      ],
+      [
+        "listen",
+        "to pay attention to sound",
+        "귀 기울이다",
+        "聆听"
+      ]
+    ],
+    "extra": {
+      "title": "More Animals",
+      "passage": [
+        "There are animals that burrow, some that climb,",
+        "animals that sleep away the cold winter time.",
+        "There are animals that travel half the world and back,",
+        "and some that never leave one track.",
+        "Some will flutter and some of them will glide,",
+        "and some will creep along the hedgerow side.",
+        "Some will squawk, some will howl, and some will send an echo",
+        "ringing round the quarry where the shadows go.",
+        "Each creature has a habitat, a home it understands.",
+        "Each has a unique rhythm, on water or on sands.",
+        "There is no better music anywhere than this.",
+        "When the hedgerow rustles and you cannot see a thing,",
+        "listen. A chorus is beginning. Listen. Let them sing."
+      ],
+      "questions": [
+        [
+          "Finding Main Idea",
+          "What is this poem mostly about?",
+          [
+            "The many different ways animals move, live and sound",
+            "How to find an animal hiding in a hedgerow",
+            "Why some animals sleep through the winter",
+            "A quarry where nothing can be heard"
+          ],
+          "A",
+          "Every line adds another kind of animal, another way of moving or another sound."
+        ],
+        [
+          "Recalling Facts and Details",
+          "According to the poem, what do some animals do all winter?",
+          [
+            "travel half the world",
+            "call a chorus",
+            "sleep",
+            "climb"
+          ],
+          "C",
+          "The second line says they sleep away the whole cold winter time."
+        ],
+        [
+          "Understanding Sequence",
+          "What does the poem tell you to do after the hedgerow rustles?",
+          [
+            "Look for the animal.",
+            "Listen.",
+            "Walk away quietly.",
+            "Call out to it."
+          ],
+          "B",
+          "The last line repeats the instruction twice."
+        ],
+        [
+          "Recognising Cause and Effect",
+          "Why does the poem say you cannot see a thing?",
+          [
+            "Because it is the middle of winter.",
+            "Because the animals have all travelled away.",
+            "Because the quarry is full of shadows.",
+            "Because the animal is hidden inside the hedgerow."
+          ],
+          "D",
+          "The rustle comes from the hedgerow, which is where the animal is."
+        ],
+        [
+          "Comparing and Contrasting",
+          "How are the travelling animals different from the animals in the fourth line?",
+          [
+            "They are much larger.",
+            "They cover half the world, while the others never leave one track.",
+            "They move only at night.",
+            "They have no habitat of their own."
+          ],
+          "B",
+          "Those two lines are set directly against each other."
+        ],
+        [
+          "Making Predictions",
+          "A reader who follows the poem’s advice would most likely",
+          [
+            "stand still and notice sounds they had missed before.",
+            "catch an animal in the hedgerow.",
+            "learn the name of every animal.",
+            "stop going outside in winter."
+          ],
+          "A",
+          "The poem asks for listening, not looking or catching."
+        ],
+        [
+          "Finding Word Meaning in Context",
+          "In this poem, the word habitat means",
+          [
+            "a kind of sound.",
+            "a season of the year.",
+            "a way of moving.",
+            "the place where an animal lives."
+          ],
+          "D",
+          "The line calls it a home the creature understands."
+        ],
+        [
+          "Drawing Conclusions and Making Inferences",
+          "You can tell that the poet believes",
+          [
+            "animals are difficult to find.",
+            "only large animals are worth watching.",
+            "there is more to hear outdoors than most people notice.",
+            "hedgerows ought to be left uncut."
+          ],
+          "C",
+          "The poem ends by asking the reader to stop and hear something already happening."
+        ],
+        [
+          "Distinguishing Between Fact and Opinion",
+          "Which line expresses an opinion?",
+          [
+            "Some animals sleep away the winter.",
+            "Some animals travel half the world and back.",
+            "There is no better music anywhere than this.",
+            "Some animals creep along the hedgerow side."
+          ],
+          "C",
+          "Which music is best is a judgement; the other three describe what animals do."
+        ],
+        [
+          "Identifying Author's Purpose",
+          "The poet’s main purpose is",
+          [
+            "to make readers want to stop and listen to animals.",
+            "to explain how animals survive the winter.",
+            "to teach the names of animal homes.",
+            "to describe one particular hedgerow."
+          ],
+          "A",
+          "The poem ends on an instruction, which is what it has been building towards."
+        ],
+        [
+          "Interpreting Figurative Language",
+          "The poem says a chorus rings \"round the quarry\". Calling animal sounds a chorus suggests that they",
+          [
+            "are all made by the same animal.",
+            "sound together like singers in a group.",
+            "are far too quiet to hear.",
+            "come only at dawn."
+          ],
+          "B",
+          "A chorus is many voices at once, which is what the poem is describing."
+        ],
+        [
+          "Summarising",
+          "Which sentence best summarises the poem?",
+          [
+            "Animals sleep, climb and burrow in different ways.",
+            "A hedgerow rustles when an animal moves inside it.",
+            "Some animals travel a long way and others do not.",
+            "The poem lists the many ways animals move, sound and live, and ends by asking the reader to stand still and listen to them."
+          ],
+          "D",
+          "A summary needs both the list and the instruction it leads to."
+        ]
+      ]
+    },
+    "new": {
+      "title": "Creatures at Dusk",
+      "passage": [
+        "There are creatures in the hedgerow, some among the reeds,",
+        "creatures in the treetops where the wind leads.",
+        "Some will flutter and some of them will glide,",
+        "some will rustle where the dry leaves hide.",
+        "Some of them will squawk and some of them will howl,",
+        "and one will send an echo back across the bowl",
+        "of hills at dusk together — a chorus, not a song,",
+        "each voice its own rhythm, and none of them is wrong.",
+        "Every habitat has music you were never taught to hear.",
+        "Every creature has a language that is unique and clear.",
+        "Stand outside at evening. Do not speak. Do not run.",
+        "Listen to the hedgerow. It has already begun."
+      ],
+      "questions": [
+        [
+          "Finding Main Idea",
+          "What is this poem mostly about?",
+          [
+            "How to walk quietly at dusk",
+            "The many voices of animals, and an invitation to listen to them",
+            "Why creatures hide beneath dry leaves",
+            "The shape of the hills in the evening"
+          ],
+          "B",
+          "The poem lists voices for eight lines and then asks the reader to listen."
+        ],
+        [
+          "Recalling Facts and Details",
+          "Where does the poem say creatures live?",
+          [
+            "only in the treetops",
+            "only among the reeds",
+            "in the hills at dusk",
+            "in the hedgerow, the reeds and the treetops"
+          ],
+          "D",
+          "All three are named in the first two lines."
+        ],
+        [
+          "Understanding Sequence",
+          "What does the poem tell you to do last?",
+          [
+            "Stand outside at evening.",
+            "Stop speaking.",
+            "Listen to the hedgerow.",
+            "Stop running."
+          ],
+          "C",
+          "The other three come first; listening is the final instruction."
+        ],
+        [
+          "Recognising Cause and Effect",
+          "According to the poem, why can you hear music you were never taught to hear?",
+          [
+            "Because every habitat has its own.",
+            "Because the wind carries it down from the treetops.",
+            "Because the creatures sing only at dusk.",
+            "Because the hills echo it back to you."
+          ],
+          "A",
+          "The line says every habitat has music, which is why it is there to be heard."
+        ],
+        [
+          "Comparing and Contrasting",
+          "How does the poem say the voices differ from one another?",
+          [
+            "Some are much louder than others.",
+            "Some come at dawn and some at dusk.",
+            "Some are made by birds and some by insects.",
+            "Each has a different rhythm, and none of them is wrong."
+          ],
+          "D",
+          "That is stated directly in the eighth line."
+        ],
+        [
+          "Making Predictions",
+          "A reader who does what the last two lines ask would most likely",
+          [
+            "find the creature that made the sound.",
+            "hear more than they had expected to.",
+            "frighten all the animals away.",
+            "learn the name of every bird."
+          ],
+          "B",
+          "The poem promises music the reader was never taught to hear, not a sighting."
+        ],
+        [
+          "Finding Word Meaning in Context",
+          "In this poem, the word glide means",
+          [
+            "to move smoothly through the air without effort.",
+            "to hide beneath the dry leaves.",
+            "to call out very loudly.",
+            "to run away quickly."
+          ],
+          "A",
+          "It is set beside flutter, as another way of moving through the air."
+        ],
+        [
+          "Drawing Conclusions and Making Inferences",
+          "You can tell that the poet thinks",
+          [
+            "animals ought to be kept in one habitat.",
+            "the hedgerow is the only place worth visiting.",
+            "most people miss what is going on around them.",
+            "evening is the only time animals make any sound."
+          ],
+          "C",
+          "The music is described as something the reader was never taught to hear, and it is already going on."
+        ],
+        [
+          "Distinguishing Between Fact and Opinion",
+          "Which line expresses an opinion?",
+          [
+            "Some of them will squawk and some of them will howl.",
+            "There are creatures in the reeds.",
+            "None of them is wrong.",
+            "Creatures live in the treetops."
+          ],
+          "C",
+          "Whether a voice is wrong is a judgement; the other three simply say what is there."
+        ],
+        [
+          "Identifying Author's Purpose",
+          "The poet’s main purpose is",
+          [
+            "to explain how animals make their sounds.",
+            "to persuade the reader to stop and listen.",
+            "to describe the plants that grow in a hedgerow.",
+            "to teach the names of animal habitats."
+          ],
+          "B",
+          "The last three lines are instructions, and everything before them is the reason."
+        ],
+        [
+          "Interpreting Figurative Language",
+          "The poem calls the animal sounds \"a chorus, not a song\". This suggests the sounds",
+          [
+            "are written down like music.",
+            "are all exactly the same as one another.",
+            "come from one animal only.",
+            "are many voices sounding at once, rather than one tune."
+          ],
+          "D",
+          "A chorus is many voices together, which is why the poem sets it against a song."
+        ],
+        [
+          "Summarising",
+          "Which sentence best summarises the poem?",
+          [
+            "The poem names the creatures and sounds of a hedgerow at dusk and asks the reader to stand still and listen to them.",
+            "Creatures flutter, glide and rustle among the dry leaves.",
+            "An echo comes back across a bowl of hills.",
+            "Every creature has a language of its own."
+          ],
+          "A",
+          "A summary needs both what is out there and what the reader is asked to do about it."
+        ]
+      ]
+    }
+  }
+]);

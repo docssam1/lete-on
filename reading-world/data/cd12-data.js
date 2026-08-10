@@ -1,1 +1,414 @@
-window.CARS_D_REGISTER([{"id":"cd12","chapter":"Post Test","num":2,"page":44,"title":"Contest Rules","theme":"Reading an announcement closely to understand eligibility, deadlines, judging, and prizes.","words":[["contest","an event in which people compete","대회","比赛"],["eligible","allowed to enter because rules are met","자격이 있는","有资格的"],["deadline","the final time for submitting something","마감일","截止日期"],["entry","a piece of work submitted to a contest","출품작","参赛作品"],["original","created by the person submitting it","독창적인","原创的"],["judge","to evaluate and choose the best","심사하다","评审"],["criteria","standards used to make a decision","기준","标准"],["notify","to officially tell someone","알리다","通知"],["publish","to make writing available to readers","발표·출판하다","发表"],["category","a group of similar entries","부문","类别"],["submit","to send work for consideration","제출하다","提交"],["prize","a reward for winning","상품","奖品"]],"extra":{"title":"Young Inventors Challenge","passage":["YOUNG INVENTORS CHALLENGE","Who may enter? Students in Years 4–6 may enter as individuals or teams of up to three. Every invention must be the students’ original work, although an adult may help with safe tool use.","Choose one problem: saving water, reducing classroom waste, or making travel to school safer. Submit a one-page explanation, a labelled drawing, and either a working model or a two-minute demonstration video. Entries must be received by 5:00 p.m. on 18 September.","Judges will score each entry for usefulness, creativity, clear explanation, and safe design. The highest-scoring entry in each year level will receive a science-kit voucher. One overall winner will also visit the city design laboratory. Finalists will be notified by email on 2 October.","Before submitting, check that every team member’s name is included and that your video link opens correctly. Late or incomplete entries cannot be judged. Start with a small problem you understand well—great inventions often begin with one careful question."],"main":"The announcement explains how Years 4–6 students can enter an invention challenge and how entries will be judged.","main_wrong":["The announcement teaches students to build one exact machine.","The contest is only for adult engineers.","Every entrant automatically visits a laboratory."],"detail_q":"What must students submit besides a one-page explanation and labelled drawing?","detail_a":"A working model or a two-minute demonstration video.","detail_wrong":["A ten-page biography.","A school report card.","A paid entry ticket."],"sequence":["Choose one of the listed problems.","Create the explanation, drawing, and model or video.","Check names and links.","Submit before the deadline."],"cause_q":"Why should teams test their video link?","cause_a":"An unusable link could make the entry incomplete and impossible to judge.","compare_q":"How are year-level winners and the overall winner different?","compare_a":"Year-level winners receive vouchers, while the overall winner also visits a design laboratory.","predict_q":"What will happen to an entry received after the deadline?","predict_a":"It will not be judged.","vocab":["original","made by the students themselves rather than copied"],"infer_q":"Why does the announcement allow adult help only with safe tool use?","infer_a":"Students must create the invention themselves while still avoiding unsafe work.","facts":["Teams may have up to three students.","There are three problem choices.","Finalists are notified by email."],"opinion":"The design-laboratory visit is the most exciting prize imaginable.","purpose":"persuade","figurative":["begin with one careful question","start by clearly identifying a real problem to solve"],"summary":"Years 4–6 students may submit original inventions on selected problems by a deadline, following specific format, safety, and judging rules.","cause_wrong":["Judges award extra points to entries that include a video.","The link must open before 5:00 p.m. so the entry can be timed.","A working video link replaces the need for a labelled drawing."],"compare_wrong":["Year-level winners are notified by email, while the overall winner is told in person.","Year-level winners are chosen by judges, while the overall winner is chosen by entrants.","Year-level winners must enter as teams, while the overall winner must enter alone."],"predict_wrong":["It will be judged, but the score will be reduced.","It will be held over and entered in next year's challenge.","It will be judged only if the video link opens correctly."],"vocab_wrong":["made earlier than any other invention of its kind","the first rough draft of a design before it is improved","judged to be the most creative entry in the contest"],"infer_wrong":["Adults understand the judging standards better than students do.","Schools require an adult to be present during every activity.","Teams of three need an adult to organise their work."],"figurative_wrong":["write one question at the top of the one-page explanation","ask the judges a question before starting to build","answer a single question during the demonstration video"],"summary_wrong":["Judges score each entry for usefulness, creativity, clear explanation, and safe design.","Entrants must choose one problem: saving water, reducing waste, or safer travel.","The highest-scoring entry at each year level receives a science-kit voucher."],"_pattern":"ACDBACDBACDB"},"new":{"title":"Our Community Photo Contest","passage":["OUR COMMUNITY THROUGH YOUR EYES","Students aged 9–13 are invited to submit one photograph showing cooperation in their neighbourhood. The image may feature people, animals, or places, but it must have been taken by the student during the current year.","Before photographing a recognisable person, ask permission. Do not enter private property, block a path, or create a dangerous scene for the photograph. Basic cropping and brightness adjustment are allowed, but objects may not be added or removed digitally.","Upload a high-quality image and a caption of 50–100 words by 30 November. The caption should explain where the photograph was taken, what cooperation it shows, and why the moment mattered. Entries will be judged for storytelling, composition, originality, and respect for the community.","Six finalists will have their photographs displayed at the town library. The winner will receive a beginner photography workshop. All entrants will receive written feedback in January."],"main":"The notice gives safety, permission, editing, caption, deadline, and judging rules for a youth community photo contest.","main_wrong":["The notice asks students to photograph only famous people.","Entrants must use professional cameras.","The library will display every photograph."],"detail_q":"How long must the caption be?","detail_a":"Between 50 and 100 words.","detail_wrong":["Exactly ten words.","More than 500 words.","No caption is allowed."],"sequence":["Take an original photograph safely.","Ask permission when needed.","Prepare the image and caption.","Upload both by 30 November."],"cause_q":"Why must students ask before photographing a recognisable person?","cause_a":"The contest requires respect for people’s privacy and permission.","compare_q":"How is basic cropping different from adding an object digitally?","compare_a":"Cropping is allowed, but changing the scene by adding an object is not.","predict_q":"What will likely happen to a photograph taken by an adult?","predict_a":"It will be ineligible because the student must take the photograph.","vocab":["composition","the way visual parts are arranged in a photograph"],"infer_q":"Why does the contest forbid creating a dangerous scene?","infer_a":"A photograph is not worth risking anyone’s safety.","facts":["Students aged 9–13 may enter.","Six finalists will be displayed.","Written feedback will arrive in January."],"opinion":"A photography workshop is a better prize than money.","purpose":"persuade","figurative":["through your eyes","from your own point of view as shown in your photograph"],"summary":"Young students may enter one respectful, safely taken community photograph with a short caption, following editing and deadline rules.","cause_wrong":["People who agree can be asked to move into a better position.","The person's name has to be included in the written caption.","Photographs of people are scored higher than photographs of places."],"compare_wrong":["Cropping must be described in the caption, while adding an object need not be.","Cropping is allowed only for finalists, while adding objects is allowed for everyone.","Cropping changes the brightness, while adding an object changes the composition."],"predict_wrong":["It will be accepted as long as the student writes the caption.","It will be judged, but only for composition and originality.","It will be accepted if the adult sends written permission."],"vocab_wrong":["the short piece of writing that accompanies an image","the level of brightness chosen for a photograph","the story that a photograph is meant to tell"],"infer_wrong":["A dangerous scene would not show cooperation in a neighbourhood.","Risky photographs could not be displayed at the town library.","Staged photographs are harder to crop and adjust afterwards."],"figurative_wrong":["photographed with the camera held close to your face","showing a close-up picture of a person's eyes","taken without looking at the camera's screen"],"summary_wrong":["Six finalists will have their photographs displayed at the town library.","Entries are judged for storytelling, composition, originality, and respect.","Students must upload a caption of 50-100 words by 30 November."],"_pattern":"DBCADBCADBCA"}}]);
+// Lesson cd12 — shared (non-licensed) content only. The licensed original
+// passage and questions live in Supabase (lesson_content), never here.
+// Both practice sets are written out in full rather than generated from the
+// scaffold in cars-d-engine.js.
+window.CARS_D_REGISTER([
+  {
+    "id": "cd12",
+    "chapter": "Post Test",
+    "num": 2,
+    "page": 44,
+    "title": "Contest Rules",
+    "theme": "Reading an announcement closely to understand eligibility, deadlines, judging, and prizes.",
+    "words": [
+      [
+        "contest",
+        "an event in which people compete",
+        "대회",
+        "比赛"
+      ],
+      [
+        "eligible",
+        "allowed to enter because rules are met",
+        "자격이 있는",
+        "有资格的"
+      ],
+      [
+        "deadline",
+        "the final time for submitting something",
+        "마감일",
+        "截止日期"
+      ],
+      [
+        "entry",
+        "a piece of work submitted to a contest",
+        "출품작",
+        "参赛作品"
+      ],
+      [
+        "original",
+        "created by the person submitting it",
+        "독창적인",
+        "原创的"
+      ],
+      [
+        "judge",
+        "to evaluate and choose the best",
+        "심사하다",
+        "评审"
+      ],
+      [
+        "criteria",
+        "standards used to make a decision",
+        "기준",
+        "标准"
+      ],
+      [
+        "notify",
+        "to officially tell someone",
+        "알리다",
+        "通知"
+      ],
+      [
+        "publish",
+        "to make writing available to readers",
+        "발표·출판하다",
+        "发表"
+      ],
+      [
+        "category",
+        "a group of similar entries",
+        "부문",
+        "类别"
+      ],
+      [
+        "submit",
+        "to send work for consideration",
+        "제출하다",
+        "提交"
+      ],
+      [
+        "prize",
+        "a reward for winning",
+        "상품",
+        "奖品"
+      ]
+    ],
+    "extra": {
+      "title": "Young Inventors Challenge",
+      "passage": [
+        "RIVERSIDE LIBRARY — YOUNG INVENTORS CHALLENGE",
+        "Have you built something nobody asked you to build? We want to see it.",
+        "HOW TO ENTER",
+        "1. The contest is open to students in years 3 to 8. You may enter alone or in a team of up to three.",
+        "2. Every entry must be your own original work. You may use a kit, but the idea must be yours.",
+        "3. Choose one category: Something That Moves, Something That Saves Time, or Something That Helps Somebody.",
+        "4. Submit a photograph, a drawing showing how it works, and no more than 200 words explaining the problem it solves.",
+        "5. The deadline is 5 p.m. on 14 March. Entries arriving after that time are not eligible and will be returned unopened.",
+        "6. Judges will use three criteria: does it work, is the idea new, and can you explain it clearly. A thing that half works and is well explained will beat a thing that works and is not.",
+        "7. We will notify every entrant by email in April, whether they have won or not.",
+        "8. The prize in each category is a £30 book token. Winning drawings will be published on the library noticeboard for a year.",
+        "Build something. Bring it in."
+      ],
+      "questions": [
+        [
+          "Finding Main Idea",
+          "What is this announcement mostly about?",
+          [
+            "How to build a machine that saves time",
+            "How to enter an invention contest at the library",
+            "Why the library is changing its noticeboard",
+            "What the judges of a contest do all year"
+          ],
+          "B",
+          "Every numbered rule tells the reader something they must do in order to enter."
+        ],
+        [
+          "Recalling Facts and Details",
+          "How many people may work together on one entry?",
+          [
+            "up to three",
+            "only one",
+            "up to eight",
+            "any number"
+          ],
+          "A",
+          "Rule 1 allows a team of up to three."
+        ],
+        [
+          "Understanding Sequence",
+          "What is the last thing that happens for somebody who enters?",
+          [
+            "The judges apply the three criteria.",
+            "The entry is submitted with a drawing.",
+            "Winning drawings are published on the noticeboard.",
+            "The deadline passes on 14 March."
+          ],
+          "C",
+          "Entering, judging and notifying all come before anything is put on the noticeboard."
+        ],
+        [
+          "Recognising Cause and Effect",
+          "What happens to an entry that arrives at six o’clock on 14 March?",
+          [
+            "It is judged with the others.",
+            "It is entered in a different category.",
+            "It is held over until next year.",
+            "It is not eligible and is returned unopened."
+          ],
+          "D",
+          "Rule 5 sets the deadline at 5 p.m. and says what happens after it."
+        ],
+        [
+          "Comparing and Contrasting",
+          "According to rule 6, how would the judges treat a device that works but is explained badly?",
+          [
+            "It would be placed below one that half works and is well explained.",
+            "It would win, because working matters most.",
+            "It would be moved into another category.",
+            "It would be returned to the entrant."
+          ],
+          "A",
+          "Rule 6 states that outcome directly."
+        ],
+        [
+          "Making Predictions",
+          "Somebody who enters but does not win will most likely",
+          [
+            "hear nothing further from the library.",
+            "be asked to enter again next year.",
+            "receive an email in April anyway.",
+            "have their drawing published."
+          ],
+          "C",
+          "Rule 7 says every entrant is notified, whether they have won or not."
+        ],
+        [
+          "Finding Word Meaning in Context",
+          "In this announcement, the word eligible means",
+          [
+            "well made.",
+            "allowed to take part.",
+            "sent by post.",
+            "chosen as a winner."
+          ],
+          "B",
+          "Rule 5 uses it for entries that arrive too late to be allowed in."
+        ],
+        [
+          "Drawing Conclusions and Making Inferences",
+          "You can tell from this announcement that the organisers",
+          [
+            "care as much about explaining an idea as about building it.",
+            "expect every entry to work perfectly.",
+            "will only accept inventions made from kits.",
+            "prefer teams to individual entrants."
+          ],
+          "A",
+          "Rule 4 asks for an explanation and rule 6 puts explaining above working."
+        ],
+        [
+          "Distinguishing Between Fact and Opinion",
+          "Which sentence expresses an opinion?",
+          [
+            "The deadline is 5 p.m. on 14 March.",
+            "The prize in each category is a £30 book token.",
+            "A thing that half works and is well explained will beat a thing that works and is not.",
+            "You may enter alone or in a team of up to three."
+          ],
+          "C",
+          "That is the judges’ view of what matters; the other three are rules that can be checked."
+        ],
+        [
+          "Identifying Author's Purpose",
+          "The author’s main purpose in this announcement is to",
+          [
+            "describe inventions that children have made before.",
+            "explain how to build something useful.",
+            "persuade readers to visit the library more often.",
+            "tell readers how to take part in the contest."
+          ],
+          "D",
+          "It is organised as numbered instructions for entering, from start to finish."
+        ],
+        [
+          "Interpreting Figurative Language",
+          "The announcement asks, \"Have you built something nobody asked you to build?\" This question is really asking whether the reader",
+          [
+            "has ever disobeyed a teacher.",
+            "has made something on their own idea alone.",
+            "owns a kit at home.",
+            "has finished all their homework."
+          ],
+          "B",
+          "It is a way of asking for inventions that came from the entrant, which rule 2 then requires."
+        ],
+        [
+          "Summarising",
+          "Which sentence best summarises this announcement?",
+          [
+            "Entries must be submitted with a photograph and a drawing.",
+            "A library is offering book tokens as prizes this spring.",
+            "Judges will use three criteria when they read the entries.",
+            "A library invites students in years 3 to 8 to submit an invention of their own by 14 March, sets out how it will be judged, and says what the winners receive."
+          ],
+          "D",
+          "A summary needs who may enter, by when, how it is judged and what is won."
+        ]
+      ]
+    },
+    "new": {
+      "title": "Photograph the City",
+      "passage": [
+        "CITY MUSEUM — PHOTOGRAPH THE CITY",
+        "One picture. Your city. Show us something the rest of us walk past.",
+        "RULES",
+        "1. The contest is open to anyone aged 8 to 16 who lives in the city or goes to school here.",
+        "2. One entry per person. The photograph must be your own original work and must have been taken this year.",
+        "3. Choose one category: Streets, Water, People at Work, or After Dark.",
+        "4. Submit your photograph as a print, no larger than A4, with your name, age and category written on the back.",
+        "5. The deadline is 30 September. Photographs handed in after that date are not eligible, and we cannot return them.",
+        "6. The judges are two photographers and one museum curator. The criteria are simple: is it interesting to look at, and does it tell us something we did not already know?",
+        "7. We will notify the shortlist by post during October.",
+        "8. The first prize in each category is a camera. Every shortlisted photograph will be published in the museum foyer from November.",
+        "Look up. Take one picture. Bring it to the front desk."
+      ],
+      "questions": [
+        [
+          "Finding Main Idea",
+          "What is this announcement mostly about?",
+          [
+            "A museum exhibition opening in November",
+            "How photographs are printed and mounted",
+            "How to enter a photography contest run by the museum",
+            "The work of a museum curator"
+          ],
+          "C",
+          "The numbered rules take the reader from who may enter through to what winners receive."
+        ],
+        [
+          "Recalling Facts and Details",
+          "Who may enter this contest?",
+          [
+            "anyone aged 8 to 16 who lives in the city or goes to school there",
+            "anyone who lives in the country",
+            "museum members only",
+            "anyone who owns a camera"
+          ],
+          "A",
+          "Rule 1 gives both the age range and the connection to the city."
+        ],
+        [
+          "Understanding Sequence",
+          "What must be written on the back of the print?",
+          [
+            "the date the photograph was taken",
+            "the name of the street",
+            "the name of the camera used",
+            "the entrant’s name, age and category"
+          ],
+          "D",
+          "Rule 4 lists exactly those three things."
+        ],
+        [
+          "Recognising Cause and Effect",
+          "Why can a photograph handed in on 1 October not be returned?",
+          [
+            "The museum keeps every entry it receives.",
+            "It arrived after the deadline, and rule 5 says late entries are not returned.",
+            "It was entered in the wrong category.",
+            "The judges have already chosen the shortlist."
+          ],
+          "B",
+          "Rule 5 sets the deadline at 30 September and states both consequences."
+        ],
+        [
+          "Comparing and Contrasting",
+          "How do the two judging criteria differ from each other?",
+          [
+            "One is about the photographer, the other about the camera.",
+            "One applies to prints and the other to digital files.",
+            "One is used in October and the other in November.",
+            "One is about how it looks, the other about what it tells you."
+          ],
+          "D",
+          "Rule 6 asks whether it is interesting to look at and whether it tells us something new."
+        ],
+        [
+          "Making Predictions",
+          "Somebody whose photograph is shortlisted will most likely",
+          [
+            "be told by post in October and see their picture in the foyer from November.",
+            "receive a camera whatever happens.",
+            "be asked to take a second photograph.",
+            "hear nothing until the following year."
+          ],
+          "A",
+          "Rules 7 and 8 give the notification and the display in that order."
+        ],
+        [
+          "Finding Word Meaning in Context",
+          "In this announcement, the word original means",
+          [
+            "unusual or strange.",
+            "the first one ever made.",
+            "taken a long time ago.",
+            "made by the person entering it."
+          ],
+          "D",
+          "Rule 2 uses it to require that the entrant took the photograph themselves."
+        ],
+        [
+          "Drawing Conclusions and Making Inferences",
+          "You can tell from this announcement that the organisers want",
+          [
+            "photographs of famous buildings.",
+            "as many entries as possible from each person.",
+            "photographs of ordinary things most people overlook.",
+            "entries only from people who own good cameras."
+          ],
+          "C",
+          "The opening line asks for something the rest of us walk past."
+        ],
+        [
+          "Distinguishing Between Fact and Opinion",
+          "Which sentence expresses an opinion?",
+          [
+            "The deadline is 30 September.",
+            "The criteria are simple.",
+            "One entry per person.",
+            "The first prize in each category is a camera."
+          ],
+          "B",
+          "Whether something is simple is a judgement; the other three are rules."
+        ],
+        [
+          "Identifying Author's Purpose",
+          "The author’s main purpose in this announcement is to",
+          [
+            "tell readers how to take part in the contest.",
+            "teach readers how to take better photographs.",
+            "describe the museum foyer.",
+            "persuade readers to buy a camera."
+          ],
+          "A",
+          "Every part of it is an instruction for entering."
+        ],
+        [
+          "Interpreting Figurative Language",
+          "The announcement begins, \"Look up.\" This is asking the reader to",
+          [
+            "photograph tall buildings only.",
+            "check the weather before going out.",
+            "pay attention to what is around them.",
+            "read the rules more carefully."
+          ],
+          "C",
+          "It goes with showing us something the rest of us walk past."
+        ],
+        [
+          "Summarising",
+          "Which sentence best summarises this announcement?",
+          [
+            "A museum will display photographs in its foyer from November.",
+            "A museum invites people aged 8 to 16 to submit one photograph of their city in one of four categories by 30 September, and sets out how it will be judged and what winners receive.",
+            "Judges for a photography contest include a museum curator.",
+            "Photographs must be printed no larger than A4."
+          ],
+          "B",
+          "A summary needs who may enter, what and by when, how it is judged and the prize."
+        ]
+      ]
+    }
+  }
+]);

@@ -1,1 +1,406 @@
-window.CARS_D_REGISTER([{"id":"cd11","chapter":"Post Test","num":1,"page":41,"title":"Animal Communication","theme":"How large animals use low or complex sounds to communicate over distance.","words":[["migrate","to travel seasonally from one region to another","이동하다","迁徙"],["pod","a social group of whales or dolphins","고래 무리","鲸群"],["frequency","the rate of sound-wave vibration","주파수","频率"],["vibration","a rapid back-and-forth movement","진동","振动"],["communicate","to share information","의사소통하다","交流"],["recording","stored sound or video","녹음","录音"],["pattern","a repeated arrangement","패턴","模式"],["distance","the space between places","거리","距离"],["signal","a sound or action carrying information","신호","信号"],["researcher","a person who studies a subject carefully","연구자","研究人员"],["unique","different from others","독특한","独特的"],["detect","to notice or discover something","감지하다","探测"]],"extra":{"title":"Elephant Rumbles","passage":["Elephants are famous for trumpeting, but many of their most important sounds are deep rumbles. Some rumbles are so low that people can barely hear them. Other elephants can detect these low frequencies from several kilometres away.","A herd uses different calls for different situations. A mother may rumble to guide a calf, while distant family groups call before meeting. Elephants also produce alarm signals when they sense danger. The sound travels through air, and some vibrations may also move through the ground.","Researchers record calls with special microphones and compare them with the elephants’ behaviour. They have found repeated patterns connected with greetings, movement, and warning. However, elephant communication is complex, and scientists do not claim that every rumble has been translated.","Protecting communication routes is important. Roads, engines, and other human noise can cover quiet signals. When habitats remain connected and noise is limited, family groups have a better chance of hearing one another."],"main":"Elephants use low rumbles and vibrations to communicate across distance, and researchers are studying these complex signals.","main_wrong":["Elephants communicate only by waving their trunks.","Every elephant rumble has already been translated into human language.","Road noise helps elephant families hear better."],"detail_q":"What tools do researchers use to record low elephant calls?","detail_a":"Special microphones.","detail_wrong":["Underwater cameras.","Telescopes.","Weather balloons."],"sequence":["An elephant produces a low rumble.","The sound and vibrations travel outward.","Another elephant detects the signal.","Researchers compare recordings with behaviour."],"cause_q":"Why can human noise be a problem for elephants?","cause_a":"It can cover the quieter signals elephants use to communicate.","compare_q":"How are trumpets and low rumbles different?","compare_a":"Trumpets are easier for people to hear, while some rumbles are extremely low and travel far.","predict_q":"What may happen if a noisy road divides a herd’s habitat?","predict_a":"Family groups may have more difficulty hearing one another’s calls.","vocab":["detect","to notice or discover something that may be difficult to sense"],"infer_q":"Why do scientists compare calls with behaviour?","infer_a":"They want to understand what situations or messages the sounds may represent.","facts":["Some rumbles can travel several kilometres.","Elephants use alarm signals.","Researchers have found repeated call patterns."],"opinion":"Elephant rumbles are the most beautiful sounds in nature.","purpose":"inform","figurative":["communication routes","the connected spaces through which animals and their signals can move"],"summary":"Elephants send low-frequency calls over long distances, while researchers study their meanings and the effects of noise on communication.","cause_wrong":["It frightens herds into trumpeting instead of rumbling.","It stops vibrations from travelling through the ground.","It makes elephants call at a much lower frequency than usual."],"compare_wrong":["Trumpets carry over several kilometres, while rumbles fade within a short distance.","Trumpets are used only for alarm, while rumbles are used only for greeting.","Trumpets travel through the ground, while rumbles travel through the air."],"predict_wrong":["The herd will begin trumpeting instead of using low rumbles.","Elephants will move closer to the road so their calls carry further.","Researchers will no longer be able to record any calls at all."],"vocab_wrong":["to produce a sound at a very low frequency","to travel toward the source of a distant sound","to repeat a call until another animal answers"],"infer_wrong":["They hope to teach elephants to respond to recorded calls.","They want to prove that every rumble carries a separate message.","They are testing which microphones record low sounds most clearly."],"figurative_wrong":["the paths that elephants walk between feeding grounds","the roads built for researchers to reach the herds","the distances that a single rumble is able to travel"],"summary_wrong":["Some elephant rumbles are so low that people can barely hear them.","Researchers record elephant calls with special microphones.","Roads, engines, and other human noise can cover quiet animal signals."],"_pattern":"CABDCABDCABD"},"new":{"title":"Dolphin Signature Whistles","passage":["Bottlenose dolphins live in social groups and often move through water where visibility is poor. Sound helps them remain connected. In addition to clicks used for echolocation, dolphins produce whistles.","Young dolphins develop a special pattern called a signature whistle. It works somewhat like a name. A dolphin repeats its own pattern, and other dolphins may copy the pattern when calling to that individual. The whistle can still be recognised even when speed or pitch changes slightly.","Scientists study these sounds with underwater microphones called hydrophones. They match recordings with video and location data to learn which dolphin called and how others responded. Research suggests that signature whistles help dolphins reunite and maintain social bonds.","The ocean is not naturally silent, but engines and construction can add intense noise. Researchers are studying how this affects dolphins’ ability to recognise calls. Understanding the sound world of dolphins may help people plan quieter and safer ocean activity."],"main":"Dolphins use individual signature whistles to identify and contact one another, and scientists study how noise affects this system.","main_wrong":["Dolphins use only eyesight to find group members.","Every dolphin is born knowing the same whistle.","Hydrophones create whistles for dolphins."],"detail_q":"What is a hydrophone?","detail_a":"An underwater microphone.","detail_wrong":["A waterproof telescope.","A type of dolphin food.","A boat engine."],"sequence":["A young dolphin develops a signature whistle.","The dolphin repeats its pattern.","Another dolphin may copy that pattern to call it.","Researchers match recordings with behaviour."],"cause_q":"Why are signature whistles useful in unclear water?","cause_a":"They allow dolphins to identify and contact one another by sound.","compare_q":"How are echolocation clicks and signature whistles different?","compare_a":"Clicks help dolphins sense surroundings, while signature whistles help identify individuals.","predict_q":"What could happen if engine noise becomes much louder?","predict_a":"Dolphins may find it harder to recognise or hear one another’s whistles.","vocab":["signature","a distinctive pattern connected with one individual"],"infer_q":"Why do researchers use both recordings and video?","infer_a":"They need to connect each sound with the dolphin and action that produced it.","facts":["Dolphins produce whistles.","Signature whistles can be recognised after slight pitch changes.","Hydrophones record underwater sound."],"opinion":"A dolphin whistle is more pleasant than any musical instrument.","purpose":"inform","figurative":["works somewhat like a name","serves as an identifying signal for one dolphin"],"summary":"Dolphins develop recognisable whistles that act as individual identifiers, and researchers examine their social use and vulnerability to noise.","cause_wrong":["They light up so that dolphins can be seen in dark water.","They bounce off objects and reveal what lies ahead.","They travel faster through water than clicks do."],"compare_wrong":["Clicks are copied by other dolphins, while whistles are used only once.","Clicks are used in social groups, while whistles are used when swimming alone.","Clicks change with speed and pitch, while whistles always stay the same."],"predict_wrong":["Dolphins will stop producing signature whistles altogether.","Dolphins will use echolocation clicks instead of whistles to identify friends.","Hydrophones will record the whistles more clearly than before."],"vocab_wrong":["a written mark used to identify a person","a sound copied exactly from another animal","a greeting made when two groups first meet"],"infer_wrong":["Video recordings are clearer than sound recordings underwater.","They must prove that dolphins can see as well as they hear.","Hydrophones cannot record more than one dolphin at a time."],"figurative_wrong":["dolphins can pronounce the names people give them","each whistle spells out a word in dolphin language","dolphins are given names by the researchers who study them"],"summary_wrong":["Dolphins use clicks for echolocation when they swim in unclear water.","Scientists record dolphin sounds using underwater microphones called hydrophones.","Young dolphins develop a whistle pattern that other dolphins may copy."],"_pattern":"BDACBDACBDAC"}}]);
+// Lesson cd11 — shared (non-licensed) content only. The licensed original
+// passage and questions live in Supabase (lesson_content), never here.
+// Both practice sets are written out in full rather than generated from the
+// scaffold in cars-d-engine.js.
+window.CARS_D_REGISTER([
+  {
+    "id": "cd11",
+    "chapter": "Post Test",
+    "num": 1,
+    "page": 41,
+    "title": "Animal Communication",
+    "theme": "How large animals use low or complex sounds to communicate over distance.",
+    "words": [
+      [
+        "migrate",
+        "to travel seasonally from one region to another",
+        "이동하다",
+        "迁徙"
+      ],
+      [
+        "pod",
+        "a social group of whales or dolphins",
+        "고래 무리",
+        "鲸群"
+      ],
+      [
+        "frequency",
+        "the rate of sound-wave vibration",
+        "주파수",
+        "频率"
+      ],
+      [
+        "vibration",
+        "a rapid back-and-forth movement",
+        "진동",
+        "振动"
+      ],
+      [
+        "communicate",
+        "to share information",
+        "의사소통하다",
+        "交流"
+      ],
+      [
+        "recording",
+        "stored sound or video",
+        "녹음",
+        "录音"
+      ],
+      [
+        "pattern",
+        "a repeated arrangement",
+        "패턴",
+        "模式"
+      ],
+      [
+        "distance",
+        "the space between places",
+        "거리",
+        "距离"
+      ],
+      [
+        "signal",
+        "a sound or action carrying information",
+        "신호",
+        "信号"
+      ],
+      [
+        "researcher",
+        "a person who studies a subject carefully",
+        "연구자",
+        "研究人员"
+      ],
+      [
+        "unique",
+        "different from others",
+        "독특한",
+        "独特的"
+      ],
+      [
+        "detect",
+        "to notice or discover something",
+        "감지하다",
+        "探测"
+      ]
+    ],
+    "extra": {
+      "title": "Listening to the Ocean",
+      "passage": [
+        "For most of history nobody knew whales made any sound at all. Sailors heard a knocking against the hull and blamed the timbers.",
+        "That changed in the 1950s, when navy engineers lowered microphones into the deep ocean to detect submarines and kept picking up something they could not identify. The recordings were passed to biologists. The sound was humpback whales, and it was not random noise. It repeated.",
+        "A humpback song is built from units arranged into phrases, phrases into themes, and themes into a song that may run for half an hour and then begin again. Researchers who slow a recording down and draw it as a picture can see the pattern on the page. The song is sung on the wintering grounds, before the whales migrate north to feed. Nobody is certain what it communicates.",
+        "Every male in an ocean population sings very nearly the same song, and each population has its own, unique version. The song also changes through the season, and every singer changes with it.",
+        "How the change spreads is one of the strangest findings in animal biology. A new phrase that appears among whales off eastern Australia has been tracked moving east across the Pacific, reaching populations thousands of kilometres away within two years. Nobody has explained how a whale that has never met another pod learns its melody.",
+        "Blue whales do something different. Their calls are extremely low — some below the frequency a human ear can register at all — and low sound carries. A blue whale call can cross an entire ocean basin, because at that pitch the vibration loses very little energy over distance.",
+        "This creates a problem. Ships are loud, and ship noise sits in exactly the low band the largest animals use. Researchers comparing modern recordings with those from the 1960s find whales calling at a different pitch, and calling more often, which is what any of us would do in a noisy room.",
+        "A signal that once crossed an ocean may now cross a bay. The whales are still singing. It is the water that has changed."
+      ],
+      "questions": [
+        [
+          "Finding Main Idea",
+          "What is this passage mostly about?",
+          [
+            "How navy engineers built underwater microphones",
+            "The differences between blue whales and humpback whales",
+            "Why humpback whales migrate north each year",
+            "Whale song: how it was discovered, how it works and what now threatens it"
+          ],
+          "D",
+          "The passage moves from the discovery to the structure of the song to the noise problem."
+        ],
+        [
+          "Recalling Facts and Details",
+          "When did people first record whale sounds without knowing what they were?",
+          [
+            "in the 1960s",
+            "in the 1950s",
+            "two years ago",
+            "in the last century of sail"
+          ],
+          "B",
+          "Navy engineers picked them up in the 1950s while listening for submarines."
+        ],
+        [
+          "Understanding Sequence",
+          "Which of these happened first?",
+          [
+            "Engineers lowered microphones to detect submarines.",
+            "Biologists identified the sound as humpback whales.",
+            "Researchers compared modern recordings with older ones.",
+            "A new phrase spread across the Pacific."
+          ],
+          "A",
+          "The microphones came first; everything else followed from what they picked up."
+        ],
+        [
+          "Recognising Cause and Effect",
+          "Why can a blue whale call cross an entire ocean basin?",
+          [
+            "Blue whales are the largest animals alive.",
+            "They call more often than humpbacks do.",
+            "At a very low pitch the vibration loses little energy over distance.",
+            "Ocean water carries all sound equally well."
+          ],
+          "C",
+          "The passage gives the low pitch as the reason the sound survives the distance."
+        ],
+        [
+          "Comparing and Contrasting",
+          "How is a blue whale call different from a humpback song?",
+          [
+            "It is much lower, and it travels much further.",
+            "It lasts for half an hour and then repeats.",
+            "It changes through the season.",
+            "It is sung only on the wintering grounds."
+          ],
+          "A",
+          "The passage sets the very low blue whale call against the structured humpback song."
+        ],
+        [
+          "Making Predictions",
+          "If ship traffic in an ocean became much quieter, whales there would most likely",
+          [
+            "stop singing altogether.",
+            "sing at a higher pitch than before.",
+            "migrate at a different time of year.",
+            "be heard again over longer distances."
+          ],
+          "D",
+          "The passage says a signal that once crossed an ocean may now cross a bay, because of noise."
+        ],
+        [
+          "Finding Word Meaning in Context",
+          "In this passage, the word detect means",
+          [
+            "to record on tape.",
+            "to notice that something is there.",
+            "to travel a long way.",
+            "to sing the same song."
+          ],
+          "B",
+          "The microphones were there to notice submarines, and noticed whales instead."
+        ],
+        [
+          "Drawing Conclusions and Making Inferences",
+          "You can tell from the passage that researchers",
+          [
+            "have worked out exactly why humpbacks sing.",
+            "believe ship noise has no effect on whales.",
+            "still cannot explain how a new phrase spreads between populations.",
+            "think blue whales and humpbacks sing the same song."
+          ],
+          "C",
+          "It says nobody has explained how a whale that has never met another pod learns its melody."
+        ],
+        [
+          "Distinguishing Between Fact and Opinion",
+          "Which statement expresses an opinion?",
+          [
+            "Humpback songs may run for half an hour.",
+            "A new phrase was tracked moving east across the Pacific.",
+            "This is one of the strangest findings in animal biology.",
+            "Ship noise sits in the low band."
+          ],
+          "C",
+          "Strangest is a judgement; the other three are things that were measured or observed."
+        ],
+        [
+          "Identifying Author's Purpose",
+          "The author’s main purpose in this passage is to",
+          [
+            "explain what is known about whale song and what now endangers it.",
+            "persuade readers to stop travelling by ship.",
+            "describe how a microphone works underwater.",
+            "tell the story of one humpback whale."
+          ],
+          "A",
+          "The passage informs throughout and closes on the change to the ocean rather than on a demand."
+        ],
+        [
+          "Interpreting Figurative Language",
+          "The last paragraph says whales call more often now, \"which is what any of us would do in a noisy room.\" This comparison suggests the whales are",
+          [
+            "enjoying the extra sound around them.",
+            "singing a completely new song.",
+            "moving to a quieter part of the ocean.",
+            "repeating themselves to be heard over the noise."
+          ],
+          "D",
+          "People raise their voices and repeat themselves in a noisy room, which is the point of the comparison."
+        ],
+        [
+          "Summarising",
+          "Which sentence best summarises the passage?",
+          [
+            "Navy microphones once picked up sounds nobody could identify.",
+            "Whale song was discovered by accident, turns out to be structured and shared across a population, and is now being drowned out by ship noise.",
+            "Blue whale calls are lower than humpback songs.",
+            "A new phrase can travel across the Pacific within two years."
+          ],
+          "B",
+          "A summary needs the discovery, what the song is, and what is happening to it now."
+        ]
+      ]
+    },
+    "new": {
+      "title": "The Rumble You Cannot Hear",
+      "passage": [
+        "An elephant can hear another elephant ten kilometres away, and neither of them is making a sound you would notice.",
+        "Elephants trumpet, and a trumpet carries. But most elephant conversation happens far lower, in rumbles that sit at the very bottom of human hearing or below it. Researchers first suspected this in the 1980s, when a scientist watching elephants at a zoo noticed a throbbing in the air that she could feel rather than hear.",
+        "She was right. When the recordings were sped up, the rumbles became audible, and there were a great many of them. Elephants communicate almost constantly.",
+        "Low frequency is the whole point. High sounds scatter off trees and grass and die within a few hundred metres. A low rumble bends around obstacles and keeps going, which is why elephants can hold a conversation across a valley they cannot see across. A whale pod solves the same problem in water; elephants solve it in air, and in the ground itself.",
+        "Some of the signal never travels through the air at all. A rumble also sets up a vibration in the ground, and elephants detect it through their feet and through the bones of their legs. A herd will stop, spread its toes and stand very still, listening with its skeleton.",
+        "This matters most when they migrate. Families separate for months across enormous distances and find one another again afterwards. Each family has a pattern of calls its members recognise, and every elephant has a rumble of its own — a unique voice, as recognisable to a relative as a face is to us.",
+        "Researchers have played a recording of a dead elephant to her family years afterwards. The family answered, and then went looking for her.",
+        "What worries researchers now is what worries them about whales. Roads, mines and machinery all produce low-frequency noise. An elephant that cannot hear its herd across a valley is an elephant that has to cross the valley to find out, and the crossing is where the danger is."
+      ],
+      "questions": [
+        [
+          "Finding Main Idea",
+          "What is this passage mostly about?",
+          [
+            "Why elephants trumpet when they are frightened",
+            "How elephants talk to one another over long distances, and what threatens it",
+            "An experiment carried out at a zoo in the 1980s",
+            "The differences between elephants and whales"
+          ],
+          "B",
+          "The passage explains the rumbles, how they travel and what noise is doing to them."
+        ],
+        [
+          "Recalling Facts and Details",
+          "How did a scientist first suspect that elephants were making sounds she could not hear?",
+          [
+            "She saw the herd stop and spread its toes.",
+            "She played a recording to a family of elephants.",
+            "She felt a throbbing in the air rather than hearing it.",
+            "She measured the distance across a valley."
+          ],
+          "C",
+          "The passage says she noticed a throbbing she could feel rather than hear."
+        ],
+        [
+          "Understanding Sequence",
+          "What did researchers do to the recordings so that the rumbles could be heard?",
+          [
+            "They slowed them down.",
+            "They played them to a herd.",
+            "They drew them as pictures.",
+            "They sped them up."
+          ],
+          "D",
+          "When the recordings were sped up, the rumbles became audible."
+        ],
+        [
+          "Recognising Cause and Effect",
+          "Why does a low rumble travel further than a high sound?",
+          [
+            "It bends around obstacles instead of scattering off them.",
+            "It is much louder to begin with.",
+            "It travels only through the ground.",
+            "Elephants repeat it many times over."
+          ],
+          "A",
+          "High sounds scatter off trees and grass; a low rumble bends around them and keeps going."
+        ],
+        [
+          "Comparing and Contrasting",
+          "How is the way an elephant hears through its feet different from ordinary hearing?",
+          [
+            "The sound reaches it through the ground rather than through the air.",
+            "It requires the herd to be moving.",
+            "It works only at night.",
+            "It can only detect other members of the same family."
+          ],
+          "A",
+          "The passage says some of the signal never travels through the air at all."
+        ],
+        [
+          "Making Predictions",
+          "If a new road were built through elephant country, the herds there would most likely",
+          [
+            "stop rumbling and begin trumpeting instead.",
+            "hear one another across shorter distances than before.",
+            "migrate twice as often as they used to.",
+            "lose the ability to recognise one another’s voices."
+          ],
+          "B",
+          "Road noise sits in the low band, which is the band the rumbles use."
+        ],
+        [
+          "Finding Word Meaning in Context",
+          "In this passage, the word vibration means",
+          [
+            "a loud trumpeting call.",
+            "a distance measured in kilometres.",
+            "a shaking that carries sound through something.",
+            "a pattern of calls a family shares."
+          ],
+          "C",
+          "It is what the rumble sets up in the ground for the elephants to feel."
+        ],
+        [
+          "Drawing Conclusions and Making Inferences",
+          "You can tell from the passage that an elephant’s rumble",
+          [
+            "is the same for every elephant in Africa.",
+            "can only be heard by members of its own family.",
+            "is used mainly to frighten away predators.",
+            "identifies the individual making it."
+          ],
+          "D",
+          "It calls the rumble a unique voice, as recognisable to a relative as a face."
+        ],
+        [
+          "Distinguishing Between Fact and Opinion",
+          "Which statement expresses an opinion?",
+          [
+            "Elephants detect vibration through their feet.",
+            "Low frequency is the whole point.",
+            "Roads and mines produce low-frequency noise.",
+            "Families separate for months at a time."
+          ],
+          "B",
+          "That is the writer’s way of stressing what matters; the others are observations."
+        ],
+        [
+          "Identifying Author's Purpose",
+          "The author’s main purpose in this passage is to",
+          [
+            "explain how elephants communicate and why noise endangers it.",
+            "persuade readers to stop building roads.",
+            "describe the daily life of one elephant family.",
+            "compare elephants with whales in every respect."
+          ],
+          "A",
+          "The passage informs and ends by naming a consequence rather than making a demand."
+        ],
+        [
+          "Interpreting Figurative Language",
+          "The passage says a herd stands still, \"listening with its skeleton.\" This means the elephants are",
+          [
+            "keeping completely silent so that others can hear.",
+            "lying down on the ground to rest.",
+            "using their ears more carefully than usual.",
+            "picking up sound through their bones rather than their ears."
+          ],
+          "D",
+          "The rumble reaches them through their feet and the bones of their legs."
+        ],
+        [
+          "Summarising",
+          "Which sentence best summarises the passage?",
+          [
+            "A scientist at a zoo felt a throbbing in the air in the 1980s.",
+            "Elephants can hear one another ten kilometres apart.",
+            "Elephants hold long-distance conversations in sound too low for people to hear, carried through air and ground alike, and machinery is now crowding that band out.",
+            "Roads, mines and machinery produce low-frequency noise."
+          ],
+          "C",
+          "A summary needs how the rumbles work, why they carry, and what is happening to them."
+        ]
+      ]
+    }
+  }
+]);
