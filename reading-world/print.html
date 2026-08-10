@@ -119,6 +119,10 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .sheet.report .rp-leg{list-style:none;margin:0;padding:0;font-size:9.6pt}
 .sheet.report .rp-leg li{display:flex;align-items:center;gap:2mm;margin-bottom:1.4mm}
 .sheet.report .rp-leg i{width:3.4mm;height:3.4mm;border-radius:1mm;display:inline-block}
+.sheet.report .rp-memo{border-left:3px solid var(--brand2);background:#fffdf3;padding:2.5mm 3mm;
+  border-radius:0 2mm 2mm 0;margin-bottom:5mm;break-inside:avoid}
+.sheet.report .rp-memo b{font-size:10pt;color:#8a6a12}
+.sheet.report .rp-memo p{margin:1mm 0 0;font-size:9.8pt;line-height:1.6;white-space:pre-line}
 .sheet.report .rp-up{border:1px solid var(--brand);border-radius:2mm;padding:2.5mm 3mm;margin-bottom:5mm;break-inside:avoid}
 .sheet.report .rp-up ul{margin:0;padding-left:5mm;font-size:9.8pt;line-height:1.7}
 .sheet.report .rp-pri{font-size:9.8pt;margin-bottom:4mm;padding:2mm 3mm;border:1px solid var(--brand);border-radius:2mm}
@@ -690,6 +694,9 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
       <label class="chk on" style="margin-left:auto"><input type="checkbox" id="optRemedy" checked><span>약점 해결 처방 넣기</span></label>
     </div>
     <div id="gGrid" class="ansgrid"></div>
+    <label class="fld" style="margin:9px 0 0"><span>선생님 코멘트 (분석지에 인쇄됩니다)</span>
+      <textarea id="gMemo" rows="4" placeholder="예: 지문을 끝까지 읽지 않고 답을 고르는 습관이 보입니다. 2주간 시간을 재고 풀린 뒤 다시 확인하겠습니다."
+        style="width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 10px;font:inherit;font-size:13px;line-height:1.6;resize:vertical"></textarea></label>
     <div class="row" style="margin-top:9px"><button class="mini" id="gClear">답안 지우기</button>
       <span id="gScore" style="align-self:center;font-size:12px;color:var(--muted)"></span></div>
   </div>
@@ -1035,7 +1042,7 @@ function placement(levelId,score,n){
 // The report runs off either a placement level or a single book unit. A unit test
 // is a mastery check, not a placement, so it reports strategy mastery instead of a
 // level verdict.
-var grade={name:'',date:'',src:'level',level:'',unit:'',levels:[],ans:{}};
+var grade={name:'',date:'',src:'level',level:'',unit:'',levels:[],memo:'',ans:{}};
 // The analysis sheet carries its own language so an academy can print an
 // English test and hand the parent a Korean report.
 var RLANG=get('rlang','ko');
@@ -1672,6 +1679,9 @@ function reportSheet(){
                  :'<br>'+RL('해당 레벨의 학습 교재는 준비 중입니다.','A book for this level is in preparation.')))+
     '</p></div></div>'+
     '<h3 class="rp-h">'+RL('전략 구성','Skill mix')+'</h3>'+pieSvg(rows)+
+    (String(grade.memo||'').trim()
+      ? '<div class="rp-memo"><b>'+RL('선생님 코멘트','Teacher’s comment')+'</b><p>'+
+        esc(grade.memo).replace(/\n/g,'<br>')+'</p></div>' : '')+
     (multi?'<h3 class="rp-h">'+RL('레벨별 성취','By level')+'</h3>'+levelBarsSvg(A.per):'')+
     '<h3 class="rp-h">'+RL('읽기 전략별 정답률','Accuracy by reading strategy')+'</h3>'+barsSvg(rows)+
     '<p class="rp-note">'+RL('CARS & STARS Plus 교사용 평가 1·2(전략별 성취 집계와 막대그래프)를 자동으로 만든 것입니다.',
@@ -2241,6 +2251,7 @@ document.addEventListener('input',function(e){
   if(m[t.id]){brand[m[t.id]]=t.value;set(m[t.id],t.value);applyBrand();
     if(t.id==='bName')checkName();
     render();return;}
+  if(t.id==='gMemo'){grade.memo=t.value;if(document.body.dataset.print==='report')render();return;}
   if(t.id==='gName'||t.id==='gDate'){grade[t.id==='gName'?'name':'date']=t.value;
     if(document.body.dataset.print==='report')render();}
 });
