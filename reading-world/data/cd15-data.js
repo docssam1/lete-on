@@ -103,7 +103,7 @@ window.CARS_D_REGISTER([
             "Why rainforest soil is poor, and where the forest keeps its riches instead",
             "How buttress roots hold up a tall tree",
             "Which insects break down leaves in a tropical forest",
-            "How many harvests a cleared patch of rainforest will give"
+            "How many harvests a cleared patch of rainforest will give to a farmer each year"
           ],
           "A",
           "The first line sets up the contradiction and every paragraph after it works one part of the answer."
@@ -124,7 +124,7 @@ window.CARS_D_REGISTER([
           "Understanding Sequence",
           "What happens to a fallen leaf in a rainforest?",
           [
-            "It is buried and slowly forms deep black earth.",
+            "It is buried and slowly forms a deep layer of rich black earth.",
             "It is washed away by the rain within days.",
             "It is broken down within weeks and taken up again by roots.",
             "It takes about a year to break down."
@@ -150,7 +150,7 @@ window.CARS_D_REGISTER([
           [
             "Its leaves fall only once a year.",
             "Its trees grow more slowly.",
-            "It has no fungi or bacteria in the soil.",
+            "It has no fungi and no bacteria of any kind living in its soil at all.",
             "Its nutrients are held in the living trees rather than in the ground."
           ],
           "D",
@@ -161,7 +161,7 @@ window.CARS_D_REGISTER([
           "If a cleared field in the rainforest were left alone for ten years, it would most likely",
           [
             "return to the forest it had been.",
-            "become richer than the forest around it.",
+            "become even richer than the forest all around it.",
             "still be missing much of what grew there before.",
             "give two or three more good harvests."
           ],
@@ -174,7 +174,7 @@ window.CARS_D_REGISTER([
           [
             "a kind of soil.",
             "a layer of the forest.",
-            "a plant that grows on a branch.",
+            "a plant that grows high up on the branch of a tree.",
             "something living things need in order to grow."
           ],
           "D",
@@ -185,7 +185,7 @@ window.CARS_D_REGISTER([
           "You can tell from the passage that people who clear rainforest for farmland",
           [
             "expect the soil to be as rich as the forest looks.",
-            "know the harvests will fail after three years.",
+            "know that the harvests will fail after about three years.",
             "plant only native species afterwards.",
             "usually keep the buttress roots in place."
           ],
@@ -196,7 +196,7 @@ window.CARS_D_REGISTER([
           "Distinguishing Between Fact and Opinion",
           "Which statement expresses an opinion?",
           [
-            "The fertile layer is only a few centimetres thick.",
+            "The fertile layer of soil is only a few centimetres thick.",
             "Buttress roots spread out from the trunk.",
             "A rainforest looks like the richest place on earth.",
             "Ash from burning gives two or three good harvests."
@@ -208,7 +208,7 @@ window.CARS_D_REGISTER([
           "Identifying Author's Purpose",
           "The author’s main purpose in this passage is to",
           [
-            "persuade readers to stop buying tropical timber.",
+            "persuade readers to stop buying any tropical timber altogether.",
             "explain why a rainforest can be rich while its soil is poor.",
             "describe the four layers of a rainforest.",
             "tell the story of one cleared field."
@@ -220,7 +220,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "The passage says \"the trees themselves are the store.\" This means the trees",
           [
-            "are kept for timber rather than cut.",
+            "are kept standing for timber rather than cut down.",
             "hold the forest’s nutrients inside them.",
             "grow in rows like a warehouse.",
             "shelter the animals from the rain."
@@ -232,8 +232,8 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the passage?",
           [
-            "Rainforest leaves break down within weeks rather than within a year.",
-            "Rainforest soil is thin because heat and rain recycle everything quickly, so the forest keeps its nutrients in the living trees — which is why cleared land fails and is so hard to restore.",
+            "Rainforest leaves break down within a few weeks rather than within a whole year.",
+            "Rainforest soil is thin; the forest keeps its nutrients in the living trees.",
             "Rainforest trees have buttress roots to hold them upright.",
             "Burning a patch of rainforest gives two or three harvests."
           ],
@@ -258,7 +258,7 @@ window.CARS_D_REGISTER([
           "Finding Main Idea",
           "What is this passage mostly about?",
           [
-            "How sea otters sleep without drifting away",
+            "How sea otters manage to sleep without drifting away at all",
             "A kelp forest: how it is built, and what keeps it standing",
             "Why giant kelp is not counted as a plant",
             "The damage done by marine heatwaves"
@@ -296,7 +296,7 @@ window.CARS_D_REGISTER([
           [
             "The kelp burns in the stronger sunlight.",
             "Urchins breed faster in warm water.",
-            "The holdfasts lose their grip on the rock.",
+            "The holdfasts slowly lose their grip on the bare rock below.",
             "Kelp takes nutrients from moving water through its surface."
           ],
           "D",
@@ -306,7 +306,7 @@ window.CARS_D_REGISTER([
           "Comparing and Contrasting",
           "How is a kelp forest like a rainforest?",
           [
-            "Both grow fastest in still, warm conditions.",
+            "Both of them grow fastest in still and warm conditions.",
             "Both are built in layers, each a habitat of its own.",
             "Both take their nutrients from deep soil.",
             "Both are eaten by sea urchins."
@@ -342,7 +342,7 @@ window.CARS_D_REGISTER([
           "Drawing Conclusions and Making Inferences",
           "You can tell from the passage that a kelp forest",
           [
-            "can survive without any large animals in it.",
+            "can survive perfectly well without any large animals in it.",
             "grows best in shallow warm bays.",
             "is easier to replant than a rainforest.",
             "depends on animals that never touch the kelp itself."
@@ -392,7 +392,7 @@ window.CARS_D_REGISTER([
           [
             "Sea otters wrap themselves in kelp fronds so that they do not drift while sleeping.",
             "Marine heatwaves can thin a kelp forest within a single season.",
-            "A kelp forest grows in layers like a rainforest, depends on cold moving water, and survives only where otters keep the urchins that eat it in check.",
+            "A kelp forest grows in layers, needs cold moving water, and depends on otters.",
             "Giant kelp grows towards the light at up to half a metre a day."
           ],
           "C",

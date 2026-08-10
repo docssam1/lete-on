@@ -101,7 +101,7 @@ window.CARS_D_REGISTER([
           "Finding Main Idea",
           "What is this passage mostly about?",
           [
-            "How navy engineers built underwater microphones",
+            "How navy engineers first built and then used underwater listening microphones",
             "The differences between blue whales and humpback whales",
             "Why humpback whales migrate north each year",
             "Whale song: how it was discovered, how it works and what now threatens it"
@@ -137,7 +137,7 @@ window.CARS_D_REGISTER([
           "Recognising Cause and Effect",
           "Why can a blue whale call cross an entire ocean basin?",
           [
-            "Blue whales are the largest animals alive.",
+            "Blue whales are the largest animals that have ever lived on the earth.",
             "They call more often than humpbacks do.",
             "At a very low pitch the vibration loses little energy over distance.",
             "Ocean water carries all sound equally well."
@@ -150,7 +150,7 @@ window.CARS_D_REGISTER([
           "How is a blue whale call different from a humpback song?",
           [
             "It is much lower, and it travels much further.",
-            "It lasts for half an hour and then repeats.",
+            "It lasts for half an hour and then repeats itself.",
             "It changes through the season.",
             "It is sung only on the wintering grounds."
           ],
@@ -162,7 +162,7 @@ window.CARS_D_REGISTER([
           "If ship traffic in an ocean became much quieter, whales there would most likely",
           [
             "stop singing altogether.",
-            "sing at a higher pitch than before.",
+            "sing at a much higher pitch than before.",
             "migrate at a different time of year.",
             "be heard again over longer distances."
           ],
@@ -175,7 +175,7 @@ window.CARS_D_REGISTER([
           [
             "to record on tape.",
             "to notice that something is there.",
-            "to travel a long way.",
+            "to travel a very long way through water.",
             "to sing the same song."
           ],
           "B",
@@ -188,7 +188,7 @@ window.CARS_D_REGISTER([
             "have worked out exactly why humpbacks sing.",
             "believe ship noise has no effect on whales.",
             "still cannot explain how a new phrase spreads between populations.",
-            "think blue whales and humpbacks sing the same song."
+            "think that blue whales and humpbacks must sing exactly the same song."
           ],
           "C",
           "It says nobody has explained how a whale that has never met another pod learns its melody."
@@ -210,7 +210,7 @@ window.CARS_D_REGISTER([
           "The author’s main purpose in this passage is to",
           [
             "explain what is known about whale song and what now endangers it.",
-            "persuade readers to stop travelling by ship.",
+            "persuade readers to stop travelling anywhere by ship from now on.",
             "describe how a microphone works underwater.",
             "tell the story of one humpback whale."
           ],
@@ -221,7 +221,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "The last paragraph says whales call more often now, \"which is what any of us would do in a noisy room.\" This comparison suggests the whales are",
           [
-            "enjoying the extra sound around them.",
+            "enjoying all of the extra sound in the water around them.",
             "singing a completely new song.",
             "moving to a quieter part of the ocean.",
             "repeating themselves to be heard over the noise."
@@ -233,8 +233,8 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the passage?",
           [
-            "Navy microphones once picked up sounds nobody could identify.",
-            "Whale song was discovered by accident, turns out to be structured and shared across a population, and is now being drowned out by ship noise.",
+            "Navy microphones once picked up strange underwater sounds that nobody could identify.",
+            "Whale song was found by accident and ship noise is now drowning it out.",
             "Blue whale calls are lower than humpback songs.",
             "A new phrase can travel across the Pacific within two years."
           ],
@@ -260,7 +260,7 @@ window.CARS_D_REGISTER([
           "Finding Main Idea",
           "What is this passage mostly about?",
           [
-            "Why elephants trumpet when they are frightened",
+            "Why elephants trumpet loudly whenever they are frightened by something nearby",
             "How elephants talk to one another over long distances, and what threatens it",
             "An experiment carried out at a zoo in the 1980s",
             "The differences between elephants and whales"
@@ -272,7 +272,7 @@ window.CARS_D_REGISTER([
           "Recalling Facts and Details",
           "How did a scientist first suspect that elephants were making sounds she could not hear?",
           [
-            "She saw the herd stop and spread its toes.",
+            "She saw the whole herd stop still and spread out its toes.",
             "She played a recording to a family of elephants.",
             "She felt a throbbing in the air rather than hearing it.",
             "She measured the distance across a valley."
@@ -299,7 +299,7 @@ window.CARS_D_REGISTER([
             "It bends around obstacles instead of scattering off them.",
             "It is much louder to begin with.",
             "It travels only through the ground.",
-            "Elephants repeat it many times over."
+            "Elephants repeat the same rumble a great many times over and over."
           ],
           "A",
           "High sounds scatter off trees and grass; a low rumble bends around them and keeps going."
@@ -311,7 +311,7 @@ window.CARS_D_REGISTER([
             "The sound reaches it through the ground rather than through the air.",
             "It requires the herd to be moving.",
             "It works only at night.",
-            "It can only detect other members of the same family."
+            "It can only detect the other members of the elephant’s own family group."
           ],
           "A",
           "The passage says some of the signal never travels through the air at all."
@@ -323,7 +323,7 @@ window.CARS_D_REGISTER([
             "stop rumbling and begin trumpeting instead.",
             "hear one another across shorter distances than before.",
             "migrate twice as often as they used to.",
-            "lose the ability to recognise one another’s voices."
+            "lose the ability to recognise one another’s voices at all."
           ],
           "B",
           "Road noise sits in the low band, which is the band the rumbles use."
@@ -335,7 +335,7 @@ window.CARS_D_REGISTER([
             "a loud trumpeting call.",
             "a distance measured in kilometres.",
             "a shaking that carries sound through something.",
-            "a pattern of calls a family shares."
+            "a pattern of calls that one whole family shares."
           ],
           "C",
           "It is what the rumble sets up in the ground for the elephants to feel."
@@ -370,7 +370,7 @@ window.CARS_D_REGISTER([
           [
             "explain how elephants communicate and why noise endangers it.",
             "persuade readers to stop building roads.",
-            "describe the daily life of one elephant family.",
+            "describe the daily life of one single elephant family in Africa.",
             "compare elephants with whales in every respect."
           ],
           "A",
@@ -380,7 +380,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "The passage says a herd stands still, \"listening with its skeleton.\" This means the elephants are",
           [
-            "keeping completely silent so that others can hear.",
+            "keeping completely silent so that the others can hear better.",
             "lying down on the ground to rest.",
             "using their ears more carefully than usual.",
             "picking up sound through their bones rather than their ears."
@@ -392,9 +392,9 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the passage?",
           [
-            "A scientist at a zoo felt a throbbing in the air in the 1980s.",
+            "A scientist working at a zoo in the 1980s felt a strange throbbing in the air around her.",
             "Elephants can hear one another ten kilometres apart.",
-            "Elephants hold long-distance conversations in sound too low for people to hear, carried through air and ground alike, and machinery is now crowding that band out.",
+            "Elephants talk over long distances in sound too low to hear, and machinery drowns it.",
             "Roads, mines and machinery produce low-frequency noise."
           ],
           "C",

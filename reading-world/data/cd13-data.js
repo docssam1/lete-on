@@ -107,7 +107,7 @@ window.CARS_D_REGISTER([
           "What is this passage mostly about?",
           [
             "A star party that works even though the sky is half covered",
-            "A boy who checks the weather forecast too often",
+            "A boy who checks the weather forecast far too often each day",
             "How to print and cut out a star map",
             "Why the Plough is easy to find"
           ],
@@ -132,7 +132,7 @@ window.CARS_D_REGISTER([
           [
             "Priya found the Plough.",
             "Tom handed out the maps.",
-            "Lisa said the party was the best she had been to.",
+            "Lisa said the party was the best one she had ever been to.",
             "Nobody spoke, and somebody suggested going indoors."
           ],
           "D",
@@ -145,7 +145,7 @@ window.CARS_D_REGISTER([
             "The grass was driest on that side.",
             "The cloud had covered the eastern half of the sky.",
             "The North Star is in the west.",
-            "The torches worked better facing that way."
+            "The torches all worked much better facing that way."
           ],
           "B",
           "The cloud came up over the eastern horizon, so west was the half still open."
@@ -155,7 +155,7 @@ window.CARS_D_REGISTER([
           "How was the second half of the party different from the first?",
           [
             "It had to be worked out as it went along.",
-            "It happened indoors instead of in the garden.",
+            "It happened indoors instead of out in the garden as planned.",
             "Fewer guests were there for it.",
             "It followed Tom’s written schedule instead of Lisa’s plan."
           ],
@@ -178,7 +178,7 @@ window.CARS_D_REGISTER([
           "Finding Word Meaning in Context",
           "In this passage, the word adapted means",
           [
-            "explained something clearly.",
+            "explained something very clearly indeed.",
             "changed a plan to fit the situation.",
             "cancelled an arrangement.",
             "agreed with somebody else."
@@ -216,7 +216,7 @@ window.CARS_D_REGISTER([
           [
             "explain how to identify a constellation.",
             "tell a story about a plan that survives being spoiled.",
-            "describe the equipment needed for stargazing.",
+            "describe all the equipment that is needed for stargazing.",
             "persuade readers to hold a party outdoors."
           ],
           "B",
@@ -226,7 +226,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "The passage says that after finding the Plough, \"the sky stops being a mess and starts being a place.\" This means the sky",
           [
-            "grew brighter as the cloud thinned.",
+            "grew steadily brighter as the thick cloud thinned out again.",
             "became easier to photograph.",
             "began to make sense once there was something to start from.",
             "seemed closer than it had before."
@@ -238,8 +238,8 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the passage?",
           [
-            "Cloud covers half the sky at Tom’s star party, and Lisa’s change of plan turns it into the best evening anyone there can remember.",
-            "Tom checks the weather forecast four times before his birthday party.",
+            "Cloud spoils half of Tom’s star party, and Lisa’s change of plan saves the evening.",
+            "Tom checks the weather forecast four separate times before his birthday party begins.",
             "Eleven children lie in the grass with torches and star maps.",
             "A group of children look for the North Star after finding the Plough."
           ],
@@ -272,7 +272,7 @@ window.CARS_D_REGISTER([
             "A teacher who refuses to cancel a rained-off night walk",
             "How a pair of binoculars should be handled",
             "Why a star map has a wheel that turns",
-            "A girl who can name constellations with her eyes shut"
+            "A girl who can name the constellations with her eyes shut"
           ],
           "A",
           "The passage runs from the forecast turning to the field at eleven o’clock."
@@ -294,7 +294,7 @@ window.CARS_D_REGISTER([
           "What did the club do first after the rain stopped?",
           [
             "They stood under the oak until it had finished dripping.",
-            "Ifeoma found the constellation she had practised.",
+            "Ifeoma found the constellation that she had practised indoors.",
             "Mr Bakari wrote in the club book.",
             "They identified five constellations on paper."
           ],
@@ -306,7 +306,7 @@ window.CARS_D_REGISTER([
           "Why did Mr Bakari lay the binoculars out on a table?",
           [
             "They are hard to handle properly in the dark.",
-            "The field was too wet to carry them across.",
+            "The field was far too wet to carry them across it.",
             "He wanted to count them before going out.",
             "He was teaching the club how to clean them."
           ],
@@ -319,7 +319,7 @@ window.CARS_D_REGISTER([
           [
             "Fewer children came to it.",
             "The maps were read before the sky was looked at, instead of afterwards.",
-            "It used no equipment at all.",
+            "It used none of the equipment he had borrowed from the science department.",
             "It finished earlier than eleven o’clock."
           ],
           "B",
@@ -332,7 +332,7 @@ window.CARS_D_REGISTER([
             "assume it has been cancelled.",
             "expect it to go ahead in some other form.",
             "ask to stay at home.",
-            "bring her own binoculars."
+            "bring her own pair of binoculars along with her."
           ],
           "B",
           "She assumed cancellation this time and was corrected by what followed."
@@ -380,7 +380,7 @@ window.CARS_D_REGISTER([
             "explain how to use a star map indoors.",
             "describe a field behind a school at night.",
             "tell a story about a plan changed rather than abandoned.",
-            "persuade readers to join an astronomy club."
+            "persuade readers to go out and join a local astronomy club."
           ],
           "C",
           "The line \"It is not cancelled. It is adapted\" is the hinge the passage turns on."
@@ -392,7 +392,7 @@ window.CARS_D_REGISTER([
             "read a map from the bottom upwards.",
             "look at the sky first and only then reach for a map.",
             "go outdoors before checking the forecast.",
-            "learn the names of stars before the shapes."
+            "learn the names of the stars before learning the shapes."
           ],
           "B",
           "He has just described using the map first and checking it against the sky afterwards."
@@ -401,10 +401,10 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the passage?",
           [
-            "An astronomy club learns to read star maps indoors on a rainy evening.",
+            "An astronomy club learns how to read its star maps indoors on a rainy evening.",
             "A teacher borrows binoculars and books a field behind a school.",
             "Rain stops early one night and a club goes out into a wet field.",
-            "A rained-off club night becomes an indoor lesson with maps, and when the rain stops early the children go out able to find what they have been practising."
+            "A rained-off club night becomes an indoor map lesson the children then use."
           ],
           "D",
           "A summary needs the change of plan and what it made possible later."

@@ -358,7 +358,7 @@ window.CARS_D_REGISTER([
           [
             "nobody at the school had the right tools to open the box.",
             "the school could not afford a new bell.",
-            "the caretaker refused to let anyone look.",
+            "the caretaker had always simply reset it every Monday morning.",
             "it annoyed people without ever being bad enough to fix."
           ],
           "D",

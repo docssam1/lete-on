@@ -100,7 +100,7 @@ window.CARS_D_REGISTER([
           "Finding Main Idea",
           "What is this passage mostly about?",
           [
-            "How telegraph poles were carried across country without trees",
+            "How telegraph poles were carried right across country where there were no trees",
             "The dangers faced by pony express riders",
             "Why the pony express is better remembered than the telegraph",
             "How the telegraph ended the pony express, and how alike the two systems were"
@@ -138,7 +138,7 @@ window.CARS_D_REGISTER([
           [
             "A message on a wire took minutes instead of days.",
             "Too many riders had been lost along the route.",
-            "The horses could not be fed through the winter.",
+            "The horses could not be fed all the way through the winter.",
             "The company had run out of stations."
           ],
           "A",
@@ -151,7 +151,7 @@ window.CARS_D_REGISTER([
             "Both were about twenty kilometres apart.",
             "Both were staffed by teenage boys.",
             "Both took a weakening message and sent it on again at full strength.",
-            "Both were built by the same three businessmen."
+            "Both of them were built and paid for by the very same three businessmen."
           ],
           "C",
           "The passage draws exactly that comparison between an operator and a fresh horse."
@@ -186,7 +186,7 @@ window.CARS_D_REGISTER([
           [
             "refused to help the telegraph crews.",
             "helped build the thing that ended their own work.",
-            "were paid more than telegraph operators.",
+            "were paid a great deal more than the telegraph operators.",
             "kept riding after the line was finished."
           ],
           "B",
@@ -220,7 +220,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "The passage says \"no amount of courage closes that gap.\" This means the riders",
           [
-            "were not brave enough for the work.",
+            "were simply not brave enough for that kind of work.",
             "could not be trained any further.",
             "had stopped trying to go faster.",
             "could not beat the wire however hard they rode."
@@ -232,9 +232,9 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the passage?",
           [
-            "Telegraph crews worked through frozen ground and remote passes in 1861.",
+            "Telegraph crews worked through frozen ground and remote mountain passes in 1861.",
             "The pony express carried mail from Missouri to California in ten days.",
-            "The pony express ended when the telegraph reached across the country, and the wire turned out to work on the same relay principle the riders had used.",
+            "The telegraph ended the pony express, and worked on the same relay principle.",
             "A wire carries a message any distance for the same effort."
           ],
           "C",
@@ -259,7 +259,7 @@ window.CARS_D_REGISTER([
           [
             "How drones deliver blood to clinics that roads reach slowly",
             "How a fixed-wing drone is built and launched",
-            "Why blood expires more quickly in warm weather",
+            "Why blood expires a great deal more quickly in warm weather",
             "The history of the pony express"
           ],
           "A",
@@ -282,7 +282,7 @@ window.CARS_D_REGISTER([
           "What happens first when a clinic needs blood?",
           [
             "The clinic sends an urgent order by text message.",
-            "The drone is launched from a catapult.",
+            "The drone is launched from a catapult at the base.",
             "A technician loads a padded box.",
             "The box lands on a marked square."
           ],
@@ -296,7 +296,7 @@ window.CARS_D_REGISTER([
             "Both were built by three businessmen.",
             "Both place bases so that each can hand on to the next.",
             "Both were replaced by the telegraph.",
-            "Both carry letters rather than supplies."
+            "Both of them carry letters rather than medical supplies."
           ],
           "B",
           "The passage draws the comparison to a station every twenty kilometres."
@@ -306,7 +306,7 @@ window.CARS_D_REGISTER([
           "Why does a small clinic have to guess how much blood it needs?",
           [
             "Blood is fragile and expires, and the clinic cannot store much.",
-            "The blood bank does not answer messages quickly.",
+            "The blood bank does not answer any of its messages very quickly.",
             "Roads wash out during the rainy season.",
             "Drones can only carry one box at a time."
           ],
@@ -343,7 +343,7 @@ window.CARS_D_REGISTER([
           [
             "that it is cheaper than building roads.",
             "that clinics no longer have to predict what they will need.",
-            "that the drones are quieter than lorries.",
+            "that the drones are a great deal quieter than lorries on the road.",
             "that blood can now be stored for longer."
           ],
           "B",
@@ -377,7 +377,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "The passage says the bases give \"overlapping circles.\" This means each base",
           [
-            "can be seen from the next one.",
+            "can be seen clearly from the next base along the whole route.",
             "flies its drones in a circular route.",
             "covers an area that reaches into its neighbours’ areas.",
             "sends every order to the same clinic."
@@ -389,10 +389,10 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the passage?",
           [
-            "A drone drops a padded box under a paper parachute.",
+            "A drone drops a padded box of blood under a small paper parachute.",
             "Roads to hill clinics wash out during the rainy season.",
             "Blood expires, so clinics cannot store very much of it.",
-            "Drones flying from overlapping bases deliver blood to clinics in about twenty minutes, which removes both the distance and the guesswork that used to cost lives."
+            "Drones from overlapping bases deliver blood in twenty minutes."
           ],
           "D",
           "A summary needs the method, the speed and both problems it solves."

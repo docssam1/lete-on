@@ -105,7 +105,7 @@ window.CARS_D_REGISTER([
           [
             "How Viking crews found their way across open water, and what that depended on",
             "How Viking long ships were built by craftsmen",
-            "Why the Vikings reached North America before other Europeans",
+            "Why the Vikings managed to reach North America long before any other Europeans",
             "What Viking sailors ate on a long voyage"
           ],
           "A",
@@ -127,7 +127,7 @@ window.CARS_D_REGISTER([
           "Understanding Sequence",
           "In latitude sailing, what does the navigator do first?",
           [
-            "Turn west and run along the line.",
+            "Turn west straight away and run along the chosen line of latitude.",
             "Follow the direction of the swell.",
             "Release a bird to look for land.",
             "Sail north or south until the midday sun is at the right height."
@@ -140,7 +140,7 @@ window.CARS_D_REGISTER([
           "Why did the direction a seabird took at dusk matter?",
           [
             "Birds fly faster than a long ship can sail.",
-            "A bird will not fly over open water at night.",
+            "A bird will never fly out over the open water once darkness has fallen.",
             "Birds return towards land in the evening, so their course is a bearing.",
             "Birds only appear where two currents meet."
           ],
@@ -151,7 +151,7 @@ window.CARS_D_REGISTER([
           "Comparing and Contrasting",
           "How was a long ship different from ships built elsewhere?",
           [
-            "It was heavier, so that it could carry more cargo.",
+            "It was much heavier, so that it could carry far more cargo.",
             "It was designed to be rowed rather than sailed.",
             "It carried instruments that other ships did not.",
             "It was shallow and flexible, and could be run onto a beach."
@@ -190,7 +190,7 @@ window.CARS_D_REGISTER([
             "mostly a matter of luck.",
             "simpler than people assume.",
             "built from many small skills rather than one invention.",
-            "impossible without written records."
+            "impossible without keeping detailed written records of it."
           ],
           "C",
           "The second paragraph says it is not one clever trick but many small ones used together."
@@ -199,7 +199,7 @@ window.CARS_D_REGISTER([
           "Distinguishing Between Fact and Opinion",
           "Which statement expresses an opinion?",
           [
-            "Iceland was reached in the ninth century.",
+            "Iceland was first reached by Viking crews at some point in the ninth century.",
             "A long ship is shallow and light for its length.",
             "A great deal of what looks like courage in the sagas is really preparation.",
             "Dried fish keeps for months."
@@ -213,7 +213,7 @@ window.CARS_D_REGISTER([
           [
             "persuade readers to admire the Vikings.",
             "describe daily life on a Viking farm.",
-            "tell the story of one crossing to Iceland.",
+            "tell the story of one single crossing from Norway to Iceland.",
             "explain how a people crossed open ocean without instruments."
           ],
           "D",
@@ -223,7 +223,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "The passage says a crew read where two currents meet \"the way a traveller on land reads a crossroads.\" This means the meeting of currents",
           [
-            "was dangerous and had to be avoided.",
+            "was dangerous and always had to be avoided.",
             "told them something about where they were.",
             "marked the halfway point of a voyage.",
             "could only be seen in daylight."
@@ -235,10 +235,10 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the passage?",
           [
-            "Viking crews crossed open ocean using the sun, the swell, currents and wildlife together, carried the knowledge in memory rather than writing, and lost a route whenever the last person who knew it died.",
-            "Viking long ships were shallow and could be run up onto a beach.",
+            "Viking crews crossed open ocean by many small signs, holding the knowledge in memory.",
+            "Viking long ships were shallow enough to be run straight up onto a beach.",
             "Viking sailors reached Iceland, Greenland and North America.",
-            "Dried fish and soured milk allowed crews to stay at sea for months."
+            "Dried fish and soured milk allowed Viking crews to stay at sea for many months at a time."
           ],
           "A",
           "A summary needs the method, how it was held and the weakness that came with it."
@@ -266,7 +266,7 @@ window.CARS_D_REGISTER([
           "Finding Main Idea",
           "What is this passage mostly about?",
           [
-            "How Pacific navigators crossed open ocean without instruments, and how that knowledge nearly died",
+            "How Pacific navigators crossed open ocean without instruments",
             "Why the winds of the central Pacific run in the wrong direction",
             "The building of canoes without the use of metal",
             "A voyage from Hawai‘i to Tahiti in 1976"
@@ -290,7 +290,7 @@ window.CARS_D_REGISTER([
           "Understanding Sequence",
           "Which of these happened last?",
           [
-            "The islands of the Pacific were settled.",
+            "The islands of the Pacific were all first settled.",
             "Long voyaging had almost stopped.",
             "A canoe sailed from Hawai‘i to Tahiti.",
             "Mau Piailug taught wayfinding outside his family."
@@ -317,7 +317,7 @@ window.CARS_D_REGISTER([
             "It works only near land.",
             "It requires a chart to check against.",
             "It is used by day and can be done with the eyes shut.",
-            "It gives an exact position rather than a direction."
+            "It gives an exact position rather than just a direction."
           ],
           "C",
           "The passage says he read the swell by day, and that some checked a course lying down with eyes shut."
@@ -341,7 +341,7 @@ window.CARS_D_REGISTER([
             "a written record of past voyages.",
             "a ceremony held before a voyage.",
             "knowledge passed from person to person over time.",
-            "the route most often taken between two islands."
+            "the route most often taken between any two islands."
           ],
           "C",
           "It describes what a navigator learned from a navigator over many years."
@@ -352,7 +352,7 @@ window.CARS_D_REGISTER([
           [
             "invented the star compass himself.",
             "believed the knowledge would survive only if it was shared.",
-            "was the first person to sail from Hawai‘i to Tahiti.",
+            "was the very first person ever to sail from Hawai‘i to Tahiti.",
             "refused to teach anybody outside Satawal."
           ],
           "B",
@@ -376,7 +376,7 @@ window.CARS_D_REGISTER([
           [
             "persuade readers to learn navigation.",
             "explain a method of navigation and what happened to it.",
-            "describe the islands of the central Pacific.",
+            "describe the many islands scattered across the central Pacific.",
             "compare Pacific canoes with European ships."
           ],
           "B",
@@ -386,7 +386,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "The passage says these signs \"widen an island.\" This means the signs",
           [
-            "make the island physically larger over time.",
+            "make the island itself physically larger over time.",
             "let a crew see the island from further away.",
             "turn a small target into one that is hard to miss.",
             "show which side of the island to approach."
@@ -398,10 +398,10 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the passage?",
           [
-            "Pacific islands were settled against the prevailing wind rather than by drifting.",
+            "Pacific islands were settled against the prevailing wind rather than by drifting on currents.",
             "Canoes were lashed with coconut fibre so that their joints could flex in a swell.",
             "A canoe sailed from Hawai‘i to Tahiti in 1976 without instruments.",
-            "Pacific navigators crossed open ocean by star, swell and bird, held the whole system in memory, and nearly lost it until one of the last men taught it to outsiders."
+            "Pacific navigators crossed ocean by star, swell and bird, and nearly lost the knowledge."
           ],
           "D",
           "A summary needs the method, how it was carried and how it survived."

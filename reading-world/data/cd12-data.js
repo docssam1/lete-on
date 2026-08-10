@@ -107,7 +107,7 @@ window.CARS_D_REGISTER([
           [
             "How to build a machine that saves time",
             "How to enter an invention contest at the library",
-            "Why the library is changing its noticeboard",
+            "Why the library is changing its main noticeboard this year",
             "What the judges of a contest do all year"
           ],
           "B",
@@ -129,7 +129,7 @@ window.CARS_D_REGISTER([
           "Understanding Sequence",
           "What is the last thing that happens for somebody who enters?",
           [
-            "The judges apply the three criteria.",
+            "The judges apply the three criteria to every single entry.",
             "The entry is submitted with a drawing.",
             "Winning drawings are published on the noticeboard.",
             "The deadline passes on 14 March."
@@ -142,7 +142,7 @@ window.CARS_D_REGISTER([
           "What happens to an entry that arrives at six o’clock on 14 March?",
           [
             "It is judged with the others.",
-            "It is entered in a different category.",
+            "It is entered in a different category instead.",
             "It is held over until next year.",
             "It is not eligible and is returned unopened."
           ],
@@ -154,7 +154,7 @@ window.CARS_D_REGISTER([
           "According to rule 6, how would the judges treat a device that works but is explained badly?",
           [
             "It would be placed below one that half works and is well explained.",
-            "It would win, because working matters most.",
+            "It would win its category, because working matters more than anything.",
             "It would be moved into another category.",
             "It would be returned to the entrant."
           ],
@@ -191,7 +191,7 @@ window.CARS_D_REGISTER([
           [
             "care as much about explaining an idea as about building it.",
             "expect every entry to work perfectly.",
-            "will only accept inventions made from kits.",
+            "will only accept inventions that have been built from kits at home.",
             "prefer teams to individual entrants."
           ],
           "A",
@@ -201,9 +201,9 @@ window.CARS_D_REGISTER([
           "Distinguishing Between Fact and Opinion",
           "Which sentence expresses an opinion?",
           [
-            "The deadline is 5 p.m. on 14 March.",
+            "The deadline for all entries is 5 p.m. on 14 March this year, without exception.",
             "The prize in each category is a £30 book token.",
-            "A thing that half works and is well explained will beat a thing that works and is not.",
+            "A well-explained half-working thing beats a working one that is not explained.",
             "You may enter alone or in a team of up to three."
           ],
           "C",
@@ -225,7 +225,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "The announcement asks, \"Have you built something nobody asked you to build?\" This question is really asking whether the reader",
           [
-            "has ever disobeyed a teacher.",
+            "has ever disobeyed a teacher’s instructions at school.",
             "has made something on their own idea alone.",
             "owns a kit at home.",
             "has finished all their homework."
@@ -237,10 +237,10 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises this announcement?",
           [
-            "Entries must be submitted with a photograph and a drawing.",
+            "Entries must be submitted together with a photograph and a labelled drawing.",
             "A library is offering book tokens as prizes this spring.",
             "Judges will use three criteria when they read the entries.",
-            "A library invites students in years 3 to 8 to submit an invention of their own by 14 March, sets out how it will be judged, and says what the winners receive."
+            "A library invites years 3 to 8 to submit an invention by 14 March."
           ],
           "D",
           "A summary needs who may enter, by when, how it is judged and what is won."
@@ -268,7 +268,7 @@ window.CARS_D_REGISTER([
           "Finding Main Idea",
           "What is this announcement mostly about?",
           [
-            "A museum exhibition opening in November",
+            "A museum exhibition that opens in the foyer in November",
             "How photographs are printed and mounted",
             "How to enter a photography contest run by the museum",
             "The work of a museum curator"
@@ -281,7 +281,7 @@ window.CARS_D_REGISTER([
           "Who may enter this contest?",
           [
             "anyone aged 8 to 16 who lives in the city or goes to school there",
-            "anyone who lives in the country",
+            "anyone of any age who lives anywhere in the country or just nearby",
             "museum members only",
             "anyone who owns a camera"
           ],
@@ -292,7 +292,7 @@ window.CARS_D_REGISTER([
           "Understanding Sequence",
           "What must be written on the back of the print?",
           [
-            "the date the photograph was taken",
+            "the date and place the photograph was taken",
             "the name of the street",
             "the name of the camera used",
             "the entrant’s name, age and category"
@@ -307,7 +307,7 @@ window.CARS_D_REGISTER([
             "The museum keeps every entry it receives.",
             "It arrived after the deadline, and rule 5 says late entries are not returned.",
             "It was entered in the wrong category.",
-            "The judges have already chosen the shortlist."
+            "The judges had already chosen the entire shortlist several days before it arrived."
           ],
           "B",
           "Rule 5 sets the deadline at 30 September and states both consequences."
@@ -316,7 +316,7 @@ window.CARS_D_REGISTER([
           "Comparing and Contrasting",
           "How do the two judging criteria differ from each other?",
           [
-            "One is about the photographer, the other about the camera.",
+            "One is about the photographer, and the other is about the camera.",
             "One applies to prints and the other to digital files.",
             "One is used in October and the other in November.",
             "One is about how it looks, the other about what it tells you."
@@ -330,7 +330,7 @@ window.CARS_D_REGISTER([
           [
             "be told by post in October and see their picture in the foyer from November.",
             "receive a camera whatever happens.",
-            "be asked to take a second photograph.",
+            "be asked to take a second photograph before the final judging takes place in November.",
             "hear nothing until the following year."
           ],
           "A",
@@ -341,7 +341,7 @@ window.CARS_D_REGISTER([
           "In this announcement, the word original means",
           [
             "unusual or strange.",
-            "the first one ever made.",
+            "the first one that was ever made.",
             "taken a long time ago.",
             "made by the person entering it."
           ],
@@ -355,7 +355,7 @@ window.CARS_D_REGISTER([
             "photographs of famous buildings.",
             "as many entries as possible from each person.",
             "photographs of ordinary things most people overlook.",
-            "entries only from people who own good cameras."
+            "entries only from people who own very expensive cameras."
           ],
           "C",
           "The opening line asks for something the rest of us walk past."
@@ -389,7 +389,7 @@ window.CARS_D_REGISTER([
           "The announcement begins, \"Look up.\" This is asking the reader to",
           [
             "photograph tall buildings only.",
-            "check the weather before going out.",
+            "check the weather carefully before going out.",
             "pay attention to what is around them.",
             "read the rules more carefully."
           ],
@@ -400,8 +400,8 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises this announcement?",
           [
-            "A museum will display photographs in its foyer from November.",
-            "A museum invites people aged 8 to 16 to submit one photograph of their city in one of four categories by 30 September, and sets out how it will be judged and what winners receive.",
+            "A museum will display the shortlisted photographs in its foyer from November onwards.",
+            "A museum invites people aged 8 to 16 to submit a photograph by 30 September.",
             "Judges for a photography contest include a museum curator.",
             "Photographs must be printed no larger than A4."
           ],
