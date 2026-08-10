@@ -1,7 +1,7 @@
 # Gfield Reading Town — Project Memory
 
 > 이 파일은 Claude의 세션 간 기억 대체용입니다. 세션 시작 시 반드시 읽으세요.
-> Last updated: 2026-07-07
+> Last updated: 2026-08-10
 
 ---
 
@@ -40,6 +40,8 @@ GitHub Pages 배포: `docssam1/lete-on` 저장소 → `/reading-world/` 경로.
     lesson1.js~lesson10.js    — CARS Level B (원본문항은 Supabase에만)
     lesson1.original.js       — Level B lesson1 원본 백업 (로컬용)
     lc1.js~lc10.js            — CARS Level C (창작 지문만 포함)
+    cars-d-layouts.js         — Level D 레이아웃(본문 배치·삽화·다이어그램 모양)
+    cars-visual-layouts.js    — Level B·C 다이어그램 모양만 (문구는 Supabase)
     avatar.js                 — 아바타 파츠 데이터
     decorations.js            — 타운 장식 아이템 목록
     decor-art.js              — 장식 아트 SVG/data-URI
@@ -47,6 +49,11 @@ GitHub Pages 배포: `docssam1/lete-on` 저장소 → `/reading-world/` 경로.
   assets/images/
     cars-level-b/             — Level B 레슨 커버 이미지
     cars-level-c/             — Level C 레슨 커버 이미지 (현재 placeholder PNG)
+  shared/
+    cars-components.js        — 앱 쪽 CARS 데코레이터(본문 배치·다이어그램 주입)
+    cars-layout.css           — 위 데코레이터용 CSS (.cars-*)
+    cars-source-bridge.js     — Supabase 원본의 meta를 CARS_SOURCE_META로 중계
+  print.html                  — 학습지 인쇄 콘솔 (앱과 별개로 자체 로딩·렌더)
   vendor/
     phaser.min.js             — Phaser 3 (타운 게임)
 ```
@@ -138,6 +145,51 @@ STEP 7 — 유사 문항 (questionSimilar)
   각 세트는 여전히 3A/3B/3C/3D를 만족하지만 **고정 순서 패턴은 폐기** —
   이제 레슨마다 정답 순서가 자유롭게 섞여 있고 분포만 3/3/3/3으로 유지됨.
   (이전의 레슨별 고정 순서 표는 옛 콘텐츠용이라 삭제함.)
+
+---
+
+## 다이어그램 문항 (순서도·인과·분류도) ✅ B/C 이관 완료 (2026-08-10)
+
+일부 문항은 **그림 자체가 문제**다. 상자 3개 중 하나가 비어 있고 보기가 그 빈칸을 채우는
+식이라, 문항 텍스트만 찍으면 답할 수가 없다. `type`은 `sequence`(순서 상자) ·
+`cause-effect`(원인→결과) · `branch-map`(분류도) 3종.
+
+### 모양(공개)과 문구(라이선스)를 분리 — 절대 섞지 말 것
+| | 어디에 | 무엇이 |
+|---|---|---|
+| **모양** | `data/cars-d-layouts.js` (Level D)<br>`data/cars-visual-layouts.js` (Level B·C) | `{type, boxCount, blankIndex, showStepNumbers}` — 상자 수·빈칸 위치뿐이라 git 공개 OK |
+| **문구** | Supabase `original_questions.meta.visualQuestions[문항번호]` | `{before, after, boxes[]}` — 교재 원문이므로 **git 금지** |
+
+`blankIndex` 자리의 `boxes` 원소는 빈 문자열 `""`로 둔다(렌더러가 빈칸으로 그림).
+`showStepNumbers: true`는 문항이 "box 2" 식으로 번호를 지목할 때만.
+
+### 렌더링 — stem은 대체된다
+다이어그램이 있으면 두 렌더러 모두 문항 stem(`item[1]`)을 **버리고** `before → 그림 →
+after`로 갈아끼운다. 그래서 Supabase stem에는 ASCII 그림을 넣지 않는다(폴백용 문장만).
+- **인쇄**: `print.html`의 `visualLayout()` → `visualFor()` → `visualHtml()`, CSS `.vis-*`
+- **앱**: `shared/cars-components.js`의 `applyQuestionVisual()`이 `.qcard`에 주입,
+  CSS `.cars-*` (`shared/cars-layout.css`, **책 스코프 없음** — D 전용 타이포그래피만
+  `html[data-cars-book="cars-level-d"]`로 한정)
+- 문구 전달: `shared/cars-source-bridge.js`가 `window.CARS_SOURCE_META[lessonId]`에 적재
+
+### 주의점
+- `original_questions`는 **평문 배열**과 **`{meta, items}` 봉투** 두 포맷이 공존한다.
+  `meta`가 필요한 레슨만 봉투. 읽는 쪽(`normOriginal`·source-bridge)은 둘 다 처리하니
+  새 코드도 반드시 양쪽 대응할 것.
+- 레슨 id는 책을 넘어 겹치지 않으므로 레이아웃 조회는 id 하나로 두 맵을 순회한다.
+- **`lesson1`은 `window.LESSONS`에 없다**(레거시 플랫 전역 `window.LESSON1`). 앱이 제목으로
+  레슨을 찾기 때문에, 레이아웃 항목에 `title: 'My Backyard Zoo'`를 실어 매칭한다.
+- 현재 다이어그램 문항: **B** lesson1·3·5·10 Q3 / **C** lc3·lc6 Q3 / **D** 다수.
+
+### 검증 상태 (중요)
+- **Level D는 PDF 스캔과 대조 완료.** 이 대조로 cd13 Q3의 상자 밀림 오류를 찾아 고쳤다
+  (`["","","Tom opens…"]` → `["","Tom opens…","Everyone goes outside…"]`).
+  ⚠️ `cars-d-layouts.js`의 `pdfPrintedOffset: 3`은 **틀렸다 — 실제 +4**
+  (PDF 51쪽 = 인쇄 47쪽). 페이지 찾을 때 주의.
+- **B·C는 원본 스캔이 없어 대조 못 함.** 기존 전사를 그대로 구조화했을 뿐이므로 cd13 같은
+  밀림이 남아 있을 수 있다. Level B/C PDF가 생기면 전수 대조할 것.
+- **lc6은 문항 문장이 통째로 유실**돼 있어(그림만 있고 질문 없음) 시리즈 표준 문구
+  "Which of these belongs in the empty box?"로 채움 — 교재 대조 필요.
 
 ---
 
@@ -379,6 +431,20 @@ CARS의 12전략 문항 엔진과 별개인 **순수 독서 경험**. 마을 Lib
 
 ## 최근 주요 작업 이력
 
+- **2026-08-10 (다이어그램 문항 B·C 이관)** — B·C의 순서도 문항 6개(lesson1·3·5·10,
+  lc3·lc6의 Q3)가 `→ [ ___ ] →` ASCII로 stem에 박혀 있어 런온 문장으로 읽히고 인쇄도
+  그대로 나가던 문제. Level D가 이미 쓰던 방식(모양=공개 맵, 문구=Supabase `meta`)으로
+  통일 → 상세는 위 "다이어그램 문항" 섹션 참조. 신규 `data/cars-visual-layouts.js`.
+  두 번째 책이 통과하도록 3군데를 열었다: ①레이아웃 조회가 D 맵+공용 맵을 순회
+  (`visualLayout()` / `lessonCfgFor()`) ②source-bridge가 D 외 책의 `meta`도 announce
+  ③`data-cars-book`을 하드코딩 대신 레슨에서 도출 — 안 고쳤으면 B·C 레슨에 D 전용
+  본문 타이포그래피가 딸려갔을 것. **D 경로는 무변동**(cd13 매칭·렌더 재확인).
+  검증: 인쇄 6개 전부 렌더(빈칸 1개·번호 정확), 앱 주입 구조/스타일, 레슨 해석 7건,
+  콘솔·페이지 에러 0건, 전 교재 구조 무결성 무변동.
+- **2026-08-10 (cd13 원본 대조 수정)** — Level D 특수 문항을 PDF 스캔과 전수 대조.
+  cd13 Q3의 `boxes`가 한 칸 밀리고 3번 상자 내용이 유실돼 있던 것을 원본대로 복구.
+  정답 B는 원래부터 맞았고 유지. 이 과정에서 `pdfPrintedOffset`이 3이 아니라 **4**임을
+  확인(설정값은 아직 3). cd14는 오류가 아니었음(`blankIndex:2`와 데이터 일치).
 - **2026-07-08 (마을 조작 재설계: 탭/클릭 이동)** — 가장자리 D-pad 4버튼(같은 날 오전
   추가분)이 실사용 스크린샷에서 Library·Study House·Screen Theater 간판을 가리는
   문제 확인 → **완전 제거**하고 지도를 탭/클릭하면 그 자리로 걸어가는 방식으로 교체.
