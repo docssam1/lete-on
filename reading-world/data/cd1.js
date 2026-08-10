@@ -109,7 +109,7 @@ window.LESSONS["cd1"] = {
         [
           "How bats learned to use their wings",
           "An old bat explaining why bats are outcasts who fly after dark",
-          "A war fought between the birds and the animals",
+          "A war fought long ago between the birds and the four-footed animals",
           "Why animals turn their backs on strangers"
         ],
         "B",
@@ -158,7 +158,7 @@ window.LESSONS["cd1"] = {
           "He is braver in battle.",
           "He is stronger than a bat is.",
           "He can still be trusted, because everyone knows where he stands.",
-          "He is allowed to change sides once."
+          "He is allowed to change sides just once before the fighting is over."
         ],
         "C",
         "That is the distinction the old bat draws when the young one objects."
@@ -179,7 +179,7 @@ window.LESSONS["cd1"] = {
         "Finding Word Meaning in Context",
         "In this passage, the word hesitate means",
         [
-          "to fly in circles.",
+          "to fly in slow circles overhead.",
           "to argue loudly.",
           "to change shape.",
           "to hold back before acting."
@@ -194,7 +194,7 @@ window.LESSONS["cd1"] = {
           "blames the birds for what happened.",
           "tells the story so the young one will not repeat the mistake.",
           "was alive during the war himself.",
-          "believes the first bat was treated unfairly."
+          "believes that the very first bat had been treated most unfairly."
         ],
         "B",
         "He ends on what bats do now, and why, which is advice rather than history."
@@ -218,7 +218,7 @@ window.LESSONS["cd1"] = {
           "explain how bats hunt after dark.",
           "describe a war between birds and animals.",
           "use a story to show what happens to someone who will not commit.",
-          "persuade readers to keep away from bats."
+          "persuade readers to stay well away from bats and their caves at night."
         ],
         "C",
         "The war is only the setting; the subject is the bat who would not choose."
@@ -239,10 +239,10 @@ window.LESSONS["cd1"] = {
         "Summarising",
         "Which sentence best summarises the passage?",
         [
-          "A young bat asks a question and is given a long answer.",
-          "Birds and animals once fought a war that the animals won.",
-          "An old bat explains that bats are loyal to one another.",
-          "An old bat explains that one ancestor tried to belong to both sides of a war, and that bats have belonged to neither ever since."
+          "A young bat asks a question and is given a long answer about the distant past.",
+          "Birds and animals once fought a long war, and the animals finally won it after many hard battles.",
+          "An old bat explains that bats are loyal to one another and to nobody else at all.",
+          "An old bat explains that an ancestor's refusal to choose a side left bats belonging to neither."
         ],
         "D",
         "A summary needs the cause and the lasting result, not one part on its own."
@@ -271,7 +271,7 @@ window.LESSONS["cd1"] = {
         "Finding Main Idea",
         "What is this passage mostly about?",
         [
-          "A farmer who loses a lamb to wolves in winter",
+          "A farmer who loses a lamb to the wolves one winter night",
           "How wolves hunt along a fence line at night",
           "A dog who belonged to two sides and ended with neither",
           "Why dogs are loyal to the people who feed them"
@@ -284,7 +284,7 @@ window.LESSONS["cd1"] = {
         "What did the farmer find in the snow?",
         [
           "Rusk’s tracks beside the wolves’ tracks",
-          "The empty food bowl",
+          "The empty food bowl left beyond the gate",
           "A broken gate",
           "Fur from the oldest wolf"
         ],
@@ -295,7 +295,7 @@ window.LESSONS["cd1"] = {
         "Understanding Sequence",
         "What happened right after the wolves took a lamb?",
         [
-          "The wolves refused to share with Rusk.",
+          "The wolves refused to share any of it with Rusk.",
           "Rusk moved into the hedge.",
           "The farmer scratched Rusk’s ears.",
           "The farmer found the tracks in the morning."
@@ -307,7 +307,7 @@ window.LESSONS["cd1"] = {
         "Recognising Cause and Effect",
         "Why did the farmer put the food bowl outside the gate?",
         [
-          "Rusk had stopped guarding the sheep.",
+          "Rusk had stopped guarding the sheep at night at all.",
           "He had worked out that Rusk had betrayed him.",
           "The wolves had asked him to.",
           "Rusk preferred to eat outdoors."
@@ -321,7 +321,7 @@ window.LESSONS["cd1"] = {
         [
           "He guarded the sheep more carefully that night.",
           "The wolves would not come to the fence that night.",
-          "He stopped running with the wolves after that night.",
+          "He stopped running with the wolves after that winter night.",
           "Both sides had trusted him before; afterwards neither did."
         ],
         "D",
@@ -332,7 +332,7 @@ window.LESSONS["cd1"] = {
         "If another dog offered to run with the wolves, the oldest wolf would most likely",
         [
           "accept him at once.",
-          "share the next lamb with him.",
+          "share the very next lamb they take with him.",
           "ask him first which side he belongs to.",
           "take him to the farmer."
         ],
@@ -345,7 +345,7 @@ window.LESSONS["cd1"] = {
         [
           "to abandon those you belong to.",
           "a dry and sandy place.",
-          "to earn what you deserve.",
+          "to earn exactly what you deserve.",
           "to hide from danger."
         ],
         "A",
@@ -355,7 +355,7 @@ window.LESSONS["cd1"] = {
         "Drawing Conclusions and Making Inferences",
         "You can tell that Rusk",
         [
-          "had planned to steal the lamb himself.",
+          "had planned to steal the lamb for himself from the start.",
           "never expected the two sides to compare what they knew.",
           "disliked the farmer from the beginning.",
           "was too old to run with the wolves."
@@ -381,7 +381,7 @@ window.LESSONS["cd1"] = {
         [
           "explain how farm dogs guard sheep.",
           "describe the habits of wolves in winter.",
-          "persuade readers to keep dogs indoors at night.",
+          "persuade readers to keep their dogs shut indoors at night in winter.",
           "use a story to show the cost of belonging to two sides at once."
         ],
         "D",
@@ -391,7 +391,7 @@ window.LESSONS["cd1"] = {
         "Interpreting Figurative Language",
         "The last line calls Rusk’s mistake \"standing in two places at once.\" This means he",
         [
-          "moved between the field and the forest each night.",
+          "moved between the field and the forest every single night.",
           "slept in the barn and ate beyond the gate.",
           "tried to belong to two groups that could not both be his.",
           "ran faster than the wolves could follow."
@@ -403,10 +403,10 @@ window.LESSONS["cd1"] = {
         "Summarising",
         "Which sentence best summarises the passage?",
         [
-          "A dog welcomed by both the farmer and the wolves loses both when each learns of the other, and ends up alone in the hedge between them.",
-          "A farmer stops feeding his dog after a lamb is taken.",
-          "Wolves come down to a fence line every night in winter.",
-          "A dog runs with wolves and returns home before dawn."
+          "A dog trusted by both the farmer and the wolves loses both when each learns of the other.",
+          "A farmer stops feeding his dog after the wolves take a lamb from the field one winter night.",
+          "Wolves come down to a fence line every night through the whole winter.",
+          "A dog runs with the wolves at night and returns home again before dawn."
         ],
         "A",
         "A summary needs the double life, the discovery and the result together."

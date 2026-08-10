@@ -115,7 +115,7 @@ window.CARS_D_REGISTER([
             "A teacher explaining how to use the six weeks before a play",
             "How to choose which play a class should perform",
             "Why costumes fall off during a performance",
-            "A girl who wants to be the director of a school play"
+            "A girl who wants to become the director of the whole school play"
           ],
           "A",
           "The list is organised by week and the frame around it is about time, not about what a play needs."
@@ -150,7 +150,7 @@ window.CARS_D_REGISTER([
           [
             "Because two people with that power will cost the group time.",
             "Because the director is too busy to keep it.",
-            "Because a folder is easier for one person to carry.",
+            "Because a folder is much easier for one person to carry about.",
             "Because the schedule changes every week."
           ],
           "A",
@@ -161,7 +161,7 @@ window.CARS_D_REGISTER([
           "How is the second list different from the first one?",
           [
             "It is shorter and easier to follow.",
-            "It was written for the teacher rather than the students.",
+            "It was written for the teacher rather than for the students.",
             "It is about when things happen rather than what is needed.",
             "It lists only the jobs done by stagehands."
           ],
@@ -185,7 +185,7 @@ window.CARS_D_REGISTER([
           "In this passage, the word coordinate means",
           [
             "to give orders to the actors.",
-            "to decide which play will be performed.",
+            "to decide which play the class is going to perform.",
             "to write down what each person says.",
             "to keep all the different parts working together."
           ],
@@ -199,7 +199,7 @@ window.CARS_D_REGISTER([
             "does not expect this play to succeed.",
             "wants to direct the play herself.",
             "has learned these rules from plays that went wrong.",
-            "thinks the students should choose an easier play."
+            "thinks the students should have chosen an easier play."
           ],
           "C",
           "She says she wrote the list after a first play that nearly did not happen, and that all of them went wrong somehow."
@@ -210,7 +210,7 @@ window.CARS_D_REGISTER([
           [
             "Costumes take three times as long as anyone expects.",
             "That was the best question anybody had asked her all term.",
-            "The second list was given out at the end of the week.",
+            "The second list was given out at the end of that same week.",
             "Priya put up her hand."
           ],
           "B",
@@ -220,7 +220,7 @@ window.CARS_D_REGISTER([
           "Identifying Author's Purpose",
           "The author’s main purpose in this passage is to",
           [
-            "persuade readers to put on a play of their own.",
+            "persuade readers to go out and put on a school play of their very own.",
             "describe the costumes and props a play needs.",
             "tell the story of one girl changing her mind.",
             "set out, in order, how the time before a performance should be used."
@@ -232,7 +232,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "The list says an actor who has practised with an empty hand will look at a teapot \"as though it has only just been invented.\" This means the actor will",
           [
-            "drop the teapot on the night.",
+            "drop the teapot on the opening night.",
             "be surprised and awkward with it.",
             "refuse to use it on stage.",
             "think the prop is the wrong one."
@@ -245,7 +245,7 @@ window.CARS_D_REGISTER([
           "Which sentence best summarises the passage?",
           [
             "A class decides to go ahead with a play after reading a teacher’s list.",
-            "A teacher hands her class a second list, this one about how to use the six weeks before a performance, and a student changes the job she wants because of it.",
+            "A teacher gives a second list on using the six weeks before a performance.",
             "A teacher warns that costumes and props take longer to prepare than anyone expects.",
             "Posters for a school play should go up in week four rather than week six."
           ],
@@ -281,7 +281,7 @@ window.CARS_D_REGISTER([
           [
             "What making a radio play requires, and how it differs from a stage play",
             "How to record a door slam at the right moment",
-            "A library club that argues about who sounds like whom",
+            "A library club that spends its time arguing over which member sounds like whom",
             "Why a spaceship is cheaper on radio than on stage"
           ],
           "A",
@@ -318,7 +318,7 @@ window.CARS_D_REGISTER([
             "Confident actors speak too quickly.",
             "A listener cannot tell apart two actors who sound alike.",
             "Confident actors do not rehearse enough.",
-            "Quiet voices record better than loud ones."
+            "Quiet voices always record much better than louder ones do."
           ],
           "B",
           "The item says the listener will be confused however well the two act."
@@ -329,7 +329,7 @@ window.CARS_D_REGISTER([
           [
             "It needs no director.",
             "It takes far less rehearsal.",
-            "It has no audience to publicise it to.",
+            "It has no audience sitting in the room to publicise it to.",
             "Everything the listener knows must arrive through sound."
           ],
           "D",
@@ -354,7 +354,7 @@ window.CARS_D_REGISTER([
             "the actors who play small parts.",
             "objects used to make the right sounds.",
             "the notes a director writes down.",
-            "the microphones used for recording."
+            "the microphones that are used for recording."
           ],
           "B",
           "Item 7 defines a radio prop as anything that makes the right noise."
@@ -363,7 +363,7 @@ window.CARS_D_REGISTER([
           "Drawing Conclusions and Making Inferences",
           "You can tell from the passage that Ms Okafor",
           [
-            "thinks radio plays are easier than stage plays.",
+            "thinks that radio plays are far easier to make than stage plays.",
             "has made radio plays before and knows where they go wrong.",
             "wanted the club to choose a different project.",
             "prefers to direct the recording herself."
@@ -378,7 +378,7 @@ window.CARS_D_REGISTER([
             "The play runs eleven minutes.",
             "A door slam is two seconds late in the middle of it.",
             "Radio is worth doing, because a spaceship costs nothing.",
-            "The club argued for forty minutes about item 3."
+            "The club argued for forty whole minutes about item number 3."
           ],
           "C",
           "Whether it is worth doing is a judgement; the other three could be checked."
@@ -399,7 +399,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "Ms Okafor writes that the listener \"builds the whole thing in their own head.\" This means a radio play",
           [
-            "is written by the listener rather than the actors.",
+            "is really written by the listener rather than by the actors.",
             "has to be explained before it is played.",
             "works because the listener imagines what is not shown.",
             "is easier to follow than a stage play."
@@ -411,9 +411,9 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the passage?",
           [
-            "A library club records an eleven-minute radio play with one late door slam.",
+            "A library club spends three weeks recording an eleven-minute radio play with one late door slam.",
             "A radio play needs no scenery, costumes or faces.",
-            "A club leader gives out a ten-item sheet on making a radio play — everything reaching the listener through sound — and the club records one three weeks later.",
+            "A club leader gives out a ten-item sheet on making a radio play, and the club records one.",
             "Two members of a club sound almost exactly alike."
           ],
           "C",

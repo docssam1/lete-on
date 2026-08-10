@@ -129,7 +129,7 @@ window.CARS_D_REGISTER([
           "What is this passage mostly about?",
           [
             "A man who is given the chance to act differently, and takes it",
-            "A river crossing that goes wrong on a plank bridge",
+            "A river crossing that goes badly wrong on a narrow plank bridge",
             "Two travellers who cannot agree which road to take",
             "A joke that is told at the wrong moment"
           ],
@@ -153,7 +153,7 @@ window.CARS_D_REGISTER([
           "What happened immediately after the plank turned under the slow man’s boot?",
           [
             "The slow man went into the water and could not swim.",
-            "The nimble man ran along the bank.",
+            "The nimble man ran along the bank shouting loudly for help.",
             "They lay on the stones for a long time.",
             "A branch cracked in the thicket."
           ],
@@ -177,7 +177,7 @@ window.CARS_D_REGISTER([
           "How was the nimble man at the river different from the nimble man with the bear?",
           [
             "He was slower and more careful this time.",
-            "He was less frightened than he had been before.",
+            "He was much less frightened this time than he had been the year before.",
             "He was travelling in the opposite direction.",
             "He used the same quickness for somebody else instead of for himself."
           ],
@@ -213,7 +213,7 @@ window.CARS_D_REGISTER([
           "You can tell from the passage that the slow man",
           [
             "had never forgiven the nimble man.",
-            "had been waiting a year to take his revenge.",
+            "had been waiting a whole year to take his revenge at last.",
             "says what he thinks rather than what is comfortable.",
             "wanted to travel the rest of the way alone."
           ],
@@ -224,9 +224,9 @@ window.CARS_D_REGISTER([
           "Distinguishing Between Fact and Opinion",
           "Which statement expresses an opinion?",
           [
-            "The plank turned under his boot.",
+            "The plank turned under his boot right in the middle of the flooded river.",
             "The river was high with rain.",
-            "Courage is what you do in the half second before you have time to be frightened.",
+            "Courage is what you do in the half second before you are frightened.",
             "The slow man could not swim."
           ],
           "C",
@@ -248,7 +248,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "The last line says a man is reliable \"the second time trouble comes, and not before.\" This means",
           [
-            "trouble always comes twice to the same people.",
+            "trouble always comes twice to exactly the same people.",
             "a promise counts for nothing until it is tested.",
             "the first time never really matters.",
             "reliable people avoid trouble altogether."
@@ -260,8 +260,8 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the passage?",
           [
-            "Two travellers meet again a year after a bear frightened one of them up a tree.",
-            "A man who once ran from danger and left his companion behind goes into a flooded river for the same companion, and learns that the difference lies in what he does with the first half second.",
+            "Two travellers meet again a year after a bear frightened one of them up a tall tree.",
+            "A man who once ran from danger goes into a flooded river for the same companion.",
             "A slow man falls off a plank bridge and is pulled out by a faster one.",
             "A man admits he made up what a bear told him."
           ],
@@ -309,7 +309,7 @@ window.CARS_D_REGISTER([
           [
             "A farmer who sets snares to protect his hens",
             "A magpie who imitates a farm dog and a gate hinge",
-            "How a badger keeps to the same route every evening",
+            "How a badger keeps to exactly the same route every single evening",
             "A magpie who chooses to stay when it would be easier to leave"
           ],
           "D",
@@ -355,7 +355,7 @@ window.CARS_D_REGISTER([
           "Comparing and Contrasting",
           "How were the magpie’s two thoughts at dusk different from each other?",
           [
-            "One was about the badger and one was about the farmer.",
+            "One was about the badger and the other one was about the angry farmer nearby.",
             "One was about the night and one about the morning.",
             "One was about the wire and one about the peg.",
             "One was about her own danger, and one about escaping without being blamed."
@@ -382,7 +382,7 @@ window.CARS_D_REGISTER([
             "always the same, without changing.",
             "very slow indeed.",
             "careful about danger.",
-            "strong enough to pull hard."
+            "strong enough to pull very hard indeed."
           ],
           "A",
           "It describes a pace he did not vary once in three months."
@@ -417,7 +417,7 @@ window.CARS_D_REGISTER([
           [
             "explain how a snare works.",
             "describe the animals that live along a hedge.",
-            "persuade readers that magpies are clever birds.",
+            "persuade readers that magpies are very clever birds indeed.",
             "use a story to show what makes a companion worth having."
           ],
           "D",
@@ -430,7 +430,7 @@ window.CARS_D_REGISTER([
             "a matter of never being late.",
             "more useful than being entertaining.",
             "the same thing as being slow.",
-            "something only badgers can manage."
+            "something that only badgers can ever manage."
           ],
           "B",
           "He is comparing it directly with having the best stories."
@@ -441,7 +441,7 @@ window.CARS_D_REGISTER([
           [
             "A badger walks the same hedge at the same hour every evening for three months.",
             "A magpie warns a badger that a farmer has set snares along the hedge.",
-            "A magpie who has always been valued for being amusing works all night to free a trapped badger, and learns from him what being reliable is worth.",
+            "A magpie valued for being amusing works all night to free a trapped badger.",
             "A badger is caught in a snare and keeps a bad leg for the rest of his life."
           ],
           "C",

@@ -105,7 +105,7 @@ window.CARS_D_REGISTER([
           [
             "How an author’s habit of listening became her way of writing",
             "Why the bus on Market Street was always late",
-            "How a librarian taught a girl to spell correctly",
+            "How a school librarian taught a girl to spell correctly at last",
             "The awards given to writers in one country"
           ],
           "A",
@@ -129,7 +129,7 @@ window.CARS_D_REGISTER([
           [
             "Her first book was published.",
             "Mr Adeyemi began setting books aside for her.",
-            "She worked in a hospital kitchen.",
+            "She worked for a time in a hospital kitchen in town.",
             "She won a national award."
           ],
           "B",
@@ -140,7 +140,7 @@ window.CARS_D_REGISTER([
           "Why did Okonjo spend so long at the bus stop as a child?",
           [
             "She preferred it to going home.",
-            "Her school finished earlier than the others.",
+            "Her school finished earlier than all of the other schools nearby.",
             "She was waiting for the library to open.",
             "Her mother worked late, so whoever was free collected her."
           ],
@@ -151,7 +151,7 @@ window.CARS_D_REGISTER([
           "Comparing and Contrasting",
           "How was Mr Adeyemi different from her other teachers?",
           [
-            "He taught her to spell correctly at last.",
+            "He finally taught her how to spell all of her words correctly.",
             "He asked about the books rather than about her spelling.",
             "He moved her into a higher group.",
             "He gave her a notebook to write in."
@@ -165,7 +165,7 @@ window.CARS_D_REGISTER([
           [
             "pay attention to the ordinary conversations around them.",
             "plan the whole plot before writing anything.",
-            "send their work to as many publishers as they can.",
+            "send their work out to as many publishers as they possibly can.",
             "read three books every week."
           ],
           "A",
@@ -176,7 +176,7 @@ window.CARS_D_REGISTER([
           "In this passage, the word observe means",
           [
             "to obey a rule.",
-            "to write a note in a book.",
+            "to write a note in the back of a book.",
             "to watch and listen carefully.",
             "to wait for a long time."
           ],
@@ -187,7 +187,7 @@ window.CARS_D_REGISTER([
           "Drawing Conclusions and Making Inferences",
           "You can tell from the passage that Okonjo",
           [
-            "resents the two years she spent in a lower group.",
+            "still resents the two whole years she spent in a lower group.",
             "wishes she had gone to university instead.",
             "believes talent matters more than practice.",
             "thinks of her dialogue as collected rather than invented."
@@ -213,7 +213,7 @@ window.CARS_D_REGISTER([
           [
             "persuade readers to buy Okonjo’s novels.",
             "explain how one writer’s early life shaped her work.",
-            "teach readers how to get a manuscript published.",
+            "teach readers how to get their own manuscript published.",
             "describe the corner of Market Street."
           ],
           "B",
@@ -226,7 +226,7 @@ window.CARS_D_REGISTER([
             "caught whatever she happened to overhear.",
             "were woven out of string.",
             "were used for fishing on holidays.",
-            "recorded her own feelings each day."
+            "recorded her own private feelings each day."
           ],
           "A",
           "A net catches what comes past it, which is what she was doing at the bus stop."
@@ -237,8 +237,8 @@ window.CARS_D_REGISTER([
           [
             "A girl who could not spell is helped by a school librarian.",
             "A writer describes the town she was born in and the rain that fell there.",
-            "An author who spent her childhood listening at a bus stop turned that habit into a first novel of overheard dialogue, and now tells young writers to begin by listening.",
-            "A first novel is rejected eleven times before a twelfth publisher accepts it."
+            "An author turned a childhood habit of listening into a novel of overheard dialogue.",
+            "A first novel is turned down eleven times before a twelfth publisher finally accepts it."
           ],
           "C",
           "A summary needs the habit, the book it produced and what she now says about it."
@@ -264,7 +264,7 @@ window.CARS_D_REGISTER([
           "Finding Main Idea",
           "What is this passage mostly about?",
           [
-            "How a publisher chooses which science books to print",
+            "How a publisher decides which science books are worth printing each year",
             "Why children stop reading at the age of nine",
             "The difference between a drawing and a diagram",
             "How an illustrator became a writer by watching his own children read"
@@ -290,7 +290,7 @@ window.CARS_D_REGISTER([
           [
             "He illustrated science books written by other people.",
             "He sent a manuscript to a publisher.",
-            "He met the librarian from his wife’s school.",
+            "He first met the librarian who worked at his wife’s school.",
             "He published Why the Sea Comes In."
           ],
           "A",
@@ -303,7 +303,7 @@ window.CARS_D_REGISTER([
             "His publisher had asked him to.",
             "He wanted to be paid more for the work.",
             "He wanted to find out whether his daughter would finish the page.",
-            "The original writer had left the company."
+            "The original writer had already left the publishing company for good."
           ],
           "C",
           "The passage gives exactly that reason for the rewriting."
@@ -313,7 +313,7 @@ window.CARS_D_REGISTER([
           "According to Ferreira, what did people in publishing not see that he did?",
           [
             "The moment a child stops reading a page",
-            "How long an illustration takes to draw",
+            "How long a single illustration takes to draw",
             "Which books libraries buy most often",
             "How many books a family owns"
           ],
@@ -326,7 +326,7 @@ window.CARS_D_REGISTER([
           [
             "refuse the work altogether.",
             "draw more pictures than usual.",
-            "ask for the book to be cancelled.",
+            "ask for the whole book to be cancelled at once.",
             "suggest changes to the writing as well."
           ],
           "D",
@@ -336,7 +336,7 @@ window.CARS_D_REGISTER([
           "Finding Word Meaning in Context",
           "In this passage, the word observe means",
           [
-            "to follow a rule carefully.",
+            "to follow a written rule very carefully indeed.",
             "to watch what happens without interfering.",
             "to write notes in a margin.",
             "to explain something clearly."
@@ -375,7 +375,7 @@ window.CARS_D_REGISTER([
             "explain how one man’s job led him into a different one.",
             "teach readers how tides work.",
             "persuade readers to take up illustration.",
-            "describe the inside of a publishing house."
+            "describe the inside of a busy publishing house in detail."
           ],
           "A",
           "The passage follows one change of work and gives the reason for it."
@@ -384,7 +384,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "Ferreira says a science book with dull sentences is \"a door with no handle.\" This means the book",
           [
-            "is too heavy for a child to carry.",
+            "is far too heavy for a young child to carry about.",
             "has pages that stick together.",
             "was printed with a mistake in it.",
             "cannot be got into, however much you want to."
@@ -397,9 +397,9 @@ window.CARS_D_REGISTER([
           "Which sentence best summarises the passage?",
           [
             "A man draws volcanoes and beetles’ wings for school science books.",
-            "An illustrator who watched his own children give up on the pages he had drawn began rewriting them, and became the author of fourteen science books.",
+            "An illustrator who watched his children give up on his pages rewrote them and became a writer.",
             "A librarian laughs at a marked-up proof and tells a man to send it somewhere.",
-            "A science book with no characters becomes one of the most borrowed in the country."
+            "A science book with no characters in it becomes one of the most borrowed books in the whole country."
           ],
           "B",
           "A summary needs what he noticed, what he did about it and where it led."

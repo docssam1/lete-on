@@ -106,7 +106,7 @@ window.CARS_D_REGISTER([
           "What is this passage mostly about?",
           [
             "An inventor who treated her failures as her most useful record",
-            "How a hand pump valve is repaired with one spanner",
+            "How a hand pump valve can be repaired with just a single spanner",
             "Why villages far from a mechanic have no water",
             "The nine countries that copied a pump design"
           ],
@@ -154,7 +154,7 @@ window.CARS_D_REGISTER([
           "How was her pump different from the pumps already in use?",
           [
             "It could be mended by its user, in the field, without a spare part.",
-            "It was made entirely from parts found in a village.",
+            "It was made entirely from parts that could be found in almost any village.",
             "It pumped water twice as quickly.",
             "It was designed to last for eleven days."
           ],
@@ -177,7 +177,7 @@ window.CARS_D_REGISTER([
           "Finding Word Meaning in Context",
           "In this passage, the word persisted means",
           [
-            "gave up after several attempts.",
+            "gave up after several failed attempts.",
             "kept going for as long as it took.",
             "complained about a difficulty.",
             "repeated the same mistake."
@@ -189,7 +189,7 @@ window.CARS_D_REGISTER([
           "Drawing Conclusions and Making Inferences",
           "You can tell from the passage that Haddad",
           [
-            "thought most inventors were careless people.",
+            "thought that most of the other inventors were careless, hurried people.",
             "regretted not becoming a mechanic.",
             "valued being credited for her work.",
             "cared more about the pump being used than about being known for it."
@@ -201,7 +201,7 @@ window.CARS_D_REGISTER([
           "Distinguishing Between Fact and Opinion",
           "Which statement expresses an opinion?",
           [
-            "The first prototype worked for eleven days.",
+            "The first prototype worked for eleven days before it failed.",
             "She was the fifth of six children.",
             "The notebooks were the most useful thing she owned.",
             "The drawings were printed as a pamphlet."
@@ -215,7 +215,7 @@ window.CARS_D_REGISTER([
           [
             "explain how to design a valve.",
             "show how one inventor’s habit of recording failure shaped her work.",
-            "persuade readers not to apply for patents.",
+            "persuade readers never to apply for a patent on any of their own work.",
             "describe the town where Haddad grew up."
           ],
           "B",
@@ -238,8 +238,8 @@ window.CARS_D_REGISTER([
           "Which sentence best summarises the passage?",
           [
             "An inventor filled sixty-one notebooks over the course of her life.",
-            "A hand pump was redesigned so that it could be mended with one spanner.",
-            "A woman who wrote down every failed experiment built a pump anybody could repair and copy, and held that a failure recorded is a result rather than a loss.",
+            "A hand pump was redesigned so that it could be mended with only a single spanner.",
+            "A woman who recorded every failure built a pump anybody could repair and copy.",
             "A woman refused to take out a patent on her design."
           ],
           "C",
@@ -272,7 +272,7 @@ window.CARS_D_REGISTER([
           "Finding Main Idea",
           "What is this passage mostly about?",
           [
-            "A caretaker who resets a school bell every Monday",
+            "A caretaker who has to reset the school bell every Monday morning",
             "A boy who solves a problem by keeping a record of being wrong",
             "How brass and steel behave in cold weather",
             "Why school bells are no longer used"
@@ -311,7 +311,7 @@ window.CARS_D_REGISTER([
             "His father suggested it.",
             "His own notes showed the bell lost more time in winter.",
             "He read about metals expanding.",
-            "The caretaker mentioned the cold corridor."
+            "The caretaker mentioned the cold corridor to him one morning."
           ],
           "B",
           "The passage says the third idea came from the notebook rather than from the bell."
@@ -321,7 +321,7 @@ window.CARS_D_REGISTER([
           "How is the third idea different from the first two?",
           [
             "It came from his own written record rather than from guessing.",
-            "It was suggested to him by an adult.",
+            "It was suggested to him by one of the adults working at the school.",
             "It required a tool he did not have.",
             "It took much longer to test."
           ],
@@ -345,7 +345,7 @@ window.CARS_D_REGISTER([
           "In this passage, the word prototype is closest in meaning to",
           [
             "a first attempt at building something.",
-            "a written record of experiments.",
+            "a written record of all past experiments.",
             "a tool for measuring gears.",
             "a repair that costs nothing."
           ],
@@ -356,7 +356,7 @@ window.CARS_D_REGISTER([
           "Drawing Conclusions and Making Inferences",
           "You can tell from the passage that the problem had lasted so long because",
           [
-            "nobody had the right tools to open the box.",
+            "nobody at the school had the right tools to open the box.",
             "the school could not afford a new bell.",
             "the caretaker refused to let anyone look.",
             "it annoyed people without ever being bad enough to fix."
@@ -368,7 +368,7 @@ window.CARS_D_REGISTER([
           "Distinguishing Between Fact and Opinion",
           "Which statement expresses an opinion?",
           [
-            "The contact arm was brass and the frame was steel.",
+            "The contact arm was brass and the frame around it was steel.",
             "The bell lost about ninety seconds a day.",
             "The notebook was the only part really worth anything.",
             "The repair was a washer."
@@ -381,7 +381,7 @@ window.CARS_D_REGISTER([
           "The author’s main purpose in this passage is to",
           [
             "explain how a school bell mechanism works.",
-            "persuade readers to repair things themselves.",
+            "persuade readers to repair broken things for themselves at home.",
             "show that solving a problem depends on recording what fails.",
             "describe a corridor at Ashfield Primary."
           ],
@@ -392,7 +392,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "The last line says nobody notices the bell, \"which was the point.\" This means the repair",
           [
-            "was too small for anyone to see.",
+            "was far too small for anybody at the school to notice.",
             "has not really been finished.",
             "was kept secret from the school.",
             "worked, because a thing that works is not noticed."
@@ -404,10 +404,10 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the passage?",
           [
-            "A school bell ran ninety seconds slow every day for thirty years.",
+            "A school bell ran about ninety seconds slow every single day for nearly thirty years.",
             "A boy took the cover off a bell mechanism after school one Friday.",
             "Brass and steel shrink at different rates in cold weather.",
-            "A boy spent five weeks being wrong about a slow school bell, and found the answer — a difference between two metals in the cold — by reading back through his own record of failed ideas."
+            "A boy finds why a school bell runs slow by reading back through his failed ideas."
           ],
           "D",
           "A summary needs the problem, the method and where the answer actually came from."

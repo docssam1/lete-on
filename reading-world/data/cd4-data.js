@@ -123,7 +123,7 @@ window.CARS_D_REGISTER([
           "Understanding Sequence",
           "What happened to the moon’s spin over millions of years?",
           [
-            "It grew steadily faster.",
+            "It grew steadily faster and faster over many millions of years instead.",
             "It stopped altogether.",
             "It reversed direction.",
             "It slowed until it matched the orbit, and then stopped slowing."
@@ -138,7 +138,7 @@ window.CARS_D_REGISTER([
             "The moon lost part of its surface.",
             "The earth’s pull bulged the moon slightly, and the bulge acted as a brake.",
             "Sunlight pushed against the far side.",
-            "The moon moved further away from the earth."
+            "The moon slowly moved much further away from the earth over millions of years."
           ],
           "B",
           "That is the mechanism the passage gives for tidal locking."
@@ -148,7 +148,7 @@ window.CARS_D_REGISTER([
           "How is the far side of the moon different from the near side?",
           [
             "It has almost none of the wide dark plains.",
-            "It never receives any sunlight at all.",
+            "It never receives any sunlight from the sun at all.",
             "It is smoother and has fewer craters.",
             "It faces the earth once each month."
           ],
@@ -209,7 +209,7 @@ window.CARS_D_REGISTER([
           [
             "persuade readers to buy a telescope.",
             "explain why one side of the moon is never seen from earth.",
-            "describe a spacecraft mission of 1959.",
+            "describe the spacecraft mission that took place in the year 1959.",
             "teach readers the names of the phases."
           ],
           "B",
@@ -231,10 +231,10 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the passage?",
           [
-            "The moon turns once for every orbit it makes, so the same side always faces us, and the far side went unseen until a spacecraft photographed it in 1959.",
+            "The moon turns once for every orbit, so the same side always faces us.",
             "The moon has phases that repeat about every 27 days.",
-            "The far side of the moon has more craters than the near side.",
-            "The earth’s pull slowed the moon’s spin over millions of years."
+            "The far side of the moon has many more craters than the near side does.",
+            "The earth’s pull slowly slowed the moon’s spin over many millions of years."
           ],
           "A",
           "A summary needs the cause, the result and the fact that it hid the far side until recently."
@@ -259,7 +259,7 @@ window.CARS_D_REGISTER([
           [
             "How to use a small telescope",
             "Why Venus is brighter than any star",
-            "The transits of Venus across the face of the sun",
+            "The rare transits of Venus right across the face of the sun",
             "How the phases of Venus showed that Venus orbits the sun"
           ],
           "D",
@@ -294,7 +294,7 @@ window.CARS_D_REGISTER([
           "Why does Venus look small when it appears almost full?",
           [
             "It is then on the far side of the sun, a very long way off.",
-            "Its clouds reflect less light at that time.",
+            "Its thick clouds reflect a great deal less light at that time.",
             "It is turned away from the earth.",
             "It is passing across the face of the sun."
           ],
@@ -308,7 +308,7 @@ window.CARS_D_REGISTER([
             "Both of them orbit the earth.",
             "Both take 27 days to complete a cycle.",
             "Both shine by reflected sunlight and show phases.",
-            "Both can be seen crossing the face of the sun."
+            "Both can sometimes be seen crossing the face of the sun."
           ],
           "C",
           "That comparison opens the third paragraph and runs through the passage."
@@ -343,7 +343,7 @@ window.CARS_D_REGISTER([
           [
             "nobody had ever seen Venus.",
             "most people believed Venus travelled around the earth.",
-            "telescopes had already shown the phases of Venus.",
+            "telescopes had already shown all the phases of Venus clearly.",
             "Venus was thought to make its own light."
           ],
           "B",
@@ -366,7 +366,7 @@ window.CARS_D_REGISTER([
           "The author’s main purpose in this passage is to",
           [
             "explain what the phases of Venus proved about the solar system.",
-            "persuade readers to observe the next transit.",
+            "persuade readers to go out and observe the next transit of Venus.",
             "describe the clouds on the surface of Venus.",
             "tell the story of Galileo’s life."
           ],
@@ -389,9 +389,9 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the passage?",
           [
-            "Venus passes across the face of the sun twice each century.",
+            "Venus passes right across the face of the sun twice in every century.",
             "Galileo used a telescope in the year 1610.",
-            "Venus shines by reflected light and moves through phases in a 584-day cycle, and a full Venus proved that it must orbit the sun rather than the earth.",
+            "Venus shows phases, and a full Venus proved it orbits the sun.",
             "Venus is brightest when the smallest part of it is lit."
           ],
           "C",

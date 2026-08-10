@@ -105,7 +105,7 @@ window.CARS_D_REGISTER([
           "Finding Main Idea",
           "What is this passage mostly about?",
           [
-            "A teacher who catches her class hiding something from her",
+            "A teacher who catches her whole class hiding something from her",
             "A teacher who waits, and learns the secret was never about her",
             "A boy whose family is moving to Adelaide",
             "How a class draws a map of Australia"
@@ -129,7 +129,7 @@ window.CARS_D_REGISTER([
           "Understanding Sequence",
           "Which of these happened first?",
           [
-            "Daniel handed Mrs Garvin a note.",
+            "Daniel handed Mrs Garvin a note after class.",
             "Melissa opened the folder.",
             "Daniel’s mother wrote to the school.",
             "The class asked for twenty minutes."
@@ -144,7 +144,7 @@ window.CARS_D_REGISTER([
             "The class was preparing something for him.",
             "Daniel had asked them to be quiet.",
             "Mrs Garvin was standing beside him.",
-            "Daniel did not yet know he was moving."
+            "Daniel did not yet know that he was moving away."
           ],
           "A",
           "The letters and the map were his, so the plan had to be kept from him."
@@ -154,7 +154,7 @@ window.CARS_D_REGISTER([
           "How was Mrs Garvin this term different from last term?",
           [
             "She noticed the whispering sooner.",
-            "She called a class meeting straight away.",
+            "She called a whole class meeting straight away.",
             "She decided not to ask, and waited instead.",
             "She asked Melissa to explain the folder."
           ],
@@ -167,7 +167,7 @@ window.CARS_D_REGISTER([
           [
             "call another class meeting.",
             "assume it is probably not about her.",
-            "ask Jay directly what is happening.",
+            "ask Jay directly what is happening this time.",
             "write to the students’ families."
           ],
           "B",
@@ -177,7 +177,7 @@ window.CARS_D_REGISTER([
           "Finding Word Meaning in Context",
           "In this passage, the word secretive means",
           [
-            "friendly and open.",
+            "friendly and open with everybody around.",
             "easily frightened.",
             "quick to complain.",
             "keeping things hidden from others."
@@ -190,7 +190,7 @@ window.CARS_D_REGISTER([
           "You can tell that Mrs Garvin",
           [
             "has learned to trust her class more than she once did.",
-            "is angry that Daniel’s mother wrote in September.",
+            "is angry that Daniel’s mother wrote to the school in September.",
             "wishes the students had included her in the plan.",
             "thinks the students should have told her sooner."
           ],
@@ -225,7 +225,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "The passage says the month \"landed on her like a dropped book.\" This means Mrs Garvin",
           [
-            "had been holding a book at the time.",
+            "had been holding a heavy book at the time.",
             "felt the news arrive with a sudden jolt.",
             "was tired after a long day of teaching.",
             "had forgotten what month it was."
@@ -238,9 +238,9 @@ window.CARS_D_REGISTER([
           "Which sentence best summarises the passage?",
           [
             "A teacher waits twenty minutes at the end of a Friday.",
-            "A boy learns that his family is moving to Adelaide.",
+            "A boy learns from his mother that his family will be moving to Adelaide before the end of the term.",
             "A class draws a map showing the distance to Adelaide.",
-            "A teacher who once demanded to know her class’s secret chooses to wait this time, and finds they were quietly preparing a farewell for a classmate."
+            "A teacher waits rather than demand an answer, and finds a farewell was being planned."
           ],
           "D",
           "A summary needs her choice, the secret and the fact that it was never about her."
@@ -272,7 +272,7 @@ window.CARS_D_REGISTER([
           [
             "A shopkeeper who suspects the worst and finds he was wrong",
             "A council that changes a dangerous road crossing",
-            "How a corner shop stays open for twenty-two years",
+            "How a corner shop manages to stay open for twenty-two years",
             "A girl who collects signatures for a school project"
           ],
           "A",
@@ -309,7 +309,7 @@ window.CARS_D_REGISTER([
             "The children had taken sweets before.",
             "He had been robbed twice by people he knew.",
             "His wife had warned him about the group.",
-            "The shop had been left unlocked on Monday."
+            "The shop had been left unlocked on Monday evening."
           ],
           "B",
           "The passage says both robberies were by people he had served for years."
@@ -319,7 +319,7 @@ window.CARS_D_REGISTER([
           "How was his wife’s view different from his?",
           [
             "She thought the children were dangerous.",
-            "She wanted to write to the council herself.",
+            "She wanted to write to the local council about it herself.",
             "She had not noticed the children at all.",
             "She thought their behaviour was ordinary for their age."
           ],
@@ -331,7 +331,7 @@ window.CARS_D_REGISTER([
           "The next time Mr Iyer notices a group of children whispering in his shop, he will most likely",
           [
             "wait longer before deciding what they are doing.",
-            "ask them to leave immediately.",
+            "ask every one of them to leave the shop immediately.",
             "telephone their parents.",
             "move the till behind the counter."
           ],
@@ -342,7 +342,7 @@ window.CARS_D_REGISTER([
           "Finding Word Meaning in Context",
           "In this passage, the word concern means",
           [
-            "a business that somebody owns.",
+            "a business that somebody owns and runs.",
             "a signature on a letter.",
             "something that worries a person.",
             "a plan made in advance."
@@ -356,7 +356,7 @@ window.CARS_D_REGISTER([
           [
             "did not really believe the children would steal.",
             "felt guilty about suspecting the children before he knew anything.",
-            "had been asked to sign the letter earlier in the week.",
+            "had already been asked to sign the letter earlier in that same week.",
             "wanted the children to stop coming to his shop."
           ],
           "B",
@@ -366,7 +366,7 @@ window.CARS_D_REGISTER([
           "Distinguishing Between Fact and Opinion",
           "Which statement expresses an opinion?",
           [
-            "Mr Iyer had run the shop for twenty-two years.",
+            "Mr Iyer had run the corner shop for twenty-two years.",
             "It was a poor way to behave in somebody else’s shop.",
             "Priya put the envelope on the counter.",
             "The letter was addressed to the council."
@@ -378,7 +378,7 @@ window.CARS_D_REGISTER([
           "Identifying Author's Purpose",
           "The author’s main purpose in this passage is to",
           [
-            "persuade readers to write to their local council.",
+            "persuade readers to write to their local council about road crossings.",
             "explain how a corner shop is run.",
             "describe a road crossing that needs repair.",
             "tell a story about how easily an honest person can misjudge others."
@@ -391,7 +391,7 @@ window.CARS_D_REGISTER([
           "The passage says the week \"sat on him like a stone in a shoe.\" This means the week",
           [
             "was a small trouble that would not leave him alone.",
-            "made it impossible for him to walk to work.",
+            "made it quite impossible for him to walk to work at all.",
             "passed more slowly than usual.",
             "left him with a pain in his foot."
           ],
@@ -403,8 +403,8 @@ window.CARS_D_REGISTER([
           "Which sentence best summarises the passage?",
           [
             "A shopkeeper signs a letter that a girl brings him on a Friday.",
-            "A group of children meet in a corner shop after school for a week.",
-            "A shopkeeper spends a week suspecting the children in his shop of planning a theft, and learns they were gathering signatures to make a dangerous crossing safer.",
+            "A group of children meet together in a corner shop after school every day for a week.",
+            "A shopkeeper wrongly suspects children of theft; they were collecting signatures.",
             "A boy is knocked off his bicycle at a crossing in September."
           ],
           "C",

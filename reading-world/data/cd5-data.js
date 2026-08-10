@@ -107,7 +107,7 @@ window.CARS_D_REGISTER([
           "What is this poem mostly about?",
           [
             "The many different ways animals move, live and sound",
-            "How to find an animal hiding in a hedgerow",
+            "How to find an animal that is hiding inside a hedgerow",
             "Why some animals sleep through the winter",
             "A quarry where nothing can be heard"
           ],
@@ -143,7 +143,7 @@ window.CARS_D_REGISTER([
           "Why does the poem say you cannot see a thing?",
           [
             "Because it is the middle of winter.",
-            "Because the animals have all travelled away.",
+            "Because the animals have all travelled far away for winter.",
             "Because the quarry is full of shadows.",
             "Because the animal is hidden inside the hedgerow."
           ],
@@ -157,7 +157,7 @@ window.CARS_D_REGISTER([
             "They are much larger.",
             "They cover half the world, while the others never leave one track.",
             "They move only at night.",
-            "They have no habitat of their own."
+            "They have no habitat that they can call their own anywhere in the world."
           ],
           "B",
           "Those two lines are set directly against each other."
@@ -167,7 +167,7 @@ window.CARS_D_REGISTER([
           "A reader who follows the poem’s advice would most likely",
           [
             "stand still and notice sounds they had missed before.",
-            "catch an animal in the hedgerow.",
+            "catch an animal that is hiding deep inside the hedgerow.",
             "learn the name of every animal.",
             "stop going outside in winter."
           ],
@@ -179,7 +179,7 @@ window.CARS_D_REGISTER([
           "In this poem, the word habitat means",
           [
             "a kind of sound.",
-            "a season of the year.",
+            "a season of the year, such as winter.",
             "a way of moving.",
             "the place where an animal lives."
           ],
@@ -191,7 +191,7 @@ window.CARS_D_REGISTER([
           "You can tell that the poet believes",
           [
             "animals are difficult to find.",
-            "only large animals are worth watching.",
+            "only the largest animals outdoors are really worth watching.",
             "there is more to hear outdoors than most people notice.",
             "hedgerows ought to be left uncut."
           ],
@@ -215,7 +215,7 @@ window.CARS_D_REGISTER([
           "The poet’s main purpose is",
           [
             "to make readers want to stop and listen to animals.",
-            "to explain how animals survive the winter.",
+            "to explain how animals manage to survive the winter.",
             "to teach the names of animal homes.",
             "to describe one particular hedgerow."
           ],
@@ -226,7 +226,7 @@ window.CARS_D_REGISTER([
           "Interpreting Figurative Language",
           "The poem says a chorus rings \"round the quarry\". Calling animal sounds a chorus suggests that they",
           [
-            "are all made by the same animal.",
+            "are all made by one and the same animal.",
             "sound together like singers in a group.",
             "are far too quiet to hear.",
             "come only at dawn."
@@ -238,10 +238,10 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the poem?",
           [
-            "Animals sleep, climb and burrow in different ways.",
+            "Animals sleep, climb and burrow in many different ways of their own.",
             "A hedgerow rustles when an animal moves inside it.",
             "Some animals travel a long way and others do not.",
-            "The poem lists the many ways animals move, sound and live, and ends by asking the reader to stand still and listen to them."
+            "The poem lists ways animals live, then asks the reader to listen."
           ],
           "D",
           "A summary needs both the list and the instruction it leads to."
@@ -271,7 +271,7 @@ window.CARS_D_REGISTER([
           [
             "How to walk quietly at dusk",
             "The many voices of animals, and an invitation to listen to them",
-            "Why creatures hide beneath dry leaves",
+            "Why creatures choose to hide away beneath the dry leaves at dusk",
             "The shape of the hills in the evening"
           ],
           "B",
@@ -281,7 +281,7 @@ window.CARS_D_REGISTER([
           "Recalling Facts and Details",
           "Where does the poem say creatures live?",
           [
-            "only in the treetops",
+            "only in the very treetops high above the path",
             "only among the reeds",
             "in the hills at dusk",
             "in the hedgerow, the reeds and the treetops"
@@ -319,7 +319,7 @@ window.CARS_D_REGISTER([
           [
             "Some are much louder than others.",
             "Some come at dawn and some at dusk.",
-            "Some are made by birds and some by insects.",
+            "Some are made by the birds and others by the insects at dusk.",
             "Each has a different rhythm, and none of them is wrong."
           ],
           "D",
@@ -342,7 +342,7 @@ window.CARS_D_REGISTER([
           "In this poem, the word glide means",
           [
             "to move smoothly through the air without effort.",
-            "to hide beneath the dry leaves.",
+            "to hide away beneath the dry leaves on the ground.",
             "to call out very loudly.",
             "to run away quickly."
           ],
@@ -390,7 +390,7 @@ window.CARS_D_REGISTER([
           "The poem calls the animal sounds \"a chorus, not a song\". This suggests the sounds",
           [
             "are written down like music.",
-            "are all exactly the same as one another.",
+            "are all exactly the same as one another in every single way.",
             "come from one animal only.",
             "are many voices sounding at once, rather than one tune."
           ],
@@ -401,8 +401,8 @@ window.CARS_D_REGISTER([
           "Summarising",
           "Which sentence best summarises the poem?",
           [
-            "The poem names the creatures and sounds of a hedgerow at dusk and asks the reader to stand still and listen to them.",
-            "Creatures flutter, glide and rustle among the dry leaves.",
+            "The poem names the creatures of a hedgerow at dusk and asks the reader to listen.",
+            "Creatures flutter, glide and rustle among the dry fallen leaves all through the evening.",
             "An echo comes back across a bowl of hills.",
             "Every creature has a language of its own."
           ],
