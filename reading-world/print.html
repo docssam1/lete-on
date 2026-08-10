@@ -808,6 +808,25 @@ function presetByName(n){
   var k=normName(n); if(!k) return null;
   return BRAND_PRESETS.filter(function(p){return normName(p.name)===k||normName(p.label)===k;})[0]||null;
 }
+// Typing a registered academy's name has to end up in the same place as clicking
+// its chip. The text fields are only half of a preset — the logo arrives later,
+// from a file — so "the name already matches" is not proof the preset is loaded.
+function presetTextApplied(p){
+  return brand.name===p.name&&brand.sub===p.sub&&brand.color===p.color&&brand.color2===p.color2;
+}
+// One fetch per preset. Without this memo a preset whose logo file is missing
+// (or still loading) would look unloaded to checkName and be requested again on
+// every keystroke.
+var logoTried={};
+function ensurePresetLogo(p){
+  if(!p||!p.logo||brand.logo||logoTried[p.key])return;
+  logoTried[p.key]='pending';
+  loadLogo(p.logo,function(uri){
+    logoTried[p.key]=uri?'done':'fail';
+    if(!uri||brand.name!==p.name||brand.logo)return;   // file missing, or the name moved on while loading
+    brand.logo=uri;set('logo',uri);applyBrand();render();
+  });
+}
 function checkName(){
   var el=document.getElementById('bStat'); if(!el) return;
   var n=(document.getElementById('bName')||{}).value||'';
@@ -817,7 +836,8 @@ function checkName(){
   if(p){
     el.className='bstat ok';
     el.innerHTML='<b>등록된 학원입니다.</b> 설정을 불러왔습니다 — 이대로 바로 진행하세요.';
-    if(brand.name!==p.name) usePreset(p.key);
+    if(!presetTextApplied(p)) usePreset(p.key);
+    else ensurePresetLogo(p);
   }else{
     el.className='bstat new';
     el.innerHTML='<b>신규 등록 학원입니다.</b> 아래에서 <b>로고</b>부터 설정해 주세요. 색과 부제는 그다음입니다.';
@@ -836,13 +856,11 @@ function usePreset(key){
   if(!p)return;
   ['name','sub','color','color2'].forEach(function(k){brand[k]=p[k];set(k,p[k]);});
   brand.logo='';set('logo','');
+  delete logoTried[p.key];        // an explicit pick retries a logo that failed before
   applyBrand();renderPresets();render();
   // The logo is optional: an academy that has not supplied a file simply prints
   // its name, and nothing looks broken.
-  if(p.logo)loadLogo(p.logo,function(uri){
-    if(!uri)return;
-    brand.logo=uri;set('logo',uri);applyBrand();render();
-  });
+  ensurePresetLogo(p);
 }
 function logoTag(cls){return brand.logo?'<img class="'+(cls||'')+'" src="'+esc(brand.logo)+'" alt="">':'';}
 // A logo committed to the repo is picked up automatically the first time, so an
