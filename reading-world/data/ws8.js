@@ -1,3 +1,4 @@
+if (!window.LESSONS) window.LESSONS = {};
 window.LESSONS['ws8'] = {
   bookId: 'wonderskills-adv3',
   levelId: 'adv3',
@@ -5,7 +6,7 @@ window.LESSONS['ws8'] = {
   chapter: null, page: null,
   title: "Plastic in the Ocean",
   theme: "Plastic pollution is spreading through the world's oceans, threatening marine life and entering the food chain, but human choices and action can slow and reverse the damage.",
-  image: 'assets/images/wonderskills-adv3/cover.svg',
+  image: 'assets/images/wonderskills-adv3/ws8.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

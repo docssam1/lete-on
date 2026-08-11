@@ -1,3 +1,4 @@
+if (!window.LESSONS) window.LESSONS = {};
 window.LESSONS['ws1'] = {
   bookId: 'wonderskills-adv3',
   levelId: 'adv3',
@@ -5,7 +6,7 @@ window.LESSONS['ws1'] = {
   chapter: null, page: null,
   title: "Our Place",
   theme: "When community members work together, they can turn a neglected place into somewhere everyone can take pride in.",
-  image: 'assets/images/wonderskills-adv3/cover.svg',
+  image: 'assets/images/wonderskills-adv3/ws1.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

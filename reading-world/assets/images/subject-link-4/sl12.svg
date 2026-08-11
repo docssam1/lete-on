@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Echo and Narcissus">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#66bb6a" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<circle cx="330" cy="200" r="56" fill="#dcedd9" stroke="#2d3748" stroke-width="9"/>
+<path d="M262 330q0-84 68-84t68 84" fill="#66bb6a" stroke="#2d3748" stroke-width="9"/>
+<ellipse cx="400" cy="380" rx="270" ry="70" fill="#dbe6df" stroke="#2d3748" stroke-width="9"/>
+<circle cx="330" cy="420" r="42" fill="#dcedd9" opacity=".55"/>
+<path d="M286 430q80-24 130 12" fill="none" stroke="#f5efe2" stroke-width="7"/>
+<path d="M560 250q34 40 0 80M614 220q60 70 0 140" fill="none" stroke="#1b5e20" stroke-width="9" opacity=".75"/>
+</g>
+</svg>

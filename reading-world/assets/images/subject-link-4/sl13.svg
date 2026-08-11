@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="The History of the Toilet">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#66bb6a" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M110 150h580" stroke="#66bb6a" stroke-width="7" stroke-dasharray="20 16"/>
+<path d="M196 150v70M400 150v96M604 150v50" stroke="#66bb6a" stroke-width="6"/>
+<path d="M140 300h112l-16 108a20 20 0 0 1-20 18h-40a20 20 0 0 1-20-18z" fill="#c9b98c" stroke="#2d3748" stroke-width="9"/>
+<ellipse cx="196" cy="300" rx="60" ry="22" fill="#dcedd9" stroke="#2d3748" stroke-width="9"/>
+<rect x="330" y="300" width="140" height="120" rx="10" fill="#c08d52" stroke="#2d3748" stroke-width="9"/>
+<ellipse cx="400" cy="300" rx="46" ry="20" fill="#f5efe2" stroke="#2d3748" stroke-width="9"/>
+<path d="M330 420h140" stroke="#2d3748" stroke-width="9"/>
+<rect x="566" y="220" width="76" height="104" rx="10" fill="#1b5e20" stroke="#2d3748" stroke-width="9"/>
+<path d="M544 330h120v78a34 34 0 0 1-34 34h-52a34 34 0 0 1-34-34z" fill="#dcedd9" stroke="#2d3748" stroke-width="9"/>
+<ellipse cx="604" cy="330" rx="60" ry="22" fill="#f5efe2" stroke="#2d3748" stroke-width="9"/>
+<circle cx="656" cy="248" r="11" fill="#66bb6a" stroke="#2d3748" stroke-width="7"/>
+<path d="M110 460h580" stroke="#2d3748" stroke-width="8" opacity=".35"/>
+</g>
+</svg>

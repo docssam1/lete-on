@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Chinese Beliefs About Colors">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#66bb6a" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M300 130h40v40h-40z" fill="#2d3748"/>
+<ellipse cx="320" cy="270" rx="96" ry="120" fill="#c8352c" stroke="#2d3748" stroke-width="9"/>
+<path d="M232 210h176M232 330h176" stroke="#2d3748" stroke-width="8" opacity=".6"/>
+<rect x="284" y="386" width="72" height="20" rx="6" fill="#e8b830" stroke="#2d3748" stroke-width="7"/>
+<path d="M320 406v54M300 460h40" stroke="#c8352c" stroke-width="8"/>
+<rect x="500" y="150" width="180" height="46" rx="10" fill="#c8352c" stroke="#2d3748" stroke-width="7"/><rect x="500" y="212" width="180" height="46" rx="10" fill="#e8b830" stroke="#2d3748" stroke-width="7"/><rect x="500" y="274" width="180" height="46" rx="10" fill="#2e7d32" stroke="#2d3748" stroke-width="7"/><rect x="500" y="336" width="180" height="46" rx="10" fill="#f2eee2" stroke="#2d3748" stroke-width="7"/><rect x="500" y="398" width="180" height="46" rx="10" fill="#2d3748" stroke="#2d3748" stroke-width="7"/>
+</g>
+</svg>

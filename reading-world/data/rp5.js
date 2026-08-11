@@ -7,7 +7,7 @@ window.LESSONS['rp5'] = {
   chapter: null, page: null,
   title: "The Strange World of Murphy's Law",
   theme: "How Murphy's Law explains everyday bad luck",
-  image: 'assets/images/reading-prime/cover.svg',
+  image: 'assets/images/reading-prime/rp5.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["annoying", "making someone slightly angry", "짜증나는", "恼人的"], ["blame", "to think that someone is responsible for something bad", "탓하다", "责怪"], ["engineer", "a person who designs and builds machines", "기술자", "工程师"], ["repeat", "to say or write something again", "반복하다", "重复"], ["humorous", "funny; causing a person to laugh", "재미있는", "幽默的"], ["remind", "to make someone remember something again", "상기시키다", "提醒"], ["attract", "to draw someone or something to oneself", "끌어당기다", "吸引"], ["object", "a non-living thing that can be seen and touched", "물건", "物体"], ["lucky", "bringing good luck", "운이 좋은", "幸运的"], ["protect", "to keep someone or something safe from harm", "보호하다", "保护"], ["point", "to be turned towards a certain direction", "향하다", "指向"], ["wealth", "a large amount of money or valuable possessions", "부, 재산", "财富"]],

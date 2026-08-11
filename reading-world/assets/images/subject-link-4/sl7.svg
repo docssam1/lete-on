@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Salar de Uyuni">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#66bb6a" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<rect x="60" y="90" width="680" height="170" rx="16" fill="#dcedd9"/>
+<circle cx="600" cy="160" r="46" fill="#e8b830" stroke="#2d3748" stroke-width="8"/>
+<path d="M60 262h680" stroke="#2d3748" stroke-width="7"/>
+<rect x="60" y="262" width="680" height="170" rx="16" fill="#eef2ee"/>
+<circle cx="600" cy="362" r="46" fill="#e8b830" opacity=".45"/>
+<path d="M160 262l60-70 60 70z" fill="#1b5e20" stroke="#2d3748" stroke-width="8"/>
+<path d="M160 262l60 70 60-70z" fill="#1b5e20" opacity=".4"/>
+<path d="M380 262v-60M420 262v-90" stroke="#2d3748" stroke-width="8"/>
+<path d="M380 262v60M420 262v90" stroke="#2d3748" stroke-width="8" opacity=".35"/>
+</g>
+</svg>

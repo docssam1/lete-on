@@ -72,306 +72,326 @@ window.LESSON1={
   "A robin family lives in a tree. The robins made a nest. When a noisy cat came close, the father robin tried to shoo it away. Mae was happy that the birds and animals were free and did not live in cages."
  ],
  "originalExtraPassage": [
-  "Mae’s neighbor Ben visits her backyard after school. Mae shows him the tiny robin nest in the tree. They stand far away so the birds feel safe.",
-  "Ben sees squirrels run up the tree and chipmunks look for food near the ground. At night, Mae tells him, fireflies blink and moths fly near the porch light.",
-  "Ben says the backyard zoo is special because the animals are free. Mae agrees. She likes watching them quietly instead of putting them in cages."
+  "Mae keeps a notebook by the back door. On the first page she wrote three words: My Backyard Zoo.",
+  "Every day after school she sits on the step and counts. Some days she counts nine animals. Once she counted twenty-two. \"Are you pulling my leg?\" her brother Sam asked. \"Nobody has twenty-two animals in a backyard.\" Mae handed him the notebook and told him to sit down and look.",
+  "Sam sat still for ten minutes. He saw two squirrels chase each other around the trunk of the maple tree. He heard crickets singing in the tall grass, but he could not find one, no matter how hard he looked.",
+  "\"They stop singing when you come close,\" Mae said. \"You have to wait.\"",
+  "So Sam waited. Chipmunks popped out of holes near the fence, looked at him, and popped back in. \"Fifteen,\" he said at last. \"I counted fifteen.\" He wrote the number in the notebook himself.",
+  "The best time, Mae told him, is after dinner. That is when the moths come to the porch light and turn in slow circles. That is when the fireflies blink above the grass, on and off, like tiny lamps. Mae says skunks come out then too. Once one walked under the fence, and she and Sam stayed very still until it had gone by.",
+  "High in the maple tree, robins have built a nest. The mother sits on the eggs and the father brings food. When the neighbour’s cat climbs onto the fence, the father robin drops down and tries to shoo it away.",
+  "\"Do you ever want to keep one?\" Sam asked.",
+  "\"No,\" said Mae. \"Animals in a city zoo live in cages. Mine are free to come and go. That is the whole point.\""
  ],
  "originalExtraQuestions": [
   [
    "Finding Main Idea",
-   "Which sentence best tells the most important idea in the story?",
+   "What is this passage mostly about?",
    [
-    "Mae owns a city zoo.",
-    "Mae enjoys watching the animals that live in her backyard.",
-    "Robins are the only animals Mae sees.",
-    "Mae wants to put animals in cages."
+    "How to build a nest for robins",
+    "A boy who would rather visit the animals at a city zoo",
+    "Mae showing her brother the animals in her backyard",
+    "A notebook that Mae lost"
    ],
-   "B",
-   "The whole story is about Mae enjoying the small animals in her backyard."
+   "C",
+   "The passage follows Mae teaching Sam how to see the animals she watches every day."
   ],
   [
    "Recalling Facts and Details",
-   "Which animal does Mae see at night?",
+   "How many animals did Sam count?",
    [
-    "a giraffe",
-    "a firefly",
-    "a lion",
-    "a sparrow"
+    "fifteen",
+    "nine",
+    "twenty-two",
+    "ten"
    ],
-   "B",
-   "Mae says that moths, fireflies, and skunks are out at night."
+   "A",
+   "Sam said, \"Fifteen. I counted fifteen,\" and wrote the number in the notebook."
   ],
   [
    "Understanding Sequence",
-   "What happens before the baby robins learn to fly?",
+   "What happened right after Sam sat still for ten minutes?",
    [
-    "The eggs hatch.",
-    "The weather gets cold.",
-    "The robins leave.",
-    "Mae visits the city zoo."
+    "He wrote his number in the notebook.",
+    "Mae showed him the robins’ nest.",
+    "He asked whether Mae ever wanted to keep one of the animals.",
+    "He saw two squirrels chase each other around the maple tree."
    ],
-   "A",
-   "The eggs hatch before the baby robins grow and learn to fly."
+   "D",
+   "The squirrels came first; the number and the nest came later in the passage."
   ],
   [
    "Recognizing Cause and Effect",
-   "Why does the father robin stay close to the nest?",
+   "Why could Sam not find the crickets?",
    [
-    "He is looking for a cage.",
-    "He is protecting the nest and babies.",
-    "He wants to play with squirrels.",
-    "He is waiting for cold weather."
+    "It was too dark under the tall grass to see them.",
+    "Crickets stop singing when someone comes close.",
+    "The crickets had left the yard.",
+    "Mae had put them in a box."
    ],
    "B",
-   "He stays close and tries to shoo away anything that comes near the nest."
+   "Mae explains that they stop singing when you come close, so you have to wait."
   ],
   [
    "Comparing and Contrasting",
-   "What do Mae's zoo and the city zoo have in common?",
+   "How are Mae’s animals different from the animals in a city zoo?",
    [
-    "Both have animals to watch.",
-    "Both are free.",
-    "Both have animals in cages.",
-    "Both are outside her door."
+    "Mae’s animals are free to come and go.",
+    "Mae’s animals are much bigger.",
+    "Mae’s animals come out only in the morning.",
+    "Mae’s animals cannot be counted."
    ],
    "A",
-   "Both places have animals, but Mae's zoo is free and the animals are not in cages."
+   "Mae says zoo animals live in cages, but hers are free to come and go."
   ],
   [
    "Making Predictions",
-   "What will Mae probably do when the robins return in spring?",
+   "The next time Sam comes to the backyard, he will most likely",
    [
-    "Watch the robins build a new nest.",
-    "Put the robins in cages.",
-    "Stop looking at animals.",
-    "Move the city zoo."
+    "try to catch a chipmunk with his hands.",
+    "tell Mae that her zoo is not real.",
+    "sit quietly and wait for the animals.",
+    "ask to go to the city zoo instead."
    ],
-   "A",
-   "Mae enjoys watching robins, and she expects them to return in spring."
+   "C",
+   "Waiting quietly is what worked for him, and it is what Mae taught him to do."
   ],
   [
    "Finding Word Meaning in Context",
-   "What does shoo away mean in this story?",
+   "In this passage, the word free means",
    [
-    "make something come closer",
-    "make something go away",
-    "give food to an animal",
-    "put an animal in a cage"
+    "costing no money to visit or to keep.",
+    "able to come and go as they wish.",
+    "moving very fast.",
+    "friendly and kind."
    ],
    "B",
-   "The father robin tries to make anything near the nest go away."
+   "Mae uses the word to contrast her animals with zoo animals kept in cages."
   ],
   [
    "Drawing Conclusions and Making Inferences",
-   "Why does Mae call her backyard a zoo?",
+   "You can tell that Mae",
    [
-    "She sees many kinds of animals there.",
-    "She sells tickets there.",
-    "She works for the city zoo.",
-    "She keeps lions in cages."
+    "wishes she could work at the city zoo.",
+    "is afraid of the skunks that come out after dinner.",
+    "thinks Sam should stop visiting her.",
+    "has watched her backyard animals for a long time."
    ],
-   "A",
-   "Mae has counted many small animals and enjoys watching them."
+   "D",
+   "She knows when each animal appears and how to behave around it, which takes time to learn."
   ],
   [
    "Distinguishing Between Fact and Opinion",
    "Which sentence is an opinion?",
    [
-    "Mae has counted over thirty animals.",
-    "Robins build nests in trees.",
-    "Chipmunks are the most fun to watch.",
-    "The father robin looks for food."
+    "Sam counted fifteen animals.",
+    "Moths come to the porch light.",
+    "Robins have built a nest in the maple tree.",
+    "The best time to watch is after dinner."
    ],
-   "C",
-   "What is most fun is what Mae thinks, so it is an opinion."
+   "D",
+   "Which time is best is what Mae thinks; the other three can be checked by looking."
   ],
   [
    "Understanding Author's Purpose",
-   "Why does the author include details about ants, squirrels, and chipmunks?",
+   "The author wrote this passage mainly to",
    [
-    "to show the many animals in Mae's backyard",
-    "to teach people to build cages",
-    "to explain how city zoos make money",
-    "to tell readers to stay indoors"
+    "teach readers how to catch crickets.",
+    "tell a story about a girl sharing what she has noticed.",
+    "explain why the animals in a city zoo must live in cages.",
+    "describe how to fix a porch light."
    ],
-   "A",
-   "These details help readers imagine Mae's busy backyard zoo."
+   "B",
+   "The passage is a story about Mae showing Sam how to see her backyard zoo."
   ],
   [
    "Interpreting Figurative Language",
-   "Why does Mae say, “I'm not pulling your leg”?",
+   "The passage says the fireflies blink \"like tiny lamps.\" This means the fireflies",
    [
-    "She thinks her zoo sounds surprising.",
-    "She hurt someone's leg.",
-    "She wants to exercise.",
-    "She is playing a sport."
+    "are made of glass.",
+    "hang in a row along the porch roof.",
+    "give small flashes of light.",
+    "never stop shining."
    ],
-   "A",
-   "Mae knows it may sound surprising that she has a zoo outside her door."
+   "C",
+   "Comparing them to lamps is a vivid way of describing their small flashes of light."
   ],
   [
    "Distinguishing Between Real and Make-believe",
-   "Which event could really happen?",
+   "Which of these could NOT really happen?",
    [
-    "A squirrel chases another squirrel up a tree.",
-    "A skunk reads Mae a book.",
-    "A robin drives a car.",
-    "An ant becomes as big as a giraffe."
+    "A chipmunk writes a number in Mae’s notebook.",
+    "A squirrel runs around a tree trunk.",
+    "A skunk walks under the fence while two children stay still.",
+    "A robin brings food to a nest."
    ],
    "A",
-   "Squirrels can chase each other up trees; the other events are make-believe."
+   "Chipmunks cannot write; the other three are things these animals really do."
   ]
  ],
  "extraPassage": [
-  "On Saturday, Jun visits Grandma's backyard zoo. It is free, so he brings no money. “Are you pulling my leg?” Jun asks. Grandma laughs and points outside.",
-  "Two squirrels race up a tree. Chipmunks look for seeds beside the path. Crickets sing from the grass. Jun writes down the animals he sees.",
-  "When evening comes, moths circle the light. Fireflies flash above the flowers. A skunk walks under a bush, and Jun stays still so it can pass safely.",
-  "Above the garden, robins have a nest. A dog barks too close, but the father robin flies down to shoo the dog away. Jun notices something special: no animals are in cages. They are free to live in the backyard."
+  "When Omar moved to the new house, he looked at the small back garden and sighed. \"There is nothing here,\" he said. \"No park. No playground. Nothing.\"",
+  "His grandmother heard him. \"Come outside at four o’clock,\" she said, \"and bring a chair.\"",
+  "\"Why?\"",
+  "\"Because I am going to show you a zoo.\"",
+  "Omar laughed. \"In our garden? You are pulling my leg.\"",
+  "\"Bring the chair,\" said his grandmother.",
+  "At four o’clock Omar sat down. Nothing happened for a long time. Then, over by the wall, two squirrels came down the tree head first and chased each other through the leaves.",
+  "\"That is one,\" said his grandmother.",
+  "A few minutes later chipmunks appeared beside the flowerpots, pushing seeds into their cheeks. Crickets began to sing in the grass, though Omar could not see a single one.",
+  "\"They hide,\" said his grandmother. \"Sit still, and they forget you are there.\"",
+  "By six o’clock Omar had stopped counting on his fingers and started keeping a list. When the sky turned the colour of orange peel, moths came to the kitchen window, and after that the fireflies began to blink above the grass.",
+  "\"Are those real?\" Omar whispered.",
+  "\"As real as you are.\"",
+  "Later, two skunks walked along the bottom of the fence, one behind the other. Omar did not move at all until they had gone.",
+  "High in the tree, robins had built a nest. When a cat jumped onto the wall, the father bird dropped down, shouting, to shoo it away. The cat left in a hurry.",
+  "Omar looked at his list. Twenty-six.",
+  "\"There are no cages here,\" said his grandmother. \"Every animal is free to come and go, and every one of them chose to come. That is better than a ticket.\"",
+  "Omar carried his chair out again the next day, and the day after that."
  ],
  "extraQuestions": [
   [
    "Finding Main Idea",
-   "What is the main idea of this story?",
+   "What is this passage mostly about?",
    [
-    "Jun buys a pet at a city zoo.",
-    "Jun finds small animals living freely in Grandma's backyard.",
-    "Grandma builds cages for birds.",
-    "Jun loses his money at the zoo."
+    "A grandmother who builds a playground",
+    "A boy who discovers that his small garden is full of animals",
+    "A cat that keeps chasing the birds away from the nest in the tree",
+    "How to write a list of animal names"
    ],
    "B",
-   "The story is about Jun seeing many small animals living freely in Grandma's backyard."
+   "Omar begins by saying there is nothing to see and ends by counting twenty-six animals."
   ],
   [
    "Recalling Facts and Details",
-   "Which animal walks under a bush?",
+   "What did Omar’s grandmother tell him to bring outside?",
    [
-    "a skunk",
-    "a lion",
-    "a giraffe",
-    "a whale"
+    "a notebook",
+    "a torch",
+    "a bag of seeds",
+    "a chair"
    ],
-   "A",
-   "The passage says a skunk walks under a bush."
+   "D",
+   "She told him to come outside at four o’clock and bring a chair."
   ],
   [
    "Understanding Sequence",
-   "What happens after evening comes?",
+   "Which animals did Omar see first?",
    [
-    "Chipmunks look for seeds.",
-    "Moths circle the light.",
-    "Jun brings money.",
-    "The dog builds a nest."
+    "the fireflies",
+    "the skunks",
+    "the squirrels",
+    "the moths"
    ],
-   "B",
-   "The passage says that when evening comes, moths circle the light."
+   "C",
+   "The squirrels came down the tree before any of the other animals appeared."
   ],
   [
    "Recognizing Cause and Effect",
-   "Why does Jun stay still near the skunk?",
+   "Why could Omar not see the crickets?",
    [
-    "He wants it to pass safely.",
-    "He wants to put it in a cage.",
-    "He wants it to sing.",
-    "He wants it to fly."
+    "They hide in the grass.",
+    "They come out only in winter.",
+    "His grandmother had chased them away.",
+    "They were too high up in the tree."
    ],
    "A",
-   "Jun stays still so the skunk can pass safely."
+   "His grandmother explains that they hide, and that sitting still makes them forget you are there."
   ],
   [
    "Comparing and Contrasting",
-   "How is Grandma's backyard zoo like Mae's zoo?",
+   "How was Omar at the end of the passage different from Omar at the beginning?",
    [
-    "Both have animals in cages.",
-    "Both are free and have animals outside.",
-    "Both have only robins.",
-    "Both are city zoos."
+    "He wanted to move back to his old house.",
+    "He stopped going outside after four o’clock.",
+    "He decided the garden was too small after all.",
+    "He carried his chair out again the next day."
    ],
-   "B",
-   "Both are free places where animals live outside, not in cages."
+   "D",
+   "He arrived complaining there was nothing to see and ended up returning day after day."
   ],
   [
    "Making Predictions",
-   "What will Jun probably do on another visit?",
+   "The next time Omar says that a place is boring, he will most likely",
    [
-    "Look quietly for more animals.",
-    "Buy a cage for every animal.",
-    "Stop looking at animals.",
-    "Ask Grandma to close the zoo."
+    "ask for a ticket to a city zoo.",
+    "sit still and look more carefully first.",
+    "stay indoors all afternoon.",
+    "tell his grandmother she is pulling his leg."
    ],
-   "A",
-   "Jun is learning to watch animals quietly, so he will probably keep looking for more."
+   "B",
+   "Sitting still is exactly what turned an empty garden into twenty-six animals."
   ],
   [
    "Finding Word Meaning in Context",
-   "In the story, free means",
+   "In this passage, the word free means",
    [
-    "costing no money",
-    "very loud",
-    "inside a cage",
-    "hard to find"
+    "not kept in a cage.",
+    "costing nothing at all.",
+    "moving very quickly.",
+    "easy to find."
    ],
    "A",
-   "Jun does not bring money because the zoo is free."
+   "His grandmother says there are no cages, and that every animal is free to come and go."
   ],
   [
    "Drawing Conclusions and Making Inferences",
-   "Why does the father robin shoo the dog away?",
+   "You can tell that Omar’s grandmother",
    [
-    "He is protecting the nest.",
-    "He wants to play with the dog.",
-    "He wants to find money.",
-    "He wants to leave the backyard."
+    "does not like animals in her garden.",
+    "wanted Omar to stop asking questions.",
+    "had watched this garden many times before.",
+    "was seeing most of these animals for the first time."
    ],
-   "A",
-   "The robin wants to keep the dog away from the nest."
+   "C",
+   "She knows what time to sit down, where each animal appears and why the crickets hide."
   ],
   [
    "Distinguishing Between Fact and Opinion",
    "Which sentence is an opinion?",
    [
-    "Fireflies flash above the flowers.",
-    "Jun visits on Saturday.",
-    "Grandma's backyard zoo is the most wonderful zoo anywhere.",
-    "Robins have a nest above the garden."
+    "That is better than a ticket.",
+    "Two skunks walked along the fence.",
+    "Omar’s list had twenty-six animals on it.",
+    "Robins had built a nest in the tree."
    ],
-   "C",
-   "“Most wonderful” tells what someone thinks, so it is an opinion."
+   "A",
+   "Calling it better than a ticket is a judgement; the other three can be checked."
   ],
   [
    "Understanding Author's Purpose",
-   "Why did the author write this story?",
+   "The author wrote this passage mainly to",
    [
-    "to describe Jun's backyard-zoo visit",
-    "to sell tickets to a city zoo",
-    "to teach how to catch skunks",
-    "to explain how to build cages"
+    "explain how squirrels climb down a tree head first.",
+    "persuade readers to buy a ticket to a zoo.",
+    "tell a story about learning to look closely.",
+    "describe the rooms of a new house."
    ],
-   "A",
-   "The author describes Jun's visit and the animals he sees."
+   "C",
+   "The passage follows one boy learning that looking carefully changes what he sees."
   ],
   [
    "Interpreting Figurative Language",
-   "When Jun asks, “Are you pulling my leg?” what does he mean?",
+   "The passage says the sky \"turned the colour of orange peel.\" This tells you that",
    [
-    "Are you really telling the truth?",
-    "Are you touching my leg?",
-    "Are you going to run away?",
-    "Are you tired?"
+    "someone was peeling an orange in the garden below.",
+    "the sky had become cloudy and grey.",
+    "it was early in the morning.",
+    "the sky had turned a bright orange at sunset."
    ],
-   "A",
-   "Jun is asking whether Grandma is joking or telling the truth."
+   "D",
+   "Comparing the sky to orange peel is a vivid way of describing its colour at sunset."
   ],
   [
    "Distinguishing Between Real and Make-believe",
-   "Which could not really happen?",
+   "Which of these could NOT really happen?",
    [
-    "A robin builds a nest.",
-    "A child sees fireflies.",
-    "A skunk turns into a bright lamp.",
-    "A chipmunk looks for seeds."
+    "A cat jumps onto a garden wall.",
+    "Fireflies light up a garden as brightly as the sun.",
+    "A robin drops down and chases a cat away from its nest.",
+    "Chipmunks carry seeds in their cheeks."
    ],
-   "C",
-   "A skunk cannot turn into a bright lamp."
+   "B",
+   "Fireflies give small flashes; nothing that small could light a garden like the sun."
   ]
  ]
 };

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="The Language of Bees">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#4d94ff" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M400 150c-90 0-90 110 0 110s90 110 0 110-90-110 0-110 90-110 0-110z" fill="none" stroke="#4d94ff" stroke-width="12"/>
+<path d="M400 260v120" stroke="#0052cc" stroke-width="12" stroke-dasharray="18 14"/>
+<ellipse cx="400" cy="320" rx="34" ry="52" fill="#e8b830" stroke="#2d3748" stroke-width="8"/>
+<path d="M370 300h60M368 330h64" stroke="#2d3748" stroke-width="9"/>
+<path d="M396 270q-70-52-84 6 -10 42 84 20z" fill="#e3edff" stroke="#2d3748" stroke-width="7" opacity=".9"/>
+<path d="M404 270q70-52 84 6 10 42-84 20z" fill="#e3edff" stroke="#2d3748" stroke-width="7" opacity=".9"/>
+<circle cx="640" cy="160" r="34" fill="#f3d34e" stroke="#2d3748" stroke-width="8"/>
+<path d="M640 104v-26M640 242v26M584 160h-26M696 160h26" stroke="#f3d34e" stroke-width="9"/>
+</g>
+</svg>

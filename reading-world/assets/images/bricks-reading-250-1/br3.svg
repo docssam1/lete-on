@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Great Easter Cakes">
+<rect width="800" height="520" rx="38" fill="#faf4ec"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#c1502e" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round" fill="none">
+<rect x="286" y="286" width="228" height="96" rx="12" fill="#e07a4f" stroke="#4a2415" stroke-width="8"/>
+      <rect x="312" y="212" width="176" height="80" rx="12" fill="#f3b89f" stroke="#4a2415" stroke-width="8"/>
+      <circle cx="400" cy="188" r="20" fill="#e07a4f" stroke="#4a2415" stroke-width="7"/>
+</g>
+<text x="60" y="92" font-family="Georgia,serif" font-size="30" fill="#8c3a1f" opacity="0.85">Unit 3</text>
+<text x="60" y="470" font-family="Georgia,serif" font-size="27" fill="#4a2415">Great Easter Cakes</text>
+<text x="740" y="92" text-anchor="end" font-family="Georgia,serif" font-size="19" fill="#c1502e" opacity="0.8">Nonfiction</text>
+</svg>

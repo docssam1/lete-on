@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="The Art of Illusion">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#4d94ff" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M220 210h360" stroke="#2d3748" stroke-width="14"/>
+<path d="M220 210l52-46M220 210l52 46M580 210l-52-46M580 210l-52 46" fill="none" stroke="#0052cc" stroke-width="13"/>
+<path d="M220 350h360" stroke="#2d3748" stroke-width="14"/>
+<path d="M220 350l-52-46M220 350l-52 46M580 350l52-46M580 350l52 46" fill="none" stroke="#0052cc" stroke-width="13"/>
+<path d="M220 268v24M580 268v24" stroke="#003087" stroke-width="6" stroke-dasharray="8 8"/>
+<path d="M220 430h360" stroke="#4d94ff" stroke-width="7"/>
+<path d="M220 418v24M580 418v24" stroke="#4d94ff" stroke-width="7"/>
+<text x="330" y="470" font-family="Georgia,serif" font-size="30" fill="#001a5e">same length</text>
+</g>
+</svg>

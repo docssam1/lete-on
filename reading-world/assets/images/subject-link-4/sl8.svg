@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Salami and Kimchi">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#66bb6a" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M170 200h180v40l-20 190a24 24 0 0 1-24 22h-92a24 24 0 0 1-24-22l-20-190z" fill="#dcedd9" stroke="#2d3748" stroke-width="9"/>
+<path d="M156 180h208v30H156z" fill="#1b5e20" stroke="#2d3748" stroke-width="9"/>
+<path d="M186 300q34-24 68 0t68 0" fill="none" stroke="#c8352c" stroke-width="12"/>
+<path d="M186 350q34-24 68 0t68 0" fill="none" stroke="#c8352c" stroke-width="12"/>
+<rect x="470" y="230" width="240" height="90" rx="45" fill="#a8443c" stroke="#2d3748" stroke-width="9"/>
+<circle cx="530" cy="262" r="10" fill="#f3ecdd"/><circle cx="596" cy="290" r="9" fill="#f3ecdd"/>
+<circle cx="654" cy="258" r="8" fill="#f3ecdd"/><circle cx="576" cy="248" r="7" fill="#f3ecdd"/>
+<path d="M470 360h240M470 400h180" stroke="#66bb6a" stroke-width="9"/>
+</g>
+</svg>

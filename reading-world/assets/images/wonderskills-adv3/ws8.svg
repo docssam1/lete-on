@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Plastic in the Ocean">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#4d94ff" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M60 220q80-34 160 0t160 0 160 0 160 0" fill="none" stroke="#4d94ff" stroke-width="9"/>
+<rect x="60" y="240" width="680" height="230" rx="20" fill="#e3edff" opacity=".8"/>
+<rect x="330" y="270" width="70" height="130" rx="16" fill="none" stroke="#2d3748" stroke-width="8"/>
+<rect x="350" y="246" width="30" height="26" rx="6" fill="#0052cc" stroke="#2d3748" stroke-width="7"/>
+<path d="M500 340q60-46 120 0-60 46-120 0z" fill="#003087" stroke="#2d3748" stroke-width="8"/>
+<path d="M620 340l40-26v52z" fill="#003087" stroke="#2d3748" stroke-width="8"/>
+<circle cx="530" cy="330" r="7" fill="#f5efe2"/>
+<circle cx="180" cy="330" r="14" fill="none" stroke="#2d3748" stroke-width="7"/>
+<circle cx="240" cy="400" r="10" fill="none" stroke="#2d3748" stroke-width="6"/>
+<rect x="150" y="410" width="46" height="18" rx="9" fill="none" stroke="#2d3748" stroke-width="6"/>
+</g>
+</svg>

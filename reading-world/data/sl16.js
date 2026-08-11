@@ -7,7 +7,7 @@ window.LESSONS['sl16'] = {
   page: null,
   title: 'Art from a Urinal',
   theme: 'How Marcel Duchamp\'s Fountain challenged the definition of art in the twentieth century',
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl16.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [
@@ -122,9 +122,9 @@ window.LESSONS['sl16'] = {
   newPassage: {
     title: 'The Rock That Won a Prize',
     passage: [
-      'When Lily placed a plain gray rock on the table, labeled it "Untitled No. 1," and walked away, the art fair judges exchanged puzzled looks. All around it stood carefully painted canvases, detailed clay sculptures, and colorful collages. The rock sat in the middle of it all, doing nothing. The head judge, Mr. Ellis, called Lily over and asked her to explain her submission. "I found it on the way to school," she said. "I chose it. That makes it mine — and now it\'s art."',
-      'The judges debated for a long time. Some argued that choosing an object was not the same as creating one — that real art required skill, effort, and hours of work. Others pointed out that Lily had done exactly what artists like Marcel Duchamp had argued a century earlier: that the decision to select and display an object was itself a creative act. By the end of the afternoon, more students and parents were standing around the rock than around any other exhibit in the room. Like a small stone dropped into still water, Lily\'s rock had sent ripples spreading through every conversation in the building.',
-      'The judges did not award Lily first prize — but they created a special award for "Most Thought-Provoking Concept" and gave it to her. In the weeks that followed, the art class spent three full sessions on a single question: what makes something art? The rock sat on a shelf in the classroom for the rest of the year, quietly and efficiently doing its job.',
+      'When Lily placed an ordinary gray rock on the table, labeled it "Untitled No. 1," and walked away, the art fair judges exchanged puzzled looks. All around it stood carefully painted canvases, detailed clay sculptures, and colorful collages. The rock sat in the middle of it all, doing nothing. The head judge, Mr. Ellis, called Lily over and asked her why she had chosen to submit it — the strangest submission, he admitted, that the fair had ever received. The label carried no signature at all; an anonymous entry, Lily said, was part of the point. "I found it on the way to school," she said. "I chose it. That makes it mine — and now it\'s art."',
+      'The controversy lasted the whole afternoon. Some argued that choosing an object was not the same as creating one — that real art required skill, effort, and hours of work — and voted to reject the entry outright. Others pointed out that Lily had done exactly what Marcel Duchamp, one of the most influential artists of the last century, had argued when he set out to challenge what a gallery would accept: that the decision to select and display an object was itself a creative act. Everyone who stopped at the table had to interpret it alone. By the end of the afternoon, more students and parents were standing around the rock than around any other exhibit in the room. Like a small stone dropped into still water, Lily\'s rock had sent ripples spreading through every conversation in the building.',
+      'The judges did not award Lily first prize — but they created a special award for "Most Thought-Provoking Concept" and gave it to her. Attitudes in the art class shifted in the weeks that followed, and three full sessions went to a single question: what makes something art? The rock sat on a shelf in the classroom for the rest of the year, quietly and efficiently doing its job.',
     ],
     questions: [
       ['Finding Main Idea', 'What is the main idea of this passage?', [

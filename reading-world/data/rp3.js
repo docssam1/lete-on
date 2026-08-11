@@ -7,7 +7,7 @@ window.LESSONS['rp3'] = {
   chapter: null, page: null,
   title: "A Friend Called Freedom",
   theme: "Relationships — how true friendship helps us heal and recover",
-  image: 'assets/images/reading-prime/cover.svg',
+  image: 'assets/images/reading-prime/rp3.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["volunteer", "a person who willingly works without pay", "자원봉사자", "志愿者"], ["damaged", "harmed and not working properly", "손상된", "损坏的"], ["train", "to teach skills to a person or animal", "훈련시키다", "训练"], ["treatment", "medicine or care to make someone better", "치료", "治疗"], ["friendship", "the relationship between friends", "우정", "友谊"], ["recover", "to get better from an illness or injury", "회복하다", "康复"], ["sell", "to exchange something for money", "팔다", "卖"], ["offer", "to present something for someone to take", "제공하다", "提供"], ["trunk", "the thick, main stem of a tree", "나무 줄기", "树干"], ["invite", "to ask someone to do something or go somewhere", "초대하다", "邀请"], ["rest", "to stop moving or working to relax", "쉬다", "休息"], ["stump", "the base of a tree after it is cut down", "그루터기", "树桩"]],

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="The Longest Hot Dog in the World">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#ce93d8" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<rect x="70" y="248" width="660" height="76" rx="38" fill="#e2b06a" stroke="#2d3748" stroke-width="9"/>
+<rect x="96" y="266" width="608" height="40" rx="20" fill="#c1543f" stroke="#2d3748" stroke-width="8"/>
+<path d="M120 286q40-18 80 0t80 0 80 0 80 0 80 0 80 0" fill="none" stroke="#f0d05a" stroke-width="9"/>
+<path d="M70 386h660" stroke="#4a148c" stroke-width="7"/>
+<path d="M70 368v36M290 372v32M510 372v32M730 368v36" stroke="#4a148c" stroke-width="7"/>
+<path d="M180 378v22M400 378v22M620 378v22" stroke="#ce93d8" stroke-width="6"/>
+</g>
+</svg>

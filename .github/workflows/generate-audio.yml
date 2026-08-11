@@ -5,11 +5,16 @@ on:
   push:
     branches: [main]
     paths:
+      - '.github/workflows/generate-audio.yml'
       - 'reading-world/data/lc*.js'
       - 'reading-world/data/lesson*.js'
       - 'reading-world/data/rp*.js'
       - 'reading-world/data/ws*.js'
       - 'reading-world/data/sl*.js'
+      - 'reading-world/data/cd*.js'
+      - 'reading-world/data/cars-d-engine.js'
+      - 'scripts/generate-audio.js'
+      - 'scripts/generate-cars-d-audio.js'
 
 jobs:
   generate:
@@ -21,7 +26,12 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Generate and upload MP3s
+      - name: Generate and upload CARS Plus Level D MP3s
+        env:
+          GOOGLE_TTS_KEY: ${{ secrets.GOOGLE_TTS_KEY }}
+        run: node scripts/generate-cars-d-audio.js
+
+      - name: Generate and upload existing Reading World MP3s
         env:
           GOOGLE_TTS_KEY: ${{ secrets.GOOGLE_TTS_KEY }}
         run: node scripts/generate-audio.js

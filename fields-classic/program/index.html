@@ -444,7 +444,7 @@ body.in-viewer{overflow:hidden}
     <button class="viewer-back" onclick="GF.closeViewer()">← 목록으로</button>
     <span class="viewer-title" id="vTitle"></span>
     <div class="viewer-acts">
-      <button class="v-btn" id="vPrintBtn" onclick="window.print()">🖨 인쇄</button>
+      <button class="v-btn" id="vPrintBtn" onclick="GF.printCurrent()">🖨 인쇄</button>
       <button class="v-btn gold" id="vYtBtn" onclick="GF.openYt()" style="display:none">▶ 새 창</button>
     </div>
   </div>
@@ -477,12 +477,12 @@ body.in-viewer{overflow:hidden}
 <script>
 (function(){"use strict";
 /* ── 이미지 경로 (concept/ 직접) ── */
-const CONCEPT_PAGES="";
+const CONCEPT_PAGES="../assets/concept/";
 const ALL=["개념완성","연산연습","진단모의고사","킬러문항",
   "실전모의고사1회","실전모의고사2회","실전모의고사3회","실전모의고사4회","실전모의고사5회","실전모의고사6회",
   "파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","자료실"];
 const PRODUCTS=[
-  {key:"개념완성",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",icon:"📘",theme:"theme-concept",type:"folder",pagesBase:CONCEPT_PAGES,pageCount:75,
+  {key:"개념완성",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",icon:"📘",theme:"theme-concept",type:"folder",pagesBase:CONCEPT_PAGES,pageCount:75,pageSegments:[{base:"../assets/concept/vol1/",count:19},{base:"../assets/concept/vol2/",count:19},{base:"../assets/concept/vol3/",count:16},{base:"../assets/concept/vol4/",count:10},{base:"../assets/concept/final/",count:11}],pageExt:"jpg",pagePrefix:"",
    chapters:[
     {key:"vol1",vol:"Vol.1",title:"수와 규칙",subtitle:"1회차 · 필즈 대비 개념",topics:["수 피라미드","줄 세우기, 자리찾기","도형이 나타내는 수"],comment:"필즈 테스트 시 연산은 첫 페이지에 있는 연산을 틀리지 않으면 됩니다. 다만 도형이 나타내는 수와 같이 구구단 정도는 반드시 필요하니 받아내림, 받아올림, 구구단은 실수없이 할 수 있도록 해주세요.",videos:[{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/7aPj5IJUzQM",pdfPage:2},{key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/itmV6EXWQA4",pdfPage:15}]},
     {key:"vol2",vol:"Vol.2",title:"저울과 패턴",subtitle:"2회차 · 필즈 대비 개념",topics:["양팔저울","양팔저울의 활용","조건에 알맞은 수","패턴 도형 규칙"],comment:null,videos:[{key:"check",type:"check",label:"✅ 체크체크",url:"https://youtu.be/WoN9Ie8Fn8s",pdfPage:21},{key:"concept",type:"concept",label:"📘 개념영상",url:"https://youtu.be/WoN9Ie8Fn8s?t=318",pdfPage:24},{key:"practice",type:"practice",label:"📝 유형반복",url:"https://youtu.be/vBgZ_lZ_XiA",pdfPage:34}]},
@@ -493,15 +493,15 @@ const PRODUCTS=[
   {key:"연산연습",name:"필즈 연산 연습",desc:"덧셈·뺄셈·받아올림·받아내림",icon:"🔢",theme:"theme-calculation",type:"practice",practiceUrl:"../arithmetic/"},
   {key:"진단모의고사",name:"진단 모의고사",desc:"현재 수준 정밀 진단 + 분석",icon:"🔍",theme:"theme-mock",type:"mock",mockUrl:"../mock/"},
   {key:"킬러문항",name:"킬러문항 완전 해제",desc:"필즈 기출에서 실수가 많았던 9개 유형 정리",icon:"🎯",theme:"theme-killer",type:"direct",viewerMode:"inline",printDoc:"killer",pagesBase:"../assets/print/killer/page_",pageCount:32,videoUrl:"https://youtu.be/_x-NIjvBxMQ",topics:["복면산","수직선에서의 길이·단위길이","도형수","마방진·삼각진","도형이 나타내는 수","주고받기","양팔저울","수·도형 규칙","약속·암호"],lessons:[{key:"k1",label:"킬러 유형",title:"킬러문항 완전 해제",type:"concept",url:"https://youtu.be/_x-NIjvBxMQ",pdfPage:1}]},
-  {key:"실전모의고사1회",name:"실전 모의고사 1회",desc:"6세 선발 모의고사 세트 1회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set-1",lessons:[{key:"p1",label:"1회",title:"실전 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사2회",name:"실전 모의고사 2회",desc:"6세 선발 모의고사 세트 2회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set-2",lessons:[{key:"p2",label:"2회",title:"실전 모의고사 2회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사3회",name:"실전 모의고사 3회",desc:"6세 선발 모의고사 세트 3회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set-3",lessons:[{key:"p3",label:"3회",title:"실전 모의고사 3회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사4회",name:"실전 모의고사 4회",desc:"6세 선발 모의고사 세트 4회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set-4",lessons:[{key:"p4",label:"4회",title:"실전 모의고사 4회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사5회",name:"실전 모의고사 5회",desc:"6세 선발 모의고사 세트 5회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set-5",lessons:[{key:"p5",label:"5회",title:"실전 모의고사 5회",type:"concept",url:"",pdfPage:1}]},
-  {key:"실전모의고사6회",name:"실전 모의고사 6회",desc:"6세 선발 모의고사 세트 6회차",icon:"📝",theme:"theme-final",type:"direct",printDoc:"mock-set-6",lessons:[{key:"p6",label:"6회",title:"실전 모의고사 6회",type:"concept",url:"",pdfPage:1}]},
-  {key:"파이널모의고사1회",name:"파이널 모의고사 1회",desc:"최종 점검 파이널 1회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
-  {key:"파이널모의고사2회",name:"파이널 모의고사 2회",desc:"최종 점검 파이널 2회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi2",label:"2회",title:"파이널 모의고사 2회",type:"concept",url:"",pdfPage:1}]},
-  {key:"파이널모의고사3회",name:"파이널 모의고사 3회",desc:"최종 점검 파이널 3회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi3",label:"3회",title:"파이널 모의고사 3회",type:"concept",url:"",pdfPage:1}]},
+  {key:"실전모의고사1회",name:"실전 모의고사 1회",desc:"6세 선발 모의고사 세트 1회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/41mXpws-gng",printDoc:"mock-set-1",lessons:[{key:"p1",label:"1회",title:"실전 모의고사 1회",type:"concept",url:"https://youtu.be/41mXpws-gng",pdfPage:1}]},
+  {key:"실전모의고사2회",name:"실전 모의고사 2회",desc:"6세 선발 모의고사 세트 2회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/S-P096L75ps",printDoc:"mock-set-2",lessons:[{key:"p2",label:"2회",title:"실전 모의고사 2회",type:"concept",url:"https://youtu.be/S-P096L75ps",pdfPage:1}]},
+  {key:"실전모의고사3회",name:"실전 모의고사 3회",desc:"6세 선발 모의고사 세트 3회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/6YU0_X5ixEQ",printDoc:"mock-set-3",lessons:[{key:"p3",label:"3회",title:"실전 모의고사 3회",type:"concept",url:"https://youtu.be/6YU0_X5ixEQ",pdfPage:1}]},
+  {key:"실전모의고사4회",name:"실전 모의고사 4회",desc:"6세 선발 모의고사 세트 4회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/KLQH2Mrjm8c",printDoc:"mock-set-4",lessons:[{key:"p4",label:"4회",title:"실전 모의고사 4회",type:"concept",url:"https://youtu.be/KLQH2Mrjm8c",pdfPage:1}]},
+  {key:"실전모의고사5회",name:"실전 모의고사 5회",desc:"6세 선발 모의고사 세트 5회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/kyHuxpZhcTQ",printDoc:"mock-set-5",lessons:[{key:"p5",label:"5회",title:"실전 모의고사 5회",type:"concept",url:"https://youtu.be/kyHuxpZhcTQ",pdfPage:1}]},
+  {key:"실전모의고사6회",name:"실전 모의고사 6회",desc:"6세 선발 모의고사 세트 6회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/uBSJ_-2IhR8",printDoc:"mock-set-6",lessons:[{key:"p6",label:"6회",title:"실전 모의고사 6회",type:"concept",url:"https://youtu.be/uBSJ_-2IhR8",pdfPage:1}]},
+  {key:"파이널모의고사1회",name:"파이널 모의고사 1회",desc:"최종 점검 파이널 1회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/obRvM_ymsM8",lessons:[{key:"fi1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"https://youtu.be/obRvM_ymsM8",pdfPage:1}]},
+  {key:"파이널모의고사2회",name:"파이널 모의고사 2회",desc:"최종 점검 파이널 2회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/VC_jgwrMH_k",lessons:[{key:"fi2",label:"2회",title:"파이널 모의고사 2회",type:"concept",url:"https://youtu.be/VC_jgwrMH_k",pdfPage:1}]},
+  {key:"파이널모의고사3회",name:"파이널 모의고사 3회",desc:"최종 점검 파이널 3회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/ihp5SqAqc00",lessons:[{key:"fi3",label:"3회",title:"파이널 모의고사 3회",type:"concept",url:"https://youtu.be/ihp5SqAqc00",pdfPage:1}]},
   {key:"파이널모의고사4회",name:"파이널 모의고사 4회",desc:"새 시험지 제작 중",icon:"🏁",theme:"theme-final",type:"direct",comingSoon:true,lessons:[{key:"fi4",label:"4회",title:"파이널 모의고사 4회",type:"concept",url:"",pdfPage:1}]},
   {key:"최종모의고사",name:"최종 모의고사",desc:"새 시험지 제작 중",icon:"🏆",theme:"theme-final",type:"direct",comingSoon:true,lessons:[{key:"u1",label:"최종",title:"최종 모의고사",type:"concept",url:"",pdfPage:1}]},
   {key:"자료실",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
@@ -576,9 +576,18 @@ function embed(url){if(!url)return"";try{const p=new URL(url);let id="",s=0;if(p
 let _bookPage=1,_bookRenderKey="",_bookScrollFrame=0;
 function bookUrl(page){
   const base=S.currentProduct?.pagesBase||"";
+  const segs=S.currentProduct?.pageSegments;
+  const ext0=S.currentProduct?.pageExt||"webp";
+  if(Array.isArray(segs)&&segs.length){
+    let acc=0;
+    for(const s of segs){
+      if(page<=acc+s.count)return s.base+String(page-acc).padStart(3,"0")+"."+(s.ext||ext0);
+      acc+=s.count;
+    }
+    return "";
+  }
   const prefix=S.currentProduct?.pagePrefix??(base.endsWith("page_")?"":"page_");
-  const ext=S.currentProduct?.pageExt||"webp";
-  return base+prefix+String(page).padStart(3,"0")+"."+ext;
+  return base+prefix+String(page).padStart(3,"0")+"."+ext0;
 }
 function makeBookWatermark(){
   const wm=document.createElement("div");
@@ -757,7 +766,7 @@ const GF={
   },
   openFromTimeline(key){
     const p=PRODUCTS.find(x=>x.key===key);if(!p)return;
-    if(p.type==="folder")this.showChapters(key);else this.openDirectViewer(key);
+    if(p.type==="mock")this.openMock(p);else if(p.type==="practice")this.openPractice(p);else if(p.type==="folder")this.showChapters(key);else this.openDirectViewer(key);
   },
   showMainGrid(){
     document.getElementById("mainGrid").style.display="";document.getElementById("chapterView").style.display="none";
@@ -884,6 +893,17 @@ const GF={
   },
   prevBookPage(){if(_bookPage>1)setBookPage(_bookPage-1)},
   nextBookPage(){const total=S.currentProduct?.pageCount||0;if(_bookPage<total)setBookPage(_bookPage+1)},
+  printCurrent(){
+    const p=S.currentProduct,ch=S.currentChapter;
+    let doc=p?.printDoc||"";
+    if(!doc&&p?.key==="개념완성"&&ch?.key)doc="concept-"+ch.key;
+    if(!doc){window.print();return;}
+    const url=new URL("../print-viewer/",location.href);
+    url.searchParams.set("doc",doc);
+    url.searchParams.set("student",S.name||"학생");
+    url.searchParams.set("autoprint","1");
+    window.open(url.toString(),"_blank","noopener");
+  },
   openYt(){if(S.currentVideo?.url)window.open(S.currentVideo.url,"_blank","noopener")},
   closeViewer(){
     S.viewerOpen=false;

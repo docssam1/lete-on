@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="The First Maps">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#4d94ff" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<circle cx="300" cy="280" r="150" fill="#e3edff" stroke="#2d3748" stroke-width="9"/>
+<path d="M150 280h300M300 130v300" stroke="#4d94ff" stroke-width="6"/>
+<path d="M196 214q66 34 40 76t70 74 96-40 22-104-114-52-114 46z" fill="#0052cc" stroke="#2d3748" stroke-width="7" opacity=".85"/>
+<rect x="540" y="220" width="130" height="80" rx="12" fill="#003087" stroke="#2d3748" stroke-width="8"/>
+<path d="M540 260h-60M670 260h60" stroke="#2d3748" stroke-width="8"/>
+<path d="M470 244h20v32h-20zM710 244h20v32h-20z" fill="#4d94ff" stroke="#2d3748" stroke-width="7"/>
+<path d="M605 300v50M560 380q45-40 90 0" fill="none" stroke="#0052cc" stroke-width="8" stroke-dasharray="10 12"/>
+</g>
+</svg>

@@ -7,7 +7,7 @@ window.LESSONS['rp6'] = {
   chapter: null, page: null,
   title: "Come to the City Insect Museum!",
   theme: "Discover the amazing world of insects and other animals!",
-  image: 'assets/images/reading-prime/cover.svg',
+  image: 'assets/images/reading-prime/rp6.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [["scary", "causing fear", "무서운", "可怕的"], ["tropical", "related to the hot and rainy parts of the world", "열대의", "热带的"], ["explore", "to learn about a place by traveling around it", "탐험하다", "探索"], ["exhibition", "a public display of objects in a museum or gallery", "전시(회)", "展览"], ["impressive", "having a strong positive effect; amazing", "인상적인", "令人印象深刻的"], ["perfect", "exactly right for a purpose", "완벽한", "完美的"], ["creature", "any living thing that is not a plant", "생물", "生物"], ["unique", "very special and unusual; unlike others", "독특한", "独特的"], ["glow", "to shine with soft light", "은은히 빛나다", "发光"], ["peaceful", "calm and relaxing", "평화로운", "平静的"], ["chase", "to follow and try to catch someone or something", "뒤쫓다", "追逐"], ["sticky", "causing things to easily attach to it", "끈적거리는", "黏的"]],

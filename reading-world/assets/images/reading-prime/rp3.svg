@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="A Friend Called Freedom">
+<rect width="800" height="520" rx="38" fill="#f5efe2"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#ce93d8" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+
+<circle cx="252" cy="212" r="58" fill="#f3e5f5" stroke="#2d3748" stroke-width="9"/>
+<path d="M180 420q0-86 72-86t72 86" fill="#ce93d8" stroke="#2d3748" stroke-width="9"/>
+<ellipse cx="540" cy="368" rx="104" ry="66" fill="#c98a4b" stroke="#2d3748" stroke-width="9"/>
+<circle cx="588" cy="272" r="62" fill="#c98a4b" stroke="#2d3748" stroke-width="9"/>
+<ellipse cx="536" cy="278" rx="22" ry="44" fill="#a86f36" stroke="#2d3748" stroke-width="8"/>
+<ellipse cx="640" cy="278" rx="22" ry="44" fill="#a86f36" stroke="#2d3748" stroke-width="8"/>
+<ellipse cx="600" cy="304" rx="34" ry="24" fill="#f0e2cd" stroke="#2d3748" stroke-width="7"/>
+<ellipse cx="606" cy="296" rx="10" ry="7" fill="#2d3748"/>
+<circle cx="572" cy="258" r="7" fill="#2d3748"/><circle cx="618" cy="256" r="7" fill="#2d3748"/>
+<path d="M644 400q46-26 34-72" fill="none" stroke="#2d3748" stroke-width="10"/>
+<path d="M400 208q-22-30-46-8-22 20 46 66 68-46 46-66-24-22-46 8z" fill="#d4526e" stroke="#2d3748" stroke-width="8"/>
+</g>
+</svg>

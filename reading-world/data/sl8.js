@@ -6,7 +6,7 @@ window.LESSONS['sl8'] = {
   chapter: null, page: null,
   title: "Salami and Kimchi",
   theme: "Salt has allowed people across the world to preserve food for centuries by removing the moisture that bacteria and fungi need to survive.",
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl8.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

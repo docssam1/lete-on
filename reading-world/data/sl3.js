@@ -6,7 +6,7 @@ window.LESSONS['sl3'] = {
   chapter: null, page: null,
   title: "Healing with Color",
   theme: "Colors carry different wavelengths of energy that affect the human body and mind in measurable ways.",
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl3.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [

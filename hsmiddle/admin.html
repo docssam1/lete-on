@@ -1,7 +1,24 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>중등 시험지 승인 관리</title><style>
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");*{box-sizing:border-box}body{margin:0;background:#f3f7fb;color:#15253c;font-family:Pretendard,sans-serif}.wrap{width:min(980px,calc(100% - 32px));margin:38px auto}h1{margin:0;font-size:28px;font-weight:950}.sub{margin:9px 0 22px;color:#60738e}.panel{padding:22px;background:#fff;border:1px solid #d5e0ed;border-radius:8px;box-shadow:0 8px 22px rgba(20,43,73,.07)}.form{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}input{height:44px;padding:0 12px;border:1px solid #bbcadb;border-radius:6px;font:700 14px Pretendard,sans-serif}button{height:42px;padding:0 14px;border:0;border-radius:6px;background:#173a6b;color:#fff;font:900 13px Pretendard,sans-serif;cursor:pointer}.alt{background:#e5eef8;color:#173a6b}.danger{background:#fff0f1;color:#b4232b}.choices{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0}.choices label{padding:8px 10px;border:1px solid #cbd8e7;border-radius:5px;background:#f7faff;font-size:12px;font-weight:800}.choices input{width:auto;height:auto;margin:0 5px 0 0}table{width:100%;border-collapse:collapse;margin-top:16px}th,td{padding:12px 8px;border-bottom:1px solid #e2eaf3;text-align:left;font-size:13px;vertical-align:top}th{color:#62748c;font-size:12px}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.status{min-height:20px;margin-top:10px;color:#355b84;font-size:13px;font-weight:800}.note{color:#697c93;font-size:12px;line-height:1.65}@media(max-width:650px){.wrap{width:min(100% - 20px,980px);margin:20px auto}.form{grid-template-columns:1fr}.actions{display:grid}.actions button{width:100%}}
-</style></head><body><main class="wrap"><h1>중등 시험지 승인 관리</h1><p class="sub">이름과 승인번호로 학생별 시험지 권한을 부여합니다. 이메일은 사용하지 않습니다.</p><section class="panel"><div class="form"><input id="name" placeholder="학생 이름"><input id="code" placeholder="승인번호 예: HS-1234"><button onclick="grant()">승인 저장</button></div><div class="choices" id="choices"></div><p class="note">같은 학생 이름으로 다시 저장하면 선택한 다섯 시험지 권한으로 교체됩니다.</p><table><thead><tr><th>학생</th><th>승인번호</th><th>승인 시험지</th><th></th></tr></thead><tbody id="rows"></tbody></table><div class="actions"><button class="alt" onclick="makeCode()">승인번호 만들기</button><button onclick="saveGithub()">GitHub에 저장</button></div><div class="status" id="status"></div></section></main><script src="./data.js"></script><script>
+</style></head><body><main class="wrap"><h1>중등 시험지 승인 관리</h1><p class="sub">이름과 승인번호로 학생별 시험지 권한을 부여합니다. 이메일은 사용하지 않습니다.</p><section class="panel"><div class="form"><input id="name" placeholder="학생 이름"><input id="code" placeholder="승인번호 예: HS-1234"><button onclick="grant()">승인 저장</button></div><div class="choices" id="choices"></div><p class="note">같은 학생 이름으로 다시 저장하면 선택한 다섯 시험지 권한으로 교체됩니다.</p><table><thead><tr><th>학생</th><th>승인번호</th><th>승인 시험지</th><th></th></tr></thead><tbody id="rows"></tbody></table><div class="actions"><button class="alt" onclick="makeCode()">승인번호 만들기</button><button onclick="saveGithub()">GitHub에 저장</button><button class="alt" onclick="location.href=&#39;./review.html&#39;">문항 데이터 검수</button><button class="alt" onclick="location.href=&#39;./library.html&#39;">서재 보기</button></div><div class="status" id="status"></div></section></main><script src="./data.js"></script><script src="./shared-auth.js"></script><script>
+/* 관리자 확인 — admins 목록이 있으면 해당 계정만 입장 */
+(()=>{
+  const D=window.HSMIDDLE_DATA;
+  if(!Array.isArray(D.admins)||!D.admins.length)return;
+  const s=HSMIDDLE_AUTH.readSession();
+  if(s.valid&&HSMIDDLE_AUTH.isAdmin(s.name))return;
+  document.addEventListener("DOMContentLoaded",()=>{
+    document.querySelector("main").innerHTML=`<h1>승인 관리</h1><p class="sub">관리자 계정으로 로그인해 주세요.</p><section class="panel"><div class="form"><input id="an" placeholder="관리자 이름"><input id="ac" placeholder="승인번호" type="password"><button onclick="adminIn()">입장</button></div><p class="status" id="as"></p></section>`;
+  });
+  window.adminIn=()=>{
+    const n=document.getElementById("an").value.trim(),c=document.getElementById("ac").value.trim();
+    if(HSMIDDLE_AUTH.isValidStudent(n,c)&&HSMIDDLE_AUTH.isAdmin(n)){HSMIDDLE_AUTH.writeSession(n,c);location.reload()}
+    else document.getElementById("as").textContent="이름 또는 승인번호를 확인해 주세요.";
+  };
+  window.__adminBlocked=true;
+})();
+if(window.__adminBlocked){throw new Error("admin gate")}
 const D=window.HSMIDDLE_DATA,choices=document.getElementById('choices'),rows=document.getElementById('rows'),status=document.getElementById('status');
 const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function renderChoices(){choices.innerHTML=Object.entries(D.exams).map(([key,label])=>`<label><input type="checkbox" data-exam="${key}" ${key==='diagnostic'?'checked':''}>${esc(label)}</label>`).join('')}

@@ -6,7 +6,7 @@ window.LESSONS['sl6'] = {
   chapter: null, page: null,
   title: "Our Bodies and Salt",
   theme: "Salt is a mineral the body cannot live without, but consuming too much of it becomes a serious danger to health.",
-  image: 'assets/images/subject-link-4/cover.svg',
+  image: 'assets/images/subject-link-4/sl6.svg',
   rewardPoints: { lessonComplete: 40 },
 
   words: [
@@ -50,7 +50,7 @@ window.LESSONS['sl6'] = {
   newPassage: {
     title: "Marathon Day",
     passage: [
-      "Marcus had trained for months to run his school's charity marathon. He followed a careful diet, exercised daily, and felt his muscles growing stronger. His coach reminded him that long-distance running causes the body to sweat out a vital mineral — salt — and that replacing it was essential. Without enough of this mineral, the brain and nerves cannot communicate properly, and the muscles begin to cramp. Marcus packed a small bag of salted snacks to eat during the twenty-kilometer route.",
+      "Marcus had trained for months to run his school's charity marathon. He followed a careful diet, exercised daily, and felt his muscles growing stronger. His coach reminded him that long-distance running causes the body to sweat out a vital mineral — salt — and that replacing it was essential. Without enough of this mineral, the brain and nerves cannot communicate, the muscles begin to cramp, and the heart cannot function as it should. Marcus packed a small bag of salted snacks to eat during the twenty-kilometer route.",
       "Halfway through the race, Marcus began to feel strange. His muscles tightened, his thoughts slowed, and a dull pressure built behind his eyes. He recognized the symptoms his coach had warned about: his body was running dangerously low on salt. He reached into his bag, chewed some salted crackers, and drank water carefully. Within minutes, the tight feeling in his legs began to improve and the headache faded. He ran on, grateful that replacing the mineral had preserved his ability to finish.",
       "Marcus crossed the finish line and collapsed happily onto the grass. His coach handed him a sports drink packed with salt and minerals. 'Your muscles are like a battery that ran almost empty,' the coach said. 'That drink is the recharge.' Marcus smiled and drank. He had always thought of salt only as a flavor added in the kitchen. Now he understood that behind every pinch of salt in a shaker was a mineral that the human body could not live, move, or think without."
     ],
