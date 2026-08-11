@@ -55,6 +55,47 @@ function hiddenCardCondition({ difficulty = 2 }) {
   };
 }
 
+function closestTwoDigitCardSum({ difficulty = 2 }) {
+  const makeExpressions = (cards, target) => {
+    const expressions = new Map();
+    for (const order of permutations(cards)) {
+      const first = order[0] * 10 + order[1];
+      const second = order[2] * 10 + order[3];
+      const pair = [first, second].sort((a, b) => a - b);
+      const key = `${pair[0]}+${pair[1]}`;
+      expressions.set(key, { first: pair[0], second: pair[1], sum: first + second });
+    }
+    const distance = Math.min(...[...expressions.values()].map((item) => Math.abs(item.sum - target)));
+    return [...expressions.values()].filter((item) => Math.abs(item.sum - target) === distance);
+  };
+
+  let cards;
+  let target;
+  let best;
+  let valid = false;
+  let attempts = 0;
+  do {
+    cards = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4);
+    target = difficulty === 1 ? sample([60, 70, 80, 90]) : difficulty === 2 ? 100 : randomInt(83, 117);
+    best = makeExpressions(cards, target);
+    attempts += 1;
+    const distance = best.length ? Math.abs(best[0].sum - target) : 99;
+    const validDistance = difficulty === 1 ? distance === 0 : difficulty === 2 ? distance >= 1 && distance <= 6 : distance >= 1 && distance <= 8;
+    valid = best.length === 2 && validDistance;
+    if (valid) break;
+  } while (attempts < 1000);
+
+  if (!valid) return closestTwoDigitCardSum({ difficulty });
+  const sum = best[0].sum;
+  const answerText = best.map((item) => `${item.first} + ${item.second}`).join(" 또는 ");
+  return {
+    prompt: `숫자 카드 4장을 한 번씩 사용하여 두 자리 수 2개를 만드세요. 두 수의 합이 ${target}에 가장 가깝도록 빈칸을 채우고 계산하세요.`,
+    visual: { kind: "closest-card-sum", cards: shuffle(cards), target },
+    answer: `${answerText} = ${sum}`,
+    solution: `숫자 카드를 십의 자리와 일의 자리에 바꾸어 넣으며 합을 비교합니다. ${answerText}로 만들면 합은 ${sum}이고, ${target}과의 차가 ${Math.abs(sum - target)}로 가장 작습니다.`
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -499,6 +540,7 @@ function paperFoldHoleCount({ difficulty }) {
 
 export const GENERATORS = {
   hiddenCardCondition,
+  closestTwoDigitCardSum,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
