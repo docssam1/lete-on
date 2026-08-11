@@ -1,0 +1,48 @@
+# 필즈 더 클래식 문제은행 인수인계
+
+## 현재 목표
+
+진단 모의고사의 기존 유사문제는 그대로 둔다. 새 `question-bank`는 실제 선발시험, 필즈 더 클래식 1과정 교재 본문, 권별 단원 테스트를 원본 문항과 1:1로 대조한 뒤에만 무한 생성 문제를 여는 별도 상품이다.
+
+## 작업 위치와 원본
+
+- 구현: `fields-classic/question-bank/`
+- 실제 선발시험 PDF 사본: `tmp/pdfs/source-audit/`
+- 실제 선발시험 렌더: `tmp/pdfs/selection-test-render/`
+- 1과정 원본: `G:\내 드라이브\1과정(N30)`
+- 단원 테스트 렌더: `tmp/pdfs/unit-test-render/book01` ~ `book10`
+- 단원 테스트 텍스트: `tmp/pdfs/unit-test-text/book01.txt` ~ `book10.txt`
+
+## 절대 규칙
+
+1. 문항 번호별로 원본 문제지 그림, 조건, 답안지를 모두 대조한다.
+2. 제목이 비슷해도 구조가 다르면 다른 세부 유형으로 만든다.
+3. 생성기는 답을 코드로 계산하고, 쉬움·같게·어려움은 원본 대비 조건 수와 구조로 조절한다. 숫자 범위만 바꿔 난이도를 표시하지 않는다.
+4. 원본 대조와 난수 검산이 끝난 문항만 `verified: true` 및 `sourceMatched: true`로 연다.
+5. Golden Bell, 연산 테스트, 2권 이후 교재 뒤 리뷰는 제외한다.
+6. `fields-classic/prescription/` 및 `fields-classic/problem-bank/prescription/`의 기존 진단 유사문제는 수정하지 않는다.
+
+## 완료
+
+- 질문은행 UI: 시험지별, 교재 단원별, 대분류 > 중분류 > 세부 유형 선택과 원본 뷰어/워터마크/인쇄 구현.
+- 원본 뷰어: `selection-test-viewer.html`, `unit-test-viewer.html`.
+- 2023.02.06 7세 1차 20문항: 원본 그림·답지 대조, 라이브 생성 20개, 각 난이도 1,000회씩 총 60,000회 출력 검산 완료. 이 시험지만 열려 있다.
+- 2022.04.18 7세 2차, 2022.06.22 7세 3차, 2022.08.12 7세 4차, 2022.12.15 7세 6차: 문제지·답지 문항별 분류 완료, 세부 유형 ID 반영, 생성기는 아직 잠김.
+- 상세 분류표와 답은 `SOURCE-AUDIT.md`에 있다.
+
+## 다음 순서
+
+1. 7세 2·3·4·6차의 `생성기 대기` 세부 유형을 원본 그림과 동일한 SVG/HTML 렌더 + 정답 검산기로 구현한다.
+2. 각 문항 생성기마다 최소 쉬움·같게·어려움 1,000회 이상 정답·표시값·그림 일치 검산 후 해당 문항만 연다.
+3. 초1 선발시험 4종을 같은 방식으로 문제지와 답지부터 분류한다.
+4. 1과정 각 권의 본문·단원 테스트를 원본 PPTX 렌더와 답지로 분류한다.
+
+## 확인 명령
+
+```powershell
+$node='C:\Users\user\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe'
+& $node --check fields-classic/question-bank/source-data.js
+& $node --check fields-classic/question-bank/generators.js
+& $node --check fields-classic/question-bank/app.js
+git diff --check -- fields-classic/question-bank
+```
