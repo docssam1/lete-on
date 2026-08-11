@@ -246,7 +246,7 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .psg.cars-print-original .cars-float-left{float:left;margin:1mm 5mm 3mm 0}
 .psg.cars-print-original .cars-media-portrait{max-width:38mm}
 .psg.cars-print-original .cars-media-medium{max-width:55mm}
-.psg.cars-print-original .cars-media-wide{max-width:128mm}
+.psg.cars-print-original .cars-media-wide{width:95mm;max-width:64%}
 .psg.cars-print-original .cars-media-column-wide{max-width:56mm}
 .psg.cars-print-original .cars-media-poem-art{max-width:58mm}
 .psg.cars-print-original .cars-media-phase-panel{max-width:48mm}
@@ -1402,6 +1402,7 @@ function carsMediaExtraClass(media){
   var p=media.placement||'', cls='';
   if(p.indexOf('float-left')===0)cls='cars-float-left';
   else if(p.indexOf('float-right')===0)cls='cars-float-right';
+  else if(p==='after-paragraph'||p==='column-right-top')cls='cars-float-right';
   if(p==='float-right-bottom')cls+=' cars-media-low';
   if(p==='float-right-middle')cls+=' cars-media-middle';
   return cls;
@@ -1416,19 +1417,22 @@ function carsParagraphRun(ps,start,end,before,after){
 function carsPassageHtml(j,art){
   var cfg=carsLessonCfg(j.lessonId), orig=cfg&&cfg.original, meta=j.meta||{};
   if(!j.licensed||!orig)return passageHtml(j.passage,art);
+  // The study view may reproduce a source page's columns, but the worksheet
+  // print flow stays single-column. Reapplying columns after pagination made
+  // every continuation page rebalance independently and scattered both text
+  // and figures across mostly empty sheets.
   var lessonId=j.lessonId, ps=j.passage||[], cls=['psg','cars-print-original','cars-d-original','cars-layout-'+(orig.layout||'standard')];
-  if(orig.columns===2)cls.push('cars-two-column');
   if(orig.layout==='poster')cls.push('cars-poster');
-  var media=carsMediaList(cfg,meta), before={}, after={}, bottom=[], journalMedia='', columnRightTop='';
+  var media=carsMediaList(cfg,meta), before={}, after={}, bottom=[], journalMedia='';
   media.forEach(function(m){
     var html=carsMediaHtml(lessonId,m,carsMediaExtraClass(m));
     if(!html)return;
     if(m.placement==='journal-bottom-right') journalMedia+=html.replace('cars-inline-media','cars-inline-media cars-journal-art');
-    else if(m.placement==='column-right-top') columnRightTop+=html.replace('cars-inline-media','cars-inline-media cars-column-figure');
+    else if(m.placement==='column-right-top') carsAddAt(before,carsColumnBreak(ps,meta)+1,html);
     else if(m.placement==='float-left-top'||m.placement==='float-right-top') carsAddAt(before,0,html);
     else if(m.placement==='float-right'||m.placement==='float-right-middle') carsAddAt(before,Number.isInteger(m.afterParagraph)?m.afterParagraph:0,html);
     else if(m.placement==='float-right-bottom') carsAddAt(before,Math.max(0,ps.length-2),html);
-    else if(m.placement==='after-paragraph') carsAddAt(after,Number.isInteger(m.afterParagraph)?m.afterParagraph:ps.length-1,html);
+    else if(m.placement==='after-paragraph') carsAddAt(before,Math.min(ps.length-1,(Number.isInteger(m.afterParagraph)?m.afterParagraph:ps.length-2)+1),html);
     else bottom.push(html);
   });
   if(orig.layout==='poster'){
@@ -1440,15 +1444,6 @@ function carsPassageHtml(j,art){
   }
   var journalCount=Number(meta.journalParagraphsFromEnd||orig.journalParagraphsFromEnd||0);
   var splitAt=journalCount>0?Math.max(0,ps.length-journalCount):ps.length;
-  if(orig.columns===2&&columnRightTop&&ps.length>1){
-    var breakAfter=carsColumnBreak(ps,meta);
-    return '<div class="'+cls.join(' ')+' cars-exact-columns">'+
-      '<div class="cars-column-grid"><div class="cars-column cars-column-left">'+
-      carsParagraphRun(ps,0,breakAfter+1,before,after)+
-      '</div><div class="cars-column cars-column-right">'+columnRightTop+
-      carsParagraphRun(ps,breakAfter+1,ps.length,before,after)+
-      '</div></div>'+bottom.join('')+'</div>';
-  }
   var body=carsParagraphRun(ps,0,splitAt,before,after);
   if(journalCount>0&&splitAt<ps.length){
     body+='<div class="cars-journal-inset">'+carsParagraphRun(ps,splitAt,ps.length,before,after)+journalMedia+'</div>';
@@ -2595,21 +2590,23 @@ function atomsOf(block){
   if(block.classList.contains('psg')||block.classList.contains('ex')||
      (block.tagName==='OL'&&block.classList.contains('qs'))) kids=block.children;
   if(!kids||kids.length<2) return [{whole:block,h:outerH(block)}];
-  var list=[].slice.call(kids), lead=null;
-  // A floated illustration is out of flow: it has no place of its own in the
-  // sequence, it rides along with the paragraph it sits beside.
-  if(list.length&&list[0].tagName==='IMG'&&list[0].classList.contains('fl'))
-    lead=list.shift();
-  var atoms=list.map(function(k){return {host:block,node:k,h:outerH(k)};});
-  // Its height is deliberately not added: the paragraphs beside it are measured
-  // already wrapped, so counting the picture again would reserve space twice and
-  // push a paragraph onto a page that did not need to exist. A passage short
-  // enough for the float to be the tallest thing never splits in the first place.
-  if(lead&&atoms.length){
-    atoms[0].pre=lead;
-  }else if(lead){
-    atoms.push({host:block,node:lead,h:outerH(lead)});
-  }
+  var list=[].slice.call(kids), pending=[], atoms=[];
+  // Floated artwork must travel with the paragraph beside it. Otherwise the
+  // paginator can put the figure at the foot of one sheet and its text on the
+  // next, leaving a nearly empty picture-only continuation page.
+  list.forEach(function(k){
+    var floated=(k.tagName==='IMG'&&k.classList.contains('fl'))||
+      k.classList.contains('cars-float-right')||k.classList.contains('cars-float-left');
+    if(floated){pending.push(k);return;}
+    var atom={host:block,node:k,h:outerH(k)};
+    if(pending.length){
+      atom.pre=pending.slice();
+      atom.h=Math.max.apply(Math,[atom.h].concat(pending.map(outerH)));
+      pending=[];
+    }
+    atoms.push(atom);
+  });
+  pending.forEach(function(k){atoms.push({host:block,node:k,h:outerH(k)});});
   return atoms;
 }
 function paginate(){
@@ -2654,7 +2651,7 @@ function splitSheet(s){
     page.forEach(function(a){
       if(a.whole){sheet.appendChild(a.whole);host=null;hostSrc=null;return;}
       if(hostSrc!==a.host){hostSrc=a.host;host=a.host.cloneNode(false);sheet.appendChild(host);}
-      if(a.pre)host.appendChild(a.pre);      // the float leads its paragraph
+      if(a.pre)a.pre.forEach(function(n){host.appendChild(n);});
       host.appendChild(a.node);
     });
     if(foot)sheet.appendChild(pi?foot.cloneNode(true):foot);
