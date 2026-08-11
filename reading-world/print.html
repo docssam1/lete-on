@@ -505,8 +505,33 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
   .sumchip{max-width:100%}
 }
 
+/* ---------------- report marks ----------------
+   A teacher reads the report on screen and marks it up before handing it over.
+   Marks are spans that add no text of their own — the star is a ::before — so
+   the character offsets a mark is stored against survive being re-applied. */
+.mk{border-radius:1mm}
+.mk-hl{background:#ffe45c;padding:0 .4mm;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.mk-ul{border-bottom:.7mm solid var(--brand);padding-bottom:.2mm}
+.mk-star{font-weight:700}
+.mk-star::before{content:'★';color:#e0a109;margin-right:.6mm;font-weight:700}
+.pv-body .mk{cursor:pointer}
+.mkbar{position:fixed;z-index:60;display:flex;gap:4px;padding:5px;
+  background:#22302a;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.28)}
+.mkbar button{border:0;background:#3a4b43;color:#fff;font:inherit;font-size:12px;
+  padding:5px 9px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.mkbar button:hover{background:#4d6157}
+.mkbar button.hl{background:#ffe45c;color:#3a3009}
+.mkbar button.star{background:#f7c948;color:#4a3a06}
+.mkbar button[disabled]{opacity:.4;cursor:default}
+.mkhint{font-size:12px;color:#5a675e;margin:0 0 8px}
+
 /* ---------------- print ---------------- */
 @media print{
+  /* Colour printers get the real highlighter; on a greyscale printer these
+     values fall to a light band and a dark rule, both still legible. */
+  .mk-hl{background:#ffe45c!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .mk-ul{border-bottom-color:#000!important}
+  .mk-star::before{color:#000!important}
   @page{size:A4;margin:0}
   html,body{background:#fff}
   .no-print{display:none!important}
@@ -650,6 +675,13 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
     </div>
     <div class="pv-body" id="sheets"><div class="empty">왼쪽에서 선택하면<br>여기에 인쇄 미리보기가 나타납니다.</div></div>
   </div>
+</div>
+
+<div class="mkbar no-print" id="mkBar" hidden>
+  <button class="hl"   data-mk="hl">형광펜</button>
+  <button class="star" data-mk="star">★ 별표</button>
+  <button              data-mk="ul">밑줄</button>
+  <button              data-mk="off">지우기</button>
 </div>
 
 <button class="btn brandy jump no-print" id="jumpPv">미리보기 보기 ↓</button>
@@ -876,6 +908,25 @@ function presetByName(n){
   var k=normName(n); if(!k) return null;
   return BRAND_PRESETS.filter(function(p){return normName(p.name)===k||normName(p.label)===k;})[0]||null;
 }
+// Typing a registered academy's name has to end up in the same place as clicking
+// its chip. The text fields are only half of a preset — the logo arrives later,
+// from a file — so "the name already matches" is not proof the preset is loaded.
+function presetTextApplied(p){
+  return brand.name===p.name&&brand.sub===p.sub&&brand.color===p.color&&brand.color2===p.color2;
+}
+// One fetch per preset. Without this memo a preset whose logo file is missing
+// (or still loading) would look unloaded to checkName and be requested again on
+// every keystroke.
+var logoTried={};
+function ensurePresetLogo(p){
+  if(!p||!p.logo||brand.logo||logoTried[p.key])return;
+  logoTried[p.key]='pending';
+  loadLogo(p.logo,function(uri){
+    logoTried[p.key]=uri?'done':'fail';
+    if(!uri||brand.name!==p.name||brand.logo)return;   // file missing, or the name moved on while loading
+    brand.logo=uri;set('logo',uri);applyBrand();render();
+  });
+}
 function checkName(){
   var el=document.getElementById('bStat'); if(!el) return;
   var n=(document.getElementById('bName')||{}).value||'';
@@ -885,7 +936,8 @@ function checkName(){
   if(p){
     el.className='bstat ok';
     el.innerHTML='<b>등록된 학원입니다.</b> 설정을 불러왔습니다 — 이대로 바로 진행하세요.';
-    if(brand.name!==p.name) usePreset(p.key);
+    if(!presetTextApplied(p)) usePreset(p.key);
+    else ensurePresetLogo(p);
   }else{
     el.className='bstat new';
     el.innerHTML='<b>신규 등록 학원입니다.</b> 아래에서 <b>로고</b>부터 설정해 주세요. 색과 부제는 그다음입니다.';
@@ -904,13 +956,11 @@ function usePreset(key){
   if(!p)return;
   ['name','sub','color','color2'].forEach(function(k){brand[k]=p[k];set(k,p[k]);});
   brand.logo='';set('logo','');
+  delete logoTried[p.key];        // an explicit pick retries a logo that failed before
   applyBrand();renderPresets();render();
   // The logo is optional: an academy that has not supplied a file simply prints
   // its name, and nothing looks broken.
-  if(p.logo)loadLogo(p.logo,function(uri){
-    if(!uri)return;
-    brand.logo=uri;set('logo',uri);applyBrand();render();
-  });
+  ensurePresetLogo(p);
 }
 function logoTag(cls){return brand.logo?'<img class="'+(cls||'')+'" src="'+esc(brand.logo)+'" alt="">':'';}
 // A logo committed to the repo is picked up automatically the first time, so an
@@ -2070,6 +2120,173 @@ function build(mode,list){
   if(mode==='book') html+=keySheets(list);
   return html;
 }
+/* ---------- report marks ----------
+   The report is rebuilt from scratch whenever anything changes — a keyed answer,
+   the memo, the language — so a teacher's marks cannot simply live in the DOM.
+   Each one is stored as {b, s, e, k, t}: the block it sits in, the character
+   offsets within that block, the kind, and the text it covered. Offsets alone
+   would drift the moment an edit lengthens the block above, so the text is the
+   real anchor and the offsets are the fast path. */
+var marks=[];                       // report annotations, in memory like the rest of `grade`
+var MK_BLOCK='p,li,td,th,h1,h2,h3,h4,div';
+var mkPending=null;                 // spans captured at mouseup, used when a bar button is hit
+
+function mkRoot(){return sheetsEl.querySelector('.sheet.report');}
+// Chart text is drawn, not read: excluding SVG here keeps offsets identical
+// between the pass that measures a selection and the pass that re-applies it.
+function mkTextNodes(el){
+  var out=[],w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null),n;
+  while((n=w.nextNode())) if(!n.parentElement.closest('svg')) out.push(n);
+  return out;
+}
+// Every text node belongs to its NEAREST block ancestor, and to that one only.
+// Blocks nest — .rp-verdict holds a bare <b> and a <p> — so without this the
+// same words would sit in two blocks at once and one drag would leave two marks.
+function mkOwnNodes(el){
+  return mkTextNodes(el).filter(function(n){
+    return n.parentElement.closest(MK_BLOCK)===el;});
+}
+function mkText(el){
+  return mkOwnNodes(el).map(function(n){return n.nodeValue;}).join('');
+}
+// Inline <b> inside a paragraph therefore marks against the paragraph, while a
+// bare <b> in a callout marks against the callout.
+function mkBlocks(){
+  var root=mkRoot(); if(!root) return [];
+  var out=[];
+  mkTextNodes(root).forEach(function(n){
+    if(!/\S/.test(n.nodeValue)) return;
+    var b=n.parentElement.closest(MK_BLOCK);
+    if(b&&b!==root&&out.indexOf(b)<0) out.push(b);
+  });
+  return out;
+}
+// The slice of one text node that a range covers, or null when it misses.
+function mkPart(r,n){
+  var len=n.nodeValue.length;
+  try{
+    if(r.comparePoint(n,len)<0) return null;   // node ends before the range starts
+    if(r.comparePoint(n,0)>0) return null;     // node starts after the range ends
+  }catch(e){return null;}
+  var a=(r.startContainer===n)?r.startOffset:0;
+  var z=(r.endContainer===n)?r.endOffset:len;
+  return z>a?[a,z]:null;
+}
+// A selection is cut at block boundaries: dragging across three paragraphs
+// leaves three marks, each of which can later re-anchor on its own.
+function mkCapture(){
+  var sel=window.getSelection(),root=mkRoot();
+  if(!root||!sel||!sel.rangeCount||sel.isCollapsed) return null;
+  var r=sel.getRangeAt(0);
+  if(!root.contains(r.commonAncestorContainer)) return null;
+  var out=[];
+  mkBlocks().forEach(function(b,bi){
+    var t=0,s=-1,e=-1;
+    mkOwnNodes(b).forEach(function(n){
+      var p=mkPart(r,n);
+      if(p){if(s<0)s=t+p[0];e=t+p[1];}
+      t+=n.nodeValue.length;
+    });
+    if(s>=0&&e>s) out.push({b:bi,s:s,e:e,t:mkText(b).slice(s,e)});
+  });
+  out=out.filter(function(m){return /\S/.test(m.t);});
+  return out.length?out:null;
+}
+function mkWrap(block,s,e,kind){
+  var t=0,jobs=[];
+  mkOwnNodes(block).forEach(function(n){
+    var len=n.nodeValue.length,a=Math.max(s-t,0),z=Math.min(e-t,len);
+    if(z>a) jobs.push([n,a,z]);
+    t+=len;
+  });
+  // Splitting a node only ever adds siblings after it, so the nodes still queued
+  // are untouched and the offsets collected above stay good.
+  jobs.forEach(function(j){
+    var n=j[0];
+    if(j[2]<n.nodeValue.length) n.splitText(j[2]);
+    if(j[1]>0) n=n.splitText(j[1]);
+    var sp=document.createElement('span');
+    sp.className='mk mk-'+kind;
+    sp.title='클릭하면 지워집니다';
+    n.parentNode.insertBefore(sp,n);
+    sp.appendChild(n);
+  });
+  return jobs.length>0;
+}
+// Offsets first; when the block has shifted under the mark, the same words
+// elsewhere in the report. A mark that finds neither is dropped.
+function mkAnchor(m,blocks){
+  if(blocks[m.b]&&mkText(blocks[m.b]).slice(m.s,m.e)===m.t) return m;
+  var order=blocks.map(function(_,i){return i;});
+  order.sort(function(a,b){return Math.abs(a-m.b)-Math.abs(b-m.b);});
+  for(var i=0;i<order.length;i++){
+    var idx=mkText(blocks[order[i]]).indexOf(m.t);
+    if(idx>=0){m.b=order[i];m.s=idx;m.e=idx+m.t.length;return m;}
+  }
+  return null;
+}
+function mkApply(){
+  if(!marks.length) return;
+  var blocks=mkBlocks();
+  if(!blocks.length) return;
+  marks=marks.filter(function(m){return mkAnchor(m,blocks);});
+  // Later marks are wrapped inside earlier ones when they overlap, which is what
+  // a highlight plus an underline over the same words should look like.
+  marks.forEach(function(m){mkWrap(blocks[m.b],m.s,m.e,m.k);});
+}
+function mkAdd(kind){
+  if(!mkPending) return;
+  if(kind==='off'){
+    mkPending.forEach(function(p){
+      marks=marks.filter(function(m){return !(m.b===p.b&&m.s<p.e&&p.s<m.e);});
+    });
+  }else{
+    mkPending.forEach(function(p){
+      marks.push({b:p.b,s:p.s,e:p.e,t:p.t,k:kind});
+    });
+  }
+  mkPending=null;
+  window.getSelection().removeAllRanges();
+  mkBarHide();
+  render();
+}
+function mkBarHide(){var el=$('mkBar');if(el)el.hidden=true;}
+function mkBarShow(){
+  var el=$('mkBar'),sel=window.getSelection();
+  if(!el||!sel||!sel.rangeCount) return mkBarHide();
+  var r=sel.getRangeAt(0).getBoundingClientRect();
+  if(!r.width&&!r.height) return mkBarHide();
+  el.hidden=false;
+  var w=el.offsetWidth,h=el.offsetHeight;
+  var top=r.top-h-8;
+  if(top<4) top=r.bottom+8;                 // no room above — sit under the selection
+  // Clamped so a selection near an edge, or scrolled part-way out, still leaves
+  // the bar somewhere the teacher can click it.
+  el.style.left=Math.min(Math.max(4,r.left+r.width/2-w/2),innerWidth-w-4)+'px';
+  el.style.top=Math.min(Math.max(4,top),innerHeight-h-4)+'px';
+}
+document.addEventListener('mouseup',function(e){
+  if(e.target.closest('#mkBar')) return;    // the button's own click applies the mark
+  setTimeout(function(){
+    mkPending=(document.body.dataset.print==='report')?mkCapture():null;
+    if(mkPending) mkBarShow(); else mkBarHide();
+  },0);                                     // the selection is not final until after mouseup
+});
+document.addEventListener('keyup',function(e){
+  if(document.body.dataset.print!=='report') return;
+  if(e.key==='Escape'){mkPending=null;return mkBarHide();}
+  if(e.shiftKey||e.key.indexOf('Arrow')===0){
+    mkPending=mkCapture();
+    if(mkPending) mkBarShow(); else mkBarHide();
+  }
+});
+// The bar is fixed while the text it belongs to scrolls, so it is re-pinned
+// rather than dismissed — scrolling to read the rest of a sentence should not
+// cost the teacher the selection they just made.
+function mkBarSync(){if(mkPending)mkBarShow();else mkBarHide();}
+window.addEventListener('scroll',mkBarSync,true);
+window.addEventListener('resize',mkBarSync);
+
 function render(){
   var mode0=document.body.dataset.print;
   // The answer grid lives in a step, so it has to track the chosen source on
@@ -2080,11 +2297,14 @@ function render(){
     ['printPaper','printKey','printBook'].forEach(function(id){$(id).disabled=true;});
     $('printReport').hidden=false;
     $('tally').innerHTML=grade.name?('분석지 · <b>'+esc(grade.name)+'</b>'):'분석지';
-    sheetsEl.innerHTML=reportSheet();
-    $('pvNote').textContent='분석지 미리보기';
+    sheetsEl.innerHTML='<p class="mkhint no-print">분석지에서 글을 드래그하면 형광펜·★·밑줄을 칠할 수 있어요. '+
+      '표시를 클릭하면 지워집니다. 표시는 인쇄물에 그대로 나갑니다.</p>'+reportSheet();
+    mkApply();
+    $('pvNote').textContent='분석지 미리보기'+(marks.length?' · 표시 '+marks.length+'개':'');
     paintSummaries(null,null);
     return;
   }
+  mkBarHide();
   $('printReport').hidden=true;
   var list=jobs();
   var qTotal=list.reduce(function(s,j){return s+((j.questions||[]).length);},0);
@@ -2459,7 +2679,26 @@ document.addEventListener('input',function(e){
     if(document.body.dataset.print==='report')render();}
 });
 document.addEventListener('click',function(e){
+  // A mark is its own delete button — clicking one lifts it off the report.
+  var hit=e.target.closest('.mk');
+  if(hit&&sheetsEl.contains(hit)&&!window.getSelection().toString()){
+    var blocks=mkBlocks(),host=hit.closest(MK_BLOCK),bi=blocks.indexOf(host);
+    if(bi>=0){
+      var ns=mkOwnNodes(host),t=0,s=-1,en=-1;
+      ns.forEach(function(n){
+        if(hit.contains(n)){if(s<0)s=t;en=t+n.nodeValue.length;}
+        t+=n.nodeValue.length;
+      });
+      if(s>=0){
+        var kind=(hit.className.match(/mk-(\w+)/)||[])[1];
+        marks=marks.filter(function(m){
+          return !(m.b===bi&&m.k===kind&&m.s<en&&s<m.e);});
+        return render();
+      }
+    }
+  }
   var b=e.target.closest('button');if(!b)return;
+  if(b.dataset.mk) return mkAdd(b.dataset.mk);
 
   /* screen A */
   if(b.dataset.course!==undefined&&b.dataset.course){location.hash='c='+b.dataset.course;return;}

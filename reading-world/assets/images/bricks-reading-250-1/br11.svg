@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Triathlon: Sports of Champions">
+<rect width="800" height="520" rx="38" fill="#faf4ec"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#c1502e" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round" fill="none">
+<circle cx="400" cy="266" r="34" fill="#e07a4f" stroke="#4a2415" stroke-width="8"/>
+      <path d="M400 232V150" stroke="#4a2415" stroke-width="8"/>
+      <path d="M330 386q70-56 140 0" fill="none" stroke="#4a2415" stroke-width="8"/>
+      <circle cx="330" cy="386" r="18" fill="#f3b89f" stroke="#4a2415" stroke-width="7"/>
+      <circle cx="470" cy="386" r="18" fill="#f3b89f" stroke="#4a2415" stroke-width="7"/>
+</g>
+<text x="60" y="92" font-family="Georgia,serif" font-size="30" fill="#8c3a1f" opacity="0.85">Unit 11</text>
+<text x="60" y="470" font-family="Georgia,serif" font-size="27" fill="#4a2415">Triathlon: Sports of Champions</text>
+<text x="740" y="92" text-anchor="end" font-family="Georgia,serif" font-size="19" fill="#c1502e" opacity="0.8">Nonfiction</text>
+</svg>
