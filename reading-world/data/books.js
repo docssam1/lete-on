@@ -173,6 +173,6 @@ window.BOOK_CATALOG = [
     grade: 'G4–6',
     band: 'G4',
     isbn: 'ISBN 978-89-6435-XXXX-X',
-    available: false,   // flip once every unit's data file is in
+    available: true,
   },
 ];
