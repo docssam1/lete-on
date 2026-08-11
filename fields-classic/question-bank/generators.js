@@ -18,6 +18,43 @@ function shuffle(list) {
   return result;
 }
 
+function hiddenCardCondition({ difficulty = 2 }) {
+  const universe = Array.from({ length: 10 }, (_, index) => index);
+  const hidden = sample(universe);
+  const clueCount = difficulty === 1 ? 3 : difficulty === 3 ? 5 : 4;
+  const cardCount = difficulty === 1 ? 4 : difficulty === 3 ? 6 : 5;
+  const pattern = difficulty === 1
+    ? [true, false, true]
+    : difficulty === 3
+      ? [true, false, true, false, true]
+      : [true, false, true, false];
+  let clues;
+  let candidates;
+  let attempts = 0;
+
+  do {
+    clues = pattern.slice(0, clueCount).map((hasCard) => {
+      const pool = hasCard ? universe.filter((value) => value !== hidden) : universe.filter((value) => value !== hidden);
+      const values = shuffle(pool).slice(0, hasCard ? cardCount - 1 : cardCount);
+      if (hasCard) values.push(hidden);
+      return { hasCard, values: values.sort((a, b) => a - b) };
+    });
+    candidates = universe.filter((value) => clues.every((clue) => (
+      clue.hasCard ? clue.values.includes(value) : !clue.values.includes(value)
+    )));
+    attempts += 1;
+  } while ((candidates.length !== 1 || candidates[0] !== hidden) && attempts < 500);
+
+  if (candidates.length !== 1 || candidates[0] !== hidden) return hiddenCardCondition({ difficulty });
+
+  return {
+    prompt: "숫자 카드 1장을 찾고 있습니다. 다음은 여러 숫자 카드 중에 찾는 카드가 있는지 없는지를 나타낸 것입니다. 찾는 숫자 카드는 무엇일까요?",
+    visual: { kind: "hidden-card-conditions", clues },
+    answer: String(hidden),
+    solution: `‘있습니다’인 줄에는 모두 있고 ‘없습니다’인 줄에는 없는 수를 차례로 확인하면 ${hidden}만 남습니다.`
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -461,6 +498,7 @@ function paperFoldHoleCount({ difficulty }) {
 }
 
 export const GENERATORS = {
+  hiddenCardCondition,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,

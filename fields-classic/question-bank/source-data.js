@@ -24,6 +24,14 @@ const type = (id, domain, middle, label, options = {}) => ({
 });
 
 export const TYPES = [
+  type("hidden-number-card-conditions", "logic", "조건 추리", "숫자 카드 포함·제외 조건으로 숨은 수 찾기", { generator: "hiddenCardCondition", sourceMatched: true }),
+  type("closest-two-digit-card-sum", "number", "수 카드와 식", "두 자리 수 두 개의 합을 목표 수에 가장 가깝게 만들기"),
+  type("front-back-total", "logic", "순서와 비교", "앞·뒤 순서로 줄 선 전체 인원 구하기"),
+  type("wrong-operation-correction", "logic", "과정 추론", "잘못 적용한 덧셈·뺄셈을 바르게 고치기"),
+  type("shape-matrix-rule", "pattern", "도형 규칙", "겹친 도형과 칠한 위치의 행렬 규칙 완성"),
+  type("delayed-date-promise", "pattern", "달력과 시간", "전에 들은 며칠 뒤 약속의 실제 날짜 구하기"),
+  type("calendar-date-weekday", "pattern", "달력과 시간", "달력에서 특정 날짜의 요일 찾기"),
+  type("two-type-unit-total", "number", "합과 차 문장제", "두 종류의 전체 개수와 단위 수로 각각의 개수 구하기"),
   type("edge-sum-grid", "number", "수 배열과 합", "주변의 합에 맞게 수 배치하기", { generator: "edgeSumCycle", sourceMatched: true }),
   type("equalize-transfer", "number", "합과 차 문장제", "주고받아 같게 만들기", { generator: "equalizeTransfer", sourceMatched: true }),
   type("number-pyramid", "number", "수 배열과 합", "수 카드로 모으기·수 피라미드", { generator: "numberPyramid", sourceMatched: true }),
@@ -210,6 +218,23 @@ export const PRACTICE_EXAM_TYPES = [
   { id: "mock-5", label: "필즈 대비 실전 5회", questions: ["shape-sum-table","colored-shape-number","operator-insertion","magic-square","edge-sum-grid","cryptarithm","repeat-pattern","go-stone-difference","balance-scale","rod-length-ratio","fold-hole-count","fold-diagonal-unfold","set-union-count","equalize-transfer","three-digit-card-count","cube-add-to-match","order-position","number-table-rule","order-position","number-pyramid"] },
   { id: "mock-6", label: "필즈 대비 실전 6회", questions: ["congruent-partition","magic-square","edge-sum-grid","shape-equation","shape-sum-table","symbol-relation","order-position","person-item-logic","latin-square","fold-diagonal-unfold","cube-fill-box","edge-sum-grid","latin-square","total-difference","set-union-count","number-card-plus-minus","function-machine","multi-person-transfer","cube-hidden-count","repeat-pattern"] }
 ].map((exam) => ({ ...exam, questions: exam.questions.map((typeId, index) => question(index + 1, typeId)) }));
+
+export const FINAL_EXAM_TYPES = [
+  {
+    id: "final-2",
+    stage: "final",
+    label: "필즈선발대비 실전 모의고사 파이널 2회",
+    file: "필즈선발대비 실전 모의고사 파이널 2회.pdf",
+    sourceViewer: false,
+    questions: [
+      "hidden-number-card-conditions", "cube-hidden-count", "closest-two-digit-card-sum", "front-back-total",
+      "set-union-count", "wrong-operation-correction", "symbol-relation", "paired-sequences",
+      "shape-matrix-rule", "delayed-date-promise", "repeat-pattern", "calendar-date-weekday",
+      "two-type-unit-total", "cryptarithm", "fold-hole-count", "edge-sum-grid", "equal-line-sum",
+      "total-difference", "symbol-sum-grid", "magic-square"
+    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index === 0 }))
+  }
+];
 
 const unit = (label, typeIds) => ({ label, typeIds });
 
