@@ -1246,17 +1246,23 @@ function carsPosterArt(){
     '<div class="cars-magazine"><b>KIDS</b><strong>TODAY</strong><span class="cars-magazine-lines"></span></div>'+
     '<div class="cars-pencil"></div></div>';
 }
+function carsColumnBreak(ps,meta){
+  var exact=Number(meta&&meta.columnBreakAfterParagraph);
+  if(Number.isInteger(exact)&&exact>=0&&exact<ps.length-1)return exact;
+  return Math.max(0,Math.ceil(ps.length/2)-1);
+}
 function carsPassageHtml(j,art){
   var cfg=carsLessonCfg(j.lessonId), orig=cfg&&cfg.original, meta=j.meta||{};
   if(!j.licensed||!orig)return passageHtml(j.passage,art);
   var lessonId=j.lessonId, ps=j.passage||[], cls=['psg','cars-print-original','cars-d-original','cars-layout-'+(orig.layout||'standard')];
   if(orig.columns===2)cls.push('cars-two-column');
   if(orig.layout==='poster')cls.push('cars-poster');
-  var media=carsMediaList(cfg,meta), before=[], after=[], journalMedia='';
+  var media=carsMediaList(cfg,meta), before=[], after=[], journalMedia='', columnRightTop='';
   media.forEach(function(m){
     var html=carsMediaHtml(lessonId,m,(m.placement&&m.placement.indexOf('float-left')===0)?'cars-float-left':(m.placement&&m.placement.indexOf('float-right')===0)?'cars-float-right':'');
     if(!html)return;
     if(m.placement==='journal-bottom-right') journalMedia+=html.replace('cars-inline-media','cars-inline-media cars-journal-art');
+    else if(m.placement==='column-right-top') columnRightTop+=html.replace('cars-inline-media','cars-inline-media cars-column-figure');
     else if(m.placement==='float-left-top'||m.placement==='float-right-top') before.push(html);
     else after.push(html);
   });
@@ -1269,6 +1275,15 @@ function carsPassageHtml(j,art){
   }
   var journalCount=Number(meta.journalParagraphsFromEnd||orig.journalParagraphsFromEnd||0);
   var splitAt=journalCount>0?Math.max(0,ps.length-journalCount):ps.length;
+  if(orig.columns===2&&columnRightTop&&ps.length>1){
+    var breakAfter=carsColumnBreak(ps,meta);
+    return '<div class="'+cls.join(' ')+' cars-exact-columns">'+before.join('')+
+      '<div class="cars-column-grid"><div class="cars-column cars-column-left">'+
+      ps.slice(0,breakAfter+1).map(function(p){return carsPara(p,'');}).join('')+
+      '</div><div class="cars-column cars-column-right">'+columnRightTop+
+      ps.slice(breakAfter+1).map(function(p){return carsPara(p,'');}).join('')+
+      '</div></div>'+after.join('')+'</div>';
+  }
   var body=before.join('')+ps.slice(0,splitAt).map(function(p){return carsPara(p,'');}).join('');
   if(journalCount>0&&splitAt<ps.length){
     body+='<div class="cars-journal-inset">'+ps.slice(splitAt).map(function(p){return carsPara(p,'');}).join('')+journalMedia+'</div>';
