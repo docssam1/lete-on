@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>수업용 교재 제작 · 진단 테스트 &amp; CARS B·C·D</title>
+<link rel="stylesheet" href="shared/cars-layout.css?v=51">
 <style>
 :root{
   --ink:#1d2b23; --muted:#6c7a71; --line:#dcdcd3; --paper:#fff; --bg:#f4f1e7;
@@ -165,6 +166,51 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .sh-intro{font-size:10pt;color:#3c4a41;margin:0 0 4mm;padding:2.5mm 3mm;background:#f4f2ea;border-left:3px solid var(--brand)}
 .psg{font-family:var(--serif);font-size:var(--fs-psg,11.6pt);line-height:1.75;margin-bottom:5mm}
 .psg p{margin:0 0 3mm}
+.psg.cars-print-original{
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:10.8pt;
+  line-height:1.3;
+  color:#111;
+  border:1px solid #c8c8c8;
+  border-radius:1mm;
+  padding:4mm 5mm 5mm;
+}
+.psg.cars-print-original .sentence-paragraph{margin:0 0 2.2mm}
+.psg.cars-print-original .sentence-line{font-family:inherit}
+.psg.cars-print-original.cars-layout-biography,
+.psg.cars-print-original.cars-layout-two-page-story,
+.psg.cars-print-original.cars-layout-tale{border-left:5px double #444}
+.psg.cars-print-original.cars-poster{
+  position:relative;
+  max-width:790px;
+  margin:0 auto 5mm;
+  padding:8mm 8mm 9mm;
+  border:4px double #171717;
+  border-radius:1px;
+  overflow:visible!important;
+  background:#fff;
+  font-family:"Segoe Print","Comic Sans MS","Bradley Hand","Trebuchet MS",sans-serif;
+  font-size:12.3pt;
+  line-height:1.22;
+}
+.psg.cars-print-original .cars-html-timeline{margin:4mm auto 0;padding:1mm 1mm 7mm;max-width:178mm}
+.psg.cars-print-original .cars-timeline-track{min-height:36mm;padding:13mm 2mm 0}
+.psg.cars-print-original .cars-timeline-track:before{top:21mm;left:2mm;right:1mm}
+.psg.cars-print-original .cars-timeline-track:after{top:19.8mm}
+.psg.cars-print-original .cars-timeline-tick{top:4.5mm;height:4mm}
+.psg.cars-print-original .cars-timeline-year{top:9mm;font-size:9.2pt}
+.psg.cars-print-original .cars-timeline-text{font-size:8.7pt;line-height:1.12;min-height:13mm}
+.psg.cars-print-original .cars-timeline-stop.is-bottom{padding-top:18mm}
+.psg.cars-print-original .cars-timeline-stop.is-bottom .cars-timeline-year{top:9mm}
+.psg.cars-print-original .cars-timeline-stop.is-bottom .cars-timeline-tick{top:4.5mm}
+.print-question-visual{margin:2.5mm 0 1.5mm}
+.print-question-visual .cars-visual-box{min-height:18mm;padding:2.6mm 3mm;font-size:10.4pt;line-height:1.2}
+.print-question-visual .cars-sequence{gap:2.2mm}
+.print-question-visual .cars-arrow{font-size:15pt}
+.print-question-visual .cars-cause-effect{grid-template-columns:minmax(0,1fr) 9mm minmax(0,1fr)}
+.print-question-visual .cars-ce-col>b{font-size:10.6pt;margin-bottom:1.8mm}
+.print-question-visual .cars-branch-root{font-size:10.8pt}
+.print-question-visual .cars-branch-child{font-size:9.4pt;min-height:16mm}
 /* The lesson illustrations are portrait (about 1122x1402), so capping the height
    squeezed the width to ~59mm and left the picture stranded in the middle of the
    page. It now sits beside the opening paragraphs the way the source book sets
@@ -1139,39 +1185,127 @@ function passageHtml(ps,art){
   return '<div class="psg">'+(art||'')+(ps||[]).map(function(p){
     return '<p>'+esc(p).replace(/\n/g,'<br>')+'</p>';}).join('')+'</div>';
 }
+function carsLessonCfg(lessonId){
+  var maps=[(window.CARS_D_LAYOUTS||{}).lessons||{},(window.CARS_VISUAL_LAYOUTS||{}).lessons||{}];
+  for(var i=0;i<maps.length;i++) if(maps[i][lessonId]) return maps[i][lessonId];
+  return null;
+}
+function carsMediaList(cfg,meta){
+  var byType={}, out=[];
+  function add(m){
+    if(!m||!m.type)return;
+    byType[m.type]=Object.assign({},byType[m.type]||{},m);
+  }
+  ((((cfg||{}).original||{}).media)||[]).forEach(add);
+  (((meta||{}).media)||[]).forEach(add);
+  Object.keys(byType).forEach(function(k){out.push(byType[k]);});
+  return out;
+}
+function carsBoxText(item){
+  if(item==null)return '';
+  if(typeof item==='string')return item;
+  return item.text||item.content||'';
+}
+function carsTimelineHtml(media){
+  if(!Array.isArray(media.items)||!media.items.length)return '';
+  return '<figure class="cars-html-timeline" aria-label="'+esc(media.ariaLabel||'Timeline')+'">'+
+    '<div class="cars-timeline-track">'+media.items.map(function(item,i){
+      return '<div class="cars-timeline-stop '+(item.side==='bottom'?'is-bottom':'is-top')+
+        '" style="--cars-stop-index:'+i+'">'+
+        '<div class="cars-timeline-text">'+esc(item.text||'')+'</div>'+
+        '<div class="cars-timeline-year">'+esc(item.year||'')+'</div>'+
+        '<span class="cars-timeline-tick" aria-hidden="true"></span></div>';
+    }).join('')+'</div></figure>';
+}
+function carsMediaAsset(lessonId,media){
+  return media.src||('assets/images/cars-level-d/'+lessonId+'-'+media.type+'.png');
+}
+function carsMediaHtml(lessonId,media,extra){
+  if(media.render==='html-timeline')return carsTimelineHtml(media);
+  var cls='cars-inline-media cars-media-'+esc(media.type)+' cars-media-'+esc(media.width||'auto')+(extra?' '+extra:'');
+  return '<figure class="'+cls+'" data-cars-media="'+esc(lessonId+'-'+media.type)+'">'+
+    '<img src="'+esc(carsMediaAsset(lessonId,media))+'" alt="'+esc(media.alt||'')+'">'+
+    (media.caption?'<figcaption>'+esc(media.caption)+'</figcaption>':'')+'</figure>';
+}
+function carsPara(text,cls){
+  return '<p class="sentence-paragraph'+(cls?' '+cls:'')+'">'+esc(text).replace(/\n/g,'<br>')+'</p>';
+}
+function posterClass(txt,i,last){
+  txt=String(txt||'').replace(/\s+/g,' ').trim();
+  if(/^hey\s*,?\s*kids/i.test(txt))return 'cars-poster-line cars-poster-kicker';
+  if(/^rules\b/i.test(txt))return 'cars-poster-line cars-poster-rules-title';
+  if(/^\d+[.)]\s*/.test(txt))return 'cars-poster-line cars-poster-rule';
+  if(/time\s+is\s+running\s+out/i.test(txt)||i===last)return 'cars-poster-line cars-poster-callout';
+  if(i<=2)return 'cars-poster-line cars-poster-headline';
+  return 'cars-poster-line cars-poster-copy';
+}
+function carsPosterArt(){
+  return '<div class="cars-poster-art" aria-hidden="true">'+
+    '<div class="cars-magazine"><b>KIDS</b><strong>TODAY</strong><span class="cars-magazine-lines"></span></div>'+
+    '<div class="cars-pencil"></div></div>';
+}
+function carsPassageHtml(j,art){
+  var cfg=carsLessonCfg(j.lessonId), orig=cfg&&cfg.original, meta=j.meta||{};
+  if(!j.licensed||!orig)return passageHtml(j.passage,art);
+  var lessonId=j.lessonId, ps=j.passage||[], cls=['psg','cars-print-original','cars-d-original','cars-layout-'+(orig.layout||'standard')];
+  if(orig.columns===2)cls.push('cars-two-column');
+  if(orig.layout==='poster')cls.push('cars-poster');
+  var media=carsMediaList(cfg,meta), before=[], after=[], journalMedia='';
+  media.forEach(function(m){
+    var html=carsMediaHtml(lessonId,m,(m.placement&&m.placement.indexOf('float-left')===0)?'cars-float-left':(m.placement&&m.placement.indexOf('float-right')===0)?'cars-float-right':'');
+    if(!html)return;
+    if(m.placement==='journal-bottom-right') journalMedia+=html.replace('cars-inline-media','cars-inline-media cars-journal-art');
+    else if(m.placement==='float-left-top'||m.placement==='float-right-top') before.push(html);
+    else after.push(html);
+  });
+  if(orig.layout==='poster'){
+    var poster=ps.map(function(p,i){
+      var c=posterClass(p,i,ps.length-1), line=c.indexOf('cars-poster-rules-title')>=0;
+      return carsPara(p,c)+(line?carsPosterArt():'');
+    }).join('');
+    return '<div class="'+cls.join(' ')+'">'+poster+'</div>';
+  }
+  var journalCount=Number(meta.journalParagraphsFromEnd||orig.journalParagraphsFromEnd||0);
+  var splitAt=journalCount>0?Math.max(0,ps.length-journalCount):ps.length;
+  var body=before.join('')+ps.slice(0,splitAt).map(function(p){return carsPara(p,'');}).join('');
+  if(journalCount>0&&splitAt<ps.length){
+    body+='<div class="cars-journal-inset">'+ps.slice(splitAt).map(function(p){return carsPara(p,'');}).join('')+journalMedia+'</div>';
+  }
+  body+=after.join('');
+  return '<div class="'+cls.join(' ')+'">'+body+'</div>';
+}
 /* ---------- diagram questions ----------
    Some questions are a picture with a gap in it — a sequence of boxes, a
    cause/effect pair, a branching chart. Printing only the stem ("Which of these
    belongs in the empty box?") leaves nothing to answer. The shape comes from
    CARS_D_LAYOUTS (public), the wording from the licensed row (job.vis). */
 function boxCell(txt,blank){
-  return '<span class="vbox'+(blank?' blank':'')+'">'+(blank?'':esc(txt||''))+'</span>';
+  return '<div class="cars-visual-box'+(blank?' is-blank':'')+'">'+(blank?'':esc(carsBoxText(txt)))+'</div>';
 }
 function visualHtml(layout,p){
-  var arrow='<span class="varr" aria-hidden="true">&#8594;</span>';
+  var arrow='<div class="cars-arrow" aria-hidden="true">&#8594;</div>';
   if(layout.type==='sequence'){
     var n=layout.boxCount||3, boxes=p.boxes||[], step=layout.showStepNumbers;
     var cells=[];
     for(var i=0;i<n;i++){
-      cells.push('<span class="vcell">'+boxCell(boxes[i],i===layout.blankIndex)+
-        (step?'<small>'+(i+1)+'</small>':'')+'</span>');
+      cells.push('<div class="cars-seq-cell">'+boxCell(boxes[i],i===layout.blankIndex)+
+        (step?'<small>'+(i+1)+'</small>':'')+'</div>');
     }
-    return '<div class="vis vis-seq">'+cells.join(arrow)+'</div>';
+    return '<div class="cars-question-visual print-question-visual"><div class="cars-visual cars-sequence '+(step?'with-steps':'')+'">'+cells.join(arrow)+'</div></div>';
   }
   if(layout.type==='cause-effect'){
-    return '<div class="vis vis-ce">'+
-      '<span class="vcol"><b>'+esc(p.causeLabel||'Cause')+'</b>'+
-        boxCell(p.cause,layout.blankIndex===0)+'</span>'+arrow+
-      '<span class="vcol"><b>'+esc(p.effectLabel||'Effect')+'</b>'+
-        boxCell(p.effect,layout.blankIndex===1)+'</span></div>';
+    return '<div class="cars-question-visual print-question-visual"><div class="cars-visual cars-cause-effect">'+
+      '<div class="cars-ce-col"><b>'+esc(p.causeLabel||'Cause')+'</b>'+
+        boxCell(p.cause,layout.blankIndex===0)+'</div>'+arrow+
+      '<div class="cars-ce-col"><b>'+esc(p.effectLabel||'Effect')+'</b>'+
+        boxCell(p.effect,layout.blankIndex===1)+'</div></div></div>';
   }
   if(layout.type==='branch-map'){
     var kids=p.children||[];
-    return '<div class="vis vis-branch"><span class="vroot">'+esc(p.root||'')+'</span>'+
-      '<span class="vstem" aria-hidden="true"></span>'+
-      '<span class="vrow" style="--n:'+kids.length+'">'+kids.map(function(c,i){
-        return '<span class="vkid">'+boxCell(c,i===layout.blankIndex)+'</span>';}).join('')+
-      '</span></div>';
+    return '<div class="cars-question-visual print-question-visual"><div class="cars-visual cars-branch"><div class="cars-branch-root">'+esc(carsBoxText(p.root))+'</div>'+
+      '<div class="cars-branch-lines" aria-hidden="true"></div><div class="cars-branch-row">'+kids.map(function(c,i){
+        return '<div class="cars-branch-child '+(i===layout.blankIndex?'is-blank':'')+'">'+(i===layout.blankIndex?'':esc(carsBoxText(c)))+'</div>';}).join('')+
+      '</div></div></div>';
   }
   return '';
 }
@@ -1187,9 +1321,10 @@ function visualLayout(lessonId,n){
 }
 // Returns {before, diagram, after} when question n of this job is a diagram.
 function visualFor(j,n){
-  if(!j||!j.vis||!j.lessonId)return null;
+  if(!j||!j.lessonId)return null;
   var layout=visualLayout(j.lessonId,n);
-  var p=j.vis[n]||j.vis[String(n)];
+  var payloads=(j.meta&&(j.meta.visualQuestions||j.meta.questions))||j.vis||{};
+  var p=payloads[n]||payloads[String(n)];
   if(!layout||!p||layout.type==='standard')return null;
   var html=visualHtml(layout,p);
   return html?{before:p.before||'',after:p.after||'',html:html}:null;
@@ -1734,7 +1869,7 @@ function jobs(){
             intro:o.instruction,passage:o.passage,questions:o.questions,
             // Level D's sequence / cause-effect / branch questions are unanswerable
             // without their diagram, so the wording travels with the job.
-            vis:(o.meta&&o.meta.visualQuestions)||null,lessonId:le.id});
+            meta:o.meta||null,vis:(o.meta&&o.meta.visualQuestions)||null,lessonId:le.id});
           return;
         }
         var d=p.get(le.L);if(!d)return;
@@ -1806,9 +1941,9 @@ function paperSheets(j){
   // tail of the question list off the page.
   if(!opt('optSplit')&&chunks.length===1)
     return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+
-      passageHtml(j.passage,artHtml(j))+intro+questionsHtml(qlist,j)+foot(j.label)+'</section>';
+      carsPassageHtml(j,artHtml(j))+intro+questionsHtml(qlist,j)+foot(j.label)+'</section>';
   return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+
-    passageHtml(j.passage,artHtml(j))+foot(j.label+' · '+T('psg'))+'</section>'+qSheets;
+    carsPassageHtml(j,artHtml(j))+foot(j.label+' · '+T('psg'))+'</section>'+qSheets;
 }
 // Split the question list into page-sized runs.
 function qChunks(list){
