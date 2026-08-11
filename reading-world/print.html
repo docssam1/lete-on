@@ -2358,7 +2358,7 @@ var marks=[];                       // report annotations, in memory like the re
 var MK_BLOCK='p,li,td,th,h1,h2,h3,h4,div';
 var mkPending=null;                 // spans captured at mouseup, used when a bar button is hit
 
-function mkRoot(){return sheetsEl.querySelector('.sheet.report');}
+function mkRoots(){return Array.from(sheetsEl.querySelectorAll('.sheet.report'));}
 // Chart text is drawn, not read: excluding SVG here keeps offsets identical
 // between the pass that measures a selection and the pass that re-applies it.
 function mkTextNodes(el){
@@ -2379,12 +2379,14 @@ function mkText(el){
 // Inline <b> inside a paragraph therefore marks against the paragraph, while a
 // bare <b> in a callout marks against the callout.
 function mkBlocks(){
-  var root=mkRoot(); if(!root) return [];
+  var roots=mkRoots(); if(!roots.length) return [];
   var out=[];
-  mkTextNodes(root).forEach(function(n){
-    if(!/\S/.test(n.nodeValue)) return;
-    var b=n.parentElement.closest(MK_BLOCK);
-    if(b&&b!==root&&out.indexOf(b)<0) out.push(b);
+  roots.forEach(function(root){
+    mkTextNodes(root).forEach(function(n){
+      if(!/\S/.test(n.nodeValue)) return;
+      var b=n.parentElement.closest(MK_BLOCK);
+      if(b&&b!==root&&out.indexOf(b)<0) out.push(b);
+    });
   });
   return out;
 }
@@ -2402,10 +2404,10 @@ function mkPart(r,n){
 // A selection is cut at block boundaries: dragging across three paragraphs
 // leaves three marks, each of which can later re-anchor on its own.
 function mkCapture(){
-  var sel=window.getSelection(),root=mkRoot();
-  if(!root||!sel||!sel.rangeCount||sel.isCollapsed) return null;
+  var sel=window.getSelection(),roots=mkRoots();
+  if(!roots.length||!sel||!sel.rangeCount||sel.isCollapsed) return null;
   var r=sel.getRangeAt(0);
-  if(!root.contains(r.commonAncestorContainer)) return null;
+  if(!roots.some(function(root){return root.contains(r.commonAncestorContainer);})) return null;
   var out=[];
   mkBlocks().forEach(function(b,bi){
     var t=0,s=-1,e=-1;
