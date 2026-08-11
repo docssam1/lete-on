@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f3f7fa" />
+  <title>필즈 더 클래식 문제은행</title>
+  <link rel="stylesheet" href="./styles.css?v=20260811d" />
+</head>
+<body>
+  <header class="app-header">
+    <a class="back-link" href="../program/">목록으로</a>
+    <div class="brand-block"><strong>필즈 더 클래식 문제은행</strong><span>실제 시험지와 교재 유형을 골라 맞춤 학습지를 만듭니다.</span></div>
+    <div class="student-name" id="studentName">DEMO</div>
+  </header>
+
+  <main class="builder-shell">
+    <section class="builder-panel" id="builderPanel">
+      <div class="step-head">
+        <div><span>STEP 1</span><strong>문제 범위 선택</strong></div>
+        <ol><li class="active">1 범위 선택</li><li>2 문제 확인</li><li>3 인쇄 설정</li></ol>
+      </div>
+
+      <div class="builder-tabs" id="builderTabs" role="tablist" aria-label="문제 선택 방식">
+        <button type="button" class="active" data-mode="exam">시험지별</button>
+        <button type="button" data-mode="curriculum">교재 단원별</button>
+        <button type="button" data-mode="type">유형별</button>
+      </div>
+
+      <div class="builder-body">
+        <div class="selection-pane">
+          <section id="examBuilder" class="builder-view">
+            <div class="age-strip" id="examAgeButtons"></div>
+            <div class="selection-toolbar">
+              <div><strong id="examStageTitle">시험지 선택</strong><span id="examStageMeta"></span></div>
+              <button id="toggleExamTypes" type="button">전체 선택</button>
+            </div>
+            <div id="examNotice" class="source-notice"></div>
+            <div id="examTypeList" class="exam-tree"></div>
+          </section>
+
+          <section id="curriculumBuilder" class="builder-view" hidden>
+            <div class="selection-toolbar">
+              <div><strong>필즈 더 클래식 1과정</strong><span>교재 본문과 권별 단원 테스트를 구분해 선택합니다.</span></div>
+              <button id="toggleCurriculum" type="button">전체 선택</button>
+            </div>
+            <div class="source-notice"><strong>사용 자료:</strong> 더클래식 교재 본문 + 권별 단원 테스트 · 골든벨 제외 · 2권부터 교재 뒤 리뷰 제외</div>
+            <div id="curriculumTree" class="bank-tree"></div>
+          </section>
+
+          <section id="typeBuilder" class="builder-view" hidden>
+            <div class="selection-toolbar">
+              <div><strong>대분류·중분류·세부 유형</strong><span>여러 영역과 유형을 함께 선택할 수 있습니다.</span></div>
+              <button id="toggleBankTypes" type="button">전체 선택</button>
+            </div>
+            <div id="bankTypeTree" class="bank-tree"></div>
+          </section>
+        </div>
+
+        <aside class="settings-pane">
+          <section class="setting-block">
+            <div class="setting-title"><strong>문제 수</strong><span>최대 50문제</span></div>
+            <div class="choice-grid count-choices" id="countChoices"><button data-count="10">10</button><button data-count="15">15</button><button data-count="20" class="active">20</button><button data-count="25">25</button><button data-count="30">30</button></div>
+            <label class="count-input"><input id="questionCount" type="number" min="1" max="50" value="20" /><span>문제</span></label>
+          </section>
+          <section class="setting-block">
+            <div class="setting-title"><strong>난이도</strong><span>선택한 원본 문제 기준</span></div>
+            <div class="choice-grid difficulty-choices" id="difficultyChoices"><button data-level="basic">이 문제보다 쉽게</button><button data-level="actual" class="active">이 문제와 같게</button><button data-level="advanced">이 문제보다 어렵게</button></div>
+          </section>
+          <section class="setting-block">
+            <div class="setting-title"><strong>문제 배열</strong></div>
+            <div class="choice-grid" id="orderChoices"><button data-order="exam" class="active">출제 순서</button><button data-order="domain">영역별</button><button data-order="mixed">섞어서</button></div>
+          </section>
+          <section class="setting-block">
+            <div class="setting-title"><strong>답안 구성</strong></div>
+            <label class="switch-row"><span>풀이 핵심 포함</span><input id="solutionToggle" type="checkbox" checked /></label>
+            <label class="switch-row"><span>이름 워터마크</span><input id="watermarkToggle" type="checkbox" checked /></label>
+          </section>
+          <div class="selection-total"><span>선택 결과</span><strong id="selectionTotal">0개 유형 · 20문제</strong><small id="selectionHelp">왼쪽에서 시험 문항이나 유형을 선택하세요.</small></div>
+          <button id="buildButton" class="next-button" type="button" disabled>문제 구성 확인</button>
+        </aside>
+      </div>
+    </section>
+
+    <section id="worksheetSection" class="worksheet-section" hidden>
+      <div class="worksheet-actions"><button id="backToBuilder" type="button">범위 다시 선택</button><div><button id="regenerateButton" type="button">새 문제</button><button id="answerButton" type="button">답안 보기</button><button id="printButton" class="primary" type="button">문제 인쇄</button></div></div>
+      <div class="worksheet-head"><div><span>GFIELD QUESTION BANK</span><h1 id="worksheetTitle">맞춤 모의고사</h1></div><dl><div><dt>이름</dt><dd id="worksheetStudent">DEMO</dd></div><div><dt>점수</dt><dd></dd></div></dl></div>
+      <div id="watermark" class="watermark" aria-hidden="true"></div>
+      <div id="questionGrid" class="question-grid"></div>
+    </section>
+  </main>
+
+  <dialog id="answerDialog" class="answer-dialog">
+    <div class="dialog-head"><div><span>정답과 풀이</span><h2>맞춤 문제 답안지</h2></div><button id="closeAnswer" type="button" aria-label="닫기">×</button></div>
+    <div id="answerWatermark" class="watermark" aria-hidden="true"></div>
+    <table><thead><tr><th>번호</th><th>대분류</th><th>중분류</th><th>유형</th><th>정답</th><th>풀이 핵심</th></tr></thead><tbody id="answerBody"></tbody></table>
+    <div class="dialog-actions"><button id="printAnswerButton" type="button">답안 인쇄</button><button id="closeAnswerBottom" class="primary" type="button">확인</button></div>
+  </dialog>
+
+  <script type="module" src="./app.js?v=20260812h"></script>
+</body>
+</html>
