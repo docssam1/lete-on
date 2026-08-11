@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560">
+  <defs>
+    <style>
+      .bg{fill:#fffdf7}.title{font:700 27px Arial,"Noto Sans KR",sans-serif;fill:#17324d}.sub{font:600 19px Arial,"Noto Sans KR",sans-serif;fill:#55708c}
+      .cell{fill:#fff;stroke:#bfdc9d;stroke-width:3}.tri{fill:#fffde9;stroke:#d9e9a8;stroke-width:3}.given{font:700 31px Arial,sans-serif;fill:#17324d;text-anchor:middle;dominant-baseline:middle}.sum{font:700 25px Arial,sans-serif;fill:#17324d;text-anchor:middle;dominant-baseline:middle}
+    </style>
+  </defs>
+  <rect class="bg" width="980" height="560" rx="26"/>
+  <g transform="translate(150 64)">
+    <rect class="cell" x="112" y="0" width="112" height="112"/>
+    <rect class="cell" x="0" y="112" width="112" height="112"/><text class="given" x="56" y="168">9</text>
+    <rect class="cell" x="112" y="112" width="112" height="112"/>
+    <rect class="cell" x="224" y="112" width="112" height="112"/>
+    <rect class="cell" x="0" y="224" width="112" height="112"/>
+    <rect class="cell" x="112" y="224" width="112" height="112"/>
+    <rect class="cell" x="224" y="224" width="112" height="112"/>
+    <rect class="cell" x="0" y="336" width="112" height="112"/>
+    <rect class="cell" x="112" y="336" width="112" height="112"/><text class="given" x="168" y="392">8</text>
+    <polygon class="tri" points="0,112 112,112 112,0"/><text class="sum" x="66" y="76">16</text>
+    <polygon class="tri" points="112,0 224,0 224,-112"/><text class="sum" x="182" y="-54">13</text>
+    <polygon class="tri" points="224,0 336,0 224,112"/><text class="sum" x="262" y="46">6</text>
+    <polygon class="tri" points="336,112 448,112 336,224"/><text class="sum" x="391" y="160">14</text>
+    <polygon class="tri" points="336,224 448,224 336,336"/><text class="sum" x="391" y="272">15</text>
+    <polygon class="tri" points="224,448 336,336 336,448"/><text class="sum" x="285" y="407">12</text>
+    <polygon class="tri" points="224,112 336,0 336,112"/><text class="sum" x="300" y="77">9</text>
+  </g>
+</svg>

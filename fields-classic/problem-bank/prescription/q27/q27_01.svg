@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 120" role="img" aria-labelledby="title desc">
+  <title id="title">자르고 남은 조각 수 풀이 1</title>
+  <desc id="desc">5개를 반으로 잘라 10조각, 3조각을 먹어 7조각, 다시 반으로 잘라 14조각</desc>
+  <rect width="620" height="120" fill="#fff"/>
+  <style>
+    .box{fill:#f7fbff;stroke:#c8d8e8;stroke-width:2}
+    .ans{fill:#fff7d8;stroke:#efbd42;stroke-width:3}
+    .txt{font-family:Arial,sans-serif;font-size:22px;font-weight:800;fill:#173d6d;text-anchor:middle;dominant-baseline:middle}
+    .sub{font-family:Arial,sans-serif;font-size:15px;fill:#51677f;text-anchor:middle}
+    .arr{font-family:Arial,sans-serif;font-size:28px;font-weight:900;fill:#8ca8bf;text-anchor:middle;dominant-baseline:middle}
+  </style>
+  <rect class="box" x="16" y="24" width="105" height="62" rx="10"/><text class="txt" x="68.5" y="52">5×2=10</text><text class="sub" x="68.5" y="104">반으로 자름</text>
+  <text class="arr" x="148" y="56">→</text>
+  <rect class="box" x="176" y="24" width="115" height="62" rx="10"/><text class="txt" x="233.5" y="52">10-3=7</text><text class="sub" x="233.5" y="104">먹고 남음</text>
+  <text class="arr" x="318" y="56">→</text>
+  <rect class="ans" x="346" y="24" width="118" height="62" rx="10"/><text class="txt" x="405" y="52">7×2=14</text><text class="sub" x="405" y="104">다시 반으로</text>
+  <text class="arr" x="490" y="56">→</text>
+  <text class="txt" x="555" y="52">14조각</text>
+</svg>
