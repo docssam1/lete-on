@@ -164,3 +164,23 @@ Drive의 zip 3개(665MB)가 유일한 출처인데 이 세션에서 열 수 없�
 
 ⚠️ **이것들은 전부 라이선스 원본이다. git에 올리면 안 된다.** 확보하면 Supabase
 `lesson_content`로만 간다 — CARS와 같은 규칙.
+
+---
+
+## 다음 작업 예약 — Bricks Listening 300 (사용자 요청 2026-08-11)
+
+**Reading 250 Level 1을 끝낸 뒤 착수한다.** 자료는 이미 Drive에 있다:
+
+| 자료 | 위치 |
+|---|---|
+| `bricks_listening_300.md` (190KB) | `output_text_review/bricks_listening_300/` — OCR 전문으로 보임 |
+| `bricks listening 300.pdf` (7.9MB) | `OCR/PDF/` |
+| `Bricks Listening 300_L1_SB_Answer Key.pdf` | 별도 폴더 |
+
+⚠️ **Reading과 다른 강세(strand)다.** 검색 요약 기준 Listening 300은 **G5~G7 / CEFR B1·B1+**로
+Reading 300과 같은 등급이 아니다. CLAUDE.md 「알파 프렙」 절에 적힌 대로 대치 프렙 학원들이
+**리스닝 대비 교재 그 자체**로 쓰는 책이라, 알파 모의고사 리스닝 섹션과 직접 연결된다.
+
+**착수 전 확인할 것**: 리스닝 교재는 지문이 아니라 **음성 스크립트 + 문항**이다. 앱의 STEP 2
+(지문 읽기)에 그대로 넣으면 리딩 교재처럼 보이게 된다. 음성 우선 흐름이 필요한지,
+아니면 스크립트를 지문처럼 다뤄도 되는지 사용자 확인 필요.
