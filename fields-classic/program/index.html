@@ -479,8 +479,7 @@ body.in-viewer{overflow:hidden}
 const CONCEPT_PAGES="";
 const ALL=["개념완성","연산연습","진단모의고사","킬러문항",
   "실전모의고사1회","실전모의고사2회","실전모의고사3회","실전모의고사4회","실전모의고사5회","실전모의고사6회",
-  "파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","파이널모의고사4회",
-  "최종모의고사","자료실"];
+  "파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","자료실"];
 const PRODUCTS=[
   {key:"개념완성",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",icon:"📘",theme:"theme-concept",type:"folder",pagesBase:CONCEPT_PAGES,pageCount:75,
    chapters:[
@@ -502,8 +501,6 @@ const PRODUCTS=[
   {key:"파이널모의고사1회",name:"파이널 모의고사 1회",desc:"최종 점검 파이널 1회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
   {key:"파이널모의고사2회",name:"파이널 모의고사 2회",desc:"최종 점검 파이널 2회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi2",label:"2회",title:"파이널 모의고사 2회",type:"concept",url:"",pdfPage:1}]},
   {key:"파이널모의고사3회",name:"파이널 모의고사 3회",desc:"최종 점검 파이널 3회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi3",label:"3회",title:"파이널 모의고사 3회",type:"concept",url:"",pdfPage:1}]},
-  {key:"파이널모의고사4회",name:"파이널 모의고사 4회",desc:"최종 점검 파이널 4회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi4",label:"4회",title:"파이널 모의고사 4회",type:"concept",url:"",pdfPage:1}]},
-  {key:"최종모의고사",name:"최종 모의고사",desc:"실전 총정리 최종 리허설",icon:"🏆",theme:"theme-final",type:"direct",lessons:[{key:"u1",label:"최종",title:"최종 모의고사",type:"concept",url:"",pdfPage:1}]},
   {key:"자료실",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
 ];
  const CONCEPT_CHAPTER_ASSETS={
@@ -526,7 +523,7 @@ const PRODUCTS=[
 const CODES={
   "bbbdc79775916a1a6f7675f3db54cba1f33f26e1dffda97fcb685e1c993df7c7":["개념완성"],
   "c5e2beda61041ffeeb6056cb9d2167786d179a219e79e864e6216ecedf620984":["킬러문항"],
-  "d769a92ca39f255ea72854ca13e7c1d9309e811cd1c52f71567bfef4a63d9b9c":["파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","파이널모의고사4회"],
+  "d769a92ca39f255ea72854ca13e7c1d9309e811cd1c52f71567bfef4a63d9b9c":["파이널모의고사1회","파이널모의고사2회","파이널모의고사3회"],
   "fcee3d55de77d92a5e3014b3c4dc874ae825fbbf0e0970399766d0a16841d50b":["진단모의고사"],
   "7952b6a2f87c81cf4049e69cf7ece810f2a281c4199483ab39829d9e16dead33":ALL
 };
@@ -549,8 +546,6 @@ const TIMELINE_ORDER=[
   {key:"파이널모의고사1회", step:"STEP 10", desc:"최종 점검 파이널 1회차"},
   {key:"파이널모의고사2회", step:"STEP 11", desc:"최종 점검 파이널 2회차"},
   {key:"파이널모의고사3회", step:"STEP 12", desc:"최종 점검 파이널 3회차"},
-  {key:"파이널모의고사4회", step:"STEP 13", desc:"최종 점검 파이널 4회차"},
-  {key:"최종모의고사",  step:"FINAL",  desc:"실전 총정리 최종 리허설"},
 ];
 function findByCode(code){
   const upper = code.trim().toUpperCase();
@@ -973,15 +968,13 @@ function programGroups(){
   const killer=PRODUCTS.find(p=>lessonKey(p)==="k1")||PRODUCTS.find(p=>p.theme==="theme-killer");
   const practice=PRODUCTS.filter(p=>/^p\d+/.test(lessonKey(p)));
   const finals=PRODUCTS.filter(p=>/^fi\d+/.test(lessonKey(p)));
-  const ultimate=PRODUCTS.find(p=>lessonKey(p)==="u1");
   const groups=[
     {id:"concept",icon:"📘",title:"TOP SECRET 개념",sub:"개념 교재 Vol.1~Final",kind:"chapters",product:concept,kicker:"TOP SECRET",head:"개념 완성",desc:"개념 책을 고르면 영상과 교재가 함께 열립니다."},
     {id:"arithmetic",icon:"🔢",title:"연산 연습",sub:"덧셈·뺄셈·받아올림",kind:"products",items:[PRODUCTS.find(p=>p.key==="연산연습")],kicker:"CALCULATION",head:"필즈 연산 연습",desc:"사고력 문제은행과 분리된 연산을 유형별로 반복합니다."},
     {id:"killer",icon:"🎯",title:"킬러문항 완전 해제",sub:"최상위 유형 공략",kind:"products",items:[killer],kicker:"KILLER",head:"킬러문항 완전 해제",desc:"문항 유형은 보이지만 구매 권한이 있을 때만 열립니다."},
     {id:"diagnostic",icon:"🔍",title:"진단모의고사",sub:"진단 및 분석",kind:"products",items:[diagnostic],kicker:"DIAGNOSTIC",head:"진단모의고사",desc:"진단지는 선택 후 별도 모의고사 화면으로 이동합니다."},
     {id:"practice",icon:"📝",title:"실전 모의고사",sub:"1회~6회",kind:"products",items:practice,kicker:"PRACTICE",head:"실전 모의고사",desc:"각 회차를 확인하고 권한이 있는 회차만 학습할 수 있습니다."},
-    {id:"final",icon:"🏁",title:"파이널 모의고사",sub:"1회~4회",kind:"products",items:finals,kicker:"FINAL",head:"파이널 모의고사",desc:"파이널 회차가 책처럼 펼쳐집니다."},
-    {id:"ultimate",icon:"🏆",title:"최종 모의고사",sub:"최종 리허설",kind:"products",items:[ultimate],kicker:"LAST CHECK",head:"최종 모의고사",desc:"마지막 실전 점검용 모의고사입니다."}
+    {id:"final",icon:"🏁",title:"파이널 모의고사",sub:"1회~3회",kind:"products",items:finals,kicker:"FINAL",head:"파이널 모의고사",desc:"파이널 회차가 책처럼 펼쳐집니다."}
   ];
   const mainGroups=groups.filter(g=>g.product||g.items?.some(Boolean));
   archiveFolderNames().forEach((folder,index)=>mainGroups.push({
