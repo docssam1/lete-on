@@ -1,3 +1,5 @@
+// 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
+// id는 URL 파라미터와 EXAMS의 stage 참조에 쓰이므로 바꾸지 않는다.
 export const AGE_STAGES = [
   { id: "k6_winter", label: "6세 12월~2월" },
   { id: "k7_spring", label: "7세 3월~5월" },
@@ -63,9 +65,14 @@ export const TYPES = [
   type("go-stone-difference", "pattern", "도형 규칙", "흑백 바둑돌의 개수 차이", { generator: "sourceGoStoneDifference", sourceMatched: true }),
   type("go-stone-difference-inverse", "pattern", "도형 규칙", "흑백 바둑돌 차로 번째 찾기"),
   type("number-card-plus-minus", "number", "수 카드와 식", "수 카드로 덧셈·뺄셈 식 완성", { generator: "numberCardEquation", sourceMatched: true }),
+  type("number-card-mixed-operations", "number", "수 카드와 식", "수 카드를 혼합 계산식에 한 번씩 넣기"),
+  type("two-digit-even-count", "number", "수 카드와 식", "수 카드로 만든 두 자리 짝수의 개수"),
+  type("two-digit-card-enumeration", "number", "수 카드와 식", "조건에 맞는 두 자리 수 모두 쓰기"),
+  type("erase-expression-target", "number", "수 카드와 식", "식의 일부를 지워 목표값 만들기"),
   type("piano-bounce", "pattern", "반복 규칙", "피아노 건반 왕복 순서", { generator: "sourcePianoBounce", sourceMatched: true }),
   type("colored-shape-number", "pattern", "도형 수 표현", "색칠한 도형이 나타내는 수", { generator: "sourceColoredShapeNumber", sourceMatched: true }),
   type("height-order", "logic", "순서와 비교", "키의 크고 작은 순서"),
+  type("hidden-score-ranking", "logic", "순서와 비교", "순위표의 가려진 서로 다른 숫자 찾기"),
   type("total-difference", "number", "합과 차 문장제", "전체 수와 차이로 두 수 구하기"),
   type("multi-person-transfer", "number", "합과 차 문장제", "여러 사람의 합과 주고받기"),
   type("fold-cut-piece-count", "geometry", "색종이 접기", "접고 자른 조각의 개수"),
@@ -99,7 +106,9 @@ export const TYPES = [
   type("custom-operation", "number", "연산 약속", "새 기호의 계산 약속"),
   type("operator-insertion", "number", "수 카드와 식", "+와 -를 넣어 식 완성하기"),
   type("cut-recut-pieces", "number", "과정 추론", "자르고 먹고 다시 잘라 남은 조각 수"),
+  type("reverse-initial-count", "logic", "과정 추론", "여러 번 오고 간 뒤 처음 수 거꾸로 찾기"),
   type("function-machine", "pattern", "수 규칙", "수 변환 기계의 규칙"),
+  type("collection-repeat-gap", "pattern", "수 규칙", "모으기 반복 수열에서 같은 수 사이 개수"),
   type("magic-square", "number", "수 배열과 합", "가로·세로·대각선 합이 같은 마방진", { legacyId: 14 }),
   type("fold-hole-count", "geometry", "색종이 접기", "접은 색종이의 구멍 개수", { generator: "paperFoldHoleCount", legacyId: 4 }),
   type("fold-diagonal-unfold", "geometry", "색종이 접기", "대각선으로 접고 자른 뒤 펼친 선 그리기"),
@@ -196,8 +205,8 @@ export const EXAMS = [
 ];
 
 export const PRACTICE_EXAM_TYPES = [
-  { id: "mock-3", label: "필즈 대비 실전 3회", questions: ["cube-count-solid","set-union-count","grid-number-placement","cube-different-shape","shape-sum-table","cryptarithm","person-item-logic","shape-equation","number-table-rule","cut-recut-pieces","repeat-pattern","triangle-count","function-machine","operator-insertion","custom-operation","fold-hole-count","three-digit-card-count","operator-insertion","number-pyramid","magic-square"] },
-  { id: "mock-4", label: "필즈 대비 실전 4회", questions: ["balance-scale","rod-length-ratio","operator-insertion","fold-number-remaining-sum","equal-line-sum","magic-square","weight-order","three-digit-card-count","number-table-rule","function-machine","square-count","bus-change","calendar-weekday-sum","growing-shape-count","cryptarithm","shape-equation","shape-sum-table","shape-sum-table","height-order","person-item-logic"] },
+  { id: "mock-3", label: "필즈 대비 실전 3회", questions: ["cube-count-solid","set-union-count","chained-number-condition","cube-different-shape","shape-sum-table","vertical-addition","person-item-logic","shape-equation","number-table-rule","cut-recut-pieces","repeat-pattern","triangle-count","function-machine","operator-insertion","custom-operation","fold-hole-count","two-digit-card-enumeration","erase-expression-target","collection-repeat-gap","magic-square"] },
+  { id: "mock-4", label: "필즈 대비 실전 4회", questions: ["balance-scale","rod-length-ratio","number-card-mixed-operations","fold-number-remaining-sum","equal-line-sum","magic-square","hidden-score-ranking","two-digit-even-count","number-table-rule","function-machine","square-count","reverse-initial-count","calendar-weekday-sum","growing-shape-count","cryptarithm","shape-equation","shape-sum-table","shape-sum-table","height-order","person-item-logic"] },
   { id: "mock-5", label: "필즈 대비 실전 5회", questions: ["shape-sum-table","colored-shape-number","operator-insertion","magic-square","edge-sum-grid","cryptarithm","repeat-pattern","go-stone-difference","balance-scale","rod-length-ratio","fold-hole-count","fold-diagonal-unfold","set-union-count","equalize-transfer","three-digit-card-count","cube-add-to-match","order-position","number-table-rule","order-position","number-pyramid"] },
   { id: "mock-6", label: "필즈 대비 실전 6회", questions: ["congruent-partition","magic-square","edge-sum-grid","shape-equation","shape-sum-table","symbol-relation","order-position","person-item-logic","latin-square","fold-diagonal-unfold","cube-fill-box","edge-sum-grid","latin-square","total-difference","set-union-count","number-card-plus-minus","function-machine","multi-person-transfer","cube-hidden-count","repeat-pattern"] }
 ].map((exam) => ({ ...exam, questions: exam.questions.map((typeId, index) => question(index + 1, typeId)) }));

@@ -49,8 +49,6 @@ window.GFIELD_FC_DATA = {
       "파이널모의고사1회",
       "파이널모의고사2회",
       "파이널모의고사3회",
-      "파이널모의고사4회",
-      "최종모의고사",
       "진단약점클리닉"
     ],
     "DEMO": [
@@ -67,8 +65,6 @@ window.GFIELD_FC_DATA = {
       "파이널모의고사1회",
       "파이널모의고사2회",
       "파이널모의고사3회",
-      "파이널모의고사4회",
-      "최종모의고사",
       "진단약점클리닉"
     ]
   },
@@ -129,16 +125,6 @@ window.GFIELD_FC_DATA = {
       "textbooks": []
     },
     "파이널모의고사3회": {
-      "notice": "",
-      "homework": "",
-      "textbooks": []
-    },
-    "파이널모의고사4회": {
-      "notice": "",
-      "homework": "",
-      "textbooks": []
-    },
-    "최종모의고사": {
       "notice": "",
       "homework": "",
       "textbooks": []
