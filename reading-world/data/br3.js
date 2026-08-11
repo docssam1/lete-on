@@ -88,7 +88,7 @@ window.LESSONS['br3'] = {
         ['painted on with a thin brush after baking',
          'cut into the dough with a sharp knife',
          'sprinkled over the surface as a powder',
-         'pressed into the surface with a mould'],
+         'pressed into the surface with a mold'],
         'D',
         'The passage says the pattern "is pressed onto the top layer", which is what stamping does.'],
       ['Drawing Conclusions and Making Inferences',

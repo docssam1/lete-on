@@ -120,7 +120,7 @@ window.LESSONS['br2'] = {
         'Jay "heard his own voice before he had decided to use it". What does this suggest?',
         ['He spoke without stopping to think it over first',
          'Someone else in the room read the line for him',
-         'He had practised the shopkeeper\'s lines at home',
+         'He had practiced the shopkeeper\'s lines at home',
          'His voice sounded strange to him in the large room'],
         'A',
         'The words came out ahead of the decision — the writer\'s way of showing an unplanned first step.'],
