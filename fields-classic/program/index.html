@@ -92,6 +92,7 @@ body.in-viewer{overflow:hidden}
 .program-run-card{min-height:326px;border:1px solid var(--border2);border-radius:16px;background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.025) 45%,rgba(0,0,0,.18));padding:22px 18px 18px;display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;transition:transform .22s cubic-bezier(.22,1,.36,1),border-color .22s,background .22s,box-shadow .22s;box-shadow:0 16px 28px rgba(0,0,0,.22)}
 .program-run-card:hover{transform:translateY(-7px);border-color:rgba(212,175,55,.52);background:linear-gradient(160deg,rgba(212,175,55,.13),rgba(255,255,255,.035) 52%,rgba(0,0,0,.2));box-shadow:0 28px 48px rgba(0,0,0,.42),0 0 0 1px rgba(212,175,55,.12)}
 .program-run-card.locked{opacity:.45;cursor:not-allowed}
+.program-run-card.coming-soon{opacity:.72}
 .program-run-book{--run-depth:30px;width:126px;height:178px;position:relative;transform-style:preserve-3d;transform:rotateY(-24deg) rotateX(5deg);filter:drop-shadow(0 24px 28px rgba(0,0,0,.7));margin:4px 0 7px;transition:transform .45s cubic-bezier(.22,1,.36,1),filter .45s ease}
 .program-run-card:hover .program-run-book{transform:rotateY(-10deg) rotateX(2deg) translateY(-8px) scale(1.045);filter:drop-shadow(0 30px 38px rgba(0,0,0,.72)) drop-shadow(0 0 20px rgba(212,175,55,.18))}
 .program-run-cover{position:absolute;inset:0;border-radius:2px 9px 9px 2px;background:linear-gradient(160deg,#173555,#0d1b2a);display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;padding:16px 10px 13px;transform:translateZ(calc(var(--run-depth)/2));backface-visibility:hidden;box-shadow:inset 11px 0 15px rgba(255,255,255,.06),inset -8px 0 12px rgba(0,0,0,.3)}
@@ -501,6 +502,8 @@ const PRODUCTS=[
   {key:"파이널모의고사1회",name:"파이널 모의고사 1회",desc:"최종 점검 파이널 1회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"",pdfPage:1}]},
   {key:"파이널모의고사2회",name:"파이널 모의고사 2회",desc:"최종 점검 파이널 2회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi2",label:"2회",title:"파이널 모의고사 2회",type:"concept",url:"",pdfPage:1}]},
   {key:"파이널모의고사3회",name:"파이널 모의고사 3회",desc:"최종 점검 파이널 3회차",icon:"🏁",theme:"theme-final",type:"direct",lessons:[{key:"fi3",label:"3회",title:"파이널 모의고사 3회",type:"concept",url:"",pdfPage:1}]},
+  {key:"파이널모의고사4회",name:"파이널 모의고사 4회",desc:"새 시험지 제작 중",icon:"🏁",theme:"theme-final",type:"direct",comingSoon:true,lessons:[{key:"fi4",label:"4회",title:"파이널 모의고사 4회",type:"concept",url:"",pdfPage:1}]},
+  {key:"최종모의고사",name:"최종 모의고사",desc:"새 시험지 제작 중",icon:"🏆",theme:"theme-final",type:"direct",comingSoon:true,lessons:[{key:"u1",label:"최종",title:"최종 모의고사",type:"concept",url:"",pdfPage:1}]},
   {key:"자료실",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
 ];
  const CONCEPT_CHAPTER_ASSETS={
@@ -546,6 +549,8 @@ const TIMELINE_ORDER=[
   {key:"파이널모의고사1회", step:"STEP 10", desc:"최종 점검 파이널 1회차"},
   {key:"파이널모의고사2회", step:"STEP 11", desc:"최종 점검 파이널 2회차"},
   {key:"파이널모의고사3회", step:"STEP 12", desc:"최종 점검 파이널 3회차"},
+  {key:"파이널모의고사4회", step:"STEP 13", desc:"새 시험지 준비중"},
+  {key:"최종모의고사", step:"FINAL", desc:"새 시험지 준비중"},
 ];
 function findByCode(code){
   const upper = code.trim().toUpperCase();
@@ -710,13 +715,16 @@ const GF={
     TIMELINE_ORDER.forEach((it,idx)=>{
       const p=PRODUCTS.find(x=>x.key===it.key);
       if(!p)return;
-      const open=S.perms.includes(it.key);
+      const comingSoon=!!p.comingSoon;
+      const open=!comingSoon&&S.perms.includes(it.key);
       // 다음 열릴 단계 판단: 열려있으면 done/current, 아니면 locked
       // current = 열린 것 중 마지막
       let cls,statusTxt,statusCls,nodeIcon;
-      const openKeys=TIMELINE_ORDER.filter(t=>S.perms.includes(t.key)).map(t=>t.key);
+      const openKeys=TIMELINE_ORDER.filter(t=>pOk(PRODUCTS.find(x=>x.key===t.key))).map(t=>t.key);
       const isLast=openKeys.length&&openKeys[openKeys.length-1]===it.key;
-      if(open){
+      if(comingSoon){
+        cls="locked";statusTxt="준비중";statusCls="locked";nodeIcon="…";
+      }else if(open){
         if(isLast){cls="current";statusTxt="학습 중";statusCls="current";nodeIcon="▶";}
         else{cls="done";statusTxt="학습 가능";statusCls="done";nodeIcon="✓";}
       }else{
@@ -905,7 +913,7 @@ function coverMarkup(ch,decorative=false){
     ? `<img src="${h(src)}" alt="${decorative?"":h(ch.title)}" loading="lazy" onerror="this.hidden=true">`
     : "";
 }
-function pOk(p){return !!p&&S.perms.includes(p.key)}
+function pOk(p){return !!p&&!p.comingSoon&&S.perms.includes(p.key)}
 function lessonKey(p){return p?.lessons?.[0]?.key||""}
 function archiveFolderNames(){
   const names=[];
@@ -968,13 +976,15 @@ function programGroups(){
   const killer=PRODUCTS.find(p=>lessonKey(p)==="k1")||PRODUCTS.find(p=>p.theme==="theme-killer");
   const practice=PRODUCTS.filter(p=>/^p\d+/.test(lessonKey(p)));
   const finals=PRODUCTS.filter(p=>/^fi\d+/.test(lessonKey(p)));
+  const ultimate=PRODUCTS.find(p=>lessonKey(p)==="u1");
   const groups=[
     {id:"concept",icon:"📘",title:"TOP SECRET 개념",sub:"개념 교재 Vol.1~Final",kind:"chapters",product:concept,kicker:"TOP SECRET",head:"개념 완성",desc:"개념 책을 고르면 영상과 교재가 함께 열립니다."},
     {id:"arithmetic",icon:"🔢",title:"연산 연습",sub:"덧셈·뺄셈·받아올림",kind:"products",items:[PRODUCTS.find(p=>p.key==="연산연습")],kicker:"CALCULATION",head:"필즈 연산 연습",desc:"사고력 문제은행과 분리된 연산을 유형별로 반복합니다."},
     {id:"killer",icon:"🎯",title:"킬러문항 완전 해제",sub:"최상위 유형 공략",kind:"products",items:[killer],kicker:"KILLER",head:"킬러문항 완전 해제",desc:"문항 유형은 보이지만 구매 권한이 있을 때만 열립니다."},
     {id:"diagnostic",icon:"🔍",title:"진단모의고사",sub:"진단 및 분석",kind:"products",items:[diagnostic],kicker:"DIAGNOSTIC",head:"진단모의고사",desc:"진단지는 선택 후 별도 모의고사 화면으로 이동합니다."},
     {id:"practice",icon:"📝",title:"실전 모의고사",sub:"1회~6회",kind:"products",items:practice,kicker:"PRACTICE",head:"실전 모의고사",desc:"각 회차를 확인하고 권한이 있는 회차만 학습할 수 있습니다."},
-    {id:"final",icon:"🏁",title:"파이널 모의고사",sub:"1회~3회",kind:"products",items:finals,kicker:"FINAL",head:"파이널 모의고사",desc:"파이널 회차가 책처럼 펼쳐집니다."}
+    {id:"final",icon:"🏁",title:"파이널 모의고사",sub:"1회~4회",kind:"products",items:finals,kicker:"FINAL",head:"파이널 모의고사",desc:"파이널 회차가 책처럼 펼쳐집니다."},
+    {id:"ultimate",icon:"🏆",title:"최종 모의고사",sub:"새 시험지",kind:"products",items:[ultimate],kicker:"LAST CHECK",head:"최종 모의고사",desc:"새 시험지를 준비하고 있습니다."}
   ];
   const mainGroups=groups.filter(g=>g.product||g.items?.some(Boolean));
   archiveFolderNames().forEach((folder,index)=>mainGroups.push({
@@ -995,14 +1005,18 @@ function sectionUnlocked(g){
   if(g.product)return pOk(g.product);
   return (g.items||[]).some(pOk);
 }
+function sectionComingSoon(g){
+  if(g.product)return !!g.product.comingSoon;
+  return !!g.items?.length&&g.items.every(p=>p?.comingSoon);
+}
 function runCard(p){
   if(!p)return "";
-  const ok=pOk(p),idx=PRODUCTS.indexOf(p);
-  return `<button class="program-run-card ${h(p.theme||"")} ${ok?"":"locked"}" onclick="GF.openProgramProduct(${idx})">
+  const soon=!!p.comingSoon,ok=pOk(p),idx=PRODUCTS.indexOf(p);
+  return `<button class="program-run-card ${h(p.theme||"")} ${ok?"":"locked"} ${soon?"coming-soon":""}" ${soon?'aria-disabled="true"':`onclick="GF.openProgramProduct(${idx})"`}>
     <div class="program-run-book" aria-hidden="true"><div class="program-run-cover"><span class="program-run-kicker">필즈 더 클래식</span><strong>${h(p.name)}</strong><span class="program-run-icon">${h(p.icon||"")}</span><span class="program-run-mark">지필드 영재교육</span></div><div class="program-run-back"></div><div class="program-run-spine"></div><div class="program-run-pages"></div><div class="program-run-top"></div><div class="program-run-bottom"></div></div>
     <div class="program-run-name">${h(p.name)}</div>
     <div class="program-run-desc">${h(p.desc||"")}</div>
-    ${ok?"":'<span class="program-lock">🔒 열람 제한</span>'}
+    ${soon?'<span class="program-lock">준비중</span>':ok?"":'<span class="program-lock">🔒 열람 제한</span>'}
   </button>`;
 }
 function renderProgramPanel(id){
@@ -1041,7 +1055,7 @@ Object.assign(GF,{
     document.getElementById("dashSub").textContent="";
     document.getElementById("headerBadge").textContent="필즈 프로그램 서재";
     const groups=programGroups(),active=groups[0]?.id||"concept";
-    const menu=groups.map(g=>`<button class="program-menu-card ${g.id===active?"active":""}" data-section="${g.id}" onclick="GF.selectProgramSection('${g.id}')"><span class="pm-icon">${h(g.icon)}</span><span><span class="pm-title">${h(g.title)}</span><span class="pm-sub">${h(g.sub)}${sectionUnlocked(g)?"":" · 열람 제한"}</span></span></button>`).join("");
+    const menu=groups.map(g=>`<button class="program-menu-card ${g.id===active?"active":""}" data-section="${g.id}" onclick="GF.selectProgramSection('${g.id}')"><span class="pm-icon">${h(g.icon)}</span><span><span class="pm-title">${h(g.title)}</span><span class="pm-sub">${h(g.sub)}${sectionComingSoon(g)?" · 준비중":sectionUnlocked(g)?"":" · 열람 제한"}</span></span></button>`).join("");
     const grid=document.getElementById("mainGrid");
     grid.innerHTML=`<div class="program-shelf"><nav class="program-menu">${menu}</nav><section class="program-detail" id="programDetail"></section></div>`;
     renderProgramPanel(active);
