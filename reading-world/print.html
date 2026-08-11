@@ -48,6 +48,8 @@ button,input,select{font:inherit}
 .row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
 .mini{border:1px solid var(--line);background:#f8f7f1;border-radius:8px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;color:#46554c}
 .mini:hover{background:#eef3ee;border-color:#bcd3c4}
+.mini.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.mini.on small{color:rgba(255,255,255,.86)}
 .grid{display:grid;gap:6px}
 .grid.lv{grid-template-columns:repeat(auto-fill,minmax(118px,1fr))}
 .grid.ch{grid-template-columns:repeat(auto-fill,minmax(94px,1fr))}
@@ -79,6 +81,8 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .cv-opt b{display:block;font-size:11.5px;padding:5px 7px;font-weight:700}
 
 .ansgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:6px}
+#gGrid.ansgrid{display:block}
+.grade-src{margin:0 0 10px}
 .ansrow{border:1px solid var(--line);border-radius:9px;padding:5px 6px;background:#fff}
 .ansrow b{font-size:11.5px;color:#5a675e;display:block;margin-bottom:3px}
 .ansrow .ops{display:flex;gap:3px}
@@ -175,6 +179,7 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
   border-radius:1mm;
   padding:4mm 5mm 5mm;
 }
+.psg.cars-print-original:after{content:"";display:block;clear:both}
 .psg.cars-print-original .sentence-paragraph{margin:0 0 2.2mm}
 .psg.cars-print-original .sentence-line{font-family:inherit}
 .psg.cars-print-original.cars-layout-biography,
@@ -205,6 +210,21 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .psg.cars-print-original .cars-timeline-stop.is-bottom .cars-timeline-text{top:34mm;min-height:0}
 .psg.cars-print-original .cars-timeline-stop.is-bottom .cars-timeline-year{top:29.2mm}
 .psg.cars-print-original .cars-timeline-stop.is-bottom .cars-timeline-tick{top:27mm;height:5mm}
+.psg.cars-print-original .cars-inline-media{margin:3mm auto;break-inside:avoid;filter:grayscale(1)}
+.psg.cars-print-original .cars-inline-media img{display:block;width:100%;height:auto}
+.psg.cars-print-original .cars-float-right{float:right;margin:1mm 0 3mm 5mm}
+.psg.cars-print-original .cars-float-left{float:left;margin:1mm 5mm 3mm 0}
+.psg.cars-print-original .cars-media-portrait{max-width:38mm}
+.psg.cars-print-original .cars-media-medium{max-width:55mm}
+.psg.cars-print-original .cars-media-wide{max-width:128mm}
+.psg.cars-print-original .cars-media-column-wide{max-width:56mm}
+.psg.cars-print-original .cars-media-poem-art{max-width:58mm}
+.psg.cars-print-original .cars-media-phase-panel{max-width:48mm}
+.psg.cars-print-original .cars-media-rainforest-layers{max-width:56mm}
+.psg.cars-print-original .cars-media-low{margin-top:2mm}
+.psg.cars-print-original .cars-media-middle{margin-top:2mm}
+.psg.cars-print-original .cars-column-figure{max-width:100%!important;margin:0 0 3mm!important}
+.psg.cars-print-original .cars-journal-art{width:55mm!important;max-width:55mm!important;margin:0!important}
 .print-question-visual{margin:2.5mm 0 1.5mm}
 .print-question-visual .cars-visual-box{min-height:18mm;padding:2.6mm 3mm;font-size:10.4pt;line-height:1.2}
 .print-question-visual .cars-sequence{gap:2.2mm}
@@ -1103,6 +1123,14 @@ function applyFont(){
   FS.qs?r.setProperty('--fs-qs',FS.qs):r.removeProperty('--fs-qs');
 }
 var LADDER=DIAG_ORDER;
+function normalizeGradeLevels(){
+  var seen={};
+  grade.levels=(grade.levels||[]).filter(function(id){
+    if(seen[id]||LADDER.indexOf(id)<0)return false;
+    seen[id]=1;return true;
+  }).sort(function(x,y){return LADDER.indexOf(x)-LADDER.indexOf(y);});
+  return grade.levels;
+}
 
 var SCOPE=get('scope','volume');
 // '' = the shelf; otherwise the course being worked on. Everything downstream —
@@ -1251,20 +1279,43 @@ function carsColumnBreak(ps,meta){
   if(Number.isInteger(exact)&&exact>=0&&exact<ps.length-1)return exact;
   return Math.max(0,Math.ceil(ps.length/2)-1);
 }
+function carsAddAt(map,index,html){
+  if(!html)return;
+  index=Math.max(0,index);
+  (map[index]=map[index]||[]).push(html);
+}
+function carsMediaExtraClass(media){
+  var p=media.placement||'', cls='';
+  if(p.indexOf('float-left')===0)cls='cars-float-left';
+  else if(p.indexOf('float-right')===0)cls='cars-float-right';
+  if(p==='float-right-bottom')cls+=' cars-media-low';
+  if(p==='float-right-middle')cls+=' cars-media-middle';
+  return cls;
+}
+function carsParagraphRun(ps,start,end,before,after){
+  var out='';
+  for(var i=start;i<end;i++){
+    out+=(before[i]||[]).join('')+carsPara(ps[i],'')+(after[i]||[]).join('');
+  }
+  return out;
+}
 function carsPassageHtml(j,art){
   var cfg=carsLessonCfg(j.lessonId), orig=cfg&&cfg.original, meta=j.meta||{};
   if(!j.licensed||!orig)return passageHtml(j.passage,art);
   var lessonId=j.lessonId, ps=j.passage||[], cls=['psg','cars-print-original','cars-d-original','cars-layout-'+(orig.layout||'standard')];
   if(orig.columns===2)cls.push('cars-two-column');
   if(orig.layout==='poster')cls.push('cars-poster');
-  var media=carsMediaList(cfg,meta), before=[], after=[], journalMedia='', columnRightTop='';
+  var media=carsMediaList(cfg,meta), before={}, after={}, bottom=[], journalMedia='', columnRightTop='';
   media.forEach(function(m){
-    var html=carsMediaHtml(lessonId,m,(m.placement&&m.placement.indexOf('float-left')===0)?'cars-float-left':(m.placement&&m.placement.indexOf('float-right')===0)?'cars-float-right':'');
+    var html=carsMediaHtml(lessonId,m,carsMediaExtraClass(m));
     if(!html)return;
     if(m.placement==='journal-bottom-right') journalMedia+=html.replace('cars-inline-media','cars-inline-media cars-journal-art');
     else if(m.placement==='column-right-top') columnRightTop+=html.replace('cars-inline-media','cars-inline-media cars-column-figure');
-    else if(m.placement==='float-left-top'||m.placement==='float-right-top') before.push(html);
-    else after.push(html);
+    else if(m.placement==='float-left-top'||m.placement==='float-right-top') carsAddAt(before,0,html);
+    else if(m.placement==='float-right'||m.placement==='float-right-middle') carsAddAt(before,Number.isInteger(m.afterParagraph)?m.afterParagraph:0,html);
+    else if(m.placement==='float-right-bottom') carsAddAt(before,Math.max(0,ps.length-2),html);
+    else if(m.placement==='after-paragraph') carsAddAt(after,Number.isInteger(m.afterParagraph)?m.afterParagraph:ps.length-1,html);
+    else bottom.push(html);
   });
   if(orig.layout==='poster'){
     var poster=ps.map(function(p,i){
@@ -1277,18 +1328,18 @@ function carsPassageHtml(j,art){
   var splitAt=journalCount>0?Math.max(0,ps.length-journalCount):ps.length;
   if(orig.columns===2&&columnRightTop&&ps.length>1){
     var breakAfter=carsColumnBreak(ps,meta);
-    return '<div class="'+cls.join(' ')+' cars-exact-columns">'+before.join('')+
+    return '<div class="'+cls.join(' ')+' cars-exact-columns">'+
       '<div class="cars-column-grid"><div class="cars-column cars-column-left">'+
-      ps.slice(0,breakAfter+1).map(function(p){return carsPara(p,'');}).join('')+
+      carsParagraphRun(ps,0,breakAfter+1,before,after)+
       '</div><div class="cars-column cars-column-right">'+columnRightTop+
-      ps.slice(breakAfter+1).map(function(p){return carsPara(p,'');}).join('')+
-      '</div></div>'+after.join('')+'</div>';
+      carsParagraphRun(ps,breakAfter+1,ps.length,before,after)+
+      '</div></div>'+bottom.join('')+'</div>';
   }
-  var body=before.join('')+ps.slice(0,splitAt).map(function(p){return carsPara(p,'');}).join('');
+  var body=carsParagraphRun(ps,0,splitAt,before,after);
   if(journalCount>0&&splitAt<ps.length){
-    body+='<div class="cars-journal-inset">'+ps.slice(splitAt).map(function(p){return carsPara(p,'');}).join('')+journalMedia+'</div>';
+    body+='<div class="cars-journal-inset">'+carsParagraphRun(ps,splitAt,ps.length,before,after)+journalMedia+'</div>';
   }
-  body+=after.join('');
+  body+=bottom.join('');
   return '<div class="'+cls.join(' ')+'">'+body+'</div>';
 }
 /* ---------- diagram questions ----------
@@ -1443,8 +1494,8 @@ function gradeGrid(){
         LET.slice(0,nOpt).split('').map(function(L){
           return '<button data-ga="'+esc(s.key)+'|'+i+':'+L+'"'+(a[i]===L?' class="on"':'')+'>'+L+'</button>';
         }).join('')+'</div></div>';}).join('');
-    return (srcs.length>1?'<div class="ans-h">'+esc(s.label)+'</div>':'')+
-      '<div class="ansgrid">'+cells+'</div>';}).join('');
+    return '<div class="grade-src">'+(srcs.length>1?'<div class="ans-h">'+esc(s.label)+'</div>':'')+
+      '<div class="ansgrid">'+cells+'</div></div>';}).join('');
   sc.textContent=done? (done+'/'+total+' 입력 · 정답 '+right+'개') : '답안을 입력하세요';
 }
 /* ---------- report: strategy analysis ---------- */
@@ -1558,7 +1609,7 @@ function gradeSources(){
     return u?[{key:u.v,kind:'unit',questions:u.questions,title:u.title,
       where:u.book+' · '+u.le.num+'과 · '+u.part,label:u.book+' '+u.le.num+'과'}]:[];
   }
-  return (grade.levels||[]).map(function(id){
+  return normalizeGradeLevels().map(function(id){
     var lv=levelById(id);
     return lv?{key:id,kind:'level',id:id,questions:lv.questions,title:lv.title,
       grade:lv.grade,where:RL('레벨 ','Level ')+id+' ('+gradeLabel(lv.grade)+')',label:RL('레벨 ','Level ')+id}:null;
@@ -2439,7 +2490,7 @@ document.addEventListener('click',function(e){
   var glv=b.getAttribute('data-glv');
   if(glv){var L=grade.levels||(grade.levels=[]),k=L.indexOf(glv);
     if(k>=0){L.splice(k,1);delete grade.ans[glv];} else L.push(glv);
-    L.sort(function(x,y){return LADDER.indexOf(x)-LADDER.indexOf(y);});
+    normalizeGradeLevels();fillGradePick();
     return render();}
   if(b.dataset.rlang){RLANG=b.dataset.rlang;set('rlang',RLANG);return render();}
   if(b.id==='printReport'){setTimeout(function(){window.print();},60);return;}
@@ -2516,7 +2567,7 @@ function fillGradePick(){
   var box=$('gLevelPick');
   box.hidden=grade.src==='unit';
   box.innerHTML=grade.src==='unit'?'':LEVELS.map(function(l){
-    var on=(grade.levels||[]).indexOf(l.id)>=0;
+    var on=normalizeGradeLevels().indexOf(l.id)>=0;
     return '<button class="mini'+(on?' on':'')+'" data-glv="'+esc(l.id)+'">'+
       esc(l.id)+' <small>'+l.questions.length+'</small></button>';}).join('');
 }
