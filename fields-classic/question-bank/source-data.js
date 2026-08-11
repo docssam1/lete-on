@@ -1,3 +1,5 @@
+// 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
+// id는 URL 파라미터와 EXAMS의 stage 참조에 쓰이므로 바꾸지 않는다.
 export const AGE_STAGES = [
   { id: "k6_winter", label: "6세 12월~2월" },
   { id: "k7_spring", label: "7세 3월~5월" },
