@@ -72,7 +72,7 @@ const TITLES = [
   'Awesome After-School Activities', 'A New School',
   'Great Easter Cakes', 'A Busy Pasen',
   'A World without Bees', "A Garden's Best Friends",
-  'Accidental Inventions', "Gorden's Invention Contest",
+  'Accidental Invention', "Gorden's Invention Contest",
   "UNESCO's Memory of the World", 'Field Trip to Wieliczka Salt Mine',
   'Triathlon: Sports of Champions', 'The Road to Paratriathlon',
   'A Problem with Food Waste', 'The Nicholson Promise',

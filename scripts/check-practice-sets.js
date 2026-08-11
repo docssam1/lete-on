@@ -54,6 +54,11 @@ const ORIGINAL_WORDS = {
   lc6: 570, lc7: 517, lc8: 614, lc9: 787, lc10: 550,
   cd1: 214, cd2: 337, cd3: 318, cd4: 302, cd5: 93, cd6: 649, cd7: 625, cd8: 615,
   cd9: 680, cd10: 701, cd11: 310, cd12: 179, cd13: 270, cd14: 318, cd15: 335,
+  // Bricks Reading 250 Level 1, counted off the publisher's dictation script.
+  // The series name is a word-count tier and it holds: 215-242, mean 231.
+  br1: 231, br2: 237, br3: 223, br4: 228, br5: 224, br6: 229, br7: 229,
+  br8: 240, br9: 232, br10: 236, br11: 236, br12: 228, br13: 215, br14: 227,
+  br15: 240, br16: 236, br17: 242, br18: 234, br19: 233, br20: 221,
 };
 
 // Every lesson the checker looks at. This used to be derived from
