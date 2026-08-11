@@ -74,6 +74,7 @@
 4. 원본 대조와 난수 검산이 끝난 문항만 `verified: true` 및 `sourceMatched: true`로 연다.
 5. Golden Bell, 연산 테스트, 2권 이후 교재 뒤 리뷰는 제외한다.
 6. `fields-classic/prescription/` 및 `fields-classic/problem-bank/prescription/`의 기존 진단 유사문제는 수정하지 않는다.
+7. 문항 제작 세부 기준은 `QUESTION-AUTHORING-GUIDE.md`를 먼저 읽고 따른다.
 
 ## 연산 자료의 학습 시기 기준
 
