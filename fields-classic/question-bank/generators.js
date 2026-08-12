@@ -96,6 +96,45 @@ function closestTwoDigitCardSum({ difficulty = 2 }) {
   };
 }
 
+function frontBackTotal({ difficulty = 2 }) {
+  const names = shuffle(["현지", "준호", "민서", "도윤", "서윤"]);
+  if (difficulty === 1) {
+    const before = randomInt(3, 8);
+    const after = randomInt(3, 8);
+    const total = before + after + 1;
+    return {
+      prompt: `${names[0]} 앞에 ${before}명, 뒤에 ${after}명이 한 줄로 서 있습니다. 줄을 선 사람은 모두 몇 명인가요?`,
+      answer: `${total}명`,
+      solution: `앞의 ${before}명과 뒤의 ${after}명에 ${names[0]} 1명을 더합니다. ${before} + 1 + ${after} = ${total}이므로 모두 ${total}명입니다.`,
+      meta: { mode: "counts", before, after, total }
+    };
+  }
+
+  if (difficulty === 3) {
+    const firstFront = randomInt(7, 14);
+    const between = randomInt(1, 4);
+    const secondBack = randomInt(7, 14);
+    const secondFront = firstFront + between + 1;
+    const total = secondFront + secondBack - 1;
+    return {
+      prompt: `${names[0]}는 앞에서 ${firstFront}번째입니다. ${names[0]}와 ${names[1]} 사이에는 ${between}명이 있고, ${names[1]}는 ${names[0]}보다 뒤에 서 있습니다. ${names[1]}가 뒤에서 ${secondBack}번째라면 줄을 선 사람은 모두 몇 명인가요?`,
+      answer: `${total}명`,
+      solution: `${names[1]}는 앞에서 ${firstFront} + ${between} + 1 = ${secondFront}번째입니다. 앞에서 ${secondFront}번째와 뒤에서 ${secondBack}번째에는 ${names[1]}가 두 번 들어가므로 한 번 뺍니다. ${secondFront} + ${secondBack} - 1 = ${total}명입니다.`,
+      meta: { mode: "between", firstFront, between, secondFront, secondBack, total }
+    };
+  }
+
+  const front = randomInt(10, 18);
+  const back = randomInt(8, 16);
+  const total = front + back - 1;
+  return {
+    prompt: `${names[0]}는 놀이 기구를 타려고 한 줄로 섰습니다. ${names[0]}는 앞에서 ${front}번째이고, 뒤에서 세면 ${back}번째입니다. 줄을 선 사람은 모두 몇 명인가요?`,
+    answer: `${total}명`,
+    solution: `앞에서 셀 때와 뒤에서 셀 때 ${names[0]}가 두 번 들어갑니다. ${front} + ${back} - 1 = ${total}이므로 모두 ${total}명입니다.`,
+    meta: { mode: "positions", front, back, total }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -541,6 +580,7 @@ function paperFoldHoleCount({ difficulty }) {
 export const GENERATORS = {
   hiddenCardCondition,
   closestTwoDigitCardSum,
+  frontBackTotal,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,

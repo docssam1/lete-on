@@ -26,7 +26,7 @@ const type = (id, domain, middle, label, options = {}) => ({
 export const TYPES = [
   type("hidden-number-card-conditions", "logic", "조건 추리", "숫자 카드 포함·제외 조건으로 숨은 수 찾기", { generator: "hiddenCardCondition", sourceMatched: true }),
   type("closest-two-digit-card-sum", "number", "수 카드와 식", "두 자리 수 두 개의 합을 목표 수에 가장 가깝게 만들기", { generator: "closestTwoDigitCardSum", sourceMatched: true }),
-  type("front-back-total", "logic", "순서와 비교", "앞·뒤 순서로 줄 선 전체 인원 구하기"),
+  type("front-back-total", "logic", "순서와 비교", "앞·뒤 순서로 줄 선 전체 인원 구하기", { generator: "frontBackTotal", sourceMatched: true }),
   type("wrong-operation-correction", "logic", "과정 추론", "잘못 적용한 덧셈·뺄셈을 바르게 고치기"),
   type("shape-matrix-rule", "pattern", "도형 규칙", "겹친 도형과 칠한 위치의 행렬 규칙 완성"),
   type("delayed-date-promise", "pattern", "달력과 시간", "전에 들은 며칠 뒤 약속의 실제 날짜 구하기"),
@@ -232,7 +232,7 @@ export const FINAL_EXAM_TYPES = [
       "shape-matrix-rule", "delayed-date-promise", "repeat-pattern", "calendar-date-weekday",
       "two-type-unit-total", "cryptarithm", "fold-hole-count", "edge-sum-grid", "equal-line-sum",
       "total-difference", "symbol-sum-grid", "magic-square"
-    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index === 0 || index === 2 }))
+    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index === 0 || index === 2 || index === 3 }))
   }
 ];
 
