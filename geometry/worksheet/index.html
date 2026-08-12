@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GFIELD 쌓기나무 학습지 생성기</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="control-panel">
+        <h1>GFIELD<br /><span>쌓기나무 학습지</span></h1>
+
+        <section class="control-group">
+          <h2>유형</h2>
+          <div class="type-grid" id="typeGrid"><!-- checkboxes injected by app.js --></div>
+        </section>
+
+        <section class="control-group">
+          <h2>난이도</h2>
+          <div class="radio-row" id="difficultyRow">
+            <label><input type="radio" name="difficulty" value="easy" /> 하</label>
+            <label><input type="radio" name="difficulty" value="mid" checked /> 중</label>
+            <label><input type="radio" name="difficulty" value="hard" /> 상</label>
+          </div>
+        </section>
+
+        <section class="control-group">
+          <h2>문항 수</h2>
+          <select id="countSelect">
+            <option value="6">6문항</option>
+            <option value="9" selected>9문항</option>
+            <option value="12">12문항</option>
+            <option value="15">15문항</option>
+          </select>
+        </section>
+
+        <section class="control-group">
+          <h2>학생 이름</h2>
+          <input type="text" id="studentName" placeholder="(선택) 이름을 입력하세요" />
+        </section>
+
+        <section class="control-group">
+          <label class="check-line"><input type="checkbox" id="includeAnswers" checked /> 정답지 포함</label>
+        </section>
+
+        <section class="control-group">
+          <h2>학습지 코드</h2>
+          <input type="text" id="codeInput" class="code-input" placeholder="#GW-..." />
+          <button type="button" id="loadCodeBtn" class="btn btn-secondary">코드로 불러오기</button>
+        </section>
+
+        <section class="control-group actions">
+          <button type="button" id="newSeedBtn" class="btn btn-primary">새로 만들기</button>
+          <button type="button" id="printBtn" class="btn btn-print">🖨 인쇄</button>
+        </section>
+      </aside>
+
+      <main class="preview-panel">
+        <div id="sheetRoot"><!-- worksheet + answer pages injected by app.js --></div>
+      </main>
+    </div>
+
+    <script src="./generators.js"></script>
+    <script src="./render.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
