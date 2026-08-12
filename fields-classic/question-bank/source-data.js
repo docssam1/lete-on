@@ -29,9 +29,9 @@ export const TYPES = [
   type("front-back-total", "logic", "순서와 비교", "앞·뒤 순서로 줄 선 전체 인원 구하기", { generator: "frontBackTotal", sourceMatched: true }),
   type("wrong-operation-correction", "logic", "과정 추론", "잘못 적용한 덧셈·뺄셈을 바르게 고치기", { generator: "wrongOperationCorrection", sourceMatched: true }),
   type("shape-matrix-rule", "pattern", "도형 규칙", "겹친 도형과 칠한 위치의 행렬 규칙 완성"),
-  type("delayed-date-promise", "pattern", "달력과 시간", "전에 들은 며칠 뒤 약속의 실제 날짜 구하기"),
+  type("delayed-date-promise", "pattern", "달력과 시간", "전에 들은 며칠 뒤 약속의 실제 날짜 구하기", { generator: "delayedDatePromise", sourceMatched: true }),
   type("calendar-date-weekday", "pattern", "달력과 시간", "달력에서 특정 날짜의 요일 찾기"),
-  type("two-type-unit-total", "number", "합과 차 문장제", "두 종류의 전체 개수와 단위 수로 각각의 개수 구하기"),
+  type("two-type-unit-total", "number", "합과 차 문장제", "두 종류의 전체 개수와 단위 수로 각각의 개수 구하기", { generator: "twoTypeUnitTotal", sourceMatched: true }),
   type("edge-sum-grid", "number", "수 배열과 합", "주변의 합에 맞게 수 배치하기", { generator: "edgeSumCycle", sourceMatched: true }),
   type("equalize-transfer", "number", "합과 차 문장제", "주고받아 같게 만들기", { generator: "equalizeTransfer", sourceMatched: true }),
   type("number-pyramid", "number", "수 배열과 합", "수 카드로 모으기·수 피라미드", { generator: "numberPyramid", sourceMatched: true }),
@@ -81,7 +81,7 @@ export const TYPES = [
   type("colored-shape-number", "pattern", "도형 수 표현", "색칠한 도형이 나타내는 수", { generator: "sourceColoredShapeNumber", sourceMatched: true }),
   type("height-order", "logic", "순서와 비교", "키의 크고 작은 순서"),
   type("hidden-score-ranking", "logic", "순서와 비교", "순위표의 가려진 서로 다른 숫자 찾기"),
-  type("total-difference", "number", "합과 차 문장제", "전체 수와 차이로 두 수 구하기"),
+  type("total-difference", "number", "합과 차 문장제", "전체 수와 차이로 두 수 구하기", { generator: "totalDifference", sourceMatched: true }),
   type("multi-person-transfer", "number", "합과 차 문장제", "여러 사람의 합과 주고받기"),
   type("fold-cut-piece-count", "geometry", "색종이 접기", "접고 자른 조각의 개수"),
   type("cryptarithm", "number", "복면산과 식", "세로셈 복면산"),
@@ -110,7 +110,7 @@ export const TYPES = [
   type("square-count", "geometry", "도형 세기", "크고 작은 사각형 세기"),
   type("calendar-weekday-sum", "pattern", "달력과 시간", "달력에서 같은 요일 날짜의 합"),
   type("person-item-logic", "logic", "조건 연결", "사람과 동물·음식 조건 연결"),
-  type("set-union-count", "logic", "집합과 포함", "두 종류를 선택한 전체 사람 수"),
+  type("set-union-count", "logic", "집합과 포함", "두 종류를 선택한 전체 사람 수", { generator: "setUnionCount", sourceMatched: true }),
   type("custom-operation", "number", "연산 약속", "새 기호의 계산 약속"),
   type("operator-insertion", "number", "수 카드와 식", "+와 -를 넣어 식 완성하기"),
   type("cut-recut-pieces", "number", "과정 추론", "자르고 먹고 다시 잘라 남은 조각 수"),
@@ -232,7 +232,7 @@ export const FINAL_EXAM_TYPES = [
       "shape-matrix-rule", "delayed-date-promise", "repeat-pattern", "calendar-date-weekday",
       "two-type-unit-total", "cryptarithm", "fold-hole-count", "edge-sum-grid", "equal-line-sum",
       "total-difference", "symbol-sum-grid", "magic-square"
-    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: [0, 2, 3, 5, 7].includes(index) }))
+    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: [0, 2, 3, 4, 5, 7, 9, 12, 17].includes(index) }))
   }
 ];
 

@@ -235,6 +235,84 @@ function pairedSequences({ difficulty = 2 }) {
   };
 }
 
+const MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+function shiftDate(month, day, delta) {
+  let m = month;
+  let d = day + delta;
+  while (d > MONTH_DAYS[m - 1]) { d -= MONTH_DAYS[m - 1]; m += 1; }
+  while (d < 1) { m -= 1; d += MONTH_DAYS[m - 1]; }
+  return { month: m, day: d };
+}
+
+function setUnionCount({ difficulty = 2 }) {
+  const pair = sample([["축구", "야구"], ["피아노", "태권도"], ["딸기", "포도"], ["수영", "줄넘기"]]);
+  const scale = difficulty === 1 ? [5, 10] : difficulty === 2 ? [9, 20] : [14, 30];
+  const both = randomInt(difficulty === 1 ? 1 : 3, difficulty === 1 ? 4 : 8);
+  const first = randomInt(both + 2, scale[1]);
+  const second = randomInt(Math.max(both + 2, scale[0]), scale[1]);
+  const total = first + second - both;
+  return {
+    prompt: `어느 반 학생들에게 ${pair[0]}와 ${pair[1]}을 좋아하는지 조사했습니다. ${pair[0]}를 좋아하는 학생은 ${first}명, ${pair[1]}을 좋아하는 학생은 ${second}명입니다. 둘 다 좋아하는 학생이 ${both}명이고 모든 학생이 둘 중 하나는 좋아한다면, 이 반 학생은 모두 몇 명입니까?`,
+    answer: `${total}명`,
+    solution: `두 수를 그냥 더하면 둘 다 좋아하는 ${both}명을 두 번 세게 됩니다. ${first} + ${second} - ${both} = ${total}이므로 모두 ${total}명입니다.`,
+    meta: { first, second, both, total }
+  };
+}
+
+function delayedDatePromise({ difficulty = 2 }) {
+  const ago = difficulty === 1 ? randomInt(2, 6) : difficulty === 2 ? randomInt(7, 14) : randomInt(10, 25);
+  // 시험일은 반드시 오늘보다 뒤여야 한다. after가 ago와 같으면 오늘 날짜가 그대로 답이 되어 문제에 노출된다.
+  const after = difficulty === 1 ? randomInt(ago + 1, 12) : difficulty === 2 ? randomInt(15, 25) : randomInt(26, 45);
+  const month = randomInt(2, 10);
+  const day = randomInt(ago + 1, MONTH_DAYS[month - 1]);
+  const heard = shiftDate(month, day, -ago);
+  const exam = shiftDate(heard.month, heard.day, after);
+  return {
+    prompt: `선생님께서 ${ago}일 전에 "오늘부터 ${after}일 후에 수학 시험을 보겠습니다"라고 말씀하셨습니다. 오늘이 ${month}월 ${day}일일 때, 수학 시험을 보는 날은 몇 월 며칠입니까?`,
+    answer: `${exam.month}월 ${exam.day}일`,
+    solution: `말씀하신 날은 ${month}월 ${day}일의 ${ago}일 전인 ${heard.month}월 ${heard.day}일입니다. 그날부터 ${after}일 후를 세면 ${exam.month}월 ${exam.day}일입니다.`,
+    meta: { ago, after, month, day, heard, exam }
+  };
+}
+
+function twoTypeUnitTotal({ difficulty = 2 }) {
+  const BIKE = { a: "두발자전거", b: "세발자전거", aUnit: 2, bUnit: 3, unit: "바퀴", counter: "대", place: "자전거 가게" };
+  const kinds = difficulty === 2
+    ? BIKE
+    : sample(difficulty === 1
+      ? [BIKE, { a: "오리", b: "돼지", aUnit: 2, bUnit: 4, unit: "다리", counter: "마리", place: "농장" }]
+      : [
+        { a: "닭", b: "토끼", aUnit: 2, bUnit: 4, unit: "다리", counter: "마리", place: "농장" },
+        { a: "오토바이", b: "자동차", aUnit: 2, bUnit: 4, unit: "바퀴", counter: "대", place: "주차장" },
+        { a: "세발자전거", b: "네발자전거", aUnit: 3, bUnit: 4, unit: "바퀴", counter: "대", place: "놀이터" }
+      ]);
+  const total = difficulty === 1 ? randomInt(5, 11) : difficulty === 2 ? randomInt(8, 18) : randomInt(9, 20);
+  const bCount = randomInt(1, total - 1);
+  const aCount = total - bCount;
+  const units = aCount * kinds.aUnit + bCount * kinds.bUnit;
+  return {
+    prompt: `${kinds.place}에 ${kinds.a}와 ${kinds.b}가 모두 ${total}${kinds.counter} 있습니다. ${kinds.unit}가 모두 ${units}개일 때, ${kinds.b}는 몇 ${kinds.counter}입니까?`,
+    answer: `${bCount}${kinds.counter}`,
+    solution: `모두 ${kinds.a}라면 ${kinds.unit}는 ${total} × ${kinds.aUnit} = ${aCount * kinds.aUnit + bCount * kinds.aUnit}개입니다. 실제보다 ${units - total * kinds.aUnit}개가 적고, ${kinds.b} 한 ${kinds.counter}를 바꿀 때마다 ${kinds.bUnit - kinds.aUnit}개씩 늘어나므로 ${kinds.b}는 ${bCount}${kinds.counter}입니다.`,
+    meta: { total, aCount, bCount, units, aUnit: kinds.aUnit, bUnit: kinds.bUnit }
+  };
+}
+
+function totalDifference({ difficulty = 2 }) {
+  const pair = sample([["형", "동생", "살"], ["언니", "동생", "살"], ["누나", "동생", "살"]]);
+  const gap = difficulty === 1 ? randomInt(2, 4) : difficulty === 2 ? randomInt(3, 7) : randomInt(5, 11);
+  const younger = difficulty === 1 ? randomInt(3, 8) : difficulty === 2 ? randomInt(5, 14) : randomInt(8, 22);
+  const older = younger + gap;
+  const sum = older + younger;
+  return {
+    prompt: `${pair[0]}와 ${pair[1]}의 나이의 합은 ${sum}${pair[2]}인데 ${pair[0]}이 ${pair[1]}보다 ${gap}${pair[2]} 더 많습니다. ${pair[0]}은 몇 ${pair[2]}입니까?`,
+    answer: `${older}${pair[2]}`,
+    solution: `합 ${sum}에서 차 ${gap}을 빼면 ${pair[1]} 나이의 두 배인 ${sum - gap}이 됩니다. ${pair[1]}은 ${younger}${pair[2]}이고 ${pair[0]}은 ${younger} + ${gap} = ${older}${pair[2]}입니다.`,
+    meta: { sum, gap, older, younger }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -683,6 +761,10 @@ export const GENERATORS = {
   frontBackTotal,
   wrongOperationCorrection,
   pairedSequences,
+  setUnionCount,
+  delayedDatePromise,
+  twoTypeUnitTotal,
+  totalDifference,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
