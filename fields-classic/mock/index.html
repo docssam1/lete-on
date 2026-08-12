@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>필즈 선발 대비 모의고사 | G-FIELD</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="../data.js"></script>
+<!-- data.js는 admin이 GitHub에 덮어써서 권한을 갱신한다. 캐시된 사본을 쓰면 방금 준 처방 권한이
+     반영되지 않으므로 program/index.html과 같은 방식으로 매번 새로 받는다. -->
+<script>document.write('<script src="../data.js?v='+Date.now()+'"><\/script>')</script>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
 </script>
