@@ -839,7 +839,9 @@ const GF={
   closeModal(){document.getElementById("commentModal").classList.remove("show")},
   startFromModal(){this.closeModal();if(S.currentChapter)this.openChapterViewer(S.currentChapter)},
   openChapterViewer(ch){
-    S.currentProduct=Object.assign({},S.currentProduct||{},ch.pagesBase?{pagesBase:ch.pagesBase,pageCount:ch.pageCount,pagePrefix:ch.pagePrefix||"",pageExt:ch.pageExt||"jpg"}:{});
+    // pageSegments도 함께 비운다. bookUrl()이 pagesBase보다 pageSegments를 먼저 보기 때문에,
+    // 남겨 두면 상품 전체(vol1~final 75쪽)의 첫 세그먼트로만 그려져 어느 볼을 골라도 vol1이 나온다.
+    S.currentProduct=Object.assign({},S.currentProduct||{},ch.pagesBase?{pagesBase:ch.pagesBase,pageCount:ch.pageCount,pageSegments:null,pagePrefix:ch.pagePrefix||"",pageExt:ch.pageExt||"jpg"}:{});
     S.viewerOpen=true;
     document.getElementById("vTitle").textContent=ch.vol+" · "+ch.title;
     document.getElementById("vYtBtn").style.display="block";
