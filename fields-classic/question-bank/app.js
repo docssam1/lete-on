@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812r";
-import { GENERATORS } from "./generators.js?v=20260812r";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812s";
+import { GENERATORS } from "./generators.js?v=20260812s";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -272,8 +272,31 @@ function magicSquareMarkup(visual) {
 function paperFoldMarkup(visual) {
   const SIZE = visual.stages.length > 3 ? 84 : 100;
   const GAP = 34;
+  const KEEP = { v: (p) => 0.5 - p.x, h: (p) => 0.5 - p.y, d1: (p) => p.x - p.y, d2: (p) => 1 - p.x - p.y };
+  const MIRROR = {
+    v: (p) => ({ x: 1 - p.x, y: p.y }),
+    h: (p) => ({ x: p.x, y: 1 - p.y }),
+    d1: (p) => ({ x: p.y, y: p.x }),
+    d2: (p) => ({ x: 1 - p.y, y: 1 - p.x })
+  };
+  // 접혀 넘어가는 쪽을 잘라내 그 무게중심을 잡는다. 화살표는 거기서 거울점으로 향한다.
+  const clip = (polygon, keep) => {
+    const out = [];
+    for (let i = 0; i < polygon.length; i += 1) {
+      const a = polygon[i];
+      const b = polygon[(i + 1) % polygon.length];
+      const da = keep(a);
+      const db = keep(b);
+      if (da >= -1e-9) out.push(a);
+      if ((da > 1e-9 && db < -1e-9) || (da < -1e-9 && db > 1e-9)) {
+        const t = da / (da - db);
+        out.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+      }
+    }
+    return out;
+  };
   const foldLine = (polygon, fold) => {
-    const keep = { v: (p) => 0.5 - p.x, h: (p) => 0.5 - p.y, d1: (p) => p.x - p.y, d2: (p) => 1 - p.x - p.y }[fold];
+    const keep = KEEP[fold];
     const points = [];
     for (let i = 0; i < polygon.length; i += 1) {
       const a = polygon[i];
@@ -309,6 +332,29 @@ function paperFoldMarkup(visual) {
       const segment = foldLine(stage.polygon, stage.fold);
       if (segment) {
         piece += `<line x1="${(shift + segment[0].x * SIZE).toFixed(1)}" y1="${(4 + segment[0].y * SIZE).toFixed(1)}" x2="${(shift + segment[1].x * SIZE).toFixed(1)}" y2="${(4 + segment[1].y * SIZE).toFixed(1)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
+      }
+      // 접는 방향 화살표 — 어느 쪽이 어디로 넘어가는지 보여준다. 이게 없으면 접는 선만 보인다.
+      const away = clip(stage.polygon, (p) => -KEEP[stage.fold](p));
+      if (away.length >= 3) {
+        const from = { x: away.reduce((t, p) => t + p.x, 0) / away.length, y: away.reduce((t, p) => t + p.y, 0) / away.length };
+        const to = MIRROR[stage.fold](from);
+        const sx = shift + from.x * SIZE;
+        const sy = 4 + from.y * SIZE;
+        const ex = shift + to.x * SIZE;
+        const ey = 4 + to.y * SIZE;
+        const nx = -(ey - sy);
+        const ny = ex - sx;
+        const length = Math.hypot(nx, ny) || 1;
+        const bulge = Math.min(20, SIZE * 0.22);
+        const cx = (sx + ex) / 2 + (nx / length) * bulge;
+        const cy = (sy + ey) / 2 + (ny / length) * bulge;
+        const angle = Math.atan2(ey - cy, ex - cx);
+        const head = [
+          `${(ex + 3 * Math.cos(angle)).toFixed(1)},${(ey + 3 * Math.sin(angle)).toFixed(1)}`,
+          `${(ex - 9 * Math.cos(angle - 0.5)).toFixed(1)},${(ey - 9 * Math.sin(angle - 0.5)).toFixed(1)}`,
+          `${(ex - 9 * Math.cos(angle + 0.5)).toFixed(1)},${(ey - 9 * Math.sin(angle + 0.5)).toFixed(1)}`
+        ].join(" ");
+        piece += `<path d="M${sx.toFixed(1)} ${sy.toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="#c0392b" stroke-width="3.2" stroke-linecap="round"/><polygon points="${head}" fill="#c0392b"/>`;
       }
     } else {
       piece += visual.holes.map((hole) => `<circle cx="${(shift + hole.x * SIZE).toFixed(1)}" cy="${(4 + hole.y * SIZE).toFixed(1)}" r="6" fill="#fff" stroke="#c0392b" stroke-width="1.8"/>`).join("");
