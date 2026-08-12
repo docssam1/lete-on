@@ -21,6 +21,8 @@ small.src{display:block;color:#888;font-size:12px;margin-top:-6px;margin-bottom:
   <option value="numsum">수가 쓰인 색종이 — 남은 수들의 합</option>
   <option value="numcut">수가 쓰인 색종이 — 잘려나간 수들의 합</option>
   <option value="numbook">교재 41쪽 확인03 재현 (검증용)</option>
+  <option value="stackfind">겹친 색종이 — 가장 밑(또는 위) 찾기</option>
+  <option value="stackorder">겹친 색종이 — 위에서부터 순서대로</option>
 </select>
 <button onclick="newProblem()">🔄 새 문제</button>
 <p id="info"></p>
@@ -200,6 +202,87 @@ function genNumber(askCut, preset){
   };
 }
 
+/* ===== 유형 5: 겹친 색종이 순서 (교재 35~36·44~46쪽) =====
+   같은 크기 정사각형 8장을 3x3 자리에 겹쳐 놓는다(가장자리 중앙 한 자리는 비움 — 교재 문법).
+   답이 유일하려면 "맨 위를 걷어내면 남은 것 중 온전히 보이는 종이가 늘 하나뿐"이어야 한다.
+   즉 맨 위를 뺀 모든 종이가 자기보다 위 종이 중 하나와 겹쳐야 한다. */
+function shuffleArr(list){
+  const a=[...list];
+  for(let i=a.length-1;i>0;i--){const j=R(0,i); [a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function genStack(askOrder){
+  const anchors=[];
+  for(let r=0;r<3;r++) for(let c=0;c<3;c++) anchors.push({r,c});
+  const dropEdge=[1,3,5,7][R(0,3)];                 // 가장자리 중앙 네 자리 중 하나를 비운다
+  const pos=anchors.filter((_,i)=>i!==dropEdge);    // 8자리, 종이 한 변=2, 판 전체=4x4
+  const labels=shuffleArr(['가','나','다','라','마','바','사','아']);
+  const over=(a,b)=>Math.abs(pos[a].r-pos[b].r)<2 && Math.abs(pos[a].c-pos[b].c)<2;
+
+  for(let attempt=0;attempt<800;attempt++){
+    const z=shuffleArr(pos.map((_,i)=>i));          // z[k] = 위에서 k번째 종이의 자리 번호
+    // 걷어내기 유일성: 바로 위 종이와 겹쳐야 한다. "위 종이 중 아무나"로는 부족하다 —
+    // 그 종이가 먼저 걷혀 나가면 중간 종이가 조기에 온전히 드러나 답이 두 갈래가 된다.
+    let ok=true;
+    for(let k=1;k<8;k++) if(!over(z[k], z[k-1])){ok=false;break;}
+    if(!ok) continue;
+    // 모든 종이에 라벨 놓을 보이는 지점이 있어야 한다 (내부 표본점 중 위 종이에 안 덮이고 가장 여유로운 곳)
+    const spots=[];
+    for(let k=0;k<8 && ok;k++){
+      const pp=pos[z[k]]; let best=null, bd=-1;
+      for(let i=1;i<=8;i++) for(let j=1;j<=8;j++){
+        const x=pp.c+i*2/9, y=pp.r+j*2/9;
+        let covered=false, clear=Infinity;
+        for(let m=0;m<k;m++){
+          const q=pos[z[m]];
+          if(x>q.c && x<q.c+2 && y>q.r && y<q.r+2){covered=true;break;}
+          const dx=Math.max(q.c-x, x-(q.c+2), 0), dy=Math.max(q.r-y, y-(q.r+2), 0);
+          clear=Math.min(clear, Math.hypot(dx,dy));
+        }
+        if(covered) continue;
+        const d=Math.min(clear, x-pp.c, pp.c+2-x, y-pp.r, pp.r+2-y);
+        if(d>bd){bd=d; best={x,y};}
+      }
+      if(!best || bd<0.12){ok=false;break;}         // 너무 비좁은 자리는 라벨이 안 읽힌다
+      spots.push(best);
+    }
+    if(!ok) continue;
+
+    const order=z.map(i=>labels[i]);                // 위 → 아래
+    const wantTop=Math.random()<0.3;                // 교재는 주로 '가장 밑'을 묻는다
+    return {
+      kind:'stack', pos, z, labels, spots, order, askOrder, wantTop,
+      answer: askOrder ? order.join(' → ') : (wantTop ? order[0] : order[7]),
+      text:['다음은 크기가 모두 같은 정사각형 모양의 색종이 8장을 겹쳐 놓은 것입니다.',
+            askOrder ? '가장 위에 있는 색종이부터 순서대로 쓰시오.'
+                     : (wantTop ? '가장 위에 놓인 색종이는 어느 것입니까?' : '가장 밑에 있는 색종이는 어느 것입니까?')],
+      info:`위에서부터 ${order.join(' ')}`,
+      src:'출처 유형: 더클래식 1과정 1권 35~36·44~46쪽'
+    };
+  }
+  return genStack(askOrder);                        // 이 배치에서 못 찾으면 자리부터 다시
+}
+
+function renderStack(ctx,d){
+  header(ctx, d.text);
+  const u=62, ox=470, oy=136;
+  // 아래 종이부터 그린다 — 위 종이의 흰 채움이 아래 경계를 지워 실제 가림과 같아진다
+  for(let k=7;k>=0;k--){
+    const p=d.pos[d.z[k]];
+    ctx.fillStyle='#fff';
+    ctx.fillRect(ox+p.c*u, oy+p.r*u, 2*u, 2*u);
+    ctx.strokeStyle='#3f7f9e'; ctx.lineWidth=2;
+    ctx.strokeRect(ox+p.c*u, oy+p.r*u, 2*u, 2*u);
+  }
+  ctx.font='700 21px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillStyle='#333';
+  for(let k=0;k<8;k++){
+    const sp=d.spots[k];
+    ctx.fillText(d.order[k], ox+sp.x*u, oy+sp.y*u);
+  }
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+}
+
 /* ===== 렌더 공통 ===== */
 const PAPER='#f9c8c4', PAPER_EDGE='#e8968f', CREASE='#d4756c', ARROW='#c0392b', CUT='#b03a5b';
 
@@ -354,7 +437,7 @@ function renderNumber(ctx,d){
 function render(d){
   const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
-  if(d.kind==='hole') renderHole(ctx,d); else renderNumber(ctx,d);
+  if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else renderNumber(ctx,d);
   document.getElementById('info').textContent=d.info+' · 정답 '+d.answer;
   document.getElementById('src').textContent=d.src;
 }
@@ -362,6 +445,8 @@ function newProblem(){
   const mode=document.getElementById('mode').value;
   if(mode==='hole2')  return render(genHole(false));
   if(mode==='hole3d') return render(genHole(true));
+  if(mode==='stackfind')  return render(genStack(false));
+  if(mode==='stackorder') return render(genStack(true));
   if(mode==='numsum') return render(genNumber(false));
   if(mode==='numbook') return render(genNumber(false, {
     grid:[[2,3,1,4],[3,2,4,1],[1,4,1,2],[4,1,2,1]],
