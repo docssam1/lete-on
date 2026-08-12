@@ -2,12 +2,14 @@ window.HSMIDDLE_DATA = {
   "students": [
     "DEMO",
     "docssam",
-    "오지민"
+    "오지민",
+    "엄한빈"
   ],
   "studentCode": {
     "DEMO": "HS-DEMO",
     "docssam": "01020837265",
-    "오지민": "HS-1329"
+    "오지민": "HS-1329",
+    "엄한빈": "HS-4303"
   },
   "access": {
     "DEMO": [
@@ -23,6 +25,10 @@ window.HSMIDDLE_DATA = {
     "오지민": [
       "diagnostic",
       "mock-1"
+    ],
+    "엄한빈": [
+      "diagnostic",
+      "final"
     ]
   },
   "admins": [
