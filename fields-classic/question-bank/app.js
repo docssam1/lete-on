@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812p";
-import { GENERATORS } from "./generators.js?v=20260812p";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812q";
+import { GENERATORS } from "./generators.js?v=20260812q";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -269,6 +269,61 @@ function magicSquareMarkup(visual) {
   return `<div class="magic-square-work"><div class="number-balls">${cards}</div><div class="magic-square-grid">${grid}</div></div>`;
 }
 
+function paperFoldMarkup(visual) {
+  const SIZE = visual.stages.length > 3 ? 84 : 100;
+  const GAP = 34;
+  const foldLine = (polygon, fold) => {
+    const keep = { v: (p) => 0.5 - p.x, h: (p) => 0.5 - p.y, d1: (p) => p.x - p.y, d2: (p) => 1 - p.x - p.y }[fold];
+    const points = [];
+    for (let i = 0; i < polygon.length; i += 1) {
+      const a = polygon[i];
+      const b = polygon[(i + 1) % polygon.length];
+      const da = keep(a);
+      const db = keep(b);
+      if (Math.abs(da) < 1e-9) points.push(a);
+      if ((da > 1e-9 && db < -1e-9) || (da < -1e-9 && db > 1e-9)) {
+        const t = da / (da - db);
+        points.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+      }
+    }
+    if (points.length < 2) return null;
+    let best = null;
+    let far = -1;
+    for (let i = 0; i < points.length; i += 1) {
+      for (let j = i + 1; j < points.length; j += 1) {
+        const d = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
+        if (d > far) { far = d; best = [points[i], points[j]]; }
+      }
+    }
+    return far > 1e-6 ? best : null;
+  };
+
+  const width = visual.stages.length * SIZE + (visual.stages.length - 1) * GAP + 8;
+  let offset = 4;
+  const parts = visual.stages.map((stage, index) => {
+    const shift = offset;
+    offset += SIZE + GAP;
+    const points = stage.polygon.map((p) => `${(shift + p.x * SIZE).toFixed(1)},${(4 + p.y * SIZE).toFixed(1)}`).join(" ");
+    let piece = `<polygon points="${points}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+    if (stage.fold) {
+      const segment = foldLine(stage.polygon, stage.fold);
+      if (segment) {
+        piece += `<line x1="${(shift + segment[0].x * SIZE).toFixed(1)}" y1="${(4 + segment[0].y * SIZE).toFixed(1)}" x2="${(shift + segment[1].x * SIZE).toFixed(1)}" y2="${(4 + segment[1].y * SIZE).toFixed(1)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
+      }
+    } else {
+      piece += visual.holes.map((hole) => `<circle cx="${(shift + hole.x * SIZE).toFixed(1)}" cy="${(4 + hole.y * SIZE).toFixed(1)}" r="6" fill="#fff" stroke="#c0392b" stroke-width="1.8"/>`).join("");
+    }
+    if (index < visual.stages.length - 1) {
+      const ax = shift + SIZE + 8;
+      const ay = 4 + SIZE / 2;
+      piece += `<path d="M${ax} ${ay} H${ax + 16}" stroke="#95a5a6" stroke-width="2.5"/><path d="M${ax + 18} ${ay} l-7 -5 v10 z" fill="#95a5a6"/>`;
+    }
+    return piece;
+  }).join("");
+
+  return `<svg class="paper-fold-svg" viewBox="0 0 ${width} ${SIZE + 8}" role="img" aria-label="색종이 접기 문제">${parts}</svg>`;
+}
+
 function numberCardMarkup(visual) {
   return `<div class="number-balls">${visual.values.map((value) => `<span>${value}</span>`).join("")}</div><div class="equation-row equation-row-three"><span class="equation-blank"></span><b>+</b><span class="equation-blank"></span><b>-</b><span class="equation-blank"></span><b>=</b><strong>${visual.target}</strong></div>`;
 }
@@ -420,7 +475,7 @@ function visualMarkup(visual) {
   if (visual.kind === "shapes") return `<div class="visual"><div class="shape-row">${visual.items.map((token) => `<span class="shape-token ${token.color === "검은색" ? "black" : "white"}">${shapeSymbol(token.shape)}</span>`).join("")}</div></div>`;
   if (visual.kind === "piano") return `<div class="visual"><div class="piano-row">${Array.from({ length: visual.keys }, (_, index) => `<span class="piano-key">${index + 1}</span>`).join("")}</div></div>`;
   if (visual.kind === "line") return `<div class="visual"><div class="people-row">${Array.from({ length: visual.total }, (_, index) => `<i class="${index + 1 === visual.first ? "marked" : ""}">${index + 1}</i>`).join("")}</div></div>`;
-  if (visual.kind === "paper-fold") return `<div class="visual fold-summary"><strong>${visual.folds === 1 ? "한 번" : "두 번"} 접기</strong><span>→</span><strong>구멍 ${visual.holes.length}개</strong><span>→</span><strong>펼치기</strong></div>`;
+  if (visual.kind === "paper-fold") return `<div class="visual paper-fold-visual">${paperFoldMarkup(visual)}</div>`;
   return "";
 }
 

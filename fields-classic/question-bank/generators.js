@@ -785,27 +785,148 @@ function sourceBusStops({ difficulty = 2 }) {
   };
 }
 
-function paperFoldHoleCount({ difficulty }) {
-  const folds = difficulty === 1 ? 1 : difficulty >= 3 ? 2 : randomInt(1, 2);
-  const firstDirection = Math.random() < 0.5 ? "v" : "h";
-  const directions = folds === 1 ? [firstDirection] : [firstDirection, firstDirection === "v" ? "h" : "v"];
-  const maxHoles = difficulty >= 4 ? 3 : folds === 1 ? 3 : 2;
-  const holeCount = randomInt(1, maxHoles);
+// ── 색종이 접기 ─────────────────────────────────────────────
+// 접기를 "반평면으로 자르기"로 다룬다. 가로·세로뿐 아니라 대각선도 같은 방식으로 처리된다.
+// 접는 선은 자르고 남은 조각의 가장자리가 되므로, 구멍을 가장자리에서 떨어뜨려 두면
+// 펼쳤을 때 항상 2배가 된다. 가장자리에 걸치면 겹쳐서 개수가 줄어든다.
+const FOLD_LINES = {
+  v: { keep: (p) => 0.5 - p.x, mirror: (p) => ({ x: 1 - p.x, y: p.y }), label: "세로" },
+  h: { keep: (p) => 0.5 - p.y, mirror: (p) => ({ x: p.x, y: 1 - p.y }), label: "가로" },
+  d1: { keep: (p) => p.x - p.y, mirror: (p) => ({ x: p.y, y: p.x }), label: "대각선" },
+  d2: { keep: (p) => 1 - p.x - p.y, mirror: (p) => ({ x: 1 - p.y, y: 1 - p.x }), label: "대각선" }
+};
+
+function polygonArea(polygon) {
+  let sum = 0;
+  for (let i = 0; i < polygon.length; i += 1) {
+    const a = polygon[i];
+    const b = polygon[(i + 1) % polygon.length];
+    sum += a.x * b.y - b.x * a.y;
+  }
+  return Math.abs(sum) / 2;
+}
+
+function clipHalfPlane(polygon, keep) {
+  const out = [];
+  for (let i = 0; i < polygon.length; i += 1) {
+    const current = polygon[i];
+    const next = polygon[(i + 1) % polygon.length];
+    const dCurrent = keep(current);
+    const dNext = keep(next);
+    if (dCurrent >= -1e-9) out.push(current);
+    if ((dCurrent > 1e-9 && dNext < -1e-9) || (dCurrent < -1e-9 && dNext > 1e-9)) {
+      const t = dCurrent / (dCurrent - dNext);
+      out.push({ x: current.x + (next.x - current.x) * t, y: current.y + (next.y - current.y) * t });
+    }
+  }
+  return out;
+}
+
+function polygonEdgeDistance(polygon, point) {
+  let best = Infinity;
+  for (let i = 0; i < polygon.length; i += 1) {
+    const a = polygon[i];
+    const b = polygon[(i + 1) % polygon.length];
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const len2 = dx * dx + dy * dy;
+    const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((point.x - a.x) * dx + (point.y - a.y) * dy) / len2));
+    best = Math.min(best, Math.hypot(point.x - (a.x + dx * t), point.y - (a.y + dy * t)));
+  }
+  return best;
+}
+
+function pointInPolygon(polygon, point) {
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i, i += 1) {
+    const a = polygon[i];
+    const b = polygon[j];
+    if ((a.y > point.y) !== (b.y > point.y)
+      && point.x < ((b.x - a.x) * (point.y - a.y)) / (b.y - a.y) + a.x) inside = !inside;
+  }
+  return inside;
+}
+
+function buildFoldStages(directions) {
+  let polygon = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
+  const stages = [];
+  for (const direction of directions) {
+    stages.push({ polygon, fold: direction });
+    polygon = clipHalfPlane(polygon, FOLD_LINES[direction].keep);
+  }
+  stages.push({ polygon, fold: null });
+  return stages;
+}
+
+function placeHoles(polygon, count, margin) {
   const holes = [];
   let attempts = 0;
-  while (holes.length < holeCount && attempts < 80) {
-    const hole = { x: 0.22 + Math.random() * 0.56, y: 0.22 + Math.random() * 0.56 };
-    if (holes.every((item) => Math.hypot(item.x - hole.x, item.y - hole.y) > 0.3)) holes.push(hole);
+  while (holes.length < count && attempts < 600) {
     attempts += 1;
+    const point = { x: Math.random(), y: Math.random() };
+    if (!pointInPolygon(polygon, point)) continue;
+    if (polygonEdgeDistance(polygon, point) < margin) continue;
+    if (holes.some((item) => Math.hypot(item.x - point.x, item.y - point.y) < margin * 2.4)) continue;
+    holes.push(point);
   }
-  const multiplier = 2 ** folds;
+  return holes;
+}
+
+function foldQuestion({ directions, holeCount, margin = 0.07 }) {
+  const stages = buildFoldStages(directions);
+
+  // 접는 선이 이미 조각의 가장자리이면 실제로는 접히지 않는다. 그런 단계는 문제가 안 된다.
+  for (let i = 0; i < directions.length; i += 1) {
+    if (polygonArea(stages[i + 1].polygon) >= polygonArea(stages[i].polygon) - 1e-9) return null;
+  }
+
+  const holes = placeHoles(stages[stages.length - 1].polygon, holeCount, margin);
+  if (holes.length < holeCount) return null;
+
+  // 답을 2의 거듭제곱으로 가정하지 않고, 실제로 되접어 펼치며 서로 다른 구멍을 센다.
+  let points = holes.map((hole) => ({ ...hole }));
+  for (let i = directions.length - 1; i >= 0; i -= 1) {
+    const { mirror } = FOLD_LINES[directions[i]];
+    const next = [...points];
+    for (const point of points) {
+      const reflected = mirror(point);
+      if (!next.some((item) => Math.hypot(item.x - reflected.x, item.y - reflected.y) < 1e-6)) next.push(reflected);
+    }
+    if (next.some((item) => !pointInPolygon(stages[i].polygon, item))) return null;
+    points = next;
+  }
+  const answer = points.length;
+  if (answer !== holeCount * 2 ** directions.length) return null;
+  const diagonal = directions.some((d) => d === "d1" || d === "d2");
+  const times = ["", "한 번", "두 번", "세 번"][directions.length];
   return {
-    prompt: `색종이를 그림처럼 반으로 ${folds === 1 ? "한 번" : "두 번"} 접은 다음 구멍을 ${holeCount}개 뚫었습니다. 색종이를 펼쳤을 때 구멍은 모두 몇 개인가요?`,
-    visual: { kind: "paper-fold", folds, directions, holes },
-    answer: `${holeCount * multiplier}개`,
-    solution: `${folds === 1 ? "한 번" : "두 번"} 접었으므로 구멍 하나가 펼쳤을 때 ${multiplier}개가 됩니다. ${holeCount}개를 각각 펼치면 모두 ${holeCount * multiplier}개입니다.`
+    prompt: `색종이를 그림처럼 ${diagonal ? "대각선을 따라 " : "반으로 "}${times} 접은 다음 구멍을 ${holeCount}개 뚫었습니다. 색종이를 펼쳤을 때 구멍은 모두 몇 개입니까?`,
+    visual: { kind: "paper-fold", stages, holes },
+    answer: `${answer}개`,
+    solution: `한 번 접을 때마다 겹이 두 배가 됩니다. ${times} 접었으므로 구멍 하나가 펼쳤을 때 ${2 ** directions.length}개가 되고, 구멍 ${holeCount}개를 각각 펼치면 모두 ${answer}개입니다.`,
+    meta: { directions, holeCount, answer, holes, stages }
   };
 }
+
+function paperFoldHoleCount({ difficulty = 2 }) {
+  const folds = difficulty === 1 ? 1 : 2;
+  const first = sample(["v", "h"]);
+  const directions = folds === 1 ? [first] : [first, first === "v" ? "h" : "v"];
+  const holeCount = randomInt(1, folds === 1 ? 3 : 2);
+  return foldQuestion({ directions, holeCount }) || paperFoldHoleCount({ difficulty });
+}
+
+function diagonalFoldHoleCount({ difficulty = 2 }) {
+  // 파이널 2회 15번: 대각선을 따라 세 번 접고 구멍 하나 → 8개.
+  const folds = difficulty === 1 ? 2 : 3;
+  const directions = [];
+  for (let i = 0; i < folds; i += 1) {
+    directions.push(i === 0 ? sample(["d1", "d2"]) : sample(["v", "h", "d1", "d2"]));
+  }
+  const holeCount = difficulty === 3 ? randomInt(1, 2) : 1;
+  return foldQuestion({ directions, holeCount, margin: 0.05 }) || diagonalFoldHoleCount({ difficulty });
+}
+
 
 export const GENERATORS = {
   hiddenCardCondition,
@@ -819,6 +940,7 @@ export const GENERATORS = {
   totalDifference,
   calendarDateWeekday,
   magicSquare,
+  diagonalFoldHoleCount,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
