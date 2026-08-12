@@ -839,7 +839,10 @@ const GF={
   closeModal(){document.getElementById("commentModal").classList.remove("show")},
   startFromModal(){this.closeModal();if(S.currentChapter)this.openChapterViewer(S.currentChapter)},
   openChapterViewer(ch){
-    S.currentProduct=Object.assign({},S.currentProduct||{},ch.pagesBase?{pagesBase:ch.pagesBase,pageCount:ch.pageCount,pagePrefix:ch.pagePrefix||"",pageExt:ch.pageExt||"jpg"}:{});
+    // pageSegments는 통권 시절의 vol1~final 75쪽 목록이다. 상위 상품에서 상속되는데
+    // bookUrl()이 pagesBase보다 pageSegments를 먼저 보므로, 남겨 두면 어느 권을 열어도
+    // 첫 구간인 vol1 이미지가 나온다. 권별 뷰어를 열 때 반드시 함께 비운다.
+    S.currentProduct=Object.assign({},S.currentProduct||{},ch.pagesBase?{pagesBase:ch.pagesBase,pageCount:ch.pageCount,pagePrefix:ch.pagePrefix||"",pageExt:ch.pageExt||"jpg",pageSegments:null}:{});
     S.viewerOpen=true;
     document.getElementById("vTitle").textContent=ch.vol+" · "+ch.title;
     document.getElementById("vYtBtn").style.display="block";
