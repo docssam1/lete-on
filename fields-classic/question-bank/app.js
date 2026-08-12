@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812q";
-import { GENERATORS } from "./generators.js?v=20260812q";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812r";
+import { GENERATORS } from "./generators.js?v=20260812r";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -324,6 +324,27 @@ function paperFoldMarkup(visual) {
   return `<svg class="paper-fold-svg" viewBox="0 0 ${width} ${SIZE + 8}" role="img" aria-label="색종이 접기 문제">${parts}</svg>`;
 }
 
+function sumGridMarkup(visual) {
+  const columns = visual.cells[0].length;
+  const cell = (item) => {
+    if (item === null) return `<span class="sg-void"></span>`;
+    if (item.t === "num") return `<span>${item.v}</span>`;
+    if (item.t === "shape") return `<span class="sg-shape">${item.s}</span>`;
+    return `<span class="sg-blank"></span>`;
+  };
+  const sum = (value) => (value === null || value === undefined
+    ? `<b class="sg-void"></b>`
+    : `<b>${value}</b>`);
+  const rows = visual.cells.map((row, index) => (
+    row.map(cell).join("") + sum(visual.rowSums[index])
+  )).join("");
+  const footer = visual.colSums.map(sum).join("") + `<b class="sg-void"></b>`;
+  const cards = visual.cards
+    ? `<div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div>`
+    : "";
+  return `<div class="sum-grid-work">${cards}<div class="sum-grid" style="--sg-cols:${columns + 1}">${rows}${footer}</div></div>`;
+}
+
 function numberCardMarkup(visual) {
   return `<div class="number-balls">${visual.values.map((value) => `<span>${value}</span>`).join("")}</div><div class="equation-row equation-row-three"><span class="equation-blank"></span><b>+</b><span class="equation-blank"></span><b>-</b><span class="equation-blank"></span><b>=</b><strong>${visual.target}</strong></div>`;
 }
@@ -445,6 +466,7 @@ function nonadjacentPyramidMarkup(visual) {
 
 function visualMarkup(visual) {
   if (!visual) return "";
+  if (visual.kind === "sum-grid") return `<div class="visual sum-grid-visual">${sumGridMarkup(visual)}</div>`;
   if (visual.kind === "torn-calendar") return `<div class="visual torn-calendar-visual">${tornCalendarMarkup(visual)}</div>`;
   if (visual.kind === "magic-square") return `<div class="visual magic-square-visual">${magicSquareMarkup(visual)}</div>`;
   if (visual.kind === "hidden-card-conditions") return `<div class="visual hidden-card-visual">${hiddenCardConditionsMarkup(visual)}</div>`;

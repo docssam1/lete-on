@@ -212,8 +212,8 @@ function pairedSequences({ difficulty = 2 }) {
   const half = Math.floor(length / 2);
   const oddSlots = terms.map((_, i) => i).filter((i) => i % 2 === 0 && i >= half);
   const evenSlots = terms.map((_, i) => i).filter((i) => i % 2 === 1 && i >= half);
-  const gIndex = sample(oddSlots);
-  const nIndex = sample(evenSlots);
+  // ㄱ이 항상 앞에 오도록 자리 순서로 이름을 붙인다. 뒤집히면 읽는 순서와 어긋난다.
+  const [gIndex, nIndex] = [sample(oddSlots), sample(evenSlots)].sort((a, b) => a - b);
   const g = terms[gIndex];
   const n = terms[nIndex];
 
@@ -362,6 +362,125 @@ function magicSquare({ difficulty = 2 }) {
     answer: grid.map((row) => row.join(" ")).join(" / "),
     solution: `아홉 수는 ${step}씩 커지는 수이므로 가운데에는 다섯째 수인 ${v(4)}이 들어가고 한 줄의 합은 ${v(4)} × 3 = ${lineSum}입니다. 합이 ${lineSum}이 되도록 남은 수를 짝지어 넣으면 위부터 ${grid.map((row) => row.join(", ")).join(" / ")}입니다.`,
     meta: { start, step, grid, lineSum, givenCount }
+  };
+}
+
+// ── 합 조건 격자 ────────────────────────────────────────────
+// 16·17·19번은 모양이 달라도 "칸에 값을 넣고 행·열의 합을 맞춘다"는 뼈대가 같다.
+// 셀은 {t:'blank'} 채워야 할 칸, {t:'num',v} 이미 적힌 수, {t:'shape',s} 도형, null 칸 없음.
+
+function triangleSumPlacement({ difficulty = 2 }) {
+  // 2행 격자에서 한 칸만 비워 두고 1부터 n까지를 한 번씩 넣는다. 원본(같게)은 2x3에 1~5.
+  const columns = difficulty === 1 ? 2 : difficulty === 3 ? 4 : 3;
+  const cellCount = columns * 2 - (difficulty === 1 ? 0 : 1);
+  const numbers = Array.from({ length: cellCount }, (_, i) => i + 1);
+  const slots = [];
+  for (let r = 0; r < 2; r += 1) {
+    for (let c = 0; c < columns; c += 1) {
+      if (difficulty !== 1 && r === 0 && c === 0) continue; // 왼쪽 위는 빈 자리
+      slots.push({ r, c });
+    }
+  }
+
+  const arrangements = permutations(numbers);
+  const target = arrangements[randomInt(0, arrangements.length - 1)];
+  const sumsOf = (values) => {
+    const rows = [0, 0];
+    const cols = Array.from({ length: columns }, () => 0);
+    slots.forEach((slot, index) => { rows[slot.r] += values[index]; cols[slot.c] += values[index]; });
+    return { rows, cols };
+  };
+  const { rows, cols } = sumsOf(target);
+  const matches = arrangements.filter((candidate) => {
+    const s = sumsOf(candidate);
+    return s.rows.every((v, i) => v === rows[i]) && s.cols.every((v, i) => v === cols[i]);
+  });
+  if (matches.length !== 1) return triangleSumPlacement({ difficulty });
+
+  const cells = Array.from({ length: 2 }, (_, r) => Array.from({ length: columns }, (_, c) => (
+    slots.some((slot) => slot.r === r && slot.c === c) ? { t: "blank" } : null
+  )));
+  const answer = slots.map((slot, index) => `${slot.r === 0 ? "위" : "아래"} ${slot.c + 1}번째 ${target[index]}`).join(", ");
+  return {
+    prompt: `1부터 ${cellCount}까지의 수를 한 번씩만 넣어 가로줄과 세로줄에 놓인 수의 합이 오른쪽과 아래에 쓰인 수가 되도록 빈칸을 채우세요.`,
+    visual: { kind: "sum-grid", cells, rowSums: rows, colSums: cols, cards: numbers },
+    answer,
+    solution: `줄에 한 칸만 남는 곳부터 채웁니다. 각 줄의 합을 차례로 맞추면 배치가 하나로 정해집니다. ${answer}입니다.`,
+    meta: { columns, cellCount, target, rows, cols, slots }
+  };
+}
+
+function twoByTwoSumFill({ difficulty = 2 }) {
+  // 2x2 네 칸. 행 합과 열 합만으로는 답이 하나로 정해지지 않는다.
+  // "네 수가 모두 다르고 0보다 크다"는 조건이 붙어야 유일해가 된다.
+  const cap = difficulty === 1 ? 6 : difficulty === 2 ? 9 : 14;
+  const values = shuffle(Array.from({ length: cap }, (_, i) => i + 1)).slice(0, 4);
+  const [a, b, c, d] = values;
+  const rows = [a + b, c + d];
+  const cols = [a + c, b + d];
+  const candidates = [];
+  for (let first = 1; first < rows[0]; first += 1) {
+    const second = rows[0] - first;
+    const third = cols[0] - first;
+    const fourth = rows[1] - third;
+    if (second < 1 || third < 1 || fourth < 1) continue;
+    if (third + fourth !== rows[1] || second + fourth !== cols[1]) continue;
+    if (new Set([first, second, third, fourth]).size !== 4) continue;
+    candidates.push([first, second, third, fourth]);
+  }
+  if (candidates.length !== 1) return twoByTwoSumFill({ difficulty });
+
+  return {
+    prompt: "빈칸에 알맞은 수를 써넣으세요. 오른쪽과 아래에 쓰인 수는 그 줄에 있는 두 수의 합입니다. (단, 네 수는 서로 다르고 0보다 큽니다.)",
+    visual: { kind: "sum-grid", cells: [[{ t: "blank" }, { t: "blank" }], [{ t: "blank" }, { t: "blank" }]], rowSums: rows, colSums: cols },
+    answer: `위 ${a}, ${b} / 아래 ${c}, ${d}`,
+    solution: `왼쪽 위를 ${a}로 두면 첫째 줄의 남은 칸은 ${b}, 첫째 열의 남은 칸은 ${c}, 마지막 칸은 ${d}입니다. 네 수가 모두 다르고 0보다 큰 경우는 이 하나뿐입니다.`,
+    meta: { a, b, c, d, rows, cols }
+  };
+}
+
+function shapeSumGrid({ difficulty = 2 }) {
+  // 도형이 같으면 같은 수. 주어진 줄의 합으로 도형 값을 알아낸 뒤 ㉠ 줄의 합을 구한다.
+  const size = difficulty === 1 ? 3 : 4;
+  const symbols = ["○", "♡", "◇", "△"].slice(0, size === 3 ? 3 : 4);
+  const values = shuffle(Array.from({ length: 9 }, (_, i) => i + 1)).slice(0, symbols.length);
+  const grid = Array.from({ length: size }, () => Array.from({ length: size }, () => randomInt(0, symbols.length - 1)));
+  if (new Set(grid.flat()).size !== symbols.length) return shapeSumGrid({ difficulty });
+
+  const rowSum = (r) => grid[r].reduce((total, index) => total + values[index], 0);
+  const colSum = (c) => grid.reduce((total, row) => total + values[row[c]], 0);
+  const hiddenRow = randomInt(0, size - 1);
+  const hiddenCol = randomInt(0, size - 1);
+  const extraHidden = difficulty === 3 ? 1 : 0;
+  const hiddenRow2 = extraHidden ? (hiddenRow + 1) % size : -1;
+
+  const rowSums = Array.from({ length: size }, (_, r) => (r === hiddenRow || r === hiddenRow2 ? null : rowSum(r)));
+  const colSums = Array.from({ length: size }, (_, c) => (c === hiddenCol ? null : colSum(c)));
+
+  // 보이는 합만으로 도형 값이 하나로 정해져야 한다.
+  const solutions = [];
+  const search = (assign) => {
+    if (solutions.length > 1) return;
+    if (assign.length === symbols.length) {
+      const ok = rowSums.every((sum, r) => sum === null || grid[r].reduce((t, i) => t + assign[i], 0) === sum)
+        && colSums.every((sum, c) => sum === null || grid.reduce((t, row) => t + assign[row[c]], 0) === sum);
+      if (ok) solutions.push([...assign]);
+      return;
+    }
+    for (let v = 1; v <= 9; v += 1) search([...assign, v]);
+  };
+  search([]);
+  if (solutions.length !== 1) return shapeSumGrid({ difficulty });
+
+  const answer = rowSum(hiddenRow);
+  const cells = grid.map((row) => row.map((index) => ({ t: "shape", s: symbols[index] })));
+  const shownRowSums = rowSums.map((sum, r) => (r === hiddenRow ? "㉠" : sum));
+  return {
+    prompt: "같은 도형은 같은 수를 나타냅니다. 오른쪽과 아래에 쓰인 수는 그 줄에 있는 수의 합입니다. ㉠에 알맞은 수를 구하세요.",
+    visual: { kind: "sum-grid", cells, rowSums: shownRowSums, colSums },
+    answer: String(answer),
+    solution: `줄의 합을 견주어 도형 값을 하나씩 정하면 ${symbols.map((symbol, i) => `${symbol}는 ${solutions[0][i]}`).join(", ")}입니다. ㉠ 줄에 있는 도형을 더하면 ${answer}입니다.`,
+    meta: { size, symbols, values: solutions[0], grid, answer, hiddenRow, hiddenCol }
   };
 }
 
@@ -941,6 +1060,9 @@ export const GENERATORS = {
   calendarDateWeekday,
   magicSquare,
   diagonalFoldHoleCount,
+  triangleSumPlacement,
+  twoByTwoSumFill,
+  shapeSumGrid,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,

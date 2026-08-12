@@ -120,6 +120,9 @@ export const TYPES = [
   type("magic-square", "number", "수 배열과 합", "가로·세로·대각선 합이 같은 마방진", { legacyId: 14, generator: "magicSquare", sourceMatched: true }),
   type("fold-hole-count", "geometry", "색종이 접기", "접은 색종이의 구멍 개수", { generator: "paperFoldHoleCount", legacyId: 4 }),
   type("fold-diagonal-hole-count", "geometry", "색종이 접기", "대각선으로 여러 번 접은 색종이의 구멍 개수", { generator: "diagonalFoldHoleCount", sourceMatched: true }),
+  type("row-column-sum-placement", "number", "수 배열과 합", "행·열 합에 맞게 1부터 차례로 놓기", { generator: "triangleSumPlacement", sourceMatched: true }),
+  type("two-by-two-sum-fill", "number", "수 배열과 합", "2x2 칸을 행·열 합과 서로 다른 조건으로 채우기", { generator: "twoByTwoSumFill", sourceMatched: true }),
+  type("shape-sum-grid-4", "number", "매트릭스", "4x4 도형표의 행·열 합으로 빈 합 구하기", { generator: "shapeSumGrid", sourceMatched: true }),
   type("fold-diagonal-unfold", "geometry", "색종이 접기", "대각선으로 접고 자른 뒤 펼친 선 그리기"),
   type("fold-number-remaining-sum", "geometry", "색종이 접기", "번호 색종이를 접고 자른 뒤 남은 수의 합"),
   type("cube-count-solid", "geometry", "쌓기나무", "입체를 이루는 쌓기나무 전체 개수", { geometryGame: "count-heights" }),
@@ -231,9 +234,9 @@ export const FINAL_EXAM_TYPES = [
       "hidden-number-card-conditions", "cube-hidden-count", "closest-two-digit-card-sum", "front-back-total",
       "set-union-count", "wrong-operation-correction", "symbol-relation", "paired-sequences",
       "shape-matrix-rule", "delayed-date-promise", "repeat-pattern", "calendar-date-weekday",
-      "two-type-unit-total", "cryptarithm", "fold-diagonal-hole-count", "edge-sum-grid", "equal-line-sum",
-      "total-difference", "symbol-sum-grid", "magic-square"
-    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: [0, 2, 3, 4, 5, 7, 9, 11, 12, 14, 17, 19].includes(index) }))
+      "two-type-unit-total", "cryptarithm", "fold-diagonal-hole-count", "row-column-sum-placement", "two-by-two-sum-fill",
+      "total-difference", "shape-sum-grid-4", "magic-square"
+    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: [0, 2, 3, 4, 5, 7, 9, 11, 12, 14, 15, 16, 17, 18, 19].includes(index) }))
   }
 ];
 

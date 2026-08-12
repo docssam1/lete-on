@@ -44,3 +44,11 @@
 .magic-square-grid .ms-blank{background:#fbfbfd;border-style:dashed}
 
 .paper-fold-svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
+
+.sum-grid-work{display:flex;flex-direction:column;align-items:center;gap:10px}
+.sum-grid{display:grid;grid-template-columns:repeat(var(--sg-cols),46px);gap:3px}
+.sum-grid span,.sum-grid b{display:flex;align-items:center;justify-content:center;height:42px;border:1px solid #c9c9d2;border-radius:5px;font-size:16px}
+.sum-grid .sg-blank{background:#fbfbfd;border-style:dashed}
+.sum-grid .sg-shape{font-size:19px;background:#fdfdff}
+.sum-grid b{background:#eef1f7;border-color:#b9c0d2;font-weight:700}
+.sum-grid .sg-void{border:none;background:none}
