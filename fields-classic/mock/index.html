@@ -45,6 +45,7 @@ html,body{font-family:'Pretendard',sans-serif;background:var(--g-bg);color:var(-
 .gate-btn:active{transform:scale(.98)}
 .gate-error{min-height:20px;color:#dc2626;font-size:13px;font-weight:800;margin-top:4px}
 .gate-note{margin-top:12px;color:#94a3b8;font-size:11px;font-weight:600}
+.res-locked{flex:1;min-width:220px;display:flex;align-items:center;justify-content:center;padding:12px 16px;border:1px dashed #c8ccd4;border-radius:12px;color:#64748b;font-size:13px;font-weight:700;text-align:center}
 .premium-header{position:sticky;top:0;z-index:900;padding:10px 16px;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:2px solid rgba(22,65,124,.12);box-shadow:0 4px 20px rgba(15,23,42,.08)}
 .header-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .header-logo{font-size:16px;font-weight:900;color:var(--g-blue);letter-spacing:-0.5px}
@@ -288,10 +289,11 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
       <p class="gate-desc">학생 이름을 입력하면 진단이 시작됩니다.<br>입력한 이름은 결과지 워터마크로만 사용됩니다.</p>
       <div class="gate-form">
         <input id="nameInp" type="text" placeholder="학생 이름 입력" autocomplete="off" onkeydown="if(event.key==='Enter')enterGate()">
+        <input id="codeInp" type="text" placeholder="승인번호 (약점 처방전 이용 시)" autocomplete="off" onkeydown="if(event.key==='Enter')enterGate()">
         <button class="gate-btn" onclick="enterGate()">진단 시작하기 →</button>
       </div>
       <div id="gateError" class="gate-error"></div>
-      <div class="gate-note">입력한 이름은 서버에 저장되지 않습니다.</div>
+      <div class="gate-note">진단은 승인번호 없이도 볼 수 있습니다. 약점 처방전은 승인번호로 확인합니다.<br>입력한 이름은 서버에 저장되지 않습니다.</div>
     </div>
   </div>
 </div>
@@ -373,6 +375,7 @@ main{max-width:900px;margin:0 auto;padding:20px 14px 60px}
 <script>
 (function(){
 let studentName='';
+let studentPerms=[];   // 승인번호로 조회한 권한. 번호가 없으면 빈 배열.
 let inputMode='ox';
 const FC_DATA=window.GFIELD_FC_DATA||{};
 
@@ -408,14 +411,36 @@ function openAnswerSheet(){
 }
 function closeAnswerSheet(){document.getElementById('answerModal').classList.remove('show');}
 
+// 권한은 승인번호로 조회한다. 이름으로 조회하면 표기가 한 글자만 달라도 권한이 조용히
+// 사라지는데, 학생도 선생님도 이유를 알 수 없었다. 승인번호는 admin이 발급한 값이라 흔들리지
+// 않는다. program에서 넘어온 경우 이미 검증된 번호가 sessionStorage에 있으므로 그것을 쓰고,
+// URL에는 싣지 않는다.
+function lookupByCode(code){
+  const upper=(code||'').trim().toUpperCase();
+  if(!upper)return null;
+  const map=FC_DATA.studentCode||{};
+  const name=Object.keys(map).find(n=>map[n]===upper);
+  if(!name)return null;
+  return {name, perms:FC_DATA.attendance?.[name]||[]};
+}
+
 function enterGate(){
   const v=document.getElementById('nameInp').value.trim();
   if(!v){document.getElementById('gateError').textContent='이름을 입력해 주세요.';return;}
-  studentName=v;
+  const typedCode=document.getElementById('codeInp')?.value||'';
+  let sessionCode='';try{sessionCode=sessionStorage.getItem('gf_c')||''}catch(e){}
+  const found=lookupByCode(typedCode)||lookupByCode(sessionCode);
+  if(typedCode.trim()&&!found){
+    document.getElementById('gateError').textContent='올바르지 않은 승인번호입니다. 비워 두면 진단만 볼 수 있습니다.';
+    return;
+  }
+  // 승인번호가 없으면 진단은 그대로 열되 권한은 비운다(기존 이용자를 막지 않는다).
+  studentPerms=found?found.perms:[];
+  studentName=found?.name||v;
   document.getElementById('accessGate').style.display='none';
   document.getElementById('mainHeader').style.display='';
   document.getElementById('mainContent').style.display='';
-  document.getElementById('headerName').textContent=v+' 학생';
+  document.getElementById('headerName').textContent=studentName+' 학생';
   buildQ();buildC();
 }
 function setMode(m){
@@ -652,7 +677,7 @@ function submitAll(){
   BA_ORDER.forEach(b=>{const{tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)<50)insights.push({cls:'i-warn',icon:'📌',txt:`행동영역 [${BA_LBL[b]}] 정답률 ${pct(ok,tot)}% — 집중 훈련이 필요합니다.`});});
   BA_ORDER.forEach(b=>{const{tot,ok}=baMap[b];if(tot>0&&pct(ok,tot)===100)insights.push({cls:'i-ok',icon:'⭐',txt:`행동영역 [${BA_LBL[b]}] 100% 정답 — 강점 영역입니다.`});});
   const wq=QS.filter((q,i)=>!mg[i]);
-  const prescriptionEnabled=(FC_DATA.attendance?.[nm2]||[]).includes('진단약점클리닉');
+  const prescriptionEnabled=studentPerms.includes('진단약점클리닉');
   const prescribedTypes=prescriptionEnabled
     ? [...new Set(wq.map(q=>q.id))].sort((a,b)=>a-b)
     : [];
@@ -723,7 +748,7 @@ ${insights.length?`<div class="r-card"><div class="r-ct">심층 분석 인사이
 </div>
 ${wq.length?`<div class="r-card"><div class="r-ct">틀린 문항 보기 (${wq.length}개)</div>${wq.map(q=>`<div class="wrong-item"><div class="wrong-left"><div class="wrong-num">Q${q.id} · ${q.lv}</div><div class="wrong-topic">${q.tp}</div><div class="wrong-area">행동영역: ${BA_LBL[q.ba]}</div><div class="wrong-key"><b>풀이 핵심</b> · ${keyPoint(q)}</div></div><a class="wrong-link" href="${explanationUrl(q.id)}" target="_blank" rel="noopener">▶ 해설</a></div>`).join('')}</div>`:''}
 <div class="res-actions">
-  ${prescribedTypes.length?`<a class="res-prescription" href="${prescriptionUrl}&view=type" target="_blank" rel="noopener">약점 처방전 · 유형별로 보기</a><a class="res-prescription" href="${prescriptionUrl}&view=mixed" target="_blank" rel="noopener">약점 처방전 · 섞어서 보기</a>`:''}
+  ${prescribedTypes.length?`<a class="res-prescription" href="${prescriptionUrl}&view=type" target="_blank" rel="noopener">약점 처방전 · 유형별로 보기</a><a class="res-prescription" href="${prescriptionUrl}&view=mixed" target="_blank" rel="noopener">약점 처방전 · 섞어서 보기</a>`:`<div class="res-locked">약점 처방전은 승인번호로 열립니다. 승인번호를 넣고 다시 시작하거나 선생님께 문의해 주세요.</div>`}
   <button class="res-print" onclick="window.print()">🖨 진단지 인쇄</button>
   <a class="res-consult" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">약점 유사 문제 및 상담 신청하기 →</a>
 </div>`;
