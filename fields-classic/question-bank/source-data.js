@@ -90,7 +90,7 @@ export const TYPES = [
   type("colored-triangle-difference", "pattern", "도형 규칙", "칠한 삼각형과 흰 삼각형의 차이"),
   type("polygon-stone-rearrangement", "geometry", "둘레와 배열", "다각형 바둑돌을 다른 모양으로 늘어놓기"),
   type("ratio-distribution", "number", "합과 차 문장제", "서로 다른 기준으로 전체 나누기"),
-  type("paired-sequences", "pattern", "수 규칙", "두 수열의 대응 규칙"),
+  type("paired-sequences", "pattern", "수 규칙", "두 수열의 대응 규칙", { generator: "pairedSequences", sourceMatched: true }),
   type("odd-even-sum-difference", "number", "연속수와 합", "홀수 합과 짝수 합의 차이"),
   type("weight-order", "logic", "순서와 비교", "무게 조건으로 순서 정하기"),
   type("adjacent-product-pentagon", "number", "수 배열과 곱", "이웃한 두 수의 곱으로 오각형 채우기"),
@@ -232,7 +232,7 @@ export const FINAL_EXAM_TYPES = [
       "shape-matrix-rule", "delayed-date-promise", "repeat-pattern", "calendar-date-weekday",
       "two-type-unit-total", "cryptarithm", "fold-hole-count", "edge-sum-grid", "equal-line-sum",
       "total-difference", "symbol-sum-grid", "magic-square"
-    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index === 0 || index === 2 || index === 3 || index === 5 }))
+    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: [0, 2, 3, 5, 7].includes(index) }))
   }
 ];
 

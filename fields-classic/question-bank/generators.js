@@ -189,6 +189,52 @@ function wrongOperationCorrection({ difficulty = 2 }) {
   };
 }
 
+function pairedSequences({ difficulty = 2 }) {
+  // 홀수 자리와 짝수 자리가 서로 다른 규칙을 따르는 수열. 빈칸은 자리마다 하나씩 둔다.
+  const length = difficulty === 1 ? 8 : 10;
+  const oddStart = randomInt(1, 6);
+  const oddStep = randomInt(2, difficulty === 1 ? 4 : 5);
+  const evenStart = randomInt(1, 6);
+  let evenStep = randomInt(2, difficulty === 1 ? 4 : 5);
+  while (evenStep === oddStep) evenStep = randomInt(2, difficulty === 1 ? 4 : 5);
+
+  // 어려움은 짝수 자리를 계차가 1씩 커지는 수열로 바꾼다.
+  const evenAt = (index) => (difficulty === 3
+    ? evenStart + evenStep * index + (index * (index - 1)) / 2
+    : evenStart + evenStep * index);
+  const oddAt = (index) => oddStart + oddStep * index;
+
+  const terms = Array.from({ length }, (_, position) => (
+    position % 2 === 0 ? oddAt(position / 2) : evenAt((position - 1) / 2)
+  ));
+
+  // 빈칸은 뒤쪽 절반에서 홀수 자리 하나, 짝수 자리 하나를 고른다.
+  const half = Math.floor(length / 2);
+  const oddSlots = terms.map((_, i) => i).filter((i) => i % 2 === 0 && i >= half);
+  const evenSlots = terms.map((_, i) => i).filter((i) => i % 2 === 1 && i >= half);
+  const gIndex = sample(oddSlots);
+  const nIndex = sample(evenSlots);
+  const g = terms[gIndex];
+  const n = terms[nIndex];
+
+  const shown = terms.map((value, index) => {
+    if (index === gIndex) return "ㄱ";
+    if (index === nIndex) return "ㄴ";
+    return String(value);
+  }).join(", ");
+
+  const evenRule = difficulty === 3
+    ? `${evenStart}부터 커지는 폭이 ${evenStep}, ${evenStep + 1}, ${evenStep + 2}처럼 1씩 늘어납니다`
+    : `${evenStart}부터 ${evenStep}씩 커집니다`;
+
+  return {
+    prompt: `다음은 일정한 규칙으로 늘어놓은 수입니다. ㄱ과 ㄴ에 알맞은 수를 각각 구하세요.\n${shown}`,
+    answer: `ㄱ=${g}, ㄴ=${n}`,
+    solution: `홀수 번째 자리끼리 보면 ${oddStart}부터 ${oddStep}씩 커지고, 짝수 번째 자리끼리 보면 ${evenRule}. 두 수열을 따로 이어가면 ㄱ은 ${g}, ㄴ은 ${n}입니다.`,
+    meta: { length, oddStart, oddStep, evenStart, evenStep, gIndex, nIndex, g, n, terms }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -636,6 +682,7 @@ export const GENERATORS = {
   closestTwoDigitCardSum,
   frontBackTotal,
   wrongOperationCorrection,
+  pairedSequences,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
