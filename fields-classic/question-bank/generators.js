@@ -18,6 +18,177 @@ function shuffle(list) {
   return result;
 }
 
+function hiddenCardCondition({ difficulty = 2 }) {
+  const universe = Array.from({ length: 10 }, (_, index) => index);
+  const hidden = sample(universe);
+  const clueCount = difficulty === 1 ? 3 : difficulty === 3 ? 5 : 4;
+  const cardCount = difficulty === 1 ? 4 : difficulty === 3 ? 6 : 5;
+  const pattern = difficulty === 1
+    ? [true, false, true]
+    : difficulty === 3
+      ? [true, false, true, false, true]
+      : [true, false, true, false];
+  let clues;
+  let candidates;
+  let attempts = 0;
+
+  do {
+    clues = pattern.slice(0, clueCount).map((hasCard) => {
+      const pool = hasCard ? universe.filter((value) => value !== hidden) : universe.filter((value) => value !== hidden);
+      const values = shuffle(pool).slice(0, hasCard ? cardCount - 1 : cardCount);
+      if (hasCard) values.push(hidden);
+      return { hasCard, values: values.sort((a, b) => a - b) };
+    });
+    candidates = universe.filter((value) => clues.every((clue) => (
+      clue.hasCard ? clue.values.includes(value) : !clue.values.includes(value)
+    )));
+    attempts += 1;
+  } while ((candidates.length !== 1 || candidates[0] !== hidden) && attempts < 500);
+
+  if (candidates.length !== 1 || candidates[0] !== hidden) return hiddenCardCondition({ difficulty });
+
+  return {
+    prompt: "숫자 카드 1장을 찾고 있습니다. 다음은 여러 숫자 카드 중에 찾는 카드가 있는지 없는지를 나타낸 것입니다. 찾는 숫자 카드는 무엇일까요?",
+    visual: { kind: "hidden-card-conditions", clues },
+    answer: String(hidden),
+    solution: `‘있습니다’인 줄에는 모두 있고 ‘없습니다’인 줄에는 없는 수를 차례로 확인하면 ${hidden}만 남습니다.`
+  };
+}
+
+function closestTwoDigitCardSum({ difficulty = 2 }) {
+  const makeExpressions = (cards, target) => {
+    const expressions = new Map();
+    for (const order of permutations(cards)) {
+      const first = order[0] * 10 + order[1];
+      const second = order[2] * 10 + order[3];
+      const pair = [first, second].sort((a, b) => a - b);
+      const key = `${pair[0]}+${pair[1]}`;
+      expressions.set(key, { first: pair[0], second: pair[1], sum: first + second });
+    }
+    const distance = Math.min(...[...expressions.values()].map((item) => Math.abs(item.sum - target)));
+    return [...expressions.values()].filter((item) => Math.abs(item.sum - target) === distance);
+  };
+
+  let cards;
+  let target;
+  let best;
+  let valid = false;
+  let attempts = 0;
+  do {
+    cards = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4);
+    target = difficulty === 1 ? sample([60, 70, 80, 90]) : difficulty === 2 ? 100 : randomInt(83, 117);
+    best = makeExpressions(cards, target);
+    attempts += 1;
+    const distance = best.length ? Math.abs(best[0].sum - target) : 99;
+    const validDistance = difficulty === 1 ? distance === 0 : difficulty === 2 ? distance >= 1 && distance <= 6 : distance >= 1 && distance <= 8;
+    valid = best.length === 2 && validDistance;
+    if (valid) break;
+  } while (attempts < 1000);
+
+  if (!valid) return closestTwoDigitCardSum({ difficulty });
+  const sum = best[0].sum;
+  const answerText = best.map((item) => `${item.first} + ${item.second}`).join(" 또는 ");
+  return {
+    prompt: `숫자 카드 4장을 한 번씩 사용하여 두 자리 수 2개를 만드세요. 두 수의 합이 ${target}에 가장 가깝도록 빈칸을 채우고 계산하세요.`,
+    visual: { kind: "closest-card-sum", cards: shuffle(cards), target },
+    answer: `${answerText} = ${sum}`,
+    solution: `숫자 카드를 십의 자리와 일의 자리에 바꾸어 넣으며 합을 비교합니다. ${answerText}로 만들면 합은 ${sum}이고, ${target}과의 차가 ${Math.abs(sum - target)}로 가장 작습니다.`
+  };
+}
+
+function frontBackTotal({ difficulty = 2 }) {
+  const names = shuffle(["현지", "준호", "민서", "도윤", "서윤"]);
+  if (difficulty === 1) {
+    const before = randomInt(3, 8);
+    const after = randomInt(3, 8);
+    const total = before + after + 1;
+    return {
+      prompt: `${names[0]} 앞에 ${before}명, 뒤에 ${after}명이 한 줄로 서 있습니다. 줄을 선 사람은 모두 몇 명인가요?`,
+      answer: `${total}명`,
+      solution: `앞의 ${before}명과 뒤의 ${after}명에 ${names[0]} 1명을 더합니다. ${before} + 1 + ${after} = ${total}이므로 모두 ${total}명입니다.`,
+      meta: { mode: "counts", before, after, total }
+    };
+  }
+
+  if (difficulty === 3) {
+    const firstFront = randomInt(7, 14);
+    const between = randomInt(1, 4);
+    const secondBack = randomInt(7, 14);
+    const secondFront = firstFront + between + 1;
+    const total = secondFront + secondBack - 1;
+    return {
+      prompt: `${names[0]}는 앞에서 ${firstFront}번째입니다. ${names[0]}와 ${names[1]} 사이에는 ${between}명이 있고, ${names[1]}는 ${names[0]}보다 뒤에 서 있습니다. ${names[1]}가 뒤에서 ${secondBack}번째라면 줄을 선 사람은 모두 몇 명인가요?`,
+      answer: `${total}명`,
+      solution: `${names[1]}는 앞에서 ${firstFront} + ${between} + 1 = ${secondFront}번째입니다. 앞에서 ${secondFront}번째와 뒤에서 ${secondBack}번째에는 ${names[1]}가 두 번 들어가므로 한 번 뺍니다. ${secondFront} + ${secondBack} - 1 = ${total}명입니다.`,
+      meta: { mode: "between", firstFront, between, secondFront, secondBack, total }
+    };
+  }
+
+  const front = randomInt(10, 18);
+  const back = randomInt(8, 16);
+  const total = front + back - 1;
+  return {
+    prompt: `${names[0]}는 놀이 기구를 타려고 한 줄로 섰습니다. ${names[0]}는 앞에서 ${front}번째이고, 뒤에서 세면 ${back}번째입니다. 줄을 선 사람은 모두 몇 명인가요?`,
+    answer: `${total}명`,
+    solution: `앞에서 셀 때와 뒤에서 셀 때 ${names[0]}가 두 번 들어갑니다. ${front} + ${back} - 1 = ${total}이므로 모두 ${total}명입니다.`,
+    meta: { mode: "positions", front, back, total }
+  };
+}
+
+function numberHasFinalConsonant(value) {
+  // 한 자리 읽기의 받침 유무: 일·삼·육·칠·팔·영은 받침이 있고 이·사·오·구는 없다.
+  return [true, true, false, true, false, false, true, true, true, false][Math.abs(value) % 10];
+}
+
+function objectParticle(value) {
+  return numberHasFinalConsonant(value) ? "을" : "를";
+}
+
+function subjectParticle(value) {
+  return numberHasFinalConsonant(value) ? "이" : "가";
+}
+
+function wrongOperationCorrection({ difficulty = 2 }) {
+  if (difficulty === 1) {
+    const step = randomInt(3, 9);
+    const original = randomInt(step + 2, 20);
+    const wrong = original - step;
+    const correct = original + step;
+    return {
+      prompt: `어떤 수에 ${step}${objectParticle(step)} 더해야 할 것을 잘못하여 빼었더니 ${wrong}${subjectParticle(wrong)} 되었습니다. 바르게 계산한 값은 얼마입니까?`,
+      answer: `${correct}`,
+      solution: `잘못 계산한 식은 (어떤 수) - ${step} = ${wrong}이므로 어떤 수는 ${wrong} + ${step} = ${original}입니다. 바르게 계산하면 ${original} + ${step} = ${correct}입니다.`,
+      meta: { mode: "add-instead-subtract", step, original, wrong, correct }
+    };
+  }
+
+  if (difficulty === 3) {
+    let first = randomInt(6, 19);
+    let second = randomInt(6, 19);
+    while (first === second) second = randomInt(6, 19);
+    const original = randomInt(Math.max(first, second) + 10, 60);
+    const wrong = original - first + second;
+    const correct = original + first - second;
+    return {
+      prompt: `어떤 수에 ${first}${objectParticle(first)} 더한 뒤 ${second}${objectParticle(second)} 빼야 할 것을 잘못하여 ${first}${objectParticle(first)} 빼고 ${second}${objectParticle(second)} 더했더니 ${wrong}${subjectParticle(wrong)} 되었습니다. 바르게 계산한 값은 얼마입니까?`,
+      answer: `${correct}`,
+      solution: `잘못 계산한 식은 (어떤 수) - ${first} + ${second} = ${wrong}이므로 어떤 수는 ${wrong} + ${first} - ${second} = ${original}입니다. 바르게 계산하면 ${original} + ${first} - ${second} = ${correct}입니다.`,
+      meta: { mode: "swapped-two-steps", first, second, original, wrong, correct }
+    };
+  }
+
+  const step = randomInt(8, 19);
+  const original = randomInt(step + 5, 55);
+  const wrong = original - step;
+  const correct = original + step;
+  return {
+    prompt: `어떤 수에 ${step}${objectParticle(step)} 더해야 할 것을 잘못하여 빼었더니 ${wrong}${subjectParticle(wrong)} 되었습니다. 바르게 계산한 값은 얼마입니까?`,
+    answer: `${correct}`,
+    solution: `잘못 계산한 식은 (어떤 수) - ${step} = ${wrong}이므로 어떤 수는 ${wrong} + ${step} = ${original}입니다. 바르게 계산하면 ${original} + ${step} = ${correct}입니다.`,
+    meta: { mode: "add-instead-subtract", step, original, wrong, correct }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -461,6 +632,10 @@ function paperFoldHoleCount({ difficulty }) {
 }
 
 export const GENERATORS = {
+  hiddenCardCondition,
+  closestTwoDigitCardSum,
+  frontBackTotal,
+  wrongOperationCorrection,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,

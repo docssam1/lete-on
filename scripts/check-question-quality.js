@@ -70,6 +70,7 @@ function loadLessons() {
   for (let i = 1; i <= 7; i++) load(`rp${i}.js`);
   for (let i = 1; i <= 12; i++) load(`ws${i}.js`);
   for (let i = 1; i <= 16; i++) load(`sl${i}.js`);
+  for (let i = 1; i <= 20; i++) load(`br${i}.js`);
   return global.window;
 }
 

@@ -1,14 +1,15 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812h";
-import { GENERATORS } from "./generators.js?v=20260812h";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812l";
+import { GENERATORS } from "./generators.js?v=20260812l";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
 const domainIndex = Object.fromEntries(DOMAINS.map((domain, index) => [domain.id, index]));
+const stageIds = new Set([...AGE_STAGES.map((item) => item.id), "practice", "final"]);
 
 const state = {
   mode: "exam",
-  stage: AGE_STAGES.some((item) => item.id === params.get("age")) ? params.get("age") : "k6_winter",
+  stage: stageIds.has(params.get("age")) ? params.get("age") : "k6_winter",
   selected: { exam: new Set(), curriculum: new Set(), type: new Set() },
   count: 20,
   difficulty: "actual",
@@ -26,7 +27,7 @@ function isReady(item) {
 }
 
 function hasVerifiedSource(typeId) {
-  return [...EXAMS, ...PRACTICE_EXAM_TYPES].some((exam) => exam.questions.some((sourceQuestion) => sourceQuestion.verified && sourceQuestion.typeId === typeId));
+  return [...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES].some((exam) => exam.questions.some((sourceQuestion) => sourceQuestion.verified && sourceQuestion.typeId === typeId));
 }
 
 function isSelectableType(item) {
@@ -50,7 +51,7 @@ function setMode(mode) {
 }
 
 function renderStageButtons() {
-  const stages = [...AGE_STAGES, { id: "practice", label: "실전 모의고사" }];
+  const stages = [...AGE_STAGES, { id: "practice", label: "실전 모의고사" }, { id: "final", label: "파이널 모의고사" }];
   $("examAgeButtons").innerHTML = stages.map((item) => `<button type="button" class="${item.id === state.stage ? "active" : ""}" data-stage="${item.id}">${item.label}</button>`).join("");
   $("examAgeButtons").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.stage = button.dataset.stage;
@@ -60,7 +61,9 @@ function renderStageButtons() {
 }
 
 function visibleExams() {
-  return state.stage === "practice" ? PRACTICE_EXAM_TYPES : EXAMS.filter((exam) => exam.stage === state.stage);
+  if (state.stage === "practice") return PRACTICE_EXAM_TYPES;
+  if (state.stage === "final") return FINAL_EXAM_TYPES;
+  return EXAMS.filter((exam) => exam.stage === state.stage);
 }
 
 function examKey(examId, number) {
@@ -70,7 +73,7 @@ function examKey(examId, number) {
 function renderExamList() {
   const exams = visibleExams();
   const stage = AGE_STAGES.find((item) => item.id === state.stage);
-  $("examStageTitle").textContent = stage?.label || "실전 모의고사";
+  $("examStageTitle").textContent = stage?.label || (state.stage === "final" ? "파이널 모의고사" : "실전 모의고사");
   $("examStageMeta").textContent = `${exams.length}개 시험지 · 원본 문항 번호 기준`;
   $("examNotice").textContent = "원본 문제의 문항 번호를 고른 뒤, 그 문제보다 쉽게·같게·어렵게 유사문제를 만들 수 있습니다. 연산 테스트는 이 문제은행에서 제외합니다.";
   $("examTypeList").innerHTML = exams.map((exam) => {
@@ -87,7 +90,8 @@ function renderExamList() {
         <em class="type-status ${ready ? "" : "fixed"}">${verified ? typeStatus(item) : "원본 대조 중"}</em>
       </label>`;
     }).join("");
-    return `<details class="tree-group" open><summary><strong>${exam.label}</strong><span>${exam.questions.length}문항</span></summary><div class="exam-source"><span>${exam.file}</span><a class="source-view-link" href="./selection-test-viewer.html?exam=${exam.id}&student=${encodeURIComponent(student)}">원문 보기</a></div>${rows}</details>`;
+    const sourceLink = exam.sourceViewer === false ? "" : `<a class="source-view-link" href="./selection-test-viewer.html?exam=${exam.id}&student=${encodeURIComponent(student)}">원문 보기</a>`;
+    return `<details class="tree-group" open><summary><strong>${exam.label}</strong><span>${exam.questions.length}문항</span></summary><div class="exam-source"><span>${exam.file}</span>${sourceLink}</div>${rows}</details>`;
   }).join("") || `<div class="source-notice">이 시기의 원본 시험지는 아직 등록되지 않았습니다.</div>`;
 
   $("examTypeList").querySelectorAll("input[data-exam-key]").forEach((input) => input.addEventListener("change", () => {
@@ -175,7 +179,7 @@ function selectedReferences() {
     return result;
   }
   const result = [];
-  for (const exam of [...EXAMS, ...PRACTICE_EXAM_TYPES]) {
+  for (const exam of [...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES]) {
     for (const sourceQuestion of exam.questions) {
       if (state.selected.exam.has(examKey(exam.id, sourceQuestion.number))) result.push({ typeId: sourceQuestion.typeId, reference: `${exam.label} ${sourceQuestion.number}번` });
     }
@@ -252,6 +256,15 @@ function shapeSymbol(shape) {
 
 function numberCardMarkup(visual) {
   return `<div class="number-balls">${visual.values.map((value) => `<span>${value}</span>`).join("")}</div><div class="equation-row equation-row-three"><span class="equation-blank"></span><b>+</b><span class="equation-blank"></span><b>-</b><span class="equation-blank"></span><b>=</b><strong>${visual.target}</strong></div>`;
+}
+
+function hiddenCardConditionsMarkup(visual) {
+  return `<div class="hidden-card-clues">${visual.clues.map((clue, index) => `<div class="hidden-card-row"><span>(${index + 1})</span><div>${clue.values.map((value) => `<i>${value}</i>`).join("")}</div><strong class="${clue.hasCard ? "has" : "not"}">→ ${clue.hasCard ? "있습니다." : "없습니다."}</strong></div>`).join("")}</div>`;
+}
+
+function closestCardSumMarkup(visual) {
+  const blank = () => '<span class="digit-card-blank"></span>';
+  return `<div class="closest-card-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="closest-card-equation"><span class="two-digit-blank">${blank()}${blank()}</span><b>+</b><span class="two-digit-blank">${blank()}${blank()}</span><b>=</b><span class="sum-blank"></span></div><small>${visual.target}에 가장 가까운 합</small></div>`;
 }
 
 function edgeSumCycleMarkup(visual) {
@@ -362,6 +375,8 @@ function nonadjacentPyramidMarkup(visual) {
 
 function visualMarkup(visual) {
   if (!visual) return "";
+  if (visual.kind === "hidden-card-conditions") return `<div class="visual hidden-card-visual">${hiddenCardConditionsMarkup(visual)}</div>`;
+  if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;
   if (visual.kind === "equalize-bags") return `<div class="visual equalize-visual">${equalizeBagsMarkup(visual)}</div>`;

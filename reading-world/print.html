@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>수업용 교재 제작 · 진단 테스트 &amp; CARS B·C·D</title>
+<link rel="stylesheet" href="shared/cars-layout.css?v=51">
 <style>
 :root{
   --ink:#1d2b23; --muted:#6c7a71; --line:#dcdcd3; --paper:#fff; --bg:#f4f1e7;
@@ -47,6 +48,8 @@ button,input,select{font:inherit}
 .row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
 .mini{border:1px solid var(--line);background:#f8f7f1;border-radius:8px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer;color:#46554c}
 .mini:hover{background:#eef3ee;border-color:#bcd3c4}
+.mini.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.mini.on small{color:rgba(255,255,255,.86)}
 .grid{display:grid;gap:6px}
 .grid.lv{grid-template-columns:repeat(auto-fill,minmax(118px,1fr))}
 .grid.ch{grid-template-columns:repeat(auto-fill,minmax(94px,1fr))}
@@ -78,6 +81,8 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .cv-opt b{display:block;font-size:11.5px;padding:5px 7px;font-weight:700}
 
 .ansgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:6px}
+#gGrid.ansgrid{display:block}
+.grade-src{margin:0 0 10px}
 .ansrow{border:1px solid var(--line);border-radius:9px;padding:5px 6px;background:#fff}
 .ansrow b{font-size:11.5px;color:#5a675e;display:block;margin-bottom:3px}
 .ansrow .ops{display:flex;gap:3px}
@@ -139,6 +144,36 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .sheet.report .cols h3{margin:0 0 2mm;font-size:10.5pt}
 .sheet.report .cols ul{margin:0;padding-left:4.5mm;font-size:9.6pt;line-height:1.6}
 .sheet.report .nextbox{border-left:3px solid var(--brand);background:#f4f2ea;padding:3mm 4mm;font-size:10pt;line-height:1.6}
+.sheet.report .rp-alert{border-left:3px solid #c1543f;background:#fdf3f2;padding:2.5mm 3mm;margin-bottom:4mm;
+  font-size:9.5pt;line-height:1.5;break-inside:avoid}
+.sheet.report .rp-auto{border:1px solid #cfd6d0;border-radius:2mm;padding:3mm 3.5mm;margin-bottom:5mm;break-inside:avoid}
+.sheet.report .rp-auto b{display:block;font-size:10.5pt;margin-bottom:1mm}
+.sheet.report .rp-auto p{margin:0;font-size:9.6pt;line-height:1.55}
+.sheet.report .rp-auto .confidence{display:inline-block;margin-top:1.5mm;padding:.6mm 1.6mm;border:1px solid #cfd6d0;
+  border-radius:2mm;font-size:8.5pt;color:#536158}
+.sheet.report .rp-d .rp-dx{margin-top:1.5mm;padding-top:1.5mm;border-top:1px solid #ded8c8}
+.sheet.report .rp-d .rp-dx strong{color:var(--brand)}
+.sheet.report .rp-qref td:nth-child(1),.sheet.report .rp-qref td:nth-child(2){white-space:nowrap}
+.sheet.report .rp-road{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm;margin-bottom:5mm;break-inside:avoid}
+.sheet.report .rp-road>div{border-top:2px solid var(--brand);padding:2mm 2.2mm;background:#fbfaf5;min-height:25mm}
+.sheet.report .rp-road b{display:block;font-size:9.4pt;margin-bottom:1mm;color:var(--brand)}
+.sheet.report .rp-road p{margin:0;font-size:8.8pt;line-height:1.45}
+.sheet.report .rp-books{display:grid;grid-template-columns:repeat(3,1fr);gap:2mm;margin-bottom:5mm;break-inside:avoid}
+.sheet.report .rp-book{border:1px solid #cfd6d0;padding:2.5mm 3mm;border-radius:2mm}
+.sheet.report .rp-book b{font-size:9.5pt;line-height:1.3;display:block}
+.sheet.report .rp-book span{font-size:8.3pt;color:var(--brand);font-weight:800}
+.sheet.report .rp-book p{font-size:8.8pt;line-height:1.45;margin:1mm 0 0}
+.sheet.report .rp-sources{margin:0 0 4mm;padding-left:5mm;font-size:8.3pt;line-height:1.45}
+.sheet.report .rp-sources li{margin-bottom:1mm}
+.sheet.report .rp-sources a{color:inherit;text-decoration:none}
+.report-pick{grid-template-columns:1fr 1fr!important}
+.report-pick label.chk{padding:6px 7px;font-size:11.5px}
+.remedy-action{display:grid;grid-template-columns:1fr;gap:5px;margin:10px 0 2px}
+.remedy-action .btn{width:100%;padding:9px 10px}
+.remedy-action small{font-size:11px;line-height:1.45;color:var(--muted)}
+@media(max-width:720px){
+  .sheet.report .rp-road,.sheet.report .rp-books{grid-template-columns:1fr 1fr}
+}
 
 .pv{background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 /* .pv has overflow:hidden, which makes it the sticky scrollport — a non-zero top
@@ -165,6 +200,69 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .sh-intro{font-size:10pt;color:#3c4a41;margin:0 0 4mm;padding:2.5mm 3mm;background:#f4f2ea;border-left:3px solid var(--brand)}
 .psg{font-family:var(--serif);font-size:var(--fs-psg,11.6pt);line-height:1.75;margin-bottom:5mm}
 .psg p{margin:0 0 3mm}
+.psg.cars-print-original{
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:10.8pt;
+  line-height:1.3;
+  color:#111;
+  border:1px solid #c8c8c8;
+  border-radius:1mm;
+  padding:4mm 5mm 5mm;
+}
+.psg.cars-print-original:after{content:"";display:block;clear:both}
+.psg.cars-print-original .sentence-paragraph{margin:0 0 2.2mm}
+.psg.cars-print-original .sentence-line{font-family:inherit}
+.psg.cars-print-original.cars-layout-biography,
+.psg.cars-print-original.cars-layout-two-page-story,
+.psg.cars-print-original.cars-layout-tale{border-left:5px double #444}
+.psg.cars-print-original.cars-poster{
+  position:relative;
+  max-width:790px;
+  margin:0 auto 5mm;
+  padding:8mm 8mm 9mm;
+  border:4px double #171717;
+  border-radius:1px;
+  overflow:visible!important;
+  background:#fff;
+  font-family:"Segoe Print","Comic Sans MS","Bradley Hand","Trebuchet MS",sans-serif;
+  font-size:12.3pt;
+  line-height:1.22;
+}
+.psg.cars-print-original .cars-html-timeline{margin:4mm auto 0;padding:1mm 1mm 6mm;max-width:178mm}
+.psg.cars-print-original .cars-timeline-track{min-height:52mm;padding:0 2mm}
+.psg.cars-print-original .cars-timeline-track:before{top:27mm;left:2mm;right:1mm}
+.psg.cars-print-original .cars-timeline-track:after{top:25.8mm}
+.psg.cars-print-original .cars-timeline-stop{height:52mm;padding:0 1.2mm}
+.psg.cars-print-original .cars-timeline-tick{top:22mm;height:8mm}
+.psg.cars-print-original .cars-timeline-year{top:18.5mm;font-size:9.2pt;line-height:1}
+.psg.cars-print-original .cars-timeline-text{position:absolute;left:1mm;right:1mm;top:0;font-size:7.8pt;line-height:1.02;min-height:0}
+.psg.cars-print-original .cars-timeline-stop.is-bottom{padding-top:0}
+.psg.cars-print-original .cars-timeline-stop.is-bottom .cars-timeline-text{top:34mm;min-height:0}
+.psg.cars-print-original .cars-timeline-stop.is-bottom .cars-timeline-year{top:29.2mm}
+.psg.cars-print-original .cars-timeline-stop.is-bottom .cars-timeline-tick{top:27mm;height:5mm}
+.psg.cars-print-original .cars-inline-media{margin:3mm auto;break-inside:avoid;filter:grayscale(1)}
+.psg.cars-print-original .cars-inline-media img{display:block;width:100%;height:auto}
+.psg.cars-print-original .cars-float-right{float:right;margin:1mm 0 3mm 5mm}
+.psg.cars-print-original .cars-float-left{float:left;margin:1mm 5mm 3mm 0}
+.psg.cars-print-original .cars-media-portrait{max-width:38mm}
+.psg.cars-print-original .cars-media-medium{max-width:55mm}
+.psg.cars-print-original .cars-media-wide{width:95mm;max-width:64%}
+.psg.cars-print-original .cars-media-column-wide{max-width:56mm}
+.psg.cars-print-original .cars-media-poem-art{max-width:58mm}
+.psg.cars-print-original .cars-media-phase-panel{max-width:48mm}
+.psg.cars-print-original .cars-media-rainforest-layers{max-width:56mm}
+.psg.cars-print-original .cars-media-low{margin-top:2mm}
+.psg.cars-print-original .cars-media-middle{margin-top:2mm}
+.psg.cars-print-original .cars-column-figure{max-width:100%!important;margin:0 0 3mm!important}
+.psg.cars-print-original .cars-journal-art{width:55mm!important;max-width:55mm!important;margin:0!important}
+.print-question-visual{margin:2.5mm 0 1.5mm}
+.print-question-visual .cars-visual-box{min-height:18mm;padding:2.6mm 3mm;font-size:10.4pt;line-height:1.2}
+.print-question-visual .cars-sequence{gap:2.2mm}
+.print-question-visual .cars-arrow{font-size:15pt}
+.print-question-visual .cars-cause-effect{grid-template-columns:minmax(0,1fr) 9mm minmax(0,1fr)}
+.print-question-visual .cars-ce-col>b{font-size:10.6pt;margin-bottom:1.8mm}
+.print-question-visual .cars-branch-root{font-size:10.8pt}
+.print-question-visual .cars-branch-child{font-size:9.4pt;min-height:16mm}
 /* The lesson illustrations are portrait (about 1122x1402), so capping the height
    squeezed the width to ~59mm and left the picture stranded in the middle of the
    page. It now sits beside the opening paragraphs the way the source book sets
@@ -437,8 +535,33 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
   .sumchip{max-width:100%}
 }
 
+/* ---------------- report marks ----------------
+   A teacher reads the report on screen and marks it up before handing it over.
+   Marks are spans that add no text of their own — the star is a ::before — so
+   the character offsets a mark is stored against survive being re-applied. */
+.mk{border-radius:1mm}
+.mk-hl{background:#ffe45c;padding:0 .4mm;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.mk-ul{border-bottom:.7mm solid var(--brand);padding-bottom:.2mm}
+.mk-star{font-weight:700}
+.mk-star::before{content:'★';color:#e0a109;margin-right:.6mm;font-weight:700}
+.pv-body .mk{cursor:pointer}
+.mkbar{position:fixed;z-index:60;display:flex;gap:4px;padding:5px;
+  background:#22302a;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.28)}
+.mkbar button{border:0;background:#3a4b43;color:#fff;font:inherit;font-size:12px;
+  padding:5px 9px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.mkbar button:hover{background:#4d6157}
+.mkbar button.hl{background:#ffe45c;color:#3a3009}
+.mkbar button.star{background:#f7c948;color:#4a3a06}
+.mkbar button[disabled]{opacity:.4;cursor:default}
+.mkhint{font-size:12px;color:#5a675e;margin:0 0 8px}
+
 /* ---------------- print ---------------- */
 @media print{
+  /* Colour printers get the real highlighter; on a greyscale printer these
+     values fall to a light band and a dark rule, both still legible. */
+  .mk-hl{background:#ffe45c!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .mk-ul{border-bottom-color:#000!important}
+  .mk-star::before{color:#000!important}
   @page{size:A4;margin:0}
   html,body{background:#fff}
   .no-print{display:none!important}
@@ -584,6 +707,13 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
   </div>
 </div>
 
+<div class="mkbar no-print" id="mkBar" hidden>
+  <button class="hl"   data-mk="hl">형광펜</button>
+  <button class="star" data-mk="star">★ 별표</button>
+  <button              data-mk="ul">밑줄</button>
+  <button              data-mk="off">지우기</button>
+</div>
+
 <button class="btn brandy jump no-print" id="jumpPv">미리보기 보기 ↓</button>
 </div><!-- /screenB -->
 
@@ -693,12 +823,22 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
       <button class="mini" data-rlang="en">English</button>
       <label class="chk on" style="margin-left:auto"><input type="checkbox" id="optRemedy" checked><span>약점 해결 처방 넣기</span></label>
     </div>
+    <details class="fold" open>
+      <summary>상담용 리포트 항목</summary>
+      <div><p class="hint">상담에 필요 없는 항목은 해제하면 미리보기와 인쇄물에서 바로 빠집니다.</p>
+        <div class="grid report-pick" id="reportSectionPick"></div>
+      </div>
+    </details>
     <div id="gGrid" class="ansgrid"></div>
     <label class="fld" style="margin:9px 0 0"><span>선생님 코멘트 (분석지에 인쇄됩니다)</span>
       <textarea id="gMemo" rows="4" placeholder="예: 지문을 끝까지 읽지 않고 답을 고르는 습관이 보입니다. 2주간 시간을 재고 풀린 뒤 다시 확인하겠습니다."
         style="width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 10px;font:inherit;font-size:13px;line-height:1.6;resize:vertical"></textarea></label>
     <div class="row" style="margin-top:9px"><button class="mini" id="gClear">답안 지우기</button>
       <span id="gScore" style="align-self:center;font-size:12px;color:var(--muted)"></span></div>
+    <div class="remedy-action">
+      <button class="btn brandy" id="autoRemedy" disabled>추천 약점 연습지 자동 선택</button>
+      <small id="autoRemedyNote">답안을 모두 입력하면 추천 레벨의 약점 유형 문항을 자동으로 골라 줍니다.</small>
+    </div>
   </div>
 
 </div>
@@ -734,6 +874,7 @@ ol.ch li i{font-style:normal;font-weight:700;flex:none;min-width:5mm}
      questions live in Supabase and are fetched at print time, never bundled here. -->
 <script src="app/store.js"></script>
 <script src="data/diagnostic.js"></script>
+<script src="data/cars-report-guide.js"></script>
 <script src="data/lesson1.js"></script>
 <script src="data/lesson2.js"></script><script src="data/lesson3.js"></script>
 <script src="data/lesson4.js"></script><script src="data/lesson5.js"></script>
@@ -808,6 +949,25 @@ function presetByName(n){
   var k=normName(n); if(!k) return null;
   return BRAND_PRESETS.filter(function(p){return normName(p.name)===k||normName(p.label)===k;})[0]||null;
 }
+// Typing a registered academy's name has to end up in the same place as clicking
+// its chip. The text fields are only half of a preset — the logo arrives later,
+// from a file — so "the name already matches" is not proof the preset is loaded.
+function presetTextApplied(p){
+  return brand.name===p.name&&brand.sub===p.sub&&brand.color===p.color&&brand.color2===p.color2;
+}
+// One fetch per preset. Without this memo a preset whose logo file is missing
+// (or still loading) would look unloaded to checkName and be requested again on
+// every keystroke.
+var logoTried={};
+function ensurePresetLogo(p){
+  if(!p||!p.logo||brand.logo||logoTried[p.key])return;
+  logoTried[p.key]='pending';
+  loadLogo(p.logo,function(uri){
+    logoTried[p.key]=uri?'done':'fail';
+    if(!uri||brand.name!==p.name||brand.logo)return;   // file missing, or the name moved on while loading
+    brand.logo=uri;set('logo',uri);applyBrand();render();
+  });
+}
 function checkName(){
   var el=document.getElementById('bStat'); if(!el) return;
   var n=(document.getElementById('bName')||{}).value||'';
@@ -817,7 +977,8 @@ function checkName(){
   if(p){
     el.className='bstat ok';
     el.innerHTML='<b>등록된 학원입니다.</b> 설정을 불러왔습니다 — 이대로 바로 진행하세요.';
-    if(brand.name!==p.name) usePreset(p.key);
+    if(!presetTextApplied(p)) usePreset(p.key);
+    else ensurePresetLogo(p);
   }else{
     el.className='bstat new';
     el.innerHTML='<b>신규 등록 학원입니다.</b> 아래에서 <b>로고</b>부터 설정해 주세요. 색과 부제는 그다음입니다.';
@@ -836,13 +997,11 @@ function usePreset(key){
   if(!p)return;
   ['name','sub','color','color2'].forEach(function(k){brand[k]=p[k];set(k,p[k]);});
   brand.logo='';set('logo','');
+  delete logoTried[p.key];        // an explicit pick retries a logo that failed before
   applyBrand();renderPresets();render();
   // The logo is optional: an academy that has not supplied a file simply prints
   // its name, and nothing looks broken.
-  if(p.logo)loadLogo(p.logo,function(uri){
-    if(!uri)return;
-    brand.logo=uri;set('logo',uri);applyBrand();render();
-  });
+  ensurePresetLogo(p);
 }
 function logoTag(cls){return brand.logo?'<img class="'+(cls||'')+'" src="'+esc(brand.logo)+'" alt="">':'';}
 // A logo committed to the repo is picked up automatically the first time, so an
@@ -1046,6 +1205,29 @@ var grade={name:'',date:'',src:'level',level:'',unit:'',levels:[],memo:'',ans:{}
 // The analysis sheet carries its own language so an academy can print an
 // English test and hand the parent a Korean report.
 var RLANG=get('rlang','ko');
+var REPORT_SECTIONS=[
+  {k:'summary',n:'점수·종합 판정'},
+  {k:'skills',n:'전략 그래프'},
+  {k:'detail',n:'상세 자동 코멘트'},
+  {k:'questions',n:'추천 문항'},
+  {k:'roadmap',n:'수업 로드맵'},
+  {k:'books',n:'유사 난도 교재'},
+  {k:'answers',n:'문항별 채점표'},
+  {k:'evidence',n:'연구 근거'}
+];
+function loadReportSections(){
+  var saved={};
+  try{saved=JSON.parse(get('reportSections','{}'))||{};}catch(e){saved={};}
+  REPORT_SECTIONS.forEach(function(x){if(saved[x.k]===undefined)saved[x.k]=true;});
+  return saved;
+}
+var reportSections=loadReportSections();
+function reportOn(k){return reportSections[k]!==false;}
+function renderReportPick(){
+  var el=$('reportSectionPick');if(!el)return;
+  el.innerHTML=REPORT_SECTIONS.map(function(x){var on=reportOn(x.k);return '<label class="chk'+(on?' on':'')+'">'+
+    '<input type="checkbox" data-rsec="'+esc(x.k)+'"'+(on?' checked':'')+'><span>'+esc(x.n)+'</span></label>';}).join('');
+}
 // Passage and question type size independently: a young reader often needs a
 // bigger passage while the questions stay compact enough to fit the page.
 var FS={psg:get('fsPsg',''),qs:get('fsQs','')};
@@ -1055,6 +1237,14 @@ function applyFont(){
   FS.qs?r.setProperty('--fs-qs',FS.qs):r.removeProperty('--fs-qs');
 }
 var LADDER=DIAG_ORDER;
+function normalizeGradeLevels(){
+  var seen={};
+  grade.levels=(grade.levels||[]).filter(function(id){
+    if(seen[id]||LADDER.indexOf(id)<0)return false;
+    seen[id]=1;return true;
+  }).sort(function(x,y){return LADDER.indexOf(x)-LADDER.indexOf(y);});
+  return grade.levels;
+}
 
 var SCOPE=get('scope','volume');
 // '' = the shelf; otherwise the course being worked on. Everything downstream —
@@ -1139,39 +1329,160 @@ function passageHtml(ps,art){
   return '<div class="psg">'+(art||'')+(ps||[]).map(function(p){
     return '<p>'+esc(p).replace(/\n/g,'<br>')+'</p>';}).join('')+'</div>';
 }
+function carsLessonCfg(lessonId){
+  var maps=[(window.CARS_D_LAYOUTS||{}).lessons||{},(window.CARS_VISUAL_LAYOUTS||{}).lessons||{}];
+  for(var i=0;i<maps.length;i++) if(maps[i][lessonId]) return maps[i][lessonId];
+  return null;
+}
+function carsMediaList(cfg,meta){
+  var byType={}, out=[];
+  function add(m){
+    if(!m||!m.type)return;
+    byType[m.type]=Object.assign({},byType[m.type]||{},m);
+  }
+  ((((cfg||{}).original||{}).media)||[]).forEach(add);
+  (((meta||{}).media)||[]).forEach(add);
+  Object.keys(byType).forEach(function(k){out.push(byType[k]);});
+  return out;
+}
+function carsBoxText(item){
+  if(item==null)return '';
+  if(typeof item==='string')return item;
+  return item.text||item.content||'';
+}
+function carsTimelineHtml(media){
+  if(!Array.isArray(media.items)||!media.items.length)return '';
+  return '<figure class="cars-html-timeline" aria-label="'+esc(media.ariaLabel||'Timeline')+'">'+
+    '<div class="cars-timeline-track">'+media.items.map(function(item,i){
+      return '<div class="cars-timeline-stop '+(item.side==='bottom'?'is-bottom':'is-top')+
+        '" style="--cars-stop-index:'+i+'">'+
+        '<div class="cars-timeline-text">'+esc(item.text||'')+'</div>'+
+        '<div class="cars-timeline-year">'+esc(item.year||'')+'</div>'+
+        '<span class="cars-timeline-tick" aria-hidden="true"></span></div>';
+    }).join('')+'</div></figure>';
+}
+function carsMediaAsset(lessonId,media){
+  return media.src||('assets/images/cars-level-d/'+lessonId+'-'+media.type+'.png');
+}
+function carsMediaHtml(lessonId,media,extra){
+  if(media.render==='html-timeline')return carsTimelineHtml(media);
+  var cls='cars-inline-media cars-media-'+esc(media.type)+' cars-media-'+esc(media.width||'auto')+(extra?' '+extra:'');
+  return '<figure class="'+cls+'" data-cars-media="'+esc(lessonId+'-'+media.type)+'">'+
+    '<img src="'+esc(carsMediaAsset(lessonId,media))+'" alt="'+esc(media.alt||'')+'">'+
+    (media.caption?'<figcaption>'+esc(media.caption)+'</figcaption>':'')+'</figure>';
+}
+function carsPara(text,cls){
+  return '<p class="sentence-paragraph'+(cls?' '+cls:'')+'">'+esc(text).replace(/\n/g,'<br>')+'</p>';
+}
+function posterClass(txt,i,last){
+  txt=String(txt||'').replace(/\s+/g,' ').trim();
+  if(/^hey\s*,?\s*kids/i.test(txt))return 'cars-poster-line cars-poster-kicker';
+  if(/^rules\b/i.test(txt))return 'cars-poster-line cars-poster-rules-title';
+  if(/^\d+[.)]\s*/.test(txt))return 'cars-poster-line cars-poster-rule';
+  if(/time\s+is\s+running\s+out/i.test(txt)||i===last)return 'cars-poster-line cars-poster-callout';
+  if(i<=2)return 'cars-poster-line cars-poster-headline';
+  return 'cars-poster-line cars-poster-copy';
+}
+function carsPosterArt(){
+  return '<div class="cars-poster-art" aria-hidden="true">'+
+    '<div class="cars-magazine"><b>KIDS</b><strong>TODAY</strong><span class="cars-magazine-lines"></span></div>'+
+    '<div class="cars-pencil"></div></div>';
+}
+function carsColumnBreak(ps,meta){
+  var exact=Number(meta&&meta.columnBreakAfterParagraph);
+  if(Number.isInteger(exact)&&exact>=0&&exact<ps.length-1)return exact;
+  return Math.max(0,Math.ceil(ps.length/2)-1);
+}
+function carsAddAt(map,index,html){
+  if(!html)return;
+  index=Math.max(0,index);
+  (map[index]=map[index]||[]).push(html);
+}
+function carsMediaExtraClass(media){
+  var p=media.placement||'', cls='';
+  if(p.indexOf('float-left')===0)cls='cars-float-left';
+  else if(p.indexOf('float-right')===0)cls='cars-float-right';
+  else if(p==='after-paragraph'||p==='column-right-top')cls='cars-float-right';
+  if(p==='float-right-bottom')cls+=' cars-media-low';
+  if(p==='float-right-middle')cls+=' cars-media-middle';
+  return cls;
+}
+function carsParagraphRun(ps,start,end,before,after){
+  var out='';
+  for(var i=start;i<end;i++){
+    out+=(before[i]||[]).join('')+carsPara(ps[i],'')+(after[i]||[]).join('');
+  }
+  return out;
+}
+function carsPassageHtml(j,art){
+  var cfg=carsLessonCfg(j.lessonId), orig=cfg&&cfg.original, meta=j.meta||{};
+  if(!j.licensed||!orig)return passageHtml(j.passage,art);
+  // The study view may reproduce a source page's columns, but the worksheet
+  // print flow stays single-column. Reapplying columns after pagination made
+  // every continuation page rebalance independently and scattered both text
+  // and figures across mostly empty sheets.
+  var lessonId=j.lessonId, ps=j.passage||[], cls=['psg','cars-print-original','cars-d-original','cars-layout-'+(orig.layout||'standard')];
+  if(orig.layout==='poster')cls.push('cars-poster');
+  var media=carsMediaList(cfg,meta), before={}, after={}, bottom=[], journalMedia='';
+  media.forEach(function(m){
+    var html=carsMediaHtml(lessonId,m,carsMediaExtraClass(m));
+    if(!html)return;
+    if(m.placement==='journal-bottom-right') journalMedia+=html.replace('cars-inline-media','cars-inline-media cars-journal-art');
+    else if(m.placement==='column-right-top') carsAddAt(before,carsColumnBreak(ps,meta)+1,html);
+    else if(m.placement==='float-left-top'||m.placement==='float-right-top') carsAddAt(before,0,html);
+    else if(m.placement==='float-right'||m.placement==='float-right-middle') carsAddAt(before,Number.isInteger(m.afterParagraph)?m.afterParagraph:0,html);
+    else if(m.placement==='float-right-bottom') carsAddAt(before,Math.max(0,ps.length-2),html);
+    else if(m.placement==='after-paragraph') carsAddAt(before,Math.min(ps.length-1,(Number.isInteger(m.afterParagraph)?m.afterParagraph:ps.length-2)+1),html);
+    else bottom.push(html);
+  });
+  if(orig.layout==='poster'){
+    var poster=ps.map(function(p,i){
+      var c=posterClass(p,i,ps.length-1), line=c.indexOf('cars-poster-rules-title')>=0;
+      return carsPara(p,c)+(line?carsPosterArt():'');
+    }).join('');
+    return '<div class="'+cls.join(' ')+'">'+poster+'</div>';
+  }
+  var journalCount=Number(meta.journalParagraphsFromEnd||orig.journalParagraphsFromEnd||0);
+  var splitAt=journalCount>0?Math.max(0,ps.length-journalCount):ps.length;
+  var body=carsParagraphRun(ps,0,splitAt,before,after);
+  if(journalCount>0&&splitAt<ps.length){
+    body+='<div class="cars-journal-inset">'+carsParagraphRun(ps,splitAt,ps.length,before,after)+journalMedia+'</div>';
+  }
+  body+=bottom.join('');
+  return '<div class="'+cls.join(' ')+'">'+body+'</div>';
+}
 /* ---------- diagram questions ----------
    Some questions are a picture with a gap in it — a sequence of boxes, a
    cause/effect pair, a branching chart. Printing only the stem ("Which of these
    belongs in the empty box?") leaves nothing to answer. The shape comes from
    CARS_D_LAYOUTS (public), the wording from the licensed row (job.vis). */
 function boxCell(txt,blank){
-  return '<span class="vbox'+(blank?' blank':'')+'">'+(blank?'':esc(txt||''))+'</span>';
+  return '<div class="cars-visual-box'+(blank?' is-blank':'')+'">'+(blank?'':esc(carsBoxText(txt)))+'</div>';
 }
 function visualHtml(layout,p){
-  var arrow='<span class="varr" aria-hidden="true">&#8594;</span>';
+  var arrow='<div class="cars-arrow" aria-hidden="true">&#8594;</div>';
   if(layout.type==='sequence'){
     var n=layout.boxCount||3, boxes=p.boxes||[], step=layout.showStepNumbers;
     var cells=[];
     for(var i=0;i<n;i++){
-      cells.push('<span class="vcell">'+boxCell(boxes[i],i===layout.blankIndex)+
-        (step?'<small>'+(i+1)+'</small>':'')+'</span>');
+      cells.push('<div class="cars-seq-cell">'+boxCell(boxes[i],i===layout.blankIndex)+
+        (step?'<small>'+(i+1)+'</small>':'')+'</div>');
     }
-    return '<div class="vis vis-seq">'+cells.join(arrow)+'</div>';
+    return '<div class="cars-question-visual print-question-visual"><div class="cars-visual cars-sequence '+(step?'with-steps':'')+'">'+cells.join(arrow)+'</div></div>';
   }
   if(layout.type==='cause-effect'){
-    return '<div class="vis vis-ce">'+
-      '<span class="vcol"><b>'+esc(p.causeLabel||'Cause')+'</b>'+
-        boxCell(p.cause,layout.blankIndex===0)+'</span>'+arrow+
-      '<span class="vcol"><b>'+esc(p.effectLabel||'Effect')+'</b>'+
-        boxCell(p.effect,layout.blankIndex===1)+'</span></div>';
+    return '<div class="cars-question-visual print-question-visual"><div class="cars-visual cars-cause-effect">'+
+      '<div class="cars-ce-col"><b>'+esc(p.causeLabel||'Cause')+'</b>'+
+        boxCell(p.cause,layout.blankIndex===0)+'</div>'+arrow+
+      '<div class="cars-ce-col"><b>'+esc(p.effectLabel||'Effect')+'</b>'+
+        boxCell(p.effect,layout.blankIndex===1)+'</div></div></div>';
   }
   if(layout.type==='branch-map'){
     var kids=p.children||[];
-    return '<div class="vis vis-branch"><span class="vroot">'+esc(p.root||'')+'</span>'+
-      '<span class="vstem" aria-hidden="true"></span>'+
-      '<span class="vrow" style="--n:'+kids.length+'">'+kids.map(function(c,i){
-        return '<span class="vkid">'+boxCell(c,i===layout.blankIndex)+'</span>';}).join('')+
-      '</span></div>';
+    return '<div class="cars-question-visual print-question-visual"><div class="cars-visual cars-branch"><div class="cars-branch-root">'+esc(carsBoxText(p.root))+'</div>'+
+      '<div class="cars-branch-lines" aria-hidden="true"></div><div class="cars-branch-row">'+kids.map(function(c,i){
+        return '<div class="cars-branch-child '+(i===layout.blankIndex?'is-blank':'')+'">'+(i===layout.blankIndex?'':esc(carsBoxText(c)))+'</div>';}).join('')+
+      '</div></div></div>';
   }
   return '';
 }
@@ -1187,9 +1498,10 @@ function visualLayout(lessonId,n){
 }
 // Returns {before, diagram, after} when question n of this job is a diagram.
 function visualFor(j,n){
-  if(!j||!j.vis||!j.lessonId)return null;
+  if(!j||!j.lessonId)return null;
   var layout=visualLayout(j.lessonId,n);
-  var p=j.vis[n]||j.vis[String(n)];
+  var payloads=(j.meta&&(j.meta.visualQuestions||j.meta.questions))||j.vis||{};
+  var p=payloads[n]||payloads[String(n)];
   if(!layout||!p||layout.type==='standard')return null;
   var html=visualHtml(layout,p);
   return html?{before:p.before||'',after:p.after||'',html:html}:null;
@@ -1280,7 +1592,7 @@ function unitById(v){return unitSources().filter(function(u){return u.v===v;})[0
 function gradeGrid(){
   var srcs=gradeSources();
   var wrap=document.getElementById('gGrid'), sc=document.getElementById('gScore');
-  if(!srcs.length){wrap.innerHTML='';sc.textContent='';return;}
+  if(!srcs.length){wrap.innerHTML='';sc.textContent='';updateRemedyAction([], {rows:[],per:[],right:0,n:0,pct:0});return;}
   var right=0,done=0,total=0;
   wrap.innerHTML=srcs.map(function(s){
     var a=ansFor(s.key), nOpt=(s.questions[0][2]||[]).length;
@@ -1291,9 +1603,10 @@ function gradeGrid(){
         LET.slice(0,nOpt).split('').map(function(L){
           return '<button data-ga="'+esc(s.key)+'|'+i+':'+L+'"'+(a[i]===L?' class="on"':'')+'>'+L+'</button>';
         }).join('')+'</div></div>';}).join('');
-    return (srcs.length>1?'<div class="ans-h">'+esc(s.label)+'</div>':'')+
-      '<div class="ansgrid">'+cells+'</div>';}).join('');
+    return '<div class="grade-src">'+(srcs.length>1?'<div class="ans-h">'+esc(s.label)+'</div>':'')+
+      '<div class="ansgrid">'+cells+'</div></div>';}).join('');
   sc.textContent=done? (done+'/'+total+' 입력 · 정답 '+right+'개') : '답안을 입력하세요';
+  updateRemedyAction(srcs,analyse(srcs));
 }
 /* ---------- report: strategy analysis ---------- */
 // Level D spells two of the strategies differently from B and C. A report that
@@ -1406,7 +1719,7 @@ function gradeSources(){
     return u?[{key:u.v,kind:'unit',questions:u.questions,title:u.title,
       where:u.book+' · '+u.le.num+'과 · '+u.part,label:u.book+' '+u.le.num+'과'}]:[];
   }
-  return (grade.levels||[]).map(function(id){
+  return normalizeGradeLevels().map(function(id){
     var lv=levelById(id);
     return lv?{key:id,kind:'level',id:id,questions:lv.questions,title:lv.title,
       grade:lv.grade,where:RL('레벨 ','Level ')+id+' ('+gradeLabel(lv.grade)+')',label:RL('레벨 ','Level ')+id}:null;
@@ -1433,6 +1746,153 @@ function analyse(srcs){
   var tot=per.reduce(function(a,p){return a+p.right;},0);
   var totN=per.reduce(function(a,p){return a+p.n;},0);
   return {rows:rows,per:per,right:tot,n:totN,pct:totN?Math.round(tot/totN*100):0};
+}
+
+var REPORT_GUIDE=window.CARS_REPORT_GUIDE||{rx:{},books:{},sources:[]};
+var SKILL_DOMAIN={
+  'Finding Main Idea':'meaning','Recalling Facts and Details':'meaning',
+  'Understanding Sequence':'structure','Recognizing Cause and Effect':'structure',
+  'Comparing and Contrasting':'structure','Summarising':'structure',
+  'Making Predictions':'inference','Finding Word Meaning in Context':'inference',
+  'Drawing Conclusions and Making Inferences':'inference','Interpreting Figurative Language':'inference',
+  'Distinguishing Between Fact and Opinion':'critical',"Understanding Author's Purpose":'critical',
+  'Distinguishing Between Real and Make-believe':'critical'
+};
+var DOMAIN_NAME={
+  meaning:['핵심 의미·근거 찾기','literal meaning and evidence'],
+  structure:['글의 구조와 정보 관계','text structure and idea relationships'],
+  inference:['문맥·추론 통합','contextual and inferential integration'],
+  critical:['관점·목적 판단','critical evaluation of viewpoint and purpose']
+};
+function answeredState(srcs){
+  var done=0,total=0;
+  srcs.forEach(function(s){var a=ansFor(s.key);total+=s.questions.length;
+    s.questions.forEach(function(_,i){if(a[i])done++;});});
+  return {done:done,total:total,complete:total>0&&done===total};
+}
+function priorityRows(A){
+  return A.rows.filter(function(r){return r.pct<70;}).sort(function(a,b){
+    return a.pct-b.pct||stratRank(a.strat)-stratRank(b.strat);});
+}
+function strategyIndex(st){
+  if(st==='Summarising'||st==='Distinguishing Between Real and Make-believe')return 11;
+  return STRAT_RANK.indexOf(st);
+}
+function reportLevel(A,isUnit){
+  if(isUnit)return String(course||'').toUpperCase();
+  return runVerdict(A.per);
+}
+function remedyPlan(srcs,A){
+  var state=answeredState(srcs),isUnit=srcs.length&&srcs[0].kind==='unit';
+  var pri=priorityRows(A),rec=reportLevel(A,isUnit),bookId={B:'b',C:'c',D:'d'}[rec]||'';
+  var book=bookOf(bookId),skills=pri.slice(0,2),lessons=[],items=[];
+  if(book&&state.complete&&skills.length){
+    [0,Math.floor((book.lessons.length-1)/2),book.lessons.length-1].forEach(function(i){
+      var le=book.lessons[i];if(le&&lessons.indexOf(le)<0)lessons.push(le);
+    });
+    lessons.forEach(function(le){skills.forEach(function(r){
+      var qi=strategyIndex(r.strat),d=le.L.extraLearning,q=d&&d.questions&&d.questions[qi];
+      if(q)items.push({lesson:le,qi:qi,q:q,strat:r.strat});
+    });});
+  }
+  return {state:state,pri:pri,rec:rec,bookId:bookId,book:book,skills:skills,lessons:lessons,items:items,
+    available:!!(book&&state.complete&&skills.length&&items.length)};
+}
+function updateRemedyAction(srcs,A){
+  var b=$('autoRemedy'),note=$('autoRemedyNote');if(!b||!note)return;
+  if(!srcs.length){b.disabled=true;note.textContent='응시 레벨과 답안을 먼저 입력하세요.';return;}
+  var p=remedyPlan(srcs,A);
+  b.disabled=!p.available;
+  if(!p.state.complete)note.textContent='답안 '+p.state.done+'/'+p.state.total+' 입력 · 모두 입력하면 추천이 확정됩니다.';
+  else if(!p.book)note.textContent='추천 레벨 '+p.rec+'은 현재 CARS B/C/D 자동 연습지 범위 밖입니다.';
+  else if(!p.skills.length)note.textContent='70% 미만 약점 유형이 없어 별도 보충 연습지가 필요하지 않습니다.';
+  else note.textContent=p.book.label+' · '+p.lessons.map(function(x){return x.num+'과';}).join(' · ')+' · '+
+    p.skills.map(function(x){return stratName(x.strat);}).join(' · ')+' 문항을 선택합니다.';
+}
+function dominantDomain(A){
+  var score={meaning:0,structure:0,inference:0,critical:0};
+  A.rows.forEach(function(r){score[SKILL_DOMAIN[r.strat]||'inference']+=r.n-r.ok;});
+  return Object.keys(score).sort(function(a,b){return score[b]-score[a];})[0];
+}
+function autoCommentBlock(A,plan){
+  var dom=dominantDomain(A),dn=DOMAIN_NAME[dom]||DOMAIN_NAME.inference;
+  var top=plan.pri.slice(0,3),names=top.map(function(r){return stratName(r.strat);});
+  var spread=A.per.length>1?Math.max.apply(null,A.per.map(function(p){return p.pct;}))-
+    Math.min.apply(null,A.per.map(function(p){return p.pct;})):0;
+  var body;
+  if(!plan.state.complete){
+    body=RL('현재 '+plan.state.total+'문항 중 '+plan.state.done+'문항만 입력되어 아래 판정은 임시 결과입니다. 미입력 문항을 오답으로 계산하므로 상담 전에 답안을 완성해야 합니다.',
+      'Only '+plan.state.done+' of '+plan.state.total+' responses are entered. The report is provisional because blanks count as incorrect. Complete the record before counselling.');
+  }else if(!names.length){
+    body=RL('전체 '+A.n+'문항 중 '+A.right+'문항을 맞혔고 모든 측정 전략이 70% 이상입니다. 새 장르에서도 같은 전략을 독립적으로 적용하는지 짧은 전이 과제로 확인한 뒤 다음 단계로 진행하는 것이 적절합니다.',
+      A.right+' of '+A.n+' items were correct and every measured strategy reached 70%. Confirm independent transfer on a new genre before moving on.');
+  }else{
+    body=RL('전체 '+A.n+'문항 중 '+A.right+'문항 정답입니다. 오답이 특히 <b>'+esc(dn[0])+'</b> 영역과 '+
+      '<b>'+esc(names.join(' · '))+'</b>에 모였습니다. 단순 반복 풀이보다 교사의 사고 시범, 근거 표시, 그래픽 조직자, 독립 적용 순으로 지도해야 합니다.',
+      A.right+' of '+A.n+' items were correct. Errors cluster in <b>'+esc(dn[1])+'</b>, especially '+
+      '<b>'+esc(names.join(' · '))+'</b>. Use teacher modelling, evidence marking, a graphic organiser and then independent transfer rather than undirected repetition.');
+  }
+  if(spread>=25)body+=RL(' 레벨 간 정답률 차이가 '+spread+'%p라서 난도가 올라갈 때 전략 적용이 급격히 흔들리는 양상도 확인됩니다.',
+    ' The '+spread+'-point gap between levels also suggests that strategy use drops as text difficulty rises.');
+  var conf=!plan.state.complete?RL('신뢰도: 임시','Confidence: provisional'):
+    (A.per.length>1?RL('신뢰도: 보통 이상','Confidence: moderate+') : RL('신뢰도: 보통 · 재검사 필요','Confidence: moderate; confirm by retest'));
+  return '<h3 class="rp-h">'+RL('자동 종합 코멘트','Automated diagnostic comment')+'</h3>'+
+    '<div class="rp-auto"><b>'+RL('관찰된 수행 패턴','Observed performance pattern')+'</b><p>'+body+'</p>'+ 
+    '<span class="confidence">'+esc(conf)+' · '+RL('선택형 1회 결과이므로 수업 관찰과 함께 해석','interpret with lesson observation')+'</span></div>';
+}
+function recommendedQuestionsBlock(plan){
+  if(!plan.state.complete)return '<h3 class="rp-h">'+RL('추천 문항','Recommended questions')+'</h3>'+ 
+    '<div class="rp-alert">'+RL('답안을 모두 입력하면 약점 전략과 추천 레벨에 맞는 문항이 자동으로 표시됩니다.',
+      'Complete every response to generate level-matched practice questions.')+'</div>';
+  if(!plan.items.length)return '';
+  var body=plan.items.map(function(x){return '<tr><td>'+esc(stratName(x.strat))+'</td><td>'+esc(plan.book.label+' '+x.lesson.num+RL('과',''))+
+    '<br><small>'+RL('추가 학습 ','Extra Reading ')+'Q'+(x.qi+1)+'</small></td><td>'+esc(x.q[1])+'</td></tr>';}).join('');
+  return '<h3 class="rp-h">'+RL('약점 해결 추천 문항','Recommended remediation questions')+'</h3>'+ 
+    '<table class="rt rp-qref"><thead><tr><th style="width:23%">'+RL('목표 전략','Target')+'</th><th style="width:25%">'+
+    RL('자동 선택 위치','Source')+'</th><th>'+RL('추천 문항','Question')+'</th></tr></thead><tbody>'+body+'</tbody></table>'+ 
+    '<p class="rp-note">'+RL('아래 “추천 약점 연습지 자동 선택” 버튼이 위 문항과 같은 단원·전략을 문제지로 구성합니다.',
+      'The automatic worksheet button builds a printable sheet from these lessons and strategy positions.')+'</p>';
+}
+function roadmapBlock(plan){
+  if(!plan.pri.length)return '';
+  var a=plan.pri[0],b=plan.pri[1]||a,ai=REPORT_GUIDE.rx[a.strat]||{},bi=REPORT_GUIDE.rx[b.strat]||{};
+  var step=[
+    [RL('1주 · 진단과 시범','Week 1 · Diagnose and model'),RL(stratName(a.strat)+'의 오답 이유를 말하게 한 뒤 교사가 사고 과정을 소리 내어 시범 보입니다.',
+      'Elicit the reason for each '+stratName(a.strat)+' error, then model the thinking aloud.')],
+    [RL('2주 · 안내 연습','Week 2 · Guided practice'),RL((RLANG==='en'?bi.routineEn:bi.routineKo)||stratCoach(b.strat),
+      (RLANG==='en'?bi.routineEn:bi.routineKo)||stratCoach(b.strat))],
+    [RL('3주 · 장르 전이','Week 3 · Genre transfer'),RL('픽션과 논픽션 추천 문항을 섞고 교사 도움을 절반으로 줄입니다. 학생은 답마다 근거를 표시합니다.',
+      'Mix fiction and nonfiction recommendations, halve teacher prompts, and require evidence for every answer.')],
+    [RL('4주 · 독립 적용','Week 4 · Independent check'),RL((RLANG==='en'?ai.criterionEn:ai.criterionKo)||'3-item exit ticket',
+      (RLANG==='en'?ai.criterionEn:ai.criterionKo)||'3-item exit ticket')+' · '+RL('같은 레벨 재평가','retest at the same level')]
+  ];
+  return '<h3 class="rp-h">'+RL('4주 수업 로드맵','Four-week teaching roadmap')+'</h3><div class="rp-road">'+
+    step.map(function(x){return '<div><b>'+esc(x[0])+'</b><p>'+esc(x[1])+'</p></div>';}).join('')+'</div>'+ 
+    '<p class="rp-note">'+RL('권장 수업 흐름(90분): 배경·어휘 10분 → 교사 시범 15분 → 조직자 안내 연습 25분 → 추천 문항 20분 → 오답 설명 10분 → 출구 문항 10분.',
+      'Suggested 90 minutes: knowledge/vocabulary 10 → modelling 15 → guided organiser 25 → recommended questions 20 → error explanation 10 → exit ticket 10.')+'</p>';
+}
+function booksBlock(level){
+  var books=(REPORT_GUIDE.books||{})[level]||[];if(!books.length)return '';
+  return '<h3 class="rp-h">'+RL('비슷한 난이도의 교재','Comparable-difficulty books')+'</h3><div class="rp-books">'+
+    books.map(function(x){return '<div class="rp-book"><span>'+esc(RLANG==='en'?x.roleEn:x.roleKo)+'</span><b>'+esc(x.name)+'</b><p>'+ 
+      esc(RLANG==='en'?x.fitEn:x.fitKo)+'</p></div>';}).join('')+'</div><p class="rp-note">'+
+    RL('공식 CARS 텍스트 복잡도 상관표와 출판사 학년 표기를 맞춘 상담용 후보입니다. 실제 배치는 학생의 정확도·속도·수업 관찰을 우선하세요.',
+      'Counselling options matched from the official CARS text-complexity correlation and publisher grade labels. Accuracy, rate and teacher observation take priority.')+'</p>';
+}
+function evidenceBlock(){
+  var src=REPORT_GUIDE.sources||[];if(!src.length)return '';
+  return '<h3 class="rp-h">'+RL('분석·처방 근거','Evidence base')+'</h3><ol class="rp-sources">'+src.map(function(x){return '<li><a href="'+esc(x.url)+
+    '"><b>'+esc(RLANG==='en'?x.en:x.ko)+'</b></a> — '+esc(RLANG==='en'?x.noteEn:x.noteKo)+'</li>';}).join('')+'</ol>';
+}
+function applyRemedyWorksheet(){
+  var srcs=gradeSources(),A=analyse(srcs),plan=remedyPlan(srcs,A);if(!plan.available)return;
+  var bs=sel.book[plan.bookId];
+  SCOPE='unit';set('scope',SCOPE);
+  plan.book.lessons.forEach(function(le){bs.ch[le.id]=plan.lessons.indexOf(le)>=0;});
+  bs.parts.vocab=false;bs.parts.original=false;bs.parts.extra=true;bs.parts.similar=false;
+  STRATS.forEach(function(_,i){sel.strat[i]=plan.skills.some(function(r){return strategyIndex(r.strat)===i;});});
+  if(readHash()===plan.bookId)setCourse(plan.bookId);else location.hash='c='+plan.bookId;
+  setTimeout(function(){var fold=$('stratFold');if(fold)fold.open=true;scrollTo(0,0);},0);
 }
 
 /* ---------- charts (plain SVG so they print without a plugin) ---------- */
@@ -1579,6 +2039,7 @@ function reportSheet(){
   var srcs=gradeSources();
   if(!srcs.length) return '<div class="empty">응시 레벨(여러 개 선택 가능) 또는 교재 단원을 고르고<br>학생 답안을 입력하면 분석지가 여기에 만들어집니다.</div>';
   var A=analyse(srcs), isUnit=srcs[0].kind==='unit', multi=srcs.length>1;
+  var plan=remedyPlan(srcs,A);
 
   // ── verdict + headline comment ───────────────────────────────────────────
   var vTitle,vBody,book='';
@@ -1630,8 +2091,14 @@ function reportSheet(){
   var pri=weak.slice().sort(function(a,b){
     return a.pct-b.pct || stratRank(a.strat)-stratRank(b.strat);}).slice(0,3);
   var detail=weak.slice(0,4).map(function(r){
+    var rx=REPORT_GUIDE.rx[r.strat]||{},err=RL(rx.errorKo||'',rx.errorEn||''),
+      routine=RL(rx.routineKo||stratCoach(r.strat),rx.routineEn||stratCoach(r.strat)),
+      prompt=RL(rx.promptKo||'',rx.promptEn||''),criterion=RL(rx.criterionKo||'',rx.criterionEn||'');
     return '<div class="rp-d"><b>'+esc(stratName(r.strat))+' <span>'+r.ok+'/'+r.n+' · '+r.pct+'%</span></b>'+
-      '<p>'+esc(factLine(r))+' '+esc(stratCoach(r.strat))+'</p></div>';}).join('')
+      '<p>'+esc(factLine(r))+'</p><p class="rp-dx"><strong>'+RL('오류 가능성: ','Likely error pattern: ')+'</strong>'+esc(err)+
+      '<br><strong>'+RL('수업 처방: ','Teaching routine: ')+'</strong>'+esc(routine)+
+      (prompt?'<br><strong>'+RL('교사 발문: ','Teacher prompt: ')+'</strong>“'+esc(prompt)+'”':'')+
+      (criterion?'<br><strong>'+RL('성공 기준: ','Success criterion: ')+'</strong>'+esc(criterion):'')+'</p></div>';}).join('')
     || '<div class="rp-d"><b>'+RL('약점 없음','No weak skill')+'</b><p>'+
        RL('모든 유형에서 70% 이상을 맞혔습니다. 다음 단계로 진행해도 좋습니다.',
           'Every skill scored 70% or better. Ready to move on.')+'</p></div>';
@@ -1654,12 +2121,12 @@ function reportSheet(){
   var remedy='';
   if(opt('optRemedy')){
     var names=weak.slice(0,3).map(function(r){return stratName(r.strat);});
-    remedy='<div class="nextbox"><b>'+RL('약점 해결 처방','Prescription')+'</b><br>'+
+    remedy='<div class="nextbox"><b>'+RL('약점 해결 처방','Prescription')+'</b><br>'+ 
       (names.length
-        ? RL('이 학생은 <b>'+esc(names.join(' · '))+'</b> 유형에서 주로 놓쳤습니다. '+
-             (book?esc(book)+'의 ':'')+'해당 유형만 뽑은 <b>약점 유형 연습지</b>를 만들어 2주간 훈련한 뒤 같은 레벨로 재응시하세요.',
-             'The misses cluster in <b>'+esc(names.join(' · '))+'</b>. Build a <b>skill practice sheet</b> from '+
-             (book?esc(book)+' ':'')+'those types, train for two weeks, then re-sit the same level.')
+        ? RL('우선순위는 <b>'+esc(names.join(' · '))+'</b>입니다. '+(plan.book?esc(plan.book.label)+'의 ':'')+
+             '추천 문항으로 교사 시범→안내 연습→독립 적용을 진행하고, 각 성공 기준을 통과한 뒤 같은 레벨로 재평가하세요.',
+             'Priorities are <b>'+esc(names.join(' · '))+'</b>. Use the recommended '+(plan.book?esc(plan.book.label)+' ':'')+
+             'items through modelling, guided practice and independent transfer, then reassess at the same level after the success criteria are met.')
         : RL('보완이 필요한 유형이 없습니다. 다음 단계로 진행하세요.',
              'No weak skill to prescribe. Move on to the next stage.'))+'</div>';
   }
@@ -1667,33 +2134,41 @@ function reportSheet(){
   var who=(grade.name?esc(grade.name)+' · ':'')+
     esc(srcs.map(function(s){return s.label;}).join(' + '))+(grade.date?' · '+esc(grade.date):'');
 
+  var summaryHtml=reportOn('summary')?
+    '<div class="rp-score"><div class="rp-gauge">'+gaugeSvg(A.pct,'total')+
+      '<span>'+A.right+' / '+A.n+'</span></div>'+ 
+    '<div class="rp-verdict"><b>'+esc(vTitle)+'</b><p>'+vBody+
+    (isUnit?'<br>'+RL('대상: ','Unit: ')+'<b>'+esc(srcs[0].title)+'</b>'
+           :(book?'<br>'+RL('추천 교재: ','Recommended book: ')+'<b>'+esc(book)+'</b>'
+                 :'<br>'+RL('현재 CARS B/C/D 교재 범위 밖의 레벨입니다.','This level is outside the current CARS B/C/D book range.')))+
+    '</p></div></div>'+ 
+    (String(grade.memo||'').trim()?'<div class="rp-memo"><b>'+RL('선생님 코멘트','Teacher’s comment')+'</b><p>'+ 
+      esc(grade.memo).replace(/\n/g,'<br>')+'</p></div>':''):'';
+  var skillsHtml=reportOn('skills')?
+    '<h3 class="rp-h">'+RL('전략 구성','Skill mix')+'</h3>'+pieSvg(rows)+
+    (multi?'<h3 class="rp-h">'+RL('레벨별 성취','By level')+'</h3>'+levelBarsSvg(A.per):'')+
+    '<h3 class="rp-h">'+RL('읽기 전략별 정답률','Accuracy by reading strategy')+'</h3>'+barsSvg(rows)+
+    '<p class="rp-note">'+RL('CARS & STARS Plus 교사용 평가 방식에 따라 전략별 성취를 집계했습니다.',
+      'Strategy performance is tallied in the CARS & STARS Plus teacher-assessment format.')+'</p>':'';
+  var detailHtml=reportOn('detail')?autoCommentBlock(A,plan)+
+    '<h3 class="rp-h">'+RL('무엇을 어떻게 도울까','What to work on')+'</h3><div class="rp-dl">'+detail+'</div>'+ 
+    (pri.length?'<div class="rp-pri"><b>'+RL('코칭 우선순위','Coaching priority')+'</b> '+
+      esc(pri.map(function(r,i){return (i+1)+'. '+stratName(r.strat);}).join('   '))+'</div>':'')+
+    (strong.length?'<div class="rp-strong"><b>'+RL('강점','Strengths')+'</b> '+
+      esc(strong.slice(0,5).map(function(r){return stratName(r.strat);}).join(' · '))+'</div>':'')+remedy:'';
+  var questionHtml=reportOn('questions')?recommendedQuestionsBlock(plan):'';
+  var roadmapHtml=reportOn('roadmap')?
+    (isUnit?'':levelUpBlock(A.per,pri))+(isUnit?'':planBlock(runVerdict(A.per),pri))+
+    roadmapBlock(plan)+homeBlock(pri):'';
+  var bookHtml=reportOn('books')?booksBlock(plan.rec):'';
+  var answerHtml=reportOn('answers')?tables:'';
+  var evidenceHtml=reportOn('evidence')?evidenceBlock():'';
+
   return '<section class="sheet report">'+
     head(isUnit?'Unit Report':'Placement Report',
       RL(isUnit?'단원 평가 분석지':'레벨 테스트 분석지', isUnit?'Unit Report':'Placement Report'),
       who,false)+
-    '<div class="rp-score"><div class="rp-gauge">'+gaugeSvg(A.pct,'total')+
-      '<span>'+A.right+' / '+A.n+'</span></div>'+
-    '<div class="rp-verdict"><b>'+esc(vTitle)+'</b><p>'+vBody+
-    (isUnit?'<br>'+RL('대상: ','Unit: ')+'<b>'+esc(srcs[0].title)+'</b>'
-           :(book?'<br>'+RL('추천 교재: ','Recommended book: ')+'<b>'+esc(book)+'</b>'
-                 :'<br>'+RL('해당 레벨의 학습 교재는 준비 중입니다.','A book for this level is in preparation.')))+
-    '</p></div></div>'+
-    '<h3 class="rp-h">'+RL('전략 구성','Skill mix')+'</h3>'+pieSvg(rows)+
-    (String(grade.memo||'').trim()
-      ? '<div class="rp-memo"><b>'+RL('선생님 코멘트','Teacher’s comment')+'</b><p>'+
-        esc(grade.memo).replace(/\n/g,'<br>')+'</p></div>' : '')+
-    (multi?'<h3 class="rp-h">'+RL('레벨별 성취','By level')+'</h3>'+levelBarsSvg(A.per):'')+
-    '<h3 class="rp-h">'+RL('읽기 전략별 정답률','Accuracy by reading strategy')+'</h3>'+barsSvg(rows)+
-    '<p class="rp-note">'+RL('CARS & STARS Plus 교사용 평가 1·2(전략별 성취 집계와 막대그래프)를 자동으로 만든 것입니다.',
-      'This is Teacher Assessment 1 and 2 from CARS & STARS Plus — the per-strategy tally and its bar graph — produced automatically.')+'</p>'+
-    '<h3 class="rp-h">'+RL('무엇을 어떻게 도울까','What to work on')+'</h3><div class="rp-dl">'+detail+'</div>'+
-    (pri.length?'<div class="rp-pri"><b>'+RL('코칭 우선순위','Coaching priority')+'</b> '+
-      esc(pri.map(function(r,i){return (i+1)+'. '+stratName(r.strat);}).join('   '))+'</div>':'')+
-    (isUnit?'':levelUpBlock(A.per,pri))+
-    (isUnit?'':planBlock(runVerdict(A.per),pri))+homeBlock(pri)+
-    (strong.length?'<div class="rp-strong"><b>'+RL('강점','Strengths')+'</b> '+
-      esc(strong.slice(0,5).map(function(r){return stratName(r.strat);}).join(' · '))+'</div>':'')+
-    tables+remedy+
+    summaryHtml+skillsHtml+detailHtml+questionHtml+roadmapHtml+bookHtml+answerHtml+evidenceHtml+
     foot(RL('분석지 · ','Report · ')+(grade.name||RL('학생','Student'))+' · '+
       esc(srcs.map(function(s){return s.label;}).join(' + ')))+'</section>';
 }
@@ -1734,7 +2209,7 @@ function jobs(){
             intro:o.instruction,passage:o.passage,questions:o.questions,
             // Level D's sequence / cause-effect / branch questions are unanswerable
             // without their diagram, so the wording travels with the job.
-            vis:(o.meta&&o.meta.visualQuestions)||null,lessonId:le.id});
+            meta:o.meta||null,vis:(o.meta&&o.meta.visualQuestions)||null,lessonId:le.id});
           return;
         }
         var d=p.get(le.L);if(!d)return;
@@ -1806,9 +2281,9 @@ function paperSheets(j){
   // tail of the question list off the page.
   if(!opt('optSplit')&&chunks.length===1)
     return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+
-      passageHtml(j.passage,artHtml(j))+intro+questionsHtml(qlist,j)+foot(j.label)+'</section>';
+      carsPassageHtml(j,artHtml(j))+intro+questionsHtml(qlist,j)+foot(j.label)+'</section>';
   return '<section class="sheet paper">'+head(tag,j.title,j.src,true)+
-    passageHtml(j.passage,artHtml(j))+foot(j.label+' · '+T('psg'))+'</section>'+qSheets;
+    carsPassageHtml(j,artHtml(j))+foot(j.label+' · '+T('psg'))+'</section>'+qSheets;
 }
 // Split the question list into page-sized runs.
 function qChunks(list){
@@ -1867,6 +2342,175 @@ function build(mode,list){
   if(mode==='book') html+=keySheets(list);
   return html;
 }
+/* ---------- report marks ----------
+   The report is rebuilt from scratch whenever anything changes — a keyed answer,
+   the memo, the language — so a teacher's marks cannot simply live in the DOM.
+   Each one is stored as {b, s, e, k, t}: the block it sits in, the character
+   offsets within that block, the kind, and the text it covered. Offsets alone
+   would drift the moment an edit lengthens the block above, so the text is the
+   real anchor and the offsets are the fast path. */
+var marks=[];                       // report annotations, in memory like the rest of `grade`
+var MK_BLOCK='p,li,td,th,h1,h2,h3,h4,div';
+var mkPending=null;                 // spans captured at mouseup, used when a bar button is hit
+
+function mkRoots(){return Array.from(sheetsEl.querySelectorAll('.sheet.report'));}
+// Chart text is drawn, not read: excluding SVG here keeps offsets identical
+// between the pass that measures a selection and the pass that re-applies it.
+function mkTextNodes(el){
+  var out=[],w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null),n;
+  while((n=w.nextNode())) if(!n.parentElement.closest('svg')) out.push(n);
+  return out;
+}
+// Every text node belongs to its NEAREST block ancestor, and to that one only.
+// Blocks nest — .rp-verdict holds a bare <b> and a <p> — so without this the
+// same words would sit in two blocks at once and one drag would leave two marks.
+function mkOwnNodes(el){
+  return mkTextNodes(el).filter(function(n){
+    return n.parentElement.closest(MK_BLOCK)===el;});
+}
+function mkText(el){
+  return mkOwnNodes(el).map(function(n){return n.nodeValue;}).join('');
+}
+// Inline <b> inside a paragraph therefore marks against the paragraph, while a
+// bare <b> in a callout marks against the callout.
+function mkBlocks(){
+  var roots=mkRoots(); if(!roots.length) return [];
+  var out=[];
+  roots.forEach(function(root){
+    mkTextNodes(root).forEach(function(n){
+      if(!/\S/.test(n.nodeValue)) return;
+      var b=n.parentElement.closest(MK_BLOCK);
+      if(b&&b!==root&&out.indexOf(b)<0) out.push(b);
+    });
+  });
+  return out;
+}
+// The slice of one text node that a range covers, or null when it misses.
+function mkPart(r,n){
+  var len=n.nodeValue.length;
+  try{
+    if(r.comparePoint(n,len)<0) return null;   // node ends before the range starts
+    if(r.comparePoint(n,0)>0) return null;     // node starts after the range ends
+  }catch(e){return null;}
+  var a=(r.startContainer===n)?r.startOffset:0;
+  var z=(r.endContainer===n)?r.endOffset:len;
+  return z>a?[a,z]:null;
+}
+// A selection is cut at block boundaries: dragging across three paragraphs
+// leaves three marks, each of which can later re-anchor on its own.
+function mkCapture(){
+  var sel=window.getSelection(),roots=mkRoots();
+  if(!roots.length||!sel||!sel.rangeCount||sel.isCollapsed) return null;
+  var r=sel.getRangeAt(0);
+  if(!roots.some(function(root){return root.contains(r.commonAncestorContainer);})) return null;
+  var out=[];
+  mkBlocks().forEach(function(b,bi){
+    var t=0,s=-1,e=-1;
+    mkOwnNodes(b).forEach(function(n){
+      var p=mkPart(r,n);
+      if(p){if(s<0)s=t+p[0];e=t+p[1];}
+      t+=n.nodeValue.length;
+    });
+    if(s>=0&&e>s) out.push({b:bi,s:s,e:e,t:mkText(b).slice(s,e)});
+  });
+  out=out.filter(function(m){return /\S/.test(m.t);});
+  return out.length?out:null;
+}
+function mkWrap(block,s,e,kind){
+  var t=0,jobs=[];
+  mkOwnNodes(block).forEach(function(n){
+    var len=n.nodeValue.length,a=Math.max(s-t,0),z=Math.min(e-t,len);
+    if(z>a) jobs.push([n,a,z]);
+    t+=len;
+  });
+  // Splitting a node only ever adds siblings after it, so the nodes still queued
+  // are untouched and the offsets collected above stay good.
+  jobs.forEach(function(j){
+    var n=j[0];
+    if(j[2]<n.nodeValue.length) n.splitText(j[2]);
+    if(j[1]>0) n=n.splitText(j[1]);
+    var sp=document.createElement('span');
+    sp.className='mk mk-'+kind;
+    sp.title='클릭하면 지워집니다';
+    n.parentNode.insertBefore(sp,n);
+    sp.appendChild(n);
+  });
+  return jobs.length>0;
+}
+// Offsets first; when the block has shifted under the mark, the same words
+// elsewhere in the report. A mark that finds neither is dropped.
+function mkAnchor(m,blocks){
+  if(blocks[m.b]&&mkText(blocks[m.b]).slice(m.s,m.e)===m.t) return m;
+  var order=blocks.map(function(_,i){return i;});
+  order.sort(function(a,b){return Math.abs(a-m.b)-Math.abs(b-m.b);});
+  for(var i=0;i<order.length;i++){
+    var idx=mkText(blocks[order[i]]).indexOf(m.t);
+    if(idx>=0){m.b=order[i];m.s=idx;m.e=idx+m.t.length;return m;}
+  }
+  return null;
+}
+function mkApply(){
+  if(!marks.length) return;
+  var blocks=mkBlocks();
+  if(!blocks.length) return;
+  marks=marks.filter(function(m){return mkAnchor(m,blocks);});
+  // Later marks are wrapped inside earlier ones when they overlap, which is what
+  // a highlight plus an underline over the same words should look like.
+  marks.forEach(function(m){mkWrap(blocks[m.b],m.s,m.e,m.k);});
+}
+function mkAdd(kind){
+  if(!mkPending) return;
+  if(kind==='off'){
+    mkPending.forEach(function(p){
+      marks=marks.filter(function(m){return !(m.b===p.b&&m.s<p.e&&p.s<m.e);});
+    });
+  }else{
+    mkPending.forEach(function(p){
+      marks.push({b:p.b,s:p.s,e:p.e,t:p.t,k:kind});
+    });
+  }
+  mkPending=null;
+  window.getSelection().removeAllRanges();
+  mkBarHide();
+  render();
+}
+function mkBarHide(){var el=$('mkBar');if(el)el.hidden=true;}
+function mkBarShow(){
+  var el=$('mkBar'),sel=window.getSelection();
+  if(!el||!sel||!sel.rangeCount) return mkBarHide();
+  var r=sel.getRangeAt(0).getBoundingClientRect();
+  if(!r.width&&!r.height) return mkBarHide();
+  el.hidden=false;
+  var w=el.offsetWidth,h=el.offsetHeight;
+  var top=r.top-h-8;
+  if(top<4) top=r.bottom+8;                 // no room above — sit under the selection
+  // Clamped so a selection near an edge, or scrolled part-way out, still leaves
+  // the bar somewhere the teacher can click it.
+  el.style.left=Math.min(Math.max(4,r.left+r.width/2-w/2),innerWidth-w-4)+'px';
+  el.style.top=Math.min(Math.max(4,top),innerHeight-h-4)+'px';
+}
+document.addEventListener('mouseup',function(e){
+  if(e.target.closest('#mkBar')) return;    // the button's own click applies the mark
+  setTimeout(function(){
+    mkPending=(document.body.dataset.print==='report')?mkCapture():null;
+    if(mkPending) mkBarShow(); else mkBarHide();
+  },0);                                     // the selection is not final until after mouseup
+});
+document.addEventListener('keyup',function(e){
+  if(document.body.dataset.print!=='report') return;
+  if(e.key==='Escape'){mkPending=null;return mkBarHide();}
+  if(e.shiftKey||e.key.indexOf('Arrow')===0){
+    mkPending=mkCapture();
+    if(mkPending) mkBarShow(); else mkBarHide();
+  }
+});
+// The bar is fixed while the text it belongs to scrolls, so it is re-pinned
+// rather than dismissed — scrolling to read the rest of a sentence should not
+// cost the teacher the selection they just made.
+function mkBarSync(){if(mkPending)mkBarShow();else mkBarHide();}
+window.addEventListener('scroll',mkBarSync,true);
+window.addEventListener('resize',mkBarSync);
+
 function render(){
   var mode0=document.body.dataset.print;
   // The answer grid lives in a step, so it has to track the chosen source on
@@ -1877,14 +2521,19 @@ function render(){
     ['printPaper','printKey','printBook'].forEach(function(id){$(id).disabled=true;});
     $('printReport').hidden=false;
     $('tally').innerHTML=grade.name?('분석지 · <b>'+esc(grade.name)+'</b>'):'분석지';
-    sheetsEl.innerHTML=reportSheet();
-    $('pvNote').textContent='분석지 미리보기';
+    sheetsEl.innerHTML='<p class="mkhint no-print">분석지에서 글을 드래그하면 형광펜·★·밑줄을 칠할 수 있어요. '+
+      '표시를 클릭하면 지워집니다. 표시는 인쇄물에 그대로 나갑니다.</p>'+reportSheet();
+    mkApply();
+    paginate();
+    $('pvNote').textContent='분석지 미리보기 · '+sheetsEl.querySelectorAll('.sheet').length+'쪽'+
+      (marks.length?' · 표시 '+marks.length+'개':'');
     paintSummaries(null,null);
     return;
   }
+  mkBarHide();
   $('printReport').hidden=true;
   var list=jobs();
-  var qTotal=list.reduce(function(s,j){return s+((j.questions||[]).length);},0);
+  var qTotal=list.reduce(function(s,j){return s+keyList(j).length;},0);
   var wTotal=list.reduce(function(s,j){return s+((j.words||[]).length);},0);
   $('tally').innerHTML=list.length
     ? '학습지 <b>'+list.length+'</b>세트 · 문항 <b>'+qTotal+'</b>개'+(wTotal?' · 낱말 <b>'+wTotal+'</b>개':'')
@@ -1941,21 +2590,23 @@ function atomsOf(block){
   if(block.classList.contains('psg')||block.classList.contains('ex')||
      (block.tagName==='OL'&&block.classList.contains('qs'))) kids=block.children;
   if(!kids||kids.length<2) return [{whole:block,h:outerH(block)}];
-  var list=[].slice.call(kids), lead=null;
-  // A floated illustration is out of flow: it has no place of its own in the
-  // sequence, it rides along with the paragraph it sits beside.
-  if(list.length&&list[0].tagName==='IMG'&&list[0].classList.contains('fl'))
-    lead=list.shift();
-  var atoms=list.map(function(k){return {host:block,node:k,h:outerH(k)};});
-  // Its height is deliberately not added: the paragraphs beside it are measured
-  // already wrapped, so counting the picture again would reserve space twice and
-  // push a paragraph onto a page that did not need to exist. A passage short
-  // enough for the float to be the tallest thing never splits in the first place.
-  if(lead&&atoms.length){
-    atoms[0].pre=lead;
-  }else if(lead){
-    atoms.push({host:block,node:lead,h:outerH(lead)});
-  }
+  var list=[].slice.call(kids), pending=[], atoms=[];
+  // Floated artwork must travel with the paragraph beside it. Otherwise the
+  // paginator can put the figure at the foot of one sheet and its text on the
+  // next, leaving a nearly empty picture-only continuation page.
+  list.forEach(function(k){
+    var floated=(k.tagName==='IMG'&&k.classList.contains('fl'))||
+      k.classList.contains('cars-float-right')||k.classList.contains('cars-float-left');
+    if(floated){pending.push(k);return;}
+    var atom={host:block,node:k,h:outerH(k)};
+    if(pending.length){
+      atom.pre=pending.slice();
+      atom.h=Math.max.apply(Math,[atom.h].concat(pending.map(outerH)));
+      pending=[];
+    }
+    atoms.push(atom);
+  });
+  pending.forEach(function(k){atoms.push({host:block,node:k,h:outerH(k)});});
   return atoms;
 }
 function paginate(){
@@ -2000,7 +2651,7 @@ function splitSheet(s){
     page.forEach(function(a){
       if(a.whole){sheet.appendChild(a.whole);host=null;hostSrc=null;return;}
       if(hostSrc!==a.host){hostSrc=a.host;host=a.host.cloneNode(false);sheet.appendChild(host);}
-      if(a.pre)host.appendChild(a.pre);      // the float leads its paragraph
+      if(a.pre)a.pre.forEach(function(n){host.appendChild(n);});
       host.appendChild(a.node);
     });
     if(foot)sheet.appendChild(pi?foot.cloneNode(true):foot);
@@ -2161,6 +2812,7 @@ function setWorkTab(t){
       ? '학생이 푼 진단 답안을 입력하면 배치 결과와 전략별 강·약점 분석지가 만들어집니다.'
       : '이 책의 단원 문항으로 채점합니다. 배치 판정이 아니라 숙달도만 보고합니다.';
     fillGradePick();
+    renderReportPick();
     document.body.dataset.print='report';
   }else{
     document.body.dataset.print=(course==='diag')?'paper':'book';
@@ -2227,6 +2879,10 @@ function doPrint(mode){
 }
 document.addEventListener('change',function(e){
   var t=e.target,k,lab=t.closest('label');
+  if(t.hasAttribute('data-rsec')){
+    reportSections[t.getAttribute('data-rsec')]=t.checked;
+    set('reportSections',JSON.stringify(reportSections));if(lab)lab.classList.toggle('on',t.checked);return render();
+  }
   if((k=t.getAttribute('data-diag-cb'))){sel.diag[k]=t.checked;if(lab)lab.classList.toggle('on',t.checked);return render();}
   if((k=t.getAttribute('data-ch-cb'))){var a=k.split(':');sel.book[a[0]].ch[a[1]]=t.checked;if(lab)lab.classList.toggle('on',t.checked);return render();}
   if((k=t.getAttribute('data-part-cb'))){var p=k.split(':');sel.book[p[0]].parts[p[1]]=t.checked;if(lab)lab.classList.toggle('on',t.checked);return render();}
@@ -2256,7 +2912,26 @@ document.addEventListener('input',function(e){
     if(document.body.dataset.print==='report')render();}
 });
 document.addEventListener('click',function(e){
+  // A mark is its own delete button — clicking one lifts it off the report.
+  var hit=e.target.closest('.mk');
+  if(hit&&sheetsEl.contains(hit)&&!window.getSelection().toString()){
+    var blocks=mkBlocks(),host=hit.closest(MK_BLOCK),bi=blocks.indexOf(host);
+    if(bi>=0){
+      var ns=mkOwnNodes(host),t=0,s=-1,en=-1;
+      ns.forEach(function(n){
+        if(hit.contains(n)){if(s<0)s=t;en=t+n.nodeValue.length;}
+        t+=n.nodeValue.length;
+      });
+      if(s>=0){
+        var kind=(hit.className.match(/mk-(\w+)/)||[])[1];
+        marks=marks.filter(function(m){
+          return !(m.b===bi&&m.k===kind&&m.s<en&&s<m.e);});
+        return render();
+      }
+    }
+  }
   var b=e.target.closest('button');if(!b)return;
+  if(b.dataset.mk) return mkAdd(b.dataset.mk);
 
   /* screen A */
   if(b.dataset.course!==undefined&&b.dataset.course){location.hash='c='+b.dataset.course;return;}
@@ -2284,10 +2959,11 @@ document.addEventListener('click',function(e){
     if(a[i]===qi[1])delete a[i]; else a[i]=qi[1];
     return render();}
   if(b.id==='gClear'){grade.ans={};return render();}
+  if(b.id==='autoRemedy'){applyRemedyWorksheet();return;}
   var glv=b.getAttribute('data-glv');
   if(glv){var L=grade.levels||(grade.levels=[]),k=L.indexOf(glv);
     if(k>=0){L.splice(k,1);delete grade.ans[glv];} else L.push(glv);
-    L.sort(function(x,y){return LADDER.indexOf(x)-LADDER.indexOf(y);});
+    normalizeGradeLevels();fillGradePick();
     return render();}
   if(b.dataset.rlang){RLANG=b.dataset.rlang;set('rlang',RLANG);return render();}
   if(b.id==='printReport'){setTimeout(function(){window.print();},60);return;}
@@ -2364,7 +3040,7 @@ function fillGradePick(){
   var box=$('gLevelPick');
   box.hidden=grade.src==='unit';
   box.innerHTML=grade.src==='unit'?'':LEVELS.map(function(l){
-    var on=(grade.levels||[]).indexOf(l.id)>=0;
+    var on=normalizeGradeLevels().indexOf(l.id)>=0;
     return '<button class="mini'+(on?' on':'')+'" data-glv="'+esc(l.id)+'">'+
       esc(l.id)+' <small>'+l.questions.length+'</small></button>';}).join('');
 }

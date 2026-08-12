@@ -66,8 +66,7 @@ window.GFIELD_FC_DATA = {
       "실전모의고사1회",
       "실전모의고사2회",
       "파이널모의고사1회",
-      "파이널모의고사2회",
-      "파이널모의고사4회"
+      "파이널모의고사2회"
     ],
     "DEMO": [
       "개념완성",
@@ -184,16 +183,6 @@ window.GFIELD_FC_DATA = {
       "textbooks": []
     },
     "파이널모의고사3회": {
-      "notice": "",
-      "homework": "",
-      "textbooks": []
-    },
-    "파이널모의고사4회": {
-      "notice": "",
-      "homework": "",
-      "textbooks": []
-    },
-    "최종모의고사": {
       "notice": "",
       "homework": "",
       "textbooks": []

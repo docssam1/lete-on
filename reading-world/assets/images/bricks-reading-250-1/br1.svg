@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="800" height="520" role="img" aria-label="Awesome After-School Activities">
+<rect width="800" height="520" rx="38" fill="#faf4ec"/>
+<rect x="18" y="18" width="764" height="484" rx="26" fill="none" stroke="#c1502e" stroke-width="3" opacity="0.55"/>
+<g stroke-linecap="round" stroke-linejoin="round" fill="none">
+<circle cx="400" cy="250" r="86" fill="#e07a4f" stroke="#4a2415" stroke-width="8"/>
+      <path d="M400 164v172M314 250h172" stroke="#4a2415" stroke-width="7"/>
+      <rect x="330" y="330" width="140" height="86" rx="10" fill="#faf4ec" stroke="#4a2415" stroke-width="8"/>
+      <path d="M400 330v86" stroke="#4a2415" stroke-width="6"/>
+</g>
+<text x="60" y="92" font-family="Georgia,serif" font-size="30" fill="#8c3a1f" opacity="0.85">Unit 1</text>
+<text x="60" y="470" font-family="Georgia,serif" font-size="27" fill="#4a2415">Awesome After-School Activities</text>
+<text x="740" y="92" text-anchor="end" font-family="Georgia,serif" font-size="19" fill="#c1502e" opacity="0.8">Nonfiction</text>
+</svg>
