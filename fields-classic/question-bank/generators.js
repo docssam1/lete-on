@@ -135,6 +135,60 @@ function frontBackTotal({ difficulty = 2 }) {
   };
 }
 
+function numberHasFinalConsonant(value) {
+  // 한 자리 읽기의 받침 유무: 일·삼·육·칠·팔·영은 받침이 있고 이·사·오·구는 없다.
+  return [true, true, false, true, false, false, true, true, true, false][Math.abs(value) % 10];
+}
+
+function objectParticle(value) {
+  return numberHasFinalConsonant(value) ? "을" : "를";
+}
+
+function subjectParticle(value) {
+  return numberHasFinalConsonant(value) ? "이" : "가";
+}
+
+function wrongOperationCorrection({ difficulty = 2 }) {
+  if (difficulty === 1) {
+    const step = randomInt(3, 9);
+    const original = randomInt(step + 2, 20);
+    const wrong = original - step;
+    const correct = original + step;
+    return {
+      prompt: `어떤 수에 ${step}${objectParticle(step)} 더해야 할 것을 잘못하여 빼었더니 ${wrong}${subjectParticle(wrong)} 되었습니다. 바르게 계산한 값은 얼마입니까?`,
+      answer: `${correct}`,
+      solution: `잘못 계산한 식은 (어떤 수) - ${step} = ${wrong}이므로 어떤 수는 ${wrong} + ${step} = ${original}입니다. 바르게 계산하면 ${original} + ${step} = ${correct}입니다.`,
+      meta: { mode: "add-instead-subtract", step, original, wrong, correct }
+    };
+  }
+
+  if (difficulty === 3) {
+    let first = randomInt(6, 19);
+    let second = randomInt(6, 19);
+    while (first === second) second = randomInt(6, 19);
+    const original = randomInt(Math.max(first, second) + 10, 60);
+    const wrong = original - first + second;
+    const correct = original + first - second;
+    return {
+      prompt: `어떤 수에 ${first}${objectParticle(first)} 더한 뒤 ${second}${objectParticle(second)} 빼야 할 것을 잘못하여 ${first}${objectParticle(first)} 빼고 ${second}${objectParticle(second)} 더했더니 ${wrong}${subjectParticle(wrong)} 되었습니다. 바르게 계산한 값은 얼마입니까?`,
+      answer: `${correct}`,
+      solution: `잘못 계산한 식은 (어떤 수) - ${first} + ${second} = ${wrong}이므로 어떤 수는 ${wrong} + ${first} - ${second} = ${original}입니다. 바르게 계산하면 ${original} + ${first} - ${second} = ${correct}입니다.`,
+      meta: { mode: "swapped-two-steps", first, second, original, wrong, correct }
+    };
+  }
+
+  const step = randomInt(8, 19);
+  const original = randomInt(step + 5, 55);
+  const wrong = original - step;
+  const correct = original + step;
+  return {
+    prompt: `어떤 수에 ${step}${objectParticle(step)} 더해야 할 것을 잘못하여 빼었더니 ${wrong}${subjectParticle(wrong)} 되었습니다. 바르게 계산한 값은 얼마입니까?`,
+    answer: `${correct}`,
+    solution: `잘못 계산한 식은 (어떤 수) - ${step} = ${wrong}이므로 어떤 수는 ${wrong} + ${step} = ${original}입니다. 바르게 계산하면 ${original} + ${step} = ${correct}입니다.`,
+    meta: { mode: "add-instead-subtract", step, original, wrong, correct }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -581,6 +635,7 @@ export const GENERATORS = {
   hiddenCardCondition,
   closestTwoDigitCardSum,
   frontBackTotal,
+  wrongOperationCorrection,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
