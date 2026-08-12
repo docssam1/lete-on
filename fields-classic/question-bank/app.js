@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812n";
-import { GENERATORS } from "./generators.js?v=20260812n";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812p";
+import { GENERATORS } from "./generators.js?v=20260812p";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -254,6 +254,21 @@ function shapeSymbol(shape) {
   return shape === "동그라미" ? "●" : shape === "세모" ? "▲" : "■";
 }
 
+function tornCalendarMarkup(visual) {
+  const head = ["일", "월", "화", "수", "목", "금", "토"]
+    .map((name) => `<b>${name}</b>`).join("");
+  const cells = visual.cells
+    .map((day) => (day === null ? `<span class="cal-empty"></span>` : `<span>${day}</span>`)).join("");
+  return `<div class="torn-calendar"><strong>${visual.month}월</strong><div class="cal-grid">${head}${cells}</div><div class="cal-torn">찢어진 부분</div></div>`;
+}
+
+function magicSquareMarkup(visual) {
+  const cards = visual.cards.map((value) => `<span>${value}</span>`).join("");
+  const grid = visual.shown.flat()
+    .map((value) => (value === null ? `<span class="ms-blank"></span>` : `<span>${value}</span>`)).join("");
+  return `<div class="magic-square-work"><div class="number-balls">${cards}</div><div class="magic-square-grid">${grid}</div></div>`;
+}
+
 function numberCardMarkup(visual) {
   return `<div class="number-balls">${visual.values.map((value) => `<span>${value}</span>`).join("")}</div><div class="equation-row equation-row-three"><span class="equation-blank"></span><b>+</b><span class="equation-blank"></span><b>-</b><span class="equation-blank"></span><b>=</b><strong>${visual.target}</strong></div>`;
 }
@@ -375,6 +390,8 @@ function nonadjacentPyramidMarkup(visual) {
 
 function visualMarkup(visual) {
   if (!visual) return "";
+  if (visual.kind === "torn-calendar") return `<div class="visual torn-calendar-visual">${tornCalendarMarkup(visual)}</div>`;
+  if (visual.kind === "magic-square") return `<div class="visual magic-square-visual">${magicSquareMarkup(visual)}</div>`;
   if (visual.kind === "hidden-card-conditions") return `<div class="visual hidden-card-visual">${hiddenCardConditionsMarkup(visual)}</div>`;
   if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;

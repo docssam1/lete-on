@@ -313,6 +313,58 @@ function totalDifference({ difficulty = 2 }) {
   };
 }
 
+const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+
+function calendarDateWeekday({ difficulty = 2 }) {
+  const month = randomInt(1, 12);
+  const days = MONTH_DAYS[month - 1];
+  const firstWeekday = randomInt(0, 6);           // 그 달 1일의 요일
+
+  // 찢어진 달력: 남은 부분은 첫 몇 줄뿐이고, 묻는 날짜는 반드시 찢겨 나간 아래쪽에 있어야 한다.
+  // 남은 줄에 그 날짜가 그대로 보이면 세어 볼 것도 없이 답이 읽힌다.
+  const keepRows = difficulty === 3 ? 1 : 2;
+  const lastShown = keepRows * 7 - firstWeekday;  // 남은 줄의 마지막 날짜
+  const reach = difficulty === 1 ? 7 : difficulty === 2 ? 21 : 28;
+  const target = randomInt(lastShown + 1, Math.min(lastShown + reach, days));
+  const answerIndex = (firstWeekday + target - 1) % 7;
+  const cells = [];
+  for (let i = 0; i < firstWeekday; i += 1) cells.push(null);
+  for (let day = 1; day <= lastShown; day += 1) cells.push(day);
+
+  const anchor = lastShown;
+  const anchorWeekday = WEEKDAYS[(firstWeekday + anchor - 1) % 7];
+  return {
+    prompt: `달력의 아래쪽이 찢어졌습니다. 남은 부분을 보고 이달 ${target}일은 무슨 요일인지 구하세요.`,
+    visual: { kind: "torn-calendar", month, firstWeekday, cells, target },
+    answer: `${WEEKDAYS[answerIndex]}요일`,
+    solution: `남은 달력에서 ${anchor}일은 ${anchorWeekday}요일입니다. 같은 요일은 7일마다 돌아오므로 ${anchor}일에서 ${target - anchor}일을 더 세면 ${target}일은 ${WEEKDAYS[answerIndex]}요일입니다.`,
+    meta: { month, firstWeekday, target, answerIndex, lastShown }
+  };
+}
+
+function magicSquare({ difficulty = 2 }) {
+  // 3x3 마방진은 등차수열 아홉 개면 항상 만들어진다. 가운데가 다섯째 수이고 한 줄의 합은 그 세 배다.
+  const start = difficulty === 1 ? randomInt(1, 6) : difficulty === 2 ? randomInt(2, 12) : randomInt(5, 25);
+  const step = difficulty === 1 ? randomInt(1, 2) : difficulty === 2 ? randomInt(2, 4) : randomInt(3, 7);
+  const v = (k) => start + step * k;             // v(0) … v(8)
+  // 로슈 방식 배치. 인덱스는 등차수열에서의 순번이다.
+  const layout = [[3, 8, 1], [2, 4, 6], [7, 0, 5]];
+  const grid = layout.map((row) => row.map((k) => v(k)));
+  const lineSum = v(4) * 3;
+
+  const givenCount = difficulty === 1 ? 4 : difficulty === 2 ? 3 : 2;
+  const positions = shuffle(Array.from({ length: 9 }, (_, i) => i)).slice(0, givenCount);
+  const shown = grid.map((row, r) => row.map((value, c) => (positions.includes(r * 3 + c) ? value : null)));
+
+  return {
+    prompt: `아래 아홉 개의 수를 한 번씩만 써서 가로, 세로, 대각선에 놓인 세 수의 합이 모두 같도록 빈칸을 채우세요.`,
+    visual: { kind: "magic-square", cards: Array.from({ length: 9 }, (_, k) => v(k)), shown },
+    answer: grid.map((row) => row.join(" ")).join(" / "),
+    solution: `아홉 수는 ${step}씩 커지는 수이므로 가운데에는 다섯째 수인 ${v(4)}이 들어가고 한 줄의 합은 ${v(4)} × 3 = ${lineSum}입니다. 합이 ${lineSum}이 되도록 남은 수를 짝지어 넣으면 위부터 ${grid.map((row) => row.join(", ")).join(" / ")}입니다.`,
+    meta: { start, step, grid, lineSum, givenCount }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -765,6 +817,8 @@ export const GENERATORS = {
   delayedDatePromise,
   twoTypeUnitTotal,
   totalDifference,
+  calendarDateWeekday,
+  magicSquare,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
