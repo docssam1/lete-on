@@ -9,6 +9,7 @@ window.TownGame = (function () {
   // world = native map image size, so all coords below are image pixels
   const W = 1207, H = 837;
   const MAP_URL = 'assets/images/lego-town-map.png';
+  const PLAYER_BOUNDS = { x: 24, y: 58, w: W - 48, h: H - 60 };
 
   // building hotspots keyed to features in the LEGO map (image pixel centers)
   const BUILDINGS = [
@@ -168,7 +169,7 @@ window.TownGame = (function () {
       this.physics.add.existing(p);
       p.body.setSize(30, 26).setOffset(-15, 2);
       p.body.setCollideWorldBounds(true);
-      this.physics.world.setBounds(28, 70, W - 56, H - 150);
+      this.physics.world.setBounds(PLAYER_BOUNDS.x, PLAYER_BOUNDS.y, PLAYER_BOUNDS.w, PLAYER_BOUNDS.h);
       this.player = p;
       window.__townPlayer = p; // for tests
 
@@ -249,6 +250,7 @@ window.TownGame = (function () {
   function setMove(x, y) { if (S && S.touch) { S.touch.x = x; S.touch.y = y; } }
   function setZoom(z) { zoom = Math.max(1, Math.min(2.6, z)); if (S && S.cameras) S.cameras.main.setZoom(zoom); return zoom; }
   function getZoom() { return zoom; }
+  function resize() { if (game && game.scale) { try { game.scale.refresh(); } catch (e) {} } if (S && S.cameras) { S.cameras.main.setBounds(0, 0, W, H); S.cameras.main.setZoom(zoom); } }
   function setWeather(type) { applyWeather(type || 'clear'); }
   function setDecor(slotId, emoji, uri) {
     if (!S || !S.slotObjs || !S.slotObjs[slotId]) return;
@@ -267,5 +269,5 @@ window.TownGame = (function () {
     } else if (emoji) { o.deco.setText(emoji).setVisible(true); }
   }
   function destroy() { if (game) { try { game.destroy(true); } catch (e) {} game = null; S = null; } }
-  return { mount, setMove, setDecor, setWeather, setZoom, getZoom, destroy };
+  return { mount, setMove, setDecor, setWeather, setZoom, getZoom, resize, destroy };
 })();

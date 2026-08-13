@@ -454,13 +454,10 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 .av-prev{width:auto;height:auto;background:transparent}
 
 /* v37: Phaser town (Gfield Reading Town game view) */
-.game-town{max-width:none}
-/* The map fills the page width. It used to be capped to whatever fitted the
-   viewport height, which left huge side margins on wide screens. The cap is now a
-   generous max-width only, so the map goes edge to edge and the page scrolls a
-   little instead of shrinking the map. The ratio must match the Phaser world
-   (1207x837 in town-game.js) — it was 960/600, stretching the map 11% wide. */
-.town-stage-wrap{position:relative;margin:12px auto 0;border-radius:18px;overflow:hidden;background:#bcd9a8;box-shadow:0 8px 26px rgba(30,50,90,.14);width:100%;max-width:1500px}
+.game-town{max-width:none;min-height:100dvh;padding-bottom:18px}
+/* The map keeps the Phaser world's 1207x837 ratio. JavaScript narrows this
+   wrapper when a short viewport would otherwise hide the bottom of the town. */
+.town-stage-wrap{position:relative;margin:12px auto 0;border-radius:18px;overflow:hidden;background:#bcd9a8;box-shadow:0 8px 26px rgba(30,50,90,.14);width:min(100%,1500px);max-width:100%}
 #town-stage{width:100%;aspect-ratio:1207/837;display:block;touch-action:none}
 #town-stage canvas{display:block;width:100%!important;height:100%!important;border-radius:18px}
 /* Map zoom (+/-) — top-right corner, clear of every building hotspot. */
