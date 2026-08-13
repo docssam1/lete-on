@@ -156,6 +156,39 @@
     return wrapSvg(svg, isoBBox(width, depth, wallH, u));
   }
 
+  // Bird's-eye "diamond" view for the IN pyramid archetype — the textbook
+  // draws its centred step pyramids looking almost straight down, so the
+  // footprint reads as a 45°-rotated square (equal diagonals: the x and z
+  // screen offsets share one coefficient) and column height only nudges
+  // faces upward a little. Same face set and painter order as renderIso
+  // (viewer still sits on the +z/+x side, just much higher).
+  function renderIsoTop(map, width, depth, options) {
+    options = options || {};
+    const u = options.u || 20;
+    const a = u * 0.78; // horizontal spread for both x and z (equal → diamond)
+    const b = u * 0.55; // downward spread per x/z step
+    const e = u * 0.5; // vertical rise per cube — small, we look from high up
+    const proj = (x, y, z) => ({ px: (x - z) * a, py: (x + z) * b - y * e });
+    const poly = (pts, fill, stroke) => polygon(pts, fill, stroke);
+    const qY = (x, yP, z) => [proj(x, yP, z), proj(x + 1, yP, z), proj(x + 1, yP, z + 1), proj(x, yP, z + 1)];
+    const qZ = (x, y, zP) => [proj(x, y, zP), proj(x + 1, y, zP), proj(x + 1, y + 1, zP), proj(x, y + 1, zP)];
+    const qX = (xP, y, z) => [proj(xP, y, z), proj(xP, y, z + 1), proj(xP, y + 1, z + 1), proj(xP, y + 1, z)];
+    let svg = "";
+    for (let z = 0; z < depth; z += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const h = map[z][x] || 0;
+        for (let y = 0; y < h; y += 1) {
+          const pal = PALETTES.grey;
+          svg += poly(qY(x, y + 1, z), pal.top, pal.stroke) + poly(qZ(x, y, z + 1), pal.left, pal.stroke) + poly(qX(x + 1, y, z), pal.right, pal.stroke);
+        }
+      }
+    }
+    const height = Math.max(1, GEN.maxHeightOf(map));
+    const pad = u * 0.6;
+    const bbox = { xMin: -depth * a - pad, yMin: -height * e - pad, w: (width + depth) * a + pad * 2, h: (width + depth) * b + height * e + pad * 2 };
+    return wrapSvg(svg, bbox);
+  }
+
   function boxWireframe(width, depth, boxH, u) {
     const c = {};
     [0, 1].forEach((xi) => [0, 1].forEach((yi) => [0, 1].forEach((zi) => {
@@ -303,6 +336,7 @@
 
   global.GW_RENDER = {
     renderIso,
+    renderIsoTop,
     renderIsoWalled,
     renderIsoBox,
     renderIsoHoles,

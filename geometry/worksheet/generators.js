@@ -675,7 +675,23 @@
     let map = null;
     let hidden = 0;
     let fallback = null; // best valid (hidden >= 1, corner-touching) candidate seen so far
-    for (let tries = 0; tries < 400; tries += 1) {
+    // Workbook archetype: a staircase leaning into the corner — tallest step
+    // against the back wall (z=0), descending toward the viewer, sometimes
+    // narrowing in x like the textbook's stepped pyramid. Always corner
+    // -touching and always hides >= 1 cube (the back-left bottom cube).
+    if (rng.bool(0.5)) {
+      const candidate = makeEmptyMap(width, depth);
+      for (let z = 0; z < depth; z += 1) {
+        const h = Math.max(1, maxH - z);
+        const w = Math.max(2, width - (z === 0 ? 0 : rng.int(0, 1)));
+        for (let x = 0; x < w; x += 1) candidate[z][x] = h;
+      }
+      const h = countHiddenWalled(candidate);
+      // Cap the answer size: a full 4x4 staircase hides 15+ cubes, which is
+      // demoralising to count — beyond 10 fall through to a random shape.
+      if (h >= 1 && h <= 10 && maxHeightOf(candidate) >= 2) { map = candidate; hidden = h; }
+    }
+    for (let tries = 0; !map && tries < 400; tries += 1) {
       const candidate = randomShape(rng, width, depth, maxH);
       if (maxHeightOf(candidate) < 2) continue;
       if (!touchesBackRow(candidate, width, depth) || !touchesLeftColumn(candidate, depth)) continue;
@@ -696,26 +712,59 @@
         hidden = countHiddenWalled(map);
       }
     }
+    // total/visible ride along so the printed card can scaffold BOTH textbook
+    // solution methods (write per-column hidden counts on the picture, or
+    // 전체 − 보이는 = 보이지 않는) and the answer sheet can show the working.
+    const total = mapTotal(map);
     return {
       type: "IH",
       prompt: "그림과 같이 뒤와 왼쪽에 벽이 있는 곳에 쌓기나무를 빈틈없이 쌓았습니다. 보이지 않는 쌓기나무는 몇 개입니까?",
+      methodHint: "풀이 방법 ① 보이는 쌓기나무 위에 그 뒤에 숨은 개수를 써서 모두 더하기 ② 전체 개수에서 보이는 개수 빼기",
       figures: { kind: "iso-walled", map, width, depth },
-      answer: { hidden },
+      answer: { hidden, total, visible: total - hidden },
       answerText: hidden + "개"
     };
+  }
+
+  // Workbook archetype for IN: a centred step pyramid (ziggurat) — ring
+  // distance from the rim sets the height, so the middle is tallest. This is
+  // the shape the textbook always pairs with its bird's-eye "diamond" view.
+  function centerPyramid(rng, width, depth, maxH) {
+    const map = makeEmptyMap(width, depth);
+    for (let z = 0; z < depth; z += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const ring = Math.min(x, z, width - 1 - x, depth - 1 - z);
+        map[z][x] = Math.max(1, Math.min(maxH, 1 + ring + (maxH > 3 && ring > 0 ? rng.int(0, 1) : 0)));
+      }
+    }
+    return map;
   }
 
   // 6b. IN — 보이지 않는 개수 (벽 없음): free-standing shape, 5-direction rule
   // (docs/03_COUNT_HIDDEN.md section 4). Needs an interior grid cell, so the
   // footprint must be at least 3x3 -- gridForDifficulty already returns
   // 3x3 (easy), 3x3 or 4x3 (mid) or 4x4 (hard), i.e. always >= 3x3.
+  //
+  // Two workbook presentations, per the source textbook: random shapes use
+  // the ordinary iso view; the pyramid archetype uses the bird's-eye
+  // "diamond" view (figures.kind "iso-top") with the textbook's own
+  // "바닥면은 보이지 않습니다" clause. The answer rule is identical either
+  // way — visibility is a direction union, never camera-dependent
+  // (docs/03_COUNT_HIDDEN.md §2).
   function genIN(rng, difficulty) {
     const [width, depth] = gridForDifficulty(rng, difficulty);
     const maxH = maxHeightForDifficulty(rng, difficulty);
+    const usePyramid = rng.bool(0.45);
     let map = null;
     let hidden = 0;
     let fallback = null;
-    for (let tries = 0; tries < 400; tries += 1) {
+    let gotPyramid = false;
+    if (usePyramid) {
+      const candidate = centerPyramid(rng, width, depth, maxH);
+      const h = countHiddenNoWall(candidate);
+      if (h >= 1 && maxHeightOf(candidate) >= 2) { map = candidate; hidden = h; gotPyramid = true; }
+    }
+    for (let tries = 0; !map && tries < 400; tries += 1) {
       const candidate = randomShape(rng, width, depth, maxH);
       if (maxHeightOf(candidate) < 2) continue;
       const h = countHiddenNoWall(candidate);
@@ -734,11 +783,15 @@
         hidden = countHiddenNoWall(map);
       }
     }
+    // Same two-method scaffold as IH — the subtraction identity (전체 −
+    // 보이는 = 보이지 않는) holds for the 5-direction rule too, by definition.
+    const total = mapTotal(map);
     return {
       type: "IN",
-      prompt: "벽이 없는 곳에 쌓기나무를 빈틈없이 쌓았습니다. 어느 방향에서 보아도 보이지 않는 쌓기나무는 몇 개입니까?",
-      figures: { kind: "iso", map, width, depth },
-      answer: { hidden },
+      prompt: "벽이 없는 곳에 쌓기나무를 빈틈없이 쌓았습니다. 어느 방향에서 보아도 보이지 않는 쌓기나무는 몇 개입니까? (단, 바닥면은 보이지 않습니다.)",
+      methodHint: "풀이 방법 ① 겉에서 보이는 쌓기나무를 먼저 세기 ② 전체 개수에서 보이는 개수 빼기",
+      figures: { kind: gotPyramid ? "iso-top" : "iso", map, width, depth },
+      answer: { hidden, total, visible: total - hidden },
       answerText: hidden + "개"
     };
   }

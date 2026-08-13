@@ -107,6 +107,10 @@
       const colorFn = f.paint ? () => "grey" : undefined;
       return figureBlock("쌓기나무 모양", REN.renderIso(f.map, f.width, f.depth, { colorFn }), "ws-figure-lg");
     }
+    if (f.kind === "iso-top") {
+      // IN pyramid archetype: the textbook's bird's-eye diamond view.
+      return figureBlock("쌓기나무 모양", REN.renderIsoTop(f.map, f.width, f.depth), "ws-figure-lg");
+    }
     if (f.kind === "iso-walled") {
       // IH only: draws the two walls behind/beneath the cubes (see
       // render.js renderIsoWalled) so the picture matches "뒤와 왼쪽에 벽이
@@ -133,6 +137,13 @@
 
   function answerBlank(p) {
     if (p.type === "TC" || p.type === "VP") return ""; // the dotted grids above ARE the answer area
+    if (p.type === "IH" || p.type === "IN") {
+      // Subtraction-method scaffold (docs/03_COUNT_HIDDEN.md §3): the child
+      // fills 전체/보이는/보이지 않는 — or writes per-column hidden counts
+      // directly on the printed picture (method ①) and only uses the last
+      // blank. Either textbook method lands in the same final blank.
+      return '<div class="ws-answer-line">전체 ______ 개 − 보이는 ______ 개 = 보이지 않는 ______ 개</div>';
+    }
     if (p.type === "VM") return '<div class="ws-answer-line">답: 최대 ______ 개, 최소 ______ 개</div>';
     if (p.type === "PN") return '<div class="ws-answer-line">답: ① ______ 개 &nbsp; ② ______ 개 &nbsp; ③ ______ 개 &nbsp; ④ ______ 개</div>';
     if (p.type === "SQ" && p.answer.mode === "which") return '<div class="ws-answer-line">답: ______ 번째</div>';
@@ -144,6 +155,7 @@
       '<article class="ws-card" data-type="' + p.type + '">' +
       '<div class="ws-card-head"><span class="ws-num">' + (idx + 1) + "</span></div>" +
       '<p class="ws-prompt">' + escapeHtml(p.prompt) + "</p>" +
+      (p.methodHint ? '<p class="ws-method">' + escapeHtml(p.methodHint) + "</p>" : "") +
       '<div class="ws-figures">' + renderFigures(p) + "</div>" +
       answerBlank(p) +
       "</article>"
@@ -160,8 +172,8 @@
       case "VM": return "최대 " + p.answer.max + "개, 최소 " + p.answer.min + "개";
       case "VP": return p.answer.hiddenLabel + " 모양 (그림 참고)";
       case "IC": return p.answer.total + "개";
-      case "IH": return p.answer.hidden + "개";
-      case "IN": return p.answer.hidden + "개";
+      case "IH": return p.answer.hidden + "개 (전체 " + p.answer.total + "개 − 보이는 " + p.answer.visible + "개)";
+      case "IN": return p.answer.hidden + "개 (전체 " + p.answer.total + "개 − 보이는 " + p.answer.visible + "개)";
       case "FB": return p.answer.need + "개";
       case "CU": return p.answer.need + "개";
       case "PN": return "① " + p.answer.three + " ② " + p.answer.two + " ③ " + p.answer.one + " ④ " + p.answer.zero;

@@ -291,3 +291,7 @@ select, .code-input, input[type="text"] {
   .control-panel { position: static; width: auto; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
   .preview-panel { height: auto; }
 }
+
+/* Two-method hint line under IH/IN prompts — quiet grey so it reads as a
+   study aid, not part of the question. */
+.ws-method { margin: 2px 0 0; font-size: 10.5px; color: #7a847e; }
