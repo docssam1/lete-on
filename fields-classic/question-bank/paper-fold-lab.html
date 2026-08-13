@@ -22,6 +22,7 @@ small.src{display:block;color:#888;font-size:12px;margin-top:-6px;margin-bottom:
   <option value="numcut">수가 쓰인 색종이 — 잘려나간 수들의 합</option>
   <option value="numbook">교재 41쪽 확인03 재현 (검증용)</option>
   <option value="numdiag">수가 쓰인 색종이 — 대각선 한 번 접기 (실전 유형)</option>
+  <option value="pieces">접고 선 따라 자르기 — 조각 개수</option>
   <option value="stackfind">겹친 색종이 — 가장 밑(또는 위) 찾기</option>
   <option value="stackorder">겹친 색종이 — 위에서부터 순서대로</option>
 </select>
@@ -312,6 +313,120 @@ function renderDiagNumber(ctx,d){
   drawNumberGrid(ctx, d.grid, x, baseY, size);
 }
 
+/* ===== 유형 7: 접고 선 따라 자르기 — 조각 개수 (교재 39·43쪽·실전 유형) =====
+   자르는 선은 접은 선이 아니라 접힌 조각 위에 그은 선이다(대각선 X, 모서리 클립).
+   조각 수는 공식이 없다 — 잘린 선을 거울 반사로 펼친 뒤, 종이 평면을 가는 격자로
+   깔고 차단 셀을 표시해 실제로 몇 덩어리로 나뉘는지 센다. 두 해상도가 일치할 때만 낸다. */
+function unfoldSegments(segs, dirs){
+  let cur=segs.map(s=>[{...s[0]},{...s[1]}]);
+  for(let i=dirs.length-1;i>=0;i--){
+    const mirror=FOLDS[dirs[i]].mirror;
+    cur=cur.concat(cur.map(sg=>[mirror(sg[0]),mirror(sg[1])]));
+  }
+  return cur;
+}
+function countPieces(segs, N){
+  const blocked=new Uint8Array(N*N);
+  for(const [a,b] of segs){
+    const steps=Math.max(2, Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)*N*8));
+    for(let k=0;k<=steps;k++){
+      const t=k/steps;
+      const ci=Math.min(N-1,Math.max(0,Math.floor((a.x+(b.x-a.x)*t)*N)));
+      const cj=Math.min(N-1,Math.max(0,Math.floor((a.y+(b.y-a.y)*t)*N)));
+      blocked[cj*N+ci]=1;
+    }
+  }
+  let count=0;
+  const seen=new Uint8Array(N*N), stack=[];
+  for(let start=0;start<N*N;start++){
+    if(blocked[start]||seen[start]) continue;
+    count++; seen[start]=1; stack.push(start);
+    while(stack.length){
+      const v=stack.pop(), vi=v%N;
+      if(vi>0   && !blocked[v-1] && !seen[v-1]){seen[v-1]=1; stack.push(v-1);}
+      if(vi<N-1 && !blocked[v+1] && !seen[v+1]){seen[v+1]=1; stack.push(v+1);}
+      if(v-N>=0   && !blocked[v-N] && !seen[v-N]){seen[v-N]=1; stack.push(v-N);}
+      if(v+N<N*N  && !blocked[v+N] && !seen[v+N]){seen[v+N]=1; stack.push(v+N);}
+    }
+  }
+  return count;
+}
+function genPieces(){
+  const dirs = pick([['h'],['v'],['h','v'],['v','h']]);
+  let poly=[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}];
+  const stages=[];
+  for(const d of dirs){ stages.push({poly, fold:d}); poly=clipHalfPlane(poly, FOLDS[d].keep); }
+  stages.push({poly, fold:null});
+  // 접힌 조각은 항상 [0,w]x[0,h] 직사각형 (가로·세로 접기의 keep이 왼쪽·위쪽이므로)
+  const w=Math.max(...poly.map(p=>p.x)), h=Math.max(...poly.map(p=>p.y));
+  const diagA=[{x:0,y:0},{x:w,y:h}], diagB=[{x:0,y:h},{x:w,y:0}];
+  const clips=[
+    [{x:w/2,y:0},{x:0,y:h/2}], [{x:w/2,y:0},{x:w,y:h/2}],
+    [{x:0,y:h/2},{x:w/2,y:h}], [{x:w,y:h/2},{x:w/2,y:h}]
+  ];
+  const cutChoice=pick(['X','A','B','clip1','clip2']);
+  const cuts = cutChoice==='X' ? [diagA,diagB]
+             : cutChoice==='A' ? [diagA]
+             : cutChoice==='B' ? [diagB]
+             : cutChoice==='clip1' ? [pick(clips)]
+             : (()=>{ const a=R(0,3); let b=R(0,3); while(b===a) b=R(0,3); return [clips[a],clips[b]]; })();
+
+  const unfolded=unfoldSegments(cuts, dirs);
+  const n1=countPieces(unfolded, 401), n2=countPieces(unfolded, 643);
+  if(n1!==n2 || n1<2 || n1>24) return genPieces();
+
+  const times=['','한 번','두 번'][dirs.length];
+  return {
+    kind:'pieces', dirs, stages, cuts, unfolded, answer:n1,
+    text:[`정사각형 모양의 색종이를 다음과 같이 ${times} 접어서 선을 따라 잘랐을 때,`,
+          '모두 몇 조각이 되는지 구하시오.'],
+    info:`접기 ${dirs.length}회 (${dirs.join(' → ')}) · 자르는 선 ${cuts.length}개(${cutChoice}) · 정답 ${n1}조각`,
+    src:'출처 유형: 더클래식 1과정 1권 39·43·48쪽 / 필즈 실전 색종이 자르기'
+  };
+}
+
+function renderPieces(ctx,d){
+  header(ctx, d.text);
+  const n=d.stages.length, size=170, gap=52, baseY=150;
+  let x=50;
+  d.stages.forEach((stage,i)=>{
+    drawPoly(ctx, stage.poly, x, baseY, size);
+    if(stage.fold){
+      drawCrease(ctx, foldSegment(stage.poly, stage.fold), x, baseY, size);
+      drawFoldArrow(ctx, stage.poly, stage.fold, x, baseY, size);
+    } else {
+      // 자르는 선 + 가위
+      ctx.strokeStyle=CUT; ctx.lineWidth=2.6;
+      for(const [a,b] of d.cuts){
+        ctx.beginPath();
+        ctx.moveTo(x+a.x*size, baseY+a.y*size);
+        ctx.lineTo(x+b.x*size, baseY+b.y*size);
+        ctx.stroke();
+        const ang=Math.atan2(b.y-a.y, b.x-a.x);
+        ctx.save();
+        ctx.translate(x+a.x*size-10*Math.cos(ang), baseY+a.y*size-10*Math.sin(ang));
+        ctx.rotate(ang);
+        ctx.font='18px sans-serif'; ctx.fillStyle='#444';
+        ctx.fillText('✂', -6, 6);
+        ctx.restore();
+      }
+    }
+    x+=size+14;
+    if(i<n-1){ drawStepArrow(ctx, x, baseY+size/2); x+=gap; }
+  });
+  // 펼친 종이(작업용) — 접은 선만 점선으로, 자른 선은 그리지 않는다
+  x+=gap-14; drawStepArrow(ctx, x-38, baseY+size/2);
+  drawPoly(ctx, [{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}], x+14, baseY, size);
+  ctx.setLineDash([6,5]); ctx.strokeStyle=CREASE; ctx.lineWidth=1.6;
+  for(const dd of d.dirs){
+    ctx.beginPath();
+    if(dd==='v'){ ctx.moveTo(x+14+size/2, baseY+3); ctx.lineTo(x+14+size/2, baseY+size-3); }
+    else        { ctx.moveTo(x+14+3, baseY+size/2); ctx.lineTo(x+14+size-3, baseY+size/2); }
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+}
+
 /* ===== 유형 5: 겹친 색종이 순서 (교재 35~36·44~46쪽) =====
    같은 크기 정사각형 8장을 3x3 자리에 겹쳐 놓는다(가장자리 중앙 한 자리는 비움 — 교재 문법).
    답이 유일하려면 "맨 위를 걷어내면 남은 것 중 온전히 보이는 종이가 늘 하나뿐"이어야 한다.
@@ -547,7 +662,7 @@ function renderNumber(ctx,d){
 function render(d){
   const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
-  if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else renderNumber(ctx,d);
+  if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else if(d.kind==='pieces') renderPieces(ctx,d); else renderNumber(ctx,d);
   document.getElementById('info').textContent=d.info+' · 정답 '+d.answer;
   document.getElementById('src').textContent=d.src;
 }
@@ -556,6 +671,7 @@ function newProblem(){
   if(mode==='hole2')  return render(genHole(false));
   if(mode==='hole3d') return render(genHole(true));
   if(mode==='numdiag')    return render(genDiagNumber(Math.random()<0.7));
+  if(mode==='pieces')     return render(genPieces());
   if(mode==='stackfind')  return render(genStack(false));
   if(mode==='stackorder') return render(genStack(true));
   if(mode==='numsum') return render(genNumber(false));
