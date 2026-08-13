@@ -64,3 +64,31 @@
 .cryptarithm-vertical .cv-row span{display:flex;align-items:center;justify-content:center;height:34px;font-size:21px;font-weight:700;color:#2b3a46}
 .cryptarithm-vertical .cv-sign{display:flex;align-items:center;justify-content:center;height:34px;font-size:18px;font-weight:900;color:#526879}
 .cryptarithm-vertical .cv-bar{width:calc(26px + var(--cv-cols)*34px);height:2px;background:#2b3a46;margin:2px 0}
+
+/* 파이널 3회 시각자료 */
+.matchstick-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.matchstick-svg{width:auto;max-width:100%;height:44px}
+.matchstick-svg line{stroke:#17334b;stroke-width:2.4;stroke-linecap:round}
+.matchstick-row strong{color:#8fa2b3}
+.matchstick-row em{font-style:normal;font-weight:800}
+.target-board-svg{width:100%;max-width:210px;height:auto}
+.target-board-svg circle{fill:none;stroke:#17334b;stroke-width:1.6}
+.target-board-svg text{font-size:11px;font-weight:800;fill:#17334b}
+.number-sequences{display:grid;gap:8px}
+.number-sequences div{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.number-sequences b{width:26px;font-weight:800}
+.number-sequences span{min-width:34px;padding:5px 8px;border:1px solid #d9e2e8;border-radius:5px;background:#fff;font-weight:800;text-align:center}
+.number-sequences span.blank{background:#f4f7f9}
+.checker-growth,.growing-dot-squares{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.checker-growth i{display:grid;grid-template-columns:repeat(var(--side),9px);gap:1px}
+.checker-growth b{width:9px;height:9px;border-radius:50%;border:1px solid #17334b}
+.checker-growth b.white{background:#fff}
+.checker-growth b.black{background:#17334b}
+.checker-growth span{display:block;margin-top:4px;font-size:10px;text-align:center}
+.checker-growth em{font-style:normal;font-weight:800}
+.stone-triangle-rows{display:grid;gap:4px;justify-items:start}
+.stone-triangle-rows div{display:flex;align-items:center;gap:3px}
+.stone-triangle-rows b{width:11px;height:11px;border-radius:50%;border:1px solid #17334b}
+.stone-triangle-rows b.white{background:#fff}
+.stone-triangle-rows b.black{background:#17334b}
+.stone-triangle-rows span{margin-left:8px;color:#718394;font-size:10px}

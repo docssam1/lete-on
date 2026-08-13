@@ -278,12 +278,14 @@ function delayedDatePromise({ difficulty = 2 }) {
 
 function twoTypeUnitTotal({ difficulty = 2 }) {
   const BIKE = { a: "두발자전거", b: "세발자전거", aUnit: 2, bUnit: 3, unit: "바퀴", counter: "대", place: "자전거 가게" };
+  const HEN = { a: "닭", b: "토끼", aUnit: 2, bUnit: 4, unit: "다리", counter: "마리", place: "농장" };
+  // 같음 난이도의 원본이 둘이다. 파이널 2회 13번은 자전거, 3회 18번은 닭과 토끼다.
   const kinds = difficulty === 2
-    ? BIKE
+    ? sample([BIKE, HEN])
     : sample(difficulty === 1
       ? [BIKE, { a: "오리", b: "돼지", aUnit: 2, bUnit: 4, unit: "다리", counter: "마리", place: "농장" }]
       : [
-        { a: "닭", b: "토끼", aUnit: 2, bUnit: 4, unit: "다리", counter: "마리", place: "농장" },
+        HEN,
         { a: "오토바이", b: "자동차", aUnit: 2, bUnit: 4, unit: "바퀴", counter: "대", place: "주차장" },
         { a: "세발자전거", b: "네발자전거", aUnit: 3, bUnit: 4, unit: "바퀴", counter: "대", place: "놀이터" }
       ]);
@@ -291,9 +293,11 @@ function twoTypeUnitTotal({ difficulty = 2 }) {
   const bCount = randomInt(1, total - 1);
   const aCount = total - bCount;
   const units = aCount * kinds.aUnit + bCount * kinds.bUnit;
+  // 원본은 한 종류만 묻기도 하고(2회 13번) 둘 다 묻기도 한다(3회 18번). 푸는 방법은 같다.
+  const askBoth = Math.random() < 0.5;
   return {
-    prompt: `${kinds.place}에 ${kinds.a}와 ${kinds.b}가 모두 ${total}${kinds.counter} 있습니다. ${kinds.unit}가 모두 ${units}개일 때, ${kinds.b}는 몇 ${kinds.counter}입니까?`,
-    answer: `${bCount}${kinds.counter}`,
+    prompt: `${kinds.place}에 ${kinds.a}와 ${kinds.b}가 모두 ${total}${kinds.counter} 있습니다. ${kinds.unit}가 모두 ${units}개일 때, ${askBoth ? `${kinds.a}와 ${kinds.b}는 각각 몇 ${kinds.counter}` : `${kinds.b}는 몇 ${kinds.counter}`}입니까?`,
+    answer: askBoth ? `${kinds.a} ${aCount}${kinds.counter}, ${kinds.b} ${bCount}${kinds.counter}` : `${bCount}${kinds.counter}`,
     solution: `모두 ${kinds.a}라면 ${kinds.unit}는 ${total} × ${kinds.aUnit} = ${aCount * kinds.aUnit + bCount * kinds.aUnit}개입니다. 실제보다 ${units - total * kinds.aUnit}개가 적고, ${kinds.b} 한 ${kinds.counter}를 바꿀 때마다 ${kinds.bUnit - kinds.aUnit}개씩 늘어나므로 ${kinds.b}는 ${bCount}${kinds.counter}입니다.`,
     meta: { total, aCount, bCount, units, aUnit: kinds.aUnit, bUnit: kinds.bUnit }
   };
@@ -1648,7 +1652,151 @@ function diagonalFoldHoleCount({ difficulty = 2 }) {
 }
 
 
+// --- 파이널 3회 (2026-08-13) ---
+
+function matchstickGrowth({ difficulty = 2 }) {
+  // 파이널 3회 10번: 네모를 옆으로 이어 붙이면 맞닿는 변을 함께 쓰므로 3개씩만 늘어난다.
+  // 네모 10개 = 4 + 3 x 9 = 31개가 원본 확정 답이다.
+  const target = difficulty === 1 ? randomInt(4, 9) : difficulty === 2 ? 10 : randomInt(11, 25);
+  return {
+    prompt: `성냥개비로 그림과 같이 네모를 옆으로 이어 붙여 만들려고 합니다. 네모를 ${target}개 만들려면 성냥개비는 모두 몇 개 필요합니까?`,
+    visual: { kind: "matchstick-row", shown: 3, target },
+    answer: `${3 * target + 1}개`,
+    solution: `첫 번째 네모는 성냥개비 4개로 만듭니다. 네모를 하나씩 더 붙일 때마다 맞닿는 변은 함께 쓰므로 3개씩만 더 필요합니다. 따라서 4 + 3 × ${target - 1} = ${3 * target + 1}개입니다.`,
+    meta: { target }
+  };
+}
+
+function neitherSetCount({ difficulty = 2 }) {
+  // 파이널 3회 20번: 전체에서 '형 또는 누나가 있는 학생'을 빼면 둘 다 없는 학생이다.
+  const PAIRS = [
+    { total: "우리 반 학생", a: "형", b: "누나", verb: "있는" },
+    { total: "동아리 학생", a: "강아지", b: "고양이", verb: "기르는" },
+    { total: "체험학습에 간 학생", a: "김밥", b: "샌드위치", verb: "싸 온" }
+  ];
+  const kinds = difficulty === 2 ? PAIRS[0] : sample(PAIRS);
+  const total = difficulty === 1 ? randomInt(20, 30) : difficulty === 2 ? 40 : randomInt(35, 60);
+  const both = difficulty === 1 ? randomInt(1, 3) : randomInt(2, 6);
+  const aOnly = randomInt(both + 2, Math.floor(total / 2));
+  const bOnly = randomInt(both + 1, Math.max(both + 2, Math.floor(total / 4)));
+  const union = aOnly + bOnly - both;
+  // 합집합이 전체를 넘으면 문제가 성립하지 않는다. 남는 학생이 최소 한 명은 있어야 한다.
+  if (union >= total) return neitherSetCount({ difficulty });
+  return {
+    prompt: `${kinds.total} ${total}명 중 ${kinds.a}을(를) ${kinds.verb} 학생은 ${aOnly}명, ${kinds.b}을(를) ${kinds.verb} 학생은 ${bOnly}명입니다. ${kinds.a}과(와) ${kinds.b}을(를) 모두 ${kinds.verb} 학생이 ${both}명일 때, ${kinds.a}도 ${kinds.b}도 ${kinds.verb.replace("있는", "없는").replace("기르는", "기르지 않는").replace("싸 온", "싸 오지 않은")} 학생은 몇 명입니까?`,
+    answer: `${total - union}명`,
+    solution: `둘 중 하나라도 해당하는 학생은 ${aOnly} + ${bOnly} - ${both} = ${union}명입니다. 전체 ${total}명에서 빼면 ${total - union}명입니다.`,
+    meta: { total, aOnly, bOnly, both, union }
+  };
+}
+
+function targetScoreCombination({ difficulty = 2 }) {
+  // 파이널 3회 9번: 두 발이 같은 점수에 맞아도 되므로 합은 중복을 허용해 센다.
+  // 연속된 점수만 쓰면 합의 가짓수가 늘 (개수 x 2 - 1)이라 문제가 한 가지로 굳는다.
+  // 같음 난이도만 원본 과녁(1~5점)을 그대로 쓰고, 나머지는 점수를 흩어 놓는다.
+  const pick = (count, max) => shuffle(Array.from({ length: max }, (_, k) => k + 1)).slice(0, count).sort((a, b) => a - b);
+  const scores = difficulty === 2 ? [1, 2, 3, 4, 5] : pick(difficulty === 1 ? 3 : randomInt(4, 5), difficulty === 1 ? 6 : 12);
+  const sums = new Set();
+  for (const a of scores) for (const b of scores) sums.add(a + b);
+  const sorted = [...sums].sort((a, b) => a - b);
+  return {
+    prompt: `그림과 같은 과녁에 화살을 두 번 쏘았습니다. 두 발 모두 과녁에 맞았을 때, 두 점수의 합으로 나올 수 있는 점수는 모두 몇 가지입니까? (같은 곳에 두 번 맞을 수도 있습니다.)`,
+    visual: { kind: "target-board", scores },
+    answer: `${sorted.length}가지`,
+    solution: `가장 작은 합은 ${sorted[0]}점, 가장 큰 합은 ${sorted[sorted.length - 1]}점입니다. 나올 수 있는 합을 모두 쓰면 ${sorted.join(", ")}점으로 ${sorted.length}가지입니다.`,
+    meta: { scores, sums: sorted }
+  };
+}
+
+function mixedSequence({ difficulty = 2 }) {
+  // 파이널 3회 17번: 한 문항 안에 서로 다른 규칙의 수열 셋이 들어간다.
+  // 원본 수치는 확인되지 않아 구조(증가폭 증가 · 앞의 두 수의 합 · 두 수열 교대)만 맞춘다.
+  const rows = [];
+
+  const startA = randomInt(1, 6);
+  const stepA = randomInt(1, 3);
+  const growA = difficulty === 1 ? 1 : randomInt(1, 2);
+  const seqA = [startA];
+  for (let i = 0; i < 5; i += 1) seqA.push(seqA[i] + stepA + growA * i);
+  rows.push({ items: seqA, gaps: [5], rule: `늘어나는 폭이 ${growA}씩 커집니다` });
+
+  const seqB = [randomInt(1, 4), randomInt(2, 6)];
+  for (let i = 0; i < 4; i += 1) seqB.push(seqB[seqB.length - 1] + seqB[seqB.length - 2]);
+  rows.push({ items: seqB, gaps: [5], rule: "앞의 두 수를 더한 값이 다음 수입니다" });
+
+  const oddStart = randomInt(2, 9);
+  const oddStep = randomInt(1, 3);
+  const evenStart = randomInt(10, 20);
+  const evenStep = randomInt(1, 3);
+  const seqC = [];
+  for (let i = 0; i < 6; i += 1) {
+    seqC.push(i % 2 === 0 ? oddStart + oddStep * (i / 2) : evenStart - evenStep * ((i - 1) / 2));
+  }
+  // 두 수열이 섞인 규칙은 빼는 쪽이 0 이하로 내려가면 어린 학생이 읽어 낼 수 없다.
+  if (seqC.some((value) => value <= 0)) return mixedSequence({ difficulty });
+  rows.push({ items: seqC, gaps: [5], rule: "홀수 번째와 짝수 번째가 각각 다른 규칙입니다" });
+
+  const answers = rows.map((row) => row.items[row.gaps[0]]);
+  return {
+    prompt: "규칙을 찾아 빈칸에 알맞은 수를 각각 구하세요.",
+    visual: { kind: "number-sequences", rows: rows.map((row) => ({ items: row.items.map((value, index) => (row.gaps.includes(index) ? null : value)) })) },
+    answer: answers.map((value, index) => `(${index + 1}) ${value}`).join(", "),
+    solution: rows.map((row, index) => `(${index + 1}) ${row.rule}. 따라서 ${answers[index]}입니다.`).join(" "),
+    meta: { answers }
+  };
+}
+
+function checkerCounts(side) {
+  // 바둑판처럼 번갈아 놓으면 네 귀퉁이와 같은 색이 (홀수 x 홀수)일 때만 하나 더 많다.
+  const first = Math.ceil((side * side) / 2);
+  return { first, second: side * side - first };
+}
+
+function borderGoStoneDifference({ difficulty = 2 }) {
+  // 파이널 3회 19번: 테두리를 한 줄씩 넓히며 흑백을 번갈아 놓는다.
+  // 확정 답(5번째 = 흰 25 · 검 24 = 7x7)에서 첫 그림이 3x3임을 역산했다.
+  const target = difficulty === 1 ? randomInt(3, 4) : difficulty === 2 ? 5 : randomInt(6, 9);
+  const side = target + 2;
+  const { first: white, second: black } = checkerCounts(side);
+  const diff = white - black;
+  return {
+    prompt: `바둑돌을 그림과 같이 테두리를 한 줄씩 넓혀 가며 흰 돌과 검은 돌을 번갈아 놓았습니다. ${target}번째 모양에서 흰 바둑돌과 검은 바둑돌 중 어느 것이 몇 개 더 많습니까?`,
+    visual: { kind: "checker-square-growth", shown: [3, 4, 5, 6], target },
+    answer: diff === 0 ? "두 색의 개수가 같습니다" : `흰 바둑돌이 ${diff}개 더 많습니다`,
+    solution: `${target}번째 모양은 한 줄에 ${side}개씩 ${side}줄입니다. 전체 ${side * side}개를 번갈아 놓으면 흰 돌 ${white}개, 검은 돌 ${black}개입니다.`,
+    meta: { side, white, black }
+  };
+}
+
+function triangleRowStoneDifference({ difficulty = 2 }) {
+  // 파이널 3회 13번: 줄마다 한 개씩 늘려 홀수 줄은 검은 돌, 짝수 줄은 흰 돌을 놓는다.
+  // 첫 줄 검은 돌 1개를 남기고 두 줄씩 묶으면 묶음마다 검은 돌이 1개씩 더 많다.
+  const gap = difficulty === 1 ? randomInt(3, 5) : difficulty === 2 ? 8 : randomInt(9, 15);
+  const rows = 2 * (gap - 1) + 1;
+  let black = 0;
+  let white = 0;
+  for (let i = 1; i <= rows; i += 1) {
+    if (i % 2 === 1) black += i;
+    else white += i;
+  }
+  // 되돌아 세어 확인한다. 공식이 맞더라도 줄 수를 잘못 뒤집으면 여기서 걸린다.
+  if (black - white !== gap) return null;
+  return {
+    prompt: `바둑돌을 그림과 같이 줄마다 한 개씩 늘려 놓았습니다. 검은 바둑돌이 흰 바둑돌보다 ${gap}개 더 많아지는 것은 몇 번째 줄까지 놓았을 때입니까?`,
+    visual: { kind: "stone-triangle-rows", shown: 5 },
+    answer: `${rows}번째 줄`,
+    solution: `첫 줄의 검은 돌 1개를 남기고 둘째 줄부터 두 줄씩 묶으면 묶음마다 검은 돌이 1개씩 더 많습니다. 차가 ${gap}개가 되려면 묶음이 ${gap - 1}개 필요하므로 1 + 2 × ${gap - 1} = ${rows}번째 줄입니다.`,
+    meta: { rows, black, white }
+  };
+}
+
 export const GENERATORS = {
+  matchstickGrowth,
+  neitherSetCount,
+  targetScoreCombination,
+  mixedSequence,
+  borderGoStoneDifference,
+  triangleRowStoneDifference,
   hiddenCardCondition,
   closestTwoDigitCardSum,
   frontBackTotal,

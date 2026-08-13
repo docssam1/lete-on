@@ -71,7 +71,7 @@ export const TYPES = [
   type("number-line-distance", "geometry", "길이와 측정", "수직선에서 두 점 사이의 거리", { legacyId: 1 }),
   type("number-line-six-points", "geometry", "길이와 측정", "여섯 점 수직선의 겹친 거리"),
   type("go-stone-difference", "pattern", "도형 규칙", "흑백 바둑돌의 개수 차이", { generator: "sourceGoStoneDifference", sourceMatched: true }),
-  type("go-stone-difference-inverse", "pattern", "도형 규칙", "흑백 바둑돌 차로 번째 찾기"),
+  type("go-stone-difference-inverse", "pattern", "도형 규칙", "흑백 바둑돌 차로 번째 찾기", { generator: "triangleRowStoneDifference", sourceMatched: true }),
   type("number-card-plus-minus", "number", "수 카드와 식", "수 카드로 덧셈·뺄셈 식 완성", { generator: "numberCardEquation", sourceMatched: true }),
   type("number-card-mixed-operations", "number", "수 카드와 식", "수 카드를 혼합 계산식에 한 번씩 넣기"),
   type("two-digit-even-count", "number", "수 카드와 식", "수 카드로 만든 두 자리 짝수의 개수"),
@@ -130,6 +130,17 @@ export const TYPES = [
   type("row-column-sum-placement", "number", "수 배열과 합", "행·열 합에 맞게 1부터 차례로 놓기", { generator: "triangleSumPlacement", sourceMatched: true }),
   type("two-by-two-sum-fill", "number", "수 배열과 합", "2x2 칸을 행·열 합과 서로 다른 조건으로 채우기", { generator: "twoByTwoSumFill", sourceMatched: true }),
   type("shape-sum-grid-4", "number", "매트릭스", "4x4 도형표의 행·열 합으로 빈 합 구하기", { generator: "shapeSumGrid", sourceMatched: true }),
+  type("row-column-count-placement", "logic", "조건 배치", "가로·세로 개수 조건에 맞게 칸 표시하기"),
+  type("truth-lie-ranking", "logic", "조건 추리", "참말·거짓말 조건으로 경기 순위 찾기"),
+  type("triangle-max-edge-sum", "number", "수 배열과 합", "삼각형 세 변의 합을 가장 크게 만들기"),
+  type("split-merge-tree", "number", "수 배열과 합", "가르기·모으기 나무의 부모·자식 관계"),
+  type("vertex-degree-sum", "geometry", "연결 관계", "점에 연결된 선의 개수 합 구하기"),
+  type("letter-block-move", "geometry", "도형 움직이기", "글자 블록의 위치·방향 이동 규칙"),
+  type("matchstick-growth", "pattern", "도형 규칙", "이어 붙인 성냥개비 도형에 필요한 개수", { generator: "matchstickGrowth", sourceMatched: true }),
+  type("neither-set-count", "logic", "집합과 포함", "둘 다 해당하지 않는 사람 수", { generator: "neitherSetCount", sourceMatched: true }),
+  type("target-score-combination", "logic", "경우의 수", "같은 점수를 허용한 과녁 점수 조합 세기", { generator: "targetScoreCombination", sourceMatched: true }),
+  type("mixed-sequence", "pattern", "수 규칙", "증가폭·앞의 두 수·두 수열이 섞인 복합 수열", { generator: "mixedSequence", sourceMatched: true }),
+  type("border-go-stone-difference", "pattern", "도형 규칙", "테두리가 커지는 바둑돌의 흑백 차이", { generator: "borderGoStoneDifference", sourceMatched: true }),
   type("fold-diagonal-unfold", "geometry", "색종이 접기", "대각선으로 접고 자른 뒤 펼친 선 그리기"),
   type("fold-number-remaining-sum", "geometry", "색종이 접기", "번호 색종이를 접고 자른 뒤 남은 수의 합", { generator: "foldNumberRemainingSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 41·50쪽" }),
   type("cube-count-solid", "geometry", "쌓기나무", "입체를 이루는 쌓기나무 전체 개수", { geometryGame: "count-heights" }),
@@ -244,6 +255,20 @@ export const FINAL_EXAM_TYPES = [
       "two-type-unit-total", "vertical-cryptarithm-shape-sum", "fold-diagonal-hole-count", "row-column-sum-placement", "two-by-two-sum-fill",
       "total-difference", "shape-sum-grid-4", "magic-square"
     ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: [0, 2, 3, 4, 5, 7, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19].includes(index) }))
+  },
+  {
+    id: "final-3",
+    stage: "final",
+    label: "필즈선발대비 실전 모의고사 파이널 3회",
+    file: "필즈선발대비 실전 모의고사 파이널 3회.pdf",
+    sourceViewer: false,
+    questions: [
+      "row-column-count-placement", "truth-lie-ranking", "triangle-max-edge-sum", "cube-count-solid",
+      "split-merge-tree", "reverse-thinking", "order-position-seven-people", "fold-diagonal-hole-count",
+      "target-score-combination", "matchstick-growth", "vertex-degree-sum", "letter-block-move",
+      "go-stone-difference-inverse", "square-count", "shape-sum-grid-4", "cube-fill-box",
+      "mixed-sequence", "two-type-unit-total", "border-go-stone-difference", "neither-set-count"
+    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: [7, 8, 9, 12, 14, 16, 17, 18, 19].includes(index) }))
   }
 ];
 

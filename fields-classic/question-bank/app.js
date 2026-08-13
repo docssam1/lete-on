@@ -890,8 +890,70 @@ function nonadjacentPyramidMarkup(visual) {
   return `<div class="nonadjacent-pyramid">${rows.map((row, rowIndex) => `<div style="--row:${rowIndex}">${row.map((value) => `<span>${value}</span>`).join("")}</div>`).join("")}</div>`;
 }
 
+function matchstickRowMarkup(visual) {
+  // 맞닿는 변을 함께 쓰는 것이 문제의 핵심이라, 네모를 붙여 그려 공유 변이 보이게 한다.
+  const unit = 34;
+  const width = unit * visual.shown + 2;
+  const sticks = [];
+  for (let i = 0; i < visual.shown; i += 1) {
+    const x = 1 + unit * i;
+    sticks.push(`<line x1="${x}" y1="1" x2="${x + unit}" y2="1" />`);
+    sticks.push(`<line x1="${x}" y1="${unit + 1}" x2="${x + unit}" y2="${unit + 1}" />`);
+    sticks.push(`<line x1="${x}" y1="1" x2="${x}" y2="${unit + 1}" />`);
+  }
+  sticks.push(`<line x1="${1 + unit * visual.shown}" y1="1" x2="${1 + unit * visual.shown}" y2="${unit + 1}" />`);
+  return `<div class="matchstick-row"><svg class="matchstick-svg" viewBox="0 0 ${width} ${unit + 2}" role="img" aria-label="성냥개비 네모 ${visual.shown}개">${sticks.join("")}</svg><strong>…</strong><em>네모 ${visual.target}개</em></div>`;
+}
+
+function targetBoardMarkup(visual) {
+  // 바깥이 낮은 점수, 가운데가 높은 점수인 보통의 과녁 배치로 그린다.
+  const size = 168;
+  const center = size / 2;
+  // 낮은 점수가 바깥, 높은 점수가 가운데. 반지름을 고리 수로 균등하게 나눈다.
+  const rings = visual.scores.slice().sort((a, b) => a - b);
+  // 고리가 5개면 띠 하나가 13px밖에 안 돼 숫자가 서로 붙는다. 가운데 원을 작게 잡아 띠를 넓힌다.
+  const radiusAt = (index) => center - 4 - (center - 10) * (index / rings.length);
+  const parts = rings.map((score, index) => `<circle cx="${center}" cy="${center}" r="${radiusAt(index).toFixed(1)}" />`);
+  const labels = rings.map((score, index) => {
+    // 마지막 고리는 가운데 원이라 중심에, 나머지는 두 원 사이 띠의 위쪽에 적는다.
+    const last = index === rings.length - 1;
+    const y = last ? center + 5 : center - (radiusAt(index) + radiusAt(index + 1)) / 2 + 5;
+    return `<text x="${center}" y="${y.toFixed(1)}" text-anchor="middle">${score}</text>`;
+  });
+  return `<div class="target-board"><svg class="target-board-svg" viewBox="0 0 ${size} ${size}" role="img" aria-label="과녁 ${rings.join("·")}점">${parts.join("")}${labels.join("")}</svg></div>`;
+}
+
+function numberSequencesMarkup(visual) {
+  return `<div class="number-sequences">${visual.rows.map((row, index) => `<div><b>(${index + 1})</b>${row.items.map((value) => `<span${value === null ? ' class="blank"' : ""}>${value === null ? "" : value}</span>`).join("")}</div>`).join("")}</div>`;
+}
+
+function checkerSquareGrowthMarkup(visual) {
+  const stage = (side) => {
+    const cells = [];
+    for (let r = 0; r < side; r += 1) {
+      for (let c = 0; c < side; c += 1) cells.push(`<b class="${(r + c) % 2 === 0 ? "white" : "black"}"></b>`);
+    }
+    return `<div><i style="--side:${side}">${cells.join("")}</i><span>${side - 2}번째</span></div>`;
+  };
+  return `<div class="checker-growth">${visual.shown.map(stage).join("")}<strong>…</strong><em>${visual.target}번째</em></div>`;
+}
+
+function stoneTriangleRowsMarkup(visual) {
+  const rows = Array.from({ length: visual.shown }, (_, index) => {
+    const count = index + 1;
+    const color = count % 2 === 1 ? "black" : "white";
+    return `<div>${Array.from({ length: count }, () => `<b class="${color}"></b>`).join("")}<span>${count}번째 줄</span></div>`;
+  });
+  return `<div class="stone-triangle-rows">${rows.join("")}<strong>⋮</strong></div>`;
+}
+
 function visualMarkup(visual) {
   if (!visual) return "";
+  if (visual.kind === "matchstick-row") return `<div class="visual matchstick-visual">${matchstickRowMarkup(visual)}</div>`;
+  if (visual.kind === "target-board") return `<div class="visual target-board-visual">${targetBoardMarkup(visual)}</div>`;
+  if (visual.kind === "number-sequences") return `<div class="visual number-sequences-visual">${numberSequencesMarkup(visual)}</div>`;
+  if (visual.kind === "checker-square-growth") return `<div class="visual checker-growth-visual">${checkerSquareGrowthMarkup(visual)}</div>`;
+  if (visual.kind === "stone-triangle-rows") return `<div class="visual stone-triangle-visual">${stoneTriangleRowsMarkup(visual)}</div>`;
   if (visual.kind === "sum-grid") return `<div class="visual sum-grid-visual">${sumGridMarkup(visual)}</div>`;
   if (visual.kind === "torn-calendar") return `<div class="visual torn-calendar-visual">${tornCalendarMarkup(visual)}</div>`;
   if (visual.kind === "magic-square") return `<div class="visual magic-square-visual">${magicSquareMarkup(visual)}</div>`;
