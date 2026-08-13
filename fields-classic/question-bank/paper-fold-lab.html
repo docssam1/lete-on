@@ -935,8 +935,12 @@ function drawHoles(ctx, holes, ox, oy, size, r){
     ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=ARROW; ctx.lineWidth=2.2; ctx.stroke();
   }
 }
+// 문항 번호. v4_2 시안이 교재 4번을 흉내 낸 '4'를 그대로 물려받아 유형과 무관하게
+// 늘 4번으로 찍히고 있었다. 랩에서는 "새 문제"를 누를 때마다 1부터 세어 올린다.
+let questionNumber = 0;
 function header(ctx, lines){
-  ctx.fillStyle='#16417C'; ctx.font='900 26px sans-serif'; ctx.fillText('4', 30, 46);
+  ctx.fillStyle='#16417C'; ctx.font='900 26px sans-serif';
+  ctx.fillText(String(questionNumber), 30, 46);
   ctx.fillStyle='#333'; ctx.font='600 21px sans-serif';
   lines.forEach((line,i)=>ctx.fillText(line, 66, 44+i*32));
 }
@@ -1040,14 +1044,17 @@ function renderNumber(ctx,d){
 
 /* ===== 진입 ===== */
 function render(d){
+  questionNumber += 1;
   const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
   if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else if(d.kind==='pieces') renderPieces(ctx,d); else if(d.kind==='punch') renderPunch(ctx,d); else if(d.kind==='num-inverse') renderNumInverse(ctx,d); else if(d.kind==='unfold-shape') renderUnfoldShape(ctx,d); else renderNumber(ctx,d);
   document.getElementById('info').textContent=d.info+' · 정답 '+d.answer;
   document.getElementById('src').textContent=d.src;
 }
+let lastMode = null;
 function newProblem(){
   const mode=document.getElementById('mode').value;
+  if(mode!==lastMode){ questionNumber=0; lastMode=mode; }   // 유형을 바꾸면 1번부터
   if(mode==='hole2')  return render(genHole(false));
   if(mode==='hole3d') return render(genHole(true));
   if(mode==='numdiag')    return render(genDiagNumber(Math.random()<0.7));
