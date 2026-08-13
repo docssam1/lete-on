@@ -123,7 +123,7 @@
     }
     if (f.kind === "iso-walled") {
       // IH only: draws the two walls behind/beneath the cubes (see
-      // render.js renderIsoWalled) so the picture matches "뒤와 왕쪽에 벽이
+      // render.js renderIsoWalled) so the picture matches "뒤와 왼쪽에 벽이
       // 있는" from the prompt.
       return figureBlock("쌓기나무 모양", REN.renderIsoWalled(f.map, f.width, f.depth), "ws-figure-lg");
     }
@@ -136,7 +136,7 @@
       return figureBlock(caption, REN.renderIsoBox(f.map, f.width, f.depth, f.boxH, opts), "ws-figure-lg");
     }
     if (f.kind === "iso-holes") {
-      return figureBlock("구멍이 뚚린 상자 모양 (흰 칸 = 구멍)", REN.renderIsoHoles(f.width, f.depth, f.boxH, f.tunnels), "ws-figure-lg");
+      return figureBlock("구멍이 뚫린 상자 모양 (흰 칸 = 구멍)", REN.renderIsoHoles(f.width, f.depth, f.boxH, f.tunnels), "ws-figure-lg");
     }
     if (f.kind === "sequence") {
       const shapeHtml = f.shapes.map((s) => figureBlock(s.n + "번째", REN.renderIso(s.map, s.width, s.depth), "ws-figure-sm")).join("");
