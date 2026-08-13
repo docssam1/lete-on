@@ -23,6 +23,8 @@ small.src{display:block;color:#888;font-size:12px;margin-top:-6px;margin-bottom:
   <option value="numbook">교재 41쪽 확인03 재현 (검증용)</option>
   <option value="numdiag">수가 쓰인 색종이 — 대각선 한 번 접기 (실전 유형)</option>
   <option value="pieces">접고 선 따라 자르기 — 조각 개수</option>
+  <option value="punch">반원·원 펀치 — 모양별 개수</option>
+  <option value="numinv">수가 쓰인 색종이 — 목표 합이 되게 색칠하기 (역방향)</option>
   <option value="stackfind">겹친 색종이 — 가장 밑(또는 위) 찾기</option>
   <option value="stackorder">겹친 색종이 — 위에서부터 순서대로</option>
 </select>
@@ -427,6 +429,257 @@ function renderPieces(ctx,d){
   ctx.setLineDash([]);
 }
 
+/* ===== 유형 8: 반원·원 펀치 — 모양별 개수 =====
+   접힌 조각의 안쪽에는 원을, 가장자리에는 반원(평평한 면이 가장자리에 붙게)을 뚫는다.
+   접은 선 위의 반원은 펼치면 거울짝과 붙어 온전한 원이 되고,
+   원래 가장자리의 반원은 반원인 채로 거울 수만큼 늘어난다.
+   개수는 병합 논리로 세고, 독립적으로 격자 래스터 분할로 재검산한다. */
+function genPunch(){
+  const dirs = pick([['h'],['v'],['h','v'],['v','h']]);
+  let poly=[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}];
+  const stages=[];
+  for(const d of dirs){ stages.push({poly, fold:d}); poly=clipHalfPlane(poly, FOLDS[d].keep); }
+  stages.push({poly, fold:null});
+  const w=Math.max(...poly.map(pt=>pt.x)), h=Math.max(...poly.map(pt=>pt.y));
+  const hasV=dirs.includes('v'), hasH=dirs.includes('h');
+  // 접힌 조각의 네 가장자리: 오른쪽(x=w)은 v 접은 선, 아래(y=h)는 h 접은 선
+  const edges=[
+    {name:'left',  crease:false}, {name:'top', crease:false},
+    {name:'right', crease:hasV},  {name:'bottom', crease:hasH}
+  ];
+  const punches=[];
+  const rOf=()=>0.05+Math.random()*0.02;
+  const clash=(cx,cy,r)=>punches.some(q=>Math.hypot(q.cx-cx,q.cy-cy)<q.r+r+0.05);
+  let guard=0;
+  while(punches.filter(q=>q.type==='full').length<1 && guard++<300){
+    const r=rOf();
+    const cx=r+0.05+Math.random()*(w-2*(r+0.05)), cy=r+0.05+Math.random()*(h-2*(r+0.05));
+    if(!clash(cx,cy,r)) punches.push({type:'full',cx,cy,r});
+  }
+  const wantHalf=R(1,2);
+  while(punches.filter(q=>q.type==='half').length<wantHalf && guard++<600){
+    const e=pick(edges), r=rOf(), t=0.18+Math.random()*0.64;
+    let cx,cy,nx=0,ny=0;
+    if(e.name==='left'){cx=0; cy=t*h; nx=-1;}
+    else if(e.name==='right'){cx=w; cy=t*h; nx=1;}
+    else if(e.name==='top'){cy=0; cx=t*w; ny=-1;}
+    else {cy=h; cx=t*w; ny=1;}
+    if(e.name==='left'||e.name==='right'){ if(cy<r+0.06||cy>h-r-0.06) continue; }
+    else { if(cx<r+0.06||cx>w-r-0.06) continue; }
+    if(clash(cx,cy,r)) continue;
+    punches.push({type:'half',cx,cy,r,nx,ny,edge:e.name,crease:e.crease});
+  }
+  if(punches.filter(q=>q.type==='half').length<1 || punches.filter(q=>q.type==='full').length<1) return genPunch();
+
+  // 펼치기: 조각을 거울로 복제 (반원의 법선도 반사). 같은 자리·같은 법선은 중복이므로 안 넣는다.
+  let pieces=punches.map(q=>({...q}));
+  for(let i=dirs.length-1;i>=0;i--){
+    const mirror=FOLDS[dirs[i]].mirror;
+    const add=pieces.map(q=>{
+      const m=mirror({x:q.cx,y:q.cy});
+      const out={...q,cx:m.x,cy:m.y};
+      if(q.type==='half'){ if(dirs[i]==='v') out.nx=-q.nx; if(dirs[i]==='h') out.ny=-q.ny; }
+      return out;
+    });
+    for(const q of add){
+      if(!pieces.some(pp=>Math.hypot(pp.cx-q.cx,pp.cy-q.cy)<1e-9 && pp.type===q.type
+        && (pp.type==='full' || (pp.nx===q.nx && pp.ny===q.ny)))) pieces.push(q);
+    }
+  }
+  // 병합: 같은 중심·반지름에 법선이 반대인 반원 두 개 = 온전한 원
+  const merged=[], used=new Array(pieces.length).fill(false);
+  for(let i=0;i<pieces.length;i++){
+    if(used[i]) continue;
+    const a=pieces[i];
+    if(a.type==='full'){ merged.push({kind:'circle',cx:a.cx,cy:a.cy,r:a.r}); used[i]=true; continue; }
+    let mate=-1;
+    for(let j=i+1;j<pieces.length;j++){
+      if(used[j]) continue;
+      const b=pieces[j];
+      if(b.type==='half' && Math.hypot(a.cx-b.cx,a.cy-b.cy)<1e-9 && Math.abs(a.r-b.r)<1e-9
+        && a.nx===-b.nx && a.ny===-b.ny){ mate=j; break; }
+    }
+    used[i]=true;
+    if(mate>=0){ used[mate]=true; merged.push({kind:'circle',cx:a.cx,cy:a.cy,r:a.r}); }
+    else merged.push({kind:'semi',cx:a.cx,cy:a.cy,r:a.r,nx:a.nx,ny:a.ny});
+  }
+  // 남은 반원의 평평한 면은 반드시 펼친 종이의 가장자리에 있어야 한다 — 아니면 병합이 틀렸다는 뜻
+  for(const m of merged) if(m.kind==='semi'){
+    const onEdge=(m.nx===-1&&Math.abs(m.cx)<1e-9)||(m.nx===1&&Math.abs(m.cx-1)<1e-9)
+              ||(m.ny===-1&&Math.abs(m.cy)<1e-9)||(m.ny===1&&Math.abs(m.cy-1)<1e-9);
+    if(!onEdge) return genPunch();
+  }
+  const circles=merged.filter(m=>m.kind==='circle').length;
+  const semis=merged.filter(m=>m.kind==='semi').length;
+
+  const times=['','한 번','두 번'][dirs.length];
+  return {
+    kind:'punch', dirs, stages, punches, pieces, merged, circles, semis,
+    answer:`반원 ${semis}개, 원 ${circles}개`,
+    text:[`다음 그림과 같이 색종이를 ${times} 접은 후 펀치로 반원과 원을 뚫었습니다.`,
+          '색종이를 펼쳤을 때 반원과 원 모양이 각각 몇 개씩 나오는지 구하시오.'],
+    info:`접기 ${dirs.length}회 (${dirs.join(' → ')}) · 펀치 ${punches.length}개 → 반원 ${semis}·원 ${circles}`,
+    src:'출처 유형: 더클래식 1과정 1권 51쪽 연습12 계열'
+  };
+}
+// 독립 재검산: 펼친 조각들을 격자에 구멍으로 새기고, 덩어리를 세어
+// 종이 가장자리에 닿은 것은 반원, 안쪽 것은 원으로 분류한다.
+function countPunchRaster(pieces, M){
+  const hole=new Uint8Array(M*M);
+  for(let j=0;j<M;j++) for(let i=0;i<M;i++){
+    const x=(i+0.5)/M, y=(j+0.5)/M;
+    for(const q of pieces){
+      if(Math.hypot(x-q.cx,y-q.cy)>=q.r) continue;
+      if(q.type==='half' && ((x-q.cx)*q.nx+(y-q.cy)*q.ny)>0) continue;  // 법선 쪽 반은 종이 밖
+      hole[j*M+i]=1; break;
+    }
+  }
+  const seen=new Uint8Array(M*M); let circles=0, semis=0;
+  for(let s0=0;s0<M*M;s0++){
+    if(!hole[s0]||seen[s0]) continue;
+    let touches=false; const stack=[s0]; seen[s0]=1;
+    while(stack.length){
+      const v=stack.pop(), vi=v%M, vj=(v/M)|0;
+      if(vi===0||vj===0||vi===M-1||vj===M-1) touches=true;
+      for(const wv of [v-1,v+1,v-M,v+M]){
+        if(wv<0||wv>=M*M) continue;
+        const wi=wv%M;
+        if(Math.abs(wi-vi)>1) continue;
+        if(hole[wv]&&!seen[wv]){seen[wv]=1; stack.push(wv);}
+      }
+    }
+    if(touches) semis++; else circles++;
+  }
+  return {circles, semis};
+}
+
+function renderPunch(ctx,d){
+  header(ctx, d.text);
+  const n=d.stages.length, size=170, gap=52, baseY=150;
+  let x=50;
+  d.stages.forEach((stage,i)=>{
+    drawPoly(ctx, stage.poly, x, baseY, size);
+    if(stage.fold){
+      drawCrease(ctx, foldSegment(stage.poly, stage.fold), x, baseY, size);
+      drawFoldArrow(ctx, stage.poly, stage.fold, x, baseY, size);
+    } else {
+      for(const q of d.punches){
+        ctx.fillStyle='#fff'; ctx.strokeStyle='#8a8a94'; ctx.lineWidth=1.8;
+        if(q.type==='full'){
+          ctx.beginPath(); ctx.arc(x+q.cx*size, baseY+q.cy*size, q.r*size, 0, Math.PI*2);
+          ctx.fill(); ctx.stroke();
+        } else {
+          // 평평한 면이 가장자리에 붙은 반원 물림 — 안쪽 반만 그린다
+          const a0=Math.atan2(q.ny,q.nx);
+          ctx.beginPath();
+          ctx.arc(x+q.cx*size, baseY+q.cy*size, q.r*size, a0+Math.PI/2, a0+Math.PI*1.5);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(x+q.cx*size, baseY+q.cy*size, q.r*size, a0+Math.PI/2, a0+Math.PI*1.5);
+          ctx.stroke();
+        }
+      }
+    }
+    x+=size+14;
+    if(i<n-1){ drawStepArrow(ctx, x, baseY+size/2); x+=gap; }
+  });
+}
+
+/* ===== 유형 9: 목표 합이 되게 색칠하기 (역방향) =====
+   수가 보이도록 "뒤로" 두 번 접은 2x2에서, 잘라낸 수의 합이 목표가 되도록
+   색칠할 칸을 학생이 고른다. 접은 칸 하나의 궤도(거울 네 칸) 합을 S라 하면
+   목표는 고른 칸들의 S 합 — 15가지 부분집합 중 목표를 만드는 답이 하나뿐일 때만 낸다. */
+function numIga(n){ return [1,3,6,7,8,0].includes(n%10) ? '이' : '가'; }
+function genNumInverse(){
+  const N=4;
+  const grid=Array.from({length:N},()=>Array.from({length:N},()=>R(1,3)));
+  const pr=pick([0,2]), pc=pick([0,2]);          // 뒤로 접어 남는(보이는) 사분면
+  const firstFold=pick(['h','v']);
+  // 접은 칸 (r,c)의 궤도 합
+  const S=[[0,0],[0,0]];
+  for(let r=0;r<2;r++) for(let c=0;c<2;c++){
+    const gr=pr+r, gc=pc+c;
+    S[r][c]=grid[gr][gc]+grid[gr][3-gc]+grid[3-gr][gc]+grid[3-gr][3-gc];
+  }
+  // 답 부분집합(1~2칸)을 고르고, 그 합을 만드는 부분집합이 유일한지 전수 확인
+  const cells=[{r:0,c:0},{r:0,c:1},{r:1,c:0},{r:1,c:1}];
+  const answerSet=shuffleArr(cells).slice(0, R(1,2));
+  const target=answerSet.reduce((t,q)=>t+S[q.r][q.c],0);
+  let matches=0;
+  for(let mask=1; mask<16; mask++){
+    let sum=0;
+    cells.forEach((q,i)=>{ if(mask&(1<<i)) sum+=S[q.r][q.c]; });
+    if(sum===target) matches++;
+  }
+  if(matches!==1) return genNumInverse();
+
+  const posName=(q)=>`${q.r===0?'위':'아래'}쪽 ${q.c===0?'왼':'오른'}쪽`;
+  return {
+    kind:'num-inverse', grid, pr, pc, firstFold, S, answerSet, target,
+    answer:`접은 모양의 ${answerSet.map(posName).join('과 ')} 칸`,
+    text:[`다음과 같이 수가 쓰여 있는 색종이를 두 번 접은 후 접은 선을 따라 잘라냈습니다. 잘라낸 부분에 쓰인 수의`,
+          `합이 ${target}${numIga(target)} 되려면 어떤 부분을 잘라야 하는지 두 번 접은 모양에 색칠하시오. (단, 수가 보이도록 뒤로 접습니다.)`],
+    info:`사분면 (${pr},${pc}) · 궤도 합 ${S.flat().join('·')} · 목표 ${target} · 답 ${answerSet.map(posName).join(', ')}`,
+    src:'출처 유형: 수 색종이 자르기의 역방향 (색칠 답)'
+  };
+}
+// 직사각형 숫자 격자 (중간 단계가 2x4라 정사각 전용 drawNumberGrid를 못 쓴다)
+function drawCellsRect(ctx, rows, ox, oy, cell){
+  const H=rows.length, W=rows[0].length;
+  ctx.fillStyle=PAPER; ctx.fillRect(ox,oy,W*cell,H*cell);
+  ctx.strokeStyle='#e0aaa4'; ctx.lineWidth=1; ctx.setLineDash([4,3]);
+  for(let k=1;k<W;k++){ctx.beginPath();ctx.moveTo(ox+k*cell,oy);ctx.lineTo(ox+k*cell,oy+H*cell);ctx.stroke();}
+  for(let k=1;k<H;k++){ctx.beginPath();ctx.moveTo(ox,oy+k*cell);ctx.lineTo(ox+W*cell,oy+k*cell);ctx.stroke();}
+  ctx.setLineDash([]);
+  ctx.font='600 '+Math.round(cell*0.5)+'px sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillStyle='#333';
+  for(let r=0;r<H;r++) for(let c=0;c<W;c++) ctx.fillText(String(rows[r][c]), ox+c*cell+cell/2, oy+r*cell+cell/2+1);
+  ctx.strokeStyle=PAPER_EDGE; ctx.lineWidth=2.4; ctx.strokeRect(ox,oy,W*cell,H*cell);
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+}
+function renderNumInverse(ctx,d){
+  header(ctx, d.text);
+  const cell=46, baseY=150;
+  let x=56;
+  // 1) 원본 4x4 + 접는선
+  drawCellsRect(ctx, d.grid, x, baseY, cell);
+  ctx.setLineDash([7,5]); ctx.strokeStyle=CREASE; ctx.lineWidth=1.8;
+  ctx.beginPath(); ctx.moveTo(x+2*cell,baseY); ctx.lineTo(x+2*cell,baseY+4*cell); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x,baseY+2*cell); ctx.lineTo(x+4*cell,baseY+2*cell); ctx.stroke();
+  ctx.setLineDash([]);
+  // 첫 접기 말림 화살표 — 접혀 나가는 반쪽에서 남는 반쪽으로
+  if(d.firstFold==='h'){
+    const fromY = d.pr===0 ? baseY+3*cell : baseY+cell;
+    const toY   = d.pr===0 ? baseY+cell   : baseY+3*cell;
+    edgeCurl(ctx, x-12, fromY, x-12, toY, x-28, baseY+2*cell);
+  } else {
+    const fromX = d.pc===0 ? x+3*cell : x+cell;
+    const toX   = d.pc===0 ? x+cell   : x+3*cell;
+    edgeCurl(ctx, fromX, baseY-12, toX, baseY-12, x+2*cell, baseY-28);
+  }
+  x+=4*cell+22; drawStepArrow(ctx, x, baseY+2*cell); x+=58;
+  // 2) 한 번 접은 중간 — 뒤로 접어 수가 보인다
+  let mid;
+  if(d.firstFold==='h') mid=[d.grid[d.pr], d.grid[d.pr+1]];
+  else mid=d.grid.map(row=>[row[d.pc], row[d.pc+1]]);
+  const midY = d.firstFold==='h' ? baseY+cell : baseY;
+  drawCellsRect(ctx, mid, x, midY, cell);
+  // 둘째 접기 말림 화살표
+  if(d.firstFold==='h'){
+    const fromX = d.pc===0 ? x+3*cell : x+cell;
+    const toX   = d.pc===0 ? x+cell   : x+3*cell;
+    edgeCurl(ctx, fromX, midY-12, toX, midY-12, x+2*cell, midY-28);
+  } else {
+    const fromY = d.pr===0 ? baseY+3*cell : baseY+cell;
+    const toY   = d.pr===0 ? baseY+cell   : baseY+3*cell;
+    edgeCurl(ctx, x-12, fromY, x-12, toY, x-28, baseY+2*cell);
+  }
+  x+=(d.firstFold==='h'?4:2)*cell+22; drawStepArrow(ctx, x, baseY+2*cell); x+=58;
+  // 3) 두 번 접은 2x2 — 학생이 색칠할 판. 답은 표시하지 않는다.
+  const packet=[[d.grid[d.pr][d.pc], d.grid[d.pr][d.pc+1]],[d.grid[d.pr+1][d.pc], d.grid[d.pr+1][d.pc+1]]];
+  drawCellsRect(ctx, packet, x, baseY+cell, cell+8);
+}
+
 /* ===== 유형 5: 겹친 색종이 순서 (교재 35~36·44~46쪽) =====
    같은 크기 정사각형 8장을 3x3 자리에 겹쳐 놓는다(가장자리 중앙 한 자리는 비움 — 교재 문법).
    답이 유일하려면 "맨 위를 걷어내면 남은 것 중 온전히 보이는 종이가 늘 하나뿐"이어야 한다.
@@ -662,7 +915,7 @@ function renderNumber(ctx,d){
 function render(d){
   const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
-  if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else if(d.kind==='pieces') renderPieces(ctx,d); else renderNumber(ctx,d);
+  if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else if(d.kind==='pieces') renderPieces(ctx,d); else if(d.kind==='punch') renderPunch(ctx,d); else if(d.kind==='num-inverse') renderNumInverse(ctx,d); else renderNumber(ctx,d);
   document.getElementById('info').textContent=d.info+' · 정답 '+d.answer;
   document.getElementById('src').textContent=d.src;
 }
@@ -672,6 +925,8 @@ function newProblem(){
   if(mode==='hole3d') return render(genHole(true));
   if(mode==='numdiag')    return render(genDiagNumber(Math.random()<0.7));
   if(mode==='pieces')     return render(genPieces());
+  if(mode==='punch')      return render(genPunch());
+  if(mode==='numinv')     return render(genNumInverse());
   if(mode==='stackfind')  return render(genStack(false));
   if(mode==='stackorder') return render(genStack(true));
   if(mode==='numsum') return render(genNumber(false));
