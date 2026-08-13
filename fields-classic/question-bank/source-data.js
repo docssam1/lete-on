@@ -42,7 +42,7 @@ export const TYPES = [
   type("order-position", "logic", "순서와 비교", "줄의 순서와 사이 사람 수", { generator: "raceOrder", sourceMatched: true }),
   type("order-position-from-back", "logic", "순서와 비교", "뒤에서의 순서와 사이 사람 수"),
   type("order-position-from-front", "logic", "순서와 비교", "앞에서의 순서와 사이 사람 수"),
-  type("order-position-seven-people", "logic", "순서와 비교", "일곱 명의 앞·뒤 순서와 사이 사람 수"),
+  type("order-position-seven-people", "logic", "순서와 비교", "일곱 명의 앞·뒤 순서와 사이 사람 수", { generator: "sevenPeopleOrder", sourceMatched: true }),
   type("number-table-rule", "pattern", "수 규칙", "수 배열표의 규칙 찾기", { legacyId: 11 }),
   type("addition-table-grid", "pattern", "수 규칙", "가로와 세로로 일정하게 커지는 수 표"),
   type("disc-number-rule", "pattern", "수 규칙", "원판에 적힌 수의 규칙", { generator: "discNumberRule", sourceMatched: true }),
@@ -107,7 +107,7 @@ export const TYPES = [
   type("venn-count", "logic", "집합과 포함", "두 조건에 모두 해당하는 사람 수"),
   type("congruent-partition", "geometry", "도형 분할", "합이 같은 합동 도형으로 나누기"),
   type("triangle-count", "geometry", "도형 세기", "크고 작은 삼각형 세기"),
-  type("square-count", "geometry", "도형 세기", "크고 작은 사각형 세기"),
+  type("square-count", "geometry", "도형 세기", "크고 작은 사각형 세기", { generator: "squareCountShape", sourceMatched: true }),
   type("calendar-weekday-sum", "pattern", "달력과 시간", "달력에서 같은 요일 날짜의 합"),
   type("person-item-logic", "logic", "조건 연결", "사람과 동물·음식 조건 연결"),
   type("set-union-count", "logic", "집합과 포함", "두 종류를 선택한 전체 사람 수", { generator: "setUnionCount", sourceMatched: true }),
@@ -130,11 +130,11 @@ export const TYPES = [
   type("row-column-sum-placement", "number", "수 배열과 합", "행·열 합에 맞게 1부터 차례로 놓기", { generator: "triangleSumPlacement", sourceMatched: true }),
   type("two-by-two-sum-fill", "number", "수 배열과 합", "2x2 칸을 행·열 합과 서로 다른 조건으로 채우기", { generator: "twoByTwoSumFill", sourceMatched: true }),
   type("shape-sum-grid-4", "number", "매트릭스", "4x4 도형표의 행·열 합으로 빈 합 구하기", { generator: "shapeSumGrid", sourceMatched: true }),
-  type("row-column-count-placement", "logic", "조건 배치", "가로·세로 개수 조건에 맞게 칸 표시하기"),
-  type("truth-lie-ranking", "logic", "조건 추리", "참말·거짓말 조건으로 경기 순위 찾기"),
+  type("row-column-count-placement", "logic", "조건 배치", "가로·세로 개수 조건에 맞게 칸 표시하기", { generator: "rowColumnCountPlacement", sourceMatched: true }),
+  type("truth-lie-ranking", "logic", "조건 추리", "참말·거짓말 조건으로 경기 순위 찾기", { generator: "truthLieRanking", sourceMatched: true }),
   type("triangle-max-edge-sum", "number", "수 배열과 합", "삼각형 세 변의 합을 가장 크게 만들기"),
   type("split-merge-tree", "number", "수 배열과 합", "가르기·모으기 나무의 부모·자식 관계"),
-  type("vertex-degree-sum", "geometry", "연결 관계", "점에 연결된 선의 개수 합 구하기"),
+  type("vertex-degree-sum", "geometry", "연결 관계", "점에 연결된 선의 개수 합 구하기", { generator: "vertexDegreeSum", sourceMatched: true }),
   type("letter-block-move", "geometry", "도형 움직이기", "글자 블록의 위치·방향 이동 규칙"),
   type("matchstick-growth", "pattern", "도형 규칙", "이어 붙인 성냥개비 도형에 필요한 개수", { generator: "matchstickGrowth", sourceMatched: true }),
   type("neither-set-count", "logic", "집합과 포함", "둘 다 해당하지 않는 사람 수", { generator: "neitherSetCount", sourceMatched: true }),
@@ -160,7 +160,7 @@ export const TYPES = [
   type("unit-area-fraction", "geometry", "넓이와 분수", "단위넓이와 분수", { status: "curriculum" }),
   type("unit-length-multiple", "geometry", "길이와 측정", "단위길이와 배수", { status: "curriculum" }),
   type("magic-card", "number", "수 카드와 식", "마법카드로 수 찾기", { status: "curriculum" }),
-  type("reverse-thinking", "logic", "과정 추론", "거꾸로 생각하기", { status: "curriculum" }),
+  type("reverse-thinking", "logic", "과정 추론", "거꾸로 생각하기", { generator: "halfGiveReverse", sourceMatched: true }),
   type("argument-logic", "logic", "조건 추리", "조건을 따져 옳고 그름 판단하기", { status: "curriculum" })
 ];
 
@@ -268,7 +268,7 @@ export const FINAL_EXAM_TYPES = [
       "target-score-combination", "matchstick-growth", "vertex-degree-sum", "letter-block-move",
       "go-stone-difference-inverse", "square-count", "shape-sum-grid-4", "cube-fill-box",
       "mixed-sequence", "two-type-unit-total", "border-go-stone-difference", "neither-set-count"
-    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: [7, 8, 9, 12, 14, 16, 17, 18, 19].includes(index) }))
+    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: [0, 1, 5, 6, 7, 8, 9, 10, 12, 13, 14, 16, 17, 18, 19].includes(index) }))
   }
 ];
 

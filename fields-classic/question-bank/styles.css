@@ -67,7 +67,7 @@
 
 /* 파이널 3회 시각자료 */
 .matchstick-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.matchstick-svg{width:auto;max-width:100%;height:44px}
+.matchstick-svg{width:auto;max-width:100%;height:44px;flex:0 0 auto}
 .matchstick-svg line{stroke:#17334b;stroke-width:2.4;stroke-linecap:round}
 .matchstick-row strong{color:#8fa2b3}
 .matchstick-row em{font-style:normal;font-weight:800}
@@ -92,3 +92,16 @@
 .stone-triangle-rows b.white{background:#fff}
 .stone-triangle-rows b.black{background:#17334b}
 .stone-triangle-rows span{margin-left:8px;color:#718394;font-size:10px}
+.count-grid{display:inline-grid;gap:3px}
+.count-grid div{display:grid;grid-template-columns:repeat(var(--size),30px) 26px;gap:3px}
+.count-grid b{width:30px;height:30px;border:1px solid #17334b;border-radius:3px;background:#fff}
+.count-grid em{display:flex;align-items:center;justify-content:center;height:30px;font-style:normal;font-weight:800}
+.count-grid .foot i{width:26px}
+.statement-list{margin:0;padding:0 0 0 4px;list-style:none;display:grid;gap:5px}
+.statement-list li{padding:6px 9px;border:1px solid #d9e2e8;border-left:3px solid #149fe7;border-radius:5px;background:#fff;font-weight:700}
+/* viewBox만 있는 SVG는 컨테이너 폭까지 늘어난다. 실제 크기에 맞춰 상한을 준다. */
+.vertex-degree-svg{width:100%;max-width:230px;height:auto}
+.vertex-degree-svg line{stroke:#17334b;stroke-width:1.8}
+.vertex-degree-svg circle{fill:#17334b}
+.cell-shape-svg{width:100%;max-width:190px;height:auto}
+.cell-shape-svg rect{fill:#fff;stroke:#17334b;stroke-width:1.6}

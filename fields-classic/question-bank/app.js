@@ -238,7 +238,12 @@ function shuffle(items) {
 function generatedProblem(item, sequence, reference) {
   if (item.generator && GENERATORS[item.generator]) {
     const difficulty = state.difficulty === "basic" ? 1 : state.difficulty === "advanced" ? 3 : 2;
-    return { ...GENERATORS[item.generator]({ max: 30, difficulty }), type: item, reference };
+    // 조건이 까다로운 생성기(답이 유일해야 하는 배치·추리)는 뽑기에 실패하면 null을 준다.
+    // 실패는 정상이므로 다시 뽑는다. 여기서 받아 주지 않으면 빈 문항 카드가 나간다.
+    for (let attempt = 0; attempt < 400; attempt += 1) {
+      const made = GENERATORS[item.generator]({ max: 30, difficulty });
+      if (made) return { ...made, type: item, reference };
+    }
   }
   return null;
 }
@@ -947,8 +952,56 @@ function stoneTriangleRowsMarkup(visual) {
   return `<div class="stone-triangle-rows">${rows.join("")}<strong>⋮</strong></div>`;
 }
 
+function countPlacementGridMarkup(visual) {
+  // 개수만 주고 칸은 비워 둔다. 답이 그림이라 학생이 직접 채워야 한다.
+  const rows = Array.from({ length: visual.size }, (_, r) => {
+    const cells = Array.from({ length: visual.size }, () => `<b></b>`).join("");
+    return `<div>${cells}<em>${visual.rows[r]}</em></div>`;
+  }).join("");
+  const foot = `<div class="foot">${visual.cols.map((n) => `<em>${n}</em>`).join("")}<i></i></div>`;
+  return `<div class="count-grid" style="--size:${visual.size}">${rows}${foot}</div>`;
+}
+
+function statementListMarkup(visual) {
+  return `<ul class="statement-list">${visual.items.map((text) => `<li>${text}</li>`).join("")}</ul>`;
+}
+
+function vertexDegreeMarkup(visual) {
+  const gap = 46;
+  const pad = 16;
+  const width = pad * 2 + gap * (visual.cols - 1);
+  const height = pad * 2 + gap * (visual.rows - 1);
+  const at = (index) => ({ x: pad + gap * visual.points[index].c, y: pad + gap * visual.points[index].r });
+  const lines = visual.edges.map(([i, j]) => {
+    const a = at(i);
+    const b = at(j);
+    return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" />`;
+  }).join("");
+  const dots = visual.points.map((_, index) => {
+    const p = at(index);
+    return `<circle cx="${p.x}" cy="${p.y}" r="4" />`;
+  }).join("");
+  return `<svg class="vertex-degree-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="점과 선 그림">${lines}${dots}</svg>`;
+}
+
+function cellShapeMarkup(visual) {
+  const unit = 30;
+  const minR = Math.min(...visual.cells.map((cell) => cell[0]));
+  const minC = Math.min(...visual.cells.map((cell) => cell[1]));
+  const maxR = Math.max(...visual.cells.map((cell) => cell[0]));
+  const maxC = Math.max(...visual.cells.map((cell) => cell[1]));
+  const width = unit * (maxC - minC + 1) + 2;
+  const height = unit * (maxR - minR + 1) + 2;
+  const squares = visual.cells.map(([r, c]) => `<rect x="${1 + unit * (c - minC)}" y="${1 + unit * (r - minR)}" width="${unit}" height="${unit}" />`).join("");
+  return `<svg class="cell-shape-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="칸을 붙여 만든 도형">${squares}</svg>`;
+}
+
 function visualMarkup(visual) {
   if (!visual) return "";
+  if (visual.kind === "count-placement-grid") return `<div class="visual count-grid-visual">${countPlacementGridMarkup(visual)}</div>`;
+  if (visual.kind === "statement-list") return `<div class="visual statement-visual">${statementListMarkup(visual)}</div>`;
+  if (visual.kind === "vertex-degree") return `<div class="visual vertex-degree-visual">${vertexDegreeMarkup(visual)}</div>`;
+  if (visual.kind === "cell-shape") return `<div class="visual cell-shape-visual">${cellShapeMarkup(visual)}</div>`;
   if (visual.kind === "matchstick-row") return `<div class="visual matchstick-visual">${matchstickRowMarkup(visual)}</div>`;
   if (visual.kind === "target-board") return `<div class="visual target-board-visual">${targetBoardMarkup(visual)}</div>`;
   if (visual.kind === "number-sequences") return `<div class="visual number-sequences-visual">${numberSequencesMarkup(visual)}</div>`;
