@@ -59,3 +59,8 @@
 .fold-unfold-option{display:flex;flex-direction:column;align-items:center;gap:4px}
 .fold-unfold-option svg{width:78px;height:78px;display:block}
 .fold-unfold-option b{font-size:12px;font-weight:900;color:var(--blue-dark)}
+.cryptarithm-vertical{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0}
+.cryptarithm-vertical .cv-row{display:grid;grid-template-columns:26px repeat(var(--cv-cols),34px);align-items:center}
+.cryptarithm-vertical .cv-row span{display:flex;align-items:center;justify-content:center;height:34px;font-size:21px;font-weight:700;color:#2b3a46}
+.cryptarithm-vertical .cv-sign{display:flex;align-items:center;justify-content:center;height:34px;font-size:18px;font-weight:900;color:#526879}
+.cryptarithm-vertical .cv-bar{width:calc(26px + var(--cv-cols)*34px);height:2px;background:#2b3a46;margin:2px 0}

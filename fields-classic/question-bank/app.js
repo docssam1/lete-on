@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812x";
-import { GENERATORS } from "./generators.js?v=20260812x";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812y";
+import { GENERATORS } from "./generators.js?v=20260812y";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -277,6 +277,14 @@ function magicSquareMarkup(visual) {
   const grid = visual.shown.flat()
     .map((value) => (value === null ? `<span class="ms-blank"></span>` : `<span>${value}</span>`)).join("");
   return `<div class="magic-square-work"><div class="number-balls">${cards}</div><div class="magic-square-grid">${grid}</div></div>`;
+}
+
+function cryptarithmVerticalMarkup(visual) {
+  // 자리를 오른쪽으로 맞춰 세로셈처럼 세운다. 자리 수가 다르면 왼쪽을 빈칸으로 채운다.
+  const width = Math.max(visual.first.length, visual.second.length, visual.sum.length);
+  const pad = (row) => Array.from({ length: width - row.length }, () => "").concat(row);
+  const line = (row, sign) => `<div class="cv-row">${sign ? `<b class="cv-sign">${sign}</b>` : `<b class="cv-sign"></b>`}${pad(row).map((cell) => `<span>${cell}</span>`).join("")}</div>`;
+  return `<div class="cryptarithm-vertical" style="--cv-cols:${width}">${line(visual.first, "")}${line(visual.second, "+")}<div class="cv-bar"></div>${line(visual.sum, "")}</div>`;
 }
 
 function foldGeometryHelpers() {
@@ -914,6 +922,7 @@ function visualMarkup(visual) {
   if (visual.kind === "piano") return `<div class="visual"><div class="piano-row">${Array.from({ length: visual.keys }, (_, index) => `<span class="piano-key">${index + 1}</span>`).join("")}</div></div>`;
   if (visual.kind === "line") return `<div class="visual"><div class="people-row">${Array.from({ length: visual.total }, (_, index) => `<i class="${index + 1 === visual.first ? "marked" : ""}">${index + 1}</i>`).join("")}</div></div>`;
   if (visual.kind === "paper-fold") return `<div class="visual paper-fold-visual">${paperFoldMarkup(visual)}</div>`;
+  if (visual.kind === "cryptarithm-vertical") return `<div class="visual cryptarithm-vertical-visual">${cryptarithmVerticalMarkup(visual)}</div>`;
   if (visual.kind === "fold-number-grid") return `<div class="visual fold-number-visual">${foldNumberGridMarkup(visual)}</div>`;
   if (visual.kind === "fold-diagonal-grid") return `<div class="visual fold-diagonal-visual">${foldDiagonalGridMarkup(visual)}</div>`;
   if (visual.kind === "fold-number-inverse") return `<div class="visual fold-inverse-visual">${foldNumberInverseMarkup(visual)}</div>`;

@@ -1039,6 +1039,94 @@ function paperFoldHoleCount({ difficulty = 2 }) {
 // 4x4 숫자판을 가로·세로로 한 번씩 접는다. 접힌 2x2 묶음이 놓이는 사분면은
 // 접는 방향(위/아래·왼/오른)에 따라 달라지고, 색칠 칸이 가리키는 원본 칸도
 // 그에 따라 달라진다. 잘리는 칸은 색칠 칸의 거울 궤도 {r,3-r}x{c,3-c} 네 개.
+// ── 세로셈 복면산: 세 도형의 값 합 (파이널 2회 14번 계열) ──────────────
+// 검증표에는 값 셋(세모 9·네모 0·별 1)과 답 10만 있고 식의 배치는 없다.
+// 그 값으로 성립하는 두 자리 세로셈만 16가지라 원본 배치는 정해지지 않는다.
+// 그래서 배치를 지어내지 않고 같은 구조 계열을 만들되, 해가 하나뿐일 때만 낸다.
+const CRYPTO_SHAPES = ["△", "□", "☆"];
+
+function cryptarithmSolutionCount(first, second, sum) {
+  // 서로 다른 숫자를 넣어 실제로 식이 성립하는 경우를 전수로 센다.
+  const value = (pattern, assign) => pattern.reduce((total, index) => total * 10 + assign[index], 0);
+  let count = 0;
+  let only = null;
+  for (let a = 0; a <= 9; a += 1) for (let b = 0; b <= 9; b += 1) for (let c = 0; c <= 9; c += 1) {
+    if (a === b || b === c || a === c) continue;
+    const assign = [a, b, c];
+    if (assign[first[0]] === 0 || assign[second[0]] === 0 || assign[sum[0]] === 0) continue;
+    if (value(first, assign) + value(second, assign) !== value(sum, assign)) continue;
+    count += 1;
+    only = assign;
+    if (count > 1) return { count, only: null };
+  }
+  return { count, only };
+}
+
+function verticalCryptarithmShapeSum({ difficulty = 2 }) {
+  const firstLength = difficulty === 3 ? 3 : 2;
+  const secondLength = firstLength;
+
+  // 허용 숫자가 셋뿐이라 무작위로 식을 찍으면 대부분 성립하지 않는다.
+  // 자리 조합을 전수로 훑어 성립하는 것만 모은 뒤 그중에서 고른다.
+  const patterns = (length) => {
+    let list = [[]];
+    for (let i = 0; i < length; i += 1) list = list.flatMap((p) => [0, 1, 2].map((d) => [...p, d]));
+    return list;
+  };
+  const firstPatterns = patterns(firstLength);
+  const secondPatterns = patterns(secondLength);
+
+  for (let round = 0; round < 300; round += 1) {
+    const digits = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 3);
+    const value = (pattern) => pattern.reduce((total, index) => total * 10 + digits[index], 0);
+    const candidates = [];
+    for (const first of firstPatterns) {
+      if (digits[first[0]] === 0) continue;
+      for (const second of secondPatterns) {
+        if (digits[second[0]] === 0) continue;
+        const total = value(first) + value(second);
+        const sumDigits = String(total).split("").map(Number);
+        if (!sumDigits.every((d) => digits.includes(d))) continue;
+        const sum = sumDigits.map((d) => digits.indexOf(d));
+        // 자리 올림으로 한 자리 늘어나는 형태(원본 계열)만 쓴다. 식을 더 짧게 하면
+        // 기호 셋을 정할 단서가 모자라 해가 여러 개가 된다 — 조건을 만족하는 식 1,398개를
+        // 전수로 훑어 유일해가 하나도 없음을 확인했다. 그래서 쉬움은 식을 줄이는 대신 힌트를 준다.
+        if (difficulty !== 3 && sum.length !== firstLength + 1) continue;
+        if (new Set([...first, ...second, ...sum]).size !== 3) continue;   // 세 도형이 모두 나와야 한다
+        candidates.push({ first, second, sum });
+      }
+    }
+    const unique = [];
+    for (const candidate of shuffle(candidates)) {
+      if (cryptarithmSolutionCount(candidate.first, candidate.second, candidate.sum).count === 1) {
+        unique.push(candidate);
+        break;                                    // 하나만 찾으면 충분하다
+      }
+    }
+    if (!unique.length) continue;
+
+    const { first, second, sum } = unique[0];
+    const answer = digits[0] + digits[1] + digits[2];
+    const naming = CRYPTO_SHAPES.map((shape, index) => `${shape}는 ${digits[index]}`).join(", ");
+    // 쉬움은 한 도형의 값을 알려 준다. 이미 유일해인 식이므로 힌트가 답을 흐리지 않는다.
+    const hintIndex = difficulty === 1 ? randomInt(0, 2) : -1;
+    const hint = hintIndex >= 0 ? ` (단, ${CRYPTO_SHAPES[hintIndex]}는 ${digits[hintIndex]}입니다.)` : "";
+    return {
+      prompt: `다음 세로셈에서 같은 도형은 같은 숫자를, 다른 도형은 다른 숫자를 나타냅니다. 세 도형이 나타내는 수의 합을 구하시오.${hint}`,
+      visual: {
+        kind: "cryptarithm-vertical",
+        first: first.map((index) => CRYPTO_SHAPES[index]),
+        second: second.map((index) => CRYPTO_SHAPES[index]),
+        sum: sum.map((index) => CRYPTO_SHAPES[index])
+      },
+      answer: String(answer),
+      solution: `자리마다 올림을 따져 보면 ${naming}입니다. 세 도형이 나타내는 수를 더하면 ${digits[0]} + ${digits[1]} + ${digits[2]} = ${answer}입니다.`,
+      meta: { digits, first, second, sum, answer, hintIndex }
+    };
+  }
+  return null;
+}
+
 function foldNumberSumCore(askCut) {
   const N = 4;
   const grid = Array.from({ length: N }, () => Array.from({ length: N }, () => randomInt(1, 4)));
@@ -1573,6 +1661,7 @@ export const GENERATORS = {
   calendarDateWeekday,
   magicSquare,
   diagonalFoldHoleCount,
+  verticalCryptarithmShapeSum,
   foldNumberRemainingSum,
   foldNumberCutSum,
   foldDiagonalNumberSum,
