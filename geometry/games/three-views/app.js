@@ -267,13 +267,26 @@ function updateTabDoneMarks() {
   });
 }
 
-// Sizes the single visible grid's cells (compact-landscape tab mode only) to
-// fill the space freed up by hiding the other two — same fit-to-box approach
-// as count-heights' fitTopBoard().
+// Sizes the view grids' cells to fill the available space. In compact-
+// landscape tab mode only one grid is visible at a time and it can claim the
+// whole row; on desktop all three grids share the row, so we solve for a
+// single common cell size that lets all three sit side by side.
 function fitViewCells() {
   const tabsEl = elements.viewsTabs;
   const stage = elements.viewsStage;
-  if (!tabsEl || !stage || getComputedStyle(tabsEl).display === "none") return;
+  if (!tabsEl || !stage) return;
+  if (getComputedStyle(tabsEl).display === "none") {
+    fitViewCellsDesktop();
+  } else {
+    fitViewCellsCompact();
+  }
+}
+
+// Compact-landscape tab mode: only the active view's grid is on screen, so
+// it can be sized against its own block the way fitTopBoard() sizes the
+// count-heights board.
+function fitViewCellsCompact() {
+  const stage = elements.viewsStage;
   const block = stage.querySelector(`.view-block[data-view="${state.activeView}"]`);
   const grid = block?.querySelector(".view-grid");
   if (!block || !grid || !block.clientWidth || !block.clientHeight) return;
@@ -293,7 +306,58 @@ function fitViewCells() {
   const cellH = (availH - (rows - 1) * gap) / rows;
   let cell = Math.floor(Math.min(cellW, cellH));
   cell = Math.max(24, Math.min(60, cell));
-  stage.style.setProperty("--tv-cell", `${cell}px`);
+  elements.viewsStage.style.setProperty("--tv-cell", `${cell}px`);
+}
+
+// Desktop (and any width where the tabs are hidden): all three view-blocks
+// sit side by side in .views-row, so find the single cell size that lets
+// their combined widths (each grid's own cols/gap/padding/border, plus the
+// gaps .views-row puts between the three blocks) fit the row's measured box,
+// while also fitting the tallest grid's rows within the row's height.
+function fitViewCellsDesktop() {
+  const row = elements.viewsRow;
+  if (!row || !row.clientWidth || !row.clientHeight) return;
+  const blocks = [...row.querySelectorAll(".view-block")];
+  if (!blocks.length) return;
+
+  const rowStyle = getComputedStyle(row);
+  const rowGap = parseFloat(rowStyle.columnGap || rowStyle.gap) || 0;
+
+  const specs = blocks.map((block) => {
+    const grid = block.querySelector(".view-grid");
+    const label = block.querySelector(".view-label");
+    const cols = Number(getComputedStyle(grid).getPropertyValue("--cols")) || grid.children.length || 1;
+    const rows = Math.max(1, Math.round(grid.children.length / cols));
+    const gridStyle = getComputedStyle(grid);
+    const padX = parseFloat(gridStyle.paddingLeft) + parseFloat(gridStyle.paddingRight);
+    const padY = parseFloat(gridStyle.paddingTop) + parseFloat(gridStyle.paddingBottom);
+    const borderX = parseFloat(gridStyle.borderLeftWidth) + parseFloat(gridStyle.borderRightWidth);
+    const borderY = parseFloat(gridStyle.borderTopWidth) + parseFloat(gridStyle.borderBottomWidth);
+    const gap = parseFloat(gridStyle.gap || gridStyle.columnGap) || 0;
+    const blockStyle = getComputedStyle(block);
+    const labelSpace = (label ? label.getBoundingClientRect().height : 0) + (parseFloat(blockStyle.gap) || 0);
+    return {
+      cols,
+      rows,
+      fixedWidth: padX + borderX + (cols - 1) * gap,
+      fixedHeight: padY + borderY + (rows - 1) * gap + labelSpace
+    };
+  });
+
+  const totalFixedWidth = specs.reduce((sum, spec) => sum + spec.fixedWidth, 0) + rowGap * (specs.length - 1);
+  const totalCols = specs.reduce((sum, spec) => sum + spec.cols, 0);
+  const maxFixedHeight = Math.max(...specs.map((spec) => spec.fixedHeight));
+  const maxRows = Math.max(...specs.map((spec) => spec.rows));
+
+  const availW = row.clientWidth - totalFixedWidth;
+  const availH = row.clientHeight - maxFixedHeight;
+  if (availW <= 0 || availH <= 0 || totalCols <= 0 || maxRows <= 0) return;
+
+  const cellW = availW / totalCols;
+  const cellH = availH / maxRows;
+  let cell = Math.floor(Math.min(cellW, cellH));
+  cell = Math.max(24, Math.min(84, cell));
+  elements.viewsStage.style.setProperty("--tv-cell", `${cell}px`);
 }
 
 function renderViewGrid(name) {

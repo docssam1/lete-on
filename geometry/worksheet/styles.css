@@ -1,0 +1,305 @@
+/* GFIELD 쌓기나무 학습지 — screen layout + print stylesheet.
+   WHY a hand-rolled sheet look (210mm white card + shadow) instead of a CSS
+   framework: this page has no build step and must print pixel-accurately on
+   A4, so the "page" is modelled directly rather than through a component
+   library. */
+
+:root {
+  --ink: #202a33;
+  --brand: #203457;
+  --accent: #278958;
+  --line: #c9d0cb;
+  --panel-bg: #f3f5f2;
+  --card-bg: #ffffff;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: "Pretendard", "Noto Sans KR", system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--panel-bg);
+}
+
+.app-shell {
+  display: flex;
+  min-height: 100%;
+  align-items: stretch;
+}
+
+/* ---------------------------------------------------------------------
+   Left control panel — fixed width, independently scrollable so long
+   checkbox lists never push the print buttons off-screen.
+   --------------------------------------------------------------------- */
+.control-panel {
+  flex: 0 0 300px;
+  width: 300px;
+  padding: 18px 16px 28px;
+  background: #ffffff;
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+.control-panel h1 {
+  margin: 4px 0 18px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--brand);
+  letter-spacing: 0.5px;
+}
+.control-panel h1 span { font-size: 19px; font-weight: 900; }
+
+.control-group { margin-bottom: 16px; }
+.control-group h2 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #55625c;
+  letter-spacing: 0.3px;
+}
+
+.type-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 6px;
+  font-size: 12px;
+}
+.type-grid label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.type-grid label:hover { background: #eef3ef; }
+
+.radio-row { display: flex; gap: 10px; font-size: 13px; font-weight: 700; }
+.radio-row label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+
+select, .code-input, input[type="text"] {
+  width: 100%;
+  height: 34px;
+  border: 1px solid #bfc6c2;
+  border-radius: 6px;
+  padding: 0 9px;
+  font-size: 13px;
+  font-family: inherit;
+  background: #fff;
+  color: var(--ink);
+}
+
+.code-input { font-family: "SFMono-Regular", Consolas, monospace; margin-bottom: 8px; }
+
+.check-line { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; cursor: pointer; }
+
+.btn {
+  display: block;
+  width: 100%;
+  height: 38px;
+  border: 1px solid #bfc6c2;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 6px;
+}
+.btn:hover { filter: brightness(0.97); }
+.btn-primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+.btn-print { background: #e5f3e8; color: #174d2f; border-color: #bfe0c8; }
+.btn-secondary { background: #f4f6f4; }
+
+.actions { display: flex; flex-direction: column; gap: 6px; }
+.actions .btn { margin-top: 0; }
+
+/* ---------------------------------------------------------------------
+   Right preview panel — renders the sheet(s) approximately (A4 white card
+   + shadow); the actual pagination happens at print time via break rules.
+   --------------------------------------------------------------------- */
+.preview-panel {
+  flex: 1 1 auto;
+  padding: 26px 20px 60px;
+  overflow-y: auto;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+#sheetRoot { width: 210mm; max-width: 100%; }
+
+.ws-page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto 24px;
+  padding: 14mm 13mm;
+  background: var(--card-bg);
+  box-shadow: 0 7px 24px rgba(35, 43, 38, 0.14);
+}
+
+.ws-head {
+  border-bottom: 3px solid var(--brand);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+.ws-head-top { display: flex; justify-content: space-between; align-items: baseline; }
+.ws-brand { font-size: 22px; font-weight: 900; color: var(--brand); }
+.ws-brand b { color: var(--accent); }
+.ws-code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 10px; color: #6b756f; }
+
+.ws-student-line {
+  display: flex;
+  gap: 18px;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.ws-student-line i {
+  font-style: normal;
+  display: inline-block;
+  min-width: 44mm;
+  border-bottom: 1px solid #555;
+  margin-left: 4px;
+  padding-bottom: 1px;
+}
+
+.ws-card {
+  border: 1px solid #aab2ad;
+  border-radius: 4px;
+  padding: 9px 11px 11px;
+  margin-bottom: 8mm;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.ws-card-head { display: flex; align-items: center; margin-bottom: 4px; }
+.ws-num {
+  display: inline-grid;
+  place-items: center;
+  width: 7mm;
+  height: 7mm;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+}
+.ws-prompt { margin: 2px 0 8px; font-size: 12.5px; line-height: 1.55; }
+
+.ws-figures {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 16px;
+}
+.ws-fig-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 16px;
+  width: 100%;
+}
+.ws-fig-row + .ws-fig-row { margin-top: 10px; }
+
+.ws-figure { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.ws-figure figcaption { font-size: 10.5px; font-weight: 800; color: #4a5450; }
+/* 2D grids render at their natural size (width/height attrs emitted by
+   render.js, ~26px per cell) so a 1-row view stays small instead of being
+   stretched to a fixed height; only cap the extremes. */
+.ws-figure svg.ws-grid { display: block; max-height: 140px; max-width: 180px; }
+/* Solve-table grid (VC/VM) draws at 30px/cell plus a helper-box gutter, so
+   it needs a bigger cap than the plain 26px view grids to avoid shrinking
+   the printed numbers into illegibility. */
+.ws-figure svg.ws-grid-solve { max-height: 210px; max-width: 230px; }
+.ws-figure svg.ws-iso { display: block; height: 130px; width: auto; }
+.ws-figure.ws-figure-lg svg.ws-iso { height: 170px; }
+.ws-figure.ws-figure-sm svg.ws-iso { height: 78px; }
+.ws-seq-dots { font-size: 22px; font-weight: 900; color: #8a9a92; padding-bottom: 12px; }
+
+.ws-answer-line {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed #d3d8d4;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* ---- answer sheet page ---- */
+.ws-answer-page { break-before: page; page-break-before: always; }
+.ws-answer-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 3px solid var(--brand);
+  font-size: 20px;
+  color: var(--brand);
+}
+.ws-answer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  column-count: 3;
+  column-gap: 8mm;
+}
+.ws-answer-item {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  font-size: 12px;
+  padding: 4px 0;
+  border-bottom: 1px dotted #d9ddd9;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.ws-answer-item b { color: var(--brand); }
+.ws-ans-thumbs { display: inline-flex; gap: 10px; align-items: flex-start; }
+.ws-ans-thumb { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.ws-ans-thumb small { font-size: 9px; color: #7a847e; }
+/* Fixed thumbnail width: without it the mini grids shrink to unreadable
+   specks and collide with the neighbouring answer text in the columns. */
+.ws-ans-thumb svg { display: block; width: 52px; height: auto; }
+/* The solve-table thumbnail (VC/VM answer sheet) packs a number into every
+   footprint cell, so the plain 52px view-thumb width shrinks the digits
+   past legibility -- give it a larger cap. */
+.ws-ans-thumb svg.ws-grid-solve { width: 90px; }
+
+/* ---------------------------------------------------------------------
+   Print — A4 portrait, hide the control panel, let cards break cleanly.
+   --------------------------------------------------------------------- */
+@media print {
+  @page { size: A4 portrait; margin: 12mm; }
+  body { background: #fff; }
+  .control-panel { display: none; }
+  .preview-panel { padding: 0; height: auto; display: block; }
+  #sheetRoot { width: auto; }
+  .ws-page {
+    width: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+  .ws-card { break-inside: avoid; page-break-inside: avoid; }
+  .ws-answer-page { break-before: page; page-break-before: always; }
+}
+
+@media (max-width: 900px) {
+  .app-shell { flex-direction: column; }
+  .control-panel { position: static; width: auto; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
+  .preview-panel { height: auto; }
+}
+
+/* Two-method hint line under IH/IN prompts — quiet grey so it reads as a
+   study aid, not part of the question. */
+.ws-method { margin: 2px 0 0; font-size: 10.5px; color: #7a847e; }

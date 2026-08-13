@@ -506,12 +506,14 @@ const PRODUCTS=[
   {key:"최종모의고사",name:"최종 모의고사",desc:"새 시험지 제작 중",icon:"🏆",theme:"theme-final",type:"direct",comingSoon:true,lessons:[{key:"u1",label:"최종",title:"최종 모의고사",type:"concept",url:"",pdfPage:1}]},
   {key:"자료실",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
 ];
+ // cover는 서재/쇼케이스의 3D 책 앞면(coverMarkup)에만 쓰인다. 뷰어 본문은 pagesBase로
+ // 따로 그리므로 여기를 바꿔도 페이지 이미지는 그대로다.
  const CONCEPT_CHAPTER_ASSETS={
-   vol1:{pagesBase:"../assets/concept/vol1/",pageCount:19,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol1/001.jpg"},
-   vol2:{pagesBase:"../assets/concept/vol2/",pageCount:19,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol2/001.jpg"},
-   vol3:{pagesBase:"../assets/concept/vol3/",pageCount:16,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol3/001.jpg"},
-   vol4:{pagesBase:"../assets/concept/vol4/",pageCount:10,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol4/001.jpg"},
-   final:{pagesBase:"../assets/concept/final/",pageCount:11,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/final/001.jpg"}
+   vol1:{pagesBase:"../assets/concept/vol1/",pageCount:19,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol1.png"},
+   vol2:{pagesBase:"../assets/concept/vol2/",pageCount:19,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol2.png"},
+   vol3:{pagesBase:"../assets/concept/vol3/",pageCount:16,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol3.png"},
+   vol4:{pagesBase:"../assets/concept/vol4/",pageCount:10,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/vol4.png"},
+   final:{pagesBase:"../assets/concept/final/",pageCount:11,pagePrefix:"",pageExt:"jpg",cover:"../assets/concept/final.png"}
  };
  const CONCEPT_VIDEO_PAGES={vol1:{concept:2,practice:15},vol2:{check:2,concept:5,practice:15},vol3:{check:2,concept:7,practice:12},vol4:{check:2,concept:6},final:{final:2}};
  const conceptProduct=PRODUCTS.find(p=>p.type==="folder");
@@ -839,7 +841,10 @@ const GF={
   closeModal(){document.getElementById("commentModal").classList.remove("show")},
   startFromModal(){this.closeModal();if(S.currentChapter)this.openChapterViewer(S.currentChapter)},
   openChapterViewer(ch){
-    S.currentProduct=Object.assign({},S.currentProduct||{},ch.pagesBase?{pagesBase:ch.pagesBase,pageCount:ch.pageCount,pagePrefix:ch.pagePrefix||"",pageExt:ch.pageExt||"jpg"}:{});
+    // pageSegments는 통권 시절의 vol1~final 75쪽 목록이다. 상위 상품에서 상속되는데
+    // bookUrl()이 pagesBase보다 pageSegments를 먼저 보므로, 남겨 두면 어느 권을 열어도
+    // 첫 구간인 vol1 이미지가 나온다. 권별 뷰어를 열 때 반드시 함께 비운다.
+    S.currentProduct=Object.assign({},S.currentProduct||{},ch.pagesBase?{pagesBase:ch.pagesBase,pageCount:ch.pageCount,pagePrefix:ch.pagePrefix||"",pageExt:ch.pageExt||"jpg",pageSegments:null}:{});
     S.viewerOpen=true;
     document.getElementById("vTitle").textContent=ch.vol+" · "+ch.title;
     document.getElementById("vYtBtn").style.display="block";

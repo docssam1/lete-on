@@ -115,6 +115,7 @@ let sq={view:'plan',day:null,vid:null,qi:0};  // Screen Quest navigation state
 let customizeMode='avatar';  // 'avatar' | 'town' inside the 꾸미기 screen
 let lib=null;           // Library reader: {view:'shelf'|'book', bookId, pages, spread, flipDir}
 let introDone=false;   // intro splash shown this session
+let townFitCleanup=null;
 let st=defaultState();
 function introSeen(){try{return sessionStorage.getItem('rw_intro_seen')==='1'}catch(e){return introDone}}
 function markIntroSeen(){introDone=true;try{sessionStorage.setItem('rw_intro_seen','1')}catch(e){}}
@@ -1027,6 +1028,23 @@ function town(){
 function brandHTML(){return `<img class="brand-mark" src="assets/images/gfield-logo.svg" alt="G.FIELD" draggable="false"><span class="brand-sub">Reading Town</span>`;}
 function gameAvailable(){return !!(window.Phaser&&window.TownGame);}
 function landingView(){return gameAvailable()?'game':'map';}
+const TOWN_MAP_W=1207, TOWN_MAP_H=837, TOWN_MAP_ASPECT=TOWN_MAP_W/TOWN_MAP_H;
+function clearTownFit(){if(townFitCleanup){townFitCleanup();townFitCleanup=null;}}
+function fitTownStage(){
+ const wrap=document.querySelector('.town-stage-wrap'),stage=document.getElementById('town-stage');
+ if(!wrap||!stage)return;
+ wrap.style.width='';
+ const parent=wrap.parentElement;
+ const maxW=Math.min(1500,parent?parent.clientWidth:window.innerWidth);
+ const rect=wrap.getBoundingClientRect();
+ const hint=document.querySelector('.town-hint');
+ const reserve=(hint?hint.offsetHeight:0)+18;
+ const minH=window.innerWidth<681?240:420;
+ const availableH=Math.max(minH,window.innerHeight-rect.top-reserve);
+ const fitW=Math.max(280,Math.min(maxW,availableH*TOWN_MAP_ASPECT));
+ wrap.style.width=fitW+'px';
+ if(window.TownGame&&TownGame.resize)TownGame.resize();
+}
 function lastStudiedLesson(){const ls=(profile&&profile.lessons)||{};let best=null,bt=-1;Object.keys(ls).forEach(id=>{const s=ls[id];if(!s)return;const t=s.updatedAt||0;if(t>bt){bt=t;best=id;}});if(!best){const av=availableLessons();best=(av&&av[0])||'lesson1';}return best;}
 function resumeInfo(){const id=lastStudiedLesson();const m=lessonMeta(id);return {id,num:m.num,title:m.title,done:lessonDone(id),started:lessonStarted(id)};}
 function lookForGame(){const eq=avEquipped();const hat=avItem('hat',eq.hat);return {skin:(avItem('skin',eq.skin)||{}).fill||'#ffd9ad',hair:(avItem('haircolor',eq.haircolor)||{}).fill||'#6b4326',clothes:(avItem('clothes',eq.clothes)||{}).fill||'#6db3f2',hatEmoji:(hat&&hat.emoji)||''};}
@@ -1058,11 +1076,14 @@ function bindPinchZoom(stage){
  const end=e=>{pts.delete(e.pointerId);if(pts.size<2)startDist=0;};
  stage.addEventListener('pointerup',end);stage.addEventListener('pointercancel',end);stage.addEventListener('pointerleave',end);
 }
-function bindGameTown(){bind();
+function bindGameTown(){bind();clearTownFit();fitTownStage();
  // English village signage (fixed English names regardless of UI language)
  const labels={library:'eBook Library',wordshop:'Vocabulary Room',theater:'Screen Theater',practice:'Textbook Library',report:'Reading Report',writingvillage:'Writing Village',open:st.lang==='ko'?'탭하여 들어가기':st.lang==='zh'?'点击进入':'Tap to enter'};
  const stage=document.getElementById('town-stage');
- if(stage&&gameAvailable()){TownGame.mount(stage,{look:lookForGame(),coins:(profile&&profile.points)||0,labels,onOpenMenu:buildingMenu,slots:(window.DECORATIONS&&DECORATIONS.slots)||{},placed:placedDecoEmoji(),onSlotClick:decorationMenu,avatarUri:avatarSvgUri(),decorArt:placedDecoArt(),buildingArt:buildingArtMap()});}
+  if(stage&&gameAvailable()){TownGame.mount(stage,{look:lookForGame(),coins:(profile&&profile.points)||0,labels,onOpenMenu:buildingMenu,slots:(window.DECORATIONS&&DECORATIONS.slots)||{},placed:placedDecoEmoji(),decorArt:placedDecoArt(),buildingArt:buildingArtMap(),onSlotClick:decorationMenu,avatarUri:avatarSvgUri()});requestAnimationFrame(fitTownStage);}
+  const onResize=()=>{fitTownStage();};
+  window.addEventListener('resize',onResize,{passive:true});
+  townFitCleanup=()=>window.removeEventListener('resize',onResize);
  app.querySelectorAll('.town-zoom [data-zoom]').forEach(b=>{b.onclick=()=>{if(!window.TownGame||!TownGame.setZoom)return;const cur=TownGame.getZoom?TownGame.getZoom():1;TownGame.setZoom(b.dataset.zoom==='in'?cur+0.4:cur-0.4);};});
  if(stage)bindPinchZoom(stage);
  const wx=document.getElementById('rw-weather');if(wx){const icons=['☀️','🌧️'];let wi=0;wx.onclick=()=>{wi=(wi+1)%icons.length;wx.textContent=icons[wi];if(window.TownGame)TownGame.setWeather(wi===1?'rain':'clear');};}}
@@ -1381,8 +1402,8 @@ function handleScreenQuest(b){const act=b.dataset.act;sqEnsure();
   if(!sqPassed(sq.vid)){profile.screenQuest.passed[sq.vid]=true;const msg=sqT('스크린 퀘스트 통과','Screen Quest passed','屏幕任务通过');awardPoints(VIDEO_PLAN.points||12,msg);}
   sq.view='result';save();render();window.scrollTo({top:0});return;}
 }
-function render(){if(!currentStudent){if(!introSeen()){app.innerHTML=introScreen();bindIntro();return;}app.innerHTML=gate();bindGate();return;}
- if(!(atTown&&townView==='game')&&window.TownGame)TownGame.destroy();
+function render(){if(!currentStudent){clearTownFit();if(window.TownGame)TownGame.destroy();if(!introSeen()){app.innerHTML=introScreen();bindIntro();return;}app.innerHTML=gate();bindGate();return;}
+ if(!(atTown&&townView==='game')){clearTownFit();if(window.TownGame)TownGame.destroy();}
  if(atTown){if(townView==='game'&&gameAvailable()){app.innerHTML=gameTownShell();bindGameTown();return;}if(townView==='screen'&&sqAvailable()){app.innerHTML=screenQuestScreen();bind();return;}if(townView==='notice'){app.innerHTML=noticeBoardScreen();bind();return;}if(townView==='diagnostic'){app.innerHTML=diagnosticScreen();bind();return;}if(townView==='parent'){app.innerHTML=parentDashboard();bind();return;}if(townView==='library'){app.innerHTML=libraryScreen();bind();bindLibraryAudio();bindLibraryPdf();return;}if(townView==='writing'){app.innerHTML=writingScreen();bind();bindWritingInputs();return;}app.innerHTML=town();bind();return;}let content=st.view==='home'?home():st.view==='words'?words():(st.view==='originalRead'||st.view==='questions')&&!hasOriginal()?missingOriginal():st.view==='originalRead'?originalRead():st.view==='questions'?questionScreen('original'):st.view==='questionOriginalExtra'?questionScreen('originalExtra'):st.view==='questionSimilar'?questionScreen('similar'):st.view==='review'?questionScreen('review'):st.view==='coach'?coachScreen():st.view==='originalExtra'?originalExtra():st.view==='similar'?extra():report();app.innerHTML=`<div class="shell">${nav()}<main class="main">${top()}${flow()}${content}</main></div>${modal()}`;bind();}
 function makeGameChoices(){const w=L.words[st.gameIndex];return [w[1],...L.words.filter((_,i)=>i!==st.gameIndex).sort(()=>Math.random()-.5).slice(0,3).map(x=>x[1])].sort(()=>Math.random()-.5)}
 const AUDIO_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio';
