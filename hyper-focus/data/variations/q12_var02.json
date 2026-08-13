@@ -1,28 +1,31 @@
 {
-  "schemaVersion": "hf-variation-problem-v1",
-  "baseQuestionId": "q12",
-  "variationId": "q12_var02",
-  "subType": "paper_hole_fold",
-  "status": "draft",
-  "source": {
-    "problemImage": "./assets/problems/q12_var02.png"
-  },
-  "contentBinding": {
-    "canonicalSource": "./canonical/q12.json",
-    "hfDataTypeId": 12
-  },
-  "problem": {
-    "prompt": "Fold the square paper twice and punch one hole. Find the number of holes after unfolding."
-  },
-  "machineReadable": {
-    "payloadType": "paper_hole_fold",
-    "foldSequence": ["horizontal_half", "vertical_half"],
-    "punchCount": 1,
-    "symmetryMultiplier": 4,
-    "expectedAnswer": 4
-  },
-  "answerValidation": {
-    "answerType": "integer",
-    "expectedAnswer": 4
-  }
+ "schemaVersion": "hf-variation-problem-v1",
+ "baseQuestionId": "q12",
+ "variationId": "q12_var02",
+ "subType": "paper_hole_fold",
+ "status": "draft",
+ "source": {
+  "problemImage": "./assets/problems/q12_var02.png"
+ },
+ "contentBinding": {
+  "canonicalSource": "./canonical/q12.json",
+  "hfDataTypeId": 12
+ },
+ "problem": {
+  "prompt": "색종이를 두 번 접고 구멍을 2개 뚫었습니다. 펼쳤을 때 구멍은 모두 몇 개입니까?"
+ },
+ "machineReadable": {
+  "payloadType": "paper_hole_fold",
+  "foldSequence": [
+   "horizontal_half",
+   "vertical_half"
+  ],
+  "punchCount": 2,
+  "symmetryMultiplier": 4,
+  "expectedAnswer": 8
+ },
+ "answerValidation": {
+  "answerType": "integer",
+  "expectedAnswer": 8
+ }
 }
