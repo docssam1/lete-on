@@ -33,6 +33,14 @@
     black: { top: "#565656", left: "#3f3f3f", right: "#2b2b2b", stroke: "#161616" }
   };
 
+  // IH wall/floor tones. #e9ddc4 is the exact "warm plaster" wall color from
+  // games/hidden-count/app.js's wallMaterial (0xe9ddc4), so the printed
+  // worksheet and the on-screen game read as the same material.
+  const WALL_FILL = "#e9ddc4";
+  const WALL_EDGE = "#c3ae82"; // slightly darker than WALL_FILL, for the wall's outline
+  const FLOOR_FILL = "#f4eee2"; // lighter than the wall, so the floor plane reads as a separate surface
+  const FLOOR_EDGE = "#ddd0b3";
+
   // Three quads that make up one visible unit cube face, reused both for
   // drawing solid cubes and for drawing "opening" quads on a box surface
   // (HL). y-plane = top/bottom, z-plane = front/back, x-plane = left/right.
@@ -71,15 +79,18 @@
     );
   }
 
-  // Painter's algorithm: back (large z) to front (small z), so nearer
-  // columns correctly occlude farther ones; within a column, bottom to top
-  // so higher cubes paint over the top face of the cube beneath them.
+  // Painter's algorithm, far-to-near. In THIS projection +z and +x both move
+  // toward the viewer (cubeSvg shows the +z/+x faces), so z=0 is the FAR row
+  // and must be drawn first; z ascending guarantees any overlapping pair is
+  // drawn far-then-near (overlap needs |Δ(x−z)|≤1, and then nearer ⇔ larger
+  // z). Verified empirically with asymmetric shapes — a descending loop
+  // paints far tall columns over near cubes.
   function renderIso(map, width, depth, options) {
     options = options || {};
     const u = options.u || 20;
     const colorFn = options.colorFn || (() => "grey");
     let svg = "";
-    for (let z = depth - 1; z >= 0; z -= 1) {
+    for (let z = 0; z < depth; z += 1) {
       for (let x = 0; x < width; x += 1) {
         const h = map[z][x] || 0;
         for (let y = 0; y < h; y += 1) {
@@ -90,6 +101,59 @@
     }
     const height = Math.max(1, GEN.maxHeightOf(map));
     return wrapSvg(svg, isoBBox(width, depth, height, u));
+  }
+
+  // Full-footprint floor plane at y=0, spanning x:[0,width] and z:[0,depth]
+  // -- same corner-plane shape as quadY but not limited to one unit cell.
+  function floorQuad(width, depth, u) {
+    return [project(0, 0, 0, u), project(width, 0, 0, u), project(width, 0, depth, u), project(0, 0, depth, u)];
+  }
+
+  // Back wall: the vertical plane at z = 0 — the true far side in this
+  // projection (+z moves toward the viewer), so the wall reads as a backdrop
+  // running up-right behind the stack. Spans the full x-width, floor to
+  // wallH.
+  function backWallQuad(width, depth, wallH, u) {
+    return [project(0, 0, 0, u), project(width, 0, 0, u), project(width, wallH, 0, u), project(0, wallH, 0, u)];
+  }
+
+  // Left wall: the vertical plane at x = 0 (render.js's screen-left / first
+  // -drawn-in-row side). Spans the full z-depth, floor to wallH.
+  function leftWallQuad(depth, wallH, u) {
+    return [project(0, 0, 0, u), project(0, 0, depth, u), project(0, wallH, depth, u), project(0, wallH, 0, u)];
+  }
+
+  // IH ("보이지 않는 개수 (벽 있음)") renderer: draws a back wall (z=0)
+  // and a left wall (x=0) BEHIND/BENEATH the cubes, matching
+  // GW_GEN.countHiddenWalled's math (see generators.js's file-top comment
+  // for the frame derivation — z=0 is the far side in this projection).
+  // Paint order is floor -> back wall -> left wall -> cubes (same painter's-
+  // algorithm loop as renderIso), so later cube polygons always overpaint
+  // the wall/floor wherever they overlap -- a wall can never render on top
+  // of a cube.
+  function renderIsoWalled(map, width, depth, options) {
+    options = options || {};
+    const u = options.u || 20;
+    const colorFn = options.colorFn || (() => "grey");
+    const height = Math.max(1, GEN.maxHeightOf(map));
+    // The wall stands a bit taller than the tallest stack so the corner
+    // reads clearly, echoing the 3D game's wallH = maxHeight + margin
+    // (games/hidden-count/app.js).
+    const wallH = height + 0.6;
+    let svg = "";
+    svg += polygon(floorQuad(width, depth, u), FLOOR_FILL, FLOOR_EDGE);
+    svg += polygon(backWallQuad(width, depth, wallH, u), WALL_FILL, WALL_EDGE);
+    svg += polygon(leftWallQuad(depth, wallH, u), WALL_FILL, WALL_EDGE);
+    for (let z = 0; z < depth; z += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const h = map[z][x] || 0;
+        for (let y = 0; y < h; y += 1) {
+          const pal = PALETTES[colorFn(x, y, z)] || PALETTES.grey;
+          svg += cubeSvg(x, y, z, u, pal);
+        }
+      }
+    }
+    return wrapSvg(svg, isoBBox(width, depth, wallH, u));
   }
 
   function boxWireframe(width, depth, boxH, u) {
@@ -123,7 +187,7 @@
     }
     if (!colorFn) colorFn = () => "grey";
     let svg = "";
-    for (let z = depth - 1; z >= 0; z -= 1) {
+    for (let z = 0; z < depth; z += 1) {
       for (let x = 0; x < width; x += 1) {
         const h = map[z][x] || 0;
         for (let y = 0; y < h; y += 1) svg += cubeSvg(x, y, z, u, PALETTES[colorFn(x, y, z)] || PALETTES.grey);
@@ -137,13 +201,13 @@
   }
 
   // HL: draw a solid full box, then paint the tunnel entrances white on the
-  // three visible faces (top / front z=0 / right x=width). This is a
+  // three visible faces (top / front z=depth / right x=width). This is a
   // simplified "marked opening" rendering, not true see-through geometry.
   function renderIsoHoles(width, depth, boxH, tunnels, options) {
     options = options || {};
     const u = options.u || 20;
     let svg = "";
-    for (let z = depth - 1; z >= 0; z -= 1) {
+    for (let z = 0; z < depth; z += 1) {
       for (let x = 0; x < width; x += 1) {
         for (let y = 0; y < boxH; y += 1) svg += cubeSvg(x, y, z, u, PALETTES.grey);
       }
@@ -156,8 +220,10 @@
         // horizontal shaft at (y=a, z=b) along x: reaches the right face x=width.
         svg += polygon(quadX(width, t.a, t.b, u), "#ffffff", "#444");
       } else {
-        // shaft at (x=a, y=b) along z: reaches the front face z=0.
-        svg += polygon(quadZ(t.a, t.b, 0, u), "#ffffff", "#444");
+        // shaft at (x=a, y=b) along z: its opening shows on the viewer-facing
+        // z face, which in this projection is the z=depth plane (see the
+        // painter's-algorithm comment — +z moves toward the viewer).
+        svg += polygon(quadZ(t.a, t.b, depth, u), "#ffffff", "#444");
       }
     });
     return wrapSvg(svg, isoBBox(width, depth, boxH, u));
@@ -170,7 +236,7 @@
     cellPx = cellPx || 34;
     const w = width * cellPx;
     const h = depth * cellPx;
-    let s = '<svg viewBox="0 0 ' + w + " " + h + '" class="ws-grid ws-grid-number" preserveAspectRatio="xMidYMid meet">';
+    let s = '<svg viewBox="0 0 ' + w + " " + h + '" width="' + w + '" height="' + h + '" class="ws-grid ws-grid-number" preserveAspectRatio="xMidYMid meet">';
     for (let z = 0; z < depth; z += 1) {
       for (let x = 0; x < width; x += 1) {
         s += '<rect x="' + x * cellPx + '" y="' + z * cellPx + '" width="' + cellPx + '" height="' + cellPx + '" fill="#fff" stroke="#333" stroke-width="1"/>';
@@ -192,7 +258,7 @@
     const cols = rows ? grid[0].length : 0;
     const w = Math.max(1, cols) * cellPx;
     const h = Math.max(1, rows) * cellPx;
-    let s = '<svg viewBox="0 0 ' + w + " " + h + '" class="ws-grid ws-grid-view" preserveAspectRatio="xMidYMid meet">';
+    let s = '<svg viewBox="0 0 ' + w + " " + h + '" width="' + w + '" height="' + h + '" class="ws-grid ws-grid-view" preserveAspectRatio="xMidYMid meet">';
     for (let r = 0; r < rows; r += 1) {
       for (let c = 0; c < cols; c += 1) {
         if (grid[r][c]) s += '<rect x="' + c * cellPx + '" y="' + r * cellPx + '" width="' + cellPx + '" height="' + cellPx + '" fill="#fff" stroke="#333" stroke-width="1.6"/>';
@@ -207,7 +273,7 @@
     cellPx = cellPx || 26;
     const w = cols * cellPx;
     const h = rows * cellPx;
-    let s = '<svg viewBox="0 0 ' + w + " " + h + '" class="ws-grid ws-grid-empty" preserveAspectRatio="xMidYMid meet">';
+    let s = '<svg viewBox="0 0 ' + w + " " + h + '" width="' + w + '" height="' + h + '" class="ws-grid ws-grid-empty" preserveAspectRatio="xMidYMid meet">';
     for (let r = 0; r < rows; r += 1) {
       for (let c = 0; c < cols; c += 1) {
         s += '<rect x="' + c * cellPx + '" y="' + r * cellPx + '" width="' + cellPx + '" height="' + cellPx + '" fill="none" stroke="#aaa" stroke-width="1" stroke-dasharray="3 2"/>';
@@ -237,6 +303,7 @@
 
   global.GW_RENDER = {
     renderIso,
+    renderIsoWalled,
     renderIsoBox,
     renderIsoHoles,
     renderNumberGrid,

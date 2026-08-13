@@ -14,8 +14,20 @@
 // z=0/z=depth-1 end-label doesn't change behaviour) from
 // /tmp/repo/geometry/games/three-views/levels.js (frontView/sideView/topView)
 // so a shape drawn here matches what the existing games would show for the
-// same map. The "hidden cube" rule is copied verbatim from
-// /tmp/repo/geometry/games/hidden-count/levels.js (countHidden).
+// same map.
+//
+// The "hidden cube" rule countHiddenWalled below is byte-for-byte the same
+// as /tmp/repo/geometry/games/hidden-count/levels.js countHidden(). Frame
+// check (verified EMPIRICALLY by rendering asymmetric shapes, not from the
+// old painter comment which had it backwards): render.js's projection sends
+// +z to screen lower-left and +x to screen lower-right, and cubeSvg() shows
+// each cube's TOP, +z and +x faces — so the VIEWER stands on the large-z /
+// large-x side, the far "back" corner is the z=0 / x=0 edge, and that is
+// where renderIsoWalled() draws its two walls. With walls at z=0/x=0 the
+// game's original blocking directions (taller column at z2>z blocks the
+// front view, at x2>x blocks the right view) apply unchanged. See
+// .selftest.mjs's FIXTURES_WALLED asymmetric fixture, which fails if either
+// the wall side or a blocking direction is mirrored.
 (function (global) {
   "use strict";
 
@@ -155,8 +167,22 @@
     };
   }
 
-  // Hidden-cube rule copied verbatim from hidden-count/levels.js countHidden().
-  function countHidden(map) {
+  // Hidden-cube rule for IH -- 보이지 않는 개수 (벽 있음), the corner-wall
+  // problem. Frame derivation, verified empirically against render.js's
+  // actual output: cubeSvg() shows each cube's TOP, +z and +x faces, so the
+  // viewer stands on the LARGE-z / LARGE-x side. The two walls therefore sit
+  // on the far boundaries the viewer cannot see: the z = 0 plane (back) and
+  // the x = 0 plane (left) -- exactly where renderIsoWalled draws them.
+  //
+  // A cube is hidden only when top AND front AND right are all blocked by a
+  // taller column standing BETWEEN the viewer and the cube:
+  //   - blocked from front (viewer beyond z=depth-1, looking toward -z /
+  //     the back wall): needs a taller column at a LARGER z (z2 > z).
+  //   - blocked from right (viewer beyond x=width-1, looking toward -x /
+  //     the left wall): needs a taller column at a LARGER x (x2 > x).
+  // This is byte-for-byte the same rule as hidden-count/levels.js's
+  // countHidden() -- the game's corner scene and this picture agree.
+  function countHiddenWalled(map) {
     const depth = map.length;
     const width = depth ? map[0].length : 0;
     let hidden = 0;
@@ -174,6 +200,42 @@
             if (map[z][x2] > y) { coveredRight = true; break; }
           }
           if (coveredTop && coveredFront && coveredRight) hidden += 1;
+        }
+      }
+    }
+    return hidden;
+  }
+
+  // Hidden-cube rule for IN -- 보이지 않는 개수 (벽 없음), per
+  // docs/03_COUNT_HIDDEN.md section 4: viewing directions are 앞/뒤/왼쪽/
+  // 오른쪽/위 (front/back/left/right/top -- never from below, five
+  // directions total). A cube is hidden only if it is blocked in ALL FIVE,
+  // i.e. it is a true interior cube: a taller (or equal) column exists on
+  // BOTH sides of it along x, on BOTH sides along z, and a cube sits
+  // directly above it in its own column. No walls, so no orientation
+  // choice is needed here -- the rule is fully symmetric.
+  function countHiddenNoWall(map) {
+    const depth = map.length;
+    const width = depth ? map[0].length : 0;
+    let hidden = 0;
+    for (let z = 0; z < depth; z += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const h = map[z][x];
+        for (let y = 0; y < h; y += 1) {
+          if (y >= h - 1) continue; // exposed from directly above: always visible
+          let blockedRight = false;
+          for (let x2 = x + 1; x2 < width; x2 += 1) if (map[z][x2] > y) { blockedRight = true; break; }
+          if (!blockedRight) continue;
+          let blockedLeft = false;
+          for (let x2 = x - 1; x2 >= 0; x2 -= 1) if (map[z][x2] > y) { blockedLeft = true; break; }
+          if (!blockedLeft) continue;
+          let blockedFront = false;
+          for (let z2 = z + 1; z2 < depth; z2 += 1) if (map[z2][x] > y) { blockedFront = true; break; }
+          if (!blockedFront) continue;
+          let blockedBack = false;
+          for (let z2 = z - 1; z2 >= 0; z2 -= 1) if (map[z2][x] > y) { blockedBack = true; break; }
+          if (!blockedBack) continue;
+          hidden += 1;
         }
       }
     }
@@ -583,24 +645,98 @@
     };
   }
 
-  // 6. IH — 3D 그림 -> 보이지 않는 개수
+  // Does any column in the shape's back row (z = 0, the wall side in the
+  // corrected frame) hold a cube? Used by genIH to guarantee the shape
+  // actually leans into the drawn corner (a shape that never touches the
+  // back wall would look wrong next to it).
+  function touchesBackRow(map, width, depth) {
+    const row = map[0];
+    for (let x = 0; x < width; x += 1) if (row[x] > 0) return true;
+    return false;
+  }
+
+  // Does any row hold a cube in the shape's left column (x = 0)? Same idea
+  // as touchesBackRow, for the left wall.
+  function touchesLeftColumn(map, depth) {
+    for (let z = 0; z < depth; z += 1) if (map[z][0] > 0) return true;
+    return false;
+  }
+
+  // 6. IH — 보이지 않는 개수 (벽 있음): corner-wall problem, math and picture
+  // both anchored to the back (z=0) + left (x=0) corner -- see
+  // countHiddenWalled and render.js's renderIsoWalled.
   function genIH(rng, difficulty) {
+    const [width, depth] = gridForDifficulty(rng, difficulty);
+    // maxHeightForDifficulty already returns 3 or 4 for every difficulty, so
+    // this is always >= 2, but the shape must never degenerate to a single
+    // flat layer (a 1-story shape can never hide a cube), so require it
+    // explicitly rather than relying on that incidentally.
+    const maxH = maxHeightForDifficulty(rng, difficulty);
+    let map = null;
+    let hidden = 0;
+    let fallback = null; // best valid (hidden >= 1, corner-touching) candidate seen so far
+    for (let tries = 0; tries < 400; tries += 1) {
+      const candidate = randomShape(rng, width, depth, maxH);
+      if (maxHeightOf(candidate) < 2) continue;
+      if (!touchesBackRow(candidate, width, depth) || !touchesLeftColumn(candidate, depth)) continue;
+      const h = countHiddenWalled(candidate);
+      if (h < 1) continue;
+      fallback = { map: candidate, hidden: h };
+      if (h <= 6) { map = candidate; hidden = h; break; } // prefer a small, easy-to-count answer
+    }
+    if (!map) {
+      if (fallback) {
+        map = fallback.map;
+        hidden = fallback.hidden;
+      } else {
+        // Dense fallback fills every column, which trivially touches both
+        // the back row and the left column and (for width,depth >= 2 and
+        // maxH >= 2) always yields hidden = (width-1)*(depth-1)*(maxH-1) >= 1.
+        map = fallbackDenseShape(width, depth, maxH);
+        hidden = countHiddenWalled(map);
+      }
+    }
+    return {
+      type: "IH",
+      prompt: "그림과 같이 뒤와 왼쪽에 벽이 있는 곳에 쌓기나무를 빈틈없이 쌓았습니다. 보이지 않는 쌓기나무는 몇 개입니까?",
+      figures: { kind: "iso-walled", map, width, depth },
+      answer: { hidden },
+      answerText: hidden + "개"
+    };
+  }
+
+  // 6b. IN — 보이지 않는 개수 (벽 없음): free-standing shape, 5-direction rule
+  // (docs/03_COUNT_HIDDEN.md section 4). Needs an interior grid cell, so the
+  // footprint must be at least 3x3 -- gridForDifficulty already returns
+  // 3x3 (easy), 3x3 or 4x3 (mid) or 4x4 (hard), i.e. always >= 3x3.
+  function genIN(rng, difficulty) {
     const [width, depth] = gridForDifficulty(rng, difficulty);
     const maxH = maxHeightForDifficulty(rng, difficulty);
     let map = null;
     let hidden = 0;
-    for (let tries = 0; tries < 300; tries += 1) {
-      map = randomShape(rng, width, depth, maxH);
-      hidden = countHidden(map);
-      if (hidden >= 1) break;
+    let fallback = null;
+    for (let tries = 0; tries < 400; tries += 1) {
+      const candidate = randomShape(rng, width, depth, maxH);
+      if (maxHeightOf(candidate) < 2) continue;
+      const h = countHiddenNoWall(candidate);
+      if (h < 1) continue;
+      fallback = { map: candidate, hidden: h };
+      if (h <= 8) { map = candidate; hidden = h; break; }
     }
-    if (hidden < 1) {
-      map = fallbackDenseShape(width, depth, maxH);
-      hidden = countHidden(map);
+    if (!map) {
+      if (fallback) {
+        map = fallback.map;
+        hidden = fallback.hidden;
+      } else {
+        // Solid box fallback: for width,depth >= 3 and maxH >= 2 this always
+        // yields hidden = (width-2)*(depth-2)*(maxH-1) >= 1.
+        map = fallbackDenseShape(width, depth, maxH);
+        hidden = countHiddenNoWall(map);
+      }
     }
     return {
-      type: "IH",
-      prompt: "쌓기나무로 쌓은 모양입니다. 보이지 않는 쌓기나무는 몇 개입니까?",
+      type: "IN",
+      prompt: "벽이 없는 곳에 쌓기나무를 빈틈없이 쌓았습니다. 어느 방향에서 보아도 보이지 않는 쌓기나무는 몇 개입니까?",
       figures: { kind: "iso", map, width, depth },
       answer: { hidden },
       answerText: hidden + "개"
@@ -852,7 +988,8 @@
     { code: "VM", label: "세 방향 → 최대·최소", defaultOn: true },
     { code: "VP", label: "두 방향 → 나머지 방향", defaultOn: true },
     { code: "IC", label: "3D 그림 → 개수", defaultOn: true },
-    { code: "IH", label: "3D 그림 → 보이지 않는 개수", defaultOn: true },
+    { code: "IH", label: "보이지 않는 개수 (벽 있음)", defaultOn: true },
+    { code: "IN", label: "보이지 않는 개수 (벽 없음)", defaultOn: true },
     { code: "FB", label: "상자 채우기", defaultOn: true },
     { code: "CU", label: "정육면체 완성", defaultOn: false },
     { code: "PN", label: "정육면체 색칠", defaultOn: true },
@@ -870,6 +1007,7 @@
       case "VP": return genView3(rng, difficulty, "VP");
       case "IC": return genIC(rng, difficulty);
       case "IH": return genIH(rng, difficulty);
+      case "IN": return genIN(rng, difficulty);
       case "FB": return genFB(rng, difficulty);
       case "CU": return genCU(rng, difficulty);
       case "PN": return genPN(rng, difficulty);
@@ -947,7 +1085,8 @@
     sideView,
     topView,
     viewsOf,
-    countHidden,
+    countHiddenWalled,
+    countHiddenNoWall,
     hasVoxel,
     exposedFaceCount,
     forEachVoxel,

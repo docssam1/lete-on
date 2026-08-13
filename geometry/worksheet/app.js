@@ -107,6 +107,12 @@
       const colorFn = f.paint ? () => "grey" : undefined;
       return figureBlock("쌓기나무 모양", REN.renderIso(f.map, f.width, f.depth, { colorFn }), "ws-figure-lg");
     }
+    if (f.kind === "iso-walled") {
+      // IH only: draws the two walls behind/beneath the cubes (see
+      // render.js renderIsoWalled) so the picture matches "뒤와 왼쪽에 벽이
+      // 있는" from the prompt.
+      return figureBlock("쌓기나무 모양", REN.renderIsoWalled(f.map, f.width, f.depth), "ws-figure-lg");
+    }
     if (f.kind === "iso-box") {
       // PN (painted cube) and BW (checker cube) are FULL cubes: no wireframe,
       // and the "(점선 = 상자 테두리)" caption would be wrong there.
@@ -155,6 +161,7 @@
       case "VP": return p.answer.hiddenLabel + " 모양 (그림 참고)";
       case "IC": return p.answer.total + "개";
       case "IH": return p.answer.hidden + "개";
+      case "IN": return p.answer.hidden + "개";
       case "FB": return p.answer.need + "개";
       case "CU": return p.answer.need + "개";
       case "PN": return "① " + p.answer.three + " ② " + p.answer.two + " ③ " + p.answer.one + " ④ " + p.answer.zero;
