@@ -214,6 +214,10 @@ select, .code-input, input[type="text"] {
    render.js, ~26px per cell) so a 1-row view stays small instead of being
    stretched to a fixed height; only cap the extremes. */
 .ws-figure svg.ws-grid { display: block; max-height: 140px; max-width: 180px; }
+/* Solve-table grid (VC/VM) draws at 30px/cell plus a helper-box gutter, so
+   it needs a bigger cap than the plain 26px view grids to avoid shrinking
+   the printed numbers into illegibility. */
+.ws-figure svg.ws-grid-solve { max-height: 210px; max-width: 230px; }
 .ws-figure svg.ws-iso { display: block; height: 130px; width: auto; }
 .ws-figure.ws-figure-lg svg.ws-iso { height: 170px; }
 .ws-figure.ws-figure-sm svg.ws-iso { height: 78px; }
@@ -265,6 +269,10 @@ select, .code-input, input[type="text"] {
 /* Fixed thumbnail width: without it the mini grids shrink to unreadable
    specks and collide with the neighbouring answer text in the columns. */
 .ws-ans-thumb svg { display: block; width: 52px; height: auto; }
+/* The solve-table thumbnail (VC/VM answer sheet) packs a number into every
+   footprint cell, so the plain 52px view-thumb width shrinks the digits
+   past legibility -- give it a larger cap. */
+.ws-ans-thumb svg.ws-grid-solve { width: 90px; }
 
 /* ---------------------------------------------------------------------
    Print — A4 portrait, hide the control panel, let cards break cleanly.

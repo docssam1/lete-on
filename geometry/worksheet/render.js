@@ -334,6 +334,66 @@
     return s;
   }
 
+  // VC/VM "풀이 방법" solve table: the 위에서 본 모양 footprint drawn as a
+  // grid (solid border = inside the shape, faint dashed = outside, matching
+  // the textbook's convention of only emphasising the actual silhouette),
+  // plus one helper-box column on the right (max height per row z, read off
+  // 오른쪽 옆에서 본 모양) and one helper-box row on the bottom (max height
+  // per column x, read off 앞에서 본 모양). Blank (worksheet) when
+  // options.numbers/colMax/rowMax are omitted; filled in (answer sheet) when
+  // they're supplied.
+  function renderSolveTable(footprint, width, depth, options) {
+    options = options || {};
+    const cell = 30;
+    const gutter = 6; // visually separates the helper boxes from the main grid
+    const numbers = options.numbers;
+    const colMax = options.colMax;
+    const rowMax = options.rowMax;
+    const numFontSize = cell * 0.45;
+    const w = width * cell + gutter + cell;
+    const h = depth * cell + gutter + cell;
+    let s = '<svg viewBox="0 0 ' + w + " " + h + '" width="' + w + '" height="' + h + '" class="ws-grid ws-grid-solve" preserveAspectRatio="xMidYMid meet">';
+    // Main width x depth grid: solid border + white fill inside the
+    // footprint, faint dashed border outside it.
+    for (let z = 0; z < depth; z += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const inside = footprint[z][x] === 1;
+        const cx = x * cell;
+        const cy = z * cell;
+        if (inside) {
+          s += '<rect x="' + cx + '" y="' + cy + '" width="' + cell + '" height="' + cell + '" fill="#fff" stroke="#333" stroke-width="1.4"/>';
+        } else {
+          s += '<rect x="' + cx + '" y="' + cy + '" width="' + cell + '" height="' + cell + '" fill="none" stroke="#c9cfcb" stroke-width="1" stroke-dasharray="3 2"/>';
+        }
+        if (inside && numbers && numbers[z] && numbers[z][x] !== undefined && numbers[z][x] !== null && numbers[z][x] !== 0) {
+          s += '<text x="' + (cx + cell / 2) + '" y="' + (cy + cell / 2 + 1) + '" text-anchor="middle" dominant-baseline="central" font-weight="700" font-size="' + numFontSize + '">' + numbers[z][x] + "</text>";
+        }
+      }
+    }
+    // Right helper column: one box per row z, max height read off 오른쪽
+    // 옆에서 본 모양.
+    const rightX = width * cell + gutter;
+    for (let z = 0; z < depth; z += 1) {
+      const by = z * cell;
+      s += '<rect x="' + rightX + '" y="' + by + '" width="' + cell + '" height="' + cell + '" rx="4" ry="4" fill="#dceef5" stroke="#9dc4d4" stroke-width="1"/>';
+      if (rowMax && rowMax[z] !== undefined && rowMax[z] !== null) {
+        s += '<text x="' + (rightX + cell / 2) + '" y="' + (by + cell / 2 + 1) + '" text-anchor="middle" dominant-baseline="central" font-weight="700" font-size="' + numFontSize + '" fill="#2f6f8f">' + rowMax[z] + "</text>";
+      }
+    }
+    // Bottom helper row: one box per column x, max height read off 앞에서
+    // 본 모양.
+    const bottomY = depth * cell + gutter;
+    for (let x = 0; x < width; x += 1) {
+      const bx = x * cell;
+      s += '<rect x="' + bx + '" y="' + bottomY + '" width="' + cell + '" height="' + cell + '" rx="4" ry="4" fill="#dceef5" stroke="#9dc4d4" stroke-width="1"/>';
+      if (colMax && colMax[x] !== undefined && colMax[x] !== null) {
+        s += '<text x="' + (bx + cell / 2) + '" y="' + (bottomY + cell / 2 + 1) + '" text-anchor="middle" dominant-baseline="central" font-weight="700" font-size="' + numFontSize + '" fill="#2f6f8f">' + colMax[x] + "</text>";
+      }
+    }
+    s += "</svg>";
+    return s;
+  }
+
   global.GW_RENDER = {
     renderIso,
     renderIsoTop,
@@ -343,6 +403,7 @@
     renderNumberGrid,
     renderViewGrid,
     renderEmptyDottedGrid,
-    renderMiniFilled
+    renderMiniFilled,
+    renderSolveTable
   };
 })(typeof window !== "undefined" ? window : globalThis);

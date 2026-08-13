@@ -87,10 +87,20 @@
       );
     }
     if (f.kind === "views3") {
+      // VC/VM only (see generators.js's genView3): after the three view
+      // silhouettes, scaffold the textbook's written method with a second
+      // row holding the empty 위에서 본 모양 solve table (see render.js's
+      // renderSolveTable).
+      const solveSvg = REN.renderSolveTable(f.footprint, f.width, f.depth);
       return (
+        '<div class="ws-fig-row">' +
         figureBlock("위", REN.renderViewGrid(f.top)) +
         figureBlock("앞", REN.renderViewGrid(f.front)) +
-        figureBlock("오른쪽 옆", REN.renderViewGrid(f.side))
+        figureBlock("오른쪽 옆", REN.renderViewGrid(f.side)) +
+        "</div>" +
+        '<div class="ws-fig-row">' +
+        figureBlock("위에서 본 모양에 수 쓰기 (아래·오른쪽 칸에는 앞·옆에서 본 가장 높은 층수를 쓰세요)", solveSvg) +
+        "</div>"
       );
     }
     if (f.kind === "VP") {
@@ -113,7 +123,7 @@
     }
     if (f.kind === "iso-walled") {
       // IH only: draws the two walls behind/beneath the cubes (see
-      // render.js renderIsoWalled) so the picture matches "뒤와 왼쪽에 벽이
+      // render.js renderIsoWalled) so the picture matches "뒤와 왕쪽에 벽이
       // 있는" from the prompt.
       return figureBlock("쌓기나무 모양", REN.renderIsoWalled(f.map, f.width, f.depth), "ws-figure-lg");
     }
@@ -126,7 +136,7 @@
       return figureBlock(caption, REN.renderIsoBox(f.map, f.width, f.depth, f.boxH, opts), "ws-figure-lg");
     }
     if (f.kind === "iso-holes") {
-      return figureBlock("구멍이 뚫린 상자 모양 (흰 칸 = 구멍)", REN.renderIsoHoles(f.width, f.depth, f.boxH, f.tunnels), "ws-figure-lg");
+      return figureBlock("구멍이 뚚린 상자 모양 (흰 칸 = 구멍)", REN.renderIsoHoles(f.width, f.depth, f.boxH, f.tunnels), "ws-figure-lg");
     }
     if (f.kind === "sequence") {
       const shapeHtml = f.shapes.map((s) => figureBlock(s.n + "번째", REN.renderIso(s.map, s.width, s.depth), "ws-figure-sm")).join("");
@@ -193,6 +203,16 @@
         '<span class="ws-ans-thumb"><small>옆</small>' + REN.renderMiniFilled(p.answer.side) + "</span></span>";
     } else if (p.type === "VP") {
       thumbs = '<span class="ws-ans-thumbs"><span class="ws-ans-thumb"><small>' + escapeHtml(p.answer.hiddenLabel) + "</small>" + REN.renderMiniFilled(p.answer.hidden) + "</span></span>";
+    } else if (p.type === "VC") {
+      const solveSvg = REN.renderSolveTable(p.figures.footprint, p.figures.width, p.figures.depth, {
+        numbers: p.answer.numbers, colMax: p.answer.colMax, rowMax: p.answer.rowMax
+      });
+      thumbs = '<span class="ws-ans-thumbs"><span class="ws-ans-thumb"><small>풀이</small>' + solveSvg + "</span></span>";
+    } else if (p.type === "VM") {
+      const solveSvg = REN.renderSolveTable(p.figures.footprint, p.figures.width, p.figures.depth, {
+        numbers: p.answer.numbers, colMax: p.answer.colMax, rowMax: p.answer.rowMax
+      });
+      thumbs = '<span class="ws-ans-thumbs"><span class="ws-ans-thumb"><small>최대</small>' + solveSvg + "</span></span>";
     }
     return '<li class="ws-answer-item"><b>' + (idx + 1) + ".</b> " + escapeHtml(answerLineText(p)) + thumbs + "</li>";
   }
