@@ -25,13 +25,14 @@ small.src{display:block;color:#888;font-size:12px;margin-top:-6px;margin-bottom:
   <option value="pieces">접고 선 따라 자르기 — 조각 개수</option>
   <option value="punch">반원·원 펀치 — 모양별 개수</option>
   <option value="numinv">수가 쓰인 색종이 — 목표 합이 되게 색칠하기 (역방향)</option>
+  <option value="unfoldshape">접어 자르고 펼친 모양 그리기 (4지선다)</option>
   <option value="stackfind">겹친 색종이 — 가장 밑(또는 위) 찾기</option>
   <option value="stackorder">겹친 색종이 — 위에서부터 순서대로</option>
 </select>
 <button onclick="newProblem()">🔄 새 문제</button>
 <p id="info"></p>
 <small class="src" id="src"></small>
-<canvas id="cv" width="1300" height="460"></canvas>
+<canvas id="cv" width="1300" height="520"></canvas>
 <script>
 const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 const pick=(list)=>list[R(0,list.length-1)];
@@ -680,6 +681,132 @@ function renderNumInverse(ctx,d){
   drawCellsRect(ctx, packet, x, baseY+cell, cell+8);
 }
 
+/* ===== 유형 10: 접어 자르고 펼친 모양 (교재 37~38쪽) =====
+   두 번 접은 2x2 조각의 모서리 삼각형을 잘라내고 펼친 모양을 고른다.
+   답은 잘린 조각을 거울로 펼친 것. 오답은 실제 오개념으로 만든다:
+   ①반사를 하나 빠뜨림 ②거울 대신 평행이동(같은 방향 네 개) ③접힌 조각 안에서 위치가 어긋남.
+   정답 판정은 거울 펼치기와 별개로 "점을 접어 넣어 잘린 삼각형에 드는지"로 재검산한다. */
+function mirrorPoly(poly, dir){ const m=FOLDS[dir].mirror; return poly.map(pt=>m(pt)); }
+function shiftPoly(poly, dx, dy){ return poly.map(pt=>({x:pt.x+dx, y:pt.y+dy})); }
+
+// 점 p를 접기 순서대로 접어 넣는다(남는 쪽으로 반사). 펼친 뒤 어디가 잘렸는지 독립 판정용.
+function foldPointIn(p, dirs){
+  let q={...p};
+  for(const d of dirs){ if(FOLDS[d].keep(q) < 0) q=FOLDS[d].mirror(q); }
+  return q;
+}
+function rasterMask(polys, M){
+  const mask=new Uint8Array(M*M);
+  for(let j=0;j<M;j++) for(let i=0;i<M;i++){
+    const pt={x:(i+0.5)/M, y:(j+0.5)/M};
+    for(const poly of polys) if(inPoly(poly,pt)){ mask[j*M+i]=1; break; }
+  }
+  return mask;
+}
+function maskDiff(a,b){ let n=0; for(let i=0;i<a.length;i++) if(a[i]!==b[i]) n++; return n; }
+
+function genUnfoldShape(){
+  const dirs = pick([['h','v'],['v','h']]);         // 남는 조각은 늘 왼쪽 위 [0,.5]x[0,.5]
+  const W=0.5;
+  const L=0.2+Math.random()*0.14;                   // 삼각형 다리 길이
+  // 접힌 조각의 네 모서리 중 하나에서 직각삼각형을 잘라낸다
+  const corner=pick(['tl','tr','bl','br']);
+  const cut = corner==='tl' ? [{x:0,y:0},{x:L,y:0},{x:0,y:L}]
+            : corner==='tr' ? [{x:W,y:0},{x:W,y:L},{x:W-L,y:0}]
+            : corner==='bl' ? [{x:0,y:W},{x:L,y:W},{x:0,y:W-L}]
+            :                 [{x:W,y:W},{x:W-L,y:W},{x:W,y:W-L}];
+
+  // 정답: 거울로 펼치기
+  const unfold=(polys)=>{
+    let cur=polys;
+    for(let i=dirs.length-1;i>=0;i--) cur=cur.concat(cur.map(pl=>mirrorPoly(pl, dirs[i])));
+    return cur;
+  };
+  const correct=unfold([cut]);
+
+  // 오답 후보
+  const wrongOnlyOne=[cut, mirrorPoly(cut, dirs[1])];                       // 반사 하나 빠뜨림
+  const wrongShift=[cut, shiftPoly(cut,W,0), shiftPoly(cut,0,W), shiftPoly(cut,W,W)]; // 평행이동
+  const other=pick(['tl','tr','bl','br'].filter(k=>k!==corner));
+  const cut2 = other==='tl' ? [{x:0,y:0},{x:L,y:0},{x:0,y:L}]
+             : other==='tr' ? [{x:W,y:0},{x:W,y:L},{x:W-L,y:0}]
+             : other==='bl' ? [{x:0,y:W},{x:L,y:W},{x:0,y:W-L}]
+             :                [{x:W,y:W},{x:W-L,y:W},{x:W,y:W-L}];
+  const wrongCorner=unfold([cut2]);                                          // 다른 모서리를 자른 모양
+
+  const M=181;
+  const mCorrect=rasterMask(correct,M);
+  const cands=[wrongOnlyOne, wrongShift, wrongCorner]
+    .filter(w=>maskDiff(rasterMask(w,M), mCorrect) > M*M*0.01);              // 눈에 띄게 달라야 오답이다
+  if(cands.length<3) return genUnfoldShape();
+
+  // 독립 재검산: 점을 접어 넣어 삼각형에 드는지로 정답 마스크를 다시 만든다
+  const mFold=new Uint8Array(M*M);
+  for(let j=0;j<M;j++) for(let i=0;i<M;i++){
+    const q=foldPointIn({x:(i+0.5)/M, y:(j+0.5)/M}, dirs);
+    if(inPoly(cut,q)) mFold[j*M+i]=1;
+  }
+  if(maskDiff(mFold, mCorrect) > M*M*0.004) return genUnfoldShape();          // 경계 픽셀 오차만 허용
+
+  const options=shuffleArr([{polys:correct,ok:true},...cands.map(w=>({polys:w,ok:false}))]);
+  return {
+    kind:'unfold-shape', dirs, cut, corner, options,
+    answer:`${'①②③④'[options.findIndex(o=>o.ok)]}`,
+    text:['색종이를 두 번 접은 후 칠해진 부분을 잘라내었습니다.',
+          '남은 부분을 펼쳤을 때의 그림으로 알맞은 것을 고르시오.'],
+    info:`접기 ${dirs.join(' → ')} · ${corner} 모서리 삼각형 · 정답 ${'①②③④'[options.findIndex(o=>o.ok)]}`,
+    src:'출처 유형: 더클래식 1과정 1권 37~38·47쪽'
+  };
+}
+
+function renderUnfoldShape(ctx,d){
+  header(ctx, d.text);
+  const size=104, baseY=132;
+  let x=48;
+  // 1) 원본 + 첫 접기
+  drawPoly(ctx, [{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}], x, baseY, size);
+  const sq=[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}];
+  drawCrease(ctx, foldSegment(sq, d.dirs[0]), x, baseY, size);
+  drawFoldArrow(ctx, sq, d.dirs[0], x, baseY, size);
+  x+=size+10; drawStepArrow(ctx, x, baseY+size/2); x+=48;
+  // 2) 한 번 접힌 조각 + 둘째 접기
+  const half=clipHalfPlane(sq, FOLDS[d.dirs[0]].keep);
+  drawPoly(ctx, half, x, baseY, size);
+  drawCrease(ctx, foldSegment(half, d.dirs[1]), x, baseY, size);
+  drawFoldArrow(ctx, half, d.dirs[1], x, baseY, size);
+  x+=size+10; drawStepArrow(ctx, x, baseY+size/2); x+=48;
+  // 3) 두 번 접힌 2x2 + 잘라낼 삼각형 색칠
+  const quad=clipHalfPlane(half, FOLDS[d.dirs[1]].keep);
+  drawPoly(ctx, quad, x, baseY, size);
+  ctx.beginPath();
+  d.cut.forEach((pt,i)=>{const X=x+pt.x*size, Y=baseY+pt.y*size; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);});
+  ctx.closePath(); ctx.fillStyle=CUT; ctx.fill();
+
+  // 4) 보기 네 개 — 잘린 부분은 흰색으로 파낸다
+  ctx.fillStyle='#333'; ctx.font='600 15px sans-serif';
+  ctx.fillText('알맞은 것은?', 48, baseY+size+42);
+  let ox=210;
+  d.options.forEach((opt,k)=>{
+    const oy=baseY+size+22;
+    drawPoly(ctx, sq, ox, oy, size);
+    ctx.setLineDash([5,4]); ctx.strokeStyle=CREASE; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(ox+size/2,oy); ctx.lineTo(ox+size/2,oy+size); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ox,oy+size/2); ctx.lineTo(ox+size,oy+size/2); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#fff';
+    for(const poly of opt.polys){
+      ctx.beginPath();
+      poly.forEach((pt,i)=>{const X=ox+pt.x*size, Y=oy+pt.y*size; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);});
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.strokeStyle=PAPER_EDGE; ctx.lineWidth=2.2;
+    ctx.strokeRect(ox,oy,size,size);
+    ctx.fillStyle='#16417C'; ctx.font='700 17px sans-serif';
+    ctx.fillText('①②③④'[k], ox+size/2-8, oy+size+22);
+    ox+=size+58;
+  });
+}
+
 /* ===== 유형 5: 겹친 색종이 순서 (교재 35~36·44~46쪽) =====
    같은 크기 정사각형 8장을 3x3 자리에 겹쳐 놓는다(가장자리 중앙 한 자리는 비움 — 교재 문법).
    답이 유일하려면 "맨 위를 걷어내면 남은 것 중 온전히 보이는 종이가 늘 하나뿐"이어야 한다.
@@ -915,7 +1042,7 @@ function renderNumber(ctx,d){
 function render(d){
   const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
-  if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else if(d.kind==='pieces') renderPieces(ctx,d); else if(d.kind==='punch') renderPunch(ctx,d); else if(d.kind==='num-inverse') renderNumInverse(ctx,d); else renderNumber(ctx,d);
+  if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else if(d.kind==='pieces') renderPieces(ctx,d); else if(d.kind==='punch') renderPunch(ctx,d); else if(d.kind==='num-inverse') renderNumInverse(ctx,d); else if(d.kind==='unfold-shape') renderUnfoldShape(ctx,d); else renderNumber(ctx,d);
   document.getElementById('info').textContent=d.info+' · 정답 '+d.answer;
   document.getElementById('src').textContent=d.src;
 }
@@ -927,6 +1054,7 @@ function newProblem(){
   if(mode==='pieces')     return render(genPieces());
   if(mode==='punch')      return render(genPunch());
   if(mode==='numinv')     return render(genNumInverse());
+  if(mode==='unfoldshape') return render(genUnfoldShape());
   if(mode==='stackfind')  return render(genStack(false));
   if(mode==='stackorder') return render(genStack(true));
   if(mode==='numsum') return render(genNumber(false));
