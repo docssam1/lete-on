@@ -207,7 +207,7 @@
   }
 
   // Hidden-cube rule for IN -- 보이지 않는 개수 (벽 없음), per
-  // docs/03_COUNT_HIDDEN.md section 4: viewing directions are 앞/뒤/왼쪽/
+  // docs/03_COUNT_HIDDEN.md section 4: viewing directions are 앞/뒤/왕쪽/
   // 오른쪽/위 (front/back/left/right/top -- never from below, five
   // directions total). A cube is hidden only if it is blocked in ALL FIVE,
   // i.e. it is a true interior cube: a taller (or equal) column exists on
@@ -414,6 +414,34 @@
     return { frontMax, sideMax };
   }
 
+  // Column/row max heights read straight off the GIVEN 앞/옆 view grids —
+  // used for VC/VM's solve-table helper boxes. WHY not just reuse
+  // deriveMaxArrays(map, ...): that derives from the private answer shape;
+  // this instead counts filled rows in each front/side-view column, exactly
+  // what a child does when copying max heights off the printed views (a
+  // view column is filled contiguously from the bottom up to its max, so
+  // counting 1s recovers the max directly).
+  function colMaxFromFrontView(front, width) {
+    const out = new Array(width).fill(0);
+    for (let x = 0; x < width; x += 1) {
+      let m = 0;
+      for (let r = 0; r < front.length; r += 1) m += front[r][x];
+      out[x] = m;
+    }
+    return out;
+  }
+  function rowMaxFromSideView(side, depth) {
+    // side view column c maps to z = depth-1-c (see sideView() above).
+    const out = new Array(depth).fill(0);
+    for (let z = 0; z < depth; z += 1) {
+      const c = depth - 1 - z;
+      let m = 0;
+      for (let r = 0; r < side.length; r += 1) m += side[r][c];
+      out[z] = m;
+    }
+    return out;
+  }
+
   function topSilhouette(map, width, depth) {
     const sil = [];
     for (let z = 0; z < depth; z += 1) {
@@ -503,6 +531,11 @@
     };
   }
 
+  // Shared "풀이 방법" hint for VC/VM — same mechanism as IH/IN's methodHint
+  // (a quiet grey .ws-method line), pointing at the solve-table scaffold
+  // app.js renders under the three views.
+  const SOLVE_TABLE_HINT = "풀이 방법 아래 칸에 앞에서 본 각 줄의 가장 높은 층수를, 오른쪽 칸에 옆에서 본 각 줄의 가장 높은 층수를 쓴 다음, 각 칸의 수를 정해 모두 더하기";
+
   // Shared generator for VC / VM / VP — see comment above enumerateShapes.
   function genView3(rng, difficulty, mode) {
     const [width, depth] = gridForDifficulty(rng, difficulty);
@@ -529,17 +562,31 @@
           return {
             type: "VC",
             prompt: "위, 앞, 오른쪽 옆에서 본 모양입니다. 쌓기나무는 모두 몇 개인지 구하시오.",
-            figures: { kind: "views3", width, depth, top, front, side, height },
-            answer: { count: min },
+            methodHint: SOLVE_TABLE_HINT,
+            figures: { kind: "views3", width, depth, top, front, side, height, footprint: top },
+            answer: { count: min, numbers: cloneMap(map), colMax: colMaxFromFrontView(front, width), rowMax: rowMaxFromSideView(side, depth) },
             answerText: min + "개"
           };
         }
         if (mode === "VM" && min < max) {
+          // Print the MAXIMUM-total consistent shape as the answer table's
+          // numbers (matching the printed 최대 answer), and keep the
+          // minimum-total shape too so the answer sheet can show 최소's own
+          // working if needed later.
+          const maxShape = results.find((r) => mapTotal(r) === max);
+          const minShape = results.find((r) => mapTotal(r) === min);
           return {
             type: "VM",
             prompt: "위, 앞, 오른쪽 옆에서 본 모양입니다. 쌓을 수 있는 쌓기나무의 최대 개수와 최소 개수를 각각 구하시오.",
-            figures: { kind: "views3", width, depth, top, front, side, height },
-            answer: { max, min },
+            methodHint: SOLVE_TABLE_HINT,
+            figures: { kind: "views3", width, depth, top, front, side, height, footprint: top },
+            answer: {
+              max, min,
+              numbers: maxShape,
+              minNumbers: minShape,
+              colMax: colMaxFromFrontView(front, width),
+              rowMax: rowMaxFromSideView(side, depth)
+            },
             answerText: "최대 " + max + "개, 최소 " + min + "개"
           };
         }
@@ -588,15 +635,27 @@
       const { frontMax, sideMax } = deriveMaxArrays(map, width, depth);
       const { results } = enumerateShapes(width, depth, silhouette, { frontMax, sideMax, maxH: height, nodeCap });
       const totals = results.map(mapTotal);
+      const fbTop = topView(map, width, depth);
+      const fbFront = frontView(map, width, depth, height);
+      const fbSide = sideView(map, width, depth, height);
+      const fbMax = Math.max.apply(null, totals);
+      const fbMin = Math.min.apply(null, totals);
+      const maxShape = results.find((r) => mapTotal(r) === fbMax);
+      const minShape = results.find((r) => mapTotal(r) === fbMin);
       return {
         type: "VM",
         prompt: "위, 앞, 오른쪽 옆에서 본 모양입니다. 쌓을 수 있는 쌓기나무의 최대 개수와 최소 개수를 각각 구하시오.",
-        figures: {
-          kind: "views3", width, depth, height,
-          top: topView(map, width, depth), front: frontView(map, width, depth, height), side: sideView(map, width, depth, height)
+        methodHint: SOLVE_TABLE_HINT,
+        figures: { kind: "views3", width, depth, height, top: fbTop, front: fbFront, side: fbSide, footprint: fbTop },
+        answer: {
+          max: fbMax,
+          min: fbMin,
+          numbers: maxShape,
+          minNumbers: minShape,
+          colMax: colMaxFromFrontView(fbFront, width),
+          rowMax: rowMaxFromSideView(fbSide, depth)
         },
-        answer: { max: Math.max.apply(null, totals), min: Math.min.apply(null, totals) },
-        answerText: "최대 " + Math.max.apply(null, totals) + "개, 최소 " + Math.min.apply(null, totals) + "개"
+        answerText: "최대 " + fbMax + "개, 최소 " + fbMin + "개"
       };
     }
     const map = fallbackSingleCellMap(width, depth, maxH);
@@ -608,8 +667,9 @@
       return {
         type: "VC",
         prompt: "위, 앞, 오른쪽 옆에서 본 모양입니다. 쌓기나무는 모두 몇 개인지 구하시오.",
-        figures: { kind: "views3", width, depth, top, front, side, height },
-        answer: { count: mapTotal(map) },
+        methodHint: SOLVE_TABLE_HINT,
+        figures: { kind: "views3", width, depth, top, front, side, height, footprint: top },
+        answer: { count: mapTotal(map), numbers: cloneMap(map), colMax: colMaxFromFrontView(front, width), rowMax: rowMaxFromSideView(side, depth) },
         answerText: mapTotal(map) + "개"
       };
     }
@@ -718,7 +778,7 @@
     const total = mapTotal(map);
     return {
       type: "IH",
-      prompt: "그림과 같이 뒤와 왼쪽에 벽이 있는 곳에 쌓기나무를 빈틈없이 쌓았습니다. 보이지 않는 쌓기나무는 몇 개입니까?",
+      prompt: "그림과 같이 뒤와 왕쪽에 벽이 있는 곳에 쌓기나무를 빈틀없이 쌓았습니다. 보이지 않는 쌓기나무는 몇 개입니까?",
       methodHint: "풀이 방법 ① 보이는 쌓기나무 위에 그 뒤에 숨은 개수를 써서 모두 더하기 ② 전체 개수에서 보이는 개수 빼기",
       figures: { kind: "iso-walled", map, width, depth },
       answer: { hidden, total, visible: total - hidden },
@@ -788,8 +848,8 @@
     const total = mapTotal(map);
     return {
       type: "IN",
-      prompt: "벽이 없는 곳에 쌓기나무를 빈틈없이 쌓았습니다. 어느 방향에서 보아도 보이지 않는 쌓기나무는 몇 개입니까? (단, 바닥면은 보이지 않습니다.)",
-      methodHint: "풀이 방법 ① 겉에서 보이는 쌓기나무를 먼저 세기 ② 전체 개수에서 보이는 개수 빼기",
+      prompt: "벽이 없는 곳에 쌓기나무를 빈틀없이 쌓았습니다. 어느 방향에서 보아도 보이지 않는 쌓기나무는 몇 개입니까? (단, 바닥면은 보이지 않습니다.)",
+      methodHint: "풀이 방법 ① 갖에서 보이는 쌓기나무를 먼저 세기 ② 전체 개수에서 보이는 개수 빼기",
       figures: { kind: gotPyramid ? "iso-top" : "iso", map, width, depth },
       answer: { hidden, total, visible: total - hidden },
       answerText: hidden + "개"
@@ -901,7 +961,7 @@
     };
   }
 
-  // 11. BW — 흑백 교차 (checkerboard cube)
+  // 11. BW — 흥백 교차 (checkerboard cube)
   function genBW(rng, difficulty) {
     const n = difficulty === "hard" ? 4 : 3;
     const cornerWhite = rng.bool();
@@ -922,14 +982,14 @@
     for (let z = 0; z < n; z += 1) for (let x = 0; x < n; x += 1) map[z][x] = n;
     return {
       type: "BW",
-      prompt: "쌓기나무를 정육면체 모양으로 쌓고, 맞닿은 면끼리 서로 다른 색이 되도록 흰색과 검은색을 번갈아 칠했습니다. " + (askWhite ? "흰색" : "검은색") + " 쌓기나무는 모두 몇 개입니까?",
+      prompt: "쌓기나무를 정육면체 모양으로 쌓고, 맞닿은 면끼리 서로 다른 색이 되도록 큰색과 검은색을 번갈아 칠했습니다. " + (askWhite ? "큰색" : "검은색") + " 쌓기나무는 모두 몇 개입니까?",
       figures: { kind: "iso-box", map, width: n, depth: n, boxH: n, checker: true, cornerWhite },
       answer: { white, black, asked: askWhite ? "white" : "black", count },
       answerText: count + "개"
     };
   }
 
-  // 12. HL — 구멍 뚫기
+  // 12. HL — 구멍 뚚기
   function genHL(rng, difficulty) {
     const [W, D, H] = boxDimsForDifficulty(rng, difficulty);
     const total = W * D * H;
@@ -961,7 +1021,7 @@
     const remaining = present.size;
     return {
       type: "HL",
-      prompt: "가로 " + W + ", 세로 " + D + ", 높이 " + H + "인 상자 모양으로 쌓기나무를 빈틈없이 쌓았습니다. 구멍이 반대편까지 뚫리도록 쌓기나무를 " + tunnelCount + "군데 빼냈습니다. 남은 쌓기나무의 개수를 구하시오.",
+      prompt: "가로 " + W + ", 세로 " + D + ", 높이 " + H + "인 상자 모양으로 쌓기나무를 빈틀없이 쌓았습니다. 구멍이 반대편까지 뚚리도록 쌓기나무를 " + tunnelCount + "군데 빼냈습니다. 남은 쌓기나무의 개수를 구하시오.",
       figures: { kind: "iso-holes", width: W, depth: D, boxH: H, tunnels },
       answer: { remaining, total, removed: total - remaining },
       answerText: remaining + "개"
@@ -1047,8 +1107,8 @@
     { code: "CU", label: "정육면체 완성", defaultOn: false },
     { code: "PN", label: "정육면체 색칠", defaultOn: true },
     { code: "PF", label: "모양 색칠 → 면의 총수", defaultOn: false },
-    { code: "BW", label: "흑백 교차", defaultOn: true },
-    { code: "HL", label: "구멍 뚫기", defaultOn: true },
+    { code: "BW", label: "흥백 교차", defaultOn: true },
+    { code: "HL", label: "구멍 뚚기", defaultOn: true },
     { code: "SQ", label: "규칙 찾기", defaultOn: false }
   ];
 
@@ -1155,6 +1215,8 @@
     boxDimsForDifficulty,
     // solver
     deriveMaxArrays,
+    colMaxFromFrontView,
+    rowMaxFromSideView,
     topSilhouette,
     enumerateShapes,
     // problem types
