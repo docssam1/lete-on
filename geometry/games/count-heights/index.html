@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town - Count the Cubes</title>
-    <link rel="stylesheet" href="./styles.css?v=count-fit-20260802a" />
+    <link rel="stylesheet" href="./styles.css?v=count-hint-20260813a" />
     <link rel="stylesheet" href="../../shared/game-rail.css?v=2" />
     <link rel="stylesheet" href="../../shared/portrait-lock.css?v=1" />
     <script type="importmap">
@@ -83,16 +83,23 @@
         <article class="answer-panel">
           <header>
             <h2 data-i18n="answerTitle">쓴 숫자 확인</h2>
-            <div class="view-switch" role="tablist" aria-label="input view">
-              <button id="modelMode" type="button" role="tab" class="active" data-mode="model" data-i18n="modelView">쌓기나무 위에 쓰기</button>
-              <button id="topMode" type="button" role="tab" data-mode="top" data-i18n="topView">바탕그림에 쓰기</button>
+            <div class="view-switch-row">
+              <div class="view-switch" role="tablist" aria-label="input view">
+                <button id="modelMode" type="button" role="tab" class="active" data-mode="model" data-i18n="modelView">쌓기나무 위에 쓰기</button>
+                <button id="topMode" type="button" role="tab" data-mode="top" data-i18n="topView">바탕그림에 쓰기</button>
+              </div>
+              <button id="edgeHints" type="button" class="edge-hints-toggle" aria-pressed="false" data-i18n="edgeHints">힌트 수</button>
             </div>
           </header>
           <div class="input-canvas">
             <div id="modelPrompt" class="model-prompt">
               <strong data-i18n="selectColumn">숫자를 쓸 쌓기나무의 맨 위를 눌러 보자!</strong>
             </div>
-            <div id="topBoard" class="top-board" aria-label="위에서 본 바탕그림"></div>
+            <div id="topBoardFrame" class="top-board-frame">
+              <div id="topBoard" class="top-board" aria-label="위에서 본 바탕그림"></div>
+              <div id="topHintRight" class="top-hint-strip top-hint-right" aria-hidden="true"></div>
+              <div id="topHintBottom" class="top-hint-strip top-hint-bottom" aria-hidden="true"></div>
+            </div>
           </div>
 
           <section class="sum-work total-only">
@@ -160,7 +167,7 @@
         <i></i><i></i><i></i><i></i><i></i><i></i>
       </div>
     </main>
-    <script type="module" src="./app.js?v=count-fit-20260802a"></script>
+    <script type="module" src="./app.js?v=count-hint-20260813a"></script>
     <script src="../../shared/game-flow.js?v=1" defer></script>
   </body>
 </html>
