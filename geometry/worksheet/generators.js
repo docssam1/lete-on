@@ -207,7 +207,7 @@
   }
 
   // Hidden-cube rule for IN -- 보이지 않는 개수 (벽 없음), per
-  // docs/03_COUNT_HIDDEN.md section 4: viewing directions are 앞/뒤/왕쪽/
+  // docs/03_COUNT_HIDDEN.md section 4: viewing directions are 앞/뒤/왼쪽/
   // 오른쪽/위 (front/back/left/right/top -- never from below, five
   // directions total). A cube is hidden only if it is blocked in ALL FIVE,
   // i.e. it is a true interior cube: a taller (or equal) column exists on
@@ -778,7 +778,7 @@
     const total = mapTotal(map);
     return {
       type: "IH",
-      prompt: "그림과 같이 뒤와 왕쪽에 벽이 있는 곳에 쌓기나무를 빈틀없이 쌓았습니다. 보이지 않는 쌓기나무는 몇 개입니까?",
+      prompt: "그림과 같이 뒤와 왼쪽에 벽이 있는 곳에 쌓기나무를 빈틈없이 쌓았습니다. 보이지 않는 쌓기나무는 몇 개입니까?",
       methodHint: "풀이 방법 ① 보이는 쌓기나무 위에 그 뒤에 숨은 개수를 써서 모두 더하기 ② 전체 개수에서 보이는 개수 빼기",
       figures: { kind: "iso-walled", map, width, depth },
       answer: { hidden, total, visible: total - hidden },
@@ -848,8 +848,8 @@
     const total = mapTotal(map);
     return {
       type: "IN",
-      prompt: "벽이 없는 곳에 쌓기나무를 빈틀없이 쌓았습니다. 어느 방향에서 보아도 보이지 않는 쌓기나무는 몇 개입니까? (단, 바닥면은 보이지 않습니다.)",
-      methodHint: "풀이 방법 ① 갖에서 보이는 쌓기나무를 먼저 세기 ② 전체 개수에서 보이는 개수 빼기",
+      prompt: "벽이 없는 곳에 쌓기나무를 빈틈없이 쌓았습니다. 어느 방향에서 보아도 보이지 않는 쌓기나무는 몇 개입니까? (단, 바닥면은 보이지 않습니다.)",
+      methodHint: "풀이 방법 ① 겉에서 보이는 쌓기나무를 먼저 세기 ② 전체 개수에서 보이는 개수 빼기",
       figures: { kind: gotPyramid ? "iso-top" : "iso", map, width, depth },
       answer: { hidden, total, visible: total - hidden },
       answerText: hidden + "개"
@@ -961,7 +961,7 @@
     };
   }
 
-  // 11. BW — 흥백 교차 (checkerboard cube)
+  // 11. BW — 흑백 교차 (checkerboard cube)
   function genBW(rng, difficulty) {
     const n = difficulty === "hard" ? 4 : 3;
     const cornerWhite = rng.bool();
@@ -982,14 +982,14 @@
     for (let z = 0; z < n; z += 1) for (let x = 0; x < n; x += 1) map[z][x] = n;
     return {
       type: "BW",
-      prompt: "쌓기나무를 정육면체 모양으로 쌓고, 맞닿은 면끼리 서로 다른 색이 되도록 큰색과 검은색을 번갈아 칠했습니다. " + (askWhite ? "큰색" : "검은색") + " 쌓기나무는 모두 몇 개입니까?",
+      prompt: "쌓기나무를 정육면체 모양으로 쌓고, 맞닿은 면끼리 서로 다른 색이 되도록 흰색과 검은색을 번갈아 칠했습니다. " + (askWhite ? "흰색" : "검은색") + " 쌓기나무는 모두 몇 개입니까?",
       figures: { kind: "iso-box", map, width: n, depth: n, boxH: n, checker: true, cornerWhite },
       answer: { white, black, asked: askWhite ? "white" : "black", count },
       answerText: count + "개"
     };
   }
 
-  // 12. HL — 구멍 뚚기
+  // 12. HL — 구멍 뚫기
   function genHL(rng, difficulty) {
     const [W, D, H] = boxDimsForDifficulty(rng, difficulty);
     const total = W * D * H;
@@ -1021,7 +1021,7 @@
     const remaining = present.size;
     return {
       type: "HL",
-      prompt: "가로 " + W + ", 세로 " + D + ", 높이 " + H + "인 상자 모양으로 쌓기나무를 빈틀없이 쌓았습니다. 구멍이 반대편까지 뚚리도록 쌓기나무를 " + tunnelCount + "군데 빼냈습니다. 남은 쌓기나무의 개수를 구하시오.",
+      prompt: "가로 " + W + ", 세로 " + D + ", 높이 " + H + "인 상자 모양으로 쌓기나무를 빈틈없이 쌓았습니다. 구멍이 반대편까지 뚫리도록 쌓기나무를 " + tunnelCount + "군데 빼냈습니다. 남은 쌓기나무의 개수를 구하시오.",
       figures: { kind: "iso-holes", width: W, depth: D, boxH: H, tunnels },
       answer: { remaining, total, removed: total - remaining },
       answerText: remaining + "개"
@@ -1107,8 +1107,8 @@
     { code: "CU", label: "정육면체 완성", defaultOn: false },
     { code: "PN", label: "정육면체 색칠", defaultOn: true },
     { code: "PF", label: "모양 색칠 → 면의 총수", defaultOn: false },
-    { code: "BW", label: "흥백 교차", defaultOn: true },
-    { code: "HL", label: "구멍 뚚기", defaultOn: true },
+    { code: "BW", label: "흑백 교차", defaultOn: true },
+    { code: "HL", label: "구멍 뚫기", defaultOn: true },
     { code: "SQ", label: "규칙 찾기", defaultOn: false }
   ];
 
