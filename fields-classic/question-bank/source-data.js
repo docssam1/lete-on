@@ -176,48 +176,48 @@ const makeExam = ({ id, stage, label, file, layout, typeIds, verifiedQuestionNum
 
 export const EXAMS = [
   makeExam({
-    id: "k6-2023-02", stage: "k6_winter", label: "더 클래식 7세 1차 선발시험 (2023.02.06)",
+    id: "k6-2023-02", stage: "k6_winter", label: "더 클래식 7세 1차 선발시험",
     file: "더_클래식_7세_1차_선발시험(230206).pdf", layout: "two",
     typeIds: ["edge-sum-grid","equalize-transfer","number-pyramid","nonadjacent-placement","order-position","disc-number-rule","shape-sum-table","repeat-pattern","arrow-number-grid","bus-change","number-card-plus-minus","equal-line-sum","two-digit-condition","growing-shape-count","symbol-sum-grid","piano-bounce","balance-scale","symbol-relation","colored-shape-number","go-stone-difference"],
     verifiedQuestionNumbers: Array.from({ length: 20 }, (_, index) => index + 1)
   }),
   makeExam({
-    id: "k7-2022-04", stage: "k7_spring", label: "더 클래식 7세 2차 선발시험 (2022.04.18)",
+    id: "k7-2022-04", stage: "k7_spring", label: "더 클래식 7세 2차 선발시험",
     file: "(최종)더_클래식_7세_2차_선발시험(220418).pdf", layout: "two",
     typeIds: ["edge-sum-grid","equalize-transfer","five-card-sum-pyramid","grid-number-placement","order-position-from-back","addition-table-grid","shape-sum-table","repeat-three-shapes","arrow-number-grid","bus-change","fold-number-cut-sum","equal-line-sum-eight-cards","symbol-sum-grid","shape-equation-add-subtract","two-digit-parity-gap","triangle-tile-growth","balance-scale-three-objects","symbol-relation-2to3","number-line-six-points","go-stone-difference-inverse"]
   }),
   makeExam({
-    id: "k7-2022-06", stage: "k7_summer", label: "더 클래식 7세 3차 선발시험 (2022.06.22)",
+    id: "k7-2022-06", stage: "k7_summer", label: "더 클래식 7세 3차 선발시험",
     file: "더_클래식_7세_3차_선발시험(220622).pdf", layout: "two",
     typeIds: ["edge-sum-grid","repeat-four-shapes","grid-number-placement","order-position-from-front","five-card-sum-pyramid","equalize-transfer","addition-table-grid","shape-sum-table","arrow-number-grid","bus-change","equal-line-sum-eight-cards","symbol-sum-grid","shape-equation-add-subtract","two-digit-parity-gap","fold-number-cut-sum","square-tile-growth","balance-scale-three-objects","symbol-relation-3to4","number-line-six-points","go-stone-difference-inverse"]
   }),
   makeExam({
-    id: "k7-2022-08", stage: "k7_november", label: "더 클래식 7세 4차 선발시험 (2022.08.12)",
+    id: "k7-2022-08", stage: "k7_november", label: "더 클래식 7세 4차 선발시험",
     file: "더_클래식_7세_4차_선발시험(220812).pdf", layout: "two",
     typeIds: ["edge-sum-grid","grid-number-placement","repeat-pattern","five-card-sum-pyramid","order-position-from-front","addition-table-grid","arrow-number-grid","shape-sum-table","equal-line-sum-eight-cards","equalize-transfer","symbol-sum-grid","two-digit-parity-gap","bus-change","shape-equation-add-subtract","square-tile-growth","fold-number-cut-sum","balance-scale-three-objects","symbol-relation-3to4","number-line-six-points","go-stone-difference-inverse"]
   }),
   makeExam({
-    id: "k7-2022-12", stage: "k7_to_g1", label: "더 클래식 7세 6차 선발시험 (2022.12.15)",
+    id: "k7-2022-12", stage: "k7_to_g1", label: "더 클래식 7세 6차 선발시험",
     file: "더_클래식_7세_6차_선발시험(221215).pdf", layout: "two",
     typeIds: ["edge-sum-grid","grid-number-placement-five","addition-table-grid","number-pyramid","arrow-number-grid","order-position-seven-people","equal-line-sum-eight-cards","shape-sum-table","bus-change","shape-equation-add-subtract","repeat-pattern","equalize-transfer","two-digit-parity-gap","symbol-sum-grid","triangle-tile-growth","balance-scale-three-objects","fold-number-cut-sum","symbol-relation-3to4","go-stone-difference-inverse","number-line-six-points"]
   }),
   makeExam({
-    id: "g1-2022-03", stage: "g1_spring", label: "더 클래식 초1 1차 선발시험 (2022.03.07)",
+    id: "g1-2022-03", stage: "g1_spring", label: "더 클래식 초1 1차 선발시험",
     file: "더_클래식_1학년_1차_선발시험(20220307).pdf", layout: "four",
     typeIds: ["bus-change","height-order","equalize-transfer","two-digit-condition","total-difference","order-position","shape-equation","fold-cut-piece-count","cryptarithm","multiplicative-symbol-equation","balance-scale","repeat-pattern","colored-triangle-difference","shape-sum-table","rod-length-ratio","symbol-relation","polygon-stone-rearrangement","paired-sequences","ratio-distribution","odd-even-sum-difference"]
   }),
   makeExam({
-    id: "g1-2022-05", stage: "g1_summer", label: "더 클래식 초1 2차 선발시험 (2022.05.30)",
+    id: "g1-2022-05", stage: "g1_summer", label: "더 클래식 초1 2차 선발시험",
     file: "더_클래식_1학년_2차_선발시험(20220530).pdf", layout: "four",
     typeIds: ["equalize-transfer","height-order","two-digit-condition","balance-scale","weight-order","shape-equation","adjacent-product-pentagon","shape-sum-table","segment-count","shape-sum-table","cryptarithm","rod-length-ratio","colored-triangle-difference","square-side-composition","fold-cut-piece-count","symbol-relation","repeat-pattern","ratio-distribution","rectilinear-perimeter","paired-sequences"]
   }),
   makeExam({
-    id: "g1-2019-08", stage: "g1_fall", label: "더 클래식 초1 3차 선발시험 (2019.08.28)",
+    id: "g1-2019-08", stage: "g1_fall", label: "더 클래식 초1 3차 선발시험",
     file: "더_클래식_1학년_3차_선발시험(20190828).pdf", layout: "four",
     typeIds: ["multi-person-transfer","height-order","balance-scale","two-digit-condition","chained-number-condition","grid-number-placement","adjacent-product-pentagon","shape-sum-table","rod-length-ratio","square-side-composition","cryptarithm","colored-triangle-difference","fold-cut-piece-count","vertical-addition","vertical-addition","rectilinear-perimeter","number-table-rule","repeat-pattern","cryptarithm","consecutive-number-addition"]
   }),
   makeExam({
-    id: "g1-2022-02", stage: "g1_winter", label: "더 클래식 초1 4차 선발시험 (2022.02.15)",
+    id: "g1-2022-02", stage: "g1_winter", label: "더 클래식 초1 4차 선발시험",
     file: "더_클래식_1학년_4차_선발시험(20220215).pdf", layout: "four",
     typeIds: ["magic-square","multiplication-matrix","shape-sum-table","step-game","latin-square","cryptarithm","repeat-pattern","two-digit-condition","total-difference","order-position","height-order","multiplication-matrix","three-digit-card-count","balance-scale","chained-number-condition","venn-count","polygon-stone-rearrangement","ratio-distribution","ratio-distribution","odd-even-sum-difference"]
   })

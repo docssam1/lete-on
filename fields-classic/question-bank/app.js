@@ -101,7 +101,9 @@ function renderExamList() {
       </label>`;
     }).join("");
     const sourceLink = exam.sourceViewer === false ? "" : `<a class="source-view-link" href="./selection-test-viewer.html?exam=${exam.id}&student=${encodeURIComponent(student)}">원문 보기</a>`;
-    return `<details class="tree-group" open><summary><strong>${exam.label}</strong><span>${exam.questions.length}문항</span></summary><div class="exam-source"><span>${exam.file}</span>${sourceLink}</div>${rows}</details>`;
+    // 파일명에 붙은 괄호 안 시행일(230206 등)은 화면에 내보내지 않는다. 파일을 찾는 데만 쓰는 값이다.
+    const fileName = String(exam.file || "").replace(/\((\d{6}|\d{8})\)/g, "");
+    return `<details class="tree-group" open><summary><strong>${exam.label}</strong><span>${exam.questions.length}문항</span></summary><div class="exam-source"><span>${fileName}</span>${sourceLink}</div>${rows}</details>`;
   }).join("") || `<div class="source-notice">이 시기의 원본 시험지는 아직 등록되지 않았습니다.</div>`;
 
   $("examTypeList").querySelectorAll("input[data-exam-key]").forEach((input) => input.addEventListener("change", () => {
