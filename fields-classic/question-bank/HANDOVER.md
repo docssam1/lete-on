@@ -171,8 +171,37 @@
      서로 충분히 다른지 래스터 차이로 확인한 뒤에만 출제한다. 인쇄용은 같은 데이터로 그리기 문항이 된다.
    - **랩 최종 10유형**: 구멍(반 접기·대각선 3번), 숫자판(남은 합·잘린 합·대각선 한 번·목표 합 역방향),
      겹침(밑/위 찾기·순서), 조각 개수, 반원·원 펀치, 펼친 모양 4지선다.
-   - ⚠️ **랩 유형들은 아직 question-bank 앱(생성기·렌더러)에 이식 안 됨** — 앱에는 구멍 2종만 연결.
-     이식 시 숫자판 3종·겹침 2종·조각 개수를 앱 visual kind로 옮기고 유형 등록·버전 갱신할 것.
+   - ✅ **랩 10유형 전부 question-bank 앱에 이식 완료(2026-08-12)**. `generators.js`에 9개 생성기
+     추가(`foldNumberRemainingSum`·`foldNumberCutSum`·`foldDiagonalNumberSum`·`foldTargetSumColoring`·
+     `foldCutPieceCount`·`foldPunchShapeCount`·`foldStackFind`·`foldStackOrder`·`foldCutShapeChoice`),
+     기존 `FOLD_LINES`/`clipHalfPlane`/`buildFoldStages`/`pointInPolygon`/`polygonArea` 엔진을 그대로
+     재사용했다(중복 정의 없음). `app.js`에 대응 visual 렌더러 7종(`fold-number-grid`·`fold-diagonal-grid`·
+     `fold-number-inverse`·`fold-cut-pieces`·`fold-punch`·`fold-stack`·`fold-unfold-choice`) 추가,
+     공용 `foldGeometryHelpers()`(KEEP/MIRROR/clip/foldLine/foldArrow)로 접기 화살표를 그린다.
+     `styles.css`에 대응 CSS 추가 — **처음엔 빠뜨려서 브라우저 확인 때 4지선다 보기가 카드 전체를
+     채우도록 깨졌다**(SVG에 width/height 속성이 없으면 크롬이 viewBox 비율로 컨테이너 폭까지
+     늘린다). `.fold-*-svg`에 `width:100%;max-width;height:auto` 지정해 해소, 재확인 완료.
+     검산: 랩과 동일한 독립 재계산 스크립트로 9개 생성기 6,000회 실패 0건(포팅 후에도 유지).
+   - 기존 스텁 3개(`fold-number-cut-sum`·`fold-cut-piece-count`·`fold-number-remaining-sum`)에
+     생성기 연결 + `sourceMatched:true`. `fold-diagonal-unfold`는 **건드리지 않았다** — 라벨이
+     "대각선으로 접고 자른 뒤 펼친 선 그리기"인데 실전 5·6회 실제 시험(mock-5 Q12·mock-6 Q10)에
+     쓰이는 다른 유형이고, 내가 확인한 37~38쪽은 가로·세로 접기라 구조가 다르다(이름만 같은 유형
+     재사용 함정 — 이 세션에서 반복 확인된 패턴). 새 h·v 4지선다는 `fold-cut-shape-choice`로 별도
+     등록했다. `fold-diagonal-unfold`(대각선+선 그리기, 진짜 실전 문항)는 여전히 미착수다.
+   - book-01 커리큘럼 "색종이 접기" 유닛에 12개 유형 전부 등록했다(3개 → 12개).
+   - ⚠️ **UI에는 아직 하나도 안 보인다 — 코드 결함이 아니라 앱의 설계된 동작이다.**
+     `app.js`의 `isSelectableType = isReady && hasVerifiedSource`에서 `hasVerifiedSource(typeId)`는
+     **EXAMS·PRACTICE_EXAM_TYPES·FINAL_EXAM_TYPES 전체를 통틀어 그 유형 id로 `verified:true`인
+     실제 시험 문항이 하나라도 있어야** 참이 된다 — 커리큘럼 트리도 이 전역 신호에 그대로 얹혀 있다
+     (책 단위 자체 검증 플래그는 없음). 방금 이식한 9개 생성기는 전부 `sourceMatched:true`(교재
+     33~51쪽 대조로 확보)까지는 맞지만, 그 typeId를 쓰는 `verified:true` 시험 문항이 하나도 없어
+     `전체 문제은행`·`교재 단원별` 어느 탭에서도 체크박스가 비활성 상태로 남는다. 렌더 파이프라인
+     자체는 임시 검증용 시험지(`__TEST_ONLY_EXAM__`, 커밋 안 함, 스크래치에서만 생성·삭제)로
+     `verified:true`를 강제해 9문항 전부 콘솔 에러 0건으로 확인했다 — **이식은 코드 레벨에서
+     완결됐고, 노출은 실제 검증된 시험 문항이 생기거나 커리큘럼 전용 검증 경로가 추가돼야 열린다.**
+     다음 세션이 결정할 것: ①이 9유형과 구조가 맞는 실전 시험 문항을 찾아 `verified:true`를 달거나,
+     ②`isSelectableType`에 "교재 페이지 대조로 확보한 sourceMatched"만으로 커리큘럼 트리를 여는
+     별도 경로를 추가할지(이 경우 exam 트리의 엄격한 게이팅은 그대로 유지해야 함 — 절대 완화 금지).
 
 ## 확인 명령
 

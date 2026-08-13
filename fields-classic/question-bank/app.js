@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812s";
-import { GENERATORS } from "./generators.js?v=20260812s";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812u";
+import { GENERATORS } from "./generators.js?v=20260812u";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -267,6 +267,362 @@ function magicSquareMarkup(visual) {
   const grid = visual.shown.flat()
     .map((value) => (value === null ? `<span class="ms-blank"></span>` : `<span>${value}</span>`)).join("");
   return `<div class="magic-square-work"><div class="number-balls">${cards}</div><div class="magic-square-grid">${grid}</div></div>`;
+}
+
+function foldGeometryHelpers() {
+  const KEEP = { v: (p) => 0.5 - p.x, h: (p) => 0.5 - p.y, d1: (p) => p.x - p.y, d2: (p) => 1 - p.x - p.y };
+  const MIRROR = {
+    v: (p) => ({ x: 1 - p.x, y: p.y }),
+    h: (p) => ({ x: p.x, y: 1 - p.y }),
+    d1: (p) => ({ x: p.y, y: p.x }),
+    d2: (p) => ({ x: 1 - p.y, y: 1 - p.x })
+  };
+  const clip = (polygon, keep) => {
+    const out = [];
+    for (let i = 0; i < polygon.length; i += 1) {
+      const a = polygon[i];
+      const b = polygon[(i + 1) % polygon.length];
+      const da = keep(a);
+      const db = keep(b);
+      if (da >= -1e-9) out.push(a);
+      if ((da > 1e-9 && db < -1e-9) || (da < -1e-9 && db > 1e-9)) {
+        const t = da / (da - db);
+        out.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+      }
+    }
+    return out;
+  };
+  const foldLine = (polygon, fold) => {
+    const keep = KEEP[fold];
+    const points = [];
+    for (let i = 0; i < polygon.length; i += 1) {
+      const a = polygon[i];
+      const b = polygon[(i + 1) % polygon.length];
+      const da = keep(a);
+      const db = keep(b);
+      if (Math.abs(da) < 1e-9) points.push(a);
+      if ((da > 1e-9 && db < -1e-9) || (da < -1e-9 && db > 1e-9)) {
+        const t = da / (da - db);
+        points.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+      }
+    }
+    if (points.length < 2) return null;
+    let best = null;
+    let far = -1;
+    for (let i = 0; i < points.length; i += 1) {
+      for (let j = i + 1; j < points.length; j += 1) {
+        const d = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
+        if (d > far) { far = d; best = [points[i], points[j]]; }
+      }
+    }
+    return far > 1e-6 ? best : null;
+  };
+  const foldArrow = (polygon, dir) => {
+    const keep = KEEP[dir];
+    const mirror = MIRROR[dir];
+    const away = clip(polygon, (p) => -keep(p));
+    if (away.length < 3) return "";
+    const from = { x: away.reduce((t, p) => t + p.x, 0) / away.length, y: away.reduce((t, p) => t + p.y, 0) / away.length };
+    const to = mirror(from);
+    return { from, to };
+  };
+  return { KEEP, MIRROR, clip, foldLine, foldArrow };
+}
+
+function foldArrowSvg(from, to, shift, top, size) {
+  if (!from) return "";
+  const sx = shift + from.x * size;
+  const sy = top + from.y * size;
+  const ex = shift + to.x * size;
+  const ey = top + to.y * size;
+  const nx = -(ey - sy);
+  const ny = ex - sx;
+  const len = Math.hypot(nx, ny) || 1;
+  const bulge = Math.min(size * 0.22, 20);
+  const cx = (sx + ex) / 2 + (nx / len) * bulge;
+  const cy = (sy + ey) / 2 + (ny / len) * bulge;
+  const angle = Math.atan2(ey - cy, ex - cx);
+  const head = [
+    `${(ex + 6 * Math.cos(angle)).toFixed(1)},${(ey + 6 * Math.sin(angle)).toFixed(1)}`,
+    `${(ex - 13 * Math.cos(angle - 0.5)).toFixed(1)},${(ey - 13 * Math.sin(angle - 0.5)).toFixed(1)}`,
+    `${(ex - 13 * Math.cos(angle + 0.5)).toFixed(1)},${(ey - 13 * Math.sin(angle + 0.5)).toFixed(1)}`
+  ].join(" ");
+  return `<path d="M${sx.toFixed(1)} ${sy.toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="#c0392b" stroke-width="3.2" stroke-linecap="round"/><polygon points="${head}" fill="#c0392b"/>`;
+}
+
+function foldStepArrowSvg(x, y) {
+  return `<path d="M${x} ${y} H${x + 30}" stroke="#95a5a6" stroke-width="3"/><polygon points="${x + 30},${y} ${x + 20},${y - 7} ${x + 20},${y + 7}" fill="#95a5a6"/>`;
+}
+
+function foldNumberGridMarkup(visual) {
+  const N = 4;
+  const cell = 30;
+  const size = N * cell;
+  const numberGrid = (grid, ox, oy, dim, showNumbers) => {
+    let out = `<rect x="${ox}" y="${oy}" width="${dim.w * cell}" height="${dim.h * cell}" fill="${showNumbers ? "#f9c8c4" : "#fbdad6"}" stroke="#e8968f" stroke-width="2"/>`;
+    for (let k = 1; k < dim.w; k += 1) out += `<line x1="${ox + k * cell}" y1="${oy}" x2="${ox + k * cell}" y2="${oy + dim.h * cell}" stroke="#e0aaa4" stroke-dasharray="3 2"/>`;
+    for (let k = 1; k < dim.h; k += 1) out += `<line x1="${ox}" y1="${oy + k * cell}" x2="${ox + dim.w * cell}" y2="${oy + k * cell}" stroke="#e0aaa4" stroke-dasharray="3 2"/>`;
+    if (showNumbers) {
+      for (let r = 0; r < dim.h; r += 1) for (let c = 0; c < dim.w; c += 1) {
+        out += `<text x="${ox + c * cell + cell / 2}" y="${oy + r * cell + cell / 2 + 5}" text-anchor="middle" font-size="15" font-weight="600" fill="#333">${grid[r][c]}</text>`;
+      }
+    }
+    return out;
+  };
+
+  let x = 8;
+  const top = 6;
+  let parts = numberGrid(visual.grid, x, top, { w: N, h: N }, true);
+  parts += `<line x1="${x + 2 * cell}" y1="${top}" x2="${x + 2 * cell}" y2="${top + size}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+  parts += `<line x1="${x}" y1="${top + 2 * cell}" x2="${x + size}" y2="${top + 2 * cell}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+  x += size + 14;
+  parts += foldStepArrowSvg(x, top + size / 2);
+  x += 44;
+
+  const midW = visual.hDir === "up" || visual.hDir === "down" ? N : 2;
+  const midH = 2;
+  const midGrid = visual.hDir === "up" ? [visual.grid[0], visual.grid[1]] : [visual.grid[2], visual.grid[3]];
+  parts += numberGrid(midGrid, x, top + cell, { w: N, h: 2 }, false);
+  parts += `<line x1="${x + 2 * cell}" y1="${top + cell}" x2="${x + 2 * cell}" y2="${top + cell + 2 * cell}" stroke="#7ba7bb" stroke-width="1.6" stroke-dasharray="5 4"/>`;
+  x += size + 14;
+  parts += foldStepArrowSvg(x, top + size / 2);
+  x += 44;
+
+  const half = size / 2;
+  parts += numberGrid([[0, 0], [0, 0]], x, top + cell / 2, { w: 2, h: 2 }, false).replace(/width="[\d.]+" height="[\d.]+"/, `width="${half}" height="${half}"`);
+  const cutSet = new Set(visual.cells.map((c) => c.r * 2 + c.c));
+  for (const cell2 of visual.cells) {
+    const cx2 = x + (cell2.c * half) / 2;
+    const cy2 = top + cell / 2 + (cell2.r * half) / 2;
+    parts += `<rect x="${cx2}" y="${cy2}" width="${half / 2}" height="${half / 2}" fill="#b03a5b"/>`;
+  }
+  x += half + 14;
+  parts += foldStepArrowSvg(x, top + size / 2);
+  x += 44;
+
+  parts += numberGrid(visual.grid, x, top, { w: N, h: N }, true);
+
+  return `<svg class="fold-number-svg" viewBox="0 0 ${x + size + 10} ${size + 16}" role="img" aria-label="수가 쓰인 색종이 접기 문제">${parts}</svg>`;
+}
+
+function foldDiagonalGridMarkup(visual) {
+  const N = 4;
+  const cell = 34;
+  const size = N * cell;
+  const top = 6;
+  let x = 8;
+
+  let parts = `<rect x="${x}" y="${top}" width="${size}" height="${size}" fill="#fdeeec" stroke="#eec6c1" stroke-width="1" stroke-dasharray="4 3"/>`;
+  for (let k = 1; k < N; k += 1) {
+    parts += `<line x1="${x + k * cell}" y1="${top}" x2="${x + k * cell}" y2="${top + size}" stroke="#eec6c1" stroke-dasharray="4 3"/>`;
+    parts += `<line x1="${x}" y1="${top + k * cell}" x2="${x + size}" y2="${top + k * cell}" stroke="#eec6c1" stroke-dasharray="4 3"/>`;
+  }
+  const tri = visual.keepLower
+    ? [[0, 0], [0, N], [N, N]]
+    : [[0, 0], [N, 0], [N, N]];
+  const triPoints = tri.map(([px, py]) => `${x + px * cell},${top + py * cell}`).join(" ");
+  parts += `<polygon points="${triPoints}" fill="#fbdad6" stroke="#e8968f" stroke-width="2.4"/>`;
+  for (const u of visual.region) {
+    const cx = x + u.c * cell;
+    const cy = top + u.r * cell;
+    if (!u.half) {
+      parts += `<rect x="${cx}" y="${cy}" width="${cell}" height="${cell}" fill="#b03a5b"/>`;
+    } else {
+      const points = visual.keepLower
+        ? `${cx},${cy} ${cx},${cy + cell} ${cx + cell},${cy + cell}`
+        : `${cx},${cy} ${cx + cell},${cy} ${cx + cell},${cy + cell}`;
+      parts += `<polygon points="${points}" fill="#b03a5b"/>`;
+    }
+  }
+  parts += `<line x1="${x}" y1="${top}" x2="${x + size}" y2="${top + size}" stroke="#e8968f" stroke-width="1.4" stroke-dasharray="5 4"/>`;
+
+  x += size + 40;
+  parts += foldStepArrowSvg(x, top + size / 2);
+  x += 44;
+
+  for (let r = 0; r < N; r += 1) for (let c = 0; c < N; c += 1) {
+    const cx = x + c * cell;
+    const cy = top + r * cell;
+    parts += `<rect x="${cx}" y="${cy}" width="${cell}" height="${cell}" fill="#f9c8c4" stroke="#e0aaa4" stroke-width="1"/>`;
+    parts += `<text x="${cx + cell / 2}" y="${cy + cell / 2 + 5}" text-anchor="middle" font-size="15" font-weight="600" fill="#333">${visual.grid[r][c]}</text>`;
+  }
+  for (let k = 1; k < N; k += 1) {
+    parts += `<line x1="${x + k * cell}" y1="${top}" x2="${x + k * cell}" y2="${top + size}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+    parts += `<line x1="${x}" y1="${top + k * cell}" x2="${x + size}" y2="${top + k * cell}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+  }
+  parts = `<rect x="${x - 2}" y="${top - 2}" width="${size + 4}" height="${size + 4}" fill="none" stroke="#e8968f" stroke-width="2.4"/>` + parts;
+
+  return `<svg class="fold-diag-svg" viewBox="0 0 ${x + size + 10} ${size + 16}" role="img" aria-label="대각선 접기 수 색종이 문제">${parts}</svg>`;
+}
+
+function foldNumberInverseMarkup(visual) {
+  const N = 4;
+  const cell = 30;
+  const size = N * cell;
+  const top = 6;
+  let x = 8;
+  const rect = (rows, ox, oy, cellSize, showNumbers) => {
+    const h = rows.length;
+    const w = rows[0].length;
+    let out = `<rect x="${ox}" y="${oy}" width="${w * cellSize}" height="${h * cellSize}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2.2"/>`;
+    for (let k = 1; k < w; k += 1) out += `<line x1="${ox + k * cellSize}" y1="${oy}" x2="${ox + k * cellSize}" y2="${oy + h * cellSize}" stroke="#e0aaa4" stroke-dasharray="3 2"/>`;
+    for (let k = 1; k < h; k += 1) out += `<line x1="${ox}" y1="${oy + k * cellSize}" x2="${ox + w * cellSize}" y2="${oy + k * cellSize}" stroke="#e0aaa4" stroke-dasharray="3 2"/>`;
+    if (showNumbers) {
+      for (let r = 0; r < h; r += 1) for (let c = 0; c < w; c += 1) {
+        out += `<text x="${ox + c * cellSize + cellSize / 2}" y="${oy + r * cellSize + cellSize / 2 + 5}" text-anchor="middle" font-size="15" font-weight="600" fill="#333">${rows[r][c]}</text>`;
+      }
+    }
+    return out;
+  };
+
+  let parts = rect(visual.grid, x, top, cell, true);
+  parts += `<line x1="${x + 2 * cell}" y1="${top}" x2="${x + 2 * cell}" y2="${top + size}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+  parts += `<line x1="${x}" y1="${top + 2 * cell}" x2="${x + size}" y2="${top + 2 * cell}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+  x += size + 14;
+  parts += foldStepArrowSvg(x, top + size / 2);
+  x += 44;
+
+  const mid = visual.firstFold === "h"
+    ? [visual.grid[visual.packetRow], visual.grid[visual.packetRow + 1]]
+    : visual.grid.map((row) => [row[visual.packetCol], row[visual.packetCol + 1]]);
+  const midW = visual.firstFold === "h" ? N : 2;
+  const midTop = visual.firstFold === "h" ? top + cell : top;
+  parts += rect(mid, x, midTop, cell, true);
+  x += midW * cell + 14;
+  parts += foldStepArrowSvg(x, top + size / 2);
+  x += 44;
+
+  const packet = [
+    [visual.grid[visual.packetRow][visual.packetCol], visual.grid[visual.packetRow][visual.packetCol + 1]],
+    [visual.grid[visual.packetRow + 1][visual.packetCol], visual.grid[visual.packetRow + 1][visual.packetCol + 1]]
+  ];
+  parts += rect(packet, x, top + cell, cell + 6, true);
+
+  return `<svg class="fold-inverse-svg" viewBox="0 0 ${x + 2 * (cell + 6) + 10} ${size + 16}" role="img" aria-label="목표 합이 되게 색칠하기 문제">${parts}</svg>`;
+}
+
+function foldCutPiecesMarkup(visual) {
+  const { foldLine, foldArrow } = foldGeometryHelpers();
+  const n = visual.stages.length;
+  const size = n <= 3 ? 100 : 84;
+  const gap = 34;
+  let shift = 6;
+  let parts = "";
+  visual.stages.forEach((stage, index) => {
+    const points = stage.polygon.map((p) => `${(shift + p.x * size).toFixed(1)},${(6 + p.y * size).toFixed(1)}`).join(" ");
+    parts += `<polygon points="${points}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+    if (stage.fold) {
+      const segment = foldLine(stage.polygon, stage.fold);
+      if (segment) parts += `<line x1="${(shift + segment[0].x * size).toFixed(1)}" y1="${(6 + segment[0].y * size).toFixed(1)}" x2="${(shift + segment[1].x * size).toFixed(1)}" y2="${(6 + segment[1].y * size).toFixed(1)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
+      const arrow = foldArrow(stage.polygon, stage.fold);
+      if (arrow) parts += foldArrowSvg(arrow.from, arrow.to, shift, 6, size);
+    } else {
+      for (const [a, b] of visual.cuts) {
+        parts += `<line x1="${(shift + a.x * size).toFixed(1)}" y1="${(6 + a.y * size).toFixed(1)}" x2="${(shift + b.x * size).toFixed(1)}" y2="${(6 + b.y * size).toFixed(1)}" stroke="#b03a5b" stroke-width="2.6"/>`;
+      }
+    }
+    shift += size + 12;
+    if (index < n - 1) { parts += foldStepArrowSvg(shift, 6 + size / 2); shift += gap; }
+  });
+  return `<svg class="fold-pieces-svg" viewBox="0 0 ${shift + 6} ${size + 16}" role="img" aria-label="색종이 접어 자르기 조각 개수 문제">${parts}</svg>`;
+}
+
+function foldPunchMarkup(visual) {
+  const { foldLine, foldArrow } = foldGeometryHelpers();
+  const n = visual.stages.length;
+  const size = n <= 3 ? 100 : 84;
+  const gap = 34;
+  let shift = 6;
+  let parts = "";
+  visual.stages.forEach((stage, index) => {
+    const points = stage.polygon.map((p) => `${(shift + p.x * size).toFixed(1)},${(6 + p.y * size).toFixed(1)}`).join(" ");
+    parts += `<polygon points="${points}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+    if (stage.fold) {
+      const segment = foldLine(stage.polygon, stage.fold);
+      if (segment) parts += `<line x1="${(shift + segment[0].x * size).toFixed(1)}" y1="${(6 + segment[0].y * size).toFixed(1)}" x2="${(shift + segment[1].x * size).toFixed(1)}" y2="${(6 + segment[1].y * size).toFixed(1)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
+      const arrow = foldArrow(stage.polygon, stage.fold);
+      if (arrow) parts += foldArrowSvg(arrow.from, arrow.to, shift, 6, size);
+    } else {
+      for (const q of visual.punches) {
+        const cx = shift + q.cx * size;
+        const cy = 6 + q.cy * size;
+        const r = q.r * size;
+        if (q.type === "full") {
+          parts += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff" stroke="#8a8a94" stroke-width="1.8"/>`;
+        } else {
+          const a0 = Math.atan2(q.ny, q.nx) + Math.PI / 2;
+          const a1 = a0 + Math.PI;
+          const sx = cx + r * Math.cos(a0);
+          const sy = cy + r * Math.sin(a0);
+          const ex = cx + r * Math.cos(a1);
+          const ey = cy + r * Math.sin(a1);
+          parts += `<path d="M${sx.toFixed(1)} ${sy.toFixed(1)} A${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${ex.toFixed(1)} ${ey.toFixed(1)} Z" fill="#fff" stroke="#8a8a94" stroke-width="1.8"/>`;
+        }
+      }
+    }
+    shift += size + 12;
+    if (index < n - 1) { parts += foldStepArrowSvg(shift, 6 + size / 2); shift += gap; }
+  });
+  return `<svg class="fold-punch-svg" viewBox="0 0 ${shift + 6} ${size + 16}" role="img" aria-label="반원·원 펀치 문제">${parts}</svg>`;
+}
+
+function foldStackMarkup(visual) {
+  const u = 46;
+  const ox = 6;
+  const oy = 6;
+  let parts = "";
+  for (let k = 7; k >= 0; k -= 1) {
+    const p = visual.pos[visual.z[k]];
+    parts += `<rect x="${ox + p.c * u}" y="${oy + p.r * u}" width="${2 * u}" height="${2 * u}" fill="#fff" stroke="#3f7f9e" stroke-width="2"/>`;
+  }
+  visual.spots.forEach((spot, index) => {
+    parts += `<text x="${ox + spot.x * u}" y="${oy + spot.y * u + 6}" text-anchor="middle" font-size="17" font-weight="700" fill="#333">${visual.order[index]}</text>`;
+  });
+  return `<svg class="fold-stack-svg" viewBox="0 0 ${4 * u + 12} ${4 * u + 12}" role="img" aria-label="겹친 색종이 순서 문제">${parts}</svg>`;
+}
+
+function foldUnfoldChoiceMarkup(visual) {
+  const { foldLine, foldArrow, clip } = foldGeometryHelpers();
+  const size = 92;
+  const square = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
+  let x = 6;
+  const top = 6;
+  let parts = `<polygon points="${square.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+  const seg1 = foldLine(square, visual.directions[0]);
+  if (seg1) parts += `<line x1="${(x + seg1[0].x * size).toFixed(1)}" y1="${(top + seg1[0].y * size).toFixed(1)}" x2="${(x + seg1[1].x * size).toFixed(1)}" y2="${(top + seg1[1].y * size).toFixed(1)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
+  const arrow1 = foldArrow(square, visual.directions[0]);
+  if (arrow1) parts += foldArrowSvg(arrow1.from, arrow1.to, x, top, size);
+  x += size + 10;
+  parts += foldStepArrowSvg(x, top + size / 2);
+  x += 42;
+
+  const half = clip(square, { v: (p) => 0.5 - p.x, h: (p) => 0.5 - p.y, d1: (p) => p.x - p.y, d2: (p) => 1 - p.x - p.y }[visual.directions[0]]);
+  parts += `<polygon points="${half.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+  const seg2 = foldLine(half, visual.directions[1]);
+  if (seg2) parts += `<line x1="${(x + seg2[0].x * size).toFixed(1)}" y1="${(top + seg2[0].y * size).toFixed(1)}" x2="${(x + seg2[1].x * size).toFixed(1)}" y2="${(top + seg2[1].y * size).toFixed(1)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
+  const arrow2 = foldArrow(half, visual.directions[1]);
+  if (arrow2) parts += foldArrowSvg(arrow2.from, arrow2.to, x, top, size);
+  x += size + 10;
+  parts += foldStepArrowSvg(x, top + size / 2);
+  x += 42;
+
+  const quad = clip(half, { v: (p) => 0.5 - p.x, h: (p) => 0.5 - p.y, d1: (p) => p.x - p.y, d2: (p) => 1 - p.x - p.y }[visual.directions[1]]);
+  parts += `<polygon points="${quad.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+  parts += `<polygon points="${visual.cut.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#b03a5b"/>`;
+
+  const stageSvg = `<svg class="fold-unfold-stage-svg" viewBox="0 0 ${x + size + 10} ${size + 16}" role="img" aria-label="색종이 접기 단계">${parts}</svg>`;
+
+  const optionSvg = visual.options.map((opt, index) => {
+    let optParts = `<polygon points="${square.map((p) => `${(6 + p.x * size).toFixed(1)},${(6 + p.y * size).toFixed(1)}`).join(" ")}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+    optParts += `<line x1="${6 + size / 2}" y1="6" x2="${6 + size / 2}" y2="${6 + size}" stroke="#d4756c" stroke-width="1.4" stroke-dasharray="5 4"/>`;
+    optParts += `<line x1="6" y1="${6 + size / 2}" x2="${6 + size}" y2="${6 + size / 2}" stroke="#d4756c" stroke-width="1.4" stroke-dasharray="5 4"/>`;
+    for (const poly of opt.polygons) {
+      optParts += `<polygon points="${poly.map((p) => `${(6 + p.x * size).toFixed(1)},${(6 + p.y * size).toFixed(1)}`).join(" ")}" fill="#fff"/>`;
+    }
+    return `<div class="fold-unfold-option"><svg viewBox="0 0 ${size + 12} ${size + 12}" role="img" aria-label="보기 ${"①②③④"[index]}">${optParts}</svg><b>${"①②③④"[index]}</b></div>`;
+  }).join("");
+
+  return `<div class="fold-unfold-choice-work">${stageSvg}<div class="fold-unfold-options">${optionSvg}</div></div>`;
 }
 
 function paperFoldMarkup(visual) {
@@ -544,6 +900,13 @@ function visualMarkup(visual) {
   if (visual.kind === "piano") return `<div class="visual"><div class="piano-row">${Array.from({ length: visual.keys }, (_, index) => `<span class="piano-key">${index + 1}</span>`).join("")}</div></div>`;
   if (visual.kind === "line") return `<div class="visual"><div class="people-row">${Array.from({ length: visual.total }, (_, index) => `<i class="${index + 1 === visual.first ? "marked" : ""}">${index + 1}</i>`).join("")}</div></div>`;
   if (visual.kind === "paper-fold") return `<div class="visual paper-fold-visual">${paperFoldMarkup(visual)}</div>`;
+  if (visual.kind === "fold-number-grid") return `<div class="visual fold-number-visual">${foldNumberGridMarkup(visual)}</div>`;
+  if (visual.kind === "fold-diagonal-grid") return `<div class="visual fold-diagonal-visual">${foldDiagonalGridMarkup(visual)}</div>`;
+  if (visual.kind === "fold-number-inverse") return `<div class="visual fold-inverse-visual">${foldNumberInverseMarkup(visual)}</div>`;
+  if (visual.kind === "fold-cut-pieces") return `<div class="visual fold-pieces-visual">${foldCutPiecesMarkup(visual)}</div>`;
+  if (visual.kind === "fold-punch") return `<div class="visual fold-punch-visual">${foldPunchMarkup(visual)}</div>`;
+  if (visual.kind === "fold-stack") return `<div class="visual fold-stack-visual">${foldStackMarkup(visual)}</div>`;
+  if (visual.kind === "fold-unfold-choice") return `<div class="visual fold-unfold-visual">${foldUnfoldChoiceMarkup(visual)}</div>`;
   return "";
 }
 
