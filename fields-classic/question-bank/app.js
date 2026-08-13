@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812u";
-import { GENERATORS } from "./generators.js?v=20260812u";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812x";
+import { GENERATORS } from "./generators.js?v=20260812x";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -31,10 +31,20 @@ function hasVerifiedSource(typeId) {
 }
 
 function isSelectableType(item) {
-  return isReady(item) && hasVerifiedSource(item.id);
+  // 원본 대조를 거쳤다는 신호는 두 가지다. 시험지에서 확인한 것(hasVerifiedSource)과
+  // 교재 페이지에서 확인한 것(textbookSource). 교재 단원 유사문제는 교재가 원본이므로
+  // 시험 문항 검증을 요구하면 영영 열리지 않는다. 어느 쪽이든 "무엇과 대조했는지"가
+  // 분명해야 하고, 이름만 같은 유형에 생성기를 얹는 것은 여전히 금지다(isReady가 막는다).
+  //
+  // 시험지 탭은 이 함수와 별개로 문항별 verified 플래그를 함께 요구하므로,
+  // 교재 대조만으로는 미검증 시험 문항이 열리지 않는다. 그 게이트는 절대 완화하지 않는다.
+  return isReady(item) && (hasVerifiedSource(item.id) || Boolean(item.textbookSource));
 }
 
 function typeStatus(item) {
+  // 화면에도 무엇과 대조했는지가 드러나야 한다. 시험지 검증 없이 교재만 대조한 유형을
+  // 그냥 "무한 생성"으로 적으면 시험지에서도 확인된 것처럼 읽힌다.
+  if (isReady(item) && !hasVerifiedSource(item.id) && item.textbookSource) return "교재 대조 · 무한 생성";
   if (isReady(item)) return item.generator ? "무한 생성" : "검수 문제 연결";
   if (item?.geometryGame) return "3D 렌더 연결 중";
   if (item?.status === "curriculum") return "교재 유형 분석 완료";
@@ -153,8 +163,8 @@ function renderTypeTree() {
     ${middles.map(({ middle, types }) => `<details class="middle-group" open><summary><strong>${middle}</strong></summary><div class="type-leaves">
       ${types.map((item) => `<label class="type-leaf ${isSelectableType(item) ? "" : "not-ready"}">
         <input type="checkbox" data-type-id="${item.id}" ${state.selected.type.has(item.id) ? "checked" : ""} ${isSelectableType(item) ? "" : "disabled"} />
-        <span><strong>${item.label}</strong><span>실제 출제 유형${item.geometryGame ? ` · Cube Town ${item.geometryGame}` : ""}</span></span>
-        <em class="type-status ${isSelectableType(item) ? "" : "fixed"}">${hasVerifiedSource(item.id) ? typeStatus(item) : "원본 대조 중"}</em>
+        <span><strong>${item.label}</strong><span>${item.textbookSource && !hasVerifiedSource(item.id) ? item.textbookSource : "실제 출제 유형"}${item.geometryGame ? ` · Cube Town ${item.geometryGame}` : ""}</span></span>
+        <em class="type-status ${isSelectableType(item) ? "" : "fixed"}">${hasVerifiedSource(item.id) || item.textbookSource ? typeStatus(item) : "원본 대조 중"}</em>
       </label>`).join("")}
     </div></details>`).join("")}
   </details>`).join("");
@@ -550,6 +560,10 @@ function foldPunchMarkup(visual) {
         if (q.type === "full") {
           parts += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff" stroke="#8a8a94" stroke-width="1.8"/>`;
         } else {
+          // 남는 반쪽은 법선의 반대편이다 — 개수 판정 규칙(dot <= 0)과 같은 쪽.
+          // 시작각 θ+π/2에서 sweep-flag 1로 그리면 θ+π(법선 반대편)를 지나 안쪽으로 부푼다.
+          // 화면이 작으면 밖으로 나간 것처럼 보이지만 아니다 — 네 가장자리 208개를 좌표로
+          // 재봐서 전부 종이 안임을 확인했다. 눈으로만 보고 방향을 뒤집지 말 것.
           const a0 = Math.atan2(q.ny, q.nx) + Math.PI / 2;
           const a1 = a0 + Math.PI;
           const sx = cx + r * Math.cos(a0);
