@@ -21,6 +21,7 @@ small.src{display:block;color:#888;font-size:12px;margin-top:-6px;margin-bottom:
   <option value="numsum">수가 쓰인 색종이 — 남은 수들의 합</option>
   <option value="numcut">수가 쓰인 색종이 — 잘려나간 수들의 합</option>
   <option value="numbook">교재 41쪽 확인03 재현 (검증용)</option>
+  <option value="numdiag">수가 쓰인 색종이 — 대각선 한 번 접기 (실전 유형)</option>
   <option value="stackfind">겹친 색종이 — 가장 밑(또는 위) 찾기</option>
   <option value="stackorder">겹친 색종이 — 위에서부터 순서대로</option>
 </select>
@@ -200,6 +201,115 @@ function genNumber(askCut, preset){
     src: preset ? '교재 재현: 더클래식 1과정 1권 41쪽 확인03 — 검증용'
                 : '출처 유형: 더클래식 1과정 1권 41·50쪽'
   };
+}
+
+/* ===== 유형 6: 수가 쓰인 색종이 — 대각선 한 번 접기 (실전 1회 18번·2회 15번 유형) =====
+   4x4 숫자판을 대각선으로 한 번 접고, 접힌 삼각형 위에 색칠한 부분을 잘라낸다.
+   대각선에서 떨어진 온전한 칸은 거울짝 {(r,c),(c,r)}이 함께 잘리고,
+   대각선 위에 걸친 칸은 반쪽 두 겹이 곧 그 칸의 양쪽 반이라 그 칸 하나만 잘린다. */
+function genDiagNumber(askCut){
+  const N=4;
+  const grid=Array.from({length:N},()=>Array.from({length:N},()=>R(1,9)));
+  const keepLower=Math.random()<0.5;              // true: 아래 삼각형이 남고 위가 접혀 내려온다 (r>c 쪽)
+  const inKeep=(r,c)=> keepLower ? r>c : c>r;
+
+  // 색칠 단위: 남은 삼각형의 온전한 칸(6개) + 대각선 반칸(4개)
+  const units=[];
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+    if(inKeep(r,c)) units.push({r,c,half:false});
+    if(r===c) units.push({r,c,half:true});
+  }
+  // 연결된 묶음을 무작위로 키운다 — 교재·시험 그림이 전부 이어진 한 덩어리다
+  const key=(u)=>u.r+','+u.c;
+  const adj=(a,b)=>Math.abs(a.r-b.r)+Math.abs(a.c-b.c)===1;
+  const want=R(3,5);
+  const start=units[R(0,units.length-1)];
+  const region=[start];
+  let guard=0;
+  while(region.length<want && guard<200){
+    guard++;
+    const cand=units.filter(u=>!region.some(v=>key(v)===key(u)) && region.some(v=>adj(u,v)));
+    if(!cand.length) break;
+    region.push(cand[R(0,cand.length-1)]);
+  }
+  if(!region.some(u=>!u.half)) return genDiagNumber(askCut);   // 온전한 칸이 하나도 없으면 거울 효과가 없다
+
+  const removed=new Set();
+  for(const u of region){
+    removed.add(u.r*N+u.c);
+    if(!u.half) removed.add(u.c*N+u.r);
+  }
+  let total=0, cut=0;
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+    total+=grid[r][c];
+    if(removed.has(r*N+c)) cut+=grid[r][c];
+  }
+  const remain=total-cut;
+  if(remain<=0 || cut<=0) return genDiagNumber(askCut);
+
+  return {
+    kind:'diag-number', grid, keepLower, region, removed, total, cut, remain,
+    answer: askCut ? cut : remain,
+    text:['색종이를 한 번 접은 후 칠해진 부분을 잘라내었습니다.',
+          askCut ? '잘려나간 부분에 있는 수들의 합을 구하시오.' : '남아 있는 수들의 합을 구하시오.'],
+    info:`대각선 접기(${keepLower?'위→아래':'아래→위'}) · 색칠 ${region.length}단위 · 잘린 칸 ${removed.size}개(합 ${cut}) · 전체 ${total} · 남은 합 ${remain}`,
+    src:'출처 유형: 필즈 실전 1회 18번·2회 15번'
+  };
+}
+
+function renderDiagNumber(ctx,d){
+  header(ctx, d.text);
+  const size=230, baseY=130, ox=90, u=size/4;
+  // 펼친 자리(유령): 옅은 바탕 + 옅은 점선 격자
+  ctx.fillStyle='#fdeeec'; ctx.fillRect(ox,baseY,size,size);
+  ctx.strokeStyle='#eec6c1'; ctx.lineWidth=1; ctx.setLineDash([5,4]);
+  for(let k=0;k<=4;k++){
+    ctx.beginPath(); ctx.moveTo(ox+k*u,baseY); ctx.lineTo(ox+k*u,baseY+size); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ox,baseY+k*u); ctx.lineTo(ox+size,baseY+k*u); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  // 접힌 두 겹 삼각형: 진한 바탕 + 실선 테두리 (대각선 y=x, keepLower면 아래쪽)
+  const tri = d.keepLower
+    ? [{x:0,y:0},{x:0,y:4},{x:4,y:4}]
+    : [{x:0,y:0},{x:4,y:0},{x:4,y:4}];
+  ctx.beginPath();
+  tri.forEach((p,i)=>{const X=ox+p.x*u, Y=baseY+p.y*u; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);});
+  ctx.closePath();
+  ctx.fillStyle='#fbdad6'; ctx.fill();
+  ctx.strokeStyle=PAPER_EDGE; ctx.lineWidth=2.4; ctx.stroke();
+  // 삼각형 안 격자
+  ctx.save(); ctx.clip();
+  ctx.strokeStyle='#e8b7b1'; ctx.lineWidth=1;
+  for(let k=1;k<4;k++){
+    ctx.beginPath(); ctx.moveTo(ox+k*u,baseY); ctx.lineTo(ox+k*u,baseY+size); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ox,baseY+k*u); ctx.lineTo(ox+size,baseY+k*u); ctx.stroke();
+  }
+  // 색칠: 온전한 칸은 사각형, 대각선 칸은 접힌 쪽 반쪽 삼각형
+  ctx.fillStyle=CUT;
+  for(const q of d.region){
+    const X=ox+q.c*u, Y=baseY+q.r*u;
+    if(!q.half){ ctx.fillRect(X,Y,u,u); continue; }
+    ctx.beginPath();
+    if(d.keepLower){ ctx.moveTo(X,Y); ctx.lineTo(X,Y+u); ctx.lineTo(X+u,Y+u); }
+    else           { ctx.moveTo(X,Y); ctx.lineTo(X+u,Y); ctx.lineTo(X+u,Y+u); }
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+  // 접는 방향 화살표: 접혀 온 쪽 유령의 중심 → 그 거울점
+  const g=d.keepLower ? {x:2.6,y:1.4} : {x:1.4,y:2.6};
+  const m={x:g.y,y:g.x};
+  const sx=ox+g.x*u, sy=baseY+g.y*u, ex=ox+m.x*u, ey=baseY+m.y*u;
+  ctx.strokeStyle=ARROW; ctx.fillStyle=ARROW; ctx.lineWidth=4; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(sx,sy); ctx.quadraticCurveTo((sx+ex)/2+14,(sy+ey)/2+14,ex,ey); ctx.stroke();
+  const ang=Math.atan2(ey-((sy+ey)/2+14), ex-((sx+ex)/2+14));
+  ctx.beginPath();
+  ctx.moveTo(ex+5*Math.cos(ang), ey+5*Math.sin(ang));
+  ctx.lineTo(ex-11*Math.cos(ang-0.5), ey-11*Math.sin(ang-0.5));
+  ctx.lineTo(ex-11*Math.cos(ang+0.5), ey-11*Math.sin(ang+0.5));
+  ctx.closePath(); ctx.fill();
+  // 오른쪽: 펼친 숫자판 전체 (교재 문법 — 잘린 칸을 지우지 않는다)
+  let x=ox+size+40; drawStepArrow(ctx, x, baseY+size/2); x+=64;
+  drawNumberGrid(ctx, d.grid, x, baseY, size);
 }
 
 /* ===== 유형 5: 겹친 색종이 순서 (교재 35~36·44~46쪽) =====
@@ -437,7 +547,7 @@ function renderNumber(ctx,d){
 function render(d){
   const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
-  if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else renderNumber(ctx,d);
+  if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else renderNumber(ctx,d);
   document.getElementById('info').textContent=d.info+' · 정답 '+d.answer;
   document.getElementById('src').textContent=d.src;
 }
@@ -445,6 +555,7 @@ function newProblem(){
   const mode=document.getElementById('mode').value;
   if(mode==='hole2')  return render(genHole(false));
   if(mode==='hole3d') return render(genHole(true));
+  if(mode==='numdiag')    return render(genDiagNumber(Math.random()<0.7));
   if(mode==='stackfind')  return render(genStack(false));
   if(mode==='stackorder') return render(genStack(true));
   if(mode==='numsum') return render(genNumber(false));
