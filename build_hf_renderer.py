@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import re, os, subprocess, sys
 
-SRC_REF = 'main:fields-classic/question-bank/paper-fold-lab.html'
-DEST    = 'hyper-focus/renderers/paper_fold.html'
+DEST = 'hyper-focus/renderers/paper_fold.html'
+SRC_PATH = 'fields-classic/question-bank/paper-fold-lab.html'
 
 HF_ADAPTER = """
 /* HF variation 어댑터: machineReadable → 엔진 파라미터, 확정 재현 */
@@ -52,12 +52,15 @@ function hfRenderVariation(variation){
 window.hfRenderVariation = hfRenderVariation;
 """
 
+def git_show(ref):
+    r = subprocess.run(['git', 'show', f'{ref}:{SRC_PATH}'],
+                       capture_output=True, text=True, encoding='utf-8')
+    return r.stdout if r.returncode == 0 else None
+
 def main():
-    result = subprocess.run(['git', 'show', SRC_REF],
-                            capture_output=True, text=True, encoding='utf-8')
-    if result.returncode != 0:
-        sys.exit(f'ERROR: git show {SRC_REF} 실패\n{result.stderr}')
-    c = result.stdout
+    c = git_show('main') or git_show('origin/main')
+    if not c:
+        sys.exit(f'ERROR: {SRC_PATH} 을 main 또는 origin/main 에서 찾을 수 없음')
 
     c = c.replace('<title>색종이 접기 렌더 테스트 v7</title>',
                   '<title>HF 색종이 접기 렌더러</title>')
