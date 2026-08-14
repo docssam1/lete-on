@@ -57,17 +57,20 @@
       "solvingModel": {
         "perAnimalPerDay": 5,
         "targetPerDay": 50,
+        "exactDays": 1.2,
+        "roundingRule": "ceil_to_complete_day",
+        "requiredWholeDays": 2,
         "expectedAnswer": 2
       },
       "judgementRule": {
         "checks": [
           "one_unit_first"
         ],
-        "description": "먼저 1마리 1일 기준을 구한 뒤 원하는 마릿수와 날짜로 바꾼다."
+        "description": "먼저 1마리 1일 기준을 구한 뒤, 목표 개수 이상을 모으는 첫 번째 온전한 날짜를 찾는다."
       },
       "answerFirstGenerationRule": {
         "enabled": true,
-        "description": "유사문제는 먼저 목표 날짜를 정한 뒤, 1마리 기준 양이 깔끔하게 나오도록 비례 수치를 만든다."
+        "description": "유사문제는 먼저 목표 날짜를 정한 뒤, 1마리 기준 양과 걸리는 날짜가 깔끔한 정수로 나오도록 비례 수치를 만든다."
       },
       "generationTemplate": {
         "easyMode": {
@@ -93,6 +96,7 @@
         "mustPreserve": [
           "1단위 기준으로 바꾸는 구조",
           "비례 관계를 이용하는 구조",
+          "온전한 날짜 수를 묻는 경우 목표량 이상이 되는 첫날을 답으로 하는 구조",
           "정답이 하나로 결정되는 구조"
         ],
         "forbiddenChanges": [
@@ -113,11 +117,13 @@
     "mustMatchContentAnswer": true,
     "sourceAnswerPath": "originalProblem.answer",
     "derivation": {
-      "method": "convert_to_one_animal_one_day_unit",
+      "method": "convert_to_one_animal_one_day_unit_then_round_up_to_complete_day",
       "checks": [
         "3마리 3일 45개인지 확인",
         "1마리 1일 5개인지 확인",
-        "10마리 60개가 2일인지 확인"
+        "10마리가 하루에 50개를 줍는지 확인",
+        "정확한 시간은 1.2일인지 확인",
+        "온전한 날짜로 세면 둘째 날에 60개 이상이 되는지 확인"
       ]
     }
   },

@@ -34,7 +34,7 @@
 33,가위바위보 승패에 따라 계단 위치 차이 구하기,TYPE-04,rps_stair_position,count,3계단,True
 34,숫자 카드로 두 자리 수끼리 뺄셈식을 만들어 최댓값과 최솟값 구하기,TYPE-05,digit_card_subtraction,min_max_values,"{""max"": 41, ""min"": 6}",True
 35,조건을 보고 달리기 순서를 추론하기,TYPE-04,line_order,name,민호,True
-36,줄 세우기에서 두 사람 사이 사람 수 조건으로 전체 사람 수의 최소·최대 구하기,TYPE-04,min_max_order,min_max_values,"18명, 32명",True
+36,줄 세우기에서 두 사람 사이 사람 수 조건으로 전체 사람 수의 최소·최대 구하기,TYPE-04,min_max_order,min_max_values,"17명, 31명",True
 37,원탁 자리에서 앞/왼쪽/오른쪽 조건으로 위치 정하기,TYPE-04,circular_seating,circular_position_map,"{""왼쪽 위"": ""하은"", ""오른쪽 위"": ""주원"", ""왼쪽 아래"": ""무검"", ""오른쪽 아래"": ""이영""}",True
 38,원 모양 자리에서 바라보는 방향 기준으로 오른쪽·왼쪽 순서 판단하기,TYPE-04,circular_viewpoint_order,ordinal,3번째,True
 39,논리표를 이용해 조건에 맞는 과일 짝 찾기,TYPE-04,logic_matrix,matching_pair,"사과, 귤",True

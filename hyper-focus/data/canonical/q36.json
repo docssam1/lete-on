@@ -51,8 +51,11 @@
         "peopleBetween": 6
       },
       "solvingModel": {
-        "minTotal": 18,
-        "maxTotal": 32,
+        "rankDistance": 7,
+        "frontPositionsOfBackRankedPerson": [8, 22],
+        "validTotals": [17, 31],
+        "minTotal": 17,
+        "maxTotal": 31,
         "caseSplit": [
           "두 사람이 같은 방향 기준으로 셀 때",
           "두 사람이 줄의 반대쪽에 가까울 때"
@@ -109,8 +112,8 @@
   "answerValidation": {
     "answerType": "min_max_values",
     "expectedAnswer": {
-      "min": 18,
-      "max": 32
+      "min": 17,
+      "max": 31
     },
     "mustMatchContentAnswer": true,
     "sourceAnswerPath": "originalProblem.answer",
@@ -119,15 +122,17 @@
       "checks": [
         "앞 순위와 뒤 순위를 반영했는지 확인",
         "사이에 6명이 있는 조건을 반영했는지 확인",
-        "최솟값이 18인지 확인",
-        "최댓값이 32인지 확인"
+        "지수의 앞 순위가 8번째 또는 22번째인지 확인",
+        "가능한 전체 인원수가 17명과 31명뿐인지 전수 확인",
+        "최솟값이 17인지 확인",
+        "최댓값이 31인지 확인"
       ]
     }
   },
   "validation": {
     "requiredChecks": [
       "problem_assets.json에 q36 경로 존재 확인",
-      "hf_data.json typeId 36의 originalProblem.answer가 18명, 32명인지 확인",
+      "hf_data.json typeId 36의 originalProblem.answer가 17명, 31명인지 확인",
       "hf_core.json 및 problem_map.json의 subType이 min_max_order인지 확인"
     ],
     "completionStatus": "verified"
