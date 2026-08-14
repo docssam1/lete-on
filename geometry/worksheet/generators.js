@@ -857,6 +857,13 @@
   }
 
   // 7. FB — 상자 채우기
+  //
+  // Textbook convention (see the GM-3 source pages): the stack is pushed into
+  // the box's far/left corner and steps DOWN toward the open space, and the
+  // leftmost column stands full height so the box's own height is readable
+  // straight off the drawing. A scattered random fill made the picture hard
+  // to read and hid how tall the box was, so the shape is now generated as a
+  // left-anchored descending staircase rather than per-column coin flips.
   function genFB(rng, difficulty) {
     const [W, D, H] = boxDimsForDifficulty(rng, difficulty);
     const total = W * D * H;
@@ -867,18 +874,27 @@
     for (let tries = 0; tries < 200; tries += 1) {
       map = makeEmptyMap(W, D);
       for (let z = 0; z < D; z += 1) {
+        // Each row starts at full height on the left wall (x = 0) and never
+        // rises again as x grows, so every row reads as a staircase.
+        let cap = H;
         for (let x = 0; x < W; x += 1) {
-          if (rng.bool(0.55)) map[z][x] = rng.int(1, H);
+          if (x === 0) { map[z][x] = H; continue; }
+          cap = Math.max(0, Math.min(cap, cap - rng.int(0, 1)));
+          map[z][x] = cap;
         }
       }
       placed = mapTotal(map);
-      if (placed >= lo && placed <= hi) break;
+      if (placed >= lo && placed <= hi && placed < total) break;
     }
-    if (!placed) { map[0][0] = 1; placed = 1; }
+    // Guarantee the leftmost column is full and at least one cell is empty,
+    // whatever the loop settled on.
+    for (let z = 0; z < D; z += 1) map[z][0] = H;
+    placed = mapTotal(map);
+    if (placed >= total) { map[D - 1][W - 1] = Math.max(0, H - 1); placed = mapTotal(map); }
     const need = total - placed;
     return {
       type: "FB",
-      prompt: "가로 " + W + ", 세로 " + D + ", 높이 " + H + "인 상자에 쌓기나무를 쌓았습니다. 상자를 완전히 채우려면 쌓기나무가 몇 개 더 필요합니까?",
+      prompt: "가로 " + W + ", 세로 " + D + ", 높이 " + H + "인 상자에 쌓기나무를 쌓았습니다. 상자를 완전히 채우려면 쌓기나무가 최소 몇 개 더 필요합니까?",
       figures: { kind: "iso-box", map, width: W, depth: D, boxH: H },
       answer: { need, total, placed },
       answerText: need + "개"
