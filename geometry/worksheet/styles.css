@@ -303,3 +303,86 @@ select, .code-input, input[type="text"] {
 /* Two-method hint line under IH/IN prompts — quiet grey so it reads as a
    study aid, not part of the question. */
 .ws-method { margin: 2px 0 0; font-size: 10.5px; color: #7a847e; }
+
+/* ---------------------------------------------------------------------
+   Type preview — a single sample problem shown above the full worksheet.
+   Screen only: @media print hides it (see the print block below is already
+   closed, so this rule carries its own print guard).
+   --------------------------------------------------------------------- */
+/* .preview-panel was a centring flex ROW when it held only #sheetRoot; with
+   the preview card added it must stack them vertically instead.
+   justify-content MUST be reset to flex-start: the base rule centres on the
+   main axis, and once that axis is vertical, centring taller-than-container
+   content pushes its top above the scroll origin where it can never be
+   scrolled back into view. */
+.preview-panel {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.ws-preview {
+  width: 210mm;
+  max-width: 100%;
+  margin: 0 auto 22px;
+  padding: 12px 14px 14px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--accent);
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(35, 43, 38, 0.09);
+}
+.ws-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 9px;
+}
+.ws-preview-head h2 { margin: 0; font-size: 14px; color: var(--brand); letter-spacing: .3px; }
+.ws-preview-actions { display: flex; align-items: center; gap: 12px; }
+.btn-inline { display: inline-block; width: auto; height: 30px; margin-top: 0; padding: 0 12px; font-size: 12px; }
+
+.ws-preview-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed var(--line);
+}
+.ws-preview-chip {
+  border: 1px solid #c3cbc6;
+  border-radius: 999px;
+  background: #f6f8f6;
+  color: #46524c;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 5px 11px;
+  cursor: pointer;
+}
+.ws-preview-chip:hover { background: #eaf1ec; }
+.ws-preview-chip.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+/* The sample reuses .ws-card markup, so neutralise the A4 page metrics it
+   would otherwise inherit from .ws-page. */
+.ws-preview-page {
+  width: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.ws-preview-page .ws-card { margin-bottom: 0; }
+.ws-preview-answer { margin-top: 10px; font-size: 12px; }
+.ws-preview-answer b { color: var(--accent); margin-right: 6px; }
+.ws-preview-answer-list { column-count: 1; }
+.ws-preview-answer-list .ws-answer-item { border-bottom: 0; padding: 0; }
+.ws-preview-empty { margin: 0; padding: 14px 2px; color: #7a847e; font-size: 12.5px; }
+
+@media print {
+  .ws-preview { display: none !important; }
+}

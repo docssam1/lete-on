@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GFIELD 쌓기나무 학습지 생성기</title>
-    <link rel="stylesheet" href="./styles.css?v=ws-3" />
+    <link rel="stylesheet" href="./styles.css?v=ws-4" />
   </head>
   <body>
     <div class="app-shell">
@@ -57,12 +57,27 @@
       </aside>
 
       <main class="preview-panel">
+        <!-- Type preview: sits between the controls and the full worksheet so a
+             teacher can see what ONE type looks like at the chosen difficulty
+             before committing to (and printing) the whole sheet. Never printed. -->
+        <section class="ws-preview" id="previewPanel">
+          <div class="ws-preview-head">
+            <h2>유형 미리보기</h2>
+            <div class="ws-preview-actions">
+              <label class="check-line"><input type="checkbox" id="previewShowAnswer" checked /> 정답 보기</label>
+              <button type="button" id="previewRerollBtn" class="btn btn-secondary btn-inline">다른 문제 보기</button>
+            </div>
+          </div>
+          <div class="ws-preview-tabs" id="previewTabs"><!-- chips injected by app.js --></div>
+          <div class="ws-preview-body" id="previewBody"><!-- one sample problem injected by app.js --></div>
+        </section>
+
         <div id="sheetRoot"><!-- worksheet + answer pages injected by app.js --></div>
       </main>
     </div>
 
-    <script src="./generators.js?v=ws-3"></script>
-    <script src="./render.js?v=ws-3"></script>
-    <script src="./app.js?v=ws-3"></script>
+    <script src="./generators.js?v=ws-4"></script>
+    <script src="./render.js?v=ws-4"></script>
+    <script src="./app.js?v=ws-4"></script>
   </body>
 </html>

@@ -29,7 +29,11 @@
     count: 9,
     studentName: "",
     includeAnswers: true,
-    worksheet: null
+    worksheet: null,
+    // Preview state is independent of the worksheet's own seed on purpose —
+    // see renderPreview().
+    previewType: null,
+    previewSeed: freshSeed()
   };
 
   // ---------------------------------------------------------------------
@@ -249,6 +253,65 @@
     return worksheetPage + answerPage;
   }
 
+  // ---------------------------------------------------------------------
+  // Type preview — one sample problem of one type, at the current difficulty.
+  // It deliberately uses its OWN seed (previewSeed), so rerolling the sample
+  // never disturbs the worksheet below it, and changing the worksheet never
+  // reshuffles the sample the teacher is studying.
+  // ---------------------------------------------------------------------
+  function previewTypeList() {
+    // Only offer the types that are actually selected; keep GEN.TYPES' order
+    // so the chips line up with the checkbox grid.
+    return GEN.TYPES.filter((t) => state.types.indexOf(t.code) !== -1);
+  }
+
+  function ensurePreviewType() {
+    const list = previewTypeList();
+    if (!list.length) { state.previewType = null; return; }
+    if (!state.previewType || !list.some((t) => t.code === state.previewType)) {
+      state.previewType = list[0].code;
+    }
+  }
+
+  function renderPreview() {
+    ensurePreviewType();
+    const tabs = document.getElementById("previewTabs");
+    const body = document.getElementById("previewBody");
+    if (!tabs || !body) return;
+    const list = previewTypeList();
+    tabs.innerHTML = list.map((t) => (
+      '<button type="button" class="ws-preview-chip' + (t.code === state.previewType ? " active" : "") +
+      '" data-type="' + t.code + '">' + escapeHtml(t.label) + "</button>"
+    )).join("");
+    tabs.querySelectorAll("button").forEach((b) => {
+      b.addEventListener("click", () => { state.previewType = b.dataset.type; renderPreview(); });
+    });
+
+    if (!state.previewType) {
+      body.innerHTML = '<p class="ws-preview-empty">유형을 하나 이상 선택하세요.</p>';
+      return;
+    }
+    // Same rng recipe as generateWorksheet so a preview problem is a genuine
+    // sample of what the sheet produces, not a differently-distributed one.
+    const rng = GEN.createRng("GWP:" + state.previewSeed + ":" + state.difficulty + ":" + state.previewType);
+    let problem = null;
+    try {
+      problem = GEN.make(state.previewType, rng, state.difficulty);
+    } catch (error) {
+      body.innerHTML = '<p class="ws-preview-empty">이 유형은 지금 난이도에서 만들 수 없습니다.</p>';
+      return;
+    }
+    const answer = document.getElementById("previewShowAnswer");
+    const showAnswer = !answer || answer.checked;
+    body.innerHTML =
+      '<div class="ws-page ws-preview-page">' + renderCard(problem, 0) + "</div>" +
+      (showAnswer
+        ? '<div class="ws-preview-answer"><b>정답</b> <ol class="ws-answer-list ws-preview-answer-list">' +
+          renderAnswerItem(problem, 0) + "</ol></div>"
+        : "");
+    window.__WSPREVIEW = { type: state.previewType, seed: state.previewSeed, problem };
+  }
+
   function regenerate() {
     state.worksheet = GEN.generateWorksheet({
       types: state.types,
@@ -258,6 +321,7 @@
     });
     document.getElementById("sheetRoot").innerHTML = buildSheetHtml(state.worksheet);
     document.getElementById("codeInput").value = state.worksheet.code;
+    renderPreview();
     // Verification hook for the self-test (and for anyone auditing the page
     // in a live browser): the exact same shape of {code, seed, problems}
     // generators.js produced.
@@ -298,6 +362,11 @@
     document.getElementById("printBtn").addEventListener("click", () => {
       window.print();
     });
+    document.getElementById("previewRerollBtn").addEventListener("click", () => {
+      state.previewSeed = freshSeed();
+      renderPreview();
+    });
+    document.getElementById("previewShowAnswer").addEventListener("change", renderPreview);
     document.getElementById("loadCodeBtn").addEventListener("click", () => {
       const parsed = GEN.parseCode(document.getElementById("codeInput").value);
       if (!parsed) {
