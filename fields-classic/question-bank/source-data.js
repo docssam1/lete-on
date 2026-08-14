@@ -66,6 +66,9 @@ export const TYPES = [
   type("balance-scale", "logic", "무게 비교", "양팔저울의 균형 관계", { generator: "sourceBalanceRelations", sourceMatched: true }),
   type("balance-scale-three-objects", "logic", "무게 비교", "세 물건 양팔저울 관계"),
   type("symbol-relation", "number", "복면산과 식", "여러 기호의 관계로 값 구하기", { generator: "sourceSymbolRelations", sourceMatched: true }),
+  type("symbol-chain-arithmetic", "number", "복면산과 식", "연속된 기호식으로 마지막 값 구하기", { generator: "symbolChainArithmetic", sourceMatched: true }),
+  type("shape-matrix-three-features", "pattern", "도형 규칙", "바깥·안쪽 도형과 칠하기의 행렬 규칙", { generator: "shapeMatrixThreeFeatures", sourceMatched: true }),
+  type("triangle-position-cycle", "pattern", "도형 규칙", "삼각형 안에서 칠한 위치가 반복되는 규칙", { generator: "trianglePositionCycle", sourceMatched: true }),
   type("symbol-relation-2to3", "number", "복면산과 식", "별 두 개와 원 세 개의 관계식"),
   type("symbol-relation-3to4", "number", "복면산과 식", "별 세 개와 원 네 개의 관계식"),
   type("number-line-distance", "geometry", "길이와 측정", "수직선에서 두 점 사이의 거리", { legacyId: 1 }),
@@ -144,10 +147,12 @@ export const TYPES = [
   type("fold-diagonal-unfold", "geometry", "색종이 접기", "대각선으로 접고 자른 뒤 펼친 선 그리기"),
   type("fold-number-remaining-sum", "geometry", "색종이 접기", "번호 색종이를 접고 자른 뒤 남은 수의 합", { generator: "foldNumberRemainingSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 41·50쪽" }),
   type("cube-count-solid", "geometry", "쌓기나무", "입체를 이루는 쌓기나무 전체 개수", { geometryGame: "count-heights" }),
+  type("cube-step-sequence", "geometry", "쌓기나무", "단계가 커지는 쌓기나무의 전체 개수", { generator: "cubeStepSequence", sourceMatched: true, geometryGame: "worksheet:TS" }),
   type("cube-different-shape", "geometry", "쌓기나무", "같은 개수로 만든 입체 중 다른 모양", { geometryGame: "find-shape" }),
   type("cube-add-to-match", "geometry", "쌓기나무", "목표 입체까지 더 필요한 쌓기나무", { geometryGame: "copy-build" }),
-  type("cube-fill-box", "geometry", "쌓기나무", "정육면체 상자를 채우는 데 필요한 개수", { geometryGame: "fill-box" }),
+  type("cube-fill-box", "geometry", "쌓기나무", "정육면체 상자를 채우는 데 필요한 개수", { generator: "cubeFillBoxWorksheet", sourceMatched: true, geometryGame: "worksheet:CU" }),
   type("cube-hidden-count", "geometry", "쌓기나무", "보이지 않는 쌓기나무의 개수", { geometryGame: "hidden-count" }),
+  type("cube-hidden-count-walled", "geometry", "쌓기나무", "벽 모서리에서 보이지 않는 쌓기나무의 개수", { generator: "cubeHiddenCountWalled", sourceMatched: true, geometryGame: "worksheet:IH" }),
   type("cube-three-views", "geometry", "쌓기나무", "앞·옆·위에서 본 쌓기나무", { geometryGame: "three-views", status: "curriculum" }),
   type("cube-tunnel", "geometry", "쌓기나무", "구멍이 뚫린 쌓기나무의 남은 개수", { geometryGame: "cube-tunnel", status: "curriculum" }),
   type("shape-transform", "geometry", "도형 움직이기", "도형 돌리기·뒤집기·거울 보기", { status: "curriculum" }),
@@ -249,12 +254,12 @@ export const FINAL_EXAM_TYPES = [
     file: "필즈선발대비 실전 모의고사 파이널 2회.pdf",
     sourceViewer: false,
     questions: [
-      "hidden-number-card-conditions", "cube-hidden-count", "closest-two-digit-card-sum", "front-back-total",
-      "set-union-count", "wrong-operation-correction", "symbol-relation", "paired-sequences",
-      "shape-matrix-rule", "delayed-date-promise", "repeat-pattern", "calendar-date-weekday",
+      "hidden-number-card-conditions", "cube-hidden-count-walled", "closest-two-digit-card-sum", "front-back-total",
+      "set-union-count", "wrong-operation-correction", "symbol-chain-arithmetic", "paired-sequences",
+      "shape-matrix-three-features", "delayed-date-promise", "triangle-position-cycle", "calendar-date-weekday",
       "two-type-unit-total", "vertical-cryptarithm-shape-sum", "fold-diagonal-hole-count", "row-column-sum-placement", "two-by-two-sum-fill",
       "total-difference", "shape-sum-grid-4", "magic-square"
-    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: [0, 2, 3, 4, 5, 7, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19].includes(index) }))
+    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: true }))
   },
   {
     id: "final-3",
@@ -263,12 +268,12 @@ export const FINAL_EXAM_TYPES = [
     file: "필즈선발대비 실전 모의고사 파이널 3회.pdf",
     sourceViewer: false,
     questions: [
-      "row-column-count-placement", "truth-lie-ranking", "triangle-max-edge-sum", "cube-count-solid",
+      "row-column-count-placement", "truth-lie-ranking", "triangle-max-edge-sum", "cube-step-sequence",
       "split-merge-tree", "reverse-thinking", "order-position-seven-people", "fold-diagonal-hole-count",
       "target-score-combination", "matchstick-growth", "vertex-degree-sum", "letter-block-move",
       "go-stone-difference-inverse", "square-count", "shape-sum-grid-4", "cube-fill-box",
       "mixed-sequence", "two-type-unit-total", "border-go-stone-difference", "neither-set-count"
-    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: [0, 1, 5, 6, 7, 8, 9, 10, 12, 13, 14, 16, 17, 18, 19].includes(index) }))
+    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: [0, 1, 3, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19].includes(index) }))
   }
 ];
 

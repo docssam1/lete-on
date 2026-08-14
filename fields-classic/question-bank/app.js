@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260812y";
-import { GENERATORS } from "./generators.js?v=20260812y";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260814c";
+import { GENERATORS } from "./generators.js?v=20260814c";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -874,6 +874,53 @@ function symbolRelationsMarkup(visual) {
   return `<div class="symbol-relations"><p>${repeat("☆", visual.firstStar)} = ${repeat("○", visual.firstCircle)}</p><p>☆ + ○ = ▽ + ▽</p><p>${visual.final.join(" + ")} = □</p></div>`;
 }
 
+function symbolChainMarkup(visual) {
+  const symbols = { circle: "○", heart: "♥", club: "♣", diamond: "◆", star: "★", triangle: "▲" };
+  const token = (value) => symbols[value]
+    ? `<span class="chain-symbol ${value}">${symbols[value]}</span>`
+    : `<span class="chain-token">${value}</span>`;
+  const givens = Object.entries(visual.given).map(([key, value]) => `${token(key)}<b>=</b><strong>${value}</strong>`).join("");
+  return `<div class="symbol-chain"><div class="symbol-chain-given">${givens}</div><div class="symbol-chain-board">${visual.rows.map((row) => `<p>${row.map(token).join("")}</p>`).join("")}</div></div>`;
+}
+
+function matrixShapeSvg(shape, cx, cy, size, fill = "none", stroke = "#596a73", width = 2) {
+  if (shape === "circle") return `<circle cx="${cx}" cy="${cy}" r="${size / 2}" fill="${fill}" stroke="${stroke}" stroke-width="${width}"/>`;
+  if (shape === "square") return `<rect x="${cx - size / 2}" y="${cy - size / 2}" width="${size}" height="${size}" fill="${fill}" stroke="${stroke}" stroke-width="${width}"/>`;
+  const top = cy - size * 0.58;
+  const bottom = cy + size * 0.46;
+  return `<polygon points="${cx},${top} ${cx - size * 0.58},${bottom} ${cx + size * 0.58},${bottom}" fill="${fill}" stroke="${stroke}" stroke-width="${width}"/>`;
+}
+
+function shapeMatrixThreeMarkup(visual) {
+  const cellSize = 76;
+  const figures = visual.cells.map((cell) => {
+    const cx = cell.column * cellSize + cellSize / 2;
+    const cy = cell.row * cellSize + cellSize / 2;
+    if (cell.missing && !cell.hintOuter) return "";
+    if (cell.missing) return `${matrixShapeSvg(cell.outer, cx, cy, 47, "none", "#b6c3c9", 2)}<text x="${cx}" y="${cy + 5}" text-anchor="middle" font-size="19" font-weight="800" fill="#8da0aa">?</text>`;
+    const fill = cell.fill === "gray" ? "#b8bdc1" : cell.fill === "hatch" ? "url(#matrix-hatch)" : "#fff";
+    return `${matrixShapeSvg(cell.outer, cx, cy, 48, "#fff")}${matrixShapeSvg(cell.inner, cx, cy, 30, fill)}`;
+  }).join("");
+  const lines = Array.from({ length: 4 }, (_, index) => `<line x1="${index * cellSize}" y1="0" x2="${index * cellSize}" y2="${cellSize * 3}"/><line x1="0" y1="${index * cellSize}" x2="${cellSize * 3}" y2="${index * cellSize}"/>`).join("");
+  return `<svg class="shape-matrix-three" viewBox="0 0 ${cellSize * 3} ${cellSize * 3}" role="img" aria-label="도형 규칙 3 곱하기 3 표"><defs><pattern id="matrix-hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#71818a" stroke-width="2"/></pattern></defs><g class="matrix-grid">${lines}</g>${figures}</svg>`;
+}
+
+function triangleCycleSvg(position = null) {
+  const points = {
+    top: "50,5 27.5,45 72.5,45",
+    "bottom-left": "5,85 27.5,45 50,85",
+    "bottom-right": "95,85 72.5,45 50,85",
+    center: "27.5,45 72.5,45 50,85"
+  };
+  const fill = position ? `<polygon points="${points[position]}" fill="#8dd7ef"/>` : "";
+  return `<svg viewBox="0 0 100 90" role="img" aria-label="${position ? "한 칸이 칠해진" : "빈"} 삼각형">${fill}<path d="M50 5L5 85H95Z M27.5 45H72.5 M27.5 45L50 85 M72.5 45L50 85" fill="none" stroke="#65b6ce" stroke-width="2"/></svg>`;
+}
+
+function trianglePositionCycleMarkup(visual) {
+  const shown = visual.sequence.map((position, index) => `<figure>${triangleCycleSvg(position)}<figcaption>${index + 1}번째</figcaption></figure>`).join("");
+  return `<div class="triangle-cycle">${shown}<b aria-hidden="true">…</b><figure class="target">${triangleCycleSvg()}<figcaption>${visual.target}번째</figcaption></figure></div>`;
+}
+
 function coloredShapeNumberMarkup(visual) {
   const examples = [[1,[0,0,0,1]],[2,[0,0,0,2]],[5,[0,0,1,1]],[8,[0,0,2,0]],[19,[0,1,0,3]],[68,[1,0,1,0]]];
   const grid = (digits, label, target = false) => `<div class="base-four-grid ${target ? "target" : ""}">${Array.from({ length: 3 }, (_, row) => digits.map((count) => `<i class="${row >= 3 - count ? "filled" : ""}"></i>`).join("")).join("")}<span>${label}</span></div>`;
@@ -967,11 +1014,17 @@ function statementListMarkup(visual) {
 }
 
 function vertexDegreeMarkup(visual) {
-  const gap = 46;
-  const pad = 16;
-  const width = pad * 2 + gap * (visual.cols - 1);
-  const height = pad * 2 + gap * (visual.rows - 1);
-  const at = (index) => ({ x: pad + gap * visual.points[index].c, y: pad + gap * visual.points[index].r });
+  const pad = 12;
+  const hasCoordinates = visual.points.every((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
+  const minX = hasCoordinates ? Math.min(...visual.points.map((point) => point.x)) : 0;
+  const minY = hasCoordinates ? Math.min(...visual.points.map((point) => point.y)) : 0;
+  const maxX = hasCoordinates ? Math.max(...visual.points.map((point) => point.x)) : 46 * (visual.cols - 1);
+  const maxY = hasCoordinates ? Math.max(...visual.points.map((point) => point.y)) : 46 * (visual.rows - 1);
+  const width = pad * 2 + maxX - minX;
+  const height = pad * 2 + maxY - minY;
+  const at = (index) => hasCoordinates
+    ? { x: pad + visual.points[index].x - minX, y: pad + visual.points[index].y - minY }
+    : { x: pad + 46 * visual.points[index].c, y: pad + 46 * visual.points[index].r };
   const lines = visual.edges.map(([i, j]) => {
     const a = at(i);
     const b = at(j);
@@ -979,7 +1032,7 @@ function vertexDegreeMarkup(visual) {
   }).join("");
   const dots = visual.points.map((_, index) => {
     const p = at(index);
-    return `<circle cx="${p.x}" cy="${p.y}" r="4" />`;
+    return `<circle cx="${p.x}" cy="${p.y}" r="7" />`;
   }).join("");
   return `<svg class="vertex-degree-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="점과 선 그림">${lines}${dots}</svg>`;
 }
@@ -998,6 +1051,7 @@ function cellShapeMarkup(visual) {
 
 function visualMarkup(visual) {
   if (!visual) return "";
+  if (visual.kind === "geometry-worksheet") return `<div class="visual geometry-worksheet-visual">${geometryWorksheetMarkup(visual)}</div>`;
   if (visual.kind === "count-placement-grid") return `<div class="visual count-grid-visual">${countPlacementGridMarkup(visual)}</div>`;
   if (visual.kind === "statement-list") return `<div class="visual statement-visual">${statementListMarkup(visual)}</div>`;
   if (visual.kind === "vertex-degree") return `<div class="visual vertex-degree-visual">${vertexDegreeMarkup(visual)}</div>`;
@@ -1029,6 +1083,9 @@ function visualMarkup(visual) {
   if (visual.kind === "source-piano") return `<div class="visual source-piano-visual">${sourcePianoMarkup()}</div>`;
   if (visual.kind === "balance-relations") return `<div class="visual balance-relations-visual">${balanceRelationsMarkup(visual)}</div>`;
   if (visual.kind === "symbol-relations") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
+  if (visual.kind === "symbol-chain") return `<div class="visual symbol-chain-visual">${symbolChainMarkup(visual)}</div>`;
+  if (visual.kind === "shape-matrix-three") return `<div class="visual shape-matrix-three-visual">${shapeMatrixThreeMarkup(visual)}</div>`;
+  if (visual.kind === "triangle-position-cycle") return `<div class="visual triangle-position-cycle-visual">${trianglePositionCycleMarkup(visual)}</div>`;
   if (visual.kind === "colored-shape-number") return `<div class="visual colored-shape-number-visual">${coloredShapeNumberMarkup(visual)}</div>`;
   if (visual.kind === "source-go-stones") return `<div class="visual source-go-stones-visual">${sourceGoStonesMarkup(visual)}</div>`;
   if (visual.kind === "nonadjacent-pyramid") return `<div class="visual nonadjacent-pyramid-visual">${nonadjacentPyramidMarkup(visual)}</div>`;
@@ -1047,6 +1104,24 @@ function visualMarkup(visual) {
   if (visual.kind === "fold-punch") return `<div class="visual fold-punch-visual">${foldPunchMarkup(visual)}</div>`;
   if (visual.kind === "fold-stack") return `<div class="visual fold-stack-visual">${foldStackMarkup(visual)}</div>`;
   if (visual.kind === "fold-unfold-choice") return `<div class="visual fold-unfold-visual">${foldUnfoldChoiceMarkup(visual)}</div>`;
+  return "";
+}
+
+function geometryWorksheetMarkup(visual) {
+  const renderer = globalThis.GW_RENDER;
+  const figures = visual.figures;
+  if (!renderer || !figures) return "";
+  if (figures.kind === "sequence") {
+    return `<div class="geometry-sequence">${figures.shapes.map((shape) => `
+      <figure><div>${renderer.renderIso(shape.map, shape.width, shape.depth)}</div><figcaption>${shape.n}단계</figcaption></figure>
+    `).join("")}<strong aria-hidden="true">…</strong></div>`;
+  }
+  if (figures.kind === "iso-box") {
+    return `<figure class="geometry-box"><div>${renderer.renderIsoBox(figures.map, figures.width, figures.depth, figures.boxH)}</div><figcaption>점선은 상자 테두리입니다.</figcaption></figure>`;
+  }
+  if (figures.kind === "iso-walled") {
+    return `<figure class="geometry-hidden"><div>${renderer.renderIsoWalled(figures.map, figures.width, figures.depth)}</div><figcaption>뒤와 왼쪽의 회색 면은 벽입니다.</figcaption></figure>`;
+  }
   return "";
 }
 

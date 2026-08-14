@@ -1135,6 +1135,41 @@
     };
   }
 
+  // 14. TS — 삼각 계단 쌓기
+  // n단계는 바닥이 삼각형인 계단 모양이다. 높이 지도 [n-x-z]의 합은
+  // 1, 4, 10, 20, 35...가 되어 파이널 3회 4번의 구조와 정확히 같다.
+  function buildTriangularStairShape(n) {
+    const map = makeEmptyMap(n, n);
+    for (let z = 0; z < n; z += 1) {
+      for (let x = 0; x < n - z; x += 1) map[z][x] = n - x - z;
+    }
+    return map;
+  }
+
+  function triangularStairTotal(n) {
+    let total = 0;
+    for (let stage = 1; stage <= n; stage += 1) total += (stage * (stage + 1)) / 2;
+    return total;
+  }
+
+  function genTS(rng, difficulty) {
+    const n = difficulty === "easy" ? rng.int(4, 5) : difficulty === "hard" ? rng.int(6, 7) : rng.int(5, 6);
+    const shownStages = difficulty === "easy" ? 3 : 4;
+    const shapes = Array.from({ length: shownStages }, (_, index) => {
+      const stage = index + 1;
+      return { n: stage, map: buildTriangularStairShape(stage), width: stage, depth: stage };
+    });
+    const count = triangularStairTotal(n);
+    const stageTotals = Array.from({ length: n }, (_, index) => triangularStairTotal(index + 1));
+    return {
+      type: "TS",
+      prompt: "쌓기나무를 일정한 규칙으로 쌓았습니다. " + n + "단계까지 쌓으려면 쌓기나무는 모두 몇 개 필요합니까?",
+      figures: { kind: "sequence", shapes, patternKind: "triangular-stair" },
+      answer: { mode: "nth", n, count, stageTotals },
+      answerText: count + "개"
+    };
+  }
+
   // ---------------------------------------------------------------------
   // Public dispatch table + worksheet assembly
   // ---------------------------------------------------------------------
@@ -1152,7 +1187,8 @@
     { code: "PF", label: "모양 색칠 → 면의 총수", defaultOn: false },
     { code: "BW", label: "흑백 교차", defaultOn: true },
     { code: "HL", label: "구멍 뚫기", defaultOn: true },
-    { code: "SQ", label: "규칙 찾기", defaultOn: false }
+    { code: "SQ", label: "규칙 찾기", defaultOn: false },
+    { code: "TS", label: "삼각 계단 쌓기", defaultOn: false }
   ];
 
   function make(typeCode, rng, difficulty) {
@@ -1171,6 +1207,7 @@
       case "BW": return genBW(rng, difficulty);
       case "HL": return genHL(rng, difficulty);
       case "SQ": return genSQ(rng, difficulty);
+      case "TS": return genTS(rng, difficulty);
       default: throw new Error("unknown worksheet type: " + typeCode);
     }
   }
@@ -1264,6 +1301,8 @@
     rowMaxFromSideView,
     topSilhouette,
     enumerateShapes,
+    buildTriangularStairShape,
+    triangularStairTotal,
     // problem types
     TYPES,
     make,

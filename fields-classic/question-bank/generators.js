@@ -253,7 +253,7 @@ function setUnionCount({ difficulty = 2 }) {
   const second = randomInt(Math.max(both + 2, scale[0]), scale[1]);
   const total = first + second - both;
   return {
-    prompt: `어느 반 학생들에게 ${pair[0]}와 ${pair[1]}을 좋아하는지 조사했습니다. ${pair[0]}를 좋아하는 학생은 ${first}명, ${pair[1]}을 좋아하는 학생은 ${second}명입니다. 둘 다 좋아하는 학생이 ${both}명이고 모든 학생이 둘 중 하나는 좋아한다면, 이 반 학생은 모두 몇 명입니까?`,
+    prompt: `어느 반 학생들에게 ${withOf(pair[0])} ${objectOf(pair[1])} 좋아하는지 조사했습니다. ${objectOf(pair[0])} 좋아하는 학생은 ${first}명, ${objectOf(pair[1])} 좋아하는 학생은 ${second}명입니다. 둘 다 좋아하는 학생이 ${both}명이고 모든 학생이 둘 중 하나는 좋아한다면, 이 반 학생은 모두 몇 명입니까?`,
     answer: `${total}명`,
     solution: `두 수를 그냥 더하면 둘 다 좋아하는 ${both}명을 두 번 세게 됩니다. ${first} + ${second} - ${both} = ${total}이므로 모두 ${total}명입니다.`,
     meta: { first, second, both, total }
@@ -310,7 +310,7 @@ function totalDifference({ difficulty = 2 }) {
   const older = younger + gap;
   const sum = older + younger;
   return {
-    prompt: `${pair[0]}와 ${pair[1]}의 나이의 합은 ${sum}${pair[2]}인데 ${pair[0]}이 ${pair[1]}보다 ${gap}${pair[2]} 더 많습니다. ${pair[0]}은 몇 ${pair[2]}입니까?`,
+    prompt: `${withOf(pair[0])} ${pair[1]}의 나이의 합은 ${sum}${pair[2]}이고, ${topicOf(pair[0])} ${pair[1]}보다 ${gap}${pair[2]} 더 많습니다. ${topicOf(pair[0])} 몇 ${pair[2]}입니까?`,
     answer: `${older}${pair[2]}`,
     solution: `합 ${sum}에서 차 ${gap}을 빼면 ${pair[1]} 나이의 두 배인 ${sum - gap}이 됩니다. ${pair[1]}은 ${younger}${pair[2]}이고 ${pair[0]}은 ${younger} + ${gap} = ${older}${pair[2]}입니다.`,
     meta: { sum, gap, older, younger }
@@ -802,6 +802,94 @@ function sourceSymbolRelations({ difficulty = 2 }) {
     visual: { kind: "symbol-relations", ...rule },
     answer: String(rule.square),
     solution: `첫째 식에서 ☆는 ${rule.star}, ○은 ${rule.circle}입니다. 둘째 식에서 ▽은 ${rule.triangle}입니다. 마지막 식을 계산하면 □는 ${rule.square}입니다.`
+  };
+}
+
+function symbolChainArithmetic({ difficulty = 2 }) {
+  const circle = difficulty === 1 ? randomInt(6, 9) : difficulty === 2 ? randomInt(12, 19) : randomInt(15, 19);
+  const offset = difficulty === 1 ? randomInt(1, 2) : difficulty === 2 ? randomInt(1, 4) : randomInt(3, 6);
+  const subtract = circle * 2 + offset;
+  const heart = circle * 3;
+  const club = heart + circle - subtract;
+  const diamond = club * 2 - circle;
+  const star = diamond + club - circle;
+  const triangle = star + diamond - circle;
+  const hard = difficulty === 3;
+  const rows = [
+    ["circle", "+", "circle", "+", "circle", "=", "heart"],
+    ["heart", "+", "circle", "-", subtract, "=", "club"],
+    ["club", "+", "club", "-", "circle", "=", "diamond"],
+    ["diamond", "+", "club", "-", "circle", "=", "star"]
+  ];
+  if (hard) rows.push(["star", "+", "diamond", "-", "circle", "=", "triangle"]);
+  const target = hard ? "triangle" : "star";
+  const answer = hard ? triangle : star;
+  const given = difficulty === 1 ? { circle, heart } : { circle };
+  const steps = [`○ = ${circle}`, `♥ = ${circle} + ${circle} + ${circle} = ${heart}`];
+  if (difficulty !== 1) steps.shift();
+  steps.push(`♣ = ${heart} + ${circle} - ${subtract} = ${club}`);
+  steps.push(`◆ = ${club} + ${club} - ${circle} = ${diamond}`);
+  steps.push(`★ = ${diamond} + ${club} - ${circle} = ${star}`);
+  if (hard) steps.push(`▲ = ${star} + ${diamond} - ${circle} = ${triangle}`);
+  return {
+    prompt: `${difficulty === 1 ? `○가 ${circle}, ♥가 ${heart}일 때` : `○가 ${circle}일 때`}, ${hard ? "▲" : "★"}는 얼마입니까?`,
+    visual: { kind: "symbol-chain", rows, given, target },
+    answer: String(answer),
+    solution: steps.join(" → "),
+    meta: { circle, heart, club, diamond, star, triangle: hard ? triangle : null, subtract, target, result: answer }
+  };
+}
+
+function shapeMatrixThreeFeatures({ difficulty = 2 }) {
+  const shapes = shuffle(["circle", "square", "triangle"]);
+  const fills = shuffle(["hatch", "empty", "gray"]);
+  const outerShift = randomInt(0, 2);
+  const fillShift = randomInt(0, 2);
+  const targets = difficulty === 3 ? [[1, 1], [2, 2]] : [[2, 2]];
+  const isTarget = (row, column) => targets.some(([r, c]) => r === row && c === column);
+  const cells = [];
+  for (let row = 0; row < 3; row += 1) {
+    for (let column = 0; column < 3; column += 1) {
+      cells.push({
+        row,
+        column,
+        outer: shapes[(row + column + outerShift) % 3],
+        inner: shapes[(row + column + outerShift + 1) % 3],
+        fill: fills[(column - row + fillShift + 6) % 3],
+        missing: isTarget(row, column),
+        hintOuter: difficulty === 1 && isTarget(row, column)
+      });
+    }
+  }
+  const shapeName = { circle: "동그라미", square: "네모", triangle: "세모" };
+  const fillName = { hatch: "빗금 친", empty: "색칠하지 않은", gray: "회색으로 칠한" };
+  const answers = cells.filter((cell) => cell.missing).map((cell) => `큰 ${shapeName[cell.outer]} 안의 ${fillName[cell.fill]} ${shapeName[cell.inner]}`);
+  return {
+    prompt: difficulty === 3 ? "도형의 규칙을 찾아 두 빈칸에 알맞은 모양을 그리세요." : "도형의 규칙을 찾아 빈칸에 알맞은 모양을 그리세요.",
+    visual: { kind: "shape-matrix-three", cells },
+    answer: answers.join(" / "),
+    solution: `각 가로줄과 세로줄에서 바깥 도형, 안쪽 도형, 칠하기가 한 번씩 나타납니다. 따라서 ${answers.join("이고, ")}입니다.`,
+    meta: { cells, targets, answers }
+  };
+}
+
+function trianglePositionCycle({ difficulty = 2 }) {
+  const clockwise = randomInt(0, 1) === 0
+    ? ["top", "bottom-right", "bottom-left"]
+    : ["top", "bottom-left", "bottom-right"];
+  const start = randomInt(0, 2);
+  const outerCycle = [...clockwise.slice(start), ...clockwise.slice(0, start)];
+  const cycle = [...outerCycle, "center"];
+  const shown = difficulty === 1 ? 8 : difficulty === 2 ? 6 : 4;
+  const target = difficulty === 1 ? randomInt(9, 12) : difficulty === 2 ? randomInt(12, 20) : randomInt(25, 40);
+  const answerPosition = cycle[(target - 1) % cycle.length];
+  const positionName = { top: "위쪽", "bottom-left": "왼쪽 아래", "bottom-right": "오른쪽 아래", center: "가운데" };
+  return {
+    prompt: `규칙을 찾아 ${target}번째 모양을 완성하세요.`,
+    visual: { kind: "triangle-position-cycle", sequence: Array.from({ length: shown }, (_, index) => cycle[index % 4]), target },
+    answer: `${positionName[answerPosition]} 삼각형`,
+    solution: `칠한 곳은 ${cycle.map((position) => positionName[position]).join(" → ")}의 네 자리로 반복됩니다. ${target}번째는 ${positionName[answerPosition]} 삼각형을 칠합니다.`,
+    meta: { cycle, shown, target, answerPosition }
   };
 }
 
@@ -1807,14 +1895,14 @@ const withOf = (name) => `${name}${hasBatchim(name) ? "과" : "와"}`;
 const objectOf = (word) => `${word}${hasBatchim(word) ? "을" : "를"}`;
 
 function rowColumnCountPlacement({ difficulty = 2 }) {
-  // 파이널 3회 1번: 가로·세로에 적힌 개수에 맞게 별을 그린다. 답이 그림이라 유일해가 아니면 안 된다.
-  const size = difficulty === 1 ? 3 : 4;
+  // 파이널 3회 1번: 조건을 만족하는 여러 그림 중 하나를 그리는 문제다. 원본도 가능한 답이 여러 개다.
+  const size = difficulty === 1 ? 3 : difficulty === 2 ? 4 : 5;
   const grid = Array.from({ length: size }, () => Array.from({ length: size }, () => (Math.random() < 0.55 ? 1 : 0)));
   const rows = grid.map((row) => row.reduce((a, b) => a + b, 0));
   const cols = Array.from({ length: size }, (_, c) => grid.reduce((sum, row) => sum + row[c], 0));
   // 개수가 0인 줄은 그 줄을 통째로 비우면 끝이라 문제가 되지 않는다.
   if (rows.some((n) => n === 0) || cols.some((n) => n === 0)) return null;
-  // 같은 가로·세로 개수를 갖는 배치를 전부 세어 하나뿐일 때만 낸다.
+  // 같은 가로·세로 개수를 갖는 배치를 세어 조건이 너무 막연하지 않은 문제만 낸다.
   const rowChoices = rows.map((need) => {
     const list = [];
     for (let mask = 0; mask < (1 << size); mask += 1) {
@@ -1825,8 +1913,9 @@ function rowColumnCountPlacement({ difficulty = 2 }) {
     return list;
   });
   let solutions = 0;
+  const solutionCap = difficulty === 1 ? 8 : difficulty === 2 ? 25 : 60;
   const walk = (index, colUsed) => {
-    if (solutions > 1) return;
+    if (solutions > solutionCap) return;
     if (index === size) {
       if (colUsed.every((n, c) => n === cols[c])) solutions += 1;
       return;
@@ -1842,25 +1931,52 @@ function rowColumnCountPlacement({ difficulty = 2 }) {
     }
   };
   walk(0, Array(size).fill(0));
-  if (solutions !== 1) return null;
+  const minSolutions = difficulty === 1 ? 1 : 2;
+  if (solutions < minSolutions || solutions > solutionCap) return null;
   return {
     prompt: "오른쪽과 아래에 쓰인 수는 그 줄에 있는 ★의 개수입니다. 조건에 맞게 빈칸에 ★을 그려 넣으세요.",
     visual: { kind: "count-placement-grid", size, rows, cols },
     answer: grid.map((row) => row.map((cell) => (cell ? "★" : "·")).join("")).join(" / "),
-    solution: "개수가 가장 많은 줄과 가장 적은 줄부터 채우면 나머지 칸이 차례로 정해집니다. 조건을 만족하는 배치는 한 가지뿐입니다.",
-    meta: { grid, rows, cols }
+    solution: "각 가로줄과 세로줄의 별 개수를 차례로 확인하며 그립니다. 제시한 그림은 조건을 만족하는 답의 한 예입니다.",
+    meta: { grid, rows, cols, solutions }
   };
 }
 
 function truthLieRanking({ difficulty = 2 }) {
-  // 파이널 3회 2번: 다섯 명 중 두 명만 거짓말을 한다. 순서가 하나로 안 정해져도
-  // 묻는 사람의 등수는 하나여야 한다(원본도 순서는 두 가지, E의 등수는 3등 하나였다).
+  // 파이널 3회 2번: 거짓말한 사람을 지문에서 지정한다. 순서가 하나로 안 정해져도
+  // 묻는 사람의 등수는 하나여야 한다(원본도 B·C가 거짓말하고 E의 등수는 3등 하나였다).
+  // 같은 문제를 여러 장 만들 때 답을 찍지 못하도록, 가능한 두 순서에서 등수가 같은 사람 중 한 명을 묻는다.
   // 가·나·다로 부르면 "나: 가는 나보다 바로 뒤에" 처럼 이름 '나'와 대명사 '나'가 겹쳐 읽을 수 없다.
   const NAMES = shuffle(["지호", "서연", "민준", "하은", "도현", "예린", "시우"]);
-  const people = NAMES.slice(0, 5);
+  const people = NAMES.slice(0, difficulty === 1 ? 4 : difficulty === 2 ? 5 : 6);
   const liars = difficulty === 1 ? 1 : 2;
-  const truth = shuffle(people.slice());
   const rankOf = (order, name) => order.indexOf(name) + 1;
+  if (difficulty === 2) {
+    const [a, b, c, d, e] = people;
+    const liarNames = [b, c];
+    const claims = [
+      { speaker: a, text: `${a}: 나는 1등도 2등도 아니야.`, holds: (o) => rankOf(o, a) > 2 },
+      { speaker: b, text: `${b}: 나는 1등도 2등도 아니야.`, holds: (o) => rankOf(o, b) > 2 },
+      { speaker: c, text: `${c}: 나는 3등 또는 4등이야.`, holds: (o) => [3, 4].includes(rankOf(o, c)) },
+      { speaker: d, text: `${d}: 나는 ${withOf(a)} ${b}보다 늦게 들어왔어.`, holds: (o) => rankOf(o, d) > rankOf(o, a) && rankOf(o, d) > rankOf(o, b) },
+      { speaker: e, text: `${e}: 나는 ${c}보다 늦었지만 ${a}보다는 빨리 들어왔어.`, holds: (o) => rankOf(o, e) > rankOf(o, c) && rankOf(o, e) < rankOf(o, a) }
+    ];
+    const liarSet = new Set(liarNames);
+    const orders = permutations(people).filter((order) => claims.every(({ speaker, holds }) => holds(order) === !liarSet.has(speaker)));
+    const settled = [e, a, d].filter((name) => new Set(orders.map((order) => rankOf(order, name))).size === 1);
+    if (!orders.length || !settled.length) return null;
+    const target = sample(settled);
+    const rank = rankOf(orders[0], target);
+    const liarSubject = `${withOf(b)} ${subjectOf(c)}`;
+    return {
+      prompt: `${people.length}명이 달리기를 했습니다. 달리기가 끝난 뒤 ${liarSubject} 거짓말을 했고, 다른 사람은 참말을 했습니다. ${topicOf(target)} 몇 등입니까?`,
+      visual: { kind: "statement-list", items: claims.map(({ text }) => text) },
+      answer: `${rank}등`,
+      solution: `${topicOf(b)} 1등이나 2등이고 ${topicOf(c)} 3등과 4등이 아닙니다. 다른 세 사람의 참말을 차례로 적용하면 ${topicOf(target)} 항상 ${rank}등입니다.`,
+      meta: { rank, target, liars: liarNames, people, orders: orders.length, template: "final-3-q2" }
+    };
+  }
+  const truth = shuffle(people.slice());
   const liarSet = new Set(shuffle(people.slice()).slice(0, liars));
   // 약한 말(1등이 아니다 · 먼저 들어왔다)만 쓰면 조건을 만족하는 순서가 중앙값 48가지나 남아
   // 누구의 등수도 하나로 정해지지 않았다. 등수를 콕 집는 말을 섞어야 순서가 좁혀진다.
@@ -1884,22 +2000,24 @@ function truthLieRanking({ difficulty = 2 }) {
       if (claim.holds(truth) === wantTrue) made = claim;
     }
     if (!made) return null;
-    claims.push(made);
+    claims.push({ speaker: name, claim: made });
   }
-  // 거짓말한 사람 수가 정확히 맞는 순서를 전부 찾는다.
-  const orders = permutations(people).filter((order) => claims.filter((claim) => !claim.holds(order)).length === liars);
+  // 지문에서 지정한 사람의 말만 거짓이고 나머지 사람의 말은 참인 순서를 전부 찾는다.
+  const orders = permutations(people).filter((order) => claims.every(({ speaker, claim }) => claim.holds(order) === !liarSet.has(speaker)));
   if (!orders.length) return null;
   // 순서가 여러 가지여도 등수가 하나로 정해지는 사람만 묻는다(원본도 순서는 두 가지였다).
   const settled = people.filter((name) => new Set(orders.map((order) => rankOf(order, name))).size === 1);
   if (!settled.length) return null;
   const target = sample(settled);
   const rank = rankOf(orders[0], target);
+  const liarNames = people.filter((name) => liarSet.has(name));
+  const liarSubject = liarNames.length === 1 ? subjectOf(liarNames[0]) : `${withOf(liarNames[0])} ${subjectOf(liarNames[1])}`;
   return {
-    prompt: `${people.length}명이 달리기를 했습니다. 다음 중 ${liars}명만 거짓말을 했습니다. ${topicOf(target)} 몇 등입니까?`,
-    visual: { kind: "statement-list", items: claims.map((claim) => claim.text) },
+    prompt: `${people.length}명이 달리기를 했습니다. 달리기가 끝난 뒤 ${liarSubject} 거짓말을 했고, 다른 사람은 참말을 했습니다. ${topicOf(target)} 몇 등입니까?`,
+    visual: { kind: "statement-list", items: claims.map(({ claim }) => claim.text) },
     answer: `${rank}등`,
-    solution: `한 명씩 거짓말했다고 가정하고 나머지 말이 모두 맞는지 확인하면, 거짓말한 사람이 ${liars}명이 되는 순서만 남습니다. 그 순서에서 ${topicOf(target)} 항상 ${rank}등입니다.`,
-    meta: { rank, target, liars, people, orders: orders.length, claims: claims.map((claim) => claim.form) }
+    solution: `${liarSubject} 한 말은 반대로, 다른 사람의 말은 그대로 적용해 가능한 순서를 찾습니다. 가능한 순서에서 ${topicOf(target)} 항상 ${rank}등입니다.`,
+    meta: { rank, target, liars: liarNames, people, orders: orders.length, claims: claims.map(({ speaker, claim }) => ({ speaker, ...claim.form })) }
   };
 }
 
@@ -1913,65 +2031,90 @@ function halfGiveReverse({ difficulty = 2 }) {
     { thing: "쿠키", counter: "개", a: "누나", b: "동생" },
     { thing: "스티커", counter: "장", a: "하은", b: "시우" }
   ];
-  const kinds = difficulty === 2 ? ITEMS[0] : sample(ITEMS);
+  const kinds = sample(ITEMS);
   // 반을 다시 반으로 나누므로 한 사람 몫은 짝수여야 한다.
-  const each = difficulty === 1 ? 2 * randomInt(1, 4) : difficulty === 2 ? 4 : 2 * randomInt(3, 14);
+  const each = difficulty === 1 ? 2 * randomInt(1, 4) : difficulty === 2 ? 2 * randomInt(2, 6) : 2 * randomInt(3, 14);
   const gap = each;
   return {
-    prompt: `${objectOf(kinds.thing)} ${withOf(kinds.a)} ${subjectOf(kinds.b)} 똑같이 나누어 가졌습니다. 그런데 ${subjectOf(kinds.a)} 자기가 가진 ${kinds.thing}의 반을 ${kinds.b}에게 주었더니 두 사람이 가진 ${kinds.thing}의 수의 차가 ${gap}${subjectOf(kinds.counter)} 되었습니다. 처음에 있던 ${topicOf(kinds.thing)} 모두 몇 ${kinds.counter}입니까?`,
+    prompt: `${withOf(kinds.a)} ${subjectOf(kinds.b)} ${objectOf(kinds.thing)} 똑같이 나누어 가졌습니다. 그런데 ${subjectOf(kinds.a)} 자기가 가진 ${kinds.thing}의 반을 ${kinds.b}에게 주었더니 두 사람이 가진 ${kinds.thing} 수의 차이는 ${gap}${kinds.counter}입니다. 처음에 있던 ${topicOf(kinds.thing)} 모두 몇 ${kinds.counter}입니까?`,
     answer: `${each * 2}${kinds.counter}`,
-    solution: `${subjectOf(kinds.a)} 반을 주면 ${topicOf(kinds.a)} 처음의 반, ${topicOf(kinds.b)} 처음의 한 배 반을 가지므로 차는 처음 한 사람 몫과 같습니다. 따라서 한 사람이 ${gap}${kinds.counter}씩 가졌고 처음에는 모두 ${each * 2}${kinds.counter}였습니다.`,
+    solution: `${subjectOf(kinds.a)} 반을 주면 ${topicOf(kinds.a)} 처음의 반, ${topicOf(kinds.b)} 처음의 한 배 반을 가지므로 차는 처음 한 사람 몫과 같습니다. 따라서 한 사람이 ${gap}${kinds.counter}씩 가졌고 처음에는 모두 ${each * 2}${kinds.counter}${hasBatchim(kinds.counter) ? "이었습니다" : "였습니다"}.`,
     meta: { each, gap }
   };
 }
 
 function sevenPeopleOrder({ difficulty = 2 }) {
-  // 파이널 3회 7번: 일곱 명 줄에서 앞·뒤·사이 조건으로 한 사람의 자리를 찾는다.
-  const NAMES = shuffle(["윤정희", "준우", "민서", "하율", "도현", "서아", "지훈"]);
-  const total = difficulty === 1 ? 6 : 7;
+  // 파이널 3회 7번: 가운데 사람, 두 사람 사이, 앞뒤 인원 비교를 함께 사용해 자리를 찾는다.
+  const NAMES = shuffle(["윤정희", "준우", "민서", "하율", "도현", "서아", "지훈", "예린", "시우"]);
+  const total = difficulty === 1 ? 5 : difficulty === 2 ? 7 : 9;
   const people = NAMES.slice(0, total);
-  const [anchor, target, third] = people;
-  const anchorPos = randomInt(2, total - 1);
-  const between = randomInt(1, 2);
-  const targetPos = anchorPos + between + 1;
-  if (targetPos > total) return null;
-  const thirdPos = sample(Array.from({ length: total }, (_, k) => k + 1).filter((p) => p !== anchorPos && p !== targetPos));
+  const [anchor, target] = people;
+  const anchorPos = (total + 1) / 2;
+  const between = difficulty === 1 ? 1 : difficulty === 2 ? randomInt(1, 2) : randomInt(1, 3);
+  const side = sample([-1, 1]);
+  const targetPos = anchorPos + side * (between + 1);
   const conditions = [
-    `${topicOf(anchor)} 앞에서 ${anchorPos}번째에 서 있습니다.`,
-    `${topicOf(target)} ${anchor}보다 뒤에 서 있고, 두 사람 사이에는 ${between}명이 서 있습니다.`,
-    `${topicOf(third)} 뒤에서 ${total - thirdPos + 1}번째에 서 있습니다.`
+    `${anchor}보다 앞에 있는 학생 수와 뒤에 있는 학생 수는 같습니다.`,
+    `${withOf(anchor)} ${target} 사이에는 학생이 ${between}명 있습니다.`,
+    side > 0
+      ? `${target}보다 앞에 있는 학생 수가 뒤에 있는 학생 수보다 많습니다.`
+      : `${target}보다 뒤에 있는 학생 수가 앞에 있는 학생 수보다 많습니다.`
   ];
   // 조건을 만족하는 자리 배치를 전부 확인해 묻는 사람의 자리가 하나인지 본다.
   const seats = [];
   for (let p = 1; p <= total; p += 1) {
     if (p === anchorPos) continue;
-    if (p > anchorPos && p - anchorPos - 1 === between) seats.push(p);
+    const sameGap = Math.abs(p - anchorPos) - 1 === between;
+    const sameSide = side > 0 ? p - 1 > total - p : total - p > p - 1;
+    if (sameGap && sameSide) seats.push(p);
   }
   if (seats.length !== 1 || seats[0] !== targetPos) return null;
   return {
     prompt: `${total}명이 한 줄로 서 있습니다. ${topicOf(target)} 앞에서 몇 번째에 서 있습니까?`,
     visual: { kind: "statement-list", items: conditions },
     answer: `앞에서 ${targetPos}번째`,
-    solution: `${subjectOf(anchor)} 앞에서 ${anchorPos}번째이고 ${topicOf(target)} 그 뒤로 ${between}명을 사이에 두므로 ${anchorPos} + ${between} + 1 = ${targetPos}번째입니다.`,
-    meta: { total, anchorPos, between, targetPos }
+    solution: `${anchor}보다 앞뒤에 있는 학생 수가 같으므로 ${topicOf(anchor)} 가운데인 ${anchorPos}번째입니다. 두 사람 사이의 학생 수와 앞뒤 인원 비교를 함께 적용하면 ${topicOf(target)} 앞에서 ${targetPos}번째입니다.`,
+    meta: { total, anchorPos, between, targetPos, side }
   };
 }
 
 function vertexDegreeSum({ difficulty = 2 }) {
-  // 파이널 3회 11번: 점마다 연결된 선의 수를 적어 모두 더하면 선 하나가 두 번 세어져 선 개수의 두 배가 된다.
-  const cols = difficulty === 1 ? 3 : 4;
-  const rows = difficulty === 3 ? 4 : 3;
-  const points = [];
-  for (let r = 0; r < rows; r += 1) for (let c = 0; c < cols; c += 1) points.push({ r, c });
+  // 파이널 3회 11번: 불규칙하게 놓인 원을 가로·세로·대각선으로 연결한다. 같음 난이도는 원본처럼 9점에 비슷한 수의 선을 쓴다.
+  const basePoints = [
+    { x: 45, y: 24 }, { x: 145, y: 18 }, { x: 18, y: 76 }, { x: 75, y: 78 }, { x: 125, y: 74 },
+    { x: 195, y: 55 }, { x: 55, y: 132 }, { x: 125, y: 132 }, { x: 178, y: 108 }, { x: 215, y: 145 }
+  ];
+  const pointCount = difficulty === 1 ? 7 : difficulty === 2 ? 9 : 10;
+  const points = basePoints.slice(0, pointCount).map((point) => ({
+    x: point.x + randomInt(-5, 5),
+    y: point.y + randomInt(-5, 5)
+  }));
   const all = [];
-  points.forEach((p, i) => {
-    points.forEach((q, j) => {
-      // 격자에서 바로 옆·바로 아래만 잇는다. 선이 서로 겹치거나 가로지르지 않아야 셀 수 있다.
-      if (j > i && ((p.r === q.r && q.c === p.c + 1) || (p.c === q.c && q.r === p.r + 1))) all.push([i, j]);
-    });
-  });
-  const want = difficulty === 1 ? randomInt(7, 10) : difficulty === 2 ? randomInt(15, 19) : randomInt(20, 26);
-  const edges = shuffle(all.slice()).slice(0, Math.min(want, all.length));
+  points.forEach((p, i) => points.forEach((q, j) => {
+    if (j <= i) return;
+    const distance = Math.hypot(p.x - q.x, p.y - q.y);
+    if (distance <= (difficulty === 3 ? 135 : 125)) all.push([i, j]);
+  }));
+  // 먼저 모든 점을 가장 가까운 앞쪽 점과 이어 연결된 뼈대를 만든 뒤 나머지 선을 채운다.
+  const edges = [];
+  const used = new Set();
+  const addEdge = (a, b) => {
+    const edge = a < b ? [a, b] : [b, a];
+    const key = edge.join("-");
+    if (!used.has(key)) { used.add(key); edges.push(edge); }
+  };
+  for (let i = 1; i < points.length; i += 1) {
+    let closest = 0;
+    for (let j = 1; j < i; j += 1) {
+      const current = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
+      const best = Math.hypot(points[i].x - points[closest].x, points[i].y - points[closest].y);
+      if (current < best) closest = j;
+    }
+    addEdge(i, closest);
+  }
+  const want = difficulty === 1 ? randomInt(9, 11) : difficulty === 2 ? randomInt(15, 18) : randomInt(21, 24);
+  shuffle(all).forEach(([a, b]) => { if (edges.length < want) addEdge(a, b); });
+  if (edges.length !== want) return null;
   // 외톨이 점이 있으면 "각 점에 연결된 선의 수"를 묻는 그림으로 어색하다.
   const degree = points.map(() => 0);
   edges.forEach(([i, j]) => { degree[i] += 1; degree[j] += 1; });
@@ -1980,7 +2123,7 @@ function vertexDegreeSum({ difficulty = 2 }) {
   if (sum !== edges.length * 2) return null;
   return {
     prompt: "그림의 각 점에 연결된 선의 개수를 세어 모두 더하면 얼마입니까?",
-    visual: { kind: "vertex-degree", rows, cols, edges, points },
+    visual: { kind: "vertex-degree", edges, points },
     answer: `${sum}`,
     solution: `선은 모두 ${edges.length}개입니다. 선 하나마다 양쪽 끝점에서 한 번씩 세므로 합은 ${edges.length} × 2 = ${sum}입니다.`,
     meta: { edges: edges.length, sum, degree }
@@ -2037,7 +2180,63 @@ function squareCountShape({ difficulty = 2 }) {
   };
 }
 
+function geometryWorksheetProblem(typeCode, difficulty) {
+  const worksheet = globalThis.GW_GEN;
+  if (!worksheet) return null;
+  const level = difficulty === 1 ? "easy" : difficulty === 3 ? "hard" : "mid";
+  const rng = worksheet.createRng(`QB:${typeCode}:${level}:${Math.random()}`);
+  return worksheet.make(typeCode, rng, level);
+}
+
+function cubeStepSequence({ difficulty = 2 }) {
+  const made = geometryWorksheetProblem("TS", difficulty);
+  if (!made) return null;
+  return {
+    prompt: made.prompt,
+    visual: { kind: "geometry-worksheet", figures: made.figures },
+    answer: made.answerText,
+    solution: `${made.answer.stageTotals.map((total, index) => `${index + 1}단계 ${total}개`).join(" → ")}이므로 답은 ${made.answerText}입니다.`,
+    meta: { worksheetType: made.type, ...made.answer }
+  };
+}
+
+function cubeFillBoxWorksheet({ difficulty = 2 }) {
+  let made = null;
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const candidate = geometryWorksheetProblem("CU", difficulty);
+    if (!candidate) return null;
+    const sourceLikeActual = difficulty !== 2 || (candidate.answer.placed >= 6 && candidate.answer.placed <= 12);
+    if (sourceLikeActual) {
+      made = candidate;
+      break;
+    }
+  }
+  if (!made) return null;
+  return {
+    prompt: "다음과 같은 상자 안에 쌓기나무를 가득 채우려고 합니다. 몇 개의 쌓기나무가 더 필요합니까?",
+    visual: { kind: "geometry-worksheet", figures: made.figures },
+    answer: made.answerText,
+    solution: `상자를 가득 채우면 ${made.answer.total}개이고 지금 ${made.answer.placed}개가 있으므로 ${made.answer.total} - ${made.answer.placed} = ${made.answer.need}개가 더 필요합니다.`,
+    meta: { worksheetType: made.type, ...made.answer }
+  };
+}
+
+function cubeHiddenCountWalled({ difficulty = 2 }) {
+  const made = geometryWorksheetProblem("IH", difficulty);
+  if (!made) return null;
+  return {
+    prompt: made.prompt,
+    visual: { kind: "geometry-worksheet", figures: made.figures },
+    answer: made.answerText,
+    solution: `전체 ${made.answer.total}개 중 벽 앞에서 보이는 ${made.answer.visible}개를 빼면 ${made.answer.total} - ${made.answer.visible} = ${made.answer.hidden}개입니다.`,
+    meta: { worksheetType: made.type, ...made.answer }
+  };
+}
+
 export const GENERATORS = {
+  cubeStepSequence,
+  cubeFillBoxWorksheet,
+  cubeHiddenCountWalled,
   rowColumnCountPlacement,
   truthLieRanking,
   halfGiveReverse,
@@ -2089,6 +2288,9 @@ export const GENERATORS = {
   sourceGoStoneDifference,
   sourceColoredShapeNumber,
   sourceSymbolRelations,
+  symbolChainArithmetic,
+  shapeMatrixThreeFeatures,
+  trianglePositionCycle,
   sourceBalanceRelations,
   sourcePianoBounce,
   sourceSymbolSumGrid,

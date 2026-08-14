@@ -143,7 +143,8 @@
       return figureBlock("구멍이 뚫린 상자 모양 (흰 칸 = 구멍)", REN.renderIsoHoles(f.width, f.depth, f.boxH, f.tunnels), "ws-figure-lg");
     }
     if (f.kind === "sequence") {
-      const shapeHtml = f.shapes.map((s) => figureBlock(s.n + "번째", REN.renderIso(s.map, s.width, s.depth), "ws-figure-sm")).join("");
+      const suffix = p.type === "TS" ? "단계" : "번째";
+      const shapeHtml = f.shapes.map((s) => figureBlock(s.n + suffix, REN.renderIso(s.map, s.width, s.depth), "ws-figure-sm")).join("");
       return shapeHtml + '<div class="ws-seq-dots">…</div>';
     }
     return "";
@@ -195,6 +196,7 @@
       case "BW": return p.answer.count + "개";
       case "HL": return p.answer.remaining + "개";
       case "SQ": return p.answer.mode === "which" ? p.answer.n + "번째" : p.answer.count + "개";
+      case "TS": return p.answer.count + "개";
       default: return p.answerText;
     }
   }
