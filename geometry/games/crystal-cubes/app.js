@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { levels, validateLevels, viewsOfHeightGrid, viewsMatch } from "./levels.js?v=crystal-1";
-import { text } from "./i18n.js?v=crystal-1";
+import { levels, validateLevels, viewsOfHeightGrid, viewsMatch } from "./levels.js?v=crystal-2";
+import { text } from "./i18n.js?v=crystal-2";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
 
@@ -500,11 +500,21 @@ boardWoodTexture.repeat.set(2.5, 2.5);
 const insetWoodTexture = createWoodTexture();
 insetWoodTexture.repeat.set(2, 2);
 const cubeGeometry = new RoundedBoxGeometry(0.96, 0.96, 0.96, 5, 0.075);
+// Placed cubes are translucent (not fully opaque wood) so the view cards now
+// stuck to the case walls/floor stay readable through a built stack.
+// opacity 0.62 read muddy once four cubes overlapped in a deep (maxH=4)
+// stack, so we use 0.7 — still see-through but each cube still reads apart.
+// depthWrite:false keeps the alpha blending between overlapping cubes correct;
+// renderOrder (set per-mesh in renderModel) makes sure cubes composite AFTER
+// the case shell and the card planes so those stay visible underneath.
 const cubeMaterial = new THREE.MeshStandardMaterial({
-  color: 0xfff5df, map: cubeWoodTexture, roughness: 0.56, metalness: 0.012, bumpMap: cubeWoodTexture, bumpScale: 0.012
+  color: 0xfff5df, map: cubeWoodTexture, roughness: 0.56, metalness: 0.012, bumpMap: cubeWoodTexture, bumpScale: 0.012,
+  transparent: true, opacity: 0.7, depthWrite: false
 });
 const edgeGeometry = new THREE.EdgesGeometry(cubeGeometry, 28);
-const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x8b6840, transparent: true, opacity: 0.2 });
+// Edge lines stay fully opaque (no alpha) so a cube's boundary stays crisp
+// for counting even though its faces are now translucent.
+const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x6b4a24 });
 // The crystal case: a faint blue translucent box with crisp edges.
 const caseMaterial = new THREE.MeshStandardMaterial({
   color: 0xbfe4ff, transparent: true, opacity: 0.12, roughness: 0.15, metalness: 0.0,
@@ -543,6 +553,60 @@ function makeBoardLabelPlane(label) {
   });
   const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1.42, 0.42), material);
   mesh.renderOrder = 902;
+  mesh.userData.generatedTexture = true;
+  return mesh;
+}
+
+// ---------------------------------------------------------------------------
+// View cards rendered onto the case walls/floor themselves (in addition to the
+// 2D reference cards in the side panel). `view` is a 2D 0/1 grid (a row of the
+// problem's target.front/side/top); `cornerLabel` is the literal Korean glyph
+// (앞/옆/위) baked into the corner so the card still identifies itself no
+// matter how the camera is orbited.
+function makeCardCanvas(view, cornerLabel) {
+  const rows = view.length;
+  const cols = view[0].length;
+  const cellPx = 160; // well above the 128px/cell floor so text/edges stay crisp
+  const canvas = document.createElement("canvas");
+  canvas.width = cols * cellPx;
+  canvas.height = rows * cellPx;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#f7fbff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const strokeWidth = Math.max(4, cellPx * 0.045);
+  ctx.lineWidth = strokeWidth;
+  for (let r = 0; r < rows; r += 1) {
+    for (let c = 0; c < cols; c += 1) {
+      const x = c * cellPx;
+      const y = r * cellPx;
+      if (view[r][c]) {
+        ctx.fillStyle = "#5b78a8";
+        ctx.fillRect(x, y, cellPx, cellPx);
+      }
+      ctx.strokeStyle = "#33507f";
+      ctx.strokeRect(x + strokeWidth / 2, y + strokeWidth / 2, cellPx - strokeWidth, cellPx - strokeWidth);
+    }
+  }
+  const labelSize = Math.round(cellPx * 0.46);
+  ctx.fillStyle = "rgba(51, 80, 127, 0.9)";
+  ctx.font = `900 ${labelSize}px 'Noto Sans KR', sans-serif`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(cornerLabel, labelSize * 0.22, labelSize * 0.14);
+  return canvas;
+}
+
+function makeCardPlane(view, cornerLabel, planeWidth, planeHeight) {
+  const texture = new THREE.CanvasTexture(makeCardCanvas(view, cornerLabel));
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const material = new THREE.MeshBasicMaterial({
+    map: texture, transparent: true, opacity: 0.95, side: THREE.DoubleSide
+  });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(planeWidth, planeHeight), material);
+  // Card planes draw after the case shell but before the (translucent) cubes,
+  // so a built cube's alpha blends over an already-visible card, not under it.
+  mesh.renderOrder = 4;
   mesh.userData.generatedTexture = true;
   return mesh;
 }
@@ -607,6 +671,43 @@ function renderModel() {
   caseEdges.position.set(0, maxH / 2, 0);
   modelGroup.add(caseEdges);
 
+  // The three view cards, stuck onto the actual faces of the case so the
+  // child reads the goal directly off the model (the 2D cards in the side
+  // panel remain as the plain reference). Determined empirically from the
+  // default camera (7.2, 6.6, 8.4) looking at target (0, ~1.25, 0): the
+  // camera sits on the +x/+z side, so the walls it looks AT (the far walls,
+  // not the ones between the camera and the cubes) are -z (back) and -x
+  // (left) — see setCameraView("front"/"side") which also puts those
+  // cameras on the +z/+x side respectively.
+  const caseHalfX = (width + 0.06) / 2;
+  const caseHalfZ = (depth + 0.06) / 2;
+  const wallNudge = 0.005; // nudge off the exact wall/floor plane to avoid z-fighting
+
+  // 앞 (front view) → far -z wall (the back wall as seen by the default camera),
+  // reading as the backdrop behind the stack. No rotation needed: a
+  // PlaneGeometry's default normal already faces +z, i.e. toward the interior.
+  const frontCard = makeCardPlane(problem.target.front, "앞", width, maxH);
+  frontCard.position.set(0, maxH / 2, -caseHalfZ + wallNudge);
+  modelGroup.add(frontCard);
+
+  // 옆 (side view) → far -x wall (the left wall). Rotating +90° about Y turns
+  // the plane's default +z normal into +x, facing the interior/camera.
+  const sideCard = makeCardPlane(problem.target.side, "옆", depth, maxH);
+  sideCard.rotation.y = Math.PI / 2;
+  sideCard.position.set(-caseHalfX + wallNudge, maxH / 2, 0);
+  modelGroup.add(sideCard);
+
+  // 위 (top view) → the case floor, face up. Rotating -90° about X (same
+  // rotation as the wood `floor` mesh above) turns the default +z normal
+  // into +y. It sits just above the opaque floor/grid meshes (y=0.014/0.025)
+  // — placing it at the spec's literal y≈0.005 would hide it completely
+  // beneath those existing opaque meshes, so it goes just above them instead,
+  // still functionally "on the floor" and still beneath the build cubes.
+  const topCard = makeCardPlane(problem.target.top, "위", width, depth);
+  topCard.rotation.x = -Math.PI / 2;
+  topCard.position.set(0, 0.03, 0);
+  modelGroup.add(topCard);
+
   // The child's current build.
   for (let z = 0; z < depth; z += 1) {
     for (let x = 0; x < width; x += 1) {
@@ -616,6 +717,10 @@ function renderModel() {
         cube.position.set(x - centerX, y + 0.5, z - centerZ);
         cube.castShadow = true;
         cube.receiveShadow = true;
+        // Cubes draw after the case shell and the card planes (renderOrder 3
+        // and 4) so their translucent faces blend on top of an already
+        // fully-drawn card, keeping the card readable through the cube.
+        cube.renderOrder = 5;
         cube.add(new THREE.LineSegments(edgeGeometry, edgeMaterial));
         modelGroup.add(cube);
       }
