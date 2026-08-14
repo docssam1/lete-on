@@ -832,6 +832,27 @@
     return map;
   }
 
+  function fullPrismMap(width, depth, height) {
+    return Array.from({ length: depth }, () => Array.from({ length: width }, () => height));
+  }
+
+  // Printed no-wall questions must describe one unmistakable solid. Random
+  // towers can hide several different interiors behind the same drawing, so
+  // use complete prisms or a centred monotone step solid only.
+  function clearNoWallShape(rng, difficulty) {
+    if (difficulty === "easy") {
+      const dims = rng.pick([[3, 3, 2], [3, 3, 3], [4, 3, 2]]);
+      return { map: fullPrismMap(dims[0], dims[1], dims[2]), width: dims[0], depth: dims[1], kind: "iso" };
+    }
+    if (difficulty === "mid" && rng.bool(0.45)) {
+      return { map: centerPyramid(rng, 3, 3, 3), width: 3, depth: 3, kind: "iso-top" };
+    }
+    const dims = difficulty === "hard"
+      ? rng.pick([[4, 4, 3], [4, 4, 4], [4, 3, 4]])
+      : rng.pick([[3, 3, 3], [4, 3, 3], [3, 4, 3]]);
+    return { map: fullPrismMap(dims[0], dims[1], dims[2]), width: dims[0], depth: dims[1], kind: "iso" };
+  }
+
   // 6b. IN — 보이지 않는 개수 (벽 없음): free-standing shape, 5-direction rule
   // (docs/03_COUNT_HIDDEN.md section 4). Needs an interior grid cell, so the
   // footprint must be at least 3x3 -- gridForDifficulty already returns
@@ -844,37 +865,9 @@
   // way — visibility is a direction union, never camera-dependent
   // (docs/03_COUNT_HIDDEN.md §2).
   function genIN(rng, difficulty) {
-    const [width, depth] = gridForDifficulty(rng, difficulty);
-    const maxH = maxHeightForDifficulty(rng, difficulty);
-    const usePyramid = rng.bool(0.45);
-    let map = null;
-    let hidden = 0;
-    let fallback = null;
-    let gotPyramid = false;
-    if (usePyramid) {
-      const candidate = centerPyramid(rng, width, depth, maxH);
-      const h = countHiddenNoWall(candidate);
-      if (h >= 1 && maxHeightOf(candidate) >= 2) { map = candidate; hidden = h; gotPyramid = true; }
-    }
-    for (let tries = 0; !map && tries < 400; tries += 1) {
-      const candidate = randomShape(rng, width, depth, maxH);
-      if (maxHeightOf(candidate) < 2) continue;
-      const h = countHiddenNoWall(candidate);
-      if (h < 1) continue;
-      fallback = { map: candidate, hidden: h };
-      if (h <= 8) { map = candidate; hidden = h; break; }
-    }
-    if (!map) {
-      if (fallback) {
-        map = fallback.map;
-        hidden = fallback.hidden;
-      } else {
-        // Solid box fallback: for width,depth >= 3 and maxH >= 2 this always
-        // yields hidden = (width-2)*(depth-2)*(maxH-1) >= 1.
-        map = fallbackDenseShape(width, depth, maxH);
-        hidden = countHiddenNoWall(map);
-      }
-    }
+    const shape = clearNoWallShape(rng, difficulty);
+    const { map, width, depth } = shape;
+    const hidden = countHiddenNoWall(map);
     // Same two-method scaffold as IH — the subtraction identity (전체 −
     // 보이는 = 보이지 않는) holds for the 5-direction rule too, by definition.
     const total = mapTotal(map);
@@ -882,7 +875,7 @@
       type: "IN",
       prompt: "벽이 없는 곳에 쌓기나무를 빈틈없이 쌓았습니다. 어느 방향에서 보아도 보이지 않는 쌓기나무는 몇 개입니까? (단, 바닥면은 보이지 않습니다.)",
       methodHint: "풀이 방법 ① 겉에서 보이는 쌓기나무를 먼저 세기 ② 전체 개수에서 보이는 개수 빼기",
-      figures: { kind: gotPyramid ? "iso-top" : "iso", map, width, depth },
+      figures: { kind: shape.kind, map, width, depth },
       answer: { hidden, total, visible: total - hidden },
       answerText: hidden + "개"
     };
@@ -953,28 +946,23 @@
     };
   }
 
-  // 9. PN — n x n x n 색칠 (밑면 포함)
+  // 9. PN — 정육면체/직육면체의 색칠된 겉면 수 (밑면 포함)
   function genPN(rng, difficulty) {
-    const n = difficulty === "hard" ? 4 : 3;
-    const map = makeEmptyMap(n, n);
-    for (let z = 0; z < n; z += 1) for (let x = 0; x < n; x += 1) map[z][x] = n;
-    let three = 0;
-    let two = 0;
-    let one = 0;
-    let zero = 0;
-    forEachVoxel(map, n, n, (x, y, z) => {
-      const f = exposedFaceCount(map, n, n, x, y, z);
-      if (f === 3) three += 1;
-      else if (f === 2) two += 1;
-      else if (f === 1) one += 1;
-      else zero += 1;
-    });
+    const dims = difficulty === "easy"
+      ? rng.pick([[2, 2, 2], [3, 2, 2]])
+      : difficulty === "hard"
+        ? rng.pick([[4, 3, 3], [4, 4, 3], [4, 3, 4]])
+        : rng.pick([[3, 3, 2], [3, 2, 3], [3, 3, 3]]);
+    const [width, depth, height] = dims;
+    const map = fullPrismMap(width, depth, height);
+    let faces = 0;
+    forEachVoxel(map, width, depth, (x, y, z) => { faces += exposedFaceCount(map, width, depth, x, y, z); });
     return {
       type: "PN",
-      prompt: "가로, 세로, 높이가 각각 " + n + "인 정육면체 모양입니다. 겉면(밑면도 칠합니다)을 모두 색칠했습니다. 다음을 구하시오. ① 세 면이 칠해진 쌓기나무 ② 두 면이 칠해진 쌓기나무 ③ 한 면이 칠해진 쌓기나무 ④ 한 면도 칠해지지 않은 쌓기나무",
-      figures: { kind: "iso-box", map, width: n, depth: n, boxH: n, paint: true },
-      answer: { three, two, one, zero },
-      answerText: "① " + three + "개 ② " + two + "개 ③ " + one + "개 ④ " + zero + "개"
+      prompt: "가로 " + width + ", 세로 " + depth + ", 높이 " + height + "인 " + (width === depth && depth === height ? "정육면체" : "직육면체") + "의 겉면(밑면 포함)을 모두 색칠했습니다. 색칠된 면은 모두 몇 면입니까?",
+      figures: { kind: "iso-box", map, width, depth, boxH: height, paint: true },
+      answer: { faces, width, depth, height },
+      answerText: faces + "면"
     };
   }
 
@@ -985,7 +973,7 @@
     let map = null;
     let total = 0;
     for (let tries = 0; tries < 300; tries += 1) {
-      map = randomShape(rng, width, depth, maxH);
+      map = cornerStaircase(rng, width, depth, maxH, false);
       total = mapTotal(map);
       if (total >= 8 && total <= 28) break;
     }
@@ -1034,37 +1022,36 @@
 
   // 12. HL — 구멍 뚫기
   function genHL(rng, difficulty) {
-    const [W, D, H] = boxDimsForDifficulty(rng, difficulty);
+    const dims = difficulty === "easy"
+      ? rng.pick([[3, 3, 3], [4, 3, 3]])
+      : difficulty === "hard" ? [4, 4, 4] : rng.pick([[4, 4, 3], [4, 3, 4]]);
+    const [W, D, H] = dims;
     const total = W * D * H;
     const present = new Set();
     for (let x = 0; x < W; x += 1) for (let y = 0; y < H; y += 1) for (let z = 0; z < D; z += 1) present.add(x + "," + y + "," + z);
-    const tunnelCount = rng.int(1, 3);
+    const axes = difficulty === "easy"
+      ? [rng.pick(["x", "y", "z"])]
+      : difficulty === "hard"
+        ? rng.shuffle(["x", "y", "z"])
+        : rng.shuffle(["x", "y", "z"]).slice(0, 2);
     const tunnels = [];
-    const used = new Set();
-    for (let i = 0; i < tunnelCount; i += 1) {
-      let axis;
-      let a;
-      let b;
-      let key;
-      let tries = 0;
-      do {
-        axis = rng.pick(["x", "y", "z"]);
-        if (axis === "x") { a = rng.int(0, H - 1); b = rng.int(0, D - 1); }
-        else if (axis === "y") { a = rng.int(0, W - 1); b = rng.int(0, D - 1); }
-        else { a = rng.int(0, W - 1); b = rng.int(0, H - 1); }
-        key = axis + "," + a + "," + b;
-        tries += 1;
-      } while (used.has(key) && tries < 20);
-      used.add(key);
-      tunnels.push({ axis, a, b });
+    axes.forEach((axis) => {
+      const candidates = [];
+      if (axis === "x") for (let y = 1; y < H - 1; y += 1) for (let z = 1; z < D - 1; z += 1) candidates.push({ axis, a: y, b: z });
+      if (axis === "y") for (let x = 1; x < W - 1; x += 1) for (let z = 1; z < D - 1; z += 1) candidates.push({ axis, a: x, b: z });
+      if (axis === "z") for (let x = 1; x < W - 1; x += 1) for (let y = 1; y < H - 1; y += 1) candidates.push({ axis, a: x, b: y });
+      const wanted = difficulty === "easy" ? rng.int(1, Math.min(2, candidates.length)) : 1;
+      tunnels.push(...rng.shuffle(candidates).slice(0, wanted));
+    });
+    tunnels.forEach(({ axis, a, b }) => {
       if (axis === "x") for (let x = 0; x < W; x += 1) present.delete(x + "," + a + "," + b);
       else if (axis === "y") for (let y = 0; y < H; y += 1) present.delete(a + "," + y + "," + b);
       else for (let z = 0; z < D; z += 1) present.delete(a + "," + b + "," + z);
-    }
+    });
     const remaining = present.size;
     return {
       type: "HL",
-      prompt: "가로 " + W + ", 세로 " + D + ", 높이 " + H + "인 상자 모양으로 쌓기나무를 빈틈없이 쌓았습니다. 구멍이 반대편까지 뚫리도록 쌓기나무를 " + tunnelCount + "군데 빼냈습니다. 남은 쌓기나무의 개수를 구하시오.",
+      prompt: "가로 " + W + ", 세로 " + D + ", 높이 " + H + "인 상자 모양으로 쌓기나무를 빈틈없이 쌓았습니다. 안쪽에서 반대편까지 이어지는 구멍을 " + axes.length + "방향으로 뚫었습니다. 남은 쌓기나무의 개수를 구하시오.",
       figures: { kind: "iso-holes", width: W, depth: D, boxH: H, tunnels },
       answer: { remaining, total, removed: total - remaining },
       answerText: remaining + "개"
@@ -1148,7 +1135,7 @@
     { code: "IN", label: "보이지 않는 개수 (벽 없음)", defaultOn: true },
     { code: "FB", label: "상자 채우기", defaultOn: true },
     { code: "CU", label: "정육면체 완성", defaultOn: false },
-    { code: "PN", label: "정육면체 색칠", defaultOn: true },
+    { code: "PN", label: "정육면체·직육면체 색칠 면", defaultOn: true },
     { code: "PF", label: "모양 색칠 → 면의 총수", defaultOn: false },
     { code: "BW", label: "흑백 교차", defaultOn: true },
     { code: "HL", label: "구멍 뚫기", defaultOn: true },

@@ -81,8 +81,8 @@ export function viewsOfHeightGrid(heightGrid, grid, height) {
   };
 }
 
-export function viewsMatch(a, b) {
-  return ["front", "side", "top"].every((name) =>
+export function viewsMatch(a, b, names = ["front", "side", "top"]) {
+  return names.every((name) =>
     a[name].length === b[name].length &&
     a[name].every((row, r) => row.length === b[name][r].length && row.every((v, c) => v === b[name][r][c]))
   );
@@ -105,7 +105,8 @@ const makeProblem = (id, level, grid, stacks) => {
     side: sideView(map, grid, height),
     top: topView(map, grid)
   };
-  return { id, level, grid, maxH: height, reference: map, target };
+  const activeViews = level === 2 ? ["front"] : level === 3 ? ["front", "side"] : ["front", "side", "top"];
+  return { id, level, grid, maxH: height, reference: map, target, activeViews };
 };
 
 const pools = [
@@ -236,7 +237,7 @@ export function validateLevels() {
       if (width > 4 || depth > 4 || problem.maxH > 4) throw new Error(`${problem.id} exceeds 4x4x4`);
       // The reference build must satisfy its own cards (a guaranteed solution exists).
       const refViews = viewsOfHeightGrid(problem.reference, problem.grid, problem.maxH);
-      if (!viewsMatch(refViews, problem.target)) throw new Error(`${problem.id} reference does not match target`);
+      if (!viewsMatch(refViews, problem.target, problem.activeViews)) throw new Error(`${problem.id} reference does not match target`);
       // Every card must have at least one filled cell.
       if (!problem.target.top.flat().some((c) => c === 1)) throw new Error(`${problem.id} empty top card`);
       if (!problem.target.front.flat().some((c) => c === 1)) throw new Error(`${problem.id} empty front card`);
