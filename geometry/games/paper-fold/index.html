@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>GFIELD Origami Studio</title>
+  <link rel="stylesheet" href="./styles.css?v=paper-fold-1" />
+  <link rel="stylesheet" href="../../shared/pwa.css?v=2" />
+  <script src="../../shared/viewport-fit.js?v=1"></script>
+  <link rel="manifest" href="/geometry/manifest.webmanifest" />
+  <meta name="theme-color" content="#155d62" />
+</head>
+<body>
+  <main class="fold-shell">
+    <header class="topbar">
+      <a class="exit" href="../../origami-studio/" aria-label="나가기">‹</a>
+      <div class="brand"><span aria-hidden="true">◇</span><strong>GFIELD</strong><small>Origami Studio</small></div>
+      <div class="progress"><strong id="levelLabel">LEVEL 1</strong><span id="problemLabel">1 / 5</span></div>
+      <button id="soundButton" class="icon-button" type="button" aria-label="음소거">♪</button>
+      <button id="levelButton" class="level-button" type="button" data-i18n="levels">레벨</button>
+    </header>
+
+    <section class="mission">
+      <div><span id="stars">★☆☆☆☆</span><h1 id="missionTitle">반으로 쏙</h1></div>
+      <p id="prompt">반짝이는 선을 따라 종이를 접어 보세요.</p>
+    </section>
+
+    <section class="play-area">
+      <article class="paper-panel">
+        <div id="stage" class="paper-stage" aria-live="polite">
+          <div id="stackView" class="stack-view" hidden></div>
+          <button id="paper" class="paper" type="button" aria-label="색종이 접기">
+            <span class="paper-sheen"></span>
+            <span id="crease" class="crease"></span>
+            <span id="foldArrow" class="fold-arrow"></span>
+            <span id="numberGrid" class="number-grid"></span>
+            <span id="marks" class="paper-marks"></span>
+          </button>
+          <div id="foldStatus" class="fold-status"></div>
+        </div>
+      </article>
+
+      <aside class="tool-panel">
+        <button id="hintButton" type="button"><span aria-hidden="true">?</span><b data-i18n="hint">힌트</b></button>
+        <button id="retryButton" type="button"><span aria-hidden="true">↻</span><b data-i18n="retry">다시</b></button>
+        <a href="../../worksheet/paper-fold/" class="worksheet-link"><span aria-hidden="true">▤</span><b data-i18n="worksheet">학습지</b></a>
+      </aside>
+    </section>
+
+    <section class="answer-dock">
+      <p id="answerPrompt">종이를 먼저 접어 보세요.</p>
+      <div id="choices" class="choices"></div>
+      <button id="nextButton" class="next-button" type="button" hidden data-i18n="next">다음 문제</button>
+    </section>
+
+    <aside id="foldyGuide" class="foldy-guide" aria-live="polite">
+      <div id="guideBubble" class="guide-bubble">접는 선을 눌러 볼까?</div>
+      <span id="foldyAccessory" class="foldy-accessory" aria-hidden="true"></span>
+      <img src="../../world-map/assets/foldy-character.webp" alt="폴디" />
+    </aside>
+
+    <div id="tutorial" class="tutorial" hidden>
+      <section class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorialText">
+        <img src="../../world-map/assets/foldy-character.webp" alt="폴디" />
+        <div><p id="tutorialText"></p><div id="tutorialDots" class="tutorial-dots"></div><button id="tutorialNext" type="button"></button></div>
+      </section>
+    </div>
+
+    <div id="levelDialog" class="dialog" hidden>
+      <section role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+        <header><h2 id="dialogTitle" data-i18n="chooseLevel">레벨 선택</h2><button id="closeLevels" type="button" aria-label="닫기">×</button></header>
+        <div id="levelList" class="level-list"></div>
+      </section>
+    </div>
+
+    <div id="completeDialog" class="dialog" hidden>
+      <section class="complete-card" role="dialog" aria-modal="true">
+        <img src="../../world-map/assets/foldy-character.webp" alt="폴디" />
+        <h2 id="completeTitle">레벨 1 완료!</h2>
+        <p id="completeText">새 접기 기술을 익혔어!</p>
+        <div class="complete-actions"><button id="nextLevelButton" type="button">다음 레벨</button><button id="practiceButton" type="button">한 번 더</button><a href="../../origami-studio/">색종이 공방</a></div>
+      </section>
+    </div>
+
+    <div id="success" class="success" aria-hidden="true"><span></span><strong>GREAT JOB!</strong><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </main>
+  <script type="module" src="./app.js?v=paper-fold-1"></script>
+  <script src="../../shared/pwa.js?v=3" defer></script>
+</body>
+</html>

@@ -158,6 +158,7 @@ body { background: #fdf8d8; color: var(--ink); }
 
 .place-hotspot { position: absolute; appearance: none; border: 0; background: transparent; cursor: pointer; padding: 0; color: white; }
 .cube-castle { left: 13.1%; top: 8.1%; width: 20.7%; height: 36.4%; }
+.origami-studio { left: 38.2%; top: 16%; width: 17.6%; height: 30.5%; }
 .cube-castle::before {
   content: "";
   position: absolute;
@@ -167,7 +168,34 @@ body { background: #fdf8d8; color: var(--ink); }
   background: transparent;
   transition: background .2s ease, border-color .2s ease, filter .2s ease;
 }
+.origami-studio::before {
+  content: "";
+  position: absolute;
+  inset: 1%;
+  border: 4px solid transparent;
+  clip-path: polygon(46% 0, 64% 13%, 100% 18%, 87% 48%, 98% 82%, 61% 100%, 26% 89%, 0 58%, 17% 29%);
+  background: transparent;
+  transition: background .2s ease, border-color .2s ease, filter .2s ease;
+}
 .cube-castle span {
+  position: absolute;
+  left: 51%;
+  bottom: 0;
+  transform: translate(-50%, 48%);
+  min-width: 120px;
+  padding: 8px 12px;
+  border: 3px solid var(--navy);
+  border-radius: 6px;
+  background: #fff8ce;
+  color: var(--navy);
+  font-size: clamp(11px, 1.1vw, 17px);
+  line-height: 1.05;
+  font-weight: 950;
+  opacity: 0;
+  transition: opacity .2s ease, transform .2s ease;
+  pointer-events: none;
+}
+.origami-studio span {
   position: absolute;
   left: 51%;
   bottom: 0;
@@ -191,6 +219,12 @@ body { background: #fdf8d8; color: var(--ink); }
   filter: drop-shadow(0 0 15px rgba(255,223,68,.9));
 }
 .cube-castle:hover span, .cube-castle:focus-visible span, .cube-castle.attention span { opacity: 1; transform: translate(-50%, 22%); }
+.origami-studio:hover::before, .origami-studio:focus-visible::before, .origami-studio.attention::before {
+  border-color: rgba(72,213,215,.95);
+  background: rgba(72,213,215,.13);
+  filter: drop-shadow(0 0 15px rgba(72,213,215,.9));
+}
+.origami-studio:hover span, .origami-studio:focus-visible span, .origami-studio.attention span { opacity: 1; transform: translate(-50%, 22%); }
 
 .map-toolbar {
   position: absolute;
@@ -301,6 +335,11 @@ body { background: #fdf8d8; color: var(--ink); }
 .sprite-6 { background-position: 0 100%; }
 .sprite-7 { background-position: 50% 100%; }
 .sprite-8 { background-position: 100% 100%; }
+.sprite-9 {
+  background-image: url("./assets/foldy-character.webp");
+  background-size: contain;
+  background-position: center;
+}
 .color-original { --character-filter: none; }
 .color-ocean { --character-filter: hue-rotate(32deg) saturate(1.08); }
 .color-berry { --character-filter: hue-rotate(112deg) saturate(1.12); }
@@ -550,6 +589,7 @@ body { background: #fdf8d8; color: var(--ink); }
   .map-stage { left: 0; top: 0; width: calc(var(--app-dvh) * 1.49334); height: var(--app-dvh); transform: none; touch-action: pan-x; }
   .map-guide { display: none; }
   .cube-castle span { min-width: 86px; padding: 5px; font-size: 9px; opacity: 1; transform: translate(-50%,26%); }
+  .origami-studio span { min-width: 86px; padding: 5px; font-size: 9px; opacity: 1; transform: translate(-50%,26%); }
   .map-toolbar { position: fixed; top: max(7px, env(safe-area-inset-top)); right: 7px; padding: 5px; border-radius: 7px; background: rgba(255,253,231,.84); box-shadow: 0 2px 9px rgba(23,38,83,.16); transform: scale(.78); transform-origin: top right; backdrop-filter: blur(8px); }
   .walker { width: 86px; }
 }
