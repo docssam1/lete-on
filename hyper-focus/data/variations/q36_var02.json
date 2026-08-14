@@ -4,8 +4,41 @@
   "variationId": "q36_var02",
   "subType": "min_max_order",
   "status": "draft",
-  "source": { "problemImage": "./assets/problems/q36_var02.png" },
-  "contentBinding": { "canonicalSource": "./canonical/q36.json", "hfDataTypeId": 36 },
-  "machineReadable": { "payloadType": "min_max_order", "itemCount": 5, "expectedAnswer": 1 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 1 }
+  "source": {
+    "problemImage": "./assets/problems/q36_var02.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q36.json",
+    "hfDataTypeId": 36
+  },
+  "machineReadable": {
+    "payloadType": "min_max_order",
+    "givens": {
+      "frontRank": 14,
+      "backRank": 9,
+      "peopleBetween": 4
+    },
+    "solvingModel": {
+      "rankDistance": 5,
+      "frontPositionsOfBackRankedPerson": [9, 19],
+      "validTotals": [17, 27],
+      "minTotal": 17,
+      "maxTotal": 27
+    },
+    "expectedAnswer": {
+      "min": 17,
+      "max": 27
+    }
+  },
+  "answerValidation": {
+    "answerType": "min_max_values",
+    "expectedAnswer": {
+      "min": 17,
+      "max": 27
+    }
+  },
+  "problem": {
+    "prompt": "지민이와 지수가 표를 사기 위해 줄을 섰더니 지민이는 앞에서 열네 번째에 서 있고, 지수는 뒤에서 아홉 번째에 서 있습니다. 지민이와 지수 사이에는 4명이 서 있습니다. 사람 수로 가능한 최솟값과 최댓값을 구하십시오."
+  },
+  "solutionHint": "두 사람 사이에 4명이 있으므로 두 사람의 자리는 5칸 떨어져 있습니다. 지수를 앞에서 9번째와 19번째에 놓아 각각 세어 보면 전체는 17명과 27명입니다. 따라서 최솟값은 17명, 최댓값은 27명입니다."
 }

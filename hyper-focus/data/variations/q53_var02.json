@@ -4,8 +4,44 @@
   "variationId": "q53_var02",
   "subType": "balance_unit_count",
   "status": "draft",
-  "source": { "problemImage": "./assets/problems/q53_var02.png" },
-  "contentBinding": { "canonicalSource": "./canonical/q53.json", "hfDataTypeId": 53 },
-  "machineReadable": { "payloadType": "balance_unit_count", "balanceItems": [3, 1, 2], "expectedAnswer": 6 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 6 }
+  "source": {
+    "problemImage": "./assets/problems/q53_var02.png"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q53.json",
+    "hfDataTypeId": 53
+  },
+  "machineReadable": {
+    "payloadType": "balance_unit_count",
+    "comparisonRule": {
+      "left": {
+        "erasers": 4,
+        "clips": 7
+      },
+      "right": {
+        "erasers": 6,
+        "clips": 3
+      },
+      "sameLength": true
+    },
+    "targetLength": {
+      "erasers": 8,
+      "clips": 6,
+      "answerUnit": "eraser"
+    },
+    "solvingModel": {
+      "clipsPerEraser": 2,
+      "targetClips": 22,
+      "expectedAnswer": 11
+    },
+    "expectedAnswer": 11
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 11
+  },
+  "problem": {
+    "prompt": "민주는 길이가 각각 같은 지우개와 클립을 여러 개 준비했습니다. 지우개 4개와 클립 7개를 합한 길이는 지우개 6개와 클립 3개를 합한 길이와 같았습니다. 책상 가로의 길이가 지우개 8개와 클립 6개를 합한 길이와 같을 때, 이 책상 가로의 길이는 지우개 몇 개의 길이와 같습니까?"
+  },
+  "solutionHint": "양쪽에서 지우개 4개와 클립 3개만큼을 똑같이 빼면, 클립 4개의 길이가 지우개 2개의 길이와 같습니다. 그러므로 지우개 1개는 클립 2개의 길이입니다. 클립 6개는 지우개 3개이므로 책상 가로는 지우개 11개의 길이입니다."
 }
