@@ -5,7 +5,7 @@
   "subType": "balance_unit_count",
   "status": "draft",
   "source": {
-    "problemImage": "./assets/problems/q53_var02.png"
+    "problemImage": "./assets/svg/variations/q53_var02.svg"
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q53.json",
