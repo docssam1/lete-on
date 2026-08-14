@@ -602,12 +602,13 @@ function formatVariationAnswer(variation){
   if(variation.subType==='unit_rate_animals')return `${answer}일`;
   if(variation.subType==='balance_unit_count')return `${answer}개`;
   if(variation.subType==='reverse_table')return `${answer}명`;
+  if(variation.subType&&variation.subType.startsWith('stacking_'))return `${answer}개`;
   return String(answer??'');
 }
 function inlineScriptString(value){return escapeHTML(JSON.stringify(String(value??'')));}
 function variationToSimilar(variation,item){
   return {
-    prompt:variation.problem.prompt,
+    prompt:variation.problem&&variation.problem.prompt||item.originalProblem&&item.originalProblem.text||'',
     answer:formatVariationAnswer(variation),
     answerStory:variation.solutionHint||item.aiTutorPack&&item.aiTutorPack.audioScript||'',
     audioScript:variation.solutionHint||item.aiTutorPack&&item.aiTutorPack.audioScript||'',
