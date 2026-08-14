@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260814c";
-import { GENERATORS } from "./generators.js?v=20260814c";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260814d";
+import { GENERATORS } from "./generators.js?v=20260814d";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -921,6 +921,53 @@ function trianglePositionCycleMarkup(visual) {
   return `<div class="triangle-cycle">${shown}<b aria-hidden="true">…</b><figure class="target">${triangleCycleSvg()}<figcaption>${visual.target}번째</figcaption></figure></div>`;
 }
 
+function triangleMaxSumMarkup(visual) {
+  const coordinates = { top: [110, 20], left: [62, 88], "bottom-left": [20, 158], bottom: [110, 158], "bottom-right": [200, 158], right: [158, 88] };
+  const shown = new Set(visual.given || []);
+  const nodes = Object.entries(coordinates).map(([name, [x, y]]) => {
+    const value = shown.has(name) ? visual.nodes[name] : "";
+    return `<circle cx="${x}" cy="${y}" r="17"/><text x="${x}" y="${y + 5}" text-anchor="middle">${value}</text>`;
+  }).join("");
+  const cards = visual.answerOnly ? "" : `<div class="triangle-number-cards">${visual.values.map((value) => `<span>${value}</span>`).join("")}</div>`;
+  return `${cards}<svg class="triangle-max-sum" viewBox="0 0 220 180" role="img" aria-label="세 변의 합이 같은 삼각형"><path d="M110 20L20 158H200Z M62 88L158 88 M20 158H200"/>${nodes}</svg>`;
+}
+
+function overlapBondsMarkup(visual) {
+  const count = visual.shownParts.length;
+  const width = count * 78;
+  const partX = (index) => 39 + index * 78;
+  const bonds = visual.totals.map((total, index) => {
+    const x = (partX(index) + partX(index + 1)) / 2;
+    return `<path d="M${x} 34V52 M${x} 62L${partX(index)} 88 M${x} 62L${partX(index + 1)} 88"/><rect class="total" x="${x - 16}" y="4" width="32" height="30"/><text x="${x}" y="24">${total}</text><rect class="junction" x="${x - 12}" y="50" width="24" height="24"/>`;
+  }).join("");
+  const parts = visual.shownParts.map((value, index) => {
+    const label = value === "star" ? "☆" : value === "blank" ? "?" : value;
+    const shared = visual.highlightShared && index === 1 ? " shared" : "";
+    return `<rect class="part${shared}" x="${partX(index) - 16}" y="87" width="32" height="30"/><text x="${partX(index)}" y="108">${label}</text>`;
+  }).join("");
+  return `<svg class="overlap-bonds" viewBox="0 0 ${width} 124" role="img" aria-label="서로 이어진 가르기 모으기">${bonds}${parts}</svg>`;
+}
+
+function letterCardSvg(chars, transformed = false) {
+  const sourceWidth = Math.max(60, chars.length * 54);
+  const sourceHeight = 60;
+  const glyphs = chars.map((char, index) => `<text x="${27 + index * 54}" y="40" text-anchor="middle">${char}</text>`).join("");
+  const content = `<rect x="1" y="1" width="${sourceWidth - 2}" height="${sourceHeight - 2}"/><g>${glyphs}</g>`;
+  if (!transformed) return `<svg viewBox="0 0 ${sourceWidth} ${sourceHeight}" role="img" aria-label="글자 블록">${content}</svg>`;
+  const outputWidth = sourceHeight;
+  const outputHeight = sourceWidth;
+  const transform = `translate(${outputWidth / 2} ${outputHeight / 2}) scale(-1 1) rotate(-90) translate(${-sourceWidth / 2} ${-sourceHeight / 2})`;
+  return `<svg viewBox="0 0 ${outputWidth} ${outputHeight}" role="img" aria-label="움직인 글자 블록"><g transform="${transform}">${content}</g></svg>`;
+}
+
+function letterBlockTransformMarkup(visual) {
+  return `<div class="letter-transform"><div class="letter-example">${letterCardSvg(visual.exampleChars)}<b>→</b>${letterCardSvg(visual.exampleChars, true)}</div><div class="letter-target">${letterCardSvg(visual.targetChars)}<b>→</b><span class="letter-answer-box"></span></div></div>`;
+}
+
+function letterBlockAnswerMarkup(visual) {
+  return `<div class="letter-transform-answer">${letterCardSvg(visual.chars, true)}</div>`;
+}
+
 function coloredShapeNumberMarkup(visual) {
   const examples = [[1,[0,0,0,1]],[2,[0,0,0,2]],[5,[0,0,1,1]],[8,[0,0,2,0]],[19,[0,1,0,3]],[68,[1,0,1,0]]];
   const grid = (digits, label, target = false) => `<div class="base-four-grid ${target ? "target" : ""}">${Array.from({ length: 3 }, (_, row) => digits.map((count) => `<i class="${row >= 3 - count ? "filled" : ""}"></i>`).join("")).join("")}<span>${label}</span></div>`;
@@ -1086,6 +1133,11 @@ function visualMarkup(visual) {
   if (visual.kind === "symbol-chain") return `<div class="visual symbol-chain-visual">${symbolChainMarkup(visual)}</div>`;
   if (visual.kind === "shape-matrix-three") return `<div class="visual shape-matrix-three-visual">${shapeMatrixThreeMarkup(visual)}</div>`;
   if (visual.kind === "triangle-position-cycle") return `<div class="visual triangle-position-cycle-visual">${trianglePositionCycleMarkup(visual)}</div>`;
+  if (visual.kind === "triangle-position-answer") return `<div class="visual triangle-position-answer-visual">${triangleCycleSvg(visual.position)}</div>`;
+  if (visual.kind === "triangle-max-sum") return `<div class="visual triangle-max-sum-visual">${triangleMaxSumMarkup(visual)}</div>`;
+  if (visual.kind === "overlap-bonds") return `<div class="visual overlap-bonds-visual">${overlapBondsMarkup(visual)}</div>`;
+  if (visual.kind === "letter-block-transform") return `<div class="visual letter-block-transform-visual">${letterBlockTransformMarkup(visual)}</div>`;
+  if (visual.kind === "letter-block-transform-answer") return `<div class="visual letter-block-transform-answer-visual">${letterBlockAnswerMarkup(visual)}</div>`;
   if (visual.kind === "colored-shape-number") return `<div class="visual colored-shape-number-visual">${coloredShapeNumberMarkup(visual)}</div>`;
   if (visual.kind === "source-go-stones") return `<div class="visual source-go-stones-visual">${sourceGoStonesMarkup(visual)}</div>`;
   if (visual.kind === "nonadjacent-pyramid") return `<div class="visual nonadjacent-pyramid-visual">${nonadjacentPyramidMarkup(visual)}</div>`;
@@ -1149,7 +1201,8 @@ function renderWorksheet() {
 function openAnswers() {
   $("answerBody").innerHTML = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
-    return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${question.answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
+    const answer = question.answerVisual ? visualMarkup(question.answerVisual) : question.answer;
+    return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
   }).join("");
   $("answerDialog").showModal();
 }

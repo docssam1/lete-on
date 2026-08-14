@@ -867,6 +867,7 @@ function shapeMatrixThreeFeatures({ difficulty = 2 }) {
   return {
     prompt: difficulty === 3 ? "도형의 규칙을 찾아 두 빈칸에 알맞은 모양을 그리세요." : "도형의 규칙을 찾아 빈칸에 알맞은 모양을 그리세요.",
     visual: { kind: "shape-matrix-three", cells },
+    answerVisual: { kind: "shape-matrix-three", cells: cells.map((cell) => ({ ...cell, missing: false, hintOuter: false })) },
     answer: answers.join(" / "),
     solution: `각 가로줄과 세로줄에서 바깥 도형, 안쪽 도형, 칠하기가 한 번씩 나타납니다. 따라서 ${answers.join("이고, ")}입니다.`,
     meta: { cells, targets, answers }
@@ -887,9 +888,83 @@ function trianglePositionCycle({ difficulty = 2 }) {
   return {
     prompt: `규칙을 찾아 ${target}번째 모양을 완성하세요.`,
     visual: { kind: "triangle-position-cycle", sequence: Array.from({ length: shown }, (_, index) => cycle[index % 4]), target },
+    answerVisual: { kind: "triangle-position-answer", position: answerPosition },
     answer: `${positionName[answerPosition]} 삼각형`,
     solution: `칠한 곳은 ${cycle.map((position) => positionName[position]).join(" → ")}의 네 자리로 반복됩니다. ${target}번째는 ${positionName[answerPosition]} 삼각형을 칠합니다.`,
     meta: { cycle, shown, target, answerPosition }
+  };
+}
+
+function triangleMaxEdgeSum({ difficulty = 2 }) {
+  const start = difficulty === 3 ? randomInt(1, 2) : 1;
+  const step = difficulty === 3 ? 2 : 1;
+  const values = Array.from({ length: 6 }, (_, index) => start + index * step);
+  const corners = shuffle(values.slice(3));
+  const total = values.reduce((sum, value) => sum + value, 0);
+  const sideSum = (total + corners.reduce((sum, value) => sum + value, 0)) / 3;
+  const nodes = {
+    top: corners[0],
+    "bottom-left": corners[1],
+    "bottom-right": corners[2]
+  };
+  nodes.left = sideSum - nodes.top - nodes["bottom-left"];
+  nodes.right = sideSum - nodes.top - nodes["bottom-right"];
+  nodes.bottom = sideSum - nodes["bottom-left"] - nodes["bottom-right"];
+  const given = difficulty === 1 ? ["top"] : [];
+  const arrangement = `위 ${nodes.top}, 왼쪽 가운데 ${nodes.left}, 왼쪽 아래 ${nodes["bottom-left"]}, 아래 가운데 ${nodes.bottom}, 오른쪽 아래 ${nodes["bottom-right"]}, 오른쪽 가운데 ${nodes.right}`;
+  return {
+    prompt: "주어진 여섯 수를 한 번씩 써서 세 변의 합이 모두 같게 만들 때, 한 변의 합이 가장 커지도록 빈칸을 채우세요.",
+    visual: { kind: "triangle-max-sum", values, nodes, given },
+    answerVisual: { kind: "triangle-max-sum", values, nodes, given: Object.keys(nodes), answerOnly: true },
+    answer: `가능한 답: ${arrangement}`,
+    solution: `가장 큰 세 수를 세 꼭짓점에 놓으면 한 변의 합이 가장 커집니다. 한 변의 합은 ${sideSum}이며, 가능한 배치 한 가지는 ${arrangement}입니다.`,
+    meta: { values, nodes, sideSum }
+  };
+}
+
+function overlappingNumberBonds({ difficulty = 2 }) {
+  const partCount = difficulty === 3 ? 4 : 3;
+  const parts = Array.from({ length: partCount }, (_, index) => randomInt(index === 0 ? 1 : 2, difficulty === 1 ? 6 : 8));
+  const totals = parts.slice(0, -1).map((value, index) => value + parts[index + 1]);
+  const shownParts = parts.map((value, index) => {
+    if (difficulty === 3) return index === 0 ? String(value) : index === parts.length - 1 ? "star" : "blank";
+    return index < 2 ? String(value) : "star";
+  });
+  const steps = [];
+  let known = parts[0];
+  const startIndex = difficulty === 3 ? 0 : 1;
+  if (difficulty === 3) {
+    for (let index = 0; index < totals.length; index += 1) {
+      const next = totals[index] - known;
+      steps.push(`${totals[index]} - ${known} = ${next}`);
+      known = next;
+    }
+  } else {
+    steps.push(`${totals[startIndex]} - ${parts[startIndex]} = ${parts[startIndex + 1]}`);
+  }
+  const answer = parts.at(-1);
+  return {
+    prompt: "가르기·모으기에서 위의 수는 아래 두 수를 모은 수입니다. ☆에 알맞은 수를 구하세요.",
+    visual: { kind: "overlap-bonds", totals, shownParts, highlightShared: difficulty === 1 },
+    answer: String(answer),
+    solution: `${steps.join(" → ")}이므로 ☆은 ${answer}입니다.`,
+    meta: { parts, totals, result: answer }
+  };
+}
+
+function letterBlockMove({ difficulty = 2 }) {
+  const exampleChars = sample([["소", "마"], ["나", "무"], ["하", "늘"], ["도", "형"]]);
+  const targets = ["학", "꿈", "별", "빛", "힘", "봄"];
+  const targetChars = difficulty === 3 ? shuffle(targets).slice(0, 2) : [sample(targets)];
+  return {
+    prompt: difficulty === 1
+      ? "보기처럼 글자 블록을 왼쪽으로 1/4바퀴 돌린 뒤 좌우로 뒤집어 빈칸에 그리세요."
+      : "보기와 같은 방법으로 글자 블록을 움직일 때, 빈칸에 알맞은 그림을 그리세요.",
+    visual: { kind: "letter-block-transform", exampleChars, targetChars },
+    answerVisual: { kind: "letter-block-transform-answer", chars: targetChars },
+    answer: "왼쪽으로 1/4바퀴 돌린 뒤 좌우로 뒤집은 그림",
+    solution: "보기의 글자 블록 전체를 왼쪽으로 1/4바퀴 돌린 다음 좌우로 뒤집습니다.",
+    meta: { exampleChars, targetChars, operation: "rotate-ccw-then-flip-horizontal" }
   };
 }
 
@@ -2291,6 +2366,9 @@ export const GENERATORS = {
   symbolChainArithmetic,
   shapeMatrixThreeFeatures,
   trianglePositionCycle,
+  triangleMaxEdgeSum,
+  overlappingNumberBonds,
+  letterBlockMove,
   sourceBalanceRelations,
   sourcePianoBounce,
   sourceSymbolSumGrid,

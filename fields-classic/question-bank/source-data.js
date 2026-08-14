@@ -135,10 +135,10 @@ export const TYPES = [
   type("shape-sum-grid-4", "number", "매트릭스", "4x4 도형표의 행·열 합으로 빈 합 구하기", { generator: "shapeSumGrid", sourceMatched: true }),
   type("row-column-count-placement", "logic", "조건 배치", "가로·세로 개수 조건에 맞게 칸 표시하기", { generator: "rowColumnCountPlacement", sourceMatched: true }),
   type("truth-lie-ranking", "logic", "조건 추리", "참말·거짓말 조건으로 경기 순위 찾기", { generator: "truthLieRanking", sourceMatched: true }),
-  type("triangle-max-edge-sum", "number", "수 배열과 합", "삼각형 세 변의 합을 가장 크게 만들기"),
-  type("split-merge-tree", "number", "수 배열과 합", "가르기·모으기 나무의 부모·자식 관계"),
+  type("triangle-max-edge-sum", "number", "수 배열과 합", "삼각형 세 변의 합을 가장 크게 만들기", { generator: "triangleMaxEdgeSum", sourceMatched: true }),
+  type("split-merge-tree", "number", "수 배열과 합", "가르기·모으기 나무의 부모·자식 관계", { generator: "overlappingNumberBonds", sourceMatched: true }),
   type("vertex-degree-sum", "geometry", "연결 관계", "점에 연결된 선의 개수 합 구하기", { generator: "vertexDegreeSum", sourceMatched: true }),
-  type("letter-block-move", "geometry", "도형 움직이기", "글자 블록의 위치·방향 이동 규칙"),
+  type("letter-block-move", "geometry", "도형 움직이기", "글자 블록의 위치·방향 이동 규칙", { generator: "letterBlockMove", sourceMatched: true }),
   type("matchstick-growth", "pattern", "도형 규칙", "이어 붙인 성냥개비 도형에 필요한 개수", { generator: "matchstickGrowth", sourceMatched: true }),
   type("neither-set-count", "logic", "집합과 포함", "둘 다 해당하지 않는 사람 수", { generator: "neitherSetCount", sourceMatched: true }),
   type("target-score-combination", "logic", "경우의 수", "같은 점수를 허용한 과녁 점수 조합 세기", { generator: "targetScoreCombination", sourceMatched: true }),
@@ -273,7 +273,7 @@ export const FINAL_EXAM_TYPES = [
       "target-score-combination", "matchstick-growth", "vertex-degree-sum", "letter-block-move",
       "go-stone-difference-inverse", "square-count", "shape-sum-grid-4", "cube-fill-box",
       "mixed-sequence", "two-type-unit-total", "border-go-stone-difference", "neither-set-count"
-    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: [0, 1, 3, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19].includes(index) }))
+    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: true }))
   }
 ];
 
