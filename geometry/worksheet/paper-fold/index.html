@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GFIELD 색종이 접기 학습지</title>
+<style>
+:root{--navy:#17345f;--pink:#b34b68;--paper:#fffdf9;--line:#d6d0c8;--ink:#25313b}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Noto Sans KR","Malgun Gothic",sans-serif;background:#edf2ef;color:var(--ink)}
+.subject-switch{position:sticky;top:0;z-index:20;display:flex;justify-content:center;gap:6px;padding:8px 14px;border-bottom:1px solid #cfd9d3;background:rgba(247,250,248,.96)}
+.subject-tab{display:inline-flex;align-items:center;min-height:40px;padding:0 18px;border:1px solid #b9c7bf;border-radius:6px;color:#34483d;background:#fff;font-size:14px;font-weight:800;text-decoration:none}
+.subject-tab.active{color:#fff;border-color:var(--pink);background:var(--pink)}
+.fold-app{display:grid;grid-template-columns:minmax(250px,310px) minmax(0,1fr);min-height:calc(100vh - 57px)}
+.controls{padding:22px 18px;border-right:1px solid #ccd6d0;background:#fbfcfb}
+.controls h1{margin:0 0 20px;color:var(--navy);font-size:25px;line-height:1.2}.controls h1 span{color:var(--pink)}
+.control-group{margin:0 0 18px}.control-group h2{margin:0 0 8px;font-size:13px;color:#58645e}
+select,button,input{font:inherit}select{width:100%;padding:10px 11px;border:1px solid #bdc9c2;border-radius:6px;background:#fff;color:#263b51;font-size:13px;font-weight:700}
+.mode-select{display:none}.mode-grid{display:grid;gap:6px;max-height:340px;overflow:auto;padding:1px 3px 1px 1px}.mode-button{min-height:38px;padding:7px 10px;border:1px solid #c7d1cb;border-radius:6px;color:#34483e;background:#fff;text-align:left;font-size:12px;line-height:1.25;box-shadow:none}.mode-button:hover{border-color:#8fa89b;background:#f6faf7}.mode-button.active{border-color:var(--pink);color:#fff;background:var(--pink);box-shadow:inset 3px 0 rgba(255,255,255,.35)}
+.radio-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.radio-row label{display:flex;justify-content:center;gap:5px;padding:9px 4px;border:1px solid #c7d1cb;border-radius:6px;background:#fff;font-size:13px;font-weight:800}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}button{min-height:42px;padding:8px 12px;border:0;border-radius:6px;color:#fff;background:var(--navy);font-size:13px;font-weight:800;cursor:pointer}button.secondary{color:#33483e;background:#e9efec}button.print{background:var(--pink)}
+.preview-panel{min-width:0;padding:18px;overflow:auto}.type-preview{max-width:1120px;margin:0 auto 18px;padding:14px;border:1px solid #c9d4ce;border-radius:8px;background:#fff}
+.preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.preview-head h2{margin:0;font-size:15px;color:var(--navy)}.preview-head p{margin:2px 0 0;color:#6e7772;font-size:12px}
+canvas{display:block;width:100%;height:auto;background:#fff;border-radius:6px}#info{margin:8px 0 0;font-size:12px;color:#53605a}.src{display:none}
+#sheetRoot{display:flex;flex-direction:column;align-items:center;gap:18px}.sheet-page{width:210mm;min-height:297mm;padding:12mm;background:#fff;box-shadow:0 3px 16px rgba(20,42,32,.14);page-break-after:always}
+.sheet-head{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:7px;border-bottom:2px solid var(--navy)}.sheet-head h2{margin:0;color:var(--navy);font-size:19px}.sheet-meta{font-size:10px;color:#65716b}
+.problem-grid{display:grid;grid-template-columns:1fr;gap:6mm;margin-top:7mm}.problem-card{position:relative;min-height:77mm;padding:5mm 5mm 4mm;border:1px solid #abb8b1;border-radius:3px;break-inside:avoid}.problem-card img{display:block;width:100%;height:61mm;object-fit:contain}.answer-line{text-align:right;font-size:10px;font-weight:800}.answer-page .problem-grid{grid-template-columns:1fr 1fr}.answer-page .problem-card{min-height:48mm}.answer-page .problem-card img{height:31mm}.answer-value{color:var(--pink)}.solution-text{min-height:2.6em;margin-top:2mm;padding-top:2mm;border-top:1px dashed #d3d9d5;color:#43534b;font-size:8.5px;line-height:1.35;text-align:left}
+@media(max-width:760px){.fold-app{display:block}.controls{border-right:0;border-bottom:1px solid #ccd6d0}.mode-grid{grid-template-columns:1fr 1fr;max-height:none}.preview-panel{padding:10px}.type-preview{margin-bottom:12px}.sheet-page{width:100%;min-height:auto;padding:14px}.problem-grid{grid-template-columns:1fr}.problem-card{min-height:240px}.problem-card img{height:auto}}
+@media print{@page{size:A4;margin:0}.subject-switch,.controls,.type-preview{display:none!important}.fold-app{display:block}.preview-panel{padding:0;overflow:visible}#sheetRoot{display:block}.sheet-page{width:210mm;min-height:297mm;margin:0;padding:12mm;box-shadow:none}.problem-grid{grid-template-columns:1fr}.problem-card{min-height:77mm}.problem-card img{height:61mm}.answer-page .problem-grid{grid-template-columns:1fr 1fr}.answer-page .problem-card{min-height:48mm}.answer-page .problem-card img{height:31mm}}
+</style>
+</head>
+<body>
+<nav class="subject-switch" aria-label="학습지 영역"><a class="subject-tab" href="../">쌓기나무 학습지</a><a class="subject-tab active" href="./">색종이 접기 학습지</a></nav>
+<div class="fold-app"><aside class="controls"><h1>GFIELD<br><span>색종이 접기 학습지</span></h1>
+<section class="control-group"><h2>유형</h2><div class="mode-grid" id="modeButtons" aria-label="색종이 접기 유형"></div><select class="mode-select" id="mode" aria-hidden="true">
+  <option value="hole2">구멍 개수 — 반으로 1~2번 접기</option>
+  <option value="hole3d">구멍 개수 — 대각선 접기</option>
+  <option value="numsum">수가 쓰인 색종이 — 남은 수들의 합</option>
+  <option value="numcut">수가 쓰인 색종이 — 잘려나간 수들의 합</option>
+  <option value="foldtop">여러 번 접기 — 가장 위의 수 찾기</option>
+  <option value="numdiag">수가 쓰인 색종이 — 대각선 한 번 접기 (실전 유형)</option>
+  <option value="pieces">접고 선 따라 자르기 — 조각 개수</option>
+  <option value="punch">반원·원 펀치 — 모양별 개수</option>
+  <option value="numinv">수가 쓰인 색종이 — 목표 합이 되게 색칠하기 (역방향)</option>
+  <option value="unfoldshape">접어 자르고 펼친 모양 그리기 (4지선다)</option>
+  <option value="stackfind">겹친 색종이 — 가장 밑(또는 위) 찾기</option>
+  <option value="stackorder">겹친 색종이 — 위에서부터 순서대로</option>
+</select>
+</section>
+<section class="control-group"><h2>난이도</h2><div class="radio-row"><label><input type="radio" name="difficulty" value="easy">하</label><label><input type="radio" name="difficulty" value="mid" checked>중</label><label><input type="radio" name="difficulty" value="hard">상</label></div></section>
+<section class="control-group"><h2>문항 수</h2><select id="count"><option value="10">10문항</option><option value="20" selected>20문항</option><option value="30">30문항</option><option value="40">40문항</option><option value="50">50문항</option></select></section>
+<section class="control-group"><label><input type="checkbox" id="answers" checked> 정답지 포함</label></section>
+<section class="actions"><button onclick="generateSheet()">새로 만들기</button><button class="print" onclick="window.print()">인쇄</button></section></aside>
+<main class="preview-panel"><section class="type-preview"><div class="preview-head"><div><h2>유형 미리보기</h2><p>선택한 난이도의 실제 출제 예시입니다.</p></div><button class="secondary" onclick="previewProblem()">다른 문제</button></div><p id="info"></p><small class="src" id="src"></small><canvas id="cv" width="1300" height="520"></canvas></section><div id="sheetRoot"></div></main></div>
+<script>
+const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=(list)=>list[R(0,list.length-1)];
+
+/* ===== 접기 엔진 (연속 도형) =====
+   접기를 "반평면으로 자르기"로 다룬다. 가로·세로뿐 아니라 대각선도 같은 방식이다.
+   keep(p) >= 0 인 쪽이 남는 조각, 나머지는 접혀서 그 위에 포개진다. */
+const FOLDS = {
+  v : { keep:p=>0.5-p.x,   mirror:p=>({x:1-p.x,y:p.y}),   label:'세로'   },
+  h : { keep:p=>0.5-p.y,   mirror:p=>({x:p.x,y:1-p.y}),   label:'가로'   },
+  d1: { keep:p=>p.x-p.y,   mirror:p=>({x:p.y,y:p.x}),     label:'대각선' },
+  d2: { keep:p=>1-p.x-p.y, mirror:p=>({x:1-p.y,y:1-p.x}), label:'대각선' }
+};
+function clipHalfPlane(poly, keep){
+  const out=[];
+  for(let i=0;i<poly.length;i++){
+    const a=poly[i], b=poly[(i+1)%poly.length];
+    const da=keep(a), db=keep(b);
+    if(da>=-1e-9) out.push(a);
+    if((da>1e-9&&db<-1e-9)||(da<-1e-9&&db>1e-9)){
+      const t=da/(da-db);
+      out.push({x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t});
+    }
+  }
+  return out;
+}
+function polyArea(poly){
+  let s=0;
+  for(let i=0;i<poly.length;i++){const a=poly[i], b=poly[(i+1)%poly.length]; s+=a.x*b.y-b.x*a.y;}
+  return Math.abs(s)/2;
+}
+const centroid=(poly)=>({x:poly.reduce((s,p)=>s+p.x,0)/poly.length, y:poly.reduce((s,p)=>s+p.y,0)/poly.length});
+function edgeDist(poly,p){
+  let best=Infinity;
+  for(let i=0;i<poly.length;i++){
+    const a=poly[i], b=poly[(i+1)%poly.length];
+    const dx=b.x-a.x, dy=b.y-a.y, l2=dx*dx+dy*dy;
+    const t=l2===0?0:Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/l2));
+    best=Math.min(best, Math.hypot(p.x-(a.x+dx*t), p.y-(a.y+dy*t)));
+  }
+  return best;
+}
+function inPoly(poly,p){
+  let ins=false;
+  for(let i=0,j=poly.length-1;i<poly.length;j=i,i++){
+    const a=poly[i], b=poly[j];
+    if((a.y>p.y)!==(b.y>p.y) && p.x < (b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x) ins=!ins;
+  }
+  return ins;
+}
+function foldSegment(poly, dir){
+  const {keep}=FOLDS[dir];
+  const pts=[];
+  for(let i=0;i<poly.length;i++){
+    const a=poly[i], b=poly[(i+1)%poly.length];
+    const da=keep(a), db=keep(b);
+    if(Math.abs(da)<1e-9) pts.push(a);
+    if((da>1e-9&&db<-1e-9)||(da<-1e-9&&db>1e-9)){
+      const t=da/(da-db); pts.push({x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t});
+    }
+  }
+  if(pts.length<2) return null;
+  let best=null, far=-1;
+  for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+    const d=Math.hypot(pts[i].x-pts[j].x, pts[i].y-pts[j].y);
+    if(d>far){far=d; best=[pts[i],pts[j]];}
+  }
+  return far>1e-6 ? best : null;
+}
+
+/* ===== 유형 1·2: 구멍 개수 ===== */
+function genHole(diagonal,difficulty='mid'){
+  let dirs;
+  if(diagonal){
+    const foldCount=difficulty==='easy'?1:difficulty==='mid'?2:3;
+    dirs=[pick(['d1','d2'])];
+    while(dirs.length<foldCount) dirs.push(pick(['v','h','d1','d2']));
+  } else {
+    const n=difficulty==='easy'?1:difficulty==='hard'?2:R(1,2), first=pick(['v','h']);
+    dirs = n===1 ? [first] : [first, first==='v'?'h':'v'];
+  }
+  const nHoles = difficulty==='easy'?1:difficulty==='hard'?R(1,2):R(1,dirs.length===1?2:1);
+  const margin = diagonal ? 0.05 : 0.07;
+
+  let poly=[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}];
+  const stages=[];
+  for(const d of dirs){ stages.push({poly, fold:d}); poly=clipHalfPlane(poly, FOLDS[d].keep); }
+  stages.push({poly, fold:null});
+
+  const holes=[]; let tries=0;
+  while(holes.length<nHoles && tries<800){
+    tries++;
+    const p={x:Math.random(), y:Math.random()};
+    if(!inPoly(poly,p)) continue;
+    if(edgeDist(poly,p)<margin) continue;
+    if(holes.some(o=>Math.hypot(o.x-p.x,o.y-p.y)<margin*2.4)) continue;
+    holes.push(p);
+  }
+  if(holes.length<nHoles) return genHole(diagonal,difficulty);
+
+  // 접는 선이 이미 조각의 가장자리이면 실제로는 접히지 않는다(같은 방향 연속 등).
+  for(let i=0;i<dirs.length;i++){
+    if(polyArea(stages[i+1].poly) >= polyArea(stages[i].poly)-1e-9) return genHole(diagonal,difficulty);
+  }
+  // 답을 2의 거듭제곱으로 가정하지 않고 실제로 되접어 세어 확인한다.
+  let pts=holes.map(h=>({...h}));
+  for(let i=dirs.length-1;i>=0;i--){
+    const mirror=FOLDS[dirs[i]].mirror;
+    const next=[...pts];
+    for(const p of pts){
+      const r=mirror(p);
+      if(!next.some(q=>Math.hypot(q.x-r.x,q.y-r.y)<1e-6)) next.push(r);
+    }
+    if(next.some(q=>!inPoly(stages[i].poly,q))) return genHole(diagonal,difficulty);
+    pts=next;
+  }
+  if(pts.length!==nHoles*2**dirs.length) return genHole(diagonal,difficulty);
+
+  const times=['','한 번','두 번','세 번'][dirs.length];
+  return {
+    kind:'hole', dirs, stages, holes, unfolded:pts, nHoles, answer:pts.length,
+    text:[`아래와 같이 색종이를 ${diagonal?'대각선을 따라':'반으로'} ${times} 접은 다음 구멍을 ${nHoles}개 뚫었습니다.`,
+          '색종이를 펼쳤을 때, 구멍은 모두 몇 개입니까?'],
+    info:`접기 ${dirs.length}회 (${dirs.map(k=>FOLDS[k].label+':'+k).join(' → ')}) · 구멍 ${nHoles}개 · 정답 ${pts.length}개`,
+    src:''
+  };
+}
+
+/* ===== 유형 3·4: 수가 쓰인 색종이 (교재 41·50쪽 문법) =====
+   4x4 숫자판을 가로로 한 번, 세로로 한 번 접는다. 교재는 항상 가로 접기가 먼저다
+   (중간 조각이 넓은 직사각형). 접는 방향(위로/아래로, 왼쪽으로/오른쪽으로)에 따라
+   접힌 묶음이 원본의 어느 사분면에 놓이는지가 정해지고, 색칠 칸이 가리키는 원본
+   칸도 그에 따라 달라진다. 잘리는 칸은 색칠 칸의 거울 궤도 {r,3-r} x {c,3-c} 네 개. */
+function genNumber(askCut, preset, difficulty='mid'){
+  const N=4;
+  const numberMax=difficulty==='easy'?4:difficulty==='hard'?9:6;
+  const grid = preset ? preset.grid.map(row=>[...row])
+                      : Array.from({length:N},()=>Array.from({length:N},()=>R(1,numberMax)));
+  const hDir = preset ? preset.hDir : pick(['up','down']);     // up: 아래가 위로 / down: 위가 아래로
+  const vDir = preset ? preset.vDir : pick(['left','right']);  // left: 오른쪽이 왼쪽으로 / right: 왼쪽이 오른쪽으로
+  const packetRow = hDir==='up' ? 0 : 2;                       // 접힌 묶음이 놓이는 사분면
+  const packetCol = vDir==='left' ? 0 : 2;
+
+  const cutCount = preset ? 1 : difficulty==='easy'?1:difficulty==='hard'?2:R(1,2);
+  const cells=[];                                              // 묶음 안 좌표 (0~1, 0~1)
+  if(preset){ cells.push({...preset.cell}); }
+  else while(cells.length<cutCount){
+    const c={r:R(0,1), c:R(0,1)};
+    if(!cells.some(o=>o.r===c.r&&o.c===c.c)) cells.push(c);
+  }
+
+  const removed=new Set();
+  for(const cell of cells){
+    const gr=packetRow+cell.r, gc=packetCol+cell.c;            // 색칠 칸의 원본 좌표
+    for(const r of [gr, N-1-gr]) for(const c of [gc, N-1-gc]) removed.add(r*N+c);
+  }
+
+  let total=0, cut=0;
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+    total+=grid[r][c];
+    if(removed.has(r*N+c)) cut+=grid[r][c];
+  }
+  const remain=total-cut;
+  if(remain<=0) return genNumber(askCut,null,difficulty);
+
+  return {
+    kind:'number', grid, hDir, vDir, packetRow, packetCol, cells, removed, total, cut, remain,
+    answer: askCut ? cut : remain,
+    text:[`다음과 같이 수가 쓰인 색종이를 접어서 색칠된 부분을 자른 후 펼쳤을 때,`,
+          askCut ? '잘려나간 수들의 합을 구하시오.' : '남아 있는 수들의 합을 구하시오.'],
+    info:`가로 ${hDir==='up'?'위로':'아래로'} → 세로 ${vDir==='left'?'왼쪽으로':'오른쪽으로'} · 색칠 ${cells.length}칸 · 잘린 칸 ${removed.size}개(합 ${cut}) · 전체 ${total} · 남은 합 ${remain}`,
+    src:''
+  };
+}
+
+/* ===== 유형 6: 수가 쓰인 색종이 — 대각선 한 번 접기 (실전 1회 18번·2회 15번 유형) =====
+   4x4 숫자판을 대각선으로 한 번 접고, 접힌 삼각형 위에 색칠한 부분을 잘라낸다.
+   대각선에서 떨어진 온전한 칸은 거울짝 {(r,c),(c,r)}이 함께 잘리고,
+   대각선 위에 걸친 칸은 반쪽 두 겹이 곧 그 칸의 양쪽 반이라 그 칸 하나만 잘린다. */
+function genDiagNumber(askCut,difficulty='mid'){
+  const N=4;
+  const numberMax=difficulty==='easy'?4:difficulty==='hard'?9:6;
+  const grid=Array.from({length:N},()=>Array.from({length:N},()=>R(1,numberMax)));
+  const keepLower=Math.random()<0.5;              // true: 아래 삼각형이 남고 위가 접혀 내려온다 (r>c 쪽)
+  const inKeep=(r,c)=> keepLower ? r>c : c>r;
+
+  // 색칠 단위: 남은 삼각형의 온전한 칸(6개) + 대각선 반칸(4개)
+  const units=[];
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+    if(inKeep(r,c)) units.push({r,c,half:false});
+    if(r===c) units.push({r,c,half:true});
+  }
+  // 연결된 묶음을 무작위로 키운다 — 교재·시험 그림이 전부 이어진 한 덩어리다
+  const key=(u)=>u.r+','+u.c;
+  const adj=(a,b)=>Math.abs(a.r-b.r)+Math.abs(a.c-b.c)===1;
+  const want=R(3,5);
+  const start=units[R(0,units.length-1)];
+  const region=[start];
+  let guard=0;
+  while(region.length<want && guard<200){
+    guard++;
+    const cand=units.filter(u=>!region.some(v=>key(v)===key(u)) && region.some(v=>adj(u,v)));
+    if(!cand.length) break;
+    region.push(cand[R(0,cand.length-1)]);
+  }
+  if(!region.some(u=>!u.half)) return genDiagNumber(askCut,difficulty);   // 온전한 칸이 하나도 없으면 거울 효과가 없다
+
+  const removed=new Set();
+  for(const u of region){
+    removed.add(u.r*N+u.c);
+    if(!u.half) removed.add(u.c*N+u.r);
+  }
+  let total=0, cut=0;
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+    total+=grid[r][c];
+    if(removed.has(r*N+c)) cut+=grid[r][c];
+  }
+  const remain=total-cut;
+  if(remain<=0 || cut<=0) return genDiagNumber(askCut,difficulty);
+
+  return {
+    kind:'diag-number', grid, keepLower, region, removed, total, cut, remain,
+    answer: askCut ? cut : remain,
+    text:['색종이를 한 번 접은 후 칠해진 부분을 잘라내었습니다.',
+          askCut ? '잘려나간 부분에 있는 수들의 합을 구하시오.' : '남아 있는 수들의 합을 구하시오.'],
+    info:`대각선 접기(${keepLower?'위→아래':'아래→위'}) · 색칠 ${region.length}단위 · 잘린 칸 ${removed.size}개(합 ${cut}) · 전체 ${total} · 남은 합 ${remain}`,
+    src:''
+  };
+}
+
+function renderDiagNumber(ctx,d){
+  header(ctx, d.text);
+  const size=230, baseY=130, ox=90, u=size/4;
+  // 펼친 자리(유령): 옅은 바탕 + 옅은 점선 격자
+  ctx.fillStyle='#fdeeec'; ctx.fillRect(ox,baseY,size,size);
+  ctx.strokeStyle='#eec6c1'; ctx.lineWidth=1; ctx.setLineDash([5,4]);
+  for(let k=0;k<=4;k++){
+    ctx.beginPath(); ctx.moveTo(ox+k*u,baseY); ctx.lineTo(ox+k*u,baseY+size); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ox,baseY+k*u); ctx.lineTo(ox+size,baseY+k*u); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  // 접힌 두 겹 삼각형: 진한 바탕 + 실선 테두리 (대각선 y=x, keepLower면 아래쪽)
+  const tri = d.keepLower
+    ? [{x:0,y:0},{x:0,y:4},{x:4,y:4}]
+    : [{x:0,y:0},{x:4,y:0},{x:4,y:4}];
+  ctx.beginPath();
+  tri.forEach((p,i)=>{const X=ox+p.x*u, Y=baseY+p.y*u; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);});
+  ctx.closePath();
+  ctx.fillStyle='#fbdad6'; ctx.fill();
+  ctx.strokeStyle=PAPER_EDGE; ctx.lineWidth=2.4; ctx.stroke();
+  // 삼각형 안 격자
+  ctx.save(); ctx.clip();
+  ctx.strokeStyle='#e8b7b1'; ctx.lineWidth=1;
+  for(let k=1;k<4;k++){
+    ctx.beginPath(); ctx.moveTo(ox+k*u,baseY); ctx.lineTo(ox+k*u,baseY+size); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ox,baseY+k*u); ctx.lineTo(ox+size,baseY+k*u); ctx.stroke();
+  }
+  // 색칠: 온전한 칸은 사각형, 대각선 칸은 접힌 쪽 반쪽 삼각형
+  ctx.fillStyle=CUT;
+  for(const q of d.region){
+    const X=ox+q.c*u, Y=baseY+q.r*u;
+    if(!q.half){ ctx.fillRect(X,Y,u,u); continue; }
+    ctx.beginPath();
+    if(d.keepLower){ ctx.moveTo(X,Y); ctx.lineTo(X,Y+u); ctx.lineTo(X+u,Y+u); }
+    else           { ctx.moveTo(X,Y); ctx.lineTo(X+u,Y); ctx.lineTo(X+u,Y+u); }
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+  // 접는 방향 화살표: 접혀 온 쪽 유령의 중심 → 그 거울점
+  const g=d.keepLower ? {x:2.6,y:1.4} : {x:1.4,y:2.6};
+  const m={x:g.y,y:g.x};
+  const sx=ox+g.x*u, sy=baseY+g.y*u, ex=ox+m.x*u, ey=baseY+m.y*u;
+  ctx.strokeStyle=ARROW; ctx.fillStyle=ARROW; ctx.lineWidth=4; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(sx,sy); ctx.quadraticCurveTo((sx+ex)/2+14,(sy+ey)/2+14,ex,ey); ctx.stroke();
+  const ang=Math.atan2(ey-((sy+ey)/2+14), ex-((sx+ex)/2+14));
+  ctx.beginPath();
+  ctx.moveTo(ex+5*Math.cos(ang), ey+5*Math.sin(ang));
+  ctx.lineTo(ex-11*Math.cos(ang-0.5), ey-11*Math.sin(ang-0.5));
+  ctx.lineTo(ex-11*Math.cos(ang+0.5), ey-11*Math.sin(ang+0.5));
+  ctx.closePath(); ctx.fill();
+  // 오른쪽: 펼친 숫자판 전체 (교재 문법 — 잘린 칸을 지우지 않는다)
+  let x=ox+size+40; drawStepArrow(ctx, x, baseY+size/2); x+=64;
+  drawNumberGrid(ctx, d.grid, x, baseY, size);
+}
+
+/* ===== 유형 7: 접고 선 따라 자르기 — 조각 개수 (교재 39·43쪽·실전 유형) =====
+   자르는 선은 접은 선이 아니라 접힌 조각 위에 그은 선이다(대각선 X, 모서리 클립).
+   조각 수는 공식이 없다 — 잘린 선을 거울 반사로 펼친 뒤, 종이 평면을 가는 격자로
+   깔고 차단 셀을 표시해 실제로 몇 덩어리로 나뉘는지 센다. 두 해상도가 일치할 때만 낸다. */
+function unfoldSegments(segs, dirs){
+  let cur=segs.map(s=>[{...s[0]},{...s[1]}]);
+  for(let i=dirs.length-1;i>=0;i--){
+    const mirror=FOLDS[dirs[i]].mirror;
+    cur=cur.concat(cur.map(sg=>[mirror(sg[0]),mirror(sg[1])]));
+  }
+  return cur;
+}
+function countPieces(segs, N){
+  const blocked=new Uint8Array(N*N);
+  for(const [a,b] of segs){
+    const steps=Math.max(2, Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)*N*8));
+    for(let k=0;k<=steps;k++){
+      const t=k/steps;
+      const ci=Math.min(N-1,Math.max(0,Math.floor((a.x+(b.x-a.x)*t)*N)));
+      const cj=Math.min(N-1,Math.max(0,Math.floor((a.y+(b.y-a.y)*t)*N)));
+      blocked[cj*N+ci]=1;
+    }
+  }
+  let count=0;
+  const seen=new Uint8Array(N*N), stack=[];
+  for(let start=0;start<N*N;start++){
+    if(blocked[start]||seen[start]) continue;
+    count++; seen[start]=1; stack.push(start);
+    while(stack.length){
+      const v=stack.pop(), vi=v%N;
+      if(vi>0   && !blocked[v-1] && !seen[v-1]){seen[v-1]=1; stack.push(v-1);}
+      if(vi<N-1 && !blocked[v+1] && !seen[v+1]){seen[v+1]=1; stack.push(v+1);}
+      if(v-N>=0   && !blocked[v-N] && !seen[v-N]){seen[v-N]=1; stack.push(v-N);}
+      if(v+N<N*N  && !blocked[v+N] && !seen[v+N]){seen[v+N]=1; stack.push(v+N);}
+    }
+  }
+  return count;
+}
+function genPieces(){
+  const dirs = pick([['h'],['v'],['h','v'],['v','h']]);
+  let poly=[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}];
+  const stages=[];
+  for(const d of dirs){ stages.push({poly, fold:d}); poly=clipHalfPlane(poly, FOLDS[d].keep); }
+  stages.push({poly, fold:null});
+  // 접힌 조각은 항상 [0,w]x[0,h] 직사각형 (가로·세로 접기의 keep이 왼쪽·위쪽이므로)
+  const w=Math.max(...poly.map(p=>p.x)), h=Math.max(...poly.map(p=>p.y));
+  const diagA=[{x:0,y:0},{x:w,y:h}], diagB=[{x:0,y:h},{x:w,y:0}];
+  const clips=[
+    [{x:w/2,y:0},{x:0,y:h/2}], [{x:w/2,y:0},{x:w,y:h/2}],
+    [{x:0,y:h/2},{x:w/2,y:h}], [{x:w,y:h/2},{x:w/2,y:h}]
+  ];
+  const cutChoice=pick(['X','A','B','clip1','clip2']);
+  const cuts = cutChoice==='X' ? [diagA,diagB]
+             : cutChoice==='A' ? [diagA]
+             : cutChoice==='B' ? [diagB]
+             : cutChoice==='clip1' ? [pick(clips)]
+             : (()=>{ const a=R(0,3); let b=R(0,3); while(b===a) b=R(0,3); return [clips[a],clips[b]]; })();
+
+  const unfolded=unfoldSegments(cuts, dirs);
+  const n1=countPieces(unfolded, 401), n2=countPieces(unfolded, 643);
+  if(n1!==n2 || n1<2 || n1>24) return genPieces();
+
+  const times=['','한 번','두 번'][dirs.length];
+  return {
+    kind:'pieces', dirs, stages, cuts, unfolded, answer:n1,
+    text:[`정사각형 모양의 색종이를 다음과 같이 ${times} 접어서 선을 따라 잘랐을 때,`,
+          '모두 몇 조각이 되는지 구하시오.'],
+    info:`접기 ${dirs.length}회 (${dirs.join(' → ')}) · 자르는 선 ${cuts.length}개(${cutChoice}) · 정답 ${n1}조각`,
+    src:''
+  };
+}
+
+function renderPieces(ctx,d){
+  header(ctx, d.text);
+  const n=d.stages.length, size=170, gap=52, baseY=150;
+  let x=50;
+  d.stages.forEach((stage,i)=>{
+    drawPoly(ctx, stage.poly, x, baseY, size);
+    if(stage.fold){
+      drawCrease(ctx, foldSegment(stage.poly, stage.fold), x, baseY, size);
+      drawFoldArrow(ctx, stage.poly, stage.fold, x, baseY, size);
+    } else {
+      // 자르는 선 + 가위
+      ctx.strokeStyle=CUT; ctx.lineWidth=2.6;
+      for(const [a,b] of d.cuts){
+        ctx.beginPath();
+        ctx.moveTo(x+a.x*size, baseY+a.y*size);
+        ctx.lineTo(x+b.x*size, baseY+b.y*size);
+        ctx.stroke();
+        const ang=Math.atan2(b.y-a.y, b.x-a.x);
+        ctx.save();
+        ctx.translate(x+a.x*size-10*Math.cos(ang), baseY+a.y*size-10*Math.sin(ang));
+        ctx.rotate(ang);
+        ctx.font='18px sans-serif'; ctx.fillStyle='#444';
+        ctx.fillText('✂', -6, 6);
+        ctx.restore();
+      }
+    }
+    x+=size+14;
+    if(i<n-1){ drawStepArrow(ctx, x, baseY+size/2); x+=gap; }
+  });
+  // 펼친 종이(작업용) — 접은 선만 점선으로, 자른 선은 그리지 않는다
+  x+=gap-14; drawStepArrow(ctx, x-38, baseY+size/2);
+  drawPoly(ctx, [{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}], x+14, baseY, size);
+  ctx.setLineDash([6,5]); ctx.strokeStyle=CREASE; ctx.lineWidth=1.6;
+  for(const dd of d.dirs){
+    ctx.beginPath();
+    if(dd==='v'){ ctx.moveTo(x+14+size/2, baseY+3); ctx.lineTo(x+14+size/2, baseY+size-3); }
+    else        { ctx.moveTo(x+14+3, baseY+size/2); ctx.lineTo(x+14+size-3, baseY+size/2); }
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+}
+
+/* ===== 유형 8: 반원·원 펀치 — 모양별 개수 =====
+   접힌 조각의 안쪽에는 원을, 가장자리에는 반원(평평한 면이 가장자리에 붙게)을 뚫는다.
+   접은 선 위의 반원은 펼치면 거울짝과 붙어 온전한 원이 되고,
+   원래 가장자리의 반원은 반원인 채로 거울 수만큼 늘어난다.
+   개수는 병합 논리로 세고, 독립적으로 격자 래스터 분할로 재검산한다. */
+function genPunch(){
+  const dirs = pick([['h'],['v'],['h','v'],['v','h']]);
+  let poly=[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}];
+  const stages=[];
+  for(const d of dirs){ stages.push({poly, fold:d}); poly=clipHalfPlane(poly, FOLDS[d].keep); }
+  stages.push({poly, fold:null});
+  const w=Math.max(...poly.map(pt=>pt.x)), h=Math.max(...poly.map(pt=>pt.y));
+  const hasV=dirs.includes('v'), hasH=dirs.includes('h');
+  // 접힌 조각의 네 가장자리: 오른쪽(x=w)은 v 접은 선, 아래(y=h)는 h 접은 선
+  const edges=[
+    {name:'left',  crease:false}, {name:'top', crease:false},
+    {name:'right', crease:hasV},  {name:'bottom', crease:hasH}
+  ];
+  const punches=[];
+  const rOf=()=>0.05+Math.random()*0.02;
+  const clash=(cx,cy,r)=>punches.some(q=>Math.hypot(q.cx-cx,q.cy-cy)<q.r+r+0.05);
+  let guard=0;
+  while(punches.filter(q=>q.type==='full').length<1 && guard++<300){
+    const r=rOf();
+    const cx=r+0.05+Math.random()*(w-2*(r+0.05)), cy=r+0.05+Math.random()*(h-2*(r+0.05));
+    if(!clash(cx,cy,r)) punches.push({type:'full',cx,cy,r});
+  }
+  const wantHalf=R(1,2);
+  while(punches.filter(q=>q.type==='half').length<wantHalf && guard++<600){
+    const e=pick(edges), r=rOf(), t=0.18+Math.random()*0.64;
+    let cx,cy,nx=0,ny=0;
+    if(e.name==='left'){cx=0; cy=t*h; nx=-1;}
+    else if(e.name==='right'){cx=w; cy=t*h; nx=1;}
+    else if(e.name==='top'){cy=0; cx=t*w; ny=-1;}
+    else {cy=h; cx=t*w; ny=1;}
+    if(e.name==='left'||e.name==='right'){ if(cy<r+0.06||cy>h-r-0.06) continue; }
+    else { if(cx<r+0.06||cx>w-r-0.06) continue; }
+    if(clash(cx,cy,r)) continue;
+    punches.push({type:'half',cx,cy,r,nx,ny,edge:e.name,crease:e.crease});
+  }
+  if(punches.filter(q=>q.type==='half').length<1 || punches.filter(q=>q.type==='full').length<1) return genPunch();
+
+  // 펼치기: 조각을 거울로 복제 (반원의 법선도 반사). 같은 자리·같은 법선은 중복이므로 안 넣는다.
+  let pieces=punches.map(q=>({...q}));
+  for(let i=dirs.length-1;i>=0;i--){
+    const mirror=FOLDS[dirs[i]].mirror;
+    const add=pieces.map(q=>{
+      const m=mirror({x:q.cx,y:q.cy});
+      const out={...q,cx:m.x,cy:m.y};
+      if(q.type==='half'){ if(dirs[i]==='v') out.nx=-q.nx; if(dirs[i]==='h') out.ny=-q.ny; }
+      return out;
+    });
+    for(const q of add){
+      if(!pieces.some(pp=>Math.hypot(pp.cx-q.cx,pp.cy-q.cy)<1e-9 && pp.type===q.type
+        && (pp.type==='full' || (pp.nx===q.nx && pp.ny===q.ny)))) pieces.push(q);
+    }
+  }
+  // 병합: 같은 중심·반지름에 법선이 반대인 반원 두 개 = 온전한 원
+  const merged=[], used=new Array(pieces.length).fill(false);
+  for(let i=0;i<pieces.length;i++){
+    if(used[i]) continue;
+    const a=pieces[i];
+    if(a.type==='full'){ merged.push({kind:'circle',cx:a.cx,cy:a.cy,r:a.r}); used[i]=true; continue; }
+    let mate=-1;
+    for(let j=i+1;j<pieces.length;j++){
+      if(used[j]) continue;
+      const b=pieces[j];
+      if(b.type==='half' && Math.hypot(a.cx-b.cx,a.cy-b.cy)<1e-9 && Math.abs(a.r-b.r)<1e-9
+        && a.nx===-b.nx && a.ny===-b.ny){ mate=j; break; }
+    }
+    used[i]=true;
+    if(mate>=0){ used[mate]=true; merged.push({kind:'circle',cx:a.cx,cy:a.cy,r:a.r}); }
+    else merged.push({kind:'semi',cx:a.cx,cy:a.cy,r:a.r,nx:a.nx,ny:a.ny});
+  }
+  // 남은 반원의 평평한 면은 반드시 펼친 종이의 가장자리에 있어야 한다 — 아니면 병합이 틀렸다는 뜻
+  for(const m of merged) if(m.kind==='semi'){
+    const onEdge=(m.nx===-1&&Math.abs(m.cx)<1e-9)||(m.nx===1&&Math.abs(m.cx-1)<1e-9)
+              ||(m.ny===-1&&Math.abs(m.cy)<1e-9)||(m.ny===1&&Math.abs(m.cy-1)<1e-9);
+    if(!onEdge) return genPunch();
+  }
+  const circles=merged.filter(m=>m.kind==='circle').length;
+  const semis=merged.filter(m=>m.kind==='semi').length;
+
+  const times=['','한 번','두 번'][dirs.length];
+  return {
+    kind:'punch', dirs, stages, punches, pieces, merged, circles, semis,
+    answer:`반원 ${semis}개, 원 ${circles}개`,
+    text:[`다음 그림과 같이 색종이를 ${times} 접은 후 펀치로 반원과 원을 뚫었습니다.`,
+          '색종이를 펼쳤을 때 반원과 원 모양이 각각 몇 개씩 나오는지 구하시오.'],
+    info:`접기 ${dirs.length}회 (${dirs.join(' → ')}) · 펀치 ${punches.length}개 → 반원 ${semis}·원 ${circles}`,
+    src:''
+  };
+}
+// 독립 재검산: 펼친 조각들을 격자에 구멍으로 새기고, 덩어리를 세어
+// 종이 가장자리에 닿은 것은 반원, 안쪽 것은 원으로 분류한다.
+function countPunchRaster(pieces, M){
+  const hole=new Uint8Array(M*M);
+  for(let j=0;j<M;j++) for(let i=0;i<M;i++){
+    const x=(i+0.5)/M, y=(j+0.5)/M;
+    for(const q of pieces){
+      if(Math.hypot(x-q.cx,y-q.cy)>=q.r) continue;
+      if(q.type==='half' && ((x-q.cx)*q.nx+(y-q.cy)*q.ny)>0) continue;  // 법선 쪽 반은 종이 밖
+      hole[j*M+i]=1; break;
+    }
+  }
+  const seen=new Uint8Array(M*M); let circles=0, semis=0;
+  for(let s0=0;s0<M*M;s0++){
+    if(!hole[s0]||seen[s0]) continue;
+    let touches=false; const stack=[s0]; seen[s0]=1;
+    while(stack.length){
+      const v=stack.pop(), vi=v%M, vj=(v/M)|0;
+      if(vi===0||vj===0||vi===M-1||vj===M-1) touches=true;
+      for(const wv of [v-1,v+1,v-M,v+M]){
+        if(wv<0||wv>=M*M) continue;
+        const wi=wv%M;
+        if(Math.abs(wi-vi)>1) continue;
+        if(hole[wv]&&!seen[wv]){seen[wv]=1; stack.push(wv);}
+      }
+    }
+    if(touches) semis++; else circles++;
+  }
+  return {circles, semis};
+}
+
+function renderPunch(ctx,d){
+  header(ctx, d.text);
+  const n=d.stages.length, size=170, gap=52, baseY=150;
+  let x=50;
+  d.stages.forEach((stage,i)=>{
+    drawPoly(ctx, stage.poly, x, baseY, size);
+    if(stage.fold){
+      drawCrease(ctx, foldSegment(stage.poly, stage.fold), x, baseY, size);
+      drawFoldArrow(ctx, stage.poly, stage.fold, x, baseY, size);
+    } else {
+      for(const q of d.punches){
+        ctx.fillStyle='#fff'; ctx.strokeStyle='#8a8a94'; ctx.lineWidth=1.8;
+        if(q.type==='full'){
+          ctx.beginPath(); ctx.arc(x+q.cx*size, baseY+q.cy*size, q.r*size, 0, Math.PI*2);
+          ctx.fill(); ctx.stroke();
+        } else {
+          // 평평한 면이 가장자리에 붙은 반원 물림 — 안쪽 반만 그린다
+          const a0=Math.atan2(q.ny,q.nx);
+          ctx.beginPath();
+          ctx.arc(x+q.cx*size, baseY+q.cy*size, q.r*size, a0+Math.PI/2, a0+Math.PI*1.5);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(x+q.cx*size, baseY+q.cy*size, q.r*size, a0+Math.PI/2, a0+Math.PI*1.5);
+          ctx.stroke();
+        }
+      }
+    }
+    x+=size+14;
+    if(i<n-1){ drawStepArrow(ctx, x, baseY+size/2); x+=gap; }
+  });
+}
+
+/* ===== 유형 9: 목표 합이 되게 색칠하기 (역방향) =====
+   수가 보이도록 "뒤로" 두 번 접은 2x2에서, 잘라낸 수의 합이 목표가 되도록
+   색칠할 칸을 학생이 고른다. 접은 칸 하나의 궤도(거울 네 칸) 합을 S라 하면
+   목표는 고른 칸들의 S 합 — 15가지 부분집합 중 목표를 만드는 답이 하나뿐일 때만 낸다. */
+function numIga(n){ return [1,3,6,7,8,0].includes(n%10) ? '이' : '가'; }
+function genNumInverse(){
+  const N=4;
+  const grid=Array.from({length:N},()=>Array.from({length:N},()=>R(1,3)));
+  const pr=pick([0,2]), pc=pick([0,2]);          // 뒤로 접어 남는(보이는) 사분면
+  const firstFold=pick(['h','v']);
+  // 접은 칸 (r,c)의 궤도 합
+  const S=[[0,0],[0,0]];
+  for(let r=0;r<2;r++) for(let c=0;c<2;c++){
+    const gr=pr+r, gc=pc+c;
+    S[r][c]=grid[gr][gc]+grid[gr][3-gc]+grid[3-gr][gc]+grid[3-gr][3-gc];
+  }
+  // 답 부분집합(1~2칸)을 고르고, 그 합을 만드는 부분집합이 유일한지 전수 확인
+  const cells=[{r:0,c:0},{r:0,c:1},{r:1,c:0},{r:1,c:1}];
+  const answerSet=shuffleArr(cells).slice(0, R(1,2));
+  const target=answerSet.reduce((t,q)=>t+S[q.r][q.c],0);
+  let matches=0;
+  for(let mask=1; mask<16; mask++){
+    let sum=0;
+    cells.forEach((q,i)=>{ if(mask&(1<<i)) sum+=S[q.r][q.c]; });
+    if(sum===target) matches++;
+  }
+  if(matches!==1) return genNumInverse();
+
+  const posName=(q)=>`${q.r===0?'위':'아래'}쪽 ${q.c===0?'왼':'오른'}쪽`;
+  return {
+    kind:'num-inverse', grid, pr, pc, firstFold, S, answerSet, target,
+    answer:`접은 모양의 ${answerSet.map(posName).join('과 ')} 칸`,
+    text:[`다음과 같이 수가 쓰여 있는 색종이를 두 번 접은 후 접은 선을 따라 잘라냈습니다. 잘라낸 부분에 쓰인 수의`,
+          `합이 ${target}${numIga(target)} 되려면 어떤 부분을 잘라야 하는지 두 번 접은 모양에 색칠하시오. (단, 수가 보이도록 뒤로 접습니다.)`],
+    info:`사분면 (${pr},${pc}) · 궤도 합 ${S.flat().join('·')} · 목표 ${target} · 답 ${answerSet.map(posName).join(', ')}`,
+    src:''
+  };
+}
+// 직사각형 숫자 격자 (중간 단계가 2x4라 정사각 전용 drawNumberGrid를 못 쓴다)
+function drawCellsRect(ctx, rows, ox, oy, cell){
+  const H=rows.length, W=rows[0].length;
+  ctx.fillStyle=PAPER; ctx.fillRect(ox,oy,W*cell,H*cell);
+  ctx.strokeStyle='#e0aaa4'; ctx.lineWidth=1; ctx.setLineDash([4,3]);
+  for(let k=1;k<W;k++){ctx.beginPath();ctx.moveTo(ox+k*cell,oy);ctx.lineTo(ox+k*cell,oy+H*cell);ctx.stroke();}
+  for(let k=1;k<H;k++){ctx.beginPath();ctx.moveTo(ox,oy+k*cell);ctx.lineTo(ox+W*cell,oy+k*cell);ctx.stroke();}
+  ctx.setLineDash([]);
+  ctx.font='600 '+Math.round(cell*0.5)+'px sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillStyle='#333';
+  for(let r=0;r<H;r++) for(let c=0;c<W;c++) ctx.fillText(String(rows[r][c]), ox+c*cell+cell/2, oy+r*cell+cell/2+1);
+  ctx.strokeStyle=PAPER_EDGE; ctx.lineWidth=2.4; ctx.strokeRect(ox,oy,W*cell,H*cell);
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+}
+function renderNumInverse(ctx,d){
+  header(ctx, d.text);
+  const cell=46, baseY=150;
+  let x=56;
+  // 1) 원본 4x4 + 접는선
+  drawCellsRect(ctx, d.grid, x, baseY, cell);
+  ctx.setLineDash([7,5]); ctx.strokeStyle=CREASE; ctx.lineWidth=1.8;
+  ctx.beginPath(); ctx.moveTo(x+2*cell,baseY); ctx.lineTo(x+2*cell,baseY+4*cell); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x,baseY+2*cell); ctx.lineTo(x+4*cell,baseY+2*cell); ctx.stroke();
+  ctx.setLineDash([]);
+  // 첫 접기 말림 화살표 — 접혀 나가는 반쪽에서 남는 반쪽으로
+  if(d.firstFold==='h'){
+    const fromY = d.pr===0 ? baseY+3*cell : baseY+cell;
+    const toY   = d.pr===0 ? baseY+cell   : baseY+3*cell;
+    edgeCurl(ctx, x-12, fromY, x-12, toY, x-28, baseY+2*cell);
+  } else {
+    const fromX = d.pc===0 ? x+3*cell : x+cell;
+    const toX   = d.pc===0 ? x+cell   : x+3*cell;
+    edgeCurl(ctx, fromX, baseY-12, toX, baseY-12, x+2*cell, baseY-28);
+  }
+  x+=4*cell+22; drawStepArrow(ctx, x, baseY+2*cell); x+=58;
+  // 2) 한 번 접은 중간 — 뒤로 접어 수가 보인다
+  let mid;
+  if(d.firstFold==='h') mid=[d.grid[d.pr], d.grid[d.pr+1]];
+  else mid=d.grid.map(row=>[row[d.pc], row[d.pc+1]]);
+  const midY = d.firstFold==='h' ? baseY+cell : baseY;
+  drawCellsRect(ctx, mid, x, midY, cell);
+  // 둘째 접기 말림 화살표
+  if(d.firstFold==='h'){
+    const fromX = d.pc===0 ? x+3*cell : x+cell;
+    const toX   = d.pc===0 ? x+cell   : x+3*cell;
+    edgeCurl(ctx, fromX, midY-12, toX, midY-12, x+2*cell, midY-28);
+  } else {
+    const fromY = d.pr===0 ? baseY+3*cell : baseY+cell;
+    const toY   = d.pr===0 ? baseY+cell   : baseY+3*cell;
+    edgeCurl(ctx, x-12, fromY, x-12, toY, x-28, baseY+2*cell);
+  }
+  x+=(d.firstFold==='h'?4:2)*cell+22; drawStepArrow(ctx, x, baseY+2*cell); x+=58;
+  // 3) 두 번 접은 2x2 — 학생이 색칠할 판. 답은 표시하지 않는다.
+  const packet=[[d.grid[d.pr][d.pc], d.grid[d.pr][d.pc+1]],[d.grid[d.pr+1][d.pc], d.grid[d.pr+1][d.pc+1]]];
+  drawCellsRect(ctx, packet, x, baseY+cell, cell+8);
+}
+
+/* ===== 유형 10: 접어 자르고 펼친 모양 (교재 37~38쪽) =====
+   두 번 접은 2x2 조각의 모서리 삼각형을 잘라내고 펼친 모양을 고른다.
+   답은 잘린 조각을 거울로 펼친 것. 오답은 실제 오개념으로 만든다:
+   ①반사를 하나 빠뜨림 ②거울 대신 평행이동(같은 방향 네 개) ③접힌 조각 안에서 위치가 어긋남.
+   정답 판정은 거울 펼치기와 별개로 "점을 접어 넣어 잘린 삼각형에 드는지"로 재검산한다. */
+function mirrorPoly(poly, dir){ const m=FOLDS[dir].mirror; return poly.map(pt=>m(pt)); }
+function shiftPoly(poly, dx, dy){ return poly.map(pt=>({x:pt.x+dx, y:pt.y+dy})); }
+
+// 점 p를 접기 순서대로 접어 넣는다(남는 쪽으로 반사). 펼친 뒤 어디가 잘렸는지 독립 판정용.
+function foldPointIn(p, dirs){
+  let q={...p};
+  for(const d of dirs){ if(FOLDS[d].keep(q) < 0) q=FOLDS[d].mirror(q); }
+  return q;
+}
+function rasterMask(polys, M){
+  const mask=new Uint8Array(M*M);
+  for(let j=0;j<M;j++) for(let i=0;i<M;i++){
+    const pt={x:(i+0.5)/M, y:(j+0.5)/M};
+    for(const poly of polys) if(inPoly(poly,pt)){ mask[j*M+i]=1; break; }
+  }
+  return mask;
+}
+function maskDiff(a,b){ let n=0; for(let i=0;i<a.length;i++) if(a[i]!==b[i]) n++; return n; }
+
+function genUnfoldShape(){
+  const dirs = pick([['h','v'],['v','h']]);         // 남는 조각은 늘 왼쪽 위 [0,.5]x[0,.5]
+  const W=0.5;
+  const L=0.2+Math.random()*0.14;                   // 삼각형 다리 길이
+  // 접힌 조각의 네 모서리 중 하나에서 직각삼각형을 잘라낸다
+  const corner=pick(['tl','tr','bl','br']);
+  const cut = corner==='tl' ? [{x:0,y:0},{x:L,y:0},{x:0,y:L}]
+            : corner==='tr' ? [{x:W,y:0},{x:W,y:L},{x:W-L,y:0}]
+            : corner==='bl' ? [{x:0,y:W},{x:L,y:W},{x:0,y:W-L}]
+            :                 [{x:W,y:W},{x:W-L,y:W},{x:W,y:W-L}];
+
+  // 정답: 거울로 펼치기
+  const unfold=(polys)=>{
+    let cur=polys;
+    for(let i=dirs.length-1;i>=0;i--) cur=cur.concat(cur.map(pl=>mirrorPoly(pl, dirs[i])));
+    return cur;
+  };
+  const correct=unfold([cut]);
+
+  // 오답 후보
+  const wrongOnlyOne=[cut, mirrorPoly(cut, dirs[1])];                       // 반사 하나 빠뜨림
+  const wrongShift=[cut, shiftPoly(cut,W,0), shiftPoly(cut,0,W), shiftPoly(cut,W,W)]; // 평행이동
+  const other=pick(['tl','tr','bl','br'].filter(k=>k!==corner));
+  const cut2 = other==='tl' ? [{x:0,y:0},{x:L,y:0},{x:0,y:L}]
+             : other==='tr' ? [{x:W,y:0},{x:W,y:L},{x:W-L,y:0}]
+             : other==='bl' ? [{x:0,y:W},{x:L,y:W},{x:0,y:W-L}]
+             :                [{x:W,y:W},{x:W-L,y:W},{x:W,y:W-L}];
+  const wrongCorner=unfold([cut2]);                                          // 다른 모서리를 자른 모양
+
+  const M=181;
+  const mCorrect=rasterMask(correct,M);
+  const cands=[wrongOnlyOne, wrongShift, wrongCorner]
+    .filter(w=>maskDiff(rasterMask(w,M), mCorrect) > M*M*0.01);              // 눈에 띄게 달라야 오답이다
+  if(cands.length<3) return genUnfoldShape();
+
+  // 독립 재검산: 점을 접어 넣어 삼각형에 드는지로 정답 마스크를 다시 만든다
+  const mFold=new Uint8Array(M*M);
+  for(let j=0;j<M;j++) for(let i=0;i<M;i++){
+    const q=foldPointIn({x:(i+0.5)/M, y:(j+0.5)/M}, dirs);
+    if(inPoly(cut,q)) mFold[j*M+i]=1;
+  }
+  if(maskDiff(mFold, mCorrect) > M*M*0.004) return genUnfoldShape();          // 경계 픽셀 오차만 허용
+
+  const options=shuffleArr([{polys:correct,ok:true},...cands.map(w=>({polys:w,ok:false}))]);
+  return {
+    kind:'unfold-shape', dirs, cut, corner, options,
+    answer:`${'①②③④'[options.findIndex(o=>o.ok)]}`,
+    text:['색종이를 두 번 접은 후 칠해진 부분을 잘라내었습니다.',
+          '남은 부분을 펼쳤을 때의 그림으로 알맞은 것을 고르시오.'],
+    info:`접기 ${dirs.join(' → ')} · ${corner} 모서리 삼각형 · 정답 ${'①②③④'[options.findIndex(o=>o.ok)]}`,
+    src:''
+  };
+}
+
+function renderUnfoldShape(ctx,d){
+  header(ctx, d.text);
+  const size=104, baseY=132;
+  let x=48;
+  // 1) 원본 + 첫 접기
+  drawPoly(ctx, [{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}], x, baseY, size);
+  const sq=[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}];
+  drawCrease(ctx, foldSegment(sq, d.dirs[0]), x, baseY, size);
+  drawFoldArrow(ctx, sq, d.dirs[0], x, baseY, size);
+  x+=size+10; drawStepArrow(ctx, x, baseY+size/2); x+=48;
+  // 2) 한 번 접힌 조각 + 둘째 접기
+  const half=clipHalfPlane(sq, FOLDS[d.dirs[0]].keep);
+  drawPoly(ctx, half, x, baseY, size);
+  drawCrease(ctx, foldSegment(half, d.dirs[1]), x, baseY, size);
+  drawFoldArrow(ctx, half, d.dirs[1], x, baseY, size);
+  x+=size+10; drawStepArrow(ctx, x, baseY+size/2); x+=48;
+  // 3) 두 번 접힌 2x2 + 잘라낼 삼각형 색칠
+  const quad=clipHalfPlane(half, FOLDS[d.dirs[1]].keep);
+  drawPoly(ctx, quad, x, baseY, size);
+  ctx.beginPath();
+  d.cut.forEach((pt,i)=>{const X=x+pt.x*size, Y=baseY+pt.y*size; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);});
+  ctx.closePath(); ctx.fillStyle=CUT; ctx.fill();
+
+  // 4) 보기 네 개 — 잘린 부분은 흰색으로 파낸다
+  ctx.fillStyle='#333'; ctx.font='600 15px sans-serif';
+  ctx.fillText('알맞은 것은?', 48, baseY+size+42);
+  let ox=210;
+  d.options.forEach((opt,k)=>{
+    const oy=baseY+size+22;
+    drawPoly(ctx, sq, ox, oy, size);
+    ctx.setLineDash([5,4]); ctx.strokeStyle=CREASE; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(ox+size/2,oy); ctx.lineTo(ox+size/2,oy+size); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ox,oy+size/2); ctx.lineTo(ox+size,oy+size/2); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#fff';
+    for(const poly of opt.polys){
+      ctx.beginPath();
+      poly.forEach((pt,i)=>{const X=ox+pt.x*size, Y=oy+pt.y*size; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);});
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.strokeStyle=PAPER_EDGE; ctx.lineWidth=2.2;
+    ctx.strokeRect(ox,oy,size,size);
+    ctx.fillStyle='#16417C'; ctx.font='700 17px sans-serif';
+    ctx.fillText('①②③④'[k], ox+size/2-8, oy+size+22);
+    ox+=size+58;
+  });
+}
+
+/* ===== 유형 5: 겹친 색종이 순서 (교재 35~36·44~46쪽) =====
+   같은 크기 정사각형 8장을 3x3 자리에 겹쳐 놓는다(가장자리 중앙 한 자리는 비움 — 교재 문법).
+   답이 유일하려면 "맨 위를 걷어내면 남은 것 중 온전히 보이는 종이가 늘 하나뿐"이어야 한다.
+   즉 맨 위를 뺀 모든 종이가 자기보다 위 종이 중 하나와 겹쳐야 한다. */
+function shuffleArr(list){
+  const a=[...list];
+  for(let i=a.length-1;i>0;i--){const j=R(0,i); [a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function genStack(askOrder){
+  const anchors=[];
+  for(let r=0;r<3;r++) for(let c=0;c<3;c++) anchors.push({r,c});
+  const dropEdge=[1,3,5,7][R(0,3)];                 // 가장자리 중앙 네 자리 중 하나를 비운다
+  const pos=anchors.filter((_,i)=>i!==dropEdge);    // 8자리, 종이 한 변=2, 판 전체=4x4
+  const labels=shuffleArr(['가','나','다','라','마','바','사','아']);
+  const over=(a,b)=>Math.abs(pos[a].r-pos[b].r)<2 && Math.abs(pos[a].c-pos[b].c)<2;
+
+  for(let attempt=0;attempt<800;attempt++){
+    const z=shuffleArr(pos.map((_,i)=>i));          // z[k] = 위에서 k번째 종이의 자리 번호
+    // 걷어내기 유일성: 바로 위 종이와 겹쳐야 한다. "위 종이 중 아무나"로는 부족하다 —
+    // 그 종이가 먼저 걷혀 나가면 중간 종이가 조기에 온전히 드러나 답이 두 갈래가 된다.
+    let ok=true;
+    for(let k=1;k<8;k++) if(!over(z[k], z[k-1])){ok=false;break;}
+    if(!ok) continue;
+    // 모든 종이에 라벨 놓을 보이는 지점이 있어야 한다 (내부 표본점 중 위 종이에 안 덮이고 가장 여유로운 곳)
+    const spots=[];
+    for(let k=0;k<8 && ok;k++){
+      const pp=pos[z[k]]; let best=null, bd=-1;
+      for(let i=1;i<=8;i++) for(let j=1;j<=8;j++){
+        const x=pp.c+i*2/9, y=pp.r+j*2/9;
+        let covered=false, clear=Infinity;
+        for(let m=0;m<k;m++){
+          const q=pos[z[m]];
+          if(x>q.c && x<q.c+2 && y>q.r && y<q.r+2){covered=true;break;}
+          const dx=Math.max(q.c-x, x-(q.c+2), 0), dy=Math.max(q.r-y, y-(q.r+2), 0);
+          clear=Math.min(clear, Math.hypot(dx,dy));
+        }
+        if(covered) continue;
+        const d=Math.min(clear, x-pp.c, pp.c+2-x, y-pp.r, pp.r+2-y);
+        if(d>bd){bd=d; best={x,y};}
+      }
+      if(!best || bd<0.12){ok=false;break;}         // 너무 비좁은 자리는 라벨이 안 읽힌다
+      spots.push(best);
+    }
+    if(!ok) continue;
+
+    const order=z.map(i=>labels[i]);                // 위 → 아래
+    const wantTop=Math.random()<0.3;                // 교재는 주로 '가장 밑'을 묻는다
+    return {
+      kind:'stack', pos, z, labels, spots, order, askOrder, wantTop,
+      answer: askOrder ? order.join(' → ') : (wantTop ? order[0] : order[7]),
+      text:['다음은 크기가 모두 같은 정사각형 모양의 색종이 8장을 겹쳐 놓은 것입니다.',
+            askOrder ? '가장 위에 있는 색종이부터 순서대로 쓰시오.'
+                     : (wantTop ? '가장 위에 놓인 색종이는 어느 것입니까?' : '가장 밑에 있는 색종이는 어느 것입니까?')],
+      info:`위에서부터 ${order.join(' ')}`,
+      src:''
+    };
+  }
+  return genStack(askOrder);                        // 이 배치에서 못 찾으면 자리부터 다시
+}
+
+function renderStack(ctx,d){
+  header(ctx, d.text);
+  const u=62, ox=470, oy=136;
+  // 아래 종이부터 그린다 — 위 종이의 흰 채움이 아래 경계를 지워 실제 가림과 같아진다
+  for(let k=7;k>=0;k--){
+    const p=d.pos[d.z[k]];
+    ctx.fillStyle='#fff';
+    ctx.fillRect(ox+p.c*u, oy+p.r*u, 2*u, 2*u);
+    ctx.strokeStyle='#3f7f9e'; ctx.lineWidth=2;
+    ctx.strokeRect(ox+p.c*u, oy+p.r*u, 2*u, 2*u);
+  }
+  ctx.font='700 21px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillStyle='#333';
+  for(let k=0;k<8;k++){
+    const sp=d.spots[k];
+    ctx.fillText(d.order[k], ox+sp.x*u, oy+sp.y*u);
+  }
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+}
+
+/* ===== 여러 번 접기: 마지막에 가장 위에 놓이는 수 ===== */
+function genFoldTop(difficulty){
+  const dims = difficulty==='easy' ? [2,4] : difficulty==='mid' ? [4,4] : [4,8];
+  const rows=dims[0], cols=dims[1];
+  const grid=Array.from({length:rows},()=>Array.from({length:cols},()=>R(1,9)));
+  let packets=grid.map((row,r)=>row.map((_,c)=>[{r,c}]));
+  const steps=[];
+  while(packets.length>1 || packets[0].length>1){
+    const canH=packets.length>1, canV=packets[0].length>1;
+    const axis=canH&&canV ? pick(['h','v']) : canH?'h':'v';
+    const direction=axis==='h' ? pick(['up','down']) : pick(['left','right']);
+    steps.push({rows:packets.length,cols:packets[0].length,direction});
+    if(axis==='h'){
+      const half=packets.length/2, next=[];
+      for(let r=0;r<half;r++){
+        const row=[];
+        for(let c=0;c<packets[0].length;c++){
+          const fixed=direction==='up'?packets[r][c]:packets[half+r][c];
+          const moving=direction==='up'?packets[packets.length-1-r][c]:packets[half-1-r][c];
+          row.push([...fixed,...moving.slice().reverse()]);
+        }
+        next.push(row);
+      }
+      packets=next;
+    }else{
+      const half=packets[0].length/2;
+      packets=packets.map(row=>Array.from({length:half},(_,c)=>{
+        const fixed=direction==='left'?row[c]:row[half+c];
+        const moving=direction==='left'?row[row.length-1-c]:row[half-1-c];
+        return [...fixed,...moving.slice().reverse()];
+      }));
+    }
+  }
+  const top=packets[0][0][packets[0][0].length-1];
+  return {kind:'fold-top',grid,steps,answer:grid[top.r][top.c],
+    text:[`앞면과 뒷면에 같은 수가 쓰인 종이를 그림의 순서대로 ${steps.length}번 접었습니다.`,
+          '가장 위에 놓이는 수를 구하세요.'],
+    info:`${rows}×${cols} 수 배열 · ${steps.length}번 접기 · 정답 ${grid[top.r][top.c]}`,src:''};
+}
+
+function renderFoldTop(ctx,d){
+  header(ctx,d.text);
+  const labels={up:'위로',down:'아래로',left:'왼쪽으로',right:'오른쪽으로'};
+  let x=42;
+  d.steps.forEach((step,i)=>{
+    const scale=Math.min(78/step.cols,58/step.rows), w=step.cols*scale, h=step.rows*scale;
+    const y=132+(62-h)/2;
+    ctx.fillStyle='#fff7f5';ctx.fillRect(x,y,w,h);ctx.strokeStyle=PAPER_EDGE;ctx.lineWidth=1.6;ctx.strokeRect(x,y,w,h);
+    ctx.setLineDash([4,3]);ctx.strokeStyle=CREASE;
+    if(step.direction==='up'||step.direction==='down'){
+      ctx.beginPath();ctx.moveTo(x,y+h/2);ctx.lineTo(x+w,y+h/2);ctx.stroke();
+    }else{
+      ctx.beginPath();ctx.moveTo(x+w/2,y);ctx.lineTo(x+w/2,y+h);ctx.stroke();
+    }
+    ctx.setLineDash([]);ctx.fillStyle=ARROW;ctx.font='700 12px sans-serif';ctx.textAlign='center';
+    ctx.fillText(labels[step.direction],x+w/2,y+h+18);
+    x+=w+34;if(i<d.steps.length-1)drawStepArrow(ctx,x-25,y+h/2);
+  });
+  ctx.fillStyle='#fff';ctx.strokeStyle='#8c9497';ctx.lineWidth=2;ctx.fillRect(x+8,140,44,44);ctx.strokeRect(x+8,140,44,44);
+  ctx.fillStyle='#333';ctx.font='800 24px sans-serif';ctx.fillText('?',x+30,169);
+  ctx.textAlign='left';
+  const cell=Math.min(42,270/d.grid.length,650/d.grid[0].length), gw=d.grid[0].length*cell, gh=d.grid.length*cell;
+  const gx=(1300-gw)/2, gy=255;
+  ctx.font=`600 ${Math.max(14,Math.round(cell*.42))}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+  for(let r=0;r<d.grid.length;r++)for(let c=0;c<d.grid[0].length;c++){
+    ctx.fillStyle='#fff';ctx.fillRect(gx+c*cell,gy+r*cell,cell,cell);ctx.strokeStyle='#69737a';ctx.lineWidth=1.2;ctx.strokeRect(gx+c*cell,gy+r*cell,cell,cell);
+    ctx.fillStyle='#28323a';ctx.fillText(String(d.grid[r][c]),gx+(c+.5)*cell,gy+(r+.5)*cell);
+  }
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';
+}
+
+/* ===== 렌더 공통 ===== */
+const PAPER='#f9c8c4', PAPER_EDGE='#e8968f', CREASE='#d4756c', ARROW='#c0392b', CUT='#b03a5b';
+
+function drawPoly(ctx, poly, ox, oy, size){
+  ctx.beginPath();
+  poly.forEach((p,i)=>{ const X=ox+p.x*size, Y=oy+p.y*size; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); });
+  ctx.closePath();
+  ctx.fillStyle=PAPER; ctx.fill();
+  ctx.strokeStyle=PAPER_EDGE; ctx.lineWidth=2.5; ctx.stroke();
+}
+function drawCrease(ctx, seg, ox, oy, size){
+  if(!seg) return;
+  ctx.setLineDash([7,6]); ctx.strokeStyle=CREASE; ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(ox+seg[0].x*size, oy+seg[0].y*size);
+  ctx.lineTo(ox+seg[1].x*size, oy+seg[1].y*size);
+  ctx.stroke(); ctx.setLineDash([]);
+}
+// 접히는 쪽 무게중심에서 그 거울점으로 넘어가는 굵은 호. 어느 쪽이 어디로 가는지 보여준다.
+function drawFoldArrow(ctx, poly, dir, ox, oy, size){
+  const {keep, mirror}=FOLDS[dir];
+  const away=clipHalfPlane(poly, p=>-keep(p));
+  if(away.length<3) return;
+  const from=centroid(away), to=mirror(from);
+  const sx=ox+from.x*size, sy=oy+from.y*size, ex=ox+to.x*size, ey=oy+to.y*size;
+  const nx=-(ey-sy), ny=ex-sx, len=Math.hypot(nx,ny)||1;
+  const cpx=(sx+ex)/2+nx/len*Math.min(38,size*0.22), cpy=(sy+ey)/2+ny/len*Math.min(38,size*0.22);
+  ctx.strokeStyle=ARROW; ctx.fillStyle=ARROW; ctx.lineWidth=6; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(sx,sy); ctx.quadraticCurveTo(cpx,cpy,ex,ey); ctx.stroke();
+  const ang=Math.atan2(ey-cpy, ex-cpx);
+  ctx.beginPath();
+  ctx.moveTo(ex+8*Math.cos(ang), ey+8*Math.sin(ang));
+  ctx.lineTo(ex-16*Math.cos(ang-0.5), ey-16*Math.sin(ang-0.5));
+  ctx.lineTo(ex-16*Math.cos(ang+0.5), ey-16*Math.sin(ang+0.5));
+  ctx.closePath(); ctx.fill();
+}
+function drawStepArrow(ctx,x,y){
+  ctx.strokeStyle='#95a5a6'; ctx.fillStyle='#95a5a6'; ctx.lineWidth=4;
+  ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+40,y); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x+40,y); ctx.lineTo(x+29,y-8); ctx.lineTo(x+29,y+8); ctx.closePath(); ctx.fill();
+}
+function drawHoles(ctx, holes, ox, oy, size, r){
+  for(const h of holes){
+    ctx.beginPath(); ctx.arc(ox+h.x*size, oy+h.y*size, r, 0, Math.PI*2);
+    ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=ARROW; ctx.lineWidth=2.2; ctx.stroke();
+  }
+}
+// 문항 번호. v4_2 시안이 교재 4번을 흉내 낸 '4'를 그대로 물려받아 유형과 무관하게
+// 늘 4번으로 찍히고 있었다. 랩에서는 "새 문제"를 누를 때마다 1부터 세어 올린다.
+let questionNumber = 0;
+function header(ctx, lines){
+  ctx.fillStyle='#16417C'; ctx.font='900 26px sans-serif';
+  ctx.fillText(String(questionNumber), 30, 46);
+  ctx.fillStyle='#333'; ctx.font='600 21px sans-serif';
+  lines.forEach((line,i)=>ctx.fillText(line, 66, 44+i*32));
+}
+
+/* ===== 렌더: 구멍 유형 ===== */
+function renderHole(ctx,d){
+  header(ctx, d.text);
+  const n=d.stages.length, size=n<=3?200:168, gap=n<=3?62:48, baseY=150;
+  let x=50;
+  d.stages.forEach((stage,i)=>{
+    drawPoly(ctx, stage.poly, x, baseY, size);
+    if(stage.fold){
+      drawCrease(ctx, foldSegment(stage.poly, stage.fold), x, baseY, size);
+      drawFoldArrow(ctx, stage.poly, stage.fold, x, baseY, size);
+    } else {
+      drawHoles(ctx, d.holes, x, baseY, size, size>180?13:11);
+    }
+    x+=size+14;
+    if(i<n-1){ drawStepArrow(ctx, x, baseY+size/2); x+=gap; }
+  });
+}
+
+function uniqueHolePoints(points){
+  const seen=new Set();
+  return points.filter(p=>{
+    const key=Math.round(p.x*10000)+','+Math.round(p.y*10000);
+    if(seen.has(key)) return false;
+    seen.add(key); return true;
+  });
+}
+
+function renderHoleSolution(ctx,d){
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+  ctx.fillStyle='#17345f'; ctx.font='900 24px sans-serif';
+  ctx.fillText('접은 순서를 거꾸로 펼쳐 구멍의 위치를 확인합니다.',38,48);
+  let points=d.holes.map(p=>({x:p.x,y:p.y}));
+  const panels=[{poly:d.stages[d.stages.length-1].poly,points:points.map(p=>({...p}))}];
+  for(let i=d.dirs.length-1;i>=0;i--){
+    points=uniqueHolePoints(points.concat(points.map(p=>FOLDS[d.dirs[i]].mirror(p))));
+    panels.push({poly:d.stages[i].poly,points:points.map(p=>({...p}))});
+  }
+  const size=panels.length>3?185:220, gap=panels.length>3?52:72, baseY=130;
+  let x=44;
+  panels.forEach((panel,i)=>{
+    drawPoly(ctx,panel.poly,x,baseY,size);
+    drawHoles(ctx,panel.points,x,baseY,size,size>200?12:10);
+    ctx.fillStyle='#b34b68'; ctx.font='800 18px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(panel.points.length+'개',x+size/2,baseY+size+30);
+    ctx.textAlign='left';
+    x+=size+12;
+    if(i<panels.length-1){
+      drawStepArrow(ctx,x,baseY+size/2); x+=gap;
+      ctx.fillStyle='#68766f'; ctx.font='700 14px sans-serif';
+      ctx.fillText('펼치기',x-gap+2,baseY+size/2+28);
+    }
+  });
+}
+
+/* ===== 렌더: 수 유형 — 교재 4단계 =====
+   [숫자판+접선+화살표1] → [접힌 중간(뒷면, 숫자 없음)+화살표2] → [접힌 2x2에 색칠] → [다시 펼친 숫자판] */
+function drawNumberGrid(ctx, grid, ox, oy, size){
+  const N=grid.length, cell=size/N;
+  // 종이 바탕
+  ctx.fillStyle=PAPER; ctx.fillRect(ox,oy,size,size);
+  // 칸 경계는 옅은 점선, 가운데 접는선 두 개는 진한 점선 (교재 문법)
+  ctx.strokeStyle='#e0aaa4'; ctx.lineWidth=1; ctx.setLineDash([4,3]);
+  for(let k=1;k<N;k++){
+    ctx.beginPath(); ctx.moveTo(ox+k*cell,oy); ctx.lineTo(ox+k*cell,oy+size); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ox,oy+k*cell); ctx.lineTo(ox+size,oy+k*cell); ctx.stroke();
+  }
+  ctx.setLineDash([7,5]); ctx.strokeStyle=CREASE; ctx.lineWidth=1.8;
+  ctx.beginPath(); ctx.moveTo(ox+size/2,oy); ctx.lineTo(ox+size/2,oy+size); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ox,oy+size/2); ctx.lineTo(ox+size,oy+size/2); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font='600 '+Math.round(cell*0.5)+'px sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillStyle='#333';
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++)
+    ctx.fillText(String(grid[r][c]), ox+c*cell+cell/2, oy+r*cell+cell/2+1);
+  ctx.strokeStyle=PAPER_EDGE; ctx.lineWidth=2.5; ctx.strokeRect(ox,oy,size,size);
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+}
+// 겹이 진 종이 느낌 — 뒤에 살짝 어긋난 테두리 하나
+function layeredRect(ctx, x, y, w, h){
+  ctx.strokeStyle='#e8c4bf'; ctx.lineWidth=2; ctx.strokeRect(x+3,y+3,w,h);
+  ctx.fillStyle='#fbdad6'; ctx.fillRect(x,y,w,h);
+  ctx.strokeStyle=PAPER_EDGE; ctx.lineWidth=2.2; ctx.strokeRect(x,y,w,h);
+}
+// 종이 가장자리를 넘어가는 작은 말림 화살표 (교재 문법)
+function edgeCurl(ctx, x1,y1, x2,y2, bulgeX, bulgeY){
+  ctx.strokeStyle=ARROW; ctx.fillStyle=ARROW; ctx.lineWidth=3.4; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.quadraticCurveTo(bulgeX,bulgeY,x2,y2); ctx.stroke();
+  const ang=Math.atan2(y2-bulgeY, x2-bulgeX);
+  ctx.beginPath();
+  ctx.moveTo(x2+6*Math.cos(ang), y2+6*Math.sin(ang));
+  ctx.lineTo(x2-11*Math.cos(ang-0.5), y2-11*Math.sin(ang-0.5));
+  ctx.lineTo(x2-11*Math.cos(ang+0.5), y2-11*Math.sin(ang+0.5));
+  ctx.closePath(); ctx.fill();
+}
+function renderNumber(ctx,d){
+  header(ctx, d.text);
+  const size=190, baseY=140, half=size/2;
+  let x=56;
+
+  // ── 1) 원본 숫자판 + 첫 접기(가로) 말림 화살표: 종이 옆 가장자리에서 접선을 넘는 작은 호
+  drawNumberGrid(ctx, d.grid, x, baseY, size);
+  const ex = d.vDir==='left' ? x+size+12 : x-12;   // 화살표를 붙일 쪽 (둘째 접기와 겹치지 않게 반대쪽)
+  if(d.hDir==='up') edgeCurl(ctx, ex, baseY+size*0.72, ex, baseY+size*0.30, ex+(d.vDir==='left'?16:-16), baseY+size/2);
+  else              edgeCurl(ctx, ex, baseY+size*0.28, ex, baseY+size*0.70, ex+(d.vDir==='left'?16:-16), baseY+size/2);
+  x+=size+34; drawStepArrow(ctx, x, baseY+size/2); x+=58;
+
+  // ── 2) 접힌 중간: 넓은 직사각형(뒷면, 숫자 없음) + 세로 접선 + 둘째 접기 말림 화살표
+  const midY = baseY + (d.hDir==='up' ? size*0.22 : size*0.28);
+  layeredRect(ctx, x, midY, size, half);
+  ctx.setLineDash([7,5]); ctx.strokeStyle=CREASE; ctx.lineWidth=1.8;
+  ctx.beginPath(); ctx.moveTo(x+size/2, midY+4); ctx.lineTo(x+size/2, midY+half-4); ctx.stroke();
+  ctx.setLineDash([]);
+  const cy = d.hDir==='up' ? midY-12 : midY+half+12;   // 접힌 열린 쪽 반대 가장자리에
+  if(d.vDir==='left') edgeCurl(ctx, x+size*0.72, cy, x+size*0.30, cy, x+size/2, cy+(d.hDir==='up'?-16:16));
+  else                edgeCurl(ctx, x+size*0.28, cy, x+size*0.70, cy, x+size/2, cy+(d.hDir==='up'?-16:16));
+  x+=size+22; drawStepArrow(ctx, x, baseY+size/2); x+=58;
+
+  // ── 3) 접힌 2x2 묶음(뒷면) + 색칠 칸
+  const py = baseY + size*0.25;
+  layeredRect(ctx, x, py, half, half);
+  ctx.setLineDash([6,4]); ctx.strokeStyle=CREASE; ctx.lineWidth=1.6;
+  ctx.beginPath(); ctx.moveTo(x+half/2, py+3); ctx.lineTo(x+half/2, py+half-3); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x+3, py+half/2); ctx.lineTo(x+half-3, py+half/2); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle=CUT;
+  for(const cell of d.cells) ctx.fillRect(x+cell.c*half/2, py+cell.r*half/2, half/2, half/2);
+  x+=half+22; drawStepArrow(ctx, x, baseY+size/2); x+=58;
+
+  // ── 4) 다시 펼친 숫자판 — 교재처럼 전부 보여준다 (잘린 칸을 지우지 않는다)
+  drawNumberGrid(ctx, d.grid, x, baseY, size);
+}
+
+/* ===== 진입 ===== */
+function render(d){
+  questionNumber += 1;
+  const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
+  if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='fold-top') renderFoldTop(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else if(d.kind==='pieces') renderPieces(ctx,d); else if(d.kind==='punch') renderPunch(ctx,d); else if(d.kind==='num-inverse') renderNumInverse(ctx,d); else if(d.kind==='unfold-shape') renderUnfoldShape(ctx,d); else renderNumber(ctx,d);
+  document.getElementById('info').textContent=d.info+' · 정답 '+d.answer;
+  document.getElementById('src').textContent=d.src;
+  return d;
+}
+function selectedDifficulty(){
+  return document.querySelector('input[name="difficulty"]:checked')?.value||'mid';
+}
+function buildProblem(mode,difficulty){
+  if(mode==='hole2')  return render(genHole(false,difficulty));
+  if(mode==='hole3d') return render(genHole(true,difficulty));
+  if(mode==='foldtop') return render(genFoldTop(difficulty));
+  if(mode==='numdiag')    return render(genDiagNumber(Math.random()<0.7,difficulty));
+  if(mode==='pieces')     return render(genPieces());
+  if(mode==='punch')      return render(genPunch());
+  if(mode==='numinv')     return render(genNumInverse());
+  if(mode==='unfoldshape') return render(genUnfoldShape());
+  if(mode==='stackfind')  return render(genStack(false));
+  if(mode==='stackorder') return render(genStack(true));
+  if(mode==='numsum') return render(genNumber(false,null,difficulty));
+  return render(genNumber(true,null,difficulty));
+}
+
+function answerText(problem){
+  if(problem.kind==='fold-top') return `${problem.answer}`;
+  if(problem.kind==='stack' && Array.isArray(problem.answer)) return problem.answer.join(' → ');
+  if(problem.kind==='punch' && typeof problem.answer==='object') return Object.entries(problem.answer).map(([k,v])=>`${k} ${v}개`).join(', ');
+  return String(problem.answer);
+}
+
+const modeSelect=document.getElementById('mode');
+const modeOptions=Array.from(modeSelect.options).map(option=>({value:option.value,label:option.textContent}));
+let selectedModes=[modeOptions[0].value];
+let previewMode=selectedModes[0];
+
+function syncModeButtons(){
+  const host=document.getElementById('modeButtons');
+  const selected=selectedModes.map(value=>modeOptions.find(option=>option.value===value)).filter(Boolean);
+  const rest=modeOptions.filter(option=>!selectedModes.includes(option.value));
+  host.innerHTML='';
+  selected.concat(rest).forEach(option=>{
+    const button=document.createElement('button');
+    const active=selectedModes.includes(option.value);
+    button.type='button';
+    button.className='mode-button'+(active?' active':'');
+    button.textContent=option.label;
+    button.setAttribute('aria-pressed',String(active));
+    button.addEventListener('click',()=>{
+      if(selectedModes.includes(option.value)){
+        if(selectedModes.length===1) return;
+        selectedModes=selectedModes.filter(value=>value!==option.value);
+        if(previewMode===option.value) previewMode=selectedModes[0];
+      }else{
+        selectedModes=[option.value].concat(selectedModes);
+        previewMode=option.value;
+      }
+      modeSelect.value=previewMode;
+      syncModeButtons();
+      generateSheet();
+    });
+    host.appendChild(button);
+  });
+}
+
+function solutionText(problem){
+  if(problem.kind==='hole'){
+    const counts=[problem.nHoles];
+    for(let i=0;i<problem.dirs.length;i++) counts.push(counts[counts.length-1]*2);
+    return `접은 순서를 거꾸로 펼치면 ${counts.join(' → ')}개가 됩니다. 따라서 ${problem.answer}개입니다.`;
+  }
+  if(problem.kind==='fold-top') return `마지막 접힌 묶음을 거꾸로 펼쳐 각 칸의 위아래 순서를 추적하면 맨 위의 수는 ${problem.answer}입니다.`;
+  if(problem.kind==='stack') return `겹친 부분의 위아래 관계를 차례로 비교하면 ${answerText(problem)}입니다.`;
+  if(problem.kind==='punch') return `접힌 선을 기준으로 구멍을 대칭 이동해 펼친 뒤 모양별로 세면 ${answerText(problem)}입니다.`;
+  if(problem.kind==='pieces') return `접힌 종이의 선과 자른 선이 만나는 위치를 모두 펼쳐 세면 ${answerText(problem)}입니다.`;
+  return `접는 방향에 따라 겹치는 칸을 대응시켜 계산하면 정답은 ${answerText(problem)}입니다.`;
+}
+
+function solutionImage(problem,problemImage){
+  if(problem.kind!=='hole') return problemImage;
+  const canvas=document.getElementById('cv');
+  renderHoleSolution(canvas.getContext('2d'),problem);
+  return canvas.toDataURL('image/jpeg',.92);
+}
+
+function previewProblem(){
+  questionNumber=0;
+  modeSelect.value=previewMode;
+  return buildProblem(previewMode,selectedDifficulty());
+}
+
+function pageHtml(items,pageNo,totalPages,title,answers){
+  return `<section class="sheet-page${answers?' answer-page':''}"><header class="sheet-head"><h2>${title}${answers?' · 정답과 풀이':''}</h2><div class="sheet-meta">${pageNo} / ${totalPages}</div></header><div class="problem-grid">${items.map(item=>`<article class="problem-card"><img src="${answers?item.solutionImage:item.image}" alt="${item.no}번 색종이 접기 문제"><div class="answer-line">${answers?`정답: <span class="answer-value">${item.answer}</span>`:'답: __________'}</div>${answers?`<div class="solution-text"><strong>${item.no}번 풀이</strong> ${item.solution}</div>`:''}</article>`).join('')}</div></section>`;
+}
+
+function generateSheet(){
+  const difficulty=selectedDifficulty();
+  const count=Number(document.getElementById('count').value)||10;
+  const labels=selectedModes.map(value=>modeOptions.find(option=>option.value===value)?.label).filter(Boolean);
+  const title=labels.length===1?labels[0]:`${labels.length}개 유형 혼합`;
+  const canvas=document.getElementById('cv');
+  const items=[];
+  const modeQueue=Array.from({length:count},(_,i)=>selectedModes[i%selectedModes.length]);
+  for(let i=modeQueue.length-1;i>0;i--){ const j=R(0,i); [modeQueue[i],modeQueue[j]]=[modeQueue[j],modeQueue[i]]; }
+  for(let i=0;i<count;i++){
+    questionNumber=i;
+    const mode=modeQueue[i];
+    const problem=buildProblem(mode,difficulty);
+    const image=canvas.toDataURL('image/jpeg',.9);
+    items.push({no:i+1,problem,answer:answerText(problem),solution:solutionText(problem),image,solutionImage:solutionImage(problem,image)});
+  }
+  const perPage=3, pages=[];
+  const pageCount=Math.ceil(items.length/perPage);
+  for(let i=0;i<items.length;i+=perPage) pages.push(pageHtml(items.slice(i,i+perPage),i/perPage+1,pageCount,`GFIELD 색종이 접기 · ${title}`,false));
+  if(document.getElementById('answers').checked){
+    const answerPerPage=6, answerPages=Math.ceil(items.length/answerPerPage);
+    for(let i=0;i<items.length;i+=answerPerPage) pages.push(pageHtml(items.slice(i,i+answerPerPage),i/answerPerPage+1,answerPages,`GFIELD 색종이 접기 · ${title}`,true));
+  }
+  document.getElementById('sheetRoot').innerHTML=pages.join('');
+  previewProblem();
+}
+/* HF variation 어댑터: machineReadable → 엔진 파라미터, 확정 재현 */
+const HF_FOLD_MAP = { vertical_half:'v', horizontal_half:'h',
+                      diagonal_main:'d1', diagonal_anti:'d2' };
+
+function hfBuildHole(mr){
+  const dirs = (mr.foldSequence||[]).map(f=>HF_FOLD_MAP[f]||f);
+  const nHoles = mr.punchCount || 1;
+  let poly=[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}];
+  const stages=[];
+  for(const d of dirs){ stages.push({poly, fold:d}); poly=clipHalfPlane(poly, FOLDS[d].keep); }
+  stages.push({poly, fold:null});
+  const holes=[]; const cx=centroid(poly); const spread=0.12;
+  for(let i=0;i<nHoles;i++){
+    const ang=(i/nHoles)*Math.PI*2;
+    holes.push({x:Math.min(0.9,Math.max(0.1,cx.x+Math.cos(ang)*spread*(nHoles>1?1:0))),
+                y:Math.min(0.9,Math.max(0.1,cx.y+Math.sin(ang)*spread*(nHoles>1?1:0)))});
+  }
+  let pts=holes.map(h=>({...h}));
+  for(let i=dirs.length-1;i>=0;i--){
+    const mirror=FOLDS[dirs[i]].mirror; const next=[...pts];
+    for(const p of pts){ const r=mirror(p);
+      if(!next.some(q=>Math.hypot(q.x-r.x,q.y-r.y)<1e-6)) next.push(r); }
+    pts=next;
+  }
+  const times=['','한 번','두 번','세 번'][dirs.length];
+  const diagonal = dirs.some(d=>d==='d1'||d==='d2');
+  return { kind:'hole', dirs, stages, holes, unfolded:pts, nHoles, answer:pts.length,
+    text:[`아래와 같이 색종이를 ${diagonal?'대각선을 따라':'반으로'} ${times} 접은 다음 구멍을 ${nHoles}개 뚫었습니다.`,
+          '색종이를 펼쳤을 때, 구멍은 모두 몇 개입니까?'],
+    info:`접기 ${dirs.length}회 · 구멍 ${nHoles}개`, src:'' };
+}
+function hfBuildNumber(mr){
+  const grid = mr.grid?.values || mr.grid;
+  const hDir = mr.hDir || 'up', vDir = mr.vDir || 'left';
+  return genNumber(false, { grid, hDir, vDir, cell:{r:0,c:0} });
+}
+function hfRenderVariation(variation){
+  const q = variation.baseQuestionId, mr = variation.machineReadable;
+  let d;
+  if(q==='q12') d = hfBuildHole(mr);
+  else if(q==='q11') d = hfBuildNumber(mr);
+  else { console.warn('미지원 유형', q); return; }
+  render(d); return d;
+}
+window.hfRenderVariation = hfRenderVariation;
+document.querySelectorAll('input[name="difficulty"]').forEach(input=>input.addEventListener('change',generateSheet));
+document.getElementById('count').addEventListener('change',generateSheet);
+document.getElementById('answers').addEventListener('change',generateSheet);
+syncModeButtons();
+previewProblem();
+generateSheet();
+</script>
+</body>
+</html>

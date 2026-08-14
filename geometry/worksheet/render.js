@@ -248,15 +248,15 @@
     tunnels.forEach((t) => {
       if (t.axis === "y") {
         // vertical shaft at (x=a, z=b): opening visible from the top face.
-        svg += polygon(quadY(t.a, boxH, t.b, u), "#ffffff", "#444");
+        svg += polygon(quadY(t.a, boxH, t.b, u), "#dce9f2", "#173a59");
       } else if (t.axis === "x") {
         // horizontal shaft at (y=a, z=b) along x: reaches the right face x=width.
-        svg += polygon(quadX(width, t.a, t.b, u), "#ffffff", "#444");
+        svg += polygon(quadX(width, t.a, t.b, u), "#c5d8e6", "#173a59");
       } else {
         // shaft at (x=a, y=b) along z: its opening shows on the viewer-facing
         // z face, which in this projection is the z=depth plane (see the
         // painter's-algorithm comment — +z moves toward the viewer).
-        svg += polygon(quadZ(t.a, t.b, depth, u), "#ffffff", "#444");
+        svg += polygon(quadZ(t.a, t.b, depth, u), "#e8f1f7", "#173a59");
       }
     });
     return wrapSvg(svg, isoBBox(width, depth, boxH, u));

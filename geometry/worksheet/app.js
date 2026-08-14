@@ -50,12 +50,16 @@
     });
   }
 
-  function onTypesChanged() {
+  function onTypesChanged(event) {
     const grid = document.getElementById("typeGrid");
     const picked = Array.from(grid.querySelectorAll('input[type="checkbox"]:checked')).map((cb) => cb.value);
     // Never allow zero types selected — fall back to the previous selection.
     state.types = picked.length ? picked : state.types;
     if (!picked.length) syncTypeCheckboxes();
+    if (event && event.target.checked) {
+      state.previewType = event.target.value;
+      state.previewSeed = freshSeed();
+    }
     regenerate();
   }
 
@@ -160,7 +164,7 @@
       return '<div class="ws-answer-line">전체 ______ 개 − 보이는 ______ 개 = 보이지 않는 ______ 개</div>';
     }
     if (p.type === "VM") return '<div class="ws-answer-line">답: 최대 ______ 개, 최소 ______ 개</div>';
-    if (p.type === "PN") return '<div class="ws-answer-line">답: ① ______ 개 &nbsp; ② ______ 개 &nbsp; ③ ______ 개 &nbsp; ④ ______ 개</div>';
+    if (p.type === "PN") return '<div class="ws-answer-line">답: 색칠된 면은 모두 ______ 면</div>';
     if (p.type === "SQ" && p.answer.mode === "which") return '<div class="ws-answer-line">답: ______ 번째</div>';
     return '<div class="ws-answer-line">답: ______ 개</div>';
   }
@@ -191,7 +195,7 @@
       case "IN": return p.answer.hidden + "개 (전체 " + p.answer.total + "개 − 보이는 " + p.answer.visible + "개)";
       case "FB": return p.answer.need + "개";
       case "CU": return p.answer.need + "개";
-      case "PN": return "① " + p.answer.three + " ② " + p.answer.two + " ③ " + p.answer.one + " ④ " + p.answer.zero;
+      case "PN": return p.answer.faces + "면";
       case "PF": return p.answer.faces + "개";
       case "BW": return p.answer.count + "개";
       case "HL": return p.answer.remaining + "개";
@@ -262,9 +266,12 @@
   // reshuffles the sample the teacher is studying.
   // ---------------------------------------------------------------------
   function previewTypeList() {
-    // Only offer the types that are actually selected; keep GEN.TYPES' order
-    // so the chips line up with the checkbox grid.
-    return GEN.TYPES.filter((t) => state.types.indexOf(t.code) !== -1);
+    const selected = GEN.TYPES.filter((t) => state.types.indexOf(t.code) !== -1);
+    return selected.sort((a, b) => {
+      if (a.code === state.previewType) return -1;
+      if (b.code === state.previewType) return 1;
+      return state.types.indexOf(a.code) - state.types.indexOf(b.code);
+    });
   }
 
   function ensurePreviewType() {
@@ -286,7 +293,11 @@
       '" data-type="' + t.code + '">' + escapeHtml(t.label) + "</button>"
     )).join("");
     tabs.querySelectorAll("button").forEach((b) => {
-      b.addEventListener("click", () => { state.previewType = b.dataset.type; renderPreview(); });
+      b.addEventListener("click", () => {
+        state.previewType = b.dataset.type;
+        state.previewSeed = freshSeed();
+        renderPreview();
+      });
     });
 
     if (!state.previewType) {

@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { levels, validateLevels, viewsOfHeightGrid, viewsMatch } from "./levels.js?v=crystal-2";
-import { text } from "./i18n.js?v=crystal-2";
+import { levels, validateLevels, viewsOfHeightGrid, viewsMatch } from "./levels.js?v=crystal-4";
+import { text } from "./i18n.js?v=crystal-3";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
 
@@ -221,9 +221,13 @@ function loadProblem() {
 // Read-only view cards (the goal) + interactive height-build grid
 // ---------------------------------------------------------------------------
 function renderCards() {
-  const target = currentProblem().target;
+  const problem = currentProblem();
+  const target = problem.target;
   ["front", "side", "top"].forEach((name) => {
     const el = cardEl[name];
+    const active = problem.activeViews.includes(name);
+    el.closest(".card-block").hidden = !active;
+    if (!active) return;
     const view = target[name];
     el.classList.remove("mismatch", "matched");
     el.style.setProperty("--cols", String(view[0].length));
@@ -296,10 +300,11 @@ function checkAnswer() {
     return;
   }
   const mine = viewsOfHeightGrid(state.build, problem.grid, problem.maxH);
-  if (viewsMatch(mine, problem.target)) { completeProblem(); return; }
+  if (viewsMatch(mine, problem.target, problem.activeViews)) { completeProblem(); return; }
   // Show which of the three cards is not yet satisfied.
   state.wrongAttempts += 1;
   ["front", "side", "top"].forEach((name) => {
+    if (!problem.activeViews.includes(name)) return;
     const ok = JSON.stringify(mine[name]) === JSON.stringify(problem.target[name]);
     cardEl[name].classList.toggle("matched", ok);
     cardEl[name].classList.toggle("mismatch", !ok);
@@ -560,8 +565,8 @@ function makeBoardLabelPlane(label) {
 // ---------------------------------------------------------------------------
 // View cards rendered onto the case walls/floor themselves (in addition to the
 // 2D reference cards in the side panel). `view` is a 2D 0/1 grid (a row of the
-// problem's target.front/side/top); `cornerLabel` is the literal Korean glyph
-// (앞/옆/위) baked into the corner so the card still identifies itself no
+// problem's target.front/side/top); `cornerLabel` uses the active locale and
+// is baked into the corner so the card still identifies itself no
 // matter how the camera is orbited.
 function makeCardCanvas(view, cornerLabel) {
   const rows = view.length;
@@ -686,16 +691,20 @@ function renderModel() {
   // 앞 (front view) → far -z wall (the back wall as seen by the default camera),
   // reading as the backdrop behind the stack. No rotation needed: a
   // PlaneGeometry's default normal already faces +z, i.e. toward the interior.
-  const frontCard = makeCardPlane(problem.target.front, "앞", width, maxH);
-  frontCard.position.set(0, maxH / 2, -caseHalfZ + wallNudge);
-  modelGroup.add(frontCard);
+  if (problem.activeViews.includes("front")) {
+    const frontCard = makeCardPlane(problem.target.front, text(state.lang, "front"), width, maxH);
+    frontCard.position.set(0, maxH / 2, -caseHalfZ + wallNudge);
+    modelGroup.add(frontCard);
+  }
 
   // 옆 (side view) → far -x wall (the left wall). Rotating +90° about Y turns
   // the plane's default +z normal into +x, facing the interior/camera.
-  const sideCard = makeCardPlane(problem.target.side, "옆", depth, maxH);
-  sideCard.rotation.y = Math.PI / 2;
-  sideCard.position.set(-caseHalfX + wallNudge, maxH / 2, 0);
-  modelGroup.add(sideCard);
+  if (problem.activeViews.includes("side")) {
+    const sideCard = makeCardPlane(problem.target.side, text(state.lang, "side"), depth, maxH);
+    sideCard.rotation.y = Math.PI / 2;
+    sideCard.position.set(-caseHalfX + wallNudge, maxH / 2, 0);
+    modelGroup.add(sideCard);
+  }
 
   // 위 (top view) → the case floor, face up. Rotating -90° about X (same
   // rotation as the wood `floor` mesh above) turns the default +z normal
@@ -703,10 +712,12 @@ function renderModel() {
   // — placing it at the spec's literal y≈0.005 would hide it completely
   // beneath those existing opaque meshes, so it goes just above them instead,
   // still functionally "on the floor" and still beneath the build cubes.
-  const topCard = makeCardPlane(problem.target.top, "위", width, depth);
-  topCard.rotation.x = -Math.PI / 2;
-  topCard.position.set(0, 0.03, 0);
-  modelGroup.add(topCard);
+  if (problem.activeViews.includes("top")) {
+    const topCard = makeCardPlane(problem.target.top, text(state.lang, "top"), width, depth);
+    topCard.rotation.x = -Math.PI / 2;
+    topCard.position.set(0, 0.03, 0);
+    modelGroup.add(topCard);
+  }
 
   // The child's current build.
   for (let z = 0; z < depth; z += 1) {

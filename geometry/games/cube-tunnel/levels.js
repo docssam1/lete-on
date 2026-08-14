@@ -31,7 +31,35 @@ export function removedCells(box, tunnels) {
   return cells;
 }
 
+function interiorCandidates(axis, box) {
+  const [width, depth, height] = box;
+  const result = [];
+  if (axis === "z") for (let x = 1; x < width - 1; x += 1) for (let y = 1; y < height - 1; y += 1) result.push({ axis, x, y });
+  if (axis === "x") for (let y = 1; y < height - 1; y += 1) for (let z = 1; z < depth - 1; z += 1) result.push({ axis, y, z });
+  if (axis === "y") for (let x = 1; x < width - 1; x += 1) for (let z = 1; z < depth - 1; z += 1) result.push({ axis, x, z });
+  return result;
+}
+
+function normalizeTunnels(id, level, box) {
+  const n = Number(id.split("-").pop()) || 1;
+  const allAxes = ["z", "x", "y"];
+  const axes = level === 2
+    ? [allAxes[(n - 1) % allAxes.length]]
+    : level === 3
+      ? [allAxes[(n - 1) % 3], allAxes[n % 3]]
+      : allAxes;
+  const result = [];
+  axes.forEach((axis, axisIndex) => {
+    const candidates = interiorCandidates(axis, box);
+    const count = level === 2 ? Math.min(candidates.length, n % 2 === 0 ? 2 : 1) : 1;
+    for (let i = 0; i < count; i += 1) result.push(candidates[(n + axisIndex + i - 1) % candidates.length]);
+  });
+  return result;
+}
+
 const makeProblem = (id, level, box, tunnels) => {
+  box = box.map((value) => Math.max(3, value));
+  tunnels = normalizeTunnels(id, level, box);
   const [width, depth, height] = box;
   tunnels.forEach((t) => {
     const bad =
@@ -215,6 +243,17 @@ export function validateLevels() {
         throw new Error(`${problem.id} remaining out of range`);
       }
       if (problem.removed < 1) throw new Error(`${problem.id} has no tunnel`);
+      const axes = new Set(problem.tunnels.map((t) => t.axis));
+      const expectedAxes = level.level === 2 ? 1 : level.level === 3 ? 2 : 3;
+      if (axes.size !== expectedAxes) throw new Error(`${problem.id} must use ${expectedAxes} tunnel directions`);
+      problem.tunnels.forEach((t) => {
+        const interior = t.axis === "z"
+          ? t.x > 0 && t.x < width - 1 && t.y > 0 && t.y < height - 1
+          : t.axis === "x"
+            ? t.y > 0 && t.y < height - 1 && t.z > 0 && t.z < depth - 1
+            : t.x > 0 && t.x < width - 1 && t.z > 0 && t.z < depth - 1;
+        if (!interior) throw new Error(`${problem.id} drills through an outer edge`);
+      });
     });
   });
 }
