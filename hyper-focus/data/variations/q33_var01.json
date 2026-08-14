@@ -1,11 +1,32 @@
 {
-  "schemaVersion": "hf-variation-problem-v1",
-  "baseQuestionId": "q33",
-  "variationId": "q33_var01",
-  "subType": "rps_stair_position",
-  "status": "draft",
-  "source": { "problemImage": "./assets/problems/q33_var01.png" },
-  "contentBinding": { "canonicalSource": "./canonical/q33.json", "hfDataTypeId": 33 },
-  "machineReadable": { "payloadType": "rps_stair_position", "startPosition": 3, "moveCount": 4, "expectedAnswer": 7 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 7 }
+ "schemaVersion": "hf-variation-problem-v1",
+ "baseQuestionId": "q33",
+ "variationId": "q33_var01",
+ "subType": "rps_stair_difference",
+ "status": "draft",
+ "source": {
+  "problemImage": "./assets/problems/q33_var01.png"
+ },
+ "contentBinding": {
+  "canonicalSource": "./canonical/q33.json",
+  "hfDataTypeId": 33
+ },
+ "machineReadable": {
+  "payloadType": "rps_stair_difference",
+  "rounds": 4,
+  "winStep": 2,
+  "loseStep": 1,
+  "personA": "재이",
+  "personB": "지용",
+  "winsA": 3,
+  "lossesA": 1,
+  "expectedAnswer": 6
+ },
+ "answerValidation": {
+  "answerType": "integer",
+  "expectedAnswer": 6
+ },
+ "problem": {
+  "prompt": "재이와 지용이 가위바위보로 계단 오르기를 합니다. 이기면 2칸 올라가고, 지면 1칸 내려갑니다. 4번 하여 재이가 3번 이기고 1번 졌다면, 재이는 지용보다 몇 계단 위에 있습니까?"
+ }
 }
