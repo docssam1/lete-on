@@ -705,6 +705,49 @@
     };
   }
 
+  // A "corner staircase": heights NEVER increase as you move away from the
+  // two walls (x = 0 and z = 0), so the column in the inner corner is the
+  // tallest and every column steps down (or stays level) toward the viewer.
+  //
+  // WHY this is mandatory for the walled picture: if a nearer column were
+  // taller than the one behind it, it would completely hide that column in
+  // the isometric drawing and the child could not read its height — the
+  // problem would have no determinate answer. Plateaus (equal neighbours)
+  // are deliberately common, because a plateau is exactly what buries a cube
+  // and creates the "보이지 않는" cubes the question is about.
+  //
+  // firstColumnFull keeps the whole x = 0 wall at maxH (the 상자 채우기
+  // convention the owner asked for) instead of letting it step down in z.
+  function cornerStaircase(rng, width, depth, maxH, firstColumnFull) {
+    const map = makeEmptyMap(width, depth);
+    for (let z = 0; z < depth; z += 1) {
+      for (let x = 0; x < width; x += 1) {
+        if (x === 0 && (z === 0 || firstColumnFull)) { map[z][x] = maxH; continue; }
+        const behind = z === 0 ? maxH : map[z - 1][x];
+        const left = x === 0 ? maxH : map[z][x - 1];
+        const cap = Math.min(behind, left);
+        const drop = rng.bool(0.58) ? 0 : rng.int(1, 2);
+        map[z][x] = Math.max(0, cap - drop);
+      }
+    }
+    map[0][0] = maxH;
+    return map;
+  }
+
+  // Guard for the above (also re-asserted by .selftest.mjs): no column may be
+  // taller than the one directly behind it or directly to its left.
+  function isCornerStaircase(map) {
+    const depth = map.length;
+    const width = depth ? map[0].length : 0;
+    for (let z = 0; z < depth; z += 1) {
+      for (let x = 0; x < width; x += 1) {
+        if (z > 0 && map[z][x] > map[z - 1][x]) return false;
+        if (x > 0 && map[z][x] > map[z][x - 1]) return false;
+      }
+    }
+    return true;
+  }
+
   // Does any column in the shape's back row (z = 0, the wall side in the
   // corrected frame) hold a cube? Used by genIH to guarantee the shape
   // actually leans into the drawn corner (a shape that never touches the
@@ -734,40 +777,29 @@
     const maxH = maxHeightForDifficulty(rng, difficulty);
     let map = null;
     let hidden = 0;
-    let fallback = null; // best valid (hidden >= 1, corner-touching) candidate seen so far
-    // Workbook archetype: a staircase leaning into the corner — tallest step
-    // against the back wall (z=0), descending toward the viewer, sometimes
-    // narrowing in x like the textbook's stepped pyramid. Always corner
-    // -touching and always hides >= 1 cube (the back-left bottom cube).
-    if (rng.bool(0.5)) {
-      const candidate = makeEmptyMap(width, depth);
-      for (let z = 0; z < depth; z += 1) {
-        const h = Math.max(1, maxH - z);
-        const w = Math.max(2, width - (z === 0 ? 0 : rng.int(0, 1)));
-        for (let x = 0; x < w; x += 1) candidate[z][x] = h;
-      }
-      const h = countHiddenWalled(candidate);
-      // Cap the answer size: a full 4x4 staircase hides 15+ cubes, which is
-      // demoralising to count — beyond 10 fall through to a random shape.
-      if (h >= 1 && h <= 10 && maxHeightOf(candidate) >= 2) { map = candidate; hidden = h; }
-    }
-    for (let tries = 0; !map && tries < 400; tries += 1) {
-      const candidate = randomShape(rng, width, depth, maxH);
+    let fallback = null; // best valid (hidden >= 1) staircase seen so far
+    // EVERY candidate is a corner staircase — a random shape could stand a
+    // tall column in front of a short one, hiding it completely, and then the
+    // drawing would not determine that column's height. See cornerStaircase.
+    for (let tries = 0; tries < 400; tries += 1) {
+      const candidate = cornerStaircase(rng, width, depth, maxH, false);
       if (maxHeightOf(candidate) < 2) continue;
       if (!touchesBackRow(candidate, width, depth) || !touchesLeftColumn(candidate, depth)) continue;
       const h = countHiddenWalled(candidate);
       if (h < 1) continue;
       fallback = { map: candidate, hidden: h };
-      if (h <= 6) { map = candidate; hidden = h; break; } // prefer a small, easy-to-count answer
+      // Cap the answer size: a solid 4x4x4 corner hides 27 cubes, which is
+      // demoralising to count by hand.
+      if (h <= 10) { map = candidate; hidden = h; break; }
     }
     if (!map) {
       if (fallback) {
         map = fallback.map;
         hidden = fallback.hidden;
       } else {
-        // Dense fallback fills every column, which trivially touches both
-        // the back row and the left column and (for width,depth >= 2 and
-        // maxH >= 2) always yields hidden = (width-1)*(depth-1)*(maxH-1) >= 1.
+        // Dense fallback fills every column to maxH: trivially a (flat)
+        // corner staircase, touches both walls, and for width,depth >= 2 and
+        // maxH >= 2 always yields hidden = (width-1)*(depth-1)*(maxH-1) >= 1.
         map = fallbackDenseShape(width, depth, maxH);
         hidden = countHiddenWalled(map);
       }
@@ -872,17 +904,10 @@
     let map = null;
     let placed = 0;
     for (let tries = 0; tries < 200; tries += 1) {
-      map = makeEmptyMap(W, D);
-      for (let z = 0; z < D; z += 1) {
-        // Each row starts at full height on the left wall (x = 0) and never
-        // rises again as x grows, so every row reads as a staircase.
-        let cap = H;
-        for (let x = 0; x < W; x += 1) {
-          if (x === 0) { map[z][x] = H; continue; }
-          cap = Math.max(0, Math.min(cap, cap - rng.int(0, 1)));
-          map[z][x] = cap;
-        }
-      }
+      // Corner staircase with the whole left wall at full height: heights
+      // never rise again toward the viewer, so no column can hide the one
+      // behind it and every stack's height stays readable in the drawing.
+      map = cornerStaircase(rng, W, D, H, true);
       placed = mapTotal(map);
       if (placed >= lo && placed <= hi && placed < total) break;
     }
@@ -906,8 +931,10 @@
     const n = boxNForDifficulty(difficulty);
     let map = null;
     let placed = 0;
+    // Same readability rule as FB/IH: a corner staircase, so nothing already
+    // in the cube can be hidden behind a taller neighbour.
     for (let tries = 0; tries < 200; tries += 1) {
-      map = randomShape(rng, n, n, n);
+      map = cornerStaircase(rng, n, n, n, false);
       placed = mapTotal(map);
       if (placed > 0 && placed < n * n * n) break;
     }
@@ -1215,6 +1242,8 @@
     topView,
     viewsOf,
     countHiddenWalled,
+    cornerStaircase,
+    isCornerStaircase,
     countHiddenNoWall,
     hasVoxel,
     exposedFaceCount,
