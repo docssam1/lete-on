@@ -28,8 +28,8 @@ export const games = [
   },
   {
     id: "tunnel", group: "counting", number: "05", ready: true, href: "../games/cube-tunnel/?v=2", thumb: "tunnel", levels: "Lv. 2–6",
-    name: { ko: "큐브 터널", zh: "方块隧道", ja: "キューブトンネル", en: "Cube Tunnels" },
-    description: { ko: "반대편까지 뚫린 구멍을 층별로 표시하고 남은 개수를 세요.", zh: "逐层标出贯通的孔洞并计算剩余方块。", ja: "反対側まで通る穴を層ごとに示して残りを数えます。", en: "Mark through-tunnels layer by layer and count what remains." }
+    name: { ko: "큐브 터널", zh: "方块隆道", ja: "キューブトンネル", en: "Cube Tunnels" },
+    description: { ko: "반대편까지 뚚린 구멍을 층별로 표시하고 남은 개수를 세요.", zh: "逐层标出贯通的孔洞并计算剩余方块。", ja: "反対側まで通る穴を層ごとに示して残りを数えます。", en: "Mark through-tunnels layer by layer and count what remains." }
   },
   {
     id: "join-pieces", group: "transform", number: "06", ready: true, href: "../games/cube-piece-lab/?v=1", thumb: "pieces", levels: "Lv. 1–5",
@@ -62,7 +62,7 @@ export const games = [
     description: { ko: "층별 개수와 방향별 모양에 맞는 쌓기나무를 골라요.", zh: "根据各层数量和方向视图选择正确形状。", ja: "層の数と方向別の形に合うものを選びます。", en: "Choose the solid that matches the layer counts and view clues." }
   },
   {
-    id: "minmax", group: "reasoning", number: "12", ready: false, thumb: "minmax", levels: "Lv. 4–5",
+    id: "minmax", group: "reasoning", number: "12", ready: true, href: "../games/minmax/?v=1", thumb: "minmax", levels: "Lv. 4–5",
     name: { ko: "최대·최소 큐브 챌린지", zh: "最多最少方块挑战", ja: "最大・最小キューブチャレンジ", en: "Cube Min–Max Challenge" },
     description: { ko: "같은 세 방향 그림을 만드는 가장 많고 적은 개수를 찾아요.", zh: "找出符合三方向图的最多和最少方块数。", ja: "同じ三方向図になる最大・最小の数を探します。", en: "Find the greatest and least cube counts for the same three views." }
   }
