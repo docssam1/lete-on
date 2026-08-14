@@ -1127,18 +1127,18 @@
   // ---------------------------------------------------------------------
   const TYPES = [
     { code: "TC", label: "바탕그림과 개수", defaultOn: true },
-    { code: "VC", label: "세 방향 → 개수", defaultOn: true },
-    { code: "VM", label: "세 방향 → 최대·최소", defaultOn: true },
-    { code: "VP", label: "두 방향 → 나머지 방향", defaultOn: true },
-    { code: "IC", label: "3D 그림 → 개수", defaultOn: true },
-    { code: "IH", label: "보이지 않는 개수 (벽 있음)", defaultOn: true },
-    { code: "IN", label: "보이지 않는 개수 (벽 없음)", defaultOn: true },
-    { code: "FB", label: "상자 채우기", defaultOn: true },
+    { code: "VC", label: "세 방향 → 개수", defaultOn: false },
+    { code: "VM", label: "세 방향 → 최대·최소", defaultOn: false },
+    { code: "VP", label: "두 방향 → 나머지 방향", defaultOn: false },
+    { code: "IC", label: "3D 그림 → 개수", defaultOn: false },
+    { code: "IH", label: "보이지 않는 개수 (벽 있음)", defaultOn: false },
+    { code: "IN", label: "보이지 않는 개수 (벽 없음)", defaultOn: false },
+    { code: "FB", label: "상자 채우기", defaultOn: false },
     { code: "CU", label: "정육면체 완성", defaultOn: false },
-    { code: "PN", label: "정육면체·직육면체 색칠 면", defaultOn: true },
+    { code: "PN", label: "정육면체·직육면체 색칠 면", defaultOn: false },
     { code: "PF", label: "모양 색칠 → 면의 총수", defaultOn: false },
-    { code: "BW", label: "흑백 교차", defaultOn: true },
-    { code: "HL", label: "구멍 뚫기", defaultOn: true },
+    { code: "BW", label: "흑백 교차", defaultOn: false },
+    { code: "HL", label: "구멍 뚫기", defaultOn: false },
     { code: "SQ", label: "규칙 찾기", defaultOn: false }
   ];
 

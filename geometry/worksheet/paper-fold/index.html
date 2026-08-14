@@ -16,6 +16,7 @@ body{margin:0;font-family:"Noto Sans KR","Malgun Gothic",sans-serif;background:#
 .controls h1{margin:0 0 20px;color:var(--navy);font-size:25px;line-height:1.2}.controls h1 span{color:var(--pink)}
 .control-group{margin:0 0 18px}.control-group h2{margin:0 0 8px;font-size:13px;color:#58645e}
 select,button,input{font:inherit}select{width:100%;padding:10px 11px;border:1px solid #bdc9c2;border-radius:6px;background:#fff;color:#263b51;font-size:13px;font-weight:700}
+.mode-select{display:none}.mode-grid{display:grid;gap:6px;max-height:340px;overflow:auto;padding:1px 3px 1px 1px}.mode-button{min-height:38px;padding:7px 10px;border:1px solid #c7d1cb;border-radius:6px;color:#34483e;background:#fff;text-align:left;font-size:12px;line-height:1.25;box-shadow:none}.mode-button:hover{border-color:#8fa89b;background:#f6faf7}.mode-button.active{border-color:var(--pink);color:#fff;background:var(--pink);box-shadow:inset 3px 0 rgba(255,255,255,.35)}
 .radio-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.radio-row label{display:flex;justify-content:center;gap:5px;padding:9px 4px;border:1px solid #c7d1cb;border-radius:6px;background:#fff;font-size:13px;font-weight:800}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}button{min-height:42px;padding:8px 12px;border:0;border-radius:6px;color:#fff;background:var(--navy);font-size:13px;font-weight:800;cursor:pointer}button.secondary{color:#33483e;background:#e9efec}button.print{background:var(--pink)}
 .preview-panel{min-width:0;padding:18px;overflow:auto}.type-preview{max-width:1120px;margin:0 auto 18px;padding:14px;border:1px solid #c9d4ce;border-radius:8px;background:#fff}
@@ -23,15 +24,15 @@ select,button,input{font:inherit}select{width:100%;padding:10px 11px;border:1px 
 canvas{display:block;width:100%;height:auto;background:#fff;border-radius:6px}#info{margin:8px 0 0;font-size:12px;color:#53605a}.src{display:none}
 #sheetRoot{display:flex;flex-direction:column;align-items:center;gap:18px}.sheet-page{width:210mm;min-height:297mm;padding:12mm;background:#fff;box-shadow:0 3px 16px rgba(20,42,32,.14);page-break-after:always}
 .sheet-head{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:7px;border-bottom:2px solid var(--navy)}.sheet-head h2{margin:0;color:var(--navy);font-size:19px}.sheet-meta{font-size:10px;color:#65716b}
-.problem-grid{display:grid;grid-template-columns:1fr;gap:6mm;margin-top:7mm}.problem-card{position:relative;min-height:77mm;padding:5mm 5mm 4mm;border:1px solid #abb8b1;border-radius:3px;break-inside:avoid}.problem-card img{display:block;width:100%;height:61mm;object-fit:contain}.answer-line{text-align:right;font-size:10px;font-weight:800}.answer-page .problem-grid{grid-template-columns:1fr 1fr}.answer-page .problem-card{min-height:40mm}.answer-page .problem-card img{height:28mm}.answer-value{color:var(--pink)}
-@media(max-width:760px){.fold-app{display:block}.controls{border-right:0;border-bottom:1px solid #ccd6d0}.preview-panel{padding:10px}.type-preview{margin-bottom:12px}.sheet-page{width:100%;min-height:auto;padding:14px}.problem-grid{grid-template-columns:1fr}.problem-card{min-height:240px}.problem-card img{height:auto}}
-@media print{@page{size:A4;margin:0}.subject-switch,.controls,.type-preview{display:none!important}.fold-app{display:block}.preview-panel{padding:0;overflow:visible}#sheetRoot{display:block}.sheet-page{width:210mm;min-height:297mm;margin:0;padding:12mm;box-shadow:none}.problem-grid{grid-template-columns:1fr}.problem-card{min-height:77mm}.problem-card img{height:61mm}.answer-page .problem-grid{grid-template-columns:1fr 1fr}.answer-page .problem-card{min-height:40mm}.answer-page .problem-card img{height:28mm}}
+.problem-grid{display:grid;grid-template-columns:1fr;gap:6mm;margin-top:7mm}.problem-card{position:relative;min-height:77mm;padding:5mm 5mm 4mm;border:1px solid #abb8b1;border-radius:3px;break-inside:avoid}.problem-card img{display:block;width:100%;height:61mm;object-fit:contain}.answer-line{text-align:right;font-size:10px;font-weight:800}.answer-page .problem-grid{grid-template-columns:1fr 1fr}.answer-page .problem-card{min-height:48mm}.answer-page .problem-card img{height:31mm}.answer-value{color:var(--pink)}.solution-text{min-height:2.6em;margin-top:2mm;padding-top:2mm;border-top:1px dashed #d3d9d5;color:#43534b;font-size:8.5px;line-height:1.35;text-align:left}
+@media(max-width:760px){.fold-app{display:block}.controls{border-right:0;border-bottom:1px solid #ccd6d0}.mode-grid{grid-template-columns:1fr 1fr;max-height:none}.preview-panel{padding:10px}.type-preview{margin-bottom:12px}.sheet-page{width:100%;min-height:auto;padding:14px}.problem-grid{grid-template-columns:1fr}.problem-card{min-height:240px}.problem-card img{height:auto}}
+@media print{@page{size:A4;margin:0}.subject-switch,.controls,.type-preview{display:none!important}.fold-app{display:block}.preview-panel{padding:0;overflow:visible}#sheetRoot{display:block}.sheet-page{width:210mm;min-height:297mm;margin:0;padding:12mm;box-shadow:none}.problem-grid{grid-template-columns:1fr}.problem-card{min-height:77mm}.problem-card img{height:61mm}.answer-page .problem-grid{grid-template-columns:1fr 1fr}.answer-page .problem-card{min-height:48mm}.answer-page .problem-card img{height:31mm}}
 </style>
 </head>
 <body>
 <nav class="subject-switch" aria-label="학습지 영역"><a class="subject-tab" href="../">쌓기나무 학습지</a><a class="subject-tab active" href="./">색종이 접기 학습지</a></nav>
 <div class="fold-app"><aside class="controls"><h1>GFIELD<br><span>색종이 접기 학습지</span></h1>
-<section class="control-group"><h2>유형</h2><select id="mode" onchange="previewProblem()">
+<section class="control-group"><h2>유형</h2><div class="mode-grid" id="modeButtons" aria-label="색종이 접기 유형"></div><select class="mode-select" id="mode" aria-hidden="true">
   <option value="hole2">구멍 개수 — 반으로 1~2번 접기</option>
   <option value="hole3d">구멍 개수 — 대각선 접기</option>
   <option value="numsum">수가 쓰인 색종이 — 남은 수들의 합</option>
@@ -1054,6 +1055,42 @@ function renderHole(ctx,d){
   });
 }
 
+function uniqueHolePoints(points){
+  const seen=new Set();
+  return points.filter(p=>{
+    const key=Math.round(p.x*10000)+','+Math.round(p.y*10000);
+    if(seen.has(key)) return false;
+    seen.add(key); return true;
+  });
+}
+
+function renderHoleSolution(ctx,d){
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+  ctx.fillStyle='#17345f'; ctx.font='900 24px sans-serif';
+  ctx.fillText('접은 순서를 거꾸로 펼쳐 구멍의 위치를 확인합니다.',38,48);
+  let points=d.holes.map(p=>({x:p.x,y:p.y}));
+  const panels=[{poly:d.stages[d.stages.length-1].poly,points:points.map(p=>({...p}))}];
+  for(let i=d.dirs.length-1;i>=0;i--){
+    points=uniqueHolePoints(points.concat(points.map(p=>FOLDS[d.dirs[i]].mirror(p))));
+    panels.push({poly:d.stages[i].poly,points:points.map(p=>({...p}))});
+  }
+  const size=panels.length>3?185:220, gap=panels.length>3?52:72, baseY=130;
+  let x=44;
+  panels.forEach((panel,i)=>{
+    drawPoly(ctx,panel.poly,x,baseY,size);
+    drawHoles(ctx,panel.points,x,baseY,size,size>200?12:10);
+    ctx.fillStyle='#b34b68'; ctx.font='800 18px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(panel.points.length+'개',x+size/2,baseY+size+30);
+    ctx.textAlign='left';
+    x+=size+12;
+    if(i<panels.length-1){
+      drawStepArrow(ctx,x,baseY+size/2); x+=gap;
+      ctx.fillStyle='#68766f'; ctx.font='700 14px sans-serif';
+      ctx.fillText('펼치기',x-gap+2,baseY+size/2+28);
+    }
+  });
+}
+
 /* ===== 렌더: 수 유형 — 교재 4단계 =====
    [숫자판+접선+화살표1] → [접힌 중간(뒷면, 숫자 없음)+화살표2] → [접힌 2x2에 색칠] → [다시 펼친 숫자판] */
 function drawNumberGrid(ctx, grid, ox, oy, size){
@@ -1168,32 +1205,91 @@ function answerText(problem){
   return String(problem.answer);
 }
 
+const modeSelect=document.getElementById('mode');
+const modeOptions=Array.from(modeSelect.options).map(option=>({value:option.value,label:option.textContent}));
+let selectedModes=[modeOptions[0].value];
+let previewMode=selectedModes[0];
+
+function syncModeButtons(){
+  const host=document.getElementById('modeButtons');
+  const selected=selectedModes.map(value=>modeOptions.find(option=>option.value===value)).filter(Boolean);
+  const rest=modeOptions.filter(option=>!selectedModes.includes(option.value));
+  host.innerHTML='';
+  selected.concat(rest).forEach(option=>{
+    const button=document.createElement('button');
+    const active=selectedModes.includes(option.value);
+    button.type='button';
+    button.className='mode-button'+(active?' active':'');
+    button.textContent=option.label;
+    button.setAttribute('aria-pressed',String(active));
+    button.addEventListener('click',()=>{
+      if(selectedModes.includes(option.value)){
+        if(selectedModes.length===1) return;
+        selectedModes=selectedModes.filter(value=>value!==option.value);
+        if(previewMode===option.value) previewMode=selectedModes[0];
+      }else{
+        selectedModes=[option.value].concat(selectedModes);
+        previewMode=option.value;
+      }
+      modeSelect.value=previewMode;
+      syncModeButtons();
+      generateSheet();
+    });
+    host.appendChild(button);
+  });
+}
+
+function solutionText(problem){
+  if(problem.kind==='hole'){
+    const counts=[problem.nHoles];
+    for(let i=0;i<problem.dirs.length;i++) counts.push(counts[counts.length-1]*2);
+    return `접은 순서를 거꾸로 펼치면 ${counts.join(' → ')}개가 됩니다. 따라서 ${problem.answer}개입니다.`;
+  }
+  if(problem.kind==='fold-top') return `마지막 접힌 묶음을 거꾸로 펼쳐 각 칸의 위아래 순서를 추적하면 맨 위의 수는 ${problem.answer}입니다.`;
+  if(problem.kind==='stack') return `겹친 부분의 위아래 관계를 차례로 비교하면 ${answerText(problem)}입니다.`;
+  if(problem.kind==='punch') return `접힌 선을 기준으로 구멍을 대칭 이동해 펼친 뒤 모양별로 세면 ${answerText(problem)}입니다.`;
+  if(problem.kind==='pieces') return `접힌 종이의 선과 자른 선이 만나는 위치를 모두 펼쳐 세면 ${answerText(problem)}입니다.`;
+  return `접는 방향에 따라 겹치는 칸을 대응시켜 계산하면 정답은 ${answerText(problem)}입니다.`;
+}
+
+function solutionImage(problem,problemImage){
+  if(problem.kind!=='hole') return problemImage;
+  const canvas=document.getElementById('cv');
+  renderHoleSolution(canvas.getContext('2d'),problem);
+  return canvas.toDataURL('image/jpeg',.92);
+}
+
 function previewProblem(){
   questionNumber=0;
-  return buildProblem(document.getElementById('mode').value,selectedDifficulty());
+  modeSelect.value=previewMode;
+  return buildProblem(previewMode,selectedDifficulty());
 }
 
 function pageHtml(items,pageNo,totalPages,title,answers){
-  return `<section class="sheet-page${answers?' answer-page':''}"><header class="sheet-head"><h2>${title}${answers?' · 정답':''}</h2><div class="sheet-meta">${pageNo} / ${totalPages}</div></header><div class="problem-grid">${items.map(item=>`<article class="problem-card"><img src="${item.image}" alt="${item.no}번 색종이 접기 문제"><div class="answer-line">${answers?`정답: <span class="answer-value">${item.answer}</span>`:'답: __________'}</div></article>`).join('')}</div></section>`;
+  return `<section class="sheet-page${answers?' answer-page':''}"><header class="sheet-head"><h2>${title}${answers?' · 정답과 풀이':''}</h2><div class="sheet-meta">${pageNo} / ${totalPages}</div></header><div class="problem-grid">${items.map(item=>`<article class="problem-card"><img src="${answers?item.solutionImage:item.image}" alt="${item.no}번 색종이 접기 문제"><div class="answer-line">${answers?`정답: <span class="answer-value">${item.answer}</span>`:'답: __________'}</div>${answers?`<div class="solution-text"><strong>${item.no}번 풀이</strong> ${item.solution}</div>`:''}</article>`).join('')}</div></section>`;
 }
 
 function generateSheet(){
-  const mode=document.getElementById('mode').value;
   const difficulty=selectedDifficulty();
   const count=Number(document.getElementById('count').value)||10;
-  const title=document.getElementById('mode').selectedOptions[0].textContent;
+  const labels=selectedModes.map(value=>modeOptions.find(option=>option.value===value)?.label).filter(Boolean);
+  const title=labels.length===1?labels[0]:`${labels.length}개 유형 혼합`;
   const canvas=document.getElementById('cv');
   const items=[];
+  const modeQueue=Array.from({length:count},(_,i)=>selectedModes[i%selectedModes.length]);
+  for(let i=modeQueue.length-1;i>0;i--){ const j=R(0,i); [modeQueue[i],modeQueue[j]]=[modeQueue[j],modeQueue[i]]; }
   for(let i=0;i<count;i++){
     questionNumber=i;
+    const mode=modeQueue[i];
     const problem=buildProblem(mode,difficulty);
-    items.push({no:i+1,problem,answer:answerText(problem),image:canvas.toDataURL('image/jpeg',.9)});
+    const image=canvas.toDataURL('image/jpeg',.9);
+    items.push({no:i+1,problem,answer:answerText(problem),solution:solutionText(problem),image,solutionImage:solutionImage(problem,image)});
   }
   const perPage=3, pages=[];
   const pageCount=Math.ceil(items.length/perPage);
   for(let i=0;i<items.length;i+=perPage) pages.push(pageHtml(items.slice(i,i+perPage),i/perPage+1,pageCount,`GFIELD 색종이 접기 · ${title}`,false));
   if(document.getElementById('answers').checked){
-    const answerPerPage=8, answerPages=Math.ceil(items.length/answerPerPage);
+    const answerPerPage=6, answerPages=Math.ceil(items.length/answerPerPage);
     for(let i=0;i<items.length;i+=answerPerPage) pages.push(pageHtml(items.slice(i,i+answerPerPage),i/answerPerPage+1,answerPages,`GFIELD 색종이 접기 · ${title}`,true));
   }
   document.getElementById('sheetRoot').innerHTML=pages.join('');
@@ -1244,9 +1340,10 @@ function hfRenderVariation(variation){
   render(d); return d;
 }
 window.hfRenderVariation = hfRenderVariation;
-document.querySelectorAll('input[name="difficulty"]').forEach(input=>input.addEventListener('change',previewProblem));
+document.querySelectorAll('input[name="difficulty"]').forEach(input=>input.addEventListener('change',generateSheet));
 document.getElementById('count').addEventListener('change',generateSheet);
 document.getElementById('answers').addEventListener('change',generateSheet);
+syncModeButtons();
 previewProblem();
 generateSheet();
 </script>
