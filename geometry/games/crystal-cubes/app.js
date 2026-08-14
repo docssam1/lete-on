@@ -560,8 +560,8 @@ function makeBoardLabelPlane(label) {
 // ---------------------------------------------------------------------------
 // View cards rendered onto the case walls/floor themselves (in addition to the
 // 2D reference cards in the side panel). `view` is a 2D 0/1 grid (a row of the
-// problem's target.front/side/top); `cornerLabel` is the literal Korean glyph
-// (앞/옆/위) baked into the corner so the card still identifies itself no
+// problem's target.front/side/top); `cornerLabel` uses the active locale and
+// is baked into the corner so the card still identifies itself no
 // matter how the camera is orbited.
 function makeCardCanvas(view, cornerLabel) {
   const rows = view.length;
@@ -686,13 +686,13 @@ function renderModel() {
   // 앞 (front view) → far -z wall (the back wall as seen by the default camera),
   // reading as the backdrop behind the stack. No rotation needed: a
   // PlaneGeometry's default normal already faces +z, i.e. toward the interior.
-  const frontCard = makeCardPlane(problem.target.front, "앞", width, maxH);
+  const frontCard = makeCardPlane(problem.target.front, text(state.lang, "front"), width, maxH);
   frontCard.position.set(0, maxH / 2, -caseHalfZ + wallNudge);
   modelGroup.add(frontCard);
 
   // 옆 (side view) → far -x wall (the left wall). Rotating +90° about Y turns
   // the plane's default +z normal into +x, facing the interior/camera.
-  const sideCard = makeCardPlane(problem.target.side, "옆", depth, maxH);
+  const sideCard = makeCardPlane(problem.target.side, text(state.lang, "side"), depth, maxH);
   sideCard.rotation.y = Math.PI / 2;
   sideCard.position.set(-caseHalfX + wallNudge, maxH / 2, 0);
   modelGroup.add(sideCard);
@@ -703,7 +703,7 @@ function renderModel() {
   // — placing it at the spec's literal y≈0.005 would hide it completely
   // beneath those existing opaque meshes, so it goes just above them instead,
   // still functionally "on the floor" and still beneath the build cubes.
-  const topCard = makeCardPlane(problem.target.top, "위", width, depth);
+  const topCard = makeCardPlane(problem.target.top, text(state.lang, "top"), width, depth);
   topCard.rotation.x = -Math.PI / 2;
   topCard.position.set(0, 0.03, 0);
   modelGroup.add(topCard);
