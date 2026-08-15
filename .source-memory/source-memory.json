@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "66f139e85342cddd3ee8269a9a96e2ea16e01aeda9ca683ce4c5df9ac78706a1",
-      "size": 26409,
-      "mtime_ns": 1786813492275661900
+      "sha256": "f7150638430d1029a0e7f4308312322e4552c89d533941649b923c29ffcf1e55",
+      "size": 27094,
+      "mtime_ns": 1786813629043527800
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "cd565fe0f384aa4bf8a0373c27abe3b1a337ffaa58479f829e2be965b19f4c02",
-      "size": 84706,
-      "mtime_ns": 1786813240851736600
+      "sha256": "829a0a28381951fad2967a723c584a40d906aa2dcb7c701ea7bf9d02886e2608",
+      "size": 84729,
+      "mtime_ns": 1786813568514438200
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "988a757286b9b1734ba32af7ab37975206e174a37dd9c41fe5a7a2b685d58b23",
-      "size": 32895,
-      "mtime_ns": 1786813417062502700
+      "sha256": "323d5c82ebc7ea7b2f86fdebfff127cf842ee414c66e6f0690b3fb338d6d0308",
+      "size": 32898,
+      "mtime_ns": 1786813568515437900
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 2",
+      "title": "Next verification 7-year-old selection test 2 question 3",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q2"
+        "q3"
       ],
-      "summary": "Verify the transfer-to-equalize bead picture and answer 4 against the existing equalize-transfer generator before enabling it.",
+      "summary": "Verify the five-card three-level sum pyramid and middle-bottom answer 3; do not confuse it with the three-card pyramid generator.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,7 +123,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "Next sequence item 1",
-          "note": "Selection test 2 question 2 is next"
+          "note": "Selection test 2 question 3 is next"
         }
       ]
     },
@@ -833,6 +833,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-04 verifiedQuestionNumbers 1",
           "note": "Only source question 1 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q2",
+      "title": "Selection test 2 question 2 equalize transfer",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q2",
+        "equalize-transfer"
+      ],
+      "summary": "The original bead counts 13 and 5 require transferring 4; equalizeTransfer matches the structure and its name-particle wording was corrected.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 2 paragraph",
+          "note": "Original counts, answer, and wording correction verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function equalizeTransfer and GENERATORS export",
+          "note": "Transfer, equalized totals, and visual counts are generated together"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-04 verifiedQuestionNumbers 1 and 2",
+          "note": "Only source questions 1 and 2 are enabled"
         }
       ]
     }

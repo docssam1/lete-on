@@ -1198,10 +1198,11 @@ function equalizeTransfer({ difficulty = 2 }) {
   const higher = lower + transfer * 2;
   const names = Math.random() < 0.5 ? ["강준", "다현"] : ["유진", "민서"];
   return {
-    prompt: `${names[0]}이와 ${names[1]}이가 사탕을 똑같이 가지려고 합니다. ${names[0]}이가 ${names[1]}이에게 사탕 몇 개를 주어야 하는지 구하세요.`,
+    prompt: "두 친구가 사탕을 똑같이 가지려고 합니다. 사탕이 많은 친구가 적은 친구에게 몇 개를 주어야 하는지 구하세요.",
     visual: { kind: "equalize-bags", names, higher, lower },
     answer: `${transfer}개`,
-    solution: `두 사람의 사탕 수 차이는 ${higher - lower}개입니다. 한 개를 주면 한쪽은 1개 줄고 다른 쪽은 1개 늘므로, 차이의 반인 ${transfer}개를 주면 같습니다.`
+    solution: `두 사람의 사탕 수 차이는 ${higher - lower}개입니다. 한 개를 주면 한쪽은 1개 줄고 다른 쪽은 1개 늘므로, 차이의 반인 ${transfer}개를 주면 같습니다.`,
+    meta: { difficulty, higher, lower, transfer }
   };
 }
 

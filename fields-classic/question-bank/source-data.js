@@ -186,7 +186,7 @@ export const EXAMS = [
     id: "k7-2022-04", stage: "k7_spring", label: "더 클래식 7세 2차 선발시험 (2022.04.18)",
     file: "(최종)더_클래식_7세_2차_선발시험(220418).pdf", layout: "two",
     typeIds: ["edge-sum-grid","equalize-transfer","five-card-sum-pyramid","grid-number-placement","order-position-from-back","addition-table-grid","shape-sum-table","repeat-three-shapes","arrow-number-grid","bus-change","fold-number-cut-sum","equal-line-sum-eight-cards","symbol-sum-grid","shape-equation-add-subtract","two-digit-parity-gap","triangle-tile-growth","balance-scale-three-objects","symbol-relation-2to3","number-line-six-points","go-stone-difference-inverse"],
-    verifiedQuestionNumbers: [1]
+    verifiedQuestionNumbers: [1, 2]
   }),
   makeExam({
     id: "k7-2022-06", stage: "k7_summer", label: "더 클래식 7세 3차 선발시험 (2022.06.22)",
