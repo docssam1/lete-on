@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "a550cffb4eb0768679688350cc3f229d19a053366e3970deb775131cda21de77",
-      "size": 53388,
-      "mtime_ns": 1786822169679315200
+      "sha256": "eacf05dc221e44de5641e2595dffcada57e1de36c98bae8dee0058ab69de9cfe",
+      "size": 54261,
+      "mtime_ns": 1786822346766080500
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "a3d77de833e696123526ad019010f3d6c600a30de0276c5a9c81ac72d9cf83a3",
-      "size": 35463,
-      "mtime_ns": 1786822015857328900
+      "sha256": "4fefe86307aad1822002e89da4baa545173520a6823dee7dd20de897a00243c1",
+      "size": 35467,
+      "mtime_ns": 1786822247257421900
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 13",
+      "title": "Next verification 7-year-old selection test 3 question 14",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q13"
+        "q14"
       ],
-      "summary": "Verify the shape add-subtract problem on source and answer page 9. The source has square + 26 = 54 and 42 - square = heart, so square is 28 and the official heart answer is 14.",
+      "summary": "Verify the odd two-digit condition problem on source and answer page 9. The number is odd, below 30, and its tens digit is five less than its ones digit; the official answer is 27. The current even-number type is wrong.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 3 question 13 is the next locked source question"
+          "note": "Selection test 3 question 14 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 13 shape-equation-add-subtract mapping",
-          "note": "Confirm exact equations and answer before reuse"
+          "locator": "EXAMS k7-2022-06 question 14 two-digit-parity-gap mapping",
+          "note": "Current mapping is an even-number type and must be split"
         }
       ]
     },
@@ -1893,6 +1893,40 @@
           "role": "code",
           "locator": "TYPES equal-line-sum-eight-cards-twelve and EXAMS k7-2022-06 verified 1 through 12",
           "note": "Source question 12 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q13",
+      "title": "Selection test 3 question 13 shape add-subtract equations",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q13",
+        "shape-equation-add-subtract"
+      ],
+      "summary": "The source uses square plus 26 equals 54, then 42 minus square equals heart. Square is 28 and the official heart answer is 14; the existing two-step carrying generator matches.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 13 paragraph",
+          "note": "Exact equations, answer, generator reuse decision, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeEquationAddSubtract",
+          "note": "One-, two-, and three-stage structural difficulty with carrying checks"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-06 verified 1 through 13",
+          "note": "Source question 13 is enabled"
         }
       ]
     }
