@@ -50,6 +50,11 @@ canvas{display:block;width:100%;height:auto;background:#fff;border-radius:6px}#i
   <option value="game-l3">게임 연계 3단계 — 자르거나 뚫을 위치</option>
   <option value="game-l4">게임 연계 4단계 — 대칭 도형 완성</option>
   <option value="game-l5">게임 연계 5단계 — 잘린 수의 합</option>
+  <option value="turn-l1">게임 연계 2코스 1단계 — 접힌 종이 뒤집기</option>
+  <option value="turn-l2">게임 연계 2코스 2단계 — 자른 선 되짚기</option>
+  <option value="turn-l3">게임 연계 2코스 3단계 — 모양 돌리기</option>
+  <option value="turn-l4">게임 연계 2코스 4단계 — 모양 뒤집기</option>
+  <option value="turn-l5">게임 연계 2코스 5단계 — 순서대로 추적하기</option>
 </select>
 </section>
 <section class="control-group"><h2>난이도</h2><div class="radio-row"><label><input type="radio" name="difficulty" value="easy">하</label><label><input type="radio" name="difficulty" value="mid" checked>중</label><label><input type="radio" name="difficulty" value="hard">상</label></div></section>
@@ -1194,6 +1199,68 @@ async function loadSharedGameLevels(){
   }
 }
 
+/* ===== 두 번째 게임 코스: 접고 돌리고 뒤집기 ===== */
+let turnGameLevels=[];
+let turnOperations={};
+const turnModeLevel=(mode)=>Number(mode.replace('turn-l',''));
+
+async function loadTurnGameLevels(){
+  try{
+    const module=await import('../../games/paper-turn/levels.js?v=paper-turn-1');
+    module.validateLevels();
+    turnGameLevels=module.levels;
+    turnOperations=module.operationMeta;
+  }catch(error){
+    console.error('돌리기·뒤집기 연계 문항을 불러오지 못했습니다.',error);
+    document.querySelectorAll('.mode-button').forEach(button=>{
+      if(button.textContent.includes('2코스')) button.disabled=true;
+    });
+  }
+}
+
+function buildTurnProblem(mode){
+  const levelNumber=turnModeLevel(mode);
+  const level=turnGameLevels[levelNumber-1];
+  if(!level) return null;
+  const source=level.problems[questionNumber%level.problems.length];
+  const titles={1:'접힌 종이를 화살표 방향으로 뒤집은 결과를 고르세요.',2:'펼친 결과를 보고 접힌 종이의 자른 선을 되짚어 고르세요.',3:'모눈의 모양을 화살표 방향으로 돌린 결과를 고르세요.',4:'모눈의 모양을 거울선 방향으로 뒤집은 결과를 고르세요.',5:'화살표를 왼쪽부터 순서대로 적용한 마지막 모양을 고르세요.'};
+  return {kind:'paper-turn',turnLevel:levelNumber,source,answer:`${source.answer+1}번`,text:[titles[levelNumber]],info:`${source.id} · 두 번째 색종이 코스`,src:'게임과 동일한 확정 문항'};
+}
+
+function drawTurnMatrix(ctx,matrix,x,y,size,{highlight=false}={}){
+  const n=matrix.length,cell=size/n;
+  ctx.save();ctx.fillStyle='#f7fbf9';ctx.fillRect(x,y,size,size);
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(matrix[r][c]){
+    ctx.fillStyle=highlight?'#73bd91':'#de7569';ctx.fillRect(x+c*cell,y+r*cell,cell,cell);
+    ctx.fillStyle='rgba(255,255,255,.34)';ctx.beginPath();ctx.arc(x+(c+.38)*cell,y+(r+.34)*cell,cell*.13,0,Math.PI*2);ctx.fill();
+  }
+  ctx.strokeStyle='#5b9fa6';ctx.lineWidth=1.5;
+  for(let i=0;i<=n;i++){ctx.beginPath();ctx.moveTo(x+i*cell,y);ctx.lineTo(x+i*cell,y+size);ctx.stroke();ctx.beginPath();ctx.moveTo(x,y+i*cell);ctx.lineTo(x+size,y+i*cell);ctx.stroke();}
+  ctx.restore();
+}
+
+function renderTurnGame(ctx,d,showAnswer=false){
+  header(ctx,d.text);
+  const p=d.source;
+  drawTurnMatrix(ctx,p.start,80,145,220);
+  ctx.fillStyle='#25313b';ctx.textAlign='center';ctx.font='800 16px sans-serif';ctx.fillText('시작 모양',190,390);
+  const operationX=340,stepGap=94;
+  p.operations.forEach((operation,index)=>{
+    const meta=turnOperations[operation]||{};
+    ctx.fillStyle='#e8f4ef';ctx.beginPath();ctx.arc(operationX+index*stepGap,255,34,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#17676c';ctx.font='900 38px sans-serif';ctx.fillText(meta.symbol||'→',operationX+index*stepGap,267);
+    ctx.fillStyle='#536b6c';ctx.font='700 11px sans-serif';ctx.fillText(meta.ko||operation,operationX+index*stepGap,310);
+  });
+  const startX=590,choiceSize=170,gap=205;
+  p.choices.forEach((matrix,index)=>{
+    drawTurnMatrix(ctx,matrix,startX+index*gap,150,choiceSize,{highlight:showAnswer&&index===p.answer});
+    ctx.fillStyle=showAnswer&&index===p.answer?'#228459':'#17345f';ctx.beginPath();ctx.arc(startX+index*gap+choiceSize/2,355,18,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='900 16px sans-serif';ctx.fillText(String(index+1),startX+index*gap+choiceSize/2,361);
+    if(showAnswer&&index===p.answer){ctx.strokeStyle='#228459';ctx.lineWidth=5;ctx.strokeRect(startX+index*gap-5,145,choiceSize+10,choiceSize+10);}
+  });
+  ctx.textAlign='left';
+}
+
 function sharedRegionLabel(region){
   const match=/^r(\d)c(\d)(?:-(ne|nw|se|sw))?$/.exec(region);
   if(!match) return region;
@@ -1311,7 +1378,7 @@ function render(d){
   questionNumber += 1;
   const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
-  if(d.kind==='game-level') renderSharedGame(ctx,d); else if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='fold-top') renderFoldTop(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else if(d.kind==='pieces') renderPieces(ctx,d); else if(d.kind==='punch') renderPunch(ctx,d); else if(d.kind==='num-inverse') renderNumInverse(ctx,d); else if(d.kind==='unfold-shape') renderUnfoldShape(ctx,d); else renderNumber(ctx,d);
+  if(d.kind==='paper-turn') renderTurnGame(ctx,d); else if(d.kind==='game-level') renderSharedGame(ctx,d); else if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='fold-top') renderFoldTop(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else if(d.kind==='pieces') renderPieces(ctx,d); else if(d.kind==='punch') renderPunch(ctx,d); else if(d.kind==='num-inverse') renderNumInverse(ctx,d); else if(d.kind==='unfold-shape') renderUnfoldShape(ctx,d); else renderNumber(ctx,d);
   document.getElementById('info').textContent=d.info+' · 정답 '+d.answer;
   document.getElementById('src').textContent=d.src;
   return d;
@@ -1320,6 +1387,10 @@ function selectedDifficulty(){
   return document.querySelector('input[name="difficulty"]:checked')?.value||'mid';
 }
 function buildProblem(mode,difficulty){
+  if(mode.startsWith('turn-l')){
+    const shared=buildTurnProblem(mode);
+    return shared?render(shared):render(genHole(false,difficulty));
+  }
   if(mode.startsWith('game-l')){
     const shared=buildSharedProblem(mode);
     return shared?render(shared):render(genHole(false,difficulty));
@@ -1339,6 +1410,7 @@ function buildProblem(mode,difficulty){
 }
 
 function answerText(problem){
+  if(problem.kind==='paper-turn') return String(problem.answer);
   if(problem.kind==='game-level') return String(problem.answer);
   if(problem.kind==='fold-top') return `${problem.answer}`;
   if(problem.kind==='stack' && Array.isArray(problem.answer)) return problem.answer.join(' → ');
@@ -1381,6 +1453,10 @@ function syncModeButtons(){
 }
 
 function solutionText(problem){
+  if(problem.kind==='paper-turn'){
+    const names=problem.source.operations.map(operation=>turnOperations[operation]?.ko||operation).join(' → ');
+    return `${names} 순서로 시작 모양을 움직입니다. 각 동작을 한 번씩 적용한 마지막 모양은 ${problem.answer}입니다. (${problem.source.id})`;
+  }
   if(problem.kind==='game-level'){
     const p=problem.source;
     if(problem.gameLevel<=2) return `${sharedAxisLabel[p.fold.axis]} 접는 선을 기준으로 작업 위치를 거울처럼 옮기면 ${problem.answer}가 됩니다. 게임 문항 ${p.id}와 같은 문제입니다.`;
@@ -1401,6 +1477,11 @@ function solutionText(problem){
 }
 
 function solutionImage(problem,problemImage){
+  if(problem.kind==='paper-turn'){
+    const canvas=document.getElementById('cv');
+    const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);renderTurnGame(ctx,problem,true);
+    return canvas.toDataURL('image/jpeg',.92);
+  }
   if(problem.kind==='game-level'){
     const canvas=document.getElementById('cv');
     const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);renderSharedGame(ctx,problem,true);
@@ -1500,6 +1581,7 @@ syncModeButtons();
 previewProblem();
 generateSheet();
 loadSharedGameLevels();
+loadTurnGameLevels();
 </script>
 </body>
 </html>
