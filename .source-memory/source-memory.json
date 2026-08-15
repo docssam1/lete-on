@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "647a6a5d01be95fc82d7ec612b95398ca2ac015c81510c5c69e53dfc91db61b0",
-      "size": 66168,
-      "mtime_ns": 1786825525218703700
+      "sha256": "3b2d0719e023b2786c3a71c4c4569f31b1955a6fa888206f1389f306c833064d",
+      "size": 67014,
+      "mtime_ns": 1786825711729559000
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "3dfab315f8ea4c5f820cf6220290a3a74a42ef8c5f24b7a8b8555defb5a39be0",
-      "size": 143447,
-      "mtime_ns": 1786825442243148600
+      "sha256": "49913524e5c26387f64a8fee2676f4c07cfabe603d25f79176f0716047f5dbf6",
+      "size": 143632,
+      "mtime_ns": 1786825666250741500
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "9b3cf7ec7357572cfa8c488c2a346cc742973663edc2b9d2d49ec67cd214d6a6",
-      "size": 36745,
-      "mtime_ns": 1786825495212705500
+      "sha256": "ba16463ce08bbb41398e3bf84be99925cfd3504199b5337e68d15bfff8769427",
+      "size": 36754,
+      "mtime_ns": 1786825594801310700
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 4 question 7",
+      "title": "Next verification 7-year-old selection test 4 question 8",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q7"
+        "q8"
       ],
-      "summary": "Verify source and answer page 6 for the arrow-number path. Recompute each horizontal plus or minus 1 and vertical plus or minus 10 move, confirm the original path length and official answer 57 before enabling.",
+      "summary": "Verify source and answer page 6 for the shape-sum table: diamond plus circle 16, square plus circle 17, circle plus circle 22, target diamond plus square 11. Confirm exact orientation before enabling.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 4 question 7 is an arrow-number path"
+          "note": "Selection test 4 question 8 is a shape-sum table"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-08 question 7 arrow-number-grid mapping",
-          "note": "Verify exact path, direction deltas, start, and answer"
+          "locator": "EXAMS k7-2022-08 question 8 shape-sum-table mapping",
+          "note": "Verify row and column symbols, target direction, and answer"
         }
       ]
     },
@@ -2369,6 +2369,40 @@
           "role": "code",
           "locator": "TYPES addition-table-grid-offset and EXAMS k7-2022-08 verified questions 1 through 6",
           "note": "Source question 6 enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q7",
+      "title": "Selection test 4 question 7 seven-move arrow number path",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q7",
+        "arrow-number-path-seven"
+      ],
+      "summary": "Starting 34, the source moves down, down, right, up, right, right, down to produce 34,44,54,55,45,46,47,57. It uses the seven-move path generator, not the fixed eight-move grid.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 7 paragraph",
+          "note": "Original path, all intermediate values, answer, range fix, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function arrowNumberPathSeven",
+          "note": "Three path lengths with bounded values and point-level metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 7",
+          "note": "Source question 7 enabled with corrected subtype"
         }
       ]
     }

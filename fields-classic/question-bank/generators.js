@@ -1763,7 +1763,9 @@ function arrowNumberPathSeven({ difficulty = 2 }) {
   const offsets = [0];
   directions.forEach((direction) => offsets.push(offsets.at(-1) + delta[direction]));
   const startMin = Math.max(difficulty === 1 ? 30 : difficulty === 2 ? 45 : 65, 1 - Math.min(...offsets));
-  const start = randomInt(startMin, startMin + (difficulty === 1 ? 30 : 40));
+  const valueLimit = difficulty === 3 ? 180 : 99;
+  const startMax = Math.max(startMin, Math.min(startMin + (difficulty === 1 ? 30 : 40), valueLimit - Math.max(...offsets)));
+  const start = randomInt(startMin, startMax);
   const values = offsets.map((offset) => start + offset);
   const answer = values.at(-1);
   const directionNames = { left: "왼쪽", right: "오른쪽", up: "위쪽", down: "아래쪽" };
@@ -1771,8 +1773,8 @@ function arrowNumberPathSeven({ difficulty = 2 }) {
     prompt: "[보기]의 화살표가 나타내는 규칙을 찾아 오른쪽 그림의 ㉠에 알맞은 수를 써 넣으세요.",
     visual: { kind: "arrow-number-path-seven", directions, points, start },
     answer: String(answer),
-    solution: `왼쪽은 1 작아지고, 오른쪽은 1 커지며, 위쪽은 10 작아지고 아래쪽은 10 커집니다. ${start}에서 ${directions.map((direction) => directionNames[direction]).join(" → ")} 순서로 가면 ${values.join(" → ")}이므로 ㉠은 ${answer}입니다.`,
-    meta: { difficulty, stepCount, directions, points, start, values, answer }
+    solution: `왼쪽은 1 작아지고, 오른쪽은 1 커지며, 위쪽은 10 작아지고 아래쪽은 10 커집니다. ${start}에서 ${directions.map((direction) => directionNames[direction]).join(" → ")} 순서로 가면 수는 ${values.join(" → ")} 순서가 됩니다. 따라서 ㉠은 ${answer}입니다.`,
+    meta: { difficulty, stepCount, directions, points, start, values, answer, valueLimit }
   };
 }
 
