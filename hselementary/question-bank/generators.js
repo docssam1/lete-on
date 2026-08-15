@@ -119,6 +119,7 @@
     }).join("");
     return `<svg class="geometry-diagram clock-diagram" viewBox="0 0 180 180" aria-label="${hour}시 ${String(minute).padStart(2, "0")}분 시계"><circle cx="90" cy="90" r="76"/>${ticks}<line class="hour-hand" x1="90" y1="90" x2="${hx.toFixed(1)}" y2="${hy.toFixed(1)}"/><line class="minute-hand" x1="90" y1="90" x2="${mx.toFixed(1)}" y2="${my.toFixed(1)}"/><circle cx="90" cy="90" r="4"/></svg>`;
   };
+  const verticalOperation = (top, bottom, partials, total) => `<div class="long-operation" aria-label="세로 계산"><span>${top}</span><span>× ${bottom}</span><i></i>${partials.map(value => `<span>${value}</span>`).join("")}<i></i><strong>${total}</strong></div>`;
 
   function range(level) {
     return {
@@ -507,6 +508,151 @@
       const answer = decimal(minuteMove - hourMove, 1);
       return result(`${startHour}시 ${String(startMinute).padStart(2, "0")}분부터 ${endHour || 12}시 ${String(endMinute).padStart(2, "0")}분까지 분침이 움직인 각도는 시침이 움직인 각도보다 몇 도 더 큰지 구하세요.<div class="clock-pair">${clockSvg(startHour, startMinute)}${clockSvg(endHour || 12, endMinute)}</div>`, answer, `${duration}분 동안 분침은 ${minuteMove}°, 시침은 ${hourMove}° 움직입니다. 차는 ${minuteMove} - ${hourMove} = ${answer}°입니다.`);
     },
+    multiplicationUnderstanding({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const boxCount = int(rng, 12 + level * 3, 25 + level * 5);
+        const itemsPerBox = int(rng, 1800 + level * 500, 4800 + level * 900);
+        const people = int(rng, 18 + level * 4, 35 + level * 6);
+        const itemsPerPerson = int(rng, 12, 28 + level * 4);
+        const answer = boxCount * itemsPerBox - people * itemsPerPerson;
+        return result(`한 상자에 물건이 ${itemsPerBox.toLocaleString()}개씩 들어 있는 상자 ${boxCount}개가 있습니다. ${people}명이 한 사람당 ${itemsPerPerson}개씩 사용했다면 남은 물건은 몇 개인지 구하세요.`, answer, `처음 물건은 ${itemsPerBox.toLocaleString()} × ${boxCount} = ${(boxCount * itemsPerBox).toLocaleString()}개이고, 사용한 물건은 ${people} × ${itemsPerPerson} = ${(people * itemsPerPerson).toLocaleString()}개입니다. 따라서 ${answer.toLocaleString()}개 남습니다.`);
+      }
+      if (variant % 3 === 1) {
+        const speed = int(rng, 70 + level * 10, 110 + level * 15);
+        const seconds = int(rng, 8 + level * 2, 16 + level * 3);
+        const laps = int(rng, 8 + level * 2, 15 + level * 3);
+        const answer = speed * seconds * laps;
+        return result(`1초에 ${speed} m씩 움직이는 장치가 있습니다. 이 장치가 한 번에 ${seconds}초씩 움직이는 일을 ${laps}번 반복하면 모두 몇 m를 움직이는지 구하세요.`, answer, `한 번 움직인 거리는 ${speed} × ${seconds} = ${speed * seconds} m이고, ${laps}번이면 ${speed * seconds} × ${laps} = ${answer.toLocaleString()} m입니다.`);
+      }
+      const intervals = int(rng, 90 + level * 20, 180 + level * 35);
+      const spacing = int(rng, 24 + level * 5, 55 + level * 8);
+      const treeCount = intervals + 1;
+      const answer = intervals * spacing;
+      return result(`길의 한쪽 끝부터 다른 쪽 끝까지 ${spacing} m 간격으로 나무 ${treeCount}그루를 심었습니다. 길의 길이는 몇 m인지 구하세요. 단, 양 끝에 모두 나무를 심었습니다.`, answer, `나무 사이의 간격은 ${treeCount} - 1 = ${intervals}곳입니다. 따라서 길이는 ${spacing} × ${intervals} = ${answer.toLocaleString()} m입니다.`);
+    },
+    multiplicationApplication({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const value = int(rng, 48 + level * 12, 96 + level * 20);
+        const answer = value * 100 - value;
+        return result(`분배법칙을 이용하여 ${value} × 99를 계산하세요.`, answer, `${value} × 99 = ${value} × (100 - 1) = ${value * 100} - ${value} = ${answer.toLocaleString()}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const common = int(rng, 41 + level * 10, 89 + level * 15);
+        const a = int(rng, 60, 95);
+        const b = int(rng, 20, 50);
+        const c = int(rng, 10, Math.min(35, a + b - 1));
+        const answer = common * (a + b - c);
+        return result(`계산의 성질을 이용하여 다음 식을 계산하세요.<div class="equation expanded">${common} × ${a} + ${common} × ${b} - ${common} × ${c}</div>`, answer, `공통인 ${common}을 묶으면 ${common} × (${a} + ${b} - ${c}) = ${common} × ${a + b - c} = ${answer.toLocaleString()}입니다.`);
+      }
+      const first = pick(rng, [17, 19, 23, 29]);
+      const second = pick(rng, [31, 37, 41, 43]);
+      const firstCount = int(rng, 4 + level, 7 + level * 2);
+      const secondCount = int(rng, 3 + level, 6 + level * 2);
+      const product = BigInt(first) ** BigInt(firstCount) * BigInt(second) ** BigInt(secondCount);
+      const answer = product.toString().length;
+      return result(`${first}을 ${firstCount}번, ${second}을 ${secondCount}번 곱한 수는 몇 자리 수인지 구하세요.<div class="equation expanded">${Array(firstCount).fill(first).concat(Array(secondCount).fill(second)).join(" × ")}</div>`, answer, `곱을 계산하면 ${product.toLocaleString()}이고, 이 수는 ${answer}자리 수입니다.`);
+    },
+    divisionUnderstanding({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const spacing = int(rng, 8 + level * 2, 18 + level * 3);
+        const intervals = int(rng, 160 + level * 40, 300 + level * 70);
+        const length = spacing * intervals;
+        const answer = intervals + 1;
+        return result(`도로의 양쪽 끝에 처음부터 끝까지 ${spacing} m 간격으로 나무를 심었습니다. 도로의 길이가 ${length.toLocaleString()} m일 때 한쪽에 심은 나무는 몇 그루인지 구하세요.`, answer, `간격은 ${length.toLocaleString()} ÷ ${spacing} = ${intervals}곳이고, 양 끝에 나무가 있으므로 ${intervals} + 1 = ${answer}그루입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const boxes = int(rng, 28 + level * 5, 48 + level * 8);
+        const items = int(rng, 18 + level * 3, 32 + level * 5);
+        const damaged = int(rng, 5, boxes - 8);
+        const sellBoxes = boxes - damaged;
+        const price = int(rng, 8 + level * 2, 16 + level * 3) * 1000;
+        const totalRevenue = sellBoxes * price;
+        const answer = totalRevenue / sellBoxes;
+        return result(`상품 ${items * boxes}개를 한 상자에 ${items}개씩 담았습니다. 그중 ${damaged}상자를 제외한 나머지를 모두 같은 값에 팔아 ${totalRevenue.toLocaleString()}원을 받았습니다. 한 상자의 판매 가격을 구하세요.`, answer, `상자는 ${boxes}개이고 판매한 상자는 ${boxes} - ${damaged} = ${sellBoxes}개입니다. ${totalRevenue.toLocaleString()} ÷ ${sellBoxes} = ${answer.toLocaleString()}원입니다.`);
+      }
+      const machineCount = int(rng, 4 + level, 7 + level * 2);
+      const hours = int(rng, 5 + level, 9 + level * 2);
+      const perMachineHour = int(rng, 18 + level * 4, 35 + level * 6);
+      const total = machineCount * hours * perMachineHour;
+      const targetMachines = int(rng, 8 + level * 2, 14 + level * 3);
+      const answer = total / machineCount / hours * targetMachines;
+      return result(`기계 ${machineCount}대가 ${hours}시간 동안 제품 ${total.toLocaleString()}개를 만들었습니다. 모든 기계의 작업량이 같을 때 기계 ${targetMachines}대가 1시간 동안 만드는 제품은 몇 개인지 구하세요.`, answer, `기계 1대가 1시간에 만드는 수는 ${total.toLocaleString()} ÷ ${machineCount} ÷ ${hours} = ${perMachineHour}개입니다. ${targetMachines}대는 ${perMachineHour} × ${targetMachines} = ${answer}개를 만듭니다.`);
+    },
+    divisionApplication({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const divisor = int(rng, 12 + level * 3, 24 + level * 5);
+        const quotient = int(rng, 108 + level * 30, 280 + level * 60);
+        const dividend = divisor * quotient;
+        const digits = String(quotient).split("").map(Number);
+        const answer = digits.reduce((sum, value) => sum + value, 0);
+        return result(`${dividend.toLocaleString()} ÷ ${divisor}의 몫을 구한 뒤, 몫의 각 자리 숫자의 합을 구하세요.`, answer, `${dividend.toLocaleString()} ÷ ${divisor} = ${quotient}이고, 몫의 각 자리 숫자의 합은 ${digits.join(" + ")} = ${answer}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const rightB = pick(rng, [35, 45, 55, 65, 75]);
+        const factor = int(rng, 5 + level, 12 + level * 2);
+        const leftA = rightB * factor;
+        const leftB = int(rng, 45 + level * 5, 85 + level * 10);
+        const product = leftA * leftB;
+        const answer = product / rightB;
+        return result(`두 곱셈식의 값이 같을 때 □에 알맞은 수를 구하세요.<div class="equation">${leftA} × ${leftB} = □ × ${rightB}</div>`, answer, `왼쪽 곱은 ${product.toLocaleString()}입니다. ${product.toLocaleString()} ÷ ${rightB} = ${answer.toLocaleString()}이므로 □는 ${answer.toLocaleString()}입니다.`);
+      }
+      const count = int(rng, 6 + level, 9 + level * 2);
+      const start = int(rng, 3, 12 + level * 4);
+      const sum = count * (start * 2 + count - 1) / 2;
+      const answer = start + count - 1;
+      return result(`연속한 ${count}개의 자연수의 합이 ${sum}입니다. 이 자연수 중 가장 큰 수를 구하세요.`, answer, `가운데 값을 기준으로 연속한 수를 찾으면 ${Array.from({ length: count }, (_, index) => start + index).join(", ")}입니다. 가장 큰 수는 ${answer}입니다.`);
+    },
+    advancedRemainder({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const divisor = int(rng, 12 + level * 3, 22 + level * 5);
+        const remainder = int(rng, 1, divisor - 1);
+        const minimum = 10;
+        const maximum = 99;
+        const values = [];
+        for (let value = minimum; value <= maximum; value += 1) if (value % divisor === remainder) values.push(value);
+        const answer = values[values.length - 1] - values[0];
+        return result(`${divisor}로 나눌 때 나머지가 ${remainder}인 두 자리 자연수 중 가장 큰 수와 가장 작은 수의 차를 구하세요.`, answer, `조건을 만족하는 두 자리 수는 ${values.join(", ")}입니다. 가장 큰 수와 가장 작은 수의 차는 ${answer}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const divisor = int(rng, 12 + level * 2, 21 + level * 4);
+        const oldQuotient = int(rng, 18 + level * 4, 35 + level * 8);
+        const wrongDivisor = divisor + int(rng, 2, 6);
+        const remainder = int(rng, 1, divisor - 1);
+        const dividend = wrongDivisor * oldQuotient + remainder;
+        const answer = dividend % divisor;
+        return result(`어떤 수를 ${divisor}로 나누어야 할 것을 잘못하여 ${wrongDivisor}로 나누었더니 몫이 ${oldQuotient}, 나머지가 ${remainder}였습니다. 바르게 나누었을 때의 나머지를 구하세요.`, answer, `어떤 수는 ${wrongDivisor} × ${oldQuotient} + ${remainder} = ${dividend}입니다. ${dividend}을 ${divisor}로 나눈 나머지는 ${answer}입니다.`);
+      }
+      const divisor = int(rng, 7 + level, 12 + level * 2);
+      const quotient = int(rng, 60 + level * 15, 120 + level * 30);
+      const remainder = int(rng, 1, divisor - 1);
+      const dividend = divisor * quotient + remainder;
+      const answer = quotient + remainder;
+      return result(`어떤 자연수를 ${divisor}로 나누었더니 ${dividend} = ${divisor} × 몫 + 나머지가 되었습니다. 몫과 나머지의 합을 구하세요.`, answer, `${dividend} = ${divisor} × ${quotient} + ${remainder}이므로 몫은 ${quotient}, 나머지는 ${remainder}입니다. 합은 ${answer}입니다.`);
+    },
+    multiplicationCompletion({ rng, level, variant = 0 }) {
+      const multiplicand = int(rng, 240 + level * 100, 780 + level * 180);
+      const multiplier = int(rng, 24 + level * 5, 68 + level * 12);
+      const onesPartial = multiplicand * (multiplier % 10);
+      const tensPartial = multiplicand * Math.floor(multiplier / 10) * 10;
+      const product = multiplicand * multiplier;
+      if (variant % 3 === 0) {
+        const index = int(rng, 0, String(multiplicand).length - 1);
+        const hidden = String(multiplicand)[index];
+        const shown = [...String(multiplicand)].map((digit, digitIndex) => digitIndex === index ? "□" : digit).join("");
+        return result(`세로셈의 □에 알맞은 숫자를 구하세요.${verticalOperation(shown, multiplier, [onesPartial, tensPartial], product)}`, hidden, `곱을 ${multiplier}로 나누면 곱해지는 수는 ${product.toLocaleString()} ÷ ${multiplier} = ${multiplicand}입니다. 따라서 □는 ${hidden}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const index = int(rng, 0, String(multiplier).length - 1);
+        const hidden = String(multiplier)[index];
+        const shown = [...String(multiplier)].map((digit, digitIndex) => digitIndex === index ? "□" : digit).join("");
+        return result(`부분곱을 보고 곱하는 수의 □에 알맞은 숫자를 구하세요.${verticalOperation(multiplicand, shown, [onesPartial, tensPartial], product)}`, hidden, `전체 곱 ${product.toLocaleString()}을 ${multiplicand}로 나누면 곱하는 수는 ${multiplier}입니다. 따라서 □는 ${hidden}입니다.`);
+      }
+      const productText = String(product);
+      const index = int(rng, 1, productText.length - 2);
+      const hidden = productText[index];
+      const shown = [...productText].map((digit, digitIndex) => digitIndex === index ? "□" : digit).join("");
+      return result(`세로셈 결과의 □에 알맞은 숫자를 구하세요.${verticalOperation(multiplicand, multiplier, [onesPartial, tensPartial], shown)}`, hidden, `${multiplicand} × ${multiplier} = ${product.toLocaleString()}이므로 □는 ${hidden}입니다.`);
+    },
     multiply({ rng, level }) {
       const r = range(level);
       const a = int(rng, 12, r.medium);
@@ -726,11 +872,14 @@
     [/^다각형의 외각의 성질$/, "polygonExterior"],
     [/^내각과 외각의 성질의 활용$/, "interiorExteriorApplication"],
     [/^시침과 분침 사이의 각도$/, "clockAngle"],
+    [/^곱셈 알아보기$/, "multiplicationUnderstanding"],
+    [/^곱셈 응용 문제$/, "multiplicationApplication"],
+    [/^나눗셈 알아보기$/, "divisionUnderstanding"],
+    [/^나눗셈 응용 문제$/, "divisionApplication"],
+    [/^나눗셈의 나머지$/, "advancedRemainder"],
+    [/^곱셈식 완성하기$/, "multiplicationCompletion"],
     [/일렬로 나열한 수|배열된 수들의 합/, "numberPattern"],
     [/^평행선 사이의 각도/, "angle"],
-    [/^곱셈 알아보기$|^곱셈식 완성하기$/, "multiply"],
-    [/나눗셈의 나머지/, "remainder"],
-    [/^나눗셈 알아보기$/, "divide"],
     [/^혼합 계산의 순서$|^하나의 식으로 나타내기$|^연산의 규칙$|^혼합 계산식 만들기$/, "mixedOperation"],
     [/분수의 종류와 크기 비교|통분과 분수의 크기 비교/, "fractionCompare"],
     [/분수의 덧셈|분수의 뺄셈|분수의 덧셈과 뺄셈/, "fractionAddSub"],
