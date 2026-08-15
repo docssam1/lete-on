@@ -1788,6 +1788,35 @@ function sourceBusStops({ difficulty = 2 }) {
   };
 }
 
+function balanceScaleThreeObjects({ difficulty = 2 }) {
+  const squareBesideStar = randomInt(1, difficulty === 3 ? 3 : 2);
+  const squareBesideCircle = randomInt(1, difficulty === 1 ? 1 : 2);
+  const squareBesideDiamond = randomInt(1, difficulty === 3 ? 3 : 2);
+  const diamondWeight = squareBesideStar + squareBesideCircle;
+  const starWeight = squareBesideDiamond + diamondWeight;
+  const circleWeight = squareBesideStar + starWeight;
+  const askCombined = difficulty === 3;
+  const answer = askCombined ? circleWeight + diamondWeight : circleWeight;
+  const target = askCombined ? "○ 1개와 ◇ 1개를 합한 무게" : "○ 1개의 무게";
+  const hint = difficulty === 1
+    ? `◇ 1개는 □ ${diamondWeight}개의 무게와 같습니다.`
+    : "";
+
+  return {
+    prompt: `다음 양팔저울은 모두 수평입니다. ${target}는 □ 몇 개의 무게와 같은지 구하세요.`,
+    visual: {
+      kind: "balance-scale-three-objects",
+      squareBesideStar,
+      squareBesideCircle,
+      squareBesideDiamond,
+      hint,
+      askCombined
+    },
+    answer: `${answer}개`,
+    solution: `첫째 저울의 ○를 □ ${squareBesideStar}개와 ☆ 1개로 바꾸어 둘째 저울에 놓아 봅니다. 양쪽의 ☆를 빼면 ◇ 1개는 □ ${diamondWeight}개와 같습니다. 셋째 저울에서 ☆ 1개는 □ ${squareBesideDiamond}개와 ◇ 1개이므로 □ ${starWeight}개와 같습니다. 따라서 ○ 1개는 □ ${circleWeight}개${askCombined ? `이고, 여기에 ◇의 □ ${diamondWeight}개를 더하면 모두 □ ${answer}개` : ""}와 같습니다.`
+  };
+}
+
 function symbolSumGridSquareTop({ difficulty = 2 }) {
   const max = difficulty === 1 ? 6 : difficulty === 2 ? 9 : 12;
   const [square, diamond, circle, triangle] = shuffle(Array.from({ length: max - 1 }, (_, index) => index + 2)).slice(0, 4);
@@ -2080,6 +2109,7 @@ export const GENERATORS = {
   sourceColoredShapeNumber,
   sourceSymbolRelations,
   sourceBalanceRelations,
+  balanceScaleThreeObjects,
   sourcePianoBounce,
   sourceSymbolSumGrid,
   symbolSumGridSquareTop,

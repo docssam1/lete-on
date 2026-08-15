@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "a7b295414fa563100a545f353c0cad0755beb5a9364d44aa2609a6e244c789f4",
-      "size": 38285,
-      "mtime_ns": 1786817566493869800
+      "sha256": "01bef5c91f60498c5a5e1d046ddabd69cb8d340cd735743c1b990fcc2e8da518",
+      "size": 39264,
+      "mtime_ns": 1786818023465701300
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "1c3ef6dfc0efc55d70122258248c0ba2a3b3a570f4ef5ff59efbe4eda1d6d3d5",
-      "size": 110166,
-      "mtime_ns": 1786817529644727800
+      "sha256": "3a7f83bf6b58629f0598804a085bbd7f0158d326b6349b02a3671892ae7bef63",
+      "size": 111791,
+      "mtime_ns": 1786817763140030800
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "a6d3631b13f57d2918c459a1d7af4a709a94b1d0b8b9f330636c08c5093ca74f",
-      "size": 34039,
-      "mtime_ns": 1786817466223571100
+      "sha256": "edefcef41cdcb7ad5f1976a30d4df5b84a9fefd0995de4b41f00d1a0d9ec745f",
+      "size": 34106,
+      "mtime_ns": 1786817838677162400
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 17",
+      "title": "Next verification 7-year-old selection test 2 question 18",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q17"
+        "q18"
       ],
-      "summary": "Verify all three balance-scale relations on source page 11 and answer 4 before implementing balance-scale-three-objects.",
+      "summary": "Verify the exact two-star to three-circle symbol relation on source page 11 and answer 9 before implementing symbol-relation-2to3.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 17 is the next locked source question"
+          "note": "Question 18 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-04 question 17 balance-scale-three-objects",
-          "note": "Do not enable until each pan count and the requested object are verified"
+          "locator": "EXAMS k7-2022-04 question 18 symbol-relation-2to3",
+          "note": "Do not enable until every source equation and the requested symbol are verified"
         }
       ]
     },
@@ -1349,6 +1349,40 @@
           "role": "code",
           "locator": "TYPES triangle-tile-growth and EXAMS k7-2022-04 verified 1 through 16",
           "note": "Source question 16 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q17",
+      "title": "Selection test 2 question 17 three-object balance scales",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q17",
+        "balance-scale-three-objects"
+      ],
+      "summary": "The source balances are circle = square + star, circle + square = diamond + star, and star = two squares + diamond; therefore one circle equals five squares, correcting a stale answer of four.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 17 paragraph",
+          "note": "Original three relations, official answer 5, stale-answer correction, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function balanceScaleThreeObjects",
+          "note": "Three structural difficulty levels with independently checked balance equations"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES balance-scale-three-objects and EXAMS k7-2022-04 verified 1 through 17",
+          "note": "Source question 17 is enabled without changing the older balance-scale generator"
         }
       ]
     }
