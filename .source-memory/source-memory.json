@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "f36839ff87038c52eb6ca4ae33b98db31c48693bfcc4d74a01ce4997ad316823",
-      "size": 16009,
-      "mtime_ns": 1786779380659908800
+      "sha256": "c0b6528894417e7100704e3e0fb15540bdc4151f6399d82dbec652ebee0efc0d",
+      "size": 16551,
+      "mtime_ns": 1786789630743699600
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "ce6bd02202bca7b916dc1de246749f3e366158a2b6f15808a9f6dbd554c50ea8",
-      "size": 32151,
-      "mtime_ns": 1786779380660906300
+      "sha256": "cc4c3536262a5c6c422fc2ee94f269f84593eb855e44b22928686fee9659d1b4",
+      "size": 32230,
+      "mtime_ns": 1786789630746214400
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "e3bf4f241b1069d2b41656735cd25a34fad674a4f4456a75c03c7566d8512422",
-      "size": 56135,
-      "mtime_ns": 1786779102317521900
+      "sha256": "aa8231e62891cbafa6c9c7e5a9b7a9c0ca3f31c503f1e7327434178f86735b48",
+      "size": 57629,
+      "mtime_ns": 1786789503046056500
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "aa353efaeec855475c86b6949e38f7eac5c278eff71f6d2d8734d6beb63946ad",
-      "size": 31742,
-      "mtime_ns": 1786779102319521600
+      "sha256": "4746d88021e574336cb5c6a93ff057beb8bdf253d910f71e2a67846ed66ec081",
+      "size": 31820,
+      "mtime_ns": 1786789473077361500
     }
   ],
   "records": [
@@ -107,15 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F11 target score combinations",
+      "title": "Next implementation F12 matchstick square growth",
       "aliases": [
         "다음 작업"
       ],
       "tags": [
         "next",
-        "F11"
+        "F12"
       ],
-      "summary": "Continue with Final 3 question 9 F11 after checking the original target illustration and the count of distinct two-shot sums.",
+      "summary": "Continue with Final 3 question 10 F12 after checking the original one-square and two-square drawings and the 31-match answer.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-15",
@@ -124,7 +124,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F10 are complete; F11 is next"
+          "note": "F01 through F11 are complete; F12 is next"
         }
       ]
     },
@@ -340,6 +340,42 @@
           "source_id": "source-data",
           "role": "code",
           "locator": "TYPES truth-lie-ranking and FINAL_EXAM_TYPES final-3 question 2",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f11",
+      "title": "Final 3 question 9 target score combinations",
+      "aliases": [
+        "파이널 3회 9번",
+        "과녁 점수 조합"
+      ],
+      "tags": [
+        "F11",
+        "final-3"
+      ],
+      "summary": "F11 preserves the original concentric target, two-hit rule, and repeated-score allowance while enumerating every distinct sum independently.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 표 9번과 대본 검증 9번",
+          "note": "Original 1 to 5 target and answer 9 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function targetScoreCombinations and GENERATORS export",
+          "note": "Three structural difficulty levels with exhaustive two-hit sums"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES target-score-combinations and FINAL_EXAM_TYPES final-3 question 9",
           "note": "Source-matched type is enabled"
         }
       ]
