@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "ebd1ea1998cdafc21b13af9900f04ec8214c08ad272ba9bce3fd0f69f062dc7b",
-      "size": 59665,
-      "mtime_ns": 1786823979298923400
+      "sha256": "832cdbf31478e99a2c10b9f275f794584a66e8bd5005a4d194781ca53380622b",
+      "size": 60503,
+      "mtime_ns": 1786824111695103600
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "a8494a4bd7eb9ccf99e2aba7e5a5095cc6ac6113ed0536b38bb4fb58d928703f",
-      "size": 36125,
-      "mtime_ns": 1786823833297601600
+      "sha256": "69a6467b17535b56e1b2a28d8d13d45c4dbc3d40d30781838189572c621c0ddd",
+      "size": 36129,
+      "mtime_ns": 1786824111690102200
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 19",
+      "title": "Next verification 7-year-old selection test 3 question 20",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q19"
+        "q20"
       ],
-      "summary": "Verify source and answer page 12 for the six-point overlapping-distance diagram. The audit answer is 17, but every shown arc, endpoint, and requested segment must match numberLineSixPoints before enabling it.",
+      "summary": "Verify source and answer page 12 for the triangular black-and-white stone pattern. The official answer is 37th when black stones exceed white stones by 19; confirm the odd-even stage rule before enabling goStoneDifferenceInverse.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 19 is the six-point overlapping-distance problem"
+          "note": "Question 20 is the inverse black-and-white stone difference pattern"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 19 number-line-six-points mapping",
-          "note": "Verify the exact diagram and target segment before enabling"
+          "locator": "EXAMS k7-2022-06 question 20 go-stone-difference-inverse mapping",
+          "note": "Verify stage parity and difference before enabling"
         }
       ]
     },
@@ -2097,6 +2097,40 @@
           "role": "code",
           "locator": "TYPES symbol-relation-3to4 and EXAMS k7-2022-06 verified 1 through 18",
           "note": "Source question 18 enabled after exact verification"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q19",
+      "title": "Selection test 3 question 19 six-point overlapping distance",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q19",
+        "number-line-six-points"
+      ],
+      "summary": "The source diagram gives AD 45, CE 53, AC 26, BD 29, and BF 80 and asks for EF. Reconstructing the five adjacent gaps gives 16, 10, 19, 34, 17, so the official answer is 17.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 19 paragraph",
+          "note": "Original five arcs, target EF, answer 17, generator reuse, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function numberLineSixPoints",
+          "note": "Source-aligned overlapping-distance generator with three levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-06 verified 1 through 19",
+          "note": "Source question 19 enabled after exact page comparison"
         }
       ]
     }
