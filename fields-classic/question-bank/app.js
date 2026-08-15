@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260815a";
-import { GENERATORS } from "./generators.js?v=20260815a";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260815b";
+import { GENERATORS } from "./generators.js?v=20260815b";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -262,6 +262,29 @@ function hiddenCardConditionsMarkup(visual) {
   return `<div class="hidden-card-clues">${visual.clues.map((clue, index) => `<div class="hidden-card-row"><span>(${index + 1})</span><div>${clue.values.map((value) => `<i>${value}</i>`).join("")}</div><strong class="${clue.hasCard ? "has" : "not"}">→ ${clue.hasCard ? "있습니다." : "없습니다."}</strong></div>`).join("")}</div>`;
 }
 
+function shapeMatrixRuleMarkup(visual) {
+  const hatchId = `shape-matrix-hatch-${visual.id}`;
+  const shape = (kind, cx, cy, size, className, fill) => {
+    const style = fill === "hatch" ? ` style="fill:url(#${hatchId})"` : "";
+    if (kind === "circle") return `<circle class="${className} fill-${fill}" cx="${cx}" cy="${cy}" r="${size}"${style}/>`;
+    if (kind === "square") return `<rect class="${className} fill-${fill}" x="${cx - size}" y="${cy - size}" width="${size * 2}" height="${size * 2}"${style}/>`;
+    return `<polygon class="${className} fill-${fill}" points="${cx},${cy - size} ${cx - size},${cy + size * 0.82} ${cx + size},${cy + size * 0.82}"${style}/>`;
+  };
+  const cells = visual.cells.map((cell, index) => {
+    const column = index % 3;
+    const row = Math.floor(index / 3);
+    const x = 15 + column * 110;
+    const y = 15 + row * 110;
+    const cx = x + 55;
+    const cy = y + 55;
+    const content = cell
+      ? `${shape(cell.outer, cx, cy, 35, "matrix-outer", "plain")}${shape(cell.inner, cx, cy, 22, "matrix-inner", cell.fill)}`
+      : `<text class="matrix-missing" x="${cx}" y="${cy + 8}">㉠</text>`;
+    return `<g><rect class="matrix-cell" x="${x}" y="${y}" width="110" height="110"/>${content}</g>`;
+  }).join("");
+  return `<svg class="shape-matrix-svg" viewBox="0 0 360 360" role="img" aria-label="큰 도형, 작은 도형, 칠한 방법의 규칙을 찾는 3행 3열 문제"><defs><pattern id="${hatchId}" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#fff"/><line x1="0" y1="0" x2="0" y2="8" stroke="#627886" stroke-width="3"/></pattern></defs>${cells}</svg>`;
+}
+
 function closestCardSumMarkup(visual) {
   const blank = () => '<span class="digit-card-blank"></span>';
   return `<div class="closest-card-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="closest-card-equation"><span class="two-digit-blank">${blank()}${blank()}</span><b>+</b><span class="two-digit-blank">${blank()}${blank()}</span><b>=</b><span class="sum-blank"></span></div><small>${visual.target}에 가장 가까운 합</small></div>`;
@@ -376,6 +399,7 @@ function nonadjacentPyramidMarkup(visual) {
 function visualMarkup(visual) {
   if (!visual) return "";
   if (visual.kind === "hidden-card-conditions") return `<div class="visual hidden-card-visual">${hiddenCardConditionsMarkup(visual)}</div>`;
+  if (visual.kind === "shape-matrix-rule") return `<div class="visual shape-matrix-visual">${shapeMatrixRuleMarkup(visual)}</div>`;
   if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;

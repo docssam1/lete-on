@@ -203,6 +203,59 @@ function wrongOperationCorrection({ difficulty = 2 }) {
   };
 }
 
+function shapeMatrixRule({ difficulty = 2 }) {
+  const shapes = ["circle", "square", "triangle"];
+  const fills = ["plain", "gray", "hatch"];
+  const direction = sample([1, 2]);
+  const cycle = [0, direction, (direction * 2) % 3];
+  const shapeRows = difficulty === 3 ? shuffle([0, 1, 2]) : cycle;
+  const shapeColumns = difficulty === 3 ? shuffle([0, 1, 2]) : cycle;
+  const outerOffset = randomInt(0, 2);
+  const innerOffset = (outerOffset + sample([1, 2])) % 3;
+  const fillRows = difficulty === 3 ? shuffle([0, 1, 2]) : [0, 2, 1];
+  const fillColumns = difficulty === 3 ? shuffle([0, 1, 2]) : [0, 1, 2];
+  const fillOffset = randomInt(0, 2);
+  const missingIndex = difficulty === 3 ? sample([0, 2, 6, 8]) : 8;
+
+  const fullCells = Array.from({ length: 9 }, (_, index) => {
+    const row = Math.floor(index / 3);
+    const column = index % 3;
+    const shapeIndex = (shapeRows[row] + shapeColumns[column]) % 3;
+    const fillIndex = (fillRows[row] + fillColumns[column] + fillOffset) % 3;
+    return {
+      outer: shapes[(shapeIndex + outerOffset) % 3],
+      inner: shapes[(shapeIndex + innerOffset) % 3],
+      fill: difficulty === 1 ? "plain" : fills[fillIndex]
+    };
+  });
+  const answerCell = fullCells[missingIndex];
+  const cells = fullCells.map((cell, index) => index === missingIndex ? null : cell);
+  const shapeNames = { circle: "동그라미", square: "네모", triangle: "세모" };
+  const fillNames = { plain: "칠하지 않은", gray: "회색으로 칠한", hatch: "빗금으로 칠한" };
+  const answer = `큰 ${shapeNames[answerCell.outer]} 안에 ${fillNames[answerCell.fill]} 작은 ${shapeNames[answerCell.inner]}`;
+  const trackedRules = difficulty === 1 ? "큰 도형과 작은 도형" : "큰 도형, 작은 도형, 칠한 방법";
+
+  return {
+    prompt: "다음 도형의 규칙을 찾아 ㉠에 알맞은 모양을 그리세요.",
+    visual: {
+      kind: "shape-matrix-rule",
+      id: Math.random().toString(36).slice(2, 10),
+      cells,
+      missingIndex
+    },
+    answer,
+    solution: `가로줄과 세로줄을 살펴보면 ${trackedRules}이 겹치지 않고 한 번씩 나타납니다. 따라서 ㉠에는 ${answer} 모양이 들어갑니다.`,
+    meta: {
+      difficulty,
+      size: 3,
+      missingIndex,
+      answerCell,
+      fullCells,
+      tracks: difficulty === 1 ? ["outer", "inner"] : ["outer", "inner", "fill"]
+    }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -650,6 +703,7 @@ export const GENERATORS = {
   closestTwoDigitCardSum,
   frontBackTotal,
   wrongOperationCorrection,
+  shapeMatrixRule,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
