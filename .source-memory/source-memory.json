@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "d1c5f732f77864bd6d79609eb826a4ce040815de370305c0919ec14c69f76cea",
-      "size": 13486,
-      "mtime_ns": 1786771274406790900
+      "sha256": "e4313538edcf5294cf90923a2758f3f8f9873ba09ca27994740019daab6dcbef",
+      "size": 13888,
+      "mtime_ns": 1786771995655636600
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "e9cbbe483091fbf1ca5fac3225fa6a26267e6d2d5ef28ed83ed171479131b6a0",
-      "size": 31909,
-      "mtime_ns": 1786771274408795100
+      "sha256": "a5b3157242c85cd9229bb0416af56407d5f959a9a5efd2337777e8fe445f4c45",
+      "size": 32109,
+      "mtime_ns": 1786771995657637000
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "9d17c2619fd900b249e132bca1d5cf599e725d9f01d6b7f2067f3af39ea26cad",
-      "size": 35603,
-      "mtime_ns": 1786771148066049800
+      "sha256": "1431fc5d3a8ded0d23017f96178891afc81973a4f4925cb33fa50355b273f197",
+      "size": 38006,
+      "mtime_ns": 1786771692075872700
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "d17f202cee4df665fe44fa4184f311f13232d595f3a4f3a6bb19f142a894750a",
-      "size": 29667,
-      "mtime_ns": 1786770900681337300
+      "sha256": "4538a2e976ca676b94cd1af7c367e789ec92aedaef5ce2758c65db19677369c9",
+      "size": 29737,
+      "mtime_ns": 1786771723312443800
     }
   ],
   "records": [
@@ -107,15 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F05 shape matrix rule",
+      "title": "Next implementation F06 delayed date promise",
       "aliases": [
         "다음 작업"
       ],
       "tags": [
         "next",
-        "F05"
+        "F06"
       ],
-      "summary": "Continue with Final 2 question 9 F05 after checking the original visual structure.",
+      "summary": "Continue with Final 2 question 10 F06 after confirming the two-step date movement against the original page and explanation.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-15",
@@ -124,7 +124,43 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F04 are complete; F05 is next"
+          "note": "F01 through F05 are complete; F06 is next"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f05",
+      "title": "Final 2 question 9 shape matrix rule",
+      "aliases": [
+        "파이널 2회 9번",
+        "도형 행렬 규칙"
+      ],
+      "tags": [
+        "F05",
+        "final-2"
+      ],
+      "summary": "F05 reproduces the original 3x3 nested-shape matrix with independently cycling outer shape, inner shape, and fill.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 2회 표 9번과 대본 검증 9번",
+          "note": "Original 3x3 outer, inner, and fill cycles verified against rendered page 6"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeMatrixRule and GENERATORS export",
+          "note": "Three difficulty structures with row and column uniqueness metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES shape-matrix-rule and FINAL_EXAM_TYPES question 9",
+          "note": "Source-matched type is enabled"
         }
       ]
     }
