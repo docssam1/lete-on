@@ -868,6 +868,52 @@ function neitherSetCount({ difficulty = 2 }) {
   };
 }
 
+function hiddenScoreRanking({ difficulty = 2 }) {
+  const names = shuffle(["수종", "세윤", "현희", "도연", "민서", "지우", "하린", "준호"]).slice(0, difficulty === 3 ? 5 : 4);
+  let hundred;
+  let baseTen;
+  do {
+    hundred = randomInt(2, 8);
+    baseTen = randomInt(1, 7);
+  } while (hundred === baseTen + 1);
+
+  const upperTen = baseTen + 2;
+  const middleTen = baseTen + 1;
+  const symbols = ["●", "★", "◆", "■"];
+  const score = (a, b, c) => a * 100 + b * 10 + c;
+  const rows = difficulty === 3
+    ? [
+        { name: names[0], score: score(hundred, upperTen, 0), rank: 1 },
+        { name: names[1], score: score(hundred, middleTen, 1), blankIndex: 1, symbol: symbols[0], rank: 2 },
+        { name: names[2], score: score(hundred, baseTen, 2), blankIndex: 0, symbol: symbols[1], rank: 3 },
+        { name: names[3], score: score(hundred, baseTen, 1), blankIndex: 2, symbol: symbols[2], rank: 4 },
+        { name: names[4], score: score(hundred, baseTen, 0), blankIndex: 2, symbol: symbols[3], rank: 5 }
+      ]
+    : [
+        { name: names[0], score: score(hundred, upperTen, 0), rank: 1 },
+        { name: names[1], score: score(hundred, middleTen, 1), blankIndex: 1, symbol: symbols[0], rank: 2 },
+        { name: names[2], score: score(hundred, baseTen, 1), blankIndex: 0, symbol: symbols[1], rank: 3 },
+        { name: names[3], score: score(hundred, baseTen, 0), blankIndex: 2, symbol: symbols[2], rank: 4 }
+      ];
+  const hiddenRows = rows.filter((row) => row.blankIndex !== undefined);
+  const hiddenDigits = hiddenRows.map((row) => Number(String(row.score)[row.blankIndex]));
+  const candidates = difficulty === 1 ? shuffle(hiddenDigits) : null;
+  const candidateSentence = candidates ? ` 가려진 곳에 들어갈 숫자는 ${candidates.join(", ")}이고, 한 번씩만 사용합니다.` : "";
+  const answer = hiddenRows.map((row) => `${row.name} ${row.score}장`).join(", ");
+  const symbolAnswer = hiddenRows.map((row, index) => `${row.symbol}=${hiddenDigits[index]}`).join(", ");
+  const solution = difficulty === 3
+    ? `${symbols[1]}은 앞뒤 점수의 백의 자리를 비교하면 ${hundred}입니다. 그러면 ${symbols[0]}은 ${baseTen}보다 크고 ${upperTen}보다 작으므로 ${middleTen}입니다. 마지막 두 점수는 ${hundred}${baseTen}2보다 작으면서 서로 다른 숫자를 써야 하므로 ${symbols[2]}=1, ${symbols[3]}=0입니다. 따라서 ${symbolAnswer}이고, 점수는 ${answer}입니다.`
+    : `${symbols[1]}은 앞뒤 점수의 백의 자리를 비교하면 ${hundred}입니다. ${symbols[2]}은 ${hundred}${baseTen}1보다 작은 ${hundred}${baseTen}${symbols[2]}의 일의 자리이므로 0입니다. ${symbols[0]}은 ${baseTen}보다 크고 ${upperTen}보다 작으므로 ${middleTen}입니다. 따라서 ${symbolAnswer}이고, 점수는 ${answer}입니다.`;
+
+  return {
+    prompt: `다음은 친구들이 모은 우표의 수를 많이 모은 순서대로 나타낸 표입니다. 가려진 숫자는 모두 다릅니다.${candidateSentence} 가려진 친구들의 우표 수를 각각 구하세요.`,
+    visual: { kind: "hidden-score-ranking", rows, candidates },
+    answer,
+    solution,
+    meta: { difficulty, rows, hiddenDigits, symbols: hiddenRows.map((row) => row.symbol), hundred, baseTen, upperTen, middleTen }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -1327,6 +1373,7 @@ export const GENERATORS = {
   letterBlockTransform,
   mixedSequences,
   neitherSetCount,
+  hiddenScoreRanking,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,

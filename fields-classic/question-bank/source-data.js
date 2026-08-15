@@ -92,7 +92,7 @@ export const TYPES = [
   type("piano-bounce", "pattern", "반복 규칙", "피아노 건반 왕복 순서", { generator: "sourcePianoBounce", sourceMatched: true }),
   type("colored-shape-number", "pattern", "도형 수 표현", "색칠한 도형이 나타내는 수", { generator: "sourceColoredShapeNumber", sourceMatched: true }),
   type("height-order", "logic", "순서와 비교", "키의 크고 작은 순서"),
-  type("hidden-score-ranking", "logic", "순서와 비교", "순위표의 가려진 서로 다른 숫자 찾기"),
+  type("hidden-score-ranking", "logic", "순서와 비교", "순위표의 가려진 서로 다른 숫자 찾기", { generator: "hiddenScoreRanking", sourceMatched: true }),
   type("total-difference", "number", "합과 차 문장제", "전체 수와 차이로 두 수 구하기"),
   type("multi-person-transfer", "number", "합과 차 문장제", "여러 사람의 합과 주고받기"),
   type("fold-cut-piece-count", "geometry", "색종이 접기", "접고 자른 조각의 개수"),
@@ -229,7 +229,7 @@ export const PRACTICE_EXAM_TYPES = [
   { id: "mock-4", label: "필즈 대비 실전 4회", questions: ["balance-scale","rod-length-ratio","number-card-mixed-operations","fold-number-remaining-sum","equal-line-sum","magic-square","hidden-score-ranking","two-digit-even-count","number-table-rule","function-machine","square-count","reverse-initial-count","calendar-weekday-sum","growing-shape-count","cryptarithm","shape-equation","shape-sum-table","shape-sum-table","height-order","person-item-logic"] },
   { id: "mock-5", label: "필즈 대비 실전 5회", questions: ["shape-sum-table","colored-shape-number","operator-insertion","magic-square","edge-sum-grid","cryptarithm","repeat-pattern","go-stone-difference","balance-scale","rod-length-ratio","fold-hole-count","fold-diagonal-unfold","set-union-count","equalize-transfer","three-digit-card-count","cube-add-to-match","order-position","number-table-rule","order-position","number-pyramid"] },
   { id: "mock-6", label: "필즈 대비 실전 6회", questions: ["congruent-partition","magic-square","edge-sum-grid","shape-equation","shape-sum-table","symbol-relation","order-position","person-item-logic","latin-square","fold-diagonal-unfold","cube-fill-box","edge-sum-grid","latin-square","total-difference","set-union-count","number-card-plus-minus","function-machine","multi-person-transfer","cube-hidden-count","repeat-pattern"] }
-].map((exam) => ({ ...exam, questions: exam.questions.map((typeId, index) => question(index + 1, typeId)) }));
+].map((exam) => ({ ...exam, questions: exam.questions.map((typeId, index) => ({ ...question(index + 1, typeId), verified: exam.id === "mock-4" && index === 6 })) }));
 
 export const FINAL_EXAM_TYPES = [
   {

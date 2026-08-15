@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816q";
-import { GENERATORS } from "./generators.js?v=20260816q";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816r";
+import { GENERATORS } from "./generators.js?v=20260816r";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -431,6 +431,12 @@ function vennNeitherMarkup(visual) {
   return `<div class="venn-neither-work"><div class="venn-total">전체 ${visual.total}${visual.unit}</div><svg viewBox="0 0 420 205" role="img" aria-label="두 조건에 모두 해당하지 않는 수를 찾는 겹친 원 그림"><circle class="venn-circle first" cx="165" cy="112" r="76"/><circle class="venn-circle second" cx="255" cy="112" r="76"/><text class="venn-label" x="112" y="22">${visual.first}</text><text class="venn-total-label" x="112" y="39">${firstTotal}</text><text class="venn-label" x="308" y="22">${visual.second}</text><text class="venn-total-label" x="308" y="39">${secondTotal}</text><text class="venn-value" x="125" y="116">${firstValue}</text><text class="venn-value overlap" x="210" y="116">${overlapValue}</text><text class="venn-value" x="295" y="116">${secondValue}</text><text class="venn-neither-label" x="210" y="199">어느 쪽에도 해당하지 않음: ?</text></svg></div>`;
 }
 
+function hiddenScoreRankingMarkup(visual) {
+  const scoreCells = (row) => String(row.score).split("").map((digit, index) => `<span class="${index === row.blankIndex ? "hidden" : ""}">${index === row.blankIndex ? row.symbol : digit}</span>`).join("");
+  const candidates = visual.candidates ? `<div class="hidden-score-candidates"><b>사용할 숫자</b>${visual.candidates.map((value) => `<span>${value}</span>`).join("")}</div>` : "";
+  return `<div class="hidden-score-work">${candidates}<div class="hidden-score-table"><div class="heading"><b>이름</b><b>우표의 수(장)</b><b>많이 모은 순서</b></div>${visual.rows.map((row) => `<div class="row"><strong>${row.name}</strong><span class="score">${scoreCells(row)}</span><em>${row.rank}</em></div>`).join("")}</div></div>`;
+}
+
 function closestCardSumMarkup(visual) {
   const blank = () => '<span class="digit-card-blank"></span>';
   return `<div class="closest-card-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="closest-card-equation"><span class="two-digit-blank">${blank()}${blank()}</span><b>+</b><span class="two-digit-blank">${blank()}${blank()}</span><b>=</b><span class="sum-blank"></span></div><small>${visual.target}에 가장 가까운 합</small></div>`;
@@ -556,6 +562,7 @@ function visualMarkup(visual) {
   if (visual.kind === "letter-block-transform") return `<div class="visual letter-transform-visual">${letterBlockTransformMarkup(visual)}</div>`;
   if (visual.kind === "mixed-sequences") return `<div class="visual mixed-sequences-visual">${mixedSequencesMarkup(visual)}</div>`;
   if (visual.kind === "venn-neither") return `<div class="visual venn-neither-visual">${vennNeitherMarkup(visual)}</div>`;
+  if (visual.kind === "hidden-score-ranking") return `<div class="visual hidden-score-visual">${hiddenScoreRankingMarkup(visual)}</div>`;
   if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;

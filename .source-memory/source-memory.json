@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "758d5fa243b5d6f4f131a17ebedc4269bfe2d1589c3313e751557a4648628728",
-      "size": 21075,
-      "mtime_ns": 1786810988182952800
+      "sha256": "5d3e5f839a3b95f765638ad11943accc455358ea2a14b9f99cd4ab99e8fdbeec",
+      "size": 21817,
+      "mtime_ns": 1786811540653185900
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "0dabf118a1e0e00202236037979aee1cbbaf11440415bee0286d13039d66e3b5",
-      "size": 33162,
-      "mtime_ns": 1786810988180950700
+      "sha256": "f502f98c551bd80e4344a15d6491802089821f93263b66907dd440cb1fc3ceb1",
+      "size": 33398,
+      "mtime_ns": 1786811540651185300
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "060053d53a45dcfde553a1f5a184c17d4945f1edca2c44856e2a0b657163a239",
-      "size": 69787,
-      "mtime_ns": 1786810654548847500
+      "sha256": "e3d4a818ae7fd9ab50c66fa7df227f6f56b29655bbf87b7aaf7fde75107fd4cb",
+      "size": 73132,
+      "mtime_ns": 1786811418902494100
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "9ee6a49e34cb989aadda77b312d726feb04dd1dd936456e59a8a2cc8ce00f0f9",
-      "size": 32257,
-      "mtime_ns": 1786810639130274800
+      "sha256": "3a8ff5b7937c508e518b12e176506b339f4c70d260cba76def7395190d2773f7",
+      "size": 32371,
+      "mtime_ns": 1786811403115098100
     }
   ],
   "records": [
@@ -107,15 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F17 hidden ranking digits",
+      "title": "Next implementation F18 two-digit even count",
       "aliases": [
         "다음 작업"
       ],
       "tags": [
         "next",
-        "F17"
+        "F18"
       ],
-      "summary": "Continue with F17 by locating the exact source ranking table, verifying that its hidden digits are distinct, and only then implementing a source-matched generator.",
+      "summary": "Continue with F18 by verifying the exact source number cards and two-digit even-number conditions before implementing the generator.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -124,7 +124,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F16 are complete; F17 is next"
+          "note": "F01 through F17 are complete; F18 is next"
         }
       ]
     },
@@ -557,6 +557,42 @@
           "role": "code",
           "locator": "TYPES neither-set-count and FINAL_EXAM_TYPES final-3 question 20",
           "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f17",
+      "title": "Practice 4 question 7 hidden ranking digits",
+      "aliases": [
+        "실전 4회 7번",
+        "순위표의 가려진 서로 다른 숫자"
+      ],
+      "tags": [
+        "F17",
+        "practice-4"
+      ],
+      "summary": "F17 preserves the original ranking table 221 > 2●3 > ★93 > 19◆ and verifies the unique completed scores 203, 193, and 192 by exhaustive digit assignment.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 4회 표 7번, 중복·해설 검증 7번, 다음 검증 순서 4번",
+          "note": "Practice 4 source structure and completed scores verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function hiddenScoreRanking and GENERATORS export",
+          "note": "Three structural difficulty levels with exhaustive unique-solution metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES hidden-score-ranking and PRACTICE_EXAM_TYPES mock-4 question 7",
+          "note": "Only the verified practice question is enabled"
         }
       ]
     }
