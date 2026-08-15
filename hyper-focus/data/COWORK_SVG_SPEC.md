@@ -134,10 +134,13 @@ SVG: 주사위 전개도 + 이동 화살표 + 경로
 **q11 paper_fold_top_numbers** (검수 통과)
 ```json
 "grid": {"rows":4,"cols":4,"values":[[...]]}
-"foldSequence": ["left","up"]
-"cutPattern": "top_right_quarter"
+"foldSequence": [
+  {"axis":"horizontal","movingSide":"top_to_bottom"},
+  {"axis":"vertical","movingSide":"right_to_left"}
+]
+"topVisibleNumbers": [N,N,N,N]
 ```
-SVG: 4×4 숫자 격자 + 접기 화살표 + 잘린 위치 표시
+SVG: Geometry 숫자판·접기 화살표 스타일. 4×4 숫자 격자를 위→아래, 오른쪽→왼쪽으로 접어 완성되는 2×2 윗면을 표시한다. 자르기·펀칭 요소는 넣지 않는다.
 
 **q12 paper_hole_fold** (검수 통과)
 ```json
