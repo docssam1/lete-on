@@ -1,5 +1,5 @@
 import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816dl";
-import { GENERATORS } from "./generators.js?v=20260816cy";
+import { GENERATORS } from "./generators.js?v=20260816cz";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -781,7 +781,7 @@ function triangleTileGrowthMarkup(visual) {
     }
     return `<div class="triangle-growth-stage stage-${size}"><svg viewBox="0 0 100 94" role="img" aria-label="${size}번째 정삼각형 조각 배열"><g>${lines.join("")}</g></svg><b>${size}번째</b>${visual.showCounts ? `<span>${size * size}장</span>` : ""}</div>`;
   };
-  return `<div class="triangle-growth-work">${visual.stages.map(stage).join("")}<strong>…</strong><em>${visual.askIndex ? `${visual.pieceCount}장` : `${visual.target}번째`}</em></div>`;
+  return `<div class="triangle-growth-work growth-theme-${visual.theme || "navy"}">${visual.stages.map(stage).join("")}<strong>…</strong><em>${visual.askIndex ? `${visual.pieceCount}장` : `${visual.target}번째`}</em></div>`;
 }
 
 function squareTileGrowthMarkup(visual) {
@@ -793,12 +793,12 @@ function squareTileGrowthMarkup(visual) {
     }).join("");
     return `<div class="square-growth-stage stage-${size}"><svg viewBox="-1 -1 102 102" role="img" aria-label="${size}번째 정사각형 조각 배열"><g>${cells}</g></svg><b>${size}번째</b>${visual.showCounts ? `<span>${size * size}장</span>` : ""}</div>`;
   };
-  return `<div class="square-growth-work">${visual.stages.map(stage).join("")}<strong>…</strong><em>${visual.askIndex ? `${visual.pieceCount}장` : `${visual.target}번째`}</em></div>`;
+  return `<div class="square-growth-work growth-theme-${visual.theme || "navy"}">${visual.stages.map(stage).join("")}<strong>…</strong><em>${visual.askIndex ? `${visual.pieceCount}장` : `${visual.target}번째`}</em></div>`;
 }
 
 function growingDotSquareMarkup(visual) {
   const stage = (size) => `<div><i style="--dots:${size}">${Array.from({ length: size * size }, () => "<b></b>").join("")}</i><span>${size}번째</span></div>`;
-  return `<div class="growing-dot-squares">${[1,2,3,4].map(stage).join("")}<strong>…</strong><em>${visual.target}번째</em></div>`;
+  return `<div class="growing-dot-squares growth-theme-${visual.theme || "navy"}">${[1,2,3,4].map(stage).join("")}<strong>…</strong><em>${visual.target}번째</em></div>`;
 }
 
 function symbolSumGridMarkup(visual) {

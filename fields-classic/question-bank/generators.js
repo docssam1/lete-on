@@ -2265,12 +2265,15 @@ function sourceSymbolSumGrid({ difficulty = 2 }) {
 }
 
 function sourceGrowingDotSquare({ difficulty = 2 }) {
-  const target = difficulty === 1 ? randomInt(5, 6) : difficulty === 2 ? randomInt(6, 7) : randomInt(7, 9);
+  const target = difficulty === 1 ? randomInt(4, 8) : difficulty === 2 ? randomInt(5, 9) : randomInt(7, 11);
+  const theme = sample(["navy", "coral", "gold", "teal"]);
+  const pieceCount = target * target;
   return {
     prompt: `구슬을 놓아 다음 모양을 만들어 갈 때, ${target}번째 모양에는 구슬을 몇 개 놓는지 구하세요.`,
-    visual: { kind: "growing-dot-square", target },
-    answer: String(target * target),
-    solution: `1번째는 1개, 2번째는 4개, 3번째는 9개, 4번째는 16개입니다. 다음 모양으로 갈수록 가로와 세로에 구슬이 한 개씩 늘어납니다. ${target}번째는 가로 ${target}줄에 ${target}개씩 있으므로 모두 ${target * target}개입니다.`
+    visual: { kind: "growing-dot-square", target, theme },
+    answer: String(pieceCount),
+    solution: `1번째는 1개, 2번째는 4개, 3번째는 9개, 4번째는 16개입니다. 다음 모양으로 갈수록 가로와 세로에 구슬이 한 개씩 늘어납니다. ${target}번째는 가로 ${target}줄에 ${target}개씩 있으므로 모두 ${pieceCount}개입니다.`,
+    meta: { difficulty, target, theme, pieceCount, answer: pieceCount }
   };
 }
 
@@ -3028,32 +3031,34 @@ function twoDigitOddBoundedGap({ difficulty = 2 }) {
 }
 
 function triangleTileGrowth({ difficulty = 2 }) {
-  const target = difficulty === 1 ? randomInt(4, 6) : difficulty === 2 ? randomInt(6, 9) : randomInt(6, 10);
+  const target = difficulty === 1 ? randomInt(4, 8) : difficulty === 2 ? randomInt(6, 10) : randomInt(7, 11);
+  const theme = sample(["navy", "coral", "gold", "teal"]);
   const pieceCount = target * target;
   const askIndex = difficulty === 3;
   return {
     prompt: askIndex
       ? `작은 정삼각형 색종이를 이어 붙여 그림과 같은 규칙으로 모양을 만듭니다. 작은 정삼각형 색종이가 ${pieceCount}장 필요한 것은 몇 번째 모양인가요?`
       : `작은 정삼각형 색종이를 이어 붙여 그림과 같은 규칙으로 모양을 만들어 나갑니다. ${target}번째 모양에는 작은 정삼각형 색종이가 몇 장 필요한가요?`,
-    visual: { kind: "triangle-tile-growth", stages: [1, 2, 3, 4], showCounts: difficulty === 1, target, pieceCount, askIndex },
+    visual: { kind: "triangle-tile-growth", stages: [1, 2, 3, 4], showCounts: difficulty === 1, target, pieceCount, askIndex, theme },
     answer: askIndex ? `${target}번째` : `${pieceCount}장`,
     solution: `1번째부터 작은 삼각형 수는 1장, 4장, 9장, 16장으로 늘어납니다. ${target}번째는 ${target}을 ${target}번 더한 ${pieceCount}장이므로, ${askIndex ? `${pieceCount}장이 필요한 것은 ${target}번째` : `${target}번째 모양에는 ${pieceCount}장`}입니다.`,
-    meta: { difficulty, target, pieceCount, askIndex, answer: askIndex ? target : pieceCount }
+    meta: { difficulty, target, pieceCount, askIndex, theme, answer: askIndex ? target : pieceCount }
   };
 }
 
 function squareTileGrowth({ difficulty = 2 }) {
-  const target = difficulty === 1 ? randomInt(4, 6) : difficulty === 2 ? randomInt(6, 9) : randomInt(5, 9);
+  const target = difficulty === 1 ? randomInt(4, 8) : difficulty === 2 ? randomInt(6, 10) : randomInt(7, 11);
+  const theme = sample(["navy", "coral", "gold", "teal"]);
   const pieceCount = target * target;
   const askIndex = difficulty === 3;
   return {
     prompt: askIndex
       ? `작은 정사각형 색종이를 이어 붙여 그림과 같은 규칙으로 모양을 만듭니다. 작은 정사각형 색종이가 ${pieceCount}장 필요한 것은 몇 번째 모양인가요?`
       : `작은 정사각형 색종이를 이어 붙여 그림과 같은 규칙으로 모양을 만들어 나갑니다. ${target}번째 모양에는 작은 정사각형 색종이가 몇 장 필요한가요?`,
-    visual: { kind: "square-tile-growth", stages: [1, 2, 3, 4], showCounts: difficulty === 1, target, pieceCount, askIndex },
+    visual: { kind: "square-tile-growth", stages: [1, 2, 3, 4], showCounts: difficulty === 1, target, pieceCount, askIndex, theme },
     answer: askIndex ? `${target}번째` : `${pieceCount}장`,
     solution: `1번째부터 작은 정사각형 수는 1장, 4장, 9장, 16장으로 늘어납니다. ${target}번째는 한 줄에 ${target}장씩 ${target}줄이므로 모두 ${pieceCount}장입니다.${askIndex ? ` 따라서 ${pieceCount}장이 필요한 것은 ${target}번째입니다.` : ""}`,
-    meta: { difficulty, target, pieceCount, askIndex, answer: askIndex ? target : pieceCount }
+    meta: { difficulty, target, pieceCount, askIndex, theme, answer: askIndex ? target : pieceCount }
   };
 }
 

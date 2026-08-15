@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "7b39bca6afcda8c666be00b351a643d0a7cdeec38f24343a6b162621e681e79d",
-      "size": 101502,
-      "mtime_ns": 1786835052276144200
+      "sha256": "4d2e1794c00c395eb262385e035d7734846a4bf6c77ac00cfb8450abb205be9c",
+      "size": 102469,
+      "mtime_ns": 1786835429164394400
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "7a16f1d0194157aabac95d3ae1ee0f1c4a1dec14d1b0bac3251c0a9b00deb101",
-      "size": 186551,
-      "mtime_ns": 1786834959667325600
+      "sha256": "d11ffdf3c2e2d8aff7997150e6ab3b1abfefbcde44a703519acef1664c87a69d",
+      "size": 186861,
+      "mtime_ns": 1786835260858895900
     },
     {
       "id": "source-data",
@@ -3654,6 +3654,42 @@
           "role": "code",
           "locator": "Corresponding source-matched TYPES entries",
           "note": "Selectable source types remain unchanged"
+        }
+      ]
+    },
+    {
+      "id": "fields.regression.diversity.growth-arrays",
+      "title": "Growing array generator diversity repair",
+      "aliases": [],
+      "tags": [
+        "regression",
+        "diversity",
+        "growing-shape-count",
+        "triangle-tile-growth",
+        "square-tile-growth"
+      ],
+      "summary": "Bead-square, triangle-tile, and square-tile growth keep the source 1, 4, 9, 16 rule and age-appropriate target range while combining five target stages with four print-safe teaching-aid colors for 20 distinct rendered problems per difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "Growing array diversity paragraph",
+          "note": "Source rule, bounded range, diversity method, and full regression"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "functions sourceGrowingDotSquare, triangleTileGrowth, and squareTileGrowth",
+          "note": "Twenty target-theme combinations per difficulty and matching answers"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES growing-shape-count, triangle-tile-growth, and square-tile-growth",
+          "note": "Source-matched type identities remain unchanged"
         }
       ]
     }
