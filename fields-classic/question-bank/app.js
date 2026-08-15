@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ax";
-import { GENERATORS } from "./generators.js?v=20260816ax";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ay";
+import { GENERATORS } from "./generators.js?v=20260816ay";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -748,6 +748,15 @@ function numberLineSixPointsMarkup(visual) {
   </svg>${hints ? `<div class="line-distance-hints"><b>도움</b>${hints}</div>` : ""}<strong>구할 거리: ${visual.target[0]}와 ${visual.target[1]}</strong></div>`;
 }
 
+function goStoneDifferenceInverseMarkup(visual) {
+  const stage = (size) => `<div class="go-triangle-stage">${Array.from({ length: size }, (_, rowIndex) => {
+    const row = rowIndex + 1;
+    const color = row % 2 === 1 ? "black" : "white";
+    return `<div>${Array.from({ length: row }, () => `<i class="${color}"></i>`).join("")}</div>`;
+  }).join("")}<span>${size}번째</span></div>`;
+  return `<div class="go-difference-work"><div class="go-triangle-stages">${Array.from({ length: visual.stages }, (_, index) => stage(index + 1)).join("")}<b>…</b></div>${visual.hint ? `<p>${visual.hint}</p>` : ""}<strong>${visual.targetColor}이 ${visual.difference}개 더 많은 때</strong></div>`;
+}
+
 function coloredShapeNumberMarkup(visual) {
   const examples = [[1,[0,0,0,1]],[2,[0,0,0,2]],[5,[0,0,1,1]],[8,[0,0,2,0]],[19,[0,1,0,3]],[68,[1,0,1,0]]];
   const grid = (digits, label, target = false) => `<div class="base-four-grid ${target ? "target" : ""}">${Array.from({ length: 3 }, (_, row) => digits.map((count) => `<i class="${row >= 3 - count ? "filled" : ""}"></i>`).join("")).join("")}<span>${label}</span></div>`;
@@ -823,6 +832,7 @@ function visualMarkup(visual) {
   if (visual.kind === "symbol-relations") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
   if (visual.kind === "symbol-relation-two-to-three") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
   if (visual.kind === "number-line-six-points") return `<div class="visual number-line-six-points-visual">${numberLineSixPointsMarkup(visual)}</div>`;
+  if (visual.kind === "go-stone-difference-inverse") return `<div class="visual go-stone-difference-inverse-visual">${goStoneDifferenceInverseMarkup(visual)}</div>`;
   if (visual.kind === "colored-shape-number") return `<div class="visual colored-shape-number-visual">${coloredShapeNumberMarkup(visual)}</div>`;
   if (visual.kind === "source-go-stones") return `<div class="visual source-go-stones-visual">${sourceGoStonesMarkup(visual)}</div>`;
   if (visual.kind === "nonadjacent-pyramid") return `<div class="visual nonadjacent-pyramid-visual">${nonadjacentPyramidMarkup(visual)}</div>`;

@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "8ffc33e610bf2e8f520856766d056554b2169bdb3ddf816935c200897640a96e",
-      "size": 41228,
-      "mtime_ns": 1786818687303094500
+      "sha256": "6848d6b6e10b94d028e241b70eebb30e8a45247505837a4b11ade973a7a58a74",
+      "size": 42252,
+      "mtime_ns": 1786818896525687100
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "84155787dfc669b0391f11ed722d2a681461b46e7d0b39ff84e71ba9698d625c",
-      "size": 114773,
-      "mtime_ns": 1786818605828182000
+      "sha256": "d8dc70f0003b5907c44c94c35580af895e790b386137d09d694963eafb130dcf",
+      "size": 115905,
+      "mtime_ns": 1786818772803372400
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "47dcae9d3646e49c1e2bc4181d8d59b5067de04f9220b5c96126b7cf63cc20da",
-      "size": 34235,
-      "mtime_ns": 1786818454279381700
+      "sha256": "e9728e78f60108ec9aa56a479c2ffd1f12cfdc4afe63400ed45c8c98ff6fa583",
+      "size": 34282,
+      "mtime_ns": 1786818772807369900
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 20",
+      "title": "Next verification 7-year-old selection test 3 question 1",
       "aliases": [],
       "tags": [
         "next",
-        "k7-2022-04",
-        "q20"
+        "k7-2022-06",
+        "q01"
       ],
-      "summary": "Verify the black and white triangular stone counts, the difference sequence, and answer 33 on source page 12 before implementing go-stone-difference-inverse.",
+      "summary": "Verify the four cards 1, 2, 4, 8, all four edge sums, the complete corner placement, and uniqueness on selection test 3 source page 3 before reusing edge-sum-grid.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 20 is the next locked source question"
+          "note": "Selection test 3 question 1 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-04 question 20 go-stone-difference-inverse",
-          "note": "Do not enable until each shown stage and the inverse difference rule are verified"
+          "locator": "EXAMS k7-2022-06 question 1 edge-sum-grid",
+          "note": "Do not enable until all cards, edge sums, the full placement answer, and uniqueness are verified"
         }
       ]
     },
@@ -1451,6 +1451,40 @@
           "role": "code",
           "locator": "TYPES number-line-six-points and EXAMS k7-2022-04 verified 1 through 19",
           "note": "Source question 19 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q20",
+      "title": "Selection test 2 question 20 inverse black-white stone difference",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q20",
+        "go-stone-difference-inverse"
+      ],
+      "summary": "Odd rows are black and even rows are white in the growing triangular arrangement; a black-over-white difference of 17 first occurs at the 33rd arrangement.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 20 paragraph",
+          "note": "Original five stages, row colors, inverse difference, answer 33, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function goStoneDifferenceInverse",
+          "note": "Brute-force validation finds the first matching black or white difference"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES go-stone-difference-inverse and all 20 EXAMS k7-2022-04 questions verified",
+          "note": "Selection test 2 is fully enabled"
         }
       ]
     }

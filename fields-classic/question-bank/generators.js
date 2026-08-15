@@ -1842,6 +1842,21 @@ function numberLineSixPoints({ difficulty = 2 }) {
   };
 }
 
+function goStoneDifferenceInverse({ difficulty = 2 }) {
+  const targetColor = difficulty === 3 && Math.random() < 0.5 ? "흰 돌" : "검은 돌";
+  const difference = difficulty === 1 ? randomInt(3, 8) : difficulty === 2 ? randomInt(8, 20) : randomInt(12, 25);
+  const answer = targetColor === "검은 돌" ? difference * 2 - 1 : difference * 2;
+  const sequence = targetColor === "검은 돌" ? "1, 3, 5, 7, …" : "2, 4, 6, 8, …";
+  const hint = difficulty === 1 ? `${targetColor}이 더 많은 때는 ${sequence}번째입니다.` : "";
+  return {
+    prompt: `다음과 같은 규칙으로 바둑돌을 놓을 때 ${targetColor}이 다른 색 돌보다 ${difference}개 많아지는 것은 몇 번째인지 구하세요.`,
+    visual: { kind: "go-stone-difference-inverse", stages: 5, targetColor, difference, hint },
+    answer: `${answer}번째`,
+    solution: `${targetColor}이 1개, 2개, 3개, … 더 많은 때는 차례로 ${sequence}번째입니다. 따라서 ${difference}개 더 많은 때는 ${answer}번째입니다.`,
+    meta: { difficulty, targetColor, difference, answer }
+  };
+}
+
 function balanceScaleThreeObjects({ difficulty = 2 }) {
   const squareBesideStar = randomInt(1, difficulty === 3 ? 3 : 2);
   const squareBesideCircle = randomInt(1, difficulty === 1 ? 1 : 2);
@@ -2164,6 +2179,7 @@ export const GENERATORS = {
   sourceSymbolRelations,
   symbolRelationTwoToThree,
   numberLineSixPoints,
+  goStoneDifferenceInverse,
   sourceBalanceRelations,
   balanceScaleThreeObjects,
   sourcePianoBounce,
