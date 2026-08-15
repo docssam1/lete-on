@@ -417,6 +417,10 @@ function letterBlockTransformMarkup(visual) {
   return `<div class="letter-transform-work">${pair(visual.example, true, "보기")}${pair(visual.target, false, "문제")}<p>${visual.guide}</p></div>`;
 }
 
+function mixedSequencesMarkup(visual) {
+  return `<div class="mixed-sequences-work">${visual.rows.map((row) => `<div class="mixed-sequence-row"><b>${row.label}</b><div>${row.terms.map((value, index) => `<span class="${index === row.blankIndex ? "blank" : ""}">${index === row.blankIndex ? row.answerLabel : value}</span>`).join("<i>,</i>")}<em>…</em></div>${row.clue ? `<small>${row.clue}</small>` : ""}</div>`).join("")}</div>`;
+}
+
 function closestCardSumMarkup(visual) {
   const blank = () => '<span class="digit-card-blank"></span>';
   return `<div class="closest-card-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="closest-card-equation"><span class="two-digit-blank">${blank()}${blank()}</span><b>+</b><span class="two-digit-blank">${blank()}${blank()}</span><b>=</b><span class="sum-blank"></span></div><small>${visual.target}에 가장 가까운 합</small></div>`;
@@ -540,6 +544,7 @@ function visualMarkup(visual) {
   if (visual.kind === "matchstick-shape-sequence") return `<div class="visual matchstick-sequence-visual">${matchstickShapeSequenceMarkup(visual)}</div>`;
   if (visual.kind === "connected-line-degree-sum") return `<div class="visual connected-line-visual">${connectedLineDegreeSumMarkup(visual)}</div>`;
   if (visual.kind === "letter-block-transform") return `<div class="visual letter-transform-visual">${letterBlockTransformMarkup(visual)}</div>`;
+  if (visual.kind === "mixed-sequences") return `<div class="visual mixed-sequences-visual">${mixedSequencesMarkup(visual)}</div>`;
   if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;

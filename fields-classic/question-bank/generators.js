@@ -759,6 +759,64 @@ function letterBlockTransform({ difficulty = 2 }) {
   };
 }
 
+function mixedSequences({ difficulty = 2 }) {
+  const labels = ["㉠", "㉡", "㉢"];
+  const growingStart = randomInt(1, difficulty === 3 ? 5 : 3);
+  const growingFirstStep = difficulty === 3 ? randomInt(1, 2) : 1;
+  const growing = [growingStart];
+  for (let index = 1; index < 7; index += 1) {
+    growing.push(growing.at(-1) + growingFirstStep + index - 1);
+  }
+
+  let sumPrevious;
+  do {
+    sumPrevious = [randomInt(1, 4), randomInt(3, 7)];
+    while (sumPrevious.length < 7) sumPrevious.push(sumPrevious.at(-1) + sumPrevious.at(-2));
+  } while (sumPrevious.at(-1) > 99 || sumPrevious[0] >= sumPrevious[1]);
+
+  const oddStart = randomInt(1, 4);
+  const evenStart = randomInt(2, 6);
+  const oddStep = difficulty === 3 ? randomInt(1, 3) : 1;
+  const evenStep = difficulty === 1 ? 2 : difficulty === 2 ? randomInt(2, 3) : randomInt(2, 4);
+  const interleaved = Array.from({ length: 8 }, (_, index) => (
+    index % 2 === 0
+      ? oddStart + Math.floor(index / 2) * oddStep
+      : evenStart + Math.floor(index / 2) * evenStep
+  ));
+
+  const blankIndexes = difficulty === 1
+    ? [5, 6, 6]
+    : difficulty === 2
+      ? [5, 6, 0]
+      : [randomInt(2, 5), randomInt(3, 5), randomInt(0, 5)];
+  const clues = difficulty === 1
+    ? ["더하는 수가 1씩 커집니다.", "앞의 두 수를 더합니다.", "한 칸씩 건너뛴 수를 따로 봅니다."]
+    : ["", "", ""];
+  const values = [growing, sumPrevious, interleaved];
+  const rows = values.map((terms, index) => ({
+    label: `(${index + 1})`,
+    terms,
+    blankIndex: blankIndexes[index],
+    answerLabel: labels[index],
+    clue: clues[index]
+  }));
+  const answers = rows.map((row) => row.terms[row.blankIndex]);
+
+  return {
+    prompt: "다음은 일정한 규칙에 따라 수를 늘어놓은 것입니다. 빈칸에 들어갈 수를 쓰세요.",
+    visual: { kind: "mixed-sequences", rows },
+    answer: labels.map((label, index) => `${label} ${answers[index]}`).join(", "),
+    solution: `${labels[0]}은 더하는 수가 ${growingFirstStep}, ${growingFirstStep + 1}, ${growingFirstStep + 2}처럼 1씩 커지는 규칙입니다. ${labels[1]}은 앞의 두 수를 더해 다음 수를 만드는 규칙입니다. ${labels[2]}은 한 칸씩 건너뛴 두 수열을 따로 보면 됩니다. 따라서 ${labels.map((label, index) => `${label}=${answers[index]}`).join(", ")}입니다.`,
+    meta: {
+      difficulty,
+      rules: ["growing-difference", "sum-previous-two", "interleaved"],
+      rows,
+      answers,
+      parameters: { growingStart, growingFirstStep, oddStart, evenStart, oddStep, evenStep }
+    }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -1216,6 +1274,7 @@ export const GENERATORS = {
   matchstickShapeSequence,
   connectedLineDegreeSum,
   letterBlockTransform,
+  mixedSequences,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
