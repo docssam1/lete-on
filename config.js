@@ -9,7 +9,7 @@
  * ========================================================= */
 window.GFIELD_CONFIG = {
   "meta": {
-    "updatedAt": "2026-07-02",
+    "updatedAt": "2026-08-16",
     "salt": "gfield-on-2026-v1"
   },
   "brands": [
@@ -61,7 +61,9 @@ window.GFIELD_CONFIG = {
       "badge": "HWANGSO",
       "desc": "생각하는 황소 입학시험 대비",
       "courses": [
-        { "key": "elem", "name": "초등 대비", "desc": "황소 초등 입학시험 대비", "lock": "soon", "programs": [] },
+        { "key": "elem", "name": "초등 대비", "desc": "황소 초등 교재 유형별 유사문제", "lock": "open", "programs": [
+          { "key": "elementary-bank", "name": "초등 유사문제 문제은행", "type": "문제은행", "desc": "4·5·6학년 학기·단원·레벨별 맞춤 문제", "lock": "open", "url": "/hselementary/question-bank/" }
+        ] },
         { "key": "mid", "name": "중등 대비", "desc": "황소 중등 입학시험 대비", "lock": "soon", "programs": [] }
       ]
     }

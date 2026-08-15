@@ -414,7 +414,7 @@ function clearHistory(){
   else clearHistoryDiagnostic();
 }
 
-function openPractice(numbers){open(`./viewer.html?doc=similar&qs=${numbers.join(',')}&student=${encodeURIComponent(student)}`,'_blank','noopener')}
+function openPractice(numbers){open(`./question-bank/?qs=${numbers.join(',')}`,'_blank','noopener')}
 
 function roadmap(score){
   const pos=Math.max(0,Math.min(100,score));
