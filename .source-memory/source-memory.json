@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "14db889943eea91807f9aaad584695dbf8f9bbaf128877711259346c253d932c",
-      "size": 90692,
-      "mtime_ns": 1786832216843556900
+      "sha256": "2a3fc0a2afaf2ba5b1e0993533d429a762b0475ccfd20eb7bf643d8cde2a166d",
+      "size": 91625,
+      "mtime_ns": 1786832414859881800
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "d2bdac79464524e2ea03c0a7310af1d3199b0f1ecf8900c0b2dbb23e0dd86a66",
-      "size": 175224,
-      "mtime_ns": 1786832216833532800
+      "sha256": "df6310509169aa4593ec748b82f07126afc39f53b6f7e21fea82eb97f1c743c8",
+      "size": 177326,
+      "mtime_ns": 1786832414851883400
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "2276a099ea19adb873398c7617c9cf1f9abe74cf6c7251edbecf174efd33832b",
-      "size": 39633,
-      "mtime_ns": 1786832216837531700
+      "sha256": "a1f7ed0bb54dffc76e0691ed1b454eef2ad22768cbc33a6c17dc2cc5311865ee",
+      "size": 39826,
+      "mtime_ns": 1786832414853882100
     }
   ],
   "records": [
@@ -107,12 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 14",
+      "title": "Next verification selection test 6 question 15",
       "aliases": [],
       "tags": [
         "next"
       ],
-      "summary": "Compare the 3 by 3 shape-sum matrix positions, row and column totals, target total, and official answer 18 before deciding whether the provisional symbol matrix matches.",
+      "summary": "Compare the growing triangle-tile figures, target stage, child-facing wording, and official answer 64 before reusing or splitting the provisional growth generator.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -120,13 +120,13 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "7-year-old selection test 6 question 14",
-          "note": "Verify every symbol coordinate, displayed total, and official answer"
+          "locator": "7-year-old selection test 6 question 15",
+          "note": "Verify every shown stage, tile count rule, target stage, and official answer"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-12 question 14",
+          "locator": "EXAMS k7-2022-12 question 15",
           "note": "Current provisional mapping remains disabled"
         }
       ]
@@ -3278,6 +3278,40 @@
           "role": "code",
           "locator": "TYPES two-digit-odd-bounded-gap and EXAMS k7-2022-12 verified 1 through 13",
           "note": "Wrong even-number mapping replaced and source question enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q14",
+      "title": "Selection test 6 question 14 triangle-top shape sum grid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q14",
+        "shape-sum-grid-triangle-top"
+      ],
+      "summary": "The source grid is triangle-triangle-triangle, square-square-triangle, circle-diamond-heart with row totals 12 and 22 and column totals 18, 20, 14; the missing third-row total is 18.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 14 paragraph",
+          "note": "Exact symbol coordinates, official answer, generator split, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeSumGridTriangleTop",
+          "note": "Source-specific five-symbol row and column model with structural difficulty"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES shape-sum-grid-triangle-top and EXAMS k7-2022-12 verified 1 through 14",
+          "note": "Wrong provisional matrix mapping replaced and source question enabled"
         }
       ]
     }

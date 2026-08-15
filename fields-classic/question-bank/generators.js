@@ -2289,6 +2289,31 @@ function sourceBusStops({ difficulty = 2 }) {
   };
 }
 
+function shapeSumGridTriangleTop({ difficulty = 2 }) {
+  let values;
+  for (let attempt = 0; attempt < 100 && !values; attempt += 1) {
+    const [triangle, square, circle, diamond, heart] = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 5);
+    const rowSums = [triangle * 3, square * 2 + triangle, circle + diamond + heart];
+    const columnSums = [triangle + square + circle, triangle + square + diamond, triangle * 2 + heart];
+    if (new Set([...rowSums.slice(0, 2), ...columnSums]).size !== 5) continue;
+    values = { triangle, square, circle, diamond, heart, rowSums, columnSums };
+  }
+  if (!values) return shapeSumGridTriangleTop({ difficulty });
+  const { triangle, square, circle, diamond, heart, rowSums, columnSums } = values;
+  const baseAnswer = rowSums[2];
+  const answer = difficulty === 3 ? baseAnswer + triangle : baseAnswer;
+  const hint = difficulty === 1 ? `도움: 세모 한 개는 ${triangle}입니다.` : "";
+  return {
+    prompt: difficulty === 3
+      ? "다음 그림에서 같은 도형은 같은 수를 나타냅니다. ㉠과 세모 한 개를 더한 수를 구하세요."
+      : "다음 그림에서 같은 도형은 같은 수를 나타내고, 오른쪽과 아래에 쓰인 수는 각 줄에 있는 세 수의 합을 나타냅니다. ㉠에 알맞은 수를 구하세요.",
+    visual: { kind: "shape-sum-grid-triangle-top", rowSums, columnSums, hint },
+    answer: String(answer),
+    solution: `${difficulty === 1 ? `도움말에서 세모는 ${triangle}입니다. ` : `첫째 줄에서 세모 세 개의 합이 ${rowSums[0]}이므로 세모는 ${triangle}입니다. `}둘째 줄에서 네모는 ${square}입니다. 첫째와 둘째 세로줄에서 동그라미는 ${circle}, 마름모는 ${diamond}입니다. 셋째 세로줄에서 하트는 ${heart}입니다. ㉠은 ${circle} + ${diamond} + ${heart} = ${baseAnswer}입니다.${difficulty === 3 ? ` 여기에 세모 ${triangle}을 더하면 ${answer}입니다.` : ""}`,
+    meta: { difficulty, triangle, square, circle, diamond, heart, rowSums, columnSums, baseAnswer, answer }
+  };
+}
+
 function shapeSumGridTopTarget({ difficulty = 2 }) {
   const [triangle, square, circle, diamond] = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4);
   const rowSums = [triangle + square + circle, diamond + square + circle, circle * 2 + triangle];
@@ -3131,6 +3156,7 @@ export const GENERATORS = {
   balanceScaleFourObjects,
   sourcePianoBounce,
   sourceSymbolSumGrid,
+  shapeSumGridTriangleTop,
   shapeSumGridTopTarget,
   shapeSumGridTriangleColumnTarget,
   symbolSumGridSquareTop,
