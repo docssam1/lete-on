@@ -153,9 +153,11 @@ SVG: 종이 접기 단계 + 구멍 위치
 
 ### 4순위 — TYPE-09 최단경로 (q45)
 ```json
-"gridSize": "4x4"
+"nodeGrid": {"rows":4,"cols":4}
+"missingNodes": [{"row":0,"col":3}]
+"blockedEdges": [{"from":{"row":N,"col":N},"to":{"row":N,"col":N}}]
 ```
-SVG: 격자 + 화살표 경로
+SVG: 원본의 오른쪽 위 들여쓰기 격자 + 출발점·도착점. 존재하는 길만 실선으로 그리고, 임의의 정답 경로를 강조하지 않는다.
 
 ---
 

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">미술관에서 동물원까지 가장 가까운 길의 가짓수 구하기 유사문제 2</title>
+  <desc id="desc">오른쪽 위가 들여간 4행 4열 점 격자이며 왼쪽 세로 길 한 구간이 끊겨 있습니다.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#333333" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+  <rect width="760" height="430" rx="24" fill="#ffffff"/>
+  <text x="380" y="43" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#20272b">미술관에서 동물원까지 가장 가까운 길을 찾아보세요</text>
+  <text x="380" y="72" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#59636a">가장 가까운 길은 모두 몇 가지일까요?</text>
+  <rect x="112" y="91" width="570" height="282" rx="22" fill="#fafafa" stroke="#dedede" stroke-width="2" filter="url(#shadow)"/>
+
+  <g id="q45-roads" fill="none" stroke="#606a70" stroke-width="5" stroke-linecap="round">
+    <path data-row="0" d="M175 115H475"/>
+    <path data-row="1" d="M175 190H625"/>
+    <path data-row="2" d="M175 265H625"/>
+    <path data-row="3" d="M175 340H625"/>
+    <path data-col="0" data-blocked-between="1,0-2,0" d="M175 115V190M175 265V340"/>
+    <path data-col="1" d="M325 115V340"/>
+    <path data-col="2" d="M475 115V340"/>
+    <path data-col="3" d="M625 190V340"/>
+  </g>
+  <g id="q45-nodes" fill="#ffffff" stroke="#606a70" stroke-width="2">
+    <circle cx="175" cy="115" r="5"/><circle cx="325" cy="115" r="5"/><circle cx="475" cy="115" r="5"/>
+    <circle cx="175" cy="190" r="5"/><circle cx="325" cy="190" r="5"/><circle cx="475" cy="190" r="5"/><circle cx="625" cy="190" r="5"/>
+    <circle cx="175" cy="265" r="5"/><circle cx="325" cy="265" r="5"/><circle cx="475" cy="265" r="5"/><circle cx="625" cy="265" r="5"/>
+    <circle cx="175" cy="340" r="5"/><circle cx="325" cy="340" r="5"/><circle cx="475" cy="340" r="5"/><circle cx="625" cy="340" r="5"/>
+  </g>
+  <circle data-role="start" cx="175" cy="115" r="9" fill="#355f83" stroke="#ffffff" stroke-width="3"/>
+  <circle data-role="end" cx="625" cy="340" r="9" fill="#a34f5f" stroke="#ffffff" stroke-width="3"/>
+  <g font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="16" font-weight="900" fill="#36434b">
+    <text x="102" y="121">미술관</text>
+    <text x="641" y="346">동물원</text>
+  </g>
+  <rect x="226" y="391" width="308" height="26" rx="13" fill="#eeeeee"/>
+  <text x="380" y="410" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#4d555a">길이 만나는 점마다 올 수 있는 가짓수를 적어 보세요.</text>
+</svg>
