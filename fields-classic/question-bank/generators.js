@@ -38,6 +38,10 @@ function numberAnd(value) {
   return `${value}${numberHasBatchim(value) ? "과" : "와"}`;
 }
 
+function numberAs(value) {
+  return `${value}${[0, 3, 6].includes(Math.abs(value) % 10) ? "으로" : "로"}`;
+}
+
 function koreanParticle(word, withBatchim, withoutBatchim) {
   const lastCode = [...word].at(-1)?.charCodeAt(0) ?? 0;
   const hasBatchim = lastCode >= 0xac00 && lastCode <= 0xd7a3 && (lastCode - 0xac00) % 28 !== 0;
@@ -1324,7 +1328,7 @@ function fiveCardSumPyramid({ difficulty = 2 }) {
     prompt: `${difficulty === 3 ? "숫자 카드 6장 중 5장을 골라" : `숫자 카드 ${availableCards.length}장을`} 빈칸에 한 번씩 넣으세요. 이웃한 아래 두 수를 더한 값이 바로 위 칸의 수가 될 때, ㉠에 들어갈 수를 구하세요.`,
     visual: { kind: "five-card-pyramid", cards: shuffle(availableCards), target, given },
     answer: String(answer),
-    solution: `아래층을 ${example[0]}, ${example[1]}, ${example[2]}로 놓으면 가운데층은 ${example[3]}, ${example[4]}이고 꼭대기는 ${target}이 됩니다. 가능한 배치를 모두 확인해도 ㉠은 ${answer}입니다.${difficulty === 3 ? ` 쓰지 않는 카드는 ${distractor}입니다.` : ""}`,
+    solution: `아래층을 ${example[0]}, ${example[1]}, ${numberAs(example[2])} 놓으면 가운데층은 ${example[3]}, ${example[4]}이고 꼭대기는 ${numberSubject(target)} 됩니다. 가능한 배치를 모두 확인해도 ㉠은 ${answer}입니다.${difficulty === 3 ? ` 쓰지 않는 카드는 ${distractor}입니다.` : ""}`,
     meta: { difficulty, cards, availableCards, target, given, distractor, layouts: layouts.map((layout) => layout.values), omitted: layouts.map((layout) => layout.omitted), answer, layoutCount: layouts.length }
   };
 }

@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "f41da3fc341ed8b517aa4a12ba9e086dc1b760e224d067bcd650156e80bb9b9b",
-      "size": 46515,
-      "mtime_ns": 1786820196649003500
+      "sha256": "24ca1e6c8c6b3e40d93093c163715235e6789a3acf38e41d09f94a24b6b539d0",
+      "size": 47497,
+      "mtime_ns": 1786820523853577000
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "c9016ab922154fc6f851eb10d0636c17211a09b126d192eb046456103ce6962e",
-      "size": 122637,
-      "mtime_ns": 1786820013450299500
+      "sha256": "a6d318dba4fa5e0d038e34b77229456f18ddc35a68c8b0409b42beee2afe1026",
+      "size": 122769,
+      "mtime_ns": 1786820473196658400
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "ad52479ad9885b492638d55ea8a4385765cd6c3d7dc5c4fbc2193d588bd3ef59",
-      "size": 34666,
-      "mtime_ns": 1786819994710567900
+      "sha256": "395bdcbb83dd600922674196bb8eb7a217c6e30623004baefc7e79abce6b9a28",
+      "size": 34669,
+      "mtime_ns": 1786820388653006700
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 6",
+      "title": "Next verification 7-year-old selection test 3 question 7",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q06"
+        "q07"
       ],
-      "summary": "Verify cards 2 through 6, a three-level sum pyramid with top 11, asked bottom-middle card, and answer 2 against source and answer page 5 before enabling.",
+      "summary": "Verify the 4 by 4 table starting at 3, increasing by 3 across and 4 down, with the marked value 24 against source and answer page 6.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 3 question 6 is the next locked source question"
+          "note": "Selection test 3 question 7 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 6 five-card-sum-pyramid mapping",
-          "note": "Mapping was corrected after direct source page comparison"
+          "locator": "EXAMS k7-2022-06 question 7 addition-table-grid mapping",
+          "note": "Do not enable until exact source clues and target cell are checked"
         }
       ]
     },
@@ -1655,6 +1655,40 @@
           "role": "code",
           "locator": "TYPES total-difference and EXAMS k7-2022-06 verified 1 through 5",
           "note": "Source question 5 is enabled and question 6 mapping corrected"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q6",
+      "title": "Selection test 3 question 6 five-card sum pyramid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q6",
+        "five-card-sum-pyramid"
+      ],
+      "summary": "Cards 2 through 6 fill three bottom and two middle cells; the two mirror layouts both give bottom-center 2 and top 11.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 6 paragraph",
+          "note": "Original page and answer, source mapping, particle fix, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "functions fiveCardSumPyramid and solveFiveCardPyramid",
+          "note": "All valid layouts are enumerated and the asked center is unique"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-06 verified 1 through 6",
+          "note": "Source question 6 is enabled"
         }
       ]
     }
