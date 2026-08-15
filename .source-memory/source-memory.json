@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "41014b08415dd24531224204ecab56b064181c3e31e2cf103c06dfeafbba18fb",
-      "size": 17626,
-      "mtime_ns": 1786807314916539600
+      "sha256": "1c810bebf54b6efcdae1fc01bf13157593fd2c3a4d8095c9c5b8c9f2030b67b6",
+      "size": 18123,
+      "mtime_ns": 1786809244990950600
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "234ea7fff4c641dfd4a6d201d8e8a3481c5ef3326dc79904f637fba59382f9e8",
-      "size": 32315,
-      "mtime_ns": 1786807260384027000
+      "sha256": "4e98c649f4b53d4f07a1ea47af1cb62d5308ae91ed92c0eaa7a0ca8b686954ed",
+      "size": 32467,
+      "mtime_ns": 1786809244991950400
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "aa8231e62891cbafa6c9c7e5a9b7a9c0ca3f31c503f1e7327434178f86735b48",
-      "size": 57629,
-      "mtime_ns": 1786789503046056500
+      "sha256": "355aef0c8289d94e96f33abf5b54603cdef27e849bd46cdbc876c57409a701ab",
+      "size": 59524,
+      "mtime_ns": 1786808940031536800
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "9cd3f41f609f01302819bea3bbc1bb0c544af42fb2ba1be1388ad3f39ea8650d",
-      "size": 31883,
-      "mtime_ns": 1786807314914533700
+      "sha256": "7b91af37b362652dcf6376d1a77313e0cc0ef331ea6e6d066255af080cc2e504",
+      "size": 31965,
+      "mtime_ns": 1786808990396105700
     }
   ],
   "records": [
@@ -107,15 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F12 matchstick shape sequence",
+      "title": "Next implementation F13 connected line degree sum",
       "aliases": [
         "다음 작업"
       ],
       "tags": [
         "next",
-        "F12"
+        "F13"
       ],
-      "summary": "Continue with Final 3 question 10 as the square variant of the shared matchstick shape sequence type. The exact Fields course hierarchy is Rules and Sequences, then Finding Rules in Shapes; the original sequence is 4, 7, 10 and the answer is 31. Allow triangle, square, pentagon, and hexagon constructions only as selectable variants under the shared sequence-application taxonomy.",
+      "summary": "Continue with Final 3 question 11 by verifying the original graph drawing, the number written at every point, and the independently counted total before enabling the generator.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -124,7 +124,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F11 are complete; F12 square variant is next under the shared matchstick shape sequence type"
+          "note": "F01 through F12 are complete; F13 is next"
         }
       ]
     },
@@ -376,6 +376,42 @@
           "source_id": "source-data",
           "role": "code",
           "locator": "TYPES target-score-combinations and FINAL_EXAM_TYPES final-3 question 9",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f12",
+      "title": "Final 3 question 10 matchstick shape sequence",
+      "aliases": [
+        "파이널 3회 10번",
+        "성냥개비 도형 수열"
+      ],
+      "tags": [
+        "F12",
+        "final-3"
+      ],
+      "summary": "F12 preserves the original square sequence 4, 7, 10 and the answer 31, aligns with the course square and pentagon activities, and allows triangle through hexagon variants with one shared edge.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 표 10번과 다음 검증 순서 4번",
+          "note": "Original square sequence and course-backed classification verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function matchstickShapeSequence and GENERATORS export",
+          "note": "Three structural difficulty levels with repeated-addition metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES matchstick-square-growth and FINAL_EXAM_TYPES final-3 question 10",
           "note": "Source-matched type is enabled"
         }
       ]

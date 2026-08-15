@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816k";
-import { GENERATORS } from "./generators.js?v=20260816k";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816l";
+import { GENERATORS } from "./generators.js?v=20260816l";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -344,6 +344,49 @@ function targetScoreCombinationsMarkup(visual) {
   return `<svg class="target-score-svg" viewBox="0 0 300 225" role="img" aria-label="바깥쪽부터 ${visual.scores.join(", ")}점인 과녁">${rings}<g class="target-arrow" transform="translate(58 31) rotate(42)"><line x1="0" y1="0" x2="48" y2="0"/><path d="M48 0L36-6M48 0L36 6"/></g><g class="target-arrow" transform="translate(78 17) rotate(50)"><line x1="0" y1="0" x2="48" y2="0"/><path d="M48 0L36-6M48 0L36 6"/></g><text class="target-shot-note" x="150" y="220">화살 2번</text></svg>`;
 }
 
+function matchstickShapePoints(sides, index) {
+  if (sides === 3) {
+    const offset = Math.floor(index / 2) * 44;
+    return index % 2 === 0
+      ? [[offset, 38], [offset + 44, 38], [offset + 22, 0]]
+      : [[offset + 44, 38], [offset + 66, 0], [offset + 22, 0]];
+  }
+  const offset = index * 44;
+  if (sides === 4) return [[offset, 0], [offset + 44, 0], [offset + 44, 44], [offset, 44]];
+  if (sides === 5) return [[offset, 48], [offset, 23], [offset + 22, 0], [offset + 44, 23], [offset + 44, 48]];
+  return [[offset, 12], [offset + 22, 0], [offset + 44, 12], [offset + 44, 36], [offset + 22, 48], [offset, 36]];
+}
+
+function matchstickStageMarkup(visual, count) {
+  const segments = new Map();
+  const points = new Map();
+  const pointKey = ([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`;
+  const edgeKey = (from, to) => [pointKey(from), pointKey(to)].sort().join("|");
+  for (let index = 0; index < count; index += 1) {
+    const polygon = matchstickShapePoints(visual.sides, index);
+    polygon.forEach((point, pointIndex) => {
+      const next = polygon[(pointIndex + 1) % polygon.length];
+      points.set(pointKey(point), point);
+      points.set(pointKey(next), next);
+      segments.set(edgeKey(point, next), [point, next]);
+    });
+  }
+  const coordinates = [...points.values()];
+  const minX = Math.min(...coordinates.map(([x]) => x));
+  const maxX = Math.max(...coordinates.map(([x]) => x));
+  const minY = Math.min(...coordinates.map(([, y]) => y));
+  const maxY = Math.max(...coordinates.map(([, y]) => y));
+  const padding = 9;
+  const lines = [...segments.values()].map(([from, to]) => `<line x1="${from[0]}" y1="${from[1]}" x2="${to[0]}" y2="${to[1]}"/>`).join("");
+  const heads = coordinates.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.8"/>`).join("");
+  const matchCount = visual.sides + (count - 1) * (visual.sides - 1);
+  return `<div class="matchstick-stage"><svg viewBox="${minX - padding} ${minY - padding} ${maxX - minX + padding * 2} ${maxY - minY + padding * 2}" role="img" aria-label="${visual.shape} ${count}개, 성냥개비 ${matchCount}개"><g class="matchstick-lines">${lines}</g><g class="matchstick-heads">${heads}</g></svg><span>${count}번째</span></div>`;
+}
+
+function matchstickShapeSequenceMarkup(visual) {
+  return `<div class="matchstick-sequence-work"><div class="matchstick-stages">${[1, 2, 3].map((count) => matchstickStageMarkup(visual, count)).join("")}<b class="sequence-ellipsis">…</b><em class="sequence-target">${visual.target}번째</em></div><p>${visual.clue}</p></div>`;
+}
+
 function closestCardSumMarkup(visual) {
   const blank = () => '<span class="digit-card-blank"></span>';
   return `<div class="closest-card-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="closest-card-equation"><span class="two-digit-blank">${blank()}${blank()}</span><b>+</b><span class="two-digit-blank">${blank()}${blank()}</span><b>=</b><span class="sum-blank"></span></div><small>${visual.target}에 가장 가까운 합</small></div>`;
@@ -464,6 +507,7 @@ function visualMarkup(visual) {
   if (visual.kind === "row-column-count-placement") return `<div class="visual row-column-count-visual">${rowColumnCountMarkup(visual)}</div>`;
   if (visual.kind === "truth-lie-ranking") return `<div class="visual truth-lie-ranking-visual">${truthLieRankingMarkup(visual)}</div>`;
   if (visual.kind === "target-score-combinations") return `<div class="visual target-score-visual">${targetScoreCombinationsMarkup(visual)}</div>`;
+  if (visual.kind === "matchstick-shape-sequence") return `<div class="visual matchstick-sequence-visual">${matchstickShapeSequenceMarkup(visual)}</div>`;
   if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;

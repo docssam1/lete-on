@@ -635,6 +635,38 @@ function targetScoreCombinations({ difficulty = 2 }) {
   };
 }
 
+function matchstickShapeSequence({ difficulty = 2 }) {
+  const shapePools = {
+    1: [{ label: "삼각형", sides: 3 }, { label: "사각형", sides: 4 }],
+    2: [{ label: "사각형", sides: 4 }, { label: "오각형", sides: 5 }],
+    3: [{ label: "오각형", sides: 5 }, { label: "육각형", sides: 6 }]
+  };
+  const shape = sample(shapePools[difficulty] || shapePools[2]);
+  const target = difficulty === 1 ? randomInt(4, 5) : difficulty === 2 ? randomInt(6, 10) : randomInt(8, 12);
+  const increment = shape.sides - 1;
+  const sequence = Array.from({ length: target }, (_, index) => shape.sides + index * increment);
+  const answer = sequence.at(-1);
+  const clue = difficulty === 1
+    ? `첫 번째는 ${shape.sides}개이고, 도형 하나를 더 붙일 때마다 ${increment}개씩 늘어납니다.`
+    : difficulty === 2
+      ? `첫 번째는 ${shape.sides}개, 두 번째는 ${sequence[1]}개입니다.`
+      : "그림을 보고 성냥개비가 몇 개씩 늘어나는지 찾아보세요.";
+
+  return {
+    prompt: `성냥개비로 ${shape.label}을 오른쪽으로 이어 만들어 나갑니다. 이웃한 두 ${shape.label}은 변 한 개를 함께 씁니다. ${shape.label} ${target}개를 만들려면 성냥개비가 모두 몇 개 필요할까요?`,
+    visual: {
+      kind: "matchstick-shape-sequence",
+      shape: shape.label,
+      sides: shape.sides,
+      target,
+      clue
+    },
+    answer: `${answer}개`,
+    solution: `첫 번째 ${shape.label}에는 ${shape.sides}개가 필요합니다. ${shape.label} 하나를 더 붙일 때마다 함께 쓰는 변 한 개를 빼고 ${increment}개씩 더 필요합니다. ${sequence.join(" → ")}이므로 ${target}개를 만들 때는 성냥개비가 ${answer}개 필요합니다.`,
+    meta: { difficulty, shape: shape.label, sides: shape.sides, target, increment, sequence, answer }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -1089,6 +1121,7 @@ export const GENERATORS = {
   rowColumnCountPlacement,
   truthLieRanking,
   targetScoreCombinations,
+  matchstickShapeSequence,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
