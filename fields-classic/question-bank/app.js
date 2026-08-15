@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bn";
-import { GENERATORS } from "./generators.js?v=20260816bm";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bo";
+import { GENERATORS } from "./generators.js?v=20260816bo";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -709,6 +709,18 @@ function triangleTileGrowthMarkup(visual) {
   return `<div class="triangle-growth-work">${visual.stages.map(stage).join("")}<strong>…</strong><em>${visual.askIndex ? `${visual.pieceCount}장` : `${visual.target}번째`}</em></div>`;
 }
 
+function squareTileGrowthMarkup(visual) {
+  const stage = (size) => {
+    const cells = Array.from({ length: size * size }, (_, index) => {
+      const row = Math.floor(index / size);
+      const column = index % size;
+      return `<rect x="${column * 100 / size}" y="${row * 100 / size}" width="${100 / size}" height="${100 / size}" />`;
+    }).join("");
+    return `<div class="square-growth-stage stage-${size}"><svg viewBox="-1 -1 102 102" role="img" aria-label="${size}번째 정사각형 조각 배열"><g>${cells}</g></svg><b>${size}번째</b>${visual.showCounts ? `<span>${size * size}장</span>` : ""}</div>`;
+  };
+  return `<div class="square-growth-work">${visual.stages.map(stage).join("")}<strong>…</strong><em>${visual.askIndex ? `${visual.pieceCount}장` : `${visual.target}번째`}</em></div>`;
+}
+
 function growingDotSquareMarkup(visual) {
   const stage = (size) => `<div><i style="--dots:${size}">${Array.from({ length: size * size }, () => "<b></b>").join("")}</i><span>${size}번째</span></div>`;
   return `<div class="growing-dot-squares">${[1,2,3,4].map(stage).join("")}<strong>…</strong><em>${visual.target}번째</em></div>`;
@@ -881,6 +893,7 @@ function visualMarkup(visual) {
   if (visual.kind === "two-digit-parity-gap") return `<div class="visual number-conditions-visual">${twoDigitParityGapMarkup(visual)}</div>`;
   if (visual.kind === "two-digit-odd-gap") return `<div class="visual number-conditions-visual">${twoDigitOddGapMarkup(visual)}</div>`;
   if (visual.kind === "triangle-tile-growth") return `<div class="visual triangle-tile-growth-visual">${triangleTileGrowthMarkup(visual)}</div>`;
+  if (visual.kind === "square-tile-growth") return `<div class="visual square-tile-growth-visual">${squareTileGrowthMarkup(visual)}</div>`;
   if (visual.kind === "growing-dot-square") return `<div class="visual growing-dot-square-visual">${growingDotSquareMarkup(visual)}</div>`;
   if (visual.kind === "symbol-sum-grid") return `<div class="visual symbol-sum-grid-visual">${symbolSumGridMarkup(visual)}</div>`;
   if (visual.kind === "shape-sum-grid-top-target") return `<div class="visual symbol-sum-grid-visual">${shapeSumGridTopTargetMarkup(visual)}</div>`;

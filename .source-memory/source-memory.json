@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "be622a8967a3ec884f51ac319b0c400c192e3be594e377f5c8c5f8a03abdf16a",
-      "size": 55580,
-      "mtime_ns": 1786822831058446400
+      "sha256": "3b623c9cccbd74cf08c53b80c901ea3234bdfc11e5ebccabb2dd47f2ba25530b",
+      "size": 56661,
+      "mtime_ns": 1786823107116028600
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "e0705fe2fc00d6a067a6657cf6abd851edc85a999ca934880bfc1e74f5aae7d9",
-      "size": 131586,
-      "mtime_ns": 1786822516887926500
+      "sha256": "cf7000bde8c1f97dc1e9c961fdf46320d1392297a89c70a2e678ae56b453899a",
+      "size": 132877,
+      "mtime_ns": 1786823066140903800
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "7ff576c42f34465899c1ed990f27e9bbc743efb1339816d8dcf0500a616dceae",
-      "size": 35637,
-      "mtime_ns": 1786822831057441600
+      "sha256": "a163a545c3d23d7ef73d0239e43c2e53eccd1b2419327457153afb1fa7b6fe9a",
+      "size": 35692,
+      "mtime_ns": 1786822988395998400
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 15",
+      "title": "Next verification 7-year-old selection test 3 question 16",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q15"
+        "q16"
       ],
-      "summary": "Verify the square-array growth problem on source and answer page 10. The first four figures contain 1, 4, 9, and 16 small squares; the seventh figure contains 49. Question 16 is the separate folded-number-paper problem with answer 18.",
+      "summary": "Verify the 4 by 4 numbered-paper problem on source and answer page 10. The paper is folded once along the rising diagonal, the shaded part is cut away, and the sum of numbers in the removed cells is 18.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 15 is square-array growth; question 16 is folded numbered paper"
+          "note": "Question 16 is the folded numbered-paper sum problem"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 questions 15 and 16 corrected mapping",
-          "note": "Both remain locked until their generators are verified"
+          "locator": "EXAMS k7-2022-06 question 16 fold-number-cut-sum mapping",
+          "note": "The source mapping is corrected but remains locked"
         }
       ]
     },
@@ -1961,6 +1961,40 @@
           "role": "code",
           "locator": "TYPES two-digit-odd-gap and EXAMS k7-2022-06 verified 1 through 14",
           "note": "Source question 14 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q15",
+      "title": "Selection test 3 question 15 square-array number pattern",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q15",
+        "square-tile-growth"
+      ],
+      "summary": "The source shows square arrays containing 1, 4, 9, and 16 small squares and asks for the seventh array; seven rows of seven squares contain 49.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 15 paragraph",
+          "note": "Original square arrays, answer 49, sequence classification, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function squareTileGrowth",
+          "note": "Forward and reverse structural difficulty without square notation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES square-tile-growth and EXAMS k7-2022-06 verified 1 through 15",
+          "note": "Source question 15 is enabled"
         }
       ]
     }
