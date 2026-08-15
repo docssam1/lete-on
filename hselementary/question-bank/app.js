@@ -123,7 +123,7 @@
     state.questions = Array.from({ length: state.count }, (_, index) => {
       const type = selected[index % selected.length];
       const seed = (baseSeed + index * 7919 + hash(type.id)) >>> 0;
-      const generated = generatorApi.generate(type, level.rank, state.difficulty, seed);
+      const generated = generatorApi.generate(type, level.rank, state.difficulty, seed, index);
       return { number: index + 1, type, level, ...generated };
     });
     state.view = "problem";

@@ -22,15 +22,47 @@
   }
 
   const generators = {
-    largeNumberPlaceValue({ rng, level }) {
-      const digitCount = 6 + level;
-      const digits = Array.from({ length: digitCount }, (_, index) => index === 0 ? int(rng, 1, 9) : int(rng, 0, 9));
-      const targetIndex = int(rng, 1, digitCount - 2);
-      if (digits[targetIndex] === 0) digits[targetIndex] = int(rng, 1, 9);
+    largeNumberPlaceValue({ rng, level, variant = 0 }) {
+      const digitCount = 9 + level;
+      const makeDigits = () => Array.from({ length: digitCount }, (_, index) => index === 0 ? int(rng, 1, 9) : int(rng, 0, 9));
+
+      if (variant % 3 === 0) {
+        const digits = makeDigits();
+        const highPlace = int(rng, 5, digitCount - 2);
+        const lowPlace = int(rng, 2, highPlace - 2);
+        digits[digitCount - highPlace - 1] = int(rng, 2, 9);
+        digits[digitCount - lowPlace - 1] = int(rng, 1, 8);
+        const value = Number(digits.join(""));
+        const highValue = digits[digitCount - highPlace - 1] * 10 ** highPlace;
+        const lowValue = digits[digitCount - lowPlace - 1] * 10 ** lowPlace;
+        const answer = Math.abs(highValue - lowValue);
+        return result(`${value.toLocaleString()}에서 ${(10 ** highPlace).toLocaleString()}의 자리 숫자가 나타내는 값과 ${(10 ** lowPlace).toLocaleString()}의 자리 숫자가 나타내는 값의 차를 구하세요.`, answer, `두 숫자가 나타내는 값은 각각 ${highValue.toLocaleString()}, ${lowValue.toLocaleString()}이므로 차는 ${answer.toLocaleString()}입니다.`);
+      }
+
+      if (variant % 3 === 1) {
+        const digits = makeDigits();
+        const targetIndex = int(rng, 2, digitCount - 3);
+        digits[targetIndex] = int(rng, 2, 9);
+        const value = Number(digits.join(""));
+        const terms = digits.map((digit, index) => ({ digit, place: 10 ** (digitCount - index - 1) })).filter(term => term.digit > 0);
+        const target = terms.find(term => term.place === 10 ** (digitCount - targetIndex - 1));
+        const expression = terms.map(term => `${term.place.toLocaleString()} × ${term === target ? "□" : term.digit}`).join(" + ");
+        return result(`다음 식의 □에 알맞은 수를 구하세요.<div class="equation expanded">${value.toLocaleString()} = ${expression}</div>`, target.digit, `${target.place.toLocaleString()}의 자리 숫자는 ${target.digit}이므로 □는 ${target.digit}입니다.`);
+      }
+
+      const digits = makeDigits();
+      const lowPlace = int(rng, 0, Math.min(2, digitCount - 6));
+      const highPlace = lowPlace + 4;
+      const baseDigit = int(rng, 1, 3);
+      const multiplier = int(rng, 2, 3);
+      const lowDigit = baseDigit * multiplier;
+      digits[digitCount - lowPlace - 1] = lowDigit;
+      digits[digitCount - highPlace - 1] = baseDigit;
       const value = Number(digits.join(""));
-      const place = digitCount - targetIndex - 1;
-      const answer = digits[targetIndex] * 10 ** place;
-      return result(`${value.toLocaleString()}에서 왼쪽에서 ${targetIndex + 1}번째 숫자 ${digits[targetIndex]}이 나타내는 값을 구하세요.`, answer, `숫자 ${digits[targetIndex]}은 ${10 ** place >= 10000 ? (10 ** place).toLocaleString() : 10 ** place}의 자리에 있으므로 나타내는 값은 ${answer.toLocaleString()}입니다.`);
+      const multipliedDigitValue = lowDigit * 10 ** (lowPlace + 3);
+      const dividedDigitValue = baseDigit * 10 ** (highPlace - 2);
+      const answer = multipliedDigitValue / dividedDigitValue;
+      return result(`${value.toLocaleString()}을 1000배 한 수에서 숫자 ${lowDigit}가 나타내는 값은, ${value.toLocaleString()}을 100분의 1로 한 수에서 숫자 ${baseDigit}가 나타내는 값의 몇 배인지 구하세요.`, answer, `1000배 한 수에서 숫자 ${lowDigit}의 값은 ${multipliedDigitValue.toLocaleString()}, 100분의 1로 한 수에서 숫자 ${baseDigit}의 값은 ${dividedDigitValue.toLocaleString()}이므로 ${multipliedDigitValue.toLocaleString()} ÷ ${dividedDigitValue.toLocaleString()} = ${answer}배입니다.`);
     },
     largeNumber({ rng, level }) {
       const digits = 6 + level;
@@ -331,11 +363,11 @@
     };
   }
 
-  function generate(type, levelRank, difficultyOffset, seed) {
+  function generate(type, levelRank, difficultyOffset, seed, variant = 0) {
     const key = generatorKey(type.name);
     if (!key) return null;
     const level = Math.max(0, Math.min(3, levelRank + difficultyOffset));
-    return { ...generators[key]({ rng: mulberry32(seed), level }), generator: key };
+    return { ...generators[key]({ rng: mulberry32(seed), level, variant }), generator: key };
   }
 
   window.HSE_GENERATORS = { generatorKey, generate, names: Object.keys(generators) };
