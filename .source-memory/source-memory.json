@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "435aaf8a7d3469511ad7f5c89660771a77db1e95ce3bff5384d2be37df8b249a",
-      "size": 14862,
-      "mtime_ns": 1786772674555145600
+      "sha256": "11c93835088345da1b818b1882d2efea39c2e07d26f1b8b1288192f425bc5359",
+      "size": 15500,
+      "mtime_ns": 1786773308608232800
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "25923deb4d603c3c1371f0686fbc1e20b73b3fb71e45062c1a433ae8d0bcfe5e",
-      "size": 32117,
-      "mtime_ns": 1786772674556146800
+      "sha256": "539c148d8d76f48b3b45c4b7246cffa56c068f38360243b7ed60ce449cfe260b",
+      "size": 32165,
+      "mtime_ns": 1786773225114582600
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "37577cf752b23c4f32eb7d2bbeafd81b06749e06a654de94fffa1354ec4ec5ed",
-      "size": 45977,
-      "mtime_ns": 1786772561810736300
+      "sha256": "4db4d6acb9ad115f41e7b29a0d20fbc5118697e1c4648d6b14ffd15e05959ea1",
+      "size": 49452,
+      "mtime_ns": 1786773111983906200
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "cac2ffc6a4617d3c7ac40b403c384b266677a25e7827a0ff29fd08beab8de229",
-      "size": 29957,
-      "mtime_ns": 1786772561811736100
+      "sha256": "3926013a4f032163185fd1fb4cbe1f8c09967768ccf0253f09437241a6374e25",
+      "size": 31688,
+      "mtime_ns": 1786772948371008800
     }
   ],
   "records": [
@@ -107,15 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F09 row and column count placement",
+      "title": "Next implementation F10 truth-lie ranking",
       "aliases": [
         "다음 작업"
       ],
       "tags": [
         "next",
-        "F09"
+        "F10"
       ],
-      "summary": "Continue with Final 3 question 1 F09 after checking the original 4x4 star-placement visual and row-column conditions.",
+      "summary": "Continue with Final 3 question 2 F10 and use exhaustive enumeration of the original statements because the transcript and source condition conflict.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-15",
@@ -124,7 +124,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F08 are complete; F09 is next"
+          "note": "F01 through F09 are complete; F10 is next"
         }
       ]
     },
@@ -268,6 +268,42 @@
           "source_id": "source-data",
           "role": "code",
           "locator": "TYPES two-type-unit-total and FINAL_EXAM_TYPES question 13",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f09",
+      "title": "Final 3 question 1 row and column star placement",
+      "aliases": [
+        "파이널 3회 1번",
+        "가로 세로 별 개수 조건"
+      ],
+      "tags": [
+        "F09",
+        "final-3"
+      ],
+      "summary": "F09 preserves the original 4x4 row-column count placement and verifies every generated grid by independent solution enumeration.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 표 1번과 다음 검증 순서 4번",
+          "note": "Original 4x4 row and column conditions and five valid layouts verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function rowColumnCountPlacement and GENERATORS export",
+          "note": "Three grid sizes with row-column metadata and bounded solution counts"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES row-column-count-placement and FINAL_EXAM_TYPES final-3 question 1",
           "note": "Source-matched type is enabled"
         }
       ]
