@@ -1809,6 +1809,73 @@ function symbolSumGridSquareTop({ difficulty = 2 }) {
   };
 }
 
+function shapeEquationAddSubtract({ difficulty = 2 }) {
+  let square;
+  let addend;
+  let total;
+  let heart;
+  let minuend;
+
+  if (difficulty === 1) {
+    square = randomInt(2, 6);
+    addend = randomInt(1, 9 - square);
+    heart = randomInt(1, 9 - square);
+    total = square + addend;
+    minuend = square + heart;
+  } else {
+    do {
+      square = randomInt(difficulty === 2 ? 21 : 24, difficulty === 2 ? 39 : 48);
+      addend = randomInt(14, difficulty === 2 ? 39 : 46);
+      heart = randomInt(12, difficulty === 2 ? 29 : 38);
+      total = square + addend;
+      minuend = square + heart;
+    } while (total > 99 || minuend > 99 || square % 10 + addend % 10 < 10 || square % 10 + heart % 10 < 10);
+  }
+
+  const exampleCircle = randomInt(2, 6);
+  const exampleAdd = randomInt(1, 9 - exampleCircle);
+  const exampleDifference = randomInt(1, 9 - exampleCircle);
+  const equations = [
+    { left: "square", operator: "+", right: addend, result: total },
+    { left: minuend, operator: "-", right: "square", result: "heart" }
+  ];
+  let target = "heart";
+  let answer = heart;
+  let extraAddend = 0;
+  let star = 0;
+
+  if (difficulty === 3) {
+    extraAddend = randomInt(11, 27);
+    star = heart + extraAddend;
+    equations.push({ left: "heart", operator: "+", right: extraAddend, result: "star" });
+    target = "star";
+    answer = star;
+  }
+
+  const targetName = target === "heart" ? "하트" : "별";
+  const solution = difficulty === 3
+    ? `네모는 ${total}에서 ${numberObject(addend)} 뺀 ${square}입니다. ${minuend}에서 ${numberObject(square)} 빼면 하트는 ${heart}이고, ${heart} + ${extraAddend} = ${star}이므로 별은 ${star}입니다.`
+    : `네모는 ${total}에서 ${numberObject(addend)} 뺀 ${square}입니다. ${minuend}에서 ${numberObject(square)} 빼면 하트는 ${heart}입니다.`;
+  return {
+    prompt: `[보기]의 계산식처럼 같은 모양은 같은 수를 나타냅니다. 오른쪽 계산식에 있는 두 네모도 같은 수를 나타낼 때, ${targetName}에 알맞은 수를 구하세요.`,
+    visual: {
+      kind: "shape-equation-add-subtract",
+      example: {
+        circle: exampleCircle,
+        addend: exampleAdd,
+        sum: exampleCircle + exampleAdd,
+        minuend: exampleCircle + exampleDifference,
+        difference: exampleDifference
+      },
+      equations,
+      target
+    },
+    answer: String(answer),
+    solution,
+    meta: { difficulty, square, addend, total, heart, minuend, extraAddend, star, target, answer }
+  };
+}
+
 function foldNumberCutSum({ difficulty = 2 }) {
   const size = 4;
   const foldMask = difficulty === 1
@@ -1957,6 +2024,7 @@ export const GENERATORS = {
   sourcePianoBounce,
   sourceSymbolSumGrid,
   symbolSumGridSquareTop,
+  shapeEquationAddSubtract,
   sourceGrowingDotSquare,
   sourceTwoDigitSumDifference,
   sourceEqualLineCross,

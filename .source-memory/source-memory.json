@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "0f9e43ea1feba9e24d0e77e27896bbffa090c0de15747d2dbc4a012fd0b92722",
-      "size": 35699,
-      "mtime_ns": 1786816643148842600
+      "sha256": "777e44ef964856eb87337e55d8abc4780e1ba29dd5593716d2a2386e2c0ff4f4",
+      "size": 36543,
+      "mtime_ns": 1786817101141270400
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "3f62168b6841bf54bcde08d1ced2a80ff670e6718263b5efaf6278e20268e4ab",
-      "size": 103712,
-      "mtime_ns": 1786816521532989100
+      "sha256": "bcf974b2cbf380e3ee3c9dac75c9b153626f93c907e000e81f2cd0e4239b22ce",
+      "size": 106253,
+      "mtime_ns": 1786816998464516200
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "a3657b466b93c416c0ed347cf261b441f5b9bf83c77ef5a3172d58f74c0e7bd1",
-      "size": 33851,
-      "mtime_ns": 1786816521534988900
+      "sha256": "23a53570073b45e5684114643ba2d0830b4535a2a4c5de47eabf346352c13870",
+      "size": 33918,
+      "mtime_ns": 1786816876938400900
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 14",
+      "title": "Next verification 7-year-old selection test 2 question 15",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q14"
+        "q15"
       ],
-      "summary": "Verify the example symbol equations and the target equations square+28=63 and 53-square=heart, whose answer is 18, before implementing shape-equation-add-subtract.",
+      "summary": "Verify the even-number range and digit-gap conditions on source page 10 and answer 72 before implementing two-digit-parity-gap.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 14 is the next locked source question"
+          "note": "Question 15 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-04 question 14 shape-equation-add-subtract",
-          "note": "Do not enable until both equations and target symbol are verified"
+          "locator": "EXAMS k7-2022-04 question 15 two-digit-parity-gap",
+          "note": "Do not enable until every condition and the unique answer are verified"
         }
       ]
     },
@@ -1247,6 +1247,40 @@
           "role": "code",
           "locator": "TYPES symbol-sum-grid-square-top and EXAMS k7-2022-04 verified 1 through 13",
           "note": "Source question 13 is enabled without changing the older symbol matrix"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q14",
+      "title": "Selection test 2 question 14 chained shape equations",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q14",
+        "shape-equation-add-subtract"
+      ],
+      "summary": "The source shows example equations 4+5=9 and 7-4=3, then square+28=63 and 53-square=heart; square is 35 and the heart answer is 18.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 14 paragraph",
+          "note": "Original equations, answer 18, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeEquationAddSubtract",
+          "note": "Two-stage source structure plus easier and harder scaffolds"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES shape-equation-add-subtract and EXAMS k7-2022-04 verified 1 through 14",
+          "note": "Source question 14 is enabled"
         }
       ]
     }

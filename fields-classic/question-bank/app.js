@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816al";
-import { GENERATORS } from "./generators.js?v=20260816al";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816am";
+import { GENERATORS } from "./generators.js?v=20260816am";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -652,6 +652,21 @@ function symbolSumGridSquareTopMarkup(visual) {
   return `<div class="symbol-sum-square-top-work">${visual.hint ? `<p>${visual.hint}</p>` : ""}<div class="symbol-sum-grid">${cells.map((cell, index) => `<span class="${index > 11 ? "sum" : ""}">${cell}</span>`).join("")}</div></div>`;
 }
 
+function shapeEquationAddSubtractMarkup(visual) {
+  const token = (value) => {
+    if (value === "square") return '<i class="shape-equation-symbol square" aria-label="네모">□</i>';
+    if (value === "heart") return '<i class="shape-equation-symbol heart" aria-label="하트">♡</i>';
+    if (value === "star") return '<i class="shape-equation-symbol star" aria-label="별">☆</i>';
+    return `<strong>${value}</strong>`;
+  };
+  const line = (equation) => `<div class="shape-equation-line">${token(equation.left)}<b>${equation.operator}</b>${token(equation.right)}<b>=</b>${token(equation.result)}</div>`;
+  const example = visual.example;
+  return `<div class="shape-equation-work">
+    <section class="shape-equation-example"><b>[보기]</b><div><span class="circled-number">${example.circle}</span><b>+</b><strong>${example.addend}</strong><b>=</b><strong>${example.sum}</strong></div><div><strong>${example.minuend}</strong><b>-</b><span class="circled-number">${example.circle}</span><b>=</b><strong>${example.difference}</strong></div></section>
+    <section class="shape-equation-target">${visual.equations.map(line).join("")}<p>${token(visual.target)} = (　　)</p></section>
+  </div>`;
+}
+
 function sourcePianoMarkup() {
   const notes = ["도", "레", "미", "파", "솔", "라", "시", "도"];
   const rows = [[1,2,3,4,5,6,7,8],[14,13,12,11,10,9,8,""],[15,16,17,18,19,20,21,22]];
@@ -735,6 +750,7 @@ function visualMarkup(visual) {
   if (visual.kind === "growing-dot-square") return `<div class="visual growing-dot-square-visual">${growingDotSquareMarkup(visual)}</div>`;
   if (visual.kind === "symbol-sum-grid") return `<div class="visual symbol-sum-grid-visual">${symbolSumGridMarkup(visual)}</div>`;
   if (visual.kind === "symbol-sum-grid-square-top") return `<div class="visual symbol-sum-grid-visual">${symbolSumGridSquareTopMarkup(visual)}</div>`;
+  if (visual.kind === "shape-equation-add-subtract") return `<div class="visual shape-equation-add-subtract-visual">${shapeEquationAddSubtractMarkup(visual)}</div>`;
   if (visual.kind === "source-piano") return `<div class="visual source-piano-visual">${sourcePianoMarkup()}</div>`;
   if (visual.kind === "balance-relations") return `<div class="visual balance-relations-visual">${balanceRelationsMarkup(visual)}</div>`;
   if (visual.kind === "symbol-relations") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
