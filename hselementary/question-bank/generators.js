@@ -138,6 +138,42 @@
     return `<svg class="direction-arrow" viewBox="0 0 120 120" aria-label="${direction}쪽 화살표"><g transform="rotate(${turns} 60 60)"><path d="M60 14 L91 51 H73 V103 H47 V51 H29 Z"/></g></svg>`;
   };
   const tileStrip = (symbols, highlight = -1) => `<div class="tile-strip">${symbols.map((symbol, index) => `<span class="tile-symbol ${index === highlight ? "is-highlight" : ""}">${symbol}</span>`).join("")}</div>`;
+  const barChartSvg = ({ labels, values, step, hidden = [], secondValues = null, unit = "명", legend = [] }) => {
+    const width = 250;
+    const height = 180;
+    const left = 34;
+    const right = 10;
+    const top = 12;
+    const bottom = secondValues ? 48 : 34;
+    const plotWidth = width - left - right;
+    const plotHeight = height - top - bottom;
+    const allValues = values.concat(secondValues || []);
+    const scaleMax = Math.max(step, Math.ceil(Math.max(...allValues) / step) * step);
+    const hiddenSet = new Set(hidden);
+    const groupWidth = plotWidth / labels.length;
+    const barWidth = secondValues ? Math.min(12, groupWidth * 0.3) : Math.min(24, groupWidth * 0.5);
+    const yFor = value => top + plotHeight - value / scaleMax * plotHeight;
+    const grid = Array.from({ length: scaleMax / step + 1 }, (_, index) => {
+      const value = index * step;
+      const y = yFor(value);
+      return `<line class="chart-grid" x1="${left}" y1="${y.toFixed(1)}" x2="${width - right}" y2="${y.toFixed(1)}"/><text class="chart-tick" x="${left - 5}" y="${(y + 3).toFixed(1)}">${value}</text>`;
+    }).join("");
+    const bars = labels.map((label, index) => {
+      const center = left + groupWidth * (index + 0.5);
+      const labelText = `<text class="chart-label" x="${center.toFixed(1)}" y="${height - bottom + 17}">${label}</text>`;
+      if (hiddenSet.has(index)) return `<rect class="chart-unknown" x="${(center - barWidth / 2).toFixed(1)}" y="${top + plotHeight - 27}" width="${barWidth.toFixed(1)}" height="27"/><text class="chart-question" x="${center.toFixed(1)}" y="${top + plotHeight - 9}">?</text>${labelText}`;
+      const firstHeight = values[index] / scaleMax * plotHeight;
+      const firstX = secondValues ? center - barWidth - 1 : center - barWidth / 2;
+      let markup = `<rect class="chart-bar" x="${firstX.toFixed(1)}" y="${yFor(values[index]).toFixed(1)}" width="${barWidth.toFixed(1)}" height="${firstHeight.toFixed(1)}"/>`;
+      if (secondValues) {
+        const secondHeight = secondValues[index] / scaleMax * plotHeight;
+        markup += `<rect class="chart-bar chart-bar-secondary" x="${(center + 1).toFixed(1)}" y="${yFor(secondValues[index]).toFixed(1)}" width="${barWidth.toFixed(1)}" height="${secondHeight.toFixed(1)}"/>`;
+      }
+      return `${markup}${labelText}`;
+    }).join("");
+    const legendMarkup = secondValues ? `<g class="chart-legend"><rect x="${left}" y="${height - 16}" width="9" height="9"/><text x="${left + 13}" y="${height - 8}">${legend[0] || "자료 1"}</text><rect class="chart-bar-secondary" x="${left + 78}" y="${height - 16}" width="9" height="9"/><text x="${left + 91}" y="${height - 8}">${legend[1] || "자료 2"}</text></g>` : "";
+    return `<svg class="bar-chart" viewBox="0 0 ${width} ${height}" aria-label="막대그래프"><text class="chart-unit" x="4" y="10">(${unit})</text>${grid}<line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="chart-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${bars}${legendMarkup}</svg>`;
+  };
   const rotatePointClockwise = ([x, y], turns, center = 4) => {
     let point = [x, y];
     for (let count = 0; count < ((turns % 4) + 4) % 4; count += 1) point = [center + (point[1] - center), center - (point[0] - center)];
@@ -789,6 +825,62 @@
       const answer = Math.abs(Number(original) - Number(rotated));
       return result(`전자 숫자 카드 ${original}을 180° 돌려서 읽은 수와 처음 수의 차를 구하세요.<div class="digital-number">${original}</div>`, answer, `180° 돌리면 카드 순서는 거꾸로 되고 6과 9가 서로 바뀌므로 ${rotated}입니다. 두 수의 차는 ${answer}입니다.`);
     },
+    barGraphUnderstanding({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const labels = ["빨강", "노랑", "초록", "파랑", "흰색"];
+        const step = level === 0 ? 2 : 5;
+        const values = labels.map(() => int(rng, 3 + level, 9 + level * 3) * step);
+        const hiddenIndex = int(rng, 1, labels.length - 2);
+        const total = values.reduce((sum, value) => sum + value, 0);
+        const known = labels.filter((_, index) => index !== hiddenIndex).map((label, index) => {
+          const originalIndex = index >= hiddenIndex ? index + 1 : index;
+          return `${label} ${values[originalIndex]}명`;
+        }).join(", ");
+        return result(`학생들이 좋아하는 색을 조사했습니다. 모두 ${total}명이고, 조사 결과는 ${known}입니다. 빠진 ${labels[hiddenIndex]} 막대에 알맞은 학생 수를 구하세요.${barChartSvg({ labels, values, step, hidden: [hiddenIndex] })}`, values[hiddenIndex], `전체 ${total}명에서 알려진 학생 수 ${total - values[hiddenIndex]}명을 빼면 ${labels[hiddenIndex]}을 좋아하는 학생은 ${values[hiddenIndex]}명입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const labels = ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"];
+        const second = 4 * int(rng, 5 + level, 7 + level * 2);
+        const third = second * 3 / 4;
+        const difference = 4 * int(rng, 1, 1 + level);
+        const fourth = third + difference;
+        const values = [4 * int(rng, 4, 7), second, third, fourth, 4 * int(rng, 4, 8), 4 * int(rng, 4, 8)];
+        return result(`학년별로 동생이 있는 학생 수를 조사했습니다. 3학년은 2학년의 3/4이고, 4학년은 3학년보다 ${difference}명 더 많습니다. 그래프를 보고 4학년 학생 수를 구하세요.${barChartSvg({ labels, values, step: 4, hidden: [2, 3] })}`, fourth, `2학년은 그래프에서 ${second}명입니다. 3학년은 ${second} × 3/4 = ${third}명이고, 4학년은 ${third} + ${difference} = ${fourth}명입니다.`);
+      }
+      const labels = ["1", "2", "3", "4", "5", "6"];
+      const step = 2;
+      const second = 2 * int(rng, 5 + level, 9 + level * 2);
+      const difference = 2 * int(rng, 1, 2 + level);
+      const third = second + difference;
+      const values = [2 * int(rng, 4, 8), second, third, 2 * int(rng, 4, 9), 2 * int(rng, 4, 9), 2 * int(rng, 4, 9)];
+      const total = values.reduce((sum, value) => sum + value, 0);
+      return result(`주사위를 여러 번 던져 나온 눈의 횟수를 나타낸 그래프입니다. 2의 눈과 3의 눈 막대가 지워졌고, 3의 눈은 2의 눈보다 ${difference}번 더 나왔습니다. 전체 횟수가 ${total}번일 때 3의 눈이 나온 횟수를 구하세요.${barChartSvg({ labels, values, step, hidden: [1, 2], unit: "번" })}`, third, `보이는 네 막대의 합은 ${total - second - third}번이므로 두 빠진 막대의 합은 ${second + third}번입니다. 차가 ${difference}번이므로 2의 눈은 (${second + third} - ${difference}) ÷ 2 = ${second}번, 3의 눈은 ${third}번입니다.`);
+    },
+    barGraphApplication({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const labels = ["가람", "나래", "다온", "라온", "마루"];
+        const speed = pick(rng, [50, 100]);
+        const farthest = 100 * int(rng, 8 + level * 2, 12 + level * 3);
+        const targetIndex = int(rng, 0, labels.length - 1);
+        const values = labels.map((_, index) => index === targetIndex ? farthest : 100 * int(rng, 3, farthest / 100 - 1));
+        const answer = farthest * 2 / speed;
+        return result(`학교에서 집까지의 거리를 조사한 막대그래프입니다. 가장 먼 곳에 사는 학생이 1분에 ${speed}m씩 일정하게 걸어 학교와 집을 왕복할 때 걸리는 시간을 구하세요.${barChartSvg({ labels, values, step: 100, unit: "m" })}`, answer, `가장 먼 거리는 ${farthest}m입니다. 왕복 거리는 ${farthest} × 2 = ${farthest * 2}m이므로 걸리는 시간은 ${farthest * 2} ÷ ${speed} = ${answer}분입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const labels = ["가반", "나반", "다반", "라반"];
+        const boys = labels.map(() => int(rng, 6 + level, 11 + level * 2));
+        const girls = labels.map(() => int(rng, 6 + level, 11 + level * 2));
+        const totals = boys.map((value, index) => value + girls[index]);
+        const answer = Math.max(...totals) - Math.min(...totals);
+        return result(`반별 남학생과 여학생 수를 나타낸 막대그래프입니다. 전체 학생 수가 가장 많은 반과 가장 적은 반의 학생 수 차를 구하세요.${barChartSvg({ labels, values: boys, secondValues: girls, step: 2, legend: ["남학생", "여학생"] })}`, answer, `각 반의 전체 학생 수는 차례로 ${totals.join(", ")}명입니다. 가장 큰 수 ${Math.max(...totals)}에서 가장 작은 수 ${Math.min(...totals)}을 빼면 ${answer}명입니다.`);
+      }
+      const labels = ["단팥", "크림", "소보로", "카스텔라"];
+      const counts = labels.map(() => 5 * int(rng, 4 + level, 9 + level * 3));
+      const prices = [1200 + level * 100, 1500 + level * 100, 1100 + level * 100, 2000 + level * 200];
+      const answer = counts.reduce((sum, count, index) => sum + count * prices[index], 0);
+      const priceText = labels.map((label, index) => `${label}빵 ${prices[index].toLocaleString()}원`).join(", ");
+      return result(`오늘 판매한 빵의 수를 나타낸 막대그래프입니다. 한 개의 가격이 ${priceText}일 때 전체 판매 금액을 구하세요.${barChartSvg({ labels, values: counts, step: 5, unit: "개" })}`, answer, `${counts.map((count, index) => `${count} × ${prices[index].toLocaleString()}`).join(" + ")} = ${answer.toLocaleString()}원이므로 전체 판매 금액은 ${answer.toLocaleString()}원입니다.`);
+    },
     multiply({ rng, level }) {
       const r = range(level);
       const a = int(rng, 12, r.medium);
@@ -1018,6 +1110,8 @@
     [/^연속 이동$/, "sequentialTransform"],
     [/^평면도형 이동의 활용 ①$/, "movementPatternOne"],
     [/^평면도형 이동의 활용 ②$/, "movementPatternTwo"],
+    [/^막대그래프의 이해$/, "barGraphUnderstanding"],
+    [/^막대그래프의 활용$/, "barGraphApplication"],
     [/일렬로 나열한 수|배열된 수들의 합/, "numberPattern"],
     [/^평행선 사이의 각도/, "angle"],
     [/^혼합 계산의 순서$|^하나의 식으로 나타내기$|^연산의 규칙$|^혼합 계산식 만들기$/, "mixedOperation"],
