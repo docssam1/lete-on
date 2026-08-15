@@ -218,7 +218,20 @@
   $("printButton").addEventListener("click", () => print());
   $("watermarkToggle").addEventListener("change", () => { if (state.questions.length) renderWorksheet(); });
 
-  $("studentNameInput").value = new URLSearchParams(location.search).get("student") || localStorage.getItem("hseStudent") || "";
+  const params = new URLSearchParams(location.search);
+  $("studentNameInput").value = params.get("student") || localStorage.getItem("hseStudent") || "";
+  const reviewType = typeById.get(params.get("type"));
+  if (reviewType?.generator) {
+    state.grade = reviewType.grade;
+    state.term = reviewType.term;
+    state.unitId = reviewType.unitId;
+    state.selected.add(reviewType.id);
+    state.count = 3;
+    $("questionCountInput").value = "3";
+    refreshSegments("gradeFilter", "grade", state.grade);
+    refreshSegments("termFilter", "term", state.term);
+  }
   renderUnitOptions();
   renderCatalog();
+  if (reviewType?.generator && params.get("review") === "1") buildQuestions();
 })();

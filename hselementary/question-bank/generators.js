@@ -22,6 +22,16 @@
   }
 
   const generators = {
+    largeNumberPlaceValue({ rng, level }) {
+      const digitCount = 6 + level;
+      const digits = Array.from({ length: digitCount }, (_, index) => index === 0 ? int(rng, 1, 9) : int(rng, 0, 9));
+      const targetIndex = int(rng, 1, digitCount - 2);
+      if (digits[targetIndex] === 0) digits[targetIndex] = int(rng, 1, 9);
+      const value = Number(digits.join(""));
+      const place = digitCount - targetIndex - 1;
+      const answer = digits[targetIndex] * 10 ** place;
+      return result(`${value.toLocaleString()}에서 왼쪽에서 ${targetIndex + 1}번째 숫자 ${digits[targetIndex]}이 나타내는 값을 구하세요.`, answer, `숫자 ${digits[targetIndex]}은 ${10 ** place >= 10000 ? (10 ** place).toLocaleString() : 10 ** place}의 자리에 있으므로 나타내는 값은 ${answer.toLocaleString()}입니다.`);
+    },
     largeNumber({ rng, level }) {
       const digits = 6 + level;
       const base = 10 ** (digits - 1);
@@ -271,6 +281,7 @@
   };
 
   const rules = [
+    [/^큰 수 알아보기$/, "largeNumberPlaceValue"],
     [/^큰 수의 크기 비교$/, "largeNumber"],
     [/큰 수의 규칙성|일렬로 나열한 수|배열된 수들의 합/, "numberPattern"],
     [/수 카드로 수 만들기|조건에 맞는 수 찾기/, "digitCards"],
