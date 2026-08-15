@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "16286d2b5a9972701259f9fa860c0f1c0d457466c16ef9d8965d25f627dff21e",
-      "size": 30089,
-      "mtime_ns": 1786814698016260500
+      "sha256": "378124e707b3dce820b81b1bc433636007ca715fb7f6aa4406de3dc471d41483",
+      "size": 30852,
+      "mtime_ns": 1786814904486957400
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "2d983e297e538c08f6a9895624e3fa77de61d1a0232224cff9cf85a4b62004f6",
-      "size": 92832,
-      "mtime_ns": 1786814652172262500
+      "sha256": "4593e6f40576d2682cb04ce3cb5e3230cd2c41fb8d73dae4b01328fd24aa5d0a",
+      "size": 94359,
+      "mtime_ns": 1786814820601006000
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "e866be0f964dd75fe2f9a287c18afa13f4a2170dd4f054a64e0877e4c2d158ab",
-      "size": 33125,
-      "mtime_ns": 1786814600152113900
+      "sha256": "a8139190928e254ba06aacf1665a821caa27065a91f42740029846cb3b8fa17c",
+      "size": 33304,
+      "mtime_ns": 1786814812788570200
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 7",
+      "title": "Next verification 7-year-old selection test 2 question 8",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q7"
+        "q8"
       ],
-      "summary": "Verify the example sum table and the target shape grid before deciding whether the existing shape-sum generator is structurally exact.",
+      "summary": "Verify the triangle-circle-diamond three-shape cycle and the requested eleventh shape before creating a source-specific repeat generator.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,7 +123,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "Next sequence item 1",
-          "note": "Selection test 2 question 7 is next"
+          "note": "Selection test 2 question 8 is next"
         }
       ]
     },
@@ -1003,6 +1003,40 @@
           "role": "code",
           "locator": "TYPES addition-table-grid and EXAMS k7-2022-04 verified 1 through 6",
           "note": "Source question 6 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q7",
+      "title": "Selection test 2 question 7 shape sum bottom target",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q7",
+        "shape-sum-table-bottom-target"
+      ],
+      "summary": "The exact source layout has diamond plus circle and diamond plus square as row sums, two diamonds as the known bottom column sum, and circle plus square as the target; answer 6.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 7 paragraph",
+          "note": "Exact orientation, source answer 6, distinct subtype decision, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeSumBottomTarget",
+          "note": "Exact target orientation and three scaffold levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES shape-sum-table-bottom-target and EXAMS k7-2022-04 verified 1 through 7",
+          "note": "Source question 7 is enabled without changing the older shape-sum subtype"
         }
       ]
     }
