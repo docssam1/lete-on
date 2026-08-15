@@ -1436,15 +1436,31 @@ function lGridPlacement({ difficulty = 2 }) {
 }
 
 function numberPyramid({ difficulty = 2 }) {
-  const max = difficulty === 1 ? 6 : difficulty === 2 ? 10 : 16;
-  const cards = shuffle(Array.from({ length: max }, (_, index) => index + 1)).slice(0, 3);
-  const middle = sample(cards);
-  const target = cards.reduce((sum, value) => sum + value, 0) + middle;
+  const max = difficulty === 1 ? 6 : difficulty === 2 ? 10 : 14;
+  let cards;
+  let usedCards;
+  let middle;
+  let target;
+  let candidateMiddles;
+  do {
+    cards = shuffle(Array.from({ length: max }, (_, index) => index + 1)).slice(0, difficulty === 3 ? 4 : 3);
+    usedCards = difficulty === 3 ? shuffle(cards).slice(0, 3) : [...cards];
+    middle = sample(usedCards);
+    target = usedCards.reduce((sum, value) => sum + value, 0) + middle;
+    candidateMiddles = new Set(permutations(cards).filter((candidate) => {
+      const chosen = candidate.slice(0, 3);
+      return chosen.reduce((sum, value) => sum + value, 0) + chosen[1] === target;
+    }).map((candidate) => candidate[1]));
+  } while (difficulty === 3 && (candidateMiddles.size !== 1 || !candidateMiddles.has(middle)));
+
+  const cardSum = usedCards.reduce((sum, value) => sum + value, 0);
+  const hint = difficulty === 1 ? `세 수 카드의 합은 ${cardSum}입니다.` : "";
   return {
-    prompt: "첫째 줄에 주어진 수 카드 세 장을 한 번씩 넣어 두 번 모으기 한 값이 아래 수가 되도록 하세요. ㉠에 들어갈 수를 구하세요.",
-    visual: { kind: "number-pyramid", cards: shuffle(cards), target },
+    prompt: `첫째 줄에 주어진 수 카드${difficulty === 3 ? " 네 장 중 세 장을 골라" : " 세 장을"} 한 번씩 넣어 두 번 모으기 한 값이 아래 수가 되도록 하세요. ㉠에 들어갈 수를 구하세요.`,
+    visual: { kind: "number-pyramid", cards: shuffle(cards), target, hint },
     answer: String(middle),
-    solution: `두 번 모으기 한 값은 첫째 줄의 세 수의 합에 가운데 수를 한 번 더 더한 값입니다. 카드의 합은 ${cards.reduce((sum, value) => sum + value, 0)}이므로, ${target}에서 ${cards.reduce((sum, value) => sum + value, 0)}을 빼면 ㉠은 ${middle}입니다.`
+    solution: `두 번 모으기 한 값은 첫째 줄에 넣은 세 수의 합에 가운데 수를 한 번 더 더한 값입니다. 넣은 세 수의 합은 ${cardSum}이므로, ${target}에서 ${numberObject(cardSum)} 빼면 ㉠은 ${middle}입니다.${difficulty === 3 ? ` 쓰지 않는 카드는 ${cards.find((value) => !usedCards.includes(value))}입니다.` : ""}`,
+    meta: { difficulty, cards, usedCards, middle, target, cardSum, candidateMiddles: [...candidateMiddles], answer: middle }
   };
 }
 

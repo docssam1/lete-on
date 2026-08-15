@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "3663a87029bff5031ab988b45c1bb170a291fdf6415f9fca0117d55830621ac2",
-      "size": 80839,
-      "mtime_ns": 1786829522166696600
+      "sha256": "00b936fc18fe19091648003e5f4e575d682c62adfd33c2bc09ff165fd5383a40",
+      "size": 81829,
+      "mtime_ns": 1786829762072992200
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "8f8e3ef819f0c9010dc039641f69af6bd4c3df56dc944f3bb242d1bdd95c9bf2",
-      "size": 158800,
-      "mtime_ns": 1786829490871705200
+      "sha256": "961b93a8fb03b76004bf07cc4ac1f9595d70840fa619a3897d7a9fabd4268a60",
+      "size": 159729,
+      "mtime_ns": 1786829658388059700
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "e0bbd8c1ba525580bf82101715c3673f0be702655a6fbb172b1f647e9b729f39",
-      "size": 38398,
-      "mtime_ns": 1786829396645087600
+      "sha256": "e71754a46f7fc5a746c859aa14b4519ca6ef813f701eab73e88358a7249e9a3a",
+      "size": 38401,
+      "mtime_ns": 1786829711249086700
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 3",
+      "title": "Next verification selection test 6 question 4",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-12",
-        "q3"
+        "q4"
       ],
-      "summary": "Compare the three number cards and two-step collecting pyramid on page 4 with the official answer, then verify whether the existing number-pyramid generator matches exactly.",
+      "summary": "Compare the 4 by 4 addition table with horizontal step 6, vertical step 4, marked bottom-left cell, and official answer 18, then verify its generator and browser rendering.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,7 +123,7 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 3 remains disabled until exact cards, diagram, target, answer, and browser rendering are verified"
+          "note": "Question 4 remains disabled until the corrected mapping, exact increments, answer, and rendering are verified"
         }
       ]
     },
@@ -2907,6 +2907,40 @@
           "role": "code",
           "locator": "TYPES grid-number-placement-five and EXAMS k7-2022-12 verified questions 1 through 2",
           "note": "Question 2 enabled after exact source comparison"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q3",
+      "title": "Selection test 6 question 3 two-step number pyramid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q3",
+        "number-pyramid"
+      ],
+      "summary": "The source uses cards 2, 3, and 4 once in the first row and asks for the marked middle card when two adjacent-sum steps give 11; card sum 9 leaves the unique official answer 2.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 3 paragraph",
+          "note": "Exact cards, two-step diagram, official answer 2, mapping-order fix, and browser rendering"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function numberPyramid",
+          "note": "Hint, source-like, and four-card selection difficulty structures with exhaustive middle-value checks"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 questions 3 and 4 mapping order and verified questions 1 through 3",
+          "note": "Question 3 enabled after correcting swapped type order"
         }
       ]
     }
