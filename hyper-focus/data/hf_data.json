@@ -1912,7 +1912,7 @@
     "fixedSimilars": [],
     "aiTutorPack": {
       "conceptAudioPath": null,
-      "audioScript": "돌리거나 뒤집어서 같은 모양은 하나로 본다.",
+      "audioScript": "입체를 공간에서 돌려 겹치면 같은 모양으로 본다. 거울에 비친 모양처럼 회전만으로 겹치지 않으면 다른 모양이다.",
       "docssamPhrase": "같은 모양인지 돌려 보며 확인해.",
       "mentalHack": "기준 모양을 고정하고 마지막 블록 위치를 바꿔 본다.",
       "studentMistake": "회전하면 같은 모양을 다른 것으로 셈",
@@ -1974,10 +1974,10 @@
     "legacyGroup": "B",
     "functionalGroup": "도형/분할/개수",
     "problemType": "TYPE-03",
-    "subType": "geoboard_triangles",
+    "subType": "geoboard_squares",
     "answerType": "count",
     "svgRequired": true,
-    "title": "점판에서 만들 수 있는 정삼각형 모두 세기",
+    "title": "점판에서 만들 수 있는 정사각형 모두 세기",
     "targetUser": {
       "profile": "프리미어 대비 7세·초등 저학년 상위권",
       "mathReadyLevel": [
@@ -2003,16 +2003,16 @@
     "originalProblem": {
       "questionId": "q19_origin",
       "difficulty": "same",
-      "text": "점판에서 만들 수 있는 정삼각형 모두 세기",
-      "answer": "12개",
-      "answerStory": "기울어진 것도 놓치지 마.",
+      "text": "점판에서 만들 수 있는 정사각형 모두 세기",
+      "answer": "6개",
+      "answerStory": "작은 것 4개, 가운데 1개, 바깥 큰 것 1개를 센다.",
       "renderData": {
         "renderStrategy": "use_original_structure_preferred",
         "svgRequired": true,
         "mustPreserve": [
           "점판",
-          "정삼각형",
-          "기울어진 세모"
+          "정사각형",
+          "기울어진 네모"
         ]
       },
       "audioPath": null
@@ -2020,10 +2020,10 @@
     "fixedSimilars": [],
     "aiTutorPack": {
       "conceptAudioPath": null,
-      "audioScript": "기본 방향 세모를 먼저 찾고, 기울어진 세모를 따로 확인한다.",
-      "docssamPhrase": "기울어진 것도 놓치지 마.",
-      "mentalHack": "8개 + 2개 + 2개처럼 방향별로 나누어 센다.",
-      "studentMistake": "기울어진 정삼각형을 빠뜨림",
+      "audioScript": "작은 기울어진 네모부터 찾고, 가운데와 바깥의 큰 네모를 따로 확인한다.",
+      "docssamPhrase": "기울어진 네모도 놓치지 마.",
+      "mentalHack": "작은 것 4개 + 가운데 1개 + 바깥 1개로 나누어 센다.",
+      "studentMistake": "가운데 반듯한 정사각형이나 바깥 큰 정사각형을 빠뜨림",
       "docsamRules": [
         "count_by_direction",
         "include_tilted"
@@ -2052,11 +2052,11 @@
     },
     "variationPolicy": {
       "difficultyPolicy": "default",
-      "variationRule": "점 배열과 정삼각형 조건 유지",
+      "variationRule": "점 배열과 정사각형 조건 유지",
       "mustPreserve": [
         "점판",
-        "정삼각형",
-        "기울어진 세모"
+        "정사각형",
+        "기울어진 네모"
       ],
       "globalRatio": {
         "easy": 70,

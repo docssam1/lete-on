@@ -3,9 +3,26 @@
   "baseQuestionId": "q18",
   "variationId": "q18_var02",
   "subType": "tetra_cube_cases",
-  "status": "draft",
-  "source": { "problemImage": "./assets/problems/q18_var02.png" },
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q18_var02.svg" },
   "contentBinding": { "canonicalSource": "./canonical/q18.json", "hfDataTypeId": 18 },
-  "machineReadable": { "payloadType": "tetra_cube_cases", "shapeSet": ["square4", "triangle3", "triangle4", "square2_triangle2", "trapezoid3"], "expectedAnswer": 4 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 4 }
+  "problem": { "prompt": "쌓기나무 4개를 모두 사용하여 면끼리 붙이되, 두 층 이상이 되게 만들 수 있는 서로 다른 모양은 모두 몇 가지입니까? 돌려서 겹치면 같은 모양입니다." },
+  "machineReadable": {
+    "payloadType": "tetra_cube_cases",
+    "unitCubeCount": 4,
+    "connectivity": "face_connected_only",
+    "mustUseMoreThanOneLayer": true,
+    "equivalenceRule": { "sameUnderSpatialRotation": true, "mirrorCopyNotGeneratedSeparately": false },
+    "solvingModel": {
+      "representatives": [
+        {"shapeId":"tripod","blocks":[[0,0,0],[0,0,1],[0,1,0],[1,0,0]]},
+        {"shapeId":"chair_left","blocks":[[0,0,0],[0,1,0],[0,1,1],[1,0,0]]},
+        {"shapeId":"chair_right","blocks":[[0,0,1],[0,1,0],[0,1,1],[1,0,1]]}
+      ],
+      "expectedAnswer": 3,
+      "verifiedByPolycubeEnumeration": true
+    }
+  },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 3 },
+  "solutionHint": "네 개로 만드는 8가지 중 한 층에 놓이는 5가지를 빼면, 두 층 이상인 입체 모양은 3가지입니다."
 }

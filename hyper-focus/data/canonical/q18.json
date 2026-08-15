@@ -52,13 +52,13 @@
       },
       "equivalenceRule": {
         "sameIfRotated": true,
-        "sameIfReflected": true,
-        "description": "돌리거나 뒤집어서 겹치면 같은 모양으로 본다."
+        "sameIfReflected": false,
+        "description": "완성한 입체를 공간에서 돌려 겹치면 같은 모양으로 본다. 거울에 비친 모양처럼 회전만으로 겹치지 않는 한 쌍은 서로 다른 모양이다."
       },
       "countingRule": {
         "target": "distinct_3d_shapes",
         "expectedAnswer": 8,
-        "description": "쌓기나무 4개를 모두 이어 만든 입체를 회전과 뒤집기 중복 없이 센다."
+        "description": "쌓기나무 4개를 모두 이어 만든 입체를 공간에서 돌려 겹치는 중복 없이 센다."
       },
       "constructionRule": {
         "allBlocksUsed": true,
@@ -76,12 +76,12 @@
         "recommendedOrder": [
           "기준 모양 하나를 정한다.",
           "마지막 블록 위치를 바꾸며 가능한 입체를 나눈다.",
-          "돌리거나 뒤집어 같은 모양은 합친다.",
+          "공간에서 돌려 같은 모양은 합친다.",
           "남는 모양이 모두 몇 개인지 센다."
         ],
         "dedupeChecks": [
           "rotation_same_shape",
-          "reflection_same_shape"
+          "spatial_rotation_same_shape"
         ]
       },
       "shapeFamilyGuide": {
@@ -103,7 +103,7 @@
           "mustPreserve": [
             "face_connected_only",
             "rotation_same_shape",
-            "reflection_same_shape"
+            "spatial_rotation_same_shape"
           ]
         },
         "baseMode": {
@@ -111,7 +111,7 @@
           "mustPreserve": [
             "all blocks used",
             "connected polycube",
-            "rotation/reflection dedupe"
+            "spatial rotation dedupe"
           ]
         },
         "hardMode": {
@@ -119,7 +119,7 @@
           "mustPreserve": [
             "answer first design",
             "connected polycube",
-            "rotation/reflection dedupe"
+            "spatial rotation dedupe"
           ]
         }
       },
@@ -132,13 +132,13 @@
         "mustPreserve": [
           "모든 블록을 사용해 하나의 입체를 만드는 구조",
           "면끼리 붙어 연결되는 규칙",
-          "돌리거나 뒤집어 같은 모양은 한 가지로 보는 규칙",
+          "완성한 입체를 공간에서 돌려 겹치면 한 가지로 보는 규칙",
           "정답이 하나로 결정되는 구조"
         ],
         "forbiddenChanges": [
           "블록이 떨어진 구조",
           "꼭짓점이나 모서리만 닿는 구조",
-          "회전/뒤집기 중복 제거 규칙이 흐려지는 문제",
+          "공간 회전 중복 제거 규칙이 흐려지는 문제",
           "정답이 여러 값으로 해석되는 문제"
         ]
       },
@@ -157,11 +157,11 @@
     "mustMatchContentAnswer": true,
     "sourceAnswerPath": "originalProblem.answer",
     "derivation": {
-      "method": "count_distinct_tetracubes_under_rotation_and_reflection",
+      "method": "count_distinct_tetracubes_under_spatial_rotation",
       "checks": [
         "사용 블록 수가 4개인지 확인",
         "모든 경우가 연결된 입체인지 확인",
-        "돌림과 뒤집기 중복을 제거했는지 확인",
+        "공간에서 돌려 겹치는 중복을 제거했는지 확인",
         "남는 경우의 수가 8가지인지 확인"
       ]
     }
@@ -172,7 +172,7 @@
       "hf_data.json typeId 18의 originalProblem.answer가 8가지인지 확인",
       "hf_core.json 및 problem_map.json의 subType이 tetra_cube_cases인지 확인",
       "equivalenceRule.sameIfRotated가 true인지 확인",
-      "equivalenceRule.sameIfReflected가 true인지 확인",
+      "equivalenceRule.sameIfReflected가 false인지 확인",
       "expectedAnswer가 8인지 확인"
     ],
     "completionStatus": "verified"

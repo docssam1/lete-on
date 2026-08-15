@@ -5,7 +5,7 @@
   "subType": "two_condition_digits",
   "status": "draft",
   "source": {
-    "problemImage": "./assets/problems/q25_var02.png"
+    "problemImage": ""
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q25.json",

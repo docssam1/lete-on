@@ -3,14 +3,15 @@
  "baseQuestionId": "q20",
  "variationId": "q20_var01",
  "subType": "segment_sum_lengths",
- "status": "draft",
+ "status": "verified",
  "source": {
-  "problemImage": "./assets/problems/q20_var01.png"
+  "problemImage": "./assets/svg/variations/q20_var01.svg"
  },
  "contentBinding": {
   "canonicalSource": "./canonical/q20.json",
   "hfDataTypeId": 20
  },
+ "problem": { "prompt": "2cm, 4cm, 6cm, 10cm 막대를 각각 한 번까지 골라 만들 수 있는 서로 다른 길이는 모두 몇 가지입니까? 같은 길이는 한 번만 셉니다." },
  "machineReadable": {
   "payloadType": "segment_sum_lengths",
   "numbers": [
@@ -25,5 +26,6 @@
  "answerValidation": {
   "answerType": "integer",
   "expectedAnswer": 11
- }
+ },
+ "solutionHint": "가능한 길이는 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22cm로 모두 11가지입니다."
 }

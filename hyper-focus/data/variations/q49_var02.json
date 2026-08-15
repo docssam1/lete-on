@@ -5,7 +5,7 @@
   "subType": "unit_rate_animals",
   "status": "draft",
   "source": {
-    "problemImage": "./assets/problems/q49_var02.png"
+    "problemImage": ""
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q49.json",

@@ -3,14 +3,15 @@
  "baseQuestionId": "q30",
  "variationId": "q30_var02",
  "subType": "target_score_cases",
- "status": "draft",
+ "status": "verified",
  "source": {
-  "problemImage": "./assets/problems/q30_var02.png"
+  "problemImage": "./assets/svg/variations/q30_var02.svg"
  },
  "contentBinding": {
   "canonicalSource": "./canonical/q30.json",
   "hfDataTypeId": 30
  },
+ "problem": { "prompt": "2점, 4점, 6점 과녁을 3번 모두 맞혔을 때 나올 수 있는 서로 다른 총점은 모두 몇 가지입니까?" },
  "machineReadable": {
   "payloadType": "target_score_cases",
   "choices": [
@@ -24,5 +25,6 @@
  "answerValidation": {
   "answerType": "integer",
   "expectedAnswer": 7
- }
+ },
+ "solutionHint": "6점부터 18점까지의 짝수인 6, 8, 10, 12, 14, 16, 18점을 만들 수 있으므로 7가지입니다."
 }

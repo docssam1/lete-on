@@ -5,7 +5,7 @@
  "subType": "work_together_grid",
  "status": "draft",
  "source": {
-  "problemImage": "./assets/problems/q48_var01.png"
+    "problemImage": ""
  },
  "contentBinding": {
   "canonicalSource": "./canonical/q48.json",

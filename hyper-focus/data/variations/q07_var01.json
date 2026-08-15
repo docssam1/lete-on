@@ -3,69 +3,27 @@
   "baseQuestionId": "q07",
   "variationId": "q07_var01",
   "subType": "cube_net_matching",
-  "status": "draft",
-  "source": {
-    "problemImage": "./assets/problems/q07_var01.png"
-  },
-  "contentBinding": {
-    "canonicalSource": "./canonical/q07.json",
-    "hfDataTypeId": 7
-  },
-  "variationPolicy": {
-    "preservedFromOriginal": [
-      "cube net folding",
-      "opposite face check",
-      "symbol rotation check",
-      "five choice evaluation"
-    ],
-    "changedFromOriginal": [
-      "simple shape marks",
-      "new valid choice set",
-      "triangle direction emphasis"
-    ]
-  },
-  "problem": {
-    "prompt": "Choose all cube views that can be made from the net."
-  },
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q07_var01.svg" },
+  "contentBinding": { "canonicalSource": "./canonical/q07.json", "hfDataTypeId": 7 },
+  "problem": { "prompt": "왼쪽 전개도로 만들 수 있는 주사위 모양을 모두 고르세요." },
   "machineReadable": {
     "payloadType": "cube_net_matching",
-    "orientationBasis": {
-      "symbol0deg": "image_up",
-      "rotationDirection": "clockwise"
-    },
     "net": {
       "faces": [
-        { "faceId": "A_CIRCLE", "grid": { "x": -1, "y": 2 }, "mark": { "kind": "circle", "orientation": 0 } },
-        { "faceId": "B_SQUARE", "grid": { "x": 0, "y": 2 }, "mark": { "kind": "square", "orientation": 0 } },
-        { "faceId": "C_UP_TRIANGLE", "grid": { "x": 0, "y": 1 }, "mark": { "kind": "triangle_up", "orientation": 0 } },
-        { "faceId": "D_HORIZONTAL_STRIPES", "grid": { "x": 0, "y": 0 }, "mark": { "kind": "horizontal_stripes", "orientation": 0, "stripeCount": 3 } },
-        { "faceId": "E_STAR", "grid": { "x": 1, "y": 0 }, "mark": { "kind": "star", "orientation": 0 } },
-        { "faceId": "F_DOWN_TRIANGLE", "grid": { "x": 0, "y": -1 }, "mark": { "kind": "triangle_down", "orientation": 0 } }
+        {"faceId":"A","grid":{"x":-1,"y":2},"mark":"circle"},{"faceId":"B","grid":{"x":0,"y":2},"mark":"square"},{"faceId":"C","grid":{"x":0,"y":1},"mark":"triangle"},{"faceId":"D","grid":{"x":0,"y":0},"mark":"stripes"},{"faceId":"E","grid":{"x":1,"y":0},"mark":"star"},{"faceId":"F","grid":{"x":0,"y":-1},"mark":"dot"}
       ],
-      "adjacency": [
-        { "from": "A_CIRCLE", "to": "B_SQUARE", "direction": "right" },
-        { "from": "B_SQUARE", "to": "C_UP_TRIANGLE", "direction": "down" },
-        { "from": "C_UP_TRIANGLE", "to": "D_HORIZONTAL_STRIPES", "direction": "down" },
-        { "from": "D_HORIZONTAL_STRIPES", "to": "E_STAR", "direction": "right" },
-        { "from": "D_HORIZONTAL_STRIPES", "to": "F_DOWN_TRIANGLE", "direction": "down" }
-      ],
-      "oppositeFacePairs": [
-        ["A_CIRCLE", "E_STAR"],
-        ["B_SQUARE", "D_HORIZONTAL_STRIPES"],
-        ["C_UP_TRIANGLE", "F_DOWN_TRIANGLE"]
-      ]
+      "oppositeFacePairs": [["A","E"],["B","D"],["C","F"]]
     },
     "choices": [
-      { "choiceId": 1, "isValid": false, "invalidRule": "opposite_faces" },
-      { "choiceId": 2, "isValid": true },
-      { "choiceId": 3, "isValid": true },
-      { "choiceId": 4, "isValid": true },
-      { "choiceId": 5, "isValid": false, "invalidRule": "opposite_faces" }
+      {"choiceId":1,"visibleFaces":["A","E","B"],"isValid":false,"invalidRule":"opposite_faces"},
+      {"choiceId":2,"visibleFaces":["A","B","C"],"isValid":true},
+      {"choiceId":3,"visibleFaces":["A","D","F"],"isValid":true},
+      {"choiceId":4,"visibleFaces":["E","B","F"],"isValid":true},
+      {"choiceId":5,"visibleFaces":["C","F","A"],"isValid":false,"invalidRule":"opposite_faces"}
     ],
-    "expectedValidChoices": [2, 3, 4]
+    "expectedValidChoices": [2,3,4]
   },
-  "answerValidation": {
-    "answerType": "option_set",
-    "expectedAnswer": [2, 3, 4]
-  }
+  "answerValidation": { "answerType": "option_set", "expectedAnswer": [2,3,4] },
+  "solutionHint": "서로 마주 보는 A-E, B-D, C-F 면은 한 꼭짓점에서 함께 보일 수 없습니다. 이 짝이 없는 2번, 3번, 4번이 가능합니다."
 }

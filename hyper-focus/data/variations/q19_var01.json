@@ -2,10 +2,20 @@
   "schemaVersion": "hf-variation-problem-v1",
   "baseQuestionId": "q19",
   "variationId": "q19_var01",
-  "subType": "geoboard_triangles",
-  "status": "draft",
-  "source": { "problemImage": "./assets/problems/q19_var01.png" },
+  "subType": "geoboard_squares",
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q19_var01.svg" },
   "contentBinding": { "canonicalSource": "./canonical/q19.json", "hfDataTypeId": 19 },
-  "machineReadable": { "payloadType": "geoboard_triangles", "boardSize": "4x4", "missingPointCount": 1, "expectedAnswer": 12 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 12 }
+  "problem": { "prompt": "점판 위의 점 4개를 꼭짓점으로 하여 만들 수 있는 크고 작은 정사각형은 모두 몇 개입니까?" },
+  "machineReadable": {
+    "payloadType": "geoboard_squares",
+    "dotBoard": { "latticeType": "square", "points": [[0,0],[1,0],[2,0],[0,1],[1,1],[2,1],[0,2],[1,2],[2,2]] },
+    "countingModel": {
+      "groupedCount": [{"sideLengthSquared":1,"count":4},{"sideLengthSquared":2,"count":1},{"sideLengthSquared":4,"count":1}],
+      "expectedAnswer": 6,
+      "verifiedByCoordinateEnumeration": true
+    }
+  },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 6 },
+  "solutionHint": "작은 반듯한 정사각형 4개, 바깥 큰 정사각형 1개, 기울어진 정사각형 1개로 모두 6개입니다."
 }

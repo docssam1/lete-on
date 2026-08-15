@@ -186,7 +186,7 @@
           "펼쳤을 때 결과 도형 수가 여러 해석으로 갈리는 구조",
           "펼쳤을 때 구멍 위치가 여러 해석으로 갈리는 구조",
           "원본과 다른 유형으로 바뀌는 변형"
-        }
+        ]
       },
       "renderSpec": {
         "renderStrategy": "transform_original_svg",

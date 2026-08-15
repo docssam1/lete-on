@@ -17,7 +17,7 @@
 16,크고 작은 정사각형 모두 세기,TYPE-03,count_squares_grid,count,10개,True
 17,대각선 또는 비스듬한 선이 있는 도형에서 정사각형 세기,TYPE-03,count_tilted_squares,count,10개,True
 18,쌓기나무 4개로 만들 수 있는 서로 다른 모양 가짓수,TYPE-03,tetra_cube_cases,count,8가지,True
-19,점판에서 만들 수 있는 정삼각형 모두 세기,TYPE-03,geoboard_triangles,count,12개,True
+19,점판에서 만들 수 있는 정사각형 모두 세기,TYPE-03,geoboard_squares,count,6개,True
 20,서로 다른 선분을 조합해 만들 수 있는 길이 가짓수 구하기,TYPE-05,segment_sum_lengths,count,15가지,True
 21,자리 조건을 만족하는 네 자리 수 찾기,TYPE-05,place_value_conditions,number,3845,True
 22,숫자 2개의 위치를 바꿔 올바른 식 만들기,TYPE-05,swap_digits_equation,equation,38-16=22,True

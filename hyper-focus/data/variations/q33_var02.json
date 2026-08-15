@@ -5,7 +5,7 @@
  "subType": "rps_stair_difference",
  "status": "draft",
  "source": {
-  "problemImage": "./assets/problems/q33_var02.png"
+    "problemImage": ""
  },
  "contentBinding": {
   "canonicalSource": "./canonical/q33.json",

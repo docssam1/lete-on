@@ -3,9 +3,27 @@
   "baseQuestionId": "q17",
   "variationId": "q17_var02",
   "subType": "count_tilted_squares",
-  "status": "draft",
-  "source": { "problemImage": "./assets/problems/q17_var02.png" },
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q17_var02.svg" },
   "contentBinding": { "canonicalSource": "./canonical/q17.json", "hfDataTypeId": 17 },
-  "machineReadable": { "payloadType": "count_tilted_squares", "figureClass": "mixed_axis_and_tilted_squares", "expectedAnswer": 8 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 8 }
+  "problem": { "prompt": "그림에서 찾을 수 있는 크고 작은 정사각형은 모두 몇 개입니까? 기울어진 정사각형도 셉니다." },
+  "machineReadable": {
+    "payloadType": "count_tilted_squares",
+    "figure": {
+      "coordinateScale": 2,
+      "lineSegments": [
+        [[0,0],[2,0]],[[2,0],[4,0]],[[4,0],[6,0]],[[0,2],[2,2]],[[2,2],[4,2]],[[4,2],[6,2]],[[0,4],[2,4]],[[2,4],[4,4]],[[4,4],[6,4]],
+        [[0,0],[0,2]],[[0,2],[0,4]],[[2,0],[2,2]],[[2,2],[2,4]],[[4,0],[4,2]],[[4,2],[4,4]],[[6,0],[6,2]],[[6,2],[6,4]],
+        [[2,0],[4,2]],[[4,2],[2,4]],[[2,4],[0,2]],[[0,2],[2,0]]
+      ]
+    },
+    "countingModel": {
+      "axisAlignedBySideSquared": {"4":6,"16":2},
+      "tiltedBySideSquared": {"8":1},
+      "expectedAnswer": 9,
+      "verifiedBySegmentEnumeration": true
+    }
+  },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 9 },
+  "solutionHint": "한 칸짜리 6개, 2×2 크기 2개, 왼쪽의 기울어진 정사각형 1개를 더하면 9개입니다."
 }

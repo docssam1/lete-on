@@ -5,7 +5,7 @@
   "subType": "reverse_table",
   "status": "draft",
   "source": {
-    "problemImage": "./assets/problems/q47_var01.png"
+    "problemImage": ""
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q47.json",

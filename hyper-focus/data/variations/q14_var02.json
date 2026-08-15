@@ -3,27 +3,23 @@
   "baseQuestionId": "q14",
   "variationId": "q14_var02",
   "subType": "square_partition_min",
-  "status": "draft",
-  "source": {
-    "problemImage": "./assets/problems/q14_var02.png"
-  },
-  "contentBinding": {
-    "canonicalSource": "./canonical/q14.json",
-    "hfDataTypeId": 14
-  },
-  "problem": {
-    "prompt": "Cut the figure into the minimum number of squares."
-  },
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q14_var02.svg" },
+  "contentBinding": { "canonicalSource": "./canonical/q14.json", "hfDataTypeId": 14 },
+  "problem": { "prompt": "점선을 따라 도형을 정사각형으로 나누려고 합니다. 겹치거나 남는 부분이 없도록 가장 적게 나누면 정사각형은 몇 개입니까?" },
   "machineReadable": {
     "payloadType": "square_partition_min",
-    "gridSize": {
-      "rows": 3,
-      "cols": 3
+    "baseFigure": {
+      "shapeType": "orthogonal_l_shape", "gridRows": 5, "gridCols": 5,
+      "occupiedCells": [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2],[3,0],[3,1],[3,2],[3,3],[3,4],[4,0],[4,1],[4,2],[4,3],[4,4]]
     },
-    "expectedAnswer": 3
+    "partitionRule": { "sameSizeNotRequired": true, "mustCoverAllArea": true, "mustNotOverlap": true },
+    "solvingModel": {
+      "minimumSquareCount": 5,
+      "solutionSquares": [{"row":0,"col":0,"size":3},{"row":3,"col":0,"size":2},{"row":3,"col":2,"size":2},{"row":3,"col":4,"size":1},{"row":4,"col":4,"size":1}],
+      "minimumVerifiedByExhaustiveCover": true
+    }
   },
-  "answerValidation": {
-    "answerType": "integer",
-    "expectedAnswer": 3
-  }
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 5 },
+  "solutionHint": "위쪽의 3×3 정사각형을 먼저 찾습니다. 아래쪽은 2×2 정사각형 2개와 1×1 정사각형 2개가 필요하므로 모두 5개입니다."
 }

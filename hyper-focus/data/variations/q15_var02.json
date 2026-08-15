@@ -3,9 +3,20 @@
   "baseQuestionId": "q15",
   "variationId": "q15_var02",
   "subType": "line_partition_six",
-  "status": "draft",
-  "source": { "problemImage": "./assets/problems/q15_var02.png" },
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q15_var02.svg" },
   "contentBinding": { "canonicalSource": "./canonical/q15.json", "hfDataTypeId": 15 },
-  "machineReadable": { "payloadType": "line_partition_six", "targetShapes": ["triangle", "triangle", "quadrilateral", "quadrilateral"], "cutCount": 2 },
-  "answerValidation": { "answerType": "shape_multiset", "expectedAnswer": ["triangle", "triangle", "quadrilateral", "quadrilateral"] }
+  "problem": { "prompt": "아래 옆으로 누운 빗 모양 도형에 곧은 선 2개를 그어 6조각이 되도록 만드세요. 선은 도형 밖이나 빈 곳을 지나도 됩니다." },
+  "machineReadable": {
+    "payloadType": "line_partition_six",
+    "baseFigure": { "shapeType": "sideways_three_prong_comb", "polygonPoints": [[0,0],[4,0],[4,1],[1,1],[1,2],[4,2],[4,3],[1,3],[1,4],[4,4],[4,5],[0,5]] },
+    "drawingRule": { "requiredStraightLineCount": 2, "targetPieceCount": 6 },
+    "solvingModel": {
+      "solutionLines": [{"from":[2.5,-0.5],"to":[2.5,5.5]},{"from":[-0.5,2.5],"to":[4.5,2.5]}],
+      "pieceCount": 6,
+      "verification": "첫 선이 세 가로 가지를 지나 4조각을 만들고, 둘째 선이 가운데 오른쪽 조각과 왼쪽 연결조각을 각각 나누어 6조각이 된다."
+    }
+  },
+  "answerValidation": { "answerType": "drawing_instruction", "expectedAnswer": { "lineCount": 2, "pieceCount": 6, "solutionSignature": "세로선 뒤 가운데 가로선" } },
+  "solutionHint": "먼저 세로선 하나가 세 가로 가지를 모두 지나게 긋습니다. 다음에는 가운데 가지를 따라 가로선을 길게 그어 보세요."
 }

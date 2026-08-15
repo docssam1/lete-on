@@ -216,7 +216,7 @@
   },
   "19": {
     "problemType": "TYPE-03",
-    "subType": "geoboard_triangles",
+    "subType": "geoboard_squares",
     "answerType": "count",
     "svgRequired": true,
     "difficultyPolicy": "default",

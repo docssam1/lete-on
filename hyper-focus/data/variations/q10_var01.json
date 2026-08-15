@@ -3,16 +3,16 @@
   "baseQuestionId": "q10",
   "variationId": "q10_var01",
   "subType": "overlap_paper_count",
-  "status": "draft",
+  "status": "verified",
   "source": {
-    "problemImage": "./assets/problems/q10_var01.png"
+    "problemImage": "./assets/svg/variations/q10_var01.svg"
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q10.json",
     "hfDataTypeId": 10
   },
   "problem": {
-    "prompt": "Overlapped parts follow the sum rule. Find the requested value."
+    "prompt": "겹친 부분의 수는 양쪽에 적힌 수를 더한 값입니다. 별표가 있는 겹친 부분에 들어갈 수를 구하세요."
   },
   "machineReadable": {
     "payloadType": "overlap_paper_count",
@@ -28,5 +28,6 @@
   "answerValidation": {
     "answerType": "integer",
     "expectedAnswer": 8
-  }
+  },
+  "solutionHint": "왼쪽의 3과 오른쪽의 5를 더하면 8입니다."
 }

@@ -130,7 +130,7 @@
     {
       "questionId": "q19",
       "typeId": 19,
-      "subType": "geoboard_triangles",
+      "subType": "geoboard_squares",
       "path": "./q19.json",
       "status": "verified"
     },

@@ -5,7 +5,7 @@
   "subType": "min_max_order",
   "status": "draft",
   "source": {
-    "problemImage": "./assets/problems/q36_var01.png"
+    "problemImage": ""
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q36.json",

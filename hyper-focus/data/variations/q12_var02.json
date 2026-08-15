@@ -3,9 +3,9 @@
  "baseQuestionId": "q12",
  "variationId": "q12_var02",
  "subType": "paper_hole_fold",
- "status": "draft",
+ "status": "verified",
  "source": {
-  "problemImage": "./assets/problems/q12_var02.png"
+  "problemImage": "./assets/svg/variations/q12_var02.svg"
  },
  "contentBinding": {
   "canonicalSource": "./canonical/q12.json",
@@ -17,15 +17,18 @@
  "machineReadable": {
   "payloadType": "paper_hole_fold",
   "foldSequence": [
-   "horizontal_half",
-   "vertical_half"
+   "top_to_bottom",
+   "left_to_right"
   ],
   "punchCount": 2,
+  "punchPoints": [{ "x": 0.30, "y": 0.28 }, { "x": 0.70, "y": 0.68 }],
   "symmetryMultiplier": 4,
-  "expectedAnswer": 8
+  "expectedAnswer": 8,
+  "solvingModel": { "layerCount": 4, "formula": "2 × 4", "expectedAnswer": 8 }
  },
  "answerValidation": {
   "answerType": "integer",
   "expectedAnswer": 8
- }
+ },
+ "solutionHint": "두 번 접은 종이는 4겹입니다. 서로 다른 곳에 뚫은 구멍 2개가 각각 4개씩 생기므로 2 × 4 = 8개입니다."
 }
