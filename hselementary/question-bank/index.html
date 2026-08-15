@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#eef5fb">
+  <title>LETE-ON | 황소 초등 문제은행</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="topbar-back" href="../../index.html" aria-label="홈으로 돌아가기">← 홈</a>
+      <div class="topbar-brand">
+        <span class="eyebrow">LETE-ON ELEMENTARY</span>
+        <h1>황소 초등 문제은행</h1>
+        <p>교재에서 확인한 유형을 학년·학기·레벨별로 검수하는 1차 문제은행입니다.</p>
+      </div>
+      <div class="topbar-chipset" aria-label="레벨 안내">
+        <span>일품(심화)</span>
+        <span>실력</span>
+        <span>경시</span>
+      </div>
+    </header>
+
+    <main class="bank-layout" aria-label="황소 초등 문제은행">
+      <aside class="panel panel-filters" id="filterPanel" aria-label="필터 패널">
+        <div class="panel-head">
+          <div>
+            <span class="panel-kicker">STEP 1</span>
+            <h2>필터</h2>
+          </div>
+          <p>학년부터 유형까지 순서대로 좁혀 주세요.</p>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">학년</div>
+          <div class="segmented" id="gradeFilter" role="group" aria-label="학년 필터">
+            <button type="button" class="segment is-active" data-grade="4">4학년</button>
+            <button type="button" class="segment" data-grade="5">5학년</button>
+            <button type="button" class="segment" data-grade="6">6학년</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">학기</div>
+          <div class="segmented" id="termFilter" role="group" aria-label="학기 필터">
+            <button type="button" class="segment is-active" data-term="1">1학기</button>
+            <button type="button" class="segment" data-term="2">2학기</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">레벨</div>
+          <div class="segmented segmented-tight" id="levelFilter" role="group" aria-label="레벨 필터">
+            <button type="button" class="segment is-active" data-level="ilpum">일품(심화)</button>
+            <button type="button" class="segment" data-level="skill">실력</button>
+            <button type="button" class="segment" data-level="competition">경시</button>
+          </div>
+        </div>
+
+        <label class="field-group" for="unitFilter">
+          <span class="field-label">단원</span>
+          <select id="unitFilter" class="input-select">
+            <option value="">전체 단원</option>
+            <option value="unit-1">단원 1</option>
+            <option value="unit-2">단원 2</option>
+            <option value="unit-3">단원 3</option>
+          </select>
+        </label>
+
+        <label class="field-group" for="typeSearchInput">
+          <span class="field-label">유형</span>
+          <input id="typeSearchInput" class="input-text" type="search" placeholder="유형명 또는 키워드 검색">
+        </label>
+
+        <div class="field-group">
+          <div class="field-label">빠른 보기</div>
+          <div class="tag-row" aria-label="유형 빠른 보기">
+            <span>수와 연산</span>
+            <span>도형</span>
+            <span>측정</span>
+            <span>자료</span>
+            <span>서술형</span>
+          </div>
+        </div>
+      </aside>
+
+      <section class="panel panel-types" id="catalogPanel" aria-label="유형 목록">
+        <div class="panel-head panel-head-row">
+          <div>
+            <span class="panel-kicker">STEP 2</span>
+            <h2>유형 목록</h2>
+            <p class="panel-copy">선택한 조건에 맞는 유형을 중간 영역에서 바로 고릅니다.</p>
+          </div>
+          <div class="catalog-stats" aria-label="선택 현황">
+            <div class="stat">
+              <span>선택한 유형</span>
+              <strong id="selectedTypeCount">0</strong>
+            </div>
+            <div class="stat">
+              <span>문항 수</span>
+              <strong id="selectedQuestionCount">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="catalog-toolbar">
+          <div class="toolbar-chip is-muted">학년별 유형 정리</div>
+          <div class="toolbar-chip">단원 연결</div>
+          <div class="toolbar-chip">난이도 선택</div>
+          <div class="toolbar-chip">문항 수 조정</div>
+        </div>
+
+        <div class="type-list" id="typeList" aria-live="polite"></div>
+        <div class="catalog-empty" id="catalogEmpty" hidden>조건에 맞는 유형이 없습니다.</div>
+      </section>
+
+      <aside class="panel panel-workspace" id="workspacePanel" aria-label="생성 설정 및 결과">
+        <div class="settings-card">
+          <div class="panel-head">
+            <div>
+              <span class="panel-kicker">STEP 3</span>
+              <h2>설정</h2>
+            </div>
+            <p>선택한 유형과 문항 수를 확인한 뒤 바로 생성합니다.</p>
+          </div>
+
+          <div class="summary-grid" aria-label="선택 요약">
+            <div class="summary-box">
+              <span>선택한 유형</span>
+              <strong id="selectedTypeSummary">0개</strong>
+            </div>
+            <div class="summary-box">
+              <span>문항 수</span>
+              <strong id="selectedQuestionSummary">0문항</strong>
+            </div>
+          </div>
+
+          <label class="field-group" for="questionCountInput">
+            <span class="field-label">문항 수</span>
+            <input id="questionCountInput" class="input-number" type="number" min="1" max="40" step="1" value="12">
+          </label>
+
+          <div class="field-group">
+            <span class="field-label">문제 난이도</span>
+            <div class="segmented" id="difficultyFilter" role="group" aria-label="문제 난이도">
+              <button type="button" class="segment" data-difficulty="-1">쉽게</button>
+              <button type="button" class="segment is-active" data-difficulty="0">같게</button>
+              <button type="button" class="segment" data-difficulty="1">어렵게</button>
+            </div>
+          </div>
+
+          <label class="field-group" for="studentNameInput">
+            <span class="field-label">학생 이름</span>
+            <input id="studentNameInput" class="input-text" type="text" maxlength="20" placeholder="이름">
+          </label>
+
+          <div class="selected-types" id="selectedTypeList"></div>
+
+          <div class="action-stack">
+            <button id="generateButton" class="primary-button" type="button">문제 생성</button>
+          </div>
+
+          <label class="switch-row" for="watermarkToggle">
+            <span>이름 워터마크</span>
+            <input id="watermarkToggle" type="checkbox" checked>
+          </label>
+        </div>
+
+      </aside>
+    </main>
+
+    <section class="worksheet" id="worksheet" hidden>
+      <div class="worksheet-toolbar">
+        <button id="backButton" class="secondary-button" type="button">범위 다시 선택</button>
+        <div class="preview-tabs" role="tablist" aria-label="문제와 풀이 탭">
+          <button id="problemTab" class="tab-button is-active" type="button" role="tab" aria-selected="true">문제</button>
+          <button id="solutionTab" class="tab-button" type="button" role="tab" aria-selected="false">정답·풀이</button>
+        </div>
+        <div class="toolbar-actions">
+          <button id="newProblemButton" class="secondary-button" type="button">새 문제</button>
+          <button id="printButton" class="primary-button" type="button">인쇄</button>
+        </div>
+      </div>
+      <header class="worksheet-head">
+        <div><span>LETE-ON ELEMENTARY QUESTION BANK</span><h2 id="worksheetTitle">맞춤 유사문제</h2><p id="worksheetMeta"></p></div>
+        <dl><div><dt>이름</dt><dd id="worksheetStudent"></dd></div><div><dt>점수</dt><dd></dd></div></dl>
+      </header>
+      <div class="question-pages" id="problemView"></div>
+      <div class="answer-pages" id="solutionView" hidden></div>
+    </section>
+  </div>
+
+  <script defer src="./curriculum.js"></script>
+  <script defer src="./generators.js"></script>
+  <script defer src="./app.js"></script>
+</body>
+</html>
