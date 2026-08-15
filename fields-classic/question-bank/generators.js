@@ -256,6 +256,79 @@ function shapeMatrixRule({ difficulty = 2 }) {
   };
 }
 
+function delayedDatePromise({ difficulty = 2 }) {
+  const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  const toDayNumber = (month, day) => monthDays.slice(0, month - 1).reduce((sum, value) => sum + value, 0) + day;
+  const fromDayNumber = (value) => {
+    let month = 1;
+    let day = value;
+    while (day > monthDays[month - 1]) {
+      day -= monthDays[month - 1];
+      month += 1;
+    }
+    return { month, day };
+  };
+  const dateText = ({ month, day }) => `${month}월 ${day}일`;
+
+  if (difficulty === 1) {
+    const month = randomInt(2, 11);
+    const after = randomInt(7, 14);
+    const heardDay = randomInt(2, monthDays[month - 1] - after);
+    const heard = { month, day: heardDay };
+    const final = { month, day: heardDay + after };
+    return {
+      prompt: `선생님께서 ${dateText(heard)}에 그날부터 ${after}일 후에 수학 시험을 보겠다고 말씀하셨습니다. 수학 시험을 보는 날짜는 몇 월 며칠인가요?`,
+      answer: dateText(final),
+      solution: `${dateText(heard)}에서 ${after}일만큼 앞으로 세면 ${dateText(final)}입니다.`,
+      meta: { mode: "known-heard-date", heard: toDayNumber(heard.month, heard.day), after, final: toDayNumber(final.month, final.day) }
+    };
+  }
+
+  let today;
+  let heardAgo;
+  let after;
+  let delayed;
+  let heardNumber;
+  let plannedNumber;
+  let finalNumber;
+  let attempts = 0;
+  do {
+    const month = sample(difficulty === 2 ? [3, 4, 5, 6, 8, 9, 10] : [2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    today = { month, day: monthDays[month - 1] - randomInt(0, 5) };
+    heardAgo = difficulty === 2 ? randomInt(7, 12) : randomInt(8, 16);
+    after = difficulty === 2 ? randomInt(17, 25) : randomInt(22, 36);
+    delayed = difficulty === 3 ? randomInt(2, 7) : 0;
+    const todayNumber = toDayNumber(today.month, today.day);
+    heardNumber = todayNumber - heardAgo;
+    plannedNumber = heardNumber + after;
+    finalNumber = plannedNumber + delayed;
+    attempts += 1;
+  } while ((heardNumber < 1 || finalNumber > 365 || fromDayNumber(finalNumber).month === today.month) && attempts < 500);
+
+  if (attempts >= 500) return delayedDatePromise({ difficulty });
+  const heard = fromDayNumber(heardNumber);
+  const planned = fromDayNumber(plannedNumber);
+  const final = fromDayNumber(finalNumber);
+  const delaySentence = delayed ? ` 그 뒤 시험 날짜가 ${delayed}일 더 늦어졌습니다.` : "";
+  const delaySolution = delayed ? ` 다시 ${delayed}일 뒤는 ${dateText(final)}입니다.` : "";
+
+  return {
+    prompt: `선생님께서 ${after}일 후에 수학 시험을 보겠다고 ${heardAgo}일 전에 말씀하셨습니다.${delaySentence} 오늘이 ${dateText(today)}일 때, 수학 시험을 보는 날짜는 몇 월 며칠인가요?`,
+    answer: dateText(final),
+    solution: `오늘 ${dateText(today)}에서 ${heardAgo}일 전은 ${dateText(heard)}입니다. 그날부터 ${after}일 뒤는 ${dateText(planned)}입니다.${delaySolution}`,
+    meta: {
+      mode: delayed ? "past-promise-delayed" : "past-promise",
+      today: toDayNumber(today.month, today.day),
+      heardAgo,
+      heard: heardNumber,
+      after,
+      planned: plannedNumber,
+      delayed,
+      final: finalNumber
+    }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -704,6 +777,7 @@ export const GENERATORS = {
   frontBackTotal,
   wrongOperationCorrection,
   shapeMatrixRule,
+  delayedDatePromise,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
