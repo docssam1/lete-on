@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "f7150638430d1029a0e7f4308312322e4552c89d533941649b923c29ffcf1e55",
-      "size": 27094,
-      "mtime_ns": 1786813629043527800
+      "sha256": "7601cbfd504f05737dd91548c5e2c78588fc40405c5f5a4d837e1487504199cf",
+      "size": 27874,
+      "mtime_ns": 1786813909825293400
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "829a0a28381951fad2967a723c584a40d906aa2dcb7c701ea7bf9d02886e2608",
-      "size": 84729,
-      "mtime_ns": 1786813568514438200
+      "sha256": "abed813a788df9b9fa81d632e5e175abf2f8aeec2fad0448e1572a8dc3d6fc5e",
+      "size": 87856,
+      "mtime_ns": 1786813797881109300
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "323d5c82ebc7ea7b2f86fdebfff127cf842ee414c66e6f0690b3fb338d6d0308",
-      "size": 32898,
-      "mtime_ns": 1786813568515437900
+      "sha256": "593006592f8b4ba48384096848821372b529c047bf27f40ca7dcdd8f6142a19f",
+      "size": 32947,
+      "mtime_ns": 1786813797882106800
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 3",
+      "title": "Next verification 7-year-old selection test 2 question 4",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q3"
+        "q4"
       ],
-      "summary": "Verify the five-card three-level sum pyramid and middle-bottom answer 3; do not confuse it with the three-card pyramid generator.",
+      "summary": "Verify the 2x2 placement of 1 through 4 from left and directly-below clues; answer is the value in the marked cell.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,7 +123,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "Next sequence item 1",
-          "note": "Selection test 2 question 3 is next"
+          "note": "Selection test 2 question 4 is next"
         }
       ]
     },
@@ -867,6 +867,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-04 verifiedQuestionNumbers 1 and 2",
           "note": "Only source questions 1 and 2 are enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q3",
+      "title": "Selection test 2 question 3 five-card sum pyramid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q3",
+        "five-card-sum-pyramid"
+      ],
+      "summary": "Cards 1 through 5 fill three bottom and two middle cells; both mirror layouts give center-bottom 3 and top 9. A separate generator was required.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 3 paragraph",
+          "note": "Original layout, answer, and structural difficulty levels verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function fiveCardSumPyramid and solveFiveCardPyramid",
+          "note": "All valid layouts are enumerated and the asked center is unique"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES five-card-sum-pyramid and EXAMS k7-2022-04 verified 1 through 3",
+          "note": "Source question 3 is enabled"
         }
       ]
     }

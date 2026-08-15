@@ -1206,6 +1206,69 @@ function equalizeTransfer({ difficulty = 2 }) {
   };
 }
 
+function solveFiveCardPyramid(cards, target, given) {
+  const layouts = new Map();
+  const omittedIndexes = cards.length === 5 ? [-1] : cards.map((_, index) => index);
+  omittedIndexes.forEach((omittedIndex) => {
+    const used = omittedIndex < 0 ? cards : cards.filter((_, index) => index !== omittedIndex);
+    permutations(used).forEach((values) => {
+      if (values[0] + values[1] !== values[3] || values[1] + values[2] !== values[4] || values[3] + values[4] !== target) return;
+      if (given && values[given.index] !== given.value) return;
+      layouts.set(values.join(","), { values, omitted: omittedIndex < 0 ? null : cards[omittedIndex] });
+    });
+  });
+  return [...layouts.values()];
+}
+
+function fiveCardSumPyramid({ difficulty = 2 }) {
+  let cards;
+  let target;
+  let given;
+  let distractor = null;
+  let layouts;
+  let attempts = 0;
+  do {
+    const max = difficulty === 1 ? 5 : difficulty === 2 ? 8 : 10;
+    const bottom = [randomInt(1, max), randomInt(1, max), randomInt(1, max)];
+    const solution = [bottom[0], bottom[1], bottom[2], bottom[0] + bottom[1], bottom[1] + bottom[2]];
+    if (new Set(solution).size !== 5) {
+      layouts = [];
+      attempts += 1;
+      continue;
+    }
+    cards = [...solution];
+    target = solution[3] + solution[4];
+    given = difficulty === 1 ? { index: 0, value: solution[0] } : null;
+    if (difficulty === 3) {
+      distractor = randomInt(1, Math.max(...solution) + 4);
+      if (cards.includes(distractor)) {
+        layouts = [];
+        attempts += 1;
+        continue;
+      }
+      cards.push(distractor);
+    }
+    layouts = solveFiveCardPyramid(cards, target, given);
+    attempts += 1;
+  } while ((layouts.length < 1
+    || layouts.length > 6
+    || new Set(layouts.map((layout) => layout.values[1])).size !== 1
+    || (difficulty === 3 && (new Set(layouts.map((layout) => layout.omitted)).size !== 1 || layouts[0].omitted !== distractor)))
+    && attempts < 1000);
+
+  if (!layouts.length) return fiveCardSumPyramid({ difficulty });
+  const answer = layouts[0].values[1];
+  const example = layouts[0].values;
+  const availableCards = cards.filter((_, index) => !given || index !== given.index);
+  return {
+    prompt: `${difficulty === 3 ? "숫자 카드 6장 중 5장을 골라" : `숫자 카드 ${availableCards.length}장을`} 빈칸에 한 번씩 넣으세요. 이웃한 아래 두 수를 더한 값이 바로 위 칸의 수가 될 때, ㉠에 들어갈 수를 구하세요.`,
+    visual: { kind: "five-card-pyramid", cards: shuffle(availableCards), target, given },
+    answer: String(answer),
+    solution: `아래층을 ${example[0]}, ${example[1]}, ${example[2]}로 놓으면 가운데층은 ${example[3]}, ${example[4]}이고 꼭대기는 ${target}이 됩니다. 가능한 배치를 모두 확인해도 ㉠은 ${answer}입니다.${difficulty === 3 ? ` 쓰지 않는 카드는 ${distractor}입니다.` : ""}`,
+    meta: { difficulty, cards, availableCards, target, given, distractor, layouts: layouts.map((layout) => layout.values), omitted: layouts.map((layout) => layout.omitted), answer, layoutCount: layouts.length }
+  };
+}
+
 function numberPyramid({ difficulty = 2 }) {
   const max = difficulty === 1 ? 6 : difficulty === 2 ? 10 : 16;
   const cards = shuffle(Array.from({ length: max }, (_, index) => index + 1)).slice(0, 3);
@@ -1603,6 +1666,7 @@ export const GENERATORS = {
   twoDigitCardEnumeration,
   edgeSumCycle,
   equalizeTransfer,
+  fiveCardSumPyramid,
   numberPyramid,
   raceOrder,
   discNumberRule,
