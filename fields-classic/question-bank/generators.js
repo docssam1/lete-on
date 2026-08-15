@@ -2457,7 +2457,7 @@ function numberLineSixPoints({ difficulty = 2 }) {
 
 function goStoneDifferenceInverse({ difficulty = 2 }) {
   const targetColor = difficulty === 3 && Math.random() < 0.5 ? "흰 돌" : "검은 돌";
-  const difference = difficulty === 1 ? randomInt(3, 8) : difficulty === 2 ? randomInt(8, 20) : randomInt(12, 25);
+  const difference = difficulty === 1 ? randomInt(3, 8) : difficulty === 2 ? randomInt(8, 21) : randomInt(12, 25);
   const answer = targetColor === "검은 돌" ? difference * 2 - 1 : difference * 2;
   const sequence = targetColor === "검은 돌" ? "1, 3, 5, 7, …" : "2, 4, 6, 8, …";
   const hint = difficulty === 1 ? `${targetColor}이 더 많은 때는 ${sequence}번째입니다.` : "";

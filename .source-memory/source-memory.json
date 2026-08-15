@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "84277e821ad039d274479b70b74dabf0bba258a4f33e4973cad595ad0e444b6f",
-      "size": 95502,
-      "mtime_ns": 1786833179428124000
+      "sha256": "878d8312bb0f4ed6e3fbbed454204c852ef8ec82c9fa38f8fbe7d60cfc9bbcf6",
+      "size": 96372,
+      "mtime_ns": 1786833409313764700
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "195f9c40532360ffbeaa0daa6d3b12692a5719c0c8591a875ee1c874b4a2c498",
+      "sha256": "80ab89d12eb3028c7944c9811b452790f05ad26caa67be444eef97f9ceef29b3",
       "size": 182006,
-      "mtime_ns": 1786833159599488400
+      "mtime_ns": 1786833409306765300
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "c24705026ca71707d1ca543a2239130b325c5982afd32d56fb40bee56e0b073b",
-      "size": 40020,
-      "mtime_ns": 1786833159601489300
+      "sha256": "925bcc4a3fd6a99be4e1faccf58d0f52a0226b3392a1df84fb772449b9ca3f88",
+      "size": 40024,
+      "mtime_ns": 1786833409309764200
     }
   ],
   "records": [
@@ -107,12 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 19",
+      "title": "Next verification selection test 6 question 20",
       "aliases": [],
       "tags": [
         "next"
       ],
-      "summary": "Compare the triangular black-and-white stone construction, which color is ahead, target difference 21, and official answer 41 before reusing the provisional inverse stone generator.",
+      "summary": "Compare the six-point number-line diagram with distances AC 18, AD 36, BD 22, CE 45, BF 72, target EF, and official answer 23 before enabling the current overlapping-distance generator.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -120,13 +120,13 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "7-year-old selection test 6 question 19",
-          "note": "Verify shown stages, line colors, count difference direction, and official answer"
+          "locator": "7-year-old selection test 6 question 20",
+          "note": "Verify all five arcs, target segment, and official answer"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-12 question 19",
+          "locator": "EXAMS k7-2022-12 question 20",
           "note": "Current provisional mapping remains disabled"
         }
       ]
@@ -3448,6 +3448,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-12 verified 1 through 18",
           "note": "Existing relation is enabled under a generalized human-facing type name"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q19",
+      "title": "Selection test 6 question 19 inverse black stone difference",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q19",
+        "go-stone-difference-inverse"
+      ],
+      "summary": "The source shows triangular rows alternating black on odd rows and white on even rows and asks when black exceeds white by 21; the official answer is stage 41. The same-level generator range was extended from 20 to 21 so the exact source case is representable.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 19 paragraph",
+          "note": "Exact drawing, official answer, range fix, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function goStoneDifferenceInverse",
+          "note": "Alternating-row inverse generator with source case 21 to 41"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified 1 through 19",
+          "note": "Question 19 enabled after exact source comparison"
         }
       ]
     }
