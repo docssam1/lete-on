@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "5a0efd7a891d95e837bacc16e6a0ea8c10157791ad01276e7b7d31a7b01d3f44",
-      "size": 22491,
-      "mtime_ns": 1786811726858316300
+      "sha256": "430851eb9351a7dff3a9ef6bed14b4b4642f0b13a2482c6da862d0cb12fb7812",
+      "size": 23129,
+      "mtime_ns": 1786811985919740000
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "d258841c10d117dcf713b014fdb5b061b7df5aecf1fae95c1de6a3cb7e677eee",
-      "size": 33568,
-      "mtime_ns": 1786811726857317800
+      "sha256": "f8f93260b7d32df49cedba58b49db0f81a407515331408113305bc40e1bf593b",
+      "size": 33756,
+      "mtime_ns": 1786811985918737300
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "f8d643b1d9768a753c0d1b0b6dcee4987c4c7f027db54a6c1ec95d5ce36d8c14",
-      "size": 74569,
-      "mtime_ns": 1786811620557111600
+      "sha256": "da3605beed8cc4e3cc86e49b51c7551b2f6e0874170a50617a19bc72ed9f0206",
+      "size": 76736,
+      "mtime_ns": 1786811886383104100
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "63a14978bade9051732dd4a38a193f7aeb8be460abc6c07713ccc0ca71912bcb",
-      "size": 32445,
-      "mtime_ns": 1786811620560113700
+      "sha256": "3d6ec42560391f8285255006c744889932d6835c0706637777b3a4af4f2123eb",
+      "size": 32520,
+      "mtime_ns": 1786811865646581300
     }
   ],
   "records": [
@@ -107,15 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F19 reverse initial count",
+      "title": "Next implementation F20 erase expression target",
       "aliases": [
         "다음 작업"
       ],
       "tags": [
         "next",
-        "F19"
+        "F20"
       ],
-      "summary": "Continue with F19 by locating the exact multi-step arrival and departure source and verifying the reverse calculation before implementing the generator.",
+      "summary": "Continue with F20 by locating the exact expression-erasing source and verifying which term must be removed to reach the target.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -124,7 +124,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F18 are complete; F19 is next"
+          "note": "F01 through F19 are complete; F20 is next"
         }
       ]
     },
@@ -628,6 +628,42 @@
           "source_id": "source-data",
           "role": "code",
           "locator": "TYPES two-digit-even-count and PRACTICE_EXAM_TYPES mock-4 question 8",
+          "note": "Only verified practice questions are enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f19",
+      "title": "Practice 4 question 12 reverse initial count",
+      "aliases": [
+        "실전 4회 12번",
+        "여러 번 오고 간 뒤 처음 수"
+      ],
+      "tags": [
+        "F19",
+        "practice-4"
+      ],
+      "summary": "F19 preserves the original +4, -6, +5, -3 sequence with final and initial count 9, and verifies every generated problem in both forward and reverse directions.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 4회 표 12번, 중복·해설 검증 12번, 다음 검증 순서 4번",
+          "note": "Practice 4 source operations and initial answer 9 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function reverseInitialCount and GENERATORS export",
+          "note": "Three operation-count levels with forward and reverse metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES reverse-initial-count and PRACTICE_EXAM_TYPES mock-4 question 12",
           "note": "Only verified practice questions are enabled"
         }
       ]

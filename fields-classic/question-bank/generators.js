@@ -940,6 +940,47 @@ function twoDigitEvenCount({ difficulty = 2 }) {
   };
 }
 
+function reverseInitialCount({ difficulty = 2 }) {
+  const contexts = [
+    { place: "생일 파티", subject: "친구", unit: "명" },
+    { place: "놀이방", subject: "어린이", unit: "명" },
+    { place: "체험 교실", subject: "학생", unit: "명" }
+  ];
+  const context = sample(contexts);
+  const operationCount = difficulty === 1 ? 2 : difficulty === 2 ? 4 : 6;
+  let initial;
+  let operations;
+  let final;
+  do {
+    initial = randomInt(difficulty === 1 ? 6 : 9, difficulty === 3 ? 24 : 18);
+    operations = Array.from({ length: operationCount }, (_, index) => ({
+      delta: (index % 2 === 0 ? 1 : -1) * randomInt(2, difficulty === 3 ? 9 : 7)
+    }));
+    if (Math.random() < 0.5) operations = operations.map((item) => ({ delta: -item.delta }));
+    let current = initial;
+    let valid = true;
+    for (const operation of operations) {
+      current += operation.delta;
+      if (current < 2) valid = false;
+    }
+    final = current;
+    if (!valid) final = -1;
+  } while (final < 2 || final > 35);
+
+  const actionText = operations.map((operation, index) => {
+    const action = operation.delta > 0 ? `${operation.delta}${context.unit}이 더 왔습니다` : `${Math.abs(operation.delta)}${context.unit}이 갔습니다`;
+    return `${index === 0 ? "모인 뒤" : "그 다음"} ${action}`;
+  }).join(". ");
+  const reverseSteps = [...operations].reverse().map((operation) => operation.delta > 0 ? `-${operation.delta}` : `+${Math.abs(operation.delta)}`);
+  return {
+    prompt: `${context.subject}들이 ${context.place}에 모였습니다. ${actionText}. 마지막에 ${final}${context.unit}이 남아 있다면 처음에 있던 ${context.subject}은 몇 ${context.unit}이었을까요?`,
+    visual: { kind: "reverse-count-timeline", operations, final, unit: context.unit },
+    answer: `${initial}${context.unit}`,
+    solution: `마지막 ${final}${context.unit}부터 일어난 일을 거꾸로 되돌립니다. ${final} ${reverseSteps.join(" ")} = ${initial}이므로 처음에는 ${initial}${context.unit}이 있었습니다.`,
+    meta: { difficulty, context, initial, operations, final, operationCount }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -1401,6 +1442,7 @@ export const GENERATORS = {
   neitherSetCount,
   hiddenScoreRanking,
   twoDigitEvenCount,
+  reverseInitialCount,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
