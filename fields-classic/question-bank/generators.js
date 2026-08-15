@@ -1788,6 +1788,27 @@ function sourceBusStops({ difficulty = 2 }) {
   };
 }
 
+function symbolSumGridSquareTop({ difficulty = 2 }) {
+  const max = difficulty === 1 ? 6 : difficulty === 2 ? 9 : 12;
+  const [square, diamond, circle, triangle] = shuffle(Array.from({ length: max - 1 }, (_, index) => index + 2)).slice(0, 4);
+  const rowSums = [square * 3, square + diamond + triangle, diamond + circle * 2];
+  const columnSums = [square * 2 + diamond, square + diamond + circle, square + triangle + circle];
+  const hiddenSums = difficulty === 3 ? ["column-2"] : [];
+  return {
+    prompt: "다음 그림에서 같은 도형은 같은 수를 나타내고, 오른쪽과 아래에 쓰인 수는 각 줄에 있는 세 수의 합을 나타냅니다. ㉠에 알맞은 수를 구하세요.",
+    visual: {
+      kind: "symbol-sum-grid-square-top",
+      rowSums,
+      columnSums,
+      hiddenSums,
+      hint: difficulty === 1 ? `□ 한 개는 ${square}입니다.` : ""
+    },
+    answer: String(columnSums[2]),
+    solution: `첫째 줄에서 네모는 ${square}입니다. 첫째 세로줄에서 마름모는 ${diamond}, ${difficulty === 3 ? "셋째 줄" : "둘째 세로줄"}에서 동그라미는 ${circle}, 둘째 줄에서 세모는 ${triangle}입니다. 따라서 ㉠은 ${square} + ${triangle} + ${circle} = ${columnSums[2]}입니다.`,
+    meta: { difficulty, square, diamond, circle, triangle, rowSums, columnSums, hiddenSums, answer: columnSums[2] }
+  };
+}
+
 function foldNumberCutSum({ difficulty = 2 }) {
   const size = 4;
   const foldMask = difficulty === 1
@@ -1935,6 +1956,7 @@ export const GENERATORS = {
   sourceBalanceRelations,
   sourcePianoBounce,
   sourceSymbolSumGrid,
+  symbolSumGridSquareTop,
   sourceGrowingDotSquare,
   sourceTwoDigitSumDifference,
   sourceEqualLineCross,
