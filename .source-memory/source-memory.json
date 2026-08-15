@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "f60c1c436cd0df2a974da8ff33c74e3050505e719568aab1fcfd3fa5f75ecebe",
-      "size": 40323,
-      "mtime_ns": 1786818317204676000
+      "sha256": "8ffc33e610bf2e8f520856766d056554b2169bdb3ddf816935c200897640a96e",
+      "size": 41228,
+      "mtime_ns": 1786818687303094500
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "4694bc3ec2485eff5e5275258e6ca1a69c235c0fe4c221749096f209aac5eb3c",
-      "size": 112943,
-      "mtime_ns": 1786818219146754200
+      "sha256": "84155787dfc669b0391f11ed722d2a681461b46e7d0b39ff84e71ba9698d625c",
+      "size": 114773,
+      "mtime_ns": 1786818605828182000
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "3115fe20dc7982520feac3f87386e8aa0abb16a15ba1c7a1fc3e7a01db0f5db8",
-      "size": 34173,
-      "mtime_ns": 1786818170007863000
+      "sha256": "47dcae9d3646e49c1e2bc4181d8d59b5067de04f9220b5c96126b7cf63cc20da",
+      "size": 34235,
+      "mtime_ns": 1786818454279381700
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 19",
+      "title": "Next verification 7-year-old selection test 2 question 20",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q19"
+        "q20"
       ],
-      "summary": "Verify all six labeled points, overlapping distances, requested segment, and answer 20 on source page 12 before implementing number-line-six-points.",
+      "summary": "Verify the black and white triangular stone counts, the difference sequence, and answer 33 on source page 12 before implementing go-stone-difference-inverse.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 19 is the next locked source question"
+          "note": "Question 20 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-04 question 19 number-line-six-points",
-          "note": "Do not enable until point order, every shown distance, and the target segment are verified"
+          "locator": "EXAMS k7-2022-04 question 20 go-stone-difference-inverse",
+          "note": "Do not enable until each shown stage and the inverse difference rule are verified"
         }
       ]
     },
@@ -1417,6 +1417,40 @@
           "role": "code",
           "locator": "TYPES symbol-relation-2to3 and EXAMS k7-2022-04 verified 1 through 18",
           "note": "Source question 18 is enabled without changing the older symbol-relation generator"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q19",
+      "title": "Selection test 2 question 19 six-point overlapping distances",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q19",
+        "number-line-six-points"
+      ],
+      "summary": "The source orders A through F and gives AC 27, AD 47, BD 30, CE 54, and BF 84; solving the overlapping segments gives EF 20.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 19 paragraph",
+          "note": "Original point order, five distances, answer 20, difficulty structure, mobile sizing, and particle fixes"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function numberLineSixPoints",
+          "note": "Five base gaps independently determine every displayed distance and target"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES number-line-six-points and EXAMS k7-2022-04 verified 1 through 19",
+          "note": "Source question 19 is enabled"
         }
       ]
     }

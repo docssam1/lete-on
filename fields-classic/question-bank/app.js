@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816at";
-import { GENERATORS } from "./generators.js?v=20260816at";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ax";
+import { GENERATORS } from "./generators.js?v=20260816ax";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -729,6 +729,25 @@ function symbolRelationsMarkup(visual) {
   return `<div class="symbol-relations">${visual.hint ? `<small>${visual.hint}</small>` : ""}<p>${repeat("☆", visual.firstStar)} = ${repeat("○", visual.firstCircle)}</p><p>☆ + ○ = ▽ + ▽</p><p>${visual.final.join(" + ")} = □</p></div>`;
 }
 
+function numberLineSixPointsMarkup(visual) {
+  const xs = { A: 28, B: 92, C: 150, D: 225, E: 360, F: 438 };
+  const arc = (from, to, value, side, height, className = "") => {
+    const x1 = xs[from];
+    const x2 = xs[to];
+    const controlY = side === "top" ? 78 - height : 78 + height;
+    const labelY = side === "top" ? controlY + 7 : controlY - 3;
+    return `<path class="distance-arc ${className}" d="M ${x1} 78 Q ${(x1 + x2) / 2} ${controlY} ${x2} 78"/><text class="distance-label ${className}" x="${(x1 + x2) / 2}" y="${labelY}">${value}</text>`;
+  };
+  const d = visual.distances;
+  const hints = visual.hints.map((hint) => `<span>${hint.from}${hint.to} = ${hint.value}</span>`).join("");
+  const targetArc = visual.target === "AF" ? arc("A", "F", "?", "top", 72, "target") : arc("E", "F", "?", "top", 30, "target");
+  return `<div class="six-point-line-work"><svg viewBox="0 0 466 180" role="img" aria-label="A부터 F까지 여섯 점과 겹쳐 표시한 거리">
+    <line class="number-line-base" x1="28" y1="78" x2="438" y2="78"/>
+    ${arc("A", "D", d.ad, "top", 60)}${arc("C", "E", d.ce, "top", 48)}${arc("A", "C", d.ac, "bottom", 40)}${arc("B", "D", d.bd, "bottom", 55)}${arc("B", "F", d.bf, "bottom", 87)}${targetArc}
+    ${Object.entries(xs).map(([label, x]) => `<circle cx="${x}" cy="78" r="4"/><text class="point-label" x="${x}" y="94">${label}</text>`).join("")}
+  </svg>${hints ? `<div class="line-distance-hints"><b>도움</b>${hints}</div>` : ""}<strong>구할 거리: ${visual.target[0]}와 ${visual.target[1]}</strong></div>`;
+}
+
 function coloredShapeNumberMarkup(visual) {
   const examples = [[1,[0,0,0,1]],[2,[0,0,0,2]],[5,[0,0,1,1]],[8,[0,0,2,0]],[19,[0,1,0,3]],[68,[1,0,1,0]]];
   const grid = (digits, label, target = false) => `<div class="base-four-grid ${target ? "target" : ""}">${Array.from({ length: 3 }, (_, row) => digits.map((count) => `<i class="${row >= 3 - count ? "filled" : ""}"></i>`).join("")).join("")}<span>${label}</span></div>`;
@@ -803,6 +822,7 @@ function visualMarkup(visual) {
   if (visual.kind === "balance-scale-three-objects") return `<div class="visual balance-relations-visual">${balanceScaleThreeObjectsMarkup(visual)}</div>`;
   if (visual.kind === "symbol-relations") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
   if (visual.kind === "symbol-relation-two-to-three") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
+  if (visual.kind === "number-line-six-points") return `<div class="visual number-line-six-points-visual">${numberLineSixPointsMarkup(visual)}</div>`;
   if (visual.kind === "colored-shape-number") return `<div class="visual colored-shape-number-visual">${coloredShapeNumberMarkup(visual)}</div>`;
   if (visual.kind === "source-go-stones") return `<div class="visual source-go-stones-visual">${sourceGoStonesMarkup(visual)}</div>`;
   if (visual.kind === "nonadjacent-pyramid") return `<div class="visual nonadjacent-pyramid-visual">${nonadjacentPyramidMarkup(visual)}</div>`;

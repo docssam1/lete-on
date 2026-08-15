@@ -34,6 +34,10 @@ function numberQuote(value) {
   return `${value}${numberHasBatchim(value) ? "이라고" : "라고"}`;
 }
 
+function numberAnd(value) {
+  return `${value}${numberHasBatchim(value) ? "과" : "와"}`;
+}
+
 function koreanParticle(word, withBatchim, withoutBatchim) {
   const lastCode = [...word].at(-1)?.charCodeAt(0) ?? 0;
   const hasBatchim = lastCode >= 0xac00 && lastCode <= 0xd7a3 && (lastCode - 0xac00) % 28 !== 0;
@@ -1808,6 +1812,36 @@ function symbolRelationTwoToThree({ difficulty = 2 }) {
   };
 }
 
+function numberLineSixPoints({ difficulty = 2 }) {
+  const limit = difficulty === 1 ? [5, 16] : difficulty === 2 ? [8, 22] : [10, 26];
+  let gaps;
+  let distances;
+  do {
+    gaps = Array.from({ length: 5 }, () => randomInt(limit[0], limit[1]));
+    const [ab, bc, cd, de, ef] = gaps;
+    distances = {
+      ac: ab + bc,
+      ad: ab + bc + cd,
+      bd: bc + cd,
+      ce: cd + de,
+      bf: bc + cd + de + ef
+    };
+  } while (new Set(Object.values(distances)).size < 5 || distances.bf > 100);
+
+  const [ab, bc, cd, de, ef] = gaps;
+  const askWhole = difficulty === 3;
+  const answer = askWhole ? gaps.reduce((sum, value) => sum + value, 0) : ef;
+  const target = askWhole ? "A와 F" : "E와 F";
+  const hints = difficulty === 1 ? [{ from: "B", to: "C", value: bc }, { from: "C", to: "D", value: cd }] : [];
+  return {
+    prompt: `다음 그림은 수직선 위에 있는 6개 점 사이의 거리를 나타낸 것입니다. 두 점 ${target} 사이의 거리를 구하세요.`,
+    visual: { kind: "number-line-six-points", distances, hints, target: askWhole ? "AF" : "EF" },
+    answer: String(answer),
+    solution: `AC ${distances.ac}에서 AD ${distances.ad}까지 늘어난 만큼 CD는 ${cd}입니다. BD ${distances.bd}에서 CD ${numberObject(cd)} 빼면 BC는 ${bc}, CE ${distances.ce}에서 CD ${numberObject(cd)} 빼면 DE는 ${de}입니다. BF ${distances.bf}에서 BC, CD, DE의 합 ${numberObject(bc + cd + de)} 빼면 EF는 ${ef}입니다.${askWhole ? ` 또 AC에서 BC를 빼면 AB는 ${ab}이므로 AF는 AB ${numberAnd(ab)} BF ${numberObject(distances.bf)} 더한 ${answer}입니다.` : ""}`,
+    meta: { difficulty, gaps, distances, hints, target: askWhole ? "AF" : "EF", answer }
+  };
+}
+
 function balanceScaleThreeObjects({ difficulty = 2 }) {
   const squareBesideStar = randomInt(1, difficulty === 3 ? 3 : 2);
   const squareBesideCircle = randomInt(1, difficulty === 1 ? 1 : 2);
@@ -2129,6 +2163,7 @@ export const GENERATORS = {
   sourceColoredShapeNumber,
   sourceSymbolRelations,
   symbolRelationTwoToThree,
+  numberLineSixPoints,
   sourceBalanceRelations,
   balanceScaleThreeObjects,
   sourcePianoBounce,
