@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "7a392a34083c8be3fe9d2de5881b4554121958f748eb9b278b8faa20383b0e31",
-      "size": 85580,
-      "mtime_ns": 1786831059860950300
+      "sha256": "552dc3e53f2a62149dcdc4b377b99b976ba3b492934b3e8de57a0703fa5e7fe6",
+      "size": 86329,
+      "mtime_ns": 1786831238984191400
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "2d3faa9e5eabb16a77b7dcc0b5d28ee4061d728bedca0fdea8b2ee8fdeb93d1c",
-      "size": 166565,
-      "mtime_ns": 1786830643473959300
+      "sha256": "712c4db34bc3c098a762101bbf7379b2754f11b13c22c9f0068f9831a992c13b",
+      "size": 168009,
+      "mtime_ns": 1786831238977192900
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "27be5911e97ddc00dabb3573fec35459797279845efc05b3800d18e1739e6e55",
-      "size": 38867,
-      "mtime_ns": 1786831059858948900
+      "sha256": "22fac0162c1bd1e1918df4ed9efb6122119fc61615c71b329be5a36cbd199a5d",
+      "size": 39053,
+      "mtime_ns": 1786831238980192500
     }
   ],
   "records": [
@@ -107,12 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 8",
+      "title": "Next verification selection test 6 question 9",
       "aliases": [],
       "tags": [
         "next"
       ],
-      "summary": "Compare the original row-column shape sum table and official answer 35, then verify or separate the mapped generator.",
+      "summary": "Compare the bus passenger story, operation order, units, and official answer before reusing the bus generator.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -120,13 +120,13 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "7-year-old selection test 6 question 8",
-          "note": "Verify symbols, row and column totals, target position, and official answer"
+          "locator": "7-year-old selection test 6 question 9",
+          "note": "Verify the exact boarding and leaving values and answer"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-12 question 8",
+          "locator": "EXAMS k7-2022-12 question 9",
           "note": "Current provisional mapping remains disabled"
         }
       ]
@@ -3079,6 +3079,39 @@
           "role": "code",
           "locator": "EXAMS k7-2022-12 verified 1 through 7",
           "note": "Question 7 now uses the correct subtype"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q8",
+      "title": "Selection test 6 question 8 repeated-shape row target",
+      "aliases": [],
+      "tags": [
+        "q8",
+        "shape-sum-table-row-target"
+      ],
+      "summary": "Verified against source and official answer: top row diamond plus square is 30, left column has two diamonds and totals 36, right column square plus circle is 29, and the lower row target is 35. A dedicated transposed layout generator preserves this reasoning order.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 8 paragraph",
+          "note": "Original symbols, sums, official answer, difficulty structure, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeSumRowTarget",
+          "note": "Dedicated repeated-column layout and independent inverse calculation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES shape-sum-table-row-target and EXAMS k7-2022-12 verified 1 through 8",
+          "note": "Source question 8 is enabled without altering older variants"
         }
       ]
     }

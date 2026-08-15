@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816cw";
-import { GENERATORS } from "./generators.js?v=20260816cl";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816cx";
+import { GENERATORS } from "./generators.js?v=20260816cm";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -573,6 +573,12 @@ function shapeSumTableMarkup(visual) {
   return `<div class="shape-sum-work"><div class="shape-sum-example"><b>[보기]</b><div><span>5</span><span>4</span><i>9</i><span>3</span><span>7</span><i>10</i><i>8</i><i>11</i></div></div><div class="shape-sum-target"><div class="shape-sum-grid"><span>◇</span><span>◇</span><b>${visual.rowOne}</b><span>□</span><span>○</span><b>㉠</b><b>${visual.columnOne}</b><b>${visual.columnTwo}</b></div></div></div>`;
 }
 
+function shapeSumRowTargetMarkup(visual) {
+  const example = visual.showExample ? `<div class="shape-sum-example"><b>[보기]</b><div><span>5</span><span>4</span><i>9</i><span>3</span><span>7</span><i>10</i><i>8</i><i>11</i></div></div>` : "";
+  const hint = visual.revealDiamond ? `<small class="shape-sum-hint">도움: ◇ = ${visual.diamond}</small>` : "";
+  return `<div class="shape-sum-work source-layout ${visual.showExample ? "" : "single"}">${example}<div class="shape-sum-target">${hint}<div class="shape-sum-source-grid"><span>◇</span><span>□</span><b>${visual.rowOne}</b><span>◇</span><span>○</span><b class="target">㉠</b><b>${visual.columnOne}</b><b>${visual.columnTwo}</b></div></div></div>`;
+}
+
 function shapeSumBottomTargetMarkup(visual) {
   const example = visual.showExample ? `<div class="shape-sum-example"><b>[보기]</b><div><span>5</span><span>4</span><i>9</i><span>3</span><span>7</span><i>10</i><i>8</i><i>11</i></div></div>` : "";
   const hint = visual.revealDiamond ? `<small class="shape-sum-hint">도움: ◇ = ${visual.diamond}</small>` : "";
@@ -971,6 +977,7 @@ function visualMarkup(visual) {
   if (visual.kind === "addition-table-grid") return `<div class="visual addition-table-visual">${additionTableGridMarkup(visual)}</div>`;
   if (visual.kind === "disc-number-rule") return `<div class="visual disc-rule-visual">${discNumberRuleMarkup(visual)}</div>`;
   if (visual.kind === "shape-sum-table") return `<div class="visual shape-sum-visual">${shapeSumTableMarkup(visual)}</div>`;
+  if (visual.kind === "shape-sum-row-target") return `<div class="visual shape-sum-visual">${shapeSumRowTargetMarkup(visual)}</div>`;
   if (visual.kind === "shape-sum-bottom-target") return `<div class="visual shape-sum-visual">${shapeSumBottomTargetMarkup(visual)}</div>`;
   if (visual.kind === "shape-sum-column-target") return `<div class="visual shape-sum-visual">${shapeSumColumnTargetMarkup(visual)}</div>`;
   if (visual.kind === "shape-sum-repeated-column-target") return `<div class="visual shape-sum-visual">${shapeSumRepeatedColumnTargetMarkup(visual)}</div>`;
