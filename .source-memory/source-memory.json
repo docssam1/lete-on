@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "552dc3e53f2a62149dcdc4b377b99b976ba3b492934b3e8de57a0703fa5e7fe6",
-      "size": 86329,
-      "mtime_ns": 1786831238984191400
+      "sha256": "ceff103c0363f423447911850c3f157e326dbf43a3c7832f2b4daff84832fdc2",
+      "size": 87066,
+      "mtime_ns": 1786831377351657700
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "22fac0162c1bd1e1918df4ed9efb6122119fc61615c71b329be5a36cbd199a5d",
-      "size": 39053,
-      "mtime_ns": 1786831238980192500
+      "sha256": "67a50423ab617ce641eb560bfb2a7cdc077e38ee1993073628945ecea98124dd",
+      "size": 39066,
+      "mtime_ns": 1786831377344567800
     }
   ],
   "records": [
@@ -107,12 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 9",
+      "title": "Next verification selection test 6 question 10",
       "aliases": [],
       "tags": [
         "next"
       ],
-      "summary": "Compare the bus passenger story, operation order, units, and official answer before reusing the bus generator.",
+      "summary": "Compare the repeated-shape addition and subtraction equations, target symbol, and official answer 55 before reusing the mapped generator.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -120,13 +120,13 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "7-year-old selection test 6 question 9",
-          "note": "Verify the exact boarding and leaving values and answer"
+          "locator": "7-year-old selection test 6 question 10",
+          "note": "Verify both equations and the target symbol"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-12 question 9",
+          "locator": "EXAMS k7-2022-12 question 10",
           "note": "Current provisional mapping remains disabled"
         }
       ]
@@ -3112,6 +3112,39 @@
           "role": "code",
           "locator": "TYPES shape-sum-table-row-target and EXAMS k7-2022-12 verified 1 through 8",
           "note": "Source question 8 is enabled without altering older variants"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q9",
+      "title": "Selection test 6 question 9 board then leave bus story",
+      "aliases": [],
+      "tags": [
+        "q9",
+        "bus-board-then-leave"
+      ],
+      "summary": "Verified against source and official answer: 27 passengers, 6 board, then 17 leave, giving 16. Corrected the exam mapping from leave-then-board to the source-matched board-then-leave generator.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 9 paragraph",
+          "note": "Original values, event order, official answer, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function busBoardThenLeave",
+          "note": "Two-event source structure and three-event hard variant"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified 1 through 9",
+          "note": "Question 9 now uses the correct event order"
         }
       ]
     }
