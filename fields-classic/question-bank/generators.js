@@ -1243,6 +1243,29 @@ function equalizeTransfer({ difficulty = 2 }) {
   };
 }
 
+function totalDifferenceShare({ difficulty = 2 }) {
+  const names = shuffle(["윤서", "다빈", "지우", "민호", "서윤", "도윤"]);
+  const largerName = names[0];
+  const smallerName = names[1];
+  const base = randomInt(difficulty === 1 ? 4 : difficulty === 2 ? 6 : 8, difficulty === 1 ? 8 : difficulty === 2 ? 13 : 15);
+  const transfer = difficulty === 3 ? randomInt(1, 3) : 0;
+  const afterDifference = difficulty === 3 ? shuffle([2, 4, 6])[0] : 0;
+  const difference = difficulty === 1 ? 2 : difficulty === 2 ? shuffle([2, 4, 6])[0] : afterDifference + transfer * 2;
+  const larger = base + difference;
+  const smaller = base;
+  const total = larger + smaller;
+  const prompt = difficulty === 3
+    ? `${total}개의 큐브가 있습니다. 처음에는 ${koreanParticle(largerName, "이", "가")} ${smallerName}보다 더 많이 갖고 있었습니다. ${koreanParticle(largerName, "이", "가")} ${smallerName}에게 ${transfer}개를 주었더니 ${largerName}의 큐브가 ${afterDifference}개 더 많았습니다. ${koreanParticle(largerName, "은", "는")} 처음에 큐브를 몇 개 가지고 있었습니까?`
+    : `${total}개의 큐브가 있습니다. ${koreanParticle(largerName, "이", "가")} ${smallerName}보다 큐브를 ${difference}개 더 많이 가지려고 합니다. ${koreanParticle(largerName, "은", "는")} 큐브를 몇 개 가져야 합니까?`;
+  return {
+    prompt,
+    visual: { kind: "total-difference-share", total, difference, transfer, afterDifference, showHint: difficulty === 1 },
+    answer: `${larger}개`,
+    solution: `${difficulty === 3 ? `${transfer}개를 주면 두 사람의 차이는 ${transfer * 2}개 줄어드므로, 처음 차이는 ${difference}개입니다. ` : ""}전체에서 차이 ${difference}개를 먼저 떼어 놓으면 ${total - difference}개가 남습니다. 남은 큐브를 똑같이 나누면 한 사람당 ${base}개이고, 더 많이 가진 ${largerName}의 큐브는 ${base}+${difference}=${larger}개입니다.`,
+    meta: { difficulty, largerName, smallerName, base, transfer, afterDifference, difference, larger, smaller, total }
+  };
+}
+
 function solveFiveCardPyramid(cards, target, given) {
   const layouts = new Map();
   const omittedIndexes = cards.length === 5 ? [-1] : cards.map((_, index) => index);
@@ -2241,6 +2264,7 @@ export const GENERATORS = {
   twoDigitCardEnumeration,
   edgeSumCycle,
   equalizeTransfer,
+  totalDifferenceShare,
   fiveCardSumPyramid,
   stairGridPlacement,
   lGridPlacement,

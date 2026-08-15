@@ -97,7 +97,7 @@ export const TYPES = [
   type("colored-shape-number", "pattern", "도형 수 표현", "색칠한 도형이 나타내는 수", { generator: "sourceColoredShapeNumber", sourceMatched: true }),
   type("height-order", "logic", "순서와 비교", "키의 크고 작은 순서"),
   type("hidden-score-ranking", "logic", "순서와 비교", "순위표의 가려진 서로 다른 숫자 찾기", { generator: "hiddenScoreRanking", sourceMatched: true }),
-  type("total-difference", "number", "합과 차 문장제", "전체 수와 차이로 두 수 구하기"),
+  type("total-difference", "number", "합과 차 문장제", "전체 수와 차이로 두 수 구하기", { generator: "totalDifferenceShare", sourceMatched: true }),
   type("multi-person-transfer", "number", "합과 차 문장제", "여러 사람의 합과 주고받기"),
   type("fold-cut-piece-count", "geometry", "색종이 접기", "접고 자른 조각의 개수"),
   type("cryptarithm", "number", "복면산과 식", "세로셈 복면산"),
@@ -195,8 +195,8 @@ export const EXAMS = [
   makeExam({
     id: "k7-2022-06", stage: "k7_summer", label: "더 클래식 7세 3차 선발시험 (2022.06.22)",
     file: "더_클래식_7세_3차_선발시험(220622).pdf", layout: "two",
-    typeIds: ["edge-sum-grid","repeat-four-shapes","l-grid-placement","order-position-from-front","five-card-sum-pyramid","equalize-transfer","addition-table-grid","shape-sum-table","arrow-number-grid","bus-change","equal-line-sum-eight-cards","symbol-sum-grid","shape-equation-add-subtract","two-digit-parity-gap","fold-number-cut-sum","square-tile-growth","balance-scale-three-objects","symbol-relation-3to4","number-line-six-points","go-stone-difference-inverse"],
-    verifiedQuestionNumbers: [1, 2, 3, 4]
+    typeIds: ["edge-sum-grid","repeat-four-shapes","l-grid-placement","order-position-from-front","total-difference","five-card-sum-pyramid","addition-table-grid","shape-sum-table","arrow-number-grid","bus-change","equal-line-sum-eight-cards","symbol-sum-grid","shape-equation-add-subtract","two-digit-parity-gap","fold-number-cut-sum","square-tile-growth","balance-scale-three-objects","symbol-relation-3to4","number-line-six-points","go-stone-difference-inverse"],
+    verifiedQuestionNumbers: [1, 2, 3, 4, 5]
   }),
   makeExam({
     id: "k7-2022-08", stage: "k7_november", label: "더 클래식 7세 4차 선발시험 (2022.08.12)",

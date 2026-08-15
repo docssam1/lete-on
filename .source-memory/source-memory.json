@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "15e1a8a0ef8e9c9029a9ddbf1a20975728dab465ef02a1740216ef6a68bb662a",
-      "size": 45592,
-      "mtime_ns": 1786819875523265700
+      "sha256": "f41da3fc341ed8b517aa4a12ba9e086dc1b760e224d067bcd650156e80bb9b9b",
+      "size": 46515,
+      "mtime_ns": 1786820196649003500
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "0ae57baa509c732c0e0f7c49e64554c9f4b65a8503def12b7704e0be09e57d4a",
-      "size": 120484,
-      "mtime_ns": 1786819805690413700
+      "sha256": "c9016ab922154fc6f851eb10d0636c17211a09b126d192eb046456103ce6962e",
+      "size": 122637,
+      "mtime_ns": 1786820013450299500
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "da959b04f8392939282a3646dce2b85d71da0805f095b9ed03498a1229326816",
-      "size": 34604,
-      "mtime_ns": 1786819805688408400
+      "sha256": "ad52479ad9885b492638d55ea8a4385765cd6c3d7dc5c4fbc2193d588bd3ef59",
+      "size": 34666,
+      "mtime_ns": 1786819994710567900
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 5",
+      "title": "Next verification 7-year-old selection test 3 question 6",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q05"
+        "q06"
       ],
-      "summary": "Verify total 20, one child has 4 more, asked larger share, and answer 12 against source and answer page 5 before generator mapping.",
+      "summary": "Verify cards 2 through 6, a three-level sum pyramid with top 11, asked bottom-middle card, and answer 2 against source and answer page 5 before enabling.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 3 question 5 is the next locked source question"
+          "note": "Selection test 3 question 6 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 5 current five-card-sum-pyramid mapping",
-          "note": "Audit notes say question 5 is equalize-transfer, so correct the mapping before enabling"
+          "locator": "EXAMS k7-2022-06 question 6 five-card-sum-pyramid mapping",
+          "note": "Mapping was corrected after direct source page comparison"
         }
       ]
     },
@@ -1621,6 +1621,40 @@
           "role": "code",
           "locator": "TYPES order-position-from-front and EXAMS k7-2022-06 verified 1 through 4",
           "note": "Source question 4 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q5",
+      "title": "Selection test 3 question 5 total and difference sharing",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q5",
+        "total-difference"
+      ],
+      "summary": "Twenty cubes are shared so Yunseo has four more than Dabin; removing the difference and halving the remainder gives Yunseo 12. The source Q5/Q6 mapping was corrected.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 5 paragraph",
+          "note": "Original page and answer, mapping correction, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function totalDifferenceShare",
+          "note": "Visual cube count and three structural difficulty levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES total-difference and EXAMS k7-2022-06 verified 1 through 5",
+          "note": "Source question 5 is enabled and question 6 mapping corrected"
         }
       ]
     }
