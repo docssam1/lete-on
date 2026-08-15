@@ -1944,6 +1944,32 @@ function sourceBusStops({ difficulty = 2 }) {
   };
 }
 
+function busBoardThenLeave({ difficulty = 2 }) {
+  const start = randomInt(difficulty === 1 ? 15 : difficulty === 2 ? 20 : 24, difficulty === 1 ? 24 : difficulty === 2 ? 34 : 40);
+  const boardedFirst = randomInt(difficulty === 1 ? 3 : 6, difficulty === 1 ? 8 : difficulty === 2 ? 14 : 15);
+  const afterFirst = start + boardedFirst;
+  const left = randomInt(difficulty === 1 ? 2 : 8, Math.min(difficulty === 1 ? 7 : difficulty === 2 ? 18 : 20, afterFirst - 5));
+  const boardedLast = difficulty === 3 ? randomInt(3, 10) : 0;
+  const events = [
+    { action: "board", count: boardedFirst },
+    { action: "leave", count: left },
+    ...(difficulty === 3 ? [{ action: "board", count: boardedLast }] : [])
+  ];
+  const answer = events.reduce((count, event) => count + (event.action === "board" ? event.count : -event.count), start);
+  const calculation = [start, `+ ${boardedFirst}`, `- ${left}`, ...(difficulty === 3 ? [`+ ${boardedLast}`] : []), `= ${answer}`].join(" ");
+  return {
+    prompt: `${start}명이 탄 버스가 출발했습니다. 다음과 같이 타고 내렸다면, 지금 버스에 타고 있는 사람은 몇 명인지 구하세요.`,
+    visual: {
+      kind: "bus-stops",
+      events,
+      hintAfterFirst: difficulty === 1 ? `첫 번째 정류장을 지난 뒤에는 ${afterFirst}명이 타고 있습니다.` : ""
+    },
+    answer: `${answer}명`,
+    solution: `처음 ${start}명에서 첫 번째 정류장에 탄 ${boardedFirst}명을 더하고, 두 번째 정류장에서 내린 ${left}명을 뺍니다.${difficulty === 3 ? ` 세 번째 정류장에서 탄 ${boardedLast}명을 다시 더합니다.` : ""} ${calculation}명입니다.`,
+    meta: { difficulty, start, events, afterFirst, answer }
+  };
+}
+
 function symbolRelationTwoToThree({ difficulty = 2 }) {
   const values = { "☆": 6, "○": 4, "▽": 5 };
   const pairTargets = [["○", "▽"], ["☆", "○"], ["☆", "▽"]];
@@ -2349,6 +2375,7 @@ export const GENERATORS = {
   sourceTwoDigitSumDifference,
   sourceEqualLineCross,
   sourceBusStops,
+  busBoardThenLeave,
   foldNumberCutSum,
   equalLineSumEightCards,
   twoDigitCondition,

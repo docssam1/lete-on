@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bi";
-import { GENERATORS } from "./generators.js?v=20260816bi";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bj";
+import { GENERATORS } from "./generators.js?v=20260816bj";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -615,7 +615,12 @@ function arrowNumberPathSevenMarkup(visual) {
 }
 
 function busStopsMarkup(visual) {
-  return `<div class="bus-stops"><ul><li>첫 번째 정류장에서 <strong>${visual.left}명</strong>이 내렸습니다.</li><li>두 번째 정류장에서 <strong>${visual.boarded}명</strong>이 탔습니다.</li></ul></div>`;
+  const events = visual.events || [
+    { action: "leave", count: visual.left },
+    { action: "board", count: visual.boarded }
+  ];
+  const eventText = events.map((event, index) => `<li>${["첫", "두", "세"][index]} 번째 정류장에서 <strong>${event.count}명</strong>이 ${event.action === "board" ? "탔습니다" : "내렸습니다"}.</li>`).join("");
+  return `<div class="bus-stops"><ul>${eventText}</ul>${visual.hintAfterFirst ? `<p>${visual.hintAfterFirst}</p>` : ""}</div>`;
 }
 
 function foldNumberCutSumMarkup(visual) {

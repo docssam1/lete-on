@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "a0d73e39c7a9fd0473cee96d6306e56ab013e49100ffa3976ea1841fd71a69e6",
-      "size": 50151,
-      "mtime_ns": 1786821204819536200
+      "sha256": "e2828e925e8d06125cc0a270674e5355be2b27baf47e16037ff0c471173b3167",
+      "size": 51041,
+      "mtime_ns": 1786821668401858100
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "86d83cbc79729d2c90bd3d0fc99430d0ba681d3cf105dac05728a0f2322b06ed",
-      "size": 125286,
-      "mtime_ns": 1786821176230756800
+      "sha256": "5edf64d370ae3f76c94d13b426fa78a49e8409820bc13f2b4444424619cd6836",
+      "size": 127039,
+      "mtime_ns": 1786821567158496400
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "3aa396b92a32a1ed50a3a33c6b311a0c570206b6a778beb79e136e2816aa0af9",
-      "size": 34870,
-      "mtime_ns": 1786821098626554600
+      "sha256": "6f16858828fb18c259d8ce23f3feef40876e8eb6fd81b1b7e53361007a715cb3",
+      "size": 35064,
+      "mtime_ns": 1786821567162496400
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 10",
+      "title": "Next verification 7-year-old selection test 3 question 11",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q10"
+        "q11"
       ],
-      "summary": "Verify the bus passenger problem on source and answer page 7: start 24, eight board, fourteen leave, official answer 18, before enabling.",
+      "summary": "Verify the 3 by 3 shape-sum matrix on source and answer page 8. The source has row sums unknown, 18, 15; column sums 14, 17, 18; the official answer is 16. Correct the currently swapped question 11 and 12 mapping before enabling.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 3 question 10 is the next locked source question"
+          "note": "Selection test 3 question 11 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 10 bus-change mapping",
-          "note": "Confirm exact two-stop structure before reuse"
+          "locator": "EXAMS k7-2022-06 questions 11 and 12 mappings",
+          "note": "Current equal-line and symbol-grid order is reversed from source page 8"
         }
       ]
     },
@@ -1791,6 +1791,40 @@
           "role": "code",
           "locator": "TYPES arrow-number-path-seven and EXAMS k7-2022-06 verified 1 through 9",
           "note": "Source question 9 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q10",
+      "title": "Selection test 3 question 10 bus boards then leaves",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q10",
+        "bus-board-then-leave"
+      ],
+      "summary": "The source starts with 24 passengers, eight board at the first stop, fourteen leave at the second stop, and the official answer is 18. It is a separate order from the prior leave-then-board type.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 10 paragraph",
+          "note": "Exact source order, answer, type split, structural difficulty, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function busBoardThenLeave",
+          "note": "Board-then-leave generator with two or three events and intermediate metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES bus-board-then-leave and EXAMS k7-2022-06 verified 1 through 10",
+          "note": "Source question 10 is enabled separately from leave-then-board"
         }
       ]
     }
