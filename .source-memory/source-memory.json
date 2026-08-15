@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "4d2e1794c00c395eb262385e035d7734846a4bf6c77ac00cfb8450abb205be9c",
-      "size": 102469,
-      "mtime_ns": 1786835429164394400
+      "sha256": "e2a602016abc6e0869fa54fa7dc083a45765a449e62f0e14c8d0d9c191e4a6af",
+      "size": 103342,
+      "mtime_ns": 1786836503650669100
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "2026c93ee1140a74219feb94997b4b1fbda06f7bd5ed20097ab071b00395080c",
-      "size": 34626,
-      "mtime_ns": 1786813323708941800
+      "sha256": "d568ecb7c9634cb2111bf45df0a27d100845dded699d213229e23a2a707b28b4",
+      "size": 34871,
+      "mtime_ns": 1786836494273656000
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "d11ffdf3c2e2d8aff7997150e6ab3b1abfefbcde44a703519acef1664c87a69d",
-      "size": 186861,
-      "mtime_ns": 1786835260858895900
+      "sha256": "bb068f7aada7ac3a1f0d5bcae8a11dbd39b1f7a6e6007224d39bb2bd7a031d2e",
+      "size": 186939,
+      "mtime_ns": 1786835825204424200
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "8be8dd022b52abd6f1e8bf1451b2e993c2f31695db62eb24d63a7873ef663305",
-      "size": 40030,
-      "mtime_ns": 1786834259636082900
+      "sha256": "7f27465ab7a7ff30686c7dcc01b063f63b417fa16822685073d8f1478771be08",
+      "size": 40890,
+      "mtime_ns": 1786835648366377500
     }
   ],
   "records": [
@@ -3690,6 +3690,28 @@
           "role": "code",
           "locator": "TYPES growing-shape-count, triangle-tile-growth, and square-tile-growth",
           "note": "Source-matched type identities remain unchanged"
+        }
+      ]
+    },
+    {
+      "id": "final-1-replacement-verified",
+      "title": "파이널 1회 고정 시드 교체본 검증",
+      "aliases": [],
+      "tags": [
+        "question-bank",
+        "final-1",
+        "fixed-seed"
+      ],
+      "summary": "7세 1차와 같은 20유형을 고정 시드 final-1-replacement-v1-q01~q20으로 생성했다. 원본과 수치·보기·그림 배치가 겹치지 않으며 83,700회 전체 회귀, 브라우저 20문항, A4 5쪽 인쇄 렌더를 통과했다. Q8·Q17·Q18·Q19 인쇄 잘림을 수정했다. 프로그램 서재 연결은 영상 뷰어와 문제은행 이동 방식 결정 전까지 보류한다.",
+      "status": "verified",
+      "sensitivity": "internal",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "파이널 1회 고정 시드 교체본",
+          "note": "원본 비중복, 답·풀이, 화면 및 A4 인쇄 검증 완료"
         }
       ]
     }

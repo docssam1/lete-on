@@ -1,5 +1,5 @@
 import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816dl";
-import { GENERATORS } from "./generators.js?v=20260816cz";
+import { GENERATORS } from "./generators.js?v=20260816da";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -181,7 +181,13 @@ function selectedReferences() {
   const result = [];
   for (const exam of [...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES]) {
     for (const sourceQuestion of exam.questions) {
-      if (state.selected.exam.has(examKey(exam.id, sourceQuestion.number))) result.push({ typeId: sourceQuestion.typeId, reference: `${exam.label} ${sourceQuestion.number}번` });
+      if (state.selected.exam.has(examKey(exam.id, sourceQuestion.number))) {
+        result.push({
+          typeId: sourceQuestion.typeId,
+          reference: `${exam.label} ${sourceQuestion.number}번`,
+          fixedSeed: sourceQuestion.fixedSeed || null
+        });
+      }
     }
   }
   return result;
@@ -223,10 +229,38 @@ function shuffle(items) {
   return result;
 }
 
-function generatedProblem(item, sequence, reference) {
+function seededRandom(seedText) {
+  let seed = 2166136261;
+  for (const character of seedText) {
+    seed ^= character.codePointAt(0);
+    seed = Math.imul(seed, 16777619);
+  }
+  return () => {
+    seed += 0x6d2b79f5;
+    let value = seed;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function withSeed(seedText, callback) {
+  if (!seedText) return callback();
+  const originalRandom = Math.random;
+  Math.random = seededRandom(seedText);
+  try {
+    return callback();
+  } finally {
+    Math.random = originalRandom;
+  }
+}
+
+function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0) {
   if (item.generator && GENERATORS[item.generator]) {
     const difficulty = state.difficulty === "basic" ? 1 : state.difficulty === "advanced" ? 3 : 2;
-    return { ...GENERATORS[item.generator]({ max: 30, difficulty }), type: item, reference };
+    const seed = fixedSeed ? `${fixedSeed}:${difficulty}:${sequence}:${attempt}` : null;
+    const generated = withSeed(seed, () => GENERATORS[item.generator]({ max: 30, difficulty }));
+    return { ...generated, type: item, reference };
   }
   return null;
 }
@@ -249,7 +283,7 @@ function buildQuestions() {
     counters.set(item.id, sequence + 1);
     let problem = null;
     for (let attempt = 0; attempt < 80; attempt += 1) {
-      problem = generatedProblem(item, sequence, reference.reference);
+      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt);
       if (!problem || !signatures.has(problemSignature(problem))) break;
     }
     if (problem) signatures.add(problemSignature(problem));

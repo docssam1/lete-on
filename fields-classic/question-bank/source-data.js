@@ -269,6 +269,25 @@ export const PRACTICE_EXAM_TYPES = [
 
 export const FINAL_EXAM_TYPES = [
   {
+    id: "final-1",
+    stage: "final",
+    label: "파이널 모의고사 1회 교체본",
+    file: "검증된 20유형 기반 교체 시험지 (기존 중복 원본 제외)",
+    sourceViewer: false,
+    replacement: true,
+    questions: [
+      "edge-sum-grid", "equalize-transfer", "number-pyramid", "nonadjacent-placement",
+      "order-position", "disc-number-rule", "shape-sum-table", "repeat-pattern",
+      "arrow-number-grid", "bus-change", "number-card-plus-minus", "equal-line-sum",
+      "two-digit-condition", "growing-shape-count", "symbol-sum-grid", "piano-bounce",
+      "balance-scale", "symbol-relation", "colored-shape-number", "go-stone-difference"
+    ].map((typeId, index) => ({
+      ...question(index + 1, typeId),
+      verified: true,
+      fixedSeed: `final-1-replacement-v1-q${String(index + 1).padStart(2, "0")}`
+    }))
+  },
+  {
     id: "final-2",
     stage: "final",
     label: "필즈선발대비 실전 모의고사 파이널 2회",

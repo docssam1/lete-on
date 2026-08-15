@@ -1833,7 +1833,7 @@ function repeatShapeSequence({ difficulty = 2 }) {
     prompt: `아래 그림의 규칙을 찾아 ${target}번째 모양을 구하세요.`,
     visual: { kind: "repeat-shape-sequence", items: cycle.concat(cycle, cycle.slice(0, 1)), target },
     answer,
-    solution: `동그라미, 세모, 동그라미가 3개씩 반복됩니다. ${target}을 3개씩 나눈 나머지를 확인하면 ${target}번째는 ${answer}입니다.`
+    solution: `동그라미, 세모, 동그라미가 3개씩 반복됩니다. ${numberObject(target)} 3개씩 나눈 나머지를 확인하면 ${target}번째는 ${answer}입니다.`
   };
 }
 
@@ -1953,7 +1953,7 @@ function arrowNumberGrid({ difficulty = 2 }) {
     prompt: "보기의 화살표가 나타내는 규칙을 찾아, 출발 수에서 화살표를 따라간 마지막 칸의 수를 구하세요.",
     visual: { kind: "arrow-number-grid", start },
     answer: String(answer),
-    solution: `오른쪽 화살표는 1씩 커지고, 위쪽 화살표는 10씩 작아집니다. 화살표를 차례로 따라가면 ${start}에서 ${answer}가 됩니다.`
+    solution: `오른쪽 화살표는 1씩 커지고, 위쪽 화살표는 10씩 작아집니다. 화살표를 차례로 따라가면 ${start}에서 ${numberSubject(answer)} 됩니다.`
   };
 }
 
@@ -2158,7 +2158,7 @@ function sourceNonadjacentPyramid() {
     prompt: "도형 안에 1, 2, 3을 같은 숫자끼리 서로 이웃하지 않도록 써넣을 때, ㉠에 들어갈 수를 구하세요.",
     visual: { kind: "nonadjacent-pyramid", top, left },
     answer: String(answer),
-    solution: `꼭대기 ${top}과 이웃한 칸에는 ${top}을 쓸 수 없고, 둘째 줄 왼쪽의 ${left}과 이웃한 칸에는 ${left}을 쓸 수 없습니다. 따라서 ㉠에는 남은 수 ${answer}이 들어갑니다.`
+    solution: `꼭대기 ${numberAnd(top)} 이웃한 칸에는 ${numberObject(top)} 쓸 수 없고, 둘째 줄 왼쪽의 ${numberAnd(left)} 이웃한 칸에는 ${numberObject(left)} 쓸 수 없습니다. 따라서 ㉠에는 남은 수 ${numberSubject(answer)} 들어갑니다.`
   };
 }
 
@@ -2304,7 +2304,7 @@ function sourceEqualLineCross() {
     [4, 1, 3, 5, 2], [4, 3, 5, 2, 1], [5, 2, 3, 4, 1], [5, 3, 1, 4, 2]
   ];
   const [top, left, center, right, bottom] = sample(layouts);
-  const sum = top + bottom;
+  const sum = top + center + bottom;
   return {
     prompt: "1부터 5까지 수를 한 번씩 넣어 가로줄과 세로줄에 놓인 세 수의 합을 같게 하려고 합니다. ㉠에 들어갈 수를 구하세요.",
     visual: { kind: "equal-line-cross", top, left, center, right, bottom },
