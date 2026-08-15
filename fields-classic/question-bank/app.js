@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816cs";
-import { GENERATORS } from "./generators.js?v=20260816ci";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ct";
+import { GENERATORS } from "./generators.js?v=20260816cj";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -555,7 +555,8 @@ function additionTableGridMarkup(visual) {
     const isTarget = row === visual.target.row && column === visual.target.column;
     return `<span class="${isTarget ? "target" : givenMap.has(key) ? "given" : "blank"}">${isTarget ? "㉠" : givenMap.get(key) ?? ""}</span>`;
   }).join("");
-  return `<div class="addition-table-grid" style="--table-size:${visual.size}">${cells}</div>`;
+  const hint = visual.hint ? `<small class="addition-table-hint">${visual.hint}</small>` : "";
+  return `<div class="addition-table-work">${hint}<div class="addition-table-grid" style="--table-size:${visual.size}">${cells}</div></div>`;
 }
 
 function discNumberRuleMarkup(visual) {

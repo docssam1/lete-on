@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "00b936fc18fe19091648003e5f4e575d682c62adfd33c2bc09ff165fd5383a40",
-      "size": 81829,
-      "mtime_ns": 1786829762072992200
+      "sha256": "afccf9e4b97f5be81286e92d4cae86252d5286f2d04ac619e89c3dbaed9e994b",
+      "size": 82640,
+      "mtime_ns": 1786830093834279400
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "961b93a8fb03b76004bf07cc4ac1f9595d70840fa619a3897d7a9fabd4268a60",
-      "size": 159729,
-      "mtime_ns": 1786829658388059700
+      "sha256": "c2dcbd76fb78d75d5a0eb0c806dcea9e35dae798102e80aa987a90fb5048cb59",
+      "size": 161412,
+      "mtime_ns": 1786829957034202700
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "e71754a46f7fc5a746c859aa14b4519ca6ef813f701eab73e88358a7249e9a3a",
-      "size": 38401,
-      "mtime_ns": 1786829711249086700
+      "sha256": "f8cd7f8d07b42927c8ef4eb7ed0cf988d443a5b273ac91c14927eea7806d0058",
+      "size": 38605,
+      "mtime_ns": 1786829957036204400
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 4",
+      "title": "Next verification selection test 6 question 5",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-12",
-        "q4"
+        "q5"
       ],
-      "summary": "Compare the 4 by 4 addition table with horizontal step 6, vertical step 4, marked bottom-left cell, and official answer 18, then verify its generator and browser rendering.",
+      "summary": "Compare selection test 6 question 5 arrow-number grid against the rendered source page and official answer before reusing or separating the current generator.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,7 +123,7 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 4 remains disabled until the corrected mapping, exact increments, answer, and rendering are verified"
+          "note": "Question 5 remains disabled until the exact arrow path, displayed numbers, target, official answer, difficulty structure, and browser rendering are verified"
         }
       ]
     },
@@ -2941,6 +2941,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-12 questions 3 and 4 mapping order and verified questions 1 through 3",
           "note": "Question 3 enabled after correcting swapped type order"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q4",
+      "title": "Selection test 6 question 4 bottom-left addition table",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q4",
+        "addition-table-grid-bottom-left"
+      ],
+      "summary": "The original 4 by 4 table starts at 6, increases by 6 across and 4 down, marks the bottom-left cell, and has official answer 18. A dedicated structurally tiered generator is verified.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7세 6차 4번 검증 기록",
+          "note": "원본 표의 단서 좌표와 공식 답 18을 문제지·답안지로 대조"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "additionTableGridBottomLeft",
+          "note": "쉬움 3x3, 같게 4x4, 어렵게 5x5의 왼쪽 아래 목표 생성기"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "k7-2022-12 question 4",
+          "note": "검증된 전용 유형 연결"
         }
       ]
     }
