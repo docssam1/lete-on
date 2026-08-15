@@ -119,15 +119,14 @@ button, select { -webkit-tap-highlight-color: transparent; }
 
 .illustration-frame {
   position: relative;
-  display: grid;
-  place-content: center;
+  align-self: flex-start;
   width: 100%;
-  min-height: 430px;
-  padding: 34px;
+  padding: 10px;
+  overflow: hidden;
   border: 1px solid #bdb09a;
   color: var(--muted);
   text-align: center;
-  background: rgba(255,255,255,.3);
+  background: #e9e2d5;
 }
 
 .illustration-frame::before,
@@ -145,10 +144,33 @@ button, select { -webkit-tap-highlight-color: transparent; }
   position: absolute;
   top: 16px;
   right: 18px;
-  color: #a29582;
+  z-index: 2;
+  padding: 4px 5px 4px 7px;
+  border-radius: 2px;
+  color: #f8f3e8;
+  background: rgba(27, 25, 22, .62);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: .15em;
+}
+
+.story-illustration {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1122 / 1402;
+  object-fit: cover;
+  background: #d8d2c8;
+}
+
+.story-illustration[hidden],
+.illustration-placeholder[hidden] { display: none; }
+
+.illustration-placeholder {
+  display: grid;
+  min-height: 430px;
+  place-content: center;
+  padding: 34px;
 }
 
 .illustration-placeholder svg {
@@ -344,7 +366,8 @@ button, select { -webkit-tap-highlight-color: transparent; }
   .story-tab { flex: 1 0 auto; }
   .book { display: block; min-height: 0; border-radius: 8px 16px 16px 8px; }
   .illustration-page { padding: 22px; border-right: 0; border-bottom: 1px solid #ded4c1; }
-  .illustration-frame { min-height: 210px; }
+  .illustration-frame { min-height: 0; }
+  .illustration-placeholder { min-height: 210px; }
   .reading-page { padding: 34px 23px 54px; }
   .page-heading { margin-bottom: 24px; }
   .story-copy { font-size: 18px; line-height: 1.76; }
@@ -360,7 +383,8 @@ button, select { -webkit-tap-highlight-color: transparent; }
   .site-header h1 { font-size: 25px; }
   .eyebrow { font-size: 9px; }
   .story-tab { padding-inline: 14px; }
-  .illustration-frame { min-height: 178px; padding: 25px 18px; }
+  .illustration-frame { min-height: 0; padding: 8px; }
+  .illustration-placeholder { min-height: 178px; padding: 25px 18px; }
   .illustration-frame small { display: none; }
   .reading-page { padding-inline: 20px; }
   .player-main { display: grid; grid-template-columns: 46px 40px 1fr 68px; }

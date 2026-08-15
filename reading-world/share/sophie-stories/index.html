@@ -21,18 +21,19 @@
     <nav class="story-tabs" aria-label="Choose a story" id="story-tabs"></nav>
 
     <main class="book" id="book" aria-live="polite">
-      <section class="illustration-page" aria-label="Illustration placeholder">
+      <section class="illustration-page" aria-label="Story illustration">
         <div class="illustration-frame">
           <span class="illustration-number" id="illustration-number">01</span>
-          <div class="illustration-placeholder" aria-hidden="true">
+          <img class="story-illustration" id="story-illustration" alt="" decoding="async" hidden>
+          <div class="illustration-placeholder" id="illustration-placeholder" aria-hidden="true">
             <svg viewBox="0 0 160 120" role="img">
               <path d="M16 99 56 58l25 23 20-18 43 36" />
               <circle cx="111" cy="33" r="10" />
               <path d="M27 27h42M27 36h29" />
             </svg>
+            <p>Illustration space</p>
+            <small>Artwork can be added or replaced later.</small>
           </div>
-          <p>Illustration space</p>
-          <small>Artwork can be added or replaced later.</small>
         </div>
       </section>
 

@@ -4,6 +4,10 @@
     "tabLabel": "Story 1",
     "title": null,
     "byline": "Sophie",
+    "illustration": {
+      "src": "./assets/story-1-illustration.webp",
+      "alt": "Audrey standing beside a kind unicorn in a magical forest."
+    },
     "paragraphs": [
       [
         "There once lived a curious girl named Audrey who loved thinking about new and exciting things.",
@@ -51,6 +55,10 @@
     "tabLabel": "Story 2",
     "title": "The Most Special Day I Have Ever Had",
     "byline": "Sophie",
+    "illustration": {
+      "src": "./assets/story-2-illustration.webp",
+      "alt": "Two best friends completing adventure missions together."
+    },
     "paragraphs": [
       [
         "Have you ever had a surprising and unforgettable day?",

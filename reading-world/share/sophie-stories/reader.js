@@ -10,6 +10,8 @@
     byline: document.getElementById('byline'),
     copy: document.getElementById('story-copy'),
     illustrationNumber: document.getElementById('illustration-number'),
+    illustration: document.getElementById('story-illustration'),
+    illustrationPlaceholder: document.getElementById('illustration-placeholder'),
     pageNumber: document.getElementById('page-number'),
     audio: document.getElementById('audio'),
     play: document.getElementById('play-button'),
@@ -67,6 +69,17 @@
     }).join('');
 
     els.illustrationNumber.textContent = String(state.current + 1).padStart(2, '0');
+    if (story.illustration?.src) {
+      els.illustration.alt = story.illustration.alt || '';
+      els.illustration.src = story.illustration.src;
+      els.illustration.hidden = false;
+      els.illustrationPlaceholder.hidden = true;
+    } else {
+      els.illustration.removeAttribute('src');
+      els.illustration.alt = '';
+      els.illustration.hidden = true;
+      els.illustrationPlaceholder.hidden = false;
+    }
     els.pageNumber.textContent = `${state.current + 1} / ${state.stories.length}`;
     renderTabs();
     resetPlayerUi();
@@ -168,6 +181,11 @@
     history.replaceState(null, '', `#${state.stories[next].id}`);
     renderStory();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  els.illustration.addEventListener('error', () => {
+    els.illustration.hidden = true;
+    els.illustrationPlaceholder.hidden = false;
   });
 
   els.play.addEventListener('click', togglePlay);
