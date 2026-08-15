@@ -599,6 +599,42 @@ function truthLieRanking({ difficulty = 2 }) {
   };
 }
 
+function targetScoreCombinations({ difficulty = 2 }) {
+  const possibleSums = (scores) => {
+    const sums = new Set();
+    for (let first = 0; first < scores.length; first += 1) {
+      for (let second = first; second < scores.length; second += 1) {
+        sums.add(scores[first] + scores[second]);
+      }
+    }
+    return [...sums].sort((a, b) => a - b);
+  };
+
+  let scores;
+  if (difficulty === 1) {
+    const count = randomInt(3, 4);
+    scores = Array.from({ length: count }, (_, index) => index + 1);
+  } else if (difficulty === 2) {
+    const count = randomInt(5, 6);
+    scores = Array.from({ length: count }, (_, index) => index + 1);
+  } else {
+    do {
+      const count = randomInt(5, 6);
+      scores = [1];
+      while (scores.length < count) scores.push(scores.at(-1) + randomInt(1, 2));
+    } while (scores.at(-1) > 10 || scores.every((score, index) => index === 0 || score - scores[index - 1] === 1));
+  }
+
+  const sums = possibleSums(scores);
+  return {
+    prompt: "다음 과녁에 화살을 2번 쏘아 모두 맞혔습니다. 얻을 수 있는 점수는 모두 몇 가지일까요? (같은 점수를 두 번 맞힐 수도 있습니다.)",
+    visual: { kind: "target-score-combinations", scores },
+    answer: `${sums.length}가지`,
+    solution: `작은 점수부터 두 번 맞힌 합을 빠짐없이 적으면 ${sums.join(", ")}점입니다. 따라서 모두 ${sums.length}가지입니다.`,
+    meta: { difficulty, scores, sums }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -1052,6 +1088,7 @@ export const GENERATORS = {
   twoTypeUnitTotal,
   rowColumnCountPlacement,
   truthLieRanking,
+  targetScoreCombinations,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
