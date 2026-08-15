@@ -727,6 +727,38 @@ function connectedLineDegreeSum({ difficulty = 2 }) {
   };
 }
 
+function letterBlockTransform({ difficulty = 2 }) {
+  const targetPools = {
+    1: ["학", "산", "문", "별"],
+    2: ["학", "봄", "꿈", "달", "집", "꽃"],
+    3: ["학교", "수학", "나무", "모양", "나라"]
+  };
+  const target = sample(targetPools[difficulty] || targetPools[2]);
+  const guide = difficulty === 1
+    ? "반시계 방향으로 90도 돌린 뒤, 좌우로 뒤집습니다."
+    : "보기의 글자가 어떻게 움직였는지 살펴보세요.";
+
+  return {
+    prompt: "다음과 같은 방법으로 글자 모양을 움직일 때, 빈 상자 안에 알맞은 그림을 그리세요.",
+    visual: {
+      kind: "letter-block-transform",
+      example: "소마",
+      target,
+      guide
+    },
+    answer: "그림 답안",
+    answerVisual: { kind: "letter-block-answer", word: target },
+    solution: `보기의 글자를 반시계 방향으로 90도 돌린 뒤 좌우로 뒤집었습니다. '${target}'도 같은 순서로 움직여 그립니다.`,
+    responseKind: "drawing",
+    meta: {
+      difficulty,
+      example: "소마",
+      target,
+      operations: ["rotate-counterclockwise-90", "flip-left-right"]
+    }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -1183,6 +1215,7 @@ export const GENERATORS = {
   targetScoreCombinations,
   matchstickShapeSequence,
   connectedLineDegreeSum,
+  letterBlockTransform,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,

@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "387282ee5e124e8f1023bd0bd22f7b552438883a6290da765690058201fa61ed",
-      "size": 18727,
-      "mtime_ns": 1786809626509649500
+      "sha256": "050b36f7173f3c4e3feee31d4187df8a8fed762ea61e84d5f9fb17be6e22a557",
+      "size": 19599,
+      "mtime_ns": 1786810186659742000
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "fea57253567a872320127352e563315afdfad865336135368cfeaca94395b270",
-      "size": 32592,
-      "mtime_ns": 1786809626510649900
+      "sha256": "cd09d12cceb5623e6655db268aa693b77964738e0ac4c3358ffd890f96c112c0",
+      "size": 32787,
+      "mtime_ns": 1786810186658741500
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "791ab560aba2657cfcfa41cb2f0c9602acb7dc813ea7a18ba743b4da80c5f8c3",
-      "size": 62303,
-      "mtime_ns": 1786809589536729500
+      "sha256": "3436bca26b1b4155ea46e830e9f8b1952d2da07055703a7101cb337609c53d32",
+      "size": 63491,
+      "mtime_ns": 1786809973435199400
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "0138d1782bf59c80333db13f5f67ece5a3074b7bded8955f0b133b44955dcc40",
-      "size": 32043,
-      "mtime_ns": 1786809494559423400
+      "sha256": "96eb544da899b9fd228d6975d915cfc6b23730fcc09ebc9704a0e57c115e703a",
+      "size": 32119,
+      "mtime_ns": 1786809973436199900
     }
   ],
   "records": [
@@ -107,15 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F14 letter block transform",
+      "title": "Next implementation F15 mixed sequences",
       "aliases": [
         "다음 작업"
       ],
       "tags": [
         "next",
-        "F14"
+        "F15"
       ],
-      "summary": "Continue with Final 3 question 12 by reproducing the exact block movement shown in the source and verifying the resulting Hangul arrangement before designing any generator variants.",
+      "summary": "Continue with Final 3 question 17 by separating increasing-difference, sum-of-previous-two, and interleaved sequence rules before implementing source-matched variants.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -124,7 +124,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F13 are complete; F14 is next"
+          "note": "F01 through F14 are complete; F15 is next"
         }
       ]
     },
@@ -448,6 +448,42 @@
           "source_id": "source-data",
           "role": "code",
           "locator": "TYPES connected-line-degree-sum and FINAL_EXAM_TYPES final-3 question 11",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f14",
+      "title": "Final 3 question 12 letter block transform",
+      "aliases": [
+        "파이널 3회 12번",
+        "글자 블록 움직이기"
+      ],
+      "tags": [
+        "F14",
+        "final-3"
+      ],
+      "summary": "F14 verifies the original Soma example as a 90-degree counterclockwise rotation followed by a left-right flip, then renders source-matched Hangul transformations as SVG.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 표 12번과 다음 검증 순서 4번",
+          "note": "Original Soma example and exact operation order verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function letterBlockTransform and GENERATORS export",
+          "note": "Three structural difficulty levels with explicit operation metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES letter-block-transform and FINAL_EXAM_TYPES final-3 question 12",
           "note": "Source-matched type is enabled"
         }
       ]

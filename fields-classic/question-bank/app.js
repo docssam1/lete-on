@@ -397,6 +397,26 @@ function connectedLineDegreeSumMarkup(visual) {
   return `<div class="connected-line-work"><svg viewBox="0 0 ${visual.width} ${visual.height}" role="img" aria-label="여러 원이 선으로 연결된 그림"><g class="connected-edges">${lines}</g><g class="connected-nodes">${nodes}</g></svg><p>${visual.clue}</p></div>`;
 }
 
+function letterBlockTileMarkup(word, transformed = false, blank = false) {
+  const length = Array.from(word).length;
+  const horizontal = !transformed && length > 1;
+  const width = horizontal ? 152 : 88;
+  const height = transformed && length > 1 ? 152 : 108;
+  const fontSize = length > 1 ? 43 : 54;
+  const content = blank
+    ? ""
+    : transformed
+      ? `<g transform="translate(${width / 2} ${height / 2}) scale(-1 1)"><g transform="rotate(-90)"><text style="font-size:${fontSize}px" x="0" y="2">${word}</text></g></g>`
+      : `<text style="font-size:${fontSize}px" x="${width / 2}" y="${height / 2 + 2}">${word}</text>`;
+  const label = blank ? "답을 그릴 빈 상자" : transformed ? `${word}를 움직인 결과` : `${word} 글자 블록`;
+  return `<svg class="letter-block-tile ${blank ? "blank" : ""}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${label}"><rect x="2" y="2" width="${width - 4}" height="${height - 4}"/>${content}</svg>`;
+}
+
+function letterBlockTransformMarkup(visual) {
+  const pair = (word, showResult, label) => `<div class="letter-transform-pair"><b>${label}</b><div>${letterBlockTileMarkup(word)}<span>→</span>${showResult ? letterBlockTileMarkup(word, true) : letterBlockTileMarkup(word, false, true)}</div></div>`;
+  return `<div class="letter-transform-work">${pair(visual.example, true, "보기")}${pair(visual.target, false, "문제")}<p>${visual.guide}</p></div>`;
+}
+
 function closestCardSumMarkup(visual) {
   const blank = () => '<span class="digit-card-blank"></span>';
   return `<div class="closest-card-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="closest-card-equation"><span class="two-digit-blank">${blank()}${blank()}</span><b>+</b><span class="two-digit-blank">${blank()}${blank()}</span><b>=</b><span class="sum-blank"></span></div><small>${visual.target}에 가장 가까운 합</small></div>`;
@@ -519,6 +539,7 @@ function visualMarkup(visual) {
   if (visual.kind === "target-score-combinations") return `<div class="visual target-score-visual">${targetScoreCombinationsMarkup(visual)}</div>`;
   if (visual.kind === "matchstick-shape-sequence") return `<div class="visual matchstick-sequence-visual">${matchstickShapeSequenceMarkup(visual)}</div>`;
   if (visual.kind === "connected-line-degree-sum") return `<div class="visual connected-line-visual">${connectedLineDegreeSumMarkup(visual)}</div>`;
+  if (visual.kind === "letter-block-transform") return `<div class="visual letter-transform-visual">${letterBlockTransformMarkup(visual)}</div>`;
   if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;
@@ -564,7 +585,7 @@ function renderWorksheet() {
       <span class="question-reference">기준 문제: ${question.reference}</span>
       <p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>
       ${question.image ? `<img class="legacy-image" src="${question.image}" alt="${question.type.label} 문제 그림" />` : visualMarkup(question.visual)}
-      <label class="answer-line">답 <input class="answer-input" aria-label="${index + 1}번 답" /></label>
+      ${question.responseKind === "drawing" ? '<span class="drawing-answer-note">위 빈 상자 안에 그림을 그리세요.</span>' : `<label class="answer-line">답 <input class="answer-input" aria-label="${index + 1}번 답" /></label>`}
     </article>`;
   }).join("");
   $("watermark").innerHTML = state.watermark ? watermarkMarkup() : "";
@@ -574,7 +595,10 @@ function renderWorksheet() {
 function openAnswers() {
   $("answerBody").innerHTML = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
-    return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${question.answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
+    const answer = question.answerVisual?.kind === "letter-block-answer"
+      ? `<div class="letter-answer-preview">${letterBlockTileMarkup(question.answerVisual.word, true)}</div>`
+      : question.answer;
+    return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
   }).join("");
   $("answerDialog").showModal();
 }
