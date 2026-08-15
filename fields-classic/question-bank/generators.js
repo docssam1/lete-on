@@ -413,6 +413,82 @@ function twoTypeUnitTotal({ difficulty = 2 }) {
   };
 }
 
+function rowColumnSolutions(rowCounts, columnCounts, limit = 100) {
+  const size = rowCounts.length;
+  const popcount = (value) => {
+    let count = 0;
+    for (let bits = value; bits; bits >>= 1) count += bits & 1;
+    return count;
+  };
+  const rowOptions = rowCounts.map((count) => (
+    Array.from({ length: 2 ** size }, (_, mask) => mask).filter((mask) => popcount(mask) === count)
+  ));
+  const solutions = [];
+
+  function visit(row, columnSums, masks) {
+    if (solutions.length >= limit) return;
+    if (row === size) {
+      if (columnSums.every((count, index) => count === columnCounts[index])) solutions.push([...masks]);
+      return;
+    }
+    const rowsLeft = size - row - 1;
+    for (const mask of rowOptions[row]) {
+      const nextSums = columnSums.map((count, column) => count + ((mask >> column) & 1));
+      const possible = nextSums.every((count, column) => (
+        count <= columnCounts[column] && count + rowsLeft >= columnCounts[column]
+      ));
+      if (possible) visit(row + 1, nextSums, [...masks, mask]);
+    }
+  }
+
+  visit(0, Array(size).fill(0), []);
+  return solutions;
+}
+
+function rowColumnCountPlacement({ difficulty = 2 }) {
+  const size = difficulty === 1 ? 3 : difficulty === 3 ? 5 : 4;
+  const solutionRange = difficulty === 1 ? [1, 4] : difficulty === 2 ? [2, 12] : [3, 30];
+  let rowCounts;
+  let columnCounts;
+  let solutions;
+  let attempts = 0;
+
+  do {
+    const matrix = Array.from({ length: size }, () => (
+      Array.from({ length: size }, () => Math.random() < 0.5 ? 1 : 0)
+    ));
+    rowCounts = matrix.map((row) => row.reduce((sum, value) => sum + value, 0));
+    columnCounts = Array.from({ length: size }, (_, column) => (
+      matrix.reduce((sum, row) => sum + row[column], 0)
+    ));
+    attempts += 1;
+    if ([...rowCounts, ...columnCounts].some((count) => count === 0)) continue;
+    solutions = rowColumnSolutions(rowCounts, columnCounts, solutionRange[1] + 1);
+  } while ((!solutions || solutions.length < solutionRange[0] || solutions.length > solutionRange[1]) && attempts < 1000);
+
+  if (!solutions || solutions.length < solutionRange[0] || solutions.length > solutionRange[1]) {
+    const fallback = difficulty === 1
+      ? { rows: [3, 2, 1], columns: [2, 2, 2] }
+      : difficulty === 2
+        ? { rows: [3, 3, 4, 2], columns: [4, 3, 3, 2] }
+        : { rows: [2, 1, 5, 3, 5], columns: [4, 3, 3, 4, 2] };
+    rowCounts = fallback.rows;
+    columnCounts = fallback.columns;
+    solutions = rowColumnSolutions(rowCounts, columnCounts, solutionRange[1] + 1);
+  }
+
+  const masks = sample(solutions);
+  const matrix = masks.map((mask) => Array.from({ length: size }, (_, column) => (mask >> column) & 1));
+  const answerRows = matrix.map((row) => row.map((value) => value ? "★" : "·").join(" "));
+  return {
+    prompt: "다음 조건에 맞게 빈칸에 별을 그려 넣으세요. 삼각형 안의 수는 그 줄에 있는 별의 수를 나타내며, 가로와 세로의 수를 모두 맞춰야 합니다.",
+    visual: { kind: "row-column-count-placement", size, rowCounts, columnCounts },
+    answer: `예: ${answerRows.join(" / ")}`,
+    solution: `가로줄의 별 수가 차례로 ${rowCounts.join(", ")}개, 세로줄의 별 수가 차례로 ${columnCounts.join(", ")}개가 되도록 놓습니다. 조건을 모두 만족하는 다른 배치도 정답입니다.`,
+    meta: { difficulty, size, rowCounts, columnCounts, matrix, solutionCount: solutions.length }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -864,6 +940,7 @@ export const GENERATORS = {
   delayedDatePromise,
   tornCalendarWeekday,
   twoTypeUnitTotal,
+  rowColumnCountPlacement,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,

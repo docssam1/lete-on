@@ -32,6 +32,14 @@ export const TYPES = [
   type("delayed-date-promise", "pattern", "달력과 시간", "전에 들은 며칠 뒤 약속의 실제 날짜 구하기", { generator: "delayedDatePromise", sourceMatched: true }),
   type("calendar-date-weekday", "pattern", "달력과 시간", "달력에서 특정 날짜의 요일 찾기", { generator: "tornCalendarWeekday", sourceMatched: true }),
   type("two-type-unit-total", "number", "합과 차 문장제", "두 종류의 전체 개수와 단위 수로 각각의 개수 구하기", { generator: "twoTypeUnitTotal", sourceMatched: true }),
+  type("row-column-count-placement", "logic", "조건 배치", "가로·세로 개수 조건에 맞게 칸 표시하기", { generator: "rowColumnCountPlacement", sourceMatched: true }),
+  type("truth-lie-ranking", "logic", "조건 추리", "참말과 거짓말로 경기 순위 찾기"),
+  type("target-score-combinations", "logic", "경우의 수", "과녁 점수의 가능한 조합 세기"),
+  type("matchstick-square-growth", "pattern", "도형 규칙", "이어 붙인 네모의 성냥개비 수"),
+  type("connected-line-degree-sum", "geometry", "연결 관계", "각 점에 연결된 선의 개수 합"),
+  type("letter-block-transform", "geometry", "도형 움직이기", "글자 블록을 움직인 결과 그리기"),
+  type("mixed-sequences", "pattern", "수 규칙", "서로 다른 규칙이 섞인 수열"),
+  type("neither-set-count", "logic", "집합과 포함", "두 조건에 모두 해당하지 않는 수"),
   type("edge-sum-grid", "number", "수 배열과 합", "주변의 합에 맞게 수 배치하기", { generator: "edgeSumCycle", sourceMatched: true }),
   type("equalize-transfer", "number", "합과 차 문장제", "주고받아 같게 만들기", { generator: "equalizeTransfer", sourceMatched: true }),
   type("number-pyramid", "number", "수 배열과 합", "수 카드로 모으기·수 피라미드", { generator: "numberPyramid", sourceMatched: true }),
@@ -233,6 +241,20 @@ export const FINAL_EXAM_TYPES = [
       "two-type-unit-total", "cryptarithm", "fold-hole-count", "edge-sum-grid", "equal-line-sum",
       "total-difference", "symbol-sum-grid", "magic-square"
     ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index === 0 || index === 2 || index === 3 || index === 5 || index === 8 || index === 9 || index === 11 || index === 12 }))
+  },
+  {
+    id: "final-3",
+    stage: "final",
+    label: "필즈선발대비 실전 모의고사 파이널 3회",
+    file: "필즈선발대비 실전 모의고사 파이널 3회.pdf",
+    sourceViewer: false,
+    questions: [
+      "row-column-count-placement", "truth-lie-ranking", "edge-sum-grid", "cube-count-solid",
+      "number-pyramid", "reverse-thinking", "order-position-seven-people", "fold-hole-count",
+      "target-score-combinations", "matchstick-square-growth", "connected-line-degree-sum", "letter-block-transform",
+      "go-stone-difference-inverse", "square-count", "symbol-sum-grid", "cube-fill-box",
+      "mixed-sequences", "two-type-unit-total", "go-stone-difference", "neither-set-count"
+    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index === 0 }))
   }
 ];
 

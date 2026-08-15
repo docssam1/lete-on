@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260815e";
-import { GENERATORS } from "./generators.js?v=20260815e";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260815f";
+import { GENERATORS } from "./generators.js?v=20260815f";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -305,6 +305,27 @@ function twoTypeUnitsMarkup(visual) {
   return `<div class="two-type-units">${visual.items.map((item, index) => `<div>${visual.variant === "bicycles" ? bicycle(index === 1) : animal(index === 1)}<strong>${item.label}</strong><span>${visual.variant === "bicycles" ? "바퀴" : "다리"} ${item.units}개</span></div>`).join("")}</div>`;
 }
 
+function rowColumnCountMarkup(visual) {
+  const cell = visual.size === 5 ? 42 : 48;
+  const offset = 50;
+  const gridSize = visual.size * cell;
+  const width = offset + gridSize + 8;
+  const height = offset + gridSize + 8;
+  const lines = Array.from({ length: visual.size + 1 }, (_, index) => {
+    const position = offset + index * cell;
+    return `<path d="M${offset} ${position}H${offset + gridSize}M${position} ${offset}V${offset + gridSize}"/>`;
+  }).join("");
+  const topLabels = visual.columnCounts.map((count, index) => {
+    const center = offset + index * cell + cell / 2;
+    return `<polygon points="${center},6 ${center - 19},${offset - 5} ${center + 19},${offset - 5}"/><text x="${center}" y="${offset - 14}">${count}</text>`;
+  }).join("");
+  const rowLabels = visual.rowCounts.map((count, index) => {
+    const center = offset + index * cell + cell / 2;
+    return `<polygon points="6,${center} ${offset - 5},${center - 19} ${offset - 5},${center + 19}"/><text x="${offset - 18}" y="${center + 6}">${count}</text>`;
+  }).join("");
+  return `<div class="row-column-count-work"><div class="row-column-rule"><span>△ 안의 수 = 그 줄의 별 수</span><span>가로와 세로를 모두 맞추기</span></div><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="가로와 세로 별 개수 조건이 있는 ${visual.size} 곱하기 ${visual.size} 빈칸"><g class="count-labels">${topLabels}${rowLabels}</g><g class="count-grid">${lines}</g></svg></div>`;
+}
+
 function closestCardSumMarkup(visual) {
   const blank = () => '<span class="digit-card-blank"></span>';
   return `<div class="closest-card-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="closest-card-equation"><span class="two-digit-blank">${blank()}${blank()}</span><b>+</b><span class="two-digit-blank">${blank()}${blank()}</span><b>=</b><span class="sum-blank"></span></div><small>${visual.target}에 가장 가까운 합</small></div>`;
@@ -422,6 +443,7 @@ function visualMarkup(visual) {
   if (visual.kind === "shape-matrix-rule") return `<div class="visual shape-matrix-visual">${shapeMatrixRuleMarkup(visual)}</div>`;
   if (visual.kind === "torn-calendar") return `<div class="visual torn-calendar-visual">${tornCalendarMarkup(visual)}</div>`;
   if (visual.kind === "two-type-units") return `<div class="visual two-type-units-visual">${twoTypeUnitsMarkup(visual)}</div>`;
+  if (visual.kind === "row-column-count-placement") return `<div class="visual row-column-count-visual">${rowColumnCountMarkup(visual)}</div>`;
   if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;
