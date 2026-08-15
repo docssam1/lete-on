@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ci";
-import { GENERATORS } from "./generators.js?v=20260816cc";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816cj";
+import { GENERATORS } from "./generators.js?v=20260816cd";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -652,13 +652,19 @@ function foldNumberCutSumMarkup(visual) {
     const point = (index + 1) * cell;
     return `<path d="M${point} 0V${paperSize}M0 ${point}H${paperSize}"/>`;
   }).join("");
+  const mainDiagonal = visual.foldDirection === "main";
   const shaded = visual.foldMask.map(([row, column]) => {
     const x = column * cell;
     const y = row * cell;
-    if (row + column === visual.size - 1) return `<path d="M${x} ${y}H${x + cell}L${x} ${y + cell}Z"/>`;
+    if (mainDiagonal && row === column) return `<path d="M${x} ${y}H${x + cell}V${y + cell}Z"/>`;
+    if (!mainDiagonal && row + column === visual.size - 1) return `<path d="M${x} ${y}H${x + cell}L${x} ${y + cell}Z"/>`;
     return `<rect x="${x}" y="${y}" width="${cell}" height="${cell}"/>`;
   }).join("");
-  const paper = `<svg class="fold-cut-paper" viewBox="-8 -24 ${paperSize + 16} ${paperSize + 34}" role="img" aria-label="대각선으로 접고 칠한 부분을 자르는 색종이"><text x="${paperSize / 2}" y="-8">한 번 접기</text><rect width="${paperSize}" height="${paperSize}"/><g class="fold-cut-grid">${gridLines}</g><path class="fold-line" d="M0 ${paperSize}L${paperSize} 0"/><g class="cut-shade">${shaded}</g><path class="fold-arrow" d="M${paperSize - 34} ${paperSize - 45}Q${paperSize - 60} ${paperSize - 78} ${paperSize - 93} ${paperSize - 88}"/><path class="fold-arrow-head" d="M${paperSize - 93} ${paperSize - 88}l12 -5l-4 12Z"/></svg>`;
+  const foldLine = mainDiagonal ? `M0 0L${paperSize} ${paperSize}` : `M0 ${paperSize}L${paperSize} 0`;
+  const foldArrow = mainDiagonal
+    ? `<path class="fold-arrow" d="M${paperSize - 30} 36Q${paperSize - 58} 58 ${paperSize - 82} 82"/><path class="fold-arrow-head" d="M${paperSize - 82} 82l12 -3l-4 12Z"/>`
+    : `<path class="fold-arrow" d="M${paperSize - 34} ${paperSize - 45}Q${paperSize - 60} ${paperSize - 78} ${paperSize - 93} ${paperSize - 88}"/><path class="fold-arrow-head" d="M${paperSize - 93} ${paperSize - 88}l12 -5l-4 12Z"/>`;
+  const paper = `<svg class="fold-cut-paper" viewBox="-8 -24 ${paperSize + 16} ${paperSize + 34}" role="img" aria-label="대각선으로 접고 칠한 부분을 자르는 색종이"><text x="${paperSize / 2}" y="-8">한 번 접기</text><rect width="${paperSize}" height="${paperSize}"/><g class="fold-cut-grid">${gridLines}</g><path class="fold-line" d="${foldLine}"/><g class="cut-shade">${shaded}</g>${foldArrow}</svg>`;
   const numberGrid = `<div class="fold-cut-number-grid" style="--fold-size:${visual.size}">${visual.grid.map((value) => `<span>${value}</span>`).join("")}</div>`;
   return `<div class="fold-number-cut-work">${paper}<b class="fold-process-arrow">→</b>${numberGrid}</div>`;
 }

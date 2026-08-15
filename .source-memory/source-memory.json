@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "12fe04af6c797245cfc26a6d17effbf1e76dc8a58bbc6b02952a84f24bb954a6",
-      "size": 73432,
-      "mtime_ns": 1786827641897128900
+      "sha256": "5af119723b4e0e3e19e465a7cd5f251524e97c647937d892a7329e500848d093",
+      "size": 74269,
+      "mtime_ns": 1786827954455336800
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "56bd08cb780a917e813b220f15c77327457b516163020935d46ec82f150551c0",
-      "size": 150262,
-      "mtime_ns": 1786827272465094100
+      "sha256": "eba929fba31cc2ea1975c94f062ad4e44785fc6fd46c68de7a8b2f7af6786bdc",
+      "size": 151768,
+      "mtime_ns": 1786827772885263600
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "2405d352d114d6cf488d8c94805474d2b91d6ea9867977ebbcca9d2de9e66c4d",
-      "size": 37699,
-      "mtime_ns": 1786827596665522300
+      "sha256": "1269532f2de6af21807feb6e2ad408cbdd7612f6dd6ad8bb39a2feee001d7fbf",
+      "size": 37926,
+      "mtime_ns": 1786827772888265000
     }
   ],
   "records": [
@@ -107,15 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 4 questions 15 and 16",
+      "title": "Next verification selection test 4 question 16",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q15",
         "q16"
       ],
-      "summary": "Verify and correct the reversed source order on page 10: question 15 is folded-number cut sum with official answer 35; question 16 is square-tile growth at the eighth stage with official answer 64.",
+      "summary": "Verify the square-array source question with stages 1, 4, 9, and 16 and the eighth-stage answer 64; keep questions 17 through 20 locked until their exact pages are checked.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -124,7 +123,7 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Questions 15 and 16 remain disabled until exact source order and rendering are verified"
+          "note": "Question 16 remains disabled until the source structure, answer, generator, and browser rendering are verified"
         }
       ]
     },
@@ -2636,6 +2635,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-08 verified questions 1 through 14",
           "note": "Question 14 enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q15",
+      "title": "Selection test 4 question 15 main-diagonal folded number-paper cut sum",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q15",
+        "fold-number-cut-sum-main-diagonal"
+      ],
+      "summary": "The source folds a 4 by 4 numbered paper along the diagonal from top-left to bottom-right; the cut reaches values 3, 8, 6, 7, 5, 1, and 5, whose sum is 35.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 15 paragraph",
+          "note": "Exact source grid, fold direction, cut cells, answer 35, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function foldNumberCutSumMainDiagonal",
+          "note": "Main-diagonal reflection and cut-cell sum generation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES fold-number-cut-sum-main-diagonal and EXAMS k7-2022-08 verified 1 through 15",
+          "note": "Question 15 enabled after source match"
         }
       ]
     }

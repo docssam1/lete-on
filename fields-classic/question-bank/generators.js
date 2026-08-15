@@ -2536,6 +2536,33 @@ function foldNumberCutSum({ difficulty = 2 }) {
   };
 }
 
+function foldNumberCutSumMainDiagonal({ difficulty = 2 }) {
+  const size = 4;
+  const foldMask = difficulty === 1
+    ? [[0, 1], [1, 1]]
+    : difficulty === 2
+      ? [[0, 1], [1, 1], [1, 2], [1, 3]]
+      : [[0, 1], [0, 2], [1, 1], [1, 2], [1, 3]];
+  const grid = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8]);
+  const cutCellMap = new Map();
+  foldMask.forEach(([row, column]) => {
+    const reflected = [column, row];
+    [[row, column], reflected].forEach(([cutRow, cutColumn]) => {
+      cutCellMap.set(`${cutRow}-${cutColumn}`, [cutRow, cutColumn]);
+    });
+  });
+  const cutCells = [...cutCellMap.values()].sort(([rowA, columnA], [rowB, columnB]) => rowA - rowB || columnA - columnB);
+  const cutValues = cutCells.map(([row, column]) => grid[row * size + column]);
+  const answer = cutValues.reduce((sum, value) => sum + value, 0);
+  return {
+    prompt: "색종이를 한 번 접은 후 칠해진 부분을 잘라내었습니다. 잘려 나간 부분에 있는 수들의 합을 구하세요.",
+    visual: { kind: "fold-number-cut-sum", size, foldMask, grid, cutCells, foldDirection: "main" },
+    answer: String(answer),
+    solution: `왼쪽 위에서 오른쪽 아래로 그어진 접은 선의 양쪽에서 서로 겹치는 칸을 함께 찾습니다. 잘리는 칸의 수를 식으로 쓰면 ${cutValues.join(" + ")} = ${answer}입니다.`,
+    meta: { difficulty, size, foldMask, grid, cutCells, cutValues, foldDirection: "main", answer }
+  };
+}
+
 function foldNumberCutSumLShape({ difficulty = 2 }) {
   const size = 4;
   const foldMask = difficulty === 1
@@ -2727,6 +2754,7 @@ export const GENERATORS = {
   sourceBusStops,
   busBoardThenLeave,
   foldNumberCutSum,
+  foldNumberCutSumMainDiagonal,
   foldNumberCutSumLShape,
   equalLineSumEightCards,
   equalLineSumEightCardsFifteenTopLeft,
