@@ -18,6 +18,22 @@ function shuffle(list) {
   return result;
 }
 
+function numberHasBatchim(value) {
+  return [0, 1, 3, 6, 7, 8].includes(Math.abs(value) % 10);
+}
+
+function numberObject(value) {
+  return `${value}${numberHasBatchim(value) ? "을" : "를"}`;
+}
+
+function numberSubject(value) {
+  return `${value}${numberHasBatchim(value) ? "이" : "가"}`;
+}
+
+function numberQuote(value) {
+  return `${value}${numberHasBatchim(value) ? "이라고" : "라고"}`;
+}
+
 function hiddenCardCondition({ difficulty = 2 }) {
   const universe = Array.from({ length: 10 }, (_, index) => index);
   const hidden = sample(universe);
@@ -132,6 +148,58 @@ function frontBackTotal({ difficulty = 2 }) {
     answer: `${total}명`,
     solution: `앞에서 셀 때와 뒤에서 셀 때 ${names[0]}가 두 번 들어갑니다. ${front} + ${back} - 1 = ${total}이므로 모두 ${total}명입니다.`,
     meta: { mode: "positions", front, back, total }
+  };
+}
+
+function wrongOperationCorrection({ difficulty = 2 }) {
+  if (difficulty === 1) {
+    const intended = sample(["add", "subtract"]);
+    const change = randomInt(3, 9);
+    const start = intended === "add" ? randomInt(15, 45) : randomInt(change + 10, 50);
+    const wrongResult = intended === "add" ? start - change : start + change;
+    const correct = intended === "add" ? start + change : start - change;
+    const correctText = intended === "add"
+      ? `${start}에 ${numberObject(change)} 더해야 하는데`
+      : `${start}에서 ${numberObject(change)} 빼야 하는데`;
+    const wrongText = intended === "add"
+      ? `${start}에서 ${numberObject(change)} 빼어`
+      : `${start}에 ${numberObject(change)} 더하여`;
+    const correctSymbol = intended === "add" ? "+" : "-";
+
+    return {
+      prompt: `${correctText} 잘못하여 ${wrongText} ${numberQuote(wrongResult)} 계산했습니다. 바르게 계산한 값은 얼마인가요?`,
+      answer: String(correct),
+      solution: `${start} ${correctSymbol} ${change} = ${correct}이므로 바르게 계산한 값은 ${correct}입니다.`,
+      meta: { mode: "known-start", intended, start, change, wrongResult, correct }
+    };
+  }
+
+  if (difficulty === 3) {
+    const added = randomInt(8, 17);
+    const subtracted = randomInt(2, 9);
+    const startMax = Math.min(70, 99 - added + subtracted);
+    const start = randomInt(added + subtracted + 10, startMax);
+    const wrongResult = start - added - subtracted;
+    const correct = start + added - subtracted;
+
+    return {
+      prompt: `어떤 수에 ${numberObject(added)} 더한 다음 ${numberObject(subtracted)} 빼야 합니다. 그런데 ${numberObject(added)} 잘못하여 빼고, 이어서 ${numberObject(subtracted)} 뺐더니 ${numberSubject(wrongResult)} 되었습니다. 바르게 계산한 값은 얼마인가요?`,
+      answer: String(correct),
+      solution: `${wrongResult}에 ${numberObject(subtracted)} 더하고 ${numberObject(added)} 더하면 처음 수는 ${start}입니다. 바르게 계산하면 ${start} + ${added} - ${subtracted} = ${correct}입니다.`,
+      meta: { mode: "unknown-two-step", start, added, subtracted, wrongResult, correct }
+    };
+  }
+
+  const change = randomInt(7, 18);
+  const start = randomInt(change + 12, 60);
+  const wrongResult = start - change;
+  const correct = start + change;
+
+  return {
+    prompt: `어떤 수에 ${numberObject(change)} 더해야 하는데 잘못하여 ${numberObject(change)} 뺐더니 ${numberSubject(wrongResult)} 되었습니다. 바르게 계산한 값은 얼마인가요?`,
+    answer: String(correct),
+    solution: `${wrongResult} + ${change} = ${start}이므로 처음 수는 ${start}입니다. 바르게 계산하면 ${start} + ${change} = ${correct}입니다.`,
+    meta: { mode: "unknown-one-step", intended: "add", start, change, wrongResult, correct }
   };
 }
 
@@ -581,6 +649,7 @@ export const GENERATORS = {
   hiddenCardCondition,
   closestTwoDigitCardSum,
   frontBackTotal,
+  wrongOperationCorrection,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
