@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ct";
-import { GENERATORS } from "./generators.js?v=20260816cj";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816cu";
+import { GENERATORS } from "./generators.js?v=20260816ck";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -606,6 +606,30 @@ function arrowNumberGridMarkup(visual) {
   return `<div class="arrow-number-rule"><svg class="arrow-legend-svg" viewBox="0 0 250 120" role="img" aria-label="화살표 규칙 보기"><defs><marker id="legend-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z"/></marker></defs><rect x="4" y="4" width="242" height="112" rx="16"/><text x="125" y="27">[보기]</text><rect x="102" y="42" width="46" height="34"/><rect x="28" y="75" width="46" height="34"/><rect x="102" y="75" width="46" height="34"/><rect x="176" y="75" width="46" height="34"/><text x="125" y="64">5</text><text x="51" y="97">14</text><text x="125" y="97">15</text><text x="199" y="97">16</text><path d="M125 75V67M102 92H76M148 92H174M125 75V79"/></svg><svg class="arrow-grid-svg" viewBox="0 0 270 210" role="img" aria-label="화살표 수 규칙 문제"><defs><marker id="${marker}" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z"/></marker></defs><g class="arrow-steps">${steps}</g><rect x="12" y="148" width="40" height="40"/><circle cx="82" cy="172" r="18"/><circle cx="126" cy="172" r="18"/><circle cx="126" cy="122" r="18"/><circle cx="184" cy="122" r="18"/><circle cx="184" cy="72" r="18"/><circle cx="132" cy="72" r="18"/><circle cx="80" cy="72" r="18"/><rect x="60" y="2" width="40" height="40"/><text x="32" y="174">${visual.start}</text><text x="80" y="28">㉠</text></svg></div>`;
 }
 
+function arrowNumberHorizontalTensMarkup(visual) {
+  const marker = `arrow-tens-${visual.start}-${visual.directions.join("")}`;
+  const minX = Math.min(...visual.points.map((point) => point.x));
+  const maxX = Math.max(...visual.points.map((point) => point.x));
+  const minY = Math.min(...visual.points.map((point) => point.y));
+  const maxY = Math.max(...visual.points.map((point) => point.y));
+  const placed = visual.points.map((point) => ({ x: (point.x - minX) * 62 + 34, y: (point.y - minY) * 62 + 34 }));
+  const width = (maxX - minX) * 62 + 68;
+  const height = (maxY - minY) * 62 + 68;
+  const arrows = placed.slice(0, -1).map((point, index) => {
+    const next = placed[index + 1];
+    const ux = Math.sign(next.x - point.x);
+    const uy = Math.sign(next.y - point.y);
+    return `<line x1="${point.x + ux * 24}" y1="${point.y + uy * 24}" x2="${next.x - ux * 25}" y2="${next.y - uy * 25}" marker-end="url(#${marker})"/>`;
+  }).join("");
+  const nodes = placed.map((point, index) => {
+    if (index === 0) return `<rect x="${point.x - 22}" y="${point.y - 22}" width="44" height="44"/><text x="${point.x}" y="${point.y + 6}">${visual.start}</text>`;
+    if (index === placed.length - 1) return `<rect class="target" x="${point.x - 22}" y="${point.y - 22}" width="44" height="44"/><text x="${point.x}" y="${point.y + 6}">㉠</text>`;
+    return `<circle cx="${point.x}" cy="${point.y}" r="21"/>`;
+  }).join("");
+  const legend = visual.legend;
+  return `<div class="arrow-number-rule"><svg class="arrow-legend-svg" viewBox="0 0 230 178" role="img" aria-label="가로는 10, 세로는 1이 변하는 화살표 규칙 보기"><defs><marker id="${marker}-legend" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z"/></marker></defs><text x="115" y="16">[보기]</text><rect x="92" y="72" width="46" height="34"/><rect x="20" y="72" width="46" height="34"/><rect x="164" y="72" width="46" height="34"/><rect x="92" y="24" width="46" height="34"/><rect x="92" y="120" width="46" height="34"/><text x="115" y="94">${legend.center}</text><text x="43" y="94">${legend.left}</text><text x="187" y="94">${legend.right}</text><text x="115" y="46">${legend.up}</text><text x="115" y="142">${legend.down}</text><path style="marker-end:url(#${marker}-legend)" d="M92 89H69M138 89H161M115 72V61M115 106V117"/></svg><svg class="arrow-grid-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="화살표를 따라 수를 찾는 문제"><defs><marker id="${marker}" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z"/></marker></defs><g class="arrow-steps">${arrows}</g><g>${nodes}</g></svg></div>`;
+}
+
 function arrowNumberPathSevenMarkup(visual) {
   const minX = Math.min(...visual.points.map((point) => point.x));
   const maxX = Math.max(...visual.points.map((point) => point.x));
@@ -947,6 +971,7 @@ function visualMarkup(visual) {
   if (visual.kind === "repeat-shape-sequence") return `<div class="visual repeat-sequence-visual">${repeatShapeSequenceMarkup(visual)}</div>`;
   if (visual.kind === "three-shape-cycle") return `<div class="visual three-shape-cycle-visual">${threeShapeCycleMarkup(visual)}</div>`;
   if (visual.kind === "arrow-number-grid") return `<div class="visual arrow-grid-visual">${arrowNumberGridMarkup(visual)}</div>`;
+  if (visual.kind === "arrow-number-horizontal-tens") return `<div class="visual arrow-grid-visual">${arrowNumberHorizontalTensMarkup(visual)}</div>`;
   if (visual.kind === "arrow-number-path-seven") return `<div class="visual arrow-path-seven-visual">${arrowNumberPathSevenMarkup(visual)}</div>`;
   if (visual.kind === "bus-stops") return `<div class="visual bus-stops-visual">${busStopsMarkup(visual)}</div>`;
   if (visual.kind === "fold-number-cut-sum") return `<div class="visual fold-number-cut-visual">${foldNumberCutSumMarkup(visual)}</div>`;

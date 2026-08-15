@@ -1830,6 +1830,60 @@ function arrowNumberGrid({ difficulty = 2 }) {
   };
 }
 
+function arrowNumberHorizontalTens({ difficulty = 2 }) {
+  const templates = difficulty === 1
+    ? [
+      ["right", "right", "down", "left", "down"],
+      ["down", "down", "right", "up", "right"],
+      ["right", "down", "right", "up", "right"]
+    ]
+    : difficulty === 2
+      ? [
+        ["right", "right", "down", "left", "down", "right", "right", "up"],
+        ["down", "down", "right", "up", "right", "down", "down", "left"],
+        ["right", "down", "right", "up", "right", "down", "down", "left"]
+      ]
+      : [
+        ["right", "right", "down", "left", "down", "left", "down", "right", "right", "up"],
+        ["down", "down", "right", "up", "right", "up", "right", "down", "down", "left"],
+        ["right", "down", "right", "up", "right", "down", "right", "down", "left", "left"]
+      ];
+  const directions = sample(templates);
+  const vector = { left: [-1, 0], right: [1, 0], up: [0, -1], down: [0, 1] };
+  const delta = { left: -10, right: 10, up: 1, down: -1 };
+  const points = [{ x: 0, y: 0 }];
+  const offsets = [0];
+  directions.forEach((direction) => {
+    const previous = points.at(-1);
+    const [x, y] = vector[direction];
+    points.push({ x: previous.x + x, y: previous.y + y });
+    offsets.push(offsets.at(-1) + delta[direction]);
+  });
+  const lower = difficulty === 1 ? 20 : difficulty === 2 ? 40 : 50;
+  const upper = difficulty === 1 ? 59 : difficulty === 2 ? 69 : 75;
+  const startMin = Math.max(lower, 1 - Math.min(...offsets));
+  const startMax = Math.min(upper, 99 - Math.max(...offsets));
+  const start = randomInt(startMin, startMax);
+  const values = offsets.map((offset) => start + offset);
+  const answer = values.at(-1);
+  const legendCenter = randomInt(12, 48);
+  const legend = {
+    center: legendCenter,
+    left: legendCenter - 10,
+    right: legendCenter + 10,
+    up: legendCenter + 1,
+    down: legendCenter - 1
+  };
+  const directionNames = { left: "왼쪽", right: "오른쪽", up: "위쪽", down: "아래쪽" };
+  return {
+    prompt: "[보기]의 화살표가 나타내는 규칙을 찾아 오른쪽 그림의 ㉠에 알맞은 수를 써 넣으세요.",
+    visual: { kind: "arrow-number-horizontal-tens", start, directions, points, legend },
+    answer: String(answer),
+    solution: `오른쪽은 10 커지고 왼쪽은 10 작아지며, 위쪽은 1 커지고 아래쪽은 1 작아집니다. ${start}에서 ${directions.map((direction) => directionNames[direction]).join(" → ")} 순서로 가면 ${values.join(" → ")}이므로 ㉠은 ${answer}입니다.`,
+    meta: { difficulty, start, directions, points, offsets, values, answer, legend }
+  };
+}
+
 function arrowNumberPathSeven({ difficulty = 2 }) {
   const delta = { left: -1, right: 1, up: -10, down: 10 };
   const vector = { left: [-1, 0], right: [1, 0], up: [0, -1], down: [0, 1] };
@@ -2887,6 +2941,7 @@ export const GENERATORS = {
   fourShapeCycle,
   fourItemCycleWithDuplicate,
   arrowNumberGrid,
+  arrowNumberHorizontalTens,
   arrowNumberPathSeven,
   numberCardEquation,
   busPassengers,

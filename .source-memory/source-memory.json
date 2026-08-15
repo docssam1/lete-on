@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "afccf9e4b97f5be81286e92d4cae86252d5286f2d04ac619e89c3dbaed9e994b",
-      "size": 82640,
-      "mtime_ns": 1786830093834279400
+      "sha256": "b1784631d192bf5ea8725adfe499f197acb7901b2ff743d7ee21ac936546b3b0",
+      "size": 83646,
+      "mtime_ns": 1786830517343519300
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "c2dcbd76fb78d75d5a0eb0c806dcea9e35dae798102e80aa987a90fb5048cb59",
-      "size": 161412,
-      "mtime_ns": 1786829957034202700
+      "sha256": "cbb6516799edc97034973d840c85f60e40bce97c39d18da854cea55304081b5e",
+      "size": 164058,
+      "mtime_ns": 1786830406730471300
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "f8cd7f8d07b42927c8ef4eb7ed0cf988d443a5b273ac91c14927eea7806d0058",
-      "size": 38605,
-      "mtime_ns": 1786829957036204400
+      "sha256": "e7e48e3ec97a6c5bbcc0edba928db78536f7d12007510586d6d04078e67549b8",
+      "size": 38790,
+      "mtime_ns": 1786830435502449600
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 5",
+      "title": "Next verification selection test 6 question 6",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-12",
-        "q5"
+        "q6"
       ],
-      "summary": "Compare selection test 6 question 5 arrow-number grid against the rendered source page and official answer before reusing or separating the current generator.",
+      "summary": "Compare the seven-person front/back order problem and official answer before implementing or reusing a generator.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,7 +123,7 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 5 remains disabled until the exact arrow path, displayed numbers, target, official answer, difficulty structure, and browser rendering are verified"
+          "note": "Question 6 remains disabled until the exact two clues, direction, unique position, official answer, difficulty structure, and browser rendering are verified"
         }
       ]
     },
@@ -2974,6 +2974,40 @@
           "source_id": "source-data",
           "role": "code",
           "locator": "k7-2022-12 question 4",
+          "note": "검증된 전용 유형 연결"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q5",
+      "title": "Selection test 6 question 5 horizontal-tens arrow path",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q5",
+        "arrow-number-horizontal-tens"
+      ],
+      "summary": "The original arrow legend changes by 10 horizontally and 1 vertically. Starting at 57 along the eight-arrow path gives 86; a separate path generator is verified.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7세 6차 5번 검증 기록",
+          "note": "원본 보기, 여덟 화살표, 공식 답 86을 문제지·답안지로 대조"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "arrowNumberHorizontalTens",
+          "note": "난이도별 5·8·10회 이동과 각 단계 경로 3종"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "k7-2022-12 question 5",
           "note": "검증된 전용 유형 연결"
         }
       ]
