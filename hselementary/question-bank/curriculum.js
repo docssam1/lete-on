@@ -73,9 +73,7 @@
   window.HSE_CURRICULUM = {
     version: "2026-08-16",
     levels: [
-      { id: "ilpum", label: "일품(심화)", rank: 0 },
-      { id: "skill", label: "실력", rank: 1 },
-      { id: "competition", label: "경시", rank: 2 }
+      { id: "simwha", label: "심화 기준", rank: 1 }
     ],
     semesters
   };

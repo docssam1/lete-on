@@ -11,6 +11,27 @@
     d /= divisor;
     return d === 1 ? String(n) : `${n}/${d}`;
   };
+  const permutationNumbers = (digits) => {
+    const values = new Set();
+    const used = Array(digits.length).fill(false);
+    const current = [];
+    const visit = () => {
+      if (current.length === digits.length) {
+        values.add(Number(current.join("")));
+        return;
+      }
+      for (let index = 0; index < digits.length; index += 1) {
+        if (used[index] || (current.length === 0 && digits[index] === 0)) continue;
+        used[index] = true;
+        current.push(digits[index]);
+        visit();
+        current.pop();
+        used[index] = false;
+      }
+    };
+    visit();
+    return [...values].sort((a, b) => a - b);
+  };
   const result = (prompt, answer, solution) => ({ prompt, answer: String(answer), solution });
 
   function range(level) {
@@ -23,7 +44,7 @@
 
   const generators = {
     largeNumberPlaceValue({ rng, level, variant = 0 }) {
-      const digitCount = 9 + level;
+      const digitCount = 11 + level;
       const makeDigits = () => Array.from({ length: digitCount }, (_, index) => index === 0 ? int(rng, 1, 9) : int(rng, 0, 9));
 
       if (variant % 3 === 0) {
@@ -63,6 +84,183 @@
       const dividedDigitValue = baseDigit * 10 ** (highPlace - 2);
       const answer = multipliedDigitValue / dividedDigitValue;
       return result(`${value.toLocaleString()}을 1000배 한 수에서 숫자 ${lowDigit}가 나타내는 값은, ${value.toLocaleString()}을 100분의 1로 한 수에서 숫자 ${baseDigit}가 나타내는 값의 몇 배인지 구하세요.`, answer, `1000배 한 수에서 숫자 ${lowDigit}의 값은 ${multipliedDigitValue.toLocaleString()}, 100분의 1로 한 수에서 숫자 ${baseDigit}의 값은 ${dividedDigitValue.toLocaleString()}이므로 ${multipliedDigitValue.toLocaleString()} ÷ ${dividedDigitValue.toLocaleString()} = ${answer}배입니다.`);
+    },
+    largeNumberCompare({ rng, level, variant = 0 }) {
+      const blankNumber = (prefix, suffix, place) => {
+        const raw = `${prefix}□${String(suffix).padStart(Math.log10(place), "0")}`;
+        const grouped = [...raw].map((character, index) => index > 0 && (raw.length - index) % 3 === 0 ? `,${character}` : character).join("");
+        return grouped.replace("□", '<span class="blank-digit">□</span>');
+      };
+      const makeNumber = (prefix, digit, suffix, place) => prefix * place * 10 + digit * place + suffix;
+      const place = 10 ** (5 + level);
+
+      if (variant % 3 === 0) {
+        const lower = int(rng, 1, 5);
+        const upper = int(rng, lower + 2, 9);
+        const firstPrefix = int(rng, 21, 78);
+        const secondPrefix = int(rng, 21, 78);
+        const firstLeft = blankNumber(firstPrefix, place - 1, place);
+        const firstRight = makeNumber(firstPrefix, upper, 0, place).toLocaleString();
+        const secondLeft = makeNumber(secondPrefix, lower, place - 1, place).toLocaleString();
+        const secondRight = blankNumber(secondPrefix, 0, place);
+        const candidates = Array.from({ length: upper - lower - 1 }, (_, index) => lower + index + 1);
+        const answer = candidates.reduce((sum, value) => sum + value, 0);
+        return result(`두 부등식의 □에는 같은 숫자가 들어갑니다. □에 공통으로 들어갈 수 있는 모든 숫자의 합을 구하세요.<div class="equation comparison">${firstLeft} &lt; ${firstRight}<br>${secondLeft} &lt; ${secondRight}</div>`, answer, `첫째 식에서 □는 ${upper}보다 작고, 둘째 식에서 ${lower}보다 커야 합니다. 가능한 숫자는 ${candidates.join(", ")}이므로 합은 ${answer}입니다.`);
+      }
+
+      if (variant % 3 === 1) {
+        const scale = 10 ** (5 + level);
+        const base = int(rng, 210, 780) * scale;
+        const increment = int(rng, 12, 89) * scale / 100;
+        const multipleBase = int(rng, 2100, 7800) * scale / 1000;
+        const placeA = int(rng, 2, 8) * 10 ** (7 + level);
+        const placeB = int(rng, 2, 9) * 10 ** (4 + level);
+        const placeC = int(rng, 2, 9) * 10 ** (1 + level);
+        const plainValue = base + int(rng, -50, 50) * scale / 10;
+        const choices = [
+          { label: "가", text: `${base.toLocaleString()}보다 ${increment.toLocaleString()} 큰 수`, value: base + increment },
+          { label: "나", text: `${multipleBase.toLocaleString()}의 100배인 수`, value: multipleBase * 100 },
+          { label: "다", text: `${(10 ** (7 + level)).toLocaleString()}이 ${placeA / 10 ** (7 + level)}개, ${(10 ** (4 + level)).toLocaleString()}이 ${placeB / 10 ** (4 + level)}개, ${(10 ** (1 + level)).toLocaleString()}이 ${placeC / 10 ** (1 + level)}개인 수`, value: placeA + placeB + placeC },
+          { label: "라", text: plainValue.toLocaleString(), value: plainValue }
+        ];
+        const smallest = [...choices].sort((a, b) => a.value - b.value)[0];
+        return result(`다음 네 수 중 가장 작은 수를 구하세요.<ol class="choice-list">${choices.map(choice => `<li><b>${choice.label}</b> ${choice.text}</li>`).join("")}</ol>`, smallest.value, `각 수를 숫자로 나타내어 비교하면 가장 작은 것은 ${smallest.label}, ${smallest.value.toLocaleString()}입니다.`);
+      }
+
+      const upper = int(rng, 3, 9);
+      const prefix = int(rng, 31, 87);
+      const left = blankNumber(prefix, place - 1, place);
+      const right = makeNumber(prefix, upper, 0, place);
+      const answer = upper - 1;
+      return result(`부등식이 성립하도록 □에 넣을 수 있는 가장 큰 숫자를 구하세요.<div class="equation comparison">${left} &lt; ${right.toLocaleString()}</div>`, answer, `□가 ${upper}이면 뒤의 자릿수 때문에 부등식이 성립하지 않습니다. 따라서 ${upper}보다 작은 가장 큰 숫자인 ${answer}입니다.`);
+    },
+    largeNumberSkipPattern({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const step = pick(rng, [[100, 500, 1000], [500, 1000, 5000], [1000, 5000, 10000]][level]);
+        const targetIndex = int(rng, [80, 300, 700][level], [240, 900, 1800][level]);
+        const start = int(rng, 120, 890) * step;
+        const answer = start + step * (targetIndex - 1);
+        return result(`${start.toLocaleString()}부터 ${step.toLocaleString()}씩 뛰어 셀 때 ${targetIndex.toLocaleString()}번째 오는 수를 구하세요.`, answer, `첫 수 뒤로 ${targetIndex - 1}번 뛰므로 ${start.toLocaleString()} + ${step.toLocaleString()} × ${(targetIndex - 1).toLocaleString()} = ${answer.toLocaleString()}입니다.`);
+      }
+
+      if (variant % 3 === 1) {
+        const step = pick(rng, [10000, 50000, 100000, 500000]);
+        const start = int(rng, 100, 900) * step;
+        const positions = [start, start + step, start + step * 2, start + step * 3, start + step * 4];
+        return result(`수직선의 눈금 간격은 모두 같습니다. ㉠과 ㉡의 합을 구하세요.<div class="number-line"><span>${positions[0].toLocaleString()}</span><i></i><b>㉠</b><i></i><span>${positions[2].toLocaleString()}</span><i></i><b>㉡</b><i></i><span>${positions[4].toLocaleString()}</span></div>`, positions[1] + positions[3], `한 눈금은 ${step.toLocaleString()}입니다. ㉠은 ${positions[1].toLocaleString()}, ㉡은 ${positions[3].toLocaleString()}이므로 합은 ${(positions[1] + positions[3]).toLocaleString()}입니다.`);
+      }
+
+      const correctStep = pick(rng, [200, 1000, 2000, 10000].slice(level, level + 2));
+      const wrongStep = correctStep / 2;
+      const correctCount = int(rng, 30 + level * 30, 90 + level * 60) * 2;
+      const start = int(rng, 120, 890) * correctStep;
+      const target = start + correctStep * correctCount;
+      const mistaken = start + wrongStep * correctCount;
+      const answer = (target - mistaken) / correctStep;
+      return result(`${start.toLocaleString()}부터 ${correctStep.toLocaleString()}씩 ${correctCount}번 뛰어 세어야 하는 것을 잘못하여 ${wrongStep.toLocaleString()}씩 ${correctCount}번 뛰어 세었습니다. 목표 수까지 ${correctStep.toLocaleString()}씩 몇 번 더 뛰어 세어야 하는지 구하세요.`, answer, `목표 수는 ${target.toLocaleString()}, 잘못 센 마지막 수는 ${mistaken.toLocaleString()}입니다. 두 수의 차를 ${correctStep.toLocaleString()}으로 나누면 ${answer}번입니다.`);
+    },
+    largeNumberApplication({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const lowUnit = pick(rng, [10000, 50000, 100000]);
+        const ratio = pick(rng, [10, 20, 100]);
+        const highUnit = lowUnit * ratio;
+        const highCount = int(rng, 12, 45 + level * 20);
+        const lowCount = int(rng, 1, ratio - 1);
+        const amount = highUnit * highCount + lowUnit * lowCount;
+        const answer = highCount + lowCount;
+        return result(`은행에서 ${amount.toLocaleString()}원을 ${highUnit.toLocaleString()}원권과 ${lowUnit.toLocaleString()}원권 수표로 바꾸려고 합니다. 수표의 수가 가장 적도록 바꿀 때 수표는 모두 몇 장인지 구하세요.`, answer, `${highUnit.toLocaleString()}원권 ${highCount}장과 ${lowUnit.toLocaleString()}원권 ${lowCount}장으로 바꾸면 가장 적습니다. 따라서 ${highCount} + ${lowCount} = ${answer}장입니다.`);
+      }
+
+      if (variant % 3 === 1) {
+        const end = int(rng, [120, 260, 420][level], [240, 480, 780][level]);
+        const written = Array.from({ length: end }, (_, index) => String(index + 1)).join("");
+        const digitCount = written.length;
+        const answer = written.slice(-3);
+        return result(`1부터 자연수를 차례로 이어 써서 모두 ${digitCount.toLocaleString()}자리인 수를 만들었습니다. 이 수의 마지막 세 자리 수를 구하세요.`, answer, `1부터 차례로 쓴 숫자의 자리 수를 구간별로 계산하면 마지막에 쓴 자연수는 ${end}입니다. 따라서 마지막 세 자리 수는 ${answer}입니다.`);
+      }
+
+      const groupCoins = 100;
+      const groupHeight = pick(rng, [12, 15, 18]);
+      const groupCount = int(rng, 12 + level * 10, 50 + level * 35) * 100000;
+      const coinCount = groupCoins * groupCount;
+      const totalCentimeters = groupHeight * groupCount;
+      const answer = decimal(totalCentimeters / 100000, 2);
+      return result(`같은 동전 ${groupCoins}개를 쌓은 높이는 ${groupHeight} cm입니다. 이 동전 ${coinCount.toLocaleString()}개를 한 줄로 쌓은 높이는 몇 km인지 구하세요.`, answer, `${coinCount.toLocaleString()}개는 ${groupCoins}개씩 ${groupCount.toLocaleString()}묶음입니다. 높이는 ${groupHeight} × ${groupCount.toLocaleString()} = ${totalCentimeters.toLocaleString()} cm이고, 100,000 cm가 1 km이므로 ${answer} km입니다.`);
+    },
+    conditionedNumber({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const digitCount = 7 + level;
+        const firstLow = int(rng, 1, 4);
+        const firstHigh = firstLow + int(rng, 2, Math.min(4, 9 - firstLow));
+        const low = firstLow * 10 ** (digitCount - 1);
+        const high = firstHigh * 10 ** (digitCount - 1);
+        const digitSum = int(rng, 7, 14);
+        const pairs = [];
+        for (let ones = 0; ones <= 9; ones += 2) {
+          const tens = digitSum - ones;
+          if (tens >= 0 && tens <= 9) pairs.push([tens, ones]);
+        }
+        const firstDigitCount = firstHigh - firstLow;
+        const freeDigitCount = digitCount - 3;
+        const answer = firstDigitCount * pairs.length * 10 ** freeDigitCount;
+        return result(`${low.toLocaleString()}보다 크고 ${high.toLocaleString()}보다 작은 ${digitCount}자리 자연수 중에서 십의 자리와 일의 자리 숫자의 합이 ${digitSum}이고 일의 자리 숫자가 짝수인 수는 모두 몇 개인지 구하세요.`, answer, `맨 앞자리 숫자는 ${Array.from({ length: firstDigitCount }, (_, index) => firstLow + index).join(", ")} 중 하나입니다. 끝 두 자리 조건은 ${pairs.length}가지이고, 가운데 ${freeDigitCount}자리는 각각 0부터 9까지 가능합니다. 따라서 ${firstDigitCount} × ${pairs.length} × ${10 ** freeDigitCount} = ${answer.toLocaleString()}개입니다.`);
+      }
+
+      if (variant % 3 === 1) {
+        const highDigit = int(rng, 5, 9);
+        const lowDigit = int(rng, 0, highDigit - 2);
+        const digitSum = highDigit + lowDigit;
+        const difference = (highDigit - lowDigit) * 9 * 1000000;
+        const answer = highDigit * 10 + lowDigit;
+        return result(`어떤 여덟 자리 수의 천만의 자리 숫자와 백만의 자리 숫자의 합은 ${digitSum}입니다. 두 자리 숫자를 서로 바꾸었더니 처음 수보다 ${difference.toLocaleString()}만큼 작아졌습니다. 처음 수의 천만의 자리와 백만의 자리 숫자를 차례로 이어 쓴 두 자리 수를 구하세요.`, answer, `두 자리를 바꿀 때 생기는 차는 두 숫자의 차 × 9,000,000입니다. 두 숫자의 차는 ${difference.toLocaleString()} ÷ 9,000,000 = ${highDigit - lowDigit}이고 합은 ${digitSum}이므로 두 숫자는 ${highDigit}, ${lowDigit}입니다. 답은 ${answer}입니다.`);
+      }
+
+      const digitCount = 7 + level;
+      const ones = int(rng, 0, 6);
+      let pairSum = int(rng, 9, 15);
+      let leadingPair = null;
+      while (!leadingPair) {
+        for (let first = 9; first >= 1; first -= 1) {
+          const second = pairSum - first;
+          if (second >= 0 && second <= 9 && second !== first && first !== ones && second !== ones) {
+            leadingPair = [first, second];
+            break;
+          }
+        }
+        if (!leadingPair) pairSum = int(rng, 9, 15);
+      }
+      const available = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0].filter(value => !leadingPair.includes(value) && value !== ones);
+      const middle = available.slice(0, digitCount - 3);
+      const answer = Number([...leadingPair, ...middle, ones].join(""));
+      return result(`다음 조건을 모두 만족하는 가장 큰 ${digitCount}자리 자연수를 구하세요.<ul class="condition-list"><li>각 자리 숫자는 모두 다릅니다.</li><li>가장 높은 두 자리 숫자의 합은 ${pairSum}입니다.</li><li>일의 자리 숫자는 ${ones}입니다.</li></ul>`, answer, `가장 높은 자리부터 큰 숫자를 놓되 모든 자리의 숫자가 다르게 되도록 확인하면 ${answer.toLocaleString()}입니다.`);
+    },
+    digitCardNumber({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const cardCount = 7 + Math.min(level, 1);
+        const cards = shuffle(rng, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, cardCount);
+        const numbers = permutationNumbers(cards);
+        const target = int(rng, 2 * 10 ** (cardCount - 1), 8 * 10 ** (cardCount - 1));
+        const answer = numbers.reduce((best, value) => Math.abs(value - target) < Math.abs(best - target) || (Math.abs(value - target) === Math.abs(best - target) && value < best) ? value : best, numbers[0]);
+        return result(`수 카드 ${cards.map(value => `<span class="digit-card">${value}</span>`).join("")}를 한 번씩 모두 사용해 만들 수 있는 자연수 중 ${target.toLocaleString()}에 가장 가까운 수를 구하세요.`, answer, `만들 수 있는 수를 큰 자리부터 비교하면 ${target.toLocaleString()}과의 차가 가장 작은 수는 ${answer.toLocaleString()}입니다.`);
+      }
+
+      if (variant % 3 === 1) {
+        const baseCards = shuffle(rng, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4);
+        const cards = [baseCards[0], baseCards[1], baseCards[1], baseCards[2], baseCards[3], baseCards[3]];
+        const numbers = permutationNumbers(cards).sort((a, b) => b - a);
+        const rank = int(rng, 3, Math.min(12 + level * 3, numbers.length));
+        const answer = numbers[rank - 1];
+        return result(`수 카드 ${cards.map(value => `<span class="digit-card">${value}</span>`).join("")}를 모두 사용해 만들 수 있는 여섯 자리 자연수 중 ${rank}번째로 큰 수를 구하세요.`, answer, `같은 숫자의 카드도 구분하지 않고 큰 수부터 차례로 배열하면 ${rank}번째 수는 ${answer.toLocaleString()}입니다.`);
+      }
+
+      const cardCount = 7 + Math.min(level, 1);
+      const cards = shuffle(rng, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, cardCount);
+      if (!cards.includes(0)) cards[0] = 0;
+      const numbers = permutationNumbers(cards);
+      const smallest = numbers[0];
+      const largest = numbers[numbers.length - 1];
+      const answer = largest - smallest;
+      return result(`수 카드 ${cards.map(value => `<span class="digit-card">${value}</span>`).join("")}를 한 번씩 모두 사용하여 만들 수 있는 가장 큰 수와 가장 작은 수의 차를 구하세요. 단, 0은 맨 앞에 놓을 수 없습니다.`, answer, `가장 큰 수는 ${largest.toLocaleString()}, 가장 작은 수는 ${smallest.toLocaleString()}이므로 차는 ${answer.toLocaleString()}입니다.`);
     },
     largeNumber({ rng, level }) {
       const digits = 6 + level;
@@ -314,9 +512,12 @@
 
   const rules = [
     [/^큰 수 알아보기$/, "largeNumberPlaceValue"],
-    [/^큰 수의 크기 비교$/, "largeNumber"],
-    [/큰 수의 규칙성|일렬로 나열한 수|배열된 수들의 합/, "numberPattern"],
-    [/수 카드로 수 만들기|조건에 맞는 수 찾기/, "digitCards"],
+    [/^큰 수의 크기 비교$/, "largeNumberCompare"],
+    [/^큰 수의 규칙성과 뛰어 세기$/, "largeNumberSkipPattern"],
+    [/^큰 수의 활용$/, "largeNumberApplication"],
+    [/^조건에 맞는 수 찾기$/, "conditionedNumber"],
+    [/^수 카드로 수 만들기$/, "digitCardNumber"],
+    [/일렬로 나열한 수|배열된 수들의 합/, "numberPattern"],
     [/^다각형의 내각의 합$/, "polygonAngles"],
     [/시침과 분침/, "clockAngle"],
     [/^각도의 계산$|^여러 각도$|^평행선 사이의 각도/, "angle"],
@@ -363,10 +564,10 @@
     };
   }
 
-  function generate(type, levelRank, difficultyOffset, seed, variant = 0) {
+  function generate(type, _levelRank, difficultyOffset, seed, variant = 0) {
     const key = generatorKey(type.name);
     if (!key) return null;
-    const level = Math.max(0, Math.min(3, levelRank + difficultyOffset));
+    const level = Math.max(0, Math.min(2, 1 + difficultyOffset));
     return { ...generators[key]({ rng: mulberry32(seed), level, variant }), generator: key };
   }
 

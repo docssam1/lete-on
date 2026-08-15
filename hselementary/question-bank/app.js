@@ -23,7 +23,7 @@
   const state = {
     grade: 4,
     term: 1,
-    level: "ilpum",
+    level: "simwha",
     unitId: "",
     search: "",
     difficulty: 0,
@@ -40,6 +40,10 @@
 
   function currentSemester() {
     return curriculum.semesters.find(item => item.grade === state.grade && item.term === state.term);
+  }
+
+  function currentDifficultyLabel() {
+    return ({ "-1": "쉽게", "0": "같게", "1": "어렵게" })[String(state.difficulty)] || "같게";
   }
 
   function visibleTypes() {
@@ -75,7 +79,7 @@
       <span class="type-copy">
         <span class="type-check"><input type="checkbox" data-type-id="${type.id}" ${selected ? "checked" : ""} ${ready ? "" : "disabled"}><strong>${escapeHtml(type.name)}</strong></span>
         <p>${type.semesterLabel} · ${type.unitNumber}단원 ${escapeHtml(type.unitName)}</p>
-        <span class="meta-row"><span>${escapeHtml(currentLevel().label)}</span><span>교재 분류 확인</span><span>시작 p.${type.page}</span></span>
+        <span class="meta-row"><span>심화 기준</span><span>원문 구조 확인</span><span>시작 p.${type.page}</span></span>
       </span>
       <span class="type-flag ${ready ? "is-ready" : ""}">${ready ? "1차 검수 가능" : "그림 렌더 제작 대기"}</span>
     </label>`;
@@ -124,7 +128,7 @@
       const type = selected[index % selected.length];
       const seed = (baseSeed + index * 7919 + hash(type.id)) >>> 0;
       const generated = generatorApi.generate(type, level.rank, state.difficulty, seed, index);
-      return { number: index + 1, type, level, ...generated };
+      return { number: index + 1, type, level, difficulty: currentDifficultyLabel(), ...generated };
     });
     state.view = "problem";
     renderWorksheet();
@@ -149,7 +153,7 @@
     $("problemView").innerHTML = chunk(state.questions, 6).map((page, pageIndex) => `<section class="print-page">
       <div class="page-label">문제 ${pageIndex + 1}</div>
       <div class="question-grid">${page.map(question => `<article class="question-item">
-        <header><b>${question.number}</b><span>${escapeHtml(question.type.unitName)} · ${escapeHtml(question.type.name)}</span><em>${escapeHtml(question.level.label)}</em></header>
+        <header><b>${question.number}</b><span>${escapeHtml(question.type.unitName)} · ${escapeHtml(question.type.name)}</span><em>${escapeHtml(question.difficulty)}</em></header>
         <div class="question-prompt">${question.prompt}</div>
         <div class="answer-line">답</div>
       </article>`).join("")}</div>${watermark()}
@@ -171,7 +175,7 @@
     if (student) localStorage.setItem("hseStudent", student);
     $("worksheetStudent").textContent = student;
     $("worksheetTitle").textContent = state.view === "problem" ? "맞춤 유사문제" : "맞춤 유사문제 정답·풀이";
-    $("worksheetMeta").textContent = `${currentLevel().label} · ${state.questions.length}문항 · ${state.selected.size}개 유형`;
+    $("worksheetMeta").textContent = `심화 기준 · ${currentDifficultyLabel()} · ${state.questions.length}문항 · ${state.selected.size}개 유형`;
     $("problemView").hidden = state.view !== "problem";
     $("solutionView").hidden = state.view !== "solution";
     $("problemTab").classList.toggle("is-active", state.view === "problem");
@@ -184,7 +188,6 @@
 
   bindSegment("gradeFilter", "grade", "grade", Number);
   bindSegment("termFilter", "term", "term", Number);
-  bindSegment("levelFilter", "level", "level");
   bindSegment("difficultyFilter", "difficulty", "difficulty", Number);
 
   $("unitFilter").addEventListener("change", event => { state.unitId = event.target.value; renderCatalog(); });
@@ -222,6 +225,7 @@
   $("studentNameInput").value = params.get("student") || localStorage.getItem("hseStudent") || "";
   const reviewType = typeById.get(params.get("type"));
   if (reviewType?.generator) {
+    state.level = "simwha";
     state.grade = reviewType.grade;
     state.term = reviewType.term;
     state.unitId = reviewType.unitId;
