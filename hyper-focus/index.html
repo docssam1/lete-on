@@ -598,6 +598,7 @@ async function loadVariationPair(id){
 function formatVariationAnswer(variation){
   const answer=variation&&variation.answerValidation?variation.answerValidation.expectedAnswer:'';
   if(answer&&typeof answer==='object'&&!Array.isArray(answer)&&answer.min!==undefined&&answer.max!==undefined)return `최솟값 ${answer.min}명, 최댓값 ${answer.max}명`;
+  if(answer&&typeof answer==='object'&&!Array.isArray(answer)&&answer.white!==undefined&&answer.black!==undefined)return `흰색 ${answer.white}개, 검은색 ${answer.black}개`;
   if(Array.isArray(answer))return answer.join(', ');
   if(variation.subType==='unit_rate_animals')return `${answer}일`;
   if(variation.subType==='balance_unit_count')return `${answer}개`;

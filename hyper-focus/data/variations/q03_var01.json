@@ -5,7 +5,7 @@
   "subType": "stacking_checker_color",
   "status": "draft",
   "source": {
-    "problemImage": "./assets/problems/q03_var01.png"
+    "problemImage": "./assets/svg/variations/q03_var01.svg"
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q03.json",
@@ -13,22 +13,59 @@
   },
   "machineReadable": {
     "payloadType": "stacking_checker_color",
+    "coordinateSystem": {
+      "rowOrder": "front_to_back",
+      "columnOrder": "left_to_right",
+      "heightAxis": "bottom_to_top",
+      "unit": "cube"
+    },
     "heightMap": {
+      "rowOrder": "front_to_back",
       "rows": [
         { "y": 0, "heights": [3, 3, 2] },
         { "y": 1, "heights": [3, 2, 1] },
         { "y": 2, "heights": [1, 1, 0] }
       ]
     },
+    "topFaceColors": {
+      "rowOrder": "front_to_back",
+      "rows": [
+        { "y": 0, "colors": ["white", "black", "black"] },
+        { "y": 1, "colors": ["black", "black", "black"] },
+        { "y": 2, "colors": ["white", "black", null] }
+      ]
+    },
+    "colorRule": {
+      "palette": ["black", "white"],
+      "anchor": {
+        "grid": { "x": 0, "y": 0, "z": 1 },
+        "color": "white"
+      },
+      "parityFormula": "color(x,y,z) = white when (x+y+z) is odd, black when (x+y+z) is even",
+      "adjacencyRule": "shared-face adjacent cubes always alternate colors"
+    },
     "derivedCounts": {
       "totalBlockCount": 16,
       "blackCount": 9,
       "whiteCount": 7,
-      "askedColor": "black"
+      "askedColors": ["white", "black"]
+    },
+    "countingModel": {
+      "method": "checkerboard_parity_count",
+      "blackCount": 9,
+      "whiteCount": 7,
+      "totalCheck": 16
     }
   },
   "answerValidation": {
-    "answerType": "integer",
-    "expectedAnswer": 9
-  }
+    "answerType": "color_count_pair",
+    "expectedAnswer": {
+      "white": 7,
+      "black": 9
+    }
+  },
+  "problem": {
+    "prompt": "검은색과 흰색 쌓기나무를 같은 색의 면이 맞닿지 않게 그림과 같이 쌓았습니다. 흰색과 검은색 쌓기나무는 각각 몇 개인지 구하세요."
+  },
+  "solutionHint": "한 기둥씩 아래에서 위로 색을 번갈아 세어요. 흰색은 7개, 검은색은 9개입니다. 7 + 9 = 16이므로 전체 쌓기나무 16개와도 맞습니다."
 }
