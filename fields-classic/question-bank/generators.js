@@ -914,6 +914,32 @@ function hiddenScoreRanking({ difficulty = 2 }) {
   };
 }
 
+function twoDigitEvenCount({ difficulty = 2 }) {
+  const cardCount = difficulty === 1 ? 3 : difficulty === 2 ? 4 : 5;
+  const pool = difficulty === 3 ? [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] : [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  let cards;
+  let numbers;
+  do {
+    cards = shuffle(pool).slice(0, cardCount).sort((a, b) => a - b);
+    numbers = [];
+    for (const tens of cards) {
+      for (const ones of cards) {
+        if (tens !== 0 && tens !== ones && ones % 2 === 0) numbers.push(tens * 10 + ones);
+      }
+    }
+  } while (numbers.length < 2 || new Set(numbers).size !== numbers.length || (difficulty === 3 && !cards.includes(0)));
+
+  const sortedNumbers = [...numbers].sort((a, b) => a - b);
+  const zeroNote = cards.includes(0) ? " 0은 십의 자리에 놓을 수 없습니다." : "";
+  return {
+    prompt: `아래 ${cardCount}장의 수 카드 중 두 장을 한 번씩 사용하여 두 자리 짝수를 만들려고 합니다. 만들 수 있는 두 자리 짝수는 모두 몇 개일까요?${zeroNote}`,
+    visual: { kind: "even-card-count", cards: shuffle(cards) },
+    answer: `${sortedNumbers.length}개`,
+    solution: `일의 자리에 짝수 카드를 놓고, 남은 카드 중 0이 아닌 카드를 십의 자리에 놓습니다. 만들 수 있는 수는 ${sortedNumbers.join(", ")}로 모두 ${sortedNumbers.length}개입니다.`,
+    meta: { difficulty, cards, numbers: sortedNumbers, cardCount }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -1374,6 +1400,7 @@ export const GENERATORS = {
   mixedSequences,
   neitherSetCount,
   hiddenScoreRanking,
+  twoDigitEvenCount,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,

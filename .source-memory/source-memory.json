@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "5d3e5f839a3b95f765638ad11943accc455358ea2a14b9f99cd4ab99e8fdbeec",
-      "size": 21817,
-      "mtime_ns": 1786811540653185900
+      "sha256": "5a0efd7a891d95e837bacc16e6a0ea8c10157791ad01276e7b7d31a7b01d3f44",
+      "size": 22491,
+      "mtime_ns": 1786811726858316300
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "f502f98c551bd80e4344a15d6491802089821f93263b66907dd440cb1fc3ceb1",
-      "size": 33398,
-      "mtime_ns": 1786811540651185300
+      "sha256": "d258841c10d117dcf713b014fdb5b061b7df5aecf1fae95c1de6a3cb7e677eee",
+      "size": 33568,
+      "mtime_ns": 1786811726857317800
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "e3d4a818ae7fd9ab50c66fa7df227f6f56b29655bbf87b7aaf7fde75107fd4cb",
-      "size": 73132,
-      "mtime_ns": 1786811418902494100
+      "sha256": "f8d643b1d9768a753c0d1b0b6dcee4987c4c7f027db54a6c1ec95d5ce36d8c14",
+      "size": 74569,
+      "mtime_ns": 1786811620557111600
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "3a8ff5b7937c508e518b12e176506b339f4c70d260cba76def7395190d2773f7",
-      "size": 32371,
-      "mtime_ns": 1786811403115098100
+      "sha256": "63a14978bade9051732dd4a38a193f7aeb8be460abc6c07713ccc0ca71912bcb",
+      "size": 32445,
+      "mtime_ns": 1786811620560113700
     }
   ],
   "records": [
@@ -107,15 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F18 two-digit even count",
+      "title": "Next implementation F19 reverse initial count",
       "aliases": [
         "다음 작업"
       ],
       "tags": [
         "next",
-        "F18"
+        "F19"
       ],
-      "summary": "Continue with F18 by verifying the exact source number cards and two-digit even-number conditions before implementing the generator.",
+      "summary": "Continue with F19 by locating the exact multi-step arrival and departure source and verifying the reverse calculation before implementing the generator.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -124,7 +124,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F17 are complete; F18 is next"
+          "note": "F01 through F18 are complete; F19 is next"
         }
       ]
     },
@@ -593,6 +593,42 @@
           "role": "code",
           "locator": "TYPES hidden-score-ranking and PRACTICE_EXAM_TYPES mock-4 question 7",
           "note": "Only the verified practice question is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f18",
+      "title": "Practice 4 question 8 two-digit even count",
+      "aliases": [
+        "실전 4회 8번",
+        "수 카드로 만든 두 자리 짝수"
+      ],
+      "tags": [
+        "F18",
+        "practice-4"
+      ],
+      "summary": "F18 preserves the original cards 5, 2, 3, 4 and answer 6, and enumerates every ordered pair of different cards while excluding zero from the tens place.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 4회 표 8번, 중복·해설 검증 8번, 다음 검증 순서 4번",
+          "note": "Practice 4 source cards and answer 6 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function twoDigitEvenCount and GENERATORS export",
+          "note": "Three structural difficulty levels with exhaustive ordered-pair metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES two-digit-even-count and PRACTICE_EXAM_TYPES mock-4 question 8",
+          "note": "Only verified practice questions are enabled"
         }
       ]
     }
