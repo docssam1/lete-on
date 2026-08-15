@@ -136,8 +136,8 @@
       return figureBlock("쌓기나무 모양", REN.renderIsoWalled(f.map, f.width, f.depth), "ws-figure-lg");
     }
     if (f.kind === "iso-box") {
-      // PN (painted cube) and BW (checker cube) are FULL cubes: no wireframe,
-      // and the "(점선 = 상자 테두리)" caption would be wrong there.
+      // PN is a full cube; BW may be a full cube or a stepped structure.
+      // Both show only the actual cubes without an enclosing wireframe.
       const full = f.paint || f.checker;
       const opts = { checker: f.checker, cornerWhite: f.cornerWhite, noBox: full };
       const caption = full ? "쌓기나무 모양" : "쌓기나무 모양 (점선 = 상자 테두리)";
@@ -165,6 +165,7 @@
     }
     if (p.type === "VM") return '<div class="ws-answer-line">답: 최대 ______ 개, 최소 ______ 개</div>';
     if (p.type === "PN") return '<div class="ws-answer-line">답: 색칠된 면은 모두 ______ 면</div>';
+    if (p.type === "BW") return '<div class="ws-answer-line">답: 흰색 ______ 개, 검은색 ______ 개</div>';
     if (p.type === "SQ" && p.answer.mode === "which") return '<div class="ws-answer-line">답: ______ 번째</div>';
     return '<div class="ws-answer-line">답: ______ 개</div>';
   }
@@ -197,7 +198,7 @@
       case "CU": return p.answer.need + "개";
       case "PN": return p.answer.faces + "면";
       case "PF": return p.answer.faces + "개";
-      case "BW": return p.answer.count + "개";
+      case "BW": return "흰색 " + p.answer.white + "개, 검은색 " + p.answer.black + "개";
       case "HL": return p.answer.remaining + "개";
       case "SQ": return p.answer.mode === "which" ? p.answer.n + "번째" : p.answer.count + "개";
       case "TS": return p.answer.count + "개";

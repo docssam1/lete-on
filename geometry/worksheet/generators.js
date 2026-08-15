@@ -992,31 +992,83 @@
     };
   }
 
-  // 11. BW — 흑백 교차 (checkerboard cube)
+  function checkerShapeForDifficulty(rng, difficulty) {
+    if (difficulty === "easy") {
+      const n = 3;
+      const map = makeEmptyMap(n, n);
+      for (let z = 0; z < n; z += 1) for (let x = 0; x < n; x += 1) map[z][x] = n;
+      return { map, width: n, depth: n, shape: "cube" };
+    }
+
+    const midShapes = [
+      [
+        [3, 3, 1, 0],
+        [2, 2, 1, 1],
+        [1, 1, 0, 0]
+      ],
+      [
+        [2, 3, 2, 1],
+        [2, 2, 2, 1],
+        [1, 1, 1, 0]
+      ],
+      [
+        [2, 3, 2, 1],
+        [3, 2, 2, 1],
+        [1, 2, 1, 0]
+      ]
+    ];
+    const hardShapes = [
+      [
+        [4, 3, 2, 1],
+        [3, 2, 2, 1],
+        [2, 2, 1, 0],
+        [1, 1, 0, 0]
+      ],
+      [
+        [3, 3, 4, 2],
+        [4, 3, 2, 1],
+        [2, 3, 3, 1],
+        [0, 2, 1, 0]
+      ],
+      [
+        [4, 3, 3, 1],
+        [3, 3, 2, 2],
+        [2, 2, 1, 1],
+        [1, 1, 1, 0]
+      ]
+    ];
+    const map = cloneMap(rng.pick(difficulty === "hard" ? hardShapes : midShapes));
+    if (rng.bool()) map.forEach((row) => row.reverse());
+    return { map, width: map[0].length, depth: map.length, shape: "stair" };
+  }
+
+  // 11. BW — 흑백 교차 (정육면체 + 계단·돌출형)
   function genBW(rng, difficulty) {
-    const n = difficulty === "hard" ? 4 : 3;
+    const built = checkerShapeForDifficulty(rng, difficulty);
+    const map = built.map;
+    const width = built.width;
+    const depth = built.depth;
+    const boxH = maxHeightOf(map);
     const cornerWhite = rng.bool();
     let white = 0;
     let black = 0;
-    for (let z = 0; z < n; z += 1) {
-      for (let x = 0; x < n; x += 1) {
-        for (let y = 0; y < n; y += 1) {
+    for (let z = 0; z < depth; z += 1) {
+      for (let x = 0; x < width; x += 1) {
+        for (let y = 0; y < map[z][x]; y += 1) {
           const parityEven = (x + y + z) % 2 === 0;
           const isWhite = cornerWhite ? parityEven : !parityEven;
           if (isWhite) white += 1; else black += 1;
         }
       }
     }
-    const askWhite = rng.bool();
-    const count = askWhite ? white : black;
-    const map = makeEmptyMap(n, n);
-    for (let z = 0; z < n; z += 1) for (let x = 0; x < n; x += 1) map[z][x] = n;
+    const shapeText = built.shape === "cube" ? "정육면체 모양으로" : "계단과 돌출이 있는 모양으로";
     return {
       type: "BW",
-      prompt: "쌓기나무를 정육면체 모양으로 쌓고, 맞닿은 면끼리 서로 다른 색이 되도록 흰색과 검은색을 번갈아 칠했습니다. " + (askWhite ? "흰색" : "검은색") + " 쌓기나무는 모두 몇 개입니까?",
-      figures: { kind: "iso-box", map, width: n, depth: n, boxH: n, checker: true, cornerWhite },
-      answer: { white, black, asked: askWhite ? "white" : "black", count },
-      answerText: count + "개"
+      prompt: "검은색과 흰색 쌓기나무를 같은 색의 면이 맞닿지 않게 " + shapeText + " 쌓았습니다. 흰색과 검은색 쌓기나무는 각각 몇 개입니까?",
+      methodHint: "한 쌓기나무의 색을 정하면, 면이 맞닿은 쌓기나무의 색은 반대가 됩니다.",
+      figures: { kind: "iso-box", map, width, depth, boxH, checker: true, cornerWhite, checkerShape: built.shape },
+      answer: { white, black },
+      answerText: "흰색 " + white + "개, 검은색 " + black + "개"
     };
   }
 
