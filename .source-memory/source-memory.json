@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "bf37a230b9751d5ea5b51da24699ce8b1ded0a8229d90c971ba4a87cb945eca2",
-      "size": 25019,
-      "mtime_ns": 1786813054209532700
+      "sha256": "49c977da59c716ad11a2fd105a4984b77f76b34d83c150ff1b69f691de471f4c",
+      "size": 25843,
+      "mtime_ns": 1786813323709943400
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "4fda6ce0e749bcfee59895d1d77ed8f57964ced7e800b066554cf3a756a772c7",
-      "size": 34391,
-      "mtime_ns": 1786813054208529700
+      "sha256": "2026c93ee1140a74219feb94997b4b1fbda06f7bd5ed20097ab071b00395080c",
+      "size": 34626,
+      "mtime_ns": 1786813323708941800
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "32de3d3a0841278b28265a72a1249eda030dda2484e89cdc0459224920703d3f",
-      "size": 82507,
-      "mtime_ns": 1786812886875171900
+      "sha256": "cd565fe0f384aa4bf8a0373c27abe3b1a337ffaa58479f829e2be965b19f4c02",
+      "size": 84706,
+      "mtime_ns": 1786813240851736600
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "a71563a4739a91a23fc6b61421a13b6cc71f2a2c4bbfff7936396b631c541f0b",
-      "size": 32787,
-      "mtime_ns": 1786812886878172500
+      "sha256": "58ce9bc7831565485c6bd3a6a038b4e633d6d458a0fef8db861e702eb2a196cd",
+      "size": 32866,
+      "mtime_ns": 1786813160802009900
     }
   ],
   "records": [
@@ -107,13 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F23 conditional two-digit card enumeration",
+      "title": "Next verification 7-year-old selection test 2 question 1",
       "aliases": [],
       "tags": [
         "next",
-        "F23"
+        "k7-2022-04",
+        "q1"
       ],
-      "summary": "Continue with F23 by verifying Practice 3 question 17 card values, the less-than-30 condition, and the complete answer list.",
+      "summary": "Verify the four-corner edge-sum card placement in the April 2022 selection test against the existing edge-sum-grid generator before enabling it.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -122,7 +123,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "Next sequence item 1",
-          "note": "F01 through F22 are complete; F23 is next"
+          "note": "F01 through F23 are complete; selection test 2 question 1 is next"
         }
       ]
     },
@@ -764,6 +765,39 @@
           "source_id": "source-data",
           "role": "code",
           "locator": "TYPES number-card-mixed-operations and PRACTICE_EXAM_TYPES mock-4 question 3",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f23",
+      "title": "Practice 3 question 17 conditional two-digit card enumeration",
+      "aliases": [],
+      "tags": [
+        "F23",
+        "practice-3"
+      ],
+      "summary": "F23 preserves cards 4,0,2,7,1 and the complete eight-number list below 30, forbidding repeated use of one card in a number.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "Practice 3 table question 17 and original page 8",
+          "note": "Original cards, condition, and complete answer list verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function twoDigitCardEnumeration and GENERATORS export",
+          "note": "Three structural difficulty levels with exhaustive ordered-pair metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES two-digit-card-enumeration and PRACTICE_EXAM_TYPES mock-3 question 17",
           "note": "Source-matched type is enabled"
         }
       ]

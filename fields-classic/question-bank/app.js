@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816w";
-import { GENERATORS } from "./generators.js?v=20260816w";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816x";
+import { GENERATORS } from "./generators.js?v=20260816x";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -471,6 +471,10 @@ function mixedOperationCardsMarkup(visual) {
   </div>`;
 }
 
+function twoDigitCardEnumerationMarkup(visual) {
+  return `<div class="two-digit-enumeration-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><strong>${visual.condition} 두 자리 수</strong></div>`;
+}
+
 function closestCardSumMarkup(visual) {
   const blank = () => '<span class="digit-card-blank"></span>';
   return `<div class="closest-card-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="closest-card-equation"><span class="two-digit-blank">${blank()}${blank()}</span><b>+</b><span class="two-digit-blank">${blank()}${blank()}</span><b>=</b><span class="sum-blank"></span></div><small>${visual.target}에 가장 가까운 합</small></div>`;
@@ -602,6 +606,7 @@ function visualMarkup(visual) {
   if (visual.kind === "erase-expression-target") return `<div class="visual erase-expression-visual">${eraseExpressionTargetMarkup(visual)}</div>`;
   if (visual.kind === "collection-repeat-gap") return `<div class="visual collection-repeat-visual">${collectionRepeatGapMarkup(visual)}</div>`;
   if (visual.kind === "mixed-operation-cards") return `<div class="visual mixed-operation-card-visual">${mixedOperationCardsMarkup(visual)}</div>`;
+  if (visual.kind === "two-digit-card-enumeration") return `<div class="visual two-digit-enumeration-visual">${twoDigitCardEnumerationMarkup(visual)}</div>`;
   if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;
@@ -647,7 +652,7 @@ function renderWorksheet() {
       <span class="question-reference">기준 문제: ${question.reference}</span>
       <p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>
       ${question.image ? `<img class="legacy-image" src="${question.image}" alt="${question.type.label} 문제 그림" />` : visualMarkup(question.visual)}
-      ${question.responseKind === "drawing" ? '<span class="drawing-answer-note">위 빈 상자 안에 그림을 그리세요.</span>' : `<label class="answer-line">답 <input class="answer-input" aria-label="${index + 1}번 답" /></label>`}
+      ${question.responseKind === "drawing" ? '<span class="drawing-answer-note">위 빈 상자 안에 그림을 그리세요.</span>' : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" aria-label="${index + 1}번 답" /></label>`}
     </article>`;
   }).join("");
   $("watermark").innerHTML = state.watermark ? watermarkMarkup() : "";

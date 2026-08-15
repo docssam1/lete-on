@@ -1087,6 +1087,53 @@ function mixedOperationCardEquation({ difficulty = 2 }) {
   };
 }
 
+function enumerateTwoDigitCards(cards, lowerExclusive, upperExclusive) {
+  const values = new Set();
+  cards.forEach((tens, tensIndex) => cards.forEach((ones, onesIndex) => {
+    if (tensIndex === onesIndex || tens === 0) return;
+    const value = tens * 10 + ones;
+    if ((lowerExclusive == null || value > lowerExclusive) && value < upperExclusive) values.add(value);
+  }));
+  return [...values].sort((a, b) => a - b);
+}
+
+function twoDigitCardEnumeration({ difficulty = 2 }) {
+  const cardCount = difficulty === 1 ? 4 : difficulty === 2 ? 5 : 6;
+  let cards;
+  let lowerExclusive;
+  let upperExclusive;
+  let answers;
+  let attempts = 0;
+  do {
+    cards = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, cardCount);
+    if (difficulty === 1) {
+      lowerExclusive = null;
+      upperExclusive = sample([30, 40, 50]);
+    } else if (difficulty === 2) {
+      lowerExclusive = null;
+      upperExclusive = sample([30, 40, 50, 60, 70]);
+    } else {
+      lowerExclusive = randomInt(12, 48);
+      upperExclusive = Math.min(89, lowerExclusive + randomInt(18, 36));
+    }
+    answers = enumerateTwoDigitCards(cards, lowerExclusive, upperExclusive);
+    attempts += 1;
+  } while ((answers.length < (difficulty === 1 ? 3 : 5) || answers.length > (difficulty === 1 ? 6 : difficulty === 2 ? 12 : 14)) && attempts < 1000);
+
+  if (answers.length < 3) return twoDigitCardEnumeration({ difficulty });
+  const condition = lowerExclusive == null
+    ? `${upperExclusive}보다 작은`
+    : `${lowerExclusive}보다 크고 ${upperExclusive}보다 작은`;
+  return {
+    prompt: `숫자 카드 중에서 2장을 골라 두 자리 수를 만들 때, ${condition} 수를 모두 쓰세요. 같은 카드는 한 수에 한 번만 쓸 수 있습니다.`,
+    visual: { kind: "two-digit-card-enumeration", cards: shuffle(cards), condition },
+    responseKind: "list",
+    answer: answers.join(", "),
+    solution: `십의 자리에 0을 놓지 않고, 같은 카드를 두 번 쓰지 않도록 차례로 만듭니다. 조건에 맞는 수는 ${answers.join(", ")}입니다.`,
+    meta: { difficulty, cards, lowerExclusive, upperExclusive, answers, answerCount: answers.length }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -1552,6 +1599,7 @@ export const GENERATORS = {
   eraseExpressionTarget,
   collectionRepeatGap,
   mixedOperationCardEquation,
+  twoDigitCardEnumeration,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
