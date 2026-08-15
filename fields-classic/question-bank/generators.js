@@ -2218,6 +2218,63 @@ function balanceScaleThreeObjects({ difficulty = 2 }) {
   };
 }
 
+function buildBalanceStarTemplates(maxCount, targetCircleCount, maxTargetDiamonds, maxWeight) {
+  const templates = [];
+  for (let starLeft = 2; starLeft <= maxCount; starLeft += 1) {
+    for (let diamondRight = 2; diamondRight <= maxCount; diamondRight += 1) {
+      for (let circleLeft = 2; circleLeft <= maxCount; circleLeft += 1) {
+        for (let starRight = 2; starRight <= maxCount; starRight += 1) {
+          for (let targetDiamonds = 1; targetDiamonds <= maxTargetDiamonds; targetDiamonds += 1) {
+            const starWeight = circleLeft * diamondRight + 1;
+            const diamondWeight = starRight + starLeft * circleLeft;
+            const circleWeight = diamondRight * diamondWeight - starLeft * starWeight;
+            const targetWeight = targetCircleCount * circleWeight + targetDiamonds * diamondWeight;
+            if (circleWeight <= 0 || targetWeight % starWeight !== 0) continue;
+            const answer = targetWeight / starWeight;
+            if (answer < 2 || answer > 12) continue;
+            if (new Set([starWeight, circleWeight, diamondWeight]).size !== 3) continue;
+            const divisor = [starWeight, circleWeight, diamondWeight].reduce((left, right) => {
+              let a = left;
+              let b = right;
+              while (b) [a, b] = [b, a % b];
+              return a;
+            });
+            const weights = {
+              star: starWeight / divisor,
+              circle: circleWeight / divisor,
+              diamond: diamondWeight / divisor
+            };
+            if (Math.max(...Object.values(weights)) > maxWeight) continue;
+            templates.push({ starLeft, diamondRight, circleLeft, starRight, targetCircleCount, targetDiamonds, weights, answer });
+          }
+        }
+      }
+    }
+  }
+  return templates;
+}
+
+const BALANCE_STAR_TEMPLATES = {
+  1: buildBalanceStarTemplates(3, 1, 3, 12),
+  2: buildBalanceStarTemplates(4, 1, 3, 18),
+  3: buildBalanceStarTemplates(5, 2, 4, 24)
+};
+
+function balanceScaleStarTarget({ difficulty = 2 }) {
+  const template = sample(BALANCE_STAR_TEMPLATES[difficulty] || BALANCE_STAR_TEMPLATES[2]);
+  const { starLeft, diamondRight, circleLeft, starRight, targetCircleCount, targetDiamonds, weights, answer } = template;
+  const hint = difficulty === 1
+    ? `도움: 각 물건의 무게를 같은 크기의 칸으로 나타내어 두 저울에 모두 맞는 수를 찾아보세요.`
+    : "";
+  return {
+    prompt: "다음 양팔저울은 모두 수평입니다. [그림 3]의 오른쪽 접시에 ☆를 몇 개 올려놓으면 수평이 되는지 구하세요.",
+    visual: { kind: "balance-scale-star-target", starLeft, diamondRight, circleLeft, starRight, targetCircleCount, targetDiamonds, hint },
+    answer: `${answer}개`,
+    solution: `두 저울에 모두 맞도록 무게를 같은 크기의 칸으로 나타내면 ☆는 ${weights.star}칸, ○는 ${weights.circle}칸, ◇는 ${weights.diamond}칸으로 둘 수 있습니다. [그림 3]의 왼쪽은 ${targetCircleCount * weights.circle} + ${targetDiamonds * weights.diamond} = ${targetCircleCount * weights.circle + targetDiamonds * weights.diamond}칸이고, ☆ ${answer}개의 무게와 같습니다.`,
+    meta: { difficulty, starLeft, diamondRight, circleLeft, starRight, targetCircleCount, targetDiamonds, weights, answer }
+  };
+}
+
 function balanceScaleFourObjects({ difficulty = 2 }) {
   let result = null;
   for (let attempt = 0; attempt < 300 && !result; attempt += 1) {
@@ -2736,6 +2793,7 @@ export const GENERATORS = {
   goStoneDifferenceInverse,
   sourceBalanceRelations,
   balanceScaleThreeObjects,
+  balanceScaleStarTarget,
   balanceScaleFourObjects,
   sourcePianoBounce,
   sourceSymbolSumGrid,

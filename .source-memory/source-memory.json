@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "aa7817977d6a0c600727ffbe188f415e2d27a91c9885ad8fa2e8eb3af5a9b79e",
-      "size": 75050,
-      "mtime_ns": 1786828126891255200
+      "sha256": "899c93770c5c358b94db461cf40752d4d7c9db7b16d171c18c331e179b2fcd07",
+      "size": 76176,
+      "mtime_ns": 1786828439543998600
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "eba929fba31cc2ea1975c94f062ad4e44785fc6fd46c68de7a8b2f7af6786bdc",
-      "size": 151768,
-      "mtime_ns": 1786827772885263600
+      "sha256": "2ce6230be6612e5fa6204b680a2f30f76ce240f4c57737f03fd4983cabc3c608",
+      "size": 155107,
+      "mtime_ns": 1786828368784996800
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "9471c916517a1e98cbf21792e14c8b58e41ea889f68b5a85ea9f76e711959d1d",
-      "size": 37930,
-      "mtime_ns": 1786828065119130200
+      "sha256": "889e42fa0f448adb1adc6ac5697071f8eadf5593e9f0f40045b778cc4564a205",
+      "size": 38115,
+      "mtime_ns": 1786828368787991500
     }
   ],
   "records": [
@@ -107,15 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 4 questions 17 and 18",
+      "title": "Next verification selection test 4 question 18",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q17",
         "q18"
       ],
-      "summary": "Verify the three-object balance question and the three-to-four symbol relation against source page 11 and the official answers 4 and 13 before enabling either question.",
+      "summary": "Verify the three-to-four symbol relation on source page 11 with official answer 13, including the exact three equations and browser rendering.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -124,7 +123,7 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Questions 17 and 18 remain disabled until exact source structure, answers, generators, and browser rendering are verified"
+          "note": "Question 18 remains disabled until the source equations, answer, generator, and browser rendering are verified"
         }
       ]
     },
@@ -2704,6 +2703,40 @@
           "role": "code",
           "locator": "TYPES square-tile-growth and EXAMS k7-2022-08 verified 1 through 16",
           "note": "Question 16 enabled after source match"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q17",
+      "title": "Selection test 4 question 17 two-balance star-count target",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q17",
+        "balance-scale-star-target"
+      ],
+      "summary": "The source balances four stars plus one circle with three diamonds, and three circles plus one diamond with four stars; one circle plus two diamonds equals four stars.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 17 paragraph",
+          "note": "Exact three scale layouts, official answer 4, separate-type decision, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function balanceScaleStarTarget",
+          "note": "Enumerated balance templates with independently checkable weights and target count"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES balance-scale-star-target and EXAMS k7-2022-08 verified 1 through 17",
+          "note": "Question 17 enabled after exact source match"
         }
       ]
     }

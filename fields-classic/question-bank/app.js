@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ck";
-import { GENERATORS } from "./generators.js?v=20260816cd";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816cl";
+import { GENERATORS } from "./generators.js?v=20260816ce";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -822,6 +822,16 @@ function balanceScaleThreeObjectsMarkup(visual) {
   return `<div class="three-object-balances">${first}${second}${third}${visual.hint ? `<p class="balance-hint">도움: ${visual.hint}</p>` : ""}<strong class="balance-target">${target}</strong></div>`;
 }
 
+function balanceScaleStarTargetMarkup(visual) {
+  const symbols = { circle: "○", star: "☆", diamond: "◇" };
+  const pieces = (kind, count) => Array.from({ length: count }, () => `<i class="weight-piece ${kind}" aria-label="${symbols[kind]}">${symbols[kind]}</i>`).join("");
+  const scale = (left, right, label) => `<div class="balance-example three-object-scale"><div class="balance-pan">${left}</div><b>=</b><div class="balance-pan">${right}</div><small>${label}</small></div>`;
+  const first = scale(`${pieces("star", visual.starLeft)}${pieces("circle", 1)}`, pieces("diamond", visual.diamondRight), "[그림 1]");
+  const second = scale(`${pieces("circle", visual.circleLeft)}${pieces("diamond", 1)}`, pieces("star", visual.starRight), "[그림 2]");
+  const third = scale(`${pieces("circle", visual.targetCircleCount)}${pieces("diamond", visual.targetDiamonds)}`, "<strong>☆ (　)개</strong>", "[그림 3]");
+  return `<div class="three-object-balances">${first}${second}${third}${visual.hint ? `<p class="balance-hint">${visual.hint}</p>` : ""}</div>`;
+}
+
 function balanceScaleFourObjectsMarkup(visual) {
   const symbols = { circle: "○", square: "□", star: "☆", diamond: "◇" };
   const pieces = (kind, count) => Array.from({ length: count }, () => `<i class="weight-piece ${kind}" aria-label="${symbols[kind]}">${symbols[kind]}</i>`).join("");
@@ -946,6 +956,7 @@ function visualMarkup(visual) {
   if (visual.kind === "source-piano") return `<div class="visual source-piano-visual">${sourcePianoMarkup()}</div>`;
   if (visual.kind === "balance-relations") return `<div class="visual balance-relations-visual">${balanceRelationsMarkup(visual)}</div>`;
   if (visual.kind === "balance-scale-three-objects") return `<div class="visual balance-relations-visual">${balanceScaleThreeObjectsMarkup(visual)}</div>`;
+  if (visual.kind === "balance-scale-star-target") return `<div class="visual balance-relations-visual">${balanceScaleStarTargetMarkup(visual)}</div>`;
   if (visual.kind === "balance-scale-four-objects") return `<div class="visual balance-relations-visual">${balanceScaleFourObjectsMarkup(visual)}</div>`;
   if (visual.kind === "symbol-relations") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
   if (visual.kind === "symbol-relation-two-to-three") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
