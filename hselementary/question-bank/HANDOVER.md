@@ -5,10 +5,10 @@
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8765/hselementary/question-bank/`
 - Total types: 174
-- Implemented types: 88
-- Pending types: 86
-- Completed: all six units in grade 4 semester 1 and units 1-2 in grade 4 semester 2
-- Next unit: grade 4 semester 2, unit 3 (decimal addition and subtraction)
+- Implemented types: 91
+- Pending types: 83
+- Completed: all six units in grade 4 semester 1 and units 1-3 in grade 4 semester 2
+- Next unit: grade 4 semester 2, unit 4 (quadrilaterals)
 
 ## Required Standard
 
@@ -29,6 +29,7 @@
 - Grade 4-1 unit 6: finding rules, 6 types
 - Grade 4-2 unit 1: fraction addition and subtraction, 6 types
 - Grade 4-2 unit 2: triangles, 4 types
+- Grade 4-2 unit 3: decimal addition and subtraction, 4 types
 
 The current ready set has passed 7,560-generation regression coverage. The newer units were also checked at desktop and mobile widths for overflow, missing questions, missing solutions, and accidental lock states.
 
@@ -43,7 +44,7 @@ The current ready set has passed 7,560-generation regression coverage. The newer
 
 ## Next Steps
 
-1. Query the private source memory for grade 4 semester 2 unit 3.
+1. Query the private source memory for grade 4 semester 2 unit 4.
 2. Inspect only the relevant triangle pages needed to confirm structures and diagrams.
 3. Record the classification decision before implementation.
 4. Add dedicated generators and SVG diagrams for every type in the unit.

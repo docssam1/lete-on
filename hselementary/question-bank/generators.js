@@ -5,6 +5,7 @@
   const int = (rng, min, max) => Math.floor(rng() * (max - min + 1)) + min;
   const shuffle = (rng, values) => [...values].sort(() => rng() - 0.5);
   const decimal = (value, places = 2) => Number(value.toFixed(places)).toString();
+  const fixedDecimal = (scaled, places) => (scaled / 10 ** places).toFixed(places);
   const fraction = (n, d) => {
     const divisor = gcd(n, d);
     n /= divisor;
@@ -245,6 +246,18 @@
       edge = [b, next];
     }
     return `<svg class="geometry-diagram equilateral-chain" viewBox="0 0 240 160" aria-label="이어 붙인 정삼각형"><g>${triangles.map(pointsValue => `<polygon points="${pointsValue}"/>`).join("")}</g><text x="203" y="128">…</text></svg>`;
+  };
+  const decimalLineSvg = ({ start, step, count, hiddenIndex, places }) => {
+    const left = 20;
+    const right = 220;
+    const y = 42;
+    const xFor = index => left + (right - left) * index / (count - 1);
+    const ticks = Array.from({ length: count }, (_, index) => {
+      const x = xFor(index);
+      const label = index === hiddenIndex ? "□" : fixedDecimal(start + step * index, places);
+      return `<line x1="${x.toFixed(1)}" y1="${y - 7}" x2="${x.toFixed(1)}" y2="${y + 7}"/><text x="${x.toFixed(1)}" y="${y + 24}">${label}</text>`;
+    }).join("");
+    return `<svg class="geometry-diagram decimal-line" viewBox="0 0 240 88" aria-label="소수 수직선"><line x1="${left}" y1="${y}" x2="${right}" y2="${y}"/>${ticks}</svg>`;
   };
   const numberGrid = (rows, columns, valueAt) => `<div class="number-grid" style="--grid-columns:${columns}">${Array.from({ length: rows * columns }, (_, index) => `<span>${valueAt(Math.floor(index / columns) + 1, index % columns + 1)}</span>`).join("")}</div>`;
   const numberTriangle = (rows) => `<div class="number-triangle">${Array.from({ length: rows }, (_, rowIndex) => {
@@ -1342,6 +1355,98 @@
       const answer = 3 * side * (side + 1) / 2;
       return result(`길이가 같은 성냥개비로 한 변을 ${side}등분한 정삼각형 격자를 만들었습니다. 사용한 성냥개비는 모두 몇 개인지 구하세요.${triangleLatticeSvg(side)}`, answer, `가로·왼쪽 아래 방향·오른쪽 아래 방향의 성냥개비 수가 각각 1 + 2 + … + ${side} = ${side * (side + 1) / 2}개입니다. 세 방향을 합하면 ${answer}개입니다.`);
     },
+    decimalUnderstanding({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const places = level === 2 ? 3 : 2;
+        const scale = 10 ** places;
+        const start = int(rng, scale / 10, scale / 2);
+        const step = int(rng, 2, 5 + level);
+        const count = 7;
+        const hiddenIndex = int(rng, 1, count - 2);
+        const answer = fixedDecimal(start + step * hiddenIndex, places);
+        return result(`아래 수직선에서 □ 안에 알맞은 소수를 구하세요.${decimalLineSvg({ start, step, count, hiddenIndex, places })}`, answer, `눈금 한 칸의 크기는 ${fixedDecimal(step, places)}입니다. 시작 수 ${fixedDecimal(start, places)}에서 ${hiddenIndex}칸 이동하면 ${fixedDecimal(start, places)} + ${fixedDecimal(step * hiddenIndex, places)} = ${answer}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const kg = int(rng, 3, 8 + level);
+        const grams = int(rng, 12, 96) * 10;
+        const answer = fixedDecimal(kg * 1000 + grams, 3);
+        return result(`${kg}kg ${grams}g을 kg 단위의 소수로 나타내세요.`, answer, `1kg은 1000g이므로 ${grams}g은 ${fixedDecimal(grams, 3)}kg입니다. 따라서 ${kg}kg ${grams}g = ${answer}kg입니다.`);
+      }
+      const values = Array.from({ length: 5 + level }, () => int(rng, 120, 980));
+      const target = pick(rng, values);
+      const answer = Math.round(target / 10) * 10;
+      return result(`다음 소수 중 ${fixedDecimal(target, 2)}에 가장 가까운 일의 자리 수를 구하세요.<div class="sequence">${values.map(value => fixedDecimal(value, 2)).join(", ")}</div>`, answer, `${fixedDecimal(target, 2)}은 일의 자리에서 반올림할 때 소수 첫째 자리 ${Math.floor(target / 10) % 10}을 보고 ${answer}이 됩니다.`);
+    },
+    decimalAddSubAdvanced({ rng, level, variant = 0 }) {
+      const places = level === 2 ? 3 : 2;
+      const scale = 10 ** places;
+      if (variant % 3 === 0) {
+        const first = int(rng, 120, 540 + level * 220);
+        const hidden = int(rng, 80, 360 + level * 180);
+        const total = first + hidden;
+        return result(`□ 안에 알맞은 소수를 구하세요.<div class="equation">${fixedDecimal(first, places)} + □ = ${fixedDecimal(total, places)}</div>`, fixedDecimal(hidden, places), `전체에서 알려진 수를 빼면 □ = ${fixedDecimal(total, places)} - ${fixedDecimal(first, places)} = ${fixedDecimal(hidden, places)}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const count = int(rng, 8 + level, 12 + level * 3);
+        const first = int(rng, 80, 250);
+        const difference = int(rng, 11, 37 + level * 8);
+        const last = first + difference * (count - 1);
+        const total = count * (first + last) / 2;
+        return result(`다음 규칙으로 나열한 ${count}개의 소수의 합을 구하세요.<div class="sequence">${fixedDecimal(first, places)}, ${fixedDecimal(first + difference, places)}, ${fixedDecimal(first + difference * 2, places)}, …, ${fixedDecimal(last, places)}</div>`, fixedDecimal(total, places), `첫째 수와 마지막 수의 합은 ${fixedDecimal(first + last, places)}이고, 이를 짝지으면 ${count}개 전체의 합은 ${count} × ${fixedDecimal(first + last, places)} ÷ 2 = ${fixedDecimal(total, places)}입니다.`);
+      }
+      const a = int(rng, 350, 780 + level * 260);
+      const b = int(rng, 90, 260 + level * 110);
+      const c = int(rng, 40, 180 + level * 80);
+      const answer = a - b + c;
+      return result(`소수점을 맞추어 계산하세요.<div class="equation">${fixedDecimal(a, places)} - ${fixedDecimal(b, places)} + ${fixedDecimal(c, places)} = □</div>`, fixedDecimal(answer, places), `${fixedDecimal(a, places)} - ${fixedDecimal(b, places)} = ${fixedDecimal(a - b, places)}이고, 여기에 ${fixedDecimal(c, places)}을 더하면 ${fixedDecimal(answer, places)}입니다.`);
+    },
+    decimalApplication({ rng, level, variant = 0 }) {
+      const scale = 100;
+      if (variant % 3 === 0) {
+        const weights = [int(rng, 420, 790), int(rng, 480, 860), int(rng, 510, 920)];
+        const [a, b, c] = weights;
+        const answer = Math.max(...weights) - Math.min(...weights);
+        return result(`세 상자 A, B, C의 무게가 있습니다. A와 B의 합은 ${fixedDecimal(a + b, 2)}kg, B와 C의 합은 ${fixedDecimal(b + c, 2)}kg, C와 A의 합은 ${fixedDecimal(c + a, 2)}kg입니다. 가장 무거운 상자와 가장 가벼운 상자의 무게 차를 구하세요.`, fixedDecimal(answer, 2), `A = (${fixedDecimal(a + b, 2)} + ${fixedDecimal(c + a, 2)} - ${fixedDecimal(b + c, 2)}) ÷ 2 = ${fixedDecimal(a, 2)}kg처럼 각각의 무게를 구할 수 있습니다. 세 무게의 최댓값과 최솟값의 차는 ${fixedDecimal(answer, 2)}kg입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const base = int(rng, 540, 920);
+        const thickness = int(rng, 18, 37);
+        const count = int(rng, 16 + level * 3, 28 + level * 5);
+        const answer = base + thickness * count;
+        return result(`높이가 ${fixedDecimal(base, 2)}cm인 책상 위에 두께가 ${fixedDecimal(thickness, 2)}cm인 책 ${count}권을 포개어 놓았습니다. 바닥에서 가장 위 책의 윗면까지의 높이를 구하세요.`, fixedDecimal(answer, 2), `책 ${count}권의 높이는 ${fixedDecimal(thickness, 2)} × ${count} = ${fixedDecimal(thickness * count, 2)}cm입니다. 책상 높이를 더하면 ${fixedDecimal(base, 2)} + ${fixedDecimal(thickness * count, 2)} = ${fixedDecimal(answer, 2)}cm입니다.`);
+      }
+      const ahead = int(rng, 140, 430 + level * 100);
+      const behind = int(rng, 90, 350 + level * 100);
+      const answer = ahead + behind;
+      return result(`직선 도로에서 지수는 현우보다 ${fixedDecimal(ahead, 2)}km 앞에 있고, 상민이는 현우보다 ${fixedDecimal(behind, 2)}km 뒤에 있습니다. 지수와 상민이 사이의 거리를 구하세요.`, fixedDecimal(answer, 2), `현우를 기준으로 한 사람은 앞, 한 사람은 뒤에 있으므로 두 거리를 더합니다. ${fixedDecimal(ahead, 2)} + ${fixedDecimal(behind, 2)} = ${fixedDecimal(answer, 2)}km입니다.`);
+    },
+    conditionedDecimal({ rng, level, variant = 0 }) {
+      if (variant % 2 === 0) {
+        let pool = [];
+        let candidates = [];
+        for (let attempt = 0; attempt < 80; attempt += 1) {
+          pool = shuffle(rng, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4);
+          candidates = permutationNumbers(pool).map(value => String(value).split("").map(Number)).filter(digits => digits.length === pool.length).filter(digits => digits[0] + digits[1] === digits[2] + digits[3]);
+          if (candidates.length >= 2 && candidates.length <= 8) break;
+        }
+        const answer = candidates.length;
+        return result(`수 카드 ${pool.map(value => `<span class="digit-card">${value}</span>`).join("")}를 한 번씩 모두 사용하여 A.BCD 꼴의 소수를 만듭니다. 일의 자리와 소수 첫째 자리의 합이 소수 둘째 자리와 소수 셋째 자리의 합과 같은 수는 모두 몇 개인지 구하세요.`, answer, `카드의 순서를 정한 뒤 ‘일의 자리 + 소수 첫째 자리 = 소수 둘째 자리 + 소수 셋째 자리’ 조건을 만족하는 경우를 세면 ${answer}개입니다.`);
+      }
+      let lower = 0;
+      let upper = 0;
+      let candidates = [];
+      for (let attempt = 0; attempt < 80; attempt += 1) {
+        lower = int(rng, 210, 320 + level * 70);
+        upper = lower + int(rng, 95, 160 + level * 60);
+        candidates = [];
+        for (let value = lower + 1; value < upper; value += 1) {
+          const digits = String(value).padStart(3, "0").split("").map(Number);
+          if (new Set(digits).size === 3 && digits[1] + digits[2] === digits[0]) candidates.push(value);
+        }
+        if (candidates.length >= 2) break;
+      }
+      return result(`${fixedDecimal(lower, 2)}보다 크고 ${fixedDecimal(upper, 2)}보다 작은 소수 둘째 자리 수 중, 각 자리 숫자가 서로 다르고 소수 첫째 자리 숫자가 일의 자리 숫자와 소수 둘째 자리 숫자의 합인 수는 모두 몇 개인지 구하세요.`, candidates.length, `백분의 일의 자리까지 나타낸 수를 정수 ${lower + 1}부터 ${upper - 1}까지 확인합니다. 세 자리 숫자가 모두 다르고 ‘일의 자리 = 소수 첫째 자리 + 소수 둘째 자리’를 만족하는 수는 ${candidates.length}개입니다.`);
+    },
     multiply({ rng, level }) {
       const r = range(level);
       const a = int(rng, 12, r.medium);
@@ -1617,7 +1722,11 @@
     [type => type.id === "4-2-u2-t1", "triangleCount"],
     [type => type.id === "4-2-u2-t2", "triangleAngleType"],
     [type => type.id === "4-2-u2-t3", "isoscelesTriangle"],
-    [type => type.id === "4-2-u2-t4", "equilateralTriangle"]
+    [type => type.id === "4-2-u2-t4", "equilateralTriangle"],
+    [type => type.id === "4-2-u3-t1", "decimalUnderstanding"],
+    [type => type.id === "4-2-u3-t2", "decimalAddSubAdvanced"],
+    [type => type.id === "4-2-u3-t3", "decimalApplication"],
+    [type => type.id === "4-2-u3-t4", "conditionedDecimal"]
   ];
 
   function generatorKey(typeOrName) {
