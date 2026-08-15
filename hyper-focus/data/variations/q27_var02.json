@@ -4,8 +4,96 @@
   "variationId": "q27_var02",
   "subType": "honeycomb_operation",
   "status": "draft",
-  "source": { "problemImage": "./assets/problems/q27_var02.png" },
-  "contentBinding": { "canonicalSource": "./canonical/q27.json", "hfDataTypeId": 27 },
-  "machineReadable": { "payloadType": "honeycomb_operation", "centerValue": 18, "neighborValues": [3, 3, 6], "expectedAnswer": 12 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 12 }
+  "source": {
+    "problemImage": "./assets/svg/variations/q27_var02.svg"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q27.json",
+    "hfDataTypeId": 27
+  },
+  "problem": {
+    "prompt": "각 벌집에서 모든 숫자와 연산 기호를 빠뜨리지 않고 한 번씩 지나는 길을 그어 옳은 식을 만들어 보세요."
+  },
+  "machineReadable": {
+    "payloadType": "honeycomb_operation",
+    "boardShape": {
+      "cellCount": 7,
+      "layout": "center_with_surrounding_hexes",
+      "cellIds": ["TL", "TR", "R", "BR", "BL", "L", "C"],
+      "ringOrder": ["TL", "TR", "R", "BR", "BL", "L"]
+    },
+    "pathRule": {
+      "useAllGivenNumbers": true,
+      "useAllGivenOperators": true,
+      "visitEachCellOnce": true,
+      "adjacentCellsOnly": true,
+      "adjacentDigitCellsConcatenate": true,
+      "calculationOrder": "path_order"
+    },
+    "boards": [
+      {
+        "boardId": 1,
+        "cells": {
+          "TL": "7",
+          "TR": "4",
+          "R": "=",
+          "BR": "8",
+          "BL": "6",
+          "L": "-",
+          "C": "2"
+        },
+        "uniqueSolution": {
+          "path": ["TL", "C", "L", "BL", "BR", "R", "TR"],
+          "expression": "72-68=4",
+          "result": 4,
+          "validFullPathCount": 1
+        }
+      },
+      {
+        "boardId": 2,
+        "cells": {
+          "TL": "9",
+          "TR": "+",
+          "R": "4",
+          "BR": "-",
+          "BL": "=",
+          "L": "6",
+          "C": "7"
+        },
+        "uniqueSolution": {
+          "path": ["TL", "TR", "R", "BR", "C", "BL", "L"],
+          "expression": "9+4-7=6",
+          "result": 6,
+          "validFullPathCount": 1
+        }
+      },
+      {
+        "boardId": 3,
+        "cells": {
+          "TL": "8",
+          "TR": "9",
+          "R": "2",
+          "BR": "8",
+          "BL": "4",
+          "L": "=",
+          "C": "-"
+        },
+        "uniqueSolution": {
+          "path": ["TR", "R", "C", "BR", "BL", "L", "TL"],
+          "expression": "92-84=8",
+          "result": 8,
+          "validFullPathCount": 1
+        }
+      }
+    ],
+    "solvingModel": {
+      "expectedAnswers": [4, 6, 8],
+      "verificationMethod": "enumerate_all_seven_cell_adjacent_paths"
+    }
+  },
+  "answerValidation": {
+    "answerType": "ordered_slots",
+    "expectedAnswer": [4, 6, 8]
+  },
+  "solutionHint": "첫 번째는 72 - 68 = 4, 두 번째는 9 + 4 - 7 = 6, 세 번째는 92 - 84 = 8이 되도록 이으면 됩니다. 각 칸은 한 번씩만 지나갑니다."
 }
