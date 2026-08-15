@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "1289605ecf182718e95d7a097fa49945184d0dc2a705441f38553e79cf3ec3df",
-      "size": 44049,
-      "mtime_ns": 1786819504685853000
+      "sha256": "d1ae5a698bf8945b4e40e9523b8e9ff2a55c24cb2969d506e56d0aa2c139e8f3",
+      "size": 44900,
+      "mtime_ns": 1786819736660710200
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "8f236d550188a7c72ca3bb9c7f9b84f4aecd2e08c9021464c1527b6e092732e6",
-      "size": 117746,
-      "mtime_ns": 1786819386699388500
+      "sha256": "84759b74065b4e9f2688289d44cf10fd5836ce0a9e0ae660aee89f1e0dc7ba85",
+      "size": 118878,
+      "mtime_ns": 1786819688111210700
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "ff0c703f8d1734c412249e6a113f01d6a85b3b1d64d97f5f3fab8cd2226bec73",
-      "size": 34368,
-      "mtime_ns": 1786819386698388300
+      "sha256": "42ee4a747ac878d8119d184005c5e27c15455e6b467251d933897683209e4071",
+      "size": 34540,
+      "mtime_ns": 1786819608547563700
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 3",
+      "title": "Next verification 7-year-old selection test 3 question 4",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q03"
+        "q04"
       ],
-      "summary": "Verify the 2 by 2 position-condition placement, all clue directions, marked cell, and answer 4 against source and answer page 4.",
+      "summary": "Verify the five-runner front-position and between-person clues, asked runner, and answer 4th against source and answer page 4 before generator reuse.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 3 question 3 is the next locked source question"
+          "note": "Selection test 3 question 4 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 3 grid-number-placement",
-          "note": "Do not enable until exact grid geometry, clues, and marked answer are verified"
+          "locator": "EXAMS k7-2022-06 question 4 order-position-from-front",
+          "note": "Do not enable until exact clues and answer uniqueness are verified"
         }
       ]
     },
@@ -1553,6 +1553,40 @@
           "role": "code",
           "locator": "TYPES repeat-four-shapes and EXAMS k7-2022-06 verified 1 and 2",
           "note": "Source question 2 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q3",
+      "title": "Selection test 3 question 3 L-grid placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q3",
+        "l-grid-placement"
+      ],
+      "summary": "The source is an L-shaped four-cell grid, not the existing stair grid: 2 is left of 3 and 1 is immediately below 4, forcing the marked middle-right cell to 4.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 3 paragraph",
+          "note": "Exact grid geometry, clues, answer, generator split, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function lGridPlacement",
+          "note": "Fixed L-grid with three structural difficulty levels and unique placement"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES l-grid-placement and EXAMS k7-2022-06 verified 1 through 3",
+          "note": "Source question 3 is enabled separately from stair-grid-placement"
         }
       ]
     }

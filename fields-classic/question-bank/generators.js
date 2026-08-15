@@ -1327,6 +1327,26 @@ function stairGridPlacement({ difficulty = 2 }) {
   };
 }
 
+function lGridPlacement({ difficulty = 2 }) {
+  const pool = difficulty === 3 ? [1, 2, 3, 4, 5] : [1, 2, 3, 4];
+  const solution = shuffle(pool).slice(0, 4);
+  const cards = difficulty === 3 ? [...pool] : [...solution];
+  const targetIndex = 2;
+  const given = difficulty === 1 ? { index: 1, value: solution[1] } : null;
+  const conditions = [
+    `${solution[1]} 바로 왼쪽 칸: ${solution[0]}`,
+    `${solution[2]} 바로 아래 칸: ${solution[3]}`
+  ];
+  if (difficulty === 3) conditions.push(`${solution[1]} 바로 아래 칸: ${solution[2]}`);
+  return {
+    prompt: `주어진 조건을 보고 빈칸에 ${difficulty === 3 ? "다섯 수 중 네 수를 골라" : "1, 2, 3, 4를"} 한 번씩 넣으세요. ㉠에 알맞은 수를 구하세요.`,
+    visual: { kind: "l-grid-placement", cards: shuffle(cards), given, targetIndex, conditions },
+    answer: String(solution[targetIndex]),
+    solution: `${conditions.join(" / ")} 조건을 차례로 표시하면 ㉠에 들어가는 수는 ${solution[targetIndex]}입니다.`,
+    meta: { difficulty, cards, solution, given, targetIndex, conditions }
+  };
+}
+
 function numberPyramid({ difficulty = 2 }) {
   const max = difficulty === 1 ? 6 : difficulty === 2 ? 10 : 16;
   const cards = shuffle(Array.from({ length: max }, (_, index) => index + 1)).slice(0, 3);
@@ -2197,6 +2217,7 @@ export const GENERATORS = {
   equalizeTransfer,
   fiveCardSumPyramid,
   stairGridPlacement,
+  lGridPlacement,
   numberPyramid,
   raceOrder,
   orderPositionFromBack,
