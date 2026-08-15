@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "0861ec3f2fe8faa6a632595c23fee9f15747f072fbf2618fa4d9eeffa50093fe",
-      "size": 57820,
-      "mtime_ns": 1786823352782819400
+      "sha256": "6b95734d1f90804508dd160ac13ee68e5d80e03233a2c91f148b6eb672702524",
+      "size": 58813,
+      "mtime_ns": 1786823591077868500
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "d0d057dd060e1f5cd22177e67e078e8481dc7f9ebc238c0c53258bfb0c4d0d00",
-      "size": 134309,
-      "mtime_ns": 1786823299454826500
+      "sha256": "07b5c51897acdde1b19f539e225e49a6ba521ea3118c5f52df520f7f8000c7eb",
+      "size": 137531,
+      "mtime_ns": 1786823503718687500
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "27cbccd024aab296c0ba7bc53d0a9ecf73b7139349296874ee764dbb188c2a98",
-      "size": 35886,
-      "mtime_ns": 1786823239363364300
+      "sha256": "7c64d8acad8a8c2297613656926268b96bc1f8b088cd8e761967168874a6afe2",
+      "size": 36057,
+      "mtime_ns": 1786823472540601200
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 17",
+      "title": "Next verification 7-year-old selection test 3 question 18",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q17"
+        "q18"
       ],
-      "summary": "Verify the three balance diagrams on source and answer page 11. Four object types are used: circle, square, star, and diamond. The source asks how many diamonds equal one circle; the official answer is 6.",
+      "summary": "Verify the three symbolic equations on source and answer page 11. Star, circle, and inverted triangle are distinct one-digit numbers. Three stars equal four circles, star plus circle equals two inverted triangles, and circle plus inverted triangle equals square; the official square answer is 13.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 17 uses four objects across three balanced scales"
+          "note": "Question 18 is the three-to-four symbolic relation problem"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 17 balance-scale-three-objects mapping",
-          "note": "The current type name may not match the four-object source structure"
+          "locator": "EXAMS k7-2022-06 question 18 symbol-relation-3to4 mapping",
+          "note": "Verify exact equations and distinct-number condition before enabling"
         }
       ]
     },
@@ -2029,6 +2029,40 @@
           "role": "code",
           "locator": "TYPES fold-number-cut-sum-l-shape and EXAMS k7-2022-06 verified 1 through 16",
           "note": "Source question 16 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q17",
+      "title": "Selection test 3 question 17 four-object balance chain",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q17",
+        "balance-scale-four-objects"
+      ],
+      "summary": "The source uses three balanced scales: circle equals two squares plus one diamond, two stars equal three diamonds, and one square equals one star plus one diamond. Therefore one circle equals six diamonds.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 17 paragraph",
+          "note": "Exact three balance relations, answer 6, separate type decision, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function balanceScaleFourObjects",
+          "note": "Generates integer-weight substitutions and verifies each balance"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES balance-scale-four-objects and EXAMS k7-2022-06 verified 1 through 17",
+          "note": "Source question 17 is enabled"
         }
       ]
     }

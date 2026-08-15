@@ -2082,6 +2082,43 @@ function balanceScaleThreeObjects({ difficulty = 2 }) {
   };
 }
 
+function balanceScaleFourObjects({ difficulty = 2 }) {
+  let result = null;
+  for (let attempt = 0; attempt < 300 && !result; attempt += 1) {
+    const starCount = difficulty === 1 ? 1 : randomInt(2, difficulty === 2 ? 3 : 4);
+    let diamondCount = difficulty === 1 ? randomInt(2, 3) : randomInt(starCount + 1, difficulty === 2 ? 5 : 6);
+    if (diamondCount === starCount) diamondCount += 1;
+    const divisor = ((a, b) => { while (b) [a, b] = [b, a % b]; return a; })(starCount, diamondCount);
+    if (divisor !== 1) continue;
+    const starWeight = diamondCount / divisor;
+    const diamondWeight = starCount / divisor;
+    const squareStarCount = difficulty === 3 ? randomInt(1, 2) : 1;
+    const squareDiamondCount = difficulty === 3 ? randomInt(1, 2) : 1;
+    const squareWeight = squareStarCount * starWeight + squareDiamondCount * diamondWeight;
+    const circleSquareCount = difficulty === 1 ? 1 : randomInt(1, difficulty === 2 ? 3 : 4);
+    const circleDiamondCount = difficulty === 1 ? randomInt(1, 2) : randomInt(difficulty === 2 ? 1 : 0, difficulty === 2 ? 3 : 4);
+    const circleWeight = circleSquareCount * squareWeight + circleDiamondCount * diamondWeight;
+    if (circleWeight % diamondWeight !== 0) continue;
+    const answer = circleWeight / diamondWeight;
+    if (answer < 3 || answer > (difficulty === 3 ? 24 : 14)) continue;
+    const expandedStarCount = circleSquareCount * squareStarCount;
+    const expandedDiamondCount = circleSquareCount * squareDiamondCount + circleDiamondCount;
+    const replacementGroups = expandedStarCount / starCount;
+    if (!Number.isInteger(replacementGroups)) continue;
+    result = { starCount, diamondCount, starWeight, diamondWeight, squareStarCount, squareDiamondCount, squareWeight, circleSquareCount, circleDiamondCount, circleWeight, expandedStarCount, expandedDiamondCount, replacementGroups, answer };
+  }
+  if (!result) return balanceScaleFourObjects({ difficulty });
+  const { starCount, diamondCount, starWeight, diamondWeight, squareStarCount, squareDiamondCount, squareWeight, circleSquareCount, circleDiamondCount, circleWeight, expandedStarCount, expandedDiamondCount, replacementGroups, answer } = result;
+  const hint = difficulty === 1 ? `☆ 1개는 ◇ ${starWeight}개의 무게와 같습니다.` : "";
+  return {
+    prompt: "다음 양팔저울은 모두 수평입니다. ○ 1개는 ◇ 몇 개의 무게와 같은지 구하세요.",
+    visual: { kind: "balance-scale-four-objects", starCount, diamondCount, squareStarCount, squareDiamondCount, circleSquareCount, circleDiamondCount, hint },
+    answer: `${answer}개`,
+    solution: `셋째 저울을 이용해 첫째 저울의 □를 바꾸면 ○ 1개는 ☆ ${expandedStarCount}개와 ◇ ${expandedDiamondCount}개를 합한 무게입니다. 둘째 저울의 ☆ ${starCount}개를 ◇ ${diamondCount}개로 ${replacementGroups}번 바꾸면 ○ 1개는 ◇ ${answer}개의 무게와 같습니다.`,
+    meta: { difficulty, starCount, diamondCount, starWeight, diamondWeight, squareStarCount, squareDiamondCount, squareWeight, circleSquareCount, circleDiamondCount, circleWeight, expandedStarCount, expandedDiamondCount, replacementGroups, answer }
+  };
+}
+
 function symbolSumGridSquareTop({ difficulty = 2 }) {
   const max = difficulty === 1 ? 6 : difficulty === 2 ? 9 : 12;
   const [square, diamond, circle, triangle] = shuffle(Array.from({ length: max - 1 }, (_, index) => index + 2)).slice(0, 4);
@@ -2461,6 +2498,7 @@ export const GENERATORS = {
   goStoneDifferenceInverse,
   sourceBalanceRelations,
   balanceScaleThreeObjects,
+  balanceScaleFourObjects,
   sourcePianoBounce,
   sourceSymbolSumGrid,
   shapeSumGridTopTarget,

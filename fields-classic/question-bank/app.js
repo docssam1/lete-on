@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bp";
-import { GENERATORS } from "./generators.js?v=20260816bq";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bq";
+import { GENERATORS } from "./generators.js?v=20260816br";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -791,6 +791,16 @@ function balanceScaleThreeObjectsMarkup(visual) {
   return `<div class="three-object-balances">${first}${second}${third}${visual.hint ? `<p class="balance-hint">도움: ${visual.hint}</p>` : ""}<strong class="balance-target">${target}</strong></div>`;
 }
 
+function balanceScaleFourObjectsMarkup(visual) {
+  const symbols = { circle: "○", square: "□", star: "☆", diamond: "◇" };
+  const pieces = (kind, count) => Array.from({ length: count }, () => `<i class="weight-piece ${kind}" aria-label="${symbols[kind]}">${symbols[kind]}</i>`).join("");
+  const scale = (left, right, label) => `<div class="balance-example three-object-scale"><div class="balance-pan">${left}</div><b>=</b><div class="balance-pan">${right}</div><small>${label}</small></div>`;
+  const first = scale(pieces("circle", 1), `${pieces("square", visual.circleSquareCount)}${pieces("diamond", visual.circleDiamondCount)}`, "[그림 1]");
+  const second = scale(pieces("star", visual.starCount), pieces("diamond", visual.diamondCount), "[그림 2]");
+  const third = scale(pieces("square", 1), `${pieces("star", visual.squareStarCount)}${pieces("diamond", visual.squareDiamondCount)}`, "[그림 3]");
+  return `<div class="three-object-balances four-object-balances">${first}${second}${third}${visual.hint ? `<p class="balance-hint">도움: ${visual.hint}</p>` : ""}<strong class="balance-target">○ 1개 = ◇ (　)개</strong></div>`;
+}
+
 function symbolRelationsMarkup(visual) {
   const repeat = (symbol, count) => Array.from({ length: count }, () => symbol).join(" + ");
   return `<div class="symbol-relations">${visual.hint ? `<small>${visual.hint}</small>` : ""}<p>${repeat("☆", visual.firstStar)} = ${repeat("○", visual.firstCircle)}</p><p>☆ + ○ = ▽ + ▽</p><p>${visual.final.join(" + ")} = □</p></div>`;
@@ -902,6 +912,7 @@ function visualMarkup(visual) {
   if (visual.kind === "source-piano") return `<div class="visual source-piano-visual">${sourcePianoMarkup()}</div>`;
   if (visual.kind === "balance-relations") return `<div class="visual balance-relations-visual">${balanceRelationsMarkup(visual)}</div>`;
   if (visual.kind === "balance-scale-three-objects") return `<div class="visual balance-relations-visual">${balanceScaleThreeObjectsMarkup(visual)}</div>`;
+  if (visual.kind === "balance-scale-four-objects") return `<div class="visual balance-relations-visual">${balanceScaleFourObjectsMarkup(visual)}</div>`;
   if (visual.kind === "symbol-relations") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
   if (visual.kind === "symbol-relation-two-to-three") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
   if (visual.kind === "number-line-six-points") return `<div class="visual number-line-six-points-visual">${numberLineSixPointsMarkup(visual)}</div>`;
