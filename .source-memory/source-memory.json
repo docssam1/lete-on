@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "7601cbfd504f05737dd91548c5e2c78588fc40405c5f5a4d837e1487504199cf",
-      "size": 27874,
-      "mtime_ns": 1786813909825293400
+      "sha256": "2a4ebfce8ab8fede78f4c0a13bca563c369a19d29851c77ad306242b83e2552c",
+      "size": 28647,
+      "mtime_ns": 1786814112724795000
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "abed813a788df9b9fa81d632e5e175abf2f8aeec2fad0448e1572a8dc3d6fc5e",
-      "size": 87856,
-      "mtime_ns": 1786813797881109300
+      "sha256": "80f6a4eafe7de56e6acec87c0e48e6366dc4078e4c874d3801c810fee2fc96ae",
+      "size": 89298,
+      "mtime_ns": 1786814056075013000
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "593006592f8b4ba48384096848821372b529c047bf27f40ca7dcdd8f6142a19f",
-      "size": 32947,
-      "mtime_ns": 1786813797882106800
+      "sha256": "c5ae855d967d2e53cce970e07863223e908b07751873b7c9e006579c35ec152f",
+      "size": 33003,
+      "mtime_ns": 1786814042864916400
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 4",
+      "title": "Next verification 7-year-old selection test 2 question 5",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q4"
+        "q5"
       ],
-      "summary": "Verify the 2x2 placement of 1 through 4 from left and directly-below clues; answer is the value in the marked cell.",
+      "summary": "Verify the runner order counted from the back and the number of people between two runners before reusing or creating a generator.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,7 +123,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "Next sequence item 1",
-          "note": "Selection test 2 question 4 is next"
+          "note": "Selection test 2 question 5 is next"
         }
       ]
     },
@@ -901,6 +901,40 @@
           "role": "code",
           "locator": "TYPES five-card-sum-pyramid and EXAMS k7-2022-04 verified 1 through 3",
           "note": "Source question 3 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q4",
+      "title": "Selection test 2 question 4 stair-grid placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q4",
+        "grid-number-placement"
+      ],
+      "summary": "The source is a four-cell stair, not a 2x2 square. Clues place 2 left of 4 and 4 below 3, leaving marked top-right as 1.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 4 paragraph",
+          "note": "Original stair geometry, clues, and answer 1 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function stairGridPlacement and GENERATORS export",
+          "note": "Three structural difficulty levels with explicit position metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES grid-number-placement and EXAMS k7-2022-04 verified 1 through 4",
+          "note": "Source question 4 is enabled"
         }
       ]
     }
