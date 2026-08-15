@@ -981,6 +981,34 @@ function reverseInitialCount({ difficulty = 2 }) {
   };
 }
 
+function eraseExpressionTarget({ difficulty = 2 }) {
+  const termCount = difficulty === 1 ? 2 : difficulty === 2 ? 3 : 4;
+  let first;
+  let terms;
+  let removeIndex;
+  let target;
+  let fullValue;
+  do {
+    first = randomInt(difficulty === 1 ? 12 : 20, difficulty === 3 ? 55 : 42);
+    const magnitudes = shuffle(Array.from({ length: 14 }, (_, index) => index + 2)).slice(0, termCount);
+    terms = magnitudes.map((value, index) => ({ sign: (index + randomInt(0, 1)) % 2 === 0 ? 1 : -1, value }));
+    const signed = terms.map((term) => term.sign * term.value);
+    removeIndex = randomInt(0, terms.length - 1);
+    fullValue = first + signed.reduce((sum, value) => sum + value, 0);
+    target = fullValue - signed[removeIndex];
+  } while (target < 1 || target > 60 || fullValue < 1 || terms.some((term, index) => index !== removeIndex && term.sign * term.value === terms[removeIndex].sign * terms[removeIndex].value));
+
+  const expression = `${first}${terms.map((term) => `${term.sign > 0 ? "+" : "-"}${term.value}`).join("")}`;
+  const removed = `${terms[removeIndex].sign > 0 ? "+" : "-"}${terms[removeIndex].value}`;
+  return {
+    prompt: "아래 식이 성립하도록 필요 없는 부분 한 곳을 X로 지우세요. 부호와 수를 함께 지워야 합니다.",
+    visual: { kind: "erase-expression-target", first, terms, target },
+    answer: removed,
+    solution: `${removed}을 지우면 ${expression.replace(removed, "")} = ${target}가 되어 식이 성립합니다.`,
+    meta: { difficulty, first, terms, removeIndex, removed, target, fullValue, termCount }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -1443,6 +1471,7 @@ export const GENERATORS = {
   hiddenScoreRanking,
   twoDigitEvenCount,
   reverseInitialCount,
+  eraseExpressionTarget,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,

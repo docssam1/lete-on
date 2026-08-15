@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "430851eb9351a7dff3a9ef6bed14b4b4642f0b13a2482c6da862d0cb12fb7812",
-      "size": 23129,
-      "mtime_ns": 1786811985919740000
+      "sha256": "e51ccb2976d926d2adfdc20aec84a73509e5efeda2c339462ae31fde0a0db9b5",
+      "size": 23717,
+      "mtime_ns": 1786812256155125100
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "f8f93260b7d32df49cedba58b49db0f81a407515331408113305bc40e1bf593b",
-      "size": 33756,
-      "mtime_ns": 1786811985918737300
+      "sha256": "dd99d16fbf1372930d9c73227451f85ad4eb952d880429899616a93a284a045b",
+      "size": 33978,
+      "mtime_ns": 1786812256154122400
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "da3605beed8cc4e3cc86e49b51c7551b2f6e0874170a50617a19bc72ed9f0206",
-      "size": 76736,
-      "mtime_ns": 1786811886383104100
+      "sha256": "78f4453adcad5e02b9df308626ded75597bd90a999184593e2571caf35a32e93",
+      "size": 78349,
+      "mtime_ns": 1786812088880133300
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "3d6ec42560391f8285255006c744889932d6835c0706637777b3a4af4f2123eb",
-      "size": 32520,
-      "mtime_ns": 1786811865646581300
+      "sha256": "8c283273a25c954837d7cb7116d08df1ff43c331809a58b7db1066d0e59c7e8e",
+      "size": 32629,
+      "mtime_ns": 1786812088884138500
     }
   ],
   "records": [
@@ -107,15 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F20 erase expression target",
+      "title": "Next implementation F21 collection repeat gap",
       "aliases": [
         "다음 작업"
       ],
       "tags": [
         "next",
-        "F20"
+        "F21"
       ],
-      "summary": "Continue with F20 by locating the exact expression-erasing source and verifying which term must be removed to reach the target.",
+      "summary": "Continue with F21 by verifying the exact collection diagram, repeated result sequence, and number of circles between equal values.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -124,7 +124,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F19 are complete; F20 is next"
+          "note": "F01 through F20 are complete; F21 is next"
         }
       ]
     },
@@ -665,6 +665,42 @@
           "role": "code",
           "locator": "TYPES reverse-initial-count and PRACTICE_EXAM_TYPES mock-4 question 12",
           "note": "Only verified practice questions are enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f20",
+      "title": "Practice 3 question 18 erase expression target",
+      "aliases": [
+        "실전 3회 18번",
+        "식의 일부를 X로 지우기"
+      ],
+      "tags": [
+        "F20",
+        "practice-3"
+      ],
+      "summary": "F20 preserves the original expression 27-5+8+10=30 and removal +10, and verifies that exactly one signed term can be erased in every generated problem.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 최종 표 18번, 중복·해설 검증 18번, 다음 검증 순서 4번",
+          "note": "Practice 3 source expression order and removed term verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function eraseExpressionTarget and GENERATORS export",
+          "note": "Three term-count levels with exhaustive one-term deletion metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES erase-expression-target and PRACTICE_EXAM_TYPES mock-3 question 18",
+          "note": "Only the verified practice question is enabled"
         }
       ]
     }
