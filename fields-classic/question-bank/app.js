@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816da";
-import { GENERATORS } from "./generators.js?v=20260816cn";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816db";
+import { GENERATORS } from "./generators.js?v=20260816co";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -551,6 +551,11 @@ function linePositionSevenMarkup(visual) {
   return `<div class="line-position-work"><ul>${visual.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul>${hint}<div class="line-position-row"><b>앞</b><div style="--line-count:${visual.total}">${Array.from({ length: visual.total }, () => "<i></i>").join("")}</div><b>뒤</b></div></div>`;
 }
 
+function totalDifferenceCandyMarkup(visual) {
+  const hint = visual.showHint ? `<small>먼저 ${visual.difference}개를 떼어 놓고, 남은 사탕을 둘로 똑같이 나누어 보세요.</small>` : "";
+  return `<div class="candy-share-work"><div class="candy-count" style="--candy-columns:${Math.min(10, Math.ceil(Math.sqrt(visual.total)))}">${Array.from({ length: visual.total }, () => '<span aria-hidden="true">🍬</span>').join("")}</div>${hint}${visual.transfer ? `<p>한 사람이 다른 사람에게 <b>${visual.transfer}개</b>를 주었습니다.</p>` : `<p>두 사람의 차이는 <b>${visual.difference}개</b>입니다.</p>`}</div>`;
+}
+
 function additionTableGridMarkup(visual) {
   const givenMap = new Map(visual.givens.map((item) => [`${item.row}:${item.column}`, item.value]));
   const cells = Array.from({ length: visual.size * visual.size }, (_, index) => {
@@ -979,6 +984,7 @@ function visualMarkup(visual) {
   if (visual.kind === "l-grid-placement") return `<div class="visual l-grid-placement-visual">${lGridPlacementMarkup(visual)}</div>`;
   if (visual.kind === "race-order") return `<div class="visual race-order-visual">${raceOrderMarkup(visual, visual.conditions || [])}</div>`;
   if (visual.kind === "line-position-seven") return `<div class="visual line-position-visual">${linePositionSevenMarkup(visual)}</div>`;
+  if (visual.kind === "total-difference-candy") return `<div class="visual total-difference-candy-visual">${totalDifferenceCandyMarkup(visual)}</div>`;
   if (visual.kind === "addition-table-grid") return `<div class="visual addition-table-visual">${additionTableGridMarkup(visual)}</div>`;
   if (visual.kind === "disc-number-rule") return `<div class="visual disc-rule-visual">${discNumberRuleMarkup(visual)}</div>`;
   if (visual.kind === "shape-sum-table") return `<div class="visual shape-sum-visual">${shapeSumTableMarkup(visual)}</div>`;

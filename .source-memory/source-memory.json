@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "68cbaeec841f36376d7e26158420334b18bbc80cdf76cda6323b8676b8eade29",
-      "size": 88754,
-      "mtime_ns": 1786831812886237800
+      "sha256": "3b8005498ee39fc296e15424504fa5d131929668d61b4218cecb1f936df4e048",
+      "size": 89733,
+      "mtime_ns": 1786831962627201700
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "fbd903dc64999a647ee909d8a50eb2b1447d81323aaf3e2c87e7f59988b2abc8",
-      "size": 169926,
-      "mtime_ns": 1786831700866316400
+      "sha256": "e82f312bd082c7cea4af72487d6fbe22401ccd26f1ab1afa153470d31ddbd2ac",
+      "size": 172087,
+      "mtime_ns": 1786831919987582700
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "d4a7b658aac61dea8f3427702fa79502c8ab99b9de8c1b12d4a9494feeb79e24",
-      "size": 39254,
-      "mtime_ns": 1786831700870316200
+      "sha256": "5d7aa63ec3ab45b506d380205e35c6fdd0347660e5a4c61a5a5ad27c49fb6583",
+      "size": 39448,
+      "mtime_ns": 1786831919991583500
     }
   ],
   "records": [
@@ -107,12 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 12",
+      "title": "Next verification selection test 6 question 13",
       "aliases": [],
       "tags": [
         "next"
       ],
-      "summary": "Compare the total-and-difference candy sharing story and official answer 15; the provisional equalize-transfer mapping is likely a different problem.",
+      "summary": "Compare the odd two-digit number conditions, range, digit gap, and official answer 37 before selecting the correct parity-gap subtype.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -120,13 +120,13 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "7-year-old selection test 6 question 12",
-          "note": "Verify total 24, difference 6, asked larger share, and official answer"
+          "locator": "7-year-old selection test 6 question 13",
+          "note": "Verify parity, range, digit relation, and official answer"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-12 question 12",
+          "locator": "EXAMS k7-2022-12 question 13",
           "note": "Current provisional mapping remains disabled"
         }
       ]
@@ -3211,6 +3211,39 @@
           "role": "code",
           "locator": "TYPES repeat-shape-color-dual and EXAMS k7-2022-12 verified 1 through 11",
           "note": "Source question 11 is enabled without changing the old single-cycle type"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q12",
+      "title": "Selection test 6 question 12 total and difference candy share",
+      "aliases": [],
+      "tags": [
+        "q12",
+        "total-difference-candy"
+      ],
+      "summary": "Verified against source and official answer: 24 candies split so one child has 6 more, making the larger share 15. Replaced the unrelated equalize-transfer mapping with a candy-specific total-and-difference generator whose picture count matches the prompt.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 12 paragraph",
+          "note": "Original total, difference, official answer, candy rendering, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function totalDifferenceCandyShare",
+          "note": "Candy-specific direct and reverse variants"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES total-difference-candy and EXAMS k7-2022-12 verified 1 through 12",
+          "note": "Source question 12 is enabled without changing the cube variant"
         }
       ]
     }
