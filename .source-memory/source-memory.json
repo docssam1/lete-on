@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "04c4039dea40db11236d494751cb0de53ddb788498be85fb7b6555f715c1059f",
-      "size": 84533,
-      "mtime_ns": 1786830768512820700
+      "sha256": "7a392a34083c8be3fe9d2de5881b4554121958f748eb9b278b8faa20383b0e31",
+      "size": 85580,
+      "mtime_ns": 1786831059860950300
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "c412623c918bd75624aea61e2eb7f93847182195413757883c5489e990c62369",
-      "size": 38856,
-      "mtime_ns": 1786830699282239200
+      "sha256": "27be5911e97ddc00dabb3573fec35459797279845efc05b3800d18e1739e6e55",
+      "size": 38867,
+      "mtime_ns": 1786831059858948900
     }
   ],
   "records": [
@@ -107,12 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 7",
+      "title": "Next verification selection test 6 question 8",
       "aliases": [],
       "tags": [
         "next"
       ],
-      "summary": "Compare the original 1-8 edge-sum layout and official answer, then verify the mapped generator before opening it.",
+      "summary": "Compare the original row-column shape sum table and official answer 35, then verify or separate the mapped generator.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -120,14 +120,14 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "7-year-old selection test 6 question 7",
-          "note": "Verify the source layout and official answer before implementation"
+          "locator": "7-year-old selection test 6 question 8",
+          "note": "Verify symbols, row and column totals, target position, and official answer"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-12 question 7",
-          "note": "Current provisional mapping must not be trusted until source comparison"
+          "locator": "EXAMS k7-2022-12 question 8",
+          "note": "Current provisional mapping remains disabled"
         }
       ]
     },
@@ -3046,6 +3046,39 @@
           "role": "code",
           "locator": "TYPES order-position-seven-people and EXAMS k7-2022-12 verified 1 through 6",
           "note": "Source question 6 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q7",
+      "title": "Selection test 6 question 7 eight-card equal line sum",
+      "aliases": [],
+      "tags": [
+        "q7",
+        "equal-line-sum-eight-cards-twelve"
+      ],
+      "summary": "Verified against source and official answer: cards 1 through 8, each side sums to 12, clues 6, 2, and 3, and the top-left target is uniquely 1. Corrected the exam mapping from the sum-15 generator to the source-matched sum-12-at-same-level generator.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 7 paragraph",
+          "note": "Original layout, official answer, mapping correction, difficulty behavior, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function equalLineSumEightCardsTwelve",
+          "note": "Shared source-matched generator with unique target validation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified 1 through 7",
+          "note": "Question 7 now uses the correct subtype"
         }
       ]
     }
