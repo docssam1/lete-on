@@ -45,6 +45,11 @@ canvas{display:block;width:100%;height:auto;background:#fff;border-radius:6px}#i
   <option value="unfoldshape">접어 자르고 펼친 모양 그리기 (4지선다)</option>
   <option value="stackfind">겹친 색종이 — 가장 밑(또는 위) 찾기</option>
   <option value="stackorder">겹친 색종이 — 위에서부터 순서대로</option>
+  <option value="game-l1">게임 연계 1단계 — 한 번 접어 펼친 모양</option>
+  <option value="game-l2">게임 연계 2단계 — 대각선 대칭</option>
+  <option value="game-l3">게임 연계 3단계 — 자르거나 뚫을 위치</option>
+  <option value="game-l4">게임 연계 4단계 — 대칭 도형 완성</option>
+  <option value="game-l5">게임 연계 5단계 — 잘린 수의 합</option>
 </select>
 </section>
 <section class="control-group"><h2>난이도</h2><div class="radio-row"><label><input type="radio" name="difficulty" value="easy">하</label><label><input type="radio" name="difficulty" value="mid" checked>중</label><label><input type="radio" name="difficulty" value="hard">상</label></div></section>
@@ -1170,12 +1175,143 @@ function renderNumber(ctx,d){
   drawNumberGrid(ctx, d.grid, x, baseY, size);
 }
 
+/* ===== 게임 1~5단계 공용 문항 어댑터 =====
+   게임의 levels.js를 그대로 읽어 학습지에서도 같은 문항 ID와 정답 근거를 쓴다. */
+let sharedGameLevels=[];
+const sharedModeLevel=(mode)=>Number(mode.replace('game-l',''));
+const sharedAxisLabel={vertical:'세로',horizontal:'가로','diag-main':'왼쪽 위-오른쪽 아래 대각선','diag-anti':'오른쪽 위-왼쪽 아래 대각선'};
+
+async function loadSharedGameLevels(){
+  try{
+    const module=await import('../../games/paper-fold/levels.js?v=paper-fold-5');
+    module.validateLevels();
+    sharedGameLevels=module.levels;
+  }catch(error){
+    console.error('게임 연계 문항을 불러오지 못했습니다.',error);
+    document.querySelectorAll('.mode-button').forEach(button=>{
+      if(button.textContent.includes('게임 연계')) button.disabled=true;
+    });
+  }
+}
+
+function sharedRegionLabel(region){
+  const match=/^r(\d)c(\d)(?:-(ne|nw|se|sw))?$/.exec(region);
+  if(!match) return region;
+  const corner={ne:'오른쪽 위 삼각형',nw:'왼쪽 위 삼각형',se:'오른쪽 아래 삼각형',sw:'왼쪽 아래 삼각형'};
+  return `${match[1]}행 ${match[2]}열${match[3]?` ${corner[match[3]]}`:''}`;
+}
+
+function buildSharedProblem(mode){
+  const levelNumber=sharedModeLevel(mode);
+  const level=sharedGameLevels[levelNumber-1];
+  if(!level) return null;
+  const source=level.problems[questionNumber%level.problems.length];
+  const prompts={
+    1:['색종이를 한 번 접은 뒤 표시된 곳을 작업했습니다.','색종이를 펼쳤을 때의 모양을 고르세요.'],
+    2:['색종이를 대각선으로 한 번 접은 뒤 표시된 곳을 작업했습니다.','대칭 위치를 생각하여 펼친 모양을 고르세요.'],
+    3:['접힌 색종이의 진한 부분을 자르거나 구멍 뚫었습니다.','펼쳤을 때 같은 작업이 나타날 모눈 위치를 모두 표시하세요.'],
+    4:['접힌 선을 기준으로 주어진 도형과 대칭이 되게 완성하세요.','도형의 모양과 방향이 같도록 그리세요.'],
+    5:['색종이를 한 번 접은 뒤 진한 부분을 잘라 냈습니다.','펼쳤을 때 잘려 나간 칸을 표시하고 그 칸의 수를 모두 더하세요.']
+  };
+  let answer;
+  if(levelNumber<=2) answer=source.answer==='a'?'가':'나';
+  else if(levelNumber===3) answer=source.targetRegions.map(sharedRegionLabel).join(', ');
+  else if(levelNumber===4) answer='정답 그림 참조';
+  else answer=source.answer.sum;
+  return {kind:'game-level',gameLevel:levelNumber,source,answer,text:prompts[levelNumber],info:`${source.id} · ${sharedAxisLabel[source.fold.axis]} 접기`,src:'게임과 동일한 확정 문항'};
+}
+
+function sharedRegionPath(ctx,x,y,size,region){
+  const match=/^r(\d)c(\d)(?:-(ne|nw|se|sw))?$/.exec(region);
+  if(!match) return false;
+  const cell=size/4,c=Number(match[2])-1,r=Number(match[1])-1,cx=x+c*cell,cy=y+r*cell;
+  ctx.beginPath();
+  if(!match[3]) ctx.rect(cx,cy,cell,cell);
+  else{
+    const points={
+      ne:[[0,0],[1,0],[1,1]],nw:[[0,0],[1,0],[0,1]],
+      se:[[1,0],[1,1],[0,1]],sw:[[0,0],[1,1],[0,1]]
+    }[match[3]];
+    points.forEach(([px,py],index)=>index?ctx.lineTo(cx+px*cell,cy+py*cell):ctx.moveTo(cx+px*cell,cy+py*cell));
+    ctx.closePath();
+  }
+  return true;
+}
+
+function drawSharedCrease(ctx,x,y,size,axis){
+  ctx.save();ctx.strokeStyle='#548bac';ctx.lineWidth=2;ctx.setLineDash([7,6]);ctx.beginPath();
+  if(axis==='vertical'){ctx.moveTo(x+size/2,y);ctx.lineTo(x+size/2,y+size);}
+  else if(axis==='horizontal'){ctx.moveTo(x,y+size/2);ctx.lineTo(x+size,y+size/2);}
+  else if(axis==='diag-main'){ctx.moveTo(x,y);ctx.lineTo(x+size,y+size);}
+  else{ctx.moveTo(x+size,y);ctx.lineTo(x,y+size);}
+  ctx.stroke();ctx.restore();
+}
+
+function drawSharedGrid(ctx,x,y,size,{values=null,regions=[],axis=null,answer=false}={}){
+  const cell=size/4;
+  ctx.save();ctx.fillStyle='#edf8fb';ctx.fillRect(x,y,size,size);
+  regions.forEach(region=>{
+    if(sharedRegionPath(ctx,x,y,size,region)){
+      ctx.fillStyle=answer?'rgba(63,164,118,.5)':'rgba(31,125,151,.82)';ctx.fill();
+    }
+  });
+  ctx.strokeStyle='#63a6c4';ctx.lineWidth=1.5;
+  for(let i=0;i<=4;i++){ctx.beginPath();ctx.moveTo(x+i*cell,y);ctx.lineTo(x+i*cell,y+size);ctx.stroke();ctx.beginPath();ctx.moveTo(x,y+i*cell);ctx.lineTo(x+size,y+i*cell);ctx.stroke();}
+  if(axis) drawSharedCrease(ctx,x,y,size,axis);
+  if(values){ctx.fillStyle='#24323c';ctx.font=`600 ${Math.round(cell*.34)}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';for(let r=0;r<4;r++)for(let c=0;c<4;c++)ctx.fillText(String(values[r][c]),x+(c+.5)*cell,y+(r+.5)*cell);}
+  ctx.restore();
+}
+
+function drawSharedMark(ctx,x,y,size,point,type){
+  const px=x+point[0]*size,py=y+point[1]*size;
+  ctx.save();ctx.strokeStyle='#c4475d';ctx.fillStyle='rgba(196,71,93,.2)';ctx.lineWidth=4;
+  if(type==='punch'){ctx.beginPath();ctx.arc(px,py,12,0,Math.PI*2);ctx.fill();ctx.stroke();}
+  else{ctx.beginPath();ctx.moveTo(px-14,py+10);ctx.lineTo(px,py-12);ctx.lineTo(px+14,py+10);ctx.stroke();}
+  ctx.restore();
+}
+
+function drawSharedShape(ctx,x,y,size,item,{answer=false}={}){
+  ctx.save();ctx.translate(x+item.x*size,y+item.y*size);ctx.rotate((item.rotation||0)*Math.PI/180);ctx.scale(item.flipped?-1:1,1);
+  ctx.fillStyle=answer?'rgba(63,164,118,.48)':'rgba(67,137,181,.35)';ctx.strokeStyle=answer?'#267b58':'#397da7';ctx.lineWidth=4;
+  const unit=size*.12;ctx.beginPath();
+  if(item.shape==='square') ctx.rect(-unit,-unit,unit*2,unit*2);
+  else if(item.shape==='right-triangle'){ctx.moveTo(-unit,unit);ctx.lineTo(-unit,-unit);ctx.lineTo(unit,unit);ctx.closePath();}
+  else{ctx.moveTo(0,-unit*1.15);ctx.lineTo(unit,unit);ctx.lineTo(-unit,unit);ctx.closePath();}
+  ctx.fill();ctx.stroke();ctx.restore();
+}
+
+function renderSharedGame(ctx,d,showAnswer=false){
+  header(ctx,d.text);
+  const p=d.source,level=d.gameLevel;
+  ctx.fillStyle='#52616b';ctx.font='700 16px sans-serif';ctx.fillText(`${p.id} · ${sharedAxisLabel[p.fold.axis]} 접기`,54,112);
+  if(level<=2){
+    const sx=90,sy=155,ss=205;
+    ctx.fillStyle='#f8d8de';ctx.strokeStyle='#ca8191';ctx.lineWidth=3;ctx.fillRect(sx,sy,ss,ss);ctx.strokeRect(sx,sy,ss,ss);drawSharedCrease(ctx,sx,sy,ss,p.fold.axis);drawSharedMark(ctx,sx,sy,ss,p.action.point,p.action.type);
+    drawStepArrow(ctx,350,sy+ss/2);
+    p.choices.forEach((choice,index)=>{
+      const x=480+index*360,y=145,size=230;
+      ctx.fillStyle='#fff8f7';ctx.fillRect(x,y,size,size);ctx.strokeStyle=showAnswer&&choice.key===p.answer?'#2f9a6c':'#9eaab0';ctx.lineWidth=showAnswer&&choice.key===p.answer?7:2;ctx.strokeRect(x,y,size,size);drawSharedCrease(ctx,x,y,size,p.fold.axis);
+      choice.result.marks.forEach(mark=>drawSharedMark(ctx,x,y,size,mark,p.action.type));
+      ctx.fillStyle='#25313b';ctx.font='800 22px sans-serif';ctx.textAlign='center';ctx.fillText(index?'나':'가',x+size/2,y+size+34);
+    });ctx.textAlign='left';
+  }else if(level===3){
+    drawSharedGrid(ctx,175,155,235,{regions:p.sourceRegions,axis:p.fold.axis});drawStepArrow(ctx,500,272);drawSharedGrid(ctx,710,135,275,{regions:showAnswer?p.targetRegions:[],axis:p.fold.axis,answer:showAnswer});
+  }else if(level===4){
+    const x=410,y=125,size=335;ctx.fillStyle='#f7d9dd';ctx.fillRect(x,y,size,size);ctx.strokeStyle='#ca8191';ctx.lineWidth=3;ctx.strokeRect(x,y,size,size);drawSharedCrease(ctx,x,y,size,p.fold.axis);
+    p.givens.forEach(item=>drawSharedShape(ctx,x,y,size,item));if(showAnswer)p.targets.forEach(item=>drawSharedShape(ctx,x,y,size,item,{answer:true}));
+    if(!showAnswer){ctx.fillStyle='#69757c';ctx.font='700 17px sans-serif';ctx.fillText('대칭 위치에 같은 도형을 그리세요.',790,295);}
+  }else{
+    drawSharedGrid(ctx,130,150,235,{regions:p.cutRegions,axis:p.fold.axis});drawStepArrow(ctx,430,268);drawSharedGrid(ctx,615,125,285,{values:p.grid.values,regions:showAnswer?p.answer.cells:[],axis:p.fold.axis,answer:showAnswer});
+    ctx.fillStyle='#25313b';ctx.font='800 24px sans-serif';ctx.fillText(showAnswer?`${p.answer.expression} = ${p.answer.sum}`:'합: __________',950,285);
+  }
+}
+
 /* ===== 진입 ===== */
 function render(d){
   questionNumber += 1;
   const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
-  if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='fold-top') renderFoldTop(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else if(d.kind==='pieces') renderPieces(ctx,d); else if(d.kind==='punch') renderPunch(ctx,d); else if(d.kind==='num-inverse') renderNumInverse(ctx,d); else if(d.kind==='unfold-shape') renderUnfoldShape(ctx,d); else renderNumber(ctx,d);
+  if(d.kind==='game-level') renderSharedGame(ctx,d); else if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='fold-top') renderFoldTop(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else if(d.kind==='pieces') renderPieces(ctx,d); else if(d.kind==='punch') renderPunch(ctx,d); else if(d.kind==='num-inverse') renderNumInverse(ctx,d); else if(d.kind==='unfold-shape') renderUnfoldShape(ctx,d); else renderNumber(ctx,d);
   document.getElementById('info').textContent=d.info+' · 정답 '+d.answer;
   document.getElementById('src').textContent=d.src;
   return d;
@@ -1184,6 +1320,10 @@ function selectedDifficulty(){
   return document.querySelector('input[name="difficulty"]:checked')?.value||'mid';
 }
 function buildProblem(mode,difficulty){
+  if(mode.startsWith('game-l')){
+    const shared=buildSharedProblem(mode);
+    return shared?render(shared):render(genHole(false,difficulty));
+  }
   if(mode==='hole2')  return render(genHole(false,difficulty));
   if(mode==='hole3d') return render(genHole(true,difficulty));
   if(mode==='foldtop') return render(genFoldTop(difficulty));
@@ -1199,6 +1339,7 @@ function buildProblem(mode,difficulty){
 }
 
 function answerText(problem){
+  if(problem.kind==='game-level') return String(problem.answer);
   if(problem.kind==='fold-top') return `${problem.answer}`;
   if(problem.kind==='stack' && Array.isArray(problem.answer)) return problem.answer.join(' → ');
   if(problem.kind==='punch' && typeof problem.answer==='object') return Object.entries(problem.answer).map(([k,v])=>`${k} ${v}개`).join(', ');
@@ -1240,6 +1381,13 @@ function syncModeButtons(){
 }
 
 function solutionText(problem){
+  if(problem.kind==='game-level'){
+    const p=problem.source;
+    if(problem.gameLevel<=2) return `${sharedAxisLabel[p.fold.axis]} 접는 선을 기준으로 작업 위치를 거울처럼 옮기면 ${problem.answer}가 됩니다. 게임 문항 ${p.id}와 같은 문제입니다.`;
+    if(problem.gameLevel===3) return `접는 선을 기준으로 진한 위치를 대칭 이동합니다. 정답 위치는 ${problem.answer}입니다. (${p.id})`;
+    if(problem.gameLevel===4) return `주어진 도형을 접는 선의 반대편으로 대칭 이동하고, 도형의 방향까지 맞춥니다. (${p.id})`;
+    return `먼저 잘려 나간 칸을 모두 찾으면 ${p.answer.cells.map(sharedRegionLabel).join(', ')}입니다. 그 칸의 수를 더하면 ${p.answer.expression} = ${p.answer.sum}입니다. (${p.id})`;
+  }
   if(problem.kind==='hole'){
     const counts=[problem.nHoles];
     for(let i=0;i<problem.dirs.length;i++) counts.push(counts[counts.length-1]*2);
@@ -1253,6 +1401,11 @@ function solutionText(problem){
 }
 
 function solutionImage(problem,problemImage){
+  if(problem.kind==='game-level'){
+    const canvas=document.getElementById('cv');
+    const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);renderSharedGame(ctx,problem,true);
+    return canvas.toDataURL('image/jpeg',.92);
+  }
   if(problem.kind!=='hole') return problemImage;
   const canvas=document.getElementById('cv');
   renderHoleSolution(canvas.getContext('2d'),problem);
@@ -1346,6 +1499,7 @@ document.getElementById('answers').addEventListener('change',generateSheet);
 syncModeButtons();
 previewProblem();
 generateSheet();
+loadSharedGameLevels();
 </script>
 </body>
 </html>
