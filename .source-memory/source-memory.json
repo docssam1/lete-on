@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "9c432644c4cdb3d49b2561f7e344af655c5e9e0a1f5b4e6f9510d4a4a030feac",
-      "size": 62889,
-      "mtime_ns": 1786824875769320900
+      "sha256": "d908a2761dfe439d698ae49c1f8b1bae659385a9173f909a0e982294766ee680",
+      "size": 63902,
+      "mtime_ns": 1786825113048380400
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "26bc01805d480ab76726a74b908e0cb6b73f577b25efdb874618e20d03c77e58",
-      "size": 140249,
-      "mtime_ns": 1786824780036805700
+      "sha256": "78b44a1c8bbeddca410133893f1104356f40b2e5359fee03466541771b58ef3d",
+      "size": 141843,
+      "mtime_ns": 1786824984577340100
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "d45eba886a4d9092cbb463d42f70c0f67e41692a5f0dc4785e70105d71bf53ce",
-      "size": 36338,
-      "mtime_ns": 1786824613527420100
+      "sha256": "13a4d8805950b15b1330c4dd8ac36692671758de649e7c7e1dd3afb47e4ffef3",
+      "size": 36549,
+      "mtime_ns": 1786824984578339500
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 4 question 3",
+      "title": "Next verification 7-year-old selection test 4 question 4",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q3"
+        "q4"
       ],
-      "summary": "Verify source and answer page 4 for the four-item cycle circle, triangle, triangle, diamond. The fifteenth item is triangle. Because one shape repeats inside the cycle, do not reuse the existing generator that requires four distinct shapes.",
+      "summary": "Verify source and answer page 4 for cards 2, 3, 4, 5, 7 in the five-card sum pyramid with top 12. Confirm that the marked bottom-middle answer is 3 and revalidate fiveCardSumPyramid before enabling.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 4 question 3 is a four-item cycle with a duplicate triangle"
+          "note": "Selection test 4 question 4 is a five-card sum pyramid"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-08 question 3 repeat-pattern mapping",
-          "note": "Verify exact cycle, target position, renderer, and answer before enabling"
+          "locator": "EXAMS k7-2022-08 question 4 five-card-sum-pyramid mapping",
+          "note": "Verify exact cards, target, marked cell, and answer before enabling"
         }
       ]
     },
@@ -2233,6 +2233,40 @@
           "role": "code",
           "locator": "TYPES vertical-stair-grid-placement and EXAMS k7-2022-08 verified questions 1 through 2",
           "note": "Source question 2 enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q3",
+      "title": "Selection test 4 question 3 four-item cycle with one duplicate",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q3",
+        "repeat-four-items-with-duplicate"
+      ],
+      "summary": "The source cycle is circle, triangle, triangle, diamond. Position 15 is triangle. The generator uses exactly three shapes in a four-item cycle with one shape repeated twice, separate from distinct-shape cycles.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 3 paragraph",
+          "note": "Original cycle, answer, generator split, diversity, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function fourItemCycleWithDuplicate and GENERATORS export",
+          "note": "Three structural difficulty levels with a duplicate-count invariant"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES repeat-four-items-with-duplicate and EXAMS k7-2022-08 verified questions 1 through 3",
+          "note": "Source question 3 enabled"
         }
       ]
     }

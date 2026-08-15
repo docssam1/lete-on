@@ -63,6 +63,7 @@ export const TYPES = [
   type("repeat-pattern", "pattern", "반복 규칙", "모양과 색의 반복 규칙", { generator: "repeatShapeSequence", sourceMatched: true }),
   type("repeat-three-shapes", "pattern", "반복 규칙", "세 가지 도형의 순서 반복", { generator: "threeShapeCycle", sourceMatched: true }),
   type("repeat-four-shapes", "pattern", "반복 규칙", "네 가지 도형의 순서 반복", { generator: "fourShapeCycle", sourceMatched: true }),
+  type("repeat-four-items-with-duplicate", "pattern", "반복 규칙", "같은 모양이 두 번 들어간 네 칸 반복", { generator: "fourItemCycleWithDuplicate", sourceMatched: true }),
   type("shape-sum-table", "number", "매트릭스", "도형의 가로·세로 합 매트릭스", { generator: "shapeSumTable", sourceMatched: true }),
   type("shape-sum-table-bottom-target", "number", "매트릭스", "도형의 가로·세로 합 표", { generator: "shapeSumBottomTarget", sourceMatched: true }),
   type("shape-sum-table-column-target", "number", "매트릭스", "두 줄 도형표의 세로 합 구하기", { generator: "shapeSumColumnTarget", sourceMatched: true }),
@@ -209,8 +210,8 @@ export const EXAMS = [
   makeExam({
     id: "k7-2022-08", stage: "k7_november", label: "더 클래식 7세 4차 선발시험 (2022.08.12)",
     file: "더_클래식_7세_4차_선발시험(220812).pdf", layout: "two",
-    typeIds: ["edge-sum-grid","vertical-stair-grid-placement","repeat-pattern","five-card-sum-pyramid","order-position-from-front","addition-table-grid","arrow-number-grid","shape-sum-table","equal-line-sum-eight-cards","equalize-transfer","symbol-sum-grid","two-digit-parity-gap","bus-change","shape-equation-add-subtract","square-tile-growth","fold-number-cut-sum","balance-scale-three-objects","symbol-relation-3to4","number-line-six-points","go-stone-difference-inverse"],
-    verifiedQuestionNumbers: [1, 2]
+    typeIds: ["edge-sum-grid","vertical-stair-grid-placement","repeat-four-items-with-duplicate","five-card-sum-pyramid","order-position-from-front","addition-table-grid","arrow-number-grid","shape-sum-table","equal-line-sum-eight-cards","equalize-transfer","symbol-sum-grid","two-digit-parity-gap","bus-change","shape-equation-add-subtract","square-tile-growth","fold-number-cut-sum","balance-scale-three-objects","symbol-relation-3to4","number-line-six-points","go-stone-difference-inverse"],
+    verifiedQuestionNumbers: [1, 2, 3]
   }),
   makeExam({
     id: "k7-2022-12", stage: "k7_to_g1", label: "더 클래식 7세 6차 선발시험 (2022.12.15)",
