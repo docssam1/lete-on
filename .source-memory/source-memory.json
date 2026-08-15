@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "b49372dd11ab21ac926c20dc65952f4a9a808cd7b1a099df1c20921e55f11489",
-      "size": 97344,
-      "mtime_ns": 1786833616521529200
+      "sha256": "a6448b4bee34fb9d03eac322accc42f7cdf2b179a99edfe9917591ef14e982e4",
+      "size": 98615,
+      "mtime_ns": 1786834146218367000
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "5396c0a8734dd14078bce2d105190752bead6e9208a813de34d061b336b4ef2f",
-      "size": 182012,
-      "mtime_ns": 1786833544143068400
+      "sha256": "b3b0ea077a44b1d0dd7fa5f742947c862e21dbfb61fb413114e5c60d9fa75d37",
+      "size": 183715,
+      "mtime_ns": 1786834074539266500
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "9ee62b1713492a5ddfea8c7261f39fafff2d9a9361a1e201c5428013b4f78f08",
-      "size": 40008,
-      "mtime_ns": 1786833544146067500
+      "sha256": "42d0503815573e9298a0fe0d98defad442346c4d3f1a3c812ee8af38fc3e4b1d",
+      "size": 40011,
+      "mtime_ns": 1786833917067094300
     }
   ],
   "records": [
@@ -107,12 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification full question-bank regression",
+      "title": "Next verification low-diversity generator audit",
       "aliases": [],
       "tags": [
         "next"
       ],
-      "summary": "Run all enabled generators across three difficulties, verify exam and type selections, answer tables, rendering, source locks, and then begin the fixed-seed Final 1 replacement paper.",
+      "summary": "Review each remaining regression warning against its original question, then vary problem structures or answers so a single selected type can produce 20 non-duplicate cards without changing the source skill.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -120,14 +120,14 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "Next order after selection test 6 question 20",
-          "note": "Regression first, then Final 1 replacement paper"
+          "locator": "Next order item 2 after full regression",
+          "note": "Fix remaining low-diversity and fixed-answer types before Final 1 replacement"
         },
         {
-          "source_id": "source-data",
+          "source_id": "generators",
           "role": "code",
-          "locator": "EXAMS and FINAL_EXAM_TYPES",
-          "note": "Confirm enabled and locked source mappings"
+          "locator": "Regression warnings for selectable generators",
+          "note": "Target score, shape growth, transform, order, relation, and scale variants"
         }
       ]
     },
@@ -3516,6 +3516,39 @@
           "role": "code",
           "locator": "EXAMS k7-2022-12 verified all 20 questions",
           "note": "Question 20 enabled after exact source comparison"
+        }
+      ]
+    },
+    {
+      "id": "fields.regression.selectable.2026-08-16",
+      "title": "Selectable question-bank full generator regression",
+      "aliases": [],
+      "tags": [
+        "regression",
+        "question-bank"
+      ],
+      "summary": "All 93 selectable source-matched types generated 83,700 items across three difficulties with no exceptions, empty prompts, empty answers, empty solutions, or broken source links. The audit found fixed diversity in balance-scale and symbol-relation; both were expanded and browser-verified with 20 unique cards.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "Full public type regression paragraph and next-order item 2",
+          "note": "Regression totals, fixed types, and remaining diversity work"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "functions sourceBalanceRelations and symbolRelationThreeToFour",
+          "note": "Expanded balance templates and exhaustive unique one-digit relation templates"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES balance-scale and symbol-relation",
+          "note": "Verified source types now use diverse generators"
         }
       ]
     }

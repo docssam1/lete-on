@@ -2187,15 +2187,33 @@ function sourceSymbolRelations({ difficulty = 2 }) {
 }
 
 function sourceBalanceRelations({ difficulty = 2 }) {
-  const rectangleWeight = difficulty === 3 ? 3 : 2;
-  const starRectangles = difficulty === 1 ? 1 : 2;
-  const starWeight = 1 + starRectangles * rectangleWeight;
-  const answer = starWeight + rectangleWeight;
+  const templates = [];
+  const rectangleWeights = [2, 3];
+  const starRectangleCounts = difficulty === 1 ? [1, 2, 3] : difficulty === 2 ? [1, 2, 3] : [2, 3];
+  const targetRectangleCounts = difficulty === 3 ? [2, 3] : [1];
+  const circlePairs = difficulty === 3 ? [[2, 1], [3, 2], [3, 1], [4, 2]] : [[2, 1], [3, 2]];
+  const middleRectangleCounts = [2, 3];
+  rectangleWeights.forEach((rectangleWeight) => {
+    starRectangleCounts.forEach((starRectangles) => {
+      targetRectangleCounts.forEach((targetRectangles) => {
+        circlePairs.forEach(([leftCircleCount, rightCircleCount]) => {
+          middleRectangleCounts.forEach((middleRectangleCount) => templates.push({
+            rectangleWeight, starRectangles, targetRectangles, leftCircleCount, rightCircleCount, middleRectangleCount
+          }));
+        });
+      });
+    });
+  });
+  const { rectangleWeight, starRectangles, targetRectangles, leftCircleCount, rightCircleCount, middleRectangleCount } = sample(templates);
+  const starWeight = leftCircleCount - rightCircleCount + starRectangles * rectangleWeight;
+  const answer = starWeight + targetRectangles * rectangleWeight;
+  const hint = difficulty === 1 ? `도움: [그림 2]에서 긴 네모 1개의 무게를 먼저 구하세요.` : "";
   return {
     prompt: "다음 양팔저울은 모두 수평입니다. [그림 3]이 수평이 되려면 오른쪽 접시에 ○을 몇 개 놓아야 하는지 구하세요.",
-    visual: { kind: "balance-relations", rectangleWeight, starRectangles },
+    visual: { kind: "balance-relations", rectangleWeight, starRectangles, targetRectangles, leftCircleCount, rightCircleCount, middleRectangleCount, hint },
     answer: `${answer}개`,
-    solution: `둘째 저울에서 긴 네모 1개는 ○ ${rectangleWeight}개와 같습니다. 첫째 저울에서 ☆는 ○ 1개와 긴 네모 ${starRectangles}개입니다. 따라서 [그림 3]의 ☆와 긴 네모의 무게는 ○ ${answer}개와 같습니다.`
+    solution: `둘째 저울에서 긴 네모 1개는 ○ ${rectangleWeight}개와 같습니다. 첫째 저울에서 ☆는 ○ 1개와 긴 네모 ${starRectangles}개입니다. 따라서 [그림 3]의 ☆와 긴 네모 ${targetRectangles}개의 무게는 ○ ${answer}개와 같습니다.`,
+    meta: { difficulty, rectangleWeight, starRectangles, targetRectangles, leftCircleCount, rightCircleCount, middleRectangleCount, starWeight, answer }
   };
 }
 
@@ -2393,16 +2411,29 @@ function symbolRelationTwoToThree({ difficulty = 2 }) {
   };
 }
 
+const SYMBOL_RELATION_UNIQUE_TEMPLATES = (() => {
+  const templates = [];
+  for (let firstStar = 2; firstStar <= 9; firstStar += 1) {
+    for (let firstCircle = 2; firstCircle <= 9; firstCircle += 1) {
+      const solutions = [];
+      for (let star = 1; star <= 9; star += 1) {
+        for (let circle = 1; circle <= 9; circle += 1) {
+          if (firstStar * star !== firstCircle * circle || (star + circle) % 2 !== 0) continue;
+          const triangle = (star + circle) / 2;
+          if (triangle <= 9 && new Set([star, circle, triangle]).size === 3) solutions.push({ "☆": star, "○": circle, "▽": triangle });
+        }
+      }
+      if (solutions.length === 1) templates.push({ firstStar, firstCircle, values: solutions[0] });
+    }
+  }
+  return templates;
+})();
+
 function symbolRelationThreeToFour({ difficulty = 2 }) {
-  const templates = [
-    { firstStar: 2, firstCircle: 3, values: { "☆": 6, "○": 4, "▽": 5 } },
-    { firstStar: 3, firstCircle: 2, values: { "☆": 4, "○": 6, "▽": 5 } },
-    { firstStar: 3, firstCircle: 4, values: { "☆": 8, "○": 6, "▽": 7 } },
-    { firstStar: 4, firstCircle: 3, values: { "☆": 6, "○": 8, "▽": 7 } },
-    { firstStar: 3, firstCircle: 5, values: { "☆": 5, "○": 3, "▽": 4 } },
-    { firstStar: 5, firstCircle: 3, values: { "☆": 3, "○": 5, "▽": 4 } }
-  ];
-  const { firstStar, firstCircle, values } = sample(templates.slice(0, difficulty === 1 ? 2 : difficulty === 2 ? 4 : 6));
+  const templates = difficulty === 3
+    ? SYMBOL_RELATION_UNIQUE_TEMPLATES
+    : SYMBOL_RELATION_UNIQUE_TEMPLATES.filter(({ firstStar, firstCircle }) => firstStar <= 7 && firstCircle <= 7);
+  const { firstStar, firstCircle, values } = sample(templates);
   const pairTargets = [
     ["○", "▽"],
     ["☆", "○"],

@@ -104,7 +104,7 @@ export const TYPES = [
   type("balance-scale-circle-target", "logic", "무게 비교", "세 저울의 관계로 필요한 원 개수 구하기", { generator: "balanceScaleCircleTarget", sourceMatched: true }),
   type("balance-scale-star-target", "logic", "무게 비교", "두 저울의 관계로 필요한 별 개수 구하기", { generator: "balanceScaleStarTarget", sourceMatched: true }),
   type("balance-scale-four-objects", "logic", "무게 비교", "네 물건을 잇는 세 양팔저울", { generator: "balanceScaleFourObjects", sourceMatched: true }),
-  type("symbol-relation", "number", "복면산과 식", "여러 기호의 관계로 값 구하기", { generator: "sourceSymbolRelations", sourceMatched: true }),
+  type("symbol-relation", "number", "복면산과 식", "여러 기호의 관계로 값 구하기", { generator: "symbolRelationThreeToFour", sourceMatched: true }),
   type("symbol-relation-2to3", "number", "복면산과 식", "별 두 개와 원 세 개의 관계식", { generator: "symbolRelationTwoToThree", sourceMatched: true }),
   type("symbol-relation-3to4", "number", "복면산과 식", "별과 원의 개수 관계식", { generator: "symbolRelationThreeToFour", sourceMatched: true }),
   type("number-line-distance", "geometry", "길이와 측정", "수직선에서 두 점 사이의 거리", { legacyId: 1 }),

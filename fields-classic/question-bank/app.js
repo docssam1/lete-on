@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816dj";
-import { GENERATORS } from "./generators.js?v=20260816cu";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816dk";
+import { GENERATORS } from "./generators.js?v=20260816cv";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -868,7 +868,7 @@ function sourcePianoMarkup() {
 function balanceRelationsMarkup(visual) {
   const pieces = (kind, count) => Array.from({ length: count }, () => `<i class="weight-piece ${kind}">${kind === "circle" ? "○" : kind === "star" ? "☆" : ""}</i>`).join("");
   const scale = (left, right, label) => `<div class="balance-example"><div class="balance-pan">${left}</div><b>=</b><div class="balance-pan">${right}</div><small>${label}</small></div>`;
-  return `<div class="balance-relations"><p>양쪽에 있는 물건의 무게가 같을 때 저울은 수평이 됩니다.</p>${scale(`${pieces("circle", 2)}${pieces("square", visual.starRectangles)}`, `${pieces("star", 1)}${pieces("circle", 1)}`, "[그림 1]")}${scale(pieces("circle", visual.rectangleWeight * 3), pieces("rectangle", 3), "[그림 2]")}${scale(`${pieces("star", 1)}${pieces("rectangle", 1)}`, `<strong>○ (　)개</strong>`, "[그림 3]")}</div>`;
+  return `<div class="balance-relations"><p>양쪽에 있는 물건의 무게가 같을 때 저울은 수평이 됩니다.</p>${scale(`${pieces("circle", visual.leftCircleCount)}${pieces("square", visual.starRectangles)}`, `${pieces("star", 1)}${pieces("circle", visual.rightCircleCount)}`, "[그림 1]")}${scale(pieces("circle", visual.rectangleWeight * visual.middleRectangleCount), pieces("rectangle", visual.middleRectangleCount), "[그림 2]")}${scale(`${pieces("star", 1)}${pieces("rectangle", visual.targetRectangles)}`, `<strong>○ (　)개</strong>`, "[그림 3]")}${visual.hint ? `<p>${visual.hint}</p>` : ""}</div>`;
 }
 
 function balanceScaleThreeObjectsMarkup(visual) {
