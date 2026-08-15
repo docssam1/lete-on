@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "2a4ebfce8ab8fede78f4c0a13bca563c369a19d29851c77ad306242b83e2552c",
-      "size": 28647,
-      "mtime_ns": 1786814112724795000
+      "sha256": "2e599f67486894ca6118043fa3f2d3d04d6f3e95e94b58019bc5900266f48d7c",
+      "size": 29442,
+      "mtime_ns": 1786814502555972700
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "80f6a4eafe7de56e6acec87c0e48e6366dc4078e4c874d3801c810fee2fc96ae",
-      "size": 89298,
-      "mtime_ns": 1786814056075013000
+      "sha256": "5720306e3e0133862a55a3844473f1215d003dbb2c6617bec526f371d481b6f6",
+      "size": 91283,
+      "mtime_ns": 1786814395497580800
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "c5ae855d967d2e53cce970e07863223e908b07751873b7c9e006579c35ec152f",
-      "size": 33003,
-      "mtime_ns": 1786814042864916400
+      "sha256": "4aeb99c25b219f92325472aa01114a7e93037c41ebcf41bd216170fa66918ef4",
+      "size": 33066,
+      "mtime_ns": 1786814273003344400
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 5",
+      "title": "Next verification 7-year-old selection test 2 question 6",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q5"
+        "q6"
       ],
-      "summary": "Verify the runner order counted from the back and the number of people between two runners before reusing or creating a generator.",
+      "summary": "Verify the 4 by 4 table that grows by 2 across and by 3 down, with the marked bottom-right answer 17.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,7 +123,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "Next sequence item 1",
-          "note": "Selection test 2 question 5 is next"
+          "note": "Selection test 2 question 6 is next"
         }
       ]
     },
@@ -935,6 +935,40 @@
           "role": "code",
           "locator": "TYPES grid-number-placement and EXAMS k7-2022-04 verified 1 through 4",
           "note": "Source question 4 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q5",
+      "title": "Selection test 2 question 5 order from back",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q5",
+        "order-position-from-back"
+      ],
+      "summary": "Five runners; one runner is second from the back and one person is between the two named runners, forcing the asked runner to be second.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 5 paragraph",
+          "note": "Original five-runner structure, answer 2, Korean particle fix, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function orderPositionFromBack and koreanParticle",
+          "note": "Three structural difficulty levels and correct name particles"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES order-position-from-back and EXAMS k7-2022-04 verified 1 through 5",
+          "note": "Source question 5 is enabled"
         }
       ]
     }

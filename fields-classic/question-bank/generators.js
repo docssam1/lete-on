@@ -34,6 +34,12 @@ function numberQuote(value) {
   return `${value}${numberHasBatchim(value) ? "이라고" : "라고"}`;
 }
 
+function koreanParticle(word, withBatchim, withoutBatchim) {
+  const lastCode = [...word].at(-1)?.charCodeAt(0) ?? 0;
+  const hasBatchim = lastCode >= 0xac00 && lastCode <= 0xd7a3 && (lastCode - 0xac00) % 28 !== 0;
+  return `${word}${hasBatchim ? withBatchim : withoutBatchim}`;
+}
+
 function hiddenCardCondition({ difficulty = 2 }) {
   const universe = Array.from({ length: 10 }, (_, index) => index);
   const hidden = sample(universe);
@@ -1324,6 +1330,33 @@ function raceOrder({ difficulty = 2 }) {
   };
 }
 
+function orderPositionFromBack({ difficulty = 2 }) {
+  const settings = difficulty === 1
+    ? { total: 4, fromBack: 2, between: 1 }
+    : difficulty === 2
+      ? { total: 5, fromBack: 2, between: 1 }
+      : { total: 7, fromBack: 2, between: 2 };
+  const names = shuffle(["지우", "민호", "서윤", "도윤", "하린", "준우", "예린"]);
+  const fixedName = names[0];
+  const targetName = names[1];
+  const fixedPosition = settings.total - settings.fromBack + 1;
+  const distance = settings.between + 1;
+  const candidates = [fixedPosition - distance, fixedPosition + distance]
+    .filter((position) => position >= 1 && position <= settings.total);
+  const targetPosition = candidates[0];
+  const conditions = [
+    `${koreanParticle(fixedName, "은", "는")} 뒤에서 ${settings.fromBack}번째로 달리고 있습니다.`,
+    `${koreanParticle(fixedName, "과", "와")} ${targetName} 사이에는 ${settings.between}명이 달리고 있습니다.`
+  ];
+  return {
+    prompt: `${settings.total}명의 친구들이 달리기를 하고 있습니다. 다음을 보고 ${koreanParticle(targetName, "은", "는")} 몇 등으로 달리고 있는지 구하세요.`,
+    visual: { kind: "race-order", total: settings.total, conditions },
+    answer: String(targetPosition),
+    solution: `${koreanParticle(fixedName, "은", "는")} 뒤에서 ${settings.fromBack}번째이므로 앞에서 ${fixedPosition}등입니다. 두 사람 사이에 ${settings.between}명이 있으려면 ${koreanParticle(targetName, "은", "는")} ${targetPosition}등입니다.`,
+    meta: { difficulty, ...settings, fixedName, targetName, fixedPosition, distance, candidates, targetPosition }
+  };
+}
+
 function discNumberRule({ difficulty = 2 }) {
   const max = difficulty === 1 ? 8 : difficulty === 2 ? 12 : 20;
   const makeDisc = () => {
@@ -1691,6 +1724,7 @@ export const GENERATORS = {
   stairGridPlacement,
   numberPyramid,
   raceOrder,
+  orderPositionFromBack,
   discNumberRule,
   shapeSumTable,
   repeatShapeSequence,

@@ -52,7 +52,7 @@ export const TYPES = [
   type("grid-number-placement-five", "logic", "조건 배치", "다섯 수의 위·아래·좌우 조건 배치"),
   type("nonadjacent-placement", "logic", "조건 배치", "같은 수가 이웃하지 않게 배치하기", { generator: "sourceNonadjacentPyramid", sourceMatched: true }),
   type("order-position", "logic", "순서와 비교", "줄의 순서와 사이 사람 수", { generator: "raceOrder", sourceMatched: true }),
-  type("order-position-from-back", "logic", "순서와 비교", "뒤에서의 순서와 사이 사람 수"),
+  type("order-position-from-back", "logic", "순서와 비교", "뒤에서의 순서와 사이 사람 수", { generator: "orderPositionFromBack", sourceMatched: true }),
   type("order-position-from-front", "logic", "순서와 비교", "앞에서의 순서와 사이 사람 수"),
   type("order-position-seven-people", "logic", "순서와 비교", "일곱 명의 앞·뒤 순서와 사이 사람 수"),
   type("number-table-rule", "pattern", "수 규칙", "수 배열표의 규칙 찾기", { legacyId: 11 }),
@@ -186,7 +186,7 @@ export const EXAMS = [
     id: "k7-2022-04", stage: "k7_spring", label: "더 클래식 7세 2차 선발시험 (2022.04.18)",
     file: "(최종)더_클래식_7세_2차_선발시험(220418).pdf", layout: "two",
     typeIds: ["edge-sum-grid","equalize-transfer","five-card-sum-pyramid","grid-number-placement","order-position-from-back","addition-table-grid","shape-sum-table","repeat-three-shapes","arrow-number-grid","bus-change","fold-number-cut-sum","equal-line-sum-eight-cards","symbol-sum-grid","shape-equation-add-subtract","two-digit-parity-gap","triangle-tile-growth","balance-scale-three-objects","symbol-relation-2to3","number-line-six-points","go-stone-difference-inverse"],
-    verifiedQuestionNumbers: [1, 2, 3, 4]
+    verifiedQuestionNumbers: [1, 2, 3, 4, 5]
   }),
   makeExam({
     id: "k7-2022-06", stage: "k7_summer", label: "더 클래식 7세 3차 선발시험 (2022.06.22)",

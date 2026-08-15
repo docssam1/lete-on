@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ab";
-import { GENERATORS } from "./generators.js?v=20260816ab";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ac";
+import { GENERATORS } from "./generators.js?v=20260816ac";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -509,7 +509,7 @@ function stairGridPlacementMarkup(visual) {
 }
 
 function raceOrderMarkup(visual, conditions) {
-  return `<div class="race-order"><div class="race-track" style="--race-count:${visual.total}">${Array.from({ length: visual.total }, (_, index) => `<span><i></i><b>${index + 1}등</b></span>`).join("")}</div><ul>${conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul></div>`;
+  return `<div class="race-order"><div class="race-track-row"><b>앞</b><div class="race-track" style="--race-count:${visual.total}">${Array.from({ length: visual.total }, (_, index) => `<span><i></i><b>${index + 1}등</b></span>`).join("")}</div><b>뒤</b></div><ul>${conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul></div>`;
 }
 
 function discNumberRuleMarkup(visual) {
