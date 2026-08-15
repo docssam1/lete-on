@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ae";
-import { GENERATORS } from "./generators.js?v=20260816ae";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816af";
+import { GENERATORS } from "./generators.js?v=20260816af";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -544,6 +544,11 @@ function repeatShapeSequenceMarkup(visual) {
   return `<div class="repeat-sequence">${visual.items.map((item, index) => `<span>${symbol(item)}<small>${index + 1}</small></span>`).join("")}<b>…</b><strong>${visual.target}번째<br>모양 (　)</strong></div>`;
 }
 
+function threeShapeCycleMarkup(visual) {
+  const guide = visual.showGuide ? `<strong class="cycle-guide">반복마디 ${visual.cycle.map((shape) => shape.symbol).join(" ")}</strong>` : "";
+  return `<div class="three-shape-cycle">${guide}<div class="cycle-items">${visual.items.map((shape, index) => `<span><b>${shape.symbol}</b><small>${index + 1}번째</small></span>`).join("")}<i>…</i><strong><b>(　)</b><small>${visual.target}번째</small></strong></div></div>`;
+}
+
 function arrowNumberGridMarkup(visual) {
   const marker = `arrow-head-${visual.start}`;
   const step = (x1, y1, x2, y2) => {
@@ -648,6 +653,7 @@ function visualMarkup(visual) {
   if (visual.kind === "shape-sum-table") return `<div class="visual shape-sum-visual">${shapeSumTableMarkup(visual)}</div>`;
   if (visual.kind === "shape-sum-bottom-target") return `<div class="visual shape-sum-visual">${shapeSumBottomTargetMarkup(visual)}</div>`;
   if (visual.kind === "repeat-shape-sequence") return `<div class="visual repeat-sequence-visual">${repeatShapeSequenceMarkup(visual)}</div>`;
+  if (visual.kind === "three-shape-cycle") return `<div class="visual three-shape-cycle-visual">${threeShapeCycleMarkup(visual)}</div>`;
   if (visual.kind === "arrow-number-grid") return `<div class="visual arrow-grid-visual">${arrowNumberGridMarkup(visual)}</div>`;
   if (visual.kind === "bus-stops") return `<div class="visual bus-stops-visual">${busStopsMarkup(visual)}</div>`;
   if (visual.kind === "equal-line-cross") return `<div class="visual equal-line-cross-visual">${equalLineCrossMarkup(visual)}</div>`;

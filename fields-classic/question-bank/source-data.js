@@ -59,7 +59,7 @@ export const TYPES = [
   type("addition-table-grid", "pattern", "수 규칙", "가로와 세로로 일정하게 커지는 수 표", { generator: "additionTableGrid", sourceMatched: true }),
   type("disc-number-rule", "pattern", "수 규칙", "원판에 적힌 수의 규칙", { generator: "discNumberRule", sourceMatched: true }),
   type("repeat-pattern", "pattern", "반복 규칙", "모양과 색의 반복 규칙", { generator: "repeatShapeSequence", sourceMatched: true }),
-  type("repeat-three-shapes", "pattern", "반복 규칙", "세 가지 도형의 순서 반복"),
+  type("repeat-three-shapes", "pattern", "반복 규칙", "세 가지 도형의 순서 반복", { generator: "threeShapeCycle", sourceMatched: true }),
   type("repeat-four-shapes", "pattern", "반복 규칙", "네 가지 도형의 순서 반복"),
   type("shape-sum-table", "number", "매트릭스", "도형의 가로·세로 합 매트릭스", { generator: "shapeSumTable", sourceMatched: true }),
   type("shape-sum-table-bottom-target", "number", "매트릭스", "도형의 가로·세로 합 표", { generator: "shapeSumBottomTarget", sourceMatched: true }),
@@ -187,7 +187,7 @@ export const EXAMS = [
     id: "k7-2022-04", stage: "k7_spring", label: "더 클래식 7세 2차 선발시험 (2022.04.18)",
     file: "(최종)더_클래식_7세_2차_선발시험(220418).pdf", layout: "two",
     typeIds: ["edge-sum-grid","equalize-transfer","five-card-sum-pyramid","grid-number-placement","order-position-from-back","addition-table-grid","shape-sum-table-bottom-target","repeat-three-shapes","arrow-number-grid","bus-change","fold-number-cut-sum","equal-line-sum-eight-cards","symbol-sum-grid","shape-equation-add-subtract","two-digit-parity-gap","triangle-tile-growth","balance-scale-three-objects","symbol-relation-2to3","number-line-six-points","go-stone-difference-inverse"],
-    verifiedQuestionNumbers: [1, 2, 3, 4, 5, 6, 7]
+    verifiedQuestionNumbers: [1, 2, 3, 4, 5, 6, 7, 8]
   }),
   makeExam({
     id: "k7-2022-06", stage: "k7_summer", label: "더 클래식 7세 3차 선발시험 (2022.06.22)",
