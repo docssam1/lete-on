@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ac";
-import { GENERATORS } from "./generators.js?v=20260816ac";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ad";
+import { GENERATORS } from "./generators.js?v=20260816ad";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -512,6 +512,18 @@ function raceOrderMarkup(visual, conditions) {
   return `<div class="race-order"><div class="race-track-row"><b>앞</b><div class="race-track" style="--race-count:${visual.total}">${Array.from({ length: visual.total }, (_, index) => `<span><i></i><b>${index + 1}등</b></span>`).join("")}</div><b>뒤</b></div><ul>${conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul></div>`;
 }
 
+function additionTableGridMarkup(visual) {
+  const givenMap = new Map(visual.givens.map((item) => [`${item.row}:${item.column}`, item.value]));
+  const cells = Array.from({ length: visual.size * visual.size }, (_, index) => {
+    const row = Math.floor(index / visual.size);
+    const column = index % visual.size;
+    const key = `${row}:${column}`;
+    const isTarget = row === visual.target.row && column === visual.target.column;
+    return `<span class="${isTarget ? "target" : givenMap.has(key) ? "given" : "blank"}">${isTarget ? "㉠" : givenMap.get(key) ?? ""}</span>`;
+  }).join("");
+  return `<div class="addition-table-grid" style="--table-size:${visual.size}">${cells}</div>`;
+}
+
 function discNumberRuleMarkup(visual) {
   const disc = (item, offset) => `<g transform="translate(${offset},76)"><circle class="disc-outer" r="52"/><path class="disc-line" d="M0-52V52M-52 0H52"/><circle class="disc-inner" r="24"/><text x="-27" y="-22">${item.northWest}</text><text x="27" y="-22">${item.northEast}</text><text x="-27" y="33">${item.southWest}</text><text x="27" y="33">${item.southEast}</text><text class="disc-center" y="7">${item.center}</text></g>`;
   return `<svg class="disc-rule-svg" viewBox="0 0 390 152" role="img" aria-label="원판 수 규칙 문제">${visual.discs.map((item, index) => disc(item, 70 + index * 125)).join("")}</svg>`;
@@ -625,6 +637,7 @@ function visualMarkup(visual) {
   if (visual.kind === "five-card-pyramid") return `<div class="visual five-card-pyramid-visual">${fiveCardPyramidMarkup(visual)}</div>`;
   if (visual.kind === "stair-grid-placement") return `<div class="visual stair-grid-placement-visual">${stairGridPlacementMarkup(visual)}</div>`;
   if (visual.kind === "race-order") return `<div class="visual race-order-visual">${raceOrderMarkup(visual, visual.conditions || [])}</div>`;
+  if (visual.kind === "addition-table-grid") return `<div class="visual addition-table-visual">${additionTableGridMarkup(visual)}</div>`;
   if (visual.kind === "disc-number-rule") return `<div class="visual disc-rule-visual">${discNumberRuleMarkup(visual)}</div>`;
   if (visual.kind === "shape-sum-table") return `<div class="visual shape-sum-visual">${shapeSumTableMarkup(visual)}</div>`;
   if (visual.kind === "repeat-shape-sequence") return `<div class="visual repeat-sequence-visual">${repeatShapeSequenceMarkup(visual)}</div>`;

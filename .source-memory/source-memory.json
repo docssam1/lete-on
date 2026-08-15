@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "2e599f67486894ca6118043fa3f2d3d04d6f3e95e94b58019bc5900266f48d7c",
-      "size": 29442,
-      "mtime_ns": 1786814502555972700
+      "sha256": "16286d2b5a9972701259f9fa860c0f1c0d457466c16ef9d8965d25f627dff21e",
+      "size": 30089,
+      "mtime_ns": 1786814698016260500
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "5720306e3e0133862a55a3844473f1215d003dbb2c6617bec526f371d481b6f6",
-      "size": 91283,
-      "mtime_ns": 1786814395497580800
+      "sha256": "2d983e297e538c08f6a9895624e3fa77de61d1a0232224cff9cf85a4b62004f6",
+      "size": 92832,
+      "mtime_ns": 1786814652172262500
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "4aeb99c25b219f92325472aa01114a7e93037c41ebcf41bd216170fa66918ef4",
-      "size": 33066,
-      "mtime_ns": 1786814273003344400
+      "sha256": "e866be0f964dd75fe2f9a287c18afa13f4a2170dd4f054a64e0877e4c2d158ab",
+      "size": 33125,
+      "mtime_ns": 1786814600152113900
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 6",
+      "title": "Next verification 7-year-old selection test 2 question 7",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q6"
+        "q7"
       ],
-      "summary": "Verify the 4 by 4 table that grows by 2 across and by 3 down, with the marked bottom-right answer 17.",
+      "summary": "Verify the example sum table and the target shape grid before deciding whether the existing shape-sum generator is structurally exact.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,7 +123,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "Next sequence item 1",
-          "note": "Selection test 2 question 6 is next"
+          "note": "Selection test 2 question 7 is next"
         }
       ]
     },
@@ -969,6 +969,40 @@
           "role": "code",
           "locator": "TYPES order-position-from-back and EXAMS k7-2022-04 verified 1 through 5",
           "note": "Source question 5 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q6",
+      "title": "Selection test 2 question 6 additive table grid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q6",
+        "addition-table-grid"
+      ],
+      "summary": "The source is a 4 by 4 table starting at 2, increasing by 2 across and 3 down; the marked bottom-right value is 17.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 6 paragraph",
+          "note": "Original grid, directional increments, answer 17, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function additionTableGrid",
+          "note": "Three structural difficulty levels with independent rule uniqueness checks"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES addition-table-grid and EXAMS k7-2022-04 verified 1 through 6",
+          "note": "Source question 6 is enabled"
         }
       ]
     }
