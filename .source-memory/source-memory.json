@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "24ca1e6c8c6b3e40d93093c163715235e6789a3acf38e41d09f94a24b6b539d0",
-      "size": 47497,
-      "mtime_ns": 1786820523853577000
+      "sha256": "21080421c79e8f452023eb3883a342511c29eabbd5e2265ce09e12b357fbe30d",
+      "size": 48232,
+      "mtime_ns": 1786820748707383900
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "395bdcbb83dd600922674196bb8eb7a217c6e30623004baefc7e79abce6b9a28",
-      "size": 34669,
-      "mtime_ns": 1786820388653006700
+      "sha256": "2cf96e340792b8e2b9ce6ab49bf9f9e7179893f41d0b2740d5ce9701a3677a07",
+      "size": 34672,
+      "mtime_ns": 1786820659008501000
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 7",
+      "title": "Next verification 7-year-old selection test 3 question 8",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q07"
+        "q08"
       ],
-      "summary": "Verify the 4 by 4 table starting at 3, increasing by 3 across and 4 down, with the marked value 24 against source and answer page 6.",
+      "summary": "Verify the two-by-two shape sum table with row sums 13 and 18, second-column sum 16, asked first-column sum, and answer 15 against source and answer page 6.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 3 question 7 is the next locked source question"
+          "note": "Selection test 3 question 8 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 7 addition-table-grid mapping",
-          "note": "Do not enable until exact source clues and target cell are checked"
+          "locator": "EXAMS k7-2022-06 question 8 shape-sum-table mapping",
+          "note": "Check exact shape layout before reusing any existing renderer"
         }
       ]
     },
@@ -1689,6 +1689,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-06 verified 1 through 6",
           "note": "Source question 6 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q7",
+      "title": "Selection test 3 question 7 additive table grid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q7",
+        "addition-table-grid"
+      ],
+      "summary": "The source is a 4 by 4 table starting at 3, increasing by 3 across and 4 down; the marked bottom-right value is 24.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 7 paragraph",
+          "note": "Exact source grid, corrected vertical increment, answer, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function additionTableGrid",
+          "note": "Three structural difficulty levels with independent rule uniqueness checks"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-06 verified 1 through 7",
+          "note": "Source question 7 is enabled"
         }
       ]
     }
