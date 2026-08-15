@@ -2426,7 +2426,7 @@ function symbolRelationThreeToFour({ difficulty = 2 }) {
 }
 
 function numberLineSixPoints({ difficulty = 2 }) {
-  const limit = difficulty === 1 ? [5, 16] : difficulty === 2 ? [8, 22] : [10, 26];
+  const limit = difficulty === 1 ? [5, 16] : difficulty === 2 ? [4, 28] : [10, 26];
   let gaps;
   let distances;
   do {
@@ -2448,7 +2448,7 @@ function numberLineSixPoints({ difficulty = 2 }) {
   const hints = difficulty === 1 ? [{ from: "B", to: "C", value: bc }, { from: "C", to: "D", value: cd }] : [];
   return {
     prompt: `다음 그림은 수직선 위에 있는 6개 점 사이의 거리를 나타낸 것입니다. 두 점 ${target} 사이의 거리를 구하세요.`,
-    visual: { kind: "number-line-six-points", distances, hints, target: askWhole ? "AF" : "EF" },
+    visual: { kind: "number-line-six-points", gaps, distances, hints, target: askWhole ? "AF" : "EF" },
     answer: String(answer),
     solution: `AC ${distances.ac}에서 AD ${distances.ad}까지 늘어난 만큼 CD는 ${cd}입니다. BD ${distances.bd}에서 CD ${numberObject(cd)} 빼면 BC는 ${bc}, CE ${distances.ce}에서 CD ${numberObject(cd)} 빼면 DE는 ${de}입니다. BF ${distances.bf}에서 BC, CD, DE의 합 ${numberObject(bc + cd + de)} 빼면 EF는 ${ef}입니다.${askWhole ? ` 또 AC에서 BC를 빼면 AB는 ${ab}이므로 AF는 AB ${numberAnd(ab)} BF ${numberObject(distances.bf)} 더한 ${answer}입니다.` : ""}`,
     meta: { difficulty, gaps, distances, hints, target: askWhole ? "AF" : "EF", answer }

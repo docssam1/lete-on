@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816di";
-import { GENERATORS } from "./generators.js?v=20260816ct";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816dj";
+import { GENERATORS } from "./generators.js?v=20260816cu";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -918,7 +918,22 @@ function symbolRelationsMarkup(visual) {
 }
 
 function numberLineSixPointsMarkup(visual) {
-  const xs = { A: 28, B: 92, C: 150, D: 225, E: 360, F: 438 };
+  const d = visual.distances;
+  const gaps = visual.gaps || [
+    d.ac - (d.bd - (d.ad - d.ac)),
+    d.bd - (d.ad - d.ac),
+    d.ad - d.ac,
+    d.ce - (d.ad - d.ac),
+    d.bf - (d.bd - (d.ad - d.ac)) - (d.ad - d.ac) - (d.ce - (d.ad - d.ac))
+  ];
+  const total = gaps.reduce((sum, value) => sum + value, 0);
+  const displayGaps = gaps.map((value) => 20 + (310 * value) / total);
+  const labels = ["A", "B", "C", "D", "E", "F"];
+  let running = 0;
+  const xs = Object.fromEntries(labels.map((label, index) => {
+    if (index > 0) running += displayGaps[index - 1];
+    return [label, 28 + running];
+  }));
   const arc = (from, to, value, side, height, className = "") => {
     const x1 = xs[from];
     const x2 = xs[to];
@@ -926,7 +941,6 @@ function numberLineSixPointsMarkup(visual) {
     const labelY = side === "top" ? controlY + 7 : controlY - 3;
     return `<path class="distance-arc ${className}" d="M ${x1} 78 Q ${(x1 + x2) / 2} ${controlY} ${x2} 78"/><text class="distance-label ${className}" x="${(x1 + x2) / 2}" y="${labelY}">${value}</text>`;
   };
-  const d = visual.distances;
   const hints = visual.hints.map((hint) => `<span>${hint.from}${hint.to} = ${hint.value}</span>`).join("");
   const targetArc = visual.target === "AF" ? arc("A", "F", "?", "top", 72, "target") : arc("E", "F", "?", "top", 30, "target");
   return `<div class="six-point-line-work"><svg viewBox="0 0 466 180" role="img" aria-label="A부터 F까지 여섯 점과 겹쳐 표시한 거리">
