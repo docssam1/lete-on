@@ -34,7 +34,7 @@ export const TYPES = [
   type("two-type-unit-total", "number", "합과 차 문장제", "두 종류의 전체 개수와 단위 수로 각각의 개수 구하기", { generator: "twoTypeUnitTotal", sourceMatched: true }),
   type("row-column-count-placement", "logic", "조건 배치", "가로·세로 개수 조건에 맞게 칸 표시하기", { generator: "rowColumnCountPlacement", sourceMatched: true }),
   type("truth-lie-ranking", "logic", "조건 추리", "참말과 거짓말로 경기 순위 찾기", { generator: "truthLieRanking", sourceMatched: true }),
-  type("target-score-combinations", "logic", "경우의 수", "과녁 점수의 가능한 조합 세기", { generator: "targetScoreCombinations", sourceMatched: true }),
+  type("target-score-combinations", "logic", "경우의 수", "과녁에 여러 번 쏘아 만들 수 있는 점수 세기", { generator: "targetScoreCombinations", sourceMatched: true }),
   type("matchstick-square-growth", "pattern", "수열의 활용", "성냥개비 도형 수열", {
     generator: "matchstickShapeSequence",
     sourceMatched: true,

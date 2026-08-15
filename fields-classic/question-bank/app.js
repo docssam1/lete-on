@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816dk";
-import { GENERATORS } from "./generators.js?v=20260816cv";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816dl";
+import { GENERATORS } from "./generators.js?v=20260816cw";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -352,7 +352,12 @@ function targetScoreCombinationsMarkup(visual) {
     const labelX = centerX + (radius + innerRadius) / 2;
     return `<circle class="target-ring band-${index % 2}" cx="${centerX}" cy="${centerY}" r="${radius.toFixed(2)}"/><text class="target-score-label" x="${labelX.toFixed(2)}" y="114">${score}</text>`;
   }).join("");
-  return `<svg class="target-score-svg" viewBox="0 0 300 225" role="img" aria-label="바깥쪽부터 ${visual.scores.join(", ")}점인 과녁">${rings}<g class="target-arrow" transform="translate(58 31) rotate(42)"><line x1="0" y1="0" x2="48" y2="0"/><path d="M48 0L36-6M48 0L36 6"/></g><g class="target-arrow" transform="translate(78 17) rotate(50)"><line x1="0" y1="0" x2="48" y2="0"/><path d="M48 0L36-6M48 0L36 6"/></g><text class="target-shot-note" x="150" y="220">화살 2번</text></svg>`;
+  const arrows = [
+    [58, 31, 42],
+    [78, 17, 50],
+    [44, 52, 34]
+  ].slice(0, visual.shotCount).map(([x, y, angle]) => `<g class="target-arrow" transform="translate(${x} ${y}) rotate(${angle})"><line x1="0" y1="0" x2="48" y2="0"/><path d="M48 0L36-6M48 0L36 6"/></g>`).join("");
+  return `<svg class="target-score-svg" viewBox="0 0 300 225" role="img" aria-label="바깥쪽부터 ${visual.scores.join(", ")}점인 과녁">${rings}${arrows}<text class="target-shot-note" x="150" y="220">화살 ${visual.shotCount}번</text></svg>`;
 }
 
 function matchstickShapePoints(sides, index) {

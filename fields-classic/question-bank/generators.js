@@ -614,49 +614,46 @@ function truthLieRanking({ difficulty = 2 }) {
 }
 
 function targetScoreCombinations({ difficulty = 2 }) {
-  const possibleSums = (scores) => {
+  const possibleSums = (scores, shotCount) => {
     const sums = new Set();
-    for (let first = 0; first < scores.length; first += 1) {
-      for (let second = first; second < scores.length; second += 1) {
-        sums.add(scores[first] + scores[second]);
+    const collect = (startIndex, shotsLeft, total) => {
+      if (shotsLeft === 0) {
+        sums.add(total);
+        return;
       }
-    }
+      for (let index = startIndex; index < scores.length; index += 1) collect(index, shotsLeft - 1, total + scores[index]);
+    };
+    collect(0, shotCount, 0);
     return [...sums].sort((a, b) => a - b);
   };
 
+  const shotCount = difficulty === 3 ? 3 : 2;
+  const count = difficulty === 1 ? randomInt(3, 4) : randomInt(5, 6);
   let scores;
-  if (difficulty === 1) {
-    const count = randomInt(3, 4);
-    scores = Array.from({ length: count }, (_, index) => index + 1);
-  } else if (difficulty === 2) {
-    const count = randomInt(5, 6);
-    scores = Array.from({ length: count }, (_, index) => index + 1);
-  } else {
-    do {
-      const count = randomInt(5, 6);
-      scores = [1];
-      while (scores.length < count) scores.push(scores.at(-1) + randomInt(1, 2));
-    } while (scores.at(-1) > 10 || scores.every((score, index) => index === 0 || score - scores[index - 1] === 1));
-  }
+  do {
+    scores = [randomInt(1, 3)];
+    const maximumStep = difficulty === 3 ? 3 : 2;
+    while (scores.length < count) scores.push(scores.at(-1) + randomInt(1, maximumStep));
+  } while (scores.at(-1) > (difficulty === 3 ? 15 : 12));
 
-  const sums = possibleSums(scores);
+  const sums = possibleSums(scores, shotCount);
   return {
-    prompt: "다음 과녁에 화살을 2번 쏘아 모두 맞혔습니다. 얻을 수 있는 점수는 모두 몇 가지일까요? (같은 점수를 두 번 맞힐 수도 있습니다.)",
-    visual: { kind: "target-score-combinations", scores },
+    prompt: `다음 과녁에 화살을 ${shotCount}번 쏘아 모두 맞혔습니다. 얻을 수 있는 점수는 모두 몇 가지일까요? (같은 점수를 여러 번 맞힐 수도 있습니다.)`,
+    visual: { kind: "target-score-combinations", scores, shotCount },
     answer: `${sums.length}가지`,
-    solution: `작은 점수부터 두 번 맞힌 합을 빠짐없이 적으면 ${sums.join(", ")}점입니다. 따라서 모두 ${sums.length}가지입니다.`,
-    meta: { difficulty, scores, sums }
+    solution: `작은 점수부터 ${shotCount}번 맞힌 합을 빠짐없이 적으면 ${sums.join(", ")}점입니다. 따라서 모두 ${sums.length}가지입니다.`,
+    meta: { difficulty, scores, shotCount, sums }
   };
 }
 
 function matchstickShapeSequence({ difficulty = 2 }) {
   const shapePools = {
     1: [{ label: "삼각형", sides: 3 }, { label: "사각형", sides: 4 }],
-    2: [{ label: "사각형", sides: 4 }, { label: "오각형", sides: 5 }],
+    2: [{ label: "삼각형", sides: 3 }, { label: "사각형", sides: 4 }, { label: "오각형", sides: 5 }],
     3: [{ label: "오각형", sides: 5 }, { label: "육각형", sides: 6 }]
   };
   const shape = sample(shapePools[difficulty] || shapePools[2]);
-  const target = difficulty === 1 ? randomInt(4, 5) : difficulty === 2 ? randomInt(6, 10) : randomInt(8, 12);
+  const target = difficulty === 1 ? randomInt(2, 11) : difficulty === 2 ? randomInt(4, 12) : randomInt(7, 16);
   const increment = shape.sides - 1;
   const sequence = Array.from({ length: target }, (_, index) => shape.sides + index * increment);
   const answer = sequence.at(-1);

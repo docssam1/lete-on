@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "a6448b4bee34fb9d03eac322accc42f7cdf2b179a99edfe9917591ef14e982e4",
-      "size": 98615,
-      "mtime_ns": 1786834146218367000
+      "sha256": "23ef6e88971a3575ab9fa2cb6ae13d4d7019b5bc68e91338c6fbb6b8f853ac3b",
+      "size": 99545,
+      "mtime_ns": 1786834348077713200
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "b3b0ea077a44b1d0dd7fa5f742947c862e21dbfb61fb413114e5c60d9fa75d37",
-      "size": 183715,
-      "mtime_ns": 1786834074539266500
+      "sha256": "5f4bb6722d2c379f6fcf01e3b67836cc1b20e6f00cfd495e3f4addaebaec3c74",
+      "size": 183723,
+      "mtime_ns": 1786834259634083200
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "42d0503815573e9298a0fe0d98defad442346c4d3f1a3c812ee8af38fc3e4b1d",
-      "size": 40011,
-      "mtime_ns": 1786833917067094300
+      "sha256": "8be8dd022b52abd6f1e8bf1451b2e993c2f31695db62eb24d63a7873ef663305",
+      "size": 40030,
+      "mtime_ns": 1786834259636082900
     }
   ],
   "records": [
@@ -3549,6 +3549,40 @@
           "role": "code",
           "locator": "TYPES balance-scale and symbol-relation",
           "note": "Verified source types now use diverse generators"
+        }
+      ]
+    },
+    {
+      "id": "fields.regression.diversity.target-matchstick",
+      "title": "Target score and matchstick generator diversity repair",
+      "aliases": [],
+      "tags": [
+        "regression",
+        "final-3",
+        "diversity"
+      ],
+      "summary": "Final 3 source questions 9 and 10 were recomputed as nine possible two-arrow sums for scores 1 through 5 and 31 sticks for ten joined squares. Generators now vary target bands and shot count, and use only triangle through hexagon with at least 20 problem signatures per difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "Target score and matchstick diversity paragraph",
+          "note": "Original answers, structural variation, limits, and browser verification"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "functions targetScoreCombinations and matchstickShapeSequence",
+          "note": "Exhaustive repeated-score sums and triangle-through-hexagon sequences"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES target-score-combinations and matchstick-square-growth",
+          "note": "Human-facing target label and verified generators"
         }
       ]
     }
