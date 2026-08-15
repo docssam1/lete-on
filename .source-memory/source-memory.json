@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "e2828e925e8d06125cc0a270674e5355be2b27baf47e16037ff0c471173b3167",
-      "size": 51041,
-      "mtime_ns": 1786821668401858100
+      "sha256": "11ebab8bd5bde96470767ef3fb5700cfb38d8a20a8d08ea4d4046d7f9cb57854",
+      "size": 52222,
+      "mtime_ns": 1786821907280121200
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "5edf64d370ae3f76c94d13b426fa78a49e8409820bc13f2b4444424619cd6836",
-      "size": 127039,
-      "mtime_ns": 1786821567158496400
+      "sha256": "438f9522ff96b0fb603046f1dc101c5de0c8439b8e7612cbe938fe21909eedd9",
+      "size": 128994,
+      "mtime_ns": 1786821823302028300
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "6f16858828fb18c259d8ce23f3feef40876e8eb6fd81b1b7e53361007a715cb3",
-      "size": 35064,
-      "mtime_ns": 1786821567162496400
+      "sha256": "c98c7b9870970ec42212d6f1380071508fde7fbb5586f1ea9484b45c44d9fddc",
+      "size": 35248,
+      "mtime_ns": 1786821800796390100
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 11",
+      "title": "Next verification 7-year-old selection test 3 question 12",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q11"
+        "q12"
       ],
-      "summary": "Verify the 3 by 3 shape-sum matrix on source and answer page 8. The source has row sums unknown, 18, 15; column sums 14, 17, 18; the official answer is 16. Correct the currently swapped question 11 and 12 mapping before enabling.",
+      "summary": "Verify the 1 through 8 perimeter-card line-sum problem on source and answer page 8. Given 3 at top-left, 2 at top-right, 1 at bottom-left, every side sums to 12, and the official bottom-right answer is 6.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 3 question 11 is the next locked source question"
+          "note": "Selection test 3 question 12 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 questions 11 and 12 mappings",
-          "note": "Current equal-line and symbol-grid order is reversed from source page 8"
+          "locator": "EXAMS k7-2022-06 question 12 equal-line-sum-eight-cards mapping",
+          "note": "Verify exact clue positions and answer before enabling"
         }
       ]
     },
@@ -1825,6 +1825,40 @@
           "role": "code",
           "locator": "TYPES bus-board-then-leave and EXAMS k7-2022-06 verified 1 through 10",
           "note": "Source question 10 is enabled separately from leave-then-board"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q11",
+      "title": "Selection test 3 question 11 shape-sum top row",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q11",
+        "shape-sum-grid-top-target"
+      ],
+      "summary": "The source grid is triangle-square-circle, diamond-square-circle, circle-triangle-circle. Its shown row sums are target, 18, 15; column sums are 14, 17, 18; the official target is 16. Questions 11 and 12 were remapped to source order.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 11 paragraph",
+          "note": "Exact layout, answer, prior generator mismatch, question-order correction, exhaustive verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeSumGridTopTarget",
+          "note": "Fixed source layout with three structural difficulty modes and algebraic metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES shape-sum-grid-top-target and EXAMS k7-2022-06 verified 1 through 11",
+          "note": "Question 11 is enabled and question 12 maps to equal-line-sum-eight-cards"
         }
       ]
     }

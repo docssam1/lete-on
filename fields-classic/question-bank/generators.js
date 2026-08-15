@@ -1944,6 +1944,24 @@ function sourceBusStops({ difficulty = 2 }) {
   };
 }
 
+function shapeSumGridTopTarget({ difficulty = 2 }) {
+  const [triangle, square, circle, diamond] = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4);
+  const rowSums = [triangle + square + circle, diamond + square + circle, circle * 2 + triangle];
+  const columnSums = [triangle + diamond + circle, square * 2 + triangle, circle * 3];
+  const hiddenSums = difficulty === 3 ? ["column-2"] : [];
+  const hint = difficulty === 1 ? `○ 한 개는 ${circle}입니다.` : "";
+  const squareTriangleComparison = square >= triangle
+    ? `둘째 줄의 합 ${rowSums[1]}은 첫째 세로줄의 합 ${columnSums[0]}보다 ${square - triangle} 큽니다. 두 줄에 공통인 마름모와 동그라미를 빼고 보면 네모가 세모보다 ${square - triangle} 큰 것이므로 네모는 ${square}입니다.`
+    : `첫째 세로줄의 합 ${columnSums[0]}은 둘째 줄의 합 ${rowSums[1]}보다 ${triangle - square} 큽니다. 두 줄에 공통인 마름모와 동그라미를 빼고 보면 세모가 네모보다 ${triangle - square} 큰 것이므로 네모는 ${square}입니다.`;
+  return {
+    prompt: "다음 그림에서 같은 도형은 같은 수를 나타내고, 오른쪽과 아래에 쓰인 수는 각 줄에 있는 세 수의 합을 나타냅니다. ㉠에 알맞은 수를 구하세요.",
+    visual: { kind: "shape-sum-grid-top-target", rowSums, columnSums, hiddenSums, hint },
+    answer: String(rowSums[0]),
+    solution: `${difficulty === 1 ? `도움말에서 동그라미는 ${circle}입니다. ` : `셋째 세로줄에서 동그라미는 ${circle}입니다. `}셋째 줄에서 세모는 ${triangle}입니다. ${difficulty === 3 ? squareTriangleComparison : `둘째 세로줄에서 네모는 ${square}입니다.`} 따라서 ㉠은 ${triangle} + ${square} + ${circle} = ${rowSums[0]}입니다.`,
+    meta: { difficulty, triangle, square, circle, diamond, rowSums, columnSums, hiddenSums, answer: rowSums[0] }
+  };
+}
+
 function busBoardThenLeave({ difficulty = 2 }) {
   const start = randomInt(difficulty === 1 ? 15 : difficulty === 2 ? 20 : 24, difficulty === 1 ? 24 : difficulty === 2 ? 34 : 40);
   const boardedFirst = randomInt(difficulty === 1 ? 3 : 6, difficulty === 1 ? 8 : difficulty === 2 ? 14 : 15);
@@ -2367,6 +2385,7 @@ export const GENERATORS = {
   balanceScaleThreeObjects,
   sourcePianoBounce,
   sourceSymbolSumGrid,
+  shapeSumGridTopTarget,
   symbolSumGridSquareTop,
   shapeEquationAddSubtract,
   twoDigitParityGap,

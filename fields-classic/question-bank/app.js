@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bj";
-import { GENERATORS } from "./generators.js?v=20260816bj";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bk";
+import { GENERATORS } from "./generators.js?v=20260816bk";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -704,6 +704,17 @@ function symbolSumGridMarkup(visual) {
   return `<div class="symbol-sum-grid">${cells.map((cell, index) => `<span class="${index > 11 ? "sum" : ""}">${cell}</span>`).join("")}</div>`;
 }
 
+function shapeSumGridTopTargetMarkup(visual) {
+  const sumLabel = (value, key) => visual.hiddenSums.includes(key) ? "" : value;
+  const cells = [
+    "△", "□", "○", "㉠",
+    "◇", "□", "○", sumLabel(visual.rowSums[1], "row-2"),
+    "○", "△", "○", sumLabel(visual.rowSums[2], "row-3"),
+    sumLabel(visual.columnSums[0], "column-1"), sumLabel(visual.columnSums[1], "column-2"), sumLabel(visual.columnSums[2], "column-3")
+  ];
+  return `<div class="shape-sum-grid-top-work">${visual.hint ? `<p>${visual.hint}</p>` : ""}<div class="symbol-sum-grid">${cells.map((cell, index) => `<span class="${index > 11 ? "sum" : ""}">${cell}</span>`).join("")}</div></div>`;
+}
+
 function symbolSumGridSquareTopMarkup(visual) {
   const sumLabel = (value, key) => visual.hiddenSums.includes(key) ? "" : value;
   const cells = [
@@ -856,6 +867,7 @@ function visualMarkup(visual) {
   if (visual.kind === "triangle-tile-growth") return `<div class="visual triangle-tile-growth-visual">${triangleTileGrowthMarkup(visual)}</div>`;
   if (visual.kind === "growing-dot-square") return `<div class="visual growing-dot-square-visual">${growingDotSquareMarkup(visual)}</div>`;
   if (visual.kind === "symbol-sum-grid") return `<div class="visual symbol-sum-grid-visual">${symbolSumGridMarkup(visual)}</div>`;
+  if (visual.kind === "shape-sum-grid-top-target") return `<div class="visual symbol-sum-grid-visual">${shapeSumGridTopTargetMarkup(visual)}</div>`;
   if (visual.kind === "symbol-sum-grid-square-top") return `<div class="visual symbol-sum-grid-visual">${symbolSumGridSquareTopMarkup(visual)}</div>`;
   if (visual.kind === "shape-equation-add-subtract") return `<div class="visual shape-equation-add-subtract-visual">${shapeEquationAddSubtractMarkup(visual)}</div>`;
   if (visual.kind === "source-piano") return `<div class="visual source-piano-visual">${sourcePianoMarkup()}</div>`;
