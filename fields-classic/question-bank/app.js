@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260815d";
-import { GENERATORS } from "./generators.js?v=20260815d";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260815e";
+import { GENERATORS } from "./generators.js?v=20260815e";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -297,6 +297,14 @@ function tornCalendarMarkup(visual) {
   return `<div class="torn-calendar" style="--calendar-columns:${visual.columns.length}"><strong>${visual.month}월</strong><div class="torn-calendar-grid">${headers}${rows}</div><svg viewBox="0 0 240 14" preserveAspectRatio="none" aria-hidden="true"><path d="M0 1L14 8 28 3 44 11 61 4 78 10 96 2 114 9 132 4 150 12 168 3 186 9 205 2 222 10 240 4V14H0Z"/></svg></div>`;
 }
 
+function twoTypeUnitsMarkup(visual) {
+  const bicycle = (tricycle) => `<svg viewBox="0 0 150 90" aria-hidden="true"><g class="unit-drawing bike"><circle cx="35" cy="63" r="20"/><circle cx="${tricycle ? 112 : 115}" cy="63" r="20"/>${tricycle ? '<circle cx="76" cy="68" r="13"/>' : ""}<path d="M35 63L62 28 84 63H35L58 63 75 39 112 63M62 28H82M75 39L67 20M61 20H76"/></g></svg>`;
+  const animal = (rabbit) => rabbit
+    ? `<svg viewBox="0 0 150 90" aria-hidden="true"><g class="unit-drawing animal"><ellipse cx="70" cy="50" rx="39" ry="24"/><circle cx="109" cy="38" r="17"/><ellipse cx="101" cy="13" rx="6" ry="18"/><ellipse cx="116" cy="13" rx="6" ry="18"/><circle class="eye" cx="115" cy="35" r="2"/><path d="M44 65V82M62 68V82M83 68V82M101 64V82"/></g></svg>`
+    : `<svg viewBox="0 0 150 90" aria-hidden="true"><g class="unit-drawing animal"><ellipse cx="72" cy="50" rx="34" ry="25"/><circle cx="108" cy="35" r="16"/><polygon points="123,34 142,42 123,47"/><circle class="eye" cx="112" cy="31" r="2"/><path d="M61 70V84M84 70V84M54 84H67M77 84H91"/></g></svg>`;
+  return `<div class="two-type-units">${visual.items.map((item, index) => `<div>${visual.variant === "bicycles" ? bicycle(index === 1) : animal(index === 1)}<strong>${item.label}</strong><span>${visual.variant === "bicycles" ? "바퀴" : "다리"} ${item.units}개</span></div>`).join("")}</div>`;
+}
+
 function closestCardSumMarkup(visual) {
   const blank = () => '<span class="digit-card-blank"></span>';
   return `<div class="closest-card-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="closest-card-equation"><span class="two-digit-blank">${blank()}${blank()}</span><b>+</b><span class="two-digit-blank">${blank()}${blank()}</span><b>=</b><span class="sum-blank"></span></div><small>${visual.target}에 가장 가까운 합</small></div>`;
@@ -413,6 +421,7 @@ function visualMarkup(visual) {
   if (visual.kind === "hidden-card-conditions") return `<div class="visual hidden-card-visual">${hiddenCardConditionsMarkup(visual)}</div>`;
   if (visual.kind === "shape-matrix-rule") return `<div class="visual shape-matrix-visual">${shapeMatrixRuleMarkup(visual)}</div>`;
   if (visual.kind === "torn-calendar") return `<div class="visual torn-calendar-visual">${tornCalendarMarkup(visual)}</div>`;
+  if (visual.kind === "two-type-units") return `<div class="visual two-type-units-visual">${twoTypeUnitsMarkup(visual)}</div>`;
   if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;

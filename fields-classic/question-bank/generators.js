@@ -385,6 +385,34 @@ function tornCalendarWeekday({ difficulty = 2 }) {
   };
 }
 
+function twoTypeUnitTotal({ difficulty = 2 }) {
+  if (difficulty === 3) {
+    const total = randomInt(7, 15);
+    const rabbits = randomInt(2, total - 2);
+    const chickens = total - rabbits;
+    const units = chickens * 2 + rabbits * 4;
+    return {
+      prompt: `닭과 토끼가 합해서 ${total}마리 있습니다. 다리 수가 모두 ${units}개일 때, 토끼는 몇 마리인지 구하세요.`,
+      visual: { kind: "two-type-units", variant: "animals", items: [{ label: "닭", units: 2 }, { label: "토끼", units: 4 }] },
+      answer: `${rabbits}마리`,
+      solution: `모두 닭이라고 생각하면 다리는 ${total} × 2 = ${total * 2}개입니다. 실제 다리는 ${units - total * 2}개 더 많고, 토끼 한 마리로 바꿀 때마다 다리가 2개씩 늘어납니다. ${units - total * 2}을 2개씩 나누면 토끼는 ${rabbits}마리입니다.`,
+      meta: { difficulty, variant: "animals", total, smallCount: chickens, largeCount: rabbits, smallUnits: 2, largeUnits: 4, units }
+    };
+  }
+
+  const total = difficulty === 1 ? randomInt(4, 7) : randomInt(7, 13);
+  const tricycles = randomInt(1, total - 1);
+  const bicycles = total - tricycles;
+  const units = bicycles * 2 + tricycles * 3;
+  return {
+    prompt: `두발자전거와 세발자전거가 합해서 ${total}대 있습니다. 바퀴 수가 모두 ${units}개일 때, 세발자전거는 몇 대인지 구하세요.`,
+    visual: { kind: "two-type-units", variant: "bicycles", items: [{ label: "두발자전거", units: 2 }, { label: "세발자전거", units: 3 }] },
+    answer: `${tricycles}대`,
+    solution: `모두 두발자전거라고 생각하면 바퀴는 ${total} × 2 = ${total * 2}개입니다. 실제 바퀴는 ${units - total * 2}개 더 많고, 세발자전거 한 대로 바꿀 때마다 바퀴가 1개씩 늘어납니다. 따라서 세발자전거는 ${tricycles}대입니다.`,
+    meta: { difficulty, variant: "bicycles", total, smallCount: bicycles, largeCount: tricycles, smallUnits: 2, largeUnits: 3, units }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -835,6 +863,7 @@ export const GENERATORS = {
   shapeMatrixRule,
   delayedDatePromise,
   tornCalendarWeekday,
+  twoTypeUnitTotal,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
