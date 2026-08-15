@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "2f99f29cd1da6fac53e20506a0de4814dd492e1e6d0d2fd1555ec034097f517b",
-      "size": 93542,
-      "mtime_ns": 1786832782008217100
+      "sha256": "ca7f42d5c814e8ee075c2133c1fd9e8f93c09a6d4ac324de954094bace3ae6f2",
+      "size": 94403,
+      "mtime_ns": 1786832941372943700
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "b63bbf72b40bf18feba6c901929cb36924b17ca5364ae7a94b9aaa4a747b1be7",
-      "size": 40021,
-      "mtime_ns": 1786832782002218500
+      "sha256": "7e8d92c1f938b342a87f45235f978b7cba8a4ff3e0e1f753ea366a95d27e26ff",
+      "size": 40025,
+      "mtime_ns": 1786832941365939300
     }
   ],
   "records": [
@@ -107,12 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 17",
+      "title": "Next verification selection test 6 question 18",
       "aliases": [],
       "tags": [
         "next"
       ],
-      "summary": "Compare the numbered paper grid, fold direction, cut region, reflected cells, and official answer 39 before reusing or splitting the provisional fold-cut generator.",
+      "summary": "Compare the three-to-four star-circle relation, second equation, target square, distinct one-digit condition, and official answer 13 before reusing the provisional symbol relation generator.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -120,13 +120,13 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "7-year-old selection test 6 question 17",
-          "note": "Verify grid numbers, fold line, cut cells, reflected cells, and official answer"
+          "locator": "7-year-old selection test 6 question 18",
+          "note": "Verify all three equations, one-digit uniqueness, and official answer"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-12 question 17",
+          "locator": "EXAMS k7-2022-12 question 18",
           "note": "Current provisional mapping remains disabled"
         }
       ]
@@ -3380,6 +3380,40 @@
           "role": "code",
           "locator": "TYPES balance-scale-circle-target and EXAMS k7-2022-12 verified 1 through 16",
           "note": "Wrong provisional balance relation replaced and source question enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q17",
+      "title": "Selection test 6 question 17 anti-diagonal numbered paper cut",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q17",
+        "fold-number-cut-sum"
+      ],
+      "summary": "The source folds a 4 by 4 numbered paper along the bottom-left to top-right diagonal and cuts an L-shaped region; reflected cells contain 4, 5, 8, 7, 6, 2, and 7 for the official sum 39.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 17 paragraph",
+          "note": "Exact grid, fold direction, cut mask, reflected cells, official answer, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function foldNumberCutSum",
+          "note": "Anti-diagonal coordinate reflection and deduplicated cut-cell sum"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified 1 through 17",
+          "note": "Existing exact source-matched fold type is enabled"
         }
       ]
     }
