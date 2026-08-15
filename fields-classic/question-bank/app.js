@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ao";
-import { GENERATORS } from "./generators.js?v=20260816ao";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816aq";
+import { GENERATORS } from "./generators.js?v=20260816aq";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -635,6 +635,36 @@ function twoDigitParityGapMarkup(visual) {
   return `<div class="number-conditions parity-gap-conditions"><ul><li><strong>${visual.lower}</strong>보다 크고 <strong>${visual.upper}</strong>보다 작은 짝수입니다.</li><li>십의 자리 숫자가 일의 자리 숫자보다 <strong>${visual.gap}</strong> 큽니다.</li>${visual.digitSum === null ? "" : `<li>십의 자리 숫자와 일의 자리 숫자의 합은 <strong>${visual.digitSum}</strong>입니다.</li>`}</ul>${visual.choices.length ? `<div class="parity-gap-choices"><b>[보기]</b>${visual.choices.map((value) => `<span>${value}</span>`).join("")}</div>` : ""}</div>`;
 }
 
+function triangleTileGrowthMarkup(visual) {
+  const stage = (size) => {
+    const height = 86;
+    const stepX = 88 / size;
+    const stepY = height / size;
+    const point = (row, column) => ({ x: 50 - row * stepX / 2 + column * stepX, y: 4 + row * stepY });
+    const lines = [];
+    for (let row = 1; row <= size; row += 1) {
+      for (let column = 0; column < row; column += 1) {
+        const left = point(row, column);
+        const right = point(row, column + 1);
+        lines.push(`<line x1="${left.x}" y1="${left.y}" x2="${right.x}" y2="${right.y}" />`);
+      }
+      for (let column = 0; column <= row; column += 1) {
+        const lower = point(row, column);
+        if (column > 0) {
+          const upperLeft = point(row - 1, column - 1);
+          lines.push(`<line x1="${lower.x}" y1="${lower.y}" x2="${upperLeft.x}" y2="${upperLeft.y}" />`);
+        }
+        if (column < row) {
+          const upperRight = point(row - 1, column);
+          lines.push(`<line x1="${lower.x}" y1="${lower.y}" x2="${upperRight.x}" y2="${upperRight.y}" />`);
+        }
+      }
+    }
+    return `<div class="triangle-growth-stage stage-${size}"><svg viewBox="0 0 100 94" role="img" aria-label="${size}번째 정삼각형 조각 배열"><g>${lines.join("")}</g></svg><b>${size}번째</b>${visual.showCounts ? `<span>${size * size}장</span>` : ""}</div>`;
+  };
+  return `<div class="triangle-growth-work">${visual.stages.map(stage).join("")}<strong>…</strong><em>${visual.askIndex ? `${visual.pieceCount}장` : `${visual.target}번째`}</em></div>`;
+}
+
 function growingDotSquareMarkup(visual) {
   const stage = (size) => `<div><i style="--dots:${size}">${Array.from({ length: size * size }, () => "<b></b>").join("")}</i><span>${size}번째</span></div>`;
   return `<div class="growing-dot-squares">${[1,2,3,4].map(stage).join("")}<strong>…</strong><em>${visual.target}번째</em></div>`;
@@ -752,6 +782,7 @@ function visualMarkup(visual) {
   if (visual.kind === "equal-line-cross") return `<div class="visual equal-line-cross-visual">${equalLineCrossMarkup(visual)}</div>`;
   if (visual.kind === "number-conditions") return `<div class="visual number-conditions-visual">${numberConditionsMarkup(visual)}</div>`;
   if (visual.kind === "two-digit-parity-gap") return `<div class="visual number-conditions-visual">${twoDigitParityGapMarkup(visual)}</div>`;
+  if (visual.kind === "triangle-tile-growth") return `<div class="visual triangle-tile-growth-visual">${triangleTileGrowthMarkup(visual)}</div>`;
   if (visual.kind === "growing-dot-square") return `<div class="visual growing-dot-square-visual">${growingDotSquareMarkup(visual)}</div>`;
   if (visual.kind === "symbol-sum-grid") return `<div class="visual symbol-sum-grid-visual">${symbolSumGridMarkup(visual)}</div>`;
   if (visual.kind === "symbol-sum-grid-square-top") return `<div class="visual symbol-sum-grid-visual">${symbolSumGridSquareTopMarkup(visual)}</div>`;

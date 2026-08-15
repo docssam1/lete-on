@@ -1920,6 +1920,21 @@ function twoDigitParityGap({ difficulty = 2 }) {
   };
 }
 
+function triangleTileGrowth({ difficulty = 2 }) {
+  const target = difficulty === 1 ? randomInt(4, 6) : difficulty === 2 ? randomInt(6, 9) : randomInt(6, 10);
+  const pieceCount = target * target;
+  const askIndex = difficulty === 3;
+  return {
+    prompt: askIndex
+      ? `작은 정삼각형 색종이를 이어 붙여 그림과 같은 규칙으로 모양을 만듭니다. 작은 정삼각형 색종이가 ${pieceCount}장 필요한 것은 몇 번째 모양인가요?`
+      : `작은 정삼각형 색종이를 이어 붙여 그림과 같은 규칙으로 모양을 만들어 나갑니다. ${target}번째 모양에는 작은 정삼각형 색종이가 몇 장 필요한가요?`,
+    visual: { kind: "triangle-tile-growth", stages: [1, 2, 3, 4], showCounts: difficulty === 1, target, pieceCount, askIndex },
+    answer: askIndex ? `${target}번째` : `${pieceCount}장`,
+    solution: `1번째부터 작은 삼각형 수는 1장, 4장, 9장, 16장으로 늘어납니다. ${target}번째는 ${target}을 ${target}번 더한 ${pieceCount}장이므로, ${askIndex ? `${pieceCount}장이 필요한 것은 ${target}번째` : `${target}번째 모양에는 ${pieceCount}장`}입니다.`,
+    meta: { difficulty, target, pieceCount, askIndex, answer: askIndex ? target : pieceCount }
+  };
+}
+
 function foldNumberCutSum({ difficulty = 2 }) {
   const size = 4;
   const foldMask = difficulty === 1
@@ -2070,6 +2085,7 @@ export const GENERATORS = {
   symbolSumGridSquareTop,
   shapeEquationAddSubtract,
   twoDigitParityGap,
+  triangleTileGrowth,
   sourceGrowingDotSquare,
   sourceTwoDigitSumDifference,
   sourceEqualLineCross,

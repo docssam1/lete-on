@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "29b9b7e0f616f3db42475cd3deb85f8475ad9f11dced186eff71c32d9f129f76",
-      "size": 37484,
-      "mtime_ns": 1786817339429271300
+      "sha256": "a7b295414fa563100a545f353c0cad0755beb5a9364d44aa2609a6e244c789f4",
+      "size": 38285,
+      "mtime_ns": 1786817566493869800
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "6088f0906f275a29b1cb43d142f6df63ef4698744118b0db95df57121b0f8398",
-      "size": 108859,
-      "mtime_ns": 1786817319856627600
+      "sha256": "1c3ef6dfc0efc55d70122258248c0ba2a3b3a570f4ef5ff59efbe4eda1d6d3d5",
+      "size": 110166,
+      "mtime_ns": 1786817529644727800
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "b76212a0ea506981b4cce3c8ca67a98863374a8e4f9c38e00f7f38de42f24691",
-      "size": 33978,
-      "mtime_ns": 1786817245228215600
+      "sha256": "a6d3631b13f57d2918c459a1d7af4a709a94b1d0b8b9f330636c08c5093ca74f",
+      "size": 34039,
+      "mtime_ns": 1786817466223571100
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 16",
+      "title": "Next verification 7-year-old selection test 2 question 17",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q16"
+        "q17"
       ],
-      "summary": "Verify the triangular paper-piece growth shown on source page 10 and answer 64 for the eighth figure before implementing triangle-tile-growth.",
+      "summary": "Verify all three balance-scale relations on source page 11 and answer 4 before implementing balance-scale-three-objects.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 16 is the next locked source question"
+          "note": "Question 17 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-04 question 16 triangle-tile-growth",
-          "note": "Do not enable until the visual growth rule and answer 64 are verified"
+          "locator": "EXAMS k7-2022-04 question 17 balance-scale-three-objects",
+          "note": "Do not enable until each pan count and the requested object are verified"
         }
       ]
     },
@@ -1315,6 +1315,40 @@
           "role": "code",
           "locator": "TYPES two-digit-parity-gap and EXAMS k7-2022-04 verified 1 through 15",
           "note": "Source question 15 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q16",
+      "title": "Selection test 2 question 16 triangular tile growth",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q16",
+        "triangle-tile-growth"
+      ],
+      "summary": "The source shows triangular arrangements containing 1, 4, 9, and 16 small triangles; the eighth arrangement contains 64 small triangles.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 16 paragraph",
+          "note": "Original triangular growth, answer 64, SVG structure, and age-appropriate explanation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function triangleTileGrowth",
+          "note": "Forward and reverse structural difficulty without square notation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES triangle-tile-growth and EXAMS k7-2022-04 verified 1 through 16",
+          "note": "Source question 16 is enabled"
         }
       ]
     }
