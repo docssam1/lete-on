@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "6808e4a0a9a4b7ad007cf26a56107a1a17b85d1569d9659db19e6bf29edee12e",
-      "size": 61331,
-      "mtime_ns": 1786824259491402500
+      "sha256": "584128d3f039aa4821350f121556be874164c880c29212301c2cb81e143f124f",
+      "size": 61949,
+      "mtime_ns": 1786824428754534900
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "93a8408c6a761258db86718ad9b745e1dd00d89ccb8d7d80a3beab2140c49e4f",
-      "size": 36113,
-      "mtime_ns": 1786824204600686800
+      "sha256": "81afa42bd2ca5f3314f72fb67db3414e708ae23372da2e099d9fa1445e4b82f5",
+      "size": 36142,
+      "mtime_ns": 1786824373493303700
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 4 question 1",
+      "title": "Next verification 7-year-old selection test 4 question 2",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q1"
+        "q2"
       ],
-      "summary": "Verify source and answer page 3 for cards 5 through 8 arranged at four corners with edge sums 12, 11, 15, and 14. Confirm the full unique placement before reusing edgeSumCycle.",
+      "summary": "Verify source and answer page 3 for the bent four-cell placement using cards 1 through 4, with 2 left of 3 and 1 directly below 3. Confirm the marked cell answer 4 and exact coordinates before reusing stairGridPlacement.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 4 starts with the four-corner edge-sum card placement"
+          "note": "Selection test 4 question 2 is a bent four-cell placement"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-08 question 1 edge-sum-grid mapping",
-          "note": "Verify source card set, sums, placement, and answer format before enabling"
+          "locator": "EXAMS k7-2022-08 question 2 grid-number-placement mapping",
+          "note": "Verify source geometry, relations, and target cell before enabling"
         }
       ]
     },
@@ -2165,6 +2165,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-06 verified questions 1 through 20",
           "note": "Selection test 3 completed"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q1",
+      "title": "Selection test 4 question 1 edge-sum card placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q1",
+        "edge-sum-grid"
+      ],
+      "summary": "Cards 5, 6, 7, 8 have edge sums top 12, right 15, bottom 14, and left 11. Exhaustive permutation gives the unique full placement TL 5, TR 7, BR 8, BL 6.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 1 paragraph",
+          "note": "Original cards, sums, full placement, reuse decision, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function edgeSumCycle",
+          "note": "Full-placement generator with exhaustive uniqueness and structural difficulty"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified question 1",
+          "note": "Source question 1 enabled"
         }
       ]
     }
