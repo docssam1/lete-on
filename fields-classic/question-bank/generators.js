@@ -2482,8 +2482,8 @@ function foldNumberCutSumLShape({ difficulty = 2 }) {
   };
 }
 
-function buildEqualLineSumEightCards({ difficulty, actualTargetSum, actualTargetIndex, actualGivenIndices }) {
-  const targetSum = difficulty === 1 ? sample([12, 13]) : difficulty === 2 ? actualTargetSum : sample([12, 13, 14, 15]);
+function buildEqualLineSumEightCards({ difficulty, actualTargetSum, actualTargetIndex, actualGivenIndices, sameTargetSums = null }) {
+  const targetSum = difficulty === 1 ? sample([12, 13]) : difficulty === 2 ? sample(sameTargetSums || [actualTargetSum]) : sample([12, 13, 14, 15]);
   const pool = EQUAL_LINE_EIGHT_LAYOUTS.filter((item) => item.sum === targetSum);
   let solution = sample(pool);
   let targetIndex;
@@ -2536,6 +2536,10 @@ function buildEqualLineSumEightCards({ difficulty, actualTargetSum, actualTarget
 
 function equalLineSumEightCards({ difficulty = 2 }) {
   return buildEqualLineSumEightCards({ difficulty, actualTargetSum: 15, actualTargetIndex: 2, actualGivenIndices: [0, 4, 6] });
+}
+
+function equalLineSumEightCardsFifteenTopLeft({ difficulty = 2 }) {
+  return buildEqualLineSumEightCards({ difficulty, actualTargetSum: 15, actualTargetIndex: 0, actualGivenIndices: [2, 4, 6], sameTargetSums: [12, 13, 14, 15] });
 }
 
 function equalLineSumEightCardsTwelve({ difficulty = 2 }) {
@@ -2642,6 +2646,7 @@ export const GENERATORS = {
   foldNumberCutSum,
   foldNumberCutSumLShape,
   equalLineSumEightCards,
+  equalLineSumEightCardsFifteenTopLeft,
   equalLineSumEightCardsTwelve,
   twoDigitCondition,
   repeatShape,
