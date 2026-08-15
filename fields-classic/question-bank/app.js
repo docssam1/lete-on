@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816l";
-import { GENERATORS } from "./generators.js?v=20260816l";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816m";
+import { GENERATORS } from "./generators.js?v=20260816m";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -387,6 +387,16 @@ function matchstickShapeSequenceMarkup(visual) {
   return `<div class="matchstick-sequence-work"><div class="matchstick-stages">${[1, 2, 3].map((count) => matchstickStageMarkup(visual, count)).join("")}<b class="sequence-ellipsis">…</b><em class="sequence-target">${visual.target}번째</em></div><p>${visual.clue}</p></div>`;
 }
 
+function connectedLineDegreeSumMarkup(visual) {
+  const lines = visual.edges.map(([first, second]) => {
+    const from = visual.nodes[first];
+    const to = visual.nodes[second];
+    return `<line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}"/>`;
+  }).join("");
+  const nodes = visual.nodes.map((node, index) => `<g><circle cx="${node.x}" cy="${node.y}" r="18"/>${visual.shown.includes(index) ? `<text x="${node.x}" y="${node.y + 6}">${visual.degrees[index]}</text>` : ""}</g>`).join("");
+  return `<div class="connected-line-work"><svg viewBox="0 0 ${visual.width} ${visual.height}" role="img" aria-label="여러 원이 선으로 연결된 그림"><g class="connected-edges">${lines}</g><g class="connected-nodes">${nodes}</g></svg><p>${visual.clue}</p></div>`;
+}
+
 function closestCardSumMarkup(visual) {
   const blank = () => '<span class="digit-card-blank"></span>';
   return `<div class="closest-card-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="closest-card-equation"><span class="two-digit-blank">${blank()}${blank()}</span><b>+</b><span class="two-digit-blank">${blank()}${blank()}</span><b>=</b><span class="sum-blank"></span></div><small>${visual.target}에 가장 가까운 합</small></div>`;
@@ -508,6 +518,7 @@ function visualMarkup(visual) {
   if (visual.kind === "truth-lie-ranking") return `<div class="visual truth-lie-ranking-visual">${truthLieRankingMarkup(visual)}</div>`;
   if (visual.kind === "target-score-combinations") return `<div class="visual target-score-visual">${targetScoreCombinationsMarkup(visual)}</div>`;
   if (visual.kind === "matchstick-shape-sequence") return `<div class="visual matchstick-sequence-visual">${matchstickShapeSequenceMarkup(visual)}</div>`;
+  if (visual.kind === "connected-line-degree-sum") return `<div class="visual connected-line-visual">${connectedLineDegreeSumMarkup(visual)}</div>`;
   if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;

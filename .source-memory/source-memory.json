@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "1c810bebf54b6efcdae1fc01bf13157593fd2c3a4d8095c9c5b8c9f2030b67b6",
-      "size": 18123,
-      "mtime_ns": 1786809244990950600
+      "sha256": "387282ee5e124e8f1023bd0bd22f7b552438883a6290da765690058201fa61ed",
+      "size": 18727,
+      "mtime_ns": 1786809626509649500
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "4e98c649f4b53d4f07a1ea47af1cb62d5308ae91ed92c0eaa7a0ca8b686954ed",
-      "size": 32467,
-      "mtime_ns": 1786809244991950400
+      "sha256": "fea57253567a872320127352e563315afdfad865336135368cfeaca94395b270",
+      "size": 32592,
+      "mtime_ns": 1786809626510649900
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "355aef0c8289d94e96f33abf5b54603cdef27e849bd46cdbc876c57409a701ab",
-      "size": 59524,
-      "mtime_ns": 1786808940031536800
+      "sha256": "791ab560aba2657cfcfa41cb2f0c9602acb7dc813ea7a18ba743b4da80c5f8c3",
+      "size": 62303,
+      "mtime_ns": 1786809589536729500
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "7b91af37b362652dcf6376d1a77313e0cc0ef331ea6e6d066255af080cc2e504",
-      "size": 31965,
-      "mtime_ns": 1786808990396105700
+      "sha256": "0138d1782bf59c80333db13f5f67ece5a3074b7bded8955f0b133b44955dcc40",
+      "size": 32043,
+      "mtime_ns": 1786809494559423400
     }
   ],
   "records": [
@@ -107,15 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F13 connected line degree sum",
+      "title": "Next implementation F14 letter block transform",
       "aliases": [
         "다음 작업"
       ],
       "tags": [
         "next",
-        "F13"
+        "F14"
       ],
-      "summary": "Continue with Final 3 question 11 by verifying the original graph drawing, the number written at every point, and the independently counted total before enabling the generator.",
+      "summary": "Continue with Final 3 question 12 by reproducing the exact block movement shown in the source and verifying the resulting Hangul arrangement before designing any generator variants.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -124,7 +124,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F12 are complete; F13 is next"
+          "note": "F01 through F13 are complete; F14 is next"
         }
       ]
     },
@@ -412,6 +412,42 @@
           "source_id": "source-data",
           "role": "code",
           "locator": "TYPES matchstick-square-growth and FINAL_EXAM_TYPES final-3 question 10",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f13",
+      "title": "Final 3 question 11 connected line degree sum",
+      "aliases": [
+        "파이널 3회 11번",
+        "각 점에 연결된 선의 개수 합"
+      ],
+      "tags": [
+        "F13",
+        "final-3"
+      ],
+      "summary": "F13 verifies the original nine circles, seventeen lines, degree list, and total 34, then generates connected planar graphs without duplicate edges, self-loops, or unmarked crossings.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 표 11번과 다음 검증 순서 4번",
+          "note": "Original graph has 17 edges and degree sum 34"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function connectedLineDegreeSum and GENERATORS export",
+          "note": "Three difficulty levels with independently checkable graph metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES connected-line-degree-sum and FINAL_EXAM_TYPES final-3 question 11",
           "note": "Source-matched type is enabled"
         }
       ]

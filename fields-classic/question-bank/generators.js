@@ -667,6 +667,66 @@ function matchstickShapeSequence({ difficulty = 2 }) {
   };
 }
 
+function connectedLineDegreeSum({ difficulty = 2 }) {
+  const config = difficulty === 1
+    ? { rows: 2, columns: 3, diagonalMin: 0, diagonalMax: 1 }
+    : difficulty === 2
+      ? { rows: 3, columns: 3, diagonalMin: 3, diagonalMax: 4 }
+      : { rows: 3, columns: 4, diagonalMin: 6, diagonalMax: 8 };
+  const width = 340;
+  const height = 205;
+  const nodes = [];
+  for (let row = 0; row < config.rows; row += 1) {
+    for (let column = 0; column < config.columns; column += 1) {
+      nodes.push({
+        id: row * config.columns + column,
+        x: 42 + column * (256 / (config.columns - 1)) + randomInt(-4, 4),
+        y: 32 + row * (140 / (config.rows - 1)) + randomInt(-4, 4)
+      });
+    }
+  }
+
+  const edges = [];
+  const addEdge = (first, second) => edges.push(first < second ? [first, second] : [second, first]);
+  for (let row = 0; row < config.rows; row += 1) {
+    for (let column = 0; column < config.columns; column += 1) {
+      const current = row * config.columns + column;
+      if (column + 1 < config.columns) addEdge(current, current + 1);
+      if (row + 1 < config.rows) addEdge(current, current + config.columns);
+    }
+  }
+
+  const cells = [];
+  for (let row = 0; row + 1 < config.rows; row += 1) {
+    for (let column = 0; column + 1 < config.columns; column += 1) cells.push({ row, column });
+  }
+  const diagonalCount = randomInt(config.diagonalMin, Math.min(config.diagonalMax, cells.length));
+  for (const { row, column } of shuffle(cells).slice(0, diagonalCount)) {
+    const topLeft = row * config.columns + column;
+    if (Math.random() < 0.5) addEdge(topLeft, topLeft + config.columns + 1);
+    else addEdge(topLeft + 1, topLeft + config.columns);
+  }
+
+  const degrees = Array(nodes.length).fill(0);
+  for (const [first, second] of edges) {
+    degrees[first] += 1;
+    degrees[second] += 1;
+  }
+  const answer = degrees.reduce((sum, degree) => sum + degree, 0);
+  const shown = difficulty === 1 ? [randomInt(0, nodes.length - 1)] : [];
+  const clue = difficulty === 1
+    ? "숫자가 적힌 원처럼, 그 원에 닿은 줄만 세어 보세요."
+    : "원을 차례로 보며 연결된 줄을 빠짐없이 세어 보세요.";
+
+  return {
+    prompt: "각각의 ○ 안에 그 원에 연결된 줄의 개수를 적습니다. 모든 ○ 안에 적을 수의 합은 얼마일까요?",
+    visual: { kind: "connected-line-degree-sum", width, height, nodes, edges, degrees, shown, clue },
+    answer: String(answer),
+    solution: `선을 빠짐없이 세면 ${edges.length}개입니다. 선 하나는 양쪽 끝의 두 원에서 한 번씩 세므로 ${edges.length} + ${edges.length} = ${answer}입니다.`,
+    meta: { difficulty, rows: config.rows, columns: config.columns, nodes, edges, degrees, answer }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -1122,6 +1182,7 @@ export const GENERATORS = {
   truthLieRanking,
   targetScoreCombinations,
   matchstickShapeSequence,
+  connectedLineDegreeSum,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,

@@ -40,7 +40,7 @@ export const TYPES = [
     sourceMatched: true,
     variants: ["삼각형", "사각형", "오각형", "육각형"]
   }),
-  type("connected-line-degree-sum", "geometry", "연결 관계", "각 점에 연결된 선의 개수 합"),
+  type("connected-line-degree-sum", "geometry", "연결 관계", "각 점에 연결된 선의 개수 합", { generator: "connectedLineDegreeSum", sourceMatched: true }),
   type("letter-block-transform", "geometry", "도형 움직이기", "글자 블록을 움직인 결과 그리기"),
   type("mixed-sequences", "pattern", "수 규칙", "서로 다른 규칙이 섞인 수열"),
   type("neither-set-count", "logic", "집합과 포함", "두 조건에 모두 해당하지 않는 수"),
@@ -258,7 +258,7 @@ export const FINAL_EXAM_TYPES = [
       "target-score-combinations", "matchstick-square-growth", "connected-line-degree-sum", "letter-block-transform",
       "go-stone-difference-inverse", "square-count", "symbol-sum-grid", "cube-fill-box",
       "mixed-sequences", "two-type-unit-total", "go-stone-difference", "neither-set-count"
-    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index <= 1 || index === 8 || index === 9 }))
+    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index <= 1 || index === 8 || index === 9 || index === 10 }))
   }
 ];
 
