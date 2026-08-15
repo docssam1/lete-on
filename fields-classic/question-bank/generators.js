@@ -817,6 +817,57 @@ function mixedSequences({ difficulty = 2 }) {
   };
 }
 
+function neitherSetCount({ difficulty = 2 }) {
+  const contexts = [
+    { group: "학급", first: "형이 있는", second: "누나가 있는", unit: "명" },
+    { group: "반", first: "축구를 좋아하는", second: "야구를 좋아하는", unit: "명" },
+    { group: "모임", first: "사과를 좋아하는", second: "포도를 좋아하는", unit: "명" }
+  ];
+  const context = sample(contexts);
+  const both = randomInt(difficulty === 1 ? 1 : 2, difficulty === 3 ? 7 : 5);
+  const firstOnly = randomInt(difficulty === 1 ? 3 : 6, difficulty === 3 ? 18 : 13);
+  const secondOnly = randomInt(difficulty === 1 ? 2 : 4, difficulty === 3 ? 15 : 11);
+  const neither = randomInt(difficulty === 1 ? 3 : 6, difficulty === 3 ? 18 : 13);
+  const firstTotal = firstOnly + both;
+  const secondTotal = secondOnly + both;
+  const total = firstOnly + both + secondOnly + neither;
+  let prompt;
+  let solution;
+  let shown;
+
+  if (difficulty === 1) {
+    prompt = `${context.group}에는 모두 ${total}${context.unit}이 있습니다. ${context.first} 사람만 ${firstOnly}${context.unit}, ${context.second} 사람만 ${secondOnly}${context.unit}, 두 가지에 모두 해당하는 사람은 ${both}${context.unit}입니다. 어느 쪽에도 해당하지 않는 사람은 몇 ${context.unit}일까요?`;
+    solution = `두 가지 중 적어도 하나에 해당하는 사람은 ${firstOnly} + ${both} + ${secondOnly} = ${firstOnly + both + secondOnly}${context.unit}입니다. 전체 ${total}${context.unit}에서 빼면 ${total} - ${firstOnly + both + secondOnly} = ${neither}${context.unit}입니다.`;
+    shown = { mode: "parts", firstOnly, both, secondOnly };
+  } else if (difficulty === 2) {
+    prompt = `${context.group}에는 모두 ${total}${context.unit}이 있습니다. ${context.first} 사람은 ${firstTotal}${context.unit}, ${context.second} 사람은 ${secondTotal}${context.unit}이고, 두 가지에 모두 해당하는 사람은 ${both}${context.unit}입니다. 어느 쪽에도 해당하지 않는 사람은 몇 ${context.unit}일까요?`;
+    const union = firstTotal + secondTotal - both;
+    solution = `두 가지에 모두 해당하는 ${both}${context.unit}을 두 번 세지 않도록 한 번 뺍니다. ${firstTotal} + ${secondTotal} - ${both} = ${union}${context.unit}이 적어도 하나에 해당합니다. 따라서 ${total} - ${union} = ${neither}${context.unit}입니다.`;
+    shown = { mode: "totals", firstTotal, secondTotal, both };
+  } else {
+    prompt = `${context.group}에는 모두 ${total}${context.unit}이 있습니다. ${context.first} 사람은 ${firstTotal}${context.unit}, ${context.second} 사람은 ${secondTotal}${context.unit}이고, ${context.first} 사람만 ${firstOnly}${context.unit}입니다. 어느 쪽에도 해당하지 않는 사람은 몇 ${context.unit}일까요?`;
+    const overlap = firstTotal - firstOnly;
+    const union = firstTotal + secondTotal - overlap;
+    solution = `두 가지에 모두 해당하는 사람은 ${firstTotal} - ${firstOnly} = ${overlap}${context.unit}입니다. 적어도 하나에 해당하는 사람은 ${firstTotal} + ${secondTotal} - ${overlap} = ${union}${context.unit}이므로, ${total} - ${union} = ${neither}${context.unit}입니다.`;
+    shown = { mode: "hidden-overlap", firstOnly, firstTotal, secondTotal };
+  }
+
+  return {
+    prompt,
+    visual: {
+      kind: "venn-neither",
+      first: context.first,
+      second: context.second,
+      unit: context.unit,
+      total,
+      shown
+    },
+    answer: `${neither}${context.unit}`,
+    solution,
+    meta: { difficulty, context, firstOnly, secondOnly, both, neither, firstTotal, secondTotal, total }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -1275,6 +1326,7 @@ export const GENERATORS = {
   connectedLineDegreeSum,
   letterBlockTransform,
   mixedSequences,
+  neitherSetCount,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,

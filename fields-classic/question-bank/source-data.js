@@ -43,7 +43,7 @@ export const TYPES = [
   type("connected-line-degree-sum", "geometry", "연결 관계", "각 점에 연결된 선의 개수 합", { generator: "connectedLineDegreeSum", sourceMatched: true }),
   type("letter-block-transform", "geometry", "도형 움직이기", "글자 블록을 움직인 결과 그리기", { generator: "letterBlockTransform", sourceMatched: true }),
   type("mixed-sequences", "pattern", "수 규칙", "세 가지 규칙의 복합 수열", { generator: "mixedSequences", sourceMatched: true }),
-  type("neither-set-count", "logic", "집합과 포함", "두 조건에 모두 해당하지 않는 수"),
+  type("neither-set-count", "logic", "집합과 포함", "두 조건에 모두 해당하지 않는 수", { generator: "neitherSetCount", sourceMatched: true }),
   type("edge-sum-grid", "number", "수 배열과 합", "주변의 합에 맞게 수 배치하기", { generator: "edgeSumCycle", sourceMatched: true }),
   type("equalize-transfer", "number", "합과 차 문장제", "주고받아 같게 만들기", { generator: "equalizeTransfer", sourceMatched: true }),
   type("number-pyramid", "number", "수 배열과 합", "수 카드로 모으기·수 피라미드", { generator: "numberPyramid", sourceMatched: true }),
@@ -258,7 +258,7 @@ export const FINAL_EXAM_TYPES = [
       "target-score-combinations", "matchstick-square-growth", "connected-line-degree-sum", "letter-block-transform",
       "go-stone-difference-inverse", "square-count", "symbol-sum-grid", "cube-fill-box",
       "mixed-sequences", "two-type-unit-total", "go-stone-difference", "neither-set-count"
-    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index <= 1 || index === 8 || index === 9 || index === 10 || index === 11 || index === 16 }))
+    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index <= 1 || index === 8 || index === 9 || index === 10 || index === 11 || index === 16 || index === 19 }))
   }
 ];
 

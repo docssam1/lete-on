@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "5460ff756e82b21a6e5f157432b5d77bb5c962d40ca912070bb0b695dfa76d79",
-      "size": 20359,
-      "mtime_ns": 1786810524816197000
+      "sha256": "758d5fa243b5d6f4f131a17ebedc4269bfe2d1589c3313e751557a4648628728",
+      "size": 21075,
+      "mtime_ns": 1786810988182952800
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "81d29e239bd0764afdddc7cdd79078f3f624a5d34868d228e28a68beb33e770a",
-      "size": 32968,
-      "mtime_ns": 1786810524815195900
+      "sha256": "0dabf118a1e0e00202236037979aee1cbbaf11440415bee0286d13039d66e3b5",
+      "size": 33162,
+      "mtime_ns": 1786810988180950700
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "b97967af433f6e60329388fe947f7783c2bea04a3d1f3ec25278c640383b75de",
-      "size": 66102,
-      "mtime_ns": 1786810356172293200
+      "sha256": "060053d53a45dcfde553a1f5a184c17d4945f1edca2c44856e2a0b657163a239",
+      "size": 69787,
+      "mtime_ns": 1786810654548847500
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "00a2cd7673bda5f7b91c246aea87c644f678bd07911e5698d67588b828d6e19b",
-      "size": 32186,
-      "mtime_ns": 1786810356173293700
+      "sha256": "9ee6a49e34cb989aadda77b312d726feb04dd1dd936456e59a8a2cc8ce00f0f9",
+      "size": 32257,
+      "mtime_ns": 1786810639130274800
     }
   ],
   "records": [
@@ -107,15 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F16 neither-set count",
+      "title": "Next implementation F17 hidden ranking digits",
       "aliases": [
         "다음 작업"
       ],
       "tags": [
         "next",
-        "F16"
+        "F17"
       ],
-      "summary": "Continue with Final 3 question 20 by verifying the two overlapping family conditions and generating source-matched neither-set word problems.",
+      "summary": "Continue with F17 by locating the exact source ranking table, verifying that its hidden digits are distinct, and only then implementing a source-matched generator.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -124,7 +124,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F15 are complete; F16 is next"
+          "note": "F01 through F16 are complete; F17 is next"
         }
       ]
     },
@@ -520,6 +520,42 @@
           "source_id": "source-data",
           "role": "code",
           "locator": "TYPES mixed-sequences and FINAL_EXAM_TYPES final-3 question 17",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f16",
+      "title": "Final 3 question 20 neither-set count",
+      "aliases": [
+        "파이널 3회 20번",
+        "두 조건에 모두 해당하지 않는 수"
+      ],
+      "tags": [
+        "F16",
+        "final-3"
+      ],
+      "summary": "F16 preserves the original totals 40, 18, 8, and overlap 3 with answer 17, then varies whether regions, set totals, or a hidden overlap must be derived.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 표 20번, 대본 검증 20번, 다음 검증 순서 4번",
+          "note": "Original set totals, overlap, and answer 17 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function neitherSetCount and GENERATORS export",
+          "note": "Three structural difficulty levels with independently checkable four-region metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES neither-set-count and FINAL_EXAM_TYPES final-3 question 20",
           "note": "Source-matched type is enabled"
         }
       ]
