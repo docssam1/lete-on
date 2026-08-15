@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "d908a2761dfe439d698ae49c1f8b1bae659385a9173f909a0e982294766ee680",
-      "size": 63902,
-      "mtime_ns": 1786825113048380400
+      "sha256": "cf92839c5b69093ae99cca07ed0cacd2e1f653d6c206934acc831435042aad7c",
+      "size": 64589,
+      "mtime_ns": 1786825237233006900
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "13a4d8805950b15b1330c4dd8ac36692671758de649e7c7e1dd3afb47e4ffef3",
-      "size": 36549,
-      "mtime_ns": 1786824984578339500
+      "sha256": "74f2656fa441c3bcfbd0836b168f69142c7544c11b7d3bd381d7affc2cfef803",
+      "size": 36552,
+      "mtime_ns": 1786825193032223000
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 4 question 4",
+      "title": "Next verification 7-year-old selection test 4 question 5",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q4"
+        "q5"
       ],
-      "summary": "Verify source and answer page 4 for cards 2, 3, 4, 5, 7 in the five-card sum pyramid with top 12. Confirm that the marked bottom-middle answer is 3 and revalidate fiveCardSumPyramid before enabling.",
+      "summary": "Verify source and answer page 5 for five runners: Jiwoo is fourth from the front and one runner is between Jiwoo and Minho, so Minho should be second. Revalidate direction and unique position before enabling.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 4 question 4 is a five-card sum pyramid"
+          "note": "Selection test 4 question 5 asks Minho's front rank"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-08 question 4 five-card-sum-pyramid mapping",
-          "note": "Verify exact cards, target, marked cell, and answer before enabling"
+          "locator": "EXAMS k7-2022-08 question 5 order-position-from-front mapping",
+          "note": "Verify exact total, fixed rank, between count, and answer"
         }
       ]
     },
@@ -2267,6 +2267,40 @@
           "role": "code",
           "locator": "TYPES repeat-four-items-with-duplicate and EXAMS k7-2022-08 verified questions 1 through 3",
           "note": "Source question 3 enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q4",
+      "title": "Selection test 4 question 4 five-card sum pyramid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q4",
+        "five-card-sum-pyramid"
+      ],
+      "summary": "Cards 2, 3, 4, 5, 7 form a two-step sum pyramid with top 12. The two mirror layouts both place 3 in the marked bottom-middle cell, matching the official answer.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 4 paragraph",
+          "note": "Original cards, top target, two layouts, answer, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function fiveCardSumPyramid",
+          "note": "Exhaustive layout generator reused with structural difficulty"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 4",
+          "note": "Source question 4 enabled"
         }
       ]
     }
