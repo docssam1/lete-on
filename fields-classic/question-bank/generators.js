@@ -1009,6 +1009,29 @@ function eraseExpressionTarget({ difficulty = 2 }) {
   };
 }
 
+function collectionRepeatGap({ difficulty = 2 }) {
+  const step = difficulty === 3 ? randomInt(1, 2) : 1;
+  const halfGap = difficulty === 1 ? randomInt(2, 3) : difficulty === 2 ? randomInt(4, 5) : randomInt(6, 8);
+  const start = randomInt(1, difficulty === 3 ? 5 : 4);
+  const firstSum = 2 * start + halfGap * step;
+  const secondSum = firstSum + step;
+  const circleCount = halfGap * 2 + 2;
+  const circles = [start];
+  for (let index = 0; index < circleCount - 1; index += 1) {
+    const target = index % 2 === 0 ? firstSum : secondSum;
+    circles.push(target - circles.at(-1));
+  }
+  const betweenCount = circleCount - 2;
+  const shownCircles = circles.slice(0, difficulty === 1 ? 4 : 3);
+  return {
+    prompt: `이웃한 두 원 안의 수를 더한 값이 네모 안에서 ${firstSum}, ${secondSum}, ${firstSum}, ${secondSum}, …와 같이 반복됩니다. 처음 나온 수 ${start}부터 다음에 같은 수 ${start}가 나올 때까지, 그 사이에는 원 안의 수가 몇 개 있을까요?`,
+    visual: { kind: "collection-repeat-gap", circles, shownCircles, sums: [firstSum, secondSum], start },
+    answer: `${betweenCount}개`,
+    solution: `원을 차례로 채우면 ${circles.join(", ")}입니다. 처음과 끝의 ${start}를 빼면 그 사이에는 ${betweenCount}개의 수가 있습니다.`,
+    meta: { difficulty, step, halfGap, start, firstSum, secondSum, circles, circleCount, betweenCount }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -1472,6 +1495,7 @@ export const GENERATORS = {
   twoDigitEvenCount,
   reverseInitialCount,
   eraseExpressionTarget,
+  collectionRepeatGap,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,

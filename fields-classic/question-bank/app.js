@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816u";
-import { GENERATORS } from "./generators.js?v=20260816u";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816v";
+import { GENERATORS } from "./generators.js?v=20260816v";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -449,6 +449,11 @@ function eraseExpressionTargetMarkup(visual) {
   return `<div class="erase-expression-work"><span>${visual.first}</span>${visual.terms.map((term) => `<span class="erasable">${term.sign > 0 ? "+" : "-"}${term.value}</span>`).join("")}<b>=</b><strong>${visual.target}</strong></div>`;
 }
 
+function collectionRepeatGapMarkup(visual) {
+  const shown = visual.shownCircles.map((value, index) => `<span class="circle">${value}</span>${index < visual.shownCircles.length - 1 ? `<i><b>${visual.sums[index % 2]}</b></i>` : ""}`).join("");
+  return `<div class="collection-repeat-work">${shown}<em>…</em><span class="circle target">${visual.start}</span></div>`;
+}
+
 function closestCardSumMarkup(visual) {
   const blank = () => '<span class="digit-card-blank"></span>';
   return `<div class="closest-card-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="closest-card-equation"><span class="two-digit-blank">${blank()}${blank()}</span><b>+</b><span class="two-digit-blank">${blank()}${blank()}</span><b>=</b><span class="sum-blank"></span></div><small>${visual.target}에 가장 가까운 합</small></div>`;
@@ -578,6 +583,7 @@ function visualMarkup(visual) {
   if (visual.kind === "even-card-count") return `<div class="visual even-card-visual">${evenCardCountMarkup(visual)}</div>`;
   if (visual.kind === "reverse-count-timeline") return `<div class="visual reverse-count-visual">${reverseCountTimelineMarkup(visual)}</div>`;
   if (visual.kind === "erase-expression-target") return `<div class="visual erase-expression-visual">${eraseExpressionTargetMarkup(visual)}</div>`;
+  if (visual.kind === "collection-repeat-gap") return `<div class="visual collection-repeat-visual">${collectionRepeatGapMarkup(visual)}</div>`;
   if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;

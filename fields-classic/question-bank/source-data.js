@@ -128,7 +128,7 @@ export const TYPES = [
   type("cut-recut-pieces", "number", "과정 추론", "자르고 먹고 다시 잘라 남은 조각 수"),
   type("reverse-initial-count", "logic", "과정 추론", "여러 번 오고 간 뒤 처음 수 거꾸로 찾기", { generator: "reverseInitialCount", sourceMatched: true }),
   type("function-machine", "pattern", "수 규칙", "수 변환 기계의 규칙"),
-  type("collection-repeat-gap", "pattern", "수 규칙", "모으기 반복 수열에서 같은 수 사이 개수"),
+  type("collection-repeat-gap", "pattern", "수 규칙", "모으기 반복 수열에서 같은 수 사이 개수", { generator: "collectionRepeatGap", sourceMatched: true }),
   type("magic-square", "number", "수 배열과 합", "가로·세로·대각선 합이 같은 마방진", { legacyId: 14 }),
   type("fold-hole-count", "geometry", "색종이 접기", "접은 색종이의 구멍 개수", { generator: "paperFoldHoleCount", legacyId: 4 }),
   type("fold-diagonal-unfold", "geometry", "색종이 접기", "대각선으로 접고 자른 뒤 펼친 선 그리기"),
@@ -231,7 +231,7 @@ export const PRACTICE_EXAM_TYPES = [
   { id: "mock-6", label: "필즈 대비 실전 6회", questions: ["congruent-partition","magic-square","edge-sum-grid","shape-equation","shape-sum-table","symbol-relation","order-position","person-item-logic","latin-square","fold-diagonal-unfold","cube-fill-box","edge-sum-grid","latin-square","total-difference","set-union-count","number-card-plus-minus","function-machine","multi-person-transfer","cube-hidden-count","repeat-pattern"] }
 ].map((exam) => ({ ...exam, questions: exam.questions.map((typeId, index) => ({
   ...question(index + 1, typeId),
-  verified: (exam.id === "mock-4" && (index === 6 || index === 7 || index === 11)) || (exam.id === "mock-3" && index === 17)
+  verified: (exam.id === "mock-4" && (index === 6 || index === 7 || index === 11)) || (exam.id === "mock-3" && (index === 17 || index === 18))
 })) }));
 
 export const FINAL_EXAM_TYPES = [

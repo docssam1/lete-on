@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "e51ccb2976d926d2adfdc20aec84a73509e5efeda2c339462ae31fde0a0db9b5",
-      "size": 23717,
-      "mtime_ns": 1786812256155125100
+      "sha256": "8d90aa6e09df621ec6f4607ec8ed56caf6e38b4eb2566b548a940e7ddb3e0b13",
+      "size": 24351,
+      "mtime_ns": 1786812692212762800
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "dd99d16fbf1372930d9c73227451f85ad4eb952d880429899616a93a284a045b",
-      "size": 33978,
-      "mtime_ns": 1786812256154122400
+      "sha256": "8bdf734820bc825e2755d4cf5689aab0c4194cb953878c186f0be270f94a160b",
+      "size": 34190,
+      "mtime_ns": 1786812692206761300
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "78f4453adcad5e02b9df308626ded75597bd90a999184593e2571caf35a32e93",
-      "size": 78349,
-      "mtime_ns": 1786812088880133300
+      "sha256": "84305b8b98372ff49d52fe42a5da2226a54642d6fab3bf34a63acaf04994451d",
+      "size": 79806,
+      "mtime_ns": 1786812571582928100
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "8c283273a25c954837d7cb7116d08df1ff43c331809a58b7db1066d0e59c7e8e",
-      "size": 32629,
-      "mtime_ns": 1786812088884138500
+      "sha256": "fd4a95afb9bb2474dd7bd3c49fe2ae3c1e078b59e8d9a41b37c49cd4f73d48a5",
+      "size": 32706,
+      "mtime_ns": 1786812383442075300
     }
   ],
   "records": [
@@ -107,15 +107,13 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F21 collection repeat gap",
-      "aliases": [
-        "다음 작업"
-      ],
+      "title": "Next implementation F22 mixed-operation card equation",
+      "aliases": [],
       "tags": [
         "next",
-        "F21"
+        "F22"
       ],
-      "summary": "Continue with F21 by verifying the exact collection diagram, repeated result sequence, and number of circles between equal values.",
+      "summary": "Continue with F22 by verifying Practice 4 question 3 card values, the plus-times-minus layout, and use-each-card-once condition.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,8 +121,8 @@
         {
           "source_id": "handover",
           "role": "decision",
-          "locator": "다음 순서 1번",
-          "note": "F01 through F20 are complete; F21 is next"
+          "locator": "Next sequence item 1",
+          "note": "F01 through F21 are complete; F22 is next"
         }
       ]
     },
@@ -701,6 +699,39 @@
           "role": "code",
           "locator": "TYPES erase-expression-target and PRACTICE_EXAM_TYPES mock-3 question 18",
           "note": "Only the verified practice question is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f21",
+      "title": "Practice 3 question 19 collection repeat gap",
+      "aliases": [],
+      "tags": [
+        "F21",
+        "practice-3"
+      ],
+      "summary": "F21 preserves the alternating adjacent sums 8 and 9 and counts the eight circles between the first and second 2.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "Practice 3 table question 19 and original page 9",
+          "note": "Original alternating sums, circle sequence, and answer 8 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function collectionRepeatGap and GENERATORS export",
+          "note": "Three structural difficulty levels with explicit sequence metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES collection-repeat-gap and PRACTICE_EXAM_TYPES mock-3 question 19",
+          "note": "Source-matched type is enabled"
         }
       ]
     }
