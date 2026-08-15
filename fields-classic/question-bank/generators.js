@@ -2394,7 +2394,15 @@ function symbolRelationTwoToThree({ difficulty = 2 }) {
 }
 
 function symbolRelationThreeToFour({ difficulty = 2 }) {
-  const values = { "☆": 8, "○": 6, "▽": 7 };
+  const templates = [
+    { firstStar: 2, firstCircle: 3, values: { "☆": 6, "○": 4, "▽": 5 } },
+    { firstStar: 3, firstCircle: 2, values: { "☆": 4, "○": 6, "▽": 5 } },
+    { firstStar: 3, firstCircle: 4, values: { "☆": 8, "○": 6, "▽": 7 } },
+    { firstStar: 4, firstCircle: 3, values: { "☆": 6, "○": 8, "▽": 7 } },
+    { firstStar: 3, firstCircle: 5, values: { "☆": 5, "○": 3, "▽": 4 } },
+    { firstStar: 5, firstCircle: 3, values: { "☆": 3, "○": 5, "▽": 4 } }
+  ];
+  const { firstStar, firstCircle, values } = sample(templates.slice(0, difficulty === 1 ? 2 : difficulty === 2 ? 4 : 6));
   const pairTargets = [
     ["○", "▽"],
     ["☆", "○"],
@@ -2405,15 +2413,15 @@ function symbolRelationThreeToFour({ difficulty = 2 }) {
     ["☆", "▽", "▽"],
     ["○", "○", "▽"]
   ];
-  const final = difficulty === 1 ? pairTargets[0] : sample(difficulty === 3 ? tripleTargets : pairTargets);
+  const final = sample(difficulty === 3 ? tripleTargets : pairTargets);
   const answer = final.reduce((sum, symbol) => sum + values[symbol], 0);
-  const hint = difficulty === 1 ? "도움: 첫째 식과 둘째 식을 함께 만족하는 ☆는 8입니다." : "";
+  const hint = difficulty === 1 ? `도움: 첫째 식과 둘째 식을 함께 만족하는 ☆는 ${values["☆"]}입니다.` : "";
   return {
     prompt: "다음 ☆, ○, ▽은 서로 다른 한 자리 수입니다. □가 나타내는 수를 구하세요.",
-    visual: { kind: "symbol-relation-three-to-four", firstStar: 3, firstCircle: 4, final, hint },
+    visual: { kind: "symbol-relation-three-to-four", firstStar, firstCircle, final, hint },
     answer: String(answer),
-    solution: `첫째 식과 둘째 식을 함께 만족하는 서로 다른 한 자리 수를 찾으면 ☆=8, ○=6, ▽=7입니다. 마지막 식 ${final.join("+")}를 계산하면 □는 ${answer}입니다.`,
-    meta: { difficulty, star: 8, circle: 6, triangle: 7, final, answer }
+    solution: `첫째 식과 둘째 식을 함께 만족하는 서로 다른 한 자리 수를 찾으면 ☆=${values["☆"]}, ○=${values["○"]}, ▽=${values["▽"]}입니다. 마지막 식 ${final.join("+")}를 계산하면 □는 ${answer}입니다.`,
+    meta: { difficulty, firstStar, firstCircle, values, final, answer }
   };
 }
 

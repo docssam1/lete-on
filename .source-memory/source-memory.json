@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "ca7f42d5c814e8ee075c2133c1fd9e8f93c09a6d4ac324de954094bace3ae6f2",
-      "size": 94403,
-      "mtime_ns": 1786832941372943700
+      "sha256": "84277e821ad039d274479b70b74dabf0bba258a4f33e4973cad595ad0e444b6f",
+      "size": 95502,
+      "mtime_ns": 1786833179428124000
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "d1677d13932e1a3f4716d42feac6bb4a0a80ef75b2c7fa9507422d3a65f2d6ba",
-      "size": 181412,
-      "mtime_ns": 1786832782000216900
+      "sha256": "195f9c40532360ffbeaa0daa6d3b12692a5719c0c8591a875ee1c874b4a2c498",
+      "size": 182006,
+      "mtime_ns": 1786833159599488400
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "7e8d92c1f938b342a87f45235f978b7cba8a4ff3e0e1f753ea366a95d27e26ff",
-      "size": 40025,
-      "mtime_ns": 1786832941365939300
+      "sha256": "c24705026ca71707d1ca543a2239130b325c5982afd32d56fb40bee56e0b073b",
+      "size": 40020,
+      "mtime_ns": 1786833159601489300
     }
   ],
   "records": [
@@ -107,12 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 18",
+      "title": "Next verification selection test 6 question 19",
       "aliases": [],
       "tags": [
         "next"
       ],
-      "summary": "Compare the three-to-four star-circle relation, second equation, target square, distinct one-digit condition, and official answer 13 before reusing the provisional symbol relation generator.",
+      "summary": "Compare the triangular black-and-white stone construction, which color is ahead, target difference 21, and official answer 41 before reusing the provisional inverse stone generator.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -120,13 +120,13 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "7-year-old selection test 6 question 18",
-          "note": "Verify all three equations, one-digit uniqueness, and official answer"
+          "locator": "7-year-old selection test 6 question 19",
+          "note": "Verify shown stages, line colors, count difference direction, and official answer"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-12 question 18",
+          "locator": "EXAMS k7-2022-12 question 19",
           "note": "Current provisional mapping remains disabled"
         }
       ]
@@ -3414,6 +3414,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-12 verified 1 through 17",
           "note": "Existing exact source-matched fold type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q18",
+      "title": "Selection test 6 question 18 unique one-digit symbol relations",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q18",
+        "symbol-relation-3to4"
+      ],
+      "summary": "The source uses three stars equal four circles, star plus circle equal two inverse triangles, and circle plus inverse triangle equal square. The unique one-digit values are 8, 6, and 7, so the official square answer is 13.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 18 paragraph",
+          "note": "Exact three equations, official answer, one-digit uniqueness, answer-diversity repair, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function symbolRelationThreeToFour",
+          "note": "Uses only coefficient pairs with one unique distinct one-digit solution and varies final expressions"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified 1 through 18",
+          "note": "Existing relation is enabled under a generalized human-facing type name"
         }
       ]
     }
