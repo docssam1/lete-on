@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "3b623c9cccbd74cf08c53b80c901ea3234bdfc11e5ebccabb2dd47f2ba25530b",
-      "size": 56661,
-      "mtime_ns": 1786823107116028600
+      "sha256": "0861ec3f2fe8faa6a632595c23fee9f15747f072fbf2618fa4d9eeffa50093fe",
+      "size": 57820,
+      "mtime_ns": 1786823352782819400
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "cf7000bde8c1f97dc1e9c961fdf46320d1392297a89c70a2e678ae56b453899a",
-      "size": 132877,
-      "mtime_ns": 1786823066140903800
+      "sha256": "d0d057dd060e1f5cd22177e67e078e8481dc7f9ebc238c0c53258bfb0c4d0d00",
+      "size": 134309,
+      "mtime_ns": 1786823299454826500
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "a163a545c3d23d7ef73d0239e43c2e53eccd1b2419327457153afb1fa7b6fe9a",
-      "size": 35692,
-      "mtime_ns": 1786822988395998400
+      "sha256": "27cbccd024aab296c0ba7bc53d0a9ecf73b7139349296874ee764dbb188c2a98",
+      "size": 35886,
+      "mtime_ns": 1786823239363364300
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 16",
+      "title": "Next verification 7-year-old selection test 3 question 17",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q16"
+        "q17"
       ],
-      "summary": "Verify the 4 by 4 numbered-paper problem on source and answer page 10. The paper is folded once along the rising diagonal, the shaded part is cut away, and the sum of numbers in the removed cells is 18.",
+      "summary": "Verify the three balance diagrams on source and answer page 11. Four object types are used: circle, square, star, and diamond. The source asks how many diamonds equal one circle; the official answer is 6.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 16 is the folded numbered-paper sum problem"
+          "note": "Question 17 uses four objects across three balanced scales"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 16 fold-number-cut-sum mapping",
-          "note": "The source mapping is corrected but remains locked"
+          "locator": "EXAMS k7-2022-06 question 17 balance-scale-three-objects mapping",
+          "note": "The current type name may not match the four-object source structure"
         }
       ]
     },
@@ -1995,6 +1995,40 @@
           "role": "code",
           "locator": "TYPES square-tile-growth and EXAMS k7-2022-06 verified 1 through 15",
           "note": "Source question 15 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q16",
+      "title": "Selection test 3 question 16 folded L-cut number sum",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q16",
+        "fold-number-cut-sum-l-shape"
+      ],
+      "summary": "The source folds a 4 by 4 numbered paper along the rising diagonal and cuts an L-shaped area consisting of two full cells and one diagonal half-cell. Unfolding removes values 6, 4, 1, 2, and 5, whose sum is 18.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 16 paragraph",
+          "note": "Exact fold line, L mask, answer 18, separate type decision, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function foldNumberCutSumLShape",
+          "note": "Reflects shaded cells across the rising diagonal and sums unique removed cells"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES fold-number-cut-sum-l-shape and EXAMS k7-2022-06 verified 1 through 16",
+          "note": "Source question 16 is enabled"
         }
       ]
     }

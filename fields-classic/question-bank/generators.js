@@ -2292,7 +2292,34 @@ function foldNumberCutSum({ difficulty = 2 }) {
     prompt: "색종이를 대각선으로 한 번 접은 후 칠해진 부분을 잘라내었습니다. 잘려 나간 부분에 있는 수들의 합을 구하세요.",
     visual: { kind: "fold-number-cut-sum", size, foldMask, grid, cutCells },
     answer: String(answer),
-    solution: `대각선 위쪽의 칸은 접으면 맞은편 칸과 겹치고, 대각선에 걸친 칸은 한 번만 셉니다. 잘리는 칸의 수 ${cutValues.join(" + ")}를 더하면 ${answer}입니다.`,
+    solution: `대각선 위쪽의 칸은 접으면 맞은편 칸과 겹치고, 대각선에 걸친 칸은 한 번만 셉니다. 잘리는 칸의 수를 식으로 쓰면 ${cutValues.join(" + ")} = ${answer}입니다.`,
+    meta: { difficulty, size, foldMask, grid, cutCells, cutValues, answer }
+  };
+}
+
+function foldNumberCutSumLShape({ difficulty = 2 }) {
+  const size = 4;
+  const foldMask = difficulty === 1
+    ? [[1, 1], [2, 1]]
+    : difficulty === 2
+      ? [[1, 1], [2, 0], [2, 1]]
+      : [[1, 0], [1, 1], [2, 0], [2, 1]];
+  const grid = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8]);
+  const cutCellMap = new Map();
+  foldMask.forEach(([row, column]) => {
+    const reflected = [size - 1 - column, size - 1 - row];
+    [[row, column], reflected].forEach(([cutRow, cutColumn]) => {
+      cutCellMap.set(`${cutRow}-${cutColumn}`, [cutRow, cutColumn]);
+    });
+  });
+  const cutCells = [...cutCellMap.values()].sort(([rowA, columnA], [rowB, columnB]) => rowA - rowB || columnA - columnB);
+  const cutValues = cutCells.map(([row, column]) => grid[row * size + column]);
+  const answer = cutValues.reduce((sum, value) => sum + value, 0);
+  return {
+    prompt: "색종이를 대각선으로 한 번 접은 후 칠해진 부분을 잘라내었습니다. 잘려 나간 부분에 있는 수들의 합을 구하세요.",
+    visual: { kind: "fold-number-cut-sum", size, foldMask, grid, cutCells },
+    answer: String(answer),
+    solution: `접은 선의 양쪽에서 서로 겹치는 칸을 함께 찾습니다. 잘리는 칸의 수를 식으로 쓰면 ${cutValues.join(" + ")} = ${answer}입니다.`,
     meta: { difficulty, size, foldMask, grid, cutCells, cutValues, answer }
   };
 }
@@ -2449,6 +2476,7 @@ export const GENERATORS = {
   sourceBusStops,
   busBoardThenLeave,
   foldNumberCutSum,
+  foldNumberCutSumLShape,
   equalLineSumEightCards,
   equalLineSumEightCardsTwelve,
   twoDigitCondition,
