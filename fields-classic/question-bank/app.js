@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ai";
-import { GENERATORS } from "./generators.js?v=20260816ai";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ak";
+import { GENERATORS } from "./generators.js?v=20260816ak";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -612,6 +612,17 @@ function foldNumberCutSumMarkup(visual) {
   return `<div class="fold-number-cut-work">${paper}<b class="fold-process-arrow">→</b>${numberGrid}</div>`;
 }
 
+function equalLineSumEightCardsMarkup(visual) {
+  const positions = [[45, 45], [130, 45], [215, 45], [215, 130], [215, 215], [130, 215], [45, 215], [45, 130]];
+  const lines = `<path d="M45 45H215V215H45Z"/>`;
+  const nodes = positions.map(([x, y], index) => {
+    const label = index === visual.targetIndex ? "㉠" : visual.givenIndices.includes(index) ? visual.layout[index] : "";
+    const className = index === visual.targetIndex ? "target" : label ? "given" : "blank";
+    return `<g class="${className}"><rect x="${x - 28}" y="${y - 28}" width="56" height="56"/><text x="${x}" y="${y + 7}">${label}</text></g>`;
+  }).join("");
+  return `<div class="equal-line-eight-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><svg viewBox="0 0 260 260" role="img" aria-label="가로와 세로 네 줄의 합을 같게 만드는 여덟 수 카드"><g class="equal-eight-lines">${lines}</g><g class="equal-eight-nodes">${nodes}</g><text class="equal-eight-sum" x="130" y="136">합: ${visual.targetSum}</text></svg></div>`;
+}
+
 function equalLineCrossMarkup(visual) {
   return `<div class="equal-line-cross"><div class="cross-cards">${[1,2,3,4,5].map((value) => `<span>${value}</span>`).join("")}</div><div class="cross-grid"><span></span><b>${visual.top}</b><span></span><b>${visual.left}</b><b>㉠</b><i></i><span></span><i></i><span></span></div></div>`;
 }
@@ -707,6 +718,7 @@ function visualMarkup(visual) {
   if (visual.kind === "arrow-number-path-seven") return `<div class="visual arrow-path-seven-visual">${arrowNumberPathSevenMarkup(visual)}</div>`;
   if (visual.kind === "bus-stops") return `<div class="visual bus-stops-visual">${busStopsMarkup(visual)}</div>`;
   if (visual.kind === "fold-number-cut-sum") return `<div class="visual fold-number-cut-visual">${foldNumberCutSumMarkup(visual)}</div>`;
+  if (visual.kind === "equal-line-eight-cards") return `<div class="visual equal-line-eight-visual">${equalLineSumEightCardsMarkup(visual)}</div>`;
   if (visual.kind === "equal-line-cross") return `<div class="visual equal-line-cross-visual">${equalLineCrossMarkup(visual)}</div>`;
   if (visual.kind === "number-conditions") return `<div class="visual number-conditions-visual">${numberConditionsMarkup(visual)}</div>`;
   if (visual.kind === "growing-dot-square") return `<div class="visual growing-dot-square-visual">${growingDotSquareMarkup(visual)}</div>`;

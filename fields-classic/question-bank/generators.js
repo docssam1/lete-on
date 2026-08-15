@@ -1168,6 +1168,21 @@ function permutations(values) {
     .map((tail) => [value, ...tail]));
 }
 
+function indexCombinations(values, count) {
+  if (count === 0) return [[]];
+  if (values.length < count) return [];
+  return values.flatMap((value, index) => indexCombinations(values.slice(index + 1), count - 1)
+    .map((tail) => [value, ...tail]));
+}
+
+const EQUAL_LINE_EIGHT_LAYOUTS = permutations([1, 2, 3, 4, 5, 6, 7, 8])
+  .map((values) => ({ values, sum: values[0] + values[1] + values[2] }))
+  .filter(({ values, sum }) => (
+    values[2] + values[3] + values[4] === sum
+    && values[4] + values[5] + values[6] === sum
+    && values[6] + values[7] + values[0] === sum
+  ));
+
 function edgeSumCycle({ difficulty = 2 }) {
   const max = difficulty === 1 ? 9 : difficulty === 2 ? 15 : 25;
   let values;
@@ -1800,6 +1815,56 @@ function foldNumberCutSum({ difficulty = 2 }) {
   };
 }
 
+function equalLineSumEightCards({ difficulty = 2 }) {
+  const targetSum = difficulty === 1 ? sample([12, 13]) : difficulty === 2 ? 15 : sample([12, 13, 14, 15]);
+  const pool = EQUAL_LINE_EIGHT_LAYOUTS.filter((item) => item.sum === targetSum);
+  let solution = sample(pool);
+  let targetIndex;
+  let givenIndices;
+  let candidates;
+
+  if (difficulty === 1) {
+    targetIndex = sample([1, 3, 5, 7]);
+    givenIndices = [(targetIndex + 7) % 8, (targetIndex + 1) % 8];
+  } else if (difficulty === 2) {
+    targetIndex = 2;
+    givenIndices = [0, 4, 6];
+  } else {
+    let choices = [];
+    for (let attempt = 0; attempt < 100 && choices.length === 0; attempt += 1) {
+      solution = sample(pool);
+      targetIndex = sample([0, 2, 4, 6]);
+      const otherIndexes = Array.from({ length: 8 }, (_, index) => index).filter((index) => index !== targetIndex);
+      choices = shuffle(indexCombinations(otherIndexes, 3)).filter((indexes) => {
+        const cornerClues = indexes.filter((index) => index % 2 === 0).length;
+        if (cornerClues > 2) return false;
+        const matching = pool.filter((item) => indexes.every((index) => item.values[index] === solution.values[index]));
+        return matching.length > 1 && new Set(matching.map((item) => item.values[targetIndex])).size === 1;
+      });
+    }
+    if (choices.length === 0) return equalLineSumEightCards({ difficulty });
+    givenIndices = choices[0];
+  }
+
+  candidates = pool.filter((item) => givenIndices.every((index) => item.values[index] === solution.values[index]));
+  const targetValues = [...new Set(candidates.map((item) => item.values[targetIndex]))];
+  if (targetValues.length !== 1) return equalLineSumEightCards({ difficulty });
+  const answer = solution.values[targetIndex];
+  const completed = solution.values.join(" → ");
+  const solutionText = difficulty === 1
+    ? `㉠이 있는 변의 합이 ${targetSum}이므로 양옆의 두 수를 ${targetSum}에서 빼면 ㉠은 ${answer}입니다.`
+    : difficulty === 2
+      ? `1부터 8까지의 합은 36입니다. 네 변의 합은 ${targetSum * 4}이고 모서리 수는 두 번씩 더해지므로 네 모서리의 합은 ${targetSum * 4} - 36 = ${targetSum * 4 - 36}입니다. 보이는 세 모서리를 빼면 ㉠은 ${answer}입니다.`
+      : `각 변의 합이 ${targetSum}이 되도록 남은 수를 한 번씩 넣어 확인합니다. 왼쪽 위부터 시계 방향으로 ${completed}이므로 ㉠은 ${answer}입니다.`;
+  return {
+    prompt: `1부터 8까지의 수를 한 번씩 사용하여 가로와 세로 각 줄에 있는 세 수의 합이 모두 ${numberSubject(targetSum)} 되도록 하려고 합니다. ㉠에 알맞은 수를 구하세요.`,
+    visual: { kind: "equal-line-eight-cards", cards: [1, 2, 3, 4, 5, 6, 7, 8], layout: solution.values, targetSum, targetIndex, givenIndices },
+    answer: String(answer),
+    solution: solutionText,
+    meta: { difficulty, layout: solution.values, targetSum, targetIndex, givenIndices, candidateCount: candidates.length, targetValues, answer }
+  };
+}
+
 function paperFoldHoleCount({ difficulty }) {
   const folds = difficulty === 1 ? 1 : difficulty >= 3 ? 2 : randomInt(1, 2);
   const firstDirection = Math.random() < 0.5 ? "v" : "h";
@@ -1875,6 +1940,7 @@ export const GENERATORS = {
   sourceEqualLineCross,
   sourceBusStops,
   foldNumberCutSum,
+  equalLineSumEightCards,
   twoDigitCondition,
   repeatShape,
   pianoZigzag,

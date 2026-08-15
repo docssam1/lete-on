@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "7d59722c1e770700aa1968ec3a6207bfb5aae2ea419d230702cf9e4a5c8aca27",
-      "size": 33815,
-      "mtime_ns": 1786816011002842900
+      "sha256": "2feee36db36ce65c7bd5d4ddf085a703dfd38b6a40231563d21eb65556b41dac",
+      "size": 34797,
+      "mtime_ns": 1786816377806118000
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "39fef9de3ee4f1bc77d653cb28f56a76921ef2a351bbf8c8df9e7b6f27a01451",
-      "size": 98660,
-      "mtime_ns": 1786815870828834900
+      "sha256": "601401e22ae3fa02c052ec0a483635cc0d406703bf3b85ef8f0acbb7ab9f52cc",
+      "size": 102308,
+      "mtime_ns": 1786816235519870700
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "ce0455aba8b000d11dc8339e90ecf5d4dfc71c339707a800c5ac9c27e77197df",
-      "size": 33588,
-      "mtime_ns": 1786815910719193500
+      "sha256": "fc128e755f8aa8e7ebb6150269e7eff890543b4617082835dd68118b26df2617",
+      "size": 33653,
+      "mtime_ns": 1786816176367013100
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 12",
+      "title": "Next verification 7-year-old selection test 2 question 13",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q12"
+        "q13"
       ],
-      "summary": "Verify the 1 through 8 perimeter-card line-sum puzzle with target 15 and marked answer 3 before implementing equal-line-sum-eight-cards.",
+      "summary": "Verify the exact 3 by 3 symbol matrix, row and column sums, and marked answer 16 before deciding whether sourceSymbolSumGrid is reusable.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 12 is the next locked source question"
+          "note": "Question 13 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-04 question 12 equal-line-sum-eight-cards",
-          "note": "Do not enable until the perimeter layout and unique marked value are verified"
+          "locator": "EXAMS k7-2022-04 question 13 symbol-sum-grid",
+          "note": "Do not enable until the symbol arrangement and marked sum are verified"
         }
       ]
     },
@@ -1179,6 +1179,40 @@
           "role": "code",
           "locator": "TYPES fold-number-cut-sum and EXAMS k7-2022-04 verified 1 through 11",
           "note": "Source question 11 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q12",
+      "title": "Selection test 2 question 12 equal line sum with eight cards",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q12",
+        "equal-line-sum-eight-cards"
+      ],
+      "summary": "The source places 1 through 8 around a 3 by 3 perimeter with every side summing to 15; clues 7, 6, and 8 force the marked top-right corner to 3.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 12 paragraph",
+          "note": "Original clues, answer 3, enumeration, and mobile overflow fix"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function equalLineSumEightCards",
+          "note": "Forty-eight valid layouts and unique-target clue generation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES equal-line-sum-eight-cards and EXAMS k7-2022-04 verified 1 through 12",
+          "note": "Source question 12 is enabled"
         }
       ]
     }
