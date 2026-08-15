@@ -1032,6 +1032,61 @@ function collectionRepeatGap({ difficulty = 2 }) {
   };
 }
 
+function solveMixedOperationCards(cards, base, target, extraTarget, given) {
+  return permutations(cards).filter((values) => (
+    base + values[0] === values[1]
+    && base * values[2] === values[3]
+    && values[1] - values[4] === target
+    && (extraTarget == null || values[3] - values[5] === extraTarget)
+    && (!given || values[given.index] === given.value)
+  ));
+}
+
+function mixedOperationCardEquation({ difficulty = 2 }) {
+  let base;
+  let target;
+  let extraTarget = null;
+  let solution;
+  let allCards;
+  let given = null;
+  let solutions;
+  let attempts = 0;
+
+  do {
+    base = difficulty === 3 ? randomInt(2, 4) : 2;
+    const addend = randomInt(difficulty === 1 ? 3 : 5, difficulty === 3 ? 14 : 11);
+    const multiplier = randomInt(2, difficulty === 3 ? 9 : 7);
+    const sum = base + addend;
+    const product = base * multiplier;
+    target = randomInt(1, sum - 1);
+    const subtrahend = sum - target;
+    solution = [addend, sum, multiplier, product, subtrahend];
+    if (difficulty === 3) {
+      extraTarget = randomInt(1, product - 1);
+      solution.push(product - extraTarget);
+    }
+    allCards = [...solution];
+    given = difficulty === 1 ? { index: 2, value: multiplier } : null;
+    solutions = new Set(allCards).size === allCards.length
+      ? solveMixedOperationCards(allCards, base, target, extraTarget, given)
+      : [];
+    attempts += 1;
+  } while (solutions.length !== 1 && attempts < 1000);
+
+  if (solutions.length !== 1) return mixedOperationCardEquation({ difficulty });
+  const availableCards = allCards.filter((_, index) => !given || index !== given.index);
+  const [addend, sum, multiplier, product, subtrahend, extraSubtrahend] = solution;
+  const equations = [`${base} + ${addend} = ${sum}`, `${base} × ${multiplier} = ${product}`, `${sum} - ${subtrahend} = ${target}`];
+  if (difficulty === 3) equations.push(`${product} - ${extraSubtrahend} = ${extraTarget}`);
+  return {
+    prompt: `${given ? "이미 놓인 수를 제외한 " : ""}숫자 카드 ${availableCards.length}장을 빈칸에 한 번씩만 넣어 모든 식을 완성하세요.`,
+    visual: { kind: "mixed-operation-cards", cards: shuffle(availableCards), base, target, extraTarget, given },
+    answer: equations.join(", "),
+    solution: `윗줄의 덧셈과 왼쪽의 곱셈을 먼저 맞춘 뒤, 윗줄의 결과에서 오른쪽 수를 빼어 ${target}${difficulty === 3 ? `, 왼쪽 곱셈의 결과에서 아래 수를 빼어 ${extraTarget}` : ""}이 되는지 확인합니다. ${equations.join(", ")}입니다.`,
+    meta: { difficulty, base, target, extraTarget, given, allCards, availableCards, solution, solutionCount: solutions.length }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -1496,6 +1551,7 @@ export const GENERATORS = {
   reverseInitialCount,
   eraseExpressionTarget,
   collectionRepeatGap,
+  mixedOperationCardEquation,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,

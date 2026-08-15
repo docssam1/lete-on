@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "8d90aa6e09df621ec6f4607ec8ed56caf6e38b4eb2566b548a940e7ddb3e0b13",
-      "size": 24351,
-      "mtime_ns": 1786812692212762800
+      "sha256": "bf37a230b9751d5ea5b51da24699ce8b1ded0a8229d90c971ba4a87cb945eca2",
+      "size": 25019,
+      "mtime_ns": 1786813054209532700
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "8bdf734820bc825e2755d4cf5689aab0c4194cb953878c186f0be270f94a160b",
-      "size": 34190,
-      "mtime_ns": 1786812692206761300
+      "sha256": "4fda6ce0e749bcfee59895d1d77ed8f57964ced7e800b066554cf3a756a772c7",
+      "size": 34391,
+      "mtime_ns": 1786813054208529700
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "84305b8b98372ff49d52fe42a5da2226a54642d6fab3bf34a63acaf04994451d",
-      "size": 79806,
-      "mtime_ns": 1786812571582928100
+      "sha256": "32de3d3a0841278b28265a72a1249eda030dda2484e89cdc0459224920703d3f",
+      "size": 82507,
+      "mtime_ns": 1786812886875171900
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "fd4a95afb9bb2474dd7bd3c49fe2ae3c1e078b59e8d9a41b37c49cd4f73d48a5",
-      "size": 32706,
-      "mtime_ns": 1786812383442075300
+      "sha256": "a71563a4739a91a23fc6b61421a13b6cc71f2a2c4bbfff7936396b631c541f0b",
+      "size": 32787,
+      "mtime_ns": 1786812886878172500
     }
   ],
   "records": [
@@ -107,13 +107,13 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F22 mixed-operation card equation",
+      "title": "Next implementation F23 conditional two-digit card enumeration",
       "aliases": [],
       "tags": [
         "next",
-        "F22"
+        "F23"
       ],
-      "summary": "Continue with F22 by verifying Practice 4 question 3 card values, the plus-times-minus layout, and use-each-card-once condition.",
+      "summary": "Continue with F23 by verifying Practice 3 question 17 card values, the less-than-30 condition, and the complete answer list.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -122,7 +122,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "Next sequence item 1",
-          "note": "F01 through F21 are complete; F22 is next"
+          "note": "F01 through F22 are complete; F23 is next"
         }
       ]
     },
@@ -731,6 +731,39 @@
           "source_id": "source-data",
           "role": "code",
           "locator": "TYPES collection-repeat-gap and PRACTICE_EXAM_TYPES mock-3 question 19",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f22",
+      "title": "Practice 4 question 3 mixed-operation card equation",
+      "aliases": [],
+      "tags": [
+        "F22",
+        "practice-4"
+      ],
+      "summary": "F22 preserves the connected 2 plus, 2 times, and subtraction layout; cards 5, 7, 9, 11, 14 have the unique solution 2+9=11, 2x7=14, 11-5=6.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "Practice 4 table question 3 and original page 3",
+          "note": "Original cards, connected layout, and unique solution verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function mixedOperationCardEquation and GENERATORS export",
+          "note": "Three structural difficulty levels with exhaustive-card metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES number-card-mixed-operations and PRACTICE_EXAM_TYPES mock-4 question 3",
           "note": "Source-matched type is enabled"
         }
       ]

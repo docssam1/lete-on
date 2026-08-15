@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816v";
-import { GENERATORS } from "./generators.js?v=20260816v";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816w";
+import { GENERATORS } from "./generators.js?v=20260816w";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -454,6 +454,23 @@ function collectionRepeatGapMarkup(visual) {
   return `<div class="collection-repeat-work">${shown}<em>…</em><span class="circle target">${visual.start}</span></div>`;
 }
 
+function mixedOperationCardsMarkup(visual) {
+  const slot = (index) => visual.given?.index === index
+    ? `<span class="mixed-card-slot given">${visual.given.value}</span>`
+    : '<span class="mixed-card-slot"></span>';
+  return `<div class="mixed-card-work">
+    <div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div>
+    <div class="mixed-card-board">
+      <div class="mixed-card-top"><b>${visual.base}</b><i>+</i>${slot(0)}<i>=</i>${slot(1)}</div>
+      <div class="mixed-card-columns">
+        <div><i>×</i>${slot(2)}<i>=</i>${slot(3)}</div>
+        <div><i>-</i>${slot(4)}<i>=</i><b>${visual.target}</b></div>
+      </div>
+      ${visual.extraTarget == null ? "" : `<div class="mixed-card-extra"><i>-</i>${slot(5)}<i>=</i><b>${visual.extraTarget}</b></div>`}
+    </div>
+  </div>`;
+}
+
 function closestCardSumMarkup(visual) {
   const blank = () => '<span class="digit-card-blank"></span>';
   return `<div class="closest-card-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="closest-card-equation"><span class="two-digit-blank">${blank()}${blank()}</span><b>+</b><span class="two-digit-blank">${blank()}${blank()}</span><b>=</b><span class="sum-blank"></span></div><small>${visual.target}에 가장 가까운 합</small></div>`;
@@ -584,6 +601,7 @@ function visualMarkup(visual) {
   if (visual.kind === "reverse-count-timeline") return `<div class="visual reverse-count-visual">${reverseCountTimelineMarkup(visual)}</div>`;
   if (visual.kind === "erase-expression-target") return `<div class="visual erase-expression-visual">${eraseExpressionTargetMarkup(visual)}</div>`;
   if (visual.kind === "collection-repeat-gap") return `<div class="visual collection-repeat-visual">${collectionRepeatGapMarkup(visual)}</div>`;
+  if (visual.kind === "mixed-operation-cards") return `<div class="visual mixed-operation-card-visual">${mixedOperationCardsMarkup(visual)}</div>`;
   if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;
