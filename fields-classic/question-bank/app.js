@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816cz";
-import { GENERATORS } from "./generators.js?v=20260816cm";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816da";
+import { GENERATORS } from "./generators.js?v=20260816cn";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -602,6 +602,11 @@ function repeatShapeSequenceMarkup(visual) {
   return `<div class="repeat-sequence">${visual.items.map((item, index) => `<span>${symbol(item)}<small>${index + 1}</small></span>`).join("")}<b>…</b><strong>${visual.target}번째<br>모양 (　)</strong></div>`;
 }
 
+function repeatShapeColorDualMarkup(visual) {
+  const guide = visual.showGuide ? `<small>모양 ${visual.shapeCount}개 주기 · 색 ${visual.fillCount}개 주기</small>` : "";
+  return `<div class="dual-pattern-work">${guide}<div class="dual-pattern-sequence" style="--preview-count:${visual.previewCount}">${visual.items.map((item, index) => `<span class="${item.filled ? "filled" : "outline"}"><b>${item.symbol}</b><i>${index + 1}</i></span>`).join("")}</div><div class="dual-pattern-target"><b>…</b><strong>${visual.target}번째<br><i>(　　　　)</i></strong></div></div>`;
+}
+
 function threeShapeCycleMarkup(visual) {
   const guide = visual.showGuide ? `<strong class="cycle-guide">반복마디 ${visual.cycle.map((shape) => shape.symbol).join(" ")}</strong>` : "";
   return `<div class="three-shape-cycle">${guide}<div class="cycle-items">${visual.items.map((shape, index) => `<span><b>${shape.symbol}</b><small>${index + 1}번째</small></span>`).join("")}<i>…</i><strong><b>(　)</b><small>${visual.target}번째</small></strong></div></div>`;
@@ -982,6 +987,7 @@ function visualMarkup(visual) {
   if (visual.kind === "shape-sum-column-target") return `<div class="visual shape-sum-visual">${shapeSumColumnTargetMarkup(visual)}</div>`;
   if (visual.kind === "shape-sum-repeated-column-target") return `<div class="visual shape-sum-visual">${shapeSumRepeatedColumnTargetMarkup(visual)}</div>`;
   if (visual.kind === "repeat-shape-sequence") return `<div class="visual repeat-sequence-visual">${repeatShapeSequenceMarkup(visual)}</div>`;
+  if (visual.kind === "repeat-shape-color-dual") return `<div class="visual repeat-sequence-visual">${repeatShapeColorDualMarkup(visual)}</div>`;
   if (visual.kind === "three-shape-cycle") return `<div class="visual three-shape-cycle-visual">${threeShapeCycleMarkup(visual)}</div>`;
   if (visual.kind === "arrow-number-grid") return `<div class="visual arrow-grid-visual">${arrowNumberGridMarkup(visual)}</div>`;
   if (visual.kind === "arrow-number-horizontal-tens") return `<div class="visual arrow-grid-visual">${arrowNumberHorizontalTensMarkup(visual)}</div>`;

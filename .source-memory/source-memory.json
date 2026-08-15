@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "ac19126255b08da10b02afc0338c6f61c654eeeb96033a2f4617745e4022c5e6",
-      "size": 87865,
-      "mtime_ns": 1786831545704405600
+      "sha256": "68cbaeec841f36376d7e26158420334b18bbc80cdf76cda6323b8676b8eade29",
+      "size": 88754,
+      "mtime_ns": 1786831812886237800
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "712c4db34bc3c098a762101bbf7379b2754f11b13c22c9f0068f9831a992c13b",
-      "size": 168009,
-      "mtime_ns": 1786831238977192900
+      "sha256": "fbd903dc64999a647ee909d8a50eb2b1447d81323aaf3e2c87e7f59988b2abc8",
+      "size": 169926,
+      "mtime_ns": 1786831700866316400
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "c88496b88f0410edc1268a96b1ff567d25c6220dff6076a21408e56613a5ef17",
-      "size": 39070,
-      "mtime_ns": 1786831545698406000
+      "sha256": "d4a7b658aac61dea8f3427702fa79502c8ab99b9de8c1b12d4a9494feeb79e24",
+      "size": 39254,
+      "mtime_ns": 1786831700870316200
     }
   ],
   "records": [
@@ -107,12 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 11",
+      "title": "Next verification selection test 6 question 12",
       "aliases": [],
       "tags": [
         "next"
       ],
-      "summary": "Compare the repeating shape and color pattern, target position, and official answer before reusing or separating the pattern generator.",
+      "summary": "Compare the total-and-difference candy sharing story and official answer 15; the provisional equalize-transfer mapping is likely a different problem.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -120,13 +120,13 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "7-year-old selection test 6 question 11",
-          "note": "Verify both shape and color cycles and the requested position"
+          "locator": "7-year-old selection test 6 question 12",
+          "note": "Verify total 24, difference 6, asked larger share, and official answer"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-12 question 11",
+          "locator": "EXAMS k7-2022-12 question 12",
           "note": "Current provisional mapping remains disabled"
         }
       ]
@@ -3178,6 +3178,39 @@
           "role": "code",
           "locator": "EXAMS k7-2022-12 verified 1 through 10",
           "note": "Source question 10 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q11",
+      "title": "Selection test 6 question 11 dual shape and color pattern",
+      "aliases": [],
+      "tags": [
+        "q11",
+        "repeat-shape-color-dual"
+      ],
+      "summary": "Verified against source and official answer: circle-triangle-square repeats every three positions while black-white repeats every two; position 20 is a white triangle. Added a dedicated dual-cycle generator with structural difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 11 paragraph",
+          "note": "Original shape cycle, color cycle, official answer, difficulty structure, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function repeatShapeColorDual",
+          "note": "Independent shape and fill cycles with randomized symbols"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES repeat-shape-color-dual and EXAMS k7-2022-12 verified 1 through 11",
+          "note": "Source question 11 is enabled without changing the old single-cycle type"
         }
       ]
     }

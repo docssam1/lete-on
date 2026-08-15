@@ -1798,6 +1798,38 @@ function repeatShapeSequence({ difficulty = 2 }) {
   };
 }
 
+function repeatShapeColorDual({ difficulty = 2 }) {
+  const shapePool = [
+    { name: "동그라미", outline: "○", filled: "●" },
+    { name: "세모", outline: "△", filled: "▲" },
+    { name: "네모", outline: "□", filled: "■" },
+    { name: "마름모", outline: "◇", filled: "◆" },
+    { name: "별", outline: "☆", filled: "★" }
+  ];
+  const shapeCount = difficulty === 1 ? 2 : difficulty === 2 ? 3 : 4;
+  const shapeCycle = shuffle(shapePool).slice(0, shapeCount);
+  const fillCycle = difficulty === 3
+    ? sample([[true, false, false], [false, true, true]])
+    : Math.random() < 0.5 ? [true, false] : [false, true];
+  const previewCount = difficulty === 1 ? 8 : difficulty === 2 ? 9 : 12;
+  const target = difficulty === 1 ? randomInt(9, 14) : difficulty === 2 ? randomInt(15, 24) : randomInt(25, 48);
+  const itemAt = (index) => {
+    const shape = shapeCycle[index % shapeCycle.length];
+    const filled = fillCycle[index % fillCycle.length];
+    return { name: shape.name, symbol: filled ? shape.filled : shape.outline, filled };
+  };
+  const items = Array.from({ length: previewCount }, (_, index) => itemAt(index));
+  const answerItem = itemAt(target - 1);
+  const answerColor = answerItem.filled ? "검은색" : "흰색";
+  return {
+    prompt: `모양과 색의 규칙을 찾아 ${target}번째 모양을 쓰거나 그리세요.`,
+    visual: { kind: "repeat-shape-color-dual", items, target, previewCount, shapeCount, fillCount: fillCycle.length, showGuide: difficulty === 1 },
+    answer: `${answerColor} ${answerItem.name}`,
+    solution: `모양은 ${shapeCount}개씩, 색은 ${fillCycle.length}개씩 같은 순서로 반복됩니다. ${target}번째의 모양과 색을 각각 찾아 합치면 ${answerColor} ${answerItem.name}입니다.`,
+    meta: { difficulty, shapeCycle, fillCycle, items, target, previewCount, answerItem, answerColor }
+  };
+}
+
 function threeShapeCycle({ difficulty = 2 }) {
   const shapePool = [
     { symbol: "△", name: "세모" },
@@ -2995,6 +3027,7 @@ export const GENERATORS = {
   shapeSumColumnTarget,
   shapeSumRepeatedColumnTarget,
   repeatShapeSequence,
+  repeatShapeColorDual,
   threeShapeCycle,
   fourShapeCycle,
   fourItemCycleWithDuplicate,
