@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260815c";
-import { GENERATORS } from "./generators.js?v=20260815c";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260815d";
+import { GENERATORS } from "./generators.js?v=20260815d";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -285,6 +285,18 @@ function shapeMatrixRuleMarkup(visual) {
   return `<svg class="shape-matrix-svg" viewBox="0 0 360 360" role="img" aria-label="큰 도형, 작은 도형, 칠한 방법의 규칙을 찾는 3행 3열 문제"><defs><pattern id="${hatchId}" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#fff"/><line x1="0" y1="0" x2="0" y2="8" stroke="#627886" stroke-width="3"/></pattern></defs>${cells}</svg>`;
 }
 
+function tornCalendarMarkup(visual) {
+  const headers = visual.headers.map((header, index) => {
+    const weekday = visual.columns[index];
+    return `<b class="${weekday === 0 ? "sunday" : weekday === 6 ? "saturday" : ""}">${header}</b>`;
+  }).join("");
+  const rows = visual.rows.flatMap((row) => row.map((date, index) => {
+    const weekday = visual.columns[index];
+    return `<span class="${weekday === 0 ? "sunday" : weekday === 6 ? "saturday" : ""}">${date || ""}</span>`;
+  })).join("");
+  return `<div class="torn-calendar" style="--calendar-columns:${visual.columns.length}"><strong>${visual.month}월</strong><div class="torn-calendar-grid">${headers}${rows}</div><svg viewBox="0 0 240 14" preserveAspectRatio="none" aria-hidden="true"><path d="M0 1L14 8 28 3 44 11 61 4 78 10 96 2 114 9 132 4 150 12 168 3 186 9 205 2 222 10 240 4V14H0Z"/></svg></div>`;
+}
+
 function closestCardSumMarkup(visual) {
   const blank = () => '<span class="digit-card-blank"></span>';
   return `<div class="closest-card-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="closest-card-equation"><span class="two-digit-blank">${blank()}${blank()}</span><b>+</b><span class="two-digit-blank">${blank()}${blank()}</span><b>=</b><span class="sum-blank"></span></div><small>${visual.target}에 가장 가까운 합</small></div>`;
@@ -400,6 +412,7 @@ function visualMarkup(visual) {
   if (!visual) return "";
   if (visual.kind === "hidden-card-conditions") return `<div class="visual hidden-card-visual">${hiddenCardConditionsMarkup(visual)}</div>`;
   if (visual.kind === "shape-matrix-rule") return `<div class="visual shape-matrix-visual">${shapeMatrixRuleMarkup(visual)}</div>`;
+  if (visual.kind === "torn-calendar") return `<div class="visual torn-calendar-visual">${tornCalendarMarkup(visual)}</div>`;
   if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;

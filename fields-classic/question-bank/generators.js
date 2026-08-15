@@ -329,6 +329,62 @@ function delayedDatePromise({ difficulty = 2 }) {
   };
 }
 
+function tornCalendarWeekday({ difficulty = 2 }) {
+  const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
+  const month = randomInt(1, 12);
+  const firstWeekday = randomInt(0, 6);
+  const lastDate = monthDays[month - 1];
+  const weekdayFor = (date) => (firstWeekday + date - 1) % 7;
+  const dateAt = (week, weekday) => {
+    const date = 1 + weekday - firstWeekday + week * 7;
+    return date >= 1 && date <= lastDate ? date : null;
+  };
+
+  let columns;
+  let weekRows;
+  let target;
+  if (difficulty === 1) {
+    columns = [0, 1, 2, 3, 4, 5, 6];
+    weekRows = [0];
+    target = randomInt(8, 14);
+  } else if (difficulty === 2) {
+    const start = randomInt(0, 4);
+    columns = [start, start + 1, start + 2];
+    weekRows = [0, 1];
+    target = randomInt(17, Math.min(28, lastDate));
+  } else {
+    const start = randomInt(0, 4);
+    const visibleWeek = randomInt(1, 3);
+    columns = [start, start + 1, start + 2];
+    weekRows = [visibleWeek];
+    const shownDates = columns.map((weekday) => dateAt(visibleWeek, weekday)).filter(Boolean);
+    const candidates = Array.from({ length: lastDate }, (_, index) => index + 1).filter((date) => (
+      !shownDates.includes(date) && Math.min(...shownDates.map((shown) => Math.abs(shown - date))) >= 9
+    ));
+    target = sample(candidates);
+  }
+
+  const rows = weekRows.map((week) => columns.map((weekday) => dateAt(week, weekday)));
+  const shown = rows.flatMap((row) => row.map((date, index) => date ? { date, weekday: columns[index] } : null).filter(Boolean));
+  const reference = shown.reduce((best, item) => (
+    Math.abs(item.date - target) < Math.abs(best.date - target) ? item : best
+  ));
+  const difference = target - reference.date;
+  const direction = difference >= 0 ? "앞으로" : "뒤로";
+  const distance = Math.abs(difference);
+  const remainder = distance % 7;
+  const answer = `${weekdays[weekdayFor(target)]}요일`;
+
+  return {
+    prompt: `어느 해 ${month}월 달력의 일부분입니다. ${month}월 ${target}일은 무슨 요일인가요?`,
+    visual: { kind: "torn-calendar", month, columns, headers: columns.map((weekday) => weekdays[weekday]), rows },
+    answer,
+    solution: `${month}월 ${reference.date}일은 ${weekdays[reference.weekday]}요일입니다. 7일마다 같은 요일이므로 ${distance}일을 7일씩 묶고 남은 ${remainder}일만큼 ${direction} 세면 ${month}월 ${target}일은 ${answer}입니다.`,
+    meta: { difficulty, month, firstWeekday, target, targetWeekday: weekdayFor(target), columns, weekRows, rows, reference, difference }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -778,6 +834,7 @@ export const GENERATORS = {
   wrongOperationCorrection,
   shapeMatrixRule,
   delayedDatePromise,
+  tornCalendarWeekday,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
