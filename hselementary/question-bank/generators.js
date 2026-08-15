@@ -33,6 +33,92 @@
     return [...values].sort((a, b) => a - b);
   };
   const result = (prompt, answer, solution) => ({ prompt, answer: String(answer), solution });
+  const splitTotal = (rng, count, total, minValue, maxValue, step = 5) => {
+    for (let attempt = 0; attempt < 200; attempt += 1) {
+      const values = [];
+      let remaining = total;
+      for (let index = 0; index < count - 1; index += 1) {
+        const slots = count - index - 1;
+        const low = Math.max(minValue, remaining - maxValue * slots);
+        const high = Math.min(maxValue, remaining - minValue * slots);
+        const lowStep = Math.ceil(low / step);
+        const highStep = Math.floor(high / step);
+        if (lowStep > highStep) break;
+        const value = int(rng, lowStep, highStep) * step;
+        values.push(value);
+        remaining -= value;
+      }
+      if (values.length === count - 1 && remaining >= minValue && remaining <= maxValue && remaining % step === 0) return [...values, remaining];
+    }
+    throw new Error(`합 ${total}을 ${count}개의 각으로 나눌 수 없습니다.`);
+  };
+  const polar = (cx, cy, radius, degrees) => {
+    const radians = (degrees - 90) * Math.PI / 180;
+    return [cx + radius * Math.cos(radians), cy + radius * Math.sin(radians)];
+  };
+  const rayFanSvg = (rayCount, labels = [], span = 144) => {
+    const cx = 120;
+    const cy = 112;
+    const start = -span / 2;
+    const end = span / 2;
+    const angles = Array.from({ length: rayCount }, (_, index) => start + (end - start) * index / (rayCount - 1));
+    const rays = angles.map(angle => {
+      const [x, y] = polar(cx, cy, 82, angle);
+      return `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+    }).join("");
+    const texts = labels.map((label, index) => {
+      const middle = (angles[index] + angles[index + 1]) / 2;
+      const [x, y] = polar(cx, cy, 35, middle);
+      return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}">${label}</text>`;
+    }).join("");
+    return `<svg class="geometry-diagram ray-fan" viewBox="0 0 240 132" aria-label="한 점에서 뻗은 ${rayCount}개의 반직선"><g>${rays}</g>${texts}<circle cx="${cx}" cy="${cy}" r="3"/></svg>`;
+  };
+  const angleWheelSvg = (labels) => {
+    const cx = 100;
+    const cy = 88;
+    const angles = Array.from({ length: labels.length }, (_, index) => index * 360 / labels.length);
+    const rays = angles.map(angle => {
+      const [x, y] = polar(cx, cy, 65, angle);
+      return `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+    }).join("");
+    const texts = labels.map((label, index) => {
+      const [x, y] = polar(cx, cy, 30, angles[index] + 180 / labels.length);
+      return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}">${label}</text>`;
+    }).join("");
+    return `<svg class="geometry-diagram angle-wheel" viewBox="0 0 200 176" aria-label="한 점 둘레의 각"><g>${rays}</g>${texts}<circle cx="${cx}" cy="${cy}" r="3"/></svg>`;
+  };
+  const polygonSvg = (sides, labels, star = false) => {
+    const cx = 120;
+    const cy = 88;
+    const radius = 62;
+    const points = Array.from({ length: sides }, (_, index) => polar(cx, cy, radius, index * 360 / sides));
+    const order = star && sides === 5 ? [0, 2, 4, 1, 3] : Array.from({ length: sides }, (_, index) => index);
+    const path = order.map(index => points[index].map(value => value.toFixed(1)).join(",")).join(" ");
+    const texts = labels.map((label, index) => {
+      const [x, y] = polar(cx, cy, radius - (star ? 11 : 18), index * 360 / sides);
+      return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}">${label}</text>`;
+    }).join("");
+    return `<svg class="geometry-diagram polygon-diagram" viewBox="0 0 240 176" aria-label="${star ? "별 모양" : `${sides}각형`}"><polygon points="${path}"/>${texts}</svg>`;
+  };
+  const foldSvg = (angle) => {
+    const radians = angle * Math.PI / 180;
+    const dx = 72 * Math.sin(radians);
+    const dy = 72 * Math.cos(radians);
+    return `<svg class="geometry-diagram fold-diagram" viewBox="0 0 240 160" aria-label="종이를 접은 각도 그림"><rect x="42" y="24" width="150" height="112"/><line class="crease" x1="117" y1="25" x2="117" y2="136"/><line class="folded" x1="117" y1="105" x2="${(117 + dx).toFixed(1)}" y2="${(105 - dy).toFixed(1)}"/><line class="original" x1="117" y1="105" x2="${(117 - dx).toFixed(1)}" y2="${(105 - dy).toFixed(1)}"/><text x="117" y="67">${angle * 2}°</text></svg>`;
+  };
+  const rotatedSquareSvg = (angle) => `<svg class="geometry-diagram rotated-square" viewBox="0 0 240 176" aria-label="회전한 정사각형"><rect x="55" y="38" width="92" height="92"/><rect x="55" y="38" width="92" height="92" transform="rotate(${angle} 101 84)"/><path d="M101 84 L101 42 A42 42 0 0 1 ${(101 + 42 * Math.sin(angle * Math.PI / 180)).toFixed(1)} ${(84 - 42 * Math.cos(angle * Math.PI / 180)).toFixed(1)}"/><text x="112" y="53">${angle}°</text></svg>`;
+  const clockSvg = (hour, minute) => {
+    const minuteAngle = minute * 6;
+    const hourAngle = (hour % 12) * 30 + minute * 0.5;
+    const [mx, my] = polar(90, 90, 60, minuteAngle);
+    const [hx, hy] = polar(90, 90, 43, hourAngle);
+    const ticks = Array.from({ length: 12 }, (_, index) => {
+      const [x1, y1] = polar(90, 90, 68, index * 30);
+      const [x2, y2] = polar(90, 90, 74, index * 30);
+      return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/>`;
+    }).join("");
+    return `<svg class="geometry-diagram clock-diagram" viewBox="0 0 180 180" aria-label="${hour}시 ${String(minute).padStart(2, "0")}분 시계"><circle cx="90" cy="90" r="76"/>${ticks}<line class="hour-hand" x1="90" y1="90" x2="${hx.toFixed(1)}" y2="${hy.toFixed(1)}"/><line class="minute-hand" x1="90" y1="90" x2="${mx.toFixed(1)}" y2="${my.toFixed(1)}"/><circle cx="90" cy="90" r="4"/></svg>`;
+  };
 
   function range(level) {
     return {
@@ -286,6 +372,50 @@
       const smallest = Number([...digits].sort((a, b) => a - b).join(""));
       return result(`수 카드 ${digits.map(value => `<span class="digit-card">${value}</span>`).join("")}를 한 번씩 모두 사용해 만들 수 있는 가장 큰 수와 가장 작은 수의 차를 구하세요.`, largest - smallest, `가장 큰 수는 ${largest.toLocaleString()}, 가장 작은 수는 ${smallest.toLocaleString()}이므로 차는 ${(largest - smallest).toLocaleString()}입니다.`);
     },
+    multiAngle({ rng, level, variant = 0 }) {
+      const rayCount = int(rng, 6 + level, 7 + level);
+      if (variant % 3 === 0) {
+        const answer = rayCount * (rayCount - 1) / 2;
+        return result(`한 점에서 뻗은 ${rayCount}개의 반직선 중 두 개를 골라 만들 수 있는 180°보다 작은 각은 모두 몇 개인지 구하세요.${rayFanSvg(rayCount)}`, answer, `각은 서로 다른 반직선 2개를 고르면 하나씩 정해집니다. 따라서 ${rayCount} × ${rayCount - 1} ÷ 2 = ${answer}개입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const step = 144 / (rayCount - 1);
+        let acute = 0;
+        let obtuse = 0;
+        for (let first = 0; first < rayCount; first += 1) {
+          for (let second = first + 1; second < rayCount; second += 1) {
+            const angle = (second - first) * step;
+            if (angle < 90) acute += 1;
+            if (angle > 90 && angle < 180) obtuse += 1;
+          }
+        }
+        return result(`그림의 반직선은 같은 간격으로 놓여 있습니다. 만들 수 있는 예각과 둔각은 모두 몇 개인지 구하세요.${rayFanSvg(rayCount)}`, acute + obtuse, `두 반직선 사이의 간격 수를 차례로 확인하면 예각은 ${acute}개, 둔각은 ${obtuse}개이므로 모두 ${acute + obtuse}개입니다.`);
+      }
+      const before = rayCount * (rayCount - 1) / 2;
+      const after = (rayCount + 1) * rayCount / 2;
+      return result(`한 점에서 뻗은 ${rayCount}개의 반직선 사이에 반직선 1개를 더 그었습니다. 180°보다 작은 각은 처음보다 몇 개 늘어나는지 구하세요.${rayFanSvg(rayCount + 1)}`, after - before, `처음에는 ${before}개, 한 개를 더 그린 뒤에는 ${after}개이므로 ${after - before}개 늘어납니다.`);
+    },
+    angleCalculation({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const a = int(rng, 2, 5 + level) * 10;
+        const b = int(rng, 2, 5 + level) * 10;
+        const answer = (180 - a - b) / 2;
+        if (answer <= 0 || !Number.isInteger(answer)) return generators.angleCalculation({ rng, level, variant: variant + 3 });
+        return result(`한 직선 위의 네 각 중 가운데 두 각의 크기는 서로 같습니다. □의 각도를 구하세요.${rayFanSvg(5, [`${a}°`, "□", "□", `${b}°`], 180)}`, answer, `직선 위의 각의 합은 180°이므로 가운데 두 각의 합은 180 - ${a} - ${b} = ${answer * 2}°입니다. 두 각이 같으므로 □는 ${answer}°입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const a = int(rng, 4, 10) * 5;
+        const b = int(rng, 5, 12) * 5;
+        const c = int(rng, 6, 15) * 5;
+        const answer = 360 - a - b - c;
+        if (answer < 20) return generators.angleCalculation({ rng, level, variant: variant + 3 });
+        return result(`한 점 둘레의 네 각을 나타낸 그림입니다. □의 각도를 구하세요.${angleWheelSvg([`${a}°`, `${b}°`, `${c}°`, "□"])}`, answer, `한 점 둘레의 각의 합은 360°이므로 360 - ${a} - ${b} - ${c} = ${answer}°입니다.`);
+      }
+      const whole = int(rng, 11, 16) * 10;
+      const part = int(rng, 3, Math.floor(whole / 10) - 3) * 10;
+      const answer = whole - part;
+      return result(`맞꼭지각의 크기가 ${whole}°이고, 그 맞은편 각을 두 각으로 나누었더니 한 각이 ${part}°가 되었습니다. 나머지 각 □의 크기를 구하세요.${rayFanSvg(4, [`${part}°`, "□", `${180 - whole}°`], 180)}`, answer, `맞꼭지각의 크기는 서로 같으므로 나뉜 두 각의 합은 ${whole}°입니다. 따라서 □는 ${whole} - ${part} = ${answer}°입니다.`);
+    },
     angle({ rng, level }) {
       const total = pick(rng, level > 1 ? [180, 360] : [90, 180]);
       const a = int(rng, 2, Math.floor(total / 10) - 2) * 5;
@@ -293,16 +423,89 @@
       const answer = total - a - b;
       return result(`한 점 둘레 또는 한 직선 위의 각을 나누어 잰 값입니다. □의 각도를 구하세요.<div class="equation">${a}° + ${b}° + □ = ${total}°</div>`, answer, `${total} - ${a} - ${b} = ${answer}이므로 □는 ${answer}°입니다.`);
     },
-    polygonAngles({ rng, level }) {
-      const sides = int(rng, 4, 6 + level);
-      const answer = (sides - 2) * 180;
-      return result(`${sides}각형의 모든 내각의 크기의 합을 구하세요.`, answer, `${sides}각형은 한 꼭짓점에서 삼각형 ${sides - 2}개로 나눌 수 있으므로 ${sides - 2} × 180° = ${answer}°입니다.`);
+    polygonInterior({ rng, level, variant = 0 }) {
+      const sides = int(rng, 4 + Math.min(level, 1), 5 + level);
+      const total = (sides - 2) * 180;
+      if (variant % 3 === 0) {
+        const angles = splitTotal(rng, sides, total, 65, 155);
+        const unknown = int(rng, 0, sides - 1);
+        const answer = angles[unknown];
+        const labels = angles.map((value, index) => index === unknown ? "□" : `${value}°`);
+        return result(`${sides}각형의 내각을 나타낸 그림입니다. □의 각도를 구하세요.${polygonSvg(sides, labels)}`, answer, `${sides}각형의 내각의 합은 (${sides} - 2) × 180 = ${total}°입니다. 주어진 각의 합을 빼면 □는 ${answer}°입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const knownCount = sides - 2;
+        const minimum = Math.max(20, Math.ceil((total - 155 * knownCount) / 10) * 5);
+        const maximum = Math.min(155, Math.floor((total - 65 * knownCount) / 10) * 5);
+        const answer = int(rng, minimum / 5, maximum / 5) * 5;
+        const known = splitTotal(rng, sides - 2, total - answer * 2, 65, 155);
+        const labels = [...known, "□", "□"];
+        return result(`${sides}각형에서 □로 표시한 두 내각의 크기는 같습니다. □ 한 곳의 각도를 구하세요.${polygonSvg(sides, labels)}`, answer, `내각의 합 ${total}°에서 알려진 각의 합 ${known.reduce((sum, value) => sum + value, 0)}°를 빼면 두 □의 합은 ${answer * 2}°입니다. 따라서 한 각은 ${answer}°입니다.`);
+      }
+      const angles = splitTotal(rng, sides, total, 65, 155);
+      const first = int(rng, 0, sides - 2);
+      const second = first + 1;
+      const answer = angles[first] + angles[second];
+      const labels = angles.map((value, index) => index === first ? "㉠" : index === second ? "㉡" : `${value}°`);
+      return result(`${sides}각형에서 ㉠과 ㉡의 각도의 합을 구하세요.${polygonSvg(sides, labels)}`, answer, `내각의 합 ${total}°에서 나머지 내각의 합 ${total - answer}°를 빼면 ㉠ + ㉡ = ${answer}°입니다.`);
     },
-    clockAngle({ rng }) {
-      const hour = int(rng, 1, 11);
-      const raw = hour * 30;
-      const answer = Math.min(raw, 360 - raw);
-      return result(`시계가 정확히 ${hour}시를 가리킬 때 시침과 분침이 이루는 작은 쪽 각의 크기를 구하세요.`, answer, `시계의 이웃한 숫자 사이는 30°이므로 작은 쪽 각은 ${answer}°입니다.`);
+    polygonExterior({ rng, level, variant = 0 }) {
+      if (variant % 3 === 2) {
+        const angles = splitTotal(rng, 5, 180, 20, 55);
+        const unknown = int(rng, 0, 4);
+        const answer = angles[unknown];
+        const labels = angles.map((value, index) => index === unknown ? "□" : `${value}°`);
+        return result(`오각별의 다섯 뾰족한 각을 나타낸 그림입니다. □의 각도를 구하세요.${polygonSvg(5, labels, true)}`, answer, `오각별의 다섯 뾰족한 각의 합은 180°입니다. 180°에서 주어진 네 각의 합을 빼면 □는 ${answer}°입니다.`);
+      }
+      const sides = int(rng, 5, 6 + level);
+      if (variant % 3 === 0) {
+        const angles = splitTotal(rng, sides, 360, 30, 100);
+        const unknown = int(rng, 0, sides - 1);
+        const answer = angles[unknown];
+        const labels = angles.map((value, index) => index === unknown ? "□" : `${value}°`);
+        return result(`${sides}각형의 한 꼭짓점에 하나씩 표시한 외각입니다. □의 각도를 구하세요.${polygonSvg(sides, labels)}`, answer, `다각형의 외각의 합은 360°이므로 주어진 외각의 합을 빼면 □는 ${answer}°입니다.`);
+      }
+      const answer = int(rng, 6, 11) * 5;
+      const known = splitTotal(rng, sides - 2, 360 - answer * 2, 30, 100);
+      return result(`${sides}각형에서 □로 표시한 두 외각의 크기는 같습니다. □ 한 곳의 각도를 구하세요.${polygonSvg(sides, [...known, "□", "□"])}`, answer, `외각의 합 360°에서 알려진 외각의 합 ${known.reduce((sum, value) => sum + value, 0)}°를 빼고 2로 나누면 ${answer}°입니다.`);
+    },
+    interiorExteriorApplication({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const answer = int(rng, 3 + level, 8 + level) * 5;
+        return result(`종이를 점선을 따라 접었더니 원래 선과 접힌 선이 이루는 각이 ${answer * 2}°가 되었습니다. 접은 선과 점선이 이루는 각 □를 구하세요.${foldSvg(answer)}`, answer, `접기 전후의 선은 접는 선을 기준으로 대칭이므로 두 작은 각의 크기는 같습니다. ${answer * 2} ÷ 2 = ${answer}°입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const answer = int(rng, 5, 13 + level) * 5;
+        return result(`정사각형을 한 꼭짓점을 중심으로 ${answer}°만큼 회전시켰습니다. 회전 전후의 서로 대응하는 두 변이 이루는 작은 각의 크기를 구하세요.${rotatedSquareSvg(answer)}`, answer, `도형의 모든 선분은 회전한 각도만큼 방향이 바뀌므로 대응하는 두 변이 이루는 작은 각은 ${answer}°입니다.`);
+      }
+      const sides = pick(rng, [[4, 5, 6], [5, 6, 8, 9], [6, 8, 9, 10, 12]][level]);
+      const exterior = 360 / sides;
+      const interior = 180 - exterior;
+      return result(`모든 내각의 크기가 같은 정${sides}각형의 한 외각은 ${exterior}°입니다. 이 다각형의 한 내각의 크기를 구하세요.${polygonSvg(sides, Array(sides).fill(""))}`, interior, `한 꼭짓점의 내각과 외각의 합은 180°이므로 180 - ${exterior} = ${interior}°입니다.`);
+    },
+    clockAngle({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const hour = int(rng, 1, 11);
+        const minute = pick(rng, [10, 16, 20, 24, 30, 40, 48, 50]);
+        const difference = Math.abs(hour * 30 + minute * 0.5 - minute * 6);
+        const answer = decimal(Math.min(difference, 360 - difference), 1);
+        return result(`시계가 ${hour}시 ${minute}분을 가리킬 때 시침과 분침이 이루는 작은 쪽 각의 크기를 구하세요.${clockSvg(hour, minute)}`, answer, `시침은 12에서 ${hour * 30 + minute * 0.5}°, 분침은 12에서 ${minute * 6}°만큼 움직였습니다. 두 값의 차에서 작은 쪽 각을 택하면 ${answer}°입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const minutes = int(rng, 12 + level * 5, 32 + level * 8);
+        const moved = minutes * 6;
+        return result(`운동을 하는 동안 분침이 ${moved}° 움직였습니다. 운동한 시간은 몇 분인지 구하세요.${clockSvg(12, minutes % 60)}`, minutes, `분침은 1분에 6° 움직이므로 ${moved} ÷ 6 = ${minutes}분입니다.`);
+      }
+      const startHour = int(rng, 1, 8);
+      const startMinute = pick(rng, [0, 10, 20, 30, 40]);
+      const duration = int(rng, 5 + level * 3, 12 + level * 4) * 10;
+      const endTotal = startHour * 60 + startMinute + duration;
+      const endHour = Math.floor(endTotal / 60) % 12;
+      const endMinute = endTotal % 60;
+      const minuteMove = duration * 6;
+      const hourMove = duration * 0.5;
+      const answer = decimal(minuteMove - hourMove, 1);
+      return result(`${startHour}시 ${String(startMinute).padStart(2, "0")}분부터 ${endHour || 12}시 ${String(endMinute).padStart(2, "0")}분까지 분침이 움직인 각도는 시침이 움직인 각도보다 몇 도 더 큰지 구하세요.<div class="clock-pair">${clockSvg(startHour, startMinute)}${clockSvg(endHour || 12, endMinute)}</div>`, answer, `${duration}분 동안 분침은 ${minuteMove}°, 시침은 ${hourMove}° 움직입니다. 차는 ${minuteMove} - ${hourMove} = ${answer}°입니다.`);
     },
     multiply({ rng, level }) {
       const r = range(level);
@@ -517,10 +720,14 @@
     [/^큰 수의 활용$/, "largeNumberApplication"],
     [/^조건에 맞는 수 찾기$/, "conditionedNumber"],
     [/^수 카드로 수 만들기$/, "digitCardNumber"],
+    [/^여러 각도$/, "multiAngle"],
+    [/^각도의 계산$/, "angleCalculation"],
+    [/^다각형의 내각의 합$/, "polygonInterior"],
+    [/^다각형의 외각의 성질$/, "polygonExterior"],
+    [/^내각과 외각의 성질의 활용$/, "interiorExteriorApplication"],
+    [/^시침과 분침 사이의 각도$/, "clockAngle"],
     [/일렬로 나열한 수|배열된 수들의 합/, "numberPattern"],
-    [/^다각형의 내각의 합$/, "polygonAngles"],
-    [/시침과 분침/, "clockAngle"],
-    [/^각도의 계산$|^여러 각도$|^평행선 사이의 각도/, "angle"],
+    [/^평행선 사이의 각도/, "angle"],
     [/^곱셈 알아보기$|^곱셈식 완성하기$/, "multiply"],
     [/나눗셈의 나머지/, "remainder"],
     [/^나눗셈 알아보기$/, "divide"],
