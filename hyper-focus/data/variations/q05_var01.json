@@ -5,7 +5,7 @@
   "subType": "stacking_hidden_count",
   "status": "draft",
   "source": {
-    "problemImage": "./assets/problems/q05_var01.png"
+    "problemImage": "./assets/svg/variations/q05_var01.svg"
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q05.json",
@@ -13,7 +13,22 @@
   },
   "machineReadable": {
     "payloadType": "stacking_hidden_count",
+    "coordinateSystem": {
+      "rowOrder": "front_to_back",
+      "columnOrder": "left_to_right",
+      "heightAxis": "bottom_to_top",
+      "unit": "cube"
+    },
+    "wallMode": {
+      "enabled": true,
+      "description": "앞쪽 벽에 가려진 뒤쪽 아래층 블록이 있다."
+    },
+    "grid": {
+      "width": 4,
+      "depth": 3
+    },
     "heightMap": {
+      "rowOrder": "front_to_back",
       "rows": [
         { "y": 0, "heights": [4, 2, 2, 1] },
         { "y": 1, "heights": [1, 2, 1, 1] },
@@ -22,32 +37,44 @@
     },
     "viewModel": {
       "camera": "front_oblique",
-      "visibleStackPositions": [
-        { "x": 0, "y": 0 },
-        { "x": 1, "y": 0 },
-        { "x": 2, "y": 0 },
-        { "x": 3, "y": 0 },
-        { "x": 0, "y": 1 },
-        { "x": 1, "y": 1 },
-        { "x": 2, "y": 1 },
-        { "x": 3, "y": 1 },
-        { "x": 1, "y": 2 }
+      "visibleBlocks": [
+        { "x": 0, "y": 0, "z": 1 },
+        { "x": 0, "y": 0, "z": 2 },
+        { "x": 0, "y": 0, "z": 3 },
+        { "x": 0, "y": 0, "z": 4 },
+        { "x": 1, "y": 0, "z": 1 },
+        { "x": 1, "y": 0, "z": 2 },
+        { "x": 2, "y": 0, "z": 1 },
+        { "x": 2, "y": 0, "z": 2 },
+        { "x": 3, "y": 0, "z": 1 },
+        { "x": 1, "y": 1, "z": 2 },
+        { "x": 1, "y": 2, "z": 1 }
       ],
-      "hiddenStackPositions": [
-        { "x": 1, "y": 0, "hiddenBlocks": 1 },
-        { "x": 2, "y": 0, "hiddenBlocks": 1 },
-        { "x": 0, "y": 1, "hiddenBlocks": 1 },
-        { "x": 1, "y": 1, "hiddenBlocks": 1 }
-      ]
+      "hiddenBlocks": [
+        { "x": 0, "y": 1, "z": 1 },
+        { "x": 1, "y": 1, "z": 1 },
+        { "x": 2, "y": 1, "z": 1 },
+        { "x": 3, "y": 1, "z": 1 }
+      ],
+      "renderRule": {
+        "visibleBlocks": "solid",
+        "hiddenBlocks": "omit_from_problem_figure"
+      }
     },
     "countingModel": {
       "totalBlockCount": 15,
       "visibleBlockCount": 11,
-      "hiddenBlockCount": 4
+      "hiddenBlockCount": 4,
+      "formula": "totalBlockCount - visibleBlockCount"
     }
   },
   "answerValidation": {
-    "answerType": "integer",
+    "answerType": "integer_with_unit",
+    "unit": "개",
     "expectedAnswer": 4
-  }
+  },
+  "problem": {
+    "prompt": "쌓기나무 15개를 그림과 같이 쌓았습니다. 그림에서 보이지 않는 쌓기나무는 몇 개인가요?"
+  },
+  "solutionHint": "그림에서 보이는 쌓기나무를 한 층씩 세면 11개입니다. 전체 15개에서 보이는 11개를 빼면 15 - 11 = 4이므로 보이지 않는 쌓기나무는 4개입니다."
 }
