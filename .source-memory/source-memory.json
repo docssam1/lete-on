@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "d3ad4f6a18eb544344fc9c564c20d6e06ea0d27091505c82db288d5de3d0b3f0",
-      "size": 71159,
-      "mtime_ns": 1786827148502565300
+      "sha256": "240487c66d69b3a81f71aec8afc3ba4ff7ee31e113954d33a993c47fe74bd460",
+      "size": 72147,
+      "mtime_ns": 1786827373768017000
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "a7ca4aa270d13dad266129223d67f4dc3badec332a8a5b5f0b5ad204cf71dbdd",
-      "size": 148820,
-      "mtime_ns": 1786827053508478900
+      "sha256": "56bd08cb780a917e813b220f15c77327457b516163020935d46ec82f150551c0",
+      "size": 150262,
+      "mtime_ns": 1786827272465094100
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "33b40b44cb4d51f6858d3127fdf78ae96710fbdfcc461668acaa2b52402dddf7",
-      "size": 37465,
-      "mtime_ns": 1786826969118919300
+      "sha256": "80f13491d73c91af1bb643b92e4d9dbd9a6bbf3b9fff1c5572a05cc9c9b7b375",
+      "size": 37681,
+      "mtime_ns": 1786827272468094300
     }
   ],
   "records": [
@@ -107,14 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 4 question 12",
+      "title": "Next verification selection test 4 questions 13 and 14",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q12"
+        "q13",
+        "q14"
       ],
-      "summary": "Build a dedicated 3 by 3 shape-sum grid from source page 8. The rows and columns determine triangle 7, square 5, diamond 8, circle 4, and the official top-row target 19.",
+      "summary": "Verify source page 9: question 13 is board then leave bus arithmetic with official answer 18, and question 14 is the two-step add-subtract shape equation with official answer 26.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +124,7 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 12 requires the exact source matrix rather than the existing generic symbol grid"
-        },
-        {
-          "source_id": "source-data",
-          "role": "code",
-          "locator": "EXAMS k7-2022-08 question 12",
-          "note": "Question 12 remains disabled until its dedicated renderer and generator pass verification"
+          "note": "Questions 13 and 14 require source structure and renderer verification before enabling"
         }
       ]
     },
@@ -2539,6 +2534,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-08 verified questions 1 through 11",
           "note": "Question 11 enabled with dedicated subtype"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q12",
+      "title": "Selection test 4 question 12 triangle-column shape-sum grid",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q12",
+        "shape-sum-grid-triangle-column-target"
+      ],
+      "summary": "The source grid is triangle-circle-diamond, triangle-square-square, triangle-diamond-square. The shown sums uniquely give triangle 7, square 5, diamond 8, circle 4, and top-row target 19.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 12 paragraph",
+          "note": "Exact layout, official answer, exhaustive verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeSumGridTriangleColumnTarget",
+          "note": "Dedicated source layout with three structural difficulty levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 12",
+          "note": "Question 12 enabled with dedicated subtype"
         }
       ]
     }

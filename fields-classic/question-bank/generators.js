@@ -2059,6 +2059,21 @@ function shapeSumGridTopTarget({ difficulty = 2 }) {
   };
 }
 
+function shapeSumGridTriangleColumnTarget({ difficulty = 2 }) {
+  const [triangle, square, diamond, circle] = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4);
+  const rowSums = [triangle + circle + diamond, triangle + square * 2, triangle + diamond + square];
+  const columnSums = [triangle * 3, circle + square + diamond, diamond + square * 2];
+  const hiddenSums = difficulty === 3 ? ["column-3"] : [];
+  const hint = difficulty === 1 ? `세모 한 개는 ${triangle}입니다.` : "";
+  return {
+    prompt: "다음 그림에서 같은 도형은 같은 수를 나타내고, 오른쪽과 아래에 쓰인 수는 각 줄에 있는 세 수의 합을 나타냅니다. ㉠에 알맞은 수를 구하세요.",
+    visual: { kind: "shape-sum-grid-triangle-column-target", rowSums, columnSums, hiddenSums, hint },
+    answer: String(rowSums[0]),
+    solution: `${difficulty === 1 ? `도움말에서 세모는 ${triangle}입니다. ` : `첫째 세로줄에는 세모가 세 개 있고 합이 ${columnSums[0]}이므로 세모는 ${triangle}입니다. `}둘째 줄에서 네모는 ${square}입니다. 셋째 줄에서 마름모는 ${diamond}입니다. 둘째 세로줄에서 동그라미는 ${circle}입니다. 따라서 ㉠은 ${triangle} + ${circle} + ${diamond} = ${rowSums[0]}입니다.`,
+    meta: { difficulty, triangle, square, diamond, circle, rowSums, columnSums, hiddenSums, answer: rowSums[0] }
+  };
+}
+
 function busBoardThenLeave({ difficulty = 2 }) {
   const start = randomInt(difficulty === 1 ? 15 : difficulty === 2 ? 20 : 24, difficulty === 1 ? 24 : difficulty === 2 ? 34 : 40);
   const boardedFirst = randomInt(difficulty === 1 ? 3 : 6, difficulty === 1 ? 8 : difficulty === 2 ? 14 : 15);
@@ -2698,6 +2713,7 @@ export const GENERATORS = {
   sourcePianoBounce,
   sourceSymbolSumGrid,
   shapeSumGridTopTarget,
+  shapeSumGridTriangleColumnTarget,
   symbolSumGridSquareTop,
   shapeEquationAddSubtract,
   twoDigitParityGap,
