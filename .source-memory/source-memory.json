@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "2a3fc0a2afaf2ba5b1e0993533d429a762b0475ccfd20eb7bf643d8cde2a166d",
-      "size": 91625,
-      "mtime_ns": 1786832414859881800
+      "sha256": "72adfc2df5a7f46a6a88ff8b9cc00080b89577dd7974c37aae3973443ce4457c",
+      "size": 92530,
+      "mtime_ns": 1786832588513527500
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "a1f7ed0bb54dffc76e0691ed1b454eef2ad22768cbc33a6c17dc2cc5311865ee",
-      "size": 39826,
-      "mtime_ns": 1786832414853882100
+      "sha256": "89dc17ab3cf6b2ca19bf527fcc11c2caef64883b4142ab059873d1e076e6469a",
+      "size": 39830,
+      "mtime_ns": 1786832588506526900
     }
   ],
   "records": [
@@ -107,12 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 15",
+      "title": "Next verification selection test 6 question 16",
       "aliases": [],
       "tags": [
         "next"
       ],
-      "summary": "Compare the growing triangle-tile figures, target stage, child-facing wording, and official answer 64 before reusing or splitting the provisional growth generator.",
+      "summary": "Compare all three balance drawings, object counts, target object, and official answer 4 before deciding whether the provisional three-object balance generator matches.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -120,13 +120,13 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "7-year-old selection test 6 question 15",
-          "note": "Verify every shown stage, tile count rule, target stage, and official answer"
+          "locator": "7-year-old selection test 6 question 16",
+          "note": "Verify each pan, object count, relation chain, target object, and official answer"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-12 question 15",
+          "locator": "EXAMS k7-2022-12 question 16",
           "note": "Current provisional mapping remains disabled"
         }
       ]
@@ -3312,6 +3312,40 @@
           "role": "code",
           "locator": "TYPES shape-sum-grid-triangle-top and EXAMS k7-2022-12 verified 1 through 14",
           "note": "Wrong provisional matrix mapping replaced and source question enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q15",
+      "title": "Selection test 6 question 15 growing triangle tiles",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q15",
+        "triangle-tile-growth"
+      ],
+      "summary": "The source shows 1, 4, 9, and 16 small equilateral triangles in stages 1 through 4 and asks for stage 8; adding 8 eight times gives the official answer 64 tiles.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 15 paragraph",
+          "note": "Exact four-stage drawing, official answer, reuse decision, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function triangleTileGrowth",
+          "note": "Forward and reverse structural difficulty without exponent notation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified 1 through 15",
+          "note": "Existing source-matched triangle growth type is enabled"
         }
       ]
     }
