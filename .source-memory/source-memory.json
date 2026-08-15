@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "49c977da59c716ad11a2fd105a4984b77f76b34d83c150ff1b69f691de471f4c",
-      "size": 25843,
-      "mtime_ns": 1786813323709943400
+      "sha256": "66f139e85342cddd3ee8269a9a96e2ea16e01aeda9ca683ce4c5df9ac78706a1",
+      "size": 26409,
+      "mtime_ns": 1786813492275661900
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "58ce9bc7831565485c6bd3a6a038b4e633d6d458a0fef8db861e702eb2a196cd",
-      "size": 32866,
-      "mtime_ns": 1786813160802009900
+      "sha256": "988a757286b9b1734ba32af7ab37975206e174a37dd9c41fe5a7a2b685d58b23",
+      "size": 32895,
+      "mtime_ns": 1786813417062502700
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 1",
+      "title": "Next verification 7-year-old selection test 2 question 2",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q1"
+        "q2"
       ],
-      "summary": "Verify the four-corner edge-sum card placement in the April 2022 selection test against the existing edge-sum-grid generator before enabling it.",
+      "summary": "Verify the transfer-to-equalize bead picture and answer 4 against the existing equalize-transfer generator before enabling it.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,7 +123,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "Next sequence item 1",
-          "note": "F01 through F23 are complete; selection test 2 question 1 is next"
+          "note": "Selection test 2 question 2 is next"
         }
       ]
     },
@@ -799,6 +799,40 @@
           "role": "code",
           "locator": "TYPES two-digit-card-enumeration and PRACTICE_EXAM_TYPES mock-3 question 17",
           "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q1",
+      "title": "Selection test 2 question 1 edge-sum placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q1",
+        "edge-sum-grid"
+      ],
+      "summary": "The original cards 2,3,4,5 with edge sums top9 right6 bottom5 left8 have the unique full placement TL5 TR4 BR2 BL3 and reuse edgeSumCycle.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 1 paragraph",
+          "note": "Original full placement and generator reuse verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function edgeSumCycle and GENERATORS export",
+          "note": "All four positions are returned as the answer"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-04 verifiedQuestionNumbers 1",
+          "note": "Only source question 1 is enabled"
         }
       ]
     }
