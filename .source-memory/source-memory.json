@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "ceff103c0363f423447911850c3f157e326dbf43a3c7832f2b4daff84832fdc2",
-      "size": 87066,
-      "mtime_ns": 1786831377351657700
+      "sha256": "ac19126255b08da10b02afc0338c6f61c654eeeb96033a2f4617745e4022c5e6",
+      "size": 87865,
+      "mtime_ns": 1786831545704405600
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "67a50423ab617ce641eb560bfb2a7cdc077e38ee1993073628945ecea98124dd",
-      "size": 39066,
-      "mtime_ns": 1786831377344567800
+      "sha256": "c88496b88f0410edc1268a96b1ff567d25c6220dff6076a21408e56613a5ef17",
+      "size": 39070,
+      "mtime_ns": 1786831545698406000
     }
   ],
   "records": [
@@ -107,12 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 10",
+      "title": "Next verification selection test 6 question 11",
       "aliases": [],
       "tags": [
         "next"
       ],
-      "summary": "Compare the repeated-shape addition and subtraction equations, target symbol, and official answer 55 before reusing the mapped generator.",
+      "summary": "Compare the repeating shape and color pattern, target position, and official answer before reusing or separating the pattern generator.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -120,13 +120,13 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "7-year-old selection test 6 question 10",
-          "note": "Verify both equations and the target symbol"
+          "locator": "7-year-old selection test 6 question 11",
+          "note": "Verify both shape and color cycles and the requested position"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-12 question 10",
+          "locator": "EXAMS k7-2022-12 question 11",
           "note": "Current provisional mapping remains disabled"
         }
       ]
@@ -3145,6 +3145,39 @@
           "role": "code",
           "locator": "EXAMS k7-2022-12 verified 1 through 9",
           "note": "Question 9 now uses the correct event order"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q10",
+      "title": "Selection test 6 question 10 shape addition and subtraction",
+      "aliases": [],
+      "tags": [
+        "q10",
+        "shape-equation-add-subtract"
+      ],
+      "summary": "Verified against source and official answer: square plus 47 equals 64, and 72 minus the same square equals heart, so square is 17 and heart is 55. The existing source-matched two-step generator is reused.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 10 paragraph",
+          "note": "Original equations, official answer, regrouping, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeEquationAddSubtract",
+          "note": "One-digit, two-digit regrouping, and three-step variants"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified 1 through 10",
+          "note": "Source question 10 is enabled"
         }
       ]
     }
