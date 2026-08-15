@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "5af119723b4e0e3e19e465a7cd5f251524e97c647937d892a7329e500848d093",
-      "size": 74269,
-      "mtime_ns": 1786827954455336800
+      "sha256": "aa7817977d6a0c600727ffbe188f415e2d27a91c9885ad8fa2e8eb3af5a9b79e",
+      "size": 75050,
+      "mtime_ns": 1786828126891255200
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "1269532f2de6af21807feb6e2ad408cbdd7612f6dd6ad8bb39a2feee001d7fbf",
-      "size": 37926,
-      "mtime_ns": 1786827772888265000
+      "sha256": "9471c916517a1e98cbf21792e14c8b58e41ea889f68b5a85ea9f76e711959d1d",
+      "size": 37930,
+      "mtime_ns": 1786828065119130200
     }
   ],
   "records": [
@@ -107,14 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 4 question 16",
+      "title": "Next verification selection test 4 questions 17 and 18",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q16"
+        "q17",
+        "q18"
       ],
-      "summary": "Verify the square-array source question with stages 1, 4, 9, and 16 and the eighth-stage answer 64; keep questions 17 through 20 locked until their exact pages are checked.",
+      "summary": "Verify the three-object balance question and the three-to-four symbol relation against source page 11 and the official answers 4 and 13 before enabling either question.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,7 +124,7 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 16 remains disabled until the source structure, answer, generator, and browser rendering are verified"
+          "note": "Questions 17 and 18 remain disabled until exact source structure, answers, generators, and browser rendering are verified"
         }
       ]
     },
@@ -2669,6 +2670,40 @@
           "role": "code",
           "locator": "TYPES fold-number-cut-sum-main-diagonal and EXAMS k7-2022-08 verified 1 through 15",
           "note": "Question 15 enabled after source match"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q16",
+      "title": "Selection test 4 question 16 square-array number pattern",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q16",
+        "square-tile-growth"
+      ],
+      "summary": "The source shows square arrays containing 1, 4, 9, and 16 small squares and asks for the eighth array; eight rows of eight squares contain 64.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 16 paragraph",
+          "note": "Exact square-array stages, answer 64, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function squareTileGrowth",
+          "note": "Forward and reverse structural difficulty without square notation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES square-tile-growth and EXAMS k7-2022-08 verified 1 through 16",
+          "note": "Question 16 enabled after source match"
         }
       ]
     }
