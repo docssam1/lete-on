@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "dc01f345e7fb0d0edbc38e01f087d7880700a43cbf4b25198674b3e3c13617d1",
-      "size": 14218,
-      "mtime_ns": 1786772226147314200
+      "sha256": "4e80085ea37ac65980605667fab3b6988302f45f230670fdebaa9a226aa04816",
+      "size": 14526,
+      "mtime_ns": 1786772460117204000
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "dde489483fff20837423addf2e676b16e6d2b8022c74626a28bfd8da5f19d576",
-      "size": 32121,
-      "mtime_ns": 1786772226149313700
+      "sha256": "492b89244e36cf1700a7467f7f8e765b0f981c303afb23364c6d4fdce92d0df9",
+      "size": 32110,
+      "mtime_ns": 1786772460119205200
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "31533a7c83aace8c01e0cc701f712acc3ff93229cc23cd1d2f9f8ebedee553f3",
-      "size": 41258,
-      "mtime_ns": 1786772102562229200
+      "sha256": "1d95279f6134d35a1c3d1eaed5af097ebbb4e6d05089abb730be85e490d9b0d2",
+      "size": 43921,
+      "mtime_ns": 1786772357080515100
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "be5132e2a7a3e72648b4840eef96906a16a0acdf1310c47d0beaef29144a6a8a",
-      "size": 29810,
-      "mtime_ns": 1786772102564228400
+      "sha256": "02d424a6c498b3720175da25ddd1bb71ad52cc266d815a272b8e6ee1f87bdeb4",
+      "size": 29885,
+      "mtime_ns": 1786772357081517200
     }
   ],
   "records": [
@@ -107,15 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F07 torn calendar weekday",
+      "title": "Next implementation F08 two-type unit totals",
       "aliases": [
         "다음 작업"
       ],
       "tags": [
         "next",
-        "F07"
+        "F08"
       ],
-      "summary": "Continue with Final 2 question 12 F07 after checking the original torn-calendar layout and weekday calculation.",
+      "summary": "Continue with Final 2 question 13 F08 using the original two-wheel and three-wheel bicycle structure.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-15",
@@ -124,7 +124,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F06 are complete; F07 is next"
+          "note": "F01 through F07 are complete; F08 is next"
         }
       ]
     },
@@ -196,6 +196,42 @@
           "source_id": "source-data",
           "role": "code",
           "locator": "TYPES delayed-date-promise and FINAL_EXAM_TYPES question 10",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f07",
+      "title": "Final 2 question 12 torn calendar weekday",
+      "aliases": [
+        "파이널 2회 12번",
+        "찢어진 달력 요일"
+      ],
+      "tags": [
+        "F07",
+        "final-2"
+      ],
+      "summary": "F07 renders the original partial torn-calendar structure and calculates weekdays from verified seven-day cycles.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 2회 표 12번과 대본 검증 12번",
+          "note": "Original three-column fragment and Sunday answer verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function tornCalendarWeekday and GENERATORS export",
+          "note": "Three difficulty structures with cell-level weekday metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES calendar-date-weekday and FINAL_EXAM_TYPES question 12",
           "note": "Source-matched type is enabled"
         }
       ]
