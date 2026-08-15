@@ -109,9 +109,11 @@ SVG: 과녁 동심원 + 점수 영역
 
 **q32 mirror_digital_number**
 ```json
-"displayNumber":NNN
+"visibleEquation": {"line1":"...", "line2":"..."}
+"originalEquation": {"line1":"...", "line2":"..."}
+"blankValues": [N,N]
 ```
-SVG: 7세그먼트 디지털 숫자 + 거울선
+SVG: 원본처럼 두 줄의 7세그먼트 식 + 빈칸 2개 + 오른쪽 거울 방향. 단일 숫자 뒤집기 문제로 바꾸지 않는다.
 
 **q51 clock_bell_count**
 ```json

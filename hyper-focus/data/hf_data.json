@@ -3398,7 +3398,7 @@
     "subType": "mirror_digital_number",
     "answerType": "number",
     "svgRequired": true,
-    "title": "거울에 비친 디지털 숫자를 원래 수로 읽고 합 구하기",
+    "title": "거울에 비친 디지털 숫자 식의 두 빈칸 합 구하기",
     "targetUser": {
       "profile": "프리미어 대비 7세·초등 저학년 상위권",
       "mathReadyLevel": [
@@ -3424,8 +3424,8 @@
     "originalProblem": {
       "questionId": "q32_origin",
       "difficulty": "same",
-      "text": "거울에 비친 디지털 숫자를 원래 수로 읽고 합 구하기",
-      "answer": "80",
+      "text": "거울에 비친 디지털 숫자 식의 두 빈칸 합 구하기",
+      "answer": "93",
       "answerStory": "디지털 숫자는 거울 방향을 바꾸어 읽는다.",
       "renderData": {
         "renderStrategy": "digital_number_svg",

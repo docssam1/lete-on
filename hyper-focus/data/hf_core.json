@@ -1705,8 +1705,8 @@
     {
       "typeId": "32",
       "answerType": "number",
-      "answer": "80",
-      "coreConcept": "거울에 비친 디지털 숫자를 원래 수로 읽고 합 구하기",
+      "answer": "93",
+      "coreConcept": "거울에 비친 디지털 숫자 식의 두 빈칸 합 구하기",
       "teacherShortcut": "거울에 비친 수를 원래 방향으로 돌려 읽는다.",
       "docssamPhrase": "디지털 숫자는 거울 방향을 바꾸어 읽는다.",
       "mentalHack": "빈칸 두 개의 원래 수를 각각 읽고 더한다.",

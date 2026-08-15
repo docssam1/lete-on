@@ -4,8 +4,39 @@
   "variationId": "q32_var02",
   "subType": "mirror_digital_number",
   "status": "draft",
-  "source": { "problemImage": "./assets/problems/q32_var02.png" },
-  "contentBinding": { "canonicalSource": "./canonical/q32.json", "hfDataTypeId": 32 },
-  "machineReadable": { "payloadType": "mirror_digital_number", "displayNumber": 508, "expectedAnswer": 805 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 805 }
+  "source": {
+    "problemImage": "./assets/svg/variations/q32_var02.svg"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q32.json",
+    "hfDataTypeId": 32
+  },
+  "problem": {
+    "prompt": "다음은 디지털 숫자로 쓴 두 식을 오른쪽에서 거울에 비춘 것입니다. 두 빈칸에 알맞은 원래 수의 합을 구하세요."
+  },
+  "machineReadable": {
+    "payloadType": "mirror_digital_number",
+    "contentForm": "two_mirrored_equations",
+    "displayType": "seven_segment_like",
+    "mirrorDirection": "right_side_mirror",
+    "visibleEquation": {
+      "line1": "18 = 45 + [ ]",
+      "line2": "[ ] = 41 + 25"
+    },
+    "originalEquation": {
+      "line1": "[ ] + 24 = 81",
+      "line2": "25 + 14 = [ ]"
+    },
+    "solvingModel": {
+      "readMirrorBackToOriginal": true,
+      "blankValues": [57, 39],
+      "sumExpression": "57 + 39",
+      "expectedAnswer": 96
+    }
+  },
+  "answerValidation": {
+    "answerType": "integer",
+    "expectedAnswer": 96
+  },
+  "solutionHint": "거울 그림 전체를 좌우로 되돌리면 첫째 식은 □ + 24 = 81, 둘째 식은 25 + 14 = □입니다. 두 빈칸은 57과 39이고, 57 + 39 = 96이므로 답은 96입니다."
 }

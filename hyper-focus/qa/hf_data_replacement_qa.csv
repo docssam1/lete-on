@@ -30,7 +30,7 @@
 29,수 배열표의 가로·세로 증가 규칙 찾기,TYPE-05,number_grid_pattern,ordered_slots,"19, 23, 30",True
 30,과녁에 화살 3번을 쏘아 만들 수 있는 서로 다른 점수 세기,TYPE-06,target_score_cases,count,7가지,True
 31,문자마다 0~8 중 하나의 수를 넣어 식을 만족시키기,TYPE-05,symbol_value_equations,symbol_values,"{""A"": 4, ""B"": 2, ""C"": 3, ""D"": 1, ""E"": 6, ""F"": 8, ""G"": 0}",True
-32,거울에 비친 디지털 숫자를 원래 수로 읽고 합 구하기,TYPE-05,mirror_digital_number,number,80,True
+32,거울에 비친 디지털 숫자 식의 두 빈칸 합 구하기,TYPE-05,mirror_digital_number,number,93,True
 33,가위바위보 승패에 따라 계단 위치 차이 구하기,TYPE-04,rps_stair_position,count,3계단,True
 34,숫자 카드로 두 자리 수끼리 뺄셈식을 만들어 최댓값과 최솟값 구하기,TYPE-05,digit_card_subtraction,min_max_values,"{""max"": 41, ""min"": 6}",True
 35,조건을 보고 달리기 순서를 추론하기,TYPE-04,line_order,name,민호,True

@@ -2,7 +2,7 @@
   "schemaVersion": "hf-canonical-problem-v1",
   "questionId": "q32",
   "typeId": 32,
-  "title": "거울에 비친 디지털 숫자의 원래 수 합 구하기",
+  "title": "거울에 비친 디지털 숫자 식의 두 빈칸 합 구하기",
   "problemType": "TYPE-05",
   "subType": "mirror_digital_number",
   "answerType": "number",
@@ -45,15 +45,22 @@
     "status": "verified",
     "payload": {
       "payloadType": "mirror_digital_number",
+      "contentForm": "two_mirrored_equations",
       "displayType": "seven_segment_like",
       "mirrorDirection": "right_side_mirror",
       "visibleEquation": {
         "line1": "42 = 14 + [ ]",
         "line2": "[ ] = 22 + 25"
       },
+      "originalEquation": {
+        "line1": "[ ] + 41 = 54",
+        "line2": "25 + 55 = [ ]"
+      },
       "solvingModel": {
         "readMirrorBackToOriginal": true,
-        "expectedAnswer": 80
+        "blankValues": [13, 80],
+        "sumExpression": "13 + 80",
+        "expectedAnswer": 93
       },
       "judgementRule": {
         "checks": [
@@ -107,7 +114,7 @@
   },
   "answerValidation": {
     "answerType": "number",
-    "expectedAnswer": 80,
+    "expectedAnswer": 93,
     "mustMatchContentAnswer": true,
     "sourceAnswerPath": "originalProblem.answer",
     "derivation": {
@@ -115,14 +122,14 @@
       "checks": [
         "거울 방향을 원래 방향으로 되돌리는지 확인",
         "두 빈칸의 원래 수를 찾는지 확인",
-        "원래 수의 합이 80인지 확인"
+        "첫째 빈칸 13과 둘째 빈칸 80의 합이 93인지 확인"
       ]
     }
   },
   "validation": {
     "requiredChecks": [
       "problem_assets.json에 q32 경로 존재 확인",
-      "hf_data.json typeId 32의 originalProblem.answer가 80인지 확인",
+      "hf_data.json typeId 32의 originalProblem.answer가 93인지 확인",
       "hf_core.json 및 problem_map.json의 subType이 mirror_digital_number인지 확인"
     ],
     "completionStatus": "verified"
