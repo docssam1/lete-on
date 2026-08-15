@@ -2158,7 +2158,7 @@ function numberLineSixPoints({ difficulty = 2 }) {
       ce: cd + de,
       bf: bc + cd + de + ef
     };
-  } while (new Set(Object.values(distances)).size < 5 || distances.bf > 100);
+  } while (new Set(Object.values(distances)).size < 5 || distances.bf > 100 || (difficulty === 3 && gaps.reduce((sum, value) => sum + value, 0) > 100));
 
   const [ab, bc, cd, de, ef] = gaps;
   const askWhole = difficulty === 3;

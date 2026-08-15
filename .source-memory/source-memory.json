@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "a9ac53ca169737bdde128b1a6a3df002e8b3db7895fe12a8714193722e558a49",
-      "size": 76997,
-      "mtime_ns": 1786828537431283400
+      "sha256": "e39d88c4a633181b8a3ecef0956392c7a50b0a794a79aca943071ad89287b200",
+      "size": 78082,
+      "mtime_ns": 1786828678790459700
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "2ce6230be6612e5fa6204b680a2f30f76ce240f4c57737f03fd4983cabc3c608",
-      "size": 155107,
-      "mtime_ns": 1786828368784996800
+      "sha256": "30456e47fa0e987acf4a1110a9f37bb99c739f5cceb51ce4a35e1c5bf786a965",
+      "size": 155182,
+      "mtime_ns": 1786828617182481100
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "68d47e75cba6dea417f86cacb0f5ae5d0fb7d2ea715d8061f49750e9780fbcc0",
-      "size": 38119,
-      "mtime_ns": 1786828497152058400
+      "sha256": "195e58fda4bec96b268d60e75b37ddae953f9ce27740e04ad1c36f90fdd24fcd",
+      "size": 38123,
+      "mtime_ns": 1786828637654142400
     }
   ],
   "records": [
@@ -107,15 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 4 questions 19 and 20",
+      "title": "Next verification selection test 4 question 20",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q19",
         "q20"
       ],
-      "summary": "Verify the six-point number-line question and the white-stone difference inverse question against source page 12 and official answers 16 and 36 before enabling them.",
+      "summary": "Replace the incorrect black-stone same-level mapping with a source-matched white-stone difference inverse generator; source difference 18 gives the 36th arrangement.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -124,7 +123,7 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Questions 19 and 20 remain disabled until exact source structures, answers, generators, and browser rendering are verified"
+          "note": "Question 20 remains disabled until the white-stone generator, answer, and browser rendering are verified"
         }
       ]
     },
@@ -2772,6 +2771,40 @@
           "role": "code",
           "locator": "TYPES symbol-relation-3to4 and EXAMS k7-2022-08 verified 1 through 18",
           "note": "Question 18 enabled after source match"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q19",
+      "title": "Selection test 4 question 19 six-point overlapping distances",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q19",
+        "number-line-six-points"
+      ],
+      "summary": "The source gives AD 43, CE 52, AC 25, BD 29, and BF 79; successive subtraction gives CD 18, BC 11, DE 34, and EF 16.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 19 paragraph",
+          "note": "Exact five distance arcs, official answer 16, difficulty structure, range fix, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function numberLineSixPoints",
+          "note": "Five overlapping distances with independently checked segment reconstruction"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES number-line-six-points and EXAMS k7-2022-08 verified 1 through 19",
+          "note": "Question 19 enabled after source match"
         }
       ]
     }
