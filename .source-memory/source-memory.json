@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "2eba2f0b9b811194b0d32407455bc75048b2a4f2b503a581fc76405ca20eae3c",
-      "size": 72762,
-      "mtime_ns": 1786827547129396300
+      "sha256": "12fe04af6c797245cfc26a6d17effbf1e76dc8a58bbc6b02952a84f24bb954a6",
+      "size": 73432,
+      "mtime_ns": 1786827641897128900
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "2558f11af362a69b5f3072dd10985f11e66bb982ee08b6b0217101ca504772e7",
-      "size": 37695,
-      "mtime_ns": 1786827480718245100
+      "sha256": "2405d352d114d6cf488d8c94805474d2b91d6ea9867977ebbcca9d2de9e66c4d",
+      "size": 37699,
+      "mtime_ns": 1786827596665522300
     }
   ],
   "records": [
@@ -107,14 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 4 question 14",
+      "title": "Next verification selection test 4 questions 15 and 16",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q14"
+        "q15",
+        "q16"
       ],
-      "summary": "Verify the source add-subtract shape equation: square plus 38 equals 63, then 51 minus square equals heart, with official answer 26.",
+      "summary": "Verify and correct the reversed source order on page 10: question 15 is folded-number cut sum with official answer 35; question 16 is square-tile growth at the eighth stage with official answer 64.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,7 +124,7 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 14 remains disabled until source-equation and generator verification"
+          "note": "Questions 15 and 16 remain disabled until exact source order and rendering are verified"
         }
       ]
     },
@@ -2601,6 +2602,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-08 verified questions 1 through 13",
           "note": "Question 13 remapped from reverse order and enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q14",
+      "title": "Selection test 4 question 14 add-subtract shape equation",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q14",
+        "shape-equation-add-subtract"
+      ],
+      "summary": "The source gives square plus 38 equals 63 and 51 minus square equals heart. Square is 25 and the official heart answer is 26.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 14 paragraph",
+          "note": "Exact equations, official answer, reuse decision, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeEquationAddSubtract",
+          "note": "Previously verified two-step source-compatible generator"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 14",
+          "note": "Question 14 enabled"
         }
       ]
     }
