@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "21080421c79e8f452023eb3883a342511c29eabbd5e2265ce09e12b357fbe30d",
-      "size": 48232,
-      "mtime_ns": 1786820748707383900
+      "sha256": "3825dad2b3c8058bc0dd8fc7d04691b1a3a798ef029b3ab81f569b3632c60897",
+      "size": 49110,
+      "mtime_ns": 1786820968364062600
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "a6d318dba4fa5e0d038e34b77229456f18ddc35a68c8b0409b42beee2afe1026",
-      "size": 122769,
-      "mtime_ns": 1786820473196658400
+      "sha256": "caa60c85b1a41195b1a55c9492642c4c09945d6db6096b5cb2407d8aa5f237aa",
+      "size": 124200,
+      "mtime_ns": 1786820860524289300
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "2cf96e340792b8e2b9ce6ab49bf9f9e7179893f41d0b2740d5ce9701a3677a07",
-      "size": 34672,
-      "mtime_ns": 1786820659008501000
+      "sha256": "4cb1d2598127c9c296a49543ca95ba64def9a008286f4fd6f4d3d9503a4b55a4",
+      "size": 34861,
+      "mtime_ns": 1786820860523288900
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 8",
+      "title": "Next verification 7-year-old selection test 3 question 9",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q08"
+        "q09"
       ],
-      "summary": "Verify the two-by-two shape sum table with row sums 13 and 18, second-column sum 16, asked first-column sum, and answer 15 against source and answer page 6.",
+      "summary": "Verify the arrow-number path and its exact shown legend, route, and answer 49 against source and answer page 7 before enabling.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 3 question 8 is the next locked source question"
+          "note": "Selection test 3 question 9 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 8 shape-sum-table mapping",
-          "note": "Check exact shape layout before reusing any existing renderer"
+          "locator": "EXAMS k7-2022-06 question 9 arrow-number-grid mapping",
+          "note": "Compare against the seven-step and eight-step arrow variants before reuse"
         }
       ]
     },
@@ -1723,6 +1723,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-06 verified 1 through 7",
           "note": "Source question 7 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q8",
+      "title": "Selection test 3 question 8 shape-sum column target",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q8",
+        "shape-sum-table-column-target"
+      ],
+      "summary": "The source layout is diamond-circle over square-square with row sums 13 and 18, second-column sum 16, and asked first-column sum 15; it is not the prior shape-sum-table layout.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 8 paragraph",
+          "note": "Exact source shape placement, answer, separate type decision, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeSumColumnTarget",
+          "note": "All three shape values are independently recovered from the shown sums"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES shape-sum-table-column-target and EXAMS k7-2022-06 verified 1 through 8",
+          "note": "Source question 8 is enabled separately from shape-sum-table"
         }
       ]
     }

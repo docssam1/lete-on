@@ -1560,6 +1560,26 @@ function shapeSumBottomTarget({ difficulty = 2 }) {
   };
 }
 
+function shapeSumColumnTarget({ difficulty = 2 }) {
+  const max = difficulty === 1 ? 6 : difficulty === 2 ? 9 : 12;
+  const [diamond, circle, square] = shuffle(Array.from({ length: max }, (_, index) => index + 1)).slice(0, 3);
+  const rowOne = diamond + circle;
+  const rowTwo = square * 2;
+  const columnTwo = circle + square;
+  const target = diamond + square;
+  const showExample = difficulty !== 3;
+  const revealSquare = difficulty === 1;
+  return {
+    prompt: showExample
+      ? "[보기]에서 색칠된 칸은 가로, 세로 각 줄의 합을 나타냅니다. 오른쪽 표에서 같은 모양은 같은 수를 나타낼 때, ㉠에 알맞은 수를 구하세요."
+      : "색칠된 칸은 가로, 세로 각 줄의 합을 나타냅니다. 같은 모양은 같은 수를 나타낼 때, ㉠에 알맞은 수를 구하세요.",
+    visual: { kind: "shape-sum-column-target", rowOne, rowTwo, columnTwo, showExample, revealSquare, square },
+    answer: String(target),
+    solution: `네모 두 개의 합이 ${rowTwo}이므로 네모는 ${square}입니다. 동그라미는 ${columnTwo}에서 ${numberObject(square)} 빼면 ${circle}, 마름모는 ${rowOne}에서 ${numberObject(circle)} 빼면 ${diamond}입니다. 따라서 ㉠은 ${diamond} + ${square} = ${target}입니다.`,
+    meta: { difficulty, diamond, circle, square, rowOne, rowTwo, columnTwo, target, showExample, revealSquare }
+  };
+}
+
 function repeatShapeSequence({ difficulty = 2 }) {
   const target = randomInt(difficulty === 1 ? 8 : difficulty === 2 ? 11 : 21, difficulty === 1 ? 12 : difficulty === 2 ? 20 : 35);
   const cycle = ["동그라미", "세모", "동그라미"];
@@ -2280,6 +2300,7 @@ export const GENERATORS = {
   discNumberRule,
   shapeSumTable,
   shapeSumBottomTarget,
+  shapeSumColumnTarget,
   repeatShapeSequence,
   threeShapeCycle,
   fourShapeCycle,
