@@ -747,9 +747,9 @@ function connectedLineDegreeSum({ difficulty = 2 }) {
 
 function letterBlockTransform({ difficulty = 2 }) {
   const targetPools = {
-    1: ["학", "산", "문", "별"],
-    2: ["학", "봄", "꿈", "달", "집", "꽃"],
-    3: ["학교", "수학", "나무", "모양", "나라"]
+    1: ["학", "산", "문", "별", "봄", "꿈", "달", "집", "꽃", "해", "강", "길", "눈", "비", "빛", "숲", "책", "수", "말", "공", "손", "발", "차", "배"],
+    2: ["학", "봄", "꿈", "달", "집", "꽃", "해", "강", "길", "눈", "비", "빛", "숲", "책", "수", "말", "공", "손", "발", "차", "배", "별", "문", "산", "불", "물", "돌", "풀"],
+    3: ["학교", "수학", "나무", "모양", "나라", "구름", "바다", "하늘", "사과", "기차", "토끼", "우산", "연필", "가방", "시계", "의자", "창문", "동물", "친구", "공원", "별빛", "눈꽃", "봄날", "여름", "가을", "겨울", "풍선", "그림", "숫자", "구슬"]
   };
   const target = sample(targetPools[difficulty] || targetPools[2]);
   const guide = difficulty === 1
@@ -2408,7 +2408,12 @@ function busBoardThenLeave({ difficulty = 2 }) {
 }
 
 function symbolRelationTwoToThree({ difficulty = 2 }) {
-  const values = { "☆": 6, "○": 4, "▽": 5 };
+  const templates = difficulty === 1
+    ? SYMBOL_RELATION_UNIQUE_TEMPLATES.filter(({ firstStar, firstCircle }) => firstStar <= 6 && firstCircle <= 6)
+    : difficulty === 2
+      ? SYMBOL_RELATION_UNIQUE_TEMPLATES.filter(({ firstStar, firstCircle }) => firstStar <= 7 && firstCircle <= 7)
+      : SYMBOL_RELATION_UNIQUE_TEMPLATES;
+  const { firstStar, firstCircle, values } = sample(templates);
   const pairTargets = [["○", "▽"], ["☆", "○"], ["☆", "▽"]];
   const tripleTargets = [
     ["☆", "○", "▽"],
@@ -2418,12 +2423,13 @@ function symbolRelationTwoToThree({ difficulty = 2 }) {
   ];
   const final = sample(difficulty === 3 ? tripleTargets : pairTargets);
   const answer = final.reduce((sum, symbol) => sum + values[symbol], 0);
-  const hint = difficulty === 1 ? "도움: 첫째 식을 만족하는 수는 ☆=6, ○=4입니다." : "";
+  const hint = difficulty === 1 ? `도움: 첫째 식과 둘째 식을 함께 만족하는 ☆는 ${values["☆"]}입니다.` : "";
   return {
     prompt: "다음 ☆, ○, ▽은 서로 다른 한 자리 수입니다. □가 나타내는 수를 구하세요.",
-    visual: { kind: "symbol-relation-two-to-three", firstStar: 2, firstCircle: 3, final, hint },
+    visual: { kind: "symbol-relation-two-to-three", firstStar, firstCircle, final, hint },
     answer: String(answer),
-    solution: `첫째 식을 만족하는 ☆와 ○를 차례로 찾아 둘째 식에도 넣어 봅니다. ☆와 ○의 합을 똑같이 둘로 나눌 수 있는 경우는 ☆=6, ○=4이고, 이때 ▽=5입니다. 마지막 식 ${final.join("+")}를 계산하면 □는 ${answer}입니다.`
+    solution: `첫째 식과 둘째 식을 함께 만족하는 서로 다른 한 자리 수를 찾으면 ☆=${values["☆"]}, ○=${values["○"]}, ▽=${values["▽"]}입니다. 마지막 식 ${final.join("+")}를 계산하면 □는 ${answer}입니다.`,
+    meta: { difficulty, firstStar, firstCircle, values, final, answer }
   };
 }
 
@@ -2540,9 +2546,9 @@ function goStoneDifferenceInverseWhite({ difficulty = 2 }) {
 }
 
 function balanceScaleThreeObjects({ difficulty = 2 }) {
-  const squareBesideStar = randomInt(1, difficulty === 3 ? 3 : 2);
-  const squareBesideCircle = randomInt(1, difficulty === 1 ? 1 : 2);
-  const squareBesideDiamond = randomInt(1, difficulty === 3 ? 3 : 2);
+  const squareBesideStar = randomInt(1, 3);
+  const squareBesideCircle = randomInt(1, 3);
+  const squareBesideDiamond = randomInt(1, 3);
   const diamondWeight = squareBesideStar + squareBesideCircle;
   const starWeight = squareBesideDiamond + diamondWeight;
   const circleWeight = squareBesideStar + starWeight;
@@ -2564,7 +2570,8 @@ function balanceScaleThreeObjects({ difficulty = 2 }) {
       askCombined
     },
     answer: `${answer}개`,
-    solution: `첫째 저울의 ○를 □ ${squareBesideStar}개와 ☆ 1개로 바꾸어 둘째 저울에 놓아 봅니다. 양쪽의 ☆를 빼면 ◇ 1개는 □ ${diamondWeight}개와 같습니다. 셋째 저울에서 ☆ 1개는 □ ${squareBesideDiamond}개와 ◇ 1개이므로 □ ${starWeight}개와 같습니다. 따라서 ○ 1개는 □ ${circleWeight}개${askCombined ? `이고, 여기에 ◇의 □ ${diamondWeight}개를 더하면 모두 □ ${answer}개` : ""}와 같습니다.`
+    solution: `첫째 저울의 ○를 □ ${squareBesideStar}개와 ☆ 1개로 바꾸어 둘째 저울에 놓아 봅니다. 양쪽의 ☆를 빼면 ◇ 1개는 □ ${diamondWeight}개와 같습니다. 셋째 저울에서 ☆ 1개는 □ ${squareBesideDiamond}개와 ◇ 1개이므로 □ ${starWeight}개와 같습니다. 따라서 ○ 1개는 □ ${circleWeight}개${askCombined ? `이고, 여기에 ◇의 □ ${diamondWeight}개를 더하면 모두 □ ${answer}개` : ""}와 같습니다.`,
+    meta: { difficulty, squareBesideStar, squareBesideCircle, squareBesideDiamond, diamondWeight, starWeight, circleWeight, askCombined, answer }
   };
 }
 
@@ -2706,18 +2713,18 @@ function balanceScaleStarTarget({ difficulty = 2 }) {
 function balanceScaleFourObjects({ difficulty = 2 }) {
   let result = null;
   for (let attempt = 0; attempt < 300 && !result; attempt += 1) {
-    const starCount = difficulty === 1 ? 1 : randomInt(2, difficulty === 2 ? 3 : 4);
-    let diamondCount = difficulty === 1 ? randomInt(2, 3) : randomInt(starCount + 1, difficulty === 2 ? 5 : 6);
+    const starCount = difficulty === 1 ? randomInt(1, 2) : randomInt(2, difficulty === 2 ? 3 : 4);
+    let diamondCount = difficulty === 1 ? randomInt(starCount + 1, 5) : randomInt(starCount + 1, difficulty === 2 ? 5 : 6);
     if (diamondCount === starCount) diamondCount += 1;
     const divisor = ((a, b) => { while (b) [a, b] = [b, a % b]; return a; })(starCount, diamondCount);
     if (divisor !== 1) continue;
     const starWeight = diamondCount / divisor;
     const diamondWeight = starCount / divisor;
-    const squareStarCount = difficulty === 3 ? randomInt(1, 2) : 1;
-    const squareDiamondCount = difficulty === 3 ? randomInt(1, 2) : 1;
+    const squareStarCount = randomInt(1, 2);
+    const squareDiamondCount = randomInt(1, 2);
     const squareWeight = squareStarCount * starWeight + squareDiamondCount * diamondWeight;
-    const circleSquareCount = difficulty === 1 ? 1 : randomInt(1, difficulty === 2 ? 3 : 4);
-    const circleDiamondCount = difficulty === 1 ? randomInt(1, 2) : randomInt(difficulty === 2 ? 1 : 0, difficulty === 2 ? 3 : 4);
+    const circleSquareCount = difficulty === 1 ? randomInt(1, 2) : randomInt(1, difficulty === 2 ? 3 : 4);
+    const circleDiamondCount = difficulty === 1 ? randomInt(0, 2) : randomInt(difficulty === 2 ? 1 : 0, difficulty === 2 ? 3 : 4);
     const circleWeight = circleSquareCount * squareWeight + circleDiamondCount * diamondWeight;
     if (circleWeight % diamondWeight !== 0) continue;
     const answer = circleWeight / diamondWeight;

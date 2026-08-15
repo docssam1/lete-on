@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "2b6ae3dfd51eb6a0352586044d6aae30c6e8499fcb00f7526671c020b3ea77dc",
-      "size": 100503,
-      "mtime_ns": 1786834742427650200
+      "sha256": "7b39bca6afcda8c666be00b351a643d0a7cdeec38f24343a6b162621e681e79d",
+      "size": 101502,
+      "mtime_ns": 1786835052276144200
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "f659b475758fe1a15b298f9ceebdaeb78f6b301b6c3faad36ac95629226fa973",
-      "size": 185535,
-      "mtime_ns": 1786834641932429100
+      "sha256": "7a16f1d0194157aabac95d3ae1ee0f1c4a1dec14d1b0bac3251c0a9b00deb101",
+      "size": 186551,
+      "mtime_ns": 1786834959667325600
     },
     {
       "id": "source-data",
@@ -3618,6 +3618,42 @@
           "role": "code",
           "locator": "TYPES order-position, order-position-from-back, and connected-line-degree-sum",
           "note": "Source-matched selectable types"
+        }
+      ]
+    },
+    {
+      "id": "fields.regression.diversity.letter-balance-symbol",
+      "title": "Letter, balance, and symbol generator diversity repair",
+      "aliases": [],
+      "tags": [
+        "regression",
+        "diversity",
+        "letter-block-transform",
+        "balance-scale",
+        "symbol-relation"
+      ],
+      "summary": "Drawing-answer letter transforms now have 24 to 30 target words per level; three-object and four-object balance scales vary valid relation counts; and two-to-three symbol relations enumerate coefficient sets with exactly one distinct one-digit solution.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "Letter, balance, and symbol diversity paragraph",
+          "note": "Source-preserving variation and validation counts"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "functions letterBlockTransform, balanceScaleThreeObjects, balanceScaleFourObjects, and symbolRelationTwoToThree",
+          "note": "Expanded pools with deterministic relation checks"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "Corresponding source-matched TYPES entries",
+          "note": "Selectable source types remain unchanged"
         }
       ]
     }
