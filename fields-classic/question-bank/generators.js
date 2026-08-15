@@ -1508,6 +1508,32 @@ function additionTableGrid({ difficulty = 2 }) {
   };
 }
 
+function additionTableGridOffset({ difficulty = 2 }) {
+  const size = difficulty === 1 ? 3 : difficulty === 2 ? 4 : 5;
+  const start = randomInt(1, difficulty === 3 ? 6 : 8);
+  let across = randomInt(1, difficulty === 1 ? 2 : 4);
+  let down = randomInt(2, difficulty === 1 ? 3 : 4);
+  if (across === down) down = down === 4 ? 2 : down + 1;
+  const grid = Array.from({ length: size }, (_, row) => (
+    Array.from({ length: size }, (_, column) => start + row * down + column * across)
+  ));
+  const target = { row: size - 1, column: size - 1 };
+  const givenPositions = difficulty === 1
+    ? [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [2, 0]]
+    : difficulty === 2
+      ? [[0, 0], [0, 1], [0, 2], [0, 3], [1, 1], [1, 2], [2, 0], [2, 2], [3, 0]]
+      : [[0, 0], [0, 2], [1, 1], [2, 3], [3, 0], [4, 1]];
+  const givens = givenPositions.map(([row, column]) => ({ row, column, value: grid[row][column] }));
+  const answer = grid[target.row][target.column];
+  return {
+    prompt: "다음 표는 일정한 규칙으로 수를 나열한 것입니다. 규칙을 찾아 빈칸 ㉠에 알맞은 수를 구하세요.",
+    visual: { kind: "addition-table-grid", size, givens, target },
+    answer: String(answer),
+    solution: `오른쪽으로 한 칸 갈 때마다 ${across}씩 커지고, 아래로 한 칸 갈 때마다 ${down}씩 커집니다. 첫 수 ${start}에서 오른쪽으로 ${size - 1}번, 아래로 ${size - 1}번 가면 ${answer}입니다.`,
+    meta: { difficulty, size, start, across, down, grid, givens, target, answer }
+  };
+}
+
 function discNumberRule({ difficulty = 2 }) {
   const max = difficulty === 1 ? 8 : difficulty === 2 ? 12 : 20;
   const makeDisc = () => {
@@ -2552,6 +2578,7 @@ export const GENERATORS = {
   orderPositionFromBack,
   orderPositionFromFront,
   additionTableGrid,
+  additionTableGridOffset,
   discNumberRule,
   shapeSumTable,
   shapeSumBottomTarget,

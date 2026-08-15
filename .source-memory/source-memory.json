@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "cf6eea1e024e99a1c7a11c0c5c2ef936fc4da096b538a336bc1334c05d7678ca",
-      "size": 65352,
-      "mtime_ns": 1786825376860419900
+      "sha256": "647a6a5d01be95fc82d7ec612b95398ca2ac015c81510c5c69e53dfc91db61b0",
+      "size": 66168,
+      "mtime_ns": 1786825525218703700
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "bdee30de1a73954997a2116c6d013570dabdc9b5bed7dbd4b92951f0327aebc0",
-      "size": 141882,
-      "mtime_ns": 1786825305451167200
+      "sha256": "3dfab315f8ea4c5f820cf6220290a3a74a42ef8c5f24b7a8b8555defb5a39be0",
+      "size": 143447,
+      "mtime_ns": 1786825442243148600
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "78c2b01266d516e9eb8ba70ce45b2652ad7172b3826ff37407cc1e9ed1d87eef",
-      "size": 36555,
-      "mtime_ns": 1786825305452166700
+      "sha256": "9b3cf7ec7357572cfa8c488c2a346cc742973663edc2b9d2d49ec67cd214d6a6",
+      "size": 36745,
+      "mtime_ns": 1786825495212705500
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 4 question 6",
+      "title": "Next verification 7-year-old selection test 4 question 7",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q6"
+        "q7"
       ],
-      "summary": "Verify source and answer page 5 for a 4 by 4 table starting 4, increasing by 4 across and 3 down. The bottom-right marked answer is 25. Confirm generator step range and clue coordinates before enabling.",
+      "summary": "Verify source and answer page 6 for the arrow-number path. Recompute each horizontal plus or minus 1 and vertical plus or minus 10 move, confirm the original path length and official answer 57 before enabling.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 4 question 6 is an additive table"
+          "note": "Selection test 4 question 7 is an arrow-number path"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-08 question 6 addition-table-grid mapping",
-          "note": "Verify +4 across, +3 down, source givens, and answer"
+          "locator": "EXAMS k7-2022-08 question 7 arrow-number-grid mapping",
+          "note": "Verify exact path, direction deltas, start, and answer"
         }
       ]
     },
@@ -2335,6 +2335,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-08 verified questions 1 through 5",
           "note": "Source question 5 enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q6",
+      "title": "Selection test 4 question 6 offset-given additive table",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q6",
+        "addition-table-grid-offset"
+      ],
+      "summary": "The 4 by 4 source starts 4, increases by 4 across and 3 down, and marks the bottom-right value 25. Its clue coordinates differ from earlier additive tables, so a source-specific generator shares the user-facing type name.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 6 paragraph",
+          "note": "Original grid, step directions, clue coordinates, answer, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function additionTableGridOffset",
+          "note": "Three structural levels with independently recoverable rules"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES addition-table-grid-offset and EXAMS k7-2022-08 verified questions 1 through 6",
+          "note": "Source question 6 enabled"
         }
       ]
     }
