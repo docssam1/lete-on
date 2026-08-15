@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q25",
+  "variationId": "q25_var02",
+  "subType": "two_condition_digits",
+  "status": "draft",
+  "source": {
+    "problemImage": ""
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q25.json",
+    "hfDataTypeId": 25
+  },
+  "machineReadable": {
+    "payloadType": "two_condition_digits",
+    "digitDomain": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "conditionBoxes": [
+      {
+        "id": "left",
+        "expressionTemplate": "68 > [ ]9"
+      },
+      {
+        "id": "right",
+        "expressionTemplate": "3[ ] < 38"
+      }
+    ],
+    "solvingModel": {
+      "leftCandidates": [1, 2, 3, 4, 5],
+      "rightCandidates": [1, 2, 3, 4, 5, 6, 7],
+      "commonCandidatesWithinDomain": [1, 2, 3, 4, 5],
+      "expectedSum": 15
+    },
+    "expectedAnswer": 15
+  },
+  "answerValidation": {
+    "answerType": "number",
+    "expectedAnswer": 15
+  },
+  "problem": {
+    "prompt": "1부터 9까지의 숫자 중에서 두 빈칸에 공통으로 들어갈 수 있는 숫자를 모두 더하면 얼마입니까?  68 > □9,  3□ < 38"
+  },
+  "solutionHint": "첫째 빈칸에는 1부터 5까지, 둘째 빈칸에는 1부터 7까지 들어갈 수 있습니다. 두 곳에 모두 들어가는 1, 2, 3, 4, 5를 더하면 15입니다."
+}

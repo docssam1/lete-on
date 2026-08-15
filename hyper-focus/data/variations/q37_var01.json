@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q37",
+  "variationId": "q37_var01",
+  "subType": "circular_seating",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q37_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q37.json", "hfDataTypeId": 37 },
+  "machineReadable": { "payloadType": "circular_seating", "seatCount": 6, "expectedAnswer": 4 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 4 }
+}

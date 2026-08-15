@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">주사위를 굴려 색칠한 칸의 바닥면 수 구하기 유사문제 1</title>
+  <desc id="desc">윗면 1, 앞면 2, 오른쪽 면 3인 주사위를 오른쪽, 오른쪽, 아래 방향으로 굴리는 문제입니다.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5 0 10Z" fill="#7a6e50"/>
+    </marker>
+    <filter id="shadow" x="-12%" y="-12%" width="124%" height="136%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#333333" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <rect width="760" height="430" rx="24" fill="#ffffff"/>
+  <text x="380" y="43" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#202027">화살표를 따라 주사위를 한 칸씩 굴려 보세요</text>
+  <text x="380" y="72" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#59606a">색칠한 칸에 닿았을 때 바닥면의 수를 구하세요.</text>
+
+  <rect x="28" y="94" width="265" height="278" rx="22" fill="#fafafa" stroke="#dedede" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="315" y="94" width="417" height="278" rx="22" fill="#fafafa" stroke="#dedede" stroke-width="2" filter="url(#shadow)"/>
+  <text x="160" y="126" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="17" font-weight="900" fill="#3f444b">시작 주사위</text>
+  <text x="523" y="126" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="17" font-weight="900" fill="#3f444b">이동하는 길</text>
+
+  <g id="q08-start-die" stroke="#565d67" stroke-width="2">
+    <polygon data-face="top" data-value="1" points="160,145 220,175 160,205 100,175" fill="#f7f7f7"/>
+    <polygon data-face="front" data-value="2" points="100,175 160,205 160,267 100,237" fill="#e8e8e8"/>
+    <polygon data-face="right" data-value="3" points="160,205 220,175 220,237 160,267" fill="#d8d8d8"/>
+    <g fill="#6e6653" stroke="none">
+      <circle cx="160" cy="175" r="5"/>
+      <circle cx="116" cy="194" r="5"/><circle cx="144" cy="244" r="5"/>
+      <circle cx="178" cy="208" r="5"/><circle cx="202" cy="221" r="5"/><circle cx="178" cy="244" r="5"/>
+    </g>
+  </g>
+  <g font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="13" font-weight="800" fill="#555b63">
+    <text x="160" y="292" text-anchor="middle">윗면 1 · 앞면 2 · 오른쪽 3</text>
+    <text x="160" y="316" text-anchor="middle">마주 보는 두 면의 합은 7</text>
+  </g>
+
+  <g id="q08-grid" transform="translate(362 158)" fill="#ffffff" stroke="#666c73" stroke-width="2">
+    <rect data-x="0" data-y="0" x="0" y="0" width="72" height="72" fill="#f0f0f0"/>
+    <rect data-x="1" data-y="0" x="72" y="0" width="72" height="72"/>
+    <rect data-x="2" data-y="0" x="144" y="0" width="72" height="72"/>
+    <rect data-x="3" data-y="0" x="216" y="0" width="72" height="72"/>
+    <rect data-x="0" data-y="1" x="0" y="72" width="72" height="72"/>
+    <rect data-x="1" data-y="1" x="72" y="72" width="72" height="72"/>
+    <rect data-x="2" data-y="1" data-target="true" x="144" y="72" width="72" height="72" fill="#cfc9ba"/>
+    <rect data-x="3" data-y="1" x="216" y="72" width="72" height="72"/>
+  </g>
+  <g id="q08-path" fill="none" stroke="#8b7b55" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)">
+    <line data-step="1" data-move="right" x1="398" y1="194" x2="462" y2="194"/>
+    <line data-step="2" data-move="right" x1="470" y1="194" x2="534" y2="194"/>
+    <line data-step="3" data-move="down" x1="542" y1="202" x2="542" y2="266"/>
+  </g>
+  <text x="398" y="181" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="12" font-weight="900" fill="#4f5965">출발</text>
+  <text x="542" y="289" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="13" font-weight="900" fill="#4f5965">색칠한 칸</text>
+
+  <rect x="196" y="392" width="368" height="26" rx="13" fill="#eeeeee"/>
+  <text x="380" y="410" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#444444">굴릴 때마다 바닥에 닿는 면을 차례로 적어 보세요.</text>
+</svg>

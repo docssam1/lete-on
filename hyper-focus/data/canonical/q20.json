@@ -1,0 +1,187 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q20",
+  "typeId": 20,
+  "title": "서로 다른 선분을 이어 만들 수 있는 길이의 가지 수 구하기",
+  "problemType": "TYPE-05",
+  "subType": "segment_sum_lengths",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q20.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 20,
+    "originalQuestionId": "q20_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "segment_sum_lengths",
+      "originalInstance": {
+        "segments": [
+          { "id": "s1", "length": 1 },
+          { "id": "s2", "length": 2 },
+          { "id": "s3", "length": 4 },
+          { "id": "s4", "length": 8 }
+        ],
+        "combinationRule": {
+          "useEachAtMostOnce": true,
+          "allowSingleSegment": true,
+          "allowAllSegments": true,
+          "mustBeJoinedEndToEnd": true,
+          "allowOverlapConstruction": false,
+          "orderIrrelevant": true,
+          "removeDuplicateLengths": true
+        }
+      },
+      "countingModel": {
+        "expectedAnswer": 15,
+        "distinctLengths": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+        "reason": "1, 2, 4, 8은 이진 가중치 구조라 비어 있지 않은 부분집합의 합이 모두 다르다."
+      },
+      "generalRuleModel": {
+        "constructionModes": [
+          {
+            "mode": "join_only",
+            "mustBeJoinedEndToEnd": true,
+            "allowOverlapConstruction": false,
+            "description": "막대를 이어 붙여 길이를 만든다."
+          },
+          {
+            "mode": "overlap_allowed",
+            "mustBeJoinedEndToEnd": false,
+            "allowOverlapConstruction": true,
+            "description": "막대를 겹쳐서 길이 차이나 공통 구간을 이용하는 문제도 가능하다."
+          }
+        ],
+        "supportedLengthSets": [
+          [1, 2, 4, 8],
+          [2, 4, 6, 10]
+        ],
+        "description": "유사문제에서는 길이 집합과 구성 방식이 달라질 수 있으므로, 반드시 가능한 길이를 직접 나열하고 중복을 제거해야 한다."
+      },
+      "solutionStrategy": {
+        "recommendedOrder": [
+          "가장 짧은 길이부터 가능한 합을 차례로 적는다.",
+          "한 막대만 쓰는 경우를 먼저 쓴다.",
+          "이어 붙이는 경우와 겹치는 경우를 문제 조건에 맞게 나눠 본다.",
+          "같은 길이는 한 번만 센다."
+        ],
+        "mentalHackFormula": "원본은 2^4 - 1 = 15로 빠르게 셀 수 있지만, 일반형은 가능한 길이를 직접 목록화한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 목표 길이 경우의 수를 정한 뒤, 선분 길이 집합과 구성 방식(이어 붙임/겹침 허용)을 정해서 가능한 길이 수가 하나로 결정되도록 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "segmentCountRange": [3, 4],
+          "mustBeJoinedEndToEnd": true,
+          "allowOverlapConstruction": false,
+          "preferredLengths": [1, 2, 3]
+        },
+        "baseMode": {
+          "segmentCount": 4,
+          "mustBeJoinedEndToEnd": true,
+          "allowOverlapConstruction": false,
+          "exampleLengthSets": [
+            [1, 2, 4, 8],
+            [2, 4, 6, 10]
+          ]
+        },
+        "hardMode": {
+          "segmentCount": 4,
+          "allowNonPowerSeries": true,
+          "allowOverlapConstruction": true,
+          "mustPreserve": [
+            "unique total count",
+            "duplicate length elimination",
+            "explicit construction rule"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "선분 개수",
+          "각 선분 길이",
+          "겹침 허용 여부",
+          "반드시 이어 붙이는지 여부",
+          "목표 길이 경우의 수"
+        ],
+        "mustPreserve": [
+          "선분을 이어 길이를 만드는 구조",
+          "문제마다 구성 규칙이 명확히 주어지는 구조",
+          "같은 길이는 한 번만 세는 규칙",
+          "정답이 하나로 결정되는 길이 집합"
+        ],
+        "forbiddenChanges": [
+          "같은 길이 중복 여부가 모호한 조건",
+          "선분 사용 횟수가 불명확한 조건",
+          "겹칠 수 있는지 이어야 하는지가 불명확한 조건",
+          "정답이 여러 값으로 갈리는 길이 집합"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "text_with_diagram_or_simple_svg",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 15,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "count_distinct_constructible_lengths",
+      "checks": [
+        "선분 길이가 1, 2, 4, 8인지 확인",
+        "원본은 반드시 이어 붙이는 조건인지 확인",
+        "원본은 겹침이 허용되지 않는지 확인",
+        "각 선분을 한 번씩만 쓰는지 확인",
+        "서로 다른 부분합이 1부터 15까지 모두 나오는지 확인",
+        "전체 경우의 수가 15인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q20 경로 존재 확인",
+      "hf_data.json typeId 20의 originalProblem.answer가 15가지인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 segment_sum_lengths인지 확인",
+      "originalInstance.combinationRule.removeDuplicateLengths가 true인지 확인",
+      "originalInstance.combinationRule.mustBeJoinedEndToEnd가 true인지 확인",
+      "originalInstance.combinationRule.allowOverlapConstruction이 false인지 확인",
+      "expectedAnswer가 15인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

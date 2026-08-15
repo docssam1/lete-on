@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q33",
+  "typeId": 33,
+  "title": "가위바위보 결과에 따른 계단 위치 차이 구하기",
+  "problemType": "TYPE-04",
+  "subType": "rps_stair_position",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q33.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 33,
+    "originalQuestionId": "q33_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "rps_stair_position",
+      "movementRule": {
+        "win": 2,
+        "lose": -1,
+        "sameStart": true
+      },
+      "rounds": 5,
+      "jaeRecord": {
+        "wins": 3,
+        "losses": 2
+      },
+      "solvingModel": {
+        "jaeMove": 4,
+        "jiyongMove": 1,
+        "difference": 3,
+        "expectedAnswer": 3
+      },
+      "judgementRule": {
+        "checks": [
+          "start_at_10_to_avoid_negative"
+        ],
+        "description": "시작 위치를 임시로 같은 계단에 두고 이동량만 계산해 차이를 구한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 위치 차이를 정한 뒤, 이김/짐 횟수와 이동 규칙을 맞춰 그 차이가 나오게 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "rounds": 3,
+          "win": 1,
+          "lose": -1
+        },
+        "baseMode": {
+          "rounds": 5,
+          "win": 2,
+          "lose": -1
+        },
+        "hardMode": {
+          "rounds": 6,
+          "allowCustomMovement": true
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "이긴 횟수",
+          "진 횟수",
+          "이동 규칙"
+        ],
+        "mustPreserve": [
+          "같은 시작 위치에서 이동량 차이를 구하는 구조",
+          "이김/짐에 따른 이동 규칙 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "이동 규칙이 불명확한 문제",
+          "무승부 처리 여부가 모호한 문제",
+          "차이가 여러 값으로 나오는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "text_with_step_diagram",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 3,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "compare_net_moves",
+      "checks": [
+        "승리 3번, 패배 2번인지 확인",
+        "이기면 +2, 지면 -1인지 확인",
+        "최종 위치 차이가 3인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q33 경로 존재 확인",
+      "hf_data.json typeId 33의 originalProblem.answer가 3계단인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 rps_stair_position인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

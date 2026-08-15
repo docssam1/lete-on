@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q23",
+  "variationId": "q23_var01",
+  "subType": "operator_insert_or_blank",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q23_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q23.json", "hfDataTypeId": 23 },
+  "machineReadable": { "payloadType": "operator_insert_or_blank", "expressionSlots": ["+", "*"], "targetValue": 14, "expectedAnswer": ["+", "*"] },
+  "answerValidation": { "answerType": "operator_set", "expectedAnswer": ["+", "*"] }
+}

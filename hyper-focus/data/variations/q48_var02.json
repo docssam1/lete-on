@@ -1,0 +1,34 @@
+{
+ "schemaVersion": "hf-variation-problem-v1",
+ "baseQuestionId": "q48",
+ "variationId": "q48_var02",
+ "subType": "work_together_grid",
+ "status": "draft",
+ "source": {
+    "problemImage": ""
+ },
+ "contentBinding": {
+  "canonicalSource": "./canonical/q48.json",
+  "hfDataTypeId": 48
+ },
+ "machineReadable": {
+  "payloadType": "work_together_grid",
+  "personA": "지호",
+  "personB": "서연",
+  "daysA": 6,
+  "daysB": 12,
+  "totalUnits": 12,
+  "perDayA": 2,
+  "perDayB": 1,
+  "perDayTogether": 3,
+  "expectedAnswer": 4
+ },
+ "answerValidation": {
+  "answerType": "integer",
+  "expectedAnswer": 4
+ },
+ "problem": {
+  "prompt": "지호는 어떤 일을 혼자 하면 6일 만에 끝내고, 서연이는 혼자 하면 12일 만에 끝냅니다. 두 사람이 함께 하면 며칠 만에 끝낼 수 있습니까?"
+ },
+ "solutionHint": "전체 일을 12칸으로 나누면, 지호는 하루에 2칸, 서연이는 하루에 1칸 합니다. 함께 하면 하루에 3칸이므로 12÷3=4일입니다."
+}

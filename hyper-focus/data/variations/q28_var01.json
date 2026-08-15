@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q28",
+  "variationId": "q28_var01",
+  "subType": "venn_sum_equal",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q28_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q28.json", "hfDataTypeId": 28 },
+  "machineReadable": { "payloadType": "venn_sum_equal", "singleRegions": [3, 5, 7], "targetIntersection": 4, "expectedAnswer": 4 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 4 }
+}

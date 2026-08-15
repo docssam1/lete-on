@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q50",
+  "typeId": 50,
+  "title": "같은 길이 물건 그림으로 각 물건 길이 구하기",
+  "problemType": "TYPE-08",
+  "subType": "length_units_picture",
+  "answerType": "multi_length_values",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q50.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": true,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 50,
+    "originalQuestionId": "q50_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "length_units_picture",
+      "givenUnit": {
+        "item": "지우개",
+        "lengthCm": 4
+      },
+      "targetItems": ["크레파스", "연필", "클립"],
+      "solvingModel": {
+        "expectedAnswer": {
+          "크레파스": 6,
+          "연필": 8,
+          "클립": 3
+        },
+        "strategy": [
+          "지우개 4cm를 그림에 직접 표시한다.",
+          "전체 길이를 같은 기준 단위로 나눈다.",
+          "각 물건의 길이를 차례로 읽는다."
+        ]
+      },
+      "judgementRule": {
+        "checks": [
+          "write_given_number_on_picture"
+        ],
+        "description": "문제에서 준 길이를 그림 위에 바로 적고 같은 단위로 비교한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 각 물건 길이를 정한 뒤, 같은 전체 길이가 되도록 그림 조합을 맞춘다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "itemCount": 3
+        },
+        "baseMode": {
+          "itemCount": 4
+        },
+        "hardMode": {
+          "itemCount": 4,
+          "mustPreserve": [
+            "same total length comparison",
+            "single valid item lengths"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "기준 물건 길이",
+          "물건 종류",
+          "같은 전체 길이 조합"
+        ],
+        "mustPreserve": [
+          "그림으로 길이를 비교하는 구조",
+          "하나의 기준 길이로 다른 길이를 구하는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "그림 길이 비례가 맞지 않는 문제",
+          "기준 길이가 여러 개로 해석되는 문제",
+          "각 물건 길이가 둘 이상 가능한 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "length_bar_with_labels",
+        "svgRequired": true,
+        "renderer": "length_units_picture"
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "multi_length_values",
+    "expectedAnswer": {
+      "크레파스": 6,
+      "연필": 8,
+      "클립": 3
+    },
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "compare_picture_lengths_by_unit_item",
+      "checks": [
+        "지우개가 4cm인지 확인",
+        "크레파스가 6cm인지 확인",
+        "연필이 8cm인지 확인",
+        "클립이 3cm인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q50 경로 존재 확인",
+      "hf_data.json typeId 50의 originalProblem.answer 확인",
+      "hf_core.json 및 problem_map.json의 subType이 length_units_picture인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

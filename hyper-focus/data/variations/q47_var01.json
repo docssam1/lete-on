@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q47",
+  "variationId": "q47_var01",
+  "subType": "reverse_table",
+  "status": "draft",
+  "source": {
+    "problemImage": ""
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q47.json",
+    "hfDataTypeId": 47
+  },
+  "machineReadable": {
+    "payloadType": "reverse_table",
+    "initialTotal": 28,
+    "changes": [
+      {
+        "from": "number_card",
+        "to": "alphabet_card",
+        "count": 7
+      },
+      {
+        "from": "alphabet_card",
+        "to": "number_card",
+        "count": 3
+      },
+      {
+        "from": "outside",
+        "to": "number_card",
+        "count": 4
+      }
+    ],
+    "solvingModel": {
+      "finalState": {
+        "numberCards": 16,
+        "alphabetCards": 16
+      },
+      "reverseStates": [
+        {
+          "numberCards": 12,
+          "alphabetCards": 16
+        },
+        {
+          "numberCards": 9,
+          "alphabetCards": 19
+        },
+        {
+          "numberCards": 16,
+          "alphabetCards": 12
+        }
+      ],
+      "expectedAnswer": 12
+    },
+    "expectedAnswer": 12
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 12
+  },
+  "problem": {
+    "prompt": "관호네 반 학생 28명은 숫자 카드와 알파벳 카드를 서로 나누어 가졌습니다. 중간에 숫자 카드를 가진 7명의 학생이 알파벳 카드로 바꾸었고, 알파벳 카드를 가진 3명의 학생이 숫자 카드로 바꾸었습니다. 며칠 후 4명의 친구가 전학을 와 숫자 카드를 받았더니 숫자 카드와 알파벳 카드를 가진 학생의 수가 같아졌습니다. 처음에 알파벳 카드를 가지고 있었던 학생은 몇 명일까요?"
+  },
+  "solutionHint": "마지막에는 모두 32명이므로 두 카드가 16명씩입니다. 전학생 4명이 오기 전에는 숫자 12명, 알파벳 16명입니다. 카드 바꾸기를 거꾸로 돌리면 숫자 9명·알파벳 19명, 다시 숫자 16명·알파벳 12명이 됩니다."
+}

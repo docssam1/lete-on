@@ -1,0 +1,23 @@
+{
+ "schemaVersion": "hf-variation-problem-v1",
+ "baseQuestionId": "q54",
+ "variationId": "q54_var01",
+ "subType": "parity_sequence",
+ "status": "draft",
+ "source": {
+  "problemImage": "./assets/problems/q54_var01.png"
+ },
+ "contentBinding": {
+  "canonicalSource": "./canonical/q54.json",
+  "hfDataTypeId": 54
+ },
+ "machineReadable": {
+  "payloadType": "parity_sequence",
+  "sequenceLength": 30,
+  "expectedAnswer": 20
+ },
+ "answerValidation": {
+  "answerType": "integer",
+  "expectedAnswer": 20
+ }
+}

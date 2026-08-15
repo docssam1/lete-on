@@ -1,0 +1,31 @@
+{
+ "schemaVersion": "hf-variation-problem-v1",
+ "baseQuestionId": "q30",
+ "variationId": "q30_var01",
+ "subType": "target_score_cases",
+ "status": "verified",
+ "source": {
+  "problemImage": "./assets/svg/variations/q30_var01.svg"
+ },
+ "contentBinding": {
+  "canonicalSource": "./canonical/q30.json",
+  "hfDataTypeId": 30
+ },
+ "problem": { "prompt": "1점, 2점, 3점, 4점 과녁을 3번 모두 맞혔을 때 나올 수 있는 서로 다른 총점은 모두 몇 가지입니까?" },
+ "machineReadable": {
+  "payloadType": "target_score_cases",
+  "choices": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "shots": 3,
+  "expectedAnswer": 10
+ },
+ "answerValidation": {
+  "answerType": "integer",
+  "expectedAnswer": 10
+ },
+ "solutionHint": "가장 작은 3점부터 가장 큰 12점까지 모든 점수를 만들 수 있으므로 10가지입니다."
+}

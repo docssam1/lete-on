@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q31",
+  "variationId": "q31_var01",
+  "subType": "symbol_value_equations",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q31_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q31.json", "hfDataTypeId": 31 },
+  "machineReadable": { "payloadType": "symbol_value_equations", "symbolCount": 3, "expectedAnswer": 7 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 7 }
+}

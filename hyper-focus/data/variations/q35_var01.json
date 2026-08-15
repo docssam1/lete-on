@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q35",
+  "variationId": "q35_var01",
+  "subType": "line_order",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q35_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q35.json", "hfDataTypeId": 35 },
+  "machineReadable": { "payloadType": "line_order", "personCount": 4, "expectedAnswer": 3 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 3 }
+}

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">겹친 원 영역의 수 구하기 유사문제 2</title><desc id="desc">4가 적힌 왼쪽 원과 6이 적힌 오른쪽 원이 겹치며 겹친 곳에 별표가 있습니다.</desc>
+  <rect width="760" height="430" rx="24" fill="#fff"/><text x="380" y="43" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#20272b">겹친 부분에는 어떤 수가 들어갈까요?</text><text x="380" y="73" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#59636a">겹친 부분의 수는 양쪽에 적힌 수를 더한 값입니다.</text>
+  <g transform="translate(180 105)" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle"><circle cx="160" cy="130" r="125" fill="#f7d59e" fill-opacity=".72" stroke="#bc8432" stroke-width="3"/><circle cx="240" cy="130" r="125" fill="#b9ddc4" fill-opacity=".72" stroke="#4f9665" stroke-width="3"/><text x="92" y="143" font-size="42" fill="#80551c">4</text><text x="308" y="143" font-size="42" fill="#2d6f42">6</text><text x="200" y="148" font-size="54" fill="#333">★</text></g>
+  <rect x="210" y="375" width="340" height="30" rx="15" fill="#f0eeeb"/><text x="380" y="396" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#4d555a">두 원에 적힌 수를 더하세요.</text>
+</svg>

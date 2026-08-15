@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q49",
+  "variationId": "q49_var01",
+  "subType": "unit_rate_animals",
+  "status": "draft",
+  "source": {
+    "problemImage": ""
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q49.json",
+    "hfDataTypeId": 49
+  },
+  "machineReadable": {
+    "payloadType": "unit_rate_animals",
+    "givenRatio": {
+      "animals": 4,
+      "days": 2,
+      "nuts": 32
+    },
+    "target": {
+      "animals": 6,
+      "nuts": 72
+    },
+    "solvingModel": {
+      "perAnimalPerDay": 4,
+      "targetPerDay": 24,
+      "expectedAnswer": 3
+    },
+    "expectedAnswer": 3
+  },
+  "answerValidation": {
+    "answerType": "time_count",
+    "expectedAnswer": 3
+  },
+  "problem": {
+    "prompt": "네 마리의 다람쥐가 2일에 32개의 도토리를 줍습니다. 6마리의 다람쥐가 72개의 도토리를 주우려면 며칠이 걸릴까요?"
+  },
+  "solutionHint": "다람쥐 1마리는 하루에 4개를 줍습니다. 6마리는 하루에 24개를 주우므로 72개를 주우려면 3일이 걸립니다."
+}

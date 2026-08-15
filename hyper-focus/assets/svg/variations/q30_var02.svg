@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">과녁을 세 번 맞혀 서로 다른 총점 세기 유사문제 2</title>
+  <desc id="desc">바깥부터 2점, 4점, 6점인 세 구역 과녁입니다.</desc>
+  <rect width="760" height="430" rx="24" fill="#fff"/>
+  <text x="380" y="43" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#20272b">과녁을 3번 모두 맞혔을 때 나오는 총점을 세어 보세요</text>
+  <text x="380" y="73" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#59636a">서로 다른 총점은 모두 몇 가지일까요?</text>
+  <g transform="translate(380 222)" stroke="#4b5358" stroke-width="2"><circle r="135" fill="#e8f1e8"/><circle r="91" fill="#f3dfba"/><circle r="47" fill="#d6c9e5"/></g>
+  <g text-anchor="middle" font-family="Arial,sans-serif" font-size="21" font-weight="900" fill="#263238"><text x="380" y="229">6</text><text x="380" y="167">4</text><text x="380" y="123">2</text></g>
+  <rect x="226" y="380" width="308" height="28" rx="14" fill="#f0eeeb"/><text x="380" y="400" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#4d555a">가장 작은 총점부터 가장 큰 총점까지 적어 보세요.</text>
+</svg>
