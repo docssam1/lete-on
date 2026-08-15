@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Sophie's Whiteboard Storybook</title>
+  <style>
+    :root{color-scheme:light;--paper:#f5ebd7;--ink:#28251f;--accent:#a34539;--line:#d5c5a8}
+    *{box-sizing:border-box} html,body{overflow-x:hidden} body{margin:0;background:#e8dcc4;color:var(--ink);font-family:Georgia,serif}
+    main{width:min(1180px,calc(100% - 28px));margin:auto;padding:28px 0 60px}
+    header{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:20px}
+    h1{margin:0;font-size:clamp(27px,4vw,46px)} header p{margin:0;color:#685f50}
+    nav{display:flex;gap:8px;margin:18px 0} button{border:1px solid #bda889;border-radius:999px;padding:11px 18px;background:#fffaf0;font-weight:700;cursor:pointer}
+    button[aria-selected=true]{color:white;background:var(--accent);border-color:var(--accent)}
+    .story{display:none}.story.active{display:block}.story h2{margin:24px 0 14px}
+    .scene-list{display:grid;gap:24px}.scene-card{overflow:hidden;scroll-margin-block:22px;border:1px solid var(--line);border-radius:18px;background:#fffaf0;box-shadow:0 13px 35px #6756381a}
+    .scene-head{display:flex;gap:18px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}.scene-head span{flex:0 0 auto;font:700 11px Arial;letter-spacing:.16em;color:var(--accent)}.scene-head p{min-width:0;margin:0;font-size:15px;overflow-wrap:anywhere}
+    video{display:block;width:100%;background:var(--paper);aspect-ratio:16/9}
+    .passage{padding:22px clamp(18px,4vw,42px) 26px;font-size:clamp(18px,2.1vw,24px);line-height:1.75}
+    .sentence{border-radius:6px;padding:2px 1px;transition:.15s}.sentence.reading{background:#f7cf73;box-shadow:0 0 0 3px #f7cf734d}
+    @media(min-width:900px){.scene-card{display:grid;grid-template-columns:1.2fr 1fr}.scene-head{grid-column:1/-1}.passage{align-self:center}.scene-card video{height:100%;object-fit:contain}}
+    @media(max-width:700px){header{align-items:flex-start;flex-direction:column;gap:7px}header>p{font-size:14px}h2{overflow-wrap:anywhere}.scene-head{align-items:flex-start}.passage{padding-inline:20px}}
+  </style>
+</head>
+<body><main>
+  <header><div><p>READ · WATCH · LISTEN</p><h1>Sophie's Whiteboard Storybook</h1></div><p>Neural2 narration · live sentence highlight · automatic next scene</p></header>
+  <nav aria-label="Choose a story">
+    <button type="button" data-target="story-1" aria-selected="true">Story 1</button><button type="button" data-target="story-2" aria-selected="false">Story 2</button>
+  </nav>
+  
+  <section class="story active" data-story="story-1">
+    <h2>Story 1 — Audrey and the Unicorn</h2>
+    <div class="scene-list">
+      
+        <article class="scene-card" data-scene="scene-01-gem">
+          <div class="scene-head"><span>SCENE 01</span><p>Audrey discovers a glowing gem on a quiet street and becomes sleepy after touching it.</p></div>
+          <video controls preload="metadata" playsinline src="./whiteboard-review/story-1/scene-01-gem.mp4"></video>
+          <div class="passage" aria-label="Read-along passage">
+            <span class="sentence" data-start="0.014999999664723873" data-end="5.851833820343018">There once lived a curious girl named Audrey who loved thinking about new and exciting things.</span> <span class="sentence" data-start="5.851833820343018" data-end="13.127751350402832">One day, she was walking down a street near her house when a mysterious glowing gem suddenly caught her attention.</span> <span class="sentence" data-start="13.127751350402832" data-end="17.901208877563477">Curious about where it had come from, Audrey carefully picked it up.</span> <span class="sentence" data-start="17.901208877563477" data-end="25.858">At first, everything seemed very fine until Audrey suddenly touched the glowing gem and fell asleep in the middle of the street.</span>
+          </div>
+        </article>
+      
+        <article class="scene-card" data-scene="scene-02-help">
+          <div class="scene-head"><span>SCENE 02</span><p>Audrey wakes in a magical forest and bandages an injured young unicorn.</p></div>
+          <video controls preload="metadata" playsinline src="./whiteboard-review/story-1/scene-02-help.mp4"></video>
+          <div class="passage" aria-label="Read-along passage">
+            <span class="sentence" data-start="0.000249664306640085" data-end="7.873208801269531">Everything went dark, and when she opened her eyes again, she realized that she was lying in the middle of a strange forest.</span> <span class="sentence" data-start="7.873208801269531" data-end="14.460458557128906">A sign nearby read, “Paint Family,” and a herd of colorful unicorns appeared before her eyes.</span> <span class="sentence" data-start="14.460458557128906" data-end="22.365041534423828">As Audrey looked around in amazement, she noticed a small unicorn that was about to burst into tears because its leg was hurt.</span> <span class="sentence" data-start="22.365041534423828" data-end="28.727166931152343">“Please save my life! I will do anything to help you when you are in danger,” the unicorn murmured.</span> <span class="sentence" data-start="28.727166931152343" data-end="34.827">Even though Audrey wanted to keep exploring, she carefully tied its injured leg with a bandage.</span>
+          </div>
+        </article>
+      
+        <article class="scene-card" data-scene="scene-03-trapped">
+          <div class="scene-head"><span>SCENE 03</span><p>Dark unicorns surround Audrey in the deep forest and block every escape.</p></div>
+          <video controls preload="metadata" playsinline src="./whiteboard-review/story-1/scene-03-trapped.mp4"></video>
+          <div class="passage" aria-label="Read-along passage">
+            <span class="sentence" data-start="0.00037521362304460126" data-end="5.6279196166992165">The unicorn happily galloped away, and Audrey wondered if she would ever meet it again.</span> <span class="sentence" data-start="5.6279196166992165" data-end="15.59608215332031">But then, the biggest problem appeared when Audrey wandered deeper into the forest and suddenly found herself surrounded by a group of huge, evil unicorns.</span> <span class="sentence" data-start="15.59608215332031" data-end="21.38429016113281">They emerged from behind the trees one by one, blocking every possible escape route.</span> <span class="sentence" data-start="21.38429016113281" data-end="25.084958496093748">Their angry eyes glowed as they slowly moved closer to her.</span> <span class="sentence" data-start="25.084958496093748" data-end="29.90083068847656">Audrey&#39;s heart began to pound, and a cold shiver ran down her spine.</span>
+          </div>
+        </article>
+      
+        <article class="scene-card" data-scene="scene-04-return">
+          <div class="scene-head"><span>SCENE 04</span><p>Audrey is trapped, but the kind white unicorn returns on a hill to protect her.</p></div>
+          <video controls preload="metadata" playsinline src="./whiteboard-review/story-1/scene-04-return.mp4"></video>
+          <div class="passage" aria-label="Read-along passage">
+            <span class="sentence" data-start="0" data-end="6.6972031250000015">She tried to escape through a narrow space between two of them, but another unicorn quickly blocked her way.</span> <span class="sentence" data-start="6.6972031250000015" data-end="12.141539062500001">Even though Audrey tried to stay brave, she realized that she was completely trapped.</span> <span class="sentence" data-start="12.141539062500001" data-end="18.1152939453125">Helplessly sitting on the ground, she knew she had to think quickly before the monsters attacked.</span> <span class="sentence" data-start="18.1152939453125" data-end="23.903456176757814">However, luckily, something amazing happened just when Audrey was about to lose hope.</span> <span class="sentence" data-start="23.903456176757814" data-end="29.998">Suddenly, the unicorn she had helped earlier appeared on a hill and let out a powerful cry.</span>
+          </div>
+        </article>
+      
+        <article class="scene-card" data-scene="scene-05-rescue">
+          <div class="scene-head"><span>SCENE 05</span><p>The kind unicorn uses glowing magic to drive away the dark unicorns and carries Audrey to safety.</p></div>
+          <video controls preload="metadata" playsinline src="./whiteboard-review/story-1/scene-05-rescue.mp4"></video>
+          <div class="passage" aria-label="Read-along passage">
+            <span class="sentence" data-start="0.00016748046874681677" data-end="4.964042297363278">Audrey&#39;s eyes widened as she realized that it had come back to keep its promise.</span> <span class="sentence" data-start="4.964042297363278" data-end="10.501250854492184">Its horn began to glow, sending sparkling waves of magic across the forest.</span> <span class="sentence" data-start="10.501250854492184" data-end="16.328750244140622">One by one, the evil unicorns became frightened and disappeared into the darkness.</span> <span class="sentence" data-start="16.328750244140622" data-end="21.178786865234372">The kind unicorn quickly lowered its back so Audrey could climb on.</span> <span class="sentence" data-start="21.178786865234372" data-end="26.885955444335934">They galloped through the forest until they finally reached the place where Audrey had first arrived.</span>
+          </div>
+        </article>
+      
+        <article class="scene-card" data-scene="scene-06-home">
+          <div class="scene-head"><span>SCENE 06</span><p>Audrey thanks the unicorn, crosses the mysterious doorway, and returns safely home understanding kindness.</p></div>
+          <video controls preload="metadata" playsinline src="./whiteboard-review/story-1/scene-06-home.mp4"></video>
+          <div class="passage" aria-label="Read-along passage">
+            <span class="sentence" data-start="0" data-end="4.997239379882814">When Audrey climbed off its back, she thanked the unicorn for saving her.</span> <span class="sentence" data-start="4.997239379882814" data-end="11.976533203125001">At that moment, she understood that the kindness she had shown earlier had returned to her when she needed it most.</span> <span class="sentence" data-start="11.976533203125001" data-end="17.0387890625">In the end, Audrey pushed open a mysterious door and dashed inside.</span> <span class="sentence" data-start="17.0387890625" data-end="22.263291625976564">When the elevator doors opened, she suddenly found herself safely back home.</span> <span class="sentence" data-start="22.263291625976564" data-end="28.414">From that day on, Audrey never forgot that even a small act of kindness could come back in an unexpected way.</span>
+          </div>
+        </article>
+      
+    </div>
+  </section>
+
+  <section class="story " data-story="story-2">
+    <h2>Story 2 — The Most Special Day I Have Ever Had</h2>
+    <div class="scene-list">
+      
+        <article class="scene-card" data-scene="scene-01-arrival">
+          <div class="scene-head"><span>SCENE 01</span><p>Sophie arrives at an indoor activity center with her best friend, excited for a special day together.</p></div>
+          <video controls preload="metadata" playsinline src="./whiteboard-review/story-2/scene-01-arrival.mp4"></video>
+          <div class="passage" aria-label="Read-along passage">
+            <span class="sentence" data-start="0.014999999664723873" data-end="2.5339581966400146">The Most Special Day I Have Ever Had</span> <span class="sentence" data-start="2.5339581966400146" data-end="5.6995415687561035">Have you ever had a surprising and unforgettable day?</span> <span class="sentence" data-start="5.6995415687561035" data-end="11.308833122253418">To me, the most extraordinary day was when I went to KidZania with my best friend.</span> <span class="sentence" data-start="11.308833122253418" data-end="22.629497528076172">There are three reasons why this day holds a special place in my heart: I spent the whole day with my friend, had a surprising sleepover, and completed exciting adventure missions.</span> <span class="sentence" data-start="22.629497528076172" data-end="27.172">To begin with, the day was special because my best friend was with me.</span>
+          </div>
+        </article>
+      
+        <article class="scene-card" data-scene="scene-02-together">
+          <div class="scene-head"><span>SCENE 02</span><p>Her best friend leads the way, encourages Sophie, and makes every activity more exciting.</p></div>
+          <video controls preload="metadata" playsinline src="./whiteboard-review/story-2/scene-02-together.mp4"></video>
+          <div class="passage" aria-label="Read-along passage">
+            <span class="sentence" data-start="0.00028889465331971564" data-end="7.271790435791015">Since I did not know my way around KidZania very well, my friend led the way and introduced me to different activities.</span> <span class="sentence" data-start="7.271790435791015" data-end="13.931500366210937">We ran from place to place, laughed together, and decided which activities we wanted to try next.</span> <span class="sentence" data-start="13.931500366210937" data-end="19.195000579833984">Whenever I felt unsure about something, my friend encouraged me to give it a try.</span> <span class="sentence" data-start="19.195000579833984" data-end="28.13">Looking back, I still feel thankful that I had a friend beside me because every activity became much more exciting when we experienced it together.</span>
+          </div>
+        </article>
+      
+        <article class="scene-card" data-scene="scene-03-sleepover">
+          <div class="scene-head"><span>SCENE 03</span><p>A surprising sleepover lets the friends laugh and remember their favorite moments together.</p></div>
+          <video controls preload="metadata" playsinline src="./whiteboard-review/story-2/scene-03-sleepover.mp4"></video>
+          <div class="passage" aria-label="Read-along passage">
+            <span class="sentence" data-start="0.0004597167968753979" data-end="7.414709136962891">Furthermore, to my surprise, my mom allowed me to have a sleepover with my friend after our long day at KidZania.</span> <span class="sentence" data-start="7.414709136962891" data-end="12.318002746582032">I had not expected it at all, so I could hardly believe what was happening.</span> <span class="sentence" data-start="12.318002746582032" data-end="19.32154278564453">Even though we were tired, we talked about our favorite moments from the day and laughed about the funny things that had happened.</span> <span class="sentence" data-start="19.32154278564453" data-end="24.199373291015625">We even discussed which activities we wanted to try the next time we visited.</span> <span class="sentence" data-start="24.199373291015625" data-end="32.273">The more I think about it, the more grateful I feel because the unexpected sleepover made an already wonderful day even more special.</span>
+          </div>
+        </article>
+      
+        <article class="scene-card" data-scene="scene-04-missions">
+          <div class="scene-head"><span>SCENE 04</span><p>Sophie crosses a rope course while her friend cheers and they search for the hidden gem.</p></div>
+          <video controls preload="metadata" playsinline src="./whiteboard-review/story-2/scene-04-missions.mp4"></video>
+          <div class="passage" aria-label="Read-along passage">
+            <span class="sentence" data-start="0.00033264160155965783" data-end="5.943791198730466">Most importantly, the best part of the day was completing the adventure missions at KidZania.</span> <span class="sentence" data-start="5.943791198730466" data-end="9.850331115722653">A helper gave us a mission pack filled with different challenges.</span> <span class="sentence" data-start="9.850331115722653" data-end="14.976536560058591">For the first mission, I had to carefully cross a rope course without falling.</span> <span class="sentence" data-start="14.976536560058591" data-end="23.23349456787109">Another challenge was jumping from a high place twenty times within one hundred seconds, and one mission sent us searching for a hidden gem.</span> <span class="sentence" data-start="23.23349456787109" data-end="28.906">My heart was pounding with excitement as my friend and I rushed from one challenge to another.</span>
+          </div>
+        </article>
+      
+        <article class="scene-card" data-scene="scene-05-proud">
+          <div class="scene-head"><span>SCENE 05</span><p>The two friends feel brave and proud, high-five, and remember the happiest day.</p></div>
+          <video controls preload="metadata" playsinline src="./whiteboard-review/story-2/scene-05-proud.mp4"></video>
+          <div class="passage" aria-label="Read-along passage">
+            <span class="sentence" data-start="0.000491088867192957" data-end="4.994326538085943">Some missions were difficult, but finishing them made me feel brave and proud.</span> <span class="sentence" data-start="4.994326538085943" data-end="10.985865539550787">It felt like a dream come true to spend an entire day going on exciting adventures with my friend.</span> <span class="sentence" data-start="10.985865539550787" data-end="23.13103002929688">In conclusion, my trip to KidZania was one of the most special days of my life because I spent time with my best friend, enjoyed a surprising sleepover, and completed unforgettable missions.</span> <span class="sentence" data-start="23.13103002929688" data-end="26.04173559570313">It was one of the happiest moments of my life.</span> <span class="sentence" data-start="26.04173559570313" data-end="29.315737670898443">If I could relive one day, it would definitely be that day.</span>
+          </div>
+        </article>
+      
+    </div>
+  </section>
+
+</main>
+<script>
+  document.querySelectorAll('nav button').forEach((button) => button.addEventListener('click', () => {
+    document.querySelectorAll('video').forEach((video) => video.pause());
+    document.querySelectorAll('nav button').forEach((item) => item.setAttribute('aria-selected', String(item === button)));
+    document.querySelectorAll('.story').forEach((story) => story.classList.toggle('active', story.dataset.story === button.dataset.target));
+  }));
+  document.querySelectorAll('video').forEach((video) => {
+    video.addEventListener('play', () => document.querySelectorAll('video').forEach((other) => { if (other !== video) other.pause(); }));
+    video.addEventListener('timeupdate', () => {
+      const sentences = video.closest('.scene-card').querySelectorAll('.sentence');
+      sentences.forEach((sentence) => {
+        const active = video.currentTime >= Number(sentence.dataset.start) && video.currentTime < Number(sentence.dataset.end);
+        sentence.classList.toggle('reading', active);
+      });
+    });
+    video.addEventListener('ended', () => {
+      const story = video.closest('.story');
+      const videos = [...story.querySelectorAll('video')];
+      const next = videos[videos.indexOf(video) + 1];
+      if (!next) return;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      next.closest('.scene-card').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'center' });
+      window.setTimeout(() => {
+        next.currentTime = 0;
+        next.play().catch(() => {});
+      }, reducedMotion ? 0 : 650);
+    });
+  });
+</script></body></html>
