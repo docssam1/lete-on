@@ -16,7 +16,7 @@
     unitId: unit.id,
     unitNumber: unit.number,
     unitName: unit.name,
-    generator: generatorApi.generatorKey(type.name)
+    generator: generatorApi.generatorKey({ ...type, semesterId: semester.id, unitId: unit.id, unitName: unit.name })
   }))));
   const typeById = new Map(types.map(type => [type.id, type]));
 

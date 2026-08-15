@@ -11,6 +11,16 @@
     d /= divisor;
     return d === 1 ? String(n) : `${n}/${d}`;
   };
+  const mixedFraction = (n, d) => {
+    const divisor = gcd(n, d);
+    n /= divisor;
+    d /= divisor;
+    const whole = Math.floor(n / d);
+    const remainder = n % d;
+    if (!remainder) return String(whole);
+    if (!whole) return `${remainder}/${d}`;
+    return `${whole} ${remainder}/${d}`;
+  };
   const permutationNumbers = (digits) => {
     const values = new Set();
     const used = Array(digits.length).fill(false);
@@ -1080,6 +1090,152 @@
       const detail = placeCounts.map((value, index) => `${placeNames[index]}의 자리 ${value}번`).join(", ");
       return result(`${step}, ${step * 2}, ${step * 3}, …, ${end.toLocaleString()}을 차례로 썼습니다. 이 수들에 숫자 ${digit}가 쓰인 횟수는 모두 몇 번인지 구하세요.`, answer, `${step}의 배수에서 ${detail}이므로 숫자 ${digit}가 쓰인 횟수는 모두 ${answer}번입니다.`);
     },
+    fractionUnderstanding({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const original = 24 * int(rng, 80 + level * 40, 180 + level * 90);
+        const afterFirst = original / 2;
+        const afterSecond = afterFirst * 2 / 3;
+        const final = afterSecond * 3 / 4;
+        return result(`처음 가진 돈의 1/2을 쓰고, 남은 돈의 1/3을 쓴 뒤, 다시 남은 돈의 1/4을 썼더니 ${final.toLocaleString()}원이 남았습니다. 처음 가진 돈을 구하세요.`, original, `마지막에는 직전 돈의 3/4이 남았으므로 거꾸로 계산하면 ${final.toLocaleString()} × 4/3 × 3/2 × 2 = ${original.toLocaleString()}원입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const unit = int(rng, 3 + level, 8 + level * 2);
+        const afterEating = unit * 15;
+        const fixed = int(rng, 4 + level, 9 + level * 2);
+        const afterFirstGift = afterEating * 2 / 3;
+        const final = afterFirstGift * 3 / 5;
+        const original = afterEating + fixed;
+        return result(`사탕 ${fixed}개를 먹고 남은 사탕의 1/3을 친구에게 준 다음, 다시 남은 사탕의 2/5를 동생에게 주었더니 ${final}개가 남았습니다. 처음 사탕은 몇 개인지 구하세요.`, original, `${final}개는 동생에게 주기 전의 3/5이므로 그때는 ${final} × 5/3 = ${afterFirstGift}개입니다. 이는 첫 선물 뒤의 수이므로 먹고 남은 사탕은 ${afterFirstGift} × 3/2 = ${afterEating}개, 처음에는 ${afterEating} + ${fixed} = ${original}개입니다.`);
+      }
+      const unit = int(rng, 18 + level * 8, 40 + level * 15);
+      const depth = unit * 3;
+      const firstLength = unit * 4;
+      const secondLength = unit * 7;
+      const total = firstLength + secondLength;
+      return result(`길이의 합이 ${total}cm인 두 막대를 수조에 수직으로 세웠습니다. 첫째 막대의 3/4과 둘째 막대의 3/7이 잠겼고 두 막대가 잠긴 깊이는 같습니다. 물의 깊이를 구하세요.`, depth, `잠긴 깊이를 3묶음으로 보면 두 막대의 전체 길이는 각각 4묶음과 7묶음입니다. 11묶음이 ${total}cm이므로 한 묶음은 ${unit}cm, 물의 깊이는 ${unit} × 3 = ${depth}cm입니다.`);
+    },
+    advancedFractionCompare({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const cardCount = 5 + Math.min(level, 1);
+        const cards = shuffle(rng, [1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, cardCount).sort((a, b) => a - b);
+        let answer = 0;
+        cards.forEach(numerator => cards.forEach(denominator => {
+          if (numerator < denominator && numerator * 2 > denominator) answer += 1;
+        }));
+        return result(`수 카드 ${cards.map(value => `<span class="digit-card">${value}</span>`).join("")}에서 두 장을 뽑아 분수를 만듭니다. 1/2보다 크고 1보다 작은 분수는 모두 몇 개인지 구하세요. 단, 한 카드는 한 번만 사용합니다.`, answer, `분자는 분모보다 작고, 분자의 2배는 분모보다 커야 합니다. 두 조건을 만족하는 순서쌍을 세면 ${answer}개입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const quotient = int(rng, 2, 3 + level);
+        const remainder = int(rng, 3, 6 + level * 2);
+        const maximumDenominator = remainder + int(rng, 8, 14 + level * 4);
+        const denominator = remainder + 1;
+        const numerator = quotient * denominator + remainder;
+        const answer = mixedFraction(numerator, denominator);
+        return result(`어떤 가분수의 분자를 분모로 나누면 몫이 ${quotient}, 나머지가 ${remainder}입니다. 분모가 ${maximumDenominator} 이하일 때 만들 수 있는 가분수 중 가장 큰 수를 구하세요.`, answer, `가분수는 ${quotient} + ${remainder}/분모입니다. 나머지는 분모보다 작아야 하므로 가장 작은 분모는 ${denominator}이고, 이때 분수가 가장 큽니다. 따라서 ${numerator}/${denominator} = ${answer}입니다.`);
+      }
+      const denominator = int(rng, 8 + level, 11 + level * 2);
+      const lower = int(rng, 1, 3);
+      const candidateCount = int(rng, 4 + level, 6 + level);
+      const upper = lower + candidateCount + 1;
+      const answer = candidateCount * (candidateCount - 1) * (candidateCount - 2) / 6;
+      return result(`분모가 ${denominator}인 서로 다른 세 진분수 A, B, C가 ${lower}/${denominator} &lt; A &lt; B &lt; C &lt; ${upper}/${denominator}를 만족합니다. (A, B, C)가 될 수 있는 경우는 모두 몇 가지인지 구하세요.`, answer, `가능한 분자는 ${lower + 1}부터 ${upper - 1}까지 ${candidateCount}개입니다. 이 중 3개를 고르면 작은 순서대로 A, B, C가 정해지므로 경우의 수는 ${answer}가지입니다.`);
+    },
+    fractionAddSubOneAdvanced({ rng, level, variant = 0 }) {
+      const denominator = pick(rng, [7, 8, 9, 10].slice(0, 3 + Math.min(level, 1)));
+      if (variant % 3 === 0) {
+        const a = denominator + int(rng, 2, denominator - 1);
+        const b = denominator * 2 + int(rng, 1, denominator - 2);
+        const c = int(rng, 2, denominator - 1);
+        const answerNumerator = a + b + c;
+        return result(`□ - ${mixedFraction(a, denominator)} = ${mixedFraction(b, denominator)} + ${c}/${denominator}일 때 □에 알맞은 수를 구하세요.`, mixedFraction(answerNumerator, denominator), `양변에 ${mixedFraction(a, denominator)}을 더하면 □ = ${mixedFraction(a, denominator)} + ${mixedFraction(b, denominator)} + ${c}/${denominator}입니다. 계산하면 ${mixedFraction(answerNumerator, denominator)}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const total = denominator * int(rng, 8 + level * 2, 14 + level * 4) + int(rng, 1, denominator - 1);
+        const first = denominator * int(rng, 2, 4 + level) + int(rng, 1, denominator - 1);
+        const second = denominator * int(rng, 2, 4 + level) + int(rng, 1, denominator - 1);
+        const answerNumerator = total - first - second;
+        if (answerNumerator <= 0) return generators.fractionAddSubOneAdvanced({ rng, level, variant });
+        return result(`전체 길이가 ${mixedFraction(total, denominator)}km인 길에서 첫 구간은 ${mixedFraction(first, denominator)}km, 둘째 구간은 ${mixedFraction(second, denominator)}km입니다. 남은 구간의 길이를 구하세요.`, mixedFraction(answerNumerator, denominator), `${mixedFraction(total, denominator)} - ${mixedFraction(first, denominator)} - ${mixedFraction(second, denominator)} = ${mixedFraction(answerNumerator, denominator)}km입니다.`);
+      }
+      const first = denominator * int(rng, 3, 6 + level) + int(rng, 1, denominator - 1);
+      const second = denominator * int(rng, 2, 5 + level) + int(rng, 1, denominator - 1);
+      const third = denominator * int(rng, 1, 3 + level) + int(rng, 1, denominator - 1);
+      const answerNumerator = first + second - third;
+      return result(`<div class="equation">(${mixedFraction(first, denominator)} + ${mixedFraction(second, denominator)}) - ${mixedFraction(third, denominator)} = □</div>`, mixedFraction(answerNumerator, denominator), `대분수를 가분수로 바꾸어 더한 뒤 빼면 ${mixedFraction(answerNumerator, denominator)}입니다.`);
+    },
+    fractionAddSubTwoAdvanced({ rng, level, variant = 0 }) {
+      const denominator = pick(rng, [6, 10, 12]);
+      if (variant % 3 === 0) {
+        const count = int(rng, 12 + level * 5, 25 + level * 10);
+        const remainder = int(rng, 1, denominator - 1);
+        const wholeSum = count * (count + 1) / 2;
+        const answerNumerator = wholeSum * denominator + count * remainder;
+        return result(`다음 규칙으로 나열한 ${count}개의 분수를 모두 더한 값을 구하세요.<div class="sequence">1 ${remainder}/${denominator}, 2 ${remainder}/${denominator}, 3 ${remainder}/${denominator}, …, ${count} ${remainder}/${denominator}</div>`, mixedFraction(answerNumerator, denominator), `자연수 부분의 합은 ${count} × ${count + 1} ÷ 2 = ${wholeSum}이고 분수 부분의 합은 ${count} × ${remainder}/${denominator}입니다. 모두 더하면 ${mixedFraction(answerNumerator, denominator)}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const count = int(rng, 5 + level, 9 + level * 2);
+        const tape = denominator * int(rng, 5, 10 + level * 2) + int(rng, 1, denominator - 1);
+        const overlap = int(rng, 1, Math.min(denominator - 1, Math.floor(tape / 3)));
+        const answerNumerator = count * tape - (count - 1) * overlap;
+        return result(`길이가 각각 ${mixedFraction(tape, denominator)}cm인 색 테이프 ${count}장을 이웃한 두 장끼리 ${overlap}/${denominator}cm씩 겹쳐 한 줄로 이어 붙였습니다. 전체 길이를 구하세요.`, mixedFraction(answerNumerator, denominator), `테이프 길이의 합에서 겹친 ${count - 1}곳을 빼면 ${count} × ${mixedFraction(tape, denominator)} - ${count - 1} × ${overlap}/${denominator} = ${mixedFraction(answerNumerator, denominator)}cm입니다.`);
+      }
+      const days = int(rng, 5 + level * 2, 12 + level * 4);
+      const slow = int(rng, 1, Math.floor(denominator / 3));
+      const fast = int(rng, 1, Math.floor(denominator / 3));
+      const answer = days * (slow + fast) * 60 / denominator;
+      return result(`한 시계는 하루에 ${slow}/${denominator}시간씩 늦어지고 다른 시계는 하루에 ${fast}/${denominator}시간씩 빨라집니다. 두 시계를 같은 시각에 맞춘 뒤 ${days}일 후 두 시계가 가리키는 시각의 차는 몇 분인지 구하세요.`, answer, `하루에 두 시계의 차는 ${slow + fast}/${denominator}시간씩 커집니다. ${days}일 동안의 차를 분으로 바꾸면 ${days} × ${slow + fast}/${denominator} × 60 = ${answer}분입니다.`);
+    },
+    conditionedFraction({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const target = int(rng, 32 + level * 15, 60 + level * 25);
+        let group = 1;
+        while (group * (group + 1) / 2 < target) group += 1;
+        const previous = (group - 1) * group / 2;
+        const position = target - previous;
+        const whole = group - position + 1;
+        const answer = mixedFraction(whole * group + position, group);
+        const preview = ["1"];
+        for (let current = 2; preview.length < 10; current += 1) for (let index = 1; index <= current && preview.length < 10; index += 1) preview.push(`${current - index + 1} ${index}/${current}`);
+        return result(`다음 규칙으로 분수를 나열할 때 ${target}번째 수를 구하세요.<div class="sequence">${preview.join(", ")}, …</div>`, answer, `${group - 1}번째 묶음까지 ${previous}개이므로 ${target}번째 수는 ${group}번째 묶음의 ${position}번째입니다. 따라서 ${whole} ${position}/${group} = ${answer}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const denominator = int(rng, 18 + level * 5, 30 + level * 10);
+        const difference = int(rng, 2 + level, 6 + level * 2);
+        const answer = denominator - 1 - difference;
+        return result(`분모가 ${denominator}인 진분수 중 두 분수의 차가 ${difference}/${denominator}가 되도록 작은 분수와 큰 분수를 고르는 방법은 모두 몇 가지인지 구하세요.`, answer, `작은 분자의 범위는 1부터 ${denominator - 1 - difference}까지이고 큰 분자는 각각 ${difference}만큼 크게 정해집니다. 따라서 ${answer}가지입니다.`);
+      }
+      const denominator = int(rng, 6 + level, 10 + level * 2);
+      const add = int(rng, 2, denominator - 1);
+      const lower = int(rng, 1, 3 + level);
+      const upper = lower + int(rng, 2, 4 + level);
+      const valid = [];
+      for (let value = 1; value <= upper * denominator; value += 1) if (lower * denominator < value + add && value + add < upper * denominator) valid.push(value);
+      return result(`자연수 □가 ${lower} &lt; (□ + ${add})/${denominator} &lt; ${upper}를 만족합니다. □ 안에 들어갈 수 있는 자연수는 모두 몇 개인지 구하세요.`, valid.length, `부등식에 ${denominator}을 곱하면 ${lower * denominator} &lt; □ + ${add} &lt; ${upper * denominator}입니다. 이를 만족하는 자연수를 세면 ${valid.length}개입니다.`);
+    },
+    fractionWordEquation({ rng, level, variant = 0 }) {
+      const denominator = pick(rng, [7, 8, 9, 10].slice(0, 3 + Math.min(level, 1)));
+      if (variant % 3 === 0) {
+        const a = denominator * int(rng, 1, 3 + level) + int(rng, 1, denominator - 1);
+        const b = denominator * int(rng, 1, 3 + level) + int(rng, 1, denominator - 1);
+        const c = denominator * int(rng, 1, 3 + level) + int(rng, 1, denominator - 1);
+        const ab = a + b;
+        const bc = b + c;
+        const ac = a + c;
+        return result(`세 수 A, B, C가 있습니다. A+B=${mixedFraction(ab, denominator)}, B+C=${mixedFraction(bc, denominator)}, A+C=${mixedFraction(ac, denominator)}일 때 A, B, C를 차례로 구하세요.`, `${mixedFraction(a, denominator)}, ${mixedFraction(b, denominator)}, ${mixedFraction(c, denominator)}`, `세 식을 모두 더하면 A+B+C의 2배입니다. A는 (A+B + A+C - B+C) ÷ 2로 구하고 같은 방법을 적용하면 A=${mixedFraction(a, denominator)}, B=${mixedFraction(b, denominator)}, C=${mixedFraction(c, denominator)}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const larger = denominator * int(rng, 4, 8 + level) + int(rng, 1, denominator - 1);
+        const smaller = denominator * int(rng, 1, 3 + level) + int(rng, 1, denominator - 1);
+        const sum = larger + smaller;
+        const difference = larger - smaller;
+        return result(`두 수의 합이 ${mixedFraction(sum, denominator)}이고 차가 ${mixedFraction(difference, denominator)}입니다. 큰 수와 작은 수를 차례로 구하세요.`, `${mixedFraction(larger, denominator)}, ${mixedFraction(smaller, denominator)}`, `큰 수는 (합 + 차) ÷ 2, 작은 수는 (합 - 차) ÷ 2입니다. 따라서 ${mixedFraction(larger, denominator)}, ${mixedFraction(smaller, denominator)}입니다.`);
+      }
+      const second = denominator * int(rng, 1, 3 + level) + int(rng, 1, denominator - 1);
+      const correct = denominator * int(rng, 1, 4 + level) + int(rng, 1, denominator - 1);
+      const first = second + correct;
+      const wrong = first + second;
+      return result(`어떤 수에서 ${mixedFraction(second, denominator)}을 빼야 할 것을 잘못하여 더했더니 ${mixedFraction(wrong, denominator)}이 되었습니다. 바르게 계산한 값을 구하세요.`, mixedFraction(correct, denominator), `잘못 계산한 값에서 ${mixedFraction(second, denominator)}을 빼면 어떤 수 ${mixedFraction(first, denominator)}을 찾을 수 있습니다. 여기에서 다시 ${mixedFraction(second, denominator)}을 빼면 ${mixedFraction(correct, denominator)}입니다.`);
+    },
     multiply({ rng, level }) {
       const r = range(level);
       const a = int(rng, 12, r.medium);
@@ -1317,6 +1473,10 @@
     [/^연산의 규칙$/, "advancedOperationRule"],
     [/^나열된 도형에서의 규칙$/, "advancedShapePattern"],
     [/^조건을 만족하는 수의 개수$/, "conditionedNumberCount"],
+    [/^분수의 이해$/, "fractionUnderstanding"],
+    [/^분수의 종류와 크기 비교$/, "advancedFractionCompare"],
+    [/^분수의 덧셈과 뺄셈 1$/, "fractionAddSubOneAdvanced"],
+    [/^분수의 덧셈과 뺄셈 2$/, "fractionAddSubTwoAdvanced"],
     [/일렬로 나열한 수|배열된 수들의 합/, "numberPattern"],
     [/^평행선 사이의 각도/, "angle"],
     [/^혼합 계산의 순서$|^하나의 식으로 나타내기$|^연산의 규칙$|^혼합 계산식 만들기$/, "mixedOperation"],
@@ -1345,8 +1505,16 @@
     ,[/원기둥과 원뿔의 겉넓이/, "cylinderSurface"]
   ];
 
-  function generatorKey(typeName) {
-    return rules.find(([pattern]) => pattern.test(typeName))?.[1] || "";
+  const scopedRules = [
+    [type => type.id === "4-2-u1-t5", "conditionedFraction"],
+    [type => type.id === "4-2-u1-t6", "fractionWordEquation"]
+  ];
+
+  function generatorKey(typeOrName) {
+    const type = typeof typeOrName === "string" ? { name: typeOrName } : typeOrName;
+    const scoped = scopedRules.find(([matches]) => matches(type))?.[1];
+    if (scoped) return scoped;
+    return rules.find(([pattern]) => pattern.test(type.name))?.[1] || "";
   }
 
   function mulberry32(seed) {
@@ -1360,7 +1528,7 @@
   }
 
   function generate(type, _levelRank, difficultyOffset, seed, variant = 0) {
-    const key = generatorKey(type.name);
+    const key = generatorKey(type);
     if (!key) return null;
     const level = Math.max(0, Math.min(2, 1 + difficultyOffset));
     return { ...generators[key]({ rng: mulberry32(seed), level, variant }), generator: key };
