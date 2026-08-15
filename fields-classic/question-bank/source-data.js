@@ -51,7 +51,7 @@ export const TYPES = [
   type("grid-number-placement", "logic", "조건 배치", "위·아래·좌우 조건에 맞게 수 배치하기", { generator: "stairGridPlacement", sourceMatched: true, legacyId: 17 }),
   type("vertical-stair-grid-placement", "logic", "조건 배치", "세로 계단형 네 칸의 위치 조건 배치", { generator: "verticalStairGridPlacement", sourceMatched: true }),
   type("l-grid-placement", "logic", "조건 배치", "ㄱ자 칸의 왼쪽·아래 조건에 맞게 수 배치하기", { generator: "lGridPlacement", sourceMatched: true }),
-  type("grid-number-placement-five", "logic", "조건 배치", "다섯 수의 위·아래·좌우 조건 배치"),
+  type("grid-number-placement-five", "logic", "조건 배치", "다섯 수의 위·아래·좌우 조건 배치", { generator: "gridNumberPlacementFive", sourceMatched: true }),
   type("nonadjacent-placement", "logic", "조건 배치", "같은 수가 이웃하지 않게 배치하기", { generator: "sourceNonadjacentPyramid", sourceMatched: true }),
   type("order-position", "logic", "순서와 비교", "줄의 순서와 사이 사람 수", { generator: "raceOrder", sourceMatched: true }),
   type("order-position-from-back", "logic", "순서와 비교", "뒤에서의 순서와 사이 사람 수", { generator: "orderPositionFromBack", sourceMatched: true }),
@@ -225,7 +225,7 @@ export const EXAMS = [
     id: "k7-2022-12", stage: "k7_to_g1", label: "더 클래식 7세 6차 선발시험 (2022.12.15)",
     file: "더_클래식_7세_6차_선발시험(221215).pdf", layout: "two",
     typeIds: ["edge-sum-grid","grid-number-placement-five","addition-table-grid","number-pyramid","arrow-number-grid","order-position-seven-people","equal-line-sum-eight-cards","shape-sum-table","bus-change","shape-equation-add-subtract","repeat-pattern","equalize-transfer","two-digit-parity-gap","symbol-sum-grid","triangle-tile-growth","balance-scale-three-objects","fold-number-cut-sum","symbol-relation-3to4","go-stone-difference-inverse","number-line-six-points"],
-    verifiedQuestionNumbers: [1]
+    verifiedQuestionNumbers: [1, 2]
   }),
   makeExam({
     id: "g1-2022-03", stage: "g1_spring", label: "더 클래식 초1 1차 선발시험 (2022.03.07)",

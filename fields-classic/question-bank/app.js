@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816cp";
-import { GENERATORS } from "./generators.js?v=20260816cg";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816cq";
+import { GENERATORS } from "./generators.js?v=20260816ch";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -875,6 +875,14 @@ function goStoneDifferenceInverseMarkup(visual) {
   return `<div class="go-difference-work"><div class="go-triangle-stages">${Array.from({ length: visual.stages }, (_, index) => stage(index + 1)).join("")}<b>…</b></div>${visual.hint ? `<p>${visual.hint}</p>` : ""}<strong>${visual.targetText || `${visual.targetColor}이 ${visual.difference}개 더 많은 때`}</strong></div>`;
 }
 
+function fiveCellPlacementMarkup(visual) {
+  const cells = [
+    [140, 12, "top"], [76, 76, "target"], [140, 76, "center"], [204, 76, "right"], [204, 140, "bottom"]
+  ];
+  const givenValue = visual.given?.position === "top" ? visual.given.value : "";
+  return `<div class="five-cell-placement-work"><div class="five-cell-cards">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="five-cell-body"><svg viewBox="0 0 340 212" role="img" aria-label="위 한 칸, 가운데 세 칸, 오른쪽 아래 한 칸으로 이어진 다섯 칸"><g>${cells.map(([x, y, position]) => `<rect x="${x}" y="${y}" width="64" height="64"/><text x="${x + 32}" y="${y + 39}">${position === "target" ? "㉠" : position === "top" ? givenValue : ""}</text>`).join("")}</g></svg><div class="five-cell-clues">${visual.clues.map((clue) => `<p>${clue}</p>`).join("")}${visual.extra ? `<strong>${visual.extra}</strong>` : ""}</div></div></div>`;
+}
+
 function coloredShapeNumberMarkup(visual) {
   const examples = [[1,[0,0,0,1]],[2,[0,0,0,2]],[5,[0,0,1,1]],[8,[0,0,2,0]],[19,[0,1,0,3]],[68,[1,0,1,0]]];
   const grid = (digits, label, target = false) => `<div class="base-four-grid ${target ? "target" : ""}">${Array.from({ length: 3 }, (_, row) => digits.map((count) => `<i class="${row >= 3 - count ? "filled" : ""}"></i>`).join("")).join("")}<span>${label}</span></div>`;
@@ -920,6 +928,7 @@ function visualMarkup(visual) {
   if (visual.kind === "closest-card-sum") return `<div class="visual closest-card-visual">${closestCardSumMarkup(visual)}</div>`;
   if (visual.kind === "number-card-plus-minus") return `<div class="visual card-equation-visual">${numberCardMarkup(visual)}</div>`;
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;
+  if (visual.kind === "five-cell-placement") return `<div class="visual five-cell-placement-visual">${fiveCellPlacementMarkup(visual)}</div>`;
   if (visual.kind === "equalize-bags") return `<div class="visual equalize-visual">${equalizeBagsMarkup(visual)}</div>`;
   if (visual.kind === "total-difference-share") return `<div class="visual total-difference-visual">${totalDifferenceShareMarkup(visual)}</div>`;
   if (visual.kind === "number-pyramid") return `<div class="visual pyramid-visual">${numberPyramidMarkup(visual)}</div>`;

@@ -1233,6 +1233,46 @@ function edgeSumCycle({ difficulty = 2 }) {
   };
 }
 
+function gridNumberPlacementFive({ difficulty = 2 }) {
+  let cards;
+  let layout;
+  let distractor = null;
+  let comparison = null;
+  do {
+    if (difficulty === 3) {
+      cards = shuffle(Array.from({ length: 12 }, (_, index) => index + 1)).slice(0, 6);
+      layout = cards.slice(0, 5);
+      distractor = cards[5];
+      const target = layout[1];
+      const top = layout[0];
+      if (target > top && distractor <= top) comparison = "큽니다";
+      else if (target < top && distractor >= top) comparison = "작습니다";
+      else comparison = null;
+    } else {
+      const start = difficulty === 1 ? 1 : randomInt(1, 4);
+      cards = Array.from({ length: 5 }, (_, index) => start + index);
+      layout = shuffle(cards);
+    }
+  } while (difficulty === 3 && comparison === null);
+
+  const [top, target, center, right, bottom] = layout;
+  const clues = [
+    `${center}의 왼쪽에 ${numberSubject(right)} 있습니다.`,
+    `${numberSubject(bottom)} ${right} 바로 아래에 있습니다.`,
+    `${numberSubject(top)} ${center}의 위에 있습니다.`
+  ];
+  const given = difficulty === 1 ? { position: "top", value: top } : null;
+  const extra = difficulty === 3 ? `㉠에 들어갈 수는 ${top}보다 ${comparison}` : "";
+
+  return {
+    prompt: "주어진 조건을 보고 다섯 칸에 수 카드를 한 번씩 넣을 때, ㉠에 들어갈 수를 구하세요.",
+    visual: { kind: "five-cell-placement", cards: shuffle(cards), clues, given, extra },
+    answer: String(target),
+    solution: `${center}의 왼쪽에 ${numberSubject(right)} 있으므로 가운데 두 칸에 ${numberAnd(center)} ${numberObject(right)} 놓습니다. ${numberSubject(bottom)} ${right} 바로 아래에 있고, ${numberSubject(top)} ${center}의 위에 있습니다. 남은 수${difficulty === 3 ? ` 중 ${top}보다 ${comparison === "큽니다" ? "큰" : "작은"}` : ""} ${numberSubject(target)} ㉠에 들어갑니다.`,
+    meta: { difficulty, cards, layout, distractor, comparison, clues, given, answer: target }
+  };
+}
+
 function equalizeTransfer({ difficulty = 2 }) {
   const lower = randomInt(difficulty === 1 ? 4 : difficulty === 2 ? 6 : 10, difficulty === 1 ? 8 : difficulty === 2 ? 12 : 15);
   const transfer = randomInt(1, difficulty === 1 ? 3 : difficulty === 2 ? 4 : 5);
@@ -2780,6 +2820,7 @@ export const GENERATORS = {
   mixedOperationCardEquation,
   twoDigitCardEnumeration,
   edgeSumCycle,
+  gridNumberPlacementFive,
   equalizeTransfer,
   totalDifferenceShare,
   fiveCardSumPyramid,
