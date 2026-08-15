@@ -5,28 +5,37 @@
   "subType": "dice_roll",
   "status": "draft",
   "source": {
-    "problemImage": "./assets/problems/q08_var02.png"
+    "problemImage": "./assets/svg/variations/q08_var02.svg"
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q08.json",
     "hfDataTypeId": 8
   },
   "problem": {
-    "prompt": "Roll the cube along the arrows and find the bottom number at the target cell."
+    "prompt": "주사위를 화살표 방향으로 한 칸씩 굴렸습니다. 색칠한 칸에 닿았을 때 바닥면의 수를 구하세요."
   },
   "machineReadable": {
     "payloadType": "dice_roll",
+    "coordinateSystem": {
+      "origin": "top_left",
+      "xAxis": "right",
+      "yAxis": "down"
+    },
     "startState": {
-      "knownFaces": {
-        "front": 1,
-        "top": 2,
+      "sourceObservedFaces": {
+        "top": 1,
+        "front": 2,
         "right": 3
       },
-      "oppositeFacePairs": [
-        [1, 6],
-        [2, 5],
-        [3, 4]
-      ]
+      "faces": {
+        "top": 1,
+        "bottom": 6,
+        "front": 2,
+        "back": 5,
+        "right": 3,
+        "left": 4
+      },
+      "oppositeFacePairs": [[1, 6], [2, 5], [3, 4]]
     },
     "grid": {
       "rowCount": 3,
@@ -35,15 +44,24 @@
     "path": {
       "startCell": { "x": 0, "y": 0 },
       "moves": ["down", "right", "up", "right"],
-      "targetCell": { "x": 2, "y": 0 }
+      "targetCell": { "x": 2, "y": 0 },
+      "coloredCell": { "x": 2, "y": 0 }
     },
+    "stateTrace": [
+      { "step": 0, "cell": { "x": 0, "y": 0 }, "top": 1, "bottom": 6, "front": 2, "back": 5, "right": 3, "left": 4 },
+      { "step": 1, "move": "down", "cell": { "x": 0, "y": 1 }, "top": 5, "bottom": 2, "front": 1, "back": 6, "right": 3, "left": 4 },
+      { "step": 2, "move": "right", "cell": { "x": 1, "y": 1 }, "top": 4, "bottom": 3, "front": 1, "back": 6, "right": 5, "left": 2 },
+      { "step": 3, "move": "up", "cell": { "x": 1, "y": 0 }, "top": 1, "bottom": 6, "front": 3, "back": 4, "right": 5, "left": 2 },
+      { "step": 4, "move": "right", "cell": { "x": 2, "y": 0 }, "top": 2, "bottom": 5, "front": 3, "back": 4, "right": 1, "left": 6 }
+    ],
     "countingModel": {
       "askedFace": "bottom",
-      "expectedAnswer": 6
+      "expectedAnswer": 5
     }
   },
   "answerValidation": {
     "answerType": "integer",
-    "expectedAnswer": 6
-  }
+    "expectedAnswer": 5
+  },
+  "solutionHint": "처음 바닥면은 6입니다. 아래, 오른쪽, 위, 오른쪽으로 차례로 굴리면 바닥면은 2, 3, 6, 5로 바뀝니다. 따라서 답은 5입니다."
 }
