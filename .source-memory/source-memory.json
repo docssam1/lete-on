@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "584128d3f039aa4821350f121556be874164c880c29212301c2cb81e143f124f",
-      "size": 61949,
-      "mtime_ns": 1786824428754534900
+      "sha256": "9c432644c4cdb3d49b2561f7e344af655c5e9e0a1f5b4e6f9510d4a4a030feac",
+      "size": 62889,
+      "mtime_ns": 1786824875769320900
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "fb344a0ffa6cfd74ac4a9fd1bf193532ef3a9a571f6fec42a350bd7cfc0932b2",
-      "size": 138715,
-      "mtime_ns": 1786823833296601200
+      "sha256": "26bc01805d480ab76726a74b908e0cb6b73f577b25efdb874618e20d03c77e58",
+      "size": 140249,
+      "mtime_ns": 1786824780036805700
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "81afa42bd2ca5f3314f72fb67db3414e708ae23372da2e099d9fa1445e4b82f5",
-      "size": 36142,
-      "mtime_ns": 1786824373493303700
+      "sha256": "d45eba886a4d9092cbb463d42f70c0f67e41692a5f0dc4785e70105d71bf53ce",
+      "size": 36338,
+      "mtime_ns": 1786824613527420100
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 4 question 2",
+      "title": "Next verification 7-year-old selection test 4 question 3",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q2"
+        "q3"
       ],
-      "summary": "Verify source and answer page 3 for the bent four-cell placement using cards 1 through 4, with 2 left of 3 and 1 directly below 3. Confirm the marked cell answer 4 and exact coordinates before reusing stairGridPlacement.",
+      "summary": "Verify source and answer page 4 for the four-item cycle circle, triangle, triangle, diamond. The fifteenth item is triangle. Because one shape repeats inside the cycle, do not reuse the existing generator that requires four distinct shapes.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 4 question 2 is a bent four-cell placement"
+          "note": "Selection test 4 question 3 is a four-item cycle with a duplicate triangle"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-08 question 2 grid-number-placement mapping",
-          "note": "Verify source geometry, relations, and target cell before enabling"
+          "locator": "EXAMS k7-2022-08 question 3 repeat-pattern mapping",
+          "note": "Verify exact cycle, target position, renderer, and answer before enabling"
         }
       ]
     },
@@ -2199,6 +2199,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-08 verified question 1",
           "note": "Source question 1 enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q2",
+      "title": "Selection test 4 question 2 vertical stair-grid placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q2",
+        "vertical-stair-grid-placement"
+      ],
+      "summary": "Cards 1, 2, 3, 4 fill a vertical four-cell stair. With 2 left of 3 and 1 directly below 3, exhaustive placement leaves the marked top-left cell as 4; this requires a separate renderer from the horizontal stair source.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 2 paragraph",
+          "note": "Original geometry, relations, answer, split decision, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function verticalStairGridPlacement and GENERATORS export",
+          "note": "Three structural difficulty levels with exhaustive uniqueness checks"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES vertical-stair-grid-placement and EXAMS k7-2022-08 verified questions 1 through 2",
+          "note": "Source question 2 enabled"
         }
       ]
     }

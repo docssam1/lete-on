@@ -1354,6 +1354,27 @@ function stairGridPlacement({ difficulty = 2 }) {
   };
 }
 
+function verticalStairGridPlacement({ difficulty = 2 }) {
+  const max = difficulty === 1 ? 6 : difficulty === 2 ? 9 : 12;
+  const solution = shuffle(Array.from({ length: max }, (_, index) => index + 1)).slice(0, 4);
+  const [target, left, right, below] = solution;
+  const given = difficulty === 1 ? { index: 2, value: right } : null;
+  let distractor = null;
+  let allCards = [...solution];
+  if (difficulty === 3) {
+    distractor = Math.max(...solution) + randomInt(1, 3);
+    allCards.push(distractor);
+  }
+  const availableCards = allCards.filter((_, index) => !given || index !== given.index);
+  return {
+    prompt: `${difficulty === 3 ? "가장 큰 수 카드는 쓰지 않고, 나머지 " : ""}숫자 카드 ${availableCards.length}장을 빈칸에 한 번씩 넣으세요. ${numberSubject(left)} ${right}의 왼쪽에 있습니다. ${numberSubject(below)} ${right}의 바로 아래에 있습니다. ㉠에 들어갈 수를 구하세요.`,
+    visual: { kind: "vertical-stair-grid-placement", cards: shuffle(availableCards), given },
+    answer: String(target),
+    solution: `가운데 오른쪽 칸에 ${right}, 그 왼쪽에 ${numberObject(left)} 놓습니다. ${right}의 바로 아래에 ${numberObject(below)} 놓으면 남은 표시 칸에는 ${numberSubject(target)} 들어갑니다.${difficulty === 3 ? ` 쓰지 않는 가장 큰 수는 ${distractor}입니다.` : ""}`,
+    meta: { difficulty, solution, target, left, right, below, given, distractor, allCards, availableCards }
+  };
+}
+
 function lGridPlacement({ difficulty = 2 }) {
   const pool = difficulty === 3 ? [1, 2, 3, 4, 5] : [1, 2, 3, 4];
   const solution = shuffle(pool).slice(0, 4);
@@ -2496,6 +2517,7 @@ export const GENERATORS = {
   totalDifferenceShare,
   fiveCardSumPyramid,
   stairGridPlacement,
+  verticalStairGridPlacement,
   lGridPlacement,
   numberPyramid,
   raceOrder,

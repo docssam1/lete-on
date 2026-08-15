@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bu";
-import { GENERATORS } from "./generators.js?v=20260816bs";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bv";
+import { GENERATORS } from "./generators.js?v=20260816bt";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -537,6 +537,11 @@ function stairGridPlacementMarkup(visual) {
   return `<div class="stair-grid-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="stair-grid"><span class="cell p0 given">${given}</span><span class="cell p1">㉠</span><span class="cell p2"></span><span class="cell p3"></span></div></div>`;
 }
 
+function verticalStairGridPlacementMarkup(visual) {
+  const given = visual.given?.index === 2 ? visual.given.value : "";
+  return `<div class="stair-grid-work"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="vertical-stair-grid"><span class="cell p0">㉠</span><span class="cell p1"></span><span class="cell p2 given">${given}</span><span class="cell p3"></span></div></div>`;
+}
+
 function raceOrderMarkup(visual, conditions) {
   return `<div class="race-order"><div class="race-track-row"><b>앞</b><div class="race-track" style="--race-count:${visual.total}">${Array.from({ length: visual.total }, (_, index) => `<span><i></i><b>${index + 1}등</b></span>`).join("")}</div><b>뒤</b></div><ul>${conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul></div>`;
 }
@@ -884,6 +889,7 @@ function visualMarkup(visual) {
   if (visual.kind === "number-pyramid") return `<div class="visual pyramid-visual">${numberPyramidMarkup(visual)}</div>`;
   if (visual.kind === "five-card-pyramid") return `<div class="visual five-card-pyramid-visual">${fiveCardPyramidMarkup(visual)}</div>`;
   if (visual.kind === "stair-grid-placement") return `<div class="visual stair-grid-placement-visual">${stairGridPlacementMarkup(visual)}</div>`;
+  if (visual.kind === "vertical-stair-grid-placement") return `<div class="visual stair-grid-placement-visual">${verticalStairGridPlacementMarkup(visual)}</div>`;
   if (visual.kind === "l-grid-placement") return `<div class="visual l-grid-placement-visual">${lGridPlacementMarkup(visual)}</div>`;
   if (visual.kind === "race-order") return `<div class="visual race-order-visual">${raceOrderMarkup(visual, visual.conditions || [])}</div>`;
   if (visual.kind === "addition-table-grid") return `<div class="visual addition-table-visual">${additionTableGridMarkup(visual)}</div>`;
