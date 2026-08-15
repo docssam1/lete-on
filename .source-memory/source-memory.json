@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "72adfc2df5a7f46a6a88ff8b9cc00080b89577dd7974c37aae3973443ce4457c",
-      "size": 92530,
-      "mtime_ns": 1786832588513527500
+      "sha256": "2f99f29cd1da6fac53e20506a0de4814dd492e1e6d0d2fd1555ec034097f517b",
+      "size": 93542,
+      "mtime_ns": 1786832782008217100
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "df6310509169aa4593ec748b82f07126afc39f53b6f7e21fea82eb97f1c743c8",
-      "size": 177326,
-      "mtime_ns": 1786832414851883400
+      "sha256": "d1677d13932e1a3f4716d42feac6bb4a0a80ef75b2c7fa9507422d3a65f2d6ba",
+      "size": 181412,
+      "mtime_ns": 1786832782000216900
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "89dc17ab3cf6b2ca19bf527fcc11c2caef64883b4142ab059873d1e076e6469a",
-      "size": 39830,
-      "mtime_ns": 1786832588506526900
+      "sha256": "b63bbf72b40bf18feba6c901929cb36924b17ca5364ae7a94b9aaa4a747b1be7",
+      "size": 40021,
+      "mtime_ns": 1786832782002218500
     }
   ],
   "records": [
@@ -107,12 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 16",
+      "title": "Next verification selection test 6 question 17",
       "aliases": [],
       "tags": [
         "next"
       ],
-      "summary": "Compare all three balance drawings, object counts, target object, and official answer 4 before deciding whether the provisional three-object balance generator matches.",
+      "summary": "Compare the numbered paper grid, fold direction, cut region, reflected cells, and official answer 39 before reusing or splitting the provisional fold-cut generator.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -120,13 +120,13 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "7-year-old selection test 6 question 16",
-          "note": "Verify each pan, object count, relation chain, target object, and official answer"
+          "locator": "7-year-old selection test 6 question 17",
+          "note": "Verify grid numbers, fold line, cut cells, reflected cells, and official answer"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-12 question 16",
+          "locator": "EXAMS k7-2022-12 question 17",
           "note": "Current provisional mapping remains disabled"
         }
       ]
@@ -3346,6 +3346,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-12 verified 1 through 15",
           "note": "Existing source-matched triangle growth type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q16",
+      "title": "Selection test 6 question 16 circle-target balance scales",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q16",
+        "balance-scale-circle-target"
+      ],
+      "summary": "The source balances four circles plus one diamond against three stars, then three diamonds plus one star against four circles, and asks how many circles equal one diamond plus two stars; the official answer is 4.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 16 paragraph",
+          "note": "Exact three balances, official answer, generator split, exhaustive template construction, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function buildBalanceCircleTargetTemplates and balanceScaleCircleTarget",
+          "note": "Only small integer-weight relations that satisfy both source-form balances are generated"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES balance-scale-circle-target and EXAMS k7-2022-12 verified 1 through 16",
+          "note": "Wrong provisional balance relation replaced and source question enabled"
         }
       ]
     }
