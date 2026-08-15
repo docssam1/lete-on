@@ -20,6 +20,7 @@
 - games/cube-memory/ - 큐브 메모리
 - games/three-views/ - 세 방향 관찰소
 - games/crystal-cubes/ - 크리스털 큐브
+- games/cube-blueprint/ - 큐브 설계도
 - games/minmax/ - 최대·최소 큐브 챌린지
 - games/paper-fold/ - 색종이 접고 펼치기
 - games/paper-turn/ - 색종이 접고 돌리고 뒤집기

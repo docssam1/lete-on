@@ -52,9 +52,9 @@ export const games = [
     description: { ko: "투명 케이스의 세 방향 카드를 만족하는 모양을 만들어요.", zh: "搭出满足透明盒三方向卡片的形状。", ja: "透明ケースの三方向カードに合う形を作ります。", en: "Build a solid that matches all three cards in a clear case." }
   },
   {
-    id: "blueprint", group: "reasoning", number: "10", ready: false, thumb: "blueprint", levels: "Lv. 2–5",
+    id: "blueprint", group: "reasoning", number: "10", ready: true, href: "../games/cube-blueprint/?v=1", thumb: "blueprint", levels: "Lv. 2–5",
     name: { ko: "큐브 설계도", zh: "方块蓝图", ja: "キューブ設計図", en: "Cube Blueprints" },
-    description: { ko: "위·앞·옆의 바탕그림만 보고 가능한 입체를 완성해요.", zh: "只看上、前、侧视图完成可能的立体。", ja: "上・前・横の図だけから立体を完成させます。", en: "Use only top, front, and side drawings to complete a solid." }
+    description: { ko: "위·앞·오른쪽 설계도를 보고 하나뿐인 입체를 완성해요.", zh: "看上、前、右三张设计图完成唯一的立体。", ja: "上・前・右の設計図から一つだけの立体を完成させます。", en: "Use top, front, and right blueprints to complete the one matching solid." }
   },
   {
     id: "find-shape", group: "reasoning", number: "11", ready: false, thumb: "find", levels: "Lv. 3–5",
