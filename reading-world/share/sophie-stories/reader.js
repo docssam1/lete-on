@@ -42,7 +42,7 @@
       eyebrow: "AUTHOR'S NEXT PAGE", title: 'A note for the author', intro: 'Read one short note, choose one branch, and keep the story growing.',
       worked: 'What worked beautifully', try: 'One thing to try next', nextQuestion: 'What would you like to write next?',
       noWrong: 'Choose one branch. There is no wrong answer.', chapter: 'My Next Chapter', placeholder: 'Start your next chapter here…',
-      hear: 'Hear the prompt', save: 'Save my next chapter', feedback: 'Get one Rainbow Pen note', busy: 'Rainbow Pen is reading…',
+      hear: 'Hear the prompt', save: 'Save my next chapter', feedback: 'Get one Rainbow Pen note', received: 'Rainbow Pen note received', busy: 'Rainbow Pen is reading…',
       saved: 'Saved on this device.', draft: 'Draft kept on this device.', short: 'Write one more sentence before saving.',
       feedbackFirst: 'Write and save a short next chapter first.', daily: "Today's Rainbow Pen notes are all used. Your chapter is still saved.",
       setup: "Rainbow Pen needs the teacher's API setup. Your chapter is still saved.", unavailable: 'Rainbow Pen could not open just now. Your chapter is still saved.', rainbow: 'Rainbow Pen note', challenge: 'Next little challenge:',
@@ -52,7 +52,7 @@
       eyebrow: '다음 이야기 쓰기', title: '작가에게 보내는 코멘트', intro: '짧은 코멘트를 읽고, 가지 하나를 골라 이야기를 이어 써 보세요.',
       worked: '특히 잘한 점', try: '다음에 한 가지 시도해 보기', nextQuestion: '다음에는 어떤 이야기를 써 볼래요?',
       noWrong: '가지 하나를 골라 보세요. 틀린 답은 없어요.', chapter: '나의 다음 챕터', placeholder: '다음 이야기를 여기에서 시작해 보세요…',
-      hear: '질문 듣기', save: '다음 챕터 저장하기', feedback: '무지개 펜 코멘트 한 번 받기', busy: '무지개 펜이 읽고 있어요…',
+      hear: '질문 듣기', save: '다음 챕터 저장하기', feedback: '무지개 펜 코멘트 한 번 받기', received: '무지개 펜 코멘트를 받았어요', busy: '무지개 펜이 읽고 있어요…',
       saved: '이 기기에 저장했어요.', draft: '작성 중인 글을 이 기기에 보관했어요.', short: '한 문장을 조금 더 쓴 뒤 저장해 보세요.',
       feedbackFirst: '짧은 다음 챕터를 쓰고 저장한 뒤 눌러 주세요.', daily: '오늘 받을 수 있는 무지개 펜 코멘트를 모두 사용했어요. 글은 저장되어 있어요.',
       setup: '관리자가 무지개 펜 API를 설정하면 사용할 수 있어요. 글은 안전하게 저장되어 있어요.', unavailable: '지금은 무지개 펜을 열 수 없어요. 글은 안전하게 저장되어 있어요.', rainbow: '무지개 펜 코멘트', challenge: '다음 작은 도전:',
@@ -169,7 +169,7 @@
         <div class="studio-actions">
           <button class="studio-button" type="button" data-studio-action="hear">${escapeHtml(text.hear)}</button>
           <button class="studio-button primary" type="button" data-studio-action="save">${escapeHtml(text.save)}</button>
-          <button class="studio-button violet" type="button" data-studio-action="feedback" ${state.studioBusy ? 'disabled' : ''}>${escapeHtml(state.studioBusy ? text.busy : text.feedback)}</button>
+          <button class="studio-button violet" type="button" data-studio-action="feedback" ${state.studioBusy || draft.ai ? 'disabled' : ''}>${escapeHtml(state.studioBusy ? text.busy : (draft.ai ? text.received : text.feedback))}</button>
         </div>
         <p class="studio-status" id="studio-status" aria-live="polite">${escapeHtml(status)}</p>
         ${renderRainbowFeedback(draft.ai, text)}
@@ -380,7 +380,7 @@
     }
 
     if (actionButton.dataset.studioAction === 'feedback') {
-      if (text.length < 10 || !selected || state.studioBusy) {
+      if (text.length < 10 || !selected || state.studioBusy || draft.ai) {
         const status = document.getElementById('studio-status');
         if (status) status.textContent = ui.feedbackFirst;
         return;
