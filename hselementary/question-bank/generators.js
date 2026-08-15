@@ -120,6 +120,30 @@
     return `<svg class="geometry-diagram clock-diagram" viewBox="0 0 180 180" aria-label="${hour}시 ${String(minute).padStart(2, "0")}분 시계"><circle cx="90" cy="90" r="76"/>${ticks}<line class="hour-hand" x1="90" y1="90" x2="${hx.toFixed(1)}" y2="${hy.toFixed(1)}"/><line class="minute-hand" x1="90" y1="90" x2="${mx.toFixed(1)}" y2="${my.toFixed(1)}"/><circle cx="90" cy="90" r="4"/></svg>`;
   };
   const verticalOperation = (top, bottom, partials, total) => `<div class="long-operation" aria-label="세로 계산"><span>${top}</span><span>× ${bottom}</span><i></i>${partials.map(value => `<span>${value}</span>`).join("")}<i></i><strong>${total}</strong></div>`;
+  const gridShapeSvg = (points, size = 8, guide = "") => {
+    const margin = 18;
+    const cell = 18;
+    const extent = size * cell;
+    const lines = Array.from({ length: size + 1 }, (_, index) => {
+      const offset = margin + index * cell;
+      return `<line class="grid-line" x1="${margin}" y1="${offset}" x2="${margin + extent}" y2="${offset}"/><line class="grid-line" x1="${offset}" y1="${margin}" x2="${offset}" y2="${margin + extent}"/>`;
+    }).join("");
+    const polygon = points.map(([x, y]) => `${margin + x * cell},${margin + (size - y) * cell}`).join(" ");
+    const [ax, ay] = points[0];
+    const guides = guide === "vertical" ? `<line class="guide-line" x1="${margin + 4 * cell}" y1="${margin}" x2="${margin + 4 * cell}" y2="${margin + extent}"/>` : guide === "horizontal" ? `<line class="guide-line" x1="${margin}" y1="${margin + 4 * cell}" x2="${margin + extent}" y2="${margin + 4 * cell}"/>` : "";
+    return `<svg class="movement-grid" viewBox="0 0 ${margin * 2 + extent} ${margin * 2 + extent}" aria-label="격자 위의 도형">${lines}${guides}<polygon points="${polygon}"/><circle cx="${margin + ax * cell}" cy="${margin + (size - ay) * cell}" r="4"/><text x="${margin + ax * cell - 9}" y="${margin + (size - ay) * cell - 8}">A</text></svg>`;
+  };
+  const directionArrowSvg = (direction) => {
+    const turns = ({ "위": 0, "오른쪽": 90, "아래": 180, "왼쪽": 270 })[direction];
+    return `<svg class="direction-arrow" viewBox="0 0 120 120" aria-label="${direction}쪽 화살표"><g transform="rotate(${turns} 60 60)"><path d="M60 14 L91 51 H73 V103 H47 V51 H29 Z"/></g></svg>`;
+  };
+  const tileStrip = (symbols, highlight = -1) => `<div class="tile-strip">${symbols.map((symbol, index) => `<span class="tile-symbol ${index === highlight ? "is-highlight" : ""}">${symbol}</span>`).join("")}</div>`;
+  const rotatePointClockwise = ([x, y], turns, center = 4) => {
+    let point = [x, y];
+    for (let count = 0; count < ((turns % 4) + 4) % 4; count += 1) point = [center + (point[1] - center), center - (point[0] - center)];
+    return point;
+  };
+  const rotateDigital = (digits) => [...String(digits)].reverse().map(digit => ({ "0": "0", "1": "1", "2": "2", "5": "5", "6": "9", "8": "8", "9": "6" })[digit]).join("");
 
   function range(level) {
     return {
@@ -653,6 +677,118 @@
       const shown = [...productText].map((digit, digitIndex) => digitIndex === index ? "□" : digit).join("");
       return result(`세로셈 결과의 □에 알맞은 숫자를 구하세요.${verticalOperation(multiplicand, multiplier, [onesPartial, tensPartial], shown)}`, hidden, `${multiplicand} × ${multiplier} = ${product.toLocaleString()}이므로 □는 ${hidden}입니다.`);
     },
+    planeTransform({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const ax = int(rng, 1, 2);
+        const ay = int(rng, 1, 2);
+        const points = [[ax, ay], [ax + 2, ay], [ax + 1, ay + 2]];
+        const dx = int(rng, 1 + level, Math.min(3 + level, 6 - ax));
+        const dy = int(rng, 1, Math.min(3, 4 - ay));
+        const answer = `${ax + dx}, ${ay + dy}`;
+        return result(`격자의 왼쪽 아래 꼭짓점을 (0, 0)으로 봅니다. 도형을 오른쪽으로 ${dx}칸, 위로 ${dy}칸 밀었을 때 점 A의 위치를 순서쌍으로 쓰세요.${gridShapeSvg(points)}`, answer, `밀기는 모든 점을 같은 방향으로 같은 칸 수만큼 옮깁니다. A(${ax}, ${ay})는 (${ax} + ${dx}, ${ay} + ${dy})이므로 (${answer})입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const vertical = rng() > 0.5;
+        const ax = vertical ? int(rng, 1, 2) : int(rng, 1, 5);
+        const ay = vertical ? int(rng, 1, 5) : int(rng, 1, 2);
+        const points = [[ax, ay], [ax + 2, ay], [ax, ay + 2]];
+        const final = vertical ? [8 - ax, ay] : [ax, 8 - ay];
+        const direction = vertical ? "좌우" : "위아래";
+        return result(`점선을 기준으로 도형을 ${direction}로 뒤집었습니다. 뒤집은 뒤 점 A의 위치를 순서쌍으로 쓰세요.${gridShapeSvg(points, 8, vertical ? "vertical" : "horizontal")}`, `${final[0]}, ${final[1]}`, `${vertical ? "세로선 x=4" : "가로선 y=4"}에서 같은 거리만큼 반대쪽으로 옮깁니다. 따라서 A의 위치는 (${final[0]}, ${final[1]})입니다.`);
+      }
+      const turns = int(rng, 1, Math.min(3, 1 + level));
+      const ax = int(rng, 1, 3);
+      const ay = int(rng, 1, 3);
+      const points = [[ax, ay], [ax + 2, ay], [ax + 1, ay + 2]];
+      const final = rotatePointClockwise(points[0], turns);
+      return result(`격자의 중심 (4, 4)를 기준으로 도형을 시계 방향으로 90°씩 ${turns}번 돌렸습니다. 돌린 뒤 점 A의 위치를 순서쌍으로 쓰세요.${gridShapeSvg(points)}`, `${final[0]}, ${final[1]}`, `시계 방향 90° 회전을 ${turns}번 적용하면 A(${ax}, ${ay})는 (${final[0]}, ${final[1]})로 이동합니다.`);
+    },
+    sequentialTransform({ rng, level, variant = 0 }) {
+      const directions = ["위", "오른쪽", "아래", "왼쪽"];
+      const rotateDirection = (direction, turns) => directions[(directions.indexOf(direction) + turns % 4 + 4) % 4];
+      const flipLeftRight = direction => ({ "위": "위", "오른쪽": "왼쪽", "아래": "아래", "왼쪽": "오른쪽" })[direction];
+      const flipUpDown = direction => ({ "위": "아래", "오른쪽": "오른쪽", "아래": "위", "왼쪽": "왼쪽" })[direction];
+      const start = pick(rng, directions);
+      if (variant % 3 === 0) {
+        const rotations = int(rng, 5 + level * 3, 15 + level * 7);
+        const flips = int(rng, 4 + level * 2, 12 + level * 5);
+        let answer = rotateDirection(start, rotations);
+        for (let count = 0; count < flips; count += 1) answer = flipLeftRight(answer);
+        return result(`화살표를 시계 방향으로 90°씩 ${rotations}번 돌린 뒤, 좌우로 ${flips}번 뒤집었습니다. 마지막 화살표가 가리키는 방향을 쓰세요.${directionArrowSvg(start)}<div class="movement-steps"><span>90° 회전 × ${rotations}</span><span>좌우 뒤집기 × ${flips}</span></div>`, answer, `90° 회전은 4번마다, 뒤집기는 2번마다 처음과 같습니다. 횟수를 각각 4와 2로 나눈 나머지만 적용하면 ${answer}쪽입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const clockwise = int(rng, 7 + level * 3, 18 + level * 6);
+        const counter = int(rng, 5 + level * 2, 15 + level * 5);
+        let answer = rotateDirection(start, clockwise);
+        answer = flipUpDown(answer);
+        answer = rotateDirection(answer, -counter);
+        return result(`화살표를 시계 방향으로 90°씩 ${clockwise}번 돌리고, 위아래로 한 번 뒤집은 뒤, 시계 반대 방향으로 90°씩 ${counter}번 돌렸습니다. 마지막 방향을 쓰세요.${directionArrowSvg(start)}<div class="movement-steps"><span>시계 방향 × ${clockwise}</span><span>위아래 뒤집기</span><span>반시계 방향 × ${counter}</span></div>`, answer, `회전 횟수는 4로 나눈 나머지를 적용하고 위아래 방향을 바꾸면 마지막 방향은 ${answer}쪽입니다.`);
+      }
+      const cycle = int(rng, 12 + level * 5, 30 + level * 12);
+      let answer = start;
+      for (let count = 0; count < cycle; count += 1) {
+        answer = rotateDirection(answer, 1);
+        answer = flipLeftRight(answer);
+      }
+      return result(`다음 두 이동을 한 묶음으로 하여 ${cycle}번 반복했습니다. 마지막 방향을 쓰세요.${directionArrowSvg(start)}<div class="movement-steps"><span>① 시계 방향 90°</span><span>② 좌우 뒤집기</span><span>${cycle}회 반복</span></div>`, answer, `한 묶음의 이동을 방향에 차례로 적용하고 반복되는 주기를 찾으면 ${cycle}번째 뒤의 방향은 ${answer}쪽입니다.`);
+    },
+    movementPatternOne({ rng, level, variant = 0 }) {
+      const symbolSets = [["●", "▲", "■", "◆"], ["◢", "◣", "◤", "◥"], ["○", "◎", "◐", "◑", "◒", "◓"]];
+      const cycle = pick(rng, symbolSets.slice(0, 2 + Math.min(level, 1)));
+      if (variant % 3 === 0) {
+        const target = int(rng, 90 + level * 80, 260 + level * 180);
+        const answer = cycle[(target - 1) % cycle.length];
+        const preview = Array.from({ length: cycle.length * 2 }, (_, index) => cycle[index % cycle.length]);
+        return result(`다음 무늬를 같은 규칙으로 이어 붙일 때 ${target}번째 모양을 구하세요.${tileStrip(preview)}`, answer, `무늬는 ${cycle.length}개마다 반복됩니다. ${target}을 ${cycle.length}로 나눈 나머지에 해당하는 모양은 ${answer}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const total = int(rng, 120 + level * 70, 320 + level * 160);
+        const targetSymbol = pick(rng, cycle);
+        const targetIndex = cycle.indexOf(targetSymbol);
+        const fullCycles = Math.floor(total / cycle.length);
+        const extra = total % cycle.length;
+        const answer = fullCycles + (targetIndex < extra ? 1 : 0);
+        return result(`다음 규칙으로 모양을 ${total}개 이어 붙였습니다. ${targetSymbol} 모양은 모두 몇 개인지 구하세요.${tileStrip(cycle.concat(cycle))}`, answer, `${cycle.length}개짜리 한 묶음이 ${fullCycles}번 있고 남은 모양은 ${extra}개입니다. ${targetSymbol}을 세면 모두 ${answer}개입니다.`);
+      }
+      const target = int(rng, 150 + level * 100, 420 + level * 220);
+      const first = cycle[(target - 1) % cycle.length];
+      const second = cycle[target % cycle.length];
+      return result(`다음 무늬를 규칙대로 이어 붙일 때 ${target}번째와 ${target + 1}번째 모양을 차례로 쓰세요.${tileStrip(cycle.concat(cycle))}`, `${first}, ${second}`, `${cycle.length}개마다 같은 무늬가 반복됩니다. 나머지를 확인하면 ${target}번째는 ${first}, ${target + 1}번째는 ${second}입니다.`);
+    },
+    movementPatternTwo({ rng, level, variant = 0 }) {
+      const validDigits = [0, 1, 2, 5, 6, 8, 9];
+      const makeNumber = (length) => {
+        const first = pick(rng, validDigits.filter(value => value !== 0));
+        return String(first) + Array.from({ length: length - 1 }, () => pick(rng, validDigits)).join("");
+      };
+      if (variant % 3 === 0) {
+        let original = makeNumber(3 + Math.min(level, 1));
+        let answer = rotateDigital(original);
+        if (answer === original) {
+          original = `6${original.slice(1)}`;
+          answer = rotateDigital(original);
+        }
+        return result(`전자 숫자 카드를 시계 방향으로 180° 돌렸습니다. 돌린 뒤 보이는 수를 쓰세요.<div class="digital-number">${original}</div>`, answer, `카드의 순서를 거꾸로 읽고 6과 9를 서로 바꾸면 ${answer}이 됩니다.`);
+      }
+      if (variant % 3 === 1) {
+        const actualHour = int(rng, 1, 11);
+        const actualMinute = pick(rng, [5, 10, 15, 20, 25, 35, 40, 45, 50, 55]);
+        const actualTotal = actualHour * 60 + actualMinute;
+        const mirrorTotal = (720 - actualTotal) % 720;
+        const mirrorHour = Math.floor(mirrorTotal / 60) || 12;
+        const mirrorMinute = mirrorTotal % 60;
+        const answer = `${actualHour}시 ${actualMinute}분`;
+        return result(`거울에 비친 시계가 다음과 같았습니다. 실제 시각을 구하세요.${clockSvg(mirrorHour, mirrorMinute)}`, answer, `거울 시각과 실제 시각의 합은 12시입니다. 거울 시각 ${mirrorHour}시 ${String(mirrorMinute).padStart(2, "0")}분을 12시에서 빼면 ${answer}입니다.`);
+      }
+      let original = makeNumber(3);
+      let rotated = rotateDigital(original);
+      if (original === rotated || rotated.startsWith("0")) {
+        original = `6${original.slice(1, 2)}2`;
+        rotated = rotateDigital(original);
+      }
+      const answer = Math.abs(Number(original) - Number(rotated));
+      return result(`전자 숫자 카드 ${original}을 180° 돌려서 읽은 수와 처음 수의 차를 구하세요.<div class="digital-number">${original}</div>`, answer, `180° 돌리면 카드 순서는 거꾸로 되고 6과 9가 서로 바뀌므로 ${rotated}입니다. 두 수의 차는 ${answer}입니다.`);
+    },
     multiply({ rng, level }) {
       const r = range(level);
       const a = int(rng, 12, r.medium);
@@ -878,6 +1014,10 @@
     [/^나눗셈 응용 문제$/, "divisionApplication"],
     [/^나눗셈의 나머지$/, "advancedRemainder"],
     [/^곱셈식 완성하기$/, "multiplicationCompletion"],
+    [/^평면도형 밀기, 뒤집기, 돌리기$/, "planeTransform"],
+    [/^연속 이동$/, "sequentialTransform"],
+    [/^평면도형 이동의 활용 ①$/, "movementPatternOne"],
+    [/^평면도형 이동의 활용 ②$/, "movementPatternTwo"],
     [/일렬로 나열한 수|배열된 수들의 합/, "numberPattern"],
     [/^평행선 사이의 각도/, "angle"],
     [/^혼합 계산의 순서$|^하나의 식으로 나타내기$|^연산의 규칙$|^혼합 계산식 만들기$/, "mixedOperation"],
