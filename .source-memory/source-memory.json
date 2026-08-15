@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "d1ae5a698bf8945b4e40e9523b8e9ff2a55c24cb2969d506e56d0aa2c139e8f3",
-      "size": 44900,
-      "mtime_ns": 1786819736660710200
+      "sha256": "15e1a8a0ef8e9c9029a9ddbf1a20975728dab465ef02a1740216ef6a68bb662a",
+      "size": 45592,
+      "mtime_ns": 1786819875523265700
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "84759b74065b4e9f2688289d44cf10fd5836ce0a9e0ae660aee89f1e0dc7ba85",
-      "size": 118878,
-      "mtime_ns": 1786819688111210700
+      "sha256": "0ae57baa509c732c0e0f7c49e64554c9f4b65a8503def12b7704e0be09e57d4a",
+      "size": 120484,
+      "mtime_ns": 1786819805690413700
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "42ee4a747ac878d8119d184005c5e27c15455e6b467251d933897683209e4071",
-      "size": 34540,
-      "mtime_ns": 1786819608547563700
+      "sha256": "da959b04f8392939282a3646dce2b85d71da0805f095b9ed03498a1229326816",
+      "size": 34604,
+      "mtime_ns": 1786819805688408400
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 4",
+      "title": "Next verification 7-year-old selection test 3 question 5",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q04"
+        "q05"
       ],
-      "summary": "Verify the five-runner front-position and between-person clues, asked runner, and answer 4th against source and answer page 4 before generator reuse.",
+      "summary": "Verify total 20, one child has 4 more, asked larger share, and answer 12 against source and answer page 5 before generator mapping.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 3 question 4 is the next locked source question"
+          "note": "Selection test 3 question 5 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 4 order-position-from-front",
-          "note": "Do not enable until exact clues and answer uniqueness are verified"
+          "locator": "EXAMS k7-2022-06 question 5 current five-card-sum-pyramid mapping",
+          "note": "Audit notes say question 5 is equalize-transfer, so correct the mapping before enabling"
         }
       ]
     },
@@ -1587,6 +1587,40 @@
           "role": "code",
           "locator": "TYPES l-grid-placement and EXAMS k7-2022-06 verified 1 through 3",
           "note": "Source question 3 is enabled separately from stair-grid-placement"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q4",
+      "title": "Selection test 3 question 4 front-position runners",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q4",
+        "order-position-from-front"
+      ],
+      "summary": "With five runners, Jiwoo is 2nd from the front and one runner is between Jiwoo and Minho, so Minho is uniquely 4th.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 4 paragraph",
+          "note": "Original clues, answer 4th, front/back type split, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function orderPositionFromFront",
+          "note": "Three structurally distinct settings with unique-position enumeration"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES order-position-from-front and EXAMS k7-2022-06 verified 1 through 4",
+          "note": "Source question 4 is enabled"
         }
       ]
     }
