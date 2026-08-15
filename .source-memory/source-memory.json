@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "eacf05dc221e44de5641e2595dffcada57e1de36c98bae8dee0058ab69de9cfe",
-      "size": 54261,
-      "mtime_ns": 1786822346766080500
+      "sha256": "be622a8967a3ec884f51ac319b0c400c192e3be594e377f5c8c5f8a03abdf16a",
+      "size": 55580,
+      "mtime_ns": 1786822831058446400
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "d6286837d4156a38580c51002a31188e10bfd443a0c9cc02fb4abc95985face7",
-      "size": 129808,
-      "mtime_ns": 1786822064193676300
+      "sha256": "e0705fe2fc00d6a067a6657cf6abd851edc85a999ca934880bfc1e74f5aae7d9",
+      "size": 131586,
+      "mtime_ns": 1786822516887926500
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "4fefe86307aad1822002e89da4baa545173520a6823dee7dd20de897a00243c1",
-      "size": 35467,
-      "mtime_ns": 1786822247257421900
+      "sha256": "7ff576c42f34465899c1ed990f27e9bbc743efb1339816d8dcf0500a616dceae",
+      "size": 35637,
+      "mtime_ns": 1786822831057441600
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 14",
+      "title": "Next verification 7-year-old selection test 3 question 15",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q14"
+        "q15"
       ],
-      "summary": "Verify the odd two-digit condition problem on source and answer page 9. The number is odd, below 30, and its tens digit is five less than its ones digit; the official answer is 27. The current even-number type is wrong.",
+      "summary": "Verify the square-array growth problem on source and answer page 10. The first four figures contain 1, 4, 9, and 16 small squares; the seventh figure contains 49. Question 16 is the separate folded-number-paper problem with answer 18.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 3 question 14 is the next locked source question"
+          "note": "Question 15 is square-array growth; question 16 is folded numbered paper"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 14 two-digit-parity-gap mapping",
-          "note": "Current mapping is an even-number type and must be split"
+          "locator": "EXAMS k7-2022-06 questions 15 and 16 corrected mapping",
+          "note": "Both remain locked until their generators are verified"
         }
       ]
     },
@@ -1927,6 +1927,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-06 verified 1 through 13",
           "note": "Source question 13 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q14",
+      "title": "Selection test 3 question 14 odd two-digit range and gap",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q14",
+        "two-digit-odd-gap"
+      ],
+      "summary": "The source asks for an odd two-digit number below 30 whose tens digit is 5 less than its ones digit; exhaustive checking leaves only 27.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 14 paragraph",
+          "note": "Original conditions, answer 27, separate odd-number type, duplicate prevention, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function twoDigitOddGap",
+          "note": "Enumerates every two-digit odd number and verifies the candidate count"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES two-digit-odd-gap and EXAMS k7-2022-06 verified 1 through 14",
+          "note": "Source question 14 is enabled"
         }
       ]
     }

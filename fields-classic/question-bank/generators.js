@@ -2214,6 +2214,32 @@ function twoDigitParityGap({ difficulty = 2 }) {
   };
 }
 
+function twoDigitOddGap({ difficulty = 2 }) {
+  const allForGap = (gap) => Array.from({ length: 90 }, (_, index) => index + 10)
+    .filter((value) => value % 2 === 1 && value % 10 - Math.floor(value / 10) === gap);
+  const gap = difficulty === 3 ? sample([2, 3, 4, 5, 6]) : sample([3, 4, 5, 6, 7]);
+  const allCandidates = allForGap(gap);
+  const takeCount = difficulty === 3 ? Math.min(randomInt(2, 3), allCandidates.length) : 1;
+  const selected = allCandidates.slice(0, takeCount);
+  const nextCandidate = allCandidates[takeCount] || 100;
+  const upper = randomInt(selected.at(-1) + 1, Math.min(nextCandidate, selected.at(-1) + 10));
+  const candidates = allCandidates.filter((value) => value < upper);
+  const answer = difficulty === 3 ? candidates.reduce((sum, value) => sum + value, 0) : candidates[0];
+  const choices = difficulty === 1
+    ? shuffle([answer, ...shuffle(Array.from({ length: upper - 10 }, (_, index) => index + 10)
+      .filter((value) => value % 2 === 1 && value !== answer)).slice(0, 2)]).sort((a, b) => a - b)
+    : [];
+  return {
+    prompt: difficulty === 3
+      ? "다음 조건을 만족하는 두 자리 수를 모두 찾아 더한 수를 구하세요."
+      : "다음 조건을 만족하는 두 자리 수를 구하세요.",
+    visual: { kind: "two-digit-odd-gap", upper, gap, choices },
+    answer: String(answer),
+    solution: `${upper}보다 작은 두 자리 홀수를 차례로 살펴봅니다. 십의 자리 숫자가 일의 자리 숫자보다 ${gap} 작은 수는 ${candidates.join(", ")}입니다.${difficulty === 3 ? ` 이 수들을 더하면 ${candidates.join(" + ")} = ${answer}입니다.` : ` 따라서 답은 ${answer}입니다.`}`,
+    meta: { difficulty, upper, gap, candidates, choices, answer }
+  };
+}
+
 function triangleTileGrowth({ difficulty = 2 }) {
   const target = difficulty === 1 ? randomInt(4, 6) : difficulty === 2 ? randomInt(6, 9) : randomInt(6, 10);
   const pieceCount = target * target;
@@ -2399,6 +2425,7 @@ export const GENERATORS = {
   symbolSumGridSquareTop,
   shapeEquationAddSubtract,
   twoDigitParityGap,
+  twoDigitOddGap,
   triangleTileGrowth,
   sourceGrowingDotSquare,
   sourceTwoDigitSumDifference,

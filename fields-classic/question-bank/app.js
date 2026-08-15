@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bm";
-import { GENERATORS } from "./generators.js?v=20260816bl";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bn";
+import { GENERATORS } from "./generators.js?v=20260816bm";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -231,18 +231,29 @@ function generatedProblem(item, sequence, reference) {
   return null;
 }
 
+function problemSignature(problem) {
+  return JSON.stringify([problem.reference, problem.type.id, problem.prompt, problem.visual || null, problem.image || null]);
+}
+
 function buildQuestions() {
   let references = selectedReferences().filter((item) => isSelectableType(typeById(item.typeId)));
   if (!references.length) return;
   if (state.order === "domain") references.sort((a, b) => domainIndex[typeById(a.typeId).domain] - domainIndex[typeById(b.typeId).domain]);
   if (state.order === "mixed") references = shuffle(references);
   const counters = new Map();
+  const signatures = new Set();
   state.questions = Array.from({ length: state.count }, (_, index) => {
     const reference = references[index % references.length];
     const item = typeById(reference.typeId);
     const sequence = counters.get(item.id) || 0;
     counters.set(item.id, sequence + 1);
-    return generatedProblem(item, sequence, reference.reference);
+    let problem = null;
+    for (let attempt = 0; attempt < 80; attempt += 1) {
+      problem = generatedProblem(item, sequence, reference.reference);
+      if (!problem || !signatures.has(problemSignature(problem))) break;
+    }
+    if (problem) signatures.add(problemSignature(problem));
+    return problem;
   }).filter(Boolean);
   renderWorksheet();
   $("builderPanel").hidden = true;
@@ -664,6 +675,10 @@ function twoDigitParityGapMarkup(visual) {
   return `<div class="number-conditions parity-gap-conditions"><ul><li><strong>${visual.lower}</strong>보다 크고 <strong>${visual.upper}</strong>보다 작은 짝수입니다.</li><li>십의 자리 숫자가 일의 자리 숫자보다 <strong>${visual.gap}</strong> 큽니다.</li>${visual.digitSum === null ? "" : `<li>십의 자리 숫자와 일의 자리 숫자의 합은 <strong>${visual.digitSum}</strong>입니다.</li>`}</ul>${visual.choices.length ? `<div class="parity-gap-choices"><b>[보기]</b>${visual.choices.map((value) => `<span>${value}</span>`).join("")}</div>` : ""}</div>`;
 }
 
+function twoDigitOddGapMarkup(visual) {
+  return `<div class="number-conditions parity-gap-conditions"><ul><li><strong>${visual.upper}</strong>보다 작은 홀수입니다.</li><li>십의 자리 숫자가 일의 자리 숫자보다 <strong>${visual.gap}</strong> 작습니다.</li></ul>${visual.choices.length ? `<div class="parity-gap-choices"><b>[보기]</b>${visual.choices.map((value) => `<span>${value}</span>`).join("")}</div>` : ""}</div>`;
+}
+
 function triangleTileGrowthMarkup(visual) {
   const stage = (size) => {
     const height = 86;
@@ -864,6 +879,7 @@ function visualMarkup(visual) {
   if (visual.kind === "equal-line-cross") return `<div class="visual equal-line-cross-visual">${equalLineCrossMarkup(visual)}</div>`;
   if (visual.kind === "number-conditions") return `<div class="visual number-conditions-visual">${numberConditionsMarkup(visual)}</div>`;
   if (visual.kind === "two-digit-parity-gap") return `<div class="visual number-conditions-visual">${twoDigitParityGapMarkup(visual)}</div>`;
+  if (visual.kind === "two-digit-odd-gap") return `<div class="visual number-conditions-visual">${twoDigitOddGapMarkup(visual)}</div>`;
   if (visual.kind === "triangle-tile-growth") return `<div class="visual triangle-tile-growth-visual">${triangleTileGrowthMarkup(visual)}</div>`;
   if (visual.kind === "growing-dot-square") return `<div class="visual growing-dot-square-visual">${growingDotSquareMarkup(visual)}</div>`;
   if (visual.kind === "symbol-sum-grid") return `<div class="visual symbol-sum-grid-visual">${symbolSumGridMarkup(visual)}</div>`;
