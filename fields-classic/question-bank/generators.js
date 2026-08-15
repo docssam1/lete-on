@@ -2008,6 +2008,30 @@ function symbolRelationTwoToThree({ difficulty = 2 }) {
   };
 }
 
+function symbolRelationThreeToFour({ difficulty = 2 }) {
+  const values = { "☆": 8, "○": 6, "▽": 7 };
+  const pairTargets = [
+    ["○", "▽"],
+    ["☆", "○"],
+    ["☆", "▽"]
+  ];
+  const tripleTargets = [
+    ["☆", "○", "▽"],
+    ["☆", "▽", "▽"],
+    ["○", "○", "▽"]
+  ];
+  const final = difficulty === 1 ? pairTargets[0] : sample(difficulty === 3 ? tripleTargets : pairTargets);
+  const answer = final.reduce((sum, symbol) => sum + values[symbol], 0);
+  const hint = difficulty === 1 ? "도움: 첫째 식과 둘째 식을 함께 만족하는 ☆는 8입니다." : "";
+  return {
+    prompt: "다음 ☆, ○, ▽은 서로 다른 한 자리 수입니다. □가 나타내는 수를 구하세요.",
+    visual: { kind: "symbol-relation-three-to-four", firstStar: 3, firstCircle: 4, final, hint },
+    answer: String(answer),
+    solution: `첫째 식과 둘째 식을 함께 만족하는 서로 다른 한 자리 수를 찾으면 ☆=8, ○=6, ▽=7입니다. 마지막 식 ${final.join("+")}를 계산하면 □는 ${answer}입니다.`,
+    meta: { difficulty, star: 8, circle: 6, triangle: 7, final, answer }
+  };
+}
+
 function numberLineSixPoints({ difficulty = 2 }) {
   const limit = difficulty === 1 ? [5, 16] : difficulty === 2 ? [8, 22] : [10, 26];
   let gaps;
@@ -2494,6 +2518,7 @@ export const GENERATORS = {
   sourceColoredShapeNumber,
   sourceSymbolRelations,
   symbolRelationTwoToThree,
+  symbolRelationThreeToFour,
   numberLineSixPoints,
   goStoneDifferenceInverse,
   sourceBalanceRelations,

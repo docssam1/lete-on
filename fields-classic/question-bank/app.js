@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bq";
-import { GENERATORS } from "./generators.js?v=20260816br";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816br";
+import { GENERATORS } from "./generators.js?v=20260816bs";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -915,6 +915,7 @@ function visualMarkup(visual) {
   if (visual.kind === "balance-scale-four-objects") return `<div class="visual balance-relations-visual">${balanceScaleFourObjectsMarkup(visual)}</div>`;
   if (visual.kind === "symbol-relations") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
   if (visual.kind === "symbol-relation-two-to-three") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
+  if (visual.kind === "symbol-relation-three-to-four") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
   if (visual.kind === "number-line-six-points") return `<div class="visual number-line-six-points-visual">${numberLineSixPointsMarkup(visual)}</div>`;
   if (visual.kind === "go-stone-difference-inverse") return `<div class="visual go-stone-difference-inverse-visual">${goStoneDifferenceInverseMarkup(visual)}</div>`;
   if (visual.kind === "colored-shape-number") return `<div class="visual colored-shape-number-visual">${coloredShapeNumberMarkup(visual)}</div>`;

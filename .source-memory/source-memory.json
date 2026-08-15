@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "6b95734d1f90804508dd160ac13ee68e5d80e03233a2c91f148b6eb672702524",
-      "size": 58813,
-      "mtime_ns": 1786823591077868500
+      "sha256": "ebd1ea1998cdafc21b13af9900f04ec8214c08ad272ba9bce3fd0f69f062dc7b",
+      "size": 59665,
+      "mtime_ns": 1786823979298923400
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "07b5c51897acdde1b19f539e225e49a6ba521ea3118c5f52df520f7f8000c7eb",
-      "size": 137531,
-      "mtime_ns": 1786823503718687500
+      "sha256": "fb344a0ffa6cfd74ac4a9fd1bf193532ef3a9a571f6fec42a350bd7cfc0932b2",
+      "size": 138715,
+      "mtime_ns": 1786823833296601200
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "7c64d8acad8a8c2297613656926268b96bc1f8b088cd8e761967168874a6afe2",
-      "size": 36057,
-      "mtime_ns": 1786823472540601200
+      "sha256": "a8494a4bd7eb9ccf99e2aba7e5a5095cc6ac6113ed0536b38bb4fb58d928703f",
+      "size": 36125,
+      "mtime_ns": 1786823833297601600
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 18",
+      "title": "Next verification 7-year-old selection test 3 question 19",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q18"
+        "q19"
       ],
-      "summary": "Verify the three symbolic equations on source and answer page 11. Star, circle, and inverted triangle are distinct one-digit numbers. Three stars equal four circles, star plus circle equals two inverted triangles, and circle plus inverted triangle equals square; the official square answer is 13.",
+      "summary": "Verify source and answer page 12 for the six-point overlapping-distance diagram. The audit answer is 17, but every shown arc, endpoint, and requested segment must match numberLineSixPoints before enabling it.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 18 is the three-to-four symbolic relation problem"
+          "note": "Question 19 is the six-point overlapping-distance problem"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 18 symbol-relation-3to4 mapping",
-          "note": "Verify exact equations and distinct-number condition before enabling"
+          "locator": "EXAMS k7-2022-06 question 19 number-line-six-points mapping",
+          "note": "Verify the exact diagram and target segment before enabling"
         }
       ]
     },
@@ -2063,6 +2063,40 @@
           "role": "code",
           "locator": "TYPES balance-scale-four-objects and EXAMS k7-2022-06 verified 1 through 17",
           "note": "Source question 17 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q18",
+      "title": "Selection test 3 question 18 three-to-four symbol relation",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q18",
+        "symbol-relation-3to4"
+      ],
+      "summary": "The source equations are three stars equal four circles, star plus circle equals two inverted triangles, and circle plus triangle equals the target square. Exhaustive one-digit search gives the unique values 8, 6, 7 and source answer 13.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 18 paragraph",
+          "note": "Original equations, unique one-digit solution, answer 13, difficulty structure, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function symbolRelationThreeToFour",
+          "note": "Source-specific three-to-four relations and three scaffold levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES symbol-relation-3to4 and EXAMS k7-2022-06 verified 1 through 18",
+          "note": "Source question 18 enabled after exact verification"
         }
       ]
     }
