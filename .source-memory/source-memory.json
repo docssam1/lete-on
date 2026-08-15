@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "777e44ef964856eb87337e55d8abc4780e1ba29dd5593716d2a2386e2c0ff4f4",
-      "size": 36543,
-      "mtime_ns": 1786817101141270400
+      "sha256": "29b9b7e0f616f3db42475cd3deb85f8475ad9f11dced186eff71c32d9f129f76",
+      "size": 37484,
+      "mtime_ns": 1786817339429271300
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "bcf974b2cbf380e3ee3c9dac75c9b153626f93c907e000e81f2cd0e4239b22ce",
-      "size": 106253,
-      "mtime_ns": 1786816998464516200
+      "sha256": "6088f0906f275a29b1cb43d142f6df63ef4698744118b0db95df57121b0f8398",
+      "size": 108859,
+      "mtime_ns": 1786817319856627600
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "23a53570073b45e5684114643ba2d0830b4535a2a4c5de47eabf346352c13870",
-      "size": 33918,
-      "mtime_ns": 1786816876938400900
+      "sha256": "b76212a0ea506981b4cce3c8ca67a98863374a8e4f9c38e00f7f38de42f24691",
+      "size": 33978,
+      "mtime_ns": 1786817245228215600
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 15",
+      "title": "Next verification 7-year-old selection test 2 question 16",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q15"
+        "q16"
       ],
-      "summary": "Verify the even-number range and digit-gap conditions on source page 10 and answer 72 before implementing two-digit-parity-gap.",
+      "summary": "Verify the triangular paper-piece growth shown on source page 10 and answer 64 for the eighth figure before implementing triangle-tile-growth.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 15 is the next locked source question"
+          "note": "Question 16 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-04 question 15 two-digit-parity-gap",
-          "note": "Do not enable until every condition and the unique answer are verified"
+          "locator": "EXAMS k7-2022-04 question 16 triangle-tile-growth",
+          "note": "Do not enable until the visual growth rule and answer 64 are verified"
         }
       ]
     },
@@ -1281,6 +1281,40 @@
           "role": "code",
           "locator": "TYPES shape-equation-add-subtract and EXAMS k7-2022-04 verified 1 through 14",
           "note": "Source question 14 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q15",
+      "title": "Selection test 2 question 15 even two-digit range and gap",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q15",
+        "two-digit-parity-gap"
+      ],
+      "summary": "The source asks for an even number greater than 60 and less than 90 whose tens digit is 5 larger than its ones digit; exhaustive checking leaves only 72.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 15 paragraph",
+          "note": "Original conditions, answer 72, difficulty structure, and language fixes"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function twoDigitParityGap",
+          "note": "Enumerates every two-digit number and requires a unique solution"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES two-digit-parity-gap and EXAMS k7-2022-04 verified 1 through 15",
+          "note": "Source question 15 is enabled"
         }
       ]
     }

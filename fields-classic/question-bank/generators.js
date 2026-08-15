@@ -1876,6 +1876,50 @@ function shapeEquationAddSubtract({ difficulty = 2 }) {
   };
 }
 
+function twoDigitParityGap({ difficulty = 2 }) {
+  let result;
+  for (let attempt = 0; attempt < 300 && !result; attempt += 1) {
+    const tens = randomInt(difficulty === 3 ? 4 : 3, difficulty === 3 ? 6 : 7);
+    const evenOnes = [0, 2, 4, 6, 8].filter((ones) => ones < tens);
+    const ones = sample(evenOnes);
+    const answer = tens * 10 + ones;
+    const gap = tens - ones;
+    const lower = difficulty === 3 ? Math.max(10, (tens - 3) * 10) : (tens - 1) * 10;
+    const upper = difficulty === 3 ? Math.min(100, (tens + 4) * 10) : (tens + 2) * 10;
+    const digitSum = difficulty === 3 ? tens + ones : null;
+    const gapCandidates = Array.from({ length: upper - lower - 1 }, (_, index) => lower + index + 1)
+      .filter((value) => value % 2 === 0 && Math.floor(value / 10) - value % 10 === gap);
+    const solutions = gapCandidates.filter((value) => digitSum === null || Math.floor(value / 10) + value % 10 === digitSum);
+    if (solutions.length !== 1 || solutions[0] !== answer) continue;
+    if (difficulty === 3 && gapCandidates.length < 2) continue;
+    const distractors = shuffle(Array.from({ length: upper - lower - 1 }, (_, index) => lower + index + 1)
+      .filter((value) => value % 2 === 0 && value !== answer && !solutions.includes(value))).slice(0, 2);
+    if (difficulty === 1 && distractors.length < 2) continue;
+    result = {
+      tens,
+      ones,
+      answer,
+      gap,
+      lower,
+      upper,
+      digitSum,
+      gapCandidates,
+      solutions,
+      choices: difficulty === 1 ? shuffle([answer, ...distractors]) : []
+    };
+  }
+  if (!result) return twoDigitParityGap({ difficulty });
+  const { tens, ones, answer, gap, lower, upper, digitSum, gapCandidates, solutions, choices } = result;
+  const sumSentence = digitSum === null ? "" : ` 또 십의 자리 숫자와 일의 자리 숫자의 합은 ${digitSum}입니다.`;
+  return {
+    prompt: `일의 자리 숫자가 0, 2, 4, 6, 8인 수를 짝수라고 합니다. 다음 주어진 조건을 만족하는 두 자리 수를 ${difficulty === 1 ? "보기에서 고르세요." : "구하세요."}`,
+    visual: { kind: "two-digit-parity-gap", lower, upper, gap, digitSum, choices },
+    answer: String(answer),
+    solution: `${lower}보다 크고 ${upper}보다 작은 짝수 중 십의 자리 숫자와 일의 자리 숫자의 차가 ${gap}인 수를 찾습니다.${sumSentence} 십의 자리 숫자는 ${tens}, 일의 자리 숫자는 ${ones}이므로 답은 ${answer}입니다.`,
+    meta: { difficulty, tens, ones, answer, gap, lower, upper, digitSum, gapCandidates, solutions, choices }
+  };
+}
+
 function foldNumberCutSum({ difficulty = 2 }) {
   const size = 4;
   const foldMask = difficulty === 1
@@ -2025,6 +2069,7 @@ export const GENERATORS = {
   sourceSymbolSumGrid,
   symbolSumGridSquareTop,
   shapeEquationAddSubtract,
+  twoDigitParityGap,
   sourceGrowingDotSquare,
   sourceTwoDigitSumDifference,
   sourceEqualLineCross,

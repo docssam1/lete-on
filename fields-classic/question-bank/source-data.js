@@ -74,7 +74,7 @@ export const TYPES = [
   type("shape-equation", "number", "복면산과 식", "도형이 나타내는 수와 식", { legacyId: 20 }),
   type("shape-equation-add-subtract", "number", "복면산과 식", "더하기와 빼기로 도형 수 구하기", { generator: "shapeEquationAddSubtract", sourceMatched: true }),
   type("two-digit-condition", "number", "조건에 맞는 수", "조건에 맞는 두 자리 수", { generator: "sourceTwoDigitSumDifference", sourceMatched: true }),
-  type("two-digit-parity-gap", "number", "조건에 맞는 수", "짝수와 자릿수 차 조건의 두 자리 수"),
+  type("two-digit-parity-gap", "number", "조건에 맞는 수", "짝수와 자릿수 차 조건의 두 자리 수", { generator: "twoDigitParityGap", sourceMatched: true }),
   type("growing-shape-count", "pattern", "도형 규칙", "구슬 배열의 개수 규칙", { generator: "sourceGrowingDotSquare", sourceMatched: true }),
   type("triangle-tile-growth", "pattern", "도형 규칙", "정삼각형 조각 수의 성장 규칙"),
   type("square-tile-growth", "pattern", "도형 규칙", "정사각형 조각 수의 성장 규칙"),
@@ -189,7 +189,7 @@ export const EXAMS = [
     id: "k7-2022-04", stage: "k7_spring", label: "더 클래식 7세 2차 선발시험 (2022.04.18)",
     file: "(최종)더_클래식_7세_2차_선발시험(220418).pdf", layout: "two",
     typeIds: ["edge-sum-grid","equalize-transfer","five-card-sum-pyramid","grid-number-placement","order-position-from-back","addition-table-grid","shape-sum-table-bottom-target","repeat-three-shapes","arrow-number-path-seven","bus-change","fold-number-cut-sum","equal-line-sum-eight-cards","symbol-sum-grid-square-top","shape-equation-add-subtract","two-digit-parity-gap","triangle-tile-growth","balance-scale-three-objects","symbol-relation-2to3","number-line-six-points","go-stone-difference-inverse"],
-    verifiedQuestionNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+    verifiedQuestionNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
   }),
   makeExam({
     id: "k7-2022-06", stage: "k7_summer", label: "더 클래식 7세 3차 선발시험 (2022.06.22)",

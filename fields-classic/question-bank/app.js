@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816am";
-import { GENERATORS } from "./generators.js?v=20260816am";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ao";
+import { GENERATORS } from "./generators.js?v=20260816ao";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -631,6 +631,10 @@ function numberConditionsMarkup(visual) {
   return `<div class="number-conditions"><p>십의 자리 숫자와 일의 자리 숫자의 합은 <strong>${visual.sum}</strong>입니다.</p><p>십의 자리 숫자가 일의 자리 숫자보다 <strong>${visual.gap}</strong> 큽니다.</p></div>`;
 }
 
+function twoDigitParityGapMarkup(visual) {
+  return `<div class="number-conditions parity-gap-conditions"><ul><li><strong>${visual.lower}</strong>보다 크고 <strong>${visual.upper}</strong>보다 작은 짝수입니다.</li><li>십의 자리 숫자가 일의 자리 숫자보다 <strong>${visual.gap}</strong> 큽니다.</li>${visual.digitSum === null ? "" : `<li>십의 자리 숫자와 일의 자리 숫자의 합은 <strong>${visual.digitSum}</strong>입니다.</li>`}</ul>${visual.choices.length ? `<div class="parity-gap-choices"><b>[보기]</b>${visual.choices.map((value) => `<span>${value}</span>`).join("")}</div>` : ""}</div>`;
+}
+
 function growingDotSquareMarkup(visual) {
   const stage = (size) => `<div><i style="--dots:${size}">${Array.from({ length: size * size }, () => "<b></b>").join("")}</i><span>${size}번째</span></div>`;
   return `<div class="growing-dot-squares">${[1,2,3,4].map(stage).join("")}<strong>…</strong><em>${visual.target}번째</em></div>`;
@@ -747,6 +751,7 @@ function visualMarkup(visual) {
   if (visual.kind === "equal-line-eight-cards") return `<div class="visual equal-line-eight-visual">${equalLineSumEightCardsMarkup(visual)}</div>`;
   if (visual.kind === "equal-line-cross") return `<div class="visual equal-line-cross-visual">${equalLineCrossMarkup(visual)}</div>`;
   if (visual.kind === "number-conditions") return `<div class="visual number-conditions-visual">${numberConditionsMarkup(visual)}</div>`;
+  if (visual.kind === "two-digit-parity-gap") return `<div class="visual number-conditions-visual">${twoDigitParityGapMarkup(visual)}</div>`;
   if (visual.kind === "growing-dot-square") return `<div class="visual growing-dot-square-visual">${growingDotSquareMarkup(visual)}</div>`;
   if (visual.kind === "symbol-sum-grid") return `<div class="visual symbol-sum-grid-visual">${symbolSumGridMarkup(visual)}</div>`;
   if (visual.kind === "symbol-sum-grid-square-top") return `<div class="visual symbol-sum-grid-visual">${symbolSumGridSquareTopMarkup(visual)}</div>`;
