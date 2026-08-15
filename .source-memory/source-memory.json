@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "b1784631d192bf5ea8725adfe499f197acb7901b2ff743d7ee21ac936546b3b0",
-      "size": 83646,
-      "mtime_ns": 1786830517343519300
+      "sha256": "04c4039dea40db11236d494751cb0de53ddb788498be85fb7b6555f715c1059f",
+      "size": 84533,
+      "mtime_ns": 1786830768512820700
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "cbb6516799edc97034973d840c85f60e40bce97c39d18da854cea55304081b5e",
-      "size": 164058,
-      "mtime_ns": 1786830406730471300
+      "sha256": "2d3faa9e5eabb16a77b7dcc0b5d28ee4061d728bedca0fdea8b2ee8fdeb93d1c",
+      "size": 166565,
+      "mtime_ns": 1786830643473959300
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "e7e48e3ec97a6c5bbcc0edba928db78536f7d12007510586d6d04078e67549b8",
-      "size": 38790,
-      "mtime_ns": 1786830435502449600
+      "sha256": "c412623c918bd75624aea61e2eb7f93847182195413757883c5489e990c62369",
+      "size": 38856,
+      "mtime_ns": 1786830699282239200
     }
   ],
   "records": [
@@ -107,14 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 6",
+      "title": "Next verification selection test 6 question 7",
       "aliases": [],
       "tags": [
-        "next",
-        "k7-2022-12",
-        "q6"
+        "next"
       ],
-      "summary": "Compare the seven-person front/back order problem and official answer before implementing or reusing a generator.",
+      "summary": "Compare the original 1-8 edge-sum layout and official answer, then verify the mapped generator before opening it.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -122,8 +120,14 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "Next order item",
-          "note": "Question 6 remains disabled until the exact two clues, direction, unique position, official answer, difficulty structure, and browser rendering are verified"
+          "locator": "7-year-old selection test 6 question 7",
+          "note": "Verify the source layout and official answer before implementation"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 question 7",
+          "note": "Current provisional mapping must not be trusted until source comparison"
         }
       ]
     },
@@ -3009,6 +3013,39 @@
           "role": "code",
           "locator": "k7-2022-12 question 5",
           "note": "검증된 전용 유형 연결"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q6",
+      "title": "Selection test 6 question 6 seven-person line position",
+      "aliases": [],
+      "tags": [
+        "q6",
+        "order-position-seven-people"
+      ],
+      "summary": "Verified against the original test and official answer: seven people, sixth from the back, three people between the named students, answer sixth from the front. Uses a dedicated line-position generator and renderer with structural difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 6 paragraph",
+          "note": "Original conditions, official answer, structural difficulty, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function orderPositionSevenPeople",
+          "note": "Five, seven, and eight-person variants with both orientations"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES order-position-seven-people and EXAMS k7-2022-12 verified 1 through 6",
+          "note": "Source question 6 is enabled"
         }
       ]
     }

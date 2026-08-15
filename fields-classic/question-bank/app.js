@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816cu";
-import { GENERATORS } from "./generators.js?v=20260816ck";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816cv";
+import { GENERATORS } from "./generators.js?v=20260816cl";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -546,6 +546,11 @@ function raceOrderMarkup(visual, conditions) {
   return `<div class="race-order"><div class="race-track-row"><b>앞</b><div class="race-track" style="--race-count:${visual.total}">${Array.from({ length: visual.total }, (_, index) => `<span><i></i><b>${index + 1}등</b></span>`).join("")}</div><b>뒤</b></div><ul>${conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul></div>`;
 }
 
+function linePositionSevenMarkup(visual) {
+  const hint = visual.hint ? `<small>${visual.hint}</small>` : "";
+  return `<div class="line-position-work"><ul>${visual.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul>${hint}<div class="line-position-row"><b>앞</b><div style="--line-count:${visual.total}">${Array.from({ length: visual.total }, () => "<i></i>").join("")}</div><b>뒤</b></div></div>`;
+}
+
 function additionTableGridMarkup(visual) {
   const givenMap = new Map(visual.givens.map((item) => [`${item.row}:${item.column}`, item.value]));
   const cells = Array.from({ length: visual.size * visual.size }, (_, index) => {
@@ -962,6 +967,7 @@ function visualMarkup(visual) {
   if (visual.kind === "vertical-stair-grid-placement") return `<div class="visual stair-grid-placement-visual">${verticalStairGridPlacementMarkup(visual)}</div>`;
   if (visual.kind === "l-grid-placement") return `<div class="visual l-grid-placement-visual">${lGridPlacementMarkup(visual)}</div>`;
   if (visual.kind === "race-order") return `<div class="visual race-order-visual">${raceOrderMarkup(visual, visual.conditions || [])}</div>`;
+  if (visual.kind === "line-position-seven") return `<div class="visual line-position-visual">${linePositionSevenMarkup(visual)}</div>`;
   if (visual.kind === "addition-table-grid") return `<div class="visual addition-table-visual">${additionTableGridMarkup(visual)}</div>`;
   if (visual.kind === "disc-number-rule") return `<div class="visual disc-rule-visual">${discNumberRuleMarkup(visual)}</div>`;
   if (visual.kind === "shape-sum-table") return `<div class="visual shape-sum-visual">${shapeSumTableMarkup(visual)}</div>`;

@@ -1538,6 +1538,42 @@ function orderPositionFromFront({ difficulty = 2 }) {
   };
 }
 
+function orderPositionSevenPeople({ difficulty = 2 }) {
+  const names = shuffle(["주희", "지훈", "서윤", "도윤", "하린", "준우", "예린", "민서"]);
+  const fixedName = names[0];
+  const relatedName = names[1];
+  const askedName = difficulty === 3 ? names[2] : relatedName;
+  const mirrored = Math.random() < 0.5;
+  const total = difficulty === 1 ? 5 : difficulty === 2 ? 7 : 8;
+  const fromBack = mirrored ? 2 : total - 1;
+  const between = difficulty === 1 ? 2 : difficulty === 2 ? 3 : 2;
+  const fixedPosition = total - fromBack + 1;
+  const distance = between + 1;
+  const relatedCandidates = [fixedPosition - distance, fixedPosition + distance]
+    .filter((position) => position >= 1 && position <= total);
+  const relatedPosition = relatedCandidates[0];
+  const askedPosition = difficulty === 3
+    ? relatedPosition + (relatedPosition > fixedPosition ? 1 : -1)
+    : relatedPosition;
+  const conditions = [
+    `${koreanParticle(fixedName, "은", "는")} 뒤에서 ${fromBack}번째에 서 있습니다.`,
+    `${koreanParticle(fixedName, "과", "와")} ${relatedName} 사이에는 ${between}명이 서 있습니다.`
+  ];
+  if (difficulty === 3) {
+    conditions.push(`${koreanParticle(askedName, "은", "는")} ${relatedName}의 바로 ${askedPosition > relatedPosition ? "뒤" : "앞"}에 서 있습니다.`);
+  }
+  const hint = difficulty === 1
+    ? `${koreanParticle(fixedName, "은", "는")} 앞에서 ${fixedPosition}번째입니다.`
+    : "";
+  return {
+    prompt: `${total}명의 친구들이 줄을 서 있습니다. 다음을 보고 ${koreanParticle(askedName, "은", "는")} 앞에서 몇 번째에 서 있는지 구하세요.`,
+    visual: { kind: "line-position-seven", total, conditions, hint },
+    answer: String(askedPosition),
+    solution: `${koreanParticle(fixedName, "은", "는")} 뒤에서 ${fromBack}번째이므로 앞에서 ${fixedPosition}번째입니다. ${koreanParticle(fixedName, "과", "와")} ${relatedName} 사이에 ${between}명이 있으므로 ${koreanParticle(relatedName, "은", "는")} 앞에서 ${relatedPosition}번째입니다.${difficulty === 3 ? ` ${koreanParticle(askedName, "은", "는")} ${relatedName}의 바로 ${askedPosition > relatedPosition ? "뒤" : "앞"}이므로 앞에서 ${askedPosition}번째입니다.` : ""}`,
+    meta: { difficulty, total, fromBack, between, fixedName, relatedName, askedName, fixedPosition, distance, relatedCandidates, relatedPosition, askedPosition, mirrored }
+  };
+}
+
 function additionTableGrid({ difficulty = 2 }) {
   const size = difficulty === 1 ? 3 : difficulty === 2 ? 4 : 5;
   const start = randomInt(1, difficulty === 3 ? 5 : 8);
@@ -2928,6 +2964,7 @@ export const GENERATORS = {
   raceOrder,
   orderPositionFromBack,
   orderPositionFromFront,
+  orderPositionSevenPeople,
   additionTableGrid,
   additionTableGridBottomLeft,
   additionTableGridOffset,
