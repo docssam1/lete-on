@@ -48,7 +48,31 @@
         "When the elevator doors opened, she suddenly found herself safely back home.",
         "From that day on, Audrey never forgot that even a small act of kindness could come back in an unexpected way."
       ]
-    ]
+    ],
+    "authorStudio": {
+      "praise": [
+        "You gave Audrey a clear adventure with a beginning, a problem, a rescue, and a meaningful ending.",
+        "Audrey's kindness returning when she needed help makes the message easy to remember."
+      ],
+      "tryNext": "On your next page, add one sentence that shows what Audrey feels when she sees the magical world again.",
+      "choices": [
+        {
+          "id": "gem-returns",
+          "label": "The glowing gem returns",
+          "prompt": "The glowing gem appears in Audrey's room. Write 3–5 sentences about what happens next."
+        },
+        {
+          "id": "unicorn-visits",
+          "label": "The unicorn visits Audrey",
+          "prompt": "The kind unicorn visits Audrey's world with an important message. Write 3–5 sentences about the visit."
+        },
+        {
+          "id": "own-idea",
+          "label": "I have my own idea",
+          "prompt": "Write 3–5 sentences for your own next chapter about Audrey and the magical forest."
+        }
+      ]
+    }
   },
   {
     "id": "story-2",
@@ -93,6 +117,30 @@
         "It was one of the happiest moments of my life.",
         "If I could relive one day, it would definitely be that day."
       ]
-    ]
+    ],
+    "authorStudio": {
+      "praise": [
+        "You organized the memory clearly around three reasons, so the reader can follow the whole day.",
+        "Details such as the rope course, the timed jumps, and the hidden gem make the adventure feel real."
+      ],
+      "tryNext": "Choose one favorite mission and add a sound, a feeling, or one line of dialogue to bring that moment even closer.",
+      "choices": [
+        {
+          "id": "new-mission",
+          "label": "A brand-new mission",
+          "prompt": "You and your friend return to KidZania and receive a brand-new mission. Write 3–5 sentences about the challenge."
+        },
+        {
+          "id": "friends-view",
+          "label": "My friend's point of view",
+          "prompt": "Tell one part of the special day from your friend's point of view. Write 3–5 sentences about what your friend saw and felt."
+        },
+        {
+          "id": "own-idea",
+          "label": "I have my own idea",
+          "prompt": "Write 3–5 sentences about another unforgettable day you would like to have with your friend."
+        }
+      ]
+    }
   }
 ]

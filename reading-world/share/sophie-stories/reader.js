@@ -2,7 +2,12 @@
   'use strict';
 
   const AUDIO_BASE = 'https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio/sophie-stories';
-  const state = { stories: [], current: 0, timings: [], activeSegment: -1, timingMode: 'exact' };
+  const WV_AI_URL = 'https://fgahqumaldheqettmvqg.supabase.co/functions/v1/writing-feedback';
+  const WV_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
+  const state = {
+    stories: [], current: 0, timings: [], activeSegment: -1, timingMode: 'exact',
+    studioBusy: false, studioError: '', studioDeepLinkPending: false
+  };
 
   const els = {
     tabs: document.getElementById('story-tabs'),
@@ -20,7 +25,9 @@
     currentTime: document.getElementById('current-time'),
     duration: document.getElementById('duration'),
     status: document.getElementById('player-status'),
-    speed: document.getElementById('speed')
+    speed: document.getElementById('speed'),
+    studio: document.getElementById('author-studio'),
+    studioContent: document.getElementById('studio-content')
   };
 
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
@@ -48,6 +55,91 @@
         ${escapeHtml(story.tabLabel)}
       </button>
     `).join('');
+  }
+
+  function studioKey(storyId) {
+    return `sophie-next-chapter-v1:${storyId}`;
+  }
+
+  function readStudioDraft(storyId) {
+    try {
+      return JSON.parse(localStorage.getItem(studioKey(storyId)) || '{}');
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function saveStudioDraft(storyId, draft) {
+    try { localStorage.setItem(studioKey(storyId), JSON.stringify(draft)); } catch (_) {}
+  }
+
+  function browserStudentId() {
+    const key = 'sophie-reader-id-v1';
+    try {
+      let id = localStorage.getItem(key);
+      if (!id) {
+        id = `reader-${globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`}`;
+        localStorage.setItem(key, id);
+      }
+      return id;
+    } catch (_) {
+      return `reader-${Date.now()}`;
+    }
+  }
+
+  function renderRainbowFeedback(ai) {
+    if (!ai) return '';
+    const praise = Array.isArray(ai.praise) ? ai.praise : [];
+    const fixes = Array.isArray(ai.fixes) ? ai.fixes : [];
+    return `<div class="rainbow-feedback" id="rainbow-feedback">
+      <h4>Rainbow Pen note</h4>
+      ${praise.length ? `<div class="rainbow-praise">${praise.slice(0, 2).map((item) => `<span>★ ${escapeHtml(item)}</span>`).join('')}</div>` : ''}
+      ${fixes.slice(0, 1).map((fix) => `<div class="rainbow-fix"><span>${escapeHtml(fix.orig || '')}</span> → <b>${escapeHtml(fix.better || '')}</b>${fix.why ? `<small>${escapeHtml(fix.why)}</small>` : ''}</div>`).join('')}
+      ${ai.challenge ? `<p class="rainbow-challenge">Next little challenge: ${escapeHtml(ai.challenge)}</p>` : ''}
+      ${ai.corrected ? `<details class="rainbow-corrected"><summary>See a polished example</summary><p>${escapeHtml(ai.corrected)}</p></details>` : ''}
+    </div>`;
+  }
+
+  function renderStudio() {
+    const story = state.stories[state.current];
+    const studio = story?.authorStudio;
+    if (!studio) {
+      els.studio.hidden = true;
+      return;
+    }
+    els.studio.hidden = false;
+    const draft = readStudioDraft(story.id);
+    const choices = Array.isArray(studio.choices) ? studio.choices : [];
+    const selected = choices.find((choice) => choice.id === draft.choiceId);
+    const status = state.studioError || (draft.savedAt ? 'Saved on this device.' : '');
+
+    els.studioContent.innerHTML = `<div class="studio-grid">
+      <article class="studio-card">
+        <h3>What worked beautifully</h3>
+        <ul class="praise-list">${(studio.praise || []).slice(0, 2).map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
+      </article>
+      <article class="studio-card try-card">
+        <h3>One thing to try next</h3>
+        <p>${escapeHtml(studio.tryNext || '')}</p>
+      </article>
+      <article class="studio-card branch-card">
+        <h3>What would you like to write next?</h3>
+        <p class="branch-intro">Choose one branch. There is no wrong answer.</p>
+        <div class="branch-choices">${choices.map((choice) => `<button class="branch-choice ${choice.id === draft.choiceId ? 'is-selected' : ''}" type="button" data-studio-choice="${escapeHtml(choice.id)}">${escapeHtml(choice.label)}</button>`).join('')}</div>
+      </article>
+      <article class="next-page" id="next-page" ${selected ? '' : 'hidden'}>
+        <h3>My Next Chapter</h3>
+        <p class="next-prompt">${escapeHtml(selected?.prompt || '')}</p>
+        <textarea id="next-chapter-text" maxlength="1800" placeholder="Start your next chapter here…">${escapeHtml(draft.text || '')}</textarea>
+        <div class="studio-actions">
+          <button class="studio-button" type="button" data-studio-action="hear">Hear the prompt</button>
+          <button class="studio-button primary" type="button" data-studio-action="save">Save my next chapter</button>
+          <button class="studio-button violet" type="button" data-studio-action="feedback" ${state.studioBusy ? 'disabled' : ''}>${state.studioBusy ? 'Rainbow Pen is reading…' : 'Get one Rainbow Pen note'}</button>
+        </div>
+        <p class="studio-status" id="studio-status" aria-live="polite">${escapeHtml(status)}</p>
+        ${renderRainbowFeedback(draft.ai)}
+      </article>
+    </div>`;
   }
 
   function renderStory() {
@@ -82,6 +174,9 @@
     }
     els.pageNumber.textContent = `${state.current + 1} / ${state.stories.length}`;
     renderTabs();
+    state.studioBusy = false;
+    state.studioError = '';
+    renderStudio();
     resetPlayerUi();
     loadAudio(story, segments);
   }
@@ -183,6 +278,104 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
+  els.studioContent.addEventListener('input', (event) => {
+    if (event.target.id !== 'next-chapter-text') return;
+    const story = state.stories[state.current];
+    const draft = readStudioDraft(story.id);
+    draft.text = event.target.value;
+    draft.savedAt = null;
+    draft.ai = null;
+    saveStudioDraft(story.id, draft);
+    const status = document.getElementById('studio-status');
+    if (status) status.textContent = 'Draft kept on this device.';
+  });
+
+  els.studioContent.addEventListener('click', async (event) => {
+    const story = state.stories[state.current];
+    const studio = story?.authorStudio;
+    if (!studio) return;
+    const choiceButton = event.target.closest('[data-studio-choice]');
+    if (choiceButton) {
+      const draft = readStudioDraft(story.id);
+      if (draft.choiceId !== choiceButton.dataset.studioChoice) draft.ai = null;
+      draft.choiceId = choiceButton.dataset.studioChoice;
+      saveStudioDraft(story.id, draft);
+      renderStudio();
+      requestAnimationFrame(() => document.getElementById('next-page')?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+      return;
+    }
+
+    const actionButton = event.target.closest('[data-studio-action]');
+    if (!actionButton) return;
+    const draft = readStudioDraft(story.id);
+    const selected = studio.choices.find((choice) => choice.id === draft.choiceId);
+    const text = String(document.getElementById('next-chapter-text')?.value || draft.text || '').trim();
+
+    if (actionButton.dataset.studioAction === 'hear') {
+      if (!selected || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(selected.prompt);
+      utterance.lang = 'en-US';
+      utterance.rate = .88;
+      window.speechSynthesis.speak(utterance);
+      return;
+    }
+
+    if (actionButton.dataset.studioAction === 'save') {
+      if (text.length < 10) {
+        const status = document.getElementById('studio-status');
+        if (status) status.textContent = 'Write one more sentence before saving.';
+        return;
+      }
+      draft.text = text;
+      draft.savedAt = Date.now();
+      saveStudioDraft(story.id, draft);
+      state.studioError = '';
+      renderStudio();
+      return;
+    }
+
+    if (actionButton.dataset.studioAction === 'feedback') {
+      if (text.length < 10 || !selected || state.studioBusy) {
+        const status = document.getElementById('studio-status');
+        if (status) status.textContent = 'Write and save a short next chapter first.';
+        return;
+      }
+      draft.text = text;
+      draft.savedAt = Date.now();
+      draft.ai = null;
+      saveStudioDraft(story.id, draft);
+      state.studioBusy = true;
+      state.studioError = '';
+      renderStudio();
+      try {
+        const response = await fetch(WV_AI_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${WV_ANON}`, apikey: WV_ANON },
+          body: JSON.stringify({
+            studentId: browserStudentId(),
+            palName: 'Oli',
+            unitTitle: story.title || story.tabLabel,
+            question: selected.prompt,
+            journal: text
+          })
+        });
+        const result = await response.json();
+        if (!response.ok || !result || result.error) throw new Error(String(result?.error || 'feedback unavailable'));
+        draft.ai = result;
+        saveStudioDraft(story.id, draft);
+      } catch (error) {
+        state.studioError = String(error.message).includes('daily-limit')
+          ? 'Today\'s Rainbow Pen notes are all used. Your chapter is still saved.'
+          : 'Rainbow Pen could not open just now. Your chapter is still saved.';
+      } finally {
+        state.studioBusy = false;
+        renderStudio();
+        requestAnimationFrame(() => document.getElementById('rainbow-feedback')?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+      }
+    }
+  });
+
   els.illustration.addEventListener('error', () => {
     els.illustration.hidden = true;
     els.illustrationPlaceholder.hidden = false;
@@ -233,6 +426,8 @@
     els.play.setAttribute('aria-label', 'Play story');
     els.status.textContent = 'Story finished';
     setActiveSegment(-1);
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    els.studio.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
   });
 
   els.audio.addEventListener('error', () => {
@@ -250,7 +445,12 @@
       const requested = location.hash.slice(1);
       const requestedIndex = stories.findIndex((story) => story.id === requested);
       state.current = requestedIndex >= 0 ? requestedIndex : 0;
+      state.studioDeepLinkPending = new URLSearchParams(location.search).get('studio') === '1';
       renderStory();
+      if (state.studioDeepLinkPending) {
+        state.studioDeepLinkPending = false;
+        window.setTimeout(() => els.studio.scrollIntoView({ behavior: 'smooth', block: 'start' }), 250);
+      }
     })
     .catch((error) => {
       els.copy.innerHTML = '<p>Sorry, this story could not be loaded.</p>';

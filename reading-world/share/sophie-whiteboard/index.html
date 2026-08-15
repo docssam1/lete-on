@@ -19,6 +19,7 @@
     video{display:block;width:100%;background:var(--paper);aspect-ratio:16/9}
     .passage{padding:22px clamp(18px,4vw,42px) 26px;font-size:clamp(18px,2.1vw,24px);line-height:1.75}
     .sentence{border-radius:6px;padding:2px 1px;transition:.15s}.sentence.reading{background:#f7cf73;box-shadow:0 0 0 3px #f7cf734d}
+    .continue-card{scroll-margin-block:22px;padding:28px;border:1px solid var(--line);border-radius:18px;text-align:center;background:#fffaf0;box-shadow:0 13px 35px #6756381a}.continue-card p{margin:7px auto 17px;max-width:620px;color:#685f50;line-height:1.55}.continue-card a{display:inline-block;border-radius:999px;padding:12px 20px;color:#fff;background:var(--accent);font-weight:700;text-decoration:none}
     @media(min-width:900px){.scene-card{display:grid;grid-template-columns:1.2fr 1fr}.scene-head{grid-column:1/-1}.passage{align-self:center}.scene-card video{height:100%;object-fit:contain}}
     @media(max-width:700px){header{align-items:flex-start;flex-direction:column;gap:7px}header>p{font-size:14px}h2{overflow-wrap:anywhere}.scene-head{align-items:flex-start}.passage{padding-inline:20px}}
   </style>
@@ -80,7 +81,11 @@
             <span class="sentence" data-start="0" data-end="4.997239379882814">When Audrey climbed off its back, she thanked the unicorn for saving her.</span> <span class="sentence" data-start="4.997239379882814" data-end="11.976533203125001">At that moment, she understood that the kindness she had shown earlier had returned to her when she needed it most.</span> <span class="sentence" data-start="11.976533203125001" data-end="17.0387890625">In the end, Audrey pushed open a mysterious door and dashed inside.</span> <span class="sentence" data-start="17.0387890625" data-end="22.263291625976564">When the elevator doors opened, she suddenly found herself safely back home.</span> <span class="sentence" data-start="22.263291625976564" data-end="28.414">From that day on, Audrey never forgot that even a small act of kindness could come back in an unexpected way.</span>
           </div>
         </article>
-      
+        <aside class="continue-card">
+          <h3>What would you like to write next?</h3>
+          <p>See Sophie's author note, choose one of three story branches, and write the next chapter.</p>
+          <a href="../sophie-stories/?studio=1#story-1">Open Story 1 Author Studio</a>
+        </aside>
     </div>
   </section>
 
@@ -127,7 +132,11 @@
             <span class="sentence" data-start="0.000491088867192957" data-end="4.994326538085943">Some missions were difficult, but finishing them made me feel brave and proud.</span> <span class="sentence" data-start="4.994326538085943" data-end="10.985865539550787">It felt like a dream come true to spend an entire day going on exciting adventures with my friend.</span> <span class="sentence" data-start="10.985865539550787" data-end="23.13103002929688">In conclusion, my trip to KidZania was one of the most special days of my life because I spent time with my best friend, enjoyed a surprising sleepover, and completed unforgettable missions.</span> <span class="sentence" data-start="23.13103002929688" data-end="26.04173559570313">It was one of the happiest moments of my life.</span> <span class="sentence" data-start="26.04173559570313" data-end="29.315737670898443">If I could relive one day, it would definitely be that day.</span>
           </div>
         </article>
-      
+        <aside class="continue-card">
+          <h3>What would you like to write next?</h3>
+          <p>See Sophie's author note, choose one of three story branches, and write the next chapter.</p>
+          <a href="../sophie-stories/?studio=1#story-2">Open Story 2 Author Studio</a>
+        </aside>
     </div>
   </section>
 
@@ -151,8 +160,11 @@
       const story = video.closest('.story');
       const videos = [...story.querySelectorAll('video')];
       const next = videos[videos.indexOf(video) + 1];
-      if (!next) return;
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!next) {
+        story.querySelector('.continue-card')?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'center' });
+        return;
+      }
       next.closest('.scene-card').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'center' });
       window.setTimeout(() => {
         next.currentTime = 0;
