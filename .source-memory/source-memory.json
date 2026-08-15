@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "ba6b5d221f3168ebdf3011cb2cf9bbb95e9df39bfa52af5610b412def09d7812",
-      "size": 33024,
-      "mtime_ns": 1786815612822612200
+      "sha256": "7d59722c1e770700aa1968ec3a6207bfb5aae2ea419d230702cf9e4a5c8aca27",
+      "size": 33815,
+      "mtime_ns": 1786816011002842900
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "6faee1e14c6bc26d5bbbbac8f91f4b5857580f944201b7506dbc8da113f8705a",
-      "size": 97208,
-      "mtime_ns": 1786815202881425100
+      "sha256": "39fef9de3ee4f1bc77d653cb28f56a76921ef2a351bbf8c8df9e7b6f27a01451",
+      "size": 98660,
+      "mtime_ns": 1786815870828834900
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "9c59808788fb76fcc14e633ea3b29bb0a76f8bf04892aa27def2a6dd1e972001",
-      "size": 33529,
-      "mtime_ns": 1786815544506791400
+      "sha256": "ce0455aba8b000d11dc8339e90ecf5d4dfc71c339707a800c5ac9c27e77197df",
+      "size": 33588,
+      "mtime_ns": 1786815910719193500
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 11",
+      "title": "Next verification 7-year-old selection test 2 question 12",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q11"
+        "q12"
       ],
-      "summary": "Verify the numbered 4 by 4 paper, one fold, diagonal cut, and sum 39 from the original image before designing the fold-number-cut-sum generator.",
+      "summary": "Verify the 1 through 8 perimeter-card line-sum puzzle with target 15 and marked answer 3 before implementing equal-line-sum-eight-cards.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 11 is the next locked source question"
+          "note": "Question 12 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-04 question 11 fold-number-cut-sum",
-          "note": "Do not enable until fold geometry and cut sum are verified"
+          "locator": "EXAMS k7-2022-04 question 12 equal-line-sum-eight-cards",
+          "note": "Do not enable until the perimeter layout and unique marked value are verified"
         }
       ]
     },
@@ -1145,6 +1145,40 @@
           "role": "code",
           "locator": "TYPES bus-change and EXAMS k7-2022-04 verified 1 through 10",
           "note": "Source question 10 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q11",
+      "title": "Selection test 2 question 11 folded number paper cut sum",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q11",
+        "fold-number-cut-sum"
+      ],
+      "summary": "The source folds a 4 by 4 numbered paper across the anti-diagonal; three shaded off-axis cells cut their reflected partners and one diagonal cell cuts once, giving 4+5+8+7+6+2+7=39.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 11 paragraph",
+          "note": "Original fold geometry, answer 39, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function foldNumberCutSum",
+          "note": "Mirrored cut-cell calculation and three structural levels"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES fold-number-cut-sum and EXAMS k7-2022-04 verified 1 through 11",
+          "note": "Source question 11 is enabled"
         }
       ]
     }

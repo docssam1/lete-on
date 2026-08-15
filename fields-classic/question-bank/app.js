@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ah";
-import { GENERATORS } from "./generators.js?v=20260816ah";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ai";
+import { GENERATORS } from "./generators.js?v=20260816ai";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -594,6 +594,24 @@ function busStopsMarkup(visual) {
   return `<div class="bus-stops"><ul><li>첫 번째 정류장에서 <strong>${visual.left}명</strong>이 내렸습니다.</li><li>두 번째 정류장에서 <strong>${visual.boarded}명</strong>이 탔습니다.</li></ul></div>`;
 }
 
+function foldNumberCutSumMarkup(visual) {
+  const cell = 42;
+  const paperSize = visual.size * cell;
+  const gridLines = Array.from({ length: visual.size - 1 }, (_, index) => {
+    const point = (index + 1) * cell;
+    return `<path d="M${point} 0V${paperSize}M0 ${point}H${paperSize}"/>`;
+  }).join("");
+  const shaded = visual.foldMask.map(([row, column]) => {
+    const x = column * cell;
+    const y = row * cell;
+    if (row + column === visual.size - 1) return `<path d="M${x} ${y}H${x + cell}L${x} ${y + cell}Z"/>`;
+    return `<rect x="${x}" y="${y}" width="${cell}" height="${cell}"/>`;
+  }).join("");
+  const paper = `<svg class="fold-cut-paper" viewBox="-8 -24 ${paperSize + 16} ${paperSize + 34}" role="img" aria-label="대각선으로 접고 칠한 부분을 자르는 색종이"><text x="${paperSize / 2}" y="-8">한 번 접기</text><rect width="${paperSize}" height="${paperSize}"/><g class="fold-cut-grid">${gridLines}</g><path class="fold-line" d="M0 ${paperSize}L${paperSize} 0"/><g class="cut-shade">${shaded}</g><path class="fold-arrow" d="M${paperSize - 34} ${paperSize - 45}Q${paperSize - 60} ${paperSize - 78} ${paperSize - 93} ${paperSize - 88}"/><path class="fold-arrow-head" d="M${paperSize - 93} ${paperSize - 88}l12 -5l-4 12Z"/></svg>`;
+  const numberGrid = `<div class="fold-cut-number-grid" style="--fold-size:${visual.size}">${visual.grid.map((value) => `<span>${value}</span>`).join("")}</div>`;
+  return `<div class="fold-number-cut-work">${paper}<b class="fold-process-arrow">→</b>${numberGrid}</div>`;
+}
+
 function equalLineCrossMarkup(visual) {
   return `<div class="equal-line-cross"><div class="cross-cards">${[1,2,3,4,5].map((value) => `<span>${value}</span>`).join("")}</div><div class="cross-grid"><span></span><b>${visual.top}</b><span></span><b>${visual.left}</b><b>㉠</b><i></i><span></span><i></i><span></span></div></div>`;
 }
@@ -688,6 +706,7 @@ function visualMarkup(visual) {
   if (visual.kind === "arrow-number-grid") return `<div class="visual arrow-grid-visual">${arrowNumberGridMarkup(visual)}</div>`;
   if (visual.kind === "arrow-number-path-seven") return `<div class="visual arrow-path-seven-visual">${arrowNumberPathSevenMarkup(visual)}</div>`;
   if (visual.kind === "bus-stops") return `<div class="visual bus-stops-visual">${busStopsMarkup(visual)}</div>`;
+  if (visual.kind === "fold-number-cut-sum") return `<div class="visual fold-number-cut-visual">${foldNumberCutSumMarkup(visual)}</div>`;
   if (visual.kind === "equal-line-cross") return `<div class="visual equal-line-cross-visual">${equalLineCrossMarkup(visual)}</div>`;
   if (visual.kind === "number-conditions") return `<div class="visual number-conditions-visual">${numberConditionsMarkup(visual)}</div>`;
   if (visual.kind === "growing-dot-square") return `<div class="visual growing-dot-square-visual">${growingDotSquareMarkup(visual)}</div>`;
