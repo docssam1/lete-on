@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "6fbed8d2f532d0ab6f4d894c3babfff319cd501cec3f06d896144ef93fe353e0",
-      "size": 78980,
-      "mtime_ns": 1786828992567124300
+      "sha256": "092a6e1f19a4daf3a52257e0916ea427335494966e945a1eea1d28f3c6ec637b",
+      "size": 79806,
+      "mtime_ns": 1786829255034165100
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "f6aced86c984469bd7361ddc1b658856c1b7f760cda2dfa8052e31f717d278ff",
-      "size": 38304,
-      "mtime_ns": 1786828849159178900
+      "sha256": "4b6059db3aa3b8742ec13a001f0c29561c8f85e537f255d086293935859bc6d9",
+      "size": 38333,
+      "mtime_ns": 1786829151539196900
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 1",
+      "title": "Next verification selection test 6 question 2",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-12",
-        "q1"
+        "q2"
       ],
-      "summary": "Open the 2022-12-15 selection test question 1 only after comparing its exact diagram and official answer, then verify its generator, three difficulty structures, browser rendering, and answer uniqueness.",
+      "summary": "Compare the five-number positional condition diagram and official answer on page 3, then verify or separate its generator before enabling question 2.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,7 +123,7 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 6 remains disabled until each source question is verified one by one"
+          "note": "Question 2 remains disabled until exact layout, answer, generator, and browser rendering are verified"
         }
       ]
     },
@@ -2839,6 +2839,40 @@
           "role": "code",
           "locator": "TYPES go-stone-difference-inverse-white and EXAMS k7-2022-08 all verified",
           "note": "Question 20 enabled after exact source comparison"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q1",
+      "title": "Selection test 6 question 1 edge-sum card placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q1",
+        "edge-sum-grid"
+      ],
+      "summary": "The source uses cards 5, 6, 7, and 8 with edge sums top 15, right 14, bottom 11, and left 12; exhaustive placement gives the unique official layout TL 7, TR 8, BR 6, BL 5.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 1 paragraph",
+          "note": "Exact cards, four sums, official full placement, exhaustive verification, and browser rendering"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function edgeSumCycle",
+          "note": "Existing source-aligned full-placement generator with three difficulty structures"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-12 verified question 1",
+          "note": "Question 1 enabled after source match"
         }
       ]
     }
