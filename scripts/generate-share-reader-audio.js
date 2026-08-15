@@ -68,6 +68,7 @@ function buildSsml(story, segments) {
 }
 
 async function synthesize(story) {
+  if (!GOOGLE_TTS_KEY) throw new Error('Set GOOGLE_TTS_KEY before generating new audio.');
   const segments = storySegments(story);
   const payload = JSON.stringify({
     input: { ssml: buildSsml(story, segments) },
@@ -109,6 +110,24 @@ async function synthesize(story) {
   };
 }
 
+async function existingTimings(storyId) {
+  const url = new URL(SUPABASE_URL);
+  const response = await request({
+    hostname: url.hostname,
+    path: `/storage/v1/object/public/audio/sophie-stories/${storyId}.timings.json`,
+    method: 'GET'
+  });
+  if (response.status !== 200) return null;
+  try { return JSON.parse(response.body.toString('utf8')); } catch (_) { return null; }
+}
+
+function timingsMatchStory(story, timings) {
+  if (!timings || timings.voice !== VOICE_NAME || Number(timings.speakingRate) !== SPEAKING_RATE) return false;
+  const current = storySegments(story).map((segment) => segment.text);
+  const stored = Array.isArray(timings.segments) ? timings.segments.map((segment) => segment.text) : [];
+  return current.length === stored.length && current.every((text, index) => text === stored[index]);
+}
+
 async function upload(buffer, storagePath, contentType) {
   const url = new URL(SUPABASE_URL);
   const response = await request({
@@ -128,9 +147,13 @@ async function upload(buffer, storagePath, contentType) {
 }
 
 async function main() {
-  if (!GOOGLE_TTS_KEY) throw new Error('Set GOOGLE_TTS_KEY before running this script.');
   fs.mkdirSync(OUT_DIR, { recursive: true });
   for (const story of stories) {
+    const storedTimings = await existingTimings(story.id);
+    if (timingsMatchStory(story, storedTimings)) {
+      console.log(`Skipping ${story.id}: narration text, voice, and speed are unchanged.`);
+      continue;
+    }
     process.stdout.write(`Generating ${story.id} with ${VOICE_NAME}... `);
     const { mp3, timings } = await synthesize(story);
     const timingBuffer = Buffer.from(`${JSON.stringify(timings, null, 2)}\n`);
@@ -143,7 +166,7 @@ async function main() {
     await upload(timingBuffer, `sophie-stories/${story.id}.timings.json`, 'audio/mpeg');
     console.log(`${mp3.length.toLocaleString()} bytes, ${timings.segments.length} exact sentence marks`);
   }
-  console.log('Sophie story audio and sentence timing files uploaded successfully.');
+  console.log('Sophie story audio pipeline completed successfully.');
 }
 
 if (require.main === module) {
@@ -153,4 +176,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildSsml, escapeSsml, storySegments };
+module.exports = { buildSsml, escapeSsml, storySegments, timingsMatchStory };

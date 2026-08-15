@@ -284,6 +284,20 @@ button, select { -webkit-tap-highlight-color: transparent; }
   font-weight: 600;
 }
 .studio-heading > p:last-child { margin: 0; color: var(--muted); line-height: 1.55; }
+.studio-language { display: flex; justify-content: center; gap: 5px; margin: -8px 0 18px; }
+.studio-language button {
+  min-width: 58px;
+  min-height: 36px;
+  padding: 6px 13px;
+  border: 1px solid #cbbda4;
+  border-radius: 999px;
+  color: var(--muted);
+  background: #fffdf8;
+  cursor: pointer;
+  font-weight: 800;
+}
+.studio-language button[aria-pressed="true"] { border-color: var(--accent); color: #fff; background: var(--accent); }
+.studio-language button:focus-visible { outline: 3px solid rgba(141,63,53,.3); outline-offset: 2px; }
 .studio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .studio-card {
   padding: 20px;

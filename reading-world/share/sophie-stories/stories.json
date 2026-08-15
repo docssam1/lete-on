@@ -54,22 +54,33 @@
         "You gave Audrey a clear adventure with a beginning, a problem, a rescue, and a meaningful ending.",
         "Audrey's kindness returning when she needed help makes the message easy to remember."
       ],
+      "praiseKo": [
+        "Audrey의 모험이 시작, 문제, 구출, 의미 있는 결말로 분명하게 이어지도록 잘 구성했어요.",
+        "Audrey가 베푼 친절이 도움이 되어 돌아오는 장면 덕분에 이야기의 메시지가 오래 기억돼요."
+      ],
       "tryNext": "On your next page, add one sentence that shows what Audrey feels when she sees the magical world again.",
+      "tryNextKo": "다음 페이지에서는 Audrey가 마법의 세계를 다시 보았을 때 어떤 기분이 들었는지 한 문장으로 보여 주세요.",
       "choices": [
         {
           "id": "gem-returns",
           "label": "The glowing gem returns",
-          "prompt": "The glowing gem appears in Audrey's room. Write 3–5 sentences about what happens next."
+          "labelKo": "빛나는 보석이 다시 나타나요",
+          "prompt": "The glowing gem appears in Audrey's room. Write 3–5 sentences about what happens next.",
+          "promptKo": "빛나는 보석이 Audrey의 방에 나타났어요. 다음에 어떤 일이 생기는지 3~5문장으로 써 보세요."
         },
         {
           "id": "unicorn-visits",
           "label": "The unicorn visits Audrey",
-          "prompt": "The kind unicorn visits Audrey's world with an important message. Write 3–5 sentences about the visit."
+          "labelKo": "유니콘이 Audrey를 찾아와요",
+          "prompt": "The kind unicorn visits Audrey's world with an important message. Write 3–5 sentences about the visit.",
+          "promptKo": "착한 유니콘이 중요한 소식을 가지고 Audrey의 세계를 찾아왔어요. 두 친구의 만남을 3~5문장으로 써 보세요."
         },
         {
           "id": "own-idea",
           "label": "I have my own idea",
-          "prompt": "Write 3–5 sentences for your own next chapter about Audrey and the magical forest."
+          "labelKo": "내 생각으로 이어 쓸래요",
+          "prompt": "Write 3–5 sentences for your own next chapter about Audrey and the magical forest.",
+          "promptKo": "Audrey와 마법의 숲에서 이어지는 나만의 다음 챕터를 3~5문장으로 써 보세요."
         }
       ]
     }
@@ -123,22 +134,33 @@
         "You organized the memory clearly around three reasons, so the reader can follow the whole day.",
         "Details such as the rope course, the timed jumps, and the hidden gem make the adventure feel real."
       ],
+      "praiseKo": [
+        "세 가지 이유를 중심으로 추억을 분명하게 정리해서 독자가 하루의 이야기를 쉽게 따라갈 수 있어요.",
+        "로프 코스, 시간 안에 뛰기, 숨은 보석 찾기 같은 구체적인 내용이 모험을 생생하게 만들어요."
+      ],
       "tryNext": "Choose one favorite mission and add a sound, a feeling, or one line of dialogue to bring that moment even closer.",
+      "tryNextKo": "가장 좋아했던 미션 하나를 골라 소리, 느낌 또는 짧은 대화를 한 문장 더하면 그 순간이 더욱 생생해져요.",
       "choices": [
         {
           "id": "new-mission",
           "label": "A brand-new mission",
-          "prompt": "You and your friend return to KidZania and receive a brand-new mission. Write 3–5 sentences about the challenge."
+          "labelKo": "새로운 미션에 도전해요",
+          "prompt": "You and your friend return to KidZania and receive a brand-new mission. Write 3–5 sentences about the challenge.",
+          "promptKo": "친구와 KidZania에 다시 가서 새로운 미션을 받았어요. 그 도전을 3~5문장으로 써 보세요."
         },
         {
           "id": "friends-view",
           "label": "My friend's point of view",
-          "prompt": "Tell one part of the special day from your friend's point of view. Write 3–5 sentences about what your friend saw and felt."
+          "labelKo": "친구의 시점으로 써 봐요",
+          "prompt": "Tell one part of the special day from your friend's point of view. Write 3–5 sentences about what your friend saw and felt.",
+          "promptKo": "특별했던 하루의 한 장면을 친구의 시점으로 들려주세요. 친구가 보고 느낀 것을 3~5문장으로 써 보세요."
         },
         {
           "id": "own-idea",
           "label": "I have my own idea",
-          "prompt": "Write 3–5 sentences about another unforgettable day you would like to have with your friend."
+          "labelKo": "내 생각으로 이어 쓸래요",
+          "prompt": "Write 3–5 sentences about another unforgettable day you would like to have with your friend.",
+          "promptKo": "친구와 함께 보내고 싶은 또 다른 잊지 못할 하루를 3~5문장으로 써 보세요."
         }
       ]
     }
