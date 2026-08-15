@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "e4313538edcf5294cf90923a2758f3f8f9873ba09ca27994740019daab6dcbef",
-      "size": 13888,
-      "mtime_ns": 1786771995655636600
+      "sha256": "dc01f345e7fb0d0edbc38e01f087d7880700a43cbf4b25198674b3e3c13617d1",
+      "size": 14218,
+      "mtime_ns": 1786772226147314200
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "a5b3157242c85cd9229bb0416af56407d5f959a9a5efd2337777e8fe445f4c45",
-      "size": 32109,
-      "mtime_ns": 1786771995657637000
+      "sha256": "dde489483fff20837423addf2e676b16e6d2b8022c74626a28bfd8da5f19d576",
+      "size": 32121,
+      "mtime_ns": 1786772226149313700
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "1431fc5d3a8ded0d23017f96178891afc81973a4f4925cb33fa50355b273f197",
-      "size": 38006,
-      "mtime_ns": 1786771692075872700
+      "sha256": "31533a7c83aace8c01e0cc701f712acc3ff93229cc23cd1d2f9f8ebedee553f3",
+      "size": 41258,
+      "mtime_ns": 1786772102562229200
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "4538a2e976ca676b94cd1af7c367e789ec92aedaef5ce2758c65db19677369c9",
-      "size": 29737,
-      "mtime_ns": 1786771723312443800
+      "sha256": "be5132e2a7a3e72648b4840eef96906a16a0acdf1310c47d0beaef29144a6a8a",
+      "size": 29810,
+      "mtime_ns": 1786772102564228400
     }
   ],
   "records": [
@@ -107,15 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F06 delayed date promise",
+      "title": "Next implementation F07 torn calendar weekday",
       "aliases": [
         "다음 작업"
       ],
       "tags": [
         "next",
-        "F06"
+        "F07"
       ],
-      "summary": "Continue with Final 2 question 10 F06 after confirming the two-step date movement against the original page and explanation.",
+      "summary": "Continue with Final 2 question 12 F07 after checking the original torn-calendar layout and weekday calculation.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-15",
@@ -124,7 +124,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F05 are complete; F06 is next"
+          "note": "F01 through F06 are complete; F07 is next"
         }
       ]
     },
@@ -160,6 +160,42 @@
           "source_id": "source-data",
           "role": "code",
           "locator": "TYPES shape-matrix-rule and FINAL_EXAM_TYPES question 9",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f06",
+      "title": "Final 2 question 10 delayed date promise",
+      "aliases": [
+        "파이널 2회 10번",
+        "두 번 이동하는 날짜 계산"
+      ],
+      "tags": [
+        "F06",
+        "final-2"
+      ],
+      "summary": "F06 preserves the original past-then-future date movement and adds structurally easier and harder variants.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 2회 표 10번과 대본 검증 10번",
+          "note": "Original two-step movement and answer June 3 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function delayedDatePromise and GENERATORS export",
+          "note": "One-step, two-step, and three-step difficulty structures with day-number metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES delayed-date-promise and FINAL_EXAM_TYPES question 10",
           "note": "Source-matched type is enabled"
         }
       ]
