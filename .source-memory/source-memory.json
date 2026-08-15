@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "832cdbf31478e99a2c10b9f275f794584a66e8bd5005a4d194781ca53380622b",
-      "size": 60503,
-      "mtime_ns": 1786824111695103600
+      "sha256": "6808e4a0a9a4b7ad007cf26a56107a1a17b85d1569d9659db19e6bf29edee12e",
+      "size": 61331,
+      "mtime_ns": 1786824259491402500
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "69a6467b17535b56e1b2a28d8d13d45c4dbc3d40d30781838189572c621c0ddd",
-      "size": 36129,
-      "mtime_ns": 1786824111690102200
+      "sha256": "93a8408c6a761258db86718ad9b745e1dd00d89ccb8d7d80a3beab2140c49e4f",
+      "size": 36113,
+      "mtime_ns": 1786824204600686800
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 20",
+      "title": "Next verification 7-year-old selection test 4 question 1",
       "aliases": [],
       "tags": [
         "next",
-        "k7-2022-06",
-        "q20"
+        "k7-2022-08",
+        "q1"
       ],
-      "summary": "Verify source and answer page 12 for the triangular black-and-white stone pattern. The official answer is 37th when black stones exceed white stones by 19; confirm the odd-even stage rule before enabling goStoneDifferenceInverse.",
+      "summary": "Verify source and answer page 3 for cards 5 through 8 arranged at four corners with edge sums 12, 11, 15, and 14. Confirm the full unique placement before reusing edgeSumCycle.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 20 is the inverse black-and-white stone difference pattern"
+          "note": "Selection test 4 starts with the four-corner edge-sum card placement"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 20 go-stone-difference-inverse mapping",
-          "note": "Verify stage parity and difference before enabling"
+          "locator": "EXAMS k7-2022-08 question 1 edge-sum-grid mapping",
+          "note": "Verify source card set, sums, placement, and answer format before enabling"
         }
       ]
     },
@@ -2131,6 +2131,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-06 verified 1 through 19",
           "note": "Source question 19 enabled after exact page comparison"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q20",
+      "title": "Selection test 3 question 20 inverse triangular stone difference",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q20",
+        "go-stone-difference-inverse"
+      ],
+      "summary": "Rows alternate black on odd row numbers and white on even row numbers. Black exceeds white by k at stage 2k-1, so a difference of 19 occurs at the official answer 37th stage.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 20 paragraph",
+          "note": "Original triangular rows, answer 37, generator reuse, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function goStoneDifferenceInverse",
+          "note": "Odd black and even white inverse-difference generator"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-06 verified questions 1 through 20",
+          "note": "Selection test 3 completed"
         }
       ]
     }
