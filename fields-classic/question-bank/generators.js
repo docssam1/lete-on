@@ -1458,10 +1458,10 @@ function orderPositionFromBack({ difficulty = 2 }) {
 
 function orderPositionFromFront({ difficulty = 2 }) {
   const settings = difficulty === 1
-    ? { total: 4, fromFront: 1, between: 1 }
+    ? { total: 4, fromFront: sample([1, 4]), between: 1 }
     : difficulty === 2
-      ? { total: 5, fromFront: 2, between: 1 }
-      : { total: 7, fromFront: 3, between: 2 };
+      ? { total: 5, fromFront: sample([2, 4]), between: 1 }
+      : { total: 7, fromFront: sample([3, 5]), between: 2 };
   const names = shuffle(["지우", "민호", "서윤", "도윤", "하린", "준우", "예린"]);
   const fixedName = names[0];
   const targetName = names[1];
