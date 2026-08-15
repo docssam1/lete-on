@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "240487c66d69b3a81f71aec8afc3ba4ff7ee31e113954d33a993c47fe74bd460",
-      "size": 72147,
-      "mtime_ns": 1786827373768017000
+      "sha256": "2eba2f0b9b811194b0d32407455bc75048b2a4f2b503a581fc76405ca20eae3c",
+      "size": 72762,
+      "mtime_ns": 1786827547129396300
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "80f13491d73c91af1bb643b92e4d9dbd9a6bbf3b9fff1c5572a05cc9c9b7b375",
-      "size": 37681,
-      "mtime_ns": 1786827272468094300
+      "sha256": "2558f11af362a69b5f3072dd10985f11e66bb982ee08b6b0217101ca504772e7",
+      "size": 37695,
+      "mtime_ns": 1786827480718245100
     }
   ],
   "records": [
@@ -107,15 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 4 questions 13 and 14",
+      "title": "Next verification selection test 4 question 14",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q13",
         "q14"
       ],
-      "summary": "Verify source page 9: question 13 is board then leave bus arithmetic with official answer 18, and question 14 is the two-step add-subtract shape equation with official answer 26.",
+      "summary": "Verify the source add-subtract shape equation: square plus 38 equals 63, then 51 minus square equals heart, with official answer 26.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -124,7 +123,7 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Questions 13 and 14 require source structure and renderer verification before enabling"
+          "note": "Question 14 remains disabled until source-equation and generator verification"
         }
       ]
     },
@@ -2568,6 +2567,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-08 verified questions 1 through 12",
           "note": "Question 12 enabled with dedicated subtype"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q13",
+      "title": "Selection test 4 question 13 board-then-leave bus arithmetic",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q13",
+        "bus-board-then-leave"
+      ],
+      "summary": "The source starts with 26 passengers, boards 9 at the first stop, then leaves 17 at the second stop. The event order gives the official answer 18.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 13 paragraph",
+          "note": "Exact event order, official answer, reuse decision, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function busBoardThenLeave",
+          "note": "Previously verified generator with board-before-leave ordering"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 13",
+          "note": "Question 13 remapped from reverse order and enabled"
         }
       ]
     }
