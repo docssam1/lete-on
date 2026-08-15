@@ -1,0 +1,132 @@
+{
+  "version": 1,
+  "name": "Fields Classic question bank",
+  "root": "..",
+  "updated": "2026-08-15",
+  "sources": [
+    {
+      "id": "handover",
+      "title": "Question bank handover",
+      "path": "fields-classic/question-bank/HANDOVER.md",
+      "kind": "markdown",
+      "sensitivity": "public",
+      "sha256": "d1c5f732f77864bd6d79609eb826a4ce040815de370305c0919ec14c69f76cea",
+      "size": 13486,
+      "mtime_ns": 1786771274406790900
+    },
+    {
+      "id": "final-audit",
+      "title": "Final exam source audit",
+      "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
+      "kind": "markdown",
+      "sensitivity": "public",
+      "sha256": "e9cbbe483091fbf1ca5fac3225fa6a26267e6d2d5ef28ed83ed171479131b6a0",
+      "size": 31909,
+      "mtime_ns": 1786771274408795100
+    },
+    {
+      "id": "generators",
+      "title": "Question generators",
+      "path": "fields-classic/question-bank/generators.js",
+      "kind": "javascript",
+      "sensitivity": "public",
+      "sha256": "9d17c2619fd900b249e132bca1d5cf599e725d9f01d6b7f2067f3af39ea26cad",
+      "size": 35603,
+      "mtime_ns": 1786771148066049800
+    },
+    {
+      "id": "source-data",
+      "title": "Question source catalog",
+      "path": "fields-classic/question-bank/source-data.js",
+      "kind": "javascript",
+      "sensitivity": "public",
+      "sha256": "d17f202cee4df665fe44fa4184f311f13232d595f3a4f3a6bb19f142a894750a",
+      "size": 29667,
+      "mtime_ns": 1786770900681337300
+    }
+  ],
+  "records": [
+    {
+      "id": "fields.question-bank.scope",
+      "title": "Question bank scope and locked exclusions",
+      "aliases": [
+        "문제은행 제외 범위"
+      ],
+      "tags": [
+        "scope",
+        "locked"
+      ],
+      "summary": "Diagnostic prescription, arithmetic, Golden Bell, duplicate finals, and unverified types remain excluded or locked.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "decision",
+          "locator": "의도적으로 제외하거나 잠가 둔 범위 표",
+          "note": "Do not reopen these items without a new user decision"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f04",
+      "title": "Final 2 question 6 wrong operation correction",
+      "aliases": [
+        "파이널 2회 6번",
+        "잘못된 연산 고치기"
+      ],
+      "tags": [
+        "F04",
+        "final-2"
+      ],
+      "summary": "F04 uses the original unknown-number inverse calculation and separates easier and harder reasoning structures.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 2회 표 6번과 대본 검증 6번",
+          "note": "Original structure and answer 57 verified"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function wrongOperationCorrection and GENERATORS export",
+          "note": "Three difficulty structures with deterministic answer metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES wrong-operation-correction and FINAL_EXAM_TYPES question 6",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.question-bank.next",
+      "title": "Next implementation F05 shape matrix rule",
+      "aliases": [
+        "다음 작업"
+      ],
+      "tags": [
+        "next",
+        "F05"
+      ],
+      "summary": "Continue with Final 2 question 9 F05 after checking the original visual structure.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "decision",
+          "locator": "다음 순서 1번",
+          "note": "F01 through F04 are complete; F05 is next"
+        }
+      ]
+    }
+  ]
+}
