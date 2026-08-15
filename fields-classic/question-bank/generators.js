@@ -680,10 +680,10 @@ function matchstickShapeSequence({ difficulty = 2 }) {
 
 function connectedLineDegreeSum({ difficulty = 2 }) {
   const config = difficulty === 1
-    ? { rows: 2, columns: 3, diagonalMin: 0, diagonalMax: 1 }
+    ? { rows: 2, columns: 3, extraMin: 0, extraMax: 3 }
     : difficulty === 2
-      ? { rows: 3, columns: 3, diagonalMin: 3, diagonalMax: 4 }
-      : { rows: 3, columns: 4, diagonalMin: 6, diagonalMax: 8 };
+      ? { rows: 3, columns: 3, extraMin: 3, extraMax: 6 }
+      : { rows: 3, columns: 4, extraMin: 4, extraMax: 9 };
   const width = 340;
   const height = 205;
   const nodes = [];
@@ -698,7 +698,14 @@ function connectedLineDegreeSum({ difficulty = 2 }) {
   }
 
   const edges = [];
-  const addEdge = (first, second) => edges.push(first < second ? [first, second] : [second, first]);
+  const edgeKeys = new Set();
+  const addEdge = (first, second) => {
+    const edge = first < second ? [first, second] : [second, first];
+    const key = edge.join("-");
+    if (edgeKeys.has(key)) return;
+    edgeKeys.add(key);
+    edges.push(edge);
+  };
   for (let row = 0; row < config.rows; row += 1) {
     for (let column = 0; column < config.columns; column += 1) {
       const current = row * config.columns + column;
@@ -707,16 +714,16 @@ function connectedLineDegreeSum({ difficulty = 2 }) {
     }
   }
 
-  const cells = [];
+  const extraCandidates = [];
   for (let row = 0; row + 1 < config.rows; row += 1) {
-    for (let column = 0; column + 1 < config.columns; column += 1) cells.push({ row, column });
+    for (let column = 0; column + 1 < config.columns; column += 1) {
+      const topLeft = row * config.columns + column;
+      extraCandidates.push([topLeft, topLeft + config.columns + 1]);
+      extraCandidates.push([topLeft + 1, topLeft + config.columns]);
+    }
   }
-  const diagonalCount = randomInt(config.diagonalMin, Math.min(config.diagonalMax, cells.length));
-  for (const { row, column } of shuffle(cells).slice(0, diagonalCount)) {
-    const topLeft = row * config.columns + column;
-    if (Math.random() < 0.5) addEdge(topLeft, topLeft + config.columns + 1);
-    else addEdge(topLeft + 1, topLeft + config.columns);
-  }
+  const extraCount = randomInt(config.extraMin, Math.min(config.extraMax, extraCandidates.length));
+  shuffle(extraCandidates).slice(0, extraCount).forEach(([first, second]) => addEdge(first, second));
 
   const degrees = Array(nodes.length).fill(0);
   for (const [first, second] of edges) {
@@ -734,7 +741,7 @@ function connectedLineDegreeSum({ difficulty = 2 }) {
     visual: { kind: "connected-line-degree-sum", width, height, nodes, edges, degrees, shown, clue },
     answer: String(answer),
     solution: `선을 빠짐없이 세면 ${edges.length}개입니다. 선 하나는 양쪽 끝의 두 원에서 한 번씩 세므로 ${edges.length} + ${edges.length} = ${answer}입니다.`,
-    meta: { difficulty, rows: config.rows, columns: config.columns, nodes, edges, degrees, answer }
+    meta: { difficulty, rows: config.rows, columns: config.columns, extraCount, nodes, edges, degrees, answer }
   };
 }
 
@@ -1488,37 +1495,49 @@ function raceOrder({ difficulty = 2 }) {
   const names = shuffle(["준수", "민호", "성준", "연우", "지우"]);
   const total = difficulty === 3 ? 5 : 4;
   const selected = names.slice(0, total);
-  const [first, earlier, fixed, later, extra] = selected;
+  const [remaining, earlier, fixed, later, extra] = selected;
+  const targetName = sample(selected);
+  const ranks = { [remaining]: 1, [earlier]: 2, [fixed]: 3, [later]: 4, ...(extra ? { [extra]: 5 } : {}) };
   if (total === 4) {
     return {
-      prompt: `${selected.join("·")} ${total}명의 친구들이 달리기를 하고 있습니다. 다음을 보고 ${first}는 몇 등인지 구하세요.`,
-      visual: { kind: "race-order", total, conditions: [`${fixed}은 3등입니다.`, `${earlier}은 ${later}보다 먼저 들어왔지만 1등은 아닙니다.`] },
-      answer: "1등",
-      solution: `${fixed}은 3등입니다. ${earlier}은 ${later}보다 먼저 들어왔지만 1등이 아니므로 ${earlier}은 2등, ${later}은 4등입니다. 따라서 ${first}는 1등입니다.`,
+      prompt: `${selected.join("·")} ${total}명의 친구들이 달리기를 하고 있습니다. 다음을 보고 ${koreanParticle(targetName, "은", "는")} 몇 등인지 구하세요.`,
+      visual: { kind: "race-order", total, conditions: [`${koreanParticle(fixed, "은", "는")} 3등입니다.`, `${koreanParticle(earlier, "은", "는")} ${later}보다 먼저 들어왔지만 1등은 아닙니다.`] },
+      answer: `${ranks[targetName]}등`,
+      solution: `${koreanParticle(fixed, "은", "는")} 3등입니다. ${koreanParticle(earlier, "은", "는")} ${later}보다 먼저 들어왔지만 1등이 아니므로 ${koreanParticle(earlier, "은", "는")} 2등, ${koreanParticle(later, "은", "는")} 4등입니다. ${koreanParticle(remaining, "은", "는")} 남은 자리인 1등이므로 ${koreanParticle(targetName, "은", "는")} ${ranks[targetName]}등입니다.`,
+      meta: { difficulty, selected, ranks, targetName, answer: ranks[targetName] }
     };
   }
   return {
-    prompt: `${selected.join("·")} ${total}명의 친구들이 달리기를 하고 있습니다. 다음을 보고 ${first}는 몇 등인지 구하세요.`,
-    visual: { kind: "race-order", total, conditions: [`${fixed}은 3등입니다.`, `${extra}은 5등입니다.`, `${earlier}은 ${later}보다 먼저 들어왔지만 1등은 아닙니다.`] },
-    answer: "1등",
-    solution: `${fixed}은 3등이고, ${earlier}은 ${later}보다 먼저 들어왔지만 1등이 아닙니다. ${extra}은 5등이므로 ${earlier}은 2등, ${later}은 4등입니다. 따라서 ${first}는 1등입니다.`,
+    prompt: `${selected.join("·")} ${total}명의 친구들이 달리기를 하고 있습니다. 다음을 보고 ${koreanParticle(targetName, "은", "는")} 몇 등인지 구하세요.`,
+    visual: { kind: "race-order", total, conditions: [`${koreanParticle(fixed, "은", "는")} 3등입니다.`, `${koreanParticle(extra, "은", "는")} 5등입니다.`, `${koreanParticle(earlier, "은", "는")} ${later}보다 먼저 들어왔지만 1등은 아닙니다.`] },
+    answer: `${ranks[targetName]}등`,
+    solution: `${koreanParticle(fixed, "은", "는")} 3등이고, ${koreanParticle(extra, "은", "는")} 5등입니다. ${koreanParticle(earlier, "은", "는")} ${later}보다 먼저 들어왔지만 1등이 아니므로 ${koreanParticle(earlier, "은", "는")} 2등, ${koreanParticle(later, "은", "는")} 4등입니다. ${koreanParticle(remaining, "은", "는")} 남은 자리인 1등이므로 ${koreanParticle(targetName, "은", "는")} ${ranks[targetName]}등입니다.`,
+    meta: { difficulty, selected, ranks, targetName, answer: ranks[targetName] }
   };
 }
 
 function orderPositionFromBack({ difficulty = 2 }) {
-  const settings = difficulty === 1
-    ? { total: 4, fromBack: 2, between: 1 }
-    : difficulty === 2
-      ? { total: 5, fromBack: 2, between: 1 }
-      : { total: 7, fromBack: 2, between: 2 };
+  const totalRange = difficulty === 1 ? [4, 5] : difficulty === 2 ? [5, 7] : [7, 9];
+  const betweenRange = difficulty === 1 ? [0, 1] : difficulty === 2 ? [1, 2] : [1, 3];
+  const settingsPool = [];
+  for (let total = totalRange[0]; total <= totalRange[1]; total += 1) {
+    for (let fixedPosition = 1; fixedPosition <= total; fixedPosition += 1) {
+      for (let between = betweenRange[0]; between <= betweenRange[1]; between += 1) {
+        const distance = between + 1;
+        const candidates = [fixedPosition - distance, fixedPosition + distance].filter((position) => position >= 1 && position <= total);
+        if (candidates.length === 1) settingsPool.push({ total, fromBack: total - fixedPosition + 1, between, fixedPosition, distance, targetPosition: candidates[0] });
+      }
+    }
+  }
+  const settings = sample(settingsPool);
   const names = shuffle(["지우", "민호", "서윤", "도윤", "하린", "준우", "예린"]);
   const fixedName = names[0];
   const targetName = names[1];
-  const fixedPosition = settings.total - settings.fromBack + 1;
-  const distance = settings.between + 1;
+  const fixedPosition = settings.fixedPosition;
+  const distance = settings.distance;
   const candidates = [fixedPosition - distance, fixedPosition + distance]
     .filter((position) => position >= 1 && position <= settings.total);
-  const targetPosition = candidates[0];
+  const targetPosition = settings.targetPosition;
   const conditions = [
     `${koreanParticle(fixedName, "은", "는")} 뒤에서 ${settings.fromBack}번째로 달리고 있습니다.`,
     `${koreanParticle(fixedName, "과", "와")} ${targetName} 사이에는 ${settings.between}명이 달리고 있습니다.`

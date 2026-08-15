@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "23ef6e88971a3575ab9fa2cb6ae13d4d7019b5bc68e91338c6fbb6b8f853ac3b",
-      "size": 99545,
-      "mtime_ns": 1786834348077713200
+      "sha256": "2b6ae3dfd51eb6a0352586044d6aae30c6e8499fcb00f7526671c020b3ea77dc",
+      "size": 100503,
+      "mtime_ns": 1786834742427650200
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "5f4bb6722d2c379f6fcf01e3b67836cc1b20e6f00cfd495e3f4addaebaec3c74",
-      "size": 183723,
-      "mtime_ns": 1786834259634083200
+      "sha256": "f659b475758fe1a15b298f9ceebdaeb78f6b301b6c3faad36ac95629226fa973",
+      "size": 185535,
+      "mtime_ns": 1786834641932429100
     },
     {
       "id": "source-data",
@@ -3583,6 +3583,41 @@
           "role": "code",
           "locator": "TYPES target-score-combinations and matchstick-square-growth",
           "note": "Human-facing target label and verified generators"
+        }
+      ]
+    },
+    {
+      "id": "fields.regression.diversity.order-lines",
+      "title": "Order and connected-line generator diversity repair",
+      "aliases": [],
+      "tags": [
+        "regression",
+        "diversity",
+        "order-position",
+        "connected-line-degree-sum"
+      ],
+      "summary": "Source-matched order generators now vary the asked child and uniquely solvable position settings, use correct Korean particles, and the connected-line source level now includes the original 17-edge answer 34 while producing at least 20 signatures per difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "Order and connected-line diversity paragraph",
+          "note": "Source structures, diversity changes, Korean particles, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "functions raceOrder, orderPositionFromBack, and connectedLineDegreeSum",
+          "note": "Unique-position enumeration and graph degree metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES order-position, order-position-from-back, and connected-line-degree-sum",
+          "note": "Source-matched selectable types"
         }
       ]
     }
