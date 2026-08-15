@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "3825dad2b3c8058bc0dd8fc7d04691b1a3a798ef029b3ab81f569b3632c60897",
-      "size": 49110,
-      "mtime_ns": 1786820968364062600
+      "sha256": "a0d73e39c7a9fd0473cee96d6306e56ab013e49100ffa3976ea1841fd71a69e6",
+      "size": 50151,
+      "mtime_ns": 1786821204819536200
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "caa60c85b1a41195b1a55c9492642c4c09945d6db6096b5cb2407d8aa5f237aa",
-      "size": 124200,
-      "mtime_ns": 1786820860524289300
+      "sha256": "86d83cbc79729d2c90bd3d0fc99430d0ba681d3cf105dac05728a0f2322b06ed",
+      "size": 125286,
+      "mtime_ns": 1786821176230756800
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "4cb1d2598127c9c296a49543ca95ba64def9a008286f4fd6f4d3d9503a4b55a4",
-      "size": 34861,
-      "mtime_ns": 1786820860523288900
+      "sha256": "3aa396b92a32a1ed50a3a33c6b311a0c570206b6a778beb79e136e2816aa0af9",
+      "size": 34870,
+      "mtime_ns": 1786821098626554600
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 9",
+      "title": "Next verification 7-year-old selection test 3 question 10",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q09"
+        "q10"
       ],
-      "summary": "Verify the arrow-number path and its exact shown legend, route, and answer 49 against source and answer page 7 before enabling.",
+      "summary": "Verify the bus passenger problem on source and answer page 7: start 24, eight board, fourteen leave, official answer 18, before enabling.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 3 question 9 is the next locked source question"
+          "note": "Selection test 3 question 10 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 9 arrow-number-grid mapping",
-          "note": "Compare against the seven-step and eight-step arrow variants before reuse"
+          "locator": "EXAMS k7-2022-06 question 10 bus-change mapping",
+          "note": "Confirm exact two-stop structure before reuse"
         }
       ]
     },
@@ -1757,6 +1757,40 @@
           "role": "code",
           "locator": "TYPES shape-sum-table-column-target and EXAMS k7-2022-06 verified 1 through 8",
           "note": "Source question 8 is enabled separately from shape-sum-table"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q9",
+      "title": "Selection test 3 question 9 seven-step arrow-number path",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q9",
+        "arrow-number-path-seven"
+      ],
+      "summary": "The source legend is left -1, right +1, up -10, down +10. Starting at 66 and moving up, up, right, down, right, right, up gives the official answer 49. The generator now uses nonrepeating randomized paths and structural difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 9 paragraph",
+          "note": "Exact source route, answer, prior mapping error, solution correction, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function arrowNumberPathSeven",
+          "note": "Nonrepeating randomized 5, 7, and 9-step routes with independent value metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES arrow-number-path-seven and EXAMS k7-2022-06 verified 1 through 9",
+          "note": "Source question 9 is enabled"
         }
       ]
     }

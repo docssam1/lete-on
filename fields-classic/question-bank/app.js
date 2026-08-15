@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bh";
-import { GENERATORS } from "./generators.js?v=20260816bg";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816bi";
+import { GENERATORS } from "./generators.js?v=20260816bi";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);

@@ -1653,29 +1653,51 @@ function arrowNumberGrid({ difficulty = 2 }) {
 }
 
 function arrowNumberPathSeven({ difficulty = 2 }) {
-  const directions = difficulty === 1
-    ? ["left", "up", "right", "up", "left"]
-    : difficulty === 2
-      ? ["left", "up", "left", "up", "right", "right", "up"]
-      : ["left", "up", "left", "up", "right", "right", "up", "left", "up"];
   const delta = { left: -1, right: 1, up: -10, down: 10 };
   const vector = { left: [-1, 0], right: [1, 0], up: [0, -1], down: [0, 1] };
-  const start = randomInt(difficulty === 1 ? 30 : difficulty === 2 ? 40 : 55, difficulty === 1 ? 69 : difficulty === 2 ? 79 : 95);
-  const values = [start];
-  const points = [{ x: 0, y: 0 }];
-  directions.forEach((direction) => {
-    values.push(values.at(-1) + delta[direction]);
-    const [x, y] = vector[direction];
-    points.push({ x: points.at(-1).x + x, y: points.at(-1).y + y });
-  });
+  const stepCount = difficulty === 1 ? 5 : difficulty === 2 ? 7 : 9;
+  let directions;
+  let points;
+  let attempts = 0;
+  do {
+    directions = [];
+    points = [{ x: 0, y: 0 }];
+    for (let index = 0; index < stepCount; index += 1) {
+      const current = points.at(-1);
+      const used = new Set(points.map((point) => `${point.x}:${point.y}`));
+      const choices = shuffle(Object.keys(vector)).filter((direction) => {
+        const [x, y] = vector[direction];
+        const next = { x: current.x + x, y: current.y + y };
+        return Math.abs(next.x) <= 4 && Math.abs(next.y) <= 4 && !used.has(`${next.x}:${next.y}`);
+      });
+      if (!choices.length) break;
+      const direction = choices[0];
+      const [x, y] = vector[direction];
+      directions.push(direction);
+      points.push({ x: current.x + x, y: current.y + y });
+    }
+    attempts += 1;
+  } while ((directions.length !== stepCount
+    || new Set(directions).size < (difficulty === 1 ? 2 : difficulty === 2 ? 3 : 4)
+    || (difficulty >= 2 && !directions.includes("down"))) && attempts < 1000);
+
+  const pathIsValid = directions.length === stepCount
+    && new Set(directions).size >= (difficulty === 1 ? 2 : difficulty === 2 ? 3 : 4)
+    && (difficulty < 2 || directions.includes("down"));
+  if (!pathIsValid) return arrowNumberPathSeven({ difficulty });
+  const offsets = [0];
+  directions.forEach((direction) => offsets.push(offsets.at(-1) + delta[direction]));
+  const startMin = Math.max(difficulty === 1 ? 30 : difficulty === 2 ? 45 : 65, 1 - Math.min(...offsets));
+  const start = randomInt(startMin, startMin + (difficulty === 1 ? 30 : 40));
+  const values = offsets.map((offset) => start + offset);
   const answer = values.at(-1);
   const directionNames = { left: "왼쪽", right: "오른쪽", up: "위쪽", down: "아래쪽" };
   return {
     prompt: "[보기]의 화살표가 나타내는 규칙을 찾아 오른쪽 그림의 ㉠에 알맞은 수를 써 넣으세요.",
     visual: { kind: "arrow-number-path-seven", directions, points, start },
     answer: String(answer),
-    solution: `왼쪽은 1 작아지고, 오른쪽은 1 커지며, 위쪽은 10 작아집니다. ${start}에서 ${directions.map((direction) => directionNames[direction]).join(" → ")} 순서로 가면 ${values.join(" → ")}이므로 ㉠은 ${answer}입니다.`,
-    meta: { difficulty, directions, points, start, values, answer }
+    solution: `왼쪽은 1 작아지고, 오른쪽은 1 커지며, 위쪽은 10 작아지고 아래쪽은 10 커집니다. ${start}에서 ${directions.map((direction) => directionNames[direction]).join(" → ")} 순서로 가면 ${values.join(" → ")}이므로 ㉠은 ${answer}입니다.`,
+    meta: { difficulty, stepCount, directions, points, start, values, answer }
   };
 }
 
