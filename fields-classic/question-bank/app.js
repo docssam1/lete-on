@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ar";
-import { GENERATORS } from "./generators.js?v=20260816ar";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816at";
+import { GENERATORS } from "./generators.js?v=20260816at";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -726,7 +726,7 @@ function balanceScaleThreeObjectsMarkup(visual) {
 
 function symbolRelationsMarkup(visual) {
   const repeat = (symbol, count) => Array.from({ length: count }, () => symbol).join(" + ");
-  return `<div class="symbol-relations"><p>${repeat("☆", visual.firstStar)} = ${repeat("○", visual.firstCircle)}</p><p>☆ + ○ = ▽ + ▽</p><p>${visual.final.join(" + ")} = □</p></div>`;
+  return `<div class="symbol-relations">${visual.hint ? `<small>${visual.hint}</small>` : ""}<p>${repeat("☆", visual.firstStar)} = ${repeat("○", visual.firstCircle)}</p><p>☆ + ○ = ▽ + ▽</p><p>${visual.final.join(" + ")} = □</p></div>`;
 }
 
 function coloredShapeNumberMarkup(visual) {
@@ -802,6 +802,7 @@ function visualMarkup(visual) {
   if (visual.kind === "balance-relations") return `<div class="visual balance-relations-visual">${balanceRelationsMarkup(visual)}</div>`;
   if (visual.kind === "balance-scale-three-objects") return `<div class="visual balance-relations-visual">${balanceScaleThreeObjectsMarkup(visual)}</div>`;
   if (visual.kind === "symbol-relations") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
+  if (visual.kind === "symbol-relation-two-to-three") return `<div class="visual symbol-relations-visual">${symbolRelationsMarkup(visual)}</div>`;
   if (visual.kind === "colored-shape-number") return `<div class="visual colored-shape-number-visual">${coloredShapeNumberMarkup(visual)}</div>`;
   if (visual.kind === "source-go-stones") return `<div class="visual source-go-stones-visual">${sourceGoStonesMarkup(visual)}</div>`;
   if (visual.kind === "nonadjacent-pyramid") return `<div class="visual nonadjacent-pyramid-visual">${nonadjacentPyramidMarkup(visual)}</div>`;

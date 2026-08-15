@@ -1788,6 +1788,26 @@ function sourceBusStops({ difficulty = 2 }) {
   };
 }
 
+function symbolRelationTwoToThree({ difficulty = 2 }) {
+  const values = { "☆": 6, "○": 4, "▽": 5 };
+  const pairTargets = [["○", "▽"], ["☆", "○"], ["☆", "▽"]];
+  const tripleTargets = [
+    ["☆", "○", "▽"],
+    ["☆", "○", "○"],
+    ["○", "○", "▽"],
+    ["☆", "▽", "▽"]
+  ];
+  const final = sample(difficulty === 3 ? tripleTargets : pairTargets);
+  const answer = final.reduce((sum, symbol) => sum + values[symbol], 0);
+  const hint = difficulty === 1 ? "도움: 첫째 식을 만족하는 수는 ☆=6, ○=4입니다." : "";
+  return {
+    prompt: "다음 ☆, ○, ▽은 서로 다른 한 자리 수입니다. □가 나타내는 수를 구하세요.",
+    visual: { kind: "symbol-relation-two-to-three", firstStar: 2, firstCircle: 3, final, hint },
+    answer: String(answer),
+    solution: `첫째 식을 만족하는 ☆와 ○를 차례로 찾아 둘째 식에도 넣어 봅니다. ☆와 ○의 합을 똑같이 둘로 나눌 수 있는 경우는 ☆=6, ○=4이고, 이때 ▽=5입니다. 마지막 식 ${final.join("+")}를 계산하면 □는 ${answer}입니다.`
+  };
+}
+
 function balanceScaleThreeObjects({ difficulty = 2 }) {
   const squareBesideStar = randomInt(1, difficulty === 3 ? 3 : 2);
   const squareBesideCircle = randomInt(1, difficulty === 1 ? 1 : 2);
@@ -2108,6 +2128,7 @@ export const GENERATORS = {
   sourceGoStoneDifference,
   sourceColoredShapeNumber,
   sourceSymbolRelations,
+  symbolRelationTwoToThree,
   sourceBalanceRelations,
   balanceScaleThreeObjects,
   sourcePianoBounce,

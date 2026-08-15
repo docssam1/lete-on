@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "01bef5c91f60498c5a5e1d046ddabd69cb8d340cd735743c1b990fcc2e8da518",
-      "size": 39264,
-      "mtime_ns": 1786818023465701300
+      "sha256": "f60c1c436cd0df2a974da8ff33c74e3050505e719568aab1fcfd3fa5f75ecebe",
+      "size": 40323,
+      "mtime_ns": 1786818317204676000
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "3a7f83bf6b58629f0598804a085bbd7f0158d326b6349b02a3671892ae7bef63",
-      "size": 111791,
-      "mtime_ns": 1786817763140030800
+      "sha256": "4694bc3ec2485eff5e5275258e6ca1a69c235c0fe4c221749096f209aac5eb3c",
+      "size": 112943,
+      "mtime_ns": 1786818219146754200
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "edefcef41cdcb7ad5f1976a30d4df5b84a9fefd0995de4b41f00d1a0d9ec745f",
-      "size": 34106,
-      "mtime_ns": 1786817838677162400
+      "sha256": "3115fe20dc7982520feac3f87386e8aa0abb16a15ba1c7a1fc3e7a01db0f5db8",
+      "size": 34173,
+      "mtime_ns": 1786818170007863000
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 18",
+      "title": "Next verification 7-year-old selection test 2 question 19",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q18"
+        "q19"
       ],
-      "summary": "Verify the exact two-star to three-circle symbol relation on source page 11 and answer 9 before implementing symbol-relation-2to3.",
+      "summary": "Verify all six labeled points, overlapping distances, requested segment, and answer 20 on source page 12 before implementing number-line-six-points.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 18 is the next locked source question"
+          "note": "Question 19 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-04 question 18 symbol-relation-2to3",
-          "note": "Do not enable until every source equation and the requested symbol are verified"
+          "locator": "EXAMS k7-2022-04 question 19 number-line-six-points",
+          "note": "Do not enable until point order, every shown distance, and the target segment are verified"
         }
       ]
     },
@@ -1383,6 +1383,40 @@
           "role": "code",
           "locator": "TYPES balance-scale-three-objects and EXAMS k7-2022-04 verified 1 through 17",
           "note": "Source question 17 is enabled without changing the older balance-scale generator"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q18",
+      "title": "Selection test 2 question 18 two-star to three-circle relation",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q18",
+        "symbol-relation-2to3"
+      ],
+      "summary": "Two stars equal three circles, one star plus one circle equals two triangles, and one circle plus one triangle equals the target square; the unique distinct one-digit values are 6, 4, and 5, giving source answer 9.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 18 paragraph",
+          "note": "Original equations, unique one-digit solution, answer 9, difficulty structure, and corrected explanation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function symbolRelationTwoToThree",
+          "note": "The first two source equations stay fixed while the final target expression changes structurally"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES symbol-relation-2to3 and EXAMS k7-2022-04 verified 1 through 18",
+          "note": "Source question 18 is enabled without changing the older symbol-relation generator"
         }
       ]
     }
