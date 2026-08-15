@@ -33,7 +33,7 @@ export const TYPES = [
   type("calendar-date-weekday", "pattern", "달력과 시간", "달력에서 특정 날짜의 요일 찾기", { generator: "tornCalendarWeekday", sourceMatched: true }),
   type("two-type-unit-total", "number", "합과 차 문장제", "두 종류의 전체 개수와 단위 수로 각각의 개수 구하기", { generator: "twoTypeUnitTotal", sourceMatched: true }),
   type("row-column-count-placement", "logic", "조건 배치", "가로·세로 개수 조건에 맞게 칸 표시하기", { generator: "rowColumnCountPlacement", sourceMatched: true }),
-  type("truth-lie-ranking", "logic", "조건 추리", "참말과 거짓말로 경기 순위 찾기"),
+  type("truth-lie-ranking", "logic", "조건 추리", "참말과 거짓말로 경기 순위 찾기", { generator: "truthLieRanking", sourceMatched: true }),
   type("target-score-combinations", "logic", "경우의 수", "과녁 점수의 가능한 조합 세기"),
   type("matchstick-square-growth", "pattern", "도형 규칙", "이어 붙인 네모의 성냥개비 수"),
   type("connected-line-degree-sum", "geometry", "연결 관계", "각 점에 연결된 선의 개수 합"),
@@ -254,7 +254,7 @@ export const FINAL_EXAM_TYPES = [
       "target-score-combinations", "matchstick-square-growth", "connected-line-degree-sum", "letter-block-transform",
       "go-stone-difference-inverse", "square-count", "symbol-sum-grid", "cube-fill-box",
       "mixed-sequences", "two-type-unit-total", "go-stone-difference", "neither-set-count"
-    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index === 0 }))
+    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index <= 1 }))
   }
 ];
 

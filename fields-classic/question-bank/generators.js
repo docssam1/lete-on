@@ -489,6 +489,116 @@ function rowColumnCountPlacement({ difficulty = 2 }) {
   };
 }
 
+function rankingStatementValue(statement, order) {
+  const rank = (name) => order.indexOf(name) + 1;
+  const speakerRank = rank(statement.speaker);
+  if (statement.kind === "self-rank") return speakerRank === statement.rank;
+  if (statement.kind === "self-not-rank") return speakerRank !== statement.rank;
+  if (statement.kind === "not-top-two") return speakerRank > 2;
+  if (statement.kind === "rank-pair") return statement.ranks.includes(speakerRank);
+  if (statement.kind === "before") return speakerRank < rank(statement.other);
+  if (statement.kind === "after") return speakerRank > rank(statement.other);
+  if (statement.kind === "immediately-before") return speakerRank + 1 === rank(statement.other);
+  if (statement.kind === "immediately-after") return speakerRank - 1 === rank(statement.other);
+  if (statement.kind === "before-both") return statement.others.every((name) => speakerRank < rank(name));
+  if (statement.kind === "after-both") return statement.others.every((name) => speakerRank > rank(name));
+  if (statement.kind === "between") return rank(statement.first) < speakerRank && speakerRank < rank(statement.second);
+  return false;
+}
+
+function rankingStatementText(statement) {
+  if (statement.kind === "self-rank") return `나는 ${statement.rank}등이야.`;
+  if (statement.kind === "self-not-rank") return `나는 ${statement.rank}등이 아니야.`;
+  if (statement.kind === "not-top-two") return "나는 1등도 2등도 아니야.";
+  if (statement.kind === "rank-pair") return `나는 ${statement.ranks[0]}등 또는 ${statement.ranks[1]}등이야.`;
+  if (statement.kind === "before") return `나는 ${statement.other}보다 빨랐어.`;
+  if (statement.kind === "after") return `나는 ${statement.other}보다 늦었어.`;
+  if (statement.kind === "immediately-before") return `나는 ${statement.other} 바로 앞이야.`;
+  if (statement.kind === "immediately-after") return `나는 ${statement.other} 바로 뒤야.`;
+  if (statement.kind === "before-both") return `나는 ${statement.others.join(", ")}보다 빨랐어.`;
+  if (statement.kind === "after-both") return `나는 ${statement.others.join(", ")}보다 늦었어.`;
+  if (statement.kind === "between") return `나는 ${statement.first}보다 늦었지만 ${statement.second}보다 빨랐어.`;
+  return "";
+}
+
+function rankingStatementCandidates(speaker, names, difficulty) {
+  const others = names.filter((name) => name !== speaker);
+  const statements = [];
+  const add = (statement) => statements.push({ speaker, ...statement });
+  for (let rank = 1; rank <= names.length; rank += 1) {
+    add({ kind: "self-rank", rank });
+    add({ kind: "self-not-rank", rank });
+  }
+  if (names.length >= 4) add({ kind: "not-top-two" });
+  for (let first = 1; first < names.length; first += 1) add({ kind: "rank-pair", ranks: [first, first + 1] });
+  for (const other of others) {
+    add({ kind: "before", other });
+    add({ kind: "after", other });
+    add({ kind: "immediately-before", other });
+    add({ kind: "immediately-after", other });
+  }
+  for (let first = 0; first < others.length; first += 1) {
+    for (let second = first + 1; second < others.length; second += 1) {
+      add({ kind: "before-both", others: [others[first], others[second]] });
+      add({ kind: "after-both", others: [others[first], others[second]] });
+      add({ kind: "between", first: others[first], second: others[second] });
+      add({ kind: "between", first: others[second], second: others[first] });
+    }
+  }
+  if (difficulty === 1) return statements.filter((item) => ["self-rank", "self-not-rank", "before", "after"].includes(item.kind));
+  if (difficulty === 3) return statements.filter((item) => !["self-rank", "self-not-rank", "rank-pair"].includes(item.kind));
+  return statements;
+}
+
+function truthLieRanking({ difficulty = 2 }) {
+  const namePool = ["민서", "서윤", "도윤", "지우", "하린", "예준", "수아", "현우", "유나", "준호"];
+  const count = difficulty === 1 ? 4 : 5;
+  const liarCount = difficulty === 1 ? 1 : 2;
+  let result;
+
+  for (let attempt = 0; attempt < 3000 && !result; attempt += 1) {
+    const names = shuffle(namePool).slice(0, count);
+    const actualOrder = shuffle(names);
+    const liarNames = shuffle(names).slice(0, liarCount);
+    const targetName = sample(names);
+    const statements = names.map((speaker) => {
+      const shouldBeTrue = !liarNames.includes(speaker);
+      let candidates = rankingStatementCandidates(speaker, names, difficulty)
+        .filter((statement) => rankingStatementValue(statement, actualOrder) === shouldBeTrue);
+      if (speaker === targetName) candidates = candidates.filter((statement) => statement.kind !== "self-rank");
+      return sample(candidates);
+    });
+    if (statements.some((statement) => !statement)) continue;
+    const texts = statements.map(rankingStatementText);
+    if (new Set(texts).size !== texts.length) continue;
+    const complexKinds = new Set(["not-top-two", "rank-pair", "before-both", "after-both", "between"]);
+    if (difficulty === 2 && !statements.some((statement) => complexKinds.has(statement.kind))) continue;
+
+    const validOrders = permutations(names).filter((order) => statements.every((statement) => (
+      rankingStatementValue(statement, order) === !liarNames.includes(statement.speaker)
+    )));
+    const targetRanks = [...new Set(validOrders.map((order) => order.indexOf(targetName) + 1))];
+    const maximumOrders = difficulty === 3 ? 1 : difficulty === 2 ? 4 : 6;
+    if (!validOrders.length || validOrders.length > maximumOrders || targetRanks.length !== 1) continue;
+    result = { names, actualOrder, liarNames, targetName, statements, validOrders, targetRank: targetRanks[0] };
+  }
+
+  if (!result) return truthLieRanking({ difficulty });
+  const liarText = result.liarNames.join(", ");
+  const orderText = result.validOrders.map((order) => order.join(" → ")).join(" 또는 ");
+  return {
+    prompt: `${result.names.join(", ")} ${result.names.length}명이 달리기를 했습니다. ${liarText}는 거짓말을 했고, 다른 사람은 참말을 했습니다. ${result.targetName}는 몇 등일까요?`,
+    visual: {
+      kind: "truth-lie-ranking",
+      liarNames: result.liarNames,
+      statements: result.statements.map((statement) => ({ ...statement, text: rankingStatementText(statement) }))
+    },
+    answer: `${result.targetRank}등`,
+    solution: `거짓말한 사람의 말은 반대로, 다른 사람의 말은 그대로 표시해 가능한 순서를 찾습니다. 가능한 순서는 ${orderText}이고, 어느 경우에도 ${result.targetName}는 ${result.targetRank}등입니다.`,
+    meta: { difficulty, ...result }
+  };
+}
+
 function numberCardEquation({ difficulty = 2 }) {
   const cardMin = difficulty === 1 ? 10 : difficulty === 2 ? 20 : 35;
   const cardMax = difficulty === 1 ? 45 : difficulty === 2 ? 79 : 99;
@@ -941,6 +1051,7 @@ export const GENERATORS = {
   tornCalendarWeekday,
   twoTypeUnitTotal,
   rowColumnCountPlacement,
+  truthLieRanking,
   edgeSumCycle,
   equalizeTransfer,
   numberPyramid,
