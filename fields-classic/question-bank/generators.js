@@ -1188,32 +1188,44 @@ const EQUAL_LINE_EIGHT_LAYOUTS = permutations([1, 2, 3, 4, 5, 6, 7, 8])
   ));
 
 function edgeSumCycle({ difficulty = 2 }) {
-  const max = difficulty === 1 ? 9 : difficulty === 2 ? 15 : 25;
-  let values;
+  const max = 12;
+  let cards;
   let solution;
   let edges;
+  let given = null;
   do {
-    values = shuffle(Array.from({ length: max }, (_, index) => index + 1)).slice(0, 4);
-    solution = shuffle(values);
+    solution = shuffle(Array.from({ length: max }, (_, index) => index + 1)).slice(0, 4);
     edges = [
       solution[0] + solution[1],
       solution[1] + solution[2],
       solution[2] + solution[3],
       solution[3] + solution[0]
     ];
-  } while (permutations(values).filter((candidate) => (
+    cards = [...solution];
+    if (difficulty === 3) {
+      const distractor = shuffle(Array.from({ length: max }, (_, index) => index + 1).filter((value) => !solution.includes(value)))[0];
+      cards.push(distractor);
+    }
+  } while (permutations(cards).filter((candidate) => (
     candidate[0] + candidate[1] === edges[0]
     && candidate[1] + candidate[2] === edges[1]
     && candidate[2] + candidate[3] === edges[2]
     && candidate[3] + candidate[0] === edges[3]
   )).length !== 1);
 
+  if (difficulty === 1) {
+    const index = randomInt(0, 3);
+    given = { index, value: solution[index] };
+  }
+
   const [topLeft, topRight, bottomRight, bottomLeft] = solution;
+  const cardInstruction = difficulty === 3 ? "주어진 수 카드 중 네 장을 골라 한 번씩 사용하여" : "주어진 수 카드를 한 번씩 모두 사용하여";
   return {
-    prompt: "주어진 수 카드를 한 번씩 모두 사용하여 네 원 안에 넣으세요. 각 변에 적힌 수는 양끝 원 안의 두 수의 합입니다.",
-    visual: { kind: "edge-sum-cycle", values: shuffle(values), edges },
+    prompt: `${cardInstruction} 네 원 안에 넣으세요. 각 변에 적힌 수는 양끝 원 안의 두 수의 합입니다.`,
+    visual: { kind: "edge-sum-cycle", values: shuffle(cards), edges, given },
     answer: `왼쪽 위 ${topLeft}, 오른쪽 위 ${topRight}, 오른쪽 아래 ${bottomRight}, 왼쪽 아래 ${bottomLeft}`,
-    solution: `윗변의 합이 ${edges[0]}이 되는 두 수를 먼저 찾습니다. 이어서 오른쪽 변, 아랫변, 왼쪽 변의 합을 차례로 확인하면 네 자리가 하나로 정해집니다.`
+    solution: "윗변에 적힌 합을 만드는 두 수를 먼저 찾습니다. 이어서 오른쪽 변, 아랫변, 왼쪽 변의 합을 차례로 확인하면 네 자리가 하나로 정해집니다.",
+    meta: { difficulty, cards, solution, edges, given }
   };
 }
 

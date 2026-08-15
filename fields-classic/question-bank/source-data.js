@@ -194,7 +194,8 @@ export const EXAMS = [
   makeExam({
     id: "k7-2022-06", stage: "k7_summer", label: "더 클래식 7세 3차 선발시험 (2022.06.22)",
     file: "더_클래식_7세_3차_선발시험(220622).pdf", layout: "two",
-    typeIds: ["edge-sum-grid","repeat-four-shapes","grid-number-placement","order-position-from-front","five-card-sum-pyramid","equalize-transfer","addition-table-grid","shape-sum-table","arrow-number-grid","bus-change","equal-line-sum-eight-cards","symbol-sum-grid","shape-equation-add-subtract","two-digit-parity-gap","fold-number-cut-sum","square-tile-growth","balance-scale-three-objects","symbol-relation-3to4","number-line-six-points","go-stone-difference-inverse"]
+    typeIds: ["edge-sum-grid","repeat-four-shapes","grid-number-placement","order-position-from-front","five-card-sum-pyramid","equalize-transfer","addition-table-grid","shape-sum-table","arrow-number-grid","bus-change","equal-line-sum-eight-cards","symbol-sum-grid","shape-equation-add-subtract","two-digit-parity-gap","fold-number-cut-sum","square-tile-growth","balance-scale-three-objects","symbol-relation-3to4","number-line-six-points","go-stone-difference-inverse"],
+    verifiedQuestionNumbers: [1]
   }),
   makeExam({
     id: "k7-2022-08", stage: "k7_november", label: "더 클래식 7세 4차 선발시험 (2022.08.12)",

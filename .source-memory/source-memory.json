@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "6848d6b6e10b94d028e241b70eebb30e8a45247505837a4b11ade973a7a58a74",
-      "size": 42252,
-      "mtime_ns": 1786818896525687100
+      "sha256": "dc6dfeea7c7c3bb7a08b3a30a47eed6e9eb4a7c9d519aeaadde5f2fbf94540ac",
+      "size": 43158,
+      "mtime_ns": 1786819298370391700
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "d8dc70f0003b5907c44c94c35580af895e790b386137d09d694963eafb130dcf",
-      "size": 115905,
-      "mtime_ns": 1786818772803372400
+      "sha256": "fbd2953003549751d0455a2ac536ee291c14b7fe84ab9ce322e9aa79d08dd65a",
+      "size": 116353,
+      "mtime_ns": 1786819217904942000
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "e9728e78f60108ec9aa56a479c2ffd1f12cfdc4afe63400ed45c8c98ff6fa583",
-      "size": 34282,
-      "mtime_ns": 1786818772807369900
+      "sha256": "b468f897b1712458fc9aba20ac4b9877abe701fa41d5a5f621f368d5ab6d860b",
+      "size": 34312,
+      "mtime_ns": 1786819138842163400
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 1",
+      "title": "Next verification 7-year-old selection test 3 question 2",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q01"
+        "q02"
       ],
-      "summary": "Verify the four cards 1, 2, 4, 8, all four edge sums, the complete corner placement, and uniqueness on selection test 3 source page 3 before reusing edge-sum-grid.",
+      "summary": "Verify the four-shape repeating cycle and the 14th shape against source and answer page 3 before adding or reusing a generator.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 3 question 1 is the next locked source question"
+          "note": "Selection test 3 question 2 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 1 edge-sum-grid",
-          "note": "Do not enable until all cards, edge sums, the full placement answer, and uniqueness are verified"
+          "locator": "EXAMS k7-2022-06 question 2 repeat-four-shapes",
+          "note": "Do not enable until the exact four-shape order and 14th answer are verified"
         }
       ]
     },
@@ -1485,6 +1485,40 @@
           "role": "code",
           "locator": "TYPES go-stone-difference-inverse and all 20 EXAMS k7-2022-04 questions verified",
           "note": "Selection test 2 is fully enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q1",
+      "title": "Selection test 3 question 1 edge-sum placement",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q1",
+        "edge-sum-grid"
+      ],
+      "summary": "Cards 1,2,4,8 with edge sums top5 right9 bottom10 left6 have the unique full placement TL4 TR1 BR8 BL2; edgeSumCycle now uses structural difficulty.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 1 paragraph",
+          "note": "Original page and answer, unique placement, structural difficulty, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function edgeSumCycle",
+          "note": "Easy gives one corner, actual uses four cards, hard adds one unused card"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-06 verifiedQuestionNumbers 1",
+          "note": "Only source question 1 is enabled"
         }
       ]
     }
