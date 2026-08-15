@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816cn";
-import { GENERATORS } from "./generators.js?v=20260816cf";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816co";
+import { GENERATORS } from "./generators.js?v=20260816cg";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -872,7 +872,7 @@ function goStoneDifferenceInverseMarkup(visual) {
     const color = row % 2 === 1 ? "black" : "white";
     return `<div>${Array.from({ length: row }, () => `<i class="${color}"></i>`).join("")}</div>`;
   }).join("")}<span>${size}번째</span></div>`;
-  return `<div class="go-difference-work"><div class="go-triangle-stages">${Array.from({ length: visual.stages }, (_, index) => stage(index + 1)).join("")}<b>…</b></div>${visual.hint ? `<p>${visual.hint}</p>` : ""}<strong>${visual.targetColor}이 ${visual.difference}개 더 많은 때</strong></div>`;
+  return `<div class="go-difference-work"><div class="go-triangle-stages">${Array.from({ length: visual.stages }, (_, index) => stage(index + 1)).join("")}<b>…</b></div>${visual.hint ? `<p>${visual.hint}</p>` : ""}<strong>${visual.targetText || `${visual.targetColor}이 ${visual.difference}개 더 많은 때`}</strong></div>`;
 }
 
 function coloredShapeNumberMarkup(visual) {

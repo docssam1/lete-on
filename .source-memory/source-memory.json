@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "e39d88c4a633181b8a3ecef0956392c7a50b0a794a79aca943071ad89287b200",
-      "size": 78082,
-      "mtime_ns": 1786828678790459700
+      "sha256": "6fbed8d2f532d0ab6f4d894c3babfff319cd501cec3f06d896144ef93fe353e0",
+      "size": 78980,
+      "mtime_ns": 1786828992567124300
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "30456e47fa0e987acf4a1110a9f37bb99c739f5cceb51ce4a35e1c5bf786a965",
-      "size": 155182,
-      "mtime_ns": 1786828617182481100
+      "sha256": "d6633a4511fc8d0a731c9527f124fc6b0101aaa19774343ba05080967bd9ee02",
+      "size": 156743,
+      "mtime_ns": 1786828849157179800
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "195e58fda4bec96b268d60e75b37ddae953f9ce27740e04ad1c36f90fdd24fcd",
-      "size": 38123,
-      "mtime_ns": 1786828637654142400
+      "sha256": "f6aced86c984469bd7361ddc1b658856c1b7f760cda2dfa8052e31f717d278ff",
+      "size": 38304,
+      "mtime_ns": 1786828849159178900
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 4 question 20",
+      "title": "Next verification selection test 6 question 1",
       "aliases": [],
       "tags": [
         "next",
-        "k7-2022-08",
-        "q20"
+        "k7-2022-12",
+        "q1"
       ],
-      "summary": "Replace the incorrect black-stone same-level mapping with a source-matched white-stone difference inverse generator; source difference 18 gives the 36th arrangement.",
+      "summary": "Open the 2022-12-15 selection test question 1 only after comparing its exact diagram and official answer, then verify its generator, three difficulty structures, browser rendering, and answer uniqueness.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,7 +123,7 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Question 20 remains disabled until the white-stone generator, answer, and browser rendering are verified"
+          "note": "Selection test 6 remains disabled until each source question is verified one by one"
         }
       ]
     },
@@ -2805,6 +2805,40 @@
           "role": "code",
           "locator": "TYPES number-line-six-points and EXAMS k7-2022-08 verified 1 through 19",
           "note": "Question 19 enabled after source match"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q20",
+      "title": "Selection test 4 question 20 white-stone difference inverse",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q20",
+        "go-stone-difference-inverse-white"
+      ],
+      "summary": "The source alternates black odd rows and white even rows and asks when white exceeds black by 18; the even-stage difference grows 1 at a time, so the official answer is the 36th arrangement.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 20 paragraph",
+          "note": "Exact row colors, official answer 36, dedicated white-stone generator, independent count validation, and browser rendering"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function goStoneDifferenceInverseWhite",
+          "note": "Three structural difficulty levels with row-count-verified answers"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES go-stone-difference-inverse-white and EXAMS k7-2022-08 all verified",
+          "note": "Question 20 enabled after exact source comparison"
         }
       ]
     }

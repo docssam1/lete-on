@@ -2189,6 +2189,28 @@ function goStoneDifferenceInverse({ difficulty = 2 }) {
   };
 }
 
+function goStoneDifferenceInverseWhite({ difficulty = 2 }) {
+  const difference = difficulty === 1 ? randomInt(3, 8) : difficulty === 2 ? randomInt(8, 20) : randomInt(12, 24);
+  const offset = difficulty === 3 ? sample([2, 4]) : 0;
+  const baseAnswer = difference * 2;
+  const answer = baseAnswer + offset;
+  const hint = difficulty === 1 ? "흰 돌이 1개, 2개, 3개 더 많은 때는 차례로 2번째, 4번째, 6번째입니다." : "";
+  const targetText = offset
+    ? `흰 돌이 ${difference}개 더 많은 때보다 ${offset}번째 뒤`
+    : `흰 돌이 ${difference}개 더 많은 때`;
+  const prompt = offset
+    ? `다음과 같은 규칙으로 바둑돌을 놓습니다. 흰 돌이 검은 돌보다 ${difference}개 많아지는 때보다 ${offset}번째 뒤에 있는 모양은 몇 번째인지 구하세요.`
+    : `다음과 같은 규칙으로 바둑돌을 놓을 때 흰 돌이 검은 돌보다 ${difference}개 많아지는 것은 몇 번째인지 구하세요.`;
+
+  return {
+    prompt,
+    visual: { kind: "go-stone-difference-inverse", stages: 5, targetColor: "흰 돌", difference, hint, targetText },
+    answer: `${answer}번째`,
+    solution: `흰 돌이 1개, 2개, 3개, … 더 많은 때는 차례로 2번째, 4번째, 6번째, …입니다. 흰 돌이 ${difference}개 더 많은 때는 ${baseAnswer}번째${offset ? `이고, 여기에서 ${offset}번째 뒤는 ${answer}번째` : ""}입니다.`,
+    meta: { difficulty, targetColor: "흰 돌", difference, offset, baseAnswer, answer }
+  };
+}
+
 function balanceScaleThreeObjects({ difficulty = 2 }) {
   const squareBesideStar = randomInt(1, difficulty === 3 ? 3 : 2);
   const squareBesideCircle = randomInt(1, difficulty === 1 ? 1 : 2);
@@ -2791,6 +2813,7 @@ export const GENERATORS = {
   symbolRelationThreeToFour,
   numberLineSixPoints,
   goStoneDifferenceInverse,
+  goStoneDifferenceInverseWhite,
   sourceBalanceRelations,
   balanceScaleThreeObjects,
   balanceScaleStarTarget,
