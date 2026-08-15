@@ -1503,6 +1503,33 @@ function arrowNumberGrid({ difficulty = 2 }) {
   };
 }
 
+function arrowNumberPathSeven({ difficulty = 2 }) {
+  const directions = difficulty === 1
+    ? ["left", "up", "right", "up", "left"]
+    : difficulty === 2
+      ? ["left", "up", "left", "up", "right", "right", "up"]
+      : ["left", "up", "left", "up", "right", "right", "up", "left", "up"];
+  const delta = { left: -1, right: 1, up: -10, down: 10 };
+  const vector = { left: [-1, 0], right: [1, 0], up: [0, -1], down: [0, 1] };
+  const start = randomInt(difficulty === 1 ? 30 : difficulty === 2 ? 40 : 55, difficulty === 1 ? 69 : difficulty === 2 ? 79 : 95);
+  const values = [start];
+  const points = [{ x: 0, y: 0 }];
+  directions.forEach((direction) => {
+    values.push(values.at(-1) + delta[direction]);
+    const [x, y] = vector[direction];
+    points.push({ x: points.at(-1).x + x, y: points.at(-1).y + y });
+  });
+  const answer = values.at(-1);
+  const directionNames = { left: "왼쪽", right: "오른쪽", up: "위쪽", down: "아래쪽" };
+  return {
+    prompt: "[보기]의 화살표가 나타내는 규칙을 찾아 오른쪽 그림의 ㉠에 알맞은 수를 써 넣으세요.",
+    visual: { kind: "arrow-number-path-seven", directions, points, start },
+    answer: String(answer),
+    solution: `왼쪽은 1 작아지고, 오른쪽은 1 커지며, 위쪽은 10 작아집니다. ${start}에서 ${directions.map((direction) => directionNames[direction]).join(" → ")} 순서로 가면 ${values.join(" → ")}이므로 ㉠은 ${answer}입니다.`,
+    meta: { difficulty, directions, points, start, values, answer }
+  };
+}
+
 function busPassengers({ max, difficulty }) {
   const start = randomInt(8, Math.max(9, Math.min(max - 5, 35)));
   const boarded = randomInt(2, Math.max(2, Math.min(max - start, difficulty >= 2 ? 12 : 8)));
@@ -1806,6 +1833,7 @@ export const GENERATORS = {
   repeatShapeSequence,
   threeShapeCycle,
   arrowNumberGrid,
+  arrowNumberPathSeven,
   numberCardEquation,
   busPassengers,
   sourceNonadjacentPyramid,

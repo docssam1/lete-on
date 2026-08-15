@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "a2d855f7472bae46ed5405537f492fde12ea7470e643f70b45a085b52dd4c78c",
-      "size": 31665,
-      "mtime_ns": 1786815071051100600
+      "sha256": "d99527ac9dce67070238327148ff582ceeaa0866c41c2d850b20be0adc110d1c",
+      "size": 32364,
+      "mtime_ns": 1786815410972607600
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "6a05a424f5ecd14567b0cefa94fc1a3f6519d4b84eb46a30feb0b40b51bb1fbe",
-      "size": 95644,
-      "mtime_ns": 1786814978609686000
+      "sha256": "6faee1e14c6bc26d5bbbbac8f91f4b5857580f944201b7506dbc8da113f8705a",
+      "size": 97208,
+      "mtime_ns": 1786815202881425100
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "85e3660eda9db9f77cf182177b9159f4a03e679f32dee6e5f4285a3b6579a37e",
-      "size": 33361,
-      "mtime_ns": 1786814978613687500
+      "sha256": "0263b908eca9d711d535ba3e081b1b4b716deba92d3daa5864f23cf7566a4eb7",
+      "size": 33525,
+      "mtime_ns": 1786815258114885400
     }
   ],
   "records": [
@@ -107,23 +107,29 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 2 question 9",
+      "title": "Next verification 7-year-old selection test 2 question 10",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-04",
-        "q9"
+        "q10"
       ],
-      "summary": "Verify the example arrow-number rules and the exact seven-step path from 46 to the marked answer 16 before reusing or splitting the arrow generator.",
-      "status": "verified",
+      "summary": "Verify the bus story order: start with 27 passengers, 12 get off, then 9 get on, giving 24; compare the exact source layout before reusing sourceBusStops.",
+      "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
       "pointers": [
         {
           "source_id": "handover",
-          "role": "decision",
-          "locator": "Next sequence item 1",
-          "note": "Selection test 2 question 9 is next"
+          "role": "audit",
+          "locator": "Next order item",
+          "note": "Question 10 is the next locked source question"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-04 question 10 bus-change",
+          "note": "Do not enable until source structure and generator match are verified"
         }
       ]
     },
@@ -1071,6 +1077,40 @@
           "role": "code",
           "locator": "TYPES repeat-three-shapes and EXAMS k7-2022-04 verified 1 through 8",
           "note": "Source question 8 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-04.q9",
+      "title": "Selection test 2 question 9 seven-step arrow path",
+      "aliases": [],
+      "tags": [
+        "k7-2022-04",
+        "q9",
+        "arrow-number-path-seven"
+      ],
+      "summary": "The source applies left -1, right +1, up -10, down +10 along seven arrows from 46 to the marked answer 16; the dedicated generator preserves that path structure.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 2 question 9 paragraph",
+          "note": "Original path, answer 16, difficulty structure, and validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function arrowNumberPathSeven",
+          "note": "Five, seven, and nine-step path variants"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES arrow-number-path-seven and EXAMS k7-2022-04 verified 1 through 9",
+          "note": "Source question 9 is enabled without changing the older arrow grid type"
         }
       ]
     }

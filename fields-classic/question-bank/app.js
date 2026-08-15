@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816af";
-import { GENERATORS } from "./generators.js?v=20260816af";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816ag";
+import { GENERATORS } from "./generators.js?v=20260816ag";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -559,6 +559,37 @@ function arrowNumberGridMarkup(visual) {
   return `<div class="arrow-number-rule"><svg class="arrow-legend-svg" viewBox="0 0 250 120" role="img" aria-label="화살표 규칙 보기"><defs><marker id="legend-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z"/></marker></defs><rect x="4" y="4" width="242" height="112" rx="16"/><text x="125" y="27">[보기]</text><rect x="102" y="42" width="46" height="34"/><rect x="28" y="75" width="46" height="34"/><rect x="102" y="75" width="46" height="34"/><rect x="176" y="75" width="46" height="34"/><text x="125" y="64">5</text><text x="51" y="97">14</text><text x="125" y="97">15</text><text x="199" y="97">16</text><path d="M125 75V67M102 92H76M148 92H174M125 75V79"/></svg><svg class="arrow-grid-svg" viewBox="0 0 270 210" role="img" aria-label="화살표 수 규칙 문제"><defs><marker id="${marker}" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z"/></marker></defs><g class="arrow-steps">${steps}</g><rect x="12" y="148" width="40" height="40"/><circle cx="82" cy="172" r="18"/><circle cx="126" cy="172" r="18"/><circle cx="126" cy="122" r="18"/><circle cx="184" cy="122" r="18"/><circle cx="184" cy="72" r="18"/><circle cx="132" cy="72" r="18"/><circle cx="80" cy="72" r="18"/><rect x="60" y="2" width="40" height="40"/><text x="32" y="174">${visual.start}</text><text x="80" y="28">㉠</text></svg></div>`;
 }
 
+function arrowNumberPathSevenMarkup(visual) {
+  const minX = Math.min(...visual.points.map((point) => point.x));
+  const maxX = Math.max(...visual.points.map((point) => point.x));
+  const minY = Math.min(...visual.points.map((point) => point.y));
+  const maxY = Math.max(...visual.points.map((point) => point.y));
+  const width = (maxX - minX) * 66 + 100;
+  const height = (maxY - minY) * 66 + 100;
+  const placed = visual.points.map((point) => ({ x: (point.x - minX) * 66 + 50, y: (point.y - minY) * 66 + 50 }));
+  const arrows = placed.slice(0, -1).map((point, index) => {
+    const next = placed[index + 1];
+    const ux = Math.sign(next.x - point.x);
+    const uy = Math.sign(next.y - point.y);
+    const sx = point.x + ux * 28;
+    const sy = point.y + uy * 28;
+    const ex = next.x - ux * 28;
+    const ey = next.y - uy * 28;
+    const bx = ex - ux * 8;
+    const by = ey - uy * 8;
+    const px = -uy * 4;
+    const py = ux * 4;
+    return `<line x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}"/><path d="M${ex} ${ey}L${bx + px} ${by + py}L${bx - px} ${by - py}Z"/>`;
+  }).join("");
+  const nodes = placed.map((point, index) => {
+    if (index === 0) return `<rect x="${point.x - 22}" y="${point.y - 22}" width="44" height="44"/><text x="${point.x}" y="${point.y + 6}">${visual.start}</text>`;
+    if (index === placed.length - 1) return `<rect class="target" x="${point.x - 22}" y="${point.y - 22}" width="44" height="44"/><text x="${point.x}" y="${point.y + 6}">㉠</text>`;
+    return `<circle cx="${point.x}" cy="${point.y}" r="21"/>`;
+  }).join("");
+  const legend = `<svg class="arrow-path-legend" viewBox="0 0 210 150" role="img" aria-label="화살표 수 규칙 보기"><text x="105" y="16">[보기]</text><rect x="84" y="55" width="42" height="42"/><rect x="18" y="55" width="42" height="42"/><rect x="150" y="55" width="42" height="42"/><rect x="84" y="3" width="42" height="42"/><rect x="84" y="107" width="42" height="42"/><text x="105" y="82">15</text><text x="39" y="82">14</text><text x="171" y="82">16</text><text x="105" y="30">5</text><text x="105" y="134">25</text><text class="legend-arrow" x="70" y="82">←</text><text class="legend-arrow" x="140" y="82">→</text><text class="legend-arrow" x="105" y="52">↑</text><text class="legend-arrow" x="105" y="108">↓</text></svg>`;
+  return `<div class="arrow-path-work">${legend}<svg class="arrow-path-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="화살표를 따라 수를 찾는 경로"><g class="path-arrows">${arrows}</g><g class="path-nodes">${nodes}</g></svg></div>`;
+}
+
 function busStopsMarkup(visual) {
   return `<div class="bus-stops"><ul><li>첫 번째 정류장에서 <strong>${visual.left}명</strong>이 내렸습니다.</li><li>두 번째 정류장에서 <strong>${visual.boarded}명</strong>이 탔습니다.</li></ul></div>`;
 }
@@ -655,6 +686,7 @@ function visualMarkup(visual) {
   if (visual.kind === "repeat-shape-sequence") return `<div class="visual repeat-sequence-visual">${repeatShapeSequenceMarkup(visual)}</div>`;
   if (visual.kind === "three-shape-cycle") return `<div class="visual three-shape-cycle-visual">${threeShapeCycleMarkup(visual)}</div>`;
   if (visual.kind === "arrow-number-grid") return `<div class="visual arrow-grid-visual">${arrowNumberGridMarkup(visual)}</div>`;
+  if (visual.kind === "arrow-number-path-seven") return `<div class="visual arrow-path-seven-visual">${arrowNumberPathSevenMarkup(visual)}</div>`;
   if (visual.kind === "bus-stops") return `<div class="visual bus-stops-visual">${busStopsMarkup(visual)}</div>`;
   if (visual.kind === "equal-line-cross") return `<div class="visual equal-line-cross-visual">${equalLineCrossMarkup(visual)}</div>`;
   if (visual.kind === "number-conditions") return `<div class="visual number-conditions-visual">${numberConditionsMarkup(visual)}</div>`;
