@@ -174,6 +174,50 @@
     const legendMarkup = secondValues ? `<g class="chart-legend"><rect x="${left}" y="${height - 16}" width="9" height="9"/><text x="${left + 13}" y="${height - 8}">${legend[0] || "자료 1"}</text><rect class="chart-bar-secondary" x="${left + 78}" y="${height - 16}" width="9" height="9"/><text x="${left + 91}" y="${height - 8}">${legend[1] || "자료 2"}</text></g>` : "";
     return `<svg class="bar-chart" viewBox="0 0 ${width} ${height}" aria-label="막대그래프"><text class="chart-unit" x="4" y="10">(${unit})</text>${grid}<line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="chart-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${bars}${legendMarkup}</svg>`;
   };
+  const numberGrid = (rows, columns, valueAt) => `<div class="number-grid" style="--grid-columns:${columns}">${Array.from({ length: rows * columns }, (_, index) => `<span>${valueAt(Math.floor(index / columns) + 1, index % columns + 1)}</span>`).join("")}</div>`;
+  const numberTriangle = (rows) => `<div class="number-triangle">${Array.from({ length: rows }, (_, rowIndex) => {
+    const start = rowIndex * (rowIndex + 1) / 2 + 1;
+    return `<div>${Array.from({ length: rowIndex + 1 }, (_, columnIndex) => `<span>${start + columnIndex}</span>`).join("")}</div>`;
+  }).join("")}</div>`;
+  const shapePatternSvg = (kind) => {
+    if (kind === "squares") {
+      const groups = [1, 2, 3].map((count, groupIndex) => {
+        const startX = 12 + groupIndex * 78;
+        const boxes = Array.from({ length: count }, (_, index) => `<rect x="${startX + index * 17}" y="35" width="17" height="17"/>`).join("");
+        return `${boxes}<text x="${startX + count * 8.5}" y="72">${count}번째</text>`;
+      }).join("");
+      return `<svg class="pattern-diagram" viewBox="0 0 250 90" aria-label="정사각형을 이어 붙인 규칙">${groups}</svg>`;
+    }
+    if (kind === "dots") {
+      const groups = [1, 2, 3].map((size, groupIndex) => {
+        const startX = 30 + groupIndex * 82;
+        const dots = Array.from({ length: size }, (_, row) => Array.from({ length: row + 1 }, (_, column) => `<circle cx="${startX + (column - row / 2) * 13}" cy="${22 + row * 13}" r="3.5"/>`).join("")).join("");
+        return `${dots}<text x="${startX}" y="78">${size}번째</text>`;
+      }).join("");
+      return `<svg class="pattern-diagram" viewBox="0 0 250 90" aria-label="삼각형으로 늘어나는 점의 규칙">${groups}</svg>`;
+    }
+    const groups = [1, 2, 3].map((stage, groupIndex) => {
+      const side = stage * 2 + 1;
+      const cell = 5;
+      const startX = 16 + groupIndex * 82;
+      const startY = 15;
+      const cells = Array.from({ length: side * side }, (_, index) => {
+        const row = Math.floor(index / side);
+        const column = index % side;
+        const border = row === 0 || column === 0 || row === side - 1 || column === side - 1;
+        return `<rect class="${border ? "pattern-dark" : "pattern-light"}" x="${startX + column * cell}" y="${startY + row * cell}" width="${cell}" height="${cell}"/>`;
+      }).join("");
+      return `${cells}<text x="${startX + side * cell / 2}" y="78">${stage}번째</text>`;
+    }).join("");
+    return `<svg class="pattern-diagram" viewBox="0 0 250 90" aria-label="테두리가 늘어나는 타일의 규칙">${groups}</svg>`;
+  };
+  const digitPlaceCounts = (values, digit) => {
+    const counts = [];
+    values.forEach(value => [...String(value)].reverse().forEach((item, index) => {
+      if (item === String(digit)) counts[index] = (counts[index] || 0) + 1;
+    }));
+    return counts.map(value => value || 0);
+  };
   const rotatePointClockwise = ([x, y], turns, center = 4) => {
     let point = [x, y];
     for (let count = 0; count < ((turns % 4) + 4) % 4; count += 1) point = [center + (point[1] - center), center - (point[0] - center)];
@@ -881,6 +925,161 @@
       const priceText = labels.map((label, index) => `${label}빵 ${prices[index].toLocaleString()}원`).join(", ");
       return result(`오늘 판매한 빵의 수를 나타낸 막대그래프입니다. 한 개의 가격이 ${priceText}일 때 전체 판매 금액을 구하세요.${barChartSvg({ labels, values: counts, step: 5, unit: "개" })}`, answer, `${counts.map((count, index) => `${count} × ${prices[index].toLocaleString()}`).join(" + ")} = ${answer.toLocaleString()}원이므로 전체 판매 금액은 ${answer.toLocaleString()}원입니다.`);
     },
+    advancedLinePattern({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const start = int(rng, 2, 12);
+        const step = int(rng, 4 + level, 8 + level * 2);
+        const target = int(rng, 35 + level * 15, 65 + level * 25);
+        const preview = Array.from({ length: 6 }, (_, index) => start + index * step);
+        const answer = start + (target - 1) * step;
+        return result(`다음 수열의 ${target}번째 수를 구하세요.<div class="sequence">${preview.join(", ")}, …</div>`, answer, `첫째 수가 ${start}이고 ${step}씩 커지므로 ${target}번째 수는 ${start} + ${step} × ${target - 1} = ${answer}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const oddStart = int(rng, 2, 8);
+        const evenStart = int(rng, 12, 22);
+        const oddStep = int(rng, 3 + level, 6 + level);
+        const evenStep = int(rng, 4 + level, 8 + level);
+        const target = int(rng, 45 + level * 20, 85 + level * 30);
+        const valueAt = position => position % 2 === 1 ? oddStart + ((position - 1) / 2) * oddStep : evenStart + (position / 2 - 1) * evenStep;
+        const preview = Array.from({ length: 8 }, (_, index) => valueAt(index + 1));
+        const answer = valueAt(target);
+        const lane = target % 2 === 1 ? "홀수 번째" : "짝수 번째";
+        const laneIndex = Math.ceil(target / 2);
+        const laneStart = target % 2 === 1 ? oddStart : evenStart;
+        const laneStep = target % 2 === 1 ? oddStep : evenStep;
+        return result(`두 규칙이 번갈아 나타나는 수열입니다. ${target}번째 수를 구하세요.<div class="sequence">${preview.join(", ")}, …</div>`, answer, `${target}번째는 ${lane} 수열의 ${laneIndex}번째입니다. ${laneStart}에서 ${laneStep}씩 커지므로 답은 ${answer}입니다.`);
+      }
+      const numeratorStart = int(rng, 1, 5);
+      const denominatorStart = int(rng, 40, 90);
+      const numeratorStep = int(rng, 2 + level, 5 + level);
+      const denominatorStep = int(rng, 3 + level, 7 + level * 2);
+      const target = int(rng, 30 + level * 15, 55 + level * 20);
+      const terms = Array.from({ length: 5 }, (_, index) => `${numeratorStart + index * numeratorStep}/${denominatorStart + index * denominatorStep}`);
+      const numerator = numeratorStart + (target - 1) * numeratorStep;
+      const denominator = denominatorStart + (target - 1) * denominatorStep;
+      return result(`분자와 분모의 규칙을 각각 찾아 ${target}번째 분수를 구하세요.<div class="sequence">${terms.join(", ")}, …</div>`, `${numerator}/${denominator}`, `분자는 ${numeratorStep}씩, 분모는 ${denominatorStep}씩 커집니다. 따라서 ${target}번째 분수는 ${numerator}/${denominator}입니다.`);
+    },
+    arrayNumberRules({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const columns = 6 + level;
+        const targetRow = int(rng, 9 + level * 4, 18 + level * 8);
+        const targetColumn = int(rng, 2, columns - 1);
+        const valueAt = (row, column) => (row - 1) * columns + (row % 2 === 1 ? column : columns - column + 1);
+        const answer = valueAt(targetRow, targetColumn);
+        return result(`자연수를 한 줄에 ${columns}개씩 쓰되, 첫째 줄은 왼쪽에서 오른쪽으로, 둘째 줄은 오른쪽에서 왼쪽으로 번갈아 배열했습니다. ${targetRow}번째 줄의 왼쪽에서 ${targetColumn}번째 수를 구하세요.${numberGrid(5, columns, valueAt)}`, answer, `${targetRow}번째 줄에는 ${(targetRow - 1) * columns + 1}부터 ${targetRow * columns}까지 있습니다. ${targetRow % 2 === 1 ? "왼쪽부터 커지므로" : "왼쪽부터 작아지므로"} 답은 ${answer}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const targetRow = int(rng, 18 + level * 6, 35 + level * 12);
+        const answer = targetRow * (targetRow + 1) / 2;
+        return result(`첫째 줄에 1개, 둘째 줄에 2개, 셋째 줄에 3개씩 자연수를 차례로 배열합니다. ${targetRow}번째 줄의 가장 오른쪽 수를 구하세요.${numberTriangle(5)}`, answer, `${targetRow}번째 줄까지 놓인 수의 개수는 1 + 2 + … + ${targetRow} = ${targetRow} × ${targetRow + 1} ÷ 2 = ${answer}이므로 가장 오른쪽 수는 ${answer}입니다.`);
+      }
+      const columns = 7 + level;
+      const target = int(rng, 120 + level * 80, 260 + level * 150);
+      const row = Math.ceil(target / columns);
+      const offset = target - (row - 1) * columns;
+      const column = row % 2 === 1 ? offset : columns - offset + 1;
+      const valueAt = (gridRow, gridColumn) => (gridRow - 1) * columns + (gridRow % 2 === 1 ? gridColumn : columns - gridColumn + 1);
+      return result(`자연수를 한 줄에 ${columns}개씩 뱀 모양으로 배열했습니다. ${target}은 몇 번째 줄의 왼쪽에서 몇 번째 위치에 있는지 쓰세요.${numberGrid(5, columns, valueAt)}`, `${row}번째 줄, ${column}번째`, `${target}을 ${columns}로 나누어 줄을 찾으면 ${row}번째 줄입니다. ${row % 2 === 1 ? "홀수 줄은 왼쪽부터 커지고" : "짝수 줄은 왼쪽부터 작아지므로"} 왼쪽에서 ${column}번째입니다.`);
+    },
+    advancedArraySum({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const start = int(rng, 10, 35);
+        const step = int(rng, 3 + level, 8 + level * 2);
+        const count = int(rng, 24 + level * 8, 45 + level * 15);
+        const last = start + (count - 1) * step;
+        const answer = count * (start + last) / 2;
+        return result(`${start}부터 시작하여 ${step}씩 커지는 수를 ${count}개 나열했습니다. 이 수들의 합을 구하세요.<div class="sequence">${start}, ${start + step}, ${start + step * 2}, …, ${last}</div>`, answer, `처음 수와 끝 수의 합은 ${start + last}이고 수는 ${count}개이므로 합은 (${start} + ${last}) × ${count} ÷ 2 = ${answer}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const count = int(rng, 18 + level * 8, 36 + level * 15);
+        const total = count * count;
+        const answer = count * 2 - 1;
+        return result(`1부터 시작하는 연속된 홀수를 더했더니 합이 ${total.toLocaleString()}이었습니다. 더한 홀수 중 가장 큰 수를 구하세요.`, answer, `처음 ${count}개 홀수의 합은 ${count}² = ${total.toLocaleString()}입니다. ${count}번째 홀수는 2 × ${count} - 1 = ${answer}입니다.`);
+      }
+      const first = int(rng, 12 + level * 10, 45 + level * 25);
+      const center = first + 4;
+      const total = center * 9;
+      const answer = first + 8;
+      return result(`연속한 자연수 9개를 작은 수부터 가로 3칸, 세로 3칸에 차례로 썼습니다. 아홉 수의 합이 ${total}일 때 가장 큰 수를 구하세요.${numberGrid(3, 3, () => "□")}`, answer, `연속한 9개의 가운데 수는 평균과 같으므로 ${total} ÷ 9 = ${center}입니다. 가장 큰 수는 가운데 수보다 4 큰 ${answer}입니다.`);
+    },
+    advancedOperationRule({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const a = int(rng, 4, 9 + level * 2);
+        const b = int(rng, 3, 8 + level * 2);
+        const answer = a * b + b;
+        return result(`다음 보기에서 ★의 규칙을 찾아 ${a}★${b}의 값을 구하세요.<div class="rule-examples"><span>2★3 = 9</span><span>4★5 = 25</span><span>6★2 = 14</span></div>`, answer, `앞의 수와 뒤의 수를 곱한 뒤 뒤의 수를 더하는 규칙입니다. ${a} × ${b} + ${b} = ${answer}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const a = int(rng, 2, 7 + level);
+        const b = int(rng, 3, 8 + level);
+        const c = int(rng, 2, 6 + level);
+        const sum = a + b;
+        const answer = sum * c + 1;
+        return result(`두 연산의 규칙을 찾아 (${a}○${b})◇${c}의 값을 구하세요.<div class="rule-examples"><span>2○3 = 5, 4○6 = 10</span><span>2◇3 = 7, 4◇5 = 21</span></div>`, answer, `○는 두 수의 합이고 ◇는 두 수의 곱에 1을 더합니다. ${a}○${b} = ${sum}, ${sum}◇${c} = ${sum} × ${c} + 1 = ${answer}입니다.`);
+      }
+      const topOne = int(rng, 2, 6);
+      const leftOne = int(rng, 3, 8);
+      const rightOne = int(rng, 4, 9);
+      const topTwo = int(rng, 3, 7);
+      const leftTwo = int(rng, 4, 9);
+      const rightTwo = int(rng, 5, 10);
+      const top = int(rng, 4, 8 + level);
+      const left = int(rng, 5, 10 + level);
+      const right = int(rng, 6, 11 + level);
+      const answer = top * (left + right);
+      return result(`세 꼭짓점의 수로 가운데 수를 만드는 규칙을 찾아 ?에 알맞은 수를 구하세요.<div class="number-trios"><span>${topOne}<br>${leftOne} · <b>${topOne * (leftOne + rightOne)}</b> · ${rightOne}</span><span>${topTwo}<br>${leftTwo} · <b>${topTwo * (leftTwo + rightTwo)}</b> · ${rightTwo}</span><span>${top}<br>${left} · <b>?</b> · ${right}</span></div>`, answer, `아래 두 수의 합에 위의 수를 곱하는 규칙입니다. (${left} + ${right}) × ${top} = ${answer}입니다.`);
+    },
+    advancedShapePattern({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const target = int(rng, 14 + level * 5, 28 + level * 10);
+        const answer = 3 * target + 1;
+        return result(`정사각형을 한 변씩 이어 붙여 한 줄로 늘어놓습니다. ${target}번째 모양에 필요한 성냥개비 수를 구하세요.${shapePatternSvg("squares")}`, answer, `첫 정사각형은 4개가 필요하고 하나를 더 붙일 때마다 3개씩 늘어납니다. 4 + 3 × ${target - 1} = ${answer}개입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const target = int(rng, 12 + level * 4, 22 + level * 8);
+        const answer = target * (target + 1) / 2;
+        return result(`점을 삼각형 모양으로 한 줄씩 늘려 놓습니다. ${target}번째 모양에 놓이는 점은 모두 몇 개인지 구하세요.${shapePatternSvg("dots")}`, answer, `점의 수는 1 + 2 + … + ${target}이므로 ${target} × ${target + 1} ÷ 2 = ${answer}개입니다.`);
+      }
+      const target = int(rng, 7 + level * 3, 13 + level * 5);
+      const side = target * 2 + 1;
+      const dark = 4 * side - 4;
+      const light = (side - 2) ** 2;
+      return result(`정사각형 타일을 늘려 ${target}번째 모양을 만들었습니다. 테두리는 검은 타일, 안쪽은 흰 타일입니다. 검은 타일과 흰 타일의 수를 차례로 구하세요.${shapePatternSvg("rings")}`, `${dark}, ${light}`, `${target}번째 모양의 한 변은 ${side}칸입니다. 테두리는 4 × ${side} - 4 = ${dark}개이고, 안쪽은 한 변이 ${side - 2}칸인 정사각형이므로 ${light}개입니다.`);
+    },
+    conditionedNumberCount({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const cardsByLevel = [[0, 1, 2, 3], [0, 1, 2, 4, 5], [0, 1, 2, 4, 8]];
+        const cards = shuffle(rng, cardsByLevel[level]);
+        const divisor = pick(rng, [2, 3]);
+        const numbers = permutationNumbers(cards);
+        const place = 10 ** (cards.length - 1);
+        const lower = place * 2;
+        const upper = place * 8;
+        const valid = numbers.filter(value => value > lower && value < upper && value % divisor === 0);
+        return result(`수 카드 ${cards.map(value => `<span class="digit-card">${value}</span>`).join("")}를 한 번씩 모두 사용하여 만든 수 중 ${lower.toLocaleString()}보다 크고 ${upper.toLocaleString()}보다 작으며 ${divisor}의 배수인 수는 모두 몇 개인지 구하세요.`, valid.length, `맨 앞자리를 정해 범위를 확인하고, 끝자리 또는 각 자리의 합으로 ${divisor}의 배수를 판별하면 조건을 만족하는 수는 ${valid.length}개입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const start = int(rng, 120 + level * 150, 360 + level * 240);
+        const end = start + int(rng, 260 + level * 150, 520 + level * 260);
+        const digit = int(rng, 2, 8);
+        const values = Array.from({ length: end - start + 1 }, (_, index) => start + index);
+        const placeCounts = digitPlaceCounts(values, digit);
+        const answer = placeCounts.reduce((sum, value) => sum + value, 0);
+        const placeNames = ["일", "십", "백", "천", "만"];
+        const detail = placeCounts.map((value, index) => `${placeNames[index]}의 자리 ${value}번`).join(", ");
+        return result(`${start.toLocaleString()}부터 ${end.toLocaleString()}까지 자연수를 차례로 쓸 때 숫자 ${digit}가 모두 몇 번 쓰이는지 구하세요.`, answer, `${detail}이므로 숫자 ${digit}가 쓰인 횟수는 모두 ${answer}번입니다.`);
+      }
+      const step = pick(rng, [5, 7, 9]);
+      const count = int(rng, 70 + level * 40, 150 + level * 80);
+      const end = step * count;
+      const digit = int(rng, 1, 8);
+      const values = Array.from({ length: count }, (_, index) => step * (index + 1));
+      const placeCounts = digitPlaceCounts(values, digit);
+      const answer = placeCounts.reduce((sum, value) => sum + value, 0);
+      const placeNames = ["일", "십", "백", "천", "만"];
+      const detail = placeCounts.map((value, index) => `${placeNames[index]}의 자리 ${value}번`).join(", ");
+      return result(`${step}, ${step * 2}, ${step * 3}, …, ${end.toLocaleString()}을 차례로 썼습니다. 이 수들에 숫자 ${digit}가 쓰인 횟수는 모두 몇 번인지 구하세요.`, answer, `${step}의 배수에서 ${detail}이므로 숫자 ${digit}가 쓰인 횟수는 모두 ${answer}번입니다.`);
+    },
     multiply({ rng, level }) {
       const r = range(level);
       const a = int(rng, 12, r.medium);
@@ -1112,6 +1311,12 @@
     [/^평면도형 이동의 활용 ②$/, "movementPatternTwo"],
     [/^막대그래프의 이해$/, "barGraphUnderstanding"],
     [/^막대그래프의 활용$/, "barGraphApplication"],
+    [/^일렬로 나열한 수에서 규칙 찾기$/, "advancedLinePattern"],
+    [/^여러 가지 배열에서 수들의 규칙$/, "arrayNumberRules"],
+    [/^배열된 수들의 합$/, "advancedArraySum"],
+    [/^연산의 규칙$/, "advancedOperationRule"],
+    [/^나열된 도형에서의 규칙$/, "advancedShapePattern"],
+    [/^조건을 만족하는 수의 개수$/, "conditionedNumberCount"],
     [/일렬로 나열한 수|배열된 수들의 합/, "numberPattern"],
     [/^평행선 사이의 각도/, "angle"],
     [/^혼합 계산의 순서$|^하나의 식으로 나타내기$|^연산의 규칙$|^혼합 계산식 만들기$/, "mixedOperation"],
