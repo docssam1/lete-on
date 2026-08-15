@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "99db0e7ec682d2469fa006ce13fe2e6c2a93c3b4d54b4ffa358fd42312546ae4",
-      "size": 70209,
-      "mtime_ns": 1786826625500272900
+      "sha256": "d3ad4f6a18eb544344fc9c564c20d6e06ea0d27091505c82db288d5de3d0b3f0",
+      "size": 71159,
+      "mtime_ns": 1786827148502565300
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "568abc814eb0df78a05b12ea847f69c97a0f1a440434e3610b0bdfb869cf7bd7",
-      "size": 145437,
-      "mtime_ns": 1786826341857043700
+      "sha256": "a7ca4aa270d13dad266129223d67f4dc3badec332a8a5b5f0b5ad204cf71dbdd",
+      "size": 148820,
+      "mtime_ns": 1786827053508478900
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "88474d7d33a26859f680ad64529d8368c7a2f9098653fb6e6fea175c13f80138",
-      "size": 37258,
-      "mtime_ns": 1786826560863896300
+      "sha256": "33b40b44cb4d51f6858d3127fdf78ae96710fbdfcc461668acaa2b52402dddf7",
+      "size": 37465,
+      "mtime_ns": 1786826969118919300
     }
   ],
   "records": [
@@ -107,15 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 4 questions 11 and 12",
+      "title": "Next verification 7-year-old selection test 4 question 12",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q11",
         "q12"
       ],
-      "summary": "Verify source and answer page 8 because the audit says question 11 is the even two-digit condition and question 12 is the 3 by 3 shape-sum matrix, while the current code mappings are reversed.",
+      "summary": "Build a dedicated 3 by 3 shape-sum grid from source page 8. The rows and columns determine triangle 7, square 5, diamond 8, circle 4, and the official top-row target 19.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -124,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Questions 11 and 12 require source-number order correction"
+          "note": "Question 12 requires the exact source matrix rather than the existing generic symbol grid"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-08 questions 11 and 12",
-          "note": "Current symbol-sum-grid and two-digit-parity-gap order conflicts with the audit"
+          "locator": "EXAMS k7-2022-08 question 12",
+          "note": "Question 12 remains disabled until its dedicated renderer and generator pass verification"
         }
       ]
     },
@@ -2506,6 +2505,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-08 verified questions 1 through 10",
           "note": "Question 10 corrected from equalize-transfer to total-difference"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q11",
+      "title": "Selection test 4 question 11 even number with larger ones digit",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q11",
+        "two-digit-even-ones-greater-gap"
+      ],
+      "summary": "The source asks for an even number greater than 20 and less than 50 whose ones digit is 5 greater than its tens digit. Exhaustive substitution gives the unique official answer 38.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 11 paragraph",
+          "note": "Exact conditions, answer, dedicated subtype, 9000-run verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function twoDigitEvenOnesGreaterGap",
+          "note": "Dedicated opposite-direction digit-condition generator with exhaustive metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 11",
+          "note": "Question 11 enabled with dedicated subtype"
         }
       ]
     }

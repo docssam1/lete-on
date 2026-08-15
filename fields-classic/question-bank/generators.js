@@ -2372,6 +2372,72 @@ function twoDigitParityGap({ difficulty = 2 }) {
   };
 }
 
+function twoDigitEvenOnesGreaterGap({ difficulty = 2 }) {
+  const candidatesFor = (gap, lower, upper) => Array.from({ length: upper - lower - 1 }, (_, index) => lower + index + 1)
+    .filter((value) => value >= 10
+      && value <= 99
+      && value % 2 === 0
+      && value % 10 - Math.floor(value / 10) === gap);
+  let result;
+  for (let attempt = 0; attempt < 500 && !result; attempt += 1) {
+    const tens = randomInt(1, difficulty === 3 ? 7 : 6);
+    const possibleOnes = [2, 4, 6, 8].filter((ones) => ones > tens);
+    if (!possibleOnes.length) continue;
+    const ones = sample(possibleOnes);
+    const answer = tens * 10 + ones;
+    const gap = ones - tens;
+    const allGapCandidates = candidatesFor(gap, 9, 100);
+    const answerIndex = allGapCandidates.indexOf(answer);
+    const previous = allGapCandidates[answerIndex - 1] || 9;
+    const next = allGapCandidates[answerIndex + 1] || 100;
+    let lower;
+    let upper;
+    let digitSum = null;
+    if (difficulty === 3) {
+      lower = Math.max(9, answer - randomInt(20, 38));
+      upper = Math.min(100, answer + randomInt(20, 38));
+      digitSum = tens + ones;
+    } else {
+      lower = randomInt(Math.max(9, previous), answer - 1);
+      upper = randomInt(answer + 1, Math.min(100, next));
+      if (difficulty === 2) {
+        lower = Math.max(10, previous, answer - 20, Math.floor(lower / 10) * 10);
+        upper = Math.min(100, next, answer + 20, Math.ceil(upper / 10) * 10);
+      }
+    }
+    const gapCandidates = candidatesFor(gap, lower, upper);
+    const solutions = gapCandidates.filter((value) => digitSum === null
+      || Math.floor(value / 10) + value % 10 === digitSum);
+    if (solutions.length !== 1 || solutions[0] !== answer) continue;
+    if (difficulty === 3 && gapCandidates.length < 2) continue;
+    const distractors = shuffle(Array.from({ length: upper - lower - 1 }, (_, index) => lower + index + 1)
+      .filter((value) => value >= 10 && value <= 99 && value % 2 === 0 && value !== answer)).slice(0, 2);
+    if (difficulty === 1 && distractors.length < 2) continue;
+    result = {
+      tens,
+      ones,
+      answer,
+      gap,
+      lower,
+      upper,
+      digitSum,
+      gapCandidates,
+      solutions,
+      choices: difficulty === 1 ? shuffle([answer, ...distractors]) : []
+    };
+  }
+  if (!result) return twoDigitEvenOnesGreaterGap({ difficulty });
+  const { tens, ones, answer, gap, lower, upper, digitSum, gapCandidates, solutions, choices } = result;
+  const sumSentence = digitSum === null ? "" : ` 또 십의 자리 숫자와 일의 자리 숫자의 합은 ${digitSum}입니다.`;
+  return {
+    prompt: `일의 자리 숫자가 0, 2, 4, 6, 8인 수를 짝수라고 합니다. 다음 주어진 조건을 만족하는 두 자리 수를 ${difficulty === 1 ? "보기에서 고르세요." : "구하세요."}`,
+    visual: { kind: "two-digit-parity-gap", lower, upper, gap, digitSum, choices, onesGreater: true },
+    answer: String(answer),
+    solution: `${lower}보다 크고 ${upper}보다 작은 짝수를 적어 봅니다. 일의 자리 숫자가 십의 자리 숫자보다 ${gap} 큰 수를 찾습니다.${sumSentence} 십의 자리 숫자는 ${tens}, 일의 자리 숫자는 ${ones}이므로 답은 ${answer}입니다.`,
+    meta: { difficulty, tens, ones, answer, gap, lower, upper, digitSum, gapCandidates, solutions, choices }
+  };
+}
+
 function twoDigitOddGap({ difficulty = 2 }) {
   const allForGap = (gap) => Array.from({ length: 90 }, (_, index) => index + 10)
     .filter((value) => value % 2 === 1 && value % 10 - Math.floor(value / 10) === gap);
@@ -2635,6 +2701,7 @@ export const GENERATORS = {
   symbolSumGridSquareTop,
   shapeEquationAddSubtract,
   twoDigitParityGap,
+  twoDigitEvenOnesGreaterGap,
   twoDigitOddGap,
   triangleTileGrowth,
   squareTileGrowth,
