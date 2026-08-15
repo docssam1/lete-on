@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "11c93835088345da1b818b1882d2efea39c2e07d26f1b8b1288192f425bc5359",
-      "size": 15500,
-      "mtime_ns": 1786773308608232800
+      "sha256": "f36839ff87038c52eb6ca4ae33b98db31c48693bfcc4d74a01ce4997ad316823",
+      "size": 16009,
+      "mtime_ns": 1786779380659908800
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "539c148d8d76f48b3b45c4b7246cffa56c068f38360243b7ed60ce449cfe260b",
-      "size": 32165,
-      "mtime_ns": 1786773225114582600
+      "sha256": "ce6bd02202bca7b916dc1de246749f3e366158a2b6f15808a9f6dbd554c50ea8",
+      "size": 32151,
+      "mtime_ns": 1786779380660906300
     },
     {
       "id": "generators",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "4db4d6acb9ad115f41e7b29a0d20fbc5118697e1c4648d6b14ffd15e05959ea1",
-      "size": 49452,
-      "mtime_ns": 1786773111983906200
+      "sha256": "e3bf4f241b1069d2b41656735cd25a34fad674a4f4456a75c03c7566d8512422",
+      "size": 56135,
+      "mtime_ns": 1786779102317521900
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "3926013a4f032163185fd1fb4cbe1f8c09967768ccf0253f09437241a6374e25",
-      "size": 31688,
-      "mtime_ns": 1786772948371008800
+      "sha256": "aa353efaeec855475c86b6949e38f7eac5c278eff71f6d2d8734d6beb63946ad",
+      "size": 31742,
+      "mtime_ns": 1786779102319521600
     }
   ],
   "records": [
@@ -107,15 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F10 truth-lie ranking",
+      "title": "Next implementation F11 target score combinations",
       "aliases": [
         "다음 작업"
       ],
       "tags": [
         "next",
-        "F10"
+        "F11"
       ],
-      "summary": "Continue with Final 3 question 2 F10 and use exhaustive enumeration of the original statements because the transcript and source condition conflict.",
+      "summary": "Continue with Final 3 question 9 F11 after checking the original target illustration and the count of distinct two-shot sums.",
       "status": "verified",
       "sensitivity": "public",
       "updated": "2026-08-15",
@@ -124,7 +124,7 @@
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F09 are complete; F10 is next"
+          "note": "F01 through F10 are complete; F11 is next"
         }
       ]
     },
@@ -304,6 +304,42 @@
           "source_id": "source-data",
           "role": "code",
           "locator": "TYPES row-column-count-placement and FINAL_EXAM_TYPES final-3 question 1",
+          "note": "Source-matched type is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.final.f10",
+      "title": "Final 3 question 2 truth-lie ranking",
+      "aliases": [
+        "파이널 3회 2번",
+        "참말 거짓말 순위"
+      ],
+      "tags": [
+        "F10",
+        "final-3"
+      ],
+      "summary": "F10 uses exhaustive permutation checks to preserve the original truth-lie ranking structure and rejects the conflicting transcript answer.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-15",
+      "pointers": [
+        {
+          "source_id": "final-audit",
+          "role": "audit",
+          "locator": "파이널 3회 대본 검증 2번과 다음 검증 순서 4번",
+          "note": "Original statements yield two orders and E rank 3"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function truthLieRanking and GENERATORS export",
+          "note": "Three difficulty structures with exhaustive permutation metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES truth-lie-ranking and FINAL_EXAM_TYPES final-3 question 2",
           "note": "Source-matched type is enabled"
         }
       ]
