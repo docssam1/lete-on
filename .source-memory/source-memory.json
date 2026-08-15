@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "3b2d0719e023b2786c3a71c4c4569f31b1955a6fa888206f1389f306c833064d",
-      "size": 67014,
-      "mtime_ns": 1786825711729559000
+      "sha256": "65fa2bb4f0586d7781c18b38b9bdccc1f0b93d4f8b7c0b5ec3c85c293dc0ee17",
+      "size": 68043,
+      "mtime_ns": 1786826124900662400
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "49913524e5c26387f64a8fee2676f4c07cfabe603d25f79176f0716047f5dbf6",
-      "size": 143632,
-      "mtime_ns": 1786825666250741500
+      "sha256": "91c63aadc79afc4aeb1e2463d69c58d8db2cb86ec3ecf4d81ae8e611db5b08c4",
+      "size": 145113,
+      "mtime_ns": 1786826054310758800
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "ba16463ce08bbb41398e3bf84be99925cfd3504199b5337e68d15bfff8769427",
-      "size": 36754,
-      "mtime_ns": 1786825594801310700
+      "sha256": "9eedc6f66679487c098a8d3494f8200ca909452fc8fa654a31fb6a702ca779d5",
+      "size": 37001,
+      "mtime_ns": 1786825950296791600
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 4 question 8",
+      "title": "Next verification 7-year-old selection test 4 question 9",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q8"
+        "q9"
       ],
-      "summary": "Verify source and answer page 6 for the shape-sum table: diamond plus circle 16, square plus circle 17, circle plus circle 22, target diamond plus square 11. Confirm exact orientation before enabling.",
+      "summary": "Verify source and answer page 7 for the 1 through 8 card border sum problem. Confirm target sum 15, visible card positions, target position, and official answer 6 before enabling.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 4 question 8 is a shape-sum table"
+          "note": "Selection test 4 question 9 is an eight-card equal-line-sum problem"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-08 question 8 shape-sum-table mapping",
-          "note": "Verify row and column symbols, target direction, and answer"
+          "locator": "EXAMS k7-2022-08 question 9 equal-line-sum-eight-cards mapping",
+          "note": "Verify exact card positions, target position, sum, and answer"
         }
       ]
     },
@@ -2403,6 +2403,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-08 verified questions 1 through 7",
           "note": "Source question 7 enabled with corrected subtype"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q8",
+      "title": "Selection test 4 question 8 repeated-shape column sum",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q8",
+        "shape-sum-table-repeated-column-target"
+      ],
+      "summary": "The source has diamond plus circle 16, square plus circle 17, circle plus circle 22, and asks for diamond plus square. The unique values are 5, 11, 6 and the answer is 11.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 8 paragraph",
+          "note": "Original layout, answer, exhaustive verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function shapeSumRepeatedColumnTarget",
+          "note": "Three structural difficulty levels with exact row and column metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 8",
+          "note": "Source question 8 enabled with dedicated subtype"
         }
       ]
     }
