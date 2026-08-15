@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "11ebab8bd5bde96470767ef3fb5700cfb38d8a20a8d08ea4d4046d7f9cb57854",
-      "size": 52222,
-      "mtime_ns": 1786821907280121200
+      "sha256": "a550cffb4eb0768679688350cc3f229d19a053366e3970deb775131cda21de77",
+      "size": 53388,
+      "mtime_ns": 1786822169679315200
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "438f9522ff96b0fb603046f1dc101c5de0c8439b8e7612cbe938fe21909eedd9",
-      "size": 128994,
-      "mtime_ns": 1786821823302028300
+      "sha256": "d6286837d4156a38580c51002a31188e10bfd443a0c9cc02fb4abc95985face7",
+      "size": 129808,
+      "mtime_ns": 1786822064193676300
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "c98c7b9870970ec42212d6f1380071508fde7fbb5586f1ea9484b45c44d9fddc",
-      "size": 35248,
-      "mtime_ns": 1786821800796390100
+      "sha256": "a3d77de833e696123526ad019010f3d6c600a30de0276c5a9c81ac72d9cf83a3",
+      "size": 35463,
+      "mtime_ns": 1786822015857328900
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 12",
+      "title": "Next verification 7-year-old selection test 3 question 13",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q12"
+        "q13"
       ],
-      "summary": "Verify the 1 through 8 perimeter-card line-sum problem on source and answer page 8. Given 3 at top-left, 2 at top-right, 1 at bottom-left, every side sums to 12, and the official bottom-right answer is 6.",
+      "summary": "Verify the shape add-subtract problem on source and answer page 9. The source has square + 26 = 54 and 42 - square = heart, so square is 28 and the official heart answer is 14.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 3 question 12 is the next locked source question"
+          "note": "Selection test 3 question 13 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 12 equal-line-sum-eight-cards mapping",
-          "note": "Verify exact clue positions and answer before enabling"
+          "locator": "EXAMS k7-2022-06 question 13 shape-equation-add-subtract mapping",
+          "note": "Confirm exact equations and answer before reuse"
         }
       ]
     },
@@ -1859,6 +1859,40 @@
           "role": "code",
           "locator": "TYPES shape-sum-grid-top-target and EXAMS k7-2022-06 verified 1 through 11",
           "note": "Question 11 is enabled and question 12 maps to equal-line-sum-eight-cards"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q12",
+      "title": "Selection test 3 question 12 eight-card perimeter sum 12",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q12",
+        "equal-line-sum-eight-cards-twelve"
+      ],
+      "summary": "Cards 1 through 8 are placed once around four sides that each sum to 12. The source shows top-left 3, top-right 2, bottom-left 1, asks bottom-right, and the official answer is 6.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 12 paragraph",
+          "note": "Exact source placement, answer, separate sum-12 type, exhaustive verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "functions buildEqualLineSumEightCards and equalLineSumEightCardsTwelve",
+          "note": "Shared renderer logic with source-specific sum and rotating target corner"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES equal-line-sum-eight-cards-twelve and EXAMS k7-2022-06 verified 1 through 12",
+          "note": "Source question 12 is enabled"
         }
       ]
     }

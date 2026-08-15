@@ -2256,8 +2256,8 @@ function foldNumberCutSum({ difficulty = 2 }) {
   };
 }
 
-function equalLineSumEightCards({ difficulty = 2 }) {
-  const targetSum = difficulty === 1 ? sample([12, 13]) : difficulty === 2 ? 15 : sample([12, 13, 14, 15]);
+function buildEqualLineSumEightCards({ difficulty, actualTargetSum, actualTargetIndex, actualGivenIndices }) {
+  const targetSum = difficulty === 1 ? sample([12, 13]) : difficulty === 2 ? actualTargetSum : sample([12, 13, 14, 15]);
   const pool = EQUAL_LINE_EIGHT_LAYOUTS.filter((item) => item.sum === targetSum);
   let solution = sample(pool);
   let targetIndex;
@@ -2268,8 +2268,10 @@ function equalLineSumEightCards({ difficulty = 2 }) {
     targetIndex = sample([1, 3, 5, 7]);
     givenIndices = [(targetIndex + 7) % 8, (targetIndex + 1) % 8];
   } else if (difficulty === 2) {
-    targetIndex = 2;
-    givenIndices = [0, 4, 6];
+    targetIndex = Array.isArray(actualTargetIndex) ? sample(actualTargetIndex) : actualTargetIndex;
+    givenIndices = actualGivenIndices === "other-corners"
+      ? [0, 2, 4, 6].filter((index) => index !== targetIndex)
+      : actualGivenIndices;
   } else {
     let choices = [];
     for (let attempt = 0; attempt < 100 && choices.length === 0; attempt += 1) {
@@ -2283,13 +2285,13 @@ function equalLineSumEightCards({ difficulty = 2 }) {
         return matching.length > 1 && new Set(matching.map((item) => item.values[targetIndex])).size === 1;
       });
     }
-    if (choices.length === 0) return equalLineSumEightCards({ difficulty });
+    if (choices.length === 0) return buildEqualLineSumEightCards({ difficulty, actualTargetSum, actualTargetIndex, actualGivenIndices });
     givenIndices = choices[0];
   }
 
   candidates = pool.filter((item) => givenIndices.every((index) => item.values[index] === solution.values[index]));
   const targetValues = [...new Set(candidates.map((item) => item.values[targetIndex]))];
-  if (targetValues.length !== 1) return equalLineSumEightCards({ difficulty });
+  if (targetValues.length !== 1) return buildEqualLineSumEightCards({ difficulty, actualTargetSum, actualTargetIndex, actualGivenIndices });
   const answer = solution.values[targetIndex];
   const completed = solution.values.join(" → ");
   const solutionText = difficulty === 1
@@ -2304,6 +2306,14 @@ function equalLineSumEightCards({ difficulty = 2 }) {
     solution: solutionText,
     meta: { difficulty, layout: solution.values, targetSum, targetIndex, givenIndices, candidateCount: candidates.length, targetValues, answer }
   };
+}
+
+function equalLineSumEightCards({ difficulty = 2 }) {
+  return buildEqualLineSumEightCards({ difficulty, actualTargetSum: 15, actualTargetIndex: 2, actualGivenIndices: [0, 4, 6] });
+}
+
+function equalLineSumEightCardsTwelve({ difficulty = 2 }) {
+  return buildEqualLineSumEightCards({ difficulty, actualTargetSum: 12, actualTargetIndex: [0, 2, 4, 6], actualGivenIndices: "other-corners" });
 }
 
 function paperFoldHoleCount({ difficulty }) {
@@ -2397,6 +2407,7 @@ export const GENERATORS = {
   busBoardThenLeave,
   foldNumberCutSum,
   equalLineSumEightCards,
+  equalLineSumEightCardsTwelve,
   twoDigitCondition,
   repeatShape,
   pianoZigzag,
