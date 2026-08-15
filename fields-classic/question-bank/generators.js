@@ -1522,6 +1522,31 @@ function threeShapeCycle({ difficulty = 2 }) {
   };
 }
 
+function fourShapeCycle({ difficulty = 2 }) {
+  const shapePool = [
+    { symbol: "△", name: "세모" },
+    { symbol: "○", name: "동그라미" },
+    { symbol: "◇", name: "마름모" },
+    { symbol: "□", name: "네모" },
+    { symbol: "☆", name: "별" },
+    { symbol: "⬠", name: "오각형" },
+    { symbol: "⬡", name: "육각형" }
+  ];
+  const cycle = shuffle(shapePool).slice(0, 4);
+  const target = difficulty === 1 ? randomInt(9, 14) : difficulty === 2 ? randomInt(12, 24) : randomInt(32, 60);
+  const previewCount = difficulty === 1 ? 8 : difficulty === 2 ? 9 : 4;
+  const items = Array.from({ length: previewCount }, (_, index) => cycle[index % cycle.length]);
+  const answerShape = cycle[(target - 1) % cycle.length];
+  const remainder = target % cycle.length;
+  return {
+    prompt: `아래 그림의 규칙을 찾아 ${target}번째 모양을 쓰거나 그리세요.`,
+    visual: { kind: "three-shape-cycle", cycle, items, target, showGuide: difficulty === 1 },
+    answer: answerShape.name,
+    solution: `${cycle.map((shape) => shape.name).join(", ")} 순서로 네 모양이 반복됩니다. ${numberObject(target)} 4개씩 묶었을 때 ${remainder === 0 ? "마지막" : `${remainder}번째`} 모양이므로 답은 ${answerShape.name}입니다.`,
+    meta: { difficulty, cycle, items, target, previewCount, answerShape, remainder }
+  };
+}
+
 function arrowNumberGrid({ difficulty = 2 }) {
   const start = randomInt(difficulty === 1 ? 40 : difficulty === 2 ? 60 : 120, difficulty === 1 ? 59 : difficulty === 2 ? 89 : 180);
   const moves = [1, 1, -10, 1, -10, -1, -1, -10];
@@ -2181,6 +2206,7 @@ export const GENERATORS = {
   shapeSumBottomTarget,
   repeatShapeSequence,
   threeShapeCycle,
+  fourShapeCycle,
   arrowNumberGrid,
   arrowNumberPathSeven,
   numberCardEquation,

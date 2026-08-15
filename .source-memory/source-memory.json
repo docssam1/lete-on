@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "dc6dfeea7c7c3bb7a08b3a30a47eed6e9eb4a7c9d519aeaadde5f2fbf94540ac",
-      "size": 43158,
-      "mtime_ns": 1786819298370391700
+      "sha256": "1289605ecf182718e95d7a097fa49945184d0dc2a705441f38553e79cf3ec3df",
+      "size": 44049,
+      "mtime_ns": 1786819504685853000
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "fbd2953003549751d0455a2ac536ee291c14b7fe84ab9ce322e9aa79d08dd65a",
-      "size": 116353,
-      "mtime_ns": 1786819217904942000
+      "sha256": "8f236d550188a7c72ca3bb9c7f9b84f4aecd2e08c9021464c1527b6e092732e6",
+      "size": 117746,
+      "mtime_ns": 1786819386699388500
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "b468f897b1712458fc9aba20ac4b9877abe701fa41d5a5f621f368d5ab6d860b",
-      "size": 34312,
-      "mtime_ns": 1786819138842163400
+      "sha256": "ff0c703f8d1734c412249e6a113f01d6a85b3b1d64d97f5f3fab8cd2226bec73",
+      "size": 34368,
+      "mtime_ns": 1786819386698388300
     }
   ],
   "records": [
@@ -107,14 +107,14 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 3 question 2",
+      "title": "Next verification 7-year-old selection test 3 question 3",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-06",
-        "q02"
+        "q03"
       ],
-      "summary": "Verify the four-shape repeating cycle and the 14th shape against source and answer page 3 before adding or reusing a generator.",
+      "summary": "Verify the 2 by 2 position-condition placement, all clue directions, marked cell, and answer 4 against source and answer page 4.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +123,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 3 question 2 is the next locked source question"
+          "note": "Selection test 3 question 3 is the next locked source question"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-06 question 2 repeat-four-shapes",
-          "note": "Do not enable until the exact four-shape order and 14th answer are verified"
+          "locator": "EXAMS k7-2022-06 question 3 grid-number-placement",
+          "note": "Do not enable until exact grid geometry, clues, and marked answer are verified"
         }
       ]
     },
@@ -1519,6 +1519,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-06 verifiedQuestionNumbers 1",
           "note": "Only source question 1 is enabled"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-06.q2",
+      "title": "Selection test 3 question 2 four-shape cycle",
+      "aliases": [],
+      "tags": [
+        "k7-2022-06",
+        "q2",
+        "repeat-four-shapes"
+      ],
+      "summary": "Circle, triangle, square, diamond repeat in a four-item cycle, so the source 14th shape is triangle; fourShapeCycle randomizes four distinct shapes and their order.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 3 question 2 paragraph",
+          "note": "Original cycle, source answer, difficulty structure, mobile fix, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function fourShapeCycle",
+          "note": "Four distinct shapes with 840 possible ordered cycles"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES repeat-four-shapes and EXAMS k7-2022-06 verified 1 and 2",
+          "note": "Source question 2 is enabled"
         }
       ]
     }
