@@ -184,6 +184,68 @@
     const legendMarkup = secondValues ? `<g class="chart-legend"><rect x="${left}" y="${height - 16}" width="9" height="9"/><text x="${left + 13}" y="${height - 8}">${legend[0] || "자료 1"}</text><rect class="chart-bar-secondary" x="${left + 78}" y="${height - 16}" width="9" height="9"/><text x="${left + 91}" y="${height - 8}">${legend[1] || "자료 2"}</text></g>` : "";
     return `<svg class="bar-chart" viewBox="0 0 ${width} ${height}" aria-label="막대그래프"><text class="chart-unit" x="4" y="10">(${unit})</text>${grid}<line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="chart-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${bars}${legendMarkup}</svg>`;
   };
+  const triangleLatticeSvg = (side) => {
+    const width = 240;
+    const top = 14;
+    const center = width / 2;
+    const unit = Math.min(34, 178 / side);
+    const height = unit * Math.sqrt(3) / 2;
+    const baseY = top + side * height;
+    const horizontal = Array.from({ length: side + 1 }, (_, row) => {
+      const y = top + row * height;
+      return `<line x1="${(center - row * unit / 2).toFixed(1)}" y1="${y.toFixed(1)}" x2="${(center + row * unit / 2).toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+    }).join("");
+    const diagonals = Array.from({ length: side + 1 }, (_, index) => {
+      const startY = top + index * height;
+      const rightX = center + index * unit / 2;
+      const leftX = center - index * unit / 2;
+      return `<line x1="${rightX.toFixed(1)}" y1="${startY.toFixed(1)}" x2="${(center - (side - 2 * index) * unit / 2).toFixed(1)}" y2="${baseY.toFixed(1)}"/><line x1="${leftX.toFixed(1)}" y1="${startY.toFixed(1)}" x2="${(center + (side - 2 * index) * unit / 2).toFixed(1)}" y2="${baseY.toFixed(1)}"/>`;
+    }).join("");
+    return `<svg class="geometry-diagram triangle-lattice" viewBox="0 0 240 180" aria-label="한 변을 ${side}등분한 정삼각형 격자"><g>${horizontal}${diagonals}</g></svg>`;
+  };
+  const triangleFanSvg = (parts) => {
+    const left = 22;
+    const right = 218;
+    const baseY = 136;
+    const apexX = 120;
+    const apexY = 18;
+    const basePoints = Array.from({ length: parts + 1 }, (_, index) => left + (right - left) * index / parts);
+    const rays = basePoints.map(x => `<line x1="${apexX}" y1="${apexY}" x2="${x.toFixed(1)}" y2="${baseY}"/>`).join("");
+    return `<svg class="geometry-diagram triangle-fan" viewBox="0 0 240 160" aria-label="밑변을 ${parts}등분한 삼각형"><g>${rays}</g></svg>`;
+  };
+  const triangleAngleCards = (triangles) => `<div class="triangle-angle-cards">${triangles.map((angles, index) => `<div><b>${String.fromCharCode(65 + index)}</b><span>△</span><small>${angles.join("°, ")}°</small></div>`).join("")}</div>`;
+  const isoscelesSplitSvg = (vertexAngle) => {
+    const unit = 78;
+    const height = unit / Math.tan(vertexAngle * Math.PI / 360);
+    const baseY = 140;
+    const apexY = baseY - height;
+    const dUnit = (height ** 2 / unit ** 2 - 1) / 2;
+    const dx = 120 + dUnit * unit;
+    const markX = (120 + dx) / 2;
+    const markY = (apexY + baseY) / 2;
+    return `<svg class="geometry-diagram isosceles-split" viewBox="0 0 240 164" aria-label="이등변삼각형의 각 관계"><polygon points="42,${baseY} 198,${baseY} 120,${apexY.toFixed(1)}"/><line x1="120" y1="${apexY.toFixed(1)}" x2="${dx.toFixed(1)}" y2="${baseY}"/><path class="angle-mark" d="M112 ${(apexY + 24).toFixed(1)} A27 27 0 0 1 130 ${(apexY + 24).toFixed(1)}"/><text x="120" y="${(apexY + 42).toFixed(1)}">${vertexAngle}°</text><text x="78" y="${(baseY + 15).toFixed(1)}">B</text><text x="162" y="${(baseY + 15).toFixed(1)}">C</text><text x="${(dx - 5).toFixed(1)}" y="${(baseY + 15).toFixed(1)}">D</text><text x="120" y="${(apexY - 8).toFixed(1)}">A</text><text x="${markX.toFixed(1)}" y="${(markY - 5).toFixed(1)}">=</text><text x="${((42 + dx) / 2).toFixed(1)}" y="${(baseY - 8).toFixed(1)}">=</text></svg>`;
+  };
+  const equilateralChainSvg = (shown = 4) => {
+    const side = 38;
+    const height = side * Math.sqrt(3) / 2;
+    const points = [[18, 130], [18 + side, 130], [18 + side / 2, 130 - height]];
+    const triangles = [`${points[0].join(",")} ${points[1].join(",")} ${points[2].join(",")}`];
+    let edge = [points[1], points[2]];
+    let prior = points[0];
+    for (let index = 1; index < shown; index += 1) {
+      const [a, b] = edge;
+      const midX = (a[0] + b[0]) / 2;
+      const midY = (a[1] + b[1]) / 2;
+      const vx = b[0] - a[0];
+      const vy = b[1] - a[1];
+      const candidates = [[midX - vy * Math.sqrt(3) / 2, midY + vx * Math.sqrt(3) / 2], [midX + vy * Math.sqrt(3) / 2, midY - vx * Math.sqrt(3) / 2]];
+      const next = candidates.sort((first, second) => Math.hypot(first[0] - prior[0], first[1] - prior[1]) - Math.hypot(second[0] - prior[0], second[1] - prior[1]))[1];
+      triangles.push(`${a.join(",")} ${b.join(",")} ${next.map(value => value.toFixed(1)).join(",")}`);
+      prior = a;
+      edge = [b, next];
+    }
+    return `<svg class="geometry-diagram equilateral-chain" viewBox="0 0 240 160" aria-label="이어 붙인 정삼각형"><g>${triangles.map(pointsValue => `<polygon points="${pointsValue}"/>`).join("")}</g><text x="203" y="128">…</text></svg>`;
+  };
   const numberGrid = (rows, columns, valueAt) => `<div class="number-grid" style="--grid-columns:${columns}">${Array.from({ length: rows * columns }, (_, index) => `<span>${valueAt(Math.floor(index / columns) + 1, index % columns + 1)}</span>`).join("")}</div>`;
   const numberTriangle = (rows) => `<div class="number-triangle">${Array.from({ length: rows }, (_, rowIndex) => {
     const start = rowIndex * (rowIndex + 1) / 2 + 1;
@@ -1236,6 +1298,50 @@
       const wrong = first + second;
       return result(`어떤 수에서 ${mixedFraction(second, denominator)}을 빼야 할 것을 잘못하여 더했더니 ${mixedFraction(wrong, denominator)}이 되었습니다. 바르게 계산한 값을 구하세요.`, mixedFraction(correct, denominator), `잘못 계산한 값에서 ${mixedFraction(second, denominator)}을 빼면 어떤 수 ${mixedFraction(first, denominator)}을 찾을 수 있습니다. 여기에서 다시 ${mixedFraction(second, denominator)}을 빼면 ${mixedFraction(correct, denominator)}입니다.`);
     },
+    triangleCount({ rng, level, variant = 0 }) {
+      if (variant % 2 === 0) {
+        const side = int(rng, 3 + level, 4 + level);
+        const answer = Math.floor(side * (side + 2) * (2 * side + 1) / 8);
+        return result(`한 변을 ${side}등분하여 만든 아래 정삼각형 격자에서 크기가 서로 다른 정삼각형은 모두 몇 개인지 구하세요.${triangleLatticeSvg(side)}`, answer, `작은 정삼각형부터 큰 정삼각형까지 같은 방향과 거꾸로 된 방향을 모두 세면 ${answer}개입니다.`);
+      }
+      const parts = int(rng, 5 + level, 7 + level * 2);
+      const answer = parts * (parts + 1) / 2;
+      return result(`아래와 같이 꼭짓점에서 밑변의 ${parts}등분점으로 선분을 모두 그었습니다. 만들어진 삼각형은 모두 몇 개인지 구하세요.${triangleFanSvg(parts)}`, answer, `꼭짓점을 공통으로 하는 삼각형은 밑변의 두 점을 고르면 하나가 정해집니다. 따라서 ${parts} + ${parts - 1} + … + 1 = ${answer}개입니다.`);
+    },
+    triangleAngleType({ rng, level }) {
+      const source = {
+        acute: [[50, 60, 70], [40, 65, 75], [55, 55, 70], [30, 70, 80], [45, 60, 75]],
+        right: [[30, 60, 90], [45, 45, 90], [25, 65, 90]],
+        obtuse: [[20, 40, 120], [35, 35, 110], [25, 55, 100], [45, 30, 105], [15, 45, 120]]
+      };
+      const count = 5 + level;
+      const kinds = shuffle(rng, ["acute", "acute", "right", "obtuse", "obtuse", level > 0 ? "acute" : "right", level > 1 ? "obtuse" : "acute"]).slice(0, count);
+      const triangles = kinds.map((kind, index) => source[kind][(index + int(rng, 0, source[kind].length - 1)) % source[kind].length]);
+      const totals = {
+        acute: kinds.filter(kind => kind === "acute").length,
+        right: kinds.filter(kind => kind === "right").length,
+        obtuse: kinds.filter(kind => kind === "obtuse").length
+      };
+      return result(`다음 삼각형을 각의 크기에 따라 분류할 때 예각삼각형, 직각삼각형, 둔각삼각형은 각각 몇 개인지 차례로 구하세요.${triangleAngleCards(triangles)}`, `${totals.acute}, ${totals.right}, ${totals.obtuse}`, `한 각이 90°보다 크면 둔각삼각형, 90°이면 직각삼각형, 세 각이 모두 90°보다 작으면 예각삼각형입니다. 따라서 예각 ${totals.acute}개, 직각 ${totals.right}개, 둔각 ${totals.obtuse}개입니다.`);
+    },
+    isoscelesTriangle({ rng, level }) {
+      const vertexAngles = level === 0 ? [80, 90, 100] : level === 1 ? [80, 90, 100, 110] : [70, 80, 100, 110];
+      const vertex = pick(rng, vertexAngles);
+      const base = (180 - vertex) / 2;
+      const answer = vertex - base;
+      return result(`이등변삼각형 ABC에서 AB=AC이고 D는 BC 위의 점입니다. AD=BD, ∠BAC=${vertex}°일 때 ∠CAD의 크기를 구하세요.${isoscelesSplitSvg(vertex)}`, answer, `이등변삼각형 ABC의 밑각은 (180 - ${vertex}) ÷ 2 = ${base}°입니다. AD=BD이므로 ∠BAD=∠ABD=${base}°입니다. 따라서 ∠CAD=${vertex} - ${base}=${answer}°입니다.`);
+    },
+    equilateralTriangle({ rng, level, variant = 0 }) {
+      if (variant % 2 === 0) {
+        const side = int(rng, 3 + level, 5 + level);
+        const count = int(rng, 12 + level * 8, 24 + level * 12);
+        const answer = (count + 2) * side;
+        return result(`한 변의 길이가 ${side}cm인 정삼각형을 이웃한 도형과 한 변씩 겹치도록 ${count}개 이어 붙였습니다. 전체 둘레의 길이를 구하세요.${equilateralChainSvg()}`, answer, `정삼각형 1개로 시작하면 둘레는 3변이고, 한 개를 더 붙일 때마다 겹친 1변은 사라지고 2변이 새로 생겨 전체 변 수가 1개씩 늘어납니다. 따라서 둘레는 (${count} + 2) × ${side} = ${answer}cm입니다.`);
+      }
+      const side = int(rng, 5 + level, 7 + level * 2);
+      const answer = 3 * side * (side + 1) / 2;
+      return result(`길이가 같은 성냥개비로 한 변을 ${side}등분한 정삼각형 격자를 만들었습니다. 사용한 성냥개비는 모두 몇 개인지 구하세요.${triangleLatticeSvg(side)}`, answer, `가로·왼쪽 아래 방향·오른쪽 아래 방향의 성냥개비 수가 각각 1 + 2 + … + ${side} = ${side * (side + 1) / 2}개입니다. 세 방향을 합하면 ${answer}개입니다.`);
+    },
     multiply({ rng, level }) {
       const r = range(level);
       const a = int(rng, 12, r.medium);
@@ -1507,7 +1613,11 @@
 
   const scopedRules = [
     [type => type.id === "4-2-u1-t5", "conditionedFraction"],
-    [type => type.id === "4-2-u1-t6", "fractionWordEquation"]
+    [type => type.id === "4-2-u1-t6", "fractionWordEquation"],
+    [type => type.id === "4-2-u2-t1", "triangleCount"],
+    [type => type.id === "4-2-u2-t2", "triangleAngleType"],
+    [type => type.id === "4-2-u2-t3", "isoscelesTriangle"],
+    [type => type.id === "4-2-u2-t4", "equilateralTriangle"]
   ];
 
   function generatorKey(typeOrName) {
