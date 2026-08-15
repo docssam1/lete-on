@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "ed069695f3d1fec93cb27c5f32fe5bdbc03995d4e25945a340c8675f9feaab72",
-      "size": 69286,
-      "mtime_ns": 1786826445278362700
+      "sha256": "99db0e7ec682d2469fa006ce13fe2e6c2a93c3b4d54b4ffa358fd42312546ae4",
+      "size": 70209,
+      "mtime_ns": 1786826625500272900
     },
     {
       "id": "final-audit",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "c953c86c6b54104d2149261822ba54fab32aaf9be2d7d6943e50d6e5a578aca7",
-      "size": 37255,
-      "mtime_ns": 1786826393666543700
+      "sha256": "88474d7d33a26859f680ad64529d8368c7a2f9098653fb6e6fea175c13f80138",
+      "size": 37258,
+      "mtime_ns": 1786826560863896300
     }
   ],
   "records": [
@@ -107,14 +107,15 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification 7-year-old selection test 4 question 10",
+      "title": "Next verification 7-year-old selection test 4 questions 11 and 12",
       "aliases": [],
       "tags": [
         "next",
         "k7-2022-08",
-        "q10"
+        "q11",
+        "q12"
       ],
-      "summary": "Verify source and answer page 7 for splitting 18 items between two people so one has 6 more. Confirm the correct subtype and official answer 12 before enabling.",
+      "summary": "Verify source and answer page 8 because the audit says question 11 is the even two-digit condition and question 12 is the 3 by 3 shape-sum matrix, while the current code mappings are reversed.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -123,13 +124,13 @@
           "source_id": "handover",
           "role": "audit",
           "locator": "Next order item",
-          "note": "Selection test 4 question 10 is a total-and-difference split problem"
+          "note": "Questions 11 and 12 require source-number order correction"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-08 question 10 equalize-transfer mapping",
-          "note": "Check and correct the currently broad mapping against the source"
+          "locator": "EXAMS k7-2022-08 questions 11 and 12",
+          "note": "Current symbol-sum-grid and two-digit-parity-gap order conflicts with the audit"
         }
       ]
     },
@@ -2471,6 +2472,40 @@
           "role": "code",
           "locator": "EXAMS k7-2022-08 verified questions 1 through 9",
           "note": "Source question 9 enabled with dedicated subtype"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-08.q10",
+      "title": "Selection test 4 question 10 total and difference share",
+      "aliases": [],
+      "tags": [
+        "k7-2022-08",
+        "q10",
+        "total-difference"
+      ],
+      "summary": "The source splits 18 cubes between two children so one has 6 more. Removing the difference and sharing the remainder equally gives the official answer 12.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 4 question 10 paragraph",
+          "note": "Original wording, official answer, corrected subtype, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function totalDifferenceShare",
+          "note": "Three structural difficulty levels with total, shares, difference, and transfer metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "EXAMS k7-2022-08 verified questions 1 through 10",
+          "note": "Question 10 corrected from equalize-transfer to total-difference"
         }
       ]
     }
