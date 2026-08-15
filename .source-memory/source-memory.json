@@ -2,7 +2,7 @@
   "version": 1,
   "name": "Fields Classic question bank",
   "root": "..",
-  "updated": "2026-08-15",
+  "updated": "2026-08-16",
   "sources": [
     {
       "id": "handover",
@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "c0b6528894417e7100704e3e0fb15540bdc4151f6399d82dbec652ebee0efc0d",
-      "size": 16551,
-      "mtime_ns": 1786789630743699600
+      "sha256": "41014b08415dd24531224204ecab56b064181c3e31e2cf103c06dfeafbba18fb",
+      "size": 17626,
+      "mtime_ns": 1786807314916539600
     },
     {
       "id": "final-audit",
@@ -20,9 +20,9 @@
       "path": "fields-classic/question-bank/FINAL-SOURCE-AUDIT.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "cc4c3536262a5c6c422fc2ee94f269f84593eb855e44b22928686fee9659d1b4",
-      "size": 32230,
-      "mtime_ns": 1786789630746214400
+      "sha256": "234ea7fff4c641dfd4a6d201d8e8a3481c5ef3326dc79904f637fba59382f9e8",
+      "size": 32315,
+      "mtime_ns": 1786807260384027000
     },
     {
       "id": "generators",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "4746d88021e574336cb5c6a93ff057beb8bdf253d910f71e2a67846ed66ec081",
-      "size": 31820,
-      "mtime_ns": 1786789473077361500
+      "sha256": "9cd3f41f609f01302819bea3bbc1bb0c544af42fb2ba1be1388ad3f39ea8650d",
+      "size": 31883,
+      "mtime_ns": 1786807314914533700
     }
   ],
   "records": [
@@ -107,7 +107,7 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next implementation F12 matchstick square growth",
+      "title": "Next implementation F12 matchstick shape sequence",
       "aliases": [
         "다음 작업"
       ],
@@ -115,16 +115,16 @@
         "next",
         "F12"
       ],
-      "summary": "Continue with Final 3 question 10 F12 after checking the original one-square and two-square drawings and the 31-match answer.",
+      "summary": "Continue with Final 3 question 10 as the square variant of the shared matchstick shape sequence type. The exact Fields course hierarchy is Rules and Sequences, then Finding Rules in Shapes; the original sequence is 4, 7, 10 and the answer is 31. Allow triangle, square, pentagon, and hexagon constructions only as selectable variants under the shared sequence-application taxonomy.",
       "status": "verified",
       "sensitivity": "public",
-      "updated": "2026-08-15",
+      "updated": "2026-08-16",
       "pointers": [
         {
           "source_id": "handover",
           "role": "decision",
           "locator": "다음 순서 1번",
-          "note": "F01 through F11 are complete; F12 is next"
+          "note": "F01 through F11 are complete; F12 square variant is next under the shared matchstick shape sequence type"
         }
       ]
     },

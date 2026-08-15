@@ -35,7 +35,9 @@ export const TYPES = [
   type("row-column-count-placement", "logic", "조건 배치", "가로·세로 개수 조건에 맞게 칸 표시하기", { generator: "rowColumnCountPlacement", sourceMatched: true }),
   type("truth-lie-ranking", "logic", "조건 추리", "참말과 거짓말로 경기 순위 찾기", { generator: "truthLieRanking", sourceMatched: true }),
   type("target-score-combinations", "logic", "경우의 수", "과녁 점수의 가능한 조합 세기", { generator: "targetScoreCombinations", sourceMatched: true }),
-  type("matchstick-square-growth", "pattern", "도형 규칙", "이어 붙인 네모의 성냥개비 수"),
+  type("matchstick-square-growth", "pattern", "수열의 활용", "성냥개비 도형 수열", {
+    variants: ["삼각형", "사각형", "오각형", "육각형"]
+  }),
   type("connected-line-degree-sum", "geometry", "연결 관계", "각 점에 연결된 선의 개수 합"),
   type("letter-block-transform", "geometry", "도형 움직이기", "글자 블록을 움직인 결과 그리기"),
   type("mixed-sequences", "pattern", "수 규칙", "서로 다른 규칙이 섞인 수열"),
