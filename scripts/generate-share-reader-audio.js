@@ -137,7 +137,10 @@ async function main() {
     fs.writeFileSync(path.join(OUT_DIR, `${story.id}.mp3`), mp3);
     fs.writeFileSync(path.join(OUT_DIR, `${story.id}.timings.json`), timingBuffer);
     await upload(mp3, `sophie-stories/${story.id}.mp3`, 'audio/mpeg');
-    await upload(timingBuffer, `sophie-stories/${story.id}.timings.json`, 'application/json');
+    // The existing public `audio` bucket only allows audio MIME types. Keep the
+    // object as UTF-8 JSON (and the .json filename used by fetch().json()), while
+    // using the bucket's permitted MIME metadata for storage compatibility.
+    await upload(timingBuffer, `sophie-stories/${story.id}.timings.json`, 'audio/mpeg');
     console.log(`${mp3.length.toLocaleString()} bytes, ${timings.segments.length} exact sentence marks`);
   }
   console.log('Sophie story audio and sentence timing files uploaded successfully.');
