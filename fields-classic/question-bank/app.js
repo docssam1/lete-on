@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816db";
-import { GENERATORS } from "./generators.js?v=20260816co";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816dc";
+import { GENERATORS } from "./generators.js?v=20260816cp";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -745,6 +745,10 @@ function twoDigitOddGapMarkup(visual) {
   return `<div class="number-conditions parity-gap-conditions"><ul><li><strong>${visual.upper}</strong>보다 작은 홀수입니다.</li><li>십의 자리 숫자가 일의 자리 숫자보다 <strong>${visual.gap}</strong> 작습니다.</li></ul>${visual.choices.length ? `<div class="parity-gap-choices"><b>[보기]</b>${visual.choices.map((value) => `<span>${value}</span>`).join("")}</div>` : ""}</div>`;
 }
 
+function twoDigitOddBoundedGapMarkup(visual) {
+  return `<div class="number-conditions parity-gap-conditions"><ul><li><strong>${visual.lower}</strong>보다 크고 <strong>${visual.upper}</strong>보다 작은 홀수입니다.</li><li>일의 자리 숫자가 십의 자리 숫자보다 <strong>${visual.gap}</strong> 큽니다.</li>${visual.digitSum === null ? "" : `<li>십의 자리 숫자와 일의 자리 숫자의 합은 <strong>${visual.digitSum}</strong>입니다.</li>`}</ul>${visual.choices.length ? `<div class="parity-gap-choices"><b>[보기]</b>${visual.choices.map((value) => `<span>${value}</span>`).join("")}</div>` : ""}</div>`;
+}
+
 function triangleTileGrowthMarkup(visual) {
   const stage = (size) => {
     const height = 86;
@@ -1005,6 +1009,7 @@ function visualMarkup(visual) {
   if (visual.kind === "number-conditions") return `<div class="visual number-conditions-visual">${numberConditionsMarkup(visual)}</div>`;
   if (visual.kind === "two-digit-parity-gap") return `<div class="visual number-conditions-visual">${twoDigitParityGapMarkup(visual)}</div>`;
   if (visual.kind === "two-digit-odd-gap") return `<div class="visual number-conditions-visual">${twoDigitOddGapMarkup(visual)}</div>`;
+  if (visual.kind === "two-digit-odd-bounded-gap") return `<div class="visual number-conditions-visual">${twoDigitOddBoundedGapMarkup(visual)}</div>`;
   if (visual.kind === "triangle-tile-growth") return `<div class="visual triangle-tile-growth-visual">${triangleTileGrowthMarkup(visual)}</div>`;
   if (visual.kind === "square-tile-growth") return `<div class="visual square-tile-growth-visual">${squareTileGrowthMarkup(visual)}</div>`;
   if (visual.kind === "growing-dot-square") return `<div class="visual growing-dot-square-visual">${growingDotSquareMarkup(visual)}</div>`;

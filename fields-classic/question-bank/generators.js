@@ -2806,6 +2806,62 @@ function twoDigitOddGap({ difficulty = 2 }) {
   };
 }
 
+function twoDigitOddBoundedGap({ difficulty = 2 }) {
+  const candidatesFor = (gap, lower, upper) => Array.from({ length: 90 }, (_, index) => index + 10)
+    .filter((value) => value > lower
+      && value < upper
+      && value % 2 === 1
+      && value % 10 - Math.floor(value / 10) === gap);
+  let result;
+  for (let attempt = 0; attempt < 500 && !result; attempt += 1) {
+    const gap = difficulty === 3 ? sample([2, 3, 4]) : sample([2, 3, 4, 5, 6, 7]);
+    const allCandidates = candidatesFor(gap, 9, 100);
+    const answerIndex = difficulty === 3
+      ? randomInt(1, allCandidates.length - 2)
+      : randomInt(0, allCandidates.length - 1);
+    const answer = allCandidates[answerIndex];
+    const previous = allCandidates[answerIndex - 1] || 9;
+    const next = allCandidates[answerIndex + 1] || 100;
+    const lower = difficulty === 3
+      ? Math.max(9, allCandidates[answerIndex - 1] - randomInt(1, 5))
+      : randomInt(Math.max(9, previous), answer - 1);
+    const upper = difficulty === 3
+      ? Math.min(100, allCandidates[answerIndex + 1] + randomInt(1, 5))
+      : randomInt(answer + 1, Math.min(100, next));
+    const gapCandidates = candidatesFor(gap, lower, upper);
+    const digitSum = difficulty === 3 ? Math.floor(answer / 10) + answer % 10 : null;
+    const solutions = gapCandidates.filter((value) => digitSum === null
+      || Math.floor(value / 10) + value % 10 === digitSum);
+    if (solutions.length !== 1 || solutions[0] !== answer) continue;
+    if (difficulty === 3 && gapCandidates.length < 3) continue;
+    const distractors = shuffle(Array.from({ length: upper - lower - 1 }, (_, index) => lower + index + 1)
+      .filter((value) => value >= 10 && value <= 99 && value % 2 === 1 && value !== answer)).slice(0, 2);
+    if (difficulty === 1 && distractors.length < 2) continue;
+    result = {
+      gap,
+      lower,
+      upper,
+      answer,
+      digitSum,
+      gapCandidates,
+      solutions,
+      choices: difficulty === 1 ? shuffle([answer, ...distractors]) : []
+    };
+  }
+  if (!result) return twoDigitOddBoundedGap({ difficulty });
+  const { gap, lower, upper, answer, digitSum, gapCandidates, solutions, choices } = result;
+  const tens = Math.floor(answer / 10);
+  const ones = answer % 10;
+  const sumSentence = digitSum === null ? "" : ` 또 십의 자리 숫자와 일의 자리 숫자의 합은 ${digitSum}입니다.`;
+  return {
+    prompt: `일의 자리 숫자가 1, 3, 5, 7, 9인 수를 홀수라고 합니다. 다음 주어진 조건을 만족하는 두 자리 수를 ${difficulty === 1 ? "보기에서 고르세요." : "구하세요."}`,
+    visual: { kind: "two-digit-odd-bounded-gap", lower, upper, gap, digitSum, choices },
+    answer: String(answer),
+    solution: `${lower}보다 크고 ${upper}보다 작은 홀수를 차례로 살펴봅니다. 일의 자리 숫자가 십의 자리 숫자보다 ${gap} 큰 수를 찾습니다.${sumSentence} 십의 자리 숫자는 ${tens}, 일의 자리 숫자는 ${ones}이므로 답은 ${answer}입니다.`,
+    meta: { difficulty, gap, lower, upper, answer, digitSum, gapCandidates, solutions, choices }
+  };
+}
+
 function triangleTileGrowth({ difficulty = 2 }) {
   const target = difficulty === 1 ? randomInt(4, 6) : difficulty === 2 ? randomInt(6, 9) : randomInt(6, 10);
   const pieceCount = target * target;
@@ -3082,6 +3138,7 @@ export const GENERATORS = {
   twoDigitParityGap,
   twoDigitEvenOnesGreaterGap,
   twoDigitOddGap,
+  twoDigitOddBoundedGap,
   triangleTileGrowth,
   squareTileGrowth,
   sourceGrowingDotSquare,

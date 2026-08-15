@@ -94,6 +94,7 @@ export const TYPES = [
   type("two-digit-parity-gap", "number", "조건에 맞는 수", "짝수와 자릿수 차 조건의 두 자리 수", { generator: "twoDigitParityGap", sourceMatched: true }),
   type("two-digit-even-ones-greater-gap", "number", "조건에 맞는 수", "일의 자리 숫자가 더 큰 짝수 찾기", { generator: "twoDigitEvenOnesGreaterGap", sourceMatched: true }),
   type("two-digit-odd-gap", "number", "조건에 맞는 수", "홀수와 자릿수 차 조건의 두 자리 수", { generator: "twoDigitOddGap", sourceMatched: true }),
+  type("two-digit-odd-bounded-gap", "number", "조건에 맞는 수", "범위와 자릿수 차로 홀수 찾기", { generator: "twoDigitOddBoundedGap", sourceMatched: true }),
   type("growing-shape-count", "pattern", "도형 규칙", "구슬 배열의 개수 규칙", { generator: "sourceGrowingDotSquare", sourceMatched: true }),
   type("triangle-tile-growth", "pattern", "도형 규칙", "정삼각형 조각 수의 성장 규칙", { generator: "triangleTileGrowth", sourceMatched: true }),
   type("square-tile-growth", "pattern", "수열의 활용", "정사각형 배열의 수 규칙", { generator: "squareTileGrowth", sourceMatched: true }),
@@ -229,8 +230,8 @@ export const EXAMS = [
   makeExam({
     id: "k7-2022-12", stage: "k7_to_g1", label: "더 클래식 7세 6차 선발시험 (2022.12.15)",
     file: "더_클래식_7세_6차_선발시험(221215).pdf", layout: "two",
-    typeIds: ["edge-sum-grid","grid-number-placement-five","number-pyramid","addition-table-grid-bottom-left","arrow-number-horizontal-tens","order-position-seven-people","equal-line-sum-eight-cards-twelve","shape-sum-table-row-target","bus-board-then-leave","shape-equation-add-subtract","repeat-shape-color-dual","total-difference-candy","two-digit-parity-gap","symbol-sum-grid","triangle-tile-growth","balance-scale-three-objects","fold-number-cut-sum","symbol-relation-3to4","go-stone-difference-inverse","number-line-six-points"],
-    verifiedQuestionNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    typeIds: ["edge-sum-grid","grid-number-placement-five","number-pyramid","addition-table-grid-bottom-left","arrow-number-horizontal-tens","order-position-seven-people","equal-line-sum-eight-cards-twelve","shape-sum-table-row-target","bus-board-then-leave","shape-equation-add-subtract","repeat-shape-color-dual","total-difference-candy","two-digit-odd-bounded-gap","symbol-sum-grid","triangle-tile-growth","balance-scale-three-objects","fold-number-cut-sum","symbol-relation-3to4","go-stone-difference-inverse","number-line-six-points"],
+    verifiedQuestionNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
   }),
   makeExam({
     id: "g1-2022-03", stage: "g1_spring", label: "더 클래식 초1 1차 선발시험 (2022.03.07)",

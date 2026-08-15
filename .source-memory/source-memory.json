@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "3b8005498ee39fc296e15424504fa5d131929668d61b4218cecb1f936df4e048",
-      "size": 89733,
-      "mtime_ns": 1786831962627201700
+      "sha256": "14db889943eea91807f9aaad584695dbf8f9bbaf128877711259346c253d932c",
+      "size": 90692,
+      "mtime_ns": 1786832216843556900
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "e82f312bd082c7cea4af72487d6fbe22401ccd26f1ab1afa153470d31ddbd2ac",
-      "size": 172087,
-      "mtime_ns": 1786831919987582700
+      "sha256": "d2bdac79464524e2ea03c0a7310af1d3199b0f1ecf8900c0b2dbb23e0dd86a66",
+      "size": 175224,
+      "mtime_ns": 1786832216833532800
     },
     {
       "id": "source-data",
@@ -40,9 +40,9 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "5d7aa63ec3ab45b506d380205e35c6fdd0347660e5a4c61a5a5ad27c49fb6583",
-      "size": 39448,
-      "mtime_ns": 1786831919991583500
+      "sha256": "2276a099ea19adb873398c7617c9cf1f9abe74cf6c7251edbecf174efd33832b",
+      "size": 39633,
+      "mtime_ns": 1786832216837531700
     }
   ],
   "records": [
@@ -107,12 +107,12 @@
     },
     {
       "id": "fields.question-bank.next",
-      "title": "Next verification selection test 6 question 13",
+      "title": "Next verification selection test 6 question 14",
       "aliases": [],
       "tags": [
         "next"
       ],
-      "summary": "Compare the odd two-digit number conditions, range, digit gap, and official answer 37 before selecting the correct parity-gap subtype.",
+      "summary": "Compare the 3 by 3 shape-sum matrix positions, row and column totals, target total, and official answer 18 before deciding whether the provisional symbol matrix matches.",
       "status": "draft",
       "sensitivity": "public",
       "updated": "2026-08-16",
@@ -120,13 +120,13 @@
         {
           "source_id": "handover",
           "role": "audit",
-          "locator": "7-year-old selection test 6 question 13",
-          "note": "Verify parity, range, digit relation, and official answer"
+          "locator": "7-year-old selection test 6 question 14",
+          "note": "Verify every symbol coordinate, displayed total, and official answer"
         },
         {
           "source_id": "source-data",
           "role": "code",
-          "locator": "EXAMS k7-2022-12 question 13",
+          "locator": "EXAMS k7-2022-12 question 14",
           "note": "Current provisional mapping remains disabled"
         }
       ]
@@ -3244,6 +3244,40 @@
           "role": "code",
           "locator": "TYPES total-difference-candy and EXAMS k7-2022-12 verified 1 through 12",
           "note": "Source question 12 is enabled without changing the cube variant"
+        }
+      ]
+    },
+    {
+      "id": "fields.selection.k7-2022-12.q13",
+      "title": "Selection test 6 question 13 bounded odd digit gap",
+      "aliases": [],
+      "tags": [
+        "k7-2022-12",
+        "q13",
+        "two-digit-odd-bounded-gap"
+      ],
+      "summary": "The source asks for an odd number between 20 and 50 whose ones digit is 4 greater than its tens digit; the unique official answer is 37.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "7-year-old selection test 6 question 13 paragraph",
+          "note": "Exact conditions, official answer, split decision, random verification, and browser validation"
+        },
+        {
+          "source_id": "generators",
+          "role": "code",
+          "locator": "function twoDigitOddBoundedGap",
+          "note": "Bounded odd-number generator with structural difficulty and independent candidate metadata"
+        },
+        {
+          "source_id": "source-data",
+          "role": "code",
+          "locator": "TYPES two-digit-odd-bounded-gap and EXAMS k7-2022-12 verified 1 through 13",
+          "note": "Wrong even-number mapping replaced and source question enabled"
         }
       ]
     }
