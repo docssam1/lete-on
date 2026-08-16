@@ -253,6 +253,9 @@
     el.style.top = (y - 30) + 'px';
     setTimeout(() => el.remove(), 950);
   }
+  function buzz(pattern){
+    try{ if (navigator.vibrate) navigator.vibrate(pattern); }catch(e){}
+  }
   function centerOf(el){
     const r = el.getBoundingClientRect();
     return [r.left + r.width / 2, r.top + r.height / 2];
@@ -553,8 +556,10 @@
       const [cx, cy] = centerOf($app.querySelector('.fb .big'));
       burst(cx, cy, 26);
       popKo(cx, cy - 20, koMain(w) + '!');
+      buzz(60);
     } else {
       $app.querySelector('.fb').classList.add('shake');
+      buzz([40, 60, 40]);
     }
     speak(w.en, 'en-US');
     $app.querySelector('#next').onclick = () => {
@@ -595,6 +600,9 @@
     if (pct >= 80){
       [200, 500, 800].forEach((t, i) => setTimeout(() =>
         burst(60 + Math.random() * (window.innerWidth - 120), 90 + i * 40, 22), t));
+    }
+    if (pct === 100){
+      buzz([80, 60, 80, 60, 160]);
     }
     const r = $app.querySelector('#retry');
     if (r) r.onclick = () => startQuiz(quiz.wrong);
@@ -651,6 +659,7 @@
     const [cx, cy] = centerOf(btn);
     burst(cx, cy, 24);
     popKo(cx, cy, koMain(w) + '!');
+    buzz(rush.combo >= 5 ? [30, 30, 30, 30, 60] : 50);
     rush.combo++;
     rush.score += 10 + Math.min(rush.combo - 1, 10) * 2;
     rush.dur = Math.max(4.5, rush.dur - 0.25);
@@ -670,6 +679,7 @@
     }
     const card = $app.querySelector('.card');
     if (card) card.classList.add('shake');
+    buzz([40, 60, 40]);
     rush.combo = 0;
     rush.lives--;
     setTimeout(() => {
