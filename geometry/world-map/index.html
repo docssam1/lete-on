@@ -61,6 +61,51 @@
       @media (max-aspect-ratio: 4 / 5) {
         .mirror-manor span { min-width: 86px; padding: 5px; font-size: 9px; opacity: 1; transform: translate(-50%,26%); }
       }
+
+      /* Geoboard Home Yard hotspot. The map art already draws the yard on the RIGHT
+         side: an upright peg board with a rubber-band star, the GEOBOARD HOME YARD
+         sign, and a flat geoboard beside it. These percentages trace that yard only
+         (77.0-91.4% across, 29.6-49.2% down). The nearest existing hotspot,
+         .mirror-manor, ends at 69.8% across, so there is a 7.2% gap and no overlap
+         with any of the three. The rules mirror .mirror-manor above and live here
+         because this entry ships without touching the shared map stylesheet. */
+      .geoboard-yard { left: 77%; top: 29.6%; width: 14.4%; height: 19.6%; }
+      .geoboard-yard::before {
+        content: "";
+        position: absolute;
+        inset: 2%;
+        border: 4px solid transparent;
+        clip-path: polygon(20% 0, 96% 10%, 100% 52%, 72% 100%, 26% 96%, 0 46%);
+        background: transparent;
+        transition: background .2s ease, border-color .2s ease, filter .2s ease;
+      }
+      .geoboard-yard span {
+        position: absolute;
+        left: 51%;
+        bottom: 0;
+        transform: translate(-50%, 48%);
+        min-width: 120px;
+        padding: 8px 12px;
+        border: 3px solid var(--navy);
+        border-radius: 6px;
+        background: #fff8ce;
+        color: var(--navy);
+        font-size: clamp(11px, 1.1vw, 17px);
+        line-height: 1.05;
+        font-weight: 950;
+        opacity: 0;
+        transition: opacity .2s ease, transform .2s ease;
+        pointer-events: none;
+      }
+      .geoboard-yard:hover::before, .geoboard-yard:focus-visible::before, .geoboard-yard.attention::before {
+        border-color: rgba(226,87,76,.95);
+        background: rgba(226,87,76,.15);
+        filter: drop-shadow(0 0 15px rgba(226,87,76,.9));
+      }
+      .geoboard-yard:hover span, .geoboard-yard:focus-visible span, .geoboard-yard.attention span { opacity: 1; transform: translate(-50%, 22%); }
+      @media (max-aspect-ratio: 4 / 5) {
+        .geoboard-yard span { min-width: 86px; padding: 5px; font-size: 9px; opacity: 1; transform: translate(-50%,26%); }
+      }
     </style>
   </head>
   <body>
@@ -96,6 +141,10 @@
 
         <button id="mirrorManor" class="place-hotspot mirror-manor" type="button" aria-label="GFIELD Mirror Manor">
           <span>GFIELD<br />MIRROR MANOR</span>
+        </button>
+
+        <button id="geoboardYard" class="place-hotspot geoboard-yard" type="button" aria-label="GFIELD Geoboard Home Yard">
+          <span>GFIELD<br />GEOBOARD YARD</span>
         </button>
 
         <div id="walkers" class="walkers" aria-hidden="true"></div>
