@@ -36,15 +36,15 @@
   }
   .chip.on{border-color:var(--green); background:var(--green-soft); font-weight:700;}
   .chip .d{font-size:11px; color:var(--sub); display:block;}
-  .mode-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .mode-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;}
   .mode{
     border:1.5px solid var(--line); background:#fff; border-radius:14px;
-    padding:14px 12px; cursor:pointer; text-align:left; transition:all .15s;
+    padding:11px 9px; cursor:pointer; text-align:left; transition:all .15s;
   }
   .mode.on{border-color:var(--green); background:var(--green-soft);}
-  .mode .mi{font-size:24px;}
-  .mode .mt{font-weight:700; font-size:14px; margin-top:6px;}
-  .mode .md{font-size:12px; color:var(--sub); margin-top:3px; line-height:1.45;}
+  .mode .mi{font-size:20px;}
+  .mode .mt{font-weight:700; font-size:12.5px; margin-top:6px; line-height:1.35;}
+  .mode .md{font-size:11px; color:var(--sub); margin-top:3px; line-height:1.45;}
   .btn{
     display:block; width:100%; border:none; border-radius:14px;
     padding:15px; font-size:16px; font-weight:800; cursor:pointer;
@@ -206,6 +206,7 @@
     if (listening){ stopListen(); return; }
     recog = new SR();
     recog.lang = sel.mode === 'ko' ? 'ko-KR' : 'en-US';
+    if (sel.mode === 'endef') recog.maxAlternatives = 1;
     recog.interimResults = false;
     recog.maxAlternatives = 4;
     listening = true; updateMicUI();
@@ -242,6 +243,15 @@
         const t = normKo(said);
         return accepted.some(a => a && (t === a || t.indexOf(a) >= 0));
       });
+    } else if (sel.mode === 'endef'){
+      // 말로 하는 뜻 설명은 문장이 저마다 달라서, 핵심 키워드가
+      // kwNeed개 이상 들어 있으면 정답으로 본다.
+      const kws = (word.kw || []).map(normEn);
+      const need = word.kwNeed || 1;
+      return saidList.some(said => {
+        const t = ' ' + normEn(said) + ' ';
+        return kws.filter(a => a && t.indexOf(' '+a+' ') >= 0 || (a.indexOf(' ')>=0 && t.indexOf(a)>=0)).length >= need;
+      });
     } else {
       const accepted = [word.en].concat(word.enAlt || []).map(normEn).filter(Boolean);
       return saidList.some(said => {
@@ -253,6 +263,12 @@
 
   // ── 힌트 (아주 조금씩 3단계) ──────────────────────────
   function hintText(word, level){
+    if (sel.mode === 'endef'){
+      const ws = word.def.split(' ');
+      if (level === 1) return ws[0] + ' …';
+      if (level === 2) return ws.slice(0,3).join(' ') + ' …';
+      return ws.slice(0, Math.ceil(ws.length/2)).join(' ') + ' …';
+    }
     if (sel.mode === 'ko'){
       const ans = word.koShow.split(',')[0].trim();
       const chars = [...ans];
@@ -298,6 +314,10 @@
             <div class="mi">🔊→🇺🇸</div><div class="mt">영어 뜻 듣고<br>영어 단어 말하기</div>
             <div class="md">뜻 설명을 들으면<br>"population!" 이라고 답해요</div>
           </button>
+          <button class="mode ${sel.mode==='endef'?'on':''}" data-mode="endef">
+            <div class="mi">🔊→💬</div><div class="mt">영어 단어 듣고<br>영어로 뜻 말하기</div>
+            <div class="md">"population" 을 들으면<br>영어 문장으로 뜻을 설명해요</div>
+          </button>
         </div>
         ${best ? `<div class="best">🏆 이 조합 최고 기록: ${best.right}/${best.total}</div>` : ''}
       </div>
@@ -318,7 +338,7 @@
     question();
   }
 
-  function askText(w){ return sel.mode === 'ko' ? w.en : w.def; }
+  function askText(w){ return sel.mode === 'en' ? w.def : w.en; }
   function askLang(){ return 'en-US'; }
 
   function question(auto){
@@ -334,7 +354,7 @@
         </div>
         <div class="pbar"><i style="width:${pct}%"></i></div>
         <div class="ask">
-          <div class="what">${sel.mode==='ko' ? '🔊 영어 단어를 듣고 <b>한글 뜻</b>을 말하세요' : '🔊 영어 설명을 듣고 <b>영어 단어</b>를 말하세요'}</div>
+          <div class="what">${sel.mode==='ko' ? '🔊 영어 단어를 듣고 <b>한글 뜻</b>을 말하세요' : sel.mode==='en' ? '🔊 영어 설명을 듣고 <b>영어 단어</b>를 말하세요' : '🔊 영어 단어를 듣고 <b>영어 문장으로 뜻</b>을 말하세요'}</div>
           <button class="speak-big" id="play">🔊</button>
           <div class="again">눌러서 다시 듣기</div>
           <div class="qtext hidden-q" id="qtext">${esc(askText(w))}</div>
@@ -346,7 +366,7 @@
           <div class="mic-label">마이크를 누르고 답을 말하세요</div>
           <div class="heard"></div>
           <div class="typebox" id="typebox">
-            <input id="typein" placeholder="${sel.mode==='ko' ? '한글 뜻 입력' : 'type the English word'}" autocomplete="off">
+            <input id="typein" placeholder="${sel.mode==='ko' ? '한글 뜻 입력' : sel.mode==='en' ? 'type the English word' : 'type the meaning in English'}" autocomplete="off">
             <button id="typego">확인</button>
           </div>
         </div>
@@ -407,9 +427,7 @@
     stopListen(); speechSynthesis.cancel();
     const w = quiz.words[quiz.i];
     (ok ? quiz.right : quiz.wrong).push(w);
-    const answerLine = sel.mode === 'ko'
-      ? `<b>${esc(w.en)}</b> <span style="color:var(--sub)">(${esc(w.pos)})</span><br>= ${esc(w.koShow)}`
-      : `<b>${esc(w.en)}</b> <span style="color:var(--sub)">(${esc(w.pos)})</span><br>= ${esc(w.koShow)}`;
+    const answerLine = `<b>${esc(w.en)}</b> <span style="color:var(--sub)">(${esc(w.pos)})</span><br>= ${esc(w.koShow)}<br><span style="font-size:13px;color:var(--sub)">${esc(w.def)}</span>`;
     $app.innerHTML = `
       <div class="card fb ${ok?'good':'bad'}">
         <div class="big">${ok ? '🎉' : '🤔'}</div>
