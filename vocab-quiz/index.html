@@ -205,7 +205,7 @@
     if (!SR){ toggleType(true); return; }
     if (listening){ stopListen(); return; }
     recog = new SR();
-    recog.lang = sel.mode === 'ko' ? 'ko-KR' : 'en-US';
+    recog.lang = (sel.mode === 'ko' || sel.mode === 'endefko') ? 'ko-KR' : 'en-US';
     if (sel.mode === 'endef') recog.maxAlternatives = 1;
     recog.interimResults = false;
     recog.maxAlternatives = 4;
@@ -237,7 +237,7 @@
   const normEn = s => String(s).toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ').trim();
 
   function isCorrect(word, saidList){
-    if (sel.mode === 'ko'){
+    if (sel.mode === 'ko' || sel.mode === 'endefko'){
       const accepted = word.ko.map(normKo);
       return saidList.some(said => {
         const t = normKo(said);
@@ -269,7 +269,7 @@
       if (level === 2) return ws.slice(0,3).join(' ') + ' …';
       return ws.slice(0, Math.ceil(ws.length/2)).join(' ') + ' …';
     }
-    if (sel.mode === 'ko'){
+    if (sel.mode === 'ko' || sel.mode === 'endefko'){
       const ans = word.koShow.split(',')[0].trim();
       const chars = [...ans];
       if (level === 1) return '●'.repeat(chars.length) + `  (${chars.length}글자)`;
@@ -314,6 +314,10 @@
             <div class="mi">🔊→🇺🇸</div><div class="mt">영어 뜻 듣고<br>영어 단어 말하기</div>
             <div class="md">뜻 설명을 들으면<br>"population!" 이라고 답해요</div>
           </button>
+          <button class="mode ${sel.mode==='endefko'?'on':''}" data-mode="endefko">
+            <div class="mi">🔊🇺🇸→🇰🇷</div><div class="mt">영어 뜻 듣고<br>한글 뜻 말하기</div>
+            <div class="md">뜻 설명을 들으면<br>"인구!" 라고 한국말로 답해요</div>
+          </button>
           <button class="mode ${sel.mode==='koq'?'on':''}" data-mode="koq">
             <div class="mi">🔊🇰🇷→🇺🇸</div><div class="mt">한글 뜻 듣고<br>영어 단어 말하기</div>
             <div class="md">"인구" 를 들으면<br>"population!" 이라고 답해요</div>
@@ -342,7 +346,7 @@
     question();
   }
 
-  function askText(w){ return sel.mode === 'en' ? w.def : sel.mode === 'koq' ? w.koShow.split(',')[0].trim() : w.en; }
+  function askText(w){ return (sel.mode === 'en' || sel.mode === 'endefko') ? w.def : sel.mode === 'koq' ? w.koShow.split(',')[0].trim() : w.en; }
   function askLang(){ return sel.mode === 'koq' ? 'ko-KR' : 'en-US'; }
 
   function question(auto){
@@ -358,7 +362,7 @@
         </div>
         <div class="pbar"><i style="width:${pct}%"></i></div>
         <div class="ask">
-          <div class="what">${sel.mode==='ko' ? '🔊 영어 단어를 듣고 <b>한글 뜻</b>을 말하세요' : sel.mode==='en' ? '🔊 영어 설명을 듣고 <b>영어 단어</b>를 말하세요' : sel.mode==='koq' ? '🔊 한글 뜻을 듣고 <b>영어 단어</b>를 말하세요' : '🔊 영어 단어를 듣고 <b>영어 문장으로 뜻</b>을 말하세요'}</div>
+          <div class="what">${sel.mode==='ko' ? '🔊 영어 단어를 듣고 <b>한글 뜻</b>을 말하세요' : sel.mode==='en' ? '🔊 영어 설명을 듣고 <b>영어 단어</b>를 말하세요' : sel.mode==='endefko' ? '🔊 영어 설명을 듣고 <b>한글 뜻</b>을 말하세요' : sel.mode==='koq' ? '🔊 한글 뜻을 듣고 <b>영어 단어</b>를 말하세요' : '🔊 영어 단어를 듣고 <b>영어 문장으로 뜻</b>을 말하세요'}</div>
           <button class="speak-big" id="play">🔊</button>
           <div class="again">눌러서 다시 듣기</div>
           <div class="qtext hidden-q" id="qtext">${esc(askText(w))}</div>
@@ -370,7 +374,7 @@
           <div class="mic-label">마이크를 누르고 답을 말하세요</div>
           <div class="heard"></div>
           <div class="typebox" id="typebox">
-            <input id="typein" placeholder="${sel.mode==='ko' ? '한글 뜻 입력' : sel.mode==='endef' ? 'type the meaning in English' : 'type the English word'}" autocomplete="off">
+            <input id="typein" placeholder="${(sel.mode==='ko'||sel.mode==='endefko') ? '한글 뜻 입력' : sel.mode==='endef' ? 'type the meaning in English' : 'type the English word'}" autocomplete="off">
             <button id="typego">확인</button>
           </div>
         </div>
