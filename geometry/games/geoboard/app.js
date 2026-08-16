@@ -9,7 +9,7 @@
    - Cubi speaks in three places only: the first-visit tutorial, a hint the child
      opened, and level completion. Every ordinary tap gets a short blip instead.
    - A wrong action never plays praise audio and never points at the answer. It
-     names the RULE that was broken (자기 교차 / 격친 선 / 중복 꿁짓점 / 열린 모양)
+     names the RULE that was broken (자기 교차 / 겹친 선 / 중복 꼭짓점 / 열린 모양)
      and marks the offending band or peg red immediately.
    - Success shows one of GOOD JOB! / GREAT JOB! / SUCCESS! for about a second.
    - Storage: the tutorial flag `gfield-geoboard-tutorial-v1`, this game's own
