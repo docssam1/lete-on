@@ -36,7 +36,7 @@
   }
   .chip.on{border-color:var(--green); background:var(--green-soft); font-weight:700;}
   .chip .d{font-size:11px; color:var(--sub); display:block;}
-  .mode-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;}
+  .mode-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
   .mode{
     border:1.5px solid var(--line); background:#fff; border-radius:14px;
     padding:11px 9px; cursor:pointer; text-align:left; transition:all .15s;
@@ -314,6 +314,10 @@
             <div class="mi">🔊→🇺🇸</div><div class="mt">영어 뜻 듣고<br>영어 단어 말하기</div>
             <div class="md">뜻 설명을 들으면<br>"population!" 이라고 답해요</div>
           </button>
+          <button class="mode ${sel.mode==='koq'?'on':''}" data-mode="koq">
+            <div class="mi">🔊🇰🇷→🇺🇸</div><div class="mt">한글 뜻 듣고<br>영어 단어 말하기</div>
+            <div class="md">"인구" 를 들으면<br>"population!" 이라고 답해요</div>
+          </button>
           <button class="mode ${sel.mode==='endef'?'on':''}" data-mode="endef">
             <div class="mi">🔊→💬</div><div class="mt">영어 단어 듣고<br>영어로 뜻 말하기</div>
             <div class="md">"population" 을 들으면<br>영어 문장으로 뜻을 설명해요</div>
@@ -338,8 +342,8 @@
     question();
   }
 
-  function askText(w){ return sel.mode === 'en' ? w.def : w.en; }
-  function askLang(){ return 'en-US'; }
+  function askText(w){ return sel.mode === 'en' ? w.def : sel.mode === 'koq' ? w.koShow.split(',')[0].trim() : w.en; }
+  function askLang(){ return sel.mode === 'koq' ? 'ko-KR' : 'en-US'; }
 
   function question(auto){
     stopListen();
@@ -354,7 +358,7 @@
         </div>
         <div class="pbar"><i style="width:${pct}%"></i></div>
         <div class="ask">
-          <div class="what">${sel.mode==='ko' ? '🔊 영어 단어를 듣고 <b>한글 뜻</b>을 말하세요' : sel.mode==='en' ? '🔊 영어 설명을 듣고 <b>영어 단어</b>를 말하세요' : '🔊 영어 단어를 듣고 <b>영어 문장으로 뜻</b>을 말하세요'}</div>
+          <div class="what">${sel.mode==='ko' ? '🔊 영어 단어를 듣고 <b>한글 뜻</b>을 말하세요' : sel.mode==='en' ? '🔊 영어 설명을 듣고 <b>영어 단어</b>를 말하세요' : sel.mode==='koq' ? '🔊 한글 뜻을 듣고 <b>영어 단어</b>를 말하세요' : '🔊 영어 단어를 듣고 <b>영어 문장으로 뜻</b>을 말하세요'}</div>
           <button class="speak-big" id="play">🔊</button>
           <div class="again">눌러서 다시 듣기</div>
           <div class="qtext hidden-q" id="qtext">${esc(askText(w))}</div>
@@ -366,7 +370,7 @@
           <div class="mic-label">마이크를 누르고 답을 말하세요</div>
           <div class="heard"></div>
           <div class="typebox" id="typebox">
-            <input id="typein" placeholder="${sel.mode==='ko' ? '한글 뜻 입력' : sel.mode==='en' ? 'type the English word' : 'type the meaning in English'}" autocomplete="off">
+            <input id="typein" placeholder="${sel.mode==='ko' ? '한글 뜻 입력' : sel.mode==='endef' ? 'type the meaning in English' : 'type the English word'}" autocomplete="off">
             <button id="typego">확인</button>
           </div>
         </div>
