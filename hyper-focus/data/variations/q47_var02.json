@@ -13,53 +13,44 @@
   },
   "machineReadable": {
     "payloadType": "reverse_table",
-    "initialTotal": 30,
+    "initialTotal": 36,
     "changes": [
       {
-        "from": "number_card",
-        "to": "alphabet_card",
+        "from": "red_ball",
+        "to": "blue_ball",
         "count": 8
       },
       {
-        "from": "alphabet_card",
-        "to": "number_card",
-        "count": 3
-      },
-      {
-        "from": "outside",
-        "to": "number_card",
-        "count": 2
+        "from": "blue_ball",
+        "to": "red_ball",
+        "count": 4
       }
     ],
     "solvingModel": {
       "finalState": {
-        "numberCards": 16,
-        "alphabetCards": 16
+        "redBalls": 18,
+        "blueBalls": 18
       },
       "reverseStates": [
         {
-          "numberCards": 14,
-          "alphabetCards": 16
+          "redBalls": 14,
+          "blueBalls": 22
         },
         {
-          "numberCards": 11,
-          "alphabetCards": 19
-        },
-        {
-          "numberCards": 19,
-          "alphabetCards": 11
+          "redBalls": 22,
+          "blueBalls": 14
         }
       ],
-      "expectedAnswer": 11
+      "expectedAnswer": 14
     },
-    "expectedAnswer": 11
+    "expectedAnswer": 14
   },
   "answerValidation": {
     "answerType": "count",
-    "expectedAnswer": 11
+    "expectedAnswer": 14
   },
   "problem": {
-    "prompt": "관호네 반 학생 30명은 숫자 카드와 알파벳 카드를 서로 나누어 가졌습니다. 중간에 숫자 카드를 가진 8명의 학생이 알파벳 카드로 바꾸었고, 알파벳 카드를 가진 3명의 학생이 숫자 카드로 바꾸었습니다. 며칠 후 2명의 친구가 전학을 와 숫자 카드를 받았더니 숫자 카드와 알파벳 카드를 가진 학생의 수가 같아졌습니다. 처음에 알파벳 카드를 가지고 있었던 학생은 몇 명일까요?"
+    "prompt": "상자 안에 빨간 구슬과 파란 구슬이 모두 36개 있었습니다. 먼저 빨간 구슬 8개를 파란 구슬로 바꾸고, 다음에 파란 구슬 4개를 빨간 구슬로 바꾸었더니 빨간 구슬과 파란 구슬의 수가 같아졌습니다. 처음에 파란 구슬은 몇 개였습니까?"
   },
-  "solutionHint": "마지막에는 모두 32명이므로 두 카드가 16명씩입니다. 전학생 2명이 오기 전에는 숫자 14명, 알파벳 16명입니다. 카드 바꾸기를 거꾸로 돌리면 숫자 11명·알파벳 19명, 다시 숫자 19명·알파벳 11명이 됩니다."
+  "solutionHint": "마지막에는 빨간 구슬과 파란 구슬이 18개씩입니다. 두 번째 바꾸기를 거꾸로 하면 빨간 구슬 14개, 파란 구슬 22개입니다. 첫 번째 바꾸기도 거꾸로 하면 빨간 구슬 22개, 파란 구슬 14개입니다. 따라서 처음 파란 구슬은 14개입니다."
 }
