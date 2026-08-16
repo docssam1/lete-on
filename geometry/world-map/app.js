@@ -11,6 +11,7 @@ const elements = {
   worldGate: $("#worldGate"),
   castle: $("#cubeCastle"),
   origami: $("#origamiStudio"),
+  mirrorManor: $("#mirrorManor"),
   walkers: $("#walkers"),
   mapStage: $(".map-stage"),
   guide: $("#mapGuide"),
@@ -56,7 +57,7 @@ const colors = [
 ];
 
 const itemCategories = [
-  { id: "hat", iconId: "cat-crown", label: { ko: "모자", zh: "帽子", ja: "ぼうし", en: "Hats" } },
+  { id: "hat", iconId: "cat-crown", label: { ko: "모자", zh: "帽子", ja: "ばうし", en: "Hats" } },
   { id: "face", iconId: "cat-glasses", label: { ko: "얼굴", zh: "脸部", ja: "かお", en: "Face" } },
   { id: "badge", iconId: "cat-star", label: { ko: "배지", zh: "徽章", ja: "バッジ", en: "Badges" } },
   { id: "hand", iconId: "cat-wand", label: { ko: "소품", zh: "道具", ja: "こもの", en: "Props" } },
@@ -66,9 +67,9 @@ const itemCategories = [
 const items = [
   { id: "cap", category: "hat", iconId: "cat-hat", cost: 100, name: { ko: "탐험 모자", zh: "探险帽", ja: "たんけん帽", en: "Explorer Cap" } },
   { id: "crown", category: "hat", iconId: "cat-crown", cost: 400, name: { ko: "황금 왕관", zh: "金色王冠", ja: "金の王冠", en: "Golden Crown" } },
-  { id: "helmet", category: "hat", iconId: "cat-helmet", cost: 220, name: { ko: "안전 헬멧", zh: "安全帽", ja: "ヘルメット", en: "Builder Helmet" } },
+  { id: "helmet", category: "hat", iconId: "cat-helmet", cost: 220, name: { ko: "안전 헬멗", zh: "安全帽", ja: "ヘルメット", en: "Builder Helmet" } },
   { id: "wizard-hat", category: "hat", iconId: "cat-wizard", cost: 320, name: { ko: "마법사 모자", zh: "魔法帽", ja: "魔法の帽子", en: "Wizard Hat" } },
-  { id: "flower-crown", category: "hat", iconId: "cat-flower", cost: 280, name: { ko: "꽃 왕관", zh: "花冠", ja: "花かんむり", en: "Flower Crown" } },
+  { id: "flower-crown", category: "hat", iconId: "cat-flower", cost: 280, name: { ko: "꽃 왕관", zh: "花冒", ja: "花かんむり", en: "Flower Crown" } },
 
   { id: "glasses", category: "face", iconId: "cat-glasses", cost: 180, name: { ko: "둥근 안경", zh: "圆眼镜", ja: "丸めがね", en: "Round Glasses" } },
   { id: "star-glasses", category: "face", iconId: "cat-stars", cost: 240, name: { ko: "별 안경", zh: "星星眼镜", ja: "スターめがね", en: "Star Glasses" } },
@@ -89,8 +90,8 @@ const items = [
   { id: "blueprint", category: "hand", iconId: "cat-blueprint", cost: 180, name: { ko: "설계 도구", zh: "设计工具", ja: "設計ツール", en: "Design Tool" } },
 
   { id: "sparkles", category: "aura", iconId: "cat-sparkles", cost: 180, name: { ko: "반짝 효과", zh: "闪亮特效", ja: "きらきら", en: "Sparkles" } },
-  { id: "rainbow", category: "aura", iconId: "cat-rainbow", cost: 320, name: { ko: "무지개 효과", zh: "彩虹特效", ja: "虹エフェクト", en: "Rainbow" } },
-  { id: "flame", category: "aura", iconId: "cat-flame", cost: 280, name: { ko: "열정 불꽃", zh: "热情火焰", ja: "情熱の炎", en: "Power Flame" } },
+  { id: "rainbow", category: "aura", iconId: "cat-rainbow", cost: 320, name: { ko: "무지개 효과", zh: "彩虹特效", ja: "虾エフェクト", en: "Rainbow" } },
+  { id: "flame", category: "aura", iconId: "cat-flame", cost: 280, name: { ko: "열정 불꿃", zh: "热情火焰", ja: "情熱の炎", en: "Power Flame" } },
   { id: "snow", category: "aura", iconId: "cat-snow", cost: 250, name: { ko: "눈꽃 효과", zh: "雪花特效", ja: "雪エフェクト", en: "Snow Glow" } },
   { id: "galaxy", category: "aura", iconId: "cat-galaxy", cost: 450, name: { ko: "은하 효과", zh: "银河特效", ja: "銀河エフェクト", en: "Galaxy Aura" } }
 ];
@@ -522,6 +523,9 @@ elements.introSound.addEventListener("click", () => {
 
 elements.castle.addEventListener("click", () => { location.href = "../cube-town/"; });
 elements.origami?.addEventListener("click", () => { location.href = "../origami-studio/"; });
+// Mirror Manor is a single game rather than a hub, so this hotspot goes straight to
+// the game folder, matching the pattern of the two hub hotspots above.
+elements.mirrorManor?.addEventListener("click", () => { location.href = "../games/mirror-manor/"; });
 elements.mapStage?.addEventListener("click", handleMapStageClick);
 elements.profileButton.addEventListener("click", () => openCharacterRoom(false));
 elements.closeCharacter.addEventListener("click", closeCharacterRoom);
