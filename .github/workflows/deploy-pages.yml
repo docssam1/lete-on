@@ -11,6 +11,7 @@ on:
       - 'personality/**'
       - 'reading-world/**'
       - 'roadmap/**'
+      - 'vocab-quiz/**'
       - 'world-explorer/**'
       - 'yubin-yujun-store/**'
       - '.github/pages-index.html'
@@ -43,6 +44,7 @@ jobs:
           mkdir -p _site/personality
           mkdir -p _site/reading-world
           mkdir -p _site/roadmap
+          mkdir -p _site/vocab-quiz
           mkdir -p _site/world-explorer
           mkdir -p _site/yubin-yujun-store
           cp -R fields-classic/. _site/fields-classic/
@@ -52,6 +54,7 @@ jobs:
           cp -R personality/. _site/personality/
           cp -R reading-world/. _site/reading-world/
           cp -R roadmap/. _site/roadmap/
+          cp -R vocab-quiz/. _site/vocab-quiz/
           cp -R world-explorer/. _site/world-explorer/
           cp -R yubin-yujun-store/. _site/yubin-yujun-store/
           cp .github/pages-index.html _site/index.html
