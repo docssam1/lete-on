@@ -10,7 +10,7 @@
    be able to drift apart between locales.
 
    WHY there are six different wrong-action messages: the design document asks that
-   자기 교차, 격친 선, 중복 꿁짓점 be reported IMMEDIATELY and by name. Each message
+   자기 교차, 겹친 선, 중복 꼭짓점 be reported IMMEDIATELY and by name. Each message
    says WHICH RULE the tap broke and nothing about where the answer is — a wrong
    action never gets praise audio and never gets a hint.
    ========================================================================= */
@@ -40,12 +40,12 @@ export const messages = {
     level1Desc: "점 두 개를 이어 선분을 만들고, 닫히지 않은 모양을 만들어요.",
     level2Title: "삼각형·사각형 그대로 만들기",
     level2Desc: "제시된 삼각형과 사각형을 같은 자리에 똑같이 만들어요.",
-    level3Title: "꿁짓점과 변의 수로 만들기",
-    level3Desc: "꿁짓점 수와 변의 수 조건에 맞는 도형을 만들어요.",
+    level3Title: "꼭짓점과 변의 수로 만들기",
+    level3Desc: "꼭짓점 수와 변의 수 조건에 맞는 도형을 만들어요.",
     level4Title: "같은 넓이 다른 모양",
     level4Desc: "넓이가 같으면서 서로 다른 모양 두 개를 만들어요.",
     level5Title: "여러 도형으로 그림 만들기",
-    level5Desc: "여러 도형을 격치지 않게 놓아 그림이나 구조를 완성해요.",
+    level5Desc: "여러 도형을 겹치지 않게 놓아 그림이나 구조를 완성해요.",
     comingSoon: "준비 중",
     promptOpen: "못을 순서대로 눌러 보기와 똑같은 열린 모양을 만드세요.",
     promptClosed: "못을 순서대로 누르고 처음 못을 다시 눌러 도형을 닫으세요.",
@@ -62,24 +62,24 @@ export const messages = {
     shapePath: "열린 모양",
     shapeTriangle: "삼각형",
     shapeQuad: "사각형",
-    statVertices: "꿁짓점 {count}",
+    statVertices: "꼭짓점 {count}",
     statEdges: "변 {count}",
     wrongCrossing: "고무줄이 이미 걸린 줄과 만나요. 선이 교차하지 않게 다른 못을 고르세요.",
-    wrongDupEdge: "같은 두 못 사이에 줄이 이미 걸려 있어요. 격친 선은 만들 수 없어요.",
-    wrongRepeatVertex: "이미 지나간 못이에요. 같은 꿁짓점을 두 번 쓸 수 없어요.",
+    wrongDupEdge: "같은 두 못 사이에 줄이 이미 걸려 있어요. 겹친 선은 만들 수 없어요.",
+    wrongRepeatVertex: "이미 지나간 못이에요. 같은 꼭짓점을 두 번 쓸 수 없어요.",
     wrongSamePeg: "방금 누른 못이에요. 길이가 없는 선은 만들 수 없어요.",
     wrongOpenOnly: "이 레벨은 열린 모양이에요. 처음 못으로 돌아가면 닫혀 버려요.",
     wrongNeedThree: "도형을 닫으려면 못이 세 개 이상 필요해요.",
-    wrongCloseNow: "못을 충분히 눌렇어요. 이제 처음 못을 눌러 도형을 닫으세요.",
+    wrongCloseNow: "못을 충분히 눌렀어요. 이제 처음 못을 눌러 도형을 닫으세요.",
     wrongShape: "보기와 다른 모양이에요. 고무줄을 풀고 다시 걸어 볼까요?",
     tutorial1: "안녕! 나는 큐비야. 여기는 점판 공작소야. 판에 박힌 못에 고무줄을 걸어 보자.",
     tutorial2: "못을 누른 순서대로 줄이 생겨. 두 못을 이으면 선분 하나가 만들어져.",
-    tutorial3: "줄이 이미 걸린 줄과 만나거나, 같은 못을 두 번 쓰면 바로 빨게 알려 줄게.",
-    tutorial4: "옷에 있는 보기와 똑같이 만들면 성공이야. 처음 못을 다시 누르면 도형이 닫혀!",
+    tutorial3: "줄이 이미 걸린 줄과 만나거나, 같은 못을 두 번 쓰면 바로 빨갛게 알려 줄게.",
+    tutorial4: "옆에 있는 보기와 똑같이 만들면 성공이야. 처음 못을 다시 누르면 도형이 닫혀!",
     tutorialNext: "다음",
     tutorialStart: "시작",
     hintOpen: "보기의 못 위치를 하나씩 세어 봐. 가로로 몇 칸, 세로로 몇 칸인지 세면 같은 자리를 찾을 수 있어.",
-    hintClosed: "먼저 한 꿁짓점을 정하고, 보기와 같은 방향으로 엎 꿁짓점을 이어 봐. 마지막에 처음 못을 누르면 닫혀.",
+    hintClosed: "먼저 한 꼭짓점을 정하고, 보기와 같은 방향으로 옆 꼭짓점을 이어 봐. 마지막에 처음 못을 누르면 닫혀.",
     guideStart: "보기를 보고 점판에 똑같이 걸어 보세요.",
     guideComplete: "고무줄로 도형을 정확하게 만들었어!",
     levelComplete: "레벨 {level} 완료!",
