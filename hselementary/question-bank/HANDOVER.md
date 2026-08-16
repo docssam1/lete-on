@@ -5,10 +5,10 @@
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8765/hselementary/question-bank/`
 - Total types: 174
-- Implemented types: 91
-- Pending types: 83
-- Completed: all six units in grade 4 semester 1 and units 1-3 in grade 4 semester 2
-- Next unit: grade 4 semester 2, unit 4 (quadrilaterals)
+- Implemented types: 99
+- Pending types: 75
+- Completed: all six units in grade 4 semester 1 and units 1-4 in grade 4 semester 2
+- Next unit: grade 4 semester 2, unit 5 (line graphs)
 
 ## Required Standard
 
@@ -30,8 +30,9 @@
 - Grade 4-2 unit 1: fraction addition and subtraction, 6 types
 - Grade 4-2 unit 2: triangles, 4 types
 - Grade 4-2 unit 3: decimal addition and subtraction, 4 types
+- Grade 4-2 unit 4: quadrilaterals, 8 types
 
-The current ready set has passed 7,560-generation regression coverage. The newer units were also checked at desktop and mobile widths for overflow, missing questions, missing solutions, and accidental lock states.
+The current ready set has passed regression coverage, including an 8,400-generation sweep for the newest unit (8 types x 3 difficulty levels x 350 seeds, 0 exceptions, all answers numerically consistent). The newer units were also checked at desktop and mobile (375px) widths for overflow, missing questions, missing solutions, and accidental lock states.
 
 ## Implementation Notes
 
@@ -44,15 +45,16 @@ The current ready set has passed 7,560-generation regression coverage. The newer
 
 ## Next Steps
 
-1. Query the private source memory for grade 4 semester 2 unit 4.
-2. Inspect only the relevant triangle pages needed to confirm structures and diagrams.
+1. Query the private source memory for grade 4 semester 2 unit 5 (line graphs).
+2. Inspect only the relevant source pages needed to confirm structures and diagrams.
 3. Record the classification decision before implementation.
-4. Add dedicated generators and SVG diagrams for every type in the unit.
+4. Add dedicated generators and SVG diagrams for every type in the unit. Line-graph SVGs must derive plotted coordinates directly from the generated numeric data (data -> coordinate function), not the other way around, to avoid mismatches between the picture and the answer.
 5. Run syntax checks, high-volume answer checks, and desktop/mobile browser verification.
 6. Update the ready count and commit only the completed unit.
 
 ## Recent Commits
 
+- Add advanced quadrilateral unit generators (grade 4-2 unit 4, 8 types)
 - `0dc06d9` Add advanced fraction unit generators
 - `b69d525` Replace rule finding with advanced generators
 - `4b67305` Add advanced bar graph generators
