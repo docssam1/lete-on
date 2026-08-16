@@ -36,7 +36,7 @@ const elements = {
 };
 
 const characters = [
-  { id: "cubi", name: "祽비", sprite: 0, role: "Cube Town Guide" },
+  { id: "cubi", name: "큐비", sprite: 0, role: "Cube Town Guide" },
   { id: "orbi", name: "오르비", sprite: 1, role: "Sphere Garden Explorer" },
   { id: "pyra", name: "파이라", sprite: 2, role: "Pyramid Peak Keeper" },
   { id: "cylo", name: "사일로", sprite: 3, role: "Cylinder Harbor Captain" },
