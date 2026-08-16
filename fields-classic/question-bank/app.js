@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816dl";
-import { GENERATORS } from "./generators.js?v=20260816da";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816dm";
+import { GENERATORS } from "./generators.js?v=20260816db";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -1027,8 +1027,86 @@ function nonadjacentPyramidMarkup(visual) {
   return `<div class="nonadjacent-pyramid">${rows.map((row, rowIndex) => `<div style="--row:${rowIndex}">${row.map((value) => `<span>${value}</span>`).join("")}</div>`).join("")}</div>`;
 }
 
+function polygonPoints(sides, radius, cx, cy) {
+  return Array.from({ length: sides }, (_, index) => {
+    const angle = -Math.PI / 2 + index * Math.PI * 2 / sides;
+    return [cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius];
+  });
+}
+
+function polygonStoneDots(sides, perSide, radius, cx, cy) {
+  const vertices = polygonPoints(sides, radius, cx, cy);
+  const dots = [];
+  vertices.forEach(([x1, y1], index) => {
+    const [x2, y2] = vertices[(index + 1) % sides];
+    for (let step = 0; step < perSide - 1; step += 1) {
+      const ratio = step / (perSide - 1);
+      dots.push([x1 + (x2 - x1) * ratio, y1 + (y2 - y1) * ratio]);
+    }
+  });
+  return dots;
+}
+
+function g1SourceMarkup(visual) {
+  if (visual.kind === "g1-bus-two-stops") {
+    return `<div class="g1-event-flow"><strong>출발 ${visual.start}명</strong>${visual.events.map(({ left, boarded }, index) => `<span>→</span><section><b>${index + 1}번째 정류장</b><small>${left}명 내림</small><small>${boarded}명 탐</small></section>`).join("")}</div>`;
+  }
+  if (visual.kind === "g1-condition-list") {
+    return `<div class="g1-condition-panel"><strong>${visual.title}</strong><ul>${visual.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul></div>`;
+  }
+  if (visual.kind === "g1-equation-panel") {
+    return `<div class="g1-equation-panel">${visual.equations.map((equation) => `<p>${equation}</p>`).join("")}${visual.hint ? `<small>${visual.hint}</small>` : ""}</div>`;
+  }
+  if (visual.kind === "g1-fold-cut-pieces") {
+    const folds = visual.folds.map((fold, index) => `<section><i class="g1-fold-paper fold-${index + 1}"></i><b>${fold}</b></section><span>→</span>`).join("");
+    return `<div class="g1-fold-flow tone-${visual.paperTone}">${folds}<section><i class="g1-fold-paper cut cut-${visual.cutPattern} ${visual.folds.length === 1 ? "cut-once" : ""}"></i><b>${visual.cuts}</b></section></div>`;
+  }
+  if (visual.kind === "g1-repeated-digit-addition") {
+    const resultText = String(visual.result).split("").join(" ");
+    return `<div class="g1-vertical-addition"><p>${visual.digitSymbol} ${visual.otherSymbol}</p><p><b>+</b> ${visual.digitSymbol} ${visual.otherSymbol}</p><hr><p>${resultText}</p></div>`;
+  }
+  if (visual.kind === "g1-balance-three-relations") {
+    const repeated = (symbol, count) => Array.from({ length: count }, () => symbol).join(" ");
+    return `<div class="g1-balance-relations"><section><span>${repeated("▭", visual.triangleRectangles)}</span><b>=</b><span>△</span><small>[그림 1]</small></section><section><span>${repeated("▭", visual.circleRectangles)} ${repeated("△", visual.circleTriangles)}</span><b>=</b><span>○</span><small>[그림 2]</small></section><section><span>△ ○</span><b>=</b><span>▭ (　)개</span><small>[그림 3]</small></section></div>`;
+  }
+  if (visual.kind === "g1-stacked-shape-cycle") {
+    return `<div class="g1-stacked-cycle">${visual.items.map((item, index) => `<section><span>${Array.from({ length: item.count }, () => `<i>${item.shape}</i>`).join("")}</span><b>${index + 1}</b></section>`).join("")}<em>…</em><strong>${visual.target}번째</strong></div>`;
+  }
+  if (visual.kind === "g1-triangle-color-difference") {
+    const stage = (size) => `<section><div>${Array.from({ length: size }, (_, row) => `<span>${Array.from({ length: row + 1 }, () => "△").join("")}</span>${row < size - 1 ? `<span class="filled">${Array.from({ length: row + 1 }, () => "▽").join("")}</span>` : ""}`).join("")}</div><b>${size}번째</b></section>`;
+    return `<div class="g1-triangle-growth">${[1, 2, 3].map(stage).join("")}<em>…</em><strong>${visual.target}번째</strong></div>`;
+  }
+  if (visual.kind === "g1-shape-sum-grid-four") {
+    const cells = ["○", "○", "◇", "◇", visual.rowSums[0], "□", "▣", "◇", "◇", visual.rowSums[1], "□", "○", "○", "○", visual.rowSums[2], "○", "▣", "□", "◇", "㉠", ...visual.columnSums];
+    return `<div class="g1-shape-grid-wrap">${visual.hint ? `<small>${visual.hint}</small>` : ""}<div class="g1-shape-grid">${cells.map((cell, index) => `<span class="${index % 5 === 4 || index >= 20 ? "sum" : ""}">${cell}</span>`).join("")}</div></div>`;
+  }
+  if (visual.kind === "g1-rod-ratio-total") {
+    return `<div class="g1-rods"><section>${Array.from({ length: visual.topUnits }, () => "<i>㉠</i>").join("")}</section><section>${Array.from({ length: visual.bottomUnits }, () => "<i>㉡</i>").join("")}</section><strong><i>㉠</i><i>㉡</i><b>${visual.total}cm</b></strong></div>`;
+  }
+  if (visual.kind === "g1-polygon-stones") {
+    const sourceVertices = polygonPoints(visual.sourceSides, 62, 80, 76).map((point) => point.join(",")).join(" ");
+    const targetVertices = polygonPoints(visual.targetSides, 62, 240, 76).map((point) => point.join(",")).join(" ");
+    const sourceDots = polygonStoneDots(visual.sourceSides, Math.min(visual.sourcePerSide, 12), 62, 80, 76);
+    const targetDots = polygonStoneDots(visual.targetSides, Math.min(visual.targetPerSide, 12), 62, 240, 76);
+    return `<svg class="g1-polygon-stones" viewBox="0 0 320 165" role="img" aria-label="다각형 둘레에 놓인 바둑돌을 다른 다각형으로 다시 늘어놓기"><polygon points="${sourceVertices}"/><polygon points="${targetVertices}"/>${sourceDots.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3"/>`).join("")}${targetDots.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3"/>`).join("")}<text x="80" y="158">${visual.sourceName} · 한 변 ${visual.sourcePerSide}개</text><text x="240" y="158">${visual.targetName} · 한 변 ?개</text></svg>`;
+  }
+  if (visual.kind === "g1-paired-sequences") {
+    const top = Array.from({ length: 4 }, (_, index) => visual.topStart + index * visual.topStep);
+    const bottom = Array.from({ length: 4 }, (_, index) => visual.bottomStart + index * visual.bottomStep);
+    return `<div class="g1-paired-table"><span>${top.join("　")}</span><b>…</b><strong>${visual.topLast}</strong><span>${bottom.join("　")}</span><b>…</b><strong>㉮</strong></div>`;
+  }
+  if (visual.kind === "g1-ratio-distribution") {
+    return `<div class="g1-ratio-panel"><section><b>어린이</b><span>${visual.childGroup}명</span><em>귤 1개</em></section><section><b>어른</b><span>1명</span><em>귤 ${visual.adultItems}개</em></section><strong>모두 ${visual.people}명 · 귤 ${visual.items}개</strong></div>`;
+  }
+  if (visual.kind === "g1-odd-even-difference") {
+    return `<div class="g1-odd-even-strip"><span>1, 2, 3, 4, … ,</span><strong>㉠</strong><small>홀수 합과 짝수 합의 차: ${visual.difference}</small></div>`;
+  }
+  return "";
+}
+
 function visualMarkup(visual) {
   if (!visual) return "";
+  if (visual.kind.startsWith("g1-")) return `<div class="visual g1-source-visual">${g1SourceMarkup(visual)}</div>`;
   if (visual.kind === "hidden-card-conditions") return `<div class="visual hidden-card-visual">${hiddenCardConditionsMarkup(visual)}</div>`;
   if (visual.kind === "shape-matrix-rule") return `<div class="visual shape-matrix-visual">${shapeMatrixRuleMarkup(visual)}</div>`;
   if (visual.kind === "torn-calendar") return `<div class="visual torn-calendar-visual">${tornCalendarMarkup(visual)}</div>`;

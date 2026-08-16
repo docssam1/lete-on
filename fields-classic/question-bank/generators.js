@@ -1,3 +1,5 @@
+import { G1_GENERATORS } from "./g1-generators.js?v=20260816a";
+
 const COLORS = ["흰색", "검은색"];
 const SHAPES = ["동그라미", "세모", "네모"];
 
@@ -3230,6 +3232,7 @@ function paperFoldHoleCount({ difficulty }) {
 }
 
 export const GENERATORS = {
+  ...G1_GENERATORS,
   hiddenCardCondition,
   closestTwoDigitCardSum,
   frontBackTotal,

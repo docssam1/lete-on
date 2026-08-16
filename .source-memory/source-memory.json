@@ -10,9 +10,9 @@
       "path": "fields-classic/question-bank/HANDOVER.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "e2a602016abc6e0869fa54fa7dc083a45765a449e62f0e14c8d0d9c191e4a6af",
-      "size": 103342,
-      "mtime_ns": 1786836503650669100
+      "sha256": "3efb20c6e2901eaeeb21b9e97c8c353da4b0e866d09d1488be124c7ee20aa384",
+      "size": 104241,
+      "mtime_ns": 1786838348978241700
     },
     {
       "id": "final-audit",
@@ -30,9 +30,9 @@
       "path": "fields-classic/question-bank/generators.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "bb068f7aada7ac3a1f0d5bcae8a11dbd39b1f7a6e6007224d39bb2bd7a031d2e",
-      "size": 186939,
-      "mtime_ns": 1786835825204424200
+      "sha256": "f63dcbaf419fb357d8dd8afe66349b5a665ffd68b491083fdc8671a8f2ac76dc",
+      "size": 187023,
+      "mtime_ns": 1786836931300376100
     },
     {
       "id": "source-data",
@@ -40,9 +40,29 @@
       "path": "fields-classic/question-bank/source-data.js",
       "kind": "javascript",
       "sensitivity": "public",
-      "sha256": "7f27465ab7a7ff30686c7dcc01b063f63b417fa16822685073d8f1478771be08",
-      "size": 40890,
-      "mtime_ns": 1786835648366377500
+      "sha256": "76bddc479227bfc6e83cd9b3127688cc3f80090679a8a09844dd8a15c9182ce1",
+      "size": 44190,
+      "mtime_ns": 1786836960846283000
+    },
+    {
+      "id": "g1-2022-03-problem",
+      "title": "더 클래식 초1 1차 선발시험 문제지",
+      "path": "G:\\내 드라이브\\필즈더클래식 문제은행 원본\\필즈 더 클래식 모의고사 원본\\선발고사\\1학년\\1차\\더_클래식_1학년_1차_선발시험(20220307).pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "dea8014fd4a2679683d2176fd58799cafff369b5e30c07a8e12e47fcef064545",
+      "size": 355346,
+      "mtime_ns": 1770800100000000000
+    },
+    {
+      "id": "g1-2022-03-answer",
+      "title": "더 클래식 초1 1차 선발시험 답안",
+      "path": "G:\\내 드라이브\\필즈더클래식 문제은행 원본\\필즈 더 클래식 모의고사 원본\\선발고사\\1학년\\1차\\더_클래식_1학년_1차_선발시험(20220307)_답안.pptx",
+      "kind": "pptx",
+      "sensitivity": "private",
+      "sha256": "718d20e8ca1c25e6ac80efbd3ba5e5dd9953a9d06edbc0cf05bf2f8b025302cb",
+      "size": 94284,
+      "mtime_ns": 1770800164000000000
     }
   ],
   "records": [
@@ -3712,6 +3732,43 @@
           "role": "audit",
           "locator": "파이널 1회 고정 시드 교체본",
           "note": "원본 비중복, 답·풀이, 화면 및 A4 인쇄 검증 완료"
+        }
+      ]
+    },
+    {
+      "id": "g1-2022-03-source-audit",
+      "title": "더 클래식 초1 1차 선발시험 2022.03.07",
+      "aliases": [
+        "초1 1차"
+      ],
+      "tags": [
+        "fields-classic",
+        "selection-test",
+        "g1",
+        "verified"
+      ],
+      "summary": "문제지 3~7쪽과 답안 PPTX를 문항별 대조했다. 20문항을 18개 신규 생성기와 2개 기존 검증 생성기에 연결했으며 생성기별 3난이도 1,000회, 전체 111유형 99,900회, 브라우저·답안·A4 인쇄 검수를 통과했다. 진단 유사문제와 처방전은 제외했다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-16",
+      "pointers": [
+        {
+          "source_id": "g1-2022-03-problem",
+          "role": "audit",
+          "locator": "G:\\내 드라이브\\필즈더클래식 문제은행 원본\\필즈 더 클래식 모의고사 원본\\선발고사\\1학년\\1차\\더_클래식_1학년_1차_선발시험(20220307).pdf",
+          "note": "문제지 원본"
+        },
+        {
+          "source_id": "g1-2022-03-answer",
+          "role": "audit",
+          "locator": "G:\\내 드라이브\\필즈더클래식 문제은행 원본\\필즈 더 클래식 모의고사 원본\\선발고사\\1학년\\1차\\더_클래식_1학년_1차_선발시험(20220307)_답안.pptx",
+          "note": "답안 원본"
+        },
+        {
+          "source_id": "handover",
+          "role": "audit",
+          "locator": "fields-classic/question-bank/SOURCE-AUDIT.md#20220307-초1-1차-선발시험-20문항-검증-완료",
+          "note": "문항별 대조표"
         }
       ]
     }
