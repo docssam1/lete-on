@@ -116,6 +116,13 @@
     border:none; border-radius:12px; padding:0 18px; background:var(--green);
     color:#fff; font-weight:800; font-size:15px; cursor:pointer;
   }
+  .choices2{display:grid; gap:9px; margin-top:6px;}
+  .choice{
+    border:1.5px solid var(--line); background:#fff; border-radius:13px;
+    padding:13px 14px; font-size:16px; font-weight:700; cursor:pointer;
+    text-align:left; color:var(--ink); transition:all .12s;
+  }
+  .choice:active{transform:scale(.985);}
   .toolrow{display:flex; gap:8px; margin-top:14px;}
   .tool{
     flex:1; border:1.5px solid var(--line); background:#fff; border-radius:12px;
@@ -264,6 +271,7 @@
 
   // ── 힌트 (아주 조금씩 3단계) ──────────────────────────
   function hintText(word, level){
+    if (sel.mode === 'pick') return '🇰🇷 ' + word.koShow;
     if (sel.mode === 'endef'){
       const ws = word.def.split(' ');
       if (level === 1) return ws[0] + ' …';
@@ -327,6 +335,10 @@
             <div class="mi">🔊→💬</div><div class="mt">영어 단어 듣고<br>영어로 뜻 말하기</div>
             <div class="md">"population" 을 들으면<br>영어 문장으로 뜻을 설명해요</div>
           </button>
+          <button class="mode ${sel.mode==='pick'?'on':''}" data-mode="pick">
+            <div class="mi">📖→👆</div><div class="mt">영어 뜻 읽고<br>단어 고르기 게임</div>
+            <div class="md">뜻을 읽고 4개 중에서<br>알맞은 단어를 골라요</div>
+          </button>
         </div>
         ${best ? `<div class="best">🏆 이 조합 최고 기록: ${best.right}/${best.total}</div>` : ''}
       </div>
@@ -347,14 +359,21 @@
     question();
   }
 
-  function askText(w){ return (sel.mode === 'en' || sel.mode === 'endefko') ? w.def : sel.mode === 'koq' ? koMain(w) : w.en; }
+  function askText(w){ return (sel.mode === 'en' || sel.mode === 'endefko' || sel.mode === 'pick') ? w.def : sel.mode === 'koq' ? koMain(w) : w.en; }
   function askLang(){ return sel.mode === 'koq' ? 'ko-KR' : 'en-US'; }
 
   function question(auto){
     stopListen();
     const w = quiz.words[quiz.i];
     quiz.hintLevel = 0;
+    const isPick = sel.mode === 'pick';
     const pct = Math.round(quiz.i / quiz.words.length * 100);
+    let choices = [];
+    if (isPick){
+      const day = dayById(sel.dayId);
+      choices = day.words.filter(x => x.en !== w.en).sort(() => Math.random() - .5).slice(0,3).concat([w])
+        .sort(() => Math.random() - .5);
+    }
     $app.innerHTML = `
       <div class="card">
         <div class="qtop">
@@ -366,10 +385,18 @@
           <div class="what">${sel.mode==='ko' ? '🔊 영어 단어를 듣고 <b>한글 뜻</b>을 말하세요' : sel.mode==='en' ? '🔊 영어 설명을 듣고 <b>영어 단어</b>를 말하세요' : sel.mode==='endefko' ? '🔊 영어 설명을 듣고 <b>한글 뜻</b>을 말하세요' : sel.mode==='koq' ? '🔊 한글 뜻을 듣고 <b>영어 단어</b>를 말하세요' : '🔊 영어 단어를 듣고 <b>영어 문장으로 뜻</b>을 말하세요'}</div>
           <button class="speak-big" id="play">🔊</button>
           <div class="again">눌러서 다시 듣기</div>
-          <div class="qtext hidden-q" id="qtext">${esc(askText(w))}</div>
-          <button class="peek" id="peek">👀 글자로 보기</button>
+          <div class="qtext${isPick ? '' : ' hidden-q'}" id="qtext">${esc(askText(w))}</div>
+          ${isPick ? '' : '<button class="peek" id="peek">👀 글자로 보기</button>'}
         </div>
         <div class="hintbox" id="hintbox"></div>
+        ${isPick ? `
+        <div class="choices2">
+          ${choices.map(c => `<button class="choice" data-pick="${esc(c.en)}">${esc(c.en)} <span style="color:var(--sub);font-weight:400">(${esc(c.pos)})</span></button>`).join('')}
+        </div>
+        <div class="toolrow">
+          <button class="tool" id="hint">💡 힌트: 한글 뜻 (⭐-1)</button>
+          <button class="tool" id="skip">건너뛰기 →</button>
+        </div>` : `
         <div class="mic-area">
           <button class="mic" id="mic">🎤</button>
           <div class="mic-label">마이크를 누르고 답을 말하세요</div>
@@ -383,34 +410,36 @@
           <button class="tool" id="hint">💡 힌트 (⭐-1)</button>
           <button class="tool" id="typetoggle">⌨️ 직접 입력</button>
           <button class="tool" id="skip">건너뛰기 →</button>
-        </div>
+        </div>`}
       </div>
       <button class="btn ghost" id="quit">그만하고 처음으로</button>`;
 
-    const playBtn = $app.querySelector('#play');
-    playBtn.onclick = () => speak(askText(w), askLang());
-    $app.querySelector('#peek').onclick = (e) => {
-      $app.querySelector('#qtext').classList.remove('hidden-q');
+    const $ = sel2 => $app.querySelector(sel2);
+    $('#play').onclick = () => speak(askText(w), askLang());
+    if ($('#peek')) $('#peek').onclick = (e) => {
+      $('#qtext').classList.remove('hidden-q');
       e.target.classList.add('hide');
     };
-    $app.querySelector('#mic').onclick = startListen;
-    $app.querySelector('#hint').onclick = () => {
-      if (quiz.hintLevel >= 3) return;
+    if ($('#mic')) $('#mic').onclick = startListen;
+    const maxHint = isPick ? 1 : 3;
+    $('#hint').onclick = () => {
+      if (quiz.hintLevel >= maxHint) return;
       quiz.hintLevel++;
       if (quiz.stars > 0) quiz.stars--;
-      $app.querySelector('.stars').textContent = '⭐ ' + quiz.stars;
-      const hb = $app.querySelector('#hintbox');
+      $('.stars').textContent = '⭐ ' + quiz.stars;
+      const hb = $('#hintbox');
       hb.textContent = hintText(w, quiz.hintLevel);
       hb.classList.add('show');
-      if (quiz.hintLevel >= 3) $app.querySelector('#hint').disabled = true;
+      if (quiz.hintLevel >= maxHint) $('#hint').disabled = true;
     };
-    $app.querySelector('#typetoggle').onclick = () => toggleType();
-    $app.querySelector('#typego').onclick = submitTyped;
-    $app.querySelector('#typein').onkeydown = (e) => { if (e.key === 'Enter') submitTyped(); };
-    $app.querySelector('#skip').onclick = () => finishOne(false, '(건너뜀)');
-    $app.querySelector('#quit').onclick = home;
+    if ($('#typetoggle')) $('#typetoggle').onclick = () => toggleType();
+    if ($('#typego')) $('#typego').onclick = submitTyped;
+    if ($('#typein')) $('#typein').onkeydown = (e) => { if (e.key === 'Enter') submitTyped(); };
+    $app.querySelectorAll('[data-pick]').forEach(b => b.onclick = () => finishOne(b.dataset.pick === w.en, b.dataset.pick));
+    $('#skip').onclick = () => finishOne(false, '(건너뜀)');
+    $('#quit').onclick = home;
 
-    if (auto !== false) setTimeout(() => speak(askText(w), askLang()), 350);
+    if (auto !== false && !isPick) setTimeout(() => speak(askText(w), askLang()), 350);
   }
 
   function toggleType(force){
