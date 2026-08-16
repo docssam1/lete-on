@@ -178,6 +178,7 @@
   const save  = (s) => { try { localStorage.setItem(LS_KEY, JSON.stringify(s)); } catch(e){} };
 
   const dayById = id => DAYS.find(d => d.id === id) || DAYS[0];
+  const koMain = w => w.koShow.split(',')[0].replace(/\([^)]*\)/g,'').trim();
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
   // ── 음성 합성 (문제 읽어주기) ──────────────────────────
@@ -270,7 +271,7 @@
       return ws.slice(0, Math.ceil(ws.length/2)).join(' ') + ' …';
     }
     if (sel.mode === 'ko' || sel.mode === 'endefko'){
-      const ans = word.koShow.split(',')[0].trim();
+      const ans = koMain(word);
       const chars = [...ans];
       if (level === 1) return '●'.repeat(chars.length) + `  (${chars.length}글자)`;
       if (level === 2) return chars.map((c,i)=> i===0 ? c : (c===' ' ? ' ' : '●')).join('');
@@ -346,7 +347,7 @@
     question();
   }
 
-  function askText(w){ return (sel.mode === 'en' || sel.mode === 'endefko') ? w.def : sel.mode === 'koq' ? w.koShow.split(',')[0].trim() : w.en; }
+  function askText(w){ return (sel.mode === 'en' || sel.mode === 'endefko') ? w.def : sel.mode === 'koq' ? koMain(w) : w.en; }
   function askLang(){ return sel.mode === 'koq' ? 'ko-KR' : 'en-US'; }
 
   function question(auto){
