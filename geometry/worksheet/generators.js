@@ -718,7 +718,7 @@
     const depth = scale.depth;
     const maxH = scale.maxH;
     // VC ●●●만 "1층에 놓인 개수"를 한 단계 더 묻는다 (세 방향을 읽어 표를
-    // 채운 다음 그 표를 다시 읽어야 하므로 사고 단계가 하나 늘어난다).
+    // 채우 다음 그 표를 다시 읽어야 하므로 사고 단계가 하나 늘어난다).
     const askFloor = mode === "VC" && normalizeIntensity(intensity) >= 3;
     const nodeCap = 20000;
     const maxTries = 250;
@@ -1712,7 +1712,7 @@
     return "mix";
   }
 
-  // level이 "전체"이면 그 유형이 실제로 지원하는 단계(TYPES[].levels, 곷
+  // level이 "전체"이면 그 유형이 실제로 지원하는 단계(TYPES[].levels, 곧
   // available인 단계들) 중 하나를 rng로 골라 그 단계로 만든다 — rng는
   // generateWorksheet이 문제마다 순서대로 넘겨주는 공유 스트림이므로, 같은
   // 시드는 같은 단계 배치를 재현한다. 실제로 어느 단계가 뽑혔는지는
