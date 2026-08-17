@@ -1,4 +1,4 @@
-// GW app.js — UI 와이어링 + worksheet assembly for the printable 쌓기나무
+// GW app.js — UI wiring + worksheet assembly for the printable 쌓기나무
 // worksheet generator. All problem math lives in generators.js, all SVG
 // markup lives in render.js; this file only reads controls, calls those two
 // modules, and writes the resulting HTML into #sheetRoot.
