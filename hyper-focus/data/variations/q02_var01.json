@@ -5,8 +5,8 @@
   "subType": "stacking_fill_cube",
   "status": "draft",
   "source": {
-    "problemImage": "./assets/svg/variations/q02_var01.svg",
-    "solutionImage": "./assets/svg/variations/q02_var01_solution.svg"
+    "problemImage": "./assets/svg/variations/q02_var01.svg?v=20260818a",
+    "solutionImage": "./assets/svg/variations/q02_var01_solution.svg?v=20260818a"
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q02.json",
