@@ -1,0 +1,3 @@
+line1 \u{d050}비 braced-and-plain
+line2 real-glyph 큐비
+line3 \n literal-n-test
