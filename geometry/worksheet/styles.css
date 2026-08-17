@@ -110,7 +110,8 @@ html, body {
   color: #6a5a2c;
 }
 
-/* 강도 ●○○ / ●●○ / ●●● — 세 버튼이 같은 폭을 나눠 갖는다. */
+/* 난이도 하/중/상 — 세 버튼이 같은 폭을 나눠 갖는다. 글자(하/중/상)가 주,
+   점(●○○ 등)은 .intensity-mark로 옅게 덧붙는 보조 표시다. */
 .intensity-row { display: flex; gap: 6px; }
 .intensity-btn {
   flex: 1 1 0;
@@ -121,8 +122,14 @@ html, body {
   color: #4a5450;
   font: inherit;
   font-size: 14px;
-  letter-spacing: 1px;
+  letter-spacing: 0.3px;
   cursor: pointer;
+}
+.intensity-btn .intensity-mark {
+  margin-left: 3px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  opacity: 0.7;
 }
 .intensity-btn:hover { background: #f1f5f2; }
 .intensity-btn.active {
@@ -252,6 +259,18 @@ select, .code-input, input[type="text"] {
   color: #fff;
   font-size: 11px;
   font-weight: 900;
+}
+/* "전체(단계 혼합)"로 만들 때만 문제 번호 옆에 붙는 작은 단계 배지. */
+.ws-prob-level {
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #eaf1ec;
+  border: 1px solid #c3d6c9;
+  color: #22503a;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: .3px;
 }
 .ws-prompt { margin: 2px 0 8px; font-size: 12.5px; line-height: 1.55; }
 
