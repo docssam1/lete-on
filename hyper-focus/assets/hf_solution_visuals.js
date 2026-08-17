@@ -3,6 +3,7 @@
     'sim-card-1-0':'./assets/svg/variations/q01_var01_solution.svg',
     'sim-card-1-1':'./assets/svg/variations/q01_var02_solution.svg'
   };
+  let sorting=false;
 
   function ensureStyle(){
     if(document.getElementById('hf-solution-visual-style'))return;
@@ -37,10 +38,36 @@
     });
   }
 
-  function start(){
+  function cardOrder(card){
+    const match=card.id.match(/^sim-card-(\d+)-(\d+)$/);
+    return match?[Number(match[1]),Number(match[2])]:[Number.MAX_SAFE_INTEGER,Number.MAX_SAFE_INTEGER];
+  }
+
+  function sortSimilarCards(){
+    const container=document.getElementById('similar-list');
+    if(!container||sorting)return;
+    const cards=Array.from(container.children).filter(el=>el.classList&&el.classList.contains('sim-card'));
+    if(cards.length<2)return;
+    const sorted=[...cards].sort((a,b)=>{
+      const ak=cardOrder(a),bk=cardOrder(b);
+      return ak[0]-bk[0]||ak[1]-bk[1];
+    });
+    if(cards.every((card,index)=>card===sorted[index]))return;
+    sorting=true;
+    sorted.forEach(card=>container.appendChild(card));
+    sorting=false;
+  }
+
+  function refresh(){
+    if(sorting)return;
+    sortSimilarCards();
     attachQ01LayerSolutions();
+  }
+
+  function start(){
+    refresh();
     const target=document.getElementById('similar-list')||document.body;
-    const observer=new MutationObserver(()=>attachQ01LayerSolutions());
+    const observer=new MutationObserver(refresh);
     observer.observe(target,{childList:true,subtree:true});
   }
 
