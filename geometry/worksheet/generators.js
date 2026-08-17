@@ -389,22 +389,42 @@
     { code: "L8", name: "4과정", age: "중3 이상", available: false }
   ];
 
-  // 강도 표기 — UI 버튼과 시트 머리말 배지가 같은 문자열을 쓴다.
+  // 강도 표기 — 시트 머리말 배지·버튼 보조 점이 같은 문자열을 쓴다. 화면에
+  // 보이는 이름은 "난이도 하/중/상"이고(아래 INTENSITY_WORDS), 점(●○○ 등)은
+  // 버튼 안에서 글자를 보조하는 장식으로만 남는다 — 내부 파라미터 이름
+  // (intensity 1/2/3)과 코드 형식은 바뀌지 않는다.
   const INTENSITY_MARKS = ["●○○", "●●○", "●●●"];
+  const INTENSITY_WORDS = ["하", "중", "상"];
 
   const DEFAULT_LEVEL = "L4";
   const DEFAULT_INTENSITY = 2;
 
+  // 단계 "전체" — 문제마다 그 유형이 지원하는 단계 중 하나를 rng로 골라
+  // 섞어 내는 특수 모드. LEVELS(커리큘럼 9단계, code L0~L8)에는 넣지 않는다:
+  // LEVELS는 "학년 하나"를 가리키는 목록이고 전체는 그 아홉 개를 섞으라는
+  // 지시라 같은 목록에 아이템으로 넣으면 개수·번호 규약(코드 숫자 0~8)이
+  // 깨진다. 대신 이 상수 하나로 어디서나 식별한다 — 코드의 단계 숫자는 9.
+  const ALL_LEVEL = "ALL";
+
+  function isAllLevel(level) {
+    return String(level === undefined || level === null ? "" : level).trim().toUpperCase() === ALL_LEVEL;
+  }
+
   function levelNum(level) {
+    if (isAllLevel(level)) return 9;
     const m = /^L?(\d)$/i.exec(String(level === undefined || level === null ? "" : level).trim());
     return m ? parseInt(m[1], 10) : parseInt(String(DEFAULT_LEVEL).slice(1), 10);
   }
 
   function levelCode(level) {
-    return "L" + levelNum(level);
+    return isAllLevel(level) ? ALL_LEVEL : "L" + levelNum(level);
   }
 
+  // "전체"는 LEVELS 목록에 없으므로 항상 같은 모양의 자리표시 정보를
+  // 돌려준다 — levelBadge / UI가 이름·나이 필드를 실제 단계와 똑같이 읽을
+  // 수 있도록.
   function levelInfo(level) {
+    if (isAllLevel(level)) return { code: ALL_LEVEL, name: "전체", age: "단계 혼합", available: true };
     const code = levelCode(level);
     return LEVELS.filter((l) => l.code === code)[0] || null;
   }
@@ -430,6 +450,7 @@
   }
 
   function normalizeLevel(level) {
+    if (isAllLevel(level)) return ALL_LEVEL;
     const code = levelCode(level);
     return levelInfo(code) ? code : DEFAULT_LEVEL;
   }
@@ -444,10 +465,16 @@
     return INTENSITY_MARKS[normalizeIntensity(intensity) - 1];
   }
 
-  // Human badge for the sheet header / preview, e.g. "초급 ●●○".
+  function intensityWord(intensity) {
+    return INTENSITY_WORDS[normalizeIntensity(intensity) - 1];
+  }
+
+  // Human badge for the sheet header / preview / cover, e.g. "초급 · 난이도
+  // 중" — 혼합(전체) 단계에서는 "전체 혼합 · 난이도 중".
   function levelBadge(level, intensity) {
     const info = levelInfo(level);
-    return (info ? info.name : levelCode(level)) + " " + intensityMark(intensity);
+    const name = isAllLevel(level) ? "전체 혼합" : (info ? info.name : levelCode(level));
+    return name + " · 난이도 " + intensityWord(intensity);
   }
 
   // Backwards compatibility for the retired 하/중/상 axis: old worksheet codes
@@ -1655,12 +1682,18 @@
     return TYPES.filter((t) => t.code === want)[0] || null;
   }
 
+  // "전체"는 모든 유형을 지원한다고 답한다 — 각 유형은 자기 자신이 실제로
+  // 지원하는 단계 중 하나에서 만들어질 뿐이지, 전체 자체가 별도 단계로
+  // 존재하는 게 아니기 때문이다(아래 make() 참고).
   function typeSupportsLevel(code, level) {
     const info = typeInfo(code);
-    return !!info && info.levels.indexOf(levelCode(level)) !== -1;
+    if (!info) return false;
+    if (isAllLevel(level)) return true;
+    return info.levels.indexOf(levelCode(level)) !== -1;
   }
 
   function typesForLevel(level) {
+    if (isAllLevel(level)) return TYPES.map((t) => t.code);
     return TYPES.filter((t) => t.levels.indexOf(levelCode(level)) !== -1).map((t) => t.code);
   }
 
@@ -1679,25 +1712,36 @@
     return "mix";
   }
 
+  // level이 "전체"이면 그 유형이 실제로 지원하는 단계(TYPES[].levels, 곷
+  // available인 단계들) 중 하나를 rng로 골라 그 단계로 만든다 — rng는
+  // generateWorksheet이 문제마다 순서대로 넘겨주는 공유 스트림이므로, 같은
+  // 시드는 같은 단계 배치를 재현한다. 실제로 어느 단계가 뽑혔는지는
+  // problem.level에 남겨 문제 카드·정답지의 단계 배지가 읽는다.
   function make(typeCode, rng, level, intensity) {
-    const lv = normalizeLevel(level);
+    const canon = canonicalType(typeCode);
+    const info = typeInfo(canon);
+    if (!info) throw new Error("unknown worksheet type: " + typeCode);
     const it = normalizeIntensity(intensity);
-    switch (canonicalType(typeCode)) {
-      case "TC": return genTC(rng, lv, it);
-      case "VC": return genView3(rng, lv, it, "VC");
-      case "VM": return genView3(rng, lv, it, "VM");
-      case "VP": return genView3(rng, lv, it, "VP");
-      case "IC": return genIC(rng, lv, it);
-      case "IH": return genIH(rng, lv, it);
-      case "IN": return genIN(rng, lv, it);
-      case "FB": return genFB(rng, lv, it);
-      case "CU": return genCU(rng, lv, it);
-      case "PN": return genPN(rng, lv, it);
-      case "BW": return genBW(rng, lv, it);
-      case "HL": return genHL(rng, lv, it);
-      case "SQ": return genSQ(rng, lv, it);
+    const lv = isAllLevel(level) ? rng.pick(info.levels) : normalizeLevel(level);
+    let problem;
+    switch (canon) {
+      case "TC": problem = genTC(rng, lv, it); break;
+      case "VC": problem = genView3(rng, lv, it, "VC"); break;
+      case "VM": problem = genView3(rng, lv, it, "VM"); break;
+      case "VP": problem = genView3(rng, lv, it, "VP"); break;
+      case "IC": problem = genIC(rng, lv, it); break;
+      case "IH": problem = genIH(rng, lv, it); break;
+      case "IN": problem = genIN(rng, lv, it); break;
+      case "FB": problem = genFB(rng, lv, it); break;
+      case "CU": problem = genCU(rng, lv, it); break;
+      case "PN": problem = genPN(rng, lv, it); break;
+      case "BW": problem = genBW(rng, lv, it); break;
+      case "HL": problem = genHL(rng, lv, it); break;
+      case "SQ": problem = genSQ(rng, lv, it); break;
       default: throw new Error("unknown worksheet type: " + typeCode);
     }
+    problem.level = lv;
+    return problem;
   }
 
   const CODE_DIFF = { 0: "easy", 1: "mid", 2: "hard" };
@@ -1707,11 +1751,12 @@
   // WHY the level/intensity digits live inside SEED: the code has a fixed
   // 3-segment shape, but "same code -> identical worksheet" requires the
   // 단계·강도 to be recoverable too. The SEED token is therefore
-  //   "l" + <단계 숫자 0~8> + <강도 1~3> + <base36 시드>
-  // e.g. l42kf3a = L4 · 강도 2 · seed 0xkf3a(base36). The old format put a
-  // bare 0/1/2 difficulty digit in front instead; since base36 seeds are
-  // written after that digit and the new token always starts with the letter
-  // "l", the two formats can never be confused.
+  //   "l" + <단계 숫자 0~8, 전체는 9> + <강도 1~3> + <base36 시드>
+  // e.g. l42kf3a = L4 · 강도 2 · seed 0xkf3a(base36), l93kf3a = 전체(단계
+  // 혼합) · 강도 3 · same seed. The old format put a bare 0/1/2 difficulty
+  // digit in front instead; since base36 seeds are written after that digit
+  // and the new token always starts with the letter "l", the two formats can
+  // never be confused.
   function buildCode(types, count, seedInt, level, intensity) {
     const seedPart = "l" + levelNum(level) + normalizeIntensity(intensity) + (seedInt >>> 0).toString(36);
     return "#GW-" + types.join(".") + "-" + count + "x" + seedPart;
@@ -1733,7 +1778,9 @@
     let intensity;
     let seedInt;
     if (seedToken[0] === "l") {
-      level = normalizeLevel("L" + seedToken[1]);
+      // 단계 숫자 9는 "전체"(단계 혼합) — 그 자리는 LEVELS의 0~8 어느 것도
+      // 아니므로 normalizeLevel("L9")로 보내지 않고 곧장 ALL_LEVEL로 읽는다.
+      level = seedToken[1] === "9" ? ALL_LEVEL : normalizeLevel("L" + seedToken[1]);
       intensity = normalizeIntensity(seedToken[2]);
       seedInt = parseInt(seedToken.slice(3), 36) >>> 0;
     } else {
@@ -1819,8 +1866,11 @@
     // 단계 × 강도
     LEVELS,
     INTENSITY_MARKS,
+    INTENSITY_WORDS,
+    ALL_LEVEL,
     DEFAULT_LEVEL,
     DEFAULT_INTENSITY,
+    isAllLevel,
     levelNum,
     levelCode,
     levelInfo,
@@ -1829,6 +1879,7 @@
     normalizeLevel,
     normalizeIntensity,
     intensityMark,
+    intensityWord,
     levelBadge,
     fromDifficulty,
     countScale,
