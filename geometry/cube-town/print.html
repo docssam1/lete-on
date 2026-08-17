@@ -4,68 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GFIELD Cube Town - Print Study</title>
-    <link rel="stylesheet" href="./print.css?v=count-pool-20260817b" />
+    <link rel="stylesheet" href="./print.css?v=cover-theme-20260817a" />
   </head>
   <body>
     <header class="print-toolbar">
+      <!-- 두 개의 돌아가기. 게임에서 곧장 인쇄로 넘어온 아이·부모는 Cube Town
+           으로, 학습지 카탈로그에서 딥링크로 들어온 어른은 랩으로 돌아가야
+           한다 — 어느 한쪽만 두면 나머지 절반이 뒤로 가기를 눌러야 한다. -->
+      <a href="../lab/index.html">← 지오메트리 랩</a>
       <a href="./index.html">← Cube Town</a>
-      <div class="tool-field">
-        <label for="gameSelect">게임</label>
-        <select id="gameSelect">
-          <option value="copy-wood">똑같이 쌓기 · 원목 관찰</option>
-          <option value="copy-color">똑같이 쌓기 · 컬러 색칠</option>
-          <option value="count-heights">쌓기나무 개수 세기</option>
-          <option value="three-views">여러 방향에서 본 모양</option>
-        </select>
-      </div>
-      <div class="tool-field">
-        <label for="levelSelect">레벨</label>
-        <select id="levelSelect">
-          <option value="all">전체 혼합</option>
-          <option value="1">레벨 1</option><option value="2">레벨 2</option><option value="3">레벨 3</option><option value="4">레벨 4</option><option value="5">레벨 5</option>
-        </select>
-      </div>
-      <div class="tool-field">
-        <label for="countSelect">문제 수</label>
-        <select id="countSelect"><option value="5">5문제</option><option value="10" selected>10문제</option><option value="20">20문제</option></select>
-      </div>
-      <label class="answer-toggle"><input id="coverToggle" type="checkbox" checked /> 표지 포함</label>
-      <label class="answer-toggle"><input id="answerToggle" type="checkbox" checked /> 정답지 포함</label>
-      <button id="generate" type="button">새 문제</button>
-      <button id="printButton" type="button">인쇄</button>
     </header>
-
-    <main id="worksheet" class="worksheet">
-      <section id="coverSheet" class="sheet cover-sheet">
-        <div class="cover-brand"><span>GFIELD</span><strong>GEOMETRY WORLD</strong></div>
-        <div class="cover-copy">
-          <p>CUBE TOWN PRACTICE BOOK</p>
-          <h1 id="coverTitle">똑같이 쌓기<br />원목 관찰</h1>
-          <div class="cover-rule"></div>
-          <p id="coverSubtitle" class="cover-subtitle">쌓기나무 맨 위에 수를 쓰고,<br />쓴 수를 모두 더해 보세요.</p>
-        </div>
-        <div class="cover-mascots" aria-hidden="true">
-          <i class="mascot mascot-cube"></i>
-          <i class="mascot mascot-sphere"></i>
-          <i class="mascot mascot-pyramid"></i>
-        </div>
-        <div class="cover-meta">
-          <div><span>이름</span><i></i></div>
-          <div><span>시작한 날</span><i></i></div>
-          <div><span>나의 단계</span><strong id="coverLevel">전체 혼합</strong></div>
-        </div>
-        <div class="cover-footer"><span>DOCSSAM'S MATH LAB</span><b id="coverCount">10 QUESTIONS</b></div>
-      </section>
-
-      <div id="questionSheets"></div>
-
-      <section id="answerSheet" class="sheet answer-sheet">
-        <header class="sheet-header">
-          <div><span>GFIELD CUBE TOWN</span><h1>정답지</h1></div>
-        </header>
-        <div id="answers" class="answer-grid"></div>
-      </section>
-    </main>
-    <script type="module" src="./print.js?v=count-pool-20260817b"></script>
   </body>
 </html>
