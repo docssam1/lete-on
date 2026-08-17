@@ -1,7 +1,9 @@
 (()=>{
-  const Q01_SOLUTION_IMAGES={
-    'sim-card-1-0':'./assets/svg/variations/q01_var01_solution.svg?v=20260818b',
-    'sim-card-1-1':'./assets/svg/variations/q01_var02_solution.svg?v=20260818b'
+  const SOLUTION_IMAGES={
+    'sim-card-1-0':{src:'./assets/svg/variations/q01_var01_solution.svg?v=20260818b',caption:'위에서 본 모양의 각 칸에 쌓인 수를 적어 확인합니다.'},
+    'sim-card-1-1':{src:'./assets/svg/variations/q01_var02_solution.svg?v=20260818b',caption:'위에서 본 모양의 각 칸에 쌓인 수를 적어 확인합니다.'},
+    'sim-card-2-0':{src:'./assets/svg/variations/q02_var01_solution.svg?v=20260818a',caption:'위에서 본 3×3 칸에 현재 쌓인 수를 적어 먼저 현재 개수를 셉니다.'},
+    'sim-card-2-1':{src:'./assets/svg/variations/q02_var02_solution.svg?v=20260818a',caption:'위에서 본 3×3 칸에 현재 쌓인 수를 적어 먼저 현재 개수를 셉니다.'}
   };
   let sorting=false;
 
@@ -17,23 +19,25 @@
     document.head.appendChild(style);
   }
 
-  function attachQ01Solutions(root=document){
+  function attachSolutions(root=document){
     ensureStyle();
-    Object.entries(Q01_SOLUTION_IMAGES).forEach(([cardId,src])=>{
+    Object.entries(SOLUTION_IMAGES).forEach(([cardId,info])=>{
       const card=root.getElementById?root.getElementById(cardId):document.getElementById(cardId);
       if(!card)return;
       const answerBox=card.querySelector('.sim-answer-box');
       if(!answerBox)return;
       const old=answerBox.querySelector('.sim-solution-visual');
+      if(old&&old.dataset.solutionSrc===info.src)return;
       if(old)old.remove();
       const wrap=document.createElement('div');
       wrap.className='sim-solution-visual';
+      wrap.dataset.solutionSrc=info.src;
       const img=document.createElement('img');
-      img.src=src;
+      img.src=info.src;
       img.alt='위에서 본 평면 모양에 각 자리의 쌓기나무 수를 적은 답안';
       const caption=document.createElement('div');
       caption.className='sim-solution-caption';
-      caption.textContent='위에서 본 모양의 각 칸에 쌓인 수를 적어 확인합니다.';
+      caption.textContent=info.caption;
       wrap.append(img,caption);
       const story=answerBox.querySelector('.sim-answer-story');
       answerBox.insertBefore(wrap,story||answerBox.firstChild);
@@ -63,7 +67,7 @@
   function refresh(){
     if(sorting)return;
     sortSimilarCards();
-    attachQ01Solutions();
+    attachSolutions();
   }
 
   function start(){
