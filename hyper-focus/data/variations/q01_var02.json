@@ -5,7 +5,8 @@
   "subType": "stacking_front_back_count",
   "status": "draft",
   "source": {
-    "problemImage": "./assets/svg/variations/q01_var02.svg"
+    "problemImage": "./assets/svg/variations/q01_var02.svg",
+    "solutionImage": "./assets/svg/variations/q01_var02_solution.svg"
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q01.json",
@@ -14,8 +15,9 @@
   "machineReadable": {
     "payloadType": "stacking_front_back_count",
     "heightMap": {
+      "rowOrder": "front_to_back",
       "rows": [
-        { "y": 0, "heights": [2, 1] },
+        { "y": 0, "heights": [2, 1, 0] },
         { "y": 1, "heights": [3, 1, 1] },
         { "y": 2, "heights": [1, 0, 1] }
       ]
@@ -38,10 +40,40 @@
         "horizontalRelationToFront": "mirrored"
       }
     },
+    "renderProfile": {
+      "projection": "isometric",
+      "profile": "cube_town_compatible",
+      "halfRatio": 0.5,
+      "depthRatio": 0.48,
+      "heightRatio": 0.72,
+      "frontAndRearUseSameSolid": true
+    },
     "countingModel": {
       "frontVisibleBlockCount": 8,
       "rearOnlyHiddenBlockCount": 2,
       "expectedTotalBlockCount": 10
+    },
+    "solutionVisual": {
+      "mode": "layer_breakdown",
+      "rowOrder": "front_to_back",
+      "layers": [
+        {
+          "layer": 1,
+          "occupiedCells": [[0,0],[1,0],[0,1],[1,1],[2,1],[0,2],[2,2]],
+          "count": 7
+        },
+        {
+          "layer": 2,
+          "occupiedCells": [[0,0],[0,1]],
+          "count": 2
+        },
+        {
+          "layer": 3,
+          "occupiedCells": [[0,1]],
+          "count": 1
+        }
+      ],
+      "equation": "7 + 2 + 1 = 10"
     }
   },
   "answerValidation": {
@@ -51,5 +83,5 @@
   "problem": {
     "prompt": "다음은 같은 쌓기나무 모양을 앞과 뒤에서 본 모습입니다. 두 그림을 함께 보고 쌓기나무가 모두 몇 개인지 구하세요."
   },
-  "solutionHint": "앞에서 보이는 8개를 먼저 세어요. 뒤에서만 새로 보이는 2개를 더하면 8 + 2 = 10이므로 모두 10개입니다. 뒤에서 볼 때에는 왼쪽과 오른쪽이 바뀌는 것도 확인해요."
+  "solutionHint": "앞과 뒤 그림을 비교해 각 자리의 높이를 확인한 뒤 층별로 펼쳐 셉니다. 1층은 7개, 2층은 2개, 3층은 1개이므로 7 + 2 + 1 = 10개입니다."
 }
