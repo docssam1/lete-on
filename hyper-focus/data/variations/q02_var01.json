@@ -5,7 +5,8 @@
   "subType": "stacking_fill_cube",
   "status": "draft",
   "source": {
-    "problemImage": "./assets/svg/variations/q02_var01.svg"
+    "problemImage": "./assets/svg/variations/q02_var01.svg",
+    "solutionImage": "./assets/svg/variations/q02_var01_solution.svg"
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q02.json",
@@ -20,15 +21,32 @@
       "totalCells": 27
     },
     "heightMap": {
+      "rowOrder": "front_to_back",
       "rows": [
         { "y": 0, "heights": [3, 2, 1] },
         { "y": 1, "heights": [2, 0, 0] },
         { "y": 2, "heights": [1, 0, 0] }
       ]
     },
+    "renderProfile": {
+      "projection": "isometric",
+      "profile": "cube_town_compatible",
+      "halfRatio": 0.5,
+      "depthRatio": 0.48,
+      "heightRatio": 0.72,
+      "containerStyle": "wireframe_transparent"
+    },
     "countingModel": {
       "filledCount": 9,
-      "missingCount": 18
+      "missingCount": 18,
+      "formula": "27 - 9"
+    },
+    "solutionVisual": {
+      "mode": "top_view_height_numbers",
+      "displayRowOrder": "rear_to_front",
+      "grid": "3x3",
+      "numbers": [[1,0,0],[2,0,0],[3,2,1]],
+      "filledCount": 9
     }
   },
   "answerValidation": {
@@ -38,5 +56,5 @@
   "problem": {
     "prompt": "가로 3칸, 세로 3칸, 높이 3칸인 상자 안에 그림처럼 쌓기나무를 넣었습니다. 상자를 가득 채우려면 쌓기나무를 몇 개 더 넣어야 할까요?"
   },
-  "solutionHint": "상자가 가득 차면 한 층에 9개씩 3층이므로 9 + 9 + 9 = 27개입니다. 지금 있는 쌓기나무는 3 + 2 + 1 + 2 + 1 = 9개입니다. 따라서 27 - 9 = 18이므로 18개를 더 넣어야 합니다."
+  "solutionHint": "위에서 본 3×3 모양에 각 자리의 높이만 적으면 현재 쌓기나무는 1 + 2 + 3 + 2 + 1 = 9개입니다. 상자가 가득 차면 27개이므로 27 - 9 = 18개를 더 넣어야 합니다."
 }
