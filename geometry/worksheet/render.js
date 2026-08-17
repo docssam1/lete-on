@@ -233,9 +233,18 @@
     return wrapSvg(svg, isoBBox(width, depth, boxH, u));
   }
 
-  // HL: draw a solid full box, then paint the tunnel entrances white on the
+  // HL: draw a solid full box, then paint the tunnel entrances BLACK on the
   // three visible faces (top / front z=depth / right x=width). This is a
   // simplified "marked opening" rendering, not true see-through geometry.
+  //
+  // WHY black rather than the old pale blue/white: on a grey cube face a
+  // light-filled square reads as "a cube with a different colour", not as a
+  // hole. A hole you can see into is the darkest thing in the picture, and it
+  // also survives black-and-white printing, which is how these sheets are
+  // actually handed out.
+  const HOLE_FILL = "#111";
+  const HOLE_EDGE = "#000";
+
   function renderIsoHoles(width, depth, boxH, tunnels, options) {
     options = options || {};
     const u = options.u || 20;
@@ -245,21 +254,66 @@
         for (let y = 0; y < boxH; y += 1) svg += cubeSvg(x, y, z, u, PALETTES.grey);
       }
     }
-    tunnels.forEach((t) => {
+    (tunnels || []).forEach((t) => {
       if (t.axis === "y") {
         // vertical shaft at (x=a, z=b): opening visible from the top face.
-        svg += polygon(quadY(t.a, boxH, t.b, u), "#dce9f2", "#173a59");
+        svg += polygon(quadY(t.a, boxH, t.b, u), HOLE_FILL, HOLE_EDGE);
       } else if (t.axis === "x") {
         // horizontal shaft at (y=a, z=b) along x: reaches the right face x=width.
-        svg += polygon(quadX(width, t.a, t.b, u), "#c5d8e6", "#173a59");
+        svg += polygon(quadX(width, t.a, t.b, u), HOLE_FILL, HOLE_EDGE);
       } else {
         // shaft at (x=a, y=b) along z: its opening shows on the viewer-facing
         // z face, which in this projection is the z=depth plane (see the
         // painter's-algorithm comment — +z moves toward the viewer).
-        svg += polygon(quadZ(t.a, t.b, depth, u), "#e8f1f7", "#173a59");
+        svg += polygon(quadZ(t.a, t.b, depth, u), HOLE_FILL, HOLE_EDGE);
       }
     });
     return wrapSvg(svg, isoBBox(width, depth, boxH, u));
+  }
+
+  // HL 층별 모눈 가이드 — 1층부터 각 층을 위에서 본 W x D 모눈으로 그리고,
+  // 구멍으로 빠진 칸을 검게 칠한 다음 층마다 "W x D − 빠진 수 = 남은 수"를
+  // 적는다. 마지막에 합계를 둔다.
+  //
+  // 층별 표는 교차 구멍을 셀 때 아이가 실제로 쓰는 방법이고, 좌표 Set으로
+  // 센 answer.remaining과 반드시 같은 값이 나온다 — 두 계산이 같은
+  // GW_GEN.holeLayers 데이터를 쓰기 때문이다. 게임 쪽에서도 재사용할 수
+  // 있도록 problem 하나만 받는 형태로 내보낸다.
+  //
+  // options.blank = true 면 칸을 칠하지 않고 계산도 빈칸으로 둔다 (학습지의
+  // 풀이 영역용). 기본값은 다 채운 정답지용.
+  function renderHoleLayers(problem, options) {
+    options = options || {};
+    const f = (problem && problem.figures) || {};
+    const width = f.width;
+    const depth = f.depth;
+    const boxH = f.boxH;
+    if (!width || !depth || !boxH) return "";
+    const blank = options.blank === true;
+    const cell = options.cell || 11;
+    const layers = GEN.holeLayers(width, depth, boxH, f.tunnels || []);
+    let total = 0;
+    const blocks = layers.map((layer) => {
+      total += layer.remaining;
+      const w = width * cell;
+      const h = depth * cell;
+      let grid = '<svg viewBox="0 0 ' + w + " " + h + '" width="' + w + '" height="' + h +
+        '" class="ws-grid ws-hole-grid" preserveAspectRatio="xMidYMid meet">';
+      for (let z = 0; z < depth; z += 1) {
+        for (let x = 0; x < width; x += 1) {
+          const filled = !blank && layer.grid[z][x] === 1;
+          grid += '<rect x="' + x * cell + '" y="' + z * cell + '" width="' + cell + '" height="' + cell +
+            '" fill="' + (filled ? HOLE_FILL : "#fff") + '" stroke="#333" stroke-width="0.8"/>';
+        }
+      }
+      grid += "</svg>";
+      const sum = blank
+        ? layer.floor + "층: " + width + "×" + depth + "−___ = ___ 개"
+        : layer.floor + "층: " + width + "×" + depth + "−" + layer.removed + " = " + layer.remaining + "개";
+      return '<span class="ws-hole-layer">' + grid + "<small>" + sum + "</small></span>";
+    }).join("");
+    const totalText = blank ? "합계: ___ 개" : "합계: " + total + "개";
+    return '<div class="ws-hole-layers">' + blocks + '<span class="ws-hole-total">' + totalText + "</span></div>";
   }
 
   // --- 2D view grids -----------------------------------------------------
@@ -400,6 +454,7 @@
     renderIsoWalled,
     renderIsoBox,
     renderIsoHoles,
+    renderHoleLayers,
     renderNumberGrid,
     renderViewGrid,
     renderEmptyDottedGrid,
