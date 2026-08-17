@@ -1,7 +1,7 @@
 (()=>{
   const Q01_SOLUTION_IMAGES={
-    'sim-card-1-0':'./assets/svg/variations/q01_var01_solution.svg',
-    'sim-card-1-1':'./assets/svg/variations/q01_var02_solution.svg'
+    'sim-card-1-0':'./assets/svg/variations/q01_var01_solution.svg?v=20260818b',
+    'sim-card-1-1':'./assets/svg/variations/q01_var02_solution.svg?v=20260818b'
   };
   let sorting=false;
 
@@ -23,7 +23,9 @@
       const card=root.getElementById?root.getElementById(cardId):document.getElementById(cardId);
       if(!card)return;
       const answerBox=card.querySelector('.sim-answer-box');
-      if(!answerBox||answerBox.querySelector('.sim-solution-visual'))return;
+      if(!answerBox)return;
+      const old=answerBox.querySelector('.sim-solution-visual');
+      if(old)old.remove();
       const wrap=document.createElement('div');
       wrap.className='sim-solution-visual';
       const img=document.createElement('img');
