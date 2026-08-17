@@ -17,7 +17,7 @@
     <rect x="247" y="261" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="268" cy="282" r="5" fill="#8a6335"/>
     <rect x="289" y="261" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
   </g>
-  <text x="268" y="322" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="12" font-weight="700" fill="#777">↑ 뒤쪽 · 아래가 앞쪽</text>
+  <text x="268" y="322" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="12" font-weight="700" fill="#777">위쪽이 앞쪽 · 아래쪽이 뒤쪽</text>
   <rect x="392" y="116" width="200" height="220" rx="18" fill="#fff" stroke="#ded7cc"/>
   <text x="492" y="146" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="18" font-weight="900" fill="#674d2d">2층 · 2개</text>
   <g stroke-width="1.6">
@@ -31,7 +31,7 @@
     <rect x="471" y="261" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
     <rect x="513" y="261" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
   </g>
-  <text x="492" y="322" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="12" font-weight="700" fill="#777">↑ 뒤쪽 · 아래가 앞쪽</text>
+  <text x="492" y="322" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="12" font-weight="700" fill="#777">위쪽이 앞쪽 · 아래쪽이 뒤쪽</text>
   <rect x="190" y="358" width="380" height="48" rx="24" fill="#efe3cf"/>
   <text x="380" y="389" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="22" font-weight="900" fill="#5b4428">7 + 2 = 9개</text>
 </svg>
