@@ -1619,20 +1619,26 @@
   // 각 유형은 스스로 어느 단계에서 제공되는지 선언한다. UI의 유형 칩과
   // generateWorksheet의 필터가 같은 목록을 읽으므로, 단계를 바꾸면 화면과
   // 실제 생성 결과가 어긋날 수 없다.
+  //
+  // theme은 "이 유형이 어느 영역의 공부인가"를 나타내는 분류다. 표지의 포인트
+  // 색과 캐릭터가 이 값 하나로 갈리므로, 유형을 새로 추가한 사람이 표지 쪽을
+  // 잊어도 표지가 색을 잃을 뿐 유형과 어긋나지는 않는다. 어떤 색·어떤 캐릭터
+  // 인지는 각 인쇄 엔진의 CSS가 정한다 — 여기에는 분류만 둔다.
+  //   stack 쌓기나무 · view 관찰 · paint 색칠·무늬 · rule 규칙
   const TYPES = [
-    { code: "TC", label: "바탕그림과 개수", defaultOn: true, levels: ["L2", "L3", "L4", "L5"] },
-    { code: "VC", label: "바탕그림을 보고 개수 구하기", defaultOn: false, levels: ["L3", "L4", "L5"] },
-    { code: "VM", label: "세 방향 → 최대·최소", defaultOn: false, levels: ["L3", "L4", "L5"] },
-    { code: "VP", label: "바탕그림을 보고 나머지 바탕그림 그리기", defaultOn: false, levels: ["L3", "L4", "L5"] },
-    { code: "IC", label: "쌓기나무의 개수 세기", defaultOn: false, levels: ["L2", "L3", "L4", "L5"] },
-    { code: "IH", label: "보이지 않는 개수 (벽 있음)", defaultOn: false, levels: ["L3", "L4", "L5"] },
-    { code: "IN", label: "보이지 않는 개수 (벽 없음)", defaultOn: false, levels: ["L3", "L4", "L5"] },
-    { code: "FB", label: "상자 채우기", defaultOn: false, levels: ["L2", "L3", "L4"] },
-    { code: "CU", label: "정육면체 완성", defaultOn: false, levels: ["L3", "L4", "L5"] },
-    { code: "PN", label: "색칠된 면·쌓기나무", defaultOn: false, levels: ["L4", "L5"] },
-    { code: "BW", label: "흑백 교차", defaultOn: false, levels: ["L3", "L4", "L5"] },
-    { code: "HL", label: "구멍 뚫기", defaultOn: false, levels: ["L3", "L4", "L5"] },
-    { code: "SQ", label: "쌓기나무 규칙 찾기", defaultOn: false, levels: ["L3", "L4", "L5"] }
+    { code: "TC", label: "바탕그림과 개수", defaultOn: true, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "VC", label: "바탕그림을 보고 개수 구하기", defaultOn: false, theme: "view", levels: ["L3", "L4", "L5"] },
+    { code: "VM", label: "세 방향 → 최대·최소", defaultOn: false, theme: "stack", levels: ["L3", "L4", "L5"] },
+    { code: "VP", label: "바탕그림을 보고 나머지 바탕그림 그리기", defaultOn: false, theme: "view", levels: ["L3", "L4", "L5"] },
+    { code: "IC", label: "쌓기나무의 개수 세기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4", "L5"] },
+    { code: "IH", label: "보이지 않는 개수 (벽 있음)", defaultOn: false, theme: "stack", levels: ["L3", "L4", "L5"] },
+    { code: "IN", label: "보이지 않는 개수 (벽 없음)", defaultOn: false, theme: "stack", levels: ["L3", "L4", "L5"] },
+    { code: "FB", label: "상자 채우기", defaultOn: false, theme: "stack", levels: ["L2", "L3", "L4"] },
+    { code: "CU", label: "정육면체 완성", defaultOn: false, theme: "stack", levels: ["L3", "L4", "L5"] },
+    { code: "PN", label: "색칠된 면·쌓기나무", defaultOn: false, theme: "paint", levels: ["L4", "L5"] },
+    { code: "BW", label: "흑백 교차", defaultOn: false, theme: "paint", levels: ["L3", "L4", "L5"] },
+    { code: "HL", label: "구멍 뚫기", defaultOn: false, theme: "paint", levels: ["L3", "L4", "L5"] },
+    { code: "SQ", label: "쌓기나무 규칙 찾기", defaultOn: false, theme: "rule", levels: ["L3", "L4", "L5"] }
   ];
 
   // 통합으로 사라진 옛 코드 — 옛 학습지 코드를 그대로 붙여 넣어도 열리도록
@@ -1656,6 +1662,21 @@
 
   function typesForLevel(level) {
     return TYPES.filter((t) => t.levels.indexOf(levelCode(level)) !== -1).map((t) => t.code);
+  }
+
+  // 표지 테마 — 고른 유형들이 모두 한 영역이면 그 영역의 테마를, 영역이 섞이면
+  // "mix"를 돌려준다. "유형이 하나면 그 유형의 테마"보다 한 걸음 넓은 규칙인데,
+  // TC+IC처럼 둘 다 쌓기나무인 조합에서까지 혼합 표지가 나오면 아이 입장에서는
+  // 같은 공부인데 표지만 달라 보이기 때문이다.
+  function themeForTypes(codes) {
+    const seen = [];
+    (codes || []).forEach((code) => {
+      const info = typeInfo(code);
+      const theme = info && info.theme ? info.theme : null;
+      if (theme && seen.indexOf(theme) === -1) seen.push(theme);
+    });
+    if (seen.length === 1) return seen[0];
+    return "mix";
   }
 
   function make(typeCode, rng, level, intensity) {
@@ -1835,6 +1856,7 @@
     typeInfo,
     typeSupportsLevel,
     typesForLevel,
+    themeForTypes,
     make,
     buildCode,
     parseCode,
