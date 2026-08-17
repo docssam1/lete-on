@@ -59,8 +59,8 @@
       },
       "container": {
         "width": 5,
-        "height": 4,
-        "depth": 5,
+        "height": 5,
+        "depth": 4,
         "totalCells": 100
       },
       "sourceObservedMarks": {
@@ -79,27 +79,27 @@
         "layers": [
           {
             "z": 1,
-            "remainingBlockCount": 1
+            "removedBlockCount": 1
           },
           {
             "z": 2,
-            "remainingBlockCount": 9
+            "removedBlockCount": 9
           },
           {
             "z": 3,
-            "remainingBlockCount": 1
+            "removedBlockCount": 1
           },
           {
             "z": 4,
-            "remainingBlockCount": 9
+            "removedBlockCount": 9
           },
           {
             "z": 5,
-            "remainingBlockCount": 1
+            "removedBlockCount": 1
           }
         ],
-        "totalRemainingBlockCount": 21,
-        "description": "각 층별로 남아 있는 블록 개수를 세어 관통 구멍 구조를 해석한다."
+        "totalRemovedBlockCount": 21,
+        "description": "각 층에서 관통 구멍 때문에 빠지는 블록 수를 세어 전체 제거 개수를 구한다."
       },
       "holeRule": {
         "description": "검은색 부분은 반대편까지 완전히 뚫리는 구멍 기둥이다.",
@@ -107,7 +107,10 @@
           "frontFace": "depth_axis",
           "topFace": "height_axis"
         },
-        "overlapMustBeDeduplicated": true
+        "frontFaceThroughLength": 4,
+        "topFaceThroughLength": 5,
+        "overlapMustBeDeduplicated": true,
+        "overlapCount": 0
       },
       "countingModel": {
         "totalBlockCount": 100,
@@ -117,10 +120,10 @@
       },
       "originalFigureStructure": {
         "confirmedFromSource": [
-          "front face 5 by 4",
-          "depth 5",
+          "front face 5 by 5",
+          "depth 4",
           "total block count 100",
-          "layer counts 1, 9, 1, 9, 1",
+          "layer removed counts 1, 9, 1, 9, 1",
           "removed block count 21",
           "remaining block count 79",
           "four black marks on front face",
@@ -154,8 +157,8 @@
         "hardMode": {
           "fixedContainer": {
             "width": 5,
-            "height": 4,
-            "depth": 5
+            "height": 5,
+            "depth": 4
           },
           "changeable": [
             "frontFaceBlackCells",
@@ -199,19 +202,21 @@
     "answerType": "integer_with_unit",
     "unit": "개",
     "expectedAnswer": 79,
-      "mustMatchContentAnswer": true,
-      "sourceAnswerPath": "originalProblem.answer",
-      "derivation": {
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
       "method": "total_minus_layer_counted_removed",
       "steps": [
         {
           "step": 1,
-          "description": "전체 직육면체의 쌓기나무는 100개입니다.",
+          "description": "전체 직육면체의 쌓기나무는 5 × 5 × 4 = 100개입니다.",
+          "expression": "5 x 5 x 4",
           "value": 100
         },
         {
           "step": 2,
-          "description": "각 층에 남아 있는 블록 수를 세면 1층 1개, 2층 9개, 3층 1개, 4층 9개, 5층 1개로 남은 블록은 모두 21개입니다.",
+          "description": "각 층에서 빠지는 블록 수는 1개, 9개, 1개, 9개, 1개이므로 모두 21개가 빠집니다.",
+          "expression": "1 + 9 + 1 + 9 + 1",
           "value": 21
         },
         {
@@ -228,7 +233,9 @@
       "problem_assets.json에 q04 경로 존재 확인",
       "hf_data.json typeId 4의 originalProblem.answer가 79개인지 확인",
       "hf_core.json 및 problem_map.json의 subType이 stacking_hole_removed인지 확인",
-      "container totalCells가 100인지 확인",
+      "container가 width 5, height 5, depth 4이고 totalCells가 100인지 확인",
+      "frontFaceThroughLength가 4인지 확인",
+      "topFaceThroughLength가 5인지 확인",
       "layerCountModel이 1, 9, 1, 9, 1인지 확인",
       "frontFaceBlackCells가 4개인지 확인",
       "topFaceBlackCells가 1개인지 확인",
