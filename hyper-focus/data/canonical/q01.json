@@ -31,7 +31,7 @@
     "docssamRules": [
       "stacking_write_heights",
       "hidden_blocks",
-      "stacking_layer_breakdown"
+      "stacking_top_view_height_numbers"
     ]
   },
   "contentBinding": {
@@ -104,11 +104,12 @@
         "expectedTotalBlockCount": 11,
         "formula": "frontVisibleBlockCount + rearOnlyHiddenBlockCount"
       },
-      "layerCountingModel": {
+      "topViewHeightNumberModel": {
         "deriveFrom": "heightMap",
-        "layerCounts": [8, 2, 1],
-        "expectedTotalBlockCount": 11,
-        "formula": "8 + 2 + 1"
+        "displayRowOrder": "rear_to_front",
+        "showOnlyOccupiedCells": true,
+        "writeStackHeightInEachCell": true,
+        "expectedTotalBlockCount": 11
       },
       "renderSpec": {
         "renderer": "isometric_stacking_blocks",
@@ -125,14 +126,15 @@
         "rearOnlyHighlightStackIds": ["rear_left","rear_center","rear_right"]
       },
       "solutionRenderSpec": {
-        "mode": "layer_breakdown",
+        "mode": "top_view_height_numbers",
         "deriveFrom": "heightMap",
-        "rowOrder": "front_to_back",
-        "showEveryOccupiedLayer": true,
-        "showLayerCount": true,
-        "showFinalEquation": true,
+        "displayRowOrder": "rear_to_front",
+        "showOnlyOccupiedCells": true,
+        "writeStackHeightInEachCell": true,
+        "showLayerBreakdown": false,
+        "showEquationInVisual": false,
         "mustMatchExpectedTotal": true,
-        "description": "풀이에서는 앞·뒤 그림으로 각 자리의 높이를 확정한 뒤 1층, 2층, 3층처럼 층별 평면 그림을 보여 주고 각 층의 개수를 더한다."
+        "description": "답안은 위에서 본 평면 모양을 그리고, 각 칸에 그 자리에 쌓인 쌓기나무의 수만 적는다. 층별 분해 그림은 사용하지 않는다."
       },
       "generationConstraints": {
         "canChange": [
@@ -147,15 +149,15 @@
           "뒤에서 볼 때 좌우가 바뀌는 관계",
           "쌓기나무가 아래에서부터 빈칸 없이 쌓이는 규칙",
           "문제 그림은 같은 입체를 앞·뒤 두 시점의 등각 투영으로 보여 주는 구조",
-          "풀이에서는 높이맵을 1층부터 층별 그림으로 나누어 개수를 확인하는 구조"
+          "답안은 위에서 본 평면 모양의 각 점유 칸에 그 자리의 쌓기나무 수를 적는 구조"
         ],
         "forbiddenChanges": [
           "앞과 뒤 그림을 보고도 전체 개수가 하나로 정해지지 않는 구조",
           "앞에서 이미 확인된 블록을 뒤에서 다시 더하게 만드는 구조",
           "뒤모양에서 좌우 반전을 무시하는 구조",
           "공중에 떠 있는 쌓기나무 구조",
-          "납작한 실루엣처럼 보여 층 구조를 구분할 수 없는 렌더",
-          "풀이에서 층별 위치 그림 없이 합계만 제시하는 방식"
+          "납작한 실루엣처럼 보여 층 구조를 구분할 수 없는 문제 렌더",
+          "답안에서 1층 2층 3층으로 따로 분해해 여러 그림을 제시하는 방식"
         ]
       }
     }
@@ -167,11 +169,11 @@
     "mustMatchContentAnswer": true,
     "sourceAnswerPath": "originalProblem.answer",
     "derivation": {
-      "method": "front_rear_then_layer_breakdown",
+      "method": "front_rear_then_top_view_height_numbers",
       "steps": [
         { "step": 1, "description": "앞과 뒤 그림을 비교하여 각 자리의 높이를 확인합니다." },
-        { "step": 2, "description": "1층은 8개, 2층은 2개, 3층은 1개입니다.", "expression": "8 + 2 + 1", "value": 11 },
-        { "step": 3, "description": "8 + 2 + 1 = 11 이므로 전체는 11개입니다.", "value": 11 }
+        { "step": 2, "description": "위에서 본 모양의 각 칸에 그 자리에 쌓인 쌓기나무 수를 적습니다." },
+        { "step": 3, "description": "각 칸의 수를 모두 합하면 11개입니다.", "value": 11 }
       ]
     }
   },
@@ -182,9 +184,9 @@
       "subType이 stacking_front_back_count인지 확인",
       "heightMap 합계가 11인지 확인",
       "rearView가 frontView의 좌우 반전 규칙과 일치하는지 확인",
-      "layerCountingModel이 8,2,1이고 합이 11인지 확인",
       "문제 렌더가 cube_town_compatible 비율을 사용하는지 확인",
-      "풀이 렌더에 모든 점유 층의 층별 그림과 개수가 포함되는지 확인"
+      "답안 렌더가 위에서 본 평면 모양의 각 점유 칸에 heightMap의 높이 수만 표시하는지 확인",
+      "답안 렌더가 층별 분해 그림을 사용하지 않는지 확인"
     ],
     "completionStatus": "verified"
   }
