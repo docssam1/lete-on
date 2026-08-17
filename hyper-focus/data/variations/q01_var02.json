@@ -54,26 +54,13 @@
       "expectedTotalBlockCount": 10
     },
     "solutionVisual": {
-      "mode": "layer_breakdown",
-      "rowOrder": "front_to_back",
-      "layers": [
-        {
-          "layer": 1,
-          "occupiedCells": [[0,0],[1,0],[0,1],[1,1],[2,1],[0,2],[2,2]],
-          "count": 7
-        },
-        {
-          "layer": 2,
-          "occupiedCells": [[0,0],[0,1]],
-          "count": 2
-        },
-        {
-          "layer": 3,
-          "occupiedCells": [[0,1]],
-          "count": 1
-        }
-      ],
-      "equation": "7 + 2 + 1 = 10"
+      "mode": "top_view_height_numbers",
+      "source": "heightMap",
+      "displayRowOrder": "rear_to_front",
+      "showOnlyOccupiedCells": true,
+      "writeStackHeightInEachCell": true,
+      "showLayerBreakdown": false,
+      "showEquationInVisual": false
     }
   },
   "answerValidation": {
@@ -83,5 +70,5 @@
   "problem": {
     "prompt": "다음은 같은 쌓기나무 모양을 앞과 뒤에서 본 모습입니다. 두 그림을 함께 보고 쌓기나무가 모두 몇 개인지 구하세요."
   },
-  "solutionHint": "앞과 뒤 그림을 비교해 각 자리의 높이를 확인한 뒤 층별로 펼쳐 셉니다. 1층은 7개, 2층은 2개, 3층은 1개이므로 7 + 2 + 1 = 10개입니다."
+  "solutionHint": "위에서 본 평면 모양의 각 칸에 그 자리에 쌓인 쌓기나무 수를 적어 확인합니다. 적힌 수를 모두 더하면 10개입니다."
 }
