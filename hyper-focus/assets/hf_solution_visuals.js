@@ -1,0 +1,49 @@
+(()=>{
+  const Q01_SOLUTION_IMAGES={
+    'sim-card-1-0':'./assets/svg/variations/q01_var01_solution.svg',
+    'sim-card-1-1':'./assets/svg/variations/q01_var02_solution.svg'
+  };
+
+  function ensureStyle(){
+    if(document.getElementById('hf-solution-visual-style'))return;
+    const style=document.createElement('style');
+    style.id='hf-solution-visual-style';
+    style.textContent=`
+      .sim-solution-visual{margin:12px 0 10px;border:1px solid #e5dfd4;border-radius:12px;overflow:hidden;background:#fbfaf7}
+      .sim-solution-visual img{display:block;width:100%;height:auto}
+      .sim-solution-caption{padding:8px 10px;font-size:.78rem;font-weight:800;color:#5b4428;background:#f5eee2;text-align:center}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function attachQ01LayerSolutions(root=document){
+    ensureStyle();
+    Object.entries(Q01_SOLUTION_IMAGES).forEach(([cardId,src])=>{
+      const card=root.getElementById?root.getElementById(cardId):document.getElementById(cardId);
+      if(!card)return;
+      const answerBox=card.querySelector('.sim-answer-box');
+      if(!answerBox||answerBox.querySelector('.sim-solution-visual'))return;
+      const wrap=document.createElement('div');
+      wrap.className='sim-solution-visual';
+      const img=document.createElement('img');
+      img.src=src;
+      img.alt='층별로 나누어 세는 풀이 그림';
+      const caption=document.createElement('div');
+      caption.className='sim-solution-caption';
+      caption.textContent='앞·뒤 그림으로 높이를 확인한 뒤 층별로 나누어 셉니다.';
+      wrap.append(img,caption);
+      const story=answerBox.querySelector('.sim-answer-story');
+      answerBox.insertBefore(wrap,story||answerBox.firstChild);
+    });
+  }
+
+  function start(){
+    attachQ01LayerSolutions();
+    const target=document.getElementById('similar-list')||document.body;
+    const observer=new MutationObserver(()=>attachQ01LayerSolutions());
+    observer.observe(target,{childList:true,subtree:true});
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
+})();
