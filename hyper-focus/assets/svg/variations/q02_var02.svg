@@ -1,48 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
   <title id="title">상자를 채우고 있는 쌓기나무</title>
-  <desc id="desc">가로 3칸, 세로 3칸, 높이 3칸인 점선 상자 안에 여덟 개의 쌓기나무가 아래부터 연속으로 쌓여 있습니다.</desc>
+  <desc id="desc">3×3×3 상자 안에 쌓기나무 8개가 아래층부터 연속으로 쌓여 있습니다.</desc>
   <defs>
-    <g id="cube" stroke="#6d6d6d" stroke-width="1" stroke-linejoin="round">
-      <polygon points="0,-20 17.4,-10 0,0 -17.4,-10" fill="#ececec"/>
-      <polygon points="-17.4,10 0,20 0,0 -17.4,-10" fill="#d4d4d4"/>
-      <polygon points="17.4,10 0,20 0,0 17.4,-10" fill="#bcbcbc"/>
+    <g id="cube" stroke="#7b6a54" stroke-width="1.4" stroke-linejoin="round">
+      <polygon points="0,-37.44 26,-24.96 0,-12.48 -26,-24.96" fill="#ead1a4"/>
+      <polygon points="-26,-24.96 0,-12.48 0,24.96 -26,12.48" fill="#d8b57e"/>
+      <polygon points="26,-24.96 0,-12.48 0,24.96 26,12.48" fill="#c89d62"/>
     </g>
   </defs>
-
-  <rect width="760" height="430" rx="24" fill="#ffffff"/>
-  <text x="380" y="47" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="25" font-weight="800" fill="#1a1a2e">상자를 가득 채워 보세요</text>
+  <rect width="760" height="430" rx="24" fill="#fff"/>
+  <text x="380" y="45" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="25" font-weight="800" fill="#1a1a2e">상자를 가득 채워 보세요</text>
   <g font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#3f4b59">
-    <rect x="204" y="64" width="104" height="34" rx="17" fill="#f2f2f2" stroke="#d6d6d6"/>
-    <text x="256" y="86" text-anchor="middle">가로 3칸</text>
-    <rect x="328" y="64" width="104" height="34" rx="17" fill="#f2f2f2" stroke="#d6d6d6"/>
-    <text x="380" y="86" text-anchor="middle">세로 3칸</text>
-    <rect x="452" y="64" width="104" height="34" rx="17" fill="#f2f2f2" stroke="#d6d6d6"/>
-    <text x="504" y="86" text-anchor="middle">높이 3칸</text>
+    <rect x="204" y="62" width="104" height="34" rx="17" fill="#f5f3ef" stroke="#ddd6cc"/><text x="256" y="84" text-anchor="middle">가로 3칸</text>
+    <rect x="328" y="62" width="104" height="34" rx="17" fill="#f5f3ef" stroke="#ddd6cc"/><text x="380" y="84" text-anchor="middle">세로 3칸</text>
+    <rect x="452" y="62" width="104" height="34" rx="17" fill="#f5f3ef" stroke="#ddd6cc"/><text x="504" y="84" text-anchor="middle">높이 3칸</text>
   </g>
-
-  <rect x="88" y="116" width="584" height="238" rx="18" fill="#fafafa" stroke="#e1e1e1" stroke-width="2"/>
-  <g transform="translate(380 232) scale(2.35)">
-    <g id="q02-filled-cubes">
-      <use href="#cube" transform="translate(0 0)"/>
-      <use href="#cube" transform="translate(0 -20)"/>
-      <use href="#cube" transform="translate(0 -40)"/>
-      <use href="#cube" transform="translate(17.4 10)"/>
-      <use href="#cube" transform="translate(17.4 -10)"/>
-      <use href="#cube" transform="translate(17.4 -30)"/>
-      <use href="#cube" transform="translate(34.8 20)"/>
-      <use href="#cube" transform="translate(-17.4 10)"/>
-    </g>
-    <g id="q02-container" fill="none" stroke="#8a8a8a" stroke-width="1" stroke-dasharray="4 3" stroke-linecap="round">
-      <path d="M0 0 52.2 30 0 60 -52.2 30Z"/>
-      <path d="M0-60 52.2-30 0 0 -52.2-30Z"/>
-      <path d="M0 0V-60M52.2 30V-30M-52.2 30V-30M0 60V0"/>
-    </g>
+  <rect x="90" y="108" width="580" height="254" rx="18" fill="#fbfbfa" stroke="#e4e0da"/>
+  <g id="q02-filled-cubes">
+    <use href="#cube" transform="translate(432 294.96)"/>
+    <use href="#cube" transform="translate(406 282.48)"/><use href="#cube" transform="translate(354 282.48)"/>
+    <use href="#cube" transform="translate(406 245.04)"/><use href="#cube" transform="translate(406 207.6)"/>
+    <use href="#cube" transform="translate(380 270)"/><use href="#cube" transform="translate(380 232.56)"/><use href="#cube" transform="translate(380 195.12)"/>
   </g>
-
-  <g transform="translate(488 132)" font-family="'Noto Sans KR','Malgun Gothic',sans-serif">
-    <line x1="0" y1="9" x2="40" y2="9" stroke="#8a8a8a" stroke-width="2" stroke-dasharray="6 5"/>
-    <text x="50" y="14" font-size="14" font-weight="700" fill="#666666">상자 테두리</text>
+  <g id="q02-container" fill="none" stroke="#66717e" stroke-width="1.7" stroke-dasharray="6 5" stroke-linecap="round" opacity=".82">
+    <path d="M380 270 L458 307.44 L380 344.88 L302 307.44 Z"/>
+    <path d="M380 157.68 L458 195.12 L380 232.56 L302 195.12 Z"/>
+    <path d="M380 270 L380 157.68 M458 307.44 L458 195.12 M380 344.88 L380 232.56 M302 307.44 L302 195.12"/>
   </g>
-  <rect x="172" y="374" width="416" height="42" rx="21" fill="#f0f4f8"/>
-  <text x="380" y="401" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="19" font-weight="800" fill="#26384a">몇 개를 더 넣어야 가득 찰까요?</text>
+  <rect x="172" y="376" width="416" height="40" rx="20" fill="#f0f4f8"/>
+  <text x="380" y="402" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="19" font-weight="800" fill="#26384a">몇 개를 더 넣어야 가득 찰까요?</text>
 </svg>
