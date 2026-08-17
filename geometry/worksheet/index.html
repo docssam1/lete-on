@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GFIELD 쌓기나무 학습지 생성기</title>
-    <link rel="stylesheet" href="./styles.css?v=ws-6" />
+    <link rel="stylesheet" href="./styles.css?v=ws-level-1" />
   </head>
   <body>
     <nav class="subject-switch" aria-label="학습지 영역">
@@ -21,12 +21,17 @@
         </section>
 
         <section class="control-group">
-          <h2>난이도</h2>
-          <div class="radio-row" id="difficultyRow">
-            <label><input type="radio" name="difficulty" value="easy" /> 하</label>
-            <label><input type="radio" name="difficulty" value="mid" checked /> 중</label>
-            <label><input type="radio" name="difficulty" value="hard" /> 상</label>
-          </div>
+          <h2>단계</h2>
+          <label class="field-label" for="levelSelect">단계로 고르기</label>
+          <select id="levelSelect"><!-- options injected by app.js --></select>
+          <label class="field-label" for="ageSelect">나이로 고르기</label>
+          <select id="ageSelect"><!-- options injected by app.js --></select>
+          <p class="level-note" id="levelNote" hidden></p>
+        </section>
+
+        <section class="control-group">
+          <h2>강도</h2>
+          <div class="intensity-row" id="intensityRow"><!-- buttons injected by app.js --></div>
         </section>
 
         <section class="control-group">
@@ -80,8 +85,8 @@
       </main>
     </div>
 
-    <script src="./generators.js?v=ws-7"></script>
-    <script src="./render.js?v=ws-6"></script>
-    <script src="./app.js?v=ws-7"></script>
+    <script src="./generators.js?v=ws-level-1"></script>
+    <script src="./render.js?v=ws-level-1"></script>
+    <script src="./app.js?v=ws-level-1"></script>
   </body>
 </html>

@@ -78,9 +78,58 @@ html, body {
   cursor: pointer;
 }
 .type-grid label:hover { background: #eef3ef; }
+/* 현재 단계에서 제공하지 않는 유형: 흘리게 + 클릭 불가. 목록에서 빼 버리면
+   "왜 사라졌지?"가 되므로 자리는 남기고 이유를 title로 알려 준다. */
+.type-grid label.is-unavailable {
+  opacity: 0.38;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+.type-grid label.is-unavailable:hover { background: transparent; }
 
 .radio-row { display: flex; gap: 10px; font-size: 13px; font-weight: 700; }
 .radio-row label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+
+.field-label {
+  display: block;
+  margin: 0 0 3px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6d7873;
+}
+.control-group select + .field-label { margin-top: 8px; }
+
+.level-note {
+  margin: 7px 0 0;
+  padding: 6px 8px;
+  border-radius: 5px;
+  background: #fdf6e3;
+  border: 1px solid #ecdfb9;
+  font-size: 11px;
+  line-height: 1.45;
+  color: #6a5a2c;
+}
+
+/* 강도 ●○○ / ●●○ / ●●● — 세 버튼이 같은 폭을 나눠 갖는다. */
+.intensity-row { display: flex; gap: 6px; }
+.intensity-btn {
+  flex: 1 1 0;
+  height: 34px;
+  border: 1px solid #bfc6c2;
+  border-radius: 6px;
+  background: #fff;
+  color: #4a5450;
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+.intensity-btn:hover { background: #f1f5f2; }
+.intensity-btn.active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
 
 select, .code-input, input[type="text"] {
   width: 100%;
@@ -152,6 +201,21 @@ select, .code-input, input[type="text"] {
 .ws-brand { font-size: 22px; font-weight: 900; color: var(--brand); }
 .ws-brand b { color: var(--accent); }
 .ws-code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 10px; color: #6b756f; }
+.ws-head-meta { display: inline-flex; align-items: center; gap: 8px; }
+/* 단계 배지 (예: 초급 ●●○) — 시트를 보고 어느 단계·강도인지 바로 알 수
+   있어야 인쇄물이 섮여도 되돌릴 수 있다. */
+.ws-level-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #eaf1ec;
+  border: 1px solid #c3d6c9;
+  color: #22503a;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  white-space: nowrap;
+}
 
 .ws-student-line {
   display: flex;
@@ -232,6 +296,46 @@ select, .code-input, input[type="text"] {
   text-align: right;
 }
 
+/* ---------------------------------------------------------------------
+   HL 층별 모눈 가이드 — 학습지에서는 아이가 칠하는 빈 풀이 영역, 정답지
+   에서는 채워진 풀이. 어느 쪽이든 층을 한 줄에 가로로 늘어놓아 "1층부터
+   차례로 세어 더한다"는 순서가 그대로 읽히게 한다. A4 기준 최대 상자는
+   4x4x4 이므로 셀 11px x 최대 5칸 = 55px 짜리 모눈 4~5개가 한 줄에 넘녁히
+   들어간다.
+   --------------------------------------------------------------------- */
+.ws-solve-area {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed #d3d8d4;
+}
+.ws-hole-layers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px 12px;
+}
+.ws-hole-layer { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.ws-hole-layer small {
+  font-size: 9px;
+  font-weight: 700;
+  color: #4a5450;
+  white-space: nowrap;
+}
+.ws-hole-layer svg.ws-hole-grid {
+  display: block;
+  width: auto;
+  max-width: 60px;
+  max-height: 60px;
+}
+.ws-hole-total {
+  align-self: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--brand);
+  white-space: nowrap;
+}
+
 /* ---- answer sheet page ---- */
 .ws-answer-page { break-before: page; page-break-before: always; }
 .ws-answer-title {
@@ -263,6 +367,14 @@ select, .code-input, input[type="text"] {
   flex-wrap: wrap;
 }
 .ws-answer-item b { color: var(--brand); }
+/* HL의 층별 가이드는 한 단 폭(약 60mm)에 들어가지 않는다 — 그 항목만 세 단을
+   가로지른어 전체 폭을 쓰게 해서 층 모눈이 한 줄로 유지되게 한다. */
+.ws-answer-item-wide {
+  column-span: all;
+  -webkit-column-span: all;
+}
+.ws-ans-solve { display: block; width: 100%; }
+.ws-ans-note { font-size: 10.5px; color: #6b756f; }
 .ws-ans-thumbs { display: inline-flex; gap: 10px; align-items: flex-start; }
 .ws-ans-thumb { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .ws-ans-thumb small { font-size: 9px; color: #7a847e; }
@@ -292,6 +404,11 @@ select, .code-input, input[type="text"] {
   }
   .ws-card { break-inside: avoid; page-break-inside: avoid; }
   .ws-answer-page { break-before: page; page-break-before: always; }
+  /* 단계 배지의 배경과 층별 가이드의 검은 칸은 "의미가 있는 색"이라 브라우저
+     기본값(배경 생략)에 맡기면 인쇄물에서 정보가 사라진다. */
+  .ws-level-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .ws-hole-layers { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .ws-hole-layers, .ws-solve-area { break-inside: avoid; page-break-inside: avoid; }
 }
 
 @media (max-width: 900px) {
