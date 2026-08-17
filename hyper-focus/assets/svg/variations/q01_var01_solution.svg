@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">q01_var01 층별 풀이</title>
+  <desc id="desc">앞과 뒤 그림으로 높이를 확인한 뒤 1층부터 층별로 나누어 전체 쌓기나무 개수를 세는 풀이입니다.</desc>
+  <rect width="760" height="430" rx="24" fill="#fbfaf7"/>
+  <text x="380" y="43" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="24" font-weight="900" fill="#25364a">층별로 나누어 세어 보세요</text>
+  <text x="380" y="73" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#697686">앞·뒤 그림으로 각 자리의 높이를 확인한 뒤, 같은 층끼리 모아 셉니다.</text>
+  <rect x="168" y="116" width="200" height="220" rx="18" fill="#fff" stroke="#ded7cc"/>
+  <text x="268" y="146" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="18" font-weight="900" fill="#674d2d">1층 · 7개</text>
+  <g stroke-width="1.6">
+    <rect x="205" y="177" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="226" cy="198" r="5" fill="#8a6335"/>
+    <rect x="247" y="177" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="268" cy="198" r="5" fill="#8a6335"/>
+    <rect x="289" y="177" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
+    <rect x="205" y="219" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="226" cy="240" r="5" fill="#8a6335"/>
+    <rect x="247" y="219" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="268" cy="240" r="5" fill="#8a6335"/>
+    <rect x="289" y="219" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="310" cy="240" r="5" fill="#8a6335"/>
+    <rect x="205" y="261" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="226" cy="282" r="5" fill="#8a6335"/>
+    <rect x="247" y="261" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="268" cy="282" r="5" fill="#8a6335"/>
+    <rect x="289" y="261" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
+  </g>
+  <text x="268" y="322" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="12" font-weight="700" fill="#777">↑ 뒤쪽 · 아래가 앞쪽</text>
+  <rect x="392" y="116" width="200" height="220" rx="18" fill="#fff" stroke="#ded7cc"/>
+  <text x="492" y="146" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="18" font-weight="900" fill="#674d2d">2층 · 2개</text>
+  <g stroke-width="1.6">
+    <rect x="429" y="177" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
+    <rect x="471" y="177" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="492" cy="198" r="5" fill="#8a6335"/>
+    <rect x="513" y="177" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
+    <rect x="429" y="219" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="450" cy="240" r="5" fill="#8a6335"/>
+    <rect x="471" y="219" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
+    <rect x="513" y="219" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
+    <rect x="429" y="261" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
+    <rect x="471" y="261" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
+    <rect x="513" y="261" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
+  </g>
+  <text x="492" y="322" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="12" font-weight="700" fill="#777">↑ 뒤쪽 · 아래가 앞쪽</text>
+  <rect x="190" y="358" width="380" height="48" rx="24" fill="#efe3cf"/>
+  <text x="380" y="389" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="22" font-weight="900" fill="#5b4428">7 + 2 = 9개</text>
+</svg>
