@@ -1,10 +1,12 @@
 import { levels as countLevels } from "../games/count-heights/levels.js";
 import { COPY_BUILD_LEVELS } from "../data/copy-build-levels.js";
+import { levels as viewLevels } from "../games/three-views/levels.js";
 
 const $ = (selector) => document.querySelector(selector);
 const GAME_COPY_WOOD = "copy-wood";
 const GAME_COPY_COLOR = "copy-color";
 const GAME_COUNT = "count-heights";
+const GAME_VIEWS = "three-views";
 let selectedProblems = [];
 
 const GAME_COPY = {
@@ -25,6 +27,12 @@ const GAME_COPY = {
     cover: "쌓기나무<br />개수 세기",
     subtitle: "쌓기나무 맨 위에 수를 쓰고,<br />쓴 수를 모두 더해 보세요.",
     instruction: "문제 모양의 각 쌓기나무 맨 위에 들어갈 수를 쓰고, 모두 더하여 전체 개수를 구하세요."
+  },
+  [GAME_VIEWS]: {
+    title: "여러 방향에서 본 모양",
+    cover: "여러 방향에서<br />본 모양",
+    subtitle: "쌓기나무를 앞, 옆, 위에서 본 모양을<br />색칠해 보세요.",
+    instruction: "쌓기나무를 앞, 옆, 위에서 본 모양을 각각 색칠해 보세요."
   }
 };
 
@@ -86,6 +94,10 @@ function expandVariants(pool, isCopy) {
 function problemPool() {
   const game = $("#gameSelect").value;
   const level = $("#levelSelect").value;
+  if (game === GAME_VIEWS) {
+    if (level === "all") return viewLevels.flatMap((entry) => entry.pool);
+    return viewLevels[Number(level) - 1].pool;
+  }
   if (game === GAME_COUNT) {
     if (level === "all") return countLevels.flatMap((entry) => entry.problems);
     return countLevels[Number(level) - 1].problems;
@@ -97,10 +109,16 @@ function problemPool() {
   return entries.flatMap((entry) => entry.problems.slice(color ? 5 : 0, color ? 10 : 5));
 }
 
+// three-views problems already carry a hand-authored 20-problem pool per level
+// and their views are pre-derived from a fixed heightmap convention (see
+// games/three-views/levels.js), so — unlike copy/count — they are used as-is
+// with no rotate/mirror expansion: transforming the map would leave the
+// pre-baked front/side/top views describing the wrong shape.
 function pickProblems() {
   const game = $("#gameSelect").value;
   const requested = Number($("#countSelect").value);
-  const expanded = shuffled(expandVariants(problemPool(), game !== GAME_COUNT));
+  const pool = problemPool();
+  const expanded = game === GAME_VIEWS ? shuffled(pool) : shuffled(expandVariants(pool, game !== GAME_COUNT));
   selectedProblems = Array.from({ length: requested }, (_, index) => expanded[index % expanded.length]);
 }
 
@@ -270,8 +288,12 @@ function renderCopyQuestion(problem, index, target, colorMode) {
   if (blankCanvas) drawProblem(blankCanvas, problem, { blank: !workedExample });
 }
 
+// three-views questions carry a 3D picture plus three view grids, so they need
+// far more room than the copy/count questions — one column of two per page
+// instead of the usual 2x2 grid.
 function createQuestionSheet(pageIndex, pageCount) {
-  const config = GAME_COPY[$("#gameSelect").value];
+  const game = $("#gameSelect").value;
+  const config = GAME_COPY[game];
   const section = document.createElement("section");
   section.className = "sheet question-sheet";
   section.innerHTML = `
@@ -280,15 +302,62 @@ function createQuestionSheet(pageIndex, pageCount) {
       <div class="student-lines"><span>이름</span><i></i><span>날짜</span><i></i></div>
     </header>
     <div class="sheet-kicker"><p>${config.instruction}</p><b>${pageIndex + 1} / ${pageCount}</b></div>
-    <div class="question-grid"></div>
+    <div class="question-grid${game === GAME_VIEWS ? " views-question-grid" : ""}"></div>
   `;
   $("#questionSheets").append(section);
   return section.querySelector(".question-grid");
 }
 
+// Renders an empty dotted grid (question side) or a filled-in grid (answer
+// side) straight from a views.{front,side,top} array — the data already
+// encodes the correct front/side/top orientation, so it is never recomputed.
+function viewGridMarkup(view, answers = false) {
+  const rows = view.length;
+  const cols = view[0].length;
+  const cells = view
+    .flatMap((row) => row.map((filled) => `<span class="${answers && filled ? "filled" : ""}"></span>`))
+    .join("");
+  return `<div class="view-answer-grid" style="--v-rows:${rows};--v-cols:${cols}">${cells}</div>`;
+}
+
+function viewsFigureMarkup(problem, answers) {
+  return `
+    <figure><figcaption>앞에서 본 모양</figcaption>${viewGridMarkup(problem.views.front, answers)}</figure>
+    <figure><figcaption>옆에서 본 모양</figcaption>${viewGridMarkup(problem.views.side, answers)}</figure>
+    <figure><figcaption>위에서 본 모양</figcaption>${viewGridMarkup(problem.views.top, answers)}</figure>
+  `;
+}
+
+function renderViewsQuestion(problem, index, target) {
+  const article = document.createElement("article");
+  article.className = "question views-question";
+  article.innerHTML = `
+    <span class="question-number">${index + 1}</span>
+    <div class="views-layout">
+      <figure class="views-cube"><figcaption>쌓기나무 모양</figcaption><canvas class="cube-canvas"></canvas></figure>
+      <div class="views-grids">${viewsFigureMarkup(problem, false)}</div>
+    </div>
+  `;
+  target.append(article);
+  drawProblem(article.querySelector(".cube-canvas"), { heights: problem.map });
+}
+
 function renderAnswer(problem, index) {
   const game = $("#gameSelect").value;
   const article = document.createElement("article");
+  if (game === GAME_VIEWS) {
+    article.className = "answer-item views-answer-item";
+    article.innerHTML = `
+      <h2>${index + 1}번</h2>
+      <div class="views-layout">
+        <figure class="views-cube"><canvas class="answer-canvas"></canvas></figure>
+        <div class="views-grids">${viewsFigureMarkup(problem, true)}</div>
+      </div>
+    `;
+    $("#answers").append(article);
+    drawProblem(article.querySelector(".answer-canvas"), { heights: problem.map });
+    return;
+  }
   article.className = `answer-item ${game !== GAME_COUNT ? "copy-answer-item" : ""}`;
   if (game === GAME_COUNT) {
     const heights = problem.heights.flat().filter(Boolean);
@@ -309,13 +378,15 @@ function renderAnswer(problem, index) {
 }
 
 function updateLevelOptions() {
-  const isCopy = $("#gameSelect").value !== GAME_COUNT;
+  // Only the copy games (똑같이 쌓기) are limited to levels 1-3; count-heights
+  // and three-views both ship five full levels.
+  const limitedLevels = $("#gameSelect").value !== GAME_COUNT && $("#gameSelect").value !== GAME_VIEWS;
   $("#levelSelect").querySelectorAll("option").forEach((option) => {
     const value = Number(option.value);
-    option.hidden = isCopy && value > 3;
-    option.disabled = isCopy && value > 3;
+    option.hidden = limitedLevels && value > 3;
+    option.disabled = limitedLevels && value > 3;
   });
-  if (isCopy && Number($("#levelSelect").value) > 3) $("#levelSelect").value = "all";
+  if (limitedLevels && Number($("#levelSelect").value) > 3) $("#levelSelect").value = "all";
 }
 
 function generate() {
@@ -324,13 +395,15 @@ function generate() {
   $("#questionSheets").replaceChildren();
   $("#answers").replaceChildren();
   const game = $("#gameSelect").value;
-  const perPage = game === GAME_COUNT ? 5 : 4;
+  $("#answers").className = `answer-grid${game === GAME_VIEWS ? " views-answer-grid" : ""}`;
+  const perPage = game === GAME_COUNT ? 5 : game === GAME_VIEWS ? 2 : 4;
   const pageCount = Math.ceil(selectedProblems.length / perPage);
   for (let page = 0; page < pageCount; page += 1) {
     const target = createQuestionSheet(page, pageCount);
     selectedProblems.slice(page * perPage, page * perPage + perPage).forEach((problem, offset) => {
       const index = page * perPage + offset;
       if (game === GAME_COUNT) renderCountQuestion(problem, index, target);
+      else if (game === GAME_VIEWS) renderViewsQuestion(problem, index, target);
       else renderCopyQuestion(problem, index, target, game === GAME_COPY_COLOR);
     });
   }
