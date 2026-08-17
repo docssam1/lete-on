@@ -5,7 +5,7 @@
   "subType": "stacking_checker_color",
   "status": "draft",
   "source": {
-    "problemImage": "./assets/svg/variations/q03_var02.svg"
+    "problemImage": "./assets/svg/variations/q03_var02.svg?v=20260818a"
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q03.json",
@@ -37,32 +37,24 @@
     },
     "colorRule": {
       "palette": ["black", "white"],
-      "anchor": {
-        "grid": { "x": 0, "y": 0, "z": 1 },
-        "color": "white"
-      },
+      "anchor": { "grid": { "x": 0, "y": 0, "z": 1 }, "color": "white" },
       "parityFormula": "color(x,y,z) = white when (x+y+z) is odd, black when (x+y+z) is even",
       "adjacencyRule": "shared-face adjacent cubes always alternate colors"
     },
-    "derivedCounts": {
-      "totalBlockCount": 18,
-      "blackCount": 10,
-      "whiteCount": 8,
-      "askedColors": ["white", "black"]
+    "renderProfile": {
+      "projection": "isometric",
+      "profile": "cube_town_compatible",
+      "halfRatio": 0.5,
+      "depthRatio": 0.48,
+      "heightRatio": 0.72,
+      "colorDerivedFromParity": true
     },
-    "countingModel": {
-      "method": "checkerboard_parity_count",
-      "blackCount": 10,
-      "whiteCount": 8,
-      "totalCheck": 18
-    }
+    "derivedCounts": { "totalBlockCount": 18, "blackCount": 10, "whiteCount": 8, "askedColors": ["white", "black"] },
+    "countingModel": { "method": "checkerboard_parity_count", "blackCount": 10, "whiteCount": 8, "totalCheck": 18 }
   },
   "answerValidation": {
     "answerType": "color_count_pair",
-    "expectedAnswer": {
-      "white": 8,
-      "black": 10
-    }
+    "expectedAnswer": { "white": 8, "black": 10 }
   },
   "problem": {
     "prompt": "검은색과 흰색 쌓기나무를 같은 색의 면이 맞닿지 않게 그림과 같이 쌓았습니다. 흰색과 검은색 쌓기나무는 각각 몇 개인지 구하세요."
