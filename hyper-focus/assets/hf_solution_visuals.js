@@ -17,7 +17,7 @@
     document.head.appendChild(style);
   }
 
-  function attachQ01LayerSolutions(root=document){
+  function attachQ01Solutions(root=document){
     ensureStyle();
     Object.entries(Q01_SOLUTION_IMAGES).forEach(([cardId,src])=>{
       const card=root.getElementById?root.getElementById(cardId):document.getElementById(cardId);
@@ -28,10 +28,10 @@
       wrap.className='sim-solution-visual';
       const img=document.createElement('img');
       img.src=src;
-      img.alt='층별로 나누어 세는 풀이 그림';
+      img.alt='위에서 본 평면 모양에 각 자리의 쌓기나무 수를 적은 답안';
       const caption=document.createElement('div');
       caption.className='sim-solution-caption';
-      caption.textContent='앞·뒤 그림으로 높이를 확인한 뒤 층별로 나누어 셉니다.';
+      caption.textContent='위에서 본 모양의 각 칸에 쌓인 수를 적어 확인합니다.';
       wrap.append(img,caption);
       const story=answerBox.querySelector('.sim-answer-story');
       answerBox.insertBefore(wrap,story||answerBox.firstChild);
@@ -61,7 +61,7 @@
   function refresh(){
     if(sorting)return;
     sortSimilarCards();
-    attachQ01LayerSolutions();
+    attachQ01Solutions();
   }
 
   function start(){
