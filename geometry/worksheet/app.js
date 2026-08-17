@@ -1,4 +1,4 @@
-// GW app.js — UI wiring + worksheet assembly for the printable 쌓기나무
+// GW app.js — UI 와이어링 + worksheet assembly for the printable 쌓기나무
 // worksheet generator. All problem math lives in generators.js, all SVG
 // markup lives in render.js; this file only reads controls, calls those two
 // modules, and writes the resulting HTML into #sheetRoot.
@@ -23,8 +23,8 @@
   }
 
   // 나이로 고르기 — 학년/나이 하나하나가 단계 하나를 가리킨다. 아직 학습지가
-  // 없는 단계(킴더·키즈·2과정 이상)도 그대로 두고, 고르면 가장 가까운 제공
-  // 단계로 옥기면서 왜 옥겨는지 안내한다.
+  // 없는 단계(킨더·키즈·2과정 이상)도 그대로 두고, 고르면 가장 가까운 제공
+  // 단계로 옮기면서 왜 옮겼는지 안내한다.
   const AGE_OPTIONS = [
     { key: "age5", label: "5-6세", level: "L0" },
     { key: "age6", label: "6-7세", level: "L1" },
@@ -150,7 +150,7 @@
       const target = GEN.levelInfo(state.level);
       state.levelNote = (sourceLabel ? sourceLabel + " 단계(" + (info ? info.name : wanted) + ")는" : "이 단계는") +
         " 아직 학습지를 준비 중이라 가장 가까운 " + (target ? target.name + " · " + target.age : state.level) +
-        " 단계로 맞춰요.";
+        " 단계로 맞췄어요.";
     }
     pruneTypesForLevel();
     buildTypeCheckboxes();
@@ -184,7 +184,7 @@
     if (f.kind === "TC") {
       const numberSvg = REN.renderNumberGrid(f.numberGrid, f.width, f.depth);
       const head = '<div class="ws-fig-row">' + figureBlock("위에서 본 모양 (칸 안의 수는 쌓기나무의 개수)", numberSvg) + "</div>";
-      // 강도 ●○○은 개수만 묻으므로 그릴 칸을 내주지 않는다.
+      // 강도 ●○○은 개수만 물으므로 그릴 칸을 내주지 않는다.
       if (!f.drawViews) return head;
       const emptyFront = REN.renderEmptyDottedGrid(f.height, f.width);
       const emptySide = REN.renderEmptyDottedGrid(f.height, f.depth);
@@ -221,7 +221,7 @@
     if (f.kind === "iso") {
       const colorFn = f.paint ? () => "grey" : undefined;
       const caption = f.paint
-        ? "쌓기나무 모양 (겦면을 색칠" + (f.includeBottom === false ? ", 바닥면 제외" : ", 밑면 포함") + ")"
+        ? "쌓기나무 모양 (겉면을 색칠" + (f.includeBottom === false ? ", 바닥면 제외" : ", 밑면 포함") + ")"
         : "쌓기나무 모양";
       return figureBlock(caption, REN.renderIso(f.map, f.width, f.depth, { colorFn }), "ws-figure-lg");
     }
@@ -241,12 +241,12 @@
       const full = f.paint || f.checker;
       const opts = { checker: f.checker, cornerWhite: f.cornerWhite, noBox: full };
       const caption = f.paint
-        ? "쌓기나무 모양 (겦면을 색칠" + (f.includeBottom === false ? ", 바닥면 제외" : ", 밑면 포함") + ")"
+        ? "쌓기나무 모양 (겉면을 색칠" + (f.includeBottom === false ? ", 바닥면 제외" : ", 밑면 포함") + ")"
         : full ? "쌓기나무 모양" : "쌓기나무 모양 (점선 = 상자 테두리)";
       return figureBlock(caption, REN.renderIsoBox(f.map, f.width, f.depth, f.boxH, opts), "ws-figure-lg");
     }
     if (f.kind === "iso-holes") {
-      return figureBlock("구멍이 뒚린 상자 모양 (검은 칸 = 구멍)", REN.renderIsoHoles(f.width, f.depth, f.boxH, f.tunnels), "ws-figure-lg");
+      return figureBlock("구멍이 뚫린 상자 모양 (검은 칸 = 구멍)", REN.renderIsoHoles(f.width, f.depth, f.boxH, f.tunnels), "ws-figure-lg");
     }
     if (f.kind === "sequence") {
       const shapeHtml = f.shapes.map((s) => figureBlock(s.n + "번째", REN.renderIso(s.map, s.width, s.depth), "ws-figure-sm")).join("");
@@ -285,10 +285,10 @@
     if (p.type === "PN") {
       return answerLine(p.answer.variant === "faces" ? "답: 색칠된 면은 모두 ______ 면" : "답: ______ 개");
     }
-    if (p.type === "BW") return answerLine("답: 큰색 ______ 개, 검은색 ______ 개");
+    if (p.type === "BW") return answerLine("답: 흰색 ______ 개, 검은색 ______ 개");
     if (p.type === "HL") {
-      // 층별 모눈 가이드가 곳 풀이 영역이다 — 아이가 층마다 빠진 칸을 칠하고
-      // 남은 칸을 세어 더한다. 빈 칸으로만 인쇄한다(정답지 쪽은 채워져 나온다).
+      // 층별 모눈 가이드가 곧 풀이 영역이다 — 아이가 층마다 빠진 칸을 칠하고
+      // 남은 칸을 세어 더한다. 빈 칸으로만 인쇄한다(정답지 쪽은 채워 나온다).
       return '<div class="ws-solve-area">' + REN.renderHoleLayers(p, { blank: true }) + "</div>" +
         answerLine("답: ______ 개");
     }
@@ -338,7 +338,7 @@
         if (a.variant === "faces") return a.faces + "면 (" + bottom + ")";
         return a.count + "개 (" + a.askFaces + "면짜리, " + bottom + ", 전체 " + a.cubes + "개)";
       }
-      case "BW": return "큰색 " + a.white + "개, 검은색 " + a.black + "개";
+      case "BW": return "흰색 " + a.white + "개, 검은색 " + a.black + "개";
       case "HL": return a.remaining + "개 (전체 " + a.total + "개 − 빠진 " + a.removed + "개)";
       case "SQ":
         if (a.mode === "which") return a.n + "번째";
@@ -367,7 +367,7 @@
       });
       thumbs = '<span class="ws-ans-thumbs"><span class="ws-ans-thumb"><small>최대</small>' + solveSvg + "</span></span>";
     } else if (p.type === "HL") {
-      // 층별 모눈 가이드를 그대로 정답지에 실는다 — 답만 있는 것보다 "층마다
+      // 층별 모눈 가이드를 그대로 정답지에 싣는다 — 답만 있는 것보다 "층마다
       // 세어 더한다"는 방법이 보이는 편이 채점·설명에 쓸모가 있다.
       thumbs = '<span class="ws-ans-solve">' + REN.renderHoleLayers(p) + "</span>";
     } else if (p.type === "SQ") {
@@ -375,7 +375,7 @@
       thumbs = totals ? '<span class="ws-ans-note">' + escapeHtml(totals) + "</span>" : "";
     }
     // HL의 층별 가이드는 3단 정답 목록 한 칸에 가로로 다 들어가지 않으므로
-    // 그 항목만 단을 가로지른다 (CSS: column-span: all).
+    // 그 항목만 단을 가로질러 전체 폭을 쓴다 (CSS: column-span: all).
     const wide = p.type === "HL" ? " ws-answer-item-wide" : "";
     return '<li class="ws-answer-item' + wide + '"><b>' + (idx + 1) + ".</b> " + escapeHtml(answerLineText(p)) + thumbs + "</li>";
   }
