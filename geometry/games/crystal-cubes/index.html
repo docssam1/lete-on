@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town - Crystal Cubes</title>
-    <link rel="stylesheet" href="./styles.css?v=crystal-3" />
+    <link rel="stylesheet" href="./styles.css?v=crystal-9" />
     <link rel="stylesheet" href="../../shared/game-rail.css?v=2" />
     <link rel="stylesheet" href="../../shared/portrait-lock.css?v=1" />
     <script type="importmap">
@@ -104,6 +104,11 @@
             </div>
             <div id="numberPrompt" class="number-prompt" data-i18n="buildPrompt">칸을 눌러 높이를 정해 제시된 카드를 모두 맞춰 보세요.</div>
             <div id="buildGrid" class="build-grid" aria-label="build grid"></div>
+            <!-- Live running total of the cubes placed so far. Filled and shown
+                 by app.js only on the level-5 "가장 많이 / 가장 적게 쌓기"
+                 problems, where that number is what is being judged; it stays
+                 hidden on levels 2-4 so those keep their existing layout. -->
+            <div id="buildCount" class="build-count" aria-live="polite" hidden></div>
             <div class="crystal-actions">
               <button id="clearBtn" type="button" class="clear-btn" data-i18n="clear">지우기</button>
               <button id="checkBtn" type="button" class="check-btn" data-i18n="check">확인</button>
@@ -168,7 +173,7 @@
            element's confetti animation/z-index stack. -->
       <div id="successNote" class="success-note" aria-live="polite"></div>
     </main>
-    <script type="module" src="./app.js?v=crystal-6"></script>
+    <script type="module" src="./app.js?v=crystal-9"></script>
     <script src="../../shared/game-flow.js?v=1" defer></script>
   </body>
 </html>

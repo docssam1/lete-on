@@ -96,7 +96,21 @@ export function viewsMatch(a, b, names = ["front", "side", "top"]) {
 // slow to repeat on every page load. 66 of the 80 authored problems turned out
 // to have more than one valid build — see levelNoticeKey() in app.js for how
 // that is surfaced to the child instead of silently staying unnoticed.
-const makeProblem = (id, level, grid, stacks, solutions) => {
+//
+// `challenge` (level 5 only) turns a "match the cards" problem into a
+// "가장 많이 / 가장 적게 쌓기" one. It is authored, never derived, because the
+// true minimum and maximum totals need the same brute-force search as
+// `solutions` — far too slow for a page load. All four numbers are typed out
+// explicitly (including `targetTotal`, which is redundant with
+// goal+min+maxTotal) precisely SO THAT validateLevels() has something real to
+// cross-check: a derived value could never disagree with itself, an authored
+// one catches a typo the moment the page loads.
+//   { goal: "max" | "min", minTotal, maxTotal, targetTotal }
+// Only the top/front/side cards constrain a level-5 build (all three views are
+// active there), so every accepted build has cubes on exactly the top card's
+// cells — which is why a total between minTotal and maxTotal is guaranteed and
+// comparing against targetTotal is enough to grade the goal.
+const makeProblem = (id, level, grid, stacks, solutions, challenge = null) => {
   const [width, depth] = grid;
   const seen = new Set();
   stacks.forEach(({ x, z, h }) => {
@@ -114,7 +128,17 @@ const makeProblem = (id, level, grid, stacks, solutions) => {
     top: topView(map, grid)
   };
   const activeViews = level === 2 ? ["front"] : level === 3 ? ["front", "side"] : ["front", "side", "top"];
-  return { id, level, grid, maxH: height, reference: map, target, activeViews, solutions };
+  const problem = { id, level, grid, maxH: height, reference: map, target, activeViews, solutions };
+  // Spread the authored challenge onto the problem only when there is one, so
+  // levels 2-4 keep exactly the shape they had (no `goal` key at all) and
+  // app.js can branch on a simple `problem.goal` truthiness test.
+  if (challenge) {
+    problem.goal = challenge.goal;
+    problem.minTotal = challenge.minTotal;
+    problem.maxTotal = challenge.maxTotal;
+    problem.targetTotal = challenge.targetTotal;
+  }
+  return problem;
 };
 
 const pools = [
@@ -200,26 +224,33 @@ const pools = [
     level: 5,
     stars: 5,
     problems: [
-      makeProblem("crystal-l5-01", 5, [4, 4], [{ x: 0, z: 0, h: 4 }, { x: 1, z: 1, h: 2 }, { x: 2, z: 2, h: 3 }, { x: 3, z: 3, h: 1 }, { x: 3, z: 0, h: 2 }, { x: 0, z: 3, h: 1 }, { x: 1, z: 3, h: 2 }], 11),
-      makeProblem("crystal-l5-02", 5, [4, 4], [{ x: 1, z: 1, h: 4 }, { x: 0, z: 0, h: 2 }, { x: 3, z: 0, h: 2 }, { x: 2, z: 2, h: 3 }, { x: 0, z: 3, h: 2 }, { x: 3, z: 3, h: 1 }, { x: 2, z: 0, h: 1 }], 15),
-      makeProblem("crystal-l5-03", 5, [4, 4], [{ x: 0, z: 0, h: 3 }, { x: 1, z: 0, h: 4 }, { x: 2, z: 1, h: 2 }, { x: 3, z: 2, h: 3 }, { x: 1, z: 3, h: 1 }, { x: 0, z: 2, h: 2 }, { x: 3, z: 0, h: 2 }], 21),
-      makeProblem("crystal-l5-04", 5, [4, 4], [{ x: 3, z: 0, h: 4 }, { x: 0, z: 0, h: 2 }, { x: 1, z: 1, h: 3 }, { x: 2, z: 2, h: 2 }, { x: 0, z: 3, h: 3 }, { x: 3, z: 3, h: 1 }, { x: 2, z: 0, h: 1 }], 22),
-      makeProblem("crystal-l5-05", 5, [4, 4], [{ x: 2, z: 1, h: 4 }, { x: 1, z: 2, h: 3 }, { x: 2, z: 2, h: 4 }, { x: 0, z: 1, h: 1 }, { x: 1, z: 1, h: 3 }, { x: 2, z: 3, h: 1 }, { x: 2, z: 0, h: 1 }], 5),
-      makeProblem("crystal-l5-06", 5, [4, 4], [{ x: 2, z: 1, h: 2 }, { x: 2, z: 2, h: 2 }, { x: 1, z: 1, h: 1 }, { x: 0, z: 2, h: 4 }, { x: 0, z: 1, h: 3 }, { x: 0, z: 0, h: 1 }, { x: 3, z: 0, h: 2 }], 6),
-      makeProblem("crystal-l5-07", 5, [4, 4], [{ x: 0, z: 2, h: 3 }, { x: 1, z: 0, h: 1 }, { x: 0, z: 3, h: 3 }, { x: 2, z: 2, h: 1 }, { x: 2, z: 0, h: 4 }, { x: 1, z: 1, h: 1 }, { x: 3, z: 3, h: 3 }], 11),
-      makeProblem("crystal-l5-08", 5, [4, 4], [{ x: 0, z: 2, h: 1 }, { x: 3, z: 1, h: 3 }, { x: 2, z: 3, h: 4 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 2, h: 1 }, { x: 1, z: 3, h: 1 }, { x: 3, z: 0, h: 3 }], 5),
-      makeProblem("crystal-l5-09", 5, [4, 4], [{ x: 1, z: 1, h: 2 }, { x: 0, z: 1, h: 2 }, { x: 2, z: 2, h: 2 }, { x: 0, z: 0, h: 1 }, { x: 3, z: 1, h: 2 }, { x: 0, z: 3, h: 4 }, { x: 2, z: 1, h: 2 }], 4),
-      makeProblem("crystal-l5-10", 5, [4, 4], [{ x: 2, z: 3, h: 2 }, { x: 3, z: 0, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 0, z: 3, h: 3 }, { x: 1, z: 2, h: 2 }, { x: 0, z: 1, h: 1 }, { x: 3, z: 1, h: 4 }], 15),
-      makeProblem("crystal-l5-11", 5, [4, 4], [{ x: 1, z: 0, h: 1 }, { x: 0, z: 3, h: 2 }, { x: 3, z: 2, h: 3 }, { x: 1, z: 3, h: 2 }, { x: 0, z: 2, h: 4 }, { x: 1, z: 1, h: 4 }, { x: 2, z: 1, h: 1 }], 3),
-      makeProblem("crystal-l5-12", 5, [4, 4], [{ x: 0, z: 1, h: 4 }, { x: 2, z: 0, h: 1 }, { x: 1, z: 3, h: 1 }, { x: 0, z: 0, h: 2 }, { x: 2, z: 3, h: 1 }, { x: 0, z: 2, h: 4 }, { x: 0, z: 3, h: 2 }], 1),
-      makeProblem("crystal-l5-13", 5, [4, 4], [{ x: 3, z: 0, h: 2 }, { x: 3, z: 3, h: 4 }, { x: 1, z: 3, h: 2 }, { x: 0, z: 2, h: 4 }, { x: 3, z: 1, h: 2 }, { x: 1, z: 2, h: 1 }, { x: 2, z: 1, h: 2 }], 6),
-      makeProblem("crystal-l5-14", 5, [4, 4], [{ x: 3, z: 0, h: 4 }, { x: 2, z: 3, h: 3 }, { x: 3, z: 3, h: 2 }, { x: 1, z: 3, h: 1 }, { x: 0, z: 2, h: 1 }, { x: 0, z: 1, h: 4 }, { x: 2, z: 1, h: 1 }], 11),
-      makeProblem("crystal-l5-15", 5, [4, 4], [{ x: 0, z: 0, h: 2 }, { x: 2, z: 3, h: 2 }, { x: 2, z: 0, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 3, z: 1, h: 3 }, { x: 1, z: 2, h: 4 }, { x: 2, z: 1, h: 2 }], 8),
-      makeProblem("crystal-l5-16", 5, [4, 4], [{ x: 1, z: 1, h: 4 }, { x: 3, z: 3, h: 4 }, { x: 1, z: 3, h: 1 }, { x: 0, z: 2, h: 2 }, { x: 3, z: 1, h: 1 }, { x: 3, z: 0, h: 2 }, { x: 2, z: 3, h: 3 }], 31),
-      makeProblem("crystal-l5-17", 5, [4, 4], [{ x: 1, z: 1, h: 3 }, { x: 0, z: 2, h: 2 }, { x: 3, z: 2, h: 2 }, { x: 0, z: 3, h: 2 }, { x: 3, z: 3, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 3, h: 4 }], 8),
-      makeProblem("crystal-l5-18", 5, [4, 4], [{ x: 3, z: 1, h: 2 }, { x: 1, z: 3, h: 3 }, { x: 1, z: 1, h: 2 }, { x: 1, z: 0, h: 2 }, { x: 3, z: 0, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 0, z: 0, h: 4 }], 15),
-      makeProblem("crystal-l5-19", 5, [4, 4], [{ x: 0, z: 0, h: 2 }, { x: 0, z: 2, h: 1 }, { x: 1, z: 2, h: 4 }, { x: 0, z: 1, h: 2 }, { x: 3, z: 0, h: 3 }, { x: 3, z: 2, h: 1 }, { x: 1, z: 0, h: 3 }], 44),
-      makeProblem("crystal-l5-20", 5, [4, 4], [{ x: 1, z: 2, h: 1 }, { x: 0, z: 1, h: 4 }, { x: 2, z: 2, h: 4 }, { x: 2, z: 0, h: 4 }, { x: 2, z: 3, h: 1 }, { x: 2, z: 1, h: 1 }, { x: 0, z: 0, h: 2 }], 40)
+      makeProblem("crystal-l5-01", 5, [4, 4], [{ x: 0, z: 0, h: 4 }, { x: 1, z: 1, h: 2 }, { x: 2, z: 2, h: 3 }, { x: 3, z: 3, h: 1 }, { x: 3, z: 0, h: 2 }, { x: 0, z: 3, h: 1 }, { x: 1, z: 3, h: 2 }], 11, { goal: "max", minTotal: 14, maxTotal: 17, targetTotal: 17 }),
+      makeProblem("crystal-l5-02", 5, [4, 4], [{ x: 1, z: 1, h: 4 }, { x: 0, z: 0, h: 2 }, { x: 3, z: 0, h: 2 }, { x: 2, z: 2, h: 3 }, { x: 0, z: 3, h: 2 }, { x: 3, z: 3, h: 1 }, { x: 2, z: 0, h: 1 }], 15, { goal: "min", minTotal: 14, maxTotal: 17, targetTotal: 14 }),
+      makeProblem("crystal-l5-03", 5, [4, 4], [{ x: 0, z: 0, h: 3 }, { x: 1, z: 0, h: 4 }, { x: 2, z: 1, h: 2 }, { x: 3, z: 2, h: 3 }, { x: 1, z: 3, h: 1 }, { x: 0, z: 2, h: 2 }, { x: 3, z: 0, h: 2 }], 21, { goal: "max", minTotal: 15, maxTotal: 19, targetTotal: 19 }),
+      makeProblem("crystal-l5-04", 5, [4, 4], [{ x: 3, z: 0, h: 4 }, { x: 0, z: 0, h: 2 }, { x: 1, z: 1, h: 3 }, { x: 2, z: 2, h: 2 }, { x: 0, z: 3, h: 3 }, { x: 3, z: 3, h: 1 }, { x: 2, z: 0, h: 1 }], 22, { goal: "min", minTotal: 15, maxTotal: 20, targetTotal: 15 }),
+      makeProblem("crystal-l5-05", 5, [4, 4], [{ x: 2, z: 1, h: 4 }, { x: 1, z: 2, h: 3 }, { x: 2, z: 2, h: 4 }, { x: 0, z: 1, h: 1 }, { x: 1, z: 1, h: 3 }, { x: 2, z: 3, h: 1 }, { x: 2, z: 0, h: 1 }], 5, { goal: "max", minTotal: 15, maxTotal: 17, targetTotal: 17 }),
+      makeProblem("crystal-l5-06", 5, [4, 4], [{ x: 2, z: 1, h: 2 }, { x: 2, z: 2, h: 2 }, { x: 1, z: 1, h: 1 }, { x: 0, z: 2, h: 4 }, { x: 0, z: 1, h: 3 }, { x: 0, z: 0, h: 1 }, { x: 3, z: 0, h: 2 }], 6, { goal: "min", minTotal: 14, maxTotal: 16, targetTotal: 14 }),
+      makeProblem("crystal-l5-07", 5, [4, 4], [{ x: 0, z: 2, h: 3 }, { x: 1, z: 0, h: 1 }, { x: 0, z: 3, h: 3 }, { x: 2, z: 2, h: 1 }, { x: 2, z: 0, h: 4 }, { x: 1, z: 1, h: 1 }, { x: 3, z: 3, h: 3 }], 11, { goal: "max", minTotal: 14, maxTotal: 18, targetTotal: 18 }),
+      makeProblem("crystal-l5-08", 5, [4, 4], [{ x: 0, z: 2, h: 1 }, { x: 3, z: 1, h: 3 }, { x: 2, z: 3, h: 4 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 2, h: 1 }, { x: 1, z: 3, h: 1 }, { x: 3, z: 0, h: 3 }], 5, { goal: "min", minTotal: 14, maxTotal: 16, targetTotal: 14 }),
+      makeProblem("crystal-l5-09", 5, [4, 4], [{ x: 1, z: 1, h: 2 }, { x: 0, z: 1, h: 2 }, { x: 2, z: 2, h: 2 }, { x: 0, z: 0, h: 1 }, { x: 3, z: 1, h: 2 }, { x: 0, z: 3, h: 4 }, { x: 2, z: 1, h: 2 }], 4, { goal: "max", minTotal: 13, maxTotal: 15, targetTotal: 15 }),
+      makeProblem("crystal-l5-10", 5, [4, 4], [{ x: 2, z: 3, h: 2 }, { x: 3, z: 0, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 0, z: 3, h: 3 }, { x: 1, z: 2, h: 2 }, { x: 0, z: 1, h: 1 }, { x: 3, z: 1, h: 4 }], 15, { goal: "min", minTotal: 14, maxTotal: 18, targetTotal: 14 }),
+      makeProblem("crystal-l5-11", 5, [4, 4], [{ x: 1, z: 0, h: 1 }, { x: 0, z: 3, h: 2 }, { x: 3, z: 2, h: 3 }, { x: 1, z: 3, h: 2 }, { x: 0, z: 2, h: 4 }, { x: 1, z: 1, h: 4 }, { x: 2, z: 1, h: 1 }], 3, { goal: "max", minTotal: 16, maxTotal: 17, targetTotal: 17 }),
+      // Replaces the retired crystal-l5-12, whose cards admitted exactly one
+      // build (min == max == 15): with zero spread it cannot pose a "가장 많이 /
+      // 가장 적게" question at all, and leaving it in would have dropped the
+      // pool to 19 — which problem-pool.js floors to 3 rounds of five, silently
+      // making four authored problems unreachable. This replacement keeps the
+      // pool at 20 (4 full practice rounds) and sits in the middle of the
+      // level's measured range: 6 valid builds, totals 14..17.
+      makeProblem("crystal-l5-21", 5, [4, 4], [{ x: 1, z: 0, h: 2 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 3, h: 1 }, { x: 0, z: 0, h: 2 }, { x: 0, z: 2, h: 3 }, { x: 3, z: 1, h: 4 }, { x: 0, z: 1, h: 2 }], 6, { goal: "min", minTotal: 14, maxTotal: 17, targetTotal: 14 }),
+      makeProblem("crystal-l5-13", 5, [4, 4], [{ x: 3, z: 0, h: 2 }, { x: 3, z: 3, h: 4 }, { x: 1, z: 3, h: 2 }, { x: 0, z: 2, h: 4 }, { x: 3, z: 1, h: 2 }, { x: 1, z: 2, h: 1 }, { x: 2, z: 1, h: 2 }], 6, { goal: "max", minTotal: 16, maxTotal: 18, targetTotal: 18 }),
+      makeProblem("crystal-l5-14", 5, [4, 4], [{ x: 3, z: 0, h: 4 }, { x: 2, z: 3, h: 3 }, { x: 3, z: 3, h: 2 }, { x: 1, z: 3, h: 1 }, { x: 0, z: 2, h: 1 }, { x: 0, z: 1, h: 4 }, { x: 2, z: 1, h: 1 }], 11, { goal: "min", minTotal: 15, maxTotal: 19, targetTotal: 15 }),
+      makeProblem("crystal-l5-15", 5, [4, 4], [{ x: 0, z: 0, h: 2 }, { x: 2, z: 3, h: 2 }, { x: 2, z: 0, h: 2 }, { x: 2, z: 2, h: 1 }, { x: 3, z: 1, h: 3 }, { x: 1, z: 2, h: 4 }, { x: 2, z: 1, h: 2 }], 8, { goal: "max", minTotal: 14, maxTotal: 17, targetTotal: 17 }),
+      makeProblem("crystal-l5-16", 5, [4, 4], [{ x: 1, z: 1, h: 4 }, { x: 3, z: 3, h: 4 }, { x: 1, z: 3, h: 1 }, { x: 0, z: 2, h: 2 }, { x: 3, z: 1, h: 1 }, { x: 3, z: 0, h: 2 }, { x: 2, z: 3, h: 3 }], 31, { goal: "min", minTotal: 17, maxTotal: 23, targetTotal: 17 }),
+      makeProblem("crystal-l5-17", 5, [4, 4], [{ x: 1, z: 1, h: 3 }, { x: 0, z: 2, h: 2 }, { x: 3, z: 2, h: 2 }, { x: 0, z: 3, h: 2 }, { x: 3, z: 3, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 1, z: 3, h: 4 }], 8, { goal: "max", minTotal: 15, maxTotal: 17, targetTotal: 17 }),
+      makeProblem("crystal-l5-18", 5, [4, 4], [{ x: 3, z: 1, h: 2 }, { x: 1, z: 3, h: 3 }, { x: 1, z: 1, h: 2 }, { x: 1, z: 0, h: 2 }, { x: 3, z: 0, h: 1 }, { x: 2, z: 0, h: 2 }, { x: 0, z: 0, h: 4 }], 15, { goal: "min", minTotal: 14, maxTotal: 18, targetTotal: 14 }),
+      makeProblem("crystal-l5-19", 5, [4, 4], [{ x: 0, z: 0, h: 2 }, { x: 0, z: 2, h: 1 }, { x: 1, z: 2, h: 4 }, { x: 0, z: 1, h: 2 }, { x: 3, z: 0, h: 3 }, { x: 3, z: 2, h: 1 }, { x: 1, z: 0, h: 3 }], 44, { goal: "max", minTotal: 13, maxTotal: 19, targetTotal: 19 }),
+      makeProblem("crystal-l5-20", 5, [4, 4], [{ x: 1, z: 2, h: 1 }, { x: 0, z: 1, h: 4 }, { x: 2, z: 2, h: 4 }, { x: 2, z: 0, h: 4 }, { x: 2, z: 3, h: 1 }, { x: 2, z: 1, h: 1 }, { x: 0, z: 0, h: 2 }], 40, { goal: "min", minTotal: 16, maxTotal: 22, targetTotal: 16 })
     ]
   }
 ];
@@ -260,6 +291,45 @@ export function validateLevels() {
     level.pool.forEach((problem) => {
       if (!Number.isInteger(problem.solutions) || problem.solutions < 1) {
         throw new Error(`${problem.id} has a missing or invalid solutions count`);
+      }
+      // Level 5 is the "가장 많이 / 가장 적게 쌓기" level: every one of its
+      // problems must carry a complete, self-consistent challenge, because
+      // app.js grades the cube TOTAL against `targetTotal` there and a missing
+      // or mistyped number would silently accept (or reject) every build.
+      // Everything below is a declared-field consistency check only — the real
+      // proof that these totals are the true extremes is a brute force, which
+      // lives in the dev-only self-test and must never run on a page load.
+      if (level.level === 5) {
+        if (problem.goal !== "max" && problem.goal !== "min") {
+          throw new Error(`${problem.id} must declare goal "max" or "min"`);
+        }
+        ["minTotal", "maxTotal", "targetTotal"].forEach((field) => {
+          if (!Number.isInteger(problem[field]) || problem[field] < 1) {
+            throw new Error(`${problem.id} has a missing or invalid ${field}`);
+          }
+        });
+        // A zero (or inverted) spread makes the question meaningless: the
+        // child could not build anything other than the answer, so "쌓아 보자"
+        // would grade every card-matching build as correct anyway.
+        if (problem.maxTotal <= problem.minTotal) {
+          throw new Error(`${problem.id} needs maxTotal > minTotal (no spread to aim at)`);
+        }
+        const expected = problem.goal === "max" ? problem.maxTotal : problem.minTotal;
+        if (problem.targetTotal !== expected) {
+          throw new Error(`${problem.id} targetTotal ${problem.targetTotal} contradicts goal "${problem.goal}"`);
+        }
+        // The authored reference must satisfy its own cards for the WHOLE
+        // level-5 pool (not just this session's five), since a broken
+        // reference there would mean the target totals describe a card set no
+        // build can meet. Cheap: one view computation per 4x4x4 problem.
+        const refViews = viewsOfHeightGrid(problem.reference, problem.grid, problem.maxH);
+        if (!viewsMatch(refViews, problem.target, problem.activeViews)) {
+          throw new Error(`${problem.id} reference does not match target`);
+        }
+      } else if (problem.goal !== undefined) {
+        // Goal fields belong to level 5 only — levels 2-4 stay views-only, and
+        // a stray `goal` there would make app.js start grading their totals.
+        throw new Error(`${problem.id} is not a level-5 problem but declares a goal`);
       }
     });
     // The level's declared `multiAnswer` flag must still agree with what its

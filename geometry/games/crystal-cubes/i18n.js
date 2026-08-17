@@ -49,6 +49,14 @@ export const messages = {
     singleAnswerNotice1: "답은 딱 하나야. 카드 한 장에 맞게 만들어 보자.",
     singleAnswerNotice2: "답은 딱 하나야. 카드 두 장에 모두 맞게 만들어 보자.",
     singleAnswerNotice3: "답은 딱 하나야. 카드 세 장에 모두 맞게 만들어 보자.",
+    goalLevelNotice: "이 레벨은 카드만 맞으면 끝이 아니야. 가장 많이 또는 가장 적게 쌓아야 정답이야.",
+    goalPromptMax: "가장 많이 쌓기 — 카드에 모두 맞으면서 쌓기나무를 가장 많이 쌓아 보세요.",
+    goalPromptMin: "가장 적게 쌓기 — 카드에 모두 맞으면서 쌓기나무를 가장 적게 쌓아 보세요.",
+    goalMoreNeeded: "카드에는 맞았어! 그런데 더 많이 쌓을 수 있어.",
+    goalFewerNeeded: "카드에는 맞았어! 그런데 더 적게 쌓을 수 있어.",
+    buildCount: "지금 쌓은 개수 {count}개",
+    goalCountMax: "가장 많이 쌓기 · 지금 {count}개",
+    goalCountMin: "가장 적게 쌓기 · 지금 {count}개",
     solutionsNote: "다른 모양도 정답일 수 있어"
   },
   zh: {
@@ -77,6 +85,14 @@ export const messages = {
     singleAnswerNotice1: "答案只有一个。照着一张卡片拼吧。",
     singleAnswerNotice2: "答案只有一个。照着两张卡片都拼对吧。",
     singleAnswerNotice3: "答案只有一个。照着三张卡片都拼对吧。",
+    goalLevelNotice: "这一关只对上卡片还不够。要堆得最多或最少才算对。",
+    goalPromptMax: "堆最多 — 在满足所有卡片的前提下，把积木堆得最多。",
+    goalPromptMin: "堆最少 — 在满足所有卡片的前提下，把积木堆得最少。",
+    goalMoreNeeded: "卡片都对了！不过还能堆得更多哦。",
+    goalFewerNeeded: "卡片都对了！不过还能堆得更少哦。",
+    buildCount: "现在堆了 {count} 个",
+    goalCountMax: "堆最多 · 现在 {count} 个",
+    goalCountMin: "堆最少 · 现在 {count} 个",
     solutionsNote: "换个样子也可能对"
   },
   ja: {
@@ -105,6 +121,14 @@ export const messages = {
     singleAnswerNotice1: "答えは一つだけ。カード1枚に合わせて作ろう。",
     singleAnswerNotice2: "答えは一つだけ。カード2枚とも合わせて作ろう。",
     singleAnswerNotice3: "答えは一つだけ。カード3枚とも合わせて作ろう。",
+    goalLevelNotice: "このレベルはカードが合うだけでは終わりじゃないよ。いちばん多く、またはいちばん少なく積んだら正解。",
+    goalPromptMax: "いちばん多く積もう — カードにすべて合わせたまま、積み木をいちばん多く積んでみよう。",
+    goalPromptMin: "いちばん少なく積もう — カードにすべて合わせたまま、積み木をいちばん少なく積んでみよう。",
+    goalMoreNeeded: "カードは合ったよ！でも、もっと多く積めるよ。",
+    goalFewerNeeded: "カードは合ったよ！でも、もっと少なく積めるよ。",
+    buildCount: "今つんだ数 {count}こ",
+    goalCountMax: "いちばん多く積もう · 今 {count}こ",
+    goalCountMin: "いちばん少なく積もう · 今 {count}こ",
     solutionsNote: "ほかの形も正解だったかも"
   },
   en: {
@@ -133,6 +157,14 @@ export const messages = {
     singleAnswerNotice1: "There's only one answer. Match the one card shown.",
     singleAnswerNotice2: "There's only one answer. Match both cards shown.",
     singleAnswerNotice3: "There's only one answer. Match all three cards shown.",
+    goalLevelNotice: "On this level, matching the cards isn't enough. Build the most, or the fewest, to be right.",
+    goalPromptMax: "Build the most — match every card while stacking as many cubes as you can.",
+    goalPromptMin: "Build the fewest — match every card while stacking as few cubes as you can.",
+    goalMoreNeeded: "The cards match! But you can stack even more.",
+    goalFewerNeeded: "The cards match! But you can stack even fewer.",
+    buildCount: "Stacked so far: {count}",
+    goalCountMax: "Build the most · {count} so far",
+    goalCountMin: "Build the fewest · {count} so far",
     solutionsNote: "Other shapes work too"
   }
 };

@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { levels, validateLevels, viewsOfHeightGrid, viewsMatch } from "./levels.js?v=crystal-5";
-import { text } from "./i18n.js?v=crystal-4";
+import { levels, validateLevels, viewsOfHeightGrid, viewsMatch } from "./levels.js?v=crystal-9";
+import { text } from "./i18n.js?v=crystal-9";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
 
@@ -19,6 +19,7 @@ const elements = {
   sideCard: $("#sideCard"),
   topCard: $("#topCard"),
   buildGrid: $("#buildGrid"),
+  buildCount: $("#buildCount"),
   checkBtn: $("#checkBtn"),
   clearBtn: $("#clearBtn"),
   hint: $("#hint"),
@@ -87,6 +88,7 @@ function applyLanguage() {
   renderCards();
   renderBuildGrid();
   updatePrompt();
+  updateBuildCount();
   if (state.tutorialStep >= 0) renderConceptTutorial();
 }
 
@@ -151,13 +153,30 @@ function setGuide(key, shouldSpeak = true) {
 // Levels 2/3/4/5 all mix single- and multi-answer problems, so this has to be
 // re-decided per session rather than hard-coded per level.
 function levelNoticeKey() {
+  // Level 5's problems carry a `goal` (levels.js): matching the cards is no
+  // longer the whole task there, so the "여러 가지 정답 / 정답은 하나" notice
+  // would be actively wrong — the answer is now pinned to one cube TOTAL.
+  // That level gets its own line explaining the new rule instead. Checked
+  // per problem, not per level number, so the level ordering can change
+  // without this silently going stale.
+  if (currentProblem().goal) return "goalLevelNotice";
   if (levels[state.levelIndex].multiAnswer) return "multiAnswerNotice";
   const activeCount = currentProblem().activeViews.length;
   return activeCount === 1 ? "singleAnswerNotice1" : activeCount === 2 ? "singleAnswerNotice2" : "singleAnswerNotice3";
 }
 
+// The standing instruction under the cards. On a goal problem it is phrased as
+// an ACTION ("가장 많이 쌓기") rather than a question about a number — this game
+// is the hands-on build; the separate 최대·최소 큐브 챌린지 game owns the
+// numeric version, so nothing here ever asks the child to type a count.
+function promptKey() {
+  const problem = currentProblem();
+  if (!problem.goal) return "buildPrompt";
+  return problem.goal === "max" ? "goalPromptMax" : "goalPromptMin";
+}
+
 function updatePrompt() {
-  const base = text(state.lang, "buildPrompt");
+  const base = text(state.lang, promptKey());
   // Shown once, only on the level's first problem this visit (state.showLevelNotice
   // is set in loadProblem()) — never repeated on every problem, and never spoken
   // by Cubi, since the house rule reserves the character's voice for the
@@ -165,6 +184,28 @@ function updatePrompt() {
   elements.numberPrompt.textContent = state.showLevelNotice
     ? `${text(state.lang, levelNoticeKey())} ${base}`
     : base;
+}
+
+const totalCubes = (build) => build.reduce((sum, row) => sum + row.reduce((a, h) => a + h, 0), 0);
+
+// Live running total of what the child has placed. Only goal problems need it
+// (that is the quantity being judged there), so on levels 2-4 the row stays
+// hidden and those levels look exactly as they did before.
+function updateBuildCount() {
+  const problem = currentProblem();
+  if (!problem.goal) {
+    elements.buildCount.hidden = true;
+    elements.buildCount.textContent = "";
+    return;
+  }
+  elements.buildCount.hidden = false;
+  // The goal must be stated HERE, not only in #numberPrompt: the shared shell
+  // renders #numberPrompt as display:none for this game at every viewport, so
+  // a child would otherwise never see whether to build the most or the fewest.
+  // This row sits right under the build grid and is visible on phone and
+  // desktop alike.
+  const key = problem.goal === "min" ? "goalCountMin" : "goalCountMax";
+  elements.buildCount.textContent = format(key, { count: totalCubes(state.build) });
 }
 
 function shouldShowConceptTutorial() {
@@ -249,6 +290,7 @@ function loadProblem() {
   renderCards();
   renderBuildGrid();
   updatePrompt();
+  updateBuildCount();
   renderModel();
   setCameraView("free");
   setGuide("guideStart", false);
@@ -332,6 +374,7 @@ function bumpHeight(x, z) {
   cell.textContent = String(h);
   cell.classList.remove("right");
   ["front", "side", "top"].forEach((name) => cardEl[name].classList.remove("mismatch", "matched"));
+  updateBuildCount();
   renderModel();
 }
 
@@ -340,6 +383,7 @@ function clearAll() {
   state.build = blankBuild(currentProblem().grid);
   renderBuildGrid();
   ["front", "side", "top"].forEach((name) => cardEl[name].classList.remove("mismatch", "matched"));
+  updateBuildCount();
   renderModel();
 }
 
@@ -353,7 +397,29 @@ function checkAnswer() {
     return;
   }
   const mine = viewsOfHeightGrid(state.build, problem.grid, problem.maxH);
-  if (viewsMatch(mine, problem.target, problem.activeViews)) { completeProblem(); return; }
+  if (viewsMatch(mine, problem.target, problem.activeViews)) {
+    // Levels 2-4: matching the cards IS the answer, unchanged.
+    if (!problem.goal) { completeProblem(); return; }
+    // Level 5 also has to hit the extreme total. Because all three cards are
+    // active here, any card-matching build already sits between minTotal and
+    // maxTotal — so a single comparison with targetTotal both grades the
+    // problem and says which way the child has to go.
+    const total = totalCubes(state.build);
+    if (total === problem.targetTotal) { completeProblem(); return; }
+    state.wrongAttempts += 1;
+    // The cards genuinely ARE satisfied, so mark them all green: this must not
+    // read as the "a card is still wrong" failure (crystalWrong, below), which
+    // outlines the offending card in red. Only the count needs changing.
+    ["front", "side", "top"].forEach((name) => {
+      if (!problem.activeViews.includes(name)) return;
+      cardEl[name].classList.remove("mismatch");
+      cardEl[name].classList.add("matched");
+    });
+    const key = total < problem.targetTotal ? "goalMoreNeeded" : "goalFewerNeeded";
+    showToast(text(state.lang, key));
+    setGuide(key, false);
+    return;
+  }
   // Show which of the three cards is not yet satisfied.
   state.wrongAttempts += 1;
   ["front", "side", "top"].forEach((name) => {
@@ -387,7 +453,12 @@ function completeProblem() {
   // Quiet visual note only — never spoken, so it doesn't compete with Cubi's
   // one line of praise (setGuide("guideSuccess") just below).
   elements.successNote.classList.remove("show");
-  if (currentProblem().solutions > 1) {
+  // Never on a goal problem: "다른 모양도 정답일 수 있어" is about the card set
+  // alone. On a 가장 많이 problem the maximal build is the only answer, so the
+  // note would be flatly false; on a 가장 적게 one it would invite the child to
+  // look for shapes that are no longer graded as correct unless they also hit
+  // the minimum. `solutions` still describes the card set, so it stays stored.
+  if (!currentProblem().goal && currentProblem().solutions > 1) {
     elements.successNote.textContent = text(state.lang, "solutionsNote");
     void elements.successNote.offsetWidth;
     elements.successNote.classList.add("show");
