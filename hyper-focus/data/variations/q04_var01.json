@@ -27,8 +27,8 @@
     },
     "container": {
       "width": 5,
-      "height": 4,
-      "depth": 5,
+      "height": 5,
+      "depth": 4,
       "totalCells": 100
     },
     "sourceObservedMarks": {
