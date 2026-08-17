@@ -99,8 +99,11 @@ function problemPool() {
     return viewLevels[Number(level) - 1].pool;
   }
   if (game === GAME_COUNT) {
-    if (level === "all") return countLevels.flatMap((entry) => entry.problems);
-    return countLevels[Number(level) - 1].problems;
+    // WHY .pool (not .problems): .problems is the 5-problem session slice the
+    // game deals out per visit; paper sheets use the full 20-problem curated
+    // pool so a 20-question book has no repeats.
+    if (level === "all") return countLevels.flatMap((entry) => entry.pool);
+    return countLevels[Number(level) - 1].pool;
   }
   const entries = level === "all"
     ? COPY_BUILD_LEVELS
@@ -111,14 +114,21 @@ function problemPool() {
 
 // three-views problems already carry a hand-authored 20-problem pool per level
 // and their views are pre-derived from a fixed heightmap convention (see
-// games/three-views/levels.js), so — unlike copy/count — they are used as-is
+// games/three-views/levels.js), so — unlike copy — they are used as-is
 // with no rotate/mirror expansion: transforming the map would leave the
 // pre-baked front/side/top views describing the wrong shape.
+//
+// count-heights problems are ALSO used as-is. The game's pools are curated so
+// that every column's top face is visible from the fixed 3/4 camera (the child
+// writes a number on each top). Rotating or mirroring the heightmap moves tall
+// columns in front of short ones, hiding top faces — the printed circles then
+// sit on occluded cubes and the sheet becomes unsolvable.
 function pickProblems() {
   const game = $("#gameSelect").value;
   const requested = Number($("#countSelect").value);
   const pool = problemPool();
-  const expanded = game === GAME_VIEWS ? shuffled(pool) : shuffled(expandVariants(pool, game !== GAME_COUNT));
+  const useAsIs = game === GAME_VIEWS || game === GAME_COUNT;
+  const expanded = useAsIs ? shuffled(pool) : shuffled(expandVariants(pool, true));
   selectedProblems = Array.from({ length: requested }, (_, index) => expanded[index % expanded.length]);
 }
 
