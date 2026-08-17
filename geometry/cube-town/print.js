@@ -9,30 +9,46 @@ const GAME_COUNT = "count-heights";
 const GAME_VIEWS = "three-views";
 let selectedProblems = [];
 
+// 표지 테마 — 지오메트리 랩의 학습지 표지와 같은 개념을 쓴다. "쌓기를 옮겨
+// 적는 공부"(copy 2종 · 개수 세기)는 원목 앰버, "보고 알아내는 공부"(여러
+// 방향에서 본 모양)는 블루. 색은 포인트로만 쓰므로 흑백 인쇄에서도 표지의
+// 짜임(테두리 · 구분선 · 캐릭터 실루엣)은 그대로 성립한다.
+//
+// 캐릭터는 world-map/assets/geometry-characters.png 한 장을 3x3 스프라이트로
+// 잘라 쓴다. 칸 이름은 worksheet/styles.css의 .gw-char-* 와 같은 규칙이다.
+const COVER_THEMES = {
+  stack: { accent: "#b0741c", chars: ["gw-char-cubie", "gw-char-box"] },
+  view: { accent: "#1e6f9e", chars: ["gw-char-protractor", "gw-char-sphere"] }
+};
+
 const GAME_COPY = {
   [GAME_COPY_WOOD]: {
     title: "똑같이 쌓기 · 원목 관찰",
     cover: "똑같이 쌓기<br />원목 관찰",
     subtitle: "입체 모양을 살펴보고,<br />각 자리의 높이를 기록해 보세요.",
-    instruction: "문제 모양을 보고, 위에서 본 바닥판의 각 칸에 쌓기나무 높이를 써 보세요."
+    instruction: "문제 모양을 보고, 위에서 본 바닥판의 각 칸에 쌓기나무 높이를 써 보세요.",
+    theme: "stack"
   },
   [GAME_COPY_COLOR]: {
     title: "똑같이 쌓기 · 컬러 색칠",
     cover: "똑같이 쌓기<br />컬러 색칠",
     subtitle: "색과 위치를 자세히 살펴보고,<br />같은 모양에 똑같이 색칠해 보세요.",
-    instruction: "왼쪽의 색깔 쌓기나무를 보고, 오른쪽의 같은 모양에 위치와 색을 똑같이 칠하세요."
+    instruction: "왼쪽의 색깔 쌓기나무를 보고, 오른쪽의 같은 모양에 위치와 색을 똑같이 칠하세요.",
+    theme: "stack"
   },
   [GAME_COUNT]: {
     title: "쌓기나무 개수 세기",
     cover: "쌓기나무<br />개수 세기",
     subtitle: "쌓기나무 맨 위에 수를 쓰고,<br />쓴 수를 모두 더해 보세요.",
-    instruction: "문제 모양의 각 쌓기나무 맨 위에 들어갈 수를 쓰고, 모두 더하여 전체 개수를 구하세요."
+    instruction: "문제 모양의 각 쌓기나무 맨 위에 들어갈 수를 쓰고, 모두 더하여 전체 개수를 구하세요.",
+    theme: "stack"
   },
   [GAME_VIEWS]: {
     title: "여러 방향에서 본 모양",
     cover: "여러 방향에서<br />본 모양",
     subtitle: "쌓기나무를 앞, 옆, 위에서 본 모양을<br />색칠해 보세요.",
-    instruction: "쌓기나무를 앞, 옆, 위에서 본 모양을 각각 색칠해 보세요."
+    instruction: "쌓기나무를 앞, 옆, 위에서 본 모양을 각각 색칠해 보세요.",
+    theme: "view"
   }
 };
 
@@ -399,6 +415,23 @@ function updateLevelOptions() {
   if (limitedLevels && Number($("#levelSelect").value) > 3) $("#levelSelect").value = "all";
 }
 
+// 표지 = 제목 + 부제 + 테마(포인트 색 · 캐릭터). data-theme 하나만 바꾸면
+// print.css가 색을 갈아 주고, 캐릭터는 테마가 지명한 스프라이트 칸으로 다시
+// 그린다.
+function renderCover(config) {
+  const theme = COVER_THEMES[config.theme] ? config.theme : "stack";
+  $("#coverTitle").innerHTML = config.cover;
+  $("#coverSubtitle").innerHTML = config.subtitle;
+  const cover = $("#coverSheet");
+  cover.dataset.theme = theme;
+  const slot = $("#coverMascots");
+  slot.replaceChildren(...COVER_THEMES[theme].chars.map((cls) => {
+    const el = document.createElement("i");
+    el.className = `gw-char ${cls}`;
+    return el;
+  }));
+}
+
 function generate() {
   updateLevelOptions();
   pickProblems();
@@ -419,8 +452,7 @@ function generate() {
   }
   selectedProblems.forEach(renderAnswer);
   const config = GAME_COPY[game];
-  $("#coverTitle").innerHTML = config.cover;
-  $("#coverSubtitle").innerHTML = config.subtitle;
+  renderCover(config);
   const selectedLevel = $("#levelSelect").value;
   $("#coverLevel").textContent = selectedLevel === "all" ? "전체 혼합" : `레벨 ${selectedLevel}`;
   $("#coverCount").textContent = `${selectedProblems.length} QUESTIONS`;
@@ -436,6 +468,12 @@ $("#answerToggle").addEventListener("change", () => { $("#answerSheet").hidden =
 $("#generate").addEventListener("click", generate);
 $("#printButton").addEventListener("click", () => window.print());
 
+// 지오메트리 랩의 연습책 카드가 이 주소로 딥링크한다:
+//   print.html?game=<...>&level=<all|1..5>&count=<n>&cover=1
+// 랩은 "무엇을 몇 문제, 표지를 넣어" 까지만 정하고 실제 문제 고르기와 인쇄는
+// 여기가 한다. 넘어온 값은 모두 select의 실제 option으로만 좁혀 받는다 —
+// 주소창에서 손으로 고친 값이 화면에 없는 상태를 만들면, 보이는 설정과 뽑히는
+// 문제가 어긋난다.
 function applyInitialParams() {
   const params = new URLSearchParams(window.location.search);
   const initialGame = params.get("game");
@@ -448,6 +486,19 @@ function applyInitialParams() {
     const option = $("#levelSelect").querySelector(`option[value="${initialLevel}"]`);
     if (option && !option.disabled) $("#levelSelect").value = initialLevel;
   }
+  // 문제 수는 이 페이지의 선택지(5/10/20)와 랩의 선택지가 다를 수 있으므로,
+  // 없는 값이 오면 가장 가까운 선택지로 붙인다. 무시하고 기본값으로 되돌리면
+  // 20문제를 시키은 사람이 조용히 10문제를 받는다.
+  const initialCount = Number(params.get("count"));
+  if (initialCount > 0) {
+    const options = Array.from($("#countSelect").options).map((o) => Number(o.value));
+    const nearest = options.reduce((best, value) => (
+      Math.abs(value - initialCount) < Math.abs(best - initialCount) ? value : best
+    ), options[0]);
+    $("#countSelect").value = String(nearest);
+  }
+  const initialCover = params.get("cover");
+  if (initialCover !== null) $("#coverToggle").checked = initialCover !== "0";
 }
 
 applyInitialParams();

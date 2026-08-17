@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GFIELD 지오메트리 랩 · 기하 사고력 문제은행</title>
     <meta name="description" content="GFIELD 지오메트리 랩 — 단계와 강도를 골라 인쇄용 기하 학습지를 만드는 문제은행." />
-    <link rel="stylesheet" href="./styles.css?v=lab-1" />
+    <link rel="stylesheet" href="./styles.css?v=lab-books-1" />
   </head>
   <body>
     <header class="lab-header">
@@ -25,7 +25,7 @@
            않는다. 준비 중 단계는 흐리게 두고 이유를 툴팁으로 알려 준다. -->
       <section class="lab-section" aria-labelledby="stagesTitle">
         <h2 id="stagesTitle">단계</h2>
-        <p class="section-note">킨더부터 4과정까지 아홉 단계. 지금은 pre · 입문 · 초급 · 중급 학습지를 제공해요.</p>
+        <p class="section-note">킨더부터 4과정까지 아홉 단계. 지금은 킨더~중급 학습지를 제공해요.</p>
         <div class="stage-band" id="stageBand"><!-- 배지는 app.js가 GW_GEN.LEVELS로 그린다 --></div>
       </section>
 
@@ -39,16 +39,16 @@
           <p class="field-note" id="levelNote" hidden></p>
         </div>
 
-        <div class="field">
+        <div class="field" id="intensityField">
           <h3>강도</h3>
           <div class="intensity-row" id="intensityRow"><!-- app.js --></div>
-          <p class="field-note">●○○ 기초 · ●●○ 표준 · ●●● 심화</p>
+          <p class="field-note" id="intensityNote">●○○ 기초 · ●●○ 표준 · ●●● 심화</p>
         </div>
 
         <div class="field">
           <h3>유형</h3>
           <div class="type-grid" id="typeGrid"><!-- app.js --></div>
-          <p class="field-note">선택한 단계에서 제공하지 않는 유형은 흐리게 표시돼요.</p>
+          <p class="field-note" id="typeNote">선택한 단계에서 제공하지 않는 유형은 흐리게 표시돼요.</p>
         </div>
 
         <div class="field">
@@ -62,34 +62,10 @@
         </div>
       </section>
 
-      <section class="lab-section" aria-labelledby="booksTitle">
-        <h2 id="booksTitle">게임별 연습책</h2>
-        <p class="section-note">게임에서 손으로 익힌 것을 종이로 한 번 더. 게임마다 그 게임의 문제만 모은 연습책이에요.</p>
-        <div class="book-grid">
-          <a class="book-card" href="../cube-town/print.html">
-            <span class="book-kicker">CUBE TOWN</span>
-            <strong class="book-title">쌓기나무 연습책</strong>
-            <ul class="book-list">
-              <li>똑같이 쌓기 · 원목 관찰</li>
-              <li>똑같이 쌓기 · 컬러 색칠</li>
-              <li>쌓기나무 개수 세기</li>
-            </ul>
-            <span class="book-go">연습책 만들기 →</span>
-          </a>
-          <div class="book-card is-soon" aria-disabled="true">
-            <span class="book-kicker">COMING SOON</span>
-            <strong class="book-title">다른 게임 연습책은 준비 중</strong>
-            <ul class="book-list">
-              <li>여러 방향에서 본 모양</li>
-              <li>크리스털 큐브</li>
-              <li>거울 저택</li>
-              <li>점판 공작소</li>
-            </ul>
-            <span class="book-go">준비 중</span>
-          </div>
-        </div>
-      </section>
-
+      <!-- 게임별 연습책은 더 이상 별도 섹션이 아니다 — 학습지 입구를 하나로
+           모으기로 했으므로 위의 유형 카탈로그에 "연습책" 배지를 단 카드로
+           들어가 있다. 입구가 둘이면 같은 인쇄물을 두 경로로 만들게 되고,
+           단계에 맞는 것을 골라 주는 일도 두 곳에서 따로 해야 한다. -->
       <section class="lab-section lab-card" aria-labelledby="codeTitle">
         <h2 id="codeTitle">학습지 코드로 다시 열기</h2>
         <p class="section-note">인쇄물 머리말의 #GW- 코드를 적으면 똑같은 학습지가 다시 만들어져요. 채점하다 한 장 더 필요할 때 쓰세요.</p>
@@ -114,7 +90,7 @@
          보여 주게 되므로, 스크립트를 그대로 불러 window.GW_GEN을 쓴다.
          버전 토큰은 worksheet/index.html의 것과 일부러 같게 두어 두 페이지가
          브라우저 캐시의 같은 사본을 공유하게 한다. -->
-    <script src="../worksheet/generators.js?v=ws-level-1"></script>
-    <script src="./app.js?v=lab-1"></script>
+    <script src="../worksheet/generators.js?v=ws-theme-1"></script>
+    <script src="./app.js?v=lab-books-1"></script>
   </body>
 </html>
