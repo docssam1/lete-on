@@ -495,21 +495,57 @@
     return labels.slice(0, 3).join(" · ") + " 외 " + (labels.length - 3) + "가지";
   }
 
+  // 표지 테마별 캐릭터 — world-map/assets/geometry-characters.png 한 장을
+  // 3x3으로 자른 스프라이트의 칸 이름이다(칸 좌표는 styles.css의 .gw-char-*).
+  // 영역마다 다른 캐릭터가 서 있어야, 여러 권을 뽑아 쌓아 두었을 때 표지만
+  // 보고 무슨 책인지 집어낼 수 있다.
+  //
+  // 혼합만 다섯을 세우는 이유: 혼합은 "여러 영역을 한 권에"라는 뜻이라
+  // 캐릭터 줄 자체가 그 사실을 말해 준다.
+  const COVER_CHARS = {
+    stack: ["gw-char-cubie", "gw-char-box"],
+    view: ["gw-char-protractor", "gw-char-sphere"],
+    paint: ["gw-char-pyramid", "gw-char-cone"],
+    rule: ["gw-char-prism", "gw-char-compass"],
+    mix: ["gw-char-cubie", "gw-char-sphere", "gw-char-pyramid", "gw-char-protractor", "gw-char-compass"]
+  };
+
+  const COVER_THEME_NAMES = {
+    stack: "쌓기나무",
+    view: "관찰",
+    paint: "색칠·무늬",
+    rule: "규칙",
+    mix: "종합"
+  };
+
+  function coverCharsHtml(theme) {
+    const list = COVER_CHARS[theme] || COVER_CHARS.mix;
+    return '<div class="ws-cover-chars" aria-hidden="true">' +
+      list.map((cls) => '<i class="gw-char ' + cls + '"></i>').join("") +
+      "</div>";
+  }
+
   // A4 cover page, laid out like the cube-town 연습책 표지 (브랜드 / 제목 /
   // 구분선 / 이름·시작한 날·나의 단계 / DOCSSAM'S MATH LAB) but drawn in the
-  // 지오메트리 랩 tone — white paper and the deep-blue rule instead of the
-  // wooden storybook colours, because this book is a problem bank, not a game.
+  // 지오메트리 랩 tone — white paper and no storybook texture, because this
+  // book is a problem bank, not a game.
+  //
+  // 포인트 색과 캐릭터는 고른 유형의 영역(theme)이 정한다. 색은 머리말·구분선·
+  // 문항 수에만 쓰는 포인트라서, 흑백 프린터로 뽑아도 표지의 짜임과 캐릭터는
+  // 그대로 남는다.
   function buildCoverHtml(ws) {
     const nameLine = state.studentName ? escapeHtml(state.studentName) : "";
+    const theme = GEN.themeForTypes(ws.types);
     return (
-      '<section class="ws-page ws-cover" id="coverPage">' +
+      '<section class="ws-page ws-cover" id="coverPage" data-theme="' + theme + '">' +
       '<div class="ws-cover-brand"><span>GFIELD</span><strong>GEOMETRY LAB</strong></div>' +
       '<div class="ws-cover-copy">' +
-      '<p class="ws-cover-kicker">지오메트리 랩 학습지</p>' +
+      '<p class="ws-cover-kicker">지오메트리 랩 학습지 · ' + escapeHtml(COVER_THEME_NAMES[theme] || "종합") + "</p>" +
       '<h1 class="ws-cover-title">' + escapeHtml(coverTypeSummary(ws)) + "</h1>" +
       '<div class="ws-cover-rule"></div>' +
       '<p class="ws-cover-sub">한 장씩 풀고 날짜를 적어 두면<br />어떤 유형이 아직 어려운지 한눈에 보여요.</p>' +
       "</div>" +
+      coverCharsHtml(theme) +
       '<div class="ws-cover-meta">' +
       "<div><span>이름</span><i>" + nameLine + "</i></div>" +
       "<div><span>시작한 날</span><i></i></div>" +
