@@ -718,7 +718,7 @@
     const depth = scale.depth;
     const maxH = scale.maxH;
     // VC ●●●만 "1층에 놓인 개수"를 한 단계 더 묻는다 (세 방향을 읽어 표를
-    // 채우 다음 그 표를 다시 읽어야 하므로 사고 단계가 하나 늘어난다).
+    // 채운 다음 그 표를 다시 읽어야 하므로 사고 단계가 하나 늘어난다).
     const askFloor = mode === "VC" && normalizeIntensity(intensity) >= 3;
     const nodeCap = 20000;
     const maxTries = 250;
