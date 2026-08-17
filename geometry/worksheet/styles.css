@@ -78,7 +78,7 @@ html, body {
   cursor: pointer;
 }
 .type-grid label:hover { background: #eef3ef; }
-/* 현재 단계에서 제공하지 않는 유형: 흘리게 + 클릭 불가. 목록에서 빼 버리면
+/* 현재 단계에서 제공하지 않는 유형: 흐리게 + 클릭 불가. 목록에서 빼 버리면
    "왜 사라졌지?"가 되므로 자리는 남기고 이유를 title로 알려 준다. */
 .type-grid label.is-unavailable {
   opacity: 0.38;
@@ -203,7 +203,7 @@ select, .code-input, input[type="text"] {
 .ws-code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 10px; color: #6b756f; }
 .ws-head-meta { display: inline-flex; align-items: center; gap: 8px; }
 /* 단계 배지 (예: 초급 ●●○) — 시트를 보고 어느 단계·강도인지 바로 알 수
-   있어야 인쇄물이 섮여도 되돌릴 수 있다. */
+   있어야 인쇄물이 섞여도 되돌릴 수 있다. */
 .ws-level-badge {
   display: inline-block;
   padding: 2px 8px;
@@ -300,7 +300,7 @@ select, .code-input, input[type="text"] {
    HL 층별 모눈 가이드 — 학습지에서는 아이가 칠하는 빈 풀이 영역, 정답지
    에서는 채워진 풀이. 어느 쪽이든 층을 한 줄에 가로로 늘어놓아 "1층부터
    차례로 세어 더한다"는 순서가 그대로 읽히게 한다. A4 기준 최대 상자는
-   4x4x4 이므로 셀 11px x 최대 5칸 = 55px 짜리 모눈 4~5개가 한 줄에 넘녁히
+   4x4x4 이므로 셀 11px x 최대 5칸 = 55px 짜리 모눈 4~5개가 한 줄에 넉넉히
    들어간다.
    --------------------------------------------------------------------- */
 .ws-solve-area {
@@ -368,7 +368,7 @@ select, .code-input, input[type="text"] {
 }
 .ws-answer-item b { color: var(--brand); }
 /* HL의 층별 가이드는 한 단 폭(약 60mm)에 들어가지 않는다 — 그 항목만 세 단을
-   가로지른어 전체 폭을 쓰게 해서 층 모눈이 한 줄로 유지되게 한다. */
+   가로질러 전체 폭을 쓰게 해서 층 모눈이 한 줄로 유지되게 한다. */
 .ws-answer-item-wide {
   column-span: all;
   -webkit-column-span: all;
