@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { levels, validateLevels, viewsOfHeightGrid, viewsMatch } from "./levels.js?v=crystal-4";
-import { text } from "./i18n.js?v=crystal-3";
+import { levels, validateLevels, viewsOfHeightGrid, viewsMatch } from "./levels.js?v=crystal-5";
+import { text } from "./i18n.js?v=crystal-4";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
 
@@ -32,6 +32,7 @@ const elements = {
   audio: $("#audio"),
   toast: $("#toast"),
   success: $("#success"),
+  successNote: $("#successNote"),
   conceptTutorial: $("#conceptTutorial"),
   conceptMessage: $("#conceptMessage"),
   conceptSteps: $("#conceptSteps"),
@@ -56,7 +57,12 @@ const state = {
   wrongAttempts: 0,
   audioEnabled: localStorage.getItem("gfield-audio-muted") !== "true",
   advanceTimer: null,
-  tutorialStep: -1
+  tutorialStep: -1,
+  // Which levelIndex the "여러/한 가지 정답" notice has already been shown for
+  // this page load — lets loadProblem() show it once per level entry (not on
+  // every problem inside that level) without any extra persisted storage.
+  noticeLevel: -1,
+  showLevelNotice: false
 };
 
 const tutorialStorageKey = "gfield-crystal-cubes-tutorial-v1";
@@ -140,8 +146,25 @@ function setGuide(key, shouldSpeak = true) {
   if (shouldSpeak) speak(message);
 }
 
+// Which "여러/한 가지 정답" line to prefix the prompt with, chosen from the
+// measured `solutions` data (see levels.js), never from the level number.
+// Levels 2/3/4/5 all mix single- and multi-answer problems, so this has to be
+// re-decided per session rather than hard-coded per level.
+function levelNoticeKey() {
+  if (levels[state.levelIndex].multiAnswer) return "multiAnswerNotice";
+  const activeCount = currentProblem().activeViews.length;
+  return activeCount === 1 ? "singleAnswerNotice1" : activeCount === 2 ? "singleAnswerNotice2" : "singleAnswerNotice3";
+}
+
 function updatePrompt() {
-  elements.numberPrompt.textContent = text(state.lang, "buildPrompt");
+  const base = text(state.lang, "buildPrompt");
+  // Shown once, only on the level's first problem this visit (state.showLevelNotice
+  // is set in loadProblem()) — never repeated on every problem, and never spoken
+  // by Cubi, since the house rule reserves the character's voice for the
+  // tutorial, an asked-for hint, and level completion.
+  elements.numberPrompt.textContent = state.showLevelNotice
+    ? `${text(state.lang, levelNoticeKey())} ${base}`
+    : base;
 }
 
 function shouldShowConceptTutorial() {
@@ -194,6 +217,10 @@ const blankBuild = (grid) => {
   return Array.from({ length: depth }, () => Array.from({ length: width }, () => 0));
 };
 
+// Bumped on every loadProblem() call; used below to let only the LAST call in
+// a same-tick burst decide the one-shot level notice (see loadProblem()).
+let loadGeneration = 0;
+
 function loadProblem() {
   state.problemIndex = Math.max(0, Math.min(levels[state.levelIndex].problems.length - 1, state.problemIndex));
   saveGameProgress("crystalCubes", {
@@ -203,10 +230,21 @@ function loadProblem() {
   });
   clearTimeout(state.advanceTimer);
   elements.success.classList.remove("show");
+  elements.successNote.classList.remove("show");
   state.build = blankBuild(currentProblem().grid);
   state.solved = false;
   state.hintsUsed = 0;
   state.wrongAttempts = 0;
+  // shared/game-flow.js resolves "?level=N" by SIMULATING a click on the
+  // matching level button right after this module's own default-level
+  // loadProblem() already ran — both happen synchronously, before the first
+  // paint. Deciding the one-shot notice here (rather than deferring it)
+  // would let that transient first call consume it, leaving the level the
+  // child actually lands on silent. Instead: render the plain prompt now,
+  // and only apply the notice on the next animation frame — by then any
+  // same-tick follow-up loadProblem() call has already bumped
+  // `loadGeneration` again, so a stale, superseded call's callback no-ops.
+  state.showLevelNotice = false;
   updateProgress();
   renderCards();
   renderBuildGrid();
@@ -215,6 +253,21 @@ function loadProblem() {
   setCameraView("free");
   setGuide("guideStart", false);
   if (shouldShowConceptTutorial()) openConceptTutorial();
+
+  const wantsNotice = state.problemIndex === 0 && state.noticeLevel !== state.levelIndex;
+  if (wantsNotice) {
+    const generation = ++loadGeneration;
+    const targetLevelIndex = state.levelIndex;
+    requestAnimationFrame(() => {
+      if (generation !== loadGeneration) return; // superseded by a later loadProblem()
+      if (state.levelIndex !== targetLevelIndex || state.problemIndex !== 0) return;
+      state.showLevelNotice = true;
+      state.noticeLevel = state.levelIndex;
+      updatePrompt();
+    });
+  } else {
+    loadGeneration += 1;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -331,10 +384,19 @@ function completeProblem() {
   elements.success.classList.remove("show");
   void elements.success.offsetWidth;
   elements.success.classList.add("show");
+  // Quiet visual note only — never spoken, so it doesn't compete with Cubi's
+  // one line of praise (setGuide("guideSuccess") just below).
+  elements.successNote.classList.remove("show");
+  if (currentProblem().solutions > 1) {
+    elements.successNote.textContent = text(state.lang, "solutionsNote");
+    void elements.successNote.offsetWidth;
+    elements.successNote.classList.add("show");
+  }
   playSuccessBurstSound();
   setGuide("guideSuccess", false);
   state.advanceTimer = setTimeout(() => {
     elements.success.classList.remove("show");
+    elements.successNote.classList.remove("show");
     nextProblem();
   }, 2900);
 }
@@ -803,6 +865,16 @@ elements.audio.addEventListener("click", () => {
   if (state.audioEnabled) speak(elements.guide.textContent);
   else speechSynthesis?.cancel();
 });
+// This handler only fires the dialog open on an explicit tap of 레벨 선택.
+// "Open the picker on entry unless ?level=N is valid" (with the saved level
+// pre-highlighted, and never blocking the first-visit tutorial) is handled
+// for crystal-cubes already by the shared ../../shared/game-flow.js — loaded
+// by index.html — which waits for #levelList to render, then either clicks
+// the button matching ?level=N or (once any tutorial closes) clicks
+// #openLevels itself. Verified in a headless run: plain entry opens the
+// dialog (after the first-visit tutorial finishes), ?level=3 skips straight
+// to that level with the dialog left closed, and renderLevelList() below
+// already highlights state.levelIndex (the saved/resumed level) as `.active`.
 elements.openLevels.addEventListener("click", () => {
   renderLevelList();
   elements.levelDialog.hidden = false;
