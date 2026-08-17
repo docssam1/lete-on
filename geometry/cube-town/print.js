@@ -488,7 +488,7 @@ function applyInitialParams() {
   }
   // 문제 수는 이 페이지의 선택지(5/10/20)와 랩의 선택지가 다를 수 있으므로,
   // 없는 값이 오면 가장 가까운 선택지로 붙인다. 무시하고 기본값으로 되돌리면
-  // 20문제를 시키은 사람이 조용히 10문제를 받는다.
+  // 20문제를 시킨 사람이 조용히 10문제를 받는다.
   const initialCount = Number(params.get("count"));
   if (initialCount > 0) {
     const options = Array.from($("#countSelect").options).map((o) => Number(o.value));
