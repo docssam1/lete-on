@@ -43,6 +43,7 @@
     types: GEN.TYPES.filter((t) => t.defaultOn).map((t) => t.code),
     count: 9,
     studentName: "",
+    includeCover: false,
     includeAnswers: true,
     levelNote: "",
     worksheet: null,
@@ -169,7 +170,105 @@
       note.hidden = !state.levelNote;
     }
     document.getElementById("countSelect").value = String(state.count);
+    const cover = document.getElementById("includeCover");
+    if (cover) cover.checked = state.includeCover;
     document.getElementById("includeAnswers").checked = state.includeAnswers;
+  }
+
+  // ---------------------------------------------------------------------
+  // Setup entry points — a pasted 학습지 코드 and a ?query deep link from the
+  // 지오메트리 랩 landing page both arrive as the same {types, level,
+  // intensity, count, seed} shape, so they share one applier. Keeping it in
+  // one place matters because the ORDER is load-bearing: the requested type
+  // list has to be written first, then applyLevel() prunes it against the
+  // 단계, and only the survivors (in the requested order) are kept.
+  // ---------------------------------------------------------------------
+  function applySetup(setup) {
+    const wanted = (setup.types || []).slice();
+    if (wanted.length) state.types = wanted;
+    if (setup.intensity) state.intensity = GEN.normalizeIntensity(setup.intensity);
+    if (setup.level) applyLevel(setup.level, "");
+    if (wanted.length) {
+      const kept = wanted.filter(supportsLevel);
+      if (kept.length) state.types = kept;
+      buildTypeCheckboxes();
+    }
+    if (setup.count) state.count = setup.count;
+    if (setup.seed) state.seed = setup.seed;
+  }
+
+  // ---------------------------------------------------------------------
+  // Deep links (?level=&intensity=&types=&count= or ?code=)
+  //
+  // WHY: the 지오메트리 랩 landing page lets a teacher pick 단계·강도·유형·문항
+  // 수 there and then hands the choice over in the URL, so the resulting setup
+  // is bookmarkable and shareable instead of living in this tab's memory.
+  // Every value is validated against generators.js's own tables — a bad or
+  // half-typed link must silently fall back to the defaults and still open a
+  // usable worksheet, never an error.
+  // ---------------------------------------------------------------------
+  function paramLevel(value) {
+    // Only "L0".."L8" / "0".."8"; anything else is ignored so a typo cannot
+    // be silently rounded into a valid-looking 단계.
+    if (!/^L?[0-8]$/i.test(String(value == null ? "" : value).trim())) return null;
+    return GEN.normalizeLevel(value);
+  }
+
+  function paramIntensity(value) {
+    return /^[123]$/.test(String(value == null ? "" : value).trim()) ? parseInt(value, 10) : null;
+  }
+
+  function paramTypes(value) {
+    if (!value) return null;
+    const seen = {};
+    const list = String(value).toUpperCase().split(/[.,+\s]+/).map(GEN.canonicalType).filter((c) => {
+      if (!GEN.typeInfo(c) || seen[c]) return false;
+      seen[c] = true;
+      return true;
+    });
+    return list.length ? list : null;
+  }
+
+  function paramCount(value) {
+    // Accept only the counts the 문항 수 select actually offers — a count the
+    // select cannot show would leave the control blank and out of sync with
+    // the printed sheet.
+    const n = parseInt(value, 10);
+    if (!n) return null;
+    const sel = document.getElementById("countSelect");
+    const allowed = sel ? Array.prototype.map.call(sel.options, (o) => parseInt(o.value, 10)) : [];
+    return allowed.indexOf(n) === -1 ? null : n;
+  }
+
+  function readCodeParam(params) {
+    let text = params.get("code") || "";
+    // "?code=#GW-..." — an unescaped '#' terminates the query string, so the
+    // browser files the rest of it under location.hash. Stitch it back on so
+    // the human-friendly form of the link works as typed.
+    if (/^#GW-/i.test(window.location.hash)) text += window.location.hash;
+    return text.trim();
+  }
+
+  function applyUrlParams() {
+    let params;
+    try { params = new URLSearchParams(window.location.search); } catch (error) { return; }
+
+    const codeText = readCodeParam(params);
+    if (codeText) {
+      const parsed = GEN.parseCode(codeText);
+      // A code carries every setting including the seed, so it wins outright:
+      // mixing it with loose params could reproduce a DIFFERENT worksheet than
+      // the code names, which defeats the point of codes.
+      if (parsed) { applySetup(parsed); return; }
+    }
+
+    const setup = {
+      level: paramLevel(params.get("level")),
+      intensity: paramIntensity(params.get("intensity")),
+      types: paramTypes(params.get("types")),
+      count: paramCount(params.get("count"))
+    };
+    if (setup.level || setup.intensity || setup.types || setup.count) applySetup(setup);
   }
 
   // ---------------------------------------------------------------------
@@ -383,6 +482,46 @@
   // ---------------------------------------------------------------------
   // Full page assembly
   // ---------------------------------------------------------------------
+  // 표지 제목은 "무엇을 연습하는 책인지"를 한 줄로 말해야 하므로 선택한 유형을
+  // 이어 붙인다. 유형을 많이 고르면 제목이 표지를 넘치므로 셋까지만 적고 나머지
+  // 는 개수로 줄인다.
+  function coverTypeSummary(ws) {
+    const labels = ws.types.map((code) => {
+      const info = GEN.typeInfo(code);
+      return info ? info.label : code;
+    });
+    if (!labels.length) return "쌓기나무 종합";
+    if (labels.length <= 3) return labels.join(" · ");
+    return labels.slice(0, 3).join(" · ") + " 외 " + (labels.length - 3) + "가지";
+  }
+
+  // A4 cover page, laid out like the cube-town 연습책 표지 (브랜드 / 제목 /
+  // 구분선 / 이름·시작한 날·나의 단계 / DOCSSAM'S MATH LAB) but drawn in the
+  // 지오메트리 랩 tone — white paper and the deep-blue rule instead of the
+  // wooden storybook colours, because this book is a problem bank, not a game.
+  function buildCoverHtml(ws) {
+    const nameLine = state.studentName ? escapeHtml(state.studentName) : "";
+    return (
+      '<section class="ws-page ws-cover" id="coverPage">' +
+      '<div class="ws-cover-brand"><span>GFIELD</span><strong>GEOMETRY LAB</strong></div>' +
+      '<div class="ws-cover-copy">' +
+      '<p class="ws-cover-kicker">지오메트리 랩 학습지</p>' +
+      '<h1 class="ws-cover-title">' + escapeHtml(coverTypeSummary(ws)) + "</h1>" +
+      '<div class="ws-cover-rule"></div>' +
+      '<p class="ws-cover-sub">한 장씩 풀고 날짜를 적어 두면<br />어떤 유형이 아직 어려운지 한눈에 보여요.</p>' +
+      "</div>" +
+      '<div class="ws-cover-meta">' +
+      "<div><span>이름</span><i>" + nameLine + "</i></div>" +
+      "<div><span>시작한 날</span><i></i></div>" +
+      '<div><span>나의 단계</span><strong class="ws-level-badge">' + escapeHtml(ws.badge) + "</strong></div>" +
+      "</div>" +
+      '<div class="ws-cover-footer"><span>DOCSSAM\'S MATH LAB</span>' +
+      '<b>' + ws.problems.length + " QUESTIONS</b></div>" +
+      '<div class="ws-cover-code">' + escapeHtml(ws.code) + "</div>" +
+      "</section>"
+    );
+  }
+
   function buildSheetHtml(ws) {
     const nameLine = state.studentName ? escapeHtml(state.studentName) : "";
     const cards = ws.problems.map((p, i) => renderCard(p, i)).join("");
@@ -414,7 +553,7 @@
         '<ol class="ws-answer-list">' + items + "</ol>" +
         "</section>";
     }
-    return worksheetPage + answerPage;
+    return (state.includeCover ? buildCoverHtml(ws) : "") + worksheetPage + answerPage;
   }
 
   // ---------------------------------------------------------------------
@@ -532,6 +671,11 @@
       state.studentName = e.target.value;
       rerenderOnly();
     });
+    const coverToggle = document.getElementById("includeCover");
+    if (coverToggle) coverToggle.addEventListener("change", (e) => {
+      state.includeCover = e.target.checked;
+      rerenderOnly();
+    });
     document.getElementById("includeAnswers").addEventListener("change", (e) => {
       state.includeAnswers = e.target.checked;
       rerenderOnly();
@@ -554,16 +698,9 @@
         window.alert("코드 형식이 올바르지 않습니다. 예) #GW-TC.VC.IC-9x1a2b3c");
         return;
       }
-      state.types = parsed.types;
-      state.intensity = parsed.intensity;
-      applyLevel(parsed.level, "");
-      // 코드에 적힌 유형 중 그 단계가 지원하는 것만 남는다 (applyLevel이
-      // 이미 걸러 주지만, 코드에서 온 목록을 먼저 넣어야 순서가 유지된다).
-      const kept = parsed.types.filter(supportsLevel);
-      if (kept.length) state.types = kept;
-      buildTypeCheckboxes();
-      state.count = parsed.count;
-      state.seed = parsed.seed;
+      // 코드에 적힌 유형 중 그 단계가 지원하는 것만 남는다 — applySetup이
+      // 그 순서까지 지켜 준다.
+      applySetup(parsed);
       syncControlsFromState();
       regenerate();
     });
@@ -575,6 +712,9 @@
     buildIntensityRow();
     applyLevel(state.level, "");
     buildTypeCheckboxes();
+    // AFTER the defaults are in place: a deep link only overrides what it
+    // actually names, so the untouched controls keep their normal defaults.
+    applyUrlParams();
     syncControlsFromState();
     wireEvents();
     regenerate();
