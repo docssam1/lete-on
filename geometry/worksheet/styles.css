@@ -78,7 +78,7 @@ html, body {
   cursor: pointer;
 }
 .type-grid label:hover { background: #eef3ef; }
-/* 현재 단계에서 제공하지 않는 유형: 흐리게 + 클릭 불가. 목록에서 빼 버리면
+/* 현재 단계에서 제공하지 않는 유형: 흐리게 + 클릭 불가. 목록에서 빠져 버리면
    "왜 사라졌지?"가 되므로 자리는 남기고 이유를 title로 알려 준다. */
 .type-grid label.is-unavailable {
   opacity: 0.38;
@@ -110,7 +110,7 @@ html, body {
   color: #6a5a2c;
 }
 
-/* 강도 ●○○ / ●●○ / ●●● — 세 버튼이 같은 폭을 나눠 갖는다. */
+/* 강도 ○○○ / ●●○ / ●●● — 세 버튼이 같은 폭을 나눠 갖는다. */
 .intensity-row { display: flex; gap: 6px; }
 .intensity-btn {
   flex: 1 1 0;
@@ -339,11 +339,15 @@ select, .code-input, input[type="text"] {
 /* ---------------------------------------------------------------------
    표지 (선택) — cube-town print.css의 .cover-sheet와 같은 구성(브랜드 /
    제목 / 가운데 구분선 / 이름·시작한 날·나의 단계 / DOCSSAM'S MATH LAB)이지만
-   색과 질감은 지오메트리 랩 톤으로 바꿨다. 게임 연습책 표지는 원목 동화풍
-   크림색 종이에 마스코트를 세우는 반면, 이 학습지는 문제은행이라 흰 종이에
-   딥블루 한 색만 쓰는 편이 성격에 맞고 인쇄 잉크도 덜 든다.
+   질감은 지오메트리 랩 톤으로 바뀐다 — 연습책 표지가 깔아 두는 원목 동화풍
+   격자 대신 흰 종이를 그대로 쓴다. 포인트 색 한 가지와 캐릭터 두셋만이 이
+   표지에서 색을 쓰는 곳이므로 인쇄 잉크도 덜 든다.
    --------------------------------------------------------------------- */
 .ws-cover {
+  /* 영역 테마 — buildCoverHtml이 data-theme으로 골라 준다. 기본값은 혼합
+     (딥블루, 지금까지의 표지 색). 색은 머리말 · 구분선 · 문항 수에만 닿는
+     포인트라 흑백 프린터로 뽑아도 표지의 짜임은 그대로 성립한다. */
+  --cover-accent: var(--brand);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -352,6 +356,11 @@ select, .code-input, input[type="text"] {
   break-after: page;
   page-break-after: always;
 }
+.ws-cover[data-theme="stack"] { --cover-accent: #b0741c; }
+.ws-cover[data-theme="view"] { --cover-accent: #1e6f9e; }
+.ws-cover[data-theme="paint"] { --cover-accent: #2f7d4f; }
+.ws-cover[data-theme="rule"] { --cover-accent: #6b4a9c; }
+.ws-cover[data-theme="mix"] { --cover-accent: var(--brand); }
 .ws-cover::after {
   content: "";
   position: absolute;
@@ -371,6 +380,8 @@ select, .code-input, input[type="text"] {
   font-size: 12px;
   font-weight: 900;
   letter-spacing: 2px;
+  /* GFIELD 칩만은 테마를 따르지 않는다 — 브랜드 색이 표지마다 달라지면
+     브랜드가 아니게 된다. */
   color: var(--accent);
 }
 .ws-cover-brand strong {
@@ -383,13 +394,17 @@ select, .code-input, input[type="text"] {
 /* margin:auto 0 — 제목 덩어리를 브랜드 줄과 이름칸 사이 남는 공간의 한가운데
    에 띄운다. 고정 margin-top으로 밀면 유형 이름이 길어 제목이 두 줄이 되는
    날 아래쪽 여백만 커져 표지가 위로 쏠린다. */
-.ws-cover-copy { position: relative; margin: auto 0; text-align: center; }
+/* 제목 덩어리와 캐릭터 줄이 한 덩어리로 남는 공간의 한가운데 놓이도록,
+   위쪽(제목)에 margin-top:auto, 아래쪽(캐릭터)에 margin-bottom:auto를 준다.
+   고정 margin으로 밀면 유형 이름이 길어 제목이 두 줄이 되는 날 아래 여백만
+   커져 표지가 위로 쏠린다. */
+.ws-cover-copy { position: relative; margin: auto 0 0; text-align: center; }
 .ws-cover-kicker {
   margin: 0 0 6mm;
   font-size: 12px;
   font-weight: 900;
   letter-spacing: 3px;
-  color: #6b7d8f;
+  color: var(--cover-accent);
 }
 .ws-cover-title {
   margin: 0;
@@ -399,8 +414,51 @@ select, .code-input, input[type="text"] {
   color: var(--brand);
   word-break: keep-all;
 }
-.ws-cover-rule { width: 26mm; height: 3px; margin: 9mm auto; background: var(--accent); }
+.ws-cover-rule { width: 26mm; height: 3px; margin: 9mm auto; background: var(--cover-accent); }
 .ws-cover-sub { margin: 0; font-size: 13px; line-height: 1.9; color: #5c6a72; }
+
+/* 캐릭터 줄 — geometry-characters.png 한 장을 3x3 스프라이트로 잘라 쓴다.
+   background-size로 격자 한 칸을 요소 크기에 맞추고, 그 다음 0/50%/100%가
+   각각 0열·1열·2열(0행·1행·2행)을 고른다. 새 이미지 파일을 만들지 않고
+   테마마다 다른 캐릭터를 세울 수 있는 유일한 방법이다.
+   혼합 표지는 다섯이 서므로 한 칸씩 작게 잡는다. */
+.ws-cover-chars {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 6mm;
+  margin: 6mm auto auto;
+}
+.gw-char {
+  display: block;
+  width: 42mm;
+  height: 42mm;
+  background-image: url("../world-map/assets/geometry-characters.png");
+  background-repeat: no-repeat;
+  /* 300%가 아니라 303%인 이유: 원본 스프라이트는 캐릭터가 칸 경계에 닿게
+     그려져 있어(노란 직육면체의 오른손, 각도기의 자) 정확히 300%로 자르면
+     옆 칸의 소품이 1px 잘져나와 표지에 정체불명의 색 조각으로 찍힌다. 3%만
+     키워 칸마다 안쪽으로 조금씩 잘라 내면 그 조각이 사라진다 — 캐릭터 쪽에서
+     깎이는 양은 418px 원본 기준 2px 남짓이라 눈에 띄지 않는다. */
+  background-size: 303% 303%;
+  /* 캐릭터는 표지의 그림이지 배경 장식이 아니다 — 브라우저 기본값(배경 생략)
+     에 맡기면 인쇄물에서 통째로 사라진다. */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+/* 혼합은 다섯이 나란히 서므로 한 칸을 줄여야 A4 폭(210mm − 좌우 여백) 안에
+   들어온다: 30 × 5 + 6 × 4 = 174mm (본문 폭 210 − 13×2 = 184mm). */
+.ws-cover[data-theme="mix"] .gw-char { width: 30mm; height: 30mm; }
+.gw-char-cubie { background-position: 0 0; }
+.gw-char-sphere { background-position: 50% 0; }
+.gw-char-pyramid { background-position: 100% 0; }
+.gw-char-cylinder { background-position: 0 50%; }
+.gw-char-box { background-position: 50% 50%; }
+.gw-char-protractor { background-position: 100% 50%; }
+.gw-char-cone { background-position: 0 100%; }
+.gw-char-prism { background-position: 50% 100%; }
+.gw-char-compass { background-position: 100% 100%; }
 
 .ws-cover-meta {
   position: relative;
@@ -428,7 +486,7 @@ select, .code-input, input[type="text"] {
   letter-spacing: 1px;
   color: var(--brand);
 }
-.ws-cover-footer b { color: var(--accent); }
+.ws-cover-footer b { color: var(--cover-accent); }
 .ws-cover-code {
   position: relative;
   margin: 3mm 2mm 0;
