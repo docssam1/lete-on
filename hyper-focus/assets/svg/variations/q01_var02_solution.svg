@@ -11,19 +11,19 @@
       <rect x="135" y="177" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="156" cy="198" r="5" fill="#8a6335"/><rect x="177" y="177" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
       <rect x="93" y="219" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="114" cy="240" r="5" fill="#8a6335"/><rect x="135" y="219" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="156" cy="240" r="5" fill="#8a6335"/><rect x="177" y="219" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="198" cy="240" r="5" fill="#8a6335"/>
       <rect x="93" y="261" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="114" cy="282" r="5" fill="#8a6335"/><rect x="135" y="261" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/><rect x="177" y="261" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="198" cy="282" r="5" fill="#8a6335"/>
-    </g><text x="156" y="322" text-anchor="middle" font-size="12" font-weight="700" fill="#777">↑ 뒤쪽 · 아래가 앞쪽</text>
+    </g><text x="156" y="322" text-anchor="middle" font-size="12" font-weight="700" fill="#777">위쪽이 앞쪽 · 아래쪽이 뒤쪽</text>
     <rect x="280" y="116" width="200" height="220" rx="18" fill="#fff" stroke="#ded7cc"/><text x="380" y="146" text-anchor="middle" font-size="18" font-weight="900" fill="#674d2d">2층 · 2개</text>
     <g stroke-width="1.6">
       <rect x="317" y="177" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="338" cy="198" r="5" fill="#8a6335"/><rect x="359" y="177" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/><rect x="401" y="177" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
       <rect x="317" y="219" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="338" cy="240" r="5" fill="#8a6335"/><rect x="359" y="219" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/><rect x="401" y="219" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
       <rect x="317" y="261" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/><rect x="359" y="261" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/><rect x="401" y="261" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
-    </g><text x="380" y="322" text-anchor="middle" font-size="12" font-weight="700" fill="#777">↑ 뒤쪽 · 아래가 앞쪽</text>
+    </g><text x="380" y="322" text-anchor="middle" font-size="12" font-weight="700" fill="#777">위쪽이 앞쪽 · 아래쪽이 뒤쪽</text>
     <rect x="504" y="116" width="200" height="220" rx="18" fill="#fff" stroke="#ded7cc"/><text x="604" y="146" text-anchor="middle" font-size="18" font-weight="900" fill="#674d2d">3층 · 1개</text>
     <g stroke-width="1.6">
       <rect x="541" y="177" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/><rect x="583" y="177" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/><rect x="625" y="177" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
       <rect x="541" y="219" width="42" height="42" rx="3" fill="#e8c890" stroke="#8b765c"/><circle cx="562" cy="240" r="5" fill="#8a6335"/><rect x="583" y="219" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/><rect x="625" y="219" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
       <rect x="541" y="261" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/><rect x="583" y="261" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/><rect x="625" y="261" width="42" height="42" rx="3" fill="#f8f6f2" stroke="#d9d2c8"/>
-    </g><text x="604" y="322" text-anchor="middle" font-size="12" font-weight="700" fill="#777">↑ 뒤쪽 · 아래가 앞쪽</text>
+    </g><text x="604" y="322" text-anchor="middle" font-size="12" font-weight="700" fill="#777">위쪽이 앞쪽 · 아래쪽이 뒤쪽</text>
   </g>
   <rect x="190" y="358" width="380" height="48" rx="24" fill="#efe3cf"/>
   <text x="380" y="389" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="22" font-weight="900" fill="#5b4428">7 + 2 + 1 = 10개</text>
