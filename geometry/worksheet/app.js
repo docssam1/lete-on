@@ -108,7 +108,10 @@
   function buildLevelSelect() {
     const sel = document.getElementById("levelSelect");
     if (!sel) return;
-    sel.innerHTML = GEN.LEVELS.map((l) => (
+    // "전체"는 커리큘럼 단계가 아니라 그 아홉 단계를 섞으라는 지시라 목록
+    // 맨 앞에 별도 옵션으로 붙인다 (GEN.LEVELS 안에는 넣지 않는다 — 이유는
+    // generators.js의 ALL_LEVEL 주석 참고).
+    sel.innerHTML = '<option value="' + GEN.ALL_LEVEL + '">전체 (단계 혼합)</option>' + GEN.LEVELS.map((l) => (
       '<option value="' + l.code + '"' + (l.available ? "" : " disabled") + '>' +
       escapeHtml(l.name + " · " + l.age + (l.available ? "" : " (준비 중)")) + "</option>"
     )).join("");
@@ -122,12 +125,15 @@
     )).join("");
   }
 
+  // 버튼 표기는 "하/중/상"이 주고 점(●○○ 등)은 보조 — 화면에 보이는 이름만
+  // 바뀐다, 내부 강도(intensity) 값 1/2/3과 코드 형식은 그대로다.
   function buildIntensityRow() {
     const row = document.getElementById("intensityRow");
     if (!row) return;
-    row.innerHTML = GEN.INTENSITY_MARKS.map((mark, index) => (
+    row.innerHTML = GEN.INTENSITY_WORDS.map((word, index) => (
       '<button type="button" class="intensity-btn" data-intensity="' + (index + 1) + '" ' +
-      'aria-label="강도 ' + (index + 1) + '">' + mark + "</button>"
+      'aria-label="난이도 ' + escapeHtml(word) + '">' + escapeHtml(word) +
+      ' <span class="intensity-mark">' + GEN.INTENSITY_MARKS[index] + "</span></button>"
     )).join("");
     row.querySelectorAll("button").forEach((b) => {
       b.addEventListener("click", () => {
@@ -192,6 +198,12 @@
       const kept = wanted.filter(supportsLevel);
       if (kept.length) state.types = kept;
       buildTypeCheckboxes();
+    } else if (state.level === GEN.ALL_LEVEL) {
+      // 유형을 명시하지 않은 채로 "전체" 단계가 들어오면(예: ?level=ALL만
+      // 붙은 링크) 모든 유형 칩을 켠다 — 코드/딥링크가 유형을 직접 명시한
+      // 경우는 위 분기에서 그 목록을 그대로 지킨다.
+      state.types = GEN.TYPES.map((t) => t.code);
+      buildTypeCheckboxes();
     }
     if (setup.count) state.count = setup.count;
     if (setup.seed) state.seed = setup.seed;
@@ -208,10 +220,12 @@
   // usable worksheet, never an error.
   // ---------------------------------------------------------------------
   function paramLevel(value) {
-    // Only "L0".."L8" / "0".."8"; anything else is ignored so a typo cannot
-    // be silently rounded into a valid-looking 단계.
-    if (!/^L?[0-8]$/i.test(String(value == null ? "" : value).trim())) return null;
-    return GEN.normalizeLevel(value);
+    const v = String(value == null ? "" : value).trim();
+    // "ALL" (전체, 단계 혼합) or "L0".."L8" / "0".."8"; anything else is
+    // ignored so a typo cannot be silently rounded into a valid-looking 단계.
+    if (/^all$/i.test(v)) return GEN.ALL_LEVEL;
+    if (!/^L?[0-8]$/i.test(v)) return null;
+    return GEN.normalizeLevel(v);
   }
 
   function paramIntensity(value) {
@@ -395,10 +409,20 @@
     return answerLine("답: ______ 개");
   }
 
-  function renderCard(p, idx) {
+  // "전체(단계 혼합)"로 만들 때만 문제마다 실제로 뽑힌 단계 이름을 작은
+  // 배지로 보여 준다 — 단일 단계로 만들면 머리말 배지 하나로 충분하니
+  // 문제마다 반복해서 보여 줄 필요가 없다.
+  function problemLevelBadgeHtml(p) {
+    const info = GEN.levelInfo(p.level);
+    const name = info ? info.name : p.level;
+    return '<span class="ws-prob-level">' + escapeHtml(name) + "</span>";
+  }
+
+  function renderCard(p, idx, mixed) {
     return (
       '<article class="ws-card" data-type="' + p.type + '">' +
-      '<div class="ws-card-head"><span class="ws-num">' + (idx + 1) + "</span></div>" +
+      '<div class="ws-card-head"><span class="ws-num">' + (idx + 1) + "</span>" +
+      (mixed && p.level ? problemLevelBadgeHtml(p) : "") + "</div>" +
       '<p class="ws-prompt">' + escapeHtml(p.prompt) + "</p>" +
       (p.methodHint ? '<p class="ws-method">' + escapeHtml(p.methodHint) + "</p>" : "") +
       '<div class="ws-figures">' + renderFigures(p) + "</div>" +
@@ -447,7 +471,7 @@
     }
   }
 
-  function renderAnswerItem(p, idx) {
+  function renderAnswerItem(p, idx, mixed) {
     let thumbs = "";
     if (p.type === "TC") {
       thumbs = '<span class="ws-ans-thumbs">' +
@@ -476,7 +500,8 @@
     // HL의 층별 가이드는 3단 정답 목록 한 칸에 가로로 다 들어가지 않으므로
     // 그 항목만 단을 가로질러 전체 폭을 쓴다 (CSS: column-span: all).
     const wide = p.type === "HL" ? " ws-answer-item-wide" : "";
-    return '<li class="ws-answer-item' + wide + '"><b>' + (idx + 1) + ".</b> " + escapeHtml(answerLineText(p)) + thumbs + "</li>";
+    const levelTag = mixed && p.level ? problemLevelBadgeHtml(p) + " " : "";
+    return '<li class="ws-answer-item' + wide + '"><b>' + (idx + 1) + ".</b> " + levelTag + escapeHtml(answerLineText(p)) + thumbs + "</li>";
   }
 
   // ---------------------------------------------------------------------
@@ -560,7 +585,8 @@
 
   function buildSheetHtml(ws) {
     const nameLine = state.studentName ? escapeHtml(state.studentName) : "";
-    const cards = ws.problems.map((p, i) => renderCard(p, i)).join("");
+    const mixed = ws.level === GEN.ALL_LEVEL;
+    const cards = ws.problems.map((p, i) => renderCard(p, i, mixed)).join("");
     const worksheetPage =
       '<section class="ws-page" id="worksheetPage">' +
       '<header class="ws-head"><div class="ws-head-top">' +
@@ -580,7 +606,7 @@
 
     let answerPage = "";
     if (state.includeAnswers) {
-      const items = ws.problems.map((p, i) => renderAnswerItem(p, i)).join("");
+      const items = ws.problems.map((p, i) => renderAnswerItem(p, i, mixed)).join("");
       answerPage =
         '<section class="ws-page ws-answer-page" id="answerPage">' +
         '<h2 class="ws-answer-title">정답 <span class="ws-head-meta">' +
@@ -649,11 +675,12 @@
     }
     const answer = document.getElementById("previewShowAnswer");
     const showAnswer = !answer || answer.checked;
+    const mixed = state.level === GEN.ALL_LEVEL;
     body.innerHTML =
-      '<div class="ws-page ws-preview-page">' + renderCard(problem, 0) + "</div>" +
+      '<div class="ws-page ws-preview-page">' + renderCard(problem, 0, mixed) + "</div>" +
       (showAnswer
         ? '<div class="ws-preview-answer"><b>정답</b> <ol class="ws-answer-list ws-preview-answer-list">' +
-          renderAnswerItem(problem, 0) + "</ol></div>"
+          renderAnswerItem(problem, 0, mixed) + "</ol></div>"
         : "");
     window.__WSPREVIEW = { type: state.previewType, seed: state.previewSeed, problem };
   }
@@ -687,6 +714,13 @@
   function wireEvents() {
     document.getElementById("levelSelect").addEventListener("change", (e) => {
       applyLevel(e.target.value, "");
+      // 사람이 직접 "전체"를 골랐을 때만 모든 유형 칩을 켠다 — 코드/딥링크로
+      // 들어온 setup은 applySetup이 명시된 유형 목록을 그대로 지키게 둔다
+      // (아래 applySetup 참고).
+      if (state.level === GEN.ALL_LEVEL) {
+        state.types = GEN.TYPES.map((t) => t.code);
+        buildTypeCheckboxes();
+      }
       const ageSel = document.getElementById("ageSelect");
       if (ageSel) ageSel.value = "";
       syncControlsFromState();
