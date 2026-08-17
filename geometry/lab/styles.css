@@ -1,0 +1,433 @@
+/* GFIELD 지오메트리 랩 — 문제은행 랜딩.
+ *
+ * WHY this looks nothing like the games: 지오메트리 월드의 게임들은 원목 동화
+ * 톤(크림 배경 · 두꺼운 테두리 · 마스코트)으로 아이를 부르는 화면이지만, 이
+ * 페이지를 실제로 쓰는 사람은 "무엇을 몇 장 뽑을지" 고르는 어른이다. 그래서
+ * 흰 배경 + 딥블루 한 가지 포인트 컬러 + 카드/표 중심으로, 일일수학 같은
+ * 문제은행 사이트의 톤을 따른다. 같은 세계관이라는 표시는 작은 녹색 GFIELD
+ * 칩 하나로 충분하다.
+ */
+
+:root {
+  --ink: #1c2833;
+  --muted: #64727d;
+  --line: #d9e0e6;
+  --brand: #17457f;      /* 하나뿐인 포인트 컬러 (딥 블루) */
+  --brand-soft: #eef3fa;
+  --gfield: #1f8a55;     /* GFIELD 칩 전용 녹색 — 다른 곳에는 쓰지 않는다 */
+  --paper: #ffffff;
+  --tint: #f6f8fa;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  /* 가로 스크롤 금지 — 이 페이지는 세로로만 흐른다. 어떤 자식이 삐져나와도
+     문서 전체가 옆으로 밀리지는 않게 막아 둔다. */
+  overflow-x: hidden;
+}
+
+/* 데스크톱 1440에서도 한 줄이 지나치게 길어지지 않도록 본문 폭을 묶는다. */
+.lab-wrap {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ---------------------------------------------------------------------
+   헤더
+   --------------------------------------------------------------------- */
+.lab-header {
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.lab-header-inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 22px;
+  padding-bottom: 20px;
+}
+.lab-title { min-width: 0; }
+.lab-title h1 {
+  margin: 8px 0 4px;
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  color: var(--brand);
+}
+.lab-sub {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--muted);
+}
+
+.gfield-chip {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 4px;
+  background: var(--gfield);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+}
+
+.lab-back {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--brand);
+  background: var(--paper);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.lab-back:hover { background: var(--brand-soft); border-color: #bdcde3; }
+
+/* ---------------------------------------------------------------------
+   섹션 공통
+   --------------------------------------------------------------------- */
+.lab-section { padding: 30px 0 6px; }
+.lab-section h2 {
+  margin: 0 0 6px;
+  font-size: 19px;
+  font-weight: 900;
+  color: var(--ink);
+}
+.lab-section h3 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: var(--muted);
+}
+.section-note {
+  margin: 0 0 16px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+.field-note {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.field-note.is-warn { color: #a4562f; }
+
+/* 카드형 섹션 — 조작 영역만 옅은 테두리로 묶어 읽는 영역과 구분한다. */
+.lab-card {
+  margin-top: 6px;
+  padding: 22px 20px 24px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--tint);
+}
+.field + .field { margin-top: 18px; }
+
+/* ---------------------------------------------------------------------
+   단계 배지 — 띠(위)와 학습지 만들기(아래)가 같은 부품을 쓴다.
+   --------------------------------------------------------------------- */
+.stage-band, .badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stage-badge {
+  flex: 1 1 96px;
+  min-width: 0;
+  /* 아홉 칸이 한 줄에 다 들어가지 않고 접히는 폭에서, 마지막 줄에 홀로 남은
+     배지가 줄 전체로 늘어나 "특별한 단계"처럼 보이는 것을 막는다. */
+  max-width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+.stage-badge b { font-size: 14px; font-weight: 900; }
+.stage-badge small { font-size: 11px; color: var(--muted); }
+.stage-badge:hover { border-color: var(--brand); background: var(--brand-soft); }
+.stage-badge.is-active {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(23, 69, 127, 0.22);
+}
+.stage-badge.is-active small { color: #d6e3f4; }
+/* 준비 중 단계: 목록에서 지우지 않고 흐리게만 둔다 — 커리큘럼 전체 길이를
+   보여 주면서 "아직"이라는 사실도 같이 전한다. */
+.stage-badge.is-soon {
+  opacity: 0.42;
+  cursor: not-allowed;
+  background: var(--tint);
+}
+.stage-badge.is-soon:hover { border-color: var(--line); background: var(--tint); }
+
+/* 강도 ●○○ / ●●○ / ●●● */
+.intensity-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.intensity-btn {
+  /* 0 1 — 세 버튼이 남는 폭을 나눠 가지지 않게 한다. 1440에서 폭을 채우면
+     ●●○ 세 점이 200px 넘는 버튼 한가운데 떠서 조작 대상으로 안 읽힌다. */
+  flex: 0 1 150px;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+.intensity-btn:hover { border-color: var(--brand); background: var(--brand-soft); }
+.intensity-btn.is-active { border-color: var(--brand); background: var(--brand); color: #fff; }
+
+/* 유형 카드 — auto-fill 이라 1440에서는 넉넉히, 좁은 화면에서는 저절로 줄어
+   가로 스크롤이 생기지 않는다. */
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 8px;
+}
+.type-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.type-card:hover { border-color: var(--brand); background: var(--brand-soft); }
+.type-card .type-code {
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  color: var(--brand);
+}
+.type-card .type-label {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+.type-card .type-levels { font-size: 11px; color: var(--muted); }
+.type-card.is-active {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: #fff;
+}
+.type-card.is-active .type-code,
+.type-card.is-active .type-levels { color: #cfdff2; }
+.type-card.is-unavailable {
+  opacity: 0.38;
+  cursor: not-allowed;
+  background: var(--tint);
+}
+.type-card.is-unavailable:hover { border-color: var(--line); background: var(--tint); }
+
+.count-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.count-btn {
+  flex: 0 1 92px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.count-btn:hover { border-color: var(--brand); background: var(--brand-soft); }
+.count-btn.is-active { border-color: var(--brand); background: var(--brand); color: #fff; }
+
+/* ---------------------------------------------------------------------
+   만들기 바
+   --------------------------------------------------------------------- */
+.build-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.build-summary {
+  margin: 0;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  font-weight: 700;
+  color: var(--muted);
+}
+.build-summary b { color: var(--brand); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn-primary { border-color: var(--brand); background: var(--brand); color: #fff; }
+.btn-primary:hover { background: #10365f; }
+.btn-outline { border-color: var(--brand); color: var(--brand); background: var(--paper); }
+.btn-outline:hover { background: var(--brand-soft); }
+
+/* ---------------------------------------------------------------------
+   게임별 연습책
+   --------------------------------------------------------------------- */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+.book-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 18px 18px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+  color: inherit;
+  text-decoration: none;
+}
+.book-card:not(.is-soon):hover { border-color: var(--brand); box-shadow: 0 4px 16px rgba(23, 69, 127, 0.1); }
+.book-kicker {
+  font-size: 10.5px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+  color: var(--gfield);
+}
+.book-title { font-size: 16px; font-weight: 900; color: var(--ink); }
+.book-list {
+  margin: 4px 0 0;
+  padding-left: 17px;
+  font-size: 13px;
+  line-height: 1.85;
+  color: var(--muted);
+}
+.book-go {
+  margin-top: auto;
+  padding-top: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--brand);
+}
+.book-card.is-soon { background: var(--tint); }
+.book-card.is-soon .book-kicker,
+.book-card.is-soon .book-go { color: #93a2ad; }
+.book-card.is-soon .book-title { color: var(--muted); }
+
+/* ---------------------------------------------------------------------
+   코드로 열기
+   --------------------------------------------------------------------- */
+.code-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.code-input {
+  flex: 1 1 220px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 14px;
+}
+.code-input:focus { outline: 2px solid var(--brand); outline-offset: -1px; }
+
+/* ---------------------------------------------------------------------
+   푸터
+   --------------------------------------------------------------------- */
+.lab-footer {
+  margin-top: 40px;
+  border-top: 1px solid var(--line);
+  background: var(--tint);
+}
+.lab-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding-top: 22px;
+  padding-bottom: 26px;
+}
+.lab-footer strong {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+  color: var(--brand);
+}
+.lab-footer-note { font-size: 12px; color: var(--muted); }
+
+/* ---------------------------------------------------------------------
+   좁은 화면 (가로로 눕힌 휴대폰 844x390 · 740x360 포함).
+   가로 스크롤이 생기지 않게 배지 한 칸의 최소 폭만 줄여 준다 — 나머지는
+   위의 flex-wrap / auto-fill 격자가 알아서 접힌다.
+   --------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .lab-wrap { padding: 0 14px; }
+  .lab-title h1 { font-size: 25px; }
+  .lab-section { padding: 24px 0 4px; }
+  .lab-card { padding: 18px 14px 20px; }
+  .stage-badge { flex: 1 1 76px; padding: 8px 4px; }
+  .stage-badge b { font-size: 13px; }
+  .stage-badge small { font-size: 10px; }
+  .type-grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+  .build-bar .btn-primary { flex: 1 1 100%; }
+}
+
+@media (max-width: 560px) {
+  .lab-header-inner { flex-direction: column; align-items: stretch; }
+  .lab-back { align-self: flex-start; }
+  .stage-badge { flex: 1 1 64px; }
+  .type-grid { grid-template-columns: 1fr 1fr; }
+}
