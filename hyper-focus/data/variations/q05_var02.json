@@ -5,7 +5,7 @@
   "subType": "stacking_hidden_count",
   "status": "draft",
   "source": {
-    "problemImage": "./assets/svg/variations/q05_var02.svg"
+    "problemImage": "./assets/svg/variations/q05_var02.svg?v=20260818a"
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q05.json",
@@ -19,14 +19,8 @@
       "heightAxis": "bottom_to_top",
       "unit": "cube"
     },
-    "wallMode": {
-      "enabled": true,
-      "description": "앞쪽 벽에 가려진 뒤쪽 아래층 블록이 있다."
-    },
-    "grid": {
-      "width": 4,
-      "depth": 3
-    },
+    "wallMode": { "enabled": true, "description": "앞쪽 벽에 가려진 뒤쪽 아래층 블록이 있다." },
+    "grid": { "width": 4, "depth": 3 },
     "heightMap": {
       "rowOrder": "front_to_back",
       "rows": [
@@ -38,42 +32,27 @@
     "viewModel": {
       "camera": "front_oblique",
       "visibleBlocks": [
-        { "x": 0, "y": 0, "z": 1 },
-        { "x": 0, "y": 0, "z": 2 },
-        { "x": 0, "y": 0, "z": 3 },
-        { "x": 1, "y": 0, "z": 1 },
-        { "x": 1, "y": 0, "z": 2 },
-        { "x": 1, "y": 0, "z": 3 },
-        { "x": 2, "y": 0, "z": 1 },
-        { "x": 2, "y": 0, "z": 2 },
-        { "x": 3, "y": 0, "z": 1 },
-        { "x": 3, "y": 1, "z": 1 },
-        { "x": 1, "y": 2, "z": 1 }
+        { "x": 0, "y": 0, "z": 1 }, { "x": 0, "y": 0, "z": 2 }, { "x": 0, "y": 0, "z": 3 },
+        { "x": 1, "y": 0, "z": 1 }, { "x": 1, "y": 0, "z": 2 }, { "x": 1, "y": 0, "z": 3 },
+        { "x": 2, "y": 0, "z": 1 }, { "x": 2, "y": 0, "z": 2 },
+        { "x": 3, "y": 0, "z": 1 }, { "x": 3, "y": 1, "z": 1 }, { "x": 1, "y": 2, "z": 1 }
       ],
       "hiddenBlocks": [
-        { "x": 0, "y": 1, "z": 1 },
-        { "x": 1, "y": 1, "z": 1 },
-        { "x": 2, "y": 1, "z": 1 }
+        { "x": 0, "y": 1, "z": 1 }, { "x": 1, "y": 1, "z": 1 }, { "x": 2, "y": 1, "z": 1 }
       ],
-      "renderRule": {
-        "visibleBlocks": "solid",
-        "hiddenBlocks": "omit_from_problem_figure"
-      }
+      "renderRule": { "visibleBlocks": "solid", "hiddenBlocks": "omit_from_problem_figure" }
     },
-    "countingModel": {
-      "totalBlockCount": 14,
-      "visibleBlockCount": 11,
-      "hiddenBlockCount": 3,
-      "formula": "totalBlockCount - visibleBlockCount"
-    }
+    "renderProfile": {
+      "projection": "isometric",
+      "profile": "cube_town_compatible",
+      "halfRatio": 0.5,
+      "depthRatio": 0.48,
+      "heightRatio": 0.72,
+      "renderOnlyVisibleBlocks": true
+    },
+    "countingModel": { "totalBlockCount": 14, "visibleBlockCount": 11, "hiddenBlockCount": 3, "formula": "totalBlockCount - visibleBlockCount" }
   },
-  "answerValidation": {
-    "answerType": "integer_with_unit",
-    "unit": "개",
-    "expectedAnswer": 3
-  },
-  "problem": {
-    "prompt": "쌓기나무 14개를 그림과 같이 쌓았습니다. 그림에서 보이지 않는 쌓기나무는 몇 개인가요?"
-  },
+  "answerValidation": { "answerType": "integer_with_unit", "unit": "개", "expectedAnswer": 3 },
+  "problem": { "prompt": "쌓기나무 14개를 그림과 같이 쌓았습니다. 그림에서 보이지 않는 쌓기나무는 몇 개인가요?" },
   "solutionHint": "그림에서 보이는 쌓기나무를 한 층씩 세면 11개입니다. 전체 14개에서 보이는 11개를 빼면 14 - 11 = 3이므로 보이지 않는 쌓기나무는 3개입니다."
 }
