@@ -30,7 +30,8 @@
     ],
     "docssamRules": [
       "stacking_write_heights",
-      "hidden_blocks"
+      "hidden_blocks",
+      "stacking_layer_breakdown"
     ]
   },
   "contentBinding": {
@@ -68,117 +69,31 @@
       "heightMap": {
         "rowOrder": "front_to_back",
         "rows": [
-          {
-            "y": 0,
-            "heights": [
-              1,
-              1
-            ]
-          },
-          {
-            "y": 1,
-            "heights": [
-              3,
-              2,
-              1
-            ]
-          },
-          {
-            "y": 2,
-            "heights": [
-              1,
-              1,
-              1
-            ]
-          }
+          { "y": 0, "heights": [1, 1, 0] },
+          { "y": 1, "heights": [3, 2, 1] },
+          { "y": 2, "heights": [1, 1, 1] }
         ]
       },
       "stacks": [
-        {
-          "stackId": "front_left",
-          "grid": {
-            "x": 0,
-            "y": 0
-          },
-          "height": 1
-        },
-        {
-          "stackId": "front_center",
-          "grid": {
-            "x": 1,
-            "y": 0
-          },
-          "height": 1
-        },
-        {
-          "stackId": "middle_left",
-          "grid": {
-            "x": 0,
-            "y": 1
-          },
-          "height": 3
-        },
-        {
-          "stackId": "middle_center",
-          "grid": {
-            "x": 1,
-            "y": 1
-          },
-          "height": 2
-        },
-        {
-          "stackId": "middle_right",
-          "grid": {
-            "x": 2,
-            "y": 1
-          },
-          "height": 1
-        },
-        {
-          "stackId": "rear_left",
-          "grid": {
-            "x": 0,
-            "y": 2
-          },
-          "height": 1
-        },
-        {
-          "stackId": "rear_center",
-          "grid": {
-            "x": 1,
-            "y": 2
-          },
-          "height": 1
-        },
-        {
-          "stackId": "rear_right",
-          "grid": {
-            "x": 2,
-            "y": 2
-          },
-          "height": 1
-        }
+        { "stackId": "front_left", "grid": { "x": 0, "y": 0 }, "height": 1 },
+        { "stackId": "front_center", "grid": { "x": 1, "y": 0 }, "height": 1 },
+        { "stackId": "middle_left", "grid": { "x": 0, "y": 1 }, "height": 3 },
+        { "stackId": "middle_center", "grid": { "x": 1, "y": 1 }, "height": 2 },
+        { "stackId": "middle_right", "grid": { "x": 2, "y": 1 }, "height": 1 },
+        { "stackId": "rear_left", "grid": { "x": 0, "y": 2 }, "height": 1 },
+        { "stackId": "rear_center", "grid": { "x": 1, "y": 2 }, "height": 1 },
+        { "stackId": "rear_right", "grid": { "x": 2, "y": 2 }, "height": 1 }
       ],
       "viewModel": {
         "projection": "isometric",
         "frontView": {
           "id": "front",
-          "knownStackIds": [
-            "front_left",
-            "front_center",
-            "middle_left",
-            "middle_center",
-            "middle_right"
-          ],
+          "knownStackIds": ["front_left","front_center","middle_left","middle_center","middle_right"],
           "cameraDirection": "front_isometric"
         },
         "rearView": {
           "id": "rear",
-          "newlyConfirmedStackIds": [
-            "rear_left",
-            "rear_center",
-            "rear_right"
-          ],
+          "newlyConfirmedStackIds": ["rear_left","rear_center","rear_right"],
           "cameraDirection": "rear_isometric",
           "horizontalRelationToFront": "mirrored"
         }
@@ -189,16 +104,35 @@
         "expectedTotalBlockCount": 11,
         "formula": "frontVisibleBlockCount + rearOnlyHiddenBlockCount"
       },
+      "layerCountingModel": {
+        "deriveFrom": "heightMap",
+        "layerCounts": [8, 2, 1],
+        "expectedTotalBlockCount": 11,
+        "formula": "8 + 2 + 1"
+      },
       "renderSpec": {
         "renderer": "isometric_stacking_blocks",
+        "projectionProfile": "cube_town_compatible",
+        "projectionRatios": {
+          "half": 0.5,
+          "depth": 0.48,
+          "height": 0.72
+        },
         "frontSvgGroupId": "q01-front-view",
         "rearSvgGroupId": "q01-rear-view",
+        "frontAndRearUseSameSolid": true,
         "showRearOnlyBlocksInExplanation": true,
-        "rearOnlyHighlightStackIds": [
-          "rear_left",
-          "rear_center",
-          "rear_right"
-        ]
+        "rearOnlyHighlightStackIds": ["rear_left","rear_center","rear_right"]
+      },
+      "solutionRenderSpec": {
+        "mode": "layer_breakdown",
+        "deriveFrom": "heightMap",
+        "rowOrder": "front_to_back",
+        "showEveryOccupiedLayer": true,
+        "showLayerCount": true,
+        "showFinalEquation": true,
+        "mustMatchExpectedTotal": true,
+        "description": "풀이에서는 앞·뒤 그림으로 각 자리의 높이를 확정한 뒤 1층, 2층, 3층처럼 층별 평면 그림을 보여 주고 각 층의 개수를 더한다."
       },
       "generationConstraints": {
         "canChange": [
@@ -211,13 +145,17 @@
           "앞과 뒤 두 시점으로 전체 개수가 하나로 결정되는 구조",
           "앞에서 확인되는 기본 블록과 뒤에서 추가 확인되는 블록의 구분",
           "뒤에서 볼 때 좌우가 바뀌는 관계",
-          "쌓기나무가 아래에서부터 빈칸 없이 쌓이는 규칙"
+          "쌓기나무가 아래에서부터 빈칸 없이 쌓이는 규칙",
+          "문제 그림은 같은 입체를 앞·뒤 두 시점의 등각 투영으로 보여 주는 구조",
+          "풀이에서는 높이맵을 1층부터 층별 그림으로 나누어 개수를 확인하는 구조"
         ],
         "forbiddenChanges": [
           "앞과 뒤 그림을 보고도 전체 개수가 하나로 정해지지 않는 구조",
           "앞에서 이미 확인된 블록을 뒤에서 다시 더하게 만드는 구조",
           "뒤모양에서 좌우 반전을 무시하는 구조",
-          "공중에 떠 있는 쌓기나무 구조"
+          "공중에 떠 있는 쌓기나무 구조",
+          "납작한 실루엣처럼 보여 층 구조를 구분할 수 없는 렌더",
+          "풀이에서 층별 위치 그림 없이 합계만 제시하는 방식"
         ]
       }
     }
@@ -229,24 +167,11 @@
     "mustMatchContentAnswer": true,
     "sourceAnswerPath": "originalProblem.answer",
     "derivation": {
-      "method": "front_visible_plus_rear_only_hidden",
+      "method": "front_rear_then_layer_breakdown",
       "steps": [
-        {
-          "step": 1,
-          "description": "앞에서 보이는 쌓기나무는 8개입니다.",
-          "value": 8
-        },
-        {
-          "step": 2,
-          "description": "뒤에서만 새로 확인되는 쌓기나무는 3개입니다.",
-          "value": 3
-        },
-        {
-          "step": 3,
-          "description": "8 + 3 = 11 이므로 전체는 11개입니다.",
-          "expression": "8 + 3",
-          "value": 11
-        }
+        { "step": 1, "description": "앞과 뒤 그림을 비교하여 각 자리의 높이를 확인합니다." },
+        { "step": 2, "description": "1층은 8개, 2층은 2개, 3층은 1개입니다.", "expression": "8 + 2 + 1", "value": 11 },
+        { "step": 3, "description": "8 + 2 + 1 = 11 이므로 전체는 11개입니다.", "value": 11 }
       ]
     }
   },
@@ -254,10 +179,12 @@
     "requiredChecks": [
       "problem_assets.json에 q01 경로 존재 확인",
       "hf_data.json typeId 1의 originalProblem.answer가 11개인지 확인",
-      "aiTutorPack.audioScript의 8 + 3 = 11 흐름과 일치하는지 확인",
       "subType이 stacking_front_back_count인지 확인",
       "heightMap 합계가 11인지 확인",
-      "rearView가 frontView의 좌우 반전 규칙과 일치하는지 확인"
+      "rearView가 frontView의 좌우 반전 규칙과 일치하는지 확인",
+      "layerCountingModel이 8,2,1이고 합이 11인지 확인",
+      "문제 렌더가 cube_town_compatible 비율을 사용하는지 확인",
+      "풀이 렌더에 모든 점유 층의 층별 그림과 개수가 포함되는지 확인"
     ],
     "completionStatus": "verified"
   }
