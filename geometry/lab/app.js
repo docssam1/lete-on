@@ -59,7 +59,11 @@
     return BOOKS.filter((b) => b.code === code)[0] || null;
   }
 
+  // "전체"에서는 네 연습책 모두 계속 켜 둔다 — 연습책은 애초에 그 게임의
+  // 전체 레벨을 섞어 넘기므로(BOOKS 위 설명 참고), 학습지 쪽 단계가 "전체"로
+  // 바뀌었다고 연습책만 흐려질 이유가 없다.
   function bookSupportsLevel(book, level) {
+    if (level === GEN.ALL_LEVEL) return true;
     return book.levels.indexOf(level) !== -1;
   }
 
@@ -105,6 +109,12 @@
   // 그대로 보관한다 — 거기서 되돌릴 유형이 없기도 하지만, 킨더를 잠깐 눌러 본
   // 것만으로 공들여 고른 유형 조합이 지워지면 안 되기 때문이다.
   function pruneTypes() {
+    // "전체"를 고르면 생성형 유형 13종을 전부 켠다 — 각 유형은 자기 자신이
+    // 지원하는 단계에서 만들어지므로 전체에서 제외해야 할 유형이 없다.
+    if (state.level === GEN.ALL_LEVEL) {
+      state.types = GEN.TYPES.map((t) => t.code);
+      return;
+    }
     if (!GEN.typesForLevel(state.level).length) return;
     const kept = state.types.filter(supportsLevel);
     if (kept.length) { state.types = kept; return; }
@@ -168,7 +178,11 @@
     const row = $("builderLevels");
     band.replaceChildren();
     row.replaceChildren();
-    GEN.LEVELS.forEach((info) => {
+    // "전체" 배지는 커리큘럼 아홉 단계 목록(GEN.LEVELS)에 없다 — 그 아홉을
+    // 섞으라는 지시일 뿐 학년 하나가 아니기 때문(generators.js ALL_LEVEL
+    // 주석 참고). 그래서 띠 맨 앞에 따로 붙인다.
+    const allInfo = GEN.levelInfo(GEN.ALL_LEVEL);
+    [allInfo].concat(GEN.LEVELS).forEach((info) => {
       // 띠에서 고르면 아래 "학습지 만들기"로 스크롤해 그 단계를 선택해 준다 —
       // 띠는 커리큘럼 안내이자 곧바로 쓰는 입구이기도 하다.
       const offered = levelOffered(info.code);
@@ -191,17 +205,19 @@
     note.classList.toggle("is-warn", Boolean(state.levelNote));
   }
 
+  // 버튼 표기는 "하/중/상"이 주고 점(●○○ 등)은 보조 — 내부 강도(intensity)
+  // 값 1/2/3과 딥링크 파라미터는 그대로다.
   function renderIntensity() {
     const row = $("intensityRow");
     row.replaceChildren();
-    GEN.INTENSITY_MARKS.forEach((mark, index) => {
+    GEN.INTENSITY_WORDS.forEach((word, index) => {
       const value = index + 1;
       const button = document.createElement("button");
       button.type = "button";
       button.className = "intensity-btn" + (value === state.intensity ? " is-active" : "");
       button.dataset.intensity = String(value);
-      button.textContent = mark;
-      button.setAttribute("aria-label", "강도 " + value);
+      button.innerHTML = word + ' <span class="intensity-mark">' + GEN.INTENSITY_MARKS[index] + "</span>";
+      button.setAttribute("aria-label", "난이도 " + word);
       button.setAttribute("aria-pressed", String(value === state.intensity));
       button.addEventListener("click", () => {
         state.intensity = value;
@@ -332,8 +348,8 @@
     field.querySelectorAll(".intensity-btn").forEach((b) => { b.disabled = book; });
     const note = $("intensityNote");
     if (note) note.textContent = book
-      ? "연습책은 게임이 고른 문제를 그대로 쓰므로 강도를 따로 고르지 않아요."
-      : "●○○ 기초 · ●●○ 표준 · ●●● 심화";
+      ? "연습책은 게임이 고른 문제를 그대로 쓰므로 난이도를 따로 고르지 않아요."
+      : "하 기초 · 중 표준 · 상 심화";
   }
 
   // 만들기 버튼은 진짜 링크다 — 눌러서 가는 주소가 곧 이 화면의 선택이므로
@@ -373,7 +389,7 @@
       tail = " · " + (labels.length <= 3
         ? labels.join(" · ")
         : labels.slice(0, 3).join(" · ") + " 외 " + (labels.length - 3) + "가지");
-      head.textContent = levelName(state.level) + " " + GEN.intensityMark(state.intensity) + " · " + state.count + "문항";
+      head.textContent = levelName(state.level) + " · 난이도 " + GEN.intensityWord(state.intensity) + " · " + state.count + "문항";
     }
     $("buildSummary").replaceChildren(head, document.createTextNode(tail));
   }

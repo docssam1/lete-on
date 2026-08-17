@@ -188,11 +188,12 @@ html, body {
 }
 .stage-badge.is-soon:hover { border-color: var(--line); background: var(--tint); }
 
-/* 강도 ●○○ / ●●○ / ●●● */
+/* 난이도 하 ●○○ / 중 ●●○ / 상 ●●● — 글자(하/중/상)가 주, 점은
+   .intensity-mark로 옅게 덧붙는 보조 표시다. */
 .intensity-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .intensity-btn {
   /* 0 1 — 세 버튼이 남는 폭을 나눠 가지지 않게 한다. 1440에서 폭을 채우면
-     ●●○ 세 점이 200px 넘는 버튼 한가운데 떠서 조작 대상으로 안 읽힌다. */
+     버튼 한가운데 글자가 200px 넘는 버튼 안에 떠서 조작 대상으로 안 읽힌다. */
   flex: 0 1 150px;
   min-height: 40px;
   border: 1px solid var(--line);
@@ -201,11 +202,18 @@ html, body {
   color: var(--ink);
   font: inherit;
   font-size: 15px;
-  letter-spacing: 2px;
+  letter-spacing: 0.5px;
   cursor: pointer;
+}
+.intensity-btn .intensity-mark {
+  margin-left: 4px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  opacity: 0.65;
 }
 .intensity-btn:hover { border-color: var(--brand); background: var(--brand-soft); }
 .intensity-btn.is-active { border-color: var(--brand); background: var(--brand); color: #fff; }
+.intensity-btn.is-active .intensity-mark { opacity: 0.9; }
 
 /* 유형 카드 — auto-fill 이라 1440에서는 넉넉히, 좁은 화면에서는 저절로 줄어
    가로 스크롤이 생기지 않는다. */

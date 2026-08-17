@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GFIELD 지오메트리 랩 · 기하 사고력 문제은행</title>
-    <meta name="description" content="GFIELD 지오메트리 랩 — 단계와 강도를 골라 인쇄용 기하 학습지를 만드는 문제은행." />
-    <link rel="stylesheet" href="./styles.css?v=lab-books-1" />
+    <meta name="description" content="GFIELD 지오메트리 랩 — 단계와 난이도를 골라 인쇄용 기하 학습지를 만드는 문제은행." />
+    <link rel="stylesheet" href="./styles.css?v=lab-all-1" />
   </head>
   <body>
     <header class="lab-header">
@@ -31,7 +31,7 @@
 
       <section class="lab-section lab-card" id="builder" aria-labelledby="builderTitle">
         <h2 id="builderTitle">학습지 만들기</h2>
-        <p class="section-note">단계 · 강도 · 유형 · 문항 수를 고르면 인쇄용 학습지가 바로 만들어져요.</p>
+        <p class="section-note">단계 · 난이도 · 유형 · 문항 수를 고르면 인쇄용 학습지가 바로 만들어져요.</p>
 
         <div class="field">
           <h3>단계</h3>
@@ -40,9 +40,9 @@
         </div>
 
         <div class="field" id="intensityField">
-          <h3>강도</h3>
+          <h3>난이도</h3>
           <div class="intensity-row" id="intensityRow"><!-- app.js --></div>
-          <p class="field-note" id="intensityNote">●○○ 기초 · ●●○ 표준 · ●●● 심화</p>
+          <p class="field-note" id="intensityNote">하 기초 · 중 표준 · 상 심화</p>
         </div>
 
         <div class="field">
@@ -90,7 +90,7 @@
          보여 주게 되므로, 스크립트를 그대로 불러 window.GW_GEN을 쓴다.
          버전 토큰은 worksheet/index.html의 것과 일부러 같게 두어 두 페이지가
          브라우저 캐시의 같은 사본을 공유하게 한다. -->
-    <script src="../worksheet/generators.js?v=ws-theme-1"></script>
-    <script src="./app.js?v=lab-books-1"></script>
+    <script src="../worksheet/generators.js?v=ws-all-1"></script>
+    <script src="./app.js?v=lab-all-1"></script>
   </body>
 </html>
