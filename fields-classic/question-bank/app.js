@@ -1865,3 +1865,29 @@ renderCurriculum();
 renderTypeTree();
 initControls();
 setMode("exam");
+
+// ?exam=<시험지 id> 로 들어오면 그 시험지에서 열려 있는 문항을 모두 골라 둔다.
+// 프로그램 페이지의 모의고사 카드에서 바로 넘어올 때 쓴다. 잠긴 문항은 건드리지 않으므로
+// 검증 게이트는 그대로다.
+(function preselectExam() {
+  const wanted = params.get("exam");
+  if (!wanted) return;
+  const exam = [...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES].find((item) => item.id === wanted);
+  if (!exam) return;
+  if (exam.stage && stageIds.has(exam.stage)) state.stage = exam.stage;
+  else if (FINAL_EXAM_TYPES.includes(exam)) state.stage = "final";
+  else if (PRACTICE_EXAM_TYPES.includes(exam)) state.stage = "practice";
+  renderStageButtons();
+  renderExamList();
+  let picked = 0;
+  exam.questions.forEach((sourceQuestion) => {
+    if (!sourceQuestion.verified || !isSelectableType(typeById(sourceQuestion.typeId))) return;
+    state.selected.exam.add(examKey(exam.id, sourceQuestion.number));
+    picked += 1;
+  });
+  if (!picked) return;
+  state.count = picked;
+  renderExamList();
+  initControls();
+  updateSummary();
+})();
