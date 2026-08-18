@@ -1,3 +1,130 @@
+// ── 카카오톡 인앱 브라우저 → 외부 브라우저 전환 ─────────────────────────
+// Kakao Developers 문서 기준: 카카오톡 인앱 브라우저 UA에는 KAKAOTALK가 포함된다.
+// Android에서는 Chrome/기본 브라우저 intent를 자동 시도하고, iOS에서는 플랫폼 제한상
+// Safari 강제 실행이 불가능하므로 즉시 안내 오버레이를 제공한다.
+(function enableKakaoExternalBrowser(){
+  var ua = navigator.userAgent || '';
+  if (!/KAKAOTALK/i.test(ua)) return;
+
+  var isAndroid = /Android/i.test(ua);
+  var isIOS = /iPhone|iPad|iPod/i.test(ua);
+  var target = new URL(window.location.href);
+
+  // 외부 브라우저로 넘긴 URL이 다시 카카오 WebView fallback으로 돌아왔을 때 무한 반복 방지
+  if (target.searchParams.get('_external_browser') === '1') {
+    ready(showGuide);
+    return;
+  }
+  target.searchParams.set('_external_browser', '1');
+
+  function ready(fn){
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn, {once:true});
+    else fn();
+  }
+
+  function androidIntent(packageName){
+    var scheme = target.protocol.replace(':','') || 'https';
+    var path = target.host + target.pathname + target.search;
+    return 'intent://' + path + '#Intent;scheme=' + scheme +
+      (packageName ? ';package=' + packageName : '') +
+      ';action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE' +
+      ';S.browser_fallback_url=' + encodeURIComponent(target.href) + ';end';
+  }
+
+  function openChrome(){
+    window.location.href = androidIntent('com.android.chrome');
+  }
+
+  function openDefaultBrowser(){
+    window.location.href = androidIntent('');
+  }
+
+  function copyLink(button){
+    var text = target.href.replace(/([?&])_external_browser=1(&|$)/, function(_, lead, tail){
+      return tail ? lead : '';
+    }).replace(/[?&]$/, '');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        var old = button.textContent;
+        button.textContent = '링크 복사됨 ✓';
+        setTimeout(function(){ button.textContent = old; }, 1300);
+      }).catch(function(){});
+    }
+  }
+
+  function showGuide(){
+    if (document.getElementById('kakao-external-guide')) return;
+
+    var wrap = document.createElement('div');
+    wrap.id = 'kakao-external-guide';
+    wrap.setAttribute('role','dialog');
+    wrap.setAttribute('aria-modal','true');
+    wrap.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:rgba(20,24,20,.62);display:flex;align-items:center;justify-content:center;padding:22px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;';
+
+    var card = document.createElement('div');
+    card.style.cssText = 'width:min(100%,420px);background:#fff;border-radius:22px;padding:24px 20px 20px;box-shadow:0 18px 60px rgba(0,0,0,.28);text-align:center;color:#243126;';
+
+    var icon = document.createElement('div');
+    icon.textContent = '🌐';
+    icon.style.cssText = 'font-size:42px;margin-bottom:9px;';
+
+    var title = document.createElement('div');
+    title.textContent = '외부 브라우저로 열어주세요';
+    title.style.cssText = 'font-size:21px;font-weight:900;letter-spacing:-.4px;margin-bottom:9px;';
+
+    var desc = document.createElement('div');
+    desc.style.cssText = 'font-size:14px;line-height:1.65;color:#617064;margin-bottom:16px;';
+    desc.innerHTML = isAndroid
+      ? '카카오톡 안에서는 일부 기능이 제한될 수 있어요.<br><b>Chrome 또는 기본 브라우저</b>에서 열어주세요.'
+      : 'iPhone에서는 웹페이지가 Safari를 강제로 실행할 수 없어요.<br>카카오톡의 <b>⋯ 메뉴 → 다른 브라우저로 열기</b>를 선택해 주세요.';
+
+    card.appendChild(icon);
+    card.appendChild(title);
+    card.appendChild(desc);
+
+    if (isAndroid) {
+      var chrome = document.createElement('button');
+      chrome.type = 'button';
+      chrome.textContent = 'Chrome으로 열기';
+      chrome.style.cssText = 'width:100%;border:0;border-radius:13px;padding:14px 16px;background:#3e7a4e;color:white;font-size:16px;font-weight:800;margin-bottom:9px;';
+      chrome.onclick = openChrome;
+      card.appendChild(chrome);
+
+      var basic = document.createElement('button');
+      basic.type = 'button';
+      basic.textContent = '기본 브라우저로 열기';
+      basic.style.cssText = 'width:100%;border:1px solid #d9dfd8;border-radius:13px;padding:13px 16px;background:#fff;color:#314034;font-size:15px;font-weight:750;margin-bottom:9px;';
+      basic.onclick = openDefaultBrowser;
+      card.appendChild(basic);
+    } else if (isIOS) {
+      var iosTip = document.createElement('div');
+      iosTip.innerHTML = '<b>1.</b> 화면 오른쪽 아래/위의 <b>⋯</b> 누르기<br><b>2.</b> <b>Safari에서 열기</b> 또는 <b>다른 브라우저로 열기</b> 선택';
+      iosTip.style.cssText = 'text-align:left;background:#f5f8f4;border-radius:13px;padding:13px 15px;font-size:14px;line-height:1.75;margin-bottom:10px;';
+      card.appendChild(iosTip);
+    }
+
+    var copy = document.createElement('button');
+    copy.type = 'button';
+    copy.textContent = '링크 복사하기';
+    copy.style.cssText = 'width:100%;border:0;background:transparent;padding:10px;color:#6a776c;font-size:13px;text-decoration:underline;';
+    copy.onclick = function(){ copyLink(copy); };
+    card.appendChild(copy);
+
+    wrap.appendChild(card);
+    document.body.appendChild(wrap);
+  }
+
+  if (isAndroid) {
+    // Android 카카오 WebView에서 외부 Chrome 실행을 먼저 시도한다.
+    setTimeout(openChrome, 120);
+    // WebView/보안 설정으로 intent가 막히면 즉시 수동 버튼을 보여준다.
+    setTimeout(function(){ ready(showGuide); }, 1200);
+  } else {
+    // iOS Safari는 웹에서 강제 실행할 수 없으므로 바로 안내한다.
+    ready(showGuide);
+  }
+})();
+
 // ── 보캡 테스트 단어 데이터 ─────────────────────────────────────────────
 // 새로운 날 추가하는 법: 사진을 Claude에게 올리면 이 배열 맨 앞에
 // { id, date, label, words } 한 덩어리를 추가한다. id는 'd' + YYYYMMDD.
