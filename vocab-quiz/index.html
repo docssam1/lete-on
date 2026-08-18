@@ -598,20 +598,8 @@
           </button>`;
         }).join('')}
       </div>
-      <div class="card" style="margin-top:14px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px">
-        <div style="font-size:13.5px; font-weight:700">⏰ 매일 5시 50분 자동 시작
-          <div style="font-size:11px; color:var(--sub); font-weight:400">페이지가 열려 있으면 마지막에 고른 챕터·게임이 저절로 시작돼요</div>
-        </div>
-        <button class="backbtn" id="autotgl">${store()._autoOff ? '꺼짐' : '켜짐 ✅'}</button>
-      </div>
       <div class="note">📥 챕터 목록에서 단어장(단어·영영뜻·한글뜻)을 내려받아 외울 수 있어요.<br>
       📸 새 교재 사진을 Claude에게 올리면 "내 단어장"에 계속 추가돼요.</div>`;
-    $app.querySelector('#autotgl').onclick = () => {
-      const s2 = store();
-      s2._autoOff = !s2._autoOff;
-      save(s2);
-      home();
-    };
     $app.querySelectorAll('[data-book]').forEach(b => b.onclick = () => {
       sel.bookId = b.dataset.book;
       nav.screen = 'chapters';
@@ -1070,7 +1058,7 @@
     $app.querySelector('#home2').onclick = home;
   }
 
-  // ── 5시 50분 자동 시작 ─────────────────────────────────
+  // ── 마지막 선택(교재·챕터·게임) 기억 ──────────────────
   function persistSel(){
     const s2 = store();
     s2._sel = { bookId: sel.bookId, dayId: sel.dayId, mode: sel.mode };
@@ -1080,21 +1068,6 @@
     const saved = store()._sel;
     if (saved && dayById(saved.dayId) && bookById(saved.bookId)) Object.assign(sel, saved);
   })();
-  const AUTO_H = 17, AUTO_M = 50;
-  setInterval(() => {
-    const s2 = store();
-    if (s2._autoOff) return;
-    const n = new Date();
-    if (n.getHours() !== AUTO_H || n.getMinutes() !== AUTO_M) return;
-    const today = n.getFullYear() + '-' + (n.getMonth() + 1) + '-' + n.getDate();
-    if (s2._autoLast === today) return;
-    s2._autoLast = today; save(s2);
-    playSuccessArpeggio();
-    buzz([80, 60, 80]);
-    popKo(window.innerWidth / 2, 130, '⏰ 자동 시작!');
-    startQuiz();
-  }, 12000);
-
   // 음성 목록이 늦게 로드되는 브라우저 대응
   if (typeof speechSynthesis !== 'undefined') speechSynthesis.onvoiceschanged = () => {};
   home();
