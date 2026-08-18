@@ -1,12 +1,13 @@
 // GW app.js — UI wiring + worksheet assembly for the printable 쌓기나무
 // worksheet generator. All problem math lives in generators.js, all SVG
-// markup lives in render.js; this file only reads controls, calls those two
-// modules, and writes the resulting HTML into #sheetRoot.
+// markup lives in render.js, every problem-card markup lives in card.js;
+// this file only reads controls, calls those modules, and writes the
+// resulting HTML into #sheetRoot.
 (function () {
   "use strict";
 
   const GEN = window.GW_GEN;
-  const REN = window.GW_RENDER;
+  const CARD = window.GW_CARD;
 
   function escapeHtml(str) {
     return String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -42,11 +43,16 @@
     intensity: GEN.DEFAULT_INTENSITY,
     types: GEN.TYPES.filter((t) => t.defaultOn).map((t) => t.code),
     count: 9,
+    // 문제 배열: "" 골고루 섞기 · "type" 유형별 · "diff" 난이도별.
+    arrange: GEN.ARRANGE_MIX,
     studentName: "",
     includeCover: false,
     includeAnswers: true,
     levelNote: "",
     worksheet: null,
+    // 인쇄에서 뺀 문제의 원래 자리 번호(0-based). 화면 세션 한정 — 학습지를
+    // 다시 만드는 모든 경로에서 비운다 (isOmitted 위의 설명 참고).
+    omitted: [],
     // Preview state is independent of the worksheet's own seed on purpose —
     // see renderPreview().
     previewType: null,
@@ -176,9 +182,24 @@
       note.hidden = !state.levelNote;
     }
     document.getElementById("countSelect").value = String(state.count);
+    const arrangeSel = document.getElementById("arrangeSelect");
+    if (arrangeSel) arrangeSel.value = state.arrange;
+    syncArrangeState();
     const cover = document.getElementById("includeCover");
     if (cover) cover.checked = state.includeCover;
     document.getElementById("includeAnswers").checked = state.includeAnswers;
+  }
+
+  // 난이도별 묶기는 한 장 안에서 강도를 하 → 중 → 상으로 올리는 모드라, 화면의
+  // 난이도 버튼이 가리킬 값이 없다. 줄을 감추지 않고 흐리게만 두어, 모드를
+  // 되돌리면 고르던 난이도가 그대로 남아 있음을 보여 준다.
+  function syncArrangeState() {
+    const diff = state.arrange === GEN.ARRANGE_DIFF;
+    const row = document.getElementById("intensityRow");
+    if (row) {
+      row.classList.toggle("is-muted", diff);
+      row.querySelectorAll(".intensity-btn").forEach((b) => { b.disabled = diff; });
+    }
   }
 
   // ---------------------------------------------------------------------
@@ -206,6 +227,7 @@
       buildTypeCheckboxes();
     }
     if (setup.count) state.count = setup.count;
+    if (setup.arrange !== undefined && setup.arrange !== null) state.arrange = GEN.normalizeArrange(setup.arrange);
     if (setup.seed) state.seed = setup.seed;
   }
 
@@ -254,6 +276,13 @@
     return allowed.indexOf(n) === -1 ? null : n;
   }
 
+  // ?arrange=type|diff (또는 코드와 같은 t|d). 알 수 없는 값은 기본(섞기).
+  function paramArrange(value) {
+    if (value === null || value === undefined || value === "") return null;
+    const mode = GEN.normalizeArrange(value);
+    return mode === GEN.ARRANGE_MIX ? null : mode;
+  }
+
   function readCodeParam(params) {
     let text = params.get("code") || "";
     // "?code=#GW-..." — an unescaped '#' terminates the query string, so the
@@ -280,229 +309,20 @@
       level: paramLevel(params.get("level")),
       intensity: paramIntensity(params.get("intensity")),
       types: paramTypes(params.get("types")),
-      count: paramCount(params.get("count"))
+      count: paramCount(params.get("count")),
+      arrange: paramArrange(params.get("arrange"))
     };
-    if (setup.level || setup.intensity || setup.types || setup.count) applySetup(setup);
+    if (setup.level || setup.intensity || setup.types || setup.count || setup.arrange) applySetup(setup);
   }
 
   // ---------------------------------------------------------------------
   // Figure rendering per problem kind
   // ---------------------------------------------------------------------
-  function figureBlock(caption, svg, sizeClass) {
-    return '<div class="ws-figure' + (sizeClass ? " " + sizeClass : "") + '"><figcaption>' + escapeHtml(caption) + "</figcaption>" + svg + "</div>";
-  }
-
-  function renderFigures(p) {
-    const f = p.figures;
-    if (f.kind === "TC") {
-      const numberSvg = REN.renderNumberGrid(f.numberGrid, f.width, f.depth);
-      const head = '<div class="ws-fig-row">' + figureBlock("위에서 본 모양 (칸 안의 수는 쌓기나무의 개수)", numberSvg) + "</div>";
-      // 강도 ●○○은 개수만 물으므로 그릴 칸을 내주지 않는다.
-      if (!f.drawViews) return head;
-      const emptyFront = REN.renderEmptyDottedGrid(f.height, f.width);
-      const emptySide = REN.renderEmptyDottedGrid(f.height, f.depth);
-      return head +
-        '<div class="ws-fig-row">' + figureBlock("앞에서 본 모양", emptyFront) + figureBlock("오른쪽 옆에서 본 모양", emptySide) + "</div>";
-    }
-    if (f.kind === "views3") {
-      // VC/VM only (see generators.js's genView3): after the three view
-      // silhouettes, scaffold the textbook's written method with a second
-      // row holding the empty 위에서 본 모양 solve table (see render.js's
-      // renderSolveTable).
-      const solveSvg = REN.renderSolveTable(f.footprint, f.width, f.depth);
-      return (
-        '<div class="ws-fig-row">' +
-        figureBlock("위", REN.renderViewGrid(f.top)) +
-        figureBlock("앞", REN.renderViewGrid(f.front)) +
-        figureBlock("오른쪽 옆", REN.renderViewGrid(f.side)) +
-        "</div>" +
-        '<div class="ws-fig-row">' +
-        figureBlock("위에서 본 모양에 수 쓰기 (아래·오른쪽 칸에는 앞·옆에서 본 가장 높은 층수를 쓰세요)", solveSvg) +
-        "</div>"
-      );
-    }
-    if (f.kind === "VP") {
-      const hiddenRows = f.height;
-      const hiddenCols = f.hiddenLabel === "앞" ? f.width : f.depth;
-      const emptyGrid = REN.renderEmptyDottedGrid(hiddenRows, hiddenCols);
-      return (
-        figureBlock("위", REN.renderViewGrid(f.top)) +
-        figureBlock(f.givenLabel, REN.renderViewGrid(f.given)) +
-        figureBlock(f.hiddenLabel + " (그리기)", emptyGrid)
-      );
-    }
-    if (f.kind === "iso") {
-      const colorFn = f.paint ? () => "grey" : undefined;
-      const caption = f.paint
-        ? "쌓기나무 모양 (겉면을 색칠" + (f.includeBottom === false ? ", 바닥면 제외" : ", 밑면 포함") + ")"
-        : "쌓기나무 모양";
-      return figureBlock(caption, REN.renderIso(f.map, f.width, f.depth, { colorFn }), "ws-figure-lg");
-    }
-    if (f.kind === "iso-top") {
-      // IN pyramid archetype: the textbook's bird's-eye diamond view.
-      return figureBlock("쌓기나무 모양", REN.renderIsoTop(f.map, f.width, f.depth), "ws-figure-lg");
-    }
-    if (f.kind === "iso-walled") {
-      // IH only: draws the two walls behind/beneath the cubes (see
-      // render.js renderIsoWalled) so the picture matches "뒤와 왼쪽에 벽이
-      // 있는" from the prompt.
-      return figureBlock("쌓기나무 모양", REN.renderIsoWalled(f.map, f.width, f.depth), "ws-figure-lg");
-    }
-    if (f.kind === "iso-box") {
-      // PN is a full cube; BW may be a full cube or a stepped structure.
-      // Both show only the actual cubes without an enclosing wireframe.
-      const full = f.paint || f.checker;
-      const opts = { checker: f.checker, cornerWhite: f.cornerWhite, noBox: full };
-      const caption = f.paint
-        ? "쌓기나무 모양 (겉면을 색칠" + (f.includeBottom === false ? ", 바닥면 제외" : ", 밑면 포함") + ")"
-        : full ? "쌓기나무 모양" : "쌓기나무 모양 (점선 = 상자 테두리)";
-      return figureBlock(caption, REN.renderIsoBox(f.map, f.width, f.depth, f.boxH, opts), "ws-figure-lg");
-    }
-    if (f.kind === "iso-holes") {
-      return figureBlock("구멍이 뚫린 상자 모양 (검은 칸 = 구멍)", REN.renderIsoHoles(f.width, f.depth, f.boxH, f.tunnels), "ws-figure-lg");
-    }
-    if (f.kind === "sequence") {
-      const shapeHtml = f.shapes.map((s) => figureBlock(s.n + "번째", REN.renderIso(s.map, s.width, s.depth), "ws-figure-sm")).join("");
-      return shapeHtml + '<div class="ws-seq-dots">…</div>';
-    }
-    return "";
-  }
-
-  function answerLine(inner) {
-    return '<div class="ws-answer-line">' + inner + "</div>";
-  }
-
-  function answerBlank(p) {
-    if (p.type === "VP") return ""; // the dotted grid above IS the answer area
-    if (p.type === "TC") {
-      // ②(그리기)는 위의 점선 모눈이 답란이고, ①·③만 숫자 답란이 필요하다.
-      let line = "① ______ 개";
-      if (p.answer.askHeight) line += "　③ ______ 층";
-      return answerLine(line);
-    }
-    if (p.type === "IC") {
-      if (!p.answer.askFloor) return answerLine("답: ______ 개");
-      let line = "① ______ 개　② ______ 개";
-      if (p.answer.askUpper) line += "　③ ______ 개";
-      return answerLine(line);
-    }
-    if (p.type === "IH" || p.type === "IN") {
-      // Subtraction-method scaffold (docs/03_COUNT_HIDDEN.md §3): the child
-      // fills 전체/보이는/보이지 않는 — or writes per-column hidden counts
-      // directly on the printed picture (method ①) and only uses the last
-      // blank. Either textbook method lands in the same final blank.
-      return answerLine("전체 ______ 개 − 보이는 ______ 개 = 보이지 않는 ______ 개");
-    }
-    if (p.type === "VC" && p.answer.askFloor) return answerLine("① ______ 개　② ______ 개");
-    if (p.type === "VM") return answerLine("답: 최대 ______ 개, 최소 ______ 개");
-    if (p.type === "PN") {
-      return answerLine(p.answer.variant === "faces" ? "답: 색칠된 면은 모두 ______ 면" : "답: ______ 개");
-    }
-    if (p.type === "BW") return answerLine("답: 흰색 ______ 개, 검은색 ______ 개");
-    if (p.type === "HL") {
-      // 층별 모눈 가이드가 곧 풀이 영역이다 — 아이가 층마다 빠진 칸을 칠하고
-      // 남은 칸을 세어 더한다. 빈 칸으로만 인쇄한다(정답지 쪽은 채워 나온다).
-      return '<div class="ws-solve-area">' + REN.renderHoleLayers(p, { blank: true }) + "</div>" +
-        answerLine("답: ______ 개");
-    }
-    if (p.type === "SQ" && p.answer.mode === "which") return answerLine("답: ______ 번째");
-    return answerLine("답: ______ 개");
-  }
-
-  // "전체(단계 혼합)"로 만들 때만 문제마다 실제로 뽑힌 단계 이름을 작은
-  // 배지로 보여 준다 — 단일 단계로 만들면 머리말 배지 하나로 충분하니
-  // 문제마다 반복해서 보여 줄 필요가 없다.
-  function problemLevelBadgeHtml(p) {
-    const info = GEN.levelInfo(p.level);
-    const name = info ? info.name : p.level;
-    return '<span class="ws-prob-level">' + escapeHtml(name) + "</span>";
-  }
-
-  function renderCard(p, idx, mixed) {
-    return (
-      '<article class="ws-card" data-type="' + p.type + '">' +
-      '<div class="ws-card-head"><span class="ws-num">' + (idx + 1) + "</span>" +
-      (mixed && p.level ? problemLevelBadgeHtml(p) : "") + "</div>" +
-      '<p class="ws-prompt">' + escapeHtml(p.prompt) + "</p>" +
-      (p.methodHint ? '<p class="ws-method">' + escapeHtml(p.methodHint) + "</p>" : "") +
-      '<div class="ws-figures">' + renderFigures(p) + "</div>" +
-      answerBlank(p) +
-      "</article>"
-    );
-  }
-
-  // Dedicated (non-string-parsed) formatter for the compact answer list —
-  // keeps the answer sheet decoupled from the free-text answerText used on
-  // the worksheet header / __WS export.
-  function answerLineText(p) {
-    const a = p.answer;
-    switch (p.type) {
-      case "TC": {
-        let s = "① 총 " + a.total + "개";
-        if (a.drawViews) s += "　② 그림 참고";
-        if (a.askHeight) s += "　③ " + a.height + "층";
-        return a.drawViews || a.askHeight ? s : "총 " + a.total + "개";
-      }
-      case "VC": return a.askFloor ? "① " + a.count + "개　② 1층 " + a.floor + "개" : a.count + "개";
-      case "VM": return "최대 " + a.max + "개, 최소 " + a.min + "개";
-      case "VP": return a.hiddenLabel + " 모양 (그림 참고)";
-      case "IC": {
-        if (!a.askFloor) return a.total + "개";
-        let s = "① " + a.total + "개　② 1층 " + a.floor + "개";
-        if (a.askUpper) s += "　③ 2층 이상 " + a.upper + "개";
-        return s;
-      }
-      case "IH": return a.hidden + "개 (전체 " + a.total + "개 − 보이는 " + a.visible + "개)";
-      case "IN": return a.hidden + "개 (전체 " + a.total + "개 − 보이는 " + a.visible + "개)";
-      case "FB": return a.need + "개";
-      case "CU": return a.need + "개";
-      case "PN": {
-        const bottom = a.includeBottom ? "밑면 포함" : "바닥면 제외";
-        if (a.variant === "faces") return a.faces + "면 (" + bottom + ")";
-        return a.count + "개 (" + a.askFaces + "면짜리, " + bottom + ", 전체 " + a.cubes + "개)";
-      }
-      case "BW": return "흰색 " + a.white + "개, 검은색 " + a.black + "개";
-      case "HL": return a.remaining + "개 (전체 " + a.total + "개 − 빠진 " + a.removed + "개)";
-      case "SQ":
-        if (a.mode === "which") return a.n + "번째";
-        if (a.mode === "increment") return a.delta + "개 (" + a.count + " → " + a.next + ")";
-        return a.count + "개";
-      default: return p.answerText;
-    }
-  }
-
-  function renderAnswerItem(p, idx, mixed) {
-    let thumbs = "";
-    if (p.type === "TC") {
-      thumbs = '<span class="ws-ans-thumbs">' +
-        '<span class="ws-ans-thumb"><small>앞</small>' + REN.renderMiniFilled(p.answer.front) + "</span>" +
-        '<span class="ws-ans-thumb"><small>옆</small>' + REN.renderMiniFilled(p.answer.side) + "</span></span>";
-    } else if (p.type === "VP") {
-      thumbs = '<span class="ws-ans-thumbs"><span class="ws-ans-thumb"><small>' + escapeHtml(p.answer.hiddenLabel) + "</small>" + REN.renderMiniFilled(p.answer.hidden) + "</span></span>";
-    } else if (p.type === "VC") {
-      const solveSvg = REN.renderSolveTable(p.figures.footprint, p.figures.width, p.figures.depth, {
-        numbers: p.answer.numbers, colMax: p.answer.colMax, rowMax: p.answer.rowMax
-      });
-      thumbs = '<span class="ws-ans-thumbs"><span class="ws-ans-thumb"><small>풀이</small>' + solveSvg + "</span></span>";
-    } else if (p.type === "VM") {
-      const solveSvg = REN.renderSolveTable(p.figures.footprint, p.figures.width, p.figures.depth, {
-        numbers: p.answer.numbers, colMax: p.answer.colMax, rowMax: p.answer.rowMax
-      });
-      thumbs = '<span class="ws-ans-thumbs"><span class="ws-ans-thumb"><small>최대</small>' + solveSvg + "</span></span>";
-    } else if (p.type === "HL") {
-      // 층별 모눈 가이드를 그대로 정답지에 싣는다 — 답만 있는 것보다 "층마다
-      // 세어 더한다"는 방법이 보이는 편이 채점·설명에 쓸모가 있다.
-      thumbs = '<span class="ws-ans-solve">' + REN.renderHoleLayers(p) + "</span>";
-    } else if (p.type === "SQ") {
-      const totals = (p.answer.stageTotals || []).map((v, i) => (i + 1) + "번째 " + v + "개").join(", ");
-      thumbs = totals ? '<span class="ws-ans-note">' + escapeHtml(totals) + "</span>" : "";
-    }
-    // HL의 층별 가이드는 3단 정답 목록 한 칸에 가로로 다 들어가지 않으므로
-    // 그 항목만 단을 가로질러 전체 폭을 쓴다 (CSS: column-span: all).
-    const wide = p.type === "HL" ? " ws-answer-item-wide" : "";
-    const levelTag = mixed && p.level ? problemLevelBadgeHtml(p) + " " : "";
-    return '<li class="ws-answer-item' + wide + '"><b>' + (idx + 1) + ".</b> " + levelTag + escapeHtml(answerLineText(p)) + thumbs + "</li>";
-  }
+  // 문제 카드 · 정답 항목 마크업은 card.js(GW_CARD)가 원본이다 — 지오메트리
+  // 랩의 미리보기가 같은 함수를 불러 쓰므로, 여기서 한 벌 더 만들면 두 화면이
+  // 서서히 갈라진다.
+  const renderCard = CARD.renderCard;
+  const renderAnswerItem = CARD.renderAnswerItem;
 
   // ---------------------------------------------------------------------
   // Full page assembly
@@ -576,17 +396,70 @@
       "<div><span>시작한 날</span><i></i></div>" +
       '<div><span>나의 단계</span><strong class="ws-level-badge">' + escapeHtml(ws.badge) + "</strong></div>" +
       "</div>" +
+      // 표지의 문항 수는 실제로 인쇄될 개수 — 두 문제를 뺐는데 표지만 원래
+      // 개수를 말하면, 표지를 믿고 채점표를 만든 사람이 두 칸을 헛 그린다.
       '<div class="ws-cover-footer"><span>DOCSSAM\'S MATH LAB</span>' +
-      '<b>' + ws.problems.length + " QUESTIONS</b></div>" +
+      '<b>' + (ws.problems.length - state.omitted.length) + " QUESTIONS</b></div>" +
       '<div class="ws-cover-code">' + escapeHtml(ws.code) + "</div>" +
       "</section>"
     );
   }
 
+  // ---------------------------------------------------------------------
+  // 문제 빼기 — 만들어 놓고 보니 한두 문제가 마음에 들지 않을 때, 학습지 전체를
+  // 다시 뽑지 않고 그 문제만 인쇄에서 빼는 화면 기능.
+  //
+  // WHY 코드에 담지 않는가: 학습지 코드는 "같은 코드 = 같은 학습지"라는 약속
+  // 하나로 서 있다. 뺀 문제까지 코드에 실으면 같은 문제 묶음을 가리키는 코드가
+  // 여러 벌 생기고, 코드를 받아 적은 사람은 자기 코드가 원본인지 누가 솎아낸
+  // 판본인지 알 수 없다. 그래서 빼기는 이 탭이 살아 있는 동안만 유지되고,
+  // 새로 만들기·단계 변경 등 학습지를 다시 만드는 모든 길에서 초기화된다.
+  // ---------------------------------------------------------------------
+  function isOmitted(index) {
+    return state.omitted.indexOf(index) !== -1;
+  }
+
+  function keptProblems(ws) {
+    return ws.problems
+      .map((p, index) => ({ p, index }))
+      .filter((entry) => !isOmitted(entry.index));
+  }
+
+  // 소제목 줄 — 배열 모드에서 group.key가 바뀌는 자리에만 찍는다. 한 묶음의
+  // 문제를 전부 빼면 소제목만 남아 아래가 빈 채로 인쇄되므로, 남은 문제가
+  // 하나도 없는 묶음의 소제목은 아예 그리지 않는다.
+  function liveGroupKeys(ws) {
+    const keys = {};
+    ws.problems.forEach((p, index) => {
+      if (p.group && !isOmitted(index)) keys[p.group.key] = true;
+    });
+    return keys;
+  }
+
+  function groupHeadHtml(p, previousKey, live) {
+    if (!p.group || p.group.key === previousKey || !live[p.group.key]) return "";
+    return '<h3 class="ws-group" data-group="' + escapeHtml(p.group.key) + '">' +
+      escapeHtml(p.group.label) + "</h3>";
+  }
+
   function buildSheetHtml(ws) {
     const nameLine = state.studentName ? escapeHtml(state.studentName) : "";
     const mixed = ws.level === GEN.ALL_LEVEL;
-    const cards = ws.problems.map((p, i) => renderCard(p, i, mixed)).join("");
+    // 번호는 "빼지 않은 문제" 기준으로 1부터 다시 매긴다 — 뺀 카드는 화면에만
+    // 흐리게 남고 번호 대신 —를 달아, 빠진 자리 때문에 번호가 건너뛰지 않는다.
+    let printedNo = 0;
+    let previousKey = null;
+    const live = liveGroupKeys(ws);
+    const cards = ws.problems.map((p, i) => {
+      const omitted = isOmitted(i);
+      if (!omitted) printedNo += 1;
+      const head = groupHeadHtml(p, previousKey, live);
+      previousKey = p.group && live[p.group.key] ? p.group.key : previousKey;
+      return head + renderCard(p, i, mixed, {
+        numberLabel: omitted ? "—" : String(printedNo),
+        omit: { index: i, checked: omitted }
+      });
+    }).join("");
     const worksheetPage =
       '<section class="ws-page" id="worksheetPage">' +
       '<header class="ws-head"><div class="ws-head-top">' +
@@ -606,7 +479,16 @@
 
     let answerPage = "";
     if (state.includeAnswers) {
-      const items = ws.problems.map((p, i) => renderAnswerItem(p, i, mixed)).join("");
+      // 뺀 문제는 정답지에서도 사라지고, 남은 정답은 학습지와 같은 번호를 쓴다.
+      let answerKey = null;
+      const answerLive = live;
+      const items = keptProblems(ws).map((entry, order) => {
+        const head = entry.p.group && answerLive[entry.p.group.key] && entry.p.group.key !== answerKey
+          ? '<li class="ws-answer-group">' + escapeHtml(entry.p.group.label) + "</li>"
+          : "";
+        if (entry.p.group) answerKey = entry.p.group.key;
+        return head + renderAnswerItem(entry.p, order, mixed, { numberLabel: String(order + 1) });
+      }).join("");
       answerPage =
         '<section class="ws-page ws-answer-page" id="answerPage">' +
         '<h2 class="ws-answer-title">정답 <span class="ws-head-meta">' +
@@ -686,26 +568,55 @@
   }
 
   function regenerate() {
+    // 새 문제 묶음이 나오면 예전 자리 번호로 저장해 둔 빼기는 뜻을 잃는다.
+    state.omitted = [];
     state.worksheet = GEN.generateWorksheet({
       types: state.types,
       level: state.level,
       intensity: state.intensity,
       count: state.count,
+      arrange: state.arrange,
       seed: state.seed
     });
-    document.getElementById("sheetRoot").innerHTML = buildSheetHtml(state.worksheet);
     document.getElementById("codeInput").value = state.worksheet.code;
+    paintSheet();
     renderPreview();
-    // Verification hook for the self-test (and for anyone auditing the page
-    // in a live browser): the exact same shape of {code, seed, problems}
-    // generators.js produced.
-    window.__WS = { code: state.worksheet.code, seed: state.worksheet.seed, problems: state.worksheet.problems };
   }
 
   function rerenderOnly() {
     // Name / answer-toggle changes don't need a new worksheet, just a repaint.
     if (!state.worksheet) return regenerate();
-    document.getElementById("sheetRoot").innerHTML = buildSheetHtml(state.worksheet);
+    paintSheet();
+  }
+
+  // 시트를 다시 그리고 빼기 체크박스를 붙인다. innerHTML로 통째로 갈아 끼우므로
+  // 이벤트는 매번 새로 매단다 (카드가 최대 50장이라 위임보다 단순한 쪽을 택함).
+  function paintSheet() {
+    const root = document.getElementById("sheetRoot");
+    root.innerHTML = buildSheetHtml(state.worksheet);
+    root.querySelectorAll(".ws-omit-box").forEach((box) => {
+      box.addEventListener("change", () => {
+        const index = parseInt(box.dataset.omit, 10);
+        const at = state.omitted.indexOf(index);
+        if (box.checked && at === -1) state.omitted.push(index);
+        else if (!box.checked && at !== -1) state.omitted.splice(at, 1);
+        paintSheet();
+      });
+    });
+    const reset = document.getElementById("resetOmitBtn");
+    if (reset) reset.hidden = !state.omitted.length;
+    // Verification hook for the self-test (and for anyone auditing the page
+    // in a live browser): the exact same shape of {code, seed, problems}
+    // generators.js produced, plus what this screen is actually printing.
+    const ws = state.worksheet;
+    window.__WS = {
+      code: ws.code,
+      seed: ws.seed,
+      arrange: ws.arrange,
+      problems: ws.problems,
+      omitted: state.omitted.slice().sort((a, b) => a - b),
+      printedCount: ws.problems.length - state.omitted.length
+    };
   }
 
   // ---------------------------------------------------------------------
@@ -736,6 +647,17 @@
     document.getElementById("countSelect").addEventListener("change", (e) => {
       state.count = parseInt(e.target.value, 10);
       regenerate();
+    });
+    const arrangeSel = document.getElementById("arrangeSelect");
+    if (arrangeSel) arrangeSel.addEventListener("change", (e) => {
+      state.arrange = GEN.normalizeArrange(e.target.value);
+      syncArrangeState();
+      regenerate();
+    });
+    const resetOmit = document.getElementById("resetOmitBtn");
+    if (resetOmit) resetOmit.addEventListener("click", () => {
+      state.omitted = [];
+      paintSheet();
     });
     document.getElementById("studentName").addEventListener("input", (e) => {
       state.studentName = e.target.value;
