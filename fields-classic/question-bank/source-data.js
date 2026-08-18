@@ -178,6 +178,16 @@ export const TYPES = [
   type("collection-repeat-gap", "pattern", "수 규칙", "모으기 반복 수열에서 같은 수 사이 개수", { generator: "collectionRepeatGap", sourceMatched: true }),
   type("magic-square", "number", "수 배열과 합", "가로·세로·대각선 합이 같은 마방진", { legacyId: 14 }),
   type("fold-hole-count", "geometry", "색종이 접기", "접은 색종이의 구멍 개수", { generator: "paperFoldHoleCount", legacyId: 4 }),
+  // F24~F31: 파이널 2·3회 연결 재검토(FINAL-SOURCE-AUDIT.md)에서 분리된 유형.
+  // 기존 유형과 이름이 비슷하지만 구조가 달라 새로 등록한다. 생성기가 검산을 통과하기 전까지 잠금.
+  type("fold-diagonal-hole-count", "geometry", "색종이 접기", "대각선으로 여러 번 접은 색종이의 구멍 개수"),
+  type("row-column-sum-placement", "number", "수 배열과 합", "행·열 합에 맞게 1부터 차례로 놓기"),
+  type("two-by-two-sum-fill", "number", "수 배열과 합", "2x2 칸을 행·열 합과 서로 다른 조건으로 채우기"),
+  type("shape-sum-grid-4", "number", "매트릭스", "4x4 도형표의 행·열 합으로 빈 합 구하기"),
+  type("vertical-cryptarithm-shape-sum", "number", "복면산과 식", "세로셈 복면산에서 세 도형이 나타내는 수의 합"),
+  type("triangle-max-edge-sum", "number", "수 배열과 합", "삼각형 세 변의 합을 가장 크게 만들기"),
+  type("split-merge-tree", "number", "수 배열과 합", "가르기·모으기 나무의 부모·자식 관계"),
+  type("border-go-stone-difference", "pattern", "도형 규칙", "테두리가 커지는 바둑돌의 흑백 차이"),
   type("fold-diagonal-unfold", "geometry", "색종이 접기", "대각선으로 접고 자른 뒤 펼친 선 그리기"),
   type("fold-number-remaining-sum", "geometry", "색종이 접기", "번호 색종이를 접고 자른 뒤 남은 수의 합"),
   type("cube-count-solid", "geometry", "쌓기나무", "입체를 이루는 쌓기나무 전체 개수", { geometryGame: "count-heights" }),
@@ -316,8 +326,10 @@ export const FINAL_EXAM_TYPES = [
       "hidden-number-card-conditions", "cube-hidden-count", "closest-two-digit-card-sum", "front-back-total",
       "set-union-count", "wrong-operation-correction", "symbol-relation", "paired-sequences",
       "shape-matrix-rule", "delayed-date-promise", "repeat-pattern", "calendar-date-weekday",
-      "two-type-unit-total", "cryptarithm", "fold-hole-count", "edge-sum-grid", "equal-line-sum",
-      "total-difference", "symbol-sum-grid", "magic-square"
+      // 14~17·19번은 연결 재검토(2026-08-12)로 분리된 유형이다. 이름이 비슷한 기존 유형에
+      // 다시 붙이지 말 것 — 구조가 다르다는 대조 기록이 FINAL-SOURCE-AUDIT.md에 있다.
+      "two-type-unit-total", "vertical-cryptarithm-shape-sum", "fold-diagonal-hole-count", "row-column-sum-placement", "two-by-two-sum-fill",
+      "total-difference", "shape-sum-grid-4", "magic-square"
     ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index === 0 || index === 2 || index === 3 || index === 5 || index === 8 || index === 9 || index === 11 || index === 12 }))
   },
   {
@@ -327,11 +339,13 @@ export const FINAL_EXAM_TYPES = [
     file: "필즈선발대비 실전 모의고사 파이널 3회.pdf",
     sourceViewer: false,
     questions: [
-      "row-column-count-placement", "truth-lie-ranking", "edge-sum-grid", "cube-count-solid",
-      "number-pyramid", "reverse-thinking", "order-position-seven-people", "fold-hole-count",
+      // 3·5·8·15·19번은 연결 재검토(2026-08-13)로 분리·정정된 유형이다. 15번은 파이널 2회
+      // 19번과 수치까지 같은 문항(F27). 근거는 FINAL-SOURCE-AUDIT.md의 재검토 표.
+      "row-column-count-placement", "truth-lie-ranking", "triangle-max-edge-sum", "cube-count-solid",
+      "split-merge-tree", "reverse-thinking", "order-position-seven-people", "fold-diagonal-hole-count",
       "target-score-combinations", "matchstick-square-growth", "connected-line-degree-sum", "letter-block-transform",
-      "go-stone-difference-inverse", "square-count", "symbol-sum-grid", "cube-fill-box",
-      "mixed-sequences", "two-type-unit-total", "go-stone-difference", "neither-set-count"
+      "go-stone-difference-inverse", "square-count", "shape-sum-grid-4", "cube-fill-box",
+      "mixed-sequences", "two-type-unit-total", "border-go-stone-difference", "neither-set-count"
     ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index <= 1 || index === 8 || index === 9 || index === 10 || index === 11 || index === 16 || index === 19 }))
   }
 ];
