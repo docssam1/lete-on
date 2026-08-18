@@ -4,12 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Gfield 보캡 테스트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
   :root{
     --cream:#faf6ee; --paper:#fffdf8; --ink:#2d3a2e; --sub:#6b7a6c;
     --green:#3e7a4e; --green-soft:#e3efe5; --accent:#e8a13c; --accent-soft:#fdf1dd;
     --bad:#c05248; --bad-soft:#f9e6e4; --line:#e4ddcd;
     --radius:18px; --shadow:0 4px 18px rgba(61,72,52,.10);
+    --display-font:'Jua','Apple SD Gothic Neo','Noto Sans KR',sans-serif;
   }
   *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
   body{
@@ -17,11 +21,45 @@
     background:var(--cream); color:var(--ink);
     min-height:100vh; display:flex; justify-content:center;
   }
-  #app{width:100%; max-width:520px; padding:18px 16px 40px;}
-  h1{font-size:22px; letter-spacing:-.3px;}
+  #app{width:100%; max-width:520px; padding:18px 16px 40px; position:relative; z-index:1;}
+  h1{font-family:var(--display-font); font-weight:400; font-size:22px; letter-spacing:-.3px;}
+  .sec-title, .btitle, .mode .mt, .score-ring .n, .big-score, .rscore{font-family:var(--display-font);}
   .top{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
-  .top .logo{font-size:26px;}
+  .top .logo{font-size:30px; display:inline-block; animation:logoBob 2.5s ease-in-out infinite;}
   .top .sub{font-size:12px; color:var(--sub);}
+  .top h1{
+    font-size:26px;
+    line-height:1.2;
+    color:#ffcf4d;
+    -webkit-text-stroke:1px #8a5310;
+    paint-order:stroke fill;
+    text-shadow:0 2px 0 #d9812a, 0 5px 0 #a05a17, 0 9px 14px rgba(89,54,10,.35);
+    letter-spacing:.5px;
+  }
+  @keyframes logoBob{0%,100%{transform:translateY(0) rotate(-4deg);}50%{transform:translateY(-6px) rotate(4deg);}}
+
+  /* ── 배경 반짝임(앰비언트) ─────────────────────────── */
+  .bg-sparkle{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-repeat:repeat; opacity:.35;
+  }
+  .bg-sparkle.s1{
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,.9) 1px, transparent 1.6px),
+      radial-gradient(circle, rgba(232,161,60,.7) 1.2px, transparent 1.8px);
+    background-size:140px 140px, 210px 210px;
+    background-position:0 0, 60px 90px;
+    animation:driftA 38s linear infinite;
+  }
+  .bg-sparkle.s2{
+    background-image:radial-gradient(circle, rgba(62,122,78,.55) 1.4px, transparent 2px);
+    background-size:180px 180px;
+    background-position:40px 20px;
+    animation:driftB 52s linear infinite;
+    opacity:.22;
+  }
+  @keyframes driftA{to{background-position:140px 140px, 210px -60px;}}
+  @keyframes driftB{to{background-position:-180px 100px;}}
   .card{
     background:var(--paper); border:1px solid var(--line);
     border-radius:var(--radius); box-shadow:var(--shadow);
@@ -32,28 +70,51 @@
   .chip{
     border:1.5px solid var(--line); background:#fff; border-radius:999px;
     padding:9px 14px; font-size:14px; cursor:pointer; color:var(--ink);
-    transition:all .15s;
+    transition:all .1s; box-shadow:0 4px 0 #ddd4bf;
   }
+  .chip:active{transform:translateY(3px); box-shadow:0 1px 0 #ddd4bf;}
   .chip.on{border-color:var(--green); background:var(--green-soft); font-weight:700;}
   .chip .d{font-size:11px; color:var(--sub); display:block;}
   .mode-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
   .mode{
     border:1.5px solid var(--line); background:#fff; border-radius:14px;
     padding:11px 9px; cursor:pointer; text-align:left; transition:all .15s;
+    box-shadow:0 4px 0 #ddd4bf;
   }
-  .mode.on{border-color:var(--green); background:var(--green-soft);}
-  .mode .mi{font-size:20px;}
-  .mode .mt{font-weight:700; font-size:12.5px; margin-top:6px; line-height:1.35;}
+  .mode:active{transform:translateY(3px); box-shadow:0 1px 0 #ddd4bf;}
+  .mode.on{
+    border-color:var(--green); background:var(--green-soft);
+    box-shadow:0 4px 0 #ddd4bf, 0 0 0 2px var(--green), 0 0 0 4px rgba(232,161,60,.55);
+    animation:modeBounce .35s ease-out;
+  }
+  @keyframes modeBounce{0%{transform:scale(.9);}55%{transform:scale(1.06);}100%{transform:scale(1);}}
+  .mode .mi{
+    font-size:20px; display:inline-flex; align-items:center; justify-content:center;
+    min-width:40px; height:34px; padding:0 9px; line-height:1;
+    border-radius:30% 70% 65% 35%/45% 35% 65% 55%;
+    background:linear-gradient(150deg, var(--green-soft), #d9ecdb);
+    white-space:nowrap;
+  }
+  .mode.on .mi{background:linear-gradient(150deg, #ffe6b8, var(--accent-soft));}
+  .mode .mt{font-family:var(--display-font); font-weight:400; font-size:12.5px; margin-top:6px; line-height:1.4;}
   .mode .md{font-size:11px; color:var(--sub); margin-top:3px; line-height:1.45;}
+  .mode[disabled]{opacity:.4;}
   .btn{
     display:block; width:100%; border:none; border-radius:14px;
-    padding:15px; font-size:16px; font-weight:800; cursor:pointer;
-    background:var(--green); color:#fff; box-shadow:var(--shadow);
-    transition:transform .1s;
+    padding:15px; font-size:17px; font-weight:400; cursor:pointer;
+    font-family:var(--display-font); letter-spacing:.3px;
+    background:var(--green); color:#fff;
+    box-shadow:0 5px 0 #2e5c3a, 0 9px 16px rgba(62,122,78,.32), inset 0 1px 0 rgba(255,255,255,.35);
+    transition:transform .1s, box-shadow .1s;
   }
-  .btn:active{transform:scale(.98);}
-  .btn.ghost{background:#fff; color:var(--ink); border:1.5px solid var(--line); box-shadow:none; font-weight:600;}
-  .btn.warn{background:var(--accent);}
+  .btn:active{transform:translateY(4px); box-shadow:0 1px 0 #2e5c3a, inset 0 1px 0 rgba(255,255,255,.35);}
+  .btn.ghost{
+    background:#fff; color:var(--ink); border:1.5px solid var(--line);
+    box-shadow:0 4px 0 #ddd4bf; font-weight:400;
+  }
+  .btn.ghost:active{box-shadow:0 1px 0 #ddd4bf;}
+  .btn.warn{background:var(--accent); box-shadow:0 5px 0 #a8701f, 0 9px 16px rgba(232,161,60,.32), inset 0 1px 0 rgba(255,255,255,.35);}
+  .btn.warn:active{box-shadow:0 1px 0 #a8701f, inset 0 1px 0 rgba(255,255,255,.35);}
   .btn[disabled]{opacity:.45; cursor:default;}
   .row{display:flex; gap:10px;}
   .row .btn{flex:1;}
@@ -64,14 +125,18 @@
   .qtop .stars{font-size:14px; color:var(--accent); font-weight:800;}
   .pbar{height:6px; background:var(--line); border-radius:99px; overflow:hidden; margin-bottom:16px;}
   .pbar i{display:block; height:100%; background:var(--green); border-radius:99px; transition:width .3s;}
+  .ask{animation:cardBreathe 6s ease-in-out infinite;}
+  @keyframes cardBreathe{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
   .ask{
     text-align:center; padding:22px 10px 18px;
   }
   .ask .what{font-size:13px; color:var(--sub); margin-bottom:12px;}
   .speak-big{
     width:92px; height:92px; border-radius:50%; border:none; cursor:pointer;
-    background:var(--green-soft); border:2px solid var(--green);
+    background:radial-gradient(circle at 34% 28%, #fff 0%, var(--green-soft) 45%, #cfe8d5 100%);
+    border:2px solid var(--green);
     font-size:38px; transition:transform .1s; margin-bottom:8px;
+    box-shadow:0 4px 0 #2e5c3a, inset 0 2px 3px rgba(255,255,255,.7);
   }
   .speak-big:active{transform:scale(.94);}
   .speak-big.playing{animation:pulse 1s infinite;}
@@ -127,8 +192,9 @@
   .tool{
     flex:1; border:1.5px solid var(--line); background:#fff; border-radius:12px;
     padding:10px; font-size:13px; font-weight:700; cursor:pointer; color:var(--ink);
+    box-shadow:0 4px 0 #ddd4bf; transition:transform .1s, box-shadow .1s;
   }
-  .tool:active{background:var(--cream);}
+  .tool:active{background:var(--cream); transform:translateY(3px); box-shadow:0 1px 0 #ddd4bf;}
 
   /* feedback */
   .fb{text-align:center; padding:26px 12px;}
@@ -144,7 +210,10 @@
   .score-ring{
     width:130px; height:130px; border-radius:50%; margin:8px auto 14px;
     display:flex; align-items:center; justify-content:center;
-    background:conic-gradient(var(--green) calc(var(--pct)*1%), var(--line) 0);
+    background:conic-gradient(from -90deg,
+      var(--green) 0%, var(--accent) calc(var(--pct)*.55%),
+      #7db8e8 calc(var(--pct)*1%), var(--line) 0);
+    box-shadow:0 6px 16px rgba(61,72,52,.18);
   }
   .score-ring>div{
     width:104px; height:104px; border-radius:50%; background:var(--paper);
@@ -202,6 +271,15 @@
   .fz-deco{position:absolute; pointer-events:none; font-size:24px; opacity:.55; animation:fzfloat 7s ease-in-out infinite; filter:drop-shadow(0 2px 2px rgba(0,0,0,.08));}
   @keyframes fzfloat{0%,100%{transform:translateY(0) translateX(0);}50%{transform:translateY(-14px) translateX(6px);}}
   .fz-tw{position:absolute; pointer-events:none; font-size:14px; animation:fztw 2s ease-in-out infinite;}
+  .fz-sun{position:absolute; right:8%; top:8%; font-size:22px; pointer-events:none; z-index:0;}
+  .fz-sun::before{
+    content:""; position:absolute; left:50%; top:50%; width:70px; height:70px;
+    transform:translate(-50%,-50%); border-radius:50%;
+    background:conic-gradient(from 0deg, rgba(255,214,56,.5) 0 8deg, transparent 8deg 20deg);
+    animation:sunSpin 20s linear infinite; z-index:-1;
+  }
+  @keyframes sunSpin{to{transform:translate(-50%,-50%) rotate(360deg);}}
+  .fz-grass{position:absolute; bottom:6px; font-size:20px; pointer-events:none; z-index:1;}
   @keyframes fztw{0%,100%{opacity:.12; transform:scale(.65) rotate(-8deg);}50%{opacity:.95; transform:scale(1.2) rotate(8deg);}}
   .upload-help{
     background:#eef5ff; border:1.5px dashed #268be1; border-radius:12px;
@@ -246,7 +324,15 @@
     transition:transform .12s;
   }
   .bookcard:active{transform:translateY(4px); box-shadow:inset 4px 0 0 hsl(var(--bh) 60% 26%), 0 2px 0 hsl(var(--bh) 45% 28%);}
-  .bookcard .bicon{font-size:30px; display:block; filter:drop-shadow(0 3px 3px rgba(0,0,0,.25));}
+  .bookcard::after{
+    content:""; position:absolute; top:-40%; bottom:-40%; left:-60%; width:35%;
+    background:linear-gradient(75deg, transparent, rgba(255,255,255,.55), transparent);
+    transform:skewX(-18deg); animation:bookSheen 4.5s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes bookSheen{0%,20%{left:-60%;}55%,100%{left:130%;}}
+  .bookcard .bicon{font-size:30px; display:block; filter:drop-shadow(0 3px 3px rgba(0,0,0,.25)); transition:transform .18s;}
+  .bookcard:active .bicon{transform:rotate(-8deg) scale(1.12);}
   .bookcard .btitle{display:block; font-weight:900; font-size:15px; margin-top:8px; line-height:1.3; text-shadow:0 1px 0 rgba(0,0,0,.25);}
   .bookcard .blevel{
     position:absolute; top:10px; right:10px; font-size:10.5px; font-weight:800;
@@ -255,7 +341,8 @@
   }
   .bookcard .bmeta{display:block; font-size:11.5px; opacity:.9; margin-top:3px;}
   .bookcard .bprog{display:block; height:6px; margin-top:9px; border-radius:99px; background:rgba(0,0,0,.28); overflow:hidden;}
-  .bookcard .bprog i{display:block; height:100%; background:#ffd62f; border-radius:99px; box-shadow:0 0 8px #ffd62f;}
+  .bookcard .bprog i{display:block; height:100%; background:#ffd62f; border-radius:99px; box-shadow:0 0 8px #ffd62f; animation:progGlow 2.2s ease-in-out infinite;}
+  @keyframes progGlow{0%,100%{box-shadow:0 0 6px #ffd62f;}50%{box-shadow:0 0 13px #ffe98a;}}
   .backbar{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
   .backbtn{
     border:1.5px solid var(--line); background:#fff; border-radius:12px;
@@ -275,10 +362,14 @@
   }
   .chap-main:active{transform:translateY(3px); box-shadow:0 1px 0 #e2dac7;}
   .chap-main .cnum{
-    flex:none; width:34px; height:34px; border-radius:10px; display:grid; place-items:center;
+    flex:none; width:34px; height:34px; border-radius:50%; display:grid; place-items:center;
     font-weight:900; color:#fff; font-size:15px;
-    background:linear-gradient(160deg, hsl(var(--bh) 55% 55%), hsl(var(--bh) 60% 38%));
-    box-shadow:0 3px 0 hsl(var(--bh) 50% 28%);
+    background:radial-gradient(circle at 35% 28%, hsl(var(--bh) 62% 62%), hsl(var(--bh) 55% 44%) 60%, hsl(var(--bh) 58% 32%));
+    box-shadow:0 3px 0 hsl(var(--bh) 50% 28%), inset 0 0 0 2px hsl(var(--bh) 70% 72% / .7), inset 0 -3px 4px hsl(var(--bh) 45% 22% / .55);
+  }
+  .chap-main.gold3{
+    border-color:#e8b93c;
+    box-shadow:0 4px 0 #e2dac7, 0 7px 14px rgba(61,72,52,.08), 0 0 0 2px #ffd97a, 0 0 14px rgba(255,214,56,.5);
   }
   .chap-main .cbody{flex:1; min-width:0;}
   .chap-main .cbody b{display:block; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
@@ -402,6 +493,11 @@
   .ws-stage{
     perspective:1000px; display:grid; place-items:center;
     padding:8px 0 14px; margin-bottom:4px;
+    position:relative;
+  }
+  .ws-stage::before{
+    content:""; position:absolute; inset:-4px 6%; z-index:-1; border-radius:50%;
+    background:radial-gradient(ellipse at center, rgba(120,74,28,.28) 0%, rgba(120,74,28,.14) 45%, transparent 72%);
   }
   .ws-board{
     position:relative;
@@ -440,14 +536,27 @@
     background:radial-gradient(circle at 35% 28%, var(--fc1), var(--fc2) 62%, var(--fc3));
     color:#fff; box-shadow:0 2px 0 rgba(0,0,0,.3), inset 0 1px 2px rgba(255,255,255,.6);
     transform:scale(1.05);
+    animation:wsFoundPop .4s cubic-bezier(.2,1.4,.4,1);
   }
+  @keyframes wsFoundPop{0%{transform:scale(.7);}55%{transform:scale(1.25);}100%{transform:scale(1.05);}}
   .ws-cell.shuffling{animation:wsShuf .16s linear infinite;}
   @keyframes wsShuf{0%{transform:rotateY(0) scale(1);}50%{transform:rotateY(180deg) scale(1.15);}100%{transform:rotateY(360deg) scale(1);}}
   .ws-hud{display:flex; justify-content:space-between; align-items:center; margin-bottom:9px; font-weight:800; font-size:14px;}
   .ws-hud .wsleft{color:var(--sub); font-size:13px;}
+
+  @media (prefers-reduced-motion: reduce){
+    .top .logo{animation:none;}
+    .bg-sparkle{animation:none;}
+    .bookcard::after{animation:none; display:none;}
+    .bookcard .bprog i{animation:none;}
+    .ask{animation:none;}
+    .fz-sun::before{animation:none;}
+  }
 </style>
 </head>
 <body>
+<div class="bg-sparkle s1" aria-hidden="true"></div>
+<div class="bg-sparkle s2" aria-hidden="true"></div>
 <div id="app"></div>
 
 <script src="vocab-data.js"></script>
@@ -733,7 +842,7 @@
           const rushBest = store()['rush_' + c.id];
           const custom = String(c.id).charAt(0) === 'u';
           return `<div class="chap" style="--bh:${b.hue}">
-            <button class="chap-main" data-chap="${c.id}">
+            <button class="chap-main${st3 === 3 ? ' gold3' : ''}" data-chap="${c.id}">
               <span class="cnum">${i + 1}</span>
               <span class="cbody"><b>${esc(c.label)}</b>
                 <small>${c.words.length}단어${rushBest ? ' · ⚡' + rushBest + '점' : ''}${custom ? ' · 내가 올림' : ''}</small></span>
@@ -1090,6 +1199,22 @@
     };
   }
 
+  // 결과 점수 카운트업 애니메이션 (rAF, ~0.8초)
+  function countUpScore(el, target, total){
+    if (!el) return;
+    if (!total || target <= 0){ el.textContent = `${target}/${total}`; return; }
+    const dur = 800;
+    const t0 = performance.now();
+    const step = (now) => {
+      const p = Math.min(1, (now - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const cur = Math.round(eased * target);
+      el.textContent = `${cur}/${total}`;
+      if (p < 1) requestAnimationFrame(step); else el.textContent = `${target}/${total}`;
+    };
+    requestAnimationFrame(step);
+  }
+
   function result(){
     const total = quiz.words.length, right = quiz.right.length;
     const pct = Math.round(right / total * 100);
@@ -1104,7 +1229,7 @@
       <div class="card" style="text-align:center">
         <div class="sec-title">오늘의 결과</div>
         <div class="score-ring" style="--pct:${pct}"><div>
-          <span class="n">${right}/${total}</span><span class="t">${pct}점 · ⭐${quiz.stars}</span>
+          <span class="n" id="scoreN">0/${total}</span><span class="t">${pct}점 · ⭐${quiz.stars}</span>
         </div></div>
         <div style="font-weight:800; font-size:18px">${pct===100 ? '완벽해요! 🏆' : pct>=70 ? '잘했어요! 💪' : '한 번 더 해볼까요? 🌱'}</div>
         <div class="best">🏆 최고 기록: ${s[key].right}/${s[key].total}</div>
@@ -1120,6 +1245,7 @@
         <button class="btn ghost" id="again">전체 다시</button>
         <button class="btn ghost" id="home">처음으로</button>
       </div>`;
+    countUpScore($app.querySelector('#scoreN'), right, total);
     if (pct >= 80){
       [200, 500, 800].forEach((t, i) => setTimeout(() =>
         burst(60 + Math.random() * (window.innerWidth - 120), 90 + i * 40, 22), t));
@@ -1174,6 +1300,10 @@
           <span class="fz-tw" style="right:18%; top:40%; animation-delay:-.7s">⭐</span>
           <span class="fz-tw" style="left:14%; top:56%; animation-delay:-1.2s">✨</span>
           <span class="fz-tw" style="right:10%; bottom:26%; animation-delay:-.4s">🌟</span>
+          <span class="fz-sun">☀️</span>
+          <span class="fz-grass" style="left:6%">🌿</span>
+          <span class="fz-grass" style="left:46%">🌿</span>
+          <span class="fz-grass" style="right:8%">🌿</span>
           <div class="falling" id="fall" style="--dur:${rush.dur}s">${esc(w.def)}</div>
           <div class="ground"></div>
         </div>
