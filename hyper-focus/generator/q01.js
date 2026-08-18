@@ -199,7 +199,7 @@
       problem: function (p) { return window.HFQ04.renderQ04Problem(p); },
       answer: function (p) { return window.HFQ04.renderQ04Answer(p); },
       title: "구멍 뚫린 쌓기나무",
-      prompt: function (p) { return "가로 " + p.width + ", 세로 " + p.depth + ", 높이 " + p.boxH + "가 되도록 빈틈없이 쌓은 쌓기나무에 반대쪽까지 통하도록 구멍을 뚫었습니다. 남은 쌓기나무는 몇 개입니까?"; } };
+      prompt: function (p) { return "가로 " + p.width + ", 세로 " + p.depth + ", 높이 " + p.boxH + "인 직육면체 모양으로 빈틈없이 쌓은 쌓기나무에 반대쪽까지 통하도록 구멍을 뚫었습니다. 남은 쌓기나무는 몇 개입니까?"; } };
     GENERATORS[5] = { gen: function (d, s) { return window.HFQ05.generateQ05(d, s); },
       problem: function (p) { return window.HFQ05.renderQ05Problem(p); },
       answer: function (p) { return window.HFQ05.renderQ05Answer(p); },
