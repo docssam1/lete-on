@@ -113,6 +113,10 @@ html, body {
 /* 난이도 하/중/상 — 세 버튼이 같은 폭을 나눠 갖는다. 글자(하/중/상)가 주,
    점(●○○ 등)은 .intensity-mark로 옅게 덧붙는 보조 표시다. */
 .intensity-row { display: flex; gap: 6px; }
+/* 난이도별 묶기를 고르면 이 줄이 흐려진다 — 감추지 않는 이유는 app.js의
+   syncArrangeState 설명 참고(모드를 되돌리면 고르던 난이도가 그대로 돌아온다). */
+.intensity-row.is-muted { opacity: .45; }
+.intensity-row.is-muted .intensity-btn { cursor: not-allowed; }
 .intensity-btn {
   flex: 1 1 0;
   height: 34px;
@@ -240,7 +244,26 @@ select, .code-input, input[type="text"] {
   padding-bottom: 1px;
 }
 
+/* 배열 모드의 소제목 줄 (유형별 묶기 = 유형명, 난이도별 묶기 = 하/중/상).
+   아래 문제들과 한 덩어리로 읽히도록 break-after를 막아, 소제목만 페이지
+   끝에 홀로 남는 일이 없게 한다. */
+.ws-group {
+  margin: 4mm 0 3mm;
+  padding: 3px 9px;
+  border-left: 4px solid var(--brand);
+  background: #eef3ef;
+  color: #22503a;
+  font-size: 12.5px;
+  font-weight: 900;
+  letter-spacing: .3px;
+  break-after: avoid;
+  page-break-after: avoid;
+  break-inside: avoid;
+}
+.ws-group:first-of-type { margin-top: 0; }
+
 .ws-card {
+  position: relative;
   border: 1px solid #aab2ad;
   border-radius: 4px;
   padding: 9px 11px 11px;
@@ -248,6 +271,26 @@ select, .code-input, input[type="text"] {
   break-inside: avoid;
   page-break-inside: avoid;
 }
+/* 문제 빼기 — 화면에서만 사는 조작이라 인쇄물에는 체크박스도, 뺀 카드도 남지
+   않는다. 뺀 카드를 화면에서 지우지 않고 흐리게만 두는 이유는, 무엇을 뺐는지
+   보이지 않으면 되돌릴 방법도 함께 사라지기 때문이다. */
+.ws-omit {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #7a847e;
+  cursor: pointer;
+  user-select: none;
+}
+.ws-omit input { margin: 0; cursor: pointer; }
+.ws-card.is-omitted { opacity: .4; background: #f4f6f4; }
+.ws-card.is-omitted .ws-num { background: #9aa6a0; }
+.ws-card.is-omitted .ws-omit { opacity: 1; color: var(--accent); }
 .ws-card-head { display: flex; align-items: center; margin-bottom: 4px; }
 .ws-num {
   display: inline-grid;
@@ -545,8 +588,24 @@ select, .code-input, input[type="text"] {
   flex-wrap: wrap;
 }
 .ws-answer-item b { color: var(--brand); }
+/* 배열 모드 소제목 — 정답 목록에도 같은 묶음 표시를 남겨, 학습지의 소제목과
+   정답지를 나란히 놓고 읽을 수 있게 한다. 3단 조판이라 단을 가로지른다. */
+.ws-answer-group {
+  column-span: all;
+  -webkit-column-span: all;
+  margin: 4px 0 3px;
+  padding: 2px 8px;
+  border-left: 3px solid var(--brand);
+  background: #eef3ef;
+  color: #22503a;
+  font-size: 11px;
+  font-weight: 900;
+  list-style: none;
+  break-after: avoid;
+  page-break-after: avoid;
+}
 /* HL의 층별 가이드는 한 단 폭(약 60mm)에 들어가지 않는다 — 그 항목만 세 단을
-   가로질러 전체 폭을 쓰게 해서 층 모눈이 한 줄로 유지되게 한다. */
+   가로지러 전체 폭을 쓰게 해서 층 모눈이 한 줄로 유지되게 한다. */
 .ws-answer-item-wide {
   column-span: all;
   -webkit-column-span: all;
@@ -581,6 +640,11 @@ select, .code-input, input[type="text"] {
     box-shadow: none;
   }
   .ws-card { break-inside: avoid; page-break-inside: avoid; }
+  /* 뺀 문제와 그 조작 부품은 종이에 나가지 않는다 — 남은 문제는 화면에서
+     이미 1부터 다시 번호를 받았으므로 번호가 건너뛰지 않는다. */
+  .ws-card.is-omitted { display: none !important; }
+  .ws-omit { display: none !important; }
+  .ws-group { break-after: avoid; page-break-after: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   /* .ws-page's print rule zeroes min-height, which would let the cover shrink
      to its own text and leave the 이름 칸이 페이지 한가운데 뜨게 된다. Give it
      back most of the printable height (A4 297mm − 12mm×2 여백 = 273mm), but
