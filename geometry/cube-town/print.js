@@ -5,8 +5,30 @@ import { levels as viewLevels } from "../games/three-views/levels.js";
 const $ = (selector) => document.querySelector(selector);
 const GAME_COPY_WOOD = "copy-wood";
 const GAME_COPY_COLOR = "copy-color";
+// 원목 관찰과 컬러 색칠을 한 권에 섞는 모드. 지오메트리 랩의 "똑같이 쌓기"
+// 카드가 난이도 중을 고르면 이 모드로 딥링크한다 — 두 풀은 같은 커리큘럼을
+// 앞뒤로 나눈 절반이라(COPY_BUILD_LEVELS의 0~4 / 5~9), 아이에게는 "본 모양을
+// 그대로 옮긴다"는 하나의 공부다. 카드를 둘로 갈라 두면 같은 공부를 두 번
+// 고르게 된다.
+const GAME_COPY_MIXED = "copy-mixed";
 const GAME_COUNT = "count-heights";
 const GAME_VIEWS = "three-views";
+
+// 섞기 모드에서 한 문제를 컬러로 낼지 원목으로 낼지는 문제 자신이 들고 다닌다.
+// 인쇄 직전에 다시 정하면 같은 화면에서 인쇄를 두 번 눌렀을 때 색/원목 배치가
+// 달라져, 미리 보고 고른 것과 다른 학습지가 나온다.
+const COPY_MODE_KEY = "__copyColor";
+
+function isCopyGame(game) {
+  return game === GAME_COPY_WOOD || game === GAME_COPY_COLOR || game === GAME_COPY_MIXED;
+}
+
+// 섞기 모드에서만 문제별 표시를 따르고, 나머지는 게임이 곧 표시 방식이다.
+function copyIsColor(game, problem) {
+  if (game === GAME_COPY_MIXED) return Boolean(problem && problem[COPY_MODE_KEY]);
+  return game === GAME_COPY_COLOR;
+}
+
 let selectedProblems = [];
 
 // 표지 테마 — 지오메트리 랩의 학습지 표지와 같은 개념을 쓴다. "쌓기를 옮겨
@@ -34,6 +56,13 @@ const GAME_COPY = {
     cover: "똑같이 쌓기<br />컬러 색칠",
     subtitle: "색과 위치를 자세히 살펴보고,<br />같은 모양에 똑같이 색칠해 보세요.",
     instruction: "왼쪽의 색깔 쌓기나무를 보고, 오른쪽의 같은 모양에 위치와 색을 똑같이 칠하세요.",
+    theme: "stack"
+  },
+  [GAME_COPY_MIXED]: {
+    title: "똑같이 쌓기",
+    cover: "똑같이 쌓기",
+    subtitle: "모양과 색을 자세히 살펴보고,<br />본 그대로 옮겨 보세요.",
+    instruction: "원목 문제는 위에서 본 칸에 높이를 쓰고, 색깔 문제는 오른쪽 모양에 똑같이 색칠하세요.",
     theme: "stack"
   },
   [GAME_COUNT]: {
@@ -77,12 +106,21 @@ function normalizeCopyProblem(problem) {
   return Array.isArray(problem) ? { grid: problem, colorMap: null } : problem;
 }
 
+// 섞기 모드의 표시 방식을 문제에 새겨 준다 (원본은 건드리지 않는다 —
+// COPY_BUILD_LEVELS는 게임 화면도 함께 읽는 공용 데이터다).
+function tagCopyMode(problem, color) {
+  return { ...normalizeCopyProblem(problem), [COPY_MODE_KEY]: color };
+}
+
 function transformCopyProblem(problem, transform, suffix) {
   const normalized = normalizeCopyProblem(problem);
   return {
     id: `copy-${suffix}-${Math.random().toString(36).slice(2)}`,
     grid: transform(normalized.grid),
-    colorMap: normalized.colorMap ? transform(normalized.colorMap) : null
+    colorMap: normalized.colorMap ? transform(normalized.colorMap) : null,
+    // 회전·대칭 변형본도 원본과 같은 표시 방식을 이어받아야 한다 — 안 그러면
+    // 섞기 모드에서 색칠 문제의 회전본이 갑자기 원목 문제로 나온다.
+    [COPY_MODE_KEY]: Boolean(normalized[COPY_MODE_KEY])
   };
 }
 
@@ -124,8 +162,14 @@ function problemPool() {
   const entries = level === "all"
     ? COPY_BUILD_LEVELS
     : [COPY_BUILD_LEVELS[Number(level) - 1]];
-  const color = game === GAME_COPY_COLOR;
-  return entries.flatMap((entry) => entry.problems.slice(color ? 5 : 0, color ? 10 : 5));
+  // 각 레벨의 problems는 앞 5개가 원목, 뒤 5개가 컬러다.
+  const wood = () => entries.flatMap((entry) => entry.problems.slice(0, 5));
+  const color = () => entries.flatMap((entry) => entry.problems.slice(5, 10));
+  if (game === GAME_COPY_MIXED) {
+    return wood().map((problem) => tagCopyMode(problem, false))
+      .concat(color().map((problem) => tagCopyMode(problem, true)));
+  }
+  return game === GAME_COPY_COLOR ? color() : wood();
 }
 
 // three-views problems already carry a hand-authored 20-problem pool per level
@@ -394,7 +438,7 @@ function renderAnswer(problem, index) {
     article.innerHTML = `
       <h2>${index + 1}번</h2>
       <canvas class="answer-canvas"></canvas>
-      ${game === GAME_COPY_WOOD ? topViewMarkup(problem, true) : ""}
+      ${!copyIsColor(game, problem) ? topViewMarkup(problem, true) : ""}
       <p class="answer-total">사용한 쌓기나무 <b>${total}</b>개</p>
     `;
   }
@@ -406,7 +450,7 @@ function renderAnswer(problem, index) {
 function updateLevelOptions() {
   // Only the copy games (똑같이 쌓기) are limited to levels 1-3; count-heights
   // and three-views both ship five full levels.
-  const limitedLevels = $("#gameSelect").value !== GAME_COUNT && $("#gameSelect").value !== GAME_VIEWS;
+  const limitedLevels = isCopyGame($("#gameSelect").value);
   $("#levelSelect").querySelectorAll("option").forEach((option) => {
     const value = Number(option.value);
     option.hidden = limitedLevels && value > 3;
@@ -447,7 +491,7 @@ function generate() {
       const index = page * perPage + offset;
       if (game === GAME_COUNT) renderCountQuestion(problem, index, target);
       else if (game === GAME_VIEWS) renderViewsQuestion(problem, index, target);
-      else renderCopyQuestion(problem, index, target, game === GAME_COPY_COLOR);
+      else renderCopyQuestion(problem, index, target, copyIsColor(game, problem));
     });
   }
   selectedProblems.forEach(renderAnswer);

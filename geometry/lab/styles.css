@@ -215,6 +215,25 @@ html, body {
 .intensity-btn.is-active { border-color: var(--brand); background: var(--brand); color: #fff; }
 .intensity-btn.is-active .intensity-mark { opacity: 0.9; }
 
+/* 영역 탭 — 쌓기나무 / 색종이 접기. 유형 카드보다 한 단계 위의 선택이므로
+   카드가 아니라 탭 모양으로 두어, 아래 격자가 무엇의 목록인지 읽히게 한다. */
+.domain-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.domain-btn {
+  flex: 0 1 180px;
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.domain-btn:hover { border-color: var(--brand); background: var(--brand-soft); }
+.domain-btn.is-active { border-color: var(--brand); background: var(--brand); color: #fff; }
+
 /* 유형 카드 — auto-fill 이라 1440에서는 넉넉히, 좁은 화면에서는 저절로 줄어
    가로 스크롤이 생기지 않는다. */
 .type-grid {
@@ -245,23 +264,6 @@ html, body {
   width: 100%;
   min-width: 0;
 }
-/* 연습책 배지 — 카드 모양은 생성형과 같게 두고 이 칩 하나로만 구분한다.
-   "이건 랩이 만드는 문제가 아니라 게임에서 온 문제책"이라는 사실은 알려야
-   하지만, 그렇다고 다른 종류의 물건처럼 보이면 카탈로그가 다시 둘로 갈린다. */
-.type-badge {
-  flex: 0 0 auto;
-  padding: 1px 6px;
-  border-radius: 999px;
-  background: var(--gfield);
-  color: #fff;
-  font-size: 9.5px;
-  font-weight: 900;
-  letter-spacing: 0.6px;
-}
-.type-card.is-active .type-badge { background: #fff; color: var(--brand); }
-.type-card.is-book.is-active { border-color: var(--gfield); background: var(--gfield); }
-.type-card.is-book.is-active .type-code,
-.type-card.is-book.is-active .type-levels { color: #d5efe1; }
 .type-card .type-code {
   font-family: "SFMono-Regular", Consolas, monospace;
   font-size: 10px;
@@ -351,10 +353,149 @@ html, body {
 .btn-outline { border-color: var(--brand); color: var(--brand); background: var(--paper); }
 .btn-outline:hover { background: var(--brand-soft); }
 
-/* 연습책을 고르면 강도 줄은 흐려진다 — 감추지 않는 이유는 renderIntensityState
-   의 설명 참조(연습책을 내려놓으면 고르던 강도가 그대로 돌아온다). */
+.btn-sm { min-height: 34px; padding: 0 14px; font-size: 12.5px; }
+
+/* 난이도가 해당되지 않는 학습지를 고르면 강도 줄이 흐려진다 — 감추지 않는
+   이유는 app.js renderIntensityState의 설명 참조(되돌리면 고르던 난이도가
+   그대로 돌아온다). */
 .field.is-muted { opacity: 0.45; }
 .field.is-muted .intensity-btn { cursor: not-allowed; }
+
+/* ---------------------------------------------------------------------
+   미리보기 — 학습지에 실릴 문제 카드 그대로를 한 장 보여 준다.
+   마크업은 worksheet/card.js가 만들므로(.ws-*), 여기서는 학습지 쪽 CSS를
+   통째로 불러오는 대신 카드 한 장에 필요한 규칙만 랩 톤으로 다시 적는다.
+   worksheet/styles.css를 그대로 링크하면 .type-grid 같은 이름이 이 페이지의
+   카탈로그와 부딪히고, A4 폭(210mm) 페이지 규칙이 랩 레이아웃까지 밀어낸다.
+   --------------------------------------------------------------------- */
+.preview-field { min-width: 0; }
+.preview-field h3 { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+.preview-type {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  color: var(--brand);
+  text-transform: none;
+}
+.preview-tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.preview-tabs:empty { display: none; }
+.preview-chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--muted);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 11px;
+  cursor: pointer;
+}
+.preview-chip:hover { border-color: var(--brand); background: var(--brand-soft); }
+.preview-chip.is-active { border-color: var(--brand); background: var(--brand); color: #fff; }
+.preview-body {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+}
+.preview-sheet { min-width: 0; }
+.preview-empty { margin: 0; padding: 12px 2px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.preview-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.preview-field.is-static .preview-actions { display: none; }
+.preview-answer { margin-top: 10px; font-size: 12.5px; }
+.preview-answer b { color: var(--brand); margin-right: 6px; }
+.preview-answer-list { list-style: none; margin: 6px 0 0; padding: 0; }
+.preview-answer-list .ws-answer-item { border-bottom: 0; padding: 0; }
+
+/* ---- card.js가 내는 문제 카드 부품 (학습지의 .ws-* 와 같은 이름) ---- */
+.preview-body .ws-card {
+  border: 1px solid #ccd5dd;
+  border-radius: 6px;
+  padding: 10px 12px 12px;
+  background: var(--paper);
+}
+.preview-body .ws-card-head { display: flex; align-items: center; margin-bottom: 4px; }
+.preview-body .ws-num {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+}
+.preview-body .ws-prob-level {
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--brand-soft);
+  border: 1px solid #c3d3e6;
+  color: var(--brand);
+  font-size: 9.5px;
+  font-weight: 800;
+}
+/* 미리보기에는 빼기 체크박스가 나올 일이 없지만(카드 하나뿐), 학습지에서
+   같은 마크업을 쓰므로 혹시 들어오더라도 자리를 잡지 않게 막아 둔다. */
+.preview-body .ws-omit { display: none; }
+.preview-body .ws-prompt { margin: 2px 0 8px; font-size: 13px; line-height: 1.6; word-break: keep-all; }
+.preview-body .ws-method { margin: 2px 0 0; font-size: 11px; color: var(--muted); }
+.preview-body .ws-figures,
+.preview-body .ws-fig-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 14px;
+}
+.preview-body .ws-fig-row { width: 100%; }
+.preview-body .ws-fig-row + .ws-fig-row { margin-top: 10px; }
+.preview-body .ws-figure { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.preview-body .ws-figure figcaption { font-size: 10.5px; font-weight: 800; color: #4a5560; text-align: center; }
+.preview-body .ws-figure svg { max-width: 100%; }
+.preview-body .ws-figure svg.ws-grid { display: block; max-height: 140px; max-width: 180px; }
+.preview-body .ws-figure svg.ws-grid-solve { max-height: 200px; max-width: 220px; }
+.preview-body .ws-figure svg.ws-iso { display: block; height: 130px; width: auto; }
+.preview-body .ws-figure.ws-figure-lg svg.ws-iso { height: 165px; }
+.preview-body .ws-figure.ws-figure-sm svg.ws-iso { height: 76px; }
+.preview-body .ws-seq-dots { font-size: 21px; font-weight: 900; color: #9aa7b2; padding-bottom: 12px; }
+.preview-body .ws-answer-line {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--line);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: right;
+}
+.preview-body .ws-solve-area { margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--line); }
+.preview-body .ws-hole-layers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px 12px;
+}
+.preview-body .ws-hole-layer { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.preview-body .ws-hole-layer small { font-size: 9px; font-weight: 700; color: #4a5560; white-space: nowrap; }
+.preview-body .ws-hole-layer svg.ws-hole-grid { display: block; width: auto; max-width: 60px; max-height: 60px; }
+.preview-body .ws-hole-total { align-self: center; font-size: 11px; font-weight: 800; color: var(--brand); }
+.preview-answer .ws-answer-item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+}
+.preview-answer .ws-answer-item b { color: var(--brand); }
+.preview-answer .ws-ans-thumbs { display: inline-flex; gap: 10px; align-items: flex-start; }
+.preview-answer .ws-ans-thumb { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.preview-answer .ws-ans-thumb small { font-size: 9px; color: var(--muted); }
+.preview-answer .ws-ans-thumb svg { display: block; width: 52px; height: auto; }
+.preview-answer .ws-ans-thumb svg.ws-grid-solve { width: 90px; }
+.preview-answer .ws-ans-solve { display: block; width: 100%; }
+.preview-answer .ws-ans-note { font-size: 10.5px; color: var(--muted); }
 
 /* ---------------------------------------------------------------------
    코드로 열기
