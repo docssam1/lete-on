@@ -605,7 +605,7 @@ select, .code-input, input[type="text"] {
   page-break-after: avoid;
 }
 /* HL의 층별 가이드는 한 단 폭(약 60mm)에 들어가지 않는다 — 그 항목만 세 단을
-   가로지러 전체 폭을 쓰게 해서 층 모눈이 한 줄로 유지되게 한다. */
+   가로질러 전체 폭을 쓰게 해서 층 모눈이 한 줄로 유지되게 한다. */
 .ws-answer-item-wide {
   column-span: all;
   -webkit-column-span: all;
