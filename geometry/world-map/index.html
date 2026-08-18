@@ -61,6 +61,110 @@
       @media (max-aspect-ratio: 4 / 5) {
         .mirror-manor span { min-width: 86px; padding: 5px; font-size: 9px; opacity: 1; transform: translate(-50%,26%); }
       }
+
+      /* Geoboard Home Yard hotspot. The map art already draws the yard on the RIGHT
+         side: an upright peg board with a rubber-band star, the GEOBOARD HOME YARD
+         sign, and a flat geoboard beside it. These percentages trace that yard only
+         (77.0-91.4% across, 29.6-49.2% down). The nearest existing hotspot,
+         .mirror-manor, ends at 69.8% across, so there is a 7.2% gap and no overlap
+         with any of the three. The rules mirror .mirror-manor above and live here
+         because this entry ships without touching the shared map stylesheet. */
+      .geoboard-yard { left: 77%; top: 29.6%; width: 14.4%; height: 19.6%; }
+      .geoboard-yard::before {
+        content: "";
+        position: absolute;
+        inset: 2%;
+        border: 4px solid transparent;
+        clip-path: polygon(20% 0, 96% 10%, 100% 52%, 72% 100%, 26% 96%, 0 46%);
+        background: transparent;
+        transition: background .2s ease, border-color .2s ease, filter .2s ease;
+      }
+      .geoboard-yard span {
+        position: absolute;
+        left: 51%;
+        bottom: 0;
+        transform: translate(-50%, 48%);
+        min-width: 120px;
+        padding: 8px 12px;
+        border: 3px solid var(--navy);
+        border-radius: 6px;
+        background: #fff8ce;
+        color: var(--navy);
+        font-size: clamp(11px, 1.1vw, 17px);
+        line-height: 1.05;
+        font-weight: 950;
+        opacity: 0;
+        transition: opacity .2s ease, transform .2s ease;
+        pointer-events: none;
+      }
+      .geoboard-yard:hover::before, .geoboard-yard:focus-visible::before, .geoboard-yard.attention::before {
+        border-color: rgba(226,87,76,.95);
+        background: rgba(226,87,76,.15);
+        filter: drop-shadow(0 0 15px rgba(226,87,76,.9));
+      }
+      .geoboard-yard:hover span, .geoboard-yard:focus-visible span, .geoboard-yard.attention span { opacity: 1; transform: translate(-50%, 22%); }
+      @media (max-aspect-ratio: 4 / 5) {
+        .geoboard-yard span { min-width: 86px; padding: 5px; font-size: 9px; opacity: 1; transform: translate(-50%,26%); }
+      }
+
+      /* Crystal Plaza hotspot. The map art draws a round lawn of glowing
+         polyhedra on stone pedestals in the middle-left of the village; the
+         plaza ellipse itself runs about 26.3-42.9% across and 41.2-60.0% down.
+         A hotspot is a RECTANGLE, and two neighbours box this one in:
+         .cube-castle spans 13.1-33.8% across and reaches 44.5% down, while
+         .origami-studio spans 38.2-55.8% across and reaches 46.5% down. So
+         claiming the plaza's top row of crystals (from ~41%) or its right edge
+         (out to ~42.9%) would intersect one of those two rects. These
+         percentages (25.6-38.0% across, 44.8-62.3% down) are the largest box
+         that clears BOTH — 0.3% below the castle, 0.2% left of the studio —
+         and they cover the left, centre and bottom pedestals, which is the part
+         of the drawing a child actually aims at. The rules mirror
+         .geoboard-yard above and live here because this entry ships without
+         touching the shared map stylesheet. */
+      .crystal-plaza { left: 25.6%; top: 44.8%; width: 12.4%; height: 17.5%; }
+      .crystal-plaza::before {
+        content: "";
+        position: absolute;
+        inset: 2%;
+        border: 4px solid transparent;
+        /* A rounded octagon instead of the neighbours' angular building
+           silhouettes: what glows here is a circular plaza, not a roofline. */
+        clip-path: polygon(28% 0, 72% 0, 100% 22%, 100% 64%, 74% 94%, 30% 100%, 0 70%, 0 26%);
+        background: transparent;
+        transition: background .2s ease, border-color .2s ease, filter .2s ease;
+      }
+      .crystal-plaza span {
+        position: absolute;
+        left: 51%;
+        bottom: 0;
+        transform: translate(-50%, 48%);
+        min-width: 120px;
+        /* The four game signs are two short hard-wrapped lines ("GFIELD" /
+           "CUBE TOWN"); this one is a single translated sentence whose length
+           differs per language, so it is kept on one line instead of being
+           chopped into three ragged ones by the 120px min-width. */
+        white-space: nowrap;
+        padding: 8px 12px;
+        border: 3px solid var(--navy);
+        border-radius: 6px;
+        background: #fff8ce;
+        color: var(--navy);
+        font-size: clamp(11px, 1.1vw, 17px);
+        line-height: 1.05;
+        font-weight: 950;
+        opacity: 0;
+        transition: opacity .2s ease, transform .2s ease;
+        pointer-events: none;
+      }
+      .crystal-plaza:hover::before, .crystal-plaza:focus-visible::before, .crystal-plaza.attention::before {
+        border-color: rgba(126,206,244,.95);
+        background: rgba(126,206,244,.16);
+        filter: drop-shadow(0 0 15px rgba(126,206,244,.9));
+      }
+      .crystal-plaza:hover span, .crystal-plaza:focus-visible span, .crystal-plaza.attention span { opacity: 1; transform: translate(-50%, 22%); }
+      @media (max-aspect-ratio: 4 / 5) {
+        .crystal-plaza span { min-width: 86px; padding: 5px; font-size: 9px; opacity: 1; transform: translate(-50%,26%); }
+      }
     </style>
   </head>
   <body>
@@ -96,6 +200,19 @@
 
         <button id="mirrorManor" class="place-hotspot mirror-manor" type="button" aria-label="GFIELD Mirror Manor">
           <span>GFIELD<br />MIRROR MANOR</span>
+        </button>
+
+        <button id="geoboardYard" class="place-hotspot geoboard-yard" type="button" aria-label="GFIELD Geoboard Home Yard">
+          <span>GFIELD<br />GEOBOARD YARD</span>
+        </button>
+
+        <!-- Unlike the four game hotspots, whose signs are fixed English place
+             names painted on the map art, this one leads to a worksheet hub
+             whose name has to be readable in the visitor's own language — so
+             its label goes through the page's data-i18n mechanism (see
+             `crystalPlaza` in app.js's `messages`) instead of being hard-coded. -->
+        <button id="crystalPlaza" class="place-hotspot crystal-plaza" type="button" aria-label="GFIELD Geometry Lab">
+          <span data-i18n="crystalPlaza">크리스털 광장 · 지오메트리 랩</span>
         </button>
 
         <div id="walkers" class="walkers" aria-hidden="true"></div>
@@ -178,7 +295,7 @@
         </div>
       </section>
     </main>
-    <script type="module" src="./app.js?v=origami-20260815a"></script>
+    <script type="module" src="./app.js?v=crystal-plaza-20260817a"></script>
     <script src="../shared/pwa.js?v=3" defer></script>
   </body>
 </html>

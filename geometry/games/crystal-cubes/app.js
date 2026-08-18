@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { levels, validateLevels, viewsOfHeightGrid, viewsMatch } from "./levels.js?v=crystal-4";
-import { text } from "./i18n.js?v=crystal-3";
+import { levels, validateLevels, viewsOfHeightGrid, viewsMatch } from "./levels.js?v=crystal-9";
+import { text } from "./i18n.js?v=crystal-9";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
 
@@ -19,6 +19,7 @@ const elements = {
   sideCard: $("#sideCard"),
   topCard: $("#topCard"),
   buildGrid: $("#buildGrid"),
+  buildCount: $("#buildCount"),
   checkBtn: $("#checkBtn"),
   clearBtn: $("#clearBtn"),
   hint: $("#hint"),
@@ -32,6 +33,7 @@ const elements = {
   audio: $("#audio"),
   toast: $("#toast"),
   success: $("#success"),
+  successNote: $("#successNote"),
   conceptTutorial: $("#conceptTutorial"),
   conceptMessage: $("#conceptMessage"),
   conceptSteps: $("#conceptSteps"),
@@ -56,7 +58,12 @@ const state = {
   wrongAttempts: 0,
   audioEnabled: localStorage.getItem("gfield-audio-muted") !== "true",
   advanceTimer: null,
-  tutorialStep: -1
+  tutorialStep: -1,
+  // Which levelIndex the "여러/한 가지 정답" notice has already been shown for
+  // this page load — lets loadProblem() show it once per level entry (not on
+  // every problem inside that level) without any extra persisted storage.
+  noticeLevel: -1,
+  showLevelNotice: false
 };
 
 const tutorialStorageKey = "gfield-crystal-cubes-tutorial-v1";
@@ -81,6 +88,7 @@ function applyLanguage() {
   renderCards();
   renderBuildGrid();
   updatePrompt();
+  updateBuildCount();
   if (state.tutorialStep >= 0) renderConceptTutorial();
 }
 
@@ -140,8 +148,64 @@ function setGuide(key, shouldSpeak = true) {
   if (shouldSpeak) speak(message);
 }
 
+// Which "여러/한 가지 정답" line to prefix the prompt with, chosen from the
+// measured `solutions` data (see levels.js), never from the level number.
+// Levels 2/3/4/5 all mix single- and multi-answer problems, so this has to be
+// re-decided per session rather than hard-coded per level.
+function levelNoticeKey() {
+  // Level 5's problems carry a `goal` (levels.js): matching the cards is no
+  // longer the whole task there, so the "여러 가지 정답 / 정답은 하나" notice
+  // would be actively wrong — the answer is now pinned to one cube TOTAL.
+  // That level gets its own line explaining the new rule instead. Checked
+  // per problem, not per level number, so the level ordering can change
+  // without this silently going stale.
+  if (currentProblem().goal) return "goalLevelNotice";
+  if (levels[state.levelIndex].multiAnswer) return "multiAnswerNotice";
+  const activeCount = currentProblem().activeViews.length;
+  return activeCount === 1 ? "singleAnswerNotice1" : activeCount === 2 ? "singleAnswerNotice2" : "singleAnswerNotice3";
+}
+
+// The standing instruction under the cards. On a goal problem it is phrased as
+// an ACTION ("가장 많이 쌓기") rather than a question about a number — this game
+// is the hands-on build; the separate 최대·최소 큐브 챌린지 game owns the
+// numeric version, so nothing here ever asks the child to type a count.
+function promptKey() {
+  const problem = currentProblem();
+  if (!problem.goal) return "buildPrompt";
+  return problem.goal === "max" ? "goalPromptMax" : "goalPromptMin";
+}
+
 function updatePrompt() {
-  elements.numberPrompt.textContent = text(state.lang, "buildPrompt");
+  const base = text(state.lang, promptKey());
+  // Shown once, only on the level's first problem this visit (state.showLevelNotice
+  // is set in loadProblem()) — never repeated on every problem, and never spoken
+  // by Cubi, since the house rule reserves the character's voice for the
+  // tutorial, an asked-for hint, and level completion.
+  elements.numberPrompt.textContent = state.showLevelNotice
+    ? `${text(state.lang, levelNoticeKey())} ${base}`
+    : base;
+}
+
+const totalCubes = (build) => build.reduce((sum, row) => sum + row.reduce((a, h) => a + h, 0), 0);
+
+// Live running total of what the child has placed. Only goal problems need it
+// (that is the quantity being judged there), so on levels 2-4 the row stays
+// hidden and those levels look exactly as they did before.
+function updateBuildCount() {
+  const problem = currentProblem();
+  if (!problem.goal) {
+    elements.buildCount.hidden = true;
+    elements.buildCount.textContent = "";
+    return;
+  }
+  elements.buildCount.hidden = false;
+  // The goal must be stated HERE, not only in #numberPrompt: the shared shell
+  // renders #numberPrompt as display:none for this game at every viewport, so
+  // a child would otherwise never see whether to build the most or the fewest.
+  // This row sits right under the build grid and is visible on phone and
+  // desktop alike.
+  const key = problem.goal === "min" ? "goalCountMin" : "goalCountMax";
+  elements.buildCount.textContent = format(key, { count: totalCubes(state.build) });
 }
 
 function shouldShowConceptTutorial() {
@@ -194,6 +258,10 @@ const blankBuild = (grid) => {
   return Array.from({ length: depth }, () => Array.from({ length: width }, () => 0));
 };
 
+// Bumped on every loadProblem() call; used below to let only the LAST call in
+// a same-tick burst decide the one-shot level notice (see loadProblem()).
+let loadGeneration = 0;
+
 function loadProblem() {
   state.problemIndex = Math.max(0, Math.min(levels[state.levelIndex].problems.length - 1, state.problemIndex));
   saveGameProgress("crystalCubes", {
@@ -203,18 +271,45 @@ function loadProblem() {
   });
   clearTimeout(state.advanceTimer);
   elements.success.classList.remove("show");
+  elements.successNote.classList.remove("show");
   state.build = blankBuild(currentProblem().grid);
   state.solved = false;
   state.hintsUsed = 0;
   state.wrongAttempts = 0;
+  // shared/game-flow.js resolves "?level=N" by SIMULATING a click on the
+  // matching level button right after this module's own default-level
+  // loadProblem() already ran — both happen synchronously, before the first
+  // paint. Deciding the one-shot notice here (rather than deferring it)
+  // would let that transient first call consume it, leaving the level the
+  // child actually lands on silent. Instead: render the plain prompt now,
+  // and only apply the notice on the next animation frame — by then any
+  // same-tick follow-up loadProblem() call has already bumped
+  // `loadGeneration` again, so a stale, superseded call's callback no-ops.
+  state.showLevelNotice = false;
   updateProgress();
   renderCards();
   renderBuildGrid();
   updatePrompt();
+  updateBuildCount();
   renderModel();
   setCameraView("free");
   setGuide("guideStart", false);
   if (shouldShowConceptTutorial()) openConceptTutorial();
+
+  const wantsNotice = state.problemIndex === 0 && state.noticeLevel !== state.levelIndex;
+  if (wantsNotice) {
+    const generation = ++loadGeneration;
+    const targetLevelIndex = state.levelIndex;
+    requestAnimationFrame(() => {
+      if (generation !== loadGeneration) return; // superseded by a later loadProblem()
+      if (state.levelIndex !== targetLevelIndex || state.problemIndex !== 0) return;
+      state.showLevelNotice = true;
+      state.noticeLevel = state.levelIndex;
+      updatePrompt();
+    });
+  } else {
+    loadGeneration += 1;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -279,6 +374,7 @@ function bumpHeight(x, z) {
   cell.textContent = String(h);
   cell.classList.remove("right");
   ["front", "side", "top"].forEach((name) => cardEl[name].classList.remove("mismatch", "matched"));
+  updateBuildCount();
   renderModel();
 }
 
@@ -287,6 +383,7 @@ function clearAll() {
   state.build = blankBuild(currentProblem().grid);
   renderBuildGrid();
   ["front", "side", "top"].forEach((name) => cardEl[name].classList.remove("mismatch", "matched"));
+  updateBuildCount();
   renderModel();
 }
 
@@ -300,7 +397,29 @@ function checkAnswer() {
     return;
   }
   const mine = viewsOfHeightGrid(state.build, problem.grid, problem.maxH);
-  if (viewsMatch(mine, problem.target, problem.activeViews)) { completeProblem(); return; }
+  if (viewsMatch(mine, problem.target, problem.activeViews)) {
+    // Levels 2-4: matching the cards IS the answer, unchanged.
+    if (!problem.goal) { completeProblem(); return; }
+    // Level 5 also has to hit the extreme total. Because all three cards are
+    // active here, any card-matching build already sits between minTotal and
+    // maxTotal — so a single comparison with targetTotal both grades the
+    // problem and says which way the child has to go.
+    const total = totalCubes(state.build);
+    if (total === problem.targetTotal) { completeProblem(); return; }
+    state.wrongAttempts += 1;
+    // The cards genuinely ARE satisfied, so mark them all green: this must not
+    // read as the "a card is still wrong" failure (crystalWrong, below), which
+    // outlines the offending card in red. Only the count needs changing.
+    ["front", "side", "top"].forEach((name) => {
+      if (!problem.activeViews.includes(name)) return;
+      cardEl[name].classList.remove("mismatch");
+      cardEl[name].classList.add("matched");
+    });
+    const key = total < problem.targetTotal ? "goalMoreNeeded" : "goalFewerNeeded";
+    showToast(text(state.lang, key));
+    setGuide(key, false);
+    return;
+  }
   // Show which of the three cards is not yet satisfied.
   state.wrongAttempts += 1;
   ["front", "side", "top"].forEach((name) => {
@@ -331,10 +450,24 @@ function completeProblem() {
   elements.success.classList.remove("show");
   void elements.success.offsetWidth;
   elements.success.classList.add("show");
+  // Quiet visual note only — never spoken, so it doesn't compete with Cubi's
+  // one line of praise (setGuide("guideSuccess") just below).
+  elements.successNote.classList.remove("show");
+  // Never on a goal problem: "다른 모양도 정답일 수 있어" is about the card set
+  // alone. On a 가장 많이 problem the maximal build is the only answer, so the
+  // note would be flatly false; on a 가장 적게 one it would invite the child to
+  // look for shapes that are no longer graded as correct unless they also hit
+  // the minimum. `solutions` still describes the card set, so it stays stored.
+  if (!currentProblem().goal && currentProblem().solutions > 1) {
+    elements.successNote.textContent = text(state.lang, "solutionsNote");
+    void elements.successNote.offsetWidth;
+    elements.successNote.classList.add("show");
+  }
   playSuccessBurstSound();
   setGuide("guideSuccess", false);
   state.advanceTimer = setTimeout(() => {
     elements.success.classList.remove("show");
+    elements.successNote.classList.remove("show");
     nextProblem();
   }, 2900);
 }
@@ -803,6 +936,16 @@ elements.audio.addEventListener("click", () => {
   if (state.audioEnabled) speak(elements.guide.textContent);
   else speechSynthesis?.cancel();
 });
+// This handler only fires the dialog open on an explicit tap of 레벨 선택.
+// "Open the picker on entry unless ?level=N is valid" (with the saved level
+// pre-highlighted, and never blocking the first-visit tutorial) is handled
+// for crystal-cubes already by the shared ../../shared/game-flow.js — loaded
+// by index.html — which waits for #levelList to render, then either clicks
+// the button matching ?level=N or (once any tutorial closes) clicks
+// #openLevels itself. Verified in a headless run: plain entry opens the
+// dialog (after the first-visit tutorial finishes), ?level=3 skips straight
+// to that level with the dialog left closed, and renderLevelList() below
+// already highlights state.levelIndex (the saved/resumed level) as `.active`.
 elements.openLevels.addEventListener("click", () => {
   renderLevelList();
   elements.levelDialog.hidden = false;

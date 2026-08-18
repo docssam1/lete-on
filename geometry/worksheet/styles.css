@@ -78,9 +78,69 @@ html, body {
   cursor: pointer;
 }
 .type-grid label:hover { background: #eef3ef; }
+/* 현재 단계에서 제공하지 않는 유형: 흐리게 + 클릭 불가. 목록에서 빼 버리면
+   "왜 사라졌지?"가 되므로 자리는 남기고 이유를 title로 알려 준다. */
+.type-grid label.is-unavailable {
+  opacity: 0.38;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+.type-grid label.is-unavailable:hover { background: transparent; }
 
 .radio-row { display: flex; gap: 10px; font-size: 13px; font-weight: 700; }
 .radio-row label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+
+.field-label {
+  display: block;
+  margin: 0 0 3px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6d7873;
+}
+.control-group select + .field-label { margin-top: 8px; }
+
+.level-note {
+  margin: 7px 0 0;
+  padding: 6px 8px;
+  border-radius: 5px;
+  background: #fdf6e3;
+  border: 1px solid #ecdfb9;
+  font-size: 11px;
+  line-height: 1.45;
+  color: #6a5a2c;
+}
+
+/* 난이도 하/중/상 — 세 버튼이 같은 폭을 나눠 갖는다. 글자(하/중/상)가 주,
+   점(●○○ 등)은 .intensity-mark로 옅게 덧붙는 보조 표시다. */
+.intensity-row { display: flex; gap: 6px; }
+/* 난이도별 묶기를 고르면 이 줄이 흐려진다 — 감추지 않는 이유는 app.js의
+   syncArrangeState 설명 참고(모드를 되돌리면 고르던 난이도가 그대로 돌아온다). */
+.intensity-row.is-muted { opacity: .45; }
+.intensity-row.is-muted .intensity-btn { cursor: not-allowed; }
+.intensity-btn {
+  flex: 1 1 0;
+  height: 34px;
+  border: 1px solid #bfc6c2;
+  border-radius: 6px;
+  background: #fff;
+  color: #4a5450;
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+}
+.intensity-btn .intensity-mark {
+  margin-left: 3px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  opacity: 0.7;
+}
+.intensity-btn:hover { background: #f1f5f2; }
+.intensity-btn.active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
 
 select, .code-input, input[type="text"] {
   width: 100%;
@@ -152,6 +212,21 @@ select, .code-input, input[type="text"] {
 .ws-brand { font-size: 22px; font-weight: 900; color: var(--brand); }
 .ws-brand b { color: var(--accent); }
 .ws-code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 10px; color: #6b756f; }
+.ws-head-meta { display: inline-flex; align-items: center; gap: 8px; }
+/* 단계 배지 (예: 초급 ●●○) — 시트를 보고 어느 단계·강도인지 바로 알 수
+   있어야 인쇄물이 섞여도 되돌릴 수 있다. */
+.ws-level-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #eaf1ec;
+  border: 1px solid #c3d6c9;
+  color: #22503a;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  white-space: nowrap;
+}
 
 .ws-student-line {
   display: flex;
@@ -169,7 +244,26 @@ select, .code-input, input[type="text"] {
   padding-bottom: 1px;
 }
 
+/* 배열 모드의 소제목 줄 (유형별 묶기 = 유형명, 난이도별 묶기 = 하/중/상).
+   아래 문제들과 한 덩어리로 읽히도록 break-after를 막아, 소제목만 페이지
+   끝에 홀로 남는 일이 없게 한다. */
+.ws-group {
+  margin: 4mm 0 3mm;
+  padding: 3px 9px;
+  border-left: 4px solid var(--brand);
+  background: #eef3ef;
+  color: #22503a;
+  font-size: 12.5px;
+  font-weight: 900;
+  letter-spacing: .3px;
+  break-after: avoid;
+  page-break-after: avoid;
+  break-inside: avoid;
+}
+.ws-group:first-of-type { margin-top: 0; }
+
 .ws-card {
+  position: relative;
   border: 1px solid #aab2ad;
   border-radius: 4px;
   padding: 9px 11px 11px;
@@ -177,6 +271,26 @@ select, .code-input, input[type="text"] {
   break-inside: avoid;
   page-break-inside: avoid;
 }
+/* 문제 빼기 — 화면에서만 사는 조작이라 인쇄물에는 체크박스도, 뺀 카드도 남지
+   않는다. 뺀 카드를 화면에서 지우지 않고 흐리게만 두는 이유는, 무엇을 뺐는지
+   보이지 않으면 되돌릴 방법도 함께 사라지기 때문이다. */
+.ws-omit {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #7a847e;
+  cursor: pointer;
+  user-select: none;
+}
+.ws-omit input { margin: 0; cursor: pointer; }
+.ws-card.is-omitted { opacity: .4; background: #f4f6f4; }
+.ws-card.is-omitted .ws-num { background: #9aa6a0; }
+.ws-card.is-omitted .ws-omit { opacity: 1; color: var(--accent); }
 .ws-card-head { display: flex; align-items: center; margin-bottom: 4px; }
 .ws-num {
   display: inline-grid;
@@ -188,6 +302,18 @@ select, .code-input, input[type="text"] {
   color: #fff;
   font-size: 11px;
   font-weight: 900;
+}
+/* "전체(단계 혼합)"로 만들 때만 문제 번호 옆에 붙는 작은 단계 배지. */
+.ws-prob-level {
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #eaf1ec;
+  border: 1px solid #c3d6c9;
+  color: #22503a;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: .3px;
 }
 .ws-prompt { margin: 2px 0 8px; font-size: 12.5px; line-height: 1.55; }
 
@@ -232,6 +358,205 @@ select, .code-input, input[type="text"] {
   text-align: right;
 }
 
+/* ---------------------------------------------------------------------
+   HL 층별 모눈 가이드 — 학습지에서는 아이가 칠하는 빈 풀이 영역, 정답지
+   에서는 채워진 풀이. 어느 쪽이든 층을 한 줄에 가로로 늘어놓아 "1층부터
+   차례로 세어 더한다"는 순서가 그대로 읽히게 한다. A4 기준 최대 상자는
+   4x4x4 이므로 셀 11px x 최대 5칸 = 55px 짜리 모눈 4~5개가 한 줄에 넉넉히
+   들어간다.
+   --------------------------------------------------------------------- */
+.ws-solve-area {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed #d3d8d4;
+}
+.ws-hole-layers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px 12px;
+}
+.ws-hole-layer { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.ws-hole-layer small {
+  font-size: 9px;
+  font-weight: 700;
+  color: #4a5450;
+  white-space: nowrap;
+}
+.ws-hole-layer svg.ws-hole-grid {
+  display: block;
+  width: auto;
+  max-width: 60px;
+  max-height: 60px;
+}
+.ws-hole-total {
+  align-self: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--brand);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------
+   표지 (선택) — cube-town print.css의 .cover-sheet와 같은 구성(브랜드 /
+   제목 / 가운데 구분선 / 이름·시작한 날·나의 단계 / DOCSSAM'S MATH LAB)이지만
+   질감은 지오메트리 랩 톤으로 바꿨다 — 연습책 표지가 깔아 두는 원목 동화풍
+   격자 대신 흰 종이를 그대로 쓴다. 포인트 색 한 가지와 캐릭터 두셋만이 이
+   표지에서 색을 쓰는 곳이므로 인쇄 잉크도 덜 든다.
+   --------------------------------------------------------------------- */
+.ws-cover {
+  /* 영역 테마 — buildCoverHtml이 data-theme으로 골라 준다. 기본값은 혼합
+     (딥블루, 지금까지의 표지 색). 색은 머리말 · 구분선 · 문항 수에만 닿는
+     포인트라 흑백 프린터로 뽑아도 표지의 짜임은 그대로 성립한다. */
+  --cover-accent: var(--brand);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* 표지가 곧 첫 페이지가 되도록 강제한다 — 표지 뒤 문제지는 반드시 새 장에서
+     시작해야 인쇄물을 접어 묶을 수 있다. */
+  break-after: page;
+  page-break-after: always;
+}
+.ws-cover[data-theme="stack"] { --cover-accent: #b0741c; }
+.ws-cover[data-theme="view"] { --cover-accent: #1e6f9e; }
+.ws-cover[data-theme="paint"] { --cover-accent: #2f7d4f; }
+.ws-cover[data-theme="rule"] { --cover-accent: #6b4a9c; }
+.ws-cover[data-theme="mix"] { --cover-accent: var(--brand); }
+.ws-cover::after {
+  content: "";
+  position: absolute;
+  inset: 6mm;
+  border: 1px solid #c9d3dd;
+  pointer-events: none;
+}
+.ws-cover-brand {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 2mm 5mm;
+  border-bottom: 2px solid var(--brand);
+}
+.ws-cover-brand span {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  /* GFIELD 칩만은 테마를 따르지 않는다 — 브랜드 색이 표지마다 달라지면
+     브랜드가 아니게 된다. */
+  color: var(--accent);
+}
+.ws-cover-brand strong {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+  color: var(--brand);
+}
+
+/* margin:auto 0 — 제목 덩어리를 브랜드 줄과 이름칸 사이 남는 공간의 한가운데
+   에 띄운다. 고정 margin-top으로 밀면 유형 이름이 길어 제목이 두 줄이 되는
+   날 아래쪽 여백만 커져 표지가 위로 쏠린다. */
+/* 제목 덩어리와 캐릭터 줄이 한 덩어리로 남는 공간의 한가운데 놓이도록,
+   위쪽(제목)에 margin-top:auto, 아래쪽(캐릭터)에 margin-bottom:auto를 준다.
+   고정 margin으로 밀면 유형 이름이 길어 제목이 두 줄이 되는 날 아래 여백만
+   커져 표지가 위로 쏠린다. */
+.ws-cover-copy { position: relative; margin: auto 0 0; text-align: center; }
+.ws-cover-kicker {
+  margin: 0 0 6mm;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--cover-accent);
+}
+.ws-cover-title {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.3;
+  font-weight: 900;
+  color: var(--brand);
+  word-break: keep-all;
+}
+.ws-cover-rule { width: 26mm; height: 3px; margin: 9mm auto; background: var(--cover-accent); }
+.ws-cover-sub { margin: 0; font-size: 13px; line-height: 1.9; color: #5c6a72; }
+
+/* 캐릭터 줄 — geometry-characters.png 한 장을 3x3 스프라이트로 잘라 쓴다.
+   background-size로 격자 한 칸을 요소 크기에 맞추고, 그 다음 0/50%/100%가
+   각각 0열·1열·2열(0행·1행·2행)을 고른다. 새 이미지 파일을 만들지 않고
+   테마마다 다른 캐릭터를 세울 수 있는 유일한 방법이다.
+   혼합 표지는 다섯이 서므로 한 칸씩 작게 잡는다. */
+.ws-cover-chars {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 6mm;
+  margin: 6mm auto auto;
+}
+.gw-char {
+  display: block;
+  width: 42mm;
+  height: 42mm;
+  background-image: url("../world-map/assets/geometry-characters.png");
+  background-repeat: no-repeat;
+  /* 300%가 아니라 303%인 이유: 원본 스프라이트는 캐릭터가 칸 경계에 닿게
+     그려져 있어(노란 직육면체의 오른손, 각도기의 자) 정확히 300%로 자르면
+     옆 칸의 소품이 1px 삐져나와 표지에 정체불명의 색 조각으로 찍힌다. 3%만
+     키워 칸마다 안쪽으로 조금씩 잘라 내면 그 조각이 사라진다 — 캐릭터 쪽에서
+     깎이는 양은 418px 원본 기준 2px 남짓이라 눈에 띄지 않는다. */
+  background-size: 303% 303%;
+  /* 캐릭터는 표지의 그림이지 배경 장식이 아니다 — 브라우저 기본값(배경 생략)
+     에 맡기면 인쇄물에서 통째로 사라진다. */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+/* 혼합은 다섯이 나란히 서므로 한 칸을 줄여야 A4 폭(210mm − 좌우 여백) 안에
+   들어온다: 30 × 5 + 6 × 4 = 174mm (본문 폭 210 − 13×2 = 184mm). */
+.ws-cover[data-theme="mix"] .gw-char { width: 30mm; height: 30mm; }
+.gw-char-cubie { background-position: 0 0; }
+.gw-char-sphere { background-position: 50% 0; }
+.gw-char-pyramid { background-position: 100% 0; }
+.gw-char-cylinder { background-position: 0 50%; }
+.gw-char-box { background-position: 50% 50%; }
+.gw-char-protractor { background-position: 100% 50%; }
+.gw-char-cone { background-position: 0 100%; }
+.gw-char-prism { background-position: 50% 100%; }
+.gw-char-compass { background-position: 100% 100%; }
+
+.ws-cover-meta {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6mm;
+  margin: 0 6mm;
+  padding: 7mm 4mm;
+  border-top: 1px solid #c3ccd4;
+  border-bottom: 1px solid #c3ccd4;
+}
+.ws-cover-meta > div { display: grid; grid-template-columns: auto 1fr; align-items: end; gap: 3mm; }
+.ws-cover-meta span { font-size: 11px; font-weight: 800; color: #61707a; white-space: nowrap; }
+.ws-cover-meta i { font-style: normal; height: 8mm; border-bottom: 1px solid #3d4f5c; }
+.ws-cover-meta .ws-level-badge { justify-self: start; }
+
+.ws-cover-footer {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8mm;
+  padding: 0 2mm;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--brand);
+}
+.ws-cover-footer b { color: var(--cover-accent); }
+.ws-cover-code {
+  position: relative;
+  margin: 3mm 2mm 0;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 9px;
+  color: #93a0a8;
+}
+
 /* ---- answer sheet page ---- */
 .ws-answer-page { break-before: page; page-break-before: always; }
 .ws-answer-title {
@@ -263,6 +588,30 @@ select, .code-input, input[type="text"] {
   flex-wrap: wrap;
 }
 .ws-answer-item b { color: var(--brand); }
+/* 배열 모드 소제목 — 정답 목록에도 같은 묶음 표시를 남겨, 학습지의 소제목과
+   정답지를 나란히 놓고 읽을 수 있게 한다. 3단 조판이라 단을 가로지른다. */
+.ws-answer-group {
+  column-span: all;
+  -webkit-column-span: all;
+  margin: 4px 0 3px;
+  padding: 2px 8px;
+  border-left: 3px solid var(--brand);
+  background: #eef3ef;
+  color: #22503a;
+  font-size: 11px;
+  font-weight: 900;
+  list-style: none;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+/* HL의 층별 가이드는 한 단 폭(약 60mm)에 들어가지 않는다 — 그 항목만 세 단을
+   가로질러 전체 폭을 쓰게 해서 층 모눈이 한 줄로 유지되게 한다. */
+.ws-answer-item-wide {
+  column-span: all;
+  -webkit-column-span: all;
+}
+.ws-ans-solve { display: block; width: 100%; }
+.ws-ans-note { font-size: 10.5px; color: #6b756f; }
 .ws-ans-thumbs { display: inline-flex; gap: 10px; align-items: flex-start; }
 .ws-ans-thumb { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .ws-ans-thumb small { font-size: 9px; color: #7a847e; }
@@ -291,7 +640,23 @@ select, .code-input, input[type="text"] {
     box-shadow: none;
   }
   .ws-card { break-inside: avoid; page-break-inside: avoid; }
+  /* 뺀 문제와 그 조작 부품은 종이에 나가지 않는다 — 남은 문제는 화면에서
+     이미 1부터 다시 번호를 받았으므로 번호가 건너뛰지 않는다. */
+  .ws-card.is-omitted { display: none !important; }
+  .ws-omit { display: none !important; }
+  .ws-group { break-after: avoid; page-break-after: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  /* .ws-page's print rule zeroes min-height, which would let the cover shrink
+     to its own text and leave the 이름 칸이 페이지 한가운데 뜨게 된다. Give it
+     back most of the printable height (A4 297mm − 12mm×2 여백 = 273mm), but
+     stay a few mm short so a rounding difference can never spill the cover
+     onto a second, blank sheet. */
+  .ws-cover { min-height: 262mm; break-after: page; page-break-after: always; }
   .ws-answer-page { break-before: page; page-break-before: always; }
+  /* 단계 배지의 배경과 층별 가이드의 검은 칸은 "의미가 있는 색"이라 브라우저
+     기본값(배경 생략)에 맡기면 인쇄물에서 정보가 사라진다. */
+  .ws-level-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .ws-hole-layers { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .ws-hole-layers, .ws-solve-area { break-inside: avoid; page-break-inside: avoid; }
 }
 
 @media (max-width: 900px) {
