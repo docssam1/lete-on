@@ -142,7 +142,7 @@ export const TYPES = [
   type("total-difference", "number", "합과 차 문장제", "전체 수와 차이로 두 수 구하기", { generator: "totalDifferenceShare", sourceMatched: true }),
   type("total-difference-candy", "number", "합과 차 문장제", "전체 사탕 수와 차이로 두 수 구하기", { generator: "totalDifferenceCandyShare", sourceMatched: true }),
   type("multi-person-transfer", "number", "합과 차 문장제", "여러 사람의 합과 주고받기"),
-  type("fold-cut-piece-count", "geometry", "색종이 접기", "접고 자른 조각의 개수"),
+  type("fold-cut-piece-count", "geometry", "색종이 접기", "접고 자른 조각의 개수", { generator: "foldCutPieceCount", sourceMatched: true, textbookSource: "더클래식 1과정 1권 39·43·48쪽" }),
   type("cryptarithm", "number", "복면산과 식", "세로셈 복면산"),
   type("multiplicative-symbol-equation", "number", "복면산과 식", "곱셈이 있는 도형 식"),
   type("rod-length-ratio", "geometry", "길이와 측정", "막대의 배수 관계와 전체 길이"),
@@ -180,16 +180,25 @@ export const TYPES = [
   type("fold-hole-count", "geometry", "색종이 접기", "접은 색종이의 구멍 개수", { generator: "paperFoldHoleCount", legacyId: 4 }),
   // F24~F31: 파이널 2·3회 연결 재검토(FINAL-SOURCE-AUDIT.md)에서 분리된 유형.
   // 기존 유형과 이름이 비슷하지만 구조가 달라 새로 등록한다. 생성기가 검산을 통과하기 전까지 잠금.
-  type("fold-diagonal-hole-count", "geometry", "색종이 접기", "대각선으로 여러 번 접은 색종이의 구멍 개수"),
+  type("fold-diagonal-hole-count", "geometry", "색종이 접기", "대각선으로 여러 번 접은 색종이의 구멍 개수", { generator: "diagonalFoldHoleCount", sourceMatched: true }),
   type("row-column-sum-placement", "number", "수 배열과 합", "행·열 합에 맞게 1부터 차례로 놓기"),
   type("two-by-two-sum-fill", "number", "수 배열과 합", "2x2 칸을 행·열 합과 서로 다른 조건으로 채우기"),
   type("shape-sum-grid-4", "number", "매트릭스", "4x4 도형표의 행·열 합으로 빈 합 구하기"),
-  type("vertical-cryptarithm-shape-sum", "number", "복면산과 식", "세로셈 복면산에서 세 도형이 나타내는 수의 합"),
+  type("vertical-cryptarithm-shape-sum", "number", "복면산과 식", "세로셈 복면산에서 세 도형이 나타내는 수의 합", { generator: "verticalCryptarithmShapeSum", sourceMatched: true }),
   type("triangle-max-edge-sum", "number", "수 배열과 합", "삼각형 세 변의 합을 가장 크게 만들기"),
   type("split-merge-tree", "number", "수 배열과 합", "가르기·모으기 나무의 부모·자식 관계"),
   type("border-go-stone-difference", "pattern", "도형 규칙", "테두리가 커지는 바둑돌의 흑백 차이"),
   type("fold-diagonal-unfold", "geometry", "색종이 접기", "대각선으로 접고 자른 뒤 펼친 선 그리기"),
-  type("fold-number-remaining-sum", "geometry", "색종이 접기", "번호 색종이를 접고 자른 뒤 남은 수의 합"),
+  type("fold-number-remaining-sum", "geometry", "색종이 접기", "번호 색종이를 접고 자른 뒤 남은 수의 합", { generator: "foldNumberRemainingSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 41·50쪽" }),
+  // 교재 41·50쪽의 '뒤로 접은 2x2' 잘린 합. 실전 시험 검증본 fold-number-cut-sum(대각선 접기)과 이름이
+  // 비슷하지만 구조가 다르다 — 합치지 말 것.
+  type("fold-number-cut-sum-textbook", "geometry", "색종이 접기", "번호 색종이를 접고 자른 수의 합 (교재)", { generator: "foldNumberCutSumTextbook", sourceMatched: true, textbookSource: "더클래식 1과정 1권 41·50쪽" }),
+  type("fold-diagonal-number-sum", "geometry", "색종이 접기", "대각선 한 번 접기 숫자판의 잘린·남은 합", { generator: "foldDiagonalNumberSum", sourceMatched: true, textbookSource: "실전 1회 18번·2회 15번 유형" }),
+  type("fold-target-sum-coloring", "geometry", "색종이 접기", "목표 합이 되게 색칠할 칸 고르기", { generator: "foldTargetSumColoring", sourceMatched: true, textbookSource: "더클래식 1과정 1권 41·50쪽 역방향" }),
+  type("fold-punch-shape-count", "geometry", "색종이 접기", "반원·원 펀치를 펼친 모양 개수", { generator: "foldPunchShapeCount", sourceMatched: true, textbookSource: "더클래식 1과정 1권 51쪽" }),
+  type("fold-stack-find", "geometry", "색종이 접기", "겹친 색종이의 가장 밑·위 찾기", { generator: "foldStackFind", sourceMatched: true, textbookSource: "더클래식 1과정 1권 35~36·44~46쪽" }),
+  type("fold-stack-order", "geometry", "색종이 접기", "겹친 색종이를 위에서부터 순서대로", { generator: "foldStackOrder", sourceMatched: true, textbookSource: "더클래식 1과정 1권 35~36·44~46쪽" }),
+  type("fold-cut-shape-choice", "geometry", "색종이 접기", "접어 자르고 펼친 모양 고르기", { generator: "foldCutShapeChoice", sourceMatched: true, textbookSource: "더클래식 1과정 1권 37~38·47쪽" }),
   type("cube-count-solid", "geometry", "쌓기나무", "입체를 이루는 쌓기나무 전체 개수", { geometryGame: "count-heights" }),
   type("cube-different-shape", "geometry", "쌓기나무", "같은 개수로 만든 입체 중 다른 모양", { geometryGame: "find-shape" }),
   type("cube-add-to-match", "geometry", "쌓기나무", "목표 입체까지 더 필요한 쌓기나무", { geometryGame: "copy-build" }),
@@ -371,7 +380,7 @@ const CURRICULUM_TEST_PAGE_COUNTS = {
 };
 
 export const CURRICULUM = [
-  { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [unit("도형 움직이기",["shape-transform"]),unit("색종이 접기",["fold-hole-count","fold-diagonal-unfold","fold-cut-piece-count"]),unit("마방진과 가쿠로 퍼즐",["magic-square","gakuro"]),unit("수 추리와 논리 추리",["grid-number-placement","person-item-logic"])] },
+  { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [unit("도형 움직이기",["shape-transform"]),unit("색종이 접기",["fold-hole-count","fold-diagonal-hole-count","fold-diagonal-unfold","fold-cut-piece-count","fold-number-remaining-sum","fold-number-cut-sum-textbook","fold-diagonal-number-sum","fold-target-sum-coloring","fold-stack-find","fold-stack-order","fold-punch-shape-count","fold-cut-shape-choice"]),unit("마방진과 가쿠로 퍼즐",["magic-square","gakuro"]),unit("수 추리와 논리 추리",["grid-number-placement","person-item-logic"])] },
   { id: "book-02", label: "2권", title: "규칙찾기와 매트릭스", units: [unit("매트릭스와 주고받기",["shape-sum-table","equalize-transfer"]),unit("양팔저울",["balance-scale"]),unit("규칙찾기와 수열",["repeat-pattern","number-table-rule"]),unit("약속과 스도쿠",["custom-operation","latin-square"])] },
   { id: "book-03", label: "3권", title: "단위넓이와 복면산", units: [unit("단위넓이와 분수",["unit-area-fraction"]),unit("단위길이와 배수",["unit-length-multiple","rod-length-ratio"]),unit("복면산",["cryptarithm"]),unit("마법카드와 마방진",["magic-card","magic-square"])] },
   { id: "book-04", label: "4권", title: "도형분할과 쌓기나무", units: [unit("도형 분할과 움직이기",["congruent-partition","shape-transform"]),unit("색종이 접기와 쌓기나무",["fold-hole-count","cube-count-solid","cube-three-views"]),unit("양팔저울과 비교하기",["balance-scale","height-order"]),unit("논리추리와 자리배치",["person-item-logic","grid-number-placement"])] },

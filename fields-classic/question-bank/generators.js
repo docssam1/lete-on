@@ -3209,29 +3209,768 @@ function equalLineSumEightCardsTwelve({ difficulty = 2 }) {
   return buildEqualLineSumEightCards({ difficulty, actualTargetSum: 12, actualTargetIndex: [0, 2, 4, 6], actualGivenIndices: "other-corners" });
 }
 
-function paperFoldHoleCount({ difficulty }) {
-  const folds = difficulty === 1 ? 1 : difficulty >= 3 ? 2 : randomInt(1, 2);
-  const firstDirection = Math.random() < 0.5 ? "v" : "h";
-  const directions = folds === 1 ? [firstDirection] : [firstDirection, firstDirection === "v" ? "h" : "v"];
-  const maxHoles = difficulty >= 4 ? 3 : folds === 1 ? 3 : 2;
-  const holeCount = randomInt(1, maxHoles);
+
+// ── 색종이 접기 ─────────────────────────────────────────────
+// 접기를 "반평면으로 자르기"로 다룬다. 가로·세로뿐 아니라 대각선도 같은 방식으로 처리된다.
+// 접는 선은 자르고 남은 조각의 가장자리가 되므로, 구멍을 가장자리에서 떨어뜨려 두면
+// 펼쳤을 때 항상 2배가 된다. 가장자리에 걸치면 겹쳐서 개수가 줄어든다.
+const FOLD_LINES = {
+  v: { keep: (p) => 0.5 - p.x, mirror: (p) => ({ x: 1 - p.x, y: p.y }), label: "세로" },
+  h: { keep: (p) => 0.5 - p.y, mirror: (p) => ({ x: p.x, y: 1 - p.y }), label: "가로" },
+  d1: { keep: (p) => p.x - p.y, mirror: (p) => ({ x: p.y, y: p.x }), label: "대각선" },
+  d2: { keep: (p) => 1 - p.x - p.y, mirror: (p) => ({ x: 1 - p.y, y: 1 - p.x }), label: "대각선" }
+};
+
+function polygonArea(polygon) {
+  let sum = 0;
+  for (let i = 0; i < polygon.length; i += 1) {
+    const a = polygon[i];
+    const b = polygon[(i + 1) % polygon.length];
+    sum += a.x * b.y - b.x * a.y;
+  }
+  return Math.abs(sum) / 2;
+}
+
+function clipHalfPlane(polygon, keep) {
+  const out = [];
+  for (let i = 0; i < polygon.length; i += 1) {
+    const current = polygon[i];
+    const next = polygon[(i + 1) % polygon.length];
+    const dCurrent = keep(current);
+    const dNext = keep(next);
+    if (dCurrent >= -1e-9) out.push(current);
+    if ((dCurrent > 1e-9 && dNext < -1e-9) || (dCurrent < -1e-9 && dNext > 1e-9)) {
+      const t = dCurrent / (dCurrent - dNext);
+      out.push({ x: current.x + (next.x - current.x) * t, y: current.y + (next.y - current.y) * t });
+    }
+  }
+  return out;
+}
+
+function polygonEdgeDistance(polygon, point) {
+  let best = Infinity;
+  for (let i = 0; i < polygon.length; i += 1) {
+    const a = polygon[i];
+    const b = polygon[(i + 1) % polygon.length];
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const len2 = dx * dx + dy * dy;
+    const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((point.x - a.x) * dx + (point.y - a.y) * dy) / len2));
+    best = Math.min(best, Math.hypot(point.x - (a.x + dx * t), point.y - (a.y + dy * t)));
+  }
+  return best;
+}
+
+function pointInPolygon(polygon, point) {
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i, i += 1) {
+    const a = polygon[i];
+    const b = polygon[j];
+    if ((a.y > point.y) !== (b.y > point.y)
+      && point.x < ((b.x - a.x) * (point.y - a.y)) / (b.y - a.y) + a.x) inside = !inside;
+  }
+  return inside;
+}
+
+function buildFoldStages(directions) {
+  let polygon = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
+  const stages = [];
+  for (const direction of directions) {
+    stages.push({ polygon, fold: direction });
+    polygon = clipHalfPlane(polygon, FOLD_LINES[direction].keep);
+  }
+  stages.push({ polygon, fold: null });
+  return stages;
+}
+
+function placeHoles(polygon, count, margin) {
   const holes = [];
   let attempts = 0;
-  while (holes.length < holeCount && attempts < 80) {
-    const hole = { x: 0.22 + Math.random() * 0.56, y: 0.22 + Math.random() * 0.56 };
-    if (holes.every((item) => Math.hypot(item.x - hole.x, item.y - hole.y) > 0.3)) holes.push(hole);
+  while (holes.length < count && attempts < 600) {
     attempts += 1;
+    const point = { x: Math.random(), y: Math.random() };
+    if (!pointInPolygon(polygon, point)) continue;
+    if (polygonEdgeDistance(polygon, point) < margin) continue;
+    if (holes.some((item) => Math.hypot(item.x - point.x, item.y - point.y) < margin * 2.4)) continue;
+    holes.push(point);
   }
-  const multiplier = 2 ** folds;
+  return holes;
+}
+
+function foldQuestion({ directions, holeCount, margin = 0.07 }) {
+  const stages = buildFoldStages(directions);
+
+  // 접는 선이 이미 조각의 가장자리이면 실제로는 접히지 않는다. 그런 단계는 문제가 안 된다.
+  for (let i = 0; i < directions.length; i += 1) {
+    if (polygonArea(stages[i + 1].polygon) >= polygonArea(stages[i].polygon) - 1e-9) return null;
+  }
+
+  const holes = placeHoles(stages[stages.length - 1].polygon, holeCount, margin);
+  if (holes.length < holeCount) return null;
+
+  // 답을 2의 거듭제곱으로 가정하지 않고, 실제로 되접어 펼치며 서로 다른 구멍을 센다.
+  let points = holes.map((hole) => ({ ...hole }));
+  for (let i = directions.length - 1; i >= 0; i -= 1) {
+    const { mirror } = FOLD_LINES[directions[i]];
+    const next = [...points];
+    for (const point of points) {
+      const reflected = mirror(point);
+      if (!next.some((item) => Math.hypot(item.x - reflected.x, item.y - reflected.y) < 1e-6)) next.push(reflected);
+    }
+    if (next.some((item) => !pointInPolygon(stages[i].polygon, item))) return null;
+    points = next;
+  }
+  const answer = points.length;
+  if (answer !== holeCount * 2 ** directions.length) return null;
+  const diagonal = directions.some((d) => d === "d1" || d === "d2");
+  const times = ["", "한 번", "두 번", "세 번"][directions.length];
   return {
-    prompt: `색종이를 그림처럼 반으로 ${folds === 1 ? "한 번" : "두 번"} 접은 다음 구멍을 ${holeCount}개 뚫었습니다. 색종이를 펼쳤을 때 구멍은 모두 몇 개인가요?`,
-    visual: { kind: "paper-fold", folds, directions, holes },
-    answer: `${holeCount * multiplier}개`,
-    solution: `${folds === 1 ? "한 번" : "두 번"} 접었으므로 구멍 하나가 펼쳤을 때 ${multiplier}개가 됩니다. ${holeCount}개를 각각 펼치면 모두 ${holeCount * multiplier}개입니다.`
+    prompt: `색종이를 그림처럼 ${diagonal ? "대각선을 따라 " : "반으로 "}${times} 접은 다음 구멍을 ${holeCount}개 뚫었습니다. 색종이를 펼쳤을 때 구멍은 모두 몇 개입니까?`,
+    visual: { kind: "paper-fold", stages, holes },
+    answer: `${answer}개`,
+    solution: `한 번 접을 때마다 겹이 두 배가 됩니다. ${times} 접었으므로 구멍 하나가 펼쳤을 때 ${2 ** directions.length}개가 되고, 구멍 ${holeCount}개를 각각 펼치면 모두 ${answer}개입니다.`,
+    meta: { directions, holeCount, answer, holes, stages }
   };
 }
 
+function paperFoldHoleCount({ difficulty = 2 }) {
+  const folds = difficulty === 1 ? 1 : 2;
+  const first = sample(["v", "h"]);
+  const directions = folds === 1 ? [first] : [first, first === "v" ? "h" : "v"];
+  const holeCount = randomInt(1, folds === 1 ? 3 : 2);
+  return foldQuestion({ directions, holeCount }) || paperFoldHoleCount({ difficulty });
+}
+
+// ── 색종이 접기: 수가 쓰인 색종이 (더클래식 1과정 1권 41·50쪽) ──────────
+// 4x4 숫자판을 가로·세로로 한 번씩 접는다. 접힌 2x2 묶음이 놓이는 사분면은
+// 접는 방향(위/아래·왼/오른)에 따라 달라지고, 색칠 칸이 가리키는 원본 칸도
+// 그에 따라 달라진다. 잘리는 칸은 색칠 칸의 거울 궤도 {r,3-r}x{c,3-c} 네 개.
+// ── 세로셈 복면산: 세 도형의 값 합 (파이널 2회 14번 계열) ──────────────
+// 검증표에는 값 셋(세모 9·네모 0·별 1)과 답 10만 있고 식의 배치는 없다.
+// 그 값으로 성립하는 두 자리 세로셈만 16가지라 원본 배치는 정해지지 않는다.
+// 그래서 배치를 지어내지 않고 같은 구조 계열을 만들되, 해가 하나뿐일 때만 낸다.
+const CRYPTO_SHAPES = ["△", "□", "☆"];
+
+function cryptarithmSolutionCount(first, second, sum) {
+  // 서로 다른 숫자를 넣어 실제로 식이 성립하는 경우를 전수로 센다.
+  const value = (pattern, assign) => pattern.reduce((total, index) => total * 10 + assign[index], 0);
+  let count = 0;
+  let only = null;
+  for (let a = 0; a <= 9; a += 1) for (let b = 0; b <= 9; b += 1) for (let c = 0; c <= 9; c += 1) {
+    if (a === b || b === c || a === c) continue;
+    const assign = [a, b, c];
+    if (assign[first[0]] === 0 || assign[second[0]] === 0 || assign[sum[0]] === 0) continue;
+    if (value(first, assign) + value(second, assign) !== value(sum, assign)) continue;
+    count += 1;
+    only = assign;
+    if (count > 1) return { count, only: null };
+  }
+  return { count, only };
+}
+
+function verticalCryptarithmShapeSum({ difficulty = 2 }) {
+  const firstLength = difficulty === 3 ? 3 : 2;
+  const secondLength = firstLength;
+
+  // 허용 숫자가 셋뿐이라 무작위로 식을 찍으면 대부분 성립하지 않는다.
+  // 자리 조합을 전수로 훑어 성립하는 것만 모은 뒤 그중에서 고른다.
+  const patterns = (length) => {
+    let list = [[]];
+    for (let i = 0; i < length; i += 1) list = list.flatMap((p) => [0, 1, 2].map((d) => [...p, d]));
+    return list;
+  };
+  const firstPatterns = patterns(firstLength);
+  const secondPatterns = patterns(secondLength);
+
+  for (let round = 0; round < 300; round += 1) {
+    const digits = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 3);
+    const value = (pattern) => pattern.reduce((total, index) => total * 10 + digits[index], 0);
+    const candidates = [];
+    for (const first of firstPatterns) {
+      if (digits[first[0]] === 0) continue;
+      for (const second of secondPatterns) {
+        if (digits[second[0]] === 0) continue;
+        const total = value(first) + value(second);
+        const sumDigits = String(total).split("").map(Number);
+        if (!sumDigits.every((d) => digits.includes(d))) continue;
+        const sum = sumDigits.map((d) => digits.indexOf(d));
+        // 자리 올림으로 한 자리 늘어나는 형태(원본 계열)만 쓴다. 식을 더 짧게 하면
+        // 기호 셋을 정할 단서가 모자라 해가 여러 개가 된다 — 조건을 만족하는 식 1,398개를
+        // 전수로 훑어 유일해가 하나도 없음을 확인했다. 그래서 쉬움은 식을 줄이는 대신 힌트를 준다.
+        if (difficulty !== 3 && sum.length !== firstLength + 1) continue;
+        if (new Set([...first, ...second, ...sum]).size !== 3) continue;   // 세 도형이 모두 나와야 한다
+        candidates.push({ first, second, sum });
+      }
+    }
+    const unique = [];
+    for (const candidate of shuffle(candidates)) {
+      if (cryptarithmSolutionCount(candidate.first, candidate.second, candidate.sum).count === 1) {
+        unique.push(candidate);
+        break;                                    // 하나만 찾으면 충분하다
+      }
+    }
+    if (!unique.length) continue;
+
+    const { first, second, sum } = unique[0];
+    const answer = digits[0] + digits[1] + digits[2];
+    const naming = CRYPTO_SHAPES.map((shape, index) => `${shape}는 ${digits[index]}`).join(", ");
+    // 쉬움은 한 도형의 값을 알려 준다. 이미 유일해인 식이므로 힌트가 답을 흐리지 않는다.
+    const hintIndex = difficulty === 1 ? randomInt(0, 2) : -1;
+    const hint = hintIndex >= 0 ? ` (단, ${CRYPTO_SHAPES[hintIndex]}는 ${digits[hintIndex]}입니다.)` : "";
+    return {
+      prompt: `다음 세로셈에서 같은 도형은 같은 숫자를, 다른 도형은 다른 숫자를 나타냅니다. 세 도형이 나타내는 수의 합을 구하시오.${hint}`,
+      visual: {
+        kind: "cryptarithm-vertical",
+        first: first.map((index) => CRYPTO_SHAPES[index]),
+        second: second.map((index) => CRYPTO_SHAPES[index]),
+        sum: sum.map((index) => CRYPTO_SHAPES[index])
+      },
+      answer: String(answer),
+      solution: `자리마다 올림을 따져 보면 ${naming}입니다. 세 도형이 나타내는 수를 더하면 ${digits[0]} + ${digits[1]} + ${digits[2]} = ${answer}입니다.`,
+      meta: { digits, first, second, sum, answer, hintIndex }
+    };
+  }
+  return null;
+}
+
+function foldNumberSumCore(askCut) {
+  const N = 4;
+  const grid = Array.from({ length: N }, () => Array.from({ length: N }, () => randomInt(1, 4)));
+  const hDir = sample(["up", "down"]);
+  const vDir = sample(["left", "right"]);
+  const packetRow = hDir === "up" ? 0 : 2;
+  const packetCol = vDir === "left" ? 0 : 2;
+
+  const cutCount = randomInt(1, 2);
+  const cells = [];
+  while (cells.length < cutCount) {
+    const candidate = { r: randomInt(0, 1), c: randomInt(0, 1) };
+    if (!cells.some((item) => item.r === candidate.r && item.c === candidate.c)) cells.push(candidate);
+  }
+
+  const removed = new Set();
+  for (const cell of cells) {
+    const gr = packetRow + cell.r;
+    const gc = packetCol + cell.c;
+    for (const r of [gr, N - 1 - gr]) for (const c of [gc, N - 1 - gc]) removed.add(r * N + c);
+  }
+
+  let total = 0;
+  let cut = 0;
+  for (let r = 0; r < N; r += 1) for (let c = 0; c < N; c += 1) {
+    total += grid[r][c];
+    if (removed.has(r * N + c)) cut += grid[r][c];
+  }
+  const remain = total - cut;
+  if (remain <= 0 || cut <= 0) return foldNumberSumCore(askCut);
+
+  return {
+    prompt: `다음과 같이 수가 쓰인 색종이를 접어서 색칠된 부분을 자른 후 펼쳤을 때, ${askCut ? "잘려나간" : "남아 있는"} 수들의 합을 구하시오.`,
+    visual: { kind: "fold-number-grid", grid, hDir, vDir, cells, removed },
+    answer: String(askCut ? cut : remain),
+    solution: `색칠한 칸은 접힌 자리에서 거울처럼 겹친 네 칸을 함께 자릅니다. 잘린 칸의 합은 ${cut}이고 전체 합은 ${total}이므로, ${askCut ? `잘려나간 수의 합은 ${cut}` : `남은 수의 합은 ${total} - ${cut} = ${remain}`}입니다.`,
+    meta: { grid, hDir, vDir, packetRow, packetCol, cells, removed, total, cut, remain }
+  };
+}
+
+function foldNumberRemainingSum({ difficulty = 2 }) {
+  return foldNumberSumCore(false);
+}
+
+// codex 갈래의 foldNumberCutSum(실전 선발시험 검증본)과 이름만 같고 구조가 다르다.
+// 이쪽은 교재 1권 41·50쪽의 '뒤로 접은 2x2' 문법이라 별도 이름으로 둔다.
+function foldNumberCutSumTextbook({ difficulty = 2 }) {
+  return foldNumberSumCore(true);
+}
+
+// ── 색종이 접기: 대각선 한 번 접기 숫자판 ─────────────────────────────
+// 대각선에서 떨어진 온전한 칸은 거울짝 {(r,c),(c,r)} 둘이 잘리고,
+// 대각선에 걸친 반칸은 두 겹이 곧 그 칸의 양쪽 반이라 그 칸 하나만 잘린다.
+function foldDiagonalNumberSum({ difficulty = 2 }) {
+  const N = 4;
+  const grid = Array.from({ length: N }, () => Array.from({ length: N }, () => randomInt(1, 9)));
+  const keepLower = Math.random() < 0.5;
+  const inKeep = (r, c) => (keepLower ? r > c : c > r);
+
+  const units = [];
+  for (let r = 0; r < N; r += 1) for (let c = 0; c < N; c += 1) {
+    if (inKeep(r, c)) units.push({ r, c, half: false });
+    if (r === c) units.push({ r, c, half: true });
+  }
+  const key = (u) => `${u.r},${u.c}`;
+  const adjacent = (a, b) => Math.abs(a.r - b.r) + Math.abs(a.c - b.c) === 1;
+  const want = randomInt(3, 5);
+  const region = [sample(units)];
+  let guard = 0;
+  while (region.length < want && guard < 200) {
+    guard += 1;
+    const candidates = units.filter((u) => !region.some((v) => key(v) === key(u)) && region.some((v) => adjacent(u, v)));
+    if (!candidates.length) break;
+    region.push(sample(candidates));
+  }
+  if (!region.some((u) => !u.half)) return foldDiagonalNumberSum({ difficulty });
+
+  const removed = new Set();
+  for (const u of region) {
+    removed.add(u.r * N + u.c);
+    if (!u.half) removed.add(u.c * N + u.r);
+  }
+  let total = 0;
+  let cut = 0;
+  for (let r = 0; r < N; r += 1) for (let c = 0; c < N; c += 1) {
+    total += grid[r][c];
+    if (removed.has(r * N + c)) cut += grid[r][c];
+  }
+  const remain = total - cut;
+  if (remain <= 0 || cut <= 0) return foldDiagonalNumberSum({ difficulty });
+
+  const askCut = difficulty !== 1;
+  return {
+    prompt: `색종이를 한 번 접은 후 칠해진 부분을 잘라내었습니다. ${askCut ? "잘려나간 부분에 있는" : "남아 있는"} 수들의 합을 구하시오.`,
+    visual: { kind: "fold-diagonal-grid", grid, keepLower, region },
+    answer: String(askCut ? cut : remain),
+    solution: `대각선에서 떨어진 칸은 접으면 마주 보는 칸과 겹쳐 함께 잘리고, 대각선에 걸친 칸은 그 칸 하나만 잘립니다. 잘린 칸의 합은 ${cut}, 전체 합은 ${total}이므로 ${askCut ? `잘려나간 수의 합은 ${cut}` : `남은 수의 합은 ${remain}`}입니다.`,
+    meta: { grid, keepLower, region, removed, total, cut, remain }
+  };
+}
+
+// ── 색종이 접기: 목표 합이 되게 색칠하기 (역방향) ──────────────────────
+// 수가 보이도록 뒤로 두 번 접은 2x2에서, 잘라낼 칸들의 궤도 합이 목표가
+// 되도록 학생이 칸을 고른다. 15가지 부분집합 중 답이 유일할 때만 낸다.
+function foldTargetSumColoring({ difficulty = 2 }) {
+  const N = 4;
+  const grid = Array.from({ length: N }, () => Array.from({ length: N }, () => randomInt(1, 3)));
+  const packetRow = sample([0, 2]);
+  const packetCol = sample([0, 2]);
+  const firstFold = sample(["h", "v"]);
+
+  const cellOrbitSum = [[0, 0], [0, 0]];
+  for (let r = 0; r < 2; r += 1) for (let c = 0; c < 2; c += 1) {
+    const gr = packetRow + r;
+    const gc = packetCol + c;
+    cellOrbitSum[r][c] = grid[gr][gc] + grid[gr][3 - gc] + grid[3 - gr][gc] + grid[3 - gr][3 - gc];
+  }
+  const cells = [{ r: 0, c: 0 }, { r: 0, c: 1 }, { r: 1, c: 0 }, { r: 1, c: 1 }];
+  const answerSet = shuffle(cells).slice(0, randomInt(1, 2));
+  const target = answerSet.reduce((total, cell) => total + cellOrbitSum[cell.r][cell.c], 0);
+
+  let matches = 0;
+  for (let mask = 1; mask < 16; mask += 1) {
+    let sum = 0;
+    cells.forEach((cell, index) => { if (mask & (1 << index)) sum += cellOrbitSum[cell.r][cell.c]; });
+    if (sum === target) matches += 1;
+  }
+  if (matches !== 1) return foldTargetSumColoring({ difficulty });
+
+  const positionName = (cell) => `${cell.r === 0 ? "위" : "아래"}쪽 ${cell.c === 0 ? "왼" : "오른"}쪽`;
+  const particle = [1, 3, 6, 7, 8, 0].includes(target % 10) ? "이" : "가";
+  return {
+    prompt: `다음과 같이 수가 쓰여 있는 색종이를 두 번 접은 후 접은 선을 따라 잘라냈습니다. 잘라낸 부분에 쓰인 수의 합이 ${target}${particle} 되려면 어떤 부분을 잘라야 하는지 두 번 접은 모양에 색칠하시오. (단, 수가 보이도록 뒤로 접습니다.)`,
+    visual: { kind: "fold-number-inverse", grid, packetRow, packetCol, firstFold },
+    answer: `접은 모양의 ${answerSet.map(positionName).join("과 ")} 칸`,
+    solution: `접은 2x2의 각 칸은 거울로 겹친 네 칸의 합(${cellOrbitSum.flat().join("·")})을 나타냅니다. 이 중 합이 ${target}이 되는 조합은 ${answerSet.map(positionName).join(", ")} 칸뿐입니다.`,
+    meta: { grid, packetRow, packetCol, firstFold, cellOrbitSum, answerSet, target }
+  };
+}
+
+// ── 색종이 접기: 접고 선 따라 자르기 조각 개수 (더클래식 1권 39·43·48쪽) ──
+// 자르는 선은 접은 선이 아니라 접힌 조각 위에 그은 선(대각선 X·모서리 클립).
+// 조각 수는 공식이 없다 — 잘린 선을 거울 반사로 펼친 뒤 격자 flood fill로
+// 실제 분할을 센다. 서로 다른 두 해상도가 일치할 때만 낸다.
+function unfoldSegments(segments, directions) {
+  let current = segments.map((segment) => [{ ...segment[0] }, { ...segment[1] }]);
+  for (let i = directions.length - 1; i >= 0; i -= 1) {
+    const { mirror } = FOLD_LINES[directions[i]];
+    current = current.concat(current.map((segment) => [mirror(segment[0]), mirror(segment[1])]));
+  }
+  return current;
+}
+
+function countPieceRegions(segments, resolution) {
+  const blocked = new Uint8Array(resolution * resolution);
+  for (const [a, b] of segments) {
+    const steps = Math.max(2, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) * resolution * 8));
+    for (let k = 0; k <= steps; k += 1) {
+      const t = k / steps;
+      const ci = Math.min(resolution - 1, Math.max(0, Math.floor((a.x + (b.x - a.x) * t) * resolution)));
+      const cj = Math.min(resolution - 1, Math.max(0, Math.floor((a.y + (b.y - a.y) * t) * resolution)));
+      blocked[cj * resolution + ci] = 1;
+    }
+  }
+  let count = 0;
+  const seen = new Uint8Array(resolution * resolution);
+  const stack = [];
+  for (let start = 0; start < resolution * resolution; start += 1) {
+    if (blocked[start] || seen[start]) continue;
+    count += 1;
+    seen[start] = 1;
+    stack.push(start);
+    while (stack.length) {
+      const v = stack.pop();
+      const vi = v % resolution;
+      if (vi > 0 && !blocked[v - 1] && !seen[v - 1]) { seen[v - 1] = 1; stack.push(v - 1); }
+      if (vi < resolution - 1 && !blocked[v + 1] && !seen[v + 1]) { seen[v + 1] = 1; stack.push(v + 1); }
+      if (v - resolution >= 0 && !blocked[v - resolution] && !seen[v - resolution]) { seen[v - resolution] = 1; stack.push(v - resolution); }
+      if (v + resolution < resolution * resolution && !blocked[v + resolution] && !seen[v + resolution]) { seen[v + resolution] = 1; stack.push(v + resolution); }
+    }
+  }
+  return count;
+}
+
+function foldCutPieceCount({ difficulty = 2 }) {
+  const directions = sample([["h"], ["v"], ["h", "v"], ["v", "h"]]);
+  const stages = buildFoldStages(directions);
+  const finalPolygon = stages[stages.length - 1].polygon;
+  const w = Math.max(...finalPolygon.map((p) => p.x));
+  const h = Math.max(...finalPolygon.map((p) => p.y));
+  const diagA = [{ x: 0, y: 0 }, { x: w, y: h }];
+  const diagB = [{ x: 0, y: h }, { x: w, y: 0 }];
+  const clips = [
+    [{ x: w / 2, y: 0 }, { x: 0, y: h / 2 }], [{ x: w / 2, y: 0 }, { x: w, y: h / 2 }],
+    [{ x: 0, y: h / 2 }, { x: w / 2, y: h }], [{ x: w, y: h / 2 }, { x: w / 2, y: h }]
+  ];
+  const cutChoice = sample(["X", "A", "B", "clip1", "clip2"]);
+  const cuts = cutChoice === "X" ? [diagA, diagB]
+    : cutChoice === "A" ? [diagA]
+      : cutChoice === "B" ? [diagB]
+        : cutChoice === "clip1" ? [sample(clips)]
+          : (() => {
+            const a = randomInt(0, 3);
+            let b = randomInt(0, 3);
+            while (b === a) b = randomInt(0, 3);
+            return [clips[a], clips[b]];
+          })();
+
+  const unfolded = unfoldSegments(cuts, directions);
+  const n1 = countPieceRegions(unfolded, 401);
+  const n2 = countPieceRegions(unfolded, 643);
+  if (n1 !== n2 || n1 < 2 || n1 > 24) return foldCutPieceCount({ difficulty });
+
+  const times = ["", "한 번", "두 번"][directions.length];
+  return {
+    prompt: `정사각형 모양의 색종이를 다음과 같이 ${times} 접어서 선을 따라 잘랐을 때, 모두 몇 조각이 되는지 구하시오.`,
+    visual: { kind: "fold-cut-pieces", directions, stages, cuts },
+    answer: `${n1}조각`,
+    solution: `접힌 조각 위에 그은 선을 거울로 펼쳐 보면, 종이가 ${n1}개의 조각으로 나뉩니다.`,
+    meta: { directions, stages, cuts, unfolded, answer: n1 }
+  };
+}
+
+// ── 색종이 접기: 반원·원 펀치 (더클래식 1권 51쪽 계열) ────────────────
+// 접힌 조각의 안쪽에는 원, 가장자리에는 반원(평평한 면이 가장자리에 붙게)을 뚫는다.
+// 접은 선 위의 반원은 펼치면 거울짝과 붙어 온전한 원이 되고, 원래 가장자리의
+// 반원은 반원인 채로 거울 수만큼 늘어난다. 병합 개수는 래스터 재검산으로 확인한다.
+function punchRaster(pieces, resolution) {
+  const hole = new Uint8Array(resolution * resolution);
+  for (let j = 0; j < resolution; j += 1) for (let i = 0; i < resolution; i += 1) {
+    const x = (i + 0.5) / resolution;
+    const y = (j + 0.5) / resolution;
+    for (const q of pieces) {
+      if (Math.hypot(x - q.cx, y - q.cy) >= q.r) continue;
+      if (q.type === "half" && (x - q.cx) * q.nx + (y - q.cy) * q.ny > 0) continue;
+      hole[j * resolution + i] = 1;
+      break;
+    }
+  }
+  const seen = new Uint8Array(resolution * resolution);
+  let circles = 0;
+  let semis = 0;
+  for (let start = 0; start < resolution * resolution; start += 1) {
+    if (!hole[start] || seen[start]) continue;
+    let touches = false;
+    const stack = [start];
+    seen[start] = 1;
+    while (stack.length) {
+      const v = stack.pop();
+      const vi = v % resolution;
+      const vj = Math.floor(v / resolution);
+      if (vi === 0 || vj === 0 || vi === resolution - 1 || vj === resolution - 1) touches = true;
+      for (const w of [v - 1, v + 1, v - resolution, v + resolution]) {
+        if (w < 0 || w >= resolution * resolution) continue;
+        if (Math.abs((w % resolution) - vi) > 1) continue;
+        if (hole[w] && !seen[w]) { seen[w] = 1; stack.push(w); }
+      }
+    }
+    if (touches) semis += 1; else circles += 1;
+  }
+  return { circles, semis };
+}
+
+function foldPunchShapeCount({ difficulty = 2 }) {
+  const directions = sample([["h"], ["v"], ["h", "v"], ["v", "h"]]);
+  const stages = buildFoldStages(directions);
+  const finalPolygon = stages[stages.length - 1].polygon;
+  const w = Math.max(...finalPolygon.map((p) => p.x));
+  const h = Math.max(...finalPolygon.map((p) => p.y));
+  const hasV = directions.includes("v");
+  const hasH = directions.includes("h");
+  const edges = [
+    { name: "left", crease: false }, { name: "top", crease: false },
+    { name: "right", crease: hasV }, { name: "bottom", crease: hasH }
+  ];
+  const punches = [];
+  const radius = () => 0.05 + Math.random() * 0.02;
+  const clash = (cx, cy, r) => punches.some((q) => Math.hypot(q.cx - cx, q.cy - cy) < q.r + r + 0.05);
+
+  let guard = 0;
+  while (punches.filter((q) => q.type === "full").length < 1 && guard++ < 300) {
+    const r = radius();
+    const cx = r + 0.05 + Math.random() * (w - 2 * (r + 0.05));
+    const cy = r + 0.05 + Math.random() * (h - 2 * (r + 0.05));
+    if (!clash(cx, cy, r)) punches.push({ type: "full", cx, cy, r });
+  }
+  const wantHalf = randomInt(1, 2);
+  while (punches.filter((q) => q.type === "half").length < wantHalf && guard++ < 600) {
+    const edge = sample(edges);
+    const r = radius();
+    const t = 0.18 + Math.random() * 0.64;
+    let cx;
+    let cy;
+    let nx = 0;
+    let ny = 0;
+    if (edge.name === "left") { cx = 0; cy = t * h; nx = -1; }
+    else if (edge.name === "right") { cx = w; cy = t * h; nx = 1; }
+    else if (edge.name === "top") { cy = 0; cx = t * w; ny = -1; }
+    else { cy = h; cx = t * w; ny = 1; }
+    if (edge.name === "left" || edge.name === "right") { if (cy < r + 0.06 || cy > h - r - 0.06) continue; }
+    else if (cx < r + 0.06 || cx > w - r - 0.06) continue;
+    if (clash(cx, cy, r)) continue;
+    punches.push({ type: "half", cx, cy, r, nx, ny, edge: edge.name, crease: edge.crease });
+  }
+  if (punches.filter((q) => q.type === "half").length < 1 || punches.filter((q) => q.type === "full").length < 1) {
+    return foldPunchShapeCount({ difficulty });
+  }
+
+  let pieces = punches.map((q) => ({ ...q }));
+  for (let i = directions.length - 1; i >= 0; i -= 1) {
+    const { mirror } = FOLD_LINES[directions[i]];
+    const add = pieces.map((q) => {
+      const m = mirror({ x: q.cx, y: q.cy });
+      const out = { ...q, cx: m.x, cy: m.y };
+      if (q.type === "half") {
+        if (directions[i] === "v") out.nx = -q.nx;
+        if (directions[i] === "h") out.ny = -q.ny;
+      }
+      return out;
+    });
+    for (const q of add) {
+      if (!pieces.some((p) => Math.hypot(p.cx - q.cx, p.cy - q.cy) < 1e-9 && p.type === q.type
+        && (p.type === "full" || (p.nx === q.nx && p.ny === q.ny)))) pieces.push(q);
+    }
+  }
+
+  const merged = [];
+  const used = new Array(pieces.length).fill(false);
+  for (let i = 0; i < pieces.length; i += 1) {
+    if (used[i]) continue;
+    const a = pieces[i];
+    if (a.type === "full") { merged.push({ kind: "circle", cx: a.cx, cy: a.cy, r: a.r }); used[i] = true; continue; }
+    let mate = -1;
+    for (let j = i + 1; j < pieces.length; j += 1) {
+      if (used[j]) continue;
+      const b = pieces[j];
+      if (b.type === "half" && Math.hypot(a.cx - b.cx, a.cy - b.cy) < 1e-9 && Math.abs(a.r - b.r) < 1e-9
+        && a.nx === -b.nx && a.ny === -b.ny) { mate = j; break; }
+    }
+    used[i] = true;
+    if (mate >= 0) { used[mate] = true; merged.push({ kind: "circle", cx: a.cx, cy: a.cy, r: a.r }); } else {
+      merged.push({ kind: "semi", cx: a.cx, cy: a.cy, r: a.r, nx: a.nx, ny: a.ny });
+    }
+  }
+  for (const m of merged) {
+    if (m.kind !== "semi") continue;
+    const onEdge = (m.nx === -1 && Math.abs(m.cx) < 1e-9) || (m.nx === 1 && Math.abs(m.cx - 1) < 1e-9)
+      || (m.ny === -1 && Math.abs(m.cy) < 1e-9) || (m.ny === 1 && Math.abs(m.cy - 1) < 1e-9);
+    if (!onEdge) return foldPunchShapeCount({ difficulty });
+  }
+  const circles = merged.filter((m) => m.kind === "circle").length;
+  const semis = merged.filter((m) => m.kind === "semi").length;
+
+  const check = punchRaster(pieces, 241);
+  if (check.circles !== circles || check.semis !== semis) return foldPunchShapeCount({ difficulty });
+
+  const times = ["", "한 번", "두 번"][directions.length];
+  return {
+    prompt: `다음 그림과 같이 색종이를 ${times} 접은 후 펀치로 반원과 원을 뚫었습니다. 색종이를 펼쳤을 때 반원과 원 모양이 각각 몇 개씩 나오는지 구하시오.`,
+    visual: { kind: "fold-punch", directions, stages, punches },
+    answer: `반원 ${semis}개, 원 ${circles}개`,
+    solution: `접은 선 위에 뚫린 반원은 펼치면 거울짝과 붙어 온전한 원이 되고, 원래 가장자리의 반원은 반원인 채로 늘어납니다. 그 결과 반원 ${semis}개, 원 ${circles}개가 나옵니다.`,
+    meta: { directions, stages, punches, pieces, circles, semis }
+  };
+}
+
+// ── 색종이 접기: 겹친 색종이 순서 (더클래식 1권 35~36·44~46쪽) ────────
+// 같은 크기 정사각형 8장을 3x3 자리(가장자리 중앙 한 자리 비움)에 겹친다.
+// 답의 유일성 조건은 z순서상 바로 위 종이와 겹치는 연속 사슬이어야 한다 —
+// "위 종이 중 아무나와 겹침"이면 그 종이가 먼저 걷혀 중간 종이가 조기에 드러난다.
+function foldStackCore(askOrder) {
+  const anchors = [];
+  for (let r = 0; r < 3; r += 1) for (let c = 0; c < 3; c += 1) anchors.push({ r, c });
+  const dropEdge = sample([1, 3, 5, 7]);
+  const pos = anchors.filter((_, i) => i !== dropEdge);
+  const labels = shuffle(["가", "나", "다", "라", "마", "바", "사", "아"]);
+  const over = (a, b) => Math.abs(pos[a].r - pos[b].r) < 2 && Math.abs(pos[a].c - pos[b].c) < 2;
+
+  for (let attempt = 0; attempt < 800; attempt += 1) {
+    const z = shuffle(pos.map((_, i) => i));
+    let ok = true;
+    for (let k = 1; k < 8; k += 1) if (!over(z[k], z[k - 1])) { ok = false; break; }
+    if (!ok) continue;
+
+    const spots = [];
+    for (let k = 0; k < 8 && ok; k += 1) {
+      const piece = pos[z[k]];
+      let best = null;
+      let bestDist = -1;
+      for (let i = 1; i <= 8; i += 1) for (let j = 1; j <= 8; j += 1) {
+        const x = piece.c + (i * 2) / 9;
+        const y = piece.r + (j * 2) / 9;
+        let covered = false;
+        let clear = Infinity;
+        for (let m = 0; m < k; m += 1) {
+          const q = pos[z[m]];
+          if (x > q.c && x < q.c + 2 && y > q.r && y < q.r + 2) { covered = true; break; }
+          const dx = Math.max(q.c - x, x - (q.c + 2), 0);
+          const dy = Math.max(q.r - y, y - (q.r + 2), 0);
+          clear = Math.min(clear, Math.hypot(dx, dy));
+        }
+        if (covered) continue;
+        const d = Math.min(clear, x - piece.c, piece.c + 2 - x, y - piece.r, piece.r + 2 - y);
+        if (d > bestDist) { bestDist = d; best = { x, y }; }
+      }
+      if (!best || bestDist < 0.12) { ok = false; break; }
+      spots.push(best);
+    }
+    if (!ok) continue;
+
+    const order = z.map((i) => labels[i]);
+    const wantTop = Math.random() < 0.3;
+    return {
+      prompt: askOrder
+        ? "다음은 크기가 모두 같은 정사각형 모양의 색종이 8장을 겹쳐 놓은 것입니다. 가장 위에 있는 색종이부터 순서대로 쓰시오."
+        : `다음은 크기가 모두 같은 정사각형 모양의 색종이 8장을 겹쳐 놓은 것입니다. 가장 ${wantTop ? "위" : "밑"}에 놓인 색종이는 어느 것입니까?`,
+      visual: { kind: "fold-stack", pos, z, spots, order },
+      answer: askOrder ? order.join(" → ") : (wantTop ? order[0] : order[7]),
+      solution: askOrder
+        ? `겹친 종이를 위에서부터 하나씩 걷어내며 온전히 드러나는 것을 확인하면 ${order.join(" → ")} 순서입니다.`
+        : `겹친 종이를 위에서부터 하나씩 걷어내며 확인하면, 가장 ${wantTop ? "위" : "밑"}에 놓인 종이는 ${wantTop ? order[0] : order[7]}입니다.`,
+      meta: { pos, z, labels, spots, order, askOrder, wantTop }
+    };
+  }
+  return foldStackCore(askOrder);
+}
+
+function foldStackFind({ difficulty = 2 }) {
+  return foldStackCore(false);
+}
+
+function foldStackOrder({ difficulty = 2 }) {
+  return foldStackCore(true);
+}
+
+// ── 색종이 접기: 접어 자르고 펼친 모양 4지선다 (더클래식 1권 37~38·47쪽) ──
+// 두 번 접은 2x2 조각의 모서리 삼각형을 잘라내고 펼친 모양을 고른다.
+// 오답은 실제 오개념으로 만든다: 반사 하나 빠뜨림·거울 대신 평행이동·다른 모서리.
+// 정답은 거울 펼치기와 별개로 "점을 접어 넣어 삼각형에 드는지"로 재검산한다.
+function mirrorPolygon(polygon, dir) {
+  const { mirror } = FOLD_LINES[dir];
+  return polygon.map((pt) => mirror(pt));
+}
+function shiftPolygon(polygon, dx, dy) {
+  return polygon.map((pt) => ({ x: pt.x + dx, y: pt.y + dy }));
+}
+function foldPointIn(point, directions) {
+  let q = { ...point };
+  for (const d of directions) { if (FOLD_LINES[d].keep(q) < 0) q = FOLD_LINES[d].mirror(q); }
+  return q;
+}
+function shapeRasterMask(polygons, resolution) {
+  const mask = new Uint8Array(resolution * resolution);
+  for (let j = 0; j < resolution; j += 1) for (let i = 0; i < resolution; i += 1) {
+    const pt = { x: (i + 0.5) / resolution, y: (j + 0.5) / resolution };
+    for (const polygon of polygons) if (pointInPolygon(polygon, pt)) { mask[j * resolution + i] = 1; break; }
+  }
+  return mask;
+}
+function maskDifference(a, b) {
+  let n = 0;
+  for (let i = 0; i < a.length; i += 1) if (a[i] !== b[i]) n += 1;
+  return n;
+}
+
+function foldCutShapeChoice({ difficulty = 2 }) {
+  const directions = sample([["h", "v"], ["v", "h"]]);
+  const w = 0.5;
+  const length = 0.2 + Math.random() * 0.14;
+  const corner = sample(["tl", "tr", "bl", "br"]);
+  const triangleAt = (c, len) => (c === "tl" ? [{ x: 0, y: 0 }, { x: len, y: 0 }, { x: 0, y: len }]
+    : c === "tr" ? [{ x: w, y: 0 }, { x: w, y: len }, { x: w - len, y: 0 }]
+      : c === "bl" ? [{ x: 0, y: w }, { x: len, y: w }, { x: 0, y: w - len }]
+        : [{ x: w, y: w }, { x: w - len, y: w }, { x: w, y: w - len }]);
+  const cut = triangleAt(corner, length);
+
+  const unfold = (polygons) => {
+    let current = polygons;
+    for (let i = directions.length - 1; i >= 0; i -= 1) current = current.concat(current.map((p) => mirrorPolygon(p, directions[i])));
+    return current;
+  };
+  const correct = unfold([cut]);
+  const wrongOnlyOne = [cut, mirrorPolygon(cut, directions[1])];
+  const wrongShift = [cut, shiftPolygon(cut, w, 0), shiftPolygon(cut, 0, w), shiftPolygon(cut, w, w)];
+  const otherCorner = sample(["tl", "tr", "bl", "br"].filter((k) => k !== corner));
+  const wrongCorner = unfold([triangleAt(otherCorner, length)]);
+
+  const resolution = 181;
+  const correctMask = shapeRasterMask(correct, resolution);
+  const candidates = [wrongOnlyOne, wrongShift, wrongCorner]
+    .filter((w2) => maskDifference(shapeRasterMask(w2, resolution), correctMask) > resolution * resolution * 0.01);
+  if (candidates.length < 3) return foldCutShapeChoice({ difficulty });
+
+  const foldMask = new Uint8Array(resolution * resolution);
+  for (let j = 0; j < resolution; j += 1) for (let i = 0; i < resolution; i += 1) {
+    const q = foldPointIn({ x: (i + 0.5) / resolution, y: (j + 0.5) / resolution }, directions);
+    if (pointInPolygon(cut, q)) foldMask[j * resolution + i] = 1;
+  }
+  if (maskDifference(foldMask, correctMask) > resolution * resolution * 0.004) return foldCutShapeChoice({ difficulty });
+
+  const options = shuffle([{ polygons: correct, ok: true }, ...candidates.map((w2) => ({ polygons: w2, ok: false }))]);
+  const answerIndex = options.findIndex((o) => o.ok);
+  return {
+    prompt: "색종이를 두 번 접은 후 칠해진 부분을 잘라내었습니다. 남은 부분을 펼쳤을 때의 그림으로 알맞은 것을 고르시오.",
+    visual: { kind: "fold-unfold-choice", directions, cut, options },
+    answer: "①②③④"[answerIndex],
+    solution: "잘린 삼각형을 접은 순서의 반대로 거울에 비추듯 펼치면, 두 번 접었으므로 네 자리에 대칭으로 나타납니다.",
+    meta: { directions, cut, options, answerIndex }
+  };
+}
+
+function diagonalFoldHoleCount({ difficulty = 2 }) {
+  // 파이널 2회 15번: 대각선을 따라 세 번 접고 구멍 하나 → 8개.
+  const folds = difficulty === 1 ? 2 : 3;
+  const directions = [];
+  for (let i = 0; i < folds; i += 1) {
+    directions.push(i === 0 ? sample(["d1", "d2"]) : sample(["v", "h", "d1", "d2"]));
+  }
+  const holeCount = difficulty === 3 ? randomInt(1, 2) : 1;
+  return foldQuestion({ directions, holeCount, margin: 0.05 }) || diagonalFoldHoleCount({ difficulty });
+}
+
+
+
+
 export const GENERATORS = {
+  diagonalFoldHoleCount,
+  foldNumberRemainingSum,
+  foldNumberCutSumTextbook,
+  foldDiagonalNumberSum,
+  foldTargetSumColoring,
+  foldCutPieceCount,
+  foldPunchShapeCount,
+  foldStackFind,
+  foldStackOrder,
+  foldCutShapeChoice,
+  verticalCryptarithmShapeSum,
+
   ...G1_GENERATORS,
   hiddenCardCondition,
   closestTwoDigitCardSum,

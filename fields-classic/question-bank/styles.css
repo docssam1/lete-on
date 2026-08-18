@@ -100,3 +100,18 @@
 .g1-fold-paper.cut-once.cut-cross::before{top:19px}.g1-fold-paper.cut-once.cut-cross::after{top:4px;height:34px}
 .g1-fold-flow.tone-gold .g1-fold-paper{background-color:#fff5cf}.g1-fold-flow.tone-coral .g1-fold-paper{background-color:#fff0ee}
 @media print{.g1-fold-paper.cut-once{width:52px;height:32px}.g1-fold-paper.cut-once::before,.g1-fold-paper.cut-once::after{top:15px}.g1-fold-paper.cut-cross::before,.g1-fold-paper.cut-cross-diagonal::before{top:24px}.g1-fold-paper.cut-cross::after,.g1-fold-paper.cut-cross-diagonal::after{left:24px;top:4px;height:44px}.g1-fold-paper.cut-once.cut-cross::before{top:15px}.g1-fold-paper.cut-once.cut-cross::after{top:3px;height:26px}}
+
+/* main 갈래에서 이식한 색종이 접기·세로셈 복면산 시각자료 (2026-08-18) */
+.fold-number-svg,.fold-diag-svg,.fold-inverse-svg,.fold-pieces-svg,.fold-punch-svg,.fold-unfold-stage-svg{display:block;width:100%;max-width:560px;height:auto;margin:0 auto}
+.fold-stack-svg{display:block;width:100%;max-width:220px;height:auto;margin:0 auto}
+.fold-unfold-choice-work{display:flex;flex-direction:column;gap:10px}
+.fold-unfold-options{display:flex;flex-wrap:wrap;justify-content:center;gap:14px}
+.fold-unfold-option{display:flex;flex-direction:column;align-items:center;gap:4px}
+.fold-unfold-option svg{width:78px;height:78px;display:block}
+.fold-unfold-option b{font-size:12px;font-weight:900;color:var(--blue-dark)}
+.cryptarithm-vertical{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0}
+.cryptarithm-vertical .cv-row{display:grid;grid-template-columns:26px repeat(var(--cv-cols),34px);align-items:center}
+.cryptarithm-vertical .cv-row span{display:flex;align-items:center;justify-content:center;height:34px;font-size:21px;font-weight:700;color:#2b3a46}
+.cryptarithm-vertical .cv-sign{display:flex;align-items:center;justify-content:center;height:34px;font-size:18px;font-weight:900;color:#526879}
+.cryptarithm-vertical .cv-bar{width:calc(26px + var(--cv-cols)*34px);height:2px;background:#2b3a46;margin:2px 0}
+
