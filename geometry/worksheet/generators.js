@@ -1746,7 +1746,45 @@
 
   const CODE_DIFF = { 0: "easy", 1: "mid", 2: "hard" };
 
-  // Code format: #GW-<TYPES>-<COUNT>x<SEED>
+  // ---------------------------------------------------------------------
+  // 문제 배열 방식 (arrange)
+  //
+  //   ""     골고루 섞기 — 고른 유형을 번갈아 뽑는 기본 동작.
+  //   "type" 유형별 묶기 — 같은 유형끼리 이어 놓고 유형명 소제목을 단다.
+  //   "diff" 난이도별 묶기 — 하 → 중 → 상 순서로 1/3씩 만들어 소제목을 단다.
+  //
+  // WHY "diff"가 강도 선택과 별개의 모드인가: 이 모드는 한 장 안에서 강도를
+  // 1 → 2 → 3으로 올리는 것이 목적이라, 화면에서 고른 강도 하나를 쓰면 모드
+  // 자체가 뜻을 잃는다. 그래서 이 모드에서는 강도 버튼을 비활성으로 두고
+  // (UI 쪽 책임) 여기서는 세 강도를 순서대로 직접 쓴다.
+  // ---------------------------------------------------------------------
+  const ARRANGE_MIX = "";
+  const ARRANGE_TYPE = "type";
+  const ARRANGE_DIFF = "diff";
+
+  // 코드에 실리는 한 글자. 기본(섞기)은 글자를 붙이지 않으므로 옛 코드가
+  // 그대로 기본 모드로 읽힌다.
+  const ARRANGE_CHAR = { type: "t", diff: "d" };
+  const ARRANGE_FROM_CHAR = { t: ARRANGE_TYPE, d: ARRANGE_DIFF };
+
+  function normalizeArrange(value) {
+    const v = String(value === undefined || value === null ? "" : value).trim().toLowerCase();
+    if (v === ARRANGE_TYPE || v === "t") return ARRANGE_TYPE;
+    if (v === ARRANGE_DIFF || v === "d") return ARRANGE_DIFF;
+    return ARRANGE_MIX;
+  }
+
+  // 난이도별 묶기의 몫 나누기 — 나머지는 앞쪽(하 → 중)부터 한 문제씩 준다.
+  // 문항 수가 3의 배수가 아닐 때 마지막 상 묶음만 비는 편이, 앞 묶음이 비어
+  // 소제목만 덩그러니 남는 것보다 낫다.
+  function splitThirds(count) {
+    const n = Math.max(0, count | 0);
+    const base = Math.floor(n / 3);
+    const rest = n % 3;
+    return [base + (rest > 0 ? 1 : 0), base + (rest > 1 ? 1 : 0), base];
+  }
+
+  // Code format: #GW-<TYPES>-<COUNT>x<SEED>[-<ARRANGE>]
   //
   // WHY the level/intensity digits live inside SEED: the code has a fixed
   // 3-segment shape, but "same code -> identical worksheet" requires the
@@ -1757,13 +1795,19 @@
   // digit in front instead; since base36 seeds are written after that digit
   // and the new token always starts with the letter "l", the two formats can
   // never be confused.
-  function buildCode(types, count, seedInt, level, intensity) {
+  //
+  // 배열 모드는 시드 토큰 뒤에 "-t"(유형별) / "-d"(난이도별)로 붙인다.
+  // WHY 하이픈으로 떼는가: base36 시드에는 t·d도 그대로 나올 수 있어서
+  // "l42kf3at"의 마지막 t가 시드의 일부인지 모드 글자인지 가릴 방법이 없다.
+  // 기본(섞기)은 아무것도 붙이지 않으므로 이미 나간 코드는 형태 그대로다.
+  function buildCode(types, count, seedInt, level, intensity, arrange) {
     const seedPart = "l" + levelNum(level) + normalizeIntensity(intensity) + (seedInt >>> 0).toString(36);
-    return "#GW-" + types.join(".") + "-" + count + "x" + seedPart;
+    const arrangeChar = ARRANGE_CHAR[normalizeArrange(arrange)];
+    return "#GW-" + types.join(".") + "-" + count + "x" + seedPart + (arrangeChar ? "-" + arrangeChar : "");
   }
 
   function parseCode(codeStr) {
-    const m = /^#?GW-([A-Z.]+)-(\d+)x([0-9a-z]+)$/i.exec(String(codeStr).trim());
+    const m = /^#?GW-([A-Z.]+)-(\d+)x([0-9a-z]+)(?:-([td]))?$/i.exec(String(codeStr).trim());
     if (!m) return null;
     const knownCodes = TYPES.map((t) => t.code);
     const seen = {};
@@ -1790,7 +1834,8 @@
       seedInt = parseInt(seedToken.slice(1), 36) >>> 0;
     }
     if (!types.length || !count || Number.isNaN(seedInt)) return null;
-    return { types, count, seed: seedInt, level, intensity };
+    const arrange = ARRANGE_FROM_CHAR[(m[4] || "").toLowerCase()] || ARRANGE_MIX;
+    return { types, count, seed: seedInt, level, intensity, arrange };
   }
 
   function buildAssignment(rng, types, count) {
@@ -1799,8 +1844,34 @@
     return seq.slice(0, count);
   }
 
-  // opts: { types, count, seed, level, intensity }. difficulty is still
-  // accepted for callers that have not moved over yet — see fromDifficulty.
+  // 유형별 묶기의 배치 — 섞기와 "유형별 문항 수"는 똑같이 두고 순서만 유형
+  // 순으로 모은다. 개수까지 다시 나누면 같은 조건에서 섞기와 묶기가 서로 다른
+  // 분량이 되어, 배열만 바꿨는데 학습량이 달라진다.
+  function groupAssignmentByType(assignment, types) {
+    return assignment
+      .map((code, index) => ({ code, index }))
+      .sort((a, b) => (types.indexOf(a.code) - types.indexOf(b.code)) || (a.index - b.index))
+      .map((entry) => entry.code);
+  }
+
+  // 배열 모드에서 문제 카드·정답지가 소제목을 그릴 수 있도록 남기는 표시.
+  // key가 바뀌는 자리마다 label을 소제목 줄로 찍으면 된다.
+  function tagGroup(problem, key, label) {
+    problem.group = { key, label };
+    return problem;
+  }
+
+  // 난이도별 묶기 배지 — 한 장 안에서 강도가 셋 다 쓰이므로 머리말에 강도
+  // 하나를 적으면 거짓말이 된다.
+  function arrangeBadge(level, intensity, arrange) {
+    if (normalizeArrange(arrange) !== ARRANGE_DIFF) return levelBadge(level, intensity);
+    const info = levelInfo(level);
+    const name = isAllLevel(level) ? "전체 혼합" : (info ? info.name : levelCode(level));
+    return name + " · 난이도 " + INTENSITY_WORDS.join("→");
+  }
+
+  // opts: { types, count, seed, level, intensity, arrange }. difficulty is
+  // still accepted for callers that have not moved over yet — fromDifficulty.
   function generateWorksheet(opts) {
     opts = opts || {};
     const legacy = opts.difficulty ? fromDifficulty(opts.difficulty) : null;
@@ -1820,15 +1891,40 @@
     if (!types.length) types = typesForLevel(level);
     const count = opts.count || 9;
     const seedInt = (opts.seed >>> 0) || 1;
+    const arrange = normalizeArrange(opts.arrange);
+    // 씨앗에는 배열 모드를 넣지 않는다. 유형 배정(buildAssignment)이 세 모드
+    // 모두 같은 난수 자리에서 시작해야 "배열만 바꿨는데 유형별 문항 수가
+    // 달라지는" 일이 없다 — 배열은 학습량이 아니라 순서를 정하는 축이다.
+    // 덤으로 이미 나간 코드는 예전과 글자 하나까지 같은 학습지를 만든다.
     const rng = createRng("GW:" + seedInt + ":" + level + ":" + intensity);
-    const assignment = buildAssignment(rng, types, count);
-    const problems = assignment.map((code) => make(code, rng, level, intensity));
+    let problems;
+    if (arrange === ARRANGE_DIFF) {
+      // 하 → 중 → 상 순서로 1/3씩. 단계는 그대로 두고 강도만 올라간다.
+      problems = [];
+      splitThirds(count).forEach((chunk, index) => {
+        if (!chunk) return;
+        const it = index + 1;
+        buildAssignment(rng, types, chunk).forEach((code) => {
+          const problem = make(code, rng, level, it);
+          problem.intensity = it;
+          problems.push(tagGroup(problem, "i" + it, "난이도 " + intensityWord(it)));
+        });
+      });
+    } else if (arrange === ARRANGE_TYPE) {
+      problems = groupAssignmentByType(buildAssignment(rng, types, count), types).map((code) => {
+        const info = typeInfo(code);
+        return tagGroup(make(code, rng, level, intensity), "t" + code, info ? info.label : code);
+      });
+    } else {
+      problems = buildAssignment(rng, types, count).map((code) => make(code, rng, level, intensity));
+    }
     return {
-      code: buildCode(types, count, seedInt, level, intensity),
+      code: buildCode(types, count, seedInt, level, intensity, arrange),
       seed: seedInt,
       level,
       intensity,
-      badge: levelBadge(level, intensity),
+      arrange,
+      badge: arrangeBadge(level, intensity, arrange),
       types,
       count,
       problems
@@ -1881,6 +1977,13 @@
     intensityMark,
     intensityWord,
     levelBadge,
+    // 문제 배열 방식
+    ARRANGE_MIX,
+    ARRANGE_TYPE,
+    ARRANGE_DIFF,
+    normalizeArrange,
+    splitThirds,
+    arrangeBadge,
     fromDifficulty,
     countScale,
     viewScale,
