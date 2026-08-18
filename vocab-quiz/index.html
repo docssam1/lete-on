@@ -198,7 +198,36 @@
     padding:10px 12px; box-shadow:var(--shadow);
     animation:fallDown var(--dur) linear forwards;
   }
-  @keyframes fallDown{from{transform:translateY(0);}to{transform:translateY(275px);}}
+  @keyframes fallDown{from{transform:translateY(0);}to{transform:translateY(var(--fdist, 275px));}}
+  .fz-deco{position:absolute; pointer-events:none; font-size:24px; opacity:.55; animation:fzfloat 7s ease-in-out infinite; filter:drop-shadow(0 2px 2px rgba(0,0,0,.08));}
+  @keyframes fzfloat{0%,100%{transform:translateY(0) translateX(0);}50%{transform:translateY(-14px) translateX(6px);}}
+  .fz-tw{position:absolute; pointer-events:none; font-size:14px; animation:fztw 2s ease-in-out infinite;}
+  @keyframes fztw{0%,100%{opacity:.12; transform:scale(.65) rotate(-8deg);}50%{opacity:.95; transform:scale(1.2) rotate(8deg);}}
+  .upload-help{
+    background:#eef5ff; border:1.5px dashed #268be1; border-radius:12px;
+    padding:11px 12px; font-size:12.5px; line-height:1.65; margin-bottom:10px;
+  }
+  .upload-help b{color:#0755a8;}
+  .promptbox{
+    background:#fff; border:1px solid var(--line); border-radius:10px;
+    padding:9px 11px; font-size:12px; line-height:1.6; color:#333;
+    white-space:pre-wrap; margin:8px 0; font-family:inherit;
+  }
+  .uparea{
+    width:100%; min-height:170px; border:1.5px solid var(--line); border-radius:12px;
+    padding:11px 12px; font-size:13.5px; line-height:1.6; resize:vertical;
+    font-family:inherit; background:#fff; outline:none;
+  }
+  .uparea:focus{border-color:var(--green);}
+  .upname{
+    width:100%; border:1.5px solid var(--line); border-radius:12px; padding:11px 13px;
+    font-size:15px; background:#fff; outline:none; margin-bottom:9px;
+  }
+  .upcount{font-size:12.5px; font-weight:800; color:var(--green); min-height:20px; margin-top:7px;}
+  .addset{
+    width:100%; border:2px dashed var(--green); background:var(--green-soft); color:var(--green);
+    border-radius:14px; padding:13px; font-size:14.5px; font-weight:800; cursor:pointer; margin-bottom:11px;
+  }
   .falling.paused{animation-play-state:paused;}
   .choice.good{border-color:var(--green); background:var(--green-soft);}
   .choice.badc{border-color:var(--bad); background:var(--bad-soft);}
@@ -265,7 +294,8 @@
 
   /* 3D falling card + arcade zone */
   .fall-zone{
-    background:linear-gradient(180deg, #d8ecff 0%, #eef6e8 44%, #fdf0d5 74%, #f2ddba 100%);
+    height:min(46vh, 340px);
+    background:linear-gradient(180deg, #cfe8ff 0%, #e2f2fa 30%, #eef6e8 58%, #fdf0d5 82%, #f2ddba 100%);
     border:2px solid #d9cfb8;
     box-shadow:inset 0 -14px 22px rgba(180,120,40,.16), inset 0 10px 18px rgba(120,170,230,.2);
   }
@@ -357,11 +387,19 @@
   const DAYS = window.VOCAB_DAYS || [];
   const LS_KEY = 'gfield_vocab_quiz_v1';
 
-  // 내 단어장(사진 등록) + reading-world 교재들을 한 책장으로
+  // 내 단어장(사진 등록 + 직접 업로드) + reading-world 교재들을 한 책장으로
+  const CUSTOM_KEY = 'gfield_vocab_custom_v1';
+  const loadCustomSets = () => { try{ return JSON.parse(localStorage.getItem(CUSTOM_KEY)) || []; }catch(e){ return []; } };
+  const saveCustomSets = a => { try{ localStorage.setItem(CUSTOM_KEY, JSON.stringify(a)); }catch(e){} };
   const PHOTO_BOOK = {
-    id: 'photo', title: '내 단어장', level: '교재 사진', icon: '📸', hue: 180,
-    chapters: DAYS.map(d => ({ id: d.id, label: d.date + ' · ' + d.label, words: d.words })),
+    id: 'photo', title: '내 단어장', level: '직접 등록', icon: '📸', hue: 180,
+    chapters: [],
   };
+  function refreshPhotoBook(){
+    PHOTO_BOOK.chapters = DAYS.map(d => ({ id: d.id, label: d.date + ' · ' + d.label, words: d.words }))
+      .concat(loadCustomSets());
+  }
+  refreshPhotoBook();
   const BOOKS = [PHOTO_BOOK].concat(window.VOCAB_BOOKS || []);
 
   // ── 상태 ──────────────────────────────────────────────
@@ -599,7 +637,7 @@
         }).join('')}
       </div>
       <div class="note">📥 챕터 목록에서 단어장(단어·영영뜻·한글뜻)을 내려받아 외울 수 있어요.<br>
-      📸 새 교재 사진을 Claude에게 올리면 "내 단어장"에 계속 추가돼요.</div>`;
+      📸 <b>내 단어장</b>을 열면 직접 업로드할 수 있어요 — 단어 사진을 GPT·제미나이로 바꿔서 붙여넣기만 하면 이 기기에 계속 저장돼요.</div>`;
     $app.querySelectorAll('[data-book]').forEach(b => b.onclick = () => {
       sel.bookId = b.dataset.book;
       nav.screen = 'chapters';
@@ -615,24 +653,35 @@
         <div><h1 style="font-size:18px">${b.icon} ${esc(b.title)}</h1>
         <div class="sub" style="font-size:11.5px;color:var(--sub)">${esc(b.level)} · 챕터를 골라 게임을 시작하세요</div></div>
       </div>
+      ${b.id === 'photo' ? '<button class="addset" id="addset">➕ 내 단어장 업로드 (GPT·제미나이로 사진 변환)</button>' : ''}
       <div class="chaplist">
         ${b.chapters.map((c, i) => {
           const st3 = starsFor(c.id);
           const rushBest = store()['rush_' + c.id];
+          const custom = String(c.id).charAt(0) === 'u';
           return `<div class="chap" style="--bh:${b.hue}">
             <button class="chap-main" data-chap="${c.id}">
               <span class="cnum">${i + 1}</span>
               <span class="cbody"><b>${esc(c.label)}</b>
-                <small>${c.words.length}단어${rushBest ? ' · ⚡' + rushBest + '점' : ''}</small></span>
+                <small>${c.words.length}단어${rushBest ? ' · ⚡' + rushBest + '점' : ''}${custom ? ' · 내가 올림' : ''}</small></span>
               <span class="cstars">${'★'.repeat(st3)}${'☆'.repeat(3 - st3)}</span>
             </button>
             <div class="cdl">
               <button data-csv="${c.id}">📥 저장</button>
-              <button data-print="${c.id}">🖨️ 인쇄</button>
+              ${custom ? `<button data-del="${c.id}">🗑️ 삭제</button>` : `<button data-print="${c.id}">🖨️ 인쇄</button>`}
             </div>
           </div>`;
         }).join('')}
       </div>`;
+    const addBtn = $app.querySelector('#addset');
+    if (addBtn) addBtn.onclick = uploadScreen;
+    $app.querySelectorAll('[data-del]').forEach(el => el.onclick = () => {
+      const c = dayById(el.dataset.del);
+      if (!confirm(`"${c.label}" 단어장을 지울까요?`)) return;
+      saveCustomSets(loadCustomSets().filter(x => x.id !== el.dataset.del));
+      refreshPhotoBook();
+      home();
+    });
     $app.querySelector('#back').onclick = () => { nav.screen = 'books'; home(); };
     $app.querySelectorAll('[data-chap]').forEach(el => el.onclick = () => {
       sel.dayId = el.dataset.chap;
@@ -648,6 +697,10 @@
     const b = bookById(sel.bookId);
     const c = dayById(sel.dayId);
     const hasKw = chapterHasKw(c);
+    const hasDef = c.words.every(w => w.def);
+    const defDis = hasDef ? '' : 'disabled style="opacity:.4"';
+    if (!hasDef && ['en', 'endefko', 'pick', 'rush'].indexOf(sel.mode) >= 0) sel.mode = 'ko';
+    if (!hasKw && sel.mode === 'endef') sel.mode = 'ko';
     const bestKey = sel.dayId + '_' + sel.mode;
     const best = store()[bestKey];
     $app.innerHTML = `
@@ -662,22 +715,22 @@
           <button class="mode ${sel.mode==='ko'?'on':''}" data-mode="ko">
             <div class="mi">🔊→🇰🇷</div><div class="mt">영어 단어 듣고<br>한글 뜻 말하기</div>
           </button>
-          <button class="mode ${sel.mode==='endefko'?'on':''}" data-mode="endefko">
+          <button class="mode ${sel.mode==='endefko'?'on':''}" data-mode="endefko" ${defDis}>
             <div class="mi">🔊🇺🇸→🇰🇷</div><div class="mt">영어 뜻 듣고<br>한글 뜻 말하기</div>
           </button>
           <button class="mode ${sel.mode==='koq'?'on':''}" data-mode="koq">
             <div class="mi">🔊🇰🇷→🇺🇸</div><div class="mt">한글 뜻 듣고<br>영어 단어 말하기</div>
           </button>
-          <button class="mode ${sel.mode==='en'?'on':''}" data-mode="en">
+          <button class="mode ${sel.mode==='en'?'on':''}" data-mode="en" ${defDis}>
             <div class="mi">🔊→🇺🇸</div><div class="mt">영어 뜻 듣고<br>영어 단어 말하기</div>
           </button>
           <button class="mode ${sel.mode==='endef'?'on':''}" data-mode="endef" ${hasKw ? '' : 'disabled style="opacity:.4"'}>
             <div class="mi">🔊→💬</div><div class="mt">영어 단어 듣고<br>영어로 뜻 말하기${hasKw ? '' : '<br><small>(내 단어장 전용)</small>'}</div>
           </button>
-          <button class="mode ${sel.mode==='pick'?'on':''}" data-mode="pick">
+          <button class="mode ${sel.mode==='pick'?'on':''}" data-mode="pick" ${defDis}>
             <div class="mi">📖→👆</div><div class="mt">영어 뜻 읽고<br>단어 고르기</div>
           </button>
-          <button class="mode ${sel.mode==='rush'?'on':''}" data-mode="rush">
+          <button class="mode ${sel.mode==='rush'?'on':''}" data-mode="rush" ${defDis}>
             <div class="mi">🌠⚡</div><div class="mt">떨어지는 뜻 잡기<br>(타임어택)</div>
           </button>
         </div>
@@ -698,6 +751,79 @@
     $app.querySelector('#start').onclick = () => startQuiz();
     $app.querySelector('#dlc').onclick = () => downloadCsv(c, b);
     $app.querySelector('#dlp').onclick = () => printSheet(c, b);
+  }
+
+  // ── 내 단어장 업로드 (GPT·제미나이 변환 텍스트 붙여넣기) ──
+  const AI_PROMPT = `사진 속 영어 단어표를 아래 형식의 텍스트로만 정리해줘.
+한 줄에 한 단어씩, 구분자는 | 를 써줘:
+
+단어 | 품사 | 쉬운 영영뜻 | 한글뜻
+
+규칙:
+- 영영뜻은 교재 문장을 그대로 베끼지 말고, 같은 뜻의 쉬운 영어로 새로 써줘
+- 한글뜻이 여러 개면 쉼표로 이어줘
+- 다른 설명 없이 단어 줄만 출력해줘`;
+  function parseWordText(text){
+    const words = [];
+    for (let line of String(text || '').split(/\n+/)){
+      line = line.trim().replace(/^\d+[.)]\s*/, '');
+      if (!line || line.indexOf('|') < 0) continue;
+      const parts = line.split(/\s*\|\s*/).filter(x => x !== '');
+      if (parts.length < 2) continue;
+      let en = '', pos = '', def = '', koShow = '';
+      if (parts.length >= 4){ en = parts[0]; pos = parts[1]; def = parts[2]; koShow = parts[3]; }
+      else if (parts.length === 3){ en = parts[0]; def = parts[1]; koShow = parts[2]; }
+      else { en = parts[0]; koShow = parts[1]; }
+      if (!/[a-zA-Z]/.test(en) || !/[가-힣]/.test(koShow)) continue;
+      const ko = koShow.split(/[,·/]/).map(x => x.trim()).filter(Boolean);
+      words.push({ en: en.trim(), pos: pos.trim(), def: def.trim(), ko, koShow: koShow.trim() });
+    }
+    return words;
+  }
+  function uploadScreen(){
+    $app.innerHTML = `
+      <div class="backbar">
+        <button class="backbtn" id="back">← 챕터</button>
+        <div><h1 style="font-size:17px">📸 내 단어장 업로드</h1></div>
+      </div>
+      <div class="card">
+        <div class="upload-help">
+          <b>이렇게 하세요:</b><br>
+          ① 단어 페이지를 사진 찍어 GPT나 제미나이에 올리고<br>
+          ② 아래 프롬프트를 복사해서 같이 보내면<br>
+          ③ 형식에 맞는 텍스트가 나와요 → 그걸 아래에 붙여넣고 저장!
+          <div class="promptbox" id="aiprompt">${esc(AI_PROMPT)}</div>
+          <button class="backbtn" id="copyprompt" style="width:100%">📋 프롬프트 복사</button>
+        </div>
+        <input class="upname" id="upname" placeholder="단어장 이름 (예: Week 2 Unit 1)" maxlength="40">
+        <textarea class="uparea" id="uptext" placeholder="apple | n | a round red or green fruit | 사과&#10;run | v | to move fast with your legs | 달리다"></textarea>
+        <div class="upcount" id="upcount"></div>
+      </div>
+      <button class="btn" id="upsave">저장하기 💾</button>
+      <div class="note">저장하면 이 기기에 계속 남아 있어요 (브라우저 데이터 삭제 전까지).<br>영영뜻이 없는 단어는 일부 게임에서 빠질 수 있어요.</div>`;
+    const $t = $app.querySelector('#uptext');
+    const $c = $app.querySelector('#upcount');
+    $t.oninput = () => {
+      const n = parseWordText($t.value).length;
+      $c.textContent = n ? `✅ ${n}개 단어 인식됨` : '';
+    };
+    $app.querySelector('#back').onclick = () => { nav.screen = 'chapters'; home(); };
+    $app.querySelector('#copyprompt').onclick = async (e) => {
+      try{ await navigator.clipboard.writeText(AI_PROMPT); e.target.textContent = '복사됐어요! ✅'; }
+      catch(err){ alert(AI_PROMPT); }
+    };
+    $app.querySelector('#upsave').onclick = () => {
+      const words = parseWordText($t.value);
+      if (words.length < 2){ alert('단어를 2개 이상 인식하지 못했어요.\n형식: 단어 | 품사 | 영영뜻 | 한글뜻'); return; }
+      const name = $app.querySelector('#upname').value.trim() || ('내 단어장 ' + (loadCustomSets().length + 1));
+      const sets = loadCustomSets();
+      sets.push({ id: 'u' + Date.now(), label: name, words });
+      saveCustomSets(sets);
+      refreshPhotoBook();
+      nav.screen = 'chapters';
+      showSuccessFx(); playSuccessArpeggio();
+      home();
+    };
   }
 
   // ── 점수 자랑하기 (공유 / 클립보드) ───────────────────
@@ -964,6 +1090,13 @@
           <span class="rscore">🏆 ${rush.score}</span>
         </div>
         <div class="fall-zone">
+          <span class="fz-deco" style="left:5%; top:6%">☁️</span>
+          <span class="fz-deco" style="right:7%; top:13%; animation-delay:-3s">☁️</span>
+          <span class="fz-deco" style="left:10%; bottom:22%; font-size:19px; animation-delay:-1.5s">🎈</span>
+          <span class="fz-tw" style="left:22%; top:26%">✨</span>
+          <span class="fz-tw" style="right:18%; top:40%; animation-delay:-.7s">⭐</span>
+          <span class="fz-tw" style="left:14%; top:56%; animation-delay:-1.2s">✨</span>
+          <span class="fz-tw" style="right:10%; bottom:26%; animation-delay:-.4s">🌟</span>
           <div class="falling" id="fall" style="--dur:${rush.dur}s">${esc(w.def)}</div>
           <div class="ground"></div>
         </div>
@@ -975,6 +1108,7 @@
     const fall = $app.querySelector('#fall');
     fall.addEventListener('animationend', () => rushMiss(w, null));
     const zone = $app.querySelector('.fall-zone');
+    fall.style.setProperty('--fdist', (zone.clientHeight + 80) + 'px');
     if (rush.raf) cancelAnimationFrame(rush.raf);
     const tick = () => {
       if (rush.answered || rush.over) return;
