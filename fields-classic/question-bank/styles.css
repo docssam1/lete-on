@@ -144,3 +144,11 @@
 .statement-list li{padding:6px 9px;border:1px solid #d9e2e8;border-left:3px solid #149fe7;border-radius:5px;background:#fff;font-weight:700}
 .cell-shape-svg{width:100%;max-width:190px;height:auto}
 .cell-shape-svg rect{fill:#fff;stroke:#17334b;stroke-width:1.6}
+.triangle-edge-sum{display:flex;flex-direction:column;align-items:center;gap:8px}
+.tes-cards{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.tes-cards span{display:grid;place-items:center;width:32px;height:38px;border:2px solid #efb73f;border-radius:5px;background:#fff8dd;font-size:15px;font-weight:900}
+.tes-svg{width:100%;max-width:260px;height:auto}
+.tes-svg line{stroke:#17334b;stroke-width:2}
+.tes-svg circle{fill:#fff;stroke:#17334b;stroke-width:2}
+.tes-svg circle.tes-given{fill:#eaf8ff}
+.tes-svg text{font-size:17px;font-weight:900;fill:#17334b}

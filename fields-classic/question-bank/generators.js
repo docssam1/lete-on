@@ -4271,7 +4271,56 @@ function squareCountShape({ difficulty = 2 }) {
 }
 
 
+
+// ── 삼각형 세 변의 합을 같게 만들고 그 합을 최대로 (F29 · 파이널 3회 3번) ──────
+// 원본 확인(2026-08-18, Drive PDF): "1부터 6까지의 수를 한 번씩 사용하여 한 줄의 수의 합이
+// 모두 같게 되는 경우를 만들 때, 한 줄의 합이 가장 큰 경우 빈 칸을 채워보세요."
+// 꼭짓점 3 + 변 가운데 3 = 여섯 자리. 세 변의 합을 더하면 꼭짓점만 두 번 세어지므로
+// 3S = (전체 합) + (꼭짓점 합)이다. 따라서 합을 키우려면 큰 수를 꼭짓점에 놓아야 한다.
+// 연속한 여섯 수 k..k+5에서 최대는 3k+9(꼭짓점이 큰 셋), 최소는 3k+6(꼭짓점이 작은 셋)이다.
+function triangleMaxEdgeSum({ difficulty = 2 }) {
+  // 연속한 여섯 수로 고정하면 난이도 1·2가 늘 같은 문항이 된다(검산에서 고유 9종만 나왔다).
+  // 여섯 수는 연속일 필요가 없으므로, 같음 난이도만 원본(1~6)을 쓰고 나머지는 수를 흩어 뽑는다.
+  const askMax = difficulty === 2 ? true : Math.random() < 0.5;
+  const numbers = difficulty === 2
+    ? [1, 2, 3, 4, 5, 6]
+    : shuffle(Array.from({ length: difficulty === 1 ? 7 : 11 }, (_, i) => i + 1)).slice(0, 6).sort((a, b) => a - b);
+  const total = numbers.reduce((a, b) => a + b, 0);
+
+  // 답을 공식으로 가정하지 않고 720가지 배치를 전수로 훑어 조건을 만족하는 것만 모은다.
+  // 자리: 0·1·2 = 꼭짓점(위·왼아래·오른아래), 3 = 위-왼아래 변, 4 = 왼아래-오른아래 변, 5 = 오른아래-위 변
+  const SIDES = [[0, 3, 1], [1, 4, 2], [2, 5, 0]];
+  const valid = [];
+  for (const perm of permutations(numbers)) {
+    const sums = SIDES.map((side) => side.reduce((a, i) => a + perm[i], 0));
+    if (sums[0] === sums[1] && sums[1] === sums[2]) valid.push({ perm, sum: sums[0] });
+  }
+  if (!valid.length) return null;
+  const target = askMax
+    ? Math.max(...valid.map((v) => v.sum))
+    : Math.min(...valid.map((v) => v.sum));
+  const best = valid.filter((v) => v.sum === target);
+  // 회전·뒤집기(6가지)를 빼면 배치가 하나여야 답이 정해진다.
+  if (best.length !== 6) return null;
+  const answer = best[0].perm;
+  // 되짚어 확인: 공식과 전수 결과가 같은지
+  const vertexSum = answer[0] + answer[1] + answer[2];
+  if ((total + vertexSum) / 3 !== target) return null;
+
+  const isRun = numbers.every((n, i) => i === 0 || n === numbers[i - 1] + 1);
+  // 힌트 자리를 고정하면 같은 그림만 나온다. 쉬움 난이도는 꼭짓점 하나를 무작위로 보여 준다.
+  const given = difficulty === 1 ? [randomInt(0, 2)] : [];
+  return {
+    prompt: `${isRun ? `${numbers[0]}부터 ${numbers[5]}까지의 수` : `${numbers.join(", ")}를`} 한 번씩 사용하여 삼각형의 한 줄에 놓인 세 수의 합이 모두 같게 만들려고 합니다. 한 줄의 합이 가장 ${askMax ? "큰" : "작은"} 경우가 되도록 빈 칸을 채우세요.`,
+    visual: { kind: "triangle-edge-sum", numbers, given: given.map((i) => ({ slot: i, value: answer[i] })) },
+    answer: `한 줄의 합 ${target} (꼭짓점 위 ${answer[0]}, 왼쪽 아래 ${answer[1]}, 오른쪽 아래 ${answer[2]} / 변 가운데 ${answer[3]}·${answer[4]}·${answer[5]})`,
+    solution: `세 줄의 합을 모두 더하면 꼭짓점의 수만 두 번 세어집니다. 그래서 (한 줄의 합) × 3 = ${total} + (꼭짓점 세 수의 합)입니다. 합을 가장 ${askMax ? "크게" : "작게"} 하려면 ${askMax ? "큰" : "작은"} 수 ${answer.slice(0, 3).slice().sort((a, b) => a - b).join("·")}을 꼭짓점에 놓아야 하고, 이때 한 줄의 합은 ${target}입니다.`,
+    meta: { numbers, target, answer, askMax, vertexSum, arrangements: best.length }
+  };
+}
+
 export const GENERATORS = {
+  triangleMaxEdgeSum,
   pairedSequences,
   setUnionCount,
   magicSquare,

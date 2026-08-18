@@ -1653,6 +1653,29 @@ function cellShapeMarkup(visual) {
   return `<svg class="cell-shape-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="칸을 붙여 만든 도형">${squares}</svg>`;
 }
 
+function triangleEdgeSumMarkup(visual) {
+  // 꼭짓점 3 + 변 가운데 3. 자리 번호는 생성기와 같다(0·1·2 꼭짓점, 3·4·5 변 가운데).
+  const W = 300, H = 260, r = 21;
+  const P = [
+    { x: W / 2, y: 26 },          // 0 위 꼭짓점
+    { x: 34, y: H - 26 },         // 1 왼쪽 아래
+    { x: W - 34, y: H - 26 },     // 2 오른쪽 아래
+  ];
+  P[3] = { x: (P[0].x + P[1].x) / 2, y: (P[0].y + P[1].y) / 2 };
+  P[4] = { x: (P[1].x + P[2].x) / 2, y: (P[1].y + P[2].y) / 2 };
+  P[5] = { x: (P[2].x + P[0].x) / 2, y: (P[2].y + P[0].y) / 2 };
+  const givenMap = new Map((visual.given || []).map((g) => [g.slot, g.value]));
+  const edges = [[0, 1], [1, 2], [2, 0]].map(([a, b]) =>
+    `<line x1="${P[a].x}" y1="${P[a].y}" x2="${P[b].x}" y2="${P[b].y}" />`).join("");
+  const slots = P.map((p, i) => {
+    const v = givenMap.get(i);
+    return `<circle cx="${p.x}" cy="${p.y}" r="${r}" class="${v == null ? "tes-blank" : "tes-given"}" />` +
+      (v == null ? "" : `<text x="${p.x}" y="${p.y + 6}" text-anchor="middle">${v}</text>`);
+  }).join("");
+  const cards = `<div class="tes-cards">${visual.numbers.map((n) => `<span>${n}</span>`).join("")}</div>`;
+  return `<div class="triangle-edge-sum">${cards}<svg class="tes-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="삼각형 여섯 자리에 수 놓기">${edges}${slots}</svg></div>`;
+}
+
 function visualMarkup(visual) {
   if (!visual) return "";
   if (visual.kind.startsWith("g1-")) return `<div class="visual g1-source-visual">${g1SourceMarkup(visual)}</div>`;
@@ -1741,6 +1764,7 @@ function visualMarkup(visual) {
   if (visual.kind === "line") return `<div class="visual"><div class="people-row">${Array.from({ length: visual.total }, (_, index) => `<i class="${index + 1 === visual.first ? "marked" : ""}">${index + 1}</i>`).join("")}</div></div>`;
   // 옛 요약 그림("한 번 접기 → 구멍 → 펼치기")은 접는 방향을 안 보여줬다.
   // 이제 생성기가 단계 폴리곤(stages)을 주므로 실제 접는 과정을 화살표와 함께 그린다.
+  if (visual.kind === "triangle-edge-sum") return `<div class="visual triangle-edge-sum-visual">${triangleEdgeSumMarkup(visual)}</div>`;
   if (visual.kind === "sum-grid") return `<div class="visual sum-grid-visual">${sumGridMarkup(visual)}</div>`;
   if (visual.kind === "magic-square") return `<div class="visual magic-square-visual">${magicSquareMarkup(visual)}</div>`;
   if (visual.kind === "statement-list") return `<div class="visual statement-visual">${statementListMarkup(visual)}</div>`;

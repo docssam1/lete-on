@@ -185,7 +185,7 @@ export const TYPES = [
   type("two-by-two-sum-fill", "number", "수 배열과 합", "2x2 칸을 행·열 합과 서로 다른 조건으로 채우기", { generator: "twoByTwoSumFill", sourceMatched: true }),
   type("shape-sum-grid-4", "number", "매트릭스", "4x4 도형표의 행·열 합으로 빈 합 구하기", { generator: "shapeSumGrid", sourceMatched: true }),
   type("vertical-cryptarithm-shape-sum", "number", "복면산과 식", "세로셈 복면산에서 세 도형이 나타내는 수의 합", { generator: "verticalCryptarithmShapeSum", sourceMatched: true }),
-  type("triangle-max-edge-sum", "number", "수 배열과 합", "삼각형 세 변의 합을 가장 크게 만들기"),
+  type("triangle-max-edge-sum", "number", "수 배열과 합", "삼각형 세 변의 합을 같게 만들고 그 합을 가장 크게", { generator: "triangleMaxEdgeSum", sourceMatched: true }),
   type("split-merge-tree", "number", "수 배열과 합", "가르기·모으기 나무의 부모·자식 관계"),
   type("border-go-stone-difference", "pattern", "도형 규칙", "테두리가 커지는 바둑돌의 흑백 차이", { generator: "borderGoStoneDifference", sourceMatched: true }),
   type("fold-diagonal-unfold", "geometry", "색종이 접기", "대각선으로 접고 자른 뒤 펼친 선 그리기"),
@@ -362,9 +362,10 @@ export const FINAL_EXAM_TYPES = [
       "mixed-sequences", "two-type-unit-total", "border-go-stone-difference", "neither-set-count"
     ].map((typeId, index) => ({
       ...question(index + 1, typeId),
-      // 닫아 둔 것: 3번(삼각형 자리 배치 그림 필요), 4·16번(쌓기나무 — Cube Town 3D 렌더 대기),
-      // 5번(가르기·모으기 나무의 가지 수를 모름). 나머지 16문항은 생성기 검산 완료.
-      verified: ![2, 3, 4, 15].includes(index)
+      // 닫아 둔 것: 4·16번(쌓기나무 — Cube Town 3D 렌더 대기),
+      // 5번(가르기·모으기 나무의 가지 수를 모름 — 원본 PDF에도 그림뿐이라 텍스트로는 알 수 없다).
+      // 3번은 2026-08-18 원본 문항 전문을 확인해 열었다. 나머지 17문항은 생성기 검산 완료.
+      verified: ![3, 4, 15].includes(index)
     }))
   }
 ];
