@@ -156,3 +156,122 @@
 
   global.HFQ01 = { generateQ01, validateQ01, renderQ01Problem, deriveQ01Answer, renderQ01Answer, _renderIso: renderIso, _rotate180: rotate180 };
 })(typeof window !== "undefined" ? window : globalThis);
+
+/* ══════════════════════════════════════════════════════════════
+   Phase2 확장 부트스트랩
+   index.html 수정 없이 추가 generator를 연결한다.
+   q01.js는 index.html의 인라인 스크립트 뒤에 로드되므로
+   GENERATORS / buildWorksheet / onBuildWorksheet 전역에 접근 가능.
+   ══════════════════════════════════════════════════════════════ */
+(function () {
+  if (typeof document === "undefined") return;
+
+  var CSS = ".hf-views{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:8px 0}"
+    + ".hf-views figure{margin:0;text-align:center}"
+    + ".hf-fig svg{width:160px;height:auto}"
+    + ".hf-views figcaption{font-size:.75rem;color:#666;margin-top:4px}";
+
+  function injectCss() {
+    if (document.getElementById("hf-gen-css")) return;
+    var st = document.createElement("style");
+    st.id = "hf-gen-css"; st.textContent = CSS;
+    document.head.appendChild(st);
+  }
+
+  function register() {
+    if (typeof GENERATORS === "undefined") return;
+    if (!window.HFQ02) return;
+
+    GENERATORS[1].prompt = function () {
+      return "다음은 쌓기나무로 만든 모양을 앞과 뒤에서 본 모양입니다. 쌓기나무는 모두 몇 개입니까?";
+    };
+    GENERATORS[2] = { gen: function (d, s) { return window.HFQ02.generateQ02(d, s); },
+      problem: function (p) { return window.HFQ02.renderQ02Problem(p); },
+      answer: function (p) { return window.HFQ02.renderQ02Answer(p); },
+      title: "상자 채우기",
+      prompt: function (p) { return "가로 " + p.width + ", 세로 " + p.depth + ", 높이 " + p.boxH + "인 상자에 쌓기나무를 쌓았습니다. 상자를 가득 채우려면 쌓기나무가 몇 개 더 필요합니까?"; } };
+    GENERATORS[3] = { gen: function (d, s) { return window.HFQ03.generateQ03(d, s); },
+      problem: function (p) { return window.HFQ03.renderQ03Problem(p); },
+      answer: function (p) { return window.HFQ03.renderQ03Answer(p); },
+      title: "흑백 쌓기나무",
+      prompt: function () { return "검은색과 흰색 쌓기나무를 같은 색의 면이 맞닿지 않게 쌓았습니다. 흰색과 검은색 쌓기나무는 각각 몇 개입니까?"; } };
+    GENERATORS[4] = { gen: function (d, s) { return window.HFQ04.generateQ04(d, s); },
+      problem: function (p) { return window.HFQ04.renderQ04Problem(p); },
+      answer: function (p) { return window.HFQ04.renderQ04Answer(p); },
+      title: "구멍 뚫린 쌓기나무",
+      prompt: function (p) { return "가로 " + p.width + ", 세로 " + p.depth + ", 높이 " + p.boxH + "가 되도록 빈틈없이 쌓은 쌓기나무에 반대쪽까지 통하도록 구멍을 뚫었습니다. 남은 쌓기나무는 몇 개입니까?"; } };
+    GENERATORS[5] = { gen: function (d, s) { return window.HFQ05.generateQ05(d, s); },
+      problem: function (p) { return window.HFQ05.renderQ05Problem(p); },
+      answer: function (p) { return window.HFQ05.renderQ05Answer(p); },
+      title: "숨은 쌓기나무",
+      prompt: function (p) { return "쌓기나무를 빈틈없이 " + p.total + "개 쌓았습니다. 어느 방향에서도 보이지 않는 쌓기나무는 몇 개입니까? (단, 바닥면은 보이지 않습니다.)"; } };
+
+    // 문제 지시문을 유형별로 사용하도록 교체
+    window.buildWorksheet = function (opts) {
+      var weaknessIds = opts.weaknessIds, diffs = opts.difficultyByQuestion, countPerType = opts.countPerType;
+      var items = [], pending = [];
+      weaknessIds.forEach(function (id) {
+        var g = GENERATORS[id];
+        if (!g) { pending.push(id); return; }
+        var diff = diffs[id] || "same";
+        var baseSeed = Date.now() % 100000 + id * 1000;
+        for (var i = 0; i < countPerType; i += 1) {
+          var p = g.gen(diff, baseSeed + i * 7919);
+          items.push({ typeId: id, title: g.title, difficulty: diff, payload: p,
+            promptText: g.prompt ? g.prompt(p) : g.title,
+            problemHtml: g.problem(p), answerText: g.answer(p) });
+        }
+      });
+      return { status: items.length ? "ok" : "not_ready", items: items, pending: pending, countPerType: countPerType };
+    };
+
+    window.onBuildWorksheet = function () {
+      var weaknessIds = selectedSet.size > 0 ? Array.from(selectedSet).sort(function (a, b) { return a - b; }) : [];
+      var area = document.getElementById("worksheet-area");
+      area.style.display = "block";
+      if (!weaknessIds.length) { area.innerHTML = '<p style="color:#888;padding:10px">먼저 틀린 문제를 체크해 주세요.</p>'; return; }
+      var result = window.buildWorksheet({ weaknessIds: weaknessIds, difficultyByQuestion: difficultyByQuestion, countPerType: 2 });
+      var nameEl = document.getElementById("studentName");
+      var name = nameEl ? nameEl.value.trim() : "";
+      var t = new Date();
+      var dstr = t.getFullYear() + "." + String(t.getMonth() + 1).padStart(2, "0") + "." + String(t.getDate()).padStart(2, "0");
+      var diffLabel = { easy: "쉽게", same: "같게", hard: "어렵게" };
+      var html = "";
+      if (result.items.length) {
+        html += '<div id="worksheetSheet" class="ws-sheet"><div class="ws-head"><div class="ws-brand">G-FIELD 약점 보완 문제지</div><div class="ws-meta">'
+          + escapeHTML(name || "학생") + " · " + dstr + "</div></div>";
+        result.items.forEach(function (it, i) {
+          html += '<div class="ws-q"><div class="ws-q-head">' + (i + 1) + ". [유형 "
+            + String(it.typeId).padStart(2, "0") + " · " + diffLabel[it.difficulty] + "] "
+            + escapeHTML(it.promptText) + "</div>" + it.problemHtml
+            + '<div class="ws-ans-line">답: __________</div></div>';
+        });
+        html += '</div><div class="ws-actions"><button class="sim-answer-toggle" onclick="printWorksheet()">문제지 인쇄</button>'
+          + '<button class="sim-answer-toggle" onclick="toggleWsAnswers(this)">정답 및 풀이 보기 ▾</button></div>';
+        html += '<div id="wsAnswers" class="ws-answers" style="display:none">'
+          + result.items.map(function (it, i) { return '<div class="ws-a-row">' + (i + 1) + ". " + escapeHTML(it.answerText) + "</div>"; }).join("")
+          + "</div>";
+      }
+      if (result.pending.length) {
+        html += '<p style="color:#888;font-size:.8rem;padding:8px">유형 '
+          + result.pending.map(function (id) { return String(id).padStart(2, "0"); }).join(", ")
+          + "은 생성기 준비 중입니다.</p>";
+      }
+      area.innerHTML = html;
+    };
+  }
+
+  function boot() {
+    try {
+      injectCss();
+      var s = document.createElement("script");
+      s.src = "./generator/stacking.js";
+      s.onload = function () { try { register(); } catch (e) { console.warn("HF generator 등록 실패", e); } };
+      s.onerror = function () { console.warn("stacking.js 로드 실패 — q01만 사용"); };
+      document.head.appendChild(s);
+    } catch (e) { console.warn("HF 부트스트랩 실패", e); }
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
