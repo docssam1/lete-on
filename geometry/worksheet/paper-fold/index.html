@@ -1,204 +1,47 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GFIELD 색종이 접기 학습지</title>
-<style>
-:root{--navy:#17345f;--pink:#b34b68;--paper:#fffdf9;--line:#d6d0c8;--ink:#25313b}
-*{box-sizing:border-box}
-body{margin:0;font-family:"Noto Sans KR","Malgun Gothic",sans-serif;background:#edf2ef;color:var(--ink)}
-.lab-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid #d9e0e6;background:#fff}
-.lab-bar .lab-back{display:inline-flex;align-items:center;min-height:38px;padding:0 14px;border:1px solid #d9e0e6;border-radius:6px;color:#17457f;background:#fff;font-size:13px;font-weight:800;text-decoration:none}
-.lab-bar .lab-back:hover{background:#eef3fa;border-color:#bdcde3}
-.lab-bar-title{display:inline-flex;align-items:center;gap:8px;color:#17457f;font-size:14px;font-weight:900;letter-spacing:-.2px}
-.gfield-chip{display:inline-block;padding:3px 9px;border-radius:4px;background:#1f8a55;color:#fff;font-size:11px;font-weight:900;letter-spacing:1.6px}
-.subject-switch{position:sticky;top:0;z-index:20;display:flex;justify-content:center;gap:6px;padding:8px 14px;border-bottom:1px solid #cfd9d3;background:rgba(247,250,248,.96)}
-.subject-tab{display:inline-flex;align-items:center;min-height:40px;padding:0 18px;border:1px solid #b9c7bf;border-radius:6px;color:#34483d;background:#fff;font-size:14px;font-weight:800;text-decoration:none}
-.subject-tab.active{color:#fff;border-color:var(--pink);background:var(--pink)}
-.fold-app{display:grid;grid-template-columns:minmax(250px,310px) minmax(0,1fr);min-height:calc(100vh - 120px)}
-.controls{padding:22px 18px;border-right:1px solid #ccd6d0;background:#fbfcfb}
-.controls h1{margin:0 0 20px;color:var(--navy);font-size:25px;line-height:1.2}.controls h1 span{color:var(--pink)}
-.control-group{margin:0 0 18px}.control-group h2{margin:0 0 8px;font-size:13px;color:#58645e}
-select,button,input{font:inherit}select{width:100%;padding:10px 11px;border:1px solid #bdc9c2;border-radius:6px;background:#fff;color:#263b51;font-size:13px;font-weight:700}
-.mode-select{display:none}.mode-grid{display:grid;gap:6px;max-height:340px;overflow:auto;padding:1px 3px 1px 1px}.mode-button{min-height:38px;padding:7px 10px;border:1px solid #c7d1cb;border-radius:6px;color:#34483e;background:#fff;text-align:left;font-size:12px;line-height:1.25;box-shadow:none}.mode-button:hover{border-color:#8fa89b;background:#f6faf7}.mode-button.active{border-color:var(--pink);color:#fff;background:var(--pink);box-shadow:inset 3px 0 rgba(255,255,255,.35)}
-.radio-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.radio-row label{display:flex;justify-content:center;gap:5px;padding:9px 4px;border:1px solid #c7d1cb;border-radius:6px;background:#fff;font-size:13px;font-weight:800}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}button{min-height:42px;padding:8px 12px;border:0;border-radius:6px;color:#fff;background:var(--navy);font-size:13px;font-weight:800;cursor:pointer}button.secondary{color:#33483e;background:#e9efec}button.print{background:var(--pink)}
-.preview-panel{min-width:0;padding:18px;overflow:auto}.type-preview{max-width:1120px;margin:0 auto 18px;padding:14px;border:1px solid #c9d4ce;border-radius:8px;background:#fff}
-.preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.preview-head h2{margin:0;font-size:15px;color:var(--navy)}.preview-head p{margin:2px 0 0;color:#6e7772;font-size:12px}
-canvas{display:block;width:100%;height:auto;background:#fff;border-radius:6px}#info{margin:8px 0 0;font-size:12px;color:#53605a}.src{display:none}
-#sheetRoot{display:flex;flex-direction:column;align-items:center;gap:18px}.sheet-page{width:210mm;min-height:297mm;padding:12mm;background:#fff;box-shadow:0 3px 16px rgba(20,42,32,.14);page-break-after:always}
-.sheet-head{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:7px;border-bottom:2px solid var(--navy)}.sheet-head h2{margin:0;color:var(--navy);font-size:19px}.sheet-meta{font-size:10px;color:#65716b}
-.problem-grid{display:grid;grid-template-columns:1fr;gap:6mm;margin-top:7mm}.problem-card{position:relative;min-height:77mm;padding:5mm 5mm 4mm;border:1px solid #abb8b1;border-radius:3px;break-inside:avoid}.problem-card img{display:block;width:100%;height:61mm;object-fit:contain}.answer-line{text-align:right;font-size:10px;font-weight:800}.answer-page .problem-grid{grid-template-columns:1fr 1fr}.answer-page .problem-card{min-height:48mm}.answer-page .problem-card img{height:31mm}.answer-value{color:var(--pink)}.solution-text{min-height:2.6em;margin-top:2mm;padding-top:2mm;border-top:1px dashed #d3d9d5;color:#43534b;font-size:8.5px;line-height:1.35;text-align:left}
-@media(max-width:760px){.fold-app{display:block}.controls{border-right:0;border-bottom:1px solid #ccd6d0}.mode-grid{grid-template-columns:1fr 1fr;max-height:none}.preview-panel{padding:10px}.type-preview{margin-bottom:12px}.sheet-page{width:100%;min-height:auto;padding:14px}.problem-grid{grid-template-columns:1fr}.problem-card{min-height:240px}.problem-card img{height:auto}}
-@media print{@page{size:A4;margin:0}.lab-bar,.subject-switch,.controls,.type-preview{display:none!important}.fold-app{display:block}.preview-panel{padding:0;overflow:visible}#sheetRoot{display:block}.sheet-page{width:210mm;min-height:297mm;margin:0;padding:12mm;box-shadow:none}.problem-grid{grid-template-columns:1fr}.problem-card{min-height:77mm}.problem-card img{height:61mm}.answer-page .problem-grid{grid-template-columns:1fr 1fr}.answer-page .problem-card{min-height:48mm}.answer-page .problem-card img{height:31mm}}
-</style>
-</head>
-<body>
-<!-- 지오메트리 랩으로 돌아가는 줄. 이 페이지는 랩의 "색종이 접기" 카드에서
-     딥링크로 열리므로, 랩으로 되돌아갈 길이 없으면 고른 것을 바꾸려는 사람이
-     브라우저 뒤로 가기에 기대야 한다. 헤더 톤(딥블루 · 흰 배경 · 얇은 테두리)
-     만 랩과 맞추고 아래 학습지 엔진은 그대로 둔다. -->
-<header class="lab-bar"><a class="lab-back" href="../../lab/index.html">← 지오메트리 랩</a><span class="lab-bar-title"><span class="gfield-chip">GFIELD</span>색종이 접기 학습지</span></header>
-<nav class="subject-switch" aria-label="학습지 영역"><a class="subject-tab" href="../">쌓기나무 학습지</a><a class="subject-tab active" href="./">색종이 접기 학습지</a><a class="subject-tab" href="../../origami-studio/">색종이 게임</a></nav>
-<div class="fold-app"><aside class="controls"><h1>GFIELD<br><span>색종이 접기 학습지</span></h1>
-<section class="control-group"><h2>유형</h2><div class="mode-grid" id="modeButtons" aria-label="색종이 접기 유형"></div><select class="mode-select" id="mode" aria-hidden="true">
-  <option value="hole2">구멍 개수 — 반으로 1~2번 접기</option>
-  <option value="hole3d">구멍 개수 — 대각선 접기</option>
-  <option value="numsum">수가 쓰인 색종이 — 남은 수들의 합</option>
-  <option value="numcut">수가 쓰인 색종이 — 잘려나간 수들의 합</option>
-  <option value="foldtop">여러 번 접기 — 가장 위의 수 찾기</option>
-  <option value="numdiag">수가 쓰인 색종이 — 대각선 한 번 접기 (실전 유형)</option>
-  <option value="pieces">접고 선 따라 자르기 — 조각 개수</option>
-  <option value="punch">반원·원 펀치 — 모양별 개수</option>
-  <option value="numinv">수가 쓰인 색종이 — 목표 합이 되게 색칠하기 (역방향)</option>
-  <option value="unfoldshape">접어 자르고 펼친 모양 그리기 (4지선다)</option>
-  <option value="stackfind">겹친 색종이 — 가장 밑(또는 위) 찾기</option>
-  <option value="stackorder">겹친 색종이 — 위에서부터 순서대로</option>
-  <option value="game-l1">게임 연계 1단계 — 한 번 접어 펼친 모양</option>
-  <option value="game-l2">게임 연계 2단계 — 대각선 대칭</option>
-  <option value="game-l3">게임 연계 3단계 — 자르거나 뚫을 위치</option>
-  <option value="game-l4">게임 연계 4단계 — 대칭 도형 완성</option>
-  <option value="game-l5">게임 연계 5단계 — 잘린 수의 합</option>
-  <option value="turn-l1">게임 연계 2코스 1단계 — 접힌 종이 뒤집기</option>
-  <option value="turn-l2">게임 연계 2코스 2단계 — 자른 선 되짚기</option>
-  <option value="turn-l3">게임 연계 2코스 3단계 — 모양 돌리기</option>
-  <option value="turn-l4">게임 연계 2코스 4단계 — 모양 뒤집기</option>
-  <option value="turn-l5">게임 연계 2코스 5단계 — 순서대로 추적하기</option>
-</select>
-</section>
-<section class="control-group"><h2>난이도</h2><div class="radio-row"><label><input type="radio" name="difficulty" value="easy">하</label><label><input type="radio" name="difficulty" value="mid" checked>중</label><label><input type="radio" name="difficulty" value="hard">상</label></div></section>
-<section class="control-group"><h2>문항 수</h2><select id="count"><option value="10">10문항</option><option value="20" selected>20문항</option><option value="30">30문항</option><option value="40">40문항</option><option value="50">50문항</option></select></section>
-<section class="control-group"><label><input type="checkbox" id="answers" checked> 정답지 포함</label></section>
-<section class="actions"><button onclick="generateSheet()">새로 만들기</button><button class="print" onclick="window.print()">인쇄</button></section></aside>
-<main class="preview-panel"><section class="type-preview"><div class="preview-head"><div><h2>유형 미리보기</h2><p>선택한 난이도의 실제 출제 예시입니다.</p></div><button class="secondary" onclick="previewProblem()">다른 문제</button></div><p id="info"></p><small class="src" id="src"></small><canvas id="cv" width="1300" height="520"></canvas></section><div id="sheetRoot"></div></main></div>
-<script>
-const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
-const pick=(list)=>list[R(0,list.length-1)];
+, 세로로 한 번 접는다. 교재는 항상 가로 접기가 먼저다
+   (중간 조각이 넓은 직사각형). 접는 방향(위로/아래로, 왼쪽으로/오른쪽으로)에 따라
+   접힌 묶음이 원본의 어느 사분면에 놓이는지가 정해지고, 색칠 칸이 가리키는 원본
+   칸도 그에 따라 달라진다. 잘리는 칸은 색칠 칸의 거울 궤도 {r,3-r} x {c,3-c} 네 개. */
 
-/* ===== 접기 엔진 (연속 도형) =====
-   접기를 "반평면으로 자르기"로 다룬다. 가로·세로뿐 아니라 대각선도 같은 방식이다.
-   keep(p) >= 0 인 쪽이 남는 조각, 나머지는 접혀서 그 위에 포개진다. */
-const FOLDS = {
-  v : { keep:p=>0.5-p.x,   mirror:p=>({x:1-p.x,y:p.y}),   label:'세로'   },
-  h : { keep:p=>0.5-p.y,   mirror:p=>({x:p.x,y:1-p.y}),   label:'가로'   },
-  d1: { keep:p=>p.x-p.y,   mirror:p=>({x:p.y,y:p.x}),     label:'대각선' },
-  d2: { keep:p=>1-p.x-p.y, mirror:p=>({x:1-p.y,y:1-p.x}), label:'대각선' }
-};
-function clipHalfPlane(poly, keep){
-  const out=[];
-  for(let i=0;i<poly.length;i++){
-    const a=poly[i], b=poly[(i+1)%poly.length];
-    const da=keep(a), db=keep(b);
-    if(da>=-1e-9) out.push(a);
-    if((da>1e-9&&db<-1e-9)||(da<-1e-9&&db>1e-9)){
-      const t=da/(da-db);
-      out.push({x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t});
-    }
-  }
-  return out;
-}
-function polyArea(poly){
-  let s=0;
-  for(let i=0;i<poly.length;i++){const a=poly[i], b=poly[(i+1)%poly.length]; s+=a.x*b.y-b.x*a.y;}
-  return Math.abs(s)/2;
-}
-const centroid=(poly)=>({x:poly.reduce((s,p)=>s+p.x,0)/poly.length, y:poly.reduce((s,p)=>s+p.y,0)/poly.length});
-function edgeDist(poly,p){
-  let best=Infinity;
-  for(let i=0;i<poly.length;i++){
-    const a=poly[i], b=poly[(i+1)%poly.length];
-    const dx=b.x-a.x, dy=b.y-a.y, l2=dx*dx+dy*dy;
-    const t=l2===0?0:Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/l2));
-    best=Math.min(best, Math.hypot(p.x-(a.x+dx*t), p.y-(a.y+dy*t)));
-  }
-  return best;
-}
-function inPoly(poly,p){
-  let ins=false;
-  for(let i=0,j=poly.length-1;i<poly.length;j=i,i++){
-    const a=poly[i], b=poly[j];
-    if((a.y>p.y)!==(b.y>p.y) && p.x < (b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x) ins=!ins;
-  }
-  return ins;
-}
-function foldSegment(poly, dir){
-  const {keep}=FOLDS[dir];
-  const pts=[];
-  for(let i=0;i<poly.length;i++){
-    const a=poly[i], b=poly[(i+1)%poly.length];
-    const da=keep(a), db=keep(b);
-    if(Math.abs(da)<1e-9) pts.push(a);
-    if((da>1e-9&&db<-1e-9)||(da<-1e-9&&db>1e-9)){
-      const t=da/(da-db); pts.push({x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t});
-    }
-  }
-  if(pts.length<2) return null;
-  let best=null, far=-1;
-  for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
-    const d=Math.hypot(pts[i].x-pts[j].x, pts[i].y-pts[j].y);
-    if(d>far){far=d; best=[pts[i],pts[j]];}
-  }
-  return far>1e-6 ? best : null;
-}
+function genNumber(askCut, preset, difficulty='mid'){
+  const N=4;
+  const numberMax=difficulty==='easy'?4:difficulty==='hard'?9:6;
+  const grid = preset ? preset.grid.map(row=>[...row])
+                      : Array.from({length:N},()=>Array.from({length:N},()=>R(1,numberMax)));
+  const hDir = preset ? preset.hDir : pick(['up','down']);
+  const vDir = preset ? preset.vDir : pick(['left','right']);
+  const packetRow = hDir==='up' ? 0 : 2;
+  const packetCol = vDir==='left' ? 0 : 2;
 
-/* ===== 유형 1·2: 구멍 개수 ===== */
-function genHole(diagonal,difficulty='mid'){
-  let dirs;
-  if(diagonal){
-    const foldCount=difficulty==='easy'?1:difficulty==='mid'?2:3;
-    dirs=[pick(['d1','d2'])];
-    while(dirs.length<foldCount) dirs.push(pick(['v','h','d1','d2']));
-  } else {
-    const n=difficulty==='easy'?1:difficulty==='hard'?2:R(1,2), first=pick(['v','h']);
-    dirs = n===1 ? [first] : [first, first==='v'?'h':'v'];
+  const cutCount = preset ? 1 : difficulty==='easy'?1:difficulty==='hard'?2:R(1,2);
+  const cells=[];
+  if(preset){ cells.push({...preset.cell}); }
+  else while(cells.length<cutCount){
+    const c={r:R(0,1), c:R(0,1)};
+    if(!cells.some(o=>o.r===c.r&&o.c===c.c)) cells.push(c);
   }
-  const nHoles = difficulty==='easy'?1:difficulty==='hard'?R(1,2):R(1,dirs.length===1?2:1);
-  const margin = diagonal ? 0.05 : 0.07;
 
-  let poly=[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}];
-  const stages=[];
-  for(const d of dirs){ stages.push({poly, fold:d}); poly=clipHalfPlane(poly, FOLDS[d].keep); }
-  stages.push({poly, fold:null});
-
-  const holes=[]; let tries=0;
-  while(holes.length<nHoles && tries<800){
-    tries++;
-    const p={x:Math.random(), y:Math.random()};
-    if(!inPoly(poly,p)) continue;
-    if(edgeDist(poly,p)<margin) continue;
-    if(holes.some(o=>Math.hypot(o.x-p.x,o.y-p.y)<margin*2.4)) continue;
-    holes.push(p);
+  const removed=new Set();
+  for(const cell of cells){
+    const gr=packetRow+cell.r, gc=packetCol+cell.c;
+    for(const r of [gr, N-1-gr]) for(const c of [gc, N-1-gc]) removed.add(r*N+c);
   }
-  if(holes.length<nHoles) return genHole(diagonal,difficulty);
 
-  // 접는 선이 이미 조각의 가장자리이면 실제로는 접히지 않는다(같은 방향 연속 등).
-  for(let i=0;i<dirs.length;i++){
-    if(polyArea(stages[i+1].poly) >= polyArea(stages[i].poly)-1e-9) return genHole(diagonal,difficulty);
+  let total=0, cut=0;
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+    total+=grid[r][c];
+    if(removed.has(r*N+c)) cut+=grid[r][c];
   }
-  // 답을 2의 거듭제곱으로 가정하지 않고 실제로 되접어 세어 확인한다.
-  let pts=holes.map(h=>({...h}));
-  for(let i=dirs.length-1;i>=0;i--){
-    const mirror=FOLDS[dirs[i]].mirror;
-    const next=[...pts];
-    for(const p of pts){
-      const r=mirror(p);
-      if(!next.some(q=>Math.hypot(q.x-r.x,q.y-r.y)<1e-6)) next.push(r);
-    }
-    if(next.some(q=>!inPoly(stages[i].poly,q))) return genHole(diagonal,difficulty);
-    pts=next;
-  }
-  if(pts.length!==nHoles*2**dirs.length) return genHole(diagonal,difficulty);
+  const remain=total-cut;
+  if(remain<=0) return genNumber(askCut,null,difficulty);
 
-  const times=['','한 번','두 번','세 번'][dirs.length];
   return {
-    kind:'hole', dirs, stages, holes, unfolded:pts, nHoles, answer:pts.length,
-    text:[`아래와 같이 색종이를 ${diagonal?'대각선을 따라':'반으로'} ${times} 접은 다음 구멍을 ${nHoles}개 뚫었습니다.`,
-          '색종이를 펼쳤을 때, 구멍은 모두 몇 개입니까?'],
-    info:`접기 ${dirs.length}회 (${dirs.map(k=>FOLDS[k].label+':'+k).join(' → ')}) · 구멍 ${nHoles}개 · 정답 ${pts.length}개`,
+    kind:'number', grid, hDir, vDir, packetRow, packetCol, cells, removed, total, cut, remain,
+    answer: askCut ? cut : remain,
+    text:[`다음과 같이 수가 쓰인 색종이를 접어서 색칠된 부분을 자른 후 펼쳤을 때,`,
+          askCut ? '잘려나간 수들의 합을 구하시오.' : '남아 있는 수들의 합을 구하시오.'],
+    info:`가로 ${hDir==='up'?'위로':'아래로'} → 세로 ${vDir==='left'?'왼쪽으로':'오른쪽으로'} · 색칠 ${cells.length}칸 · 잘린 칸 ${removed.size}개(합 ${cut}) · 전체 ${total} · 남은 합 ${remain}`,
     src:''
   };
 }
-
-/* ===== 유형 3·4: 수가 쓰인 색종이 (교재 41·50쪽 문법) =====
-   4x4 숫자판을 가로로 한 번</path_omitted_for_brevity_placeholder_never_used/>
+PLACEHOLDER_REMOVED
