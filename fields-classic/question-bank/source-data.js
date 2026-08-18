@@ -149,7 +149,7 @@ export const TYPES = [
   type("colored-triangle-difference", "pattern", "도형 규칙", "칠한 삼각형과 흰 삼각형의 차이"),
   type("polygon-stone-rearrangement", "geometry", "둘레와 배열", "다각형 바둑돌을 다른 모양으로 늘어놓기"),
   type("ratio-distribution", "number", "합과 차 문장제", "서로 다른 기준으로 전체 나누기"),
-  type("paired-sequences", "pattern", "수 규칙", "두 수열의 대응 규칙"),
+  type("paired-sequences", "pattern", "수 규칙", "두 수열의 대응 규칙", { generator: "pairedSequences", sourceMatched: true }),
   type("odd-even-sum-difference", "number", "연속수와 합", "홀수 합과 짝수 합의 차이"),
   type("weight-order", "logic", "순서와 비교", "무게 조건으로 순서 정하기"),
   type("adjacent-product-pentagon", "number", "수 배열과 곱", "이웃한 두 수의 곱으로 오각형 채우기"),
@@ -166,28 +166,28 @@ export const TYPES = [
   type("venn-count", "logic", "집합과 포함", "두 조건에 모두 해당하는 사람 수"),
   type("congruent-partition", "geometry", "도형 분할", "합이 같은 합동 도형으로 나누기"),
   type("triangle-count", "geometry", "도형 세기", "크고 작은 삼각형 세기"),
-  type("square-count", "geometry", "도형 세기", "크고 작은 사각형 세기"),
+  type("square-count", "geometry", "도형 세기", "크고 작은 사각형 세기", { generator: "squareCountShape", sourceMatched: true }),
   type("calendar-weekday-sum", "pattern", "달력과 시간", "달력에서 같은 요일 날짜의 합"),
   type("person-item-logic", "logic", "조건 연결", "사람과 동물·음식 조건 연결"),
-  type("set-union-count", "logic", "집합과 포함", "두 종류를 선택한 전체 사람 수"),
+  type("set-union-count", "logic", "집합과 포함", "두 종류를 선택한 전체 사람 수", { generator: "setUnionCount", sourceMatched: true }),
   type("custom-operation", "number", "연산 약속", "새 기호의 계산 약속"),
   type("operator-insertion", "number", "수 카드와 식", "+와 -를 넣어 식 완성하기"),
   type("cut-recut-pieces", "number", "과정 추론", "자르고 먹고 다시 잘라 남은 조각 수"),
   type("reverse-initial-count", "logic", "과정 추론", "여러 번 오고 간 뒤 처음 수 거꾸로 찾기", { generator: "reverseInitialCount", sourceMatched: true }),
   type("function-machine", "pattern", "수 규칙", "수 변환 기계의 규칙"),
   type("collection-repeat-gap", "pattern", "수 규칙", "모으기 반복 수열에서 같은 수 사이 개수", { generator: "collectionRepeatGap", sourceMatched: true }),
-  type("magic-square", "number", "수 배열과 합", "가로·세로·대각선 합이 같은 마방진", { legacyId: 14 }),
+  type("magic-square", "number", "수 배열과 합", "가로·세로·대각선 합이 같은 마방진", { legacyId: 14, generator: "magicSquare", sourceMatched: true }),
   type("fold-hole-count", "geometry", "색종이 접기", "접은 색종이의 구멍 개수", { generator: "paperFoldHoleCount", legacyId: 4 }),
   // F24~F31: 파이널 2·3회 연결 재검토(FINAL-SOURCE-AUDIT.md)에서 분리된 유형.
   // 기존 유형과 이름이 비슷하지만 구조가 달라 새로 등록한다. 생성기가 검산을 통과하기 전까지 잠금.
   type("fold-diagonal-hole-count", "geometry", "색종이 접기", "대각선으로 여러 번 접은 색종이의 구멍 개수", { generator: "diagonalFoldHoleCount", sourceMatched: true }),
-  type("row-column-sum-placement", "number", "수 배열과 합", "행·열 합에 맞게 1부터 차례로 놓기"),
-  type("two-by-two-sum-fill", "number", "수 배열과 합", "2x2 칸을 행·열 합과 서로 다른 조건으로 채우기"),
-  type("shape-sum-grid-4", "number", "매트릭스", "4x4 도형표의 행·열 합으로 빈 합 구하기"),
+  type("row-column-sum-placement", "number", "수 배열과 합", "행·열 합에 맞게 1부터 차례로 놓기", { generator: "triangleSumPlacement", sourceMatched: true }),
+  type("two-by-two-sum-fill", "number", "수 배열과 합", "2x2 칸을 행·열 합과 서로 다른 조건으로 채우기", { generator: "twoByTwoSumFill", sourceMatched: true }),
+  type("shape-sum-grid-4", "number", "매트릭스", "4x4 도형표의 행·열 합으로 빈 합 구하기", { generator: "shapeSumGrid", sourceMatched: true }),
   type("vertical-cryptarithm-shape-sum", "number", "복면산과 식", "세로셈 복면산에서 세 도형이 나타내는 수의 합", { generator: "verticalCryptarithmShapeSum", sourceMatched: true }),
   type("triangle-max-edge-sum", "number", "수 배열과 합", "삼각형 세 변의 합을 가장 크게 만들기"),
   type("split-merge-tree", "number", "수 배열과 합", "가르기·모으기 나무의 부모·자식 관계"),
-  type("border-go-stone-difference", "pattern", "도형 규칙", "테두리가 커지는 바둑돌의 흑백 차이"),
+  type("border-go-stone-difference", "pattern", "도형 규칙", "테두리가 커지는 바둑돌의 흑백 차이", { generator: "borderGoStoneDifference", sourceMatched: true }),
   type("fold-diagonal-unfold", "geometry", "색종이 접기", "대각선으로 접고 자른 뒤 펼친 선 그리기"),
   type("fold-number-remaining-sum", "geometry", "색종이 접기", "번호 색종이를 접고 자른 뒤 남은 수의 합", { generator: "foldNumberRemainingSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 41·50쪽" }),
   // 교재 41·50쪽의 '뒤로 접은 2x2' 잘린 합. 실전 시험 검증본 fold-number-cut-sum(대각선 접기)과 이름이
@@ -216,7 +216,7 @@ export const TYPES = [
   type("unit-area-fraction", "geometry", "넓이와 분수", "단위넓이와 분수", { status: "curriculum" }),
   type("unit-length-multiple", "geometry", "길이와 측정", "단위길이와 배수", { status: "curriculum" }),
   type("magic-card", "number", "수 카드와 식", "마법카드로 수 찾기", { status: "curriculum" }),
-  type("reverse-thinking", "logic", "과정 추론", "거꾸로 생각하기", { status: "curriculum" }),
+  type("reverse-thinking", "logic", "과정 추론", "거꾸로 생각하기", { generator: "halfGiveReverse", sourceMatched: true }),
   type("argument-logic", "logic", "조건 추리", "조건을 따져 옳고 그름 판단하기", { status: "curriculum" })
 ];
 
@@ -339,7 +339,12 @@ export const FINAL_EXAM_TYPES = [
       // 다시 붙이지 말 것 — 구조가 다르다는 대조 기록이 FINAL-SOURCE-AUDIT.md에 있다.
       "two-type-unit-total", "vertical-cryptarithm-shape-sum", "fold-diagonal-hole-count", "row-column-sum-placement", "two-by-two-sum-fill",
       "total-difference", "shape-sum-grid-4", "magic-square"
-    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index === 0 || index === 2 || index === 3 || index === 5 || index === 8 || index === 9 || index === 11 || index === 12 }))
+    ].map((typeId, index) => ({
+      ...question(index + 1, typeId),
+      // 닫아 둔 것: 2번(쌓기나무·도형 트랙), 7번(연속 네 기호식 — 연산 기록이 없어 그림 필요),
+      // 11번(칠한 위치 4주기 — 답이 그림). 나머지 17문항은 생성기 검산 완료.
+      verified: ![1, 6, 10].includes(index)
+    }))
   },
   {
     id: "final-3",
@@ -355,7 +360,12 @@ export const FINAL_EXAM_TYPES = [
       "target-score-combinations", "matchstick-square-growth", "connected-line-degree-sum", "letter-block-transform",
       "go-stone-difference-inverse", "square-count", "shape-sum-grid-4", "cube-fill-box",
       "mixed-sequences", "two-type-unit-total", "border-go-stone-difference", "neither-set-count"
-    ].map((typeId, index) => ({ ...question(index + 1, typeId), verified: index <= 1 || index === 8 || index === 9 || index === 10 || index === 11 || index === 16 || index === 19 }))
+    ].map((typeId, index) => ({
+      ...question(index + 1, typeId),
+      // 닫아 둔 것: 3번(삼각형 자리 배치 그림 필요), 4·16번(쌓기나무 — Cube Town 3D 렌더 대기),
+      // 5번(가르기·모으기 나무의 가지 수를 모름). 나머지 16문항은 생성기 검산 완료.
+      verified: ![2, 3, 4, 15].includes(index)
+    }))
   }
 ];
 

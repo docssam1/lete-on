@@ -1586,6 +1586,73 @@ function paperFoldMarkup(visual) {
   return `<svg class="paper-fold-svg" viewBox="0 0 ${width} ${SIZE + 8}" role="img" aria-label="색종이 접기 문제">${parts}</svg>`;
 }
 
+
+// ── main 갈래에서 이식한 파이널 2·3회 시각자료 (2026-08-18) ──────────────
+
+function magicSquareMarkup(visual) {
+  const cards = visual.cards.map((value) => `<span>${value}</span>`).join("");
+  const grid = visual.shown.flat()
+    .map((value) => (value === null ? `<span class="ms-blank"></span>` : `<span>${value}</span>`)).join("");
+  return `<div class="magic-square-work"><div class="number-balls">${cards}</div><div class="magic-square-grid">${grid}</div></div>`;
+}
+
+function sumGridMarkup(visual) {
+  const columns = visual.cells[0].length;
+  const cell = (item) => {
+    if (item === null) return `<span class="sg-void"></span>`;
+    if (item.t === "num") return `<span>${item.v}</span>`;
+    if (item.t === "shape") return `<span class="sg-shape">${item.s}</span>`;
+    return `<span class="sg-blank"></span>`;
+  };
+  const sum = (value) => (value === null || value === undefined
+    ? `<b class="sg-void"></b>`
+    : `<b>${value}</b>`);
+  const rows = visual.cells.map((row, index) => (
+    row.map(cell).join("") + sum(visual.rowSums[index])
+  )).join("");
+  const footer = visual.colSums.map(sum).join("") + `<b class="sg-void"></b>`;
+  const cards = visual.cards
+    ? `<div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div>`
+    : "";
+  return `<div class="sum-grid-work">${cards}<div class="sum-grid" style="--sg-cols:${columns + 1}">${rows}${footer}</div></div>`;
+}
+
+function checkerSquareGrowthMarkup(visual) {
+  const stage = (side) => {
+    const cells = [];
+    for (let r = 0; r < side; r += 1) {
+      for (let c = 0; c < side; c += 1) cells.push(`<b class="${(r + c) % 2 === 0 ? "white" : "black"}"></b>`);
+    }
+    return `<div><i style="--side:${side}">${cells.join("")}</i><span>${side - 2}번째</span></div>`;
+  };
+  return `<div class="checker-growth">${visual.shown.map(stage).join("")}<strong>…</strong><em>${visual.target}번째</em></div>`;
+}
+
+function stoneTriangleRowsMarkup(visual) {
+  const rows = Array.from({ length: visual.shown }, (_, index) => {
+    const count = index + 1;
+    const color = count % 2 === 1 ? "black" : "white";
+    return `<div>${Array.from({ length: count }, () => `<b class="${color}"></b>`).join("")}<span>${count}번째 줄</span></div>`;
+  });
+  return `<div class="stone-triangle-rows">${rows.join("")}<strong>⋮</strong></div>`;
+}
+
+function statementListMarkup(visual) {
+  return `<ul class="statement-list">${visual.items.map((text) => `<li>${text}</li>`).join("")}</ul>`;
+}
+
+function cellShapeMarkup(visual) {
+  const unit = 30;
+  const minR = Math.min(...visual.cells.map((cell) => cell[0]));
+  const minC = Math.min(...visual.cells.map((cell) => cell[1]));
+  const maxR = Math.max(...visual.cells.map((cell) => cell[0]));
+  const maxC = Math.max(...visual.cells.map((cell) => cell[1]));
+  const width = unit * (maxC - minC + 1) + 2;
+  const height = unit * (maxR - minR + 1) + 2;
+  const squares = visual.cells.map(([r, c]) => `<rect x="${1 + unit * (c - minC)}" y="${1 + unit * (r - minR)}" width="${unit}" height="${unit}" />`).join("");
+  return `<svg class="cell-shape-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="칸을 붙여 만든 도형">${squares}</svg>`;
+}
+
 function visualMarkup(visual) {
   if (!visual) return "";
   if (visual.kind.startsWith("g1-")) return `<div class="visual g1-source-visual">${g1SourceMarkup(visual)}</div>`;
@@ -1674,6 +1741,12 @@ function visualMarkup(visual) {
   if (visual.kind === "line") return `<div class="visual"><div class="people-row">${Array.from({ length: visual.total }, (_, index) => `<i class="${index + 1 === visual.first ? "marked" : ""}">${index + 1}</i>`).join("")}</div></div>`;
   // 옛 요약 그림("한 번 접기 → 구멍 → 펼치기")은 접는 방향을 안 보여줬다.
   // 이제 생성기가 단계 폴리곤(stages)을 주므로 실제 접는 과정을 화살표와 함께 그린다.
+  if (visual.kind === "sum-grid") return `<div class="visual sum-grid-visual">${sumGridMarkup(visual)}</div>`;
+  if (visual.kind === "magic-square") return `<div class="visual magic-square-visual">${magicSquareMarkup(visual)}</div>`;
+  if (visual.kind === "statement-list") return `<div class="visual statement-visual">${statementListMarkup(visual)}</div>`;
+  if (visual.kind === "stone-triangle-rows") return `<div class="visual stone-triangle-visual">${stoneTriangleRowsMarkup(visual)}</div>`;
+  if (visual.kind === "cell-shape") return `<div class="visual cell-shape-visual">${cellShapeMarkup(visual)}</div>`;
+  if (visual.kind === "checker-square-growth") return `<div class="visual checker-growth-visual">${checkerSquareGrowthMarkup(visual)}</div>`;
   if (visual.kind === "paper-fold") return `<div class="visual paper-fold-visual">${paperFoldMarkup(visual)}</div>`;
   if (visual.kind === "cryptarithm-vertical") return `<div class="visual cryptarithm-vertical-visual">${cryptarithmVerticalMarkup(visual)}</div>`;
   if (visual.kind === "fold-number-grid") return `<div class="visual fold-number-visual">${foldNumberGridMarkup(visual)}</div>`;

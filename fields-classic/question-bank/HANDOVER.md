@@ -251,8 +251,19 @@ main 갈래에서 이 갈래(codex/question-bank-f01)로 옮겨 온 것:
   고정 시드는 retry 0에서 기존 형식 그대로라 검수된 교체본 출력이 안 바뀐다
   (브라우저에서 두 번 빌드해 20문항 동일함을 확인).
 - `paper-fold-lab.html`(교재 12유형 시제품) 복사.
-- 파이널 2회 15번·14번, 3회 8번을 열려면 verified만 켜면 된다(생성기·검산 완료).
-  main 전용 파이널 생성기 17종 이식은 다음 단계.
+- **파이널 2회 17/20 · 3회 16/20 열림(2026-08-18).** main 전용 생성기 10종을 더 옮겼다
+  (`setUnionCount`·`pairedSequences`·`magicSquare`·`triangleSumPlacement`·`twoByTwoSumFill`·
+  `shapeSumGrid`·`borderGoStoneDifference`·`halfGiveReverse`·`squareCountShape`+`countRectangles`).
+  조사는 전부 이 갈래의 `koreanParticle`로 바꿔 넣었고, 난이도별 800~1,000회씩 독립 재계산
+  검산을 다시 돌렸다 — main에서 통과했다는 사실은 시드 체계가 달라 근거가 못 된다.
+  마방진은 여덟 줄 합을 직접 세고, 삼각형 배치는 순열 전수로 유일해를 확인하고, 사각형 세기는
+  직사각형을 처음부터 다시 센다.
+- **같은 구조인데 장면만 다른 두 건은 유형을 쪼개지 않고 장면을 늘렸다.**
+  ① `totalDifferenceShare`에 나이 장면 추가(파이널 2회 18번은 형제 나이, 초1·mock은 큐브 나누기 —
+  합·차로 두 수를 구하는 셈이 같다). main에서 가져온 중복 구현 `totalDifference`는 지웠다.
+  ② `twoTypeUnitTotal`의 닭·토끼를 같음 난이도에서도 나오게 했다(2회 13번 자전거, 3회 18번 닭·토끼).
+- 아직 닫힌 것: 2회 2번(도형 트랙) · 7번(연산 기록 없음) · 11번(답이 그림),
+  3회 3번(자리 배치 그림) · 4·16번(Cube Town 3D) · 5번(나무 가지 수).
 
 ## 다음 순서
 

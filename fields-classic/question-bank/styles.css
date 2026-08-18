@@ -115,3 +115,32 @@
 .cryptarithm-vertical .cv-sign{display:flex;align-items:center;justify-content:center;height:34px;font-size:18px;font-weight:900;color:#526879}
 .cryptarithm-vertical .cv-bar{width:calc(26px + var(--cv-cols)*34px);height:2px;background:#2b3a46;margin:2px 0}
 
+
+/* main 갈래에서 이식한 파이널 2·3회 시각자료 (2026-08-18) */
+.magic-square-grid{display:grid;grid-template-columns:repeat(3,46px);gap:3px}
+.magic-square-grid span{display:flex;align-items:center;justify-content:center;height:42px;border:1px solid #c9c9d2;border-radius:5px;font-size:16px}
+.magic-square-grid .ms-blank{background:#fbfbfd;border-style:dashed}
+.sum-grid-work{display:flex;flex-direction:column;align-items:center;gap:10px}
+.sum-grid{display:grid;grid-template-columns:repeat(var(--sg-cols),46px);gap:3px}
+.sum-grid span,.sum-grid b{display:flex;align-items:center;justify-content:center;height:42px;border:1px solid #c9c9d2;border-radius:5px;font-size:16px}
+.sum-grid .sg-blank{background:#fbfbfd;border-style:dashed}
+.sum-grid .sg-shape{font-size:19px;background:#fdfdff}
+.sum-grid b{background:#eef1f7;border-color:#b9c0d2;font-weight:700}
+.sum-grid .sg-void{border:none;background:none}
+.checker-growth,.growing-dot-squares{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.checker-growth i{display:grid;grid-template-columns:repeat(var(--side),9px);gap:1px}
+.checker-growth b{width:9px;height:9px;border-radius:50%;border:1px solid #17334b}
+.checker-growth b.white{background:#fff}
+.checker-growth b.black{background:#17334b}
+.checker-growth span{display:block;margin-top:4px;font-size:10px;text-align:center}
+.checker-growth em{font-style:normal;font-weight:800}
+.stone-triangle-rows{display:grid;gap:4px;justify-items:start}
+.stone-triangle-rows div{display:flex;align-items:center;gap:3px}
+.stone-triangle-rows b{width:11px;height:11px;border-radius:50%;border:1px solid #17334b}
+.stone-triangle-rows b.white{background:#fff}
+.stone-triangle-rows b.black{background:#17334b}
+.stone-triangle-rows span{margin-left:8px;color:#718394;font-size:10px}
+.statement-list{margin:0;padding:0 0 0 4px;list-style:none;display:grid;gap:5px}
+.statement-list li{padding:6px 9px;border:1px solid #d9e2e8;border-left:3px solid #149fe7;border-radius:5px;background:#fff;font-weight:700}
+.cell-shape-svg{width:100%;max-width:190px;height:auto}
+.cell-shape-svg rect{fill:#fff;stroke:#17334b;stroke-width:1.6}

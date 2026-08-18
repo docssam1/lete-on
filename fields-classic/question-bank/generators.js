@@ -402,8 +402,10 @@ function tornCalendarWeekday({ difficulty = 2 }) {
 }
 
 function twoTypeUnitTotal({ difficulty = 2 }) {
-  if (difficulty === 3) {
-    const total = randomInt(7, 15);
+  // 같음 난이도의 원본이 둘이다. 파이널 2회 13번은 두발·세발자전거, 3회 18번은 닭과 토끼다.
+  // 셈은 같으므로 유형을 쪼개지 않고 같음 난이도에서 두 장면이 모두 나오게 한다.
+  if (difficulty === 3 || (difficulty === 2 && Math.random() < 0.5)) {
+    const total = difficulty === 2 ? randomInt(7, 13) : randomInt(7, 15);
     const rabbits = randomInt(2, total - 2);
     const chickens = total - rabbits;
     const units = chickens * 2 + rabbits * 4;
@@ -1304,6 +1306,18 @@ function totalDifferenceShare({ difficulty = 2 }) {
   const larger = base + difference;
   const smaller = base;
   const total = larger + smaller;
+  // 파이널 2회 18번의 원본은 형제 나이(합 21·차 5 → 13살)다. 큐브 나누기와 셈이 같은 문제라
+  // 유형을 쪼개지 않고 시나리오만 늘린다. 난이도 3은 주고받기 비틀기라 나이 표현이 안 맞아 제외한다.
+  const agePair = difficulty !== 3 && Math.random() < 0.5 ? sample([["형", "동생"], ["언니", "동생"], ["누나", "동생"]]) : null;
+  if (agePair) {
+    return {
+      prompt: `${koreanParticle(agePair[0], "과", "와")} ${agePair[1]}의 나이의 합은 ${total}살인데 ${koreanParticle(agePair[0], "이", "가")} ${agePair[1]}보다 ${difference}살 더 많습니다. ${koreanParticle(agePair[0], "은", "는")} 몇 살입니까?`,
+      visual: { kind: "total-difference-share", total, difference, transfer: 0, afterDifference: 0, showHint: difficulty === 1 },
+      answer: `${larger}살`,
+      solution: `합 ${total}에서 차 ${difference}를 빼면 ${agePair[1]} 나이의 두 배인 ${total - difference}이 됩니다. ${agePair[1]}은 ${smaller}살이고 ${agePair[0]}은 ${smaller} + ${difference} = ${larger}살입니다.`,
+      meta: { difficulty, largerName: agePair[0], smallerName: agePair[1], base, transfer: 0, afterDifference: 0, difference, larger, smaller, total, scenario: "age" }
+    };
+  }
   const prompt = difficulty === 3
     ? `${total}개의 큐브가 있습니다. 처음에는 ${koreanParticle(largerName, "이", "가")} ${smallerName}보다 더 많이 갖고 있었습니다. ${koreanParticle(largerName, "이", "가")} ${smallerName}에게 ${transfer}개를 주었더니 ${largerName}의 큐브가 ${afterDifference}개 더 많았습니다. ${koreanParticle(largerName, "은", "는")} 처음에 큐브를 몇 개 가지고 있었습니까?`
     : `${total}개의 큐브가 있습니다. ${koreanParticle(largerName, "이", "가")} ${smallerName}보다 큐브를 ${difference}개 더 많이 가지려고 합니다. ${koreanParticle(largerName, "은", "는")} 큐브를 몇 개 가져야 합니까?`;
@@ -3958,7 +3972,316 @@ function diagonalFoldHoleCount({ difficulty = 2 }) {
 
 
 
+
+// ── main 갈래에서 이식한 파이널 2·3회 생성기 (2026-08-18) ──────────────
+// 조사는 이 갈래의 koreanParticle로 통일한다(main의 hasBatchim 계열은 가져오지 않는다).
+
+function pairedSequences({ difficulty = 2 }) {
+  // 홀수 자리와 짝수 자리가 서로 다른 규칙을 따르는 수열. 빈칸은 자리마다 하나씩 둔다.
+  const length = difficulty === 1 ? 8 : 10;
+  const oddStart = randomInt(1, 6);
+  const oddStep = randomInt(2, difficulty === 1 ? 4 : 5);
+  const evenStart = randomInt(1, 6);
+  let evenStep = randomInt(2, difficulty === 1 ? 4 : 5);
+  while (evenStep === oddStep) evenStep = randomInt(2, difficulty === 1 ? 4 : 5);
+
+  // 어려움은 짝수 자리를 계차가 1씩 커지는 수열로 바꾼다.
+  const evenAt = (index) => (difficulty === 3
+    ? evenStart + evenStep * index + (index * (index - 1)) / 2
+    : evenStart + evenStep * index);
+  const oddAt = (index) => oddStart + oddStep * index;
+
+  const terms = Array.from({ length }, (_, position) => (
+    position % 2 === 0 ? oddAt(position / 2) : evenAt((position - 1) / 2)
+  ));
+
+  // 빈칸은 뒤쪽 절반에서 홀수 자리 하나, 짝수 자리 하나를 고른다.
+  const half = Math.floor(length / 2);
+  const oddSlots = terms.map((_, i) => i).filter((i) => i % 2 === 0 && i >= half);
+  const evenSlots = terms.map((_, i) => i).filter((i) => i % 2 === 1 && i >= half);
+  // ㄱ이 항상 앞에 오도록 자리 순서로 이름을 붙인다. 뒤집히면 읽는 순서와 어긋난다.
+  const [gIndex, nIndex] = [sample(oddSlots), sample(evenSlots)].sort((a, b) => a - b);
+  const g = terms[gIndex];
+  const n = terms[nIndex];
+
+  const shown = terms.map((value, index) => {
+    if (index === gIndex) return "ㄱ";
+    if (index === nIndex) return "ㄴ";
+    return String(value);
+  }).join(", ");
+
+  const evenRule = difficulty === 3
+    ? `${evenStart}부터 커지는 폭이 ${evenStep}, ${evenStep + 1}, ${evenStep + 2}처럼 1씩 늘어납니다`
+    : `${evenStart}부터 ${evenStep}씩 커집니다`;
+
+  return {
+    prompt: `다음은 일정한 규칙으로 늘어놓은 수입니다. ㄱ과 ㄴ에 알맞은 수를 각각 구하세요.\n${shown}`,
+    answer: `ㄱ=${g}, ㄴ=${n}`,
+    solution: `홀수 번째 자리끼리 보면 ${oddStart}부터 ${oddStep}씩 커지고, 짝수 번째 자리끼리 보면 ${evenRule}. 두 수열을 따로 이어가면 ㄱ은 ${g}, ㄴ은 ${n}입니다.`,
+    meta: { length, oddStart, oddStep, evenStart, evenStep, gIndex, nIndex, g, n, terms }
+  };
+}
+
+function setUnionCount({ difficulty = 2 }) {
+  const pair = sample([["축구", "야구"], ["피아노", "태권도"], ["딸기", "포도"], ["수영", "줄넘기"]]);
+  const scale = difficulty === 1 ? [5, 10] : difficulty === 2 ? [9, 20] : [14, 30];
+  const both = randomInt(difficulty === 1 ? 1 : 3, difficulty === 1 ? 4 : 8);
+  const first = randomInt(both + 2, scale[1]);
+  const second = randomInt(Math.max(both + 2, scale[0]), scale[1]);
+  const total = first + second - both;
+  return {
+    prompt: `어느 반 학생들에게 ${pair[0]}와 ${pair[1]}을 좋아하는지 조사했습니다. ${pair[0]}를 좋아하는 학생은 ${first}명, ${pair[1]}을 좋아하는 학생은 ${second}명입니다. 둘 다 좋아하는 학생이 ${both}명이고 모든 학생이 둘 중 하나는 좋아한다면, 이 반 학생은 모두 몇 명입니까?`,
+    answer: `${total}명`,
+    solution: `두 수를 그냥 더하면 둘 다 좋아하는 ${both}명을 두 번 세게 됩니다. ${first} + ${second} - ${both} = ${total}이므로 모두 ${total}명입니다.`,
+    meta: { first, second, both, total }
+  };
+}
+
+
+function magicSquare({ difficulty = 2 }) {
+  // 3x3 마방진은 등차수열 아홉 개면 항상 만들어진다. 가운데가 다섯째 수이고 한 줄의 합은 그 세 배다.
+  const start = difficulty === 1 ? randomInt(1, 6) : difficulty === 2 ? randomInt(2, 12) : randomInt(5, 25);
+  const step = difficulty === 1 ? randomInt(1, 2) : difficulty === 2 ? randomInt(2, 4) : randomInt(3, 7);
+  const v = (k) => start + step * k;             // v(0) … v(8)
+  // 로슈 방식 배치. 인덱스는 등차수열에서의 순번이다.
+  const layout = [[3, 8, 1], [2, 4, 6], [7, 0, 5]];
+  const grid = layout.map((row) => row.map((k) => v(k)));
+  const lineSum = v(4) * 3;
+
+  const givenCount = difficulty === 1 ? 4 : difficulty === 2 ? 3 : 2;
+  const positions = shuffle(Array.from({ length: 9 }, (_, i) => i)).slice(0, givenCount);
+  const shown = grid.map((row, r) => row.map((value, c) => (positions.includes(r * 3 + c) ? value : null)));
+
+  return {
+    prompt: `아래 아홉 개의 수를 한 번씩만 써서 가로, 세로, 대각선에 놓인 세 수의 합이 모두 같도록 빈칸을 채우세요.`,
+    visual: { kind: "magic-square", cards: Array.from({ length: 9 }, (_, k) => v(k)), shown },
+    answer: grid.map((row) => row.join(" ")).join(" / "),
+    solution: `아홉 수는 ${step}씩 커지는 수이므로 가운데에는 다섯째 수인 ${v(4)}이 들어가고 한 줄의 합은 ${v(4)} × 3 = ${lineSum}입니다. 합이 ${lineSum}이 되도록 남은 수를 짝지어 넣으면 위부터 ${grid.map((row) => row.join(", ")).join(" / ")}입니다.`,
+    meta: { start, step, grid, lineSum, givenCount }
+  };
+}
+
+function triangleSumPlacement({ difficulty = 2 }) {
+  // 2행 격자에서 한 칸만 비워 두고 1부터 n까지를 한 번씩 넣는다. 원본(같게)은 2x3에 1~5.
+  const columns = difficulty === 1 ? 2 : difficulty === 3 ? 4 : 3;
+  const cellCount = columns * 2 - (difficulty === 1 ? 0 : 1);
+  const numbers = Array.from({ length: cellCount }, (_, i) => i + 1);
+  const slots = [];
+  for (let r = 0; r < 2; r += 1) {
+    for (let c = 0; c < columns; c += 1) {
+      if (difficulty !== 1 && r === 0 && c === 0) continue; // 왼쪽 위는 빈 자리
+      slots.push({ r, c });
+    }
+  }
+
+  const arrangements = permutations(numbers);
+  const target = arrangements[randomInt(0, arrangements.length - 1)];
+  const sumsOf = (values) => {
+    const rows = [0, 0];
+    const cols = Array.from({ length: columns }, () => 0);
+    slots.forEach((slot, index) => { rows[slot.r] += values[index]; cols[slot.c] += values[index]; });
+    return { rows, cols };
+  };
+  const { rows, cols } = sumsOf(target);
+  const matches = arrangements.filter((candidate) => {
+    const s = sumsOf(candidate);
+    return s.rows.every((v, i) => v === rows[i]) && s.cols.every((v, i) => v === cols[i]);
+  });
+  if (matches.length !== 1) return triangleSumPlacement({ difficulty });
+
+  const cells = Array.from({ length: 2 }, (_, r) => Array.from({ length: columns }, (_, c) => (
+    slots.some((slot) => slot.r === r && slot.c === c) ? { t: "blank" } : null
+  )));
+  const answer = slots.map((slot, index) => `${slot.r === 0 ? "위" : "아래"} ${slot.c + 1}번째 ${target[index]}`).join(", ");
+  return {
+    prompt: `1부터 ${cellCount}까지의 수를 한 번씩만 넣어 가로줄과 세로줄에 놓인 수의 합이 오른쪽과 아래에 쓰인 수가 되도록 빈칸을 채우세요.`,
+    visual: { kind: "sum-grid", cells, rowSums: rows, colSums: cols, cards: numbers },
+    answer,
+    solution: `줄에 한 칸만 남는 곳부터 채웁니다. 각 줄의 합을 차례로 맞추면 배치가 하나로 정해집니다. ${answer}입니다.`,
+    meta: { columns, cellCount, target, rows, cols, slots }
+  };
+}
+
+function twoByTwoSumFill({ difficulty = 2 }) {
+  // 2x2 네 칸. 행 합과 열 합만으로는 답이 하나로 정해지지 않는다.
+  // "네 수가 모두 다르고 0보다 크다"는 조건이 붙어야 유일해가 된다.
+  const cap = difficulty === 1 ? 6 : difficulty === 2 ? 9 : 14;
+  const values = shuffle(Array.from({ length: cap }, (_, i) => i + 1)).slice(0, 4);
+  const [a, b, c, d] = values;
+  const rows = [a + b, c + d];
+  const cols = [a + c, b + d];
+  const candidates = [];
+  for (let first = 1; first < rows[0]; first += 1) {
+    const second = rows[0] - first;
+    const third = cols[0] - first;
+    const fourth = rows[1] - third;
+    if (second < 1 || third < 1 || fourth < 1) continue;
+    if (third + fourth !== rows[1] || second + fourth !== cols[1]) continue;
+    if (new Set([first, second, third, fourth]).size !== 4) continue;
+    candidates.push([first, second, third, fourth]);
+  }
+  if (candidates.length !== 1) return twoByTwoSumFill({ difficulty });
+
+  return {
+    prompt: "빈칸에 알맞은 수를 써넣으세요. 오른쪽과 아래에 쓰인 수는 그 줄에 있는 두 수의 합입니다. (단, 네 수는 서로 다르고 0보다 큽니다.)",
+    visual: { kind: "sum-grid", cells: [[{ t: "blank" }, { t: "blank" }], [{ t: "blank" }, { t: "blank" }]], rowSums: rows, colSums: cols },
+    answer: `위 ${a}, ${b} / 아래 ${c}, ${d}`,
+    solution: `왼쪽 위를 ${a}로 두면 첫째 줄의 남은 칸은 ${b}, 첫째 열의 남은 칸은 ${c}, 마지막 칸은 ${d}입니다. 네 수가 모두 다르고 0보다 큰 경우는 이 하나뿐입니다.`,
+    meta: { a, b, c, d, rows, cols }
+  };
+}
+
+function shapeSumGrid({ difficulty = 2 }) {
+  // 도형이 같으면 같은 수. 주어진 줄의 합으로 도형 값을 알아낸 뒤 ㉠ 줄의 합을 구한다.
+  const size = difficulty === 1 ? 3 : 4;
+  const symbols = ["○", "♡", "◇", "△"].slice(0, size === 3 ? 3 : 4);
+  const values = shuffle(Array.from({ length: 9 }, (_, i) => i + 1)).slice(0, symbols.length);
+  const grid = Array.from({ length: size }, () => Array.from({ length: size }, () => randomInt(0, symbols.length - 1)));
+  if (new Set(grid.flat()).size !== symbols.length) return shapeSumGrid({ difficulty });
+
+  const rowSum = (r) => grid[r].reduce((total, index) => total + values[index], 0);
+  const colSum = (c) => grid.reduce((total, row) => total + values[row[c]], 0);
+  const hiddenRow = randomInt(0, size - 1);
+  const hiddenCol = randomInt(0, size - 1);
+  const extraHidden = difficulty === 3 ? 1 : 0;
+  const hiddenRow2 = extraHidden ? (hiddenRow + 1) % size : -1;
+
+  const rowSums = Array.from({ length: size }, (_, r) => (r === hiddenRow || r === hiddenRow2 ? null : rowSum(r)));
+  const colSums = Array.from({ length: size }, (_, c) => (c === hiddenCol ? null : colSum(c)));
+
+  // 보이는 합만으로 도형 값이 하나로 정해져야 한다.
+  const solutions = [];
+  const search = (assign) => {
+    if (solutions.length > 1) return;
+    if (assign.length === symbols.length) {
+      const ok = rowSums.every((sum, r) => sum === null || grid[r].reduce((t, i) => t + assign[i], 0) === sum)
+        && colSums.every((sum, c) => sum === null || grid.reduce((t, row) => t + assign[row[c]], 0) === sum);
+      if (ok) solutions.push([...assign]);
+      return;
+    }
+    for (let v = 1; v <= 9; v += 1) search([...assign, v]);
+  };
+  search([]);
+  if (solutions.length !== 1) return shapeSumGrid({ difficulty });
+
+  const answer = rowSum(hiddenRow);
+  const cells = grid.map((row) => row.map((index) => ({ t: "shape", s: symbols[index] })));
+  const shownRowSums = rowSums.map((sum, r) => (r === hiddenRow ? "㉠" : sum));
+  return {
+    prompt: "같은 도형은 같은 수를 나타냅니다. 오른쪽과 아래에 쓰인 수는 그 줄에 있는 수의 합입니다. ㉠에 알맞은 수를 구하세요.",
+    visual: { kind: "sum-grid", cells, rowSums: shownRowSums, colSums },
+    answer: String(answer),
+    solution: `줄의 합을 견주어 도형 값을 하나씩 정하면 ${symbols.map((symbol, i) => `${symbol}는 ${solutions[0][i]}`).join(", ")}입니다. ㉠ 줄에 있는 도형을 더하면 ${answer}입니다.`,
+    meta: { size, symbols, values: solutions[0], grid, answer, hiddenRow, hiddenCol }
+  };
+}
+
+function checkerCounts(side) {
+  // 바둑판처럼 번갈아 놓으면 네 귀퉁이와 같은 색이 (홀수 x 홀수)일 때만 하나 더 많다.
+  const first = Math.ceil((side * side) / 2);
+  return { first, second: side * side - first };
+}
+
+function borderGoStoneDifference({ difficulty = 2 }) {
+  // 파이널 3회 19번: 테두리를 한 줄씩 넓히며 흑백을 번갈아 놓는다.
+  // 확정 답(5번째 = 흰 25 · 검 24 = 7x7)에서 첫 그림이 3x3임을 역산했다.
+  const target = difficulty === 1 ? randomInt(3, 4) : difficulty === 2 ? 5 : randomInt(6, 9);
+  const side = target + 2;
+  const { first: white, second: black } = checkerCounts(side);
+  const diff = white - black;
+  return {
+    prompt: `바둑돌을 그림과 같이 테두리를 한 줄씩 넓혀 가며 흰 돌과 검은 돌을 번갈아 놓았습니다. ${target}번째 모양에서 흰 바둑돌과 검은 바둑돌 중 어느 것이 몇 개 더 많습니까?`,
+    visual: { kind: "checker-square-growth", shown: [3, 4, 5, 6], target },
+    answer: diff === 0 ? "두 색의 개수가 같습니다" : `흰 바둑돌이 ${diff}개 더 많습니다`,
+    solution: `${target}번째 모양은 한 줄에 ${side}개씩 ${side}줄입니다. 전체 ${side * side}개를 번갈아 놓으면 흰 돌 ${white}개, 검은 돌 ${black}개입니다.`,
+    meta: { side, white, black }
+  };
+}
+
+function halfGiveReverse({ difficulty = 2 }) {
+  // 파이널 3회 6번: 똑같이 나눈 뒤 한 사람이 자기 몫의 반을 주면 차는 처음 한 사람 몫과 같아진다.
+  const ITEMS = [
+    { thing: "사탕", counter: "개", a: "형", b: "동생" },
+    { thing: "구슬", counter: "개", a: "지호", b: "서연" },
+    { thing: "색종이", counter: "장", a: "언니", b: "동생" },
+    { thing: "딱지", counter: "장", a: "민준", b: "예린" },
+    { thing: "쿠키", counter: "개", a: "누나", b: "동생" },
+    { thing: "스티커", counter: "장", a: "하은", b: "시우" }
+  ];
+  const kinds = difficulty === 2 ? ITEMS[0] : sample(ITEMS);
+  // 반을 다시 반으로 나누므로 한 사람 몫은 짝수여야 한다.
+  const each = difficulty === 1 ? 2 * randomInt(1, 4) : difficulty === 2 ? 4 : 2 * randomInt(3, 14);
+  const gap = each;
+  return {
+    prompt: `${koreanParticle(kinds.thing, "을", "를")} ${koreanParticle(kinds.a, "과", "와")} ${koreanParticle(kinds.b, "이", "가")} 똑같이 나누어 가졌습니다. 그런데 ${koreanParticle(kinds.a, "이", "가")} 자기가 가진 ${kinds.thing}의 반을 ${kinds.b}에게 주었더니 두 사람이 가진 ${kinds.thing}의 수의 차가 ${gap}${koreanParticle(kinds.counter, "이", "가")} 되었습니다. 처음에 있던 ${koreanParticle(kinds.thing, "은", "는")} 모두 몇 ${kinds.counter}입니까?`,
+    answer: `${each * 2}${kinds.counter}`,
+    solution: `${koreanParticle(kinds.a, "이", "가")} 반을 주면 ${koreanParticle(kinds.a, "은", "는")} 처음의 반, ${koreanParticle(kinds.b, "은", "는")} 처음의 한 배 반을 가지므로 차는 처음 한 사람 몫과 같습니다. 따라서 한 사람이 ${gap}${kinds.counter}씩 가졌고 처음에는 모두 ${each * 2}${kinds.counter}였습니다.`,
+    meta: { each, gap }
+  };
+}
+
+function countRectangles(cells) {
+  const set = new Set(cells.map(([r, c]) => `${r},${c}`));
+  const rs = cells.map((cell) => cell[0]);
+  const cs = cells.map((cell) => cell[1]);
+  const counts = {};
+  for (let r0 = Math.min(...rs); r0 <= Math.max(...rs); r0 += 1) {
+    for (let c0 = Math.min(...cs); c0 <= Math.max(...cs); c0 += 1) {
+      for (let r1 = r0; r1 <= Math.max(...rs); r1 += 1) {
+        for (let c1 = c0; c1 <= Math.max(...cs); c1 += 1) {
+          let ok = true;
+          for (let r = r0; r <= r1 && ok; r += 1) for (let c = c0; c <= c1 && ok; c += 1) if (!set.has(`${r},${c}`)) ok = false;
+          if (ok) {
+            const size = (r1 - r0 + 1) * (c1 - c0 + 1);
+            counts[size] = (counts[size] || 0) + 1;
+          }
+        }
+      }
+    }
+  }
+  return counts;
+}
+
+function squareCountShape({ difficulty = 2 }) {
+  // 파이널 3회 14번: 불규칙하게 붙은 도형에서 크고 작은 사각형을 모두 센다.
+  // 확정 답 10개 = 한 칸 5 · 두 칸 4 · 세 칸 1. 5칸 모양 중 이 조합을 만드는 것이 실제로 있다.
+  const size = difficulty === 1 ? 4 : difficulty === 2 ? 5 : randomInt(6, 7);
+  const cells = [[0, 0]];
+  while (cells.length < size) {
+    const [r, c] = sample(cells);
+    const [dr, dc] = sample([[1, 0], [-1, 0], [0, 1], [0, -1]]);
+    const next = [r + dr, c + dc];
+    if (!cells.some(([a, b]) => a === next[0] && b === next[1])) cells.push(next);
+  }
+  const counts = countRectangles(cells);
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  // 한 줄로만 늘어선 모양은 세는 재미가 없고, 같음 난이도는 원본 구성과 맞춘다.
+  const distinctRows = new Set(cells.map((cell) => cell[0])).size;
+  const distinctCols = new Set(cells.map((cell) => cell[1])).size;
+  if (distinctRows < 2 || distinctCols < 2) return null;
+  if (difficulty === 2 && !(counts[1] === 5 && counts[2] === 4 && counts[3] === 1 && total === 10)) return null;
+  const parts = Object.keys(counts).map(Number).sort((a, b) => a - b).map((size2) => `${size2}칸짜리 ${counts[size2]}개`);
+  return {
+    prompt: "그림에서 찾을 수 있는 크고 작은 사각형은 모두 몇 개입니까?",
+    visual: { kind: "cell-shape", cells },
+    answer: `${total}개`,
+    solution: `${parts.join(", ")}로 모두 ${total}개입니다.`,
+    meta: { cells, counts, total }
+  };
+}
+
+
 export const GENERATORS = {
+  pairedSequences,
+  setUnionCount,
+  magicSquare,
+  triangleSumPlacement,
+  twoByTwoSumFill,
+  shapeSumGrid,
+  borderGoStoneDifference,
+  halfGiveReverse,
+  squareCountShape,
+
   diagonalFoldHoleCount,
   foldNumberRemainingSum,
   foldNumberCutSumTextbook,
