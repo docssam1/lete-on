@@ -95,7 +95,9 @@ function renderExamList() {
         <em class="type-status ${ready ? "" : "fixed"}">${verified ? typeStatus(item) : "원본 대조 중"}</em>
       </label>`;
     }).join("");
-    const sourceLink = exam.sourceViewer === false ? "" : `<a class="source-view-link" href="./selection-test-viewer.html?exam=${exam.id}&student=${encodeURIComponent(student)}">원문 보기</a>`;
+    // 원문 이미지가 없는 시험지(sourcePageCount 미설정)는 링크 자체를 내지 않는다.
+    // 링크만 걸어 두면 빈 뷰어로 들어가게 된다.
+    const sourceLink = exam.sourceViewer === false || !exam.sourcePageCount ? "" : `<a class="source-view-link" href="./selection-test-viewer.html?exam=${exam.id}&student=${encodeURIComponent(student)}">원문 보기</a>`;
     return `<details class="tree-group" open><summary><strong>${exam.label}</strong><span>${exam.questions.length}문항</span></summary><div class="exam-source"><span>${exam.file}</span>${sourceLink}</div>${rows}</details>`;
   }).join("") || `<div class="source-notice">이 시기의 원본 시험지는 아직 등록되지 않았습니다.</div>`;
 

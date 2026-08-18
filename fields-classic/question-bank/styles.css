@@ -152,3 +152,5 @@
 .tes-svg circle{fill:#fff;stroke:#17334b;stroke-width:2}
 .tes-svg circle.tes-given{fill:#eaf8ff}
 .tes-svg text{font-size:17px;font-weight:900;fill:#17334b}
+.viewer-empty{margin:0;padding:56px 20px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--muted);font-size:13px;font-weight:700;text-align:center}
+.viewer-empty a{color:var(--blue-dark);font-weight:900}
