@@ -1,0 +1,193 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q08",
+  "typeId": 8,
+  "title": "주사위를 굴려서 바닥면의 수 구하기",
+  "problemType": "TYPE-02",
+  "subType": "dice_roll",
+  "answerType": "number",
+  "dataLevel": "L3",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q08.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 8,
+    "originalQuestionId": "q08_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "dice_roll",
+      "grid": {
+        "rowCount": 2,
+        "colCount": 4,
+        "rowOrder": "top_to_bottom",
+        "colOrder": "left_to_right"
+      },
+      "startState": {
+        "sourceObserved": true,
+        "knownFaces": {
+          "front": 1,
+          "top": 2,
+          "right": 3
+        },
+        "oppositeFacePairs": [
+          [1, 6],
+          [2, 5],
+          [3, 4]
+        ],
+        "oppositeFacesSumRule": 7
+      },
+      "path": {
+        "startCell": {
+          "x": 0,
+          "y": 0
+        },
+        "moves": [
+          "right",
+          "down",
+          "right",
+          "right"
+        ],
+        "turnCount": 1,
+        "targetCell": {
+          "x": 3,
+          "y": 1
+        },
+        "coloredCell": {
+          "x": 3,
+          "y": 1
+        }
+      },
+      "judgementRule": {
+        "description": "주사위를 화살표 방향으로 한 칸씩 굴릴 때마다 윗면, 앞면, 옆면, 바닥면이 함께 바뀐다.",
+        "checks": [
+          "dice_roll_state_update",
+          "opposite_faces",
+          "target_bottom_face"
+        ],
+        "forbiddenVisiblePairs": [
+          [1, 6],
+          [2, 5],
+          [3, 4]
+        ]
+      },
+      "countingModel": {
+        "askedFace": "bottom",
+        "expectedAnswer": 5
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "changeable": [
+            "arrow directions"
+          ],
+          "fixedGrid": {
+            "rowCount": 2,
+            "colCount": 4
+          },
+          "description": "표는 고정한 채 화살표 방향만 바꾼다."
+        },
+        "baseMode": {
+          "changeable": [
+            "grid size",
+            "path moves",
+            "arrow directions"
+          ],
+          "constraints": [
+            "at most 2 turns"
+          ],
+          "description": "가로 또는 세로 한 줄을 늘리고 방향은 2번만 꺾는다."
+        },
+        "hardMode": {
+          "changeable": [
+            "non_rectangular_path_shape",
+            "path moves",
+            "arrow directions"
+          ],
+          "description": "직사각형이 아닌 계단형 또는 꺾인형 경로로 이동시킨다."
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "화살표 방향",
+          "경로 길이",
+          "격자 크기",
+          "경로 모양"
+        ],
+        "mustPreserve": [
+          "주사위 굴림 규칙",
+          "이동 후 면 변화 규칙",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "주사위 방향 추적이 모순되는 경로",
+          "시작 정보 부족으로 답이 여러 개 되는 구성",
+          "유형이 단순 좌표 이동 문제로 바뀌는 변형"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg_with_teaching_sketch",
+        "svgRequired": true,
+        "renderer": "dice_roll_path",
+        "showGrid": true,
+        "showArrows": true,
+        "showColoredTargetCell": true
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "number",
+    "expectedAnswer": 5,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "dice_roll_tracking",
+      "checks": [
+        "시작 주사위 면 배치를 확인",
+        "각 화살표 이동마다 면 상태를 갱신",
+        "색칠된 칸에 닿았을 때 바닥면 수가 5인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q08 경로 존재 확인",
+      "hf_data.json typeId 8의 originalProblem.answer가 5인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 dice_roll인지 확인",
+      "oppositeFacePairs가 [1,6], [2,5], [3,4]인지 확인",
+      "마주보는 눈의 합이 7인지 확인",
+      "동시에 보이는 면 조합이 forbiddenVisiblePairs와 충돌하지 않는지 확인",
+      "path moves가 right, down, right, right 인지 확인",
+      "coloredCell이 마지막 칸인지 확인",
+      "expectedAnswer가 5인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

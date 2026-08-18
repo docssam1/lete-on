@@ -2583,6 +2583,12 @@ function outerH(el){
   var cs=getComputedStyle(el);
   return el.getBoundingClientRect().height+(parseFloat(cs.marginBottom)||0);
 }
+function splitHostH(el){
+  var cs=getComputedStyle(el);
+  return (parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0)+
+    (parseFloat(cs.borderTopWidth)||0)+(parseFloat(cs.borderBottomWidth)||0)+
+    (parseFloat(cs.marginBottom)||0);
+}
 // Blocks that can be broken hand back their own children; everything else is
 // one indivisible lump.
 function atomsOf(block){
@@ -2594,10 +2600,18 @@ function atomsOf(block){
   // Floated artwork must travel with the paragraph beside it. Otherwise the
   // paginator can put the figure at the foot of one sheet and its text on the
   // next, leaving a nearly empty picture-only continuation page.
-  list.forEach(function(k){
+  list.forEach(function(k,i){
     var floated=(k.tagName==='IMG'&&k.classList.contains('fl'))||
       k.classList.contains('cars-float-right')||k.classList.contains('cars-float-left');
     if(floated){pending.push(k);return;}
+    // A closing scene belongs to the final paragraph. Keeping the two as one
+    // pagination atom prevents a nearly empty image-only continuation sheet.
+    if(i===list.length-1&&k.classList.contains('cars-inline-media')&&atoms.length){
+      var prev=atoms[atoms.length-1];
+      (prev.post||(prev.post=[])).push(k);
+      prev.h+=outerH(k);
+      return;
+    }
     var atom={host:block,node:k,h:outerH(k)};
     if(pending.length){
       atom.pre=pending.slice();
@@ -2629,15 +2643,22 @@ function splitSheet(s){
   });
   if(!flow.length)return;
   var headH=keep.reduce(function(a,c){return a+outerH(c);},0);
+  var avail=limit-headH;
+  // Floats and poster artwork overlap adjacent copy by design. Their atom
+  // heights therefore overstate the space used, so trust the rendered block
+  // first when the complete sheet already fits below the masthead.
+  if(flow.reduce(function(a,c){return a+outerH(c);},0)<=avail)return;
   var atoms=[];flow.forEach(function(bl){atoms=atoms.concat(atomsOf(bl));});
-  var avail=limit-headH, total=atoms.reduce(function(a,x){return a+x.h;},0);
-  if(total<=avail)return;                       // already fits
-  var pages=[[]],used=0;
+  var pages=[[]],used=0,hosts=[];
   atoms.forEach(function(a){
+    // Child atom heights do not include their cloned wrapper's padding, border
+    // or bottom margin. Charge that chrome once per wrapper on every page.
+    var hostH=a.host&&hosts.indexOf(a.host)<0?splitHostH(a.host):0;
     // An atom taller than a whole page cannot be helped by another break; let it
     // start a page of its own rather than opening an empty one after it.
-    if(used>0&&used+a.h>avail){pages.push([]);used=0;}
-    pages[pages.length-1].push(a);used+=a.h;
+    if(used>0&&used+hostH+a.h>avail){pages.push([]);used=0;hosts=[];hostH=a.host?splitHostH(a.host):0;}
+    pages[pages.length-1].push(a);used+=hostH+a.h;
+    if(a.host&&hosts.indexOf(a.host)<0)hosts.push(a.host);
   });
   if(pages.length<2)return;
   // The first page is rebuilt in place — putting it inside a fragment and then
@@ -2653,6 +2674,7 @@ function splitSheet(s){
       if(hostSrc!==a.host){hostSrc=a.host;host=a.host.cloneNode(false);sheet.appendChild(host);}
       if(a.pre)a.pre.forEach(function(n){host.appendChild(n);});
       host.appendChild(a.node);
+      if(a.post)a.post.forEach(function(n){host.appendChild(n);});
     });
     if(foot)sheet.appendChild(pi?foot.cloneNode(true):foot);
     markContinued(sheet,pi,pages.length);

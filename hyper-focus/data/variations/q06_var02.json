@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q06",
+  "variationId": "q06_var02",
+  "subType": "solid_view_impossible",
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q06_var02.svg" },
+  "contentBinding": { "canonicalSource": "./canonical/q06.json", "hfDataTypeId": 6 },
+  "problem": { "prompt": "색 블록을 여러 방향에서 관찰했을 때 나타날 수 없는 모습을 모두 고르세요." },
+  "machineReadable": {
+    "payloadType": "solid_view_impossible",
+    "baseSolid": {
+      "layerCount": 1,
+      "fixedSingleLayer": true,
+      "blocks": [
+        {"blockId":"R1","grid":{"x":0,"y":0,"z":0},"color":"red"},
+        {"blockId":"R2","grid":{"x":0,"y":1,"z":0},"color":"red"},
+        {"blockId":"Y1","grid":{"x":1,"y":0,"z":0},"color":"yellow"},
+        {"blockId":"G1","grid":{"x":1,"y":1,"z":0},"color":"green"},
+        {"blockId":"P1","grid":{"x":2,"y":1,"z":0},"color":"purple"}
+      ]
+    },
+    "colorSubstitutionFromCanonical": {"blue":"red","green":"yellow","purple":"green","orange":"purple"},
+    "choices": [
+      {"choiceId":1,"canonicalChoiceId":1,"visibleColorSequence":["yellow","green","purple"],"isValid":true},
+      {"choiceId":2,"canonicalChoiceId":2,"visibleColorSequence":["purple","red"],"isValid":true},
+      {"choiceId":3,"canonicalChoiceId":4,"visibleColorSequence":["red","purple","yellow","green"],"isValid":false,"invalidReason":"회전해도 색의 좌우 순서가 맞지 않는다."},
+      {"choiceId":4,"canonicalChoiceId":5,"visibleColorSequence":["red","yellow"],"isValid":true},
+      {"choiceId":5,"canonicalChoiceId":6,"visibleColorSequence":["purple","red","red","red","yellow"],"isValid":false,"invalidReason":"보이는 블록 수와 색 배치가 실제 입체와 일치하지 않는다."}
+    ],
+    "expectedInvalidChoices": [3,5]
+  },
+  "answerValidation": { "answerType": "option_set", "expectedAnswer": [3,5] },
+  "solutionHint": "색의 위치 관계를 유지한 채 블록을 돌려 봅니다. 거울상처럼 순서가 바뀐 3번과 블록 배치가 맞지 않는 5번은 만들 수 없습니다."
+}

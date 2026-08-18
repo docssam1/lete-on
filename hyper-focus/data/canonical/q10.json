@@ -1,0 +1,172 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q10",
+  "typeId": 10,
+  "title": "겹친 영역의 장수 또는 겹친 영역의 수 구하기",
+  "problemType": "TYPE-04",
+  "subType": "overlap_count_rule",
+  "answerType": "number",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q10.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": true,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 10,
+    "originalQuestionId": "q10_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "overlap_count_rule",
+      "baseShapes": {
+        "shapeType": "axis_aligned_rectangle",
+        "shapeCount": 4,
+        "description": "여러 개의 직사각형이 서로 겹쳐 배치되어 있으며, 각 분할 영역 숫자는 그 칸을 덮는 도형 수를 뜻한다."
+      },
+      "observedRegions": [
+        {
+          "regionId": "r1",
+          "label": 1
+        },
+        {
+          "regionId": "r2a",
+          "label": 2
+        },
+        {
+          "regionId": "r2b",
+          "label": 2
+        },
+        {
+          "regionId": "r3a",
+          "label": 3
+        },
+        {
+          "regionId": "r3b",
+          "label": 3
+        },
+        {
+          "regionId": "target",
+          "label": null,
+          "marker": "*"
+        }
+      ],
+      "ruleModel": {
+        "meaningOfNumber": "해당 분할 영역을 동시에 덮는 도형의 개수",
+        "targetQuestion": "표시된 별 영역의 겹친 개수",
+        "answerFirstGenerationRule": {
+          "enabled": true,
+          "description": "유사문제는 정답을 먼저 정한 뒤, 그 정답이 유일하게 나오도록 도형 배치와 영역 숫자를 설계한다."
+        }
+      },
+      "countingModel": {
+        "expectedAnswer": 4,
+        "reasoningPattern": [
+          "1겹, 2겹, 3겹 영역을 따라 겹침 층수를 추적한다.",
+          "별표 영역은 인접한 3겹 영역보다 도형이 하나 더 겹친 구조로 판정한다."
+        ]
+      },
+      "generationTemplate": {
+        "baseMode": {
+          "changeable": [
+            "rectangle positions",
+            "rectangle sizes",
+            "target marker position"
+          ],
+          "mustPreserve": [
+            "겹침 영역을 먼저 찾아야 하는 구조",
+            "각 숫자가 겹친 장수를 뜻하는 구조",
+            "정답이 겹침 규칙으로 유일하게 결정되는 구조"
+          ]
+        },
+        "variantModes": [
+          {
+            "mode": "count_overlap",
+            "description": "겹친 부분의 장수를 묻는다."
+          },
+          {
+            "mode": "sum_overlap_values",
+            "description": "겹친 부분에 적힌 수들의 합을 묻는 형태로 확장할 수 있다."
+          }
+        ]
+      },
+      "generationConstraints": {
+        "canChange": [
+          "색종이 또는 직사각형 위치",
+          "직사각형 크기",
+          "영역 숫자",
+          "겹친 영역에서 적용하는 계산 규칙"
+        ],
+        "mustPreserve": [
+          "겹친 영역을 먼저 찾아야 하는 구조",
+          "정답이 겹친 영역 규칙으로 결정되는 구조",
+          "정답이 하나로 유일하게 결정되는 구조",
+          "유사문제는 정답을 먼저 정한 뒤 문제 구조를 설계하는 원칙"
+        ],
+        "forbiddenChanges": [
+          "겹침이 없어지는 배치",
+          "겹친 영역이 여러 해석으로 갈리는 구조",
+          "규칙이 모호해서 답이 둘 이상 되는 구성",
+          "원본과 다른 유형으로 바뀌는 변형"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg",
+        "svgRequired": true,
+        "renderer": "overlap_region_counter",
+        "showRegionLabels": true,
+        "showTargetMarker": true
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "number",
+    "expectedAnswer": 4,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "overlap_layer_tracking",
+      "checks": [
+        "1겹, 2겹, 3겹 영역의 연결 흐름을 확인",
+        "별표 영역이 4겹인지 확인",
+        "정답이 4로 유일하게 결정되는지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q10 경로 존재 확인",
+      "hf_data.json typeId 10의 originalProblem.answer가 4인지 확인",
+      "aiTutorPack.docsamRules에 overlap_layers, overlap_sum_variant가 포함되는지 확인",
+      "observedRegions에 1, 2, 3, * 구조가 반영되는지 확인",
+      "target expectedAnswer가 4인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

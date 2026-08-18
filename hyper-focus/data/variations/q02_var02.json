@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q02",
+  "variationId": "q02_var02",
+  "subType": "stacking_fill_cube",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/svg/variations/q02_var02.svg"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q02.json",
+    "hfDataTypeId": 2
+  },
+  "machineReadable": {
+    "payloadType": "stacking_fill_cube",
+    "container": {
+      "width": 3,
+      "depth": 3,
+      "height": 3,
+      "totalCells": 27
+    },
+    "heightMap": {
+      "rows": [
+        { "y": 0, "heights": [3, 3, 1] },
+        { "y": 1, "heights": [1, 0, 0] },
+        { "y": 2, "heights": [0, 0, 0] }
+      ]
+    },
+    "countingModel": {
+      "filledCount": 8,
+      "missingCount": 19
+    }
+  },
+  "answerValidation": {
+    "answerType": "integer",
+    "expectedAnswer": 19
+  },
+  "problem": {
+    "prompt": "가로 3칸, 세로 3칸, 높이 3칸인 상자 안에 그림처럼 쌓기나무를 넣었습니다. 상자를 가득 채우려면 쌓기나무를 몇 개 더 넣어야 할까요?"
+  },
+  "solutionHint": "상자가 가득 차면 한 층에 9개씩 3층이므로 9 + 9 + 9 = 27개입니다. 지금 있는 쌓기나무는 3 + 3 + 1 + 1 = 8개입니다. 따라서 27 - 8 = 19이므로 19개를 더 넣어야 합니다."
+}

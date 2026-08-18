@@ -1,0 +1,33 @@
+{
+ "schemaVersion": "hf-variation-problem-v1",
+ "baseQuestionId": "q21",
+ "variationId": "q21_var01",
+ "subType": "place_value_conditions",
+ "status": "draft",
+ "source": {
+  "problemImage": "./assets/problems/q21_var01.png"
+ },
+ "contentBinding": {
+  "canonicalSource": "./canonical/q21.json",
+  "hfDataTypeId": 21
+ },
+ "machineReadable": {
+  "payloadType": "place_value_conditions",
+  "digitCount": 3,
+  "conditions": [
+   "hundreds_eq_4",
+   "tens_eq_hundreds_plus_2",
+   "ones_eq_tens_minus_4"
+  ],
+  "conditionText": [
+   "백의 자리 숫자는 4입니다",
+   "십의 자리 숫자는 백의 자리보다 2 큽니다",
+   "일의 자리 숫자는 십의 자리보다 4 작습니다"
+  ],
+  "expectedAnswer": 462
+ },
+ "answerValidation": {
+  "answerType": "integer",
+  "expectedAnswer": 462
+ }
+}

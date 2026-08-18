@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { levels, hiddenCubes, validateLevels } from "./levels.js?v=hidden-4";
+import { levels, hiddenCubes, validateLevels } from "./levels.js?v=hidden-5";
 import { text } from "./i18n.js?v=hidden-4";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
@@ -87,7 +87,7 @@ function layerTotals(heights) {
 function layerHidden(heights) {
   const maxHeight = Math.max(...heights.flat());
   const counts = new Array(maxHeight).fill(0);
-  hiddenCubes(heights).forEach((cube) => { counts[cube.y] += 1; });
+  hiddenCubes(heights, levels[state.levelIndex].wall === true).forEach((cube) => { counts[cube.y] += 1; });
   return counts;
 }
 
@@ -868,7 +868,7 @@ function renderModel() {
   leftWall.receiveShadow = true;
   modelGroup.add(leftWall);
 
-  const hiddenKeys = new Set(hiddenCubes(heights).map((c) => `${c.x},${c.y},${c.z}`));
+  const hiddenKeys = new Set(hiddenCubes(heights, levels[state.levelIndex].wall === true).map((c) => `${c.x},${c.y},${c.z}`));
   occupiedColumns().forEach((cell) => {
     const wx = cell.x - centerX;
     const wz = cell.z - centerZ;

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">펜토미노 네 조각으로 직사각형 채우기 유사문제 1</title>
+  <desc id="desc">F, I, L, P, V 다섯 조각 중 네 조각을 골라 5칸 곱하기 4칸 직사각형을 채우는 문제입니다.</desc>
+  <defs><filter id="s"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".12"/></filter></defs>
+  <rect width="760" height="430" rx="24" fill="#fff"/>
+  <text x="380" y="39" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#20272b">5조각 중 4조각만 골라 직사각형을 채우세요</text>
+  <text x="380" y="68" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#59636a">조각은 돌리거나 뒤집어도 되고, 겹치거나 빈칸이 생기면 안 됩니다.</text>
+  <g fill="#68737a" stroke="#fff" stroke-width="1.5" filter="url(#s)">
+    <g transform="translate(58 111)"><rect x="18" width="18" height="18"/><rect y="18" width="18" height="18"/><rect x="18" y="18" width="18" height="18"/><rect x="36" y="18" width="18" height="18"/><rect x="36" y="36" width="18" height="18"/></g>
+    <g transform="translate(181 127)"><rect width="18" height="18"/><rect x="18" width="18" height="18"/><rect x="36" width="18" height="18"/><rect x="54" width="18" height="18"/><rect x="72" width="18" height="18"/></g>
+    <g transform="translate(326 101)"><rect width="18" height="18"/><rect y="18" width="18" height="18"/><rect y="36" width="18" height="18"/><rect y="54" width="18" height="18"/><rect x="18" y="54" width="18" height="18"/></g>
+    <g transform="translate(450 110)"><rect width="18" height="18"/><rect x="18" width="18" height="18"/><rect y="18" width="18" height="18"/><rect x="18" y="18" width="18" height="18"/><rect y="36" width="18" height="18"/></g>
+    <g transform="translate(604 103)"><rect width="18" height="18"/><rect y="18" width="18" height="18"/><rect y="36" width="18" height="18"/><rect x="18" y="36" width="18" height="18"/><rect x="36" y="36" width="18" height="18"/></g>
+  </g>
+  <g text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="800" fill="#343c41"><text x="85" y="187">F</text><text x="226" y="187">I</text><text x="344" y="187">L</text><text x="468" y="187">P</text><text x="631" y="187">V</text></g>
+  <g transform="translate(255 211)" filter="url(#s)"><rect width="250" height="160" fill="#fffdf8" stroke="#4d565b" stroke-width="3"/><g stroke="#aeb5b8" stroke-width="1.4" stroke-dasharray="5 4"><path d="M50 0V160M100 0V160M150 0V160M200 0V160M0 40H250M0 80H250M0 120H250"/></g></g>
+  <text x="380" y="402" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#59636a">모서리에 잘 맞는 조각부터 놓고, 쓰지 않을 한 조각을 찾아보세요.</text>
+</svg>

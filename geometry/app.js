@@ -537,13 +537,55 @@ const speechSettings = {
 };
 
 const cubiAudioProfile = {
-  useMp3: false,
+  useMp3: true,
+  cacheVersion: "20260815-1",
+  tutorial: {
+    ko: {
+      tutorialTake: "../../assets/audio/cubi/tutorial/ko/drag-from-tray.mp3",
+      tutorialPlace: "../../assets/audio/cubi/tutorial/ko/place-on-guide.mp3",
+      tutorialStack: "../../assets/audio/cubi/tutorial/ko/stack-up.mp3"
+    },
+    zh: {
+      tutorialTake: "../../assets/audio/cubi/tutorial/zh/drag-from-tray.mp3",
+      tutorialPlace: "../../assets/audio/cubi/tutorial/zh/place-on-guide.mp3",
+      tutorialStack: "../../assets/audio/cubi/tutorial/zh/stack-up.mp3"
+    },
+    ja: {
+      tutorialTake: "../../assets/audio/cubi/tutorial/ja/drag-from-tray.mp3",
+      tutorialPlace: "../../assets/audio/cubi/tutorial/ja/place-on-guide.mp3",
+      tutorialStack: "../../assets/audio/cubi/tutorial/ja/stack-up.mp3"
+    },
+    en: {
+      tutorialTake: "../../assets/audio/cubi/tutorial/en/drag-from-tray.mp3",
+      tutorialPlace: "../../assets/audio/cubi/tutorial/en/place-on-guide.mp3",
+      tutorialStack: "../../assets/audio/cubi/tutorial/en/stack-up.mp3"
+    }
+  },
   success: {
-    successGood: "../../assets/audio/cubi/success/good-job.mp3",
-    successGreat: "../../assets/audio/cubi/success/great-job.mp3",
-    successPop: "../../assets/audio/cubi/success/success.mp3"
+    ko: {
+      successGood: "../../assets/audio/cubi/success/ko/good-job.mp3",
+      successGreat: "../../assets/audio/cubi/success/ko/great-job.mp3",
+      successPop: "../../assets/audio/cubi/success/ko/success.mp3"
+    },
+    zh: {
+      successGood: "../../assets/audio/cubi/success/zh/good-job.mp3",
+      successGreat: "../../assets/audio/cubi/success/zh/great-job.mp3",
+      successPop: "../../assets/audio/cubi/success/zh/success.mp3"
+    },
+    ja: {
+      successGood: "../../assets/audio/cubi/success/ja/good-job.mp3",
+      successGreat: "../../assets/audio/cubi/success/ja/great-job.mp3",
+      successPop: "../../assets/audio/cubi/success/ja/success.mp3"
+    },
+    en: {
+      successGood: "../../assets/audio/cubi/success/en/good-job.mp3",
+      successGreat: "../../assets/audio/cubi/success/en/great-job.mp3",
+      successPop: "../../assets/audio/cubi/success/en/success.mp3"
+    }
   }
 };
+
+let activeCubiAudio = null;
 
 const maleVoiceHints = {
   ko: /\bmale\b|injoon|hyunsu|bongjin|minjun|seojun/i,
@@ -2332,7 +2374,13 @@ function playSuccessSound(phraseKey = "successPop") {
 
 function playSuccessVoice(phraseKey) {
   if (!state.audioEnabled) return;
-  if (playCubiMp3("success", phraseKey)) return;
+  const fallback = () => speakSuccessFallback(phraseKey);
+  if (playCubiMp3("success", phraseKey, fallback)) return;
+  fallback();
+}
+
+function speakSuccessFallback(phraseKey) {
+  if (!state.audioEnabled) return;
   if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) return;
 
   const successVoiceText = {
@@ -2353,14 +2401,38 @@ function playSuccessVoice(phraseKey) {
   window.setTimeout(() => window.speechSynthesis.speak(utterance), 90);
 }
 
-function playCubiMp3(group, cueKey) {
-  if (!cubiAudioProfile.useMp3) return false;
-  const src = cubiAudioProfile[group]?.[cueKey];
+function stopCubiVoice() {
+  if (activeCubiAudio) {
+    activeCubiAudio.pause();
+    activeCubiAudio.removeAttribute("src");
+    activeCubiAudio.load();
+    activeCubiAudio = null;
+  }
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+}
+
+function playCubiMp3(group, cueKey, onFailure) {
+  if (!state.audioEnabled || !cubiAudioProfile.useMp3) return false;
+  const src = cubiAudioProfile[group]?.[state.lang]?.[cueKey];
   if (!src) return false;
 
-  const audio = new Audio(src);
+  stopCubiVoice();
+  const versionedSrc = `${src}?v=${encodeURIComponent(cubiAudioProfile.cacheVersion)}`;
+  const audio = new Audio(versionedSrc);
   audio.volume = 0.92;
-  audio.play().catch(() => {});
+  activeCubiAudio = audio;
+  let failed = false;
+  const fallback = () => {
+    if (failed) return;
+    failed = true;
+    if (activeCubiAudio === audio) activeCubiAudio = null;
+    if (state.audioEnabled) onFailure?.();
+  };
+  audio.addEventListener("error", fallback, { once: true });
+  audio.addEventListener("ended", () => {
+    if (activeCubiAudio === audio) activeCubiAudio = null;
+  }, { once: true });
+  audio.play().catch(fallback);
   return true;
 }
 
@@ -2370,8 +2442,8 @@ function toggleAudio() {
   updateAudioButton();
   if (state.audioEnabled && state.tutorialStep >= 0) {
     speakGuide(state.guideKey, true);
-  } else if ("speechSynthesis" in window) {
-    window.speechSynthesis.cancel();
+  } else if (!state.audioEnabled) {
+    stopCubiVoice();
   }
 }
 
@@ -2386,7 +2458,14 @@ function updateAudioButton() {
 }
 
 function speakGuide(key, force = false) {
-  if (!state.audioEnabled && !force) return;
+  if (!state.audioEnabled) return;
+  const fallback = () => speakGuideFallback(key, force);
+  if (playCubiMp3("tutorial", key, fallback)) return;
+  fallback();
+}
+
+function speakGuideFallback(key) {
+  if (!state.audioEnabled) return;
   if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) return;
 
   const settings = speechSettings[state.lang] || speechSettings.ko;

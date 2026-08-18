@@ -36,7 +36,7 @@ function countHidden(heights) {
 
 // Which cubes are hidden — used by the "속 보기" (X-ray) reveal so the same
 // rule that scores the answer also decides what glows inside the shape.
-export function hiddenCubes(heights) {
+function hiddenCubesWalled(heights) {
   const depth = heights.length;
   const width = heights[0].length;
   const cubes = [];
@@ -60,7 +60,42 @@ export function hiddenCubes(heights) {
   return cubes;
 }
 
+function hiddenCubesNoWall(heights) {
+  const depth = heights.length;
+  const width = heights[0].length;
+  const cubes = [];
+  for (let z = 0; z < depth; z += 1) {
+    for (let x = 0; x < width; x += 1) {
+      for (let y = 0; y < heights[z][x]; y += 1) {
+        const coveredTop = y < heights[z][x] - 1;
+        const left = Array.from({ length: x }, (_, i) => heights[z][i]).some((h) => h > y);
+        const right = Array.from({ length: width - x - 1 }, (_, i) => heights[z][x + i + 1]).some((h) => h > y);
+        const back = Array.from({ length: z }, (_, i) => heights[i][x]).some((h) => h > y);
+        const front = Array.from({ length: depth - z - 1 }, (_, i) => heights[z + i + 1][x]).some((h) => h > y);
+        if (coveredTop && left && right && back && front) cubes.push({ x, y, z });
+      }
+    }
+  }
+  return cubes;
+}
+
+export function hiddenCubes(heights, wall = false) {
+  return wall ? hiddenCubesWalled(heights) : hiddenCubesNoWall(heights);
+}
+
+function clearNoWallMap(id, level) {
+  const index = Number(id.split("-").pop()) || 1;
+  const size = level <= 2 ? 3 : 4;
+  const depth = level <= 3 || index % 3 ? size : 3;
+  const height = Math.min(4, level <= 1 ? 2 : level <= 3 ? 3 : 4);
+  if (index % 4 === 0 && size === 3) {
+    return [[1, 1, 1], [1, height, 1], [1, 1, 1]];
+  }
+  return Array.from({ length: depth }, () => Array.from({ length: size }, () => height));
+}
+
 const makeProblem = (id, level, heights) => {
+  if (level < 6) heights = clearNoWallMap(id, level);
   const depth = heights.length;
   const width = heights[0].length;
   return {
@@ -71,7 +106,7 @@ const makeProblem = (id, level, heights) => {
     heights,
     answer: {
       total: heights.flat().reduce((sum, value) => sum + value, 0),
-      hidden: countHidden(heights)
+      hidden: level === 6 ? countHidden(heights) : hiddenCubesNoWall(heights).length
     }
   };
 };
@@ -254,7 +289,7 @@ export function validateLevels() {
       if (problem.heights.length !== depth || problem.heights.some((row) => row.length !== width)) {
         throw new Error(`${problem.id} has an invalid board`);
       }
-      if (problem.answer.hidden !== hiddenCubes(problem.heights).length) {
+      if (problem.answer.hidden !== hiddenCubes(problem.heights, level.wall === true).length) {
         throw new Error(`${problem.id} has an inconsistent hidden count`);
       }
     });

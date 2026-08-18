@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">쌓기나무를 앞과 뒤에서 본 모양</title>
+  <desc id="desc">같은 쌓기나무 모양을 앞과 뒤에서 본 두 그림입니다. 뒤에서 보면 왼쪽과 오른쪽이 바뀝니다.</desc>
+  <defs>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="145%">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#163f72" flood-opacity="0.12"/>
+    </filter>
+    <g id="cube" stroke="#1f5f9f" stroke-width="1.6" stroke-linejoin="round">
+      <path d="M0-14 25 0 0 14-25 0Z" fill="#7bbfff"/>
+      <path d="M-25 0 0 14 0 42-25 28Z" fill="#4a9eff"/>
+      <path d="M25 0 0 14 0 42 25 28Z" fill="#2d7fdd"/>
+      <path d="M-16 2 0 11 16 2" fill="none" stroke="#cfe9ff" stroke-width="1.2" opacity="0.75"/>
+    </g>
+  </defs>
+
+  <rect width="760" height="430" rx="24" fill="#f5f9ff"/>
+  <text x="380" y="48" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="25" font-weight="800" fill="#19375b">같은 쌓기나무를 앞과 뒤에서 보았어요</text>
+  <text x="380" y="76" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="600" fill="#607b98">두 그림을 함께 보고 전체 개수를 생각해 보세요.</text>
+
+  <rect x="28" y="98" width="336" height="276" rx="20" fill="#ffffff" filter="url(#shadow)"/>
+  <rect x="396" y="98" width="336" height="276" rx="20" fill="#ffffff" filter="url(#shadow)"/>
+  <rect x="116" y="112" width="160" height="36" rx="18" fill="#e5f2ff"/>
+  <text x="196" y="136" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="18" font-weight="800" fill="#245b9e">앞에서 본 모양</text>
+  <rect x="484" y="112" width="160" height="36" rx="18" fill="#e5f2ff"/>
+  <text x="564" y="136" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="18" font-weight="800" fill="#245b9e">뒤에서 본 모양</text>
+
+  <g id="q01-front-view">
+    <use href="#cube" transform="translate(95 250)"/>
+    <use href="#cube" transform="translate(95 222)"/>
+    <use href="#cube" transform="translate(145 250)"/>
+    <use href="#cube" transform="translate(195 250)"/>
+    <use href="#cube" transform="translate(70 264)"/>
+    <use href="#cube" transform="translate(120 264)"/>
+    <use href="#cube" transform="translate(120 236)"/>
+  </g>
+  <g transform="translate(87 329)">
+    <path d="M0 0h216" stroke="#9bbddd" stroke-width="3" stroke-linecap="round"/>
+    <path d="M108 0v-14m0 14-7-8m7 8 7-8" fill="none" stroke="#245b9e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="108" y="24" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="700" fill="#55708f">앞</text>
+  </g>
+
+  <g id="q01-rear-view">
+    <use href="#cube" transform="translate(595 236)"/>
+    <use href="#cube" transform="translate(545 236)"/>
+    <use href="#cube" transform="translate(545 208)"/>
+    <use href="#cube" transform="translate(570 250)"/>
+    <use href="#cube" transform="translate(570 222)"/>
+    <use href="#cube" transform="translate(520 250)"/>
+    <use href="#cube" transform="translate(470 250)"/>
+    <use href="#cube" transform="translate(545 264)"/>
+    <use href="#cube" transform="translate(495 264)"/>
+  </g>
+  <g transform="translate(455 329)">
+    <path d="M0 0h216" stroke="#9bbddd" stroke-width="3" stroke-linecap="round"/>
+    <path d="M108 0v-14m0 14-7-8m7 8 7-8" fill="none" stroke="#245b9e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="108" y="24" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="700" fill="#55708f">뒤</text>
+  </g>
+
+  <rect x="174" y="391" width="412" height="28" rx="14" fill="#dcecff"/>
+  <text x="380" y="411" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="700" fill="#315c89">뒤에서 보면 왼쪽과 오른쪽이 서로 바뀌어요.</text>
+</svg>

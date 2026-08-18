@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q36",
+  "variationId": "q36_var01",
+  "subType": "min_max_order",
+  "status": "draft",
+  "source": {
+    "problemImage": ""
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q36.json",
+    "hfDataTypeId": 36
+  },
+  "machineReadable": {
+    "payloadType": "min_max_order",
+    "givens": {
+      "frontRank": 12,
+      "backRank": 9,
+      "peopleBetween": 4
+    },
+    "solvingModel": {
+      "rankDistance": 5,
+      "frontPositionsOfBackRankedPerson": [7, 17],
+      "validTotals": [15, 25],
+      "minTotal": 15,
+      "maxTotal": 25
+    },
+    "expectedAnswer": {
+      "min": 15,
+      "max": 25
+    }
+  },
+  "answerValidation": {
+    "answerType": "min_max_values",
+    "expectedAnswer": {
+      "min": 15,
+      "max": 25
+    }
+  },
+  "problem": {
+    "prompt": "지민이와 지수가 표를 사기 위해 줄을 섰더니 지민이는 앞에서 열두 번째에 서 있고, 지수는 뒤에서 아홉 번째에 서 있습니다. 지민이와 지수 사이에는 4명이 서 있습니다. 사람 수로 가능한 최솟값과 최댓값을 구하십시오."
+  },
+  "solutionHint": "두 사람 사이에 4명이 있으므로 두 사람의 자리는 5칸 떨어져 있습니다. 지수를 앞에서 7번째와 17번째에 놓아 각각 세어 보면 전체는 15명과 25명입니다. 따라서 최솟값은 15명, 최댓값은 25명입니다."
+}

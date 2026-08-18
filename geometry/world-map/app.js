@@ -1,4 +1,4 @@
-import { syncEvolution, getEvolution, applyCharacterGlow, stageName, levelLabel, releaseColorLock } from "../shared/evolution.js?v=evolve4-20260720a";
+import { syncEvolution, getEvolution, applyCharacterGlow, stageName, levelLabel, releaseColorLock } from "../shared/evolution.js?v=paper-fold-20260815a";
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -10,6 +10,10 @@ const elements = {
   skipIntro: $("#skipIntro"),
   worldGate: $("#worldGate"),
   castle: $("#cubeCastle"),
+  origami: $("#origamiStudio"),
+  mirrorManor: $("#mirrorManor"),
+  geoboardYard: $("#geoboardYard"),
+  crystalPlaza: $("#crystalPlaza"),
   walkers: $("#walkers"),
   mapStage: $(".map-stage"),
   guide: $("#mapGuide"),
@@ -42,7 +46,8 @@ const characters = [
   { id: "arco", name: "아르코", sprite: 5, role: "Angle Lab Scholar" },
   { id: "coni", name: "코니", sprite: 6, role: "Cone Valley Ranger" },
   { id: "pris", name: "프리즈", sprite: 7, role: "Prism Light Runner" },
-  { id: "nova", name: "노바", sprite: 8, role: "Compass Trail Finder" }
+  { id: "nova", name: "노바", sprite: 8, role: "Compass Trail Finder" },
+  { id: "foldy", name: "폴디", sprite: 9, role: "Origami Studio Guide" }
 ];
 
 const colors = [
@@ -95,19 +100,19 @@ const items = [
 
 const messages = {
   ko: {
-    skipIntro: "건너뛰기 ›", gatewayTitle: "지오메트리 월드로 이동 중…", gatewayHint: "도형 친구들이 기다리고 있어요", mapGuide: "{name}, 쌓기나무 성에 새로운 게임이 있어!", myPartner: "나의 도형 파트너", chooseCharacter: "캐릭터 선택", setupCharacter: "내 도형 친구 만들기", friends: "도형 친구들", color: "색상", items: "포인트 몰", itemHint: "포인트로 해금하고 여러 장식을 함께 착용해요", playerName: "내 이름", namePlaceholder: "이름이나 별명", nameHint: "이 이름으로 학습 기록이 저장돼요.", saveProfile: "이 이름으로 시작하기", updateProfile: "변경 내용 저장", nameRequired: "이름이나 별명을 먼저 적어 주세요.", removeItem: "장착 해제",
+    skipIntro: "건너뛰기 ›", gatewayTitle: "지오메트리 월드로 이동 중…", gatewayHint: "도형 친구들이 기다리고 있어요", crystalPlaza: "크리스털 광장 · 지오메트리 랩", mapGuide: "{name}, 쌓기나무 성에 새로운 게임이 있어!", origamiGuide: "{name}, 색종이 공방에서 한 단계씩 접어 볼까?", myPartner: "나의 도형 파트너", chooseCharacter: "캐릭터 선택", setupCharacter: "내 도형 친구 만들기", friends: "도형 친구들", color: "색상", items: "포인트 몰", itemHint: "포인트로 해금하고 여러 장식을 함께 착용해요", playerName: "내 이름", namePlaceholder: "이름이나 별명", nameHint: "이 이름으로 학습 기록이 저장돼요.", saveProfile: "이 이름으로 시작하기", updateProfile: "변경 내용 저장", nameRequired: "이름이나 별명을 먼저 적어 주세요.", removeItem: "장착 해제",
     needPoints: "포인트가 조금 더 필요해!", unlocked: "새 아이템을 얻었어!"
   },
   zh: {
-    skipIntro: "跳过 ›", gatewayTitle: "正在进入几何世界…", gatewayHint: "几何伙伴们正在等你", mapGuide: "{name}，积木城堡里有新游戏！", myPartner: "我的几何伙伴", chooseCharacter: "选择角色", setupCharacter: "创建我的几何伙伴", friends: "几何朋友", color: "颜色", items: "积分商城", itemHint: "用积分解锁并同时佩戴多件装饰", playerName: "我的名字", namePlaceholder: "名字或昵称", nameHint: "学习记录会保存在这个名字下。", saveProfile: "用这个名字开始", updateProfile: "保存更改", nameRequired: "请先填写名字或昵称。", removeItem: "卸下",
+    skipIntro: "跳过 ›", gatewayTitle: "正在进入几何世界…", gatewayHint: "几何伙伴们正在等你", crystalPlaza: "水晶广场 · 几何实验室", mapGuide: "{name}，积木城堡里有新游戏！", origamiGuide: "{name}，一起在折纸工坊一步一步折吧！", myPartner: "我的几何伙伴", chooseCharacter: "选择角色", setupCharacter: "创建我的几何伙伴", friends: "几何朋友", color: "颜色", items: "积分商城", itemHint: "用积分解锁并同时佩戴多件装饰", playerName: "我的名字", namePlaceholder: "名字或昵称", nameHint: "学习记录会保存在这个名字下。", saveProfile: "用这个名字开始", updateProfile: "保存更改", nameRequired: "请先填写名字或昵称。", removeItem: "卸下",
     needPoints: "还需要更多积分！", unlocked: "获得了新道具！"
   },
   ja: {
-    skipIntro: "スキップ ›", gatewayTitle: "ジオメトリーワールドへ移動中…", gatewayHint: "図形のなかまたちが待っているよ", mapGuide: "{name}、つみき城に新しいゲームがあるよ！", myPartner: "わたしの図形パートナー", chooseCharacter: "キャラクター選択", setupCharacter: "図形パートナーをつくる", friends: "図形のなかま", color: "カラー", items: "ポイントモール", itemHint: "ポイントで解放して複数のアイテムを装備", playerName: "なまえ", namePlaceholder: "なまえ・ニックネーム", nameHint: "この名前で学習記録を保存します。", saveProfile: "この名前ではじめる", updateProfile: "変更を保存", nameRequired: "名前かニックネームを入力してください。", removeItem: "はずす",
+    skipIntro: "スキップ ›", gatewayTitle: "ジオメトリーワールドへ移動中…", gatewayHint: "図形のなかまたちが待っているよ", crystalPlaza: "クリスタル広場・ジオメトリーラボ", mapGuide: "{name}、つみき城に新しいゲームがあるよ！", origamiGuide: "{name}、おりがみ工房で一つずつ折ってみよう！", myPartner: "わたしの図形パートナー", chooseCharacter: "キャラクター選択", setupCharacter: "図形パートナーをつくる", friends: "図形のなかま", color: "カラー", items: "ポイントモール", itemHint: "ポイントで解放して複数のアイテムを装備", playerName: "なまえ", namePlaceholder: "なまえ・ニックネーム", nameHint: "この名前で学習記録を保存します。", saveProfile: "この名前ではじめる", updateProfile: "変更を保存", nameRequired: "名前かニックネームを入力してください。", removeItem: "はずす",
     needPoints: "ポイントがもう少し必要！", unlocked: "新しいアイテムをゲット！"
   },
   en: {
-    skipIntro: "Skip ›", gatewayTitle: "Entering Geometry World…", gatewayHint: "Your geometry friends are waiting", mapGuide: "{name}, there is a new game in the cube castle!", myPartner: "My Geometry Partner", chooseCharacter: "Choose a Character", setupCharacter: "Create My Geometry Partner", friends: "Geometry Friends", color: "Color", items: "Point Mall", itemHint: "Unlock items with points and wear several together", playerName: "My name", namePlaceholder: "Name or nickname", nameHint: "Your learning progress is saved under this name.", saveProfile: "Start with this name", updateProfile: "Save changes", nameRequired: "Enter a name or nickname first.", removeItem: "Remove",
+    skipIntro: "Skip ›", gatewayTitle: "Entering Geometry World…", gatewayHint: "Your geometry friends are waiting", crystalPlaza: "Crystal Plaza · Geometry Lab", mapGuide: "{name}, there is a new game in the cube castle!", origamiGuide: "{name}, let us fold one easy step at a time in Origami Studio!", myPartner: "My Geometry Partner", chooseCharacter: "Choose a Character", setupCharacter: "Create My Geometry Partner", friends: "Geometry Friends", color: "Color", items: "Point Mall", itemHint: "Unlock items with points and wear several together", playerName: "My name", namePlaceholder: "Name or nickname", nameHint: "Your learning progress is saved under this name.", saveProfile: "Start with this name", updateProfile: "Save changes", nameRequired: "Enter a name or nickname first.", removeItem: "Remove",
     needPoints: "You need a few more points!", unlocked: "New item unlocked!"
   }
 };
@@ -187,7 +192,8 @@ function updatePoints() {
 
 function setGuide(textKey) {
   elements.guideName.textContent = selectedCharacter().name;
-  elements.guide.querySelector("p").textContent = message(textKey).replace("{name}", profile.name || selectedCharacter().name);
+  const key = textKey === "mapGuide" && selectedCharacter().id === "foldy" ? "origamiGuide" : textKey;
+  elements.guide.querySelector("p").textContent = message(key).replace("{name}", profile.name || selectedCharacter().name);
 }
 
 function itemName(item) {
@@ -439,8 +445,10 @@ function enterWorldMap() {
   if (onboarding) {
     openCharacterRoom(true);
   } else {
-    elements.castle.classList.add("attention");
-    setTimeout(() => elements.castle.classList.remove("attention"), 3700);
+    const focusOrigami = new URLSearchParams(location.search).get("focus") === "origami";
+    const target = focusOrigami ? elements.origami : elements.castle;
+    target?.classList.add("attention");
+    setTimeout(() => target?.classList.remove("attention"), 3700);
   }
 }
 
@@ -499,8 +507,9 @@ function completeProfile() {
   setGuide("mapGuide");
   elements.characterModal.hidden = true;
   elements.characterModal.classList.remove("onboarding");
-  elements.castle.classList.add("attention");
-  setTimeout(() => elements.castle.classList.remove("attention"), 2900);
+  const firstTarget = profile.character === "foldy" ? elements.origami : elements.castle;
+  firstTarget?.classList.add("attention");
+  setTimeout(() => firstTarget?.classList.remove("attention"), 2900);
 }
 
 if (new URLSearchParams(location.search).get("enter") === "1") finishIntro({ skipGateway: true });
@@ -515,6 +524,19 @@ elements.introSound.addEventListener("click", () => {
 });
 
 elements.castle.addEventListener("click", () => { location.href = "../cube-town/"; });
+elements.origami?.addEventListener("click", () => { location.href = "../origami-studio/"; });
+// Mirror Manor is a single game rather than a hub, so this hotspot goes straight to
+// the game folder, matching the pattern of the two hub hotspots above.
+elements.mirrorManor?.addEventListener("click", () => { location.href = "../games/mirror-manor/"; });
+// Geoboard Home Yard is a single game rather than a hub, so this hotspot goes
+// straight to the game folder, matching the Mirror Manor line above.
+elements.geoboardYard?.addEventListener("click", () => { location.href = "../games/geoboard/"; });
+// Crystal Plaza is the only hotspot that opens something other than a game:
+// the printable worksheet hub. It points at the landing page file explicitly
+// (not the folder) so the link works on static hosts without directory
+// indexes, which the game folders above get away with because they ship an
+// index the host already resolves.
+elements.crystalPlaza?.addEventListener("click", () => { location.href = "../lab/index.html"; });
 elements.mapStage?.addEventListener("click", handleMapStageClick);
 elements.profileButton.addEventListener("click", () => openCharacterRoom(false));
 elements.closeCharacter.addEventListener("click", closeCharacterRoom);
@@ -534,7 +556,7 @@ elements.sound.addEventListener("click", () => {
   localStorage.setItem("gfield-audio-muted", String(!audioEnabled));
   elements.sound.textContent = audioEnabled ? "♫" : "♪";
   elements.sound.setAttribute("aria-pressed", String(audioEnabled));
-  if (audioEnabled) speak(message("mapGuide"));
+  if (audioEnabled) speak(message(selectedCharacter().id === "foldy" ? "origamiGuide" : "mapGuide").replace("{name}", profile.name || selectedCharacter().name));
   else speechSynthesis?.cancel();
 });
 $$("[data-lang]").forEach((button) => button.addEventListener("click", () => {

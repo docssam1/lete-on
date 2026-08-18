@@ -68,6 +68,14 @@ main{position:relative;z-index:1}
 .hero-login-hint{margin-top:16px;text-align:center;color:var(--muted2);font-size:13.5px;font-weight:700}
 .hero-login-hint a{color:var(--gold-l);text-decoration:none;border-bottom:1px solid rgba(248,221,131,.5)}
 .hero-login-hint a:hover{border-bottom-color:var(--gold-l)}
+.hero-more{display:inline-flex;flex-direction:column;align-items:center;gap:7px;margin-top:18px;color:var(--gold-l);font-size:14px;font-weight:950;text-decoration:none;text-shadow:0 0 18px rgba(248,221,131,.3)}
+.hero-more-label{padding-bottom:2px;border-bottom:1px dashed rgba(248,221,131,.7)}
+.hero-more-arrow{position:relative;width:24px;height:42px;animation:detailCue 1.5s ease-in-out infinite}
+.hero-more-arrow::before{content:"";position:absolute;top:0;left:11px;height:30px;border-left:2px dashed rgba(248,221,131,.9)}
+.hero-more-arrow::after{content:"";position:absolute;left:6px;bottom:3px;width:10px;height:10px;border-right:2px solid var(--gold-l);border-bottom:2px solid var(--gold-l);transform:rotate(45deg)}
+.hero-more:hover{color:#fff;text-shadow:0 0 22px rgba(248,221,131,.6)}
+@keyframes detailCue{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+@media(prefers-reduced-motion:reduce){.hero-more-arrow{animation:none}}
 
 /* 히어로 */
 .hero{position:relative;padding:120px 22px 90px;text-align:center;background:radial-gradient(circle at 50% 0%,rgba(212,175,55,.14),transparent 55%),linear-gradient(180deg,#050a14,#02050b)}
@@ -346,6 +354,10 @@ footer strong{color:#94a3b8}
       <a class="cta kakao" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">💬 카카오톡 상담하기</a>
     </div>
     <p class="hero-login-hint">이미 승인번호를 받으셨다면 <a href="./login.html" id="heroLogin">로그인</a></p>
+    <a class="hero-more" href="#why" aria-label="아래 프로그램 상세 내용 보기">
+      <span class="hero-more-label">자세히 보기</span>
+      <span class="hero-more-arrow" aria-hidden="true"></span>
+    </a>
   </section>
 
   <!-- 왜 진단인가 -->

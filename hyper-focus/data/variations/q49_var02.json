@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q49",
+  "variationId": "q49_var02",
+  "subType": "unit_rate_animals",
+  "status": "draft",
+  "source": {
+    "problemImage": ""
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q49.json",
+    "hfDataTypeId": 49
+  },
+  "machineReadable": {
+    "payloadType": "unit_rate_animals",
+    "givenRatio": {
+      "animals": 5,
+      "days": 3,
+      "nuts": 60
+    },
+    "target": {
+      "animals": 8,
+      "nuts": 160
+    },
+    "solvingModel": {
+      "perAnimalPerDay": 4,
+      "targetPerDay": 32,
+      "expectedAnswer": 5
+    },
+    "expectedAnswer": 5
+  },
+  "answerValidation": {
+    "answerType": "time_count",
+    "expectedAnswer": 5
+  },
+  "problem": {
+    "prompt": "다섯 마리의 다람쥐가 3일에 60개의 도토리를 줍습니다. 8마리의 다람쥐가 160개의 도토리를 주우려면 며칠이 걸릴까요?"
+  },
+  "solutionHint": "다람쥐 1마리는 하루에 4개를 줍습니다. 8마리는 하루에 32개를 주우므로 160개를 주우려면 5일이 걸립니다."
+}

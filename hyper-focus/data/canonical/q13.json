@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q13",
+  "typeId": 13,
+  "title": "펜토미노 조각으로 직사각형 빈칸 채우기",
+  "problemType": "TYPE-03",
+  "subType": "pentomino_fill",
+  "answerType": "drawing_layout",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q13.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 13,
+    "originalQuestionId": "q13_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "pentomino_fill",
+      "board": {
+        "width": 5,
+        "height": 4,
+        "cellCount": 20,
+        "shape": "rectangle"
+      },
+      "pieceSet": {
+        "providedPieceCount": 5,
+        "requiredPieceCount": 4,
+        "unitCellsPerPiece": 5,
+        "allowRotate": true,
+        "allowFlip": true,
+        "description": "주어진 펜토미노 5조각 중 4조각을 골라 빈칸 없이 5x4 직사각형을 채운다."
+      },
+      "placementRule": {
+        "mustCoverAllCells": true,
+        "mustNotOverlap": true,
+        "mustStayInsideBoard": true,
+        "unusedPieceCount": 1
+      },
+      "judgementRule": {
+        "checks": [
+          "rotate_flip",
+          "place_constrained_piece_first",
+          "full_cover_without_gap"
+        ],
+        "description": "회전하거나 뒤집을 수 있으며, 제약이 큰 조각부터 먼저 놓아 빈칸 없이 채워지는지 판정한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 완성 배치를 정한 뒤, 그 배치가 유일하거나 허용 답 집합 안에 들도록 조각 세트와 보드를 설계한다."
+      },
+      "generationTemplate": {
+        "baseMode": {
+          "changeable": [
+            "piece shapes",
+            "piece ordering",
+            "board size"
+          ],
+          "mustPreserve": [
+            "펜토미노 조각 채우기 구조",
+            "주어진 조각 중 일부만 사용하여 직사각형을 채우는 구조",
+            "회전과 뒤집기 허용 규칙"
+          ]
+        },
+        "easyMode": {
+          "changeable": [
+            "piece ordering",
+            "board size"
+          ],
+          "boardCellCount": 20,
+          "requiredPieceCount": 4
+        },
+        "hardMode": {
+          "changeable": [
+            "piece shapes",
+            "piece ordering",
+            "board size",
+            "requiredPieceCount"
+          ],
+          "maxBoardCellCount": 25,
+          "maxRequiredPieceCount": 5
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "조각 종류",
+          "조각 제시 순서",
+          "보드 크기",
+          "사용해야 하는 조각 수"
+        ],
+        "mustPreserve": [
+          "조각을 회전하거나 뒤집어 채우는 구조",
+          "빈칸 없이 직사각형을 채우는 구조",
+          "겹침 없이 보드 안에만 놓는 구조",
+          "정답을 먼저 정하고 문제를 설계하는 원칙"
+        ],
+        "forbiddenChanges": [
+          "직사각형 전체를 덮을 수 없는 조각 세트",
+          "여러 해석으로 정답 기준이 무너지는 보드 구조",
+          "원본과 다른 유형으로 바뀌는 변형"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "use_original_structure_preferred",
+        "svgRequired": true,
+        "renderer": "pentomino_fill_board",
+        "showPieceSet": true,
+        "showBoard": true
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "drawing_layout",
+    "expectedAnswer": "다양한 배치 가능",
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "tiling_feasibility",
+      "checks": [
+        "보드 20칸을 5칸 조각 4개로 정확히 덮는지 확인",
+        "겹침과 빈칸이 없는지 확인",
+        "회전/뒤집기 허용 상태에서 완성 배치가 가능한지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q13 경로 존재 확인",
+      "hf_data.json typeId 13의 originalProblem.answer가 다양한 배치 가능인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 pentomino_fill인지 확인",
+      "board cellCount가 20인지 확인",
+      "requiredPieceCount가 4인지 확인",
+      "unitCellsPerPiece가 5인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

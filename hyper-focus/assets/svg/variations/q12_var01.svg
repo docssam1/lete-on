@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">색종이를 두 번 접어 구멍 뚫기 유사문제 1</title>
+  <desc id="desc">정사각형 종이의 오른쪽을 왼쪽으로 접고 아래쪽을 위로 접은 뒤 구멍 하나를 뚫는 과정입니다.</desc>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5 0 10Z" fill="#a76545"/></marker><filter id="s"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity=".11"/></filter></defs>
+  <rect width="760" height="430" rx="24" fill="#fff"/>
+  <text x="380" y="42" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#20272b">색종이를 두 번 접고 구멍을 1개 뚫었습니다</text>
+  <text x="380" y="72" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#59636a">색종이를 모두 펼치면 구멍은 몇 개일까요?</text>
+  <g transform="translate(52 128)" filter="url(#s)"><rect width="170" height="170" fill="#fff8ed" stroke="#8b715d" stroke-width="2.5"/><path d="M85 0V170" stroke="#b49376" stroke-width="2" stroke-dasharray="7 6"/><path d="M202 28C160 4 118 8 96 47" fill="none" stroke="#a76545" stroke-width="4" marker-end="url(#a)"/></g>
+  <path d="M246 213H289" stroke="#8e9894" stroke-width="4" marker-end="url(#a)"/>
+  <g transform="translate(316 128)" filter="url(#s)"><rect width="85" height="170" fill="#fff8ed" stroke="#8b715d" stroke-width="2.5"/><path d="M0 85H85" stroke="#b49376" stroke-width="2" stroke-dasharray="7 6"/><path d="M73 151C40 134 30 111 42 94" fill="none" stroke="#a76545" stroke-width="4" marker-end="url(#a)"/></g>
+  <path d="M430 213H473" stroke="#8e9894" stroke-width="4" marker-end="url(#a)"/>
+  <g transform="translate(510 170)" filter="url(#s)"><rect x="5" y="7" width="120" height="120" fill="#ead8c8" stroke="#b99a82"/><rect width="120" height="120" fill="#fff8ed" stroke="#8b715d" stroke-width="2.5"/><circle cx="34" cy="39" r="9" fill="#fff" stroke="#a76545" stroke-width="3"/></g>
+  <g text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#66554a"><text x="137" y="330">① 오른쪽을 왼쪽으로</text><text x="359" y="330">② 아래쪽을 위로</text><text x="570" y="330">③ 구멍 1개</text></g>
+  <rect x="206" y="380" width="348" height="29" rx="15" fill="#f0eeeb"/><text x="380" y="400" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#4d555a">접힌 종이가 모두 몇 겹인지 생각해 보세요.</text>
+</svg>

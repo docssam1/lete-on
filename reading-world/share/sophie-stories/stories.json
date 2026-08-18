@@ -1,0 +1,168 @@
+[
+  {
+    "id": "story-1",
+    "tabLabel": "Story 1",
+    "title": null,
+    "byline": "Sophie",
+    "illustration": {
+      "src": "./assets/story-1-illustration.webp",
+      "alt": "Audrey standing beside a kind unicorn in a magical forest."
+    },
+    "paragraphs": [
+      [
+        "There once lived a curious girl named Audrey who loved thinking about new and exciting things.",
+        "One day, she was walking down a street near her house when a mysterious glowing gem suddenly caught her attention.",
+        "Curious about where it had come from, Audrey carefully picked it up."
+      ],
+      [
+        "At first, everything seemed very fine until Audrey suddenly touched the glowing gem and fell asleep in the middle of the street.",
+        "Everything went dark, and when she opened her eyes again, she realized that she was lying in the middle of a strange forest.",
+        "A sign nearby read, “Paint Family,” and a herd of colorful unicorns appeared before her eyes.",
+        "As Audrey looked around in amazement, she noticed a small unicorn that was about to burst into tears because its leg was hurt.",
+        "“Please save my life! I will do anything to help you when you are in danger,” the unicorn murmured.",
+        "Even though Audrey wanted to keep exploring, she carefully tied its injured leg with a bandage.",
+        "The unicorn happily galloped away, and Audrey wondered if she would ever meet it again."
+      ],
+      [
+        "But then, the biggest problem appeared when Audrey wandered deeper into the forest and suddenly found herself surrounded by a group of huge, evil unicorns.",
+        "They emerged from behind the trees one by one, blocking every possible escape route.",
+        "Their angry eyes glowed as they slowly moved closer to her.",
+        "Audrey's heart began to pound, and a cold shiver ran down her spine.",
+        "She tried to escape through a narrow space between two of them, but another unicorn quickly blocked her way.",
+        "Even though Audrey tried to stay brave, she realized that she was completely trapped.",
+        "Helplessly sitting on the ground, she knew she had to think quickly before the monsters attacked."
+      ],
+      [
+        "However, luckily, something amazing happened just when Audrey was about to lose hope.",
+        "Suddenly, the unicorn she had helped earlier appeared on a hill and let out a powerful cry.",
+        "Audrey's eyes widened as she realized that it had come back to keep its promise.",
+        "Its horn began to glow, sending sparkling waves of magic across the forest.",
+        "One by one, the evil unicorns became frightened and disappeared into the darkness.",
+        "The kind unicorn quickly lowered its back so Audrey could climb on.",
+        "They galloped through the forest until they finally reached the place where Audrey had first arrived.",
+        "When Audrey climbed off its back, she thanked the unicorn for saving her.",
+        "At that moment, she understood that the kindness she had shown earlier had returned to her when she needed it most."
+      ],
+      [
+        "In the end, Audrey pushed open a mysterious door and dashed inside.",
+        "When the elevator doors opened, she suddenly found herself safely back home.",
+        "From that day on, Audrey never forgot that even a small act of kindness could come back in an unexpected way."
+      ]
+    ],
+    "authorStudio": {
+      "praise": [
+        "You gave Audrey a clear adventure with a beginning, a problem, a rescue, and a meaningful ending.",
+        "Audrey's kindness returning when she needed help makes the message easy to remember."
+      ],
+      "praiseKo": [
+        "Audrey의 모험이 시작, 문제, 구출, 의미 있는 결말로 분명하게 이어지도록 잘 구성했어요.",
+        "Audrey가 베푼 친절이 도움이 되어 돌아오는 장면 덕분에 이야기의 메시지가 오래 기억돼요."
+      ],
+      "tryNext": "On your next page, add one sentence that shows what Audrey feels when she sees the magical world again.",
+      "tryNextKo": "다음 페이지에서는 Audrey가 마법의 세계를 다시 보았을 때 어떤 기분이 들었는지 한 문장으로 보여 주세요.",
+      "choices": [
+        {
+          "id": "gem-returns",
+          "label": "The glowing gem returns",
+          "labelKo": "빛나는 보석이 다시 나타나요",
+          "prompt": "The glowing gem appears in Audrey's room. Write 3–5 sentences about what happens next.",
+          "promptKo": "빛나는 보석이 Audrey의 방에 나타났어요. 다음에 어떤 일이 생기는지 3~5문장으로 써 보세요."
+        },
+        {
+          "id": "unicorn-visits",
+          "label": "The unicorn visits Audrey",
+          "labelKo": "유니콘이 Audrey를 찾아와요",
+          "prompt": "The kind unicorn visits Audrey's world with an important message. Write 3–5 sentences about the visit.",
+          "promptKo": "착한 유니콘이 중요한 소식을 가지고 Audrey의 세계를 찾아왔어요. 두 친구의 만남을 3~5문장으로 써 보세요."
+        },
+        {
+          "id": "own-idea",
+          "label": "I have my own idea",
+          "labelKo": "내 생각으로 이어 쓸래요",
+          "prompt": "Write 3–5 sentences for your own next chapter about Audrey and the magical forest.",
+          "promptKo": "Audrey와 마법의 숲에서 이어지는 나만의 다음 챕터를 3~5문장으로 써 보세요."
+        }
+      ]
+    }
+  },
+  {
+    "id": "story-2",
+    "tabLabel": "Story 2",
+    "title": "The Most Special Day I Have Ever Had",
+    "byline": "Sophie",
+    "illustration": {
+      "src": "./assets/story-2-illustration.webp",
+      "alt": "Two best friends completing adventure missions together."
+    },
+    "paragraphs": [
+      [
+        "Have you ever had a surprising and unforgettable day?",
+        "To me, the most extraordinary day was when I went to KidZania with my best friend.",
+        "There are three reasons why this day holds a special place in my heart: I spent the whole day with my friend, had a surprising sleepover, and completed exciting adventure missions."
+      ],
+      [
+        "To begin with, the day was special because my best friend was with me.",
+        "Since I did not know my way around KidZania very well, my friend led the way and introduced me to different activities.",
+        "We ran from place to place, laughed together, and decided which activities we wanted to try next.",
+        "Whenever I felt unsure about something, my friend encouraged me to give it a try.",
+        "Looking back, I still feel thankful that I had a friend beside me because every activity became much more exciting when we experienced it together."
+      ],
+      [
+        "Furthermore, to my surprise, my mom allowed me to have a sleepover with my friend after our long day at KidZania.",
+        "I had not expected it at all, so I could hardly believe what was happening.",
+        "Even though we were tired, we talked about our favorite moments from the day and laughed about the funny things that had happened.",
+        "We even discussed which activities we wanted to try the next time we visited.",
+        "The more I think about it, the more grateful I feel because the unexpected sleepover made an already wonderful day even more special."
+      ],
+      [
+        "Most importantly, the best part of the day was completing the adventure missions at KidZania.",
+        "A helper gave us a mission pack filled with different challenges.",
+        "For the first mission, I had to carefully cross a rope course without falling.",
+        "Another challenge was jumping from a high place twenty times within one hundred seconds, and one mission sent us searching for a hidden gem.",
+        "My heart was pounding with excitement as my friend and I rushed from one challenge to another.",
+        "Some missions were difficult, but finishing them made me feel brave and proud.",
+        "It felt like a dream come true to spend an entire day going on exciting adventures with my friend."
+      ],
+      [
+        "In conclusion, my trip to KidZania was one of the most special days of my life because I spent time with my best friend, enjoyed a surprising sleepover, and completed unforgettable missions.",
+        "It was one of the happiest moments of my life.",
+        "If I could relive one day, it would definitely be that day."
+      ]
+    ],
+    "authorStudio": {
+      "praise": [
+        "You organized the memory clearly around three reasons, so the reader can follow the whole day.",
+        "Details such as the rope course, the timed jumps, and the hidden gem make the adventure feel real."
+      ],
+      "praiseKo": [
+        "세 가지 이유를 중심으로 추억을 분명하게 정리해서 독자가 하루의 이야기를 쉽게 따라갈 수 있어요.",
+        "로프 코스, 시간 안에 뛰기, 숨은 보석 찾기 같은 구체적인 내용이 모험을 생생하게 만들어요."
+      ],
+      "tryNext": "Choose one favorite mission and add a sound, a feeling, or one line of dialogue to bring that moment even closer.",
+      "tryNextKo": "가장 좋아했던 미션 하나를 골라 소리, 느낌 또는 짧은 대화를 한 문장 더하면 그 순간이 더욱 생생해져요.",
+      "choices": [
+        {
+          "id": "new-mission",
+          "label": "A brand-new mission",
+          "labelKo": "새로운 미션에 도전해요",
+          "prompt": "You and your friend return to KidZania and receive a brand-new mission. Write 3–5 sentences about the challenge.",
+          "promptKo": "친구와 KidZania에 다시 가서 새로운 미션을 받았어요. 그 도전을 3~5문장으로 써 보세요."
+        },
+        {
+          "id": "friends-view",
+          "label": "My friend's point of view",
+          "labelKo": "친구의 시점으로 써 봐요",
+          "prompt": "Tell one part of the special day from your friend's point of view. Write 3–5 sentences about what your friend saw and felt.",
+          "promptKo": "특별했던 하루의 한 장면을 친구의 시점으로 들려주세요. 친구가 보고 느낀 것을 3~5문장으로 써 보세요."
+        },
+        {
+          "id": "own-idea",
+          "label": "I have my own idea",
+          "labelKo": "내 생각으로 이어 쓸래요",
+          "prompt": "Write 3–5 sentences about another unforgettable day you would like to have with your friend.",
+          "promptKo": "친구와 함께 보내고 싶은 또 다른 잊지 못할 하루를 3~5문장으로 써 보세요."
+        }
+      ]
+    }
+  }
+]

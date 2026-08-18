@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q27",
+  "variationId": "q27_var01",
+  "subType": "honeycomb_operation",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/svg/variations/q27_var01.svg"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q27.json",
+    "hfDataTypeId": 27
+  },
+  "problem": {
+    "prompt": "각 벌집에서 모든 숫자와 연산 기호를 빠뜨리지 않고 한 번씩 지나는 길을 그어 옳은 식을 만들어 보세요."
+  },
+  "machineReadable": {
+    "payloadType": "honeycomb_operation",
+    "boardShape": {
+      "cellCount": 7,
+      "layout": "center_with_surrounding_hexes",
+      "cellIds": ["TL", "TR", "R", "BR", "BL", "L", "C"],
+      "ringOrder": ["TL", "TR", "R", "BR", "BL", "L"]
+    },
+    "pathRule": {
+      "useAllGivenNumbers": true,
+      "useAllGivenOperators": true,
+      "visitEachCellOnce": true,
+      "adjacentCellsOnly": true,
+      "adjacentDigitCellsConcatenate": true,
+      "calculationOrder": "path_order"
+    },
+    "boards": [
+      {
+        "boardId": 1,
+        "cells": {
+          "TL": "8",
+          "TR": "7",
+          "R": "=",
+          "BR": "6",
+          "BL": "7",
+          "L": "-",
+          "C": "3"
+        },
+        "uniqueSolution": {
+          "path": ["TL", "C", "L", "BL", "BR", "R", "TR"],
+          "expression": "83-76=7",
+          "result": 7,
+          "validFullPathCount": 1
+        }
+      },
+      {
+        "boardId": 2,
+        "cells": {
+          "TL": "7",
+          "TR": "+",
+          "R": "8",
+          "BR": "-",
+          "BL": "=",
+          "L": "9",
+          "C": "6"
+        },
+        "uniqueSolution": {
+          "path": ["TL", "TR", "R", "BR", "C", "BL", "L"],
+          "expression": "7+8-6=9",
+          "result": 9,
+          "validFullPathCount": 1
+        }
+      },
+      {
+        "boardId": 3,
+        "cells": {
+          "TL": "5",
+          "TR": "7",
+          "R": "3",
+          "BR": "6",
+          "BL": "8",
+          "L": "=",
+          "C": "-"
+        },
+        "uniqueSolution": {
+          "path": ["TR", "R", "C", "BR", "BL", "L", "TL"],
+          "expression": "73-68=5",
+          "result": 5,
+          "validFullPathCount": 1
+        }
+      }
+    ],
+    "solvingModel": {
+      "expectedAnswers": [7, 9, 5],
+      "verificationMethod": "enumerate_all_seven_cell_adjacent_paths"
+    }
+  },
+  "answerValidation": {
+    "answerType": "ordered_slots",
+    "expectedAnswer": [7, 9, 5]
+  },
+  "solutionHint": "첫 번째는 83 - 76 = 7, 두 번째는 7 + 8 - 6 = 9, 세 번째는 73 - 68 = 5가 되도록 이으면 됩니다. 각 칸은 한 번씩만 지나갑니다."
+}

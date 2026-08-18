@@ -19,7 +19,7 @@ window.Store = (function () {
   // 공개(publishable)용 값 — 브라우저에 노출되어도 안전. 쓰기 권한은 테이블 정책(RLS)으로 제어.
   const SUPABASE = {
     url: 'https://fgahqumaldheqettmvqg.supabase.co',
-    key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs',
+    key: 'sb_publishable_OsjJG92BLMaZrc2jTClt0g_ecdTtf_I',
     table: 'readers',
   };
   const remoteOn = () => !!(SUPABASE.url && SUPABASE.key);

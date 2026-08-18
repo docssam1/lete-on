@@ -1,0 +1,26 @@
+{
+ "schemaVersion": "hf-variation-problem-v1",
+ "baseQuestionId": "q51",
+ "variationId": "q51_var01",
+ "subType": "clock_bell_count",
+ "status": "verified",
+ "source": {
+  "problemImage": "./assets/svg/variations/q51_var01.svg"
+ },
+ "contentBinding": {
+  "canonicalSource": "./canonical/q51.json",
+  "hfDataTypeId": 51
+ },
+ "problem": { "prompt": "정각에는 그 시각의 수만큼, 30분에는 1번 종이 울립니다. 2시 종은 제외하고 2시부터 5시까지 종은 모두 몇 번 울립니까?" },
+ "machineReadable": {
+  "payloadType": "clock_bell_count",
+  "startHour": 2,
+  "endHour": 5,
+  "expectedAnswer": 15
+ },
+ "answerValidation": {
+  "answerType": "integer",
+  "expectedAnswer": 15
+ },
+ "solutionHint": "3시, 4시, 5시의 정각 종은 3 + 4 + 5 = 12번이고, 30분 종은 3번입니다. 모두 15번입니다."
+}

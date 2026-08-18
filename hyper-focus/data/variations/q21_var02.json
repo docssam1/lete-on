@@ -1,0 +1,35 @@
+{
+ "schemaVersion": "hf-variation-problem-v1",
+ "baseQuestionId": "q21",
+ "variationId": "q21_var02",
+ "subType": "place_value_conditions",
+ "status": "draft",
+ "source": {
+  "problemImage": "./assets/problems/q21_var02.png"
+ },
+ "contentBinding": {
+  "canonicalSource": "./canonical/q21.json",
+  "hfDataTypeId": 21
+ },
+ "machineReadable": {
+  "payloadType": "place_value_conditions",
+  "digitCount": 4,
+  "conditions": [
+   "thousands_eq_2",
+   "ones_eq_8",
+   "hundreds_eq_tens_plus_3",
+   "digit_sum_21"
+  ],
+  "conditionText": [
+   "천의 자리 숫자는 2입니다",
+   "일의 자리 숫자는 8입니다",
+   "백의 자리 숫자는 십의 자리보다 3 큽니다",
+   "각 자리 숫자의 합은 21입니다"
+  ],
+  "expectedAnswer": 2748
+ },
+ "answerValidation": {
+  "answerType": "integer",
+  "expectedAnswer": 2748
+ }
+}

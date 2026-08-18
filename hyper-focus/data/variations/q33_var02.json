@@ -1,0 +1,32 @@
+{
+ "schemaVersion": "hf-variation-problem-v1",
+ "baseQuestionId": "q33",
+ "variationId": "q33_var02",
+ "subType": "rps_stair_difference",
+ "status": "draft",
+ "source": {
+    "problemImage": ""
+ },
+ "contentBinding": {
+  "canonicalSource": "./canonical/q33.json",
+  "hfDataTypeId": 33
+ },
+ "machineReadable": {
+  "payloadType": "rps_stair_difference",
+  "rounds": 6,
+  "winStep": 3,
+  "loseStep": 2,
+  "personA": "윤서",
+  "personB": "세령",
+  "winsA": 4,
+  "lossesA": 2,
+  "expectedAnswer": 10
+ },
+ "answerValidation": {
+  "answerType": "integer",
+  "expectedAnswer": 10
+ },
+ "problem": {
+  "prompt": "윤서와 세령이 가위바위보로 계단 오르기를 합니다. 이기면 3칸 올라가고, 지면 2칸 내려갑니다. 6번 하여 윤서가 4번 이기고 2번 졌다면, 윤서는 세령보다 몇 계단 위에 있습니까?"
+ }
+}

@@ -4,17 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GFIELD Cube Town - Print Study</title>
-    <link rel="stylesheet" href="./print.css?v=count-worksheet-20260719a" />
+    <link rel="stylesheet" href="./print.css?v=lab-one-1" />
   </head>
   <body>
     <header class="print-toolbar">
+      <!-- 두 개의 돌아가기. 게임에서 곧장 인쇄로 넘어온 아이·부모는 Cube Town
+           으로, 학습지 카탈로그에서 딥링크로 들어온 어른은 랩으로 돌아가야
+           한다 — 어느 한쪽만 두면 나머지 절반이 뒤로 가기를 눌러야 한다. -->
+      <a href="../lab/index.html">← 지오메트리 랩</a>
       <a href="./index.html">← Cube Town</a>
       <div class="tool-field">
         <label for="gameSelect">게임</label>
         <select id="gameSelect">
+          <!-- 섞기는 지오메트리 랩의 "똑같이 쌓기" 카드가 난이도 중으로
+               딥링크하는 모드다 (print.js GAME_COPY_MIXED 설명 참고). -->
+          <option value="copy-mixed">똑같이 쌓기 · 원목+컬러 섞기</option>
           <option value="copy-wood">똑같이 쌓기 · 원목 관찰</option>
           <option value="copy-color">똑같이 쌓기 · 컬러 색칠</option>
           <option value="count-heights">쌓기나무 개수 세기</option>
+          <option value="three-views">여러 방향에서 본 모양</option>
         </select>
       </div>
       <div class="tool-field">
@@ -43,11 +51,10 @@
           <div class="cover-rule"></div>
           <p id="coverSubtitle" class="cover-subtitle">쌓기나무 맨 위에 수를 쓰고,<br />쓴 수를 모두 더해 보세요.</p>
         </div>
-        <div class="cover-mascots" aria-hidden="true">
-          <i class="mascot mascot-cube"></i>
-          <i class="mascot mascot-sphere"></i>
-          <i class="mascot mascot-pyramid"></i>
-        </div>
+        <!-- 캐릭터는 print.js가 게임(=표지 테마)에 맞춰 채운다. 표지에 늘 같은
+             셋이 서 있으면 네 권을 나란히 놓았을 때 어느 책이 무엇인지 표지로
+             구분되지 않는다. -->
+        <div class="cover-mascots" id="coverMascots" aria-hidden="true"></div>
         <div class="cover-meta">
           <div><span>이름</span><i></i></div>
           <div><span>시작한 날</span><i></i></div>
@@ -65,6 +72,6 @@
         <div id="answers" class="answer-grid"></div>
       </section>
     </main>
-    <script type="module" src="./print.js?v=count-worksheet-20260719a"></script>
+    <script type="module" src="./print.js?v=lab-one-1"></script>
   </body>
 </html>

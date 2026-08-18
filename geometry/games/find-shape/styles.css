@@ -1,0 +1,250 @@
+@import url("../fill-box/styles.css?v=fill-1");
+
+:root {
+  --clue-blue: #2e7193;
+  --clue-deep: #1d4f70;
+  --wood-light: #f8dfb1;
+  --wood-mid: #d9a663;
+  --wood-deep: #8b542b;
+}
+
+.find-shell { display: grid; grid-template-rows: minmax(0, 1fr); gap: 0; height: var(--app-dvh); min-height: 0; }
+.find-shell .mission-bar { margin-top: 0; }
+.find-shell .play-grid { min-height: 0; grid-template-columns: minmax(340px, .78fr) minmax(560px, 1.32fr); }
+.clue-panel,
+.choices-panel {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid #c89a67;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #fffaf0, #f5dfbd);
+  box-shadow: 0 10px 28px rgba(38,17,5,.22), inset 0 0 0 2px rgba(255,255,255,.48);
+}
+.clue-panel > header,
+.choices-panel > header {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #d8b889;
+  background: rgba(255,249,236,.86);
+}
+.clue-panel h2,
+.choices-panel h2,
+.choices-panel p { margin: 0; }
+.clue-panel h2,
+.choices-panel h2 { font-size: 19px; }
+.choices-panel > header p { max-width: 72%; color: #6d665d; font-size: 13px; text-align: right; }
+.clue-panel .progress-box { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 12px; }
+.clue-panel .progress-box button { min-height: 32px; padding: 5px 9px; }
+
+.clue-stage {
+  height: calc(100% - 58px);
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+  padding: 18px;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(255,255,255,.75), transparent 46%),
+    repeating-linear-gradient(0deg, rgba(147,94,44,.035) 0 2px, transparent 2px 13px);
+}
+.layer-clue {
+  border: 1px solid #d4ad75;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: rgba(255,250,238,.88);
+  box-shadow: inset 0 1px 0 #fff, 0 5px 12px rgba(100,62,26,.08);
+}
+.layer-clue h3 { margin: 0 0 9px; color: #6b4326; font-size: 14px; }
+.layer-list { display: grid; gap: 6px; }
+.layer-row { display: flex; align-items: center; gap: 8px; color: #4f4034; font-size: 13px; font-weight: 800; }
+.layer-row b { display: none; }
+.layer-chip {
+  flex: 0 0 34px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #b9854c;
+  border-radius: 6px;
+  color: #fff;
+  background: linear-gradient(#d79b52, #a96830);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+}
+
+.view-clues { min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.view-card {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 8px;
+  place-items: center;
+  padding: 10px;
+  border: 1px solid #8dafc3;
+  border-radius: 8px;
+  background: linear-gradient(#fbfdff, #eaf4f9);
+}
+.view-card strong { color: #2e5874; font-size: 12px; }
+.view-grid {
+  --cols: 3;
+  --rows: 3;
+  align-self: center;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(28px, 48px));
+  grid-template-rows: repeat(var(--rows), minmax(28px, 48px));
+  gap: 2px;
+  padding: 5px;
+  border: 2px solid #6b94ad;
+  border-radius: 6px;
+  background: #f8fcff;
+  box-shadow: inset 0 0 0 1px #fff, 0 4px 10px rgba(35,82,112,.1);
+}
+.view-grid span { border: 1px solid #c3d8e4; background: #edf6fa; }
+.view-grid span.filled { border-color: #234f70; background: linear-gradient(145deg, #648bab, #315e80); }
+.clue-panel.hint-layer .layer-clue,
+.clue-panel.hint-front .view-card:first-child,
+.clue-panel.hint-right .view-card:last-child { animation: clue-glow .9s ease 2; }
+@keyframes clue-glow { 50% { box-shadow: 0 0 0 5px rgba(255,190,62,.35), 0 0 24px rgba(255,183,31,.45); transform: translateY(-2px); } }
+
+.choices-panel { display: grid; grid-template-rows: 58px minmax(0, 1fr) auto; }
+.choice-grid {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 14px;
+  overflow: hidden;
+}
+.choice-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: center; }
+.shape-choice {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border: 2px solid #d0ab76;
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255,255,255,.98), rgba(249,231,201,.86) 68%, rgba(224,190,141,.76)),
+    repeating-linear-gradient(0deg, transparent 0 12px, rgba(132,80,33,.035) 12px 13px);
+  cursor: pointer;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.75), 0 5px 0 rgba(130,79,35,.16);
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+.shape-choice:hover { transform: translateY(-2px); border-color: #a7743c; }
+.shape-choice:active { transform: translateY(2px); }
+.shape-choice.selected { border-color: #2f86ad; box-shadow: 0 0 0 4px rgba(47,134,173,.22), 0 6px 0 rgba(35,91,118,.2); }
+.shape-choice.correct { border-color: #4b9d3b; box-shadow: 0 0 0 5px rgba(75,157,59,.22), 0 7px 0 rgba(42,115,34,.2); }
+.shape-choice.wrong { border-color: #d34b42; animation: wrong-shake .34s ease; }
+.shape-choice svg { width: 100%; height: 100%; min-height: 120px; display: block; filter: drop-shadow(0 10px 8px rgba(88,52,23,.18)); }
+.shape-choice .option-tag {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  width: 27px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: #254f70;
+  font-size: 12px;
+  font-weight: 950;
+  box-shadow: 0 2px 0 rgba(0,0,0,.18);
+}
+.choice-actions { display: grid; grid-template-columns: .8fr 1.35fr; gap: 10px; padding: 0 14px 13px; }
+.choice-actions button {
+  min-height: 46px;
+  border: 1px solid #b9854c;
+  border-radius: 8px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 0 rgba(104,60,24,.22);
+}
+#clearChoice { background: linear-gradient(#fff2d0, #e8bf81); color: #664122; }
+#checkChoice { background: linear-gradient(#73c668, #3e9837); border-color: #317b2b; color: #fff; }
+.choice-actions button:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(104,60,24,.2); }
+.choice-actions button:disabled { opacity: .45; cursor: default; }
+
+.brand-watermark { top: 68px; }
+.find-shell .docssam { right: calc(122px + env(safe-area-inset-right)); bottom: 8px; }
+.find-shell .cubi-sprite { width: clamp(84px, 8vw, 126px); height: clamp(84px, 8vw, 126px); }
+.find-shell .level-list { grid-template-columns: repeat(3, 1fr); }
+.find-shell .level-list button { display: grid; gap: 5px; text-align: left; }
+.find-shell .level-list button strong { font-size: 17px; }
+.find-shell .level-list button span { color: #d99c1f; }
+.find-shell .level-list button small { color: #6d665d; line-height: 1.35; }
+
+@media (min-width: 1000px) and (min-height: 650px) {
+  .find-shell { height: var(--app-dvh); padding-bottom: 12px; overflow: hidden; }
+  .find-shell .play-grid { overflow: hidden; }
+  .choice-grid.three .shape-choice { height: min(42vh, 360px); }
+  .choice-grid:not(.three) .shape-choice { min-height: 180px; }
+}
+
+@media (orientation: landscape) and (max-height: 560px) {
+  .find-shell {
+    grid-template-rows: minmax(0, 1fr);
+    gap: 0;
+    height: var(--app-dvh);
+    min-height: 0;
+    padding: 5px calc(106px + env(safe-area-inset-right)) 5px max(5px, env(safe-area-inset-left));
+  }
+  .find-shell .topbar,
+  .find-shell .mission-bar { display: none; }
+  .find-shell .play-grid { grid-row: 1; grid-template-columns: minmax(225px, 34fr) minmax(0, 66fr); gap: 6px; height: 100%; }
+  .clue-panel,
+  .choices-panel { height: 100%; border-radius: 7px; }
+  .clue-panel { display: grid; grid-template-rows: 34px minmax(0, 1fr); }
+  .clue-panel > header,
+  .choices-panel > header { min-height: 0; height: 34px; padding: 3px 7px; }
+  .clue-panel h2,
+  .choices-panel h2 { font-size: 12px; }
+  .clue-panel .progress-box { margin-left: auto; font-size: 9px; }
+  .clue-panel .progress-box button { display: none; }
+  .choices-panel > header p { max-width: 74%; font-size: 9px; line-height: 1.15; }
+  .brand-watermark { top: 39px; opacity: .18; }
+  .brand-watermark span { font-size: 11px; }
+  .brand-watermark strong { font-size: 8px; }
+  .brand-watermark small { font-size: 6px; }
+  .clue-stage { height: auto; padding: 6px; gap: 5px; grid-template-rows: auto minmax(0, 1fr); }
+  .layer-clue { padding: 5px 7px; border-radius: 6px; }
+  .layer-clue h3 { display: none; }
+  .layer-list { grid-template-columns: repeat(4, 1fr); gap: 3px; }
+  .layer-row { display: grid; grid-template-columns: 21px 1fr; gap: 3px; font-size: 8px; line-height: 1.1; }
+  .layer-row span:last-of-type { display: none; }
+  .layer-row b { display: block; color: #6b4326; font-size: 10px; text-align: center; }
+  .layer-chip { width: 21px; height: 19px; font-size: 8px; border-radius: 4px; }
+  .view-clues { gap: 5px; }
+  .view-card { gap: 3px; padding: 4px; border-radius: 6px; }
+  .view-card strong { font-size: 8px; }
+  .view-grid { grid-template-columns: repeat(var(--cols), minmax(12px, 23px)); grid-template-rows: repeat(var(--rows), minmax(12px, 23px)); gap: 1px; padding: 3px; border-width: 1px; }
+  .choices-panel { grid-template-rows: 34px minmax(0, 1fr) 36px; }
+  .choice-grid { gap: 5px; padding: 5px; }
+  .choice-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .shape-choice { border-width: 1px; border-radius: 6px; box-shadow: inset 0 1px 0 #fff, 0 2px 0 rgba(130,79,35,.16); }
+  .shape-choice svg { min-height: 0; height: 100%; }
+  .shape-choice .option-tag { top: 4px; left: 4px; width: 20px; height: 20px; font-size: 9px; }
+  .choice-actions { grid-row: 3; gap: 5px; padding: 0 5px 4px; }
+  .choice-actions button { min-height: 0; height: 31px; border-radius: 5px; font-size: 11px; }
+  .find-shell .docssam { left: auto; right: calc(108px + env(safe-area-inset-right)); bottom: 4px; }
+  .find-shell .cubi-sprite { width: 38px; height: 38px; opacity: .92; }
+  .find-shell .speech-bubble { display: none; }
+  .find-shell .level-list { grid-template-columns: repeat(3, 1fr); }
+  .find-shell .level-list button { min-height: 72px; }
+  .find-shell .action-bar #reset { grid-column: span 1; }
+}
+
+@media (orientation: landscape) and (max-height: 390px) {
+  .layer-row span:last-of-type { display: none; }
+  .clue-stage { padding: 4px; gap: 4px; }
+  .choices-panel { grid-template-rows: 31px minmax(0, 1fr) 32px; }
+  .clue-panel { grid-template-rows: 31px minmax(0, 1fr); }
+  .clue-panel > header,
+  .choices-panel > header { height: 31px; }
+  .choice-actions button { height: 28px; }
+}

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">색 블록을 여러 방향에서 본 모습 유사문제 1</title>
+  <desc id="desc">빨강 두 개, 노랑, 파랑, 보라 블록으로 된 한 층 입체와 다섯 보기입니다.</desc>
+  <defs><filter id="s"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".14"/></filter></defs>
+  <rect width="760" height="430" rx="24" fill="#fff"/>
+  <text x="380" y="40" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#20272b">여러 방향에서 볼 때 나타날 수 없는 모습을 고르세요</text>
+  <g transform="translate(322 88)" filter="url(#s)" stroke="#394249" stroke-width="1.5">
+    <g transform="translate(-44 24)" data-color="red"><path d="M0 24L44 0 88 24 44 48Z" fill="#ff8b82"/><path d="M0 24L44 48V92L0 68Z" fill="#d74f49"/><path d="M88 24L44 48V92L88 68Z" fill="#b93e39"/></g>
+    <g transform="translate(0 48)" data-color="blue"><path d="M0 24L44 0 88 24 44 48Z" fill="#75b7ec"/><path d="M0 24L44 48V92L0 68Z" fill="#3f8fcc"/><path d="M88 24L44 48V92L88 68Z" fill="#2877b4"/></g>
+    <g transform="translate(44 72)" data-color="purple"><path d="M0 24L44 0 88 24 44 48Z" fill="#b69be1"/><path d="M0 24L44 48V92L0 68Z" fill="#8466bd"/><path d="M88 24L44 48V92L88 68Z" fill="#6749a2"/></g>
+    <g transform="translate(0 0)" data-color="red"><path d="M0 24L44 0 88 24 44 48Z" fill="#ff8b82"/><path d="M0 24L44 48V92L0 68Z" fill="#d74f49"/><path d="M88 24L44 48V92L88 68Z" fill="#b93e39"/></g>
+    <g transform="translate(44 24)" data-color="yellow"><path d="M0 24L44 0 88 24 44 48Z" fill="#ffe37e"/><path d="M0 24L44 48V92L0 68Z" fill="#e4b835"/><path d="M88 24L44 48V92L88 68Z" fill="#c7961f"/></g>
+  </g>
+  <g transform="translate(70 285)" font-family="Arial,sans-serif" font-size="17" font-weight="900" fill="#253039">
+    <g transform="translate(0 0)"><text x="0" y="28">1</text><g transform="translate(24 5)" stroke="#444"><rect width="36" height="36" fill="#e4b835"/><rect x="36" width="36" height="36" fill="#3f8fcc"/><rect x="72" width="36" height="36" fill="#6749a2"/></g></g>
+    <g transform="translate(150 0)"><text x="0" y="28">2</text><g transform="translate(24 5)" stroke="#444"><rect width="36" height="36" fill="#6749a2"/><rect x="36" width="36" height="36" fill="#d74f49"/></g></g>
+    <g transform="translate(270 0)"><text x="0" y="28">3</text><g transform="translate(24 5) scale(.78)" stroke="#444"><rect width="36" height="36" fill="#d74f49"/><rect x="36" width="36" height="36" fill="#e4b835"/><rect x="72" width="36" height="36" fill="#e4b835"/><rect x="108" width="36" height="36" fill="#3f8fcc"/><rect x="144" width="36" height="36" fill="#6749a2"/></g></g>
+    <g transform="translate(430 0)"><text x="0" y="28">4</text><g transform="translate(24 5) scale(.86)" stroke="#444"><rect width="36" height="36" fill="#d74f49"/><rect x="36" width="36" height="36" fill="#6749a2"/><rect x="72" width="36" height="36" fill="#e4b835"/><rect x="108" width="36" height="36" fill="#3f8fcc"/></g></g>
+    <g transform="translate(580 0)"><text x="0" y="28">5</text><g transform="translate(24 5) scale(.8)" stroke="#444"><rect width="36" height="36" fill="#d74f49"/><rect x="36" width="36" height="36" fill="#e4b835"/></g></g>
+  </g>
+  <rect x="205" y="375" width="350" height="28" rx="14" fill="#f0eeeb"/><text x="380" y="395" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#4d555a">블록을 돌릴 수는 있지만 거울처럼 뒤집을 수는 없습니다.</text>
+</svg>

@@ -1,0 +1,226 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q03",
+  "typeId": 3,
+  "title": "흑백이 교차로 쌓인 쌓기나무에서 색별 개수 구하기",
+  "problemType": "TYPE-01",
+  "subType": "stacking_checker_color",
+  "answerType": "color_count_pair",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q03.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 3,
+    "originalQuestionId": "q03_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "stacking_checker_color",
+      "coordinateSystem": {
+        "rowOrder": "front_to_back",
+        "columnOrder": "left_to_right",
+        "heightAxis": "bottom_to_top",
+        "unit": "cube"
+      },
+      "heightMap": {
+        "rowOrder": "front_to_back",
+        "rows": [
+          {
+            "y": 0,
+            "heights": [4, 4, 4, 1]
+          },
+          {
+            "y": 1,
+            "heights": [4, 3, 2, 0]
+          },
+          {
+            "y": 2,
+            "heights": [4, 2, 0, 0]
+          },
+          {
+            "y": 3,
+            "heights": [1, 0, 0, 0]
+          }
+        ]
+      },
+      "topFaceColors": {
+        "rowOrder": "front_to_back",
+        "rows": [
+          {
+            "y": 0,
+            "colors": ["black", "white", "black", "black"]
+          },
+          {
+            "y": 1,
+            "colors": ["white", "white", "white", null]
+          },
+          {
+            "y": 2,
+            "colors": ["black", "white", null, null]
+          },
+          {
+            "y": 3,
+            "colors": ["black", null, null, null]
+          }
+        ]
+      },
+      "colorRule": {
+        "palette": ["black", "white"],
+        "anchor": {
+          "grid": { "x": 0, "y": 0, "z": 1 },
+          "color": "white"
+        },
+        "parityFormula": "color(x,y,z) = white when (x+y+z) is odd, black when (x+y+z) is even",
+        "adjacencyRule": "shared-face adjacent cubes always alternate colors",
+        "topFaceColorDerivedFromHeightMap": true
+      },
+      "stackRule": {
+        "representation": "height_map",
+        "allowedHeights": [0, 1, 2, 3, 4],
+        "gravityRule": "각 기둥은 반드시 1층부터 연속으로 쌓인다.",
+        "forbidden": [
+          "floating_block",
+          "gap_inside_vertical_stack",
+          "same_color_shared_face"
+        ]
+      },
+      "derivedCounts": {
+        "totalBlockCount": 29,
+        "blackCount": 15,
+        "whiteCount": 14,
+        "askedColors": ["white", "black"]
+      },
+      "countingModel": {
+        "method": "checkerboard_parity_count",
+        "steps": [
+          {
+            "label": "전체 블록 수",
+            "value": 29
+          },
+          {
+            "label": "색 교차 규칙 적용 후 검은색 개수",
+            "value": 15
+          },
+          {
+            "label": "색 교차 규칙 적용 후 흰색 개수",
+            "value": 14
+          }
+        ]
+      },
+      "generationTemplate": {
+        "baseMode": {
+          "maxContainer": {
+            "width": 4,
+            "depth": 4,
+            "height": 4
+          },
+          "changeable": [
+            "heightMap",
+            "askedColor"
+          ],
+          "derivedAutomatically": [
+            "topFaceColors",
+            "blackCount",
+            "whiteCount"
+          ]
+        },
+        "easyMode": {
+          "maxContainer": {
+            "width": 3,
+            "depth": 3,
+            "height": 3
+          },
+          "allowedHeights": [0, 1, 2, 3]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "기둥 위치와 높이",
+          "문제에서 묻는 색",
+          "기본형 및 낮은 난이도 내의 상자 크기"
+        ],
+        "mustPreserve": [
+          "흑백 교차 규칙",
+          "특정 색 쌓기나무 개수 구하기 구조",
+          "높이맵 기반 표현",
+          "윗면 색이 높이맵과 자동으로 일치하는 구조",
+          "모든 기둥이 바닥부터 연속으로 쌓이는 규칙"
+        ],
+        "forbiddenChanges": [
+          "공중에 떠 있는 쌓기나무",
+          "한 기둥의 중간층이 비어 있는 구조",
+          "같은 색 면끼리 맞닿는 구조",
+          "높이맵과 윗면 색이 서로 맞지 않는 구조",
+          "검은색 또는 흰색 개수가 하나로 결정되지 않는 구조",
+          "원본과 다른 유형으로 바뀌는 변형"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg",
+        "svgRequired": true,
+        "renderer": "checker_stacking_blocks",
+        "showTopFaceColors": true,
+        "showHeightMapBasis": true
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "color_count_pair",
+    "expectedAnswer": {
+      "white": 14,
+      "black": 15
+    },
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "checkerboard_parity_count",
+      "checks": [
+        "heightMap 합계가 29인지 확인",
+        "topFaceColors가 parityFormula와 일치하는지 확인",
+        "blackCount + whiteCount = totalBlockCount 인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q03 경로 존재 확인",
+      "hf_data.json typeId 3의 answer와 color_count_pair 구조가 일치하는지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 stacking_checker_color인지 확인",
+      "heightMap 합계가 29인지 확인",
+      "topFaceColors가 주어진 원본 구조와 일치하는지 확인",
+      "blackCount가 15인지 확인",
+      "whiteCount가 14인지 확인",
+      "same_color_shared_face 위반이 없는지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

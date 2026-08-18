@@ -392,6 +392,10 @@ Cause→Effect, branch-map 특수문항도 B/C/D 문제지와 답안지에서 �
 미리보기 DOM과 인쇄물에서 함께 빠져야 한다. 자동 추천 버튼도 미입력 답안이 있으면
 비활성화하고, 선택될 레벨·단원·전략을 버튼 아래에 먼저 설명한다.
 
+CARS 채점·분석지의 판정 규칙, 처방 데이터 계약, 추천 문항 연결, 강조 표시, A4 검증은
+`skills/cars-analysis-report/SKILL.md`를 기준으로 작업한다. 상세 계약과 검증표는 그 스킬의
+`references/architecture.md`, `references/qa.md`에 있으며, 여기에는 중복해 복사하지 않는다.
+
 ---
 
 ## 10. 새 책을 붙일 때 체크리스트

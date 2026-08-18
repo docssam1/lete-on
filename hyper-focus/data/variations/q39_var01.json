@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q39",
+  "variationId": "q39_var01",
+  "subType": "logic_matrix",
+  "status": "draft",
+  "source": { "problemImage": "./assets/problems/q39_var01.png" },
+  "contentBinding": { "canonicalSource": "./canonical/q39.json", "hfDataTypeId": 39 },
+  "machineReadable": { "payloadType": "logic_matrix", "categoryCount": 3, "expectedAnswer": 2 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 2 }
+}

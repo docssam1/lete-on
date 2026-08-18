@@ -10,6 +10,19 @@
    a height-build grid the child taps to raise cube stacks inside the case. A
    build is accepted when its own three views match all three cards.
    ========================================================================= */
+/* The shell base (imported from fill-box) turns .answer-panel into a 4-row
+   grid whose row tracks are shaped for the number-pad games (header row,
+   board row, total row, pad row). Crystal Cubes' panel only ever has two
+   children — the header and .crystal-stage — so two of those tracks (a
+   64px/40px row and a minmax(140px,.72fr)/minmax(82px,.78fr) row) sit
+   completely empty while still claiming space, capping .crystal-stage well
+   short of the panel's real height. That squeeze is not limited to compact
+   landscape phones: at 1440x900 the same empty rows already push level 2/4's
+   content (cards + build grid + count row + actions) a few dozen pixels past
+   the fixed row2 height, forcing .crystal-stage to scroll. So replace the
+   grid with a plain column unconditionally — not only inside a media query —
+   letting .crystal-stage take the panel's whole remaining height everywhere. */
+.crystal-shell .crystal-answer { display: flex; flex-direction: column; min-height: 0; }
 .crystal-shell .crystal-answer > header {
   display: flex;
   align-items: center;
@@ -35,6 +48,7 @@
   gap: 10px;
 }
 .card-block { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.card-block[hidden] { display: none !important; }
 .view-label { font-weight: 800; font-size: clamp(10px, 1.1vw, 12px); color: #5b6a74; text-align: center; }
 
 /* Read-only view cards. */
@@ -96,6 +110,27 @@
 .build-cell.right { outline: 3px solid #35a13f; outline-offset: -1px; }
 .build-cell:disabled { cursor: default; }
 
+/* Live cube total, shown only on the level-5 가장 많이 / 가장 적게 problems.
+   One compact line directly under the build grid so the number the child is
+   trying to push up or down sits next to the taps that change it — and so the
+   panel gains no height at all on levels 2-4, where it stays [hidden].
+   Kept deliberately tiny (tight line-height, no vertical padding): .crystal-stage
+   is an overflow:auto column that already has to scroll on short landscape
+   phones, so every pixel this row adds is a pixel of extra scrolling. */
+.build-count {
+  margin: 2px auto 0;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #fff6e2;
+  border: 1px solid #e0cba4;
+  color: #7a4f1c;
+  font-weight: 900;
+  font-size: clamp(10px, 1.2vw, 12px);
+  line-height: 1.35;
+  text-align: center;
+}
+.build-count[hidden] { display: none !important; }
+
 .crystal-actions { display: grid; grid-template-columns: 1fr 1.4fr; gap: 9px; padding: 6px 4px 0; margin-top: 4px; }
 .crystal-actions button {
   min-height: 46px;
@@ -124,17 +159,64 @@
 }
 .crystal-shell .xray-button.wide { min-height: 34px; padding: 6px 16px; }
 
+/* Quiet "other shapes were possible too" note shown next to the success burst
+   (never inside #success itself — that element's confetti/rays layers rely on
+   a tight z-index stack that a fifth sibling would fight for room in). */
+.success-note {
+  position: fixed;
+  left: 50%;
+  bottom: 9%;
+  transform: translateX(-50%);
+  z-index: 45;
+  max-width: min(86vw, 420px);
+  background: rgba(29, 46, 27, .84);
+  color: #fff6d8;
+  font-weight: 800;
+  font-size: clamp(13px, 1.9vw, 17px);
+  padding: 8px 18px;
+  border-radius: 999px;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+.success-note.show { opacity: 1; }
+
 /* Roomier level picker: 4 levels in one row on wide screens. */
 .crystal-shell .level-list { grid-template-columns: repeat(4, 1fr); }
 @media (max-width: 720px) { .crystal-shell .level-list { grid-template-columns: repeat(2, 1fr); } }
 
-/* Tight landscape phones: shrink cards and the build grid so everything fits. */
+/* Tight landscape phones: shrink cards, header chrome and the build grid so
+   everything — including the build grid, the live count row (level 5's
+   most/fewest problems) and the check/clear controls — fits above the fold
+   with no inner scrolling. Priority order per the "shrink cards first" rule:
+   header/paddings/gaps, then the read-only view cards, and only the build
+   grid itself as a last resort (it stays well above the 34px finger-size
+   floor throughout). */
 @media (orientation: landscape) and (max-height: 560px) {
-  .crystal-stage { padding: 5px 8px 4px; gap: 5px; }
-  .cards-row { gap: 7px; }
-  .view-label { font-size: 9px; }
-  .card-cell { width: 15px; height: 15px; border-radius: 3px; }
-  .build-grid { width: min(100%, 200px); gap: 4px; padding: 4px; }
-  .build-cell { font-size: 14px; border-radius: 6px; }
-  .crystal-actions button { min-height: 32px; }
+  /* The header's h2 is already display:none in the shared shell (only the
+     옆 toggle button renders), so the inherited 48px header height is mostly
+     empty room; shrinking it here — scoped to crystal-cubes only — hands
+     that room straight to .crystal-stage. */
+  .crystal-shell .crystal-answer > header { height: 32px; padding: 1px 8px; }
+  .crystal-shell .xray-button.wide { min-height: 26px; padding: 3px 10px; font-size: 12px; }
+
+  .crystal-stage { padding: 2px 5px 1px; gap: 2px; }
+  .cards-title { font-size: 9px; line-height: 1.05; }
+  .cards-row { gap: 5px; }
+  .view-label { font-size: 7px; line-height: 1; }
+  .view-grid.card { padding: 3px; gap: 1px; }
+  .card-cell { width: 10px; height: 10px; border-radius: 2px; }
+  /* The build grid itself only shrinks as a last resort, after the header,
+     paddings/gaps and read-only cards above have already given up all the
+     room they can — and even at this size a cell stays well clear of the
+     34px finger-size floor (measured ~40px on the tallest, most-columns
+     level-4 board, ~54px on level 2's 3x3 board; unchanged between the
+     844x390 and 740x360 reference sizes, since this width is a fixed px
+     value, not viewport-relative). */
+  .build-grid { width: min(100%, 176px); gap: 3px; padding: 3px; }
+  .build-cell { font-size: 13px; border-radius: 5px; }
+  .build-count { font-size: 8px; padding: 0 7px; margin-top: 0; line-height: 1.1; }
+  .crystal-actions { gap: 5px; padding: 2px 4px 0; margin-top: 1px; }
+  .crystal-actions button { min-height: 26px; }
 }

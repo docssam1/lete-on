@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">점판에서 정사각형 모두 세기 유사문제 1</title><desc id="desc">가로 세 점, 세로 세 점으로 이루어진 정사각형 점판입니다.</desc>
+  <rect width="760" height="430" rx="24" fill="#fff"/><text x="380" y="43" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#20272b">점 4개를 꼭짓점으로 하는 정사각형을 모두 찾아보세요</text><text x="380" y="73" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#59636a">크기가 다르거나 기울어진 정사각형도 셉니다.</text>
+  <rect x="240" y="105" width="280" height="280" fill="#fbfcfc" stroke="#c5cccf" stroke-width="2"/>
+  <g fill="#3e4a50" stroke="#fff" stroke-width="2"><circle cx="280" cy="145" r="8"/><circle cx="380" cy="145" r="8"/><circle cx="480" cy="145" r="8"/><circle cx="280" cy="245" r="8"/><circle cx="380" cy="245" r="8"/><circle cx="480" cy="245" r="8"/><circle cx="280" cy="345" r="8"/><circle cx="380" cy="345" r="8"/><circle cx="480" cy="345" r="8"/></g>
+  <rect x="205" y="395" width="350" height="26" rx="13" fill="#f0eeeb"/><text x="380" y="414" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#4d555a">작은 것 → 큰 것 → 기울어진 것 순서로 찾아보세요.</text>
+</svg>

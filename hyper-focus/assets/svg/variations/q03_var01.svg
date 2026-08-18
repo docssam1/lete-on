@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">흑백이 교차로 쌓인 쌓기나무 유사문제 1</title>
+  <desc id="desc">같은 색의 면이 맞닿지 않도록 흰색과 검은색 쌓기나무 16개가 아래부터 빈틈없이 쌓여 있습니다.</desc>
+  <defs>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="145%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#333333" flood-opacity="0.12"/>
+    </filter>
+    <g id="cube-white" stroke="#555555" stroke-width="1.35" stroke-linejoin="round">
+      <polygon points="0,-18 32,0 0,18 -32,0" fill="#ffffff"/>
+      <polygon points="-32,0 0,18 0,54 -32,36" fill="#f4f4f4"/>
+      <polygon points="32,0 0,18 0,54 32,36" fill="#e5e5e5"/>
+    </g>
+    <g id="cube-black" stroke="#555555" stroke-width="1.35" stroke-linejoin="round">
+      <polygon points="0,-18 32,0 0,18 -32,0" fill="#b9b9b9"/>
+      <polygon points="-32,0 0,18 0,54 -32,36" fill="#a6a6a6"/>
+      <polygon points="32,0 0,18 0,54 32,36" fill="#8f8f8f"/>
+    </g>
+  </defs>
+
+  <rect width="760" height="430" rx="24" fill="#ffffff"/>
+  <text x="380" y="43" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="24" font-weight="800" fill="#1a1a2e">같은 색끼리 만나지 않게 쌓았어요</text>
+  <text x="380" y="73" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="16" font-weight="700" fill="#4f5965">흰색과 검은색 쌓기나무는 각각 몇 개일까요?</text>
+
+  <rect x="84" y="96" width="592" height="284" rx="20" fill="#fafafa" stroke="#dedede" stroke-width="2" filter="url(#shadow)"/>
+  <g id="q03-checker-cubes">
+      <use href="#cube-white" transform="translate(340 240)"/>
+      <use href="#cube-black" transform="translate(340 204)"/>
+      <use href="#cube-white" transform="translate(340 168)"/>
+      <use href="#cube-black" transform="translate(308 258)"/>
+      <use href="#cube-black" transform="translate(372 258)"/>
+      <use href="#cube-white" transform="translate(308 222)"/>
+      <use href="#cube-white" transform="translate(372 222)"/>
+      <use href="#cube-black" transform="translate(308 186)"/>
+      <use href="#cube-black" transform="translate(372 186)"/>
+      <use href="#cube-white" transform="translate(276 276)"/>
+      <use href="#cube-white" transform="translate(340 276)"/>
+      <use href="#cube-white" transform="translate(404 276)"/>
+      <use href="#cube-black" transform="translate(340 240)"/>
+      <use href="#cube-black" transform="translate(404 240)"/>
+      <use href="#cube-black" transform="translate(308 294)"/>
+      <use href="#cube-black" transform="translate(372 294)"/>
+  </g>
+
+  <g id="q03-color-legend" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="800" fill="#343434">
+    <rect x="548" y="128" width="26" height="26" rx="4" fill="#ffffff" stroke="#555555" stroke-width="1.4"/>
+    <text x="586" y="147">흰색</text>
+    <rect x="548" y="168" width="26" height="26" rx="4" fill="#a6a6a6" stroke="#555555" stroke-width="1.4"/>
+    <text x="586" y="187">검은색</text>
+  </g>
+
+  <rect x="207" y="394" width="346" height="26" rx="13" fill="#eeeeee"/>
+  <text x="380" y="412" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="700" fill="#444444">한 기둥씩 아래에서 위로 색을 번갈아 살펴보세요.</text>
+</svg>

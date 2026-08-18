@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GFIELD 쌓기나무 학습지 생성기</title>
+    <link rel="stylesheet" href="./styles.css?v=ws-one-1" />
+  </head>
+  <body>
+    <nav class="subject-switch" aria-label="학습지 영역">
+      <a class="subject-tab active" href="./">쌓기나무 학습지</a>
+      <a class="subject-tab" href="./paper-fold/">색종이 접기 학습지</a>
+    </nav>
+    <div class="app-shell">
+      <aside class="control-panel">
+        <h1>GFIELD<br /><span>쌓기나무 학습지</span></h1>
+
+        <section class="control-group">
+          <h2>유형</h2>
+          <div class="type-grid" id="typeGrid"><!-- checkboxes injected by app.js --></div>
+        </section>
+
+        <section class="control-group">
+          <h2>단계</h2>
+          <label class="field-label" for="levelSelect">단계로 고르기</label>
+          <select id="levelSelect"><!-- options injected by app.js --></select>
+          <label class="field-label" for="ageSelect">나이로 고르기</label>
+          <select id="ageSelect"><!-- options injected by app.js --></select>
+          <p class="level-note" id="levelNote" hidden></p>
+        </section>
+
+        <section class="control-group">
+          <h2>난이도</h2>
+          <div class="intensity-row" id="intensityRow"><!-- buttons injected by app.js --></div>
+        </section>
+
+        <section class="control-group">
+          <h2>문항 수</h2>
+          <select id="countSelect">
+            <option value="6">6문항</option>
+            <option value="9" selected>9문항</option>
+            <option value="12">12문항</option>
+            <option value="15">15문항</option>
+            <option value="20">20문항</option>
+            <option value="30">30문항</option>
+            <option value="50">50문항</option>
+          </select>
+        </section>
+
+        <section class="control-group">
+          <!-- 문제 배열 — 같은 문제 묶음을 어떤 순서로 늘어놓을지. 난이도별
+               묶기는 한 장 안에서 하→중→상으로 올라가는 별개 모드라, 고르면
+               위의 난이도 버튼이 비활성이 된다(app.js syncArrangeState). -->
+          <h2>문제 배열</h2>
+          <select id="arrangeSelect">
+            <option value="">골고루 섞기</option>
+            <option value="type">유형별 묶기</option>
+            <option value="diff">난이도별 묶기 (하→중→상)</option>
+          </select>
+        </section>
+
+        <section class="control-group">
+          <h2>학생 이름</h2>
+          <input type="text" id="studentName" placeholder="(선택) 이름을 입력하세요" />
+        </section>
+
+        <section class="control-group">
+          <!-- 표지는 기본 꺼짐: 한 유형만 빠르게 뽑아 쓰는 평소 사용에서 표지가
+               종이 한 장을 더 먹는다. 여러 장을 묶어 한 권으로 만들 때만 켠다. -->
+          <label class="check-line"><input type="checkbox" id="includeCover" /> 표지 포함</label>
+          <label class="check-line"><input type="checkbox" id="includeAnswers" checked /> 정답지 포함</label>
+        </section>
+
+        <section class="control-group">
+          <h2>학습지 코드</h2>
+          <input type="text" id="codeInput" class="code-input" placeholder="#GW-..." />
+          <button type="button" id="loadCodeBtn" class="btn btn-secondary">코드로 불러오기</button>
+        </section>
+
+        <section class="control-group actions">
+          <!-- 빼기 초기화 — 각 문제 카드의 "빼기" 체크박스를 한꺼번에 푼다.
+               빼기는 이 화면에서만 사는 상태라 코드에도 인쇄물에도 남지 않는다. -->
+          <button type="button" id="resetOmitBtn" class="btn btn-secondary" hidden>빼기 초기화</button>
+          <button type="button" id="newSeedBtn" class="btn btn-primary">새로 만들기</button>
+          <button type="button" id="printBtn" class="btn btn-print">🖨 인쇄</button>
+        </section>
+      </aside>
+
+      <main class="preview-panel">
+        <!-- Type preview: sits between the controls and the full worksheet so a
+             teacher can see what ONE type looks like at the chosen difficulty
+             before committing to (and printing) the whole sheet. Never printed. -->
+        <section class="ws-preview" id="previewPanel">
+          <div class="ws-preview-head">
+            <h2>유형 미리보기</h2>
+            <div class="ws-preview-actions">
+              <label class="check-line"><input type="checkbox" id="previewShowAnswer" checked /> 정답 보기</label>
+              <button type="button" id="previewRerollBtn" class="btn btn-secondary btn-inline">다른 문제 보기</button>
+            </div>
+          </div>
+          <div class="ws-preview-tabs" id="previewTabs"><!-- chips injected by app.js --></div>
+          <div class="ws-preview-body" id="previewBody"><!-- one sample problem injected by app.js --></div>
+        </section>
+
+        <div id="sheetRoot"><!-- worksheet + answer pages injected by app.js --></div>
+      </main>
+    </div>
+
+    <script src="./generators.js?v=ws-one-1"></script>
+    <script src="./render.js?v=ws-one-1"></script>
+    <!-- 문제 카드 마크업은 랩의 미리보기와 같은 원본을 쓴다 (card.js 머리말 참고). -->
+    <script src="./card.js?v=ws-one-1"></script>
+    <script src="./app.js?v=ws-one-1"></script>
+  </body>
+</html>
