@@ -1,47 +1,53 @@
-, 세로로 한 번 접는다. 교재는 항상 가로 접기가 먼저다
-   (중간 조각이 넓은 직사각형). 접는 방향(위로/아래로, 왼쪽으로/오른쪽으로)에 따라
-   접힌 묶음이 원본의 어느 사분면에 놓이는지가 정해지고, 색칠 칸이 가리키는 원본
-   칸도 그에 따라 달라진다. 잘리는 칸은 색칠 칸의 거울 궤도 {r,3-r} x {c,3-c} 네 개. */
-
-function genNumber(askCut, preset, difficulty='mid'){
+/* ===== 유형 6: 수가 쓰인 색종이 — 대각선 한 번 접기 (실전 1회 18번·2회 15번 유형) =====
+   4x4 숫자판을 대각선으로 한 번 접고, 접힌 삼각형 위에 색칠한 부분을 잘라낸다.
+   대각선에서 떨어진 온전한 칸은 거울짝 {(r,c),(c,r)}이 함께 잘리고,
+   대각선 위에 걸친 칸은 반쪽 두 겹이 곧 그 칸의 양쪽 반이라 그 칸 하나만 잘린다. */
+function genDiagNumber(askCut,difficulty='mid'){
   const N=4;
   const numberMax=difficulty==='easy'?4:difficulty==='hard'?9:6;
-  const grid = preset ? preset.grid.map(row=>[...row])
-                      : Array.from({length:N},()=>Array.from({length:N},()=>R(1,numberMax)));
-  const hDir = preset ? preset.hDir : pick(['up','down']);
-  const vDir = preset ? preset.vDir : pick(['left','right']);
-  const packetRow = hDir==='up' ? 0 : 2;
-  const packetCol = vDir==='left' ? 0 : 2;
+  const grid=Array.from({length:N},()=>Array.from({length:N},()=>R(1,numberMax)));
+  const keepLower=Math.random()<0.5;
+  const inKeep=(r,c)=> keepLower ? r>c : c>r;
 
-  const cutCount = preset ? 1 : difficulty==='easy'?1:difficulty==='hard'?2:R(1,2);
-  const cells=[];
-  if(preset){ cells.push({...preset.cell}); }
-  else while(cells.length<cutCount){
-    const c={r:R(0,1), c:R(0,1)};
-    if(!cells.some(o=>o.r===c.r&&o.c===c.c)) cells.push(c);
+  const units=[];
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+    if(inKeep(r,c)) units.push({r,c,half:false});
+    if(r===c) units.push({r,c,half:true});
   }
+  const key=(u)=>u.r+','+u.c;
+  const adj=(a,b)=>Math.abs(a.r-b.r)+Math.abs(a.c-b.c)===1;
+  const want=R(3,5);
+  const start=units[R(0,units.length-1)];
+  const region=[start];
+  let guard=0;
+  while(region.length<want && guard<200){
+    guard++;
+    const cand=units.filter(u=>!region.some(v=>key(v)===key(u)) && region.some(v=>adj(u,v)));
+    if(!cand.length) break;
+    region.push(cand[R(0,cand.length-1)]);
+  }
+  if(!region.some(u=>!u.half)) return genDiagNumber(askCut,difficulty);
 
   const removed=new Set();
-  for(const cell of cells){
-    const gr=packetRow+cell.r, gc=packetCol+cell.c;
-    for(const r of [gr, N-1-gr]) for(const c of [gc, N-1-gc]) removed.add(r*N+c);
+  for(const u of region){
+    removed.add(u.r*N+u.c);
+    if(!u.half) removed.add(u.c*N+u.r);
   }
-
   let total=0, cut=0;
   for(let r=0;r<N;r++) for(let c=0;c<N;c++){
     total+=grid[r][c];
     if(removed.has(r*N+c)) cut+=grid[r][c];
   }
   const remain=total-cut;
-  if(remain<=0) return genNumber(askCut,null,difficulty);
+  if(remain<=0 || cut<=0) return genDiagNumber(askCut,difficulty);
 
   return {
-    kind:'number', grid, hDir, vDir, packetRow, packetCol, cells, removed, total, cut, remain,
+    kind:'diag-number', grid, keepLower, region, removed, total, cut, remain,
     answer: askCut ? cut : remain,
-    text:[`다음과 같이 수가 쓰인 색종이를 접어서 색칠된 부분을 자른 후 펼쳤을 때,`,
-          askCut ? '잘려나간 수들의 합을 구하시오.' : '남아 있는 수들의 합을 구하시오.'],
-    info:`가로 ${hDir==='up'?'위로':'아래로'} → 세로 ${vDir==='left'?'왼쪽으로':'오른쪽으로'} · 색칠 ${cells.length}칸 · 잘린 칸 ${removed.size}개(합 ${cut}) · 전체 ${total} · 남은 합 ${remain}`,
+    text:['색종이를 한 번 접은 후 칠해진 부분을 잘라내었습니다.',
+          askCut ? '잘려나간 부분에 있는 수들의 합을 구하시오.' : '남아 있는 수들의 합을 구하시오.'],
+    info:`대각선 접기(${keepLower?'위→아래':'아래→위'}) · 색칠 ${region.length}단위 · 잘린 칸 ${removed.size}개(합 ${cut}) · 전체 ${total} · 남은 합 ${remain}`,
     src:''
   };
 }
-PLACEHOLDER_REMOVED
+NOTE_TRUNCATED_FOR_TESTING_2
