@@ -372,6 +372,26 @@ body.intro-active>*:not(#gfieldIntro){display:none!important}
 .wk-btns{display:flex;gap:6px;flex-shrink:0}
 .wk-diff-btn{padding:5px 12px;border:1px solid #ddd;border-radius:16px;background:#fff;cursor:pointer;font-size:.76rem;font-weight:500}
 .wk-diff-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.ws-sheet{background:#fff;border:1px solid #e5e5e5;border-radius:10px;padding:22px;margin-top:14px}
+.ws-head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--navy);padding-bottom:8px;margin-bottom:14px}
+.ws-brand{font-weight:800;color:var(--navy);font-size:1rem}
+.ws-meta{font-size:.8rem;color:#666}
+.ws-q{padding:12px 0;border-bottom:1px dashed #ddd}
+.ws-q-head{font-size:.88rem;font-weight:600;margin-bottom:8px;line-height:1.5}
+.q01-views{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.q01-views figure{margin:0;text-align:center}
+.q01-fig svg{width:150px;height:auto}
+.q01-views figcaption{font-size:.75rem;color:#666;margin-top:4px}
+.ws-ans-line{font-size:.85rem;margin-top:8px;color:#333}
+.ws-actions{display:flex;gap:8px;margin-top:12px}
+.ws-answers{margin-top:10px;background:#f7f9ff;border-radius:8px;padding:12px}
+.ws-a-row{font-size:.83rem;padding:4px 0}
+@media print{
+  body.worksheet-print-mode *{visibility:hidden}
+  body.worksheet-print-mode #worksheetSheet,body.worksheet-print-mode #worksheetSheet *{visibility:visible}
+  body.worksheet-print-mode #worksheetSheet{position:absolute;left:0;top:0;width:100%;border:none;border-radius:0;padding:10mm}
+  body.worksheet-print-mode .ws-q{page-break-inside:avoid}
+}
 </style>
 </head>
 <body>
@@ -688,17 +708,47 @@ function renderWeaknessPanel(wrongIds){
 }
 // SPARK Phase2 계약: q01 generator가 여기 연결된다.
 // generateQ01(difficulty,seed) → validateQ01 → renderQ01Problem → deriveQ01Answer → renderQ01Answer
+const GENERATORS={1:{gen:(d,s)=>window.HFQ01.generateQ01(d,s),problem:p=>window.HFQ01.renderQ01Problem(p),answer:p=>window.HFQ01.renderQ01Answer(p),title:'쌓기나무 앞·뒤에서 본 모양'}};
 function buildWorksheet({weaknessIds,difficultyByQuestion,countPerType}){
-  return {status:'not_ready',message:'문제 생성기 준비 중입니다. (q01 generator 연결 예정)',weaknessIds,difficultyByQuestion,countPerType};
+  const items=[];const pending=[];
+  weaknessIds.forEach(id=>{
+    const g=GENERATORS[id];
+    if(!g||!window.HFQ01){pending.push(id);return;}
+    const diff=difficultyByQuestion[id]||'same';
+    const baseSeed=Date.now()%100000+id*1000;
+    for(let i=0;i<countPerType;i++){
+      const p=g.gen(diff,baseSeed+i*7919);
+      items.push({typeId:id,title:g.title,difficulty:diff,payload:p,problemHtml:g.problem(p),answerText:g.answer(p)});
+    }
+  });
+  return {status:items.length?'ok':'not_ready',items,pending,countPerType};
 }
 function onBuildWorksheet(){
   const weaknessIds=selectedSet.size>0?Array.from(selectedSet):[];
   const area=document.getElementById('worksheet-area');
-  if(!weaknessIds.length){area.style.display='block';area.innerHTML='<p style="color:#888;padding:10px">먼저 틀린 문제를 체크해 주세요.</p>';return;}
-  const result=buildWorksheet({weaknessIds,difficultyByQuestion,countPerType:2});
   area.style.display='block';
-  area.innerHTML=`<p style="color:#555;padding:10px;background:#f7f7f7;border-radius:8px">${escapeHTML(result.message)}<br><span style="font-size:.8rem;color:#888">선택: ${weaknessIds.map(id=>`${String(id).padStart(2,'0')}(${difficultyByQuestion[id]})`).join(', ')} · 유형당 ${result.countPerType}문제 · A4 시험지 출력 예정</span></p>`;
+  if(!weaknessIds.length){area.innerHTML='<p style="color:#888;padding:10px">먼저 틀린 문제를 체크해 주세요.</p>';return;}
+  const result=buildWorksheet({weaknessIds,difficultyByQuestion,countPerType:2});
+  const name=document.getElementById('studentName')?document.getElementById('studentName').value.trim():'';
+  const today=new Date();const dstr=`${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
+  const diffLabel={easy:'쉽게',same:'같게',hard:'어렵게'};
+  let html='';
+  if(result.items.length){
+    html+=`<div id="worksheetSheet" class="ws-sheet"><div class="ws-head"><div class="ws-brand">G-FIELD 약점 보완 문제지</div><div class="ws-meta">${escapeHTML(name||'학생')} · ${dstr}</div></div>`;
+    result.items.forEach((it,i)=>{
+      html+=`<div class="ws-q"><div class="ws-q-head">${i+1}. [유형 ${String(it.typeId).padStart(2,'0')} · ${diffLabel[it.difficulty]}] 다음은 쌓기나무로 만든 모양을 앞과 뒤에서 본 모양입니다. 쌓기나무는 모두 몇 개입니까?</div>${it.problemHtml}<div class="ws-ans-line">답: __________</div></div>`;
+    });
+    html+=`</div><div class="ws-actions"><button class="sim-answer-toggle" onclick="printWorksheet()">문제지 인쇄</button><button class="sim-answer-toggle" onclick="toggleWsAnswers(this)">정답 및 풀이 보기 ▾</button></div>`;
+    html+=`<div id="wsAnswers" class="ws-answers" style="display:none">${result.items.map((it,i)=>`<div class="ws-a-row">${i+1}. ${escapeHTML(it.answerText)}</div>`).join('')}</div>`;
+  }
+  if(result.pending.length){
+    html+=`<p style="color:#888;font-size:.8rem;padding:8px">유형 ${result.pending.map(id=>String(id).padStart(2,'0')).join(', ')}은 생성기 준비 중입니다.</p>`;
+  }
+  area.innerHTML=html;
 }
+function toggleWsAnswers(btn){const box=document.getElementById('wsAnswers');const open=box.style.display==='none';box.style.display=open?'block':'none';btn.textContent=open?'정답 및 풀이 닫기 ▴':'정답 및 풀이 보기 ▾';}
+function printWorksheet(){document.body.classList.add('worksheet-print-mode');setTimeout(()=>window.print(),100);}
+window.addEventListener('afterprint',()=>{document.body.classList.remove('worksheet-print-mode')});
 async function renderSimilarUI(){if(!hfData){try{const res=await fetch('./data/hf_data.json');hfData=await res.json();}catch(e){document.getElementById('similar-list').innerHTML='<p style="color:red">데이터 로드 실패</p>';return;}}await renderSimilarList();}
 async function renderSimilarList(){
   const renderToken=++similarRenderToken;
@@ -849,5 +899,6 @@ html+=`<div class="diag-card trend-card"><h3>🗂 1~${historyIndex+1}회차 누�
   setTimeout(()=>window.showIntroPreview(),15200);
 })();
 </script>
+<script src="./generator/q01.js"></script>
 </body>
 </html>
