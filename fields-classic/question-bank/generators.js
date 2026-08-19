@@ -4319,7 +4319,214 @@ function triangleMaxEdgeSum({ difficulty = 2 }) {
   };
 }
 
+
+// ── main 갈래에서 이식: 파이널 2·3회 원본 전용 생성기 (2026-08-18) ──────────
+
+function symbolChainArithmetic({ difficulty = 2 }) {
+  const circle = difficulty === 1 ? randomInt(6, 9) : difficulty === 2 ? randomInt(12, 19) : randomInt(15, 19);
+  const offset = difficulty === 1 ? randomInt(1, 2) : difficulty === 2 ? randomInt(1, 4) : randomInt(3, 6);
+  const subtract = circle * 2 + offset;
+  const heart = circle * 3;
+  const club = heart + circle - subtract;
+  const diamond = club * 2 - circle;
+  const star = diamond + club - circle;
+  const triangle = star + diamond - circle;
+  const hard = difficulty === 3;
+  const rows = [
+    ["circle", "+", "circle", "+", "circle", "=", "heart"],
+    ["heart", "+", "circle", "-", subtract, "=", "club"],
+    ["club", "+", "club", "-", "circle", "=", "diamond"],
+    ["diamond", "+", "club", "-", "circle", "=", "star"]
+  ];
+  if (hard) rows.push(["star", "+", "diamond", "-", "circle", "=", "triangle"]);
+  const target = hard ? "triangle" : "star";
+  const answer = hard ? triangle : star;
+  const given = difficulty === 1 ? { circle, heart } : { circle };
+  const steps = [`○ = ${circle}`, `♥ = ${circle} + ${circle} + ${circle} = ${heart}`];
+  if (difficulty !== 1) steps.shift();
+  steps.push(`♣ = ${heart} + ${circle} - ${subtract} = ${club}`);
+  steps.push(`◆ = ${club} + ${club} - ${circle} = ${diamond}`);
+  steps.push(`★ = ${diamond} + ${club} - ${circle} = ${star}`);
+  if (hard) steps.push(`▲ = ${star} + ${diamond} - ${circle} = ${triangle}`);
+  return {
+    prompt: `${difficulty === 1 ? `○가 ${circle}, ♥가 ${heart}일 때` : `○가 ${circle}일 때`}, ${hard ? "▲는" : "★은"} 얼마입니까?`,
+    visual: { kind: "symbol-chain", rows, given, target },
+    answer: String(answer),
+    solution: steps.join(" → "),
+    meta: { circle, heart, club, diamond, star, triangle: hard ? triangle : null, subtract, target, result: answer }
+  };
+}
+
+function shapeMatrixThreeFeatures({ difficulty = 2 }) {
+  const shapes = shuffle(["circle", "square", "triangle"]);
+  const fills = shuffle(["hatch", "empty", "gray"]);
+  const outerShift = randomInt(0, 2);
+  const fillShift = randomInt(0, 2);
+  const targets = difficulty === 3 ? [[1, 1], [2, 2]] : [[2, 2]];
+  const isTarget = (row, column) => targets.some(([r, c]) => r === row && c === column);
+  const cells = [];
+  for (let row = 0; row < 3; row += 1) {
+    for (let column = 0; column < 3; column += 1) {
+      cells.push({
+        row,
+        column,
+        outer: shapes[(row + column + outerShift) % 3],
+        inner: shapes[(row + column + outerShift + 1) % 3],
+        fill: fills[(column - row + fillShift + 6) % 3],
+        missing: isTarget(row, column),
+        hintOuter: difficulty === 1 && isTarget(row, column)
+      });
+    }
+  }
+  const shapeName = { circle: "동그라미", square: "네모", triangle: "세모" };
+  const fillName = { hatch: "빗금 친", empty: "색칠하지 않은", gray: "회색으로 칠한" };
+  const answers = cells.filter((cell) => cell.missing).map((cell) => `큰 ${shapeName[cell.outer]} 안의 ${fillName[cell.fill]} ${shapeName[cell.inner]}`);
+  return {
+    prompt: difficulty === 3 ? "도형의 규칙을 찾아 두 빈칸에 알맞은 모양을 그리세요." : "도형의 규칙을 찾아 빈칸에 알맞은 모양을 그리세요.",
+    visual: { kind: "shape-matrix-three", cells },
+    answerVisual: { kind: "shape-matrix-three", cells: cells.map((cell) => ({ ...cell, missing: false, hintOuter: false })) },
+    answer: answers.join(" / "),
+    solution: `각 가로줄과 세로줄에서 바깥 도형, 안쪽 도형, 칠하기가 한 번씩 나타납니다. 따라서 ${answers.join("이고, ")}입니다.`,
+    meta: { cells, targets, answers }
+  };
+}
+
+function trianglePositionCycle({ difficulty = 2 }) {
+  const clockwise = randomInt(0, 1) === 0
+    ? ["top", "bottom-right", "bottom-left"]
+    : ["top", "bottom-left", "bottom-right"];
+  const start = randomInt(0, 2);
+  const outerCycle = [...clockwise.slice(start), ...clockwise.slice(0, start)];
+  const cycle = [...outerCycle, "center"];
+  const shown = difficulty === 1 ? 8 : difficulty === 2 ? 6 : 4;
+  const target = difficulty === 1 ? randomInt(9, 12) : difficulty === 2 ? randomInt(12, 20) : randomInt(25, 40);
+  const answerPosition = cycle[(target - 1) % cycle.length];
+  const positionName = { top: "위쪽", "bottom-left": "왼쪽 아래", "bottom-right": "오른쪽 아래", center: "가운데" };
+  return {
+    prompt: `규칙을 찾아 ${target}번째 모양을 완성하세요.`,
+    visual: { kind: "triangle-position-cycle", sequence: Array.from({ length: shown }, (_, index) => cycle[index % 4]), target },
+    answerVisual: { kind: "triangle-position-answer", position: answerPosition },
+    answer: `${positionName[answerPosition]} 삼각형`,
+    solution: `칠한 곳은 ${cycle.map((position) => positionName[position]).join(" → ")}의 네 자리로 반복됩니다. ${target}번째는 ${positionName[answerPosition]} 삼각형을 칠합니다.`,
+    meta: { cycle, shown, target, answerPosition }
+  };
+}
+
+function overlappingNumberBonds({ difficulty = 2 }) {
+  const partCount = difficulty === 3 ? 4 : 3;
+  const parts = Array.from({ length: partCount }, (_, index) => randomInt(index === 0 ? 1 : 2, difficulty === 1 ? 6 : 8));
+  const totals = parts.slice(0, -1).map((value, index) => value + parts[index + 1]);
+  const shownParts = parts.map((value, index) => {
+    if (difficulty === 3) return index === 0 ? String(value) : index === parts.length - 1 ? "star" : "blank";
+    return index < 2 ? String(value) : "star";
+  });
+  const steps = [];
+  let known = parts[0];
+  const startIndex = difficulty === 3 ? 0 : 1;
+  if (difficulty === 3) {
+    for (let index = 0; index < totals.length; index += 1) {
+      const next = totals[index] - known;
+      steps.push(`${totals[index]} - ${known} = ${next}`);
+      known = next;
+    }
+  } else {
+    steps.push(`${totals[startIndex]} - ${parts[startIndex]} = ${parts[startIndex + 1]}`);
+  }
+  const answer = parts.at(-1);
+  return {
+    prompt: "가르기·모으기에서 위의 수는 아래 두 수를 모은 수입니다. ☆에 알맞은 수를 구하세요.",
+    visual: { kind: "overlap-bonds", totals, shownParts, highlightShared: difficulty === 1 },
+    answer: String(answer),
+    solution: `${steps.join(" → ")}이므로 ☆은 ${answer}입니다.`,
+    meta: { parts, totals, result: answer }
+  };
+}
+
+function geometryWorksheetProblem(typeCode, difficulty) {
+  const worksheet = globalThis.GW_GEN;
+  if (!worksheet) return null;
+  // 워크시트 엔진의 난이도 축은 단계(L3·L4·L5)다. 예전에는 "easy"/"mid"/"hard"를
+  // 넘겼는데, normalizeLevel의 정규식(`^L?\d$`)에 걸리지 않아 셋 다 조용히 기본값
+  // L4로 접혔다 — 난이도 버튼이 아무 일도 안 하고 있었다. 엔진 주석이 밝힌
+  // "구 easy/mid/hard = L3/L4/L5"를 그대로 쓴다. 같음(2)은 L4라서 기존 검수 결과가
+  // 그대로 유지되고, 하·상만 실제로 갈린다.
+  const level = difficulty === 1 ? "L3" : difficulty === 3 ? "L5" : "L4";
+  const rng = worksheet.createRng(`QB:${typeCode}:${level}:${Math.random()}`);
+  return worksheet.make(typeCode, rng, level);
+}
+
+// 파이널 3회 4번은 "계단형 쌓기나무의 5단계 전체 개수"다. 워크시트 엔진의 SQ는 같은
+// 그림으로 세 가지를 물을 수 있어서(n단계 개수 / 몇 번째 모양인가 / 몇 개 더 필요한가)
+// 그냥 부르면 원본과 다른 질문이 나간다. 모양도 계단이 아닌 십자·사각뿔이 섞인다.
+// 그래서 원본과 같은 질문(nth)·같은 모양(계단)만 받고, 같음 난이도는 5단계로 고정한다.
+function cubeStepSequence({ difficulty = 2 }) {
+  let made = null;
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    // 삼각 계단은 워크시트 엔진에서 L4부터 나온다(L3 목록에 없다). 쉬움에서도 원본과
+    // 같은 모양을 내야 하므로 단계는 L4 이상으로 부르고, 쉬움은 4단계를 받아 낮춘다.
+    const candidate = geometryWorksheetProblem("TS", difficulty === 1 ? 2 : difficulty);
+    if (!candidate) return null;
+    const kind = candidate.figures && candidate.figures.patternKind;
+    if (candidate.answer.mode !== "nth") continue;
+    if (kind !== "triangular-stair") continue;
+    if (difficulty === 1 && candidate.answer.n !== 4) continue;
+    if (difficulty === 2 && candidate.answer.n !== 5) continue;
+    made = candidate;
+    break;
+  }
+  if (!made) return null;
+  return {
+    prompt: made.prompt,
+    visual: { kind: "geometry-worksheet", figures: made.figures },
+    answer: made.answerText,
+    solution: `${made.answer.stageTotals.map((total, index) => `${index + 1}단계 ${total}개`).join(" → ")}이므로 답은 ${made.answerText}입니다.`,
+    meta: { worksheetType: made.type, ...made.answer }
+  };
+}
+
+function cubeFillBoxWorksheet({ difficulty = 2 }) {
+  let made = null;
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const candidate = geometryWorksheetProblem("CU", difficulty);
+    if (!candidate) return null;
+    const sourceLikeActual = difficulty !== 2 || (candidate.answer.placed >= 6 && candidate.answer.placed <= 12);
+    if (sourceLikeActual) {
+      made = candidate;
+      break;
+    }
+  }
+  if (!made) return null;
+  return {
+    prompt: "다음과 같은 상자 안에 쌓기나무를 가득 채우려고 합니다. 몇 개의 쌓기나무가 더 필요합니까?",
+    visual: { kind: "geometry-worksheet", figures: made.figures },
+    answer: made.answerText,
+    solution: `상자를 가득 채우면 ${made.answer.total}개이고 지금 ${made.answer.placed}개가 있으므로 ${made.answer.total} - ${made.answer.placed} = ${made.answer.need}개가 더 필요합니다.`,
+    meta: { worksheetType: made.type, ...made.answer }
+  };
+}
+
+function cubeHiddenCountWalled({ difficulty = 2 }) {
+  const made = geometryWorksheetProblem("IH", difficulty);
+  if (!made) return null;
+  return {
+    prompt: made.prompt,
+    visual: { kind: "geometry-worksheet", figures: made.figures },
+    answer: made.answerText,
+    solution: `전체 ${made.answer.total}개 중 벽 앞에서 보이는 ${made.answer.visible}개를 빼면 ${made.answer.total} - ${made.answer.visible} = ${made.answer.hidden}개입니다.`,
+    meta: { worksheetType: made.type, ...made.answer }
+  };
+}
+
+
 export const GENERATORS = {
+  symbolChainArithmetic,
+  shapeMatrixThreeFeatures,
+  trianglePositionCycle,
+  overlappingNumberBonds,
+  cubeStepSequence,
+  cubeFillBoxWorksheet,
+  cubeHiddenCountWalled,
+
   triangleMaxEdgeSum,
   pairedSequences,
   setUnionCount,

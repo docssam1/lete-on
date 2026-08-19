@@ -1680,6 +1680,90 @@ function triangleEdgeSumMarkup(visual) {
   return `<div class="triangle-edge-sum">${cards}<svg class="tes-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="삼각형 여섯 자리에 수 놓기">${edges}${slots}</svg></div>`;
 }
 
+
+// ── main 갈래에서 이식: 파이널 2·3회 시각자료 (2026-08-18) ──────────────
+
+function symbolChainMarkup(visual) {
+  const symbols = { circle: "○", heart: "♥", club: "♣", diamond: "◆", star: "★", triangle: "▲" };
+  const token = (value) => symbols[value]
+    ? `<span class="chain-symbol ${value}">${symbols[value]}</span>`
+    : `<span class="chain-token">${value}</span>`;
+  const givens = Object.entries(visual.given).map(([key, value]) => `${token(key)}<b>=</b><strong>${value}</strong>`).join("");
+  return `<div class="symbol-chain"><div class="symbol-chain-given">${givens}</div><div class="symbol-chain-board">${visual.rows.map((row) => `<p>${row.map(token).join("")}</p>`).join("")}</div></div>`;
+}
+
+function matrixShapeSvg(shape, cx, cy, size, fill = "none", stroke = "#596a73", width = 2) {
+  if (shape === "circle") return `<circle cx="${cx}" cy="${cy}" r="${size / 2}" fill="${fill}" stroke="${stroke}" stroke-width="${width}"/>`;
+  if (shape === "square") return `<rect x="${cx - size / 2}" y="${cy - size / 2}" width="${size}" height="${size}" fill="${fill}" stroke="${stroke}" stroke-width="${width}"/>`;
+  const top = cy - size * 0.58;
+  const bottom = cy + size * 0.46;
+  return `<polygon points="${cx},${top} ${cx - size * 0.58},${bottom} ${cx + size * 0.58},${bottom}" fill="${fill}" stroke="${stroke}" stroke-width="${width}"/>`;
+}
+
+function shapeMatrixThreeMarkup(visual) {
+  const cellSize = 76;
+  const figures = visual.cells.map((cell) => {
+    const cx = cell.column * cellSize + cellSize / 2;
+    const cy = cell.row * cellSize + cellSize / 2;
+    if (cell.missing && !cell.hintOuter) return "";
+    if (cell.missing) return `${matrixShapeSvg(cell.outer, cx, cy, 47, "none", "#b6c3c9", 2)}<text x="${cx}" y="${cy + 5}" text-anchor="middle" font-size="19" font-weight="800" fill="#8da0aa">?</text>`;
+    const fill = cell.fill === "gray" ? "#b8bdc1" : cell.fill === "hatch" ? "url(#matrix-hatch)" : "#fff";
+    return `${matrixShapeSvg(cell.outer, cx, cy, 48, "#fff")}${matrixShapeSvg(cell.inner, cx, cy, 30, fill)}`;
+  }).join("");
+  const lines = Array.from({ length: 4 }, (_, index) => `<line x1="${index * cellSize}" y1="0" x2="${index * cellSize}" y2="${cellSize * 3}"/><line x1="0" y1="${index * cellSize}" x2="${cellSize * 3}" y2="${index * cellSize}"/>`).join("");
+  return `<svg class="shape-matrix-three" viewBox="0 0 ${cellSize * 3} ${cellSize * 3}" role="img" aria-label="도형 규칙 3 곱하기 3 표"><defs><pattern id="matrix-hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#71818a" stroke-width="2"/></pattern></defs><g class="matrix-grid">${lines}</g>${figures}</svg>`;
+}
+
+function triangleCycleSvg(position = null) {
+  const points = {
+    top: "50,5 27.5,45 72.5,45",
+    "bottom-left": "5,85 27.5,45 50,85",
+    "bottom-right": "95,85 72.5,45 50,85",
+    center: "27.5,45 72.5,45 50,85"
+  };
+  const fill = position ? `<polygon points="${points[position]}" fill="#8dd7ef"/>` : "";
+  return `<svg viewBox="0 0 100 90" role="img" aria-label="${position ? "한 칸이 칠해진" : "빈"} 삼각형">${fill}<path d="M50 5L5 85H95Z M27.5 45H72.5 M27.5 45L50 85 M72.5 45L50 85" fill="none" stroke="#65b6ce" stroke-width="2"/></svg>`;
+}
+
+function trianglePositionCycleMarkup(visual) {
+  const shown = visual.sequence.map((position, index) => `<figure>${triangleCycleSvg(position)}<figcaption>${index + 1}번째</figcaption></figure>`).join("");
+  return `<div class="triangle-cycle">${shown}<b aria-hidden="true">…</b><figure class="target">${triangleCycleSvg()}<figcaption>${visual.target}번째</figcaption></figure></div>`;
+}
+
+function overlapBondsMarkup(visual) {
+  const count = visual.shownParts.length;
+  const width = count * 78;
+  const partX = (index) => 39 + index * 78;
+  const bonds = visual.totals.map((total, index) => {
+    const x = (partX(index) + partX(index + 1)) / 2;
+    return `<path d="M${x} 34V52 M${x} 62L${partX(index)} 88 M${x} 62L${partX(index + 1)} 88"/><rect class="total" x="${x - 16}" y="4" width="32" height="30"/><text x="${x}" y="24">${total}</text><rect class="junction" x="${x - 12}" y="50" width="24" height="24"/>`;
+  }).join("");
+  const parts = visual.shownParts.map((value, index) => {
+    const label = value === "star" ? "☆" : value === "blank" ? "?" : value;
+    const shared = visual.highlightShared && index === 1 ? " shared" : "";
+    return `<rect class="part${shared}" x="${partX(index) - 16}" y="87" width="32" height="30"/><text x="${partX(index)}" y="108">${label}</text>`;
+  }).join("");
+  return `<svg class="overlap-bonds" viewBox="0 0 ${width} 124" role="img" aria-label="서로 이어진 가르기 모으기">${bonds}${parts}</svg>`;
+}
+
+function geometryWorksheetMarkup(visual) {
+  const renderer = globalThis.GW_RENDER;
+  const figures = visual.figures;
+  if (!renderer || !figures) return "";
+  if (figures.kind === "sequence") {
+    return `<div class="geometry-sequence">${figures.shapes.map((shape) => `
+      <figure><div>${renderer.renderIso(shape.map, shape.width, shape.depth)}</div><figcaption>${shape.n}단계</figcaption></figure>
+    `).join("")}<strong aria-hidden="true">…</strong></div>`;
+  }
+  if (figures.kind === "iso-box") {
+    return `<figure class="geometry-box"><div>${renderer.renderIsoBox(figures.map, figures.width, figures.depth, figures.boxH)}</div><figcaption>점선은 상자 테두리입니다.</figcaption></figure>`;
+  }
+  if (figures.kind === "iso-walled") {
+    return `<figure class="geometry-hidden"><div>${renderer.renderIsoWalled(figures.map, figures.width, figures.depth)}</div><figcaption>뒤와 왼쪽의 회색 면은 벽입니다.</figcaption></figure>`;
+  }
+  return "";
+}
+
 function visualMarkup(visual) {
   if (!visual) return "";
   if (visual.kind.startsWith("g1-")) return `<div class="visual g1-source-visual">${g1SourceMarkup(visual)}</div>`;
@@ -1769,6 +1853,12 @@ function visualMarkup(visual) {
   // 옛 요약 그림("한 번 접기 → 구멍 → 펼치기")은 접는 방향을 안 보여줬다.
   // 이제 생성기가 단계 폴리곤(stages)을 주므로 실제 접는 과정을 화살표와 함께 그린다.
   if (visual.kind === "triangle-edge-sum") return `<div class="visual triangle-edge-sum-visual">${triangleEdgeSumMarkup(visual)}</div>`;
+  if (visual.kind === "symbol-chain") return `<div class="visual symbol-chain-visual">${symbolChainMarkup(visual)}</div>`;
+  if (visual.kind === "shape-matrix-three") return `<div class="visual shape-matrix-three-visual">${shapeMatrixThreeMarkup(visual)}</div>`;
+  if (visual.kind === "triangle-position-cycle") return `<div class="visual triangle-position-cycle-visual">${trianglePositionCycleMarkup(visual)}</div>`;
+  if (visual.kind === "triangle-position-answer") return `<div class="visual triangle-position-answer-visual">${triangleCycleSvg(visual.position)}</div>`;
+  if (visual.kind === "overlap-bonds") return `<div class="visual overlap-bonds-visual">${overlapBondsMarkup(visual)}</div>`;
+  if (visual.kind === "geometry-worksheet") return `<div class="visual geometry-worksheet-visual">${geometryWorksheetMarkup(visual)}</div>`;
   if (visual.kind === "sum-grid") return `<div class="visual sum-grid-visual">${sumGridMarkup(visual)}</div>`;
   if (visual.kind === "magic-square") return `<div class="visual magic-square-visual">${magicSquareMarkup(visual)}</div>`;
   if (visual.kind === "statement-list") return `<div class="visual statement-visual">${statementListMarkup(visual)}</div>`;
@@ -1811,9 +1901,16 @@ function renderWorksheet() {
 function openAnswers() {
   $("answerBody").innerHTML = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
-    const answer = question.answerVisual?.kind === "letter-block-answer"
-      ? `<div class="letter-answer-preview">${letterBlockTileMarkup(question.answerVisual.word, true)}</div>`
-      : question.answer;
+    // 답이 그림인 문항은 답안지에도 그림이 있어야 한다. 예전에는 글자 블록만 그렸고
+    // 나머지 answerVisual은 조용히 버려져서, 도형 행렬·삼각형 위치 문항의 답안이
+    // 말로만 적혀 나왔다. 그림을 그리되 글로 쓴 답도 함께 남긴다 — 채점자가 그림만
+    // 보고 판단하지 않아도 되게.
+    const answerPicture = !question.answerVisual
+      ? ""
+      : question.answerVisual.kind === "letter-block-answer"
+        ? `<div class="letter-answer-preview">${letterBlockTileMarkup(question.answerVisual.word, true)}</div>`
+        : visualMarkup(question.answerVisual);
+    const answer = answerPicture ? `${answerPicture}<div class="answer-text">${question.answer}</div>` : question.answer;
     return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${answer}</td><td>${state.includeSolution ? question.solution : "-"}</td></tr>`;
   }).join("");
   $("answerDialog").showModal();

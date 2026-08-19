@@ -185,8 +185,16 @@ export const TYPES = [
   type("two-by-two-sum-fill", "number", "수 배열과 합", "2x2 칸을 행·열 합과 서로 다른 조건으로 채우기", { generator: "twoByTwoSumFill", sourceMatched: true }),
   type("shape-sum-grid-4", "number", "매트릭스", "4x4 도형표의 행·열 합으로 빈 합 구하기", { generator: "shapeSumGrid", sourceMatched: true }),
   type("vertical-cryptarithm-shape-sum", "number", "복면산과 식", "세로셈 복면산에서 세 도형이 나타내는 수의 합", { generator: "verticalCryptarithmShapeSum", sourceMatched: true }),
+  // main 갈래에서 이식(2026-08-18). 파이널 2·3회 원본 전용 세부 유형이다.
+  // 이름이 비슷한 기존 유형(symbol-relation·shape-matrix-rule·repeat-pattern·cube-hidden-count)과
+  // 구조가 달라 별도로 둔다 — 합치지 말 것.
+  type("symbol-chain-arithmetic", "number", "복면산과 식", "연속된 기호식으로 마지막 값 구하기", { generator: "symbolChainArithmetic", sourceMatched: true }),
+  type("shape-matrix-three-features", "pattern", "도형 규칙", "바깥·안쪽 도형과 칠하기의 행렬 규칙", { generator: "shapeMatrixThreeFeatures", sourceMatched: true }),
+  type("triangle-position-cycle", "pattern", "도형 규칙", "삼각형 안에서 칠한 위치가 반복되는 규칙", { generator: "trianglePositionCycle", sourceMatched: true }),
+  type("cube-step-sequence", "geometry", "쌓기나무", "단계가 커지는 쌓기나무의 전체 개수", { generator: "cubeStepSequence", sourceMatched: true, geometryGame: "worksheet:TS" }),
+  type("cube-hidden-count-walled", "geometry", "쌓기나무", "벽 모서리에서 보이지 않는 쌓기나무의 개수", { generator: "cubeHiddenCountWalled", sourceMatched: true, geometryGame: "worksheet:IH" }),
   type("triangle-max-edge-sum", "number", "수 배열과 합", "삼각형 세 변의 합을 같게 만들고 그 합을 가장 크게", { generator: "triangleMaxEdgeSum", sourceMatched: true }),
-  type("split-merge-tree", "number", "수 배열과 합", "가르기·모으기 나무의 부모·자식 관계"),
+  type("split-merge-tree", "number", "수 배열과 합", "가르기·모으기 나무의 부모·자식 관계", { generator: "overlappingNumberBonds", sourceMatched: true }),
   type("border-go-stone-difference", "pattern", "도형 규칙", "테두리가 커지는 바둑돌의 흑백 차이", { generator: "borderGoStoneDifference", sourceMatched: true }),
   type("fold-diagonal-unfold", "geometry", "색종이 접기", "대각선으로 접고 자른 뒤 펼친 선 그리기"),
   type("fold-number-remaining-sum", "geometry", "색종이 접기", "번호 색종이를 접고 자른 뒤 남은 수의 합", { generator: "foldNumberRemainingSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 41·50쪽" }),
@@ -202,7 +210,7 @@ export const TYPES = [
   type("cube-count-solid", "geometry", "쌓기나무", "입체를 이루는 쌓기나무 전체 개수", { geometryGame: "count-heights" }),
   type("cube-different-shape", "geometry", "쌓기나무", "같은 개수로 만든 입체 중 다른 모양", { geometryGame: "find-shape" }),
   type("cube-add-to-match", "geometry", "쌓기나무", "목표 입체까지 더 필요한 쌓기나무", { geometryGame: "copy-build" }),
-  type("cube-fill-box", "geometry", "쌓기나무", "정육면체 상자를 채우는 데 필요한 개수", { geometryGame: "fill-box" }),
+  type("cube-fill-box", "geometry", "쌓기나무", "정육면체 상자를 채우는 데 필요한 개수", { generator: "cubeFillBoxWorksheet", sourceMatched: true, geometryGame: "worksheet:CU" }),
   type("cube-hidden-count", "geometry", "쌓기나무", "보이지 않는 쌓기나무의 개수", { geometryGame: "hidden-count" }),
   type("cube-three-views", "geometry", "쌓기나무", "앞·옆·위에서 본 쌓기나무", { geometryGame: "three-views", status: "curriculum" }),
   type("cube-tunnel", "geometry", "쌓기나무", "구멍이 뚫린 쌓기나무의 남은 개수", { geometryGame: "cube-tunnel", status: "curriculum" }),
@@ -332,18 +340,19 @@ export const FINAL_EXAM_TYPES = [
     file: "필즈선발대비 실전 모의고사 파이널 2회.pdf",
     sourceViewer: false,
     questions: [
-      "hidden-number-card-conditions", "cube-hidden-count", "closest-two-digit-card-sum", "front-back-total",
-      "set-union-count", "wrong-operation-correction", "symbol-relation", "paired-sequences",
-      "shape-matrix-rule", "delayed-date-promise", "repeat-pattern", "calendar-date-weekday",
+      "hidden-number-card-conditions", "cube-hidden-count-walled", "closest-two-digit-card-sum", "front-back-total",
+      "set-union-count", "wrong-operation-correction", "symbol-chain-arithmetic", "paired-sequences",
+      "shape-matrix-three-features", "delayed-date-promise", "triangle-position-cycle", "calendar-date-weekday",
       // 14~17·19번은 연결 재검토(2026-08-12)로 분리된 유형이다. 이름이 비슷한 기존 유형에
       // 다시 붙이지 말 것 — 구조가 다르다는 대조 기록이 FINAL-SOURCE-AUDIT.md에 있다.
       "two-type-unit-total", "vertical-cryptarithm-shape-sum", "fold-diagonal-hole-count", "row-column-sum-placement", "two-by-two-sum-fill",
       "total-difference", "shape-sum-grid-4", "magic-square"
     ].map((typeId, index) => ({
       ...question(index + 1, typeId),
-      // 닫아 둔 것: 2번(쌓기나무·도형 트랙), 7번(연속 네 기호식 — 연산 기록이 없어 그림 필요),
-      // 11번(칠한 위치 4주기 — 답이 그림). 나머지 17문항은 생성기 검산 완료.
-      verified: ![1, 6, 10].includes(index)
+      // 2026-08-19: 2·7·9·11번을 열어 20문항이 되었다. 넷 다 원본 PDF 그림을 대조한
+      // 기록이 있고(2번은 3쪽 그림 = 벽 모서리 계단형이라 IH), 생성기를 옮겨 온 뒤
+      // 난이도별 독립 재계산을 다시 돌렸다. 근거는 FINAL-SOURCE-AUDIT.md.
+      verified: true
     }))
   },
   {
@@ -355,17 +364,17 @@ export const FINAL_EXAM_TYPES = [
     questions: [
       // 3·5·8·15·19번은 연결 재검토(2026-08-13)로 분리·정정된 유형이다. 15번은 파이널 2회
       // 19번과 수치까지 같은 문항(F27). 근거는 FINAL-SOURCE-AUDIT.md의 재검토 표.
-      "row-column-count-placement", "truth-lie-ranking", "triangle-max-edge-sum", "cube-count-solid",
+      "row-column-count-placement", "truth-lie-ranking", "triangle-max-edge-sum", "cube-step-sequence",
       "split-merge-tree", "reverse-thinking", "order-position-seven-people", "fold-diagonal-hole-count",
       "target-score-combinations", "matchstick-square-growth", "connected-line-degree-sum", "letter-block-transform",
       "go-stone-difference-inverse", "square-count", "shape-sum-grid-4", "cube-fill-box",
       "mixed-sequences", "two-type-unit-total", "border-go-stone-difference", "neither-set-count"
     ].map((typeId, index) => ({
       ...question(index + 1, typeId),
-      // 닫아 둔 것: 4·16번(쌓기나무 — Cube Town 3D 렌더 대기),
-      // 5번(가르기·모으기 나무의 가지 수를 모름 — 원본 PDF에도 그림뿐이라 텍스트로는 알 수 없다).
-      // 3번은 2026-08-18 원본 문항 전문을 확인해 열었다. 나머지 17문항은 생성기 검산 완료.
-      verified: ![3, 4, 15].includes(index)
+      // 2026-08-19: 4·5·16번을 열어 20문항이 되었다. 4·16번은 Geometry Worksheet의
+      // `TS`(삼각 계단)·`CU`를 그대로 쓰고, 5번은 원본 PDF 그림 대조 기록이 있는
+      // 가르기·모으기 나무다. 3번은 2026-08-18 원본 문항 전문을 확인해 열었다.
+      verified: true
     }))
   }
 ];
