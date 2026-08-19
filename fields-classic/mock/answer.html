@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>파이널 모의고사 정답·문항 분석 | G-FIELD</title>
+<style>
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+:root{
+  --g-blue:#16417C;--g-blue3:#1e3a6b;--g-gold:#EAC996;--g-gold2:#f5d9a8;
+  --g-ink:#0f172a;--g-muted:#64748b;--g-bg:#eef3f8;--g-line:#dbe4ee;
+  --d-ha:#0ea5e9;--d-jung:#f59e0b;--d-sang:#ef4444;
+  --r-md:12px;--r-lg:16px;--r-pill:999px;
+  --sh-sm:0 2px 12px rgba(22,65,124,.06);--sh-md:0 8px 28px rgba(22,65,124,.16);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-family:'Pretendard',sans-serif;background:var(--g-bg);color:var(--g-ink)}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 18px 60px}
+
+/* ── 머리 ── */
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.brand{font-size:19px;font-weight:900;letter-spacing:-.6px;color:var(--g-blue)}
+.brand span{color:var(--g-gold);background:var(--g-blue);padding:2px 8px;border-radius:6px;margin-right:6px}
+.top-actions{display:flex;gap:8px}
+.btn{height:40px;padding:0 16px;border:1.5px solid var(--g-line);border-radius:var(--r-md);background:#fff;
+  color:var(--g-ink);font:800 13.5px Pretendard,sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--g-blue);color:var(--g-blue)}
+.btn.primary{background:linear-gradient(135deg,var(--g-blue),var(--g-blue3));border-color:transparent;color:#fff;box-shadow:var(--sh-md)}
+
+.head-card{background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh-sm);padding:20px 22px;margin-bottom:16px}
+.head-card h1{font-size:22px;font-weight:900;letter-spacing:-.8px}
+.head-card .sub{margin-top:6px;color:var(--g-muted);font-size:13px;font-weight:600;line-height:1.6;word-break:keep-all}
+
+/* ── 시험 선택 ── */
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tab{height:42px;padding:0 18px;border-radius:var(--r-pill);border:1.5px solid var(--g-line);background:#fff;
+  font:800 14px Pretendard,sans-serif;color:var(--g-muted);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--g-blue);border-color:var(--g-blue);color:#fff}
+
+/* ── 요약 ── */
+/* align-items:start — 카드 높이를 서로 맞추지 않는다. 중분류는 16줄이고 난이도는 2~3줄이라,
+   맞추면 난이도 카드에 손바닥만 한 빈 칸이 생긴다. */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));align-items:start;gap:12px;margin-bottom:16px}
+.card{background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh-sm);padding:16px 18px}
+.card.full{grid-column:1/-1}
+.card.full .bars{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 22px}
+.card h3{font-size:12px;font-weight:800;letter-spacing:.4px;color:var(--g-muted);margin-bottom:12px}
+.bar-row{display:grid;grid-template-columns:116px 1fr 40px;align-items:center;gap:8px;margin-bottom:7px;font-size:12.5px;font-weight:700}
+.bar-row:last-child{margin-bottom:0}
+.bar-row .name{color:#334155;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar{height:9px;border-radius:var(--r-pill);background:#eef2f7;overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:var(--r-pill);background:var(--g-blue)}
+.bar-row .num{text-align:right;color:var(--g-muted);font-weight:800}
+.bar-row.d-하 .bar>i{background:var(--d-ha)}
+.bar-row.d-중 .bar>i{background:var(--d-jung)}
+.bar-row.d-상 .bar>i{background:var(--d-sang)}
+
+/* ── 문항표 ── */
+.table-card{background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh-sm);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:#f6f9fc;color:#334155;font-weight:800;font-size:11.5px;letter-spacing:.3px;
+  padding:11px 10px;text-align:left;border-bottom:2px solid var(--g-line);white-space:nowrap}
+tbody td{padding:12px 10px;border-bottom:1px solid #eef2f7;vertical-align:top;line-height:1.55;word-break:keep-all}
+tbody tr:last-child td{border-bottom:0}
+.c-no{width:38px;text-align:center;font-weight:900;color:var(--g-blue)}
+.c-diff{width:44px;text-align:center}
+.c-ans{width:210px}
+.tag{display:inline-block;padding:2px 8px;border-radius:var(--r-pill);font-size:11px;font-weight:800;
+  background:#eef4fb;color:var(--g-blue)}
+.tag.d-하{background:rgba(14,165,233,.12);color:#0369a1}
+.tag.d-중{background:rgba(245,158,11,.14);color:#b45309}
+.tag.d-상{background:rgba(239,68,68,.12);color:#b91c1c}
+.q-type{font-weight:800;color:#1e293b}
+.q-summary{margin-top:3px;color:var(--g-muted);font-size:12px}
+.q-mid{color:#475569;font-size:11.5px;font-weight:700;white-space:nowrap}
+.ans{font-weight:900;color:#0f172a;font-size:13.5px}
+.note{color:var(--g-muted);font-size:12px}
+
+.foot{margin-top:16px;color:var(--g-muted);font-size:12px;line-height:1.7;word-break:keep-all}
+.foot b{color:#334155}
+
+/* ── 인쇄: A4 세로. 표가 넘어가면 머리글을 다시 찍는다 ── */
+@media print{
+  @page{size:A4 portrait;margin:12mm 10mm}
+  html,body{background:#fff}
+  .wrap{max-width:none;padding:0}
+  .top-actions,.tabs{display:none}
+  .card,.table-card,.head-card{box-shadow:none;border:1px solid var(--g-line);break-inside:avoid}
+  thead{display:table-header-group}
+  tbody tr{break-inside:avoid}
+  table{font-size:10.5px}
+  thead th,tbody td{padding:6px 6px}
+  .bar>i{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .tag{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><span>G</span>FIELD 티처 콘솔</div>
+    <div class="top-actions">
+      <button class="btn" id="bankBtn" type="button">📝 이 회차로 시험지 만들기</button>
+      <button class="btn" id="videoBtn" type="button">▶ 해설 영상</button>
+      <button class="btn primary" id="printBtn" type="button">인쇄</button>
+    </div>
+  </div>
+
+  <div class="head-card">
+    <h1 id="title">파이널 모의고사 정답·문항 분석</h1>
+    <p class="sub" id="subtitle"></p>
+  </div>
+
+  <div class="tabs" id="tabs" role="tablist"></div>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th class="c-no">번호</th>
+          <th>영역</th>
+          <th>문항 유형 · 원본 구조</th>
+          <th class="c-diff">난이도</th>
+          <th class="c-ans">정답</th>
+          <th>채점·지도 메모</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <p class="foot">
+    <b>이 표의 정답은 원본 시험지의 확정 답입니다.</b> 문제은행이 만들어 내는 변형 문제의 답이 아닙니다 —
+    변형 문제의 답은 시험지를 만든 화면에서 「답안 보기」로 확인하세요.<br>
+    원본 지문과 그림은 저작권상 담지 않았습니다. 구조 요약·정답·검증 메모만 싣습니다.<br>
+    <b>난이도</b>는 원본 대조 때 매긴 값이고, 영역 구분은 문제은행의 대분류·중분류와 같습니다.
+  </p>
+</div>
+
+<script src="./answer-data.js?v=20260819a"></script>
+<script>
+(function(){
+  var DATA = window.FIELDS_MOCK_ANSWERS || {};
+  var ids = Object.keys(DATA);
+  var $ = function(id){ return document.getElementById(id); };
+  // 회차는 주소로도 지정된다(program 서재에서 바로 들어올 때). 없으면 첫 회차.
+  var want = new URLSearchParams(location.search).get('exam');
+  var current = ids.indexOf(want) >= 0 ? want : ids[0];
+
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
+  }
+
+  // 개수 세기 — 등장 순서를 지켜 담는다. 영역 순서가 표마다 바뀌면 두 회차를 나란히 못 읽는다.
+  function tally(list, key){
+    var map = new Map();
+    list.forEach(function(q){ map.set(q[key], (map.get(q[key]) || 0) + 1); });
+    return map;
+  }
+
+  function barBlock(title, map, order, diffClass, full){
+    var total = 0;
+    map.forEach(function(v){ total += v; });
+    var keys = order ? order.filter(function(k){ return map.has(k); }) : Array.from(map.keys());
+    var rows = keys.map(function(k){
+      var n = map.get(k);
+      var pct = total ? Math.round(n / total * 100) : 0;
+      return '<div class="bar-row ' + (diffClass ? 'd-' + esc(k) : '') + '">' +
+        '<span class="name">' + esc(k) + '</span>' +
+        '<span class="bar"><i style="width:' + pct + '%"></i></span>' +
+        '<span class="num">' + n + '</span></div>';
+    }).join('');
+    return '<div class="card' + (full ? ' full' : '') + '"><h3>' + esc(title) + '</h3>' +
+      '<div class="bars">' + rows + '</div></div>';
+  }
+
+  function render(){
+    var exam = DATA[current];
+    var qs = exam.questions;
+
+    $('tabs').innerHTML = ids.map(function(id){
+      return '<button class="tab" role="tab" data-id="' + id + '" aria-selected="' +
+        (id === current) + '">' + esc(DATA[id].label.replace('필즈선발대비 실전 모의고사 ', '')) + '</button>';
+    }).join('');
+
+    $('title').textContent = exam.label + ' — 정답·문항 분석';
+    $('subtitle').textContent = qs.length + '문항 · 원본 시험지와 해설 영상을 1:1로 대조해 확정한 답입니다.';
+
+    $('summary').innerHTML =
+      barBlock('난이도', tally(qs, 'diff'), ['하', '중', '상'], true) +
+      barBlock('대분류', tally(qs, 'domain')) +
+      barBlock('중분류', tally(qs, 'middle'), null, false, true);
+
+    $('rows').innerHTML = qs.map(function(q){
+      return '<tr>' +
+        '<td class="c-no">' + q.no + '</td>' +
+        '<td><div class="q-mid">' + esc(q.domain) + '</div><div class="q-mid" style="color:#94a3b8">' + esc(q.middle) + '</div></td>' +
+        '<td><div class="q-type">' + esc(q.type) + '</div><div class="q-summary">' + esc(q.summary) + '</div></td>' +
+        '<td class="c-diff"><span class="tag d-' + esc(q.diff) + '">' + esc(q.diff) + '</span></td>' +
+        '<td class="c-ans"><span class="ans">' + esc(q.answer) + '</span></td>' +
+        '<td><span class="note">' + esc(q.note) + '</span></td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  $('tabs').addEventListener('click', function(e){
+    var t = e.target.closest('.tab');
+    if (!t) return;
+    current = t.dataset.id;
+    history.replaceState(null, '', '?exam=' + current);
+    render();
+  });
+  $('printBtn').addEventListener('click', function(){ window.print(); });
+  $('videoBtn').addEventListener('click', function(){
+    var v = DATA[current] && DATA[current].video;
+    if (v) window.open(v, '_blank', 'noopener');
+  });
+  $('bankBtn').addEventListener('click', function(){
+    window.open('../question-bank/?exam=' + current, '_blank', 'noopener');
+  });
+
+  if (!ids.length) {
+    $('subtitle').textContent = '정답 데이터를 불러오지 못했습니다.';
+  } else {
+    render();
+  }
+})();
+</script>
+</body>
+</html>

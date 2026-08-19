@@ -445,6 +445,7 @@ body.in-viewer{overflow:hidden}
     <span class="viewer-title" id="vTitle"></span>
     <div class="viewer-acts">
       <button class="v-btn" id="vBankBtn" onclick="GF.openBank()" style="display:none">📝 시험지 만들기</button>
+      <button class="v-btn" id="vAnswerBtn" onclick="GF.openAnswerSheet()" style="display:none">✅ 정답·분석</button>
       <button class="v-btn" id="vPrintBtn" onclick="GF.printCurrent()">🖨 인쇄</button>
       <button class="v-btn gold" id="vYtBtn" onclick="GF.openYt()" style="display:none">▶ 새 창</button>
     </div>
@@ -501,8 +502,8 @@ const PRODUCTS=[
   {key:"실전모의고사5회",name:"실전 모의고사 5회",desc:"6세 선발 모의고사 세트 5회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/kyHuxpZhcTQ",printDoc:"mock-set-5",lessons:[{key:"p5",label:"5회",title:"실전 모의고사 5회",type:"concept",url:"https://youtu.be/kyHuxpZhcTQ",pdfPage:1}]},
   {key:"실전모의고사6회",name:"실전 모의고사 6회",desc:"6세 선발 모의고사 세트 6회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/uBSJ_-2IhR8",printDoc:"mock-set-6",lessons:[{key:"p6",label:"6회",title:"실전 모의고사 6회",type:"concept",url:"https://youtu.be/uBSJ_-2IhR8",pdfPage:1}]},
   {key:"파이널모의고사1회",bankExam:"final-1",name:"파이널 모의고사 1회",desc:"최종 점검 파이널 1회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/obRvM_ymsM8",lessons:[{key:"fi1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"https://youtu.be/obRvM_ymsM8",pdfPage:1}]},
-  {key:"파이널모의고사2회",bankExam:"final-2",name:"파이널 모의고사 2회",desc:"최종 점검 파이널 2회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/VC_jgwrMH_k",lessons:[{key:"fi2",label:"2회",title:"파이널 모의고사 2회",type:"concept",url:"https://youtu.be/VC_jgwrMH_k",pdfPage:1}]},
-  {key:"파이널모의고사3회",bankExam:"final-3",name:"파이널 모의고사 3회",desc:"최종 점검 파이널 3회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/ihp5SqAqc00",lessons:[{key:"fi3",label:"3회",title:"파이널 모의고사 3회",type:"concept",url:"https://youtu.be/ihp5SqAqc00",pdfPage:1}]},
+  {key:"파이널모의고사2회",bankExam:"final-2",answerDoc:"final-2",name:"파이널 모의고사 2회",desc:"최종 점검 파이널 2회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/VC_jgwrMH_k",lessons:[{key:"fi2",label:"2회",title:"파이널 모의고사 2회",type:"concept",url:"https://youtu.be/VC_jgwrMH_k",pdfPage:1}]},
+  {key:"파이널모의고사3회",bankExam:"final-3",answerDoc:"final-3",name:"파이널 모의고사 3회",desc:"최종 점검 파이널 3회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/ihp5SqAqc00",lessons:[{key:"fi3",label:"3회",title:"파이널 모의고사 3회",type:"concept",url:"https://youtu.be/ihp5SqAqc00",pdfPage:1}]},
   {key:"파이널모의고사4회",name:"파이널 모의고사 4회",desc:"새 시험지 제작 중",icon:"🏁",theme:"theme-final",type:"direct",comingSoon:true,lessons:[{key:"fi4",label:"4회",title:"파이널 모의고사 4회",type:"concept",url:"",pdfPage:1}]},
   {key:"최종모의고사",name:"최종 모의고사",desc:"새 시험지 제작 중",icon:"🏆",theme:"theme-final",type:"direct",comingSoon:true,lessons:[{key:"u1",label:"최종",title:"최종 모의고사",type:"concept",url:"",pdfPage:1}]},
   {key:"자료실",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
@@ -892,12 +893,21 @@ const GF={
     document.getElementById("vPrintBtn").style.display=p.pagesBase?"block":"none";
     // 원본 스캔이 없는 시험지는 문제은행에서 같은 구조의 시험지를 뽑아 쓴다.
     document.getElementById("vBankBtn").style.display=p.bankExam?"block":"none";
+    // 정답·분석은 원본 확정 답이 있는 회차만 연다. 없는 회차까지 열어 두면 뷰어가 다른
+    // 회차의 답을 대신 보여 준다 — 원문 뷰어에서 이미 한 번 겪은 일이라 조건을 건다.
+    document.getElementById("vAnswerBtn").style.display=p.answerDoc?"block":"none";
     document.getElementById("vBody").className="viewer-body "+(hasVid?"has-video":"no-video");
     document.getElementById("vPanel").style.display=hasVid?"flex":"none";
     const tabs=document.getElementById("vTabs");tabs.style.display="";tabs.innerHTML="";
     (p.lessons||[]).forEach(l=>{const b=document.createElement("button");b.className="tab-btn";b.textContent=l.label;b.dataset.k=l.key;b.dataset.type=l.type||"concept";b.addEventListener("click",()=>{document.querySelectorAll(".tab-btn").forEach(x=>x.classList.toggle("active",x.dataset.k===l.key));document.getElementById("videoIframe").src=l.url?embed(l.url):"";if(p.pagesBase&&l.pdfPage)setBookPage(l.pdfPage);else setBookEmpty();S.currentVideo={url:l.url}});tabs.appendChild(b)});
     if(p.lessons?.length){const first=p.lessons[0];S.currentVideo={url:first.url};document.getElementById("videoIframe").src=first.url?embed(first.url):"";if(p.pagesBase&&first.pdfPage)setBookPage(first.pdfPage);else setBookEmpty();tabs.querySelector(".tab-btn")?.classList.add("active")}
     document.getElementById("viewer").classList.add("show");document.body.classList.add("in-viewer");checkOrientation();
+  },
+  openAnswerSheet(){
+    const p=S.currentProduct;if(!p?.answerDoc)return;
+    const url=new URL("../mock/answer.html",location.href);
+    url.searchParams.set("exam",p.answerDoc);
+    window.open(url,"_blank","noopener");
   },
   openBank(){
     const p=S.currentProduct;if(!p?.bankExam)return;
