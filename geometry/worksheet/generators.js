@@ -1839,6 +1839,7 @@
   }
 
   function buildAssignment(rng, types, count) {
+    if (!types.length) return [];
     const seq = [];
     while (seq.length < count) seq.push.apply(seq, rng.shuffle(types));
     return seq.slice(0, count);
@@ -1877,21 +1878,35 @@
     const legacy = opts.difficulty ? fromDifficulty(opts.difficulty) : null;
     const level = normalizeLevel(opts.level || (legacy && legacy.level));
     const intensity = normalizeIntensity(opts.intensity || (legacy && legacy.intensity) || DEFAULT_INTENSITY);
-    const requested = opts.types && opts.types.length
-      ? opts.types.map(canonicalType)
+    const hasExplicitTypes = Object.prototype.hasOwnProperty.call(opts, "types");
+    const requested = hasExplicitTypes
+      ? (Array.isArray(opts.types) ? opts.types : [])
       : TYPES.filter((t) => t.defaultOn).map((t) => t.code);
-    // 선택된 단계에서 지원하지 않는 유형은 생성에서 뺀다. 하나도 남지 않으면
-    // 그 단계가 제공하는 유형 전체로 되돌린다 (빈 학습지를 만들지 않는다).
+    // 선택된 단계에서 지원하지 않는 유형과 중복만 뺀다. 호출자가 빈 배열을
+    // 명시했다면 자동으로 기본 유형을 채우지 않는다 — 화면의 0개 선택 상태와
+    // 생성 결과가 같아야 한다.
     const seen = {};
-    let types = requested.filter((c) => {
+    const types = requested.map(canonicalType).filter((c) => {
       if (seen[c] || !typeSupportsLevel(c, level)) return false;
       seen[c] = true;
       return true;
     });
-    if (!types.length) types = typesForLevel(level);
     const count = opts.count || 9;
     const seedInt = (opts.seed >>> 0) || 1;
     const arrange = normalizeArrange(opts.arrange);
+    if (!types.length) {
+      return {
+        code: "",
+        seed: seedInt,
+        level,
+        intensity,
+        arrange,
+        badge: arrangeBadge(level, intensity, arrange),
+        types: [],
+        count,
+        problems: []
+      };
+    }
     // 씨앗에는 배열 모드를 넣지 않는다. 유형 배정(buildAssignment)이 세 모드
     // 모두 같은 난수 자리에서 시작해야 "배열만 바꿨는데 유형별 문항 수가
     // 달라지는" 일이 없다 — 배열은 학습량이 아니라 순서를 정하는 축이다.

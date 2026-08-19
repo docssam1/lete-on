@@ -41,7 +41,7 @@
     seed: freshSeed(),
     level: GEN.DEFAULT_LEVEL,
     intensity: GEN.DEFAULT_INTENSITY,
-    types: GEN.TYPES.filter((t) => t.defaultOn).map((t) => t.code),
+    types: [],
     count: 9,
     // 문제 배열: "" 골고루 섞기 · "type" 유형별 · "diff" 난이도별.
     arrange: GEN.ARRANGE_MIX,
@@ -63,12 +63,9 @@
     return GEN.typeSupportsLevel(code, state.level);
   }
 
-  // Drop any type the current 단계 does not offer; never end up with none.
+  // Drop any type the current 단계 does not offer. If none remain, keep empty.
   function pruneTypesForLevel() {
-    const kept = state.types.filter(supportsLevel);
-    if (kept.length) { state.types = kept; return; }
-    const fallback = GEN.TYPES.filter((t) => t.defaultOn && supportsLevel(t.code)).map((t) => t.code);
-    state.types = fallback.length ? fallback : GEN.typesForLevel(state.level).slice(0, 1);
+    state.types = state.types.filter(supportsLevel);
   }
 
   // ---------------------------------------------------------------------
@@ -95,9 +92,7 @@
   function onTypesChanged(event) {
     const grid = document.getElementById("typeGrid");
     const picked = Array.from(grid.querySelectorAll('input[type="checkbox"]:checked')).map((cb) => cb.value);
-    // Never allow zero types selected — fall back to the previous selection.
-    state.types = picked.length ? picked : state.types;
-    if (!picked.length) syncTypeCheckboxes();
+    state.types = picked;
     if (event && event.target.checked) {
       state.previewType = event.target.value;
       state.previewSeed = freshSeed();
@@ -212,18 +207,13 @@
   // ---------------------------------------------------------------------
   function applySetup(setup) {
     const wanted = (setup.types || []).slice();
-    if (wanted.length) state.types = wanted;
+    const hasTypes = Object.prototype.hasOwnProperty.call(setup, "types") && setup.types !== null;
+    if (hasTypes) state.types = wanted;
     if (setup.intensity) state.intensity = GEN.normalizeIntensity(setup.intensity);
     if (setup.level) applyLevel(setup.level, "");
-    if (wanted.length) {
+    if (hasTypes) {
       const kept = wanted.filter(supportsLevel);
-      if (kept.length) state.types = kept;
-      buildTypeCheckboxes();
-    } else if (state.level === GEN.ALL_LEVEL) {
-      // 유형을 명시하지 않은 채로 "전체" 단계가 들어오면(예: ?level=ALL만
-      // 붙은 링크) 모든 유형 칩을 켠다 — 코드/딥링크가 유형을 직접 명시한
-      // 경우는 위 분기에서 그 목록을 그대로 지킨다.
-      state.types = GEN.TYPES.map((t) => t.code);
+      state.types = kept;
       buildTypeCheckboxes();
     }
     if (setup.count) state.count = setup.count;
@@ -450,16 +440,20 @@
     let printedNo = 0;
     let previousKey = null;
     const live = liveGroupKeys(ws);
-    const cards = ws.problems.map((p, i) => {
-      const omitted = isOmitted(i);
-      if (!omitted) printedNo += 1;
-      const head = groupHeadHtml(p, previousKey, live);
-      previousKey = p.group && live[p.group.key] ? p.group.key : previousKey;
-      return head + renderCard(p, i, mixed, {
-        numberLabel: omitted ? "—" : String(printedNo),
-        omit: { index: i, checked: omitted }
-      });
-    }).join("");
+    const cards = ws.problems.length
+      ? ws.problems.map((p, i) => {
+        const omitted = isOmitted(i);
+        if (!omitted) printedNo += 1;
+        const head = groupHeadHtml(p, previousKey, live);
+        previousKey = p.group && live[p.group.key] ? p.group.key : previousKey;
+        return head + renderCard(p, i, mixed, {
+          numberLabel: omitted ? "—" : String(printedNo),
+          omit: { index: i, checked: omitted }
+        });
+      }).join("")
+      : ws.types.length
+        ? ""
+        : '<p class="ws-preview-empty">유형을 하나 이상 선택해 주세요.</p>';
     const worksheetPage =
       '<section class="ws-page" id="worksheetPage">' +
       '<header class="ws-head"><div class="ws-head-top">' +
@@ -570,6 +564,25 @@
   function regenerate() {
     // 새 문제 묶음이 나오면 예전 자리 번호로 저장해 둔 빼기는 뜻을 잃는다.
     state.omitted = [];
+    if (!state.types.length) {
+      state.worksheet = {
+        code: "",
+        seed: state.seed,
+        level: state.level,
+        intensity: state.intensity,
+        arrange: state.arrange,
+        badge: GEN.arrangeBadge(state.level, state.intensity, state.arrange),
+        types: [],
+        count: state.count,
+        problems: []
+      };
+      document.getElementById("printBtn").disabled = true;
+      document.getElementById("codeInput").value = "";
+      paintSheet();
+      renderPreview();
+      return;
+    }
+    document.getElementById("printBtn").disabled = false;
     state.worksheet = GEN.generateWorksheet({
       types: state.types,
       level: state.level,
@@ -625,13 +638,6 @@
   function wireEvents() {
     document.getElementById("levelSelect").addEventListener("change", (e) => {
       applyLevel(e.target.value, "");
-      // 사람이 직접 "전체"를 골랐을 때만 모든 유형 칩을 켠다 — 코드/딥링크로
-      // 들어온 setup은 applySetup이 명시된 유형 목록을 그대로 지키게 둔다
-      // (아래 applySetup 참고).
-      if (state.level === GEN.ALL_LEVEL) {
-        state.types = GEN.TYPES.map((t) => t.code);
-        buildTypeCheckboxes();
-      }
       const ageSel = document.getElementById("ageSelect");
       if (ageSel) ageSel.value = "";
       syncControlsFromState();

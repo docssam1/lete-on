@@ -356,6 +356,13 @@ html, body {
 }
 .btn-primary { border-color: var(--brand); background: var(--brand); color: #fff; }
 .btn-primary:hover { background: #10365f; }
+.btn-primary.is-disabled,
+.btn-primary[aria-disabled="true"] {
+  opacity: 0.42;
+  cursor: not-allowed;
+  pointer-events: auto;
+  box-shadow: none;
+}
 .btn-outline { border-color: var(--brand); color: var(--brand); background: var(--paper); }
 .btn-outline:hover { background: var(--brand-soft); }
 

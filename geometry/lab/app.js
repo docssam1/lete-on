@@ -95,7 +95,7 @@
     domain: DOMAIN_CUBE,
     level: GEN.DEFAULT_LEVEL,
     intensity: GEN.DEFAULT_INTENSITY,
-    types: GEN.TYPES.filter((t) => t.defaultOn).map((t) => t.code),
+    types: [],
     count: 9,
     // 고정 문제·색종이 학습지는 생성형 유형과 동시에 담을 수 없다 — 인쇄 엔진
     // 자체가 다르고, 한 권 안에 두 엔진의 페이지를 섞으면 문항 번호가 두 번
@@ -105,10 +105,8 @@
     fold: null,
     foldCount: 20,
     levelNote: "",
-    // 단계·영역을 바꿔서 골라 두었던 유형이 전부 이 조합에서 지원되지 않게
-    // 잘려나가, 대신 첫 유형을 자동으로 골라 준 경우의 안내 한 줄. 유형 줄의
-    // 기존 안내 자리(#typeNote)를 그대로 재활용해 보여 준다 — 새 안내
-    // 영역을 만들면 화면에 "왜 바뀌었는지" 알리는 자리가 두 곳이 된다.
+    // 단계·영역을 바꿔 골라 둔 유형이 이 조합에서 지원되지 않아 해제된 경우의
+    // 안내 한 줄. 유형 줄의 기존 안내 자리(#typeNote)를 그대로 재활용한다.
     typeAutoNote: "",
     // 미리보기는 학습지 쪽과 마찬가지로 자기 시드를 따로 쓴다 — "새 문제"를
     // 눌러도 아래의 선택은 그대로 있어야 한다.
@@ -190,26 +188,16 @@
     return info ? info.label : code;
   }
 
-  // 선택한 단계가 제공하지 않는 유형은 조용히 떨어뜨린다. 하나도 남지 않으면
-  // 그 단계의 기본 유형으로 되돌린다 — 유형이 0개인 상태로 "만들기"를 누르면
-  // 생성기가 제멋대로 채우므로, 화면에 보이는 것과 인쇄물이 달라진다.
-  //
-  // 다만 생성형 유형이 아예 없는 단계(킨더·키즈)에서는 선택을 건드리지 않고
-  // 그대로 보관한다 — 거기서 되돌릴 유형이 없기도 하지만, 킨더를 잠깐 눌러 본
-  // 것만으로 공들여 고른 유형 조합이 지워지면 안 되기 때문이다.
+  // 선택한 단계가 제공하지 않는 유형만 해제한다. 하나도 남지 않아도 다른 유형을
+  // 자동으로 고르지 않는다 — 무엇을 출제할지는 사용자가 직접 정한다.
   function pruneTypes() {
-    // "전체"를 고르면 생성형 유형을 전부 켠다 — 각 유형은 자기 자신이 지원하는
-    // 단계에서 만들어지므로 전체에서 제외해야 할 유형이 없다.
-    if (state.level === GEN.ALL_LEVEL) {
-      state.types = GEN.TYPES.map((t) => t.code);
-      return;
-    }
-    if (!GEN.typesForLevel(state.level).length) return;
+    if (state.level === GEN.ALL_LEVEL) return;
+    const previousCount = state.types.length;
     const kept = state.types.filter(supportsLevel);
-    if (kept.length) { state.types = kept; return; }
-    const fallback = GEN.TYPES.filter((t) => t.defaultOn && supportsLevel(t.code)).map((t) => t.code);
-    state.types = fallback.length ? fallback : GEN.typesForLevel(state.level).slice(0, 1);
-    state.typeAutoNote = "골라 둔 유형이 이 단계에서는 제공되지 않아 " + typeLabel(state.types[0]) + " 유형으로 자동으로 바꿨어요.";
+    state.types = kept;
+    if (previousCount && !kept.length) {
+      state.typeAutoNote = "골라 둔 유형이 이 단계에서는 제공되지 않아 선택을 해제했어요.";
+    }
   }
 
   // 준비 중 단계를 고르면 가장 가까운 제공 단계로 옮기고 왜 옮겼는지 남긴다
@@ -231,25 +219,12 @@
     syncMode();
   }
 
-  // 단계를 옮긴 뒤 선택이 그 단계 밖으로 나가지 않게 맞춘다. 생성형이 없는
-  // 단계에서는 다른 학습지가 반드시 하나 선택되어 있어야 "학습지 만들기"가
-  // 빈 곳을 가리키지 않는다.
+  // 단계를 옮긴 뒤 현재 단계에서 지원하지 않는 고정 유형만 해제한다.
   function syncMode() {
     const books = booksForLevel(state.level);
     const folds = foldsForLevel(state.level);
     if (state.book && !books.some((b) => b.code === state.book)) state.book = null;
     if (state.fold && !folds.some((f) => f.code === state.fold)) state.fold = null;
-    if (state.domain === DOMAIN_FOLD) {
-      if (!state.fold && folds.length) {
-        state.fold = folds[0].code;
-        state.typeAutoNote = "골라 둔 유형이 이 단계에서는 제공되지 않아 " + foldInfo(state.fold).label + " 유형으로 자동으로 바꿨어요.";
-      }
-      return;
-    }
-    if (!state.book && !GEN.typesForLevel(state.level).length && books.length) {
-      state.book = books[0].code;
-      state.typeAutoNote = "골라 둔 유형이 이 단계에서는 제공되지 않아 " + bookInfo(state.book).label + " 유형으로 자동으로 바꿨어요.";
-    }
   }
 
   function setDomain(domain) {
@@ -400,9 +375,8 @@
             state.types = [type.code];
           } else {
             const at = state.types.indexOf(type.code);
-            // 유형을 0개로 만드는 해제는 무시한다 — 빈 학습지는 만들 수 없다.
             if (at === -1) state.types.push(type.code);
-            else if (state.types.length > 1) state.types.splice(at, 1);
+            else state.types.splice(at, 1);
           }
           state.previewType = type.code;
           state.previewSeed = freshSeed();
@@ -420,10 +394,8 @@
         ok,
         active: state.book === book.code,
         onClick() {
-          // 이미 고른 것을 다시 누르면 생성형으로 돌아간다. 단, 생성형이 없는
-          // 단계에서는 놓아 줄 곳이 없으므로 선택을 유지한다.
           if (state.book === book.code) {
-            if (GEN.typesForLevel(state.level).length) state.book = null;
+            state.book = null;
           } else {
             state.book = book.code;
           }
@@ -444,7 +416,7 @@
         ok,
         active: state.fold === fold.code,
         onClick() {
-          state.fold = fold.code;
+          state.fold = state.fold === fold.code ? null : fold.code;
           renderAll();
         }
       }));
@@ -464,11 +436,11 @@
         // 정보이기 때문이다.
         note.textContent = state.typeAutoNote;
       } else if (state.domain === DOMAIN_FOLD) {
-        note.textContent = "색종이 학습지는 한 번에 한 유형씩 만들어요. 만들기를 누르면 색종이 접기 학습지 화면이 그 유형으로 열려요.";
+        note.textContent = "원하는 유형을 선택하세요. 선택하지 않은 상태로 두어도 돼요.";
       } else if (state.book) {
         note.textContent = "이 학습지는 손으로 고른 문제 풀을 그대로 쓰므로 한 번에 하나만 만들어요.";
       } else {
-        note.textContent = "선택한 단계에서 제공하지 않는 유형은 흐리게 표시돼요. 여러 장을 함께 고르면 한 학습지에 섞여 나와요.";
+        note.textContent = "원하는 유형만 선택하세요. 여러 장을 고르면 한 학습지에 섞여 나와요.";
       }
       note.classList.toggle("is-warn", Boolean(state.typeAutoNote) || (Boolean(state.book) && state.domain === DOMAIN_CUBE));
     }
@@ -678,9 +650,20 @@
 
   function renderSummary() {
     const link = $("buildBtn");
-    link.href = buildUrl();
+    const ready = state.domain === DOMAIN_FOLD
+      ? Boolean(state.fold)
+      : Boolean(state.book || previewableTypes().length);
+    link.href = ready ? buildUrl() : "#";
+    link.classList.toggle("is-disabled", !ready);
+    link.setAttribute("aria-disabled", String(!ready));
     const head = document.createElement("b");
     let tail;
+    if (!ready) {
+      head.textContent = "유형을 선택해 주세요";
+      tail = " · 선택 후 학습지를 만들 수 있어요.";
+      $("buildSummary").replaceChildren(head, document.createTextNode(tail));
+      return;
+    }
     if (state.domain === DOMAIN_FOLD) {
       const fold = state.fold ? foldInfo(state.fold) : null;
       head.textContent = "색종이 접기 · 난이도 " + GEN.intensityWord(state.intensity) + " · " + state.foldCount + "문항";
@@ -738,6 +721,9 @@
   function init() {
     setLevel(state.level);
     renderAll();
+    $("buildBtn").addEventListener("click", (event) => {
+      if ($("buildBtn").getAttribute("aria-disabled") === "true") event.preventDefault();
+    });
     $("previewNewBtn").addEventListener("click", () => {
       state.previewSeed = freshSeed();
       renderPreview();
