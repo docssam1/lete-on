@@ -22,6 +22,78 @@
     if (!whole) return `${remainder}/${d}`;
     return `${whole} ${remainder}/${d}`;
   };
+  const rationalValue = (numerator, denominator = 1) => {
+    if (!denominator) return null;
+    const sign = denominator < 0 ? -1 : 1;
+    const divisor = gcd(numerator, denominator);
+    return { numerator: sign * numerator / divisor, denominator: sign * denominator / divisor };
+  };
+  const rationalOperation = (left, right, operator) => {
+    if (!left || !right) return null;
+    if (operator === "+") return rationalValue(left.numerator * right.denominator + right.numerator * left.denominator, left.denominator * right.denominator);
+    if (operator === "-") return rationalValue(left.numerator * right.denominator - right.numerator * left.denominator, left.denominator * right.denominator);
+    if (operator === "×") return rationalValue(left.numerator * right.numerator, left.denominator * right.denominator);
+    if (operator === "÷") return right.numerator ? rationalValue(left.numerator * right.denominator, left.denominator * right.numerator) : null;
+    return null;
+  };
+  const flatMixedValue = (numbers, operators) => {
+    const terms = [typeof numbers[0] === "number" ? rationalValue(numbers[0]) : numbers[0]];
+    const additiveOperators = [];
+    for (let index = 0; index < operators.length; index += 1) {
+      const value = typeof numbers[index + 1] === "number" ? rationalValue(numbers[index + 1]) : numbers[index + 1];
+      const operator = operators[index];
+      if (operator === "×" || operator === "÷") {
+        terms[terms.length - 1] = rationalOperation(terms[terms.length - 1], value, operator);
+      } else {
+        additiveOperators.push(operator);
+        terms.push(value);
+      }
+    }
+    return terms.slice(1).reduce((total, value, index) => rationalOperation(total, value, additiveOperators[index]), terms[0]);
+  };
+  const operatorPermutations = (values) => {
+    const output = [];
+    const visit = (chosen, remaining) => {
+      if (!remaining.length) {
+        output.push(chosen);
+        return;
+      }
+      remaining.forEach((value, index) => visit([...chosen, value], [...remaining.slice(0, index), ...remaining.slice(index + 1)]));
+    };
+    visit([], values);
+    return output;
+  };
+  const mixedExpressionText = (numbers, operators, withMiddleParentheses = false) => withMiddleParentheses
+    ? `${numbers[0]} ${operators[0]} (${numbers[1]} ${operators[1]} ${numbers[2]}) ${operators[2]} ${numbers[3]} ${operators[3]} ${numbers[4]}`
+    : numbers.slice(1).reduce((text, number, index) => `${text} ${operators[index]} ${number}`, String(numbers[0]));
+  const mixedExpressionValue = (numbers, operators, withMiddleParentheses = false) => {
+    if (!withMiddleParentheses) return flatMixedValue(numbers, operators);
+    const middle = rationalOperation(rationalValue(numbers[1]), rationalValue(numbers[2]), operators[1]);
+    return flatMixedValue([numbers[0], middle, numbers[3], numbers[4]], [operators[0], operators[2], operators[3]]);
+  };
+  const uniqueOperatorPuzzle = (rng, level) => {
+    const allOperators = ["+", "-", "×", "÷"];
+    for (let attempt = 0; attempt < 360; attempt += 1) {
+      const numbers = Array.from({ length: 5 }, () => int(rng, 2 + level, 12 + level * 9));
+      const withMiddleParentheses = level === 2 && rng() > 0.35;
+      const candidates = operatorPermutations(allOperators).map(operators => {
+        const value = mixedExpressionValue(numbers, operators, withMiddleParentheses);
+        return { operators, value };
+      }).filter(candidate => candidate.value && candidate.value.denominator === 1 && candidate.value.numerator > 0 && candidate.value.numerator <= 9000);
+      const grouped = new Map();
+      candidates.forEach(candidate => {
+        const group = grouped.get(candidate.value.numerator) || [];
+        group.push(candidate);
+        grouped.set(candidate.value.numerator, group);
+      });
+      const unique = candidates.filter(candidate => grouped.get(candidate.value.numerator).length === 1);
+      if (unique.length) {
+        const selected = pick(rng, unique);
+        return { ...selected, numbers, withMiddleParentheses, target: selected.value.numerator };
+      }
+    }
+    throw new Error("유일한 혼합 계산식 조건을 만들지 못했습니다.");
+  };
   const permutationNumbers = (digits) => {
     const values = new Set();
     const used = Array(digits.length).fill(false);
@@ -1837,6 +1909,104 @@
       const answer = a + b * c - d;
       return result(`<div class="equation">${a} + ${b} × ${c} - ${d} = □</div>`, answer, `곱셈을 먼저 계산하면 ${b} × ${c} = ${b * c}이고, ${a} + ${b * c} - ${d} = ${answer}입니다.`);
     },
+    mixedOrderAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const quotient = int(rng, 2, 4 + level * 2);
+        const divisor = int(rng, 2, 6 + level * 2);
+        const dividend = quotient * divisor;
+        const multiplier = int(rng, 3, 8 + level * 2);
+        const addend = int(rng, 12, 34 + level * 12);
+        const outside = int(rng, 2, 5 + level);
+        const tail = int(rng, 8, 32 + level * 12);
+        const answer = int(rng, 28, 92 + level * 35);
+        const inside = addend + multiplier * quotient;
+        const head = answer + inside * outside - tail;
+        const expression = `${head} - {${addend} + ${multiplier} × (${dividend} ÷ ${divisor})} × ${outside} + ${tail}`;
+        return result(`다음 계산을 하세요.<div class="equation" data-mixed-kind="order-calc" data-values="${head},${addend},${multiplier},${dividend},${divisor},${outside},${tail}">${expression} = □</div>`, answer, `괄호 안에서 ${dividend} ÷ ${divisor} = ${quotient}, ${multiplier} × ${quotient} = ${multiplier * quotient}입니다. 중괄호 안은 ${inside}이므로 ${head} - ${inside * outside} + ${tail} = ${answer}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const blank = int(rng, 2, 8 + level * 4);
+        const factor = int(rng, 3, 9 + level * 3);
+        const divisor = int(rng, 2, 6 + level * 2);
+        const quotient = Math.ceil(factor * blank / divisor) + int(rng, 2, 7 + level * 2);
+        const addend = divisor * quotient - factor * blank;
+        const answer = int(rng, 20, 75 + level * 30);
+        const start = answer + quotient;
+        return result(`□ 안에 알맞은 수를 구하세요.<div class="equation" data-mixed-kind="order-blank" data-values="${start},${addend},${factor},${divisor},${answer}">${start} - (${addend} + ${factor} × □) ÷ ${divisor} = ${answer}</div>`, blank, `${start}에서 ${answer}을 빼면 괄호 안을 ${divisor}로 나눈 값은 ${quotient}입니다. 따라서 괄호 안은 ${quotient} × ${divisor} = ${quotient * divisor}이고, ${factor} × □ = ${quotient * divisor - addend}이므로 □는 ${blank}입니다.`);
+      }
+      const left = int(rng, 12, 28 + level * 10);
+      const right = int(rng, 9, 24 + level * 10);
+      const divisor = int(rng, 2, 6 + level * 2);
+      const ratio = int(rng, 2, 4 + level);
+      const multiplier = divisor * ratio;
+      const tail = int(rng, 10, 40 + level * 15);
+      const answer = int(rng, 35, 110 + level * 35);
+      const deducted = (left + right) * ratio;
+      const head = answer + deducted - tail;
+      const expression = `${head} - (${left} + ${right}) × ${multiplier} ÷ ${divisor} + ${tail}`;
+      return result(`괄호, 곱셈과 나눗셈의 순서에 주의하여 계산하세요.<div class="equation" data-mixed-kind="order-sequence" data-values="${head},${left},${right},${multiplier},${divisor},${tail}">${expression} = □</div>`, answer, `먼저 괄호 안은 ${left + right}입니다. ${left + right} × ${multiplier} ÷ ${divisor} = ${deducted}이므로 ${head} - ${deducted} + ${tail} = ${answer}입니다.`);
+    },
+    oneExpressionAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const total = int(rng, 42, 76 + level * 24);
+        const boys = int(rng, 14, total - 16);
+        const boyCount = int(rng, 3, 6 + level * 2);
+        const girlCount = int(rng, 2, 5 + level * 2);
+        const answer = boys * boyCount + (total - boys) * girlCount;
+        const expression = `${boys} × ${boyCount} + (${total} - ${boys}) × ${girlCount}`;
+        return result(`운동회에 쓸 색종이를 남학생에게는 한 명당 ${boyCount}장씩, 여학생에게는 한 명당 ${girlCount}장씩 나누어 줍니다. 전체 학생은 ${total}명이고 남학생은 ${boys}명일 때, 필요한 색종이는 모두 몇 장인지 하나의 식으로 나타내어 계산하세요.<div class="equation" data-mixed-kind="one-expression-people" data-values="${total},${boys},${boyCount},${girlCount}">□</div>`, answer, `여학생은 ${total} - ${boys} = ${total - boys}명입니다. 하나의 식은 ${expression}이고, ${answer}장입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const firstPrice = int(rng, 4, 9 + level * 3) * 100;
+        const secondPrice = int(rng, 9, 18 + level * 5) * 100;
+        const firstCount = int(rng, 3, 7 + level * 2);
+        const secondCount = int(rng, 2, 6 + level * 2);
+        const change = int(rng, 15, 45 + level * 20) * 100;
+        const paid = firstPrice * firstCount + secondPrice * secondCount + change;
+        const expression = `${paid.toLocaleString()} - (${firstPrice.toLocaleString()} × ${firstCount} + ${secondPrice.toLocaleString()} × ${secondCount})`;
+        return result(`문구점에서 한 자루에 ${firstPrice.toLocaleString()}원인 연필 ${firstCount}자루와 한 권에 ${secondPrice.toLocaleString()}원인 연습장 ${secondCount}권을 사고 ${paid.toLocaleString()}원을 냈습니다. 거스름돈을 하나의 식으로 나타내어 계산하세요.<div class="equation" data-mixed-kind="one-expression-money" data-values="${paid},${firstPrice},${firstCount},${secondPrice},${secondCount}">□</div>`, change, `물건값을 먼저 묶으면 ${expression} = ${change.toLocaleString()}입니다.`);
+      }
+      const rows = int(rng, 6, 12 + level * 3);
+      const perRow = int(rng, 8, 15 + level * 4);
+      const damagedRows = int(rng, 1, Math.max(1, Math.floor(rows / 3)));
+      const damagedPerRow = int(rng, 2, Math.min(perRow - 1, 5 + level));
+      const answer = rows * perRow - damagedRows * damagedPerRow;
+      const expression = `${rows} × ${perRow} - ${damagedRows} × ${damagedPerRow}`;
+      return result(`한 상자에 ${perRow}개씩 들어 있는 물건이 ${rows}상자 있습니다. 이 중 ${damagedRows}상자에서는 ${damagedPerRow}개씩 사용할 수 없게 되었습니다. 사용할 수 있는 물건 수를 하나의 식으로 나타내어 계산하세요.<div class="equation" data-mixed-kind="one-expression-stock" data-values="${rows},${perRow},${damagedRows},${damagedPerRow}">□</div>`, answer, `전체 수에서 사용할 수 없는 수를 빼면 됩니다. ${expression} = ${answer}입니다.`);
+    },
+    mixedWordEquationAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const pen = int(rng, 8, 20 + level * 7) * 100;
+        const caseExtra = int(rng, 2, 8 + level * 2) * 100;
+        const crayonExtra = int(rng, 3, 12 + level * 4) * 100;
+        const casePrice = pen + caseExtra;
+        const crayonPrice = pen * 3 + crayonExtra;
+        const difference = crayonPrice - casePrice;
+        return result(`필통의 가격은 연필 한 자루의 가격보다 ${caseExtra.toLocaleString()}원 더 비싸고, 크레파스의 가격은 연필 한 자루의 가격의 3배보다 ${crayonExtra.toLocaleString()}원 더 비쌉니다. 크레파스의 가격은 필통의 가격보다 ${difference.toLocaleString()}원 더 비쌀 때, 크레파스의 가격을 구하세요.<div class="equation" data-mixed-kind="word-price" data-values="${caseExtra},${crayonExtra},${difference}">□</div>`, crayonPrice, `연필 가격을 □원이라 하면 (${3} × □ + ${crayonExtra.toLocaleString()}) - (□ + ${caseExtra.toLocaleString()}) = ${difference.toLocaleString()}입니다. □는 ${pen.toLocaleString()}이므로 크레파스의 가격은 ${crayonPrice.toLocaleString()}원입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const smaller = int(rng, 12, 40 + level * 18);
+        const quotient = int(rng, 3, 6 + level * 2);
+        const remainder = int(rng, 1, smaller - 1);
+        const larger = smaller * quotient + remainder;
+        const difference = larger - smaller;
+        const answer = larger + smaller;
+        return result(`두 자연수의 차는 ${difference}입니다. 큰 수를 작은 수로 나누면 몫은 ${quotient}, 나머지는 ${remainder}일 때, 두 수의 합을 구하세요.<div class="equation" data-mixed-kind="word-quotient" data-values="${difference},${quotient},${remainder}">□</div>`, answer, `작은 수를 □라 하면 큰 수는 ${quotient} × □ + ${remainder}입니다. 두 수의 차가 ${difference}이므로 (${quotient} - 1) × □ + ${remainder} = ${difference}입니다. 작은 수는 ${smaller}, 큰 수는 ${larger}이므로 합은 ${answer}입니다.`);
+      }
+      const pineNut = int(rng, 14, 42 + level * 14) * 100;
+      const difference = int(rng, 1, 6 + level * 2) * 100;
+      const peanut = pineNut + difference;
+      const boxes = int(rng, 7, 14 + level * 4);
+      const total = boxes * 2 * (peanut + pineNut);
+      return result(`한 상자에 땅콩 2봉지와 잣 2봉지가 들어 있습니다. 이런 상자 ${boxes}개의 값은 모두 ${total.toLocaleString()}원입니다. 땅콩 한 봉지의 값이 잣 한 봉지의 값보다 ${difference.toLocaleString()}원 더 비쌀 때, 잣 한 봉지의 값을 구하세요.<div class="equation" data-mixed-kind="word-box" data-values="${boxes},${total},${difference}">□</div>`, pineNut, `잣 한 봉지의 값을 □원이라 하면 한 상자의 값은 2 × (□ + □ + ${difference.toLocaleString()})원입니다. ${boxes}상자의 값이 ${total.toLocaleString()}원이므로 □는 ${pineNut.toLocaleString()}원입니다.`);
+    },
+    mixedExpressionBuildAdvanced({ rng, level }) {
+      const puzzle = uniqueOperatorPuzzle(rng, level);
+      const expression = mixedExpressionText(puzzle.numbers, puzzle.operators, puzzle.withMiddleParentheses);
+      const answer = puzzle.operators.join(", ");
+      const parenthesesNotice = puzzle.withMiddleParentheses ? "괄호 안을 먼저 계산한 뒤" : "곱셈과 나눗셈을 먼저 계산한 뒤";
+      return result(`□ 안에 +, -, ×, ÷를 각각 한 번씩 넣어 계산 결과가 ${puzzle.target}이 되게 하세요.${puzzle.withMiddleParentheses ? " 괄호 안은 하나의 계산으로 봅니다." : ""}<div class="equation" data-mixed-kind="operator-puzzle" data-mixed-numbers="${puzzle.numbers.join(",")}" data-mixed-parentheses="${puzzle.withMiddleParentheses ? "middle" : "none"}" data-mixed-target="${puzzle.target}">${puzzle.withMiddleParentheses ? `${puzzle.numbers[0]} □ (${puzzle.numbers[1]} □ ${puzzle.numbers[2]}) □ ${puzzle.numbers[3]} □ ${puzzle.numbers[4]}` : `${puzzle.numbers[0]} □ ${puzzle.numbers[1]} □ ${puzzle.numbers[2]} □ ${puzzle.numbers[3]} □ ${puzzle.numbers[4]}`} = ${puzzle.target}</div>`, answer, `왼쪽부터 기호를 ${answer} 순서로 넣습니다. ${parenthesesNotice} ${expression} = ${puzzle.target}가 됩니다.`);
+    },
     fractionCompare({ rng, level }) {
       const d = int(rng, 5, 9 + level * 3);
       const a = int(rng, 1, d - 2);
@@ -2343,7 +2513,11 @@
     [type => type.id === "4-2-u6-t1", "polygonDiagonals"],
     [type => type.id === "4-2-u6-t2", "regularPolygonApplication"],
     [type => type.id === "4-2-u6-t3", "tessellationCover"],
-    [type => type.id === "4-2-u6-t4", "shapePartitionCompose"]
+    [type => type.id === "4-2-u6-t4", "shapePartitionCompose"],
+    [type => type.id === "5-1-u1-t1", "mixedOrderAdvanced"],
+    [type => type.id === "5-1-u1-t2", "oneExpressionAdvanced"],
+    [type => type.id === "5-1-u1-t3", "mixedWordEquationAdvanced"],
+    [type => type.id === "5-1-u1-t4", "mixedExpressionBuildAdvanced"]
   ];
 
   function generatorKey(typeOrName) {

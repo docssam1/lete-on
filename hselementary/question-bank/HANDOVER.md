@@ -5,10 +5,10 @@
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8765/hselementary/question-bank/`
 - Total types: 174
-- Implemented types: 103
-- Pending types: 71
-- Completed: all six units in grade 4 semester 1 and all six units in grade 4 semester 2
-- Next unit: grade 5 semester 1, unit 1 (mixed operations)
+- Implemented types: 107
+- Pending types: 67
+- Completed: all six units in grade 4 semester 1, all six units in grade 4 semester 2, and grade 5 semester 1 unit 1
+- Next unit: grade 5 semester 1, unit 2 (factors and multiples)
 
 ## Required Standard
 
@@ -34,8 +34,9 @@
 - Grade 4-2 unit 4: quadrilaterals, 8 types
 - Grade 4-2 unit 5: line graphs, 2 types
 - Grade 4-2 unit 6: polygons, 4 types
+- Grade 5-1 unit 1: mixed operations, 4 types
 
-The current ready set has passed regression coverage, including an 8,400-generation sweep for the quadrilateral unit (8 types x 3 difficulty levels x 350 seeds, 0 exceptions). The graph audit covers 4 graph types across 5,400 generated questions, including data-to-SVG coordinate checks. The polygon audit covers 4 types across 4,200 generated questions, including independent checks for diagonal counts, tile-grid counts, and rotated-piece placements. The newer units were also checked at desktop and mobile (375px) widths for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
+The current ready set has passed regression coverage, including an 8,400-generation sweep for the quadrilateral unit (8 types x 3 difficulty levels x 350 seeds, 0 exceptions). The graph audit covers 4 graph types across 5,400 generated questions, including data-to-SVG coordinate checks. The polygon audit covers 4 types across 4,200 generated questions, including independent checks for diagonal counts, tile-grid counts, and rotated-piece placements. The mixed-operation audit covers 4 types across 4,200 generated questions, including order-of-operations, one-expression, word-equation, and unique operator-arrangement checks. The newer units were also checked at desktop and mobile (375px) widths for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
 
 ## Implementation Notes
 
@@ -43,13 +44,14 @@ The current ready set has passed regression coverage, including an 8,400-generat
 - Page integration and scoped type identity: `app.js`
 - Type metadata: `curriculum.js`
 - Graph regression check: `graph-audit.js`
+- Mixed-operation regression check: `mixed-operation-audit.js`
 - Duplicate names must be resolved with semester/unit/type IDs. Do not route generators by display name alone.
 - Source evidence and detailed classification notes are maintained outside the public repository. Query that memory before opening source pages or designing a new type.
 - Never add original textbook pages, extracted source images, or private absolute paths to this repository.
 
 ## Next Steps
 
-1. Query the private source memory for grade 5 semester 1 unit 1 (mixed operations).
+1. Query the private source memory for grade 5 semester 1 unit 2 (factors and multiples).
 2. Inspect only the relevant source pages needed to confirm structures and diagrams.
 3. Record the classification decision before implementation.
 4. Add dedicated generators and SVG diagrams for every type in the unit. Keep graph safeguards in graph-audit.js when a later unit uses any chart renderer.
