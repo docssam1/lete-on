@@ -157,6 +157,7 @@
     return [...values].sort((a, b) => a - b);
   };
   const result = (prompt, answer, solution) => ({ prompt, answer: String(answer), solution });
+  const correspondenceTable = rows => `<table class="problem-table"><tbody>${rows.map(([label, ...values]) => `<tr><th>${label}</th>${values.map(value => `<td>${value}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
   const splitTotal = (rng, count, total, minValue, maxValue, step = 5) => {
     for (let attempt = 0; attempt < 200; attempt += 1) {
       const values = [];
@@ -2634,6 +2635,87 @@
       const product = left * right;
       const least = lcm(left, right);
       return result(`서로 다른 두 자연수의 곱은 ${product.toLocaleString()}이고 최대공약수는 ${common}입니다. 이 두 수의 최소공배수를 구하세요.`, least, `두 자연수의 곱은 최대공약수와 최소공배수의 곱과 같습니다. 따라서 최소공배수는 ${product.toLocaleString()} ÷ ${common} = ${least.toLocaleString()}입니다.`);
+    },
+    ruleCorrespondenceAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const multiplier = pick(rng, [2, 3, 4, 5].slice(0, 2 + level));
+        const addend = int(rng, 4 + level * 2, 12 + level * 5);
+        const first = int(rng, 4, 11 + level * 2);
+        const inputs = [first, first + 2, first + 5];
+        const target = first + int(rng, 8 + level * 2, 15 + level * 4);
+        const outputs = inputs.map(value => multiplier * value + addend);
+        const answer = multiplier * target + addend;
+        return result(`어떤 수를 규칙 상자에 넣었더니 아래와 같이 바뀌었습니다. 규칙을 찾아 ${target}을 넣었을 때 나오는 수를 구하세요.<div class="rule-examples">${inputs.map((value, index) => `<span>${value} → ${outputs[index]}</span>`).join("")}</div>`, answer, `입력이 2씩 늘 때 출력이 ${multiplier * 2}씩 늘므로, 규칙은 ‘${multiplier}배한 뒤 ${addend}을 더하기’입니다. 따라서 ${target}을 넣으면 ${target} × ${multiplier} + ${addend} = ${answer}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const shift = int(rng, 2, 3 + level);
+        const word = pick(rng, ["MATH", "STAR", "CODE", "NOTE", "BOOK"]);
+        const cipher = [...word].map(letter => String.fromCharCode((letter.charCodeAt(0) - 65 + shift) % 26 + 65)).join("");
+        const first = String.fromCharCode(65 + shift);
+        const second = String.fromCharCode(66 + shift);
+        return result(`알파벳을 오른쪽으로 같은 칸 수만큼 옮겨 암호를 만듭니다. A → ${first}, B → ${second}, C → ${String.fromCharCode(67 + shift)}일 때, 암호문 ${cipher}를 알파벳을 왼쪽으로 되돌려 해독한 단어를 구하세요.`, word, `A가 ${first}이 되었으므로 각 알파벳을 오른쪽으로 ${shift}칸 옮긴 암호입니다. ${cipher}의 각 글자를 왼쪽으로 ${shift}칸 되돌리면 ${word}입니다.`);
+      }
+      const sides = [3, 4, 4, 5];
+      const position = int(rng, 10 + level * 6, 24 + level * 12);
+      const before = Array.from({ length: position - 1 }, (_, index) => sides[index % sides.length]).reduce((sum, value) => sum + value, 0);
+      const sideCount = sides[(position - 1) % sides.length];
+      const firstNumber = before + 1;
+      const lastNumber = before + sideCount;
+      const answer = sideCount * (firstNumber + lastNumber) / 2;
+      return result(`정삼각형, 정사각형, 마름모, 정오각형을 이 순서대로 반복하여 놓고, 꼭짓점에 1부터 차례로 수를 씁니다. ${position}번째 도형의 꼭짓점에 쓰인 수의 합을 구하세요.<div class="rule-examples"><span>1번째: 3개</span><span>2번째: 4개</span><span>3번째: 4개</span><span>4번째: 5개</span></div>`, answer, `한 묶음의 꼭짓점 수는 3+4+4+5=16개입니다. ${position}번째 도형 앞까지 ${before}개의 수를 썼으므로, ${position}번째 ${sideCount}각형에는 ${firstNumber}부터 ${lastNumber}까지 씁니다. 합은 ${firstNumber}+…+${lastNumber}=${answer}입니다.`);
+    },
+    correspondenceTableAdvanced({ rng, level, variant = 0 }) {
+      const multiplier = pick(rng, [2, 3, 4, 5].slice(0, 2 + level));
+      const addend = int(rng, 3, 10 + level * 4);
+      const first = int(rng, 3, 8 + level * 2);
+      const inputs = [first, first + 2, first + 5];
+      if (variant % 2 === 0) {
+        const target = first + int(rng, 8 + level * 2, 16 + level * 3);
+        const outputs = inputs.map(value => multiplier * value + addend);
+        const answer = multiplier * target + addend;
+        return result(`다음 대응표에서 ▲와 ■ 사이의 대응 관계를 찾아, ▲가 ${target}일 때 ■의 값을 구하세요.${correspondenceTable([["▲", ...inputs, target], ["■", ...outputs, "□"]])}`, answer, `▲가 ${inputs[0]}에서 ${inputs[1]}로 2만큼 늘 때 ■는 ${outputs[0]}에서 ${outputs[1]}로 ${multiplier * 2}만큼 늘어납니다. 따라서 ■ = ▲ × ${multiplier} + ${addend}입니다. ▲=${target}이면 ■=${target}×${multiplier}+${addend}=${answer}입니다.`);
+      }
+      const secondMultiplier = pick(rng, [2, 3, 4].slice(0, 2 + Math.min(level, 1)));
+      const secondAddend = int(rng, 1, 6 + level * 3);
+      const target = first + int(rng, 7 + level * 2, 14 + level * 3);
+      const middle = inputs.map(value => multiplier * value + addend);
+      const outputs = middle.map(value => secondMultiplier * value + secondAddend);
+      const answer = secondMultiplier * (multiplier * target + addend) + secondAddend;
+      return result(`다음 대응표에서 ●는 ▲에 먼저 대응하고, ★는 ●에 다시 대응합니다. 표의 규칙을 이용하여 ▲가 ${target}일 때 ★의 값을 구하세요.${correspondenceTable([["▲", ...inputs, target], ["●", ...middle, "□"], ["★", ...outputs, "□"]])}`, answer, `첫째 대응은 ●=▲×${multiplier}+${addend}, 둘째 대응은 ★=●×${secondMultiplier}+${secondAddend}입니다. ▲=${target}이면 ●=${target}×${multiplier}+${addend}=${multiplier * target + addend}, ★=${multiplier * target + addend}×${secondMultiplier}+${secondAddend}=${answer}입니다.`);
+    },
+    patternCorrespondenceApplicationOne({ rng, level, variant = 0 }) {
+      if (variant % 2 === 0) {
+        const lineCount = int(rng, 10 + level * 4, 18 + level * 9);
+        const answer = lineCount * (lineCount + 1) / 2 + 1;
+        return result(`직선들을 어느 세 직선도 한 점에서 만나지 않게 그리고, 서로 평행한 두 직선이 없게 그었습니다. 직선의 수와 나뉜 영역의 최대 개수 사이의 규칙을 이용하여, 직선을 ${lineCount}개 그었을 때 나뉜 영역의 최대 개수를 구하세요.${correspondenceTable([["직선의 수", 1, 2, 3, 4], ["영역의 최대 개수", 2, 4, 7, 11]])}`, answer, `새 직선이 늘어날 때마다 만나는 점의 수만큼 새 영역이 생깁니다. 따라서 n개일 때 영역 수는 1+(1+2+…+n)=n(n+1)÷2+1입니다. n=${lineCount}이면 ${lineCount}×${lineCount + 1}÷2+1=${answer}입니다.`);
+      }
+      const stage = int(rng, 12 + level * 5, 24 + level * 12);
+      const answer = stage * (stage + 1) / 2;
+      return result(`아래처럼 첫째 단계에는 1개, 둘째 단계에는 1+2개, 셋째 단계에는 1+2+3개의 정사각형 조각을 계단 모양으로 붙입니다. ${stage}번째 단계의 정사각형 조각 수를 구하세요.${correspondenceTable([["단계", 1, 2, 3, 4], ["조각 수", 1, 3, 6, 10]])}`, answer, `${stage}번째 단계는 1부터 ${stage}까지의 수를 모두 더한 것입니다. 1+2+…+${stage}=${stage}×${stage + 1}÷2=${answer}개입니다.`);
+    },
+    patternCorrespondenceApplicationTwo({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const spacing = pick(rng, [3, 4, 5, 6].slice(0, 2 + level));
+        const half = int(rng, 20 + level * 8, 42 + level * 14);
+        const first = int(rng, 2, Math.min(12 + level * 3, half - 2));
+        const opposite = first + half;
+        const total = half * 2;
+        const answer = total * spacing;
+        return result(`원 모양 호수 둘레에 ${spacing}m 간격으로 가로등을 세웠습니다. ${first}번째 가로등과 ${opposite}번째 가로등이 서로 마주 보고 있을 때, 호수 둘레의 길이를 구하세요.`, answer, `마주 보는 두 가로등 사이에는 전체 가로등의 절반이 있습니다. ${opposite}-${first}=${half}이므로 전체 가로등 수는 ${half}×2=${total}개입니다. 둘레는 ${total}×${spacing}=${answer}m입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const included = pick(rng, [180, 240, 300, 360].slice(0, 2 + level));
+        const baseFee = pick(rng, [18000, 24000, 30000, 36000].slice(0, 2 + level));
+        const rate = pick(rng, [2, 3, 4, 5].slice(0, 2 + level));
+        const usage = included + int(rng, 180 + level * 90, 540 + level * 180);
+        const answer = baseFee + (usage - included) * rate;
+        return result(`한 달 통화 요금은 처음 ${included}분까지 ${baseFee.toLocaleString()}원이고, ${included}분을 넘기면 초과한 1분마다 ${rate}원씩 늘어납니다. 이번 달 통화 시간이 ${usage}분일 때 내야 할 요금을 구하세요.`, answer, `기본 요금은 ${baseFee.toLocaleString()}원이고 초과 시간은 ${usage}-${included}=${usage - included}분입니다. 초과 요금은 ${(usage - included).toLocaleString()}×${rate}=${((usage - included) * rate).toLocaleString()}원이므로 모두 ${answer.toLocaleString()}원입니다.`);
+      }
+      const [fastSpeed, slowSpeed] = pick(rng, level === 2 ? [[60, 45], [72, 54], [84, 63]] : [[36, 27], [45, 30], [54, 42]]);
+      const hours = int(rng, 3 + level, 7 + level * 2);
+      const remaining = (fastSpeed - slowSpeed) * hours;
+      const answer = fastSpeed * hours;
+      return result(`형은 한 시간에 ${fastSpeed}km, 동생은 한 시간에 ${slowSpeed}km를 같은 길로 걷습니다. 두 사람이 동시에 출발하여 형이 목적지에 도착했을 때 동생은 ${remaining}km를 더 가야 했습니다. 집에서 목적지까지의 거리를 구하세요.`, answer, `형과 동생의 한 시간 거리 차는 ${fastSpeed}-${slowSpeed}=${fastSpeed - slowSpeed}km입니다. ${remaining}km 차이가 났으므로 걸은 시간은 ${remaining}÷${fastSpeed - slowSpeed}=${hours}시간입니다. 목적지까지 거리는 ${fastSpeed}×${hours}=${answer}km입니다.`);
     }
   };
 
@@ -2740,7 +2822,11 @@
     [type => type.id === "5-1-u2-t9", "divisorCountAdvanced"],
     [type => type.id === "5-1-u2-t10", "commonDivisorApplicationAdvanced"],
     [type => type.id === "5-1-u2-t11", "commonMultipleApplicationAdvanced"],
-    [type => type.id === "5-1-u2-t12", "gcdLcmRelationAdvanced"]
+    [type => type.id === "5-1-u2-t12", "gcdLcmRelationAdvanced"],
+    [type => type.id === "5-1-u3-t1", "ruleCorrespondenceAdvanced"],
+    [type => type.id === "5-1-u3-t2", "correspondenceTableAdvanced"],
+    [type => type.id === "5-1-u3-t3", "patternCorrespondenceApplicationOne"],
+    [type => type.id === "5-1-u3-t4", "patternCorrespondenceApplicationTwo"]
   ];
 
   function generatorKey(typeOrName) {
