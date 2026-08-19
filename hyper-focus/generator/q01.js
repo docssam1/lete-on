@@ -256,6 +256,9 @@
   function boot() {
     try {
       injectCss();
+      // mock/viewer처럼 stacking.js를 명시적으로 먼저 불러온 화면에서는
+      // 상대경로가 다른 스크립트를 다시 요청하지 않는다.
+      if (window.HFQ02) { register(); return; }
       var s = document.createElement("script");
       s.src = "./generator/stacking.js";
       s.onload = function () { try { register(); } catch (e) { console.warn("HF generator 등록 실패", e); } };
