@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HF 문제은행 검수판 — 유형 × 난이도</title>
+<style>
+:root{--navy:#12233f;--gold:#c9a227;--line:#e6e6e6;--bg:#f7f8fa}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Pretendard','Noto Sans KR',system-ui,-apple-system,sans-serif;background:var(--bg);color:#1c1c1c}
+.wrap{max-width:1100px;margin:0 auto;padding:14px}
+header{background:var(--navy);color:#fff;border-radius:14px;padding:16px 18px;margin-bottom:12px}
+header h1{margin:0;font-size:1.02rem;letter-spacing:-.02em}
+header p{margin:6px 0 0;font-size:.78rem;opacity:.78;line-height:1.55}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px;margin-bottom:12px}
+.controls label{font-size:.78rem;font-weight:700;color:#555}
+select,button{font:inherit;font-size:.85rem;padding:7px 12px;border:1px solid #d5d5d5;border-radius:8px;background:#fff;cursor:pointer}
+button.primary{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:700}
+button.gold{background:var(--gold);color:#1c1c1c;border-color:var(--gold);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column}
+.card.easy{border-top:4px solid #2e9e5b}
+.card.same{border-top:4px solid #d3a01c}
+.card.hard{border-top:4px solid #c0392b}
+.badge{display:inline-block;align-self:flex-start;font-size:.68rem;font-weight:800;padding:3px 9px;border-radius:999px;margin-bottom:8px}
+.easy .badge{background:#e8f6ee;color:#1e7a44}
+.same .badge{background:#fbf3dd;color:#8a6a08}
+.hard .badge{background:#fbeae8;color:#93291e}
+.q{font-size:.83rem;line-height:1.55;font-weight:600;margin-bottom:8px}
+.fig{flex:1;display:flex;align-items:center;justify-content:center;min-height:150px;background:#fcfcfc;border-radius:8px;padding:6px}
+.hf-views,.q01-views{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:0}
+.hf-views figure,.q01-views figure{margin:0;text-align:center}
+.hf-fig svg,.q01-fig svg{width:128px;height:auto}
+.hf-views figcaption,.q01-views figcaption{font-size:.7rem;color:#777;margin-top:3px}
+.ans{margin-top:10px;padding:9px 10px;background:#f2f6ff;border-radius:8px;font-size:.78rem;line-height:1.5;color:#25406e}
+.meta{margin-top:6px;font-size:.68rem;color:#9a9a9a;font-family:ui-monospace,Menlo,monospace}
+.chk{margin-top:6px;font-size:.74rem;color:#666}
+.ok{color:#1e7a44;font-weight:700}.ng{color:#c0392b;font-weight:700}
+.stats{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;font-size:.78rem;line-height:1.75;display:none}
+.stats b{color:var(--navy)}
+.loading{text-align:center;padding:40px;color:#888;font-size:.9rem}
+@media print{
+  .controls,header p{display:none}
+  body{background:#fff}
+  .card{page-break-inside:avoid;border:1px solid #ccc}
+  .grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>하이퍼 포커스 문제은행 검수판</h1>
+  <p>유형별 · 난이도별(쉽게 / 같게 / 어렵게) 실시간 생성 결과입니다.
+     실제 배포 중인 생성기를 그대로 불러와 그리므로, 여기서 보이는 그림·정답이 학생 문제지에 나가는 것과 동일합니다.</p>
+</header>
+
+<div class="controls">
+  <label>유형</label>
+  <select id="typeSel"></select>
+  <button class="primary" onclick="draw()">다시 생성</button>
+  <button class="gold" onclick="drawAll()">전 유형 보기</button>
+  <button onclick="runSelfTest()">자동 검증</button>
+  <button onclick="window.print()">인쇄</button>
+</div>
+
+<div id="stats" class="stats"></div>
+<div id="board" class="grid"><div class="loading">생성기를 불러오는 중…</div></div>
+</div>
+
+<script src="./generator/q01.js"></script>
+<script>
+var TYPES = {
+  1:{name:'01 · 앞과 뒤에서 본 쌓기나무 개수', mod:'HFQ01', g:'generateQ01', p:'renderQ01Problem', a:'renderQ01Answer', v:'validateQ01',
+     prompt:function(){return '다음은 쌓기나무로 만든 모양을 앞과 뒤에서 본 모양입니다. 쌓기나무는 모두 몇 개입니까?';}},
+  2:{name:'02 · 상자 채우기', mod:'HFQ02', g:'generateQ02', p:'renderQ02Problem', a:'renderQ02Answer', v:'validateQ02',
+     prompt:function(p){return '가로 '+p.width+', 세로 '+p.depth+', 높이 '+p.boxH+'인 상자에 쌓기나무를 쌓았습니다. 상자를 가득 채우려면 쌓기나무가 몇 개 더 필요합니까?';}},
+  3:{name:'03 · 흑백 교차 쌓기나무', mod:'HFQ03', g:'generateQ03', p:'renderQ03Problem', a:'renderQ03Answer', v:'validateQ03',
+     prompt:function(){return '검은색과 흰색 쌓기나무를 같은 색의 면이 맞닿지 않게 쌓았습니다. 흰색과 검은색 쌓기나무는 각각 몇 개입니까?';}},
+  4:{name:'04 · 구멍 뚫린 쌓기나무', mod:'HFQ04', g:'generateQ04', p:'renderQ04Problem', a:'renderQ04Answer', v:'validateQ04',
+     prompt:function(p){return '가로 '+p.width+', 세로 '+p.depth+', 높이 '+p.boxH+'인 직육면체 모양으로 빈틈없이 쌓은 쌓기나무에 반대쪽까지 통하도록 구멍을 뚫었습니다. 남은 쌓기나무는 몇 개입니까?';}},
+  5:{name:'05 · 숨은 쌓기나무', mod:'HFQ05', g:'generateQ05', p:'renderQ05Problem', a:'renderQ05Answer', v:'validateQ05',
+     prompt:function(p){return '쌓기나무를 빈틈없이 '+p.total+'개 쌓았습니다. 어느 방향에서도 보이지 않는 쌓기나무는 몇 개입니까? (단, 바닥면은 보이지 않습니다.)';}}
+};
+var DIFFS=[['easy','쉽게'],['same','같게'],['hard','어렵게']];
+
+function cardFor(id, diff, label){
+  var T=TYPES[id], M=window[T.mod];
+  if(!M) return '<div class="card '+diff+'"><span class="badge">'+label+'</span><div class="q">생성기 준비 중</div></div>';
+  var seed=Math.floor(Math.random()*90000)+1000;
+  var p=M[T.g](diff, seed);
+  var valid=M[T.v](p);
+  return '<div class="card '+diff+'">'
+    + '<span class="badge">'+label+'</span>'
+    + '<div class="q">[유형 '+('0'+id).slice(-2)+'] '+T.prompt(p)+'</div>'
+    + '<div class="fig">'+M[T.p](p)+'</div>'
+    + '<div class="ans">'+M[T.a](p)+'</div>'
+    + '<div class="meta">seed '+seed+' · '+(p.width||'-')+'×'+(p.depth||'-')+(p.boxH?'×'+p.boxH:'')+'</div>'
+    + '<div class="chk">문제 성립 검증: <span class="'+(valid?'ok':'ng')+'">'+(valid?'통과':'실패')+'</span></div>'
+    + '</div>';
+}
+function draw(){
+  var id=document.getElementById('typeSel').value;
+  document.getElementById('board').innerHTML=DIFFS.map(function(d){return cardFor(id,d[0],d[1]);}).join('');
+}
+function drawAll(){
+  var html='';
+  Object.keys(TYPES).forEach(function(id){
+    DIFFS.forEach(function(d){ html+=cardFor(id,d[0],d[1]); });
+  });
+  document.getElementById('board').innerHTML=html;
+}
+function runSelfTest(){
+  var box=document.getElementById('stats');
+  box.style.display='block';
+  var out='<b>자동 검증</b> — 유형별 각 난이도 200회 생성<br>';
+  Object.keys(TYPES).forEach(function(id){
+    var T=TYPES[id], M=window[T.mod];
+    if(!M){ out+='유형 '+('0'+id).slice(-2)+' — 생성기 없음<br>'; return; }
+    var line='유형 '+('0'+id).slice(-2)+' — ';
+    DIFFS.forEach(function(d){
+      var ok=0, answers={}, n=0;
+      for(var s=1;s<=200;s++){
+        var p=M[T.g](d[0], s);
+        if(M[T.v](p)) ok++;
+        var m=M[T.a](p).match(/정답:\s*([^—]+)/);
+        var key=m?m[1].trim():'';
+        if(!answers[key]){answers[key]=1;n++;}
+      }
+      line+='<b>'+d[1]+'</b> 성립 '+ok+'/200 · 정답 '+n+'종 &nbsp; ';
+    });
+    out+=line+'<br>';
+  });
+  box.innerHTML=out;
+}
+
+(function init(){
+  var sel=document.getElementById('typeSel');
+  Object.keys(TYPES).forEach(function(k){
+    var o=document.createElement('option'); o.value=k; o.textContent=TYPES[k].name; sel.appendChild(o);
+  });
+  var tries=0;
+  var timer=setInterval(function(){
+    tries++;
+    if(window.HFQ01 && window.HFQ05){ clearInterval(timer); draw(); }
+    else if(tries>60){ clearInterval(timer);
+      document.getElementById('board').innerHTML='<div class="loading">생성기를 불러오지 못했습니다. 새로고침해 주세요.</div>'; }
+  },100);
+})();
+</script>
+</body>
+</html>
