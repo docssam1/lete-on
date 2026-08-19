@@ -380,3 +380,4 @@ function renderSharedGame(ctx,d,showAnswer=false){
     ctx.fillStyle='#25313b';ctx.font='800 24px sans-serif';ctx.fillText(showAnswer?`${p.answer.expression} = ${p.answer.sum}`:'합: __________',950,285);
   }
 }
+
