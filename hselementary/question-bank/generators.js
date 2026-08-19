@@ -111,6 +111,97 @@
     }).join("");
     return `<svg class="geometry-diagram polygon-diagram" viewBox="0 0 240 176" aria-label="${star ? "별 모양" : `${sides}각형`}"><polygon points="${path}"/>${texts}</svg>`;
   };
+  const regularPolygonPoints = (sides, cx = 120, cy = 84, radius = 58) => Array.from({ length: sides }, (_, index) => polar(cx, cy, radius, index * 360 / sides));
+  const pointText = point => point.map(value => value.toFixed(1)).join(",");
+  const polygonDiagonalSvg = (sides, mode = "fan") => {
+    const points = regularPolygonPoints(sides);
+    const outline = points.map(pointText).join(" ");
+    const diagonals = [];
+    if (mode === "fan") {
+      for (let index = 2; index <= sides - 2; index += 1) diagonals.push('<line class="crease" x1="' + points[0][0].toFixed(1) + '" y1="' + points[0][1].toFixed(1) + '" x2="' + points[index][0].toFixed(1) + '" y2="' + points[index][1].toFixed(1) + '"/>');
+    } else {
+      for (let first = 0; first < sides; first += 1) {
+        for (let second = first + 1; second < sides; second += 1) {
+          if (second === first + 1 || (first === 0 && second === sides - 1)) continue;
+          diagonals.push('<line class="crease" x1="' + points[first][0].toFixed(1) + '" y1="' + points[first][1].toFixed(1) + '" x2="' + points[second][0].toFixed(1) + '" y2="' + points[second][1].toFixed(1) + '"/>');
+        }
+      }
+    }
+    const labels = points.map((point, index) => {
+      const [x, y] = polar(120, 84, 76, index * 360 / sides);
+      return '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '">' + String.fromCharCode(65 + index) + '</text>';
+    }).join("");
+    return '<svg class="geometry-diagram polygon-diagonal" viewBox="0 0 240 168" data-polygon-sides="' + sides + '" data-diagonal-mode="' + mode + '" aria-label="정' + sides + '각형과 대각선"><polygon points="' + outline + '"/>' + diagonals.join("") + labels + '</svg>';
+  };
+  const regularMeetSvg = (angles, labels) => {
+    const cx = 120;
+    const cy = 84;
+    let current = 0;
+    const starts = angles.map(angle => {
+      const start = current;
+      current += angle;
+      return start;
+    });
+    const lines = angles.map((_, index) => {
+      const point = polar(cx, cy, 64, starts[index]);
+      return '<line x1="' + cx + '" y1="' + cy + '" x2="' + point[0].toFixed(1) + '" y2="' + point[1].toFixed(1) + '"/>';
+    }).join("");
+    const texts = labels.map((label, index) => {
+      const point = polar(cx, cy, 37, starts[index] + angles[index] / 2);
+      return '<text x="' + point[0].toFixed(1) + '" y="' + point[1].toFixed(1) + '">' + label + '</text>';
+    }).join("");
+    return '<svg class="geometry-diagram regular-meet" viewBox="0 0 240 168" data-angles="' + angles.join(",") + '" aria-label="정다각형을 맞댄 각"><circle cx="' + cx + '" cy="' + cy + '" r="64"/>' + lines + texts + '<circle cx="' + cx + '" cy="' + cy + '" r="3"/></svg>';
+  };
+  const tileBoardSvg = ({ rows, cols, highlight = "none" }) => {
+    const cell = Math.min(34, Math.floor(170 / Math.max(rows, cols)));
+    const width = cols * cell;
+    const height = rows * cell;
+    const left = (240 - width) / 2;
+    const top = (164 - height) / 2;
+    const cells = Array.from({ length: rows * cols }, (_, index) => {
+      const row = Math.floor(index / cols);
+      const column = index % cols;
+      const selected = highlight === "checker" ? (row + column) % 2 === 0 : highlight === "border" ? row === 0 || column === 0 || row === rows - 1 || column === cols - 1 : false;
+      return '<rect x="' + (left + column * cell) + '" y="' + (top + row * cell) + '" width="' + cell + '" height="' + cell + '" style="fill:' + (selected ? "#dceffd" : "#ffffff") + '"/>';
+    }).join("");
+    return '<svg class="geometry-diagram tile-board" viewBox="0 0 240 164" data-tile-rows="' + rows + '" data-tile-cols="' + cols + '" data-tile-highlight="' + highlight + '" aria-label="' + rows + '행 ' + cols + '열 타일"><g>' + cells + '</g></svg>';
+  };
+  const normalizeCells = cells => {
+    const minX = Math.min(...cells.map(cell => cell[0]));
+    const minY = Math.min(...cells.map(cell => cell[1]));
+    return cells.map(cell => [cell[0] - minX, cell[1] - minY]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  };
+  const shapeKey = cells => normalizeCells(cells).map(cell => cell.join(",")).join(";");
+  const shapeRotations = cells => {
+    const shapes = new Map();
+    let current = cells;
+    for (let turn = 0; turn < 4; turn += 1) {
+      current = normalizeCells(current);
+      shapes.set(shapeKey(current), current);
+      current = current.map(cell => [cell[1], -cell[0]]);
+    }
+    return [...shapes.values()];
+  };
+  const placementCount = (rows, cols, cells) => shapeRotations(cells).reduce((total, shape) => {
+    const width = Math.max(...shape.map(cell => cell[0])) + 1;
+    const height = Math.max(...shape.map(cell => cell[1])) + 1;
+    return total + Math.max(0, cols - width + 1) * Math.max(0, rows - height + 1);
+  }, 0);
+  const piecePlacementSvg = ({ rows, cols, cells }) => {
+    const cell = 22;
+    const leftOrigin = [20, 54];
+    const rightOrigin = [118, 20];
+    const piece = normalizeCells(cells);
+    const miniWidth = Math.max(...piece.map(cellValue => cellValue[0])) + 1;
+    const miniHeight = Math.max(...piece.map(cellValue => cellValue[1])) + 1;
+    const mini = piece.map(cellValue => '<rect x="' + (leftOrigin[0] + cellValue[0] * cell) + '" y="' + (leftOrigin[1] + (miniHeight - cellValue[1] - 1) * cell) + '" width="' + cell + '" height="' + cell + '" style="fill:#dceffd"/>').join("");
+    const board = Array.from({ length: rows * cols }, (_, index) => {
+      const row = Math.floor(index / cols);
+      const column = index % cols;
+      return '<rect x="' + (rightOrigin[0] + column * cell) + '" y="' + (rightOrigin[1] + row * cell) + '" width="' + cell + '" height="' + cell + '"/>';
+    }).join("");
+    return '<svg class="geometry-diagram piece-placement" viewBox="0 0 240 164" data-piece-rows="' + rows + '" data-piece-cols="' + cols + '" data-piece-cells="' + piece.map(cellValue => cellValue.join(",")).join(";") + '" aria-label="조각과 모눈"><text x="39" y="34">조각</text><text x="164" y="14">모눈</text><g>' + mini + '</g><g>' + board + '</g></svg>';
+  };
   const foldSvg = (angle) => {
     const radians = angle * Math.PI / 180;
     const dx = 72 * Math.sin(radians);
@@ -1923,6 +2014,70 @@
       const answer = decimal(2 * 3.14 * radius * radius + 2 * 3.14 * radius * height, 2);
       return result(`원주율을 3.14로 할 때 밑면의 반지름이 ${radius}cm, 높이가 ${height}cm인 원기둥의 겉넓이를 구하세요.`, answer, `두 밑면과 옆면의 넓이를 더하면 2 × 3.14 × ${radius}² + 2 × 3.14 × ${radius} × ${height} = ${answer}cm²입니다.`);
     },
+    polygonDiagonals({ rng, level, variant = 0 }) {
+      const sideChoices = level === 0 ? [4, 5, 6] : level === 1 ? [5, 6, 7, 8] : [6, 7, 8, 9, 10];
+      const sides = pick(rng, sideChoices);
+      if (variant % 3 === 0) {
+        const answer = sides - 3;
+        return result('정' + sides + '각형의 한 꼭짓점에서 이웃한 꼭짓점과 자기 자신을 제외한 꼭짓점에 선분을 그었습니다. 그을 수 있는 대각선은 모두 몇 개입니까?' + polygonDiagonalSvg(sides, "fan"), answer, '한 꼭짓점은 자기 자신 1개와 이웃한 꼭짓점 2개에는 대각선을 그을 수 없습니다. 따라서 ' + sides + ' - 3 = ' + answer + '개입니다.');
+      }
+      if (variant % 3 === 1) {
+        const diagonalCount = sides * (sides - 3) / 2;
+        return result('모든 대각선을 그었더니 대각선이 ' + diagonalCount + '개인 정다각형이 있습니다. 이 다각형은 몇 각형입니까?' + polygonDiagonalSvg(sides, "all"), sides, '정' + sides + '각형에서는 한 꼭짓점마다 ' + (sides - 3) + '개의 대각선을 그을 수 있습니다. 꼭짓점마다 세면 ' + sides + ' × ' + (sides - 3) + '이고, 같은 대각선을 두 번 세었으므로 2로 나누면 ' + diagonalCount + '개입니다. 따라서 정' + sides + '각형입니다.');
+      }
+      const other = pick(rng, sideChoices.filter(value => value !== sides));
+      const answer = Math.abs(sides * (sides - 3) / 2 - other * (other - 3) / 2);
+      return result('정' + sides + '각형과 정' + other + '각형에 그을 수 있는 모든 대각선의 개수 차를 구하세요.' + polygonDiagonalSvg(sides, "all"), answer, '정' + sides + '각형의 대각선은 ' + (sides * (sides - 3) / 2) + '개, 정' + other + '각형의 대각선은 ' + (other * (other - 3) / 2) + '개입니다. 차는 ' + answer + '개입니다.');
+    },
+    regularPolygonApplication({ rng, level, variant = 0 }) {
+      const sideChoices = level === 0 ? [3, 4, 6] : level === 1 ? [3, 4, 5, 6, 8] : [3, 4, 5, 6, 8, 10];
+      const sides = pick(rng, sideChoices);
+      const exterior = 360 / sides;
+      const interior = 180 - exterior;
+      if (variant % 3 === 0) {
+        return result('한 내각의 크기가 ' + interior + '°인 정' + sides + '각형이 있습니다. 한 외각의 크기를 구하세요.' + polygonSvg(sides, Array(sides).fill("")), exterior, '한 꼭짓점에서 내각과 외각의 합은 180°이므로 180 - ' + interior + ' = ' + exterior + '°입니다.');
+      }
+      if (variant % 3 === 1) {
+        const sideLength = int(rng, 3 + level, 8 + level * 3);
+        const answer = sides * sideLength;
+        return result('한 변의 길이가 ' + sideLength + 'cm인 정' + sides + '각형의 둘레를 구하세요.' + polygonSvg(sides, Array(sides).fill("")), answer, '정' + sides + '각형은 같은 길이의 변이 ' + sides + '개이므로 ' + sideLength + ' × ' + sides + ' = ' + answer + 'cm입니다.');
+      }
+      const angleCases = [
+        { angles: [90, 90, 60, 120], labels: ["90°", "90°", "60°", "□"], answer: 120 },
+        { angles: [120, 90, 60, 90], labels: ["120°", "90°", "60°", "□"], answer: 90 },
+        { angles: [120, 120, 60, 60], labels: ["120°", "120°", "60°", "□"], answer: 60 }
+      ];
+      const selected = pick(rng, angleCases.slice(0, 1 + level * 1 + 1));
+      return result('정다각형들을 한 꼭짓점에 맞대어 빈틈없이 붙였습니다. 그림의 □에 알맞은 각도를 구하세요.' + regularMeetSvg(selected.angles, selected.labels), selected.answer, '한 점 둘레의 각의 합은 360°입니다. 알려진 각의 합 ' + (360 - selected.answer) + '°을 360°에서 빼면 □는 ' + selected.answer + '°입니다.');
+    },
+    tessellationCover({ rng, level, variant = 0 }) {
+      const rows = int(rng, 3 + level, 4 + level);
+      const cols = int(rng, 4 + level, 6 + level);
+      if (variant % 3 === 0) {
+        const side = int(rng, 2, 5 + level);
+        const answer = rows * cols;
+        return result('한 변의 길이가 ' + side + 'cm인 같은 정사각형 타일로 그림과 같은 직사각형 바닥을 빈틈없이 덮었습니다. 사용한 타일은 모두 몇 장입니까?' + tileBoardSvg({ rows, cols }), answer, '가로에 ' + cols + '장, 세로에 ' + rows + '장이므로 ' + cols + ' × ' + rows + ' = ' + answer + '장입니다.');
+      }
+      if (variant % 3 === 1) {
+        const evenRows = rows % 2 === 0 ? rows : rows + 1;
+        const answer = Math.ceil(evenRows * cols / 2);
+        return result('같은 정사각형 타일을 그림처럼 파랑, 흰색이 번갈아 나타나도록 빈틈없이 붙였습니다. 파란색 타일은 모두 몇 장입니까?' + tileBoardSvg({ rows: evenRows, cols, highlight: "checker" }), answer, '한 줄마다 파란색 타일은 ' + Math.ceil(cols / 2) + '장과 ' + Math.floor(cols / 2) + '장이 번갈아 있습니다. 전체 ' + (evenRows * cols) + '장 중 절반이므로 파란색 타일은 ' + answer + '장입니다.');
+      }
+      const tileWidth = int(rng, 2, 4 + level);
+      const tileHeight = int(rng, 2, 3 + level);
+      const answer = rows * cols;
+      return result('가로 ' + (cols * tileWidth) + 'cm, 세로 ' + (rows * tileHeight) + 'cm인 직사각형을 가로 ' + tileWidth + 'cm, 세로 ' + tileHeight + 'cm인 같은 직사각형 타일로 덮으려고 합니다. 필요한 타일 수를 구하세요.' + tileBoardSvg({ rows, cols, highlight: "border" }), answer, '가로에는 ' + (cols * tileWidth) + ' ÷ ' + tileWidth + ' = ' + cols + '장, 세로에는 ' + (rows * tileHeight) + ' ÷ ' + tileHeight + ' = ' + rows + '장입니다. 따라서 ' + cols + ' × ' + rows + ' = ' + answer + '장입니다.');
+    },
+    shapePartitionCompose({ rng, level, variant = 0 }) {
+      const cases = [
+        { name: "ㄴ자 모양 조각", cells: [[0, 0], [0, 1], [1, 0]], rows: 3 + level, cols: 4 + level },
+        { name: "긴 막대 모양 조각", cells: [[0, 0], [1, 0], [2, 0]], rows: 3 + level, cols: 4 + level },
+        { name: "ㅜ자 모양 조각", cells: [[0, 0], [1, 0], [2, 0], [1, 1]], rows: 4 + Math.min(level, 1), cols: 5 + level }
+      ];
+      const selected = cases[variant % cases.length];
+      const answer = placementCount(selected.rows, selected.cols, selected.cells);
+      return result('왼쪽 ' + selected.name + '을 돌리는 것은 가능하지만 뒤집는 것은 불가능합니다. 오른쪽 ' + selected.rows + '행 ' + selected.cols + '열 모눈 안에 선을 맞추어 완전히 놓을 수 있는 서로 다른 방법은 모두 몇 가지입니까?' + piecePlacementSvg(selected), answer, '조각을 돌려 생기는 서로 다른 방향을 모두 확인하고, 각 방향에서 모눈을 벗어나지 않는 위치를 셉니다. 이 조각은 모두 ' + answer + '가지 위치에 놓을 수 있습니다.');
+    },
     quadPerpParallelDistance({ rng, level, variant = 0 }) {
       const segCount = level === 0 ? 3 : level === 2 ? pick(rng, [5, 6]) : pick(rng, [4, 5]);
       const verticals = Array.from({ length: segCount }, () => int(rng, 2, 6 + level * 2));
@@ -2184,7 +2339,11 @@
     [type => type.id === "4-2-u4-t7", "quadSquareSpecial"],
     [type => type.id === "4-2-u4-t8", "quadRectangleCount"],
     [type => type.id === "4-2-u5-t1", "lineGraphUnderstanding"],
-    [type => type.id === "4-2-u5-t2", "lineGraphApplication"]
+    [type => type.id === "4-2-u5-t2", "lineGraphApplication"],
+    [type => type.id === "4-2-u6-t1", "polygonDiagonals"],
+    [type => type.id === "4-2-u6-t2", "regularPolygonApplication"],
+    [type => type.id === "4-2-u6-t3", "tessellationCover"],
+    [type => type.id === "4-2-u6-t4", "shapePartitionCompose"]
   ];
 
   function generatorKey(typeOrName) {
