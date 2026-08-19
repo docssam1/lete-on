@@ -142,13 +142,19 @@ html, body {
 .field + .field { margin-top: 18px; }
 
 /* ---------------------------------------------------------------------
-   단계 배지 — 띠(위)와 학습지 만들기(아래)가 같은 부품을 쓴다.
+   단계 배지 — 학습지 만들기 안에 한 자리만 있다(예전에는 페이지 맨 위에도
+   같은 아홉 단계 줄이 따로 있었지만, 내용이 완전히 같아 위아래로 두 번
+   고르는 것처럼 보였으므로 지웠다).
    --------------------------------------------------------------------- */
-.stage-band, .badge-row {
+.badge-row {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
+
+/* 예전 상단 섹션의 안내 문구가 옮겨 온 자리 — 배지 줄 위, 다른 field-note와
+   달리 늘 보인다(hidden 대상이 아니다). */
+.stage-static-note { margin-bottom: 10px; }
 
 .stage-badge {
   flex: 1 1 96px;
@@ -538,6 +544,56 @@ html, body {
   color: var(--brand);
 }
 .lab-footer-note { font-size: 12px; color: var(--muted); }
+
+/* ---------------------------------------------------------------------
+   데스크톱 2열 배치 — 미리보기가 유형 카드 아래에 있으면 문제 그림을 보려고
+   늘 아래로 스크롤해야 한다. 1100px 이상에서는 학습지 만들기를 왼쪽(단계·
+   난이도·영역·유형·문항 수·만들기 버튼) / 오른쪽(미리보기) 두 열로 나누고,
+   오른쪽 열은 position: sticky로 고정해 난이도·영역을 바꾸는 동안에도 계속
+   보이게 한다.
+   1100px 미만에서는 .builder-grid에 grid를 걸지 않으므로 DOM 순서 그대로
+   세로 한 줄로 흐르고, 미리보기는 지금처럼 유형 카드 바로 아래에 남는다.
+   --------------------------------------------------------------------- */
+@media (min-width: 1100px) {
+  .builder-grid {
+    display: grid;
+    grid-template-columns: 1fr minmax(360px, 45%);
+    align-items: start;
+    column-gap: 28px;
+  }
+  /* 왼쪽 열 여섯 필드에 행 번호를 하나씩 못박아 준다. 오른쪽 열(미리보기)만
+     그 여섯 행 전체(1 / 7)에 걸치도록 span을 주면, 그리드의 auto-placement가
+     "미리보기가 옆 칸을 통째로 차지하니 나머지는 어디에 넣지?"를 스스로
+     판단하게 되어(브라우저마다 다르게) 영역·문항 수 같은 필드가 뒤죽박죽
+     오른쪽 열로 밀려나는 문제가 생겼다 — 그래서 왼쪽 여섯 칸을 전부 명시
+     지정해 순서를 고정한다. */
+  .builder-grid #levelField { grid-column: 1; grid-row: 1; }
+  .builder-grid #intensityField { grid-column: 1; grid-row: 2; }
+  .builder-grid #domainField { grid-column: 1; grid-row: 3; }
+  .builder-grid #typesField { grid-column: 1; grid-row: 4; }
+  .builder-grid #countField { grid-column: 1; grid-row: 5; }
+  .builder-grid .build-bar { grid-column: 1; grid-row: 6; }
+  .builder-grid .preview-field {
+    grid-column: 2;
+    grid-row: 1 / 7;
+    position: sticky;
+    top: 16px;
+    align-self: start;
+  }
+  /* 유형 카드 — 왼쪽 열 폭이 전체 폭의 절반 남짓으로 줄어드니, auto-fill
+     대신 2열로 못박아 카드 한 장이 너무 좁아지지 않게 한다. */
+  .builder-grid .type-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  /* 2열이 되며 카드 폭이 좁아진 만큼 단계 표기(type-levels)가 줄바꿈으로
+     지저분해지지 않도록 글자를 줄이고 줄간격을 좁힌다. */
+  .builder-grid .type-card {
+    padding: 8px 10px;
+    gap: 3px;
+  }
+  .builder-grid .type-card .type-label { font-size: 12.5px; line-height: 1.35; }
+  .builder-grid .type-card .type-levels { font-size: 9.5px; line-height: 1.3; }
+}
 
 /* ---------------------------------------------------------------------
    좁은 화면 (가로로 눕힌 휴대폰 844x390 · 740x360 포함).

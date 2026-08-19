@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GFIELD 지오메트리 랩 · 기하 사고력 문제은행</title>
     <meta name="description" content="GFIELD 지오메트리 랩 — 단계와 난이도를 골라 인쇄용 기하 학습지를 만드는 문제은행." />
-    <link rel="stylesheet" href="./styles.css?v=lab-one-1" />
+    <link rel="stylesheet" href="./styles.css?v=lab-ui-2" />
   </head>
   <body>
     <header class="lab-header">
@@ -20,67 +20,71 @@
     </header>
 
     <main class="lab-wrap">
-      <!-- 단계 띠. 9단계 전부를 늘 보여 준다 — 제공 중인 4단계만 그리면
-           "우리 아이 단계는 왜 없지?"가 되고, 커리큘럼의 전체 길이도 보이지
-           않는다. 준비 중 단계는 흐리게 두고 이유를 툴팁으로 알려 준다. -->
-      <section class="lab-section" aria-labelledby="stagesTitle">
-        <h2 id="stagesTitle">단계</h2>
-        <p class="section-note">킨더부터 4과정까지 아홉 단계. 지금은 킨더~중급 학습지를 제공해요.</p>
-        <div class="stage-band" id="stageBand"><!-- 배지는 app.js가 GW_GEN.LEVELS로 그린다 --></div>
-      </section>
-
       <section class="lab-section lab-card" id="builder" aria-labelledby="builderTitle">
         <h2 id="builderTitle">학습지 만들기</h2>
         <p class="section-note">영역 · 단계 · 난이도 · 유형 · 문항 수를 고르면 인쇄용 학습지가 바로 만들어져요.</p>
 
-        <div class="field">
-          <h3>단계</h3>
-          <div class="badge-row" id="builderLevels"><!-- app.js --></div>
-          <p class="field-note" id="levelNote" hidden></p>
-        </div>
-
-        <div class="field" id="intensityField">
-          <h3>난이도</h3>
-          <div class="intensity-row" id="intensityRow"><!-- app.js --></div>
-          <p class="field-note" id="intensityNote">하 기초 · 중 표준 · 상 심화</p>
-        </div>
-
-        <div class="field">
-          <!-- 영역 — 쌓기나무 / 색종이 접기. 두 카탈로그를 한 격자에 쏟아
-               놓으면 스무 장 넘는 카드가 한 덩어리로 보여 무엇이 무엇의
-               이웃인지 읽히지 않는다. -->
-          <h3>영역</h3>
-          <div class="domain-row" id="domainRow"><!-- app.js --></div>
-          <p class="field-note" id="domainNote"></p>
-        </div>
-
-        <div class="field">
-          <h3>유형</h3>
-          <div class="type-grid" id="typeGrid"><!-- app.js --></div>
-          <p class="field-note" id="typeNote">선택한 단계에서 제공하지 않는 유형은 흐리게 표시돼요.</p>
-        </div>
-
-        <!-- 미리보기 — 고른 단계·난이도로 만든 문제 한 장을 학습지에 실릴
-             모습 그대로 보여 준다. 만들어 놓고 인쇄해 봐야 무엇이 나오는지
-             알던 것을, 고르는 자리에서 바로 확인하게 한다. -->
-        <div class="field preview-field" id="previewPanel">
-          <h3>미리보기 <span class="preview-type" id="previewType"></span></h3>
-          <div class="preview-tabs" id="previewTabs"><!-- app.js --></div>
-          <div class="preview-body" id="previewBody"><!-- app.js --></div>
-          <div class="preview-actions">
-            <button type="button" class="btn btn-outline btn-sm" id="previewNewBtn">새 문제</button>
-            <button type="button" class="btn btn-outline btn-sm" id="previewAnswerBtn" aria-pressed="false">정답 보기</button>
+        <!-- 데스크톱(1100px 이상)에서는 이 안의 필드들이 왼쪽 열로, 미리보기
+             패널만 오른쪽 열로 옮겨져 값을 바꾸는 동안 스크롤 없이 결과를
+             볼 수 있다. 1100px 미만에서는 세로 배치로 되돌아간다(아래
+             .builder-grid 미디어쿼리, styles.css). -->
+        <div class="builder-grid">
+          <div class="field" id="levelField">
+            <h3>단계</h3>
+            <!-- 예전에 페이지 맨 위 독립 섹션에 있던 안내. 단계 배지가 위아래
+                 두 곳에 있던 것을 하나로 합치며 이 자리로 옮겨 왔다(9단계 전부를
+                 늘 보여 준다 — 제공 중인 4단계만 그리면 "우리 아이 단계는 왜
+                 없지?"가 되고, 커리큘럼의 전체 길이도 보이지 않는다). -->
+            <p class="field-note stage-static-note">킨더부터 4과정까지 아홉 단계. 지금은 킨더~중급 학습지를 제공해요.</p>
+            <div class="badge-row" id="builderLevels"><!-- app.js --></div>
+            <p class="field-note" id="levelNote" hidden></p>
           </div>
-        </div>
 
-        <div class="field">
-          <h3>문항 수</h3>
-          <div class="count-row" id="countRow"><!-- app.js --></div>
-        </div>
+          <div class="field" id="intensityField">
+            <h3>난이도</h3>
+            <div class="intensity-row" id="intensityRow"><!-- app.js --></div>
+            <p class="field-note" id="intensityNote">하 기초 · 중 표준 · 상 심화</p>
+          </div>
 
-        <div class="build-bar">
-          <p class="build-summary" id="buildSummary"></p>
-          <a class="btn btn-primary" id="buildBtn" href="../worksheet/index.html">학습지 만들기</a>
+          <div class="field" id="domainField">
+            <!-- 영역 — 쌓기나무 / 색종이 접기. 두 카탈로그를 한 격자에 쏟아
+                 놓으면 스무 장 넘는 카드가 한 덩어리로 보여 무엇이 무엇의
+                 이웃인지 읽히지 않는다. -->
+            <h3>영역</h3>
+            <div class="domain-row" id="domainRow"><!-- app.js --></div>
+            <p class="field-note" id="domainNote"></p>
+          </div>
+
+          <div class="field" id="typesField">
+            <h3>유형</h3>
+            <div class="type-grid" id="typeGrid"><!-- app.js --></div>
+            <p class="field-note" id="typeNote">선택한 단계에서 제공하지 않는 유형은 흐리게 표시돼요.</p>
+          </div>
+
+          <!-- 미리보기 — 고른 단계·난이도로 만든 문제 한 장을 학습지에 실릴
+               모습 그대로 보여 준다. 만들어 놓고 인쇄해 봐야 무엇이 나오는지
+               알던 것을, 고르는 자리에서 바로 확인하게 한다. 데스크톱에서는
+               position: sticky로 오른쪽 열에 고정돼, 난이도·영역을 바꾸는 동안
+               계속 눈에 보인다. -->
+          <div class="field preview-field" id="previewPanel">
+            <h3>미리보기 <span class="preview-type" id="previewType"></span></h3>
+            <div class="preview-tabs" id="previewTabs"><!-- app.js --></div>
+            <div class="preview-body" id="previewBody"><!-- app.js --></div>
+            <div class="preview-actions">
+              <button type="button" class="btn btn-outline btn-sm" id="previewNewBtn">새 문제</button>
+              <button type="button" class="btn btn-outline btn-sm" id="previewAnswerBtn" aria-pressed="false">정답 보기</button>
+            </div>
+          </div>
+
+          <div class="field" id="countField">
+            <h3>문항 수</h3>
+            <div class="count-row" id="countRow"><!-- app.js --></div>
+          </div>
+
+          <div class="build-bar">
+            <p class="build-summary" id="buildSummary"></p>
+            <a class="btn btn-primary" id="buildBtn" href="../worksheet/index.html">학습지 만들기</a>
+          </div>
         </div>
       </section>
 
@@ -117,6 +121,6 @@
     <script src="../worksheet/generators.js?v=ws-one-1"></script>
     <script src="../worksheet/render.js?v=ws-one-1"></script>
     <script src="../worksheet/card.js?v=ws-one-1"></script>
-    <script src="./app.js?v=lab-one-1"></script>
+    <script src="./app.js?v=lab-ui-2"></script>
   </body>
 </html>
