@@ -504,7 +504,7 @@ const PRODUCTS=[
   {key:"파이널모의고사1회",bankExam:"final-1",name:"파이널 모의고사 1회",desc:"최종 점검 파이널 1회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/obRvM_ymsM8",lessons:[{key:"fi1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"https://youtu.be/obRvM_ymsM8",pdfPage:1}]},
   {key:"파이널모의고사2회",bankExam:"final-2",answerDoc:"final-2",name:"파이널 모의고사 2회",desc:"최종 점검 파이널 2회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/VC_jgwrMH_k",lessons:[{key:"fi2",label:"2회",title:"파이널 모의고사 2회",type:"concept",url:"https://youtu.be/VC_jgwrMH_k",pdfPage:1}]},
   {key:"파이널모의고사3회",bankExam:"final-3",answerDoc:"final-3",name:"파이널 모의고사 3회",desc:"최종 점검 파이널 3회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/ihp5SqAqc00",lessons:[{key:"fi3",label:"3회",title:"파이널 모의고사 3회",type:"concept",url:"https://youtu.be/ihp5SqAqc00",pdfPage:1}]},
-  {key:"파이널모의고사4회",name:"파이널 모의고사 4회",desc:"새 시험지 제작 중",icon:"🏁",theme:"theme-final",type:"direct",comingSoon:true,lessons:[{key:"fi4",label:"4회",title:"파이널 모의고사 4회",type:"concept",url:"",pdfPage:1}]},
+  {key:"파이널모의고사4회",name:"파이널 모의고사 4회",desc:"새 시험지 제작 중 · 정답·분석 열람 가능",icon:"🏁",theme:"theme-final",type:"direct",comingSoon:true,answerDoc:"final-4",lessons:[{key:"fi4",label:"4회",title:"파이널 모의고사 4회",type:"concept",url:"",pdfPage:1}]},
   {key:"최종모의고사",name:"최종 모의고사",desc:"새 시험지 제작 중",icon:"🏆",theme:"theme-final",type:"direct",comingSoon:true,lessons:[{key:"u1",label:"최종",title:"최종 모의고사",type:"concept",url:"",pdfPage:1}]},
   {key:"자료실",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
 ];
@@ -903,6 +903,12 @@ const GF={
     if(p.lessons?.length){const first=p.lessons[0];S.currentVideo={url:first.url};document.getElementById("videoIframe").src=first.url?embed(first.url):"";if(p.pagesBase&&first.pdfPage)setBookPage(first.pdfPage);else setBookEmpty();tabs.querySelector(".tab-btn")?.classList.add("active")}
     document.getElementById("viewer").classList.add("show");document.body.classList.add("in-viewer");checkOrientation();
   },
+  openAnswerDoc(id){
+    if(!id)return;
+    const url=new URL("../mock/answer.html",location.href);
+    url.searchParams.set("exam",id);
+    window.open(url,"_blank","noopener");
+  },
   openAnswerSheet(){
     const p=S.currentProduct;if(!p?.answerDoc)return;
     const url=new URL("../mock/answer.html",location.href);
@@ -1057,11 +1063,15 @@ function sectionComingSoon(g){
 function runCard(p){
   if(!p)return "";
   const soon=!!p.comingSoon,ok=pOk(p),idx=PRODUCTS.indexOf(p);
-  return `<button class="program-run-card ${h(p.theme||"")} ${ok?"":"locked"} ${soon?"coming-soon":""}" ${soon?'aria-disabled="true"':`onclick="GF.openProgramProduct(${idx})"`}>
+  // 시험지는 아직 없어도 원본 확정 답이 있는 회차가 있다(파이널 4회는 실전 4회와 같은 시험지라
+  // 문제은행에 넣지 않았지만 답과 문항 분석은 다 있다). 그런 카드는 잠긴 채로 두되 정답·분석만
+  // 열어 준다. 권한은 새로 만들지 않고 그 상품에 대한 기존 권한을 그대로 본다.
+  const answerOnly=soon&&!!p.answerDoc&&S.perms.includes(p.key);
+  return `<button class="program-run-card ${h(p.theme||"")} ${ok?"":"locked"} ${soon?"coming-soon":""}" ${soon?(answerOnly?`onclick="GF.openAnswerDoc('${h(p.answerDoc)}')"`:'aria-disabled="true"'):`onclick="GF.openProgramProduct(${idx})"`}>
     <div class="program-run-book" aria-hidden="true"><div class="program-run-cover"><span class="program-run-kicker">필즈 더 클래식</span><strong>${h(p.name)}</strong><span class="program-run-icon">${h(p.icon||"")}</span><span class="program-run-mark">지필드 영재교육</span></div><div class="program-run-back"></div><div class="program-run-spine"></div><div class="program-run-pages"></div><div class="program-run-top"></div><div class="program-run-bottom"></div></div>
     <div class="program-run-name">${h(p.name)}</div>
     <div class="program-run-desc">${h(p.desc||"")}</div>
-    ${soon?'<span class="program-lock">준비중</span>':ok?"":'<span class="program-lock">🔒 열람 제한</span>'}
+    ${soon?(answerOnly?'<span class="program-lock">✅ 정답·분석</span>':'<span class="program-lock">준비중</span>'):ok?"":'<span class="program-lock">🔒 열람 제한</span>'}
   </button>`;
 }
 function renderProgramPanel(id){

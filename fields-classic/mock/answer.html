@@ -30,6 +30,8 @@ html,body{font-family:'Pretendard',sans-serif;background:var(--g-bg);color:var(-
 .head-card{background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh-sm);padding:20px 22px;margin-bottom:16px}
 .head-card h1{font-size:22px;font-weight:900;letter-spacing:-.8px}
 .head-card .sub{margin-top:6px;color:var(--g-muted);font-size:13px;font-weight:600;line-height:1.6;word-break:keep-all}
+.head-card .exam-note{margin-top:10px;padding:9px 12px;border-radius:var(--r-md);background:#fff7e8;
+  border:1px solid #f0d9a8;color:#8a6520;font-size:12.5px;font-weight:700;line-height:1.6;word-break:keep-all}
 
 /* ── 시험 선택 ── */
 .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
@@ -109,6 +111,7 @@ tbody tr:last-child td{border-bottom:0}
   <div class="head-card">
     <h1 id="title">파이널 모의고사 정답·문항 분석</h1>
     <p class="sub" id="subtitle"></p>
+    <p class="exam-note" id="examNote" hidden></p>
   </div>
 
   <div class="tabs" id="tabs" role="tablist"></div>
@@ -146,6 +149,8 @@ tbody tr:last-child td{border-bottom:0}
   var ids = Object.keys(DATA);
   var $ = function(id){ return document.getElementById(id); };
   // 회차는 주소로도 지정된다(program 서재에서 바로 들어올 때). 없으면 첫 회차.
+  // 문제은행이 실제로 갖고 있는 회차. 4회는 실전 4회와 중복이라 등록하지 않았다.
+  var BANK_EXAMS = ['final-1', 'final-2', 'final-3'];
   var want = new URLSearchParams(location.search).get('exam');
   var current = ids.indexOf(want) >= 0 ? want : ids[0];
 
@@ -189,6 +194,12 @@ tbody tr:last-child td{border-bottom:0}
 
     $('title').textContent = exam.label + ' — 정답·문항 분석';
     $('subtitle').textContent = qs.length + '문항 · 원본 시험지와 해설 영상을 1:1로 대조해 확정한 답입니다.';
+    var noteEl = $('examNote');
+    noteEl.textContent = exam.examNote || '';
+    noteEl.hidden = !exam.examNote;
+    // 문제은행에 등록된 회차만 시험지를 뽑을 수 있다. 없는 회차에 버튼을 열어 두면
+    // 문제은행이 다른 회차를 대신 띄운다.
+    $('bankBtn').style.display = BANK_EXAMS.indexOf(current) >= 0 ? '' : 'none';
 
     $('summary').innerHTML =
       barBlock('난이도', tally(qs, 'diff'), ['하', '중', '상'], true) +

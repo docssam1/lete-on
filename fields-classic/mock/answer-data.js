@@ -1,9 +1,12 @@
 // 파이널 모의고사 확정 답·문항 분석 데이터
 //
 // 출처는 `question-bank/FINAL-SOURCE-AUDIT.md`의 원본 구조표와 대본 검증표다. 손으로 옮기지 않고
-// 두 표를 기계로 합쳐 만든다(스크립트는 작업 기록 참조). 유형 이름·영역은 감사 문서의 산문이 아니라
-// `source-data.js`에서 가져온다 — 감사 문서에는 옛 표기가 남아 있고, 화면에 나가는 이름은 앱이
-// 실제로 쓰는 쪽이어야 한다.
+// 두 표를 기계로 합쳐 만든다(빌더는 작업 기록 참조).
+//
+// 유형 이름·영역은 문제은행에 **등록된 시험지(2·3회)**면 `source-data.js`에서 가져온다 — 감사
+// 문서에는 옛 표기가 남아 있고, 화면에 나가는 이름은 앱이 실제로 쓰는 쪽이어야 한다. 4회는 실전
+// 4회와 중복이라 문제은행에 등록하지 않았으므로, 감사 문서가 적어 둔 유형 id로 `TYPES`를 조회한다
+// (F17·F18·F19·F22처럼 F코드로만 적힌 네 개는 나중에 등록된 실제 유형으로 이어 준다).
 //
 // 여기 있는 것은 원본 시험지의 **확정 답**이다. 문제은행이 만들어 내는 변형 문제의 답이 아니다.
 // 원본 지문·그림은 저작권상 담지 않는다 — 구조 요약과 답, 검증 메모만 둔다.
@@ -11,6 +14,7 @@ window.FIELDS_MOCK_ANSWERS = {
   "final-2": {
     label: "필즈선발대비 실전 모의고사 파이널 2회",
     video: "https://www.youtube.com/watch?v=VC_jgwrMH_k",
+    examNote: null,
     questions: [
       {"no":1,"summary":"네 번의 포함·제외 카드 조건으로 숫자 찾기","domain":"논리와 문제해결","middle":"조건 추리","type":"숫자 카드 포함·제외 조건으로 숨은 수 찾기","typeId":"hidden-number-card-conditions","diff":"상","answer":"4","note":"네 포함·제외 조건의 공통 원소"},
       {"no":2,"summary":"계단형 입체에서 가려진 쌓기나무 세기","domain":"도형과 공간","middle":"쌓기나무","type":"벽 모서리에서 보이지 않는 쌓기나무의 개수","typeId":"cube-hidden-count-walled","diff":"중","answer":"5개","note":"원본 입체에서 가려진 층별 개수 재확인"},
@@ -37,6 +41,7 @@ window.FIELDS_MOCK_ANSWERS = {
   "final-3": {
     label: "필즈선발대비 실전 모의고사 파이널 3회",
     video: "https://www.youtube.com/watch?v=ihp5SqAqc00",
+    examNote: null,
     questions: [
       {"no":1,"summary":"4x4 가로·세로 별 개수에 맞게 표시","domain":"논리와 문제해결","middle":"조건 배치","type":"가로·세로 개수 조건에 맞게 칸 표시하기","typeId":"row-column-count-placement","diff":"중","answer":"위부터 ★★★· / ★★·★ / ★★★★ / ★·★·","note":"행의 별 수 3·3·4·2, 열의 별 수 4·3·3·2를 모두 만족하는 한 가지 답"},
       {"no":2,"summary":"두 사람만 거짓말한 경기 순위 추리","domain":"논리와 문제해결","middle":"조건 추리","type":"참말과 거짓말로 경기 순위 찾기","typeId":"truth-lie-ranking","diff":"상","answer":"3등","note":"가능한 순서는 C-B-E-A-D 또는 B-C-E-A-D; 대본의 2등은 원본 조건과 불일치"},
@@ -58,6 +63,33 @@ window.FIELDS_MOCK_ANSWERS = {
       {"no":18,"summary":"닭·토끼의 전체 마리 수와 다리 수","domain":"수와 연산","middle":"합과 차 문장제","type":"두 종류의 전체 개수와 단위 수로 각각의 개수 구하기","typeId":"two-type-unit-total","diff":"중","answer":"닭 4마리, 토끼 6마리","note":"모두 닭이면 20개인 다리에서 12개를 두 개씩 바꿈"},
       {"no":19,"summary":"테두리가 커지는 바둑돌의 5번째 흑백 차이","domain":"규칙과 관계","middle":"도형 규칙","type":"테두리가 커지는 바둑돌의 흑백 차이","typeId":"border-go-stone-difference","diff":"중","answer":"흰돌이 1개 더 많다","note":"다섯 번째 흰돌 25개, 검은돌 24개"},
       {"no":20,"summary":"형·누나가 모두 있거나 없는 학생 수","domain":"논리와 문제해결","middle":"집합과 포함","type":"두 조건에 모두 해당하지 않는 수","typeId":"neither-set-count","diff":"중","answer":"17명","note":"형 또는 누나가 있는 학생 18+8-3=23, 전체 40명에서 제외"}
+    ]
+  },
+  "final-4": {
+    label: "필즈선발대비 실전 모의고사 파이널 4회",
+    video: "https://www.youtube.com/watch?v=KLQH2Mrjm8c",
+    examNote: "파이널 4회는 실전 4회와 문항·그림·수치가 같습니다. 해설 영상도 실전 4회 것을 씁니다.",
+    questions: [
+      {"no":1,"summary":"세 구슬의 저울 관계로 필요한 가 구슬 수","domain":"논리와 문제해결","middle":"무게 비교","type":"양팔저울의 균형 관계","typeId":"balance-scale","diff":"중","answer":"가 구슬 5개","note":"가=1, 나=2, 다=3으로 놓으면 나+다=5"},
+      {"no":2,"summary":"같은 막대로 구성된 가·나·다·라 길이","domain":"도형과 공간","middle":"길이와 측정","type":"막대의 배수 관계와 전체 길이","typeId":"rod-length-ratio","diff":"중","answer":"나 8cm, 다 4cm, 라 3cm","note":"가 막대 2cm를 기준으로 전체 길이를 각각 분할"},
+      {"no":3,"summary":"다섯 수 카드를 +·×·- 혼합 계산식에 한 번씩 넣기","domain":"수와 연산","middle":"수 카드와 식","type":"수 카드를 혼합 계산식에 한 번씩 넣기","typeId":"number-card-mixed-operations","diff":"중","answer":"위 2+9=11, 왼쪽 2×7=14, 오른쪽 11-5=6","note":"5·7·9·11·14를 한 번씩 사용"},
+      {"no":4,"summary":"번호 색종이를 접고 잘라 남은 수의 합","domain":"도형과 공간","middle":"색종이 접기","type":"번호 색종이를 접고 자른 뒤 남은 수의 합","typeId":"fold-number-remaining-sum","diff":"중","answer":"18","note":"접힌 뒤 잘려 나간 네 칸의 합 6을 전체 합 24에서 제외"},
+      {"no":5,"summary":"1~6을 삼각형 둘레에 놓아 세 변 합 같게 만들기","domain":"수와 연산","middle":"수 배열과 합","type":"가로·세로 각 줄의 합 같게 만들기","typeId":"equal-line-sum","diff":"중","answer":"한 줄의 합 11","note":"위 2, 왼쪽 아래 4, 오른쪽 아래 6, 왼쪽 변 5, 오른쪽 변 3, 아래 변 1"},
+      {"no":6,"summary":"1~9 마방진의 색칠한 칸 값","domain":"수와 연산","middle":"수 배열과 합","type":"가로·세로·대각선 합이 같은 마방진","typeId":"magic-square","diff":"상","answer":"8","note":"마방진은 2,7,6 / 9,5,1 / 4,3,8; 색칠한 칸은 오른쪽 아래"},
+      {"no":7,"summary":"순위표의 가려진 서로 다른 세 자리 숫자","domain":"논리와 문제해결","middle":"순서와 비교","type":"순위표의 가려진 서로 다른 숫자 찾기","typeId":"hidden-score-ranking","diff":"중","answer":"세윤 203장, 현희 193장, 도연 192장","note":"가려진 숫자는 각각 0·1·2이며 모두 다름"},
+      {"no":8,"summary":"네 수 카드로 만든 두 자리 짝수의 개수","domain":"수와 연산","middle":"수 카드와 식","type":"수 카드로 만든 두 자리 짝수의 개수","typeId":"two-digit-even-count","diff":"중","answer":"6개","note":"일의 자리 2·4 각각에 남은 세 카드를 십의 자리로 사용"},
+      {"no":9,"summary":"번갈아 2씩 커지는 수열의 빈칸","domain":"규칙과 관계","middle":"수 규칙","type":"수 배열표의 규칙 찾기","typeId":"number-table-rule","diff":"하","answer":"7","note":"3,5 / 4,6 / 5,7 / 6,8의 두 수열 교대"},
+      {"no":10,"summary":"두 단계 수 변환 기계의 역·순방향 값","domain":"규칙과 관계","middle":"수 규칙","type":"수 변환 기계의 규칙","typeId":"function-machine","diff":"중","answer":"첫 빈칸 10, 다음 빈칸 1","note":"첫 기계는 ×2+2, 둘째 기계는 10을 입력 수로 나눔"},
+      {"no":11,"summary":"불규칙하게 붙은 도형의 사각형 세기","domain":"도형과 공간","middle":"도형 세기","type":"크고 작은 사각형 세기","typeId":"square-count","diff":"중","answer":"10개","note":"한 칸 5개, 두 칸 4개, 세 칸 1개"},
+      {"no":12,"summary":"여러 번 오고 간 뒤 현재 수에서 처음 인원 찾기","domain":"논리와 문제해결","middle":"과정 추론","type":"여러 번 오고 간 뒤 처음 수 거꾸로 찾기","typeId":"reverse-initial-count","diff":"중","answer":"9명","note":"처음+4-6+5-3=9이므로 증감이 서로 상쇄됨"},
+      {"no":13,"summary":"찢어진 7월 달력에서 수요일 날짜의 합","domain":"규칙과 관계","middle":"달력과 시간","type":"달력에서 같은 요일 날짜의 합","typeId":"calendar-weekday-sum","diff":"중","answer":"85","note":"수요일은 3·10·17·24·31일"},
+      {"no":14,"summary":"계단 타일의 7번째 흰색·검은색 차이","domain":"규칙과 관계","middle":"도형 규칙","type":"구슬 배열의 개수 규칙","typeId":"growing-shape-count","diff":"중","answer":"흰색 타일이 7개 더 많다","note":"7번째 흰색 28개, 검은색 21개"},
+      {"no":15,"summary":"세 도형이 있는 세로 덧셈 복면산","domain":"수와 연산","middle":"복면산과 식","type":"세로셈 복면산","typeId":"cryptarithm","diff":"상","answer":"스페이드 9, 하트 8, 별 1","note":"98+18=116"},
+      {"no":16,"summary":"연속 기호식으로 마지막 별 값 구하기","domain":"수와 연산","middle":"복면산과 식","type":"도형이 나타내는 수와 식","typeId":"shape-equation","diff":"상","answer":"17","note":"네모 4, 동그라미 12, 하트 14, 이중 원 24를 차례로 계산"},
+      {"no":17,"summary":"4x4 도형표의 행·열 합으로 빈 합 채우기","domain":"수와 연산","middle":"매트릭스","type":"도형의 가로·세로 합 매트릭스","typeId":"shape-sum-table","diff":"중","answer":"세 번째 행 24, 아래 첫째·둘째·셋째 열도 각각 24","note":"원 5, 네모 11, 별 7, 세모 3; 넷째 열 합 26과도 일치"},
+      {"no":18,"summary":"4x4 과일표의 행·열 합으로 빈 합 채우기","domain":"수와 연산","middle":"매트릭스","type":"도형의 가로·세로 합 매트릭스","typeId":"shape-sum-table","diff":"중","answer":"네 번째 행 34, 아래 열 합은 37, 44, 40, 44","note":"바나나 15, 사과 5, 포도 12"},
+      {"no":19,"summary":"다섯 사람 키 비교로 가장 큰·작은 사람","domain":"논리와 문제해결","middle":"순서와 비교","type":"키의 크고 작은 순서","typeId":"height-order","diff":"중","answer":"가장 큰 사람 동화, 가장 작은 사람 영희","note":"동화>슬기>지현>주희>영희 순서"},
+      {"no":20,"summary":"네 사람과 네 동물 조건 연결","domain":"논리와 문제해결","middle":"조건 연결","type":"사람과 동물·음식 조건 연결","typeId":"person-item-logic","diff":"상","answer":"주연-햄스터, 유빈-원숭이, 유준-고양이, 관호-강아지","note":"원본의 세 조건과 일대일 대응을 모두 만족"}
     ]
   }
 };
