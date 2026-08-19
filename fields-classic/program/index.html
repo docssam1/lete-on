@@ -1024,19 +1024,21 @@ function archiveFolderMarkup(folder){
 }
 function programGroups(){
   const concept=PRODUCTS.find(p=>p.type==="folder");
-  const diagnostic=PRODUCTS.find(p=>p.type==="mock");
+  // 키로 찾는다. type만 보면 같은 type의 상품이 늘었을 때 엉뚱한 것이 잡힌다
+  // (마무리 점검도 type이 "mock"이다).
+  const diagnostic=PRODUCTS.find(p=>p.key==="진단모의고사");
+  const finalCheck=PRODUCTS.find(p=>p.key==="마무리점검");
   const killer=PRODUCTS.find(p=>lessonKey(p)==="k1")||PRODUCTS.find(p=>p.theme==="theme-killer");
   const practice=PRODUCTS.filter(p=>/^p\d+/.test(lessonKey(p)));
   const finals=PRODUCTS.filter(p=>/^fi\d+/.test(lessonKey(p)));
-  const ultimate=PRODUCTS.find(p=>lessonKey(p)==="u1");
   const groups=[
     {id:"concept",icon:"📘",title:"TOP SECRET 개념",sub:"개념 교재 Vol.1~Final",kind:"chapters",product:concept,kicker:"TOP SECRET",head:"개념 완성",desc:"개념 책을 고르면 영상과 교재가 함께 열립니다."},
     {id:"arithmetic",icon:"🔢",title:"연산 연습",sub:"덧셈·뺄셈·받아올림",kind:"products",items:[PRODUCTS.find(p=>p.key==="연산연습")],kicker:"CALCULATION",head:"필즈 연산 연습",desc:"사고력 문제은행과 분리된 연산을 유형별로 반복합니다."},
     {id:"killer",icon:"🎯",title:"킬러문항 완전 해제",sub:"최상위 유형 공략",kind:"products",items:[killer],kicker:"KILLER",head:"킬러문항 완전 해제",desc:"문항 유형은 보이지만 구매 권한이 있을 때만 열립니다."},
     {id:"diagnostic",icon:"🔍",title:"진단모의고사",sub:"진단 및 분석",kind:"products",items:[diagnostic],kicker:"DIAGNOSTIC",head:"진단모의고사",desc:"진단지는 선택 후 별도 모의고사 화면으로 이동합니다."},
     {id:"practice",icon:"📝",title:"실전 모의고사",sub:"1회~6회",kind:"products",items:practice,kicker:"PRACTICE",head:"실전 모의고사",desc:"각 회차를 확인하고 권한이 있는 회차만 학습할 수 있습니다."},
-    {id:"final",icon:"🏁",title:"파이널 모의고사",sub:"1회~4회",kind:"products",items:finals,kicker:"FINAL",head:"파이널 모의고사",desc:"파이널 회차가 책처럼 펼쳐집니다."},
-    {id:"ultimate",icon:"🏆",title:"최종 모의고사",sub:"새 시험지",kind:"products",items:[ultimate],kicker:"LAST CHECK",head:"최종 모의고사",desc:"새 시험지를 준비하고 있습니다."}
+    {id:"final",icon:"🏁",title:"파이널 모의고사",sub:"1회~3회",kind:"products",items:finals,kicker:"FINAL",head:"파이널 모의고사",desc:"파이널 회차가 책처럼 펼쳐집니다."},
+    {id:"finalcheck",icon:"🏁",title:"마무리 점검",sub:"시험 직전 최종 점검",kind:"products",items:[finalCheck],kicker:"LAST CHECK",head:"마무리 점검",desc:"채점하면 문항마다 해설이 붙은 결과표가 나옵니다. 이 시험지에는 해설 강의가 없습니다."}
   ];
   const mainGroups=groups.filter(g=>g.product||g.items?.some(Boolean));
   archiveFolderNames().forEach((folder,index)=>mainGroups.push({

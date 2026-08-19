@@ -207,6 +207,11 @@ window.GFIELD_FC_DATA = {
       "homework": "",
       "textbooks": []
     },
+    "마무리점검": {
+      "notice": "",
+      "homework": "",
+      "textbooks": []
+    },
     "연산연습": {
       "notice": "",
       "homework": "",
