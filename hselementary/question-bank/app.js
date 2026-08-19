@@ -7,7 +7,7 @@
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
   const hash = (value) => [...value].reduce((sum, character) => Math.imul(sum ^ character.charCodeAt(0), 16777619), 2166136261) >>> 0;
 
-  const types = curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.types.map(type => ({
+  const types = curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types.map(type => ({
     ...type,
     semesterId: semester.id,
     semesterLabel: semester.label,
@@ -16,8 +16,11 @@
     unitId: unit.id,
     unitNumber: unit.number,
     unitName: unit.name,
+    subunitId: subunit.id,
+    subunitNumber: subunit.number,
+    subunitName: subunit.name,
     generator: generatorApi.generatorKey({ ...type, semesterId: semester.id, unitId: unit.id, unitName: unit.name })
-  }))));
+  })))));
   const typeById = new Map(types.map(type => [type.id, type]));
 
   const state = {
@@ -52,7 +55,7 @@
     return types.filter(type => {
       if (type.grade !== state.grade || type.term !== state.term) return false;
       if (state.unitId && type.unitId !== state.unitId) return false;
-      if (search && !`${type.name} ${type.unitName}`.toLocaleLowerCase("ko").includes(search)) return false;
+      if (search && !`${type.name} ${type.subunitName} ${type.unitName}`.toLocaleLowerCase("ko").includes(search)) return false;
       return true;
     });
   }
@@ -79,7 +82,7 @@
     return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
-      '<span class="tree-type-copy"><strong>' + escapeHtml(type.name) + '</strong><small>심화 기준 · p.' + type.page + '</small></span>' +
+      '<span class="tree-type-copy"><strong>' + escapeHtml(type.label || type.name) + '</strong><small>심화 기준</small></span>' +
       '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "준비 중") + '</span>' +
     '</label>';
   }
@@ -97,7 +100,11 @@
           '<span class="tree-chevron" aria-hidden="true">›</span><span class="tree-unit-number">' + unit.number + '</span>' +
           '<span class="tree-unit-copy"><strong>' + escapeHtml(unit.name) + '</strong><small>' + readyCount + '개 유형 생성 가능</small></span>' +
         '</button>' +
-        '<div class="tree-branch" ' + (isOpen ? "" : "hidden") + '>' + unitTypes.map(typeTreeRow).join("") + '</div>' +
+        '<div class="tree-branch" ' + (isOpen ? "" : "hidden") + '>' + (unit.subunits || []).map(subunit => {
+          const subunitTypes = unitTypes.filter(type => type.subunitId === subunit.id);
+          if (!subunitTypes.length) return "";
+          return '<section class="tree-subunit"><div class="tree-subunit-head"><span>소단원 ' + String(subunit.number).padStart(2, "0") + '</span><strong>' + escapeHtml(subunit.name) + '</strong></div>' + subunitTypes.map(typeTreeRow).join("") + '</section>';
+        }).join("") + '</div>' +
       '</section>';
     }).join("");
     $("typeList").innerHTML = markup;
@@ -113,7 +120,7 @@
     $("selectedQuestionSummary").textContent = `${selected.length ? state.count : 0}문항`;
     $("generateButton").disabled = selected.length === 0;
     $("selectedTypeList").innerHTML = selected.length ? selected.map(type =>
-      '<div><span><b>' + escapeHtml(type.name) + '</b><small>' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + '</small></span>' +
+      '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(type.label || type.name) + '</b><small>' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · 소단원 ' + type.subunitNumber + '</small></span>' +
       '<button type="button" data-remove-type="' + type.id + '" aria-label="' + escapeHtml(type.name) + ' 선택 해제">×</button></div>'
     ).join("") : '<p>왼쪽 교육과정 트리에서 유형을 선택하세요.</p>';
   }
