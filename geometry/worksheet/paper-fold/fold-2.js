@@ -63,7 +63,7 @@ function renderPunch(ctx,d){
 
 /* ===== 유형 9: 목표 합이 되게 색칠하기 (역방향) =====
    수가 보이도록 "뒤로" 두 번 접은 2x2에서, 잘라낸 수의 합이 목표가 되도록
-   색칠할 칸을 학생이 고른다. 접은 칸 하나의 굤도(거울 네 칸) 합을 S라 하면
+   색칠할 칸을 학생이 고른다. 접은 칸 하나의 구도(거울 네 칸) 합을 S라 하면
    목표는 고른 칸들의 S 합 — 15가지 부분집합 중 목표를 만드는 답이 하나뿐일 때만 낸다. */
 function numIga(n){ return [1,3,6,7,8,0].includes(n%10) ? '이' : '가'; }
 function genNumInverse(){
@@ -71,7 +71,7 @@ function genNumInverse(){
   const grid=Array.from({length:N},()=>Array.from({length:N},()=>R(1,3)));
   const pr=pick([0,2]), pc=pick([0,2]);          // 뒤로 접어 남는(보이는) 사분면
   const firstFold=pick(['h','v']);
-  // 접은 칸 (r,c)의 굤도 합
+  // 접은 칸 (r,c)의 구도 합
   const S=[[0,0],[0,0]];
   for(let r=0;r<2;r++) for(let c=0;c<2;c++){
     const gr=pr+r, gc=pc+c;
@@ -95,7 +95,7 @@ function genNumInverse(){
     answer:`접은 모양의 ${answerSet.map(posName).join('과 ')} 칸`,
     text:[`다음과 같이 수가 쓰여 있는 색종이를 두 번 접은 후 접은 선을 따라 잘라냈습니다. 잘라낸 부분에 쓰인 수의`,
           `합이 ${target}${numIga(target)} 되려면 어떤 부분을 잘라야 하는지 두 번 접은 모양에 색칠하시오. (단, 수가 보이도록 뒤로 접습니다.)`],
-    info:`사분면 (${pr},${pc}) · 굤도 합 ${S.flat().join('·')} · 목표 ${target} · 답 ${answerSet.map(posName).join(', ')}`,
+    info:`사분면 (${pr},${pc}) · 구도 합 ${S.flat().join('·')} · 목표 ${target} · 답 ${answerSet.map(posName).join(', ')}`,
     src:''
   };
 }
@@ -283,9 +283,9 @@ function renderUnfoldShape(ctx,d){
 }
 
 /* ===== 유형 5: 겹친 색종이 순서 (교재 35~36·44~46쪽) =====
-   같은 크기 정사각형 8장을 3x3 자리에 격쳐 놓는다(가장자리 중앙 한 자리는 비움 — 교재 문법).
-   답이 유일하려면 "맨 위를 거둘어내면 남은 것 중 온전히 보이는 종이가 늘 하나뿐"이어야 한다.
-   즉 맨 위를 뿨 모든 종이가 자기보다 위 종이 중 하나와 겨쳐야 한다. */
+   같은 크기 정사각형 8장을 3x3 자리에 겹쳐 놓는다(가장자리 중앙 한 자리는 비움 — 교재 문법).
+   답이 유일하려면 "맨 위를 걷어내면 남은 것 중 온전히 보이는 종이가 늘 하나뿐"이어야 한다.
+   즉 맨 위를 뺀 모든 종이가 자기보다 위 종이 중 하나와 겹쳐야 한다. */
 function shuffleArr(list){
   const a=[...list];
   for(let i=a.length-1;i>0;i--){const j=R(0,i); [a[i],a[j]]=[a[j],a[i]];}
@@ -301,8 +301,8 @@ function genStack(askOrder){
 
   for(let attempt=0;attempt<800;attempt++){
     const z=shuffleArr(pos.map((_,i)=>i));          // z[k] = 위에서 k번째 종이의 자리 번호
-    // 거둥어내기 유일성: 바로 위 종이와 겨쳐야 한다. "위 종이 중 아무나"로는 부족하다 —
-    // 그 종이가 먼저 거쳠 나가면 중간 종이가 조기에 온전히 드러나 답이 두 갈래가 된다.
+    // 걷어내기 유일성: 바로 위 종이와 겹쳐야 한다. "위 종이 중 아무나"로는 부족하다 —
+    // 그 종이가 먼저 걷혀 나가면 중간 종이가 조기에 온전히 드러나 답이 두 갈래가 된다.
     let ok=true;
     for(let k=1;k<8;k++) if(!over(z[k], z[k-1])){ok=false;break;}
     if(!ok) continue;
@@ -323,7 +323,7 @@ function genStack(askOrder){
         const d=Math.min(clear, x-pp.c, pp.c+2-x, y-pp.r, pp.r+2-y);
         if(d>bd){bd=d; best={x,y};}
       }
-      if(!best || bd<0.12){ok=false;break;}         // 너무 비좋은 자리는 라벨이 안 읽힌다
+      if(!best || bd<0.12){ok=false;break;}         // 너무 비좁은 자리는 라벨이 안 읽힌다
       spots.push(best);
     }
     if(!ok) continue;
@@ -333,7 +333,7 @@ function genStack(askOrder){
     return {
       kind:'stack', pos, z, labels, spots, order, askOrder, wantTop,
       answer: askOrder ? order.join(' → ') : (wantTop ? order[0] : order[7]),
-      text:['다음은 크기가 모두 같은 정사각형 모양의 색종이 8장을 겨쳐 놓은 것입니다.',
+      text:['다음은 크기가 모두 같은 정사각형 모양의 색종이 8장을 겹쳐 놓은 것입니다.',
             askOrder ? '가장 위에 있는 색종이부터 순서대로 쓰시오.'
                      : (wantTop ? '가장 위에 놓인 색종이는 어느 것입니까?' : '가장 밑에 있는 색종이는 어느 것입니까?')],
       info:`위에서부터 ${order.join(' ')}`,
@@ -433,3 +433,4 @@ function renderFoldTop(ctx,d){
   }
   ctx.textAlign='left';ctx.textBaseline='alphabetic';
 }
+
