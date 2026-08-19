@@ -13,6 +13,7 @@
 window.FIELDS_MOCK_ANSWERS = {
   "final-2": {
     label: "필즈선발대비 실전 모의고사 파이널 2회",
+    short: "파이널 2회",
     video: "https://www.youtube.com/watch?v=VC_jgwrMH_k",
     examNote: null,
     questions: [
@@ -40,6 +41,7 @@ window.FIELDS_MOCK_ANSWERS = {
   },
   "final-3": {
     label: "필즈선발대비 실전 모의고사 파이널 3회",
+    short: "파이널 3회",
     video: "https://www.youtube.com/watch?v=ihp5SqAqc00",
     examNote: null,
     questions: [
@@ -65,10 +67,11 @@ window.FIELDS_MOCK_ANSWERS = {
       {"no":20,"summary":"형·누나가 모두 있거나 없는 학생 수","domain":"논리와 문제해결","middle":"집합과 포함","type":"두 조건에 모두 해당하지 않는 수","typeId":"neither-set-count","diff":"중","answer":"17명","note":"형 또는 누나가 있는 학생 18+8-3=23, 전체 40명에서 제외"}
     ]
   },
-  "final-4": {
-    label: "필즈선발대비 실전 모의고사 파이널 4회",
+  "mock-4": {
+    label: "필즈 대비 실전 모의고사 4회",
+    short: "실전 4회",
     video: "https://www.youtube.com/watch?v=KLQH2Mrjm8c",
-    examNote: "파이널 4회는 실전 4회와 문항·그림·수치가 같습니다. 해설 영상도 실전 4회 것을 씁니다.",
+    examNote: "파이널 4회와 같은 시험지입니다. 파이널 4회 상품은 중복이라 없앴고, 이 확정 답은 실전 4회의 것으로 싣습니다. 해설 영상도 실전 4회 것입니다.",
     questions: [
       {"no":1,"summary":"세 구슬의 저울 관계로 필요한 가 구슬 수","domain":"논리와 문제해결","middle":"무게 비교","type":"양팔저울의 균형 관계","typeId":"balance-scale","diff":"중","answer":"가 구슬 5개","note":"가=1, 나=2, 다=3으로 놓으면 나+다=5"},
       {"no":2,"summary":"같은 막대로 구성된 가·나·다·라 길이","domain":"도형과 공간","middle":"길이와 측정","type":"막대의 배수 관계와 전체 길이","typeId":"rod-length-ratio","diff":"중","answer":"나 8cm, 다 4cm, 라 3cm","note":"가 막대 2cm를 기준으로 전체 길이를 각각 분할"},

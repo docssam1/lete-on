@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>파이널 모의고사 정답·문항 분석 | G-FIELD</title>
+<title>모의고사 정답·문항 분석 | G-FIELD</title>
 <style>
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
 :root{
@@ -109,7 +109,7 @@ tbody tr:last-child td{border-bottom:0}
   </div>
 
   <div class="head-card">
-    <h1 id="title">파이널 모의고사 정답·문항 분석</h1>
+    <h1 id="title">모의고사 정답·문항 분석</h1>
     <p class="sub" id="subtitle"></p>
     <p class="exam-note" id="examNote" hidden></p>
   </div>
@@ -149,7 +149,7 @@ tbody tr:last-child td{border-bottom:0}
   var ids = Object.keys(DATA);
   var $ = function(id){ return document.getElementById(id); };
   // 회차는 주소로도 지정된다(program 서재에서 바로 들어올 때). 없으면 첫 회차.
-  // 문제은행이 실제로 갖고 있는 회차. 4회는 실전 4회와 중복이라 등록하지 않았다.
+  // 문제은행이 실제로 갖고 있는 회차. 실전 4회는 등록돼 있지 않아 시험지 버튼을 감춘다.
   var BANK_EXAMS = ['final-1', 'final-2', 'final-3'];
   var want = new URLSearchParams(location.search).get('exam');
   var current = ids.indexOf(want) >= 0 ? want : ids[0];
@@ -189,7 +189,7 @@ tbody tr:last-child td{border-bottom:0}
 
     $('tabs').innerHTML = ids.map(function(id){
       return '<button class="tab" role="tab" data-id="' + id + '" aria-selected="' +
-        (id === current) + '">' + esc(DATA[id].label.replace('필즈선발대비 실전 모의고사 ', '')) + '</button>';
+        (id === current) + '">' + esc(DATA[id].short || DATA[id].label) + '</button>';
     }).join('');
 
     $('title').textContent = exam.label + ' — 정답·문항 분석';

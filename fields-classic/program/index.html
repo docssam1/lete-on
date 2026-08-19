@@ -482,7 +482,7 @@ body.in-viewer{overflow:hidden}
 const CONCEPT_PAGES="../assets/concept/";
 const ALL=["개념완성","연산연습","진단모의고사","킬러문항",
   "실전모의고사1회","실전모의고사2회","실전모의고사3회","실전모의고사4회","실전모의고사5회","실전모의고사6회",
-  "파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","자료실"];
+  "파이널모의고사1회","파이널모의고사2회","파이널모의고사3회","마무리점검","자료실"];
 const PRODUCTS=[
   {key:"개념완성",name:"TOP SECRET 개념 완성",desc:"필즈 핵심 개념 커리큘럼",icon:"📘",theme:"theme-concept",type:"folder",pagesBase:CONCEPT_PAGES,pageCount:75,pageSegments:[{base:"../assets/concept/vol1/",count:19},{base:"../assets/concept/vol2/",count:19},{base:"../assets/concept/vol3/",count:16},{base:"../assets/concept/vol4/",count:10},{base:"../assets/concept/final/",count:11}],pageExt:"jpg",pagePrefix:"",
    chapters:[
@@ -498,14 +498,16 @@ const PRODUCTS=[
   {key:"실전모의고사1회",name:"실전 모의고사 1회",desc:"6세 선발 모의고사 세트 1회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/41mXpws-gng",printDoc:"mock-set-1",lessons:[{key:"p1",label:"1회",title:"실전 모의고사 1회",type:"concept",url:"https://youtu.be/41mXpws-gng",pdfPage:1}]},
   {key:"실전모의고사2회",name:"실전 모의고사 2회",desc:"6세 선발 모의고사 세트 2회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/S-P096L75ps",printDoc:"mock-set-2",lessons:[{key:"p2",label:"2회",title:"실전 모의고사 2회",type:"concept",url:"https://youtu.be/S-P096L75ps",pdfPage:1}]},
   {key:"실전모의고사3회",name:"실전 모의고사 3회",desc:"6세 선발 모의고사 세트 3회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/6YU0_X5ixEQ",printDoc:"mock-set-3",lessons:[{key:"p3",label:"3회",title:"실전 모의고사 3회",type:"concept",url:"https://youtu.be/6YU0_X5ixEQ",pdfPage:1}]},
-  {key:"실전모의고사4회",name:"실전 모의고사 4회",desc:"6세 선발 모의고사 세트 4회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/KLQH2Mrjm8c",printDoc:"mock-set-4",lessons:[{key:"p4",label:"4회",title:"실전 모의고사 4회",type:"concept",url:"https://youtu.be/KLQH2Mrjm8c",pdfPage:1}]},
+  {key:"실전모의고사4회",answerDoc:"mock-4",name:"실전 모의고사 4회",desc:"6세 선발 모의고사 세트 4회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/KLQH2Mrjm8c",printDoc:"mock-set-4",lessons:[{key:"p4",label:"4회",title:"실전 모의고사 4회",type:"concept",url:"https://youtu.be/KLQH2Mrjm8c",pdfPage:1}]},
   {key:"실전모의고사5회",name:"실전 모의고사 5회",desc:"6세 선발 모의고사 세트 5회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/kyHuxpZhcTQ",printDoc:"mock-set-5",lessons:[{key:"p5",label:"5회",title:"실전 모의고사 5회",type:"concept",url:"https://youtu.be/kyHuxpZhcTQ",pdfPage:1}]},
   {key:"실전모의고사6회",name:"실전 모의고사 6회",desc:"6세 선발 모의고사 세트 6회차",icon:"📝",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/uBSJ_-2IhR8",printDoc:"mock-set-6",lessons:[{key:"p6",label:"6회",title:"실전 모의고사 6회",type:"concept",url:"https://youtu.be/uBSJ_-2IhR8",pdfPage:1}]},
   {key:"파이널모의고사1회",bankExam:"final-1",name:"파이널 모의고사 1회",desc:"최종 점검 파이널 1회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/obRvM_ymsM8",lessons:[{key:"fi1",label:"1회",title:"파이널 모의고사 1회",type:"concept",url:"https://youtu.be/obRvM_ymsM8",pdfPage:1}]},
   {key:"파이널모의고사2회",bankExam:"final-2",answerDoc:"final-2",name:"파이널 모의고사 2회",desc:"최종 점검 파이널 2회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/VC_jgwrMH_k",lessons:[{key:"fi2",label:"2회",title:"파이널 모의고사 2회",type:"concept",url:"https://youtu.be/VC_jgwrMH_k",pdfPage:1}]},
   {key:"파이널모의고사3회",bankExam:"final-3",answerDoc:"final-3",name:"파이널 모의고사 3회",desc:"최종 점검 파이널 3회차",icon:"🏁",theme:"theme-final",type:"direct",videoUrl:"https://youtu.be/ihp5SqAqc00",lessons:[{key:"fi3",label:"3회",title:"파이널 모의고사 3회",type:"concept",url:"https://youtu.be/ihp5SqAqc00",pdfPage:1}]},
-  {key:"파이널모의고사4회",name:"파이널 모의고사 4회",desc:"새 시험지 제작 중 · 정답·분석 열람 가능",icon:"🏁",theme:"theme-final",type:"direct",comingSoon:true,answerDoc:"final-4",lessons:[{key:"fi4",label:"4회",title:"파이널 모의고사 4회",type:"concept",url:"",pdfPage:1}]},
-  {key:"최종모의고사",name:"최종 모의고사",desc:"새 시험지 제작 중",icon:"🏆",theme:"theme-final",type:"direct",comingSoon:true,lessons:[{key:"u1",label:"최종",title:"최종 모의고사",type:"concept",url:"",pdfPage:1}]},
+  // 파이널 4회는 실전 4회와, 최종 모의고사는 실전 3회와 같은 시험지여서 둘 다 뺐다.
+  // 그 자리를 새 원본 「마무리 점검」이 대신한다. 강의가 없는 시험지라 영상이 없고,
+  // 채점하면 문항마다 글 해설이 붙은 결과표가 나온다.
+  {key:"마무리점검",name:"마무리 점검",desc:"시험 직전 최종 점검 · 채점하면 문항별 해설",icon:"🏁",theme:"theme-final",type:"mock",hasVideo:false,mockUrl:"../mock/final.html"},
   {key:"자료실",name:"자료실",desc:"지필드 전용 자료 · 인쇄 출력",icon:"📁",theme:"theme-archive",type:"direct",hasVideo:false,lessons:[{key:"a1",label:"핵심 자료",title:"필즈 핵심 자료",type:"concept",url:"",pdfPage:1}]}
 ];
  // cover는 서재/쇼케이스의 3D 책 앞면(coverMarkup)에만 쓰인다. 뷰어 본문은 pagesBase로
@@ -553,8 +555,7 @@ const TIMELINE_ORDER=[
   {key:"파이널모의고사1회", step:"STEP 10", desc:"최종 점검 파이널 1회차"},
   {key:"파이널모의고사2회", step:"STEP 11", desc:"최종 점검 파이널 2회차"},
   {key:"파이널모의고사3회", step:"STEP 12", desc:"최종 점검 파이널 3회차"},
-  {key:"파이널모의고사4회", step:"STEP 13", desc:"새 시험지 준비중"},
-  {key:"최종모의고사", step:"FINAL", desc:"새 시험지 준비중"},
+  {key:"마무리점검", step:"FINAL", desc:"시험 직전 최종 점검"},
 ];
 function findByCode(code){
   const upper = code.trim().toUpperCase();
