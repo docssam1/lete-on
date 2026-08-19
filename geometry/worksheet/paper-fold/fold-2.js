@@ -63,7 +63,7 @@ function renderPunch(ctx,d){
 
 /* ===== 유형 9: 목표 합이 되게 색칠하기 (역방향) =====
    수가 보이도록 "뒤로" 두 번 접은 2x2에서, 잘라낸 수의 합이 목표가 되도록
-   색칠할 칸을 학생이 고른다. 접은 칸 하나의 구도(거울 네 칸) 합을 S라 하면
+   색칠할 칸을 학생이 고른다. 접은 칸 하나의 궤도(거울 네 칸) 합을 S라 하면
    목표는 고른 칸들의 S 합 — 15가지 부분집합 중 목표를 만드는 답이 하나뿐일 때만 낸다. */
 function numIga(n){ return [1,3,6,7,8,0].includes(n%10) ? '이' : '가'; }
 function genNumInverse(){
@@ -71,7 +71,7 @@ function genNumInverse(){
   const grid=Array.from({length:N},()=>Array.from({length:N},()=>R(1,3)));
   const pr=pick([0,2]), pc=pick([0,2]);          // 뒤로 접어 남는(보이는) 사분면
   const firstFold=pick(['h','v']);
-  // 접은 칸 (r,c)의 구도 합
+  // 접은 칸 (r,c)의 궤도 합
   const S=[[0,0],[0,0]];
   for(let r=0;r<2;r++) for(let c=0;c<2;c++){
     const gr=pr+r, gc=pc+c;
@@ -95,7 +95,7 @@ function genNumInverse(){
     answer:`접은 모양의 ${answerSet.map(posName).join('과 ')} 칸`,
     text:[`다음과 같이 수가 쓰여 있는 색종이를 두 번 접은 후 접은 선을 따라 잘라냈습니다. 잘라낸 부분에 쓰인 수의`,
           `합이 ${target}${numIga(target)} 되려면 어떤 부분을 잘라야 하는지 두 번 접은 모양에 색칠하시오. (단, 수가 보이도록 뒤로 접습니다.)`],
-    info:`사분면 (${pr},${pc}) · 구도 합 ${S.flat().join('·')} · 목표 ${target} · 답 ${answerSet.map(posName).join(', ')}`,
+    info:`사분면 (${pr},${pc}) · 궤도 합 ${S.flat().join('·')} · 목표 ${target} · 답 ${answerSet.map(posName).join(', ')}`,
     src:''
   };
 }
@@ -433,4 +433,3 @@ function renderFoldTop(ctx,d){
   }
   ctx.textAlign='left';ctx.textBaseline='alphabetic';
 }
-
