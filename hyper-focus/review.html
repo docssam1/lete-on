@@ -37,6 +37,14 @@ button.gold{background:var(--gold);color:#1c1c1c;border-color:var(--gold);font-w
 .meta{margin-top:6px;font-size:.68rem;color:#9a9a9a;font-family:ui-monospace,Menlo,monospace}
 .chk{margin-top:6px;font-size:.74rem;color:#666}
 .ok{color:#1e7a44;font-weight:700}.ng{color:#c0392b;font-weight:700}
+.sol{margin-top:8px;padding:9px 10px;background:#fffdf5;border:1px dashed #e0d5b0;border-radius:8px}
+.sol-t{font-size:.72rem;font-weight:800;color:#8a6a08;margin-bottom:6px}
+.hf-numgrid{display:block;margin:0 auto;max-width:150px;height:auto}
+.hf-hole-layers{display:flex;flex-wrap:wrap;gap:9px;align-items:flex-start;justify-content:center}
+.hf-hole-layer{display:flex;flex-direction:column;align-items:center;gap:3px}
+.hf-hole-layer small{font-size:9px;font-weight:700;color:#4a5450}
+.hf-hole-grid{display:block;width:auto;max-width:62px;height:auto}
+.hf-hole-total{align-self:center;font-size:.74rem;font-weight:800;color:var(--navy)}
 .stats{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;font-size:.78rem;line-height:1.75;display:none}
 .stats b{color:var(--navy)}
 .loading{text-align:center;padding:40px;color:#888;font-size:.9rem}
@@ -75,15 +83,27 @@ var TYPES = {
   1:{name:'01 · 앞과 뒤에서 본 쌓기나무 개수', mod:'HFQ01', g:'generateQ01', p:'renderQ01Problem', a:'renderQ01Answer', v:'validateQ01',
      prompt:function(){return '다음은 쌓기나무로 만든 모양을 앞과 뒤에서 본 모양입니다. 쌓기나무는 모두 몇 개입니까?';}},
   2:{name:'02 · 상자 채우기', mod:'HFQ02', g:'generateQ02', p:'renderQ02Problem', a:'renderQ02Answer', v:'validateQ02',
-     prompt:function(p){return '가로 '+p.width+', 세로 '+p.depth+', 높이 '+p.boxH+'인 상자에 쌓기나무를 쌓았습니다. 상자를 가득 채우려면 쌓기나무가 몇 개 더 필요합니까?';}},
+     prompt:function(p){return '네모 반듯한 상자 속에 크기가 같은 쌓기나무를 여러 개 채워 놓았습니다. 이 상자를 완전히 채우려면 쌓기나무가 몇 개 더 필요합니까?';}},
   3:{name:'03 · 흑백 교차 쌓기나무', mod:'HFQ03', g:'generateQ03', p:'renderQ03Problem', a:'renderQ03Answer', v:'validateQ03',
-     prompt:function(){return '검은색과 흰색 쌓기나무를 같은 색의 면이 맞닿지 않게 쌓았습니다. 흰색과 검은색 쌓기나무는 각각 몇 개입니까?';}},
+     prompt:function(){return '검은색과 흰색 쌓기나무를 같은 색의 면이 맞닿지 않게 다음과 같이 쌓았을 때, 흰색과 검은색 쌓기나무의 개수를 각각 구하시오.';}},
   4:{name:'04 · 구멍 뚫린 쌓기나무', mod:'HFQ04', g:'generateQ04', p:'renderQ04Problem', a:'renderQ04Answer', v:'validateQ04',
      prompt:function(p){return '가로 '+p.width+', 세로 '+p.depth+', 높이 '+p.boxH+'인 직육면체 모양으로 빈틈없이 쌓은 쌓기나무에 반대쪽까지 통하도록 구멍을 뚫었습니다. 남은 쌓기나무는 몇 개입니까?';}},
   5:{name:'05 · 숨은 쌓기나무', mod:'HFQ05', g:'generateQ05', p:'renderQ05Problem', a:'renderQ05Answer', v:'validateQ05',
-     prompt:function(p){return '쌓기나무를 빈틈없이 '+p.total+'개 쌓았습니다. 어느 방향에서도 보이지 않는 쌓기나무는 몇 개입니까? (단, 바닥면은 보이지 않습니다.)';}}
+     prompt:function(p){return '쌓기나무 '+p.total+'개로 다음과 같이 쌓았습니다. 그림에서 보이지 않는 쌓기나무의 개수를 구하시오.';}}
 };
 var DIFFS=[['easy','쉽게'],['same','같게'],['hard','어렵게']];
+
+function solutionOf(id, M, p){
+  var body='';
+  if(String(id)==='1'){
+    if(window.HFSTACK) body=window.HFSTACK.renderTopNumberGrid(p.map,p.width,p.depth)
+      +'<div style="font-size:.72rem;color:#777;text-align:center;margin-top:5px">위에서 본 바탕그림에 자리마다 쌓인 개수를 씁니다</div>';
+  } else if(String(id)==='4' && M.renderQ04Solution){
+    body=M.renderQ04Solution(p);
+  }
+  if(!body) return '';
+  return '<div class="sol"><div class="sol-t">풀이</div>'+body+'</div>';
+}
 
 function cardFor(id, diff, label){
   var T=TYPES[id], M=window[T.mod];
@@ -96,7 +116,8 @@ function cardFor(id, diff, label){
     + '<div class="q">[유형 '+('0'+id).slice(-2)+'] '+T.prompt(p)+'</div>'
     + '<div class="fig">'+M[T.p](p)+'</div>'
     + '<div class="ans">'+M[T.a](p)+'</div>'
-    + '<div class="meta">seed '+seed+' · '+(p.width||'-')+'×'+(p.depth||'-')+(p.boxH?'×'+p.boxH:'')+'</div>'
+    + solutionOf(id, M, p)
+    + '<div class="meta">seed '+seed+' · '+(p.width||'-')+'×'+(p.depth||'-')+(p.boxH?'×'+p.boxH:'')+(p.walled!==undefined?(p.walled?' · 벽 있음':' · 벽 없음'):'')+'</div>'
     + '<div class="chk">문제 성립 검증: <span class="'+(valid?'ok':'ng')+'">'+(valid?'통과':'실패')+'</span></div>'
     + '</div>';
 }
