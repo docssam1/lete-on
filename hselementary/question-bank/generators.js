@@ -150,6 +150,7 @@
   };
   const tileStrip = (symbols, highlight = -1) => `<div class="tile-strip">${symbols.map((symbol, index) => `<span class="tile-symbol ${index === highlight ? "is-highlight" : ""}">${symbol}</span>`).join("")}</div>`;
   const barChartSvg = ({ labels, values, step, hidden = [], secondValues = null, unit = "명", legend = [] }) => {
+    if (!Number.isFinite(step) || step <= 0) throw new Error("막대그래프 눈금 단위가 올바르지 않습니다.");
     const width = 250;
     const height = 180;
     const left = 34;
@@ -159,7 +160,12 @@
     const plotWidth = width - left - right;
     const plotHeight = height - top - bottom;
     const allValues = values.concat(secondValues || []);
+    if (allValues.some(value => !Number.isFinite(value) || value < 0 || !Number.isInteger(value / step))) {
+      throw new Error("막대그래프 값은 눈금 단위의 배수여야 합니다.");
+    }
     const scaleMax = Math.max(step, Math.ceil(Math.max(...allValues) / step) * step);
+    const tickCount = scaleMax / step + 1;
+    if (tickCount > 10) throw new Error("막대그래프 세로 눈금은 10개 이하여야 합니다.");
     const hiddenSet = new Set(hidden);
     const groupWidth = plotWidth / labels.length;
     const barWidth = secondValues ? Math.min(12, groupWidth * 0.3) : Math.min(24, groupWidth * 0.5);
@@ -175,15 +181,57 @@
       if (hiddenSet.has(index)) return `<rect class="chart-unknown" x="${(center - barWidth / 2).toFixed(1)}" y="${top + plotHeight - 27}" width="${barWidth.toFixed(1)}" height="27"/><text class="chart-question" x="${center.toFixed(1)}" y="${top + plotHeight - 9}">?</text>${labelText}`;
       const firstHeight = values[index] / scaleMax * plotHeight;
       const firstX = secondValues ? center - barWidth - 1 : center - barWidth / 2;
-      let markup = `<rect class="chart-bar" x="${firstX.toFixed(1)}" y="${yFor(values[index]).toFixed(1)}" width="${barWidth.toFixed(1)}" height="${firstHeight.toFixed(1)}"/>`;
+      let markup = `<rect class="chart-bar" data-chart-value="${values[index]}" x="${firstX.toFixed(1)}" y="${yFor(values[index]).toFixed(1)}" width="${barWidth.toFixed(1)}" height="${firstHeight.toFixed(1)}"/>`;
       if (secondValues) {
         const secondHeight = secondValues[index] / scaleMax * plotHeight;
-        markup += `<rect class="chart-bar chart-bar-secondary" x="${(center + 1).toFixed(1)}" y="${yFor(secondValues[index]).toFixed(1)}" width="${barWidth.toFixed(1)}" height="${secondHeight.toFixed(1)}"/>`;
+        markup += `<rect class="chart-bar chart-bar-secondary" data-chart-value="${secondValues[index]}" x="${(center + 1).toFixed(1)}" y="${yFor(secondValues[index]).toFixed(1)}" width="${barWidth.toFixed(1)}" height="${secondHeight.toFixed(1)}"/>`;
       }
       return `${markup}${labelText}`;
     }).join("");
     const legendMarkup = secondValues ? `<g class="chart-legend"><rect x="${left}" y="${height - 16}" width="9" height="9"/><text x="${left + 13}" y="${height - 8}">${legend[0] || "자료 1"}</text><rect class="chart-bar-secondary" x="${left + 78}" y="${height - 16}" width="9" height="9"/><text x="${left + 91}" y="${height - 8}">${legend[1] || "자료 2"}</text></g>` : "";
-    return `<svg class="bar-chart" viewBox="0 0 ${width} ${height}" aria-label="막대그래프"><text class="chart-unit" x="4" y="10">(${unit})</text>${grid}<line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="chart-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${bars}${legendMarkup}</svg>`;
+    return `<div class="graph-figure"><p class="graph-scale-note">세로 눈금 한 칸은 ${step}${unit}입니다.</p><svg class="bar-chart" viewBox="0 0 ${width} ${height}" aria-label="세로 눈금 한 칸이 ${step}${unit}인 막대그래프" data-chart-kind="bar" data-chart-step="${step}" data-chart-scale-max="${scaleMax}" data-chart-tick-count="${tickCount}" data-chart-values="${values.join(",")}"${secondValues ? ` data-chart-second-values="${secondValues.join(",")}"` : ""} data-chart-unit="${unit}" data-chart-top="${top}" data-chart-plot-height="${plotHeight}"><text class="chart-unit" x="4" y="10">(${unit})</text>${grid}<line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="chart-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${bars}${legendMarkup}</svg></div>`;
+  };
+  const lineChartSvg = ({ labels, series, step, unit, xAxis = "시간" }) => {
+    if (!Number.isFinite(step) || step <= 0 || labels.length < 2 || labels.length > 7 || !series.length || series.length > 2) {
+      throw new Error("꺾은선그래프 설정이 올바르지 않습니다.");
+    }
+    const allValues = series.flatMap(item => item.values);
+    if (series.some(item => item.values.length !== labels.length) || allValues.some(value => !Number.isFinite(value) || value < 0 || !Number.isInteger(value / step))) {
+      throw new Error("꺾은선그래프 값은 눈금 단위의 배수여야 합니다.");
+    }
+    const width = 250;
+    const height = 196;
+    const left = 38;
+    const right = 12;
+    const top = 14;
+    const bottom = series.length > 1 ? 52 : 38;
+    const plotWidth = width - left - right;
+    const plotHeight = height - top - bottom;
+    const scaleMax = Math.max(step, Math.ceil(Math.max(...allValues) / step) * step);
+    const tickCount = scaleMax / step + 1;
+    if (tickCount > 10) throw new Error("꺾은선그래프 세로 눈금은 10개 이하여야 합니다.");
+    const xFor = index => left + plotWidth * index / (labels.length - 1);
+    const yFor = value => top + plotHeight - value / scaleMax * plotHeight;
+    const horizontalGrid = Array.from({ length: tickCount }, (_, index) => {
+      const value = index * step;
+      const y = yFor(value);
+      return `<line class="chart-grid" x1="${left}" y1="${y.toFixed(1)}" x2="${width - right}" y2="${y.toFixed(1)}"/><text class="chart-tick" x="${left - 5}" y="${(y + 3).toFixed(1)}">${value}</text>`;
+    }).join("");
+    const verticalGrid = labels.map((_, index) => {
+      const x = xFor(index);
+      return `<line class="chart-grid chart-grid-vertical" x1="${x.toFixed(1)}" y1="${top}" x2="${x.toFixed(1)}" y2="${top + plotHeight}"/>`;
+    }).join("");
+    const xLabels = labels.map((label, index) => `<text class="chart-label" x="${xFor(index).toFixed(1)}" y="${top + plotHeight + 17}">${label}</text>`).join("");
+    const plottedSeries = series.map((item, seriesIndex) => {
+      const points = item.values.map((value, index) => `${xFor(index).toFixed(1)},${yFor(value).toFixed(1)}`).join(" ");
+      const markers = item.values.map((value, index) => `<circle class="chart-point chart-line-${seriesIndex}" data-chart-value="${value}" cx="${xFor(index).toFixed(1)}" cy="${yFor(value).toFixed(1)}" r="3"/>`).join("");
+      return `<polyline class="chart-line chart-line-${seriesIndex}" points="${points}"/>${markers}`;
+    }).join("");
+    const legendMarkup = series.length > 1 ? `<g class="chart-legend chart-line-legend">${series.map((item, index) => {
+      const x = left + index * 96;
+      return `<line class="chart-line chart-line-${index}" x1="${x}" y1="${height - 13}" x2="${x + 16}" y2="${height - 13}"/><text x="${x + 22}" y="${height - 9}">${item.name}</text>`;
+    }).join("")}</g>` : "";
+    return `<div class="graph-figure"><p class="graph-scale-note">세로 눈금 한 칸은 ${step}${unit}입니다.</p><svg class="line-chart" viewBox="0 0 ${width} ${height}" aria-label="세로 눈금 한 칸이 ${step}${unit}인 꺾은선그래프" data-chart-kind="line" data-chart-step="${step}" data-chart-scale-max="${scaleMax}" data-chart-tick-count="${tickCount}" data-chart-values="${series.map(item => item.values.join(",")).join(";")}" data-chart-unit="${unit}" data-chart-top="${top}" data-chart-plot-height="${plotHeight}"><text class="chart-unit" x="4" y="10">(${unit})</text>${horizontalGrid}${verticalGrid}<line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}"/><line class="chart-axis" x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}"/>${plottedSeries}${xLabels}<text class="chart-axis-name" x="${width - right}" y="${height - (series.length > 1 ? 30 : 8)}">${xAxis}</text>${legendMarkup}</svg></div>`;
   };
   const triangleLatticeSvg = (side) => {
     const width = 240;
@@ -1120,7 +1168,7 @@
       if (variant % 3 === 0) {
         const labels = ["빨강", "노랑", "초록", "파랑", "흰색"];
         const step = level === 0 ? 2 : 5;
-        const values = labels.map(() => int(rng, 3 + level, 9 + level * 3) * step);
+        const values = labels.map(() => int(rng, 3 + level, 9) * step);
         const hiddenIndex = int(rng, 1, labels.length - 2);
         const total = values.reduce((sum, value) => sum + value, 0);
         const known = labels.filter((_, index) => index !== hiddenIndex).map((label, index) => {
@@ -1131,17 +1179,17 @@
       }
       if (variant % 3 === 1) {
         const labels = ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"];
-        const second = 4 * int(rng, 5 + level, 7 + level * 2);
+        const second = 16 * int(rng, 1, 2);
         const third = second * 3 / 4;
-        const difference = 4 * int(rng, 1, 1 + level);
+        const difference = 4 * int(rng, 1, 1 + Math.min(level, 1));
         const fourth = third + difference;
-        const values = [4 * int(rng, 4, 7), second, third, fourth, 4 * int(rng, 4, 8), 4 * int(rng, 4, 8)];
+        const values = [4 * int(rng, 4, 7), second, third, fourth, 4 * int(rng, 4, 7), 4 * int(rng, 4, 7)];
         return result(`학년별로 동생이 있는 학생 수를 조사했습니다. 3학년은 2학년의 3/4이고, 4학년은 3학년보다 ${difference}명 더 많습니다. 그래프를 보고 4학년 학생 수를 구하세요.${barChartSvg({ labels, values, step: 4, hidden: [2, 3] })}`, fourth, `2학년은 그래프에서 ${second}명입니다. 3학년은 ${second} × 3/4 = ${third}명이고, 4학년은 ${third} + ${difference} = ${fourth}명입니다.`);
       }
       const labels = ["1", "2", "3", "4", "5", "6"];
       const step = 2;
-      const second = 2 * int(rng, 5 + level, 9 + level * 2);
-      const difference = 2 * int(rng, 1, 2 + level);
+      const second = 2 * int(rng, 4 + level, 5 + level);
+      const difference = 2 * int(rng, 1, 2);
       const third = second + difference;
       const values = [2 * int(rng, 4, 8), second, third, 2 * int(rng, 4, 9), 2 * int(rng, 4, 9), 2 * int(rng, 4, 9)];
       const total = values.reduce((sum, value) => sum + value, 0);
@@ -1151,26 +1199,88 @@
       if (variant % 3 === 0) {
         const labels = ["가람", "나래", "다온", "라온", "마루"];
         const speed = pick(rng, [50, 100]);
-        const farthest = 100 * int(rng, 8 + level * 2, 12 + level * 3);
+        const step = pick(rng, [100, 200]);
+        const farthest = step * int(rng, 6 + Math.min(level, 1), 9);
         const targetIndex = int(rng, 0, labels.length - 1);
-        const values = labels.map((_, index) => index === targetIndex ? farthest : 100 * int(rng, 3, farthest / 100 - 1));
+        const values = labels.map((_, index) => index === targetIndex ? farthest : step * int(rng, 3, farthest / step - 1));
         const answer = farthest * 2 / speed;
-        return result(`학교에서 집까지의 거리를 조사한 막대그래프입니다. 가장 먼 곳에 사는 학생이 1분에 ${speed}m씩 일정하게 걸어 학교와 집을 왕복할 때 걸리는 시간을 구하세요.${barChartSvg({ labels, values, step: 100, unit: "m" })}`, answer, `가장 먼 거리는 ${farthest}m입니다. 왕복 거리는 ${farthest} × 2 = ${farthest * 2}m이므로 걸리는 시간은 ${farthest * 2} ÷ ${speed} = ${answer}분입니다.`);
+        return result(`학교에서 집까지의 거리를 조사한 막대그래프입니다. 가장 먼 곳에 사는 학생이 1분에 ${speed}m씩 일정하게 걸어 학교와 집을 왕복할 때 걸리는 시간을 구하세요.${barChartSvg({ labels, values, step, unit: "m" })}`, answer, `가장 먼 거리는 ${farthest}m입니다. 왕복 거리는 ${farthest} × 2 = ${farthest * 2}m이므로 걸리는 시간은 ${farthest * 2} ÷ ${speed} = ${answer}분입니다.`);
       }
       if (variant % 3 === 1) {
         const labels = ["가반", "나반", "다반", "라반"];
-        const boys = labels.map(() => int(rng, 6 + level, 11 + level * 2));
-        const girls = labels.map(() => int(rng, 6 + level, 11 + level * 2));
+        const step = 2;
+        const boys = labels.map(() => step * int(rng, 3 + level, 7 + level));
+        const girls = labels.map(() => step * int(rng, 3 + level, 7 + level));
         const totals = boys.map((value, index) => value + girls[index]);
         const answer = Math.max(...totals) - Math.min(...totals);
-        return result(`반별 남학생과 여학생 수를 나타낸 막대그래프입니다. 전체 학생 수가 가장 많은 반과 가장 적은 반의 학생 수 차를 구하세요.${barChartSvg({ labels, values: boys, secondValues: girls, step: 2, legend: ["남학생", "여학생"] })}`, answer, `각 반의 전체 학생 수는 차례로 ${totals.join(", ")}명입니다. 가장 큰 수 ${Math.max(...totals)}에서 가장 작은 수 ${Math.min(...totals)}을 빼면 ${answer}명입니다.`);
+        return result(`반별 남학생과 여학생 수를 나타낸 막대그래프입니다. 전체 학생 수가 가장 많은 반과 가장 적은 반의 학생 수 차를 구하세요.${barChartSvg({ labels, values: boys, secondValues: girls, step, legend: ["남학생", "여학생"] })}`, answer, `각 반의 전체 학생 수는 차례로 ${totals.join(", ")}명입니다. 가장 큰 수 ${Math.max(...totals)}에서 가장 작은 수 ${Math.min(...totals)}을 빼면 ${answer}명입니다.`);
       }
       const labels = ["단팥", "크림", "소보로", "카스텔라"];
-      const counts = labels.map(() => 5 * int(rng, 4 + level, 9 + level * 3));
+      const counts = labels.map(() => 5 * int(rng, 4 + level, 9));
       const prices = [1200 + level * 100, 1500 + level * 100, 1100 + level * 100, 2000 + level * 200];
       const answer = counts.reduce((sum, count, index) => sum + count * prices[index], 0);
       const priceText = labels.map((label, index) => `${label}빵 ${prices[index].toLocaleString()}원`).join(", ");
       return result(`오늘 판매한 빵의 수를 나타낸 막대그래프입니다. 한 개의 가격이 ${priceText}일 때 전체 판매 금액을 구하세요.${barChartSvg({ labels, values: counts, step: 5, unit: "개" })}`, answer, `${counts.map((count, index) => `${count} × ${prices[index].toLocaleString()}`).join(" + ")} = ${answer.toLocaleString()}원이므로 전체 판매 금액은 ${answer.toLocaleString()}원입니다.`);
+    },
+    lineGraphUnderstanding({ rng, level, variant = 0 }) {
+      const labels = ["월", "화", "수", "목", "금"];
+      const step = 5;
+      const values = [
+        int(rng, 3 + level, 4 + level),
+        int(rng, 5 + level, 6 + level),
+        int(rng, 4 + level, 5 + level),
+        int(rng, 6 + level, 7 + level),
+        int(rng, 5 + level, 7)
+      ].map(value => value * step);
+      const chart = lineChartSvg({ labels, series: [{ name: "배출량", values }], step, unit: "kg", xAxis: "요일" });
+      if (variant % 3 === 0) {
+        const answer = values[3] - values[2];
+        return result(`한 반의 요일별 재활용품 배출량을 조사하여 꺾은선그래프로 나타냈습니다. 목요일의 배출량은 수요일보다 몇 kg 더 많습니까?${chart}`, answer, `수요일은 ${values[2]}kg, 목요일은 ${values[3]}kg이므로 ${values[3]} - ${values[2]} = ${answer}kg입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const answer = values.slice(1, 4).reduce((sum, value) => sum + value, 0);
+        return result(`한 반의 요일별 재활용품 배출량을 조사하여 꺾은선그래프로 나타냈습니다. 화요일부터 목요일까지 배출량의 합은 몇 kg입니까?${chart}`, answer, `화요일부터 목요일까지의 배출량은 ${values[1]}kg, ${values[2]}kg, ${values[3]}kg입니다. 합은 ${values[1]} + ${values[2]} + ${values[3]} = ${answer}kg입니다.`);
+      }
+      const answer = Math.max(...values) - Math.min(...values);
+      return result(`한 반의 요일별 재활용품 배출량을 조사하여 꺾은선그래프로 나타냈습니다. 배출량이 가장 많은 날과 가장 적은 날의 배출량 차는 몇 kg입니까?${chart}`, answer, `그래프에서 가장 많은 배출량은 ${Math.max(...values)}kg, 가장 적은 배출량은 ${Math.min(...values)}kg입니다. 따라서 차는 ${Math.max(...values)} - ${Math.min(...values)} = ${answer}kg입니다.`);
+    },
+    lineGraphApplication({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const labels = ["0", "1", "2", "3", "4"];
+        const step = 100;
+        const fastRate = 200;
+        const slowRate = 100;
+        const halfHours = pick(rng, [5, 7]);
+        const elapsedText = halfHours === 5 ? "2시간 30분" : "3시간 30분";
+        const fastFuel = fastRate * halfHours / 2 / 20;
+        const slowFuel = slowRate * halfHours / 2 / 25;
+        const answer = fastFuel - slowFuel;
+        const series = [
+          { name: "가 자동차", values: labels.map((_, index) => fastRate * index) },
+          { name: "나 자동차", values: labels.map((_, index) => slowRate * index) }
+        ];
+        return result(`가 자동차와 나 자동차가 일정한 빠르기로 달린 거리를 나타낸 꺾은선그래프입니다. 가 자동차는 1L로 20km, 나 자동차는 1L로 25km를 달릴 수 있습니다. 출발한 지 ${elapsedText} 후 두 자동차가 사용한 휘발유 양의 차는 몇 L입니까?${lineChartSvg({ labels, series, step, unit: "km", xAxis: "시간(시)" })}`, answer, `그래프에서 가 자동차는 1시간에 ${fastRate}km, 나 자동차는 1시간에 ${slowRate}km를 달립니다. ${elapsedText} 동안 가 자동차는 ${fastRate * halfHours / 2}km를 달려 ${fastFuel}L, 나 자동차는 ${slowRate * halfHours / 2}km를 달려 ${slowFuel}L를 사용합니다. 차는 ${fastFuel} - ${slowFuel} = ${answer}L입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const labels = ["0", "5", "10", "15"];
+        const step = 40;
+        const profile = pick(rng, [
+          { start: 320, bothDrain: 120, bDrain: 40 },
+          { start: 360, bothDrain: 160, bDrain: 40 }
+        ]);
+        const { start, bothDrain, bDrain } = profile;
+        const values = [start, start - bothDrain, start - bothDrain * 2, start - bothDrain * 2 - bDrain];
+        const aDrain = bothDrain - bDrain;
+        const firstOnlyMinutes = start / aDrain * 5;
+        return result(`물탱크에 물이 들어 있고 가, 나 두 수도꼭지를 함께 틀었습니다. 10분 뒤 가 수도꼭지를 잠그고 나 수도꼭지만 사용했을 때의 물의 양을 나타낸 꺾은선그래프입니다. 처음부터 가 수도꼭지만 사용했다면 물탱크의 물을 모두 사용하는 데 몇 분 걸립니까?${lineChartSvg({ labels, series: [{ name: "남은 물", values }], step, unit: "L", xAxis: "시간(분)" })}`, firstOnlyMinutes, `처음 5분 동안 물은 ${start}L에서 ${values[1]}L로 ${bothDrain}L 줄었습니다. 10분 뒤부터 5분 동안 나 수도꼭지만 사용하여 ${bDrain}L 줄었으므로, 가 수도꼭지는 5분에 ${aDrain}L를 사용합니다. 처음 물 ${start}L를 가 수도꼭지만 사용하면 ${start} ÷ ${aDrain} × 5 = ${firstOnlyMinutes}분 걸립니다.`);
+      }
+      const labels = ["3월", "5월", "7월", "9월", "11월"];
+      const step = 50;
+      const iceCream = [5 + level, 6 + level, 7 + level, 7 + level, 6 + level].map(value => value * step);
+      const chocolate = [6, 5 + level, 6 + level, 4 + level, 5 + level].map(value => value * step);
+      const answer = iceCream[3] * 700 - chocolate[3] * 600;
+      const series = [{ name: "아이스크림", values: iceCream }, { name: "초콜릿", values: chocolate }];
+      return result(`한 가게의 아이스크림과 초콜릿 판매량을 나타낸 꺾은선그래프입니다. 아이스크림은 한 개에 700원, 초콜릿은 한 개에 600원입니다. 9월의 아이스크림 판매 금액은 초콜릿 판매 금액보다 몇 원 더 많습니까?${lineChartSvg({ labels, series, step, unit: "개", xAxis: "월" })}`, answer, `9월 아이스크림은 ${iceCream[3]}개, 초콜릿은 ${chocolate[3]}개입니다. 판매 금액의 차는 ${iceCream[3]} × 700 - ${chocolate[3]} × 600 = ${answer.toLocaleString()}원입니다.`);
     },
     advancedLinePattern({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
@@ -2072,7 +2182,9 @@
     [type => type.id === "4-2-u4-t5", "quadPropertyRelations"],
     [type => type.id === "4-2-u4-t6", "quadPropertyApplication"],
     [type => type.id === "4-2-u4-t7", "quadSquareSpecial"],
-    [type => type.id === "4-2-u4-t8", "quadRectangleCount"]
+    [type => type.id === "4-2-u4-t8", "quadRectangleCount"],
+    [type => type.id === "4-2-u5-t1", "lineGraphUnderstanding"],
+    [type => type.id === "4-2-u5-t2", "lineGraphApplication"]
   ];
 
   function generatorKey(typeOrName) {
