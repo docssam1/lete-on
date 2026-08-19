@@ -28,6 +28,7 @@
     search: "",
     difficulty: 0,
     selected: new Set(),
+    collapsedUnits: new Set(),
     count: 12,
     questions: [],
     view: "problem",
@@ -71,23 +72,35 @@
     $("unitFilter").innerHTML = `<option value="">전체 단원</option>${units.map(unit => `<option value="${unit.id}" ${unit.id === state.unitId ? "selected" : ""}>${unit.number}. ${escapeHtml(unit.name)}</option>`).join("")}`;
   }
 
-  function typeCard(type) {
+  function typeTreeRow(type) {
     const ready = Boolean(type.generator);
     const selected = state.selected.has(type.id);
-    return `<label class="type-card ${selected ? "is-selected" : ""} ${ready ? "" : "is-pending"}">
-      <span class="type-number">${String(type.typeNumber || type.number).padStart(2, "0")}</span>
-      <span class="type-copy">
-        <span class="type-check"><input type="checkbox" data-type-id="${type.id}" ${selected ? "checked" : ""} ${ready ? "" : "disabled"}><strong>${escapeHtml(type.name)}</strong></span>
-        <p>${type.semesterLabel} · ${type.unitNumber}단원 ${escapeHtml(type.unitName)}</p>
-        <span class="meta-row"><span>심화 기준</span><span>원문 구조 확인</span><span>시작 p.${type.page}</span></span>
-      </span>
-      <span class="type-flag ${ready ? "is-ready" : ""}">${ready ? "1차 검수 가능" : "그림 렌더 제작 대기"}</span>
-    </label>`;
+    const number = String(type.typeNumber || type.number).padStart(2, "0");
+    return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '">' +
+      '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
+      '<span class="tree-type-number">' + number + '</span>' +
+      '<span class="tree-type-copy"><strong>' + escapeHtml(type.name) + '</strong><small>심화 기준 · p.' + type.page + '</small></span>' +
+      '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "준비 중") + '</span>' +
+    '</label>';
   }
 
   function renderCatalog() {
     const visible = visibleTypes();
-    $("typeList").innerHTML = visible.map(typeCard).join("");
+    const semester = currentSemester();
+    const markup = (semester?.units || []).map(unit => {
+      const unitTypes = visible.filter(type => type.unitId === unit.id);
+      if (!unitTypes.length) return "";
+      const isOpen = !state.collapsedUnits.has(unit.id);
+      const readyCount = unitTypes.filter(type => type.generator).length;
+      return '<section class="tree-unit ' + (isOpen ? "is-open" : "") + '">' +
+        '<button class="tree-unit-toggle" type="button" data-tree-unit="' + unit.id + '" aria-expanded="' + isOpen + '">' +
+          '<span class="tree-chevron" aria-hidden="true">›</span><span class="tree-unit-number">' + unit.number + '</span>' +
+          '<span class="tree-unit-copy"><strong>' + escapeHtml(unit.name) + '</strong><small>' + readyCount + '개 유형 생성 가능</small></span>' +
+        '</button>' +
+        '<div class="tree-branch" ' + (isOpen ? "" : "hidden") + '>' + unitTypes.map(typeTreeRow).join("") + '</div>' +
+      '</section>';
+    }).join("");
+    $("typeList").innerHTML = markup;
     $("catalogEmpty").hidden = visible.length > 0;
     renderSummary();
   }
@@ -99,7 +112,19 @@
     $("selectedTypeSummary").textContent = `${selected.length}개`;
     $("selectedQuestionSummary").textContent = `${selected.length ? state.count : 0}문항`;
     $("generateButton").disabled = selected.length === 0;
-    $("selectedTypeList").innerHTML = selected.length ? selected.map(type => `<div><span><b>${escapeHtml(type.name)}</b><small>${type.semesterLabel} · ${escapeHtml(type.unitName)}</small></span><button type="button" data-remove-type="${type.id}" aria-label="${escapeHtml(type.name)} 선택 해제">×</button></div>`).join("") : `<p>가운데 목록에서 생성 가능한 유형을 선택하세요.</p>`;
+    $("selectedTypeList").innerHTML = selected.length ? selected.map(type =>
+      '<div><span><b>' + escapeHtml(type.name) + '</b><small>' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + '</small></span>' +
+      '<button type="button" data-remove-type="' + type.id + '" aria-label="' + escapeHtml(type.name) + ' 선택 해제">×</button></div>'
+    ).join("") : '<p>왼쪽 교육과정 트리에서 유형을 선택하세요.</p>';
+  }
+
+  function setQuestionCount(value) {
+    state.count = Math.max(1, Math.min(40, Number.isFinite(value) ? value : 12));
+    $("questionCountInput").value = String(state.count);
+    document.querySelectorAll("[data-count]").forEach(button => {
+      button.classList.toggle("is-active", Number(button.dataset.count) === state.count);
+    });
+    renderSummary();
   }
 
   function bindSegment(containerId, dataKey, stateKey, transform = value => value) {
@@ -152,7 +177,7 @@
   function renderProblems() {
     $("problemView").innerHTML = chunk(state.questions, 6).map((page, pageIndex) => `<section class="print-page">
       <div class="page-label">문제 ${pageIndex + 1}</div>
-      <div class="question-grid">${page.map(question => `<article class="question-item">
+      <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item">
         <header><b>${question.number}</b><span>${escapeHtml(question.type.unitName)} · ${escapeHtml(question.type.name)}</span><em>${escapeHtml(question.difficulty)}</em></header>
         <div class="question-prompt">${question.prompt}</div>
         <div class="answer-line">답</div>
@@ -172,6 +197,7 @@
 
   function renderWorksheet() {
     const student = $("studentNameInput").value.trim();
+    const selected = [...state.selected].map(id => typeById.get(id)).filter(Boolean);
     if (student) localStorage.setItem("hseStudent", student);
     $("worksheetStudent").textContent = student;
     $("worksheetTitle").textContent = state.view === "problem" ? "맞춤 유사문제" : "맞춤 유사문제 정답·풀이";
@@ -182,6 +208,13 @@
     $("solutionTab").classList.toggle("is-active", state.view === "solution");
     $("problemTab").setAttribute("aria-selected", state.view === "problem" ? "true" : "false");
     $("solutionTab").setAttribute("aria-selected", state.view === "solution" ? "true" : "false");
+    $("reviewStageMeta").textContent = `${state.questions.length}문항 · ${selected.length}개 유형`;
+    $("reviewSelectedTypes").innerHTML = selected.map(type =>
+      `<div><strong>${escapeHtml(type.name)}</strong><span>${type.unitNumber}단원 · ${escapeHtml(type.unitName)}</span></div>`
+    ).join("");
+    $("reviewQuestionList").innerHTML = state.questions.map(question =>
+      `<a href="#question-${question.number}"><b>${question.number}</b><span>${escapeHtml(question.type.name)}</span></a>`
+    ).join("");
     renderProblems();
     renderSolutions();
   }
@@ -193,9 +226,19 @@
   $("unitFilter").addEventListener("change", event => { state.unitId = event.target.value; renderCatalog(); });
   $("typeSearchInput").addEventListener("input", event => { state.search = event.target.value; renderCatalog(); });
   $("questionCountInput").addEventListener("input", event => {
-    const value = Number(event.target.value);
-    state.count = Math.max(1, Math.min(40, Number.isFinite(value) ? value : 12));
-    renderSummary();
+    setQuestionCount(Number(event.target.value));
+  });
+  document.querySelector(".count-presets").addEventListener("click", event => {
+    const button = event.target.closest("button[data-count]");
+    if (!button) return;
+    setQuestionCount(Number(button.dataset.count));
+  });
+  $("typeList").addEventListener("click", event => {
+    const button = event.target.closest("button[data-tree-unit]");
+    if (!button) return;
+    const unitId = button.dataset.treeUnit;
+    if (state.collapsedUnits.has(unitId)) state.collapsedUnits.delete(unitId); else state.collapsedUnits.add(unitId);
+    renderCatalog();
   });
   $("typeList").addEventListener("change", event => {
     const input = event.target.closest("input[data-type-id]");
