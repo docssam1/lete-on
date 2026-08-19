@@ -1,6 +1,47 @@
 (() => {
   const gcd = (a, b) => b ? gcd(b, a % b) : Math.abs(a);
   const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+  const gcdMany = values => values.reduce((total, value) => gcd(total, value));
+  const lcmMany = values => values.reduce((total, value) => lcm(total, value));
+  const factorMap = value => {
+    const factors = new Map();
+    let remaining = value;
+    for (let divisor = 2; divisor * divisor <= remaining; divisor += divisor === 2 ? 1 : 2) {
+      while (remaining % divisor === 0) {
+        factors.set(divisor, (factors.get(divisor) || 0) + 1);
+        remaining /= divisor;
+      }
+    }
+    if (remaining > 1) factors.set(remaining, (factors.get(remaining) || 0) + 1);
+    return factors;
+  };
+  const factorMapProduct = factors => [...factors.entries()].reduce((total, [prime, power]) => total * prime ** power, 1);
+  const factorMapText = factors => [...factors.entries()]
+    .sort(([left], [right]) => left - right)
+    .map(([prime, power]) => power === 1 ? String(prime) : `${prime}^${power}`)
+    .join(" × ");
+  const factorMapMultiply = (...maps) => maps.reduce((total, factors) => {
+    factors.forEach((power, prime) => total.set(prime, (total.get(prime) || 0) + power));
+    return total;
+  }, new Map());
+  const factorMapDivide = (numerator, denominator) => {
+    const answer = new Map(numerator);
+    denominator.forEach((power, prime) => answer.set(prime, (answer.get(prime) || 0) - power));
+    [...answer.entries()].forEach(([prime, power]) => {
+      if (power < 0) throw new Error("소인수 지수가 음수가 되었습니다.");
+      if (power === 0) answer.delete(prime);
+    });
+    return answer;
+  };
+  const allDivisors = value => {
+    const output = [];
+    for (let divisor = 1; divisor * divisor <= value; divisor += 1) {
+      if (value % divisor) continue;
+      output.push(divisor);
+      if (divisor * divisor !== value) output.push(value / divisor);
+    }
+    return output.sort((left, right) => left - right);
+  };
   const pick = (rng, values) => values[Math.floor(rng() * values.length)];
   const int = (rng, min, max) => Math.floor(rng() * (max - min + 1)) + min;
   const shuffle = (rng, values) => [...values].sort(() => rng() - 0.5);
@@ -2423,6 +2464,176 @@
       const c = int(rng, 1, n);
       const answer = r * (m - r + 1) * c * (n - c + 1);
       return result(`가로로 ${m}칸, 세로로 ${n}칸인 직사각형 모눈 안에 깃발이 하나 그려져 있습니다. 깃발을 포함한 크고 작은 직사각형은 모두 몇 개인지 구하세요.${gridRectSvg(m, n, [r, c])}`, answer, `깃발이 있는 칸을 포함하려면 왼쪽으로 ${r}가지, 오른쪽으로 ${m - r + 1}가지, 위로 ${c}가지, 아래로 ${n - c + 1}가지 중 하나씩 선택하면 됩니다. ${r} × ${m - r + 1} × ${c} × ${n - c + 1} = ${answer}개입니다.`);
+    },
+    factorMultipleAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const divisor = pick(rng, [7, 9, 11, 13, 17].slice(0, 3 + level));
+        const base = int(rng, 320, 960 + level * 480);
+        const low = level === 2 ? 1000 : 100;
+        const high = low + int(rng, 600, 1800 + level * 1200);
+        const count = Math.floor((base + high) / divisor) - Math.floor((base + low - 1) / divisor);
+        return result(`${base} + □가 ${divisor}의 배수가 되도록 하는 ${low} 이상 ${high} 이하의 자연수 □는 모두 몇 개인지 구하세요.`, count, `${base}+□가 ${divisor}의 배수이려면 □의 범위 안에서 ${divisor}의 배수가 되는 값을 세면 됩니다. ${low}부터 ${high}까지 조건을 만족하는 수는 ${count}개입니다.`);
+      }
+      const bases = level === 0 ? [[2, 4], [3, 2], [5, 1]] : level === 1 ? [[2, 5], [3, 3], [5, 2], [7, 1]] : [[2, 6], [3, 4], [5, 2], [7, 2]];
+      const factors = new Map(bases);
+      const value = factorMapProduct(factors);
+      if (variant % 3 === 1) {
+        const lower = level === 0 ? 10 : 100;
+        const upper = Math.min(value, lower + int(rng, 250, 1100 + level * 900));
+        const candidates = allDivisors(value).filter(divisor => divisor >= lower && divisor <= upper);
+        const answer = candidates.length ? candidates[candidates.length - 1] : allDivisors(value).filter(divisor => divisor <= upper).at(-1);
+        return result(`${value.toLocaleString()}의 약수 중 ${upper.toLocaleString()} 이하인 수 가운데 가장 큰 수를 구하세요.`, answer, `${value.toLocaleString()}을 소인수분해하면 ${factorMapText(factors)}입니다. 이 범위에서 가장 큰 약수는 ${answer.toLocaleString()}입니다.`);
+      }
+      const divisors = allDivisors(value).filter(divisor => divisor <= Math.sqrt(value));
+      const first = divisors[divisors.length - 1];
+      const second = value / first;
+      return result(`두 자연수의 곱이 ${value.toLocaleString()}일 때, 두 수의 차가 가장 작도록 하는 두 수의 합을 구하세요.`, first + second, `${value.toLocaleString()}의 약수 중 제곱근에 가장 가까운 약수는 ${first.toLocaleString()}입니다. 다른 수는 ${second.toLocaleString()}이므로 합은 ${first.toLocaleString()} + ${second.toLocaleString()} = ${(first + second).toLocaleString()}입니다.`);
+    },
+    primeFactorBasicAdvanced({ rng, level, variant = 0 }) {
+      const primes = level === 0 ? [2, 3, 5] : level === 1 ? [2, 3, 5, 7] : [2, 3, 5, 7, 11];
+      const factors = new Map();
+      primes.forEach((prime, index) => {
+        const power = int(rng, index === 0 ? 1 : 0, 1 + Math.min(2, level));
+        if (power) factors.set(prime, power);
+      });
+      if (factors.size < 2) factors.set(2, 2 + level);
+      const value = factorMapProduct(factors);
+      if (variant % 3 === 2) {
+        const candidates = [value - 1, value, value + 1, value + pick(rng, [2, 4, 6, 8])];
+        const primesOnly = candidates.filter(candidate => {
+          if (candidate < 2) return false;
+          return allDivisors(candidate).length === 2;
+        });
+        return result(`다음 수 중 소수인 수는 모두 몇 개인지 구하세요.<div class="equation">${candidates.join(", ")}</div>`, primesOnly.length, `각 수를 작은 소수로 나누어 보면 소수는 ${primesOnly.join(", ") || "없고"}, 모두 ${primesOnly.length}개입니다.`);
+      }
+      return result(`${value.toLocaleString()}을 소인수의 곱으로 나타내세요.`, factorMapText(factors), `${value.toLocaleString()}을 소수로 차례로 나누면 ${factorMapText(factors)}입니다.`);
+    },
+    primeFactorPowerAdvanced({ rng, level, variant = 0 }) {
+      const primes = level === 2 ? [2, 3, 5, 7] : [2, 3, 5];
+      const left = new Map(primes.map((prime, index) => [prime, int(rng, 1 + (index === 0 ? 1 : 0), 2 + level)]));
+      const right = new Map(primes.map((prime, index) => [prime, int(rng, 0, Math.max(0, (left.get(prime) || 0) - (index === 0 ? 0 : 1)))]).filter(([, power]) => power));
+      if (!right.size) right.set(2, 1);
+      if (variant % 3 === 0) {
+        const answerMap = factorMapMultiply(left, right);
+        return result(`다음을 소인수의 곱으로 나타내세요.<div class="equation">(${factorMapText(left)}) × (${factorMapText(right)})</div>`, factorMapText(answerMap), `같은 소인수끼리 지수를 더하면 ${factorMapText(answerMap)}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const answerMap = factorMapDivide(left, right);
+        return result(`다음을 소인수의 곱으로 나타내세요.<div class="equation">(${factorMapText(left)}) ÷ (${factorMapText(right)})</div>`, factorMapText(answerMap), `나눗셈에서는 같은 소인수의 지수를 빼므로 ${factorMapText(answerMap)}입니다.`);
+      }
+      const target = new Map(left);
+      target.set(2, (target.get(2) || 0) + 2);
+      target.set(3, (target.get(3) || 0) + 1);
+      const answerMap = factorMapDivide(target, left);
+      return result(`□에 알맞은 수를 소인수의 곱으로 나타내세요.<div class="equation">(${factorMapText(left)}) × □ = ${factorMapText(target)}</div>`, factorMapText(answerMap), `오른쪽 소인수의 지수에서 왼쪽 소인수의 지수를 빼면 □는 ${factorMapText(answerMap)}입니다.`);
+    },
+    primeFactorApplicationAdvanced({ rng, level, variant = 0 }) {
+      const primes = [2, 3, 5, 7].slice(0, 3 + Math.min(level, 1));
+      const factors = new Map(primes.map((prime, index) => [prime, int(rng, 1, 2 + (index === 0 ? level : 1))]));
+      const value = factorMapProduct(factors);
+      if (variant % 3 === 0) {
+        const n = int(rng, 18 + level * 8, 42 + level * 18);
+        const answer = Math.floor(n / 5) + Math.floor(n / 25) + Math.floor(n / 125);
+        return result(`1부터 ${n}까지의 자연수를 모두 곱한 수의 일의 자리에서부터 연속으로 나타나는 0은 몇 개인지 구하세요.`, answer, `10은 2와 5의 곱이고 2보다 5의 개수가 적습니다. ${n}!에 들어 있는 5의 개수는 ⌊${n}/5⌋ + ⌊${n}/25⌋ + ⌊${n}/125⌋ = ${answer}개이므로 0도 ${answer}개입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const completion = new Map();
+        factors.forEach((power, prime) => completion.set(prime, power % 2 ? 1 : 0));
+        const answer = factorMapProduct(completion);
+        return result(`${value.toLocaleString()}에 가장 작은 자연수를 곱하여 제곱수가 되게 하려고 합니다. 곱해야 하는 자연수를 구하세요.`, answer, `${value.toLocaleString()} = ${factorMapText(factors)}입니다. 모든 지수가 짝수가 되려면 ${factorMapText(completion)}을 더 곱해야 하므로 답은 ${answer}입니다.`);
+      }
+      const completion = new Map();
+      factors.forEach((power, prime) => completion.set(prime, (3 - power % 3) % 3));
+      const answer = factorMapProduct(completion);
+      return result(`${value.toLocaleString()}에 가장 작은 자연수를 곱하여 세제곱수가 되게 하려고 합니다. 곱해야 하는 자연수를 구하세요.`, answer, `${value.toLocaleString()} = ${factorMapText(factors)}입니다. 모든 지수가 3의 배수가 되도록 ${factorMapText(completion)}을 곱하면 되므로 답은 ${answer}입니다.`);
+    },
+    commonDivisorAdvanced({ rng, level, variant = 0 }) {
+      const common = pick(rng, [6, 8, 10, 12, 15, 18, 21].slice(0, 4 + level));
+      const coprimePairs = [[5, 7], [7, 9], [8, 11], [11, 13], [13, 16]];
+      const [leftScale, rightScale] = pick(rng, coprimePairs.slice(0, 3 + level));
+      const left = common * leftScale;
+      const right = common * rightScale;
+      if (variant % 2 === 0) {
+        const answer = allDivisors(common).length;
+        return result(`${left}과 ${right}의 공약수는 모두 몇 개인지 구하세요.`, answer, `${left}과 ${right}의 최대공약수는 ${common}이고 공약수는 ${allDivisors(common).join(", ")}입니다. 따라서 ${answer}개입니다.`);
+      }
+      return result(`${left}과 ${right}의 최대공약수를 구하고 소인수의 곱으로 나타내세요.`, factorMapText(factorMap(common)), `${left}과 ${right}을 각각 소인수분해했을 때 공통으로 들어 있는 소인수의 지수를 작은 쪽으로 고르면 최대공약수는 ${common} = ${factorMapText(factorMap(common))}입니다.`);
+    },
+    commonMultipleAdvanced({ rng, level, variant = 0 }) {
+      const pairs = level === 0 ? [[12, 18], [14, 20], [15, 24]] : level === 1 ? [[18, 30], [24, 35], [28, 45]] : [[36, 54], [40, 63], [42, 70]];
+      const [left, right] = pick(rng, pairs);
+      const base = lcm(left, right);
+      if (variant % 2 === 0) {
+        const target = base * int(rng, 4, 10 + level * 3) + int(rng, 1, Math.floor(base / 3));
+        const answer = Math.round(target / base) * base;
+        return result(`${left}의 배수이면서 ${right}의 배수인 수 중 ${target.toLocaleString()}에 가장 가까운 수를 구하세요.`, answer, `${left}과 ${right}의 최소공배수는 ${base}입니다. ${base}의 배수 중 ${target.toLocaleString()}에 가장 가까운 수는 ${answer.toLocaleString()}입니다.`);
+      }
+      const lower = base * int(rng, 2, 4 + level);
+      const upper = lower + base * int(rng, 3, 6 + level);
+      const answer = Math.floor(upper / base) - Math.floor((lower - 1) / base);
+      return result(`${lower.toLocaleString()} 이상 ${upper.toLocaleString()} 이하인 자연수 중 ${left}과 ${right}의 공배수는 모두 몇 개인지 구하세요.`, answer, `${left}과 ${right}의 공배수는 ${base}의 배수입니다. 범위 안의 ${base}의 배수를 세면 ${answer}개입니다.`);
+    },
+    divisibilityRuleAdvanced({ rng, level, variant = 0 }) {
+      const settings = level === 0 ? [[3, 4], [9, 4]] : level === 1 ? [[4, 5], [8, 5], [9, 5]] : [[9, 6], [11, 6], [12, 6]];
+      const [divisor, digits] = pick(rng, settings);
+      for (let attempt = 0; attempt < 80; attempt += 1) {
+        const values = Array.from({ length: digits }, (_, index) => index === 0 ? int(rng, 1, 9) : int(rng, 0, 9));
+        const blankIndex = int(rng, 1, digits - 2);
+        const candidates = [];
+        for (let digit = 0; digit <= 9; digit += 1) {
+          values[blankIndex] = digit;
+          if (Number(values.join("")) % divisor === 0) candidates.push(digit);
+        }
+        if (!candidates.length) continue;
+        values[blankIndex] = "□";
+        const answer = candidates.reduce((total, digit) => total + digit, 0);
+        return result(`${values.join("")}이 ${divisor}의 배수가 되도록 하는 □ 안의 숫자를 모두 더한 값을 구하세요.`, answer, `${divisor}의 배수 조건을 적용하여 가능한 숫자는 ${candidates.join(", ")}입니다. 이들의 합은 ${answer}입니다.`);
+      }
+      throw new Error("배수 판정법 조건을 만들지 못했습니다.");
+    },
+    threeNumberGcdLcmAdvanced({ rng, level }) {
+      const common = pick(rng, [2, 3, 4, 5, 6].slice(0, 3 + level));
+      const scales = level === 2 ? [6, 10, 15] : pick(rng, [[2, 3, 5], [3, 4, 5], [4, 5, 7], [6, 7, 10]]);
+      const values = scales.map(scale => common * scale);
+      const greatest = gcdMany(values);
+      const least = lcmMany(values);
+      return result(`세 수 ${values.join(", ")}의 최대공약수와 최소공배수를 차례로 구하세요.`, `${greatest}, ${least}`, `세 수에 공통으로 들어 있는 인수는 ${greatest}이고, 필요한 소인수의 가장 큰 지수를 모두 곱하면 최소공배수는 ${least}입니다. 따라서 ${greatest}, ${least}입니다.`);
+    },
+    divisorCountAdvanced({ rng, level, variant = 0 }) {
+      const primes = level === 2 ? [2, 3, 5, 7] : [2, 3, 5];
+      const factors = new Map(primes.map((prime, index) => [prime, int(rng, 1, 2 + Math.min(2, level + (index === 0 ? 1 : 0)))]));
+      const value = factorMapProduct(factors);
+      if (variant % 2 === 0) {
+        const answer = [...factors.values()].reduce((total, power) => total * (power + 1), 1);
+        return result(`${value.toLocaleString()}의 약수는 모두 몇 개인지 구하세요.`, answer, `${value.toLocaleString()} = ${factorMapText(factors)}입니다. 각 소인수의 지수에 0부터 해당 지수까지를 고를 수 있으므로 약수의 개수는 ${[...factors.values()].map(power => power + 1).join(" × ")} = ${answer}개입니다.`);
+      }
+      const answer = [...factors.values()].reduce((total, power) => total * (Math.floor(power / 2) + 1), 1);
+      return result(`${value.toLocaleString()}의 약수 중 제곱수인 약수는 모두 몇 개인지 구하세요.`, answer, `제곱수인 약수는 각 소인수의 지수가 짝수여야 합니다. ${factorMapText(factors)}에서 가능한 짝수 지수의 선택 수를 곱하면 ${answer}개입니다.`);
+    },
+    commonDivisorApplicationAdvanced({ rng, level }) {
+      const divisor = pick(rng, [7, 8, 9, 11, 12, 13, 15].slice(0, 4 + level));
+      const remainders = [int(rng, 1, divisor - 3), int(rng, 1, divisor - 3), int(rng, 1, divisor - 3)];
+      const scales = [5, 7, 9 + level * 2];
+      const values = scales.map((scale, index) => divisor * scale + remainders[index]);
+      return result(`세 수 ${values.join(", ")}을 어떤 자연수로 나누었더니 나머지가 차례로 ${remainders.join(", ")}이었습니다. 이 자연수로 가능한 수 중 가장 큰 수를 구하세요.`, divisor, `각 수에서 나머지를 빼면 ${values.map((value, index) => value - remainders[index]).join(", ")}입니다. 찾는 수는 이 세 수의 공약수이고, 최대공약수는 ${divisor}입니다.`);
+    },
+    commonMultipleApplicationAdvanced({ rng, level }) {
+      const periods = level === 0 ? pick(rng, [[6, 8], [8, 10], [9, 12]]) : level === 1 ? pick(rng, [[12, 18], [14, 20], [15, 24]]) : pick(rng, [[18, 28], [24, 35], [30, 42]]);
+      const [first, second] = periods;
+      const base = lcm(first, second);
+      const after = base * int(rng, 2, 5 + level) + int(rng, 1, base - 1);
+      const answer = Math.ceil(after / base) * base;
+      return result(`두 신호등은 지금 동시에 켜졌고, 첫째 신호등은 ${first}분마다, 둘째 신호등은 ${second}분마다 켜집니다. ${after}분 뒤 또는 그 이후 처음으로 동시에 켜지는 때는 몇 분 뒤인지 구하세요.`, answer, `두 신호등이 동시에 켜지는 간격은 ${first}과 ${second}의 최소공배수 ${base}분입니다. ${after}분 뒤 또는 그 이후 처음인 ${base}의 배수는 ${answer}입니다.`);
+    },
+    gcdLcmRelationAdvanced({ rng, level }) {
+      const common = pick(rng, [3, 4, 5, 6, 8, 10].slice(0, 3 + level));
+      const pairs = level === 2 ? [[7, 11], [8, 15], [9, 14], [11, 16]] : [[2, 5], [3, 7], [4, 9], [5, 8]];
+      const [leftScale, rightScale] = pick(rng, pairs);
+      const left = common * leftScale;
+      const right = common * rightScale;
+      const product = left * right;
+      const least = lcm(left, right);
+      return result(`서로 다른 두 자연수의 곱은 ${product.toLocaleString()}이고 최대공약수는 ${common}입니다. 이 두 수의 최소공배수를 구하세요.`, least, `두 자연수의 곱은 최대공약수와 최소공배수의 곱과 같습니다. 따라서 최소공배수는 ${product.toLocaleString()} ÷ ${common} = ${least.toLocaleString()}입니다.`);
     }
   };
 
@@ -2517,7 +2728,19 @@
     [type => type.id === "5-1-u1-t1", "mixedOrderAdvanced"],
     [type => type.id === "5-1-u1-t2", "oneExpressionAdvanced"],
     [type => type.id === "5-1-u1-t3", "mixedWordEquationAdvanced"],
-    [type => type.id === "5-1-u1-t4", "mixedExpressionBuildAdvanced"]
+    [type => type.id === "5-1-u1-t4", "mixedExpressionBuildAdvanced"],
+    [type => type.id === "5-1-u2-t1", "factorMultipleAdvanced"],
+    [type => type.id === "5-1-u2-t2", "primeFactorBasicAdvanced"],
+    [type => type.id === "5-1-u2-t3", "primeFactorPowerAdvanced"],
+    [type => type.id === "5-1-u2-t4", "primeFactorApplicationAdvanced"],
+    [type => type.id === "5-1-u2-t5", "commonDivisorAdvanced"],
+    [type => type.id === "5-1-u2-t6", "commonMultipleAdvanced"],
+    [type => type.id === "5-1-u2-t7", "divisibilityRuleAdvanced"],
+    [type => type.id === "5-1-u2-t8", "threeNumberGcdLcmAdvanced"],
+    [type => type.id === "5-1-u2-t9", "divisorCountAdvanced"],
+    [type => type.id === "5-1-u2-t10", "commonDivisorApplicationAdvanced"],
+    [type => type.id === "5-1-u2-t11", "commonMultipleApplicationAdvanced"],
+    [type => type.id === "5-1-u2-t12", "gcdLcmRelationAdvanced"]
   ];
 
   function generatorKey(typeOrName) {
