@@ -208,3 +208,13 @@
 .answer-dialog td .triangle-position-answer-visual svg{width:58px}
 @media(max-width:560px){.triangle-cycle figure{flex-basis:62px}}
 .answer-dialog td .answer-text{margin-top:4px;color:#243b49;font-size:12px;font-weight:800;text-align:center}
+
+/* 삼각형 합 채우기 (파이널 2회 16번 원본 그림) — viewBox만 있는 SVG라 width/height를
+   직접 준다. 안 주면 카드 폭까지 늘어난다(전에 두 번 겪었다). */
+.triangle-sum-grid{display:flex;justify-content:center}
+.triangle-sum-grid svg{display:block;width:100%;max-width:260px;height:auto}
+.tsg-cell{fill:#fff;stroke:#c9b9a4;stroke-width:1.4}
+.tsg-tri{fill:#ded5c8;stroke:#b3a693;stroke-width:1.4}
+.tsg-num,.tsg-sum{fill:#3c3226;font-family:'Noto Sans KR',sans-serif;font-weight:800;text-anchor:middle;dominant-baseline:central}
+.tsg-num{font-size:19px}
+.tsg-sum{font-size:15px}

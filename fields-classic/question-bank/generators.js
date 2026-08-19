@@ -4094,10 +4094,25 @@ function triangleSumPlacement({ difficulty = 2 }) {
   )));
   const answer = slots.map((slot, index) => `${slot.r === 0 ? "위" : "아래"} ${slot.c + 1}번째 ${target[index]}`).join(", ");
   return {
-    prompt: `1부터 ${cellCount}까지의 수를 한 번씩만 넣어 가로줄과 세로줄에 놓인 수의 합이 오른쪽과 아래에 쓰인 수가 되도록 빈칸을 채우세요.`,
-    visual: { kind: "sum-grid", cells, rowSums: rows, colSums: cols, cards: numbers },
+    // 원본(파이널 2회 16번)은 합을 삼각형 안에 적고, 그 삼각형이 가리키는 쪽 — 위 삼각형은
+    // 아래쪽 칸들, 오른쪽 삼각형은 왼쪽 칸들 — 의 합을 묻는다. 셈은 행·열 합 그대로지만
+    // 표를 격자 바깥에 숫자로 적으면 아이가 보는 그림이 원본과 달라진다. 2026-08-19에
+    // 원본 그림을 확인하고 전용 시각 자료로 바꿨다.
+    prompt: `1부터 ${cellCount}까지의 수를 한 번씩만 사용하여 삼각형의 왼쪽, 아래쪽에 있는 수의 합이 삼각형 안의 수가 되도록 완성하시오.`,
+    visual: { kind: "triangle-sum-grid", cells, rowSums: rows, colSums: cols },
+    // 답이 배치라서 글로만 적으면 채점자가 칸을 세어 가며 읽어야 한다. 완성 그림을 함께 낸다.
+    answerVisual: {
+      kind: "triangle-sum-grid",
+      cells: cells.map((row, r) => row.map((item, c) => {
+        if (item === null) return null;
+        const index = slots.findIndex((slot) => slot.r === r && slot.c === c);
+        return index < 0 ? item : { t: "num", v: target[index] };
+      })),
+      rowSums: rows,
+      colSums: cols
+    },
     answer,
-    solution: `줄에 한 칸만 남는 곳부터 채웁니다. 각 줄의 합을 차례로 맞추면 배치가 하나로 정해집니다. ${answer}입니다.`,
+    solution: `칸이 하나뿐인 줄부터 채웁니다. 각 삼각형의 합을 차례로 맞추면 배치가 하나로 정해집니다. ${answer}입니다.`,
     meta: { columns, cellCount, target, rows, cols, slots }
   };
 }

@@ -1621,6 +1621,57 @@ function sumGridMarkup(visual) {
   return `<div class="sum-grid-work">${cards}<div class="sum-grid" style="--sg-cols:${columns + 1}">${rows}${footer}</div></div>`;
 }
 
+// 파이널 2회 16번 전용. 합을 표 바깥에 숫자로 적는 sum-grid와 달리, 원본은 합을 삼각형
+// 안에 적고 삼각형이 자기가 가리키는 쪽 칸들을 뜻한다 — 위 삼각형은 그 아래 세로줄,
+// 오른쪽 삼각형은 그 왼쪽 가로줄. 왼쪽 위처럼 칸이 비는 자리가 있으면 세로줄 삼각형은
+// 그 줄에서 실제로 가장 위에 있는 칸 위에 앉는다(원본 그림이 그렇다).
+function triangleSumGridMarkup(visual) {
+  const S = 46;          // 칸 한 변
+  const TH = 28;         // 위 삼각형 높이
+  const TW = 30;         // 오른쪽 삼각형 너비
+  const rowCount = visual.cells.length;
+  const colCount = visual.cells[0].length;
+  const X0 = 2;
+  const Y0 = TH + 2;
+  const width = X0 + colCount * S + TW + 4;
+  const height = Y0 + rowCount * S + 4;
+  const has = (r, c) => visual.cells[r] && visual.cells[r][c] !== null && visual.cells[r][c] !== undefined;
+
+  let parts = "";
+  for (let r = 0; r < rowCount; r += 1) {
+    for (let c = 0; c < colCount; c += 1) {
+      if (!has(r, c)) continue;
+      const item = visual.cells[r][c];
+      const x = X0 + c * S;
+      const y = Y0 + r * S;
+      parts += `<rect x="${x}" y="${y}" width="${S}" height="${S}" class="tsg-cell"/>`;
+      if (item && item.t === "num") parts += `<text x="${x + S / 2}" y="${y + S / 2}" class="tsg-num">${item.v}</text>`;
+    }
+  }
+  visual.colSums.forEach((value, c) => {
+    if (value === null || value === undefined) return;
+    let top = -1;
+    for (let r = 0; r < rowCount; r += 1) if (has(r, c)) { top = r; break; }
+    if (top < 0) return;
+    const x = X0 + c * S;
+    const y = Y0 + top * S;
+    parts += `<polygon points="${x},${y} ${x + S},${y} ${x + S / 2},${y - TH}" class="tsg-tri"/>` +
+      `<text x="${x + S / 2}" y="${y - TH * 0.32}" class="tsg-sum">${value}</text>`;
+  });
+  visual.rowSums.forEach((value, r) => {
+    if (value === null || value === undefined) return;
+    let last = -1;
+    for (let c = 0; c < colCount; c += 1) if (has(r, c)) last = c;
+    if (last < 0) return;
+    const x = X0 + (last + 1) * S;
+    const y = Y0 + r * S;
+    parts += `<polygon points="${x},${y} ${x},${y + S} ${x + TW},${y + S / 2}" class="tsg-tri"/>` +
+      `<text x="${x + TW * 0.34}" y="${y + S / 2}" class="tsg-sum">${value}</text>`;
+  });
+
+  return `<div class="triangle-sum-grid"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="삼각형 합 채우기">${parts}</svg></div>`;
+}
+
 function checkerSquareGrowthMarkup(visual) {
   const stage = (side) => {
     const cells = [];
@@ -1859,6 +1910,7 @@ function visualMarkup(visual) {
   if (visual.kind === "triangle-position-answer") return `<div class="visual triangle-position-answer-visual">${triangleCycleSvg(visual.position)}</div>`;
   if (visual.kind === "overlap-bonds") return `<div class="visual overlap-bonds-visual">${overlapBondsMarkup(visual)}</div>`;
   if (visual.kind === "geometry-worksheet") return `<div class="visual geometry-worksheet-visual">${geometryWorksheetMarkup(visual)}</div>`;
+  if (visual.kind === "triangle-sum-grid") return `<div class="visual triangle-sum-grid-visual">${triangleSumGridMarkup(visual)}</div>`;
   if (visual.kind === "sum-grid") return `<div class="visual sum-grid-visual">${sumGridMarkup(visual)}</div>`;
   if (visual.kind === "magic-square") return `<div class="visual magic-square-visual">${magicSquareMarkup(visual)}</div>`;
   if (visual.kind === "statement-list") return `<div class="visual statement-visual">${statementListMarkup(visual)}</div>`;
