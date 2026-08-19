@@ -231,7 +231,7 @@
     syncMode();
   }
 
-  // 단계를 옮긴 뒤 선택이 그 단계 밖으로 나가지 않게 맞추는다. 생성형이 없는
+  // 단계를 옮긴 뒤 선택이 그 단계 밖으로 나가지 않게 맞춘다. 생성형이 없는
   // 단계에서는 다른 학습지가 반드시 하나 선택되어 있어야 "학습지 만들기"가
   // 빈 곳을 가리키지 않는다.
   function syncMode() {
@@ -632,7 +632,7 @@
       chip.className = "preview-chip" + (code === state.previewType ? " is-active" : "");
       chip.dataset.type = code;
       chip.textContent = typeLabel(code);
-      chip.addEventListener("click", (event) => {
+      chip.addEventListener("click", () => {
         state.previewType = code;
         state.previewSeed = freshSeed();
         renderPreview();
