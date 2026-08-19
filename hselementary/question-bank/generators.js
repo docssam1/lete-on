@@ -42,6 +42,7 @@
     }
     return output.sort((left, right) => left - right);
   };
+  const eulerPhi = value => Array.from({ length: value - 1 }, (_, index) => index + 1).filter(numerator => gcd(numerator, value) === 1).length;
   const pick = (rng, values) => values[Math.floor(rng() * values.length)];
   const int = (rng, min, max) => Math.floor(rng() * (max - min + 1)) + min;
   const shuffle = (rng, values) => [...values].sort(() => rng() - 0.5);
@@ -2716,6 +2717,88 @@
       const remaining = (fastSpeed - slowSpeed) * hours;
       const answer = fastSpeed * hours;
       return result(`형은 한 시간에 ${fastSpeed}km, 동생은 한 시간에 ${slowSpeed}km를 같은 길로 걷습니다. 두 사람이 동시에 출발하여 형이 목적지에 도착했을 때 동생은 ${remaining}km를 더 가야 했습니다. 집에서 목적지까지의 거리를 구하세요.`, answer, `형과 동생의 한 시간 거리 차는 ${fastSpeed}-${slowSpeed}=${fastSpeed - slowSpeed}km입니다. ${remaining}km 차이가 났으므로 걸은 시간은 ${remaining}÷${fastSpeed - slowSpeed}=${hours}시간입니다. 목적지까지 거리는 ${fastSpeed}×${hours}=${answer}km입니다.`);
+    },
+    equalFractionAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 2 === 0) {
+        for (let attempt = 0; attempt < 120; attempt += 1) {
+          const numerator = int(rng, 14 + level * 5, 34 + level * 12);
+          const denominator = numerator + int(rng, 16 + level * 5, 36 + level * 10);
+          const add = int(rng, 3, 8 + level * 3);
+          const subtract = int(rng, 2, Math.min(7 + level * 2, denominator - numerator - 1));
+          const first = fraction(numerator + add, denominator);
+          const second = fraction(numerator, denominator - subtract);
+          const [r, s] = first.split("/").map(Number);
+          const [u, v] = second.split("/").map(Number);
+          if (r * v === u * s) continue;
+          const answer = denominator - numerator;
+          return result(`어떤 진분수의 분자에 ${add}을 더하면 ${first}와 크기가 같아지고, 분모에서 ${subtract}을 빼면 ${second}와 크기가 같아집니다. 처음 분수의 분모와 분자의 차를 구하세요.`, answer, `처음 분수를 a/b라 하면 (a+${add})/b=${first}, a/(b-${subtract})=${second}입니다. 두 등식을 만족하는 a=${numerator}, b=${denominator}이므로 분모와 분자의 차는 ${denominator}-${numerator}=${answer}입니다.`);
+        }
+      }
+      const firstNumerator = int(rng, 8 + level * 3, 22 + level * 6);
+      const denominatorStep = 3 + level;
+      let firstDenominator = firstNumerator + int(rng, 22 + level * 5, 40 + level * 8);
+      if (firstDenominator === firstNumerator * denominatorStep) firstDenominator += 1;
+      const position = int(rng, 12 + level * 6, 28 + level * 12);
+      const numeratorStep = 1;
+      const targetNumerator = firstNumerator + (position - 1) * numeratorStep;
+      const targetDenominator = firstDenominator + (position - 1) * denominatorStep;
+      const target = fraction(targetNumerator, targetDenominator);
+      const examples = Array.from({ length: 4 }, (_, index) => `${firstNumerator + index * numeratorStep}/${firstDenominator + index * denominatorStep}`);
+      return result(`분자에는 1씩, 분모에는 ${denominatorStep}씩 더하여 분수를 나열합니다.<div class="sequence">${examples.join(", ")}, …</div>${target}와 크기가 같은 분수가 처음 나오는 것은 몇 번째인지 구하세요.`, position, `분자와 분모가 각각 일정하게 늘어나는 수열입니다. ${position}번째 분수는 (${firstNumerator}+${position - 1})/(${firstDenominator}+${denominatorStep}×${position - 1})=${targetNumerator}/${targetDenominator}=${target}이므로 답은 ${position}번째입니다.`);
+    },
+    irreducibleFractionAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 2 === 0) {
+        const baseNumerator = pick(rng, [2, 3, 4, 5, 7].slice(0, 3 + level));
+        const baseDenominator = pick(rng, [5, 7, 8, 9, 11, 13].slice(0, 4 + level));
+        const limit = baseDenominator * int(rng, 18 + level * 7, 42 + level * 13);
+        const answer = Math.floor((limit - 1) / baseDenominator);
+        return result(`${baseNumerator}/${baseDenominator}와 크기가 같고 분모가 ${limit}보다 작은 분수는 모두 몇 개인지 구하세요.`, answer, `${baseNumerator}/${baseDenominator}와 같은 분수의 분모는 ${baseDenominator}, ${baseDenominator * 2}, ${baseDenominator * 3}, …입니다. ${limit}보다 작은 배수는 ${answer}개이므로 답은 ${answer}개입니다.`);
+      }
+      const denominator = pick(rng, level === 2 ? [84, 90, 96, 105, 120] : [36, 40, 45, 48, 54, 60]);
+      const answer = eulerPhi(denominator);
+      return result(`분모가 ${denominator}인 진분수 중 기약분수는 모두 몇 개인지 구하세요.`, answer, `분자가 1부터 ${denominator - 1}까지인 수 중 ${denominator}와 공약수가 1인 수를 세면 됩니다. 그런 수는 모두 ${answer}개입니다.`);
+    },
+    commonDenominatorCompareAdvanced({ rng, level, variant = 0 }) {
+      const denominators = level === 2 ? [28, 33, 35, 39, 44, 45] : [12, 14, 15, 18, 20, 21];
+      const candidates = [];
+      while (candidates.length < 3) {
+        const denominator = pick(rng, denominators);
+        const numerator = int(rng, 2, denominator - 2);
+        if (candidates.some(item => item.numerator * denominator === numerator * item.denominator)) continue;
+        candidates.push({ numerator, denominator });
+      }
+      const labels = ["가", "나", "다"];
+      const sorted = candidates.map((item, index) => ({ ...item, label: labels[index] })).sort((left, right) => right.numerator * left.denominator - left.numerator * right.denominator);
+      const answer = sorted.map(item => item.label).join(", ");
+      const text = candidates.map((item, index) => `${labels[index]}: ${item.numerator}/${item.denominator}`).join(", ");
+      return result(`다음 세 분수를 큰 수부터 차례로 나열하세요.<div class="equation comparison">${text}</div>`, answer, `분모의 최소공배수로 통분하거나 교차곱하여 비교합니다. 큰 순서는 ${sorted.map(item => `${item.label}(${item.numerator}/${item.denominator})`).join(" > ")}이므로 답은 ${answer}입니다.`);
+    },
+    conditionalFractionAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 2 === 0) {
+        const numerator = pick(rng, [13, 17, 19, 23, 29].slice(0, 3 + level));
+        const lower = pick(rng, [[2, 5], [3, 7], [4, 9]].slice(0, 2 + level));
+        const upper = pick(rng, [[3, 5], [5, 8], [7, 10]].slice(0, 2 + level));
+        const [lowerN, lowerD] = lower;
+        const [upperN, upperD] = upper;
+        const candidates = [];
+        const maxDenominator = Math.ceil(numerator * lowerD / lowerN);
+        for (let denominator = numerator + 1; denominator <= maxDenominator; denominator += 1) {
+          if (!(lowerN * denominator < numerator * lowerD && numerator * upperD < upperN * denominator)) continue;
+          if (gcd(numerator, denominator) === 1) candidates.push(denominator);
+        }
+        return result(`분자가 ${numerator}인 기약분수 중 ${lowerN}/${lowerD}보다 크고 ${upperN}/${upperD}보다 작은 분수는 모두 몇 개인지 구하세요.`, candidates.length, `분모 d에 대하여 ${lowerN}/${lowerD}<${numerator}/d<${upperN}/${upperD}를 만족하는 정수를 찾고, ${numerator}과 서로소인 분모만 고릅니다. 조건을 만족하는 분모는 ${candidates.join(", ")}이므로 모두 ${candidates.length}개입니다.`);
+      }
+      const numerator = pick(rng, [11, 13, 17, 19, 23].slice(0, 3 + level));
+      const target = pick(rng, [[3, 7], [4, 9], [5, 11], [7, 13]].slice(0, 2 + level));
+      const [targetN, targetD] = target;
+      const candidates = [];
+      for (let denominator = numerator + 1; denominator <= 120 + level * 40; denominator += 1) {
+        if (gcd(numerator, denominator) !== 1) continue;
+        candidates.push({ denominator, gap: Math.abs(numerator * targetD - targetN * denominator), scale: denominator * targetD });
+      }
+      candidates.sort((left, right) => left.gap * right.scale - right.gap * left.scale || left.denominator - right.denominator);
+      const answer = `${numerator}/${candidates[0].denominator}`;
+      return result(`분자가 ${numerator}이고 분모가 ${120 + level * 40} 이하인 기약분수 중 ${targetN}/${targetD}에 가장 가까운 분수를 구하세요.`, answer, `${targetN}/${targetD}와의 차는 |${numerator}×${targetD}-${targetN}×d|/(${targetD}×d)로 비교합니다. 조건에 맞는 분모 중 가장 가까운 것은 ${candidates[0].denominator}이므로 답은 ${answer}입니다.`);
     }
   };
 
@@ -2826,7 +2909,11 @@
     [type => type.id === "5-1-u3-t1", "ruleCorrespondenceAdvanced"],
     [type => type.id === "5-1-u3-t2", "correspondenceTableAdvanced"],
     [type => type.id === "5-1-u3-t3", "patternCorrespondenceApplicationOne"],
-    [type => type.id === "5-1-u3-t4", "patternCorrespondenceApplicationTwo"]
+    [type => type.id === "5-1-u3-t4", "patternCorrespondenceApplicationTwo"],
+    [type => type.id === "5-1-u4-t1", "equalFractionAdvanced"],
+    [type => type.id === "5-1-u4-t2", "irreducibleFractionAdvanced"],
+    [type => type.id === "5-1-u4-t3", "commonDenominatorCompareAdvanced"],
+    [type => type.id === "5-1-u4-t4", "conditionalFractionAdvanced"]
   ];
 
   function generatorKey(typeOrName) {
