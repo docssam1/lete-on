@@ -46,3 +46,8 @@ function calcDiag(addW,subW,cw){
   comment:'필즈 시험에서의 연산은 두자리+두자리 또는 두자리-두자리까지 출제됩니다. 학생은 우선 연산에 집중하여 학습해 주세요. 연산이 부족하다면 사고력 선행, 소마·필즈에서의 학습에 문제가 생길 수도 있습니다. 필즈 입학 시 시험의 연산과 구구단 정도는 하고 있어야 합니다.'};
 }
 
+
+// 점수로 판정 줄을 찾는다. LVLS가 여기 있으니 조회 함수도 여기 둔다.
+// index.html은 자기 IIFE 안에 같은 이름의 함수를 그대로 갖고 있다(내용 동일) — 그쪽에서는
+// 안쪽 정의가 이 전역을 가리므로 동작이 바뀌지 않는다.
+function getLv(sc){ for (const d of LVLS) if (sc >= d.mn && sc <= d.mx) return d; return LVLS[LVLS.length - 1]; }
