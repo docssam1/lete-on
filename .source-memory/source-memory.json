@@ -2,7 +2,7 @@
   "version": 1,
   "name": "Fields Classic question bank",
   "root": "..",
-  "updated": "2026-08-20",
+  "updated": "2026-08-21",
   "sources": [
     {
       "id": "handover",
@@ -103,6 +103,96 @@
       "sha256": "8d120421ff818e1f1c93b502b2278823360a3d0d681c1e8b7d095570db929665",
       "size": 3144,
       "mtime_ns": 1787234861605039000
+    },
+    {
+      "id": "cmath-nc1-2-shape-start",
+      "title": "시매쓰 NC 1단계 2 도형의 시작",
+      "path": "private-sources/Cmath/NC/NC 1단계/NC 1단계 - 2/NC 1단계 2.도형의 시작.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "7460bf162962c0b186a4d5a32d9768699455ff6a56aee7a252dba7d1681e92b6",
+      "size": 26361877,
+      "mtime_ns": 1685767106000000000
+    },
+    {
+      "id": "cmath-nc1-6-solid-shapes",
+      "title": "시매쓰 NC 1단계 6 올록볼록 입체도형",
+      "path": "private-sources/Cmath/NC/NC 1단계/NC 1단계 - 6/NC 1단계 6.올록볼록 입체도형.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "685d2684393ef2f8bfae6b4e8baeb6ca3df016f401cc81fbc1dbc2d0d9063fb1",
+      "size": 28072802,
+      "mtime_ns": 1683183338000000000
+    },
+    {
+      "id": "cmath-nc2-4-blocks-pentomino",
+      "title": "시매쓰 NC 2단계 4 탐구블록과 펜토미노",
+      "path": "private-sources/Cmath/NC/NC 2단계/NC 2단계 - 4/NC 2단계 4.탐구블록과 펜토미노.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "3c9a6d886932ff872c31551be7a4d252cbba93c437c1cea964af23492c1149a3",
+      "size": 26922669,
+      "mtime_ns": 1686296834000000000
+    },
+    {
+      "id": "cmath-nc3-2-tangram-cubes",
+      "title": "시매쓰 NC 3단계 2 칠교놀이와 쌓기나무",
+      "path": "private-sources/Cmath/NC/NC 3단계/NC 3단계 - 2/NC 3단계 2.칠교놀이와 쌓기나무.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "b5e084104ec827139a79b1564897f0c17a2ca706c03d1579a27f27230125f985",
+      "size": 29464683,
+      "mtime_ns": 1686301334000000000
+    },
+    {
+      "id": "cmath-nc4-2-geometry-inquiry",
+      "title": "시매쓰 NC 4단계 2 도형 탐구 문제 해결력",
+      "path": "private-sources/Cmath/NC/NC 4단계/NC 4단계 - 2/NC 4단계 2.도형_탐구 문제 해결력.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "1a5500b8d1be0ce82a07add05f5618e86ff476c80e4b8b1cf3d458a2772bcbdb",
+      "size": 13064359,
+      "mtime_ns": 1689999386000000000
+    },
+    {
+      "id": "cmath-nc5-2-segments-shapes",
+      "title": "시매쓰 NC 5단계 2 선분에서 도형까지",
+      "path": "private-sources/Cmath/NC/NC 5단계/NC 5단계 - 2/NC 5단계 2.선분에서 도형까지.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "09c4f59bc21c345df2874ba82e672796a9ca45cf141094a784a258183944b084",
+      "size": 23455840,
+      "mtime_ns": 1686637222000000000
+    },
+    {
+      "id": "cmath-nc5-4-measurement",
+      "title": "시매쓰 NC 5단계 4 측정의 세계",
+      "path": "private-sources/Cmath/NC/NC 5단계/NC 5단계 - 4/NC 5단계 4.측정의 세계.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "c2134fd7cb6aa71398a6e76ed5db5b95729ac5ebf1f217419edad6efd122b7b2",
+      "size": 28258865,
+      "mtime_ns": 1686644640000000000
+    },
+    {
+      "id": "cmath-nc6-1-fun-geometry",
+      "title": "시매쓰 NC 6단계 1 재미있는 도형",
+      "path": "private-sources/Cmath/NC/NC 6단계/NC 6단계 - 1/NC 6단계 1.재미있는 도형.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "570c1f36de7a4f10f04e38e5cc1ab6ccec71616ade56710c64940079ebae5a8e",
+      "size": 27364887,
+      "mtime_ns": 1686028944000000000
+    },
+    {
+      "id": "cmath-nc6-5-land-fences",
+      "title": "시매쓰 NC 6단계 5 땅과 울타리",
+      "path": "private-sources/Cmath/NC/NC 6단계/NC 6단계 - 5/NC 6단계 5.땅과 울타리.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "4884fa86be4439d39507ef4f299c58981c0d056b982b7ab9dcb04c755ad85990",
+      "size": 26864432,
+      "mtime_ns": 1686900846000000000
     }
   ],
   "records": [
@@ -3960,6 +4050,81 @@
           "role": "test",
           "locator": "full deterministic test suite",
           "note": "20개 문제의 고유성·정답 유일성·기하 도우미·4개 언어 키를 검증"
+        }
+      ]
+    },
+    {
+      "id": "geometry.curriculum.cmath-nc-inventory",
+      "title": "시매쓰 NC 기하 자료 색인",
+      "aliases": [
+        "시매쓰 NC",
+        "Cmath NC"
+      ],
+      "tags": [
+        "geometry",
+        "cmath",
+        "nc",
+        "curriculum",
+        "source-inventory"
+      ],
+      "summary": "시매쓰 NC 자료는 1~6단계, 전체 348개 파일로 확인되었다. 파일명 기준 기하 관련 본교재 후보 9권을 등록했으며 페이지별 내용과 GFIELD 단계·난이도 대응은 아직 검증 전이다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-21",
+      "pointers": [
+        {
+          "source_id": "cmath-nc1-2-shape-start",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc1-6-solid-shapes",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc2-4-blocks-pentomino",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc3-2-tangram-cubes",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc4-2-geometry-inquiry",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc5-2-segments-shapes",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc5-4-measurement",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc6-1-fun-geometry",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc6-5-land-fences",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
         }
       ]
     }
