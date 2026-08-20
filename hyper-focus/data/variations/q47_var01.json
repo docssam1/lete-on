@@ -5,7 +5,8 @@
   "subType": "reverse_table",
   "status": "verified",
   "presentation": {
-    "mode": "text-only"
+    "mode": "text-only",
+    "answerUnit": "명"
   },
   "source": {
     "problemImage": ""

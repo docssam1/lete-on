@@ -5,7 +5,8 @@
   "subType": "unit_rate_animals",
   "status": "verified",
   "presentation": {
-    "mode": "text-only"
+    "mode": "text-only",
+    "answerUnit": "일"
   },
   "source": {
     "problemImage": ""
@@ -37,7 +38,7 @@
     "expectedAnswer": 5
   },
   "problem": {
-    "prompt": "다섯 마리의 다람쥐가 3일에 60개의 도토리를 줍습니다. 8마리의 다람쥐가 160개의 도토리를 주우려면 며칠이 걸릴까요?"
+    "prompt": "모든 다람쥐가 같은 속도로 매일 같은 수의 도토리를 줍습니다. 다섯 마리의 다람쥐가 3일에 60개의 도토리를 줍는다면, 8마리의 다람쥐가 160개의 도토리를 주우려면 며칠이 걸릴까요?"
   },
   "solutionHint": "다람쥐 1마리는 하루에 4개를 줍습니다. 8마리는 하루에 32개를 주우므로 160개를 주우려면 5일이 걸립니다."
 }

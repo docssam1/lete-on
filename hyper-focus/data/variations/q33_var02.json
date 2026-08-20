@@ -2,10 +2,11 @@
  "schemaVersion": "hf-variation-problem-v1",
  "baseQuestionId": "q33",
  "variationId": "q33_var02",
- "subType": "rps_stair_difference",
+ "subType": "rps_stair_position",
  "status": "verified",
  "presentation": {
-  "mode": "text-only"
+  "mode": "text-only",
+  "answerUnit": "계단"
  },
  "source": {
     "problemImage": ""
@@ -15,7 +16,7 @@
   "hfDataTypeId": 33
  },
  "machineReadable": {
-  "payloadType": "rps_stair_difference",
+  "payloadType": "rps_stair_position",
   "rounds": 6,
   "winStep": 3,
   "loseStep": 2,
@@ -30,7 +31,7 @@
   "expectedAnswer": 10
  },
  "problem": {
-  "prompt": "윤서와 세령이 가위바위보로 계단 오르기를 합니다. 이기면 3칸 올라가고, 지면 2칸 내려갑니다. 6번 하여 윤서가 4번 이기고 2번 졌다면, 윤서는 세령보다 몇 계단 위에 있습니까?"
+  "prompt": "윤서와 세령이는 같은 계단에서 시작하여 가위바위보로 계단 오르기를 합니다. 이기면 3칸 올라가고, 지면 2칸 내려갑니다. 6번 하여 윤서가 4번 이기고 2번 졌다면, 윤서는 세령이보다 몇 계단 위에 있습니까?"
  },
  "solutionHint": "윤서는 4번 이겨 12칸 올라가고 2번 져 4칸 내려가므로 8칸 올라갑니다. 세령이는 2번 이겨 6칸 올라가고 4번 져 8칸 내려가므로 2칸 내려갑니다. 두 사람의 차이는 10칸입니다."
 }
