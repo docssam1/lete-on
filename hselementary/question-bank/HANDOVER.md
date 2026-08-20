@@ -5,10 +5,10 @@
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8765/hselementary/question-bank/`
 - Total types: 174
-- Implemented types: 114 (deterministic generator availability check)
-- Pending types: 60
-- Completed: all six units in grade 4 semester 1, all six units in grade 4 semester 2, and grade 5 semester 1 units 1-5
-- Next unit: grade 5 semester 1, unit 6 (polygon perimeter and area)
+- Implemented types: 118 (deterministic generator availability check)
+- Pending types: 56
+- Completed: all six units in grade 4 semester 1, all six units in grade 4 semester 2, and all six units in grade 5 semester 1
+- Next unit: grade 5 semester 2, unit 1 (number ranges and rounding)
 
 ## Required Standard
 
@@ -39,8 +39,10 @@
 - Grade 5-1 unit 2: factors and multiples, 12 types
 - Grade 5-1 unit 3: patterns and correspondences, 4 types
 - Grade 5-1 unit 4: simplifying and common denominators, 4 types
+- Grade 5-1 unit 5: fraction addition and subtraction, 4 types
+- Grade 5-1 unit 6: polygon perimeter and area, 4 types
 
-The current ready set has passed regression coverage, including an 8,400-generation sweep for the quadrilateral unit (8 types x 3 difficulty levels x 350 seeds, 0 exceptions). The graph audit covers 4 graph types across 5,400 generated questions, including data-to-SVG coordinate checks. The polygon audit covers 4 types across 4,200 generated questions, including independent checks for diagonal counts, tile-grid counts, and rotated-piece placements. The mixed-operation audit covers 4 types across 4,200 generated questions, including order-of-operations, one-expression, word-equation, and unique operator-arrangement checks. The factors-and-multiples audit covers 12 types across 12,600 generated questions, including factor ranges, divisibility, common-factor remainder conditions, periods, divisor counts, and GCD/LCM relations. The patterns-and-correspondences audit covers 4 types across 4,200 generated questions, including numerical transforms, cipher shifts, chained correspondence tables, shape-count relations, circular positions, pricing, and speed conditions. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
+The current ready set has passed regression coverage, including an 8,400-generation sweep for the quadrilateral unit (8 types x 3 difficulty levels x 350 seeds, 0 exceptions). The graph audit covers 4 graph types across 5,400 generated questions, including data-to-SVG coordinate checks. The polygon audit covers 4 types across 4,200 generated questions, including independent checks for diagonal counts, tile-grid counts, and rotated-piece placements. The mixed-operation audit covers 4 types across 4,200 generated questions, including order-of-operations, one-expression, word-equation, and unique operator-arrangement checks. The factors-and-multiples audit covers 12 types across 12,600 generated questions, including factor ranges, divisibility, common-factor remainder conditions, periods, divisor counts, and GCD/LCM relations. The patterns-and-correspondences audit covers 4 types across 4,200 generated questions, including numerical transforms, cipher shifts, chained correspondence tables, shape-count relations, circular positions, pricing, and speed conditions. The fraction-addition-and-subtraction audit covers 4 types across 12,600 generated questions. The perimeter-and-area audit covers 4 types across 12,600 generated questions, independently checking rectilinear boundaries, cut rectangles, square arrangements, partitioned areas, scale factors, polyomino boundaries, equal-area quadrilaterals, and moving points. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
 
 ## Implementation Notes
 
@@ -53,6 +55,7 @@ The current ready set has passed regression coverage, including an 8,400-generat
 - Patterns-and-correspondences regression check: `correspondence-audit.js`
 - Simplifying-and-common-denominators regression check: `fractions-audit.js`
 - Fraction-addition-and-subtraction regression check: `fraction-add-sub-audit.js`
+- Perimeter-and-area regression check: `perimeter-area-audit.js`
 - Geometry single-answer and visibility gate: `GEOMETRY_VALIDATION.md`
 - Duplicate names must be resolved with semester/unit/type IDs. Do not route generators by display name alone.
 - Source evidence and detailed classification notes are maintained outside the public repository. Query that memory before opening source pages or designing a new type.
@@ -60,7 +63,7 @@ The current ready set has passed regression coverage, including an 8,400-generat
 
 ## Next Steps
 
-1. Query the private source memory for grade 5 semester 1 unit 6 (polygon perimeter and area).
+1. Query the private source memory for grade 5 semester 2 unit 1 (number ranges and rounding).
 2. Inspect only the relevant source pages needed to confirm structures and diagrams.
 3. Record the classification decision before implementation.
 4. Add dedicated generators and SVG diagrams for every type in the unit. Keep graph safeguards in graph-audit.js when a later unit uses any chart renderer.

@@ -731,6 +731,174 @@
     return `<svg class="geometry-diagram grid-rect" viewBox="0 0 240 ${(top + height + 14).toFixed(0)}" aria-label="${m} 곱하기 ${n} 격자"><g>${verticalLines}${horizontalLines}</g>${marker}</svg>`;
   };
 
+  const measureSvg = ({ kind, values, expected, aria, body, extra = "", viewBox = "0 0 280 190" }) => `<svg class="geometry-diagram area-diagram" viewBox="${viewBox}" data-measure-kind="${kind}" data-measure-values="${values.join(",")}" data-measure-expected="${expected}" ${extra} aria-label="${aria}">${body}</svg>`;
+
+  const rectilinearPerimeterSvg = ({ width, height, topDepth, bottomDepth, expected }) => {
+    const left = 42;
+    const top = 24;
+    const drawWidth = 194;
+    const drawHeight = 122;
+    const topLeft = left + drawWidth * 0.25;
+    const topRight = left + drawWidth * 0.58;
+    const bottomLeft = left + drawWidth * 0.42;
+    const bottomRight = left + drawWidth * 0.72;
+    const topY = top + Math.min(42, drawHeight * topDepth / height);
+    const bottomY = top + drawHeight - Math.min(38, drawHeight * bottomDepth / height);
+    const points = [
+      [left, top], [topLeft, top], [topLeft, topY], [topRight, topY], [topRight, top], [left + drawWidth, top],
+      [left + drawWidth, top + drawHeight], [bottomRight, top + drawHeight], [bottomRight, bottomY], [bottomLeft, bottomY],
+      [bottomLeft, top + drawHeight], [left, top + drawHeight]
+    ].map(point => point.join(",")).join(" ");
+    const body = `<polygon class="shape-fill" points="${points}"/><line class="dimension" x1="${left}" y1="${top + drawHeight + 20}" x2="${left + drawWidth}" y2="${top + drawHeight + 20}"/><text x="${left + drawWidth / 2}" y="${top + drawHeight + 32}">${width}cm</text><line class="dimension" x1="${left - 18}" y1="${top}" x2="${left - 18}" y2="${top + drawHeight}"/><text x="${left - 24}" y="${top + drawHeight / 2}" transform="rotate(-90 ${left - 24} ${top + drawHeight / 2})">${height}cm</text><text x="${(topLeft + topRight) / 2}" y="${topY - 10}">깊이 ${topDepth}cm</text>${bottomDepth ? `<text x="${(bottomLeft + bottomRight) / 2}" y="${bottomY + 12}">깊이 ${bottomDepth}cm</text>` : ""}`;
+    return measureSvg({ kind: "rectilinear-perimeter", values: [width, height, topDepth, bottomDepth], expected, aria: "위아래에 홈이 있는 직각 다각형", body });
+  };
+
+  const cutStripSvg = ({ widths, height, expected }) => {
+    const total = widths.reduce((sum, value) => sum + value, 0);
+    const left = 20;
+    const top = 30;
+    const drawWidth = 240;
+    const drawHeight = 70;
+    let cursor = left;
+    const labels = ["가", "나", "다", "라", "마", "바"];
+    const pieces = widths.map((value, index) => {
+      const pieceWidth = drawWidth * value / total;
+      const output = `<rect class="shape-fill" x="${cursor.toFixed(1)}" y="${top}" width="${pieceWidth.toFixed(1)}" height="${drawHeight}"/><text x="${(cursor + pieceWidth / 2).toFixed(1)}" y="${top + drawHeight / 2}">${labels[index]}</text>`;
+      cursor += pieceWidth;
+      return output;
+    }).join("");
+    const body = `${pieces}<line class="dimension" x1="${left}" y1="${top + drawHeight + 20}" x2="${left + drawWidth}" y2="${top + drawHeight + 20}"/><text x="${left + drawWidth / 2}" y="${top + drawHeight + 34}">자르기 전 직사각형</text>`;
+    return measureSvg({ kind: "cut-strip-perimeter", values: [total, height, ...widths], expected, aria: "여러 직사각형으로 자른 긴 직사각형", body, viewBox: "0 0 280 155" });
+  };
+
+  const sequencePerimeter = order => 2 * order.reduce((sum, value) => sum + value, 0) + order[0] + order[order.length - 1] + order.slice(1).reduce((sum, value, index) => sum + Math.abs(value - order[index]), 0);
+
+  const maximumSquareSequencePerimeter = count => {
+    const values = Array.from({ length: count }, (_, index) => index + 1);
+    let maximum = 0;
+    const visit = (chosen, remaining) => {
+      if (!remaining.length) {
+        maximum = Math.max(maximum, sequencePerimeter(chosen));
+        return;
+      }
+      remaining.forEach((value, index) => visit([...chosen, value], [...remaining.slice(0, index), ...remaining.slice(index + 1)]));
+    };
+    visit([], values);
+    return maximum;
+  };
+
+  const squareSequenceSvg = ({ count, expected }) => {
+    const order = Array.from({ length: count }, (_, index) => index % 2 ? count - Math.floor(index / 2) : 1 + Math.floor(index / 2));
+    const scale = 13;
+    const total = count * (count + 1) / 2;
+    const drawScale = Math.min(scale, 232 / total);
+    let cursor = 24;
+    const baseline = 145;
+    const squares = order.map(side => {
+      const size = side * drawScale;
+      const output = `<rect class="shape-fill" x="${cursor.toFixed(1)}" y="${(baseline - size).toFixed(1)}" width="${size.toFixed(1)}" height="${size.toFixed(1)}"/><text x="${(cursor + size / 2).toFixed(1)}" y="${(baseline - size / 2).toFixed(1)}">${side}</text>`;
+      cursor += size;
+      return output;
+    }).join("");
+    return measureSvg({ kind: "square-sequence-max", values: [count], expected, aria: `한 변이 1cm부터 ${count}cm인 정사각형을 이어 붙인 예`, body: `${squares}<text x="140" y="170">붙이는 방법의 예</text>` });
+  };
+
+  const partitionAreaSvg = ({ x1, x2, y1, y2, expected }) => {
+    const left = 44;
+    const top = 24;
+    const width = 190;
+    const height = 132;
+    const splitX = left + width * x1 / (x1 + x2);
+    const splitY = top + height * y1 / (y1 + y2);
+    const areas = [x1 * y1, x2 * y1, "□", x2 * y2];
+    const positions = [[(left + splitX) / 2, (top + splitY) / 2], [(splitX + left + width) / 2, (top + splitY) / 2], [(left + splitX) / 2, (splitY + top + height) / 2], [(splitX + left + width) / 2, (splitY + top + height) / 2]];
+    const body = `<rect class="shape-fill" x="${left}" y="${top}" width="${width}" height="${height}"/><line x1="${splitX.toFixed(1)}" y1="${top}" x2="${splitX.toFixed(1)}" y2="${top + height}"/><line x1="${left}" y1="${splitY.toFixed(1)}" x2="${left + width}" y2="${splitY.toFixed(1)}"/>${areas.map((area, index) => `<text x="${positions[index][0].toFixed(1)}" y="${positions[index][1].toFixed(1)}">${area}${area === "□" ? "" : "cm²"}</text>`).join("")}`;
+    return measureSvg({ kind: "partition-area", values: [x1, x2, y1, y2], expected, aria: "네 부분으로 나눈 직사각형과 각 부분의 넓이", body });
+  };
+
+  const scaledAreaSvg = ({ originalArea, numerator, denominator, expected }) => {
+    const body = `<rect class="shape-fill" x="20" y="55" width="82" height="64"/><text x="61" y="87">${originalArea}cm²</text><path class="folded" d="M116 87 H164"/><path class="folded" d="M154 78 L164 87 L154 96"/><polygon class="highlight-fill" points="178,126 256,126 240,48 162,48"/><text x="209" y="84">각 변</text><text x="209" y="101">${numerator}/${denominator}배</text>`;
+    return measureSvg({ kind: "scaled-area", values: [originalArea, numerator, denominator], expected, aria: "직사각형의 각 변을 같은 비율로 늘여 만든 평행사변형", body });
+  };
+
+  const cutoutAreaSvg = ({ width, height, firstWidth, firstHeight, secondWidth, secondHeight, expected }) => {
+    const left = 48;
+    const top = 24;
+    const drawWidth = 184;
+    const drawHeight = 128;
+    const firstW = drawWidth * firstWidth / width;
+    const firstH = drawHeight * firstHeight / height;
+    const secondW = drawWidth * secondWidth / width;
+    const secondH = drawHeight * secondHeight / height;
+    const body = `<rect class="highlight-fill" x="${left}" y="${top}" width="${drawWidth}" height="${drawHeight}"/><rect class="cutout-fill" x="${(left + drawWidth - firstW).toFixed(1)}" y="${top}" width="${firstW.toFixed(1)}" height="${firstH.toFixed(1)}"/><rect class="cutout-fill" x="${left}" y="${(top + drawHeight - secondH).toFixed(1)}" width="${secondW.toFixed(1)}" height="${secondH.toFixed(1)}"/><text x="${left + drawWidth / 2}" y="${top + drawHeight + 24}">전체 가로 ${width}cm</text><text x="${left - 18}" y="${top + drawHeight / 2}" transform="rotate(-90 ${left - 18} ${top + drawHeight / 2})">전체 세로 ${height}cm</text><text x="${left + drawWidth - firstW / 2}" y="${top + firstH / 2}">${firstWidth}×${firstHeight}</text><text x="${left + secondW / 2}" y="${top + drawHeight - secondH / 2}">${secondWidth}×${secondHeight}</text>`;
+    return measureSvg({ kind: "cutout-area", values: [width, height, firstWidth, firstHeight, secondWidth, secondHeight], expected, aria: "직사각형의 두 모서리를 잘라 낸 도형", body });
+  };
+
+  const polyominoBoundary = cells => {
+    const set = new Set(cells.map(([x, y]) => `${x},${y}`));
+    return cells.reduce((total, [x, y]) => total + [[1, 0], [-1, 0], [0, 1], [0, -1]].filter(([dx, dy]) => !set.has(`${x + dx},${y + dy}`)).length, 0);
+  };
+
+  const polyominoCellText = cells => cells.map(([x, y]) => `${x}:${y}`).join(";");
+
+  const polyominoSvg = ({ cells, side, expected, kind, lead = "" }) => {
+    const minX = Math.min(...cells.map(cell => cell[0]));
+    const maxX = Math.max(...cells.map(cell => cell[0]));
+    const minY = Math.min(...cells.map(cell => cell[1]));
+    const maxY = Math.max(...cells.map(cell => cell[1]));
+    const cellSize = Math.min(34, 190 / (maxX - minX + 1), 128 / (maxY - minY + 1));
+    const left = (280 - (maxX - minX + 1) * cellSize) / 2;
+    const top = 18;
+    const body = cells.map(([x, y]) => `<rect class="shape-fill" x="${(left + (x - minX) * cellSize).toFixed(1)}" y="${(top + (y - minY) * cellSize).toFixed(1)}" width="${cellSize.toFixed(1)}" height="${cellSize.toFixed(1)}"/>`).join("") + `<text x="140" y="172">${lead || `한 정사각형의 한 변 ${side}cm`}</text>`;
+    return measureSvg({ kind, values: [side, cells.length], expected, aria: "같은 정사각형으로 만든 도형", body, extra: `data-measure-cells="${polyominoCellText(cells)}"` });
+  };
+
+  const polyominoPairSvg = ({ cellsA, cellsB, side, expected, areaA }) => {
+    const draw = (cells, originX, label) => {
+      const minX = Math.min(...cells.map(cell => cell[0]));
+      const minY = Math.min(...cells.map(cell => cell[1]));
+      const cellSize = 22;
+      return cells.map(([x, y]) => `<rect class="shape-fill" x="${originX + (x - minX) * cellSize}" y="${36 + (y - minY) * cellSize}" width="${cellSize}" height="${cellSize}"/>`).join("") + `<text x="${originX + 48}" y="20">도형 ${label}</text>`;
+    };
+    const body = `${draw(cellsA, 18, "가")}${draw(cellsB, 154, "나")}<text x="70" y="174">넓이 ${areaA}cm²</text><text x="210" y="174">둘레는?</text>`;
+    return measureSvg({ kind: "poly-pair", values: [side, cellsA.length, cellsB.length], expected, aria: "같은 정사각형으로 만든 두 도형", body, extra: `data-measure-cells-a="${polyominoCellText(cellsA)}" data-measure-cells-b="${polyominoCellText(cellsB)}"` });
+  };
+
+  const equalQuadrilateralAreaSvg = ({ base, height, trapezoidTop, trapezoidBottom, expected }) => {
+    const body = `<polygon class="shape-fill" points="18,116 92,116 78,54 4,54"/><line class="crease" x1="4" y1="54" x2="4" y2="116"/><text x="48" y="132">밑변 ${base}cm</text><text x="13" y="84">${height}cm</text><polygon class="shape-fill" points="112,116 190,116 176,54 124,54"/><text x="150" y="132">${trapezoidBottom}cm</text><text x="150" y="45">${trapezoidTop}cm</text><polygon class="highlight-fill" points="234,34 270,84 234,134 198,84"/><line class="crease" x1="198" y1="84" x2="270" y2="84"/><line class="crease" x1="234" y1="34" x2="234" y2="134"/><text x="234" y="22">${2 * height}cm</text><text x="251" y="91">□</text>`;
+    return measureSvg({ kind: "equal-quadrilaterals", values: [base, height, trapezoidTop, trapezoidBottom], expected, aria: "넓이가 같은 평행사변형, 사다리꼴, 마름모", body });
+  };
+
+  const maximumRectangleSvg = ({ halfPerimeter, expected }) => {
+    const body = `<rect class="shape-fill" x="48" y="38" width="184" height="108"/><text x="140" y="164">가로 + 세로 = ${halfPerimeter}cm</text><text x="140" y="92">넓이가 가장 클 때?</text>`;
+    return measureSvg({ kind: "maximum-rectangle", values: [halfPerimeter], expected, aria: "둘레가 정해진 직사각형", body });
+  };
+
+  const movingPointSvg = ({ base, height, numerator, denominator, speed, expected }) => {
+    const left = 42;
+    const bottom = 145;
+    const width = 196;
+    const top = 38;
+    const pointX = left + width * 2 * numerator / denominator;
+    const body = `<polygon class="shape-fill" points="${left},${bottom} ${left + width},${bottom} ${left + width - 24},${top} ${left - 24},${top}"/><polygon class="highlight-fill" points="${left},${bottom} ${pointX.toFixed(1)},${bottom} ${left - 24},${top}"/><text x="${left - 8}" y="${bottom + 16}">D</text><text x="${left + width + 8}" y="${bottom + 16}">C</text><text x="${pointX.toFixed(1)}" y="${bottom + 16}">P</text><text x="${left + width / 2}" y="${bottom + 32}">${base}cm</text><text x="${left + width / 2}" y="22">P는 D에서 C로 초당 ${speed}cm 이동</text>`;
+    return measureSvg({ kind: "moving-point-area", values: [base, height, numerator, denominator, speed], expected, aria: "평행사변형의 밑변을 따라 움직이는 점과 색칠한 삼각형", body });
+  };
+
+  const polyominoCases = [
+    {
+      a: [[1, 0], [0, 1], [1, 1], [2, 1], [1, 2]],
+      b: [[0, 0], [1, 0], [2, 0], [1, 1], [1, 2]]
+    },
+    {
+      a: [[0, 0], [1, 0], [1, 1], [2, 1], [2, 2], [3, 2]],
+      b: [[0, 0], [0, 1], [1, 1], [2, 1], [2, 2], [2, 3]]
+    },
+    {
+      a: [[1, 0], [2, 0], [0, 1], [1, 1], [2, 1], [3, 1], [0, 2], [3, 2]],
+      b: [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [1, 2], [2, 2], [3, 2]]
+    }
+  ];
+
   function range(level) {
     return {
       small: 12 + level * 8,
@@ -2950,6 +3118,100 @@
         return result(`${fraction(target.numerator, target.denominator)} = 1/A + 1/B + 1/15를 만족하는 자연수 A, B를 각각 구하세요. ${equation}`, answer, `A>B, A<50 조건에서 분모를 대입해 확인하면 A=${answer.split(", ")[0]}, B=${answer.split(", ")[1]}입니다.`);
       }
       throw new Error("유일한 두 단위분수 방정식을 만들지 못했습니다.");
+    },
+    advancedPolygonPerimeter({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const width = int(rng, 22 + level * 4, 34 + level * 8);
+        const height = int(rng, 14 + level * 3, 24 + level * 5);
+        const topDepth = int(rng, 3 + level, Math.max(4 + level, Math.floor(height / 3)));
+        const bottomDepth = level === 0 ? 0 : int(rng, 2 + level, Math.max(3 + level, Math.floor(height / 4)));
+        const answer = 2 * (width + height) + 2 * (topDepth + bottomDepth);
+        return result(`그림의 모든 각은 직각입니다. 표시되지 않은 변의 길이는 가로·세로 길이의 합이 서로 같다는 성질을 이용하여 구할 수 있습니다. 도형의 둘레를 구하세요.${rectilinearPerimeterSvg({ width, height, topDepth, bottomDepth, expected: answer })}`, answer, `홈이 없다고 생각한 직사각형의 둘레는 2×(${width}+${height})=${2 * (width + height)}cm입니다. 홈 하나가 생길 때마다 둘레는 그 깊이의 2배만큼 늘어나므로 ${2 * (width + height)}+2×(${topDepth}+${bottomDepth})=${answer}cm입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const count = 4 + level;
+        const height = int(rng, 4 + level, 7 + level * 2);
+        const widths = Array.from({ length: count }, () => int(rng, 3 + level, 8 + level * 2));
+        const width = widths.reduce((sum, value) => sum + value, 0);
+        const originalPerimeter = 2 * (width + height);
+        const piecePerimeters = widths.map(value => 2 * (value + height));
+        const labels = ["가", "나", "다", "라", "마", "바"].slice(0, count);
+        const answer = width - height;
+        const table = correspondenceTable([["조각", ...labels], ["둘레(cm)", ...piecePerimeters]]);
+        return result(`가로로 긴 직사각형을 세로로 잘라 ${count}개의 직사각형으로 만들었습니다. 자르기 전 둘레는 ${originalPerimeter}cm이고, 각 조각의 둘레는 표와 같습니다. 자르기 전 직사각형의 가로와 세로의 길이의 차를 구하세요.${cutStripSvg({ widths, height, expected: answer })}${table}`, answer, `각 조각의 둘레의 합에서 자르기 전 둘레를 빼면 새로 생긴 세로 선분 ${2 * (count - 1)}개의 길이입니다. (${piecePerimeters.join("+")})-${originalPerimeter}=${2 * (count - 1) * height}이므로 세로는 ${height}cm, 가로는 ${width}cm입니다. 차는 ${answer}cm입니다.`);
+      }
+      const count = 4 + level;
+      const answer = maximumSquareSequencePerimeter(count);
+      return result(`한 변의 길이가 각각 1cm, 2cm, …, ${count}cm인 정사각형 ${count}개를 밑변이 한 직선 위에 놓이도록 빈틈없이 이어 붙입니다. 붙이는 순서를 바꿀 수 있을 때, 만들 수 있는 도형의 둘레 중 가장 긴 것은 몇 cm입니까?${squareSequenceSvg({ count, expected: answer })}`, answer, `모든 순서를 조사합니다. 한 순서 a₁,…,aₙ의 둘레는 위아래 변 2×(1+…+${count})에 양 끝 높이와 이웃한 높이 차를 더한 값입니다. 가능한 순서 중 최댓값은 ${answer}cm입니다.`);
+    },
+    rectangleRightTriangleAreaAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const x1 = int(rng, 3 + level, 7 + level * 2);
+        const x2 = int(rng, 4 + level, 9 + level * 2);
+        const y1 = int(rng, 2 + level, 6 + level * 2);
+        const y2 = int(rng, 4 + level, 10 + level * 2);
+        const answer = x1 * y2;
+        return result(`직사각형을 가로와 세로에 평행한 두 선분으로 나누었습니다. 표시된 세 부분의 넓이를 이용하여 □ 부분의 넓이를 구하세요.${partitionAreaSvg({ x1, x2, y1, y2, expected: answer })}`, answer, `위의 두 부분은 높이가 같으므로 가로의 비는 ${x1 * y1}:${x2 * y1}=${x1}:${x2}입니다. 아래도 같은 가로의 비이므로 □:${x2 * y2}=${x1}:${x2}이고, □=${answer}cm²입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const ratios = level === 0 ? [[3, 2]] : level === 1 ? [[3, 2], [4, 3]] : [[3, 2], [4, 3], [5, 4]];
+        const [numerator, denominator] = pick(rng, ratios);
+        const factor = int(rng, 8 + level * 3, 18 + level * 6);
+        const originalArea = factor * denominator * denominator;
+        const answer = factor * numerator * numerator;
+        return result(`넓이가 ${originalArea}cm²인 직사각형의 가로와 세로에 해당하는 두 길이를 각각 ${numerator}/${denominator}배로 늘여 평행사변형을 만들었습니다. 새 평행사변형의 넓이를 구하세요.${scaledAreaSvg({ originalArea, numerator, denominator, expected: answer })}`, answer, `밑변과 높이가 각각 ${numerator}/${denominator}배가 되므로 넓이는 (${numerator}/${denominator})²배입니다. ${originalArea}×${numerator * numerator}/${denominator * denominator}=${answer}cm²입니다.`);
+      }
+      const width = int(rng, 18 + level * 4, 28 + level * 7);
+      const height = int(rng, 14 + level * 3, 22 + level * 5);
+      const firstWidth = int(rng, 3 + level, Math.floor(width / 3));
+      const firstHeight = int(rng, 3 + level, Math.floor(height / 3));
+      const secondWidth = int(rng, 3 + level, Math.floor(width / 3));
+      const secondHeight = int(rng, 2 + level, Math.floor(height / 3));
+      const answer = width * height - firstWidth * firstHeight - secondWidth * secondHeight;
+      return result(`가로 ${width}cm, 세로 ${height}cm인 직사각형에서 그림의 두 흰 직사각형을 잘라 냈습니다. 남은 색칠한 부분의 넓이를 구하세요.${cutoutAreaSvg({ width, height, firstWidth, firstHeight, secondWidth, secondHeight, expected: answer })}`, answer, `전체 넓이에서 잘라 낸 두 부분을 뺍니다. ${width}×${height}-${firstWidth}×${firstHeight}-${secondWidth}×${secondHeight}=${answer}cm²입니다.`);
+    },
+    perimeterAreaSquareCompositionAdvanced({ rng, level, variant = 0 }) {
+      const selected = polyominoCases[level];
+      const side = int(rng, 2 + level, 5 + level * 2);
+      if (variant % 3 === 0) {
+        const area = selected.a.length * side * side;
+        const answer = polyominoBoundary(selected.a) * side;
+        return result(`크기가 같은 정사각형으로 만든 도형의 넓이가 ${area}cm²입니다. 도형의 둘레를 구하세요.${polyominoSvg({ cells: selected.a, side, expected: answer, kind: "poly-area-to-perimeter", lead: `전체 넓이 ${area}cm²` })}`, answer, `정사각형 한 개의 넓이는 ${area}÷${selected.a.length}=${side * side}cm²이므로 한 변은 ${side}cm입니다. 바깥쪽 변은 ${polyominoBoundary(selected.a)}개이므로 둘레는 ${polyominoBoundary(selected.a)}×${side}=${answer}cm입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const perimeter = polyominoBoundary(selected.b) * side;
+        const answer = selected.b.length * side * side;
+        return result(`크기가 같은 정사각형으로 만든 도형의 둘레가 ${perimeter}cm입니다. 도형의 넓이를 구하세요.${polyominoSvg({ cells: selected.b, side, expected: answer, kind: "poly-perimeter-to-area", lead: `전체 둘레 ${perimeter}cm` })}`, answer, `바깥쪽 변이 ${polyominoBoundary(selected.b)}개이므로 정사각형 한 변은 ${perimeter}÷${polyominoBoundary(selected.b)}=${side}cm입니다. 정사각형 ${selected.b.length}개의 넓이는 ${selected.b.length}×${side}²=${answer}cm²입니다.`);
+      }
+      const areaA = selected.a.length * side * side;
+      const answer = polyominoBoundary(selected.b) * side;
+      return result(`도형 가와 나는 크기가 같은 정사각형으로 만들었습니다. 도형 가의 넓이가 ${areaA}cm²일 때, 도형 나의 둘레를 구하세요.${polyominoPairSvg({ cellsA: selected.a, cellsB: selected.b, side, expected: answer, areaA })}`, answer, `도형 가는 정사각형 ${selected.a.length}개이므로 한 정사각형의 넓이는 ${side * side}cm², 한 변은 ${side}cm입니다. 도형 나의 바깥쪽 변 ${polyominoBoundary(selected.b)}개를 세면 둘레는 ${answer}cm입니다.`);
+    },
+    quadrilateralAreaAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const height = int(rng, 4 + level, 7 + level * 2);
+        const base = int(rng, 9 + level * 2, 15 + level * 4);
+        const trapezoidTop = int(rng, 4 + level, base - 1);
+        const trapezoidBottom = 2 * base - trapezoidTop;
+        const answer = base;
+        return result(`그림의 평행사변형, 사다리꼴, 마름모의 넓이는 모두 같습니다. 마름모의 가로 대각선 길이를 구하세요.${equalQuadrilateralAreaSvg({ base, height, trapezoidTop, trapezoidBottom, expected: answer })}`, answer, `평행사변형의 넓이는 ${base}×${height}=${base * height}cm²입니다. 마름모의 세로 대각선은 ${2 * height}cm이므로 가로 대각선을 □라 하면 ${2 * height}×□÷2=${base * height}입니다. □=${answer}cm입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const halfPerimeter = int(rng, 15 + level * 4, 25 + level * 7);
+        const shorter = Math.floor(halfPerimeter / 2);
+        const longer = halfPerimeter - shorter;
+        const answer = shorter * longer;
+        return result(`가로와 세로가 자연수이고 둘레가 ${2 * halfPerimeter}cm인 직사각형 중 넓이가 가장 큰 직사각형의 넓이를 구하세요.${maximumRectangleSvg({ halfPerimeter, expected: answer })}`, answer, `가로+세로=${halfPerimeter}이고 두 수의 차가 가장 작을 때 곱이 가장 큽니다. ${shorter}×${longer}=${answer}cm²입니다.`);
+      }
+      const ratioChoices = level === 0 ? [[1, 4], [1, 3]] : level === 1 ? [[1, 4], [1, 3], [3, 8]] : [[1, 3], [3, 8], [2, 5]];
+      const [numerator, denominator] = pick(rng, ratioChoices);
+      const base = denominator * int(rng, 2 + level, 4 + level * 2);
+      const height = int(rng, 6 + level * 2, 12 + level * 3);
+      const distance = 2 * base * numerator / denominator;
+      const speedChoices = allDivisors(distance).filter(value => value <= 6 + level * 2);
+      const speed = pick(rng, speedChoices);
+      const answer = distance / speed;
+      return result(`점 P가 평행사변형의 밑변 위에서 D를 출발하여 C 쪽으로 초당 ${speed}cm씩 움직입니다. 삼각형 ADP의 넓이가 평행사변형 넓이의 ${numerator}/${denominator}이 되는 것은 출발한 지 몇 초 후입니까?${movingPointSvg({ base, height, numerator, denominator, speed, expected: answer })}`, answer, `DP를 xcm라 하면 삼각형 ADP와 평행사변형의 높이는 같습니다. 넓이의 비는 (x×높이÷2):(${base}×높이)=x:${2 * base}입니다. x=${distance}cm이므로 ${distance}÷${speed}=${answer}초 후입니다.`);
     }
   };
 
@@ -3068,7 +3330,11 @@
     [type => type.id === "5-1-u5-t1", "fifthFractionAdditionAdvanced"],
     [type => type.id === "5-1-u5-t2", "fifthFractionSubtractionAdvanced"],
     [type => type.id === "5-1-u5-t3", "fifthFractionEquationAdvanced"],
-    [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"]
+    [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"],
+    [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
+    [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],
+    [type => type.id === "5-1-u6-t3", "perimeterAreaSquareCompositionAdvanced"],
+    [type => type.id === "5-1-u6-t4", "quadrilateralAreaAdvanced"]
   ];
 
   function generatorKey(typeOrName) {
