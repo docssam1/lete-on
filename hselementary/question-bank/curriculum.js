@@ -1,25 +1,40 @@
 (() => {
+  const detailed = (name, generatorKey, labels) => ({
+    name,
+    types: labels.map((label, variant) => ({ name: label, label, generatorKey, variant }))
+  });
+
   const semester = (id, units) => ({
     id,
     grade: Number(id[0]),
     term: Number(id[2]),
     label: `${id[0]}학년 ${id[2]}학기`,
-    units: units.map((unit, unitIndex) => ({
-      id: `${id}-u${unitIndex + 1}`,
-      number: unitIndex + 1,
-      name: unit[0],
-      subunits: unit.slice(1).map((name, subunitIndex) => ({
-        id: `${id}-u${unitIndex + 1}-s${subunitIndex + 1}`,
-        number: subunitIndex + 1,
-        name,
-        types: [{
-          id: `${id}-u${unitIndex + 1}-t${subunitIndex + 1}`,
-          number: 1,
-          name,
-          label: "핵심 유형"
-        }]
-      }))
-    }))
+    units: units.map((unit, unitIndex) => {
+      let typeNumber = 0;
+      return {
+        id: `${id}-u${unitIndex + 1}`,
+        number: unitIndex + 1,
+        name: unit[0],
+        subunits: unit.slice(1).map((entry, subunitIndex) => {
+          const definition = typeof entry === "string" ? { name: entry } : entry;
+          const typeDefinitions = definition.types?.length ? definition.types : [{ name: definition.name, label: "핵심 유형" }];
+          return {
+            id: `${id}-u${unitIndex + 1}-s${subunitIndex + 1}`,
+            number: subunitIndex + 1,
+            name: definition.name,
+            types: typeDefinitions.map((type, typeIndex) => ({
+              id: `${id}-u${unitIndex + 1}-t${subunitIndex + 1}${typeIndex ? `-${typeIndex + 1}` : ""}`,
+              number: typeIndex + 1,
+              typeNumber: ++typeNumber,
+              name: type.name || type.label || definition.name,
+              label: type.label || type.name || "핵심 유형",
+              generatorKey: type.generatorKey || "",
+              variant: Number.isInteger(type.variant) ? type.variant : undefined
+            }))
+          };
+        })
+      };
+    })
   });
 
   const semesters = [
@@ -27,8 +42,16 @@
       ["큰 수", "큰 수 알아보기", "큰 수의 크기 비교", "큰 수의 규칙성과 뛰어 세기", "큰 수의 활용", "조건에 맞는 수 찾기", "수 카드로 수 만들기"],
       ["각도", "여러 각도", "각도의 계산", "다각형의 내각의 합", "다각형의 외각의 성질", "내각과 외각의 성질의 활용", "시침과 분침 사이의 각도"],
       ["곱셈과 나눗셈", "곱셈 알아보기", "곱셈 응용 문제", "나눗셈 알아보기", "나눗셈 응용 문제", "나눗셈의 나머지", "곱셈식 완성하기"],
-      ["평면도형의 이동", "평면도형 밀기, 뒤집기, 돌리기", "연속 이동", "평면도형 이동의 활용 ①", "평면도형 이동의 활용 ②"],
-      ["막대그래프", "막대그래프의 이해", "막대그래프의 활용"],
+      ["평면도형의 이동",
+        detailed("평면도형 밀기, 뒤집기, 돌리기", "planeTransform", ["밀기 후 점의 위치 찾기", "뒤집기 후 점의 위치 찾기", "돌리기 후 점의 위치 찾기"]),
+        detailed("연속 이동", "sequentialTransform", ["돌리기와 좌우 뒤집기를 이어서 하기", "돌리기와 위아래 뒤집기를 이어서 하기", "묶음 이동을 반복한 뒤 방향 찾기"]),
+        detailed("평면도형 이동의 활용 ①", "movementPatternOne", ["반복 무늬의 N번째 모양 찾기", "반복 무늬에서 특정 모양의 개수 구하기", "연속한 두 위치의 모양 찾기"]),
+        detailed("평면도형 이동의 활용 ②", "movementPatternTwo", ["전자 숫자 카드를 180° 돌려 읽기", "거울에 비친 시계의 실제 시각 찾기", "180° 돌린 수와 처음 수의 차 구하기"])
+      ],
+      ["막대그래프",
+        detailed("막대그래프의 이해", "barGraphUnderstanding", ["전체 수로 빠진 막대의 값 구하기", "비율 조건으로 숨은 막대의 값 구하기", "합과 차로 숨은 두 막대의 값 구하기"]),
+        detailed("막대그래프의 활용", "barGraphApplication", ["거리 막대그래프로 왕복 시간 구하기", "두 항목 막대그래프 비교하기", "막대그래프와 단가로 전체 금액 구하기"])
+      ],
       ["규칙 찾기", "일렬로 나열한 수에서 규칙 찾기", "여러 가지 배열에서 수들의 규칙", "배열된 수들의 합", "연산의 규칙", "나열된 도형에서의 규칙", "조건을 만족하는 수의 개수"]
     ]),
     semester("4-2", [

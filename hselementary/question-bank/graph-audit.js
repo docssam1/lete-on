@@ -2,13 +2,19 @@
 
 // Regression check for readable, numerically faithful graph generators.
 global.window = {};
+require("./curriculum.js");
 require("./generators.js");
 
 const api = window.HSE_GENERATORS;
-const barGraphTypes = [
-  { id: "4-1-u5-t1", name: "막대그래프의 이해", semesterId: "4-1", unitId: "4-1-u5", unitName: "막대그래프" },
-  { id: "4-1-u5-t2", name: "막대그래프의 활용", semesterId: "4-1", unitId: "4-1-u5", unitName: "막대그래프" }
-];
+const semester41 = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "4-1");
+const barGraphUnit = semester41.units.find(unit => unit.id === "4-1-u5");
+const barGraphTypes = barGraphUnit.subunits.flatMap(subunit => subunit.types.map(type => ({
+  ...type,
+  semesterId: semester41.id,
+  unitId: barGraphUnit.id,
+  unitName: barGraphUnit.name,
+  subunitName: subunit.name
+})));
 const lineGraphTypes = [
   { id: "4-2-u5-t1", name: "꺾은선그래프의 이해", semesterId: "4-2", unitId: "4-2-u5", unitName: "꺾은선그래프" },
   { id: "4-2-u5-t2", name: "꺾은선그래프의 활용", semesterId: "4-2", unitId: "4-2-u5", unitName: "꺾은선그래프" }
@@ -111,4 +117,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log("그래프 감사 통과: 막대·꺾은선그래프 4유형, 5,400개 생성");
+console.log(`그래프 감사 통과: 막대그래프 ${barGraphTypes.length}유형·꺾은선그래프 ${lineGraphTypes.length}유형, ${(barGraphTypes.length + lineGraphTypes.length) * 3 * 450}개 생성`);

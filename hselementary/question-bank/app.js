@@ -22,6 +22,9 @@
     generator: generatorApi.generatorKey({ ...type, semesterId: semester.id, unitId: unit.id, unitName: unit.name })
   })))));
   const typeById = new Map(types.map(type => [type.id, type]));
+  let previewPopover = null;
+  let previewAnchor = null;
+  let previewHideTimer = 0;
 
   const state = {
     grade: 4,
@@ -79,7 +82,7 @@
     const ready = Boolean(type.generator);
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
-    return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '">' +
+    return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" tabindex="0">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
       '<span class="tree-type-copy"><strong>' + escapeHtml(type.label || type.name) + '</strong><small>' + type.grade + '학년 ' + type.term + '학기 · 심화 문제은행</small></span>' +
@@ -88,6 +91,7 @@
   }
 
   function renderCatalog() {
+    hideTypePreview(true);
     const visible = visibleTypes();
     const semester = currentSemester();
     const markup = (semester?.units || []).map(unit => {
@@ -110,6 +114,62 @@
     $("typeList").innerHTML = markup;
     $("catalogEmpty").hidden = visible.length > 0;
     renderSummary();
+  }
+
+  function ensurePreviewPopover() {
+    if (previewPopover) return previewPopover;
+    previewPopover = document.createElement("aside");
+    previewPopover.id = "typePreviewPopover";
+    previewPopover.className = "type-preview-popover";
+    previewPopover.setAttribute("role", "tooltip");
+    previewPopover.hidden = true;
+    previewPopover.addEventListener("pointerenter", () => clearTimeout(previewHideTimer));
+    previewPopover.addEventListener("pointerleave", () => hideTypePreview());
+    document.body.appendChild(previewPopover);
+    return previewPopover;
+  }
+
+  function positionTypePreview(anchor) {
+    if (!previewPopover || previewPopover.hidden || !anchor?.isConnected) return;
+    if (matchMedia("(max-width: 700px)").matches) {
+      previewPopover.style.left = "10px";
+      previewPopover.style.right = "10px";
+      previewPopover.style.top = "auto";
+      previewPopover.style.bottom = "10px";
+      return;
+    }
+    const anchorRect = anchor.getBoundingClientRect();
+    const popupRect = previewPopover.getBoundingClientRect();
+    let left = anchorRect.right + 12;
+    if (left + popupRect.width > innerWidth - 12) left = anchorRect.left - popupRect.width - 12;
+    left = Math.max(12, Math.min(left, innerWidth - popupRect.width - 12));
+    const top = Math.max(12, Math.min(anchorRect.top, innerHeight - popupRect.height - 12));
+    previewPopover.style.right = "auto";
+    previewPopover.style.bottom = "auto";
+    previewPopover.style.left = `${left}px`;
+    previewPopover.style.top = `${top}px`;
+  }
+
+  function showTypePreview(typeId, anchor) {
+    const type = typeById.get(typeId);
+    if (!type?.generator) return;
+    clearTimeout(previewHideTimer);
+    const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.variant ?? 0);
+    if (!generated) return;
+    const popover = ensurePreviewPopover();
+    previewAnchor = anchor;
+    popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(type.label || type.name)}</strong></header><div class="type-preview-question">${generated.prompt}</div><footer>${escapeHtml(currentDifficultyLabel())} 대표 문제</footer>`;
+    popover.hidden = false;
+    requestAnimationFrame(() => positionTypePreview(anchor));
+  }
+
+  function hideTypePreview(immediate = false) {
+    clearTimeout(previewHideTimer);
+    const close = () => {
+      if (previewPopover) previewPopover.hidden = true;
+      previewAnchor = null;
+    };
+    if (immediate) close(); else previewHideTimer = setTimeout(close, 100);
   }
 
   function renderSummary() {
@@ -247,6 +307,24 @@
     if (state.collapsedUnits.has(unitId)) state.collapsedUnits.delete(unitId); else state.collapsedUnits.add(unitId);
     renderCatalog();
   });
+  $("typeList").addEventListener("pointerover", event => {
+    const row = event.target.closest("[data-preview-type-id]");
+    if (!row || row.contains(event.relatedTarget)) return;
+    showTypePreview(row.dataset.previewTypeId, row);
+  });
+  $("typeList").addEventListener("pointerout", event => {
+    const row = event.target.closest("[data-preview-type-id]");
+    if (!row || row.contains(event.relatedTarget)) return;
+    hideTypePreview();
+  });
+  $("typeList").addEventListener("focusin", event => {
+    const row = event.target.closest("[data-preview-type-id]");
+    if (row) showTypePreview(row.dataset.previewTypeId, row);
+  });
+  $("typeList").addEventListener("focusout", event => {
+    const row = event.target.closest("[data-preview-type-id]");
+    if (row && !row.contains(event.relatedTarget)) hideTypePreview();
+  });
   $("typeList").addEventListener("change", event => {
     const input = event.target.closest("input[data-type-id]");
     if (!input) return;
@@ -270,6 +348,9 @@
   $("solutionTab").addEventListener("click", () => { state.view = "solution"; renderWorksheet(); });
   $("printButton").addEventListener("click", () => print());
   $("watermarkToggle").addEventListener("change", () => { if (state.questions.length) renderWorksheet(); });
+  addEventListener("resize", () => positionTypePreview(previewAnchor));
+  addEventListener("scroll", () => hideTypePreview(true), true);
+  addEventListener("keydown", event => { if (event.key === "Escape") hideTypePreview(true); });
 
   const params = new URLSearchParams(location.search);
   $("studentNameInput").value = params.get("student") || localStorage.getItem("hseStudent") || "";

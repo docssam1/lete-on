@@ -4,8 +4,8 @@
 
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8765/hselementary/question-bank/`
-- Total types: 174
-- Implemented types: 118 (deterministic generator availability check)
+- Total types: 186
+- Implemented types: 130 (deterministic generator availability check)
 - Pending types: 56
 - Completed: all six units in grade 4 semester 1, all six units in grade 4 semester 2, and all six units in grade 5 semester 1
 - Next unit: grade 5 semester 2, unit 1 (number ranges and rounding)
@@ -26,8 +26,8 @@
 - Grade 4-1 unit 1: large numbers, 6 types
 - Grade 4-1 unit 2: angles, 6 types
 - Grade 4-1 unit 3: multiplication and division, 6 types
-- Grade 4-1 unit 4: plane transformations, 4 types
-- Grade 4-1 unit 5: bar graphs, 2 types
+- Grade 4-1 unit 4: plane transformations, 12 detailed types
+- Grade 4-1 unit 5: bar graphs, 6 detailed types
 - Grade 4-1 unit 6: finding rules, 6 types
 - Grade 4-2 unit 1: fraction addition and subtraction, 6 types
 - Grade 4-2 unit 2: triangles, 4 types
@@ -42,7 +42,7 @@
 - Grade 5-1 unit 5: fraction addition and subtraction, 4 types
 - Grade 5-1 unit 6: polygon perimeter and area, 4 types
 
-The current ready set has passed regression coverage, including an 8,400-generation sweep for the quadrilateral unit (8 types x 3 difficulty levels x 350 seeds, 0 exceptions). The graph audit covers 4 graph types across 5,400 generated questions, including data-to-SVG coordinate checks. The polygon audit covers 4 types across 4,200 generated questions, including independent checks for diagonal counts, tile-grid counts, and rotated-piece placements. The mixed-operation audit covers 4 types across 4,200 generated questions, including order-of-operations, one-expression, word-equation, and unique operator-arrangement checks. The factors-and-multiples audit covers 12 types across 12,600 generated questions, including factor ranges, divisibility, common-factor remainder conditions, periods, divisor counts, and GCD/LCM relations. The patterns-and-correspondences audit covers 4 types across 4,200 generated questions, including numerical transforms, cipher shifts, chained correspondence tables, shape-count relations, circular positions, pricing, and speed conditions. The fraction-addition-and-subtraction audit covers 4 types across 12,600 generated questions. The perimeter-and-area audit covers 4 types across 12,600 generated questions, independently checking rectilinear boundaries, cut rectangles, square arrangements, partitioned areas, scale factors, polyomino boundaries, equal-area quadrilaterals, and moving points. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
+The current ready set has passed regression coverage, including an 8,400-generation sweep for the quadrilateral unit (8 types x 3 difficulty levels x 350 seeds, 0 exceptions). The graph audit covers 8 detailed graph types across 10,800 generated questions, including data-to-SVG coordinate checks. The movement audit covers 12 detailed types across 10,800 generated questions and confirms that every type stays on its assigned generator branch. The polygon audit covers 4 types across 4,200 generated questions, including independent checks for diagonal counts, tile-grid counts, and rotated-piece placements. The mixed-operation audit covers 4 types across 4,200 generated questions, including order-of-operations, one-expression, word-equation, and unique operator-arrangement checks. The factors-and-multiples audit covers 12 types across 12,600 generated questions, including factor ranges, divisibility, common-factor remainder conditions, periods, divisor counts, and GCD/LCM relations. The patterns-and-correspondences audit covers 4 types across 4,200 generated questions, including numerical transforms, cipher shifts, chained correspondence tables, shape-count relations, circular positions, pricing, and speed conditions. The fraction-addition-and-subtraction audit covers 4 types across 12,600 generated questions. The perimeter-and-area audit covers 4 types across 12,600 generated questions, independently checking rectilinear boundaries, cut rectangles, square arrangements, partitioned areas, scale factors, polyomino boundaries, equal-area quadrilaterals, and moving points. Graph and diagram units additionally receive desktop and mobile (375px) checks for overflow, missing questions, missing solutions, accidental lock states, and graph-label overlap.
 
 ## Implementation Notes
 
@@ -50,6 +50,7 @@ The current ready set has passed regression coverage, including an 8,400-generat
 - Page integration and scoped type identity: `app.js`
 - Type metadata: `curriculum.js`
 - Graph regression check: `graph-audit.js`
+- Plane-transformation detail routing check: `movement-audit.js`
 - Mixed-operation regression check: `mixed-operation-audit.js`
 - Factors-and-multiples regression check: `factors-audit.js`
 - Patterns-and-correspondences regression check: `correspondence-audit.js`

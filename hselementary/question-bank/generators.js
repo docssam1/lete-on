@@ -3339,6 +3339,7 @@
 
   function generatorKey(typeOrName) {
     const type = typeof typeOrName === "string" ? { name: typeOrName } : typeOrName;
+    if (type.generatorKey && generators[type.generatorKey]) return type.generatorKey;
     const scoped = scopedRules.find(([matches]) => matches(type))?.[1];
     if (scoped) return scoped;
     return rules.find(([pattern]) => pattern.test(type.name))?.[1] || "";
@@ -3358,7 +3359,8 @@
     const key = generatorKey(type);
     if (!key) return null;
     const level = Math.max(0, Math.min(2, 1 + difficultyOffset));
-    return { ...generators[key]({ rng: mulberry32(seed), level, variant }), generator: key };
+    const resolvedVariant = Number.isInteger(type?.variant) ? type.variant : variant;
+    return { ...generators[key]({ rng: mulberry32(seed), level, variant: resolvedVariant }), generator: key };
   }
 
   window.HSE_GENERATORS = { generatorKey, generate, names: Object.keys(generators) };
