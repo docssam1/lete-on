@@ -48,6 +48,13 @@
   const shuffle = (rng, values) => [...values].sort(() => rng() - 0.5);
   const decimal = (value, places = 2) => Number(value.toFixed(places)).toString();
   const fixedDecimal = (scaled, places) => (scaled / 10 ** places).toFixed(places);
+  const roundTo = (value, unit) => Math.round(value / unit) * unit;
+  const floorTo = (value, unit) => Math.floor(value / unit) * unit;
+  const ceilTo = (value, unit) => Math.ceil(value / unit) * unit;
+  const placeName = unit => ({ 1: "일", 10: "십", 100: "백", 1000: "천", 10000: "만" })[unit] || unit.toLocaleString();
+  const roundedIntegerRange = (target, unit) => [target - unit / 2, target + unit / 2 - 1];
+  const flooredIntegerRange = (target, unit) => [target, target + unit - 1];
+  const ceiledIntegerRange = (target, unit) => [target - unit + 1, target];
   const fraction = (n, d) => {
     const divisor = gcd(n, d);
     n /= divisor;
@@ -2278,11 +2285,170 @@
       const answer = a * x + b;
       return result(`두 수 x와 y 사이에 <b>y = ${a} × x + ${b}</b>의 대응 관계가 있습니다. x가 ${x}일 때 y를 구하세요.`, answer, `x 자리에 ${x}을 넣으면 y = ${a} × ${x} + ${b} = ${answer}입니다.`);
     },
+    advancedRange({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const aLow = int(rng, 11 + level * 8, 28 + level * 12);
+        const aHigh = aLow + int(rng, 9 + level * 2, 15 + level * 3);
+        const bLow = aLow + int(rng, 3, 7);
+        const bHigh = bLow + int(rng, 9 + level * 2, 16 + level * 3);
+        const first = new Set(Array.from({ length: aHigh - aLow }, (_, index) => aLow + index));
+        const second = new Set(Array.from({ length: bHigh - bLow }, (_, index) => bLow + index + 1));
+        const candidates = new Set([...first, ...second]);
+        const common = [...first].filter(value => second.has(value));
+        const answer = candidates.size - common.length;
+        const evidence = `<span hidden data-range-kind="symmetric" data-a-low="${aLow}" data-a-high="${aHigh}" data-b-low="${bLow}" data-b-high="${bHigh}" data-range-expected="${answer}"></span>`;
+        return result(`자연수 n에 대하여 두 조건 <b>${aLow} ≤ n &lt; ${aHigh}</b>, <b>${bLow} &lt; n ≤ ${bHigh}</b>가 있습니다. 두 조건 중 정확히 하나만 만족하는 자연수는 모두 몇 개인지 구하세요.${evidence}`, answer, `첫째 조건의 자연수는 ${first.size}개, 둘째 조건은 ${second.size}개이고 두 조건을 모두 만족하는 수는 ${common.length}개입니다. 한 조건만 만족하는 수는 ${first.size} + ${second.size} - 2 × ${common.length} = ${answer}개입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const sideMin = int(rng, 8 + level * 3, 15 + level * 5);
+        const sideMax = sideMin + int(rng, 3 + level, 6 + level * 2);
+        const lower = sideMin * 4 - int(rng, 1, 3);
+        const upper = sideMax * 4 + int(rng, 1, 3);
+        const minArea = sideMin ** 2;
+        const maxArea = sideMax ** 2;
+        const answer = `${minArea} 이상 ${maxArea} 이하`;
+        const evidence = `<span hidden data-range-kind="square" data-lower="${lower}" data-upper="${upper}" data-side-min="${sideMin}" data-side-max="${sideMax}" data-range-expected="${minArea},${maxArea}"></span>`;
+        return result(`한 변의 길이가 자연수인 정사각형의 둘레가 <b>${lower}cm 초과 ${upper}cm 미만</b>입니다. 이 정사각형의 넓이가 될 수 있는 수의 범위를 이상과 이하를 사용하여 나타내세요.${evidence}`, answer, `둘레를 4로 나누어 자연수인 한 변의 길이를 찾으면 ${sideMin}cm 이상 ${sideMax}cm 이하입니다. 넓이는 한 변의 길이를 두 번 곱하므로 ${minArea}cm² 이상 ${maxArea}cm² 이하입니다.`);
+      }
+      let total = 0;
+      let minimum = 0;
+      let maximum = 0;
+      let countMin = 0;
+      let countMax = 0;
+      for (let attempt = 0; attempt < 100; attempt += 1) {
+        total = int(rng, 18 + level * 5, 35 + level * 12) * 20;
+        minimum = int(rng, 14 + level * 2, 24 + level * 3);
+        maximum = minimum + int(rng, 7, 13 + level * 2);
+        countMin = Math.ceil(total / maximum);
+        countMax = Math.floor(total / minimum);
+        if (countMax - countMin >= 2 && countMax - countMin <= 12) break;
+      }
+      const answer = `${countMin} 이상 ${countMax} 이하`;
+      const evidence = `<span hidden data-range-kind="boxes" data-total="${total}" data-minimum="${minimum}" data-maximum="${maximum}" data-range-expected="${countMin},${countMax}"></span>`;
+      return result(`물건 ${total.toLocaleString()}개를 상자에 모두 나누어 담습니다. 상자마다 <b>${minimum}개 이상 ${maximum}개 이하</b>가 되게 할 때 필요한 상자 수의 범위를 이상과 이하를 사용하여 나타내세요.${evidence}`, answer, `상자 수가 가장 적을 때는 한 상자에 최대한 많이 담으므로 ${total} ÷ ${maximum}을 올림한 ${countMin}개입니다. 가장 많을 때는 한 상자에 적어도 ${minimum}개씩 담아야 하므로 ${total} ÷ ${minimum}을 버림한 ${countMax}개입니다.`);
+    },
+    advancedRounding({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const unit = [10, 100, 1000][level];
+        let value = int(rng, 1200, 9800 + level * 42000);
+        if (value % unit === 0) value += Math.floor(unit / 3);
+        const rounded = roundTo(value, unit);
+        const raised = ceilTo(value, unit * 10);
+        const dropped = floorTo(value, unit * 10);
+        const answer = raised + rounded - dropped;
+        const evidence = `<span hidden data-round-kind="methods" data-value="${value}" data-unit="${unit}" data-round-expected="${answer}"></span>`;
+        return result(`${value.toLocaleString()}을 ① 올림하여 ${placeName(unit * 10)}의 자리까지 나타낸 수, ② 반올림하여 ${placeName(unit)}의 자리까지 나타낸 수, ③ 버림하여 ${placeName(unit * 10)}의 자리까지 나타낸 수를 차례로 구했습니다. <b>① + ② - ③</b>의 값을 구하세요.${evidence}`, answer, `①은 ${raised.toLocaleString()}, ②는 ${rounded.toLocaleString()}, ③은 ${dropped.toLocaleString()}입니다. 따라서 ${raised.toLocaleString()} + ${rounded.toLocaleString()} - ${dropped.toLocaleString()} = ${answer.toLocaleString()}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        let candidates = [];
+        let valid = [];
+        for (let attempt = 0; attempt < 100; attempt += 1) {
+          const pool = new Set();
+          while (pool.size < 7 + level) pool.add(int(rng, 1200, 8900));
+          candidates = [...pool];
+          valid = candidates.filter(value => ceilTo(value, 100) !== roundTo(value, 100) && floorTo(value, 10) !== roundTo(value, 10));
+          if (valid.length >= 2 && valid.length <= candidates.length - 2) break;
+        }
+        const answer = valid.length;
+        const evidence = `<span hidden data-round-kind="conditions" data-candidates="${candidates.join(",")}" data-round-expected="${answer}"></span>`;
+        return result(`다음 수 중 두 조건을 모두 만족하는 수는 몇 개인지 구하세요.<div class="sequence">${candidates.map(value => value.toLocaleString()).join(", ")}</div><ul><li>올림하여 백의 자리까지 나타낸 수와 반올림하여 백의 자리까지 나타낸 수가 다릅니다.</li><li>버림하여 십의 자리까지 나타낸 수와 반올림하여 십의 자리까지 나타낸 수가 다릅니다.</li></ul>${evidence}`, answer, `각 수의 백의 자리 아래와 십의 자리 아래를 차례로 확인합니다. 두 결과가 모두 다른 수는 ${valid.map(value => value.toLocaleString()).join(", ")}이므로 ${answer}개입니다.`);
+      }
+      let digits = [];
+      let numbers = [];
+      for (let attempt = 0; attempt < 50; attempt += 1) {
+        digits = shuffle(rng, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4);
+        numbers = permutationNumbers(digits);
+        if (numbers.length >= 18) break;
+      }
+      const sum = numbers.reduce((total, value) => total + value, 0);
+      const unit = level === 2 ? 10000 : 1000;
+      const answer = floorTo(sum, unit);
+      const evidence = `<span hidden data-round-kind="cards" data-digits="${digits.join(",")}" data-unit="${unit}" data-round-expected="${answer}"></span>`;
+      return result(`수 카드 ${digits.map(value => `<span class="digit-card">${value}</span>`).join("")}를 한 번씩 모두 사용하여 만들 수 있는 모든 네 자리 자연수의 합을 구한 뒤, 그 합을 버림하여 ${placeName(unit)}의 자리까지 나타내세요.${evidence}`, answer, `0이 맨 앞에 오는 경우를 제외하고 만들 수 있는 ${numbers.length}개의 수를 모두 더하면 ${sum.toLocaleString()}입니다. 이를 버림하여 ${placeName(unit)}의 자리까지 나타내면 ${answer.toLocaleString()}입니다.`);
+    },
+    roundingApplication({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const firstUnit = pick(rng, [40, 50, 60]);
+        const secondUnit = pick(rng, [30, 40, 50]);
+        const firstLength = firstUnit * int(rng, 12 + level * 3, 20 + level * 5) + int(rng, 1, firstUnit - 1);
+        const secondLength = secondUnit * int(rng, 10 + level * 3, 18 + level * 5) + int(rng, 1, secondUnit - 1);
+        const firstPrice = int(rng, 4, 9 + level * 2) * 100;
+        const secondPrice = int(rng, 4, 9 + level * 2) * 100;
+        const firstCount = Math.ceil(firstLength / firstUnit);
+        const secondCount = Math.ceil(secondLength / secondUnit);
+        const answer = firstCount * firstPrice + secondCount * secondPrice;
+        const evidence = `<span hidden data-application-kind="package" data-first="${firstLength},${firstUnit},${firstPrice}" data-second="${secondLength},${secondUnit},${secondPrice}" data-application-expected="${answer}"></span>`;
+        return result(`빨간 리본 ${firstLength}cm와 노란 리본 ${secondLength}cm가 필요합니다. 빨간 리본은 ${firstUnit}cm 단위로만 팔며 한 묶음에 ${firstPrice.toLocaleString()}원, 노란 리본은 ${secondUnit}cm 단위로만 팔며 한 묶음에 ${secondPrice.toLocaleString()}원입니다. 필요한 리본을 사는 데 드는 최소 금액을 구하세요.${evidence}`, answer, `빨간 리본은 ${firstLength} ÷ ${firstUnit}을 올림한 ${firstCount}묶음, 노란 리본은 ${secondLength} ÷ ${secondUnit}을 올림한 ${secondCount}묶음이 필요합니다. 따라서 ${firstCount} × ${firstPrice.toLocaleString()} + ${secondCount} × ${secondPrice.toLocaleString()} = ${answer.toLocaleString()}원입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const widthMm = int(rng, 42 + level * 5, 78 + level * 8);
+        const heightMm = int(rng, 24 + level * 4, 57 + level * 7);
+        const perimeterMm = 2 * (widthMm + heightMm);
+        const answer = roundTo(perimeterMm / 10, 1);
+        const svg = `<svg class="problem-svg" viewBox="0 0 300 150" role="img" aria-label="ㄱ자 모양의 판"><path d="M55 30h75v42h110v55H55z" fill="#eaf6fb" stroke="#173b54" stroke-width="3"/><text x="140" y="145" text-anchor="middle">전체 가로 ${widthMm} mm</text><text x="42" y="82" text-anchor="middle" transform="rotate(-90 42 82)">전체 세로 ${Math.floor(heightMm / 10)} cm ${heightMm % 10} mm</text></svg>`;
+        const evidence = `<span hidden data-application-kind="units" data-width="${widthMm}" data-height="${heightMm}" data-application-expected="${answer}"></span>`;
+        return result(`아래 ㄱ자 모양 판의 둘레는 약 몇 cm인지 자연수로 나타내세요.${svg}${evidence}`, answer, `ㄱ자 모양의 들어간 두 변을 바깥쪽으로 옮겨 생각하면 둘레는 전체 가로와 전체 세로의 합의 2배입니다. 2 × (${widthMm} + ${heightMm}) = ${perimeterMm}mm = ${decimal(perimeterMm / 10, 1)}cm이고, 반올림하여 자연수로 나타내면 약 ${answer}cm입니다.`);
+      }
+      const baseDistance = pick(rng, [800, 1000, 1200]);
+      const baseFare = int(rng, 28, 36) * 100;
+      const step = pick(rng, [100, 120, 150]);
+      const stepFare = int(rng, 12, 24) * 10;
+      const targetDistance = baseDistance + step * int(rng, 25 + level * 8, 55 + level * 12) + int(rng, 1, step - 1);
+      const additions = Math.ceil((targetDistance - baseDistance) / step);
+      const answer = baseFare + additions * stepFare;
+      const evidence = `<span hidden data-application-kind="fare" data-base="${baseDistance},${baseFare}" data-step="${step},${stepFare}" data-distance="${targetDistance}" data-application-expected="${answer}"></span>`;
+      return result(`택시 요금은 ${baseDistance}m 미만까지 ${baseFare.toLocaleString()}원이고, 그 뒤 ${step}m를 갈 때마다 ${stepFare}원씩 추가됩니다. 이 택시로 ${targetDistance.toLocaleString()}m를 갔을 때 요금을 구하세요.${evidence}`, answer, `${baseDistance}m를 넘은 거리는 ${(targetDistance - baseDistance).toLocaleString()}m입니다. ${(targetDistance - baseDistance).toLocaleString()} ÷ ${step}을 올림한 ${additions}번의 추가 요금이 붙으므로 ${baseFare.toLocaleString()} + ${additions} × ${stepFare} = ${answer.toLocaleString()}원입니다.`);
+    },
+    roundedRange({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const value = int(rng, 2200 + level * 900, 7800 + level * 4000);
+        const roundedTarget = roundTo(value, 1000);
+        const flooredTarget = floorTo(value, 100);
+        const ceiledTarget = ceilTo(value, 10);
+        const ranges = [roundedIntegerRange(roundedTarget, 1000), flooredIntegerRange(flooredTarget, 100), ceiledIntegerRange(ceiledTarget, 10)];
+        const lower = Math.max(...ranges.map(range => range[0]));
+        const upper = Math.min(...ranges.map(range => range[1]));
+        const answer = `${lower} 이상 ${upper} 이하`;
+        const evidence = `<span hidden data-rounded-kind="intersection" data-targets="${roundedTarget},${flooredTarget},${ceiledTarget}" data-rounded-expected="${lower},${upper}"></span>`;
+        return result(`어떤 자연수에 대하여 다음 세 조건이 모두 성립합니다.<ul><li>반올림하여 천의 자리까지 나타내면 ${roundedTarget.toLocaleString()}입니다.</li><li>버림하여 백의 자리까지 나타내면 ${flooredTarget.toLocaleString()}입니다.</li><li>올림하여 십의 자리까지 나타내면 ${ceiledTarget.toLocaleString()}입니다.</li></ul>이 자연수의 범위를 이상과 이하를 사용하여 나타내세요.${evidence}`, answer, `각 조건에서 원래 수의 범위는 차례로 ${ranges[0][0]}~${ranges[0][1]}, ${ranges[1][0]}~${ranges[1][1]}, ${ranges[2][0]}~${ranges[2][1]}입니다. 세 범위의 공통 부분은 ${lower} 이상 ${upper} 이하입니다.`);
+      }
+      if (variant % 3 === 1) {
+        let first = 0;
+        let second = 0;
+        let firstTarget = 0;
+        let secondTarget = 0;
+        let candidates = [];
+        for (let attempt = 0; attempt < 180; attempt += 1) {
+          const hidden = int(rng, 8 + level * 4, 45 + level * 12);
+          first = int(rng, 3, 7 + level);
+          second = int(rng, 2, 6 + level);
+          if (first === second) continue;
+          firstTarget = roundTo(first * hidden, 10);
+          secondTarget = roundTo(second * hidden, 10);
+          candidates = Array.from({ length: 150 }, (_, index) => index + 1).filter(value => roundTo(first * value, 10) === firstTarget && roundTo(second * value, 10) === secondTarget);
+          if (candidates.length >= 2 && candidates.length <= 8) break;
+        }
+        const answer = candidates.length;
+        const evidence = `<span hidden data-rounded-kind="multiples" data-factors="${first},${second}" data-targets="${firstTarget},${secondTarget}" data-rounded-expected="${answer}"></span>`;
+        return result(`어떤 자연수 n에 ${first}을 곱한 수를 반올림하여 십의 자리까지 나타내면 ${firstTarget}이고, n에 ${second}을 곱한 수를 반올림하여 십의 자리까지 나타내면 ${secondTarget}입니다. n이 될 수 있는 자연수는 모두 몇 개인지 구하세요.${evidence}`, answer, `${first}n의 범위와 ${second}n의 범위를 각각 구한 뒤 공통으로 만족하는 자연수 n을 찾으면 ${candidates.join(", ")}의 ${answer}개입니다.`);
+      }
+      const firstUnit = level === 2 ? 1000 : 100;
+      const secondUnit = level === 0 ? 10 : 100;
+      const firstValue = int(rng, 24, 75 + level * 15) * firstUnit + int(rng, 0, firstUnit - 1);
+      const secondValue = int(rng, 18, 64 + level * 12) * secondUnit + int(rng, 0, secondUnit - 1);
+      const firstTarget = roundTo(firstValue, firstUnit);
+      const secondTarget = floorTo(secondValue, secondUnit);
+      const firstRange = roundedIntegerRange(firstTarget, firstUnit);
+      const secondRange = flooredIntegerRange(secondTarget, secondUnit);
+      const answer = firstRange[1] + secondRange[1];
+      const evidence = `<span hidden data-rounded-kind="sum" data-first="${firstTarget},${firstUnit}" data-second="${secondTarget},${secondUnit}" data-rounded-expected="${answer}"></span>`;
+      return result(`자연수 A를 반올림하여 ${placeName(firstUnit)}의 자리까지 나타내면 ${firstTarget.toLocaleString()}이고, 자연수 B를 버림하여 ${placeName(secondUnit)}의 자리까지 나타내면 ${secondTarget.toLocaleString()}입니다. A+B가 될 수 있는 가장 큰 수를 구하세요.${evidence}`, answer, `A의 최댓값은 ${firstRange[1].toLocaleString()}, B의 최댓값은 ${secondRange[1].toLocaleString()}입니다. 따라서 A+B의 최댓값은 ${firstRange[1].toLocaleString()} + ${secondRange[1].toLocaleString()} = ${answer.toLocaleString()}입니다.`);
+    },
     rounding({ rng, level }) {
       const unit = pick(rng, [10, 100, 1000].slice(0, 2 + Math.min(level, 1)));
       const value = int(rng, 120, 9800);
       const answer = Math.round(value / unit) * unit;
-      return result(`${value.toLocaleString()}을 ${unit.toLocaleString()}의 자리에서 반올림하세요.`, answer, `${unit.toLocaleString()}의 자리 바로 아래 숫자를 보고 반올림하면 ${answer.toLocaleString()}입니다.`);
+      return result(`${value.toLocaleString()}을 ${placeName(unit)}의 자리에서 반올림하세요.`, answer, `${placeName(unit)}의 자리 바로 아래 숫자를 보고 반올림하면 ${answer.toLocaleString()}입니다.`);
     },
     fractionMultiply({ rng, level }) {
       const d1 = int(rng, 3, 8 + level * 2);
