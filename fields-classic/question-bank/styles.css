@@ -260,6 +260,8 @@
 .geometry-worksheet-answer-visual svg{display:block;width:auto;max-width:170px;max-height:145px;margin:auto}
 .geometry-answer-row{display:flex;align-items:flex-end;justify-content:center;gap:10px}
 .geometry-answer-row svg{max-width:72px;max-height:72px}
+.geometry-answer-minmax{gap:18px}
+.geometry-answer-minmax svg{max-width:130px;max-height:120px}
 
 /* 유형 행에 마우스를 올리면 실제 생성기로 만든 한 문항을 보여 준다. */
 [data-preview-type]{transition:background-color .12s ease}

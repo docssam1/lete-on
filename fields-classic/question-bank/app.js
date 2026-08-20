@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260820b";
-import { GENERATORS } from "./generators.js?v=20260816db";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260820c";
+import { GENERATORS } from "./generators.js?v=20260820a";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -20,12 +20,13 @@ const state = {
 };
 
 function isReady(item) {
-  // The diagnostic bank remains untouched. This new bank only opens types with
-  // a source-matched, source-approved live generator, never a loosely related
-  // legacy image or a prototype that only shares a broad type name.
+  // 진단 문제은행은 건드리지 않는다. 이 문제은행은 원본 1:1 대조(sourceMatched)
+  // 또는 공용 엔진 독립 검산(bankApproved)을 통과하고 실제 생성 경로가 있는
+  // 유형만 연다. 이름만 비슷한 레거시 이미지나 시제품은 열지 않는다.
   const ownGenerator = item?.generator && GENERATORS[item.generator];
   const geometryGenerator = item?.worksheetCode && globalThis.GW_GEN?.typeInfo(item.worksheetCode);
-  return Boolean(item?.sourceMatched && (ownGenerator || geometryGenerator));
+  const provenanceApproved = item?.sourceMatched || item?.bankApproved;
+  return Boolean(provenanceApproved && (ownGenerator || geometryGenerator));
 }
 
 function hasVerifiedSource(typeId) {
@@ -33,9 +34,9 @@ function hasVerifiedSource(typeId) {
 }
 
 function isSelectableType(item) {
-  // 원본 대조를 거쳤다는 신호는 두 가지다. 시험지에서 확인한 것(hasVerifiedSource)과
-  // 교재 페이지에서 확인한 것(textbookSource). 교재 유형은 대응하는 시험 문항이 없어도
-  // 교재 원본과 1:1 대조가 끝났으면 유형·교재 탭에서 열 수 있다.
+  // 선택 근거는 시험지 대조(hasVerifiedSource), 교재 대조(textbookSource),
+  // 독립 검산된 연계 문제은행(worksheetSource) 세 가지다. 교재·연계 유형은
+  // 대응하는 시험 문항이 없어도 유형·교재 탭에서 열 수 있다.
   // 시험지 탭은 이 함수와 별개로 문항별 verified 플래그를 함께 요구하므로,
   // 교재 대조만으로는 미검증 시험 문항이 열리지 않는다. 그 게이트는 절대 완화하지 않는다.
   return isReady(item) && (hasVerifiedSource(item.id) || Boolean(item.textbookSource) || Boolean(item.worksheetSource));
@@ -46,6 +47,13 @@ function typeStatus(item) {
   if (item?.geometryGame) return "3D 렌더 연결 중";
   if (item?.status === "curriculum") return "교재 유형 분석 완료";
   return "생성기 제작 대기";
+}
+
+function typeSourceLabel(item) {
+  if (hasVerifiedSource(item.id)) return "실제 출제 유형";
+  if (item.textbookSource) return `교재 대조 유형 · ${item.textbookSource}`;
+  if (item.bankApproved && item.worksheetSource) return `연계 문제은행 유형 · ${item.worksheetSource}`;
+  return "원본 대조 유형";
 }
 
 const typePreviewCache = new Map();
@@ -94,7 +102,10 @@ function showTypePreview(anchor) {
   clearTimeout(typePreviewHideTimer);
   const panel = ensureTypePreviewPanel();
   const problem = previewProblem(item);
-  if (!problem) return;
+  if (!problem) {
+    hideTypePreview();
+    return;
+  }
   const domain = DOMAINS.find((entry) => entry.id === item.domain);
   panel.innerHTML = `<div class="type-preview-head"><span>${domain.label} · ${item.middle}</span><strong>${item.label}</strong></div>
     <p>${problem.prompt.replaceAll("\n", "<br>")}</p>
@@ -259,7 +270,7 @@ function renderTypeTree() {
     ${middles.map(({ middle, types }) => `<details class="middle-group" open><summary><strong>${middle}</strong></summary><div class="type-leaves">
       ${types.map((item) => `<label class="type-leaf ${isSelectableType(item) ? "" : "not-ready"}"${isSelectableType(item) ? ` data-preview-type="${item.id}"` : ""}>
         <input type="checkbox" data-type-id="${item.id}" ${state.selected.type.has(item.id) ? "checked" : ""} ${isSelectableType(item) ? "" : "disabled"} />
-        <span><strong>${item.label}</strong><span>실제 출제·교재 유형${item.worksheetSource ? ` · ${item.worksheetSource}` : item.geometryGame ? " · Cube Town 연계" : ""}</span></span>
+        <span><strong>${item.label}</strong><span>${typeSourceLabel(item)}</span></span>
         <em class="type-status ${isSelectableType(item) ? "" : "fixed"}">${isSelectableType(item) ? typeStatus(item) : "원본 대조 중"}</em>
       </label>`).join("")}
     </div></details>`).join("")}
@@ -407,7 +418,14 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
   if (!worksheet || !info) return null;
   const intensity = state.difficulty === "basic" ? 1 : state.difficulty === "advanced" ? 3 : 2;
   const requestedLevel = item.worksheetLevel || info.levels[0];
-  const level = worksheet.typeSupportsLevel(item.worksheetCode, requestedLevel) ? requestedLevel : info.levels[0];
+  const baseLevel = worksheet.typeSupportsLevel(item.worksheetCode, requestedLevel) ? requestedLevel : info.levels[0];
+  const baseIndex = Math.max(0, info.levels.indexOf(baseLevel));
+  const levelIndex = state.difficulty === "advanced"
+    ? Math.min(info.levels.length - 1, baseIndex + 1)
+    : state.difficulty === "basic"
+      ? Math.max(0, baseIndex - 1)
+      : baseIndex;
+  const level = info.levels[levelIndex];
   const randomPart = fixedSeed || `${Date.now()}:${Math.random()}`;
   const rng = worksheet.createRng(`FIELDS-QB:${item.id}:${level}:${intensity}:${randomPart}:${sequence}:${attempt}`);
   let made;
@@ -463,7 +481,7 @@ function buildQuestions() {
   if (state.order === "mixed") references = shuffle(references);
   const counters = new Map();
   const signatures = new Set();
-  state.questions = Array.from({ length: state.count }, (_, index) => {
+  const questions = Array.from({ length: state.count }, (_, index) => {
     const reference = references[index % references.length];
     const item = typeById(reference.typeId);
     const sequence = counters.get(item.id) || 0;
@@ -475,7 +493,13 @@ function buildQuestions() {
     }
     if (problem) signatures.add(problemSignature(problem));
     return problem;
-  }).filter(Boolean);
+  });
+  if (questions.some((problem) => !problem)) {
+    state.questions = [];
+    window.alert("문항을 끝까지 만들지 못했습니다. 같은 선택으로 다시 생성해 주세요.");
+    return;
+  }
+  state.questions = questions;
   renderWorksheet();
   $("builderPanel").hidden = true;
   $("worksheetSection").hidden = false;
@@ -2003,13 +2027,28 @@ function geometryWorksheetAnswerMarkup(visual) {
   if (problem.type === "TC") {
     return `<div class="geometry-answer-row">${figure("앞", renderer.renderMiniFilled(answer.front))}${figure("오른쪽 옆", renderer.renderMiniFilled(answer.side))}</div>`;
   }
-  if (problem.type === "VC" || problem.type === "VM") {
+  if (problem.type === "VC") {
     return figure("위에서 본 모양에 쓴 수", renderer.renderSolveTable(
       problem.figures.footprint,
       problem.figures.width,
       problem.figures.depth,
       { numbers: answer.numbers, colMax: answer.colMax, rowMax: answer.rowMax }
     ));
+  }
+  if (problem.type === "VM") {
+    const maximum = figure("가장 많이 놓은 경우", renderer.renderSolveTable(
+      problem.figures.footprint,
+      problem.figures.width,
+      problem.figures.depth,
+      { numbers: answer.numbers, colMax: answer.colMax, rowMax: answer.rowMax }
+    ));
+    const minimum = figure("가장 적게 놓은 경우", renderer.renderSolveTable(
+      problem.figures.footprint,
+      problem.figures.width,
+      problem.figures.depth,
+      { numbers: answer.minNumbers, colMax: answer.colMax, rowMax: answer.rowMax }
+    ));
+    return `<div class="geometry-answer-row geometry-answer-minmax">${maximum}${minimum}</div>`;
   }
   if (problem.type === "VP") return figure(answer.hiddenLabel, renderer.renderMiniFilled(answer.hidden, 18));
   if (problem.type === "HL") return renderer.renderHoleLayers(problem);
@@ -2242,6 +2281,5 @@ setMode("exam");
   if (!picked) return;
   state.count = picked;
   renderExamList();
-  initControls();
   updateSummary();
 })();

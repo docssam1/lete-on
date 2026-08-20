@@ -514,7 +514,7 @@
   function viewScale(rng, level, intensity) {
     const n = levelNum(level);
     const low = normalizeIntensity(intensity) === 1;
-    if (n <= 3) return { width: 3, depth: 3, maxH: 3 };
+    if (n <= 3) return { width: 3, depth: 3, maxH: low ? 2 : 3 };
     if (n === 4) {
       const g = rng.pick([[3, 3], [4, 3]]);
       return { width: g[0], depth: g[1], maxH: low ? 3 : 4 };
@@ -525,6 +525,7 @@
   // CU 정육면체 한 변.
   function boxNForLevel(level, intensity) {
     const n = levelNum(level);
+    if (n <= 3 && normalizeIntensity(intensity) === 1) return 2;
     if (n >= 5) return 4;
     if (n === 4 && normalizeIntensity(intensity) >= 3) return 4;
     return 3;
@@ -1056,12 +1057,21 @@
     if (n <= 3) {
       // 반듯한 상자라는 읽기 쉬운 구조는 유지하되, 20문항을 만들었을 때
       // 같은 그림 세 장만 되풀이되지 않도록 방향과 높이를 함께 바꾼다.
+      // ●●○ 이상에서는 가끔 가운데가 높은 계단식 사각뿔을 섞어 풀이 단계를
+      // 올린다. ●○○은 방향·높이가 다른 반듯한 상자 10종을 유지한다.
+      if (i >= 2 && rng.bool(0.4)) {
+        const side = rng.pick([3, 4]);
+        return { map: centerPyramid(rng, side, side, 3), width: side, depth: side, kind: "iso-top" };
+      }
       const dims = rng.pick([
         [3, 3, 2], [3, 3, 3], [3, 3, 4],
         [4, 3, 2], [3, 4, 2], [4, 3, 3], [3, 4, 3],
         [4, 4, 2], [4, 4, 3], [4, 4, 4]
       ]);
       return { map: fullPrismMap(dims[0], dims[1], dims[2]), width: dims[0], depth: dims[1], kind: "iso" };
+    }
+    if (i >= 3) {
+      return { map: centerPyramid(rng, 4, 4, 4), width: 4, depth: 4, kind: "iso-top" };
     }
     if (i >= 2 && rng.bool(n >= 5 ? 0.35 : 0.45)) {
       const side = n >= 5 ? 4 : 3;
@@ -1293,7 +1303,9 @@
     const i = normalizeIntensity(intensity);
     const tier = n <= 3 ? 0 : n === 4 ? (i === 1 ? 0 : 1) : (i === 1 ? 1 : 2);
     if (tier === 0) {
-      const dims = rng.pick([[2, 2, 2], [3, 3, 3], [3, 3, 2], [4, 3, 2], [3, 4, 2], [4, 3, 3]]);
+      const dims = rng.pick(n <= 3 && i === 1
+        ? [[2, 2, 2], [3, 3, 3], [2, 2, 3], [2, 3, 2], [3, 2, 2]]
+        : [[2, 2, 2], [3, 3, 3], [3, 3, 2], [4, 3, 2], [3, 4, 2], [4, 3, 3]]);
       const map = fullPrismMap(dims[0], dims[1], dims[2]);
       const cube = dims[0] === dims[1] && dims[1] === dims[2];
       return { map, width: dims[0], depth: dims[1], shape: cube ? "cube" : "prism" };
