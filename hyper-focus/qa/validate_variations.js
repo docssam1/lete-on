@@ -655,7 +655,105 @@ for (const name of ['q49_var01','q49_var02']) {
   ok(days === v.answerValidation.expectedAnswer, `${name}: target days mismatch`);
 }
 
-const textOnlyIds = ['q33_var01','q33_var02','q47_var01','q47_var02','q48_var01','q48_var02','q49_var01','q49_var02'];
+for (const name of ['q41_var01','q41_var02']) {
+  const v = variations.get(name), m = v.machineReadable;
+  const state = { ...m.start };
+  ok(new Set(Object.values(m.transforms).map((transform) => transform.axis)).size === Object.keys(m.transforms).length, `${name}: transform axes are not independent`);
+  for (const label of m.sequence) {
+    const transform = m.transforms[label];
+    ok(transform && transform.swap.includes(state[transform.axis]), `${name}: invalid transform ${label}`);
+    state[transform.axis] = transform.swap.find((value) => value !== state[transform.axis]);
+  }
+  ok(same(state, m.expectedState), `${name}: final shape mismatch`);
+  const color = { blue: '파란색', orange: '주황색', green: '초록색', purple: '보라색' }[state.outerColor];
+  const outer = { square: '네모', star: '별', circle: '원', hexagon: '육각형' }[state.outerShape];
+  const innerColor = { yellow: '노란색', white: '흰색' }[state.innerColor];
+  const inner = state.innerShape === 'triangle' ? `${state.innerDirection === 'up' ? '위를 향한 ' : '아래를 향한 '}${innerColor} 삼각형` : `${innerColor} ${state.innerShape === 'diamond' ? '마름모' : '원'}`;
+  ok(v.answerValidation.expectedAnswer === `${color} ${outer} 안에 ${inner}`, `${name}: answer description mismatch`);
+}
+
+for (const name of ['q42_var01','q42_var02']) {
+  const v = variations.get(name), m = v.machineReadable, cells = m.cells;
+  let count = 0;
+  for (let mask = 0; mask < 2 ** cells.length; mask += 1) {
+    let picked = 0, valid = true;
+    for (let i = 0; i < cells.length; i += 1) if ((mask >> i) & 1) picked += 1;
+    if (picked !== m.fillCount) continue;
+    for (let i = 0; i < cells.length; i += 1) if ((mask >> i) & 1) {
+      for (let j = i + 1; j < cells.length; j += 1) if ((mask >> j) & 1) {
+        if (Math.abs(cells[i][0] - cells[j][0]) + Math.abs(cells[i][1] - cells[j][1]) === 1) valid = false;
+      }
+    }
+    if (valid) count += 1;
+  }
+  ok(count === v.answerValidation.expectedAnswer, `${name}: non-adjacent case count is ${count}`);
+}
+
+for (const name of ['q43_var01','q43_var02']) {
+  const v = variations.get(name), m = v.machineReadable, orbits = new Set();
+  function build(prefix, remaining) {
+    if (prefix.length === m.pickCount) {
+      const forward = prefix.join('|'), reverse = prefix.slice().reverse().join('|');
+      orbits.add(forward < reverse ? forward : reverse);
+      return;
+    }
+    remaining.forEach((color, index) => build([...prefix, color], remaining.filter((_, i) => i !== index)));
+  }
+  build([], m.palette);
+  ok(m.cellCount === m.pickCount && m.allPickedColorsUsedOnce && m.rotationFlipSame, `${name}: coloring contract mismatch`);
+  ok(orbits.size === v.answerValidation.expectedAnswer, `${name}: coloring orbit count is ${orbits.size}`);
+}
+
+for (const name of ['q46_var01','q46_var02']) {
+  const v = variations.get(name), m = v.machineReadable;
+  ok(m.expectedAnswer / 2 / 2 === m.finalCount, `${name}: forward half rules mismatch`);
+  ok(same(m.reverseStates, [m.finalCount, m.finalCount * 2, m.finalCount * 4]), `${name}: reverse states mismatch`);
+  ok(m.expectedAnswer === v.answerValidation.expectedAnswer, `${name}: reverse-story answer mismatch`);
+}
+
+for (const name of ['q50_var01','q50_var02']) {
+  const v = variations.get(name), m = v.machineReadable, candidates = [];
+  function rowTotal(row, values) { return Object.entries(row).reduce((sum, [item, count]) => sum + values[item] * count, 0); }
+  for (let crayon = 1; crayon <= 20; crayon += 1) for (let pencil = 1; pencil <= 20; pencil += 1) for (let clip = 1; clip <= 20; clip += 1) {
+    const values = { '크레파스': crayon, '연필': pencil, '지우개': m.givenUnit.lengthCm, '클립': clip };
+    const totals = m.equalRows.map((row) => rowTotal(row, values));
+    if (totals.every((total) => total === totals[0])) candidates.push({ '크레파스': crayon, '연필': pencil, '클립': clip });
+  }
+  ok(candidates.length === 1 && same(candidates[0], v.answerValidation.expectedAnswer), `${name}: length candidates are ${JSON.stringify(candidates)}`);
+}
+
+for (const name of ['q52_var01','q52_var02']) {
+  const v = variations.get(name), m = v.machineReadable, candidates = [];
+  function weight(side, values) { return Object.entries(side).reduce((sum, [item, count]) => sum + values[item] * count, 0); }
+  for (let square = 1; square <= 30; square += 1) for (let triangle = 1; triangle <= 30; triangle += 1) {
+    const values = { circle: 1, square, triangle };
+    if (m.equations.every((equation) => weight(equation.left, values) === weight(equation.right, values))) candidates.push(values);
+  }
+  ok(candidates.length === 1, `${name}: normalized balance candidates are ${JSON.stringify(candidates)}`);
+  ok(weight(m.target, candidates[0]) === v.answerValidation.expectedAnswer, `${name}: balance target mismatch`);
+}
+
+const verifiedSvgIds = [
+  'q41_var01', 'q41_var02', 'q42_var01', 'q42_var02', 'q43_var01',
+  'q43_var02', 'q50_var01', 'q50_var02', 'q52_var01', 'q52_var02'
+];
+for (const name of verifiedSvgIds) {
+  const v = variations.get(name);
+  const source = v.source?.problemImage || '';
+  const sourcePath = path.join(root, 'hyper-focus', source.replace(/^\.\/assets\//, 'assets/'));
+  const svg = fs.existsSync(sourcePath) ? fs.readFileSync(sourcePath, 'utf8') : '';
+  ok(source.endsWith('.svg'), `${name}: verified visual is not SVG`);
+  ok(/<svg\b[^>]*\bviewBox=/.test(svg), `${name}: SVG viewBox missing`);
+  ok(/<title\b/.test(svg) && /<desc\b/.test(svg), `${name}: SVG title or description missing`);
+  ok(!/\b(?:NaN|undefined|null)\b/.test(svg), `${name}: SVG contains an invalid coordinate or value`);
+  if (name.startsWith('q52_')) {
+    const itemXs = [...svg.matchAll(/<use href="#(?:c|s|t)" x="(\d+)"/g)].map(match => Number(match[1]));
+    ok(itemXs.length > 0 && itemXs.every(x => (x >= 155 && x <= 265) || (x >= 445 && x <= 575)), `${name}: an item is outside its balance pan`);
+    ok(svg.includes('M140 80Q210 112 280 80') && svg.includes('M430 80Q510 112 590 80'), `${name}: wide balance pans missing`);
+  }
+}
+
+const textOnlyIds = ['q33_var01','q33_var02','q46_var01','q46_var02','q47_var01','q47_var02','q48_var01','q48_var02','q49_var01','q49_var02'];
 for (const name of textOnlyIds) {
   const v = variations.get(name);
   ok(v.status === 'verified', `${name}: text-only status is not verified`);
@@ -686,5 +784,5 @@ console.log('PASS');
 console.log('- canonical JSON: 54');
 console.log('- variation JSON: 108');
 console.log('- var01/var02 answer collisions: 0');
-console.log('- targeted exhaustive validators: q06, q07, q12-q15, q17-q21, q25, q28-q31, q33, q35-q40, q47-q49, q51');
+console.log('- targeted exhaustive validators: q06, q07, q12-q15, q17-q21, q25, q28-q31, q33, q35-q43, q46-q52');
 console.log(`- rejected canonical-type-drift variations: ${rejectedIds.length}`);

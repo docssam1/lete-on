@@ -1,7 +1,7 @@
 (function (global) {
   "use strict";
 
-  const READY_TYPE_IDS = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 25, 27, 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 39, 40, 45, 47, 48, 49, 51, 53];
+  const READY_TYPE_IDS = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 25, 27, 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 45, 46, 47, 48, 49, 50, 51, 52, 53];
   const types = new Map();
   const loading = new Map();
 
@@ -128,7 +128,8 @@
         formatted = `최솟값 ${answer.min}, 최댓값 ${answer.max}`;
       } else {
         const positionLabels = {left_top: "왼쪽 위", right_top: "오른쪽 위", left_bottom: "왼쪽 아래", right_bottom: "오른쪽 아래"};
-        formatted = Object.entries(answer).map(([key, value]) => `${positionLabels[key] || key} ${value}`).join(", ");
+        formatted = Object.entries(answer).map(([key, value]) => `${positionLabels[key] || key} ${value}${unit || ""}`).join(", ");
+        unit = "";
       }
     } else if (Array.isArray(answer)) formatted = answer.join(", ");
     else formatted = String(answer);

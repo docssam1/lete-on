@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 220" role="img" aria-labelledby="title desc">
+  <title id="title">다섯 가지 색과 일렬로 이어진 세 칸</title>
+  <desc id="desc">빨강, 파랑, 노랑, 보라, 초록 색 표와 빈 세 칸 도형</desc>
+  <rect width="460" height="220" fill="#fff"/>
+  <g stroke="#26384d" stroke-width="3" fill="#fff">
+    <rect x="125" y="96" width="70" height="70"/><rect x="195" y="96" width="70" height="70"/><rect x="265" y="96" width="70" height="70"/>
+  </g>
+  <g stroke="#26384d" stroke-width="2">
+    <circle cx="110" cy="40" r="21" fill="#ef5b5b"/><circle cx="170" cy="40" r="21" fill="#4f7ee8"/><circle cx="230" cy="40" r="21" fill="#f2cd45"/><circle cx="290" cy="40" r="21" fill="#9b6bd6"/><circle cx="350" cy="40" r="21" fill="#52ad72"/>
+  </g>
+  <text x="230" y="205" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#53647a">서로 다른 세 색을 골라 사용</text>
+</svg>

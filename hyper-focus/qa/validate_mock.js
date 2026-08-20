@@ -309,10 +309,14 @@ assert(new Set(variationExam.questions.map((question) => question.variationId)).
 variationExam.questions.forEach((question) => {
   assert(question.sourceMode === "variation-bank", `${question.typeCode}: 기존 문제은행 출처 누락`);
   assert(question.prompt && question.answerText && question.answer !== undefined, `${question.variationId}: 문장·정답·풀이 누락`);
+  if (question.typeId === 50) {
+    Object.entries(question.answer).forEach(([item, length]) => assert(question.answerText.includes(`${item} ${length}cm`), `${question.variationId}: ${item} 정답 단위 누락`));
+  }
+  if (question.typeId === 52) assert(question.answerText.includes(`${question.answer}개`), `${question.variationId}: 저울 정답 단위 누락`);
   if (question.presentationMode === "text-only") {
     assert(question.problemHtml.includes("hf-variation-text-only"), `${question.variationId}: 문장형 풀이 공간 누락`);
     assert(!question.problemHtml.includes("<img"), `${question.variationId}: 문장형 문제에 가짜 그림 포함`);
-    assert(/정답: .+(계단|명|일)\./.test(question.answerText), `${question.variationId}: 문장형 정답 단위 누락`);
+    assert(/정답: .+(계단|명|일|개)\./.test(question.answerText), `${question.variationId}: 문장형 정답 단위 누락`);
   } else {
     assert(question.problemHtml.includes("hf-variation-problem"), `${question.variationId}: 문제 그림 누락`);
     const match = question.problemHtml.match(/src="([^"]+)"/);

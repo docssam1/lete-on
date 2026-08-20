@@ -117,14 +117,15 @@ var VARIATION_CACHE={};
 function esc(value){return String(value==null?'':value).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function qcode(id){return 'q'+String(id).padStart(2,'0');}
 function hasAnswer(v){return !!(v&&v.answerValidation&&Object.prototype.hasOwnProperty.call(v.answerValidation,'expectedAnswer'));}
-function formatAnswer(answer){
-  if(Array.isArray(answer)) return answer.join(', ');
+function formatAnswer(answer,unit){
+  unit=unit||'';
+  if(Array.isArray(answer)) return answer.join(', ')+unit;
   if(answer&&typeof answer==='object'){
-    if(Object.prototype.hasOwnProperty.call(answer,'min')&&Object.prototype.hasOwnProperty.call(answer,'max')) return '최솟값 '+answer.min+', 최댓값 '+answer.max;
+    if(Object.prototype.hasOwnProperty.call(answer,'min')&&Object.prototype.hasOwnProperty.call(answer,'max')) return '최솟값 '+answer.min+unit+', 최댓값 '+answer.max+unit;
     var positionLabels={left_top:'왼쪽 위',right_top:'오른쪽 위',left_bottom:'왼쪽 아래',right_bottom:'오른쪽 아래'};
-    return Object.keys(answer).map(function(key){return (positionLabels[key]||key)+' '+answer[key];}).join(', ');
+    return Object.keys(answer).map(function(key){return (positionLabels[key]||key)+' '+answer[key]+unit;}).join(', ');
   }
-  return String(answer);
+  return String(answer)+unit;
 }
 async function loadVariationStatus(){
   if(VARIATION_STATUS) return VARIATION_STATUS;
@@ -171,7 +172,7 @@ function variationCard(id,canonical,v){
     ?'<img src='+esc(source)+' alt="'+esc(v.variationId)+' 유사문제 그림">'
     :'<div class="asset-missing">'+(state==='rejected'?'폐기된 문제<br>그림을 불러오지 않음':'뷰어용 그림 없음')+'</div>';
   var prompt=v.problem&&v.problem.prompt||'문제 문장 없음';
-  var answer=hasAnswer(v)?formatAnswer(v.answerValidation.expectedAnswer)+(v.presentation&&v.presentation.answerUnit||''):'정답 없음';
+  var answer=hasAnswer(v)?formatAnswer(v.answerValidation.expectedAnswer,v.presentation&&v.presentation.answerUnit):'정답 없음';
   return '<article class="card '+state+'">'
     +'<span class="badge">'+stateLabel(state)+'</span>'
     +'<div class="q">['+esc(v.variationId)+'] '+esc(v.problem&&v.problem.title||canonical.title)+'</div>'

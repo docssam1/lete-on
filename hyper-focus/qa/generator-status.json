@@ -19,14 +19,14 @@
     "canonicalCount": 45,
     "variationCount": 90,
     "answerFieldsPresentTypes": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54],
-    "viewerReadyTypes": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 25, 27, 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 39, 40, 45, 47, 48, 49, 51, 53],
-    "viewerReadyVariationCount": 64,
+    "viewerReadyTypes": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 25, 27, 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 45, 46, 47, 48, 49, 50, 51, 52, 53],
+    "viewerReadyVariationCount": 76,
     "rejectedTypes": [22, 23, 24, 26],
     "rejectedVariationIds": ["q22_var01", "q22_var02", "q23_var01", "q23_var02", "q24_var01", "q24_var02", "q26_var01", "q26_var02"],
     "rejectedVariationCount": 8,
-    "viewerPendingTypes": [34, 41, 42, 43, 44, 46, 50, 52, 54],
-    "viewerPendingVariationCount": 18,
-    "viewerUnavailableTypes": [22, 23, 24, 26, 34, 41, 42, 43, 44, 46, 50, 52, 54],
+    "viewerPendingTypes": [34, 44, 54],
+    "viewerPendingVariationCount": 6,
+    "viewerUnavailableTypes": [22, 23, 24, 26, 34, 44, 54],
     "viewerReadyRule": "rejected가 아니며 문제 문장, 정답, 풀이와 유형에 필요한 그림 자산 또는 명시적인 text-only 표시가 있는 variation만 노출"
   }
 }

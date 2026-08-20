@@ -3,9 +3,22 @@
   "baseQuestionId": "q43",
   "variationId": "q43_var01",
   "subType": "coloring_triomino",
-  "status": "draft",
-  "source": { "problemImage": "./assets/problems/q43_var01.png" },
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q43_var01.svg" },
   "contentBinding": { "canonicalSource": "./canonical/q43.json", "hfDataTypeId": 43 },
-  "machineReadable": { "payloadType": "coloring_triomino", "pieceCount": 3, "expectedAnswer": 2 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 2 }
+  "machineReadable": {
+    "payloadType": "coloring_triomino",
+    "cellCount": 3,
+    "layout": "straight",
+    "palette": ["red", "blue", "yellow"],
+    "pickCount": 3,
+    "allPickedColorsUsedOnce": true,
+    "rotationFlipSame": true,
+    "expectedAnswer": 3
+  },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 3 },
+  "problem": {
+    "prompt": "빨간색, 파란색, 노란색을 한 번씩 모두 사용하여 일렬로 이어진 3칸을 색칠하려고 합니다. 돌리거나 뒤집어서 같아지는 것은 한 가지로 볼 때, 모두 몇 가지입니까?"
+  },
+  "solutionHint": "세 색을 늘어놓는 방법은 6가지이고, 서로 거꾸로 놓인 두 방법은 뒤집으면 같으므로 6÷2=3가지입니다."
 }
