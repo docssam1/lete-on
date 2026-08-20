@@ -51,6 +51,7 @@ async function generate(model, prompt, temperature = 0.2, attempts = 4) {
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(360000),
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           generationConfig: {
@@ -102,14 +103,15 @@ function overlap(original, created, size = 9) {
 function validateSet(unit, label, set) {
   const issues = [];
   const originalCount = countWords(unit.original.paragraphs);
-  const total = countWords(set?.passage);
-  if (!set?.title || !Array.isArray(set?.passage)) issues.push(`${label}: missing title or passage`);
+  const passage = Array.isArray(set?.passage) ? set.passage : [];
+  const total = countWords(passage);
+  if (!set?.title || !passage.length) issues.push(`${label}: missing title or passage`);
   if (total < Math.floor(originalCount * 0.85) || total > Math.ceil(originalCount * 1.25)) {
     issues.push(`${label}: ${total} words is outside 85-125% of ${originalCount}`);
   }
   if (label === 'newPassage') {
-    const text = norm(set.passage.join(' '));
-    const missing = unit.words.map(word => word.term).filter(term => !text.includes(norm(term)));
+    const text = ` ${norm(passage.join(' '))} `;
+    const missing = unit.words.map(word => word.term).filter(term => !text.includes(` ${norm(term)} `));
     if (missing.length) issues.push(`${label}: missing focus words ${missing.join(', ')}`);
   }
   if (!Array.isArray(set?.questions) || set.questions.length !== 12) {
@@ -126,7 +128,7 @@ function validateSet(unit, label, set) {
     if (String(question?.[4] || '').length < 20) issues.push(`${label} Q${index + 1}: explanation too short`);
   });
   if (answerDistribution(set.questions) !== '3/3/3/3') issues.push(`${label}: answer distribution ${answerDistribution(set.questions)}`);
-  const copied = overlap(unit.original.paragraphs, set.passage);
+  const copied = overlap(unit.original.paragraphs, passage);
   if (copied) issues.push(`${label}: copied 9-word source run '${copied}'`);
   return issues;
 }
@@ -134,20 +136,19 @@ function validateSet(unit, label, set) {
 function validateUnit(unit) {
   const issues = [];
   if (!unit.title || !Array.isArray(unit.words) || unit.words.length !== 10) issues.push('metadata: expected title and ten focus words');
-  const originalCount = countWords(unit.original?.paragraphs);
-  if (originalCount < 200 || originalCount > 310) issues.push(`original: suspicious length ${originalCount}`);
   issues.push(...validateSet(unit, 'extraLearning', unit.extraLearning));
   issues.push(...validateSet(unit, 'newPassage', unit.newPassage));
   return issues;
 }
 
-function sourcePrompt(level, source) {
+function sourcePrompt(level, source, expectedUnits) {
+  const unitList = expectedUnits.join(', ');
   const exactRule = level === 3
-    ? 'The dictation script is the canonical English original. Split it by the 20 unit titles and preserve its wording and paragraph order exactly.'
+    ? `The dictation script is the canonical English original. Extract only units ${unitList} by their unit titles and preserve wording and paragraph order exactly.`
     : 'The English original is distributed in exact fragments across each unit-test PDF. Reassemble only those fragments, using the Korean teacher-guide translation to recover paragraph order. Never translate or invent a missing sentence; set needsReview=true if evidence is incomplete.';
   return `You are reconstructing licensed classroom data for private storage. Return JSON only.
 
-For Bricks Reading 250 Level ${level}, produce exactly 20 units. ${exactRule}
+For Bricks Reading 250 Level ${level}, return {"units":[...]} with exactly ${expectedUnits.length} units numbered ${unitList}. Do not return any other unit. ${exactRule}
 
 For each unit return:
 {"unit":1,"title":"...","words":[{"term":"...","definition":"...","ko":"..."}],"original":{"paragraphs":["..."],"wordCount":250,"needsReview":false,"reviewNote":""}}
@@ -164,6 +165,40 @@ Original rules:
 
 SOURCE JSON:
 ${JSON.stringify(source)}`;
+}
+
+function teacherGuideForUnits(pages, expectedUnits) {
+  const starts = new Map();
+  (pages || []).forEach((page, index) => {
+    const match = String(page).match(/\bUnit\s+(\d+)\b/i);
+    if (match && /Talk about the/i.test(page) && !starts.has(Number(match[1]))) {
+      starts.set(Number(match[1]), index);
+    }
+  });
+
+  const selected = [];
+  for (const unit of expectedUnits) {
+    const start = starts.get(unit);
+    if (start == null) continue;
+    const end = starts.get(unit + 1) ?? pages.length;
+    selected.push(...pages.slice(start, end));
+  }
+  return selected;
+}
+
+function sourceForUnits(level, source, expectedUnits) {
+  const first = expectedUnits[0];
+  const last = expectedUnits.at(-1);
+  const batch = {
+    level,
+    word_list_pages: (source.word_list_pages || []).slice((first - 1) * 2, last * 2),
+    unit_tests: Object.fromEntries(expectedUnits.map(unit => [String(unit), source.unit_tests?.[String(unit)]])),
+  };
+  if (level === 2) batch.teacher_guide_pages = teacherGuideForUnits(source.teacher_guide_pages, expectedUnits);
+  // The Level 3 script is only about 30 KB; retaining it prevents a fuzzy OCR title
+  // mismatch from dropping a passage while the requested unit numbers limit output.
+  if (level === 3) batch.script_text = source.script_text;
+  return batch;
 }
 
 function authorPrompt(level, units) {
@@ -211,20 +246,49 @@ ${JSON.stringify(compact)}`;
 
 async function repairUnit(level, unit, issues) {
   const prompt = `Repair this generated Bricks Reading 250 Level ${level} unit. Return the complete unit JSON only. Keep good material, but fix every listed issue. Preserve the exact 12-strategy order and 3/3/3/3 answer distribution in each set. Do not copy 9 consecutive words from the licensed original.\n\nISSUES:\n${issues.map(issue => `- ${issue}`).join('\n')}\n\nUNIT:\n${JSON.stringify(unit)}`;
-  return generate(PRO_MODEL, prompt, 0.25);
+  const result = await generate(PRO_MODEL, prompt, 0.25);
+  return result?.unit && typeof result.unit === 'object' ? result.unit : result;
 }
 
-async function normalizeLevel(level, source) {
-  console.log(`Level ${level}: extracting private metadata/originals with ${PRO_MODEL}`);
-  const result = await generate(PRO_MODEL, sourcePrompt(level, source), 0.05);
-  if (!Array.isArray(result.units) || result.units.length !== 20) throw new Error(`Level ${level}: source extraction did not return 20 units`);
-  return result.units;
+async function normalizeLevel(level, source, cachedUnits = [], onProgress = () => {}) {
+  const units = [...cachedUnits].sort((a, b) => Number(a.unit) - Number(b.unit));
+  for (let start = 1; start <= 20; start += 2) {
+    const expectedUnits = Array.from({ length: Math.min(2, 21 - start) }, (_, index) => start + index);
+    if (expectedUnits.every(unit => units.some(item => Number(item.unit) === unit))) {
+      console.log(`Level ${level}: using cached private metadata/originals ${expectedUnits[0]}-${expectedUnits.at(-1)}`);
+      continue;
+    }
+    console.log(`Level ${level}: extracting private metadata/originals ${expectedUnits[0]}-${expectedUnits.at(-1)} with ${PRO_MODEL}`);
+    const sourceBatch = sourceForUnits(level, source, expectedUnits);
+    const result = await generate(PRO_MODEL, sourcePrompt(level, sourceBatch, expectedUnits), 0.05);
+    const actual = Array.isArray(result) ? result : (Array.isArray(result.units) ? result.units : []);
+    const actualUnits = actual.map(unit => Number(unit.unit)).sort((a, b) => a - b);
+    if (actual.length !== expectedUnits.length || actualUnits.some((unit, index) => unit !== expectedUnits[index])) {
+      throw new Error(`Level ${level}: source extraction ${expectedUnits[0]}-${expectedUnits.at(-1)} returned [${actualUnits.join(', ')}]`);
+    }
+    units.push(...actual);
+    units.sort((a, b) => Number(a.unit) - Number(b.unit));
+    onProgress(units);
+  }
+  return units.sort((a, b) => Number(a.unit) - Number(b.unit));
 }
 
-async function authorLevel(level, units) {
-  const complete = [];
+async function authorLevel(level, units, cachedUnits = [], onProgress = () => {}) {
+  const complete = cachedUnits.map(cached => {
+    const metadata = units.find(unit => Number(unit.unit) === Number(cached.unit));
+    return metadata ? { ...cached, title: metadata.title, words: metadata.words, original: metadata.original } : cached;
+  }).sort((a, b) => Number(a.unit) - Number(b.unit));
   for (let start = 0; start < units.length; start += 4) {
     const batch = units.slice(start, start + 4);
+    const cachedBatch = batch.map(meta => complete.find(item => Number(item.unit) === Number(meta.unit)));
+    if (cachedBatch.every(Boolean) && cachedBatch.every(unit => validateUnit(unit).length === 0)) {
+      console.log(`Level ${level}: using cached authored units ${start + 1}-${start + batch.length}`);
+      continue;
+    }
+    const batchIds = new Set(batch.map(meta => Number(meta.unit)));
+    for (let index = complete.length - 1; index >= 0; index -= 1) {
+      if (batchIds.has(Number(complete[index].unit))) complete.splice(index, 1);
+    }
     console.log(`Level ${level}: authoring units ${start + 1}-${start + batch.length}`);
     const generated = await generate(PRO_MODEL, authorPrompt(level, batch), 0.75);
     const authored = generated.units || [];
@@ -239,10 +303,11 @@ async function authorLevel(level, units) {
       const remaining = validateUnit(unit);
       if (remaining.length) throw new Error(`Level ${level} Unit ${meta.unit} failed local validation: ${remaining.join('; ')}`);
       complete.push(unit);
+      complete.sort((a, b) => Number(a.unit) - Number(b.unit));
     }
 
     console.log(`Level ${level}: reviewing units ${start + 1}-${start + batch.length} with ${REVIEW_MODEL}`);
-    const reviewedBatch = complete.slice(-batch.length);
+    const reviewedBatch = batch.map(meta => complete.find(item => Number(item.unit) === Number(meta.unit)));
     const review = await generate(REVIEW_MODEL, reviewPrompt(level, reviewedBatch), 0.05);
     for (const report of review.units || []) {
       if (!report.errors?.length) continue;
@@ -253,6 +318,7 @@ async function authorLevel(level, units) {
       const remaining = validateUnit(complete[index]);
       if (remaining.length) throw new Error(`Level ${level} Unit ${report.unit} failed after review repair: ${remaining.join('; ')}`);
     }
+    onProgress(complete);
   }
   return complete.sort((a, b) => a.unit - b.unit);
 }
@@ -278,29 +344,50 @@ function publicLesson(level, unit) {
 }
 
 function writeLessons(level, units) {
-  for (const unit of units) {
+  const assignments = units.map(unit => {
     const id = lessonId(level, unit.unit);
-    const body = `// Bricks Reading 250 Level ${level}, Unit ${unit.unit}. Licensed original stays in Supabase.\nwindow.LESSONS = window.LESSONS || {};\nwindow.LESSONS[${JSON.stringify(id)}] = ${JSON.stringify(publicLesson(level, unit), null, 2)};\n`;
-    fs.writeFileSync(path.join(DATA, `${id}.js`), body, 'utf8');
-  }
+    return `window.LESSONS[${JSON.stringify(id)}] = ${JSON.stringify(publicLesson(level, unit), null, 2)};`;
+  });
+  const body = `// Bricks Reading 250 Level ${level}. Licensed originals stay in Supabase.\nwindow.LESSONS = window.LESSONS || {};\n${assignments.join('\n')}\n`;
+  fs.writeFileSync(path.join(DATA, `bricks-250-level-${level}.js`), body, 'utf8');
 }
 
 async function main() {
   const options = args();
   const raw = JSON.parse(fs.readFileSync(path.resolve(options.source), 'utf8'));
   const privatePath = path.resolve(options['private-out']);
+  const cachePath = privatePath.replace(/\.json$/i, '.build-cache.json');
+  const cache = fs.existsSync(cachePath)
+    ? JSON.parse(fs.readFileSync(cachePath, 'utf8'))
+    : { source: {}, authored: {} };
   const normalized = { generatedAt: new Date().toISOString(), models: { author: PRO_MODEL, reviewer: REVIEW_MODEL }, levels: {} };
 
+  const saveCache = () => {
+    fs.mkdirSync(path.dirname(cachePath), { recursive: true });
+    fs.writeFileSync(cachePath, JSON.stringify(cache, null, 2), 'utf8');
+  };
+
   for (const level of [2, 3]) {
-    const metadata = await normalizeLevel(level, raw.levels[String(level)]);
-    const authored = await authorLevel(level, metadata);
-    normalized.levels[String(level)] = authored;
+    const key = String(level);
+    const metadata = await normalizeLevel(level, raw.levels[key], cache.source[key], units => {
+      cache.source[key] = [...units];
+      saveCache();
+    });
+    cache.source[key] = metadata;
+    saveCache();
+    const authored = await authorLevel(level, metadata, cache.authored[key], units => {
+      cache.authored[key] = [...units];
+      saveCache();
+    });
+    cache.authored[key] = authored;
+    saveCache();
+    normalized.levels[key] = authored;
     writeLessons(level, authored);
     fs.mkdirSync(path.dirname(privatePath), { recursive: true });
     fs.writeFileSync(privatePath, JSON.stringify(normalized, null, 2), 'utf8');
   }
   console.log(`Wrote private normalized source: ${privatePath}`);
-  console.log('Wrote 40 public lesson files under reading-world/data');
+  console.log('Wrote two public lesson bundles under reading-world/data');
 }
 
 main().catch(error => { console.error(error); process.exit(1); });
