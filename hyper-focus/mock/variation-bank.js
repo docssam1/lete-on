@@ -2,6 +2,7 @@
   "use strict";
 
   const READY_TYPE_IDS = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 25, 27, 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 45, 46, 47, 48, 49, 50, 51, 52, 53];
+  const DIFFICULTY_LABEL = { easy: "쉽게", same: "같게", hard: "어렵게" };
   const types = new Map();
   const loading = new Map();
 
@@ -37,6 +38,7 @@
       ? "text-only" : "image";
     const prompt = variation && variation.problem && variation.problem.prompt;
     const hint = variation && variation.solutionHint;
+    const difficulty = DIFFICULTY_LABEL[variation && variation.difficulty] ? variation.difficulty : "same";
     if (!variation || variation.status === "rejected" || variation.baseQuestionId !== expectedBase) return null;
     if (Number(variation.contentBinding && variation.contentBinding.hfDataTypeId) !== typeId) return null;
     if ((presentationMode === "image" && !image) || typeof prompt !== "string" || !prompt.trim()
@@ -46,7 +48,8 @@
       typeCode: expectedBase,
       typeTitle: variation.problem.title || canonical.title,
       variationId: variation.variationId,
-      variationLabel: variation.variationId.endsWith("var01") ? "유사문제 1" : "유사문제 2",
+      variationLabel: `${DIFFICULTY_LABEL[difficulty]} · ${variation.variationId.endsWith("var01") ? "유사문제 1" : "유사문제 2"}`,
+      difficulty,
       reviewStatus: variation.status || "draft",
       prompt: prompt.trim(),
       image,
@@ -108,9 +111,11 @@
     return row ? { title: row.title, source: "variation-bank" } : null;
   }
 
-  function getAvailable(typeId) {
+  function getAvailable(typeId, difficulty) {
     const row = types.get(Number(typeId));
-    return row ? row.variations.slice() : [];
+    if (!row) return [];
+    const available = row.variations.slice();
+    return difficulty ? available.filter((variation) => variation.difficulty === difficulty) : available;
   }
 
   function getVariation(variationId) {
@@ -143,7 +148,7 @@
       typeId: variation.typeId,
       typeCode: variation.typeCode,
       typeTitle: variation.typeTitle,
-      difficulty: "variation",
+      difficulty: variation.difficulty,
       difficultyLabel: variation.variationLabel,
       seed: null,
       variationId: variation.variationId,

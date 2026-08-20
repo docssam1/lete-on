@@ -128,6 +128,11 @@
     return global.HFVariationBank || null;
   }
 
+  function accessPolicy() {
+    if (!global.HFAccessPolicy) throw new Error("Hyper Focus 문제 이용 정책을 불러오지 못했습니다.");
+    return global.HFAccessPolicy;
+  }
+
   function getTypeMeta(typeId) {
     const id = Number(typeId);
     if (TYPE_META[id]) return TYPE_META[id];
@@ -233,19 +238,25 @@
     const opts = options || {};
     const base = normalizeSeed(opts.seed);
     const countPerType = Number(opts.countPerType);
-    if (!Number.isInteger(countPerType) || countPerType < 1 || countPerType > 20) {
-      throw new Error("약점 유형별 문제 수를 1~20 사이에서 직접 정해 주세요.");
-    }
     const requestedDifficulty = opts.difficulty || "same";
+    const difficultyByType = opts.difficultyByType && typeof opts.difficultyByType === "object" ? opts.difficultyByType : {};
+    const policy = accessPolicy();
+    const accessTier = policy.tier(opts.accessTier);
     const cleanTypes = [...new Set((typeIds || []).map(Number).filter((id) => getTypeMeta(id)))];
+    if (cleanTypes.length > policy.MAX_SELECTED_TYPES) {
+      throw new Error(`한 번에 선택할 수 있는 약점 유형은 최대 ${policy.MAX_SELECTED_TYPES}개입니다.`);
+    }
     const questions = [];
     let number = 1;
     cleanTypes.forEach((typeId) => {
+      const difficulty = difficultyByType[typeId] || difficultyByType[String(typeId)] || requestedDifficulty;
+      policy.validatePracticeRequest({ countPerType, difficulty, accessTier });
       if (!TYPE_META[typeId]) {
         const bank = bankModule();
-        const available = bank ? bank.getAvailable(typeId) : [];
+        const available = bank ? bank.getAvailable(typeId, difficulty) : [];
         if (available.length < countPerType) {
-          throw new Error(`q${String(typeId).padStart(2, "0")}는 현재 서로 다른 유사문제 ${available.length}개만 사용할 수 있습니다.`);
+          if (!available.length) throw new Error(`q${String(typeId).padStart(2, "0")} ${DIFFICULTY_LABEL[difficulty]} 문제는 아직 검수 완료된 문항이 없습니다.`);
+          throw new Error(`q${String(typeId).padStart(2, "0")} ${DIFFICULTY_LABEL[difficulty]} 문제는 현재 ${available.length}개만 사용할 수 있습니다.`);
         }
         const offset = normalizeSeed(base + typeId * 12011) % available.length;
         for (let index = 0; index < countPerType; index += 1) {
@@ -255,9 +266,6 @@
         return;
       }
       for (let index = 0; index < countPerType; index += 1) {
-        const difficulty = requestedDifficulty === "mixed"
-          ? ["easy", "same", "hard"][index % 3]
-          : requestedDifficulty;
         const questionSeed = base + typeId * 12011 + index * 7919;
         questions.push(generateQuestion(typeId, difficulty, questionSeed, number));
         number += 1;
@@ -265,14 +273,28 @@
     });
     return {
       id: "premier-practice",
-      title: "Hyper Focus 약점 문제은행",
+      title: "Hyper Focus 맞춤 시험지",
       subtitle: `${cleanTypes.length}개 약점 유형 · ${questions.length}문항`,
       seed: base,
       durationMinutes: null,
       typeIds: cleanTypes,
       countPerType,
+      accessTier,
+      difficultyByType: Object.fromEntries(cleanTypes.map((typeId) => [typeId, difficultyByType[typeId] || difficultyByType[String(typeId)] || requestedDifficulty])),
       questions
     };
+  }
+
+  function getPracticeAvailability(typeId, accessTier) {
+    const id = Number(typeId);
+    const policy = accessPolicy();
+    const cap = policy.limitForTier(accessTier);
+    if (TYPE_META[id]) return { easy: cap, same: cap, hard: cap };
+    const bank = bankModule();
+    return Object.fromEntries(policy.DIFFICULTIES.map((difficulty) => [
+      difficulty,
+      Math.min(cap, bank ? bank.getAvailable(id, difficulty).length : 0)
+    ]));
   }
 
   function resultFromMarks(exam, marks) {
@@ -324,6 +346,7 @@
     generateQuestion,
     createExam,
     createPractice,
+    getPracticeAvailability,
     resultFromMarks,
     safeStudent,
     makeSeed

@@ -26,6 +26,8 @@
 <body>
 <header class="toolbar"><b>G-FIELD HYPER FOCUS VIEWER</b><div class="actions"><a id="backLink" href="./">채점 화면</a><button type="button" id="regenBtn">다른 문제</button><button type="button" id="answerBtn">정답·풀이 보기</button><button type="button" class="gold" onclick="window.print()">인쇄</button></div></header>
 <main id="pages" class="pages"><div class="sheet"><div class="empty">문제지를 만드는 중입니다.</div></div></main>
+<script src="../../config.js"></script>
+<script src="./access-policy.js"></script>
 <script src="../generator/q01.js"></script>
 <script src="../generator/stacking.js"></script>
 <script src="../generator/spatial.js"></script>
@@ -41,12 +43,15 @@
   const seed=HFMock.normalizeSeed(params.get('seed')||HFMock.makeSeed());
   const typeIds=(params.get('types')||'').split(',').map(Number).filter(Boolean);
   const count=Number(params.get('count'));
-  const difficulty=['easy','same','hard','mixed'].includes(params.get('difficulty'))?params.get('difficulty'):'mixed';
+  const difficulty=['easy','same','hard'].includes(params.get('difficulty'))?params.get('difficulty'):'same';
+  const difficultyByType={};
+  (params.get('levels')||'').split(',').forEach(pair=>{const [rawId,level]=pair.split(':');const typeId=Number(rawId);if(typeId&&['easy','same','hard'].includes(level))difficultyByType[typeId]=level;});
+  const storedAccess=HFAccessPolicy.storedAccess(window.GFIELD_CONFIG);
   let doc;
   try{
     if(mode==='practice')await HFMock.preparePractice(typeIds);else await HFMock.prepareExam(examId);
     doc=mode==='practice'
-      ?HFMock.createPractice(typeIds,{seed,countPerType:count,difficulty})
+      ?HFMock.createPractice(typeIds,{seed,countPerType:count,difficulty,difficultyByType,accessTier:storedAccess.paid?'paid':'free'})
       :HFMock.createExam(examId,seed);
   }catch(error){
     document.getElementById('pages').innerHTML=`<section class="sheet"><div class="empty">${String(error.message||error)}<br><a href="./?exam=${encodeURIComponent(examId)}">돌아가기</a></div></section>`;

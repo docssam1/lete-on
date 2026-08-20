@@ -15,6 +15,7 @@ load("hyper-focus/generator/q01.js");
 load("hyper-focus/generator/stacking.js");
 load("hyper-focus/generator/spatial.js");
 load("hyper-focus/mock/exam-blueprints.js");
+load("hyper-focus/mock/access-policy.js");
 load("hyper-focus/mock/variation-bank.js");
 
 const generatorStatus = JSON.parse(fs.readFileSync(path.join(root, "hyper-focus/qa/generator-status.json"), "utf8"));
@@ -274,7 +275,7 @@ assert(!globalThis.HFQ09.validateQ09(q09Fallback), "q09: fallback 문제를 정�
 
 let missingCountRejected = false;
 try {
-  globalThis.HFMock.createPractice([6, 7, 8, 9], { seed: 777, difficulty: "mixed" });
+  globalThis.HFMock.createPractice([6, 7, 8, 9], { seed: 777, difficulty: "same", accessTier: "free" });
 } catch (error) {
   missingCountRejected = /직접 정해/.test(error.message);
 }
@@ -283,16 +284,36 @@ assert(missingCountRejected, "약점 문제 수의 임의 기본값이 남아 �
 const oneEach = globalThis.HFMock.createPractice([6, 7, 8, 9], {
   seed: 777,
   countPerType: 1,
-  difficulty: "mixed"
+  difficulty: "same",
+  accessTier: "free"
 });
 const sevenEach = globalThis.HFMock.createPractice([6, 7, 8, 9], {
   seed: 777,
   countPerType: 7,
-  difficulty: "mixed"
+  difficulty: "hard",
+  accessTier: "paid"
 });
 assert(oneEach.questions.length === 4, "유형별 1문항 선택 반영 실패");
-assert(sevenEach.questions.length === 28, "유형별 7문항 선택 반영 실패");
+assert(sevenEach.questions.length === 28 && sevenEach.questions.every((question) => question.difficulty === "hard"), "유료 유형별 7문항·난이도 선택 반영 실패");
 assert(new Set(sevenEach.questions.map((q) => q.typeId)).size === 4, "약점 유형 누락");
+assert(globalThis.HFAccessPolicy.FREE_PER_DIFFICULTY === 2, "난이도별 무료 2문항 계약 불일치");
+assert(globalThis.HFAccessPolicy.MAX_SELECTED_TYPES === 20, "최대 선택 유형 20개 계약 불일치");
+assert(globalThis.HFAccessPolicy.hasPaidPermission(["soma:premier:hyperfocus-extra"]), "유료 추가 문제 권한 열쇠 불일치");
+let freeThirdRejected = false;
+try {
+  globalThis.HFMock.createPractice([6], { seed: 777, countPerType: 3, difficulty: "easy", accessTier: "free" });
+} catch (error) {
+  freeThirdRejected = /3번째부터는 유료/.test(error.message);
+}
+assert(freeThirdRejected, "무료 사용자의 난이도별 3번째 문제를 차단하지 않음");
+const twentyOneTypes = [1,2,3,4,5,6,7,8,9].concat(readyBankTypes.slice(0,12));
+let typeLimitRejected = false;
+try {
+  globalThis.HFMock.createPractice(twentyOneTypes, { seed: 777, countPerType: 2, difficulty: "same", accessTier: "free" });
+} catch (error) {
+  typeLimitRejected = /최대 20개/.test(error.message);
+}
+assert(typeLimitRejected, "21개 유형 요청을 차단하지 않음");
 
 const exam = globalThis.HFMock.createExam(reviewId, 12345);
 const marks = Object.fromEntries(exam.questions.map((q) => [String(q.number), q.typeId % 2 ? "x" : "o"]));
@@ -325,22 +346,30 @@ variationExam.questions.forEach((question) => {
     assert(fs.existsSync(asset), `${question.variationId}: 그림 파일 없음 ${match[1]}`);
   }
 });
-const bankPractice = globalThis.HFMock.createPractice([10, 53], { seed: 20260820, countPerType: 2, difficulty: "mixed" });
+const bankPractice = globalThis.HFMock.createPractice([10, 53], { seed: 20260820, countPerType: 2, difficulty: "same", accessTier: "free" });
 assert(bankPractice.questions.length === 4, "기존 유사문제 약점 문제은행 연결 실패");
 assert(new Set(bankPractice.questions.map((question) => question.variationId)).size === 4, "기존 유사문제 약점 문제은행 중복 발생");
+assert(bankPractice.questions.every((question) => question.difficulty === "same"), "정적 유사문제 난이도 표시 불일치");
 let bankOverRequestRejected = false;
 try {
-  globalThis.HFMock.createPractice([10], { seed: 20260820, countPerType: 3, difficulty: "mixed" });
+  globalThis.HFMock.createPractice([10], { seed: 20260820, countPerType: 3, difficulty: "same", accessTier: "paid" });
 } catch (error) {
-  bankOverRequestRejected = /2개만/.test(error.message);
+  bankOverRequestRejected = /현재 2개만/.test(error.message);
 }
 assert(bankOverRequestRejected, "준비 수보다 많은 기존 유사문제 요청을 거부하지 않음");
+let unavailableDifficultyRejected = false;
+try {
+  globalThis.HFMock.createPractice([10], { seed: 20260820, countPerType: 2, difficulty: "easy", accessTier: "free" });
+} catch (error) {
+  unavailableDifficultyRejected = /아직 검수 완료된 문항이 없습니다/.test(error.message);
+}
+assert(unavailableDifficultyRejected, "정적 유형의 준비되지 않은 난이도를 차단하지 않음");
 
 [
-  ["hyper-focus/mock/index.html", ["spatial.js", "exam-blueprints.js", "variation-bank.js", "variation-bank-review", "review.html?mode=variation", "prepareExam", "questionList", "resultFromMarks", "practiceCount", "viewer.html"]],
-  ["hyper-focus/mock/viewer.html", ["spatial.js", "exam-blueprints.js", "variation-bank.js", "preparePractice", "createPractice", "window.print", "solutions", "flex-wrap:nowrap"]],
+  ["hyper-focus/mock/index.html", ["config.js", "access-policy.js", "spatial.js", "exam-blueprints.js", "variation-bank.js", "prepareExam", "questionList", "resultFromMarks", "practiceDifficultyByType", "선택 난이도로 시험지 만들기", "viewer.html"]],
+  ["hyper-focus/mock/viewer.html", ["config.js", "access-policy.js", "spatial.js", "exam-blueprints.js", "variation-bank.js", "preparePractice", "difficultyByType", "createPractice", "window.print", "solutions", "flex-wrap:nowrap"]],
   ["hyper-focus/review.html", ["spatial.js", "HFQ09", "generateQ09", "기존 variation 눈 검수표", "generator-status.json", "viewerReadyVariationCount", "원본 기준", "눈 검수"]],
-  ["hyper-focus/index.html", ["mock/?exam=spatial-generator-review", "mock/?exam=variation-bank-review", "review.html?mode=variation", "공간지각 생성기 검수 세트", "기존 유사문제 문제은행 검수", "원본 비교 눈 검수표"]]
+  ["hyper-focus/index.html", ["mock/access-policy.js", "맞춤 시험지", "유형당 2문항 자동 시험지 만들기", "MAX_SELECTED_TYPES"]]
 ].forEach(([relativePath, needles]) => {
   const html = fs.readFileSync(path.join(root, relativePath), "utf8");
   needles.forEach((needle) => assert(html.includes(needle), `${relativePath}: ${needle} 계약 누락`));
@@ -361,6 +390,12 @@ const mockIndex = fs.readFileSync(path.join(root, "hyper-focus/mock/index.html")
 assert(!mockIndex.includes("0/10"), "고정 10문항 진행률이 남아 있음");
 assert(!mockIndex.includes("약점별 4문제"), "고정 4문항 문구가 남아 있음");
 assert(!mockIndex.includes("set('count','4')"), "고정 4문항 URL이 남아 있음");
+assert(!mockIndex.includes("기존 유사문제 검수") && !mockIndex.includes("눈 검수표"), "학생 진단 화면에 내부 문제은행 검수 링크가 남아 있음");
+const hyperFocusIndex = fs.readFileSync(path.join(root, "hyper-focus/index.html"), "utf8");
+assert(!hyperFocusIndex.includes("sim-card") && !hyperFocusIndex.includes("문제은행 검수"), "학생 화면에 유사문제 카드 또는 문제은행 검수 UI가 남아 있음");
+assert(hyperFocusIndex.includes("최대 20개 유형") && hyperFocusIndex.includes("유형마다 난이도"), "최대 20유형·개별 난이도 안내 누락");
+const sharedConfig = fs.readFileSync(path.join(root, "config.js"), "utf8");
+assert(sharedConfig.includes('"key": "hyperfocus-extra"'), "통합관리 유료 추가 문제 권한 프로그램 누락");
 
 console.log("PASS");
 console.log(`- blueprint-driven review questions: ${questionCount} across ${blueprint.slots.length} configured slots`);
