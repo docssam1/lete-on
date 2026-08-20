@@ -206,10 +206,10 @@ const messages = {
   }
 };
 
-Object.assign(messages.ko, { mapMoveHint: "바닥을 누르거나 조이스틱으로 걸어가요", loading3d: "3D 도형 마을을 만드는 중…" });
-Object.assign(messages.zh, { mapMoveHint: "点击地面或使用摇杆移动", loading3d: "正在创建3D几何小镇…" });
-Object.assign(messages.ja, { mapMoveHint: "地面をタップするかスティックで歩こう", loading3d: "3D図形の町を作っています…" });
-Object.assign(messages.en, { mapMoveHint: "Tap the ground or use the joystick", loading3d: "Building the 3D Geometry Town…" });
+Object.assign(messages.ko, { mapMoveHint: "바닥을 누르거나 조이스틱으로 걸어가요", loading3d: "3D 도형 마을을 만드는 중…", cameraView: "시점 변경" });
+Object.assign(messages.zh, { mapMoveHint: "点击地面或使用摇杆移动", loading3d: "正在创建3D几何小镇…", cameraView: "切换视角" });
+Object.assign(messages.ja, { mapMoveHint: "地面をタップするかスティックで歩こう", loading3d: "3D図形の町を作っています…", cameraView: "視点切替" });
+Object.assign(messages.en, { mapMoveHint: "Tap the ground or use the joystick", loading3d: "Building the 3D Geometry Town…", cameraView: "Change view" });
 Object.assign(messages.ko, {
   viewRoadmap: "학습 로드맵", roadmapEyebrow: "앞으로 열릴 도형 세계", roadmapNote: "기초부터 중등까지 차례로 확장됩니다.", roadmapStatus: "확장 예정", roadmapClose: "로드맵 닫기",
   shapeDistrict: "평면도형 거리", shapeDistrictHint: "합동·대칭·도형 이동을 배우는 길",

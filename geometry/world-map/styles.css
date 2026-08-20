@@ -1166,6 +1166,7 @@ body.world-3d-ready .world-camera-controls {
   bottom: max(84px, calc(env(safe-area-inset-bottom) + 72px));
   display: grid;
   gap: 6px;
+  justify-items: end;
 }
 .world-camera-controls button {
   width: 44px;
@@ -1182,6 +1183,18 @@ body.world-3d-ready .world-camera-controls {
   backdrop-filter: blur(8px);
 }
 .world-camera-controls button:active { transform: scale(.92); }
+.world-camera-controls .camera-mode-button {
+  width: auto;
+  min-width: 92px;
+  padding: 0 12px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.camera-mode-button b { font-size: 19px; line-height: 1; }
+.camera-control-label { font-size: 12px; line-height: 1; white-space: nowrap; }
 
 @media (pointer: coarse), (max-width: 780px), (max-height: 440px) and (orientation: landscape) {
   body.world-3d-ready .world-joystick {
@@ -1243,6 +1256,35 @@ body.world-3d-ready .world-camera-controls {
     transform: translateX(-50%);
   }
   body.world-3d-ready .place-prompt span { max-width: 58vw; }
+}
+
+@media (orientation: portrait) and (max-width: 480px) {
+  .character-dialog > header {
+    min-height: 112px;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) auto;
+    grid-template-areas:
+      "character-title character-close"
+      "character-language character-points";
+    align-items: center;
+    gap: 8px 10px;
+    padding: max(10px, env(safe-area-inset-top)) 12px 10px;
+  }
+  .character-dialog header > div:first-child {
+    grid-area: character-title;
+    min-width: 0;
+  }
+  .character-dialog header p,
+  .character-dialog header h2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: keep-all;
+  }
+  .character-language-menu { grid-area: character-language; }
+  .dialog-points { grid-area: character-points; justify-self: end; }
+  #closeCharacter { grid-area: character-close; justify-self: end; }
+  .character-content { max-height: calc(var(--app-dvh) - 112px); }
 }
 
 @media (max-height: 440px) and (orientation: landscape) {

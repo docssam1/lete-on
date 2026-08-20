@@ -7,7 +7,7 @@
     <link rel="preload" href="./assets/geometry-intro-poster.webp" as="image" fetchpriority="high" />
     <link rel="preload" href="./assets/geometry-world-gateway.webp" as="image" />
     <link rel="preload" href="./assets/geometry-world-map.webp" as="image" />
-  <link rel="stylesheet" href="./styles.css?v=geometry-village-20260820i" />
+  <link rel="stylesheet" href="./styles.css?v=geometry-village-20260821a" />
     <link rel="stylesheet" href="../shared/pwa.css?v=2" />
     <script src="../shared/viewport-fit.js?v=1"></script>
     <link rel="manifest" href="/geometry/manifest.webmanifest" />
@@ -253,7 +253,9 @@
 
       <div id="worldJoystick" class="world-joystick" aria-label="캐릭터 이동"><span></span></div>
       <div class="world-camera-controls" aria-label="3D camera controls">
-        <button id="worldCameraMode" type="button" aria-label="카메라 시점 변경" title="카메라 시점 변경">◉</button>
+        <button id="worldCameraMode" class="camera-mode-button" type="button" aria-label="카메라 시점 변경" title="카메라 시점 변경">
+          <b aria-hidden="true">↻</b><span class="camera-control-label" data-i18n="cameraView">시점 변경</span>
+        </button>
         <button id="worldZoomIn" type="button" aria-label="카메라 확대">＋</button>
         <button id="worldZoomOut" type="button" aria-label="카메라 축소">−</button>
       </div>
@@ -348,8 +350,8 @@
         </div>
       </section>
     </main>
-    <script type="module" src="./app.js?v=geometry-village-20260820e"></script>
-  <script type="module" src="./world-3d.js?v=geometry-village-20260820n"></script>
+    <script type="module" src="./app.js?v=geometry-village-20260821a"></script>
+  <script type="module" src="./world-3d.js?v=geometry-village-20260821a"></script>
     <script src="../shared/pwa.js?v=3" defer></script>
   </body>
 </html>
