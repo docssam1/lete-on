@@ -2458,6 +2458,160 @@
       const answer = fraction(n1 * n2, d1 * d2);
       return result(`<div class="equation">${n1}/${d1} × ${n2}/${d2} = □</div>`, answer, `분자는 ${n1} × ${n2}, 분모는 ${d1} × ${d2}로 계산한 뒤 약분하면 ${answer}입니다.`);
     },
+    fractionNaturalAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const firstDenominator = int(rng, 3, 5 + level);
+        const firstNumerator = pick(rng, Array.from({ length: firstDenominator - 1 }, (_, index) => index + 1).filter(value => gcd(value, firstDenominator) === 1));
+        const secondDenominator = int(rng, 3, 6 + level);
+        const secondNumerator = pick(rng, Array.from({ length: secondDenominator - 1 }, (_, index) => index + 1).filter(value => gcd(value, secondDenominator) === 1));
+        const total = firstDenominator * secondDenominator * int(rng, 8 + level * 4, 15 + level * 7);
+        const first = total * firstNumerator / firstDenominator;
+        const afterFirst = total - first;
+        const second = afterFirst * secondNumerator / secondDenominator;
+        const answer = afterFirst - second;
+        const evidence = `<span hidden data-fmul-kind="sequential-share" data-values="${total},${firstNumerator},${firstDenominator},${secondNumerator},${secondDenominator}"></span>`;
+        return result(`어느 학교 학생 ${total}명 중 ${firstNumerator}/${firstDenominator}은 체험 학습 A를 선택했습니다. 남은 학생의 ${secondNumerator}/${secondDenominator}은 체험 학습 B를 선택했습니다. 두 체험 학습을 선택하지 않은 학생은 몇 명인지 구하세요.${evidence}`, answer, `A를 선택한 학생은 ${total} × ${firstNumerator}/${firstDenominator} = ${first}명입니다. 남은 ${afterFirst}명 중 B를 선택하지 않은 비율은 ${secondDenominator - secondNumerator}/${secondDenominator}이므로 ${afterFirst} × ${secondDenominator - secondNumerator}/${secondDenominator} = ${answer}명입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const denominator = pick(rng, [24, 32, 36, 48, 60, 64, 72].slice(0, 4 + level));
+        let numerator = int(rng, 2 + level, denominator - 1);
+        while (gcd(numerator, denominator) !== 1) numerator = int(rng, 2 + level, denominator - 1);
+        const answer = 86400 * numerator / denominator;
+        const evidence = `<span hidden data-fmul-kind="day-seconds" data-values="${numerator},${denominator}"></span>`;
+        return result(`하루의 ${numerator}/${denominator}만큼인 시간은 몇 초인지 구하세요.${evidence}`, answer, `하루는 24 × 60 × 60 = 86400초입니다. 따라서 86400 × ${numerator}/${denominator} = ${answer.toLocaleString()}초입니다.`);
+      }
+      let numerator = int(rng, 2, 5 + level);
+      let denominator = int(rng, numerator + 2, 9 + level * 3);
+      const divisor = gcd(numerator, denominator);
+      numerator /= divisor;
+      denominator /= divisor;
+      const limit = 60 + level * 30;
+      const candidates = Array.from({ length: limit }, (_, index) => index + 1).filter(value => {
+        const productNumerator = value * numerator;
+        return productNumerator % denominator === 0 && productNumerator / denominator >= 10 && productNumerator / denominator <= 99;
+      });
+      const answer = candidates.length;
+      const evidence = `<span hidden data-fmul-kind="natural-count" data-values="${numerator},${denominator},${limit}"></span>`;
+      return result(`1 이상 ${limit} 이하인 자연수 n 중에서 n × ${numerator}/${denominator}이 두 자리 자연수가 되는 n은 모두 몇 개인지 구하세요.${evidence}`, answer, `n은 ${denominator}의 배수여야 합니다. 이 가운데 n × ${numerator}/${denominator}이 10 이상 99 이하인 수는 ${candidates.join(", ")}의 ${answer}개입니다.`);
+    },
+    fractionProductAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const start = int(rng, 4, 7 + level);
+        const step = pick(rng, Array.from({ length: start - 2 }, (_, index) => index + 2).filter(value => gcd(value, start) === 1));
+        const count = int(rng, 7 + level * 3, 11 + level * 4);
+        const end = start + step * (count - 1);
+        const answer = fraction(end + step, start);
+        const evidence = `<span hidden data-fmul-kind="telescoping" data-values="${start},${step},${count}"></span>`;
+        return result(`다음 ${count}개 분수의 곱을 구하세요.<div class="sequence">(1+${step}/${start}) × (1+${step}/${start + step}) × (1+${step}/${start + step * 2}) × … × (1+${step}/${end})</div>${evidence}`, answer, `각 항은 차례로 ${start + step}/${start}, ${start + step * 2}/${start + step}, …, ${end + step}/${end}입니다. 이웃한 분자와 분모가 약분되어 ${end + step}/${start} = ${answer}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const height = int(rng, 6 + level * 2, 12 + level * 4);
+        const denominator = int(rng, 3, 5 + level);
+        const numerator = pick(rng, Array.from({ length: denominator - 1 }, (_, index) => index + 1).filter(value => gcd(value, denominator) === 1));
+        const reboundCount = 2 + level;
+        let total = rationalValue(height);
+        let power = rationalValue(height * numerator, denominator);
+        for (let bounce = 1; bounce <= reboundCount; bounce += 1) {
+          total = rationalOperation(total, power, "+");
+          if (bounce < reboundCount) total = rationalOperation(total, power, "+");
+          power = rationalOperation(power, rationalValue(numerator, denominator), "×");
+        }
+        const answer = mixedFraction(total.numerator, total.denominator);
+        const evidence = `<span hidden data-fmul-kind="bouncing" data-values="${height},${numerator},${denominator},${reboundCount}"></span>`;
+        return result(`${height}m 높이에서 공을 떨어뜨렸습니다. 공은 바닥에 닿을 때마다 직전 높이의 ${numerator}/${denominator}만큼 튀어 오릅니다. ${reboundCount}번째로 튀어 올라 최고점에 도착할 때까지 공이 움직인 거리를 구하세요.${evidence}`, answer, `처음 ${height}m를 내려온 뒤, 마지막을 제외한 각 튀어 오름은 올라갔다 내려오므로 두 번 더합니다. ${height} + 2 × (${fraction(height * numerator, denominator)} + ${reboundCount > 2 ? `${fraction(height * numerator ** 2, denominator ** 2)}${reboundCount > 3 ? ` + ${fraction(height * numerator ** 3, denominator ** 3)}` : ""}` : "0"}) + ${fraction(height * numerator ** reboundCount, denominator ** reboundCount)} = ${answer}m입니다.`);
+      }
+      const lastDivisor = int(rng, 7 + level * 3, 11 + level * 4);
+      const factor = int(rng, 8 + level * 3, 18 + level * 5);
+      const total = lastDivisor * factor;
+      const answer = factor;
+      const evidence = `<span hidden data-fmul-kind="remaining-product" data-values="${total},${lastDivisor}"></span>`;
+      return result(`${total}에서 처음에는 전체의 1/2을 덜어 내고, 다음에는 남은 양의 1/3, 그다음에는 다시 남은 양의 1/4을 덜어 냅니다. 이와 같이 남은 양의 1/5, 1/6, …, 1/${lastDivisor}을 차례로 덜어 낸 뒤 남은 수를 구하세요.${evidence}`, answer, `남는 비율은 1/2 × 2/3 × 3/4 × … × ${lastDivisor - 1}/${lastDivisor}입니다. 모두 약분하면 1/${lastDivisor}이므로 ${total} × 1/${lastDivisor} = ${answer}입니다.`);
+    },
+    fractionMultiplicationEquation({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const firstDenominator = int(rng, 3, 5 + level);
+        const firstNumerator = pick(rng, Array.from({ length: firstDenominator - 1 }, (_, index) => index + 1).filter(value => gcd(value, firstDenominator) === 1));
+        const secondDenominator = int(rng, 3, 6 + level);
+        const secondNumerator = pick(rng, Array.from({ length: secondDenominator - 1 }, (_, index) => index + 1).filter(value => gcd(value, secondDenominator) === 1));
+        const total = firstDenominator * secondDenominator * int(rng, 7 + level * 3, 14 + level * 5);
+        const afterFirst = total * (firstDenominator - firstNumerator) / firstDenominator;
+        const remaining = afterFirst * (secondDenominator - secondNumerator) / secondDenominator;
+        const evidence = `<span hidden data-fmul-kind="reverse-total" data-values="${remaining},${firstNumerator},${firstDenominator},${secondNumerator},${secondDenominator}"></span>`;
+        return result(`어떤 수의 ${firstNumerator}/${firstDenominator}을 덜어 내고, 남은 수의 ${secondNumerator}/${secondDenominator}을 다시 덜어 냈더니 ${remaining}이 남았습니다. 처음 수를 구하세요.${evidence}`, total, `처음 수를 □라 하면 □ × ${firstDenominator - firstNumerator}/${firstDenominator} × ${secondDenominator - secondNumerator}/${secondDenominator} = ${remaining}입니다. 거꾸로 계산하면 □ = ${remaining} × ${secondDenominator}/${secondDenominator - secondNumerator} × ${firstDenominator}/${firstDenominator - firstNumerator} = ${total}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const firstRatio = int(rng, 5 + level, 11 + level * 2);
+        const secondRatio = pick(rng, Array.from({ length: firstRatio - 3 }, (_, index) => index + 3).filter(value => gcd(value, firstRatio) === 1));
+        const unit = int(rng, 120 + level * 80, 260 + level * 140);
+        const first = firstRatio * unit;
+        const second = secondRatio * unit;
+        const total = first + second;
+        const evidence = `<span hidden data-fmul-kind="ratio-total" data-values="${total},${firstRatio},${secondRatio}"></span>`;
+        return result(`두 사람이 가진 돈의 합은 ${total.toLocaleString()}원입니다. 첫째가 가진 돈의 1/${firstRatio}과 둘째가 가진 돈의 1/${secondRatio}이 같을 때, 두 사람이 가진 돈을 차례로 구하세요.${evidence}`, `${first}, ${second}`, `공통으로 같은 금액을 1묶음이라 보면 두 사람의 돈은 ${firstRatio}:${secondRatio}입니다. 한 묶음은 ${total} ÷ (${firstRatio}+${secondRatio}) = ${unit}원이므로 ${first.toLocaleString()}원, ${second.toLocaleString()}원입니다.`);
+      }
+      const firstDenominator = pick(rng, [5, 7, 8]);
+      const secondDenominator = pick(rng, [6, 9, 10].filter(value => value !== firstDenominator));
+      const rawFirstNumerator = firstDenominator - 1;
+      const rawSecondNumerator = secondDenominator - 2;
+      const firstDivisor = gcd(rawFirstNumerator, firstDenominator);
+      const secondDivisor = gcd(rawSecondNumerator, secondDenominator);
+      const firstNumerator = rawFirstNumerator / firstDivisor;
+      const reducedFirstDenominator = firstDenominator / firstDivisor;
+      const secondNumerator = rawSecondNumerator / secondDivisor;
+      const reducedSecondDenominator = secondDenominator / secondDivisor;
+      const common = lcm(reducedFirstDenominator, reducedSecondDenominator);
+      const total = common * int(rng, 4 + level * 2, 9 + level * 3);
+      const firstLength = total * firstNumerator / reducedFirstDenominator;
+      const secondLength = total * secondNumerator / reducedSecondDenominator;
+      if (firstLength === secondLength) return generators.fractionMultiplicationEquation({ rng, level, variant });
+      const difference = Math.abs(firstLength - secondLength);
+      const evidence = `<span hidden data-fmul-kind="part-difference" data-values="${difference},${firstNumerator},${reducedFirstDenominator},${secondNumerator},${reducedSecondDenominator}"></span>`;
+      return result(`길이가 서로 다른 두 막대를 같은 길이의 길에 놓았습니다. 긴 막대는 길 전체의 ${Math.max(firstLength, secondLength) === firstLength ? `${firstNumerator}/${reducedFirstDenominator}` : `${secondNumerator}/${reducedSecondDenominator}`}, 짧은 막대는 길 전체의 ${Math.max(firstLength, secondLength) === firstLength ? `${secondNumerator}/${reducedSecondDenominator}` : `${firstNumerator}/${reducedFirstDenominator}`}이고 두 막대의 길이 차는 ${difference}cm입니다. 길 전체는 몇 cm인지 구하세요.${evidence}`, total, `길 전체를 □cm라 하면 두 분수만큼의 차가 ${difference}cm입니다. 따라서 □ = ${difference} ÷ (두 분수의 차) = ${total}cm입니다.`);
+    },
+    fractionMultiplicationApplication({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const sets = [[6, 8, 12], [8, 10, 20], [9, 12, 18], [10, 12, 15]];
+        const denominators = pick(rng, sets.slice(0, 2 + level));
+        const numerator = pick(rng, [5, 7, 11].filter(value => denominators.every(denominator => gcd(value, denominator) === 1)));
+        const common = lcmMany(denominators);
+        const answer = mixedFraction(common, numerator);
+        const evidence = `<span hidden data-fmul-kind="least-multiplier" data-values="${numerator},${denominators.join(",")}"></span>`;
+        return result(`다음 세 분수 중 어느 것에 곱해도 자연수가 되게 하는 양의 분수 중 가장 작은 분수를 구하세요.<div class="sequence">${denominators.map(denominator => `${numerator}/${denominator}`).join(", ")}</div>${evidence}`, answer, `곱하는 분수를 □라 하면 □ × ${numerator}의 값은 ${denominators.join(", ")}의 공배수여야 합니다. 최소공배수는 ${common}이므로 가장 작은 □는 ${common}/${numerator} = ${answer}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const firstDenominator = int(rng, 5, 7 + level);
+        const secondDenominator = int(rng, 6, 9 + level);
+        const firstChoices = Array.from({ length: firstDenominator - 1 }, (_, index) => index + 1).filter(value => gcd(value, firstDenominator) === 1);
+        const secondChoices = Array.from({ length: secondDenominator - 1 }, (_, index) => index + 1).filter(value => gcd(value, secondDenominator) === 1);
+        const selectedFirst = pick(rng, firstChoices);
+        const selectedSecond = pick(rng, secondChoices);
+        const target = rationalValue(selectedFirst * selectedSecond, firstDenominator * secondDenominator);
+        const maxNumerator = 8 + level * 2;
+        const pairs = [];
+        for (let a = 1; a <= maxNumerator; a += 1) for (let b = 1; b <= maxNumerator; b += 1) {
+          if (gcd(a, firstDenominator) !== 1 || gcd(b, secondDenominator) !== 1) continue;
+          const product = rationalValue(a * b, firstDenominator * secondDenominator);
+          if (product.numerator === target.numerator && product.denominator === target.denominator) pairs.push([a, b]);
+        }
+        const evidence = `<span hidden data-fmul-kind="pair-count" data-values="${firstDenominator},${secondDenominator},${target.numerator},${target.denominator},${maxNumerator}"></span>`;
+        return result(`1 이상 ${maxNumerator} 이하인 자연수 A, B에 대하여 A/${firstDenominator}과 B/${secondDenominator}은 각각 기약분수입니다. A/${firstDenominator} × B/${secondDenominator} = ${target.numerator}/${target.denominator}을 만족하는 순서쌍 (A, B)는 모두 몇 개인지 구하세요.${evidence}`, pairs.length, `A와 B의 곱 조건과 각각의 최대공약수 조건을 함께 확인하면 ${pairs.map(pair => `(${pair.join(", ")})`).join(", ") || "해당 없음"}이므로 모두 ${pairs.length}개입니다.`);
+      }
+      const digits = [1, 2, 3, 4, 5, 6 + level];
+      const chosen = shuffle(rng, digits);
+      const target = rationalValue(chosen[0] * chosen[3] * chosen[4], chosen[1] * chosen[2] * chosen[5]);
+      const arrangements = [];
+      const visit = (used, remaining) => {
+        if (!remaining.length) {
+          const value = rationalValue(used[0] * used[3] * used[4], used[1] * used[2] * used[5]);
+          if (value.numerator === target.numerator && value.denominator === target.denominator) arrangements.push(used);
+          return;
+        }
+        remaining.forEach((value, index) => visit([...used, value], [...remaining.slice(0, index), ...remaining.slice(index + 1)]));
+      };
+      visit([], digits);
+      const evidence = `<span hidden data-fmul-kind="digit-arrangements" data-values="${digits.join(",")}" data-target="${target.numerator},${target.denominator}"></span>`;
+      return result(`서로 다른 여섯 칸에 ${digits.join(", ")}을 한 번씩 넣습니다. (가/나) ÷ (다/라) × (마/바) = ${target.numerator}/${target.denominator}이 되게 하는 (가, 나, 다, 라, 마, 바)의 배열은 모두 몇 가지인지 구하세요.${evidence}`, arrangements.length, `나눗셈을 곱셈으로 바꾸면 (가 × 라 × 마)/(나 × 다 × 바)입니다. 여섯 수를 한 번씩 넣어 약분한 값이 ${target.numerator}/${target.denominator}인 배열을 모두 확인하면 ${arrangements.length}가지입니다.`);
+    },
     decimalMultiply({ rng, level }) {
       const a = int(rng, 12, 79) / 10;
       const b = level ? int(rng, 12, 49) / 10 : int(rng, 2, 9);
