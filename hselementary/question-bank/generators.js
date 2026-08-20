@@ -891,6 +891,72 @@
     return measureSvg({ kind: "moving-point-area", values: [base, height, numerator, denominator, speed], expected, aria: "평행사변형의 밑변을 따라 움직이는 점과 색칠한 삼각형", body });
   };
 
+  const triangleSidesSvg = (sides, mark = "") => {
+    const [base, leftSide, rightSide] = sides;
+    const rawX = (leftSide ** 2 + base ** 2 - rightSide ** 2) / (2 * base);
+    const rawY = Math.sqrt(Math.max(1, leftSide ** 2 - rawX ** 2));
+    const scale = Math.min(150 / base, 92 / rawY);
+    const ax = 42;
+    const ay = 136;
+    const bx = ax + base * scale;
+    const by = ay;
+    const cx = ax + rawX * scale;
+    const cy = ay - rawY * scale;
+    return `<svg class="geometry-diagram triangle-condition" viewBox="0 0 240 166" data-triangle-sides="${sides.join(",")}" aria-label="세 변이 표시된 삼각형"><polygon class="shape-fill" points="${ax},${ay} ${bx.toFixed(1)},${by} ${cx.toFixed(1)},${cy.toFixed(1)}"/><text x="${((ax + bx) / 2).toFixed(1)}" y="${ay + 15}">${base}cm</text><text x="${((ax + cx) / 2 - 9).toFixed(1)}" y="${((ay + cy) / 2).toFixed(1)}">${leftSide}cm</text><text x="${((bx + cx) / 2 + 9).toFixed(1)}" y="${((by + cy) / 2).toFixed(1)}">${rightSide}cm</text>${mark ? `<text x="${cx.toFixed(1)}" y="${(cy - 12).toFixed(1)}">${mark}</text>` : ""}</svg>`;
+  };
+
+  const overlapSquaresSvg = (side, dx, dy) => {
+    const scale = 82 / side;
+    const size = side * scale;
+    const offsetX = dx * scale;
+    const offsetY = dy * scale;
+    return `<svg class="geometry-diagram overlap-squares" viewBox="0 0 240 172" data-square-side="${side}" data-square-offset="${dx},${dy}" aria-label="서로 겹친 합동 정사각형"><rect class="shape-fill" x="44" y="58" width="${size}" height="${size}"/><rect class="highlight-fill" x="${(44 + offsetX).toFixed(1)}" y="${(58 - offsetY).toFixed(1)}" width="${size}" height="${size}"/><text x="85" y="155">한 변 ${side}cm</text><text x="184" y="30">가로 ${dx}cm</text><text x="202" y="48">세로 ${dy}cm 이동</text></svg>`;
+  };
+
+  const coordinateSymmetrySvg = ({ point, image, axis, mode = "line" }) => {
+    const cell = 18;
+    const left = 48;
+    const bottom = 142;
+    const grid = Array.from({ length: 9 }, (_, index) => `<line class="crease" x1="${left + index * cell}" y1="${bottom - 8 * cell}" x2="${left + index * cell}" y2="${bottom}"/><line class="crease" x1="${left}" y1="${bottom - index * cell}" x2="${left + 8 * cell}" y2="${bottom - index * cell}"/><text x="${left + index * cell}" y="${bottom + 12}">${index}</text><text x="${left - 12}" y="${bottom - index * cell}">${index}</text>`).join("");
+    const toPixel = ([x, y]) => [left + x * cell, bottom - y * cell];
+    const [px, py] = toPixel(point);
+    const [qx, qy] = toPixel(image);
+    const axisMarkup = axis === "vertical" ? `<line class="folded" x1="${left + 4 * cell}" y1="${bottom - 8 * cell}" x2="${left + 4 * cell}" y2="${bottom}"/><text x="${left + 4 * cell + 12}" y="12">x=4</text>` : axis === "horizontal" ? `<line class="folded" x1="${left}" y1="${bottom - 4 * cell}" x2="${left + 8 * cell}" y2="${bottom - 4 * cell}"/><text x="208" y="${bottom - 4 * cell - 8}">y=4</text>` : `<line class="folded" x1="${left}" y1="${bottom}" x2="${left + 8 * cell}" y2="${bottom - 8 * cell}"/><text x="202" y="18">y=x</text>`;
+    return `<svg class="geometry-diagram symmetry-grid" viewBox="0 0 240 166" data-symmetry-mode="${mode}" data-symmetry-axis="${axis}" data-symmetry-points="${point.join(",")};${image.join(",")}" aria-label="모눈 위 대칭점"><g>${grid}</g>${axisMarkup}<circle class="highlight-fill" cx="${px}" cy="${py}" r="5"/><text x="${px - 10}" y="${py - 10}">P</text><circle cx="${qx}" cy="${qy}" r="5"/><text x="${qx + 10}" y="${qy - 10}">P′</text></svg>`;
+  };
+
+  const symmetryShapeSvg = kind => {
+    const shapes = {
+      square: `<rect class="shape-fill" x="65" y="28" width="110" height="110"/>`,
+      rectangle: `<rect class="shape-fill" x="38" y="48" width="164" height="78"/>`,
+      hexagon: `<polygon class="shape-fill" points="66,28 174,28 214,83 174,138 66,138 26,83"/>`,
+      trapezoid: `<polygon class="shape-fill" points="76,36 164,36 204,132 36,132"/>`
+    };
+    return `<svg class="geometry-diagram symmetry-shape" viewBox="0 0 240 166" data-symmetry-shape="${kind}" aria-label="대칭축을 찾는 도형">${shapes[kind]}</svg>`;
+  };
+
+  const mirrorRoomSvg = (width, height) => `<svg class="geometry-diagram mirror-room" viewBox="0 0 240 166" data-room-size="${width},${height}" aria-label="거울로 된 직사각형 방"><rect class="shape-fill" x="34" y="26" width="172" height="112"/><line class="folded" x1="34" y1="138" x2="118" y2="54"/><text x="120" y="156">가로 ${width}m</text><text x="218" y="82">${height}m</text><text x="58" y="118">45°</text></svg>`;
+
+  const pointSymmetryGridSvg = ({ point, image, center = [4, 4] }) => {
+    const base = coordinateSymmetrySvg({ point, image, axis: "vertical", mode: "point" });
+    return base.replace(/<line class="folded"[\s\S]*?<\/text>/, "").replace("</svg>", `<circle class="folded" cx="${48 + center[0] * 18}" cy="${142 - center[1] * 18}" r="5"/><text x="${48 + center[0] * 18 + 12}" y="${142 - center[1] * 18 + 12}">O</text></svg>`);
+  };
+
+  const pointOverlapSvg = ({ width, height, dx, dy }) => {
+    const scale = Math.min(92 / width, 68 / height);
+    const w = width * scale;
+    const h = height * scale;
+    return `<svg class="geometry-diagram point-overlap" viewBox="0 0 240 166" data-rect-size="${width},${height}" data-center-offset="${dx},${dy}" aria-label="직사각형과 점대칭 도형의 겹침"><rect class="shape-fill" x="${(120 - w / 2 + dx * scale).toFixed(1)}" y="${(83 - h / 2 + dy * scale).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}"/><rect class="highlight-fill" x="${(120 - w / 2 - dx * scale).toFixed(1)}" y="${(83 - h / 2 - dy * scale).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}"/><circle cx="120" cy="83" r="4"/><text x="132" y="83">O</text></svg>`;
+  };
+
+  const latticeCenterLinesSvg = (width, height) => {
+    const cell = Math.min(150 / width, 100 / height);
+    const left = 120 - width * cell / 2;
+    const top = 82 - height * cell / 2;
+    const grid = Array.from({ length: width + 1 }, (_, index) => `<line class="crease" x1="${(left + index * cell).toFixed(1)}" y1="${top.toFixed(1)}" x2="${(left + index * cell).toFixed(1)}" y2="${(top + height * cell).toFixed(1)}"/>`).join("") + Array.from({ length: height + 1 }, (_, index) => `<line class="crease" x1="${left.toFixed(1)}" y1="${(top + index * cell).toFixed(1)}" x2="${(left + width * cell).toFixed(1)}" y2="${(top + index * cell).toFixed(1)}"/>`).join("");
+    return `<svg class="geometry-diagram lattice-center" viewBox="0 0 240 166" data-lattice-size="${width},${height}" aria-label="중심이 표시된 직사각형 모눈"><rect x="${left.toFixed(1)}" y="${top.toFixed(1)}" width="${(width * cell).toFixed(1)}" height="${(height * cell).toFixed(1)}"/><g>${grid}</g><circle class="folded" cx="120" cy="82" r="5"/><text x="132" y="82">O</text></svg>`;
+  };
+
   const polyominoCases = [
     {
       a: [[1, 0], [0, 1], [1, 1], [2, 1], [1, 2]],
@@ -2611,6 +2677,195 @@
       visit([], digits);
       const evidence = `<span hidden data-fmul-kind="digit-arrangements" data-values="${digits.join(",")}" data-target="${target.numerator},${target.denominator}"></span>`;
       return result(`서로 다른 여섯 칸에 ${digits.join(", ")}을 한 번씩 넣습니다. (가/나) ÷ (다/라) × (마/바) = ${target.numerator}/${target.denominator}이 되게 하는 (가, 나, 다, 라, 마, 바)의 배열은 모두 몇 가지인지 구하세요.${evidence}`, arrangements.length, `나눗셈을 곱셈으로 바꾸면 (가 × 라 × 마)/(나 × 다 × 바)입니다. 여섯 수를 한 번씩 넣어 약분한 값이 ${target.numerator}/${target.denominator}인 배열을 모두 확인하면 ${arrangements.length}가지입니다.`);
+    },
+    triangleConstructionAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const sideA = int(rng, 6 + level, 10 + level * 2);
+        const sideB = int(rng, 5 + level, 9 + level * 2);
+        const evidence = `<span hidden data-congruence-kind="required-condition" data-values="3"></span>`;
+        return result(`삼각형 ABC와 합동인 삼각형을 두 변과 그 끼인각 조건으로 하나만 그리려고 합니다. 변 AB=${sideA}cm, 변 AC=${sideB}cm를 알고 있을 때 더 알아야 하는 조건을 고르세요.${correspondenceTable([["번호", "①", "②", "③", "④"], ["조건", "∠B의 크기", "∠C의 크기", "∠A의 크기", "삼각형의 넓이"]])}${evidence}`, 3, `변 AB와 변 AC 사이에 끼인각은 ∠A입니다. 따라서 두 변과 그 끼인각 조건을 완성하는 것은 ③입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const start = int(rng, 4, 7 + level);
+        const lengths = [start, start + 2, start + 5, start + 8, start + 11, start + 15 + level];
+        const triangles = [];
+        for (let i = 0; i < lengths.length; i += 1) for (let j = i + 1; j < lengths.length; j += 1) for (let k = j + 1; k < lengths.length; k += 1) {
+          if (lengths[i] + lengths[j] > lengths[k]) triangles.push([lengths[i], lengths[j], lengths[k]]);
+        }
+        const evidence = `<span hidden data-congruence-kind="side-combinations" data-values="${lengths.join(",")}"></span>`;
+        return result(`길이가 각각 ${lengths.join("cm, ")}cm인 막대가 한 개씩 있습니다. 이 중 서로 다른 막대 3개를 골라 만들 수 있는 서로 다른 삼각형은 모두 몇 가지인지 구하세요.${triangleSidesSvg(triangles[0] || lengths.slice(0, 3))}${evidence}`, triangles.length, `세 길이를 작은 순서로 a, b, c라 할 때 a+b>c인 조합만 가능합니다. 모든 조합을 확인하면 ${triangles.map(items => `(${items.join(", ")})`).join(", ")}의 ${triangles.length}가지입니다.`);
+      }
+      const start = int(rng, 20, 30 + level * 5);
+      const angles = [start, start + 15, start + 30, start + 50, start + 70];
+      const pairs = [];
+      for (let i = 0; i < angles.length; i += 1) for (let j = i; j < angles.length; j += 1) if (angles[i] + angles[j] < 180) pairs.push([angles[i], angles[j]]);
+      const evidence = `<span hidden data-congruence-kind="angle-pairs" data-values="${angles.join(",")}"></span>`;
+      return result(`길이가 8cm인 한 선분의 양 끝에서 다음 보기의 각을 하나씩 골라 삼각형을 완성합니다. 양 끝의 각이 같아도 될 때 만들 수 있는 서로 다른 삼각형은 모두 몇 가지인지 구하세요.<div class="sequence">${angles.map(angle => `${angle}°`).join(", ")}</div>${evidence}`, pairs.length, `삼각형의 두 각의 합은 180°보다 작아야 합니다. 순서를 바꾼 것은 같은 삼각형으로 보고 중복을 제외하면 ${pairs.length}가지입니다.`);
+    },
+    triangleCongruenceCondition({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const first = int(rng, 7 + level, 12 + level * 2);
+        const second = first + int(rng, 5, 9 + level * 2);
+        const limit = second + first + int(rng, 3, 7);
+        const candidates = Array.from({ length: limit }, (_, index) => index + 1).filter(value => value !== first && value !== second && Math.abs(second - first) < value && value < first + second);
+        const evidence = `<span hidden data-congruence-kind="missing-side" data-values="${first},${second},${limit}"></span>`;
+        return result(`세 변의 길이가 ${first}cm, ${second}cm, □cm인 삼각형이 있습니다. 세 변의 길이가 모두 다르고 □는 ${limit} 이하인 자연수일 때, □에 들어갈 수 있는 수는 모두 몇 개인지 구하세요.${triangleSidesSvg([first, second, candidates[Math.floor(candidates.length / 2)] || second - 1], "□")}${evidence}`, candidates.length, `삼각형이 되려면 ${second - first}<□<${first + second}입니다. 이 범위에서 ${first}, ${second}는 제외해야 하므로 가능한 자연수는 ${candidates.length}개입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const start = int(rng, 5, 8 + level);
+        const sticks = [start, start + 1, start + 4, start + 7, start + 10];
+        const valid = [];
+        for (let i = 0; i < sticks.length; i += 1) for (let j = i + 1; j < sticks.length; j += 1) for (let k = j + 1; k < sticks.length; k += 1) if (sticks[i] + sticks[j] > sticks[k]) valid.push([sticks[i], sticks[j], sticks[k]]);
+        const evidence = `<span hidden data-congruence-kind="stick-triangles" data-values="${sticks.join(",")}"></span>`;
+        return result(`길이가 ${sticks.join("cm, ")}cm인 막대가 한 개씩 있습니다. 막대 3개를 골라 삼각형을 만들 때, 합동이 아닌 서로 다른 삼각형은 모두 몇 가지인지 구하세요.${evidence}`, valid.length, `사용한 세 막대의 길이가 같으면 합동인 삼각형입니다. 세 길이의 합 조건을 만족하는 조합을 세면 ${valid.length}가지입니다.`);
+      }
+      const sides = pick(rng, [6, 8, 10, 12].slice(0, 2 + level));
+      const parts = Array.from({ length: sides - 1 }, (_, index) => index + 2).filter(value => sides % value === 0);
+      const evidence = `<span hidden data-congruence-kind="regular-parts" data-values="${sides}"></span>`;
+      return result(`정${sides}각형의 중심과 모든 꼭짓점을 이어 ${sides}개의 합동인 삼각형으로 나누었습니다. 이 삼각형을 같은 수씩 묶어 서로 합동인 조각으로 다시 나눌 때, 조각의 개수가 될 수 있는 2 이상 ${sides} 이하의 자연수는 모두 몇 개인지 구하세요.${polygonSvg(sides, Array(sides).fill(""))}${evidence}`, parts.length, `조각의 개수는 ${sides}개의 삼각형을 똑같이 나눌 수 있어야 하므로 ${sides}의 약수입니다. 가능한 수는 ${parts.join(", ")}의 ${parts.length}개입니다.`);
+    },
+    congruenceApplicationOne({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const angle = int(rng, 18 + level * 4, 36 + level * 6);
+        const answer = angle * 2;
+        const evidence = `<span hidden data-congruence-kind="folded-angle" data-values="${angle}"></span>`;
+        return result(`정사각형 종이를 점선을 따라 접었습니다. 접기 전 선분과 접은 뒤 대응하는 선분이 점선과 이루는 각이 각각 ${angle}°일 때, 두 선분 사이의 각을 구하세요.${foldSvg(angle)}${evidence}`, answer, `접은 선을 대칭축으로 하므로 두 대응각의 크기는 같습니다. ${angle}+${angle}=${answer}°입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const vertexAngle = pick(rng, [40, 50, 60, 70, 80].slice(0, 3 + level));
+        const answer = (180 - vertexAngle) / 2;
+        const evidence = `<span hidden data-congruence-kind="isosceles-angle" data-values="${vertexAngle}"></span>`;
+        return result(`합동인 두 이등변삼각형을 붙여 다음 도형을 만들었습니다. 한 이등변삼각형의 꼭지각이 ${vertexAngle}°일 때 밑각 한 곳의 크기를 구하세요.${isoscelesSplitSvg(vertexAngle)}${evidence}`, answer, `이등변삼각형의 두 밑각은 같고 세 각의 합은 180°입니다. (180-${vertexAngle})÷2=${answer}°입니다.`);
+      }
+      const side = int(rng, 10 + level * 2, 16 + level * 3);
+      const dx = int(rng, 2, Math.floor(side / 2));
+      const dy = int(rng, 2, Math.floor(side / 2));
+      const answer = (side - dx) * (side - dy);
+      const evidence = `<span hidden data-congruence-kind="square-overlap" data-values="${side},${dx},${dy}"></span>`;
+      return result(`한 변이 ${side}cm인 합동인 두 정사각형을 가로로 ${dx}cm, 세로로 ${dy}cm 어긋나게 겹쳤습니다. 겹친 부분의 넓이를 구하세요.${overlapSquaresSvg(side, dx, dy)}${evidence}`, answer, `겹친 부분은 가로 ${side}-${dx}=${side - dx}cm, 세로 ${side}-${dy}=${side - dy}cm인 직사각형입니다. 넓이는 ${side - dx}×${side - dy}=${answer}cm²입니다.`);
+    },
+    congruenceApplicationTwo({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const count = 5 + level * 2;
+        const eachArea = int(rng, 12 + level * 4, 24 + level * 7);
+        const shaded = int(rng, 2, count - 2);
+        const answer = eachArea * shaded;
+        const evidence = `<span hidden data-congruence-kind="congruent-area" data-values="${count},${eachArea},${shaded}"></span>`;
+        return result(`합동인 삼각형 ${count}개로 만든 도형의 전체 넓이가 ${eachArea * count}cm²입니다. 그중 ${shaded}개를 색칠했을 때 색칠한 부분의 넓이를 구하세요.${triangleFanSvg(count)}${evidence}`, answer, `삼각형 한 개의 넓이는 ${eachArea * count}÷${count}=${eachArea}cm²입니다. 따라서 색칠한 넓이는 ${eachArea}×${shaded}=${answer}cm²입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const side = int(rng, 5 + level, 10 + level * 2);
+        const answer = side * 5;
+        const evidence = `<span hidden data-congruence-kind="equilateral-trapezoid" data-values="${side}"></span>`;
+        const svg = `<svg class="geometry-diagram equilateral-trapezoid" viewBox="0 0 240 160" aria-label="정삼각형으로 만든 사다리꼴"><polygon class="shape-fill" points="76,42 164,42 208,130 32,130"/><line class="crease" x1="76" y1="42" x2="120" y2="130"/><line class="crease" x1="164" y1="42" x2="120" y2="130"/><text x="120" y="146">윗변+아랫변=${side * 3}cm</text></svg>`;
+        return result(`합동인 정삼각형 3개를 이어 붙여 사다리꼴을 만들었습니다. 사다리꼴의 윗변과 아랫변의 길이 합이 ${side * 3}cm일 때 둘레를 구하세요.${svg}${evidence}`, answer, `윗변을 한 변으로 보면 아랫변은 그 2배이므로 정삼각형 한 변은 ${side * 3}÷3=${side}cm입니다. 둘레는 한 변 길이의 5배이므로 ${answer}cm입니다.`);
+      }
+      const count = 5 + level;
+      const base = int(rng, 6 + level * 2, 11 + level * 2);
+      const height = int(rng, 5 + level, 10 + level * 2);
+      const totalArea = count * base * height / 2;
+      const evidence = `<span hidden data-congruence-kind="fan-height" data-values="${count},${base},${totalArea}"></span>`;
+      return result(`밑변의 길이가 ${base}cm인 합동인 삼각형 ${count}개를 부채처럼 이어 붙였습니다. 전체 넓이가 ${totalArea}cm²일 때 삼각형 한 개의 높이를 구하세요.${triangleFanSvg(count)}${evidence}`, height, `삼각형 한 개의 넓이는 ${totalArea}÷${count}=${totalArea / count}cm²입니다. 높이는 ${totalArea / count}×2÷${base}=${height}cm입니다.`);
+    },
+    lineSymmetryAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const axis = pick(rng, ["vertical", "horizontal", "diagonal"].slice(0, 2 + level));
+        let point = [int(rng, 1, 3), int(rng, 1, 7)];
+        while ((axis === "horizontal" && point[1] === 4) || (axis === "diagonal" && point[0] === point[1])) point = [int(rng, 1, 3), int(rng, 1, 7)];
+        const image = axis === "vertical" ? [8 - point[0], point[1]] : axis === "horizontal" ? [point[0], 8 - point[1]] : [point[1], point[0]];
+        const evidence = `<span hidden data-congruence-kind="line-point" data-axis="${axis}" data-values="${point.join(",")}"></span>`;
+        return result(`모눈에서 점 P를 ${axis === "vertical" ? "직선 x=4" : axis === "horizontal" ? "직선 y=4" : "직선 y=x"}에 대하여 선대칭이동한 점 P′의 좌표를 쓰세요.${coordinateSymmetrySvg({ point, image, axis })}${evidence}`, `${image[0]}, ${image[1]}`, `대칭축에서 같은 거리에 있는 반대쪽 점을 찾으면 P′는 (${image[0]}, ${image[1]})입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const angle = int(rng, 18 + level * 3, 38 + level * 5);
+        const answer = angle * 2;
+        const evidence = `<span hidden data-congruence-kind="line-rays" data-values="${angle}"></span>`;
+        return result(`한 반직선을 직선 가에 대하여 선대칭이동했습니다. 원래 반직선과 대칭축이 이루는 각이 ${angle}°일 때 두 반직선 사이의 작은 각을 구하세요.${foldSvg(angle)}${evidence}`, answer, `대칭축 양쪽의 대응각은 모두 ${angle}°이므로 작은 각은 ${angle}×2=${answer}°입니다.`);
+      }
+      const cases = [{ kind: "square", axes: 4, name: "정사각형" }, { kind: "rectangle", axes: 2, name: "정사각형이 아닌 직사각형" }, { kind: "hexagon", axes: 6, name: "정육각형" }, { kind: "trapezoid", axes: 1, name: "등변사다리꼴" }];
+      const selected = pick(rng, cases.slice(0, 2 + level));
+      const evidence = `<span hidden data-congruence-kind="axis-count" data-shape="${selected.kind}" data-values="${selected.axes}"></span>`;
+      return result(`다음 ${selected.name}의 대칭축은 모두 몇 개인지 구하세요.${symmetryShapeSvg(selected.kind)}${evidence}`, selected.axes, `${selected.name}을 정확히 포개는 대칭축을 방향별로 세면 ${selected.axes}개입니다.`);
+    },
+    lineSymmetryApplication({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const rank = int(rng, 18 + level * 18, 45 + level * 20);
+        const first = Math.floor((rank - 1) / 10) + 1;
+        const middle = (rank - 1) % 10;
+        const answer = first * 101 + middle * 10;
+        const evidence = `<span hidden data-congruence-kind="palindrome-rank" data-values="${rank}"></span>`;
+        return result(`세 자리 자연수 중 바로 읽어도 거꾸로 읽어도 같은 수를 작은 수부터 나열했습니다. ${rank}번째 수를 구하세요.${evidence}`, answer, `백의 자리와 일의 자리가 같은 수가 각 백의 자리마다 10개씩 있습니다. ${rank}번째 수의 백의 자리는 ${first}, 십의 자리는 ${middle}이므로 ${answer}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const folds = 2 + level;
+        const width = 12 + level * 4;
+        const height = 8 + level * 4;
+        const cutArea = int(rng, 1, Math.max(1, Math.floor(width * height / 2 ** folds / 3)));
+        const answer = width * height - cutArea * 2 ** folds;
+        const evidence = `<span hidden data-congruence-kind="folded-paper-area" data-values="${width},${height},${folds},${cutArea}"></span>`;
+        return result(`가로 ${width}cm, 세로 ${height}cm인 직사각형 종이를 반씩 ${folds}번 접었습니다. 접힌 종이의 가장자리와 닿지 않는 넓이 ${cutArea}cm²의 조각을 잘라 냈을 때, 종이를 완전히 펼친 뒤 남은 넓이를 구하세요.${evidence}`, answer, `접힌 층은 2^${folds}=${2 ** folds}겹이므로 잘려 나간 전체 넓이는 ${cutArea}×${2 ** folds}=${cutArea * 2 ** folds}cm²입니다. 처음 넓이 ${width * height}cm²에서 빼면 ${answer}cm²입니다.`);
+      }
+      const width = pick(rng, [6, 8, 10, 12].slice(0, 2 + level));
+      const height = pick(rng, [4, 6, 8, 9].filter(value => value !== width).slice(0, 2 + level));
+      const travel = lcm(width, height);
+      const answer = travel / width + travel / height - 2;
+      const evidence = `<span hidden data-congruence-kind="mirror-bounces" data-values="${width},${height}"></span>`;
+      return result(`가로 ${width}m, 세로 ${height}m인 직사각형 방의 네 벽이 거울입니다. 왼쪽 아래 모서리에서 벽과 45°를 이루도록 빛을 쏘아 어느 모서리에 처음 도착할 때까지 진행시켰습니다. 모서리에 도착하기 전까지 벽에 반사된 횟수를 구하세요.${mirrorRoomSvg(width, height)}${evidence}`, answer, `방을 반사시켜 이어 붙이면 빛은 직선으로 갑니다. 가로와 세로 이동거리가 처음 함께 맞는 길이는 최소공배수 ${travel}m이므로 중간 벽을 지나는 횟수는 ${travel / width - 1}+${travel / height - 1}=${answer}번입니다.`);
+    },
+    pointSymmetryAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const point = [int(rng, 1, 3), int(rng, 1, 7)];
+        const image = [8 - point[0], 8 - point[1]];
+        const evidence = `<span hidden data-congruence-kind="point-coordinate" data-values="${point.join(",")},4,4"></span>`;
+        return result(`점 O(4, 4)를 대칭의 중심으로 하여 점 P(${point[0]}, ${point[1]})와 점대칭인 점 P′의 좌표를 쓰세요.${pointSymmetryGridSvg({ point, image })}${evidence}`, `${image[0]}, ${image[1]}`, `O는 PP′의 중점입니다. x좌표와 y좌표의 합이 각각 8이므로 P′는 (${image[0]}, ${image[1]})입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const symbolSets = [["0", "1", "8", "6", "9"], ["0", "1", "2", "5", "8", "6", "9"]];
+        const symbols = symbolSets[Math.min(level, 1)];
+        const answer = symbols.filter(symbol => symbol !== "0").length;
+        const evidence = `<span hidden data-congruence-kind="rotated-codes" data-symbols="${symbols.join(",")}" data-values="${answer}"></span>`;
+        return result(`이 문제에서는 숫자를 180° 돌렸을 때 0→0, 1→1, 2→2, 5→5, 8→8, 6↔9로 읽습니다. ${symbols.join(", ")}만 사용하여 만든 두 자리 수 중 180° 돌려도 처음과 같은 수는 모두 몇 개인지 구하세요.${evidence}`, answer, `십의 자리 숫자를 정하면 일의 자리는 그 숫자를 180° 돌린 숫자로 하나만 정해집니다. 십의 자리에 0은 올 수 없으므로 ${answer}개입니다.`);
+      }
+      const width = int(rng, 10 + level * 2, 16 + level * 3);
+      const height = int(rng, 8 + level, 12 + level * 2);
+      const dx = int(rng, 1, Math.floor(width / 3));
+      const dy = int(rng, 1, Math.floor(height / 3));
+      const answer = (width - 2 * dx) * (height - 2 * dy);
+      const evidence = `<span hidden data-congruence-kind="point-overlap" data-values="${width},${height},${dx},${dy}"></span>`;
+      return result(`가로 ${width}cm, 세로 ${height}cm인 직사각형과 이 직사각형을 점 O에 대하여 점대칭이동한 도형이 겹쳐 있습니다. 두 직사각형의 중심은 O에서 가로 ${dx}cm, 세로 ${dy}cm씩 반대 방향에 있을 때 겹친 부분의 넓이를 구하세요.${pointOverlapSvg({ width, height, dx, dy })}${evidence}`, answer, `두 중심의 가로 차는 ${2 * dx}cm, 세로 차는 ${2 * dy}cm입니다. 겹친 부분은 가로 ${width - 2 * dx}cm, 세로 ${height - 2 * dy}cm이므로 넓이는 ${answer}cm²입니다.`);
+    },
+    pointSymmetryApplication({ rng, level, variant = 0 }) {
+      if (variant % 3 === 0) {
+        const speed = pick(rng, [6, 9, 12, 15, 18].slice(0, 3 + level));
+        const answer = 180 / speed * 60;
+        const evidence = `<span hidden data-congruence-kind="rotation-time" data-values="${speed}"></span>`;
+        const svg = `<svg class="geometry-diagram rotating-triangle" viewBox="0 0 240 166" aria-label="삼각형을 중심 O 둘레로 180도 회전"><polygon class="shape-fill" points="120,82 64,126 92,30"/><polygon class="highlight-fill" points="120,82 176,38 148,134"/><circle cx="120" cy="82" r="4"/><text x="132" y="82">O</text><path class="folded" d="M91 34 A68 68 0 0 1 149 131"/><text x="188" y="82">180°</text></svg>`;
+        return result(`삼각형을 한 점 O를 중심으로 1분에 ${speed}°씩 일정하게 회전시킵니다. 처음 도형과 점대칭인 위치에 처음 도착할 때까지 걸리는 시간은 몇 초인지 구하세요.${svg}${evidence}`, answer, `점대칭인 위치는 180° 회전한 위치입니다. ${180 / speed}분이 걸리므로 초로 바꾸면 ${answer}초입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const top = int(rng, 8 + level, 14 + level * 2);
+        const bottom = top + int(rng, 3, 7 + level);
+        const height = int(rng, 6 + level, 11 + level * 2);
+        const total = (top + bottom) * height;
+        const evidence = `<span hidden data-congruence-kind="point-trapezoids" data-values="${top},${bottom},${total}"></span>`;
+        const svg = `<svg class="geometry-diagram point-trapezoids" viewBox="0 0 240 166" aria-label="점대칭인 두 사다리꼴"><polygon class="shape-fill" points="38,32 112,32 132,78 22,78"/><polygon class="highlight-fill" points="202,134 128,134 108,88 218,88"/><circle cx="120" cy="83" r="4"/><text x="132" y="83">O</text><text x="75" y="20">${top}cm</text><text x="77" y="92">${bottom}cm</text></svg>`;
+        return result(`서로 점대칭인 합동인 사다리꼴 두 개의 넓이 합이 ${total}cm²입니다. 한 사다리꼴의 윗변은 ${top}cm, 아랫변은 ${bottom}cm일 때 높이를 구하세요.${svg}${evidence}`, height, `사다리꼴 두 개의 넓이 합은 (윗변+아랫변)×높이입니다. ${total}÷(${top}+${bottom})=${height}cm입니다.`);
+      }
+      const width = pick(rng, [4, 6, 8].slice(0, 1 + level));
+      const height = pick(rng, [4, 6, 8].slice(0, 1 + level));
+      const directions = new Set();
+      const addDirection = (dx, dy) => {
+        if (!dx && !dy) return;
+        const divisor = gcd(dx, dy);
+        dx /= divisor;
+        dy /= divisor;
+        if (dx < 0 || (dx === 0 && dy < 0)) { dx *= -1; dy *= -1; }
+        directions.add(`${dx},${dy}`);
+      };
+      for (let x = 0; x <= width; x += 1) { addDirection(x - width / 2, -height / 2); addDirection(x - width / 2, height / 2); }
+      for (let y = 1; y < height; y += 1) { addDirection(-width / 2, y - height / 2); addDirection(width / 2, y - height / 2); }
+      const evidence = `<span hidden data-congruence-kind="center-lines" data-values="${width},${height}"></span>`;
+      return result(`가로 ${width}칸, 세로 ${height}칸인 직사각형 모눈의 중심 O를 지나고, 양 끝이 모눈의 테두리 꼭짓점에 놓이는 서로 다른 직선은 모두 몇 개인지 구하세요.${latticeCenterLinesSvg(width, height)}${evidence}`, directions.size, `중심에서 테두리 꼭짓점으로 향하는 방향을 최대공약수로 나누어 같은 기울기를 하나로 묶습니다. 반대 방향도 같은 직선이므로 중복을 제외하면 ${directions.size}개입니다.`);
     },
     decimalMultiply({ rng, level }) {
       const a = int(rng, 12, 79) / 10;
