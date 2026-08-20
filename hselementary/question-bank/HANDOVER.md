@@ -5,10 +5,10 @@
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8765/hselementary/question-bank/`
 - Total types: 174
-- Implemented types: 127
-- Pending types: 47
-- Completed: all six units in grade 4 semester 1, all six units in grade 4 semester 2, and grade 5 semester 1 units 1-4
-- Next unit: grade 5 semester 1, unit 5 (fraction addition and subtraction)
+- Implemented types: 114 (deterministic generator availability check)
+- Pending types: 60
+- Completed: all six units in grade 4 semester 1, all six units in grade 4 semester 2, and grade 5 semester 1 units 1-5
+- Next unit: grade 5 semester 1, unit 6 (polygon perimeter and area)
 
 ## Required Standard
 
@@ -19,6 +19,7 @@
 - Keep formulas readable with structured HTML/SVG and verify that no symbols, fractions, or layouts break on mobile.
 - Validate answers algorithmically and stress-test every generator before marking a type ready.
 - For every graph, draw numeric tick labels and grid lines, use only values that are exact multiples of the stated tick step, state the tick step in the question, reverse-check plotted coordinates against the data, and confirm labels at 375px without clipping or overlap. Run `node graph-audit.js` whenever a graph generator changes.
+- For cube stacks, 3D solids, holes, and folded paper, apply `GEOMETRY_VALIDATION.md`: enumerate all valid answer candidates, require exactly one, and reject views where required height, color, position, direction, or fold evidence is not visible or inferable.
 
 ## Completed Generator Groups
 
@@ -51,13 +52,15 @@ The current ready set has passed regression coverage, including an 8,400-generat
 - Factors-and-multiples regression check: `factors-audit.js`
 - Patterns-and-correspondences regression check: `correspondence-audit.js`
 - Simplifying-and-common-denominators regression check: `fractions-audit.js`
+- Fraction-addition-and-subtraction regression check: `fraction-add-sub-audit.js`
+- Geometry single-answer and visibility gate: `GEOMETRY_VALIDATION.md`
 - Duplicate names must be resolved with semester/unit/type IDs. Do not route generators by display name alone.
 - Source evidence and detailed classification notes are maintained outside the public repository. Query that memory before opening source pages or designing a new type.
 - Never add original textbook pages, extracted source images, or private absolute paths to this repository.
 
 ## Next Steps
 
-1. Query the private source memory for grade 5 semester 1 unit 5 (fraction addition and subtraction).
+1. Query the private source memory for grade 5 semester 1 unit 6 (polygon perimeter and area).
 2. Inspect only the relevant source pages needed to confirm structures and diagrams.
 3. Record the classification decision before implementation.
 4. Add dedicated generators and SVG diagrams for every type in the unit. Keep graph safeguards in graph-audit.js when a later unit uses any chart renderer.

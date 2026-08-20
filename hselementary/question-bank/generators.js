@@ -158,6 +158,10 @@
     return [...values].sort((a, b) => a - b);
   };
   const result = (prompt, answer, solution) => ({ prompt, answer: String(answer), solution });
+  const fractionEquation = (kind, terms, expected, body) => {
+    const termText = terms.map(({ numerator, denominator }) => `${numerator}/${denominator}`).join(";");
+    return `<div class="equation" data-fraction-kind="${kind}" data-fraction-terms="${termText}" data-fraction-expected="${expected.numerator}/${expected.denominator}">${body}</div>`;
+  };
   const correspondenceTable = rows => `<table class="problem-table"><tbody>${rows.map(([label, ...values]) => `<tr><th>${label}</th>${values.map(value => `<td>${value}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
   const splitTotal = (rng, count, total, minValue, maxValue, step = 5) => {
     for (let attempt = 0; attempt < 200; attempt += 1) {
@@ -2799,6 +2803,83 @@
       candidates.sort((left, right) => left.gap * right.scale - right.gap * left.scale || left.denominator - right.denominator);
       const answer = `${numerator}/${candidates[0].denominator}`;
       return result(`분자가 ${numerator}이고 분모가 ${120 + level * 40} 이하인 기약분수 중 ${targetN}/${targetD}에 가장 가까운 분수를 구하세요.`, answer, `${targetN}/${targetD}와의 차는 |${numerator}×${targetD}-${targetN}×d|/(${targetD}×d)로 비교합니다. 조건에 맞는 분모 중 가장 가까운 것은 ${candidates[0].denominator}이므로 답은 ${answer}입니다.`);
+    },
+    fifthFractionAdditionAdvanced({ rng, level, variant = 0 }) {
+      const pairs = level === 2 ? [[8, 15], [9, 14], [10, 21], [12, 25]] : [[6, 8], [8, 12], [9, 12], [10, 15]];
+      const [firstDenominator, secondDenominator] = pick(rng, pairs);
+      const first = rationalValue(firstDenominator * int(rng, 2 + level, 5 + level * 2) + int(rng, 1, firstDenominator - 1), firstDenominator);
+      const second = rationalValue(secondDenominator * int(rng, 1 + level, 4 + level * 2) + int(rng, 1, secondDenominator - 1), secondDenominator);
+      const total = rationalOperation(first, second, "+");
+      if (variant % 3 === 0) {
+        const equation = fractionEquation("add", [first, second], total, `${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)} = □`);
+        return result(`다음 계산을 하세요.${equation}`, mixedFraction(total.numerator, total.denominator), `분모의 최소공배수로 통분한 뒤 분자를 더합니다. ${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)} = ${mixedFraction(total.numerator, total.denominator)}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const equation = fractionEquation("add-blank", [first, second], first, `□ + ${mixedFraction(second.numerator, second.denominator)} = ${mixedFraction(total.numerator, total.denominator)}`);
+        return result(`빈칸에 알맞은 수를 구하세요.${equation}`, mixedFraction(first.numerator, first.denominator), `합에서 알고 있는 수를 빼면 됩니다. ${mixedFraction(total.numerator, total.denominator)} - ${mixedFraction(second.numerator, second.denominator)} = ${mixedFraction(first.numerator, first.denominator)}입니다.`);
+      }
+      const third = rationalValue(int(rng, 1, 3 + level), 2 + int(rng, 2, 5 + level));
+      const answer = rationalOperation(total, third, "+");
+      const equation = fractionEquation("add-word", [first, second, third], answer, `${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)} + ${mixedFraction(third.numerator, third.denominator)} = □`);
+      return result(`길이가 ${mixedFraction(first.numerator, first.denominator)}m인 끈과 ${mixedFraction(second.numerator, second.denominator)}m인 끈을 이어 붙인 뒤 ${mixedFraction(third.numerator, third.denominator)}m를 더 이어 붙였습니다. 전체 길이를 구하세요.${equation}`, mixedFraction(answer.numerator, answer.denominator), `이어 붙인 길이를 모두 더합니다. ${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)} + ${mixedFraction(third.numerator, third.denominator)} = ${mixedFraction(answer.numerator, answer.denominator)}m입니다.`);
+    },
+    fifthFractionSubtractionAdvanced({ rng, level, variant = 0 }) {
+      const pairs = level === 2 ? [[8, 15], [9, 14], [10, 21], [12, 25]] : [[6, 8], [8, 12], [9, 12], [10, 15]];
+      const [firstDenominator, secondDenominator] = pick(rng, pairs);
+      for (let attempt = 0; attempt < 80; attempt += 1) {
+        const first = rationalValue(firstDenominator * int(rng, 4 + level, 8 + level * 2) + int(rng, 1, firstDenominator - 1), firstDenominator);
+        const second = rationalValue(secondDenominator * int(rng, 1 + level, 4 + level) + int(rng, 1, secondDenominator - 1), secondDenominator);
+        const difference = rationalOperation(first, second, "-");
+        if (!difference || difference.numerator <= 0) continue;
+        if (variant % 3 === 0) {
+          const equation = fractionEquation("subtract", [first, second], difference, `${mixedFraction(first.numerator, first.denominator)} - ${mixedFraction(second.numerator, second.denominator)} = □`);
+          return result(`다음 계산을 하세요.${equation}`, mixedFraction(difference.numerator, difference.denominator), `분모의 최소공배수로 통분한 뒤 분자를 뺍니다. ${mixedFraction(first.numerator, first.denominator)} - ${mixedFraction(second.numerator, second.denominator)} = ${mixedFraction(difference.numerator, difference.denominator)}입니다.`);
+        }
+        if (variant % 3 === 1) {
+          const equation = fractionEquation("subtract-blank", [first, second], first, `□ - ${mixedFraction(second.numerator, second.denominator)} = ${mixedFraction(difference.numerator, difference.denominator)}`);
+          return result(`빈칸에 알맞은 수를 구하세요.${equation}`, mixedFraction(first.numerator, first.denominator), `차에 빼는 수를 더하면 처음 수가 됩니다. ${mixedFraction(difference.numerator, difference.denominator)} + ${mixedFraction(second.numerator, second.denominator)} = ${mixedFraction(first.numerator, first.denominator)}입니다.`);
+        }
+        const extra = rationalValue(int(rng, 1, 3 + level), 2 + int(rng, 2, 5 + level));
+        const final = rationalOperation(difference, extra, "-");
+        if (!final || final.numerator <= 0) continue;
+        const equation = fractionEquation("subtract-word", [first, second, extra], final, `${mixedFraction(first.numerator, first.denominator)} - ${mixedFraction(second.numerator, second.denominator)} - ${mixedFraction(extra.numerator, extra.denominator)} = □`);
+        return result(`전체 ${mixedFraction(first.numerator, first.denominator)}L에서 ${mixedFraction(second.numerator, second.denominator)}L를 사용하고, 다시 ${mixedFraction(extra.numerator, extra.denominator)}L를 사용했습니다. 남은 양을 구하세요.${equation}`, mixedFraction(final.numerator, final.denominator), `사용한 양을 차례로 빼면 ${mixedFraction(first.numerator, first.denominator)} - ${mixedFraction(second.numerator, second.denominator)} - ${mixedFraction(extra.numerator, extra.denominator)} = ${mixedFraction(final.numerator, final.denominator)}L입니다.`);
+      }
+      throw new Error("양수인 분수 뺄셈 조건을 만들지 못했습니다.");
+    },
+    fifthFractionEquationAdvanced({ rng, level, variant = 0 }) {
+      const denominator = pick(rng, level === 2 ? [12, 15, 18, 20] : [6, 8, 10, 12]);
+      const first = rationalValue(denominator * int(rng, 2, 5 + level) + int(rng, 1, denominator - 1), denominator);
+      const second = rationalValue(denominator * int(rng, 1, 3 + level) + int(rng, 1, denominator - 1), denominator);
+      const third = rationalValue(denominator * int(rng, 1, 2 + level) + int(rng, 1, denominator - 1), denominator);
+      const answer = rationalOperation(rationalOperation(first, second, "+"), third, "-");
+      if (answer.numerator <= 0) return generators.fifthFractionEquationAdvanced({ rng, level, variant });
+      const equation = fractionEquation("word-equation", [first, second, third], answer, `(${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)}) - ${mixedFraction(third.numerator, third.denominator)} = □`);
+      if (variant % 3 === 0) {
+        return result(`한 통에 ${mixedFraction(first.numerator, first.denominator)}L, 다른 통에 ${mixedFraction(second.numerator, second.denominator)}L의 물이 있습니다. 두 통의 물을 합친 뒤 ${mixedFraction(third.numerator, third.denominator)}L를 덜어 내면 얼마가 남습니까?${equation}`, mixedFraction(answer.numerator, answer.denominator), `먼저 두 통의 물을 더하고 덜어 낸 양을 뺍니다. (${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)}) - ${mixedFraction(third.numerator, third.denominator)} = ${mixedFraction(answer.numerator, answer.denominator)}L입니다.`);
+      }
+      if (variant % 3 === 1) {
+        return result(`첫째 날 ${mixedFraction(first.numerator, first.denominator)}km, 둘째 날 ${mixedFraction(second.numerator, second.denominator)}km를 걸었습니다. 이틀 동안 걸은 거리에서 ${mixedFraction(third.numerator, third.denominator)}km를 제외한 거리를 식으로 나타내어 구하세요.${equation}`, mixedFraction(answer.numerator, answer.denominator), `두 날의 거리를 더한 뒤 제외한 거리를 뺍니다. ${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)} - ${mixedFraction(third.numerator, third.denominator)} = ${mixedFraction(answer.numerator, answer.denominator)}km입니다.`);
+      }
+      const blankEquation = fractionEquation("equation-blank", [first, second, third], answer, `□ + ${mixedFraction(third.numerator, third.denominator)} = ${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)}`);
+      return result(`어떤 양에 ${mixedFraction(third.numerator, third.denominator)}를 더했더니 ${mixedFraction(first.numerator, first.denominator)}와 ${mixedFraction(second.numerator, second.denominator)}를 합한 양과 같았습니다. 처음 양을 구하세요.${blankEquation}`, mixedFraction(answer.numerator, answer.denominator), `처음 양을 □라 하면 □ + ${mixedFraction(third.numerator, third.denominator)} = ${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)}입니다. 합에서 ${mixedFraction(third.numerator, third.denominator)}를 빼면 ${mixedFraction(answer.numerator, answer.denominator)}입니다.`);
+    },
+    unitPartialFractionAdvanced({ rng, level, variant = 0 }) {
+      const pairs = level === 2 ? [[3, 15], [4, 20], [5, 20], [6, 15]] : [[2, 6], [3, 6], [3, 12], [4, 12], [5, 10]];
+      const [firstDenominator, secondDenominator] = pick(rng, pairs);
+      const first = rationalValue(1, firstDenominator);
+      const second = rationalValue(1, secondDenominator);
+      const total = rationalOperation(first, second, "+");
+      if (variant % 3 === 0) {
+        const equation = fractionEquation("unit-add", [first, second], total, `1/${firstDenominator} + 1/${secondDenominator} = □`);
+        return result(`두 단위분수의 합을 구하세요.${equation}`, fraction(total.numerator, total.denominator), `분모의 최소공배수로 통분하면 1/${firstDenominator} + 1/${secondDenominator} = ${fraction(total.numerator, total.denominator)}입니다.`);
+      }
+      if (variant % 3 === 1) {
+        const equation = fractionEquation("unit-blank-right", [total, first], second, `${fraction(total.numerator, total.denominator)} = 1/${firstDenominator} + □`);
+        return result(`빈칸에 알맞은 단위분수를 구하세요.${equation}`, fraction(second.numerator, second.denominator), `전체에서 알고 있는 단위분수를 빼면 됩니다. ${fraction(total.numerator, total.denominator)} - 1/${firstDenominator} = 1/${secondDenominator}입니다.`);
+      }
+      const equation = fractionEquation("unit-blank-left", [total, second], first, `${fraction(total.numerator, total.denominator)} = □ + 1/${secondDenominator}`);
+      return result(`빈칸에 알맞은 단위분수를 구하세요.${equation}`, fraction(first.numerator, first.denominator), `전체에서 1/${secondDenominator}을 빼면 됩니다. ${fraction(total.numerator, total.denominator)} - 1/${secondDenominator} = 1/${firstDenominator}입니다.`);
     }
   };
 
@@ -2913,7 +2994,11 @@
     [type => type.id === "5-1-u4-t1", "equalFractionAdvanced"],
     [type => type.id === "5-1-u4-t2", "irreducibleFractionAdvanced"],
     [type => type.id === "5-1-u4-t3", "commonDenominatorCompareAdvanced"],
-    [type => type.id === "5-1-u4-t4", "conditionalFractionAdvanced"]
+    [type => type.id === "5-1-u4-t4", "conditionalFractionAdvanced"],
+    [type => type.id === "5-1-u5-t1", "fifthFractionAdditionAdvanced"],
+    [type => type.id === "5-1-u5-t2", "fifthFractionSubtractionAdvanced"],
+    [type => type.id === "5-1-u5-t3", "fifthFractionEquationAdvanced"],
+    [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"]
   ];
 
   function generatorKey(typeOrName) {

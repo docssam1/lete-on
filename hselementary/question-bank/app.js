@@ -47,7 +47,7 @@
   }
 
   function currentDifficultyLabel() {
-    return ({ "-1": "쉽게", "0": "같게", "1": "어렵게" })[String(state.difficulty)] || "같게";
+    return ({ "-1": "심화 낮춤", "0": "심화 기준", "1": "심화 올림" })[String(state.difficulty)] || "심화 기준";
   }
 
   function visibleTypes() {
@@ -72,7 +72,7 @@
     const semester = currentSemester();
     const units = semester?.units || [];
     if (!units.some(unit => unit.id === state.unitId)) state.unitId = "";
-    $("unitFilter").innerHTML = `<option value="">전체 단원</option>${units.map(unit => `<option value="${unit.id}" ${unit.id === state.unitId ? "selected" : ""}>${unit.number}. ${escapeHtml(unit.name)}</option>`).join("")}`;
+    $("unitFilter").innerHTML = `<option value="">전체 대단원</option>${units.map(unit => `<option value="${unit.id}" ${unit.id === state.unitId ? "selected" : ""}>${unit.number}. ${escapeHtml(unit.name)}</option>`).join("")}`;
   }
 
   function typeTreeRow(type) {
@@ -82,7 +82,7 @@
     return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
-      '<span class="tree-type-copy"><strong>' + escapeHtml(type.label || type.name) + '</strong><small>심화 기준</small></span>' +
+      '<span class="tree-type-copy"><strong>' + escapeHtml(type.label || type.name) + '</strong><small>' + type.grade + '학년 ' + type.term + '학기 · 심화 문제은행</small></span>' +
       '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "준비 중") + '</span>' +
     '</label>';
   }
@@ -120,7 +120,7 @@
     $("selectedQuestionSummary").textContent = `${selected.length ? state.count : 0}문항`;
     $("generateButton").disabled = selected.length === 0;
     $("selectedTypeList").innerHTML = selected.length ? selected.map(type =>
-      '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(type.label || type.name) + '</b><small>' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · 소단원 ' + type.subunitNumber + '</small></span>' +
+      '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(type.label || type.name) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · 소단원 ' + type.subunitNumber + '</small></span>' +
       '<button type="button" data-remove-type="' + type.id + '" aria-label="' + escapeHtml(type.name) + ' 선택 해제">×</button></div>'
     ).join("") : '<p>왼쪽 교육과정 트리에서 유형을 선택하세요.</p>';
   }
@@ -185,7 +185,7 @@
     $("problemView").innerHTML = chunk(state.questions, 6).map((page, pageIndex) => `<section class="print-page">
       <div class="page-label">문제 ${pageIndex + 1}</div>
       <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item">
-        <header><b>${question.number}</b><span>${escapeHtml(question.type.unitName)} · ${escapeHtml(question.type.name)}</span><em>${escapeHtml(question.difficulty)}</em></header>
+        <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(question.type.name)}</span><em>${escapeHtml(question.difficulty)}</em></header>
         <div class="question-prompt">${question.prompt}</div>
         <div class="answer-line">답</div>
       </article>`).join("")}</div>${watermark()}
@@ -208,7 +208,7 @@
     if (student) localStorage.setItem("hseStudent", student);
     $("worksheetStudent").textContent = student;
     $("worksheetTitle").textContent = state.view === "problem" ? "맞춤 유사문제" : "맞춤 유사문제 정답·풀이";
-    $("worksheetMeta").textContent = `심화 기준 · ${currentDifficultyLabel()} · ${state.questions.length}문항 · ${state.selected.size}개 유형`;
+    $("worksheetMeta").textContent = `심화 문제은행 · ${currentDifficultyLabel()} · ${state.questions.length}문항 · ${state.selected.size}개 유형`;
     $("problemView").hidden = state.view !== "problem";
     $("solutionView").hidden = state.view !== "solution";
     $("problemTab").classList.toggle("is-active", state.view === "problem");
