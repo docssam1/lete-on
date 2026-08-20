@@ -173,6 +173,11 @@ window.BOOK_CATALOG = [
     grade: 'G4–6',
     band: 'G4',
     isbn: 'ISBN 978-89-6435-XXXX-X',
+    // Original passages are private, but the publisher's nine question texts
+    // have not been acquired yet. Reading Town therefore uses the two complete
+    // practice assessments until those licensed questions can be connected.
+    originalPassage: true,
+    originalAssessment: false,
     available: true,
   },
 ];
