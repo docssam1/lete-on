@@ -34,7 +34,7 @@ html,body{font-family:'Pretendard',sans-serif;background:var(--g-bg);color:var(-
   border:1px solid #f0d9a8;color:#8a6520;font-size:12.5px;font-weight:700;line-height:1.6;word-break:keep-all}
 
 /* ── 시험 선택 ── */
-.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tabs{display:none}
 .tab{height:42px;padding:0 18px;border-radius:var(--r-pill);border:1.5px solid var(--g-line);background:#fff;
   font:800 14px Pretendard,sans-serif;color:var(--g-muted);cursor:pointer}
 .tab[aria-selected="true"]{background:var(--g-blue);border-color:var(--g-blue);color:#fff}
@@ -152,7 +152,9 @@ tbody tr:last-child td{border-bottom:0}
   // 회차는 주소로도 지정된다(program 서재에서 바로 들어올 때). 없으면 첫 회차.
   var student = new URLSearchParams(location.search).get('student') || '학생';
   var want = new URLSearchParams(location.search).get('exam');
-  var current = ids.indexOf(want) >= 0 ? want : ids[0];
+  // 답안지는 서재에서 연 해당 회차의 승인본만 보여 준다. 주소에 회차가 없거나
+  // 승인 데이터가 없으면 다른 회차 답안을 대신 열지 않는다.
+  var current = ids.indexOf(want) >= 0 ? want : '';
 
   function esc(s){
     return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
@@ -187,11 +189,6 @@ tbody tr:last-child td{border-bottom:0}
     var exam = DATA[current];
     var qs = exam.questions;
 
-    $('tabs').innerHTML = ids.map(function(id){
-      return '<button class="tab" role="tab" data-id="' + id + '" aria-selected="' +
-        (id === current) + '">' + esc(DATA[id].short || DATA[id].label) + '</button>';
-    }).join('');
-
     $('title').textContent = exam.label + ' · 답안 및 유형별 풀이';
     $('subtitle').textContent = student + ' 학생의 학습용 답안지입니다. 원본 시험지와 대본을 1:1로 대조해 확정했습니다.';
     var noteEl = $('examNote');
@@ -218,20 +215,17 @@ tbody tr:last-child td{border-bottom:0}
     }).join('');
   }
 
-  $('tabs').addEventListener('click', function(e){
-    var t = e.target.closest('.tab');
-    if (!t) return;
-    current = t.dataset.id;
-    history.replaceState(null, '', '?exam=' + current);
-    render();
-  });
   $('printBtn').addEventListener('click', function(){ window.print(); });
   $('videoBtn').addEventListener('click', function(){
     var v = DATA[current] && DATA[current].video;
     if (v) window.open(v, '_blank', 'noopener');
   });
-  if (!ids.length) {
-    $('subtitle').textContent = '정답 데이터를 불러오지 못했습니다.';
+  if (!current) {
+    $('title').textContent = '승인된 답안을 준비하고 있습니다.';
+    $('subtitle').textContent = '서재에서 해당 모의고사의 「정답·분석」을 열어 주세요.';
+    $('answerMeta').hidden = true;
+    document.querySelector('.table-card').hidden = true;
+    $('videoBtn').style.display = 'none';
   } else {
     render();
   }
