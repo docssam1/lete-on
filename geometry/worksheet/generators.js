@@ -1054,7 +1054,13 @@
     const n = levelNum(level);
     const i = normalizeIntensity(intensity);
     if (n <= 3) {
-      const dims = rng.pick([[3, 3, 2], [3, 3, 3], [4, 3, 2]]);
+      // 반듯한 상자라는 읽기 쉬운 구조는 유지하되, 20문항을 만들었을 때
+      // 같은 그림 세 장만 되풀이되지 않도록 방향과 높이를 함께 바꾼다.
+      const dims = rng.pick([
+        [3, 3, 2], [3, 3, 3], [3, 3, 4],
+        [4, 3, 2], [3, 4, 2], [4, 3, 3], [3, 4, 3],
+        [4, 4, 2], [4, 4, 3], [4, 4, 4]
+      ]);
       return { map: fullPrismMap(dims[0], dims[1], dims[2]), width: dims[0], depth: dims[1], kind: "iso" };
     }
     if (i >= 2 && rng.bool(n >= 5 ? 0.35 : 0.45)) {
@@ -1196,7 +1202,9 @@
       const map = cornerStaircase(rng, 4, 4, 4, false);
       return { map, width: 4, depth: 4, height: maxHeightOf(map), shapeKind: "stair" };
     }
-    const dims = n >= 5 ? rng.pick([[4, 4, 4], [5, 4, 4]]) : rng.pick([[3, 3, 3], [4, 3, 3]]);
+    const dims = n >= 5
+      ? rng.pick([[4, 4, 3], [4, 4, 4], [5, 4, 3], [4, 5, 3], [5, 4, 4], [4, 5, 4]])
+      : rng.pick([[3, 3, 2], [3, 3, 3], [3, 3, 4], [4, 3, 2], [3, 4, 2], [4, 3, 3], [3, 4, 3], [4, 4, 2], [4, 4, 3], [4, 4, 4]]);
     return {
       map: fullPrismMap(dims[0], dims[1], dims[2]),
       width: dims[0],
@@ -1285,10 +1293,10 @@
     const i = normalizeIntensity(intensity);
     const tier = n <= 3 ? 0 : n === 4 ? (i === 1 ? 0 : 1) : (i === 1 ? 1 : 2);
     if (tier === 0) {
-      const side = 3;
-      const map = makeEmptyMap(side, side);
-      for (let z = 0; z < side; z += 1) for (let x = 0; x < side; x += 1) map[z][x] = side;
-      return { map, width: side, depth: side, shape: "cube" };
+      const dims = rng.pick([[2, 2, 2], [3, 3, 3], [3, 3, 2], [4, 3, 2], [3, 4, 2], [4, 3, 3]]);
+      const map = fullPrismMap(dims[0], dims[1], dims[2]);
+      const cube = dims[0] === dims[1] && dims[1] === dims[2];
+      return { map, width: dims[0], depth: dims[1], shape: cube ? "cube" : "prism" };
     }
 
     const midShapes = [
@@ -1352,7 +1360,9 @@
         }
       }
     }
-    const shapeText = built.shape === "cube" ? "정육면체 모양으로" : "계단과 돌출이 있는 모양으로";
+    const shapeText = built.shape === "cube"
+      ? "정육면체 모양으로"
+      : built.shape === "prism" ? "직육면체 모양으로" : "계단과 돌출이 있는 모양으로";
     return {
       type: "BW",
       prompt: "검은색과 흰색 쌓기나무를 같은 색의 면이 맞닿지 않게 " + shapeText + " 쌓았습니다. 흰색과 검은색 쌓기나무는 각각 몇 개입니까?",

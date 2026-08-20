@@ -23,6 +23,18 @@ const type = (id, domain, middle, label, options = {}) => ({
   id, domain, middle, label, difficulty: "actual", status: "classified", ...options
 });
 
+// Geometry World의 검산된 학습지 엔진을 그대로 쓰는 유형이다. 필즈 쪽에
+// 비슷한 생성기나 SVG를 다시 만들지 않고, worksheetCode 하나로 수학·그림·정답을
+// 함께 가져온다. worksheetLevel은 이 문제은행에서 "같게"를 만들 때의 기준 단계다.
+const geometryWorksheet = (worksheetCode, worksheetLevel, options = {}) => ({
+  sourceMatched: true,
+  worksheetCode,
+  worksheetLevel,
+  worksheetSource: "지오메트리 공용 문제은행",
+  geometryGame: `worksheet:${worksheetCode}`,
+  ...options
+});
+
 export const TYPES = [
   type("hidden-number-card-conditions", "logic", "조건 추리", "숫자 카드 포함·제외 조건으로 숨은 수 찾기", { generator: "hiddenCardCondition", sourceMatched: true }),
   type("closest-two-digit-card-sum", "number", "수 카드와 식", "두 자리 수 두 개의 합을 목표 수에 가장 가깝게 만들기", { generator: "closestTwoDigitCardSum", sourceMatched: true }),
@@ -194,8 +206,8 @@ export const TYPES = [
   type("symbol-chain-arithmetic", "number", "복면산과 식", "연속된 기호식으로 마지막 값 구하기", { generator: "symbolChainArithmetic", sourceMatched: true }),
   type("shape-matrix-three-features", "pattern", "도형 규칙", "바깥·안쪽 도형과 칠하기의 행렬 규칙", { generator: "shapeMatrixThreeFeatures", sourceMatched: true }),
   type("triangle-position-cycle", "pattern", "도형 규칙", "삼각형 안에서 칠한 위치가 반복되는 규칙", { generator: "trianglePositionCycle", sourceMatched: true }),
-  type("cube-step-sequence", "geometry", "쌓기나무", "단계가 커지는 쌓기나무의 전체 개수", { generator: "cubeStepSequence", sourceMatched: true, geometryGame: "worksheet:TS" }),
-  type("cube-hidden-count-walled", "geometry", "쌓기나무", "벽 모서리에서 보이지 않는 쌓기나무의 개수", { generator: "cubeHiddenCountWalled", sourceMatched: true, geometryGame: "worksheet:IH" }),
+  type("cube-step-sequence", "geometry", "쌓기나무 규칙", "삼각 계단으로 커지는 쌓기나무의 전체 개수", geometryWorksheet("SQ", "L4", { generator: "cubeStepSequence" })),
+  type("cube-hidden-count-walled", "geometry", "숨은 쌓기나무", "벽 모서리에서 보이지 않는 쌓기나무의 개수", geometryWorksheet("IH", "L3", { generator: "cubeHiddenCountWalled" })),
   type("triangle-max-edge-sum", "number", "수 배열과 합", "삼각형 세 변의 합을 같게 만들고 그 합을 가장 크게", { generator: "triangleMaxEdgeSum", sourceMatched: true }),
   type("split-merge-tree", "number", "수 배열과 합", "가르기·모으기 나무의 부모·자식 관계", { generator: "overlappingNumberBonds", sourceMatched: true }),
   type("border-go-stone-difference", "pattern", "도형 규칙", "테두리가 커지는 바둑돌의 흑백 차이", { generator: "borderGoStoneDifference", sourceMatched: true }),
@@ -210,13 +222,21 @@ export const TYPES = [
   type("fold-stack-find", "geometry", "색종이 접기", "겹친 색종이의 가장 밑·위 찾기", { generator: "foldStackFind", sourceMatched: true, textbookSource: "더클래식 1과정 1권 35~36·44~46쪽" }),
   type("fold-stack-order", "geometry", "색종이 접기", "겹친 색종이를 위에서부터 순서대로", { generator: "foldStackOrder", sourceMatched: true, textbookSource: "더클래식 1과정 1권 35~36·44~46쪽" }),
   type("fold-cut-shape-choice", "geometry", "색종이 접기", "접어 자르고 펼친 모양 고르기", { generator: "foldCutShapeChoice", sourceMatched: true, textbookSource: "더클래식 1과정 1권 37~38·47쪽" }),
-  type("cube-count-solid", "geometry", "쌓기나무", "입체를 이루는 쌓기나무 전체 개수", { geometryGame: "count-heights" }),
+  // Geometry worksheet 13유형. 이름이 비슷해도 묻는 정보가 다르면 합치지 않는다.
+  type("cube-top-number-grid", "geometry", "쌓기나무 바탕그림", "위에서 본 바탕그림의 수로 전체 개수와 앞·옆 모양 구하기", geometryWorksheet("TC", "L2")),
+  type("cube-three-views", "geometry", "쌓기나무 바탕그림", "위·앞·옆 모양을 보고 쌓기나무 개수 구하기", geometryWorksheet("VC", "L3")),
+  type("cube-three-view-minmax", "geometry", "쌓기나무 바탕그림", "위·앞·옆 모양으로 가능한 최대·최소 개수 구하기", geometryWorksheet("VM", "L3")),
+  type("cube-missing-view", "geometry", "쌓기나무 바탕그림", "두 방향의 모양을 보고 나머지 방향 그리기", geometryWorksheet("VP", "L3")),
+  type("cube-count-solid", "geometry", "쌓기나무 개수", "입체 그림에서 쌓기나무 전체 개수 세기", geometryWorksheet("IC", "L2")),
   type("cube-different-shape", "geometry", "쌓기나무", "같은 개수로 만든 입체 중 다른 모양", { geometryGame: "find-shape" }),
   type("cube-add-to-match", "geometry", "쌓기나무", "목표 입체까지 더 필요한 쌓기나무", { geometryGame: "copy-build" }),
-  type("cube-fill-box", "geometry", "쌓기나무", "정육면체 상자를 채우는 데 필요한 개수", { generator: "cubeFillBoxWorksheet", sourceMatched: true, geometryGame: "worksheet:CU" }),
-  type("cube-hidden-count", "geometry", "쌓기나무", "보이지 않는 쌓기나무의 개수", { geometryGame: "hidden-count" }),
-  type("cube-three-views", "geometry", "쌓기나무", "앞·옆·위에서 본 쌓기나무", { geometryGame: "three-views", status: "curriculum" }),
-  type("cube-tunnel", "geometry", "쌓기나무", "구멍이 뚫린 쌓기나무의 남은 개수", { geometryGame: "cube-tunnel", status: "curriculum" }),
+  type("cube-fill-rectangular-box", "geometry", "쌓기나무 채우기", "직육면체 상자를 채우는 데 필요한 개수", geometryWorksheet("FB", "L3")),
+  type("cube-fill-box", "geometry", "쌓기나무 채우기", "정육면체를 완성하는 데 필요한 개수", geometryWorksheet("CU", "L3", { generator: "cubeFillBoxWorksheet" })),
+  type("cube-hidden-count", "geometry", "숨은 쌓기나무", "벽 없이 어느 쪽에서도 보이지 않는 쌓기나무의 개수", geometryWorksheet("IN", "L3")),
+  type("cube-painted-faces", "geometry", "쌓기나무 색칠", "겉면을 칠한 뒤 색칠된 면·쌓기나무 개수", geometryWorksheet("PN", "L4")),
+  type("cube-black-white-alternating", "geometry", "쌓기나무 색칠", "같은 색이 맞닿지 않게 쌓은 흰색·검은색 개수", geometryWorksheet("BW", "L3")),
+  type("cube-tunnel", "geometry", "쌓기나무 구멍", "여러 방향으로 구멍을 뚫은 뒤 남은 개수", geometryWorksheet("HL", "L3")),
+  type("cube-pattern-sequence", "geometry", "쌓기나무 규칙", "여러 모양으로 커지는 쌓기나무의 규칙", geometryWorksheet("SQ", "L3")),
   type("shape-transform", "geometry", "도형 움직이기", "도형 돌리기·뒤집기·거울 보기", { status: "curriculum" }),
   type("gakuro", "number", "수 배열과 합", "가쿠로 퍼즐", { status: "curriculum" }),
   type("shortest-path", "geometry", "길과 위치", "최단거리와 길 찾기", { status: "curriculum" }),
@@ -408,12 +428,12 @@ export const CURRICULUM = [
   { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [unit("도형 움직이기",["shape-transform"]),unit("색종이 접기",["fold-hole-count","fold-diagonal-hole-count","fold-diagonal-unfold","fold-cut-piece-count","fold-number-remaining-sum","fold-number-cut-sum-textbook","fold-diagonal-number-sum","fold-target-sum-coloring","fold-stack-find","fold-stack-order","fold-punch-shape-count","fold-cut-shape-choice"]),unit("마방진과 가쿠로 퍼즐",["magic-square","gakuro"]),unit("수 추리와 논리 추리",["grid-number-placement","person-item-logic"])] },
   { id: "book-02", label: "2권", title: "규칙찾기와 매트릭스", units: [unit("매트릭스와 주고받기",["shape-sum-table","equalize-transfer"]),unit("양팔저울",["balance-scale"]),unit("규칙찾기와 수열",["repeat-pattern","number-table-rule"]),unit("약속과 스도쿠",["custom-operation","latin-square"])] },
   { id: "book-03", label: "3권", title: "단위넓이와 복면산", units: [unit("단위넓이와 분수",["unit-area-fraction"]),unit("단위길이와 배수",["unit-length-multiple","rod-length-ratio"]),unit("복면산",["cryptarithm"]),unit("마법카드와 마방진",["magic-card","magic-square"])] },
-  { id: "book-04", label: "4권", title: "도형분할과 쌓기나무", units: [unit("도형 분할과 움직이기",["congruent-partition","shape-transform"]),unit("색종이 접기와 쌓기나무",["fold-hole-count","cube-count-solid","cube-three-views"]),unit("양팔저울과 비교하기",["balance-scale","height-order"]),unit("논리추리와 자리배치",["person-item-logic","grid-number-placement"])] },
+  { id: "book-04", label: "4권", title: "도형분할과 쌓기나무", units: [unit("도형 분할과 움직이기",["congruent-partition","shape-transform"]),unit("색종이 접기와 쌓기나무",["fold-hole-count","cube-top-number-grid","cube-count-solid","cube-three-views","cube-missing-view","cube-pattern-sequence"]),unit("양팔저울과 비교하기",["balance-scale","height-order"]),unit("논리추리와 자리배치",["person-item-logic","grid-number-placement"])] },
   { id: "book-05", label: "5권", title: "곱셈매트릭스와 삼각수", units: [unit("수 배열표와 달력",["number-table-rule","calendar-weekday-sum"]),unit("최단거리와 숫자 카드",["shortest-path","three-digit-card-count"]),unit("곱셈 매트릭스",["multiplication-matrix"]),unit("삼각수와 사각수",["growing-shape-count"])] },
   { id: "book-06", label: "6권", title: "도형의 둘레와 연속수", units: [unit("수직선의 분할과 비",["number-line-distance","ratio-distribution"]),unit("도형의 둘레",["rectilinear-perimeter","polygon-stone-rearrangement"]),unit("연속수의 합",["consecutive-number-addition","odd-even-sum-difference"]),unit("수와 숫자의 개수",["three-digit-card-count"])] },
   { id: "book-07", label: "7권", title: "달력과 우기기", units: [unit("달력과 시계",["calendar-weekday-sum"]),unit("규칙 찾기와 우기기",["argument-logic","repeat-pattern"]),unit("가로수 심기",["tree-planting"]),unit("팔린드롬과 벤다이어그램",["palindrome","venn-count"])] },
   { id: "book-08", label: "8권", title: "매트릭스와 복면산", units: [unit("묶음수와 매트릭스",["shape-sum-table"]),unit("복면산",["cryptarithm"]),unit("합차와 배수문제",["total-difference","unit-length-multiple"]),unit("거꾸로 생각하기",["reverse-thinking"])] },
-  { id: "book-09", label: "9권", title: "도형분할과 논리", units: [unit("도형의 분할과 넓이",["congruent-partition","unit-area-fraction"]),unit("쌓기나무의 개수",["cube-count-solid","cube-hidden-count","cube-fill-box"]),unit("마방진",["magic-square"]),unit("논리 추리",["person-item-logic","chained-number-condition"])] },
+  { id: "book-09", label: "9권", title: "도형분할과 논리", units: [unit("도형의 분할과 넓이",["congruent-partition","unit-area-fraction"]),unit("쌓기나무의 개수",["cube-count-solid","cube-hidden-count-walled","cube-hidden-count","cube-fill-rectangular-box","cube-fill-box","cube-three-view-minmax","cube-painted-faces","cube-black-white-alternating","cube-tunnel"]),unit("마방진",["magic-square"]),unit("논리 추리",["person-item-logic","chained-number-condition"])] },
   { id: "book-10", label: "10권", title: "연속수와 따라잡기", units: [unit("연속수의 합",["consecutive-number-addition","odd-even-sum-difference"]),unit("따라잡기",["catch-up"]),unit("조건에 맞는 수",["two-digit-condition","chained-number-condition"]),unit("숫자 야구게임",["number-baseball"])] }
 ].map((book, index) => ({
   ...book,
