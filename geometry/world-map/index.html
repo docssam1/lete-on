@@ -7,7 +7,7 @@
     <link rel="preload" href="./assets/geometry-intro-poster.webp" as="image" fetchpriority="high" />
     <link rel="preload" href="./assets/geometry-world-gateway.webp" as="image" />
     <link rel="preload" href="./assets/geometry-world-map.webp" as="image" />
-    <link rel="stylesheet" href="./styles.css?v=origami-20260815a" />
+  <link rel="stylesheet" href="./styles.css?v=geometry-village-20260820i" />
     <link rel="stylesheet" href="../shared/pwa.css?v=2" />
     <script src="../shared/viewport-fit.js?v=1"></script>
     <link rel="manifest" href="/geometry/manifest.webmanifest" />
@@ -187,6 +187,14 @@
     </section>
 
     <main class="world" aria-label="GFIELD Geometry World">
+      <section id="world3d" class="world-3d-viewport" aria-label="3D Geometry World" aria-hidden="true">
+        <div id="world3dLoading" class="world-3d-loading" role="status">
+          <strong>GFIELD GEOMETRY WORLD</strong>
+          <span data-i18n="loading3d">3D 도형 마을을 만드는 중…</span>
+          <i></i>
+        </div>
+      </section>
+
       <section class="map-stage" aria-label="Geometry World map">
         <img src="./assets/geometry-world-map.webp" alt="Geometry World 마을 지도" fetchpriority="high" />
 
@@ -216,8 +224,9 @@
         </button>
 
         <div id="walkers" class="walkers" aria-hidden="true"></div>
+      </section>
 
-        <div class="map-toolbar">
+      <div class="map-toolbar">
           <button id="profileButton" class="profile-button" type="button" aria-label="character">
             <span id="profileAvatar" class="character-sprite sprite-0"></span>
           </button>
@@ -233,11 +242,55 @@
             <button type="button" data-lang="ja">日</button>
             <button type="button" data-lang="en">EN</button>
           </div>
-        </div>
+      </div>
 
-        <div id="mapGuide" class="map-guide" aria-live="polite">
-          <strong id="guideName">큐비</strong>
-          <p data-i18n="mapGuide">쌓기나무 성에 새로운 게임이 있어!</p>
+      <div id="mapGuide" class="map-guide" aria-live="polite">
+        <strong id="guideName">큐비</strong>
+        <p data-i18n="mapGuide">쌓기나무 성에 새로운 게임이 있어!</p>
+      </div>
+
+      <div id="mapMoveHint" class="map-move-hint" data-i18n="mapMoveHint">가고 싶은 곳을 눌러 걸어가요</div>
+
+      <div id="worldJoystick" class="world-joystick" aria-label="캐릭터 이동"><span></span></div>
+      <div class="world-camera-controls" aria-label="3D camera controls">
+        <button id="worldCameraMode" type="button" aria-label="카메라 시점 변경" title="카메라 시점 변경">◉</button>
+        <button id="worldZoomIn" type="button" aria-label="카메라 확대">＋</button>
+        <button id="worldZoomOut" type="button" aria-label="카메라 축소">−</button>
+      </div>
+
+      <section id="placePrompt" class="place-prompt" aria-live="polite" hidden>
+        <div>
+          <strong id="placePromptName"></strong>
+          <span id="placePromptDescription"></span>
+        </div>
+        <button id="enterPlace" type="button" data-i18n="enterPlace">들어가기</button>
+      </section>
+
+      <section id="npcPrompt" class="place-prompt npc-prompt" aria-live="polite" hidden>
+        <span id="npcAvatar" class="character-sprite sprite-1" aria-hidden="true"></span>
+        <div>
+          <strong id="npcName"></strong>
+          <span id="npcText"></span>
+        </div>
+        <button id="npcNext" type="button">다음 이야기</button>
+      </section>
+
+      <section id="roadmapModal" class="roadmap-modal" aria-labelledby="roadmapTitle" aria-modal="true" role="dialog" hidden>
+        <div class="roadmap-dialog">
+          <header class="roadmap-header">
+            <div>
+              <p id="roadmapEyebrow">앞으로 열릴 도형 세계</p>
+              <h2 id="roadmapTitle"></h2>
+              <span id="roadmapDescription"></span>
+            </div>
+            <button id="roadmapClose" type="button" aria-label="닫기">×</button>
+          </header>
+          <div id="roadmapProgression" class="roadmap-progression" aria-label="학습 단계"></div>
+          <div id="roadmapStages" class="roadmap-stages"></div>
+          <footer class="roadmap-footer">
+            <span id="roadmapNote">기초부터 중등까지 차례로 확장됩니다.</span>
+            <strong id="roadmapStatus">확장 예정</strong>
+          </footer>
         </div>
       </section>
 
@@ -295,7 +348,8 @@
         </div>
       </section>
     </main>
-    <script type="module" src="./app.js?v=crystal-plaza-20260817a"></script>
+    <script type="module" src="./app.js?v=geometry-village-20260820e"></script>
+  <script type="module" src="./world-3d.js?v=geometry-village-20260820n"></script>
     <script src="../shared/pwa.js?v=3" defer></script>
   </body>
 </html>
