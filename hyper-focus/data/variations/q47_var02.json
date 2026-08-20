@@ -3,7 +3,10 @@
   "baseQuestionId": "q47",
   "variationId": "q47_var02",
   "subType": "reverse_table",
-  "status": "draft",
+  "status": "verified",
+  "presentation": {
+    "mode": "text-only"
+  },
   "source": {
     "problemImage": ""
   },

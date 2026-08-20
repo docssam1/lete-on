@@ -3,7 +3,10 @@
  "baseQuestionId": "q33",
  "variationId": "q33_var01",
  "subType": "rps_stair_difference",
- "status": "draft",
+ "status": "verified",
+ "presentation": {
+  "mode": "text-only"
+ },
  "source": {
     "problemImage": ""
  },
@@ -28,5 +31,6 @@
  },
  "problem": {
   "prompt": "재이와 지용이 가위바위보로 계단 오르기를 합니다. 이기면 2칸 올라가고, 지면 1칸 내려갑니다. 4번 하여 재이가 3번 이기고 1번 졌다면, 재이는 지용보다 몇 계단 위에 있습니까?"
- }
+ },
+ "solutionHint": "재이는 3번 이겨 6칸 올라가고 1번 져 1칸 내려가므로 5칸 올라갑니다. 지용은 1번 이겨 2칸 올라가고 3번 져 3칸 내려가므로 1칸 내려갑니다. 두 사람의 차이는 6칸입니다."
 }
