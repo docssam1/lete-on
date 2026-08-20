@@ -3,7 +3,12 @@
   "baseQuestionId": "q26",
   "variationId": "q26_var02",
   "subType": "matchstick_move",
-  "status": "draft",
+  "status": "rejected",
+  "rejection": {
+    "reason": "canonical_type_drift",
+    "decisionDate": "2026-08-20",
+    "action": "exclude_from_all_question_banks"
+  },
   "source": { "problemImage": "./assets/problems/q26_var02.png" },
   "contentBinding": { "canonicalSource": "./canonical/q26.json", "hfDataTypeId": 26 },
   "machineReadable": { "payloadType": "matchstick_move", "moveCount": 2, "targetEquationValue": 10, "expectedAnswer": 2 },

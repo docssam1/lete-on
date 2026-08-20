@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 410" role="img" aria-labelledby="title desc">
+  <title id="title">자리 조건을 만족하는 세 자리 수 유사문제 1</title>
+  <desc id="desc">백의 자리, 십의 자리, 일의 자리 사이의 관계를 적은 세 조건입니다.</desc>
+  <rect width="760" height="410" rx="24" fill="#fff"/>
+  <text x="380" y="48" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="25" font-weight="800" fill="#20272b">조건을 차례로 읽고 세 자리 수를 완성하세요</text>
+  <g transform="translate(85 92)" font-family="'Noto Sans KR','Malgun Gothic',sans-serif">
+    <rect width="590" height="245" rx="16" fill="#f8fafc" stroke="#9aa8b8" stroke-width="2"/>
+    <circle cx="42" cy="54" r="7" fill="#173657"/><text x="66" y="63" font-size="25" font-weight="750" fill="#283640">백의 자리 숫자는 4입니다.</text>
+    <circle cx="42" cy="122" r="7" fill="#173657"/><text x="66" y="131" font-size="25" font-weight="750" fill="#283640">십의 자리 숫자는 백의 자리보다 2 큽니다.</text>
+    <circle cx="42" cy="190" r="7" fill="#173657"/><text x="66" y="199" font-size="25" font-weight="750" fill="#283640">일의 자리 숫자는 십의 자리보다 4 작습니다.</text>
+  </g>
+  <rect x="230" y="355" width="300" height="36" rx="18" fill="#fff8e8" stroke="#dfc47c"/>
+  <text x="380" y="379" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="16" font-weight="800" fill="#725718">백의 자리부터 하나씩 정하세요.</text>
+</svg>

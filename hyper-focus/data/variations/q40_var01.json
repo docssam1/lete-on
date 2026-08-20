@@ -4,8 +4,21 @@
   "variationId": "q40_var01",
   "subType": "number_code_rule",
   "status": "draft",
-  "source": { "problemImage": "./assets/problems/q40_var01.png" },
-  "contentBinding": { "canonicalSource": "./canonical/q40.json", "hfDataTypeId": 40 },
-  "machineReadable": { "payloadType": "number_code_rule", "ruleFamily": "digit_transform", "expectedAnswer": 14 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 14 }
+  "source": {"problemImage": "./assets/svg/variations/q40_var01.svg"},
+  "contentBinding": {"canonicalSource": "./canonical/q40.json", "hfDataTypeId": 40},
+  "problem": {"prompt": "세 바깥 수와 가운데 수 사이에는 같은 규칙이 있습니다. 같은 규칙을 찾아 빈칸에 알맞은 수를 쓰세요."},
+  "machineReadable": {
+    "payloadType": "number_code_rule",
+    "shapeFamily": "triangle_triplets",
+    "rule": {"formula": "top + left - right = inner", "coefficients": [1, 1, -1]},
+    "examples": [
+      {"outer": [6, 8, 5], "inner": 9},
+      {"outer": [4, 9, 7], "inner": 6},
+      {"outer": [7, 3, 4], "inner": 6}
+    ],
+    "target": {"outer": [5, 6, null], "inner": 7},
+    "solvingModel": {"validSignedSumRuleCount": 1, "expectedAnswer": 4, "formula": "5+6-4=7"}
+  },
+  "answerValidation": {"answerType": "integer", "expectedAnswer": 4},
+  "solutionHint": "위 수와 왼쪽 수를 더한 뒤 오른쪽 수를 빼면 가운데 수가 됩니다. 5+6-□=7이므로 빈칸은 4입니다."
 }

@@ -4,8 +4,30 @@
   "variationId": "q37_var02",
   "subType": "circular_seating",
   "status": "draft",
-  "source": { "problemImage": "./assets/problems/q37_var02.png" },
-  "contentBinding": { "canonicalSource": "./canonical/q37.json", "hfDataTypeId": 37 },
-  "machineReadable": { "payloadType": "circular_seating", "seatCount": 7, "expectedAnswer": 5 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 5 }
+  "source": {"problemImage": "./assets/svg/variations/q37_var02.svg"},
+  "contentBinding": {"canonicalSource": "./canonical/q37.json", "hfDataTypeId": 37},
+  "problem": {"prompt": "시우, 예린, 건우, 수아, 태오 5명이 원탁 가운데를 보고 앉아 있습니다. 그림의 화살표는 각 사람의 왼쪽 방향입니다. 설명을 보고 빈자리에 앉은 사람의 이름을 쓰세요."},
+  "machineReadable": {
+    "payloadType": "circular_seating",
+    "participants": ["시우", "예린", "건우", "수아", "태오"],
+    "anchorPerson": "시우",
+    "seatOrder": ["top", "right_top", "right_bottom", "left_bottom", "left_top"],
+    "leftDirection": "clockwise_when_viewed_from_above",
+    "conditions": [
+      "시우는 예린의 옆에 앉아 있습니다.",
+      "예린은 건우의 한 사람 건너 왼쪽에 앉아 있습니다.",
+      "수아는 태오의 바로 왼쪽 옆에 앉아 있습니다."
+    ],
+    "relations": [
+      {"type": "adjacent", "personA": "시우", "personB": "예린"},
+      {"type": "left_steps", "person": "예린", "fromPerson": "건우", "steps": 2},
+      {"type": "left_steps", "person": "수아", "fromPerson": "태오", "steps": 1}
+    ],
+    "solvingModel": {
+      "validSeatingCount": 1,
+      "expectedPositionMap": {"left_top": "건우", "right_top": "예린", "left_bottom": "수아", "right_bottom": "태오"}
+    }
+  },
+  "answerValidation": {"answerType": "circular_position_map", "expectedAnswer": {"left_top": "건우", "right_top": "예린", "left_bottom": "수아", "right_bottom": "태오"}},
+  "solutionHint": "시우를 위에 고정합니다. 화살표 방향으로 예린, 태오, 수아, 건우가 차례로 앉습니다. 왼쪽 위는 건우, 오른쪽 위는 예린, 왼쪽 아래는 수아, 오른쪽 아래는 태오입니다."
 }

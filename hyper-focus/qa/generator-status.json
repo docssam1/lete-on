@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "hf-generator-status-v1",
+  "lastVerified": "2026-08-20",
+  "policy": {
+    "preserveExistingCanonicalAndVariations": true,
+    "doNotRebuildViewerReadyTypes": true,
+    "publishOnlyViewerReadyProblems": true,
+    "officialExamRequiresSeparateApprovedBlueprint": true
+  },
+  "dynamicGenerators": {
+    "status": "verified-frozen",
+    "typeIds": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "questionTypeCount": 9,
+    "changeRule": "회귀 검증 실패 또는 사용자 변경 지시가 있을 때만 수정"
+  },
+  "variationBank": {
+    "typeRange": [10, 54],
+    "questionTypeCount": 45,
+    "canonicalCount": 45,
+    "variationCount": 90,
+    "answerFieldsPresentTypes": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54],
+    "viewerReadyTypes": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 25, 27, 28, 29, 30, 31, 32, 35, 36, 37, 38, 39, 40, 45, 51, 53],
+    "viewerReadyVariationCount": 56,
+    "rejectedTypes": [22, 23, 24, 26],
+    "rejectedVariationIds": ["q22_var01", "q22_var02", "q23_var01", "q23_var02", "q24_var01", "q24_var02", "q26_var01", "q26_var02"],
+    "rejectedVariationCount": 8,
+    "viewerPendingTypes": [33, 34, 41, 42, 43, 44, 46, 47, 48, 49, 50, 52, 54],
+    "viewerPendingVariationCount": 26,
+    "viewerUnavailableTypes": [22, 23, 24, 26, 33, 34, 41, 42, 43, 44, 46, 47, 48, 49, 50, 52, 54],
+    "viewerReadyRule": "rejected가 아니며 문제 문장, 존재하는 그림 자산, 정답, 풀이가 모두 있는 variation만 노출"
+  }
+}

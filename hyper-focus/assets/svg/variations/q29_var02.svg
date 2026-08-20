@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">가로 세로 증가 규칙 유사문제 2</title>
+  <desc id="desc">원본과 같은 계단형 네모 칸에 6, 10, 14, 23, 24, 32, 37, 49와 세 물음표가 놓여 있습니다.</desc>
+  <rect width="760" height="430" rx="24" fill="#fff"/>
+  <text x="380" y="42" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#20272b">가로 규칙과 세로 규칙을 모두 찾아보세요</text>
+  <text x="380" y="70" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="700" fill="#59636a">위쪽 줄의 왼쪽, 오른쪽, 아래쪽 물음표 순서로 답을 쓰세요.</text>
+  <g transform="translate(190 99)" font-family="Arial,'Noto Sans KR',sans-serif" font-size="25" font-weight="800" text-anchor="middle" dominant-baseline="middle" fill="#263238" stroke="#68747d" stroke-width="2">
+    <g><rect x="0" y="0" width="70" height="58" fill="#fff"/><text x="35" y="31" stroke="none">6</text></g>
+    <g><rect x="70" y="0" width="70" height="58" fill="#fff"/><text x="105" y="31" stroke="none">10</text></g>
+    <g><rect x="140" y="0" width="70" height="58" fill="#fff"/><text x="175" y="31" stroke="none">14</text></g>
+    <g><rect x="140" y="58" width="70" height="58" fill="#fff"/><text x="175" y="89" stroke="none">23</text></g>
+    <g><rect x="0" y="116" width="70" height="58" fill="#fff"/><text x="35" y="147" stroke="none">24</text></g>
+    <g><rect x="70" y="116" width="70" height="58" fill="#fff8e8"/><text x="105" y="147" stroke="none">?</text></g>
+    <g><rect x="140" y="116" width="70" height="58" fill="#fff"/><text x="175" y="147" stroke="none">32</text></g>
+    <g><rect x="210" y="116" width="70" height="58" fill="#fff8e8"/><text x="245" y="147" stroke="none">?</text></g>
+    <g><rect x="70" y="174" width="70" height="58" fill="#fff"/><text x="105" y="205" stroke="none">37</text></g>
+    <g><rect x="210" y="174" width="70" height="58" fill="#fff8e8"/><text x="245" y="205" stroke="none">?</text></g>
+    <g><rect x="280" y="174" width="70" height="58" fill="#fff"/><text x="315" y="205" stroke="none">49</text></g>
+  </g>
+  <rect x="245" y="374" width="270" height="28" rx="14" fill="#f0f3f5"/>
+  <text x="380" y="394" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#4d555a">이어진 가로 칸과 세로 칸을 따로 살펴보세요.</text>
+</svg>

@@ -511,7 +511,9 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
       <div class="input-group"><label>학부모 연락처</label><input type="tel" id="parentPhone" placeholder="010-0000-0000"><small style="display:block;margin-top:6px;font-size:.72rem;color:rgba(255,255,255,.4);letter-spacing:.02em;line-height:1.4;">이름과 접속코드는 자동으로 입력되어 있습니다. 전화번호를 기준으로 저장됩니다.</small></div>
       <div class="input-group"><label>승인 번호</label><input type="password" id="authCode" placeholder="승인번호를 입력하세요"></div>
       <button class="btn-primary" onclick="checkAuth()">약점 유형 진단하기 →</button>
-      <a href="./mock/" class="btn-primary" style="background:var(--navy);color:#fff;display:flex;justify-content:center;align-items:center;text-decoration:none;margin-top:12px;border:1px solid var(--gold);">프리미어 진단 모의고사 →</a>
+      <a href="./mock/?exam=spatial-generator-review" class="btn-primary" style="background:var(--navy);color:#fff;display:flex;justify-content:center;align-items:center;text-decoration:none;margin-top:12px;border:1px solid var(--gold);">공간지각 생성기 검수 세트 →</a>
+      <a href="./mock/?exam=variation-bank-review" class="btn-primary" style="background:#fff;color:var(--navy);display:flex;justify-content:center;align-items:center;text-decoration:none;margin-top:8px;border:1px solid var(--navy);">기존 유사문제 문제은행 검수 →</a>
+      <a href="./review.html?mode=variation" class="btn-primary" style="background:#fff;color:var(--navy);display:flex;justify-content:center;align-items:center;text-decoration:none;margin-top:8px;border:1px dashed var(--navy);">원본 비교 눈 검수표 →</a>
       <a href="https://open.kakao.com/me/gfield" target="_blank" class="btn-primary" style="background:#FEE500;color:#3C1E1E;display:flex;justify-content:center;align-items:center;gap:8px;text-decoration:none;margin-top:12px;border:1px solid #FEE500;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-5.523 0-10 3.5-10 7.828 0 2.748 1.76 5.166 4.417 6.44-.22.842-.796 3.016-.814 3.125-.025.15.05.228.163.155.116-.076 3.65-2.457 4.296-2.923.63.084 1.28.129 1.938.129 5.523 0 10-3.5 10-7.828S17.523 3 12 3z"/></svg>
         문제집 및 상담 신청하기
@@ -528,7 +530,9 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
   </div>
   <div class="p2-body">
     <div class="action-btns">
-      <a href="./mock/" class="video-btn btn-print-dark"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm2 4v2h12V7H6zm0 4v2h7v-2H6zm0 4v2h10v-2H6z"/></svg>프리미어 진단 모의고사</a>
+      <a href="./mock/?exam=spatial-generator-review" class="video-btn btn-print-dark"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm2 4v2h12V7H6zm0 4v2h7v-2H6zm0 4v2h10v-2H6z"/></svg>공간지각 생성기 검수 세트</a>
+      <a href="./mock/?exam=variation-bank-review" class="video-btn btn-print-dark"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm2 4v2h12V7H6zm0 4v2h7v-2H6zm0 4v2h10v-2H6z"/></svg>기존 유사문제 문제은행 검수</a>
+      <a href="./review.html?mode=variation" class="video-btn btn-print-dark"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5c5.5 0 9.5 5 9.5 7s-4 7-9.5 7S2.5 14 2.5 12 6.5 5 12 5zm0 3.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5zm0 2A1.5 1.5 0 1 1 12 13.5 1.5 1.5 0 0 1 12 10.5z"/></svg>원본 비교 눈 검수표</a>
       <a href="https://youtu.be/OkkrvK9ZxMI?si=_POQwsA-hhrw-vCN&t=786" target="_blank" class="video-btn btn-youtube"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>설명회 영상</a>
       <a href="https://youtu.be/8l-YgY8LZzk" target="_blank" class="video-btn btn-youtube"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>풀이 영상 전체보기</a>
       <button type="button" class="video-btn download-answer-btn btn-print-dark" onclick="downloadAnswerPdf()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 9V2h12v7h1a3 3 0 0 1 3 3v6h-4v4H6v-4H2v-6a3 3 0 0 1 3-3h1zm2-5v5h8V4H8zm0 12v4h8v-4H8zm11-4a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>전체 답안 인쇄</button>

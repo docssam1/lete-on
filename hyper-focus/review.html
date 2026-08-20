@@ -18,15 +18,18 @@ select,button{font:inherit;font-size:.85rem;padding:7px 12px;border:1px solid #d
 button.primary{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:700}
 button.gold{background:var(--gold);color:#1c1c1c;border-color:var(--gold);font-weight:700}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid.variation-grid{grid-template-columns:repeat(2,1fr)}
 @media(max-width:860px){.grid{grid-template-columns:1fr}}
 .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column}
 .card.easy{border-top:4px solid #2e9e5b}
 .card.same{border-top:4px solid #d3a01c}
 .card.hard{border-top:4px solid #c0392b}
+.card.ready{border-top:4px solid #2e9e5b}.card.pending{border-top:4px solid #8994a3}.card.rejected{border-top:4px solid #c0392b;background:#fffafa}
 .badge{display:inline-block;align-self:flex-start;font-size:.68rem;font-weight:800;padding:3px 9px;border-radius:999px;margin-bottom:8px}
 .easy .badge{background:#e8f6ee;color:#1e7a44}
 .same .badge{background:#fbf3dd;color:#8a6a08}
 .hard .badge{background:#fbeae8;color:#93291e}
+.ready .badge{background:#e8f6ee;color:#1e7a44}.pending .badge{background:#eef1f5;color:#596574}.rejected .badge{background:#fbeae8;color:#93291e}
 .q{font-size:.83rem;line-height:1.55;font-weight:600;margin-bottom:8px}
 .fig{flex:1;display:flex;align-items:center;justify-content:center;min-height:150px;background:#fcfcfc;border-radius:8px;padding:6px}
 .hf-views,.q01-views{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:0}
@@ -45,9 +48,13 @@ button.gold{background:var(--gold);color:#1c1c1c;border-color:var(--gold);font-w
 .hf-hole-layer small{font-size:9px;font-weight:700;color:#4a5450}
 .hf-hole-grid{display:block;width:auto;max-width:62px;height:auto}
 .hf-hole-total{align-self:center;font-size:.74rem;font-weight:800;color:var(--navy)}
+.hf-spatial{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;flex-wrap:wrap}.hf-spatial figure,.hf-three-views figure{margin:0;text-align:center}.hf-spatial figcaption,.hf-three-views figcaption{font-size:.68rem;color:#777}.hf-spatial-main{width:120px}.hf-option-grid{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(58px,1fr));gap:5px}.hf-option{position:relative;min-height:62px;padding:3px;border:1px solid #ddd;border-radius:6px}.hf-option b{position:absolute;top:2px;left:3px;display:grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--navy);color:#fff;font-size:8px}.hf-option svg{display:block;width:54px;height:54px;margin:auto}.hf-net-wrap .hf-net{width:100px;max-height:135px}.hf-three-views{display:flex;align-items:end;justify-content:center;gap:13px;flex-wrap:wrap}.hf-view-grid{display:block;max-width:92px;max-height:112px}.hf-die{display:block;width:82px}.hf-dice-path{display:block;max-width:180px;max-height:135px}
 .stats{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;font-size:.78rem;line-height:1.75;display:none}
 .stats b{color:var(--navy)}
 .loading{text-align:center;padding:40px;color:#888;font-size:.9rem}
+.mode-btn.active{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:800}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.compare figure{margin:0;min-width:0}.compare figcaption{margin:0 0 5px;font-size:.68rem;font-weight:800;color:#667}.compare img{display:block;width:100%;height:190px;object-fit:contain;border:1px solid #e3e6ea;border-radius:8px;background:#fff}.asset-missing{height:190px;display:grid;place-items:center;border:1px dashed #c5cbd3;border-radius:8px;background:#f5f6f8;color:#7d8794;font-size:.75rem;font-weight:750;text-align:center;padding:12px}.eye-check{margin-top:8px;padding:8px 9px;border:1px solid #d9dee6;border-radius:8px;background:#fff;font-size:.72rem;line-height:1.7;color:#39485b}.eye-check b{color:var(--navy)}.status-lines{margin-top:7px;font-size:.7rem;line-height:1.65;color:#667}.variation-answer{margin-top:8px;padding:8px 9px;border-radius:8px;background:#f2f6ff;font-size:.75rem;line-height:1.55;color:#25406e}.variation-hint{margin-top:6px;padding:8px 9px;border-radius:8px;background:#fffdf5;border:1px dashed #e0d5b0;font-size:.72rem;line-height:1.55;color:#705a19}
+@media(max-width:860px){.grid.variation-grid{grid-template-columns:1fr}.compare img,.asset-missing{height:150px}}
 @media print{
   .controls,header p{display:none}
   body{background:#fff}
@@ -60,11 +67,12 @@ button.gold{background:var(--gold);color:#1c1c1c;border-color:var(--gold);font-w
 <div class="wrap">
 <header>
   <h1>하이퍼 포커스 문제은행 검수판</h1>
-  <p>유형별 · 난이도별(쉽게 / 같게 / 어렵게) 실시간 생성 결과입니다.
-     실제 배포 중인 생성기를 그대로 불러와 그리므로, 여기서 보이는 그림·정답이 학생 문제지에 나가는 것과 동일합니다.</p>
+  <p>실시간 생성기와 기존 variation을 같은 검수판에서 확인합니다. variation 눈 검수표는 원본·유사문제·정답·풀이·노출 상태를 한 카드에서 비교합니다.</p>
 </header>
 
 <div class="controls">
+  <button id="generatorModeBtn" class="mode-btn active" onclick="setReviewMode('generator')">실시간 생성기</button>
+  <button id="variationModeBtn" class="mode-btn" onclick="setReviewMode('variation')">기존 variation 눈 검수표</button>
   <label>유형</label>
   <select id="typeSel"></select>
   <button class="primary" onclick="draw()">다시 생성</button>
@@ -78,20 +86,133 @@ button.gold{background:var(--gold);color:#1c1c1c;border-color:var(--gold);font-w
 </div>
 
 <script src="./generator/q01.js"></script>
+<script src="./generator/stacking.js"></script>
+<script src="./generator/spatial.js"></script>
 <script>
 var TYPES = {
   1:{name:'01 · 앞과 뒤에서 본 쌓기나무 개수', mod:'HFQ01', g:'generateQ01', p:'renderQ01Problem', a:'renderQ01Answer', v:'validateQ01',
      prompt:function(){return '다음은 쌓기나무로 만든 모양을 앞과 뒤에서 본 모양입니다. 쌓기나무는 모두 몇 개입니까?';}},
   2:{name:'02 · 상자 채우기', mod:'HFQ02', g:'generateQ02', p:'renderQ02Problem', a:'renderQ02Answer', v:'validateQ02',
-     prompt:function(p){return '네모 반듯한 상자 속에 크기가 같은 쌓기나무를 여러 개 채워 놓았습니다. 이 상자를 완전히 채우려면 쌓기나무가 몇 개 더 필요합니까?';}},
+     prompt:function(p){return '가로 '+p.width+'칸, 세로 '+p.depth+'칸, 높이 '+p.boxH+'칸인 상자 속에 크기가 같은 쌓기나무를 여러 개 채워 놓았습니다. 이 상자를 완전히 채우려면 쌓기나무가 몇 개 더 필요합니까?';}},
   3:{name:'03 · 흑백 교차 쌓기나무', mod:'HFQ03', g:'generateQ03', p:'renderQ03Problem', a:'renderQ03Answer', v:'validateQ03',
-     prompt:function(){return '검은색과 흰색 쌓기나무를 같은 색의 면이 맞닿지 않게 다음과 같이 쌓았을 때, 흰색과 검은색 쌓기나무의 개수를 각각 구하시오.';}},
+     prompt:function(p){return '위에서 본 바탕그림의 수는 각 칸에 쌓인 높이입니다. 왼쪽 위 칸의 맨 아래는 '+(p.cornerWhite?'흰색':'검은색')+'이고, 같은 색의 면이 맞닿지 않게 쌓았습니다. 전체 흰색과 검은색 쌓기나무의 개수를 각각 구하시오.';}},
   4:{name:'04 · 구멍 뚫린 쌓기나무', mod:'HFQ04', g:'generateQ04', p:'renderQ04Problem', a:'renderQ04Answer', v:'validateQ04',
      prompt:function(p){return '가로 '+p.width+', 세로 '+p.depth+', 높이 '+p.boxH+'인 직육면체 모양으로 빈틈없이 쌓은 쌓기나무에 반대쪽까지 통하도록 구멍을 뚫었습니다. 남은 쌓기나무는 몇 개입니까?';}},
   5:{name:'05 · 숨은 쌓기나무', mod:'HFQ05', g:'generateQ05', p:'renderQ05Problem', a:'renderQ05Answer', v:'validateQ05',
-     prompt:function(p){return '쌓기나무 '+p.total+'개로 다음과 같이 쌓았습니다. 그림에서 보이지 않는 쌓기나무의 개수를 구하시오.';}}
+     prompt:function(p){return '위에서 본 바탕그림의 수는 각 칸에 쌓인 높이입니다. '+(p.walled?'뒤와 왼쪽에 벽이 있습니다. 위·앞·오른쪽':'벽이 없습니다. 위·앞·뒤·왼쪽·오른쪽')+'에서 모두 가려진 쌓기나무의 개수를 구하시오.';}},
+  6:{name:'06 · 여러 방향에서 본 색 블록', mod:'HFQ06', g:'generateQ06', p:'renderQ06Problem', a:'renderQ06Answer', v:'validateQ06',
+     prompt:function(){return '기준 모양을 돌려서 볼 때 나타날 수 없는 모습을 모두 고르세요. 거울처럼 뒤집지는 않습니다.';}},
+  7:{name:'07 · 전개도로 만드는 입체', mod:'HFQ07', g:'generateQ07', p:'renderQ07Problem', a:'renderQ07Answer', v:'validateQ07',
+     prompt:function(){return '전개도를 접어서 만들 수 있는 입체 모양을 모두 고르세요.';}},
+  8:{name:'08 · 주사위 굴리기', mod:'HFQ08', g:'generateQ08', p:'renderQ08Problem', a:'renderQ08Answer', v:'validateQ08',
+     prompt:function(){return '처음 주사위의 세 면을 보고, 화살표를 따라 한 칸씩 굴렸을 때 색칠한 칸에 닿는 바닥면의 수를 구하세요.';}},
+  9:{name:'09 · 세 방향 모습으로 최소 개수', mod:'HFQ09', g:'generateQ09', p:'renderQ09Problem', a:'renderQ09Answer', v:'validateQ09',
+     prompt:function(){return '쌓기나무를 위, 앞, 오른쪽 옆에서 본 모양입니다. 세 모양을 모두 만족하도록 쌓을 때 가장 적은 개수를 구하세요.';}}
 };
 var DIFFS=[['easy','쉽게'],['same','같게'],['hard','어렵게']];
+var REVIEW_MODE='generator';
+var VARIATION_STATUS=null;
+var VARIATION_CACHE={};
+
+function esc(value){return String(value==null?'':value).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function qcode(id){return 'q'+String(id).padStart(2,'0');}
+function hasAnswer(v){return !!(v&&v.answerValidation&&Object.prototype.hasOwnProperty.call(v.answerValidation,'expectedAnswer'));}
+function formatAnswer(answer){
+  if(Array.isArray(answer)) return answer.join(', ');
+  if(answer&&typeof answer==='object'){
+    if(Object.prototype.hasOwnProperty.call(answer,'min')&&Object.prototype.hasOwnProperty.call(answer,'max')) return '최솟값 '+answer.min+', 최댓값 '+answer.max;
+    var positionLabels={left_top:'왼쪽 위',right_top:'오른쪽 위',left_bottom:'왼쪽 아래',right_bottom:'오른쪽 아래'};
+    return Object.keys(answer).map(function(key){return (positionLabels[key]||key)+' '+answer[key];}).join(', ');
+  }
+  return String(answer);
+}
+async function loadVariationStatus(){
+  if(VARIATION_STATUS) return VARIATION_STATUS;
+  var response=await fetch('./qa/generator-status.json',{cache:'no-store'});
+  if(!response.ok) throw new Error('문제은행 상태 원장을 불러오지 못했습니다.');
+  VARIATION_STATUS=await response.json();
+  return VARIATION_STATUS;
+}
+async function loadVariationType(id){
+  if(!VARIATION_CACHE[id]){
+    var code=qcode(id);
+    VARIATION_CACHE[id]=Promise.all([
+      fetch('./data/canonical/'+code+'.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error(code+' canonical 없음');return r.json();}),
+      fetch('./data/variations/'+code+'_var01.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error(code+' var01 없음');return r.json();}),
+      fetch('./data/variations/'+code+'_var02.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error(code+' var02 없음');return r.json();})
+    ]).then(function(rows){return {canonical:rows[0],variations:[rows[1],rows[2]]};});
+  }
+  return VARIATION_CACHE[id];
+}
+function variationState(id,v){
+  var bank=VARIATION_STATUS.variationBank;
+  if(v.status==='rejected'||bank.rejectedVariationIds.indexOf(v.variationId)>=0) return 'rejected';
+  if(bank.viewerReadyTypes.indexOf(Number(id))>=0) return 'ready';
+  return 'pending';
+}
+function stateLabel(state){return state==='ready'?'뷰어 준비':state==='rejected'?'폐기':'자산 보완 대기';}
+function readinessLines(state,v){
+  var source=v.source&&v.source.problemImage||'';
+  var fields=[['문제 문장',!!(v.problem&&v.problem.prompt)],['그림',state==='ready'&&!!source],['정답',hasAnswer(v)],['풀이',!!v.solutionHint]];
+  return fields.map(function(row){return row[0]+' <span class="'+(row[1]?'ok':'ng')+'">'+(row[1]?'있음':'없음')+'</span>';}).join(' · ');
+}
+function eyeChecklist(state,v){
+  if(state==='rejected') return '<div class="eye-check"><b>폐기 확정</b> · '+esc(v.rejection&&v.rejection.reason||'오류 문제')+' · 모든 문제은행 노출 금지</div>';
+  if(state==='pending') return '<div class="eye-check"><b>노출 금지</b> · 문장·그림·풀이 자산이 모두 준비될 때까지 대기</div>';
+  return '<div class="eye-check"><b>눈 검수</b><br>□ 원본 유형 유지　□ 답이 하나　□ 숫자·문장 일치<br>□ 그림 가독성　□ 정답·풀이 일치　□ 7~8세 표현</div>';
+}
+function variationCard(id,canonical,v){
+  var state=variationState(id,v), source=v.source&&v.source.problemImage||'';
+  var current=state==='ready'&&source
+    ?'<img src='+esc(source)+' alt="'+esc(v.variationId)+' 유사문제 그림">'
+    :'<div class="asset-missing">'+(state==='rejected'?'폐기된 문제<br>그림을 불러오지 않음':'뷰어용 그림 없음')+'</div>';
+  var prompt=v.problem&&v.problem.prompt||'문제 문장 없음';
+  var answer=hasAnswer(v)?formatAnswer(v.answerValidation.expectedAnswer):'정답 없음';
+  return '<article class="card '+state+'">'
+    +'<span class="badge">'+stateLabel(state)+'</span>'
+    +'<div class="q">['+esc(v.variationId)+'] '+esc(v.problem&&v.problem.title||canonical.title)+'</div>'
+    +'<div class="q" style="font-weight:500">'+esc(prompt)+'</div>'
+    +'<div class="compare"><figure><figcaption>유사문제</figcaption>'+current+'</figure><figure><figcaption>원본 기준</figcaption><img src=./assets/problems/'+qcode(id)+'.png alt="'+qcode(id)+' 원본 문제"></figure></div>'
+    +'<div class="variation-answer"><b>정답</b> · '+esc(answer)+'</div>'
+    +'<div class="variation-hint"><b>풀이</b> · '+esc(v.solutionHint||'풀이 없음')+'</div>'
+    +'<div class="status-lines">'+readinessLines(state,v)+'</div>'
+    +eyeChecklist(state,v)
+    +'</article>';
+}
+async function populateVariationTypes(){
+  await loadVariationStatus();
+  var sel=document.getElementById('typeSel');sel.innerHTML='';
+  for(var id=10;id<=54;id++){
+    var state=VARIATION_STATUS.variationBank.viewerReadyTypes.indexOf(id)>=0?'준비':VARIATION_STATUS.variationBank.rejectedTypes.indexOf(id)>=0?'폐기':'대기';
+    var option=document.createElement('option');option.value=id;option.textContent=qcode(id)+' · '+state;sel.appendChild(option);
+  }
+}
+function populateGeneratorTypes(){
+  var sel=document.getElementById('typeSel');sel.innerHTML='';
+  Object.keys(TYPES).forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=TYPES[k].name;sel.appendChild(o);});
+}
+async function setReviewMode(mode){
+  REVIEW_MODE=mode==='variation'?'variation':'generator';
+  document.getElementById('generatorModeBtn').classList.toggle('active',REVIEW_MODE==='generator');
+  document.getElementById('variationModeBtn').classList.toggle('active',REVIEW_MODE==='variation');
+  document.getElementById('stats').style.display='none';
+  history.replaceState(null,'',location.pathname+'?mode='+REVIEW_MODE);
+  if(REVIEW_MODE==='variation') await populateVariationTypes(); else populateGeneratorTypes();
+  draw();
+}
+async function drawVariation(all){
+  var board=document.getElementById('board');board.classList.add('variation-grid');board.innerHTML='<div class="loading">기존 variation과 원본을 불러오는 중…</div>';
+  try{
+    var ids=all?Array.from({length:45},function(_,index){return index+10;}):[Number(document.getElementById('typeSel').value)];
+    var rows=await Promise.all(ids.map(loadVariationType));
+    board.innerHTML=rows.map(function(row,index){var id=ids[index];return row.variations.map(function(v){return variationCard(id,row.canonical,v);}).join('');}).join('');
+  }catch(error){board.innerHTML='<div class="loading ng">'+esc(error.message||error)+'</div>';}
+}
+async function runVariationAudit(){
+  await loadVariationStatus();
+  var bank=VARIATION_STATUS.variationBank, box=document.getElementById('stats');box.style.display='block';
+  box.innerHTML='<b>variation 눈 검수 현황</b><br>뷰어 준비 '+bank.viewerReadyVariationCount+'문제 · 폐기 '+bank.rejectedVariationCount+'문제 · 자산 보완 대기 '+bank.viewerPendingVariationCount+'문제<br>준비 문제도 카드의 눈 검수 6항목을 사람이 확인한 뒤에만 정식 시험 구성표에 넣습니다.';
+}
 
 function solutionOf(id, M, p){
   var body='';
@@ -100,6 +221,9 @@ function solutionOf(id, M, p){
       +'<div style="font-size:.72rem;color:#777;text-align:center;margin-top:5px">위에서 본 바탕그림에 자리마다 쌓인 개수를 씁니다</div>';
   } else if(String(id)==='4' && M.renderQ04Solution){
     body=M.renderQ04Solution(p);
+  } else if(String(id)==='9' && window.HFSTACK){
+    body=window.HFSTACK.renderTopNumberGrid(p.minimumMap,p.width,p.depth)
+      +'<div style="font-size:.72rem;color:#777;text-align:center;margin-top:5px">가장 적게 쌓는 높이표</div>';
   }
   if(!body) return '';
   return '<div class="sol"><div class="sol-t">풀이</div>'+body+'</div>';
@@ -122,10 +246,14 @@ function cardFor(id, diff, label){
     + '</div>';
 }
 function draw(){
+  if(REVIEW_MODE==='variation'){drawVariation(false);return;}
+  document.getElementById('board').classList.remove('variation-grid');
   var id=document.getElementById('typeSel').value;
   document.getElementById('board').innerHTML=DIFFS.map(function(d){return cardFor(id,d[0],d[1]);}).join('');
 }
 function drawAll(){
+  if(REVIEW_MODE==='variation'){drawVariation(true);return;}
+  document.getElementById('board').classList.remove('variation-grid');
   var html='';
   Object.keys(TYPES).forEach(function(id){
     DIFFS.forEach(function(d){ html+=cardFor(id,d[0],d[1]); });
@@ -133,6 +261,7 @@ function drawAll(){
   document.getElementById('board').innerHTML=html;
 }
 function runSelfTest(){
+  if(REVIEW_MODE==='variation'){runVariationAudit();return;}
   var box=document.getElementById('stats');
   box.style.display='block';
   var out='<b>자동 검증</b> — 유형별 각 난이도 200회 생성<br>';
@@ -157,14 +286,12 @@ function runSelfTest(){
 }
 
 (function init(){
-  var sel=document.getElementById('typeSel');
-  Object.keys(TYPES).forEach(function(k){
-    var o=document.createElement('option'); o.value=k; o.textContent=TYPES[k].name; sel.appendChild(o);
-  });
+  if(new URLSearchParams(location.search).get('mode')==='variation'){setReviewMode('variation');return;}
+  populateGeneratorTypes();
   var tries=0;
   var timer=setInterval(function(){
     tries++;
-    if(window.HFQ01 && window.HFQ05){ clearInterval(timer); draw(); }
+    if(window.HFQ01 && window.HFQ05 && window.HFQ09){ clearInterval(timer); draw(); }
     else if(tries>60){ clearInterval(timer);
       document.getElementById('board').innerHTML='<div class="loading">생성기를 불러오지 못했습니다. 새로고침해 주세요.</div>'; }
   },100);
