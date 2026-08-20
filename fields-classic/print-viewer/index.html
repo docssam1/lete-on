@@ -68,7 +68,14 @@ const documentKey=params.get("doc")||"";
 const source=window.GFIELD_PRINT_DOCUMENTS?.[documentKey];
 // 원본 답안 스캔은 채점·분석 자료가 아니다. 대본과 원본을 대조해 확정한 회차만
 // 문항별 정답·유형·지도 메모 화면으로 연결한다.
-const answerAnalysisByDocument={"mock-set-4":"mock-4"};
+const answerAnalysisByDocument={
+  "mock-set-1":"mock-1",
+  "mock-set-2":"mock-2",
+  "mock-set-3":"mock-3",
+  "mock-set-4":"mock-4",
+  "mock-set-5":"mock-5",
+  "mock-set-6":"mock-6"
+};
 const answerAnalysis=answerAnalysisByDocument[documentKey]||"";
 const title=(source?.title||"인쇄 자료").slice(0,80);
 const student=(params.get("student")||"학생").trim().slice(0,30);
