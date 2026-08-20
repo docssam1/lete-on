@@ -35,6 +35,7 @@ const parseImproper = text => {
   return normalize(Number(parts[0]), 1);
 };
 const equal = (left, right) => left.numerator === right.numerator && left.denominator === right.denominator;
+const compact = value => String(value || "").replace(/\s+/g, "");
 
 for (const type of types) {
   for (const difficulty of [-1, 0, 1]) {
@@ -56,11 +57,18 @@ for (const type of types) {
           continue;
         }
         const kind = attribute(equation, "data-fraction-kind");
-        const expected = parseImproper(attribute(equation, "data-fraction-expected"));
+        const rawExpected = attribute(equation, "data-fraction-expected");
+        const declaredAnswer = attribute(equation, "data-fraction-answer");
+        if (!rawExpected) {
+          check(compact(declaredAnswer) === compact(generated.answer), `${context}: 내부 정답과 표시 정답이 다릅니다.`);
+          continue;
+        }
+        const expected = parseImproper(rawExpected);
         const actual = parseImproper(generated.answer);
         check(equal(expected, actual), `${context}: 표시 정답과 내부 정답이 다릅니다.`);
         const terms = (attribute(equation, "data-fraction-terms") || "").split(";").filter(Boolean).map(parseImproper);
         if (kind === "add") check(equal(expected, add(terms[0], terms[1])), `${context}: 덧셈 계산이 틀렸습니다.`);
+        if (kind === "series-add" || kind === "unit-series") check(equal(expected, terms.slice(1).reduce((sum, term) => add(sum, term), terms[0])), `${context}: 분수 수열의 합이 틀렸습니다.`);
         if (kind === "subtract") check(equal(expected, subtract(terms[0], terms[1])), `${context}: 뺄셈 계산이 틀렸습니다.`);
         if (kind === "add-blank") check(equal(expected, terms[0]), `${context}: 덧셈 빈칸 정답이 틀렸습니다.`);
         if (kind === "subtract-blank") check(equal(expected, terms[0]), `${context}: 뺄셈 빈칸 정답이 틀렸습니다.`);

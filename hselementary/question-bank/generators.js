@@ -162,6 +162,7 @@
     const termText = terms.map(({ numerator, denominator }) => `${numerator}/${denominator}`).join(";");
     return `<div class="equation" data-fraction-kind="${kind}" data-fraction-terms="${termText}" data-fraction-expected="${expected.numerator}/${expected.denominator}">${body}</div>`;
   };
+  const answerEquation = (kind, expected, body) => `<div class="equation" data-fraction-kind="${kind}" data-fraction-answer="${expected}">${body}</div>`;
   const correspondenceTable = rows => `<table class="problem-table"><tbody>${rows.map(([label, ...values]) => `<tr><th>${label}</th>${values.map(value => `<td>${value}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
   const splitTotal = (rng, count, total, minValue, maxValue, step = 5) => {
     for (let attempt = 0; attempt < 200; attempt += 1) {
@@ -2805,25 +2806,43 @@
       return result(`분자가 ${numerator}이고 분모가 ${120 + level * 40} 이하인 기약분수 중 ${targetN}/${targetD}에 가장 가까운 분수를 구하세요.`, answer, `${targetN}/${targetD}와의 차는 |${numerator}×${targetD}-${targetN}×d|/(${targetD}×d)로 비교합니다. 조건에 맞는 분모 중 가장 가까운 것은 ${candidates[0].denominator}이므로 답은 ${answer}입니다.`);
     },
     fifthFractionAdditionAdvanced({ rng, level, variant = 0 }) {
-      const pairs = level === 2 ? [[8, 15], [9, 14], [10, 21], [12, 25]] : [[6, 8], [8, 12], [9, 12], [10, 15]];
-      const [firstDenominator, secondDenominator] = pick(rng, pairs);
-      const first = rationalValue(firstDenominator * int(rng, 2 + level, 5 + level * 2) + int(rng, 1, firstDenominator - 1), firstDenominator);
-      const second = rationalValue(secondDenominator * int(rng, 1 + level, 4 + level * 2) + int(rng, 1, secondDenominator - 1), secondDenominator);
-      const total = rationalOperation(first, second, "+");
       if (variant % 3 === 0) {
+        const pairs = level === 2 ? [[8, 15], [9, 14], [10, 21], [12, 25]] : [[6, 8], [8, 12], [9, 12], [10, 15]];
+        const [firstDenominator, secondDenominator] = pick(rng, pairs);
+        const first = rationalValue(firstDenominator * int(rng, 2 + level, 5 + level * 2) + int(rng, 1, firstDenominator - 1), firstDenominator);
+        const second = rationalValue(secondDenominator * int(rng, 1 + level, 4 + level * 2) + int(rng, 1, secondDenominator - 1), secondDenominator);
+        const total = rationalOperation(first, second, "+");
         const equation = fractionEquation("add", [first, second], total, `${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)} = □`);
         return result(`다음 계산을 하세요.${equation}`, mixedFraction(total.numerator, total.denominator), `분모의 최소공배수로 통분한 뒤 분자를 더합니다. ${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)} = ${mixedFraction(total.numerator, total.denominator)}입니다.`);
       }
       if (variant % 3 === 1) {
-        const equation = fractionEquation("add-blank", [first, second], first, `□ + ${mixedFraction(second.numerator, second.denominator)} = ${mixedFraction(total.numerator, total.denominator)}`);
-        return result(`빈칸에 알맞은 수를 구하세요.${equation}`, mixedFraction(first.numerator, first.denominator), `합에서 알고 있는 수를 빼면 됩니다. ${mixedFraction(total.numerator, total.denominator)} - ${mixedFraction(second.numerator, second.denominator)} = ${mixedFraction(first.numerator, first.denominator)}입니다.`);
+        const start = 2 + Math.min(level, 1);
+        const count = 5 + level;
+        const terms = Array.from({ length: count }, (_, index) => rationalValue(start - 1 + index, start + index));
+        const total = terms.reduce((sum, term) => rationalOperation(sum, term, "+"), rationalValue(0));
+        const equation = fractionEquation("series-add", terms, total, `${terms.map(term => fraction(term.numerator, term.denominator)).join(" + ")} = □`);
+        return result(`다음 규칙으로 나열한 분수의 합을 구하세요.${equation}`, mixedFraction(total.numerator, total.denominator), `각 항을 통분하여 더하면 ${mixedFraction(total.numerator, total.denominator)}입니다.`);
       }
-      const third = rationalValue(int(rng, 1, 3 + level), 2 + int(rng, 2, 5 + level));
-      const answer = rationalOperation(total, third, "+");
-      const equation = fractionEquation("add-word", [first, second, third], answer, `${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)} + ${mixedFraction(third.numerator, third.denominator)} = □`);
-      return result(`길이가 ${mixedFraction(first.numerator, first.denominator)}m인 끈과 ${mixedFraction(second.numerator, second.denominator)}m인 끈을 이어 붙인 뒤 ${mixedFraction(third.numerator, third.denominator)}m를 더 이어 붙였습니다. 전체 길이를 구하세요.${equation}`, mixedFraction(answer.numerator, answer.denominator), `이어 붙인 길이를 모두 더합니다. ${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)} + ${mixedFraction(third.numerator, third.denominator)} = ${mixedFraction(answer.numerator, answer.denominator)}m입니다.`);
+      const digits = level === 2 ? [1, 3, 5, 7, 8, 9] : [2, 3, 4, 6, 7, 9];
+      const candidates = permutationNumbers(digits).map(value => Math.floor(value / 1000) + value % 1000);
+      const answer = Math.max(...candidates);
+      const equation = answerEquation("card-max-add", answer, `${digits.map(value => `<span class="digit-card">${value}</span>`).join("")}에서 카드를 한 번씩 사용하여 세 자리 수 2개를 만들 때, 두 수의 합이 가장 크게 되도록 하세요.`);
+      return result(`6장의 수 카드를 한 번씩 모두 사용하여 세 자리 자연수 2개를 만들었습니다. 두 수의 합이 가장 크게 될 때의 합을 구하세요.${equation}`, answer, `합을 크게 하려면 큰 숫자를 백의 자리에 놓고, 그다음 큰 숫자를 십의 자리에 놓습니다. 가능한 배치를 비교한 최댓값은 ${answer}입니다.`);
     },
     fifthFractionSubtractionAdvanced({ rng, level, variant = 0 }) {
+      if (variant % 3 === 1) {
+        const cards = level === 2 ? [[7, 9], [5, 6], [3, 4], [5, 8]] : [[5, 6], [3, 4], [4, 7], [2, 3]];
+        const candidates = [];
+        for (let a = 0; a < cards.length; a += 1) for (let b = 0; b < cards.length; b += 1) for (let c = 0; c < cards.length; c += 1) {
+          if (a === b || a === c || b === c) continue;
+          const value = rationalOperation(rationalOperation(rationalValue(cards[a][0], cards[a][1]), rationalValue(cards[b][0], cards[b][1]), "+"), rationalValue(cards[c][0], cards[c][1]), "-");
+          if (value) candidates.push(value);
+        }
+        candidates.sort((left, right) => right.numerator * left.denominator - left.numerator * right.denominator);
+        const answer = candidates[0];
+        const equation = answerEquation("card-max-subtract", fraction(answer.numerator, answer.denominator), `${cards.map(([numerator, denominator]) => `${numerator}/${denominator}`).join(", ")} 중 세 장을 골라 □ + □ - □가 가장 크게 되도록 하세요.`);
+        return result(`다음 분수 중 세 개를 골라 빈칸에 넣고, 계산 결과가 가장 크게 되도록 하세요.${equation}`, fraction(answer.numerator, answer.denominator), `더하는 두 분수는 크게, 빼는 분수는 작게 고르는 모든 순서를 비교하면 최댓값은 ${fraction(answer.numerator, answer.denominator)}입니다.`);
+      }
       const pairs = level === 2 ? [[8, 15], [9, 14], [10, 21], [12, 25]] : [[6, 8], [8, 12], [9, 12], [10, 15]];
       const [firstDenominator, secondDenominator] = pick(rng, pairs);
       for (let attempt = 0; attempt < 80; attempt += 1) {
@@ -2848,38 +2867,89 @@
       throw new Error("양수인 분수 뺄셈 조건을 만들지 못했습니다.");
     },
     fifthFractionEquationAdvanced({ rng, level, variant = 0 }) {
-      const denominator = pick(rng, level === 2 ? [12, 15, 18, 20] : [6, 8, 10, 12]);
-      const first = rationalValue(denominator * int(rng, 2, 5 + level) + int(rng, 1, denominator - 1), denominator);
-      const second = rationalValue(denominator * int(rng, 1, 3 + level) + int(rng, 1, denominator - 1), denominator);
-      const third = rationalValue(denominator * int(rng, 1, 2 + level) + int(rng, 1, denominator - 1), denominator);
-      const answer = rationalOperation(rationalOperation(first, second, "+"), third, "-");
-      if (answer.numerator <= 0) return generators.fifthFractionEquationAdvanced({ rng, level, variant });
-      const equation = fractionEquation("word-equation", [first, second, third], answer, `(${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)}) - ${mixedFraction(third.numerator, third.denominator)} = □`);
       if (variant % 3 === 0) {
-        return result(`한 통에 ${mixedFraction(first.numerator, first.denominator)}L, 다른 통에 ${mixedFraction(second.numerator, second.denominator)}L의 물이 있습니다. 두 통의 물을 합친 뒤 ${mixedFraction(third.numerator, third.denominator)}L를 덜어 내면 얼마가 남습니까?${equation}`, mixedFraction(answer.numerator, answer.denominator), `먼저 두 통의 물을 더하고 덜어 낸 양을 뺍니다. (${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)}) - ${mixedFraction(third.numerator, third.denominator)} = ${mixedFraction(answer.numerator, answer.denominator)}L입니다.`);
+        const denominator = level === 2 ? 20 : 15;
+        const offsets = [8, 1, 6, 3, 5, 7, 4, 9, 2];
+        const values = offsets.map(offset => rationalValue(offset, denominator));
+        const blanks = [0, 8];
+        const cells = values.map((value, index) => blanks.includes(index) ? "□" : fraction(value.numerator, value.denominator));
+        const table = `<table class="problem-table fraction-magic"><tbody>${[0, 1, 2].map(row => `<tr>${cells.slice(row * 3, row * 3 + 3).map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+        const answer = `${fraction(values[blanks[0]].numerator, values[blanks[0]].denominator)}, ${fraction(values[blanks[1]].numerator, values[blanks[1]].denominator)}`;
+        const equation = answerEquation("magic-square", answer, table);
+        return result(`다음 9개의 분수를 한 번씩 사용하여 가로, 세로, 대각선의 세 수의 합이 모두 같도록 할 때, 빈칸에 알맞은 수를 각각 구하세요.${equation}<div class="sequence">${values.map(value => fraction(value.numerator, value.denominator)).join(", ")}</div>`, answer, `가운데 수는 ${fraction(values[4].numerator, values[4].denominator)}이고 각 줄의 합을 정한 뒤, 주어진 두 칸과 같은 줄·열·대각선의 합을 비교하면 빈칸은 ${answer}입니다.`);
       }
       if (variant % 3 === 1) {
-        return result(`첫째 날 ${mixedFraction(first.numerator, first.denominator)}km, 둘째 날 ${mixedFraction(second.numerator, second.denominator)}km를 걸었습니다. 이틀 동안 걸은 거리에서 ${mixedFraction(third.numerator, third.denominator)}km를 제외한 거리를 식으로 나타내어 구하세요.${equation}`, mixedFraction(answer.numerator, answer.denominator), `두 날의 거리를 더한 뒤 제외한 거리를 뺍니다. ${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)} - ${mixedFraction(third.numerator, third.denominator)} = ${mixedFraction(answer.numerator, answer.denominator)}km입니다.`);
+        const soccer = 18 + level * 9 + int(rng, 0, 2) * 9;
+        const basketball = 24 + level * 6 + int(rng, 0, 2) * 6;
+        const total = soccer + basketball;
+        const condition = rationalOperation(rationalValue(basketball, 2), rationalValue(soccer * 5, 9), "+");
+        const answer = `${basketball}명, ${soccer}명`;
+        const equation = answerEquation("club-system", answer, `농구부 + 축구부 = ${total}, 농구부의 1/2 + 축구부의 5/9 = ${fraction(condition.numerator, condition.denominator)}`);
+        return result(`어느 초등학교의 농구부와 축구부 인원을 더하면 모두 ${total}명입니다. 농구부 인원의 1/2과 축구부 인원의 5/9의 합이 ${fraction(condition.numerator, condition.denominator)}명일 때, 농구부와 축구부 인원을 각각 구하세요.${equation}`, answer, `농구부를 b명, 축구부를 s명이라 하면 b+s=${total}, b/2+5s/9=${fraction(condition.numerator, condition.denominator)}입니다. 두 식을 풀면 농구부 ${basketball}명, 축구부 ${soccer}명입니다.`);
       }
-      const blankEquation = fractionEquation("equation-blank", [first, second, third], answer, `□ + ${mixedFraction(third.numerator, third.denominator)} = ${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)}`);
-      return result(`어떤 양에 ${mixedFraction(third.numerator, third.denominator)}를 더했더니 ${mixedFraction(first.numerator, first.denominator)}와 ${mixedFraction(second.numerator, second.denominator)}를 합한 양과 같았습니다. 처음 양을 구하세요.${blankEquation}`, mixedFraction(answer.numerator, answer.denominator), `처음 양을 □라 하면 □ + ${mixedFraction(third.numerator, third.denominator)} = ${mixedFraction(first.numerator, first.denominator)} + ${mixedFraction(second.numerator, second.denominator)}입니다. 합에서 ${mixedFraction(third.numerator, third.denominator)}를 빼면 ${mixedFraction(answer.numerator, answer.denominator)}입니다.`);
+      for (let attempt = 0; attempt < 160; attempt += 1) {
+        const a = int(rng, 2, 6);
+        const b = int(rng, a + 1, 9);
+        const c = int(rng, 2, 6);
+        const d = int(rng, c + 1, 9);
+        if (a === c && b === d) continue;
+        const first = rationalValue(a, b);
+        const second = rationalValue(c, d);
+        const swappedFirst = rationalValue(b, a);
+        const swappedSecond = rationalValue(d, c);
+        const leftSum = rationalOperation(swappedFirst, second, "+");
+        const rightSum = rationalOperation(first, swappedSecond, "+");
+        const difference = rationalOperation(first, second, "-");
+        const answer = difference.numerator >= 0 ? difference : rationalValue(-difference.numerator, difference.denominator);
+        const equation = answerEquation("swap-equation", fraction(answer.numerator, answer.denominator), `${b}/${a} + ${c}/${d} = ${fraction(leftSum.numerator, leftSum.denominator)}, ${a}/${b} + ${d}/${c} = ${fraction(rightSum.numerator, rightSum.denominator)}`);
+        return result(`두 진분수 A, B가 있습니다. A의 분자와 분모를 바꾼 수에 B를 더하면 ${fraction(leftSum.numerator, leftSum.denominator)}가 되고, B의 분자와 분모를 바꾼 수에 A를 더하면 ${fraction(rightSum.numerator, rightSum.denominator)}가 됩니다. A와 B의 차를 구하세요.${equation}`, fraction(answer.numerator, answer.denominator), `조건을 식으로 나타내어 A=${a}/${b}, B=${c}/${d}를 대입하면 차는 ${fraction(answer.numerator, answer.denominator)}입니다.`);
+      }
+      throw new Error("분수 식 세우기 조건을 만들지 못했습니다.");
     },
     unitPartialFractionAdvanced({ rng, level, variant = 0 }) {
-      const pairs = level === 2 ? [[3, 15], [4, 20], [5, 20], [6, 15]] : [[2, 6], [3, 6], [3, 12], [4, 12], [5, 10]];
-      const [firstDenominator, secondDenominator] = pick(rng, pairs);
-      const first = rationalValue(1, firstDenominator);
-      const second = rationalValue(1, secondDenominator);
-      const total = rationalOperation(first, second, "+");
       if (variant % 3 === 0) {
-        const equation = fractionEquation("unit-add", [first, second], total, `1/${firstDenominator} + 1/${secondDenominator} = □`);
-        return result(`두 단위분수의 합을 구하세요.${equation}`, fraction(total.numerator, total.denominator), `분모의 최소공배수로 통분하면 1/${firstDenominator} + 1/${secondDenominator} = ${fraction(total.numerator, total.denominator)}입니다.`);
+        for (let attempt = 0; attempt < 240; attempt += 1) {
+          const a = int(rng, 3, 8);
+          const b = int(rng, a + 2, 24);
+          const c = int(rng, b + 2, 80);
+          const target = rationalOperation(rationalOperation(rationalValue(1, a), rationalValue(1, b), "+"), rationalValue(1, c), "+");
+          const candidates = [];
+          for (let first = 2; first <= 10; first += 1) for (let second = first + 1; second <= 30; second += 1) for (let third = second + 1; third <= 80; third += 1) {
+            const value = rationalOperation(rationalOperation(rationalValue(1, first), rationalValue(1, second), "+"), rationalValue(1, third), "+");
+            if (value.numerator === target.numerator && value.denominator === target.denominator) candidates.push([first, second, third]);
+          }
+          if (candidates.length !== 1) continue;
+          const answer = candidates[0].join(", ");
+          const equation = answerEquation("unit-three", answer, `${fraction(target.numerator, target.denominator)} = 1/A + 1/B + 1/C, A < B < C, A ≤ 10, B ≤ 30, C ≤ 80`);
+          return result(`${fraction(target.numerator, target.denominator)}를 서로 다른 세 단위분수의 합으로 나타내어라. ${equation}`, answer, `A<B<C 조건에서 가능한 분모를 모두 조사하면 A=${answer.split(", ")[0]}, B=${answer.split(", ")[1]}, C=${answer.split(", ")[2]}만 남습니다.`);
+        }
+        throw new Error("유일한 세 단위분수 분해를 만들지 못했습니다.");
       }
       if (variant % 3 === 1) {
-        const equation = fractionEquation("unit-blank-right", [total, first], second, `${fraction(total.numerator, total.denominator)} = 1/${firstDenominator} + □`);
-        return result(`빈칸에 알맞은 단위분수를 구하세요.${equation}`, fraction(second.numerator, second.denominator), `전체에서 알고 있는 단위분수를 빼면 됩니다. ${fraction(total.numerator, total.denominator)} - 1/${firstDenominator} = 1/${secondDenominator}입니다.`);
+        const count = 4 + level;
+        const terms = Array.from({ length: count }, (_, index) => {
+          const n = index + 2;
+          return rationalValue(1, (2 * n - 1) * (2 * n + 1));
+        });
+        const total = terms.reduce((sum, term) => rationalOperation(sum, term, "+"), rationalValue(0));
+        const equation = fractionEquation("unit-series", terms, total, `${terms.map(term => fraction(term.numerator, term.denominator)).join(" + ")} = □`);
+        return result(`다음 단위분수의 합을 계산하세요.${equation}`, fraction(total.numerator, total.denominator), `각 항을 1/2×(1/(2n-1)-1/(2n+1))으로 바꾸면 중간 항이 지워져 ${fraction(total.numerator, total.denominator)}가 됩니다.`);
       }
-      const equation = fractionEquation("unit-blank-left", [total, second], first, `${fraction(total.numerator, total.denominator)} = □ + 1/${secondDenominator}`);
-      return result(`빈칸에 알맞은 단위분수를 구하세요.${equation}`, fraction(first.numerator, first.denominator), `전체에서 1/${secondDenominator}을 빼면 됩니다. ${fraction(total.numerator, total.denominator)} - 1/${secondDenominator} = 1/${firstDenominator}입니다.`);
+      for (let attempt = 0; attempt < 240; attempt += 1) {
+        const a = int(rng, 3, 12);
+        const b = int(rng, 2, a - 1);
+        const target = rationalOperation(rationalOperation(rationalValue(1, a), rationalValue(1, b), "+"), rationalValue(1, 15), "+");
+        const candidates = [];
+        for (let first = 2; first < 50; first += 1) for (let second = first - 1; second >= 2; second -= 1) {
+          const value = rationalOperation(rationalOperation(rationalValue(1, first), rationalValue(1, second), "+"), rationalValue(1, 15), "+");
+          if (value.numerator === target.numerator && value.denominator === target.denominator) candidates.push([first, second]);
+        }
+        if (candidates.length !== 1) continue;
+        const answer = candidates[0].join(", ");
+        const equation = answerEquation("unit-two-solve", answer, `${fraction(target.numerator, target.denominator)} = 1/A + 1/B + 1/15, A > B`);
+        return result(`${fraction(target.numerator, target.denominator)} = 1/A + 1/B + 1/15를 만족하는 자연수 A, B를 각각 구하세요. ${equation}`, answer, `A>B, A<50 조건에서 분모를 대입해 확인하면 A=${answer.split(", ")[0]}, B=${answer.split(", ")[1]}입니다.`);
+      }
+      throw new Error("유일한 두 단위분수 방정식을 만들지 못했습니다.");
     }
   };
 
