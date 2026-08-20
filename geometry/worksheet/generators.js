@@ -1202,10 +1202,11 @@
     return { dist, faces, cubes };
   }
 
-  // 단계별 크기: L4 = 3x3x3~4x3x3, L5 = 4x4x4~5x4x4. 계단 모양(구 PF)은
-  // 강도 ●○○의 L5에서만 섞는다 — 2면/3면을 묻는 ●●○·●●●은 교재와 같이
-  // 직육면체로 고정해야 "모서리 8개, 모서리줄 …" 같은 규칙 발견이 산다.
-  function paintShapeFor(rng, level, intensity) {
+  // 공용 학습지는 L4 = 3x3x2~4x4x4, L5 = 4x4x3~5x5x4 범위를 유지한다.
+  // 문제은행이 세부 유형을 지정한 L4 입문 문제만 2x2x2부터 시작한다. 계단
+  // 모양(구 PF)은 강도 ●○○의 L5에서만 섞는다 — 2면/3면을 묻는 ●●○·●●●은
+  // 교재와 같이 직육면체로 고정해야 "모서리 8개, 모서리줄 …" 같은 규칙 발견이 산다.
+  function paintShapeFor(rng, level, intensity, options) {
     const n = levelNum(level);
     const i = normalizeIntensity(intensity);
     if (n >= 5 && i === 1 && rng.bool(0.4)) {
@@ -1214,6 +1215,11 @@
     }
     const dims = n >= 5
       ? rng.pick([[4, 4, 3], [4, 4, 4], [5, 4, 3], [4, 5, 3], [5, 4, 4], [4, 5, 4]])
+      : i === 1 && options && options.variant
+        ? rng.pick([
+          [2, 2, 2], [2, 3, 2], [3, 2, 2], [2, 3, 3], [3, 2, 3],
+          [2, 4, 2], [4, 2, 2], [3, 3, 2], [3, 3, 3], [4, 3, 2], [3, 4, 2]
+        ])
       : rng.pick([[3, 3, 2], [3, 3, 3], [3, 3, 4], [4, 3, 2], [3, 4, 2], [4, 3, 3], [3, 4, 3], [4, 4, 2], [4, 4, 3], [4, 4, 4]]);
     return {
       map: fullPrismMap(dims[0], dims[1], dims[2]),
@@ -1226,9 +1232,14 @@
 
   const PAINT_FACE_WORD = ["한 면도 색칠되지 않은", "한 면만 색칠된", "두 면만 색칠된", "세 면만 색칠된"];
 
-  function genPN(rng, level, intensity) {
+  function genPN(rng, level, intensity, options) {
     const i = normalizeIntensity(intensity);
-    const shape = paintShapeFor(rng, level, i);
+    const hasVariant = options && Object.prototype.hasOwnProperty.call(options, "variant");
+    if (hasVariant && options.variant !== "faces" && options.variant !== "count") {
+      throw new Error("unknown PN variant: " + options.variant);
+    }
+    const forcedVariant = hasVariant ? options.variant : null;
+    const shape = paintShapeFor(rng, level, i, options);
     const map = shape.map;
     const width = shape.width;
     const depth = shape.depth;
@@ -1243,7 +1254,7 @@
       : "가로 " + width + ", 세로 " + depth + ", 높이 " + shape.height + "인 " +
         (shape.shapeKind === "cube" ? "정육면체" : "직육면체") + " 모양으로 쌓기나무를 쌓고 ";
 
-    if (i === 1) {
+    if ((forcedVariant || (i === 1 ? "faces" : "count")) === "faces") {
       return {
         type: "PN",
         prompt: shapeText + bottomText + " 색칠된 면은 모두 몇 면입니까?",
@@ -1263,8 +1274,13 @@
       };
     }
 
-    // ●●○ 두 면 / 한 면, ●●● 세 면 / 한 면도 색칠되지 않은.
-    const askFaces = i === 2 ? rng.pick([2, 1]) : rng.pick([3, 0]);
+    // 문제은행에서 count를 강제하면 ●○○ 세 면, ●●○ 두 면, ●●● 한 면 또는
+    // 안쪽(0면) 순으로 풀이 구조가 깊어진다. 공용 학습지의 기존 분포는 유지한다.
+    const requestedFaces = i === 1 ? [3] : i === 2 ? [2] : [1, 0];
+    const availableFaces = requestedFaces.filter((faces) => stats.dist[faces] > 0);
+    const askFaces = forcedVariant === "count"
+      ? rng.pick(availableFaces.length ? availableFaces : [0, 1, 2, 3].filter((faces) => stats.dist[faces] > 0))
+      : i === 2 ? rng.pick([2, 1]) : rng.pick([3, 0]);
     const count = stats.dist[askFaces];
     return {
       type: "PN",
@@ -1614,10 +1630,34 @@
     return pool.length ? pool : SQ_FAMILIES.filter((f) => f.minLevel <= 3);
   }
 
-  function genSQ(rng, level, intensity) {
+  function genSQ(rng, level, intensity, options) {
     const i = normalizeIntensity(intensity);
-    const family = rng.pick(sqFamiliesFor(level));
-    const kind = family.kind;
+    const hasKind = options && Object.prototype.hasOwnProperty.call(options, "kind");
+    const requestedKind = hasKind ? options.kind : null;
+    const requestedFamily = hasKind ? SQ_FAMILIES.find((entry) => entry.kind === requestedKind) : null;
+    if (hasKind && !requestedFamily) throw new Error("unknown SQ kind: " + requestedKind);
+    if (requestedFamily && requestedFamily.minLevel > levelNum(level)) {
+      throw new Error("SQ kind " + requestedKind + " is not supported at " + level);
+    }
+    const hasExcludedKinds = options && Object.prototype.hasOwnProperty.call(options, "excludeKinds");
+    const excludedKinds = hasExcludedKinds ? options.excludeKinds : [];
+    if (hasExcludedKinds && !Array.isArray(excludedKinds)) throw new Error("SQ excludeKinds must be an array");
+    excludedKinds.forEach((kind) => {
+      if (!SQ_FAMILIES.some((entry) => entry.kind === kind)) throw new Error("unknown excluded SQ kind: " + kind);
+    });
+    if (requestedKind && excludedKinds.indexOf(requestedKind) !== -1) {
+      throw new Error("requested SQ kind is excluded: " + requestedKind);
+    }
+    const availableFamilies = sqFamiliesFor(level).filter((entry) => excludedKinds.indexOf(entry.kind) === -1);
+    if (!availableFamilies.length) throw new Error("no SQ families remain for " + level);
+    const hasMode = options && Object.prototype.hasOwnProperty.call(options, "mode");
+    const requestedMode = hasMode ? options.mode : null;
+    if (hasMode && ["nth", "which", "increment"].indexOf(requestedMode) === -1) {
+      throw new Error("unknown SQ mode: " + requestedMode);
+    }
+    // 옵션이 없는 기존 발급 코드는 예전과 똑같이 패밀리를 가장 먼저 뽑는다.
+    // 난수 호출 순서까지 보존해야 같은 #GW 코드가 같은 문제를 재현한다.
+    let family = !hasKind && !hasMode && !hasExcludedKinds ? rng.pick(availableFamilies) : null;
     // 강도 = 몇 번째까지 밀어붙이는가 + 어떤 방향으로 묻는가.
     const N = i === 1 ? rng.int(4, 5) : i === 2 ? rng.int(5, 7) : rng.int(6, 9);
     const modes = i === 1
@@ -1625,7 +1665,20 @@
       : i === 2
         ? ["nth", "which", "increment"]
         : ["which", "increment", "which", "increment", "nth"];
-    const mode = rng.pick(modes);
+    const mode = hasMode ? requestedMode : rng.pick(modes);
+    if (family) {
+      // 기존 무옵션 경로에서 이미 선택했다.
+    } else if (requestedFamily) {
+      family = requestedFamily;
+    } else if (mode === "increment" && hasMode) {
+      const byIntensity = i === 1 ? ["cross", "frame"] : i === 2 ? ["stair", "tower"] : ["pyramid", "cube"];
+      const candidates = availableFamilies.filter((entry) => byIntensity.indexOf(entry.kind) !== -1);
+      if (!candidates.length) throw new Error("no SQ increment family for " + level + " intensity " + i);
+      family = rng.pick(candidates);
+    } else {
+      family = rng.pick(availableFamilies);
+    }
+    const kind = family.kind;
     const shapes = [1, 2, 3].map((stage) => {
       const dims = sqDims(kind, stage);
       return { n: stage, map: buildSQShape(kind, stage), width: dims.width, depth: dims.depth };
@@ -1739,7 +1792,7 @@
   // generateWorksheet이 문제마다 순서대로 넘겨주는 공유 스트림이므로, 같은
   // 시드는 같은 단계 배치를 재현한다. 실제로 어느 단계가 뽑혔는지는
   // problem.level에 남겨 문제 카드·정답지의 단계 배지가 읽는다.
-  function make(typeCode, rng, level, intensity) {
+  function make(typeCode, rng, level, intensity, options) {
     const canon = canonicalType(typeCode);
     const info = typeInfo(canon);
     if (!info) throw new Error("unknown worksheet type: " + typeCode);
@@ -1756,10 +1809,10 @@
       case "IN": problem = genIN(rng, lv, it); break;
       case "FB": problem = genFB(rng, lv, it); break;
       case "CU": problem = genCU(rng, lv, it); break;
-      case "PN": problem = genPN(rng, lv, it); break;
+      case "PN": problem = genPN(rng, lv, it, options); break;
       case "BW": problem = genBW(rng, lv, it); break;
       case "HL": problem = genHL(rng, lv, it); break;
-      case "SQ": problem = genSQ(rng, lv, it); break;
+      case "SQ": problem = genSQ(rng, lv, it, options); break;
       default: throw new Error("unknown worksheet type: " + typeCode);
     }
     problem.level = lv;

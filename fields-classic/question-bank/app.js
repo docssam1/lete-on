@@ -1,4 +1,4 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260820c";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260820d";
 import { GENERATORS } from "./generators.js?v=20260820a";
 
 const $ = (id) => document.getElementById(id);
@@ -430,7 +430,7 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
   const rng = worksheet.createRng(`FIELDS-QB:${item.id}:${level}:${intensity}:${randomPart}:${sequence}:${attempt}`);
   let made;
   try {
-    made = worksheet.make(item.worksheetCode, rng, level, intensity);
+    made = worksheet.make(item.worksheetCode, rng, level, intensity, item.worksheetOptions || null);
   } catch (_error) {
     return null;
   }
