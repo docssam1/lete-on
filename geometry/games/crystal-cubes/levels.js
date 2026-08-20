@@ -27,6 +27,7 @@ const heightMap = (grid, stacks) => {
 };
 
 const maxHeight = (map) => Math.max(1, ...map.flat());
+const cubeTotal = (map) => map.flat().reduce((sum, height) => sum + height, 0);
 
 function frontView(map, grid, height) {
   const [width, depth] = grid;
@@ -127,11 +128,23 @@ const makeProblem = (id, level, grid, stacks, solutions, challenge = null) => {
     side: sideView(map, grid, height),
     top: topView(map, grid)
   };
-  const activeViews = level === 2 ? ["front"] : level === 3 ? ["front", "side"] : ["front", "side", "top"];
-  const problem = { id, level, grid, maxH: height, reference: map, target, activeViews, solutions };
-  // Spread the authored challenge onto the problem only when there is one, so
-  // levels 2-4 keep exactly the shape they had (no `goal` key at all) and
-  // app.js can branch on a simple `problem.goal` truthiness test.
+  // The floor card is always visible. Without it, a front-only or
+  // front/right problem leaves the rear footprint unknown and can admit many
+  // builds that the child has no way to distinguish.
+  const activeViews = level === 2 ? ["front", "top"] : ["front", "side", "top"];
+  const problem = {
+    id,
+    level,
+    grid,
+    maxH: height,
+    reference: map,
+    referenceTotal: cubeTotal(map),
+    target,
+    activeViews,
+    solutions
+  };
+  // Spread the authored optimization challenge only onto level-5 problems;
+  // standard levels use the separate requiredTotal clue.
   if (challenge) {
     problem.goal = challenge.goal;
     problem.minTotal = challenge.minTotal;
@@ -141,7 +154,9 @@ const makeProblem = (id, level, grid, stacks, solutions, challenge = null) => {
   return problem;
 };
 
-const pools = [
+// Exported only so the offline self-test can exhaustively verify every
+// authored candidate, including problems that are not currently served.
+export const authoredPools = [
   {
     level: 2,
     stars: 2,
@@ -255,12 +270,59 @@ const pools = [
   }
 ];
 
+// Direction cards alone can describe several different solids. These
+// authored problems were exhaustively checked with the reference cube total
+// added as a clue; each id below then has exactly one valid build. Keeping ten
+// per level also gives two complete five-question practice rounds with no
+// unreachable remainder.
+const singleAnswerWithCountIds = new Set([
+  "crystal-l2-02", "crystal-l2-03", "crystal-l2-05", "crystal-l2-07", "crystal-l2-11",
+  "crystal-l2-12", "crystal-l2-13", "crystal-l2-16", "crystal-l2-17", "crystal-l2-18",
+  "crystal-l3-03", "crystal-l3-05", "crystal-l3-06", "crystal-l3-07", "crystal-l3-09",
+  "crystal-l3-12", "crystal-l3-14", "crystal-l3-17", "crystal-l3-18", "crystal-l3-19",
+  "crystal-l4-01", "crystal-l4-02", "crystal-l4-04", "crystal-l4-09", "crystal-l4-10",
+  "crystal-l4-12", "crystal-l4-15", "crystal-l4-16", "crystal-l4-18", "crystal-l4-19"
+]);
+
+function countBuildsWithTotal(problem, requiredTotal, stopAfter = 2) {
+  const [width, depth] = problem.grid;
+  const cells = [];
+  for (let z = 0; z < depth; z += 1) {
+    for (let x = 0; x < width; x += 1) {
+      if (problem.target.top[z][x]) cells.push({ x, z });
+    }
+  }
+  const build = Array.from({ length: depth }, () => Array(width).fill(0));
+  let matches = 0;
+
+  function visit(index, total) {
+    if (matches >= stopAfter || total > requiredTotal) return;
+    const remaining = cells.length - index;
+    if (total + remaining > requiredTotal || total + remaining * problem.maxH < requiredTotal) return;
+    if (index === cells.length) {
+      if (total !== requiredTotal) return;
+      const views = viewsOfHeightGrid(build, problem.grid, problem.maxH);
+      if (viewsMatch(views, problem.target, problem.activeViews)) matches += 1;
+      return;
+    }
+    const { x, z } = cells[index];
+    for (let height = 1; height <= problem.maxH; height += 1) {
+      build[z][x] = height;
+      visit(index + 1, total + height);
+      if (matches >= stopAfter) return;
+    }
+  }
+
+  visit(0, 0);
+  return matches;
+}
+
 // A level counts as "multi-answer" the moment ANY problem it actually serves
 // this session has more than one valid build — decided from the measured
 // `solutions` data, never from the level number. app.js reads this to choose
 // between the "여러 가지 정답" and "정답은 하나" level-start notices.
 export function isMultiAnswerSession(problems) {
-  return problems.some((problem) => problem.solutions > 1);
+  return problems.some((problem) => !problem.requiredTotal && problem.solutions > 1);
 }
 
 // Same fix as cube-tunnel's levels.js: the pool-cache key must use the
@@ -268,12 +330,17 @@ export function isMultiAnswerSession(problems) {
 // game's first playable level is numbered 2 as well, but game-flow.js's
 // "?level=N" practice reload always sends the 1-based position shown in the
 // level picker.
-export const levels = pools.map((entry, index) => {
-  const problems = sessionProblems("crystal-cubes", index + 1, entry.problems, 5);
+export const levels = authoredPools.map((entry, index) => {
+  const pool = entry.level === 5
+    ? entry.problems
+    : entry.problems
+      .filter((problem) => singleAnswerWithCountIds.has(problem.id))
+      .map((problem) => ({ ...problem, requiredTotal: problem.referenceTotal }));
+  const problems = sessionProblems("crystal-cubes", index + 1, pool, 5);
   return {
     level: entry.level,
     stars: entry.stars,
-    pool: entry.problems,
+    pool,
     problems,
     multiAnswer: isMultiAnswerSession(problems)
   };
@@ -327,9 +394,16 @@ export function validateLevels() {
           throw new Error(`${problem.id} reference does not match target`);
         }
       } else if (problem.goal !== undefined) {
-        // Goal fields belong to level 5 only — levels 2-4 stay views-only, and
-        // a stray `goal` there would make app.js start grading their totals.
+        // Goal fields belong to level 5 only; standard levels use requiredTotal.
         throw new Error(`${problem.id} is not a level-5 problem but declares a goal`);
+      } else {
+        if (!Number.isInteger(problem.requiredTotal) || problem.requiredTotal < 1) {
+          throw new Error(`${problem.id} needs a visible requiredTotal clue`);
+        }
+        const validBuilds = countBuildsWithTotal(problem, problem.requiredTotal);
+        if (validBuilds !== 1) {
+          throw new Error(`${problem.id} has ${validBuilds === 0 ? "no" : "multiple"} answers with its cards and total`);
+        }
       }
     });
     // The level's declared `multiAnswer` flag must still agree with what its

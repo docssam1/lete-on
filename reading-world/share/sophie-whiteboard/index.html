@@ -17,11 +17,12 @@
     .scene-list{display:grid;gap:24px}.scene-card{overflow:hidden;scroll-margin-block:22px;border:1px solid var(--line);border-radius:18px;background:#fffaf0;box-shadow:0 13px 35px #6756381a}
     .scene-head{display:flex;gap:18px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}.scene-head span{flex:0 0 auto;font:700 11px Arial;letter-spacing:.16em;color:var(--accent)}.scene-head p{min-width:0;margin:0;font-size:15px;overflow-wrap:anywhere}
     video{display:block;width:100%;background:var(--paper);aspect-ratio:16/9}
+    .reader-controls{display:flex;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--line);background:#fffaf0;font-family:Arial,sans-serif}.reader-controls button{padding:8px 13px;font-size:13px}.reader-controls label{display:flex;align-items:center;gap:7px;margin-left:auto;font-size:13px;font-weight:700}.reader-controls select{border:1px solid #bda889;border-radius:999px;padding:8px 28px 8px 11px;background:#fff;font:700 13px Arial;color:var(--ink)}
     .passage{padding:22px clamp(18px,4vw,42px) 26px;font-size:clamp(18px,2.1vw,24px);line-height:1.75}
     .sentence{border-radius:6px;padding:2px 1px;transition:.15s}.sentence.reading{background:#f7cf73;box-shadow:0 0 0 3px #f7cf734d}
     .continue-card{scroll-margin-block:22px;padding:28px;border:1px solid var(--line);border-radius:18px;text-align:center;background:#fffaf0;box-shadow:0 13px 35px #6756381a}.continue-card p{margin:7px auto 17px;max-width:620px;color:#685f50;line-height:1.55}.continue-card a{display:inline-block;border-radius:999px;padding:12px 20px;color:#fff;background:var(--accent);font-weight:700;text-decoration:none}
-    @media(min-width:900px){.scene-card{display:grid;grid-template-columns:1.2fr 1fr}.scene-head{grid-column:1/-1}.passage{align-self:center}.scene-card video{height:100%;object-fit:contain}}
-    @media(max-width:700px){header{align-items:flex-start;flex-direction:column;gap:7px}header>p{font-size:14px}h2{overflow-wrap:anywhere}.scene-head{align-items:flex-start}.passage{padding-inline:20px}}
+    @media(min-width:900px){.scene-card{display:grid;grid-template-columns:1.2fr 1fr}.scene-head{grid-column:1/-1}.scene-card video{grid-column:1;grid-row:2;height:100%;object-fit:contain}.reader-controls{grid-column:1;grid-row:3}.passage{grid-column:2;grid-row:2 / span 2;align-self:center}}
+    @media(max-width:700px){header{align-items:flex-start;flex-direction:column;gap:7px}header>p{font-size:14px}h2{overflow-wrap:anywhere}.scene-head{align-items:flex-start}.passage{padding-inline:20px}.reader-controls{flex-wrap:wrap}.reader-controls label{margin-left:0}}
   </style>
 </head>
 <body><main>
@@ -148,6 +149,21 @@
     document.querySelectorAll('.story').forEach((story) => story.classList.toggle('active', story.dataset.story === button.dataset.target));
   }));
   document.querySelectorAll('video').forEach((video) => {
+    const controls = document.createElement('div');
+    controls.className = 'reader-controls';
+    controls.innerHTML = '<button type="button" data-action="toggle">Play</button><button type="button" data-action="restart">From beginning</button><label>Speed <select aria-label="Reading speed"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option></select></label>';
+    video.after(controls);
+    const toggle = controls.querySelector('[data-action="toggle"]');
+    toggle.addEventListener('click', () => video.paused ? video.play().catch(() => {}) : video.pause());
+    controls.querySelector('[data-action="restart"]').addEventListener('click', () => {
+      video.currentTime = 0;
+      video.play().catch(() => {});
+    });
+    controls.querySelector('select').addEventListener('change', (event) => {
+      video.playbackRate = Number(event.target.value);
+    });
+    video.addEventListener('play', () => { toggle.textContent = 'Pause'; });
+    video.addEventListener('pause', () => { toggle.textContent = 'Play'; });
     video.addEventListener('play', () => document.querySelectorAll('video').forEach((other) => { if (other !== video) other.pause(); }));
     video.addEventListener('timeupdate', () => {
       const sentences = video.closest('.scene-card').querySelectorAll('.sentence');
@@ -157,6 +173,7 @@
       });
     });
     video.addEventListener('ended', () => {
+      video.closest('.scene-card').querySelectorAll('.sentence.reading').forEach((sentence) => sentence.classList.remove('reading'));
       const story = video.closest('.story');
       const videos = [...story.querySelectorAll('video')];
       const next = videos[videos.indexOf(video) + 1];

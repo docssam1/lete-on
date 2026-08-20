@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { levels, validateLevels, viewsOfHeightGrid, viewsMatch } from "./levels.js?v=crystal-9";
-import { text } from "./i18n.js?v=crystal-9";
+import { levels, validateLevels, viewsOfHeightGrid, viewsMatch } from "./levels.js?v=crystal-10";
+import { text } from "./i18n.js?v=crystal-10";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
 
@@ -102,7 +102,7 @@ function updateAudioButton() {
 
 function updateProgress() {
   elements.progress.textContent = format("progress", {
-    level: state.levelIndex + 1,
+    level: levels[state.levelIndex].level,
     current: state.problemIndex + 1,
     total: levels[state.levelIndex].problems.length
   });
@@ -160,6 +160,7 @@ function levelNoticeKey() {
   // per problem, not per level number, so the level ordering can change
   // without this silently going stale.
   if (currentProblem().goal) return "goalLevelNotice";
+  if (currentProblem().requiredTotal) return "singleAnswerCountNotice";
   if (levels[state.levelIndex].multiAnswer) return "multiAnswerNotice";
   const activeCount = currentProblem().activeViews.length;
   return activeCount === 1 ? "singleAnswerNotice1" : activeCount === 2 ? "singleAnswerNotice2" : "singleAnswerNotice3";
@@ -193,12 +194,19 @@ const totalCubes = (build) => build.reduce((sum, row) => sum + row.reduce((a, h)
 // hidden and those levels look exactly as they did before.
 function updateBuildCount() {
   const problem = currentProblem();
-  if (!problem.goal) {
+  if (!problem.goal && !problem.requiredTotal) {
     elements.buildCount.hidden = true;
     elements.buildCount.textContent = "";
     return;
   }
   elements.buildCount.hidden = false;
+  if (problem.requiredTotal) {
+    elements.buildCount.textContent = format("requiredCount", {
+      required: problem.requiredTotal,
+      count: totalCubes(state.build)
+    });
+    return;
+  }
   // The goal must be stated HERE, not only in #numberPrompt: the shared shell
   // renders #numberPrompt as display:none for this game at every viewport, so
   // a child would otherwise never see whether to build the most or the fewest.
@@ -398,7 +406,21 @@ function checkAnswer() {
   }
   const mine = viewsOfHeightGrid(state.build, problem.grid, problem.maxH);
   if (viewsMatch(mine, problem.target, problem.activeViews)) {
-    // Levels 2-4: matching the cards IS the answer, unchanged.
+    if (problem.requiredTotal) {
+      const total = totalCubes(state.build);
+      if (total !== problem.requiredTotal) {
+        state.wrongAttempts += 1;
+        problem.activeViews.forEach((name) => {
+          cardEl[name].classList.remove("mismatch");
+          cardEl[name].classList.add("matched");
+        });
+        const key = total < problem.requiredTotal ? "requiredMoreNeeded" : "requiredFewerNeeded";
+        showToast(text(state.lang, key));
+        setGuide(key, false);
+        return;
+      }
+    }
+    // Standard levels also require the visible cube total when one is given.
     if (!problem.goal) { completeProblem(); return; }
     // Level 5 also has to hit the extreme total. Because all three cards are
     // active here, any card-matching build already sits between minTotal and
@@ -458,7 +480,7 @@ function completeProblem() {
   // note would be flatly false; on a 가장 적게 one it would invite the child to
   // look for shapes that are no longer graded as correct unless they also hit
   // the minimum. `solutions` still describes the card set, so it stays stored.
-  if (!currentProblem().goal && currentProblem().solutions > 1) {
+  if (!currentProblem().goal && !currentProblem().requiredTotal && currentProblem().solutions > 1) {
     elements.successNote.textContent = text(state.lang, "solutionsNote");
     void elements.successNote.offsetWidth;
     elements.successNote.classList.add("show");

@@ -4475,27 +4475,29 @@ function geometryWorksheetProblem(typeCode, difficulty) {
 // 그냥 부르면 원본과 다른 질문이 나간다. 모양도 계단이 아닌 십자·사각뿔이 섞인다.
 // 그래서 원본과 같은 질문(nth)·같은 모양(계단)만 받고, 같음 난이도는 5단계로 고정한다.
 function cubeStepSequence({ difficulty = 2 }) {
-  let made = null;
-  for (let attempt = 0; attempt < 200; attempt += 1) {
-    // 삼각 계단은 워크시트 엔진에서 L4부터 나온다(L3 목록에 없다). 쉬움에서도 원본과
-    // 같은 모양을 내야 하므로 단계는 L4 이상으로 부르고, 쉬움은 4단계를 받아 낮춘다.
-    const candidate = geometryWorksheetProblem("TS", difficulty === 1 ? 2 : difficulty);
-    if (!candidate) return null;
-    const kind = candidate.figures && candidate.figures.patternKind;
-    if (candidate.answer.mode !== "nth") continue;
-    if (kind !== "triangular-stair") continue;
-    if (difficulty === 1 && candidate.answer.n !== 4) continue;
-    if (difficulty === 2 && candidate.answer.n !== 5) continue;
-    made = candidate;
-    break;
-  }
-  if (!made) return null;
+  const worksheet = globalThis.GW_GEN;
+  if (!worksheet?.buildTriangularStairShape || !worksheet?.triangularStairTotal) return null;
+  const n = difficulty === 1 ? 4 : difficulty === 3 ? (Math.random() < 0.5 ? 6 : 7) : 5;
+  const stageTotals = Array.from({ length: n }, (_, index) => worksheet.triangularStairTotal(index + 1));
+  const figures = {
+    kind: "sequence",
+    patternKind: "triangular-stair",
+    patternName: "삼각 계단",
+    shapes: [1, 2, 3].map((stage) => ({
+      n: stage,
+      map: worksheet.buildTriangularStairShape(stage),
+      width: stage,
+      depth: stage
+    }))
+  };
+  const count = worksheet.triangularStairTotal(n);
+  const answerText = `${count}개`;
   return {
-    prompt: made.prompt,
-    visual: { kind: "geometry-worksheet", figures: made.figures },
-    answer: made.answerText,
-    solution: `${made.answer.stageTotals.map((total, index) => `${index + 1}단계 ${total}개`).join(" → ")}이므로 답은 ${made.answerText}입니다.`,
-    meta: { worksheetType: made.type, ...made.answer }
+    prompt: `쌓기나무를 일정한 규칙에 따라 쌓았습니다. ${n}번째 모양의 쌓기나무는 몇 개입니까?`,
+    visual: { kind: "geometry-worksheet", figures },
+    answer: answerText,
+    solution: `${stageTotals.map((total, index) => `${index + 1}단계 ${total}개`).join(" → ")}이므로 답은 ${answerText}입니다.`,
+    meta: { worksheetType: "SQ", mode: "nth", n, count, stageTotals, patternKind: "triangular-stair" }
   };
 }
 

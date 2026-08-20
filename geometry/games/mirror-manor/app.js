@@ -18,9 +18,9 @@
 
 import {
   levels, readyLevels, validateLevels, classifyCell, classifyPlacement,
-  mirrorDistance, isGivenSide, inGrid, GAME_ID, PROGRESS_KEY
-} from "./levels.js?v=mirror-manor-1";
-import { messages, text } from "./i18n.js?v=mirror-manor-1";
+  reflectCell, mirrorDistance, isGivenSide, inGrid, GAME_ID, PROGRESS_KEY
+} from "./levels.js?v=mirror-manor-2";
+import { messages, text } from "./i18n.js?v=mirror-manor-2";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
@@ -281,9 +281,12 @@ function nearestCell(cells, axis) {
 function paintGuidesFor(cell) {
   const p = problem();
   const along = p.axis.kind === "vertical" ? cell[1] : cell[0];
-  const partner = p.sourceCells
-    .filter((source) => (p.axis.kind === "vertical" ? source[1] : source[0]) === along)
-    .sort((a, b) => mirrorDistance(a, p.axis) - mirrorDistance(b, p.axis))[0];
+  const candidates = p.sourceCells.filter((source) =>
+    (p.axis.kind === "vertical" ? source[1] : source[0]) === along);
+  const partner = candidates.find((source) => cellId(reflectCell(source, p.axis)) === cellId(cell))
+    || candidates.sort((a, b) =>
+      Math.abs(mirrorDistance(a, p.axis) - mirrorDistance(cell, p.axis))
+      - Math.abs(mirrorDistance(b, p.axis) - mirrorDistance(cell, p.axis)))[0];
   const list = [{ cell, side: "answer" }];
   if (partner) list.unshift({ cell: partner, side: "given" });
   showGuides(list);
@@ -502,7 +505,7 @@ function rewardProblem() {
 function renderStatus() {
   const p = problem();
   const level = levelData();
-  $("#levelLabel").textContent = `LEVEL ${level.id}`;
+  $("#levelLabel").textContent = t("levelLabel", { level: level.id });
   $("#problemLabel").textContent = `${state.problem + 1} / ${state.queue.length}`;
   $("#missionTitle").textContent = t(level.titleKey);
   $("#stars").textContent = "*".repeat(level.id) + "-".repeat(5 - level.id);
@@ -599,6 +602,7 @@ function applyLanguage() {
   $("#levelButton").textContent = t("levels");
   $("#hintButton").textContent = t("hint");
   $("#retryButton").textContent = t("retry");
+  $("#toolPanel").setAttribute("aria-label", t("toolsAria"));
   ui.next.textContent = t("next");
   $("#dialogTitle").textContent = t("chooseLevel");
   $("#closeLevels").setAttribute("aria-label", t("close"));
@@ -620,7 +624,11 @@ window.addEventListener("pointercancel", (event) => { if (drag) endDrag(event); 
 
 $("#hintButton").addEventListener("click", () => {
   state.hints += 1;
-  cubiSays(t(problem().interaction === "paint-reflection" ? "hintPaint" : "hintDrag"));
+  const current = problem();
+  const hintKey = current.interaction === "paint-reflection"
+    ? (current.axis.kind === "horizontal" ? "hintPaintHorizontal" : "hintPaintVertical")
+    : "hintDrag";
+  cubiSays(t(hintKey));
 });
 $("#retryButton").addEventListener("click", resetProblem);
 ui.next.addEventListener("click", nextProblem);

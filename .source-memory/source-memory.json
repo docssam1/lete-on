@@ -2,7 +2,7 @@
   "version": 1,
   "name": "Fields Classic question bank",
   "root": "..",
-  "updated": "2026-08-20",
+  "updated": "2026-08-21",
   "sources": [
     {
       "id": "handover",
@@ -83,6 +83,136 @@
       "sha256": "fbcdf411afafb1d38881e2e40cdf7cc8c075e550f697bd7eaed729b81ad6af4e",
       "size": 2738,
       "mtime_ns": 1787232090986480700
+    },
+    {
+      "id": "gfield-drive-memory-notes",
+      "title": "지필드 지오메트리 설계 결정 메모",
+      "path": "private-sources/geometry/gfield-geometry-memory-notes.md",
+      "kind": "markdown",
+      "sensitivity": "private",
+      "sha256": "bad39d87111f422f33a9978ea8b2d7cfb77fac25c8fc8fc6b18bf37f5a87389d",
+      "size": 2333,
+      "mtime_ns": 1787193654415852800
+    },
+    {
+      "id": "ray-b1-2",
+      "title": "RAY B1-2",
+      "path": "private-sources/RAY/Ray B1-2.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "67b0323b0686ff5d9ea2488f51a5454e9b24ea584420de342ceab92355677f87",
+      "size": 3988496,
+      "mtime_ns": 1582602082000000000
+    },
+    {
+      "id": "geometry-geoboard-levels",
+      "title": "Geoboard Studio level data",
+      "path": "geometry/games/geoboard/levels.js",
+      "kind": "javascript",
+      "sensitivity": "internal",
+      "sha256": "161ab966a9ae59f40db7433e44e99fe6cc86ea0dee8f31fa6487abb788265f79",
+      "size": 22827,
+      "mtime_ns": 1787138066480953100
+    },
+    {
+      "id": "geometry-geoboard-selftest",
+      "title": "Geoboard Studio deterministic self-test",
+      "path": "geometry/games/geoboard/geoboard.selftest.mjs",
+      "kind": "javascript",
+      "sensitivity": "internal",
+      "sha256": "8d120421ff818e1f1c93b502b2278823360a3d0d681c1e8b7d095570db929665",
+      "size": 3144,
+      "mtime_ns": 1787234861605039000
+    },
+    {
+      "id": "cmath-nc1-2-shape-start",
+      "title": "시매쓰 NC 1단계 2 도형의 시작",
+      "path": "private-sources/Cmath/NC/NC 1단계/NC 1단계 - 2/NC 1단계 2.도형의 시작.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "7460bf162962c0b186a4d5a32d9768699455ff6a56aee7a252dba7d1681e92b6",
+      "size": 26361877,
+      "mtime_ns": 1685767106000000000
+    },
+    {
+      "id": "cmath-nc1-6-solid-shapes",
+      "title": "시매쓰 NC 1단계 6 올록볼록 입체도형",
+      "path": "private-sources/Cmath/NC/NC 1단계/NC 1단계 - 6/NC 1단계 6.올록볼록 입체도형.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "685d2684393ef2f8bfae6b4e8baeb6ca3df016f401cc81fbc1dbc2d0d9063fb1",
+      "size": 28072802,
+      "mtime_ns": 1683183338000000000
+    },
+    {
+      "id": "cmath-nc2-4-blocks-pentomino",
+      "title": "시매쓰 NC 2단계 4 탐구블록과 펜토미노",
+      "path": "private-sources/Cmath/NC/NC 2단계/NC 2단계 - 4/NC 2단계 4.탐구블록과 펜토미노.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "3c9a6d886932ff872c31551be7a4d252cbba93c437c1cea964af23492c1149a3",
+      "size": 26922669,
+      "mtime_ns": 1686296834000000000
+    },
+    {
+      "id": "cmath-nc3-2-tangram-cubes",
+      "title": "시매쓰 NC 3단계 2 칠교놀이와 쌓기나무",
+      "path": "private-sources/Cmath/NC/NC 3단계/NC 3단계 - 2/NC 3단계 2.칠교놀이와 쌓기나무.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "b5e084104ec827139a79b1564897f0c17a2ca706c03d1579a27f27230125f985",
+      "size": 29464683,
+      "mtime_ns": 1686301334000000000
+    },
+    {
+      "id": "cmath-nc4-2-geometry-inquiry",
+      "title": "시매쓰 NC 4단계 2 도형 탐구 문제 해결력",
+      "path": "private-sources/Cmath/NC/NC 4단계/NC 4단계 - 2/NC 4단계 2.도형_탐구 문제 해결력.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "1a5500b8d1be0ce82a07add05f5618e86ff476c80e4b8b1cf3d458a2772bcbdb",
+      "size": 13064359,
+      "mtime_ns": 1689999386000000000
+    },
+    {
+      "id": "cmath-nc5-2-segments-shapes",
+      "title": "시매쓰 NC 5단계 2 선분에서 도형까지",
+      "path": "private-sources/Cmath/NC/NC 5단계/NC 5단계 - 2/NC 5단계 2.선분에서 도형까지.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "09c4f59bc21c345df2874ba82e672796a9ca45cf141094a784a258183944b084",
+      "size": 23455840,
+      "mtime_ns": 1686637222000000000
+    },
+    {
+      "id": "cmath-nc5-4-measurement",
+      "title": "시매쓰 NC 5단계 4 측정의 세계",
+      "path": "private-sources/Cmath/NC/NC 5단계/NC 5단계 - 4/NC 5단계 4.측정의 세계.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "c2134fd7cb6aa71398a6e76ed5db5b95729ac5ebf1f217419edad6efd122b7b2",
+      "size": 28258865,
+      "mtime_ns": 1686644640000000000
+    },
+    {
+      "id": "cmath-nc6-1-fun-geometry",
+      "title": "시매쓰 NC 6단계 1 재미있는 도형",
+      "path": "private-sources/Cmath/NC/NC 6단계/NC 6단계 - 1/NC 6단계 1.재미있는 도형.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "570c1f36de7a4f10f04e38e5cc1ab6ccec71616ade56710c64940079ebae5a8e",
+      "size": 27364887,
+      "mtime_ns": 1686028944000000000
+    },
+    {
+      "id": "cmath-nc6-5-land-fences",
+      "title": "시매쓰 NC 6단계 5 땅과 울타리",
+      "path": "private-sources/Cmath/NC/NC 6단계/NC 6단계 - 5/NC 6단계 5.땅과 울타리.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "sha256": "4884fa86be4439d39507ef4f299c58981c0d056b982b7ab9dcb04c755ad85990",
+      "size": 26864432,
+      "mtime_ns": 1686900846000000000
     }
   ],
   "records": [
@@ -3818,6 +3948,113 @@
       ]
     },
     {
+      "id": "geometry.design.levels-1-to-5",
+      "title": "쌓기나무 레벨 구조(1~5) 설계 근거",
+      "aliases": [
+        "쌓기나무 레벨",
+        "cube-stack level"
+      ],
+      "tags": [
+        "geometry",
+        "cube-stack",
+        "roadmap",
+        "design"
+      ],
+      "summary": "레벨 1~3은 원목/색 위치 기반 출제 구조를 확장하고, 레벨 4는 직육면체 전용, 레벨 5는 정육면체·직육면체·삼각기둥·뿔/원추 조각 기반 자유 창작/검증형으로 설계. 일부 유형은 5문제씩 묶어 구성하고 레벨 전환·포인트몰 연동은 추후 구현 대기.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-20",
+      "pointers": [
+        {
+          "note": "챌린지/크리에이티브형으로 단계 분리",
+          "locator": "레벨 1~3 색깔 위치 검증 강화, 레벨 4 직육면체만, 레벨 5 다면체 혼합",
+          "role": "decision",
+          "source_id": "gfield-drive-memory-notes"
+        }
+      ]
+    },
+    {
+      "id": "geometry.paper-fold.curriculum-1-3",
+      "title": "색종이접기 레벨 커리큘럼(1~3) 정리",
+      "aliases": [
+        "색종이 접기",
+        "paper fold"
+      ],
+      "tags": [
+        "geometry",
+        "paper-fold",
+        "curriculum"
+      ],
+      "summary": "레벨1은 좌우 대칭/한 번 접기, 레벨2는 대각선 한 번 접기로 난이도 단계화. 레벨별로 정답 선택형 인터랙션(그림 클릭) 중심으로 유지하고, 정답 후 2단계(부분 합/개수 계산)로 전이하는 구성 권장.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-20",
+      "pointers": [
+        {
+          "note": "선택형 오답/정답 피드백 위주로 UX 통일",
+          "locator": "색종이 접기 레벨 1 대칭 연습, 레벨2 대각선 접기",
+          "role": "decision",
+          "source_id": "gfield-drive-memory-notes"
+        }
+      ]
+    },
+    {
+      "id": "geometry.worksheet.lab-portal-single-entry",
+      "title": "지오메트리 랩(문항은행) 통합 엔트리 설계",
+      "aliases": [
+        "지오메트리 랩",
+        "문항은행 입구 통합"
+      ],
+      "tags": [
+        "geometry",
+        "worksheet",
+        "lab",
+        "ux"
+      ],
+      "summary": "학습지 진입은 랩 단일화. 게임별 전용 문제 뱅크 버튼은 제거하고 유형 카드(똑같이쌓기 원목/컬러, 개수 세기, 여러 방향)로 4개 게임을 운영. 단계/난이도/유형을 함께 고를 수 있으며 유형 선택을 강제로 복구하지 않는다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-20",
+      "pointers": [
+        {
+          "note": "PC는 미리보기 우측 고정, 모바일은 스크롤형 구성",
+          "locator": "랩 단일화 및 유형 혼합 출제",
+          "role": "decision",
+          "source_id": "gfield-drive-memory-notes"
+        }
+      ]
+    },
+    {
+      "id": "geometry.validation.single-answer-visibility",
+      "title": "GFIELD 단일정답·가시성 검수 스킬",
+      "aliases": [
+        "단일정답 검수",
+        "가시성 검수",
+        "쌓기나무 모호성 방지",
+        "색종이 접기 모호성 방지"
+      ],
+      "tags": [
+        "geometry",
+        "validation",
+        "single-answer",
+        "visibility",
+        "worksheet",
+        "game"
+      ],
+      "summary": "쌓기나무·색종이·입체도형 문제는 보이는 정보만으로 정답이 하나여야 한다. 뒤에 가려진 부분, 숨은 색, 구멍 위치, 접힌 뒤 펼친 모양, 직육면체·삼각기둥 방향 등은 조건으로 유일하게 결정되어야 하며, 여러 답이 가능한 보기나 애매한 시점은 출제하지 않는다. 단계는 킨더·키즈·Pre·입문·초급·중급으로 구분하고, 난이도 하/중/상은 각 단계 안에서 별도로 관리한다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-20",
+      "pointers": [
+        {
+          "source_id": "gfield-drive-memory-notes",
+          "role": "decision",
+          "locator": "Codex skill: gfield-single-answer-visibility",
+          "note": "사용자 결정: 유형별 문제 생성·검수 시 답이 여러 개 나오거나 보이지 않는 부분이 애매한 문제를 방지하는 GFIELD 전용 스킬로 저장"
+        }
+      ]
+    },
+    {
       "id": "hf.q06-q09-single-answer",
       "title": "Hyper Focus q06~q09 단일정답 생성 규칙",
       "aliases": [
@@ -3839,6 +4076,125 @@
           "role": "audit",
           "locator": "q06~q09 각 유형 및 검증 위치",
           "note": "2026-08-20 원본 교차검증과 생성기 전수검사 결정"
+        }
+      ]
+    },
+    {
+      "id": "geometry.geoboard.ray-b1-2-foundation",
+      "title": "점판 공작소 RAY B1-2 근거와 구현 경계",
+      "aliases": [
+        "점판 공작소 교재 근거",
+        "RAY B1-2 점판"
+      ],
+      "tags": [
+        "geometry",
+        "geoboard",
+        "ray",
+        "single-answer"
+      ],
+      "summary": "RAY B1-2는 점판에서 삼각형·사각형·오각형을 만들고 점·선 그림 속 삼각형과 사각형을 세는 활동을 제시한다. 게임 1단계는 이를 위한 열린 선 조작 연습, 2단계는 제시된 삼각형·사각형 재현으로 연결한다. 현재 공개 범위는 20문제이며 위치·방향까지 같은 하나의 답만 인정한다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-20",
+      "pointers": [
+        {
+          "source_id": "ray-b1-2",
+          "role": "source",
+          "locator": "PDF p. 36, 활동: 지오보드로 도형 만들기",
+          "note": "삼각형·사각형·오각형을 점판에 만드는 활동을 원본 페이지에서 시각 확인"
+        },
+        {
+          "source_id": "ray-b1-2",
+          "role": "source",
+          "locator": "PDF p. 38 and p. 46, 도형의 개수",
+          "note": "점과 선으로 된 그림에서 삼각형·사각형의 개수를 세는 후속 활동을 시각 확인"
+        },
+        {
+          "source_id": "geometry-geoboard-levels",
+          "role": "code",
+          "locator": "LEVELS, LEVEL_PROBLEMS, acceptsAnswer, validateLevels",
+          "note": "1단계 조작 연습과 2단계 닫힌 도형 재현을 분리하고 위치·방향까지 같은 edge set 하나만 허용"
+        },
+        {
+          "source_id": "geometry-geoboard-selftest",
+          "role": "test",
+          "locator": "full deterministic test suite",
+          "note": "20개 문제의 고유성·정답 유일성·기하 도우미·4개 언어 키를 검증"
+        }
+      ]
+    },
+    {
+      "id": "geometry.curriculum.cmath-nc-inventory",
+      "title": "시매쓰 NC 기하 자료 색인",
+      "aliases": [
+        "시매쓰 NC",
+        "Cmath NC"
+      ],
+      "tags": [
+        "geometry",
+        "cmath",
+        "nc",
+        "curriculum",
+        "source-inventory"
+      ],
+      "summary": "시매쓰 NC 자료는 1~6단계, 전체 348개 파일로 확인되었다. 파일명 기준 기하 관련 본교재 후보 9권을 등록했으며 페이지별 내용과 GFIELD 단계·난이도 대응은 아직 검증 전이다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-21",
+      "pointers": [
+        {
+          "source_id": "cmath-nc1-2-shape-start",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc1-6-solid-shapes",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc2-4-blocks-pentomino",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc3-2-tangram-cubes",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc4-2-geometry-inquiry",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc5-2-segments-shapes",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc5-4-measurement",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc6-1-fun-geometry",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
+        },
+        {
+          "source_id": "cmath-nc6-5-land-fences",
+          "role": "source",
+          "locator": "file identity and title",
+          "note": "Fingerprint verified; page-level content not yet inspected"
         }
       ]
     }
