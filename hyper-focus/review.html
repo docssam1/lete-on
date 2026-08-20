@@ -171,7 +171,7 @@ function variationCard(id,canonical,v){
     ?'<img src='+esc(source)+' alt="'+esc(v.variationId)+' 유사문제 그림">'
     :'<div class="asset-missing">'+(state==='rejected'?'폐기된 문제<br>그림을 불러오지 않음':'뷰어용 그림 없음')+'</div>';
   var prompt=v.problem&&v.problem.prompt||'문제 문장 없음';
-  var answer=hasAnswer(v)?formatAnswer(v.answerValidation.expectedAnswer):'정답 없음';
+  var answer=hasAnswer(v)?formatAnswer(v.answerValidation.expectedAnswer)+(v.presentation&&v.presentation.answerUnit||''):'정답 없음';
   return '<article class="card '+state+'">'
     +'<span class="badge">'+stateLabel(state)+'</span>'
     +'<div class="q">['+esc(v.variationId)+'] '+esc(v.problem&&v.problem.title||canonical.title)+'</div>'

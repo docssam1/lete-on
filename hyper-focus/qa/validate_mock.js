@@ -312,6 +312,7 @@ variationExam.questions.forEach((question) => {
   if (question.presentationMode === "text-only") {
     assert(question.problemHtml.includes("hf-variation-text-only"), `${question.variationId}: 문장형 풀이 공간 누락`);
     assert(!question.problemHtml.includes("<img"), `${question.variationId}: 문장형 문제에 가짜 그림 포함`);
+    assert(/정답: .+(계단|명|일)\./.test(question.answerText), `${question.variationId}: 문장형 정답 단위 누락`);
   } else {
     assert(question.problemHtml.includes("hf-variation-problem"), `${question.variationId}: 문제 그림 누락`);
     const match = question.problemHtml.match(/src="([^"]+)"/);

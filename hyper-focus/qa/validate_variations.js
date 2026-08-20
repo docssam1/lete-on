@@ -610,6 +610,8 @@ for (const name of ['q33_var01','q33_var02']) {
   const aPosition = m.winsA * m.winStep - m.lossesA * m.loseStep;
   const bPosition = m.lossesA * m.winStep - m.winsA * m.loseStep;
   ok(m.winsA + m.lossesA === m.rounds, `${name}: round count mismatch`);
+  ok(v.subType === 'rps_stair_position' && m.payloadType === 'rps_stair_position', `${name}: canonical subtype drift`);
+  ok(v.problem.prompt.includes('같은 계단에서 시작'), `${name}: same-start condition missing`);
   ok(aPosition - bPosition === v.answerValidation.expectedAnswer, `${name}: stair difference mismatch`);
 }
 
@@ -637,6 +639,8 @@ for (const name of ['q48_var01','q48_var02']) {
   const perA = m.totalUnits / m.daysA, perB = m.totalUnits / m.daysB;
   const together = m.totalUnits / (perA + perB);
   ok(Number.isInteger(perA) && Number.isInteger(perB), `${name}: child-friendly whole-grid units missing`);
+  ok(v.subType === 'work_together' && m.payloadType === 'work_together', `${name}: canonical subtype drift`);
+  ok(v.problem.prompt.includes('매일 같은 속도로'), `${name}: constant-work-rate condition missing`);
   ok(perA === m.perDayA && perB === m.perDayB && perA + perB === m.perDayTogether, `${name}: per-day grid mismatch`);
   ok(together === v.answerValidation.expectedAnswer, `${name}: together-work answer mismatch`);
 }
@@ -646,6 +650,7 @@ for (const name of ['q49_var01','q49_var02']) {
   const perAnimalPerDay = given.nuts / (given.animals * given.days);
   const days = target.nuts / (target.animals * perAnimalPerDay);
   ok(Number.isInteger(perAnimalPerDay) && Number.isInteger(days), `${name}: whole-unit rate condition missing`);
+  ok(v.problem.prompt.includes('같은 속도로 매일 같은 수'), `${name}: constant-animal-rate condition missing`);
   ok(perAnimalPerDay === m.solvingModel.perAnimalPerDay, `${name}: unit rate mismatch`);
   ok(days === v.answerValidation.expectedAnswer, `${name}: target days mismatch`);
 }
@@ -655,6 +660,7 @@ for (const name of textOnlyIds) {
   const v = variations.get(name);
   ok(v.status === 'verified', `${name}: text-only status is not verified`);
   ok(v.presentation && v.presentation.mode === 'text-only', `${name}: explicit text-only presentation missing`);
+  ok(v.presentation.answerUnit, `${name}: answer unit missing`);
   ok(v.problem && v.problem.prompt && v.solutionHint, `${name}: text-only prompt or solution missing`);
   ok(v.source && !v.source.problemImage, `${name}: text-only problem points to a misleading image`);
 }

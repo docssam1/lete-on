@@ -51,6 +51,7 @@
       prompt: prompt.trim(),
       image,
       presentationMode,
+      answerUnit: String(variation.presentation && variation.presentation.answerUnit || ""),
       answer: variation.answerValidation.expectedAnswer,
       solutionHint: hint.trim(),
       payload: variation.machineReadable || {},
@@ -120,16 +121,18 @@
     return null;
   }
 
-  function formatAnswer(answer) {
+  function formatAnswer(answer, unit) {
+    let formatted;
     if (answer && typeof answer === "object" && !Array.isArray(answer)) {
       if (Object.prototype.hasOwnProperty.call(answer, "min") && Object.prototype.hasOwnProperty.call(answer, "max")) {
-        return `최솟값 ${answer.min}, 최댓값 ${answer.max}`;
+        formatted = `최솟값 ${answer.min}, 최댓값 ${answer.max}`;
+      } else {
+        const positionLabels = {left_top: "왼쪽 위", right_top: "오른쪽 위", left_bottom: "왼쪽 아래", right_bottom: "오른쪽 아래"};
+        formatted = Object.entries(answer).map(([key, value]) => `${positionLabels[key] || key} ${value}`).join(", ");
       }
-      const positionLabels = {left_top: "왼쪽 위", right_top: "오른쪽 위", left_bottom: "왼쪽 아래", right_bottom: "오른쪽 아래"};
-      return Object.entries(answer).map(([key, value]) => `${positionLabels[key] || key} ${value}`).join(", ");
-    }
-    if (Array.isArray(answer)) return answer.join(", ");
-    return String(answer);
+    } else if (Array.isArray(answer)) formatted = answer.join(", ");
+    else formatted = String(answer);
+    return formatted + String(unit || "");
   }
 
   function toQuestion(variation, number) {
@@ -152,7 +155,7 @@
       presentationMode: variation.presentationMode,
       answer: variation.answer,
       answerCandidates: null,
-      answerText: `정답: ${formatAnswer(variation.answer)}. ${variation.solutionHint}`,
+      answerText: `정답: ${formatAnswer(variation.answer, variation.answerUnit)}. ${variation.solutionHint}`,
       payload: variation.payload
     };
   }
