@@ -686,5 +686,5 @@ console.log('PASS');
 console.log('- canonical JSON: 54');
 console.log('- variation JSON: 108');
 console.log('- var01/var02 answer collisions: 0');
-console.log('- targeted exhaustive validators: q06, q07, q12-q15, q17-q21, q25, q28-q31, q35-q40, q51');
+console.log('- targeted exhaustive validators: q06, q07, q12-q15, q17-q21, q25, q28-q31, q33, q35-q40, q47-q49, q51');
 console.log(`- rejected canonical-type-drift variations: ${rejectedIds.length}`);
