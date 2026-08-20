@@ -180,4 +180,70 @@ window.BOOK_CATALOG = [
     originalAssessment: false,
     available: true,
   },
+  {
+    id: 'vocabulary-workshop-purple',
+    category: 'textbook', totalLessons: 14,
+    title: 'Vocabulary Workshop',
+    subtitle: 'Level Purple',
+    fullTitle: 'Vocabulary Workshop Enriched Edition Level Purple',
+    series: 'Vocabulary Workshop',
+    publisher: 'Sadlier',
+    publisherAbbr: 'SAD',
+    publisherColor: '#74449a',
+    spineColor: '#4d286e',
+    coverGradient: 'linear-gradient(160deg, #3d1d59 0%, #74449a 48%, #bd95d5 100%)',
+    accentColor: '#f2e9f8',
+    level: 'Purple',
+    grade: 'G2',
+    band: 'G2',
+    isbn: 'Vocabulary Workshop · Purple',
+    vocabularyOnly: true,
+    originalPassage: false,
+    originalAssessment: false,
+    available: false,
+  },
+  {
+    id: 'vocabulary-workshop-red',
+    category: 'textbook', totalLessons: 12,
+    title: 'Vocabulary Workshop',
+    subtitle: 'Level Red',
+    fullTitle: 'Vocabulary Workshop Enriched Edition Level Red',
+    series: 'Vocabulary Workshop',
+    publisher: 'Sadlier',
+    publisherAbbr: 'SAD',
+    publisherColor: '#b13d45',
+    spineColor: '#78242d',
+    coverGradient: 'linear-gradient(160deg, #681f29 0%, #b13d45 48%, #e8a1a4 100%)',
+    accentColor: '#fdeced',
+    level: 'Red',
+    grade: 'G3',
+    band: 'G3',
+    isbn: 'Vocabulary Workshop · Red',
+    vocabularyOnly: true,
+    originalPassage: false,
+    originalAssessment: false,
+    available: false,
+  },
 ];
+
+// Public lesson manifest only. Licensed words and definitions are loaded from
+// Supabase lesson_content and never bundled in the public repository.
+window.LESSONS = window.LESSONS || {};
+[
+  { prefix: 'vwp', total: 14, bookId: 'vocabulary-workshop-purple', levelId: 'Purple' },
+  { prefix: 'vwr', total: 12, bookId: 'vocabulary-workshop-red', levelId: 'Red' },
+].forEach((book) => {
+  for (let unit = 1; unit <= book.total; unit += 1) {
+    const lessonId = `${book.prefix}${String(unit).padStart(2, '0')}`;
+    window.LESSONS[lessonId] = {
+      bookId: book.bookId,
+      levelId: book.levelId,
+      lessonId,
+      title: `Unit ${unit}`,
+      theme: `${book.levelId} vocabulary practice`,
+      image: '',
+      words: [],
+      rewardPoints: { lessonComplete: 20 },
+    };
+  }
+});
