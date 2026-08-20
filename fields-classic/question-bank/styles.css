@@ -218,3 +218,18 @@
 .tsg-num,.tsg-sum{fill:#3c3226;font-family:'Noto Sans KR',sans-serif;font-weight:800;text-anchor:middle;dominant-baseline:central}
 .tsg-num{font-size:19px}
 .tsg-sum{font-size:15px}
+
+/* 교재 단원별 선택: 권 안에서 단원과 세부 유형을 각각 펼쳐 고른다. */
+.curriculum-unit{margin:0 0 4px 28px;border-left:1px solid #dbe4e9}
+.curriculum-unit>summary{display:flex;align-items:center;gap:8px;min-height:42px;padding:0 10px;cursor:pointer;list-style:none;background:#f8fafb}
+.curriculum-unit>summary::-webkit-details-marker{display:none}
+.curriculum-unit>summary:before{content:'›';color:#6e7f8c;font-size:15px;transform:rotate(90deg)}
+.curriculum-unit:not([open])>summary:before{transform:none}
+.curriculum-unit>summary strong{font-size:10.5px}
+.curriculum-unit>summary span{margin-left:auto;color:var(--muted);font-size:8px;font-weight:800}
+.curriculum-unit>.type-leaves{margin:0 0 8px 28px}
+@media(max-width:560px){
+  .curriculum-unit{margin-left:14px}
+  .curriculum-unit>.type-leaves{margin-left:14px}
+  .curriculum-unit>summary span{max-width:125px;text-align:right}
+}

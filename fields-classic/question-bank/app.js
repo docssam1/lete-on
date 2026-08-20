@@ -110,22 +110,29 @@ function renderExamList() {
   }));
 }
 
-function curriculumKey(bookId, unitIndex) {
-  return `${bookId}:${unitIndex}`;
+function curriculumKey(bookId, unitIndex, typeId) {
+  return `${bookId}:${unitIndex}:${typeId}`;
 }
 
 function renderCurriculum() {
   $("curriculumTree").innerHTML = CURRICULUM.map((book) => {
     const sourceFolder = book.id.replace("-", "");
     const units = book.units.map((unit, unitIndex) => {
-      const key = curriculumKey(book.id, unitIndex);
-      const labels = unit.typeIds.map((id) => typeById(id)?.label).filter(Boolean);
-      const readyCount = unit.typeIds.filter((id) => isSelectableType(typeById(id))).length;
-      return `<label class="type-leaf ${readyCount ? "" : "not-ready"}">
-        <input type="checkbox" data-curriculum-key="${key}" ${state.selected.curriculum.has(key) ? "checked" : ""} ${readyCount ? "" : "disabled"} />
-        <span><strong>${unit.label}</strong><span>${labels.join(" · ")}</span></span>
-        <em class="type-status ${readyCount ? "" : "fixed"}">${readyCount ? `${readyCount}개 유형 생성 가능` : "생성기 제작 대기"}</em>
-      </label>`;
+      const types = unit.typeIds.map((id) => typeById(id)).filter(Boolean);
+      const readyCount = types.filter(isSelectableType).length;
+      const typeRows = types.map((item) => {
+        const key = curriculumKey(book.id, unitIndex, item.id);
+        const ready = isSelectableType(item);
+        return `<label class="type-leaf ${ready ? "" : "not-ready"}">
+          <input type="checkbox" data-curriculum-key="${key}" ${state.selected.curriculum.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
+          <span><strong>${item.label}</strong><span>${item.middle} · ${item.textbookSource || "교재 원본 대조 유형"}</span></span>
+          <em class="type-status ${ready ? "" : "fixed"}">${ready ? typeStatus(item) : "생성기 제작 대기"}</em>
+        </label>`;
+      }).join("");
+      return `<details class="curriculum-unit" open>
+        <summary><strong>${unit.label}</strong><span>${readyCount} / ${types.length}개 세부 유형 생성 가능</span></summary>
+        <div class="type-leaves">${typeRows}</div>
+      </details>`;
     }).join("");
     return `<details class="tree-group curriculum-book" open>
       <summary><strong>${book.label} · ${book.title}</strong><span>교재 4단원 + 단원 테스트 25문항</span></summary>
@@ -180,10 +187,12 @@ function selectedReferences() {
   if (state.mode === "curriculum") {
     const result = [];
     for (const key of state.selected.curriculum) {
-      const [bookId, indexText] = key.split(":");
+      const [bookId, indexText, typeId] = key.split(":");
       const book = CURRICULUM.find((item) => item.id === bookId);
       const unit = book?.units[Number(indexText)];
-      result.push(...(unit?.typeIds || []).map((typeId) => ({ typeId, reference: `${book.label} ${unit.label}` })));
+      if (book && unit && unit.typeIds.includes(typeId)) {
+        result.push({ typeId, reference: `${book.label} ${unit.label} · ${typeById(typeId)?.label || "세부 유형"}` });
+      }
     }
     return result;
   }
