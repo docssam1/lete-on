@@ -56,36 +56,42 @@ window.GFIELD_PRINT_DOCUMENTS = {
   },
   "mock-set-1": {
     title: "필즈 더 클래식 실전 모의고사 1회",
+    videoUrl: "https://youtu.be/41mXpws-gng",
     startPage: 1,
     pageCount: 13,
     pagesBase: "../assets/print/mock-set/page_"
   },
   "mock-set-2": {
     title: "필즈 더 클래식 실전 모의고사 2회",
+    videoUrl: "https://youtu.be/S-P096L75ps",
     startPage: 14,
     pageCount: 13,
     pagesBase: "../assets/print/mock-set/page_"
   },
   "mock-set-3": {
     title: "필즈 더 클래식 실전 모의고사 3회",
+    videoUrl: "https://youtu.be/6YU0_X5ixEQ",
     startPage: 27,
     pageCount: 9,
     pagesBase: "../assets/print/mock-set/page_"
   },
   "mock-set-4": {
     title: "필즈 더 클래식 실전 모의고사 4회",
+    videoUrl: "https://youtu.be/KLQH2Mrjm8c",
     startPage: 36,
     pageCount: 9,
     pagesBase: "../assets/print/mock-set/page_"
   },
   "mock-set-5": {
     title: "필즈 더 클래식 실전 모의고사 5회",
+    videoUrl: "https://youtu.be/kyHuxpZhcTQ",
     startPage: 45,
     pageCount: 9,
     pagesBase: "../assets/print/mock-set/page_"
   },
   "mock-set-6": {
     title: "필즈 더 클래식 실전 모의고사 6회",
+    videoUrl: "https://youtu.be/uBSJ_-2IhR8",
     startPage: 54,
     pageCount: 10,
     pagesBase: "../assets/print/mock-set/page_"
