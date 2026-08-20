@@ -605,6 +605,60 @@ for (const name of ['q51_var01','q51_var02']) {
   ok(hourBells + halfHourBells === v.answerValidation.expectedAnswer, `${name}: bell total is ${hourBells + halfHourBells}`);
 }
 
+for (const name of ['q33_var01','q33_var02']) {
+  const v = variations.get(name), m = v.machineReadable;
+  const aPosition = m.winsA * m.winStep - m.lossesA * m.loseStep;
+  const bPosition = m.lossesA * m.winStep - m.winsA * m.loseStep;
+  ok(m.winsA + m.lossesA === m.rounds, `${name}: round count mismatch`);
+  ok(aPosition - bPosition === v.answerValidation.expectedAnswer, `${name}: stair difference mismatch`);
+}
+
+for (const name of ['q47_var01','q47_var02']) {
+  const v = variations.get(name), m = v.machineReadable;
+  const candidates = [];
+  for (let alphabet = 0; alphabet <= m.initialTotal; alphabet += 1) {
+    let state = { number_card: m.initialTotal - alphabet, alphabet_card: alphabet };
+    let valid = true;
+    for (const change of m.changes) {
+      if (change.from !== 'outside') {
+        if (state[change.from] < change.count) { valid = false; break; }
+        state[change.from] -= change.count;
+      }
+      state[change.to] += change.count;
+    }
+    const final = m.solvingModel.finalState;
+    if (valid && state.number_card === final.numberCards && state.alphabet_card === final.alphabetCards) candidates.push(alphabet);
+  }
+  ok(candidates.length === 1 && candidates[0] === v.answerValidation.expectedAnswer, `${name}: reverse-table candidates are ${candidates.join(',')}`);
+}
+
+for (const name of ['q48_var01','q48_var02']) {
+  const v = variations.get(name), m = v.machineReadable;
+  const perA = m.totalUnits / m.daysA, perB = m.totalUnits / m.daysB;
+  const together = m.totalUnits / (perA + perB);
+  ok(Number.isInteger(perA) && Number.isInteger(perB), `${name}: child-friendly whole-grid units missing`);
+  ok(perA === m.perDayA && perB === m.perDayB && perA + perB === m.perDayTogether, `${name}: per-day grid mismatch`);
+  ok(together === v.answerValidation.expectedAnswer, `${name}: together-work answer mismatch`);
+}
+
+for (const name of ['q49_var01','q49_var02']) {
+  const v = variations.get(name), m = v.machineReadable, given = m.givenRatio, target = m.target;
+  const perAnimalPerDay = given.nuts / (given.animals * given.days);
+  const days = target.nuts / (target.animals * perAnimalPerDay);
+  ok(Number.isInteger(perAnimalPerDay) && Number.isInteger(days), `${name}: whole-unit rate condition missing`);
+  ok(perAnimalPerDay === m.solvingModel.perAnimalPerDay, `${name}: unit rate mismatch`);
+  ok(days === v.answerValidation.expectedAnswer, `${name}: target days mismatch`);
+}
+
+const textOnlyIds = ['q33_var01','q33_var02','q47_var01','q47_var02','q48_var01','q48_var02','q49_var01','q49_var02'];
+for (const name of textOnlyIds) {
+  const v = variations.get(name);
+  ok(v.status === 'verified', `${name}: text-only status is not verified`);
+  ok(v.presentation && v.presentation.mode === 'text-only', `${name}: explicit text-only presentation missing`);
+  ok(v.problem && v.problem.prompt && v.solutionHint, `${name}: text-only prompt or solution missing`);
+  ok(v.source && !v.source.problemImage, `${name}: text-only problem points to a misleading image`);
+}
+
 const allHfData = readJson(path.join(root, 'hyper-focus', 'data', 'hf_data.json'));
 const allHfCore = readJson(path.join(root, 'hyper-focus', 'data', 'hf_core.json')).problems;
 const q18HfData = allHfData.find(item => item.typeId === 18);

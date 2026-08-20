@@ -1,7 +1,7 @@
 (function (global) {
   "use strict";
 
-  const READY_TYPE_IDS = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 25, 27, 28, 29, 30, 31, 32, 35, 36, 37, 38, 39, 40, 45, 51, 53];
+  const READY_TYPE_IDS = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 25, 27, 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 39, 40, 45, 47, 48, 49, 51, 53];
   const types = new Map();
   const loading = new Map();
 
@@ -33,11 +33,14 @@
   function normalizeVariation(typeId, canonical, variation) {
     const expectedBase = code(typeId);
     const image = assetPath(variation && variation.source && variation.source.problemImage);
+    const presentationMode = variation && variation.presentation && variation.presentation.mode === "text-only"
+      ? "text-only" : "image";
     const prompt = variation && variation.problem && variation.problem.prompt;
     const hint = variation && variation.solutionHint;
     if (!variation || variation.status === "rejected" || variation.baseQuestionId !== expectedBase) return null;
     if (Number(variation.contentBinding && variation.contentBinding.hfDataTypeId) !== typeId) return null;
-    if (!image || typeof prompt !== "string" || !prompt.trim() || typeof hint !== "string" || !hint.trim() || !hasAnswer(variation)) return null;
+    if ((presentationMode === "image" && !image) || typeof prompt !== "string" || !prompt.trim()
+      || typeof hint !== "string" || !hint.trim() || !hasAnswer(variation)) return null;
     return {
       typeId,
       typeCode: expectedBase,
@@ -47,6 +50,7 @@
       reviewStatus: variation.status || "draft",
       prompt: prompt.trim(),
       image,
+      presentationMode,
       answer: variation.answerValidation.expectedAnswer,
       solutionHint: hint.trim(),
       payload: variation.machineReadable || {},
@@ -142,7 +146,10 @@
       reviewStatus: variation.reviewStatus,
       sourceMode: "variation-bank",
       prompt: variation.prompt,
-      problemHtml: `<img class="hf-variation-problem" src="${escapeHtml(variation.image)}" alt="${escapeHtml(`${variation.typeTitle} ${variation.variationLabel} 그림`)}">`,
+      problemHtml: variation.presentationMode === "text-only"
+        ? '<div class="hf-variation-text-only"><b>풀이 공간</b><span></span><span></span><span></span></div>'
+        : `<img class="hf-variation-problem" src="${escapeHtml(variation.image)}" alt="${escapeHtml(`${variation.typeTitle} ${variation.variationLabel} 그림`)}">`,
+      presentationMode: variation.presentationMode,
       answer: variation.answer,
       answerCandidates: null,
       answerText: `정답: ${formatAnswer(variation.answer)}. ${variation.solutionHint}`,

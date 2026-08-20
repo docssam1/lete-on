@@ -30,6 +30,7 @@ for (let typeId = 10; typeId <= 54; typeId += 1) {
   computedVariationCount += variations.length;
   variations.filter((variation) => variation.status === "rejected").forEach((variation) => computedRejectedIds.push(variation.variationId));
   const ready = variations.every((variation) => {
+    const textOnly = variation.presentation && variation.presentation.mode === "text-only";
     const source = String(variation.source && variation.source.problemImage || "");
     const asset = source.startsWith("./assets/")
       ? path.join(root, "hyper-focus", source.slice(2))
@@ -38,7 +39,7 @@ for (let typeId = 10; typeId <= 54; typeId += 1) {
       variation.status !== "rejected" &&
       variation.problem && variation.problem.prompt &&
       variation.solutionHint &&
-      source && fs.existsSync(asset) &&
+      (textOnly || (source && fs.existsSync(asset))) &&
       variation.answerValidation && Object.prototype.hasOwnProperty.call(variation.answerValidation, "expectedAnswer")
     );
   });
@@ -307,12 +308,17 @@ assert(variationExam.questions.length === readyBankVariationCount, "기존 유�
 assert(new Set(variationExam.questions.map((question) => question.variationId)).size === readyBankVariationCount, "기존 유사문제 중복 노출");
 variationExam.questions.forEach((question) => {
   assert(question.sourceMode === "variation-bank", `${question.typeCode}: 기존 문제은행 출처 누락`);
-  assert(question.problemHtml.includes("hf-variation-problem"), `${question.variationId}: 문제 그림 누락`);
   assert(question.prompt && question.answerText && question.answer !== undefined, `${question.variationId}: 문장·정답·풀이 누락`);
-  const match = question.problemHtml.match(/src="([^"]+)"/);
-  assert(match, `${question.variationId}: 그림 경로 누락`);
-  const asset = path.resolve(root, "hyper-focus/mock", match[1]);
-  assert(fs.existsSync(asset), `${question.variationId}: 그림 파일 없음 ${match[1]}`);
+  if (question.presentationMode === "text-only") {
+    assert(question.problemHtml.includes("hf-variation-text-only"), `${question.variationId}: 문장형 풀이 공간 누락`);
+    assert(!question.problemHtml.includes("<img"), `${question.variationId}: 문장형 문제에 가짜 그림 포함`);
+  } else {
+    assert(question.problemHtml.includes("hf-variation-problem"), `${question.variationId}: 문제 그림 누락`);
+    const match = question.problemHtml.match(/src="([^"]+)"/);
+    assert(match, `${question.variationId}: 그림 경로 누락`);
+    const asset = path.resolve(root, "hyper-focus/mock", match[1]);
+    assert(fs.existsSync(asset), `${question.variationId}: 그림 파일 없음 ${match[1]}`);
+  }
 });
 const bankPractice = globalThis.HFMock.createPractice([10, 53], { seed: 20260820, countPerType: 2, difficulty: "mixed" });
 assert(bankPractice.questions.length === 4, "기존 유사문제 약점 문제은행 연결 실패");

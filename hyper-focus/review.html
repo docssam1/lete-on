@@ -153,7 +153,8 @@ function variationState(id,v){
 function stateLabel(state){return state==='ready'?'뷰어 준비':state==='rejected'?'폐기':'자산 보완 대기';}
 function readinessLines(state,v){
   var source=v.source&&v.source.problemImage||'';
-  var fields=[['문제 문장',!!(v.problem&&v.problem.prompt)],['그림',state==='ready'&&!!source],['정답',hasAnswer(v)],['풀이',!!v.solutionHint]];
+  var textOnly=v.presentation&&v.presentation.mode==='text-only';
+  var fields=[['문제 문장',!!(v.problem&&v.problem.prompt)],[textOnly?'문장형 표시':'그림',state==='ready'&&(textOnly||!!source)],['정답',hasAnswer(v)],['풀이',!!v.solutionHint]];
   return fields.map(function(row){return row[0]+' <span class="'+(row[1]?'ok':'ng')+'">'+(row[1]?'있음':'없음')+'</span>';}).join(' · ');
 }
 function eyeChecklist(state,v){
@@ -163,7 +164,10 @@ function eyeChecklist(state,v){
 }
 function variationCard(id,canonical,v){
   var state=variationState(id,v), source=v.source&&v.source.problemImage||'';
-  var current=state==='ready'&&source
+  var textOnly=v.presentation&&v.presentation.mode==='text-only';
+  var current=state==='ready'&&textOnly
+    ?'<div class="asset-missing" style="color:#16805c">문장만으로 조건이 완전한 유형<br>별도 그림 불필요</div>'
+    :state==='ready'&&source
     ?'<img src='+esc(source)+' alt="'+esc(v.variationId)+' 유사문제 그림">'
     :'<div class="asset-missing">'+(state==='rejected'?'폐기된 문제<br>그림을 불러오지 않음':'뷰어용 그림 없음')+'</div>';
   var prompt=v.problem&&v.problem.prompt||'문제 문장 없음';

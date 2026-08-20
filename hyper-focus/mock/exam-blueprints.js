@@ -11,9 +11,10 @@
     "q19_var01", "q19_var02", "q20_var01", "q20_var02", "q21_var01", "q21_var02",
     "q25_var01", "q25_var02", "q27_var01", "q27_var02", "q28_var01", "q28_var02",
     "q29_var01", "q29_var02", "q30_var01", "q30_var02", "q31_var01", "q31_var02",
-    "q32_var01", "q32_var02", "q35_var01", "q35_var02", "q36_var01", "q36_var02",
+    "q32_var01", "q32_var02", "q33_var01", "q33_var02", "q35_var01", "q35_var02", "q36_var01", "q36_var02",
     "q37_var01", "q37_var02", "q38_var01", "q38_var02", "q39_var01", "q39_var02",
-    "q40_var01", "q40_var02", "q45_var01", "q45_var02",
+    "q40_var01", "q40_var02", "q45_var01", "q45_var02", "q47_var01", "q47_var02",
+    "q48_var01", "q48_var02", "q49_var01", "q49_var02",
     "q51_var01", "q51_var02", "q53_var01", "q53_var02"
   ];
 
@@ -51,7 +52,7 @@
       status: "review",
       title: "기존 유사문제 문제은행 검수 세트",
       subtitle: "q10~q54 중 뷰어 준비 완료 문제",
-      description: "기존 variation JSON 가운데 문제 문장·그림·정답·풀이가 모두 있는 56문제를 그대로 확인하는 검수용 세트입니다.",
+      description: "기존 variation JSON 가운데 문제 문장·필요한 그림·정답·풀이가 모두 있는 64문제를 그대로 확인하는 검수용 세트입니다.",
       durationMinutes: null,
       slots: VARIATION_REVIEW_IDS.map((variationId) => ({
         typeId: Number(variationId.slice(1, 3)),
