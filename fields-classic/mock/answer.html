@@ -15,7 +15,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{font-family:'Pretendard',sans-serif;background:var(--g-bg);color:var(--g-ink)}
-.wrap{max-width:1180px;margin:0 auto;padding:22px 18px 60px}
+.wrap{max-width:980px;margin:0 auto;padding:28px 18px 60px}
 
 /* ── 머리 ── */
 .top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
@@ -42,7 +42,7 @@ html,body{font-family:'Pretendard',sans-serif;background:var(--g-bg);color:var(-
 /* ── 요약 ── */
 /* align-items:start — 카드 높이를 서로 맞추지 않는다. 중분류는 16줄이고 난이도는 2~3줄이라,
    맞추면 난이도 카드에 손바닥만 한 빈 칸이 생긴다. */
-.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));align-items:start;gap:12px;margin-bottom:16px}
+.summary{display:none}
 .card{background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh-sm);padding:16px 18px}
 .card.full{grid-column:1/-1}
 .card.full .bars{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 22px}
@@ -58,7 +58,9 @@ html,body{font-family:'Pretendard',sans-serif;background:var(--g-bg);color:var(-
 .bar-row.d-상 .bar>i{background:var(--d-sang)}
 
 /* ── 문항표 ── */
-.table-card{background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh-sm);overflow:hidden}
+.answer-meta{display:flex;gap:8px;flex-wrap:wrap;padding:13px 18px;margin:-2px 0 16px;background:#fff7ec;border:1px solid #f0e3d2;border-radius:8px;font-size:12px;font-weight:800;color:#8a5a20}
+.answer-meta span{background:#fff;border:1px solid #f0ddc4;border-radius:999px;padding:4px 10px}
+.table-card{background:#fff;border-radius:8px;box-shadow:var(--sh-sm);overflow:hidden}
 table{width:100%;border-collapse:collapse;font-size:13px}
 thead th{background:#f6f9fc;color:#334155;font-weight:800;font-size:11.5px;letter-spacing:.3px;
   padding:11px 10px;text-align:left;border-bottom:2px solid var(--g-line);white-space:nowrap}
@@ -66,7 +68,7 @@ tbody td{padding:12px 10px;border-bottom:1px solid #eef2f7;vertical-align:top;li
 tbody tr:last-child td{border-bottom:0}
 .c-no{width:38px;text-align:center;font-weight:900;color:var(--g-blue)}
 .c-diff{width:44px;text-align:center}
-.c-ans{width:210px}
+.c-ans{width:150px}
 .tag{display:inline-block;padding:2px 8px;border-radius:var(--r-pill);font-size:11px;font-weight:800;
   background:#eef4fb;color:var(--g-blue)}
 .tag.d-하{background:rgba(14,165,233,.12);color:#0369a1}
@@ -100,19 +102,19 @@ tbody tr:last-child td{border-bottom:0}
 <body>
 <div class="wrap">
   <div class="top">
-    <div class="brand"><span>G</span>FIELD 티처 콘솔</div>
+    <div class="brand"><span>G</span>FIELD 답안지</div>
     <div class="top-actions">
-      <button class="btn" id="bankBtn" type="button">📝 이 회차로 시험지 만들기</button>
       <button class="btn" id="videoBtn" type="button">▶ 해설 영상</button>
       <button class="btn primary" id="printBtn" type="button">인쇄</button>
     </div>
   </div>
 
   <div class="head-card">
-    <h1 id="title">모의고사 정답·문항 분석</h1>
+    <h1 id="title">모의고사 답안 및 유형별 풀이</h1>
     <p class="sub" id="subtitle"></p>
     <p class="exam-note" id="examNote" hidden></p>
   </div>
+  <div class="answer-meta" id="answerMeta"></div>
 
   <div class="tabs" id="tabs" role="tablist"></div>
 
@@ -123,11 +125,11 @@ tbody tr:last-child td{border-bottom:0}
       <thead>
         <tr>
           <th class="c-no">번호</th>
-          <th>영역</th>
-          <th>문항 유형 · 원본 구조</th>
+          <th>영역 · 유형</th>
+          <th>문항 구조</th>
           <th class="c-diff">난이도</th>
           <th class="c-ans">정답</th>
-          <th>채점·지도 메모</th>
+          <th>풀이 핵심</th>
         </tr>
       </thead>
       <tbody id="rows"></tbody>
@@ -135,10 +137,9 @@ tbody tr:last-child td{border-bottom:0}
   </div>
 
   <p class="foot">
-    <b>이 표의 정답은 원본 시험지의 확정 답입니다.</b> 문제은행이 만들어 내는 변형 문제의 답이 아닙니다 —
-    변형 문제의 답은 시험지를 만든 화면에서 「답안 보기」로 확인하세요.<br>
-    원본 지문과 그림은 저작권상 담지 않았습니다. 구조 요약·정답·검증 메모만 싣습니다.<br>
-    <b>난이도</b>는 원본 대조 때 매긴 값이고, 영역 구분은 문제은행의 대분류·중분류와 같습니다.
+    <b>이 답안지는 원본 시험지와 대본을 대조해 확정한 정답과 풀이 핵심입니다.</b>
+    스캔 답안지를 대신 보여 주지 않습니다.<br>
+    원본 지문·그림은 저작권상 싣지 않고, 문항 구조·정답·검수된 풀이만 제공합니다.
   </p>
 </div>
 
@@ -149,8 +150,7 @@ tbody tr:last-child td{border-bottom:0}
   var ids = Object.keys(DATA);
   var $ = function(id){ return document.getElementById(id); };
   // 회차는 주소로도 지정된다(program 서재에서 바로 들어올 때). 없으면 첫 회차.
-  // 문제은행이 실제로 갖고 있는 회차. 실전 4회는 등록돼 있지 않아 시험지 버튼을 감춘다.
-  var BANK_EXAMS = ['final-1', 'final-2', 'final-3'];
+  var student = new URLSearchParams(location.search).get('student') || '학생';
   var want = new URLSearchParams(location.search).get('exam');
   var current = ids.indexOf(want) >= 0 ? want : ids[0];
 
@@ -192,14 +192,14 @@ tbody tr:last-child td{border-bottom:0}
         (id === current) + '">' + esc(DATA[id].short || DATA[id].label) + '</button>';
     }).join('');
 
-    $('title').textContent = exam.label + ' — 정답·문항 분석';
-    $('subtitle').textContent = qs.length + '문항 · 원본 시험지와 해설 영상을 1:1로 대조해 확정한 답입니다.';
+    $('title').textContent = exam.label + ' · 답안 및 유형별 풀이';
+    $('subtitle').textContent = student + ' 학생의 학습용 답안지입니다. 원본 시험지와 대본을 1:1로 대조해 확정했습니다.';
     var noteEl = $('examNote');
     noteEl.textContent = exam.examNote || '';
     noteEl.hidden = !exam.examNote;
-    // 문제은행에 등록된 회차만 시험지를 뽑을 수 있다. 없는 회차에 버튼을 열어 두면
-    // 문제은행이 다른 회차를 대신 띄운다.
-    $('bankBtn').style.display = BANK_EXAMS.indexOf(current) >= 0 ? '' : 'none';
+    $('answerMeta').innerHTML = '<span>총 ' + qs.length + '문항</span>' +
+      '<span>원본·대본 대조 완료</span>' +
+      '<span>정답과 풀이 핵심 수록</span>';
 
     $('summary').innerHTML =
       barBlock('난이도', tally(qs, 'diff'), ['하', '중', '상'], true) +
@@ -230,10 +230,6 @@ tbody tr:last-child td{border-bottom:0}
     var v = DATA[current] && DATA[current].video;
     if (v) window.open(v, '_blank', 'noopener');
   });
-  $('bankBtn').addEventListener('click', function(){
-    window.open('../question-bank/?exam=' + current, '_blank', 'noopener');
-  });
-
   if (!ids.length) {
     $('subtitle').textContent = '정답 데이터를 불러오지 못했습니다.';
   } else {

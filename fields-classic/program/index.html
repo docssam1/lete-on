@@ -908,12 +908,14 @@ const GF={
     if(!id)return;
     const url=new URL("../mock/answer.html",location.href);
     url.searchParams.set("exam",id);
+    url.searchParams.set("student",S.name||"학생");
     window.open(url,"_blank","noopener");
   },
   openAnswerSheet(){
     const p=S.currentProduct;if(!p?.answerDoc)return;
     const url=new URL("../mock/answer.html",location.href);
     url.searchParams.set("exam",p.answerDoc);
+    url.searchParams.set("student",S.name||"학생");
     window.open(url,"_blank","noopener");
   },
   openBank(){

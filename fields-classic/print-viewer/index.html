@@ -15,7 +15,9 @@ html,body{margin:0;min-height:100%;font-family:Pretendard,sans-serif;background:
 .document-head{width:min(1180px,100%);margin:18px auto 0;padding:0 12px}.document-head-inner{padding:18px 20px;background:#fff;border:1px solid #cbd5e1;border-left:5px solid #16417c;border-radius:8px;box-shadow:0 4px 14px rgba(15,23,42,.07)}.document-kicker{font-size:10px;letter-spacing:.12em;font-weight:900;color:#a26a18}.document-name{margin-top:4px;font-size:19px;font-weight:900;color:#0f274b;letter-spacing:0}.document-caption{margin-top:7px;font-size:12px;font-weight:700;color:#64748b}.course-summary{width:min(1180px,100%);margin:12px auto 0;padding:0 12px;background:transparent;border:0;box-shadow:none}.course-summary-inner{padding:14px 16px;background:#fff;border:1px solid #cbd5e1;border-radius:8px;box-shadow:0 4px 14px rgba(15,23,42,.07)}.course-summary-title{font-size:13px;font-weight:900;color:#16417c}.course-topics{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0 0;padding:0;list-style:none}.course-topics li{padding:5px 8px;border-radius:5px;background:#edf3f8;color:#334155;font-size:11px;font-weight:800}
 .status{padding:22px;text-align:center;color:#64748b;font-size:13px;font-weight:800}
 .viewer-layout{width:min(1180px,100%);margin:0 auto;padding:18px 12px 50px;display:grid;grid-template-columns:156px minmax(0,1fr);align-items:start;gap:18px}.page-rail{position:sticky;top:82px;padding:12px;background:#fff;border:1px solid #cbd5e1;border-radius:8px;box-shadow:0 4px 14px rgba(15,23,42,.07)}.page-rail-title{font-size:11px;font-weight:900;color:#64748b;margin:1px 2px 10px}.page-jumps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.page-jump{height:32px;border:1px solid #d6e0ea;border-radius:5px;background:#f8fafc;color:#475569;font:800 11px Pretendard,sans-serif;cursor:pointer}.page-jump:hover,.page-jump.is-current{border-color:#16417c;background:#16417c;color:#fff}.pages{min-width:0;margin:0;padding:0;display:grid;gap:18px}
-.page{position:relative;width:100%;background:#fff;box-shadow:0 8px 28px rgba(15,23,42,.16);overflow:hidden}
+.page{position:relative;width:100%;background:#fff;box-shadow:0 8px 28px rgba(15,23,42,.16);overflow:hidden;transform-origin:left center;backface-visibility:hidden}
+.page.is-turning{animation:book-page-turn .52s cubic-bezier(.2,.75,.25,1)}
+@keyframes book-page-turn{0%{transform:perspective(1700px) rotateY(-76deg);opacity:.18;filter:brightness(.78)}58%{transform:perspective(1700px) rotateY(8deg);opacity:1;filter:brightness(1.05)}100%{transform:perspective(1700px) rotateY(0);opacity:1;filter:none}}
 .page canvas,.page img{display:block;width:100%;height:auto}
 .watermark{display:block;position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}
 .watermark span{position:absolute;left:50%;transform:translate(-50%,-50%) rotate(-32deg);font-size:34pt;font-weight:900;color:rgba(22,65,124,.14);white-space:nowrap;letter-spacing:0}
@@ -60,6 +62,10 @@ html,body{margin:0;min-height:100%;font-family:Pretendard,sans-serif;background:
 const params=new URLSearchParams(location.search);
 const documentKey=params.get("doc")||"";
 const source=window.GFIELD_PRINT_DOCUMENTS?.[documentKey];
+// 원본 답안 스캔은 채점·분석 자료가 아니다. 대본과 원본을 대조해 확정한 회차만
+// 문항별 정답·유형·지도 메모 화면으로 연결한다.
+const answerAnalysisByDocument={"mock-set-4":"mock-4"};
+const answerAnalysis=answerAnalysisByDocument[documentKey]||"";
 const title=(source?.title||"인쇄 자료").slice(0,80);
 const student=(params.get("student")||"학생").trim().slice(0,30);
 const lessonVideo=params.get("video")||"";
@@ -71,7 +77,12 @@ document.getElementById("title").textContent=title;
 document.getElementById("documentName").textContent=title;
 document.title=title+" | GFIELD";
 if(lessonVideo)document.getElementById("videoBtn").style.display="";
-if(documentKey==="killer"||documentKey.startsWith("mock-set")||documentKey==="diagnostic")document.getElementById("answerBtn").style.display="";
+if(documentKey==="killer")document.getElementById("answerBtn").style.display="";
+if(answerAnalysis){
+  const answerBtn=document.getElementById("answerBtn");
+  answerBtn.textContent="✅ 정답·분석";
+  answerBtn.style.display="";
+}
 if(topics.length){
   document.getElementById("courseSummary").style.display="";
   const topicList=document.getElementById("courseTopics");
@@ -84,7 +95,10 @@ function openLessonVideo(){
 function openAnswerGuide(){
   const url=documentKey==="killer"
     ? `../killer-answer/?student=${encodeURIComponent(student)}`
-    : `./?doc=answer&student=${encodeURIComponent(student)}`;
+    : answerAnalysis
+      ? `../mock/answer.html?exam=${encodeURIComponent(answerAnalysis)}&student=${encodeURIComponent(student)}`
+      : "";
+  if(!url)return;
   window.open(url,"_blank","noopener");
 }
 
@@ -102,7 +116,12 @@ function watermark(){
 
 function selectPage(number){
   const current=pages.querySelector(`.page[data-page="${number}"]`);
-  if(current)current.scrollIntoView({behavior:"smooth",block:"start"});
+  if(!current)return;
+  current.classList.remove("is-turning");
+  // Reflow makes the page-opening animation replay when a page is selected again.
+  void current.offsetWidth;
+  current.classList.add("is-turning");
+  current.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
 function updatePageJump(number){
