@@ -339,6 +339,45 @@ export const TYPES = [
   type("circular-seat-placement", "logic", "자리 배치", "시계 방향 조건으로 원탁 자리 정하기", { generator: "circularSeatPlacement", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
   type("ordinal-line-placement", "logic", "자리 배치", "앞·뒤 순서와 사이 사람 수로 줄의 자리 정하기", { generator: "ordinalLinePlacement", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
 
+  // 더클래식 1과정 5권: 154문항을 단계와 인쇄 문제 번호로 직접 대조했다.
+  // 같은 수 규칙처럼 보여도 이동 경로·대각선 채우기·줄 순환처럼 풀이가 다르면 분리한다.
+  type("sequential-path-number-grid", "pattern", "수 배열 경로", "선을 따라 차례로 이어지는 수 배열", { generator: "sequentialPathNumberGrid", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("diagonal-fill-number-grid", "pattern", "수 배열 경로", "대각선 방향으로 채우는 수 배열", { generator: "diagonalFillNumberGrid", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("line-cycle-number-table", "pattern", "수 배열 경로", "여러 줄에 번갈아 놓은 수의 규칙", { generator: "lineCycleNumberTable", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("finger-bounce-sequence", "pattern", "수열의 활용", "손가락을 왕복하며 세는 수의 위치", { generator: "fingerBounceSequence", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("calendar-month-position", "pattern", "달력 규칙", "한 달 달력에서 날짜와 요일 찾기", { generator: "calendarMonthPosition", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("calendar-cross-month-weekday", "pattern", "달력 규칙", "달을 건너간 날짜와 요일 찾기", { generator: "calendarCrossMonthWeekday", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("calendar-same-weekday-sum", "pattern", "달력 규칙", "같은 요일 두 날짜의 합으로 날짜 찾기", { generator: "calendarSameWeekdaySum", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+
+  type("shortest-path-rectangle", "logic", "최단거리", "직사각형 길의 가장 짧은 방법 수", { generator: "shortestPathRectangle", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("shortest-path-irregular-grid", "logic", "최단거리", "막힌 곳이 있는 길의 가장 짧은 방법 수", { generator: "shortestPathIrregularGrid", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("shortest-path-via-waypoint", "logic", "최단거리", "정해진 점을 꼭 지나는 가장 짧은 방법 수", { generator: "shortestPathViaWaypoint", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("digit-card-number-enumeration", "number", "숫자 카드", "숫자 카드로 만들 수 있는 수의 개수", { generator: "digitCardNumberEnumeration", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("digit-card-ranked-number", "number", "숫자 카드", "숫자 카드로 만든 수의 크기 순서", { generator: "digitCardRankedNumber", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("two-digit-digit-sum-rank", "number", "숫자 카드", "두 자리 숫자의 합 조건과 크기 순서", { generator: "twoDigitDigitSumRank", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("two-digit-digit-difference-rank", "number", "숫자 카드", "두 자리 숫자의 차 조건과 크기 순서", { generator: "twoDigitDigitDifferenceRank", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+
+  type("multiplication-table-pattern", "number", "곱셈 매트릭스", "가로와 세로 머리수의 곱셈표", { generator: "multiplicationTablePattern", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("product-cycle-completion", "number", "곱셈 매트릭스", "다각형 이웃한 꼭짓점의 곱 완성", { generator: "productCycleCompletion", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("multiplication-matrix-products", "number", "곱셈 매트릭스", "가로·세로의 곱으로 빈칸 찾기", { generator: "multiplicationMatrixProducts", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("multiplication-matrix-placement", "logic", "곱셈 매트릭스", "수 카드를 놓아 가로·세로의 곱 맞추기", { generator: "multiplicationMatrixPlacement", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("symbol-product-pair", "number", "도형 곱셈식", "두 도형의 곱과 합으로 값 찾기", { generator: "symbolProductPair", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("symbol-multiplication-chain", "number", "도형 곱셈식", "이어진 도형 곱셈식으로 값 찾기", { generator: "symbolMultiplicationChain", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("symbol-mixed-operation-grid", "number", "도형 곱셈식", "곱셈·덧셈·뺄셈이 섞인 도형식", { generator: "symbolMixedOperationGrid", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+
+  type("handshake-pair-count", "logic", "두 명씩 짝짓기", "모든 사람이 한 번씩 악수한 횟수", { generator: "handshakePairCount", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("pair-selection-count", "logic", "두 명씩 짝짓기", "서로 다른 두 개를 고르는 방법 수", { generator: "pairSelectionCount", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("complete-graph-segment-count", "geometry", "선분 세기", "여러 점을 서로 이은 선분 수", { generator: "completeGraphSegmentCount", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("inverse-pair-count", "logic", "두 명씩 짝짓기", "악수 횟수로 사람 수 거꾸로 찾기", { generator: "inversePairCount", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("square-number-odd-sum", "pattern", "삼각수와 사각수", "연속한 홀수의 합으로 사각수 만들기", { generator: "squareNumberOddSum", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("pascal-row-sum", "pattern", "수 배열 규칙", "위의 두 수를 더해 만든 줄의 합", { generator: "pascalRowSum", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("triangle-figure-count", "geometry", "도형 세기", "크고 작은 삼각형의 전체 개수", { generator: "triangleFigureCount", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("square-grid-count-book5", "geometry", "도형 세기", "모눈에서 크고 작은 정사각형의 전체 개수", { generator: "squareGridCount", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("triangular-row-boundary-number", "pattern", "삼각수와 사각수", "줄마다 하나씩 늘어나는 수 배열의 첫 수·끝 수", { generator: "triangularRowBoundaryNumber", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("square-row-boundary-number", "pattern", "삼각수와 사각수", "줄마다 홀수 개씩 늘어나는 수 배열의 첫 수·끝 수", { generator: "squareRowBoundaryNumber", sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" }),
+  type("cube-triangular-wall-growth", "geometry", "쌓기나무 규칙", "한 줄 계단으로 커지는 쌓기나무의 전체 개수", geometryWorksheet("SQ", "L3", { worksheetOptions: { kind: "stair", mode: "nth" }, sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" })),
+  type("cube-tetrahedral-growth", "geometry", "쌓기나무 규칙", "삼각 계단으로 커지는 쌓기나무의 전체 개수", geometryWorksheet("SQ", "L4", { worksheetOptions: { kind: "triangular-stair", mode: "nth" }, sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" })),
+
   // 더클래식 1과정 2권: 단원 이름이 아니라 실제 풀이 구조로 나눈 세부 유형이다.
   // 원본 페이지와 단원 테스트를 대조한 항목만 sourceMatched로 기록한다. 생성기가 없는
   // 유형은 커리큘럼 화면에 보이되, 검증이 끝날 때까지 선택할 수 없다.
@@ -739,7 +778,42 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "balance-unit-ratio": "저울 한 줄을 같은 물건 개수로 바꾸어 다음 저울의 관계와 이어 봅니다.",
   "directional-seat-placement": "확실한 한 자리부터 정하고 위·아래·좌우 조건을 한 칸씩 이어 놓습니다.",
   "circular-seat-placement": "맨 위 자리를 고정한 뒤 시계 방향 조건을 차례로 이어 놓습니다.",
-  "ordinal-line-placement": "앞에서의 순서와 두 사람 사이의 수를 한 줄에 표시합니다."
+  "ordinal-line-placement": "앞에서의 순서와 두 사람 사이의 수를 한 줄에 표시합니다.",
+  "sequential-path-number-grid": "출발 칸을 찾고 선을 따라 한 칸마다 1씩 이어 씁니다.",
+  "diagonal-fill-number-grid": "같은 대각선에 놓이는 칸을 묶고 화살표 순서대로 수를 이어 씁니다.",
+  "line-cycle-number-table": "한 줄씩 번갈아 수를 놓은 뒤 같은 줄의 수끼리 얼마씩 커지는지 봅니다.",
+  "finger-bounce-sequence": "엄지에서 새끼손가락까지 갔다가 돌아오는 여덟 자리 반복을 표시합니다.",
+  "calendar-month-position": "1일의 요일을 찾고 같은 요일 칸에서 7씩 더하거나 뺍니다.",
+  "calendar-cross-month-weekday": "이번 달에 남은 날을 먼저 세고 나머지를 다음 달에서 셉니다.",
+  "calendar-same-weekday-sum": "같은 요일 날짜는 7씩 차이 난다는 점으로 가능한 날짜를 확인합니다.",
+  "shortest-path-rectangle": "각 점까지 오는 길의 수를 왼쪽 수와 위쪽 수를 더해 적습니다.",
+  "shortest-path-irregular-grid": "막힌 점에는 0을 쓰고 갈 수 있는 점만 왼쪽과 위쪽 수를 더합니다.",
+  "shortest-path-via-waypoint": "출발점에서 별표까지와 별표에서 도착점까지를 나누어 셉니다.",
+  "digit-card-number-enumeration": "맨 앞자리부터 작은 카드로 정하고 이미 쓴 카드는 지우며 빠짐없이 씁니다.",
+  "digit-card-ranked-number": "첫자리가 같은 수끼리 묶고 다음 자리의 작은 순서로 정리합니다.",
+  "two-digit-digit-sum-rank": "십의 자리부터 정하고 목표 합에서 그 수를 뺀 값을 일의 자리에 씁니다.",
+  "two-digit-digit-difference-rank": "두 자리 숫자의 차가 맞는 수를 빠짐없이 쓴 뒤 크기 순서로 놓습니다.",
+  "multiplication-table-pattern": "왼쪽 수와 위쪽 수를 곱해 만나는 칸에 씁니다.",
+  "product-cycle-completion": "보이는 꼭짓점에서 시작해 변의 수를 이웃한 수로 나누며 따라갑니다.",
+  "multiplication-matrix-products": "가로 또는 세로의 곱에서 이미 아는 수를 차례로 나눕니다.",
+  "multiplication-matrix-placement": "가로·세로의 곱을 동시에 맞추고 사용한 수 카드는 지웁니다.",
+  "symbol-product-pair": "곱이 되는 두 수를 찾아 합과 크기 조건까지 확인합니다.",
+  "symbol-multiplication-chain": "아는 모양부터 시작해 곱을 이웃한 모양의 수로 차례로 나눕니다.",
+  "symbol-mixed-operation-grid": "같은 모양만 있는 곱셈식부터 풀고 찾은 값을 다른 식에 넣습니다.",
+  "handshake-pair-count": "한 사람씩 새로 악수하는 횟수를 겹치지 않게 줄여 가며 더합니다.",
+  "pair-selection-count": "첫째 것과 짝지을 수 있는 경우부터 이미 센 짝을 빼며 셉니다.",
+  "complete-graph-segment-count": "한 점에서 새로 그을 선을 세고 이미 그은 선은 다시 세지 않습니다.",
+  "inverse-pair-count": "1부터 차례로 더해 주어진 짝의 수가 되는 때를 찾습니다.",
+  "square-number-odd-sum": "정사각형 둘레에 새로 늘어나는 홀수 개를 차례로 더합니다.",
+  "pascal-row-sum": "양 끝에 1을 쓰고 가운데는 바로 위의 두 수를 더해 다음 줄을 만듭니다.",
+  "triangle-figure-count": "가장 작은 삼각형부터 크기와 방향을 바꾸어 겹치지 않게 셉니다.",
+  "square-grid-count-book5": "한 칸짜리부터 가장 큰 정사각형까지 크기별로 나누어 셉니다.",
+  "square-tile-growth": "한 줄에 놓인 정사각형 수와 줄 수가 함께 하나씩 늘어나는지 확인합니다.",
+  "triangle-tile-growth": "한 변의 작은 삼각형 수가 늘 때 전체 조각 수를 줄별로 나누어 셉니다.",
+  "triangular-row-boundary-number": "앞줄까지 놓인 수의 개수를 더해 다음 줄의 첫 수와 끝 수를 찾습니다.",
+  "square-row-boundary-number": "각 줄에 1개, 3개, 5개씩 놓인 수를 누적해 첫 수와 끝 수를 찾습니다.",
+  "cube-triangular-wall-growth": "각 층의 1개, 2개, 3개를 위에서부터 차례로 더합니다.",
+  "cube-tetrahedral-growth": "각 층의 삼각수만큼 쌓인 개수를 아래층부터 차례로 더합니다."
 });
 
 export const textbookGuideForType = (id) => TEXTBOOK_CONCEPT_GUIDES[id] || "문제에 보이는 관계를 한 단계씩 표시한 뒤 같은 규칙을 적용합니다.";
@@ -1317,6 +1391,172 @@ const BOOK04_UNIT04_REFS = Object.freeze({
   })
 });
 
+// 5권도 페이지 번호가 아니라 활동·확인·연습·도전의 인쇄 문제 번호를 기준으로 한다.
+// 네 단원의 합집합은 154문항이며, 한 문항은 주된 풀이 구조 한 곳에만 배정한다.
+const BOOK05_UNIT01_REFS = Object.freeze({
+  "sequential-path-number-grid": stageReferences({
+    concept: [problemNumbers("activity", 1, [1, 2, 4])],
+    practice: [problemNumbers("practice", 1, [1, 2, 3, 4, 6])],
+    advanced: [problemNumbers("advanced", 1, [1])]
+  }),
+  "diagonal-fill-number-grid": stageReferences({
+    concept: [problemNumbers("activity", 1, [3])],
+    practice: [problemNumbers("practice", 1, [5])]
+  }),
+  "line-cycle-number-table": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [7, 8])]
+  }),
+  "finger-bounce-sequence": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [2])]
+  }),
+  "calendar-month-position": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2])],
+    practice: [problemNumbers("practice", 1, [9, 10])]
+  }),
+  "calendar-cross-month-weekday": stageReferences({
+    concept: [problemNumbers("activity", 2, [3, 4])],
+    practice: [problemNumbers("practice", 1, [11, 12])]
+  }),
+  "calendar-same-weekday-sum": stageReferences({
+    type: [problemNumbers("check", 2, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [13, 14, 15, 16])],
+    advanced: [problemNumbers("advanced", 1, [3, 4])]
+  })
+});
+
+const BOOK05_UNIT02_REFS = Object.freeze({
+  "shortest-path-rectangle": stageReferences({
+    concept: [problemNumbers("activity", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [1, 2])]
+  }),
+  "shortest-path-irregular-grid": stageReferences({
+    concept: [problemNumbers("activity", 1, [3, 4, 5, 6])],
+    practice: [problemNumbers("practice", 1, [3])],
+    advanced: [problemNumbers("advanced", 1, [1, 2])]
+  }),
+  "shortest-path-via-waypoint": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [4, 5, 6, 7])]
+  }),
+  "digit-card-number-enumeration": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2])],
+    practice: [problemNumbers("practice", 1, [12, 13])]
+  }),
+  "digit-card-ranked-number": stageReferences({
+    concept: [problemNumbers("activity", 2, [3, 4, 5, 6])],
+    practice: [problemNumbers("practice", 1, [8, 9, 10, 11, 14, 15])]
+  }),
+  "two-digit-digit-sum-rank": stageReferences({
+    type: [problemNumbers("check", 2, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [16, 17, 18, 19])]
+  }),
+  "two-digit-digit-difference-rank": stageReferences({
+    type: [problemNumbers("check", 2, [5, 6])],
+    practice: [problemNumbers("practice", 1, [20, 21])],
+    advanced: [problemNumbers("advanced", 1, [3, 4])]
+  })
+});
+
+const BOOK05_UNIT03_REFS = Object.freeze({
+  "multiplication-table-pattern": stageReferences({
+    concept: [problemNumbers("activity", 1, [1])]
+  }),
+  "product-cycle-completion": stageReferences({
+    concept: [problemNumbers("activity", 1, [2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [1, 2, 3, 4])],
+    advanced: [problemNumbers("advanced", 1, [1])]
+  }),
+  "multiplication-matrix-products": stageReferences({
+    type: [problemNumbers("check", 1, [2])],
+    practice: [problemNumbers("practice", 1, [5])]
+  }),
+  "multiplication-matrix-placement": stageReferences({
+    type: [problemNumbers("check", 1, [1, 3])],
+    practice: [problemNumbers("practice", 1, [6, 7])],
+    advanced: [problemNumbers("advanced", 1, [5])]
+  }),
+  "symbol-product-pair": stageReferences({
+    concept: [problemNumbers("activity", 2, [1])],
+    practice: [problemNumbers("practice", 1, [8])]
+  }),
+  "symbol-multiplication-chain": stageReferences({
+    concept: [problemNumbers("activity", 2, [2])]
+  }),
+  "symbol-mixed-operation-grid": stageReferences({
+    concept: [problemNumbers("activity", 2, [3, 4, 5])],
+    type: [problemNumbers("check", 2, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [9, 10, 11, 12, 13, 14, 15])],
+    advanced: [problemNumbers("advanced", 1, [2, 3, 4])]
+  })
+});
+
+const BOOK05_UNIT04_REFS = Object.freeze({
+  "handshake-pair-count": stageReferences({
+    concept: [problemNumbers("activity", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [1, 2])]
+  }),
+  "pair-selection-count": stageReferences({
+    concept: [problemNumbers("activity", 1, [3, 4])],
+    type: [problemNumbers("check", 1, [1, 2, 3])],
+    practice: [problemNumbers("practice", 1, [5, 6])]
+  }),
+  "complete-graph-segment-count": stageReferences({
+    concept: [problemNumbers("activity", 1, [5])],
+    practice: [problemNumbers("practice", 1, [3])]
+  }),
+  "inverse-pair-count": stageReferences({
+    concept: [problemNumbers("activity", 1, [6])],
+    practice: [problemNumbers("practice", 1, [4])]
+  }),
+  "square-number-odd-sum": stageReferences({
+    concept: [problemNumbers("activity", 2, [1])]
+  }),
+  "pascal-row-sum": stageReferences({
+    concept: [problemNumbers("activity", 2, [2])],
+    practice: [problemNumbers("practice", 1, [16])]
+  }),
+  "triangle-figure-count": stageReferences({
+    type: [problemNumbers("check", 1, [4])],
+    practice: [problemNumbers("practice", 1, [7])],
+    advanced: [problemNumbers("advanced", 1, [3])]
+  }),
+  "square-grid-count-book5": stageReferences({
+    type: [problemNumbers("check", 1, [5]), problemNumbers("check", 2, [3])],
+    practice: [problemNumbers("practice", 1, [8, 15])]
+  }),
+  "square-tile-growth": stageReferences({
+    type: [problemNumbers("check", 2, [1])],
+    practice: [problemNumbers("practice", 1, [11])]
+  }),
+  "triangle-tile-growth": stageReferences({
+    type: [problemNumbers("check", 2, [2])],
+    practice: [problemNumbers("practice", 1, [12])]
+  }),
+  "triangular-stone-growth": stageReferences({
+    practice: [problemNumbers("practice", 1, [9])]
+  }),
+  "cube-triangular-wall-growth": stageReferences({
+    practice: [problemNumbers("practice", 1, [10])],
+    advanced: [problemNumbers("advanced", 1, [4])]
+  }),
+  "staircase-tile-growth": stageReferences({
+    practice: [problemNumbers("practice", 1, [13])]
+  }),
+  "square-border-stone-growth": stageReferences({
+    practice: [problemNumbers("practice", 1, [14])]
+  }),
+  "triangular-row-boundary-number": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [1])]
+  }),
+  "square-row-boundary-number": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [2])]
+  }),
+  "cube-tetrahedral-growth": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [5])]
+  })
+});
+
 export const CURRICULUM = [
   { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [
     detailedStagedUnit("도형 움직이기", [
@@ -1389,10 +1629,28 @@ export const CURRICULUM = [
     ], [4,6], [4,6], 4, 18, BOOK04_UNIT04_REFS)
   ] },
   { id: "book-05", label: "5권", title: "곱셈매트릭스와 삼각수", units: [
-    stagedUnit("수 배열표와 달력", ["number-table-rule","calendar-weekday-sum"], [4,4], [2,4], 4, 16),
-    stagedUnit("최단거리와 숫자 카드", ["shortest-path","three-digit-card-count"], [6,6], [4,6], 4, 21),
-    stagedUnit("곱셈 매트릭스", ["multiplication-matrix"], [4,5], [3,4], 5, 15),
-    stagedUnit("삼각수와 사각수", ["growing-shape-count"], [6,2], [5,3], 5, 16)
+    detailedStagedUnit("수 배열표와 달력", [
+      "sequential-path-number-grid", "diagonal-fill-number-grid", "line-cycle-number-table",
+      "finger-bounce-sequence", "calendar-month-position", "calendar-cross-month-weekday",
+      "calendar-same-weekday-sum"
+    ], [4,4], [2,4], 4, 16, BOOK05_UNIT01_REFS),
+    detailedStagedUnit("최단거리와 숫자 카드", [
+      "shortest-path-rectangle", "shortest-path-irregular-grid", "shortest-path-via-waypoint",
+      "digit-card-number-enumeration", "digit-card-ranked-number", "two-digit-digit-sum-rank",
+      "two-digit-digit-difference-rank"
+    ], [6,6], [4,6], 4, 21, BOOK05_UNIT02_REFS),
+    detailedStagedUnit("곱셈 매트릭스", [
+      "multiplication-table-pattern", "product-cycle-completion", "multiplication-matrix-products",
+      "multiplication-matrix-placement", "symbol-product-pair", "symbol-multiplication-chain",
+      "symbol-mixed-operation-grid"
+    ], [4,5], [3,4], 5, 15, BOOK05_UNIT03_REFS),
+    detailedStagedUnit("삼각수와 사각수", [
+      "handshake-pair-count", "pair-selection-count", "complete-graph-segment-count",
+      "inverse-pair-count", "square-number-odd-sum", "pascal-row-sum", "triangle-figure-count",
+      "square-grid-count-book5", "square-tile-growth", "triangle-tile-growth", "triangular-stone-growth",
+      "cube-triangular-wall-growth", "staircase-tile-growth", "square-border-stone-growth",
+      "triangular-row-boundary-number", "square-row-boundary-number", "cube-tetrahedral-growth"
+    ], [6,2], [5,3], 5, 16, BOOK05_UNIT04_REFS)
   ] },
   { id: "book-06", label: "6권", title: "도형의 둘레와 연속수", units: [
     stagedUnit("수직선의 분할과 비", ["number-line-distance","ratio-distribution"], [5,6], [2,6], 4, 17),

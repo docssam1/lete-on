@@ -1,9 +1,10 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822e";
-import { GENERATORS } from "./generators.js?v=20260822e";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822f";
+import { GENERATORS } from "./generators.js?v=20260822f";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260822e";
 import { book03Markup } from "./book03-renderers.js?v=20260822e";
 import { book04Markup } from "./book04-renderers.js?v=20260822e";
+import { book05Markup } from "./book05-renderers.js?v=20260822f";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -2345,6 +2346,7 @@ function visualMarkup(visual) {
   if (visual.kind === "book1") return `<div class="visual book01-visual">${book01Markup(visual)}</div>`;
   if (visual.kind === "book3") return `<div class="visual book03-visual">${book03Markup(visual)}</div>`;
   if (visual.kind === "book4") return `<div class="visual book04-visual">${book04Markup(visual)}</div>`;
+  if (visual.kind === "book5") return `<div class="visual book05-visual">${book05Markup(visual)}</div>`;
   if (visual.kind.startsWith("g1-")) return `<div class="visual g1-source-visual">${g1SourceMarkup(visual)}</div>`;
   if (visual.kind === "hidden-card-conditions") return `<div class="visual hidden-card-visual">${hiddenCardConditionsMarkup(visual)}</div>`;
   if (visual.kind === "shape-matrix-rule") return `<div class="visual shape-matrix-visual">${shapeMatrixRuleMarkup(visual)}</div>`;
