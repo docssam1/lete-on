@@ -446,6 +446,84 @@ export const TYPES = [
   type("last-number-from-digit-total", "number", "수와 숫자", "쓴 숫자의 전체 개수로 마지막 수 찾기", { generator: "lastNumberFromDigitTotal", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
   type("repeated-digit-concatenation", "number", "수 이어 붙이기", "같은 숫자를 이어 붙이고 더해 목표 수 만들기", { generator: "repeatedDigitConcatenation", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
 
+  // 더클래식 1과정 7권: 180문항을 네 단계와 인쇄 문제 번호로 직접 대조했다.
+  // 달력·시계, 우기기, 가로수, 팔린드롬·벤다이어그램을 풀이 구조별로 나눈다.
+  type("calendar-month-shift-weekday-b7", "pattern", "달력과 시계", "다음 달 같은 날짜·1일의 요일 찾기", { generator: "calendarMonthShiftWeekdayBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("calendar-cross-month-weekday-b7", "pattern", "달력과 시계", "여러 달을 건너 특정 날짜의 요일 찾기", { generator: "calendarCrossMonthKnownWeekday", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("weekday-after-days-b7", "pattern", "달력과 시계", "오늘부터 며칠 뒤의 요일 찾기", { generator: "weekdayAfterDaysBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("time-unit-conversion-b7", "number", "달력과 시계", "일·시간·분·초 단위 바꾸기", { generator: "timeUnitConversionBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("analog-clock-reading-b7", "number", "달력과 시계", "시침과 분침을 보고 시각 읽기", { generator: "analogClockReadingBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("elapsed-time-analog-b7", "number", "달력과 시계", "두 시계 사이의 지난 시간 구하기", { generator: "elapsedTimeAnalogBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("time-add-subtract-base60-b7", "number", "달력과 시계", "60분 받아올림·받아내림 시간 계산", { generator: "timeAddSubtractBase60Book7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("find-end-time-b7", "number", "달력과 시계", "시작 시각과 걸린 시간으로 끝 시각 찾기", { generator: "findEndTimeBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("find-start-time-b7", "number", "달력과 시계", "끝 시각과 걸린 시간으로 시작 시각 찾기", { generator: "findStartTimeBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("consecutive-full-month-reverse-b7", "logic", "달력과 시계", "31일이 연달아 있는 두 달을 거꾸로 추리하기", { generator: "consecutiveFullMonthReverse", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("leap-year-cross-month-weekday-b7", "pattern", "달력과 시계", "윤년을 포함해 여러 달 뒤 요일 찾기", { generator: "leapYearCrossMonthWeekday", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("mirror-clock-reading-b7", "geometry", "거울 시계", "거울에 비친 시계를 뒤집어 원래 시각 읽기", { generator: "mirrorClockReadingBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("mirror-clock-elapsed-b7", "logic", "거울 시계", "거울 시계 두 개로 밤사이 지난 시간 구하기", { generator: "mirrorClockElapsed", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("mirror-symmetric-clock-b7", "logic", "거울 시계", "거울에 비친 모양이 같은 시각 찾기", { generator: "mirrorSymmetricClock", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+
+  type("arithmetic-sequence-nth-b7", "pattern", "차가 같은 수열", "첫 수와 뛰는 수로 몇 번째 수 구하기", { generator: "arithmeticSequenceNthBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("shared-polygon-matchsticks-b7", "pattern", "수열의 활용", "맞닿은 정다각형의 성냥개비 수 구하기", { generator: "sharedPolygonMatchsticksBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("division-fill-long-form-b7", "number", "거꾸로 풀기", "나눗셈 세로식의 빈칸 완성하기", { generator: "divisionFillLongForm", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("reverse-linear-equation-b7", "number", "거꾸로 풀기", "더하고 곱한 식을 거꾸로 풀어 빈칸 찾기", { generator: "reverseLinearEquationBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("arithmetic-sequence-position-b7", "pattern", "차가 같은 수열", "마지막 수가 몇 번째인지 거꾸로 찾기", { generator: "arithmeticSequencePositionBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("sparse-arithmetic-sequence-b7", "pattern", "차가 같은 수열", "띄엄띄엄 주어진 수로 첫 수·빈칸 찾기", { generator: "sparseArithmeticSequenceBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("indexed-arithmetic-sequence-b7", "pattern", "차가 같은 수열", "순서표의 대응 규칙으로 먼 번째 수 구하기", { generator: "indexedArithmeticSequenceBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("two-leg-animal-assumption-b7", "logic", "가정하여 풀기", "동물 수와 다리 수로 두 동물 수 구하기", { generator: "twoLegAnimalAssumption", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("two-wheel-vehicle-assumption-b7", "logic", "가정하여 풀기", "탈것 수와 바퀴 수로 각각의 수 구하기", { generator: "twoWheelVehicleAssumption", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("two-card-value-assumption-b7", "logic", "가정하여 풀기", "두 숫자 카드의 장수와 합 구하기", { generator: "twoCardValueAssumption", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("two-score-value-assumption-b7", "logic", "가정하여 풀기", "두 배점의 문제 수 구하기", { generator: "twoScoreValueAssumption", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("two-coin-value-assumption-b7", "logic", "가정하여 풀기", "두 동전·우표의 개수와 금액 구하기", { generator: "twoCoinValueAssumption", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("correct-wrong-score-assumption-b7", "logic", "가정하여 풀기", "맞고 틀린 점수로 맞힌 문제 수 구하기", { generator: "correctWrongScoreAssumption", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("constant-step-object-growth-b7", "pattern", "수열의 활용", "일정하게 늘어나는 바둑돌의 먼 번째 개수", { generator: "constantStepObjectGrowthBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("bounded-symbol-sum-extrema-b7", "logic", "조건에 맞는 수", "두 수의 관계와 합의 범위에서 최댓값·최솟값 구하기", { generator: "boundedSymbolSumExtrema", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("win-loss-net-zero-b7", "logic", "가정하여 풀기", "이기고 진 횟수와 이동 결과로 승리 횟수 구하기", { generator: "winLossNetZero", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("shared-consumption-assumption-b7", "logic", "가정하여 풀기", "먹는 양이 다른 두 집단의 수 구하기", { generator: "sharedConsumptionAssumption", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("count-difference-assumption-b7", "logic", "가정하여 풀기", "두 종류의 개수 차와 단위 수 차로 각각 구하기", { generator: "countDifferenceAssumption", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("linked-sequence-correspondence-b7", "pattern", "차가 같은 수열", "두 수열의 같은 순서에 놓인 수 구하기", { generator: "linkedSequenceCorrespondence", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+
+  type("climb-slip-days-b7", "logic", "재치 있게 풀기", "낮에 오르고 밤에 미끄러지는 날짜 구하기", { generator: "climbSlipDays", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("exchange-container-total-b7", "logic", "재치 있게 풀기", "빈 병·쿠폰을 바꾸어 먹는 전체 개수", { generator: "exchangeContainerTotal", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("reverse-doubling-target-day-b7", "pattern", "두 배 규칙", "마지막 크기에서 거꾸로 두 배 전의 날짜 찾기", { generator: "reverseDoublingTargetDay", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("doubling-fraction-start-count-b7", "pattern", "두 배 규칙", "가득 찬 날보다 앞선 양과 시작 개수 함께 구하기", { generator: "doublingFractionStartCount", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("doubling-start-count-b7", "pattern", "두 배 규칙", "더 이른 날 가득 채우기 위한 처음 개수", { generator: "doublingStartCount", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("doubling-half-full-day-b7", "pattern", "두 배 규칙", "가득 차기 하루 전 절반이 되는 날", { generator: "doublingHalfFullDay", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("doubling-two-start-earlier-b7", "pattern", "두 배 규칙", "처음 수가 두 배일 때 가득 차는 날짜", { generator: "doublingTwoStartEarlier", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("polygon-border-point-count-b7", "geometry", "가로수 심기", "정다각형 둘레의 점·바둑돌 전체 개수", { generator: "polygonBorderPointCount", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("polygon-border-side-count-inverse-b7", "geometry", "가로수 심기", "둘레의 점 개수로 한 변의 점 개수 구하기", { generator: "polygonBorderSideCountInverse", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("polygon-stakes-from-side-b7", "geometry", "가로수 심기", "정다각형 한 변의 말뚝 수로 전체 말뚝 수 구하기", { generator: "polygonStakesFromSide", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("closed-perimeter-object-count-b7", "number", "가로수 심기", "닫힌 둘레와 간격으로 나무·가로등 수 구하기", { generator: "closedPerimeterObjectCount", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("closed-perimeter-from-spacing-count-b7", "number", "가로수 심기", "나무 수와 간격으로 닫힌 둘레 구하기", { generator: "closedPerimeterFromSpacingCount", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("between-objects-subdivision-count-b7", "number", "가로수 심기", "나무 사이를 더 작은 간격으로 나눈 꽃의 수", { generator: "betweenObjectsSubdivisionCount", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("perimeter-capacity-b7", "number", "가로수 심기", "둘레의 가로등 사이 의자와 앉는 사람 수", { generator: "perimeterCapacity", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("between-object-perimeter-b7", "number", "가로수 심기", "가로등 사이 나무 수로 연못 둘레 거꾸로 찾기", { generator: "betweenObjectPerimeter", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("inner-outer-path-object-count-b7", "geometry", "가로수 심기", "직사각형 산책로 안쪽·바깥쪽 가로등 수", { generator: "innerOuterPathObjectCount", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("polygon-border-shape-conversion-b7", "geometry", "가로수 심기", "같은 바둑돌로 다른 정다각형의 한 변 만들기", { generator: "polygonBorderShapeConversion", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+
+  type("palindrome-length-count-b7", "number", "팔린드롬", "자릿수별 대칭수의 개수 구하기", { generator: "palindromeLengthCount", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("three-digit-palindrome-digit-sum-b7", "number", "팔린드롬", "각 자리 합에 맞는 세 자리 대칭수 모두 찾기", { generator: "threeDigitPalindromeDigitSum", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("calendar-date-palindrome-b7", "pattern", "팔린드롬", "월·일을 이어 쓴 날짜 대칭수 찾기", { generator: "calendarDatePalindrome", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("clock-time-palindrome-b7", "pattern", "팔린드롬", "시와 분을 이어 쓴 시각 대칭수 세기", { generator: "clockTimePalindrome", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("reversed-two-digit-difference-enumeration-b7", "number", "자리 바꾸기", "앞뒤를 바꾼 두 자리 수의 차로 모든 수 찾기", { generator: "reversedTwoDigitDifferenceEnumeration", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("reversed-two-digit-difference-extreme-b7", "number", "자리 바꾸기", "앞뒤를 바꾼 수의 차로 가장 큰·작은 수 찾기", { generator: "reversedTwoDigitDifferenceExtreme", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("reversed-digit-given-tens-b7", "number", "자리 바꾸기", "십의 자리와 바꾼 수의 차로 처음 수 찾기", { generator: "reversedDigitGivenTens", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("reversed-digit-pair-range-b7", "logic", "자리 바꾸기", "합의 범위와 자리 바꿈 관계로 두 수 찾기", { generator: "reversedDigitPairRange", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("four-point-distance-chain-b7", "geometry", "거리와 집합", "네 점·여섯 점 사이의 겹친 거리 찾기", { generator: "fourPointDistanceChain", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("venn-overlap-all-b7", "logic", "벤다이어그램", "모두 두 집합에 속할 때 겹치는 수 구하기", { generator: "vennOverlapAll", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("venn-union-total-b7", "logic", "벤다이어그램", "두 집합과 겹치는 수로 전체 수 구하기", { generator: "vennUnionTotal", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("venn-exactly-one-b7", "logic", "벤다이어그램", "두 조건 중 한 가지만 좋아하는 수 구하기", { generator: "vennExactlyOne", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("venn-neither-b7", "logic", "벤다이어그램", "두 조건에 모두 해당하지 않는 수 구하기", { generator: "vennNeitherBook7", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("venn-overlap-with-neither-b7", "logic", "벤다이어그램", "전체와 둘 다 아닌 수를 이용해 겹치는 수 구하기", { generator: "vennOverlapWithNeither", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("two-way-table-count-b7", "logic", "두 기준 분류", "두 가지 기준으로 나눈 표의 빠진 수 구하기", { generator: "twoWayTableCount", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("palindrome-adjacent-digit-difference-b7", "number", "팔린드롬", "이웃한 자리 차 조건의 세 자리 대칭수 찾기", { generator: "palindromeAdjacentDigitDifference", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("complement-groups-total-b7", "logic", "집합과 포함", "두 집단에 속하지 않는 수와 합으로 전체 구하기", { generator: "complementGroupsTotal", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("four-group-complement-total-b7", "logic", "집합과 포함", "네 모둠의 여집합 합으로 전체 구하기", { generator: "fourGroupComplementTotal", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("reverse-add-palindrome-b7", "number", "팔린드롬", "수를 거꾸로 읽어 더하며 대칭수 만들기", { generator: "reverseAddPalindrome", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("minimum-stone-moves-b7", "logic", "도형 옮기기", "바둑돌을 가장 적게 옮겨 목표 모양 만들기", { generator: "minimumStoneMoves", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("kaprekar-495-b7", "number", "수의 규칙", "세 자리 수의 큰 수와 작은 수를 빼 495 만들기", { generator: "kaprekar495", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+  type("three-circle-equal-sum-b7", "number", "수 배열과 합", "세 원 안의 합이 같도록 색칠한 수 찾기", { generator: "threeCircleEqualSum", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
+
   // 더클래식 1과정 2권: 단원 이름이 아니라 실제 풀이 구조로 나눈 세부 유형이다.
   // 원본 페이지와 단원 테스트를 대조한 항목만 sourceMatched로 기록한다. 생성기가 없는
   // 유형은 커리큘럼 화면에 보이되, 검증이 끝날 때까지 선택할 수 없다.
@@ -943,7 +1021,79 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "mixed-sign-concatenation": "이어 붙인 수를 먼저 적고 더하기와 빼기를 왼쪽부터 계산합니다.",
   "remove-plus-concatenation": "더하기 하나를 없애면 양옆 수가 한 수로 이어져 값이 얼마나 커지는지 비교합니다.",
   "last-number-from-digit-total": "한 자리 수에 쓴 9개를 먼저 빼고 남은 숫자 개수를 두 자리씩 묶습니다.",
-  "repeated-digit-concatenation": "같은 숫자를 한 자리·두 자리·세 자리 묶음으로 나누어 목표 합을 만듭니다."
+  "repeated-digit-concatenation": "같은 숫자를 한 자리·두 자리·세 자리 묶음으로 나누어 목표 합을 만듭니다.",
+  "calendar-month-shift-weekday-b7": "한 달의 날짜 수를 7로 나눈 나머지만큼 다음 달의 요일을 옮깁니다.",
+  "calendar-cross-month-weekday-b7": "달마다 남은 날짜 수를 차례로 더하고 7일씩 묶어 요일을 찾습니다.",
+  "weekday-after-days-b7": "지난 날 수를 7로 나눈 나머지만큼 오늘의 요일에서 옮깁니다.",
+  "time-unit-conversion-b7": "1일=24시간, 1시간=60분, 1분=60초를 기준으로 바꿉니다.",
+  "analog-clock-reading-b7": "짧은 바늘은 시, 긴 바늘은 작은 눈금 한 칸을 1분으로 읽습니다.",
+  "elapsed-time-analog-b7": "두 시각을 분으로 바꾸어 빼고 다시 시간과 분으로 나눕니다.",
+  "time-add-subtract-base60-b7": "분이 60 이상이면 1시간을 올리고, 부족하면 1시간을 60분으로 바꿉니다.",
+  "find-end-time-b7": "시작 시각에 걸린 시간을 더하고 60분마다 1시간으로 바꿉니다.",
+  "find-start-time-b7": "끝 시각에서 걸린 시간을 빼며 필요하면 1시간을 60분으로 바꿉니다.",
+  "consecutive-full-month-reverse-b7": "31일인 달이 연달아 나오는 곳은 7월과 8월뿐임을 먼저 찾습니다.",
+  "leap-year-cross-month-weekday-b7": "윤년의 2월은 29일까지 있다는 점을 포함해 지난 날 수를 셉니다.",
+  "mirror-clock-reading-b7": "거울 시각을 12시에서 빼 원래 시각으로 되돌립니다.",
+  "mirror-clock-elapsed-b7": "두 거울 시각을 원래 시각으로 고친 뒤 밤 12시를 지나간 시간을 셉니다.",
+  "mirror-symmetric-clock-b7": "좌우로 뒤집어도 시침과 분침의 자리가 같은 시각을 찾습니다.",
+  "arithmetic-sequence-nth-b7": "첫 수에서 같은 수를 순서보다 한 번 적게 더합니다.",
+  "shared-polygon-matchsticks-b7": "첫 다각형의 변 수에서 시작해 한 도형마다 공통 변 하나를 뺀 만큼 더합니다.",
+  "division-fill-long-form-b7": "나누는 수와 몫을 곱하고 남는 수가 나누는 수보다 작은지 확인합니다.",
+  "reverse-linear-equation-b7": "마지막 수에서 먼저 더한 수를 빼고 곱한 수로 나눕니다.",
+  "arithmetic-sequence-position-b7": "마지막 수와 첫 수의 차를 뛰는 수로 나눈 뒤 첫째 수를 포함해 1을 더합니다.",
+  "sparse-arithmetic-sequence-b7": "보이는 두 수 사이의 칸 수로 차를 나누어 한 칸의 변화를 찾습니다.",
+  "indexed-arithmetic-sequence-b7": "순서가 1 커질 때 아래 수가 얼마나 변하는지 찾아 먼 순서까지 이어갑니다.",
+  "two-leg-animal-assumption-b7": "모두 다리가 적은 동물이라고 놓고 남은 다리를 한 마리씩 바꿔 셉니다.",
+  "two-wheel-vehicle-assumption-b7": "모두 두 바퀴라고 놓고 남은 바퀴를 네 바퀴 탈것으로 바꿉니다.",
+  "two-card-value-assumption-b7": "모든 카드를 작은 수 카드라고 놓고 부족한 합을 두 카드의 차로 나눕니다.",
+  "two-score-value-assumption-b7": "모두 낮은 배점이라고 놓고 부족한 점수를 두 배점의 차로 나눕니다.",
+  "two-coin-value-assumption-b7": "모두 작은 금액이라고 놓고 부족한 금액을 두 금액의 차로 나눕니다.",
+  "correct-wrong-score-assumption-b7": "모두 맞았다고 놓고 실제 점수와의 차를 한 문제를 틀릴 때 줄어드는 점수로 나눕니다.",
+  "constant-step-object-growth-b7": "처음 개수와 매번 늘어나는 개수를 찾아 순서보다 한 번 적게 더합니다.",
+  "bounded-symbol-sum-extrema-b7": "두 수의 관계를 만족하는 자연수를 차례로 적고 합의 범위 안에서 끝값을 찾습니다.",
+  "win-loss-net-zero-b7": "모두 이겼다고 놓은 이동량에서 한 번 질 때 줄어드는 칸 수를 이용합니다.",
+  "shared-consumption-assumption-b7": "모두 적게 먹는 집단이라고 놓고 남은 양을 집단을 바꿀 때의 차로 나눕니다.",
+  "count-difference-assumption-b7": "개수 차만큼 먼저 놓고 한 쌍씩 늘릴 때 단위 수의 차가 어떻게 변하는지 봅니다.",
+  "linked-sequence-correspondence-b7": "첫 수열에서 목표의 순서를 찾고 같은 순서의 둘째 수열 값을 구합니다.",
+  "climb-slip-days-b7": "마지막 날에는 미끄러지지 않으므로 목표에서 낮에 오르는 높이를 먼저 뺍니다.",
+  "exchange-container-total-b7": "처음 산 수와 바꾸어 받은 수를 더하고 새 빈 병도 다시 바꿀 수 있는지 확인합니다.",
+  "reverse-doubling-target-day-b7": "마지막 크기에서 하루 전으로 갈 때마다 2로 나눕니다.",
+  "doubling-fraction-start-count-b7": "가득 찬 양을 1로 보고 하루 전마다 절반이 되며, 더 일찍 채우려면 시작 개수가 두 배가 됩니다.",
+  "doubling-start-count-b7": "가득 차는 날을 하루 앞당길 때마다 처음 개수를 두 배로 늘립니다.",
+  "doubling-half-full-day-b7": "매일 두 배이므로 가득 차기 바로 전날에는 정확히 절반입니다.",
+  "doubling-two-start-earlier-b7": "처음 개수가 두 배이면 가득 차는 날이 하루 빨라집니다.",
+  "polygon-border-point-count-b7": "닫힌 정다각형에서는 꼭짓점이 겹치므로 한 변의 간격 수에 변 수를 곱합니다.",
+  "polygon-border-side-count-inverse-b7": "전체 점 수를 변 수로 나누어 한 변의 간격 수를 찾고 꼭짓점 하나를 더합니다.",
+  "polygon-stakes-from-side-b7": "한 변의 말뚝 수에서 겹치는 꼭짓점 하나를 빼 변 수만큼 곱합니다.",
+  "closed-perimeter-object-count-b7": "닫힌 둘레에서는 간격 수와 물건 수가 같으므로 둘레를 간격으로 나눕니다.",
+  "closed-perimeter-from-spacing-count-b7": "닫힌 둘레는 물건 수와 간격 수가 같으므로 개수와 간격을 곱합니다.",
+  "between-objects-subdivision-count-b7": "큰 간격 하나 안에 들어가는 작은 간격 수에서 양끝을 빼 중간 물건 수를 구합니다.",
+  "perimeter-capacity-b7": "둘레의 간격 수를 구하고 간격마다 놓는 의자 수와 한 의자 정원을 차례로 곱합니다.",
+  "between-object-perimeter-b7": "중간 물건 수로 큰 간격의 개수를 찾고 가로등 간격을 곱합니다.",
+  "inner-outer-path-object-count-b7": "안쪽과 바깥쪽 직사각형의 둘레를 각각 구해 간격으로 나눈 뒤 더합니다.",
+  "polygon-border-shape-conversion-b7": "첫 정다각형의 전체 점 수를 구해 새 정다각형의 변 수로 나눕니다.",
+  "palindrome-length-count-b7": "첫 자리에는 0이 올 수 없고 앞 절반을 정하면 뒤 절반은 거울처럼 정해집니다.",
+  "three-digit-palindrome-digit-sum-b7": "백의 자리와 일의 자리를 같게 놓고 두 배한 값과 가운데 수의 합을 맞춥니다.",
+  "calendar-date-palindrome-b7": "월과 일을 문제의 방식대로 이어 쓴 뒤 앞뒤가 같은 날짜만 고릅니다.",
+  "clock-time-palindrome-b7": "시와 분을 이어 쓴 수가 거꾸로 읽어도 같은지 분마다 확인합니다.",
+  "reversed-two-digit-difference-enumeration-b7": "자리 바꿈 전후의 차는 두 자리 숫자의 차에 9를 곱한 값입니다.",
+  "reversed-two-digit-difference-extreme-b7": "두 자리 숫자의 차를 정한 뒤 가능한 수 중 조건에 맞는 가장 큰 수나 작은 수를 고릅니다.",
+  "reversed-digit-given-tens-b7": "자리 바꿈 전후의 차를 9로 나누어 두 자리 숫자의 차를 찾습니다.",
+  "reversed-digit-pair-range-b7": "자리 숫자 차와 합의 범위를 함께 만족하는 뒤집힌 두 수를 찾습니다.",
+  "four-point-distance-chain-b7": "겹친 두 점 사이 거리는 큰 구간에서 이미 아는 작은 구간을 빼서 구합니다.",
+  "venn-overlap-all-b7": "모두 적어도 한 조건에 속하므로 두 집합의 합에서 전체를 빼 겹친 수를 구합니다.",
+  "venn-union-total-b7": "두 집합의 수를 더하고 겹쳐서 두 번 센 수를 한 번 뺍니다.",
+  "venn-exactly-one-b7": "각 집합에서 겹친 수를 뺀 두 부분만 더합니다.",
+  "venn-neither-b7": "두 집합의 합집합을 구한 뒤 전체에서 뺍니다.",
+  "venn-overlap-with-neither-b7": "전체에서 둘 다 아닌 수를 빼 합집합을 구한 뒤 두 집합의 합과 비교합니다.",
+  "two-way-table-count-b7": "행과 열의 합을 이용해 네 칸을 하나씩 채우고 필요한 전체나 분류 수를 더합니다.",
+  "palindrome-adjacent-digit-difference-b7": "세 자리 대칭수의 양끝을 같게 놓고 가운데 숫자와의 차를 맞춥니다.",
+  "complement-groups-total-b7": "각 집단에 속하지 않는 수를 더하면 전체가 몇 번 세어지는지 확인합니다.",
+  "four-group-complement-total-b7": "각 모둠을 제외한 수들의 합은 전체 학생을 세 번 센 값입니다.",
+  "reverse-add-palindrome-b7": "수를 거꾸로 읽은 수와 더하고, 앞뒤가 같아질 때까지 같은 과정을 반복합니다.",
+  "minimum-stone-moves-b7": "처음과 목표에서 같은 자리에 있는 돌은 그대로 두고 다른 자리의 돌만 셉니다.",
+  "kaprekar-495-b7": "세 숫자로 가장 큰 수와 가장 작은 수를 만들어 빼는 과정을 495가 될 때까지 반복합니다.",
+  "three-circle-equal-sum-b7": "완성된 원의 합을 기준으로 다른 원에서 알고 있는 수를 빼 색칠한 수를 구합니다."
 });
 
 export const textbookGuideForType = (id) => TEXTBOOK_CONCEPT_GUIDES[id] || "문제에 보이는 관계를 한 단계씩 표시한 뒤 같은 규칙을 적용합니다.";
@@ -1943,6 +2093,223 @@ const BOOK06_UNIT04_REFS = Object.freeze({
   })
 });
 
+// 7권은 교사용 지도서의 정답 표기와 수업용 교재의 인쇄 문제 번호를 함께 대조했다.
+// 설명 예시와 리뷰는 제외하고 활동·확인·연습·도전 180문항만 한 유형에 한 번씩 배정한다.
+const BOOK07_UNIT01_REFS = Object.freeze({
+  "calendar-month-shift-weekday-b7": stageReferences({
+    concept: [problemNumbers("activity", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [2, 3])]
+  }),
+  "calendar-cross-month-weekday-b7": stageReferences({
+    concept: [problemNumbers("activity", 1, [3, 4, 5, 6])],
+    type: [problemNumbers("check", 1, [1, 2, 3])],
+    practice: [problemNumbers("practice", 1, [4, 5, 6, 7, 8])]
+  }),
+  "weekday-after-days-b7": stageReferences({ practice: [problemNumbers("practice", 1, [1])] }),
+  "time-unit-conversion-b7": stageReferences({ practice: [problemNumbers("practice", 1, [9])] }),
+  "analog-clock-reading-b7": stageReferences({
+    concept: [problemNumbers("activity", 2, [1])],
+    practice: [problemNumbers("practice", 1, [10])]
+  }),
+  "elapsed-time-analog-b7": stageReferences({
+    concept: [problemNumbers("activity", 2, [2, 3])],
+    type: [problemNumbers("check", 2, [3, 4])],
+    practice: [problemNumbers("practice", 1, [11, 12, 15, 16])]
+  }),
+  "time-add-subtract-base60-b7": stageReferences({ concept: [problemNumbers("activity", 2, [4])] }),
+  "find-end-time-b7": stageReferences({
+    type: [problemNumbers("check", 2, [1])],
+    practice: [problemNumbers("practice", 1, [13])]
+  }),
+  "find-start-time-b7": stageReferences({
+    type: [problemNumbers("check", 2, [2])],
+    practice: [problemNumbers("practice", 1, [14])]
+  }),
+  "consecutive-full-month-reverse-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [1])] }),
+  "leap-year-cross-month-weekday-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [2])] }),
+  "mirror-clock-reading-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [3])] }),
+  "mirror-clock-elapsed-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [4])] }),
+  "mirror-symmetric-clock-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [5])] })
+});
+
+const BOOK07_UNIT02_REFS = Object.freeze({
+  "arithmetic-sequence-nth-b7": stageReferences({
+    concept: [problemNumbers("activity", 1, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [1])],
+    advanced: [problemNumbers("advanced", 1, [5])]
+  }),
+  "shared-polygon-matchsticks-b7": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [3])]
+  }),
+  "division-fill-long-form-b7": stageReferences({
+    concept: [problemNumbers("activity", 2, [1])],
+    practice: [problemNumbers("practice", 1, [5])]
+  }),
+  "reverse-linear-equation-b7": stageReferences({
+    concept: [problemNumbers("activity", 2, [2])],
+    practice: [problemNumbers("practice", 1, [6])]
+  }),
+  "arithmetic-sequence-position-b7": stageReferences({
+    concept: [problemNumbers("activity", 2, [3, 4, 5])],
+    practice: [problemNumbers("practice", 1, [7, 8])]
+  }),
+  "sparse-arithmetic-sequence-b7": stageReferences({
+    concept: [problemNumbers("activity", 2, [6])],
+    type: [problemNumbers("check", 2, [3, 4])],
+    practice: [problemNumbers("practice", 1, [9, 12, 13])]
+  }),
+  "indexed-arithmetic-sequence-b7": stageReferences({
+    type: [problemNumbers("check", 2, [1, 2])],
+    practice: [problemNumbers("practice", 1, [2, 10, 11])]
+  }),
+  "two-leg-animal-assumption-b7": stageReferences({
+    concept: [problemNumbers("activity", 3, [1, 5])],
+    practice: [problemNumbers("practice", 1, [14, 15])]
+  }),
+  "two-wheel-vehicle-assumption-b7": stageReferences({
+    concept: [problemNumbers("activity", 3, [2])],
+    practice: [problemNumbers("practice", 1, [18])]
+  }),
+  "two-card-value-assumption-b7": stageReferences({
+    concept: [problemNumbers("activity", 3, [3])],
+    practice: [problemNumbers("practice", 1, [17])]
+  }),
+  "two-score-value-assumption-b7": stageReferences({
+    concept: [problemNumbers("activity", 3, [4])],
+    practice: [problemNumbers("practice", 1, [16])]
+  }),
+  "two-coin-value-assumption-b7": stageReferences({
+    concept: [problemNumbers("activity", 3, [6])],
+    practice: [problemNumbers("practice", 1, [19])]
+  }),
+  "correct-wrong-score-assumption-b7": stageReferences({
+    type: [problemNumbers("check", 3, [1, 2, 3])],
+    practice: [problemNumbers("practice", 1, [20, 21])]
+  }),
+  "constant-step-object-growth-b7": stageReferences({ practice: [problemNumbers("practice", 1, [4])] }),
+  "bounded-symbol-sum-extrema-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [1])] }),
+  "win-loss-net-zero-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [2])] }),
+  "shared-consumption-assumption-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [3])] }),
+  "count-difference-assumption-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [4])] }),
+  "linked-sequence-correspondence-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [6])] })
+});
+
+const BOOK07_UNIT03_REFS = Object.freeze({
+  "climb-slip-days-b7": stageReferences({
+    concept: [problemNumbers("activity", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [1, 2, 3])]
+  }),
+  "exchange-container-total-b7": stageReferences({
+    concept: [problemNumbers("activity", 1, [3, 4])],
+    practice: [problemNumbers("practice", 1, [4, 5, 6])]
+  }),
+  "reverse-doubling-target-day-b7": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [7])]
+  }),
+  "doubling-fraction-start-count-b7": stageReferences({ type: [problemNumbers("check", 1, [3])] }),
+  "doubling-start-count-b7": stageReferences({
+    type: [problemNumbers("check", 1, [4])],
+    practice: [problemNumbers("practice", 1, [8])]
+  }),
+  "doubling-half-full-day-b7": stageReferences({
+    type: [problemNumbers("check", 1, [6])],
+    practice: [problemNumbers("practice", 1, [9])]
+  }),
+  "doubling-two-start-earlier-b7": stageReferences({
+    type: [problemNumbers("check", 1, [5])],
+    practice: [problemNumbers("practice", 1, [10])]
+  }),
+  "polygon-border-point-count-b7": stageReferences({ concept: [problemNumbers("activity", 2, [1, 3, 5])] }),
+  "polygon-border-side-count-inverse-b7": stageReferences({
+    concept: [problemNumbers("activity", 2, [2, 4, 6])],
+    practice: [problemNumbers("practice", 1, [11, 12])]
+  }),
+  "polygon-stakes-from-side-b7": stageReferences({
+    concept: [problemNumbers("activity", 2, [7])],
+    practice: [problemNumbers("practice", 1, [13])]
+  }),
+  "closed-perimeter-object-count-b7": stageReferences({
+    type: [problemNumbers("check", 2, [1])],
+    practice: [problemNumbers("practice", 1, [14])]
+  }),
+  "closed-perimeter-from-spacing-count-b7": stageReferences({
+    type: [problemNumbers("check", 2, [2])],
+    practice: [problemNumbers("practice", 1, [15, 18])]
+  }),
+  "between-objects-subdivision-count-b7": stageReferences({
+    type: [problemNumbers("check", 2, [3, 4])],
+    practice: [problemNumbers("practice", 1, [16, 17])]
+  }),
+  "perimeter-capacity-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [1])] }),
+  "between-object-perimeter-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [2])] }),
+  "inner-outer-path-object-count-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [3])] }),
+  "polygon-border-shape-conversion-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [4])] })
+});
+
+const BOOK07_UNIT04_REFS = Object.freeze({
+  "palindrome-length-count-b7": stageReferences({ concept: [problemNumbers("activity", 1, [1])] }),
+  "three-digit-palindrome-digit-sum-b7": stageReferences({
+    concept: [problemNumbers("activity", 1, [2, 3])],
+    practice: [problemNumbers("practice", 1, [3, 4])]
+  }),
+  "calendar-date-palindrome-b7": stageReferences({
+    concept: [problemNumbers("activity", 1, [4])],
+    practice: [problemNumbers("practice", 1, [5])]
+  }),
+  "clock-time-palindrome-b7": stageReferences({
+    concept: [problemNumbers("activity", 1, [5])],
+    practice: [problemNumbers("practice", 1, [6])]
+  }),
+  "reversed-two-digit-difference-enumeration-b7": stageReferences({ type: [problemNumbers("check", 1, [1])] }),
+  "reversed-two-digit-difference-extreme-b7": stageReferences({
+    type: [problemNumbers("check", 1, [2, 3])],
+    practice: [problemNumbers("practice", 1, [7, 8])]
+  }),
+  "reversed-digit-given-tens-b7": stageReferences({
+    type: [problemNumbers("check", 1, [4, 5])],
+    practice: [problemNumbers("practice", 1, [9])]
+  }),
+  "reversed-digit-pair-range-b7": stageReferences({
+    type: [problemNumbers("check", 1, [6, 7])],
+    practice: [problemNumbers("practice", 1, [10])]
+  }),
+  "four-point-distance-chain-b7": stageReferences({
+    concept: [problemNumbers("activity", 2, [1])],
+    practice: [problemNumbers("practice", 1, [12])],
+    advanced: [problemNumbers("advanced", 1, [2])]
+  }),
+  "venn-overlap-all-b7": stageReferences({
+    concept: [problemNumbers("activity", 2, [2, 3])],
+    practice: [problemNumbers("practice", 1, [13, 14])]
+  }),
+  "venn-union-total-b7": stageReferences({
+    concept: [problemNumbers("activity", 2, [4, 5])],
+    practice: [problemNumbers("practice", 1, [15, 16])]
+  }),
+  "venn-exactly-one-b7": stageReferences({ type: [problemNumbers("check", 2, [1])] }),
+  "venn-neither-b7": stageReferences({
+    type: [problemNumbers("check", 2, [2])],
+    practice: [problemNumbers("practice", 1, [18])]
+  }),
+  "venn-overlap-with-neither-b7": stageReferences({ practice: [problemNumbers("practice", 1, [17])] }),
+  "two-way-table-count-b7": stageReferences({
+    type: [problemNumbers("check", 2, [3, 4])],
+    practice: [problemNumbers("practice", 1, [20])]
+  }),
+  "palindrome-adjacent-digit-difference-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [1])] }),
+  "complement-groups-total-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [3])] }),
+  "four-group-complement-total-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [4])] }),
+  "reverse-add-palindrome-b7": stageReferences({
+    practice: [problemNumbers("practice", 1, [1, 2])],
+    advanced: [problemNumbers("advanced", 1, [5])]
+  }),
+  "minimum-stone-moves-b7": stageReferences({ advanced: [problemNumbers("advanced", 1, [6])] }),
+  "kaprekar-495-b7": stageReferences({ practice: [problemNumbers("practice", 1, [11])] }),
+  "three-circle-equal-sum-b7": stageReferences({ practice: [problemNumbers("practice", 1, [19])] })
+});
+
 export const CURRICULUM = [
   { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [
     detailedStagedUnit("도형 움직이기", [
@@ -2071,10 +2438,42 @@ export const CURRICULUM = [
     ], [4,6], [2,4], 4, 14, BOOK06_UNIT04_REFS)
   ] },
   { id: "book-07", label: "7권", title: "달력과 우기기", units: [
-    stagedUnit("달력과 시계", ["calendar-weekday-sum"], [6,4], [3,4], 5, 16),
-    stagedUnit("규칙 찾기와 우기기", ["argument-logic","repeat-pattern"], [4,6,6], [2,4,3], 6, 21),
-    stagedUnit("가로수 심기", ["tree-planting"], [4,7], [6,4], 4, 18),
-    stagedUnit("팔린드롬과 벤다이어그램", ["palindrome","venn-count"], [5,5], [7,4], 6, 20)
+    detailedStagedUnit("달력과 시계", [
+      "calendar-month-shift-weekday-b7", "calendar-cross-month-weekday-b7", "weekday-after-days-b7",
+      "time-unit-conversion-b7", "analog-clock-reading-b7", "elapsed-time-analog-b7",
+      "time-add-subtract-base60-b7", "find-end-time-b7", "find-start-time-b7",
+      "consecutive-full-month-reverse-b7", "leap-year-cross-month-weekday-b7",
+      "mirror-clock-reading-b7", "mirror-clock-elapsed-b7", "mirror-symmetric-clock-b7"
+    ], [6,4], [3,4], 5, 16, BOOK07_UNIT01_REFS),
+    detailedStagedUnit("규칙 찾기와 우기기", [
+      "arithmetic-sequence-nth-b7", "shared-polygon-matchsticks-b7", "division-fill-long-form-b7",
+      "reverse-linear-equation-b7", "arithmetic-sequence-position-b7", "sparse-arithmetic-sequence-b7",
+      "indexed-arithmetic-sequence-b7", "two-leg-animal-assumption-b7", "two-wheel-vehicle-assumption-b7",
+      "two-card-value-assumption-b7", "two-score-value-assumption-b7", "two-coin-value-assumption-b7",
+      "correct-wrong-score-assumption-b7", "constant-step-object-growth-b7", "bounded-symbol-sum-extrema-b7",
+      "win-loss-net-zero-b7", "shared-consumption-assumption-b7", "count-difference-assumption-b7",
+      "linked-sequence-correspondence-b7"
+    ], [4,6,6], [2,4,3], 6, 21, BOOK07_UNIT02_REFS),
+    detailedStagedUnit("가로수 심기", [
+      "climb-slip-days-b7", "exchange-container-total-b7", "reverse-doubling-target-day-b7",
+      "doubling-fraction-start-count-b7", "doubling-start-count-b7", "doubling-half-full-day-b7",
+      "doubling-two-start-earlier-b7", "polygon-border-point-count-b7",
+      "polygon-border-side-count-inverse-b7", "polygon-stakes-from-side-b7",
+      "closed-perimeter-object-count-b7", "closed-perimeter-from-spacing-count-b7",
+      "between-objects-subdivision-count-b7", "perimeter-capacity-b7", "between-object-perimeter-b7",
+      "inner-outer-path-object-count-b7", "polygon-border-shape-conversion-b7"
+    ], [4,7], [6,4], 4, 18, BOOK07_UNIT03_REFS),
+    detailedStagedUnit("팔린드롬과 벤다이어그램", [
+      "palindrome-length-count-b7", "three-digit-palindrome-digit-sum-b7", "calendar-date-palindrome-b7",
+      "clock-time-palindrome-b7", "reversed-two-digit-difference-enumeration-b7",
+      "reversed-two-digit-difference-extreme-b7", "reversed-digit-given-tens-b7",
+      "reversed-digit-pair-range-b7", "four-point-distance-chain-b7", "venn-overlap-all-b7",
+      "venn-union-total-b7", "venn-exactly-one-b7", "venn-neither-b7",
+      "venn-overlap-with-neither-b7", "two-way-table-count-b7",
+      "palindrome-adjacent-digit-difference-b7", "complement-groups-total-b7",
+      "four-group-complement-total-b7", "reverse-add-palindrome-b7", "minimum-stone-moves-b7",
+      "kaprekar-495-b7", "three-circle-equal-sum-b7"
+    ], [5,5], [7,4], 6, 20, BOOK07_UNIT04_REFS)
   ] },
   { id: "book-08", label: "8권", title: "매트릭스와 복면산", units: [
     stagedUnit("묶음수와 매트릭스", ["shape-sum-table"], [5,4], [4,3], 6, 19),
