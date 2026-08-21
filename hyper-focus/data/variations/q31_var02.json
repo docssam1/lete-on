@@ -4,8 +4,16 @@
   "variationId": "q31_var02",
   "subType": "symbol_value_equations",
   "status": "draft",
-  "source": { "problemImage": "./assets/problems/q31_var02.png" },
-  "contentBinding": { "canonicalSource": "./canonical/q31.json", "hfDataTypeId": 31 },
-  "machineReadable": { "payloadType": "symbol_value_equations", "symbolCount": 4, "expectedAnswer": 9 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 9 }
+  "source": {"problemImage": "./assets/svg/variations/q31_var02.svg"},
+  "contentBinding": {"canonicalSource": "./canonical/q31.json", "hfDataTypeId": 31},
+  "problem": {"prompt": "각 문자는 0부터 8까지의 수 중 서로 다른 하나를 나타냅니다. 모든 식을 만족하는 각 문자의 수를 구하세요."},
+  "machineReadable": {
+    "payloadType": "symbol_value_equations",
+    "digitDomain": [0, 1, 2, 3, 4, 5, 6, 7, 8],
+    "distinctAssignment": true,
+    "equations": ["A + G = A", "C + D = A", "B + B = E", "B x B x B = F", "D + D + D + D + D = C", "C x D = C"],
+    "solvingModel": {"expectedAnswer": {"A": 6, "B": 2, "C": 5, "D": 1, "E": 4, "F": 8, "G": 0}, "validAssignmentCount": 1, "verificationMethod": "enumerate_all_distinct_digit_assignments"}
+  },
+  "answerValidation": {"answerType": "symbol_values", "expectedAnswer": {"A": 6, "B": 2, "C": 5, "D": 1, "E": 4, "F": 8, "G": 0}},
+  "solutionHint": "A+G=A에서 G=0, C×D=C에서 D=1입니다. D를 다섯 번 더한 수가 C이므로 C=5, C+D=A이므로 A=6입니다. 남은 식에 맞는 서로 다른 수를 넣으면 B=2, E=4, F=8입니다."
 }

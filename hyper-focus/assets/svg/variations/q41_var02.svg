@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 410" role="img" aria-labelledby="title desc">
+  <title id="title">도형 변환 버튼 규칙</title><desc id="desc">가 버튼은 원과 육각형을 바꾸고, 나 버튼은 초록과 보라를 바꾸며, 다 버튼은 안쪽 원과 마름모를 바꾼다</desc>
+  <rect width="760" height="410" rx="18" fill="#fff" stroke="#cfd7e3" stroke-width="3"/>
+  <text x="35" y="42" font-family="sans-serif" font-weight="700" font-size="22" fill="#18304d">버튼 규칙</text>
+  <g font-family="sans-serif" font-size="20" font-weight="700" text-anchor="middle">
+    <circle cx="80" cy="105" r="28" fill="#e64d4d"/><text x="80" y="112" fill="#fff">가</text>
+    <circle cx="175" cy="105" r="35" fill="#52ad72" stroke="#26384d" stroke-width="3"/>
+    <text x="245" y="112" fill="#53647a">↔</text>
+    <polygon points="315,70 345,87 345,123 315,140 285,123 285,87" fill="#52ad72" stroke="#26384d" stroke-width="3"/>
+    <text x="460" y="112" fill="#53647a">바깥 모양만 바뀜</text>
+
+    <circle cx="80" cy="190" r="28" fill="#3b78c8"/><text x="80" y="197" fill="#fff">나</text>
+    <circle cx="175" cy="190" r="35" fill="#52ad72" stroke="#26384d" stroke-width="3"/>
+    <text x="245" y="197" fill="#53647a">↔</text>
+    <circle cx="315" cy="190" r="35" fill="#9b6bd6" stroke="#26384d" stroke-width="3"/>
+    <text x="460" y="197" fill="#53647a">바깥 색만 바뀜</text>
+
+    <circle cx="80" cy="275" r="28" fill="#52ad72"/><text x="80" y="282" fill="#fff">다</text>
+    <circle cx="175" cy="275" r="28" fill="#fff" stroke="#26384d" stroke-width="3"/>
+    <text x="245" y="282" fill="#53647a">↔</text>
+    <polygon points="315,242 348,275 315,308 282,275" fill="#fff" stroke="#26384d" stroke-width="3"/>
+    <text x="460" y="282" fill="#53647a">안쪽 모양만 바뀜</text>
+  </g>
+  <g transform="translate(70 325)">
+    <circle cx="30" cy="30" r="30" fill="#52ad72" stroke="#26384d" stroke-width="3"/><circle cx="30" cy="30" r="14" fill="#fff" stroke="#26384d" stroke-width="2"/>
+    <text x="78" y="38" font-family="sans-serif" font-size="20" fill="#53647a">→ 나 → 다 → 가 →</text>
+    <rect x="270" y="0" width="85" height="60" rx="6" fill="#fff" stroke="#8994a3" stroke-width="4"/>
+    <text x="400" y="38" font-family="sans-serif" font-size="17" fill="#53647a">빈칸에 그리기</text>
+  </g>
+</svg>

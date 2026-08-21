@@ -2,8 +2,12 @@
  "schemaVersion": "hf-variation-problem-v1",
  "baseQuestionId": "q48",
  "variationId": "q48_var01",
- "subType": "work_together_grid",
- "status": "draft",
+  "subType": "work_together",
+  "status": "verified",
+  "presentation": {
+    "mode": "text-only",
+    "answerUnit": "일"
+  },
  "source": {
     "problemImage": ""
  },
@@ -12,7 +16,7 @@
   "hfDataTypeId": 48
  },
  "machineReadable": {
-  "payloadType": "work_together_grid",
+    "payloadType": "work_together",
   "personA": "민수",
   "personB": "철수",
   "daysA": 3,
@@ -28,7 +32,7 @@
   "expectedAnswer": 2
  },
  "problem": {
-  "prompt": "민수는 어떤 일을 혼자 하면 3일 만에 끝내고, 철수는 혼자 하면 6일 만에 끝냅니다. 두 사람이 함께 하면 며칠 만에 끝낼 수 있습니까?"
+    "prompt": "민수는 어떤 일을 혼자 하면 3일 만에 끝내고, 철수는 혼자 하면 6일 만에 끝냅니다. 두 사람은 매일 같은 속도로 일한다고 할 때, 함께 하면 며칠 만에 끝낼 수 있습니까?"
  },
  "solutionHint": "전체 일을 6칸으로 나누면, 민수는 하루에 2칸, 철수는 하루에 1칸 합니다. 함께 하면 하루에 3칸이므로 6÷3=2일입니다."
 }

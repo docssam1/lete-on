@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 500" role="img" aria-labelledby="title desc">
+  <title id="title">세 원의 네 수 합 맞추기 유사문제 2</title>
+  <desc id="desc">세 원이 겹쳐 있고 알려진 수 46, 50, 9와 미지수 ㄱ, ㄴ, ㄷ, ㄹ이 놓여 있습니다. 각 원 안의 네 수 합은 104입니다.</desc>
+  <rect width="760" height="500" rx="24" fill="#fff"/>
+  <text x="380" y="42" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#20272b">어느 원 안에서도 네 수의 합은 104입니다</text>
+  <text x="380" y="71" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="16" font-weight="700" fill="#59636a">ㄱ + ㄴ의 값을 구하세요.</text>
+  <g fill="#fbfcfd" fill-opacity=".68" stroke="#48545d" stroke-width="3">
+    <circle cx="380" cy="207" r="128"/>
+    <circle cx="300" cy="315" r="128"/>
+    <circle cx="460" cy="315" r="128"/>
+  </g>
+  <g text-anchor="middle" dominant-baseline="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="29" font-weight="800" fill="#263238">
+    <text x="380" y="126">ㄱ</text><text x="327" y="222">9</text><text x="433" y="222">ㄷ</text><text x="380" y="277">ㄴ</text>
+    <text x="235" y="331">46</text><text x="525" y="331">50</text><text x="380" y="389">ㄹ</text>
+  </g>
+  <rect x="235" y="462" width="290" height="26" rx="13" fill="#fff8e8" stroke="#dfc47c"/>
+  <text x="380" y="480" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#725718">왼쪽 원과 오른쪽 원을 먼저 비교해 보세요.</text>
+</svg>

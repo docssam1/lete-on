@@ -162,7 +162,10 @@
   var CSS = ".hf-views{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:8px 0}"
     + ".hf-views figure{margin:0;text-align:center}"
     + ".hf-fig svg{width:160px;height:auto}"
-    + ".hf-views figcaption{font-size:.75rem;color:#666;margin-top:4px}";
+    + ".hf-views figcaption{font-size:.75rem;color:#666;margin-top:4px}"
+    + ".hf-spatial{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin:8px 0}.hf-spatial figure,.hf-three-views figure{margin:0;text-align:center}.hf-spatial figcaption,.hf-three-views figcaption{font-size:.72rem;color:#666}"
+    + ".hf-spatial-main{width:145px}.hf-option-grid{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(65px,1fr));gap:6px}.hf-option{position:relative;padding:4px;border:1px solid #ddd;border-radius:7px}.hf-option b{position:absolute;top:2px;left:3px;display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#12233f;color:#fff;font-size:9px}.hf-option svg{display:block;width:62px;height:62px;margin:auto}"
+    + ".hf-net-wrap .hf-net{width:110px;max-height:150px}.hf-three-views{display:flex;align-items:end;justify-content:center;gap:18px;flex-wrap:wrap;margin:8px 0}.hf-view-grid{display:block;max-width:100px;max-height:120px}.hf-die{display:block;width:90px}.hf-dice-path{display:block;max-width:220px;max-height:160px}";
 
   function injectCss() {
     if (document.getElementById("hf-gen-css")) return;
@@ -187,7 +190,7 @@
       problem: function (p) { return window.HFQ03.renderQ03Problem(p); },
       answer: function (p) { return window.HFQ03.renderQ03Answer(p); },
       title: "흑백 쌓기나무",
-      prompt: function () { return "검은색과 흰색 쌓기나무를 같은 색의 면이 맞닿지 않게 쌓았습니다. 흰색과 검은색 쌓기나무는 각각 몇 개입니까?"; } };
+      prompt: function (p) { return "위에서 본 바탕그림의 수는 각 칸의 높이입니다. 왼쪽 위 칸의 맨 아래는 " + (p.cornerWhite ? "흰색" : "검은색") + "이고, 같은 색의 면이 맞닿지 않게 쌓았습니다. 전체 흰색과 검은색 쌓기나무는 각각 몇 개입니까?"; } };
     GENERATORS[4] = { gen: function (d, s) { return window.HFQ04.generateQ04(d, s); },
       problem: function (p) { return window.HFQ04.renderQ04Problem(p); },
       answer: function (p) { return window.HFQ04.renderQ04Answer(p); },
@@ -197,7 +200,13 @@
       problem: function (p) { return window.HFQ05.renderQ05Problem(p); },
       answer: function (p) { return window.HFQ05.renderQ05Answer(p); },
       title: "숨은 쌓기나무",
-      prompt: function (p) { return "쌓기나무를 빈틈없이 " + p.total + "개 쌓았습니다. 어느 방향에서도 보이지 않는 쌓기나무는 몇 개입니까? (단, 바닥면은 보이지 않습니다.)"; } };
+      prompt: function (p) { return "위에서 본 바탕그림의 수는 각 칸의 높이입니다. " + (p.walled ? "뒤와 왼쪽에 벽이 있습니다. 위·앞·오른쪽" : "벽이 없습니다. 위·앞·뒤·왼쪽·오른쪽") + "에서 모두 가려진 쌓기나무는 몇 개입니까?"; } };
+    if (window.HFQ06) {
+      GENERATORS[6] = { gen: function (d, s) { return window.HFQ06.generateQ06(d, s); }, problem: function (p) { return window.HFQ06.renderQ06Problem(p); }, answer: function (p) { return window.HFQ06.renderQ06Answer(p); }, title: "여러 방향에서 본 색 블록", prompt: function () { return "기준 모양을 돌려서 볼 때 나타날 수 없는 모습을 모두 고르세요. 거울처럼 뒤집지는 않습니다."; } };
+      GENERATORS[7] = { gen: function (d, s) { return window.HFQ07.generateQ07(d, s); }, problem: function (p) { return window.HFQ07.renderQ07Problem(p); }, answer: function (p) { return window.HFQ07.renderQ07Answer(p); }, title: "전개도로 만드는 입체", prompt: function () { return "전개도를 접어서 만들 수 있는 입체 모양을 모두 고르세요."; } };
+      GENERATORS[8] = { gen: function (d, s) { return window.HFQ08.generateQ08(d, s); }, problem: function (p) { return window.HFQ08.renderQ08Problem(p); }, answer: function (p) { return window.HFQ08.renderQ08Answer(p); }, title: "주사위 굴리기", prompt: function () { return "화살표를 따라 한 칸씩 굴렸을 때 색칠한 칸에 닿는 바닥면의 수를 구하세요."; } };
+      GENERATORS[9] = { gen: function (d, s) { return window.HFQ09.generateQ09(d, s); }, problem: function (p) { return window.HFQ09.renderQ09Problem(p); }, answer: function (p) { return window.HFQ09.renderQ09Answer(p); }, title: "세 방향 모습으로 최소 개수", prompt: function () { return "위, 앞, 오른쪽 옆에서 본 세 모양을 모두 만족하도록 쌓을 때 가장 적은 개수를 구하세요."; } };
+    }
 
     window.buildWorksheet = function (opts) {
       var weaknessIds = opts.weaknessIds, diffs = opts.difficultyByQuestion, countPerType = opts.countPerType;
@@ -256,14 +265,20 @@
   function boot() {
     try {
       injectCss();
-      // mock/viewer처럼 stacking.js를 명시적으로 먼저 불러온 화면에서는
-      // 상대경로가 다른 스크립트를 다시 요청하지 않는다.
-      if (window.HFQ02) { register(); return; }
-      var s = document.createElement("script");
-      s.src = "./generator/stacking.js";
-      s.onload = function () { try { register(); } catch (e) { console.warn("HF generator 등록 실패", e); } };
-      s.onerror = function () { console.warn("stacking.js 로드 실패 — q01만 사용"); };
-      document.head.appendChild(s);
+      function loadSpatialThenRegister() {
+        if (window.HFQ06) { register(); return; }
+        var spatial = document.createElement("script");
+        spatial.src = "./generator/spatial.js";
+        spatial.onload = function () { try { register(); } catch (e) { console.warn("HF generator 등록 실패", e); } };
+        spatial.onerror = function () { console.warn("spatial.js 로드 실패 — q01~q05만 사용"); try { register(); } catch (e) {} };
+        document.head.appendChild(spatial);
+      }
+      if (window.HFQ02) { loadSpatialThenRegister(); return; }
+      var stacking = document.createElement("script");
+      stacking.src = "./generator/stacking.js";
+      stacking.onload = loadSpatialThenRegister;
+      stacking.onerror = function () { console.warn("stacking.js 로드 실패 — q01만 사용"); };
+      document.head.appendChild(stacking);
     } catch (e) { console.warn("HF 부트스트랩 실패", e); }
   }
 

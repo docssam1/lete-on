@@ -65,6 +65,26 @@
       "mtime_ns": 1770800164000000000
     },
     {
+      "id": "hf-visibility-decisions",
+      "title": "Hyper Focus 단일정답·가시성 결정",
+      "path": "hyper-focus/qa/HF_VISIBILITY_DECISIONS.md",
+      "kind": "markdown",
+      "sensitivity": "public",
+      "sha256": "502a061f2b78bd57ff6632e88d3db68bce67a72d229b99b78bc83fe81f939e83",
+      "size": 3754,
+      "mtime_ns": 1787232438545882200
+    },
+    {
+      "id": "hf-q06-q09-generator-audit",
+      "title": "Hyper Focus q06~q09 생성기 검수",
+      "path": "hyper-focus/qa/HF_Q06_Q09_GENERATOR_AUDIT.md",
+      "kind": "markdown",
+      "sensitivity": "public",
+      "sha256": "fbcdf411afafb1d38881e2e40cdf7cc8c075e550f697bd7eaed729b81ad6af4e",
+      "size": 2738,
+      "mtime_ns": 1787232090986480700
+    },
+    {
       "id": "gfield-drive-memory-notes",
       "title": "지필드 지오메트리 설계 결정 메모",
       "path": "private-sources/geometry/gfield-geometry-memory-notes.md",
@@ -3903,6 +3923,31 @@
       ]
     },
     {
+      "id": "hf.visibility-single-answer",
+      "title": "Hyper Focus 시험 구성·q02~q05 단일정답 기준",
+      "aliases": [
+        "GFIELD 단일정답·가시성 검수"
+      ],
+      "tags": [
+        "hyper-focus",
+        "single-answer",
+        "visibility",
+        "exam-blueprint"
+      ],
+      "summary": "시험 문항 수는 구성표가 결정하고 약점 문제 수는 직접 입력한다. q02는 높은 열린 상자 시점, q03 어렵게는 높은 색 쌓기 시점과 수 높이표를 사용한다. q04는 안쪽 구멍만 사용하고 교차 수로 난도를 분리한다. q05는 높이표·벽·관찰 방향과 벽 유무별로 겹치지 않는 숨은 수 구간을 검사한다.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-20",
+      "pointers": [
+        {
+          "source_id": "hf-visibility-decisions",
+          "role": "decision",
+          "locator": "시험 구성과 문제은행; q02 상자 채우기; q03 흑백 교차 쌓기나무; q04 구멍 뚫기; q05 보이지 않는 쌓기나무",
+          "note": "2026-08-20 검수 결정과 코드·테스트 위치"
+        }
+      ]
+    },
+    {
       "id": "geometry.design.levels-1-to-5",
       "title": "쌓기나무 레벨 구조(1~5) 설계 근거",
       "aliases": [
@@ -4006,6 +4051,31 @@
           "role": "decision",
           "locator": "Codex skill: gfield-single-answer-visibility",
           "note": "사용자 결정: 유형별 문제 생성·검수 시 답이 여러 개 나오거나 보이지 않는 부분이 애매한 문제를 방지하는 GFIELD 전용 스킬로 저장"
+        }
+      ]
+    },
+    {
+      "id": "hf.q06-q09-single-answer",
+      "title": "Hyper Focus q06~q09 단일정답 생성 규칙",
+      "aliases": [
+        "q06 q07 q08 q09 유사문제 생성기"
+      ],
+      "tags": [
+        "hyper-focus",
+        "q06-q09",
+        "single-answer",
+        "geometry"
+      ],
+      "summary": "q06은 회전 좌표, q07은 접힌 면의 반대쌍, q08은 24개 주사위 방향, q09는 세 방향 높이맵 전수탐색으로 정답 후보 하나를 검사한다. q08은 이동·꺾임 수, q09는 바닥 칸 수로 난도 구간을 분리하고 fallback 문제를 거부한다.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-20",
+      "pointers": [
+        {
+          "source_id": "hf-q06-q09-generator-audit",
+          "role": "audit",
+          "locator": "q06~q09 각 유형 및 검증 위치",
+          "note": "2026-08-20 원본 교차검증과 생성기 전수검사 결정"
         }
       ]
     },

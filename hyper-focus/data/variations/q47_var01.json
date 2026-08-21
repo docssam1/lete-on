@@ -3,7 +3,11 @@
   "baseQuestionId": "q47",
   "variationId": "q47_var01",
   "subType": "reverse_table",
-  "status": "draft",
+  "status": "verified",
+  "presentation": {
+    "mode": "text-only",
+    "answerUnit": "명"
+  },
   "source": {
     "problemImage": ""
   },

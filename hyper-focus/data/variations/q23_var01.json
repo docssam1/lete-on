@@ -3,7 +3,12 @@
   "baseQuestionId": "q23",
   "variationId": "q23_var01",
   "subType": "operator_insert_or_blank",
-  "status": "draft",
+  "status": "rejected",
+  "rejection": {
+    "reason": "canonical_type_drift",
+    "decisionDate": "2026-08-20",
+    "action": "exclude_from_all_question_banks"
+  },
   "source": { "problemImage": "./assets/problems/q23_var01.png" },
   "contentBinding": { "canonicalSource": "./canonical/q23.json", "hfDataTypeId": 23 },
   "machineReadable": { "payloadType": "operator_insert_or_blank", "expressionSlots": ["+", "*"], "targetValue": 14, "expectedAnswer": ["+", "*"] },
