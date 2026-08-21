@@ -187,6 +187,41 @@
       title: "막대를 이어 만들 수 있는 길이", module: "HFQ20", generate: "generateQ20", validate: "validateQ20",
       renderProblem: "renderQ20Problem", deriveAnswer: "deriveQ20Answer", enumerateAnswers: "enumerateQ20AnswerCandidates", renderAnswer: "renderQ20Answer",
       prompt: (p) => `${p.numbers.join("cm, ")}cm 막대를 각각 한 번까지 골라 이어 만들 수 있는 서로 다른 길이는 모두 몇 가지입니까? 같은 길이는 한 번만 셉니다.`
+    },
+    21: {
+      title: "자리 조건으로 수 찾기", module: "HFQ21", generate: "generateQ21", validate: "validateQ21",
+      renderProblem: "renderQ21Problem", deriveAnswer: "deriveQ21Answer", enumerateAnswers: "enumerateQ21AnswerCandidates", renderAnswer: "renderQ21Answer",
+      prompt: (p) => `조건을 모두 만족하는 ${p.digitCount}자리 수를 구하세요.`
+    },
+    22: {
+      title: "숫자 두 개를 바꾸어 식 고치기", module: "HFQ22", generate: "generateQ22", validate: "validateQ22",
+      renderProblem: "renderQ22Problem", deriveAnswer: "deriveQ22Answer", enumerateAnswers: "enumerateQ22AnswerCandidates", renderAnswer: "renderQ22Answer",
+      prompt: () => "식에 있는 숫자 두 개의 자리를 서로 바꾸어 계산이 맞게 만드세요."
+    },
+    23: {
+      title: "기호를 넣어 식 만들기", module: "HFQ23", generate: "generateQ23", validate: "validateQ23",
+      renderProblem: "renderQ23Problem", deriveAnswer: "deriveQ23Answer", enumerateAnswers: "enumerateQ23AnswerCandidates", renderAnswer: "renderQ23Answer",
+      prompt: (p) => `숫자 사이에 ${p.allowedOps.includes("-")?"+, -, 또는 아무것도":"+ 또는 아무것도"} 쓰지 않아 오른쪽 수가 되는 식은 모두 몇 가지입니까?`
+    },
+    24: {
+      title: "더하기 하나를 빼기로 바꾸기", module: "HFQ24", generate: "generateQ24", validate: "validateQ24",
+      renderProblem: "renderQ24Problem", deriveAnswer: "deriveQ24Answer", enumerateAnswers: "enumerateQ24AnswerCandidates", renderAnswer: "renderQ24Answer",
+      prompt: () => "+ 하나를 -로 바꾸어 계산이 맞게 만드세요. 바꿀 + 바로 뒤의 수를 쓰세요."
+    },
+    25: {
+      title: "두 조건에 공통인 숫자의 합", module: "HFQ25", generate: "generateQ25", validate: "validateQ25",
+      renderProblem: "renderQ25Problem", deriveAnswer: "deriveQ25Answer", enumerateAnswers: "enumerateQ25AnswerCandidates", renderAnswer: "renderQ25Answer",
+      prompt: () => "각 비교식의 □에 공통으로 들어갈 수 있는 숫자를 모두 더하세요."
+    },
+    26: {
+      title: "성냥개비를 옮겨 정사각형 만들기", module: "HFQ26", generate: "generateQ26", validate: "validateQ26",
+      renderProblem: "renderQ26Problem", deriveAnswer: "deriveQ26Answer", enumerateAnswers: "enumerateQ26AnswerCandidates", renderAnswer: "renderQ26Answer",
+      prompt: (p) => `성냥개비를 연한 점이 있는 자리 안에서 정확히 ${p.moveCount}개만 옮겨 서로 변을 나누어 쓰지 않는 같은 크기의 정사각형 3개를 만드세요. 성냥개비를 더하거나 버리거나 겹치면 안 됩니다.`
+    },
+    27: {
+      title: "벌집 수 배열에서 식 만들기", module: "HFQ27", generate: "generateQ27", validate: "validateQ27",
+      renderProblem: "renderQ27Problem", deriveAnswer: "deriveQ27Answer", enumerateAnswers: "enumerateQ27AnswerCandidates", renderAnswer: "renderQ27Answer",
+      prompt: () => "각 벌집에서 이웃한 칸을 따라 모든 숫자와 기호를 한 번씩 지나 옳은 식을 만드세요. 1번부터 차례로 식의 답을 쓰세요."
     }
   };
 
