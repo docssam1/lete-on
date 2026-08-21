@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-/** Validate and optionally upload the publisher MP3 tracks for Levels 2 and 3. */
+/** Validate and optionally upload the publisher MP3 tracks for Levels 1, 2, and 3. */
 const fs = require('fs');
 const path = require('path');
 
@@ -13,8 +13,8 @@ function parseArgs() {
     options[arg.slice(2)] = process.argv[index + 1];
     index += 1;
   }
-  if (!options['level2-dir'] || !options['level3-dir']) {
-    throw new Error('Usage: node scripts/import-bricks-250-audio.js --level2-dir DIR --level3-dir DIR [--apply]');
+  if (![1, 2, 3].some(level => options[`level${level}-dir`])) {
+    throw new Error('Usage: node scripts/import-bricks-250-audio.js [--level1-dir DIR] [--level2-dir DIR] [--level3-dir DIR] [--apply]');
   }
   return options;
 }
@@ -40,7 +40,8 @@ async function upload(filePath, storagePath) {
 async function main() {
   const options = parseArgs();
   const tasks = [];
-  for (const level of [2, 3]) {
+  for (const level of [1, 2, 3]) {
+    if (!options[`level${level}-dir`]) continue;
     const dir = path.resolve(options[`level${level}-dir`]);
     for (let unit = 1; unit <= 20; unit += 1) {
       const track = `Track${String(unit + 1).padStart(2, '0')}.mp3`;
@@ -48,7 +49,7 @@ async function main() {
       if (!fs.existsSync(filePath)) throw new Error(`Missing Level ${level} ${track}: ${filePath}`);
       const size = fs.statSync(filePath).size;
       if (size < 100000) throw new Error(`Suspiciously small Level ${level} ${track}: ${size} bytes`);
-      const lessonId = `brl${level}-${String(unit).padStart(2, '0')}`;
+      const lessonId = level === 1 ? `br${unit}` : `brl${level}-${String(unit).padStart(2, '0')}`;
       tasks.push({ filePath, storagePath: `bricks-reading-250-${level}/${lessonId}-original.mp3` });
     }
   }
