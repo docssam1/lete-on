@@ -20,6 +20,8 @@ load("hyper-focus/mock/variation-bank.js");
 
 const generatorStatus = JSON.parse(fs.readFileSync(path.join(root, "hyper-focus/qa/generator-status.json"), "utf8"));
 const readyBankTypes = generatorStatus.variationBank.viewerReadyTypes;
+assert(readyBankTypes.length === 45, "q10~q54 전체 45유형이 시험지에 연결되지 않음");
+assert(generatorStatus.variationBank.viewerUnavailableTypes.length === 0, "시험지 미연결 유형이 남아 있음");
 const computedReadyTypes = [];
 const computedRejectedIds = [];
 let computedVariationCount = 0;
@@ -337,7 +339,9 @@ variationExam.questions.forEach((question) => {
   if (question.presentationMode === "text-only") {
     assert(question.problemHtml.includes("hf-variation-text-only"), `${question.variationId}: 문장형 풀이 공간 누락`);
     assert(!question.problemHtml.includes("<img"), `${question.variationId}: 문장형 문제에 가짜 그림 포함`);
-    assert(/정답: .+(계단|명|일|개)\./.test(question.answerText), `${question.variationId}: 문장형 정답 단위 누락`);
+    const variation = globalThis.HFVariationBank.getVariation(question.variationId);
+    assert(question.answerText.startsWith("정답: ") && question.answerText.includes(". "), `${question.variationId}: 문장형 정답·풀이 구분 누락`);
+    if (variation.answerUnit) assert(question.answerText.includes(variation.answerUnit), `${question.variationId}: 문장형 정답 단위 누락`);
   } else {
     assert(question.problemHtml.includes("hf-variation-problem"), `${question.variationId}: 문제 그림 누락`);
     const match = question.problemHtml.match(/src="([^"]+)"/);

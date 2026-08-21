@@ -1,7 +1,7 @@
 (function (global) {
   "use strict";
 
-  const READY_TYPE_IDS = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 25, 27, 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 45, 46, 47, 48, 49, 50, 51, 52, 53];
+  const READY_TYPE_IDS = Array.from({ length: 45 }, (_, index) => index + 10);
   const DIFFICULTY_LABEL = { easy: "쉽게", same: "같게", hard: "어렵게" };
   const types = new Map();
   const loading = new Map();

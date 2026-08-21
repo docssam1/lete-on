@@ -587,6 +587,151 @@ for (const name of ['q40_var01','q40_var02']) {
   ok(answers.length === 1 && answers[0] === v.answerValidation.expectedAnswer, `${name}: target answer candidates are ${answers.join(',')}`);
   ok(mr.solvingModel.validSignedSumRuleCount === rules.length, `${name}: declared signed-sum rule count mismatch`);
 }
+
+function swapEquationSolutions(equation) {
+  const match = String(equation).match(/^(\d{2})-(\d{2})=(\d{2})$/);
+  if (!match) return [];
+  const digits = [...match[1], ...match[2], ...match[3]];
+  const solutions = new Set();
+  for (let first = 0; first < digits.length; first += 1) for (let second = first + 1; second < digits.length; second += 1) {
+    const candidate = digits.slice();
+    [candidate[first], candidate[second]] = [candidate[second], candidate[first]];
+    if (candidate[0] === '0' || candidate[2] === '0' || candidate[4] === '0') continue;
+    const left = Number(candidate.slice(0, 2).join(''));
+    const right = Number(candidate.slice(2, 4).join(''));
+    const result = Number(candidate.slice(4, 6).join(''));
+    if (left - right === result) solutions.add(`${left}-${String(right).padStart(2, '0')}=${String(result).padStart(2, '0')}`);
+  }
+  return [...solutions].sort();
+}
+
+for (const name of ['q22_var01','q22_var02']) {
+  const v = variations.get(name), mr = v.machineReadable, solutions = swapEquationSolutions(mr.originalEquation);
+  ok(v.subType === 'swap_digits_equation' && mr.payloadType === 'swap_digits_equation', `${name}: canonical subtype drift`);
+  ok(solutions.length === 1 && solutions[0] === v.answerValidation.expectedAnswer, `${name}: valid swapped equations are ${solutions.join(',')}`);
+  ok(mr.solvingModel.validSwapCount === solutions.length, `${name}: declared swap count mismatch`);
+}
+
+function operatorBlankSolutions(tokens, target) {
+  const slots = tokens.length - 1, solutions = [];
+  for (let mask = 0; mask < 3 ** slots; mask += 1) {
+    let code = mask, current = String(tokens[0]), sign = 1, total = 0, expression = current;
+    for (let index = 0; index < slots; index += 1) {
+      const op = ['', '+', '-'][code % 3];
+      code = Math.floor(code / 3);
+      expression += op + tokens[index + 1];
+      if (!op) current += tokens[index + 1];
+      else {
+        total += sign * Number(current);
+        sign = op === '+' ? 1 : -1;
+        current = String(tokens[index + 1]);
+      }
+    }
+    total += sign * Number(current);
+    if (total === target) solutions.push(expression);
+  }
+  return solutions.sort();
+}
+
+for (const name of ['q23_var01','q23_var02']) {
+  const v = variations.get(name), mr = v.machineReadable, solutions = operatorBlankSolutions(mr.tokens, mr.targetValue);
+  ok(v.subType === 'operator_insert_or_blank' && mr.payloadType === 'operator_insert_or_blank', `${name}: canonical subtype drift`);
+  ok(solutions.length === v.answerValidation.expectedAnswer, `${name}: expression count is ${solutions.length}`);
+  ok(same(solutions, mr.solvingModel.solutions.slice().sort()), `${name}: declared expressions mismatch`);
+}
+
+for (const name of ['q24_var01','q24_var02']) {
+  const v = variations.get(name), mr = v.machineReadable;
+  const originalTotal = mr.numbers.reduce((sum, number) => sum + number, 0);
+  const candidates = mr.numbers.filter((number) => originalTotal - 2 * number === mr.targetValue);
+  ok(v.subType === 'change_plus_to_minus' && mr.payloadType === 'change_plus_to_minus', `${name}: canonical subtype drift`);
+  ok(originalTotal === mr.originalTotal, `${name}: original sum mismatch`);
+  ok(candidates.length === 1 && candidates[0] === v.answerValidation.expectedAnswer, `${name}: sign-change candidates are ${candidates.join(',')}`);
+}
+
+function digitCardDifferences(cards) {
+  const rows = [];
+  function arrange(prefix, remaining) {
+    if (!remaining.length) {
+      const left = 10 * prefix[0] + prefix[1], right = 10 * prefix[2] + prefix[3];
+      if (left > right) rows.push({ value: left - right, equation: `${left}-${right}=${left - right}` });
+      return;
+    }
+    remaining.forEach((digit, index) => arrange([...prefix, digit], remaining.filter((_, inner) => inner !== index)));
+  }
+  arrange([], cards);
+  return rows;
+}
+
+for (const name of ['q34_var01','q34_var02']) {
+  const v = variations.get(name), mr = v.machineReadable, rows = digitCardDifferences(mr.cards);
+  const min = Math.min(...rows.map((row) => row.value)), max = Math.max(...rows.map((row) => row.value));
+  ok(v.subType === 'digit_card_subtraction' && mr.payloadType === 'digit_card_subtraction', `${name}: canonical subtype drift`);
+  ok(rows.length === mr.solvingModel.validArrangements, `${name}: positive arrangement count mismatch`);
+  ok(same({ max, min }, v.answerValidation.expectedAnswer), `${name}: min/max is ${max}/${min}`);
+  ok(rows.some((row) => row.equation === mr.solvingModel.maxEquation) && rows.some((row) => row.equation === mr.solvingModel.minEquation), `${name}: solution equations mismatch`);
+}
+
+for (const name of ['q44_var01','q44_var02']) {
+  const v = variations.get(name), mr = v.machineReadable, answers = [];
+  for (let number = 100; number <= 999; number += 1) {
+    const digits = String(number).split('').map(Number);
+    if (digits.includes(mr.mustContainDigit) && digits.reduce((sum, digit) => sum + digit, 0) === mr.digitSum && digits[0] < digits[2]) answers.push(String(number));
+  }
+  ok(v.subType === 'three_digit_conditions' && mr.payloadType === 'three_digit_conditions', `${name}: canonical subtype drift`);
+  ok(same(answers, v.answerValidation.expectedAnswer), `${name}: valid numbers are ${answers.join(',')}`);
+  ok(mr.solvingModel.validNumberCount === answers.length, `${name}: declared number count mismatch`);
+}
+
+for (const name of ['q54_var01','q54_var02']) {
+  const v = variations.get(name), mr = v.machineReadable, parity = [1, 1];
+  while (parity.length < mr.sequenceLength) parity.push((parity.at(-1) + parity.at(-2)) % 2);
+  const oddCount = parity.filter(Boolean).length;
+  ok(v.subType === 'parity_sequence' && mr.payloadType === 'parity_sequence', `${name}: canonical subtype drift`);
+  ok(oddCount === v.answerValidation.expectedAnswer, `${name}: odd count is ${oddCount}`);
+  ok(mr.solvingModel.fullPatternGroups === Math.floor(mr.sequenceLength / 3) && mr.solvingModel.remainder === mr.sequenceLength % 3, `${name}: parity grouping mismatch`);
+}
+
+function edgeKey(x1, y1, x2, y2) {
+  const first = [x1, y1], second = [x2, y2];
+  const ordered = first[0] < second[0] || (first[0] === second[0] && first[1] < second[1]) ? [first, second] : [second, first];
+  return `${ordered[0].join(',')}-${ordered[1].join(',')}`;
+}
+
+function squareEdges(x, y) {
+  return [edgeKey(x, y, x + 1, y), edgeKey(x + 1, y, x + 1, y + 1), edgeKey(x, y + 1, x + 1, y + 1), edgeKey(x, y, x, y + 1)];
+}
+
+function matchstickTargets(mr) {
+  const cells = [];
+  for (let y = 0; y < mr.grid.height; y += 1) for (let x = 0; x < mr.grid.width; x += 1) cells.push([x, y]);
+  const targets = [];
+  for (let first = 0; first < cells.length; first += 1) for (let second = first + 1; second < cells.length; second += 1) for (let third = second + 1; third < cells.length; third += 1) {
+    const squares = [cells[first], cells[second], cells[third]];
+    let sharesEdge = false;
+    for (let a = 0; a < squares.length; a += 1) for (let b = a + 1; b < squares.length; b += 1) {
+      if (Math.abs(squares[a][0] - squares[b][0]) + Math.abs(squares[a][1] - squares[b][1]) === 1) sharesEdge = true;
+    }
+    if (sharesEdge) continue;
+    const edges = new Set(squares.flatMap(([x, y]) => squareEdges(x, y)));
+    if (edges.size === 12) targets.push({ squares, edges });
+  }
+  const initial = new Set(mr.initialEdges);
+  return targets.filter((target) => [...initial].filter((edge) => !target.edges.has(edge)).length === mr.moveRule.moveCount
+    && [...target.edges].filter((edge) => !initial.has(edge)).length === mr.moveRule.moveCount);
+}
+
+for (const name of ['q26_var01','q26_var02']) {
+  const v = variations.get(name), mr = v.machineReadable, targets = matchstickTargets(mr), initial = new Set(mr.initialEdges);
+  const targetEdges = new Set(mr.solvingModel.targetSquares.flatMap(([x, y]) => squareEdges(x, y)));
+  const movedFrom = [...initial].filter((edge) => !targetEdges.has(edge)).sort();
+  const movedTo = [...targetEdges].filter((edge) => !initial.has(edge)).sort();
+  ok(v.subType === 'matchstick_move' && mr.payloadType === 'matchstick_move', `${name}: canonical subtype drift`);
+  ok(initial.size === 12 && mr.initialEdges.length === 12, `${name}: initial matchstick count mismatch`);
+  ok(targets.length === 1 && same(targets[0].squares, mr.solvingModel.targetSquares), `${name}: valid target count is ${targets.length}`);
+  ok(same(movedFrom, mr.solvingModel.movedFrom.slice().sort()) && same(movedTo, mr.solvingModel.movedTo.slice().sort()), `${name}: moved edge set mismatch`);
+  ok(mr.solvingModel.validTargetCount === targets.length, `${name}: declared target count mismatch`);
+}
 const statusLedger = readJson(path.join(root, 'hyper-focus', 'qa', 'generator-status.json'));
 const rejectedIds = [...variations.entries()].filter(([, variation]) => variation.status === 'rejected').map(([name]) => name).sort();
 ok(same(rejectedIds, statusLedger.variationBank.rejectedVariationIds.slice().sort()), 'rejected variation ledger mismatch');
@@ -784,5 +929,5 @@ console.log('PASS');
 console.log('- canonical JSON: 54');
 console.log('- variation JSON: 108');
 console.log('- var01/var02 answer collisions: 0');
-console.log('- targeted exhaustive validators: q06, q07, q12-q15, q17-q21, q25, q28-q31, q33, q35-q43, q46-q52');
+console.log('- targeted exhaustive validators: q06, q07, q12-q15, q17-q24, q25-q26, q28-q31, q33-q44, q46-q54');
 console.log(`- rejected canonical-type-drift variations: ${rejectedIds.length}`);
