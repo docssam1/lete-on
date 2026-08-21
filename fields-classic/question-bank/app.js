@@ -1,5 +1,6 @@
 import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260820d";
 import { GENERATORS } from "./generators.js?v=20260820a";
+import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -56,6 +57,29 @@ function typeSourceLabel(item) {
   return "원본 대조 유형";
 }
 
+function learningMapPreviewMarkup(item) {
+  const map = learningMapForType(item);
+  if (map.kind === "extension") {
+    return `<section class="type-learning-map extension" aria-label="사고력 확장 위치">
+      <div class="learning-map-title"><strong>${map.label}</strong><span>${map.relation}</span></div>
+      <p>${map.note}</p>
+    </section>`;
+  }
+
+  const groupRows = map.groups.map((groupItem) => `<div class="learning-map-row">
+    <span>${groupItem.nationalDomain}</span>
+    <strong>${groupItem.strand}</strong>
+    <small>${groupItem.gradeBand} · ${groupItem.standardRange}</small>
+  </div>`).join("");
+  const flow = map.groups[0].flow.map((step) => `<span>${step}</span>`).join("");
+  return `<section class="type-learning-map related" aria-label="교육과정 관련 위치">
+    <div class="learning-map-title"><strong>${map.label}</strong><span>${map.relation}</span></div>
+    <div class="learning-map-rows">${groupRows}</div>
+    <div class="learning-map-flow" aria-label="학습 흐름">${flow}</div>
+    <p>${map.note} 개인 진단 결과가 아닙니다.</p>
+  </section>`;
+}
+
 const typePreviewCache = new Map();
 let typePreviewPanel = null;
 let typePreviewAnchor = null;
@@ -108,6 +132,7 @@ function showTypePreview(anchor) {
   }
   const domain = DOMAINS.find((entry) => entry.id === item.domain);
   panel.innerHTML = `<div class="type-preview-head"><span>${domain.label} · ${item.middle}</span><strong>${item.label}</strong></div>
+    ${learningMapPreviewMarkup(item)}
     <p>${problem.prompt.replaceAll("\n", "<br>")}</p>
     ${problem.image ? `<img src="${problem.image}" alt="${item.label} 예시 그림" />` : visualMarkup(problem.visual)}`;
   panel.hidden = false;
@@ -270,7 +295,7 @@ function renderTypeTree() {
     ${middles.map(({ middle, types }) => `<details class="middle-group" open><summary><strong>${middle}</strong></summary><div class="type-leaves">
       ${types.map((item) => `<label class="type-leaf ${isSelectableType(item) ? "" : "not-ready"}"${isSelectableType(item) ? ` data-preview-type="${item.id}"` : ""}>
         <input type="checkbox" data-type-id="${item.id}" ${state.selected.type.has(item.id) ? "checked" : ""} ${isSelectableType(item) ? "" : "disabled"} />
-        <span><strong>${item.label}</strong><span>${typeSourceLabel(item)}</span></span>
+        <span><strong>${item.label}</strong><span>${typeSourceLabel(item)}</span><small class="learning-map-inline ${learningMapForType(item).kind}">${learningMapInlineLabel(item)}</small></span>
         <em class="type-status ${isSelectableType(item) ? "" : "fixed"}">${isSelectableType(item) ? typeStatus(item) : "원본 대조 중"}</em>
       </label>`).join("")}
     </div></details>`).join("")}
