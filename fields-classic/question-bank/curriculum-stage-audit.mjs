@@ -1,4 +1,4 @@
-import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js";
+import { CURRICULUM, TEXTBOOK_STAGES, TYPES, textbookGuideForType, typeById } from "./source-data.js";
 
 const expectedStageSections = Object.freeze({
   concept: "activity",
@@ -17,14 +17,20 @@ const assert = (condition, message) => {
 const twoDigits = (value) => String(value).padStart(2, "0");
 
 assert(CURRICULUM.length === 10, `expected 10 books, got ${CURRICULUM.length}`);
+assert(new Set(TYPES.map((type) => type.id)).size === TYPES.length, "global type id duplicated");
 assert(TEXTBOOK_STAGES.map((stage) => stage.id).join(",") === "concept,type,practice,advanced", "stage order changed");
 assert(TEXTBOOK_STAGES.map((stage) => stage.difficulty).join(",") === "1,1,2,3", "stage difficulty mapping changed");
 
 const sourceKeys = new Set();
+const detailedSourceKeys = new Set();
+const detailedSourceKeysByBook = new Map();
 const curriculumTypeIds = new Set();
 let unitCount = 0;
 let rangeCount = 0;
 let sourceQuestionCount = 0;
+let detailedTypeCount = 0;
+let detailedReferenceCount = 0;
+let detailedQuestionCount = 0;
 
 for (const [bookIndex, book] of CURRICULUM.entries()) {
   assert(book.id === `book-${twoDigits(bookIndex + 1)}`, `${book.label}: unstable book id`);
@@ -40,6 +46,39 @@ for (const [bookIndex, book] of CURRICULUM.entries()) {
     for (const typeId of unit.typeIds) {
       curriculumTypeIds.add(typeId);
       assert(typeById(typeId), `${book.label} ${unit.label}: unknown type ${typeId}`);
+    }
+
+    if (unit.typeStudyRefs) {
+      const detailedTypeIds = Object.keys(unit.typeStudyRefs).sort();
+      assert(detailedTypeIds.join(",") === [...unit.typeIds].sort().join(","), `${book.label} ${unit.label}: detailed type set mismatch`);
+      detailedTypeCount += detailedTypeIds.length;
+      for (const typeId of detailedTypeIds) {
+        const byStage = unit.typeStudyRefs[typeId];
+        assert(Object.keys(byStage).sort().join(",") === Object.keys(expectedStageSections).sort().join(","), `${book.label} ${unit.label} ${typeId}: detailed stage set mismatch`);
+        for (const stage of TEXTBOOK_STAGES) {
+          const references = byStage[stage.id];
+          assert(Array.isArray(references), `${book.label} ${unit.label} ${typeId} ${stage.label}: detailed references missing`);
+          for (const reference of references) {
+            detailedReferenceCount += 1;
+            assert(reference.section === expectedStageSections[stage.id], `${book.label} ${unit.label} ${typeId} ${stage.label}: detailed section mismatch`);
+            assert(Number.isInteger(reference.group) && reference.group >= 1, `${book.label} ${unit.label} ${typeId} ${stage.label}: invalid detailed group`);
+            assert(Array.isArray(reference.numbers) && reference.numbers.length > 0, `${book.label} ${unit.label} ${typeId} ${stage.label}: problem numbers missing`);
+            assert(new Set(reference.numbers).size === reference.numbers.length, `${book.label} ${unit.label} ${typeId} ${stage.label}: duplicate problem number`);
+            assert(reference.numbers.every((number, index) => Number.isInteger(number) && number >= 1 && (index === 0 || number > reference.numbers[index - 1])), `${book.label} ${unit.label} ${typeId} ${stage.label}: problem numbers must be ascending positive integers`);
+            const parentRange = unit.studyRefs[stage.id].find((range) => range.section === reference.section && range.group === reference.group);
+            assert(parentRange, `${book.label} ${unit.label} ${typeId} ${stage.label}: parent range missing`);
+            for (const question of reference.numbers) {
+              assert(question >= parentRange.from && question <= parentRange.to, `${book.label} ${unit.label} ${typeId} ${stage.label}: q${question} outside parent range`);
+              const key = `${book.id}/unit-${twoDigits(unitIndex + 1)}/${reference.section}-${twoDigits(reference.group)}/q-${twoDigits(question)}`;
+              assert(!detailedSourceKeys.has(key), `source problem assigned to multiple detailed types: ${key}`);
+              detailedSourceKeys.add(key);
+              if (!detailedSourceKeysByBook.has(book.id)) detailedSourceKeysByBook.set(book.id, new Set());
+              detailedSourceKeysByBook.get(book.id).add(key);
+              detailedQuestionCount += 1;
+            }
+          }
+        }
+      }
     }
 
     for (const stage of TEXTBOOK_STAGES) {
@@ -67,9 +106,19 @@ assert(unitCount === 40, `expected 40 units, got ${unitCount}`);
 assert(rangeCount === 244, `expected 244 ranges, got ${rangeCount}`);
 assert(sourceQuestionCount === 1618, `expected 1618 source questions, got ${sourceQuestionCount}`);
 assert(sourceKeys.size === sourceQuestionCount, "source question keys are not unique");
-assert(curriculumTypeIds.size === 96, `expected 96 curriculum types, got ${curriculumTypeIds.size}`);
+assert(curriculumTypeIds.size === 149, `expected 149 curriculum types, got ${curriculumTypeIds.size}`);
+assert(detailedTypeCount === 106, `expected 106 detailed types, got ${detailedTypeCount}`);
+assert(detailedQuestionCount === 463, `expected 463 detailed source questions, got ${detailedQuestionCount}`);
+const fullyDetailedBooks = CURRICULUM.filter((book) => book.units.every((unit) => unit.typeStudyRefs));
+assert(fullyDetailedBooks.map((book) => book.id).join(",") === "book-01,book-02,book-03", "fully detailed book set changed");
+for (const book of fullyDetailedBooks) {
+  const source = [...sourceKeys].filter((key) => key.startsWith(`${book.id}/`));
+  const detailed = detailedSourceKeysByBook.get(book.id) || new Set();
+  assert(source.length === detailed.size, `${book.label} detailed coverage mismatch ${detailed.size}/${source.length}`);
+  for (const key of source) assert(detailed.has(key), `${book.label} source problem not classified: ${key}`);
+}
 for (const typeId of curriculumTypeIds) {
   assert(textbookGuideForType(typeId) !== fallbackGuide, `explicit concept guide missing for ${typeId}`);
 }
 
-console.log(`CURRICULUM_STAGE_AUDIT_OK books=${CURRICULUM.length} units=${unitCount} stages=${TEXTBOOK_STAGES.length} ranges=${rangeCount} sourceQuestions=${sourceQuestionCount} types=${curriculumTypeIds.size}`);
+console.log(`CURRICULUM_STAGE_AUDIT_OK books=${CURRICULUM.length} units=${unitCount} stages=${TEXTBOOK_STAGES.length} ranges=${rangeCount} sourceQuestions=${sourceQuestionCount} types=${curriculumTypeIds.size} detailedTypes=${detailedTypeCount} detailedRefs=${detailedReferenceCount} detailedQuestions=${detailedQuestionCount}`);

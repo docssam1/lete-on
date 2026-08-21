@@ -1,0 +1,124 @@
+// 더클래식 1과정 1권 전용 시각 자료. 화면과 인쇄에서 같은 구조를 사용한다.
+
+const esc = (value) => String(value).replace(/[&<>"']/g, (character) => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+}[character]));
+
+function patternGrid(cells, size, label = "") {
+  const selected = new Set(cells.map(([row, column]) => `${row}:${column}`));
+  const squares = Array.from({ length: size * size }, (_, index) => {
+    const row = Math.floor(index / size);
+    const column = index % size;
+    const marked = selected.has(`${row}:${column}`);
+    return `<i class="${marked ? "filled" : ""}"></i>`;
+  }).join("");
+  return `<div class="b1-pattern"><div class="b1-cell-grid" style="--size:${size}">${squares}</div>${label ? `<b>${esc(label)}</b>` : ""}</div>`;
+}
+
+function shapeTransformMarkup(visual) {
+  const operationLabels = {
+    "mirror-left-right": "좌우 뒤집기", "mirror-top-bottom": "위아래 뒤집기",
+    "rotate-left": "왼쪽 1/4바퀴", "rotate-right": "오른쪽 1/4바퀴", "rotate-half": "반 바퀴"
+  };
+  const options = visual.options.map((option) => patternGrid(option.cells, visual.size, `${option.option}번`)).join("");
+  return `<div class="b1-transform"><div class="b1-transform-source">${patternGrid(visual.source, visual.size, "처음 모양")}<span>→</span><strong>${visual.operations.map((operation) => operationLabels[operation]).join(" → ")}</strong></div><div class="b1-option-row">${options}</div></div>`;
+}
+
+function partitionChoiceMarkup(visual) {
+  const options = visual.options.map((option) => {
+    const cells = option.labels.map((label, index) => `<i class="piece-${label.toLowerCase()}">${visual.symbols ? `<b>${esc(visual.symbols[index])}</b>` : ""}</i>`).join("");
+    return `<div class="b1-partition-option"><div class="b1-partition-grid" style="--rows:${visual.rows};--columns:${visual.columns}">${cells}</div><strong>${option.option}번</strong></div>`;
+  }).join("");
+  return `<div class="b1-partition-options">${options}</div>`;
+}
+
+const SEGMENT_PATHS = Object.freeze({
+  a: "M12 5H38L33 10H17Z", b: "M40 7V35L35 30V12Z", c: "M40 39V67L35 62V44Z",
+  d: "M12 69H38L33 64H17Z", e: "M5 39V67L10 62V44Z", f: "M5 7V35L10 30V12Z", g: "M12 37H38L33 32H17Z"
+});
+const DIGIT_SEGMENTS = Object.freeze({ 0:"abcdef",1:"bc",2:"abdeg",3:"abcdg",4:"bcfg",5:"acdfg",6:"acdefg",7:"abc",8:"abcdefg",9:"abcdfg" });
+
+function digitalDigit(value) {
+  const segments = DIGIT_SEGMENTS[value] || "";
+  return `<svg class="b1-digit" viewBox="0 0 45 74" role="img" aria-label="디지털 숫자 ${value}">${Object.entries(SEGMENT_PATHS).map(([name, path]) => `<path class="${segments.includes(name) ? "on" : ""}" d="${path}"/>`).join("")}</svg>`;
+}
+
+const operationShort = (operation) => ({
+  "mirror-left-right": "좌우 뒤집기", "mirror-top-bottom": "위아래 뒤집기", "rotate-half": "반 바퀴"
+}[operation] || operation);
+
+function digitalTransformMarkup(visual) {
+  const options = visual.options.map((option) => `<span><b>${option.option}</b>${option.value}</span>`).join("");
+  return `<div class="b1-digital-transform"><div>${visual.digits.map(digitalDigit).join("")}<i>→</i><strong>${operationShort(visual.operation)}</strong></div><div class="b1-number-options">${options}</div></div>`;
+}
+
+function digitalBoardMarkup(visual) {
+  return `<div class="b1-digital-board">${visual.rows.map((row) => `<div>${digitalDigit(row.digit)}<span>→</span><strong>${operationShort(row.operation)}</strong><em>?</em></div>`).join("")}<b>나온 숫자의 합 = ?</b></div>`;
+}
+
+function digitalAdditionMarkup(visual) {
+  return `<div class="b1-digital-addition">${visual.rows.map((row) => `<div><span>${row.source.map(digitalDigit).join("")}</span><i>→</i><strong>${operationShort(row.operation)}</strong></div>`).join("")}<b>움직인 뒤의 두 수를 더하세요.</b></div>`;
+}
+
+const circlePoints = (count, cx, cy, radius) => Array.from({ length: count }, (_, index) => {
+  const angle = -Math.PI / 2 + index * Math.PI * 2 / count;
+  return [cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius];
+});
+
+function circleMagicMarkup(visual) {
+  const points = circlePoints(6, 160, 125, 92);
+  const lines = [[0,3],[1,4],[2,5]].map(([a,b]) => `<line x1="${points[a][0]}" y1="${points[a][1]}" x2="${points[b][0]}" y2="${points[b][1]}"/>`).join("");
+  const nodes = points.map(([x,y], index) => `<circle cx="${x}" cy="${y}" r="20"/><text x="${x}" y="${y+1}">${visual.shown[index] == null ? "㉠" : visual.shown[index]}</text>`).join("");
+  return `<svg class="b1-svg b1-circle-magic" viewBox="0 0 320 255" role="img" aria-label="가운데를 지나는 세 줄의 합이 같은 원 그림">${lines}${nodes}<circle class="center" cx="160" cy="125" r="22"/><text x="160" y="126">${visual.center}</text><text class="sum" x="160" y="247">한 줄의 합 ${visual.lineSum}</text></svg>`;
+}
+
+function crossMagicMarkup(visual) {
+  const [top,bottom,left,right] = visual.shown;
+  const cell = (value, className) => `<span class="${className}">${value == null ? "㉠" : value}</span>`;
+  return `<div class="b1-cross-magic">${cell(top,"top")}${cell(left,"left")}${cell(visual.center,"center")}${cell(right,"right")}${cell(bottom,"bottom")}<strong>한 줄의 합 ${visual.lineSum}</strong></div>`;
+}
+
+function sumGridMarkup(visual) {
+  const cells = visual.shown.map((value) => `<span class="${value == null ? "blank" : ""}">${value == null ? "" : value}</span>`).join("");
+  const rows = visual.rowSums.map((sum) => `<b>${sum}</b>`).join("");
+  const columns = visual.columnSums.map((sum) => `<b>${sum}</b>`).join("");
+  const cards = visual.cards?.length ? `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>` : "";
+  return `${cards}<div class="b1-sum-grid-wrap" style="--columns:${visual.columns};--rows:${visual.rows}"><div class="b1-sum-grid">${cells}</div><div class="b1-row-sums">${rows}</div><div class="b1-column-sums">${columns}</div><em>합</em></div>`;
+}
+
+function ringLinesMarkup(visual) {
+  const points = circlePoints(8, 160, 125, 94);
+  const lines = [[0,4],[1,5],[2,6],[3,7]].map(([a,b]) => `<line x1="${points[a][0]}" y1="${points[a][1]}" x2="${points[b][0]}" y2="${points[b][1]}"/>`).join("");
+  const nodes = points.map(([x,y], index) => `<circle cx="${x}" cy="${y}" r="19"/><text x="${x}" y="${y+1}">${visual.shown[index] == null ? "㉠" : visual.shown[index]}</text>`).join("");
+  return `<svg class="b1-svg b1-ring-lines" viewBox="0 0 320 255" role="img" aria-label="마주 보는 수의 합이 같은 원">${lines}<circle cx="160" cy="125" r="94"/>${nodes}<text class="sum" x="160" y="247">두 수의 합 ${visual.lineSum}</text></svg>`;
+}
+
+function conditionCardMarkup(visual) {
+  return `<div class="b1-condition-card"><strong>${esc(visual.title)}</strong><ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol></div>`;
+}
+
+function numberSequenceMarkup(visual) {
+  return `<div class="b1-number-sequence">${visual.shown.map((value, index) => `<span class="${value == null ? "blank" : ""}">${value == null ? "" : value}</span>${index < visual.shown.length - 1 ? "<i>→</i>" : ""}`).join("")}</div>`;
+}
+
+function logicCluesMarkup(visual) {
+  const header = visual.items.length ? `<div class="b1-logic-tags">${visual.names.map((name) => `<span>${esc(name)}</span>`).join("")}${visual.items.map((item) => `<i>${esc(item)}</i>`).join("")}</div>` : "";
+  return `<div class="b1-logic-clues">${header}<ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol><strong>${esc(visual.question)}</strong></div>`;
+}
+
+export function book01Markup(visual) {
+  if (!visual || visual.kind !== "book1") return "";
+  if (visual.subtype === "shape-transform") return shapeTransformMarkup(visual);
+  if (visual.subtype === "partition-choice") return partitionChoiceMarkup(visual);
+  if (visual.subtype === "digital-transform") return digitalTransformMarkup(visual);
+  if (visual.subtype === "digital-board") return digitalBoardMarkup(visual);
+  if (visual.subtype === "digital-addition") return digitalAdditionMarkup(visual);
+  if (visual.subtype === "circle-magic") return circleMagicMarkup(visual);
+  if (visual.subtype === "cross-magic") return crossMagicMarkup(visual);
+  if (visual.subtype === "sum-grid") return sumGridMarkup(visual);
+  if (visual.subtype === "ring-lines") return ringLinesMarkup(visual);
+  if (visual.subtype === "condition-card") return conditionCardMarkup(visual);
+  if (visual.subtype === "number-sequence") return numberSequenceMarkup(visual);
+  if (visual.subtype === "logic-clues") return logicCluesMarkup(visual);
+  return "";
+}

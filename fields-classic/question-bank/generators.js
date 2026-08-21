@@ -1,4 +1,6 @@
 import { G1_GENERATORS } from "./g1-generators.js?v=20260816a";
+import { BOOK01_GENERATORS } from "./book01-generators.js?v=20260822d";
+import { BOOK03_GENERATORS } from "./book03-generators.js?v=20260822d";
 
 const COLORS = ["흰색", "검은색"];
 const SHAPES = ["동그라미", "세모", "네모"];
@@ -5003,7 +5005,9 @@ function triangleMaxEdgeSum({ difficulty = 2 }) {
   const best = valid.filter((v) => v.sum === target);
   // 회전·뒤집기(6가지)를 빼면 배치가 하나여야 답이 정해진다.
   if (best.length !== 6) return null;
-  const answer = best[0].perm;
+  // 회전·뒤집기 여섯 배치가 모두 같은 원리의 정답이다. 첫 배열만 고정하면
+  // 같은 난이도에서 그림이 늘 같아지므로 그 여섯 배치 중 하나를 고른다.
+  const answer = sample(best).perm;
   // 되짚어 확인: 공식과 전수 결과가 같은지
   const vertexSum = answer[0] + answer[1] + answer[2];
   if ((total + vertexSum) / 3 !== target) return null;
@@ -5222,6 +5226,8 @@ function cubeHiddenCountWalled({ difficulty = 2 }) {
 
 
 export const GENERATORS = {
+  ...BOOK01_GENERATORS,
+  ...BOOK03_GENERATORS,
   equalPartitionTwo,
   equalPartitionThree,
   equalPartitionFour,

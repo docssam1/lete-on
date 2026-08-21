@@ -1,6 +1,8 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822a";
-import { GENERATORS } from "./generators.js?v=20260821b";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822d";
+import { GENERATORS } from "./generators.js?v=20260822d";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
+import { book01Markup } from "./book01-renderers.js?v=20260822d";
+import { book03Markup } from "./book03-renderers.js?v=20260822d";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -272,14 +274,34 @@ function hasBookSource(item, book) {
   return Boolean(item?.textbookSource?.includes(`1과정 ${book.label}`));
 }
 
-function isSelectableCurriculumType(item, book) {
-  return isReady(item) && hasBookSource(item, book);
+function typeStageReferences(unit, typeId, stageId) {
+  if (unit?.typeStudyRefs?.[typeId]) return unit.typeStudyRefs[typeId][stageId] || [];
+  return unit?.studyRefs?.[stageId] || [];
+}
+
+function isSelectableCurriculumType(item, book, unit = null, stageId = activeTextbookStage().id) {
+  const hasStageSource = !unit?.typeStudyRefs || typeStageReferences(unit, item?.id, stageId).length > 0;
+  return isReady(item) && hasBookSource(item, book) && hasStageSource;
 }
 
 function studyReferenceLabel(references = []) {
   const twoDigits = (value) => String(value).padStart(2, "0");
+  const compactNumbers = (numbers) => {
+    const values = [...new Set(numbers)].sort((a, b) => a - b);
+    const groups = [];
+    for (const value of values) {
+      const last = groups.at(-1);
+      if (last && value === last.at(-1) + 1) last.push(value);
+      else groups.push([value]);
+    }
+    return groups.map((group) => group.length === 1
+      ? twoDigits(group[0])
+      : `${twoDigits(group[0])}~${twoDigits(group.at(-1))}`).join(", ");
+  };
   return references.map((reference) => {
-    const range = `${twoDigits(reference.from)}~${twoDigits(reference.to)}`;
+    const range = reference.numbers
+      ? compactNumbers(reference.numbers)
+      : `${twoDigits(reference.from)}~${twoDigits(reference.to)}`;
     if (reference.section === "activity") return `활동 ${twoDigits(reference.group)} 본문 ${range}`;
     if (reference.section === "check") return `활동 ${twoDigits(reference.group)} 확인 ${range}`;
     if (reference.section === "practice") return `더클 연습 ${range}`;
@@ -294,15 +316,21 @@ function renderCurriculum() {
       const types = unit.typeIds.map((id) => typeById(id)).filter(Boolean);
       const typeRows = types.map((item) => {
         const key = curriculumKey(book.id, unitIndex, item.id);
-        const ready = isSelectableCurriculumType(item, book);
+        const stage = activeTextbookStage();
+        const typeReferences = typeStageReferences(unit, item.id, stage.id);
+        const ready = isSelectableCurriculumType(item, book, unit, stage.id);
         const sourceChecked = hasBookSource(item, book);
+        const sourceNumbers = studyReferenceLabel(typeReferences);
+        const sourceState = sourceNumbers
+          ? `${stage.label} 원본 ${sourceNumbers}`
+          : `${stage.label} 단계 원본 문항 없음`;
         return `<label class="type-leaf curriculum-type ${ready ? "" : "not-ready"}"${ready ? ` data-preview-type="${item.id}"` : ""}>
           <input type="checkbox" data-curriculum-key="${key}" ${state.selected.curriculum.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
-          <span><strong>${item.label}</strong><span>${item.middle} · ${sourceChecked ? "교재 원본 대조 완료 · 위 단계별 문제번호 기준" : "교재 원본 문항 대조 전"}</span></span>
-          <em class="type-status ${ready ? "" : "fixed"}">${ready ? typeStatus(item) : sourceChecked ? "원본 대조 완료 · 생성기 검증 대기" : "원본 대조 대기"}</em>
+          <span><strong>${item.label}</strong><span>${item.middle} · ${sourceChecked ? sourceState : "교재 원본 문항 대조 전"}</span></span>
+          <em class="type-status ${ready ? "" : "fixed"}">${ready ? typeStatus(item) : sourceChecked && !sourceNumbers ? "이 단계에는 없음" : sourceChecked ? "생성기 검증 대기" : "원본 대조 대기"}</em>
         </label>`;
       }).join("");
-      const readyCount = types.filter((item) => isSelectableCurriculumType(item, book)).length;
+      const readyCount = types.filter((item) => isSelectableCurriculumType(item, book, unit)).length;
       const stageMap = unit.studyRefs ? `<div class="curriculum-stage-map" aria-label="${book.label} ${unit.label} 교재 단계별 문항 번호">
         ${TEXTBOOK_STAGES.map((stage) => `<div class="${stage.id}"><strong>${stage.label}</strong><span>${studyReferenceLabel(unit.studyRefs[stage.id])}</span></div>`).join("")}
       </div>` : "";
@@ -369,9 +397,9 @@ function selectedReferences() {
       const [bookId, indexText, typeId] = key.split(":");
       const book = CURRICULUM.find((item) => item.id === bookId);
       const unit = book?.units[Number(indexText)];
-      if (book && unit?.typeIds.includes(typeId) && isSelectableCurriculumType(typeById(typeId), book)) {
+      if (book && unit?.typeIds.includes(typeId) && isSelectableCurriculumType(typeById(typeId), book, unit)) {
         const stage = activeTextbookStage();
-        const sourceNumbers = studyReferenceLabel(unit.studyRefs?.[stage.id]);
+        const sourceNumbers = studyReferenceLabel(typeStageReferences(unit, typeId, stage.id));
         result.push({ typeId, reference: `${book.label} ${unit.label} · ${stage.label}(${sourceNumbers}) · ${typeById(typeId)?.label || "세부 유형"}` });
       }
     }
@@ -2311,6 +2339,8 @@ function numberSequencesMarkup(visual) {
 
 function visualMarkup(visual) {
   if (!visual) return "";
+  if (visual.kind === "book1") return `<div class="visual book01-visual">${book01Markup(visual)}</div>`;
+  if (visual.kind === "book3") return `<div class="visual book03-visual">${book03Markup(visual)}</div>`;
   if (visual.kind.startsWith("g1-")) return `<div class="visual g1-source-visual">${g1SourceMarkup(visual)}</div>`;
   if (visual.kind === "hidden-card-conditions") return `<div class="visual hidden-card-visual">${hiddenCardConditionsMarkup(visual)}</div>`;
   if (visual.kind === "shape-matrix-rule") return `<div class="visual shape-matrix-visual">${shapeMatrixRuleMarkup(visual)}</div>`;
@@ -2504,7 +2534,17 @@ function initControls() {
   $("curriculumStageChoices").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.curriculumStage = button.dataset.stage;
     $("curriculumStageChoices").querySelectorAll("button").forEach((item) => item.classList.toggle("active", item === button));
+    for (const key of [...state.selected.curriculum]) {
+      const [bookId, indexText, typeId] = key.split(":");
+      const book = CURRICULUM.find((item) => item.id === bookId);
+      const unit = book?.units[Number(indexText)];
+      if (!book || !unit || !isSelectableCurriculumType(typeById(typeId), book, unit, state.curriculumStage)) {
+        state.selected.curriculum.delete(key);
+      }
+    }
     typePreviewCache.clear();
+    renderCurriculum();
+    updateSummary();
   }));
   $("orderChoices").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.order = button.dataset.order;
