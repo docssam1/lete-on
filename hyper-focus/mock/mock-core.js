@@ -257,6 +257,36 @@
       title: "숫자 카드 두 자리 수 뺄셈", module: "HFQ34", generate: "generateQ34", validate: "validateQ34",
       renderProblem: "renderQ34Problem", deriveAnswer: "deriveQ34Answer", enumerateAnswers: "enumerateQ34AnswerCandidates", renderAnswer: "renderQ34Answer",
       prompt: (p) => `숫자 카드 ${p.cards.join(", ")}를 한 번씩만 사용하여 두 자리 수끼리의 뺄셈을 만드세요. 계산 결과의 최댓값과 최솟값을 각각 구하세요.`
+    },
+    35: {
+      title: "조건을 보고 달리기 순서 찾기", module: "HFQ35", generate: "generateQ35", validate: "validateQ35",
+      renderProblem: "renderQ35Problem", deriveAnswer: "deriveQ35Answer", enumerateAnswers: "enumerateQ35AnswerCandidates", renderAnswer: "renderQ35Answer",
+      prompt: (p) => `달리기에 참여한 사람은 ${p.participants.join(", ")}입니다. 조건을 보고 ${p.queryRank}등으로 달리는 사람의 이름을 쓰세요.`
+    },
+    36: {
+      title: "줄서기 전체 인원의 최솟값과 최댓값", module: "HFQ36", generate: "generateQ36", validate: "validateQ36",
+      renderProblem: "renderQ36Problem", deriveAnswer: "deriveQ36Answer", enumerateAnswers: "enumerateQ36AnswerCandidates", renderAnswer: "renderQ36Answer",
+      prompt: (p) => `지민이는 앞에서 ${p.frontRank}번째, 지수는 뒤에서 ${p.backRank}번째이고 두 사람 사이에는 ${p.peopleBetween}명이 있습니다. 줄에 선 전체 사람 수의 최솟값과 최댓값을 구하세요.`
+    },
+    37: {
+      title: "원탁의 왼쪽 자리 찾기", module: "HFQ37", generate: "generateQ37", validate: "validateQ37",
+      renderProblem: "renderQ37Problem", deriveAnswer: "deriveQ37Answer", enumerateAnswers: "enumerateQ37AnswerCandidates", renderAnswer: "renderQ37Answer",
+      prompt: (p) => `${p.participants.join(", ")}가 모두 원탁 가운데를 보고 앉아 있습니다. 그림의 화살표가 각 사람의 왼쪽 방향일 때 조건에 맞게 빈자리를 채우세요.`
+    },
+    38: {
+      title: "원형 배열에서 마주 보는 순서", module: "HFQ38", generate: "generateQ38", validate: "validateQ38",
+      renderProblem: "renderQ38Problem", deriveAnswer: "deriveQ38Answer", enumerateAnswers: "enumerateQ38AnswerCandidates", renderAnswer: "renderQ38Answer",
+      prompt: (p) => `지연이와 친구 ${p.participantCount-1}명이 같은 간격으로 둥글게 앉아 모두 가운데를 봅니다. 지연이의 오른쪽 ${p.rightOffset}번째 사람과 마주 보는 사람은 지연이의 왼쪽 몇 번째입니까?`
+    },
+    39: {
+      title: "논리표로 두 가지 짝 찾기", module: "HFQ39", generate: "generateQ39", validate: "validateQ39",
+      renderProblem: "renderQ39Problem", deriveAnswer: "deriveQ39Answer", enumerateAnswers: "enumerateQ39AnswerCandidates", renderAnswer: "renderQ39Answer",
+      prompt: (p) => `${p.entities.join(", ")}는 ${p.categories.join(", ")} 중 두 가지씩 골랐습니다. 표와 각 열의 사람 수를 보고 ${p.queryEntity}가 고른 두 가지를 쓰세요.`
+    },
+    40: {
+      title: "도형 안 숫자의 공통 규칙", module: "HFQ40", generate: "generateQ40", validate: "validateQ40",
+      renderProblem: "renderQ40Problem", deriveAnswer: "deriveQ40Answer", enumerateAnswers: "enumerateQ40AnswerCandidates", renderAnswer: "renderQ40Answer",
+      prompt: () => "세 바깥 수와 가운데 수 사이에 공통으로 쓰인 규칙을 찾아 ?에 알맞은 수를 쓰세요."
     }
   };
 

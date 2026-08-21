@@ -9,9 +9,9 @@
     "officialExamRequiresSeparateApprovedBlueprint": true
   },
   "dynamicGenerators": {
-    "status": "verified-q01-q09-frozen-q10-q34-expanded",
-    "typeIds": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
-    "questionTypeCount": 34,
+    "status": "verified-q01-q09-frozen-q10-q40-expanded",
+    "typeIds": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40],
+    "questionTypeCount": 40,
     "changeRule": "회귀 검증 실패 또는 사용자 변경 지시가 있을 때만 수정"
   },
   "variationBank": {

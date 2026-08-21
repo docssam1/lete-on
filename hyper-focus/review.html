@@ -90,6 +90,7 @@ button.gold{background:var(--gold);color:#1c1c1c;border-color:var(--gold);font-w
 <script src="./generator/spatial.js"></script>
 <script src="./generator/reasoning.js"></script>
 <script src="./generator/advanced.js"></script>
+<script src="./generator/logic.js"></script>
 <script>
 var TYPES = {
   1:{name:'01 · 앞과 뒤에서 본 쌓기나무 개수', mod:'HFQ01', g:'generateQ01', p:'renderQ01Problem', a:'renderQ01Answer', v:'validateQ01',
@@ -139,7 +140,13 @@ var TYPES = {
   31:{name:'31 · 문자값 식',mod:'HFQ31',g:'generateQ31',p:'renderQ31Problem',a:'renderQ31Answer',v:'validateQ31',prompt:function(){return '서로 다른 문자값을 모두 구하세요.';}},
   32:{name:'32 · 디지털 거울 식',mod:'HFQ32',g:'generateQ32',p:'renderQ32Problem',a:'renderQ32Answer',v:'validateQ32',prompt:function(){return '거울에 비친 식을 원래 방향으로 읽고 두 빈칸의 합을 구하세요.';}},
   33:{name:'33 · 가위바위보 계단',mod:'HFQ33',g:'generateQ33',p:'renderQ33Problem',a:'renderQ33Answer',v:'validateQ33',prompt:function(){return '같은 계단에서 시작한 두 사람의 위치 차이를 구하세요.';}},
-  34:{name:'34 · 숫자 카드 뺄셈',mod:'HFQ34',g:'generateQ34',p:'renderQ34Problem',a:'renderQ34Answer',v:'validateQ34',prompt:function(){return '두 자리 수 뺄셈의 최댓값과 최솟값을 구하세요.';}}
+  34:{name:'34 · 숫자 카드 뺄셈',mod:'HFQ34',g:'generateQ34',p:'renderQ34Problem',a:'renderQ34Answer',v:'validateQ34',prompt:function(){return '두 자리 수 뺄셈의 최댓값과 최솟값을 구하세요.';}},
+  35:{name:'35 · 달리기 순서',mod:'HFQ35',g:'generateQ35',p:'renderQ35Problem',a:'renderQ35Answer',v:'validateQ35',prompt:function(p){return p.queryRank+'등인 사람을 구하세요.';}},
+  36:{name:'36 · 줄서기 최소·최대',mod:'HFQ36',g:'generateQ36',p:'renderQ36Problem',a:'renderQ36Answer',v:'validateQ36',prompt:function(){return '전체 사람 수의 최솟값과 최댓값을 구하세요.';}},
+  37:{name:'37 · 원탁 자리',mod:'HFQ37',g:'generateQ37',p:'renderQ37Problem',a:'renderQ37Answer',v:'validateQ37',prompt:function(){return '왼쪽 조건에 맞게 빈자리를 채우세요.';}},
+  38:{name:'38 · 원형 순서',mod:'HFQ38',g:'generateQ38',p:'renderQ38Problem',a:'renderQ38Answer',v:'validateQ38',prompt:function(p){return '오른쪽 '+p.rightOffset+'번째 사람과 마주 보는 사람의 왼쪽 순서를 구하세요.';}},
+  39:{name:'39 · 논리표 짝 찾기',mod:'HFQ39',g:'generateQ39',p:'renderQ39Problem',a:'renderQ39Answer',v:'validateQ39',prompt:function(p){return p.queryEntity+'가 고른 두 가지를 구하세요.';}},
+  40:{name:'40 · 도형 숫자 규칙',mod:'HFQ40',g:'generateQ40',p:'renderQ40Problem',a:'renderQ40Answer',v:'validateQ40',prompt:function(){return '공통 규칙을 찾아 ?에 알맞은 수를 쓰세요.';}}
 };
 var DIFFS=[['easy','쉽게'],['same','같게'],['hard','어렵게']];
 var REVIEW_MODE='generator';
@@ -328,7 +335,7 @@ function runSelfTest(){
   var tries=0;
   var timer=setInterval(function(){
     tries++;
-    if(window.HFQ01 && window.HFQ05 && window.HFQ09 && window.HFQ34){ clearInterval(timer); draw(); }
+    if(window.HFQ01 && window.HFQ05 && window.HFQ09 && window.HFQ40){ clearInterval(timer); draw(); }
     else if(tries>60){ clearInterval(timer);
       document.getElementById('board').innerHTML='<div class="loading">생성기를 불러오지 못했습니다. 새로고침해 주세요.</div>'; }
   },100);
