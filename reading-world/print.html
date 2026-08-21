@@ -172,7 +172,10 @@ label.chk small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
 .remedy-action .btn{width:100%;padding:9px 10px}
 .remedy-action small{font-size:11px;line-height:1.45;color:var(--muted)}
 @media(max-width:720px){
-  .sheet.report .rp-road,.sheet.report .rp-books{grid-template-columns:1fr 1fr}
+  .sheet.report .rp-score{flex-direction:column}
+  .sheet.report .rp-gauge{min-width:0}
+  .sheet.report .rp-road,.sheet.report .rp-books{grid-template-columns:1fr}
+  .sheet.report .sh-top{align-items:flex-start;flex-direction:column}
 }
 
 .pv{background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden}
@@ -1731,21 +1734,26 @@ function ansFor(key){return (grade.ans[key]=grade.ans[key]||{});}
 function analyse(srcs){
   var byStrat={},order=[],per=[];
   srcs.forEach(function(s){
-    var a=ansFor(s.key),right=0;
+    var a=ansFor(s.key),right=0,answered=0;
     s.questions.forEach(function(q,i){
-      var st=foldStrat(q[0]),ok=a[i]===q[3];
-      if(!byStrat[st]){byStrat[st]={n:0,ok:0,by:{}};order.push(st);}
-      var t=byStrat[st], u=t.by[s.key]||(t.by[s.key]={n:0,ok:0,label:s.label});
-      t.n++; u.n++; if(ok){t.ok++;u.ok++;right++;}
+      var st=foldStrat(q[0]),has=!!a[i],ok=has&&a[i]===q[3];
+      if(!byStrat[st]){byStrat[st]={n:0,answered:0,ok:0,by:{}};order.push(st);}
+      var t=byStrat[st], u=t.by[s.key]||(t.by[s.key]={n:0,answered:0,ok:0,label:s.label});
+      t.n++;u.n++;
+      if(has){t.answered++;u.answered++;answered++;}
+      if(ok){t.ok++;u.ok++;right++;}
     });
-    per.push({src:s,right:right,n:s.questions.length,
-      pct:Math.round(right/s.questions.length*100)});
+    per.push({src:s,right:right,n:s.questions.length,answered:answered,
+      pct:answered?Math.round(right/answered*100):0});
   });
   var rows=order.map(function(st){var t=byStrat[st];
-    return {strat:st,n:t.n,ok:t.ok,pct:Math.round(t.ok/t.n*100),by:t.by};});
+    return {strat:st,n:t.n,answered:t.answered,ok:t.ok,
+      pct:t.answered?Math.round(t.ok/t.answered*100):0,by:t.by};});
   var tot=per.reduce(function(a,p){return a+p.right;},0);
   var totN=per.reduce(function(a,p){return a+p.n;},0);
-  return {rows:rows,per:per,right:tot,n:totN,pct:totN?Math.round(tot/totN*100):0};
+  var entered=per.reduce(function(a,p){return a+p.answered;},0);
+  return {rows:rows,per:per,right:tot,n:totN,answered:entered,
+    pct:entered?Math.round(tot/entered*100):0};
 }
 
 var REPORT_GUIDE=window.CARS_REPORT_GUIDE||{rx:{},books:{},sources:[]};
@@ -1771,7 +1779,7 @@ function answeredState(srcs){
   return {done:done,total:total,complete:total>0&&done===total};
 }
 function priorityRows(A){
-  return A.rows.filter(function(r){return r.pct<70;}).sort(function(a,b){
+  return A.rows.filter(function(r){return r.answered&&r.pct<70;}).sort(function(a,b){
     return a.pct-b.pct||stratRank(a.strat)-stratRank(b.strat);});
 }
 function strategyIndex(st){
@@ -1784,7 +1792,7 @@ function reportLevel(A,isUnit){
 }
 function remedyPlan(srcs,A){
   var state=answeredState(srcs),isUnit=srcs.length&&srcs[0].kind==='unit';
-  var pri=priorityRows(A),rec=reportLevel(A,isUnit),bookId={B:'b',C:'c',D:'d'}[rec]||'';
+  var pri=priorityRows(A),rec=state.complete?reportLevel(A,isUnit):'',bookId={B:'b',C:'c',D:'d'}[rec]||'';
   var book=bookOf(bookId),skills=pri.slice(0,2),lessons=[],items=[];
   if(book&&state.complete&&skills.length){
     [0,Math.floor((book.lessons.length-1)/2),book.lessons.length-1].forEach(function(i){
@@ -1811,7 +1819,7 @@ function updateRemedyAction(srcs,A){
 }
 function dominantDomain(A){
   var score={meaning:0,structure:0,inference:0,critical:0};
-  A.rows.forEach(function(r){score[SKILL_DOMAIN[r.strat]||'inference']+=r.n-r.ok;});
+  A.rows.forEach(function(r){score[SKILL_DOMAIN[r.strat]||'inference']+=r.answered-r.ok;});
   return Object.keys(score).sort(function(a,b){return score[b]-score[a];})[0];
 }
 function autoCommentBlock(A,plan){
@@ -1916,13 +1924,14 @@ function barsSvg(rows){
     return '<text x="0" y="'+(y+15)+'" class="bl">'+esc(stratName(r.strat))+'</text>'+
       '<rect x="'+labelW+'" y="'+(y+4)+'" width="'+barW+'" height="14" rx="7" fill="#eae4d5"/>'+
       '<rect x="'+labelW+'" y="'+(y+4)+'" width="'+w.toFixed(1)+'" height="14" rx="7" fill="'+tone+'"/>'+
-      '<text x="'+(W-2)+'" y="'+(y+15)+'" class="bn" text-anchor="end">'+r.ok+'/'+r.n+'</text>';
+      '<text x="'+(W-2)+'" y="'+(y+15)+'" class="bn" text-anchor="end">'+r.ok+'/'+r.answered+'</text>';
   }).join('');
   return '<svg class="cb" viewBox="0 0 '+W+' '+h+'" role="img" aria-label="strategy accuracy">'+body+'</svg>';
 }
 // The skill mix at a glance: how much of the profile is solid, shaky or weak.
 // A donut earns its place here because the three parts are shares of one whole.
 function pieSvg(rows){
+  rows=rows.filter(function(r){return r.answered;});
   var band=[{k:'ok',n:0,c:'#2f8a5c',t:RL('숙달 80% 이상','Solid 80%+')},
             {k:'mid',n:0,c:'#cf9a34',t:RL('보통 50–79%','Shaky 50-79%')},
             {k:'low',n:0,c:'#c1543f',t:RL('약점 50% 미만','Weak under 50%')}];
@@ -1950,7 +1959,7 @@ function levelBarsSvg(per){
     return '<text x="0" y="'+(y+15)+'" class="bl">'+esc(p.src.label)+'</text>'+
       '<rect x="110" y="'+(y+3)+'" width="'+(W-150)+'" height="16" rx="8" fill="#eae4d5"/>'+
       '<rect x="110" y="'+(y+3)+'" width="'+w.toFixed(1)+'" height="16" rx="8" fill="var(--brand)"/>'+
-      '<text x="'+(W-2)+'" y="'+(y+16)+'" class="bn" text-anchor="end">'+p.right+'/'+p.n+' · '+p.pct+'%</text>';
+      '<text x="'+(W-2)+'" y="'+(y+16)+'" class="bn" text-anchor="end">'+p.right+'/'+p.answered+' · '+p.pct+'%</text>';
   }).join('');
   return '<svg class="cb" viewBox="0 0 '+W+' '+h+'" role="img" aria-label="level comparison">'+body+'</svg>';
 }
@@ -1972,14 +1981,16 @@ function runVerdict(per){
 // when more than one level was sat — whether it failed everywhere or only at the
 // harder level. A comment that does not cite the tally is not worth printing.
 function factLine(r){
-  var missed=r.n-r.ok;
+  var measured=r.answered,missed=measured-r.ok;
   var keys=Object.keys(r.by||{});
   var base;
-  if(r.ok===0) base=RL(r.n+'문항을 모두 놓쳤습니다.','All '+r.n+' questions were missed.');
-  else base=RL(r.n+'문항 중 '+missed+'개를 놓쳤습니다.',missed+' of '+r.n+' were missed.');
+  if(r.ok===0) base=RL('입력된 '+measured+'문항을 모두 놓쳤습니다.','All '+measured+' entered questions were missed.');
+  else base=RL('입력된 '+measured+'문항 중 '+missed+'개를 놓쳤습니다.',missed+' of '+measured+' entered questions were missed.');
   if(keys.length<2) return base;
-  var parts=keys.map(function(k){var u=r.by[k];return u.label+' '+u.ok+'/'+u.n;});
-  var bad=keys.filter(function(k){var u=r.by[k];return u.ok<u.n;});
+  keys=keys.filter(function(k){return r.by[k].answered;});
+  if(keys.length<2)return base;
+  var parts=keys.map(function(k){var u=r.by[k];return u.label+' '+u.ok+'/'+u.answered;});
+  var bad=keys.filter(function(k){var u=r.by[k];return u.ok<u.answered;});
   var where=bad.length===keys.length
     ? RL(' 두 레벨 모두에서 흔들립니다.',' It is unsteady at both levels.')
     : RL(' '+r.by[bad[0]].label+'에서만 무너집니다.',' It only breaks down at '+r.by[bad[0]].label+'.');
@@ -2040,10 +2051,19 @@ function reportSheet(){
   if(!srcs.length) return '<div class="empty">응시 레벨(여러 개 선택 가능) 또는 교재 단원을 고르고<br>학생 답안을 입력하면 분석지가 여기에 만들어집니다.</div>';
   var A=analyse(srcs), isUnit=srcs[0].kind==='unit', multi=srcs.length>1;
   var plan=remedyPlan(srcs,A);
+  var state=plan.state;
 
   // ── verdict + headline comment ───────────────────────────────────────────
   var vTitle,vBody,book='';
-  if(isUnit){
+  if(!state.complete){
+    vTitle=RL('임시 분석 · '+state.done+'/'+state.total+' 입력',
+      'Provisional analysis · '+state.done+'/'+state.total+' entered');
+    vBody=state.done
+      ? RL('현재 결과는 입력된 답안만 집계했습니다. 미입력 답은 오답으로 처리하지 않았으며, 모든 답안을 입력하기 전에는 추천 레벨·교재·수업 로드맵을 확정하지 않습니다.',
+          'Only entered responses are included. Blanks are not counted as incorrect, and no level, book or teaching roadmap is final until every response is entered.')
+      : RL('아직 입력된 답안이 없습니다. 답안을 입력하면 관찰된 문항만 임시 집계하고, 전체 입력이 끝난 뒤 최종 판정과 처방을 만듭니다.',
+          'No responses have been entered. Entered items will be tallied provisionally; the final verdict and prescription appear only after completion.');
+  }else if(isUnit){
     var p=A.pct;
     if(p>=90){vTitle=RL('숙달 ('+p+'%)','Mastered ('+p+'%)');
       vBody=RL('이 단원의 전략을 안정적으로 적용합니다. 다음 단원으로 진행하세요.',
@@ -2085,8 +2105,9 @@ function reportSheet(){
 
   // ── strategy rows, sorted weakest first so the eye lands on the problem ──
   var rows=A.rows.slice().sort(function(a,b){return a.pct-b.pct||b.n-a.n;});
-  var weak=rows.filter(function(r){return r.pct<70;});
-  var strong=rows.filter(function(r){return r.pct>=80;});
+  var measured=rows.filter(function(r){return r.answered;});
+  var weak=rows.filter(function(r){return r.answered&&r.pct<70;});
+  var strong=rows.filter(function(r){return r.answered&&r.pct>=80;});
 
   var pri=weak.slice().sort(function(a,b){
     return a.pct-b.pct || stratRank(a.strat)-stratRank(b.strat);}).slice(0,3);
@@ -2094,23 +2115,26 @@ function reportSheet(){
     var rx=REPORT_GUIDE.rx[r.strat]||{},err=RL(rx.errorKo||'',rx.errorEn||''),
       routine=RL(rx.routineKo||stratCoach(r.strat),rx.routineEn||stratCoach(r.strat)),
       prompt=RL(rx.promptKo||'',rx.promptEn||''),criterion=RL(rx.criterionKo||'',rx.criterionEn||'');
-    return '<div class="rp-d"><b>'+esc(stratName(r.strat))+' <span>'+r.ok+'/'+r.n+' · '+r.pct+'%</span></b>'+
+    return '<div class="rp-d"><b>'+esc(stratName(r.strat))+' <span>'+r.ok+'/'+r.answered+' · '+r.pct+'%</span></b>'+
       '<p>'+esc(factLine(r))+'</p><p class="rp-dx"><strong>'+RL('오류 가능성: ','Likely error pattern: ')+'</strong>'+esc(err)+
       '<br><strong>'+RL('수업 처방: ','Teaching routine: ')+'</strong>'+esc(routine)+
       (prompt?'<br><strong>'+RL('교사 발문: ','Teacher prompt: ')+'</strong>“'+esc(prompt)+'”':'')+
       (criterion?'<br><strong>'+RL('성공 기준: ','Success criterion: ')+'</strong>'+esc(criterion):'')+'</p></div>';}).join('')
-    || '<div class="rp-d"><b>'+RL('약점 없음','No weak skill')+'</b><p>'+
-       RL('모든 유형에서 70% 이상을 맞혔습니다. 다음 단계로 진행해도 좋습니다.',
-          'Every skill scored 70% or better. Ready to move on.')+'</p></div>';
+    || '<div class="rp-d"><b>'+(state.complete?RL('약점 없음','No weak skill'):RL('최종 판정 대기','Awaiting final result'))+'</b><p>'+
+       (state.complete
+         ? RL('모든 유형에서 70% 이상을 맞혔습니다. 다음 단계로 진행해도 좋습니다.',
+             'Every skill scored 70% or better. Ready to move on.')
+         : RL('현재 입력된 답안만으로 약점을 확정하지 않습니다. 남은 답안을 입력한 뒤 다시 확인하세요.',
+             'Weaknesses are not final from the responses entered so far. Complete the remaining answers and review again.'))+'</p></div>';
 
   // ── per-source answer tables ────────────────────────────────────────────
   var tables=srcs.map(function(s){
     var a=ansFor(s.key);
     var body=s.questions.map(function(q,i){
-      var mine=a[i]||'—', ok=mine===q[3];
+      var mine=a[i]||'—', has=!!a[i],ok=has&&mine===q[3];
       return '<tr><td class="c">'+(i+1)+'</td><td>'+esc(stratName(foldStrat(q[0])))+'</td>'+
         '<td class="c">'+esc(q[3])+'</td><td class="c">'+esc(mine)+'</td>'+
-        '<td class="c '+(ok?'ok':'no')+'">'+(ok?'O':'X')+'</td></tr>';}).join('');
+        '<td class="c '+(has?(ok?'ok':'no'):'')+'">'+(has?(ok?'O':'X'):'—')+'</td></tr>';}).join('');
     return (srcs.length>1?'<h3 class="rp-h">'+esc(s.label)+'</h3>':'')+
       '<table class="rt"><thead><tr><th style="width:9%">'+RL('문항','Q')+'</th><th>'+RL('읽기 전략','Reading strategy')+
       '</th><th style="width:11%">'+RL('정답','Key')+'</th><th style="width:11%">'+RL('학생답','Answer')+
@@ -2119,7 +2143,7 @@ function reportSheet(){
 
   // ── optional remediation block ──────────────────────────────────────────
   var remedy='';
-  if(opt('optRemedy')){
+  if(opt('optRemedy')&&state.complete){
     var names=weak.slice(0,3).map(function(r){return stratName(r.strat);});
     remedy='<div class="nextbox"><b>'+RL('약점 해결 처방','Prescription')+'</b><br>'+ 
       (names.length
@@ -2136,20 +2160,26 @@ function reportSheet(){
 
   var summaryHtml=reportOn('summary')?
     '<div class="rp-score"><div class="rp-gauge">'+gaugeSvg(A.pct,'total')+
-      '<span>'+A.right+' / '+A.n+'</span></div>'+ 
+      '<span>'+A.right+' / '+A.answered+(state.complete?'':' '+RL('입력','entered'))+'</span></div>'+
     '<div class="rp-verdict"><b>'+esc(vTitle)+'</b><p>'+vBody+
-    (isUnit?'<br>'+RL('대상: ','Unit: ')+'<b>'+esc(srcs[0].title)+'</b>'
-           :(book?'<br>'+RL('추천 교재: ','Recommended book: ')+'<b>'+esc(book)+'</b>'
-                 :'<br>'+RL('현재 CARS B/C/D 교재 범위 밖의 레벨입니다.','This level is outside the current CARS B/C/D book range.')))+
+    (!state.complete?''
+      :(isUnit?'<br>'+RL('대상: ','Unit: ')+'<b>'+esc(srcs[0].title)+'</b>'
+             :(book?'<br>'+RL('추천 교재: ','Recommended book: ')+'<b>'+esc(book)+'</b>'
+                   :'<br>'+RL('현재 CARS B/C/D 교재 범위 밖의 레벨입니다.','This level is outside the current CARS B/C/D book range.'))))+
     '</p></div></div>'+ 
     (String(grade.memo||'').trim()?'<div class="rp-memo"><b>'+RL('선생님 코멘트','Teacher’s comment')+'</b><p>'+ 
       esc(grade.memo).replace(/\n/g,'<br>')+'</p></div>':''):'';
-  var skillsHtml=reportOn('skills')?
-    '<h3 class="rp-h">'+RL('전략 구성','Skill mix')+'</h3>'+pieSvg(rows)+
+  var skillsHtml=reportOn('skills')?(A.answered?
+    '<h3 class="rp-h">'+RL('전략 구성','Skill mix')+'</h3>'+pieSvg(measured)+
     (multi?'<h3 class="rp-h">'+RL('레벨별 성취','By level')+'</h3>'+levelBarsSvg(A.per):'')+
-    '<h3 class="rp-h">'+RL('읽기 전략별 정답률','Accuracy by reading strategy')+'</h3>'+barsSvg(rows)+
-    '<p class="rp-note">'+RL('CARS & STARS Plus 교사용 평가 방식에 따라 전략별 성취를 집계했습니다.',
-      'Strategy performance is tallied in the CARS & STARS Plus teacher-assessment format.')+'</p>':'';
+    '<h3 class="rp-h">'+RL('읽기 전략별 정답률','Accuracy by reading strategy')+'</h3>'+barsSvg(measured)+
+    '<p class="rp-note">'+(state.complete
+      ? RL('CARS & STARS Plus 교사용 평가 방식에 따라 전략별 성취를 집계했습니다.',
+          'Strategy performance is tallied in the CARS & STARS Plus teacher-assessment format.')
+      : RL('입력된 답안만 집계한 임시 도표입니다. 0/0은 아직 해당 전략의 답안이 입력되지 않았다는 뜻입니다.',
+          'This provisional chart uses entered responses only. 0/0 means that strategy has not yet been entered.'))+'</p>'
+    :'<h3 class="rp-h">'+RL('전략 분석','Strategy analysis')+'</h3><div class="rp-alert">'+
+      RL('답안을 입력하면 전략별 임시 정답률이 표시됩니다.','Enter responses to see provisional strategy accuracy.')+'</div>'):'';
   var detailHtml=reportOn('detail')?autoCommentBlock(A,plan)+
     '<h3 class="rp-h">'+RL('무엇을 어떻게 도울까','What to work on')+'</h3><div class="rp-dl">'+detail+'</div>'+ 
     (pri.length?'<div class="rp-pri"><b>'+RL('코칭 우선순위','Coaching priority')+'</b> '+
@@ -2158,9 +2188,12 @@ function reportSheet(){
       esc(strong.slice(0,5).map(function(r){return stratName(r.strat);}).join(' · '))+'</div>':'')+remedy:'';
   var questionHtml=reportOn('questions')?recommendedQuestionsBlock(plan):'';
   var roadmapHtml=reportOn('roadmap')?
-    (isUnit?'':levelUpBlock(A.per,pri))+(isUnit?'':planBlock(runVerdict(A.per),pri))+
-    roadmapBlock(plan)+homeBlock(pri):'';
-  var bookHtml=reportOn('books')?booksBlock(plan.rec):'';
+    (state.complete?((isUnit?'':levelUpBlock(A.per,pri))+(isUnit?'':planBlock(runVerdict(A.per),pri))+
+      roadmapBlock(plan)+homeBlock(pri))
+      :'<h3 class="rp-h">'+RL('수업 로드맵','Teaching roadmap')+'</h3><div class="rp-alert">'+
+        RL('답안을 모두 입력하면 추천 레벨과 약점 우선순위에 맞춘 4주 로드맵이 생성됩니다.',
+          'Complete every response to generate a four-week roadmap matched to the recommended level and priorities.')+'</div>'):'';
+  var bookHtml=reportOn('books')&&state.complete?booksBlock(plan.rec):'';
   var answerHtml=reportOn('answers')?tables:'';
   var evidenceHtml=reportOn('evidence')?evidenceBlock():'';
 
