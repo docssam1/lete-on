@@ -91,6 +91,7 @@ button.gold{background:var(--gold);color:#1c1c1c;border-color:var(--gold);font-w
 <script src="./generator/reasoning.js"></script>
 <script src="./generator/advanced.js"></script>
 <script src="./generator/logic.js"></script>
+<script src="./generator/combinatorics.js"></script>
 <script>
 var TYPES = {
   1:{name:'01 · 앞과 뒤에서 본 쌓기나무 개수', mod:'HFQ01', g:'generateQ01', p:'renderQ01Problem', a:'renderQ01Answer', v:'validateQ01',
@@ -146,7 +147,14 @@ var TYPES = {
   37:{name:'37 · 원탁 자리',mod:'HFQ37',g:'generateQ37',p:'renderQ37Problem',a:'renderQ37Answer',v:'validateQ37',prompt:function(){return '왼쪽 조건에 맞게 빈자리를 채우세요.';}},
   38:{name:'38 · 원형 순서',mod:'HFQ38',g:'generateQ38',p:'renderQ38Problem',a:'renderQ38Answer',v:'validateQ38',prompt:function(p){return '오른쪽 '+p.rightOffset+'번째 사람과 마주 보는 사람의 왼쪽 순서를 구하세요.';}},
   39:{name:'39 · 논리표 짝 찾기',mod:'HFQ39',g:'generateQ39',p:'renderQ39Problem',a:'renderQ39Answer',v:'validateQ39',prompt:function(p){return p.queryEntity+'가 고른 두 가지를 구하세요.';}},
-  40:{name:'40 · 도형 숫자 규칙',mod:'HFQ40',g:'generateQ40',p:'renderQ40Problem',a:'renderQ40Answer',v:'validateQ40',prompt:function(){return '공통 규칙을 찾아 ?에 알맞은 수를 쓰세요.';}}
+  40:{name:'40 · 도형 숫자 규칙',mod:'HFQ40',g:'generateQ40',p:'renderQ40Problem',a:'renderQ40Answer',v:'validateQ40',prompt:function(){return '공통 규칙을 찾아 ?에 알맞은 수를 쓰세요.';}},
+  41:{name:'41 · 버튼 도형 규칙',mod:'HFQ41',g:'generateQ41',p:'renderQ41Problem',a:'renderQ41Answer',v:'validateQ41',prompt:function(){return '버튼을 차례로 눌렀을 때의 마지막 도형을 그리세요.';}},
+  42:{name:'42 · 이웃하지 않게 칠하기',mod:'HFQ42',g:'generateQ42',p:'renderQ42Problem',a:'renderQ42Answer',v:'validateQ42',prompt:function(p){return p.cells.length+'칸 중 '+p.fillCount+'칸을 한 변으로 이웃하지 않게 칠하는 방법을 세세요.';}},
+  43:{name:'43 · 색칠 경우의 수',mod:'HFQ43',g:'generateQ43',p:'renderQ43Problem',a:'renderQ43Answer',v:'validateQ43',prompt:function(){return '돌리거나 뒤집어서 같은 것을 한 가지로 보고 색칠 방법을 세세요.';}},
+  44:{name:'44 · 조건에 맞는 세 자리 수',mod:'HFQ44',g:'generateQ44',p:'renderQ44Problem',a:'renderQ44Answer',v:'validateQ44',prompt:function(){return '조건을 만족하는 세 자리 수를 모두 쓰세요.';}},
+  45:{name:'45 · 가장 가까운 길',mod:'HFQ45',g:'generateQ45',p:'renderQ45Problem',a:'renderQ45Answer',v:'validateQ45',prompt:function(){return '출발점에서 도착점까지 가장 가까운 길을 세세요.';}},
+  46:{name:'46 · 사탕 수 거꾸로 찾기',mod:'HFQ46',g:'generateQ46',p:'renderQ46Problem',a:'renderQ46Answer',v:'validateQ46',prompt:function(){return '마지막 사탕 수에서 거꾸로 처음 수를 찾으세요.';}},
+  47:{name:'47 · 구슬 변화 역추적',mod:'HFQ47',g:'generateQ47',p:'renderQ47Problem',a:'renderQ47Answer',v:'validateQ47',prompt:function(){return '표를 거꾸로 올라가 처음 빨강 구슬 수를 찾으세요.';}}
 };
 var DIFFS=[['easy','쉽게'],['same','같게'],['hard','어렵게']];
 var REVIEW_MODE='generator';
@@ -335,7 +343,7 @@ function runSelfTest(){
   var tries=0;
   var timer=setInterval(function(){
     tries++;
-    if(window.HFQ01 && window.HFQ05 && window.HFQ09 && window.HFQ40){ clearInterval(timer); draw(); }
+    if(window.HFQ01 && window.HFQ05 && window.HFQ09 && window.HFQ47){ clearInterval(timer); draw(); }
     else if(tries>60){ clearInterval(timer);
       document.getElementById('board').innerHTML='<div class="loading">생성기를 불러오지 못했습니다. 새로고침해 주세요.</div>'; }
   },100);

@@ -271,7 +271,7 @@
     37: {
       title: "원탁의 왼쪽 자리 찾기", module: "HFQ37", generate: "generateQ37", validate: "validateQ37",
       renderProblem: "renderQ37Problem", deriveAnswer: "deriveQ37Answer", enumerateAnswers: "enumerateQ37AnswerCandidates", renderAnswer: "renderQ37Answer",
-      prompt: (p) => `${p.participants.join(", ")}가 모두 원탁 가운데를 보고 앉아 있습니다. 그림의 화살표가 각 사람의 왼쪽 방향일 때 조건에 맞게 빈자리를 채우세요.`
+      prompt: (p) => `원탁에 앉은 사람은 ${p.participants.join(", ")}입니다. 모두 가운데를 보고 있습니다. 그림의 화살표가 각 사람의 왼쪽 방향일 때 조건에 맞게 빈자리를 채우세요.`
     },
     38: {
       title: "원형 배열에서 마주 보는 순서", module: "HFQ38", generate: "generateQ38", validate: "validateQ38",
@@ -287,6 +287,41 @@
       title: "도형 안 숫자의 공통 규칙", module: "HFQ40", generate: "generateQ40", validate: "validateQ40",
       renderProblem: "renderQ40Problem", deriveAnswer: "deriveQ40Answer", enumerateAnswers: "enumerateQ40AnswerCandidates", renderAnswer: "renderQ40Answer",
       prompt: () => "세 바깥 수와 가운데 수 사이에 공통으로 쓰인 규칙을 찾아 ?에 알맞은 수를 쓰세요."
+    },
+    41: {
+      title: "버튼 도형 변화 규칙", module: "HFQ41", generate: "generateQ41", validate: "validateQ41",
+      renderProblem: "renderQ41Problem", deriveAnswer: "deriveQ41Answer", enumerateAnswers: "enumerateQ41AnswerCandidates", renderAnswer: "renderQ41Answer",
+      prompt: () => "보기에서 각 버튼이 바꾸는 규칙을 찾으세요. 시작 도형에 버튼을 왼쪽부터 차례로 눌렀을 때의 마지막 도형을 그리세요."
+    },
+    42: {
+      title: "이웃하지 않게 칸 칠하기", module: "HFQ42", generate: "generateQ42", validate: "validateQ42",
+      renderProblem: "renderQ42Problem", deriveAnswer: "deriveQ42Answer", enumerateAnswers: "enumerateQ42AnswerCandidates", renderAnswer: "renderQ42Answer",
+      prompt: (p) => `${p.cells.length}칸 중 ${p.fillCount}칸을 칠합니다. 칠한 두 칸이 한 변으로 이웃하지 않게 칠하는 방법은 모두 몇 가지입니까?`
+    },
+    43: {
+      title: "색칠하는 경우의 수", module: "HFQ43", generate: "generateQ43", validate: "validateQ43",
+      renderProblem: "renderQ43Problem", deriveAnswer: "deriveQ43Answer", enumerateAnswers: "enumerateQ43AnswerCandidates", renderAnswer: "renderQ43Answer",
+      prompt: (p) => `${p.palette.map((color) => color.name).join(", ")} 중 서로 다른 ${p.pickCount}색을 골라 빈칸을 색칠합니다. 돌리거나 뒤집어서 같아지는 것을 한 가지로 보면 모두 몇 가지입니까?`
+    },
+    44: {
+      title: "조건에 맞는 세 자리 수", module: "HFQ44", generate: "generateQ44", validate: "validateQ44",
+      renderProblem: "renderQ44Problem", deriveAnswer: "deriveQ44Answer", enumerateAnswers: "enumerateQ44AnswerCandidates", renderAnswer: "renderQ44Answer",
+      prompt: () => "조건을 모두 만족하는 세 자리 수를 빠짐없이 쓰세요."
+    },
+    45: {
+      title: "가장 가까운 길의 가짓수", module: "HFQ45", generate: "generateQ45", validate: "validateQ45",
+      renderProblem: "renderQ45Problem", deriveAnswer: "deriveQ45Answer", enumerateAnswers: "enumerateQ45AnswerCandidates", renderAnswer: "renderQ45Answer",
+      prompt: () => "출발점에서 도착점까지 선을 따라가는 가장 가까운 길은 모두 몇 가지입니까?"
+    },
+    46: {
+      title: "마지막 수에서 처음 수 찾기", module: "HFQ46", generate: "generateQ46", validate: "validateQ46",
+      renderProblem: "renderQ46Problem", deriveAnswer: "deriveQ46Answer", enumerateAnswers: "enumerateQ46AnswerCandidates", renderAnswer: "renderQ46Answer",
+      prompt: (p) => `처음에 사탕을 몇 개 가지고 있었습니다. 그림의 순서대로 남은 사탕의 반을 주거나 먹었더니 마지막에 ${p.finalCount}개가 남았습니다. 처음 사탕은 몇 개입니까?`
+    },
+    47: {
+      title: "구슬 수 변화 거꾸로 추적하기", module: "HFQ47", generate: "generateQ47", validate: "validateQ47",
+      renderProblem: "renderQ47Problem", deriveAnswer: "deriveQ47Answer", enumerateAnswers: "enumerateQ47AnswerCandidates", renderAnswer: "renderQ47Answer",
+      prompt: (p) => `빨강과 파랑 구슬은 모두 ${p.total}개이고 새로 넣거나 빼지 않았습니다. 표의 마지막에서 거꾸로 생각할 때, 처음 빨강 구슬은 몇 개입니까?`
     }
   };
 
