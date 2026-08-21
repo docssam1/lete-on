@@ -125,6 +125,16 @@
       "mtime_ns": 1787234861605039000
     },
     {
+      "id": "geometry-geoboard-source-design",
+      "title": "점판 공작소 교재 근거 설계",
+      "path": "geometry/docs/12_SOURCE_BACKED_FUTURE_GAMES.md",
+      "kind": "markdown",
+      "sensitivity": "internal",
+      "sha256": "f3d46c79a01b9c4f37f74e32b0a0597a762ae7218933c109960c9e714bf868ff",
+      "size": 16956,
+      "mtime_ns": 1787332817687000000
+    },
+    {
       "id": "cmath-nc1-2-shape-start",
       "title": "시매쓰 NC 1단계 2 도형의 시작",
       "path": "private-sources/Cmath/NC/NC 1단계/NC 1단계 - 2/NC 1단계 2.도형의 시작.pdf",
@@ -4120,6 +4130,40 @@
           "role": "test",
           "locator": "full deterministic test suite",
           "note": "20개 문제의 고유성·정답 유일성·기하 도우미·4개 언어 키를 검증"
+        }
+      ]
+    },
+    {
+      "id": "geometry.geoboard.hyperfocus-complex-figures",
+      "title": "하이퍼포커스 기반 복합 점판·도형 개수 확장",
+      "aliases": [
+        "복잡한 점판 도형",
+        "하이퍼포커스 점판",
+        "겹친 정사각형 세기"
+      ],
+      "tags": [
+        "geometry",
+        "geoboard",
+        "hyperfocus",
+        "shape-counting",
+        "single-answer"
+      ],
+      "summary": "프리미어 하이퍼포커스 문항 16·17은 끊긴 선과 기울어진 정사각형을 포함한 복합 그림에서 정사각형 10개를 찾고, 문항 19는 삼각 배열 점판에서 정삼각형 12개를 찾는다. 게임은 사각 격자와 삼각 배열을 분리하고, 아이가 찾은 도형을 직접 표시하며 정답 폐곡선 집합과 비교한다.",
+      "status": "verified",
+      "sensitivity": "private",
+      "updated": "2026-08-22",
+      "pointers": [
+        {
+          "source_id": "geometry-geoboard-source-design",
+          "role": "audit",
+          "locator": "하이퍼포커스 기반 복합 점판 확장",
+          "note": "Google Drive의 프리미어 하이퍼포커스 기출 유형 점검 문항 16·17·19와 정답·지도 포인트를 시각 확인한 뒤 적용 규칙만 기록"
+        },
+        {
+          "source_id": "geometry-geoboard-levels",
+          "role": "code",
+          "locator": "GRID, answerKey, validateLevels",
+          "note": "현재 엔진은 5x5 사각 점판의 단일 목표 edge set 재현만 지원하므로 복수 도형 찾기와 삼각 배열은 별도 채점 모드가 필요"
         }
       ]
     },
