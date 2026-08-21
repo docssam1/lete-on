@@ -594,7 +594,7 @@ function loadAttempt(index){if(index>=studentHistory.length)return;selectedSet.c
 function submitNewAttempt(){if(selectedSet.size===0){alert('틀린(약점) 유형을 최소 하나 이상 체크해 주세요.');return}if(selectedSet.size>HFAccessPolicy.MAX_SELECTED_TYPES){alert(`맞춤 시험지는 최대 ${HFAccessPolicy.MAX_SELECTED_TYPES}개 유형까지 선택할 수 있습니다.`);return}if(studentHistory.length>=3){alert('총 3회 응시 제한을 초과했습니다.');return}const sortedIds=Array.from(selectedSet).sort((a,b)=>a-b);const name=document.getElementById('studentName').value.trim();const phone=document.getElementById('parentPhone').value.trim();const rate=Math.round(((54-sortedIds.length)/54)*100);studentHistory.push({attempt:studentHistory.length+1,wrongIds:sortedIds,rate:rate});localStorage.setItem(currentUserKey,JSON.stringify(studentHistory));updateAttemptButtons();const scriptURL='https://script.google.com/macros/s/AKfycbzwtu2FOu_rmqT-pyhwakl0EYrkbdUHUwTYnxB0GBlLcZlgXqmxTJfObeKQHx8Tu_FZsA/exec';fetch(scriptURL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,wrongIds:sortedIds.join(', '),rate})}).catch(err=>console.error(err));renderResultUI(studentHistory.length-1);}
 function setView(v){['quick','area','list','similar'].forEach(n=>{const vs=document.getElementById(`view-${n}`);const bs=document.getElementById(`btn-${n}`);if(vs)vs.classList.toggle('active',v===n);if(bs)bs.classList.toggle('active',v===n)});if(v==='similar')renderSimilarUI();}
 function worksheetAvailability(typeId){
-  if(typeId>=1&&typeId<=47)return{easy:true,same:true,hard:true};
+  if(typeId>=1&&typeId<=54)return{easy:true,same:true,hard:true};
   if(HFVariationBank.READY_TYPE_IDS.includes(typeId))return{easy:false,same:true,hard:false};
   return{easy:false,same:false,hard:false};
 }
@@ -608,7 +608,6 @@ function createSelectedWorksheet(){
   if(!ids.length){if(status)status.textContent='먼저 틀린 유형을 선택해 주세요.';return}
   if(ids.length>HFAccessPolicy.MAX_SELECTED_TYPES){if(status)status.textContent=`한 번에 최대 ${HFAccessPolicy.MAX_SELECTED_TYPES}개 유형까지 선택할 수 있습니다.`;return}
   try{HFAccessPolicy.validatePracticeRequest({countPerType:count,difficulty:'same',accessTier:paid?'paid':'free'})}catch(error){if(status)status.textContent=String(error.message||error);return}
-  if(count>2&&ids.some(id=>id>47)){if(status)status.textContent='현재 3문항 이상 자동 생성은 q01~q47 유형만 지원합니다. 나머지 유형은 검수된 2문항까지 제공합니다.';return}
   for(const id of ids){const difficulty=worksheetDifficultyByType.get(id)||'same';if(!worksheetAvailability(id)[difficulty]){if(status)status.textContent=`유형 ${String(id).padStart(2,'0')}의 선택 난이도는 아직 검수 완료된 문제가 없습니다.`;return}}
   const levels=ids.map(id=>`${id}:${worksheetDifficultyByType.get(id)||'same'}`).join(',');
   const url=new URL('./mock/viewer.html',location.href);url.searchParams.set('mode','practice');url.searchParams.set('student',document.getElementById('studentName').value.trim()||'학생');url.searchParams.set('types',ids.join(','));url.searchParams.set('levels',levels);url.searchParams.set('count',String(count));url.searchParams.set('seed',String(Date.now()));window.open(url,'_blank','noopener');

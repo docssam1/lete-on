@@ -18,6 +18,7 @@ load("hyper-focus/generator/reasoning.js");
 load("hyper-focus/generator/advanced.js");
 load("hyper-focus/generator/logic.js");
 load("hyper-focus/generator/combinatorics.js");
+load("hyper-focus/generator/applications.js");
 load("hyper-focus/mock/exam-blueprints.js");
 load("hyper-focus/mock/access-policy.js");
 load("hyper-focus/mock/variation-bank.js");
@@ -469,6 +470,36 @@ for (let typeId = 41; typeId <= 47; typeId += 1) {
   assert(new Set(answers).size === 2, `q${typeId}: 무료 두 문항 정답 충돌`);
 }
 
+let q48Q54Checks = 0;
+for (let typeId = 48; typeId <= 54; typeId += 1) {
+  const code = String(typeId).padStart(2, "0"), mod = globalThis[`HFQ${code}`];
+  ["easy", "same", "hard"].forEach((difficulty) => {
+    const answers = new Set();
+    for (let seed = 1; seed <= 100; seed += 1) {
+      const payload = mod[`generateQ${code}`](difficulty, seed);
+      assert(mod[`validateQ${code}`](payload), `q${code} ${difficulty}: 성립 실패 seed ${seed}`);
+      const answer = mod[`deriveQ${code}Answer`](payload), candidates = mod[`enumerateQ${code}AnswerCandidates`](payload);
+      assert(candidates.length === 1 && JSON.stringify(candidates[0]) === JSON.stringify(answer), `q${code} ${difficulty}: 단일 정답 후보 실패 seed ${seed}`);
+      const svg = mod[`renderQ${code}Problem`](payload);
+      assert(svg.includes("<svg") && !/(?:NaN|undefined|null)/.test(svg), `q${code} ${difficulty}: SVG 실패 seed ${seed}`);
+      if (typeId === 48) assert(payload.workerCount === (difficulty === "hard" ? 3 : 2) && payload.answer < Math.min(...payload.individualTimes), `q48 ${difficulty}: 작업자 수·함께 시간 실패`);
+      if (typeId === 49) assert(Number.isInteger(payload.rate) && payload.answer === Math.ceil(payload.exactDays), `q49 ${difficulty}: 1마리 하루 기준·온전한 날짜 실패`);
+      if (typeId === 50) assert(payload.items.length === (difficulty === "easy" ? 3 : 4) && Object.keys(payload.answer).length === payload.items.length - 1, `q50 ${difficulty}: 물건 수·길이 답 실패`);
+      if (typeId === 51) assert(payload.spanHours === {easy:3,same:7,hard:12}[difficulty], `q51 ${difficulty}: 시간 범위 실패`);
+      if (typeId === 52 || typeId === 53) assert(payload.count === {easy:2,same:3,hard:4}[difficulty] && payload.answer > 0, `q${code} ${difficulty}: 기준 단위 수 실패`);
+      if (typeId === 54) assert(payload.termCount >= {easy:15,same:40,hard:60}[difficulty] && payload.parities.length === 9, `q54 ${difficulty}: 항 수·홀짝 보기 실패`);
+      answers.add(JSON.stringify(answer)); q48Q54Checks += 1;
+    }
+    assert(answers.size >= 2, `q${code} ${difficulty}: 정답 다양성 ${answers.size}종`);
+  });
+}
+const q48Q54Practice = globalThis.HFMock.createPractice([48,49,50,51,52,53,54], { seed: 20260826, countPerType: 2, accessTier: "free", difficultyByType: {48:"easy",49:"same",50:"hard",51:"easy",52:"same",53:"hard",54:"same"} });
+assert(q48Q54Practice.questions.length === 14 && q48Q54Practice.questions.every((question) => question.answerCandidates.length === 1), "q48~q54: 무료 난이도별 2문항 생성 실패");
+for (let typeId = 48; typeId <= 54; typeId += 1) {
+  const answers = q48Q54Practice.questions.filter((question) => question.typeId === typeId).map((question) => JSON.stringify(question.answer));
+  assert(new Set(answers).size === 2, `q${typeId}: 무료 두 문항 정답 충돌`);
+}
+
 let spatialDifficultyChecks = 0;
 [6, 7, 8, 9].forEach((typeId) => {
   const code = String(typeId).padStart(2, "0"), mod = globalThis[`HFQ${code}`];
@@ -580,24 +611,8 @@ variationExam.questions.forEach((question) => {
     assert(fs.existsSync(asset), `${question.variationId}: 그림 파일 없음 ${match[1]}`);
   }
 });
-const bankPractice = globalThis.HFMock.createPractice([48, 53], { seed: 20260820, countPerType: 2, difficulty: "same", accessTier: "free" });
-assert(bankPractice.questions.length === 4, "기존 유사문제 약점 문제은행 연결 실패");
-assert(new Set(bankPractice.questions.map((question) => question.variationId)).size === 4, "기존 유사문제 약점 문제은행 중복 발생");
-assert(bankPractice.questions.every((question) => question.difficulty === "same"), "정적 유사문제 난이도 표시 불일치");
-let bankOverRequestRejected = false;
-try {
-  globalThis.HFMock.createPractice([48], { seed: 20260820, countPerType: 3, difficulty: "same", accessTier: "paid" });
-} catch (error) {
-  bankOverRequestRejected = /현재 2개만/.test(error.message);
-}
-assert(bankOverRequestRejected, "준비 수보다 많은 기존 유사문제 요청을 거부하지 않음");
-let unavailableDifficultyRejected = false;
-try {
-  globalThis.HFMock.createPractice([48], { seed: 20260820, countPerType: 2, difficulty: "easy", accessTier: "free" });
-} catch (error) {
-  unavailableDifficultyRejected = /아직 검수 완료된 문항이 없습니다/.test(error.message);
-}
-assert(unavailableDifficultyRejected, "정적 유형의 준비되지 않은 난이도를 차단하지 않음");
+const preservedBankPair = globalThis.HFVariationBank.getAvailable(48, "same");
+assert(preservedBankPair.length === 2 && new Set(preservedBankPair.map((row) => row.variationId)).size === 2, "기존 var01·var02 문제은행 보존 실패");
 
 [
   ["hyper-focus/mock/index.html", ["config.js", "access-policy.js", "spatial.js", "reasoning.js", "exam-blueprints.js", "variation-bank.js", "prepareExam", "questionList", "resultFromMarks", "practiceDifficultyByType", "선택 난이도로 시험지 만들기", "viewer.html"]],
@@ -646,6 +661,7 @@ console.log(`- q21-q27 all-difficulty exhaustive checks: ${q21Q27Checks}`);
 console.log(`- q28-q34 all-difficulty exhaustive checks: ${q28Q34Checks}`);
 console.log(`- q35-q40 all-difficulty exhaustive checks: ${q35Q40Checks}`);
 console.log(`- q41-q47 all-difficulty exhaustive checks: ${q41Q47Checks}`);
+console.log(`- q48-q54 all-difficulty exhaustive checks: ${q48Q54Checks}`);
 console.log(`- answer varieties: ${Object.entries(answerSets).map(([id, set]) => `q${String(id).padStart(2, "0")}=${set.size}`).join(", ")}`);
 console.log(`- explicit practice counts: ${oneEach.questions.length} and ${sevenEach.questions.length} questions`);
 console.log(`- scoring contract follows blueprint total: ${exam.questions.length} questions`);

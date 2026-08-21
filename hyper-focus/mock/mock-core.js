@@ -322,6 +322,41 @@
       title: "구슬 수 변화 거꾸로 추적하기", module: "HFQ47", generate: "generateQ47", validate: "validateQ47",
       renderProblem: "renderQ47Problem", deriveAnswer: "deriveQ47Answer", enumerateAnswers: "enumerateQ47AnswerCandidates", renderAnswer: "renderQ47Answer",
       prompt: (p) => `빨강과 파랑 구슬은 모두 ${p.total}개이고 새로 넣거나 빼지 않았습니다. 표의 마지막에서 거꾸로 생각할 때, 처음 빨강 구슬은 몇 개입니까?`
+    },
+    48: {
+      title: "함께 일할 때 걸리는 시간", module: "HFQ48", generate: "generateQ48", validate: "validateQ48",
+      renderProblem: "renderQ48Problem", deriveAnswer: "deriveQ48Answer", enumerateAnswers: "enumerateQ48AnswerCandidates", renderAnswer: "renderQ48Answer",
+      prompt: (p) => `${p.names.map((name,i)=>`${name}가 혼자 하면 ${p.individualTimes[i]}일`).join(", ")} 걸리는 일을 모두 함께 하면 며칠 걸립니까?`
+    },
+    49: {
+      title: "한 마리 하루 기준 비례", module: "HFQ49", generate: "generateQ49", validate: "validateQ49",
+      renderProblem: "renderQ49Problem", deriveAnswer: "deriveQ49Answer", enumerateAnswers: "enumerateQ49AnswerCandidates", renderAnswer: "renderQ49Answer",
+      prompt: (p) => `${p.givenAnimals}마리가 ${p.givenDays}일 동안 도토리 ${p.givenNuts}개를 모읍니다. 같은 빠르기로 ${p.targetAnimals}마리가 ${p.targetNuts}개 이상 모으려면 온전한 날짜로 며칠이 필요합니까?`
+    },
+    50: {
+      title: "같은 전체 길이로 물건 길이 찾기", module: "HFQ50", generate: "generateQ50", validate: "validateQ50",
+      renderProblem: "renderQ50Problem", deriveAnswer: "deriveQ50Answer", enumerateAnswers: "enumerateQ50AnswerCandidates", renderAnswer: "renderQ50Answer",
+      prompt: (p) => `그림의 모든 줄은 양 끝 길이가 같습니다. 지우개 한 개가 ${p.unitLength}cm일 때 다른 물건 한 개의 길이를 각각 구하세요.`
+    },
+    51: {
+      title: "시계 종이 울리는 횟수", module: "HFQ51", generate: "generateQ51", validate: "validateQ51",
+      renderProblem: "renderQ51Problem", deriveAnswer: "deriveQ51Answer", enumerateAnswers: "enumerateQ51AnswerCandidates", renderAnswer: "renderQ51Answer",
+      prompt: (p) => `시계는 정각에 그 시각의 수만큼, 30분에 한 번 울립니다. ${((p.startHour-1)%12)+1}시부터 ${((p.endHour-1)%12)+1}시까지 ${p.spanHours}시간 동안 울리는 횟수를 구하세요. 시작 정각 종은 ${p.includeStart?'세고':'세지 않고'}, 끝 정각 종은 셉니다.`
+    },
+    52: {
+      title: "가장 가벼운 도형으로 무게 바꾸기", module: "HFQ52", generate: "generateQ52", validate: "validateQ52",
+      renderProblem: "renderQ52Problem", deriveAnswer: "deriveQ52Answer", enumerateAnswers: "enumerateQ52AnswerCandidates", renderAnswer: "renderQ52Answer",
+      prompt: () => "그림의 등호는 저울이 평형이라는 뜻입니다. 아래 도형 묶음과 무게가 같은 가장 가벼운 ○는 몇 개입니까?"
+    },
+    53: {
+      title: "가장 짧은 막대로 길이 바꾸기", module: "HFQ53", generate: "generateQ53", validate: "validateQ53",
+      renderProblem: "renderQ53Problem", deriveAnswer: "deriveQ53Answer", enumerateAnswers: "enumerateQ53AnswerCandidates", renderAnswer: "renderQ53Answer",
+      prompt: () => "그림에서 등호 양쪽의 전체 길이는 같습니다. 아래 색 막대 묶음과 같은 길이를 만들려면 가장 짧은 막대가 몇 개 필요합니까?"
+    },
+    54: {
+      title: "수열의 홀수 개수", module: "HFQ54", generate: "generateQ54", validate: "validateQ54",
+      renderProblem: "renderQ54Problem", deriveAnswer: "deriveQ54Answer", enumerateAnswers: "enumerateQ54AnswerCandidates", renderAnswer: "renderQ54Answer",
+      prompt: (p) => `${p.startA}, ${p.startB}에서 시작해 앞의 두 수를 더한 수를 다음에 씁니다. ${p.termCount}번째 수까지 홀수는 모두 몇 개입니까? 수를 끝까지 계산하지 말고 홀짝 패턴을 찾으세요.`
     }
   };
 
