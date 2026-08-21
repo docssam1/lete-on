@@ -89,6 +89,7 @@ button.gold{background:var(--gold);color:#1c1c1c;border-color:var(--gold);font-w
 <script src="./generator/stacking.js"></script>
 <script src="./generator/spatial.js"></script>
 <script src="./generator/reasoning.js"></script>
+<script src="./generator/advanced.js"></script>
 <script>
 var TYPES = {
   1:{name:'01 · 앞과 뒤에서 본 쌓기나무 개수', mod:'HFQ01', g:'generateQ01', p:'renderQ01Problem', a:'renderQ01Answer', v:'validateQ01',
@@ -131,7 +132,14 @@ var TYPES = {
   24:{name:'24 · 더하기를 빼기로 바꾸기',mod:'HFQ24',g:'generateQ24',p:'renderQ24Problem',a:'renderQ24Answer',v:'validateQ24',prompt:function(){return '+ 하나를 -로 바꾸어 식을 맞게 만드세요.';}},
   25:{name:'25 · 공통 숫자의 합',mod:'HFQ25',g:'generateQ25',p:'renderQ25Problem',a:'renderQ25Answer',v:'validateQ25',prompt:function(){return '모든 비교식에 공통으로 들어갈 숫자를 더하세요.';}},
   26:{name:'26 · 성냥개비 옮기기',mod:'HFQ26',g:'generateQ26',p:'renderQ26Problem',a:'renderQ26Answer',v:'validateQ26',prompt:function(p){return '연한 점이 있는 자리 안에서 성냥개비 '+p.moveCount+'개를 옮겨 정사각형 3개를 만드세요.';}},
-  27:{name:'27 · 벌집 식 만들기',mod:'HFQ27',g:'generateQ27',p:'renderQ27Problem',a:'renderQ27Answer',v:'validateQ27',prompt:function(){return '모든 칸을 한 번씩 지나 옳은 식을 만드세요.';}}
+  27:{name:'27 · 벌집 식 만들기',mod:'HFQ27',g:'generateQ27',p:'renderQ27Problem',a:'renderQ27Answer',v:'validateQ27',prompt:function(){return '모든 칸을 한 번씩 지나 옳은 식을 만드세요.';}},
+  28:{name:'28 · 원의 겹침 합',mod:'HFQ28',g:'generateQ28',p:'renderQ28Problem',a:'renderQ28Answer',v:'validateQ28',prompt:function(p){return p.circleCount===2?'한 원 안의 합을 맞춰 ㄱ을 구하세요.':'세 원의 합을 맞춰 ㄱ+ㄴ을 구하세요.';}},
+  29:{name:'29 · 가로·세로 수 규칙',mod:'HFQ29',g:'generateQ29',p:'renderQ29Problem',a:'renderQ29Answer',v:'validateQ29',prompt:function(){return '가로와 세로 규칙을 찾아 ?1부터 차례로 쓰세요.';}},
+  30:{name:'30 · 과녁 총점 경우의 수',mod:'HFQ30',g:'generateQ30',p:'renderQ30Problem',a:'renderQ30Answer',v:'validateQ30',prompt:function(p){return p.shots+'번 모두 맞혀 만들 수 있는 서로 다른 총점을 세세요.';}},
+  31:{name:'31 · 문자값 식',mod:'HFQ31',g:'generateQ31',p:'renderQ31Problem',a:'renderQ31Answer',v:'validateQ31',prompt:function(){return '서로 다른 문자값을 모두 구하세요.';}},
+  32:{name:'32 · 디지털 거울 식',mod:'HFQ32',g:'generateQ32',p:'renderQ32Problem',a:'renderQ32Answer',v:'validateQ32',prompt:function(){return '거울에 비친 식을 원래 방향으로 읽고 두 빈칸의 합을 구하세요.';}},
+  33:{name:'33 · 가위바위보 계단',mod:'HFQ33',g:'generateQ33',p:'renderQ33Problem',a:'renderQ33Answer',v:'validateQ33',prompt:function(){return '같은 계단에서 시작한 두 사람의 위치 차이를 구하세요.';}},
+  34:{name:'34 · 숫자 카드 뺄셈',mod:'HFQ34',g:'generateQ34',p:'renderQ34Problem',a:'renderQ34Answer',v:'validateQ34',prompt:function(){return '두 자리 수 뺄셈의 최댓값과 최솟값을 구하세요.';}}
 };
 var DIFFS=[['easy','쉽게'],['same','같게'],['hard','어렵게']];
 var REVIEW_MODE='generator';
@@ -320,7 +328,7 @@ function runSelfTest(){
   var tries=0;
   var timer=setInterval(function(){
     tries++;
-    if(window.HFQ01 && window.HFQ05 && window.HFQ09 && window.HFQ27){ clearInterval(timer); draw(); }
+    if(window.HFQ01 && window.HFQ05 && window.HFQ09 && window.HFQ34){ clearInterval(timer); draw(); }
     else if(tries>60){ clearInterval(timer);
       document.getElementById('board').innerHTML='<div class="loading">생성기를 불러오지 못했습니다. 새로고침해 주세요.</div>'; }
   },100);

@@ -222,6 +222,41 @@
       title: "벌집 수 배열에서 식 만들기", module: "HFQ27", generate: "generateQ27", validate: "validateQ27",
       renderProblem: "renderQ27Problem", deriveAnswer: "deriveQ27Answer", enumerateAnswers: "enumerateQ27AnswerCandidates", renderAnswer: "renderQ27Answer",
       prompt: () => "각 벌집에서 이웃한 칸을 따라 모든 숫자와 기호를 한 번씩 지나 옳은 식을 만드세요. 1번부터 차례로 식의 답을 쓰세요."
+    },
+    28: {
+      title: "겹치는 원 안의 합 맞추기", module: "HFQ28", generate: "generateQ28", validate: "validateQ28",
+      renderProblem: "renderQ28Problem", deriveAnswer: "deriveQ28Answer", enumerateAnswers: "enumerateQ28AnswerCandidates", renderAnswer: "renderQ28Answer",
+      prompt: (p) => p.circleCount === 2 ? `한 원 안의 수의 합이 ${p.target}입니다. ㄱ의 값을 구하세요.` : `한 원 안의 네 수의 합이 ${p.target}입니다. ㄱ+ㄴ의 값을 구하세요.`
+    },
+    29: {
+      title: "수 배열의 가로·세로 규칙", module: "HFQ29", generate: "generateQ29", validate: "validateQ29",
+      renderProblem: "renderQ29Problem", deriveAnswer: "deriveQ29Answer", enumerateAnswers: "enumerateQ29AnswerCandidates", renderAnswer: "renderQ29Answer",
+      prompt: () => "네모 칸의 가로 규칙과 세로 규칙을 찾아 ?1부터 번호 순서대로 알맞은 수를 쓰세요."
+    },
+    30: {
+      title: "과녁의 서로 다른 총점 세기", module: "HFQ30", generate: "generateQ30", validate: "validateQ30",
+      renderProblem: "renderQ30Problem", deriveAnswer: "deriveQ30Answer", enumerateAnswers: "enumerateQ30AnswerCandidates", renderAnswer: "renderQ30Answer",
+      prompt: (p) => `${p.scores.join(", ")}점 과녁을 ${p.shots}번 모두 맞혔을 때 만들 수 있는 서로 다른 총점은 모두 몇 가지입니까? 맞힌 순서가 달라도 총점이 같으면 한 번만 셉니다.`
+    },
+    31: {
+      title: "문자마다 서로 다른 수 넣기", module: "HFQ31", generate: "generateQ31", validate: "validateQ31",
+      renderProblem: "renderQ31Problem", deriveAnswer: "deriveQ31Answer", enumerateAnswers: "enumerateQ31AnswerCandidates", renderAnswer: "renderQ31Answer",
+      prompt: (p) => `각 문자는 ${p.domain[0]}부터 ${p.domain[p.domain.length-1]}까지 중 서로 다른 하나를 나타냅니다. 모든 식을 만족하는 문자값을 구하세요.`
+    },
+    32: {
+      title: "거울에 비친 디지털 숫자 식", module: "HFQ32", generate: "generateQ32", validate: "validateQ32",
+      renderProblem: "renderQ32Problem", deriveAnswer: "deriveQ32Answer", enumerateAnswers: "enumerateQ32AnswerCandidates", renderAnswer: "renderQ32Answer",
+      prompt: () => "디지털 숫자로 쓴 두 식을 오른쪽 거울에 비춘 모습입니다. 원래 방향으로 다시 읽어 두 빈칸에 들어갈 수의 합을 구하세요."
+    },
+    33: {
+      title: "가위바위보 계단 위치 차이", module: "HFQ33", generate: "generateQ33", validate: "validateQ33",
+      renderProblem: "renderQ33Problem", deriveAnswer: "deriveQ33Answer", enumerateAnswers: "enumerateQ33AnswerCandidates", renderAnswer: "renderQ33Answer",
+      prompt: (p) => `재이와 지용이는 같은 계단에서 시작합니다. 이기면 ${p.winStep}칸 올라가고 지면 ${p.loseStep}칸 내려갑니다. ${p.rounds}번 하여 재이가 ${p.winsA}번 이겼다면 재이는 지용이보다 몇 계단 위에 있습니까? 무승부는 없습니다.`
+    },
+    34: {
+      title: "숫자 카드 두 자리 수 뺄셈", module: "HFQ34", generate: "generateQ34", validate: "validateQ34",
+      renderProblem: "renderQ34Problem", deriveAnswer: "deriveQ34Answer", enumerateAnswers: "enumerateQ34AnswerCandidates", renderAnswer: "renderQ34Answer",
+      prompt: (p) => `숫자 카드 ${p.cards.join(", ")}를 한 번씩만 사용하여 두 자리 수끼리의 뺄셈을 만드세요. 계산 결과의 최댓값과 최솟값을 각각 구하세요.`
     }
   };
 
