@@ -102,6 +102,91 @@
       enumerateAnswers: "enumerateQ09AnswerCandidates",
       renderAnswer: "renderQ09Answer",
       prompt: () => "쌓기나무를 위, 앞, 오른쪽 옆에서 본 모양입니다. 세 모양을 모두 만족하도록 쌓을 때 필요한 쌓기나무의 가장 적은 수를 구하세요."
+    },
+    10: {
+      title: "겹친 영역의 수",
+      module: "HFQ10",
+      generate: "generateQ10",
+      validate: "validateQ10",
+      renderProblem: "renderQ10Problem",
+      deriveAnswer: "deriveQ10Answer",
+      enumerateAnswers: "enumerateQ10AnswerCandidates",
+      renderAnswer: "renderQ10Answer",
+      prompt: () => "겹친 부분의 수는 양쪽에 적힌 수를 더한 값입니다. 별표가 있는 겹친 부분에 들어갈 수를 구하세요."
+    },
+    11: {
+      title: "숫자 종이 두 번 접기",
+      module: "HFQ11",
+      generate: "generateQ11",
+      validate: "validateQ11",
+      renderProblem: "renderQ11Problem",
+      deriveAnswer: "deriveQ11Answer",
+      enumerateAnswers: "enumerateQ11AnswerCandidates",
+      renderAnswer: "renderQ11Answer",
+      prompt: () => "수가 쓰인 종이를 그림과 같은 방법으로 두 번 접었습니다. 가장 윗면에 오는 네 수의 합을 구하세요."
+    },
+    12: {
+      title: "접은 색종이 구멍 수",
+      module: "HFQ12",
+      generate: "generateQ12",
+      validate: "validateQ12",
+      renderProblem: "renderQ12Problem",
+      deriveAnswer: "deriveQ12Answer",
+      enumerateAnswers: "enumerateQ12AnswerCandidates",
+      renderAnswer: "renderQ12Answer",
+      prompt: (payload) => `색종이를 ${payload.folds.length}번 접고, 접힌 선 위가 아닌 곳에 구멍을 ${payload.punchCount}개 뚫었습니다. 모두 펼치면 구멍은 몇 개입니까?`
+    },
+    13: {
+      title: "펜토미노로 직사각형 채우기",
+      module: "HFQ13",
+      generate: "generateQ13",
+      validate: "validateQ13",
+      renderProblem: "renderQ13Problem",
+      deriveAnswer: "deriveQ13Answer",
+      enumerateAnswers: "enumerateQ13AnswerCandidates",
+      renderAnswer: "renderQ13Answer",
+      prompt: () => "주어진 펜토미노 5조각 중 4조각만 사용하여 20칸 직사각형을 빈틈없이 채우세요. 쓰지 않는 조각도 쓰세요. 조각은 돌리거나 뒤집어도 됩니다."
+    },
+    14: {
+      title: "정사각형으로 가장 적게 나누기",
+      module: "HFQ14",
+      generate: "generateQ14",
+      validate: "validateQ14",
+      renderProblem: "renderQ14Problem",
+      deriveAnswer: "deriveQ14Answer",
+      enumerateAnswers: "enumerateQ14AnswerCandidates",
+      renderAnswer: "renderQ14Answer",
+      prompt: () => "점선을 따라 도형을 정사각형으로 나누려고 합니다. 겹치거나 남는 부분이 없도록 가장 적게 나누면 정사각형은 몇 개입니까?"
+    },
+    15: {
+      title: "선 2개로 목표 조각 만들기", module: "HFQ15", generate: "generateQ15", validate: "validateQ15",
+      renderProblem: "renderQ15Problem", deriveAnswer: "deriveQ15Answer", enumerateAnswers: "enumerateQ15AnswerCandidates", renderAnswer: "renderQ15Answer",
+      prompt: (p) => `빗 모양에 표시된 후보 직선 중 2개를 골라 ${p.targetPieces}조각이 되게 하세요. 정답 선의 글자를 쓰세요.`
+    },
+    16: {
+      title: "선 그림의 정사각형 모두 세기", module: "HFQ16", generate: "generateQ16", validate: "validateQ16",
+      renderProblem: "renderQ16Problem", deriveAnswer: "deriveQ16Answer", enumerateAnswers: "enumerateQ16AnswerCandidates", renderAnswer: "renderQ16Answer",
+      prompt: () => "다음 그림에서 선을 따라 그릴 수 있는 크고 작은 정사각형은 모두 몇 개입니까?"
+    },
+    17: {
+      title: "기울어진 정사각형까지 세기", module: "HFQ17", generate: "generateQ17", validate: "validateQ17",
+      renderProblem: "renderQ17Problem", deriveAnswer: "deriveQ17Answer", enumerateAnswers: "enumerateQ17AnswerCandidates", renderAnswer: "renderQ17Answer",
+      prompt: () => "그림에서 찾을 수 있는 크고 작은 정사각형은 모두 몇 개입니까? 기울어진 정사각형도 셉니다."
+    },
+    18: {
+      title: "쌓기나무로 서로 다른 입체 만들기", module: "HFQ18", generate: "generateQ18", validate: "validateQ18",
+      renderProblem: "renderQ18Problem", deriveAnswer: "deriveQ18Answer", enumerateAnswers: "enumerateQ18AnswerCandidates", renderAnswer: "renderQ18Answer",
+      prompt: (p) => `쌓기나무 ${p.cubeCount}개를 모두 면끼리 붙여 조건에 맞는 서로 다른 모양을 만들면 모두 몇 가지입니까? 돌려서 겹치면 같은 모양입니다.`
+    },
+    19: {
+      title: "점판의 정사각형 모두 세기", module: "HFQ19", generate: "generateQ19", validate: "validateQ19",
+      renderProblem: "renderQ19Problem", deriveAnswer: "deriveQ19Answer", enumerateAnswers: "enumerateQ19AnswerCandidates", renderAnswer: "renderQ19Answer",
+      prompt: () => "점판 위의 점 4개를 꼭짓점으로 하여 만들 수 있는 크고 작은 정사각형은 모두 몇 개입니까?"
+    },
+    20: {
+      title: "막대를 이어 만들 수 있는 길이", module: "HFQ20", generate: "generateQ20", validate: "validateQ20",
+      renderProblem: "renderQ20Problem", deriveAnswer: "deriveQ20Answer", enumerateAnswers: "enumerateQ20AnswerCandidates", renderAnswer: "renderQ20Answer",
+      prompt: (p) => `${p.numbers.join("cm, ")}cm 막대를 각각 한 번까지 골라 이어 만들 수 있는 서로 다른 길이는 모두 몇 가지입니까? 같은 길이는 한 번만 셉니다.`
     }
   };
 
@@ -265,9 +350,21 @@
         }
         return;
       }
+      const answersForType = new Set();
       for (let index = 0; index < countPerType; index += 1) {
         const questionSeed = base + typeId * 12011 + index * 7919;
-        questions.push(generateQuestion(typeId, difficulty, questionSeed, number));
+        let question = null;
+        for (let attempt = 0; attempt < 100; attempt += 1) {
+          const candidate = generateQuestion(typeId, difficulty, questionSeed + attempt * 104729, number);
+          const answerKey = JSON.stringify(candidate.answer);
+          if (index >= 2 || !answersForType.has(answerKey)) {
+            answersForType.add(answerKey);
+            question = candidate;
+            break;
+          }
+        }
+        if (!question) throw new Error(`q${String(typeId).padStart(2, "0")} ${DIFFICULTY_LABEL[difficulty]} 문제의 서로 다른 정답을 충분히 만들지 못했습니다.`);
+        questions.push(question);
         number += 1;
       }
     });

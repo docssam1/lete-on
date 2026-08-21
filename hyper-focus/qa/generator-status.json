@@ -4,13 +4,14 @@
   "policy": {
     "preserveExistingCanonicalAndVariations": true,
     "doNotRebuildViewerReadyTypes": true,
+    "expandDifficultyOnlyWithValidatedGenerators": true,
     "publishOnlyViewerReadyProblems": true,
     "officialExamRequiresSeparateApprovedBlueprint": true
   },
   "dynamicGenerators": {
-    "status": "verified-frozen",
-    "typeIds": [1, 2, 3, 4, 5, 6, 7, 8, 9],
-    "questionTypeCount": 9,
+    "status": "verified-q01-q09-frozen-q10-q20-expanded",
+    "typeIds": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+    "questionTypeCount": 20,
     "changeRule": "회귀 검증 실패 또는 사용자 변경 지시가 있을 때만 수정"
   },
   "variationBank": {
