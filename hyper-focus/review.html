@@ -89,6 +89,10 @@ button.gold{background:var(--gold);color:#1c1c1c;border-color:var(--gold);font-w
 <script src="./generator/stacking.js"></script>
 <script src="./generator/spatial.js"></script>
 <script src="./generator/reasoning.js"></script>
+<script src="./generator/advanced.js"></script>
+<script src="./generator/logic.js"></script>
+<script src="./generator/combinatorics.js"></script>
+<script src="./generator/applications.js"></script>
 <script>
 var TYPES = {
   1:{name:'01 · 앞과 뒤에서 본 쌓기나무 개수', mod:'HFQ01', g:'generateQ01', p:'renderQ01Problem', a:'renderQ01Answer', v:'validateQ01',
@@ -124,7 +128,41 @@ var TYPES = {
   17:{name:'17 · 기울어진 정사각형까지 세기',mod:'HFQ17',g:'generateQ17',p:'renderQ17Problem',a:'renderQ17Answer',v:'validateQ17',prompt:function(){return '기울어진 정사각형까지 모두 세세요.';}},
   18:{name:'18 · 쌓기나무 입체 경우의 수',mod:'HFQ18',g:'generateQ18',p:'renderQ18Problem',a:'renderQ18Answer',v:'validateQ18',prompt:function(p){return '쌓기나무 '+p.cubeCount+'개로 조건에 맞는 서로 다른 모양을 모두 만드세요.';}},
   19:{name:'19 · 점판 정사각형 세기',mod:'HFQ19',g:'generateQ19',p:'renderQ19Problem',a:'renderQ19Answer',v:'validateQ19',prompt:function(){return '점 4개로 만드는 정사각형을 모두 세세요.';}},
-  20:{name:'20 · 막대로 만드는 길이',mod:'HFQ20',g:'generateQ20',p:'renderQ20Problem',a:'renderQ20Answer',v:'validateQ20',prompt:function(){return '막대를 골라 만들 수 있는 서로 다른 길이를 모두 세세요.';}}
+  20:{name:'20 · 막대로 만드는 길이',mod:'HFQ20',g:'generateQ20',p:'renderQ20Problem',a:'renderQ20Answer',v:'validateQ20',prompt:function(){return '막대를 골라 만들 수 있는 서로 다른 길이를 모두 세세요.';}},
+  21:{name:'21 · 자리 조건으로 수 찾기',mod:'HFQ21',g:'generateQ21',p:'renderQ21Problem',a:'renderQ21Answer',v:'validateQ21',prompt:function(p){return '조건을 만족하는 '+p.digitCount+'자리 수를 구하세요.';}},
+  22:{name:'22 · 숫자 두 개 바꾸기',mod:'HFQ22',g:'generateQ22',p:'renderQ22Problem',a:'renderQ22Answer',v:'validateQ22',prompt:function(){return '숫자 두 개의 자리를 바꾸어 식을 맞게 만드세요.';}},
+  23:{name:'23 · 기호 넣어 식 만들기',mod:'HFQ23',g:'generateQ23',p:'renderQ23Problem',a:'renderQ23Answer',v:'validateQ23',prompt:function(){return '기호를 넣어 만들 수 있는 식을 모두 세세요.';}},
+  24:{name:'24 · 더하기를 빼기로 바꾸기',mod:'HFQ24',g:'generateQ24',p:'renderQ24Problem',a:'renderQ24Answer',v:'validateQ24',prompt:function(){return '+ 하나를 -로 바꾸어 식을 맞게 만드세요.';}},
+  25:{name:'25 · 공통 숫자의 합',mod:'HFQ25',g:'generateQ25',p:'renderQ25Problem',a:'renderQ25Answer',v:'validateQ25',prompt:function(){return '모든 비교식에 공통으로 들어갈 숫자를 더하세요.';}},
+  26:{name:'26 · 성냥개비 옮기기',mod:'HFQ26',g:'generateQ26',p:'renderQ26Problem',a:'renderQ26Answer',v:'validateQ26',prompt:function(p){return '연한 점이 있는 자리 안에서 성냥개비 '+p.moveCount+'개를 옮겨 정사각형 3개를 만드세요.';}},
+  27:{name:'27 · 벌집 식 만들기',mod:'HFQ27',g:'generateQ27',p:'renderQ27Problem',a:'renderQ27Answer',v:'validateQ27',prompt:function(){return '모든 칸을 한 번씩 지나 옳은 식을 만드세요.';}},
+  28:{name:'28 · 원의 겹침 합',mod:'HFQ28',g:'generateQ28',p:'renderQ28Problem',a:'renderQ28Answer',v:'validateQ28',prompt:function(p){return p.circleCount===2?'한 원 안의 합을 맞춰 ㄱ을 구하세요.':'세 원의 합을 맞춰 ㄱ+ㄴ을 구하세요.';}},
+  29:{name:'29 · 가로·세로 수 규칙',mod:'HFQ29',g:'generateQ29',p:'renderQ29Problem',a:'renderQ29Answer',v:'validateQ29',prompt:function(){return '가로와 세로 규칙을 찾아 ?1부터 차례로 쓰세요.';}},
+  30:{name:'30 · 과녁 총점 경우의 수',mod:'HFQ30',g:'generateQ30',p:'renderQ30Problem',a:'renderQ30Answer',v:'validateQ30',prompt:function(p){return p.shots+'번 모두 맞혀 만들 수 있는 서로 다른 총점을 세세요.';}},
+  31:{name:'31 · 문자값 식',mod:'HFQ31',g:'generateQ31',p:'renderQ31Problem',a:'renderQ31Answer',v:'validateQ31',prompt:function(){return '서로 다른 문자값을 모두 구하세요.';}},
+  32:{name:'32 · 디지털 거울 식',mod:'HFQ32',g:'generateQ32',p:'renderQ32Problem',a:'renderQ32Answer',v:'validateQ32',prompt:function(){return '거울에 비친 식을 원래 방향으로 읽고 두 빈칸의 합을 구하세요.';}},
+  33:{name:'33 · 가위바위보 계단',mod:'HFQ33',g:'generateQ33',p:'renderQ33Problem',a:'renderQ33Answer',v:'validateQ33',prompt:function(){return '같은 계단에서 시작한 두 사람의 위치 차이를 구하세요.';}},
+  34:{name:'34 · 숫자 카드 뺄셈',mod:'HFQ34',g:'generateQ34',p:'renderQ34Problem',a:'renderQ34Answer',v:'validateQ34',prompt:function(){return '두 자리 수 뺄셈의 최댓값과 최솟값을 구하세요.';}},
+  35:{name:'35 · 달리기 순서',mod:'HFQ35',g:'generateQ35',p:'renderQ35Problem',a:'renderQ35Answer',v:'validateQ35',prompt:function(p){return p.queryRank+'등인 사람을 구하세요.';}},
+  36:{name:'36 · 줄서기 최소·최대',mod:'HFQ36',g:'generateQ36',p:'renderQ36Problem',a:'renderQ36Answer',v:'validateQ36',prompt:function(){return '전체 사람 수의 최솟값과 최댓값을 구하세요.';}},
+  37:{name:'37 · 원탁 자리',mod:'HFQ37',g:'generateQ37',p:'renderQ37Problem',a:'renderQ37Answer',v:'validateQ37',prompt:function(){return '왼쪽 조건에 맞게 빈자리를 채우세요.';}},
+  38:{name:'38 · 원형 순서',mod:'HFQ38',g:'generateQ38',p:'renderQ38Problem',a:'renderQ38Answer',v:'validateQ38',prompt:function(p){return '오른쪽 '+p.rightOffset+'번째 사람과 마주 보는 사람의 왼쪽 순서를 구하세요.';}},
+  39:{name:'39 · 논리표 짝 찾기',mod:'HFQ39',g:'generateQ39',p:'renderQ39Problem',a:'renderQ39Answer',v:'validateQ39',prompt:function(p){return p.queryEntity+'가 고른 두 가지를 구하세요.';}},
+  40:{name:'40 · 도형 숫자 규칙',mod:'HFQ40',g:'generateQ40',p:'renderQ40Problem',a:'renderQ40Answer',v:'validateQ40',prompt:function(){return '공통 규칙을 찾아 ?에 알맞은 수를 쓰세요.';}},
+  41:{name:'41 · 버튼 도형 규칙',mod:'HFQ41',g:'generateQ41',p:'renderQ41Problem',a:'renderQ41Answer',v:'validateQ41',prompt:function(){return '버튼을 차례로 눌렀을 때의 마지막 도형을 그리세요.';}},
+  42:{name:'42 · 이웃하지 않게 칠하기',mod:'HFQ42',g:'generateQ42',p:'renderQ42Problem',a:'renderQ42Answer',v:'validateQ42',prompt:function(p){return p.cells.length+'칸 중 '+p.fillCount+'칸을 한 변으로 이웃하지 않게 칠하는 방법을 세세요.';}},
+  43:{name:'43 · 색칠 경우의 수',mod:'HFQ43',g:'generateQ43',p:'renderQ43Problem',a:'renderQ43Answer',v:'validateQ43',prompt:function(){return '돌리거나 뒤집어서 같은 것을 한 가지로 보고 색칠 방법을 세세요.';}},
+  44:{name:'44 · 조건에 맞는 세 자리 수',mod:'HFQ44',g:'generateQ44',p:'renderQ44Problem',a:'renderQ44Answer',v:'validateQ44',prompt:function(){return '조건을 만족하는 세 자리 수를 모두 쓰세요.';}},
+  45:{name:'45 · 가장 가까운 길',mod:'HFQ45',g:'generateQ45',p:'renderQ45Problem',a:'renderQ45Answer',v:'validateQ45',prompt:function(){return '출발점에서 도착점까지 가장 가까운 길을 세세요.';}},
+  46:{name:'46 · 사탕 수 거꾸로 찾기',mod:'HFQ46',g:'generateQ46',p:'renderQ46Problem',a:'renderQ46Answer',v:'validateQ46',prompt:function(){return '마지막 사탕 수에서 거꾸로 처음 수를 찾으세요.';}},
+  47:{name:'47 · 구슬 변화 역추적',mod:'HFQ47',g:'generateQ47',p:'renderQ47Problem',a:'renderQ47Answer',v:'validateQ47',prompt:function(){return '표를 거꾸로 올라가 처음 빨강 구슬 수를 찾으세요.';}},
+  48:{name:'48 · 함께 일하는 시간',mod:'HFQ48',g:'generateQ48',p:'renderQ48Problem',a:'renderQ48Answer',v:'validateQ48',prompt:function(){return '같은 일을 모두 함께 할 때 걸리는 날 수를 구하세요.';}},
+  49:{name:'49 · 한 마리 하루 기준',mod:'HFQ49',g:'generateQ49',p:'renderQ49Problem',a:'renderQ49Answer',v:'validateQ49',prompt:function(){return '1마리 1일 기준으로 바꾸어 온전한 날짜 수를 구하세요.';}},
+  50:{name:'50 · 같은 전체 길이',mod:'HFQ50',g:'generateQ50',p:'renderQ50Problem',a:'renderQ50Answer',v:'validateQ50',prompt:function(){return '같은 전체 길이를 이용해 물건 한 개의 길이를 구하세요.';}},
+  51:{name:'51 · 시계 종 횟수',mod:'HFQ51',g:'generateQ51',p:'renderQ51Problem',a:'renderQ51Answer',v:'validateQ51',prompt:function(){return '정각 종과 30분 종을 나누어 전체 횟수를 구하세요.';}},
+  52:{name:'52 · 가장 가벼운 도형',mod:'HFQ52',g:'generateQ52',p:'renderQ52Problem',a:'renderQ52Answer',v:'validateQ52',prompt:function(){return '도형을 가장 가벼운 ○의 개수로 바꾸세요.';}},
+  53:{name:'53 · 가장 짧은 막대',mod:'HFQ53',g:'generateQ53',p:'renderQ53Problem',a:'renderQ53Answer',v:'validateQ53',prompt:function(){return '모든 길이를 가장 짧은 막대의 개수로 바꾸세요.';}},
+  54:{name:'54 · 수열 홀수 개수',mod:'HFQ54',g:'generateQ54',p:'renderQ54Problem',a:'renderQ54Answer',v:'validateQ54',prompt:function(){return '홀짝 반복 패턴으로 홀수의 개수를 구하세요.';}}
 };
 var DIFFS=[['easy','쉽게'],['same','같게'],['hard','어렵게']];
 var REVIEW_MODE='generator';
@@ -313,7 +351,7 @@ function runSelfTest(){
   var tries=0;
   var timer=setInterval(function(){
     tries++;
-    if(window.HFQ01 && window.HFQ05 && window.HFQ09 && window.HFQ20){ clearInterval(timer); draw(); }
+    if(window.HFQ01 && window.HFQ05 && window.HFQ09 && window.HFQ54){ clearInterval(timer); draw(); }
     else if(tries>60){ clearInterval(timer);
       document.getElementById('board').innerHTML='<div class="loading">생성기를 불러오지 못했습니다. 새로고침해 주세요.</div>'; }
   },100);

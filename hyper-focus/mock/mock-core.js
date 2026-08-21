@@ -187,6 +187,176 @@
       title: "막대를 이어 만들 수 있는 길이", module: "HFQ20", generate: "generateQ20", validate: "validateQ20",
       renderProblem: "renderQ20Problem", deriveAnswer: "deriveQ20Answer", enumerateAnswers: "enumerateQ20AnswerCandidates", renderAnswer: "renderQ20Answer",
       prompt: (p) => `${p.numbers.join("cm, ")}cm 막대를 각각 한 번까지 골라 이어 만들 수 있는 서로 다른 길이는 모두 몇 가지입니까? 같은 길이는 한 번만 셉니다.`
+    },
+    21: {
+      title: "자리 조건으로 수 찾기", module: "HFQ21", generate: "generateQ21", validate: "validateQ21",
+      renderProblem: "renderQ21Problem", deriveAnswer: "deriveQ21Answer", enumerateAnswers: "enumerateQ21AnswerCandidates", renderAnswer: "renderQ21Answer",
+      prompt: (p) => `조건을 모두 만족하는 ${p.digitCount}자리 수를 구하세요.`
+    },
+    22: {
+      title: "숫자 두 개를 바꾸어 식 고치기", module: "HFQ22", generate: "generateQ22", validate: "validateQ22",
+      renderProblem: "renderQ22Problem", deriveAnswer: "deriveQ22Answer", enumerateAnswers: "enumerateQ22AnswerCandidates", renderAnswer: "renderQ22Answer",
+      prompt: () => "식에 있는 숫자 두 개의 자리를 서로 바꾸어 계산이 맞게 만드세요."
+    },
+    23: {
+      title: "기호를 넣어 식 만들기", module: "HFQ23", generate: "generateQ23", validate: "validateQ23",
+      renderProblem: "renderQ23Problem", deriveAnswer: "deriveQ23Answer", enumerateAnswers: "enumerateQ23AnswerCandidates", renderAnswer: "renderQ23Answer",
+      prompt: (p) => `숫자 사이에 ${p.allowedOps.includes("-")?"+, -, 또는 아무것도":"+ 또는 아무것도"} 쓰지 않아 오른쪽 수가 되는 식은 모두 몇 가지입니까?`
+    },
+    24: {
+      title: "더하기 하나를 빼기로 바꾸기", module: "HFQ24", generate: "generateQ24", validate: "validateQ24",
+      renderProblem: "renderQ24Problem", deriveAnswer: "deriveQ24Answer", enumerateAnswers: "enumerateQ24AnswerCandidates", renderAnswer: "renderQ24Answer",
+      prompt: () => "+ 하나를 -로 바꾸어 계산이 맞게 만드세요. 바꿀 + 바로 뒤의 수를 쓰세요."
+    },
+    25: {
+      title: "두 조건에 공통인 숫자의 합", module: "HFQ25", generate: "generateQ25", validate: "validateQ25",
+      renderProblem: "renderQ25Problem", deriveAnswer: "deriveQ25Answer", enumerateAnswers: "enumerateQ25AnswerCandidates", renderAnswer: "renderQ25Answer",
+      prompt: () => "각 비교식의 □에 공통으로 들어갈 수 있는 숫자를 모두 더하세요."
+    },
+    26: {
+      title: "성냥개비를 옮겨 정사각형 만들기", module: "HFQ26", generate: "generateQ26", validate: "validateQ26",
+      renderProblem: "renderQ26Problem", deriveAnswer: "deriveQ26Answer", enumerateAnswers: "enumerateQ26AnswerCandidates", renderAnswer: "renderQ26Answer",
+      prompt: (p) => `성냥개비를 연한 점이 있는 자리 안에서 정확히 ${p.moveCount}개만 옮겨 서로 변을 나누어 쓰지 않는 같은 크기의 정사각형 3개를 만드세요. 성냥개비를 더하거나 버리거나 겹치면 안 됩니다.`
+    },
+    27: {
+      title: "벌집 수 배열에서 식 만들기", module: "HFQ27", generate: "generateQ27", validate: "validateQ27",
+      renderProblem: "renderQ27Problem", deriveAnswer: "deriveQ27Answer", enumerateAnswers: "enumerateQ27AnswerCandidates", renderAnswer: "renderQ27Answer",
+      prompt: () => "각 벌집에서 이웃한 칸을 따라 모든 숫자와 기호를 한 번씩 지나 옳은 식을 만드세요. 1번부터 차례로 식의 답을 쓰세요."
+    },
+    28: {
+      title: "겹치는 원 안의 합 맞추기", module: "HFQ28", generate: "generateQ28", validate: "validateQ28",
+      renderProblem: "renderQ28Problem", deriveAnswer: "deriveQ28Answer", enumerateAnswers: "enumerateQ28AnswerCandidates", renderAnswer: "renderQ28Answer",
+      prompt: (p) => p.circleCount === 2 ? `한 원 안의 수의 합이 ${p.target}입니다. ㄱ의 값을 구하세요.` : `한 원 안의 네 수의 합이 ${p.target}입니다. ㄱ+ㄴ의 값을 구하세요.`
+    },
+    29: {
+      title: "수 배열의 가로·세로 규칙", module: "HFQ29", generate: "generateQ29", validate: "validateQ29",
+      renderProblem: "renderQ29Problem", deriveAnswer: "deriveQ29Answer", enumerateAnswers: "enumerateQ29AnswerCandidates", renderAnswer: "renderQ29Answer",
+      prompt: () => "네모 칸의 가로 규칙과 세로 규칙을 찾아 ?1부터 번호 순서대로 알맞은 수를 쓰세요."
+    },
+    30: {
+      title: "과녁의 서로 다른 총점 세기", module: "HFQ30", generate: "generateQ30", validate: "validateQ30",
+      renderProblem: "renderQ30Problem", deriveAnswer: "deriveQ30Answer", enumerateAnswers: "enumerateQ30AnswerCandidates", renderAnswer: "renderQ30Answer",
+      prompt: (p) => `${p.scores.join(", ")}점 과녁을 ${p.shots}번 모두 맞혔을 때 만들 수 있는 서로 다른 총점은 모두 몇 가지입니까? 맞힌 순서가 달라도 총점이 같으면 한 번만 셉니다.`
+    },
+    31: {
+      title: "문자마다 서로 다른 수 넣기", module: "HFQ31", generate: "generateQ31", validate: "validateQ31",
+      renderProblem: "renderQ31Problem", deriveAnswer: "deriveQ31Answer", enumerateAnswers: "enumerateQ31AnswerCandidates", renderAnswer: "renderQ31Answer",
+      prompt: (p) => `각 문자는 ${p.domain[0]}부터 ${p.domain[p.domain.length-1]}까지 중 서로 다른 하나를 나타냅니다. 모든 식을 만족하는 문자값을 구하세요.`
+    },
+    32: {
+      title: "거울에 비친 디지털 숫자 식", module: "HFQ32", generate: "generateQ32", validate: "validateQ32",
+      renderProblem: "renderQ32Problem", deriveAnswer: "deriveQ32Answer", enumerateAnswers: "enumerateQ32AnswerCandidates", renderAnswer: "renderQ32Answer",
+      prompt: () => "디지털 숫자로 쓴 두 식을 오른쪽 거울에 비춘 모습입니다. 원래 방향으로 다시 읽어 두 빈칸에 들어갈 수의 합을 구하세요."
+    },
+    33: {
+      title: "가위바위보 계단 위치 차이", module: "HFQ33", generate: "generateQ33", validate: "validateQ33",
+      renderProblem: "renderQ33Problem", deriveAnswer: "deriveQ33Answer", enumerateAnswers: "enumerateQ33AnswerCandidates", renderAnswer: "renderQ33Answer",
+      prompt: (p) => `재이와 지용이는 같은 계단에서 시작합니다. 이기면 ${p.winStep}칸 올라가고 지면 ${p.loseStep}칸 내려갑니다. ${p.rounds}번 하여 재이가 ${p.winsA}번 이겼다면 재이는 지용이보다 몇 계단 위에 있습니까? 무승부는 없습니다.`
+    },
+    34: {
+      title: "숫자 카드 두 자리 수 뺄셈", module: "HFQ34", generate: "generateQ34", validate: "validateQ34",
+      renderProblem: "renderQ34Problem", deriveAnswer: "deriveQ34Answer", enumerateAnswers: "enumerateQ34AnswerCandidates", renderAnswer: "renderQ34Answer",
+      prompt: (p) => `숫자 카드 ${p.cards.join(", ")}를 한 번씩만 사용하여 두 자리 수끼리의 뺄셈을 만드세요. 계산 결과의 최댓값과 최솟값을 각각 구하세요.`
+    },
+    35: {
+      title: "조건을 보고 달리기 순서 찾기", module: "HFQ35", generate: "generateQ35", validate: "validateQ35",
+      renderProblem: "renderQ35Problem", deriveAnswer: "deriveQ35Answer", enumerateAnswers: "enumerateQ35AnswerCandidates", renderAnswer: "renderQ35Answer",
+      prompt: (p) => `달리기에 참여한 사람은 ${p.participants.join(", ")}입니다. 조건을 보고 ${p.queryRank}등으로 달리는 사람의 이름을 쓰세요.`
+    },
+    36: {
+      title: "줄서기 전체 인원의 최솟값과 최댓값", module: "HFQ36", generate: "generateQ36", validate: "validateQ36",
+      renderProblem: "renderQ36Problem", deriveAnswer: "deriveQ36Answer", enumerateAnswers: "enumerateQ36AnswerCandidates", renderAnswer: "renderQ36Answer",
+      prompt: (p) => `지민이는 앞에서 ${p.frontRank}번째, 지수는 뒤에서 ${p.backRank}번째이고 두 사람 사이에는 ${p.peopleBetween}명이 있습니다. 줄에 선 전체 사람 수의 최솟값과 최댓값을 구하세요.`
+    },
+    37: {
+      title: "원탁의 왼쪽 자리 찾기", module: "HFQ37", generate: "generateQ37", validate: "validateQ37",
+      renderProblem: "renderQ37Problem", deriveAnswer: "deriveQ37Answer", enumerateAnswers: "enumerateQ37AnswerCandidates", renderAnswer: "renderQ37Answer",
+      prompt: (p) => `원탁에 앉은 사람은 ${p.participants.join(", ")}입니다. 모두 가운데를 보고 있습니다. 그림의 화살표가 각 사람의 왼쪽 방향일 때 조건에 맞게 빈자리를 채우세요.`
+    },
+    38: {
+      title: "원형 배열에서 마주 보는 순서", module: "HFQ38", generate: "generateQ38", validate: "validateQ38",
+      renderProblem: "renderQ38Problem", deriveAnswer: "deriveQ38Answer", enumerateAnswers: "enumerateQ38AnswerCandidates", renderAnswer: "renderQ38Answer",
+      prompt: (p) => `지연이와 친구 ${p.participantCount-1}명이 같은 간격으로 둥글게 앉아 모두 가운데를 봅니다. 지연이의 오른쪽 ${p.rightOffset}번째 사람과 마주 보는 사람은 지연이의 왼쪽 몇 번째입니까?`
+    },
+    39: {
+      title: "논리표로 두 가지 짝 찾기", module: "HFQ39", generate: "generateQ39", validate: "validateQ39",
+      renderProblem: "renderQ39Problem", deriveAnswer: "deriveQ39Answer", enumerateAnswers: "enumerateQ39AnswerCandidates", renderAnswer: "renderQ39Answer",
+      prompt: (p) => `${p.entities.join(", ")}는 ${p.categories.join(", ")} 중 두 가지씩 골랐습니다. 표와 각 열의 사람 수를 보고 ${p.queryEntity}가 고른 두 가지를 쓰세요.`
+    },
+    40: {
+      title: "도형 안 숫자의 공통 규칙", module: "HFQ40", generate: "generateQ40", validate: "validateQ40",
+      renderProblem: "renderQ40Problem", deriveAnswer: "deriveQ40Answer", enumerateAnswers: "enumerateQ40AnswerCandidates", renderAnswer: "renderQ40Answer",
+      prompt: () => "세 바깥 수와 가운데 수 사이에 공통으로 쓰인 규칙을 찾아 ?에 알맞은 수를 쓰세요."
+    },
+    41: {
+      title: "버튼 도형 변화 규칙", module: "HFQ41", generate: "generateQ41", validate: "validateQ41",
+      renderProblem: "renderQ41Problem", deriveAnswer: "deriveQ41Answer", enumerateAnswers: "enumerateQ41AnswerCandidates", renderAnswer: "renderQ41Answer",
+      prompt: () => "보기에서 각 버튼이 바꾸는 규칙을 찾으세요. 시작 도형에 버튼을 왼쪽부터 차례로 눌렀을 때의 마지막 도형을 그리세요."
+    },
+    42: {
+      title: "이웃하지 않게 칸 칠하기", module: "HFQ42", generate: "generateQ42", validate: "validateQ42",
+      renderProblem: "renderQ42Problem", deriveAnswer: "deriveQ42Answer", enumerateAnswers: "enumerateQ42AnswerCandidates", renderAnswer: "renderQ42Answer",
+      prompt: (p) => `${p.cells.length}칸 중 ${p.fillCount}칸을 칠합니다. 칠한 두 칸이 한 변으로 이웃하지 않게 칠하는 방법은 모두 몇 가지입니까?`
+    },
+    43: {
+      title: "색칠하는 경우의 수", module: "HFQ43", generate: "generateQ43", validate: "validateQ43",
+      renderProblem: "renderQ43Problem", deriveAnswer: "deriveQ43Answer", enumerateAnswers: "enumerateQ43AnswerCandidates", renderAnswer: "renderQ43Answer",
+      prompt: (p) => `${p.palette.map((color) => color.name).join(", ")} 중 서로 다른 ${p.pickCount}색을 골라 빈칸을 색칠합니다. 돌리거나 뒤집어서 같아지는 것을 한 가지로 보면 모두 몇 가지입니까?`
+    },
+    44: {
+      title: "조건에 맞는 세 자리 수", module: "HFQ44", generate: "generateQ44", validate: "validateQ44",
+      renderProblem: "renderQ44Problem", deriveAnswer: "deriveQ44Answer", enumerateAnswers: "enumerateQ44AnswerCandidates", renderAnswer: "renderQ44Answer",
+      prompt: () => "조건을 모두 만족하는 세 자리 수를 빠짐없이 쓰세요."
+    },
+    45: {
+      title: "가장 가까운 길의 가짓수", module: "HFQ45", generate: "generateQ45", validate: "validateQ45",
+      renderProblem: "renderQ45Problem", deriveAnswer: "deriveQ45Answer", enumerateAnswers: "enumerateQ45AnswerCandidates", renderAnswer: "renderQ45Answer",
+      prompt: () => "출발점에서 도착점까지 선을 따라가는 가장 가까운 길은 모두 몇 가지입니까?"
+    },
+    46: {
+      title: "마지막 수에서 처음 수 찾기", module: "HFQ46", generate: "generateQ46", validate: "validateQ46",
+      renderProblem: "renderQ46Problem", deriveAnswer: "deriveQ46Answer", enumerateAnswers: "enumerateQ46AnswerCandidates", renderAnswer: "renderQ46Answer",
+      prompt: (p) => `처음에 사탕을 몇 개 가지고 있었습니다. 그림의 순서대로 남은 사탕의 반을 주거나 먹었더니 마지막에 ${p.finalCount}개가 남았습니다. 처음 사탕은 몇 개입니까?`
+    },
+    47: {
+      title: "구슬 수 변화 거꾸로 추적하기", module: "HFQ47", generate: "generateQ47", validate: "validateQ47",
+      renderProblem: "renderQ47Problem", deriveAnswer: "deriveQ47Answer", enumerateAnswers: "enumerateQ47AnswerCandidates", renderAnswer: "renderQ47Answer",
+      prompt: (p) => `빨강과 파랑 구슬은 모두 ${p.total}개이고 새로 넣거나 빼지 않았습니다. 표의 마지막에서 거꾸로 생각할 때, 처음 빨강 구슬은 몇 개입니까?`
+    },
+    48: {
+      title: "함께 일할 때 걸리는 시간", module: "HFQ48", generate: "generateQ48", validate: "validateQ48",
+      renderProblem: "renderQ48Problem", deriveAnswer: "deriveQ48Answer", enumerateAnswers: "enumerateQ48AnswerCandidates", renderAnswer: "renderQ48Answer",
+      prompt: (p) => `${p.names.map((name,i)=>`${name}가 혼자 하면 ${p.individualTimes[i]}일`).join(", ")} 걸리는 일을 모두 함께 하면 며칠 걸립니까?`
+    },
+    49: {
+      title: "한 마리 하루 기준 비례", module: "HFQ49", generate: "generateQ49", validate: "validateQ49",
+      renderProblem: "renderQ49Problem", deriveAnswer: "deriveQ49Answer", enumerateAnswers: "enumerateQ49AnswerCandidates", renderAnswer: "renderQ49Answer",
+      prompt: (p) => `${p.givenAnimals}마리가 ${p.givenDays}일 동안 도토리 ${p.givenNuts}개를 모읍니다. 같은 빠르기로 ${p.targetAnimals}마리가 ${p.targetNuts}개 이상 모으려면 온전한 날짜로 며칠이 필요합니까?`
+    },
+    50: {
+      title: "같은 전체 길이로 물건 길이 찾기", module: "HFQ50", generate: "generateQ50", validate: "validateQ50",
+      renderProblem: "renderQ50Problem", deriveAnswer: "deriveQ50Answer", enumerateAnswers: "enumerateQ50AnswerCandidates", renderAnswer: "renderQ50Answer",
+      prompt: (p) => `그림의 모든 줄은 양 끝 길이가 같습니다. 지우개 한 개가 ${p.unitLength}cm일 때 다른 물건 한 개의 길이를 각각 구하세요.`
+    },
+    51: {
+      title: "시계 종이 울리는 횟수", module: "HFQ51", generate: "generateQ51", validate: "validateQ51",
+      renderProblem: "renderQ51Problem", deriveAnswer: "deriveQ51Answer", enumerateAnswers: "enumerateQ51AnswerCandidates", renderAnswer: "renderQ51Answer",
+      prompt: (p) => `시계는 정각에 그 시각의 수만큼, 30분에 한 번 울립니다. ${((p.startHour-1)%12)+1}시부터 ${((p.endHour-1)%12)+1}시까지 ${p.spanHours}시간 동안 울리는 횟수를 구하세요. 시작 정각 종은 ${p.includeStart?'세고':'세지 않고'}, 끝 정각 종은 셉니다.`
+    },
+    52: {
+      title: "가장 가벼운 도형으로 무게 바꾸기", module: "HFQ52", generate: "generateQ52", validate: "validateQ52",
+      renderProblem: "renderQ52Problem", deriveAnswer: "deriveQ52Answer", enumerateAnswers: "enumerateQ52AnswerCandidates", renderAnswer: "renderQ52Answer",
+      prompt: () => "그림의 등호는 저울이 평형이라는 뜻입니다. 아래 도형 묶음과 무게가 같은 가장 가벼운 ○는 몇 개입니까?"
+    },
+    53: {
+      title: "가장 짧은 막대로 길이 바꾸기", module: "HFQ53", generate: "generateQ53", validate: "validateQ53",
+      renderProblem: "renderQ53Problem", deriveAnswer: "deriveQ53Answer", enumerateAnswers: "enumerateQ53AnswerCandidates", renderAnswer: "renderQ53Answer",
+      prompt: () => "그림에서 등호 양쪽의 전체 길이는 같습니다. 아래 색 막대 묶음과 같은 길이를 만들려면 가장 짧은 막대가 몇 개 필요합니까?"
+    },
+    54: {
+      title: "수열의 홀수 개수", module: "HFQ54", generate: "generateQ54", validate: "validateQ54",
+      renderProblem: "renderQ54Problem", deriveAnswer: "deriveQ54Answer", enumerateAnswers: "enumerateQ54AnswerCandidates", renderAnswer: "renderQ54Answer",
+      prompt: (p) => `${p.startA}, ${p.startB}에서 시작해 앞의 두 수를 더한 수를 다음에 씁니다. ${p.termCount}번째 수까지 홀수는 모두 몇 개입니까? 수를 끝까지 계산하지 말고 홀짝 패턴을 찾으세요.`
     }
   };
 
