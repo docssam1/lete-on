@@ -3,14 +3,25 @@
   "baseQuestionId": "q26",
   "variationId": "q26_var01",
   "subType": "matchstick_move",
-  "status": "rejected",
-  "rejection": {
-    "reason": "canonical_type_drift",
-    "decisionDate": "2026-08-20",
-    "action": "exclude_from_all_question_banks"
+  "status": "verified",
+  "source": {"problemImage": "./assets/svg/variations/q26_var01.svg"},
+  "contentBinding": {"canonicalSource": "./canonical/q26.json", "hfDataTypeId": 26},
+  "problem": {"prompt": "그림에는 성냥개비가 12개 있습니다. 성냥개비를 정확히 3개만 옮겨, 서로 변을 나누어 쓰지 않는 같은 크기의 정사각형 3개를 만드세요. 성냥개비를 버리거나 겹치면 안 됩니다."},
+  "machineReadable": {
+    "payloadType": "matchstick_move",
+    "grid": {"width": 4, "height": 3},
+    "initialEdges": ["0,0-0,1", "2,0-3,0", "3,0-3,1", "2,1-3,1", "2,0-2,1", "1,1-2,1", "2,1-2,2", "1,2-2,2", "1,1-1,2", "1,0-2,0", "3,0-4,0", "1,3-2,3"],
+    "moveRule": {"moveCount": 3, "discardForbidden": true, "overlapForbidden": true},
+    "targetRule": {"squareCount": 3, "equalSize": true, "sharedEdgesForbidden": true},
+    "solvingModel": {
+      "targetSquares": [[0, 0], [2, 0], [1, 1]],
+      "movedFrom": ["1,0-2,0", "3,0-4,0", "1,3-2,3"],
+      "movedTo": ["0,0-1,0", "1,0-1,1", "0,1-1,1"],
+      "validTargetCount": 1,
+      "expectedAnswer": "왼쪽 위의 빈 세 변을 채워 같은 크기의 정사각형 3개 만들기"
+    },
+    "expectedAnswer": "왼쪽 위의 빈 세 변을 채워 같은 크기의 정사각형 3개 만들기"
   },
-  "source": { "problemImage": "./assets/problems/q26_var01.png" },
-  "contentBinding": { "canonicalSource": "./canonical/q26.json", "hfDataTypeId": 26 },
-  "machineReadable": { "payloadType": "matchstick_move", "moveCount": 1, "targetEquationValue": 8, "expectedAnswer": 1 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 1 }
+  "answerValidation": {"answerType": "drawing_target", "expectedAnswer": "왼쪽 위의 빈 세 변을 채워 같은 크기의 정사각형 3개 만들기"},
+  "solutionHint": "그림에서 정사각형을 만들지 못하고 따로 뻗어 있는 성냥개비 3개를 찾습니다. 그 3개를 왼쪽 위의 위쪽, 오른쪽, 아래쪽 변으로 옮기면 서로 떨어진 같은 크기 정사각형이 3개 됩니다."
 }

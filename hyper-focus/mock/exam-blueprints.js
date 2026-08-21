@@ -4,20 +4,8 @@
   // 시험의 문항 수·순서·난이도는 생성기가 아니라 이 구성표가 소유한다.
   // 아래 세트는 q01~q09 생성기 연결을 점검하기 위한 검수용이며,
   // 정식 프리미어 모의고사 구성으로 승인된 것이 아니다.
-  const VARIATION_REVIEW_IDS = [
-    "q10_var01", "q10_var02", "q11_var01", "q11_var02", "q12_var01", "q12_var02",
-    "q13_var01", "q13_var02", "q14_var01", "q14_var02", "q15_var01", "q15_var02",
-    "q16_var01", "q16_var02", "q17_var01", "q17_var02", "q18_var01", "q18_var02",
-    "q19_var01", "q19_var02", "q20_var01", "q20_var02", "q21_var01", "q21_var02",
-    "q25_var01", "q25_var02", "q27_var01", "q27_var02", "q28_var01", "q28_var02",
-    "q29_var01", "q29_var02", "q30_var01", "q30_var02", "q31_var01", "q31_var02",
-    "q32_var01", "q32_var02", "q33_var01", "q33_var02", "q35_var01", "q35_var02", "q36_var01", "q36_var02",
-    "q37_var01", "q37_var02", "q38_var01", "q38_var02", "q39_var01", "q39_var02",
-    "q40_var01", "q40_var02", "q41_var01", "q41_var02", "q42_var01", "q42_var02",
-    "q43_var01", "q43_var02", "q45_var01", "q45_var02", "q46_var01", "q46_var02",
-    "q47_var01", "q47_var02", "q48_var01", "q48_var02", "q49_var01", "q49_var02",
-    "q50_var01", "q50_var02", "q51_var01", "q51_var02", "q52_var01", "q52_var02", "q53_var01", "q53_var02"
-  ];
+  const VARIATION_REVIEW_IDS = Array.from({ length: 45 }, (_, index) => index + 10)
+    .flatMap((typeId) => ["01", "02"].map((suffix) => `q${String(typeId).padStart(2, "0")}_var${suffix}`));
 
   const EXAMS = {
     "spatial-generator-review": {
@@ -53,7 +41,7 @@
       status: "review",
       title: "기존 유사문제 문제은행 검수 세트",
       subtitle: "q10~q54 중 뷰어 준비 완료 문제",
-      description: "기존 variation JSON 가운데 문제 문장·필요한 그림·정답·풀이가 모두 있는 76문제를 그대로 확인하는 검수용 세트입니다.",
+      description: "q10~q54의 문제 문장·필요한 그림·정답·풀이가 모두 있는 90문제를 그대로 확인하는 검수용 세트입니다.",
       durationMinutes: null,
       slots: VARIATION_REVIEW_IDS.map((variationId) => ({
         typeId: Number(variationId.slice(1, 3)),

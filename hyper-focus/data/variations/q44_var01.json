@@ -1,41 +1,21 @@
 {
- "schemaVersion": "hf-variation-problem-v1",
- "baseQuestionId": "q44",
- "variationId": "q44_var01",
- "subType": "three_digit_conditions",
- "status": "draft",
- "source": {
-  "problemImage": "./assets/problems/q44_var01.png"
- },
- "contentBinding": {
-  "canonicalSource": "./canonical/q44.json",
-  "hfDataTypeId": 44
- },
- "machineReadable": {
-  "payloadType": "three_digit_conditions",
-  "conditions": [
-   "sum_12",
-   "contains_zero",
-   "hundreds_lt_ones"
-  ],
-  "conditionText": [
-   "각 자리 숫자의 합은 12입니다",
-   "숫자 0이 항상 들어갑니다",
-   "백의 자리 숫자는 일의 자리보다 작습니다"
-  ],
-  "expectedAnswer": [
-   "309",
-   "408",
-   "507"
-  ],
-  "answerType": "list"
- },
- "answerValidation": {
-  "answerType": "integer_list",
-  "expectedAnswer": [
-   "309",
-   "408",
-   "507"
-  ]
- }
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q44",
+  "variationId": "q44_var01",
+  "subType": "three_digit_conditions",
+  "status": "verified",
+  "source": {},
+  "presentation": {"mode": "text-only"},
+  "contentBinding": {"canonicalSource": "./canonical/q44.json", "hfDataTypeId": 44},
+  "problem": {"prompt": "다음 조건을 모두 만족하는 세 자리 수를 빠짐없이 쓰세요. ① 숫자 0이 들어갑니다. ② 각 자리 숫자의 합은 12입니다. ③ 백의 자리 숫자는 일의 자리 숫자보다 작습니다."},
+  "machineReadable": {
+    "payloadType": "three_digit_conditions",
+    "digitSum": 12,
+    "mustContainDigit": 0,
+    "relation": "hundreds_lt_ones",
+    "solvingModel": {"validNumbers": ["309", "408", "507"], "validNumberCount": 3, "expectedAnswer": ["309", "408", "507"]},
+    "expectedAnswer": ["309", "408", "507"]
+  },
+  "answerValidation": {"answerType": "list", "expectedAnswer": ["309", "408", "507"]},
+  "solutionHint": "0은 백의 자리에 올 수 없고 일의 자리에 오면 백의 자리가 더 작을 수 없습니다. 따라서 0을 십의 자리에 놓고 합이 12가 되는 309, 408, 507을 찾습니다."
 }
