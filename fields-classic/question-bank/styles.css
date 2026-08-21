@@ -265,6 +265,42 @@
 .geometry-answer-minmax{gap:18px}
 .geometry-answer-minmax svg{max-width:130px;max-height:120px}
 
+/* 교재 단원별은 시험지의 상대 난이도와 분리해, 원본 교재의 네 학습 단계를 쓴다. */
+.curriculum-stage-choices{grid-template-columns:repeat(4,minmax(0,1fr))}
+.curriculum-stage-choices button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0}
+.curriculum-stage-choices button strong{font-size:11px}
+.curriculum-stage-choices button span{color:var(--muted);font-size:7px;white-space:nowrap}
+.curriculum-stage-choices button.active span{color:#2783b2}
+.curriculum-stage-map{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:7px 10px 10px;border:1px solid #dce6eb;background:#fff}
+.curriculum-stage-map>div{min-width:0;padding:7px 8px;border-right:1px solid #e7edef}
+.curriculum-stage-map>div:last-child{border-right:0}
+.curriculum-stage-map strong{display:block;margin-bottom:3px;font-size:8px}
+.curriculum-stage-map span{display:block;color:#617888;font-size:7px;font-weight:700;line-height:1.45;word-break:keep-all}
+.curriculum-stage-map .concept{border-top:3px solid #2d9b78}
+.curriculum-stage-map .type{border-top:3px solid #319bc9}
+.curriculum-stage-map .practice{border-top:3px solid #d7a72d}
+.curriculum-stage-map .advanced{border-top:3px solid #d96657}
+.study-stage-banner{display:flex;align-items:center;gap:7px;margin-top:7px;padding:6px 8px;border-left:3px solid #319bc9;background:#f0f8fb;color:#436374}
+.study-stage-banner strong{flex:0 0 auto;color:#176d94;font-size:9px}
+.study-stage-banner span{font-size:7.5px;font-weight:800;line-height:1.45}
+.study-stage-banner.concept{border-left-color:#2d9b78;background:#eef8f4}.study-stage-banner.concept strong{color:#23775e}
+.study-stage-banner.practice{border-left-color:#d7a72d;background:#fff9e8}.study-stage-banner.practice strong{color:#967116}
+.study-stage-banner.advanced{border-left-color:#d96657;background:#fff2ef}.study-stage-banner.advanced strong{color:#ae4337}
+.concept-guide{display:flex;align-items:flex-start;gap:7px;margin-top:8px;padding:8px 9px;border:1px solid #cfe4da;background:#f5fbf8;color:#395e50}
+.concept-guide strong{flex:0 0 auto;font-size:8px}
+.concept-guide span{font-size:8px;font-weight:800;line-height:1.55;word-break:keep-all}
+.type-preview .study-stage-banner{margin:8px 0 0}
+.type-preview .concept-guide{margin:8px 0 0}
+@media(max-width:700px){
+  .curriculum-stage-map{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .curriculum-stage-map>div:nth-child(2){border-right:0}
+  .curriculum-stage-map>div:nth-child(-n+2){border-bottom:1px solid #e7edef}
+  .study-stage-banner{align-items:flex-start}
+}
+@media(max-width:420px){
+  .curriculum-stage-choices{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
 /* 유형 행에 마우스를 올리면 실제 생성기로 만든 한 문항을 보여 준다. */
 [data-preview-type]{transition:background-color .12s ease}
 [data-preview-type]:hover{background:#f1f9fd}

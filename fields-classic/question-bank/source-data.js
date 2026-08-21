@@ -444,7 +444,130 @@ export const FINAL_EXAM_TYPES = [
   }
 ];
 
-const unit = (label, typeIds) => ({ label, typeIds });
+const unit = (label, typeIds, options = {}) => ({ label, typeIds, ...options });
+
+const problemRange = (section, group, to) => ({ section, group, from: 1, to });
+const stagedUnit = (label, typeIds, activities, checks, advanced, practice) => unit(label, typeIds, {
+  // 분류 기준은 페이지가 아니라 권-단원-섹션-문항번호다. 페이지는 판본마다
+  // 달라질 수 있으므로 원본 감사 문서에서만 보조 위치로 기록한다.
+  studyRefs: {
+    concept: activities.map((to, index) => problemRange("activity", index + 1, to)),
+    type: checks.map((to, index) => problemRange("check", index + 1, to)),
+    practice: [problemRange("practice", 1, practice)],
+    advanced: [problemRange("advanced", 1, advanced)]
+  }
+});
+
+// 교재 안의 단계는 시험 문항을 기준으로 한 쉬움·같게·어렵게와 다른 축이다.
+// 개념과 유형은 같은 수 범위를 쓰더라도, 개념에는 활동·예시 발판을 제공하고
+// 유형에서는 그 발판 없이 직접 적용하게 한다. 연습과 심화는 구조 난이도를 높인다.
+export const TEXTBOOK_STAGES = Object.freeze([
+  { id: "concept", label: "개념", sourceLabel: "활동·예시", difficulty: 1, description: "핵심 원리와 풀이 발판을 보고 시작합니다." },
+  { id: "type", label: "유형", sourceLabel: "더클 확인", difficulty: 1, description: "같은 원리를 발판 없이 직접 적용합니다." },
+  { id: "practice", label: "연습", sourceLabel: "더클 연습", difficulty: 2, description: "수와 표현이 달라진 누적 문제를 풉니다." },
+  { id: "advanced", label: "심화", sourceLabel: "더클 도전", difficulty: 3, description: "조건과 풀이 단계를 결합한 문제를 풉니다." }
+]);
+
+const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
+  "shape-transform": "가운데 점이나 거울의 위치를 표시하고, 도형의 꼭짓점을 하나씩 옮겨 그립니다.",
+  "fold-hole-count": "접은 횟수마다 겹친 장수가 어떻게 늘어나는지 먼저 셉니다.",
+  "fold-diagonal-hole-count": "대각선 접은 선을 기준으로 구멍의 짝이 생기는 위치를 찾습니다.",
+  "fold-diagonal-unfold": "접은 선을 기준으로 잘린 선을 같은 거리의 반대쪽에 옮겨 그립니다.",
+  "fold-cut-piece-count": "접힌 종이의 겹 수와 자르는 선이 지나가는 횟수를 나누어 생각합니다.",
+  "fold-number-remaining-sum": "접은 선을 기준으로 잘려 나갈 칸을 먼저 찾고, 남은 수만 더합니다.",
+  "fold-number-cut-sum-textbook": "접은 선을 기준으로 서로 겹치는 칸을 찾고, 잘린 칸의 수만 더합니다.",
+  "fold-diagonal-number-sum": "대각선 양쪽에서 서로 마주 겹치는 번호를 짝지어 봅니다.",
+  "fold-target-sum-coloring": "접었을 때 겹치는 번호의 합을 먼저 구한 뒤 목표 합과 같은 칸을 고릅니다.",
+  "fold-stack-find": "접는 순서대로 종이 조각의 위아래가 어떻게 바뀌는지 한 단계씩 표시합니다.",
+  "fold-stack-order": "마지막 접기부터 거꾸로 펼쳐 각 조각의 위아래 순서를 찾습니다.",
+  "fold-punch-shape-count": "접힌 겹 수와 펀치 모양이 펼쳐질 때 생기는 짝을 함께 셉니다.",
+  "fold-cut-shape-choice": "접은 선을 기준으로 잘린 모양을 뒤집어 붙여 펼친 모양을 만듭니다.",
+  "magic-square": "가로·세로·대각선의 합이 같다는 조건으로 한 줄의 합부터 찾습니다.",
+  "gakuro": "삼각형 옆에 적힌 합을 보며 한 줄에 같은 수가 겹치지 않게 채웁니다.",
+  "grid-number-placement": "위·아래·왼쪽·오른쪽 조건을 하나씩 표시하고 확실한 자리부터 채웁니다.",
+  "person-item-logic": "사람과 조건을 표에 적고, 될 수 없는 곳을 지운 뒤 남은 한 곳을 찾습니다.",
+  "equal-partition-two": "전체를 같은 두 묶음으로 나누어 두 칸에 같은 수를 씁니다.",
+  "equal-partition-four": "먼저 반으로 나누고, 두 묶음을 다시 반으로 나누면 네 묶음이 같습니다.",
+  "equal-partition-three": "같은 수를 세 번 모아 전체가 되는 수를 찾습니다.",
+  "shape-sum-table": "같은 모양은 같은 수입니다. 같은 모양만 있는 줄부터 값을 찾습니다.",
+  "equalize-transfer": "준 뒤와 받은 뒤의 수를 적고, 두 수가 같아지는지 확인합니다.",
+  "total-difference": "더 많은 쪽의 차이를 먼저 떼어 놓고, 남은 수를 똑같이 나눕니다.",
+  "reverse-transfer-total": "마지막 수에서 거꾸로 생각해, 준 만큼 더하고 받은 만큼 뺍니다.",
+  "balance-order-chain": "아래로 내려간 쪽이 더 무겁습니다. 저울마다 비교한 결과를 한 줄로 잇습니다.",
+  "balance-given-unit-weight": "수평인 양쪽의 무게는 같습니다. 아는 물건의 무게부터 바꾸어 적습니다.",
+  "distinct-shape-value-equation": "같은 모양에는 같은 수, 다른 모양에는 다른 수가 들어갑니다. 같은 모양만 있는 식부터 풉니다.",
+  "constant-step-number-sequence": "이웃한 두 수의 차이가 늘 같은지 살펴봅니다.",
+  "interleaved-number-sequence": "한 칸씩 건너뛴 수끼리 따로 읽어 두세 가지 규칙을 찾습니다.",
+  "previous-two-sum-sequence": "앞의 두 수를 더해 다음 수를 만듭니다.",
+  "repeating-number-sequence": "처음부터 다시 되풀이되는 가장 짧은 수 묶음을 찾습니다.",
+  "repeating-symbol-sequence": "모양, 색, 개수를 따로 살펴 되풀이되는 가장 짧은 묶음을 찾습니다.",
+  "progressive-number-table": "각 단계에서 가로와 세로로 무엇이 하나씩 늘어나는지 비교합니다.",
+  "matchstick-shared-polygon-growth": "첫 도형을 센 뒤, 새 도형 하나를 붙일 때 늘어나는 성냥개비만 더합니다.",
+  "triangular-stone-growth": "각 단계에서 새로 늘어난 바둑돌의 줄과 색을 따로 셉니다.",
+  "square-border-stone-growth": "안쪽과 테두리를 나누어 흰돌과 검은돌을 각각 셉니다.",
+  "staircase-tile-growth": "첫째 줄부터 계단의 각 줄에 놓인 타일 수를 차례로 더합니다.",
+  "repeated-fold-cut-count": "한 번 접을 때 겹 수가 어떻게 늘어나는지 먼저 적습니다.",
+  "colored-triangle-growth": "전체 삼각형 수와 두 색의 배치 규칙을 나누어 셉니다.",
+  "nested-circle-count": "작은 원부터 큰 원까지 크기별로 빠짐없이 셉니다.",
+  "cube-square-layer-growth": "위층부터 각 정사각형 층의 쌓기나무 수를 세어 모두 더합니다.",
+  "growing-segment-count": "한 단계 커질 때 새로 생기는 선분 수를 먼저 찾습니다.",
+  "fold-punch-doubling": "한 번 펼칠 때 구멍이 접은 선을 기준으로 같은 위치에 하나 더 생깁니다.",
+  "four-number-center-rule": "윗줄과 아랫줄, 왼쪽과 오른쪽의 계산이 같은지 비교합니다.",
+  "number-grid-row-rule": "답이 보이는 줄에서 계산 순서를 찾고, 같은 순서를 빈 줄에 씁니다.",
+  "two-digit-compose-rule": "두 수로 만든 두 자리 수를 먼저 적은 뒤 약속된 계산을 합니다.",
+  "sudoku-three-row-column": "한 줄에 1, 2, 3이 한 번씩만 들어가도록 빠진 수를 찾습니다.",
+  "sudoku-three-region": "가로·세로와 굵은 칸 안에 1, 2, 3이 한 번씩 들어갑니다.",
+  "sudoku-four-square-region": "가로·세로와 2×2 굵은 칸 안에 1부터 4까지 한 번씩 들어갑니다.",
+  "sudoku-four-irregular-region": "굵은 칸 모양이 네모가 아니어도 같은 영역 안에 1부터 4까지 한 번씩 들어갑니다.",
+  "unit-area-fraction": "작은 정사각형 한 칸을 단위넓이 1로 놓고, 전체 칸과 색칠한 칸을 각각 셉니다.",
+  "unit-length-multiple": "기준 막대 한 개의 길이를 정하고 다른 막대가 몇 개만큼인지 셉니다.",
+  "rod-length-ratio": "가장 짧은 막대를 한 묶음으로 보고 각 막대가 몇 묶음인지 표시합니다.",
+  "cryptarithm": "일의 자리부터 계산하고, 받아올림이나 받아내림을 다음 자리에 표시합니다.",
+  "magic-card": "각 카드에 나타난 수의 공통점을 찾아 선택한 카드가 뜻하는 수를 좁혀 갑니다.",
+  "congruent-partition": "전체 칸 수를 같은 조각 수로 나누고, 각 조각의 모양과 넓이가 같은지 확인합니다.",
+  "cube-top-number-grid": "위에서 본 각 칸의 수는 그 자리에 쌓인 층수입니다. 칸의 수를 더해 전체를 구합니다.",
+  "cube-count-solid": "위에서 보이는 꼭대기마다 아래에 받치는 쌓기나무가 있는지 층별로 셉니다.",
+  "cube-three-views": "위에서 본 자리와 앞·옆에서 본 가장 높은 층을 함께 맞춥니다.",
+  "cube-missing-view": "두 방향에서 보이는 높이를 위에서 본 자리에 표시한 뒤 남은 방향을 읽습니다.",
+  "cube-pattern-sequence": "각 단계의 층별 개수를 적고, 단계가 하나 늘 때 추가되는 수를 찾습니다.",
+  "cube-pattern-stage-from-count": "단계별 전체 개수를 차례로 적어 주어진 개수와 같은 단계를 찾습니다.",
+  "cube-pattern-next-increase": "현재 단계와 다음 단계의 층별 차이를 세어 새로 필요한 개수만 더합니다.",
+  "balance-scale": "수평이면 양쪽 무게가 같고, 아래로 내려간 쪽이 더 무겁습니다.",
+  "height-order": "두 사람씩 비교한 결과를 화살표나 한 줄 순서로 이어 봅니다.",
+  "number-table-rule": "가로로 갈 때와 세로로 갈 때 수가 얼마씩 바뀌는지 따로 찾습니다.",
+  "calendar-weekday-sum": "같은 요일은 날짜가 7씩 차이 납니다. 필요한 날짜만 차례로 적습니다.",
+  "shortest-path": "출발점에서 갈 수 있는 길의 수를 가까운 점부터 차례로 더해 표시합니다.",
+  "three-digit-card-count": "백·십·일의 자리에 올 수 있는 카드를 조건별로 나누어 빠짐없이 적습니다.",
+  "multiplication-matrix": "가로와 세로의 두 수를 곱해 만나는 칸의 수를 만듭니다.",
+  "growing-shape-count": "각 단계에서 새로 붙는 구슬의 수를 찾고 앞 단계의 전체에 더합니다.",
+  "number-line-distance": "두 점 사이의 같은 간격 수를 세고 한 간격의 길이만큼 더합니다.",
+  "ratio-distribution": "각 대상이 차지하는 같은 크기 묶음 수를 먼저 세고 전체를 묶음 수로 나눕니다.",
+  "rectilinear-perimeter": "가로 길이와 세로 길이를 방향별로 모아 도형의 바깥 둘레만 더합니다.",
+  "polygon-stone-rearrangement": "전체 바둑돌 수는 그대로 두고 새 도형의 한 변에 놓일 수를 찾아 배열합니다.",
+  "consecutive-number-addition": "가운데 수를 기준으로 앞뒤 수를 같은 거리만큼 작고 크게 적습니다.",
+  "odd-even-sum-difference": "홀수와 짝수를 차례로 짝지어 각 짝에서 생기는 차이를 셉니다.",
+  "argument-logic": "문장의 조건을 한 줄씩 확인하고, 어긋나는 경우를 지워 남는 답을 찾습니다.",
+  "repeat-pattern": "모양과 색을 따로 읽어 가장 짧게 되풀이되는 묶음을 찾습니다.",
+  "tree-planting": "처음과 끝에 나무가 있는지 확인한 뒤 나무 사이의 간격 수를 셉니다.",
+  "palindrome": "앞에서 읽은 숫자와 뒤에서 읽은 숫자가 같은 자리끼리 짝을 이룹니다.",
+  "venn-count": "두 조건에 모두 맞는 수는 한 번만 세도록 겹친 곳에 먼저 적습니다.",
+  "reverse-thinking": "마지막에 한 일을 반대 계산으로 바꾸어 뒤에서부터 거꾸로 풉니다.",
+  "cube-hidden-count-walled": "벽과 바닥에 가려진 자리도 위에 놓인 쌓기나무를 받치도록 채워 셉니다.",
+  "cube-hidden-count": "보이는 꼭대기 아래와 뒤쪽에 반드시 있어야 하는 쌓기나무만 층별로 셉니다.",
+  "cube-fill-rectangular-box": "가로 칸 수, 세로 칸 수, 층수를 차례로 묶어 상자 전체 칸을 셉니다.",
+  "cube-fill-box": "한 층의 칸 수를 세고 같은 층이 몇 층인지 확인해 전체를 구합니다.",
+  "cube-three-view-minmax": "세 방향의 가장 높은 층은 지키면서 겹쳐 놓을 수 있는 높이를 비교합니다.",
+  "cube-painted-faces": "겉에서 보이는 윗면·앞면·옆면을 방향별로 나누어 중복 없이 셉니다.",
+  "cube-painted-cube-count": "모서리·테두리·가운데에 있는 쌓기나무가 각각 몇 면 칠해지는지 나눕니다.",
+  "cube-black-white-alternating": "한 칸 옆으로 갈 때마다 색이 바뀌도록 층별로 흰색과 검은색을 셉니다.",
+  "cube-tunnel": "구멍마다 빠지는 칸을 표시하고 여러 구멍이 겹치는 칸은 한 번만 뺍니다.",
+  "chained-number-condition": "첫 조건으로 가능한 수를 줄인 뒤, 남은 수에 다음 조건을 차례로 적용합니다.",
+  "catch-up": "한 번 움직일 때 줄어드는 거리 차를 찾고, 처음 거리만큼 몇 번 필요한지 셉니다.",
+  "two-digit-condition": "십의 자리와 일의 자리 조건을 따로 적고 두 조건을 모두 만족하는 수만 남깁니다.",
+  "number-baseball": "자리와 숫자가 모두 맞는 것과 숫자만 맞는 것을 나누어 후보를 지웁니다."
+});
+
+export const textbookGuideForType = (id) => TEXTBOOK_CONCEPT_GUIDES[id] || "문제에 보이는 관계를 한 단계씩 표시한 뒤 같은 규칙을 적용합니다.";
 
 const CURRICULUM_TEST_FILES = {
   "book-01": "N30_1과정-1_테스트.pptx",
@@ -465,24 +588,66 @@ const CURRICULUM_TEST_PAGE_COUNTS = {
 };
 
 export const CURRICULUM = [
-  { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [unit("도형 움직이기",["shape-transform"]),unit("색종이 접기",["fold-hole-count","fold-diagonal-hole-count","fold-diagonal-unfold","fold-cut-piece-count","fold-number-remaining-sum","fold-number-cut-sum-textbook","fold-diagonal-number-sum","fold-target-sum-coloring","fold-stack-find","fold-stack-order","fold-punch-shape-count","fold-cut-shape-choice"]),unit("마방진과 가쿠로 퍼즐",["magic-square","gakuro"]),unit("수 추리와 논리 추리",["grid-number-placement","person-item-logic"])] },
-  {
-    id: "book-02", label: "2권", title: "규칙찾기와 매트릭스",
-    units: [
-      unit("매트릭스와 주고받기", ["equal-partition-two","equal-partition-four","equal-partition-three","shape-sum-table","equalize-transfer","total-difference","reverse-transfer-total"]),
-      unit("양팔저울", ["balance-order-chain","balance-given-unit-weight","distinct-shape-value-equation"]),
-      unit("규칙찾기와 수열", ["constant-step-number-sequence","interleaved-number-sequence","previous-two-sum-sequence","repeating-number-sequence","repeating-symbol-sequence","progressive-number-table","matchstick-shared-polygon-growth","triangular-stone-growth","square-border-stone-growth","staircase-tile-growth","repeated-fold-cut-count","colored-triangle-growth","nested-circle-count","cube-square-layer-growth","growing-segment-count","fold-punch-doubling"]),
-      unit("약속과 스도쿠", ["four-number-center-rule","number-grid-row-rule","two-digit-compose-rule","sudoku-three-row-column","sudoku-three-region","sudoku-four-square-region","sudoku-four-irregular-region"])
-    ]
-  },
-  { id: "book-03", label: "3권", title: "단위넓이와 복면산", units: [unit("단위넓이와 분수",["unit-area-fraction"]),unit("단위길이와 배수",["unit-length-multiple","rod-length-ratio"]),unit("복면산",["cryptarithm"]),unit("마법카드와 마방진",["magic-card","magic-square"])] },
-  { id: "book-04", label: "4권", title: "도형분할과 쌓기나무", units: [unit("도형 분할과 움직이기",["congruent-partition","shape-transform"]),unit("색종이 접기와 쌓기나무",["fold-hole-count","cube-top-number-grid","cube-count-solid","cube-three-views","cube-missing-view","cube-pattern-sequence","cube-pattern-stage-from-count","cube-pattern-next-increase"]),unit("양팔저울과 비교하기",["balance-scale","height-order"]),unit("논리추리와 자리배치",["person-item-logic","grid-number-placement"])] },
-  { id: "book-05", label: "5권", title: "곱셈매트릭스와 삼각수", units: [unit("수 배열표와 달력",["number-table-rule","calendar-weekday-sum"]),unit("최단거리와 숫자 카드",["shortest-path","three-digit-card-count"]),unit("곱셈 매트릭스",["multiplication-matrix"]),unit("삼각수와 사각수",["growing-shape-count"])] },
-  { id: "book-06", label: "6권", title: "도형의 둘레와 연속수", units: [unit("수직선의 분할과 비",["number-line-distance","ratio-distribution"]),unit("도형의 둘레",["rectilinear-perimeter","polygon-stone-rearrangement"]),unit("연속수의 합",["consecutive-number-addition","odd-even-sum-difference"]),unit("수와 숫자의 개수",["three-digit-card-count"])] },
-  { id: "book-07", label: "7권", title: "달력과 우기기", units: [unit("달력과 시계",["calendar-weekday-sum"]),unit("규칙 찾기와 우기기",["argument-logic","repeat-pattern"]),unit("가로수 심기",["tree-planting"]),unit("팔린드롬과 벤다이어그램",["palindrome","venn-count"])] },
-  { id: "book-08", label: "8권", title: "매트릭스와 복면산", units: [unit("묶음수와 매트릭스",["shape-sum-table"]),unit("복면산",["cryptarithm"]),unit("합차와 배수문제",["total-difference","unit-length-multiple"]),unit("거꾸로 생각하기",["reverse-thinking"])] },
-  { id: "book-09", label: "9권", title: "도형분할과 논리", units: [unit("도형의 분할과 넓이",["congruent-partition","unit-area-fraction"]),unit("쌓기나무의 개수",["cube-count-solid","cube-hidden-count-walled","cube-hidden-count","cube-fill-rectangular-box","cube-fill-box","cube-three-view-minmax","cube-painted-faces","cube-painted-cube-count","cube-black-white-alternating","cube-tunnel"]),unit("마방진",["magic-square"]),unit("논리 추리",["person-item-logic","chained-number-condition"])] },
-  { id: "book-10", label: "10권", title: "연속수와 따라잡기", units: [unit("연속수의 합",["consecutive-number-addition","odd-even-sum-difference"]),unit("따라잡기",["catch-up"]),unit("조건에 맞는 수",["two-digit-condition","chained-number-condition"]),unit("숫자 야구게임",["number-baseball"])] }
+  { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [
+    stagedUnit("도형 움직이기", ["shape-transform"], [6,4], [5,4], 4, 18),
+    stagedUnit("색종이 접기", ["fold-hole-count","fold-diagonal-hole-count","fold-diagonal-unfold","fold-cut-piece-count","fold-number-remaining-sum","fold-number-cut-sum-textbook","fold-diagonal-number-sum","fold-target-sum-coloring","fold-stack-find","fold-stack-order","fold-punch-shape-count","fold-cut-shape-choice"], [3,4], [3,6], 4, 20),
+    stagedUnit("마방진과 가쿠로 퍼즐", ["magic-square","gakuro"], [5,4], [3,4], 4, 17),
+    stagedUnit("수 추리와 논리 추리", ["grid-number-placement","person-item-logic"], [5,4], [4,4], 4, 24)
+  ] },
+  { id: "book-02", label: "2권", title: "규칙찾기와 매트릭스", units: [
+    stagedUnit("매트릭스와 주고받기", ["equal-partition-two","equal-partition-four","equal-partition-three","shape-sum-table","equalize-transfer","total-difference","reverse-transfer-total"], [5,5], [6,4], 4, 21),
+    stagedUnit("양팔저울", ["balance-order-chain","balance-given-unit-weight","distinct-shape-value-equation"], [4,4], [4,4], 4, 18),
+    stagedUnit("규칙찾기와 수열", ["constant-step-number-sequence","interleaved-number-sequence","previous-two-sum-sequence","repeating-number-sequence","repeating-symbol-sequence","progressive-number-table","matchstick-shared-polygon-growth","triangular-stone-growth","square-border-stone-growth","staircase-tile-growth","repeated-fold-cut-count","colored-triangle-growth","nested-circle-count","cube-square-layer-growth","growing-segment-count","fold-punch-doubling"], [4,4], [4,3], 4, 17),
+    stagedUnit("약속과 스도쿠", ["four-number-center-rule","number-grid-row-rule","two-digit-compose-rule","sudoku-three-row-column","sudoku-three-region","sudoku-four-square-region","sudoku-four-irregular-region"], [6,3], [4,4], 4, 14)
+  ] },
+  { id: "book-03", label: "3권", title: "단위넓이와 복면산", units: [
+    stagedUnit("단위넓이와 분수", ["unit-area-fraction"], [5,4], [4,4], 4, 20),
+    stagedUnit("단위길이와 배수", ["unit-length-multiple","rod-length-ratio"], [4,4], [2,2], 4, 16),
+    stagedUnit("복면산", ["cryptarithm"], [4,4], [4,4], 4, 17),
+    stagedUnit("마법카드와 마방진", ["magic-card","magic-square"], [3,3], [3,4], 4, 19)
+  ] },
+  { id: "book-04", label: "4권", title: "도형분할과 쌓기나무", units: [
+    stagedUnit("도형 분할과 움직이기", ["congruent-partition","shape-transform"], [4,6], [4,4], 4, 20),
+    stagedUnit("색종이 접기와 쌓기나무", ["fold-hole-count","cube-top-number-grid","cube-count-solid","cube-three-views","cube-missing-view","cube-pattern-sequence","cube-pattern-stage-from-count","cube-pattern-next-increase"], [4,3], [4,3], 4, 17),
+    stagedUnit("양팔저울과 비교하기", ["balance-scale","height-order"], [4,4], [4,2], 4, 16),
+    stagedUnit("논리추리와 자리배치", ["person-item-logic","grid-number-placement"], [4,6], [4,6], 4, 18)
+  ] },
+  { id: "book-05", label: "5권", title: "곱셈매트릭스와 삼각수", units: [
+    stagedUnit("수 배열표와 달력", ["number-table-rule","calendar-weekday-sum"], [4,4], [2,4], 4, 16),
+    stagedUnit("최단거리와 숫자 카드", ["shortest-path","three-digit-card-count"], [6,6], [4,6], 4, 21),
+    stagedUnit("곱셈 매트릭스", ["multiplication-matrix"], [4,5], [3,4], 5, 15),
+    stagedUnit("삼각수와 사각수", ["growing-shape-count"], [6,2], [5,3], 5, 16)
+  ] },
+  { id: "book-06", label: "6권", title: "도형의 둘레와 연속수", units: [
+    stagedUnit("수직선의 분할과 비", ["number-line-distance","ratio-distribution"], [5,6], [2,6], 4, 17),
+    stagedUnit("도형의 둘레", ["rectilinear-perimeter","polygon-stone-rearrangement"], [6,5], [4,4], 5, 20),
+    stagedUnit("연속수의 합", ["consecutive-number-addition","odd-even-sum-difference"], [5,4], [4,3], 6, 19),
+    stagedUnit("수와 숫자의 개수", ["three-digit-card-count"], [4,6], [2,4], 4, 14)
+  ] },
+  { id: "book-07", label: "7권", title: "달력과 우기기", units: [
+    stagedUnit("달력과 시계", ["calendar-weekday-sum"], [6,4], [3,4], 5, 16),
+    stagedUnit("규칙 찾기와 우기기", ["argument-logic","repeat-pattern"], [4,6,6], [2,4,3], 6, 21),
+    stagedUnit("가로수 심기", ["tree-planting"], [4,7], [6,4], 4, 18),
+    stagedUnit("팔린드롬과 벤다이어그램", ["palindrome","venn-count"], [5,5], [7,4], 6, 20)
+  ] },
+  { id: "book-08", label: "8권", title: "매트릭스와 복면산", units: [
+    stagedUnit("묶음수와 매트릭스", ["shape-sum-table"], [5,4], [4,3], 6, 19),
+    stagedUnit("복면산", ["cryptarithm"], [4,6], [4,4], 6, 18),
+    stagedUnit("합차와 배수문제", ["total-difference","unit-length-multiple"], [6,4], [4,4], 6, 18),
+    stagedUnit("거꾸로 생각하기", ["reverse-thinking"], [4,4], [4,4], 4, 19)
+  ] },
+  { id: "book-09", label: "9권", title: "도형분할과 논리", units: [
+    stagedUnit("도형의 분할과 넓이", ["congruent-partition","unit-area-fraction"], [7,6], [5,4], 6, 22),
+    stagedUnit("쌓기나무의 개수", ["cube-count-solid","cube-hidden-count-walled","cube-hidden-count","cube-fill-rectangular-box","cube-fill-box","cube-three-view-minmax","cube-painted-faces","cube-painted-cube-count","cube-black-white-alternating","cube-tunnel"], [5,2], [5,5], 5, 14),
+    stagedUnit("마방진", ["magic-square"], [4,4], [2,3], 5, 15),
+    stagedUnit("논리 추리", ["person-item-logic","chained-number-condition"], [6,4], [4,5], 5, 20)
+  ] },
+  { id: "book-10", label: "10권", title: "연속수와 따라잡기", units: [
+    stagedUnit("연속수의 합", ["consecutive-number-addition","odd-even-sum-difference"], [3,6,8], [4,4,4], 6, 26),
+    stagedUnit("따라잡기", ["catch-up"], [4,4], [4,4], 5, 17),
+    stagedUnit("조건에 맞는 수", ["two-digit-condition","chained-number-condition"], [8,3], [4,4], 5, 16),
+    stagedUnit("숫자 야구게임", ["number-baseball"], [4,6], [4,4], 5, 20)
+  ] }
 ].map((book, index) => ({
   ...book,
   source: {

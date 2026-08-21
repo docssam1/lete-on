@@ -1,9 +1,9 @@
 import "../../geometry/worksheet/generators.js";
 import { GENERATORS } from "./generators.js";
-import { CURRICULUM, typeById } from "./source-data.js";
+import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js";
 
 const iterations = Number.parseInt(process.argv[2] || "1000", 10);
-const difficulties = [1, 2, 3];
+const stages = TEXTBOOK_STAGES;
 const book = CURRICULUM.find((item) => item.id === "book-02");
 const typeIds = book.units.flatMap((unit) => unit.typeIds);
 const types = typeIds.map(typeById);
@@ -303,10 +303,23 @@ assert(new Set(typeIds).size === typeIds.length, "book-02", 0, "duplicate type i
 assert(types.every(Boolean), "book-02", 0, "unknown type id");
 assert(types.every((type) => type.textbookSource), "book-02", 0, "textbook source missing");
 assert(types.every((type) => typeof GENERATORS[type.generator] === "function"), "book-02", 0, "generator missing");
+assert(book.units.every((item) => item.studyRefs), "book-02", 0, "study reference missing");
+for (const item of book.units) {
+  assert(Object.keys(item.studyRefs).sort().join(",") === stages.map((stage) => stage.id).sort().join(","), "book-02", 0, `${item.label}: stage mismatch`);
+  assert(item.studyRefs.concept.length === item.studyRefs.type.length, "book-02", 0, `${item.label}: activity/check group mismatch`);
+  for (const references of Object.values(item.studyRefs)) {
+    for (const reference of references) {
+      assert(reference.from === 1 && Number.isInteger(reference.to) && reference.to >= 1, "book-02", 0, `${item.label}: invalid problem range`);
+    }
+  }
+}
+const fallbackGuide = "문제에 보이는 관계를 한 단계씩 표시한 뒤 같은 규칙을 적용합니다.";
+assert(types.every((type) => textbookGuideForType(type.id) !== fallbackGuide), "book-02", 0, "explicit concept guide missing");
 
 let generated = 0;
 for (const type of types) {
-  for (const difficulty of difficulties) {
+  for (const stage of stages) {
+    const difficulty = stage.difficulty;
     const variants = new Set();
     for (let index = 0; index < iterations; index += 1) {
       let problem = null;
@@ -322,4 +335,4 @@ for (const type of types) {
   }
 }
 
-console.log(`BOOK02_AUDIT_OK types=${types.length} difficulties=${difficulties.length} iterations=${iterations} generated=${generated}`);
+console.log(`BOOK02_AUDIT_OK types=${types.length} stages=${stages.length} iterations=${iterations} generated=${generated}`);

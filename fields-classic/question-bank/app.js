@@ -1,4 +1,4 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260821b";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822a";
 import { GENERATORS } from "./generators.js?v=20260821b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 
@@ -14,11 +14,32 @@ const state = {
   selected: { exam: new Set(), curriculum: new Set(), type: new Set() },
   count: 20,
   difficulty: "actual",
+  curriculumStage: "type",
   order: "exam",
   includeSolution: true,
   watermark: true,
   questions: []
 };
+
+function activeTextbookStage() {
+  return TEXTBOOK_STAGES.find((item) => item.id === state.curriculumStage) || TEXTBOOK_STAGES[1];
+}
+
+function activeDifficulty() {
+  if (state.mode === "curriculum") return activeTextbookStage().difficulty;
+  return state.difficulty === "basic" ? 1 : state.difficulty === "advanced" ? 3 : 2;
+}
+
+function withProblemContext(problem, item, reference) {
+  const studyStage = state.mode === "curriculum" ? activeTextbookStage() : null;
+  return {
+    ...problem,
+    type: item,
+    reference,
+    studyStage,
+    conceptGuide: studyStage?.id === "concept" ? textbookGuideForType(item.id) : ""
+  };
+}
 
 function isReady(item) {
   // 진단 문제은행은 건드리지 않는다. 이 문제은행은 원본 1:1 대조(sourceMatched)
@@ -52,7 +73,7 @@ function typeStatus(item) {
 
 function typeSourceLabel(item) {
   if (hasVerifiedSource(item.id)) return "실제 출제 유형";
-  if (item.textbookSource) return `교재 대조 유형 · ${item.textbookSource}`;
+  if (item.textbookSource) return "교재 대조 유형 · 문제번호 색인 연결";
   if (item.bankApproved && item.worksheetSource) return `연계 문제은행 유형 · ${item.worksheetSource}`;
   return "원본 대조 유형";
 }
@@ -99,7 +120,8 @@ function ensureTypePreviewPanel() {
 }
 
 function previewProblem(item) {
-  const key = `${item.id}:${state.difficulty}`;
+  const levelKey = state.mode === "curriculum" ? `curriculum:${state.curriculumStage}` : `source:${state.difficulty}`;
+  const key = `${item.id}:${levelKey}`;
   if (!typePreviewCache.has(key)) {
     typePreviewCache.set(key, generatedProblem(item, 0, "유형 예시", `preview:${item.id}`, 0));
   }
@@ -132,7 +154,9 @@ function showTypePreview(anchor) {
   }
   const domain = DOMAINS.find((entry) => entry.id === item.domain);
   panel.innerHTML = `<div class="type-preview-head"><span>${domain.label} · ${item.middle}</span><strong>${item.label}</strong></div>
+    ${problem.studyStage ? `<div class="study-stage-banner ${problem.studyStage.id}"><strong>${problem.studyStage.label}</strong><span>${problem.studyStage.sourceLabel} · ${problem.studyStage.description}</span></div>` : ""}
     ${learningMapPreviewMarkup(item)}
+    ${problem.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${problem.conceptGuide}</span></div>` : ""}
     <p>${problem.prompt.replaceAll("\n", "<br>")}</p>
     ${problem.image ? `<img src="${problem.image}" alt="${item.label} 예시 그림" />` : visualMarkup(problem.visual)}`;
   panel.hidden = false;
@@ -178,6 +202,10 @@ function setMode(mode) {
   $("examBuilder").hidden = mode !== "exam";
   $("curriculumBuilder").hidden = mode !== "curriculum";
   $("typeBuilder").hidden = mode !== "type";
+  $("difficultySetting").hidden = mode === "curriculum";
+  $("curriculumStageSetting").hidden = mode !== "curriculum";
+  typePreviewCache.clear();
+  hideTypePreview();
   updateSummary();
 }
 
@@ -248,6 +276,17 @@ function isSelectableCurriculumType(item, book) {
   return isReady(item) && hasBookSource(item, book);
 }
 
+function studyReferenceLabel(references = []) {
+  const twoDigits = (value) => String(value).padStart(2, "0");
+  return references.map((reference) => {
+    const range = `${twoDigits(reference.from)}~${twoDigits(reference.to)}`;
+    if (reference.section === "activity") return `활동 ${twoDigits(reference.group)} 본문 ${range}`;
+    if (reference.section === "check") return `활동 ${twoDigits(reference.group)} 확인 ${range}`;
+    if (reference.section === "practice") return `더클 연습 ${range}`;
+    return `더클 도전 ${range}`;
+  }).join(" · ");
+}
+
 function renderCurriculum() {
   $("curriculumTree").innerHTML = CURRICULUM.map((book) => {
     const sourceFolder = book.id.replace("-", "");
@@ -259,13 +298,17 @@ function renderCurriculum() {
         const sourceChecked = hasBookSource(item, book);
         return `<label class="type-leaf curriculum-type ${ready ? "" : "not-ready"}"${ready ? ` data-preview-type="${item.id}"` : ""}>
           <input type="checkbox" data-curriculum-key="${key}" ${state.selected.curriculum.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
-          <span><strong>${item.label}</strong><span>${item.middle} · ${sourceChecked ? item.textbookSource : "교재 원본 문항 대조 전"}</span></span>
+          <span><strong>${item.label}</strong><span>${item.middle} · ${sourceChecked ? "교재 원본 대조 완료 · 위 단계별 문제번호 기준" : "교재 원본 문항 대조 전"}</span></span>
           <em class="type-status ${ready ? "" : "fixed"}">${ready ? typeStatus(item) : sourceChecked ? "원본 대조 완료 · 생성기 검증 대기" : "원본 대조 대기"}</em>
         </label>`;
       }).join("");
       const readyCount = types.filter((item) => isSelectableCurriculumType(item, book)).length;
+      const stageMap = unit.studyRefs ? `<div class="curriculum-stage-map" aria-label="${book.label} ${unit.label} 교재 단계별 문항 번호">
+        ${TEXTBOOK_STAGES.map((stage) => `<div class="${stage.id}"><strong>${stage.label}</strong><span>${studyReferenceLabel(unit.studyRefs[stage.id])}</span></div>`).join("")}
+      </div>` : "";
       return `<details class="middle-group curriculum-unit" open>
         <summary><strong>${unit.label}</strong><span>${types.length}개 세부 유형 · ${readyCount}개 생성 가능</span></summary>
+        ${stageMap}
         <div class="type-leaves">${typeRows}</div>
       </details>`;
     }).join("");
@@ -273,6 +316,7 @@ function renderCurriculum() {
       <summary><strong>${book.label} · ${book.title}</strong><span>교재 4단원 + 단원 테스트 25문항</span></summary>
       <div class="curriculum-sources">
         <div><strong>교재 본문 유사문제</strong><span>아래 단원 안에서 세부 유형별 선택</span></div>
+        <div><strong>교재 학습 단계</strong><span>개념·유형·연습·심화를 교재 원본 구조대로 유지</span></div>
         <div><strong>단원 테스트 원문</strong><span>${book.source.unitTest}</span><a class="source-view-link" href="./unit-test-viewer.html?book=${sourceFolder}&student=${encodeURIComponent(student)}">원문 보기</a></div>
         <div><strong>단원 테스트 유사문제</strong><span>문항별 유형 대조 후 연결</span><em>분석 중</em></div>
       </div>
@@ -326,7 +370,9 @@ function selectedReferences() {
       const book = CURRICULUM.find((item) => item.id === bookId);
       const unit = book?.units[Number(indexText)];
       if (book && unit?.typeIds.includes(typeId) && isSelectableCurriculumType(typeById(typeId), book)) {
-        result.push({ typeId, reference: `${book.label} ${unit.label} · ${typeById(typeId)?.label || "세부 유형"}` });
+        const stage = activeTextbookStage();
+        const sourceNumbers = studyReferenceLabel(unit.studyRefs?.[stage.id]);
+        result.push({ typeId, reference: `${book.label} ${unit.label} · ${stage.label}(${sourceNumbers}) · ${typeById(typeId)?.label || "세부 유형"}` });
       }
     }
     return result;
@@ -450,13 +496,13 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
   const worksheet = globalThis.GW_GEN;
   const info = worksheet?.typeInfo(item.worksheetCode);
   if (!worksheet || !info) return null;
-  const intensity = state.difficulty === "basic" ? 1 : state.difficulty === "advanced" ? 3 : 2;
+  const intensity = activeDifficulty();
   const requestedLevel = item.worksheetLevel || info.levels[0];
   const baseLevel = worksheet.typeSupportsLevel(item.worksheetCode, requestedLevel) ? requestedLevel : info.levels[0];
   const baseIndex = Math.max(0, info.levels.indexOf(baseLevel));
-  const levelIndex = state.difficulty === "advanced"
+  const levelIndex = intensity === 3
     ? Math.min(info.levels.length - 1, baseIndex + 1)
-    : state.difficulty === "basic"
+    : intensity === 1
       ? Math.max(0, baseIndex - 1)
       : baseIndex;
   const level = info.levels[levelIndex];
@@ -470,7 +516,7 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
   }
   const answerVisualTypes = new Set(["VC", "VM", "VP", "HL"]);
   const hasAnswerVisual = answerVisualTypes.has(made.type) || (made.type === "TC" && made.answer.drawViews);
-  return {
+  return withProblemContext({
     prompt: made.prompt,
     visual: { kind: "geometry-worksheet", problem: made, figures: made.figures },
     answer: made.answerText,
@@ -478,14 +524,12 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
     solution: geometryWorksheetSolution(made),
     responseKind: made.type === "VP" ? "drawing" : "text",
     meta: { worksheetType: made.type, worksheetLevel: made.level, intensity, ...made.answer },
-    type: item,
-    reference
-  };
+  }, item, reference);
 }
 
 function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0) {
   if (item.generator && GENERATORS[item.generator]) {
-    const difficulty = state.difficulty === "basic" ? 1 : state.difficulty === "advanced" ? 3 : 2;
+    const difficulty = activeDifficulty();
     const seed = fixedSeed ? `${fixedSeed}:${difficulty}:${sequence}:${attempt}` : null;
     // 답이 유일해야 하는 배치·추리 생성기는 조건이 안 맞으면 null을 준다. 실패는 정상이므로
     // 다시 뽑는다(중복 회피 루프와 별개). 받아 주지 않으면 빈 문항 카드가 나간다.
@@ -495,7 +539,7 @@ function generatedProblem(item, sequence, reference, fixedSeed = null, attempt =
       // 문항의 출력이 바뀌면 안 된다. 접미사는 실패로 다시 뽑을 때만 붙는다.
       const retrySeed = seed ? (retry === 0 ? seed : `${seed}:r${retry}`) : null;
       const generated = withSeed(retrySeed, () => GENERATORS[item.generator]({ max: 30, difficulty }));
-      if (generated) return { ...generated, type: item, reference };
+      if (generated) return withProblemContext(generated, item, reference);
     }
   }
   if (!item.generator && item.worksheetCode && globalThis.GW_GEN?.typeInfo(item.worksheetCode)) {
@@ -2404,7 +2448,9 @@ function renderWorksheet() {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
     return `<article class="question-card">
       <div class="question-top"><span class="question-number">${String(index + 1).padStart(2, "0")}</span><span class="question-type">${domain.label} · ${question.type.middle} · ${question.type.label}</span></div>
+      ${question.studyStage ? `<div class="study-stage-banner ${question.studyStage.id}"><strong>${question.studyStage.label}</strong><span>${question.studyStage.sourceLabel} · ${question.studyStage.description}</span></div>` : ""}
       <span class="question-reference">기준 문제: ${question.reference}</span>
+      ${question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
       <p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>
       ${question.image ? `<img class="legacy-image" src="${question.image}" alt="${question.type.label} 문제 그림" />` : visualMarkup(question.visual)}
       ${question.responseKind === "drawing" ? '<span class="drawing-answer-note">위 빈 상자 안에 그림을 그리세요.</span>' : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" aria-label="${index + 1}번 답" /></label>`}
@@ -2453,6 +2499,12 @@ function initControls() {
   $("difficultyChoices").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.difficulty = button.dataset.level;
     $("difficultyChoices").querySelectorAll("button").forEach((item) => item.classList.toggle("active", item === button));
+    typePreviewCache.clear();
+  }));
+  $("curriculumStageChoices").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
+    state.curriculumStage = button.dataset.stage;
+    $("curriculumStageChoices").querySelectorAll("button").forEach((item) => item.classList.toggle("active", item === button));
+    typePreviewCache.clear();
   }));
   $("orderChoices").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.order = button.dataset.order;
