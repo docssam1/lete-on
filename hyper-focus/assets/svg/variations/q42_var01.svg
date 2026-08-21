@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 250" role="img" aria-labelledby="title desc">
+  <title id="title">이웃하지 않게 두 칸을 고르는 5칸 도형</title>
+  <desc id="desc">아래로 세 칸이 이어지고 가운데와 아래 칸의 오른쪽에 한 칸씩 붙은 도형</desc>
+  <rect width="260" height="250" fill="#fff"/>
+  <g transform="translate(70 28)" fill="#fff" stroke="#26384d" stroke-width="3">
+    <rect x="0" y="0" width="60" height="60"/>
+    <rect x="0" y="60" width="60" height="60"/>
+    <rect x="60" y="60" width="60" height="60"/>
+    <rect x="0" y="120" width="60" height="60"/>
+    <rect x="60" y="120" width="60" height="60"/>
+  </g>
+  <text x="130" y="232" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#53647a">한 변이 붙으면 이웃한 칸</text>
+</svg>

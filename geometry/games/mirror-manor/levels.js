@@ -329,7 +329,8 @@ export const readyLevels = levels.filter((level) => level.ready);
  * Classify a tapped cell (level 1) without revealing where the answer is.
  *
  * The two named mistakes come straight from the design document:
- *   "distance"  — 거리가 틀림: the child kept the mirror row but miscounted squares.
+ *   "distance"  — 거리가 틀림: the child kept the mirror row but missed by one
+ *                 square, the only distance distractor promised by the design.
  *   "direction" — 방향만 틀림: the count was right but the reflection was slid to
  *                 another row/column, so the mirrored direction is wrong.
  * Anything else is a plain miss and gets a neutral nudge, never a hint.
@@ -340,7 +341,9 @@ export function classifyCell(cell, problem) {
   if (targetCells.some((target) => same(target, cell))) return "correct";
   const distance = mirrorDistance(cell, axis);
   const along = parallelCoord(cell, axis);
-  if (sourceCells.some((source) => parallelCoord(source, axis) === along)) return "distance";
+  if (sourceCells.some((source) =>
+    parallelCoord(source, axis) === along
+    && Math.abs(mirrorDistance(source, axis) - distance) === 1)) return "distance";
   if (sourceCells.some((source) => mirrorDistance(source, axis) === distance)) return "direction";
   return "miss";
 }
@@ -351,7 +354,8 @@ export function classifyCell(cell, problem) {
  * Order matters: a piece whose silhouette is a turned version of an expected object
  * and which sits the right number of squares from the glass is an orientation
  * mistake; a piece with exactly the right silhouette, on the right rows, but the
- * wrong number of squares out is a distance mistake.
+ * wrong number of squares out by one is a distance mistake. Larger misses stay
+ * neutral so the feedback never overstates what the child almost solved.
  */
 export function classifyPlacement(cells, problem, remainingTargets) {
   const axis = problem.axis;
@@ -373,7 +377,7 @@ export function classifyPlacement(cells, problem, remainingTargets) {
   for (const target of remainingTargets) {
     if (key !== shapeKey(target.cells)) continue;
     if (alongSet(cells) !== alongSet(target.cells)) continue;
-    if (pieceDistance(cells) !== pieceDistance(target.cells)) return "distance";
+    if (Math.abs(pieceDistance(cells) - pieceDistance(target.cells)) === 1) return "distance";
   }
   return "miss";
 }

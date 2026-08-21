@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" role="img" aria-labelledby="title desc">
+  <title id="title">두 조건에 공통으로 들어가는 숫자 유사문제 2</title>
+  <desc id="desc">68이 빈칸 9보다 크고, 3 빈칸이 38보다 작다는 두 비교식입니다.</desc>
+  <rect width="760" height="330" rx="24" fill="#fff"/>
+  <text x="380" y="49" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="25" font-weight="800" fill="#20272b">두 빈칸에 공통으로 들어가는 숫자를 찾으세요</text>
+  <rect x="88" y="91" width="584" height="166" rx="16" fill="#f9fafb" stroke="#8d98a5" stroke-width="2"/>
+  <g font-family="Arial,'Noto Sans KR',sans-serif" font-size="50" font-weight="750" fill="#172333" text-anchor="middle">
+    <text x="237" y="190">68 &gt;</text><rect x="302" y="143" width="54" height="62" fill="#fff" stroke="#173657" stroke-width="3"/><text x="386" y="190">9</text>
+    <text x="489" y="190">3</text><rect x="519" y="143" width="54" height="62" fill="#fff" stroke="#173657" stroke-width="3"/><text x="618" y="190">&lt; 38</text>
+  </g>
+  <text x="380" y="294" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="17" font-weight="800" fill="#64501f">1부터 9까지의 숫자만 사용합니다.</text>
+</svg>

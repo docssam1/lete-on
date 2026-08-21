@@ -3,9 +3,20 @@
   "baseQuestionId": "q24",
   "variationId": "q24_var02",
   "subType": "change_plus_to_minus",
-  "status": "draft",
-  "source": { "problemImage": "./assets/problems/q24_var02.png" },
-  "contentBinding": { "canonicalSource": "./canonical/q24.json", "hfDataTypeId": 24 },
-  "machineReadable": { "payloadType": "change_plus_to_minus", "equationCount": 4, "changeCount": 1, "expectedAnswer": 3 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 3 }
+  "status": "verified",
+  "source": {},
+  "presentation": {"mode": "text-only"},
+  "contentBinding": {"canonicalSource": "./canonical/q24.json", "hfDataTypeId": 24},
+  "problem": {"prompt": "아래 식에서 + 한 개를 -로 바꾸어 식이 성립하게 하려고 합니다. 바꿀 기호에 동그라미 하세요.  2+3+4+5+6=8"},
+  "machineReadable": {
+    "payloadType": "change_plus_to_minus",
+    "numbers": [2, 3, 4, 5, 6],
+    "originalTotal": 20,
+    "targetValue": 8,
+    "changeCount": 1,
+    "solvingModel": {"difference": 12, "changedNumber": 6, "validChangeCount": 1, "expectedAnswer": 6},
+    "expectedAnswer": 6
+  },
+  "answerValidation": {"answerType": "number", "expectedAnswer": 6},
+  "solutionHint": "처음 합은 20이고 목표 8보다 12 큽니다. +6을 -6으로 바꾸면 합이 12만큼 줄어 8이 됩니다."
 }

@@ -3,9 +3,9 @@
  "baseQuestionId": "q21",
  "variationId": "q21_var02",
  "subType": "place_value_conditions",
- "status": "draft",
- "source": {
-  "problemImage": "./assets/problems/q21_var02.png"
+  "status": "verified",
+  "source": {
+    "problemImage": "./assets/svg/variations/q21_var02.svg"
  },
  "contentBinding": {
   "canonicalSource": "./canonical/q21.json",
@@ -28,8 +28,13 @@
   ],
   "expectedAnswer": 2748
  },
- "answerValidation": {
-  "answerType": "integer",
-  "expectedAnswer": 2748
- }
+  "answerValidation": {
+    "answerType": "integer",
+    "expectedAnswer": 2748
+  },
+  "problem": {
+    "title": "자리 조건을 만족하는 수 찾기",
+    "prompt": "다음 네 조건을 모두 만족하는 네 자리 수를 구하세요. 천의 자리 숫자는 2이고, 일의 자리 숫자는 8이며, 백의 자리 숫자는 십의 자리보다 3 크고, 네 자리 숫자의 합은 21입니다."
+  },
+  "solutionHint": "천의 자리 2와 일의 자리 8을 먼저 놓습니다. 남은 백의 자리와 십의 자리의 합은 11이고 두 수의 차는 3이므로 7과 4입니다. 따라서 2748입니다."
 }

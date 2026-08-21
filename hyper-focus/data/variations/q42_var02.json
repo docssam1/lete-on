@@ -3,9 +3,19 @@
   "baseQuestionId": "q42",
   "variationId": "q42_var02",
   "subType": "grid_fill_cases",
-  "status": "draft",
-  "source": { "problemImage": "./assets/problems/q42_var02.png" },
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q42_var02.svg" },
   "contentBinding": { "canonicalSource": "./canonical/q42.json", "hfDataTypeId": 42 },
-  "machineReadable": { "payloadType": "grid_fill_cases", "gridSize": "4x4", "expectedAnswer": 6 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 6 }
+  "machineReadable": {
+    "payloadType": "grid_fill_cases",
+    "cells": [[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2], [0, 3], [1, 3]],
+    "fillCount": 3,
+    "adjacencyType": "shared_edge",
+    "expectedAnswer": 12
+  },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 12 },
+  "problem": {
+    "prompt": "그림의 8칸 중 3칸을 색칠하려고 합니다. 색칠한 칸끼리 한 변으로 이웃하지 않게 색칠하는 방법은 몇 가지입니까?"
+  },
+  "solutionHint": "위에서부터 어느 줄의 왼쪽 또는 오른쪽 칸을 고를지 나누어 세고, 바로 위아래에서 같은 쪽 칸을 함께 고른 경우를 제외하면 12가지입니다."
 }

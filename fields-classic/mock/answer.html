@@ -15,7 +15,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{font-family:'Pretendard',sans-serif;background:var(--g-bg);color:var(--g-ink)}
-.wrap{max-width:1180px;margin:0 auto;padding:22px 18px 60px}
+.wrap{max-width:980px;margin:0 auto;padding:28px 18px 60px}
 
 /* ── 머리 ── */
 .top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
@@ -34,7 +34,7 @@ html,body{font-family:'Pretendard',sans-serif;background:var(--g-bg);color:var(-
   border:1px solid #f0d9a8;color:#8a6520;font-size:12.5px;font-weight:700;line-height:1.6;word-break:keep-all}
 
 /* ── 시험 선택 ── */
-.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tabs{display:none}
 .tab{height:42px;padding:0 18px;border-radius:var(--r-pill);border:1.5px solid var(--g-line);background:#fff;
   font:800 14px Pretendard,sans-serif;color:var(--g-muted);cursor:pointer}
 .tab[aria-selected="true"]{background:var(--g-blue);border-color:var(--g-blue);color:#fff}
@@ -42,7 +42,7 @@ html,body{font-family:'Pretendard',sans-serif;background:var(--g-bg);color:var(-
 /* ── 요약 ── */
 /* align-items:start — 카드 높이를 서로 맞추지 않는다. 중분류는 16줄이고 난이도는 2~3줄이라,
    맞추면 난이도 카드에 손바닥만 한 빈 칸이 생긴다. */
-.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));align-items:start;gap:12px;margin-bottom:16px}
+.summary{display:none}
 .card{background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh-sm);padding:16px 18px}
 .card.full{grid-column:1/-1}
 .card.full .bars{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 22px}
@@ -58,7 +58,26 @@ html,body{font-family:'Pretendard',sans-serif;background:var(--g-bg);color:var(-
 .bar-row.d-상 .bar>i{background:var(--d-sang)}
 
 /* ── 문항표 ── */
-.table-card{background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh-sm);overflow:hidden}
+.answer-meta{display:flex;gap:8px;flex-wrap:wrap;padding:13px 18px;margin:-2px 0 16px;background:#fff7ec;border:1px solid #f0e3d2;border-radius:8px;font-size:12px;font-weight:800;color:#8a5a20}
+.answer-meta span{background:#fff;border:1px solid #f0ddc4;border-radius:999px;padding:4px 10px}
+.check-card{margin:0 0 16px;padding:18px;background:#fff;border:1px solid var(--g-line);border-radius:8px;box-shadow:var(--sh-sm)}
+.check-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.check-head h2{font-size:17px;font-weight:900;color:var(--g-blue)}
+.check-head p{margin-top:4px;color:var(--g-muted);font-size:12.5px;font-weight:650;line-height:1.55}
+.check-actions{display:flex;align-items:center;gap:8px;flex:none}
+.check-progress{min-width:62px;text-align:center;color:var(--g-blue);font-size:13px;font-weight:900}
+.diagnosis{margin-top:16px;padding-top:16px;border-top:1px solid var(--g-line)}
+.diagnosis-top{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center}
+.score-box{padding:14px 10px;text-align:center;background:#f5f8fc;border:1px solid #dbe6f2;border-radius:8px}
+.score-box strong{display:block;color:var(--g-blue);font-size:30px;line-height:1;font-weight:950}
+.score-box span{display:block;margin-top:6px;color:var(--g-muted);font-size:11.5px;font-weight:800}
+.diagnosis-copy h3{font-size:15px;font-weight:900;color:#1e293b}
+.diagnosis-copy p{margin-top:5px;color:var(--g-muted);font-size:12.5px;line-height:1.6;word-break:keep-all}
+.weak-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:12px}
+.weak-item{padding:11px 12px;background:#fff8f6;border:1px solid #fed7cf;border-radius:8px}
+.weak-item strong{display:block;color:#9f2d20;font-size:12.5px}
+.weak-item span{display:block;margin-top:3px;color:#7c4a43;font-size:11.5px;line-height:1.45}
+.table-card{background:#fff;border-radius:8px;box-shadow:var(--sh-sm);overflow:hidden}
 table{width:100%;border-collapse:collapse;font-size:13px}
 thead th{background:#f6f9fc;color:#334155;font-weight:800;font-size:11.5px;letter-spacing:.3px;
   padding:11px 10px;text-align:left;border-bottom:2px solid var(--g-line);white-space:nowrap}
@@ -66,7 +85,13 @@ tbody td{padding:12px 10px;border-bottom:1px solid #eef2f7;vertical-align:top;li
 tbody tr:last-child td{border-bottom:0}
 .c-no{width:38px;text-align:center;font-weight:900;color:var(--g-blue)}
 .c-diff{width:44px;text-align:center}
-.c-ans{width:210px}
+.c-ans{width:150px}
+.c-check{width:96px;text-align:center}
+.mark-set{display:grid;grid-template-columns:repeat(2,36px);justify-content:center;gap:5px}
+.mark-btn{width:36px;height:34px;border:1.5px solid var(--g-line);border-radius:7px;background:#fff;color:#64748b;font:900 15px Pretendard,sans-serif;cursor:pointer}
+.mark-btn:hover{border-color:#8aa5c5;color:var(--g-blue)}
+.mark-btn[data-mark="O"][aria-pressed="true"]{background:#e8f7ef;border-color:#2f9e62;color:#147743}
+.mark-btn[data-mark="X"][aria-pressed="true"]{background:#fff0ed;border-color:#e56d5b;color:#b93b2c}
 .tag{display:inline-block;padding:2px 8px;border-radius:var(--r-pill);font-size:11px;font-weight:800;
   background:#eef4fb;color:var(--g-blue)}
 .tag.d-하{background:rgba(14,165,233,.12);color:#0369a1}
@@ -86,7 +111,7 @@ tbody tr:last-child td{border-bottom:0}
   @page{size:A4 portrait;margin:12mm 10mm}
   html,body{background:#fff}
   .wrap{max-width:none;padding:0}
-  .top-actions,.tabs{display:none}
+  .top-actions,.tabs,.check-actions{display:none}
   .card,.table-card,.head-card{box-shadow:none;border:1px solid var(--g-line);break-inside:avoid}
   thead{display:table-header-group}
   tbody tr{break-inside:avoid}
@@ -95,24 +120,65 @@ tbody tr:last-child td{border-bottom:0}
   .bar>i{print-color-adjust:exact;-webkit-print-color-adjust:exact}
   .tag{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 }
+@media(max-width:720px){
+  .wrap{padding:18px 10px 42px}
+  .head-card{padding:17px 16px}
+  .head-card h1{font-size:19px}
+  .check-card{padding:15px 13px}
+  .check-head{display:block}
+  .check-actions{margin-top:12px;justify-content:space-between}
+  .diagnosis-top{grid-template-columns:86px 1fr;gap:11px}
+  .score-box strong{font-size:25px}
+  .table-card{overflow:visible;background:transparent;box-shadow:none}
+  table,tbody{display:block;width:100%}
+  thead{display:none}
+  tbody{display:grid;gap:10px}
+  tbody tr{position:relative;display:block;padding:13px 13px 12px;background:#fff;border:1px solid var(--g-line);border-radius:8px;box-shadow:var(--sh-sm)}
+  tbody td{display:block;width:100%;padding:0;border:0;text-align:left}
+  tbody .c-no{position:absolute;top:14px;left:13px;width:30px;font-size:15px;text-align:center}
+  tbody td:nth-child(2){min-height:40px;padding:1px 54px 7px 39px}
+  tbody td:nth-child(3){padding:9px 0;border-top:1px solid #edf2f7}
+  tbody .c-diff{position:absolute;top:13px;right:13px;width:auto}
+  tbody .c-ans{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-top:1px solid #edf2f7}
+  tbody .c-ans::before{content:'정답';min-width:42px;color:var(--g-muted);font-size:11.5px;font-weight:800}
+  tbody td:nth-child(6){display:flex;align-items:flex-start;gap:10px;padding:0 0 10px}
+  tbody td:nth-child(6)::before{content:'풀이';min-width:42px;color:var(--g-muted);font-size:11.5px;font-weight:800}
+  tbody .c-check{display:flex;align-items:center;gap:10px;padding-top:9px;border-top:1px solid #edf2f7}
+  tbody .c-check::before{content:'내 채점';min-width:42px;color:var(--g-muted);font-size:11.5px;font-weight:800}
+  .mark-set{justify-content:start}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
-    <div class="brand"><span>G</span>FIELD 티처 콘솔</div>
+    <div class="brand"><span>G</span>FIELD 답안지</div>
     <div class="top-actions">
-      <button class="btn" id="bankBtn" type="button">📝 이 회차로 시험지 만들기</button>
       <button class="btn" id="videoBtn" type="button">▶ 해설 영상</button>
       <button class="btn primary" id="printBtn" type="button">인쇄</button>
     </div>
   </div>
 
   <div class="head-card">
-    <h1 id="title">모의고사 정답·문항 분석</h1>
+    <h1 id="title">모의고사 답안 및 유형별 풀이</h1>
     <p class="sub" id="subtitle"></p>
     <p class="exam-note" id="examNote" hidden></p>
   </div>
+  <div class="answer-meta" id="answerMeta"></div>
+
+  <section class="check-card" id="checkCard">
+    <div class="check-head">
+      <div>
+        <h2>내 답 O/X 확인</h2>
+        <p>각 문항의 채점 결과를 누르면 20문항을 모두 입력한 뒤 약점 유형을 자동으로 진단합니다.</p>
+      </div>
+      <div class="check-actions">
+        <span class="check-progress" id="checkProgress">0 / 20</span>
+        <button class="btn" id="resetCheckBtn" type="button">초기화</button>
+      </div>
+    </div>
+    <div class="diagnosis" id="diagnosis" hidden></div>
+  </section>
 
   <div class="tabs" id="tabs" role="tablist"></div>
 
@@ -123,11 +189,12 @@ tbody tr:last-child td{border-bottom:0}
       <thead>
         <tr>
           <th class="c-no">번호</th>
-          <th>영역</th>
-          <th>문항 유형 · 원본 구조</th>
+          <th>영역 · 유형</th>
+          <th>문항 구조</th>
           <th class="c-diff">난이도</th>
           <th class="c-ans">정답</th>
-          <th>채점·지도 메모</th>
+          <th>풀이 핵심</th>
+          <th class="c-check">내 채점</th>
         </tr>
       </thead>
       <tbody id="rows"></tbody>
@@ -135,24 +202,26 @@ tbody tr:last-child td{border-bottom:0}
   </div>
 
   <p class="foot">
-    <b>이 표의 정답은 원본 시험지의 확정 답입니다.</b> 문제은행이 만들어 내는 변형 문제의 답이 아닙니다 —
-    변형 문제의 답은 시험지를 만든 화면에서 「답안 보기」로 확인하세요.<br>
-    원본 지문과 그림은 저작권상 담지 않았습니다. 구조 요약·정답·검증 메모만 싣습니다.<br>
-    <b>난이도</b>는 원본 대조 때 매긴 값이고, 영역 구분은 문제은행의 대분류·중분류와 같습니다.
+    <b>이 답안지는 원본 시험지와 대본을 대조해 확정한 정답과 풀이 핵심입니다.</b>
+    스캔 답안지를 대신 보여 주지 않습니다.<br>
+    원본 지문·그림은 저작권상 싣지 않고, 문항 구조·정답·검수된 풀이만 제공합니다.
   </p>
 </div>
 
-<script src="./answer-data.js?v=20260819a"></script>
+<script src="./answer-data.js?v=20260820a"></script>
 <script>
 (function(){
   var DATA = window.FIELDS_MOCK_ANSWERS || {};
   var ids = Object.keys(DATA);
   var $ = function(id){ return document.getElementById(id); };
   // 회차는 주소로도 지정된다(program 서재에서 바로 들어올 때). 없으면 첫 회차.
-  // 문제은행이 실제로 갖고 있는 회차. 실전 4회는 등록돼 있지 않아 시험지 버튼을 감춘다.
-  var BANK_EXAMS = ['final-1', 'final-2', 'final-3'];
+  var student = new URLSearchParams(location.search).get('student') || '학생';
   var want = new URLSearchParams(location.search).get('exam');
-  var current = ids.indexOf(want) >= 0 ? want : ids[0];
+  // 답안지는 서재에서 연 해당 회차의 승인본만 보여 준다. 주소에 회차가 없거나
+  // 승인 데이터가 없으면 다른 회차 답안을 대신 열지 않는다.
+  var current = ids.indexOf(want) >= 0 ? want : '';
+  var marks = {};
+  var storageKey = 'gfield-answer-check:' + current + ':' + student;
 
   function esc(s){
     return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
@@ -187,19 +256,14 @@ tbody tr:last-child td{border-bottom:0}
     var exam = DATA[current];
     var qs = exam.questions;
 
-    $('tabs').innerHTML = ids.map(function(id){
-      return '<button class="tab" role="tab" data-id="' + id + '" aria-selected="' +
-        (id === current) + '">' + esc(DATA[id].short || DATA[id].label) + '</button>';
-    }).join('');
-
-    $('title').textContent = exam.label + ' — 정답·문항 분석';
-    $('subtitle').textContent = qs.length + '문항 · 원본 시험지와 해설 영상을 1:1로 대조해 확정한 답입니다.';
+    $('title').textContent = exam.label + ' · 답안 및 유형별 풀이';
+    $('subtitle').textContent = student + ' 학생의 학습용 답안지입니다. 원본 시험지와 대본을 1:1로 대조해 확정했습니다.';
     var noteEl = $('examNote');
     noteEl.textContent = exam.examNote || '';
     noteEl.hidden = !exam.examNote;
-    // 문제은행에 등록된 회차만 시험지를 뽑을 수 있다. 없는 회차에 버튼을 열어 두면
-    // 문제은행이 다른 회차를 대신 띄운다.
-    $('bankBtn').style.display = BANK_EXAMS.indexOf(current) >= 0 ? '' : 'none';
+    $('answerMeta').innerHTML = '<span>총 ' + qs.length + '문항</span>' +
+      '<span>원본·대본 대조 완료</span>' +
+      '<span>정답과 풀이 핵심 수록</span>';
 
     $('summary').innerHTML =
       barBlock('난이도', tally(qs, 'diff'), ['하', '중', '상'], true) +
@@ -214,28 +278,93 @@ tbody tr:last-child td{border-bottom:0}
         '<td class="c-diff"><span class="tag d-' + esc(q.diff) + '">' + esc(q.diff) + '</span></td>' +
         '<td class="c-ans"><span class="ans">' + esc(q.answer) + '</span></td>' +
         '<td><span class="note">' + esc(q.note) + '</span></td>' +
+        '<td class="c-check"><div class="mark-set" role="group" aria-label="' + q.no + '번 채점">' +
+          '<button class="mark-btn" type="button" data-no="' + q.no + '" data-mark="O" aria-pressed="false" title="맞았어요">O</button>' +
+          '<button class="mark-btn" type="button" data-no="' + q.no + '" data-mark="X" aria-pressed="false" title="틀렸어요">X</button>' +
+        '</div></td>' +
         '</tr>';
     }).join('');
+    restoreMarks();
+    updateCheckState();
   }
 
-  $('tabs').addEventListener('click', function(e){
-    var t = e.target.closest('.tab');
-    if (!t) return;
-    current = t.dataset.id;
-    history.replaceState(null, '', '?exam=' + current);
-    render();
+  function restoreMarks(){
+    try {
+      var saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      marks = saved && typeof saved === 'object' ? saved : {};
+    } catch (e) { marks = {}; }
+  }
+
+  function saveMarks(){
+    try { localStorage.setItem(storageKey, JSON.stringify(marks)); } catch (e) {}
+  }
+
+  function updateCheckState(){
+    if (!current) return;
+    var qs = DATA[current].questions;
+    var completed = qs.filter(function(q){ return marks[q.no] === 'O' || marks[q.no] === 'X'; }).length;
+    $('checkProgress').textContent = completed + ' / ' + qs.length;
+    document.querySelectorAll('.mark-btn').forEach(function(btn){
+      btn.setAttribute('aria-pressed', marks[btn.dataset.no] === btn.dataset.mark ? 'true' : 'false');
+    });
+    if (completed === qs.length) renderDiagnosis(qs);
+    else $('diagnosis').hidden = true;
+  }
+
+  function renderDiagnosis(qs){
+    var wrong = qs.filter(function(q){ return marks[q.no] === 'X'; });
+    var correct = qs.length - wrong.length;
+    var score = Math.round(correct / qs.length * 100);
+    var byType = new Map();
+    wrong.forEach(function(q){
+      var key = q.domain + '|' + q.middle + '|' + q.type;
+      if (!byType.has(key)) byType.set(key, {domain:q.domain, middle:q.middle, type:q.type, numbers:[]});
+      byType.get(key).numbers.push(q.no);
+    });
+    var weak = Array.from(byType.values()).sort(function(a,b){
+      return b.numbers.length - a.numbers.length || a.numbers[0] - b.numbers[0];
+    });
+    var title = wrong.length ? '우선 복습할 유형 ' + weak.length + '개' : '모든 문항을 정확히 풀었습니다';
+    var detail = wrong.length
+      ? '틀린 ' + wrong.length + '문항을 유형별로 묶었습니다. 아래 순서대로 다시 풀어 보세요.'
+      : '현재 회차에서 확인된 약점 유형이 없습니다.';
+    var items = weak.map(function(item){
+      return '<div class="weak-item"><strong>' + esc(item.type) + '</strong>' +
+        '<span>' + esc(item.domain) + ' · ' + esc(item.middle) + '<br>' + item.numbers.join(', ') + '번</span></div>';
+    }).join('');
+    $('diagnosis').innerHTML = '<div class="diagnosis-top">' +
+      '<div class="score-box"><strong>' + score + '점</strong><span>' + correct + ' / ' + qs.length + ' 정답</span></div>' +
+      '<div class="diagnosis-copy"><h3>' + title + '</h3><p>' + detail + '</p></div></div>' +
+      (items ? '<div class="weak-list">' + items + '</div>' : '');
+    $('diagnosis').hidden = false;
+  }
+
+  $('rows').addEventListener('click', function(event){
+    var btn = event.target.closest('.mark-btn');
+    if (!btn) return;
+    marks[btn.dataset.no] = btn.dataset.mark;
+    saveMarks();
+    updateCheckState();
   });
+
+  $('resetCheckBtn').addEventListener('click', function(){
+    marks = {};
+    try { localStorage.removeItem(storageKey); } catch (e) {}
+    updateCheckState();
+  });
+
   $('printBtn').addEventListener('click', function(){ window.print(); });
   $('videoBtn').addEventListener('click', function(){
     var v = DATA[current] && DATA[current].video;
     if (v) window.open(v, '_blank', 'noopener');
   });
-  $('bankBtn').addEventListener('click', function(){
-    window.open('../question-bank/?exam=' + current, '_blank', 'noopener');
-  });
-
-  if (!ids.length) {
-    $('subtitle').textContent = '정답 데이터를 불러오지 못했습니다.';
+  if (!current) {
+    $('title').textContent = '승인된 답안을 준비하고 있습니다.';
+    $('subtitle').textContent = '서재에서 해당 모의고사의 「정답·분석」을 열어 주세요.';
+    $('answerMeta').hidden = true;
+    $('checkCard').hidden = true;
+    document.querySelector('.table-card').hidden = true;
+    $('videoBtn').style.display = 'none';
   } else {
     render();
   }

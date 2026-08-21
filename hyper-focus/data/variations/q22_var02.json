@@ -3,9 +3,20 @@
   "baseQuestionId": "q22",
   "variationId": "q22_var02",
   "subType": "swap_digits_equation",
-  "status": "draft",
-  "source": { "problemImage": "./assets/problems/q22_var02.png" },
-  "contentBinding": { "canonicalSource": "./canonical/q22.json", "hfDataTypeId": 22 },
-  "machineReadable": { "payloadType": "swap_digits_equation", "baseNumber": 63, "swapRule": "reverse_digits", "expectedAnswer": 36 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 36 }
+  "status": "verified",
+  "source": {},
+  "presentation": {"mode": "text-only"},
+  "contentBinding": {"canonicalSource": "./canonical/q22.json", "hfDataTypeId": 22},
+  "problem": {"prompt": "다음 식은 올바르지 않습니다. 식에 있는 숫자 2개의 위치를 서로 바꾸어 식을 바르게 만드세요.  50-32=27"},
+  "machineReadable": {
+    "payloadType": "swap_digits_equation",
+    "originalEquation": "50-32=27",
+    "digitPositions": ["left_tens", "left_ones", "right_tens", "right_ones", "result_tens", "result_ones"],
+    "swapCount": 1,
+    "operatorsFixed": true,
+    "solvingModel": {"validSwapCount": 1, "swappedPositions": ["right_tens", "right_ones"], "expectedAnswer": "50-23=27"},
+    "expectedAnswer": "50-23=27"
+  },
+  "answerValidation": {"answerType": "equation", "expectedAnswer": "50-23=27"},
+  "solutionHint": "32의 3과 2의 자리를 서로 바꾸면 50-23=27이 되어 계산이 맞습니다. 가능한 두 자리 교환을 모두 확인해도 이 식만 맞습니다."
 }

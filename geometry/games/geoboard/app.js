@@ -24,8 +24,8 @@ import {
   samePoint, pointKey, targetPoints, acceptsAnswer,
   isClosed, vertexCount, edgeCount,
   pointOnSegment, segmentsIntersect
-} from "./levels.js?v=geoboard-1";
-import { messages, text } from "./i18n.js?v=geoboard-1";
+} from "./levels.js?v=geoboard-2";
+import { messages, text } from "./i18n.js?v=geoboard-2";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
@@ -476,7 +476,7 @@ function renderStatus() {
   const p = problem();
   const level = levelData();
   const points = currentPoints();
-  $("#levelLabel").textContent = `LEVEL ${level.id}`;
+  $("#levelLabel").textContent = t("levelLabel", { level: level.id });
   $("#problemLabel").textContent = `${state.problem + 1} / ${state.queue.length}`;
   $("#missionTitle").textContent = t(level.titleKey);
   $("#stars").textContent = "*".repeat(level.id) + "-".repeat(5 - level.id);
@@ -583,6 +583,7 @@ function applyLanguage() {
   $("#levelButton").textContent = t("levels");
   $("#hintButton").textContent = t("hint");
   $("#retryButton").textContent = t("retry");
+  $("#toolPanel").setAttribute("aria-label", t("toolsAria"));
   $("#modelLabel").textContent = t("modelLabel");
   ui.next.textContent = t("next");
   $("#dialogTitle").textContent = t("chooseLevel");

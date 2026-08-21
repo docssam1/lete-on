@@ -218,3 +218,83 @@
 .tsg-num,.tsg-sum{fill:#3c3226;font-family:'Noto Sans KR',sans-serif;font-weight:800;text-anchor:middle;dominant-baseline:central}
 .tsg-num{font-size:19px}
 .tsg-sum{font-size:15px}
+
+/* 교재 단원별 선택: 권 안에서 단원과 세부 유형을 각각 펼쳐 고른다. */
+.curriculum-unit{margin:0 0 4px 28px;border-left:1px solid #dbe4e9}
+.curriculum-unit>summary{display:flex;align-items:center;gap:8px;min-height:42px;padding:0 10px;cursor:pointer;list-style:none;background:#f8fafb}
+.curriculum-unit>summary::-webkit-details-marker{display:none}
+.curriculum-unit>summary:before{content:'›';color:#6e7f8c;font-size:15px;transform:rotate(90deg)}
+.curriculum-unit:not([open])>summary:before{transform:none}
+.curriculum-unit>summary strong{font-size:10.5px}
+.curriculum-unit>summary span{margin-left:auto;color:var(--muted);font-size:8px;font-weight:800}
+.curriculum-unit>.type-leaves{margin:0 0 8px 28px}
+@media(max-width:560px){
+  .curriculum-unit{margin-left:14px}
+  .curriculum-unit>.type-leaves{margin-left:14px}
+  .curriculum-unit>summary span{max-width:125px;text-align:right}
+}
+
+/* Geometry World 공용 문제 카드. 수학·SVG는 geometry/worksheet가 만들고,
+   여기서는 문제은행 카드 안에서 안정적으로 들어갈 크기만 정한다. */
+.geometry-worksheet-visual{align-content:center;min-height:150px;padding:10px;overflow:visible}
+.geometry-worksheet-visual .geometry-method{margin:0 0 8px;padding:5px 8px;border-left:3px solid #8cb8cd;background:#edf6fa;color:#496777;font-size:8px;font-weight:800;line-height:1.5}
+.geometry-worksheet-visual .ws-figures,.geometry-worksheet-visual .ws-fig-row{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:10px;width:100%}
+.geometry-worksheet-visual .ws-fig-row+.ws-fig-row{margin-top:8px}
+.geometry-worksheet-visual .ws-figure{display:flex;flex-direction:column;align-items:center;gap:3px;margin:0}
+.geometry-worksheet-visual .ws-figure figcaption{max-width:210px;color:#526d7e;font-size:7.5px;font-weight:900;text-align:center;line-height:1.35}
+.geometry-worksheet-visual svg.ws-grid{display:block;width:auto;max-width:150px;max-height:120px}
+.geometry-worksheet-visual svg.ws-grid-solve{max-width:185px;max-height:165px}
+.geometry-worksheet-visual svg.ws-iso{display:block;width:auto;max-width:100%;height:125px}
+.geometry-worksheet-visual .ws-figure-lg svg.ws-iso{height:155px}
+.geometry-worksheet-visual .ws-figure-sm svg.ws-iso{height:70px}
+.geometry-worksheet-visual .ws-seq-dots{align-self:center;padding-bottom:16px;color:#718693;font-size:19px;font-weight:900}
+.geometry-hole-solve{margin-top:8px;padding-top:7px;border-top:1px dashed #cbd8df}
+.ws-hole-layers{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:6px 10px}
+.ws-hole-layer{display:flex;flex-direction:column;align-items:center;gap:2px}
+.ws-hole-layer small,.ws-hole-total{color:#526d7e;font-size:7px;font-weight:800;white-space:nowrap}
+.ws-hole-layer svg.ws-hole-grid{display:block;width:auto;max-width:54px;max-height:54px}
+.ws-hole-total{align-self:center}
+.geometry-worksheet-answer-visual{display:grid;place-items:center;min-width:92px}
+.geometry-worksheet-answer-visual figure{margin:0;text-align:center}
+.geometry-worksheet-answer-visual figcaption{margin-bottom:3px;color:#526d7e;font-size:8px;font-weight:900}
+.geometry-worksheet-answer-visual svg{display:block;width:auto;max-width:170px;max-height:145px;margin:auto}
+.geometry-answer-row{display:flex;align-items:flex-end;justify-content:center;gap:10px}
+.geometry-answer-row svg{max-width:72px;max-height:72px}
+.geometry-answer-minmax{gap:18px}
+.geometry-answer-minmax svg{max-width:130px;max-height:120px}
+
+/* 유형 행에 마우스를 올리면 실제 생성기로 만든 한 문항을 보여 준다. */
+[data-preview-type]{transition:background-color .12s ease}
+[data-preview-type]:hover{background:#f1f9fd}
+.type-preview{position:fixed;z-index:40;max-height:calc(100vh - 24px);padding:0;border:1px solid #cbdce6;border-radius:6px;background:#fff;box-shadow:0 18px 45px rgba(22,50,75,.22);overflow-x:hidden;overflow-y:auto}
+.type-preview[hidden]{display:none}
+.type-preview-head{padding:10px 12px;background:#159fe0;color:#fff}
+.type-preview-head span,.type-preview-head strong{display:block}
+.type-preview-head span{font-size:8px;font-weight:800;opacity:.86}
+.type-preview-head strong{margin-top:2px;font-size:11px;line-height:1.45}
+.type-preview>p{margin:0;padding:11px 12px 7px;color:#203d50;font-size:10px;font-weight:800;line-height:1.65;word-break:keep-all}
+.learning-map-inline{display:inline-flex;width:max-content;max-width:100%;margin-top:5px;padding:2px 5px;border:1px solid #b9dce9;border-radius:3px;background:#edf8fb;color:#17677a;font-size:7px;font-weight:900;line-height:1.35}
+.learning-map-inline.extension{border-color:#e0d4ac;background:#fff8df;color:#7b682e}
+.type-learning-map{margin:10px 10px 0;padding:9px 10px;border:1px solid #c9e1e9;border-radius:5px;background:#f5fbfd;color:#24485a}
+.type-learning-map.extension{border-color:#eadfb9;background:#fffbec;color:#5f562f}
+.learning-map-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+.learning-map-title strong{font-size:9px}
+.learning-map-title span{padding:2px 5px;border-radius:3px;background:#dff1f6;color:#17677a;font-size:7px;font-weight:900}
+.type-learning-map.extension .learning-map-title span{background:#f5e9b9;color:#6b5c27}
+.learning-map-rows{display:grid;gap:5px}
+.learning-map-row{display:grid;grid-template-columns:68px minmax(0,1fr);gap:2px 7px;padding-top:5px;border-top:1px solid rgba(74,123,143,.18)}
+.learning-map-row:first-child{padding-top:0;border-top:0}
+.learning-map-row>span{color:#527888;font-size:7px;font-weight:900}
+.learning-map-row>strong{font-size:8px;line-height:1.45}
+.learning-map-row>small{grid-column:2;color:#718894;font-size:7px;font-weight:800}
+.learning-map-flow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
+.learning-map-flow span{position:relative;display:grid;place-items:center;min-height:24px;padding:3px;border:1px solid #d2e5eb;border-radius:3px;background:#fff;color:#365d6e;font-size:7px;font-weight:900;text-align:center}
+.learning-map-flow span+span:before{content:'›';position:absolute;left:-10px;color:#7694a1;font-size:13px}
+.type-learning-map p{margin:7px 0 0;color:#68808b;font-size:7px;font-weight:700;line-height:1.5;word-break:keep-all}
+.type-learning-map.extension p{color:#746b44}
+.type-preview>.visual,.type-preview>img{display:block;width:calc(100% - 20px);max-height:255px;margin:0 10px 10px;object-fit:contain}
+.type-preview .geometry-worksheet-visual{min-height:115px;max-height:none;padding:6px}
+.type-preview .geometry-worksheet-visual svg.ws-iso{height:98px}
+.type-preview .geometry-worksheet-visual .ws-figure-lg svg.ws-iso{height:120px}
+.type-preview .geometry-worksheet-visual .ws-figure-sm svg.ws-iso{height:54px}
+@media print{.type-preview{display:none!important}}

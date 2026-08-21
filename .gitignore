@@ -3,3 +3,8 @@ reading-world/private/
 *.cars-d-private-meta.json
 *.cars-d-private-source.json
 *.cars-d-meta-backup.json
+
+# Local QA output and private source-routing notes.
+/artifacts/
+/debug.log
+/.source-memory/gfield-geometry-memory-notes.md

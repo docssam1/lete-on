@@ -1,5 +1,6 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260816dm";
-import { GENERATORS } from "./generators.js?v=20260816db";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260820d";
+import { GENERATORS } from "./generators.js?v=20260820a";
+import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -20,10 +21,13 @@ const state = {
 };
 
 function isReady(item) {
-  // The diagnostic bank remains untouched. This new bank only opens types with
-  // a source-matched, source-approved live generator, never a loosely related
-  // legacy image or a prototype that only shares a broad type name.
-  return Boolean(item?.sourceMatched && item?.generator && GENERATORS[item.generator]);
+  // 진단 문제은행은 건드리지 않는다. 이 문제은행은 원본 1:1 대조(sourceMatched)
+  // 또는 공용 엔진 독립 검산(bankApproved)을 통과하고 실제 생성 경로가 있는
+  // 유형만 연다. 이름만 비슷한 레거시 이미지나 시제품은 열지 않는다.
+  const ownGenerator = item?.generator && GENERATORS[item.generator];
+  const geometryGenerator = item?.worksheetCode && globalThis.GW_GEN?.typeInfo(item.worksheetCode);
+  const provenanceApproved = item?.sourceMatched || item?.bankApproved;
+  return Boolean(provenanceApproved && (ownGenerator || geometryGenerator));
 }
 
 function hasVerifiedSource(typeId) {
@@ -31,19 +35,141 @@ function hasVerifiedSource(typeId) {
 }
 
 function isSelectableType(item) {
-  // 원본 대조를 거쳤다는 신호는 두 가지다. 시험지에서 확인한 것(hasVerifiedSource)과
-  // 교재 페이지에서 확인한 것(textbookSource). 교재 유형은 대응하는 시험 문항이 없어도
-  // 교재 원본과 1:1 대조가 끝났으면 유형·교재 탭에서 열 수 있다.
+  // 선택 근거는 시험지 대조(hasVerifiedSource), 교재 대조(textbookSource),
+  // 독립 검산된 연계 문제은행(worksheetSource) 세 가지다. 교재·연계 유형은
+  // 대응하는 시험 문항이 없어도 유형·교재 탭에서 열 수 있다.
   // 시험지 탭은 이 함수와 별개로 문항별 verified 플래그를 함께 요구하므로,
   // 교재 대조만으로는 미검증 시험 문항이 열리지 않는다. 그 게이트는 절대 완화하지 않는다.
-  return isReady(item) && (hasVerifiedSource(item.id) || Boolean(item.textbookSource));
+  return isReady(item) && (hasVerifiedSource(item.id) || Boolean(item.textbookSource) || Boolean(item.worksheetSource));
 }
 
 function typeStatus(item) {
-  if (isReady(item)) return item.generator ? "무한 생성" : "검수 문제 연결";
+  if (isReady(item)) return "무한 생성";
   if (item?.geometryGame) return "3D 렌더 연결 중";
   if (item?.status === "curriculum") return "교재 유형 분석 완료";
   return "생성기 제작 대기";
+}
+
+function typeSourceLabel(item) {
+  if (hasVerifiedSource(item.id)) return "실제 출제 유형";
+  if (item.textbookSource) return `교재 대조 유형 · ${item.textbookSource}`;
+  if (item.bankApproved && item.worksheetSource) return `연계 문제은행 유형 · ${item.worksheetSource}`;
+  return "원본 대조 유형";
+}
+
+function learningMapPreviewMarkup(item) {
+  const map = learningMapForType(item);
+  if (map.kind === "extension") {
+    return `<section class="type-learning-map extension" aria-label="사고력 확장 위치">
+      <div class="learning-map-title"><strong>${map.label}</strong><span>${map.relation}</span></div>
+      <p>${map.note}</p>
+    </section>`;
+  }
+
+  const groupRows = map.groups.map((groupItem) => `<div class="learning-map-row">
+    <span>${groupItem.nationalDomain}</span>
+    <strong>${groupItem.strand}</strong>
+    <small>${groupItem.gradeBand} · ${groupItem.standardRange}</small>
+  </div>`).join("");
+  const flow = map.groups[0].flow.map((step) => `<span>${step}</span>`).join("");
+  return `<section class="type-learning-map related" aria-label="교육과정 관련 위치">
+    <div class="learning-map-title"><strong>${map.label}</strong><span>${map.relation}</span></div>
+    <div class="learning-map-rows">${groupRows}</div>
+    <div class="learning-map-flow" aria-label="학습 흐름">${flow}</div>
+    <p>${map.note} 개인 진단 결과가 아닙니다.</p>
+  </section>`;
+}
+
+const typePreviewCache = new Map();
+let typePreviewPanel = null;
+let typePreviewAnchor = null;
+let typePreviewHideTimer = null;
+
+function ensureTypePreviewPanel() {
+  if (typePreviewPanel) return typePreviewPanel;
+  typePreviewPanel = document.createElement("aside");
+  typePreviewPanel.id = "typePreview";
+  typePreviewPanel.className = "type-preview";
+  typePreviewPanel.setAttribute("role", "tooltip");
+  typePreviewPanel.hidden = true;
+  typePreviewPanel.addEventListener("pointerenter", () => clearTimeout(typePreviewHideTimer));
+  typePreviewPanel.addEventListener("pointerleave", hideTypePreviewSoon);
+  document.body.append(typePreviewPanel);
+  return typePreviewPanel;
+}
+
+function previewProblem(item) {
+  const key = `${item.id}:${state.difficulty}`;
+  if (!typePreviewCache.has(key)) {
+    typePreviewCache.set(key, generatedProblem(item, 0, "유형 예시", `preview:${item.id}`, 0));
+  }
+  return typePreviewCache.get(key);
+}
+
+function positionTypePreview(anchor) {
+  const panel = ensureTypePreviewPanel();
+  const rect = anchor.getBoundingClientRect();
+  const margin = 12;
+  const width = Math.min(390, window.innerWidth - margin * 2);
+  panel.style.width = `${width}px`;
+  const left = rect.right + margin + width <= window.innerWidth
+    ? rect.right + margin
+    : Math.max(margin, rect.left - width - margin);
+  const top = Math.max(margin, Math.min(rect.top, window.innerHeight - panel.offsetHeight - margin));
+  panel.style.left = `${left}px`;
+  panel.style.top = `${top}px`;
+}
+
+function showTypePreview(anchor) {
+  const item = typeById(anchor.dataset.previewType);
+  if (!item || !isSelectableType(item)) return;
+  clearTimeout(typePreviewHideTimer);
+  const panel = ensureTypePreviewPanel();
+  const problem = previewProblem(item);
+  if (!problem) {
+    hideTypePreview();
+    return;
+  }
+  const domain = DOMAINS.find((entry) => entry.id === item.domain);
+  panel.innerHTML = `<div class="type-preview-head"><span>${domain.label} · ${item.middle}</span><strong>${item.label}</strong></div>
+    ${learningMapPreviewMarkup(item)}
+    <p>${problem.prompt.replaceAll("\n", "<br>")}</p>
+    ${problem.image ? `<img src="${problem.image}" alt="${item.label} 예시 그림" />` : visualMarkup(problem.visual)}`;
+  panel.hidden = false;
+  typePreviewAnchor?.removeAttribute("aria-describedby");
+  typePreviewAnchor = anchor;
+  typePreviewAnchor.setAttribute("aria-describedby", panel.id);
+  positionTypePreview(anchor);
+}
+
+function hideTypePreview() {
+  if (!typePreviewPanel) return;
+  typePreviewPanel.hidden = true;
+  typePreviewAnchor?.removeAttribute("aria-describedby");
+  typePreviewAnchor = null;
+}
+
+function hideTypePreviewSoon() {
+  clearTimeout(typePreviewHideTimer);
+  typePreviewHideTimer = setTimeout(hideTypePreview, 100);
+}
+
+function initTypePreviews() {
+  const canHover = window.matchMedia("(hover: hover) and (pointer: fine)");
+  document.addEventListener("pointerover", (event) => {
+    if (!canHover.matches) return;
+    const anchor = event.target.closest("[data-preview-type]");
+    if (!anchor || anchor.contains(event.relatedTarget)) return;
+    showTypePreview(anchor);
+  });
+  document.addEventListener("pointerout", (event) => {
+    if (!canHover.matches) return;
+    const anchor = event.target.closest("[data-preview-type]");
+    if (!anchor || anchor.contains(event.relatedTarget) || typePreviewPanel?.contains(event.relatedTarget)) return;
+    hideTypePreviewSoon();
+  });
+  window.addEventListener("scroll", hideTypePreview, { passive: true });
+  window.addEventListener("resize", hideTypePreview);
 }
 
 function setMode(mode) {
@@ -88,7 +214,7 @@ function renderExamList() {
       const ready = verified && isSelectableType(item);
       const page = typeof exam.pageFor === "function" ? `원본 ${exam.pageFor(sourceQuestion.number)}쪽` : "원본 문항";
       const key = examKey(exam.id, sourceQuestion.number);
-      return `<label class="exam-row ${ready ? "" : "not-ready"}">
+      return `<label class="exam-row ${ready ? "" : "not-ready"}"${ready ? ` data-preview-type="${item.id}"` : ""}>
         <span class="number">${sourceQuestion.number}번</span>
         <input type="checkbox" data-exam-key="${key}" ${state.selected.exam.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
         <span><strong>${item?.label || "분류 확인 중"}</strong><span>${item?.middle || ""} · ${page} · 실제 출제</span></span>
@@ -110,22 +236,29 @@ function renderExamList() {
   }));
 }
 
-function curriculumKey(bookId, unitIndex) {
-  return `${bookId}:${unitIndex}`;
+function curriculumKey(bookId, unitIndex, typeId) {
+  return `${bookId}:${unitIndex}:${typeId}`;
 }
 
 function renderCurriculum() {
   $("curriculumTree").innerHTML = CURRICULUM.map((book) => {
     const sourceFolder = book.id.replace("-", "");
     const units = book.units.map((unit, unitIndex) => {
-      const key = curriculumKey(book.id, unitIndex);
-      const labels = unit.typeIds.map((id) => typeById(id)?.label).filter(Boolean);
-      const readyCount = unit.typeIds.filter((id) => isSelectableType(typeById(id))).length;
-      return `<label class="type-leaf ${readyCount ? "" : "not-ready"}">
-        <input type="checkbox" data-curriculum-key="${key}" ${state.selected.curriculum.has(key) ? "checked" : ""} ${readyCount ? "" : "disabled"} />
-        <span><strong>${unit.label}</strong><span>${labels.join(" · ")}</span></span>
-        <em class="type-status ${readyCount ? "" : "fixed"}">${readyCount ? `${readyCount}개 유형 생성 가능` : "생성기 제작 대기"}</em>
-      </label>`;
+      const types = unit.typeIds.map((id) => typeById(id)).filter(Boolean);
+      const readyCount = types.filter(isSelectableType).length;
+      const typeRows = types.map((item) => {
+        const key = curriculumKey(book.id, unitIndex, item.id);
+        const ready = isSelectableType(item);
+        return `<label class="type-leaf ${ready ? "" : "not-ready"}"${ready ? ` data-preview-type="${item.id}"` : ""}>
+          <input type="checkbox" data-curriculum-key="${key}" ${state.selected.curriculum.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
+          <span><strong>${item.label}</strong><span>${item.middle} · ${item.textbookSource || item.worksheetSource || "교재 원본 대조 유형"}</span></span>
+          <em class="type-status ${ready ? "" : "fixed"}">${ready ? typeStatus(item) : "생성기 제작 대기"}</em>
+        </label>`;
+      }).join("");
+      return `<details class="curriculum-unit" open>
+        <summary><strong>${unit.label}</strong><span>${readyCount} / ${types.length}개 세부 유형 생성 가능</span></summary>
+        <div class="type-leaves">${typeRows}</div>
+      </details>`;
     }).join("");
     return `<details class="tree-group curriculum-book" open>
       <summary><strong>${book.label} · ${book.title}</strong><span>교재 4단원 + 단원 테스트 25문항</span></summary>
@@ -160,10 +293,10 @@ function renderTypeTree() {
   $("bankTypeTree").innerHTML = groupedTypes().map(({ domain, middles }) => `<details class="tree-group" open>
     <summary><strong>${domain.label}</strong><span>${middles.reduce((sum, group) => sum + group.types.length, 0)}개 세부 유형</span></summary>
     ${middles.map(({ middle, types }) => `<details class="middle-group" open><summary><strong>${middle}</strong></summary><div class="type-leaves">
-      ${types.map((item) => `<label class="type-leaf ${isSelectableType(item) ? "" : "not-ready"}">
+      ${types.map((item) => `<label class="type-leaf ${isSelectableType(item) ? "" : "not-ready"}"${isSelectableType(item) ? ` data-preview-type="${item.id}"` : ""}>
         <input type="checkbox" data-type-id="${item.id}" ${state.selected.type.has(item.id) ? "checked" : ""} ${isSelectableType(item) ? "" : "disabled"} />
-        <span><strong>${item.label}</strong><span>실제 출제 유형${item.geometryGame ? ` · Cube Town ${item.geometryGame}` : ""}</span></span>
-        <em class="type-status ${isSelectableType(item) ? "" : "fixed"}">${hasVerifiedSource(item.id) ? typeStatus(item) : "원본 대조 중"}</em>
+        <span><strong>${item.label}</strong><span>${typeSourceLabel(item)}</span><small class="learning-map-inline ${learningMapForType(item).kind}">${learningMapInlineLabel(item)}</small></span>
+        <em class="type-status ${isSelectableType(item) ? "" : "fixed"}">${isSelectableType(item) ? typeStatus(item) : "원본 대조 중"}</em>
       </label>`).join("")}
     </div></details>`).join("")}
   </details>`).join("");
@@ -180,10 +313,12 @@ function selectedReferences() {
   if (state.mode === "curriculum") {
     const result = [];
     for (const key of state.selected.curriculum) {
-      const [bookId, indexText] = key.split(":");
+      const [bookId, indexText, typeId] = key.split(":");
       const book = CURRICULUM.find((item) => item.id === bookId);
       const unit = book?.units[Number(indexText)];
-      result.push(...(unit?.typeIds || []).map((typeId) => ({ typeId, reference: `${book.label} ${unit.label}` })));
+      if (book && unit && unit.typeIds.includes(typeId)) {
+        result.push({ typeId, reference: `${book.label} ${unit.label} · ${typeById(typeId)?.label || "세부 유형"}` });
+      }
     }
     return result;
   }
@@ -264,6 +399,81 @@ function withSeed(seedText, callback) {
   }
 }
 
+function geometryWorksheetSolution(problem) {
+  const answer = problem.answer || {};
+  switch (problem.type) {
+    case "TC":
+      return `바탕그림의 각 칸에 적힌 수를 모두 더하면 ${answer.total}개입니다.${answer.drawViews ? " 앞과 옆에서는 각 줄에서 가장 높이 쌓인 층까지 칸을 그립니다." : ""}${answer.askHeight ? ` 가장 높은 곳은 ${answer.height}층입니다.` : ""}`;
+    case "VC": {
+      const values = (answer.numbers || []).flat().filter((value) => value > 0);
+      return `위에서 본 모양의 각 자리에 앞·옆에서 본 가장 높은 층수를 맞춰 쓰고 더합니다. ${values.join(" + ")} = ${answer.count}이므로 ${answer.count}개입니다.`;
+    }
+    case "VM":
+      return `세 방향의 모양을 모두 지키면서 각 자리에 놓을 수를 정합니다. 가장 많이 놓으면 ${answer.max}개, 가장 적게 놓으면 ${answer.min}개입니다.`;
+    case "VP":
+      return `위에서 본 모양으로 쌓은 자리를 찾고, 주어진 방향에서 보이는 가장 높은 층을 맞추면 ${answer.hiddenLabel}에서 본 모양이 정해집니다.`;
+    case "IC":
+      return `아래에서부터 층별로 보이는 칸과 가려진 칸을 빠짐없이 세면 모두 ${answer.total}개입니다.${answer.askFloor ? ` 그중 1층에는 ${answer.floor}개가 놓여 있습니다.` : ""}${answer.askUpper ? ` 2층 이상에는 ${answer.upper}개가 있습니다.` : ""}`;
+    case "IH":
+    case "IN":
+      return `전체 ${answer.total}개에서 겉에서 보이는 ${answer.visible}개를 빼면 ${answer.total} - ${answer.visible} = ${answer.hidden}개입니다.`;
+    case "FB":
+    case "CU":
+      return `상자를 가득 채우면 ${answer.total}개입니다. 지금 놓인 ${answer.placed}개를 빼면 ${answer.total} - ${answer.placed} = ${answer.need}개가 더 필요합니다.`;
+    case "PN":
+      return answer.variant === "faces"
+        ? `겉에서 보이는 면을 방향별로 빠짐없이 세면 모두 ${answer.faces}면입니다.`
+        : `쌓기나무를 하나씩 떼어 색칠된 면의 수대로 나누어 세면, ${answer.askFaces}면이 색칠된 쌓기나무는 ${answer.count}개입니다.`;
+    case "BW":
+      return `한 쌓기나무의 색을 정하면 맞닿은 쌓기나무는 반대색입니다. 차례로 세면 흰색 ${answer.white}개, 검은색 ${answer.black}개입니다.`;
+    case "HL":
+      return `가득 채운 ${answer.total}개에서 구멍으로 빠진 ${answer.removed}개를 빼면 ${answer.total} - ${answer.removed} = ${answer.remaining}개입니다.`;
+    case "SQ": {
+      const steps = (answer.stageTotals || []).map((value, index) => `${index + 1}번째 ${value}개`).join(" → ");
+      return `${steps}${steps ? ". " : ""}규칙을 이어 보면 답은 ${problem.answerText}입니다.`;
+    }
+    default:
+      return `그림의 조건을 차례로 확인하면 답은 ${problem.answerText}입니다.`;
+  }
+}
+
+function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt) {
+  const worksheet = globalThis.GW_GEN;
+  const info = worksheet?.typeInfo(item.worksheetCode);
+  if (!worksheet || !info) return null;
+  const intensity = state.difficulty === "basic" ? 1 : state.difficulty === "advanced" ? 3 : 2;
+  const requestedLevel = item.worksheetLevel || info.levels[0];
+  const baseLevel = worksheet.typeSupportsLevel(item.worksheetCode, requestedLevel) ? requestedLevel : info.levels[0];
+  const baseIndex = Math.max(0, info.levels.indexOf(baseLevel));
+  const levelIndex = state.difficulty === "advanced"
+    ? Math.min(info.levels.length - 1, baseIndex + 1)
+    : state.difficulty === "basic"
+      ? Math.max(0, baseIndex - 1)
+      : baseIndex;
+  const level = info.levels[levelIndex];
+  const randomPart = fixedSeed || `${Date.now()}:${Math.random()}`;
+  const rng = worksheet.createRng(`FIELDS-QB:${item.id}:${level}:${intensity}:${randomPart}:${sequence}:${attempt}`);
+  let made;
+  try {
+    made = worksheet.make(item.worksheetCode, rng, level, intensity, item.worksheetOptions || null);
+  } catch (_error) {
+    return null;
+  }
+  const answerVisualTypes = new Set(["VC", "VM", "VP", "HL"]);
+  const hasAnswerVisual = answerVisualTypes.has(made.type) || (made.type === "TC" && made.answer.drawViews);
+  return {
+    prompt: made.prompt,
+    visual: { kind: "geometry-worksheet", problem: made, figures: made.figures },
+    answer: made.answerText,
+    answerVisual: hasAnswerVisual ? { kind: "geometry-worksheet-answer", problem: made } : null,
+    solution: geometryWorksheetSolution(made),
+    responseKind: made.type === "VP" ? "drawing" : "text",
+    meta: { worksheetType: made.type, worksheetLevel: made.level, intensity, ...made.answer },
+    type: item,
+    reference
+  };
+}
+
 function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0) {
   if (item.generator && GENERATORS[item.generator]) {
     const difficulty = state.difficulty === "basic" ? 1 : state.difficulty === "advanced" ? 3 : 2;
@@ -279,6 +489,9 @@ function generatedProblem(item, sequence, reference, fixedSeed = null, attempt =
       if (generated) return { ...generated, type: item, reference };
     }
   }
+  if (!item.generator && item.worksheetCode && globalThis.GW_GEN?.typeInfo(item.worksheetCode)) {
+    return generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt);
+  }
   return null;
 }
 
@@ -293,7 +506,7 @@ function buildQuestions() {
   if (state.order === "mixed") references = shuffle(references);
   const counters = new Map();
   const signatures = new Set();
-  state.questions = Array.from({ length: state.count }, (_, index) => {
+  const questions = Array.from({ length: state.count }, (_, index) => {
     const reference = references[index % references.length];
     const item = typeById(reference.typeId);
     const sequence = counters.get(item.id) || 0;
@@ -305,7 +518,13 @@ function buildQuestions() {
     }
     if (problem) signatures.add(problemSignature(problem));
     return problem;
-  }).filter(Boolean);
+  });
+  if (questions.some((problem) => !problem)) {
+    state.questions = [];
+    window.alert("문항을 끝까지 만들지 못했습니다. 같은 선택으로 다시 생성해 주세요.");
+    return;
+  }
+  state.questions = questions;
   renderWorksheet();
   $("builderPanel").hidden = true;
   $("worksheetSection").hidden = false;
@@ -1799,8 +2018,17 @@ function overlapBondsMarkup(visual) {
 
 function geometryWorksheetMarkup(visual) {
   const renderer = globalThis.GW_RENDER;
-  const figures = visual.figures;
+  const card = globalThis.GW_CARD;
+  const problem = visual.problem || { figures: visual.figures };
+  const figures = problem.figures;
   if (!renderer || !figures) return "";
+  if (card?.renderFigures) {
+    const method = problem.methodHint ? `<p class="geometry-method">${problem.methodHint}</p>` : "";
+    const solveArea = problem.type === "HL"
+      ? `<div class="geometry-hole-solve">${renderer.renderHoleLayers(problem, { blank: true })}</div>`
+      : "";
+    return `${method}<div class="ws-figures">${card.renderFigures(problem)}</div>${solveArea}`;
+  }
   if (figures.kind === "sequence") {
     return `<div class="geometry-sequence">${figures.shapes.map((shape) => `
       <figure><div>${renderer.renderIso(shape.map, shape.width, shape.depth)}</div><figcaption>${shape.n}단계</figcaption></figure>
@@ -1812,6 +2040,43 @@ function geometryWorksheetMarkup(visual) {
   if (figures.kind === "iso-walled") {
     return `<figure class="geometry-hidden"><div>${renderer.renderIsoWalled(figures.map, figures.width, figures.depth)}</div><figcaption>뒤와 왼쪽의 회색 면은 벽입니다.</figcaption></figure>`;
   }
+  return "";
+}
+
+function geometryWorksheetAnswerMarkup(visual) {
+  const renderer = globalThis.GW_RENDER;
+  const problem = visual.problem;
+  if (!renderer || !problem) return "";
+  const answer = problem.answer || {};
+  const figure = (label, svg) => `<figure><figcaption>${label}</figcaption>${svg}</figure>`;
+  if (problem.type === "TC") {
+    return `<div class="geometry-answer-row">${figure("앞", renderer.renderMiniFilled(answer.front))}${figure("오른쪽 옆", renderer.renderMiniFilled(answer.side))}</div>`;
+  }
+  if (problem.type === "VC") {
+    return figure("위에서 본 모양에 쓴 수", renderer.renderSolveTable(
+      problem.figures.footprint,
+      problem.figures.width,
+      problem.figures.depth,
+      { numbers: answer.numbers, colMax: answer.colMax, rowMax: answer.rowMax }
+    ));
+  }
+  if (problem.type === "VM") {
+    const maximum = figure("가장 많이 놓은 경우", renderer.renderSolveTable(
+      problem.figures.footprint,
+      problem.figures.width,
+      problem.figures.depth,
+      { numbers: answer.numbers, colMax: answer.colMax, rowMax: answer.rowMax }
+    ));
+    const minimum = figure("가장 적게 놓은 경우", renderer.renderSolveTable(
+      problem.figures.footprint,
+      problem.figures.width,
+      problem.figures.depth,
+      { numbers: answer.minNumbers, colMax: answer.colMax, rowMax: answer.rowMax }
+    ));
+    return `<div class="geometry-answer-row geometry-answer-minmax">${maximum}${minimum}</div>`;
+  }
+  if (problem.type === "VP") return figure(answer.hiddenLabel, renderer.renderMiniFilled(answer.hidden, 18));
+  if (problem.type === "HL") return renderer.renderHoleLayers(problem);
   return "";
 }
 
@@ -1910,6 +2175,7 @@ function visualMarkup(visual) {
   if (visual.kind === "triangle-position-answer") return `<div class="visual triangle-position-answer-visual">${triangleCycleSvg(visual.position)}</div>`;
   if (visual.kind === "overlap-bonds") return `<div class="visual overlap-bonds-visual">${overlapBondsMarkup(visual)}</div>`;
   if (visual.kind === "geometry-worksheet") return `<div class="visual geometry-worksheet-visual">${geometryWorksheetMarkup(visual)}</div>`;
+  if (visual.kind === "geometry-worksheet-answer") return `<div class="geometry-worksheet-answer-visual">${geometryWorksheetAnswerMarkup(visual)}</div>`;
   if (visual.kind === "triangle-sum-grid") return `<div class="visual triangle-sum-grid-visual">${triangleSumGridMarkup(visual)}</div>`;
   if (visual.kind === "sum-grid") return `<div class="visual sum-grid-visual">${sumGridMarkup(visual)}</div>`;
   if (visual.kind === "magic-square") return `<div class="visual magic-square-visual">${magicSquareMarkup(visual)}</div>`;
@@ -2015,6 +2281,7 @@ renderExamList();
 renderCurriculum();
 renderTypeTree();
 initControls();
+initTypePreviews();
 setMode("exam");
 
 // ?exam=<시험지 id> 로 들어오면 그 시험지에서 열려 있는 문항을 모두 골라 둔다.
@@ -2039,6 +2306,5 @@ setMode("exam");
   if (!picked) return;
   state.count = picked;
   renderExamList();
-  initControls();
   updateSummary();
 })();

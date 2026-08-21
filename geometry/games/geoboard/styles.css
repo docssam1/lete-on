@@ -12,9 +12,9 @@
      lives in. 844x390 and 740x360 landscape and 1440x900 desktop are the sizes the
      breakpoints are tuned for.
    - Finger targets: the peg circle drawn on screen is small, but an invisible
-     .peg-hit circle of radius 9.5 viewBox units sits over it. The board is square,
-     so at 844x390 (board 218px, measured) that is a 41.5px target, at 740x360 it is
-     38.3px, and on desktop 102.6px — all clear of the 30px floor.
+     .peg-hit circle of radius 9.5 viewBox units sits over it. The compact landscape
+     rows leave the board about 240-270px wide on a phone, keeping each hit target
+     comfortably above 44px without letting neighbouring targets overlap.
    - Visual identity is a sunlit workshop yard: pale birch board, brass pegs and a
      bright rubber band. Deliberately unlike the manor's night-blue walls.
    ========================================================================= */
@@ -198,24 +198,24 @@ button { cursor: pointer }
 
 /* Mobile landscape (the 844x390 and 740x360 targets). Everything on one screen. */
 @media (orientation: landscape) and (max-height: 560px) {
-  :root { --board-h: 56vh }
-  .yard-shell { grid-template-rows: 44px 44px minmax(0, 1fr) 64px }
+  :root { --board-h: calc(var(--app-dvh) - 120px) }
+  .yard-shell { grid-template-rows: 40px 32px minmax(0, 1fr) 48px }
   .topbar { padding: 3px 8px }
   .topbar > * { min-height: 34px }
   .brand strong { font-size: 15px }
-  .mission { padding: 4px 10px }
-  .mission h1 { font-size: 15px }
+  .mission { padding: 2px 10px }
+  .mission h1 { font-size: 14px }
   .mission p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px }
-  .play-area { grid-template-columns: minmax(0, 1fr) 96px; gap: 7px; padding: 4px 7px }
-  .board-stage { padding: 2px }
+  .play-area { grid-template-columns: minmax(0, 1fr) 96px; gap: 7px; padding: 0 7px }
+  .board-stage { padding: 0 }
   .model-card { padding: 4px }
   .model-card figcaption { font-size: 9px }
   .tool-panel { gap: 4px }
   .tool-panel button { min-height: 36px; font-size: 11px }
-  .answer-dock { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 92px; padding: 5px 76px 5px 8px }
+  .answer-dock { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 92px; padding: 2px 70px 2px 8px }
   .answer-dock p { font-size: 11px; line-height: 1.2 }
   .shape-stats b { padding: 4px 8px; font-size: 11px }
-  .next-button { min-height: 38px; font-size: 12px }
+  .next-button { min-height: 42px; font-size: 12px }
   .cubi-guide .cubi-sprite { width: 56px; height: 56px }
   .guide-bubble { display: none }
   /* Keep the feedback banner inside the mission bar so it never covers the board. */
@@ -235,6 +235,7 @@ button { cursor: pointer }
   .mission { display: block }
   .mission p { max-width: none; margin-top: 3px; text-align: left }
   .play-area { grid-template-columns: minmax(0, 1fr) 96px; gap: 6px; padding: 6px }
+  .board-stage { place-items: start center }
   .answer-dock { grid-template-columns: 1fr; gap: 6px; padding: 7px 76px 7px 7px }
   .cubi-guide { position: fixed }
   .level-list { grid-template-columns: repeat(2, minmax(0, 1fr)) }

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 480" role="img" aria-labelledby="title desc">
+  <title id="title">서로 다른 문자값 식 유사문제 2</title>
+  <desc id="desc">0부터 8까지 수 카드와 A부터 G까지 문자로 만든 여섯 식입니다. 모든 문자는 서로 다른 값을 가집니다.</desc>
+  <rect width="760" height="480" rx="24" fill="#fff"/>
+  <text x="380" y="40" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="22" font-weight="800" fill="#20272b">각 문자는 서로 다른 수를 나타냅니다</text>
+  <text x="380" y="68" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#59636a">0부터 8까지의 수 중 하나씩 골라 모든 식을 맞추세요.</text>
+  <g transform="translate(145 88)" font-family="Arial,sans-serif" font-size="19" font-weight="800" text-anchor="middle" fill="#274047">
+    <rect x="0" y="0" width="470" height="42" rx="10" fill="#effafa" stroke="#9acccc"/>
+    <text x="26" y="28">0</text><text x="78" y="28">1</text><text x="130" y="28">2</text><text x="182" y="28">3</text><text x="234" y="28">4</text><text x="286" y="28">5</text><text x="338" y="28">6</text><text x="390" y="28">7</text><text x="442" y="28">8</text>
+  </g>
+  <rect x="75" y="153" width="610" height="180" rx="20" fill="#fbfdfd" stroke="#8fc8c8" stroke-width="2"/>
+  <g font-family="Arial,sans-serif" font-size="21" font-weight="800" fill="#263238" text-anchor="middle">
+    <text x="180" y="205">A + G = A</text><text x="380" y="205">B + B = E</text><text x="575" y="205">D + D + D + D + D = C</text>
+    <text x="180" y="275">C + D = A</text><text x="380" y="275">B × B × B = F</text><text x="575" y="275">C × D = C</text>
+  </g>
+  <g transform="translate(105 347)" font-family="Arial,sans-serif" font-size="19" font-weight="800" fill="#263238">
+    <text x="0" y="24">A =</text><rect x="36" width="42" height="36" fill="#fff" stroke="#69747b" stroke-width="2"/>
+    <text x="155" y="24">B =</text><rect x="191" width="42" height="36" fill="#fff" stroke="#69747b" stroke-width="2"/>
+    <text x="310" y="24">C =</text><rect x="346" width="42" height="36" fill="#fff" stroke="#69747b" stroke-width="2"/>
+    <text x="465" y="24">D =</text><rect x="501" width="42" height="36" fill="#fff" stroke="#69747b" stroke-width="2"/>
+    <text x="80" y="69">E =</text><rect x="116" y="45" width="42" height="36" fill="#fff" stroke="#69747b" stroke-width="2"/>
+    <text x="235" y="69">F =</text><rect x="271" y="45" width="42" height="36" fill="#fff" stroke="#69747b" stroke-width="2"/>
+    <text x="390" y="69">G =</text><rect x="426" y="45" width="42" height="36" fill="#fff" stroke="#69747b" stroke-width="2"/>
+  </g>
+  <text x="380" y="464" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#725718">값이 바로 정해지는 식부터 살펴보세요.</text>
+</svg>

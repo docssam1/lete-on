@@ -2,11 +2,14 @@
 @import "./assets/thumbs/count.css";
 @import "./assets/thumbs/hidden.css";
 @import "./assets/thumbs/fill.css";
-@import "./assets/thumbs/tunnel.css";
+@import "./assets/thumbs/tunnel.css?v=20260820a";
 @import "./assets/thumbs/pieces.css";
 @import "./assets/thumbs/memory.css";
 @import "./assets/thumbs/views.css";
 @import "./assets/thumbs/transparent.css";
+@import "./assets/thumbs/blueprint.css?v=20260820b";
+@import "./assets/thumbs/find.css?v=20260820b";
+@import "./assets/thumbs/minmax.css?v=20260820b";
 :root {
   --navy:#172653; --ink:#24313b; --muted:#68736f; --paper:#fffdf5; --line:#d9d7ca; --green:#29945b;
   font-family:"Pretendard","Noto Sans KR","Noto Sans CJK KR",system-ui,sans-serif;

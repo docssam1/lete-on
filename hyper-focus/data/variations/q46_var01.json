@@ -3,9 +3,21 @@
   "baseQuestionId": "q46",
   "variationId": "q46_var01",
   "subType": "reverse_story",
-  "status": "draft",
-  "source": { "problemImage": "./assets/problems/q46_var01.png" },
+  "status": "verified",
+  "presentation": { "mode": "text-only", "answerUnit": "개" },
+  "source": { "problemImage": "" },
   "contentBinding": { "canonicalSource": "./canonical/q46.json", "hfDataTypeId": 46 },
-  "machineReadable": { "payloadType": "reverse_story", "storyKind": "difference_then_share", "expectedAnswer": 18 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 18 }
+  "machineReadable": {
+    "payloadType": "reverse_story",
+    "initialAction": "give_half",
+    "secondAction": "eat_half_of_remaining",
+    "finalCount": 3,
+    "reverseStates": [3, 6, 12],
+    "expectedAnswer": 12
+  },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 12 },
+  "problem": {
+    "prompt": "수아는 사탕 몇 개를 가지고 있었습니다. 그중에서 반은 동생에게 주고, 남은 사탕의 반을 먹었더니 3개가 남았습니다. 처음에 수아가 가지고 있던 사탕은 모두 몇 개입니까?"
+  },
+  "solutionHint": "마지막 3개에서 거꾸로 생각합니다. 먹기 전에는 3×2=6개, 동생에게 주기 전에는 6×2=12개였습니다."
 }

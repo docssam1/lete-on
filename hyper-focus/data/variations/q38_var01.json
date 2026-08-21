@@ -4,8 +4,19 @@
   "variationId": "q38_var01",
   "subType": "circular_viewpoint_order",
   "status": "draft",
-  "source": { "problemImage": "./assets/problems/q38_var01.png" },
-  "contentBinding": { "canonicalSource": "./canonical/q38.json", "hfDataTypeId": 38 },
-  "machineReadable": { "payloadType": "circular_viewpoint_order", "observerShift": 2, "expectedAnswer": 3 },
-  "answerValidation": { "answerType": "integer", "expectedAnswer": 3 }
+  "source": {"problemImage": "./assets/svg/variations/q38_var01.svg"},
+  "contentBinding": {"canonicalSource": "./canonical/q38.json", "hfDataTypeId": 38},
+  "problem": {"prompt": "하늘이와 7명의 친구들이 일정한 간격으로 둥글게 앉아 모두 원의 가운데를 보고 있습니다. 하늘이의 오른쪽으로 두 번째에 앉은 사람과 마주 보는 사람은 하늘이의 왼쪽으로 몇 번째입니까?"},
+  "machineReadable": {
+    "payloadType": "circular_viewpoint_order",
+    "participantCount": 8,
+    "anchor": "하늘",
+    "facing": "center",
+    "leftDirection": "clockwise_when_viewed_from_above",
+    "referenceRightOffset": 2,
+    "oppositeOffset": 4,
+    "solvingModel": {"oppositeSeatFromAnchor": 2, "expectedAnswer": 2, "formula": "8÷2-2=2"}
+  },
+  "answerValidation": {"answerType": "ordinal", "expectedAnswer": 2},
+  "solutionHint": "8명의 맞은편 자리는 4칸 떨어져 있습니다. 하늘이의 오른쪽으로 2칸 간 뒤 맞은편으로 4칸 가면, 하늘이의 왼쪽으로 2번째 자리입니다."
 }

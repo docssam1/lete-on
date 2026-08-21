@@ -3,9 +3,9 @@
   "baseQuestionId": "q25",
   "variationId": "q25_var02",
   "subType": "two_condition_digits",
-  "status": "draft",
+  "status": "verified",
   "source": {
-    "problemImage": ""
+    "problemImage": "./assets/svg/variations/q25_var02.svg"
   },
   "contentBinding": {
     "canonicalSource": "./canonical/q25.json",

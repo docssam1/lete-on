@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 510" role="img" aria-labelledby="title desc">
+  <title id="title">삼각형 수 규칙 유사문제 1</title>
+  <desc id="desc">바깥 세 수와 가운데 수가 있는 삼각형 예시 세 개와 오른쪽 아래 수가 빈 삼각형 한 개입니다.</desc>
+  <rect width="760" height="510" rx="24" fill="#fff"/>
+  <text x="380" y="40" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#20272b">네 삼각형에는 모두 같은 수 규칙이 있습니다</text>
+  <text x="380" y="69" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#59636a">마지막 삼각형의 빈칸에 알맞은 수를 쓰세요.</text>
+  <g font-family="Arial,'Noto Sans KR',sans-serif" font-size="25" font-weight="850" text-anchor="middle" dominant-baseline="middle" fill="#263238">
+    <g transform="translate(210 115)"><polygon points="0,0 -78,125 78,125" fill="#edf0f2" stroke="#66727b" stroke-width="3"/><circle cy="0" r="25" fill="#fff" stroke="#66727b" stroke-width="2"/><circle cx="-78" cy="125" r="25" fill="#fff" stroke="#66727b" stroke-width="2"/><circle cx="78" cy="125" r="25" fill="#fff" stroke="#66727b" stroke-width="2"/><text y="2">6</text><text x="-78" y="127">8</text><text x="78" y="127">5</text><text y="78" font-size="32">9</text></g>
+    <g transform="translate(550 115)"><polygon points="0,0 -78,125 78,125" fill="#edf0f2" stroke="#66727b" stroke-width="3"/><circle cy="0" r="25" fill="#fff" stroke="#66727b" stroke-width="2"/><circle cx="-78" cy="125" r="25" fill="#fff" stroke="#66727b" stroke-width="2"/><circle cx="78" cy="125" r="25" fill="#fff" stroke="#66727b" stroke-width="2"/><text y="2">4</text><text x="-78" y="127">9</text><text x="78" y="127">7</text><text y="78" font-size="32">6</text></g>
+    <g transform="translate(210 325)"><polygon points="0,0 -78,125 78,125" fill="#edf0f2" stroke="#66727b" stroke-width="3"/><circle cy="0" r="25" fill="#fff" stroke="#66727b" stroke-width="2"/><circle cx="-78" cy="125" r="25" fill="#fff" stroke="#66727b" stroke-width="2"/><circle cx="78" cy="125" r="25" fill="#fff" stroke="#66727b" stroke-width="2"/><text y="2">7</text><text x="-78" y="127">3</text><text x="78" y="127">4</text><text y="78" font-size="32">6</text></g>
+    <g transform="translate(550 325)"><polygon points="0,0 -78,125 78,125" fill="#fff8e8" stroke="#c9a227" stroke-width="3"/><circle cy="0" r="25" fill="#fff" stroke="#66727b" stroke-width="2"/><circle cx="-78" cy="125" r="25" fill="#fff" stroke="#66727b" stroke-width="2"/><circle cx="78" cy="125" r="25" fill="#fff" stroke="#c9a227" stroke-width="3"/><text y="2">5</text><text x="-78" y="127">6</text><text x="78" y="127">?</text><text y="78" font-size="32">7</text></g>
+  </g>
+  <text x="380" y="497" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#725718">위, 왼쪽, 오른쪽 수를 같은 순서로 계산해 보세요.</text>
+</svg>

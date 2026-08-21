@@ -8,7 +8,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="../config.js"></script>
 <script src="./assets/kr_font.js"></script>
+<script src="./mock/access-policy.js"></script>
+<script src="./mock/variation-bank.js"></script>
 <style>
 :root{--navy:#0d1b2a;--navy-mid:#1a2e44;--navy-light:#243b55;--gold:#c9a84c;--gold-light:#e8c97a;--cream:#faf8f3;--cream-dark:#f0ece0;--red:#c0392b;--red-light:#e74c3c;--blue:#2980b9;--purple:#8e44ad;--text:#2c2c2c;--text-light:#6b7280;--border:rgba(201,168,76,0.25);--shadow:0 20px 60px rgba(13,27,42,0.12)}
 body{-webkit-user-select:none;-moz-user-select:none;user-select:none}
@@ -335,18 +338,9 @@ body.intro-active>*:not(#gfieldIntro){display:none!important}
 @keyframes introCountPop{0%{transform:scale(.65);opacity:0}55%{transform:scale(1.12);opacity:1}100%{transform:scale(1)}}
 @media(max-width:960px){#gfieldIntro .records{grid-template-columns:1fr}#gfieldIntro .grand{order:-1;min-height:250px}#gfieldIntro .record{padding:14px;border-radius:20px}#gfieldIntro .intro-scene{padding:70px 16px 28px}#gfieldIntro .intro-title{font-size:clamp(42px,15vw,86px)}#gfieldIntro .intro-subtitle{font-size:clamp(26px,9vw,46px)}#gfieldIntro .type-line{font-size:clamp(15px,5.2vw,30px)}}
 @media(max-width:600px){#gfieldIntroScene1{overflow-y:auto!important;align-items:flex-start!important;padding-top:54px!important;padding-bottom:12px!important}#gfieldIntro .records{gap:6px!important;width:calc(100% - 16px)!important}#gfieldIntro .stack{gap:5px!important;max-width:100%!important}#gfieldIntro .grand{min-height:0!important;padding:10px 8px!important;border-radius:16px!important;flex-direction:row!important;justify-content:center!important;gap:12px!important}#gfieldIntro .grand:before{display:none}#gfieldIntro .glabel{font-size:10px!important}#gfieldIntro .gnum{font-size:clamp(42px,14vw,64px)!important;margin-top:0!important;line-height:1!important}#gfieldIntro .gunit{font-size:14px!important;margin-top:0!important}#gfieldIntro .gnote{font-size:8px!important;margin-top:2px!important;line-height:1.3!important}#gfieldIntro .record{padding:7px 9px!important;border-radius:12px!important}#gfieldIntro .recordTitle{font-size:10px!important;gap:4px!important}#gfieldIntro .recordTitle small{font-size:7px!important}#gfieldIntro .year{grid-template-columns:40px 1fr 24px!important;gap:4px!important;margin-top:3px!important;font-size:8.5px!important;min-height:14px!important}#gfieldIntro .bar{height:3px!important}#gfieldIntro .total{margin-top:3px!important;font-size:9px!important;padding-top:3px!important}#gfieldIntro .total b{font-size:17px!important}}
-.sim-diff-btn{padding:7px 16px;border:1px solid #ddd;border-radius:20px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:500;transition:all .2s}
-.sim-diff-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
-.sim-card{border:1px solid #e0e0e0;border-radius:14px;padding:16px;margin-bottom:16px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.sim-prompt{padding:15px 16px;margin:10px 0 12px;border-radius:10px;background:#f8fafc;border:1px solid #e4e9f1;line-height:1.75;font-size:.95rem;color:#172033;white-space:pre-wrap}
-.sim-source-badge{display:inline-flex;align-items:center;padding:3px 8px;margin-bottom:2px;border-radius:999px;background:#e9f1ff;color:#234f9d;font-size:.68rem;font-weight:700}
-.sim-card-img{width:100%;border-radius:10px;margin-bottom:12px;display:block}
-.sim-svg-wrap{width:100%;min-height:80px;margin:10px 0;border-radius:8px;background:#fafafa;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.sim-svg-wrap svg{width:100%;height:auto}
-.sim-answer-toggle{background:none;border:1px solid var(--navy);color:var(--navy);border-radius:20px;padding:6px 16px;cursor:pointer;font-size:.82rem;font-weight:600;margin-top:8px;width:100%}
-.sim-answer-box{display:none;margin-top:10px;padding:12px;background:#f0f4ff;border-radius:8px;line-height:1.6;font-size:.88rem;color:#333}
-.sim-answer-box.open{display:block}
-.sim-audio-btn{background:var(--navy);color:#fff;border:none;border-radius:20px;padding:6px 16px;cursor:pointer;font-size:.82rem;margin-top:8px;margin-right:8px}
+.worksheet-builder-note{margin-bottom:14px;padding:14px 16px;border:1px solid #e4d3aa;border-radius:10px;background:#fffbef;color:#684f16;font-size:.86rem;line-height:1.65}
+.worksheet-type-list{display:grid;gap:9px}.worksheet-type-row{display:grid;grid-template-columns:minmax(190px,1fr) auto;gap:12px;align-items:center;padding:13px 14px;border:1px solid #e1e6ec;border-radius:10px;background:#fff}.worksheet-type-title{font-size:.84rem;line-height:1.55;color:var(--navy);font-weight:700}.worksheet-difficulties{display:flex;gap:6px}.worksheet-difficulties button{min-width:62px;padding:7px 10px;border:1px solid #ccd5df;border-radius:18px;background:#fff;color:#53647a;font-size:.76rem;font-weight:700;cursor:pointer}.worksheet-difficulties button.active{border-color:var(--navy);background:var(--navy);color:#fff}.worksheet-difficulties button:disabled{opacity:.32;cursor:not-allowed}.worksheet-build-actions{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}.worksheet-build-btn{padding:13px 24px;border:2px solid var(--gold);border-radius:9px;background:var(--navy);color:#fff;font-weight:800;cursor:pointer}.worksheet-build-btn:disabled{opacity:.45;cursor:not-allowed}.worksheet-build-status{width:100%;text-align:center;color:var(--red);font-size:.8rem;font-weight:700}
+@media(max-width:650px){.worksheet-type-row{grid-template-columns:1fr}.worksheet-difficulties button{flex:1;min-width:0}.worksheet-difficulties{width:100%}}
 
 /* 버튼/제목 한글 줄바꿈 교정 */
 .p2-header h1,.btn-action,.submit-btn,.res-video-btn,.tab-btn,.attempt-menu,.login-card h3,.diag-card h3{word-break:keep-all!important;overflow-wrap:break-word}
@@ -511,7 +505,6 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
       <div class="input-group"><label>학부모 연락처</label><input type="tel" id="parentPhone" placeholder="010-0000-0000"><small style="display:block;margin-top:6px;font-size:.72rem;color:rgba(255,255,255,.4);letter-spacing:.02em;line-height:1.4;">이름과 접속코드는 자동으로 입력되어 있습니다. 전화번호를 기준으로 저장됩니다.</small></div>
       <div class="input-group"><label>승인 번호</label><input type="password" id="authCode" placeholder="승인번호를 입력하세요"></div>
       <button class="btn-primary" onclick="checkAuth()">약점 유형 진단하기 →</button>
-      <a href="./mock/" class="btn-primary" style="background:var(--navy);color:#fff;display:flex;justify-content:center;align-items:center;text-decoration:none;margin-top:12px;border:1px solid var(--gold);">프리미어 진단 모의고사 →</a>
       <a href="https://open.kakao.com/me/gfield" target="_blank" class="btn-primary" style="background:#FEE500;color:#3C1E1E;display:flex;justify-content:center;align-items:center;gap:8px;text-decoration:none;margin-top:12px;border:1px solid #FEE500;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-5.523 0-10 3.5-10 7.828 0 2.748 1.76 5.166 4.417 6.44-.22.842-.796 3.016-.814 3.125-.025.15.05.228.163.155.116-.076 3.65-2.457 4.296-2.923.63.084 1.28.129 1.938.129 5.523 0 10-3.5 10-7.828S17.523 3 12 3z"/></svg>
         문제집 및 상담 신청하기
@@ -528,7 +521,6 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
   </div>
   <div class="p2-body">
     <div class="action-btns">
-      <a href="./mock/" class="video-btn btn-print-dark"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm2 4v2h12V7H6zm0 4v2h7v-2H6zm0 4v2h10v-2H6z"/></svg>프리미어 진단 모의고사</a>
       <a href="https://youtu.be/OkkrvK9ZxMI?si=_POQwsA-hhrw-vCN&t=786" target="_blank" class="video-btn btn-youtube"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>설명회 영상</a>
       <a href="https://youtu.be/8l-YgY8LZzk" target="_blank" class="video-btn btn-youtube"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>풀이 영상 전체보기</a>
       <button type="button" class="video-btn download-answer-btn btn-print-dark" onclick="downloadAnswerPdf()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 9V2h12v7h1a3 3 0 0 1 3 3v6h-4v4H6v-4H2v-6a3 3 0 0 1 3-3h1zm2-5v5h8V4H8zm0 12v4h8v-4H8zm11-4a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>전체 답안 인쇄</button>
@@ -546,9 +538,9 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
       <button class="tab-btn" id="btn-quick" onclick="setView('quick')">번호만 체크하기</button>
       <button class="tab-btn active" id="btn-area" onclick="setView('area')">영역별로 보기</button>
       <button class="tab-btn" id="btn-list" onclick="setView('list')">목록으로 보기</button>
-      <button class="tab-btn" id="btn-similar" onclick="setView('similar')">유사문제</button>
+      <button class="tab-btn" id="btn-similar" onclick="setView('similar')">맞춤 시험지</button>
     </div>
-    <div id="view-similar" class="checklist-section"><div class="category-block"><div class="category-header"><div class="category-title">유사문제 훈련</div><div class="category-divider"></div></div><div id="similar-filter" style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;"><button class="sim-diff-btn active" data-diff="easy" onclick="setSimilarDiff('easy')">🟢 쉬운 문제</button><button class="sim-diff-btn" data-diff="same" onclick="setSimilarDiff('same')">🟡 같은 난이도</button><button class="sim-diff-btn" data-diff="hard" onclick="setSimilarDiff('hard')">🔴 어려운 문제</button></div><div id="similar-list"></div></div></div>
+    <div id="view-similar" class="checklist-section"><div class="category-block"><div class="category-header"><div class="category-title">선택 유형 맞춤 시험지</div><div class="category-divider"></div></div><div class="worksheet-builder-note">최대 20개 유형을 고르고, 유형마다 난이도를 정하면 각 유형의 유사문제 2문항을 자동으로 시험지에 넣습니다. 3번째 문제부터는 유료 추가 문제입니다.</div><div id="similar-list"></div></div></div>
     <div id="view-quick" class="checklist-section"><div class="category-block"><div class="category-header"><div class="category-title">정답(번호)만 체크하기</div><div class="category-divider"></div></div><p style="text-align:center;margin-bottom:16px;font-weight:600;color:var(--navy);">✔️ 1번부터 54번까지 <span style="color:var(--red);">틀린 문제 번호</span>만 체크하세요.</p><div class="number-grid" id="quick-grid"></div></div></div>
     <div id="view-area" class="checklist-section active"></div>
     <div id="view-list" class="checklist-section"><div class="category-block"><div class="category-header"><div class="category-title">전체 문항 리스트 (1~54)</div><div class="category-divider"></div></div><div class="items-grid" id="list-grid"></div></div></div>
@@ -564,6 +556,7 @@ document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey
         <div class="result-list-box" id="resultListBox"></div>
         <div class="academy-pledge">지필드 영재교육은 성공하는 공부습관을 만들기 위해 최선의 노력을 다하겠습니다.</div>
         <div class="result-actions">
+          <button class="btn-action btn-action-fill" onclick="openWorksheetBuilder()">📝 선택 유형 맞춤 시험지</button>
           <button class="btn-action btn-action-outline" onclick="toggleAllAccordions()">📂 오답 상세 한 번에 보기</button>
           <button class="btn-action btn-action-outline" onclick="downloadReportPdf()">📄 진단 결과 인쇄</button>
           <button class="btn-action btn-action-outline" onclick="downloadAnswerPdf()">📋 전체 답안 인쇄</button>
@@ -587,141 +580,56 @@ if(q36UiItem)Object.assign(q36UiItem,{ans:"최소 17명, 최대 31명",tTip:"지
 const q49UiItem=data.flatMap(cat=>cat.items).find(item=>item.id===49);
 if(q49UiItem)Object.assign(q49UiItem,{text:"3마리가 3일에 45개 줍는 도토리를, 10마리가 60개 이상 주울 때 걸리는 온전한 날짜 수",ans:"2일",tTip:"다람쥐 1마리는 하루에 5개, 10마리는 하루에 50개를 줍습니다. 하루 뒤에는 50개라서 모자라고, 둘째 날에는 60개 이상이 됩니다.",mTip:"정확한 시간은 1.2일이지만 문제에서 온전한 날짜 수를 묻는 것으로 보고, 목표 개수 이상이 되는 첫째 날을 답으로 합니다."});
 const selectedSet=new Set();
+const worksheetDifficultyByType=new Map();
 const checkSVG=`<svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#0d1b2a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 let myChart=null,diffChart=null,currentUserKey="",studentHistory=[];
 document.addEventListener('DOMContentLoaded',function(){try{const params=new URLSearchParams(location.search);const gname=params.get('gname');if(gname){const nameEl=document.getElementById('studentName');const phoneEl=document.getElementById('parentPhone');const codeEl=document.getElementById('authCode');if(nameEl)nameEl.value=gname;if(codeEl)codeEl.value='777200';const savedPhone=localStorage.getItem('gfield_autophone_'+gname);if(savedPhone){if(phoneEl)phoneEl.value=savedPhone;checkAuth();}else{if(phoneEl)phoneEl.focus();}}}catch(e){}});
 window.onload=function(){const viewArea=document.getElementById('view-area');const listGrid=document.getElementById('list-grid');const quickGrid=document.getElementById('quick-grid');let allItems=[];data.forEach(cat=>{let blockHTML=`<div class="category-block"><div class="category-header"><div class="category-num">${cat.categoryNum}</div><div class="category-title">유형 ${cat.categoryNum}. ${cat.categoryTitle}</div><div class="category-divider"></div></div><div class="items-grid">`;cat.items.forEach(item=>{blockHTML+=`<label class="check-item" data-id="${item.id}" onclick="toggleItem(event,${item.id})"><div class="custom-check">${checkSVG}</div><span class="list-num">${String(item.id).padStart(2,'0')}</span><span>${item.text}</span></label>`;allItems.push(item)});blockHTML+=`</div></div>`;viewArea.innerHTML+=blockHTML;});allItems.sort((a,b)=>a.id-b.id);allItems.forEach(item=>{const listLbl=document.createElement('label');listLbl.className='check-item';listLbl.setAttribute('data-id',item.id);listLbl.onclick=(e)=>toggleItem(e,item.id);listLbl.innerHTML=`<div class="custom-check">${checkSVG}</div><span class="list-num">${String(item.id).padStart(2,'0')}</span><span>${item.text}</span>`;listGrid.appendChild(listLbl);const quickLbl=document.createElement('label');quickLbl.className='check-item num-item';quickLbl.setAttribute('data-id',item.id);quickLbl.onclick=(e)=>toggleItem(e,item.id);quickLbl.innerHTML=`<span class="list-num">${String(item.id).padStart(2,'0')}</span>`;quickGrid.appendChild(quickLbl);});};
-function toggleItem(e,id){e.preventDefault();if(selectedSet.has(id))selectedSet.delete(id);else selectedSet.add(id);updateChecksUI()}
-function updateChecksUI(){document.querySelectorAll('.check-item').forEach(el=>{const elId=parseInt(el.getAttribute('data-id'));el.classList.toggle('checked',selectedSet.has(elId))});document.getElementById('checkCount').textContent=selectedSet.size}
+function toggleItem(e,id){e.preventDefault();if(selectedSet.has(id))selectedSet.delete(id);else{if(selectedSet.size>=HFAccessPolicy.MAX_SELECTED_TYPES){alert(`한 번에 선택할 수 있는 유형은 최대 ${HFAccessPolicy.MAX_SELECTED_TYPES}개입니다.`);return}selectedSet.add(id);if(!worksheetDifficultyByType.has(id))worksheetDifficultyByType.set(id,'same')}updateChecksUI()}
+function updateChecksUI(){document.querySelectorAll('.check-item').forEach(el=>{const elId=parseInt(el.getAttribute('data-id'));el.classList.toggle('checked',selectedSet.has(elId))});document.getElementById('checkCount').textContent=selectedSet.size;if(document.getElementById('view-similar')?.classList.contains('active'))renderSimilarUI()}
 function showLoginFromPreview(){document.getElementById('introPreview').style.display='none';const p1=document.getElementById('page1');p1.classList.add('active');window.scrollTo(0,0);}
-function checkAuth(){const name=document.getElementById('studentName').value.trim();const phone=document.getElementById('parentPhone').value.trim();const code=document.getElementById('authCode').value;if(!name||!phone){alert('이름과 연락처를 모두 입력해 주세요.');return}if(!code.includes('777200')){alert('승인번호가 올바르지 않습니다.');return}currentUserKey=`gfield_${name}_${phone}`;try{localStorage.setItem('gfield_autophone_'+name,phone);}catch(e){}const stored=localStorage.getItem(currentUserKey);studentHistory=stored?JSON.parse(stored):[];const p1=document.getElementById('page1');p1.classList.remove('active');p1.style.display='none';document.getElementById('page2').style.display='block';document.getElementById('studentInfoDisplay').textContent=`학생: ${name}  |  연락처: ${phone}`;updateAttemptButtons();if(studentHistory.length>=3)alert('이미 최대 응시 횟수(3회)를 모두 완료하셨습니다. 이전 결과를 불러와 확인해 주세요.');setView('quick');window.scrollTo(0,0);}
+async function checkAuth(){const name=document.getElementById('studentName').value.trim();const phone=document.getElementById('parentPhone').value.trim();const code=document.getElementById('authCode').value;if(!name||!phone){alert('이름과 연락처를 모두 입력해 주세요.');return}let allowed=code.includes('777200');if(!allowed){try{const verified=await HFAccessPolicy.verifyCode(code,window.GFIELD_CONFIG);allowed=verified.valid;if(verified.paid)HFAccessPolicy.saveVerifiedHash(verified.hash)}catch(e){allowed=false}}if(!allowed){alert('승인번호가 올바르지 않습니다.');return}currentUserKey=`gfield_${name}_${phone}`;try{localStorage.setItem('gfield_autophone_'+name,phone);}catch(e){}const stored=localStorage.getItem(currentUserKey);studentHistory=stored?JSON.parse(stored):[];const p1=document.getElementById('page1');p1.classList.remove('active');p1.style.display='none';document.getElementById('page2').style.display='block';const paid=HFAccessPolicy.storedAccess(window.GFIELD_CONFIG).paid;document.getElementById('studentInfoDisplay').textContent=`학생: ${name}  |  연락처: ${phone}${paid?'  |  추가 문제 이용 가능':''}`;updateAttemptButtons();if(studentHistory.length>=3)alert('이미 최대 응시 횟수(3회)를 모두 완료하셨습니다. 이전 결과를 불러와 확인해 주세요.');setView('quick');window.scrollTo(0,0);}
 function updateAttemptButtons(){for(let i=0;i<3;i++){const btn=document.getElementById(`btn-att-${i}`);if(i<studentHistory.length){btn.className='attempt-btn completed';btn.disabled=false}else{btn.className='attempt-btn disabled';btn.disabled=true}}}
-function loadAttempt(index){if(index>=studentHistory.length)return;selectedSet.clear();studentHistory[index].wrongIds.forEach(id=>selectedSet.add(id));updateChecksUI();renderResultUI(index)}
-function submitNewAttempt(){if(selectedSet.size===0){alert('틀린(약점) 유형을 최소 하나 이상 체크해 주세요.');return}if(studentHistory.length>=3){alert('총 3회 응시 제한을 초과했습니다.');return}const sortedIds=Array.from(selectedSet).sort((a,b)=>a-b);const name=document.getElementById('studentName').value.trim();const phone=document.getElementById('parentPhone').value.trim();const rate=Math.round(((54-sortedIds.length)/54)*100);studentHistory.push({attempt:studentHistory.length+1,wrongIds:sortedIds,rate:rate});localStorage.setItem(currentUserKey,JSON.stringify(studentHistory));updateAttemptButtons();const scriptURL='https://script.google.com/macros/s/AKfycbzwtu2FOu_rmqT-pyhwakl0EYrkbdUHUwTYnxB0GBlLcZlgXqmxTJfObeKQHx8Tu_FZsA/exec';fetch(scriptURL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,wrongIds:sortedIds.join(', '),rate})}).catch(err=>console.error(err));renderResultUI(studentHistory.length-1);}
+function loadAttempt(index){if(index>=studentHistory.length)return;selectedSet.clear();studentHistory[index].wrongIds.slice(0,HFAccessPolicy.MAX_SELECTED_TYPES).forEach(id=>{selectedSet.add(id);if(!worksheetDifficultyByType.has(id))worksheetDifficultyByType.set(id,'same')});updateChecksUI();renderResultUI(index)}
+function submitNewAttempt(){if(selectedSet.size===0){alert('틀린(약점) 유형을 최소 하나 이상 체크해 주세요.');return}if(selectedSet.size>HFAccessPolicy.MAX_SELECTED_TYPES){alert(`맞춤 시험지는 최대 ${HFAccessPolicy.MAX_SELECTED_TYPES}개 유형까지 선택할 수 있습니다.`);return}if(studentHistory.length>=3){alert('총 3회 응시 제한을 초과했습니다.');return}const sortedIds=Array.from(selectedSet).sort((a,b)=>a-b);const name=document.getElementById('studentName').value.trim();const phone=document.getElementById('parentPhone').value.trim();const rate=Math.round(((54-sortedIds.length)/54)*100);studentHistory.push({attempt:studentHistory.length+1,wrongIds:sortedIds,rate:rate});localStorage.setItem(currentUserKey,JSON.stringify(studentHistory));updateAttemptButtons();const scriptURL='https://script.google.com/macros/s/AKfycbzwtu2FOu_rmqT-pyhwakl0EYrkbdUHUwTYnxB0GBlLcZlgXqmxTJfObeKQHx8Tu_FZsA/exec';fetch(scriptURL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,wrongIds:sortedIds.join(', '),rate})}).catch(err=>console.error(err));renderResultUI(studentHistory.length-1);}
 function setView(v){['quick','area','list','similar'].forEach(n=>{const vs=document.getElementById(`view-${n}`);const bs=document.getElementById(`btn-${n}`);if(vs)vs.classList.toggle('active',v===n);if(bs)bs.classList.toggle('active',v===n)});if(v==='similar')renderSimilarUI();}
-let hfData=null;let currentSimilarDiff='easy';
-const variationCache=new Map();
-let similarRenderToken=0;
-function setSimilarDiff(diff){currentSimilarDiff=diff;document.querySelectorAll('.sim-diff-btn').forEach(b=>b.classList.toggle('active',b.dataset.diff===diff));renderSimilarList();}
-async function loadVariationPair(id){
-  if(variationCache.has(id))return variationCache.get(id);
-  const q=String(id).padStart(2,'0');
-  const pair=await Promise.all([1,2].map(async n=>{
-    try{
-      const res=await fetch(`./data/variations/q${q}_var0${n}.json`);
-      if(!res.ok)return null;
-      const variation=await res.json();
-      if(variation.baseQuestionId!==`q${q}`||!variation.problem||!variation.problem.prompt)return null;
-      return variation;
-    }catch(e){return null;}
-  }));
-  const usable=pair.filter(Boolean);
-  variationCache.set(id,usable);
-  return usable;
+function worksheetAvailability(typeId){
+  if(typeId>=1&&typeId<=20)return{easy:true,same:true,hard:true};
+  if(HFVariationBank.READY_TYPE_IDS.includes(typeId))return{easy:false,same:true,hard:false};
+  return{easy:false,same:false,hard:false};
 }
-function formatVariationAnswer(variation){
-  const answer=variation&&variation.answerValidation?variation.answerValidation.expectedAnswer:'';
-  if(answer&&typeof answer==='object'&&!Array.isArray(answer)&&answer.min!==undefined&&answer.max!==undefined)return `최솟값 ${answer.min}명, 최댓값 ${answer.max}명`;
-  if(answer&&typeof answer==='object'&&!Array.isArray(answer)&&answer.white!==undefined&&answer.black!==undefined)return `흰색 ${answer.white}개, 검은색 ${answer.black}개`;
-  if(answer&&typeof answer==='object'&&!Array.isArray(answer)&&answer.usedPieceIds)return `사용 조각 ${answer.usedPieceIds.join(', ')} · 남는 조각 ${answer.unusedPieceId}`;
-  if(answer&&typeof answer==='object'&&!Array.isArray(answer)&&answer.lineCount!==undefined&&answer.pieceCount!==undefined)return `곧은 선 ${answer.lineCount}개로 ${answer.pieceCount}조각${answer.solutionSignature?` · ${answer.solutionSignature}`:''}`;
-  if(Array.isArray(answer))return answer.join(', ');
-  if(variation.subType==='unit_rate_animals')return `${answer}일`;
-  if(variation.subType==='balance_unit_count')return `${answer}개`;
-  if(variation.subType==='reverse_table')return `${answer}명`;
-  if(variation.subType==='tetra_cube_cases')return `${answer}가지`;
-  if(variation.subType==='count_tilted_squares'||variation.subType==='geoboard_squares'||variation.subType==='square_partition_min')return `${answer}개`;
-  if(variation.subType&&variation.subType.startsWith('stacking_'))return `${answer}개`;
-  return String(answer??'');
+function setWorksheetDifficulty(typeId,difficulty){const available=worksheetAvailability(typeId);if(!available[difficulty])return;worksheetDifficultyByType.set(typeId,difficulty);renderSimilarUI()}
+function openWorksheetBuilder(){setView('similar');document.getElementById('view-similar')?.scrollIntoView({behavior:'smooth',block:'start'})}
+function createSelectedWorksheet(){
+  const ids=Array.from(selectedSet).sort((a,b)=>a-b);
+  const status=document.getElementById('worksheet-build-status');
+  const paid=HFAccessPolicy.storedAccess(window.GFIELD_CONFIG).paid;
+  const count=paid?Number(document.getElementById('worksheet-count')?.value):HFAccessPolicy.FREE_PER_DIFFICULTY;
+  if(!ids.length){if(status)status.textContent='먼저 틀린 유형을 선택해 주세요.';return}
+  if(ids.length>HFAccessPolicy.MAX_SELECTED_TYPES){if(status)status.textContent=`한 번에 최대 ${HFAccessPolicy.MAX_SELECTED_TYPES}개 유형까지 선택할 수 있습니다.`;return}
+  try{HFAccessPolicy.validatePracticeRequest({countPerType:count,difficulty:'same',accessTier:paid?'paid':'free'})}catch(error){if(status)status.textContent=String(error.message||error);return}
+  if(count>2&&ids.some(id=>id>20)){if(status)status.textContent='현재 3문항 이상 자동 생성은 q01~q20 유형만 지원합니다. 나머지 유형은 검수된 2문항까지 제공합니다.';return}
+  for(const id of ids){const difficulty=worksheetDifficultyByType.get(id)||'same';if(!worksheetAvailability(id)[difficulty]){if(status)status.textContent=`유형 ${String(id).padStart(2,'0')}의 선택 난이도는 아직 검수 완료된 문제가 없습니다.`;return}}
+  const levels=ids.map(id=>`${id}:${worksheetDifficultyByType.get(id)||'same'}`).join(',');
+  const url=new URL('./mock/viewer.html',location.href);url.searchParams.set('mode','practice');url.searchParams.set('student',document.getElementById('studentName').value.trim()||'학생');url.searchParams.set('types',ids.join(','));url.searchParams.set('levels',levels);url.searchParams.set('count',String(count));url.searchParams.set('seed',String(Date.now()));window.open(url,'_blank','noopener');
 }
-function inlineScriptString(value){return escapeHTML(JSON.stringify(String(value??'')));}
-function variationToSimilar(variation,item){
-  return {
-    prompt:variation.problem&&variation.problem.prompt||item.originalProblem&&item.originalProblem.text||'',
-    answer:formatVariationAnswer(variation),
-    answerStory:variation.solutionHint||item.aiTutorPack&&item.aiTutorPack.audioScript||'',
-    audioScript:variation.solutionHint||item.aiTutorPack&&item.aiTutorPack.audioScript||'',
-    problemImage:variation.source&&variation.source.problemImage||'',
-    variationId:variation.variationId,
-    isVariation:true
-  };
-}
-async function renderSimilarUI(){if(!hfData){try{const res=await fetch('./data/hf_data.json');hfData=await res.json();}catch(e){document.getElementById('similar-list').innerHTML='<p style="color:red">데이터 로드 실패</p>';return;}}await renderSimilarList();}
-async function renderSimilarList(){
-  const renderToken=++similarRenderToken;
-  const wrongIds=selectedSet.size>0?Array.from(selectedSet):[];
+async function renderSimilarUI(){
   const container=document.getElementById('similar-list');
-  if(wrongIds.length===0){container.innerHTML='<p style="text-align:center;color:#888;padding:24px">먼저 틀린 문제를 체크해 주세요.</p>';return;}
-  if(!hfData){container.innerHTML='<p style="text-align:center;color:#888">데이터 로딩 중...</p>';return;}
-  container.innerHTML='<p style="text-align:center;color:#888;padding:24px">검수된 유사문제를 불러오는 중...</p>';
-  const loadedPairs=await Promise.all(wrongIds.map(async id=>[id,await loadVariationPair(id)]));
-  if(renderToken!==similarRenderToken)return;
-  const loadedMap=new Map(loadedPairs);
-  const BASE_IMG='https://raw.githubusercontent.com/docssam1/lete-on/main/hyper-focus/assets/book/';
-  let html='';
-  wrongIds.forEach(id=>{
-    const item=hfData.find(d=>d.typeId===id);
-    if(!item)return;
-    const variations=loadedMap.get(id)||[];
-    const sims=variations.length?variations.map(v=>variationToSimilar(v,item)):item.fixedSimilars||[];
-    const imgNums=currentSimilarDiff==='hard'?[3,4]:[1,2];
-    const simItems=sims.slice(0,2).map((sim,i)=>({img:sim.isVariation?sim.problemImage:`${BASE_IMG}${id}_${imgNums[i]}.png`,sim}));
-    if(!simItems.length)return;
-    simItems.forEach(({img,sim},i)=>{
-      const cardId=`sim-card-${id}-${i}`;
-      const svgId=`sim-svg-${id}-${i}`;
-      const svgPath=sim.handwritingData&&sim.handwritingData.svgPath?sim.handwritingData.svgPath:'';
-      const svgColor=sim.handwritingData&&sim.handwritingData.color?sim.handwritingData.color:'#0d1b2a';
-      const audioScript=sim.audioScript||item.aiTutorPack&&item.aiTutorPack.audioScript||'';
-      html+=`<div class="sim-card" id="${cardId}">
-        <div style="font-size:.72rem;color:#888;margin-bottom:8px;font-weight:500">유형 ${String(id).padStart(2,'0')} · ${item.title} · ${i===0?'유사문제 ①':'유사문제 ②'}</div>
-        ${sim.isVariation?`<span class="sim-source-badge">검수된 variation</span>`:''}
-        ${sim.prompt?`<div class="sim-prompt">${escapeHTML(sim.prompt)}</div>`:''}
-        ${img?`<img class="sim-card-img" src="${escapeHTML(img)}" onerror="this.style.display='none'" alt="유사문제 ${i+1}">`:''}
-        ${svgPath?`<div class="sim-svg-wrap"><svg id="${svgId}" viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg"><path d="${svgPath}" fill="none" stroke="${svgColor}" stroke-width="2.5" stroke-linecap="round"/></svg></div>`:''}
-        ${audioScript?`<button class="sim-audio-btn" onclick="speakSim(this,${inlineScriptString(audioScript)})">🔊 음성 듣기</button>`:''}
-        <button class="sim-answer-toggle" onclick="toggleSimAnswer(this)">정답 및 풀이 보기 ▾</button>
-        <div class="sim-answer-box">
-          <strong>정답:</strong> ${escapeHTML(sim.answer||'')}
-          <div style="margin-top:6px">${escapeHTML(sim.answerStory||'')}</div>
-        </div>
-      </div>`;
-    });
-  });
-  container.innerHTML=html||'<p style="text-align:center;color:#888;padding:24px">유사문제가 없습니다.</p>';
-  // SVG 손글씨 애니메이션
-  setTimeout(()=>{
-    wrongIds.forEach(id=>{
-      const item=hfData.find(d=>d.typeId===id);
-      if(!item)return;
-      const variations=loadedMap.get(id)||[];
-      const sims=variations.length?variations.map(v=>variationToSimilar(v,item)):item.fixedSimilars||[];
-      [0,1].forEach(i=>{
-        const sim=sims[i];
-        if(!sim||!sim.handwritingData||!sim.handwritingData.svgPath)return;
-        const svgId=`sim-svg-${id}-${i}`;
-        const el=document.getElementById(svgId);
-        if(!el)return;
-        try{
-          if(typeof Vivus!=='undefined'){
-            new Vivus(svgId,{duration:sim.handwritingData.duration||200,type:'delayed',animTimingFunction:Vivus.EASE});
-          }
-        }catch(e){}
-      });
-    });
-  },300);
-}
-function toggleSimAnswer(btn){
-  const box=btn.nextElementSibling;
-  const open=box.classList.toggle('open');
-  btn.textContent=open?'정답 및 풀이 닫기 ▴':'정답 및 풀이 보기 ▾';
-}
-function speakSim(btn,text){
-  if(!('speechSynthesis' in window))return;
-  window.speechSynthesis.cancel();
-  const utt=new SpeechSynthesisUtterance(text);
-  utt.lang='ko-KR';utt.rate=0.9;
-  window.speechSynthesis.speak(utt);
+  const ids=Array.from(selectedSet).sort((a,b)=>a-b);
+  if(!ids.length){container.innerHTML='<p style="text-align:center;color:#888;padding:24px">먼저 틀린 유형을 선택해 주세요.</p>';return}
+  const rows=ids.map(id=>{
+    const item=data.flatMap(category=>category.items).find(candidate=>candidate.id===id);
+    const available=worksheetAvailability(id);
+    let difficulty=worksheetDifficultyByType.get(id)||'same';
+    if(!available[difficulty])difficulty=available.same?'same':available.easy?'easy':available.hard?'hard':'same';
+    worksheetDifficultyByType.set(id,difficulty);
+    const buttons=[['easy','쉽게'],['same','같게'],['hard','어렵게']].map(([value,label])=>`<button type="button" class="${difficulty===value&&available[value]?'active':''}" ${available[value]?'':'disabled'} title="${available[value]?'':value==='same'?'검수 문제 준비 중':'이 난이도의 생성기 준비 중'}" onclick="setWorksheetDifficulty(${id},'${value}')">${label}</button>`).join('');
+    return `<div class="worksheet-type-row"><div class="worksheet-type-title">유형 ${String(id).padStart(2,'0')} · ${escapeHTML(item?.text||'유형 설명')}</div><div class="worksheet-difficulties">${buttons}</div></div>`;
+  }).join('');
+  const unsupported=ids.filter(id=>!Object.values(worksheetAvailability(id)).some(Boolean));
+  const paid=HFAccessPolicy.storedAccess(window.GFIELD_CONFIG).paid;
+  const countControl=paid?`<label for="worksheet-count">유형당 문항</label><input id="worksheet-count" type="number" min="2" max="${HFAccessPolicy.PAID_PER_DIFFICULTY}" value="2" inputmode="numeric" style="width:68px;padding:9px;border:1px solid #cbd5df;border-radius:8px">`:'';
+  container.innerHTML=`<div class="worksheet-type-list">${rows}</div><div class="worksheet-build-actions">${countControl}<button type="button" class="worksheet-build-btn" ${unsupported.length?'disabled':''} onclick="createSelectedWorksheet()">${paid?'선택 난이도로 자동 시험지 만들기':'유형당 2문항 자동 시험지 만들기'}</button><div class="worksheet-build-status" id="worksheet-build-status">${unsupported.length?`아직 시험지 연결이 준비되지 않은 유형: ${unsupported.map(id=>String(id).padStart(2,'0')).join(', ')}`:paid?'추가 문제 권한이 확인되었습니다.':'3번째 문제부터는 유료 추가 문제입니다.'}</div></div>`;
 }
 function toggleAllAccordions(){const cards=document.querySelectorAll('#resultListBox .res-card');const allOpen=[...cards].every(c=>c.classList.contains('open'));cards.forEach(c=>c.classList.toggle('open',!allOpen));}
 function escapeHTML(v){return String(v??'').replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]))}
@@ -816,7 +724,6 @@ function generateDiagnosis(weakCounts,totalCounts,studentName,wrongCount,history
   setTimeout(()=>window.showIntroPreview(),15200);
 })();
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vivus/0.4.6/vivus.min.js"></script>
 <script>
 (function(){
   function killIntro(){
