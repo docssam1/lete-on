@@ -14,6 +14,7 @@ function assert(condition, message) {
 load("hyper-focus/generator/q01.js");
 load("hyper-focus/generator/stacking.js");
 load("hyper-focus/generator/spatial.js");
+load("hyper-focus/generator/reasoning.js");
 load("hyper-focus/mock/exam-blueprints.js");
 load("hyper-focus/mock/access-policy.js");
 load("hyper-focus/mock/variation-bank.js");
@@ -239,6 +240,52 @@ const q05Fallback = globalThis.HFQ05.generateQ05("same", 1);
 q05Fallback.seed = "fallback";
 assert(!globalThis.HFQ05.validateQ05(q05Fallback), "q05: fallback 문제를 정상 출제로 허용함");
 
+let reasoningDifficultyChecks = 0;
+const reasoningAnswers = Object.fromEntries([10, 11, 12].flatMap((id) => ["easy", "same", "hard"].map((difficulty) => [`${id}:${difficulty}`, new Set()])));
+const q10Ranges = { easy: [], same: [], hard: [] };
+const q11Ranges = { easy: [], same: [], hard: [] };
+[10, 11, 12].forEach((typeId) => {
+  const code = String(typeId).padStart(2, "0"), mod = globalThis[`HFQ${code}`];
+  ["easy", "same", "hard"].forEach((difficulty) => {
+    for (let seed = 1; seed <= 500; seed += 1) {
+      const payload = mod[`generateQ${code}`](difficulty, seed);
+      assert(mod[`validateQ${code}`](payload), `q${code} ${difficulty}: 성립 실패 seed ${seed}`);
+      const answer = mod[`deriveQ${code}Answer`](payload);
+      const candidates = mod[`enumerateQ${code}AnswerCandidates`](payload);
+      assert(candidates.length === 1 && JSON.stringify(candidates[0]) === JSON.stringify(answer), `q${code} ${difficulty}: 단일 정답 후보 실패 seed ${seed}`);
+      const svg = mod[`renderQ${code}Problem`](payload);
+      assert(svg.includes("<svg") && !/(?:NaN|undefined|null)/.test(svg), `q${code} ${difficulty}: SVG 실패 seed ${seed}`);
+      reasoningAnswers[`${typeId}:${difficulty}`].add(JSON.stringify(answer));
+      if (typeId === 10) q10Ranges[difficulty].push(answer);
+      if (typeId === 11) q11Ranges[difficulty].push(answer);
+      if (typeId === 12) {
+        const foldCount = { easy: 1, same: 2, hard: 3 }[difficulty];
+        assert(payload.folds.length === foldCount, `q12 ${difficulty}: 접기 횟수 실패 seed ${seed}`);
+        assert(payload.unfoldedPoints.length === payload.punchCount * 2 ** foldCount, `q12 ${difficulty}: 펼친 구멍 좌표 중복 seed ${seed}`);
+      }
+      reasoningDifficultyChecks += 1;
+    }
+  });
+});
+Object.entries(reasoningAnswers).forEach(([key, answers]) => {
+  const minimum = key.startsWith("12:") ? 2 : 3;
+  assert(answers.size >= minimum, `q${key}: 정답 다양성 ${answers.size}종`);
+});
+assert(Math.max(...q10Ranges.easy) < Math.min(...q10Ranges.same) && Math.max(...q10Ranges.same) < Math.min(...q10Ranges.hard), "q10: 난이도 답 범위 겹침");
+assert(Math.max(...q11Ranges.easy) < Math.min(...q11Ranges.same) && Math.max(...q11Ranges.same) < Math.min(...q11Ranges.hard), "q11: 난이도 합 범위 겹침");
+const generatedPractice = globalThis.HFMock.createPractice([10, 11, 12], {
+  seed: 20260821,
+  countPerType: 2,
+  accessTier: "free",
+  difficultyByType: { 10: "easy", 11: "same", 12: "hard" }
+});
+assert(generatedPractice.questions.length === 6, "q10~q12: 무료 난이도별 2문항 생성 실패");
+assert(generatedPractice.questions.every((question) => question.seed && question.answerCandidates.length === 1), "q10~q12: 정적 variation으로 잘못 출제됨");
+for (const typeId of [10, 11, 12]) {
+  const answers = generatedPractice.questions.filter((question) => question.typeId === typeId).map((question) => JSON.stringify(question.answer));
+  assert(new Set(answers).size === 2, `q${typeId}: 무료 두 문항 정답 충돌`);
+}
+
 let spatialDifficultyChecks = 0;
 [6, 7, 8, 9].forEach((typeId) => {
   const code = String(typeId).padStart(2, "0"), mod = globalThis[`HFQ${code}`];
@@ -350,27 +397,27 @@ variationExam.questions.forEach((question) => {
     assert(fs.existsSync(asset), `${question.variationId}: 그림 파일 없음 ${match[1]}`);
   }
 });
-const bankPractice = globalThis.HFMock.createPractice([10, 53], { seed: 20260820, countPerType: 2, difficulty: "same", accessTier: "free" });
+const bankPractice = globalThis.HFMock.createPractice([13, 53], { seed: 20260820, countPerType: 2, difficulty: "same", accessTier: "free" });
 assert(bankPractice.questions.length === 4, "기존 유사문제 약점 문제은행 연결 실패");
 assert(new Set(bankPractice.questions.map((question) => question.variationId)).size === 4, "기존 유사문제 약점 문제은행 중복 발생");
 assert(bankPractice.questions.every((question) => question.difficulty === "same"), "정적 유사문제 난이도 표시 불일치");
 let bankOverRequestRejected = false;
 try {
-  globalThis.HFMock.createPractice([10], { seed: 20260820, countPerType: 3, difficulty: "same", accessTier: "paid" });
+  globalThis.HFMock.createPractice([13], { seed: 20260820, countPerType: 3, difficulty: "same", accessTier: "paid" });
 } catch (error) {
   bankOverRequestRejected = /현재 2개만/.test(error.message);
 }
 assert(bankOverRequestRejected, "준비 수보다 많은 기존 유사문제 요청을 거부하지 않음");
 let unavailableDifficultyRejected = false;
 try {
-  globalThis.HFMock.createPractice([10], { seed: 20260820, countPerType: 2, difficulty: "easy", accessTier: "free" });
+  globalThis.HFMock.createPractice([13], { seed: 20260820, countPerType: 2, difficulty: "easy", accessTier: "free" });
 } catch (error) {
   unavailableDifficultyRejected = /아직 검수 완료된 문항이 없습니다/.test(error.message);
 }
 assert(unavailableDifficultyRejected, "정적 유형의 준비되지 않은 난이도를 차단하지 않음");
 
 [
-  ["hyper-focus/mock/index.html", ["config.js", "access-policy.js", "spatial.js", "exam-blueprints.js", "variation-bank.js", "prepareExam", "questionList", "resultFromMarks", "practiceDifficultyByType", "선택 난이도로 시험지 만들기", "viewer.html"]],
+  ["hyper-focus/mock/index.html", ["config.js", "access-policy.js", "spatial.js", "reasoning.js", "exam-blueprints.js", "variation-bank.js", "prepareExam", "questionList", "resultFromMarks", "practiceDifficultyByType", "선택 난이도로 시험지 만들기", "viewer.html"]],
   ["hyper-focus/mock/viewer.html", ["config.js", "access-policy.js", "spatial.js", "exam-blueprints.js", "variation-bank.js", "preparePractice", "difficultyByType", "createPractice", "window.print", "solutions", "flex-wrap:nowrap"]],
   ["hyper-focus/review.html", ["spatial.js", "HFQ09", "generateQ09", "기존 variation 눈 검수표", "generator-status.json", "viewerReadyVariationCount", "원본 기준", "눈 검수"]],
   ["hyper-focus/index.html", ["mock/access-policy.js", "맞춤 시험지", "유형당 2문항 자동 시험지 만들기", "MAX_SELECTED_TYPES"]]
@@ -409,6 +456,7 @@ console.log(`- q03 hard elevated-view and height-grid checks without fallback: $
 console.log(`- q04 separated difficulty checks without fallback: ${q04DifficultyChecks}`);
 console.log(`- q05 separated wall/open difficulty checks without fallback: ${q05DifficultyChecks}`);
 console.log(`- q06-q09 all-difficulty checks without fallback: ${spatialDifficultyChecks}`);
+console.log(`- q10-q12 all-difficulty single-answer checks: ${reasoningDifficultyChecks}`);
 console.log(`- answer varieties: ${Object.entries(answerSets).map(([id, set]) => `q${String(id).padStart(2, "0")}=${set.size}`).join(", ")}`);
 console.log(`- explicit practice counts: ${oneEach.questions.length} and ${sevenEach.questions.length} questions`);
 console.log(`- scoring contract follows blueprint total: ${exam.questions.length} questions`);

@@ -102,6 +102,39 @@
       enumerateAnswers: "enumerateQ09AnswerCandidates",
       renderAnswer: "renderQ09Answer",
       prompt: () => "쌓기나무를 위, 앞, 오른쪽 옆에서 본 모양입니다. 세 모양을 모두 만족하도록 쌓을 때 필요한 쌓기나무의 가장 적은 수를 구하세요."
+    },
+    10: {
+      title: "겹친 영역의 수",
+      module: "HFQ10",
+      generate: "generateQ10",
+      validate: "validateQ10",
+      renderProblem: "renderQ10Problem",
+      deriveAnswer: "deriveQ10Answer",
+      enumerateAnswers: "enumerateQ10AnswerCandidates",
+      renderAnswer: "renderQ10Answer",
+      prompt: () => "겹친 부분의 수는 양쪽에 적힌 수를 더한 값입니다. 별표가 있는 겹친 부분에 들어갈 수를 구하세요."
+    },
+    11: {
+      title: "숫자 종이 두 번 접기",
+      module: "HFQ11",
+      generate: "generateQ11",
+      validate: "validateQ11",
+      renderProblem: "renderQ11Problem",
+      deriveAnswer: "deriveQ11Answer",
+      enumerateAnswers: "enumerateQ11AnswerCandidates",
+      renderAnswer: "renderQ11Answer",
+      prompt: () => "수가 쓰인 종이를 그림과 같은 방법으로 두 번 접었습니다. 가장 윗면에 오는 네 수의 합을 구하세요."
+    },
+    12: {
+      title: "접은 색종이 구멍 수",
+      module: "HFQ12",
+      generate: "generateQ12",
+      validate: "validateQ12",
+      renderProblem: "renderQ12Problem",
+      deriveAnswer: "deriveQ12Answer",
+      enumerateAnswers: "enumerateQ12AnswerCandidates",
+      renderAnswer: "renderQ12Answer",
+      prompt: (payload) => `색종이를 ${payload.folds.length}번 접고, 접힌 선 위가 아닌 곳에 구멍을 ${payload.punchCount}개 뚫었습니다. 모두 펼치면 구멍은 몇 개입니까?`
     }
   };
 
@@ -265,9 +298,21 @@
         }
         return;
       }
+      const answersForType = new Set();
       for (let index = 0; index < countPerType; index += 1) {
         const questionSeed = base + typeId * 12011 + index * 7919;
-        questions.push(generateQuestion(typeId, difficulty, questionSeed, number));
+        let question = null;
+        for (let attempt = 0; attempt < 100; attempt += 1) {
+          const candidate = generateQuestion(typeId, difficulty, questionSeed + attempt * 104729, number);
+          const answerKey = JSON.stringify(candidate.answer);
+          if (index >= 2 || !answersForType.has(answerKey)) {
+            answersForType.add(answerKey);
+            question = candidate;
+            break;
+          }
+        }
+        if (!question) throw new Error(`q${String(typeId).padStart(2, "0")} ${DIFFICULTY_LABEL[difficulty]} 문제의 서로 다른 정답을 충분히 만들지 못했습니다.`);
+        questions.push(question);
         number += 1;
       }
     });
