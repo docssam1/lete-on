@@ -286,6 +286,30 @@ for (const typeId of [10, 11, 12]) {
   assert(new Set(answers).size === 2, `q${typeId}: 무료 두 문항 정답 충돌`);
 }
 
+let tilingDifficultyChecks = 0;
+const q14Ranges = { easy: [], same: [], hard: [] };
+[13, 14].forEach((typeId) => {
+  const code = String(typeId).padStart(2, "0"), mod = globalThis[`HFQ${code}`];
+  ["easy", "same", "hard"].forEach((difficulty) => {
+    const answers = new Set();
+    for (let seed = 1; seed <= 200; seed += 1) {
+      const payload = mod[`generateQ${code}`](difficulty, seed);
+      assert(mod[`validateQ${code}`](payload), `q${code} ${difficulty}: 성립 실패 seed ${seed}`);
+      const answer = mod[`deriveQ${code}Answer`](payload), candidates = mod[`enumerateQ${code}AnswerCandidates`](payload);
+      assert(candidates.length === 1 && JSON.stringify(candidates[0]) === JSON.stringify(answer), `q${code} ${difficulty}: 단일 정답 후보 실패 seed ${seed}`);
+      const svg = mod[`renderQ${code}Problem`](payload);
+      assert(svg.includes("<svg") && !/(?:NaN|undefined|null)/.test(svg), `q${code} ${difficulty}: SVG 실패 seed ${seed}`);
+      if (typeId === 13) assert(payload.guideCount === { easy: 2, same: 1, hard: 0 }[difficulty], `q13 ${difficulty}: 도움 조각 수 실패`);
+      if (typeId === 14) q14Ranges[difficulty].push(answer);
+      answers.add(JSON.stringify(answer)); tilingDifficultyChecks += 1;
+    }
+    assert(answers.size === 2, `q${code} ${difficulty}: 무료 두 문항 정답 다양성 ${answers.size}종`);
+  });
+});
+assert(Math.max(...q14Ranges.easy) < Math.min(...q14Ranges.same) && Math.max(...q14Ranges.same) < Math.min(...q14Ranges.hard), "q14: 난이도 최소 분할 수 범위 겹침");
+const tilingPractice = globalThis.HFMock.createPractice([13, 14], { seed: 20260822, countPerType: 2, accessTier: "free", difficultyByType: { 13: "hard", 14: "easy" } });
+assert(tilingPractice.questions.length === 4 && tilingPractice.questions.every((question) => question.answerCandidates.length === 1), "q13~q14: 무료 난이도별 2문항 생성 실패");
+
 let spatialDifficultyChecks = 0;
 [6, 7, 8, 9].forEach((typeId) => {
   const code = String(typeId).padStart(2, "0"), mod = globalThis[`HFQ${code}`];
@@ -397,20 +421,20 @@ variationExam.questions.forEach((question) => {
     assert(fs.existsSync(asset), `${question.variationId}: 그림 파일 없음 ${match[1]}`);
   }
 });
-const bankPractice = globalThis.HFMock.createPractice([13, 53], { seed: 20260820, countPerType: 2, difficulty: "same", accessTier: "free" });
+const bankPractice = globalThis.HFMock.createPractice([15, 53], { seed: 20260820, countPerType: 2, difficulty: "same", accessTier: "free" });
 assert(bankPractice.questions.length === 4, "기존 유사문제 약점 문제은행 연결 실패");
 assert(new Set(bankPractice.questions.map((question) => question.variationId)).size === 4, "기존 유사문제 약점 문제은행 중복 발생");
 assert(bankPractice.questions.every((question) => question.difficulty === "same"), "정적 유사문제 난이도 표시 불일치");
 let bankOverRequestRejected = false;
 try {
-  globalThis.HFMock.createPractice([13], { seed: 20260820, countPerType: 3, difficulty: "same", accessTier: "paid" });
+  globalThis.HFMock.createPractice([15], { seed: 20260820, countPerType: 3, difficulty: "same", accessTier: "paid" });
 } catch (error) {
   bankOverRequestRejected = /현재 2개만/.test(error.message);
 }
 assert(bankOverRequestRejected, "준비 수보다 많은 기존 유사문제 요청을 거부하지 않음");
 let unavailableDifficultyRejected = false;
 try {
-  globalThis.HFMock.createPractice([13], { seed: 20260820, countPerType: 2, difficulty: "easy", accessTier: "free" });
+  globalThis.HFMock.createPractice([15], { seed: 20260820, countPerType: 2, difficulty: "easy", accessTier: "free" });
 } catch (error) {
   unavailableDifficultyRejected = /아직 검수 완료된 문항이 없습니다/.test(error.message);
 }
@@ -457,6 +481,7 @@ console.log(`- q04 separated difficulty checks without fallback: ${q04Difficulty
 console.log(`- q05 separated wall/open difficulty checks without fallback: ${q05DifficultyChecks}`);
 console.log(`- q06-q09 all-difficulty checks without fallback: ${spatialDifficultyChecks}`);
 console.log(`- q10-q12 all-difficulty single-answer checks: ${reasoningDifficultyChecks}`);
+console.log(`- q13-q14 all-difficulty exhaustive checks: ${tilingDifficultyChecks}`);
 console.log(`- answer varieties: ${Object.entries(answerSets).map(([id, set]) => `q${String(id).padStart(2, "0")}=${set.size}`).join(", ")}`);
 console.log(`- explicit practice counts: ${oneEach.questions.length} and ${sevenEach.questions.length} questions`);
 console.log(`- scoring contract follows blueprint total: ${exam.questions.length} questions`);

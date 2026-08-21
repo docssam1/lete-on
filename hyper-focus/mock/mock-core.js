@@ -135,6 +135,28 @@
       enumerateAnswers: "enumerateQ12AnswerCandidates",
       renderAnswer: "renderQ12Answer",
       prompt: (payload) => `색종이를 ${payload.folds.length}번 접고, 접힌 선 위가 아닌 곳에 구멍을 ${payload.punchCount}개 뚫었습니다. 모두 펼치면 구멍은 몇 개입니까?`
+    },
+    13: {
+      title: "펜토미노로 직사각형 채우기",
+      module: "HFQ13",
+      generate: "generateQ13",
+      validate: "validateQ13",
+      renderProblem: "renderQ13Problem",
+      deriveAnswer: "deriveQ13Answer",
+      enumerateAnswers: "enumerateQ13AnswerCandidates",
+      renderAnswer: "renderQ13Answer",
+      prompt: () => "주어진 펜토미노 5조각 중 4조각만 사용하여 20칸 직사각형을 빈틈없이 채우세요. 쓰지 않는 조각도 쓰세요. 조각은 돌리거나 뒤집어도 됩니다."
+    },
+    14: {
+      title: "정사각형으로 가장 적게 나누기",
+      module: "HFQ14",
+      generate: "generateQ14",
+      validate: "validateQ14",
+      renderProblem: "renderQ14Problem",
+      deriveAnswer: "deriveQ14Answer",
+      enumerateAnswers: "enumerateQ14AnswerCandidates",
+      renderAnswer: "renderQ14Answer",
+      prompt: () => "점선을 따라 도형을 정사각형으로 나누려고 합니다. 겹치거나 남는 부분이 없도록 가장 적게 나누면 정사각형은 몇 개입니까?"
     }
   };
 

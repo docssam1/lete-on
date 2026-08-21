@@ -214,7 +214,139 @@
     return `정답: ${payload.answer}개 — ${payload.folds.length}번 접으면 한 구멍이 ${2 ** payload.folds.length}개로 늘어납니다. ${payload.punchCount}×${2 ** payload.folds.length}=${payload.answer}입니다.`;
   }
 
+  const Q13_PIECES = {
+    F: [[0,1],[1,0],[1,1],[1,2],[2,2]], I: [[0,0],[0,1],[0,2],[0,3],[0,4]],
+    L: [[0,0],[1,0],[2,0],[3,0],[3,1]], P: [[0,0],[0,1],[1,0],[1,1],[2,0]],
+    U: [[0,0],[0,2],[1,0],[1,1],[1,2]], V: [[0,0],[1,0],[2,0],[2,1],[2,2]]
+  };
+  const Q13_TEMPLATES = [
+    { ids: ["F","I","L","P","V"], unused: "F", placements: [
+      { pieceId:"I", cells:[[0,0],[0,1],[0,2],[0,3],[0,4]] }, { pieceId:"L", cells:[[1,0],[1,1],[1,2],[1,3],[2,3]] },
+      { pieceId:"P", cells:[[2,0],[2,1],[2,2],[3,0],[3,1]] }, { pieceId:"V", cells:[[1,4],[2,4],[3,2],[3,3],[3,4]] }
+    ]},
+    { ids: ["F","I","L","U","V"], unused: "I", placements: [
+      { pieceId:"F", cells:[[0,0],[1,0],[1,1],[1,2],[2,1]] }, { pieceId:"V", cells:[[0,1],[0,2],[0,3],[1,3],[2,3]] },
+      { pieceId:"L", cells:[[0,4],[1,4],[2,4],[3,3],[3,4]] }, { pieceId:"U", cells:[[2,0],[2,2],[3,0],[3,1],[3,2]] }
+    ]}
+  ];
+  function orientations(cells) {
+    const output = new Map();
+    for (const flip of [false, true]) {
+      let current = cells.map(([row, col]) => [row, flip ? -col : col]);
+      for (let turn = 0; turn < 4; turn += 1) {
+        const minRow = Math.min(...current.map((cell) => cell[0])), minCol = Math.min(...current.map((cell) => cell[1]));
+        const normalized = current.map(([row, col]) => [row - minRow, col - minCol]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+        output.set(JSON.stringify(normalized), normalized);
+        current = current.map(([row, col]) => [col, -row]);
+      }
+    }
+    return [...output.values()];
+  }
+  function canTileQ13(pieceIds) {
+    const board = new Set(Array.from({ length: 20 }, (_, index) => index)), placements = new Map();
+    pieceIds.forEach((pieceId) => {
+      const list = [];
+      orientations(Q13_PIECES[pieceId]).forEach((shape) => {
+        const height = Math.max(...shape.map((cell) => cell[0])) + 1, width = Math.max(...shape.map((cell) => cell[1])) + 1;
+        for (let dr = 0; dr <= 4 - height; dr += 1) for (let dc = 0; dc <= 5 - width; dc += 1) list.push(shape.map(([row, col]) => (row + dr) * 5 + col + dc));
+      });
+      placements.set(pieceId, list);
+    });
+    function search(remaining, unused) {
+      if (!remaining.size) return true;
+      const first = Math.min(...remaining);
+      for (const pieceId of unused) for (const placement of placements.get(pieceId)) if (placement.includes(first) && placement.every((cell) => remaining.has(cell))) {
+        const next = new Set(remaining); placement.forEach((cell) => next.delete(cell));
+        if (search(next, unused.filter((id) => id !== pieceId))) return true;
+      }
+      return false;
+    }
+    return search(board, pieceIds.slice());
+  }
+  function enumerateQ13AnswerCandidates(payload) {
+    if (!payload || !Array.isArray(payload.pieceIds) || payload.pieceIds.length !== 5) return [];
+    const candidates = [];
+    payload.pieceIds.forEach((unused) => {
+      if (canTileQ13(payload.pieceIds.filter((id) => id !== unused))) candidates.push({ usedPieceIds: payload.pieceIds.filter((id) => id !== unused).sort(), unusedPieceId: unused });
+    });
+    return candidates;
+  }
+  function generateQ13(difficulty, seed) {
+    const template = Q13_TEMPLATES[Math.abs(Math.trunc(Number(seed) || 1)) % 2], guideCount = { easy: 2, same: 1, hard: 0 }[difficulty] ?? 1;
+    return { pieceIds: template.ids.slice(), unusedPieceId: template.unused, solutionPlacements: template.placements, guideCount, difficulty, seed: Number(seed) || 1 };
+  }
+  function deriveQ13Answer(payload) { return { usedPieceIds: payload.pieceIds.filter((id) => id !== payload.unusedPieceId).sort(), unusedPieceId: payload.unusedPieceId }; }
+  function validateQ13(payload) {
+    const candidates = enumerateQ13AnswerCandidates(payload), answer = deriveQ13Answer(payload), expectedGuide = { easy: 2, same: 1, hard: 0 }[payload && payload.difficulty];
+    return expectedGuide !== undefined && payload.guideCount === expectedGuide && candidates.length === 1 && JSON.stringify(candidates[0]) === JSON.stringify(answer);
+  }
+  function renderQ13Problem(payload) {
+    const colors = ["#f0c7b5","#beddd4","#c8d5ea","#ead6a8"], cell = 32, bx = 35, by = 52;
+    let board = "";
+    for (let row = 0; row < 4; row += 1) for (let col = 0; col < 5; col += 1) board += `<rect x="${bx + col * cell}" y="${by + row * cell}" width="${cell}" height="${cell}" fill="#fff" stroke="#65717a"/>`;
+    payload.solutionPlacements.slice(0, payload.guideCount).forEach((placement, index) => placement.cells.forEach(([row, col]) => {
+      board += `<rect x="${bx + col * cell + 1}" y="${by + row * cell + 1}" width="${cell - 2}" height="${cell - 2}" fill="${colors[index]}"/><text x="${bx + col * cell + 16}" y="${by + row * cell + 21}" text-anchor="middle" font-size="11" font-weight="900">${placement.pieceId}</text>`;
+    }));
+    let pieces = "";
+    payload.pieceIds.forEach((pieceId, index) => {
+      const cells = Q13_PIECES[pieceId], x = 250 + index * 82, y = 72;
+      cells.forEach(([row, col]) => { pieces += `<rect x="${x + col * 15}" y="${y + row * 15}" width="15" height="15" fill="#dbe4ec" stroke="#536170"/>`; });
+      pieces += `<text x="${x + 28}" y="158" text-anchor="middle" font-size="15" font-weight="950" fill="#273746">${pieceId}</text>`;
+    });
+    return `<svg class="hf-reasoning hf-pentomino" viewBox="0 0 680 245" role="img" aria-label="펜토미노 조각으로 직사각형 채우기"><rect width="680" height="245" rx="18" fill="#fff"/>${board}${pieces}<text x="115" y="205" text-anchor="middle" font-size="13" font-weight="850" fill="#59636a">20칸 직사각형</text><text x="455" y="205" text-anchor="middle" font-size="14" font-weight="850" fill="#59636a">5조각 중 4조각만 사용</text></svg>`;
+  }
+  function renderQ13Answer(payload) { return `정답: ${payload.unusedPieceId}조각 — 나머지 ${payload.pieceIds.filter((id) => id !== payload.unusedPieceId).join("·")}조각으로 20칸을 빈틈없이 채울 수 있습니다.`; }
+
+  function squareChain(sizes) {
+    const occupied = new Set(); let row = 0, col = 0;
+    sizes.forEach((size) => {
+      for (let r = row; r < row + size; r += 1) for (let c = col; c < col + size; c += 1) occupied.add(`${r},${c}`);
+      row += size; col += size - 1;
+    });
+    const cells = [...occupied].map((key) => key.split(",").map(Number));
+    return { cells, rows: Math.max(...cells.map((cell) => cell[0])) + 1, cols: Math.max(...cells.map((cell) => cell[1])) + 1 };
+  }
+  const Q14_CHAINS = { easy: [[3,2],[3,2,1]], same: [[4,2,2,2],[3,2,2,1,1]], hard: [[4,3,2,1,1,1],[3,3,2,2,1,1,1]] };
+  function minimumSquareCoverQ14(cells) {
+    const occupied = new Set(cells.map((cell) => cell.join(","))), squares = [];
+    cells.forEach(([row, col]) => {
+      for (let size = 1; size <= 8; size += 1) {
+        const square = [];
+        for (let r = row; r < row + size; r += 1) for (let c = col; c < col + size; c += 1) square.push(`${r},${c}`);
+        if (square.every((cell) => occupied.has(cell))) squares.push(square);
+      }
+    });
+    let best = Infinity;
+    function search(remaining, count) {
+      if (count >= best) return;
+      if (!remaining.size) { best = count; return; }
+      const first = remaining.values().next().value;
+      squares.filter((square) => square.includes(first) && square.every((cell) => remaining.has(cell))).sort((a,b) => b.length-a.length).forEach((square) => {
+        const next = new Set(remaining); square.forEach((cell) => next.delete(cell)); search(next, count + 1);
+      });
+    }
+    search(occupied, 0); return best;
+  }
+  function generateQ14(difficulty, seed) {
+    const pairs = Q14_CHAINS[difficulty] || Q14_CHAINS.same, sizes = pairs[Math.abs(Math.trunc(Number(seed) || 1)) % 2], figure = squareChain(sizes);
+    return { ...figure, sizes: sizes.slice(), answer: sizes.length, difficulty, seed: Number(seed) || 1 };
+  }
+  function enumerateQ14AnswerCandidates(payload) { return payload && Array.isArray(payload.cells) ? [minimumSquareCoverQ14(payload.cells)] : []; }
+  function deriveQ14Answer(payload) { return payload.answer; }
+  function validateQ14(payload) {
+    const pairs = Q14_CHAINS[payload && payload.difficulty], candidates = enumerateQ14AnswerCandidates(payload);
+    return Boolean(pairs && pairs.some((sizes) => JSON.stringify(sizes) === JSON.stringify(payload.sizes)) && candidates.length === 1 && candidates[0] === payload.answer);
+  }
+  function renderQ14Problem(payload) {
+    const cell = Math.min(22, 180 / payload.rows, 260 / payload.cols), width = payload.cols * cell, height = payload.rows * cell, ox = (680 - width) / 2, oy = (230 - height) / 2;
+    const cells = payload.cells.map(([row, col]) => `<rect x="${ox + col * cell}" y="${oy + row * cell}" width="${cell}" height="${cell}" fill="#f2e7cf" stroke="#6d675d" stroke-width="1" stroke-dasharray="2 2"/>`).join("");
+    return `<svg class="hf-reasoning hf-square-partition" viewBox="0 0 680 230" role="img" aria-label="점선을 따라 정사각형으로 나눌 도형"><rect width="680" height="230" rx="18" fill="#fff"/>${cells}<text x="340" y="218" text-anchor="middle" font-size="13" font-weight="850" fill="#59636a">칸의 선을 따라 나누세요.</text></svg>`;
+  }
+  function renderQ14Answer(payload) { return `정답: ${payload.answer}개 — 큰 정사각형부터 찾으면 ${payload.sizes.map((size) => `${size}×${size}`).join(", ")} 정사각형 ${payload.answer}개로 나뉩니다.`; }
+
   global.HFQ10 = { generateQ10, validateQ10, enumerateQ10AnswerCandidates, renderQ10Problem, deriveQ10Answer, renderQ10Answer };
   global.HFQ11 = { generateQ11, validateQ11, enumerateQ11AnswerCandidates, renderQ11Problem, deriveQ11Answer, renderQ11Answer, visibleCells: q11VisibleCells };
   global.HFQ12 = { generateQ12, validateQ12, enumerateQ12AnswerCandidates, renderQ12Problem, deriveQ12Answer, renderQ12Answer, unfoldPoints };
+  global.HFQ13 = { generateQ13, validateQ13, enumerateQ13AnswerCandidates, renderQ13Problem, deriveQ13Answer, renderQ13Answer };
+  global.HFQ14 = { generateQ14, validateQ14, enumerateQ14AnswerCandidates, renderQ14Problem, deriveQ14Answer, renderQ14Answer, minimumSquareCover: minimumSquareCoverQ14 };
 })(typeof window !== "undefined" ? window : globalThis);
