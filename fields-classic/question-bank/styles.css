@@ -439,3 +439,39 @@
   .book01-visual{min-height:150px;padding:5px}.b1-option-row,.b1-partition-options{grid-template-columns:repeat(2,minmax(0,1fr))}.b1-transform-source{gap:7px}.b1-transform-source>strong{max-width:95px}.b1-cell-grid{grid-template-columns:repeat(var(--size),16px)}.b1-cell-grid i{width:16px;height:16px}.b1-number-options{grid-template-columns:repeat(2,58px)}.b1-condition-card,.b1-logic-clues{padding:9px 10px}.b1-digital-addition>div{min-width:225px}
 }
 @media print{.book01-visual{break-inside:avoid}}
+
+/* 1과정 4권: 문제 번호로 세분화한 도형 분할·접기·비교·자리 배치. */
+.book04-visual{display:grid;place-items:center;min-height:170px;padding:10px;background:#fff;overflow:hidden;color:#244b60}
+.book04-visual small{color:#607b88;font-size:9px;font-weight:900;letter-spacing:0}
+.b4-option-grid{display:grid;grid-template-columns:repeat(4,minmax(74px,1fr));gap:9px;width:min(100%,500px)}
+.b4-option-grid>div{display:grid;grid-template-rows:20px 82px;place-items:center;min-width:0;border:1px solid #b7cdd7;background:#f8fbfc}
+.b4-option-grid>div>b{color:#b76535;font-size:10px}
+.b4-cell-shape{display:block;width:auto;max-width:68px;height:auto;max-height:68px}.b4-cell-shape rect{fill:#d9eef4;stroke:#397f9c;stroke-width:1.5}.b4-cell-shape.is-target rect{fill:#fff6c9;stroke:#c68c23;stroke-dasharray:3 2}
+.b4-fit-layout{display:grid;grid-template-columns:130px minmax(0,1fr);align-items:center;gap:16px;width:min(100%,570px)}
+.b4-fit-target{display:grid;place-items:center;gap:7px;min-height:125px;border:2px solid #d9ad47;background:#fffaf0}.b4-fit-target>span{font-size:9px;font-weight:900}
+
+.b4-transform-grid{display:grid;grid-template-columns:minmax(120px,1fr) minmax(90px,auto) minmax(95px,1fr);align-items:center;gap:12px;width:min(100%,560px)}
+.b4-transform-grid>div:not(.b4-step-arrow){display:grid;justify-items:center;gap:6px}
+.b4-number-grid{display:grid;grid-template-columns:repeat(var(--columns),38px);border:2px solid #4e8095;background:#4e8095;gap:1px;padding:1px}
+.b4-number-grid span{display:grid;place-items:center;width:38px;height:38px;background:#fff;color:#264b5e;font-size:12px;font-weight:900}.b4-number-grid span.is-target{background:#fff0a9;color:#9b6100;font-size:18px}
+.b4-step-arrow{display:grid;grid-template-columns:24px minmax(62px,1fr);align-items:center;gap:3px 5px}.b4-step-arrow span{color:#cc7b2f;font-size:20px;font-weight:900}.b4-step-arrow em{color:#59727e;font-size:8px;font-style:normal;font-weight:900;line-height:1.35;text-align:center;word-break:keep-all}
+.b4-digital-arithmetic{display:grid;grid-template-columns:1fr;gap:4px;width:min(100%,360px);padding:13px 17px;border:1.5px solid #a9c3ce;background:#f8fbfc}
+.b4-digital-row{display:grid;grid-template-columns:70px 24px minmax(110px,1fr) 20px;align-items:center;gap:7px}.b4-digital-row>strong{font-family:monospace;font-size:31px;letter-spacing:4px}.b4-digital-row>span{color:#ca7a31;font-size:20px}.b4-digital-row>em{font-size:10px;font-style:normal;font-weight:900}.b4-digital-row>b{font-size:20px}.b4-arithmetic-line{height:2px;background:#375e70}.b4-answer-blank{justify-self:end;min-width:72px;padding:4px 10px;border-bottom:2px solid #cc9230;text-align:center}
+
+.b4-surface-grid{display:grid;grid-template-columns:repeat(2,52px);border:2px solid #527e8f;gap:1px;background:#527e8f}.b4-surface-grid span{display:grid;place-items:center;width:52px;height:52px;color:#153c4d;font-size:9px;font-weight:900}.b4-surface-grid .red{background:#f3aaa1}.b4-surface-grid .yellow{background:#f6df79}.b4-surface-grid .green{background:#a9d8a5}.b4-surface-grid .blue{background:#9fcde5}
+.b4-folded-surface{display:grid;grid-template-columns:repeat(var(--count),48px);gap:1px;border:2px solid #567f90;background:#567f90}.b4-folded-surface span{display:grid;place-items:center;width:48px;height:48px;background:#f4f8fa;color:#b17026;font-size:20px;font-weight:900}
+.b4-pair-sums{display:grid;gap:7px;width:min(100%,330px);justify-items:center}.b4-pair-sums>strong{padding:5px 12px;border:1px solid #d8b153;background:#fff6ce;font-size:10px}.b4-pair-sums>div{display:grid;grid-template-columns:44px 18px 44px 18px 38px;align-items:center;gap:5px}.b4-pair-sums span{display:grid;place-items:center;width:44px;height:34px;border:1.5px solid #5791aa;background:#fff;font-weight:900}.b4-pair-sums b{color:#657b86;text-align:center}.b4-pair-sums em{font-style:normal;font-weight:900}
+.b4-equation-stack{display:grid;gap:7px;justify-items:center}.b4-equation-stack>div{display:grid;grid-template-columns:42px 18px 42px 18px 42px;align-items:center;gap:5px}.b4-equation-stack strong,.b4-equation-stack em{display:grid;place-items:center;width:42px;height:36px;border:1.5px solid #5b94ab;background:#fff;font-size:18px;font-style:normal}.b4-equation-stack em{border-color:#d8a63d;background:#fff4c6;font-size:13px}.b4-equation-stack b{text-align:center}.b4-equation-stack .is-target{margin-top:4px;padding-top:8px;border-top:2px solid #9ab6c2}
+
+.b4-clue-panel{display:grid;gap:6px;width:min(100%,450px);padding:10px 12px;border:1px solid #b6d0c6;border-left:5px solid #2d8a6c;background:#f7fcfa}
+.b4-clue-panel p{display:grid;grid-template-columns:22px 1fr;align-items:start;gap:5px;margin:0;font-size:10px;font-weight:800;line-height:1.45;word-break:keep-all}.b4-clue-panel p>b{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#2d8a6c;color:#fff;font-size:8px}
+.b4-target-strip{margin-top:4px;padding:6px 9px;border:1px solid #dfbd67;background:#fff8dc;color:#795d16;font-size:10px;font-weight:900;text-align:center}
+.b4-balance-list{display:grid;gap:9px;width:min(100%,430px)}.b4-balance-list>div:not(.b4-target-strip){display:grid;grid-template-columns:42px 30px 24px minmax(105px,1fr) 42px;align-items:center;gap:5px;padding:6px 9px;border-bottom:3px solid #6b91a1}.b4-object{font-size:25px;text-align:center}.b4-object.repeated{font-size:20px;letter-spacing:4px}.b4-balance-list small{font-size:8px;font-weight:900}.b4-balance-list b{text-align:center}
+.b4-seat-layout{display:grid;grid-template-columns:minmax(210px,1.45fr) minmax(150px,1fr);align-items:center;gap:15px;width:min(100%,600px)}
+.b4-seat-grid{display:grid;grid-template-columns:repeat(var(--columns),48px);gap:4px;justify-content:center}.b4-seat-grid span{display:grid;place-items:center;width:48px;height:48px;border:2px solid #538ca4;background:#eef7fa}.b4-seat-grid span:after{content:'?';color:#7b929d;font-weight:900}
+.b4-circle-seats{position:relative;width:175px;height:175px;margin:auto;border:2px solid #5b8698;border-radius:50%;background:#f4f9fa}.b4-circle-seats>span{position:absolute;display:grid;place-items:center;width:44px;height:32px;border:1.5px solid #4f91aa;background:#fff;color:#244b60;font-size:9px;font-weight:900;transform:translate(-50%,-50%)}.b4-circle-seats>i{position:absolute;left:50%;top:50%;font-size:10px;font-style:normal;font-weight:900;transform:translate(-50%,-50%)}
+
+@media(max-width:560px){
+  .book04-visual{min-height:150px;padding:6px}.b4-option-grid{grid-template-columns:repeat(2,minmax(70px,1fr))}.b4-fit-layout,.b4-transform-grid,.b4-seat-layout{grid-template-columns:1fr}.b4-fit-target{min-height:100px}.b4-transform-grid{gap:8px}.b4-step-arrow{grid-template-columns:24px 1fr;width:min(100%,200px);justify-self:center}.b4-number-grid{grid-template-columns:repeat(var(--columns),32px)}.b4-number-grid span{width:32px;height:32px}.b4-folded-surface{grid-template-columns:repeat(var(--count),42px)}.b4-folded-surface span{width:42px;height:42px}.b4-clue-panel{padding:8px 9px}.b4-seat-layout{gap:9px}
+}
+@media print{.book04-visual{break-inside:avoid}.b4-clue-panel,.b4-digital-arithmetic,.b4-option-grid>div{background:#fff}}

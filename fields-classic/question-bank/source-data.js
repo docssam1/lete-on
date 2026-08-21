@@ -323,6 +323,22 @@ export const TYPES = [
   type("triangle-edge-sum-nine", "number", "수 배열과 합", "1부터 9까지로 삼각형 세 변의 합 맞추기", { generator: "triangleEdgeSumNine", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
   type("magic-square-four-complete", "number", "마방진", "1부터 16까지로 4×4 마방진 완성하기", { generator: "magicSquareFourComplete", sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 문제 번호별 대조" }),
 
+  // 더클래식 1과정 4권: 153문항을 단계와 인쇄 문제 번호로 직접 대조했다.
+  // 기존 검증 유형과 풀이 구조가 같은 문항은 재사용하고, 다른 구조만 새 유형으로 둔다.
+  type("tetromino-family-choice", "geometry", "도형 분할", "정사각형 네 칸을 이어 만든 테트로미노 찾기", { generator: "tetrominoFamilyChoice", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
+  type("tetromino-square-composition", "geometry", "도형 분할", "돌려서 빈자리에 맞는 네 칸 조각 고르기", { generator: "tetrominoSquareComposition", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
+  type("digital-grid-transform", "pattern", "디지털 숫자", "숫자 배열판을 돌리거나 뒤집은 자리 찾기", { generator: "digitalGridTransform", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
+  type("digital-transform-arithmetic", "number", "디지털 숫자", "움직인 디지털 두 자리 수의 덧셈·뺄셈", { generator: "digitalTransformArithmetic", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
+  type("fold-number-grid-multi", "geometry", "색종이 접기", "번호판을 한두 번 접어 잘린 수의 합 구하기", { generator: "foldNumberGridMulti", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
+  type("fold-surface-top-trace", "geometry", "색종이 접기", "여러 번 접은 색종이의 맨 위 색 찾기", { generator: "foldSurfaceTopTrace", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
+  type("pair-sum-card-completion", "number", "합과 차", "합이 같은 두 수 카드의 빈 카드 찾기", { generator: "pairSumCardCompletion", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
+  type("shape-difference-chain", "number", "비교와 차", "도형 사이의 차를 이어 새로운 차 구하기", { generator: "shapeDifferenceChain", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
+  type("measurement-order-chain", "logic", "순서와 비교", "키·나이·거리의 차를 이어 값과 순서 구하기", { generator: "measurementOrderChain", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
+  type("balance-unit-ratio", "logic", "양팔저울", "저울의 물건 개수 관계를 이어 같은 무게 구하기", { generator: "balanceUnitRatio", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
+  type("directional-seat-placement", "logic", "자리 배치", "위·아래·좌우 조건으로 자리 정하기", { generator: "directionalSeatPlacement", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
+  type("circular-seat-placement", "logic", "자리 배치", "시계 방향 조건으로 원탁 자리 정하기", { generator: "circularSeatPlacement", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
+  type("ordinal-line-placement", "logic", "자리 배치", "앞·뒤 순서와 사이 사람 수로 줄의 자리 정하기", { generator: "ordinalLinePlacement", sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 문제 번호별 대조" }),
+
   // 더클래식 1과정 2권: 단원 이름이 아니라 실제 풀이 구조로 나눈 세부 유형이다.
   // 원본 페이지와 단원 테스트를 대조한 항목만 sourceMatched로 기록한다. 생성기가 없는
   // 유형은 커리큘럼 화면에 보이되, 검증이 끝날 때까지 선택할 수 없다.
@@ -632,6 +648,7 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "cube-three-views": "위에서 본 자리와 앞·옆에서 본 가장 높은 층을 함께 맞춥니다.",
   "cube-missing-view": "두 방향에서 보이는 높이를 위에서 본 자리에 표시한 뒤 남은 방향을 읽습니다.",
   "cube-pattern-sequence": "각 단계의 층별 개수를 적고, 단계가 하나 늘 때 추가되는 수를 찾습니다.",
+  "cube-step-sequence": "위층부터 1개, 2개, 3개처럼 늘어나는 각 층의 수를 차례로 더합니다.",
   "cube-pattern-stage-from-count": "단계별 전체 개수를 차례로 적어 주어진 개수와 같은 단계를 찾습니다.",
   "cube-pattern-next-increase": "현재 단계와 다음 단계의 층별 차이를 세어 새로 필요한 개수만 더합니다.",
   "balance-scale": "수평이면 양쪽 무게가 같고, 아래로 내려간 쪽이 더 무겁습니다.",
@@ -709,7 +726,20 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "triangle-max-edge-sum": "세 꼭짓점의 수가 두 줄씩 세어진다는 점을 이용해 큰 수나 작은 수를 꼭짓점에 놓습니다.",
   "triangle-edge-sum-six": "한 변의 목표 합에서 이미 놓인 두 수를 빼 남은 원의 수를 찾습니다.",
   "triangle-edge-sum-nine": "네 수가 놓이는 한 변씩 목표 합을 맞추고 쓴 수는 카드에서 지웁니다.",
-  "magic-square-four-complete": "마주 보는 자리의 두 수를 짝지어 합이 17이 되도록 놓습니다."
+  "magic-square-four-complete": "마주 보는 자리의 두 수를 짝지어 합이 17이 되도록 놓습니다.",
+  "tetromino-family-choice": "네 정사각형이 모두 변으로 이어져 한 덩어리가 되는지 확인합니다.",
+  "tetromino-square-composition": "빈자리의 꺾인 방향과 네 칸의 이어진 모양을 조각과 비교합니다.",
+  "digital-grid-transform": "숫자 하나만 보지 말고 배열판의 네 모서리부터 옮긴 자리를 표시합니다.",
+  "digital-transform-arithmetic": "각 디지털 수를 먼저 움직여 새 수를 적은 뒤 덧셈이나 뺄셈을 합니다.",
+  "fold-number-grid-multi": "접은 선을 하나씩 거꾸로 펼쳐 잘린 칸과 짝이 되는 번호를 모두 찾습니다.",
+  "fold-surface-top-trace": "접을 때 움직이는 쪽이 위로 올라간다는 것을 접는 순서마다 표시합니다.",
+  "pair-sum-card-completion": "한 쌍의 목표 합에서 보이는 카드 수를 빼 빈 카드의 수를 찾습니다.",
+  "shape-difference-chain": "이웃한 도형 사이의 차를 같은 방향으로 이어 더합니다.",
+  "measurement-order-chain": "기준값에서 크고 작은 차를 순서대로 더하거나 빼며 값을 적습니다.",
+  "balance-unit-ratio": "저울 한 줄을 같은 물건 개수로 바꾸어 다음 저울의 관계와 이어 봅니다.",
+  "directional-seat-placement": "확실한 한 자리부터 정하고 위·아래·좌우 조건을 한 칸씩 이어 놓습니다.",
+  "circular-seat-placement": "맨 위 자리를 고정한 뒤 시계 방향 조건을 차례로 이어 놓습니다.",
+  "ordinal-line-placement": "앞에서의 순서와 두 사람 사이의 수를 한 줄에 표시합니다."
 });
 
 export const textbookGuideForType = (id) => TEXTBOOK_CONCEPT_GUIDES[id] || "문제에 보이는 관계를 한 단계씩 표시한 뒤 같은 규칙을 적용합니다.";
@@ -1156,6 +1186,137 @@ const BOOK03_UNIT04_REFS = Object.freeze({
   })
 });
 
+// 4권도 페이지가 아니라 각 활동·확인·연습·도전 안에 인쇄된 문제 번호를 쓴다.
+// 네 표의 합집합은 교재 본문 153문항과 정확히 일치하며 한 문항의 중복 배정은 없다.
+const BOOK04_UNIT01_REFS = Object.freeze({
+  "tetromino-family-choice": stageReferences({
+    concept: [problemNumbers("activity", 1, [1])]
+  }),
+  "tetromino-square-composition": stageReferences({
+    concept: [problemNumbers("activity", 1, [2])],
+    practice: [problemNumbers("practice", 1, [2, 3])]
+  }),
+  "rotational-partition-two": stageReferences({
+    concept: [problemNumbers("activity", 1, [4])],
+    practice: [problemNumbers("practice", 1, [1, 4, 5])],
+    advanced: [problemNumbers("advanced", 1, [1, 2])]
+  }),
+  "rotational-partition-four": stageReferences({
+    concept: [problemNumbers("activity", 1, [3])],
+    type: [problemNumbers("check", 1, [3])],
+    practice: [problemNumbers("practice", 1, [6])],
+    advanced: [problemNumbers("advanced", 1, [3])]
+  }),
+  "symbol-balanced-congruent-partition": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2, 4])],
+    practice: [problemNumbers("practice", 1, [7, 8, 9, 10])]
+  }),
+  "shape-quarter-half-turn": stageReferences({
+    concept: [problemNumbers("activity", 2, [1])],
+    practice: [problemNumbers("practice", 1, [12])]
+  }),
+  "shape-mirror-direction": stageReferences({
+    practice: [problemNumbers("practice", 1, [11])]
+  }),
+  "digital-digit-transform": stageReferences({
+    concept: [problemNumbers("activity", 2, [2])],
+    practice: [problemNumbers("practice", 1, [13])]
+  }),
+  "digital-grid-transform": stageReferences({
+    concept: [problemNumbers("activity", 2, [3, 4, 5, 6])],
+    practice: [problemNumbers("practice", 1, [14, 15, 16])],
+    advanced: [problemNumbers("advanced", 1, [4])]
+  }),
+  "digital-transform-arithmetic": stageReferences({
+    type: [problemNumbers("check", 2, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [17, 18, 19, 20])]
+  })
+});
+
+const BOOK04_UNIT02_REFS = Object.freeze({
+  "fold-cut-shape-choice": stageReferences({
+    concept: [problemNumbers("activity", 1, [1])],
+    practice: [problemNumbers("practice", 1, [1])],
+    advanced: [problemNumbers("advanced", 1, [1, 2])]
+  }),
+  "fold-number-grid-multi": stageReferences({
+    concept: [problemNumbers("activity", 1, [2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [2, 3, 4, 5, 6, 7])]
+  }),
+  "fold-surface-top-trace": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [8, 9, 10, 11])]
+  }),
+  "cube-count-solid": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 3])],
+    practice: [problemNumbers("practice", 1, [12, 14])],
+    advanced: [problemNumbers("advanced", 1, [3])]
+  }),
+  "cube-step-sequence": stageReferences({
+    concept: [problemNumbers("activity", 2, [2])],
+    practice: [problemNumbers("practice", 1, [13])]
+  }),
+  "cube-hidden-count-walled": stageReferences({
+    type: [problemNumbers("check", 2, [1])],
+    practice: [problemNumbers("practice", 1, [15])]
+  }),
+  "cube-top-number-grid": stageReferences({
+    type: [problemNumbers("check", 2, [2])],
+    practice: [problemNumbers("practice", 1, [16])]
+  }),
+  "cube-fill-rectangular-box": stageReferences({
+    type: [problemNumbers("check", 2, [3])],
+    practice: [problemNumbers("practice", 1, [17])]
+  }),
+  "cube-painted-cube-count": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [4])]
+  })
+});
+
+const BOOK04_UNIT03_REFS = Object.freeze({
+  "pair-sum-card-completion": stageReferences({
+    practice: [problemNumbers("practice", 1, [1, 2])]
+  }),
+  "shape-difference-chain": stageReferences({
+    concept: [problemNumbers("activity", 1, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [3, 4, 5, 6])]
+  }),
+  "measurement-order-chain": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [7, 8, 9, 10])],
+    advanced: [problemNumbers("advanced", 1, [1, 2])]
+  }),
+  "balance-unit-ratio": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2, 3, 4])],
+    type: [problemNumbers("check", 2, [1, 2])],
+    practice: [problemNumbers("practice", 1, [11, 12, 13, 14, 15, 16])],
+    advanced: [problemNumbers("advanced", 1, [3, 4])]
+  })
+});
+
+const BOOK04_UNIT04_REFS = Object.freeze({
+  "person-item-logic": stageReferences({
+    concept: [problemNumbers("activity", 1, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [1, 2, 3, 4])]
+  }),
+  "ordinal-line-placement": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2, 3, 4]), problemNumbers("check", 2, [1, 2, 3, 4, 5, 6])],
+    practice: [problemNumbers("practice", 1, [5, 6, 7, 8, 15, 16, 17, 18])],
+    advanced: [problemNumbers("advanced", 1, [3, 4])]
+  }),
+  "directional-seat-placement": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2, 3, 4, 5, 6])],
+    practice: [problemNumbers("practice", 1, [9, 10, 11, 12])]
+  }),
+  "circular-seat-placement": stageReferences({
+    practice: [problemNumbers("practice", 1, [13, 14])],
+    advanced: [problemNumbers("advanced", 1, [2])]
+  }),
+  "grid-number-placement": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [1])]
+  })
+});
+
 export const CURRICULUM = [
   { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [
     detailedStagedUnit("도형 움직이기", [
@@ -1210,10 +1371,22 @@ export const CURRICULUM = [
     ], [3,3], [3,4], 4, 19, BOOK03_UNIT04_REFS)
   ] },
   { id: "book-04", label: "4권", title: "도형분할과 쌓기나무", units: [
-    stagedUnit("도형 분할과 움직이기", ["congruent-partition","shape-transform"], [4,6], [4,4], 4, 20),
-    stagedUnit("색종이 접기와 쌓기나무", ["fold-hole-count","cube-top-number-grid","cube-count-solid","cube-three-views","cube-missing-view","cube-pattern-sequence","cube-pattern-stage-from-count","cube-pattern-next-increase"], [4,3], [4,3], 4, 17),
-    stagedUnit("양팔저울과 비교하기", ["balance-scale","height-order"], [4,4], [4,2], 4, 16),
-    stagedUnit("논리추리와 자리배치", ["person-item-logic","grid-number-placement"], [4,6], [4,6], 4, 18)
+    detailedStagedUnit("도형 분할과 움직이기", [
+      "tetromino-family-choice", "tetromino-square-composition", "rotational-partition-two",
+      "rotational-partition-four", "symbol-balanced-congruent-partition", "shape-quarter-half-turn",
+      "shape-mirror-direction", "digital-digit-transform", "digital-grid-transform", "digital-transform-arithmetic"
+    ], [4,6], [4,4], 4, 20, BOOK04_UNIT01_REFS),
+    detailedStagedUnit("색종이 접기와 쌓기나무", [
+      "fold-cut-shape-choice", "fold-number-grid-multi", "fold-surface-top-trace", "cube-count-solid",
+      "cube-step-sequence", "cube-hidden-count-walled", "cube-top-number-grid", "cube-fill-rectangular-box",
+      "cube-painted-cube-count"
+    ], [4,3], [4,3], 4, 17, BOOK04_UNIT02_REFS),
+    detailedStagedUnit("양팔저울과 비교하기", [
+      "pair-sum-card-completion", "shape-difference-chain", "measurement-order-chain", "balance-unit-ratio"
+    ], [4,4], [4,2], 4, 16, BOOK04_UNIT03_REFS),
+    detailedStagedUnit("논리추리와 자리배치", [
+      "person-item-logic", "ordinal-line-placement", "directional-seat-placement", "circular-seat-placement", "grid-number-placement"
+    ], [4,6], [4,6], 4, 18, BOOK04_UNIT04_REFS)
   ] },
   { id: "book-05", label: "5권", title: "곱셈매트릭스와 삼각수", units: [
     stagedUnit("수 배열표와 달력", ["number-table-rule","calendar-weekday-sum"], [4,4], [2,4], 4, 16),

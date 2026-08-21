@@ -1,8 +1,9 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822d";
-import { GENERATORS } from "./generators.js?v=20260822d";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822e";
+import { GENERATORS } from "./generators.js?v=20260822e";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
-import { book01Markup } from "./book01-renderers.js?v=20260822d";
-import { book03Markup } from "./book03-renderers.js?v=20260822d";
+import { book01Markup } from "./book01-renderers.js?v=20260822e";
+import { book03Markup } from "./book03-renderers.js?v=20260822e";
+import { book04Markup } from "./book04-renderers.js?v=20260822e";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -270,8 +271,10 @@ function curriculumKey(bookId, unitIndex, typeId) {
   return `${bookId}:${unitIndex}:${typeId}`;
 }
 
-function hasBookSource(item, book) {
-  return Boolean(item?.textbookSource?.includes(`1과정 ${book.label}`));
+function hasBookSource(item, book, unit = null) {
+  // 문제 번호별 typeStudyRefs는 해당 권 원본을 직접 대조했다는 가장 강한 근거다.
+  // 다른 권에서 먼저 만든 생성기를 재사용해도 문자열 출처 때문에 잠기지 않아야 한다.
+  return Boolean(unit?.typeStudyRefs?.[item?.id]) || Boolean(item?.textbookSource?.includes(`1과정 ${book.label}`));
 }
 
 function typeStageReferences(unit, typeId, stageId) {
@@ -281,7 +284,7 @@ function typeStageReferences(unit, typeId, stageId) {
 
 function isSelectableCurriculumType(item, book, unit = null, stageId = activeTextbookStage().id) {
   const hasStageSource = !unit?.typeStudyRefs || typeStageReferences(unit, item?.id, stageId).length > 0;
-  return isReady(item) && hasBookSource(item, book) && hasStageSource;
+  return isReady(item) && hasBookSource(item, book, unit) && hasStageSource;
 }
 
 function studyReferenceLabel(references = []) {
@@ -319,7 +322,7 @@ function renderCurriculum() {
         const stage = activeTextbookStage();
         const typeReferences = typeStageReferences(unit, item.id, stage.id);
         const ready = isSelectableCurriculumType(item, book, unit, stage.id);
-        const sourceChecked = hasBookSource(item, book);
+        const sourceChecked = hasBookSource(item, book, unit);
         const sourceNumbers = studyReferenceLabel(typeReferences);
         const sourceState = sourceNumbers
           ? `${stage.label} 원본 ${sourceNumbers}`
@@ -2341,6 +2344,7 @@ function visualMarkup(visual) {
   if (!visual) return "";
   if (visual.kind === "book1") return `<div class="visual book01-visual">${book01Markup(visual)}</div>`;
   if (visual.kind === "book3") return `<div class="visual book03-visual">${book03Markup(visual)}</div>`;
+  if (visual.kind === "book4") return `<div class="visual book04-visual">${book04Markup(visual)}</div>`;
   if (visual.kind.startsWith("g1-")) return `<div class="visual g1-source-visual">${g1SourceMarkup(visual)}</div>`;
   if (visual.kind === "hidden-card-conditions") return `<div class="visual hidden-card-visual">${hiddenCardConditionsMarkup(visual)}</div>`;
   if (visual.kind === "shape-matrix-rule") return `<div class="visual shape-matrix-visual">${shapeMatrixRuleMarkup(visual)}</div>`;
