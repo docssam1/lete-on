@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260814d";
-import { GENERATORS } from "./generators.js?v=20260814d";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, typeById } from "./source-data.js?v=20260815f";
+import { GENERATORS } from "./generators.js?v=20260815f";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -113,31 +113,47 @@ function renderExamList() {
   }));
 }
 
-function curriculumKey(bookId, unitIndex) {
-  return `${bookId}:${unitIndex}`;
+function curriculumKey(bookId, unitIndex, typeId) {
+  return `${bookId}:${unitIndex}:${typeId}`;
+}
+
+function hasBookSource(item, book) {
+  return Boolean(item?.textbookSource?.includes(`1과정 ${book.label}`));
+}
+
+function isSelectableCurriculumType(item, book) {
+  return isReady(item) && hasBookSource(item, book);
 }
 
 function renderCurriculum() {
   $("curriculumTree").innerHTML = CURRICULUM.map((book) => {
     const sourceFolder = book.id.replace("-", "");
     const units = book.units.map((unit, unitIndex) => {
-      const key = curriculumKey(book.id, unitIndex);
-      const labels = unit.typeIds.map((id) => typeById(id)?.label).filter(Boolean);
-      const readyCount = unit.typeIds.filter((id) => isSelectableType(typeById(id))).length;
-      return `<label class="type-leaf ${readyCount ? "" : "not-ready"}">
-        <input type="checkbox" data-curriculum-key="${key}" ${state.selected.curriculum.has(key) ? "checked" : ""} ${readyCount ? "" : "disabled"} />
-        <span><strong>${unit.label}</strong><span>${labels.join(" · ")}</span></span>
-        <em class="type-status ${readyCount ? "" : "fixed"}">${readyCount ? `${readyCount}개 유형 생성 가능` : "생성기 제작 대기"}</em>
-      </label>`;
+      const typeRows = unit.typeIds.map((typeId) => {
+        const item = typeById(typeId);
+        const key = curriculumKey(book.id, unitIndex, typeId);
+        const ready = isSelectableCurriculumType(item, book);
+        const sourceChecked = hasBookSource(item, book);
+        return `<label class="type-leaf curriculum-type ${ready ? "" : "not-ready"}">
+          <input type="checkbox" data-curriculum-key="${key}" ${state.selected.curriculum.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
+          <span><strong>${item?.label || "세부 유형 분류 중"}</strong><span>${sourceChecked ? item.textbookSource : "교재 원본 문항 대조 전"}</span></span>
+          <em class="type-status ${ready ? "" : "fixed"}">${ready ? "교재 대조 · 무한 생성" : sourceChecked ? "원본 대조 완료 · 생성기 검증 대기" : "원본 대조 대기"}</em>
+        </label>`;
+      }).join("");
+      const readyCount = unit.typeIds.filter((id) => isSelectableCurriculumType(typeById(id), book)).length;
+      return `<details class="middle-group curriculum-unit" open>
+        <summary><strong>${unit.label}</strong><span>${unit.typeIds.length}개 세부 유형 · ${readyCount}개 생성 가능</span></summary>
+        <div class="type-leaves">${typeRows}</div>
+      </details>`;
     }).join("");
     return `<details class="tree-group curriculum-book" open>
       <summary><strong>${book.label} · ${book.title}</strong><span>교재 4단원 + 단원 테스트 25문항</span></summary>
       <div class="curriculum-sources">
-        <div><strong>교재 본문 유사문제</strong><span>아래 단원별 선택</span></div>
+        <div><strong>교재 본문 유사문제</strong><span>아래 단원 안에서 세부 유형별 선택</span></div>
         <div><strong>단원 테스트 원문</strong><span>${book.source.unitTest}</span><a class="source-view-link" href="./unit-test-viewer.html?book=${sourceFolder}&student=${encodeURIComponent(student)}">원문 보기</a></div>
         <div><strong>단원 테스트 유사문제</strong><span>문항별 유형 대조 후 연결</span><em>분석 중</em></div>
       </div>
-      <div class="type-leaves">${units}</div>
+      <div class="curriculum-units">${units}</div>
       <p class="book-policy">골든벨 제외${book.source.reviewIncluded ? "" : " · 교재 뒤 리뷰 제외"}</p>
     </details>`;
   }).join("");
@@ -183,10 +199,12 @@ function selectedReferences() {
   if (state.mode === "curriculum") {
     const result = [];
     for (const key of state.selected.curriculum) {
-      const [bookId, indexText] = key.split(":");
+      const [bookId, indexText, typeId] = key.split(":");
       const book = CURRICULUM.find((item) => item.id === bookId);
       const unit = book?.units[Number(indexText)];
-      result.push(...(unit?.typeIds || []).map((typeId) => ({ typeId, reference: `${book.label} ${unit.label}` })));
+      if (book && unit?.typeIds.includes(typeId) && isSelectableCurriculumType(typeById(typeId), book)) {
+        result.push({ typeId, reference: `${book.label} ${unit.label} · ${typeById(typeId)?.label || "세부 유형"}` });
+      }
     }
     return result;
   }
@@ -807,6 +825,173 @@ function numberPyramidMarkup(visual) {
   return `<div class="pyramid-wrap"><div class="number-balls">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><div class="pyramid-tree"><div class="pyramid-row top"><span></span><span>㉠</span><span></span></div><div class="pyramid-row middle"><span></span><span></span></div><strong>${visual.target}</strong></div></div>`;
 }
 
+function equalPartitionTreeMarkup(visual) {
+  const box = (x, y, value = "") => `<rect x="${x - 29}" y="${y - 22}" width="58" height="44" rx="5"/><text x="${x}" y="${y + 7}">${value}</text>`;
+  if (visual.parts === 4) {
+    const leaves = [65, 155, 245, 335];
+    return `<svg class="equal-partition-svg" viewBox="0 0 400 235" role="img" aria-label="${visual.top}을 반으로 가른 뒤 다시 반으로 가르는 수 가르기">
+      <path d="M200 51V72M200 72L110 104M200 72L290 104M110 128V150M110 150L65 181M110 150L155 181M290 128V150M290 150L245 181M290 150L335 181"/>
+      ${box(200, 30, visual.top)}${box(110, 106, visual.middle)}${box(290, 106, visual.middle)}${leaves.map((x) => box(x, 204)).join("")}
+    </svg>`;
+  }
+  const xs = visual.parts === 2 ? [120, 280] : [70, 200, 330];
+  return `<svg class="equal-partition-svg" viewBox="0 0 400 180" role="img" aria-label="${visual.top}을 ${visual.parts}부분으로 똑같이 가르는 수 가르기">
+    ${xs.map((x) => `<path d="M200 51V70L${x} 126"/>`).join("")}
+    ${box(200, 30, visual.top)}${xs.map((x) => box(x, 148)).join("")}
+  </svg>`;
+}
+
+function balanceOrderChainMarkup(visual) {
+  const scale = (row) => `<div class="balance-compare ${row.heavier}"><div class="balance-load">${row.left}</div><div class="balance-beam"><i></i></div><div class="balance-load">${row.right}</div></div>`;
+  return `<div class="balance-order-work">${visual.relations.map(scale).join("")}</div>`;
+}
+
+function balanceUnitEquationsMarkup(visual) {
+  const side = (items) => `<div class="balance-equation-side">${items.map((item) => `<i>${item}</i>`).join("")}</div>`;
+  return `<div class="balance-unit-work"><p>${visual.unit} = ${visual.unitGrams}g</p>${visual.equations.map((row) => `<div>${side(row.left)}<b>=</b>${side(row.right)}</div>`).join("")}</div>`;
+}
+
+function distinctShapeEquationsMarkup(visual) {
+  const side = (items) => items.map((item) => `<i>${item}</i>`).join(`<b>+</b>`);
+  return `<div class="distinct-shape-work"><div class="shape-number-range">${Array.from({ length: visual.limit }, (_, index) => `<span>${index + 1}</span>`).join("")}</div><div class="shape-equation-rows">${visual.rows.map((row) => `<p>${side(row.left)}<b>=</b>${side(row.right)}</p>`).join("")}</div><strong>${visual.target} = ?</strong></div>`;
+}
+
+function symbolPatternSequenceMarkup(visual) {
+  const symbols = {
+    circle: ["○", "●"], triangle: ["△", "▲"], square: ["□", "■"], diamond: ["◇", "◆"], star: ["☆", "★"]
+  };
+  const group = (item) => `<span class="symbol-pattern-group">${Array.from({ length: item.count }, () => `<i>${symbols[item.shape][item.filled ? 1 : 0]}</i>`).join("")}</span>`;
+  return `<div class="symbol-pattern-work">${visual.items.map(group).join("")}<b>→</b><span class="symbol-pattern-target">?</span></div>`;
+}
+
+function progressiveNumberTableMarkup(visual) {
+  return `<div class="progressive-table-work">${visual.stages.map((grid, stageIndex) => `<figure><div style="--table-cols:${grid[0].length}">${grid.flat().map((value) => `<span class="${value === null ? "blank" : ""}">${value ?? ""}</span>`).join("")}</div><figcaption>${stageIndex + 1}단계</figcaption></figure>`).join("<b>→</b>")}</div>`;
+}
+
+function matchstickGrowthStage(variant, count) {
+  const unit = 28;
+  const lines = [];
+  if (variant === "square") {
+    for (let index = 0; index < count; index += 1) {
+      const x = index * unit + 3;
+      lines.push(`<line x1="${x}" y1="5" x2="${x + unit}" y2="5"/><line x1="${x}" y1="33" x2="${x + unit}" y2="33"/>`);
+    }
+    for (let index = 0; index <= count; index += 1) {
+      const x = index * unit + 3;
+      lines.push(`<line x1="${x}" y1="5" x2="${x}" y2="33"/>`);
+    }
+  } else {
+    for (let index = 0; index < count; index += 1) {
+      const x = index * unit + 3;
+      lines.push(`<line x1="${x}" y1="18" x2="${x}" y2="42"/><line x1="${x}" y1="42" x2="${x + unit}" y2="42"/><line x1="${x}" y1="18" x2="${x + unit / 2}" y2="3"/><line x1="${x + unit / 2}" y1="3" x2="${x + unit}" y2="18"/>`);
+    }
+    const end = count * unit + 3;
+    lines.push(`<line x1="${end}" y1="18" x2="${end}" y2="42"/>`);
+  }
+  return `<svg class="growth-matchstick" viewBox="0 0 ${count * unit + 8} 47">${lines.join("")}</svg>`;
+}
+
+function triangleStoneStage(stage) {
+  const side = stage + 2;
+  const dots = [];
+  for (let row = 0; row < side; row += 1) {
+    dots.push(`<span>` + Array.from({ length: row + 1 }, (_, column) => `<i class="${row === side - 1 || column === 0 || column === row ? "black" : "white"}"></i>`).join("") + `</span>`);
+  }
+  return `<div class="growth-triangle-stones">${dots.join("")}</div>`;
+}
+
+function squareStoneStage(stage) {
+  const side = stage + 1;
+  return `<div class="growth-square-stones" style="--stone-side:${side}">${Array.from({ length: side * side }, (_, index) => {
+    const row = Math.floor(index / side);
+    const column = index % side;
+    return `<i class="${row === 0 || row === side - 1 || column === 0 || column === side - 1 ? "black" : "white"}"></i>`;
+  }).join("")}</div>`;
+}
+
+function staircaseStage(stage) {
+  return `<div class="growth-staircase">${Array.from({ length: stage }, (_, row) => `<span>${Array.from({ length: stage - row }, () => "<i></i>").join("")}</span>`).join("")}</div>`;
+}
+
+function foldCutStage(stage, punch = false) {
+  const pieces = 2 ** stage;
+  return `<div class="growth-fold-paper" style="--fold-pieces:${pieces};--fold-width:${Math.max(30, 82 - stage * 14)}px">${Array.from({ length: Math.min(pieces, 8) }, () => `<i>${punch ? "•" : ""}</i>`).join("")}</div>`;
+}
+
+function coloredTriangleStage(stage) {
+  return `<div class="growth-colored-triangle">${Array.from({ length: stage }, (_, row) => `<span>${Array.from({ length: row + 1 }, (_, column) => `${column ? "<i class=\"white\">▽</i>" : ""}<i>▲</i>`).join("")}</span>`).join("")}</div>`;
+}
+
+function nestedCircleStage(stage) {
+  return `<div class="growth-nested-circles">${Array.from({ length: stage }, (_, row) => `<span>${Array.from({ length: row + 1 }, () => "<i></i>").join("")}</span>`).join("")}</div>`;
+}
+
+function segmentGrowthStage(stage) {
+  const lines = [];
+  for (let row = 0; row < stage; row += 1) {
+    for (let column = 0; column <= row; column += 1) {
+      const x = 50 + (column - row / 2) * 20;
+      const y = 8 + row * 17;
+      const direction = (row + column) % 3;
+      const dx = direction === 0 ? 0 : direction === 1 ? -8 : 8;
+      lines.push(`<line x1="${x}" y1="${y}" x2="${x + dx}" y2="${y + 14}"/>`);
+    }
+  }
+  return `<svg class="growth-segments" viewBox="0 0 100 ${stage * 17 + 12}">${lines.join("")}</svg>`;
+}
+
+function book2GrowthMarkup(visual) {
+  const stageMarkup = (stage) => {
+    if (visual.subtype === "matchstick") return matchstickGrowthStage(visual.variant, stage);
+    if (visual.subtype === "triangle-stones") return triangleStoneStage(stage);
+    if (visual.subtype === "square-stones") return squareStoneStage(stage);
+    if (visual.subtype === "staircase") return staircaseStage(stage);
+    if (visual.subtype === "fold-cut") return foldCutStage(stage, false);
+    if (visual.subtype === "colored-triangle") return coloredTriangleStage(stage);
+    if (visual.subtype === "nested-circles") return nestedCircleStage(stage);
+    if (visual.subtype === "segments") return segmentGrowthStage(stage);
+    if (visual.subtype === "fold-punch") return foldCutStage(stage, stage === Math.max(...visual.stages));
+    return "";
+  };
+  return `<div class="book2-growth-work">${visual.stages.map((stage) => `<figure>${stageMarkup(stage)}<figcaption>${stage + (visual.subtype.startsWith("fold-") ? "번 접음" : "번째")}</figcaption></figure>`).join("<b>→</b>")}<strong>…<br>${visual.target}${visual.subtype.startsWith("fold-") ? "번" : "번째"}</strong></div>`;
+}
+
+function centerNumberRuleMarkup(visual) {
+  return `<div class="center-rule-work">${visual.items.map((item, index) => `<figure><div class="center-rule-cluster"><span class="top">${item.outer[0]}</span><span class="right">${item.outer[1]}</span><span class="bottom">${item.outer[2]}</span><span class="left">${item.outer[3]}</span><strong>${item.hidden ? "㉠" : item.center}</strong></div><figcaption>${index + 1}</figcaption></figure>`).join("")}</div>`;
+}
+
+function numberRuleGridMarkup(visual) {
+  return `<div class="number-rule-grid">${visual.rows.flat().map((value) => `<span class="${value === null ? "blank" : ""}">${value ?? "㉠"}</span>`).join("")}</div>`;
+}
+
+function twoDigitComposeRuleMarkup(visual) {
+  const digit = (number, index, itemIndex, field) => {
+    const hidden = visual.hidden.item === itemIndex && visual.hidden.field === field && visual.hidden.digit === index;
+    return `<i class="${hidden ? "blank" : ""}">${hidden ? "㉠" : String(number).padStart(2, "0")[index]}</i>`;
+  };
+  return `<div class="compose-rule-work">${visual.items.map((item, itemIndex) => {
+    const resultHidden = visual.hidden.item === itemIndex && visual.hidden.field === "result";
+    return `<figure><div class="compose-pair"><p>${digit(item.first, 0, itemIndex, "first")}${digit(item.first, 1, itemIndex, "first")}</p><b>${visual.operation === "add" ? "+" : "−"}</b><p>${digit(item.second, 0, itemIndex, "second")}${digit(item.second, 1, itemIndex, "second")}</p><strong>${resultHidden ? "㉠" : item.result}</strong></div><figcaption>${itemIndex + 1}</figcaption></figure>`;
+  }).join("")}</div>`;
+}
+
+function sudokuGridMarkup(visual) {
+  const { size, grid, regions, target } = visual;
+  const cellStyle = (row, column) => {
+    if (!regions) return "";
+    const region = regions[row][column];
+    const top = row === 0 || regions[row - 1][column] !== region ? 3 : 1;
+    const right = column === size - 1 || regions[row][column + 1] !== region ? 3 : 1;
+    const bottom = row === size - 1 || regions[row + 1][column] !== region ? 3 : 1;
+    const left = column === 0 || regions[row][column - 1] !== region ? 3 : 1;
+    return `border-width:${top}px ${right}px ${bottom}px ${left}px`;
+  };
+  return `<div class="sudoku-work"><div class="sudoku-grid" style="--sudoku-size:${size}">${grid.flatMap((row, rowIndex) => row.map((value, column) => {
+    const marked = target[0] === rowIndex && target[1] === column;
+    return `<span class="${marked ? "target" : value ? "given" : "empty"}" style="${cellStyle(rowIndex, column)}">${marked ? "㉠" : value || ""}</span>`;
+  })).join("")}</div><p>1부터 ${size}까지 한 번씩</p></div>`;
+}
+
 function raceOrderMarkup(visual, conditions) {
   return `<div class="race-order"><div class="race-track" style="--race-count:${visual.total}">${Array.from({ length: visual.total }, (_, index) => `<span><i></i><b>${index + 1}등</b></span>`).join("")}</div><ul>${conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul></div>`;
 }
@@ -821,8 +1006,14 @@ function shapeSumTableMarkup(visual) {
 }
 
 function repeatShapeSequenceMarkup(visual) {
-  const symbol = (item) => item === "세모" ? "△" : "○";
+  const symbols = { "동그라미": "○", "세모": "△", "네모": "□", "마름모": "◇", "별": "☆" };
+  const symbol = (item) => symbols[item] || "○";
   return `<div class="repeat-sequence">${visual.items.map((item, index) => `<span>${symbol(item)}<small>${index + 1}</small></span>`).join("")}<b>…</b><strong>${visual.target}번째<br>모양 (　)</strong></div>`;
+}
+
+function repeatShapeAnswerMarkup(visual) {
+  const symbols = { "동그라미": "○", "세모": "△", "네모": "□", "마름모": "◇", "별": "☆" };
+  return `<div class="repeat-shape-answer" role="img" aria-label="정답 ${visual.item}">${symbols[visual.item] || "○"}</div>`;
 }
 
 function arrowNumberGridMarkup(visual) {
@@ -1117,10 +1308,22 @@ function visualMarkup(visual) {
   if (visual.kind === "edge-sum-cycle") return `<div class="visual edge-sum-visual">${edgeSumCycleMarkup(visual)}</div>`;
   if (visual.kind === "equalize-bags") return `<div class="visual equalize-visual">${equalizeBagsMarkup(visual)}</div>`;
   if (visual.kind === "number-pyramid") return `<div class="visual pyramid-visual">${numberPyramidMarkup(visual)}</div>`;
+  if (visual.kind === "equal-partition-tree") return `<div class="visual equal-partition-visual">${equalPartitionTreeMarkup(visual)}</div>`;
+  if (visual.kind === "balance-order-chain") return `<div class="visual balance-order-visual">${balanceOrderChainMarkup(visual)}</div>`;
+  if (visual.kind === "balance-unit-equations") return `<div class="visual balance-unit-visual">${balanceUnitEquationsMarkup(visual)}</div>`;
+  if (visual.kind === "distinct-shape-equations") return `<div class="visual distinct-shape-visual">${distinctShapeEquationsMarkup(visual)}</div>`;
+  if (visual.kind === "symbol-pattern-sequence") return `<div class="visual symbol-pattern-visual">${symbolPatternSequenceMarkup(visual)}</div>`;
+  if (visual.kind === "progressive-number-table") return `<div class="visual progressive-table-visual">${progressiveNumberTableMarkup(visual)}</div>`;
+  if (visual.kind === "book2-growth") return `<div class="visual book2-growth-visual">${book2GrowthMarkup(visual)}</div>`;
+  if (visual.kind === "center-number-rule") return `<div class="visual center-number-rule-visual">${centerNumberRuleMarkup(visual)}</div>`;
+  if (visual.kind === "number-rule-grid") return `<div class="visual number-rule-grid-visual">${numberRuleGridMarkup(visual)}</div>`;
+  if (visual.kind === "two-digit-compose-rule") return `<div class="visual two-digit-compose-visual">${twoDigitComposeRuleMarkup(visual)}</div>`;
+  if (visual.kind === "sudoku-grid") return `<div class="visual sudoku-grid-visual">${sudokuGridMarkup(visual)}</div>`;
   if (visual.kind === "race-order") return `<div class="visual race-order-visual">${raceOrderMarkup(visual, visual.conditions || [])}</div>`;
   if (visual.kind === "disc-number-rule") return `<div class="visual disc-rule-visual">${discNumberRuleMarkup(visual)}</div>`;
   if (visual.kind === "shape-sum-table") return `<div class="visual shape-sum-visual">${shapeSumTableMarkup(visual)}</div>`;
   if (visual.kind === "repeat-shape-sequence") return `<div class="visual repeat-sequence-visual">${repeatShapeSequenceMarkup(visual)}</div>`;
+  if (visual.kind === "repeat-shape-answer") return `<div class="visual repeat-shape-answer-visual">${repeatShapeAnswerMarkup(visual)}</div>`;
   if (visual.kind === "arrow-number-grid") return `<div class="visual arrow-grid-visual">${arrowNumberGridMarkup(visual)}</div>`;
   if (visual.kind === "bus-stops") return `<div class="visual bus-stops-visual">${busStopsMarkup(visual)}</div>`;
   if (visual.kind === "equal-line-cross") return `<div class="visual equal-line-cross-visual">${equalLineCrossMarkup(visual)}</div>`;

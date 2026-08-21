@@ -312,7 +312,7 @@ function totalDifference({ difficulty = 2 }) {
   return {
     prompt: `${withOf(pair[0])} ${pair[1]}의 나이의 합은 ${sum}${pair[2]}이고, ${topicOf(pair[0])} ${pair[1]}보다 ${gap}${pair[2]} 더 많습니다. ${topicOf(pair[0])} 몇 ${pair[2]}입니까?`,
     answer: `${older}${pair[2]}`,
-    solution: `합 ${sum}에서 차 ${gap}을 빼면 ${pair[1]} 나이의 두 배인 ${sum - gap}이 됩니다. ${pair[1]}은 ${younger}${pair[2]}이고 ${pair[0]}은 ${younger} + ${gap} = ${older}${pair[2]}입니다.`,
+    solution: `합 ${sum}에서 ${objectOf(`차 ${gap}`)} 빼면 ${pair[1]} 나이의 두 배인 ${subjectOf(sum - gap)} 됩니다. ${topicOf(pair[1])} ${younger}${pair[2]}이고 ${topicOf(pair[0])} ${younger} + ${gap} = ${older}${pair[2]}입니다.`,
     meta: { sum, gap, older, younger }
   };
 }
@@ -552,7 +552,7 @@ function equalizeTransfer({ difficulty = 2 }) {
   const higher = lower + transfer * 2;
   const names = Math.random() < 0.5 ? ["강준", "다현"] : ["유진", "민서"];
   return {
-    prompt: `${names[0]}이와 ${names[1]}이가 사탕을 똑같이 가지려고 합니다. ${names[0]}이가 ${names[1]}이에게 사탕 몇 개를 주어야 하는지 구하세요.`,
+    prompt: `${withOf(names[0])} ${subjectOf(names[1])} 사탕을 똑같이 가지려고 합니다. ${subjectOf(names[0])} ${names[1]}에게 사탕 몇 개를 주어야 하는지 구하세요.`,
     visual: { kind: "equalize-bags", names, higher, lower },
     answer: `${transfer}개`,
     solution: `두 사람의 사탕 수 차이는 ${higher - lower}개입니다. 한 개를 주면 한쪽은 1개 줄고 다른 쪽은 1개 늘므로, 차이의 반인 ${transfer}개를 주면 같습니다.`
@@ -639,6 +639,658 @@ function shapeSumTable({ difficulty = 2 }) {
     answer: String(rowTwo),
     solution: `마름모는 ${diamond}, 네모는 ${square}, 동그라미는 ${circle}입니다. 두 번째 줄의 합은 ${square} + ${circle} = ${rowTwo}입니다.`
   };
+}
+
+function shapeRepeatOrdinal({ difficulty = 2 }) {
+  const shapeNames = shuffle(["동그라미", "세모", "네모", "마름모", "별"]);
+  const settings = difficulty === 1
+    ? { patterns: [[0, 1]], target: [8, 12] }
+    : difficulty === 3
+      ? { patterns: [[0, 1, 2, 1], [0, 0, 1, 2], [0, 1, 2, 0]], target: [17, 30] }
+      : { patterns: [[0, 1, 0], [0, 0, 1], [0, 1, 1]], target: [11, 20] };
+  const pattern = sample(settings.patterns);
+  const cycle = pattern.map((index) => shapeNames[index]);
+  const target = randomInt(settings.target[0], settings.target[1]);
+  const shownCount = cycle.length * 2 + 1;
+  const items = Array.from({ length: shownCount }, (_, index) => cycle[index % cycle.length]);
+  const answer = cycle[(target - 1) % cycle.length];
+  const cycleText = cycle.join(", ");
+  return {
+    prompt: `아래 그림의 규칙을 찾아 ${target}번째 모양을 그리세요.`,
+    visual: { kind: "repeat-shape-sequence", items, target },
+    answer,
+    answerVisual: { kind: "repeat-shape-answer", item: answer },
+    solution: `한 반복마디는 ${cycleText}입니다. 이 반복마디를 차례대로 이어 보면 ${target}번째 모양은 ${answer}입니다.`
+  };
+}
+
+function equalPartition(parts, { difficulty = 2 }) {
+  const ranges = difficulty === 1 ? [2, 8] : difficulty === 3 ? [8, 20] : [4, 14];
+  const part = randomInt(ranges[0], ranges[1]);
+  const top = part * parts;
+  const middle = parts === 4 ? top / 2 : null;
+  const label = parts === 2 ? "두 수" : parts === 3 ? "세 수" : "네 수";
+  const detail = parts === 4
+    ? `먼저 ${objectOf(top)} 반으로 가르면 ${withOf(middle)} ${middle}입니다. ${objectOf(middle)} 다시 반으로 가르면 ${withOf(part)} ${part}이므로, 맨 아래 빈칸에는 모두 ${subjectOf(part)} 들어갑니다.`
+    : `${objectOf(top)} 똑같은 ${parts}부분으로 가르면 한 부분은 ${part}입니다. 따라서 ${label}는 모두 ${part}입니다.`;
+  return {
+    prompt: `아래 수를 ${label}로 똑같이 가르려고 합니다. 맨 아래 빈칸 하나에 들어갈 수를 구하세요.`,
+    visual: { kind: "equal-partition-tree", top, parts, middle },
+    answer: String(part),
+    solution: detail,
+    meta: { top, parts, part, middle }
+  };
+}
+
+function equalPartitionTwo(options) {
+  return equalPartition(2, options);
+}
+
+function equalPartitionThree(options) {
+  return equalPartition(3, options);
+}
+
+function equalPartitionFour(options) {
+  return equalPartition(4, options);
+}
+
+function reverseTransferTotal({ difficulty = 2 }) {
+  const names = sample([["재이", "준이"], ["유나", "민서"], ["하나", "지우"]]);
+  const afterEach = randomInt(difficulty === 1 ? 4 : difficulty === 2 ? 6 : 8, difficulty === 1 ? 8 : difficulty === 2 ? 14 : 18) * 2;
+  const receiverBefore = afterEach / 2;
+  const giverBefore = afterEach + receiverBefore;
+  let prompt;
+  if (difficulty === 1) {
+    prompt = `${names[1]}는 구슬을 ${receiverBefore}개 가지고 있었습니다. ${names[0]}가 ${names[1]}에게 ${names[1]}가 가지고 있던 만큼의 구슬을 주었더니 두 사람의 구슬 수가 같아졌습니다. ${names[0]}가 처음 가지고 있던 구슬은 몇 개입니까?`;
+  } else if (difficulty === 3) {
+    prompt = `${names[0]}가 ${names[1]}에게 ${names[1]}가 가지고 있던 만큼의 구슬을 주었더니 두 사람의 구슬 수가 같아졌고, 두 사람의 구슬을 모두 합하면 ${afterEach * 2}개였습니다. ${names[0]}가 처음 가지고 있던 구슬은 몇 개입니까?`;
+  } else {
+    prompt = `${names[0]}가 ${names[1]}에게 ${names[1]}가 가지고 있던 만큼의 구슬을 주었더니 두 사람은 각각 ${afterEach}개의 구슬을 가지게 되었습니다. ${names[0]}가 처음 가지고 있던 구슬은 몇 개입니까?`;
+  }
+  return {
+    prompt,
+    answer: `${giverBefore}개`,
+    solution: `준 뒤에 ${names[1]}의 구슬은 ${afterEach}개입니다. 처음 가진 만큼을 한 번 더 받아 ${afterEach}개가 되었으므로 처음에는 ${receiverBefore}개였습니다. ${names[0]}에게는 준 뒤 ${afterEach}개와 준 구슬 ${receiverBefore}개가 있었으므로 처음에는 ${giverBefore}개입니다.`,
+    meta: { names, afterEach, receiverBefore, giverBefore }
+  };
+}
+
+function balanceOrderChain({ difficulty = 2 }) {
+  const count = difficulty === 3 ? 4 : 3;
+  const ordered = shuffle(["●", "◆", "■", "★", "▲"]).slice(0, count);
+  const relations = [];
+  for (let index = 0; index < count - 1; index += 1) {
+    const reverse = Math.random() < 0.5;
+    relations.push(reverse
+      ? { left: ordered[index + 1], right: ordered[index], heavier: "right" }
+      : { left: ordered[index], right: ordered[index + 1], heavier: "left" });
+  }
+  if (difficulty >= 2) {
+    const reverse = Math.random() < 0.5;
+    relations.push(reverse
+      ? { left: ordered.at(-1), right: ordered[0], heavier: "right" }
+      : { left: ordered[0], right: ordered.at(-1), heavier: "left" });
+  }
+  return {
+    prompt: `양팔저울 ${relations.length}개를 보고 무거운 물건부터 차례대로 기호를 쓰세요.`,
+    visual: { kind: "balance-order-chain", relations: shuffle(relations) },
+    answer: ordered.join(" > "),
+    solution: `아래로 내려간 접시에 있는 물건이 더 무겁습니다. 저울의 관계를 이어 보면 ${ordered.join(" > ")}입니다.`,
+    meta: { ordered, relations }
+  };
+}
+
+function balanceGivenUnitWeight({ difficulty = 2 }) {
+  const symbols = shuffle(["●", "◆", "■", "★"]);
+  const [unit, first, second, target] = symbols;
+  const unitGrams = randomInt(1, difficulty === 3 ? 3 : 2);
+  let factors;
+  let equations;
+  if (difficulty === 1) {
+    factors = [1, 2, 0, 3];
+    equations = [
+      { left: [first], right: [unit, unit] },
+      { left: [target], right: [first, unit] }
+    ];
+  } else if (difficulty === 3) {
+    factors = [1, 3, 4, 7];
+    equations = [
+      { left: [first], right: [unit, unit, unit] },
+      { left: [second], right: [first, unit] },
+      { left: [target], right: [first, second] }
+    ];
+  } else {
+    factors = [1, 3, 2, 5];
+    equations = [
+      { left: [first], right: [unit, unit, unit] },
+      { left: [second], right: [unit, unit] },
+      { left: [target], right: [first, second] }
+    ];
+  }
+  const weights = Object.fromEntries(symbols.map((symbol, index) => [symbol, factors[index] * unitGrams]));
+  return {
+    prompt: `다음 양팔저울은 모두 수평입니다. ${unit} 1개의 무게가 ${unitGrams}g일 때, ${target} 1개의 무게를 구하세요.`,
+    visual: { kind: "balance-unit-equations", equations, unit, unitGrams },
+    answer: `${weights[target]}g`,
+    solution: equations.map((row) => `${row.left.join("+")}=${row.right.join("+")}`).join(" → ") + `이므로 ${target} 1개의 무게는 ${weights[target]}g입니다.`,
+    meta: { symbols, factors, weights, equations, unit, unitGrams, target }
+  };
+}
+
+function distinctShapeValueEquation({ difficulty = 2 }) {
+  const symbols = shuffle(["○", "□", "◇", "△", "✚"]);
+  const [a, b, c, d, e] = symbols;
+  let rows;
+  let values;
+  let limit;
+  if (difficulty === 1) {
+    limit = 5;
+    values = { [a]: 1, [b]: 2, [c]: 3, [d]: 4, [e]: 5 };
+    rows = [
+      { left: [a, a], right: [b] },
+      { left: [a, b], right: [c] },
+      { left: [a, c], right: [d] },
+      { left: [a, d], right: [e] }
+    ];
+  } else {
+    limit = 9;
+    const family = sample(["fibonacci", "triple", "double"]);
+    if (family === "triple") {
+      values = { [a]: 1, [b]: 3, [c]: 4, [d]: 5, [e]: 9 };
+      rows = [
+        { left: [a, a, a], right: [b] },
+        { left: [a, b], right: [c] },
+        { left: [a, c], right: [d] },
+        { left: [c, d], right: [e] }
+      ];
+    } else if (family === "double") {
+      values = { [a]: 1, [b]: 2, [c]: 4, [d]: 5, [e]: 7 };
+      rows = [
+        { left: [a, a], right: [b] },
+        { left: [b, b], right: [c] },
+        { left: [a, c], right: [d] },
+        { left: [b, d], right: [e] }
+      ];
+    } else {
+      values = { [a]: 1, [b]: 2, [c]: 3, [d]: 5, [e]: 8 };
+      rows = [
+        { left: [a, a], right: [b] },
+        { left: [a, b], right: [c] },
+        { left: [b, c], right: [d] },
+        { left: [c, d], right: [e] }
+      ];
+    }
+    if (difficulty === 3) rows = shuffle(rows);
+  }
+  const targetCandidates = difficulty === 1 ? [d, e] : [c, d, e];
+  const target = sample(targetCandidates);
+  return {
+    prompt: `각 도형은 1부터 ${limit}까지의 서로 다른 수를 나타냅니다. 식을 보고 ${target}가 나타내는 수를 구하세요.`,
+    visual: { kind: "distinct-shape-equations", rows, limit, target },
+    answer: String(values[target]),
+    solution: `같은 도형은 같은 수이고 서로 다른 도형은 서로 다른 수입니다. 식을 차례로 맞추면 ${symbols.map((symbol) => `${symbol}=${values[symbol]}`).join(", ")}이므로 ${target}=${values[target]}입니다.`,
+    meta: { symbols, values, rows, limit, target }
+  };
+}
+
+function constantStepNumberSequence({ difficulty = 2 }) {
+  const rowCount = difficulty === 1 ? 1 : 2;
+  const length = difficulty === 3 ? 7 : 6;
+  const rows = [];
+  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+    const step = randomInt(2, difficulty === 3 ? 12 : 7);
+    const descending = rowIndex > 0 ? true : Math.random() < 0.35;
+    const start = descending ? randomInt(step * length + 5, step * length + 30) : randomInt(1, 12);
+    const items = Array.from({ length }, (_, index) => start + (descending ? -step : step) * index);
+    const gap = randomInt(2, length - 2);
+    rows.push({ items, gap, step: descending ? -step : step });
+  }
+  return {
+    prompt: "같은 수만큼 늘어나거나 줄어드는 규칙을 찾아 빈칸에 알맞은 수를 쓰세요.",
+    visual: { kind: "number-sequences", rows: rows.map((row) => ({ items: row.items.map((value, index) => index === row.gap ? null : value) })) },
+    answer: rows.map((row, index) => `(${index + 1}) ${row.items[row.gap]}`).join(", "),
+    solution: rows.map((row, index) => `(${index + 1}) ${Math.abs(row.step)}씩 ${row.step > 0 ? "커지므로" : "작아지므로"} 빈칸은 ${row.items[row.gap]}입니다.`).join(" "),
+    meta: { rows }
+  };
+}
+
+function bookInterleavedNumberSequence({ difficulty = 2 }) {
+  const strands = difficulty === 3 ? 3 : 2;
+  const strandLength = difficulty === 1 ? 4 : 5;
+  const rules = Array.from({ length: strands }, (_, index) => {
+    const step = randomInt(2, difficulty === 3 ? 7 : 5) + index;
+    return { start: randomInt(1, 8) + index, step };
+  });
+  const items = [];
+  for (let round = 0; round < strandLength; round += 1) {
+    for (const rule of rules) items.push(rule.start + rule.step * round);
+  }
+  const gaps = rules.map((_, strand) => (strandLength - randomInt(1, 2)) * strands + strand).sort((a, b) => a - b);
+  return {
+    prompt: `${strands}개의 수열이 번갈아 나오는 규칙을 찾아 빈칸에 알맞은 수를 쓰세요.`,
+    visual: { kind: "number-sequences", rows: [{ items: items.map((value, index) => gaps.includes(index) ? null : value) }] },
+    answer: gaps.map((gap, index) => `${["ㄱ", "ㄴ", "ㄷ"][index]}=${items[gap]}`).join(", "),
+    solution: rules.map((rule, index) => `${index + 1}번째 수열은 ${rule.step}씩 커집니다.`).join(" ") + ` 따라서 빈칸은 ${gaps.map((gap) => items[gap]).join(", ")}입니다.`,
+    meta: { strands, rules, items, gaps }
+  };
+}
+
+function previousTwoSumSequence({ difficulty = 2 }) {
+  const first = randomInt(1, difficulty === 3 ? 6 : 4);
+  const second = randomInt(first + 1, difficulty === 3 ? 9 : 6);
+  const length = difficulty === 1 ? 6 : 7;
+  const items = [first, second];
+  while (items.length < length) items.push(items.at(-1) + items.at(-2));
+  const gap = difficulty === 1 ? length - 1 : randomInt(4, length - 1);
+  return {
+    prompt: "앞의 두 수를 더해 다음 수를 만드는 규칙입니다. 빈칸에 알맞은 수를 쓰세요.",
+    visual: { kind: "number-sequences", rows: [{ items: items.map((value, index) => index === gap ? null : value) }] },
+    answer: String(items[gap]),
+    solution: `${withOf(items[gap - 2])} ${objectOf(items[gap - 1])} 더하면 ${items[gap]}이므로 빈칸은 ${items[gap]}입니다.`,
+    meta: { items, gap }
+  };
+}
+
+function repeatingNumberSequence({ difficulty = 2 }) {
+  const size = difficulty === 1 ? 2 : difficulty === 3 ? 4 : 3;
+  const pattern = shuffle(Array.from({ length: 9 }, (_, index) => index + 1)).slice(0, size);
+  const length = size * 3;
+  const items = Array.from({ length }, (_, index) => pattern[index % size]);
+  const gap = randomInt(size + 1, length - 2);
+  return {
+    prompt: "반복마디를 찾아 빈칸에 알맞은 수를 쓰세요.",
+    visual: { kind: "number-sequences", rows: [{ items: items.map((value, index) => index === gap ? null : value) }] },
+    answer: String(items[gap]),
+    solution: `${subjectOf(pattern.join(", "))} 한 반복마디입니다. 같은 자리의 수를 찾으면 ${items[gap]}입니다.`,
+    meta: { pattern, items, gap }
+  };
+}
+
+function repeatingSymbolSequence({ difficulty = 2 }) {
+  const shapes = shuffle(["circle", "triangle", "square", "diamond", "star"]);
+  const length = difficulty === 1 ? 2 : difficulty === 3 ? 4 : 3;
+  const pattern = Array.from({ length }, (_, index) => ({
+    shape: shapes[index],
+    filled: difficulty === 1 ? index % 2 === 1 : Math.random() < 0.5,
+    count: difficulty === 3 ? randomInt(1, 3) : 1
+  }));
+  const shown = Array.from({ length: length * 2 + 1 }, (_, index) => pattern[index % length]);
+  const target = pattern[shown.length % length];
+  const shapeNames = { circle: "동그라미", triangle: "세모", square: "네모", diamond: "마름모", star: "별" };
+  const answer = `${target.filled ? "색칠한" : "색칠하지 않은"} ${shapeNames[target.shape]} ${target.count}개`;
+  return {
+    prompt: "모양·색·개수의 반복마디를 찾아 다음에 올 그림을 고르세요.",
+    visual: { kind: "symbol-pattern-sequence", items: shown, target },
+    answer,
+    solution: `한 반복마디는 ${pattern.map((item) => `${item.filled ? "색칠한" : "빈"} ${shapeNames[item.shape]} ${item.count}개`).join(" → ")}입니다. 따라서 다음 그림은 ${answer}입니다.`,
+    meta: { pattern, shown, target }
+  };
+}
+
+function progressiveNumberTable({ difficulty = 2 }) {
+  const rows = difficulty === 1 ? 1 : 2;
+  const columns = difficulty === 3 ? 4 : 3;
+  const base = randomInt(0, 5);
+  const rowStep = randomInt(1, 4);
+  const columnStep = randomInt(1, 4);
+  const stageStep = randomInt(1, difficulty === 3 ? 5 : 3);
+  const fullStages = Array.from({ length: 4 }, (_, stage) => Array.from({ length: rows }, (_, row) => Array.from({ length: columns }, (_, column) => base + row * rowStep + column * columnStep + stage * stageStep)));
+  const targetRow = randomInt(0, rows - 1);
+  const targetColumn = randomInt(0, columns - 1);
+  const shownStages = fullStages.map((grid, stage) => grid.map((row, rowIndex) => row.map((value, column) => stage === 3 && rowIndex === targetRow && column === targetColumn ? null : value)));
+  const answer = fullStages[3][targetRow][targetColumn];
+  return {
+    prompt: "단계가 바뀔 때마다 같은 규칙으로 수가 변합니다. 4단계 빈칸에 알맞은 수를 쓰세요.",
+    visual: { kind: "progressive-number-table", stages: shownStages },
+    answer: String(answer),
+    solution: `다음 단계로 갈 때 같은 자리의 수가 ${stageStep}씩 커집니다. 따라서 빈칸은 ${answer}입니다.`,
+    meta: { fullStages, targetRow, targetColumn, stageStep, answer }
+  };
+}
+
+function matchstickSharedPolygonGrowth({ difficulty = 2 }) {
+  const variant = Math.random() < 0.5 ? "square" : "house";
+  const target = randomInt(difficulty === 1 ? 4 : difficulty === 2 ? 6 : 9, difficulty === 1 ? 6 : difficulty === 2 ? 9 : 13);
+  const first = variant === "square" ? 4 : 5;
+  const added = variant === "square" ? 3 : 4;
+  const answer = first + added * (target - 1);
+  return {
+    prompt: `${variant === "square" ? "네모" : "집"} 모양을 옆으로 이어 붙였습니다. ${target}개를 만드는 데 필요한 성냥개비는 모두 몇 개입니까?`,
+    visual: { kind: "book2-growth", subtype: "matchstick", variant, stages: [1, 2, 3], target },
+    answer: `${answer}개`,
+    solution: `처음에는 ${first}개가 필요하고 한 모양을 더 붙일 때마다 겹치는 변 하나를 함께 써서 ${added}개씩 늘어납니다. ${first}에서 ${added}개씩 ${target - 1}번 늘리면 ${answer}개입니다.`,
+    meta: { variant, target, first, added, answer }
+  };
+}
+
+const triangularNumber = (number) => (number * (number + 1)) / 2;
+
+function triangularStoneGrowth({ difficulty = 2 }) {
+  const target = randomInt(difficulty === 1 ? 3 : difficulty === 2 ? 5 : 7, difficulty === 1 ? 5 : difficulty === 2 ? 7 : 10);
+  const side = target + 2;
+  const white = triangularNumber(target - 1);
+  const black = triangularNumber(side) - white;
+  const difference = Math.abs(black - white);
+  return {
+    prompt: `삼각형 모양으로 놓은 ${target}번째 바둑돌에서 검은 돌과 흰 돌의 개수 차는 몇 개입니까?`,
+    visual: { kind: "book2-growth", subtype: "triangle-stones", stages: [1, 2, 3, 4], target },
+    answer: `${difference}개`,
+    solution: `${target}번째에는 검은 돌 ${black}개, 흰 돌 ${white}개가 있으므로 차는 ${difference}개입니다.`,
+    meta: { target, side, black, white, difference }
+  };
+}
+
+function squareBorderStoneGrowth({ difficulty = 2 }) {
+  const target = randomInt(difficulty === 1 ? 3 : difficulty === 2 ? 5 : 7, difficulty === 1 ? 5 : difficulty === 2 ? 7 : 9);
+  const side = target + 1;
+  const black = side <= 2 ? side * side : 4 * (side - 1);
+  const white = Math.max(0, (side - 2) * (side - 2));
+  const difference = Math.abs(black - white);
+  const more = black === white ? "같습니다" : `${black > white ? "검은 돌" : "흰 돌"}이 ${difference}개 더 많습니다`;
+  return {
+    prompt: `네모 테두리 모양으로 놓은 ${target}번째 바둑돌에서 어느 색 돌이 몇 개 더 많습니까?`,
+    visual: { kind: "book2-growth", subtype: "square-stones", stages: [1, 2, 3, 4], target },
+    answer: more,
+    solution: `${target}번째는 한 변이 ${side}개인 네모입니다. 검은 돌 ${black}개, 흰 돌 ${white}개이므로 ${more}.`,
+    meta: { target, side, black, white, difference, more }
+  };
+}
+
+function staircaseTileGrowth({ difficulty = 2 }) {
+  const target = randomInt(difficulty === 1 ? 4 : difficulty === 2 ? 6 : 9, difficulty === 1 ? 6 : difficulty === 2 ? 9 : 12);
+  const answer = triangularNumber(target);
+  return {
+    prompt: `계단 모양을 같은 규칙으로 늘려 갈 때 ${target}번째 모양의 타일은 모두 몇 개입니까?`,
+    visual: { kind: "book2-growth", subtype: "staircase", stages: [1, 2, 3, 4], target },
+    answer: `${answer}개`,
+    solution: `1개부터 ${target}개까지 차례로 더하면 ${answer}개입니다.`,
+    meta: { target, answer }
+  };
+}
+
+function repeatedFoldCutCount({ difficulty = 2 }) {
+  const folds = randomInt(difficulty === 1 ? 2 : difficulty === 2 ? 4 : 6, difficulty === 1 ? 4 : difficulty === 2 ? 6 : 9);
+  const answer = 2 ** folds;
+  return {
+    prompt: `정사각형 종이를 계속 반으로 ${folds}번 접었습니다. 다시 펼쳐 접힌 선을 따라 모두 자르면 종이는 몇 장이 됩니까?`,
+    visual: { kind: "book2-growth", subtype: "fold-cut", stages: [0, 1, 2, 3], target: folds },
+    answer: `${answer}장`,
+    solution: `한 번 접을 때마다 펼쳐서 자른 종이 수가 2배가 됩니다. 1장 → ${Array.from({ length: folds }, (_, index) => 2 ** (index + 1)).join("장 → ")}장이므로 ${answer}장입니다.`,
+    meta: { folds, answer }
+  };
+}
+
+function coloredTriangleGrowth({ difficulty = 2 }) {
+  const target = randomInt(difficulty === 1 ? 3 : difficulty === 2 ? 5 : 7, difficulty === 1 ? 5 : difficulty === 2 ? 7 : 10);
+  const blue = triangularNumber(target);
+  const white = triangularNumber(target - 1);
+  const difference = blue - white;
+  return {
+    prompt: `두 색 삼각형을 같은 규칙으로 늘려 갈 때 ${target}번째 모양에서 두 색의 개수 차는 몇 개입니까?`,
+    visual: { kind: "book2-growth", subtype: "colored-triangle", stages: [1, 2, 3, 4], target },
+    answer: `${difference}개`,
+    solution: `색칠한 삼각형은 ${blue}개, 흰 삼각형은 ${white}개이므로 차는 ${difference}개입니다.`,
+    meta: { target, blue, white, difference }
+  };
+}
+
+function nestedCircleCount({ difficulty = 2 }) {
+  const target = randomInt(difficulty === 1 ? 4 : difficulty === 2 ? 6 : 9, difficulty === 1 ? 6 : difficulty === 2 ? 9 : 12);
+  const answer = triangularNumber(target);
+  return {
+    prompt: `원을 같은 규칙으로 겹쳐 그릴 때 ${target}번째 모양에서 찾을 수 있는 원은 모두 몇 개입니까?`,
+    visual: { kind: "book2-growth", subtype: "nested-circles", stages: [1, 2, 3, 4], target },
+    answer: `${answer}개`,
+    solution: `${target}번째에는 1개, 2개, …, ${target}개인 원 묶음이 있으므로 모두 ${answer}개입니다.`,
+    meta: { target, answer }
+  };
+}
+
+function cubeSquareLayerGrowth({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const made = geometryWorksheetProblem("SQ", difficulty);
+    if (!made || made.figures.patternKind !== "pyramid" || made.answer.mode !== "nth") continue;
+    return {
+      prompt: made.prompt,
+      visual: { kind: "geometry-worksheet", figures: made.figures },
+      answer: made.answerText,
+      solution: `1층부터 ${made.answer.n}층까지 층마다 1개, 4개, 9개처럼 정사각형 수가 필요합니다. 모두 더하면 ${made.answer.count}개입니다.`,
+      meta: { worksheetType: made.type, patternKind: made.figures.patternKind, ...made.answer }
+    };
+  }
+  return null;
+}
+
+function growingSegmentCount({ difficulty = 2 }) {
+  const target = randomInt(difficulty === 1 ? 4 : difficulty === 2 ? 6 : 9, difficulty === 1 ? 6 : difficulty === 2 ? 9 : 12);
+  const answer = triangularNumber(target);
+  return {
+    prompt: `선분을 같은 규칙으로 늘려 갈 때 ${target}번째 모양의 선분은 모두 몇 개입니까?`,
+    visual: { kind: "book2-growth", subtype: "segments", stages: [1, 2, 3, 4], target },
+    answer: `${answer}개`,
+    solution: `각 단계에서 선분이 1개, 2개, 3개처럼 늘어납니다. 1부터 ${target}까지 더하면 ${answer}개입니다.`,
+    meta: { target, answer }
+  };
+}
+
+function foldPunchDoubling({ difficulty = 2 }) {
+  const folds = randomInt(difficulty === 1 ? 1 : difficulty === 2 ? 3 : 6, difficulty === 1 ? 3 : difficulty === 2 ? 5 : 9);
+  const answer = 2 ** folds;
+  return {
+    prompt: `색종이를 계속 반으로 ${folds}번 접고 구멍을 1개 뚫었습니다. 모두 펼치면 구멍은 몇 개입니까?`,
+    visual: { kind: "book2-growth", subtype: "fold-punch", stages: [0, 1, 2, 3], target: folds },
+    answer: `${answer}개`,
+    solution: `한 번 펼칠 때마다 구멍 수가 2배가 됩니다. 1개에서 ${folds}번 2배씩 늘어나므로 ${answer}개입니다.`,
+    meta: { folds, answer }
+  };
+}
+
+function fourNumberCenterRule({ difficulty = 2 }) {
+  const family = difficulty === 1 ? "sum" : difficulty === 2 ? sample(["sum-minus", "opposite-difference"]) : "opposite-difference";
+  const makeItem = () => {
+    let outer;
+    let center;
+    do {
+      outer = Array.from({ length: 4 }, () => randomInt(1, difficulty === 3 ? 15 : 9));
+      const [top, right, bottom, left] = outer;
+      if (family === "sum") center = top + right + bottom + left;
+      if (family === "sum-minus") center = top + left + right - bottom;
+      if (family === "opposite-difference") center = top + bottom - left - right;
+    } while (center < 1 || center > 50);
+    return { outer, center };
+  };
+  const items = Array.from({ length: 4 }, makeItem);
+  const answer = items.at(-1).center;
+  const ruleText = family === "sum"
+    ? "바깥 네 수를 모두 더합니다"
+    : family === "sum-minus"
+      ? "위·왼쪽·오른쪽 수를 더한 뒤 아래 수를 뺍니다"
+      : "위와 아래 수의 합에서 왼쪽과 오른쪽 수의 합을 뺍니다";
+  return {
+    prompt: "앞의 세 그림에서 바깥 수와 가운데 수 사이의 약속을 찾아, 마지막 그림의 가운데에 알맞은 수를 쓰세요.",
+    visual: { kind: "center-number-rule", items: items.map((item, index) => ({ ...item, hidden: index === items.length - 1 })) },
+    answer: String(answer),
+    solution: `${ruleText}. 같은 약속으로 계산하면 ${answer}입니다.`,
+    meta: { family, items, answer }
+  };
+}
+
+function numberGridRowRule({ difficulty = 2 }) {
+  const family = difficulty === 1 ? "sum" : difficulty === 2 ? sample(["sum", "minus-middle"]) : sample(["minus-middle", "minus-last"]);
+  const makeRow = () => {
+    let row;
+    do {
+      const a = randomInt(3, difficulty === 3 ? 20 : 12);
+      const b = randomInt(1, difficulty === 3 ? 12 : 8);
+      const c = randomInt(1, difficulty === 3 ? 12 : 8);
+      const result = family === "sum" ? a + b + c : family === "minus-middle" ? a - b + c : a + b - c;
+      row = [a, b, c, result];
+    } while (row[3] < 1 || row[3] > 50);
+    return row;
+  };
+  let rows;
+  do {
+    rows = Array.from({ length: 4 }, makeRow);
+  } while (family !== "sum" && rows.slice(0, 3).every((row) => row[1] === row[2]));
+  const blankColumn = difficulty === 1 ? 3 : randomInt(0, 3);
+  const answer = rows[3][blankColumn];
+  const shown = rows.map((row, rowIndex) => row.map((value, column) => rowIndex === 3 && column === blankColumn ? null : value));
+  const ruleText = family === "sum" ? "앞의 세 수를 더하면 마지막 수가 됩니다" : family === "minus-middle" ? "첫째 수에서 둘째 수를 빼고 셋째 수를 더합니다" : "첫째 수와 둘째 수를 더하고 셋째 수를 뺍니다";
+  return {
+    prompt: "각 줄에 같은 계산 약속이 있습니다. 약속을 찾아 빈칸에 알맞은 수를 쓰세요.",
+    visual: { kind: "number-rule-grid", rows: shown, blank: [3, blankColumn] },
+    answer: String(answer),
+    solution: `${ruleText}. 마지막 줄에도 같은 약속을 쓰면 빈칸은 ${answer}입니다.`,
+    meta: { family, rows, blankColumn, answer }
+  };
+}
+
+function twoDigitComposeRule({ difficulty = 2 }) {
+  const operation = difficulty === 1 ? "subtract" : sample(["add", "subtract"]);
+  const makeItem = () => {
+    let first;
+    let second;
+    let result;
+    do {
+      first = randomInt(21, difficulty === 3 ? 89 : 69);
+      second = randomInt(12, difficulty === 3 ? 78 : 59);
+      if (operation === "subtract" && second > first) [first, second] = [second, first];
+      result = operation === "add" ? first + second : first - second;
+    } while (result < 5 || result > 99 || first % 10 === second % 10);
+    return { first, second, result };
+  };
+  const items = Array.from({ length: 4 }, makeItem);
+  let hidden = { item: 3, field: "result", digit: null };
+  if (difficulty === 3) hidden = { item: 3, field: Math.random() < 0.5 ? "first" : "second", digit: randomInt(0, 1) };
+  const targetItem = items[hidden.item];
+  const answer = hidden.field === "result" ? targetItem.result : String(targetItem[hidden.field]).padStart(2, "0")[hidden.digit];
+  return {
+    prompt: `두 줄의 숫자로 각각 두 자리 수를 만드세요. 두 수를 ${operation === "add" ? "더하는" : "빼는"} 같은 약속으로 빈칸을 채우세요.`,
+    visual: { kind: "two-digit-compose-rule", items, operation, hidden },
+    answer: String(answer),
+    solution: `마지막 그림의 두 수는 ${withOf(targetItem.first)} ${targetItem.second}입니다. ${targetItem.first} ${operation === "add" ? "+" : "−"} ${targetItem.second} = ${targetItem.result}이므로 빈칸은 ${answer}입니다.`,
+    meta: { operation, items, hidden, answer }
+  };
+}
+
+function countSudokuSolutions(grid, size, regions, limit = 2) {
+  const working = grid.map((row) => [...row]);
+  const regionAt = regions ? (row, column) => regions[row][column] : () => null;
+  let count = 0;
+  const choices = (row, column) => {
+    const used = new Set(working[row]);
+    for (let scan = 0; scan < size; scan += 1) used.add(working[scan][column]);
+    if (regions) {
+      const region = regionAt(row, column);
+      for (let r = 0; r < size; r += 1) for (let c = 0; c < size; c += 1) if (regionAt(r, c) === region) used.add(working[r][c]);
+    }
+    return Array.from({ length: size }, (_, index) => index + 1).filter((value) => !used.has(value));
+  };
+  const search = () => {
+    if (count >= limit) return;
+    let target = null;
+    let candidates = null;
+    for (let row = 0; row < size; row += 1) {
+      for (let column = 0; column < size; column += 1) {
+        if (working[row][column]) continue;
+        const next = choices(row, column);
+        if (!next.length) return;
+        if (!candidates || next.length < candidates.length) {
+          target = [row, column];
+          candidates = next;
+        }
+      }
+    }
+    if (!target) {
+      count += 1;
+      return;
+    }
+    const [row, column] = target;
+    for (const value of candidates) {
+      working[row][column] = value;
+      search();
+      working[row][column] = 0;
+      if (count >= limit) return;
+    }
+  };
+  search();
+  return count;
+}
+
+function transformSudoku(solution, regions) {
+  const size = solution.length;
+  const turns = randomInt(0, 3);
+  const mirrored = Math.random() < 0.5;
+  const transformCell = (row, column) => {
+    let r = row;
+    let c = mirrored ? size - 1 - column : column;
+    for (let turn = 0; turn < turns; turn += 1) [r, c] = [c, size - 1 - r];
+    return [r, c];
+  };
+  const result = Array.from({ length: size }, () => Array(size).fill(0));
+  const regionResult = regions ? Array.from({ length: size }, () => Array(size).fill(0)) : null;
+  for (let row = 0; row < size; row += 1) {
+    for (let column = 0; column < size; column += 1) {
+      const [r, c] = transformCell(row, column);
+      result[r][c] = solution[row][column];
+      if (regions) regionResult[r][c] = regions[row][column];
+    }
+  }
+  const digits = shuffle(Array.from({ length: size }, (_, index) => index + 1));
+  return { solution: result.map((row) => row.map((value) => digits[value - 1])), regions: regionResult };
+}
+
+function makeSudoku({ size, regions = null, difficulty = 2, label }) {
+  const base = size === 3
+    ? [[1, 2, 3], [2, 3, 1], [3, 1, 2]]
+    : [[1, 2, 3, 4], [3, 4, 1, 2], [2, 1, 4, 3], [4, 3, 2, 1]];
+  const transformed = transformSudoku(base, regions);
+  const solution = transformed.solution;
+  const regionMap = transformed.regions;
+  const desiredBlanks = size === 3
+    ? (difficulty === 1 ? 3 : difficulty === 2 ? 4 : 5)
+    : (difficulty === 1 ? 6 : difficulty === 2 ? 8 : 10);
+  let puzzle = solution.map((row) => [...row]);
+  const removed = [];
+  for (const cell of shuffle(Array.from({ length: size * size }, (_, index) => index))) {
+    if (removed.length >= desiredBlanks) break;
+    const row = Math.floor(cell / size);
+    const column = cell % size;
+    const previous = puzzle[row][column];
+    puzzle[row][column] = 0;
+    if (countSudokuSolutions(puzzle, size, regionMap) === 1) removed.push([row, column]);
+    else puzzle[row][column] = previous;
+  }
+  if (removed.length < Math.min(desiredBlanks, size === 3 ? 3 : 6)) return null;
+  const target = sample(removed);
+  const answer = solution[target[0]][target[1]];
+  return {
+    prompt: `1부터 ${size}까지의 수가 가로와 세로${regionMap ? ", 굵은 선으로 나눈 각 영역" : ""}에 한 번씩 들어가도록 빈칸을 채울 때, ㉠에 들어갈 수를 구하세요.`,
+    visual: { kind: "sudoku-grid", size, grid: puzzle, regions: regionMap, target },
+    answer: String(answer),
+    solution: `가로와 세로${regionMap ? ", 굵은 선 안" : ""}에 같은 수가 겹치지 않게 채우면 ㉠은 ${answer}입니다.`,
+    meta: { label, size, puzzle, solution, regions: regionMap, target, answer, solutionCount: countSudokuSolutions(puzzle, size, regionMap) }
+  };
+}
+
+const SUDOKU_THREE_REGIONS = [[0, 0, 1], [2, 0, 1], [2, 2, 1]];
+const SUDOKU_FOUR_SQUARE_REGIONS = [[0, 0, 1, 1], [0, 0, 1, 1], [2, 2, 3, 3], [2, 2, 3, 3]];
+const SUDOKU_FOUR_IRREGULAR_REGIONS = [[0, 0, 0, 1], [2, 0, 1, 1], [2, 2, 3, 1], [2, 3, 3, 3]];
+
+function sudokuThreeRowColumn({ difficulty = 2 }) {
+  return makeSudoku({ size: 3, difficulty, label: "3x3-row-column" });
+}
+
+function sudokuThreeRegion({ difficulty = 2 }) {
+  return makeSudoku({ size: 3, regions: SUDOKU_THREE_REGIONS, difficulty, label: "3x3-region" });
+}
+
+function sudokuFourSquareRegion({ difficulty = 2 }) {
+  return makeSudoku({ size: 4, regions: SUDOKU_FOUR_SQUARE_REGIONS, difficulty, label: "4x4-square-region" });
+}
+
+function sudokuFourIrregularRegion({ difficulty = 2 }) {
+  return makeSudoku({ size: 4, regions: SUDOKU_FOUR_IRREGULAR_REGIONS, difficulty, label: "4x4-irregular-region" });
 }
 
 function repeatShapeSequence({ difficulty = 2 }) {
@@ -1958,6 +2610,7 @@ function triangleRowStoneDifference({ difficulty = 2 }) {
 function hasBatchim(word) {
   // 마지막 글자의 받침 유무. 한글 음절은 0xAC00부터 28개씩 묶여 있고 그 안에서 받침이 0이면 없다.
   const last = String(word).trim().slice(-1);
+  if (/\d/.test(last)) return "013678".includes(last);
   const code = last.charCodeAt(0);
   if (code < 0xac00 || code > 0xd7a3) return false;
   return (code - 0xac00) % 28 !== 0;
@@ -2309,6 +2962,36 @@ function cubeHiddenCountWalled({ difficulty = 2 }) {
 }
 
 export const GENERATORS = {
+  equalPartitionTwo,
+  equalPartitionThree,
+  equalPartitionFour,
+  reverseTransferTotal,
+  balanceOrderChain,
+  balanceGivenUnitWeight,
+  distinctShapeValueEquation,
+  constantStepNumberSequence,
+  bookInterleavedNumberSequence,
+  previousTwoSumSequence,
+  repeatingNumberSequence,
+  repeatingSymbolSequence,
+  progressiveNumberTable,
+  matchstickSharedPolygonGrowth,
+  triangularStoneGrowth,
+  squareBorderStoneGrowth,
+  staircaseTileGrowth,
+  repeatedFoldCutCount,
+  coloredTriangleGrowth,
+  nestedCircleCount,
+  cubeSquareLayerGrowth,
+  growingSegmentCount,
+  foldPunchDoubling,
+  fourNumberCenterRule,
+  numberGridRowRule,
+  twoDigitComposeRule,
+  sudokuThreeRowColumn,
+  sudokuThreeRegion,
+  sudokuFourSquareRegion,
+  sudokuFourIrregularRegion,
   cubeStepSequence,
   cubeFillBoxWorksheet,
   cubeHiddenCountWalled,
@@ -2355,6 +3038,7 @@ export const GENERATORS = {
   raceOrder,
   discNumberRule,
   shapeSumTable,
+  shapeRepeatOrdinal,
   repeatShapeSequence,
   arrowNumberGrid,
   numberCardEquation,
