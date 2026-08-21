@@ -273,6 +273,25 @@
 .type-preview-head span{font-size:8px;font-weight:800;opacity:.86}
 .type-preview-head strong{margin-top:2px;font-size:11px;line-height:1.45}
 .type-preview>p{margin:0;padding:11px 12px 7px;color:#203d50;font-size:10px;font-weight:800;line-height:1.65;word-break:keep-all}
+.learning-map-inline{display:inline-flex;width:max-content;max-width:100%;margin-top:5px;padding:2px 5px;border:1px solid #b9dce9;border-radius:3px;background:#edf8fb;color:#17677a;font-size:7px;font-weight:900;line-height:1.35}
+.learning-map-inline.extension{border-color:#e0d4ac;background:#fff8df;color:#7b682e}
+.type-learning-map{margin:10px 10px 0;padding:9px 10px;border:1px solid #c9e1e9;border-radius:5px;background:#f5fbfd;color:#24485a}
+.type-learning-map.extension{border-color:#eadfb9;background:#fffbec;color:#5f562f}
+.learning-map-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+.learning-map-title strong{font-size:9px}
+.learning-map-title span{padding:2px 5px;border-radius:3px;background:#dff1f6;color:#17677a;font-size:7px;font-weight:900}
+.type-learning-map.extension .learning-map-title span{background:#f5e9b9;color:#6b5c27}
+.learning-map-rows{display:grid;gap:5px}
+.learning-map-row{display:grid;grid-template-columns:68px minmax(0,1fr);gap:2px 7px;padding-top:5px;border-top:1px solid rgba(74,123,143,.18)}
+.learning-map-row:first-child{padding-top:0;border-top:0}
+.learning-map-row>span{color:#527888;font-size:7px;font-weight:900}
+.learning-map-row>strong{font-size:8px;line-height:1.45}
+.learning-map-row>small{grid-column:2;color:#718894;font-size:7px;font-weight:800}
+.learning-map-flow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
+.learning-map-flow span{position:relative;display:grid;place-items:center;min-height:24px;padding:3px;border:1px solid #d2e5eb;border-radius:3px;background:#fff;color:#365d6e;font-size:7px;font-weight:900;text-align:center}
+.learning-map-flow span+span:before{content:'›';position:absolute;left:-10px;color:#7694a1;font-size:13px}
+.type-learning-map p{margin:7px 0 0;color:#68808b;font-size:7px;font-weight:700;line-height:1.5;word-break:keep-all}
+.type-learning-map.extension p{color:#746b44}
 .type-preview>.visual,.type-preview>img{display:block;width:calc(100% - 20px);max-height:255px;margin:0 10px 10px;object-fit:contain}
 .type-preview .geometry-worksheet-visual{min-height:115px;max-height:none;padding:6px}
 .type-preview .geometry-worksheet-visual svg.ws-iso{height:98px}
