@@ -344,9 +344,130 @@
   }
   function renderQ14Answer(payload) { return `정답: ${payload.answer}개 — 큰 정사각형부터 찾으면 ${payload.sizes.map((size) => `${size}×${size}`).join(", ")} 정사각형 ${payload.answer}개로 나뉩니다.`; }
 
+  function q15CombCells(horizontal) {
+    const coarse = [];
+    if (!horizontal) {
+      for (let x = 0; x < 5; x += 1) coarse.push([x, 3]);
+      [0, 2, 4].forEach((x) => { for (let y = 0; y < 3; y += 1) coarse.push([x, y]); });
+    } else {
+      for (let y = 0; y < 5; y += 1) coarse.push([0, y]);
+      [0, 2, 4].forEach((y) => { for (let x = 1; x < 4; x += 1) coarse.push([x, y]); });
+    }
+    return coarse.flatMap(([x, y]) => [[x*2,y*2],[x*2+1,y*2],[x*2,y*2+1],[x*2+1,y*2+1]]);
+  }
+  function q15PieceCount(cells, cuts) {
+    const occupied = new Set(cells.map((cell) => cell.join(","))), seen = new Set(); let parts = 0;
+    for (const start of occupied) {
+      if (seen.has(start)) continue; parts += 1; seen.add(start); const queue = [start];
+      while (queue.length) {
+        const [x,y] = queue.pop().split(",").map(Number);
+        for (const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+          const nx=x+dx, ny=y+dy, key=`${nx},${ny}`; if (!occupied.has(key) || seen.has(key)) continue;
+          const blocked = (dx===1&&cuts.includes(`V${x+1}`))||(dx===-1&&cuts.includes(`V${x}`))||(dy===1&&cuts.includes(`H${y+1}`))||(dy===-1&&cuts.includes(`H${y}`));
+          if (!blocked) { seen.add(key); queue.push(key); }
+        }
+      }
+    }
+    return parts;
+  }
+  function q15ValidPairs(payload) {
+    const output=[];
+    for(let i=0;i<payload.candidates.length;i+=1)for(let j=i+1;j<payload.candidates.length;j+=1){
+      const pair=[payload.candidates[i],payload.candidates[j]];
+      if(q15PieceCount(payload.cells,pair.map((line)=>line.id))===payload.targetPieces)output.push({lineIds:pair.map((line)=>line.id).sort(),labels:pair.map((line)=>line.label).sort()});
+    }
+    return output;
+  }
+  const Q15_SPEC={easy:{target:5,count:4},same:{target:6,count:5},hard:{target:7,count:6}};
+  function generateQ15(difficulty,seed){
+    const spec=Q15_SPEC[difficulty]||Q15_SPEC.same,rng=makeRng(seed),horizontal=Math.abs(Math.trunc(Number(seed)||1))%2===1,cells=q15CombCells(horizontal);
+    const all=[];for(let x=1;x<(horizontal?8:10);x+=1)all.push({id:`V${x}`,axis:"V",position:x});for(let y=1;y<(horizontal?10:8);y+=1)all.push({id:`H${y}`,axis:"H",position:y});
+    for(let attempt=0;attempt<2000;attempt+=1){
+      const shuffled=all.slice().sort(()=>rng.next()-.5),candidates=shuffled.slice(0,spec.count).map((line,index)=>({...line,label:"가나다라마바사"[index]}));
+      const payload={horizontal,cells,candidates,targetPieces:spec.target,difficulty,seed:Number(seed)||1};const pairs=q15ValidPairs(payload);
+      if(pairs.length===1){payload.answer=pairs[0];return payload;}
+    }
+    throw new Error(`q15 ${difficulty} 단일 정답 후보 생성 실패`);
+  }
+  function enumerateQ15AnswerCandidates(payload){return payload&&Array.isArray(payload.candidates)?q15ValidPairs(payload):[];}
+  function deriveQ15Answer(payload){return payload.answer;}
+  function validateQ15(payload){const spec=Q15_SPEC[payload&&payload.difficulty],pairs=enumerateQ15AnswerCandidates(payload);return Boolean(spec&&payload.candidates.length===spec.count&&payload.targetPieces===spec.target&&pairs.length===1&&JSON.stringify(pairs[0])===JSON.stringify(payload.answer));}
+  function renderQ15Problem(payload){
+    const scale=34,ox=75,oy=28,fill=payload.cells.map(([x,y])=>`<rect x="${ox+x*scale/2}" y="${oy+y*scale/2}" width="${scale/2+0.4}" height="${scale/2+0.4}" fill="#e9e0ca"/>`).join("");
+    const lines=payload.candidates.map((line)=>{if(line.axis==="V"){const x=ox+line.position*scale/2;return `<path d="M${x} ${oy-10}V${oy+8*scale/2+10}" stroke="#a44f49" stroke-width="2" stroke-dasharray="7 5"/><text x="${x}" y="${oy-14}" text-anchor="middle" font-size="14" font-weight="900">${line.label}</text>`;}const y=oy+line.position*scale/2;return `<path d="M${ox-10} ${y}H${ox+10*scale/2+10}" stroke="#4e776f" stroke-width="2" stroke-dasharray="7 5"/><text x="${ox-19}" y="${y+5}" text-anchor="middle" font-size="14" font-weight="900">${line.label}</text>`;}).join("");
+    return `<svg class="hf-reasoning hf-line-partition" viewBox="0 0 680 230" role="img" aria-label="빗 모양과 후보 직선"><rect width="680" height="230" rx="18" fill="#fff"/>${fill}${lines}<text x="500" y="82" text-anchor="middle" font-size="19" font-weight="900" fill="#243746">후보 직선 ${payload.candidates.length}개</text><text x="500" y="120" text-anchor="middle" font-size="16" font-weight="850" fill="#59636a">두 선을 골라</text><text x="500" y="151" text-anchor="middle" font-size="22" font-weight="950" fill="#9a4f45">${payload.targetPieces}조각</text><text x="500" y="181" text-anchor="middle" font-size="16" font-weight="850" fill="#59636a">만드세요.</text></svg>`;
+  }
+  function renderQ15Answer(payload){return `정답: ${payload.answer.labels.join("선과 ")}선 — 두 선을 따라 자르면 ${payload.targetPieces}조각이 됩니다.`;}
+
+  function q16AllEdges(size){const h=[],v=[];for(let y=0;y<=size;y+=1)for(let x=0;x<size;x+=1)h.push(`H${x},${y}`);for(let x=0;x<=size;x+=1)for(let y=0;y<size;y+=1)v.push(`V${x},${y}`);return [...h,...v];}
+  function q16SquareCounts(size,edges){const set=new Set(edges),bySize={},squares=[];for(let side=1;side<=size;side+=1)for(let y=0;y<=size-side;y+=1)for(let x=0;x<=size-side;x+=1){let ok=true;for(let d=0;d<side;d+=1)ok=ok&&set.has(`H${x+d},${y}`)&&set.has(`H${x+d},${y+side}`)&&set.has(`V${x},${y+d}`)&&set.has(`V${x+side},${y+d}`);if(ok){bySize[side]=(bySize[side]||0)+1;squares.push([x,y,side]);}}return{bySize,total:squares.length,squares};}
+  const Q16_SPEC={easy:{size:2,min:2,max:5,remove:[0,2]},same:{size:3,min:7,max:13,remove:[1,4]},hard:{size:4,min:15,max:28,remove:[2,7]}};
+  function generateQ16(difficulty,seed){const spec=Q16_SPEC[difficulty]||Q16_SPEC.same,rng=makeRng(seed),all=q16AllEdges(spec.size);for(let attempt=0;attempt<1000;attempt+=1){const remove=rng.int(spec.remove[0],spec.remove[1]),edges=all.slice().sort(()=>rng.next()-.5).slice(remove),count=q16SquareCounts(spec.size,edges);if(count.total>=spec.min&&count.total<=spec.max)return{size:spec.size,edges,bySize:count.bySize,answer:count.total,difficulty,seed:Number(seed)||1};}throw new Error(`q16 ${difficulty} 생성 실패`);}
+  function enumerateQ16AnswerCandidates(payload){return payload&&Array.isArray(payload.edges)?[q16SquareCounts(payload.size,payload.edges).total]:[];}
+  function deriveQ16Answer(payload){return payload.answer;}
+  function validateQ16(payload){const spec=Q16_SPEC[payload&&payload.difficulty],answers=enumerateQ16AnswerCandidates(payload);return Boolean(spec&&payload.size===spec.size&&payload.answer>=spec.min&&payload.answer<=spec.max&&answers.length===1&&answers[0]===payload.answer);}
+  function renderQ16Problem(payload){const cell=42,w=payload.size*cell,ox=(680-w)/2,oy=25;const lines=payload.edges.map((edge)=>{const axis=edge[0],[a,b]=edge.slice(1).split(",").map(Number);return axis==="H"?`<path d="M${ox+a*cell} ${oy+b*cell}h${cell}"/>`:`<path d="M${ox+a*cell} ${oy+b*cell}v${cell}"/>`;}).join("");return `<svg class="hf-reasoning hf-square-grid" viewBox="0 0 680 230" role="img" aria-label="정사각형을 세는 선 그림"><rect width="680" height="230" rx="18" fill="#fff"/><g fill="none" stroke="#273746" stroke-width="3" stroke-linecap="round">${lines}</g><text x="340" y="210" text-anchor="middle" font-size="14" font-weight="850" fill="#59636a">선이 모두 이어진 정사각형만 세세요.</text></svg>`;}
+  function renderQ16Answer(payload){return `정답: ${payload.answer}개 — 크기별로 ${Object.entries(payload.bySize).map(([size,count])=>`${size}칸짜리 ${count}개`).join(", ")}를 더합니다.`;}
+
+  const Q17_TEMPLATES={easy:[{cols:1,rows:1,diamonds:1},{cols:2,rows:1,diamonds:1}],same:[{cols:2,rows:2,diamonds:1},{cols:3,rows:2,diamonds:1}],hard:[{cols:3,rows:3,diamonds:2},{cols:4,rows:3,diamonds:2}]};
+  function axisGridSquareCount(cols,rows){let total=0,bySize={};for(let size=1;size<=Math.min(cols,rows);size+=1){const count=(cols-size+1)*(rows-size+1);bySize[size]=count;total+=count;}return{total,bySize};}
+  function generateQ17(difficulty,seed){const templates=Q17_TEMPLATES[difficulty]||Q17_TEMPLATES.same,t=templates[Math.abs(Math.trunc(Number(seed)||1))%2],axis=axisGridSquareCount(t.cols,t.rows);return{...t,axisBySize:axis.bySize,answer:axis.total+t.diamonds,difficulty,seed:Number(seed)||1};}
+  function enumerateQ17AnswerCandidates(payload){if(!payload)return[];const axis=axisGridSquareCount(payload.cols,payload.rows);return[axis.total+payload.diamonds];}
+  function deriveQ17Answer(payload){return payload.answer;}
+  function validateQ17(payload){const templates=Q17_TEMPLATES[payload&&payload.difficulty],answers=enumerateQ17AnswerCandidates(payload);return Boolean(templates&&templates.some((t)=>t.cols===payload.cols&&t.rows===payload.rows&&t.diamonds===payload.diamonds)&&answers.length===1&&answers[0]===payload.answer);}
+  function renderQ17Problem(payload){const cell=34,w=payload.cols*cell,h=payload.rows*cell,ox=90,oy=(190-h)/2;let grid="";for(let x=0;x<=payload.cols;x+=1)grid+=`<path d="M${ox+x*cell} ${oy}V${oy+h}"/>`;for(let y=0;y<=payload.rows;y+=1)grid+=`<path d="M${ox} ${oy+y*cell}H${ox+w}"/>`;let diamonds="";for(let i=0;i<payload.diamonds;i+=1){const cx=400+i*105,cy=105,s=36;diamonds+=`<path d="M${cx} ${cy-s}L${cx+s} ${cy}L${cx} ${cy+s}L${cx-s} ${cy}Z"/>`;}
+    return `<svg class="hf-reasoning hf-tilted-squares" viewBox="0 0 680 230" role="img" aria-label="반듯한 정사각형과 기울어진 정사각형"><rect width="680" height="230" rx="18" fill="#fff"/><g fill="none" stroke="#273746" stroke-width="3">${grid}${diamonds}</g><text x="340" y="214" text-anchor="middle" font-size="14" font-weight="850" fill="#59636a">떨어진 그림끼리 이어서 새 정사각형을 만들지는 않습니다.</text></svg>`;}
+  function renderQ17Answer(payload){const axis=Object.entries(payload.axisBySize).map(([size,count])=>`${size}칸짜리 ${count}개`).join(", ");return `정답: ${payload.answer}개 — 반듯한 정사각형은 ${axis}, 기울어진 정사각형은 ${payload.diamonds}개입니다.`;}
+
+  const Q18_CACHE=new Map();
+  function enumeratePolycubesQ18(targetCount){
+    if(Q18_CACHE.has(targetCount))return Q18_CACHE.get(targetCount);
+    const directions=[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]],permutations=[[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]];
+    const parity=(p)=>{let n=0;for(let i=0;i<3;i+=1)for(let j=i+1;j<3;j+=1)if(p[i]>p[j])n+=1;return n%2?-1:1;},rotations=[];
+    for(const permutation of permutations)for(const sx of[-1,1])for(const sy of[-1,1])for(const sz of[-1,1])if(parity(permutation)*sx*sy*sz===1)rotations.push({permutation,signs:[sx,sy,sz]});
+    const normalized=(blocks)=>{const mins=[0,1,2].map((axis)=>Math.min(...blocks.map((b)=>b[axis])));return blocks.map((b)=>b.map((v,a)=>v-mins[a])).sort((a,b)=>a[0]-b[0]||a[1]-b[1]||a[2]-b[2]);};
+    const key=(blocks)=>normalized(blocks).map((b)=>b.join(",")).join(";"),canonical=(blocks)=>rotations.map((r)=>key(blocks.map((b)=>[b[r.permutation[0]]*r.signs[0],b[r.permutation[1]]*r.signs[1],b[r.permutation[2]]*r.signs[2]]))).sort()[0];
+    let shapes=[[[0,0,0]]];for(let count=2;count<=targetCount;count+=1){const next=new Map();for(const shape of shapes){const occupied=new Set(shape.map((b)=>b.join(",")));for(const block of shape)for(const d of directions){const added=block.map((v,a)=>v+d[a]);if(!occupied.has(added.join(","))){const candidate=[...shape,added],id=canonical(candidate);if(!next.has(id))next.set(id,normalized(candidate));}}}shapes=[...next.values()];}
+    Q18_CACHE.set(targetCount,shapes);return shapes;
+  }
+  const Q18_TEMPLATES={easy:[{count:2,mode:"all"},{count:3,mode:"all"}],same:[{count:4,mode:"planar"},{count:4,mode:"nonplanar"}],hard:[{count:4,mode:"all"},{count:5,mode:"planar"}]};
+  function q18Filtered(count,mode){const shapes=enumeratePolycubesQ18(count);if(mode==="all")return shapes;return shapes.filter((shape)=>{const planar=[0,1,2].some((axis)=>new Set(shape.map((b)=>b[axis])).size===1);return mode==="planar"?planar:!planar;});}
+  function generateQ18(difficulty,seed){const templates=Q18_TEMPLATES[difficulty]||Q18_TEMPLATES.same,t=templates[Math.abs(Math.trunc(Number(seed)||1))%2],answer=q18Filtered(t.count,t.mode).length;return{cubeCount:t.count,mode:t.mode,answer,difficulty,seed:Number(seed)||1};}
+  function enumerateQ18AnswerCandidates(payload){return payload&&payload.cubeCount?[q18Filtered(payload.cubeCount,payload.mode).length]:[];}
+  function deriveQ18Answer(payload){return payload.answer;}
+  function validateQ18(payload){const templates=Q18_TEMPLATES[payload&&payload.difficulty],answers=enumerateQ18AnswerCandidates(payload);return Boolean(templates&&templates.some((t)=>t.count===payload.cubeCount&&t.mode===payload.mode)&&answers.length===1&&answers[0]===payload.answer);}
+  function q18Cube(x,y){return `<g transform="translate(${x} ${y})"><path d="M0 12L20 0 40 12 20 24Z" fill="#f5f5f2"/><path d="M0 12L20 24V48L0 36Z" fill="#d8dde0"/><path d="M40 12L20 24V48L40 36Z" fill="#c8ced1"/><path d="M0 12L20 0 40 12V36L20 48 0 36Z" fill="none" stroke="#58636b"/></g>`;}
+  function renderQ18Problem(payload){let cubes="";for(let i=0;i<payload.cubeCount;i+=1)cubes+=q18Cube(190+i*43,70+(i%2)*12);const mode={all:"모든 입체 모양",planar:"한 층에 놓이는 모양",nonplanar:"두 층 이상인 모양"}[payload.mode];return `<svg class="hf-reasoning hf-polycubes" viewBox="0 0 680 230" role="img" aria-label="쌓기나무로 서로 다른 입체 만들기"><rect width="680" height="230" rx="18" fill="#fff"/>${cubes}<text x="340" y="178" text-anchor="middle" font-size="18" font-weight="900" fill="#243746">쌓기나무 ${payload.cubeCount}개 · ${mode}</text><text x="340" y="207" text-anchor="middle" font-size="14" font-weight="850" fill="#59636a">돌려서 겹치면 같은 모양, 거울 모양은 따로 셉니다.</text></svg>`;}
+  function renderQ18Answer(payload){return `정답: ${payload.answer}가지 — 쌓기나무 ${payload.cubeCount}개를 면끼리 붙여 만들고, 돌려서 같은 모양을 하나로 묶어 셉니다.`;}
+
+  function pointSquareCountQ19(points){const set=new Set(points.map((p)=>p.join(","))),squares=new Set();for(const a of points)for(const b of points){const dx=b[0]-a[0],dy=b[1]-a[1];if(!dx&&!dy)continue;for(const sign of[-1,1]){const c=[a[0]-sign*dy,a[1]+sign*dx],d=[b[0]-sign*dy,b[1]+sign*dx];if(set.has(c.join(","))&&set.has(d.join(",")))squares.add([a,b,c,d].map((p)=>p.join(",")).sort().join("|"));}}return squares.size;}
+  const Q19_TEMPLATES={easy:[{w:2,h:2,missing:[]},{w:3,h:2,missing:[]}],same:[{w:3,h:3,missing:[]},{w:3,h:3,missing:[[1,1]]}],hard:[{w:4,h:4,missing:[]},{w:4,h:4,missing:[[1,1],[2,2]]}]};
+  function q19Points(t){const missing=new Set(t.missing.map((p)=>p.join(","))),points=[];for(let y=0;y<t.h;y+=1)for(let x=0;x<t.w;x+=1)if(!missing.has(`${x},${y}`))points.push([x,y]);return points;}
+  function generateQ19(difficulty,seed){const templates=Q19_TEMPLATES[difficulty]||Q19_TEMPLATES.same,t=templates[Math.abs(Math.trunc(Number(seed)||1))%2],points=q19Points(t);return{width:t.w,height:t.h,missing:t.missing,points,answer:pointSquareCountQ19(points),difficulty,seed:Number(seed)||1};}
+  function enumerateQ19AnswerCandidates(payload){return payload&&Array.isArray(payload.points)?[pointSquareCountQ19(payload.points)]:[];}
+  function deriveQ19Answer(payload){return payload.answer;}
+  function validateQ19(payload){const templates=Q19_TEMPLATES[payload&&payload.difficulty],answers=enumerateQ19AnswerCandidates(payload);return Boolean(templates&&templates.some((t)=>t.w===payload.width&&t.h===payload.height&&JSON.stringify(t.missing)===JSON.stringify(payload.missing))&&answers.length===1&&answers[0]===payload.answer);}
+  function renderQ19Problem(payload){const gap=40,w=(payload.width-1)*gap,h=(payload.height-1)*gap,ox=(680-w)/2,oy=(190-h)/2,dots=payload.points.map(([x,y])=>`<circle cx="${ox+x*gap}" cy="${oy+y*gap}" r="5.5" fill="#243746"/>`).join("");return `<svg class="hf-reasoning hf-geoboard" viewBox="0 0 680 230" role="img" aria-label="점을 이어 정사각형 만들기"><rect width="680" height="230" rx="18" fill="#fff"/>${dots}<text x="340" y="214" text-anchor="middle" font-size="14" font-weight="850" fill="#59636a">점 4개를 꼭짓점으로 하는 정사각형을 셉니다.</text></svg>`;}
+  function renderQ19Answer(payload){return `정답: ${payload.answer}개 — 반듯한 정사각형과 기울어진 정사각형을 좌표로 하나씩 확인합니다.`;}
+
+  const Q20_SPEC={easy:{count:3,minValue:1,maxValue:8,minAnswer:5,maxAnswer:7},same:{count:4,minValue:2,maxValue:12,minAnswer:10,maxAnswer:15},hard:{count:5,minValue:3,maxValue:18,minAnswer:20,maxAnswer:31}};
+  function q20Sums(numbers){const sums=new Set();for(let mask=1;mask<2**numbers.length;mask+=1)sums.add(numbers.reduce((sum,value,index)=>sum+(((mask>>index)&1)?value:0),0));return[...sums].sort((a,b)=>a-b);}
+  function generateQ20(difficulty,seed){const spec=Q20_SPEC[difficulty]||Q20_SPEC.same,rng=makeRng(seed);for(let attempt=0;attempt<1000;attempt+=1){const numbers=[...new Set(Array.from({length:spec.count*2},()=>rng.int(spec.minValue,spec.maxValue)))].slice(0,spec.count).sort((a,b)=>a-b);if(numbers.length!==spec.count)continue;const sums=q20Sums(numbers);if(sums.length>=spec.minAnswer&&sums.length<=spec.maxAnswer)return{numbers,sums,answer:sums.length,difficulty,seed:Number(seed)||1};}throw new Error(`q20 ${difficulty} 생성 실패`);}
+  function enumerateQ20AnswerCandidates(payload){return payload&&Array.isArray(payload.numbers)?[q20Sums(payload.numbers).length]:[];}
+  function deriveQ20Answer(payload){return payload.answer;}
+  function validateQ20(payload){const spec=Q20_SPEC[payload&&payload.difficulty],answers=enumerateQ20AnswerCandidates(payload);return Boolean(spec&&payload.numbers.length===spec.count&&payload.answer>=spec.minAnswer&&payload.answer<=spec.maxAnswer&&answers.length===1&&answers[0]===payload.answer&&JSON.stringify(q20Sums(payload.numbers))===JSON.stringify(payload.sums));}
+  function renderQ20Problem(payload){const max=Math.max(...payload.numbers),colors=["#d9c496","#bcd8d0","#c7d3e8","#edc5b4","#d9c8e4"],rods=payload.numbers.map((n,i)=>{const width=70+n/max*210,y=30+i*34;return `<rect x="${(680-width)/2}" y="${y}" width="${width}" height="20" rx="8" fill="${colors[i]}" stroke="#66717a"/><text x="340" y="${y+15}" text-anchor="middle" font-size="13" font-weight="900">${n}cm</text>`;}).join("");return `<svg class="hf-reasoning hf-segment-sums" viewBox="0 0 680 ${70+payload.numbers.length*34}" role="img" aria-label="서로 다른 길이의 막대">${rods}</svg>`;}
+  function renderQ20Answer(payload){return `정답: ${payload.answer}가지 — 만들 수 있는 길이는 ${payload.sums.join(", ")}cm입니다. 같은 길이는 한 번만 셉니다.`;}
+
   global.HFQ10 = { generateQ10, validateQ10, enumerateQ10AnswerCandidates, renderQ10Problem, deriveQ10Answer, renderQ10Answer };
   global.HFQ11 = { generateQ11, validateQ11, enumerateQ11AnswerCandidates, renderQ11Problem, deriveQ11Answer, renderQ11Answer, visibleCells: q11VisibleCells };
   global.HFQ12 = { generateQ12, validateQ12, enumerateQ12AnswerCandidates, renderQ12Problem, deriveQ12Answer, renderQ12Answer, unfoldPoints };
   global.HFQ13 = { generateQ13, validateQ13, enumerateQ13AnswerCandidates, renderQ13Problem, deriveQ13Answer, renderQ13Answer };
   global.HFQ14 = { generateQ14, validateQ14, enumerateQ14AnswerCandidates, renderQ14Problem, deriveQ14Answer, renderQ14Answer, minimumSquareCover: minimumSquareCoverQ14 };
+  global.HFQ15 = { generateQ15, validateQ15, enumerateQ15AnswerCandidates, renderQ15Problem, deriveQ15Answer, renderQ15Answer };
+  global.HFQ16 = { generateQ16, validateQ16, enumerateQ16AnswerCandidates, renderQ16Problem, deriveQ16Answer, renderQ16Answer };
+  global.HFQ17 = { generateQ17, validateQ17, enumerateQ17AnswerCandidates, renderQ17Problem, deriveQ17Answer, renderQ17Answer };
+  global.HFQ18 = { generateQ18, validateQ18, enumerateQ18AnswerCandidates, renderQ18Problem, deriveQ18Answer, renderQ18Answer, enumeratePolycubes: enumeratePolycubesQ18 };
+  global.HFQ19 = { generateQ19, validateQ19, enumerateQ19AnswerCandidates, renderQ19Problem, deriveQ19Answer, renderQ19Answer, pointSquareCount: pointSquareCountQ19 };
+  global.HFQ20 = { generateQ20, validateQ20, enumerateQ20AnswerCandidates, renderQ20Problem, deriveQ20Answer, renderQ20Answer };
 })(typeof window !== "undefined" ? window : globalThis);
