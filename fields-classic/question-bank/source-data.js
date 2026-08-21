@@ -378,6 +378,74 @@ export const TYPES = [
   type("cube-triangular-wall-growth", "geometry", "쌓기나무 규칙", "한 줄 계단으로 커지는 쌓기나무의 전체 개수", geometryWorksheet("SQ", "L3", { worksheetOptions: { kind: "stair", mode: "nth" }, sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" })),
   type("cube-tetrahedral-growth", "geometry", "쌓기나무 규칙", "삼각 계단으로 커지는 쌓기나무의 전체 개수", geometryWorksheet("SQ", "L4", { worksheetOptions: { kind: "triangular-stair", mode: "nth" }, sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 문제 번호별 대조" })),
 
+  // 더클래식 1과정 6권: 159문항을 네 단계와 인쇄 문제 번호로 직접 대조했다.
+  // 같은 단원 안에서도 풀이 구조가 달라지면 별도 유형으로 분리한다.
+  type("number-line-midpoint-book6", "geometry", "수직선과 길이", "수직선에서 두 점의 중간 수 찾기", { generator: "numberLineMidpointBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("number-line-unit-distance-book6", "geometry", "수직선과 길이", "똑같이 나눈 수직선 한 칸의 거리", { generator: "numberLineUnitDistanceBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("number-line-two-part-distance", "geometry", "수직선과 길이", "서로 다르게 나눈 두 구간의 거리", { generator: "numberLineTwoPartDistance", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("rod-difference-measure-count", "number", "비와 측정", "두 막대의 차이로 같은 길이를 재는 횟수", { generator: "rodDifferenceMeasureCount", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("equivalent-fraction-chain", "number", "분수와 비", "크기가 같은 분수의 빈칸 완성", { generator: "equivalentFractionChain", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("equivalent-ratio-chain", "number", "분수와 비", "크기가 같은 비의 빈칸 완성", { generator: "equivalentRatioChain", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("bar-ratio-read", "geometry", "분수와 비", "막대 조각의 개수로 두 길이의 비 읽기", { generator: "barRatioRead", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("bar-ratio-total-length", "number", "분수와 비", "막대의 비와 전체 길이로 각각의 길이 구하기", { generator: "barRatioTotalLength", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("balance-ratio-book6", "logic", "비와 양팔저울", "수평인 저울에서 두 물건 무게의 비", { generator: "balanceRatioBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("balance-weight-ratio", "logic", "비와 양팔저울", "저울의 비와 전체 무게로 각 물건 무게 구하기", { generator: "balanceWeightRatio", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("symbol-sum-card-deduction", "number", "도형 수 추리", "서로 다른 수 카드와 도형 합으로 값 찾기", { generator: "symbolSumCardDeduction", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("stride-ratio-total", "number", "비 문장제", "같은 거리의 걸음 수와 보폭의 합으로 보폭 구하기", { generator: "strideRatioTotal", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("repeated-unit-length-total", "number", "비 문장제", "두 막대 개수와 길이의 합으로 전체 길이 구하기", { generator: "repeatedUnitLengthTotal", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+
+  type("quadrilateral-perimeter", "geometry", "도형의 둘레", "직사각형·평행사변형의 둘레와 한 변", { generator: "quadrilateralPerimeter", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("equal-sided-quadrilateral-perimeter", "geometry", "도형의 둘레", "정사각형·마름모의 둘레와 한 변", { generator: "equalSidedQuadrilateralPerimeter", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("joined-quadrilateral-dimensions", "geometry", "붙인 도형의 둘레", "붙인 사각형의 둘레로 가로·세로 찾기", { generator: "joinedQuadrilateralDimensions", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("joined-quadrilateral-side", "geometry", "붙인 도형의 둘레", "붙인 두 사각형의 공통 변 길이 찾기", { generator: "joinedQuadrilateralSide", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("joined-regular-shape-side", "geometry", "붙인 도형의 둘레", "정다각형과 사각형을 붙여 모르는 변 찾기", { generator: "joinedRegularShapeSide", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("diagonal-triangle-perimeter", "geometry", "도형의 둘레", "직사각형의 대각선으로 나눈 삼각형 둘레", { generator: "diagonalTrianglePerimeter", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("square-composition-side", "geometry", "정사각형 분할", "크기가 다른 정사각형을 붙여 한 변 찾기", { generator: "squareCompositionSide", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("square-composition-perimeter", "geometry", "정사각형 분할", "정사각형으로 나눈 도형의 색칠 부분 둘레", { generator: "squareCompositionPerimeter", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("fold-cut-rectangle-perimeter", "geometry", "접기와 둘레", "직사각형을 접어 자른 뒤 처음 둘레 찾기", { generator: "foldCutRectanglePerimeter", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("rectilinear-route-perimeter", "geometry", "직각 도형의 둘레", "서로 다른 직각 경로의 둘레 비교", { generator: "rectilinearRoutePerimeter", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("rectilinear-perimeter-book6", "geometry", "직각 도형의 둘레", "모눈과 직각으로 꺾인 도형의 둘레", { generator: "rectilinearPerimeterBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("concave-perimeter", "geometry", "직각 도형의 둘레", "안으로 들어간 부분이 있는 도형의 둘레", { generator: "concavePerimeter", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("grid-cutout-perimeter", "geometry", "잘라낸 도형의 둘레", "모눈 정사각형을 잘라낸 뒤 남은 둘레", { generator: "gridCutoutPerimeter", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("polyomino-outer-perimeter", "geometry", "단위 도형의 둘레", "같은 정사각형을 붙인 도형의 바깥 둘레", { generator: "polyominoOuterPerimeter", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("attached-regular-shape-perimeter", "geometry", "붙인 도형의 둘레", "여러 정다각형을 붙인 도형의 전체 둘레", { generator: "attachedRegularShapePerimeter", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("perimeter-unit-edge-inverse", "geometry", "단위 도형의 둘레", "붙인 도형의 둘레로 한 변의 길이 찾기", { generator: "perimeterUnitEdgeInverse", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("cutout-perimeter-change", "geometry", "잘라낸 도형의 둘레", "정사각형을 잘라내거나 옮긴 뒤 둘레 변화", { generator: "cutoutPerimeterChange", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("square-partition-lengths", "geometry", "정사각형 분할", "정사각형을 나눈 작은 정사각형의 길이", { generator: "squarePartitionLengths", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("nested-square-perimeter", "geometry", "정사각형 분할", "겹쳐 나눈 정사각형의 색칠 부분 둘레", { generator: "nestedSquarePerimeter", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+
+  type("napier-multiplication", "number", "곱셈을 간편하게", "네이피어 격자로 두 자리·세 자리 수 곱하기", { generator: "napierMultiplication", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("area-model-multiplication", "number", "곱셈을 간편하게", "타일 넓이로 곱셈을 나누어 계산하기", { generator: "areaModelMultiplication", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("round-pair-addition", "number", "덧셈을 간편하게", "합이 둥근 수가 되는 수끼리 짝지어 더하기", { generator: "roundPairAddition", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("round-pair-missing-addend", "number", "덧셈을 간편하게", "짝의 합으로 빠진 더하는 수 찾기", { generator: "roundPairMissingAddend", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("common-factor-sum", "number", "곱셈을 간편하게", "같은 수를 묶어 곱셈의 합 계산하기", { generator: "commonFactorSum", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("near-round-multiplication", "number", "곱셈을 간편하게", "99번·999번 더한 값을 한 묶음 빼서 계산하기", { generator: "nearRoundMultiplication", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("near-round-addition", "number", "덧셈을 간편하게", "9·99·999에 가까운 수의 합을 고쳐 계산하기", { generator: "nearRoundAddition", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("inclusive-range-count", "number", "연속수", "처음 수와 끝 수를 포함한 수의 개수", { generator: "inclusiveRangeCount", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("consecutive-sum-even-count", "number", "연속수의 합", "개수가 짝수인 연속수의 합", { generator: "consecutiveSumEvenCount", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("consecutive-sum-odd-count", "number", "연속수의 합", "개수가 홀수인 연속수의 합", { generator: "consecutiveSumOddCount", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("nth-even-odd", "number", "홀수와 짝수", "몇 번째 짝수·홀수 구하기", { generator: "nthEvenOdd", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("even-odd-position", "number", "홀수와 짝수", "주어진 짝수·홀수가 몇 번째인지 찾기", { generator: "evenOddPosition", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("facing-page-number", "number", "책의 쪽수", "펼친 책의 마주 보는 두 쪽수", { generator: "facingPageNumber", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("alternating-pair-sum", "number", "덧셈을 간편하게", "더하기와 빼기를 짝지어 빠르게 계산하기", { generator: "alternatingPairSum", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("common-factor-missing-term", "number", "곱셈을 간편하게", "같은 수를 묶은 곱셈식의 빈칸 찾기", { generator: "commonFactorMissingTerm", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("consecutive-numbers-from-sum", "number", "연속수의 합", "연속수의 개수와 합으로 각 수 찾기", { generator: "consecutiveNumbersFromSum", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("newspaper-page-pair", "logic", "책의 쪽수", "접힌 신문의 마주 보는 쪽수로 빠진 쪽 찾기", { generator: "newspaperPagePair", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+
+  type("range-number-digit-count", "number", "수와 숫자", "범위 안의 수 개수와 쓰인 숫자 개수", { generator: "rangeNumberDigitCount", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("total-written-digits", "number", "수와 숫자", "1부터 어떤 수까지 쓴 숫자의 전체 개수", { generator: "totalWrittenDigits", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("digit-occurrence-count", "number", "숫자 포함", "범위에서 특정 숫자의 개수나 포함된 수 세기", { generator: "digitOccurrenceCount", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("digit-exclusion-count", "number", "숫자 포함", "특정 숫자가 들어간 수를 제외한 개수", { generator: "digitExclusionCount", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("consecutive-sign-insertion", "number", "연산 기호 넣기", "이어진 수 사이에 더하기·빼기 넣기", { generator: "consecutiveSignInsertion", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("odd-sequence-sign-insertion", "number", "연산 기호 넣기", "홀수 수열 사이에 더하기·빼기 넣기", { generator: "oddSequenceSignInsertion", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("doubling-sequence-sign-insertion", "number", "연산 기호 넣기", "두 배씩 커지는 수 사이에 더하기·빼기 넣기", { generator: "doublingSequenceSignInsertion", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("plus-concatenation-evaluate", "number", "수 이어 붙이기", "숫자를 이어 붙인 여러 덧셈식 계산하기", { generator: "plusConcatenationEvaluate", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("plus-concatenation-target", "number", "수 이어 붙이기", "더하기와 이어 붙이기로 목표 수 만들기", { generator: "plusConcatenationTarget", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("mixed-sign-concatenation", "number", "수 이어 붙이기", "더하기·빼기와 이어 붙이기로 목표 수 만들기", { generator: "mixedSignConcatenation", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("remove-plus-concatenation", "number", "수 이어 붙이기", "더하기 하나를 빼 수를 이어 붙여 목표값 만들기", { generator: "removePlusConcatenation", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("last-number-from-digit-total", "number", "수와 숫자", "쓴 숫자의 전체 개수로 마지막 수 찾기", { generator: "lastNumberFromDigitTotal", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+  type("repeated-digit-concatenation", "number", "수 이어 붙이기", "같은 숫자를 이어 붙이고 더해 목표 수 만들기", { generator: "repeatedDigitConcatenation", sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 문제 번호별 대조" }),
+
   // 더클래식 1과정 2권: 단원 이름이 아니라 실제 풀이 구조로 나눈 세부 유형이다.
   // 원본 페이지와 단원 테스트를 대조한 항목만 sourceMatched로 기록한다. 생성기가 없는
   // 유형은 커리큘럼 화면에 보이되, 검증이 끝날 때까지 선택할 수 없다.
@@ -813,7 +881,69 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "triangular-row-boundary-number": "앞줄까지 놓인 수의 개수를 더해 다음 줄의 첫 수와 끝 수를 찾습니다.",
   "square-row-boundary-number": "각 줄에 1개, 3개, 5개씩 놓인 수를 누적해 첫 수와 끝 수를 찾습니다.",
   "cube-triangular-wall-growth": "각 층의 1개, 2개, 3개를 위에서부터 차례로 더합니다.",
-  "cube-tetrahedral-growth": "각 층의 삼각수만큼 쌓인 개수를 아래층부터 차례로 더합니다."
+  "cube-tetrahedral-growth": "각 층의 삼각수만큼 쌓인 개수를 아래층부터 차례로 더합니다.",
+  "number-line-midpoint-book6": "양 끝 수를 더해 두 수로 똑같이 나누면 가운데 수가 됩니다.",
+  "number-line-unit-distance-book6": "두 끝 수의 차를 같은 간격 수로 나누어 한 칸의 거리를 구합니다.",
+  "number-line-two-part-distance": "각 구간의 한 칸 거리를 따로 구한 뒤 물음표 사이의 칸 수만큼 더합니다.",
+  "rod-difference-measure-count": "전체 길이를 두 막대의 재는 횟수로 나눈 뒤 두 막대 길이의 차를 찾습니다.",
+  "equivalent-fraction-chain": "분자와 분모에 같은 수를 곱하거나 나누어 같은 크기의 분수를 만듭니다.",
+  "equivalent-ratio-chain": "비의 두 수에 같은 수를 곱해 같은 비를 차례로 만듭니다.",
+  "bar-ratio-read": "각 막대를 같은 길이 조각으로 나누고 조각 수를 앞뒤 순서에 맞게 씁니다.",
+  "bar-ratio-total-length": "비의 두 수를 더해 전체 묶음 수를 찾고 전체 길이를 한 묶음씩 나눕니다.",
+  "balance-ratio-book6": "수평인 저울의 양쪽 개수를 비교하고 가장 간단한 비로 줄입니다.",
+  "balance-weight-ratio": "저울에서 물건의 개수 비를 찾은 뒤 알려진 전체 무게를 같은 묶음으로 나눕니다.",
+  "symbol-sum-card-deduction": "도형을 수 카드 후보에 하나씩 넣어 모든 식이 맞고 서로 다른 수가 되는 경우만 남깁니다.",
+  "stride-ratio-total": "같은 거리를 걸었으므로 걸음 수가 적은 사람의 보폭이 더 큽니다. 거꾸로 된 비로 나눕니다.",
+  "repeated-unit-length-total": "같은 전체 길이를 만드는 막대 개수의 관계와 두 막대 길이의 합을 함께 이용합니다.",
+  "quadrilateral-perimeter": "마주 보는 두 변의 길이가 같으므로 가로와 세로를 두 번씩 더합니다.",
+  "equal-sided-quadrilateral-perimeter": "네 변의 길이가 모두 같으므로 한 변을 네 번 더하거나 둘레를 네 등분합니다.",
+  "joined-quadrilateral-dimensions": "각 도형의 둘레에서 한 변씩 구하고 붙어 있는 공통 변을 표시합니다.",
+  "joined-quadrilateral-side": "알고 있는 도형의 둘레로 공통 변을 먼저 구해 옆 도형에 옮깁니다.",
+  "joined-regular-shape-side": "정사각형과 정삼각형처럼 변이 같은 도형부터 한 변을 구해 이어진 도형에 씁니다.",
+  "diagonal-triangle-perimeter": "직사각형의 한 변과 대각선을 이용해 색칠한 삼각형의 세 변만 더합니다.",
+  "square-composition-side": "가장 작은 정사각형의 한 변부터 같은 높이·너비를 따라 큰 정사각형의 변을 만듭니다.",
+  "square-composition-perimeter": "정사각형들의 한 변을 차례로 구한 뒤 색칠한 부분의 바깥 네 변만 더합니다.",
+  "fold-cut-rectangle-perimeter": "접은 그림의 겹친 길이와 잘라낸 길이를 거꾸로 되돌려 처음 가로와 세로를 찾습니다.",
+  "rectilinear-route-perimeter": "오른쪽으로 간 전체 길이는 왼쪽으로 돌아온 전체 길이와 같고 위아래도 같습니다.",
+  "rectilinear-perimeter-book6": "가로 방향 길이와 세로 방향 길이를 각각 모아 도형의 바깥선을 한 바퀴 더합니다.",
+  "concave-perimeter": "안으로 들어간 선을 바깥으로 평행 이동해 같은 가로·세로 길이로 바꾸어 셉니다.",
+  "grid-cutout-perimeter": "잘라낸 한 칸마다 사라진 바깥 변과 새로 생긴 안쪽 변을 비교합니다.",
+  "polyomino-outer-perimeter": "낱개 정사각형 둘레의 합에서 서로 맞닿은 변을 두 번씩 뺍니다.",
+  "attached-regular-shape-perimeter": "붙은 공통 변은 바깥 둘레에서 빠지므로 각 도형 둘레의 합에서 두 번 뺍니다.",
+  "perimeter-unit-edge-inverse": "도형의 바깥에 드러난 같은 길이 변의 개수를 세어 전체 둘레를 나눕니다.",
+  "cutout-perimeter-change": "잘라내거나 옮긴 조각 때문에 없어진 변과 새로 생긴 변의 길이를 비교합니다.",
+  "square-partition-lengths": "한쪽 전체 길이를 이루는 작은 정사각형 변들을 같은 방향끼리 더합니다.",
+  "nested-square-perimeter": "가장 작은 정사각형에서 시작해 맞닿은 변의 길이를 이용해 다음 정사각형의 변을 구합니다.",
+  "napier-multiplication": "곱해지는 수를 자릿값으로 나누어 각각 곱한 뒤 같은 자리의 값을 더합니다.",
+  "area-model-multiplication": "한 수를 십의 자리와 일의 자리로 나누어 두 직사각형의 넓이를 더합니다.",
+  "round-pair-addition": "둘을 더해 10·100·1000이 되는 수끼리 먼저 짝지어 계산합니다.",
+  "round-pair-missing-addend": "목표 합에서 이미 짝지은 둥근 수들의 합을 빼 빠진 수를 찾습니다.",
+  "common-factor-sum": "같은 수가 몇 번씩 더해지는지 묶음 수만 먼저 더한 뒤 곱합니다.",
+  "near-round-multiplication": "99번은 100번에서 한 번을 빼고, 999번은 1000번에서 한 번을 뺍니다.",
+  "near-round-addition": "각 수를 가까운 10·100·1000으로 올린 뒤 더 올린 만큼 마지막에 뺍니다.",
+  "inclusive-range-count": "끝 수에서 처음 수를 빼고 처음 수까지 포함하도록 1을 더합니다.",
+  "consecutive-sum-even-count": "첫 수와 끝 수를 짝지어 같은 합을 만들고 짝의 개수만큼 곱합니다.",
+  "consecutive-sum-odd-count": "가운데 수를 찾아 연속수의 개수만큼 곱합니다.",
+  "nth-even-odd": "몇 번째 짝수는 순서의 두 배, 몇 번째 홀수는 순서의 두 배에서 1을 뺀 수입니다.",
+  "even-odd-position": "짝수는 2로 나누고, 홀수는 1을 더한 뒤 2로 나누어 순서를 찾습니다.",
+  "facing-page-number": "펼친 책의 왼쪽은 짝수, 오른쪽은 바로 다음 홀수라는 점을 이용합니다.",
+  "alternating-pair-sum": "앞에서부터 더하는 수와 빼는 수를 한 쌍으로 묶어 같은 차를 셉니다.",
+  "common-factor-missing-term": "같은 수로 묶은 전체 묶음 수를 찾고 보이는 묶음 수를 뺍니다.",
+  "consecutive-numbers-from-sum": "합을 수의 개수로 나누어 가운데 수를 찾고 앞뒤로 1씩 이어 씁니다.",
+  "newspaper-page-pair": "같은 종이의 두 면 합은 첫 면과 마지막 면의 합과 같습니다.",
+  "range-number-digit-count": "범위의 수를 자릿수별로 나누고 각 구간의 수 개수에 자릿수를 곱합니다.",
+  "total-written-digits": "한 자리, 두 자리, 세 자리 수 구간을 나누어 쓰인 숫자 개수를 더합니다.",
+  "digit-occurrence-count": "목표 숫자가 십의 자리와 일의 자리에 오는 경우를 나누어 겹치는 수를 확인합니다.",
+  "digit-exclusion-count": "전체 수에서 금지된 숫자가 하나라도 들어간 수를 빼거나 허용된 자리만 직접 셉니다.",
+  "consecutive-sign-insertion": "모두 더한 값에서 빼기로 바꾼 수의 두 배만큼 줄어든다는 점을 이용합니다.",
+  "odd-sequence-sign-insertion": "홀수를 모두 더한 값과 목표값의 차를 보고 빼야 할 홀수의 합을 찾습니다.",
+  "doubling-sequence-sign-insertion": "모두 더한 값에서 목표값까지 줄여야 하는 수를 두 배 묶음으로 찾습니다.",
+  "plus-concatenation-evaluate": "더하기 기호가 없는 이웃 숫자는 한 수로 이어 읽은 뒤 각 항을 더합니다.",
+  "plus-concatenation-target": "오른쪽부터 이어 붙일지 나눌지 정하며 목표 합과 비교합니다.",
+  "mixed-sign-concatenation": "이어 붙인 수를 먼저 적고 더하기와 빼기를 왼쪽부터 계산합니다.",
+  "remove-plus-concatenation": "더하기 하나를 없애면 양옆 수가 한 수로 이어져 값이 얼마나 커지는지 비교합니다.",
+  "last-number-from-digit-total": "한 자리 수에 쓴 9개를 먼저 빼고 남은 숫자 개수를 두 자리씩 묶습니다.",
+  "repeated-digit-concatenation": "같은 숫자를 한 자리·두 자리·세 자리 묶음으로 나누어 목표 합을 만듭니다."
 });
 
 export const textbookGuideForType = (id) => TEXTBOOK_CONCEPT_GUIDES[id] || "문제에 보이는 관계를 한 단계씩 표시한 뒤 같은 규칙을 적용합니다.";
@@ -1557,6 +1687,262 @@ const BOOK05_UNIT04_REFS = Object.freeze({
   })
 });
 
+// 6권도 페이지가 아니라 활동·확인·연습·도전의 인쇄 문제 번호를 기준으로 한다.
+// 네 단원의 합집합은 159문항이며, 한 문항은 주된 풀이 구조 한 곳에만 배정한다.
+const BOOK06_UNIT01_REFS = Object.freeze({
+  "number-line-midpoint-book6": stageReferences({
+    concept: [problemNumbers("activity", 1, [1])],
+    practice: [problemNumbers("practice", 1, [1])]
+  }),
+  "number-line-unit-distance-book6": stageReferences({
+    concept: [problemNumbers("activity", 1, [2, 3])],
+    practice: [problemNumbers("practice", 1, [2, 3])]
+  }),
+  "number-line-two-part-distance": stageReferences({
+    concept: [problemNumbers("activity", 1, [4, 5])],
+    practice: [problemNumbers("practice", 1, [4, 5])]
+  }),
+  "rod-difference-measure-count": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [6, 7])],
+    advanced: [problemNumbers("advanced", 1, [1])]
+  }),
+  "equivalent-fraction-chain": stageReferences({
+    concept: [problemNumbers("activity", 2, [1])],
+    practice: [problemNumbers("practice", 1, [8])]
+  }),
+  "equivalent-ratio-chain": stageReferences({
+    concept: [problemNumbers("activity", 2, [2])],
+    practice: [problemNumbers("practice", 1, [9])]
+  }),
+  "bar-ratio-read": stageReferences({
+    concept: [problemNumbers("activity", 2, [3, 4])]
+  }),
+  "bar-ratio-total-length": stageReferences({
+    concept: [problemNumbers("activity", 2, [5, 6])],
+    practice: [problemNumbers("practice", 1, [10, 11])]
+  }),
+  "balance-ratio-book6": stageReferences({
+    type: [problemNumbers("check", 2, [1])],
+    practice: [problemNumbers("practice", 1, [12])],
+    advanced: [problemNumbers("advanced", 1, [2])]
+  }),
+  "balance-weight-ratio": stageReferences({
+    type: [problemNumbers("check", 2, [2])],
+    practice: [problemNumbers("practice", 1, [13])]
+  }),
+  "symbol-sum-card-deduction": stageReferences({
+    type: [problemNumbers("check", 2, [3, 4, 5, 6])],
+    practice: [problemNumbers("practice", 1, [14, 15])]
+  }),
+  "stride-ratio-total": stageReferences({
+    practice: [problemNumbers("practice", 1, [16])],
+    advanced: [problemNumbers("advanced", 1, [3])]
+  }),
+  "repeated-unit-length-total": stageReferences({
+    practice: [problemNumbers("practice", 1, [17])],
+    advanced: [problemNumbers("advanced", 1, [4])]
+  })
+});
+
+const BOOK06_UNIT02_REFS = Object.freeze({
+  "quadrilateral-perimeter": stageReferences({
+    concept: [problemNumbers("activity", 1, [1])],
+    practice: [problemNumbers("practice", 1, [2, 3])]
+  }),
+  "equal-sided-quadrilateral-perimeter": stageReferences({
+    concept: [problemNumbers("activity", 1, [2])],
+    practice: [problemNumbers("practice", 1, [4])]
+  }),
+  "joined-quadrilateral-dimensions": stageReferences({
+    concept: [problemNumbers("activity", 1, [3])],
+    practice: [problemNumbers("practice", 1, [5])]
+  }),
+  "joined-quadrilateral-side": stageReferences({
+    concept: [problemNumbers("activity", 1, [4])],
+    practice: [problemNumbers("practice", 1, [6])]
+  }),
+  "joined-regular-shape-side": stageReferences({
+    concept: [problemNumbers("activity", 1, [5])],
+    practice: [problemNumbers("practice", 1, [7])]
+  }),
+  "diagonal-triangle-perimeter": stageReferences({
+    concept: [problemNumbers("activity", 1, [6])],
+    practice: [problemNumbers("practice", 1, [8])]
+  }),
+  "square-composition-side": stageReferences({
+    type: [problemNumbers("check", 1, [1])],
+    practice: [problemNumbers("practice", 1, [9])]
+  }),
+  "square-composition-perimeter": stageReferences({
+    type: [problemNumbers("check", 1, [2])],
+    practice: [problemNumbers("practice", 1, [10])]
+  }),
+  "fold-cut-rectangle-perimeter": stageReferences({
+    type: [problemNumbers("check", 1, [3, 4])],
+    practice: [problemNumbers("practice", 1, [11, 12])]
+  }),
+  "rectilinear-route-perimeter": stageReferences({
+    concept: [problemNumbers("activity", 2, [1])]
+  }),
+  "rectilinear-perimeter-book6": stageReferences({
+    concept: [problemNumbers("activity", 2, [2])],
+    practice: [problemNumbers("practice", 1, [1, 13, 14])]
+  }),
+  "concave-perimeter": stageReferences({
+    concept: [problemNumbers("activity", 2, [3, 4, 5])],
+    practice: [problemNumbers("practice", 1, [15, 16, 17])]
+  }),
+  "grid-cutout-perimeter": stageReferences({
+    type: [problemNumbers("check", 2, [1])],
+    practice: [problemNumbers("practice", 1, [18])]
+  }),
+  "polyomino-outer-perimeter": stageReferences({
+    type: [problemNumbers("check", 2, [2])],
+    practice: [problemNumbers("practice", 1, [19])]
+  }),
+  "attached-regular-shape-perimeter": stageReferences({
+    type: [problemNumbers("check", 2, [3])],
+    practice: [problemNumbers("practice", 1, [20])],
+    advanced: [problemNumbers("advanced", 1, [1])]
+  }),
+  "perimeter-unit-edge-inverse": stageReferences({
+    type: [problemNumbers("check", 2, [4])]
+  }),
+  "cutout-perimeter-change": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [2, 3])]
+  }),
+  "square-partition-lengths": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [4])]
+  }),
+  "nested-square-perimeter": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [5])]
+  })
+});
+
+const BOOK06_UNIT03_REFS = Object.freeze({
+  "napier-multiplication": stageReferences({
+    concept: [problemNumbers("activity", 1, [1])],
+    practice: [problemNumbers("practice", 1, [1])]
+  }),
+  "area-model-multiplication": stageReferences({
+    concept: [problemNumbers("activity", 1, [2])],
+    practice: [problemNumbers("practice", 1, [2])]
+  }),
+  "round-pair-addition": stageReferences({
+    concept: [problemNumbers("activity", 1, [3])],
+    practice: [problemNumbers("practice", 1, [3])]
+  }),
+  "round-pair-missing-addend": stageReferences({
+    concept: [problemNumbers("activity", 1, [4])],
+    practice: [problemNumbers("practice", 1, [4])]
+  }),
+  "common-factor-sum": stageReferences({
+    concept: [problemNumbers("activity", 1, [5])],
+    type: [problemNumbers("check", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [5, 6])]
+  }),
+  "near-round-multiplication": stageReferences({
+    type: [problemNumbers("check", 1, [3])],
+    practice: [problemNumbers("practice", 1, [8])]
+  }),
+  "near-round-addition": stageReferences({
+    type: [problemNumbers("check", 1, [4])],
+    practice: [problemNumbers("practice", 1, [7])]
+  }),
+  "inclusive-range-count": stageReferences({
+    practice: [problemNumbers("practice", 1, [9])]
+  }),
+  "consecutive-sum-even-count": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2])],
+    practice: [problemNumbers("practice", 1, [10, 11])]
+  }),
+  "consecutive-sum-odd-count": stageReferences({
+    concept: [problemNumbers("activity", 2, [3, 4])],
+    practice: [problemNumbers("practice", 1, [12, 13])]
+  }),
+  "nth-even-odd": stageReferences({
+    type: [problemNumbers("check", 2, [1])],
+    practice: [problemNumbers("practice", 1, [14])]
+  }),
+  "even-odd-position": stageReferences({
+    type: [problemNumbers("check", 2, [2])],
+    practice: [problemNumbers("practice", 1, [15])]
+  }),
+  "facing-page-number": stageReferences({
+    type: [problemNumbers("check", 2, [3])],
+    practice: [problemNumbers("practice", 1, [16, 17])]
+  }),
+  "alternating-pair-sum": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [1])]
+  }),
+  "common-factor-missing-term": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [2])]
+  }),
+  "consecutive-numbers-from-sum": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [3, 4])]
+  }),
+  "newspaper-page-pair": stageReferences({
+    practice: [problemNumbers("practice", 1, [18, 19])],
+    advanced: [problemNumbers("advanced", 1, [5, 6])]
+  })
+});
+
+const BOOK06_UNIT04_REFS = Object.freeze({
+  "range-number-digit-count": stageReferences({
+    concept: [problemNumbers("activity", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [1, 2])]
+  }),
+  "total-written-digits": stageReferences({
+    concept: [problemNumbers("activity", 1, [3, 4])],
+    practice: [problemNumbers("practice", 1, [3, 4])],
+    advanced: [problemNumbers("advanced", 1, [1])]
+  }),
+  "digit-occurrence-count": stageReferences({
+    type: [problemNumbers("check", 1, [1])],
+    practice: [problemNumbers("practice", 1, [5])]
+  }),
+  "digit-exclusion-count": stageReferences({
+    type: [problemNumbers("check", 1, [2])],
+    practice: [problemNumbers("practice", 1, [6])]
+  }),
+  "consecutive-sign-insertion": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [7, 8])],
+    advanced: [problemNumbers("advanced", 1, [3])]
+  }),
+  "odd-sequence-sign-insertion": stageReferences({
+    concept: [problemNumbers("activity", 2, [5])],
+    practice: [problemNumbers("practice", 1, [9])]
+  }),
+  "doubling-sequence-sign-insertion": stageReferences({
+    concept: [problemNumbers("activity", 2, [6])],
+    practice: [problemNumbers("practice", 1, [10])]
+  }),
+  "plus-concatenation-evaluate": stageReferences({
+    type: [problemNumbers("check", 2, [1])],
+    practice: [problemNumbers("practice", 1, [11])]
+  }),
+  "plus-concatenation-target": stageReferences({
+    type: [problemNumbers("check", 2, [2])],
+    practice: [problemNumbers("practice", 1, [12])]
+  }),
+  "mixed-sign-concatenation": stageReferences({
+    type: [problemNumbers("check", 2, [3])],
+    practice: [problemNumbers("practice", 1, [13])]
+  }),
+  "remove-plus-concatenation": stageReferences({
+    type: [problemNumbers("check", 2, [4])],
+    practice: [problemNumbers("practice", 1, [14])]
+  }),
+  "last-number-from-digit-total": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [2])]
+  }),
+  "repeated-digit-concatenation": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [4])]
+  })
+});
+
 export const CURRICULUM = [
   { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [
     detailedStagedUnit("도형 움직이기", [
@@ -1653,10 +2039,36 @@ export const CURRICULUM = [
     ], [6,2], [5,3], 5, 16, BOOK05_UNIT04_REFS)
   ] },
   { id: "book-06", label: "6권", title: "도형의 둘레와 연속수", units: [
-    stagedUnit("수직선의 분할과 비", ["number-line-distance","ratio-distribution"], [5,6], [2,6], 4, 17),
-    stagedUnit("도형의 둘레", ["rectilinear-perimeter","polygon-stone-rearrangement"], [6,5], [4,4], 5, 20),
-    stagedUnit("연속수의 합", ["consecutive-number-addition","odd-even-sum-difference"], [5,4], [4,3], 6, 19),
-    stagedUnit("수와 숫자의 개수", ["three-digit-card-count"], [4,6], [2,4], 4, 14)
+    detailedStagedUnit("수직선의 분할과 비", [
+      "number-line-midpoint-book6", "number-line-unit-distance-book6", "number-line-two-part-distance",
+      "rod-difference-measure-count", "equivalent-fraction-chain", "equivalent-ratio-chain",
+      "bar-ratio-read", "bar-ratio-total-length", "balance-ratio-book6", "balance-weight-ratio",
+      "symbol-sum-card-deduction", "stride-ratio-total", "repeated-unit-length-total"
+    ], [5,6], [2,6], 4, 17, BOOK06_UNIT01_REFS),
+    detailedStagedUnit("도형의 둘레", [
+      "quadrilateral-perimeter", "equal-sided-quadrilateral-perimeter", "joined-quadrilateral-dimensions",
+      "joined-quadrilateral-side", "joined-regular-shape-side", "diagonal-triangle-perimeter",
+      "square-composition-side", "square-composition-perimeter", "fold-cut-rectangle-perimeter",
+      "rectilinear-route-perimeter", "rectilinear-perimeter-book6", "concave-perimeter",
+      "grid-cutout-perimeter", "polyomino-outer-perimeter", "attached-regular-shape-perimeter",
+      "perimeter-unit-edge-inverse", "cutout-perimeter-change", "square-partition-lengths",
+      "nested-square-perimeter"
+    ], [6,5], [4,4], 5, 20, BOOK06_UNIT02_REFS),
+    detailedStagedUnit("연속수의 합", [
+      "napier-multiplication", "area-model-multiplication", "round-pair-addition",
+      "round-pair-missing-addend", "common-factor-sum", "near-round-multiplication",
+      "near-round-addition", "inclusive-range-count", "consecutive-sum-even-count",
+      "consecutive-sum-odd-count", "nth-even-odd", "even-odd-position", "facing-page-number",
+      "alternating-pair-sum", "common-factor-missing-term", "consecutive-numbers-from-sum",
+      "newspaper-page-pair"
+    ], [5,4], [4,3], 6, 19, BOOK06_UNIT03_REFS),
+    detailedStagedUnit("수와 숫자의 개수", [
+      "range-number-digit-count", "total-written-digits", "digit-occurrence-count",
+      "digit-exclusion-count", "consecutive-sign-insertion", "odd-sequence-sign-insertion",
+      "doubling-sequence-sign-insertion", "plus-concatenation-evaluate", "plus-concatenation-target",
+      "mixed-sign-concatenation", "remove-plus-concatenation", "last-number-from-digit-total",
+      "repeated-digit-concatenation"
+    ], [4,6], [2,4], 4, 14, BOOK06_UNIT04_REFS)
   ] },
   { id: "book-07", label: "7권", title: "달력과 우기기", units: [
     stagedUnit("달력과 시계", ["calendar-weekday-sum"], [6,4], [3,4], 5, 16),
