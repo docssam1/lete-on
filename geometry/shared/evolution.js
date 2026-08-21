@@ -38,7 +38,8 @@ const NEWER_GAMES = [
   { prefix: "three-views",    stem: "view",   levels: [1, 2, 3, 4, 5],    per: 4 },
   { prefix: "fill-box",       stem: "fill",   levels: [1, 2, 3, 4],       per: 5 },
   { prefix: "cube-memory",    stem: "mem",    levels: [1, 2, 3, 4, 5],    per: 4 },
-  { prefix: "crystal-cubes",  stem: "crystal", levels: [2, 3, 4, 5],      per: 4 }
+  { prefix: "crystal-cubes",  stem: "crystal", levels: [2, 3, 4, 5],      per: 4 },
+  { prefix: "paper-fold",     stem: "paper",   levels: [1, 2, 3, 4, 5],    per: 5 }
 ];
 const NEWER_LEVELS = NEWER_GAMES.reduce((sum, g) => sum + g.levels.length, 0);
 

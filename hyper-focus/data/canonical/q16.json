@@ -1,0 +1,155 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q16",
+  "typeId": 16,
+  "title": "선 따라 그릴 수 있는 큰 정사각형과 작은 정사각형 모두 세기",
+  "problemType": "TYPE-03",
+  "subType": "count_squares_grid",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q16.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 16,
+    "originalQuestionId": "q16_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "count_squares_grid",
+      "baseFigure": {
+        "shapeType": "grid_composite",
+        "description": "부분적으로 이어진 선분들로 이루어진 격자형 도형",
+        "allowsOnlyAxisAlignedSquares": true
+      },
+      "countingRule": {
+        "countBySize": true,
+        "completeEdgesOnly": true,
+        "description": "1칸짜리부터 크기별로 정사각형을 세되, 네 변이 모두 완성된 경우만 정사각형으로 인정한다."
+      },
+      "countingModel": {
+        "expectedAnswer": 10,
+        "strategy": [
+          "1칸짜리 정사각형부터 모두 센다.",
+          "2칸짜리, 3칸짜리처럼 크기를 키워가며 센다.",
+          "선이 끊어진 것은 정사각형으로 세지 않는다."
+        ]
+      },
+      "judgementRule": {
+        "checks": [
+          "count_by_size",
+          "complete_edges_only"
+        ],
+        "description": "정사각형은 크기별로 나누어 세고, 네 변이 모두 이어진 경우만 센다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 목표 정사각형 개수를 먼저 정한 뒤, 그 개수가 유일하게 나오도록 선 구조를 설계한다."
+      },
+      "generationTemplate": {
+        "baseMode": {
+          "changeable": [
+            "grid structure",
+            "missing edge positions"
+          ],
+          "mustPreserve": [
+            "격자/선 구조",
+            "크기별 정사각형 세기 구조",
+            "완성된 변만 세는 규칙"
+          ]
+        },
+        "easyMode": {
+          "changeable": [
+            "grid structure"
+          ],
+          "maxSpan": 4
+        },
+        "hardMode": {
+          "changeable": [
+            "grid structure",
+            "missing edge positions",
+            "overall span"
+          ],
+          "maxSpan": 6
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "가로 세로 격자 크기",
+          "선이 빠진 위치",
+          "부분 격자 배치"
+        ],
+        "mustPreserve": [
+          "크기별 정사각형을 세는 구조",
+          "완성된 네 변이 있는 경우만 세는 규칙",
+          "정답이 유일하게 결정되는 구조",
+          "정답을 먼저 정하고 문제를 설계하는 원칙"
+        ],
+        "forbiddenChanges": [
+          "선이 불완전한데 정사각형으로 해석될 수 있는 모호한 구조",
+          "여러 해석으로 같은 답이 흔들리는 구조",
+          "원본과 다른 유형으로 바뀌는 변형"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "use_original_structure_preferred",
+        "svgRequired": true,
+        "renderer": "count_squares_grid",
+        "showGridSegments": true
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 10,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "count_complete_squares_by_size",
+      "checks": [
+        "1칸짜리 정사각형 개수를 확인",
+        "더 큰 정사각형 개수를 확인",
+        "모든 크기 합이 10인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q16 경로 존재 확인",
+      "hf_data.json typeId 16의 originalProblem.answer가 10개인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 count_squares_grid인지 확인",
+      "countingRule.countBySize가 true인지 확인",
+      "countingRule.completeEdgesOnly가 true인지 확인",
+      "expectedAnswer가 10인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

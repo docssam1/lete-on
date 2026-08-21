@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q18",
+  "variationId": "q18_var01",
+  "subType": "tetra_cube_cases",
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q18_var01.svg" },
+  "contentBinding": { "canonicalSource": "./canonical/q18.json", "hfDataTypeId": 18 },
+  "problem": { "prompt": "쌓기나무 3개를 모두 사용하여 면끼리 붙여 만들 수 있는 서로 다른 모양은 모두 몇 가지입니까? 돌려서 겹치면 같은 모양입니다." },
+  "machineReadable": {
+    "payloadType": "tetra_cube_cases",
+    "unitCubeCount": 3,
+    "connectivity": "face_connected_only",
+    "equivalenceRule": { "sameUnderSpatialRotation": true, "mirrorCopyNotGeneratedSeparately": true },
+    "solvingModel": {
+      "representatives": [
+        {"shapeId":"straight","blocks":[[0,0,0],[1,0,0],[2,0,0]]},
+        {"shapeId":"corner","blocks":[[0,0,0],[0,1,0],[1,0,0]]}
+      ],
+      "expectedAnswer": 2,
+      "verifiedByPolycubeEnumeration": true
+    }
+  },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 2 },
+  "solutionHint": "세 개를 일자로 붙인 모양과 한 번 꺾어 붙인 모양뿐입니다. 돌려서 같아지는 것은 한 가지로 셉니다."
+}

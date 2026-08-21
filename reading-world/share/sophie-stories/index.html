@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="theme-color" content="#efe5cf">
+  <title>Sophie's Storybook</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <div>
+        <p class="eyebrow">A READ-ALONG BOOK</p>
+        <h1>Sophie's Storybook</h1>
+      </div>
+      <div class="book-mark" aria-hidden="true">S</div>
+    </header>
+
+    <nav class="story-tabs" aria-label="Choose a story" id="story-tabs"></nav>
+
+    <main class="book" id="book" aria-live="polite">
+      <section class="illustration-page" aria-label="Story illustration">
+        <div class="illustration-frame">
+          <span class="illustration-number" id="illustration-number">01</span>
+          <img class="story-illustration" id="story-illustration" alt="" decoding="async" hidden>
+          <div class="illustration-placeholder" id="illustration-placeholder" aria-hidden="true">
+            <svg viewBox="0 0 160 120" role="img">
+              <path d="M16 99 56 58l25 23 20-18 43 36" />
+              <circle cx="111" cy="33" r="10" />
+              <path d="M27 27h42M27 36h29" />
+            </svg>
+            <p>Illustration space</p>
+            <small>Artwork can be added or replaced later.</small>
+          </div>
+        </div>
+      </section>
+
+      <article class="reading-page">
+        <div class="page-heading">
+          <p class="byline" id="byline"></p>
+          <h2 id="story-title"></h2>
+        </div>
+        <div class="story-copy" id="story-copy"></div>
+        <p class="page-number" id="page-number"></p>
+      </article>
+    </main>
+
+    <section class="author-studio" id="author-studio" aria-labelledby="studio-title">
+      <div class="studio-heading">
+        <p class="eyebrow" id="studio-eyebrow">AUTHOR'S NEXT PAGE</p>
+        <h2 id="studio-title">A note for the author</h2>
+        <p id="studio-intro">Read one short note, choose one branch, and keep the story growing.</p>
+      </div>
+      <div id="studio-content"></div>
+    </section>
+
+    <section class="player" aria-label="Read-along audio player">
+      <div class="player-main">
+        <button class="round-button primary" id="play-button" type="button" aria-label="Play story">
+          <span class="play-icon" aria-hidden="true">▶</span>
+          <span class="pause-icon" aria-hidden="true">Ⅱ</span>
+        </button>
+        <button class="round-button" id="restart-button" type="button" aria-label="Start again">↺</button>
+
+        <div class="progress-wrap">
+          <div class="time-row">
+            <span id="current-time">0:00</span>
+            <span class="player-status" id="player-status">Ready to read</span>
+            <span id="duration">0:00</span>
+          </div>
+          <input id="progress" class="progress" type="range" min="0" max="1000" value="0" aria-label="Story progress">
+        </div>
+
+        <label class="speed-control">
+          <span>Speed</span>
+          <select id="speed" aria-label="Reading speed">
+            <option value="0.75">0.75×</option>
+            <option value="0.9">0.9×</option>
+            <option value="1" selected>1×</option>
+            <option value="1.15">1.15×</option>
+            <option value="1.25">1.25×</option>
+          </select>
+        </label>
+      </div>
+      <audio id="audio" preload="metadata"></audio>
+    </section>
+  </div>
+
+  <noscript>This read-along book needs JavaScript to play the narration.</noscript>
+  <script src="./reader.js" defer></script>
+</body>
+</html>

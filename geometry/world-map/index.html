@@ -7,7 +7,7 @@
     <link rel="preload" href="./assets/geometry-intro-poster.webp" as="image" fetchpriority="high" />
     <link rel="preload" href="./assets/geometry-world-gateway.webp" as="image" />
     <link rel="preload" href="./assets/geometry-world-map.webp" as="image" />
-    <link rel="stylesheet" href="./styles.css?v=calm-20260719a" />
+  <link rel="stylesheet" href="./styles.css?v=geometry-village-20260821a" />
     <link rel="stylesheet" href="../shared/pwa.css?v=2" />
     <script src="../shared/viewport-fit.js?v=1"></script>
     <link rel="manifest" href="/geometry/manifest.webmanifest" />
@@ -17,6 +17,155 @@
     <meta name="apple-mobile-web-app-title" content="Geometry World" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <style>
+      /* Mirror Manor hotspot. The manor is already drawn on the map art between the
+         origami studio and the river; these percentages trace that building only
+         (56.4-69.8% across, 23.2-46.0% down) and start after .origami-studio ends at
+         55.8%, so no existing hotspot is overlapped. The rules mirror
+         .origami-studio in styles.css and live here because this entry ships without
+         touching the shared map stylesheet. */
+      .mirror-manor { left: 56.4%; top: 23.2%; width: 13.4%; height: 22.8%; }
+      .mirror-manor::before {
+        content: "";
+        position: absolute;
+        inset: 2%;
+        border: 4px solid transparent;
+        clip-path: polygon(38% 0, 100% 22%, 100% 74%, 62% 100%, 0 76%, 0 24%);
+        background: transparent;
+        transition: background .2s ease, border-color .2s ease, filter .2s ease;
+      }
+      .mirror-manor span {
+        position: absolute;
+        left: 51%;
+        bottom: 0;
+        transform: translate(-50%, 48%);
+        min-width: 120px;
+        padding: 8px 12px;
+        border: 3px solid var(--navy);
+        border-radius: 6px;
+        background: #fff8ce;
+        color: var(--navy);
+        font-size: clamp(11px, 1.1vw, 17px);
+        line-height: 1.05;
+        font-weight: 950;
+        opacity: 0;
+        transition: opacity .2s ease, transform .2s ease;
+        pointer-events: none;
+      }
+      .mirror-manor:hover::before, .mirror-manor:focus-visible::before, .mirror-manor.attention::before {
+        border-color: rgba(168,214,240,.95);
+        background: rgba(168,214,240,.15);
+        filter: drop-shadow(0 0 15px rgba(168,214,240,.9));
+      }
+      .mirror-manor:hover span, .mirror-manor:focus-visible span, .mirror-manor.attention span { opacity: 1; transform: translate(-50%, 22%); }
+      @media (max-aspect-ratio: 4 / 5) {
+        .mirror-manor span { min-width: 86px; padding: 5px; font-size: 9px; opacity: 1; transform: translate(-50%,26%); }
+      }
+
+      /* Geoboard Home Yard hotspot. The map art already draws the yard on the RIGHT
+         side: an upright peg board with a rubber-band star, the GEOBOARD HOME YARD
+         sign, and a flat geoboard beside it. These percentages trace that yard only
+         (77.0-91.4% across, 29.6-49.2% down). The nearest existing hotspot,
+         .mirror-manor, ends at 69.8% across, so there is a 7.2% gap and no overlap
+         with any of the three. The rules mirror .mirror-manor above and live here
+         because this entry ships without touching the shared map stylesheet. */
+      .geoboard-yard { left: 77%; top: 29.6%; width: 14.4%; height: 19.6%; }
+      .geoboard-yard::before {
+        content: "";
+        position: absolute;
+        inset: 2%;
+        border: 4px solid transparent;
+        clip-path: polygon(20% 0, 96% 10%, 100% 52%, 72% 100%, 26% 96%, 0 46%);
+        background: transparent;
+        transition: background .2s ease, border-color .2s ease, filter .2s ease;
+      }
+      .geoboard-yard span {
+        position: absolute;
+        left: 51%;
+        bottom: 0;
+        transform: translate(-50%, 48%);
+        min-width: 120px;
+        padding: 8px 12px;
+        border: 3px solid var(--navy);
+        border-radius: 6px;
+        background: #fff8ce;
+        color: var(--navy);
+        font-size: clamp(11px, 1.1vw, 17px);
+        line-height: 1.05;
+        font-weight: 950;
+        opacity: 0;
+        transition: opacity .2s ease, transform .2s ease;
+        pointer-events: none;
+      }
+      .geoboard-yard:hover::before, .geoboard-yard:focus-visible::before, .geoboard-yard.attention::before {
+        border-color: rgba(226,87,76,.95);
+        background: rgba(226,87,76,.15);
+        filter: drop-shadow(0 0 15px rgba(226,87,76,.9));
+      }
+      .geoboard-yard:hover span, .geoboard-yard:focus-visible span, .geoboard-yard.attention span { opacity: 1; transform: translate(-50%, 22%); }
+      @media (max-aspect-ratio: 4 / 5) {
+        .geoboard-yard span { min-width: 86px; padding: 5px; font-size: 9px; opacity: 1; transform: translate(-50%,26%); }
+      }
+
+      /* Crystal Plaza hotspot. The map art draws a round lawn of glowing
+         polyhedra on stone pedestals in the middle-left of the village; the
+         plaza ellipse itself runs about 26.3-42.9% across and 41.2-60.0% down.
+         A hotspot is a RECTANGLE, and two neighbours box this one in:
+         .cube-castle spans 13.1-33.8% across and reaches 44.5% down, while
+         .origami-studio spans 38.2-55.8% across and reaches 46.5% down. So
+         claiming the plaza's top row of crystals (from ~41%) or its right edge
+         (out to ~42.9%) would intersect one of those two rects. These
+         percentages (25.6-38.0% across, 44.8-62.3% down) are the largest box
+         that clears BOTH — 0.3% below the castle, 0.2% left of the studio —
+         and they cover the left, centre and bottom pedestals, which is the part
+         of the drawing a child actually aims at. The rules mirror
+         .geoboard-yard above and live here because this entry ships without
+         touching the shared map stylesheet. */
+      .crystal-plaza { left: 25.6%; top: 44.8%; width: 12.4%; height: 17.5%; }
+      .crystal-plaza::before {
+        content: "";
+        position: absolute;
+        inset: 2%;
+        border: 4px solid transparent;
+        /* A rounded octagon instead of the neighbours' angular building
+           silhouettes: what glows here is a circular plaza, not a roofline. */
+        clip-path: polygon(28% 0, 72% 0, 100% 22%, 100% 64%, 74% 94%, 30% 100%, 0 70%, 0 26%);
+        background: transparent;
+        transition: background .2s ease, border-color .2s ease, filter .2s ease;
+      }
+      .crystal-plaza span {
+        position: absolute;
+        left: 51%;
+        bottom: 0;
+        transform: translate(-50%, 48%);
+        min-width: 120px;
+        /* The four game signs are two short hard-wrapped lines ("GFIELD" /
+           "CUBE TOWN"); this one is a single translated sentence whose length
+           differs per language, so it is kept on one line instead of being
+           chopped into three ragged ones by the 120px min-width. */
+        white-space: nowrap;
+        padding: 8px 12px;
+        border: 3px solid var(--navy);
+        border-radius: 6px;
+        background: #fff8ce;
+        color: var(--navy);
+        font-size: clamp(11px, 1.1vw, 17px);
+        line-height: 1.05;
+        font-weight: 950;
+        opacity: 0;
+        transition: opacity .2s ease, transform .2s ease;
+        pointer-events: none;
+      }
+      .crystal-plaza:hover::before, .crystal-plaza:focus-visible::before, .crystal-plaza.attention::before {
+        border-color: rgba(126,206,244,.95);
+        background: rgba(126,206,244,.16);
+        filter: drop-shadow(0 0 15px rgba(126,206,244,.9));
+      }
+      .crystal-plaza:hover span, .crystal-plaza:focus-visible span, .crystal-plaza.attention span { opacity: 1; transform: translate(-50%, 22%); }
+      @media (max-aspect-ratio: 4 / 5) {
+        .crystal-plaza span { min-width: 86px; padding: 5px; font-size: 9px; opacity: 1; transform: translate(-50%,26%); }
+      }
+    </style>
   </head>
   <body>
     <section id="intro" class="intro" aria-label="Geometry World intro">
@@ -38,6 +187,14 @@
     </section>
 
     <main class="world" aria-label="GFIELD Geometry World">
+      <section id="world3d" class="world-3d-viewport" aria-label="3D Geometry World" aria-hidden="true">
+        <div id="world3dLoading" class="world-3d-loading" role="status">
+          <strong>GFIELD GEOMETRY WORLD</strong>
+          <span data-i18n="loading3d">3D 도형 마을을 만드는 중…</span>
+          <i></i>
+        </div>
+      </section>
+
       <section class="map-stage" aria-label="Geometry World map">
         <img src="./assets/geometry-world-map.webp" alt="Geometry World 마을 지도" fetchpriority="high" />
 
@@ -45,9 +202,31 @@
           <span>GFIELD<br />CUBE TOWN</span>
         </button>
 
-        <div id="walkers" class="walkers" aria-hidden="true"></div>
+        <button id="origamiStudio" class="place-hotspot origami-studio" type="button" aria-label="GFIELD Origami Studio">
+          <span>GFIELD<br />ORIGAMI STUDIO</span>
+        </button>
 
-        <div class="map-toolbar">
+        <button id="mirrorManor" class="place-hotspot mirror-manor" type="button" aria-label="GFIELD Mirror Manor">
+          <span>GFIELD<br />MIRROR MANOR</span>
+        </button>
+
+        <button id="geoboardYard" class="place-hotspot geoboard-yard" type="button" aria-label="GFIELD Geoboard Home Yard">
+          <span>GFIELD<br />GEOBOARD YARD</span>
+        </button>
+
+        <!-- Unlike the four game hotspots, whose signs are fixed English place
+             names painted on the map art, this one leads to a worksheet hub
+             whose name has to be readable in the visitor's own language — so
+             its label goes through the page's data-i18n mechanism (see
+             `crystalPlaza` in app.js's `messages`) instead of being hard-coded. -->
+        <button id="crystalPlaza" class="place-hotspot crystal-plaza" type="button" aria-label="GFIELD Geometry Lab">
+          <span data-i18n="crystalPlaza">크리스털 광장 · 지오메트리 랩</span>
+        </button>
+
+        <div id="walkers" class="walkers" aria-hidden="true"></div>
+      </section>
+
+      <div class="map-toolbar">
           <button id="profileButton" class="profile-button" type="button" aria-label="character">
             <span id="profileAvatar" class="character-sprite sprite-0"></span>
           </button>
@@ -63,11 +242,57 @@
             <button type="button" data-lang="ja">日</button>
             <button type="button" data-lang="en">EN</button>
           </div>
-        </div>
+      </div>
 
-        <div id="mapGuide" class="map-guide" aria-live="polite">
-          <strong id="guideName">큐비</strong>
-          <p data-i18n="mapGuide">쌓기나무 성에 새로운 게임이 있어!</p>
+      <div id="mapGuide" class="map-guide" aria-live="polite">
+        <strong id="guideName">큐비</strong>
+        <p data-i18n="mapGuide">쌓기나무 성에 새로운 게임이 있어!</p>
+      </div>
+
+      <div id="mapMoveHint" class="map-move-hint" data-i18n="mapMoveHint">가고 싶은 곳을 눌러 걸어가요</div>
+
+      <div id="worldJoystick" class="world-joystick" aria-label="캐릭터 이동"><span></span></div>
+      <div class="world-camera-controls" aria-label="3D camera controls">
+        <button id="worldCameraMode" class="camera-mode-button" type="button" aria-label="카메라 시점 변경" title="카메라 시점 변경">
+          <b aria-hidden="true">↻</b><span class="camera-control-label" data-i18n="cameraView">시점 변경</span>
+        </button>
+        <button id="worldZoomIn" type="button" aria-label="카메라 확대">＋</button>
+        <button id="worldZoomOut" type="button" aria-label="카메라 축소">−</button>
+      </div>
+
+      <section id="placePrompt" class="place-prompt" aria-live="polite" hidden>
+        <div>
+          <strong id="placePromptName"></strong>
+          <span id="placePromptDescription"></span>
+        </div>
+        <button id="enterPlace" type="button" data-i18n="enterPlace">들어가기</button>
+      </section>
+
+      <section id="npcPrompt" class="place-prompt npc-prompt" aria-live="polite" hidden>
+        <span id="npcAvatar" class="character-sprite sprite-1" aria-hidden="true"></span>
+        <div>
+          <strong id="npcName"></strong>
+          <span id="npcText"></span>
+        </div>
+        <button id="npcNext" type="button">다음 이야기</button>
+      </section>
+
+      <section id="roadmapModal" class="roadmap-modal" aria-labelledby="roadmapTitle" aria-modal="true" role="dialog" hidden>
+        <div class="roadmap-dialog">
+          <header class="roadmap-header">
+            <div>
+              <p id="roadmapEyebrow">앞으로 열릴 도형 세계</p>
+              <h2 id="roadmapTitle"></h2>
+              <span id="roadmapDescription"></span>
+            </div>
+            <button id="roadmapClose" type="button" aria-label="닫기">×</button>
+          </header>
+          <div id="roadmapProgression" class="roadmap-progression" aria-label="학습 단계"></div>
+          <div id="roadmapStages" class="roadmap-stages"></div>
+          <footer class="roadmap-footer">
+            <span id="roadmapNote">기초부터 중등까지 차례로 확장됩니다.</span>
+            <strong id="roadmapStatus">확장 예정</strong>
+          </footer>
         </div>
       </section>
 
@@ -125,7 +350,8 @@
         </div>
       </section>
     </main>
-    <script type="module" src="./app.js?v=evolve4-20260720a"></script>
+    <script type="module" src="./app.js?v=geometry-village-20260821a"></script>
+  <script type="module" src="./world-3d.js?v=geometry-village-20260821a"></script>
     <script src="../shared/pwa.js?v=3" defer></script>
   </body>
 </html>

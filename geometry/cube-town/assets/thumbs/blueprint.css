@@ -1,0 +1,8 @@
+.game-thumb.thumb-blueprint::before,
+.game-thumb.thumb-blueprint .thumb-art {
+  display: none;
+}
+
+.game-thumb.thumb-blueprint {
+  background: center / cover no-repeat url("./blueprint.webp?v=20260820b");
+}

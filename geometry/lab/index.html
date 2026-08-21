@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GFIELD 지오메트리 랩 · 기하 사고력 문제은행</title>
+    <meta name="description" content="GFIELD 지오메트리 랩 — 단계와 난이도를 골라 인쇄용 기하 학습지를 만드는 문제은행." />
+    <link rel="stylesheet" href="./styles.css?v=lab-ui-2" />
+  </head>
+  <body>
+    <header class="lab-header">
+      <div class="lab-wrap lab-header-inner">
+        <div class="lab-title">
+          <span class="gfield-chip">GFIELD</span>
+          <h1>지오메트리 랩</h1>
+          <p class="lab-sub">GEOMETRY LAB — 기하 사고력 문제은행</p>
+        </div>
+        <a class="lab-back" href="../world-map/index.html">← 지오메트리 월드</a>
+      </div>
+    </header>
+
+    <main class="lab-wrap">
+      <section class="lab-section lab-card" id="builder" aria-labelledby="builderTitle">
+        <h2 id="builderTitle">학습지 만들기</h2>
+        <p class="section-note">영역 · 단계 · 난이도 · 유형 · 문항 수를 고르면 인쇄용 학습지가 바로 만들어져요.</p>
+
+        <!-- 데스크톱(1100px 이상)에서는 이 안의 필드들이 왼쪽 열로, 미리보기
+             패널만 오른쪽 열로 옮겨져 값을 바꾸는 동안 스크롤 없이 결과를
+             볼 수 있다. 1100px 미만에서는 세로 배치로 되돌아간다(아래
+             .builder-grid 미디어쿼리, styles.css). -->
+        <div class="builder-grid">
+          <div class="field" id="levelField">
+            <h3>단계</h3>
+            <!-- 예전에 페이지 맨 위 독립 섹션에 있던 안내. 단계 배지가 위아래
+                 두 곳에 있던 것을 하나로 합치며 이 자리로 옮겨 왔다(9단계 전부를
+                 늘 보여 준다 — 제공 중인 4단계만 그리면 "우리 아이 단계는 왜
+                 없지?"가 되고, 커리큘럼의 전체 길이도 보이지 않는다). -->
+            <p class="field-note stage-static-note">킨더부터 4과정까지 아홉 단계. 지금은 킨더~중급 학습지를 제공해요.</p>
+            <div class="badge-row" id="builderLevels"><!-- app.js --></div>
+            <p class="field-note" id="levelNote" hidden></p>
+          </div>
+
+          <div class="field" id="intensityField">
+            <h3>난이도</h3>
+            <div class="intensity-row" id="intensityRow"><!-- app.js --></div>
+            <p class="field-note" id="intensityNote">하 기초 · 중 표준 · 상 심화</p>
+          </div>
+
+          <div class="field" id="domainField">
+            <!-- 영역 — 쌓기나무 / 색종이 접기. 두 카탈로그를 한 격자에 쏟아
+                 놓으면 스무 장 넘는 카드가 한 덩어리로 보여 무엇이 무엇의
+                 이웃인지 읽히지 않는다. -->
+            <h3>영역</h3>
+            <div class="domain-row" id="domainRow"><!-- app.js --></div>
+            <p class="field-note" id="domainNote"></p>
+          </div>
+
+          <div class="field" id="typesField">
+            <h3>유형</h3>
+            <div class="type-grid" id="typeGrid"><!-- app.js --></div>
+            <p class="field-note" id="typeNote">선택한 단계에서 제공하지 않는 유형은 흐리게 표시돼요.</p>
+          </div>
+
+          <!-- 미리보기 — 고른 단계·난이도로 만든 문제 한 장을 학습지에 실릴
+               모습 그대로 보여 준다. 만들어 놓고 인쇄해 봐야 무엇이 나오는지
+               알던 것을, 고르는 자리에서 바로 확인하게 한다. 데스크톱에서는
+               position: sticky로 오른쪽 열에 고정돼, 난이도·영역을 바꾸는 동안
+               계속 눈에 보인다. -->
+          <div class="field preview-field" id="previewPanel">
+            <h3>미리보기 <span class="preview-type" id="previewType"></span></h3>
+            <div class="preview-tabs" id="previewTabs"><!-- app.js --></div>
+            <div class="preview-body" id="previewBody"><!-- app.js --></div>
+            <div class="preview-actions">
+              <button type="button" class="btn btn-outline btn-sm" id="previewNewBtn">새 문제</button>
+              <button type="button" class="btn btn-outline btn-sm" id="previewAnswerBtn" aria-pressed="false">정답 보기</button>
+            </div>
+          </div>
+
+          <div class="field" id="countField">
+            <h3>문항 수</h3>
+            <div class="count-row" id="countRow"><!-- app.js --></div>
+          </div>
+
+          <div class="build-bar">
+            <p class="build-summary" id="buildSummary"></p>
+            <a class="btn btn-primary" id="buildBtn" href="../worksheet/index.html">학습지 만들기</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 색종이 접기도, 정해진 문제 풀을 쓰는 학습지도 별도 섹션이 아니다 —
+           학습지 입구를 하나로 모으기로 했으므로 위의 카탈로그에 영역별 카드로
+           들어가 있다. 입구가 여럿이면 같은 인쇄물을 여러 경로로 만들게 되고,
+           단계에 맞는 것을 골라 주는 일도 그만큼 여러 곳에서 따로 해야 한다. -->
+      <section class="lab-section lab-card" aria-labelledby="codeTitle">
+        <h2 id="codeTitle">학습지 코드로 다시 열기</h2>
+        <p class="section-note">인쇄물 머리말의 #GW- 코드를 적으면 똑같은 학습지가 다시 만들어져요. 채점하다 한 장 더 필요할 때 쓰세요.</p>
+        <div class="code-row">
+          <input type="text" id="codeInput" class="code-input" placeholder="#GW-TC.VC-9xl42kf3a" autocomplete="off" spellcheck="false" />
+          <button type="button" id="codeBtn" class="btn btn-outline">코드로 열기</button>
+        </div>
+        <p class="field-note" id="codeNote" hidden></p>
+      </section>
+    </main>
+
+    <footer class="lab-footer">
+      <div class="lab-wrap lab-footer-inner">
+        <span class="gfield-chip">GFIELD</span>
+        <strong>DOCSSAM'S MATH LAB</strong>
+        <span class="lab-footer-note">지오메트리 랩 · 기하 사고력 문제은행</span>
+      </div>
+    </footer>
+
+    <!-- 유형·단계 목록은 학습지 생성기와 같은 원본을 읽는다. 여기에 상수로
+         베껴 두면 generators.js가 유형을 하나 늘린 날 이 페이지만 옛 목록을
+         보여 주게 되므로, 스크립트를 그대로 불러 window.GW_GEN을 쓴다.
+         미리보기 그림(render.js)과 문제 카드 마크업(card.js)도 학습지가 쓰는
+         바로 그 파일을 불러, 여기서 본 문제와 인쇄물이 같은 코드에서 나온다.
+         버전 토큰은 worksheet/index.html의 것과 일부러 같게 두어 두 페이지가
+         브라우저 캐시의 같은 사본을 공유하게 한다. -->
+    <script src="../worksheet/generators.js?v=20260820b"></script>
+    <script src="../worksheet/render.js?v=ws-one-1"></script>
+    <script src="../worksheet/card.js?v=ws-one-1"></script>
+    <script src="./app.js?v=lab-ui-2"></script>
+  </body>
+</html>

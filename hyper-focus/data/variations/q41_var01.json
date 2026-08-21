@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q41",
+  "variationId": "q41_var01",
+  "subType": "shape_transform_code",
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q41_var01.svg" },
+  "contentBinding": { "canonicalSource": "./canonical/q41.json", "hfDataTypeId": 41 },
+  "machineReadable": {
+    "payloadType": "shape_transform_code",
+    "start": { "outerShape": "square", "outerColor": "blue", "innerShape": "triangle", "innerDirection": "up", "innerColor": "yellow" },
+    "transforms": {
+      "가": { "axis": "outerShape", "swap": ["square", "star"] },
+      "나": { "axis": "outerColor", "swap": ["blue", "orange"] },
+      "다": { "axis": "innerDirection", "swap": ["up", "down"] }
+    },
+    "sequence": ["가", "나"],
+    "expectedState": { "outerShape": "star", "outerColor": "orange", "innerShape": "triangle", "innerDirection": "up", "innerColor": "yellow" },
+    "expectedAnswer": "주황색 별 안에 위를 향한 노란색 삼각형"
+  },
+  "answerValidation": { "answerType": "shape_description", "expectedAnswer": "주황색 별 안에 위를 향한 노란색 삼각형" },
+  "problem": {
+    "prompt": "그림의 버튼 규칙을 보고, 시작 도형에 가 버튼과 나 버튼을 차례로 눌렀을 때의 도형을 빈칸에 그리세요."
+  },
+  "solutionHint": "가 버튼으로 파란색 네모가 파란색 별이 되고, 나 버튼으로 별의 색이 주황색이 됩니다. 안쪽 노란색 삼각형의 방향은 그대로입니다."
+}

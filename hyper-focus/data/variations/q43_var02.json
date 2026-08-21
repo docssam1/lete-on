@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q43",
+  "variationId": "q43_var02",
+  "subType": "coloring_triomino",
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q43_var02.svg" },
+  "contentBinding": { "canonicalSource": "./canonical/q43.json", "hfDataTypeId": 43 },
+  "machineReadable": {
+    "payloadType": "coloring_triomino",
+    "cellCount": 3,
+    "layout": "straight",
+    "palette": ["red", "blue", "yellow", "purple", "green"],
+    "pickCount": 3,
+    "allPickedColorsUsedOnce": true,
+    "rotationFlipSame": true,
+    "expectedAnswer": 30
+  },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 30 },
+  "problem": {
+    "prompt": "빨간색, 파란색, 노란색, 보라색, 초록색 중 서로 다른 3색을 골라 일렬로 이어진 3칸을 색칠하려고 합니다. 돌리거나 뒤집어서 같아지는 것은 한 가지로 볼 때, 모두 몇 가지입니까?"
+  },
+  "solutionHint": "5색 중 3색을 고르는 방법은 10가지입니다. 고른 세 색마다 뒤집어서 같은 배열을 하나로 묶으면 3가지이므로 10×3=30가지입니다."
+}

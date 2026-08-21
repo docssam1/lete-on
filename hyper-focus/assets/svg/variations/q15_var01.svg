@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">곧은 선 두 개로 여섯 조각 만들기 유사문제 1</title>
+  <desc id="desc">위로 솟은 기둥이 세 개인 빗 모양 도형에 곧은 선 두 개를 그어 여섯 조각을 만드는 문제입니다.</desc>
+  <defs><filter id="s"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity=".13"/></filter></defs>
+  <rect width="760" height="430" rx="24" fill="#fff"/>
+  <text x="380" y="43" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#20272b">곧은 선 2개를 그어 6조각을 만드세요</text>
+  <text x="380" y="73" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#59636a">선은 도형의 빈 곳이나 바깥을 지나도 됩니다.</text>
+  <path data-shape="three_prong_comb" d="M205 110H265V290H325V110H385V290H445V110H505V350H205Z" fill="#fff5df" stroke="#49413a" stroke-width="4" stroke-linejoin="round" filter="url(#s)"/>
+  <g stroke="#a99d8b" stroke-width="1.2" stroke-dasharray="5 5" opacity=".55"><path d="M265 110V350M325 110V350M385 110V350M445 110V350M205 170H505M205 230H505M205 290H505"/></g>
+  <rect x="245" y="379" width="270" height="30" rx="15" fill="#f0eeeb"/>
+  <text x="380" y="400" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#4d555a">한 선이 여러 기둥을 한꺼번에 지나가게 해 보세요.</text>
+</svg>

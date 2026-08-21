@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q20",
+  "variationId": "q20_var02",
+  "subType": "segment_sum_lengths",
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q20_var02.svg" },
+  "contentBinding": { "canonicalSource": "./canonical/q20.json", "hfDataTypeId": 20 },
+  "problem": { "prompt": "3cm, 5cm, 7cm, 9cm 막대를 각각 한 번까지 골라 이어 만들 수 있는 서로 다른 길이는 모두 몇 가지입니까? 같은 길이는 한 번만 셉니다." },
+  "machineReadable": { "payloadType": "segment_sum_lengths", "numbers": [3, 5, 7, 9], "constructionMode": "end_to_end_only", "expectedAnswer": 14 },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 14 },
+  "solutionHint": "가능한 길이는 3, 5, 7, 8, 9, 10, 12, 14, 15, 16, 17, 19, 21, 24cm로 모두 14가지입니다."
+}

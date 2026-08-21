@@ -1,0 +1,189 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q11",
+  "typeId": 11,
+  "title": "숫자 종이를 두 번 접었을 때 위에 보이는 수의 합 구하기",
+  "problemType": "TYPE-02",
+  "subType": "paper_fold_top_numbers",
+  "answerType": "number",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q11.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": true,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 11,
+    "originalQuestionId": "q11_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "paper_fold_top_numbers",
+      "grid": {
+        "rows": 4,
+        "cols": 4,
+        "values": [
+          [1, 2, 3, 4],
+          [5, 6, 7, 8],
+          [9, 10, 11, 12],
+          [13, 14, 15, 16]
+        ],
+        "rowOrder": "top_to_bottom",
+        "colOrder": "left_to_right"
+      },
+      "foldSequence": [
+        {
+          "step": 1,
+          "axis": "horizontal",
+          "lineBetweenRows": [2, 3],
+          "movingSide": "top_to_bottom",
+          "description": "위쪽 절반이 아래쪽으로 접힌다."
+        },
+        {
+          "step": 2,
+          "axis": "vertical",
+          "lineBetweenCols": [2, 3],
+          "movingSide": "right_to_left",
+          "description": "오른쪽 절반이 왼쪽으로 접힌다."
+        }
+      ],
+      "topVisibleNumbers": [7, 8, 3, 4],
+      "countingModel": {
+        "expectedAnswer": 22,
+        "sumExpression": "7 + 8 + 3 + 4"
+      },
+      "judgementRule": {
+        "checks": [
+          "fold_direction",
+          "back_face_comes_up",
+          "top_visible_sum"
+        ],
+        "description": "접을 때 숫자 자체가 뒤집히는 것이 아니라 칸 전체가 뒤로 넘어가며, 뒷면에 있던 칸이 다시 위로 올라온다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 정답을 먼저 정한 뒤, 그 정답이 유일하게 나오도록 숫자 배열과 두 번 접기 방향을 설계한다."
+      },
+      "generationTemplate": {
+        "baseMode": {
+          "changeable": [
+            "grid values",
+            "final fold arrow direction",
+            "cut position",
+            "target sum"
+          ],
+          "mustPreserve": [
+            "숫자 종이를 두 번 접는 구조",
+            "뒷면의 칸이 위로 다시 올라오는 규칙",
+            "숫자가 보이도록 뒤로 접는 규칙",
+            "최종 윗면 수의 합 또는 자른 뒤 남는 수의 합을 묻는 구조"
+          ]
+        },
+        "easyMode": {
+          "changeable": [
+            "grid values",
+            "final fold arrow direction",
+            "cut position",
+            "target sum"
+          ],
+          "maxRows": 4,
+          "maxCols": 4
+        },
+        "hardMode": {
+          "changeable": [
+            "grid values",
+            "final fold arrow direction",
+            "grid size",
+            "cut position",
+            "target sum"
+          ],
+          "maxRows": 5,
+          "maxCols": 5
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "숫자 배열",
+          "마지막 화살표 방향",
+          "격자 크기",
+          "자르는 위치",
+          "목표 합"
+        ],
+        "mustPreserve": [
+          "두 번 접기 구조",
+          "첫 번째 접기 방식",
+          "뒷면의 칸이 위로 다시 올라오는 규칙",
+          "숫자가 보이도록 뒤로 접는 규칙",
+          "접은 뒤 자르고 다시 펼쳐 결과를 판단할 수 있는 구조",
+          "정답이 하나로 유일하게 결정되는 구조",
+          "정답을 먼저 정하고 문제를 설계하는 원칙"
+        ],
+        "forbiddenChanges": [
+          "첫 번째 접기까지 바꿔 원본과 다른 접기 구조가 되는 변형",
+          "접기 방향이 모호한 그림",
+          "자른 결과가 여러 해석으로 갈리는 구조",
+          "최종 위에 보이는 수가 여러 해석으로 갈리는 구조",
+          "원본과 다른 유형으로 바뀌는 변형"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg",
+        "svgRequired": true,
+        "renderer": "paper_fold_number_grid",
+        "showGridValues": true,
+        "showFoldArrows": true
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "number",
+    "expectedAnswer": 22,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "paper_fold_visible_sum",
+      "checks": [
+        "첫 번째 접기 후 위에 올라오는 줄을 확인",
+        "두 번째 접기 후 위에 올라오는 칸을 확인",
+        "최종 위면 수 4개의 합이 22인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q11 경로 존재 확인",
+      "hf_data.json typeId 11의 originalProblem.answer가 22인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 paper_fold_top_numbers인지 확인",
+      "foldSequence가 2단계인지 확인",
+      "topVisibleNumbers가 [7,8,3,4]인지 확인",
+      "sumExpression 결과가 22인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

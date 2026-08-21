@@ -170,7 +170,12 @@
   function readProgress() {
     var nums = (progress.textContent || "").match(/\d+/g);
     if (!nums || nums.length < 3) return null;
-    return { level: Number(nums[0]), current: Number(nums[1]), total: Number(nums[2]) };
+    return {
+      level: Number(progress.dataset.flowLevel) || Number(nums[0]),
+      displayLevel: Number(nums[0]),
+      current: Number(nums[1]),
+      total: Number(nums[2])
+    };
   }
 
   function injectStyles() {
@@ -254,12 +259,12 @@
     return true;
   }
 
-  function showOverlay(level) {
+  function showOverlay(level, displayLevel) {
     var ov = buildOverlay();
     var total = levelButtons().length;
     var hasNext = level < total;
 
-    ov.title.textContent = pick(TITLES).replace("{n}", String(level));
+    ov.title.textContent = pick(TITLES).replace("{n}", String(displayLevel || level));
     ov.subtitle.textContent = pick(SUBTITLES);
     ov.primaryBtn.textContent = hasNext ? pick(PRIMARY_NEXT_LEVEL) : pick(PRIMARY_FINISH);
     ov.secondaryBtn.textContent = pick(SECONDARY);
@@ -294,7 +299,7 @@
 
       event.preventDefault();
       event.stopPropagation();
-      showOverlay(state.level);
+      showOverlay(state.level, state.displayLevel);
     },
     true
   );

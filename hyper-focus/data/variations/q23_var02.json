@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q23",
+  "variationId": "q23_var02",
+  "subType": "operator_insert_or_blank",
+  "status": "verified",
+  "source": {},
+  "presentation": {"mode": "text-only", "answerUnit": "가지"},
+  "contentBinding": {"canonicalSource": "./canonical/q23.json", "hfDataTypeId": 23},
+  "problem": {"prompt": "숫자 7, 4, 3, 2, 1의 순서를 바꾸지 않고 수 사이에 + 또는 -를 알맞게 써서 값이 13이 되게 하세요. 기호를 쓰지 않은 칸은 두 숫자를 이어 한 수로 봅니다. 만들 수 있는 식은 모두 몇 가지입니까?"},
+  "machineReadable": {
+    "payloadType": "operator_insert_or_blank",
+    "tokens": [7, 4, 3, 2, 1],
+    "targetValue": 13,
+    "allowedSlots": ["blank", "+", "-"],
+    "blankMeansDigitJoin": true,
+    "solvingModel": {"solutions": ["7+4+3-2+1"], "validExpressionCount": 1, "expectedAnswer": 1},
+    "expectedAnswer": 1
+  },
+  "answerValidation": {"answerType": "count", "expectedAnswer": 1},
+  "solutionHint": "모든 칸을 빈칸, +, -로 바꾸어 확인하면 7+4+3-2+1만 13이 됩니다. 따라서 1가지입니다."
+}

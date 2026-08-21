@@ -1,0 +1,160 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q15",
+  "typeId": 15,
+  "title": "선 2개로 목표 도형 조합 만들기",
+  "problemType": "TYPE-03",
+  "subType": "line_partition_six",
+  "answerType": "drawing_instruction",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q15.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 15,
+    "originalQuestionId": "q15_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "line_partition_six",
+      "baseFigure": {
+        "shapeType": "u_shape",
+        "description": "굵은 U자형 도형"
+      },
+      "drawingRule": {
+        "requiredLineCount": 2,
+        "targetShapeCombination": {
+          "triangle": 0,
+          "quadrilateral": 0
+        },
+        "allowStraightOrCurved": false,
+        "description": "굵은 선 2개를 추가로 그어 목표 도형 조합이 되게 만든다."
+      },
+      "judgementRule": {
+        "checks": [
+          "cross_lines",
+          "extend_line",
+          "target_shape_combination"
+        ],
+        "description": "먼저 한 번 자르고, 다른 한 선은 지나가도록 길게 그어 선끼리 만나게 하여 목표 도형 조합이 만들어지는지 본다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 목표 조각 수를 정한 뒤, 그 수가 유일하게 나오도록 선의 위치와 교차 구조를 설계한다."
+      },
+      "generationTemplate": {
+        "baseMode": {
+          "changeable": [
+            "base figure shape",
+            "cut line directions"
+          ],
+          "mustPreserve": [
+            "색종이를 2번 잘라 목표 도형 조합을 만드는 구조",
+            "직선 2개로 도형 종류를 분할하는 구조",
+            "결과 도형 종류와 개수 조합을 묻는 구조"
+          ]
+        },
+        "easyMode": {
+          "changeable": [
+            "base figure shape",
+            "cut line directions"
+          ],
+          "requiredLineCount": 2,
+          "targetShapeCounts": {
+            "triangle": 2,
+            "quadrilateral": 2
+          }
+        },
+        "hardMode": {
+          "changeable": [
+            "base figure shape",
+            "cut line directions",
+            "target shape counts"
+          ],
+          "requiredLineCount": 2,
+          "targetShapeCounts": {
+            "triangle": 2,
+            "quadrilateral": 2
+          }
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "기본 색종이 도형",
+          "자르는 선 방향",
+          "선의 교차 위치"
+        ],
+        "mustPreserve": [
+          "2번 잘라 도형 종류를 만드는 구조",
+          "최종 결과가 목표 도형 조합이 되는 구조",
+          "정답이 유일하게 결정되는 구조",
+          "정답을 먼저 정하고 문제를 설계하는 원칙"
+        ],
+        "forbiddenChanges": [
+          "목표 도형 조합과 다른 결과가 되는 구조",
+          "같은 답이 여러 해석으로 나오는 구조",
+          "원본과 다른 유형으로 바뀌는 변형"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg",
+        "svgRequired": true,
+        "renderer": "line_partition_u_shape",
+        "showBaseFigure": true
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "drawing_instruction",
+    "expectedAnswer": "선 2개로 6조각",
+    "expectedAnswer": "선 2개로 목표 도형 조합 만들기",
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "line_intersection_partitioning",
+      "checks": [
+        "첫 번째 선으로 기본 분할이 생기는지 확인",
+        "두 번째 선이 추가 교차를 만들어 목표 도형 조합을 만드는지 확인",
+        "최종 결과 도형의 종류와 개수가 조건과 일치하는지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q15 경로 존재 확인",
+      "hf_data.json typeId 15의 originalProblem.answer가 drawing_instruction 형식인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 line_partition_six인지 확인",
+      "requiredLineCount가 2인지 확인",
+      "목표 도형 조합 규칙이 포함되는지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

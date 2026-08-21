@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q34",
+  "typeId": 34,
+  "title": "숫자 카드로 만든 두 자리 수 뺄셈의 최댓값과 최솟값 구하기",
+  "problemType": "TYPE-05",
+  "subType": "digit_card_subtraction",
+  "answerType": "min_max_values",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q34.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 34,
+    "originalQuestionId": "q34_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "digit_card_subtraction",
+      "digitCards": [1, 3, 4, 5],
+      "usageRule": {
+        "useEachExactlyOnce": true,
+        "makeTwoTwoDigitNumbers": true,
+        "mustContainAdjacentNumbersByOne": true
+      },
+      "solvingModel": {
+        "expectedMax": 41,
+        "expectedMin": 6,
+        "strategyMax": "큰 숫자를 앞의 십의 자리로 보내고 작은 숫자를 뒤의 십의 자리로 보낸다.",
+        "strategyMin": "1 차이 나는 이웃 수가 한 자리쌍에 들어가도록 하고, 십의 자리 차이도 가장 작게 만든다."
+      },
+      "judgementRule": {
+        "checks": [
+          "tens_difference_one",
+          "borrowing_check"
+        ],
+        "description": "최솟값은 십의 자리 차이를 작게 만들고 받아내림까지 함께 확인한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 최댓값과 최솟값을 정한 뒤, 숫자 카드를 배치해 그 결과가 유일하게 나오도록 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "digitCardCount": 4,
+          "digitRangeMax": 6
+        },
+        "baseMode": {
+          "digitCardCount": 4,
+          "digitRangeMax": 9
+        },
+        "hardMode": {
+          "digitCardCount": 5,
+          "allowThreeDigitVsTwoDigit": false
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "숫자 카드 값"
+        ],
+        "mustPreserve": [
+          "각 카드 한 번씩만 쓰는 구조",
+          "두 자리 수끼리 뺄셈하는 구조",
+          "1 차이 나는 이웃 수가 반드시 포함되는 구조",
+          "최댓값과 최솟값을 함께 구하는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "카드 중복 사용이 가능한 문제",
+          "자리 수가 바뀌는 문제",
+          "최솟값 해석이 여러 개인 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "digit_card_subtraction_svg",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "min_max_values",
+    "expectedAnswer": {
+      "max": 41,
+      "min": 6
+    },
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "arrange_digit_cards_for_extremes",
+      "checks": [
+        "숫자 카드가 1,3,4,5인지 확인",
+        "최댓값이 41인지 확인",
+        "최솟값이 6인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q34 경로 존재 확인",
+      "hf_data.json typeId 34의 originalProblem.answer max/min 확인",
+      "hf_core.json 및 problem_map.json의 subType이 digit_card_subtraction인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

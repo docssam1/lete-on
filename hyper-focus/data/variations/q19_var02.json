@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q19",
+  "variationId": "q19_var02",
+  "subType": "geoboard_squares",
+  "status": "verified",
+  "source": { "problemImage": "./assets/svg/variations/q19_var02.svg" },
+  "contentBinding": { "canonicalSource": "./canonical/q19.json", "hfDataTypeId": 19 },
+  "problem": { "prompt": "가운데 점이 빠진 점판에서 점 4개를 꼭짓점으로 하여 만들 수 있는 정사각형은 모두 몇 개입니까?" },
+  "machineReadable": {
+    "payloadType": "geoboard_squares",
+    "dotBoard": { "latticeType": "square", "points": [[0,0],[1,0],[2,0],[0,1],[2,1],[0,2],[1,2],[2,2]], "missingPoints": [[1,1]] },
+    "countingModel": {
+      "groupedCount": [{"sideLengthSquared":2,"count":1},{"sideLengthSquared":4,"count":1}],
+      "expectedAnswer": 2,
+      "verifiedByCoordinateEnumeration": true
+    }
+  },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 2 },
+  "solutionHint": "바깥의 큰 정사각형 1개와 네 변의 가운데 점을 잇는 기울어진 정사각형 1개로 모두 2개입니다."
+}

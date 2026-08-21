@@ -1,7 +1,6 @@
 # Cubi Audio Direction
 
-GFIELD Cube Town uses temporary browser speech while the Cubi voice pack is not ready.
-The final sound should use short MP3 files with a cartoon mascot tone, not teacher narration and not plain TTS.
+GFIELD Cube Town now uses generated Cubi MP3 files first. Browser speech is retained only as a fallback when an MP3 is missing or cannot be played.
 
 ## Voice Style
 
@@ -22,28 +21,40 @@ The final sound should use short MP3 files with a cartoon mascot tone, not teach
 - Success: one of `SUCCESS!`, `GREAT JOB!`, or `GOOD JOB!` plays as a character voice effect.
 - Mute button controls both effects and Cubi MP3 voice.
 
-## Planned File Layout
+## File Layout
 
 ```text
 geometry/assets/audio/cubi/
   success/
-    good-job.mp3
-    great-job.mp3
-    success.mp3
-  effects/
-    wood-place-01.mp3
-    wood-place-02.mp3
-    wrong-soft.mp3
+    ko/
+      good-job.mp3
+      great-job.mp3
+      success.mp3
+    zh/
+    ja/
+    en/
   tutorial/
     ko/
       drag-from-tray.mp3
       place-on-guide.mp3
       stack-up.mp3
-      return-to-tray.mp3
     zh/
     ja/
     en/
 ```
+
+The three tutorial cues are generated in all four languages. Success phrases remain English but use the language-specific Cubi voice so the character sound stays consistent with the selected language.
+Placement and wrong-answer feedback remain lightweight WebAudio effects and are not part of this MP3 pack.
+
+## Generation
+
+Run from the repository root:
+
+```text
+node scripts/generate-cubi-audio.js
+```
+
+The script uses the installed `edge-tts` package and creates 24 non-empty MP3 files. Tutorial lines use a youthful pitch and slightly quick delivery. Success cues use a faster, higher, stronger setting.
 
 ## Current Code Hook
 
@@ -51,14 +62,11 @@ geometry/assets/audio/cubi/
 
 ```js
 const cubiAudioProfile = {
-  useMp3: false,
-  success: {
-    successGood: "./assets/audio/cubi/success/good-job.mp3",
-    successGreat: "./assets/audio/cubi/success/great-job.mp3",
-    successPop: "./assets/audio/cubi/success/success.mp3"
-  }
+  useMp3: true,
+  cacheVersion: "20260815-1",
+  tutorial: { ko: {}, zh: {}, ja: {}, en: {} },
+  success: { ko: {}, zh: {}, ja: {}, en: {} }
 };
 ```
 
-When final MP3 files are added, set `useMp3` to `true`.
-Until then, the app falls back to temporary browser speech for success voice only.
+`geometry/app.js` maps language and cue keys to these files. A media load, decode, or autoplay failure invokes the original `speechSynthesis` path. The existing placement and wrong-answer WebAudio effects are unchanged, and `gfield-audio-muted` still controls every sound.

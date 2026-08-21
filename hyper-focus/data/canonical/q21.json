@@ -1,0 +1,184 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q21",
+  "typeId": 21,
+  "title": "자리 조건을 만족하는 네 자리 수 찾기",
+  "problemType": "TYPE-05",
+  "subType": "place_value_conditions",
+  "answerType": "number",
+  "dataLevel": "L4",
+  "renderMode": "text_rule",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q21.png"
+    }
+  },
+  "editableLayers": {
+    "text": true,
+    "numbers": true,
+    "choices": false,
+    "shapes": false,
+    "layout": false
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 21,
+    "originalQuestionId": "q21_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "place_value_conditions",
+      "numberFormat": {
+        "digitCount": 4,
+        "places": ["thousands", "hundreds", "tens", "ones"]
+      },
+      "originalConditions": [
+        {
+          "id": "fixed_thousands",
+          "type": "fixed_digit",
+          "place": "thousands",
+          "value": 3
+        },
+        {
+          "id": "greater_than_3700",
+          "type": "greater_than",
+          "value": 3700
+        },
+        {
+          "id": "hundreds_double_tens",
+          "type": "relation",
+          "expression": "hundreds = 2 * tens"
+        },
+        {
+          "id": "ones_three_less_than_hundreds",
+          "type": "relation",
+          "expression": "ones = hundreds - 3"
+        }
+      ],
+      "solvingModel": {
+        "fixedDigits": {
+          "thousands": 3
+        },
+        "candidateReductionOrder": [
+          "3700보다 큰 수이므로 백의 자리는 7, 8, 9 중 하나다.",
+          "백의 자리는 십의 자리의 2배이므로 가능한 쌍을 찾는다.",
+          "일의 자리는 백의 자리보다 3 작으므로 일의 자리를 정한다.",
+          "모든 조건을 동시에 만족하는 수를 고른다."
+        ],
+        "derivedDigits": {
+          "hundreds": 8,
+          "tens": 4,
+          "ones": 5
+        },
+        "expectedAnswer": 3845
+      },
+      "judgementRule": {
+        "checks": [
+          "fix_key_place",
+          "reduce_candidates"
+        ],
+        "description": "핵심 자리수를 먼저 고정하고, 자릿수 관계식으로 후보를 줄여 한 개의 수를 결정한다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 정답 수를 정한 뒤, 각 자리 조건을 설계해 그 수만 유일하게 남도록 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "digitCount": 3,
+          "conditionCount": 3,
+          "mustPreserve": [
+            "fixed key place",
+            "simple place relation",
+            "unique answer"
+          ]
+        },
+        "baseMode": {
+          "digitCount": 4,
+          "conditionCount": 4,
+          "mustPreserve": [
+            "at least one fixed place",
+            "at least one relation between places",
+            "magnitude condition",
+            "unique answer"
+          ]
+        },
+        "hardMode": {
+          "digitCount": 4,
+          "conditionCount": 5,
+          "allowAdditionalRules": [
+            "difference relation",
+            "sum relation",
+            "parity condition"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "자릿수 개수",
+          "고정되는 자리",
+          "자리 사이 관계식",
+          "크기 비교 조건",
+          "목표 정답 수"
+        ],
+        "mustPreserve": [
+          "자리값 조건으로 수 하나를 결정하는 구조",
+          "조건을 순서대로 좁혀 가는 풀이 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "조건이 서로 모순되는 문제",
+          "조건이 부족해 답이 여러 개인 문제",
+          "자리값과 무관한 외부 규칙을 끼워 넣는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "text_with_place_value_box",
+        "svgRequired": false
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "number",
+    "expectedAnswer": 3845,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "place_value_constraint_solving",
+      "checks": [
+        "천의 자리가 3인지 확인",
+        "3700보다 큰지 확인",
+        "백의 자리가 십의 자리의 2배인지 확인",
+        "일의 자리가 백의 자리보다 3 작은지 확인",
+        "최종 수가 3845인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q21 경로 존재 확인",
+      "hf_data.json typeId 21의 originalProblem.answer가 3845인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 place_value_conditions인지 확인",
+      "originalConditions가 4개인지 확인",
+      "solvingModel.expectedAnswer가 3845인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

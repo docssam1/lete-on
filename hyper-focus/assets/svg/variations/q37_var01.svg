@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 570" role="img" aria-labelledby="title desc">
+  <title id="title">원탁의 왼쪽 오른쪽 자리 유사문제 1</title>
+  <desc id="desc">준호가 위쪽 자리에 고정되어 있고 네 빈자리가 있는 원탁입니다. 원탁 안 화살표는 사람의 왼쪽 방향을 나타냅니다.</desc>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="#c38d16"/></marker></defs>
+  <rect width="760" height="570" rx="24" fill="#fff"/>
+  <text x="380" y="38" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="22" font-weight="800" fill="#20272b">모두 원탁 가운데를 보고 앉아 있습니다</text>
+  <g transform="translate(70 60)" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="17" font-weight="750" fill="#283640">
+    <circle cx="8" cy="18" r="5" fill="#173657"/><text x="24" y="24">준호는 지아의 옆에 앉아 있습니다.</text>
+    <circle cx="8" cy="54" r="5" fill="#173657"/><text x="24" y="60">지아는 민서의 한 사람 건너 왼쪽에 앉아 있습니다.</text>
+    <circle cx="8" cy="90" r="5" fill="#173657"/><text x="24" y="96">도윤은 하린의 바로 왼쪽 옆에 앉아 있습니다.</text>
+  </g>
+  <g font-family="'Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">
+    <circle cx="380" cy="370" r="105" fill="#f1f3f4" stroke="#56616a" stroke-width="3"/>
+    <path d="M380 300 A70 70 0 0 1 450 370" fill="none" stroke="#c38d16" stroke-width="6" marker-end="url(#arrow)"/>
+    <text x="380" y="382" font-size="16" font-weight="900" fill="#725718">각 사람의 왼쪽 방향</text>
+    <rect x="325" y="210" width="110" height="52" rx="12" fill="#173657"/><text x="380" y="243" font-size="22" font-weight="900" fill="#fff">준호</text>
+    <g fill="#fff" stroke="#68747d" stroke-width="2"><rect x="475" y="282" width="112" height="52" rx="10"/><rect x="425" y="447" width="112" height="52" rx="10"/><rect x="223" y="447" width="112" height="52" rx="10"/><rect x="173" y="282" width="112" height="52" rx="10"/></g>
+    <g font-size="18" font-weight="800" fill="#8a949c"><text x="531" y="315">이름</text><text x="481" y="480">이름</text><text x="279" y="480">이름</text><text x="229" y="315">이름</text></g>
+  </g>
+  <text x="380" y="545" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#725718">기준 사람 준호를 고정하고 화살표 방향으로 조건을 맞추세요.</text>
+</svg>

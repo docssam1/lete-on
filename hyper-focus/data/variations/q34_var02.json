@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q34",
+  "variationId": "q34_var02",
+  "subType": "digit_card_subtraction",
+  "status": "verified",
+  "source": {},
+  "presentation": {"mode": "text-only"},
+  "contentBinding": {"canonicalSource": "./canonical/q34.json", "hfDataTypeId": 34},
+  "problem": {"prompt": "숫자 카드 1, 4, 5, 8을 한 번씩만 사용하여 두 자리 수끼리의 뺄셈을 만드세요. 계산 결과가 가장 클 때와 가장 작을 때의 값을 각각 구하세요."},
+  "machineReadable": {
+    "payloadType": "digit_card_subtraction",
+    "cards": [1, 4, 5, 8],
+    "useEachExactlyOnce": true,
+    "solvingModel": {"validArrangements": 12, "maxEquation": "85-14=71", "minEquation": "51-48=3", "expectedAnswer": {"max": 71, "min": 3}},
+    "expectedAnswer": {"max": 71, "min": 3}
+  },
+  "answerValidation": {"answerType": "min_max_values", "expectedAnswer": {"max": 71, "min": 3}},
+  "solutionHint": "가장 큰 값은 85-14=71입니다. 가장 작은 양의 값은 두 수가 가장 가까운 51-48=3입니다. 네 카드는 각각 한 번씩만 씁니다."
+}

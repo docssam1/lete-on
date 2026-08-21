@@ -1,0 +1,240 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q04",
+  "typeId": 4,
+  "title": "구멍 뚫린 쌓기나무의 남은 개수 구하기",
+  "problemType": "TYPE-01",
+  "subType": "stacking_hole_removed",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q04.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 4,
+    "originalQuestionId": "q04_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "stacking_hole_removed",
+      "coordinateSystem": {
+        "frontFace": {
+          "xDirection": "left_to_right",
+          "zDirection": "top_to_bottom",
+          "indexBase": 1
+        },
+        "topFace": {
+          "xDirection": "left_to_right",
+          "yDirection": "front_to_back",
+          "indexBase": 1
+        }
+      },
+      "container": {
+        "width": 5,
+        "height": 4,
+        "depth": 5,
+        "totalCells": 100
+      },
+      "sourceObservedMarks": {
+        "frontFaceBlackCells": [
+          { "x": 2, "z": 2 },
+          { "x": 2, "z": 4 },
+          { "x": 4, "z": 2 },
+          { "x": 4, "z": 4 }
+        ],
+        "topFaceBlackCells": [
+          { "x": 3, "y": 3 }
+        ]
+      },
+      "layerCountModel": {
+        "countingOrder": "bottom_to_top",
+        "layers": [
+          {
+            "z": 1,
+            "remainingBlockCount": 1
+          },
+          {
+            "z": 2,
+            "remainingBlockCount": 9
+          },
+          {
+            "z": 3,
+            "remainingBlockCount": 1
+          },
+          {
+            "z": 4,
+            "remainingBlockCount": 9
+          },
+          {
+            "z": 5,
+            "remainingBlockCount": 1
+          }
+        ],
+        "totalRemainingBlockCount": 21,
+        "description": "각 층별로 남아 있는 블록 개수를 세어 관통 구멍 구조를 해석한다."
+      },
+      "holeRule": {
+        "description": "검은색 부분은 반대편까지 완전히 뚫리는 구멍 기둥이다.",
+        "throughDirectionByFace": {
+          "frontFace": "depth_axis",
+          "topFace": "height_axis"
+        },
+        "overlapMustBeDeduplicated": true
+      },
+      "countingModel": {
+        "totalBlockCount": 100,
+        "removedBlockCount": 21,
+        "remainingBlockCount": 79,
+        "formula": "totalBlockCount - removedBlockCount"
+      },
+      "originalFigureStructure": {
+        "confirmedFromSource": [
+          "front face 5 by 4",
+          "depth 5",
+          "total block count 100",
+          "layer counts 1, 9, 1, 9, 1",
+          "removed block count 21",
+          "remaining block count 79",
+          "four black marks on front face",
+          "one black mark on top face"
+        ]
+      },
+      "generationTemplate": {
+        "baseMode": {
+          "changeable": [
+            "frontFaceBlackCells",
+            "topFaceBlackCells"
+          ],
+          "mustPreserve": [
+            "전체 개수 - 구멍으로 빠진 개수 구조",
+            "검은 칸은 반대편까지 뚫리는 구멍 기둥",
+            "구멍 중복은 한 번만 계산"
+          ]
+        },
+        "easyMode": {
+          "changeable": [
+            "container size",
+            "frontFaceBlackCells",
+            "topFaceBlackCells"
+          ],
+          "maxContainer": {
+            "width": 4,
+            "height": 4,
+            "depth": 4
+          }
+        },
+        "hardMode": {
+          "fixedContainer": {
+            "width": 5,
+            "height": 4,
+            "depth": 5
+          },
+          "changeable": [
+            "frontFaceBlackCells",
+            "topFaceBlackCells",
+            "sideFaceBlackCells"
+          ],
+          "extraRule": "옆면 또는 윗면에 검은색 1개를 더 표시할 수 있다."
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "앞면의 구멍 위치",
+          "윗면의 구멍 위치",
+          "난이도 하의 직육면체 크기",
+          "난이도 상의 추가 검은칸 1개"
+        ],
+        "mustPreserve": [
+          "전체 개수에서 관통 구멍 기둥 개수를 빼는 구조",
+          "검은 칸은 실제 관통 기둥을 뜻하는 구조",
+          "겹치는 구멍 기둥은 중복 계산하지 않는 규칙",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "겉면 표시만 있고 실제로 관통하지 않는 검은칸",
+          "구멍 기둥 중복 계산을 피할 수 없어 정답이 둘 이상 되는 구조",
+          "원본과 다른 유형으로 바뀌는 변형"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "transform_original_svg",
+        "svgRequired": true,
+        "renderer": "punctured_rect_prism",
+        "showMarkedFaces": [
+          "front",
+          "top"
+        ]
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "integer_with_unit",
+    "unit": "개",
+    "expectedAnswer": 79,
+      "mustMatchContentAnswer": true,
+      "sourceAnswerPath": "originalProblem.answer",
+      "derivation": {
+      "method": "total_minus_layer_counted_removed",
+      "steps": [
+        {
+          "step": 1,
+          "description": "전체 직육면체의 쌓기나무는 100개입니다.",
+          "value": 100
+        },
+        {
+          "step": 2,
+          "description": "각 층에 남아 있는 블록 수를 세면 1층 1개, 2층 9개, 3층 1개, 4층 9개, 5층 1개로 남은 블록은 모두 21개입니다.",
+          "value": 21
+        },
+        {
+          "step": 3,
+          "description": "전체 100개에서 제거된 21개를 빼면 남은 쌓기나무는 79개입니다.",
+          "expression": "100 - 21",
+          "value": 79
+        }
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q04 경로 존재 확인",
+      "hf_data.json typeId 4의 originalProblem.answer가 79개인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 stacking_hole_removed인지 확인",
+      "container totalCells가 100인지 확인",
+      "layerCountModel이 1, 9, 1, 9, 1인지 확인",
+      "frontFaceBlackCells가 4개인지 확인",
+      "topFaceBlackCells가 1개인지 확인",
+      "layerCountModel 합이 21인지 확인",
+      "100 - 21 = 79인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

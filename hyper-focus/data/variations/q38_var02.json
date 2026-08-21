@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q38",
+  "variationId": "q38_var02",
+  "subType": "circular_viewpoint_order",
+  "status": "draft",
+  "source": {"problemImage": "./assets/svg/variations/q38_var02.svg"},
+  "contentBinding": {"canonicalSource": "./canonical/q38.json", "hfDataTypeId": 38},
+  "problem": {"prompt": "도윤이와 11명의 친구들이 일정한 간격으로 둥글게 앉아 모두 원의 가운데를 보고 있습니다. 도윤이의 오른쪽으로 세 번째에 앉은 사람과 마주 보는 사람은 도윤이의 왼쪽으로 몇 번째입니까?"},
+  "machineReadable": {
+    "payloadType": "circular_viewpoint_order",
+    "participantCount": 12,
+    "anchor": "도윤",
+    "facing": "center",
+    "leftDirection": "clockwise_when_viewed_from_above",
+    "referenceRightOffset": 3,
+    "oppositeOffset": 6,
+    "solvingModel": {"oppositeSeatFromAnchor": 3, "expectedAnswer": 3, "formula": "12÷2-3=3"}
+  },
+  "answerValidation": {"answerType": "ordinal", "expectedAnswer": 3},
+  "solutionHint": "12명의 맞은편 자리는 6칸 떨어져 있습니다. 도윤이의 오른쪽으로 3칸 간 뒤 맞은편으로 6칸 가면, 도윤이의 왼쪽으로 3번째 자리입니다."
+}

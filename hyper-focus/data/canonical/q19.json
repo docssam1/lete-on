@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q19",
+  "typeId": 19,
+  "title": "점판에서 만들 수 있는 정사각형 모두 세기",
+  "problemType": "TYPE-03",
+  "subType": "geoboard_squares",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": { "originalProblemPng": { "path": "./assets/problems/q19.png" } },
+  "editableLayers": { "text": false, "numbers": false, "choices": false, "shapes": true, "layout": true },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 19,
+    "originalQuestionId": "q19_origin",
+    "preservePaths": [
+      "title", "subType", "originalProblem.text", "originalProblem.answer", "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy", "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript", "aiTutorPack.docssamPhrase", "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake", "aiTutorPack.docsamRules", "variationPolicy.variationRule", "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "geoboard_squares",
+      "dotBoard": {
+        "latticeType": "square_lattice_diamond_subset",
+        "coordinateSystem": "integer_cartesian",
+        "points": [
+          {"id":"P1","x":2,"y":0},{"id":"P2","x":1,"y":1},{"id":"P3","x":3,"y":1},
+          {"id":"P4","x":0,"y":2},{"id":"P5","x":2,"y":2},{"id":"P6","x":4,"y":2},
+          {"id":"P7","x":1,"y":3},{"id":"P8","x":3,"y":3},{"id":"P9","x":2,"y":4}
+        ]
+      },
+      "countingRule": {
+        "targetShape": "square",
+        "includeAxisAligned": true,
+        "includeTilted": true,
+        "countBySideLength": true,
+        "description": "네 꼭짓점이 모두 점판의 점에 놓이는 정사각형을 방향과 크기별로 모두 센다."
+      },
+      "countingModel": {
+        "expectedAnswer": 6,
+        "groupedCount": [
+          {"sideLengthSquared":2,"count":4},
+          {"sideLengthSquared":4,"count":1},
+          {"sideLengthSquared":8,"count":1}
+        ],
+        "mentalHackFormula": "4 + 1 + 1 = 6",
+        "verifiedByCoordinateEnumeration": true
+      },
+      "judgementRule": {
+        "checks": ["four_vertices_on_dots","equal_sides","right_angles","count_by_size_and_direction"],
+        "description": "작은 기울어진 정사각형 4개, 가운데 반듯한 정사각형 1개, 바깥 큰 정사각형 1개를 센다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 점 좌표를 먼저 정한 뒤 가능한 모든 정사각형을 좌표로 전수 열거하여 정답이 하나로 결정되게 한다."
+      },
+      "generationTemplate": {
+        "easyMode": {"baseBoard":"3x3_square_dot_board","pointRemovalAllowed":true,"maxRemovedPoints":1},
+        "baseMode": {"baseBoard":"diamond_subset_of_square_lattice","includeAxisAligned":true,"includeTilted":true},
+        "hardMode": {"baseBoard":"4x4_square_dot_board","pointRemovalAllowed":true,"maxRemovedPoints":2}
+      },
+      "generationConstraints": {
+        "canChange": ["점판 크기","빠지는 점의 위치","빠지는 점의 개수"],
+        "mustPreserve": ["점 사이 간격이 일정한 점판 구조","반듯한 정사각형과 기울어진 정사각형을 함께 세는 구조","정답을 좌표 전수검증하는 원칙"],
+        "forbiddenChanges": ["삼각형을 세는 문제로 바꾸기","정사각형 여부가 모호한 점 배치","정답이 여러 값으로 갈리는 문제"]
+      },
+      "renderSpec": {"renderStrategy":"use_original_structure_preferred","svgRequired":true,"renderer":"geoboard_square_counter","showDots":true,"showGuideLines":false}
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 6,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "enumerate_squares_from_point_coordinates",
+      "checks": ["한 변의 제곱이 2인 정사각형 4개","한 변의 제곱이 4인 정사각형 1개","한 변의 제곱이 8인 정사각형 1개","전체 6개"]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "원본 q19.png의 질문 도형이 정사각형인지 확인",
+      "hf_data.json typeId 19의 originalProblem.answer가 6개인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 geoboard_squares인지 확인",
+      "점 좌표로 가능한 모든 정사각형을 전수 열거해 6개인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}
