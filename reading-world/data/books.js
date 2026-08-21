@@ -199,7 +199,7 @@ window.BOOK_CATALOG = [
     isbn: 'Bricks Reading 250 · Level 2',
     originalPassage: true,
     originalAssessment: false,
-    available: false,
+    available: true,
   },
   {
     id: 'bricks-reading-250-3',
@@ -220,7 +220,7 @@ window.BOOK_CATALOG = [
     isbn: 'Bricks Reading 250 · Level 3',
     originalPassage: true,
     originalAssessment: false,
-    available: false,
+    available: true,
   },
   {
     id: 'vocabulary-workshop-purple',
@@ -242,7 +242,7 @@ window.BOOK_CATALOG = [
     vocabularyOnly: true,
     originalPassage: false,
     originalAssessment: false,
-    available: false,
+    available: true,
   },
   {
     id: 'vocabulary-workshop-red',
@@ -264,7 +264,7 @@ window.BOOK_CATALOG = [
     vocabularyOnly: true,
     originalPassage: false,
     originalAssessment: false,
-    available: false,
+    available: true,
   },
 ];
 
