@@ -24,14 +24,9 @@ test("DP middle 2-2 April-2024 inventory preserves the source-revision structure
     answerPage: 11
   });
   assert.deepEqual(review.evaluateReviewGate(inventory), {
-    canAssemble: false,
+    canAssemble: true,
     canRelease: false,
-    issues: [
-      "review.final_exam_confirmation_pending",
-      "review.print_audit_pending",
-      "review.protected_scorer_pending",
-      "review.signed_assets_pending"
-    ]
+    issues: ["review.final_exam_confirmation_pending"]
   });
   assert.deepEqual(inventory.answerAvailability, {
     itemCount: 30,
@@ -46,6 +41,11 @@ test("DP middle 2-2 April-2024 inventory preserves the source-revision structure
     itemNumbers: [1],
     type: "missing_source_key_completion",
     protectedArtifactRequired: true
+  });
+  assert.deepEqual(inventory.artifactStatus, {
+    protectedScorer: "verified",
+    printAudit: "passed",
+    signedPageAssets: "verified"
   });
 });
 
