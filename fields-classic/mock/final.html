@@ -72,6 +72,7 @@ html,body{font-family:'Pretendard',sans-serif;background:var(--bg);color:var(--i
 .solcell{color:#334155;min-width:280px}
 
 .hidden{display:none}
+.exam-watermark{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}.exam-watermark span{position:absolute;left:50%;transform:translate(-50%,-50%) rotate(-32deg);font-size:30px;font-weight:900;color:rgba(22,65,124,.075);white-space:nowrap}.exam-watermark span:nth-child(1){top:25%}.exam-watermark span:nth-child(2){top:50%}.exam-watermark span:nth-child(3){top:75%}.wrap{position:relative;z-index:1}
 
 @media print{
   @page{size:A4 portrait;margin:12mm 10mm}
@@ -84,13 +85,15 @@ html,body{font-family:'Pretendard',sans-serif;background:var(--bg);color:var(--i
   thead{display:table-header-group}
   tr{break-inside:avoid}
   .mini>i{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .exam-watermark span{color:rgba(22,65,124,.12)}
 }
 </style>
 </head>
 <body>
+<div class="exam-watermark" id="examWatermark" aria-hidden="true"></div>
 <div class="wrap">
   <div class="top">
-    <div class="brand"><span>G</span>FIELD 티처 콘솔</div>
+    <div class="brand"><span>G</span>FIELD · FIELDS THE CLASSIC</div>
     <div>
       <button class="btn" id="resetBtn" type="button">다시 채점</button>
       <button class="btn primary" id="printBtn" type="button">인쇄</button>
@@ -126,6 +129,8 @@ html,body{font-family:'Pretendard',sans-serif;background:var(--bg);color:var(--i
   var D = window.FIELDS_FINAL_CHECK;
   var $ = function(id){ return document.getElementById(id); };
   if (!D) { $('subtitle').textContent = '문항 데이터를 불러오지 못했습니다.'; return; }
+  var student = (new URLSearchParams(location.search).get('student') || sessionStorage.getItem('gf_n') || '학생').trim().slice(0, 30) || '학생';
+  for (var wm = 0; wm < 3; wm += 1) { var stamp = document.createElement('span'); stamp.textContent = student + ' 학생 · GFIELD'; $('examWatermark').appendChild(stamp); }
 
   var QS = D.questions;
   var CALC = D.addition.map(function(c,i){ return Object.assign({}, c, { no: '덧셈 ' + (i+1) }); })

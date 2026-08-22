@@ -15,6 +15,11 @@ if (params.get("exam") !== exam.id) {
 }
 
 $("studentName").textContent = student;
+for (let row = 0; row < 3; row += 1) {
+  const label = document.createElement("span");
+  label.textContent = `${student} 학생 · GFIELD`;
+  $("studentWatermark").appendChild(label);
+}
 $("examSelect").innerHTML = DIAGNOSIS_EXAMS.map((item) => `<option value="${item.id}" ${item.id === exam.id ? "selected" : ""}>${item.label}</option>`).join("");
 $("examSelect").addEventListener("change", () => {
   exam = DIAGNOSIS_EXAMS.find((item) => item.id === $("examSelect").value) || DIAGNOSIS_EXAMS[0];

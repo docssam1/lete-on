@@ -50,7 +50,7 @@ html,body{margin:0;min-height:100%;font-family:Pretendard,sans-serif;background:
 </header>
 <section class="document-head" id="documentHead">
   <div class="document-head-inner">
-    <div class="document-kicker">GFIELD · ORIGINAL MOCK EXAM</div>
+    <div class="document-kicker" id="documentKicker">GFIELD · FIELDS THE CLASSIC</div>
     <div class="document-name" id="documentName">원본 모의고사</div>
     <div class="document-caption" id="documentCaption">원본 시험지와 화면·인쇄 워터마크가 적용됩니다.</div>
   </div>
@@ -81,6 +81,7 @@ const title=(source?.title||"인쇄 자료").slice(0,80);
 const student=(params.get("student")||"학생").trim().slice(0,30);
 const lessonVideo=params.get("video")||source?.videoUrl||"";
 const topics=(params.get("topics")||"").split("|").map(v=>v.trim()).filter(Boolean);
+const documentFamily=documentKey==="diagnostic"?"진단 모의고사":documentKey.startsWith("mock-set")?"실전 모의고사":documentKey==="killer"?"킬러문항 완전 해제":"필즈 더 클래식";
 const status=document.getElementById("status");
 const pages=document.getElementById("pages");
 const printBtn=document.getElementById("printBtn");
@@ -91,6 +92,7 @@ let spreadStart=1;
 let isTurning=false;
 document.getElementById("title").textContent=title;
 document.getElementById("documentName").textContent=title;
+document.getElementById("documentKicker").textContent=`GFIELD · FIELDS THE CLASSIC · ${documentFamily}`;
 document.title=title+" | GFIELD";
 if(lessonVideo)document.getElementById("videoBtn").style.display="";
 if(documentKey==="killer")document.getElementById("answerBtn").style.display="";
@@ -149,7 +151,7 @@ function createCover(){
   const shell=document.createElement("div");
   shell.className="cover-shell";
   shell.innerHTML=`
-    <div class="cover-kicker">GFIELD ACADEMY · SELECTION SERIES</div>
+    <div class="cover-kicker">${cover.kicker||"GFIELD ACADEMY · FIELDS THE CLASSIC"}</div>
     <div class="cover-brand">FIELDS THE CLASSIC</div>
     <div class="cover-rule"></div>
     <div class="cover-title">필즈 더 클래식<strong>${cover.title}</strong></div>
@@ -262,8 +264,8 @@ async function render(){
   if(!source)throw new Error("인쇄할 자료를 찾을 수 없습니다.");
   document.getElementById("meta").textContent=`${student} 학생 · 총 ${totalPageCount()}면 · 화면 및 인쇄 워터마크 적용`;
   document.getElementById("documentCaption").textContent=coverOffset
-    ? `표지 포함 ${totalPageCount()}면 · 원본 시험지 ${source.pageCount}쪽 · ${student} 학생 워터마크 적용`
-    : `${source.pageCount}쪽 원본 시험지 · ${student} 학생 워터마크 적용`;
+    ? `표지 포함 ${totalPageCount()}면 · ${documentFamily} ${source.pageCount}쪽 · ${student} 학생 워터마크 적용`
+    : `${documentFamily} ${source.pageCount}쪽 · ${student} 학생 워터마크 적용`;
   const images=[];
   if(coverOffset)pages.appendChild(createCover());
   for(let number=1;number<=source.pageCount;number++){
