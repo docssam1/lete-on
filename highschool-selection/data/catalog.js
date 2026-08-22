@@ -72,25 +72,25 @@
       privateAnswerPageCount: 3,
       sourceRole: "internal-variant",
       sourceStatus: "audited",
-      answerStatus: "found",
-      classificationStatus: "draft",
+      answerStatus: "verified",
+      classificationStatus: "verified",
       releaseStatus: "review_pending",
       assetPolicy: "signed-page-images",
       visible: true,
       reviewProgress: {
         sourceStructure: "verified",
         questionInventory: "40/40",
-        answerReview: "blocked",
-        answerReviewIssues: 5,
-        curriculumReview: "draft",
-        curriculumHighConfidence: 28,
-        curriculumOwnerReview: 12,
-        responseShapeReview: "draft",
-        visualReview: "blocked",
-        visualReviewIssues: 4,
-        releaseDecision: "pending"
+        answerReview: "verified",
+        answerReviewIssues: 0,
+        curriculumReview: "verified",
+        curriculumHighConfidence: 40,
+        curriculumOwnerReview: 0,
+        responseShapeReview: "verified",
+        visualReview: "passed",
+        visualReviewIssues: 0,
+        releaseDecision: "final_confirmation_pending"
       },
-      note: "원본 40문항과 답·풀이 구간은 확인했습니다. Q3·Q4 원답 충돌, Q8·Q10·Q11 최종값 누락, Q34 원본 글리프와 Q39 표 배치를 해소하고 정답·배점·유형·인쇄본을 승인하기 전에는 열리지 않습니다."
+      note: "보호된 v2 검수 기록에서 40문항의 정답·분류·응답 구성·시각·원본 지문·교정 산출물과 인쇄·서명 전달 감사를 완료했습니다. 시험 1회 전체 최종 확인과 releaseStatus 전환 전에는 학생에게 열리지 않습니다."
     },
     {
       id: "dp-middle1-entry",
