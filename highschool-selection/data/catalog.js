@@ -131,8 +131,8 @@
     {
       id: "dp-middle2-2-transfer",
       programId: "DP",
-      title: "DP 중2-2 편입 원본형",
-      track: "중2-2 편입",
+      title: "DP 중2-2 편입 1차 모의고사",
+      track: "중2-2 전 과정까지 편입",
       curriculumVersion: "2022-revised",
       scopeLabel: "중1-1~중2-2 누적 · 30문항",
       questionCount: 30,
@@ -140,13 +140,15 @@
       sourcePageCount: 11,
       privateAnswerPageCount: 1,
       sourceRole: "actual-revision",
+      deliveryRole: "first-sale-mock",
+      formProfile: "sale-mock-a4-v1",
       sourceStatus: "audited",
       answerStatus: "found",
       classificationStatus: "verified",
       releaseStatus: "review_pending",
       assetPolicy: "signed-page-images",
       visible: true,
-      note: "2024년 4월 원본에서 30문항·문제 8쪽·답안 1쪽·150분을 확인했습니다. 상세 해설은 없으며, 이 판본의 20문항 기준은 회차 전체 승인 전에는 판정에 사용하지 않습니다. 원본 표지의 과거 운영 문구는 재생성 시험지에서 제거합니다."
+      note: "2024년 4월 원본에서 30문항·문제 8쪽·답안 1쪽·150분을 확인했습니다. 원본은 출제 근거로 보존하고 학생 제공본은 공통 A4 폼의 1차 판매용 모의고사로 운영합니다. 원답 29개는 독립 검산과 일치했고, 공란인 1개는 비공개 검산으로 보완했습니다. 보호 채점기·인쇄 안전본·서명 페이지 자산 검증을 마쳤으며 회차 전체 확인 전에는 학생에게 공개하지 않습니다. 상세 해설은 없고 판본의 20문항 기준도 아직 판정에 사용하지 않습니다."
     },
     {
       id: "dp-common1-entry-202405",

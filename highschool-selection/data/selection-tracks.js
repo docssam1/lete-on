@@ -74,6 +74,8 @@
       trackId: "middle-transfer",
       scopeKey: "middle1-1-to-middle2-2",
       scopeLabel: "중1-1~중2-2 누적",
+      scopeKind: "terminal-unit",
+      terminalUnit: { course: "중2-2", unit: "전 과정" },
       evidenceStatus: "verified",
       evidenceRefs: ["EXAM:dp-middle2-2-transfer"]
     },

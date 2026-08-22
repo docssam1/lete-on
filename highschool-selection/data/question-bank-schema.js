@@ -59,7 +59,25 @@
         reportModel: "entry-transfer-30",
         targets: [
           { id: "middle-entry", scopeKey: "elementary-cumulative", state: "observed", label: "중1 입학", difficultyPlan: "기준 중심 · 올림 유형은 선별" },
-          { id: "middle2-2-transfer", scopeKey: "middle1-1-to-middle2-2", state: "user-confirmed", label: "중2-2 편입", difficultyPlan: "기준 우선 · 올림 유형으로 변별" },
+          {
+            id: "middle-linear-function-transfer",
+            scopeKey: "middle1-1-to-linear-function",
+            scopeKind: "terminal-unit",
+            terminalUnit: { course: "중2-1", unit: "일차함수" },
+            usage: "question-bank-only",
+            state: "user-confirmed",
+            label: "일차함수까지 편입",
+            difficultyPlan: "기준 우선 · 일차함수 누적 연결과 올림 유형으로 변별"
+          },
+          {
+            id: "middle2-2-transfer",
+            scopeKey: "middle1-1-to-middle2-2",
+            scopeKind: "terminal-unit",
+            terminalUnit: { course: "중2-2", unit: "전 과정" },
+            state: "verified-original",
+            label: "중2-2 전 과정까지 편입 1차",
+            difficultyPlan: "기준 우선 · 올림 유형으로 변별"
+          },
           { id: "common1-entry", scopeKey: "common-math-1", state: "audited-revision", label: "공통수학1 입학", difficultyPlan: "원본 회차의 난도 배열 유지" },
           { id: "director-transfer", scopeKey: "target-class-confirmation", state: "observed", label: "원장반·상위 편입", difficultyPlan: "올림 우선 · 조건 결합·그래프·경계 전수 확인 강화" }
         ],

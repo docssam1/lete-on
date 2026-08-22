@@ -16,6 +16,9 @@ ProgramTrackBinding
   id = programCode:trackId
   programCode, trackId
   scopeKey, scopeLabel
+  scopeKind = cumulative | terminal-unit | sample
+  terminalUnit = { course, unit }  # 편입형은 실제 진도 종료 단원
+  usage = question-bank-only  # 중간 편입 진도 조립형; 특정 회차·컷과 연결 금지
   evidenceStatus = verified | observed | needs-review
   evidenceRefs[]
 
@@ -23,7 +26,7 @@ ExamTrackAssignment
   examId, programCode, trackId
 ```
 
-`SH:high-selection`은 고등과정 선발용이지만 시험 범위는 `middle-cumulative`로 저장합니다. `middle-entry`와 `middle-transfer`는 별도 트랙이며, 공통수학 입학·고등선행·고등 편입도 서로 합치지 않습니다. 기존 자료에 명칭만 있고 대상 학년·범위가 불명확한 연결은 `needs-review`로 격리해 시험 생성에 사용하지 않습니다. 아무 자료도 없는 프로그램-트랙 연결은 만들지 않습니다. 기존 `catalog.js`의 프로그램·시험 ID와 화면 호환용 `track` 문자열은 변경하지 않고 `ExamTrackAssignment`로 새 축을 연결합니다.
+`SH:high-selection`은 고등과정 선발용이지만 시험 범위는 `middle-cumulative`로 저장합니다. `middle-entry`와 `middle-transfer`는 별도 트랙이며, 공통수학 입학·고등선행·고등 편입도 서로 합치지 않습니다. 편입형 범위는 학기 이름만으로 뭉뚱그리지 않고 `일차함수까지`처럼 실제 수업이 끝나는 단원을 `terminalUnit`으로 저장합니다. 같은 중등 편입 트랙이라도 종료 단원이 다르면 문제은행 목표 범위를 별도로 둡니다. 기존 자료에 명칭만 있고 대상 학년·범위가 불명확한 연결은 `needs-review`로 격리해 시험 생성에 사용하지 않습니다. 아무 자료도 없는 프로그램-트랙 연결은 만들지 않습니다. 기존 `catalog.js`의 프로그램·시험 ID와 화면 호환용 `track` 문자열은 변경하지 않고 `ExamTrackAssignment`로 새 축을 연결합니다.
 
 ## Exam
 
@@ -39,6 +42,8 @@ pageCount
 sourcePageCount
 privateAnswerPageCount
 sourceRole = actual | recommended | textbook | internal-variant
+deliveryRole = first-sale-mock | practice-bank | internal-review
+formProfile  # 학생 제공용 공통 시험지 폼; 원본 출처 디자인과 분리
 sourceStatus = missing | found | audited | version_unmatched | structure_conflict
 answerStatus = missing | found | verified
 classificationStatus = missing | draft | verified
@@ -64,6 +69,8 @@ generatorPolicyId, figureAuditPolicyId
 ```
 
 `pageCount`는 학생에게 보여 주는 문제 페이지 수입니다. 원본 전체 쪽수는 `sourcePageCount`, 답·풀이 비공개 쪽수는 `privateAnswerPageCount`로 분리합니다. 답안 값과 풀이 내용은 공개 카탈로그에 두지 않습니다.
+
+`sourceRole`은 출제 근거의 성격이고 `deliveryRole`은 판매·서비스 형태입니다. 실제 원본을 감사해 구성한 시험도 학생에게는 `first-sale-mock`과 공통 `formProfile`로 제공하며, 화면이나 인쇄물에 `원본형`을 상품명처럼 노출하지 않습니다.
 
 학생 화면의 출제 모드는 `SH`, `DP`, `WM`, `ED`, `DG`, `SM` 코드만 사용하고 작성자 표기는 `T`로 고정합니다.
 

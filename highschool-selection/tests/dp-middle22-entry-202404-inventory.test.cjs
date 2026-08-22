@@ -24,9 +24,28 @@ test("DP middle 2-2 April-2024 inventory preserves the source-revision structure
     answerPage: 11
   });
   assert.deepEqual(review.evaluateReviewGate(inventory), {
-    canAssemble: false,
+    canAssemble: true,
     canRelease: false,
-    issues: ["review.answer_audit_pending", "review.final_exam_confirmation_pending"]
+    issues: ["review.final_exam_confirmation_pending"]
+  });
+  assert.deepEqual(inventory.answerAvailability, {
+    itemCount: 30,
+    sourceKeyValues: 29,
+    missingSourceKeys: 1,
+    privateCompletions: 1,
+    detailedSolutions: false,
+    independentCheck: "verified_private"
+  });
+  assert.deepEqual(inventory.correctionSummary, {
+    count: 1,
+    itemNumbers: [1],
+    type: "missing_source_key_completion",
+    protectedArtifactRequired: true
+  });
+  assert.deepEqual(inventory.artifactStatus, {
+    protectedScorer: "verified",
+    printAudit: "passed",
+    signedPageAssets: "verified"
   });
 });
 
@@ -46,9 +65,9 @@ test("30 ordered items preserve page groups and current-curriculum classificatio
   assert.equal(inventory.items.filter(item => item.difficultyCandidate === "advanced").length, 19);
   assert.equal(inventory.items.filter(item => item.curriculumCandidate.code.startsWith("ENRICH-")).length, 2);
   inventory.items.forEach(item => {
-    assert.equal(item.answerStatus, "found_pending_independent_check");
+    assert.equal(item.answerStatus, item.number === 1 ? "key_completed_private" : "verified_private");
     assert.equal(item.classificationStatus, "agent_verified");
-    assert.equal(item.resolutionStatus, "review_blocked");
+    assert.equal(item.resolutionStatus, "agent_verified");
     assert.equal(core.isNeutralId(item.id, "question", "DP"), true);
     assert.equal(core.isNeutralId(item.lineageRef.questionTypeId, "type", "DP"), true);
     assert.equal(item.lineageRef.relation, "original");
