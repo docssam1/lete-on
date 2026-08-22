@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'fields-classic/**'
+      - 'hselementary/**'
       - 'geometry/**'
       - 'hyper-focus/**'
       - 'number_magic/**'
@@ -39,6 +40,7 @@ jobs:
       - name: Stage sites and landing menu
         run: |
           mkdir -p _site/fields-classic
+          mkdir -p _site/hselementary
           mkdir -p _site/geometry
           mkdir -p _site/hyper-focus
           mkdir -p _site/number_magic
@@ -50,6 +52,7 @@ jobs:
           mkdir -p _site/world-explorer
           mkdir -p _site/yubin-yujun-store
           cp -R fields-classic/. _site/fields-classic/
+          cp -R hselementary/. _site/hselementary/
           cp -R geometry/. _site/geometry/
           cp -R hyper-focus/. _site/hyper-focus/
           cp -R number_magic/. _site/number_magic/
