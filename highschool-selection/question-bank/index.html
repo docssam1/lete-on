@@ -33,6 +33,12 @@
     function scopeItems(binding){
       const sets={
         'middle-cumulative':bank.curriculum.middle,
+        'middle1-1-to-linear-function':[
+          {label:'중1 전 과정',state:'누적 범위'},
+          {label:'중2-1 식의 계산·부등식',state:'누적 범위'},
+          {label:'연립일차방정식',state:'누적 범위'},
+          {label:'일차함수',state:'종료 단원'}
+        ],
         'middle1-1-to-middle2-2':[
           {label:'중1-1',state:'누적 범위'},
           {label:'중1-2',state:'누적 범위'},
@@ -58,11 +64,17 @@
     function renderExamOptions(preferredExamId){
       const profile=activeProfile();
       const candidates=visibleExams.filter(exam=>exam.programId===profile.id);
-      select.innerHTML=candidates.map(exam=>`<option value="${esc(exam.id)}">${esc(exam.title)}</option>`).join('');
+      select.innerHTML=`<option value="">추천 회차 없음 · 문항 DB 조립형</option>`+candidates.map(exam=>`<option value="${esc(exam.id)}">${esc(exam.title)}</option>`).join('');
       if(candidates.some(exam=>exam.id===preferredExamId))select.value=preferredExamId;
     }
     function selectExamForTarget(){
       const profile=activeProfile(),target=activeTarget();
+      if(target.usage==='question-bank-only'){
+        select.value='';
+        select.disabled=true;
+        return;
+      }
+      select.disabled=false;
       const match=visibleExams.find(exam=>{
         const resolved=tracks.resolveExamTrack(exam.id);
         return exam.programId===profile.id&&resolved&&resolved.binding&&resolved.binding.scopeKey===target.scopeKey;
@@ -71,19 +83,20 @@
     }
     function renderScope(){
       const profile=activeProfile(),target=activeTarget();
-      const exam=visibleExams.find(item=>item.id===select.value)||visibleExams.find(item=>item.programId===profile.id);
+      const bankOnly=target.usage==='question-bank-only';
+      const exam=bankOnly?null:(visibleExams.find(item=>item.id===select.value)||visibleExams.find(item=>item.programId===profile.id));
       const resolved=exam&&tracks.resolveExamTrack(exam.id),track=resolved&&resolved.track,binding=resolved&&resolved.binding;
       const exactRound=Boolean(binding&&binding.scopeKey===target.scopeKey);
       const practiceOpen=Boolean(exactRound&&exam.releaseStatus==='released'&&exam.classificationStatus==='verified'&&exam.answerStatus==='verified');
       document.getElementById('scope-code').textContent=`${academyNames[profile.id]||profile.id} · ${target.label} · ${profile.id}`;
-      document.getElementById('scope-title').textContent=`${target.label} · ${binding&&exactRound?binding.scopeLabel:'추천 회차 대조 필요'}`;
-      document.getElementById('scope-description').textContent=`${exactRound?exam.scopeLabel:'선택한 목표 과정과 추천 회차의 범위를 대조 중입니다.'} 세부유형과 반복 문항은 해당 회차가 승인된 경우에만 열립니다.`;
+      document.getElementById('scope-title').textContent=`${target.label} · ${bankOnly?'문항 DB 전용':binding&&exactRound?binding.scopeLabel:'추천 회차 대조 필요'}`;
+      document.getElementById('scope-description').textContent=bankOnly?'중간 편입 진도에 맞춰 종료 단원까지의 승인 문항을 조립합니다. 특정 원본 회차나 커트라인을 연결하지 않습니다.':`${exactRound?exam.scopeLabel:'선택한 목표 과정과 추천 회차의 범위를 대조 중입니다.'} 세부유형과 반복 문항은 해당 회차가 승인된 경우에만 열립니다.`;
       document.getElementById('middle').innerHTML=scopeItems(exactRound?binding:{scopeKey:target.scopeKey}).map(item=>`<div><strong>${esc(item.label)}</strong><span>${esc(item.state)}</span></div>`).join('');
       document.getElementById('report-model-title').textContent=`${target.label} 성적표 구조`;
       document.getElementById('report-model-note').textContent=`${profile.scorePolicy} · 난도 운영: ${target.difficultyPlan||'확인 필요'}`;
       document.getElementById('report-axes').innerHTML=profile.reportAxes.map(axis=>`<span>${esc(axis)}</span>`).join('');
       document.getElementById('type-emphasis').innerHTML=profile.typeEmphasis.map(type=>`<span>${esc(type)}</span>`).join('');
-      document.getElementById('practice-state').innerHTML=`<div><p class="eyebrow">Current Service State</p><h2>${practiceOpen?'반복연습 이용 가능':'선택 과정 검수 전 잠금'}</h2><p>${practiceOpen?'승인된 오답 유형을 기준으로 연습 세트를 준비합니다.':exactRound?'정답·유형과 쌍둥이·유사문제가 모두 승인되기 전에는 이 시험의 연습 세트를 열지 않습니다.':'이 목표 과정의 원본 회차·답안·유형 대조가 끝난 뒤에만 추천 회차를 연결합니다.'}</p></div><span class="badge ${practiceOpen?'open':'review'}">${practiceOpen?'이용 가능':'승인 대기'}</span>`;
+      document.getElementById('practice-state').innerHTML=`<div><p class="eyebrow">Current Service State</p><h2>${practiceOpen?'반복연습 이용 가능':bankOnly?'문항 DB 조립 검수 중':'선택 과정 검수 전 잠금'}</h2><p>${practiceOpen?'승인된 오답 유형을 기준으로 연습 세트를 준비합니다.':bankOnly?'종료 단원까지 분류·검산된 문항만 조립하며, 원본 시험이나 합격 컷은 사용하지 않습니다.':exactRound?'정답·유형과 쌍둥이·유사문제가 모두 승인되기 전에는 이 시험의 연습 세트를 열지 않습니다.':'이 목표 과정의 원본 회차·답안·유형 대조가 끝난 뒤에만 추천 회차를 연결합니다.'}</p></div><span class="badge ${practiceOpen?'open':'review'}">${practiceOpen?'이용 가능':'승인 대기'}</span>`;
     }
     modeSelect.addEventListener('change',()=>{renderTargets();renderExamOptions();selectExamForTarget();renderScope();});
     targetSelect.addEventListener('change',()=>{selectExamForTarget();renderScope();});

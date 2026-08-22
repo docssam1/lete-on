@@ -20,7 +20,9 @@ const EXAMS = Object.freeze({
   }),
   "dp-middle2-2-transfer": Object.freeze({
     examId: "dp-middle2-2-transfer",
-    title: "DP 중2-2 편입 원본형",
+    title: "DP 중2-2 편입 1차 모의고사",
+    deliveryRole: "first-sale-mock",
+    formProfile: "sale-mock-a4-v1",
     questionCount: 30,
     pageCount: 10,
     responseSchemaVersion: dpMiddle22Schema.SCHEMA_VERSION,

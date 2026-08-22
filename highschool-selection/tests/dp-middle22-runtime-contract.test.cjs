@@ -8,7 +8,9 @@ const EXAM_ID = "dp-middle2-2-transfer";
 test("DP middle 2-2 transfer is wired to the runtime without an inferred cutline", () => {
   const contract = contracts.getExamContract(EXAM_ID);
   assert.equal(contract.examId, EXAM_ID);
-  assert.equal(contract.title, "DP 중2-2 편입 원본형");
+  assert.equal(contract.title, "DP 중2-2 편입 1차 모의고사");
+  assert.equal(contract.deliveryRole, "first-sale-mock");
+  assert.equal(contract.formProfile, "sale-mock-a4-v1");
   assert.equal(contract.questionCount, 30);
   assert.equal(contract.pageCount, 10);
   assert.equal(contract.operationalScorePolicy.totalPoints, 30);
