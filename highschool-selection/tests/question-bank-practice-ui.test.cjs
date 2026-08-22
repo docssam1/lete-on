@@ -46,6 +46,8 @@ test("academy profiles select report axes and type priorities without publishing
   assert.equal(transfer.difficultyPlan, "기준 우선 · 올림 유형으로 변별");
   assert.equal(dp.targets.some(target => target.id === "director-transfer"), true);
   assert.equal(dp.targets.find(target => target.id === "director-transfer").difficultyPlan.includes("올림 우선"), true);
+  assert.equal(dp.targets.find(target => target.id === "common1-entry").recommendedExamId, "dp-common1-entry-202405");
+  assert.equal(pageSource.includes("target.recommendedExamId"), true);
   assert.equal(dp.typeEmphasis.includes("그래프 해석"), true);
   assert.equal(dp.scorePolicy.includes("원본 배점·컷"), true);
 });
