@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>프리미어 모의고사 서재 | G-FIELD</title>
+  <meta name="description" content="프리미어 모의고사 시험지 뷰어와 인쇄">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="library">
+  <header class="library-head"><div>
+    <small>G-FIELD PREMIER</small>
+    <h1>프리미어 모의고사 서재</h1>
+    <p>원본 문항 순서와 2단 구성을 살린 프리미어 문제지 뷰어입니다.</p>
+  </div></header>
+  <main class="library-main">
+    <section class="library-grid" id="examGrid" aria-live="polite"></section>
+  </main>
+  <script src="./exams.js"></script>
+  <script>
+  (function () {
+    const exams = Object.values(window.PREMIER_EXAMS || {});
+    const grid = document.getElementById('examGrid');
+    grid.innerHTML = exams.map((exam) => `
+      <article class="exam-card">
+        <div class="exam-card-top"><span class="round-tile">${exam.round}회</span><span class="state">시험지 검수 완료</span></div>
+        <h2>${exam.title}</h2>
+        <p>${exam.description}</p>
+        <div class="card-meta"><span>20문항</span><span>60분</span><span>문제지만 제공</span><span>A3 인쇄</span></div>
+        <a class="open-viewer" href="./viewer.html?exam=${encodeURIComponent(exam.id)}">시험지 열기</a>
+      </article>`).join('');
+  })();
+  </script>
+</body>
+</html>

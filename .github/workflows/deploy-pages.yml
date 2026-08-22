@@ -9,6 +9,7 @@ on:
       - 'hyper-focus/**'
       - 'number_magic/**'
       - 'personality/**'
+      - 'premier/**'
       - 'reading-world/**'
       - 'roadmap/**'
       - 'vocab-quiz/**'
@@ -42,6 +43,7 @@ jobs:
           mkdir -p _site/hyper-focus
           mkdir -p _site/number_magic
           mkdir -p _site/personality
+          mkdir -p _site/premier
           mkdir -p _site/reading-world
           mkdir -p _site/roadmap
           mkdir -p _site/vocab-quiz
@@ -52,6 +54,9 @@ jobs:
           cp -R hyper-focus/. _site/hyper-focus/
           cp -R number_magic/. _site/number_magic/
           cp -R personality/. _site/personality/
+          cp -R premier/. _site/premier/
+          rm -rf _site/premier/qa
+          test ! -e _site/premier/qa
           cp -R reading-world/. _site/reading-world/
           cp -R roadmap/. _site/roadmap/
           cp -R vocab-quiz/. _site/vocab-quiz/
