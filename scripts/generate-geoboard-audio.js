@@ -16,8 +16,8 @@ const cues = {
     tutorial2: "첫 번째 못을 누르고 다음 못을 누르면, 그 사이에 고무줄이 생겨.",
     tutorial3: "못을 계속 누르면 열린 모양이 돼. 선이 겹치거나 같은 못을 다시 쓰면 안 돼.",
     tutorial4: "마지막에 처음 못을 다시 누르면 도형이 닫혀. 이제 보기와 똑같이 만들어 보자.",
-    tutorialPractice: "잘했어! 이제 네가 직접 해 볼 차례야.",
-    tutorialComplete: "튜토리얼을 끝냈어. 점판에 고무줄로 도형을 만들어 보자.",
+    tutorialPractice: "이제 반짝이는 못부터 눌러 삼각형을 완성해 봐.",
+    tutorialComplete: "좋아! 직접 닫힌 도형을 만들었어. 이제 본 문제를 시작하자.",
     hintOpen: "보기의 못 위치를 하나씩 세어 봐. 가로와 세로 칸 수를 세면 같은 자리를 찾을 수 있어.",
     hintClosed: "한 꼭짓점을 먼저 정하고, 보기와 같은 방향으로 이어 봐. 마지막에 처음 못을 누르면 닫혀.",
   },
@@ -29,8 +29,8 @@ const cues = {
     tutorial2: "先点第一个钉子，再点下一个钉子，中间就会出现一条皮筋。",
     tutorial3: "继续点钉子会做出不封口的图形。皮筋不能重叠，也不能再次使用同一个钉子。",
     tutorial4: "最后再点第一个钉子，图形就封起来了。现在照着样图做一遍吧。",
-    tutorialPractice: "做得好！现在轮到你自己试一试了。",
-    tutorialComplete: "教程完成了。现在用皮筋在钉板上做出图形吧。",
+    tutorialPractice: "现在从闪亮的钉子开始，自己完成这个三角形吧。",
+    tutorialComplete: "真棒！你自己做出了封闭图形。现在开始正式题目吧。",
     hintOpen: "一个一个数样图上钉子的位置。数横着和竖着几格，就能找到同样的位置。",
     hintClosed: "先定下一个顶点，再按样图的方向连接。最后点第一个钉子就封口了。",
   },
@@ -42,8 +42,8 @@ const cues = {
     tutorial2: "最初のくぎを押して次のくぎを押すと、その間にゴムが一本かかるよ。",
     tutorial3: "くぎを続けて押すと開いた形になるよ。ゴムを重ねたり、同じくぎをもう一度使ったりしないでね。",
     tutorial4: "最後に最初のくぎを押すと形が閉じるよ。今度は見本と同じ形をつくろう。",
-    tutorialPractice: "できたね！つぎは自分でやってみよう。",
-    tutorialComplete: "チュートリアルはおしまい。点板にゴムをかけて形をつくろう。",
+    tutorialPractice: "光っているくぎから押して、三角形を完成させよう。",
+    tutorialComplete: "いいね！自分で閉じた形を作れたよ。では問題を始めよう。",
     hintOpen: "見本のくぎの場所を一つずつ数えよう。よことたてのマス数を数えると同じ場所が見つかるよ。",
     hintClosed: "まず頂点を一つ決めて、見本と同じ向きにつなごう。最後に最初のくぎを押せば閉じるよ。",
   },
@@ -55,8 +55,8 @@ const cues = {
     tutorial2: "Tap the first peg, then the next peg. A rubber band appears between them.",
     tutorial3: "Keep tapping pegs to make an open shape. Do not overlap a band or use the same peg twice.",
     tutorial4: "Tap the first peg again at the end to close the shape. Now build the same shape as the model.",
-    tutorialPractice: "Great! Now it is your turn to try.",
-    tutorialComplete: "The tutorial is complete. Stretch the rubber band to build a shape on the board.",
+    tutorialPractice: "Now start with the glowing peg and complete the triangle yourself.",
+    tutorialComplete: "Great! You made a closed shape yourself. Now let's start the first problem.",
     hintOpen: "Count the pegs on the model one at a time. Count across and down to find the same place.",
     hintClosed: "Choose one corner first, then join the next corner in the same direction as the model. Tap the first peg last.",
   },
@@ -111,4 +111,3 @@ function main() {
 }
 
 main();
-
