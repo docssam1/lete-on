@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>SH-R01 최종 검수안 · 선발·누적 진단</title>
+  <link rel="stylesheet" href="../shared/app.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로</a>
+  <header class="site-header"><nav class="shell nav"><a class="brand" href="./review.html"><span class="brand-mark">SL</span><span>회차 검수<small>ROUND REVIEW</small></span></a><div class="nav-links"><a class="button ghost" href="./review.html">40문항 상태</a><a class="button accent" href="../library.html">시험지 서재</a></div></nav></header>
+  <main id="main" class="shell app-main">
+    <div class="page-title"><div><p class="eyebrow">SH-R01 · Change Log</p><h1>검수 변경이력 한 번에 확인</h1><p>교정 9문항과 분류 검수 12문항의 결정·실행 상태를 모았습니다. 원본과 답값은 이 화면에 저장하거나 노출하지 않습니다.</p></div><span class="badge review" id="round-review-state">상태 확인 중</span></div>
+    <div class="notice" id="round-review-notice">이 화면은 변경이력 열람용입니다. 7개 교정 산출물·12개 분류·응답 스키마·채점 정책·인쇄 감사·서명 자산이 모두 통과하기 전에는 최종 확인 요청이 비활성화됩니다.</div>
+    <section class="review-summary" aria-label="최종 검수 현황">
+      <article><span>검수 대상</span><strong id="summary-total">19</strong></article>
+      <article><span>차단 해소안</span><strong id="summary-blocked">7</strong></article>
+      <article><span>분류 재검수</span><strong id="summary-classification">12</strong></article>
+      <article><span>실행·검수 대기</span><strong id="summary-pending">0</strong></article>
+    </section>
+    <section class="panel review-panel">
+      <div class="review-toolbar"><div><p class="eyebrow">Correction &amp; Classification Log</p><h2>교정·분류 변경이력</h2></div><div class="review-filters"><label>구분<select id="summary-queue-filter"><option value="ALL">전체 21문항</option><option value="blocked">차단 해소 9문항</option><option value="classification">분류 검수 12문항</option></select></label><button class="ghost" id="summary-reload">새로고침</button></div></div>
+      <div class="review-table-wrap"><table class="data-table review-table"><thead><tr><th>번호</th><th>검수 구분</th><th>독립 검수 처리</th><th>2022 개정 분류 후보</th><th>상태</th><th>근거</th></tr></thead><tbody id="summary-rows"></tbody></table></div>
+    </section>
+    <section class="panel" aria-labelledby="round-decision-title">
+      <p class="eyebrow">One Final Confirmation</p>
+      <h2 id="round-decision-title">SH-R01 시험 1회 전체 확인</h2>
+      <p id="summary-release-readiness">변경이력은 열람할 수 있지만 전체 릴리스 게이트가 통과하기 전에는 확인 요청을 보낼 수 없습니다.</p>
+      <div class="actions"><button class="accent" id="round-approve" disabled>시험 전체 최종 확인</button><a class="button ghost" href="./review.html">40문항 상태로</a></div>
+    </section>
+  </main>
+  <footer class="footer"><div class="shell"><span>GFIELD 운영자 전용</span><span>원본·답값·풀이·비공개 경로 비노출</span></div></footer>
+  <script src="../shared/runtime.js"></script>
+  <script src="../data/catalog.js"></script>
+  <script src="../data/question-bank-core.js"></script>
+  <script src="../data/review-only/sh-r01-inventory.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script src="../shared/review-security.js"></script>
+  <script src="../shared/sh-r01-release-gate.js"></script>
+  <script src="../shared/review-summary-security.js"></script>
+  <script src="../shared/review-summary-page.js"></script>
+</body>
+</html>
