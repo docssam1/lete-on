@@ -173,11 +173,10 @@ window.BOOK_CATALOG = [
     grade: 'G4–6',
     band: 'G4',
     isbn: 'ISBN 978-89-6435-XXXX-X',
-    // Original passages are private, but the publisher's nine question texts
-    // have not been acquired yet. Reading Town therefore uses the two complete
-    // practice assessments until those licensed questions can be connected.
+    // Licensed passages and the publisher's nine questions are loaded from the
+    // private lesson_content table and never bundled in the public app.
     originalPassage: true,
-    originalAssessment: false,
+    originalAssessment: true,
     available: true,
   },
   {
@@ -198,7 +197,7 @@ window.BOOK_CATALOG = [
     band: 'G5',
     isbn: 'Bricks Reading 250 · Level 2',
     originalPassage: true,
-    originalAssessment: false,
+    originalAssessment: true,
     available: true,
   },
   {
@@ -219,7 +218,7 @@ window.BOOK_CATALOG = [
     band: 'G6',
     isbn: 'Bricks Reading 250 · Level 3',
     originalPassage: true,
-    originalAssessment: false,
+    originalAssessment: true,
     available: true,
   },
   {
