@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SH-R01 문항 검수 · 선발·누적 진단</title><link rel="stylesheet" href="../shared/app.css"></head>
+<body>
+  <a class="skip-link" href="#main">본문으로</a>
+  <header class="site-header"><nav class="shell nav"><a class="brand" href="./"><span class="brand-mark">SL</span><span>문항 검수<small>ITEM REVIEW</small></span></a><div class="nav-links"><a class="button ghost" href="./">학생 승인</a><a class="button accent" href="../library.html">시험지 서재</a></div></nav></header>
+  <main id="main" class="shell app-main">
+    <div class="page-title"><div><p class="eyebrow">SH-R01 · Agent Review</p><h1>40문항 개별 검수</h1><p>원문과 답을 공개하지 않고 분류 후보와 검증 상태만 확인합니다. 검수자는 문항을 검증 확정·대체 검증·채점 제외로 처리하고, 사용자는 마지막에 시험 1회 전체만 확인합니다.</p></div><span class="badge review" id="review-state">상태 확인 중</span></div>
+    <div class="notice" id="review-notice">12개 확인필요 분류와 7개 교정 보호 산출물은 에이전트 검수로 확정됐습니다. 전 문항 보호 상태와 회차 공통 게이트가 맞기 전에는 학생에게 열리지 않습니다.</div>
+    <section class="review-summary" aria-label="검수 현황">
+      <article><span>전체</span><strong id="metric-total">40</strong></article>
+      <article><span>교정 실행 대기</span><strong id="metric-correction-pending">6</strong></article>
+      <article><span>분류 검수 대기</span><strong id="metric-classification-pending">0</strong></article>
+      <article><span>에이전트 처리 완료</span><strong id="metric-resolved">0</strong></article>
+    </section>
+    <section class="panel" aria-label="최종 시험 확인" style="display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:16px"><div><p class="eyebrow">Final Exam Confirmation</p><h2 style="margin:4px 0 6px">시험 1회 전체 확인</h2><p id="release-readiness" style="margin:0;color:var(--muted)">문항 검수 상태를 확인하고 있습니다.</p></div><button class="accent" id="final-confirmation" disabled>최종 1회 확인</button></section>
+    <section class="panel review-panel">
+      <div class="review-toolbar"><div><p class="eyebrow">Candidate Taxonomy</p><h2>문항별 분류 후보</h2></div><div class="review-filters"><label>학년<select id="grade-filter"><option value="ALL">전체</option><option value="G7">중1</option><option value="G8">중2</option><option value="G9">중3</option><option value="LINK">연계</option></select></label><label>처리 상태<select id="status-filter"><option value="ALL">전체</option><option value="PENDING">대기</option><option value="READY">검증 확정 가능</option><option value="RESOLVED">처리 완료</option><option value="EXCLUDED">채점 제외</option></select></label><button class="ghost" id="review-reload">새로고침</button></div></div>
+      <div class="review-table-wrap"><table class="data-table review-table"><thead><tr><th>번호</th><th>검수 큐</th><th>교육과정 후보</th><th>영역·세부유형 후보</th><th>응답</th><th>답 검산</th><th>분류</th><th>시각</th><th>처리</th><th>결정</th></tr></thead><tbody id="review-rows"></tbody></table></div>
+    </section>
+  </main>
+  <footer class="footer"><div class="shell"><span>GFIELD 운영자 전용</span><span>원문·답안·저장경로 비노출</span></div></footer>
+  <script src="../shared/runtime.js"></script><script src="../data/catalog.js"></script><script src="../data/question-bank-core.js"></script><script src="../data/review-only/sh-r01-inventory.js"></script><script src="../shared/review-security.js"></script><script src="../shared/sh-r01-release-gate.js"></script><script src="../shared/auth.js"></script><script src="../shared/review-page.js"></script>
+</body>
+</html>

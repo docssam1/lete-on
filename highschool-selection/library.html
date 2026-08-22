@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>시험지 서재 · 선발·누적 진단</title><link rel="stylesheet" href="./shared/app.css"></head>
+<body>
+  <a class="skip-link" href="#main">본문으로</a>
+  <header class="site-header"><nav class="shell nav"><a class="brand" href="./"><span class="brand-mark">SL</span><span>시험지 서재<small id="student-label">PRIVATE LIBRARY</small></span></a><div class="nav-links"><a class="button ghost" href="./question-bank/">유형 연습</a><button class="soft" id="logout">나가기</button></div></nav></header>
+  <main id="main" class="shell app-main"><div class="page-title"><div><p class="eyebrow">Exam Library</p><h1>내 시험과 준비 상태</h1><p>지원 과정과 실제 시험 범위를 먼저 확인하세요. 목록은 모두 보이지만, 관리자 승인과 시험 준비가 끝난 회차만 열립니다.</p></div><a class="button ghost" href="./report.html">최근 분석지</a></div>
+    <ol class="library-guide" aria-label="시험 응시 순서"><li><b>01</b><span>범위 확인</span></li><li><b>02</b><span>승인 상태 확인</span></li><li><b>03</b><span>시험 응시</span></li><li><b>04</b><span>진단지 확인</span></li></ol>
+    <div class="tabs" id="tabs" aria-label="출제 모드"></div><section class="exam-grid" id="exam-grid" aria-live="polite"></section>
+  </main>
+  <footer class="footer"><div class="shell"><span id="watermark-label"></span><span>PDF 직접 노출 없음 · 페이지 이미지 워터마크</span></div></footer>
+  <script src="./shared/runtime.js"></script><script src="./data/catalog.js"></script><script src="./data/selection-tracks.js"></script><script src="./shared/auth.js"></script>
+  <script>
+    const session=HIGHSELECT_AUTH.requireSession();if(!session)throw new Error('redirect');
+    const programs=HIGHSELECT_CATALOG.programs,exams=HIGHSELECT_CATALOG.exams,tracks=SELECTION_TRACK_CATALOG;let active='all';
+    document.getElementById('student-label').textContent=`${session.name} 학생 전용`;
+    document.getElementById('watermark-label').textContent=`${session.name} 학생 · GFIELD`;
+    document.getElementById('logout').onclick=()=>{HIGHSELECT_AUTH.clear();location.href='./login.html'};
+    document.getElementById('tabs').innerHTML=[{id:'all',shortName:'전체'},...programs].map(p=>`<button class="tab ${p.id==='all'?'active':''}" data-mode="${p.id}">${p.shortName}</button>`).join('');
+    document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(!b)return;active=b.dataset.mode;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));render();});
+    const label={draft:'자료 없음',blocked:'준비 중',review_pending:'검수 중',released:'공개',archived:'종료'};
+    function render(){const list=exams.filter(e=>e.visible&&(active==='all'||e.programId===active));document.getElementById('exam-grid').innerHTML=list.map(exam=>{const program=programs.find(p=>p.id===exam.programId),trackInfo=tracks.resolveExamTrack(exam.id),trackLabel=trackInfo&&trackInfo.track?trackInfo.track.label:exam.track,approved=HIGHSELECT_AUTH.canAccess(exam.id,session),released=exam.releaseStatus==='released',open=approved&&released;const state=open?'응시 가능':approved?'승인됨 · 시험 준비 중':'승인 필요';const studentMessage=open?'시험지와 답안 입력 화면을 열 수 있습니다.':approved?'시험지와 채점 기준을 마지막으로 확인하고 있습니다. 준비가 끝나면 같은 승인번호로 바로 열립니다.':'관리자에게 이 회차의 시험 승인을 요청해 주세요.';return `<article class="exam-card" style="--card-accent:${program.accent}"><div class="topline"><span class="badge">${program.shortName}</span><span class="badge ${open?'open':approved?'review':'locked'}">${state}</span></div><h2>${exam.title}</h2><p>${exam.scopeLabel}</p><div class="meta-row"><span class="badge">${trackLabel}</span><span class="badge">${exam.questionCount||'문항 확인 필요'}${exam.questionCount?'문항':''}</span><span class="badge">${label[exam.releaseStatus]||'확인 필요'}</span></div><footer><p>${studentMessage}</p><a class="button ${open?'accent':'soft'}" href="./exam.html?id=${encodeURIComponent(exam.id)}">${open?'응시하기':'상태 보기'}</a></footer></article>`}).join('')||'<div class="empty">해당 모드에 등록된 시험이 없습니다.</div>';}
+    render();
+  </script>
+</body>
+</html>

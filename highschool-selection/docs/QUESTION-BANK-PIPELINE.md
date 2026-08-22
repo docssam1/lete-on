@@ -1,0 +1,88 @@
+# Question bank pipeline
+
+This pipeline stores review metadata, not question text, answer values, solution text, original files, or filesystem locations. Public mode values are limited to `SH`, `DP`, `WM`, `ED`, `DG`, and `SM`; the writer value is always `T`.
+
+## 1. Register identity and curriculum
+
+Use `data/question-bank-core.js` to derive a stable neutral ID from an opaque registry key. The returned ID contains only an entity prefix, a mode code, and a deterministic digest. Registry keys must not be copied into published records.
+
+Every question has the complete hierarchy:
+
+```text
+grade -> major -> minor -> detail
+```
+
+Each node uses a stable neutral code. `createCurriculumPath` produces the canonical path key and `validateCurriculumPath` rejects missing, orphaned, malformed, or mismatched nodes.
+
+## 2. Reference protected source assets
+
+`data/source-lineage.js` represents an original or derived item without copying its content:
+
+```text
+sourceAssetId + sourceFingerprint + pageNumber + itemLocator and/or bbox
+assetVariant = original | twin | similar
+deliveryPolicy = signed-page-images
+```
+
+`sourceFingerprint` is a SHA-256 content fingerprint and `bbox` uses normalized page coordinates. URL, URI, PDF URL, download URL, and filesystem path fields are rejected. A source reference is resolved only by an authorized server.
+
+`shared/source-asset-security.js` binds the reference to the existing student/exam-specific signed raster manifest validation. It requires the same source ID, fingerprint, and source page number, a short expiry, an approved image host, and an image MIME type. Direct PDF delivery is rejected by the shared manifest policy.
+
+## 3. Record provenance and answer review
+
+Provenance contains only `role`, workflow `status`, and a neutral source reference ID. Any sensitive locator belongs in a separate access-controlled source registry. Answer verification contains only `status` and `reviewCount`; answer material remains in the protected grading service.
+
+Status changes must follow `canTransition`. A provenance record must reach `audited` or `cleared`, and answer verification must reach `verified`, before release eligibility.
+
+## 4. Classify generation, variants, and lineage
+
+Select one input type and one generation kind (`parameterized`, `bespoke`, or `figure_only`). Link lowered, standard, and raised variants through the same neutral family ID while keeping each variant's own neutral question ID.
+
+Every bank item also records a neutral lineage:
+
+```text
+sourceExamId -> originalQuestionId -> questionTypeId -> questionId
+relation = original | twin | similar
+```
+
+For an original, `questionId` equals `originalQuestionId`; a twin or similar item must point to a distinct original. The asset variant must match the lineage relation, and the variant family ID must equal the original question ID. This preserves round-to-item-to-type ancestry without publishing source content.
+
+## 5. Run deterministic gates
+
+`shared/question-bank-validation.js` evaluates gates in this fixed order:
+
+```text
+identity -> curriculum -> metadata -> provenance -> source lineage
+         -> answer verification -> single answer -> figure visibility
+         -> user approval -> release
+```
+
+The single-answer hook receives trusted internal metadata and returns only `validOutcomeCount`, `status`, and an optional neutral `evidenceCode`. An enumerator may inspect candidates internally, but the persisted audit result must contain no candidate or answer values. The gate passes only when the count is exactly one.
+
+Figure questions require all four checks: visible evidence, constrained hidden state, unambiguous position, and sufficient contrast. A failed check requires revision or exclusion; it cannot be waived by explanatory text.
+
+User approval stores only a neutral approval ID, question ID, status, decision version, and reviewer `T`. Only `approved` passes; pending, rejected, or revoked records block release.
+
+## 6. Assemble an exam
+
+`shared/exam-assembly.js` rejects an assembly when a question fails a gate, IDs repeat, a variant family is overused, mode or writer differs, points do not match, or configured count and distribution limits fail. Supported constraints cover:
+
+- total question count and points;
+- min/max by difficulty band and input type;
+- maximum figure count;
+- maximum uses of a variant family or curriculum detail;
+
+The duplicate rule is scoped to one assembled form. An approved original question may be reused in another exam form or another compatible academy blueprint when its curriculum scope, difficulty, points, notation, and placement constraints all pass again. Cross-form reuse keeps one question ID and lineage; it does not copy the source record or inherit the first form's cutoff. Exact duplicates inside one form and immediate repeats inside one practice set remain blocked.
+- min/max by lineage relation.
+
+At least one `original` item is required by default, so an exam cannot be assembled entirely from twins or similar items. The minimum can be raised for a specific blueprint but cannot be negative.
+
+The result is a deterministic issue list plus aggregate counts. Only an assembly with `eligible: true` may proceed to the existing approval and release process.
+
+## Verification
+
+From `repo/highschool-selection`, run:
+
+```text
+node --test tests/*.test.cjs
+```
