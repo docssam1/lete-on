@@ -6,6 +6,7 @@
   const $ = (id) => document.getElementById(id);
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
   const hash = (value) => [...value].reduce((sum, character) => Math.imul(sum ^ character.charCodeAt(0), 16777619), 2166136261) >>> 0;
+  const typeDisplayName = type => type.label && type.label !== "핵심 유형" ? type.label : type.name;
 
   const types = curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types.map(type => ({
     ...type,
@@ -58,7 +59,7 @@
     return types.filter(type => {
       if (type.grade !== state.grade || type.term !== state.term) return false;
       if (state.unitId && type.unitId !== state.unitId) return false;
-      if (search && !`${type.name} ${type.subunitName} ${type.unitName}`.toLocaleLowerCase("ko").includes(search)) return false;
+      if (search && !`${typeDisplayName(type)} ${type.name} ${type.subunitName} ${type.unitName}`.toLocaleLowerCase("ko").includes(search)) return false;
       return true;
     });
   }
@@ -85,7 +86,7 @@
     return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" tabindex="0">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
-      '<span class="tree-type-copy"><strong>' + escapeHtml(type.label || type.name) + '</strong><small>' + type.grade + '학년 ' + type.term + '학기 · 심화 문제은행</small></span>' +
+      '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + type.grade + '학년 ' + type.term + '학기 · 심화 문제은행</small></span>' +
       '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "준비 중") + '</span>' +
     '</label>';
   }
@@ -158,7 +159,7 @@
     if (!generated) return;
     const popover = ensurePreviewPopover();
     previewAnchor = anchor;
-    popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(type.label || type.name)}</strong></header><div class="type-preview-question">${generated.prompt}</div><footer>${escapeHtml(currentDifficultyLabel())} 대표 문제</footer>`;
+    popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header><div class="type-preview-question">${generated.prompt}</div><footer>${escapeHtml(currentDifficultyLabel())} 대표 문제</footer>`;
     popover.hidden = false;
     requestAnimationFrame(() => positionTypePreview(anchor));
   }
@@ -180,8 +181,8 @@
     $("selectedQuestionSummary").textContent = `${selected.length ? state.count : 0}문항`;
     $("generateButton").disabled = selected.length === 0;
     $("selectedTypeList").innerHTML = selected.length ? selected.map(type =>
-      '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(type.label || type.name) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · 소단원 ' + type.subunitNumber + '</small></span>' +
-      '<button type="button" data-remove-type="' + type.id + '" aria-label="' + escapeHtml(type.name) + ' 선택 해제">×</button></div>'
+      '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(typeDisplayName(type)) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · 소단원 ' + type.subunitNumber + '</small></span>' +
+      '<button type="button" data-remove-type="' + type.id + '" aria-label="' + escapeHtml(typeDisplayName(type)) + ' 선택 해제">×</button></div>'
     ).join("") : '<p>왼쪽 교육과정 트리에서 유형을 선택하세요.</p>';
   }
 
@@ -245,7 +246,7 @@
     $("problemView").innerHTML = chunk(state.questions, 6).map((page, pageIndex) => `<section class="print-page">
       <div class="page-label">문제 ${pageIndex + 1}</div>
       <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item">
-        <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(question.type.name)}</span><em>${escapeHtml(question.difficulty)}</em></header>
+        <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>
         <div class="question-prompt">${question.prompt}</div>
         <div class="answer-line">답</div>
       </article>`).join("")}</div>${watermark()}
@@ -256,7 +257,7 @@
     $("solutionView").innerHTML = chunk(state.questions, 8).map((page, pageIndex) => `<section class="print-page answer-page">
       <div class="page-label">정답·풀이 ${pageIndex + 1}</div>
       <div class="solution-list">${page.map(question => `<article class="solution-item">
-        <header><b>${question.number}</b><span>${escapeHtml(question.type.name)}</span><strong>${escapeHtml(question.answer)}</strong></header>
+        <header><b>${question.number}</b><span>${escapeHtml(typeDisplayName(question.type))}</span><strong>${escapeHtml(question.answer)}</strong></header>
         <p>${escapeHtml(question.solution)}</p>
       </article>`).join("")}</div>${watermark()}
     </section>`).join("");
@@ -277,10 +278,10 @@
     $("solutionTab").setAttribute("aria-selected", state.view === "solution" ? "true" : "false");
     $("reviewStageMeta").textContent = `${state.questions.length}문항 · ${selected.length}개 유형`;
     $("reviewSelectedTypes").innerHTML = selected.map(type =>
-      `<div><strong>${escapeHtml(type.name)}</strong><span>${type.unitNumber}단원 · ${escapeHtml(type.unitName)}</span></div>`
+      `<div><strong>${escapeHtml(typeDisplayName(type))}</strong><span>${type.unitNumber}단원 · ${escapeHtml(type.unitName)}</span></div>`
     ).join("");
     $("reviewQuestionList").innerHTML = state.questions.map(question =>
-      `<a href="#question-${question.number}"><b>${question.number}</b><span>${escapeHtml(question.type.name)}</span></a>`
+      `<a href="#question-${question.number}"><b>${question.number}</b><span>${escapeHtml(typeDisplayName(question.type))}</span></a>`
     ).join("");
     renderProblems();
     renderSolutions();

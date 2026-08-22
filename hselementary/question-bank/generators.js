@@ -957,6 +957,483 @@
     return `<svg class="geometry-diagram lattice-center" viewBox="0 0 240 166" data-lattice-size="${width},${height}" aria-label="중심이 표시된 직사각형 모눈"><rect x="${left.toFixed(1)}" y="${top.toFixed(1)}" width="${(width * cell).toFixed(1)}" height="${(height * cell).toFixed(1)}"/><g>${grid}</g><circle class="folded" cx="120" cy="82" r="5"/><text x="132" y="82">O</text></svg>`;
   };
 
+  const decimalLShapeSvg = ({ width, height, cutWidth, cutHeight }) => {
+    const scale = Math.min(150 / width, 104 / height);
+    const left = 42;
+    const top = 28;
+    const w = width * scale;
+    const h = height * scale;
+    const cw = cutWidth * scale;
+    const ch = cutHeight * scale;
+    return `<svg class="geometry-diagram decimal-l-shape" viewBox="0 0 240 166" data-decimal-shape="${width},${height},${cutWidth},${cutHeight}" aria-label="오른쪽 위가 잘린 ㄱ자 모양 도형"><path class="shape-fill" d="M${left} ${top} H${left + w - cw} V${top + ch} H${left + w} V${top + h} H${left} Z"/><line class="crease" x1="${left + w - cw}" y1="${top}" x2="${left + w - cw}" y2="${top + ch}"/><text x="${left + w / 2 - 16}" y="${top + h + 20}">${decimal(width, 2)}cm</text><text x="${left - 34}" y="${top + h / 2}">${decimal(height, 2)}cm</text><text x="${left + w - cw / 2 - 12}" y="${top + ch + 18}">${decimal(cutWidth, 2)}cm</text><text x="${left + w - cw - 38}" y="${top + ch / 2 + 4}">${decimal(cutHeight, 2)}cm</text></svg>`;
+  };
+
+  const decimalSquareStackSvg = ({ side, count, offset }) => {
+    const shown = Math.min(count, 6);
+    const scale = Math.min(82 / side, 18 / offset);
+    const size = side * scale;
+    const step = offset * scale;
+    const startX = 30;
+    const startY = 36;
+    const squares = Array.from({ length: shown }, (_, index) => `<rect class="${index === shown - 1 ? "highlight-fill" : "shape-fill"}" x="${(startX + index * step).toFixed(1)}" y="${(startY + index * step).toFixed(1)}" width="${size.toFixed(1)}" height="${size.toFixed(1)}"/>`).join("");
+    return `<svg class="geometry-diagram decimal-square-stack" viewBox="0 0 240 166" data-square-stack="${side},${count},${offset}" aria-label="같은 간격으로 겹쳐 놓은 정사각형"><g>${squares}</g>${count > shown ? `<text x="${startX + shown * step + 8}" y="${startY + shown * step}">… ${count}장</text>` : ""}<path class="folded" d="M${startX} ${startY - 8} H${startX + size}"/><text x="${startX + size / 2 - 18}" y="${startY - 14}">${decimal(side, 2)}cm</text><path class="folded" d="M${startX + size + 8} ${startY + size - 4} l${step} ${step}"/><text x="${startX + size + 18}" y="${startY + size + 18}">${decimal(offset, 2)}cm 이동</text></svg>`;
+  };
+
+  const decimalEvidence = (kind, values, extra = "") => `<span hidden data-decimal-kind="${kind}" data-values="${values.join(",")}" ${extra}></span>`;
+
+  const cuboidEvidence = (kind, values) => `<span hidden data-cuboid-kind="${kind}" data-values="${values.join(",")}"></span>`;
+  const volumeEvidence = (kind, values) => `<span hidden data-volume-kind="${kind}" data-values="${values.join(",")}"></span>`;
+
+  const cuboidSvg = ({ a, b, c, labels = [] }) => {
+    const [top = "", front = "", right = ""] = labels;
+    return `<svg class="geometry-diagram cuboid-diagram" viewBox="0 0 260 176" data-cuboid-dimensions="${a},${b},${c}" aria-label="가로 ${a}, 세로 ${b}, 높이 ${c}인 직육면체"><polygon class="shape-fill" points="48,62 164,62 214,30 98,30"/><polygon class="highlight-fill" points="48,62 164,62 164,142 48,142"/><polygon class="shape-fill" points="164,62 214,30 214,110 164,142"/><text x="106" y="160">가로 ${a}cm</text><text x="196" y="137">세로 ${b}cm</text><text x="28" y="104">높이 ${c}cm</text>${top ? `<text x="130" y="48">${top}</text>` : ""}${front ? `<text x="106" y="106">${front}</text>` : ""}${right ? `<text x="190" y="88">${right}</text>` : ""}</svg>`;
+  };
+
+  const heightMapTable = ({ title, heights }) => {
+    const width = Math.max(...heights.map(row => row.length));
+    const header = Array.from({ length: width }, (_, index) => `<th>${index + 1}열</th>`).join("");
+    const rows = heights.map((row, index) => `<tr><th>${index + 1}행</th>${Array.from({ length: width }, (_, column) => `<td>${row[column] || 0}</td>`).join("")}</tr>`).join("");
+    return `<div class="graph-panel height-map" data-height-map="${heights.map(row => row.join(".")).join(";")}"><div class="graph-title">${title}</div><table class="problem-table"><thead><tr><th>바닥 칸</th>${header}</tr></thead><tbody>${rows}</tbody></table><div class="graph-legend">각 수는 그 바닥 칸에 쌓인 정육면체의 높이입니다.</div></div>`;
+  };
+
+  const notchedProfileSvg = ({ width, cutWidth, cutHeight }) => `
+    <svg class="geometry-diagram area-diagram notched-profile" viewBox="0 0 300 190" data-notch-profile="${width},${cutWidth},${cutHeight}" aria-label="오른쪽 위에 가로 ${cutWidth}cm, 높이 ${cutHeight}cm인 홈이 있는 앞면">
+      <polygon class="highlight-fill" points="44,30 190,30 190,76 252,76 252,154 44,154"/>
+      <line class="dimension" x1="44" y1="170" x2="252" y2="170"/>
+      <line class="dimension" x1="44" y1="160" x2="44" y2="176"/>
+      <line class="dimension" x1="252" y1="160" x2="252" y2="176"/>
+      <text x="148" y="182">전체 가로 ${width}cm</text>
+      <line class="dimension" x1="190" y1="17" x2="252" y2="17"/>
+      <line class="dimension" x1="190" y1="12" x2="190" y2="25"/>
+      <line class="dimension" x1="252" y1="12" x2="252" y2="70"/>
+      <text x="221" y="7">${cutWidth}cm</text>
+      <text x="267" y="52">${cutHeight}cm</text>
+      <text x="25" y="92">높이 ?</text>
+      <text x="148" y="102">앞에서 본 단면</text>
+    </svg>`;
+
+  const cellsFromHeights = heights => {
+    const cells = [];
+    heights.forEach((row, y) => row.forEach((height, x) => {
+      for (let z = 0; z < height; z += 1) cells.push([x, y, z]);
+    }));
+    return cells;
+  };
+
+  const voxelSurface = cells => {
+    const occupied = new Set(cells.map(cell => cell.join(",")));
+    const directions = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
+    return cells.reduce((surface, [x, y, z]) => surface + directions.filter(([dx, dy, dz]) => !occupied.has(`${x + dx},${y + dy},${z + dz}`)).length, 0);
+  };
+
+  const centeredTunnelCells = ({ size, hole, directions }) => {
+    const start = (size - hole) / 2;
+    const cells = [];
+    for (let x = 0; x < size; x += 1) for (let y = 0; y < size; y += 1) for (let z = 0; z < size; z += 1) {
+      const inBand = value => value >= start && value < start + hole;
+      const removed = (directions.includes("x") && inBand(y) && inBand(z))
+        || (directions.includes("y") && inBand(x) && inBand(z))
+        || (directions.includes("z") && inBand(x) && inBand(y));
+      if (!removed) cells.push([x, y, z]);
+    }
+    return cells;
+  };
+
+  const tunnelCubeSvg = ({ size, hole, directions }) => {
+    const frontHole = directions.includes("y") ? '<rect class="cutout-fill" x="92" y="86" width="32" height="32"/>' : "";
+    const rightHole = directions.includes("x") ? '<polygon class="cutout-fill" points="168,82 187,70 187,94 168,106"/>' : "";
+    const topHole = directions.includes("z") ? '<polygon class="cutout-fill" points="103,50 126,50 141,40 118,40"/>' : "";
+    return `<svg class="geometry-diagram cuboid-diagram" viewBox="0 0 260 176" data-tunnel-cube="${size},${hole},${directions.join(".")}" aria-label="중앙에 관통 구멍을 낸 정육면체"><polygon class="shape-fill" points="48,62 164,62 214,30 98,30"/><polygon class="highlight-fill" points="48,62 164,62 164,142 48,142"/><polygon class="shape-fill" points="164,62 214,30 214,110 164,142"/>${frontHole}${rightHole}${topHole}<text x="106" y="160">한 변 ${size}칸</text><text x="201" y="137">구멍 ${hole}×${hole}칸</text></svg>`;
+  };
+
+  const spaceEvidence = (kind, values, extra = "") => `<span hidden data-space-kind="${kind}" data-values="${values.join(",")}" ${extra}></span>`;
+
+  const stackProjections = heights => {
+    const rows = heights.length;
+    const columns = heights[0].length;
+    return {
+      top: heights.flat().map(value => value > 0 ? 1 : 0),
+      front: Array.from({ length: columns }, (_, x) => Math.max(...heights.map(row => row[x] || 0))),
+      right: Array.from({ length: rows }, (_, y) => Math.max(...heights[y]))
+    };
+  };
+
+  const projectionSquareCount = projections => projections.top.reduce((sum, value) => sum + value, 0)
+    + projections.front.reduce((sum, value) => sum + value, 0)
+    + projections.right.reduce((sum, value) => sum + value, 0);
+
+  const sameProjection = (left, right) => ["top", "front", "right"].every(key => left[key].join(",") === right[key].join(","));
+
+  const enumerateHeightMaps = ({ top, front, right, maxHeight, total = null }) => {
+    const rows = right.length;
+    const columns = front.length;
+    const occupied = top.map((value, index) => value ? index : -1).filter(index => index >= 0);
+    const heights = Array.from({ length: rows }, () => Array(columns).fill(0));
+    const output = [];
+    const visit = index => {
+      if (index === occupied.length) {
+        if (total !== null && heights.flat().reduce((sum, value) => sum + value, 0) !== total) return;
+        const projections = stackProjections(heights);
+        if (projections.front.join(",") === front.join(",") && projections.right.join(",") === right.join(",")) output.push(heights.map(row => [...row]));
+        return;
+      }
+      const position = occupied[index];
+      const y = Math.floor(position / columns);
+      const x = position % columns;
+      const limit = Math.min(maxHeight, front[x], right[y]);
+      for (let height = 1; height <= limit; height += 1) {
+        heights[y][x] = height;
+        visit(index + 1);
+      }
+      heights[y][x] = 0;
+    };
+    visit(0);
+    return output;
+  };
+
+  const projectionViewsSvg = ({ heights, title = "세 방향에서 본 그림" }) => {
+    const projections = stackProjections(heights);
+    const rows = heights.length;
+    const columns = heights[0].length;
+    const cell = 18;
+    const panel = (label, values, width, offsetX) => {
+      const max = Math.max(1, ...values);
+      const cells = values.map((height, x) => Array.from({ length: height }, (_, z) => `<rect class="highlight-fill" x="${offsetX + x * cell}" y="${126 - (z + 1) * cell}" width="${cell}" height="${cell}"/>`).join("")).join("");
+      const grid = Array.from({ length: width + 1 }, (_, index) => `<line class="crease" x1="${offsetX + index * cell}" y1="${126 - max * cell}" x2="${offsetX + index * cell}" y2="126"/>`).join("")
+        + Array.from({ length: max + 1 }, (_, index) => `<line class="crease" x1="${offsetX}" y1="${126 - index * cell}" x2="${offsetX + width * cell}" y2="${126 - index * cell}"/>`).join("");
+      return `<g>${cells}${grid}<text x="${offsetX + width * cell / 2}" y="148">${label}</text></g>`;
+    };
+    const topCells = projections.top.map((value, index) => value ? `<rect class="shape-fill" x="${18 + (index % columns) * cell}" y="${54 + Math.floor(index / columns) * cell}" width="${cell}" height="${cell}"/>` : "").join("");
+    const topGrid = Array.from({ length: columns + 1 }, (_, index) => `<line class="crease" x1="${18 + index * cell}" y1="54" x2="${18 + index * cell}" y2="${54 + rows * cell}"/>`).join("")
+      + Array.from({ length: rows + 1 }, (_, index) => `<line class="crease" x1="18" y1="${54 + index * cell}" x2="${18 + columns * cell}" y2="${54 + index * cell}"/>`).join("");
+    return `<svg class="geometry-diagram stack-projections" viewBox="0 0 300 166" data-projections="${projections.top.join(".")};${projections.front.join(".")};${projections.right.join(".")}" aria-label="${title}"><g>${topCells}${topGrid}<text x="${18 + columns * cell / 2}" y="148">위</text></g>${panel("앞", projections.front, columns, 112)}${panel("오른쪽", projections.right, rows, 218)}</svg>`;
+  };
+
+  const isometricStackSvg = (heights, title = "높이표대로 쌓은 정육면체") => {
+    const cells = cellsFromHeights(heights).sort((left, right) => (left[0] + left[1] + left[2]) - (right[0] + right[1] + right[2]));
+    const cube = ([x, y, z]) => {
+      const cx = 126 + (x - y) * 20;
+      const cy = 132 - (x + y) * 10 - z * 20;
+      return `<g><polygon class="shape-fill" points="${cx},${cy - 10} ${cx + 20},${cy} ${cx},${cy + 10} ${cx - 20},${cy}"/><polygon class="highlight-fill" points="${cx - 20},${cy} ${cx},${cy + 10} ${cx},${cy + 30} ${cx - 20},${cy + 20}"/><polygon class="shape-fill" points="${cx},${cy + 10} ${cx + 20},${cy} ${cx + 20},${cy + 20} ${cx},${cy + 30}"/></g>`;
+    };
+    return `<svg class="geometry-diagram isometric-stack" viewBox="0 0 280 180" data-stack-heights="${heights.map(row => row.join(".")).join(";")}" aria-label="${title}">${cells.map(cube).join("")}</svg>`;
+  };
+
+  const paintedFaceHistogram = cells => {
+    const occupied = new Set(cells.map(cell => cell.join(",")));
+    const directions = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
+    const histogram = Array(7).fill(0);
+    cells.forEach(([x, y, z]) => {
+      const painted = directions.filter(([dx, dy, dz]) => !occupied.has(`${x + dx},${y + dy},${z + dz}`)).length;
+      histogram[painted] += 1;
+    });
+    return histogram;
+  };
+
+  const internalCubeCount = cells => paintedFaceHistogram(cells)[0];
+
+  const rotationTransforms = (() => {
+    const permutations = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
+    const parity = permutation => permutation.join("") === "012" || permutation.join("") === "120" || permutation.join("") === "201" ? 1 : -1;
+    const transforms = [];
+    permutations.forEach(permutation => [-1, 1].forEach(sx => [-1, 1].forEach(sy => [-1, 1].forEach(sz => {
+      if (parity(permutation) * sx * sy * sz !== 1) return;
+      transforms.push(point => [sx * point[permutation[0]], sy * point[permutation[1]], sz * point[permutation[2]]]);
+    }))));
+    return transforms;
+  })();
+
+  const normalizedCellsKey = cells => {
+    const minima = [0, 1, 2].map(axis => Math.min(...cells.map(cell => cell[axis])));
+    return cells.map(cell => cell.map((value, axis) => value - minima[axis]).join(",")).sort().join(";");
+  };
+
+  const canonicalPolycube = cells => rotationTransforms.map(transform => normalizedCellsKey(cells.map(transform))).sort()[0];
+
+  const addedCubeShapeCount = baseCells => {
+    const occupied = new Set(baseCells.map(cell => cell.join(",")));
+    const directions = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
+    const candidates = new Set();
+    baseCells.forEach(([x, y, z]) => directions.forEach(([dx, dy, dz]) => {
+      const next = [x + dx, y + dy, z + dz];
+      if (!occupied.has(next.join(","))) candidates.add(canonicalPolycube([...baseCells, next]));
+    }));
+    return candidates.size;
+  };
+
+  const boundedCompositionCount = (parts, total, maximum) => {
+    const memo = new Map();
+    const visit = (remainingParts, remainingTotal) => {
+      const key = `${remainingParts},${remainingTotal}`;
+      if (memo.has(key)) return memo.get(key);
+      if (!remainingParts) return remainingTotal === 0 ? 1 : 0;
+      let count = 0;
+      for (let value = 1; value <= maximum; value += 1) count += visit(remainingParts - 1, remainingTotal - value);
+      memo.set(key, count);
+      return count;
+    };
+    return visit(parts, total);
+  };
+
+  const polycubeSvg = cells => {
+    const normalized = cells.map(cell => [...cell]);
+    const cube = ([x, y, z]) => {
+      const cx = 126 + (x - y) * 22;
+      const cy = 120 - (x + y) * 11 - z * 22;
+      return `<g><polygon class="shape-fill" points="${cx},${cy - 11} ${cx + 22},${cy} ${cx},${cy + 11} ${cx - 22},${cy}"/><polygon class="highlight-fill" points="${cx - 22},${cy} ${cx},${cy + 11} ${cx},${cy + 33} ${cx - 22},${cy + 22}"/><polygon class="shape-fill" points="${cx},${cy + 11} ${cx + 22},${cy} ${cx + 22},${cy + 22} ${cx},${cy + 33}"/></g>`;
+    };
+    return `<svg class="geometry-diagram isometric-stack" viewBox="0 0 280 180" data-polycube="${normalized.map(cell => cell.join(".")).join(";")}" aria-label="회전하여 같은 모양은 하나로 세는 쌓기나무">${normalized.slice().sort((a, b) => a.reduce((s, v) => s + v, 0) - b.reduce((s, v) => s + v, 0)).map(cube).join("")}</svg>`;
+  };
+
+  const waterTankSvg = ({ width, depth, height, waterHeight, title = "직육면체 수조" }) => {
+    const waterY = 142 - 80 * waterHeight / height;
+    return `<svg class="geometry-diagram cuboid-diagram water-tank" viewBox="0 0 260 190" data-water-tank="${width},${depth},${height},${waterHeight}" aria-label="${title}"><polygon class="shape-fill" points="48,62 164,62 214,30 98,30"/><polygon class="highlight-fill" points="48,${waterY.toFixed(1)} 164,${waterY.toFixed(1)} 164,142 48,142"/><polygon class="shape-fill" points="164,${waterY.toFixed(1)} 214,${(waterY - 32).toFixed(1)} 214,110 164,142"/><path d="M48 62V142H164L214 110V30L164 62Z M48 62L98 30H214 M164 62V142"/><text x="106" y="166">가로 ${width}cm</text><text x="202" y="145">세로 ${depth}cm</text><text x="28" y="104">높이 ${height}cm</text><text x="106" y="${Math.max(74, waterY - 10).toFixed(1)}">물 ${waterHeight}cm</text></svg>`;
+  };
+
+  const cubeNetSvg = ({ values = ["", "", "", "", "", ""], highlight = -1 }) => {
+    const cells = [[0, 1], [1, 1], [2, 1], [3, 1], [1, 0], [1, 2]];
+    const size = 38;
+    return `<svg class="geometry-diagram cube-net" viewBox="0 0 230 170" data-net-values="${values.join(",")}" aria-label="여섯 면의 위치와 수가 표시된 정육면체 전개도"><g>${cells.map(([x, y], index) => `<rect class="${index === highlight ? "highlight-fill" : "shape-fill"}" x="${32 + x * size}" y="${24 + y * size}" width="${size}" height="${size}"/><text x="${51 + x * size}" y="${48 + y * size}">${values[index]}</text>`).join("")}</g></svg>`;
+  };
+
+  const diceSvg = ({ top, front, right }) => cuboidSvg({ a: 1, b: 1, c: 1, labels: [top, front, right] }).replace("data-cuboid-dimensions", `data-dice-faces="${top},${front},${right}" data-cuboid-dimensions`);
+
+  const factorTriples = value => {
+    const triples = [];
+    for (let a = 1; a <= value; a += 1) for (let b = 1; b <= a; b += 1) for (let c = 1; c <= b; c += 1) {
+      if (a * b * c === value) triples.push([a, b, c]);
+    }
+    return triples;
+  };
+
+  const rollDice = (orientation, move) => {
+    const { top, bottom, north, south, east, west } = orientation;
+    if (move === "N") return { top: south, bottom: north, north: top, south: bottom, east, west };
+    if (move === "S") return { top: north, bottom: south, north: bottom, south: top, east, west };
+    if (move === "E") return { top: west, bottom: east, north, south, east: top, west: bottom };
+    return { top: east, bottom: west, north, south, east: bottom, west: top };
+  };
+
+  const diceOrientation = (top, front, right) => ({ top, bottom: 7 - top, north: 7 - front, south: front, east: right, west: 7 - right });
+
+  const dicePathSvg = moves => {
+    const arrows = { N: "↑", S: "↓", E: "→", W: "←" };
+    return `<div class="equation dice-path" data-dice-path="${moves.join("")}">${moves.map(move => arrows[move]).join(" ")}</div>`;
+  };
+
+  const averageProbabilityEvidence = (kind, values) => `<span hidden data-average-probability-kind="${kind}" data-values="${values.join(",")}"></span>`;
+  const fractionDivisionEvidence = (kind, values) => `<span hidden data-fraction-division-kind="${kind}" data-values="${values.join(",")}"></span>`;
+  const fractionTrapezoidSvg = ({ top, bottom, height = "□" }) => `<svg class="geometry-diagram area-diagram fraction-trapezoid" viewBox="0 0 260 176" data-trapezoid="${top},${bottom},${height}" aria-label="윗변 ${top}cm, 아랫변 ${bottom}cm, 높이 ${height}cm인 사다리꼴"><polygon class="highlight-fill" points="72,38 174,38 224,136 30,136"/><line class="dimension" x1="72" y1="25" x2="174" y2="25"/><line class="dimension" x1="30" y1="151" x2="224" y2="151"/><line class="dimension" x1="52" y1="38" x2="52" y2="136"/><text x="123" y="15">${top}cm</text><text x="127" y="165">${bottom}cm</text><text x="24" y="87">${height}cm</text></svg>`;
+  const equalTriangleSvg = ({ leftBase, leftHeight, rightBase }) => `<svg class="geometry-diagram fraction-division-shape" viewBox="0 0 240 166" data-equal-triangles="${leftBase},${leftHeight},${rightBase}" aria-label="넓이가 같은 두 직각삼각형"><path class="shape-fill" d="M28 128 L28 42 L104 128 Z"/><path class="highlight-fill" d="M132 128 L212 128 L212 54 Z"/><path class="folded" d="M28 42 V128 H104 M132 128 H212 V54"/><text x="48" y="151">${leftBase}cm</text><text x="4" y="88">${leftHeight}cm</text><text x="158" y="151">${rightBase}cm</text><text x="214" y="90">□cm</text><text x="84" y="28">두 색칠한 부분의 넓이는 같습니다.</text></svg>`;
+  const angularSolidEvidence = (kind, values) => `<span hidden data-angular-solid-kind="${kind}" data-values="${values.join(",")}"></span>`;
+  const angularPrismSvg = ({ sides, side, height }) => {
+    const radius = sides > 7 ? 30 : 36;
+    const top = regularPolygonPoints(sides, 120, 46, radius);
+    const bottom = top.map(([x, y]) => [x, y + 66]);
+    const polygon = points => points.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
+    const verticals = top.map(([x, y], index) => `<line class="${index > sides / 2 && index < sides - 1 ? "crease" : ""}" x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${bottom[index][0].toFixed(1)}" y2="${bottom[index][1].toFixed(1)}"/>`).join("");
+    return `<svg class="geometry-diagram angular-prism" viewBox="0 0 240 166" data-prism="${sides},${side},${height}" aria-label="밑면이 정${sides}각형인 각기둥"><polygon class="shape-fill" points="${polygon(top)}"/><polygon points="${polygon(bottom)}"/>${verticals}<text x="120" y="151">밑면 한 변 ${side}cm</text><text x="198" y="84">높이 ${height}cm</text></svg>`;
+  };
+  const prismNetStripSvg = ({ sides, side, height, span = 0 }) => {
+    const left = 18, top = 52, width = 204, cell = width / sides, bodyHeight = 64;
+    const rectangles = Array.from({ length: sides }, (_, index) => `<rect class="${span && index < span ? "highlight-fill" : "shape-fill"}" x="${(left + index * cell).toFixed(1)}" y="${top}" width="${cell.toFixed(1)}" height="${bodyHeight}"/><text x="${(left + (index + 0.5) * cell).toFixed(1)}" y="${top + bodyHeight / 2}">${index + 1}</text>`).join("");
+    const route = span ? `<line class="folded" x1="${left}" y1="${top + bodyHeight}" x2="${(left + span * cell).toFixed(1)}" y2="${top}"/>` : "";
+    return `<svg class="geometry-diagram prism-net-strip" viewBox="0 0 240 166" data-prism-net="${sides},${side},${height},${span}" aria-label="번호가 표시된 각기둥의 옆면 전개도"><text x="120" y="18">옆면 ${sides}개를 한 줄로 펼침</text>${rectangles}${route}<text x="120" y="140">한 칸 ${side}cm × ${height}cm</text></svg>`;
+  };
+  const angularPyramidSvg = ({ sides, side, lateral }) => {
+    const base = regularPolygonPoints(sides, 120, 112, sides > 6 ? 45 : 52).map(([x, y]) => [x, 92 + (y - 112) * 0.45]);
+    const polygon = base.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
+    const apex = [120, 24];
+    const edges = base.map(([x, y], index) => `<line class="${index > sides / 2 ? "crease" : ""}" x1="${apex[0]}" y1="${apex[1]}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`).join("");
+    return `<svg class="geometry-diagram angular-pyramid" viewBox="0 0 240 166" data-pyramid="${sides},${side},${lateral}" aria-label="밑면이 정${sides}각형인 각뿔"><polygon class="shape-fill" points="${polygon}"/>${edges}<circle class="highlight-fill" cx="120" cy="24" r="3"/><text x="120" y="147">밑면 한 변 ${side}cm</text><text x="194" y="56">옆모서리 ${lateral}cm</text></svg>`;
+  };
+  const surfaceRouteSvg = ({ faces, width, height, label = "최단 경로" }) => {
+    const left = 22, top = 38, drawWidth = 196, drawHeight = 82;
+    const lines = Array.from({ length: faces + 1 }, (_, index) => `<line x1="${(left + drawWidth * index / faces).toFixed(1)}" y1="${top}" x2="${(left + drawWidth * index / faces).toFixed(1)}" y2="${top + drawHeight}"/>`).join("");
+    return `<svg class="geometry-diagram surface-route" viewBox="0 0 240 166" data-surface-route="${faces},${width},${height}" aria-label="${faces}개 면을 펼친 최단 경로"><rect class="shape-fill" x="${left}" y="${top}" width="${drawWidth}" height="${drawHeight}"/>${lines}<line class="folded" x1="${left}" y1="${top + drawHeight}" x2="${left + drawWidth}" y2="${top}"/><text x="120" y="20">${label}</text><text x="120" y="144">가로 ${width}cm</text><text x="222" y="80">세로 ${height}cm</text></svg>`;
+  };
+  const pyramidCrossNetSvg = ({ base, outer }) => {
+    const left = 50, top = 24, size = 140, centerSize = size * base / outer, centerLeft = 120 - centerSize / 2, centerTop = 94 - centerSize / 2;
+    return `<svg class="geometry-diagram pyramid-cross-net" viewBox="0 0 240 166" data-pyramid-cross="${base},${outer}" aria-label="정사각형 안에 그린 사각뿔 전개도"><rect class="original" x="${left}" y="${top}" width="${size}" height="${size}"/><rect class="shape-fill" x="${centerLeft.toFixed(1)}" y="${centerTop.toFixed(1)}" width="${centerSize.toFixed(1)}" height="${centerSize.toFixed(1)}"/><polygon class="highlight-fill" points="${centerLeft.toFixed(1)},${centerTop.toFixed(1)} ${(centerLeft + centerSize).toFixed(1)},${centerTop.toFixed(1)} 120,${top}"/><polygon class="highlight-fill" points="${(centerLeft + centerSize).toFixed(1)},${centerTop.toFixed(1)} ${(centerLeft + centerSize).toFixed(1)},${(centerTop + centerSize).toFixed(1)} ${left + size},94"/><polygon class="highlight-fill" points="${centerLeft.toFixed(1)},${(centerTop + centerSize).toFixed(1)} ${(centerLeft + centerSize).toFixed(1)},${(centerTop + centerSize).toFixed(1)} 120,${top + size}"/><polygon class="highlight-fill" points="${centerLeft.toFixed(1)},${centerTop.toFixed(1)} ${centerLeft.toFixed(1)},${(centerTop + centerSize).toFixed(1)} ${left},94"/><text x="120" y="98">${base}cm</text><text x="120" y="14">바깥 한 변 ${outer}cm</text></svg>`;
+  };
+  const decimalDivisionEvidence = (kind, values) => `<span hidden data-decimal-division-kind="${kind}" data-values="${values.join(",")}"></span>`;
+  const decimalNumberLineSvg = ({ start, end, intervals, targetIndex }) => {
+    const left = 24, right = 216, y = 84;
+    const ticks = Array.from({ length: intervals + 1 }, (_, index) => {
+      const x = left + (right - left) * index / intervals;
+      const label = index === 0 ? start : index === intervals ? end : index === targetIndex ? "㉠" : "";
+      return `<line x1="${x.toFixed(1)}" y1="${y - 8}" x2="${x.toFixed(1)}" y2="${y + 8}"/><text x="${x.toFixed(1)}" y="${y + 29}">${label}</text>`;
+    }).join("");
+    return `<svg class="geometry-diagram decimal-number-line" viewBox="0 0 240 150" data-number-line="${start},${end},${intervals},${targetIndex}" aria-label="${start}부터 ${end}까지 ${intervals}등분한 수직선"><line class="folded" x1="${left}" y1="${y}" x2="${right}" y2="${y}"/>${ticks}<text x="120" y="26">눈금은 모두 같은 간격입니다.</text></svg>`;
+  };
+  const decimalCompositeAreaSvg = ({ base, height, square }) => `<svg class="geometry-diagram decimal-composite-area" viewBox="0 0 240 158" data-composite-area="${base},${height},${square}" aria-label="평행사변형과 정사각형을 이어 붙인 도형"><polygon class="highlight-fill" points="20,118 128,118 164,58 56,58"/><rect class="shape-fill" x="164" y="58" width="60" height="60"/><line class="crease" x1="56" y1="58" x2="56" y2="118"/><text x="82" y="142">밑변 ${base}cm</text><text x="31" y="91">높이 □</text><text x="194" y="92">한 변 ${square}cm</text></svg>`;
+  const movingOverlapSvg = ({ leftWidth, rightWidth, height, gap, overlap }) => `<svg class="geometry-diagram moving-overlap" viewBox="0 0 240 146" data-moving-overlap="${leftWidth},${rightWidth},${height},${gap},${overlap}" aria-label="처음에 떨어져 있다가 서로 다가오는 두 직사각형"><rect class="shape-fill" x="18" y="54" width="72" height="58"/><rect class="shape-fill" x="150" y="54" width="72" height="58"/><path class="folded" d="M92 82 H132 M122 72 L132 82 122 92 M148 82 H108 M118 72 L108 82 118 92"/><text x="54" y="136">가로 ${leftWidth}cm</text><text x="186" y="136">가로 ${rightWidth}cm</text><text x="120" y="40">처음 간격 ${gap}cm</text></svg>`;
+  const fivePointLineSvg = ({ middle, total, extra }) => {
+    const xs = [22, 66, 112, 164, 218];
+    return `<svg class="geometry-diagram five-point-line" viewBox="0 0 240 150" data-five-point-line="${middle},${total},${extra}" aria-label="일직선 위에 차례로 놓인 다섯 점"><line class="folded" x1="${xs[0]}" y1="76" x2="${xs[4]}" y2="76"/>${xs.map((x, index) => `<circle class="highlight-fill" cx="${x}" cy="76" r="4"/><text x="${x}" y="102">${["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ"][index]}</text>`).join("")}<text x="115" y="34">ㄴㄹ=${middle}cm</text><text x="120" y="130">ㄱㅁ=${total}cm, ㄹㅁ=ㄱㄴ+${extra}cm</text></svg>`;
+  };
+  const rectangleBorderSvg = ({ width, height, border }) => `<svg class="geometry-diagram rectangle-border" viewBox="0 0 240 158" data-rectangle-border="${width},${height},${border}" aria-label="폭이 일정한 길로 둘러싸인 직사각형 공원"><rect class="highlight-fill" x="30" y="24" width="180" height="110"/><rect class="shape-fill" x="52" y="46" width="136" height="66"/><text x="120" y="82">공원</text><text x="120" y="150">길의 폭 ${border}m</text></svg>`;
+  const equilateralStripSvg = ({ count, total }) => {
+    const width = 184 / count;
+    const triangles = Array.from({ length: count }, (_, index) => {
+      const x = 28 + index * width;
+      return `<polygon class="${index % 2 ? "highlight-fill" : "shape-fill"}" points="${x.toFixed(1)},112 ${(x + width / 2).toFixed(1)},40 ${(x + width).toFixed(1)},112"/>`;
+    }).join("");
+    return `<svg class="geometry-diagram equilateral-strip" viewBox="0 0 240 158" data-equilateral-strip="${count},${total}" aria-label="같은 크기의 정삼각형 ${count}개가 이어진 도형">${triangles}<text x="120" y="28">모두 같은 크기의 정삼각형</text><text x="120" y="142">아랫변 전체 ${total}cm</text></svg>`;
+  };
+  const ratioEvidence = (kind, values) => `<span hidden data-ratio-kind="${kind}" data-values="${values.join(",")}"></span>`;
+  const graphEvidence = (kind, values) => `<span hidden data-advanced-graph-kind="${kind}" data-values="${values.join(",")}"></span>`;
+  const circleSolidEvidence = (kind, values) => `<span hidden data-circle-solid-kind="${kind}" data-values="${values.join(",")}"></span>`;
+  const circleCompositeSvg = ({ kind, a, b = 0, count = 0 }) => {
+    if (kind === "ring") {
+      const outer = 62, inner = outer * b / a;
+      return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-circle-shape="ring,${a},${b}" aria-label="반지름이 다른 두 동심원"><circle class="shape-fill" cx="140" cy="84" r="${outer}"/><circle cx="140" cy="84" r="${inner}" style="fill:white"/><line x1="140" y1="84" x2="${140 + outer}" y2="84"/><text x="${170 + outer / 2}" y="75">${a}cm</text><line x1="140" y1="84" x2="${140 + inner}" y2="84"/><text x="${148 + inner / 2}" y="105">${b}cm</text></svg>`;
+    }
+    if (kind === "square-circle") {
+      return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-circle-shape="square-circle,${a}" aria-label="정사각형에 꼭 맞는 원"><rect class="shape-fill" x="65" y="20" width="150" height="150"/><circle cx="140" cy="95" r="75" style="fill:white"/><text x="140" y="176">한 변 ${a}cm</text></svg>`;
+    }
+    if (kind === "rectangle-circles") {
+      const circles = Array.from({ length: count }, (_, index) => `<circle cx="${55 + index * 55}" cy="82" r="27" style="fill:white"/>`).join("");
+      return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-circle-shape="rectangle-circles,${a},${count}" aria-label="직사각형 안에 나란히 놓인 같은 원"><rect class="shape-fill" x="28" y="55" width="${55 * count}" height="54"/>${circles}<text x="140" y="142">각 원의 반지름 ${a}cm</text></svg>`;
+    }
+    if (kind === "segment") {
+      return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-circle-shape="segment,${a},${b}" aria-label="부채꼴에서 삼각형을 뺀 활꼴"><path class="shape-fill" d="M140 92 L140 24 A68 68 0 0 1 208 92 Z"/><polygon points="140,92 140,24 208,92" style="fill:white"/><text x="176" y="112">${a}cm</text><text x="158" y="56">${b}°</text></svg>`;
+    }
+    return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-circle-shape="sector-difference,${a},${b}" aria-label="큰 부채꼴에서 작은 부채꼴을 뺀 도형"><path class="shape-fill" d="M140 90 L140 20 A70 70 0 0 1 210 90 Z"/><path d="M140 90 L140 50 A40 40 0 0 1 180 90 Z" style="fill:white"/><text x="184" y="116">큰 반지름 ${a}cm</text><text x="148" y="76">작은 반지름 ${b}cm</text></svg>`;
+  };
+  const circlePointsSvg = ({ points, gaps = 1 }) => {
+    const cx = 140, cy = 88, radius = 62;
+    const positions = Array.from({ length: points }, (_, index) => {
+      const angle = -Math.PI / 2 + index * Math.PI * 2 / points;
+      return [cx + radius * Math.cos(angle), cy + radius * Math.sin(angle)];
+    });
+    const dots = positions.map(([x, y], index) => `<circle class="${index === 0 || index === gaps ? "highlight-fill" : ""}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.4"/>`).join("");
+    const [startX, startY] = positions[0], [endX, endY] = positions[gaps];
+    return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-circle-points="${points},${gaps}" aria-label="원주를 같은 간격의 점 ${points}개로 나눈 그림"><circle class="shape-fill" cx="${cx}" cy="${cy}" r="${radius}"/><line class="folded" x1="${cx}" y1="${cy}" x2="${startX.toFixed(1)}" y2="${startY.toFixed(1)}"/><line class="folded" x1="${cx}" y1="${cy}" x2="${endX.toFixed(1)}" y2="${endY.toFixed(1)}"/>${dots}<circle class="highlight-fill" cx="${cx}" cy="${cy}" r="3"/><text x="140" y="169">원주를 ${points}등분</text></svg>`;
+  };
+  const inscribedAngleSvg = ({ angle }) => `<svg class="geometry-diagram" viewBox="0 0 280 180" data-inscribed-angle="${angle}" aria-label="같은 호를 보는 원주각과 중심각"><circle class="shape-fill" cx="140" cy="88" r="62"/><path class="folded" d="M88 122 L140 26 L192 122"/><line class="crease" x1="140" y1="88" x2="88" y2="122"/><line class="crease" x1="140" y1="88" x2="192" y2="122"/><text x="140" y="48">${angle}°</text><text x="140" y="169">같은 호를 보는 두 각</text></svg>`;
+  const locusDiagramSvg = ({ kind, a, b, r }) => {
+    if (kind === "rectangle") return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-locus="rectangle,${a},${b},${r}" aria-label="직사각형 바깥을 따라 구르는 원"><rect x="70" y="45" width="140" height="90"/><rect class="crease" x="50" y="25" width="180" height="130"/><circle class="highlight-fill" cx="50" cy="25" r="12"/><text x="140" y="156">${a}cm</text><text x="224" y="88">${b}cm</text><text x="42" y="18">r=${r}</text></svg>`;
+    if (kind === "pivot") return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-locus="pivot,${a},${b}" aria-label="한 점을 중심으로 회전하는 선분"><line x1="70" y1="132" x2="70" y2="42"/><path class="crease" d="M70 42 A90 90 0 0 1 160 132"/><line class="folded" x1="70" y1="132" x2="160" y2="132"/><text x="54" y="88">${a}cm</text><text x="92" y="122">${b}°</text></svg>`;
+    return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-locus="tether,${a},${b},${r}" aria-label="직사각형 우리와 줄에 묶인 동물의 이동 범위"><rect class="shape-fill" x="105" y="58" width="90" height="62"/><path class="crease" d="M105 58 A${r * 5} ${r * 5} 0 0 0 ${105 - r * 5} ${58 + r * 5}"/><text x="150" y="142">${a}m × ${b}m</text><text x="48" y="42">줄 ${r}m</text></svg>`;
+  };
+  const solidDiagramSvg = ({ kind, a, b, c = 0 }) => {
+    if (kind === "cylinder-net") return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-solid="cylinder-net,${a},${b}" aria-label="원기둥 전개도"><rect class="shape-fill" x="45" y="45" width="190" height="90"/><circle cx="80" cy="45" r="28"/><circle cx="200" cy="135" r="28"/><text x="140" y="160">높이 ${b}cm, 반지름 ${a}cm</text></svg>`;
+    if (kind === "cylinder-wrap") return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-solid="cylinder-wrap,${a},${b},${c}" aria-label="원기둥 옆면을 감은 선"><ellipse class="shape-fill" cx="140" cy="34" rx="48" ry="15"/><rect class="shape-fill" x="92" y="34" width="96" height="112"/><ellipse cx="140" cy="146" rx="48" ry="15"/><path class="folded" d="M92 132 C118 104 164 78 188 50"/><text x="201" y="91">${b}cm</text><text x="140" y="171">반지름 ${a}cm</text></svg>`;
+    if (kind === "cone-net") return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-solid="cone-net,${a},${b}" aria-label="원뿔의 옆면 전개도"><path class="shape-fill" d="M70 142 A100 100 0 0 1 210 142 L140 72 Z"/><circle cx="220" cy="82" r="${Math.max(16, a * 3)}"/><text x="140" y="58">모선 ${b}cm</text><text x="218" y="118">r=${a}cm</text></svg>`;
+    if (kind === "profile") {
+      const left = 190 - a * 8;
+      const profile = c
+        ? `<polygon class="shape-fill" points="190,40 ${left},140 190,140"/>`
+        : `<rect class="shape-fill" x="${left}" y="40" width="${a * 8}" height="100"/>`;
+      return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-solid="profile,${a},${b},${c}" aria-label="회전축이 표시된 ${c ? "직각삼각형" : "직사각형"}"><line class="folded" x1="190" y1="18" x2="190" y2="160"/>${profile}<text x="205" y="90">회전축</text><text x="${Math.max(58, left + a * 4)}" y="154">${a}cm</text><text x="198" y="46">${b}cm</text></svg>`;
+    }
+    return `<svg class="geometry-diagram" viewBox="0 0 280 180" data-solid="stepped-profile,${a},${b},${c}" aria-label="계단 모양 평면도형과 회전축"><line class="folded" x1="200" y1="18" x2="200" y2="162"/><path class="shape-fill" d="M200 35 H${200-a*7} V90 H${200-c*7} V145 H200 Z"/><text x="207" y="90">회전축</text><text x="86" y="166">높이 ${b}cm</text></svg>`;
+  };
+  const ratioText = (left, right) => {
+    const divisor = gcd(Math.abs(left), Math.abs(right));
+    return `${left / divisor}:${right / divisor}`;
+  };
+  const ratioTrapezoidSvg = ({ top, bottom, diagonal = false, middle = false }) => {
+    const diagonalLine = diagonal ? '<line class="folded" x1="78" y1="42" x2="196" y2="122"/>' : "";
+    const middleLine = middle ? '<line class="crease" x1="52" y1="82" x2="188" y2="82"/><text x="120" y="72">□</text>' : "";
+    const lengthLabel = (name, value) => value === "?" || value == null ? name : `${name} ${value}cm`;
+    return `<svg class="geometry-diagram ratio-trapezoid" viewBox="0 0 240 158" data-ratio-trapezoid="${top},${bottom}" aria-label="윗변과 아랫변이 평행한 사다리꼴"><polygon class="shape-fill" points="78,42 162,42 210,122 30,122"/>${diagonalLine}${middleLine}<text x="120" y="25">${lengthLabel("윗변", top)}</text><text x="120" y="143">${lengthLabel("아랫변", bottom)}</text></svg>`;
+  };
+  const pictographTable = ({ title, labels, values, largeUnit, smallUnit, unitLabel = "명", hiddenIndices = [] }) => {
+    const rows = labels.map((label, index) => {
+      const large = Math.floor(values[index] / largeUnit);
+      const small = (values[index] % largeUnit) / smallUnit;
+      if (!Number.isInteger(small)) throw new Error("그림그래프 값이 범례 단위에 맞지 않습니다.");
+      const largeIcons = large > 8 ? `■×${large}` : "■".repeat(large);
+      const smallIcons = small > 8 ? `●×${small}` : "●".repeat(small);
+      const icons = hiddenIndices.includes(index) ? '<span class="missing-graph-value">□</span>' : `<span class="large-icons">${largeIcons}</span><span class="small-icons">${smallIcons}</span>`;
+      return `<tr><th>${label}</th><td class="pictograph-icons">${icons}</td></tr>`;
+    }).join("");
+    return `<div class="graph-panel" data-pictograph-values="${values.join(",")}"><div class="graph-title">${title}</div><table class="problem-table pictograph-table"><tbody>${rows}</tbody></table><div class="graph-legend">■ ${largeUnit.toLocaleString()}${unitLabel}　● ${smallUnit.toLocaleString()}${unitLabel}</div></div>`;
+  };
+  const graphColors = ["#dcecf5", "#ffe3a3", "#cce8dc", "#e5dcf5", "#f5d4dc", "#d8e0e7"];
+  const stripGraphSvg = ({ title, segments }) => {
+    const left = 24, width = 252, y = 54, height = 42;
+    let cumulative = 0;
+    const blocks = segments.map((segment, index) => {
+      const x = left + width * cumulative / 100;
+      const segmentWidth = width * segment.percent / 100;
+      cumulative += segment.percent;
+      return `<rect x="${x.toFixed(1)}" y="${y}" width="${segmentWidth.toFixed(1)}" height="${height}" style="fill:${graphColors[index % graphColors.length]}"/><text x="${(x + segmentWidth / 2).toFixed(1)}" y="${y + height / 2}">${segment.label}</text>`;
+    }).join("");
+    const ticks = Array.from({ length: 11 }, (_, index) => {
+      const x = left + width * index / 10;
+      return `<line class="grid-line" x1="${x.toFixed(1)}" y1="38" x2="${x.toFixed(1)}" y2="102"/><text class="tick-label" x="${x.toFixed(1)}" y="24">${index * 10}</text>`;
+    }).join("");
+    const legends = segments.map((segment, index) => `<text class="legend-label" x="${index % 2 ? 220 : 80}" y="${128 + Math.floor(index / 2) * 20}">${segment.label}${segment.showPercent === false ? "" : ` ${segment.percent}%`}</text>`).join("");
+    return `<svg class="geometry-diagram graph-chart strip-chart" viewBox="0 0 300 190" data-strip-values="${segments.map(segment => segment.percent).join(",")}" aria-label="${title}"><text class="chart-title" x="150" y="8">${title}</text>${ticks}${blocks}<rect x="${left}" y="${y}" width="${width}" height="${height}"/>${legends}</svg>`;
+  };
+  const pieGraphSvg = ({ title, segments }) => {
+    const cx = 150, cy = 70, radius = 57;
+    let cumulative = 0;
+    const sectors = segments.map((segment, index) => {
+      const start = cumulative * Math.PI * 2 / 100 - Math.PI / 2;
+      cumulative += segment.percent;
+      const end = cumulative * Math.PI * 2 / 100 - Math.PI / 2;
+      const x1 = cx + radius * Math.cos(start), y1 = cy + radius * Math.sin(start);
+      const x2 = cx + radius * Math.cos(end), y2 = cy + radius * Math.sin(end);
+      const largeArc = segment.percent > 50 ? 1 : 0;
+      const path = segment.percent === 100
+        ? `<circle cx="${cx}" cy="${cy}" r="${radius}" style="fill:${graphColors[index % graphColors.length]}"/>`
+        : `<path d="M ${cx} ${cy} L ${x1.toFixed(2)} ${y1.toFixed(2)} A ${radius} ${radius} 0 ${largeArc} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z" style="fill:${graphColors[index % graphColors.length]}"/>`;
+      const middle = (start + end) / 2, labelRadius = 34;
+      const label = segment.percent >= 12 ? `<text x="${(cx + labelRadius * Math.cos(middle)).toFixed(1)}" y="${(cy + labelRadius * Math.sin(middle)).toFixed(1)}">${segment.percent}%</text>` : "";
+      return path + label;
+    }).join("");
+    const legends = segments.map((segment, index) => `<rect x="${index % 2 ? 160 : 20}" y="${137 + Math.floor(index / 2) * 20}" width="10" height="10" style="fill:${graphColors[index % graphColors.length]}"/><text class="legend-label" x="${index % 2 ? 225 : 85}" y="${142 + Math.floor(index / 2) * 20}">${segment.label}${segment.showPercent === false ? "" : ` ${segment.percent}%`}</text>`).join("");
+    return `<svg class="geometry-diagram graph-chart pie-chart" viewBox="0 0 300 210" data-pie-values="${segments.map(segment => segment.percent).join(",")}" aria-label="${title}"><text class="chart-title" x="150" y="8">${title}</text>${sectors}<circle cx="${cx}" cy="${cy}" r="${radius}"/>${legends}</svg>`;
+  };
+  const graphPair = (left, right) => `<div class="graph-pair">${left}${right}</div>`;
+  const durationText = seconds => `${Math.floor(seconds / 60)}분${seconds % 60 ? ` ${seconds % 60}초` : ""}`;
+  const decimalDigitAt = (numerator, denominator, position) => {
+    let remainder = numerator % denominator;
+    let digit = 0;
+    for (let index = 0; index < position; index += 1) {
+      remainder *= 10;
+      digit = Math.floor(remainder / denominator);
+      remainder %= denominator;
+    }
+    return digit;
+  };
+  const factorial = value => Array.from({ length: value }, (_, index) => index + 1).reduce((total, item) => total * item, 1);
+  const combination = (n, r) => {
+    r = Math.min(r, n - r);
+    let value = 1;
+    for (let index = 1; index <= r; index += 1) value = value * (n - r + index) / index;
+    return value;
+  };
+  const valueTable = (headers, row) => `<table class="problem-table"><thead><tr>${headers.map(value => `<th>${value}</th>`).join("")}</tr></thead><tbody><tr>${row.map(value => `<td>${value}</td>`).join("")}</tr></tbody></table>`;
+
+  const decimalDigitRelationCases = (() => {
+    const groups = new Map();
+    for (let a = 1; a <= 9; a += 1) for (let b = 0; b <= 9; b += 1) for (let c = 1; c <= 9; c += 1) for (let d = 0; d <= 9; d += 1) {
+      if (new Set([a, b, c, d]).size !== 4) continue;
+      const first = 10 * a + b;
+      const second = 10 * c + d;
+      if (first >= second) continue;
+      const product = first * second;
+      const alternate = (10 * a + c) * (10 * b + d);
+      const difference = Math.abs(alternate - product);
+      const key = `${product},${difference}`;
+      const values = groups.get(key) || [];
+      values.push({ a, b, c, d, sum: a + b + c + d });
+      groups.set(key, values);
+    }
+    return [...groups.entries()].map(([key, values]) => ({
+      key,
+      values,
+      product: Number(key.split(",")[0]),
+      difference: Number(key.split(",")[1]),
+      sums: [...new Set(values.map(value => value.sum))]
+    })).filter(group => group.sums.length === 1 && group.difference > 0);
+  })();
+
   const polyominoCases = [
     {
       a: [[1, 0], [0, 1], [1, 1], [2, 1], [1, 2]],
@@ -2867,11 +3344,2281 @@
       const evidence = `<span hidden data-congruence-kind="center-lines" data-values="${width},${height}"></span>`;
       return result(`가로 ${width}칸, 세로 ${height}칸인 직사각형 모눈의 중심 O를 지나고, 양 끝이 모눈의 테두리 꼭짓점에 놓이는 서로 다른 직선은 모두 몇 개인지 구하세요.${latticeCenterLinesSvg(width, height)}${evidence}`, directions.size, `중심에서 테두리 꼭짓점으로 향하는 방향을 최대공약수로 나누어 같은 기울기를 하나로 묶습니다. 반대 방향도 같은 직선이므로 중복을 제외하면 ${directions.size}개입니다.`);
     },
+    decimalNaturalAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 11;
+      if (kind === 0) {
+        const valueScale = int(rng, 125, 875 + level * 300);
+        const count = int(rng, 8 + level * 4, 24 + level * 12);
+        const answerScale = valueScale * count;
+        const evidence = decimalEvidence("repeated-sum", [valueScale, count, answerScale]);
+        return result(`${fixedDecimal(valueScale, 2)}를 ${count}번 더한 값을 구하세요.${evidence}`, fixedDecimal(answerScale, 2), `같은 수를 ${count}번 더하는 것은 ${fixedDecimal(valueScale, 2)}×${count}입니다. 따라서 ${fixedDecimal(answerScale, 2)}입니다.`);
+      }
+      if (kind === 1) {
+        const valueScale = int(rng, 12 + level * 4, 48 + level * 12);
+        const natural = int(rng, 6 + level * 2, 18 + level * 5);
+        const pair = pick(rng, [[25, 4], [50, 2], [125, 8]]);
+        const pairPlaces = pair[0] === 125 ? 3 : 2;
+        const answerScale = valueScale * natural;
+        const evidence = decimalEvidence("factor-pair", [valueScale, natural, pair[0], 10 ** pairPlaces, pair[1], answerScale]);
+        return result(`곱하는 순서를 바꾸어 계산하세요.<div class="equation">${fixedDecimal(valueScale, 1)} × ${natural} × ${fixedDecimal(pair[0], pairPlaces)} × ${pair[1]}</div>${evidence}`, fixedDecimal(answerScale, 1), `${fixedDecimal(pair[0], pairPlaces)}×${pair[1]}=1이므로 남은 ${fixedDecimal(valueScale, 1)}×${natural}=${fixedDecimal(answerScale, 1)}입니다.`);
+      }
+      if (kind === 2) {
+        const unitScale = int(rng, 12 + level * 3, 28 + level * 8);
+        const m = int(rng, 24 + level * 3, 36 + level * 6);
+        const n = int(rng, 5, 9 + level);
+        const p = int(rng, 18, 28 + level * 3);
+        const q = int(rng, 4, 8 + level);
+        const coefficient = 3 * m - 4 * n + p - 2 * q;
+        const answerScale = unitScale * coefficient;
+        const evidence = decimalEvidence("common-factor", [unitScale, m, n, p, q, answerScale]);
+        return result(`공통인 수를 묶어 계산하세요.<div class="equation">${fixedDecimal(unitScale * 3, 2)}×${m} - ${fixedDecimal(unitScale * 4, 2)}×${n} + ${fixedDecimal(unitScale, 2)}×${p} - ${fixedDecimal(unitScale * 2, 2)}×${q}</div>${evidence}`, fixedDecimal(answerScale, 2), `${fixedDecimal(unitScale, 2)}을 공통으로 묶으면 ${fixedDecimal(unitScale, 2)}×(3×${m}-4×${n}+${p}-2×${q})=${fixedDecimal(answerScale, 2)}입니다.`);
+      }
+      if (kind === 3) {
+        let valueScale = int(rng, 107, 899 + level * 250);
+        if (valueScale % 10 === 0) valueScale += 3;
+        const natural = int(rng, 12 + level * 5, 39 + level * 15);
+        const written = valueScale * natural;
+        const evidence = decimalEvidence("missing-point", [valueScale, natural, written]);
+        return result(`${fixedDecimal(valueScale, 2)}에 어떤 자연수를 곱했습니다. 곱을 소수 둘째 자리까지 쓴 뒤 소수점만 빠뜨려 ${written}이라고 적었을 때, 곱한 자연수를 구하세요.${evidence}`, natural, `소수점을 두 자리 왼쪽에 찍으면 실제 곱은 ${fixedDecimal(written, 2)}입니다. ${fixedDecimal(written, 2)}÷${fixedDecimal(valueScale, 2)}=${natural}입니다.`);
+      }
+      if (kind === 4) {
+        const denominators = level === 0 ? [2, 5, 11] : level === 1 ? [3, 7, 13] : [4, 9, 17];
+        const groups = new Map();
+        for (let a = 1; a < denominators[0]; a += 1) for (let b = 1; b < denominators[1]; b += 1) for (let c = 1; c < denominators[2]; c += 1) {
+          const rounded = Math.round((a / denominators[0] + b / denominators[1] + c / denominators[2]) * 100 + 1e-9);
+          const values = groups.get(rounded) || [];
+          values.push([a, b, c]);
+          groups.set(rounded, values);
+        }
+        const unique = [...groups.entries()].filter(([, values]) => values.length === 1);
+        const [target, [[a, b, c]]] = pick(rng, unique);
+        const evidence = decimalEvidence("rounded-fraction-sum", [...denominators, target, a, b, c]);
+        return result(`자연수 ㄱ, ㄴ, ㄷ은 각각 대응하는 분모보다 작습니다. 다음 값의 소수 셋째 자리에서 반올림한 값이 ${fixedDecimal(target, 2)}일 때 ㄱ, ㄴ, ㄷ을 차례로 쓰세요.<div class="equation">ㄱ/${denominators[0]} + ㄴ/${denominators[1]} + ㄷ/${denominators[2]}</div>${evidence}`, `${a}, ${b}, ${c}`, `가능한 진분수를 모두 대입해 합을 소수 둘째 자리까지 반올림하면 조건을 만족하는 순서쌍은 (${a}, ${b}, ${c}) 하나뿐입니다.`);
+      }
+      if (kind === 5) {
+        const modulus = [7, 9, 11][level];
+        for (let attempt = 0; attempt < 200; attempt += 1) {
+          const target = int(rng, 123, 987);
+          const digits = String(target).split("").map(Number);
+          if (digits[0] === 0 || new Set(digits).size !== 3) continue;
+          const digitSum = digits.reduce((sum, digit) => sum + digit, 0);
+          const remainder = target % modulus;
+          const candidates = [];
+          for (let value = 100; value <= 999; value += 1) {
+            const valueDigits = String(value).split("").map(Number);
+            if (new Set(valueDigits).size !== 3 || valueDigits[0] !== digits[0]) continue;
+            if (valueDigits.reduce((sum, digit) => sum + digit, 0) === digitSum && value % modulus === remainder) candidates.push(value);
+          }
+          if (!candidates.length || candidates.length > 4) continue;
+          const answerScale = candidates.reduce((sum, value) => sum + value, 0);
+          const evidence = decimalEvidence("conditioned-decimal", [digits[0], digitSum, modulus, remainder, answerScale, candidates.length]);
+          return result(`0보다 크고 1보다 작은 소수 셋째 자리 수가 다음 조건을 모두 만족합니다. 가능한 수를 모두 더한 값을 구하세요.<div class="conditions"><p>각 자리 숫자는 서로 다릅니다.</p><p>소수 첫째 자리 숫자는 ${digits[0]}이고 세 자리 숫자의 합은 ${digitSum}입니다.</p><p>소수점을 없앤 세 자리 수를 ${modulus}로 나눈 나머지는 ${remainder}입니다.</p></div>${evidence}`, fixedDecimal(answerScale, 3), `조건을 차례로 확인하면 ${candidates.map(value => fixedDecimal(value, 3)).join(", ")}입니다. 모두 더하면 ${fixedDecimal(answerScale, 3)}입니다.`);
+        }
+        throw new Error("조건에 맞는 소수 후보를 만들지 못했습니다.");
+      }
+      if (kind === 6) {
+        const startScale = int(rng, 1200, 2600 + level * 900);
+        const stepScale = int(rng, 137, 380 + level * 120);
+        const rank = int(rng, 40 + level * 40, 120 + level * 90);
+        const answerScale = startScale + stepScale * (rank - 1);
+        const evidence = decimalEvidence("decimal-sequence", [startScale, stepScale, rank, answerScale]);
+        return result(`다음 규칙으로 수를 나열할 때 ${rank}번째 수를 구하세요.<div class="sequence">${fixedDecimal(startScale, 2)}, ${fixedDecimal(startScale + stepScale, 2)}, ${fixedDecimal(startScale + stepScale * 2, 2)}, ${fixedDecimal(startScale + stepScale * 3, 2)}, …</div>${evidence}`, fixedDecimal(answerScale, 2), `첫째 수에 공차 ${fixedDecimal(stepScale, 2)}을 ${rank - 1}번 더합니다. ${fixedDecimal(startScale, 2)}+${fixedDecimal(stepScale, 2)}×${rank - 1}=${fixedDecimal(answerScale, 2)}입니다.`);
+      }
+      if (kind === 7) {
+        const firstWidth = int(rng, 14 + level * 3, 24 + level * 5);
+        const firstHeightScale = int(rng, 85, 165 + level * 35);
+        const secondWidth = int(rng, 8 + level * 2, 13 + level * 3);
+        const secondHeightScale = int(rng, firstHeightScale + 20, firstHeightScale + 85 + level * 20);
+        const differenceScale = secondWidth * secondHeightScale - firstWidth * firstHeightScale;
+        if (differenceScale <= 0) return generators.decimalNaturalAdvanced({ rng, level, variant });
+        const evidence = decimalEvidence("rectangle-area-difference", [firstWidth, firstHeightScale, secondWidth, differenceScale, secondHeightScale]);
+        return result(`직사각형 가의 가로는 ${firstWidth}cm, 세로는 ${fixedDecimal(firstHeightScale, 2)}cm입니다. 직사각형 나는 가로가 ${secondWidth}cm이고 넓이가 가보다 ${fixedDecimal(differenceScale, 2)}cm² 더 큽니다. 나의 세로를 구하세요.${evidence}`, fixedDecimal(secondHeightScale, 2), `가의 넓이는 ${firstWidth}×${fixedDecimal(firstHeightScale, 2)}=${fixedDecimal(firstWidth * firstHeightScale, 2)}cm²입니다. 나의 넓이는 ${fixedDecimal(secondWidth * secondHeightScale, 2)}cm²이므로 세로는 이를 ${secondWidth}로 나눈 ${fixedDecimal(secondHeightScale, 2)}cm입니다.`);
+      }
+      if (kind === 8) {
+        const locomotive = int(rng, 12, 20 + level * 4);
+        const carCount = int(rng, 3 + level, 6 + level * 2);
+        const carLength = int(rng, 10, 16 + level * 2);
+        const speedScale = pick(rng, [12, 18, 24, 30].slice(0, 2 + level));
+        const seconds = pick(rng, [24, 30, 36, 42, 48].slice(level, level + 3));
+        const travelMeters = speedScale * 5 * seconds / 3;
+        const vehicleLength = locomotive + carCount * carLength;
+        const tunnel = travelMeters - vehicleLength;
+        if (tunnel <= 20) return generators.decimalNaturalAdvanced({ rng, level, variant });
+        const evidence = decimalEvidence("tunnel-length", [locomotive, carCount, carLength, speedScale, seconds, tunnel]);
+        return result(`길이 ${locomotive}m인 기관차 1대와 길이 ${carLength}m인 객차 ${carCount}칸이 연결되어 있습니다. 이 기차가 1분에 ${fixedDecimal(speedScale, 1)}km를 가는 속력으로 달려 터널에 들어가기 시작한 뒤 완전히 빠져나오는 데 ${seconds}초가 걸렸습니다. 터널의 길이를 구하세요.${evidence}`, tunnel, `${seconds}초 동안 간 거리는 ${fixedDecimal(speedScale, 1)}×1000×${seconds}/60=${travelMeters}m입니다. 기차 길이 ${vehicleLength}m를 빼면 터널은 ${tunnel}m입니다.`);
+      }
+      if (kind === 9) {
+        const valueScale = pick(rng, [125, 150, 175, 225, 240, 250, 275, 320, 375].slice(level, level + 6));
+        const step = 100 / gcd(valueScale, 100);
+        const candidates = Array.from({ length: 90 }, (_, index) => index + 10).filter(value => value % step === 0);
+        const minimum = candidates[0];
+        const maximum = candidates[candidates.length - 1];
+        const answer = valueScale * (maximum - minimum) / 100;
+        const evidence = decimalEvidence("natural-product-range", [valueScale, step, minimum, maximum, answer]);
+        return result(`${fixedDecimal(valueScale, 2)}에 두 자리 자연수를 곱한 값이 자연수가 되게 합니다. 곱한 수가 가장 클 때의 곱과 가장 작을 때의 곱의 차를 구하세요.${evidence}`, answer, `${fixedDecimal(valueScale, 2)}=${valueScale / gcd(valueScale, 100)}/${100 / gcd(valueScale, 100)}이므로 곱한 수는 ${step}의 배수여야 합니다. 두 자리 수 중 가장 작은 값은 ${minimum}, 가장 큰 값은 ${maximum}이므로 곱의 차는 ${fixedDecimal(valueScale, 2)}×(${maximum}-${minimum})=${answer}입니다.`);
+      }
+      const divisor = int(rng, 37 + level * 6, 63 + level * 10);
+      const targetScale = int(rng, 18 + level * 4, 35 + level * 8);
+      const candidates = Array.from({ length: divisor * 8 }, (_, index) => index + 1).filter(value => Math.round(value / divisor * 10 + 1e-9) === targetScale);
+      if (!candidates.length) return generators.decimalNaturalAdvanced({ rng, level, variant });
+      const answer = candidates.reduce((sum, value) => sum + value, 0);
+      const evidence = decimalEvidence("rounded-quotient-naturals", [divisor, targetScale, candidates[0], candidates[candidates.length - 1], answer]);
+      return result(`자연수들을 ${divisor}로 나눈 몫을 소수 둘째 자리에서 반올림했더니 ${fixedDecimal(targetScale, 1)}가 되었습니다. 가능한 자연수를 모두 더한 값을 구하세요.${evidence}`, answer, `반올림 전 몫은 ${fixedDecimal(targetScale * 10 - 5, 2)} 이상 ${fixedDecimal(targetScale * 10 + 5, 2)} 미만입니다. 자연수를 확인하면 ${candidates.join(", ")}이고 합은 ${answer}입니다.`);
+    },
+    decimalDecimalAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 11;
+      if (kind === 0) {
+        const firstScale = int(rng, 125 + level * 20, 875 + level * 80);
+        const secondScale = int(rng, 112 + level * 15, 685 + level * 70);
+        const productScale = firstScale * secondScale;
+        const productText = fixedDecimal(productScale, 4);
+        const [whole, fractionPart] = productText.split(".");
+        const positions = [0, 3];
+        const masked = fractionPart.split("").map((digit, index) => positions.includes(index) ? "□" : digit).join("");
+        const answer = positions.map(index => fractionPart[index]).join(", ");
+        const evidence = decimalEvidence("missing-product-digits", [firstScale, secondScale, productScale, ...positions]);
+        return result(`다음 곱에서 □에 들어갈 숫자를 왼쪽부터 차례로 쓰세요.<div class="equation">${fixedDecimal(firstScale, 2)} × ${fixedDecimal(secondScale, 2)} = ${whole}.${masked}</div>${evidence}`, answer, `자연수 ${firstScale}×${secondScale}=${productScale}을 계산한 뒤 소수점을 네 자리 왼쪽에 찍으면 ${productText}입니다. 따라서 ${answer}입니다.`);
+      }
+      if (kind === 1) {
+        const divisorScale = int(rng, 24 + level * 4, 68 + level * 10);
+        const centerScale = int(rng, 900 + level * 350, 2800 + level * 900);
+        const targetScale = Math.round(centerScale / divisorScale);
+        const candidates = Array.from({ length: 8000 }, (_, index) => index + 1).filter(value => Math.round(value / divisorScale + 1e-9) === targetScale);
+        const minimum = candidates[0];
+        const maximum = candidates[candidates.length - 1];
+        const evidence = decimalEvidence("rounded-decimal-range", [divisorScale, targetScale, minimum, maximum]);
+        return result(`소수 둘째 자리 수를 ${fixedDecimal(divisorScale, 1)}로 나눈 몫을 소수 둘째 자리에서 반올림했더니 ${fixedDecimal(targetScale, 1)}가 되었습니다. 가능한 소수 중 가장 작은 수와 가장 큰 수를 차례로 쓰세요.${evidence}`, `${fixedDecimal(minimum, 2)}, ${fixedDecimal(maximum, 2)}`, `조건을 만족하는 백분의 일 단위 수를 확인하면 ${fixedDecimal(minimum, 2)}부터 ${fixedDecimal(maximum, 2)}까지입니다.`);
+      }
+      if (kind === 2) {
+        const sideScale = int(rng, 24 + level * 6, 72 + level * 12);
+        const widthAddScale = int(rng, 5, 16 + level * 3);
+        const heightAddScale = int(rng, 5, 16 + level * 3);
+        const increaseScale = (sideScale + widthAddScale) * (sideScale + heightAddScale) - sideScale * sideScale;
+        const evidence = decimalEvidence("square-area-increase", [sideScale, widthAddScale, heightAddScale, increaseScale]);
+        return result(`정사각형의 가로를 ${fixedDecimal(widthAddScale, 1)}m, 세로를 ${fixedDecimal(heightAddScale, 1)}m 늘여 직사각형을 만들었더니 넓이가 ${fixedDecimal(increaseScale, 2)}m² 늘어났습니다. 처음 정사각형의 한 변을 구하세요.${evidence}`, fixedDecimal(sideScale, 1), `처음 한 변을 □m라 하면 늘어난 넓이는 (${fixedDecimal(widthAddScale, 1)}+${fixedDecimal(heightAddScale, 1)})×□+${fixedDecimal(widthAddScale * heightAddScale, 2)}입니다. 이를 풀면 □=${fixedDecimal(sideScale, 1)}m입니다.`);
+      }
+      if (kind === 3) {
+        const selected = pick(rng, decimalDigitRelationCases);
+        const answer = selected.sums[0];
+        const evidence = decimalEvidence("digit-product-relation", [selected.product, selected.difference, answer, selected.values.length]);
+        return result(`ㄱ, ㄴ, ㄷ, ㄹ은 서로 다른 한 자리 숫자이고 ㄱ.ㄴ < ㄷ.ㄹ입니다. 다음 두 조건을 모두 만족할 때 ㄱ+ㄴ+ㄷ+ㄹ을 구하세요.<div class="conditions"><p>ㄱ.ㄴ × ㄷ.ㄹ = ${fixedDecimal(selected.product, 2)}</p><p>|ㄱ.ㄷ × ㄴ.ㄹ - ㄱ.ㄴ × ㄷ.ㄹ| = ${fixedDecimal(selected.difference, 2)}</p></div>${evidence}`, answer, `서로 다른 숫자를 조건에 대입해 확인하면 가능한 배열의 숫자 합은 모두 ${answer}입니다.`);
+      }
+      if (kind === 4) {
+        const count = 5 + level;
+        const factors = Array.from({ length: count }, (_, index) => int(rng, 501 + index * 20, 680 + level * 80 + index * 25));
+        const value = factors.reduce((product, factor) => product * factor / 100, 1);
+        const answer = Math.floor(Math.log10(value)) + 1;
+        const evidence = decimalEvidence("product-digit-count", [...factors, answer]);
+        return result(`다음 곱을 직접 계산하지 않고, 곱의 정수 부분이 몇 자리인지 구하세요.<div class="equation">${factors.map(factor => fixedDecimal(factor, 2)).join(" × ")}</div>${evidence}`, answer, `각 수를 아래위의 간단한 자연수로 어림하여 곱의 범위를 잡으면 ${10 ** (answer - 1)} 이상 ${10 ** answer} 미만입니다. 따라서 정수 부분은 ${answer}자리입니다.`);
+      }
+      if (kind === 5) {
+        const aScale = int(rng, 250, 620 + level * 120);
+        const bScale = int(rng, 80, Math.min(aScale - 20, 240 + level * 60));
+        const dScale = int(rng, 120, 360 + level * 80);
+        const cScale = int(rng, 12, 35 + level * 8);
+        const answerScale = (aScale - bScale + dScale) * cScale;
+        const evidence = decimalEvidence("decimal-distributive", [aScale, bScale, dScale, cScale, answerScale]);
+        return result(`분배법칙을 이용하여 계산하세요.<div class="equation">(${fixedDecimal(aScale, 2)} - ${fixedDecimal(bScale, 2)}) × ${fixedDecimal(cScale, 1)} + ${fixedDecimal(dScale, 2)} × ${fixedDecimal(cScale, 1)}</div>${evidence}`, fixedDecimal(answerScale, 3), `공통인 ${fixedDecimal(cScale, 1)}을 묶으면 (${fixedDecimal(aScale, 2)}-${fixedDecimal(bScale, 2)}+${fixedDecimal(dScale, 2)})×${fixedDecimal(cScale, 1)}=${fixedDecimal(answerScale, 3)}입니다.`);
+      }
+      if (kind === 6) {
+        const widthScale = int(rng, 72 + level * 12, 118 + level * 20);
+        const heightScale = int(rng, 58 + level * 10, 96 + level * 18);
+        const cutWidthScale = int(rng, 18, Math.floor(widthScale / 2));
+        const cutHeightScale = int(rng, 16, Math.floor(heightScale / 2));
+        const answerScale = widthScale * heightScale - cutWidthScale * cutHeightScale;
+        const svg = decimalLShapeSvg({ width: widthScale / 10, height: heightScale / 10, cutWidth: cutWidthScale / 10, cutHeight: cutHeightScale / 10 });
+        const evidence = decimalEvidence("decimal-l-area", [widthScale, heightScale, cutWidthScale, cutHeightScale, answerScale]);
+        return result(`다음 ㄱ자 모양 도형의 넓이를 구하세요.${svg}${evidence}`, fixedDecimal(answerScale, 2), `전체 직사각형 넓이 ${fixedDecimal(widthScale, 1)}×${fixedDecimal(heightScale, 1)}에서 잘린 직사각형 넓이 ${fixedDecimal(cutWidthScale, 1)}×${fixedDecimal(cutHeightScale, 1)}을 빼면 ${fixedDecimal(answerScale, 2)}cm²입니다.`);
+      }
+      if (kind === 7) {
+        const divisorScale = int(rng, 125 + level * 20, 285 + level * 45);
+        const quotientScale = int(rng, 24 + level * 5, 68 + level * 12);
+        const remainderScale = int(rng, 5, Math.min(divisorScale * 5, 95 + level * 30));
+        const originalScale = divisorScale * quotientScale + remainderScale;
+        const correctScale = originalScale * divisorScale;
+        const evidence = decimalEvidence("wrong-decimal-operation", [divisorScale, quotientScale, remainderScale, originalScale, correctScale]);
+        return result(`어떤 수에 ${fixedDecimal(divisorScale, 1)}를 곱해야 할 것을 잘못하여 ${fixedDecimal(divisorScale, 1)}로 나누었더니 몫이 ${fixedDecimal(quotientScale, 1)}, 나머지가 ${fixedDecimal(remainderScale, 2)}였습니다. 바르게 계산한 값을 구하세요.${evidence}`, fixedDecimal(correctScale, 3), `어떤 수는 ${fixedDecimal(divisorScale, 1)}×${fixedDecimal(quotientScale, 1)}+${fixedDecimal(remainderScale, 2)}=${fixedDecimal(originalScale, 2)}입니다. 여기에 ${fixedDecimal(divisorScale, 1)}를 곱하면 ${fixedDecimal(correctScale, 3)}입니다.`);
+      }
+      if (kind === 8) {
+        const slowScale = int(rng, 180 + level * 25, 360 + level * 60);
+        const differenceScale = int(rng, 120 + level * 20, 280 + level * 45);
+        const fastScale = slowScale + differenceScale;
+        const minutes = pick(rng, [84, 90, 96, 102, 108].slice(level, level + 3));
+        const answerScale = differenceScale * minutes / 6;
+        const evidence = decimalEvidence("relative-distance", [fastScale, slowScale, minutes, answerScale]);
+        return result(`승용차는 1시간에 ${fixedDecimal(fastScale, 1)}km, 버스는 1시간에 ${fixedDecimal(slowScale, 1)}km를 갑니다. 같은 곳에서 같은 방향으로 동시에 출발했을 때 ${Math.floor(minutes / 60)}시간 ${minutes % 60}분 후 두 차 사이의 거리를 구하세요.${evidence}`, fixedDecimal(answerScale, 2), `속력의 차는 ${fixedDecimal(differenceScale, 1)}km/h이고 ${minutes}분은 ${minutes}/60시간입니다. 따라서 거리는 ${fixedDecimal(differenceScale, 1)}×${minutes}/60=${fixedDecimal(answerScale, 2)}km입니다.`);
+      }
+      if (kind === 9) {
+        const a = int(rng, 1, 8);
+        const b = int(rng, 0, 9);
+        const hidden = int(rng, 0, 9);
+        const d = int(rng, 1, 8);
+        const e = int(rng, 1, 9);
+        const firstScale = 100 * a + 10 * b + hidden;
+        const secondScale = 10 * d + e;
+        const productScale = firstScale * secondScale;
+        const candidates = Array.from({ length: 10 }, (_, digit) => digit).filter(digit => (100 * a + 10 * b + digit) * secondScale === productScale);
+        const evidence = decimalEvidence("missing-factor-digit", [a, b, d, e, productScale, hidden]);
+        return result(`다음 곱셈식의 □에 들어갈 숫자를 구하세요.<div class="equation">${a}.${b}□ × 0.${d}${e} = ${fixedDecimal(productScale, 4)}</div>${evidence}`, hidden, `□에 0부터 9까지 넣어 곱을 확인하면 조건에 맞는 숫자는 ${candidates.join(", ")}이고, 따라서 ${hidden}입니다.`);
+      }
+      const count = 3 + level * 2;
+      const offsetScale = int(rng, 5, 12 + level * 3);
+      const commonScale = int(rng, 24 + level * 6, 52 + level * 10);
+      const sideScale = commonScale + (count - 1) * offsetScale;
+      const answerScale = commonScale * commonScale;
+      const svg = decimalSquareStackSvg({ side: sideScale / 10, count, offset: offsetScale / 10 });
+      const evidence = decimalEvidence("overlapping-squares", [sideScale, count, offsetScale, commonScale, answerScale]);
+      return result(`한 변의 길이가 ${fixedDecimal(sideScale, 1)}cm인 정사각형 종이 ${count}장을 가로와 세로 방향으로 각각 ${fixedDecimal(offsetScale, 1)}cm씩 일정하게 옮겨 겹쳐 놓았습니다. 모든 종이가 공통으로 겹치는 부분의 넓이를 구하세요.${svg}${evidence}`, fixedDecimal(answerScale, 2), `첫 종이와 마지막 종이의 가로·세로 이동 거리는 각각 ${fixedDecimal((count - 1) * offsetScale, 1)}cm입니다. 공통 부분의 한 변은 ${fixedDecimal(sideScale, 1)}-${fixedDecimal((count - 1) * offsetScale, 1)}=${fixedDecimal(commonScale, 1)}cm이므로 넓이는 ${fixedDecimal(answerScale, 2)}cm²입니다.`);
+    },
     decimalMultiply({ rng, level }) {
       const a = int(rng, 12, 79) / 10;
       const b = level ? int(rng, 12, 49) / 10 : int(rng, 2, 9);
       const answer = decimal(a * b, 3);
       return result(`<div class="equation">${decimal(a)} × ${decimal(b)} = □</div>`, answer, `자연수처럼 곱한 뒤 두 수의 소수 자릿수만큼 소수점을 옮기면 ${answer}입니다.`);
+    },
+    cuboidPropertiesAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 5;
+      if (kind === 0) {
+        const side = int(rng, 4, 8 + level);
+        const height = int(rng, 7, 14 + level * 3);
+        return result(`가로 ${height}cm, 세로 ${4 * side}cm인 직사각형 띠를 세로 방향만 이어 붙여 밑면이 정사각형인 직육면체를 만들었습니다. 직육면체의 높이를 구하세요.${cuboidEvidence("strip-height", [side, height, 4 * side])}`, height, `띠의 긴 변 ${4 * side}cm는 밑면 정사각형의 둘레가 되고, 이어 붙이지 않은 변 ${height}cm가 높이가 됩니다.`);
+      }
+      if (kind === 1) {
+        const cube = int(rng, 2, 4 + level);
+        const counts = [int(rng, 2, 3 + level), int(rng, 2, 4 + level), int(rng, 2, 3 + level)];
+        const count = counts.reduce((a, b) => a * b, 1);
+        const edgeSum = count * 12 * cube;
+        return result(`가로 ${counts[0] * cube}cm, 세로 ${counts[1] * cube}cm, 높이 ${counts[2] * cube}cm인 직육면체를 한 모서리 ${cube}cm인 정육면체로 모두 잘랐습니다. 만든 정육면체의 개수와 모든 정육면체의 모서리 길이의 합을 더한 값을 구하세요.${cuboidSvg({ a: counts[0] * cube, b: counts[1] * cube, c: counts[2] * cube })}${cuboidEvidence("cube-cut", [cube, ...counts])}`, count + edgeSum, `정육면체는 ${counts.join("×")}=${count}개이고, 한 개의 모서리 합은 12×${cube}=${12 * cube}cm입니다. 따라서 ${count}+${edgeSum}=${count + edgeSum}입니다.`);
+      }
+      if (kind === 2) {
+        const parts = int(rng, 3, 5 + level);
+        const unit = int(rng, 2, 5);
+        const b = int(rng, 4, 8 + level);
+        const c = int(rng, 3, 7 + level);
+        const answer = parts * 4 * (unit + b + c);
+        return result(`가로 ${parts * unit}cm, 세로 ${b}cm, 높이 ${c}cm인 직육면체를 가로 방향으로 똑같이 ${parts}조각 냈습니다. 모든 조각의 모서리 길이의 합을 구하세요.${cuboidSvg({ a: parts * unit, b, c })}${cuboidEvidence("cut-edge-sum", [parts, unit, b, c])}`, answer, `한 조각의 크기는 ${unit}×${b}×${c}이고 모서리 합은 4×(${unit}+${b}+${c})입니다. ${parts}조각이므로 ${answer}cm입니다.`);
+      }
+      if (kind === 3) {
+        const n = int(rng, 3, 5 + level);
+        return result(`한 모서리를 똑같이 ${n}등분한 정육면체를 모든 눈금선을 따라 잘랐습니다. 생기는 작은 정육면체는 몇 개입니까?${cuboidEvidence("full-cube-cut", [n])}`, n ** 3, `가로, 세로, 높이 방향으로 각각 ${n}개씩이므로 ${n}×${n}×${n}=${n ** 3}개입니다.`);
+      }
+      const count = int(rng, 3, 6 + level);
+      const a = int(rng, 2, 5 + level);
+      const b = int(rng, 3, 7 + level);
+      const c = int(rng, 4, 8 + level);
+      const answer = 4 * (count * a + b + c);
+      return result(`크기가 ${a}cm×${b}cm×${c}cm인 직육면체 ${count}개를 ${a}cm인 모서리끼리 한 줄로 이어 붙였습니다. 만든 큰 직육면체의 모든 모서리 길이의 합을 구하세요.${cuboidSvg({ a: count * a, b, c })}${cuboidEvidence("joined-edge-sum", [count, a, b, c])}`, answer, `큰 직육면체의 크기는 ${count * a}×${b}×${c}이므로 모서리의 합은 4×(${count * a}+${b}+${c})=${answer}cm입니다.`);
+    },
+    cuboidNetAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 5;
+      const a = int(rng, 5, 9 + level);
+      const b = int(rng, 3, a - 1);
+      const c = int(rng, 2, b);
+      if (kind === 0) {
+        const wrong = [a + 1, c];
+        const choices = shuffle(rng, [[a, b], [a, c], [b, c], wrong]);
+        const index = choices.findIndex(pair => pair === wrong) + 1;
+        return result(`가로 ${a}cm, 세로 ${b}cm, 높이 ${c}cm인 직육면체의 전개도에 들어갈 수 없는 면을 고르세요.<div class="equation">${choices.map((pair, i) => `${i + 1}. ${pair[0]}cm×${pair[1]}cm`).join("　")}</div>${cuboidEvidence("invalid-face", [a, b, c, index])}`, index, `직육면체의 면은 ${a}×${b}, ${a}×${c}, ${b}×${c} 세 종류뿐이므로 ${index}번입니다.`);
+      }
+      if (kind === 1) {
+        const side = int(rng, 3, 7 + level);
+        const width = 4 * side + int(rng, 0, side - 1);
+        const height = 3 * side + int(rng, 0, side - 1);
+        return result(`가로 ${width}cm, 세로 ${height}cm인 종이에 가로 4칸, 세로 3칸 안에 들어가는 정육면체 전개도를 그립니다. 만들 수 있는 가장 큰 정육면체의 한 모서리 길이를 구하세요.${cubeNetSvg({})}${cuboidEvidence("largest-net", [width, height])}`, Math.min(Math.floor(width / 4), Math.floor(height / 3)), `전개도 한 칸의 한 변은 가로 기준 ${width}÷4, 세로 기준 ${height}÷3을 모두 넘지 않아야 합니다. 두 값의 자연수 부분 중 작은 값이 답입니다.`);
+      }
+      if (kind === 2) {
+        const side = int(rng, 3, 8 + level);
+        const answer = 12 * side * side;
+        return result(`한 모서리 ${side}cm인 정육면체의 전개도를 가로 4칸, 세로 3칸인 직사각형 안에 그립니다. 필요한 가장 작은 도화지의 넓이를 구하세요.${cubeNetSvg({})}${cuboidEvidence("net-paper", [side])}`, answer, `도화지의 가로는 ${4 * side}cm, 세로는 ${3 * side}cm이므로 넓이는 ${answer}cm²입니다.`);
+      }
+      if (kind === 3) {
+        const side = int(rng, 3, 7 + level);
+        const marginW = int(rng, 1, 4);
+        const marginH = int(rng, 1, 4);
+        const width = 4 * side + marginW;
+        const height = 3 * side + marginH;
+        const answer = width * height - 6 * side * side;
+        return result(`가로 ${width}cm, 세로 ${height}cm인 종이에 한 모서리 ${side}cm인 정육면체의 전개도를 그려 오렸습니다. 남는 종이의 넓이를 구하세요.${cubeNetSvg({})}${cuboidEvidence("net-waste", [width, height, side])}`, answer, `종이 넓이 ${width * height}cm²에서 정사각형 6개의 넓이 ${6 * side * side}cm²를 빼면 ${answer}cm²입니다.`);
+      }
+      const faces = [[a, b], [a, c], [b, c]];
+      const answer = Math.min(...faces.flat());
+      return result(`크기가 각각 ${faces.map(pair => `${pair[0]}cm×${pair[1]}cm`).join(", ")}인 직사각형 종이가 두 장씩 있습니다. 각 종이를 잘라 정육면체의 여섯 면을 만들 때 가능한 가장 큰 정육면체의 한 모서리를 구하세요.${cuboidEvidence("face-paper-cube", [a, b, c])}`, answer, `여섯 면 모두 같은 정사각형이어야 하므로 모든 종이의 짧은 변을 넘을 수 없습니다. 가장 작은 길이는 ${answer}cm입니다.`);
+    },
+    cuboidNetViewAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 5;
+      const values = shuffle(rng, [1, 2, 3, 4, 5, 6]);
+      const opposite = [2, 3, 0, 1, 5, 4];
+      if (kind === 0) {
+        const marked = int(rng, 0, 5);
+        const answer = values[opposite[marked]];
+        return result(`다음 전개도를 접었을 때 색칠한 ${values[marked]}의 면과 마주 보는 면의 수를 구하세요.${cubeNetSvg({ values, highlight: marked })}${cuboidEvidence("opposite-face", [...values, marked])}`, answer, `이 전개도에서 마주 보는 위치의 짝은 가로줄의 첫째-셋째, 둘째-넷째, 위-아래 면입니다. 따라서 ${answer}입니다.`);
+      }
+      if (kind === 1) return result(`직육면체의 한 모서리를 골랐습니다. 그 모서리와 만나지 않으면서 방향이 수직인 모서리는 모두 몇 개입니까?${cuboidEvidence("perpendicular-edges", [])}`, 4, `고른 모서리의 양 끝에서 뻗는 4개는 만나므로 제외합니다. 반대쪽 두 꼭짓점에서 같은 두 방향으로 놓인 4개가 만나지 않으면서 수직입니다.`);
+      if (kind === 2) {
+        const answer = values[1] + values[2] + values[4];
+        return result(`다음 전개도를 접었을 때 ${values[1]}, ${values[2]}, ${values[4]}가 적힌 세 면이 만나는 꼭짓점에서 세 수의 합을 구하세요.${cubeNetSvg({ values })}${cuboidEvidence("vertex-face-sum", [...values, 1, 2, 4])}`, answer, `세 면은 어느 두 면도 서로 마주 보지 않으므로 한 꼭짓점에서 만납니다. 합은 ${answer}입니다.`);
+      }
+      if (kind === 3) {
+        const marked = int(rng, 0, 5);
+        const answer = values[marked] * values[opposite[marked]];
+        return result(`전개도에서 색칠한 면과, 접었을 때 그 면과 마주 보는 면에 적힌 수의 곱을 구하세요.${cubeNetSvg({ values, highlight: marked })}${cuboidEvidence("opposite-product", [...values, marked])}`, answer, `${values[marked]}의 맞은편 수는 ${values[opposite[marked]]}이므로 곱은 ${answer}입니다.`);
+      }
+      const scale = int(rng, 1, 3 + level);
+      const [a, b, c] = [scale, 2 * scale, 4 * scale];
+      return result(`크기가 ${a}cm×${b}cm×${c}cm인 직육면체에서 서로 마주 보는 꼭짓점을 겉면 위의 직선으로 잇습니다. 가능한 경로 중 가장 짧은 길이를 구하세요.${cuboidSvg({ a, b, c })}${cuboidEvidence("surface-shortest", [a, b, c])}`, 5 * scale, `두 면을 펼치면 후보 길이는 √((${a}+${b})²+${c}²), √((${a}+${c})²+${b}²), √((${b}+${c})²+${a}²)입니다. 가장 짧은 것은 ${5 * scale}cm입니다.`);
+    },
+    cuboidApplicationAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 5;
+      if (kind === 0) {
+        const count = pick(rng, [12, 18, 24, 30].slice(0, 2 + level));
+        const triples = factorTriples(count);
+        const best = [...triples].sort((x, y) => (x[0] * x[1] + x[1] * x[2] + x[2] * x[0]) - (y[0] * y[1] + y[1] * y[2] + y[2] * y[0]))[0];
+        return result(`한 모서리 1cm인 쌓기나무 ${count}개를 빈틈없이 넣는 겉넓이가 가장 작은 직육면체 상자의 가로, 세로, 높이를 큰 수부터 쓰세요.${cuboidEvidence("smallest-box", [count])}`, best.join(", "), `곱이 ${count}인 자연수 세 쌍을 모두 비교하면 서로 가장 가까운 ${best.join("×")}에서 겉넓이가 가장 작습니다.`);
+      }
+      const a = int(rng, 4, 8 + level), b = int(rng, 3, 7 + level), c = int(rng, 2, 6 + level);
+      if (kind === 1) return result(`가로 ${a}cm, 세로 ${b}cm, 높이 ${c}cm인 직육면체에 가로-세로, 세로-높이, 높이-가로 방향으로 끈을 한 바퀴씩 둘렀습니다. 사용한 끈의 전체 길이를 구하세요.${cuboidSvg({ a, b, c })}${cuboidEvidence("three-loops", [a, b, c])}`, 4 * (a + b + c), `세 고리 길이는 2(${a}+${b}), 2(${b}+${c}), 2(${c}+${a})이므로 합은 ${4 * (a + b + c)}cm입니다.`);
+      if (kind === 2) {
+        const small = [int(rng, 2, 4), int(rng, 2, 4), int(rng, 2, 4)];
+        const counts = [int(rng, 2, 4 + level), int(rng, 2, 4 + level), int(rng, 2, 3 + level)];
+        const box = small.map((value, i) => value * counts[i] + int(rng, 0, value - 1));
+        const answer = counts.reduce((x, y) => x * y, 1);
+        return result(`안쪽 크기가 ${box.join("cm×")}cm인 상자에 ${small.join("cm×")}cm인 직육면체를 방향을 바꾸지 않고 빈틈없이 최대한 넣습니다. 몇 개까지 넣을 수 있습니까?${cuboidEvidence("max-pack", [...box, ...small])}`, answer, `각 방향으로 ${box.map((value, i) => Math.floor(value / small[i])).join(", ")}개씩 들어가므로 모두 ${answer}개입니다.`);
+      }
+      if (kind === 3) {
+        const stack = int(rng, 3, 5 + level);
+        const h = int(rng, 2, 6 + level);
+        const rope = 2 * (a + stack * h);
+        return result(`가로 ${a}cm인 같은 상자 ${stack}개를 세로로 쌓고, 가로와 전체 높이를 지나는 한 고리로 묶었더니 끈이 ${rope}cm 들었습니다. 상자 한 개의 높이를 구하세요.${cuboidEvidence("stack-height", [a, stack, rope])}`, h, `한 고리의 반은 ${rope}÷2=${rope / 2}cm이고 가로 ${a}cm를 빼면 전체 높이는 ${stack * h}cm입니다. ${stack}으로 나누면 ${h}cm입니다.`);
+      }
+      const loops = [2 * (a + b), 2 * (b + c), 2 * (c + a)].sort((x, y) => x - y);
+      const shortest = Math.min(a, b, c);
+      return result(`직육면체를 서로 다른 세 방향으로 한 바퀴씩 묶은 끈의 길이가 ${loops.join("cm, ")}cm입니다. 직육면체의 가장 짧은 모서리를 구하세요.${cuboidEvidence("edges-from-loops", loops)}`, shortest, `세 길이의 반을 두 변의 합으로 바꾼 뒤, 두 작은 합을 더하고 큰 합을 빼어 2로 나누면 가장 짧은 모서리는 ${shortest}cm입니다.`);
+    },
+    diceArrangementAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 5;
+      const top = pick(rng, [1, 2, 3, 4, 5, 6]);
+      const front = pick(rng, [1, 2, 3, 4, 5, 6].filter(v => v !== top && v !== 7 - top));
+      const right = pick(rng, [1, 2, 3, 4, 5, 6].filter(v => ![top, 7 - top, front, 7 - front].includes(v)));
+      if (kind === 0) return result(`마주 보는 두 면의 합이 7인 주사위의 위, 앞, 오른쪽 면은 그림과 같습니다. 보이지 않는 아랫면의 수를 구하세요.${diceSvg({ top, front, right })}${cuboidEvidence("dice-bottom", [top, front, right])}`, 7 - top, `윗면 ${top}과 아랫면은 마주 보므로 합이 7입니다. 따라서 ${7 - top}입니다.`);
+      if (kind === 1) {
+        const values = [top, front, 7 - top, 7 - front, right, "□"];
+        return result(`마주 보는 두 면의 합이 7인 주사위 전개도입니다. □에 들어갈 수를 구하세요.${cubeNetSvg({ values, highlight: 5 })}${cuboidEvidence("dice-net-missing", [top, front, right])}`, 7 - right, `${right}과 □의 면은 전개도를 접으면 마주 보므로 □=${7 - right}입니다.`);
+      }
+      if (kind === 2) {
+        const tops = Array.from({ length: 3 + level }, () => int(rng, 1, 6));
+        return result(`마주 보는 두 면의 합이 7인 주사위 ${tops.length}개를 한 줄로 놓았습니다. 윗면의 수가 차례로 ${tops.join(", ")}일 때 바닥면 수의 합을 구하세요.${cuboidEvidence("dice-bottom-sum", tops)}`, tops.reduce((sum, value) => sum + 7 - value, 0), `각 바닥면은 7에서 윗면을 뺀 수이므로 합은 ${tops.map(value => 7 - value).join("+")}=${tops.reduce((sum, value) => sum + 7 - value, 0)}입니다.`);
+      }
+      if (kind === 3) {
+        const touching = int(rng, 1, 6);
+        const count = int(rng, 3, 5 + level);
+        const answer = 2 * (count - 1) * touching;
+        return result(`같은 주사위 ${count}개를 한 줄로 이어 붙였습니다. 서로 맞닿는 두 면에는 모두 ${touching}이 적혀 있습니다. 맞닿아 보이지 않는 면에 적힌 수의 합을 구하세요.${cuboidEvidence("dice-touching", [count, touching])}`, answer, `맞닿는 곳은 ${count - 1}군데이고 한 곳마다 ${touching}이 적힌 면 2개가 숨습니다. 합은 ${answer}입니다.`);
+      }
+      const touching = int(rng, 1, 6);
+      const floor = int(rng, 1, 6);
+      const answer = 42 - 2 * touching - floor;
+      return result(`주사위 2개를 쌓았습니다. 맞닿은 두 면에는 같은 수 ${touching}이 적혀 있고, 아래 주사위의 바닥면은 ${floor}입니다. 바닥면과 맞닿은 면을 제외하고 보이는 모든 면의 수의 합을 구하세요.${cuboidEvidence("dice-visible", [touching, floor])}`, answer, `주사위 2개의 모든 면의 합은 42입니다. 맞닿은 두 면 ${2 * touching}과 바닥면 ${floor}을 빼면 ${answer}입니다.`);
+    },
+    diceRollingAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 5;
+      const top = pick(rng, [1, 2, 3, 4, 5, 6]);
+      const front = pick(rng, [1, 2, 3, 4, 5, 6].filter(v => v !== top && v !== 7 - top));
+      const right = pick(rng, [1, 2, 3, 4, 5, 6].filter(v => ![top, 7 - top, front, 7 - front].includes(v)));
+      const start = diceOrientation(top, front, right);
+      if (kind === 0) {
+        const moves = Array.from({ length: 3 + level }, () => pick(rng, ["N", "S", "E", "W"]));
+        const end = moves.reduce(rollDice, start);
+        return result(`그림의 주사위를 화살표 방향으로 한 칸씩 굴렸습니다. 마지막 윗면의 수를 구하세요.${diceSvg({ top, front, right })}${dicePathSvg(moves)}${cuboidEvidence("dice-roll-top", [top, front, right, ...moves.map(v => "NSEW".indexOf(v))])}`, end.top, `방향마다 윗면과 이동 방향 쪽 면을 차례로 바꾸어 추적하면 마지막 윗면은 ${end.top}입니다.`);
+      }
+      if (kind === 1) {
+        const moves = ["E", "N", "E", "S"].slice(0, 3 + Math.min(level, 1));
+        const end = moves.reduce(rollDice, start);
+        return result(`처음 주사위의 위, 앞, 오른쪽 면은 그림과 같습니다. 화살표대로 굴렸을 때 마지막 윗면과 마주 보는 면의 수를 구하세요.${diceSvg({ top, front, right })}${dicePathSvg(moves)}${cuboidEvidence("dice-roll-opposite", [top, front, right, ...moves.map(v => "NSEW".indexOf(v))])}`, end.bottom, `굴림을 차례로 적용하면 마지막 윗면은 ${end.top}이고 그 맞은편은 ${end.bottom}입니다.`);
+      }
+      if (kind === 2) {
+        const tops = Array.from({ length: 4 + level }, () => int(rng, 1, 6));
+        const answer = tops.reduce((sum, value) => sum + 7 - value, 0);
+        return result(`마주 보는 두 면의 합이 7인 주사위 ${tops.length}개의 윗면이 ${tops.join(", ")}입니다. 모든 바닥면의 합을 구하세요.${cuboidEvidence("rolling-bottom-sum", tops)}`, answer, `바닥면은 각각 ${tops.map(value => 7 - value).join(", ")}이므로 합은 ${answer}입니다.`);
+      }
+      if (kind === 3) {
+        const moves = Array.from({ length: 5 + level }, () => pick(rng, ["N", "E", "S", "W"]));
+        let state = start;
+        let answer = 0;
+        moves.forEach(move => { state = rollDice(state, move); answer += state.top; });
+        return result(`그림의 주사위를 화살표 길을 따라 굴릴 때, 각 칸에 도착한 직후 윗면 수의 합을 구하세요.${diceSvg({ top, front, right })}${dicePathSvg(moves)}${cuboidEvidence("dice-path-sum", [top, front, right, ...moves.map(v => "NSEW".indexOf(v))])}`, answer, `각 이동 뒤의 윗면을 차례로 기록해 더하면 ${answer}입니다.`);
+      }
+      const pathA = ["E", "N", "E"];
+      const pathB = ["N", "E", "N"];
+      const sumPath = path => { let state = start; return path.reduce((sum, move) => { state = rollDice(state, move); return sum + state.top; }, 0); };
+      const sumA = sumPath(pathA), sumB = sumPath(pathB);
+      return result(`주사위의 위가 ${top}, 앞이 ${front}일 때 오른쪽 면의 수를 구하세요. 경로 A(${pathA.join("-")})에서 도착할 때마다 본 윗면의 합은 ${sumA}, 경로 B(${pathB.join("-")})의 합은 ${sumB}입니다.${cuboidEvidence("dice-two-paths", [top, front, sumA, sumB])}`, right, `오른쪽 면 후보 중 위·앞면과 같거나 마주 보는 수를 제외하고 두 경로를 굴려 보면 두 합을 동시에 만족하는 수는 ${right} 하나입니다.`);
+    },
+    prismElementsNetAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      const sides = int(rng, 5, 7 + level);
+      if (kind === 0) {
+        const relation = 2 * sides + 2;
+        return result(`어떤 각기둥의 모서리 수와 면 수의 합에서 꼭짓점 수를 뺐더니 ${relation}이었습니다. 이 각기둥의 한 밑면은 몇 각형입니까?${angularSolidEvidence("prism-relation", [sides, relation])}`, sides, `한 밑면이 n각형인 각기둥은 꼭짓점 2n개, 모서리 3n개, 면 n+2개입니다. 3n+(n+2)-2n=${relation}이므로 n=${sides}입니다.`);
+      }
+      if (kind === 1) {
+        const side = int(rng, 3, 6 + level);
+        const height = int(rng, 7, 12 + level * 2);
+        const lateralArea = sides * side * height;
+        const answer = 2 * sides * side + sides * height;
+        return result(`밑면의 모든 변의 길이가 ${side}cm인 각기둥의 옆넓이는 ${lateralArea}cm²이고 높이는 ${height}cm입니다. 이 각기둥의 모든 모서리 길이의 합을 구하세요.${angularPrismSvg({ sides, side, height })}${angularSolidEvidence("prism-lateral-area", [sides, side, height, lateralArea])}`, answer, `밑면의 둘레는 ${lateralArea}÷${height}=${sides * side}cm이므로 밑면은 ${sides}각형입니다. 두 밑면의 둘레와 옆모서리 ${sides}개의 합은 ${answer}cm입니다.`);
+      }
+      if (kind === 2) {
+        const side = int(rng, 3, 7 + level);
+        const height = side + int(rng, 2, 5 + level);
+        const joins = sides + 1;
+        const tallA = int(rng, 1, Math.max(1, joins - 2));
+        let tallB = int(rng, 1, Math.max(1, joins - 1));
+        if (tallB === tallA) tallB = tallA === joins - 1 ? tallA - 1 : tallA + 1;
+        const joinA = tallA * height + (joins - tallA) * side;
+        const joinB = tallB * height + (joins - tallB) * side;
+        const answer = 2 * Math.abs(joinA - joinB);
+        return result(`밑면이 정${sides}각형이고 높이가 ${height}cm인 각기둥의 전개도 A와 B가 있습니다. 모든 면을 따로 놓았을 때 변 길이의 합은 같고, 전개도에서 서로 붙여 둔 변 길이의 합은 A가 ${joinA}cm, B가 ${joinB}cm입니다. 두 전개도 둘레의 차를 구하세요.${prismNetStripSvg({ sides, side, height })}${angularSolidEvidence("prism-net-perimeter", [sides, side, height, joinA, joinB])}`, answer, `붙인 변은 둘레에서 두 번씩 빠집니다. 따라서 두 전개도 둘레의 차는 2×|${joinA}-${joinB}|=${answer}cm입니다.`);
+      }
+      if (kind === 3) {
+        const total = 12 * sides + 4;
+        return result(`한 밑면이 ${sides}각형인 각기둥을 밑면과 평행한 면으로 한 번 잘라 두 각기둥으로 나누었습니다. 두 각기둥의 면, 모서리, 꼭짓점 수를 모두 합한 값을 구하세요.${angularPrismSvg({ sides, side: 4, height: 9 })}${angularSolidEvidence("prism-parallel-cut", [sides])}`, total, `각 ${sides}각기둥은 면 ${sides + 2}개, 모서리 ${3 * sides}개, 꼭짓점 ${2 * sides}개로 합이 ${6 * sides + 2}입니다. 두 개이므로 ${total}입니다.`);
+      }
+      if (kind === 4) {
+        const height = int(rng, 4, 8 + level);
+        const widths = Array.from({ length: sides }, () => int(rng, 2, 7 + level));
+        const areas = widths.map(width => width * height);
+        const perimeter = widths.reduce((sum, value) => sum + value, 0);
+        const answer = 2 * perimeter + sides * height;
+        return result(`높이가 ${height}cm인 각기둥의 옆면 넓이는 차례로 다음과 같습니다. 이 각기둥의 모든 모서리 길이의 합을 구하세요.${valueTable(areas.map((_, index) => `옆면 ${index + 1}`), areas.map(value => `${value}cm²`))}${angularSolidEvidence("prism-face-areas", [sides, height, ...areas])}`, answer, `각 옆면의 가로 길이는 넓이를 높이 ${height}cm로 나눈 값입니다. 밑면 둘레는 ${perimeter}cm이므로 모든 모서리 길이의 합은 2×${perimeter}+${sides}×${height}=${answer}cm입니다.`);
+      }
+      const side = int(rng, 3, 7 + level);
+      const height = int(rng, 6, 11 + level * 2);
+      const perimeter = sides * side;
+      const answer = 2 * perimeter + sides * height;
+      return result(`옆면 ${sides}개를 한 줄로 펼친 전개도의 가로 길이는 ${perimeter}cm이고 세로 길이는 ${height}cm입니다. 이 각기둥의 모든 모서리 길이의 합을 구하세요.${prismNetStripSvg({ sides, side, height })}${angularSolidEvidence("prism-net-dimensions", [sides, side, height, perimeter])}`, answer, `가로 길이는 밑면의 둘레 ${perimeter}cm입니다. 두 밑면의 모서리와 옆모서리를 합하면 2×${perimeter}+${sides}×${height}=${answer}cm입니다.`);
+    },
+    prismApplicationAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      const sides = int(rng, 5, 7 + level);
+      if (kind === 0) {
+        const side = int(rng, 3, 7 + level);
+        const span = int(rng, 2, Math.min(sides - 1, 3 + level));
+        const height = side * span;
+        return result(`밑면의 한 변이 ${side}cm인 각기둥의 옆면을 펼쳤습니다. 선분은 아래 꼭짓점에서 시작하여 옆면 ${span}개를 연속해서 지나며 밑면의 변과 45°를 이룹니다. 선분이 도착한 높이를 구하세요.${prismNetStripSvg({ sides, side, height, span })}${angularSolidEvidence("prism-45-rise", [sides, side, span])}`, height, `펼친 옆면에서 45° 선분의 가로 이동 거리와 세로 이동 거리는 같습니다. 가로로 ${side}×${span}=${height}cm 이동하므로 높이도 ${height}cm입니다.`);
+      }
+      if (kind === 1) {
+        const answer = 9 * sides;
+        return result(`밑면이 정${sides}각형인 각기둥의 두 밑면 중심을 각 꼭짓점과 잇고, 그 선을 따라 잘라 서로 떨어진 삼각기둥으로 나누었습니다. 만들어진 모든 삼각기둥의 모서리 수의 합을 구하세요.${angularPrismSvg({ sides, side: 4, height: 8 })}${angularSolidEvidence("prism-radial-split", [sides])}`, answer, `삼각기둥은 ${sides}개 생기고, 삼각기둥 하나의 모서리는 9개입니다. 서로 떨어진 입체의 모서리를 각각 세므로 ${sides}×9=${answer}개입니다.`);
+      }
+      if (kind === 2) {
+        const side = int(rng, 3, 6 + level);
+        const span = int(rng, 2, Math.min(sides - 1, 4 + level));
+        return result(`각기둥의 옆면에 그은 선을 전개도에 옮기니 1번 옆면의 왼쪽 아래 꼭짓점에서 ${span}번 옆면의 오른쪽 위 꼭짓점까지 곧게 이어졌습니다. 이 선이 지나가는 옆면은 모두 몇 개입니까?${prismNetStripSvg({ sides, side, height: 8, span })}${angularSolidEvidence("prism-crossed-faces", [sides, span])}`, span, `전개도에서 선분은 번호가 연속된 1번부터 ${span}번 옆면까지 지나므로 모두 ${span}개입니다.`);
+      }
+      if (kind === 3) {
+        const triple = pick(rng, [[3, 4, 5], [5, 12, 13], [8, 15, 17]]);
+        const scale = int(rng, 1, 1 + level);
+        const width = triple[0] * scale, height = triple[1] * scale, answer = triple[2] * scale;
+        const faces = int(rng, 2, 3 + Math.min(level, 1));
+        return result(`각기둥 겉면의 두 점을 잇기 위해 지나갈 옆면 ${faces}개를 그림처럼 한 평면에 펼쳤습니다. 두 점의 가로 차는 ${width}cm, 세로 차는 ${height}cm입니다. 겉면을 따라가는 가장 짧은 거리를 구하세요.${surfaceRouteSvg({ faces, width, height })}${angularSolidEvidence("prism-shortest-route", [faces, width, height, answer])}`, answer, `펼친 면에서 가장 짧은 길이는 두 점을 잇는 직선입니다. √(${width}²+${height}²)=${answer}cm입니다.`);
+      }
+      if (kind === 4) {
+        const vertices = 6 * sides;
+        const edges = 9 * sides;
+        const faces = 3 * sides + 2;
+        const answer = vertices + edges + faces;
+        return result(`한 밑면이 ${sides}각형인 각기둥의 모든 꼭짓점을 각 꼭짓점에 모인 모서리의 같은 길이만큼씩 잘라 냈습니다. 잘라 낸 뒤 남은 입체의 면, 모서리, 꼭짓점 수의 합을 구하세요.${angularPrismSvg({ sides, side: 5, height: 9 })}${angularSolidEvidence("prism-truncated", [sides])}`, answer, `원래 모서리 하나마다 새 꼭짓점이 2개이므로 꼭짓점은 ${vertices}개, 모서리는 원래 모서리 수의 3배인 ${edges}개입니다. 면은 원래 면과 꼭짓점마다 하나씩 늘어 ${faces}개이므로 합은 ${answer}입니다.`);
+      }
+      const side = int(rng, 3, 7 + level);
+      const span = int(rng, 2, Math.min(sides - 1, 4 + level));
+      const height = 2 * int(rng, 3, 7 + level);
+      const answer = side * span * height / 2;
+      return result(`각기둥의 옆면을 펼치니 가로 ${side}cm인 옆면 ${span}개와 높이 ${height}cm를 두 변으로 하는 삼각형이 생겼습니다. 이 삼각형의 넓이를 구하세요.${prismNetStripSvg({ sides, side, height, span })}${angularSolidEvidence("prism-unfolded-triangle", [sides, side, span, height])}`, answer, `삼각형의 밑변은 ${side}×${span}=${side * span}cm이고 높이는 ${height}cm입니다. 넓이는 ${side * span}×${height}÷2=${answer}cm²입니다.`);
+    },
+    pyramidElementsNetAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      const sides = int(rng, 4, 7 + level);
+      if (kind === 0) {
+        const faceSum = 2 * sides + 3;
+        const answer = 6 * sides * sides;
+        return result(`밑면의 모양이 같은 각기둥과 각뿔이 있습니다. 두 입체의 면 수의 합은 ${faceSum}개입니다. 두 입체의 모서리 수의 곱을 구하세요.${angularSolidEvidence("prism-pyramid-face-sum", [sides, faceSum])}`, answer, `밑면을 n각형이라 하면 면 수의 합은 (n+2)+(n+1)=2n+3입니다. n=${sides}이고 모서리 수는 각각 ${3 * sides}, ${2 * sides}이므로 곱은 ${answer}입니다.`);
+      }
+      if (kind === 1) {
+        const side = int(rng, 3, 6 + level);
+        const lateral = side + int(rng, 2, 5 + level);
+        const totalJoins = sides;
+        const lateralA = int(rng, 1, totalJoins - 1);
+        let lateralB = int(rng, 1, totalJoins - 1);
+        if (lateralB === lateralA) lateralB = lateralA === totalJoins - 1 ? lateralA - 1 : lateralA + 1;
+        const joinA = lateralA * lateral + (totalJoins - lateralA) * side;
+        const joinB = lateralB * lateral + (totalJoins - lateralB) * side;
+        const answer = 2 * Math.abs(joinA - joinB);
+        return result(`밑면이 정${sides}각형이고 옆모서리가 ${lateral}cm인 각뿔의 두 전개도 A, B가 있습니다. 모든 면을 따로 놓았을 때 변 길이의 합은 같고, 서로 붙여 둔 변 길이의 합은 A가 ${joinA}cm, B가 ${joinB}cm입니다. 두 전개도 둘레의 차를 구하세요.${angularPyramidSvg({ sides, side, lateral })}${angularSolidEvidence("pyramid-net-perimeter", [sides, side, lateral, joinA, joinB])}`, answer, `붙인 변은 전개도 둘레에서 두 번씩 빠집니다. 따라서 둘레의 차는 2×|${joinA}-${joinB}|=${answer}cm입니다.`);
+      }
+      if (kind === 2) {
+        const side = int(rng, 3, 6 + level);
+        const height = 2 * int(rng, 3, 6 + level);
+        const lateral = side + height / 2;
+        return result(`밑면이 같은 정${sides}각형인 각뿔과 각기둥이 있습니다. 밑면 한 변은 ${side}cm, 각뿔의 옆모서리는 ${lateral}cm이고 두 입체의 모든 모서리 길이의 합이 같습니다. 각기둥의 높이를 구하세요.${angularPyramidSvg({ sides, side, lateral })}${angularSolidEvidence("equal-edge-sums", [sides, side, lateral])}`, height, `각뿔의 모서리 합은 2×${sides}×${lateral}, 각기둥은 2×${sides}×${side}+${sides}×높이입니다. 두 값을 같게 하면 높이는 2×(${lateral}-${side})=${height}cm입니다.`);
+      }
+      if (kind === 3) {
+        const pyramidSides = int(rng, 4, 6 + level);
+        const answer = (6 * sides + 2) + (4 * pyramidSides + 2);
+        return result(`밑면이 ${sides}각형인 각기둥의 전개도와 밑면이 ${pyramidSides}각형인 각뿔의 전개도가 있습니다. 두 입체의 면, 모서리, 꼭짓점 수를 모두 합한 값을 구하세요.${angularSolidEvidence("two-solid-totals", [sides, pyramidSides])}`, answer, `${sides}각기둥의 합은 6×${sides}+2=${6 * sides + 2}, ${pyramidSides}각뿔의 합은 4×${pyramidSides}+2=${4 * pyramidSides + 2}이므로 모두 ${answer}입니다.`);
+      }
+      if (kind === 4) {
+        const segments = int(rng, 3, 5 + level);
+        const answer = (sides + 1) + 2 * sides * (segments - 1);
+        return result(`밑면이 ${sides}각형인 각뿔의 모든 모서리를 ${segments}등분하고, 꼭짓점을 포함하여 등분점마다 점을 찍습니다. 서로 겹치는 점을 한 번만 셀 때 모두 몇 개입니까?${angularPyramidSvg({ sides, side: segments, lateral: segments })}${angularSolidEvidence("pyramid-edge-points", [sides, segments])}`, answer, `각뿔의 꼭짓점은 ${sides + 1}개이고 모서리는 ${2 * sides}개입니다. 각 모서리 안쪽에 ${segments - 1}개씩 새 점이 생기므로 ${sides + 1}+${2 * sides}×${segments - 1}=${answer}개입니다.`);
+      }
+      const side = int(rng, 3, 6 + level);
+      const height = int(rng, 5, 9 + level);
+      const lateral = int(rng, side + 2, side + 6 + level);
+      const prismTotal = 2 * sides * side + sides * height;
+      const pyramidTotal = 2 * sides * lateral;
+      const answer = Math.abs(prismTotal - pyramidTotal);
+      return result(`같은 수의 종이 막대를 사용해 밑면이 정${sides}각형인 각기둥과 각뿔의 모서리 틀을 각각 만들었습니다. 각기둥은 밑면 한 변 ${side}cm, 높이 ${height}cm이고 각뿔의 모든 모서리는 ${lateral}cm입니다. 필요한 종이 막대 길이의 차를 구하세요.${angularSolidEvidence("solid-edge-length-difference", [sides, side, height, lateral])}`, answer, `각기둥은 ${prismTotal}cm, 각뿔은 ${pyramidTotal}cm가 필요하므로 차는 ${answer}cm입니다.`);
+    },
+    pyramidApplicationAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      const sides = int(rng, 4, 7 + level);
+      if (kind === 0) {
+        const vertices = 2 * sides + 1;
+        const edges = 4 * sides;
+        const faces = 2 * sides + 1;
+        const answer = vertices + edges + faces;
+        return result(`밑면이 같은 ${sides}각기둥과 ${sides}각뿔을 밑면끼리 완전히 붙였습니다. 만들어진 입체의 면, 모서리, 꼭짓점 수의 합을 구하세요.${angularSolidEvidence("glued-prism-pyramid", [sides])}`, answer, `붙인 밑면은 사라집니다. 꼭짓점은 ${vertices}개, 모서리는 ${edges}개, 면은 ${faces}개이므로 합은 ${answer}입니다.`);
+      }
+      if (kind === 1) {
+        const side = 2 * int(rng, 3, 7 + level);
+        const answer = side;
+        return result(`모든 모서리 길이가 ${side}cm인 정삼각뿔의 서로 이웃한 두 옆면에서, 각 면의 두 변의 중점을 이은 선분을 하나씩 그어 이어 붙였습니다. 두 선분 길이의 합을 구하세요.${angularPyramidSvg({ sides: 3, side, lateral: side })}${angularSolidEvidence("tetra-midpoint-route", [side])}`, answer, `삼각형에서 두 변의 중점을 이은 선분은 나머지 한 변 길이의 절반입니다. 각 선분은 ${side / 2}cm이고 두 개의 합은 ${answer}cm입니다.`);
+      }
+      if (kind === 2) {
+        const triple = pick(rng, [[3, 4, 5], [5, 12, 13], [8, 15, 17]]);
+        const scale = int(rng, 1, 1 + level);
+        const width = triple[0] * scale, height = triple[1] * scale, answer = triple[2] * scale;
+        return result(`사각뿔의 서로 이웃한 옆면 두 개를 그림처럼 펼쳤습니다. 두 점의 가로 차는 ${width}cm, 세로 차는 ${height}cm입니다. 사각뿔의 겉면을 따라 두 점을 잇는 가장 짧은 거리를 구하세요.${surfaceRouteSvg({ faces: 2, width, height, label: "옆면 두 개를 펼친 모습" })}${angularSolidEvidence("pyramid-shortest-route", [2, width, height, answer])}`, answer, `두 옆면을 펼친 평면에서 직선이 가장 짧습니다. √(${width}²+${height}²)=${answer}cm입니다.`);
+      }
+      if (kind === 3) {
+        const vertices = sides + 2;
+        const edges = 3 * sides;
+        const faces = 2 * sides;
+        const answer = vertices + edges + faces;
+        return result(`밑면이 같은 ${sides}각뿔 두 개를 밑면끼리 완전히 붙였습니다. 만들어진 입체의 면, 모서리, 꼭짓점 수의 합을 구하세요.${angularSolidEvidence("glued-two-pyramids", [sides])}`, answer, `두 꼭짓점과 공통 밑면의 꼭짓점 ${sides}개로 꼭짓점은 ${vertices}개입니다. 모서리는 ${edges}개, 면은 ${faces}개이므로 합은 ${answer}입니다.`);
+      }
+      if (kind === 4) {
+        const base = 2 * int(rng, 3, 6 + level);
+        const outer = base + 2 * int(rng, 3, 7 + level);
+        const answer = base * outer;
+        return result(`한 변이 ${outer}cm인 정사각형 안에 그림과 같이 밑면 한 변이 ${base}cm인 사각뿔의 전개도를 그렸습니다. 네 옆면의 꼭짓점은 바깥 정사각형의 각 변에 놓입니다. 전개도의 넓이를 구하세요.${pyramidCrossNetSvg({ base, outer })}${angularSolidEvidence("square-pyramid-net-area", [base, outer])}`, answer, `가운데 정사각형 넓이는 ${base}²이고, 네 삼각형 넓이의 합은 ${base}×(${outer}-${base})입니다. 전체는 ${base}²+${base}×(${outer}-${base})=${answer}cm²입니다.`);
+      }
+      const triple = pick(rng, [[3, 4, 5], [5, 12, 13], [8, 15, 17]]);
+      const scale = int(rng, 1, 1 + level);
+      const width = triple[0] * scale, height = triple[1] * scale, answer = triple[2] * scale;
+      return result(`정사면체의 네 면을 모두 지나도록 두 점을 잇는 경로를 전개도 위에 나타냈습니다. 펼친 전개도에서 두 점의 가로 차는 ${width}cm, 세로 차는 ${height}cm입니다. 가장 짧은 경로의 길이를 구하세요.${surfaceRouteSvg({ faces: 4, width, height, label: "네 면을 모두 지나는 전개도 경로" })}${angularSolidEvidence("tetra-all-face-route", [4, width, height, answer])}`, answer, `전개도에서 네 면을 모두 지나는 범위가 고정되어 있으므로 두 점을 잇는 직선이 가장 짧습니다. 길이는 √(${width}²+${height}²)=${answer}cm입니다.`);
+    },
+    decimalNaturalDivisionAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const target = int(rng, 4, 6 + level);
+        const offsets = shuffle(rng, [-12, -5, 7, 16].slice(0, 3 + Math.min(level, 1)));
+        const labels = ["ㄱ", "ㄴ", "ㄷ", "ㄹ"].slice(0, offsets.length);
+        const divisors = shuffle(rng, [6, 8, 12, 16]).slice(0, offsets.length);
+        const quotients = offsets.map(offset => target + offset / 10);
+        const expressions = quotients.map((quotient, index) => `${labels[index]} ${decimal(quotient * divisors[index], 2)}÷${divisors[index]}`);
+        const answer = labels.map((label, index) => ({ label, distance: Math.abs(offsets[index]) })).sort((a, b) => a.distance - b.distance).map(item => item.label).join(", ");
+        return result(`다음 계산 결과를 ${target}에 가까운 순서대로 기호를 쓰세요.<div class="equation">${expressions.join("　　")}</div>${decimalDivisionEvidence("closest-quotients", [target * 10, ...quotients.map(value => Math.round(value * 10))])}`, answer, `각 몫은 ${quotients.map((value, index) => `${labels[index]}=${decimal(value, 2)}`).join(", ")}입니다. ${target}과의 차가 작은 순서는 ${answer}입니다.`);
+      }
+      if (kind === 1) {
+        const q1 = int(rng, 6, 18 + level * 4), q2 = q1 + int(rng, 3, 8);
+        const b1 = int(rng, 4, 9), b2 = int(rng, 4, 9);
+        const a1 = b1 * (10 + q1) / 10, a2 = b2 * (10 + q2) / 10;
+        const answer = decimal(Math.abs(q2 - q1) / 10, 2);
+        return result(`두 수 a, b에 대하여 a★b=(a-b)÷b로 약속합니다. 다음 두 계산 결과의 차를 구하세요.<div class="equation">${decimal(a1, 2)}★${b1}　　${decimal(a2, 2)}★${b2}</div>${decimalDivisionEvidence("defined-operation", [q1, q2])}`, answer, `첫 결과는 ${decimal(q1 / 10, 2)}, 둘째 결과는 ${decimal(q2 / 10, 2)}이므로 차는 ${answer}입니다.`);
+      }
+      if (kind === 2) {
+        const base = int(rng, 8, 15 + level * 2), height = int(rng, 3, 8 + level), square = int(rng, 4, 8 + level);
+        const total = base * height + square * square;
+        return result(`평행사변형과 정사각형을 겹치지 않게 이어 붙인 도형의 넓이는 ${total}cm²입니다. 평행사변형의 높이 □를 구하세요.${decimalCompositeAreaSvg({ base, height, square })}${decimalDivisionEvidence("composite-missing-height", [base, square, total])}`, height, `정사각형의 넓이 ${square * square}cm²를 빼면 평행사변형의 넓이는 ${base * height}cm²입니다. ${base * height}÷${base}=${height}cm입니다.`);
+      }
+      if (kind === 3) {
+        const divisor = int(rng, 4, 9 + level);
+        const quotientScaled = int(rng, 125, 485 + level * 40);
+        const dividendScaled = divisor * quotientScaled;
+        const original = fixedDecimal(dividendScaled, 2);
+        const indexes = [...original].map((value, index) => value !== "." ? index : -1).filter(index => index >= 0);
+        const hiddenIndex = pick(rng, indexes.slice(1));
+        const answer = Number(original[hiddenIndex]);
+        const masked = `${original.slice(0, hiddenIndex)}□${original.slice(hiddenIndex + 1)}`;
+        return result(`다음 나눗셈이 맞도록 □에 들어갈 숫자를 구하세요.<div class="equation">${masked} ÷ ${divisor} = ${fixedDecimal(quotientScaled, 2)}</div>${decimalDivisionEvidence("missing-long-division-digit", [divisor, quotientScaled, dividendScaled, hiddenIndex])}`, answer, `${fixedDecimal(quotientScaled, 2)}×${divisor}=${original}이므로 빠진 숫자는 ${answer}입니다.`);
+      }
+      if (kind === 4) {
+        const multiplier = int(rng, 4, 9 + level);
+        const originalHundred = 180 * multiplier;
+        const addHundred = int(rng, 125, 475);
+        const quotientFourHundred = originalHundred / 4;
+        const totalHundred = quotientFourHundred + addHundred;
+        const answerHundred = 56 * multiplier;
+        return result(`어떤 수를 4로 나눈 몫에 ${fixedDecimal(addHundred, 2)}을 더했더니 ${fixedDecimal(totalHundred, 2)}이 되었습니다. 그 수를 5로 나눈 몫과 9로 나눈 몫의 합을 구하세요.${decimalDivisionEvidence("linked-quotient-sum", [originalHundred, addHundred, totalHundred])}`, decimal(answerHundred / 100, 2), `어떤 수는 (${fixedDecimal(totalHundred, 2)}-${fixedDecimal(addHundred, 2)})×4=${fixedDecimal(originalHundred, 2)}입니다. 이를 5와 9로 나눈 몫의 합은 ${decimal(answerHundred / 100, 2)}입니다.`);
+      }
+      const cards = pick(rng, [[2, 3, 4, 9], [1, 3, 6, 8], [2, 5, 7, 9], [1, 4, 7, 8]]);
+      const cases = operatorPermutations(cards).map(order => ({ order, value: (10 * order[0] + order[1] + order[2] / 10) / order[3] }));
+      const minimum = Math.min(...cases.map(item => item.value));
+      const maximum = Math.max(...cases.map(item => item.value));
+      const answer = decimal(maximum - minimum, 3);
+      return result(`수 카드 ${cards.join(", ")} 중 3장으로 소수 두 자리 수를 만들고, 남은 카드의 수로 나눕니다. 만들 수 있는 몫의 최댓값과 최솟값의 차를 구하세요.${decimalDivisionEvidence("digit-card-quotient-range", cards)}`, answer, `가능한 카드 순서를 모두 검사하면 가장 큰 몫은 ${decimal(maximum, 3)}, 가장 작은 몫은 ${decimal(minimum, 3)}입니다. 차는 ${answer}입니다.`);
+    },
+    decimalDivisionApplicationAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const intervals = int(rng, 7, 9 + level), targetIndex = int(rng, 2, intervals - 2);
+        const startHundred = int(rng, 8, 25) * 100;
+        const stepHundred = pick(rng, [25, 35, 45, 55]);
+        const endHundred = startHundred + intervals * stepHundred;
+        const answerHundred = startHundred + targetIndex * stepHundred;
+        return result(`수직선의 눈금은 모두 같은 간격입니다. ㉠에 알맞은 수를 구하세요.${decimalNumberLineSvg({ start: decimal(startHundred / 100, 2), end: decimal(endHundred / 100, 2), intervals, targetIndex })}${decimalDivisionEvidence("equal-number-line", [startHundred, endHundred, intervals, targetIndex])}`, decimal(answerHundred / 100, 2), `한 눈금은 (${decimal(endHundred / 100, 2)}-${decimal(startHundred / 100, 2)})÷${intervals}=${decimal(stepHundred / 100, 2)}입니다. 처음에서 ${targetIndex}칸 간 값은 ${decimal(answerHundred / 100, 2)}입니다.`);
+      }
+      if (kind === 1) {
+        const firstLaps = 4, secondsPerLap = int(rng, 45, 85 + level * 10), secondLaps = int(rng, 3, 6 + level);
+        const firstSeconds = firstLaps * secondsPerLap, answerSeconds = secondLaps * secondsPerLap;
+        return result(`일정한 빠르기로 운동장 ${firstLaps}바퀴를 도는 데 ${durationText(firstSeconds)}가 걸렸습니다. 같은 빠르기로 ${secondLaps}바퀴를 도는 데 걸리는 시간을 구하세요.${decimalDivisionEvidence("constant-lap-time", [firstLaps, firstSeconds, secondLaps])}`, durationText(answerSeconds), `한 바퀴에는 ${firstSeconds}÷${firstLaps}=${secondsPerLap}초가 걸립니다. ${secondLaps}바퀴는 ${answerSeconds}초, 즉 ${durationText(answerSeconds)}입니다.`);
+      }
+      if (kind === 2) {
+        const totalCount = int(rng, 10, 14 + level), removed = int(rng, 3, totalCount - 4), newCount = int(rng, 7, 11 + level);
+        const itemHundred = int(rng, 65, 145), containerHundred = int(rng, 180, 420);
+        const totalHundred = containerHundred + totalCount * itemHundred;
+        const remainingHundred = totalHundred - removed * itemHundred;
+        const answerHundred = containerHundred + newCount * itemHundred;
+        return result(`무게가 같은 연필 ${totalCount}자루가 든 필통의 무게는 ${fixedDecimal(totalHundred, 2)}g입니다. 연필 ${removed}자루를 꺼내니 ${fixedDecimal(remainingHundred, 2)}g이었습니다. 빈 필통에 같은 연필 ${newCount}자루를 넣으면 몇 g입니까?${decimalDivisionEvidence("container-item-mass", [totalCount, removed, newCount, totalHundred, remainingHundred])}`, decimal(answerHundred / 100, 2), `꺼낸 연필 ${removed}자루의 무게 차로 한 자루는 ${fixedDecimal(itemHundred, 2)}g임을 구합니다. 빈 필통은 ${fixedDecimal(containerHundred, 2)}g이므로 새 무게는 ${decimal(answerHundred / 100, 2)}g입니다.`);
+      }
+      if (kind === 3) {
+        const speedA = pick(rng, [36, 42, 48, 54]), speedB = speedA + pick(rng, [18, 24, 30]);
+        const sampleMinutesA = pick(rng, [10, 12, 15]), sampleMinutesB = pick(rng, [20, 24, 30]);
+        const travelMinutes = pick(rng, [20, 25, 30]);
+        const distanceA = speedA * sampleMinutesA / 60, distanceB = speedB * sampleMinutesB / 60;
+        const answer = decimal((speedB - speedA) * travelMinutes / 60, 2);
+        return result(`가 이동 수단은 ${sampleMinutesA}분에 ${decimal(distanceA, 2)}km, 나 이동 수단은 ${sampleMinutesB}분에 ${decimal(distanceB, 2)}km를 일정하게 갑니다. 같은 곳에서 같은 방향으로 동시에 출발하면 ${travelMinutes}분 뒤 두 이동 수단 사이의 거리는 몇 km입니까?${decimalDivisionEvidence("two-speed-gap", [speedA, speedB, sampleMinutesA, sampleMinutesB, travelMinutes])}`, answer, `시속은 각각 ${speedA}km, ${speedB}km입니다. 빠르기 차 ${speedB - speedA}km/h로 ${travelMinutes}분 동안 벌어지므로 거리는 ${answer}km입니다.`);
+      }
+      if (kind === 4) {
+        const [rateATenth, rateBTenth] = pick(rng, [[124, 180], [128, 192], [135, 225], [144, 216]]);
+        const rateA = rateATenth / 10, rateB = rateBTenth / 10;
+        const distance = rateA * rateB;
+        const price = pick(rng, [1500, 1600, 1700]);
+        const answer = Math.round(Math.abs(rateB - rateA) * price);
+        return result(`가 자동차는 휘발유 1L로 ${rateA}km, 나 자동차는 1L로 ${rateB}km를 갑니다. 두 자동차가 각각 ${decimal(distance, 2)}km를 갈 때 필요한 휘발유 값의 차를 구하세요. 휘발유는 1L에 ${price.toLocaleString()}원입니다.${decimalDivisionEvidence("fuel-cost-difference", [rateATenth, rateBTenth, Math.round(distance * 100), price])}`, answer, `필요한 기름은 각각 ${decimal(distance / rateA, 2)}L, ${decimal(distance / rateB, 2)}L입니다. 양의 차에 ${price.toLocaleString()}원을 곱하면 ${answer.toLocaleString()}원입니다.`);
+      }
+      const overlap = int(rng, 2, 5 + level), height = int(rng, 3, 6 + level);
+      const leftWidth = overlap + int(rng, 2, 5), rightWidth = overlap + int(rng, 2, 5);
+      const seconds = 5, leftSpeedTenth = int(rng, 4, 8), rightSpeedTenth = int(rng, 4, 8);
+      const gapTenth = (leftSpeedTenth + rightSpeedTenth) * seconds - overlap * 10;
+      if (gapTenth <= 0) return generators.decimalDivisionApplicationAdvanced({ rng, level, variant });
+      const answer = overlap * height;
+      return result(`높이가 ${height}cm인 두 직사각형이 ${fixedDecimal(gapTenth, 1)}cm 떨어져 있습니다. 왼쪽 도형은 초당 ${fixedDecimal(leftSpeedTenth, 1)}cm, 오른쪽 도형은 초당 ${fixedDecimal(rightSpeedTenth, 1)}cm씩 서로를 향해 움직입니다. ${seconds}초 뒤 겹치는 부분의 넓이를 구하세요.${movingOverlapSvg({ leftWidth, rightWidth, height, gap: fixedDecimal(gapTenth, 1), overlap })}${decimalDivisionEvidence("moving-overlap-area", [leftWidth, rightWidth, height, gapTenth, leftSpeedTenth, rightSpeedTenth, seconds])}`, answer, `두 도형이 줄인 간격은 (${fixedDecimal(leftSpeedTenth, 1)}+${fixedDecimal(rightSpeedTenth, 1)})×${seconds}cm입니다. 처음 간격을 빼면 겹친 가로가 ${overlap}cm이므로 넓이는 ${overlap}×${height}=${answer}cm²입니다.`);
+    },
+    naturalDecimalQuotientAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const [numerator, denominator] = pick(rng, [[6, 7], [17, 21], [5, 13], [7, 11], [8, 37]]);
+        const position = pick(rng, [48, 75, 100, 120 + level * 10]);
+        const answer = decimalDigitAt(numerator, denominator, position);
+        return result(`${numerator}/${denominator}을 소수로 나타낼 때 소수 ${position}째 자리 숫자를 구하세요.${decimalDivisionEvidence("repeating-decimal-digit", [numerator, denominator, position])}`, answer, `나눗셈의 나머지를 차례로 이어 계산하면 반복 주기를 찾을 수 있습니다. ${position}째 자리의 숫자는 ${answer}입니다.`);
+      }
+      if (kind === 1) {
+        const lowA = int(rng, 11, 15), highA = lowA + int(rng, 1, 3), lowB = int(rng, 5, 7), highB = lowB + int(rng, 1, 3);
+        const maximum = Math.round(highA / lowB * 100) / 100;
+        const minimum = Math.round(lowA / highB * 100) / 100;
+        const answer = decimal(maximum - minimum, 2);
+        return result(`가가 ${lowA} 이상 ${highA} 이하의 자연수이고, 나가 ${lowB} 이상 ${highB} 이하의 자연수입니다. 가÷나의 몫을 반올림하여 소수 둘째 자리까지 나타낼 때 가장 큰 값과 가장 작은 값의 차를 구하세요.${decimalDivisionEvidence("rounded-quotient-range", [lowA, highA, lowB, highB])}`, answer, `가장 큰 값은 ${highA}÷${lowB}를 반올림한 ${decimal(maximum, 2)}, 가장 작은 값은 ${lowA}÷${highB}를 반올림한 ${decimal(minimum, 2)}입니다. 차는 ${answer}입니다.`);
+      }
+      if (kind === 2) {
+        const firstTenth = pick(rng, [12, 15, 18, 24]), secondTenth = pick(rng, [8, 12, 16, 25]);
+        const answer = decimal(100 / (firstTenth * secondTenth), 3);
+        return result(`세 수 가, 나, 다에 대하여 가÷나=${fixedDecimal(firstTenth, 1)}, 나÷다=${fixedDecimal(secondTenth, 1)}입니다. 다÷가의 몫을 반올림하여 소수 셋째 자리까지 나타내세요.${decimalDivisionEvidence("three-number-quotient", [firstTenth, secondTenth])}`, answer, `가/나와 나/다를 곱하면 가/다=${decimal(firstTenth * secondTenth / 100, 3)}입니다. 그 역수인 다/가는 ${answer}입니다.`);
+      }
+      if (kind === 3) {
+        const first = int(rng, 8, 15), count = int(rng, 3, 6 + level), last = first + count - 1;
+        const lowHundred = first * 100 - int(rng, 15, 65), highHundred = last * 100 + int(rng, 15, 65);
+        const lowDivisor = pick(rng, [4, 5, 8, 10]), highDivisor = pick(rng, [4, 5, 8, 10]);
+        const lowDividendHundred = lowHundred * lowDivisor;
+        const highDividendHundred = highHundred * highDivisor;
+        const candidates = Array.from({ length: count }, (_, index) => first + index);
+        const answer = candidates.reduce((sum, value) => sum + value, 0);
+        return result(`자연수 n이 ${fixedDecimal(lowDividendHundred, 2)}÷${lowDivisor}<n<${fixedDecimal(highDividendHundred, 2)}÷${highDivisor}를 만족합니다. 가능한 모든 n의 합을 구하세요.${decimalDivisionEvidence("natural-number-interval", [lowDividendHundred, lowDivisor, highDividendHundred, highDivisor])}`, answer, `양쪽 나눗셈을 계산하면 ${fixedDecimal(lowHundred, 2)}<n<${fixedDecimal(highHundred, 2)}입니다. 조건을 만족하는 자연수는 ${candidates.join(", ")}이고 합은 ${answer}입니다.`);
+      }
+      if (kind === 4) {
+        const base = int(rng, 120, 190 + level * 10), divisor = int(rng, 41, 67);
+        const groups = new Map();
+        for (let addHundred = 1; addHundred <= 999; addHundred += 1) {
+          const roundedThousand = Math.round(((base + addHundred / 100) / divisor) * 1000);
+          const values = groups.get(roundedThousand) || [];
+          values.push(addHundred);
+          groups.set(roundedThousand, values);
+        }
+        const choices = [...groups.entries()].filter(([, values]) => values.length >= 2 && values.length <= 7);
+        const [targetThousand, additions] = pick(rng, choices);
+        const answerHundred = Math.min(...additions);
+        return result(`${base}에 어떤 소수를 더하여 ${divisor}로 나눈 몫을 반올림해 소수 셋째 자리까지 나타냈더니 ${fixedDecimal(targetThousand, 3)}이 되었습니다. 더할 수 있는 소수 중 가장 작은 수를 구하세요.${decimalDivisionEvidence("smallest-rounding-addend", [base, divisor, targetThousand])}`, decimal(answerHundred / 100, 2), `0.01씩 늘려 몫이 ${fixedDecimal(targetThousand, 3)}으로 반올림되는 범위를 확인하면 가장 작은 수는 ${decimal(answerHundred / 100, 2)}입니다.`);
+      }
+      let selected = null;
+      for (let attempt = 0; attempt < 120 && !selected; attempt += 1) {
+        const divisorA = int(rng, 3, 8), divisorB = int(rng, 3, 8), center = int(rng, 20, 80);
+        const targetA = Math.round(center / divisorA), targetB = Math.round(center / divisorB);
+        const candidates = Array.from({ length: 160 }, (_, index) => index + 1).filter(value => Math.round(value / divisorA) === targetA && Math.round(value / divisorB) === targetB);
+        if (candidates.length >= 2 && candidates.length <= 5) selected = { divisorA, divisorB, targetA, targetB, candidates };
+      }
+      if (!selected) selected = { divisorA: 5, divisorB: 3, targetA: 7, targetB: 12, candidates: [35, 36, 37] };
+      const answer = selected.candidates.join(", ");
+      return result(`어떤 자연수를 ${selected.divisorA}로 나눈 몫을 소수 첫째 자리에서 반올림하면 ${selected.targetA}, 같은 수를 ${selected.divisorB}로 나눈 몫을 소수 첫째 자리에서 반올림하면 ${selected.targetB}가 됩니다. 가능한 자연수를 모두 쓰세요.${decimalDivisionEvidence("two-rounded-quotients", [selected.divisorA, selected.targetA, selected.divisorB, selected.targetB])}`, answer, `각 반올림 범위를 모두 만족하는 자연수를 검사하면 ${answer}입니다.`);
+    },
+    decimalDivisionEquationAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const middleTenth = int(rng, 620, 930 + level * 50), firstTenth = int(rng, 220, 420), extraTenth = int(rng, 120, 260);
+        const lastTenth = firstTenth + extraTenth;
+        const totalTenth = firstTenth + middleTenth + lastTenth;
+        const answerTenth = firstTenth + middleTenth;
+        return result(`일직선 위에 다섯 점 ㄱ, ㄴ, ㄷ, ㄹ, ㅁ이 차례로 있습니다. ㄴㄹ=${fixedDecimal(middleTenth, 1)}cm, ㄱㅁ=${fixedDecimal(totalTenth, 1)}cm이고 ㄹㅁ은 ㄱㄴ보다 ${fixedDecimal(extraTenth, 1)}cm 더 깁니다. ㄱㄹ의 길이를 구하세요.${fivePointLineSvg({ middle: fixedDecimal(middleTenth, 1), total: fixedDecimal(totalTenth, 1), extra: fixedDecimal(extraTenth, 1) })}${decimalDivisionEvidence("five-collinear-points", [middleTenth, totalTenth, extraTenth])}`, decimal(answerTenth / 10, 1), `ㄱㄴ을 x라 하면 x+${fixedDecimal(middleTenth, 1)}+(x+${fixedDecimal(extraTenth, 1)})=${fixedDecimal(totalTenth, 1)}입니다. x=${fixedDecimal(firstTenth, 1)}이므로 ㄱㄹ=${decimal(answerTenth / 10, 1)}cm입니다.`);
+      }
+      if (kind === 1) {
+        const factorXHundred = pick(rng, [125, 150, 200, 250]), factorYHundred = pick(rng, [120, 160, 240, 400]);
+        const increaseRatioNumerator = factorXHundred * factorYHundred - 10000;
+        const requiredMultiple = 10000 / gcd(increaseRatioNumerator, 10000);
+        const originalHundred = requiredMultiple * int(rng, 8, 26 + level * 5);
+        const increaseHundred = originalHundred * increaseRatioNumerator / 10000;
+        return result(`어떤 직사각형의 가로를 ${decimal(factorXHundred / 100, 2)}배, 세로를 ${decimal(factorYHundred / 100, 2)}배 하여 새 직사각형을 만들었더니 넓이가 처음보다 ${fixedDecimal(increaseHundred, 2)}cm² 늘었습니다. 처음 직사각형의 넓이를 구하세요.${decimalDivisionEvidence("scaled-rectangle-area", [factorXHundred, factorYHundred, increaseHundred])}`, decimal(originalHundred / 100, 2), `넓이는 ${decimal(factorXHundred * factorYHundred / 10000, 3)}배가 됩니다. 늘어난 배수로 ${fixedDecimal(increaseHundred, 2)}를 나누면 처음 넓이는 ${decimal(originalHundred / 100, 2)}cm²입니다.`);
+      }
+      if (kind === 2) {
+        const width = int(rng, 24, 42 + level * 4), height = int(rng, 16, 30 + level * 3), border = int(rng, 2, 5);
+        const roadArea = 2 * border * (width + height) + 4 * border * border;
+        const answer = 2 * (width + height);
+        return result(`직사각형 공원 둘레에 폭이 ${border}m로 일정한 길을 만들었습니다. 길의 넓이는 ${roadArea}m²입니다. 공원의 둘레를 구하세요.${rectangleBorderSvg({ width, height, border })}${decimalDivisionEvidence("rectangular-park-border", [width, height, border, roadArea])}`, answer, `길 넓이에서 네 모서리의 ${border}m×${border}m 부분을 빼고 폭 ${border}m로 나누면 공원 둘레가 됩니다. (${roadArea}-${4 * border * border})÷${border}=${answer}m입니다.`);
+      }
+      if (kind === 3) {
+        const count = int(rng, 4, 6 + level), sideTenth = int(rng, 28, 65 + level * 5), totalTenth = count * sideTenth;
+        return result(`같은 크기의 정삼각형 ${count}개를 그림처럼 이어 붙였습니다. 아랫변 전체 길이가 ${fixedDecimal(totalTenth, 1)}cm일 때 정삼각형 한 변의 길이를 구하세요.${equilateralStripSvg({ count, total: fixedDecimal(totalTenth, 1) })}${decimalDivisionEvidence("equilateral-strip-side", [count, totalTenth])}`, decimal(sideTenth / 10, 1), `아랫변은 같은 길이 ${count}개로 이루어졌으므로 ${fixedDecimal(totalTenth, 1)}÷${count}=${decimal(sideTenth / 10, 1)}cm입니다.`);
+      }
+      if (kind === 4) {
+        const speedATenth = pick(rng, [35, 42, 48, 56]), speedBTenth = speedATenth - pick(rng, [6, 8, 12]);
+        const factorTenth = pick(rng, [4, 5, 6]);
+        const secondMeetingMinutes = 18 * factorTenth;
+        const distanceHundred = (speedATenth + speedBTenth) * factorTenth;
+        return result(`두 사람이 서로의 집에서 동시에 출발하여 두 집 사이를 같은 빠르기로 계속 왕복합니다. 빠르기는 각각 시속 ${fixedDecimal(speedATenth, 1)}km, ${fixedDecimal(speedBTenth, 1)}km이고 두 번째로 만날 때까지 ${durationText(secondMeetingMinutes * 60)}가 걸렸습니다. 두 집 사이의 거리를 구하세요.${decimalDivisionEvidence("second-meeting-distance", [speedATenth, speedBTenth, secondMeetingMinutes])}`, decimal(distanceHundred / 100, 2), `두 번째 만날 때 두 사람이 간 거리의 합은 집 사이 거리의 3배입니다. (${fixedDecimal(speedATenth, 1)}+${fixedDecimal(speedBTenth, 1)})×${secondMeetingMinutes}/60÷3=${decimal(distanceHundred / 100, 2)}km입니다.`);
+      }
+      const speedA = pick(rng, [24, 30, 36, 42]), speedB = pick(rng, [30, 36, 42, 48]);
+      const delayMinutes = pick(rng, [4, 5, 6]);
+      let afterStartMinutes = int(rng, 7, 14 + level);
+      while ((speedA * (delayMinutes + afterStartMinutes) + speedB * afterStartMinutes) % 3) afterStartMinutes += 1;
+      const circumference = speedA * (delayMinutes + afterStartMinutes) / 60 + speedB * afterStartMinutes / 60;
+      return result(`둘레가 ${decimal(circumference, 2)}km인 순환 길에서 가가 시속 ${speedA}km로 먼저 출발하고 ${delayMinutes}분 뒤 나가 같은 곳에서 반대 방향으로 시속 ${speedB}km로 출발했습니다. 나는 출발 몇 분 뒤 가를 처음 만납니까?${decimalDivisionEvidence("delayed-opposite-meeting", [speedA, speedB, delayMinutes, Math.round(circumference * 100)])}`, afterStartMinutes, `나가 출발할 때 가가 앞서 간 거리를 둘레에서 뺀 뒤 두 사람의 빠르기 합으로 나눕니다. 계산하면 ${afterStartMinutes}분입니다.`);
+    },
+    ratioComparisonAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const [horizontalRatio, verticalRatio] = pick(rng, [[3, 2], [4, 3], [5, 4], [7, 4]]);
+        const unit = int(rng, 2, 5 + level), width = horizontalRatio * unit, height = verticalRatio * unit;
+        const perimeter = 2 * (width + height), answer = width * height;
+        return result(`가로에 대한 세로의 비가 ${verticalRatio}/${horizontalRatio}인 직사각형의 둘레가 ${perimeter}cm입니다. 이 직사각형의 넓이를 구하세요.${ratioEvidence("rectangle-ratio-area", [horizontalRatio, verticalRatio, perimeter])}`, answer, `가로와 세로를 ${horizontalRatio}:${verticalRatio}로 놓으면 한 몫은 ${perimeter}÷2÷${horizontalRatio + verticalRatio}=${unit}cm입니다. 넓이는 ${width}×${height}=${answer}cm²입니다.`);
+      }
+      if (kind === 1) {
+        const [smallRatio, largeRatio] = pick(rng, [[2, 5], [3, 8], [4, 7], [5, 9]]);
+        const unit = int(rng, 5, 12 + level * 3), difference = (largeRatio - smallRatio) * unit;
+        const answer = smallRatio * unit;
+        return result(`두 상자에 든 공의 개수 차는 ${difference}개이고, 많은 상자의 공 수에 대한 적은 상자의 공 수의 비율은 ${decimal(smallRatio / largeRatio, 3)}입니다. 적은 상자에는 공이 몇 개 들어 있습니까?${ratioEvidence("difference-ratio-value", [smallRatio, largeRatio, difference])}`, answer, `두 수의 비는 ${smallRatio}:${largeRatio}이고 차는 ${largeRatio - smallRatio}몫입니다. 한 몫은 ${difference}÷${largeRatio - smallRatio}=${unit}이므로 적은 상자는 ${answer}개입니다.`);
+      }
+      if (kind === 2) {
+        const [top, bottom] = pick(rng, [[4, 7], [5, 8], [7, 11], [8, 13]]);
+        const answer = ratioText(top, bottom);
+        return result(`사다리꼴을 대각선으로 나눈 두 삼각형 가와 나의 넓이의 비가 ${top}:${bottom}입니다. 사다리꼴의 윗변과 아랫변의 길이의 비를 가장 간단한 자연수의 비로 나타내세요.${ratioTrapezoidSvg({ top: "?", bottom: "?", diagonal: true })}${ratioEvidence("trapezoid-base-ratio", [top, bottom])}`, answer, `두 삼각형은 평행한 두 밑변에 대한 높이가 같습니다. 넓이의 비가 밑변의 비와 같으므로 윗변:아랫변=${answer}입니다.`);
+      }
+      if (kind === 3) {
+        const [afterFirstRatio, afterSecondRatio] = pick(rng, [[4, 3], [5, 4], [7, 5]]);
+        const unit = int(rng, 7, 14 + level * 2), transfer = int(rng, 4, Math.max(4, afterSecondRatio * unit - 2));
+        const first = afterFirstRatio * unit + transfer, second = afterSecondRatio * unit - transfer;
+        return result(`지호는 사탕 ${first}개, 세린이는 ${second}개를 가지고 있습니다. 지호가 세린이에게 사탕을 몇 개 주면 지호와 세린이가 가진 사탕 수의 비가 ${afterFirstRatio}:${afterSecondRatio}가 됩니까?${ratioEvidence("transfer-to-ratio", [first, second, afterFirstRatio, afterSecondRatio])}`, transfer, `전체 ${first + second}개를 ${afterFirstRatio + afterSecondRatio}몫으로 나누면 한 몫은 ${unit}개입니다. 지호는 ${afterFirstRatio * unit}개가 되어야 하므로 ${transfer}개를 주어야 합니다.`);
+      }
+      if (kind === 4) {
+        const [a, b, c, d] = pick(rng, [[4, 5, 5, 8], [3, 7, 7, 10], [5, 6, 3, 4], [7, 9, 9, 14], [3, 5, 4, 9], [7, 8, 5, 7]]);
+        const answer = decimal(a * c / (b * d), 3);
+        return result(`가에 대한 나의 비율은 ${a}/${b}이고, 나와 다의 비는 ${c}:${d}입니다. 가에 대한 다의 비율을 소수로 나타내세요.${ratioEvidence("chained-ratios", [a, b, c, d])}`, answer, `가/나는 ${a}/${b}, 나/다는 ${c}/${d}이므로 가/다=(${a}/${b})×(${c}/${d})=${answer}입니다.`);
+      }
+      const [onlyFirstRatio, onlySecondRatio] = pick(rng, [[2, 3], [3, 4], [4, 5]]);
+      const unit = int(rng, 5, 10 + level), intersection = int(rng, 4, 10 + level * 2);
+      const onlyFirst = onlyFirstRatio * unit, onlySecond = onlySecondRatio * unit, total = onlyFirst + onlySecond + intersection;
+      const answer = ratioText(onlyFirst + intersection, onlySecond + intersection);
+      return result(`학생 ${total}명은 모두 K팝 또는 힙합을 좋아합니다. 두 음악을 모두 좋아하는 학생은 ${intersection}명이고, K팝만 좋아하는 학생 수와 힙합만 좋아하는 학생 수의 비는 ${onlyFirstRatio}:${onlySecondRatio}입니다. K팝을 좋아하는 학생 수와 힙합을 좋아하는 학생 수의 비를 가장 간단히 나타내세요.${ratioEvidence("overlapping-groups-ratio", [total, intersection, onlyFirstRatio, onlySecondRatio])}`, answer, `한 가지만 좋아하는 ${total - intersection}명을 ${onlyFirstRatio}:${onlySecondRatio}로 나누면 ${onlyFirst}명과 ${onlySecond}명입니다. 두 음악을 모두 좋아하는 학생을 각각 더하면 비는 ${answer}입니다.`);
+    },
+    percentageAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const [leftMultiplier, rightMultiplier] = pick(rng, [[3, 4], [4, 5], [5, 8], [7, 10]]);
+        const answer = decimal(leftMultiplier / rightMultiplier * 100, 1);
+        return result(`두 수 가와 나에 대하여 ${leftMultiplier}×가=${rightMultiplier}×나입니다. 가에 대한 나의 비율을 백분율로 나타내세요.${ratioEvidence("coefficient-percent", [leftMultiplier, rightMultiplier])}`, answer, `나/가=${leftMultiplier}/${rightMultiplier}이므로 백분율은 ${answer}%입니다.`);
+      }
+      if (kind === 1) {
+        const oldFirst = pick(rng, [600, 700, 800, 1200]), oldSecond = pick(rng, [1000, 1200, 1500, 2000]);
+        const firstPercent = pick(rng, [15, 20, 25, 30]), secondPercent = firstPercent + pick(rng, [-10, -5, 5, 10]);
+        const newFirst = oldFirst * (100 + firstPercent) / 100, newSecond = oldSecond * (100 + secondPercent) / 100;
+        const winner = firstPercent > secondPercent ? "가" : "나", difference = Math.abs(firstPercent - secondPercent);
+        const answer = `${winner}, ${difference}%p`;
+        return result(`가 상품은 ${oldFirst.toLocaleString()}원에서 ${newFirst.toLocaleString()}원으로, 나 상품은 ${oldSecond.toLocaleString()}원에서 ${newSecond.toLocaleString()}원으로 올랐습니다. 가격이 더 많이 오른 상품의 기호와 두 인상률의 차를 쓰세요.${ratioEvidence("price-rise-comparison", [oldFirst, newFirst, oldSecond, newSecond])}`, answer, `가와 나의 인상률은 각각 ${firstPercent}%, ${secondPercent}%입니다. 더 많이 오른 것은 ${winner}이고 차는 ${difference}%p입니다.`);
+      }
+      if (kind === 2) {
+        const rainDays = pick(rng, [40, 60, 80]), dryDays = pick(rng, [40, 60, 80]);
+        const rainAccuracy = pick(rng, [70, 80, 90]), dryAccuracy = pick(rng, [80, 90, 95]);
+        const correct = rainDays * rainAccuracy / 100 + dryDays * dryAccuracy / 100;
+        const answer = decimal(correct / (rainDays + dryDays) * 100, 1);
+        return result(`비가 온다고 예보한 ${rainDays}일 중 ${rainAccuracy}%에 실제로 비가 왔고, 비가 오지 않는다고 예보한 ${dryDays}일 중 ${dryAccuracy}%에 실제로 비가 오지 않았습니다. 전체 예보의 적중률을 구하세요.${ratioEvidence("forecast-accuracy", [rainDays, rainAccuracy, dryDays, dryAccuracy])}`, answer, `맞은 날은 ${rainDays * rainAccuracy / 100}+${dryDays * dryAccuracy / 100}=${correct}일입니다. 전체 ${rainDays + dryDays}일에 대한 비율은 ${answer}%입니다.`);
+      }
+      if (kind === 3) {
+        const total = 1000 * int(rng, 1, 2 + level), femalePercent = pick(rng, [45, 50, 55]);
+        const malePercent = pick(rng, [8, 10, 12]), femaleWinPercent = pick(rng, [5, 8, 10]);
+        const female = total * femalePercent / 100, male = total - female;
+        const answer = male * malePercent / 100 + female * femaleWinPercent / 100;
+        return result(`학생 ${total}명을 대상으로 추첨했더니 남학생의 ${malePercent}%, 여학생의 ${femaleWinPercent}%가 당첨되었습니다. 전체 학생 중 여학생은 ${femalePercent}%일 때 당첨된 학생은 모두 몇 명입니까?${ratioEvidence("group-selection-percent", [total, femalePercent, malePercent, femaleWinPercent])}`, answer, `남학생 ${male}명 중 ${male * malePercent / 100}명, 여학생 ${female}명 중 ${female * femaleWinPercent / 100}명이 당첨되어 모두 ${answer}명입니다.`);
+      }
+      if (kind === 4) {
+        const price = pick(rng, [200, 250, 300, 400]), quantity = 12;
+        const free = pick(rng, [2, 3, 4]), discount = pick(rng, [8, 10, 12]);
+        const firstCost = (quantity - free) * price, secondCost = quantity * price * (100 - discount) / 100;
+        const answer = Math.abs(firstCost - secondCost);
+        return result(`연필 한 자루의 정가는 ${price}원입니다. 가 문구점은 ${quantity}자루를 사면 ${free}자루를 덤으로 주고, 나 문구점은 정가에서 ${discount}%를 할인합니다. 연필 ${quantity}자루를 마련할 때 두 문구점의 가격 차는 몇 원입니까?${ratioEvidence("bonus-discount-difference", [price, quantity, free, discount])}`, answer, `가 문구점에서는 ${quantity - free}자루 값인 ${firstCost.toLocaleString()}원, 나 문구점에서는 ${secondCost.toLocaleString()}원입니다. 차는 ${answer.toLocaleString()}원입니다.`);
+      }
+      const total = pick(rng, [40000, 50000, 60000]), childPercent = pick(rng, [12, 14, 15]), boyPercent = pick(rng, [50, 55, 60]), targetPercent = pick(rng, [30, 40, 50]);
+      const answer = total * childPercent / 100 * boyPercent / 100 * targetPercent / 100;
+      return result(`인구가 ${total.toLocaleString()}명인 도시에 사는 초등학생은 전체의 ${childPercent}%입니다. 초등학생 중 남학생은 ${boyPercent}%이고, 남학생 중 ${targetPercent}%가 안경을 썼습니다. 안경을 쓴 초등학교 남학생은 몇 명입니까?${ratioEvidence("nested-population-percent", [total, childPercent, boyPercent, targetPercent])}`, answer, `전체에 ${childPercent}%, ${boyPercent}%, ${targetPercent}%를 차례로 곱하면 ${answer}명입니다.`);
+    },
+    multipleRatesAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const total = pick(rng, [4800, 6400, 8000, 9600]), firstDenominator = pick(rng, [40, 50, 80]), finalPercent = pick(rng, [60, 75, 80]);
+        const finalCount = total / firstDenominator * finalPercent / 100;
+        return result(`1차 서류 전형 합격률은 1/${firstDenominator}이고, 1차 합격자의 ${finalPercent}%인 ${finalCount}명이 최종 합격했습니다. 처음 지원한 사람은 모두 몇 명입니까?${ratioEvidence("reverse-pass-rate", [firstDenominator, finalPercent, finalCount])}`, total, `1차 합격자는 ${finalCount}÷${finalPercent / 100}=${total / firstDenominator}명이고, 지원자는 그 수의 ${firstDenominator}배인 ${total.toLocaleString()}명입니다.`);
+      }
+      if (kind === 1) {
+        const total = pick(rng, [400, 500, 600]), invalid = pick(rng, [20, 25, 30]), margin = pick(rng, [12, 15, 18]);
+        const valid = total - invalid;
+        const adjustedMargin = (valid + margin) % 2 ? margin + 1 : margin;
+        const winner = (valid + adjustedMargin) / 2;
+        const answer = decimal(winner / total * 100, 1);
+        return result(`총투표수 ${total}표 중 무효표는 ${invalid}표였습니다. 당선자는 다른 후보보다 ${adjustedMargin}표를 더 얻었습니다. 당선자의 득표수는 총투표수의 몇 %입니까?${ratioEvidence("vote-share", [total, invalid, adjustedMargin])}`, answer, `유효표 ${valid}표를 두 후보가 나누어 갖고 차가 ${adjustedMargin}표이므로 당선자는 ${winner}표입니다. 총투표수에 대한 비율은 ${answer}%입니다.`);
+      }
+      if (kind === 2) {
+        const areas = [pick(rng, [600, 700, 800]), pick(rng, [650, 750, 900]), pick(rng, [700, 820, 950])];
+        const densities = shuffle(rng, pick(rng, [[1000, 1400, 1800], [1200, 1500, 1800], [900, 1500, 2100], [1100, 1600, 2200]]));
+        const populations = areas.map((area, index) => area * densities[index]);
+        const maxDensity = Math.max(...densities), minDensity = Math.min(...densities);
+        const answer = `${["가", "나", "다"][densities.indexOf(maxDensity)]}, ${maxDensity - minDensity}명/km²`;
+        return result(`세 도시의 넓이와 인구가 다음과 같습니다. 인구 밀도가 가장 높은 도시와 가장 낮은 도시의 인구 밀도 차를 구하세요.${valueTable(["도시", "가", "나", "다"], ["넓이(km²)", ...areas])}${valueTable(["도시", "가", "나", "다"], ["인구(명)", ...populations.map(value => value.toLocaleString())])}${ratioEvidence("city-density", [...areas, ...populations])}`, answer, `인구를 넓이로 나누면 밀도는 각각 ${densities.join(", ")}명/km²입니다. 가장 높은 도시는 ${answer.split(",")[0]}이고 차는 ${maxDensity - minDensity}명/km²입니다.`);
+      }
+      if (kind === 3) {
+        const oldTotal = pick(rng, [1600, 2000, 2400]), oldDefects = pick(rng, [56, 70, 84]), newTotal = oldTotal + pick(rng, [400, 600, 800]);
+        const limit = oldDefects * newTotal / oldTotal;
+        const answer = Math.ceil(limit) - 1;
+        return result(`어제 만든 제품 ${oldTotal}개 중 ${oldDefects}개가 불량품이었습니다. 오늘 ${newTotal}개를 만들 때 어제보다 불량률을 낮추려면 불량품은 몇 개 이하여야 합니까?${ratioEvidence("defect-rate-limit", [oldTotal, oldDefects, newTotal])}`, answer, `어제 불량률과 같은 개수는 ${newTotal}×${oldDefects}/${oldTotal}=${decimal(limit, 2)}개입니다. 이보다 작아야 하므로 최대 ${answer}개입니다.`);
+      }
+      if (kind === 4) {
+        const principalA = pick(rng, [40000, 60000, 80000]), monthsA = pick(rng, [6, 8, 10]), monthlyA = pick(rng, [1, 1.25, 1.5]);
+        const principalB = pick(rng, [30000, 50000, 70000]), monthsB = pick(rng, [4, 6, 8]), monthlyB = pick(rng, [1.5, 2, 2.5]);
+        const interestA = principalA * monthlyA / 100 * monthsA, interestB = principalB * monthlyB / 100 * monthsB;
+        const answer = `${monthlyA}%, ${monthlyB}%`;
+        return result(`가 은행에서 ${principalA.toLocaleString()}원을 ${monthsA}개월 빌린 이자는 ${interestA.toLocaleString()}원이고, 나 은행에서 ${principalB.toLocaleString()}원을 ${monthsB}개월 빌린 이자는 ${interestB.toLocaleString()}원입니다. 각 은행의 1개월 이자율을 차례로 구하세요.${ratioEvidence("monthly-interest-rates", [principalA, monthsA, interestA, principalB, monthsB, interestB])}`, answer, `이자÷원금÷기간×100으로 계산하면 가 은행은 ${monthlyA}%, 나 은행은 ${monthlyB}%입니다.`);
+      }
+      const totalA = 150, foodA = 60, totalB = pick(rng, [300, 400, 500, 600]), totalC = pick(rng, [240, 280, 360, 440]);
+      const bNumerator = 1, bDenominator = 2, cNumerator = 5, cDenominator = 4;
+      const indexA = foodA / totalA, foodB = totalB * indexA * bNumerator / bDenominator, foodC = totalC * indexA * bNumerator / bDenominator * cNumerator / cDenominator;
+      const answer = foodB;
+      return result(`가 가구의 총지출액은 ${totalA}만원, 식료품비는 ${foodA}만원입니다. 나 가구의 엥겔 지수는 가 가구의 1/2이고, 다 가구의 엥겔 지수는 나 가구의 1.25배입니다. 나와 다 가구의 총지출액이 각각 ${totalB}만원, ${totalC}만원일 때 소득 수준이 가장 높은 가구의 식료품비는 얼마입니까?${ratioEvidence("engel-households", [totalA, foodA, totalB, totalC, bNumerator, bDenominator, cNumerator, cDenominator])}`, answer, `가 가구의 엥겔 지수는 ${decimal(indexA * 100, 1)}%입니다. 나는 ${decimal(indexA * 50, 1)}%, 다는 ${decimal(indexA * 62.5, 1)}%이므로 소득 수준이 가장 높은 나 가구의 식료품비는 ${answer}만원입니다.`);
+    },
+    priceConcentrationAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const labels = ["ㄱ", "ㄴ", "ㄷ", "ㄹ"], discounts = shuffle(rng, [10, 12, 15, 20 + level * 5]);
+        const prices = labels.map((_, index) => pick(rng, [12000, 16000, 20000, 24000]) + index * 4000);
+        const salePrices = prices.map((price, index) => price * (100 - discounts[index]) / 100);
+        const answer = labels.map((label, index) => ({ label, discount: discounts[index] })).sort((a, b) => b.discount - a.discount).map(item => item.label).join(", ");
+        return result(`다음 표에서 할인율이 높은 상품부터 차례로 기호를 쓰세요.${valueTable(["상품", ...labels], ["정가(원)", ...prices.map(value => value.toLocaleString())])}${valueTable(["상품", ...labels], ["할인가(원)", ...salePrices.map(value => value.toLocaleString())])}${ratioEvidence("discount-order", [...prices, ...salePrices])}`, answer, `각 할인율은 ${discounts.map((value, index) => `${labels[index]} ${value}%`).join(", ")}입니다. 높은 순서는 ${answer}입니다.`);
+      }
+      if (kind === 1) {
+        const price = pick(rng, [800, 1000, 1200]), quantity = 4 * int(rng, 3, 5 + level), discount = pick(rng, [8, 10, 12, 15]);
+        const bonusCost = quantity * 3 / 4 * price, discountCost = quantity * price * (100 - discount) / 100;
+        const answer = decimal((discountCost - bonusCost) / discountCost * 100, 1);
+        return result(`같은 정가 ${price.toLocaleString()}원인 공책 ${quantity}권을 삽니다. 가 문구점은 3권을 사면 1권을 덤으로 주고, 나 문구점은 ${discount}% 할인합니다. 가 문구점의 지불액은 나 문구점보다 몇 % 적습니까?${ratioEvidence("bonus-vs-discount-rate", [price, quantity, discount])}`, answer, `가에서는 ${bonusCost.toLocaleString()}원, 나에서는 ${discountCost.toLocaleString()}원을 냅니다. 나의 지불액에 대한 차의 비율은 ${answer}%입니다.`);
+      }
+      if (kind === 2) {
+        const quantity = pick(rng, [60, 80, 100]), cost = pick(rng, [500, 600, 800]), markup = pick(rng, [50, 60, 75]);
+        const fullCount = Math.floor(quantity * 3 / 5), secondCount = Math.floor(quantity / 5), lastCount = quantity - fullCount - secondCount;
+        const regular = cost * (100 + markup) / 100;
+        const secondPrice = regular * 80 / 100, lastPrice = regular * 50 / 100;
+        const revenue = fullCount * regular + secondCount * secondPrice + lastCount * lastPrice;
+        const answer = revenue - quantity * cost;
+        return result(`과일 ${quantity}개를 한 개에 ${cost}원씩 사서 ${markup}%의 이익을 붙여 정가를 정했습니다. ${fullCount}개는 정가, ${secondCount}개는 정가의 20% 할인, 나머지는 정가의 절반에 팔았습니다. 전체 이익은 얼마입니까?${ratioEvidence("tiered-sale-profit", [quantity, cost, markup, fullCount, secondCount])}`, answer, `정가는 ${regular.toLocaleString()}원입니다. 세 판매 금액의 합에서 원가 ${quantity * cost}원을 빼면 이익은 ${answer.toLocaleString()}원입니다.`);
+      }
+      if (kind === 3) {
+        const firstMass = pick(rng, [150, 200, 250]), firstPercent = pick(rng, [10, 14, 20]);
+        const secondMass = pick(rng, [100, 125, 200]), secondPercent = pick(rng, [20, 25, 30]);
+        const answer = decimal((firstMass * firstPercent + secondMass * secondPercent) / (firstMass + secondMass), 1);
+        return result(`진하기가 ${firstPercent}%인 설탕물 ${firstMass}g과 ${secondPercent}%인 설탕물 ${secondMass}g을 섞었습니다. 새 설탕물의 진하기를 구하세요.${ratioEvidence("mixed-concentration", [firstMass, firstPercent, secondMass, secondPercent])}`, answer, `설탕의 양을 더해 전체 무게로 나누면 (${firstMass}×${firstPercent}%+${secondMass}×${secondPercent}%)÷${firstMass + secondMass}=${answer}%입니다.`);
+      }
+      if (kind === 4) {
+        const firstMass = pick(rng, [150, 200, 250]), firstPercent = pick(rng, [20, 30, 40]);
+        const secondMass = pick(rng, [250, 300, 350]), secondPercent = pick(rng, [10, 20, 25]);
+        const total = firstMass + secondMass, used = pick(rng, [100, 150, 200]);
+        const saltTotal = (firstMass * firstPercent + secondMass * secondPercent) / 100;
+        const answer = decimal(saltTotal * (total - used) / total, 2);
+        return result(`진하기가 ${firstPercent}%인 소금물 ${firstMass}g과 ${secondPercent}%인 소금물 ${secondMass}g을 섞은 뒤 ${used}g을 사용했습니다. 남은 소금물에 들어 있는 소금은 몇 g입니까?${ratioEvidence("remaining-solute", [firstMass, firstPercent, secondMass, secondPercent, used])}`, answer, `섞은 소금은 ${saltTotal}g이고 전체 ${total}g 중 ${total - used}g이 남았습니다. 같은 진하기이므로 남은 소금은 ${answer}g입니다.`);
+      }
+      const mass = pick(rng, [400, 500, 600]), percent = pick(rng, [6, 8, 10]), removed = pick(rng, [100, 200, 250]);
+      const answer = decimal(percent * (mass - removed) / mass, 2);
+      return result(`진하기가 ${percent}%인 소금물 ${mass}g에서 ${removed}g을 덜어 낸 뒤 같은 양의 물을 부었습니다. 새 소금물의 진하기를 구하세요.${ratioEvidence("remove-refill-concentration", [mass, percent, removed])}`, answer, `덜어 낸 뒤 소금은 처음의 ${(mass - removed)}/${mass}만큼 남습니다. 전체 무게는 다시 ${mass}g이므로 진하기는 ${answer}%입니다.`);
+    },
+    ratioEquationOneAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const scale = int(rng, 1, 3 + level), initialHundred = 1800 * scale, thirdDayHundred = 320 * scale;
+        return result(`냄비 가득 곰국을 끓였습니다. 첫날 전체의 14%를 먹고, 둘째 날 남은 양의 4/9를 먹었습니다. 셋째 날 ${fixedDecimal(thirdDayHundred, 2)}L를 먹었더니 처음 양의 30%가 남았습니다. 처음 곰국은 몇 L입니까?${ratioEvidence("sequential-consumption", [14, 4, 9, thirdDayHundred, 30])}`, initialHundred / 100, `처음 양을 xL라 하면 x×86/100×5/9-${fixedDecimal(thirdDayHundred, 2)}=x×30/100입니다. 풀면 x=${initialHundred / 100}L입니다.`);
+      }
+      if (kind === 1) {
+        const width = pick(rng, [30, 40, 50]), height = pick(rng, [20, 25, 30]), reducePercent = pick(rng, [20, 25, 30]);
+        const newWidth = width * (100 - reducePercent) / 100, newHeight = height + pick(rng, [3, 4, 5]);
+        const signedDifference = newWidth * newHeight - width * height;
+        if (!signedDifference) return generators.ratioEquationOneAdvanced({ rng, level, variant });
+        const areaDifference = Math.abs(signedDifference), direction = signedDifference > 0 ? "늘었습니다" : "줄었습니다";
+        const answer = ratioText(newWidth, newHeight);
+        return result(`가로 ${width}cm, 세로 ${height}cm인 직사각형의 가로를 ${reducePercent}% 줄이고 세로를 늘렸더니 넓이가 처음보다 ${areaDifference}cm² ${direction} 새 직사각형의 가로와 세로의 비를 가장 간단히 나타내세요.${ratioEvidence("changed-rectangle-ratio", [width, height, reducePercent, newHeight, signedDifference])}`, answer, `새 가로는 ${newWidth}cm입니다. 넓이가 ${areaDifference}cm² ${direction.replace("습니다", "으므로")} 새 세로는 ${newHeight}cm이고, 가로:세로=${answer}입니다.`);
+      }
+      if (kind === 2) {
+        const [top, bottom] = pick(rng, [[8, 32], [10, 50], [12, 36], [14, 42], [18, 42], [20, 60]]);
+        const upper = 3 * top + bottom, lower = top + 3 * bottom;
+        const answer = (top + bottom) / 2;
+        return result(`사다리꼴의 높이를 똑같이 둘로 나누는 평행선을 그었습니다. 윗부분과 아랫부분의 넓이의 비는 ${ratioText(upper, lower)}이고 윗변은 ${top}cm입니다. 가운데 평행선의 길이를 구하세요.${ratioTrapezoidSvg({ top, bottom: "?", middle: true })}${ratioEvidence("trapezoid-midline-from-area-ratio", [top, upper, lower])}`, answer, `아랫변을 x라 하면 두 부분의 넓이의 비는 (3×${top}+x):(${top}+3x)=${ratioText(upper, lower)}입니다. x=${bottom}이고 가운데 선은 (${top}+${bottom})÷2=${answer}cm입니다.`);
+      }
+      if (kind === 3) {
+        const dailySpend = pick(rng, [4000, 5000, 6000]), basicPercent = pick(rng, [3, 4, 5]), specialDays = int(rng, 6, 15 + level * 2);
+        const totalPoints = dailySpend * basicPercent / 100 * (30 + specialDays);
+        return result(`한 가게는 구매 금액의 ${basicPercent}%를 포인트로 적립하고, 4월 중 특별 적립일에는 그 두 배를 적립합니다. 4월 30일 동안 매일 ${dailySpend.toLocaleString()}원어치씩 사서 ${totalPoints.toLocaleString()}포인트를 받았다면 특별 적립일은 며칠입니까?${ratioEvidence("special-point-days", [dailySpend, basicPercent, totalPoints, 30])}`, specialDays, `보통 하루 포인트는 ${dailySpend * basicPercent / 100}입니다. 특별한 날은 하루치가 하나 더 생기므로 (${totalPoints}÷${dailySpend * basicPercent / 100})-30=${specialDays}일입니다.`);
+      }
+      if (kind === 4) {
+        const [aPercent, aToCNum, aToCDen] = pick(rng, [[75, 2, 3], [60, 3, 5], [80, 4, 7], [70, 7, 12], [50, 3, 8]]);
+        const bToCNum = aToCNum * 100, bToCDen = aToCDen * aPercent;
+        const answer = ratioText(bToCNum, bToCDen);
+        return result(`유현이가 가진 돈은 성현이가 가진 돈의 ${aPercent}%이고, 유현이가 가진 돈은 대현이가 가진 돈의 ${aToCNum}/${aToCDen}입니다. 성현이가 가진 돈과 대현이가 가진 돈의 비를 가장 간단히 나타내세요.${ratioEvidence("chained-money-ratio", [aPercent, aToCNum, aToCDen])}`, answer, `유현/성현=${aPercent}/100, 유현/대현=${aToCNum}/${aToCDen}이므로 성현/대현=(${aToCNum}/${aToCDen})÷(${aPercent}/100)=${answer}입니다.`);
+      }
+      const scale = int(rng, 1, 2 + level), fullOil = 12000 * scale, canWeight = 650 * scale;
+      const firstNum = 5, firstDen = 12, secondNum = 3, secondDen = 10;
+      const dailyUse = pick(rng, [250, 375, 500]) * scale, days = pick(rng, [10, 12, 14]);
+      const firstWeight = canWeight + fullOil * firstNum / firstDen, secondWeight = canWeight + fullOil * secondNum / secondDen;
+      const answer = (canWeight + fullOil - dailyUse * days) / 10;
+      return result(`기름통에 기름이 5/12만큼 있을 때 무게는 ${fixedDecimal(firstWeight, 2)}g이고, 30%만큼 있을 때 무게는 ${fixedDecimal(secondWeight, 2)}g입니다. 통을 가득 채운 뒤 매일 ${decimal(dailyUse / 1000, 3)}kg씩 ${days}일 사용했습니다. 남은 기름통 무게의 100배는 몇 kg입니까?${ratioEvidence("oil-can-weight", [firstWeight, firstNum, firstDen, secondWeight, secondNum, secondDen, dailyUse, days])}`, answer, `두 무게 차로 가득 찬 기름은 ${fullOil / 1000}kg, 빈 통은 ${canWeight / 1000}kg임을 구합니다. 사용 후 전체 무게는 ${(canWeight + fullOil - dailyUse * days) / 1000}kg이므로 100배는 ${answer}kg입니다.`);
+    },
+    ratioEquationTwoAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const lowPercent = pick(rng, [5, 6, 8]), highPercent = lowPercent + pick(rng, [6, 8, 10]), targetPercent = highPercent - pick(rng, [2, 3]);
+        const lowMass = pick(rng, [100, 200, 300]), highMass = lowMass * (targetPercent - lowPercent) / (highPercent - targetPercent);
+        return result(`진하기가 ${lowPercent}%인 소금물 ${lowMass}g과 ${highPercent}%인 소금물을 섞어 ${targetPercent}%인 소금물을 만들려고 합니다. ${highPercent}% 소금물은 몇 g 넣어야 합니까?${ratioEvidence("target-mixture-mass", [lowPercent, lowMass, highPercent, targetPercent])}`, highMass, `소금의 양을 같게 놓으면 ${lowMass}×${lowPercent}%+x×${highPercent}%=(${lowMass}+x)×${targetPercent}%입니다. x=${highMass}g입니다.`);
+      }
+      if (kind === 1) {
+        const mass = pick(rng, [400, 500, 600]), firstPercent = pick(rng, [6, 8, 10]), targetPercent = firstPercent + pick(rng, [2, 4, 5]);
+        const finalMass = mass * firstPercent / targetPercent, answer = mass - finalMass;
+        return result(`진하기가 ${firstPercent}%인 소금물 ${mass}g을 매일 같은 양씩 증발시켰더니 진하기가 ${targetPercent}%가 되었습니다. 증발한 물은 모두 몇 g입니까?${ratioEvidence("evaporated-water", [mass, firstPercent, targetPercent])}`, answer, `소금의 양은 ${mass * firstPercent / 100}g으로 변하지 않습니다. 최종 무게는 ${mass * firstPercent / 100}÷${targetPercent}%=${finalMass}g이므로 ${answer}g이 증발했습니다.`);
+      }
+      if (kind === 2) {
+        const mass = pick(rng, [200, 300, 400]), firstPercent = pick(rng, [4, 5, 6]), addedSalt = pick(rng, [8, 10, 12]), targetPercent = pick(rng, [5, 8, 10]);
+        const salt = mass * firstPercent / 100 + addedSalt, finalMass = salt * 100 / targetPercent, answer = finalMass - mass - addedSalt;
+        if (answer < 0 || !Number.isInteger(answer)) return generators.ratioEquationTwoAdvanced({ rng, level, variant });
+        return result(`진하기가 ${firstPercent}%인 소금물 ${mass}g에 소금 ${addedSalt}g과 물을 더 넣어 진하기가 ${targetPercent}%인 소금물을 만들었습니다. 더 넣은 물은 몇 g입니까?${ratioEvidence("salt-and-water-addition", [mass, firstPercent, addedSalt, targetPercent])}`, answer, `소금은 모두 ${salt}g입니다. 최종 소금물은 ${salt}÷${targetPercent}%=${finalMass}g이므로 물은 ${finalMass}-${mass}-${addedSalt}=${answer}g 넣었습니다.`);
+      }
+      if (kind === 3) {
+        const cost = pick(rng, [12000, 15000, 18000, 20000]), markup = pick(rng, [30, 40, 50]), discount = pick(rng, [1000, 1500, 1800, 2000]);
+        const regular = cost * (100 + markup) / 100, sale = regular - discount, answer = decimal((sale - cost) / cost * 100, 1);
+        return result(`원가가 ${cost.toLocaleString()}원인 물건에 ${markup}%의 이익을 붙여 정가를 정한 뒤 ${discount.toLocaleString()}원을 할인해 팔았습니다. 원가에 대한 남은 이익의 비율은 몇 %입니까?${ratioEvidence("markup-discount-profit-rate", [cost, markup, discount])}`, answer, `정가는 ${regular.toLocaleString()}원, 판매가는 ${sale.toLocaleString()}원입니다. 이익 ${sale - cost}원은 원가의 ${answer}%입니다.`);
+      }
+      if (kind === 4) {
+        const scale = int(rng, 1, 3 + level), totalRegular = 77000 * scale, paid = 56000 * scale;
+        const shoeDiscount = 30, clothesDiscount = 20;
+        const shoeRegular = (totalRegular * (100 - clothesDiscount) - paid * 100) / (shoeDiscount - clothesDiscount);
+        const clothesRegular = totalRegular - shoeRegular;
+        return result(`신발은 정가보다 ${shoeDiscount}% 싸게, 옷은 정가보다 ${clothesDiscount}% 싸게 사서 모두 ${paid.toLocaleString()}원을 냈습니다. 두 물건의 정가 합이 ${totalRegular.toLocaleString()}원일 때 옷의 정가는 얼마입니까?${ratioEvidence("two-item-regular-price", [shoeDiscount, clothesDiscount, paid, totalRegular])}`, clothesRegular, `신발 정가를 x원이라 하면 x×70%+(${totalRegular}-x)×80%=${paid}입니다. 신발 정가는 ${shoeRegular.toLocaleString()}원, 옷 정가는 ${clothesRegular.toLocaleString()}원입니다.`);
+      }
+      const cost = pick(rng, [10000, 15000, 20000]), markup = pick(rng, [30, 40, 50]), discount = pick(rng, [10, 15, 20]);
+      const fullSold = int(rng, 3, 8 + level), count = fullSold + int(rng, 6, 15 + level * 3);
+      const regular = cost * (100 + markup) / 100, discounted = regular * (100 - discount) / 100;
+      const totalProfit = fullSold * (regular - cost) + (count - fullSold) * (discounted - cost);
+      return result(`원가가 ${cost.toLocaleString()}원인 상품에 ${markup}%의 이익을 붙여 정가를 정했습니다. ${fullSold}개는 정가에 팔고 나머지는 정가의 ${discount}%를 할인하여 모두 팔았더니 총이익이 ${totalProfit.toLocaleString()}원이었습니다. 처음 상품은 모두 몇 개였습니까?${ratioEvidence("mixed-sale-count", [cost, markup, discount, fullSold, totalProfit])}`, count, `정가 판매 한 개의 이익과 할인 판매 한 개의 이익을 각각 구해 식을 세우면 전체 상품 수는 ${count}개입니다.`);
+    },
+    cubeSurfaceAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const count = pick(rng, [8, 12, 18, 27, 36]);
+        const rectangular = factorTriples(count);
+        const minimum = Math.min(...rectangular.map(([a, b, c]) => 2 * (a * b + b * c + c * a)));
+        const maximum = 4 * count + 2;
+        return result(`한 모서리가 1cm인 정육면체 ${count}개를 면끼리 붙여 하나의 입체도형을 만듭니다. 모든 정육면체가 연결될 때 겉넓이의 최댓값과 최솟값을 차례로 구하세요.${volumeEvidence("cube-surface-extremes", [count])}`, `${maximum}cm², ${minimum}cm²`, `붙인 면이 최소 ${count - 1}쌍인 사슬 모양의 겉넓이는 6×${count}-2×${count - 1}=${maximum}cm²입니다. 가장 촘촘한 직육면체 배열의 겉넓이는 ${minimum}cm²입니다.`);
+      }
+      if (kind === 1) {
+        const heights = pick(rng, [[[1, 2, 1], [2, 3, 2]], [[2, 1, 2], [3, 2, 1]], [[1, 3, 2], [2, 2, 3]], [[2, 2, 1], [1, 3, 2], [2, 1, 1]]]);
+        const side = int(rng, 1, 2 + level), cells = cellsFromHeights(heights);
+        const answer = voxelSurface(cells) * side * side;
+        return result(`한 모서리 ${side}cm인 정육면체를 바닥 칸별 높이표와 같이 빈틈없이 쌓았습니다. 입체도형의 겉넓이를 구하세요.${heightMapTable({ title: "바닥 칸별 높이", heights })}${volumeEvidence("height-map-surface", [side, ...heights.flat(), heights.length, heights[0].length])}`, answer, `높이표에 따라 모든 정육면체의 이웃한 면을 지우고 바깥에 드러난 면을 세면 ${voxelSurface(cells)}면입니다. 한 면의 넓이가 ${side * side}cm²이므로 겉넓이는 ${answer}cm²입니다.`);
+      }
+      if (kind === 2) {
+        const size = pick(rng, [5, 7]), hole = pick(rng, size === 5 ? [1, 3] : [1, 3]), directions = pick(rng, [["x"], ["x", "y"], ["x", "y", "z"]]);
+        const cells = centeredTunnelCells({ size, hole, directions }), answer = voxelSurface(cells);
+        const directionText = directions.length === 1 ? "앞뒤" : directions.length === 2 ? "앞뒤와 좌우" : "앞뒤·좌우·위아래";
+        return result(`한 모서리가 ${size}cm인 정육면체의 정중앙에 단면이 ${hole}cm×${hole}cm인 구멍을 ${directionText} 방향으로 끝까지 관통시켰습니다. 남은 입체도형의 겉넓이를 구하세요.${tunnelCubeSvg({ size, hole, directions })}${volumeEvidence("centered-tunnel-surface", [size, hole, directions.length])}`, answer, `1cm 정육면체 모형에서 관통 부분을 제거한 뒤 바깥과 구멍 안쪽에 드러난 면을 모두 세면 ${answer}개이므로 겉넓이는 ${answer}cm²입니다.`);
+      }
+      if (kind === 3) {
+        const side = int(rng, 1, 3), counts = pick(rng, [[3, 3, 3], [4, 3, 2], [5, 4, 2], [5, 3, 2]]);
+        const count = counts[0] * counts[1] * counts[2];
+        const smallTotal = count * 6 * side * side;
+        const bigSurface = 2 * side * side * (counts[0] * counts[1] + counts[1] * counts[2] + counts[2] * counts[0]);
+        const answer = ratioText(smallTotal, bigSurface);
+        return result(`가로 ${counts[0] * side}cm, 세로 ${counts[1] * side}cm, 높이 ${counts[2] * side}cm인 직육면체를 한 모서리 ${side}cm인 정육면체로 모두 잘랐습니다. 작은 정육면체 겉넓이의 합과 원래 직육면체 겉넓이의 비를 가장 간단히 나타내세요.${cuboidSvg({ a: counts[0] * side, b: counts[1] * side, c: counts[2] * side })}${volumeEvidence("cut-cubes-surface-ratio", [side, ...counts])}`, answer, `작은 정육면체 ${count}개의 겉넓이 합은 ${smallTotal}cm², 원래 겉넓이는 ${bigSurface}cm²이므로 비는 ${answer}입니다.`);
+      }
+      if (kind === 4) {
+        const size = pick(rng, [5, 7]), removedCount = int(rng, 1, 6);
+        const middle = Math.floor(size / 2), removed = [[middle, middle, size - 1], [middle, middle, 0], [middle, 0, middle], [middle, size - 1, middle], [0, middle, middle], [size - 1, middle, middle]].slice(0, removedCount);
+        const removedKeys = new Set(removed.map(cell => cell.join(","))), cells = [];
+        for (let x = 0; x < size; x += 1) for (let y = 0; y < size; y += 1) for (let z = 0; z < size; z += 1) if (!removedKeys.has(`${x},${y},${z}`)) cells.push([x, y, z]);
+        const answer = voxelSurface(cells);
+        const faces = ["윗면", "아랫면", "앞면", "뒷면", "왼쪽 면", "오른쪽 면"].slice(0, removedCount).join(", ");
+        return result(`한 모서리 ${size}cm인 정육면체를 1cm 정육면체로 채웠습니다. ${faces}의 정중앙에 있는 정육면체를 각각 1개씩 제거했습니다. 남은 입체도형의 겉넓이를 구하세요.${cuboidSvg({ a: size, b: size, c: size })}${volumeEvidence("removed-face-centers", [size, removedCount])}`, answer, `제거할 위치가 서로 만나지 않으므로 높이 모형에서 해당 정육면체를 뺀 뒤 드러난 면을 세면 ${answer}면입니다. 한 면이 1cm²이므로 겉넓이는 ${answer}cm²입니다.`);
+      }
+      const side = int(rng, 1, 3), parts = pick(rng, [[3, 3, 2], [4, 3, 2], [5, 2, 2], [3, 4, 3]]);
+      const dimensions = parts.map(count => count * side), pieceCount = parts.reduce((total, value) => total * value, 1);
+      const piecesSurface = pieceCount * 6 * side * side, originalSurface = 2 * (dimensions[0] * dimensions[1] + dimensions[1] * dimensions[2] + dimensions[2] * dimensions[0]);
+      const answer = ratioText(piecesSurface, originalSurface);
+      return result(`가로 ${dimensions[0]}cm, 세로 ${dimensions[1]}cm, 높이 ${dimensions[2]}cm인 직육면체를 ${parts.join("×")}등분하여 같은 정육면체 조각으로 잘랐습니다. 모든 조각의 겉넓이 합과 원래 겉넓이의 비를 구하세요.${cuboidSvg({ a: dimensions[0], b: dimensions[1], c: dimensions[2] })}${volumeEvidence("partition-surface-ratio", [...dimensions, ...parts])}`, answer, `조각은 ${pieceCount}개이고 겉넓이 합은 ${piecesSurface}cm²입니다. 원래 겉넓이 ${originalSurface}cm²와의 비는 ${answer}입니다.`);
+    },
+    cuboidVolumeAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const count = pick(rng, [24, 36, 48, 60, 72, 96]);
+        const triples = factorTriples(count);
+        return result(`한 모서리 1cm인 정육면체 ${count}개를 모두 사용해 빈틈없는 직육면체를 만듭니다. 돌리거나 뒤집어 같은 크기가 되는 것은 한 가지로 볼 때 서로 다른 직육면체는 몇 가지입니까?${volumeEvidence("factor-cuboids", [count])}`, triples.length, `가로≥세로≥높이로 두고 ${count}의 세 자연수 곱을 찾으면 ${triples.map(values => values.join("×")).join(", ")}로 ${triples.length}가지입니다.`);
+      }
+      if (kind === 1) {
+        const heights = pick(rng, [[[1, 2, 3], [2, 1, 2]], [[2, 3, 1], [1, 2, 2]], [[3, 2], [2, 1], [1, 2]], [[1, 2, 1], [3, 2, 3]]]);
+        const side = int(rng, 1, 3), cells = cellsFromHeights(heights);
+        const volume = cells.length * side ** 3, surface = voxelSurface(cells) * side ** 2;
+        return result(`한 모서리 ${side}cm인 정육면체를 높이표대로 쌓았습니다. 부피와 겉넓이를 차례로 구하세요.${heightMapTable({ title: "바닥 칸별 높이", heights })}${volumeEvidence("height-map-volume-surface", [side, ...heights.flat(), heights.length, heights[0].length])}`, `${volume}cm³, ${surface}cm²`, `정육면체는 ${cells.length}개이므로 부피는 ${volume}cm³입니다. 드러난 면은 ${voxelSurface(cells)}개이므로 겉넓이는 ${surface}cm²입니다.`);
+      }
+      if (kind === 2) {
+        const [areaHigh, areaLow, high, low] = pick(rng, [[12, 20, 20, 8], [15, 25, 22, 10], [18, 30, 24, 9], [20, 30, 18, 8]]);
+        const answer = decimal((areaHigh * high + areaLow * low) / (areaHigh + areaLow), 2);
+        const table = valueTable(["부분", "높은 부분", "낮은 부분"], ["넓이·높이", `${areaHigh}m² · ${high}m`, `${areaLow}m² · ${low}m`]);
+        return result(`두 부분의 흙을 옮겨 표면 높이가 같아지도록 고르게 만들었습니다. 흙의 손실이 없을 때 새 높이를 구하세요.${table}${volumeEvidence("equalized-soil-height", [areaHigh, areaLow, high, low])}`, answer, `전체 흙의 부피는 ${areaHigh * high + areaLow * low}m³이고 전체 밑넓이는 ${areaHigh + areaLow}m²이므로 높이는 ${answer}m입니다.`);
+      }
+      if (kind === 3) {
+        const a = int(rng, 4, 8 + level), b = int(rng, 5, 10 + level), c = int(rng, 6, 12 + level);
+        const loops = [2 * (a + b), 2 * (b + c), 2 * (c + a)];
+        const answer = a * b * c;
+        return result(`직육면체 상자를 서로 수직인 세 방향으로 한 바퀴씩 묶었습니다. 각 방향의 끈 길이가 ${loops.join("cm, ")}cm일 때 상자의 부피를 구하세요.${cuboidSvg({ a: "□", b: "□", c: "□" })}${volumeEvidence("three-loop-volume", [...loops])}`, answer, `세 식 a+b=${a + b}, b+c=${b + c}, c+a=${c + a}를 풀면 세 변은 ${a}, ${b}, ${c}cm입니다. 부피는 ${answer}cm³입니다.`);
+      }
+      if (kind === 4) {
+        const a = int(rng, 3, 7 + level), b = int(rng, 4, 9 + level), c = int(rng, 5, 10 + level);
+        const facePerimeters = [2 * (a + b), 2 * (b + c), 2 * (c + a)], answer = a * b * c;
+        const table = valueTable(["묶은 면", "가로×세로", "세로×높이", "높이×가로"], ["끈 길이", ...facePerimeters.map(value => `${value}cm`)]);
+        return result(`같은 상자를 서로 다른 면이 바닥에 오도록 놓고 각각 한 바퀴씩 묶은 끈 길이가 표와 같습니다. 상자 한 개의 부피를 구하세요.${table}${volumeEvidence("face-perimeter-volume", [...facePerimeters])}`, answer, `세 면의 둘레를 2로 나누어 변의 합을 구하고 연립하면 세 변은 ${a}, ${b}, ${c}cm입니다. 부피는 ${answer}cm³입니다.`);
+      }
+      const piece = [int(rng, 2, 5), int(rng, 2, 5), int(rng, 2, 5)], partitions = pick(rng, [[3, 3, 2], [3, 2, 3], [2, 3, 3]]);
+      const dimensions = piece.map((value, index) => value * partitions[index]), answer = dimensions.reduce((total, value) => total * value, 1);
+      return result(`가로 ${piece[0]}cm, 세로 ${piece[1]}cm, 높이 ${piece[2]}cm인 같은 직육면체 조각 18개가 ${partitions.join("×")} 배열로 원래 직육면체를 이룹니다. 원래 직육면체의 부피를 구하세요.${cuboidSvg({ a: dimensions[0], b: dimensions[1], c: dimensions[2] })}${volumeEvidence("eighteen-piece-volume", [...piece, ...partitions])}`, answer, `원래 세 변은 ${dimensions.join(", ")}cm이고 부피는 ${dimensions.join("×")}=${answer}cm³입니다.`);
+    },
+    surfaceVolumeAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const width = int(rng, 8, 13 + level), depth = int(rng, 4, 8 + level), height = int(rng, 7, 12 + level);
+        const cutWidth = int(rng, 2, Math.min(4, width - 3)), cutHeight = int(rng, 2, Math.min(4, height - 2));
+        const crossArea = width * height - cutWidth * cutHeight;
+        const surface = 2 * crossArea + 2 * (width + height) * depth;
+        const answer = crossArea * depth;
+        return result(`깊이가 ${depth}cm이고 오른쪽 위로 가로 ${cutWidth}cm, 높이 ${cutHeight}cm인 홈이 끝까지 이어진 직육면체입니다. 전체 가로는 ${width}cm이고 겉넓이가 ${surface}cm²일 때 부피를 구하세요.${notchedProfileSvg({ width, cutWidth, cutHeight })}${volumeEvidence("notched-surface-volume", [width, depth, cutWidth, cutHeight, surface])}`, answer, `전체 높이를 h라 하면 겉넓이는 2(${width}h-${cutWidth}×${cutHeight})+2(${width}+h)×${depth}=${surface}입니다. h=${height}cm이고 부피는 (${width}×${height}-${cutWidth}×${cutHeight})×${depth}=${answer}cm³입니다.`);
+      }
+      if (kind === 1) {
+        const heights = pick(rng, [[[1, 2, 1], [2, 3, 2]], [[2, 1, 2], [1, 3, 1]], [[1, 2, 1], [2, 2, 2], [1, 3, 1]], [[2, 2], [3, 1], [1, 2]]]);
+        const cells = cellsFromHeights(heights), side = int(rng, 2, 4 + level);
+        const volume = cells.length * side ** 3, answer = voxelSurface(cells) * side ** 2;
+        return result(`크기가 같은 정육면체를 높이표대로 이어 붙였습니다. 입체도형의 부피가 ${volume}cm³일 때 겉넓이를 구하세요.${heightMapTable({ title: "정육면체 높이표", heights })}${volumeEvidence("joined-cubes-volume-surface", [volume, cells.length, voxelSurface(cells)])}`, answer, `정육면체 한 개의 부피는 ${volume}÷${cells.length}=${side ** 3}cm³이므로 한 모서리는 ${side}cm입니다. 드러난 면 ${voxelSurface(cells)}개의 넓이 합은 ${answer}cm²입니다.`);
+      }
+      if (kind === 2) {
+        const a = int(rng, 4, 9 + level), b = int(rng, 5, 10 + level), c = int(rng, 6, 12 + level);
+        const faces = [a * b, b * c, c * a], answer = a * b * c;
+        return result(`직육면체에서 한 꼭짓점에서 만나는 서로 이웃한 세 면의 넓이가 각각 ${faces.join("cm², ")}cm²입니다. 직육면체의 부피를 구하세요.${cuboidSvg({ a: "□", b: "□", c: "□" })}${volumeEvidence("three-face-areas-volume", faces)}`, answer, `세 면의 넓이를 모두 곱하면 (abc)²입니다. √(${faces.join("×")})=${answer}이므로 부피는 ${answer}cm³입니다.`);
+      }
+      if (kind === 3) {
+        const layers = int(rng, 3, 5 + level), side = int(rng, 1, 3);
+        const heights = Array.from({ length: layers }, (_, y) => Array.from({ length: layers }, (_, x) => Math.max(0, layers - Math.max(x, y))));
+        const cells = cellsFromHeights(heights), exposed = voxelSurface(cells), unpaintedFaces = 6 * cells.length - exposed;
+        const answer = unpaintedFaces * side * side;
+        return result(`한 모서리 ${side}cm인 정육면체를 높이표와 같이 층층이 쌓고 바깥에 드러난 면을 모두 색칠했습니다. 모든 정육면체 면 중 색칠되지 않은 면의 넓이 합을 구하세요.${heightMapTable({ title: `${layers}층 계단 쌓기 높이표`, heights })}${volumeEvidence("painted-pyramid-unpainted", [side, cells.length, exposed])}`, answer, `전체 면은 6×${cells.length}=${6 * cells.length}개이고 바깥에 드러난 면은 ${exposed}개입니다. 색칠되지 않은 ${unpaintedFaces}면의 넓이는 ${answer}cm²입니다.`);
+      }
+      if (kind === 4) {
+        const width = int(rng, 4, 9 + level), depth = int(rng, 5, 11 + level), height = int(rng, 6, 12 + level);
+        const topArea = width * depth, frontArea = width * height, answer = width * depth * height;
+        const table = valueTable(["보기", "공통 가로", "직사각형 넓이"], ["위·앞", `${width}cm`, `위 ${topArea}cm² · 앞 ${frontArea}cm²`]);
+        return result(`직육면체를 위와 앞에서 보니 두 직사각형의 공통 가로 길이와 넓이가 표와 같았습니다. 직육면체의 부피를 구하세요.${table}${volumeEvidence("top-front-volume", [width, topArea, frontArea])}`, answer, `세로는 ${topArea}÷${width}=${depth}cm, 높이는 ${frontArea}÷${width}=${height}cm입니다. 부피는 ${answer}cm³입니다.`);
+      }
+      const layers = int(rng, 3, 7 + level), side = int(rng, 1, 3);
+      const heights = [Array.from({ length: layers }, (_, index) => layers - index)];
+      const targetSurface = voxelSurface(cellsFromHeights(heights)) * side * side;
+      const example = [[3, 2, 1]];
+      return result(`한 모서리 ${side}cm인 정육면체를 첫째 열 ${layers}층, 다음 열은 한 층씩 낮게 하여 마지막 열이 1층이 되도록 계단 모양으로 쌓았습니다. 겉넓이가 ${targetSurface}cm²일 때 모두 몇 층으로 쌓았는지 구하세요.${heightMapTable({ title: "3층일 때의 규칙 예시", heights: example })}${volumeEvidence("stair-surface-layers", [side, targetSurface])}`, layers, `n층일 때 높이표 [n,n-1,…,1]의 바깥 면을 세어 ${targetSurface}cm²가 되는 n을 찾으면 ${layers}입니다.`);
+    },
+    volumeApplicationAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const [width, depth, height, waterHeight] = pick(rng, [[20, 15, 30, 18], [24, 16, 32, 20], [30, 18, 36, 24], [28, 20, 35, 25], [32, 18, 40, 30]]);
+        const volume = width * depth * waterHeight, newBase = depth * height, answer = decimal(volume / newBase, 2);
+        return result(`가로 ${width}cm, 세로 ${depth}cm, 높이 ${height}cm인 직육면체 수조에 물이 ${waterHeight}cm 높이까지 있습니다. 물을 쏟지 않고 세로×높이인 면이 바닥이 되도록 세우면 물의 높이는 몇 cm입니까?${waterTankSvg({ width, depth, height, waterHeight })}${volumeEvidence("reoriented-water-height", [width, depth, height, waterHeight])}`, answer, `물의 부피는 ${width}×${depth}×${waterHeight}=${volume}cm³입니다. 새 밑넓이는 ${depth}×${height}=${newBase}cm²이므로 높이는 ${answer}cm입니다.`);
+      }
+      if (kind === 1) {
+        const outerWidth = pick(rng, [30, 40, 50]), outerDepth = pick(rng, [24, 30, 36]), outerHeight = pick(rng, [20, 24, 30]), thickness = pick(rng, [2, 3, 4]);
+        if (outerWidth <= 2 * thickness || outerDepth <= 2 * thickness || outerHeight <= thickness) return generators.volumeApplicationAdvanced({ rng, level, variant });
+        const inner = [outerWidth - 2 * thickness, outerDepth - 2 * thickness, outerHeight - thickness];
+        const answer = decimal(inner.reduce((total, value) => total * value, 1) / 1000, 3);
+        return result(`겉의 가로 ${outerWidth}cm, 세로 ${outerDepth}cm, 높이 ${outerHeight}cm인 뚜껑 없는 직육면체 그릇의 바닥과 옆면 두께는 모두 ${thickness}cm입니다. 그릇에 가득 담을 수 있는 물은 몇 L입니까?${cuboidSvg({ a: outerWidth, b: outerDepth, c: outerHeight })}${volumeEvidence("thick-container-capacity", [outerWidth, outerDepth, outerHeight, thickness])}`, answer, `안쪽 크기는 ${inner.join("×")}cm입니다. 들이는 ${inner.reduce((total, value) => total * value, 1)}cm³=${answer}L입니다.`);
+      }
+      if (kind === 2) {
+        const width = pick(rng, [30, 36, 40]), depth = pick(rng, [20, 24, 30]), initialHeight = pick(rng, [16, 18, 20]), newBase = pick(rng, [600, 720, 800]), maxHeight = pick(rng, [8, 10, 12]);
+        const volume = width * depth * initialHeight, capacity = newBase * maxHeight, spilled = Math.max(0, volume - capacity);
+        if (!spilled) return generators.volumeApplicationAdvanced({ rng, level, variant });
+        return result(`열린 수조에 가로 ${width}cm, 세로 ${depth}cm인 밑면으로 물이 ${initialHeight}cm 높이까지 있습니다. 수조를 기울여 다른 면을 바닥에 놓으면 새 밑넓이는 ${newBase}cm²이고 열린 가장자리까지 높이는 ${maxHeight}cm입니다. 넘쳐 쏟아지는 물의 양을 구하세요.${waterTankSvg({ width, depth, height: Math.max(initialHeight + 4, maxHeight + 4), waterHeight: initialHeight, title: "기울이기 전 수조" })}${volumeEvidence("tilted-spilled-volume", [width, depth, initialHeight, newBase, maxHeight])}`, spilled, `처음 물은 ${volume}cm³이고 새 자세에서 최대 ${capacity}cm³를 담습니다. 차 ${spilled}cm³가 쏟아집니다.`);
+      }
+      if (kind === 3) {
+        const width = pick(rng, [20, 24, 30]), depth = pick(rng, [15, 20, 25]), initialHeight = pick(rng, [8, 10, 12]), rise = pick(rng, [2, 3, 4]);
+        const objectVolume = width * depth * rise, answer = initialHeight + rise;
+        return result(`밑면이 ${width}cm×${depth}cm인 직육면체 수조에 물이 ${initialHeight}cm 높이까지 있습니다. 부피가 ${objectVolume}cm³인 물체를 완전히 잠기게 넣으면 물의 높이는 몇 cm입니까?${waterTankSvg({ width, depth, height: answer + 6, waterHeight: initialHeight })}${volumeEvidence("submerged-object-height", [width, depth, initialHeight, objectVolume])}`, answer, `물체가 밀어낸 부피만큼 수위가 ${objectVolume}÷(${width}×${depth})=${rise}cm 오르므로 새 높이는 ${answer}cm입니다.`);
+      }
+      if (kind === 4) {
+        const width = pick(rng, [20, 24, 30]), depth = pick(rng, [15, 20, 25]), initialHeight = pick(rng, [8, 10, 12]);
+        const rodWidth = pick(rng, [4, 5, 6]), rodDepth = pick(rng, [4, 5, 6]), baseArea = width * depth, rodArea = rodWidth * rodDepth;
+        const answer = decimal(baseArea * initialHeight / (baseArea - rodArea), 2);
+        return result(`밑면이 ${width}cm×${depth}cm인 수조에 물이 ${initialHeight}cm 높이까지 있습니다. 밑면이 ${rodWidth}cm×${rodDepth}cm이고 물보다 높은 직육면체 막대를 바닥에 수직으로 세우면 물의 높이는 몇 cm입니까?${waterTankSvg({ width, depth, height: Math.ceil(Number(answer)) + 6, waterHeight: initialHeight })}${volumeEvidence("vertical-rod-height", [width, depth, initialHeight, rodWidth, rodDepth])}`, answer, `물의 부피 ${baseArea * initialHeight}cm³는 막대 밖 밑넓이 ${baseArea - rodArea}cm²×새 높이입니다. 새 높이는 ${answer}cm입니다.`);
+      }
+      const depth = pick(rng, [10, 12, 15]), widthA = pick(rng, [12, 15, 18]), widthB = pick(rng, [18, 20, 24]), heightA = pick(rng, [12, 15, 18]), heightB = pick(rng, [5, 6, 8]);
+      const answer = decimal((widthA * heightA + widthB * heightB) / (widthA + widthB), 2);
+      const table = valueTable(["구간", "가", "나"], ["가로·물높이", `${widthA}cm · ${heightA}cm`, `${widthB}cm · ${heightB}cm`]);
+      return result(`세로가 모두 ${depth}cm인 직육면체 수조를 칸막이로 나눈 두 구간의 가로와 물높이가 표와 같습니다. 칸막이를 빼면 물높이는 몇 cm가 됩니까?${table}${volumeEvidence("partition-final-height", [widthA, widthB, heightA, heightB])}`, answer, `세로는 공통이므로 물의 단면적 합을 전체 가로로 나눕니다. (${widthA}×${heightA}+${widthB}×${heightB})÷(${widthA}+${widthB})=${answer}cm입니다.`);
+    },
+    pictureGraphAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const average14 = pick(rng, [300, 320, 340, 360]), base = pick(rng, [280, 310, 340]);
+        const values = [average14 - 40, base - 20, base + 10, average14 + 40, base + 10, base + 40];
+        const chart = pictographTable({ title: "학년별 학생 수", labels: ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"], values, largeUnit: 100, smallUnit: 10, hiddenIndices: [0, 4] });
+        const answer = `${values[0]}명, ${values[4]}명`;
+        return result(`1학년과 4학년 학생 수의 평균은 ${average14}명입니다. 5학년 학생 수는 2학년, 3학년, 6학년 학생 수의 평균과 같습니다. 그림그래프에서 빈 두 학년의 학생 수를 차례로 구하세요.${chart}${graphEvidence("picture-missing-grades", values)}`, answer, `1학년은 ${average14}×2-${values[3]}=${values[0]}명입니다. 5학년은 (${values[1]}+${values[2]}+${values[5]})÷3=${values[4]}명입니다.`);
+      }
+      if (kind === 1) {
+        const average = pick(rng, [300, 340, 380, 420]);
+        const values = [average - 60, average - 20, average + 20, average + 60];
+        const chart = pictographTable({ title: "마을별 학생 수", labels: ["가", "나", "다", "라"], values, largeUnit: 100, smallUnit: 10, hiddenIndices: [0, 3] });
+        const answer = `${values[0]}명, ${values[3]}명`;
+        return result(`네 마을의 학생 수 평균은 ${average}명이고, 가 마을은 라 마을보다 120명 적습니다. 그림그래프의 빈 두 마을 학생 수를 가, 라 순서로 구하세요.${chart}${graphEvidence("picture-average-difference", values)}`, answer, `네 마을의 합은 ${average * 4}명입니다. 가와 라의 합은 ${values[0] + values[3]}명이고 차가 120명이므로 가=${values[0]}명, 라=${values[3]}명입니다.`);
+      }
+      if (kind === 2) {
+        const machines = [5, 8, 4, 10, 6];
+        const perMachine = shuffle(rng, pick(rng, [[3000, 5000, 7000, 9000, 11000], [2000, 5000, 8000, 10000, 14000], [4000, 6000, 9000, 12000, 15000], [3000, 7000, 10000, 13000, 16000]]));
+        const production = machines.map((count, index) => count * perMachine[index]);
+        const difference = Math.max(...perMachine) - Math.min(...perMachine);
+        const chart = pictographTable({ title: "공장별 연필 생산량", labels: ["가", "나", "다", "라", "마"], values: production, largeUnit: 20000, smallUnit: 1000, unitLabel: "자루" });
+        const table = valueTable(["공장", "가", "나", "다", "라", "마"], ["기계 수", ...machines]);
+        return result(`그림그래프는 다섯 공장의 하루 연필 생산량입니다. 공장별 기계 수가 표와 같을 때, 기계 한 대당 생산량이 가장 많은 공장과 가장 적은 공장의 생산량 차를 구하세요.${chart}${table}${graphEvidence("picture-machine-average", [...machines, ...production])}`, difference, `각 공장의 생산량을 기계 수로 나누면 한 대당 ${perMachine.map(value => value.toLocaleString()).join(", ")}자루입니다. 최댓값과 최솟값의 차는 ${difference.toLocaleString()}자루입니다.`);
+      }
+      if (kind === 3) {
+        const average = pick(rng, [18000, 22000, 26000, 30000]);
+        const values = [average - 3000, average - 1000, average + 1000, average + 3000];
+        const difference = Math.max(...values) - Math.min(...values);
+        const chart = pictographTable({ title: "구별 등록 인구", labels: ["가구", "나구", "다구", "라구"], values, largeUnit: 10000, smallUnit: 1000 });
+        const answer = `차 ${difference}명, 평균 ${average}명`;
+        return result(`그림그래프를 보고 가장 많은 구와 가장 적은 구의 인구 차, 네 구의 평균을 차례로 구하세요.${chart}${graphEvidence("picture-range-average", values)}`, answer, `최댓값 ${Math.max(...values).toLocaleString()}명과 최솟값 ${Math.min(...values).toLocaleString()}명의 차는 ${difference.toLocaleString()}명이고, 네 구의 평균은 ${average.toLocaleString()}명입니다.`);
+      }
+      if (kind === 4) {
+        const displayA = int(rng, 4, 7) * 10000 + int(rng, 1, 8) * 1000;
+        const displayB = int(rng, 1, 3) * 10000 + int(rng, 1, 8) * 1000;
+        const values = [displayA, displayB];
+        const answer = displayA - displayB + 999;
+        const chart = pictographTable({ title: "천의 자리까지 반올림한 인구", labels: ["가 지역", "나 지역"], values, largeUnit: 10000, smallUnit: 1000 });
+        return result(`실제 인구를 반올림하여 천의 자리까지 나타낸 그림그래프입니다. 가 지역의 실제 인구가 나 지역보다 많을 수 있는 최대 차를 구하세요.${chart}${graphEvidence("picture-rounded-max-gap", values)}`, answer, `가는 최대 ${displayA + 499}명, 나는 최소 ${displayB - 500}명일 수 있습니다. 최대 차는 ${displayA + 499}-${displayB - 500}=${answer.toLocaleString()}명입니다.`);
+      }
+      const scale = int(rng, 1, 2 + level);
+      const initial = pick(rng, [[2800, 4000, 3200, 3600], [3200, 4800, 3600, 4000], [3600, 4400, 4000, 3200]]).map(value => value * scale);
+      const moved = initial[1] / 10;
+      const redistributed = [initial[0] + moved, initial[1] - moved * 3, initial[2] + moved, initial[3] + moved];
+      const changes = [110, 90, 110, 90];
+      const finalValues = redistributed.map((value, index) => value * changes[index] / 100);
+      const answer = finalValues.reduce((sum, value) => sum + value, 0) / 4;
+      const chart = pictographTable({ title: "이동 전 마을별 인구", labels: ["A", "B", "C", "D"], values: initial, largeUnit: 1000, smallUnit: 100 });
+      return result(`그림그래프는 이동 전 네 마을의 인구입니다. B마을 인구의 30%가 A, C, D마을로 똑같이 나누어 이사했습니다. 그 뒤 A와 C는 각각 10% 늘고 B와 D는 각각 10% 줄었다면 네 마을의 최종 인구 평균을 구하세요.${chart}${graphEvidence("picture-move-average", [...initial, ...changes])}`, answer, `B마을에서 각 마을로 ${moved}명씩 이동한 뒤 인구는 ${redistributed.join(", ")}명입니다. 10% 변화를 적용한 최종 인구의 합은 ${finalValues.reduce((sum, value) => sum + value, 0)}명이므로 평균은 ${answer}명입니다.`);
+    },
+    stripGraphAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const total = pick(rng, [800, 1000, 1200]);
+        const classPercent = pick(rng, [20, 25, 30]), fruitPercent = pick(rng, [30, 35, 40]);
+        const classSegments = [{ label: "1반", percent: 30 }, { label: "2반", percent: classPercent }, { label: "3반", percent: 25 }, { label: "4반", percent: 45 - classPercent }];
+        const fruitSegments = [{ label: "사과", percent: fruitPercent }, { label: "귤", percent: 30 }, { label: "포도", percent: 20 }, { label: "기타", percent: 50 - fruitPercent }];
+        const answer = total * classPercent * fruitPercent / 10000;
+        return result(`전교생은 ${total}명입니다. 첫 띠그래프는 반별 비율이고, 둘째는 2반 학생들이 좋아하는 과일의 비율입니다. 2반에서 사과를 좋아하는 학생은 몇 명입니까?${graphPair(stripGraphSvg({ title: "반별 학생", segments: classSegments }), stripGraphSvg({ title: "2반의 선호 과일", segments: fruitSegments }))}${graphEvidence("strip-nested-percent", [total, classPercent, fruitPercent])}`, answer, `2반은 ${total}×${classPercent}%=${total * classPercent / 100}명이고, 그중 ${fruitPercent}%는 ${answer}명입니다.`);
+      }
+      if (kind === 1) {
+        const totalA = pick(rng, [600, 800, 1000]), totalB = totalA - pick(rng, [100, 200]);
+        const targetA = pick(rng, [20, 25, 30]), targetB = pick(rng, [15, 20, 25]);
+        const valuesA = [15, targetA, 20, 15, 15, 35 - targetA];
+        const valuesB = [15, targetB, 20, 20, 15, 30 - targetB];
+        const countA = totalA * targetA / 100, countB = totalB * targetB / 100;
+        const answer = Math.abs(countA - countB);
+        const make = (title, values) => stripGraphSvg({ title, segments: values.map((percent, index) => ({ label: `${index + 1}학년`, percent })) });
+        return result(`가 학교는 ${totalA}명, 나 학교는 ${totalB}명입니다. 두 띠그래프에서 2학년 학생 수의 차를 구하세요.${graphPair(make("가 학교", valuesA), make("나 학교", valuesB))}${graphEvidence("strip-two-groups", [totalA, totalB, targetA, targetB])}`, answer, `2학년은 각각 ${countA}명, ${countB}명이므로 차는 ${answer}명입니다.`);
+      }
+      if (kind === 2) {
+        const totalA = pick(rng, [800, 1000, 1200]), totalB = pick(rng, [600, 800, 1000]);
+        const percentA = pick(rng, [20, 25, 30]), percentB = pick(rng, [30, 35, 40]);
+        const make = (title, target) => stripGraphSvg({ title, segments: [{ label: "140 미만", percent: 25 }, { label: "140~150", percent: 30 }, { label: "150~160", percent: target }, { label: "160 이상", percent: 45 - target }] });
+        const countA = totalA * percentA / 100, countB = totalB * percentB / 100;
+        const answer = Math.abs(countA - countB);
+        return result(`두 해에 조사한 학생은 각각 ${totalA}명과 ${totalB}명입니다. 키가 150cm 이상 160cm 미만인 학생 수의 차를 구하세요.${graphPair(make("첫째 해", percentA), make("둘째 해", percentB))}${graphEvidence("strip-period-count-gap", [totalA, totalB, percentA, percentB])}`, answer, `해당 구간의 학생은 각각 ${countA}명과 ${countB}명이므로 차는 ${answer}명입니다.`);
+      }
+      if (kind === 3) {
+        const scale = int(rng, 1, 4 + level), total = 80 * scale;
+        const counts = [14, 6, 32, 28].map(value => value * scale);
+        const percents = counts.map(value => value * 100 / total);
+        const segments = ["봄", "여름", "가을", "겨울"].map((label, index) => ({ label, percent: percents[index], showPercent: index === 1 }));
+        return result(`학생 ${total}명의 태어난 계절을 나타낸 띠그래프입니다. 여름은 봄의 3/7이고 겨울은 봄의 2배입니다. 가을에 태어난 학생 수를 구하세요.${stripGraphSvg({ title: "태어난 계절", segments })}${graphEvidence("strip-missing-season", [total, ...counts])}`, counts[2], `봄을 14칸으로 보면 여름은 6칸, 겨울은 28칸입니다. 전체 비를 실제 인원에 맞추면 가을은 ${counts[2]}명입니다.`);
+      }
+      if (kind === 4) {
+        const total = pick(rng, [250, 500]), essayPercent = 20;
+        const geometryPercent = pick(rng, [20, 30, 40]);
+        const geometryCount = total * essayPercent * geometryPercent / 10000;
+        const correct = int(rng, 2, Math.max(2, geometryCount - 1));
+        const segments = [{ label: "수와 연산", percent: 35 }, { label: "도형", percent: geometryPercent }, { label: "측정", percent: 15 }, { label: "규칙", percent: 10 }, { label: "자료", percent: 40 - geometryPercent }];
+        const answer = geometryCount - correct;
+        return result(`문제집은 ${total}문제이고 서술형은 전체의 ${essayPercent}%입니다. 서술형 문제의 영역별 비율이 띠그래프와 같고, 도형 영역 서술형을 ${correct}문제 맞혔다면 틀린 도형 영역 서술형은 몇 문제입니까?${stripGraphSvg({ title: "영역별 서술형 문제", segments })}${graphEvidence("strip-domain-wrong", [total, essayPercent, geometryPercent, correct])}`, answer, `서술형은 ${total * essayPercent / 100}문제이고 도형 영역은 그중 ${geometryPercent}%인 ${geometryCount}문제입니다. ${correct}문제를 맞혔으므로 ${answer}문제를 틀렸습니다.`);
+      }
+      const percentSets = [[15, 25, 30, 30], [20, 25, 20, 35], [25, 20, 35, 20], [30, 20, 25, 25]];
+      const percents = pick(rng, percentSets), total = 400;
+      const counts = percents.map(percent => percent * total / 100);
+      const dimensions = pick(rng, [[18, 5, 10, 7], [20, 6, 10, 8], [24, 5, 10, 8], [20, 7, 10, 10]]);
+      const areaGap = dimensions[0] * dimensions[1] - dimensions[2] * dimensions[3];
+      const answer = percents[3] * areaGap / 100;
+      const table = valueTable(["학년", "3학년", "4학년", "5학년", "6학년"], ["학생 수", ...counts]);
+      const chart = stripGraphSvg({ title: "학년별 학생 비율", segments: percents.map((percent, index) => ({ label: `${index + 3}학년`, percent })) });
+      return result(`표의 자료를 가로 ${dimensions[0]}cm, 세로 ${dimensions[1]}cm인 띠그래프와 가로 ${dimensions[2]}cm, 세로 ${dimensions[3]}cm인 띠그래프로 각각 나타냈습니다. 두 띠그래프에서 6학년이 차지하는 넓이의 차를 구하세요.${table}${chart}${graphEvidence("strip-area-gap", [...counts, ...dimensions])}`, answer, `6학년 비율은 ${percents[3]}%입니다. 두 직사각형 넓이의 차 ${areaGap}cm²의 ${percents[3]}%는 ${answer}cm²입니다.`);
+    },
+    pieGraphAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const [total, fairy, biography, novel, other] = pick(rng, [[1200, 444, 384, 288, 84], [1000, 360, 320, 250, 70], [1500, 540, 480, 360, 120], [2000, 720, 640, 500, 140]]);
+        const counts = [fairy, biography, novel, other], labels = ["동화책", "위인전", "소설책", "기타"];
+        const segments = counts.map((count, index) => ({ label: labels[index], percent: count * 100 / total, showPercent: index >= 2 }));
+        const answer = biography - novel;
+        return result(`도서관의 책은 ${total}권입니다. 동화책과 위인전은 전체의 ${(fairy + biography) * 100 / total}%이고 동화책이 위인전보다 ${fairy - biography}권 많습니다. 원그래프를 보고 위인전은 소설책보다 몇 권 더 많은지 구하세요.${pieGraphSvg({ title: "종류별 책", segments })}${graphEvidence("pie-sum-difference", [total, ...counts])}`, answer, `동화책과 위인전은 ${fairy + biography}권이고 차가 ${fairy - biography}권이므로 위인전은 ${biography}권입니다. 소설책 ${novel}권보다 ${answer}권 많습니다.`);
+      }
+      if (kind === 1) {
+        const totalA = pick(rng, [800, 1000, 1200]), totalB = pick(rng, [600, 800, 1000]);
+        const cowA = pick(rng, [30, 35]), cowB = pick(rng, [35, 40]);
+        const make = (title, cow) => pieGraphSvg({ title, segments: [{ label: "닭", percent: 25 }, { label: "돼지", percent: 20 }, { label: "소", percent: cow }, { label: "기타", percent: 55 - cow }] });
+        const countA = totalA * cowA / 100, countB = totalB * cowB / 100;
+        const answer = `가 ${countA}마리, 나 ${countB}마리`;
+        return result(`가 마을은 가축 ${totalA}마리, 나 마을은 ${totalB}마리를 기릅니다. 두 원그래프를 보고 소의 수를 가, 나 순서로 구하세요.${graphPair(make("가 마을", cowA), make("나 마을", cowB))}${graphEvidence("pie-two-villages", [totalA, totalB, cowA, cowB])}`, answer, `소는 각각 ${totalA}×${cowA}%=${countA}마리, ${totalB}×${cowB}%=${countB}마리입니다.`);
+      }
+      if (kind === 2) {
+        const scale = int(rng, 1, 3 + level), totalA = 200 * scale, totalB = 300 * scale;
+        const [beanA, beanB] = pick(rng, [[20, 30], [25, 35], [30, 40], [35, 45]]);
+        const make = (title, bean) => pieGraphSvg({ title, segments: [{ label: "쌀", percent: 30 }, { label: "보리", percent: 20 }, { label: "콩", percent: bean }, { label: "기타", percent: 50 - bean }] });
+        const beanCount = totalA * beanA / 100 + totalB * beanB / 100;
+        const answer = beanCount * 100 / (totalA + totalB);
+        return result(`가 마을은 곡물 ${totalA}t, 나 마을은 ${totalB}t을 생산합니다. 두 마을을 합친 전체 곡물 생산량 중 콩은 몇 %입니까?${graphPair(make("가 마을", beanA), make("나 마을", beanB))}${graphEvidence("pie-combined-rate", [totalA, totalB, beanA, beanB])}`, answer, `콩은 모두 ${beanCount}t이고 두 마을 전체는 ${totalA + totalB}t입니다. ${beanCount}÷${totalA + totalB}×100=${answer}%입니다.`);
+      }
+      if (kind === 3) {
+        const [weight, otherPercent, calciumPart, requirement] = pick(rng, [[400, 2, 25, 5], [300, 4, 25, 5], [500, 2, 20, 6], [400, 5, 25, 8], [200, 2, 25, 5], [250, 4, 20, 7]]);
+        const calcium = weight * otherPercent / 100 * calciumPart / 100;
+        const answer = Math.ceil(requirement / calcium);
+        const segments = [{ label: "수분", percent: 100 - otherPercent - 9 }, { label: "탄수화물", percent: 7 }, { label: "단백질", percent: 2 }, { label: "기타", percent: otherPercent }];
+        return result(`과일 한 개의 무게는 ${weight}g이고, 기타 성분의 ${calciumPart}%가 칼슘입니다. 칼슘 하루 충분 섭취량이 ${requirement}g일 때 이 과일을 적어도 몇 개 먹어야 합니까?${pieGraphSvg({ title: "과일의 영양 성분", segments })}${graphEvidence("pie-nutrition-ceil", [weight, otherPercent, calciumPart, requirement])}`, answer, `한 개의 칼슘은 ${weight}×${otherPercent}%×${calciumPart}%=${calcium}g입니다. ${requirement}÷${calcium}을 올림하면 ${answer}개입니다.`);
+      }
+      if (kind === 4) {
+        const scale = int(rng, 1, 3 + level), totalA = 2000000 * scale, totalB = 2500000 * scale;
+        const percentA = pick(rng, [18, 20, 24]), percentB = pick(rng, [20, 24, 28]);
+        const make = (title, percent) => pieGraphSvg({ title, segments: [{ label: "순대", percent }, { label: "떡볶이", percent: 28 }, { label: "김밥", percent: 22 }, { label: "기타", percent: 50 - percent }] });
+        const salesA = totalA * percentA / 100, salesB = totalB * percentB / 100;
+        const answer = Math.abs(salesA - salesB);
+        return result(`가 분식점의 하루 매출은 ${totalA.toLocaleString()}원, 나 분식점은 ${totalB.toLocaleString()}원입니다. 두 원그래프를 보고 순대 매출액의 차를 구하세요.${graphPair(make("가 분식점", percentA), make("나 분식점", percentB))}${graphEvidence("pie-sales-gap", [totalA, totalB, percentA, percentB])}`, answer, `순대 매출은 각각 ${salesA.toLocaleString()}원, ${salesB.toLocaleString()}원이므로 차는 ${answer.toLocaleString()}원입니다.`);
+      }
+      const total = pick(rng, [1200, 1600, 2000]);
+      const [mountain, sea, both] = pick(rng, [[60, 50, 30], [55, 45, 25], [65, 40, 20]]);
+      const union = mountain + sea - both;
+      const yesNo = (title, yes) => pieGraphSvg({ title, segments: [{ label: "좋아함", percent: yes }, { label: "좋아하지 않음", percent: 100 - yes }] });
+      const charts = `${graphPair(yesNo("산", mountain), yesNo("바다", sea))}${yesNo("산과 바다 모두", both)}`;
+      const answer = total * union / 100;
+      return result(`학생 ${total}명을 조사한 원그래프입니다. 산이나 바다 중 적어도 하나를 좋아하는 학생은 몇 명입니까?${charts}${graphEvidence("pie-union", [total, mountain, sea, both])}`, answer, `적어도 하나를 좋아하는 비율은 ${mountain}+${sea}-${both}=${union}%입니다. 학생 수는 ${total}×${union}%=${answer}명입니다.`);
+    },
+    combinedGraphAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const total = pick(rng, [4000, 8000]), approve = pick(rng, [70, 75]);
+        const approveReasons = [35, 34, 22, 9], opposeReasons = [33, 32, 28, 7];
+        const approveCount = total * approve / 100, opposeCount = total - approveCount;
+        const maxApprove = approveCount * Math.max(...approveReasons) / 100;
+        const maxOppose = opposeCount * Math.max(...opposeReasons) / 100;
+        const answer = maxApprove - maxOppose;
+        const pie = pieGraphSvg({ title: "찬반 여부", segments: [{ label: "찬성", percent: approve }, { label: "반대", percent: 100 - approve }] });
+        const reasonLabels = ["필요성", "활용성", "접근성", "기타"];
+        const strips = graphPair(stripGraphSvg({ title: "찬성 이유", segments: approveReasons.map((percent, index) => ({ label: reasonLabels[index], percent })) }), stripGraphSvg({ title: "반대 이유", segments: opposeReasons.map((percent, index) => ({ label: reasonLabels[index], percent })) }));
+        return result(`주민 ${total}명을 대상으로 한 찬반 원그래프와 이유별 띠그래프입니다. 가장 많은 찬성 이유의 인원은 가장 많은 반대 이유의 인원보다 몇 명 더 많습니까?${pie}${strips}${graphEvidence("combined-approval-reasons", [total, approve, ...approveReasons, ...opposeReasons])}`, answer, `찬성 ${approveCount}명의 가장 큰 이유는 ${maxApprove}명, 반대 ${opposeCount}명의 가장 큰 이유는 ${maxOppose}명입니다. 차는 ${answer}명입니다.`);
+      }
+      if (kind === 1) {
+        const total = pick(rng, [800, 1200]), malePercent = pick(rng, [55, 60]);
+        const male = total * malePercent / 100, female = total - male;
+        const labels = ["피아노", "미술", "태권도"];
+        const maleRates = pick(rng, [[25, 35, 40], [30, 25, 45]]), femaleRates = pick(rng, [[45, 25, 30], [35, 40, 25]]);
+        const counts = labels.map((_, index) => male * maleRates[index] / 100 + female * femaleRates[index] / 100);
+        const max = Math.max(...counts), winner = labels[counts.indexOf(max)];
+        const pie = pieGraphSvg({ title: "남녀 학생", segments: [{ label: "남학생", percent: malePercent }, { label: "여학생", percent: 100 - malePercent }] });
+        const strips = graphPair(stripGraphSvg({ title: "남학생 선택", segments: labels.map((label, index) => ({ label, percent: maleRates[index] })) }), stripGraphSvg({ title: "여학생 선택", segments: labels.map((label, index) => ({ label, percent: femaleRates[index] })) }));
+        return result(`학생 ${total}명의 성별 원그래프와 학원 선택 띠그래프입니다. 가장 많은 학생이 선택한 학원과 그 학생 수를 구하세요.${pie}${strips}${graphEvidence("combined-gender-choice", [total, malePercent, ...maleRates, ...femaleRates])}`, `${winner}, ${max}명`, `남학생 ${male}명과 여학생 ${female}명에 각 비율을 적용하면 학원별 학생 수는 ${counts.join(", ")}명입니다. 가장 많은 곳은 ${winner} ${max}명입니다.`);
+      }
+      if (kind === 2) {
+        const scale = int(rng, 1, 5 + level), totals = [600, 500, 400].map(value => value * scale), maleRates = [50, 60, 25];
+        const femaleCounts = totals.map((total, index) => total * (100 - maleRates[index]) / 100);
+        const femaleTotal = femaleCounts.reduce((sum, value) => sum + value, 0);
+        const femalePercents = femaleCounts.map(value => value * 100 / femaleTotal);
+        const winnerTotal = Math.max(...totals), winner = ["가", "나", "다"][totals.indexOf(winnerTotal)];
+        const pie = pieGraphSvg({ title: "여학생이 얻은 표", segments: femalePercents.map((percent, index) => ({ label: ["가", "나", "다"][index], percent })) });
+        const table = valueTable(["후보", "가", "나", "다"], ["남학생 표 비율", ...maleRates.map(value => `${value}%`)]);
+        const givenMale = totals.map((total, index) => total * maleRates[index] / 100);
+        return result(`후보 가, 나, 다의 남녀 득표 비율과 여학생 표의 원그래프입니다. 남학생에게 얻은 표가 각각 ${givenMale.join(", ")}표일 때 가장 많은 표를 얻은 후보와 득표 수를 구하세요.${pie}${table}${graphEvidence("combined-election", [...totals, ...maleRates])}`, `${winner}, ${winnerTotal}표`, `후보별 전체 표는 남학생 표를 해당 비율로 나누어 ${totals.join(", ")}표입니다. 가장 많은 후보는 ${winner}, ${winnerTotal}표입니다.`);
+      }
+      if (kind === 3) {
+        const [total, toyPercent, robotPercent] = pick(rng, [[400, 25, 45], [600, 30, 40], [800, 20, 50], [1000, 25, 40]]);
+        const toyCount = total * toyPercent / 100, robotCount = toyCount * robotPercent / 100;
+        const overall = stripGraphSvg({ title: "받고 싶은 선물", segments: [{ label: "전자기기", percent: 30 }, { label: "게임", percent: 20 }, { label: "장난감", percent: toyPercent }, { label: "기타", percent: 50 - toyPercent }] });
+        const toy = pieGraphSvg({ title: "장난감 종류", segments: [{ label: "로봇", percent: robotPercent }, { label: "블록", percent: 25 }, { label: "퍼즐", percent: 15 }, { label: "기타", percent: 60 - robotPercent }] });
+        return result(`장난감을 받고 싶은 학생 중 로봇을 고른 학생이 ${robotCount}명입니다. 전체 조사 학생 수를 구하세요.${graphPair(overall, toy)}${graphEvidence("combined-subcategory-total", [total, toyPercent, robotPercent, robotCount])}`, total, `로봇은 장난감 선택자의 ${robotPercent}%이므로 장난감 선택자는 ${toyCount}명입니다. 이는 전체의 ${toyPercent}%이므로 전체는 ${total}명입니다.`);
+      }
+      if (kind === 4) {
+        const scores = [0, 6, 8, 12], percents = pick(rng, [[10, 20, 40, 30], [5, 25, 45, 25], [15, 20, 35, 30], [20, 15, 45, 20]]), total = 100;
+        const counts = percents.map(percent => total * percent / 100);
+        const answer = decimal(scores.reduce((sum, score, index) => sum + score * counts[index], 0) / total, 2);
+        const pie = pieGraphSvg({ title: "시험 점수 분포", segments: scores.map((score, index) => ({ label: `${score}점`, percent: percents[index] })) });
+        const table = valueTable(["점수", ...scores.map(value => `${value}점`)], ["학생 수", ...counts]);
+        return result(`학생 ${total}명의 시험 결과를 원그래프와 표로 나타냈습니다. 평균 점수를 구하세요.${pie}${table}${graphEvidence("combined-score-average", [total, ...scores, ...counts])}`, answer, `점수×학생 수의 합을 전체 ${total}명으로 나누면 (${scores.map((score, index) => `${score}×${counts[index]}`).join("+")})÷${total}=${answer}점입니다.`);
+      }
+      const total = 1000, malePercent = pick(rng, [50, 55, 60]), femalePercent = 100 - malePercent;
+      const maleTargetPercent = pick(rng, [35, 40, 45, 50]), femaleTargetPercent = pick(rng, [20, 25, 30]);
+      const male = total * malePercent / 100, female = total - male;
+      const targetTotal = male * maleTargetPercent / 100 + female * femaleTargetPercent / 100;
+      const gender = pieGraphSvg({ title: "남녀 학생", segments: [{ label: "남학생", percent: malePercent }, { label: "여학생", percent: femalePercent }] });
+      const femaleBrands = stripGraphSvg({ title: "여학생 선호 상표", segments: [{ label: "가", percent: femaleTargetPercent }, { label: "나", percent: 25 }, { label: "다", percent: 20 }, { label: "기타", percent: 55 - femaleTargetPercent }] });
+      return result(`전체 학생 중 가 상표를 좋아하는 학생은 ${targetTotal}명입니다. 성별 원그래프와 여학생 선호 띠그래프를 보고, 남학생 중 가 상표를 좋아하는 비율을 구하세요.${graphPair(gender, femaleBrands)}${graphEvidence("combined-missing-male-rate", [total, malePercent, maleTargetPercent, femaleTargetPercent, targetTotal])}`, `${maleTargetPercent}%`, `여학생은 ${female}명이고 그중 가 상표는 ${female * femaleTargetPercent / 100}명입니다. 남학생 가 상표는 ${targetTotal}-${female * femaleTargetPercent / 100}=${male * maleTargetPercent / 100}명이므로 남학생 ${male}명의 ${maleTargetPercent}%입니다.`);
+    },
+    fractionDivisionUnderstandingAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const denominator = pick(rng, [9, 11, 13].slice(0, 2 + level));
+        const whole = int(rng, 1, 4 + level);
+        const multiplier = 2 * denominator;
+        const divisor = pick(rng, [4, 6, 8].slice(0, 2 + level));
+        const candidates = Array.from({ length: denominator - 1 }, (_, index) => index + 1).filter(numerator => ((whole * denominator + numerator) * multiplier) % (denominator * divisor) === 0);
+        if (!candidates.length) return generators.fractionDivisionUnderstandingAdvanced({ rng, level, variant });
+        const answer = Math.max(...candidates);
+        return result(`대분수 ${whole} □/${denominator}에서 □는 ${denominator}보다 작은 자연수입니다. 다음 계산 결과가 자연수가 되도록 하는 □ 중 가장 큰 수를 구하세요.<div class="equation">${whole} □/${denominator} × ${multiplier} ÷ ${divisor}</div>${fractionDivisionEvidence("max-natural-numerator", [whole, denominator, multiplier, divisor])}`, answer, `□에 1부터 ${denominator - 1}까지 넣어 약분 조건을 확인하면 가능한 수는 ${candidates.join(", ")}입니다. 그중 가장 큰 수는 ${answer}입니다.`);
+      }
+      if (kind === 1) {
+        const denominator = 8;
+        const boxCount = int(rng, 4, 6 + level);
+        const countPerBox = int(rng, 18, 30 + level * 4);
+        const itemNumerator = int(rng, 3, 11);
+        const boxNumerator = int(rng, 2, 7);
+        const totalNumerator = boxCount * (countPerBox * itemNumerator + boxNumerator);
+        return result(`같은 물건이 한 상자에 ${countPerBox}개씩 들어 있습니다. 같은 상자 ${boxCount}개의 전체 무게가 ${mixedFraction(totalNumerator, denominator)}kg이고 빈 상자 한 개의 무게가 ${fraction(boxNumerator, denominator)}kg일 때, 물건 한 개의 무게를 구하세요.${fractionDivisionEvidence("box-item-mass", [denominator, boxCount, countPerBox, itemNumerator, boxNumerator, totalNumerator])}`, mixedFraction(itemNumerator, denominator), `전체 무게에서 빈 상자 ${boxCount}개의 무게를 빼고 물건 수 ${boxCount * countPerBox}개로 나누면 ${mixedFraction(itemNumerator, denominator)}kg입니다.`);
+      }
+      if (kind === 2) {
+        const threshold = pick(rng, [10, 12, 15, 18, 20].slice(0, 3 + level));
+        let answer = 0;
+        for (let n = 1; n < threshold * 2; n += 1) if (n * threshold > (n + 1) * (n + 2)) answer += 1;
+        return result(`다음과 같은 규칙으로 계산식을 계속 만들 때, 계산한 값이 1/${threshold}보다 큰 식은 모두 몇 개입니까?<div class="equation">1/2÷3,　2/3÷4,　3/4÷5,　4/5÷6,　…</div>${fractionDivisionEvidence("sequence-over-threshold", [threshold])}`, answer, `n번째 값은 n/(n+1)÷(n+2)=n/{(n+1)(n+2)}입니다. n×${threshold}>(n+1)(n+2)를 만족하는 자연수 n을 세면 ${answer}개입니다.`);
+      }
+      if (kind === 3) {
+        const common = 6 * int(rng, 2, 5 + level);
+        const values = [8 * common, 2 * common, 5 * common / 2, 8 * common / 3];
+        const labels = ["ㄱ", "ㄴ", "ㄷ", "ㄹ"];
+        const order = labels.map((label, index) => ({ label, value: values[index] })).sort((a, b) => b.value - a.value).map(item => item.label).join(", ");
+        return result(`ㄱ, ㄴ, ㄷ, ㄹ은 0이 아닌 자연수이고 다음 네 식의 계산값은 모두 같습니다. 네 수를 큰 것부터 차례로 쓰세요.<div class="equation">ㄱ÷2÷4　　ㄴ×1 1/2÷3<br>ㄷ÷5×2　　ㄹ×3/4÷2</div>${fractionDivisionEvidence("equal-expression-order", [common, ...values])}`, order, `공통 계산값을 ${common}으로 두면 ㄱ=${values[0]}, ㄴ=${values[1]}, ㄷ=${values[2]}, ㄹ=${values[3]}입니다. 따라서 ${order} 순서입니다.`);
+      }
+      if (kind === 4) {
+        const denominator = 8;
+        const appleCount = int(rng, 7, 11 + level);
+        const peachCount = int(rng, 3, 6 + level);
+        const removed = int(rng, 2, appleCount - 3);
+        const appleNumerator = int(rng, 5, 11);
+        const peachNumerator = int(rng, 7, 15);
+        const basketNumerator = int(rng, 3, 8);
+        const totalNumerator = basketNumerator + appleCount * appleNumerator + peachCount * peachNumerator;
+        const remainingNumerator = totalNumerator - removed * appleNumerator;
+        return result(`무게가 각각 같은 사과 ${appleCount}개와 복숭아 ${peachCount}개가 든 바구니의 무게는 ${mixedFraction(totalNumerator, denominator)}kg입니다. 사과 ${removed}개를 꺼낸 뒤에는 ${mixedFraction(remainingNumerator, denominator)}kg이었습니다. 빈 바구니가 ${mixedFraction(basketNumerator, denominator)}kg일 때 복숭아 한 개의 무게를 구하세요.${fractionDivisionEvidence("fruit-basket", [denominator, appleCount, peachCount, removed, appleNumerator, peachNumerator, basketNumerator, totalNumerator, remainingNumerator])}`, mixedFraction(peachNumerator, denominator), `꺼낸 사과의 무게 차를 ${removed}로 나누면 사과 한 개는 ${mixedFraction(appleNumerator, denominator)}kg입니다. 남은 전체에서 바구니와 사과 무게를 빼고 ${peachCount}으로 나누면 복숭아 한 개는 ${mixedFraction(peachNumerator, denominator)}kg입니다.`);
+      }
+      const scale = int(rng, 1, 2 + level);
+      const firstDays = 14 * scale, secondDays = 21 * scale, togetherDays = 6 * scale;
+      const doneNumerator = 5, doneDenominator = 7;
+      return result(`어떤 일을 가와 나가 함께 ${togetherDays}일 동안 하여 전체의 ${doneNumerator}/${doneDenominator}를 마쳤습니다. 남은 일을 가가 혼자 ${4 * scale}일 동안 하여 끝냈습니다. 두 사람의 일하는 양이 날마다 일정할 때, 나가 처음부터 혼자 이 일을 하면 며칠 걸리는지 구하세요.${fractionDivisionEvidence("work-rate", [togetherDays, doneNumerator, doneDenominator, 4 * scale, firstDays, secondDays])}`, secondDays, `가는 하루에 (2/${doneDenominator})÷${4 * scale}=1/${firstDays}을 합니다. 두 사람이 함께 하루에 (${doneNumerator}/${doneDenominator})÷${togetherDays}=5/${42 * scale}을 하므로 나는 하루에 1/${secondDays}을 합니다. 따라서 ${secondDays}일 걸립니다.`);
+    },
+    fractionDivisionEquationAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const denominator = 12;
+        const smallerNumerator = int(rng, 13, 25 + level * 3);
+        const differenceNumerator = int(rng, 5, 11 + level);
+        const largerNumerator = smallerNumerator + differenceNumerator;
+        const totalNumerator = smallerNumerator + largerNumerator;
+        return result(`두 사람이 ${mixedFraction(totalNumerator, denominator)}kg의 재료를 나누어 가졌습니다. 더 많이 가진 사람은 다른 사람보다 ${mixedFraction(differenceNumerator, denominator)}kg 더 가졌습니다. 적게 가진 사람의 재료는 몇 kg입니까?${fractionDivisionEvidence("split-total-difference", [denominator, smallerNumerator, largerNumerator, differenceNumerator, totalNumerator])}`, mixedFraction(smallerNumerator, denominator), `전체에서 차를 빼면 적게 가진 양의 2배입니다. (${mixedFraction(totalNumerator, denominator)}-${mixedFraction(differenceNumerator, denominator)})÷2=${mixedFraction(smallerNumerator, denominator)}kg입니다.`);
+      }
+      if (kind === 1) {
+        const denominator = pick(rng, [10, 12, 15]);
+        const firstNumerator = int(rng, 2, Math.floor(denominator / 2));
+        const secondNumerator = int(rng, 2, Math.floor(denominator / 2));
+        const count = int(rng, 120, 260 + level * 40);
+        const secondTotalNumerator = secondNumerator * count;
+        return result(`가 제품 한 개와 나 제품 한 개를 만드는 데 쓰는 우유의 합은 ${fraction(firstNumerator + secondNumerator, denominator)}L입니다. 나 제품 ${count}개를 만드는 데 ${mixedFraction(secondTotalNumerator, denominator)}L를 썼습니다. 가 제품 한 개에 쓰는 우유는 몇 L입니까?${fractionDivisionEvidence("unit-material", [denominator, firstNumerator, secondNumerator, count, secondTotalNumerator])}`, fraction(firstNumerator, denominator), `나 제품 한 개에는 ${mixedFraction(secondTotalNumerator, denominator)}÷${count}=${fraction(secondNumerator, denominator)}L가 듭니다. 두 제품 한 개씩의 합에서 이를 빼면 가 제품 한 개는 ${fraction(firstNumerator, denominator)}L입니다.`);
+      }
+      if (kind === 2) {
+        const leftBase = int(rng, 4, 8 + level);
+        const leftHeight = int(rng, 5, 11 + level * 2);
+        const divisor = int(rng, 2, 5 + level);
+        const rightBase = leftBase * divisor;
+        const rightHeightNumerator = leftBase * leftHeight;
+        return result(`그림의 색칠한 두 직각삼각형의 넓이가 같습니다. 오른쪽 삼각형의 높이 □를 구하세요.${equalTriangleSvg({ leftBase, leftHeight, rightBase })}${fractionDivisionEvidence("equal-triangle-area", [leftBase, leftHeight, rightBase])}`, fraction(rightHeightNumerator, rightBase), `삼각형 넓이의 1/2은 양쪽에 공통이므로 밑변×높이가 같습니다. □=${leftBase}×${leftHeight}÷${rightBase}=${fraction(rightHeightNumerator, rightBase)}cm입니다.`);
+      }
+      if (kind === 3) {
+        const denominator = pick(rng, [17, 19, 23, 29].slice(0, 2 + level));
+        const values = [3, 1, 6];
+        return result(`세 기약분수 가, 나, 다가 있습니다. 가는 나의 3배이고 다는 가의 2배입니다. 세 분수의 합이 ${fraction(10, denominator)}일 때 가, 나, 다를 차례로 구하세요.${fractionDivisionEvidence("three-fraction-ratio", [denominator, ...values])}`, `${fraction(3, denominator)}, ${fraction(1, denominator)}, ${fraction(6, denominator)}`, `나를 1몫으로 보면 가는 3몫, 다는 6몫으로 모두 10몫입니다. 한 몫은 1/${denominator}이므로 가=${fraction(3, denominator)}, 나=${fraction(1, denominator)}, 다=${fraction(6, denominator)}입니다.`);
+      }
+      if (kind === 4) {
+        const denominator = 8;
+        const secondNumerator = int(rng, 13, 25 + level * 3);
+        const differenceNumerator = int(rng, 3, Math.min(11, secondNumerator - 2));
+        const firstNumerator = 2 * secondNumerator - differenceNumerator;
+        const totalNumerator = firstNumerator + secondNumerator;
+        return result(`길이가 ${mixedFraction(totalNumerator, denominator)}m인 테이프를 선우와 지민이가 나누어 가졌습니다. 선우의 테이프는 지민이 테이프 길이의 2배보다 ${mixedFraction(differenceNumerator, denominator)}m 짧습니다. 선우가 가진 테이프의 길이를 구하세요.${fractionDivisionEvidence("tape-relation", [denominator, firstNumerator, secondNumerator, differenceNumerator, totalNumerator])}`, mixedFraction(firstNumerator, denominator), `지민이의 길이를 1몫이라 하면 전체는 3몫에서 ${mixedFraction(differenceNumerator, denominator)}m를 뺀 것입니다. 따라서 지민이는 (${mixedFraction(totalNumerator, denominator)}+${mixedFraction(differenceNumerator, denominator)})÷3=${mixedFraction(secondNumerator, denominator)}m이고 선우는 ${mixedFraction(firstNumerator, denominator)}m입니다.`);
+      }
+      const firstRate = pick(rng, [4, 6, 8]);
+      const secondRate = firstRate + pick(rng, [2, 4]);
+      const firstStageSeconds = pick(rng, [150, 210, 270, 330]);
+      const secondStageSeconds = pick(rng, [600, 720, 840, 960].slice(0, 2 + level));
+      const totalSeconds = firstStageSeconds + secondStageSeconds;
+      const capacity = firstRate * firstStageSeconds + secondRate * secondStageSeconds;
+      if (capacity % firstRate !== 0) return generators.fractionDivisionEquationAdvanced({ rng, level, variant });
+      const firstOnlySeconds = capacity / firstRate;
+      const timeText = seconds => `${Math.floor(seconds / 60)}분${seconds % 60 ? ` ${seconds % 60}초` : ""}`;
+      return result(`물통에 처음에는 1초에 ${firstRate}dL씩 물을 넣었습니다. 이 속도로만 넣으면 ${timeText(firstOnlySeconds)} 만에 가득 찹니다. 도중부터 1초에 ${secondRate}dL씩 넣었더니 모두 ${timeText(totalSeconds)} 만에 가득 찼습니다. 처음 속도로 물을 넣은 시간은 몇 분 몇 초입니까?${fractionDivisionEvidence("changed-fill-rate", [firstRate, secondRate, firstOnlySeconds, totalSeconds])}`, timeText(firstStageSeconds), `처음 속도로 넣은 시간을 x초라 하면 ${firstRate}x+${secondRate}(${totalSeconds}-x)=${firstRate * firstOnlySeconds}입니다. 풀면 x=${firstStageSeconds}초, 즉 ${timeText(firstStageSeconds)}입니다.`);
+    },
+    secondFractionDivisionUnderstanding({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const denominator = pick(rng, [8, 10, 12]), whole = int(rng, 2, 4 + level), hidden = int(rng, 1, denominator - 1);
+        const multiplier = pick(rng, [2, 3, 4]), divisorNumerator = pick(rng, [3, 5, 7]);
+        const targetNumerator = (whole * denominator - hidden) * multiplier;
+        return result(`□는 ${denominator}보다 작은 자연수입니다. 다음 식을 만족하는 □를 구하세요.<div class="equation">${multiplier} × (${whole} - □/${denominator}) ÷ ${divisorNumerator}/${denominator} = ${mixedFraction(targetNumerator, divisorNumerator)}</div>${fractionDivisionEvidence("62-inverse-blank", [denominator, whole, multiplier, divisorNumerator, targetNumerator])}`, hidden, `오른쪽 값에 ${divisorNumerator}/${denominator}를 곱하고 ${multiplier}로 나누면 ${whole}-${hidden}/${denominator}입니다. 따라서 □=${hidden}입니다.`);
+      }
+      if (kind === 1) {
+        const [a, b, c, d, e, f, g, h] = pick(rng, [[3, 4, 2, 5, 5, 6, 4, 9], [5, 8, 3, 7, 7, 10, 2, 3], [4, 9, 5, 12, 3, 5, 7, 15], [7, 12, 5, 18, 8, 15, 4, 7]]);
+        const left = rationalValue(a * d, b * c), right = rationalValue(e * h, f * g);
+        const answerValue = rationalOperation(left, right, "+"), answer = mixedFraction(answerValue.numerator, answerValue.denominator);
+        return result(`분수 a, b에 대하여 a ★ b=a÷b, a ● b=a+b로 약속했습니다. 다음 값을 구하세요.<div class="equation">(${a}/${b} ★ ${c}/${d}) ● (${e}/${f} ★ ${g}/${h})</div>${fractionDivisionEvidence("62-defined-operations", [a, b, c, d, e, f, g, h])}`, answer, `★를 먼저 계산하면 ${mixedFraction(left.numerator, left.denominator)}와 ${mixedFraction(right.numerator, right.denominator)}입니다. 두 값을 ●로 더하면 ${answer}입니다.`);
+      }
+      if (kind === 2) {
+        const n = int(rng, 2, 5 + level);
+        const first = rationalValue(n * (n + 3), (n + 1) * (n + 2));
+        const later = rationalValue((n + 2) * (n + 5), (n + 3) * (n + 4));
+        const difference = rationalOperation(later, first, "-");
+        return result(`n번째 수를 n/(n+1)÷(n+2)/(n+3)으로 정했습니다. ${n + 2}번째 수와 ${n}번째 수의 차를 구하세요.<div class="equation">1/2÷3/4,　2/3÷4/5,　3/4÷5/6,　…</div>${fractionDivisionEvidence("62-sequence-difference", [n])}`, fraction(difference.numerator, difference.denominator), `${n}번째 수는 ${fraction(first.numerator, first.denominator)}, ${n + 2}번째 수는 ${fraction(later.numerator, later.denominator)}이므로 차는 ${fraction(difference.numerator, difference.denominator)}입니다.`);
+      }
+      if (kind === 3) {
+        const [a, b, c, d, e, f, g, h] = pick(rng, [[3, 4, 2, 5, 5, 6, 10, 9], [5, 7, 3, 8, 4, 9, 2, 3], [7, 10, 5, 12, 3, 8, 9, 16], [4, 11, 2, 7, 5, 12, 3, 10]]);
+        const square = rationalValue(a * d, b * c), triangle = rationalValue(e * h, f * g);
+        const quotient = rationalOperation(square, triangle, "÷"), answer = mixedFraction(quotient.numerator, quotient.denominator);
+        return result(`다음 두 나눗셈의 결과를 각각 ■, ▲로 나타낼 때 ■÷▲를 구하세요.<div class="equation">${a}/${b} ÷ ${c}/${d} = ■<br>${e}/${f} ÷ ${g}/${h} = ▲</div>${fractionDivisionEvidence("62-symbolic-quotient", [a, b, c, d, e, f, g, h])}`, answer, `■=${mixedFraction(square.numerator, square.denominator)}, ▲=${mixedFraction(triangle.numerator, triangle.denominator)}입니다. 따라서 ■÷▲=${answer}입니다.`);
+      }
+      if (kind === 4) {
+        const [whole, denominator, lower, upper, candidateDenominator] = pick(rng, [[10, 5, 1, 4, 12], [8, 7, 2, 6, 15], [12, 8, 1, 7, 18], [6, 9, 2, 8, 20]]);
+        const candidates = Array.from({ length: candidateDenominator - 1 }, (_, index) => index + 1).filter(value => value * denominator > lower * candidateDenominator && value * denominator < upper * candidateDenominator);
+        const answer = candidates.reduce((sum, value) => sum + value, 0);
+        return result(`□는 ${candidateDenominator}보다 작은 자연수입니다. ${whole} ${lower}/${denominator}보다 크고 ${whole} ${upper}/${denominator}보다 작은 ${whole} □/${candidateDenominator}을 만들 수 있는 모든 □의 합을 구하세요.${fractionDivisionEvidence("62-between-mixed", [denominator, lower, upper, candidateDenominator])}`, answer, `${lower}/${denominator}<□/${candidateDenominator}<${upper}/${denominator}을 만족하는 □는 ${candidates.join(", ")}이므로 합은 ${answer}입니다.`);
+      }
+      const first = pick(rng, [9, 18, 27, 36]), second = first * 4 / 3, third = second * 5 / 6;
+      const firstValue = rationalValue(first * 3, 2), secondValue = rationalValue(second * 3, 4), thirdValue = rationalValue(third * 6, 5);
+      const answer = first * second * third;
+      return result(`ㄱ, ㄴ, ㄷ은 자연수이고 다음 식을 모두 만족합니다. ㄱ×ㄴ×ㄷ을 구하세요.<div class="equation">ㄱ ÷ 2/3 = ${mixedFraction(firstValue.numerator, firstValue.denominator)}<br>ㄴ × 3/4 = ${mixedFraction(secondValue.numerator, secondValue.denominator)}<br>ㄷ ÷ 5/6 = ${mixedFraction(thirdValue.numerator, thirdValue.denominator)}</div>${fractionDivisionEvidence("62-linked-symbols", [firstValue.numerator, firstValue.denominator, secondValue.numerator, secondValue.denominator, thirdValue.numerator, thirdValue.denominator])}`, answer, `첫째 식부터 차례로 풀면 ㄱ=${first}, ㄴ=${second}, ㄷ=${third}입니다. 곱은 ${answer}입니다.`);
+    },
+    secondFractionDivisionApplication({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const [area, firstN, firstD, secondN, secondD] = pick(rng, [[180, 2, 3, 3, 5], [240, 3, 4, 3, 5], [360, 5, 6, 3, 4], [210, 4, 7, 2, 3]]);
+        const answer = area * firstN * secondN / (firstD * secondD);
+        return result(`넓이가 ${area}cm²인 직사각형 안의 삼각형 넓이는 직사각형의 ${firstN}/${firstD}이고, 색칠한 부분은 그 삼각형의 ${secondN}/${secondD}입니다. 색칠한 부분의 넓이를 구하세요.<div class="equation">전체 → ${firstN}/${firstD} → ${secondN}/${secondD}</div>${fractionDivisionEvidence("62-area-chain", [area, firstN, firstD, secondN, secondD])}`, answer, `${area}×${firstN}/${firstD}×${secondN}/${secondD}=${answer}이므로 색칠한 넓이는 ${answer}cm²입니다.`);
+      }
+      if (kind === 1) {
+        const [capacity, firstN, firstD, added, removed, finalN, finalD] = pick(rng, [[60, 1, 3, 35, 10, 3, 4], [72, 5, 12, 30, 12, 2, 3], [84, 3, 7, 30, 24, 1, 2], [96, 3, 8, 40, 16, 5, 8]]);
+        return result(`빈 물통에 전체 들이의 ${firstN}/${firstD}만큼 물을 넣고 ${added}L를 더 넣은 뒤 ${removed}L를 덜어 냈더니 전체의 ${finalN}/${finalD}가 되었습니다. 물통의 들이는 몇 L입니까?${fractionDivisionEvidence("62-tank-backsolve", [firstN, firstD, added, removed, finalN, finalD])}`, capacity, `전체 들이를 xL라 하면 ${firstN}/${firstD}x+${added}-${removed}=${finalN}/${finalD}x입니다. 풀면 x=${capacity}L입니다.`);
+      }
+      if (kind === 2) {
+        const start = pick(rng, [480, 500, 520, 540]), work = pick(rng, [45, 50, 60, 75]), rest = pick(rng, [10, 15, 20]), cycles = int(rng, 3, 4 + level);
+        const finish = start + work * cycles + rest * (cycles - 1);
+        const clock = minutes => `${Math.floor(minutes / 60)}시 ${String(minutes % 60).padStart(2, "0")}분`;
+        return result(`${clock(start)}부터 같은 작업을 ${cycles}번 합니다. 한 번 작업하는 데 ${mixedFraction(work, 60)}시간, 작업 사이에 쉴 때마다 ${mixedFraction(rest, 60)}시간이 걸립니다. 모두 끝나는 시각을 구하세요.${fractionDivisionEvidence("62-work-rest-clock", [start, work, rest, cycles])}`, clock(finish), `작업 시간은 ${work}×${cycles}=${work * cycles}분, 휴식은 ${rest}×${cycles - 1}=${rest * (cycles - 1)}분입니다. 모두 ${finish - start}분 뒤인 ${clock(finish)}에 끝납니다.`);
+      }
+      if (kind === 3) {
+        const machines = int(rng, 4, 6 + level), denominator = machines * 6, firstHours = 3, broken = int(rng, 1, Math.min(2, machines - 2));
+        const remainingN = denominator - machines * firstHours;
+        const remainingD = denominator;
+        const secondTime = rationalValue(remainingN, machines - broken);
+        const totalTime = rationalOperation(rationalValue(firstHours), secondTime, "+");
+        const answer = mixedFraction(totalTime.numerator, totalTime.denominator);
+        return result(`같은 기계 ${machines}대가 각각 1시간에 전체 일의 1/${denominator}씩 처리합니다. ${firstHours}시간 함께 일한 뒤 ${broken}대가 고장 나고 나머지 기계만 일했습니다. 일을 끝내는 데 걸린 전체 시간을 구하세요.${fractionDivisionEvidence("62-decreasing-machines", [machines, denominator, firstHours, broken])}`, answer, `처음 처리한 양은 ${machines}×${firstHours}/${denominator}=1/2입니다. 남은 1/2을 ${machines - broken}대가 처리하는 시간까지 더하면 ${answer}시간입니다.`);
+      }
+      if (kind === 4) {
+        const [premiumPart, regularPart, unit] = pick(rng, [[3, 5, 18], [2, 3, 24], [5, 7, 16], [4, 9, 14]]);
+        const premium = premiumPart * unit, regular = regularPart * unit, total = premium + regular;
+        return result(`공연장 좌석은 일반석과 특별석으로만 이루어져 있습니다. 특별석 수는 일반석 수의 ${premiumPart}/${regularPart}이고 전체는 ${total}석입니다. 특별석과 일반석 수를 차례로 구하세요.${fractionDivisionEvidence("62-seat-ratio", [premiumPart, regularPart, total])}`, `${premium}석, ${regular}석`, `전체를 ${premiumPart + regularPart}몫으로 나누면 한 몫은 ${unit}석입니다. 특별석은 ${premium}석, 일반석은 ${regular}석입니다.`);
+      }
+      const [side, usedN, usedD, beds, bedSide] = pick(rng, [[12, 3, 4, 4, 3], [16, 3, 4, 4, 4], [20, 1, 2, 8, 5], [18, 5, 9, 4, 6], [28, 1, 2, 8, 7]]);
+      return result(`한 변이 ${side}m인 정사각형 땅의 ${usedN}/${usedD}를 건물 부지로 쓰고, 남은 땅을 넓이가 같은 정사각형 화단 ${beds}개로 나누었습니다. 화단 한 개의 한 변은 몇 m입니까?${fractionDivisionEvidence("62-square-beds", [side, usedN, usedD, beds])}`, bedSide, `남은 넓이는 ${side ** 2}×(1-${usedN}/${usedD})=${beds * bedSide ** 2}m²입니다. 한 화단은 ${bedSide ** 2}m²이므로 한 변은 ${bedSide}m입니다.`);
+    },
+    secondFractionDivisionChallenge({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const a = int(rng, 2, 5 + level), b = int(rng, 2, 6), c = int(rng, 2, 8);
+        const inner = rationalValue(b * c + 1, c), reciprocal = rationalValue(inner.denominator, inner.numerator);
+        const value = rationalOperation(rationalValue(a), reciprocal, "+");
+        return result(`다음 연분수의 값을 구하세요.<div class="equation">${a} + 1/(${b} + 1/${c})</div>${fractionDivisionEvidence("62-continued-fraction", [a, b, c])}`, mixedFraction(value.numerator, value.denominator), `${b}+1/${c}=${mixedFraction(inner.numerator, inner.denominator)}이므로 그 역수는 ${fraction(reciprocal.numerator, reciprocal.denominator)}입니다. 따라서 전체는 ${mixedFraction(value.numerator, value.denominator)}입니다.`);
+      }
+      if (kind === 1) {
+        const base = int(rng, 1, 4), denominator = pick(rng, [11, 13, 17, 19]), count = int(rng, 4, 6 + level);
+        const numerator = base * denominator + count ** 2 - 2;
+        return result(`다음 식을 계산하세요.<div class="equation">${base} - 1/${denominator} + 3/${denominator} + 5/${denominator} + … + ${2 * count - 1}/${denominator}</div>${fractionDivisionEvidence("62-odd-fraction-sum", [base, denominator, count])}`, mixedFraction(numerator, denominator), `1+3+…+${2 * count - 1}=${count ** 2}이므로 분수 부분은 (${count ** 2}-2)/${denominator}입니다. 전체는 ${mixedFraction(numerator, denominator)}입니다.`);
+      }
+      if (kind === 2) {
+        const digits = pick(rng, [[1, 2, 3, 4], [1, 3, 4, 6], [2, 3, 5, 7], [1, 4, 5, 8]]);
+        const cases = [];
+        for (const whole of digits) for (const numerator of digits) for (const denominator of digits) for (const divisor of digits) {
+          if (new Set([whole, numerator, denominator, divisor]).size !== 4 || numerator >= denominator) continue;
+          cases.push({ whole, numerator, denominator, divisor, value: rationalValue(whole * denominator + numerator, denominator * divisor) });
+        }
+        cases.sort((left, right) => left.value.numerator * right.value.denominator - right.value.numerator * left.value.denominator);
+        const smallest = cases[0], largest = cases[cases.length - 1], difference = rationalOperation(largest.value, smallest.value, "-");
+        return result(`수 카드 ${digits.join(", ")}을 한 번씩 모두 사용해 (대분수)÷(자연수)를 만듭니다. 분수 부분은 진분수일 때 계산값의 최댓값과 최솟값의 차를 구하세요.${fractionDivisionEvidence("62-card-extremes", digits)}`, mixedFraction(difference.numerator, difference.denominator), `최솟값은 ${smallest.whole} ${smallest.numerator}/${smallest.denominator}÷${smallest.divisor}=${mixedFraction(smallest.value.numerator, smallest.value.denominator)}, 최댓값은 ${largest.whole} ${largest.numerator}/${largest.denominator}÷${largest.divisor}=${mixedFraction(largest.value.numerator, largest.value.denominator)}입니다. 차는 ${mixedFraction(difference.numerator, difference.denominator)}입니다.`);
+      }
+      if (kind === 3) {
+        const [a, b, c, d] = pick(rng, [[6, 5, 10, 7], [8, 3, 12, 5], [9, 4, 15, 8], [10, 7, 14, 9]]);
+        const answer = lcm(a, c);
+        return result(`자연수 □를 ${a}/${b}와 ${c}/${d}로 각각 나누었을 때 두 몫이 모두 자연수가 되게 하려고 합니다. 가장 작은 □를 구하세요.${fractionDivisionEvidence("62-natural-divisions", [a, b, c, d])}`, answer, `기약분수로 나누어 자연수가 되려면 □는 각 분자의 배수여야 합니다. ${a}와 ${c}의 최소공배수는 ${answer}입니다.`);
+      }
+      if (kind === 4) {
+        const first = int(rng, 3, 7 + level), second = int(rng, 4, 9 + level), third = int(rng, 5, 11 + level);
+        const left = rationalValue(first * 5, 12), middle = rationalValue(second * 2, 3 * first), right = rationalValue(third * 6, 5 * second);
+        const answer = first + second + third;
+        return result(`ㄱ, ㄴ, ㄷ은 자연수이고 다음 식을 만족합니다. ㄱ+ㄴ+ㄷ을 구하세요.<div class="equation">ㄱ/4 ÷ 3/5 = ${fraction(left.numerator, left.denominator)}<br>ㄴ/3 ÷ ㄱ/2 = ${fraction(middle.numerator, middle.denominator)}<br>ㄷ/5 ÷ ㄴ/6 = ${fraction(right.numerator, right.denominator)}</div>${fractionDivisionEvidence("62-symbol-system", [left.numerator, left.denominator, middle.numerator, middle.denominator, right.numerator, right.denominator])}`, answer, `첫째 식에서 ㄱ=${first}, 둘째 식에서 ㄴ=${second}, 셋째 식에서 ㄷ=${third}입니다. 합은 ${answer}입니다.`);
+      }
+      const [numerator, denominator, total, scale, limit] = pick(rng, [[3, 4, 6, 5, 20], [4, 5, 8, 5, 20], [5, 6, 10, 3, 20], [6, 7, 12, 5, 30]]);
+      const candidates = Array.from({ length: limit - 1 }, (_, index) => index + 2).filter(value => value % numerator === 0 && total * scale % value === 0);
+      const answer = candidates.reduce((sum, value) => sum + value, 0);
+      return result(`2 이상 ${limit} 이하의 자연수 □에 대하여 □÷${numerator}/${denominator}와 ${total}÷(□/${scale})의 몫이 모두 자연수가 되게 하려고 합니다. 가능한 모든 □의 합을 구하세요.${fractionDivisionEvidence("62-two-natural-conditions", [numerator, denominator, total, scale, limit])}`, answer, `□는 ${numerator}의 배수이면서 ${total * scale}의 약수여야 합니다. 가능한 수 ${candidates.join(", ")}의 합은 ${answer}입니다.`);
+    },
+    secondFractionDivisionUnitRate({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const [top, bottom, height, coats, coverN, coverD] = pick(rng, [[6, 10, 5, 2, 1, 4], [8, 14, 6, 3, 1, 6], [9, 15, 8, 2, 1, 5], [12, 18, 7, 3, 1, 7]]);
+        const area = (top + bottom) * height / 2, amount = rationalValue(area * coats * coverN, coverD);
+        return result(`사다리꼴 모양 벽을 전체에 ${coats}번 칠합니다. 페인트는 1m²를 칠할 때 ${coverN}/${coverD}L가 필요합니다. 필요한 페인트의 양을 구하세요.${fractionTrapezoidSvg({ top, bottom, height })}${fractionDivisionEvidence("62-paint-unit-rate", [top, bottom, height, coats, coverN, coverD])}`, `${mixedFraction(amount.numerator, amount.denominator)}L`, `벽 넓이는 (${top}+${bottom})×${height}÷2=${area}m²입니다. ${coats}번 칠할 양은 ${area}×${coats}×${coverN}/${coverD}=${mixedFraction(amount.numerator, amount.denominator)}L입니다.`);
+      }
+      if (kind === 1) {
+        const [speedA, timeAN, timeAD, speedB, timeBN, timeBD] = pick(rng, [[12, 3, 4, 18, 5, 6], [15, 4, 5, 20, 3, 4], [16, 2, 3, 24, 5, 6], [18, 2, 3, 21, 3, 4]]);
+        const distanceA = rationalValue(speedA * timeAN, timeAD), distanceB = rationalValue(speedB * timeBN, timeBD), totalMinutes = timeAN * 60 / timeAD + timeBN * 60 / timeBD;
+        return result(`첫 구간 ${mixedFraction(distanceA.numerator, distanceA.denominator)}km는 시속 ${speedA}km로, 다음 구간 ${mixedFraction(distanceB.numerator, distanceB.denominator)}km는 시속 ${speedB}km로 이동했습니다. 전체 이동 시간을 구하세요.${fractionDivisionEvidence("62-two-speed-time", [distanceA.numerator, distanceA.denominator, speedA, distanceB.numerator, distanceB.denominator, speedB])}`, `${totalMinutes}분`, `각 구간의 시간은 거리÷속력이므로 ${mixedFraction(timeAN, timeAD)}시간과 ${mixedFraction(timeBN, timeBD)}시간입니다. 합은 ${totalMinutes}분입니다.`);
+      }
+      if (kind === 2) {
+        const [rateN, rateD, totalHours, observed] = pick(rng, [[5, 4, 16, 3], [7, 6, 18, 5], [9, 8, 20, 4], [11, 10, 24, 6]]);
+        const length = rationalValue(rateN * totalHours, rateD), remaining = rationalValue(rateN * (totalHours - observed), rateD);
+        return result(`길이가 ${mixedFraction(length.numerator, length.denominator)}cm인 양초가 1시간에 ${fraction(rateN, rateD)}cm씩 일정하게 줄어듭니다. 불을 붙인 지 ${observed}시간 뒤 남은 길이가 ${mixedFraction(remaining.numerator, remaining.denominator)}cm일 때, 처음부터 모두 타는 데 걸리는 시간을 구하세요.${fractionDivisionEvidence("62-candle-unit-rate", [length.numerator, length.denominator, rateN, rateD])}`, `${totalHours}시간`, `전체 길이를 한 시간에 줄어드는 길이로 나누면 ${mixedFraction(length.numerator, length.denominator)}÷${fraction(rateN, rateD)}=${totalHours}시간입니다.`);
+      }
+      if (kind === 3) {
+        const [distance, timeA, timeB, timeC] = pick(rng, [[30, 180, 150, 210], [24, 160, 120, 200], [36, 180, 240, 144], [28, 210, 168, 240]]);
+        const arrival = 8 * 60 + timeA, startB = arrival - timeB, startC = arrival - timeC;
+        const speedText = minutes => mixedFraction(distance * 60, minutes);
+        const clock = minutes => `${Math.floor(minutes / 60)}시 ${String(minutes % 60).padStart(2, "0")}분`;
+        return result(`같은 정상까지 거리는 ${distance}km입니다. 가는 ${clock(8 * 60)}에 출발해 시속 ${speedText(timeA)}km로 걷고, 나는 시속 ${speedText(timeB)}km, 다는 시속 ${speedText(timeC)}km로 걸어 세 사람이 동시에 도착했습니다. 나와 다의 출발 시각을 차례로 구하세요.${fractionDivisionEvidence("62-same-arrival", [distance, timeA, timeB, timeC, 480])}`, `${clock(startB)}, ${clock(startC)}`, `가의 도착 시각은 ${clock(arrival)}입니다. 나는 ${timeB}분, 다는 ${timeC}분이 걸리므로 출발 시각은 각각 ${clock(startB)}, ${clock(startC)}입니다.`);
+      }
+      if (kind === 4) {
+        const [firstDays, secondDays, togetherDays] = pick(rng, [[12, 18, 4], [15, 20, 5], [18, 24, 6], [20, 30, 8]]);
+        const remaining = rationalValue(firstDays * secondDays - togetherDays * (firstDays + secondDays), firstDays * secondDays);
+        const alone = rationalValue(remaining.numerator * firstDays, remaining.denominator), total = rationalOperation(rationalValue(togetherDays), alone, "+");
+        return result(`어떤 일을 가 혼자 하면 ${firstDays}일, 나 혼자 하면 ${secondDays}일 걸립니다. 두 사람이 ${togetherDays}일 함께 일한 뒤 나가 그만두고 가가 혼자 마쳤습니다. 일을 끝내는 데 모두 며칠 걸렸습니까?${fractionDivisionEvidence("62-split-work", [firstDays, secondDays, togetherDays])}`, `${mixedFraction(total.numerator, total.denominator)}일`, `함께 한 양을 빼고 남은 일을 가의 하루 일률 1/${firstDays}로 나누면 혼자 일한 기간은 ${mixedFraction(alone.numerator, alone.denominator)}일입니다. 전체는 ${mixedFraction(total.numerator, total.denominator)}일입니다.`);
+      }
+      const [rateA, rateB, drain, delayB, delayDrain, totalTime] = pick(rng, [[8, 6, 2, 3, 5, 12], [10, 7, 3, 2, 6, 14], [12, 8, 4, 4, 7, 15], [9, 6, 3, 3, 8, 16]]);
+      const capacity = rateA * totalTime + rateB * (totalTime - delayB) - drain * (totalTime - delayDrain);
+      return result(`빈 물통에 가 수도관은 1분에 ${rateA}L씩 처음부터 물을 넣었습니다. 나 수도관은 ${delayB}분 뒤부터 1분에 ${rateB}L씩 넣고, 배수관은 ${delayDrain}분 뒤부터 1분에 ${drain}L씩 뺐습니다. 처음부터 ${totalTime}분 뒤 가득 찼을 때 물통의 들이를 구하세요.${fractionDivisionEvidence("62-staggered-pipes", [rateA, rateB, drain, delayB, delayDrain, totalTime])}`, `${capacity}L`, `가는 ${rateA * totalTime}L, 나는 ${rateB * (totalTime - delayB)}L를 넣고 배수관은 ${drain * (totalTime - delayDrain)}L를 뺍니다. 들이는 ${capacity}L입니다.`);
+    },
+    secondFractionDivisionEquation({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const scale = int(rng, 1, 3 + level), triangleSide = 19 * scale, squareSide = 13 * scale, total = 12 * squareSide + 6 * triangleSide;
+        return result(`같은 정사각형 3개와 같은 정삼각형 2개를 철사로 각각 만들었습니다. 정사각형 한 변은 정삼각형 한 변의 13/19이고 사용한 철사는 모두 ${total}cm입니다. 정삼각형 한 변의 길이를 구하세요.${fractionDivisionEvidence("62-wire-shapes", [13, 19, 3, 2, total])}`, `${triangleSide}cm`, `정삼각형 한 변을 xcm라 하면 정사각형 한 변은 13/19x입니다. 12×13/19x+6x=${total}을 풀면 x=${triangleSide}cm입니다.`);
+      }
+      if (kind === 1) {
+        const [korean, mathN, mathD, scienceN, scienceD] = pick(rng, [[48, 3, 2, 5, 6], [56, 3, 2, 6, 7], [60, 7, 5, 5, 7], [64, 5, 4, 9, 10]]);
+        const math = korean * mathN / mathD, science = math * scienceN / scienceD, total = korean + math + science;
+        return result(`국어 점수는 ${korean}점, 수학 점수는 국어의 ${mathN}/${mathD}, 과학 점수는 수학의 ${scienceN}/${scienceD}입니다. 세 과목의 총점을 구하세요.${fractionDivisionEvidence("62-related-scores", [korean, mathN, mathD, scienceN, scienceD])}`, `${total}점`, `수학은 ${math}점, 과학은 ${science}점이므로 총점은 ${korean}+${math}+${science}=${total}점입니다.`);
+      }
+      if (kind === 2) {
+        const [total, firstN, firstD, secondN, secondD] = pick(rng, [[240, 3, 8, 2, 5], [300, 2, 5, 1, 3], [360, 5, 12, 3, 7], [420, 3, 7, 2, 5]]);
+        const first = total * firstN / firstD, remainder = total - first, second = remainder * secondN / secondD, last = total - first - second;
+        return result(`밭 전체의 ${firstN}/${firstD}에는 감자를 심고, 남은 밭의 ${secondN}/${secondD}에는 고구마를 심었습니다. 나머지 ${last}m²에는 채소를 심었습니다. 밭 전체의 넓이를 구하세요.${fractionDivisionEvidence("62-field-backsolve", [firstN, firstD, secondN, secondD, last])}`, `${total}m²`, `채소밭은 전체의 (1-${firstN}/${firstD})×(1-${secondN}/${secondD})입니다. 이 양이 ${last}m²이므로 전체는 ${total}m²입니다.`);
+      }
+      if (kind === 3) {
+        const [length, ratioN, ratioD, addLength, addWidth] = pick(rng, [[20, 3, 5, 4, 3], [24, 2, 3, 3, 4], [28, 5, 7, 5, 2], [30, 4, 5, 6, 3]]);
+        const width = length * ratioN / ratioD, difference = (length + addLength) * (width + addWidth) - length * width, area = length * width;
+        return result(`직사각형의 가로는 세로의 ${ratioN}/${ratioD}입니다. 세로를 ${addLength}cm, 가로를 ${addWidth}cm 늘렸더니 넓이가 ${difference}cm² 늘었습니다. 원래 직사각형의 넓이를 구하세요.${fractionDivisionEvidence("62-rectangle-change", [ratioN, ratioD, addLength, addWidth, difference])}`, `${area}cm²`, `세로를 x라 하면 가로는 ${ratioN}/${ratioD}x입니다. (x+${addLength})(${ratioN}/${ratioD}x+${addWidth})-${ratioN}/${ratioD}x²=${difference}에서 x=${length}입니다. 원래 넓이는 ${area}cm²입니다.`);
+      }
+      if (kind === 4) {
+        const [distance, flatN, flatD, upN, upD, speedFlat, speedUp, speedDown] = pick(rng, [[60, 1, 2, 1, 5, 30, 12, 24], [72, 5, 12, 1, 4, 36, 18, 30], [84, 3, 7, 2, 7, 42, 21, 28], [90, 2, 5, 1, 3, 45, 18, 30]]);
+        const downN = flatD * upD - flatN * upD - upN * flatD, downD = flatD * upD;
+        const time = rationalOperation(rationalOperation(rationalValue(distance * flatN, flatD * speedFlat), rationalValue(distance * upN, upD * speedUp), "+"), rationalValue(distance * downN, downD * speedDown), "+");
+        return result(`전체 ${distance}km인 길에서 평지는 전체의 ${flatN}/${flatD}, 오르막은 전체의 ${upN}/${upD}, 나머지는 내리막입니다. 평지·오르막·내리막에서의 속력이 각각 시속 ${speedFlat}km, ${speedUp}km, ${speedDown}km일 때 전체 걸린 시간을 구하세요.${fractionDivisionEvidence("62-three-part-route", [distance, flatN, flatD, upN, upD, speedFlat, speedUp, speedDown])}`, `${mixedFraction(time.numerator, time.denominator)}시간`, `각 구간의 거리÷속력을 더하면 ${mixedFraction(time.numerator, time.denominator)}시간입니다.`);
+      }
+      const [height, firstN, firstD, secondN, secondD] = pick(rng, [[30, 2, 5, 3, 4], [36, 1, 3, 5, 6], [42, 3, 7, 5, 7], [48, 3, 8, 7, 8]]);
+      const rise = rationalValue(height * (secondN * firstD - firstN * secondD), secondD * firstD);
+      return result(`직육면체 물통의 물높이가 처음에는 전체 높이의 ${firstN}/${firstD}였습니다. 물을 더 넣었더니 전체 높이의 ${secondN}/${secondD}가 되었고 물높이는 ${mixedFraction(rise.numerator, rise.denominator)}cm 올랐습니다. 물통의 전체 높이를 구하세요.${fractionDivisionEvidence("62-tank-height", [firstN, firstD, secondN, secondD, rise.numerator, rise.denominator])}`, `${height}cm`, `전체 높이를 x라 하면 (${secondN}/${secondD}-${firstN}/${firstD})x=${mixedFraction(rise.numerator, rise.denominator)}입니다. 따라서 x=${height}cm입니다.`);
+    },
+    secondFractionDecimalMixed({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const [decimalA, fractionN, fractionD, divisorN, divisorD, decimalB] = pick(rng, [[75, 3, 4, 3, 5, 25], [125, 5, 8, 3, 4, 40], [84, 7, 10, 2, 5, 34], [165, 3, 5, 9, 10, 45]]);
+        const sum = rationalOperation(rationalValue(decimalA, 100), rationalValue(fractionN, fractionD), "+");
+        const divided = rationalOperation(sum, rationalValue(divisorN, divisorD), "÷");
+        const value = rationalOperation(divided, rationalValue(decimalB, 100), "-");
+        return result(`다음을 계산하세요.<div class="equation">(${(decimalA / 100).toFixed(2)} + ${fractionN}/${fractionD}) ÷ ${divisorN}/${divisorD} - ${(decimalB / 100).toFixed(2)}</div>${fractionDivisionEvidence("62-mixed-calculation", [decimalA, fractionN, fractionD, divisorN, divisorD, decimalB])}`, mixedFraction(value.numerator, value.denominator), `소수를 분수로 바꾸어 차례로 계산하면 ${mixedFraction(value.numerator, value.denominator)}입니다.`);
+      }
+      if (kind === 1) {
+        const [distanceTenths, fuelN, fuelD] = pick(rng, [[434, 7, 2], [576, 24, 5], [625, 25, 4], [693, 11, 2]]);
+        const efficiency = rationalValue(distanceTenths * fuelD, 10 * fuelN);
+        return result(`자동차가 ${(distanceTenths / 10).toFixed(1)}km를 달리는 데 ${mixedFraction(fuelN, fuelD)}L의 연료를 사용했습니다. 연료 1L로 달린 거리를 구하세요.${fractionDivisionEvidence("62-fuel-efficiency", [distanceTenths, fuelN, fuelD])}`, `${decimal(efficiency.numerator / efficiency.denominator, 2)}km`, `거리÷사용한 연료=${(distanceTenths / 10).toFixed(1)}÷${mixedFraction(fuelN, fuelD)}=${decimal(efficiency.numerator / efficiency.denominator, 2)}km입니다.`);
+      }
+      if (kind === 2) {
+        const [valueN, valueD, lowerN, lowerD, upperN, upperD, limit] = pick(rng, [[25, 3, 1, 2, 2, 1, 30], [42, 5, 2, 3, 3, 1, 30], [63, 8, 3, 5, 2, 1, 35], [55, 6, 1, 3, 5, 2, 40]]);
+        const candidates = Array.from({ length: limit }, (_, index) => index + 1).filter(number => valueN * lowerD > lowerN * valueD * number && valueN * upperD < upperN * valueD * number);
+        const answer = candidates.reduce((sum, value) => sum + value, 0);
+        return result(`자연수 □에 대하여 ${fraction(lowerN, lowerD)}<${mixedFraction(valueN, valueD)}÷□<${fraction(upperN, upperD)}입니다. 가능한 모든 □의 합을 구하세요.${fractionDivisionEvidence("62-quotient-range", [valueN, valueD, lowerN, lowerD, upperN, upperD, limit])}`, answer, `부등식을 만족하는 자연수는 ${candidates.join(", ")}이고 합은 ${answer}입니다.`);
+      }
+      if (kind === 3) {
+        const [firstTenths, firstLaps, secondN, secondD, secondLaps] = pick(rng, [[8, 14, 14, 9, 7], [12, 11, 9, 5, 8], [15, 12, 11, 6, 9], [18, 10, 7, 4, 12]]);
+        const firstDistance = rationalValue(firstTenths * firstLaps, 10), secondDistance = rationalValue(secondN * secondLaps, secondD);
+        const difference = rationalOperation(firstDistance, secondDistance, firstDistance.numerator * secondDistance.denominator >= secondDistance.numerator * firstDistance.denominator ? "-" : "+");
+        const actualDifference = Math.abs(firstDistance.numerator / firstDistance.denominator - secondDistance.numerator / secondDistance.denominator);
+        return result(`한 바퀴가 ${(firstTenths / 10).toFixed(1)}km인 트랙을 ${firstLaps}바퀴 돈 거리와, 한 바퀴가 ${mixedFraction(secondN, secondD)}km인 트랙을 ${secondLaps}바퀴 돈 거리의 차를 구하세요.${fractionDivisionEvidence("62-track-difference", [firstTenths, firstLaps, secondN, secondD, secondLaps])}`, `${decimal(actualDifference, 3)}km`, `두 거리는 ${mixedFraction(firstDistance.numerator, firstDistance.denominator)}km와 ${mixedFraction(secondDistance.numerator, secondDistance.denominator)}km입니다. 차는 ${decimal(actualDifference, 3)}km입니다.`);
+      }
+      if (kind === 4) {
+        const [emptyN, emptyD, drinkN, drinkD, consumedN, consumedD] = pick(rng, [[3, 4, 5, 2, 2, 5], [4, 5, 18, 5, 1, 3], [5, 6, 14, 3, 3, 7], [7, 8, 21, 4, 4, 9]]);
+        const full = rationalOperation(rationalValue(emptyN, emptyD), rationalValue(drinkN, drinkD), "+");
+        const remainingDrink = rationalValue(drinkN * (consumedD - consumedN), drinkD * consumedD);
+        const after = rationalOperation(rationalValue(emptyN, emptyD), remainingDrink, "+");
+        return result(`음료가 가득 든 병의 무게는 ${mixedFraction(full.numerator, full.denominator)}kg입니다. 음료의 ${consumedN}/${consumedD}를 마신 뒤 병을 재었더니 ${mixedFraction(after.numerator, after.denominator)}kg이었습니다. 빈 병의 무게를 구하세요.${fractionDivisionEvidence("62-bottle-weight", [full.numerator, full.denominator, after.numerator, after.denominator, consumedN, consumedD])}`, `${mixedFraction(emptyN, emptyD)}kg`, `처음과 나중 무게의 차는 마신 음료 ${consumedN}/${consumedD}의 무게입니다. 음료 전체와 빈 병 무게를 역산하면 빈 병은 ${mixedFraction(emptyN, emptyD)}kg입니다.`);
+      }
+      const [topTenths, bottomN, bottomD, heightN, heightD] = pick(rng, [[25, 9, 2, 8, 1], [32, 24, 5, 15, 2], [45, 11, 2, 6, 1], [56, 32, 5, 25, 4]]);
+      const top = rationalValue(topTenths, 10), bottom = rationalValue(bottomN, bottomD), height = rationalValue(heightN, heightD);
+      const baseSum = rationalOperation(top, bottom, "+"), area = rationalValue(baseSum.numerator * height.numerator, baseSum.denominator * height.denominator * 2);
+      return result(`사다리꼴의 윗변은 ${(topTenths / 10).toFixed(1)}cm, 아랫변은 ${mixedFraction(bottomN, bottomD)}cm이고 넓이는 ${mixedFraction(area.numerator, area.denominator)}cm²입니다. 높이를 구하세요.${fractionTrapezoidSvg({ top: (topTenths / 10).toFixed(1), bottom: mixedFraction(bottomN, bottomD) })}${fractionDivisionEvidence("62-trapezoid-height", [topTenths, bottomN, bottomD, area.numerator, area.denominator])}`, `${mixedFraction(heightN, heightD)}cm`, `높이=넓이×2÷(윗변+아랫변)이므로 ${mixedFraction(heightN, heightD)}cm입니다.`);
+    },
+    secondDecimalDivisionUnderstanding({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const targetTenth = int(rng, 54, 88 + level * 8);
+        const divisorTenth = pick(rng, [12, 14, 16, 25]);
+        const quotients = shuffle(rng, [-12, -5, -1, 3, 8, 15].map(offset => targetTenth + offset));
+        const labels = ["㉠", "㉡", "㉢", "㉣", "㉤", "㉥"];
+        const expressions = quotients.map((quotient, index) => `${labels[index]} ${fixedDecimal(quotient * divisorTenth, 2)}÷${fixedDecimal(divisorTenth, 1)}`);
+        const answer = quotients.map((quotient, index) => quotient > targetTenth ? labels[index] : "").filter(Boolean).join(", ");
+        return result(`${fixedDecimal(targetTenth, 1)}보다 몫이 큰 것을 모두 찾아 기호를 쓰세요.<div class="equation">${expressions.join("<br>")}</div>${decimalDivisionEvidence("62d-compare-quotients", [targetTenth, ...quotients])}`, answer, `각 식의 몫은 차례로 ${quotients.map(value => fixedDecimal(value, 1)).join(", ")}입니다. ${fixedDecimal(targetTenth, 1)}보다 큰 식은 ${answer}입니다.`);
+      }
+      if (kind === 1) {
+        const lowTenth = int(rng, 42, 72 + level * 6);
+        const highTenth = lowTenth + int(rng, 65, 105 + level * 10);
+        const divisorA = pick(rng, [12, 14, 16]), divisorB = pick(rng, [15, 18, 25]);
+        const candidates = Array.from({ length: 40 }, (_, index) => index + 1).filter(value => lowTenth / 10 < value && value < highTenth / 10);
+        return result(`다음 두 부등식의 □ 안에 공통으로 들어갈 수 있는 자연수는 모두 몇 개입니까?<div class="equation">${fixedDecimal(lowTenth * divisorA, 2)}÷${fixedDecimal(divisorA, 1)} &lt; □<br>□ &lt; ${fixedDecimal(highTenth * divisorB, 2)}÷${fixedDecimal(divisorB, 1)}</div>${decimalDivisionEvidence("62d-common-natural-range", [lowTenth, highTenth])}`, candidates.length, `두 나눗셈의 몫은 ${fixedDecimal(lowTenth, 1)}와 ${fixedDecimal(highTenth, 1)}입니다. 그 사이의 자연수는 ${candidates.join(", ")}로 모두 ${candidates.length}개입니다.`);
+      }
+      if (kind === 2) {
+        const multiplierTenth = pick(rng, [12, 14, 16, 18]);
+        const firstDigit = int(rng, 2, 4), lastDigit = firstDigit + int(rng, 2, Math.min(4 + level, 9 - firstDigit));
+        const lowHundred = (firstDigit - 1) * multiplierTenth + 1;
+        const highHundred = (lastDigit + 1) * multiplierTenth - 1;
+        const candidates = Array.from({ length: 9 }, (_, index) => index + 1).filter(digit => lowHundred < digit * multiplierTenth && digit * multiplierTenth < highHundred);
+        return result(`□가 0이 아닌 소수 한 자리 수일 때 다음을 만족하는 □는 모두 몇 개입니까?<div class="equation">${fixedDecimal(lowHundred, 2)} &lt; □ × ${fixedDecimal(multiplierTenth, 1)} &lt; ${fixedDecimal(highHundred, 2)}</div>${decimalDivisionEvidence("62d-one-decimal-range", [multiplierTenth, lowHundred, highHundred])}`, candidates.length, `□=0.1, 0.2, …, 0.9를 차례로 확인하면 ${candidates.map(value => fixedDecimal(value, 1)).join(", ")}가 조건을 만족하므로 ${candidates.length}개입니다.`);
+      }
+      if (kind === 3) {
+        const divisorTenth = pick(rng, [24, 32, 36, 45]);
+        const quotientTenth = int(rng, 24, 79 + level * 12);
+        const dividendHundred = divisorTenth * quotientTenth;
+        const original = fixedDecimal(dividendHundred, 2);
+        const positions = [...original].map((character, index) => /\d/.test(character) ? index : -1).filter(index => index >= 0);
+        const hiddenIndex = pick(rng, positions);
+        const masked = `${original.slice(0, hiddenIndex)}□${original.slice(hiddenIndex + 1)}`;
+        const answer = original[hiddenIndex];
+        return result(`다음 나눗셈이 맞도록 □에 들어갈 숫자를 구하세요.<div class="equation">${masked} ÷ ${fixedDecimal(divisorTenth, 1)} = ${fixedDecimal(quotientTenth, 1)}</div>${decimalDivisionEvidence("62d-missing-division-digit", [divisorTenth, quotientTenth, dividendHundred, hiddenIndex])}`, answer, `${fixedDecimal(quotientTenth, 1)}×${fixedDecimal(divisorTenth, 1)}=${original}이므로 빠진 숫자는 ${answer}입니다.`);
+      }
+      if (kind === 4) {
+        const digits = shuffle(rng, [1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4).sort((a, b) => a - b);
+        const cases = [];
+        for (const a of digits) for (const b of digits) for (const c of digits) for (const d of digits) {
+          if (new Set([a, b, c, d]).size !== 4) continue;
+          cases.push({ text: `${a}.${b}÷${c}.${d}`, value: (10 * a + b) / (10 * c + d) });
+        }
+        cases.sort((left, right) => left.value - right.value);
+        const best = cases[cases.length - 1];
+        return result(`수 카드 ${digits.join(", ")}을 한 번씩 모두 사용하여 (소수 한 자리 수)÷(소수 한 자리 수)를 만듭니다. 몫이 가장 클 때의 몫을 구하세요.${decimalDivisionEvidence("62d-card-largest-quotient", digits)}`, decimal(best.value, 3), `가능한 배열을 모두 비교하면 ${best.text}일 때 가장 큽니다. 몫은 ${decimal(best.value, 3)}입니다.`);
+      }
+      const digits = shuffle(rng, [1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 3).sort((a, b) => a - b);
+      const factorTenth = pick(rng, [24, 28, 32]), divisorTenth = pick(rng, [15, 20, 25]);
+      const values = [];
+      for (const a of digits) for (const b of digits) for (const c of digits) {
+        if (new Set([a, b, c]).size !== 3) continue;
+        const number = (100 * a + 10 * b + c) / 100;
+        values.push({ number, transformed: number * factorTenth / divisorTenth });
+      }
+      values.sort((left, right) => left.transformed - right.transformed);
+      const lowIndex = int(rng, 0, 2), highIndex = int(rng, Math.max(lowIndex + 2, 3), 5);
+      const lowThousand = Math.round((values[lowIndex].transformed + values[lowIndex + 1].transformed) * 500);
+      const highThousand = Math.round((values[highIndex - 1].transformed + values[highIndex].transformed) * 500);
+      const candidates = values.filter(item => lowThousand / 1000 < item.transformed && item.transformed < highThousand / 1000);
+      return result(`수 카드 ${digits.join(", ")}을 한 번씩 모두 사용하여 소수 두 자리 수 ㉠을 만듭니다. 다음을 만족하는 ㉠은 모두 몇 개입니까?<div class="equation">${fixedDecimal(lowThousand, 3)} &lt; ㉠ × ${fixedDecimal(factorTenth, 1)} ÷ ${fixedDecimal(divisorTenth, 1)} &lt; ${fixedDecimal(highThousand, 3)}</div>${decimalDivisionEvidence("62d-card-range-count", [...digits, factorTenth, divisorTenth, lowThousand, highThousand])}`, candidates.length, `카드의 모든 배열을 검사하면 ${candidates.map(item => item.number.toFixed(2)).join(", ")}가 조건을 만족하므로 ${candidates.length}개입니다.`);
+    },
+    secondDecimalDivisionApplication({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const gapA = pick(rng, [8, 9, 12, 15]), gapB = pick(rng, [10, 14, 16, 18]);
+        const lengthTenth = lcm(gapA, gapB) * int(rng, 3, 5 + level);
+        const answer = lengthTenth / gapA + lengthTenth / gapB;
+        return result(`길이가 ${fixedDecimal(lengthTenth, 1)}m인 통로의 양쪽에 처음부터 끝까지 각각 ${fixedDecimal(gapA, 1)}m, ${fixedDecimal(gapB, 1)}m 간격으로 표지를 놓습니다. 양 끝의 표지는 양쪽이 함께 사용합니다. 필요한 표지는 모두 몇 개입니까?${decimalDivisionEvidence("62d-two-side-spacing", [lengthTenth, gapA, gapB])}`, answer, `양쪽에서 생기는 간격 수는 ${lengthTenth / gapA}개와 ${lengthTenth / gapB}개입니다. 양 끝을 함께 쓰므로 표지 수는 두 간격 수의 합인 ${answer}개입니다.`);
+      }
+      if (kind === 1) {
+        const count = int(rng, 8, 13 + level * 2), lengthTenth = int(rng, 180, 290), overlapTenth = int(rng, 12, 35);
+        const totalTenth = count * lengthTenth - (count - 1) * overlapTenth;
+        return result(`길이가 ${fixedDecimal(lengthTenth, 1)}cm인 색 테이프 ${count}장을 이웃한 두 장이 ${fixedDecimal(overlapTenth, 1)}cm씩 겹치도록 일렬로 붙였습니다. 이어 붙인 전체 길이를 구하세요.${decimalDivisionEvidence("62d-overlapped-tape", [count, lengthTenth, overlapTenth])}`, `${fixedDecimal(totalTenth, 1)}cm`, `처음 길이의 합 ${fixedDecimal(count * lengthTenth, 1)}cm에서 겹친 ${count - 1}곳의 길이를 빼면 ${fixedDecimal(totalTenth, 1)}cm입니다.`);
+      }
+      if (kind === 2) {
+        const base = int(rng, 8, 16 + level * 2), height = int(rng, 5, 12 + level), ratioTenth = pick(rng, [12, 15, 18, 20]);
+        const triangleArea = base * height / 2, rectangleArea = triangleArea * ratioTenth / 10;
+        return result(`어떤 직사각형의 넓이는 밑변이 ${base}cm인 삼각형 넓이의 ${fixedDecimal(ratioTenth, 1)}배이고, 직사각형의 넓이는 ${decimal(rectangleArea, 2)}cm²입니다. 삼각형의 높이를 구하세요.${decimalDivisionEvidence("62d-area-ratio-height", [base, ratioTenth, Math.round(rectangleArea * 100)])}`, `${height}cm`, `삼각형의 넓이는 ${decimal(rectangleArea, 2)}÷${fixedDecimal(ratioTenth, 1)}=${decimal(triangleArea, 2)}cm²입니다. 높이는 넓이×2÷밑변이므로 ${height}cm입니다.`);
+      }
+      if (kind === 3) {
+        const overlapBase = int(rng, 3, 8 + level), overlapHeight = pick(rng, [4, 6, 8, 10]);
+        const overlapArea = overlapBase * overlapHeight / 2;
+        const areaA = overlapArea + int(rng, 18, 38), areaB = overlapArea + int(rng, 20, 42);
+        const unionArea = areaA + areaB - overlapArea;
+        return result(`두 삼각형의 넓이는 각각 ${decimal(areaA, 2)}cm², ${decimal(areaB, 2)}cm²이고 겹친 전체 도형의 넓이는 ${decimal(unionArea, 2)}cm²입니다. 겹친 부분이 높이 ${overlapHeight}cm인 삼각형일 때 그 밑변을 구하세요.${decimalDivisionEvidence("62d-overlap-triangle", [areaA * 100, areaB * 100, unionArea * 100, overlapHeight])}`, `${overlapBase}cm`, `겹친 넓이는 ${decimal(areaA, 2)}+${decimal(areaB, 2)}-${decimal(unionArea, 2)}=${decimal(overlapArea, 2)}cm²입니다. 밑변은 넓이×2÷높이=${overlapBase}cm입니다.`);
+      }
+      if (kind === 4) {
+        const speedATenth = pick(rng, [24, 27, 30, 32]), speedBTenth = pick(rng, [28, 31, 34, 36]);
+        const minutes = pick(rng, [30, 36, 42, 48, 54, 60].slice(0, 4 + level));
+        const distanceHundred = (speedATenth + speedBTenth) * minutes / 6;
+        const start = int(rng, 780, 930), finish = start + minutes;
+        const clock = value => `${Math.floor(value / 60)}시 ${String(value % 60).padStart(2, "0")}분`;
+        return result(`두 사람이 ${fixedDecimal(distanceHundred, 2)}km 떨어진 곳에서 ${clock(start)}에 서로를 향해 동시에 출발했습니다. 두 사람은 1시간에 각각 ${fixedDecimal(speedATenth, 1)}km, ${fixedDecimal(speedBTenth, 1)}km를 걷습니다. 만나는 시각을 구하세요.${decimalDivisionEvidence("62d-opposite-walkers", [distanceHundred, speedATenth, speedBTenth, start])}`, clock(finish), `빠르기의 합은 ${fixedDecimal(speedATenth + speedBTenth, 1)}km/h이고 만날 때까지 ${minutes}분이 걸립니다. 따라서 ${clock(finish)}에 만납니다.`);
+      }
+      const widthA = int(rng, 2, 6 + level), widthB = int(rng, 3, 8 + level), heightA = int(rng, 2, 7), heightB = int(rng, 3, 9);
+      const missing = widthA * heightA, topRight = widthB * heightA, bottomLeft = widthA * heightB, bottomRight = widthB * heightB;
+      return result(`가로와 세로의 경계가 곧게 이어진 네 직사각형의 넓이입니다. ㉠의 넓이를 구하세요.${valueTable(["㉠cm²", `${topRight}cm²`], [`${bottomLeft}cm²`, `${bottomRight}cm²`])}${decimalDivisionEvidence("62d-four-rectangles", [widthA, widthB, heightA, heightB])}`, `${missing}cm²`, `같은 열의 가로 길이와 같은 행의 세로 길이를 이용하면 ㉠×${bottomRight}=${topRight}×${bottomLeft}입니다. 따라서 ㉠=${missing}cm²입니다.`);
+    },
+    secondDecimalDivisionRounding({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const dividendHundred = int(rng, 480, 2480 + level * 800), divisorHundred = int(rng, 113, 387);
+        const quotient = dividendHundred / divisorHundred;
+        const first = Number(quotient.toFixed(1)), second = Number(quotient.toFixed(2));
+        const answer = decimal(Math.abs(first - second), 2);
+        if (answer === "0") return generators.secondDecimalDivisionRounding({ rng, level, variant });
+        return result(`${fixedDecimal(dividendHundred, 2)}÷${fixedDecimal(divisorHundred, 2)}의 몫을 반올림하여 소수 첫째 자리까지 나타낸 값과 소수 둘째 자리까지 나타낸 값의 차를 구하세요.${decimalDivisionEvidence("62d-rounded-difference", [dividendHundred, divisorHundred])}`, answer, `몫은 ${decimal(quotient, 4)}…이고 반올림한 두 값은 ${first}, ${second}입니다. 차는 ${answer}입니다.`);
+      }
+      if (kind === 1) {
+        const digits = shuffle(rng, [1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4).sort((a, b) => a - b);
+        const values = [];
+        for (const a of digits) for (const b of digits) for (const c of digits) for (const d of digits) {
+          if (new Set([a, b, c, d]).size !== 4) continue;
+          values.push((10 * a + b) / (10 * c + d));
+        }
+        const maximum = Math.max(...values), answer = decimal(maximum, 2);
+        return result(`수 카드 ${digits.join(", ")}을 한 번씩 사용한 (소수 한 자리 수)÷(소수 한 자리 수)의 몫 중 가장 큰 값을 반올림하여 소수 둘째 자리까지 나타내세요.${decimalDivisionEvidence("62d-card-rounded-maximum", digits)}`, answer, `모든 배열을 비교한 가장 큰 몫은 ${decimal(maximum, 5)}…이므로 소수 둘째 자리까지 ${answer}입니다.`);
+      }
+      if (kind === 2) {
+        const divisorTenth = pick(rng, [63, 71, 82, 94]);
+        const hidden = int(rng, 1, 8), baseHundred = 1000 + int(rng, 0, 99);
+        const dividendHundred = baseHundred + hidden * 100;
+        const targetTenth = Math.round(dividendHundred / divisorTenth);
+        const candidates = Array.from({ length: 10 }, (_, digit) => digit).filter(digit => Math.round((baseHundred + digit * 100) / divisorTenth) === targetTenth);
+        if (candidates.length !== 1) return generators.secondDecimalDivisionRounding({ rng, level, variant });
+        const original = fixedDecimal(dividendHundred, 2), masked = `${original[0]}□${original.slice(2)}`;
+        return result(`${masked}÷${fixedDecimal(divisorTenth, 1)}의 몫을 반올림하여 소수 첫째 자리까지 나타내면 ${fixedDecimal(targetTenth, 1)}입니다. □에 알맞은 숫자를 구하세요.${decimalDivisionEvidence("62d-rounded-missing-digit", [baseHundred, divisorTenth, targetTenth])}`, hidden, `□에 0부터 9까지 넣어 반올림 조건을 확인하면 ${hidden}만 조건을 만족합니다.`);
+      }
+      if (kind === 3) {
+        const limitTenth = int(rng, 130, 220), truckTenth = int(rng, 18, 42), boxHundred = pick(rng, [9, 11, 12, 15, 18]);
+        const count = Math.floor((limitTenth - truckTenth) * 10 / boxHundred);
+        return result(`최대 ${fixedDecimal(limitTenth, 1)}t까지 견디는 다리를 무게 ${fixedDecimal(truckTenth, 1)}t인 트럭이 지나갑니다. 한 개가 ${fixedDecimal(boxHundred, 2)}t인 상자를 최대 몇 개 실을 수 있습니까?${decimalDivisionEvidence("62d-bridge-boxes", [limitTenth, truckTenth, boxHundred])}`, count, `실을 수 있는 무게 ${fixedDecimal(limitTenth - truckTenth, 1)}t를 상자 한 개의 무게로 나눈 몫의 자연수 부분은 ${count}이므로 최대 ${count}개입니다.`);
+      }
+      if (kind === 4) {
+        const numeratorHundred = int(rng, 1800, 6200), chosenTenth = int(rng, 12, 75);
+        const targetTenth = Math.round(numeratorHundred / chosenTenth);
+        const candidates = Array.from({ length: 90 }, (_, index) => index + 10).filter(value => Math.round(numeratorHundred / value) === targetTenth);
+        return result(`${fixedDecimal(numeratorHundred, 2)}÷㉠의 몫을 반올림하여 소수 첫째 자리까지 나타내면 ${fixedDecimal(targetTenth, 1)}입니다. ㉠이 1.0 이상 9.9 이하인 소수 한 자리 수일 때 가능한 ㉠은 모두 몇 개입니까?${decimalDivisionEvidence("62d-rounded-divisor-count", [numeratorHundred, targetTenth])}`, candidates.length, `1.0부터 9.9까지 0.1씩 확인하면 조건을 만족하는 값은 ${candidates.map(value => fixedDecimal(value, 1)).join(", ")}로 ${candidates.length}개입니다.`);
+      }
+      const cubeHundred = pick(rng, [85, 95, 105, 115, 125]);
+      const counts = [int(rng, 4, 8 + level), int(rng, 3, 7 + level), int(rng, 3, 6 + level)];
+      const margins = [int(rng, 0, cubeHundred - 1), int(rng, 0, cubeHundred - 1), int(rng, 0, cubeHundred - 1)];
+      const dimensions = counts.map((count, index) => count * cubeHundred + margins[index]);
+      const answer = counts.reduce((total, value) => total * value, 1);
+      return result(`가로 ${fixedDecimal(dimensions[0], 2)}cm, 세로 ${fixedDecimal(dimensions[1], 2)}cm, 높이 ${fixedDecimal(dimensions[2], 2)}cm인 상자에 모서리 길이가 ${fixedDecimal(cubeHundred, 2)}cm인 정육면체를 빈틈없이 나란히 넣습니다. 최대 몇 개 넣을 수 있습니까?${decimalDivisionEvidence("62d-cubes-in-box", [cubeHundred, ...dimensions])}`, answer, `각 방향에 들어가는 개수는 몫의 자연수 부분인 ${counts.join(", ")}개입니다. 모두 ${counts.join("×")}=${answer}개입니다.`);
+    },
+    secondDecimalDivisionRemainder({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const remainders = shuffle(rng, [12, 23, 37, 46].map(value => value + level));
+        const divisors = [125, 138, 164, 175], labels = ["㉠", "㉡", "㉢", "㉣"];
+        const equations = remainders.map((remainder, index) => `${labels[index]} ${fixedDecimal(divisors[index] * (index + 3) + remainder, 2)}÷${fixedDecimal(divisors[index], 2)}`);
+        const order = remainders.map((value, index) => ({ value, label: labels[index] })).sort((a, b) => b.value - a.value).map(item => item.label).join(", ");
+        return result(`다음 나눗셈의 몫을 자연수 부분까지 구했을 때 나머지가 큰 순서대로 기호를 쓰세요.<div class="equation">${equations.join("<br>")}</div>${decimalDivisionEvidence("62d-remainder-order", remainders)}`, order, `나머지는 차례로 ${remainders.map(value => fixedDecimal(value, 2)).join(", ")}입니다. 큰 순서는 ${order}입니다.`);
+      }
+      if (kind === 1) {
+        const divisorHundred = pick(rng, [135, 175, 225, 260]), quotient = int(rng, 4, 12 + level), remainderHundred = int(rng, 1, divisorHundred - 1);
+        const dividendHundred = divisorHundred * quotient + remainderHundred;
+        return result(`어떤 수를 ${fixedDecimal(divisorHundred, 2)}로 나누어 몫을 자연수 부분까지 구했더니 몫이 ${quotient}, 나머지가 ${fixedDecimal(remainderHundred, 2)}였습니다. 어떤 수를 구하세요.${decimalDivisionEvidence("62d-dividend-from-remainder", [divisorHundred, quotient, remainderHundred])}`, fixedDecimal(dividendHundred, 2), `${fixedDecimal(divisorHundred, 2)}×${quotient}+${fixedDecimal(remainderHundred, 2)}=${fixedDecimal(dividendHundred, 2)}입니다.`);
+      }
+      if (kind === 2) {
+        const divisorA = pick(rng, [125, 150, 175, 225]), quotient = int(rng, 5, 13 + level), remainderA = int(rng, 12, divisorA - 1);
+        const original = divisorA * quotient + remainderA, divisorB = pick(rng, [80, 95, 110, 130]);
+        const remainderB = original % divisorB;
+        return result(`어떤 수를 ${fixedDecimal(divisorA, 2)}로 나누어 몫을 자연수 부분까지 구하면 몫이 ${quotient}, 나머지가 ${fixedDecimal(remainderA, 2)}입니다. 이 수를 ${fixedDecimal(divisorB, 2)}로 나눌 때의 나머지를 구하세요.${decimalDivisionEvidence("62d-changed-divisor-remainder", [divisorA, quotient, remainderA, divisorB])}`, fixedDecimal(remainderB, 2), `어떤 수는 ${fixedDecimal(original, 2)}입니다. 이를 ${fixedDecimal(divisorB, 2)}로 나누면 나머지는 ${fixedDecimal(remainderB, 2)}입니다.`);
+      }
+      if (kind === 3) {
+        const divisorHundred = pick(rng, [175, 225, 275, 325]), dividendHundred = int(rng, 600, 2400 + level * 500);
+        const remainder = dividendHundred % divisorHundred;
+        if (!remainder) return generators.secondDecimalDivisionRemainder({ rng, level, variant });
+        const add = divisorHundred - remainder;
+        return result(`${fixedDecimal(dividendHundred, 2)}÷${fixedDecimal(divisorHundred, 2)}가 나누어떨어지도록 ${fixedDecimal(dividendHundred, 2)}에 더할 수 있는 가장 작은 소수를 구하세요.${decimalDivisionEvidence("62d-smallest-decimal-addend", [dividendHundred, divisorHundred])}`, fixedDecimal(add, 2), `현재 나머지는 ${fixedDecimal(remainder, 2)}이므로 나누는 수 ${fixedDecimal(divisorHundred, 2)}까지 필요한 ${fixedDecimal(add, 2)}를 더해야 합니다.`);
+      }
+      if (kind === 4) {
+        const divisorA = pick(rng, [210, 260, 310, 360]), quotient = int(rng, 4, 11 + level), remainderA = int(rng, 15, divisorA - 1);
+        const original = divisorA * quotient + remainderA, divisorB = pick(rng, [140, 175, 225, 250]);
+        const remainderB = original % divisorB;
+        return result(`어떤 수를 ${fixedDecimal(divisorA, 2)}로 나누면 몫이 ${quotient}, 나머지가 ${fixedDecimal(remainderA, 2)}입니다. 같은 수를 ${fixedDecimal(divisorB, 2)}로 나누어 몫을 자연수 부분까지 구할 때 나머지를 구하세요.${decimalDivisionEvidence("62d-same-number-new-remainder", [divisorA, quotient, remainderA, divisorB])}`, fixedDecimal(remainderB, 2), `어떤 수는 ${fixedDecimal(original, 2)}이고, ${fixedDecimal(divisorB, 2)}로 다시 나눈 나머지는 ${fixedDecimal(remainderB, 2)}입니다.`);
+      }
+      const divisorHundred = pick(rng, [211, 237, 263, 289]), quotient = int(rng, 2, 9 + level), remainderHundred = int(rng, 1, divisorHundred - 1);
+      const original = divisorHundred * quotient + remainderHundred;
+      return result(`어떤 소수를 ${fixedDecimal(divisorHundred, 2)}로 나누어 몫을 자연수 부분까지 구했더니 몫이 ${quotient}, 나머지가 ${fixedDecimal(remainderHundred, 2)}였습니다. 어떤 소수를 구하세요.${decimalDivisionEvidence("62d-original-from-remainder", [divisorHundred, quotient, remainderHundred])}`, fixedDecimal(original, 2), `나누는 수×몫+나머지=${fixedDecimal(divisorHundred, 2)}×${quotient}+${fixedDecimal(remainderHundred, 2)}=${fixedDecimal(original, 2)}입니다.`);
+    },
+    secondDecimalDivisionUnitRate({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const [speedTenth, distanceTenth] = pick(rng, [[42, 462], [36, 378], [48, 624], [54, 729], [66, 891]]);
+        const sampleMinutes = pick(rng, [48, 54, 66, 72, 84]);
+        const sampleDistanceHundred = speedTenth * sampleMinutes / 6;
+        const minutes = distanceTenth * 60 / speedTenth;
+        return result(`일정한 빠르기로 ${sampleMinutes}분 동안 ${fixedDecimal(sampleDistanceHundred, 2)}km를 걸었습니다. 같은 빠르기로 ${fixedDecimal(distanceTenth, 1)}km를 가는 데 걸리는 시간을 반올림하여 소수 첫째 자리까지 나타내세요.${decimalDivisionEvidence("62d-unit-speed-time", [sampleDistanceHundred, sampleMinutes, distanceTenth])}`, `${decimal(minutes / 60, 1)}시간`, `1시간의 거리는 ${fixedDecimal(sampleDistanceHundred, 2)}÷${sampleMinutes}×60=${fixedDecimal(speedTenth, 1)}km입니다. ${fixedDecimal(distanceTenth, 1)}÷${fixedDecimal(speedTenth, 1)}=${decimal(minutes / 60, 1)}시간입니다.`);
+      }
+      if (kind === 1) {
+        const [fuelA, distanceA, fuelB, distanceB] = pick(rng, [[24, 3024, 46, 7245], [32, 4288, 50, 7425], [28, 3696, 42, 6237], [36, 4968, 48, 7344]]);
+        const rateA = distanceA / fuelA, rateB = distanceB / fuelB;
+        const ratio = rateA / rateB;
+        return result(`가 자동차는 휘발유 ${fixedDecimal(fuelA, 1)}L로 ${fixedDecimal(distanceA, 2)}km, 나 자동차는 ${fixedDecimal(fuelB, 1)}L로 ${fixedDecimal(distanceB, 2)}km를 갑니다. 1L당 거리로 비교할 때 가 자동차는 나 자동차의 약 몇 배입니까? 반올림하여 소수 둘째 자리까지 나타내세요.${decimalDivisionEvidence("62d-fuel-efficiency-ratio", [fuelA, distanceA, fuelB, distanceB])}`, decimal(ratio, 2), `1L당 거리는 각각 ${decimal(rateA / 10, 3)}km, ${decimal(rateB / 10, 3)}km입니다. 두 값을 나누면 ${decimal(ratio, 2)}배입니다.`);
+      }
+      if (kind === 2) {
+        const rateA = int(rng, 14, 28 + level * 3), rateB = int(rng, 10, 24 + level * 3), minutes = int(rng, 3, 8), price = pick(rng, [8, 10, 12, 15]);
+        const volume = (rateA + rateB) * minutes, cost = volume * price;
+        return result(`가 수도관은 1분에 ${rateA}L, 나 수도관은 1분에 ${rateB}L씩 일정하게 물이 나옵니다. 두 수도관을 ${minutes}분 동안 함께 틀 때 물 1L의 값이 ${price}원이라면 물값은 얼마입니까?${decimalDivisionEvidence("62d-two-taps-cost", [rateA, rateB, minutes, price])}`, `${cost.toLocaleString()}원`, `1분에 ${rateA + rateB}L, ${minutes}분에는 ${volume}L가 나옵니다. ${volume}×${price}=${cost.toLocaleString()}원입니다.`);
+      }
+      if (kind === 3) {
+        const stillTenth = pick(rng, [36, 42, 48, 54]), currentTenth = pick(rng, [6, 8, 9, 12]);
+        const downHours = int(rng, 2, 5), upHours = int(rng, 2, 5);
+        const downDistanceTenth = (stillTenth + currentTenth) * downHours, upDistanceTenth = (stillTenth - currentTenth) * upHours;
+        const total = downHours + upHours;
+        return result(`고요한 물에서 시속 ${fixedDecimal(stillTenth, 1)}km인 배가 시속 ${fixedDecimal(currentTenth, 1)}km로 흐르는 강에서 아래쪽으로 ${fixedDecimal(downDistanceTenth, 1)}km, 다시 위쪽으로 ${fixedDecimal(upDistanceTenth, 1)}km 이동합니다. 모두 몇 시간이 걸립니까?${decimalDivisionEvidence("62d-river-round-trip", [stillTenth, currentTenth, downDistanceTenth, upDistanceTenth])}`, `${total}시간`, `내려갈 때 속력은 ${fixedDecimal(stillTenth + currentTenth, 1)}km/h, 올라갈 때는 ${fixedDecimal(stillTenth - currentTenth, 1)}km/h입니다. 시간의 합은 ${downHours}+${upHours}=${total}시간입니다.`);
+      }
+      if (kind === 4) {
+        const emptyHundred = int(rng, 45, 125), densityHundred = pick(rng, [82, 95, 108, 124]), fullVolumeTenth = int(rng, 35, 75), usedVolumeTenth = int(rng, 10, fullVolumeTenth - 10);
+        const fullMassThousand = emptyHundred * 10 + densityHundred * fullVolumeTenth;
+        const afterMassThousand = emptyHundred * 10 + densityHundred * (fullVolumeTenth - usedVolumeTenth);
+        return result(`빈 통에 액체 ${fixedDecimal(fullVolumeTenth, 1)}L를 넣은 무게는 ${fixedDecimal(fullMassThousand, 3)}kg입니다. 이 통에서 ${fixedDecimal(usedVolumeTenth, 1)}L를 사용한 뒤의 무게는 ${fixedDecimal(afterMassThousand, 3)}kg입니다. 빈 통의 무게를 구하세요.${decimalDivisionEvidence("62d-container-unit-mass", [fullVolumeTenth, usedVolumeTenth, fullMassThousand, afterMassThousand])}`, `${fixedDecimal(emptyHundred, 2)}kg`, `두 무게의 차를 사용한 양으로 나누어 1L의 무게를 구한 뒤, 처음 무게에서 액체 무게를 빼면 빈 통은 ${fixedDecimal(emptyHundred, 2)}kg입니다.`);
+      }
+      const initialTenth = int(rng, 180, 320), burnHundred = pick(rng, [18, 22, 24, 25, 28]), elapsed = int(rng, 20, 55 + level * 10);
+      const remainingHundred = initialTenth * 10 - burnHundred * elapsed;
+      if (remainingHundred <= 0) return generators.secondDecimalDivisionUnitRate({ rng, level, variant });
+      return result(`길이가 ${fixedDecimal(initialTenth, 1)}cm인 양초가 1분에 ${fixedDecimal(burnHundred, 2)}cm씩 일정하게 줄어듭니다. 길이가 ${fixedDecimal(remainingHundred, 2)}cm가 될 때까지 몇 분 걸립니까?${decimalDivisionEvidence("62d-candle-time", [initialTenth, burnHundred, remainingHundred])}`, `${elapsed}분`, `줄어든 길이 ${fixedDecimal(initialTenth * 10 - remainingHundred, 2)}cm를 1분에 줄어드는 길이로 나누면 ${elapsed}분입니다.`);
+    },
+    secondDecimalDivisionEquation({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const initialTenth = int(rng, 80, 180 + level * 30), dropsTenth = [int(rng, 10, 25), int(rng, 12, 30), int(rng, 10, 24)];
+        let bounce = 0.8 * initialTenth / 10;
+        dropsTenth.forEach(drop => { bounce = 0.8 * (bounce + drop / 10); });
+        const finalThousand = Math.round(bounce * 1000);
+        return result(`공은 떨어진 높이의 0.8배만큼 튀어 오릅니다. 처음 바닥에서 튄 뒤 차례로 ${dropsTenth.map(value => fixedDecimal(value, 1)).join("m, ")}m 낮은 세 계단으로 떨어졌습니다. 네 번째로 튀어 오른 높이가 ${fixedDecimal(finalThousand, 3)}m일 때 처음 공을 떨어뜨린 높이를 구하세요.${decimalDivisionEvidence("62d-bouncing-stairs", [8, 10, ...dropsTenth, finalThousand])}`, `${fixedDecimal(initialTenth, 1)}m`, `네 번째 높이에서 매 단계마다 ÷0.8을 한 뒤 낮아진 계단 높이를 빼며 거꾸로 계산하면 처음 높이는 ${fixedDecimal(initialTenth, 1)}m입니다.`);
+      }
+      if (kind === 1) {
+        const capacity = pick(rng, [40, 60, 80, 100, 120]), addedHundred = capacity * 15;
+        return result(`물통에 전체 들이의 0.2만큼 물이 있습니다. 빈 부분의 5/8만큼을 채우고 ${fixedDecimal(addedHundred, 2)}L를 더 넣었더니 비어 있는 부분이 전체 들이의 15%가 되었습니다. 물통의 들이를 구하세요.${decimalDivisionEvidence("62d-tank-capacity", [addedHundred])}`, `${capacity}L`, `처음 20%에서 빈 부분의 5/8인 50%를 더 채우면 70%입니다. 마지막은 85%이므로 ${fixedDecimal(addedHundred, 2)}L가 전체의 15%입니다. 들이는 ${capacity}L입니다.`);
+      }
+      if (kind === 2) {
+        const temperature = int(rng, 5, 32 + level * 5), seconds = pick(rng, [4, 5, 6]);
+        const speedHundred = 33150 + 61 * temperature, distanceHundred = speedHundred * seconds;
+        return result(`기온이 0℃일 때 소리는 1초에 331.5m를 이동하고, 기온이 1℃ 높아질 때마다 1초에 0.61m씩 더 이동합니다. 소리가 ${seconds}초 동안 ${fixedDecimal(distanceHundred, 2)}m 이동했다면 기온은 몇 ℃입니까?${decimalDivisionEvidence("62d-sound-temperature", [seconds, distanceHundred])}`, `${temperature}℃`, `1초 이동 거리는 ${fixedDecimal(distanceHundred / seconds, 2)}m이고 331.5m보다 ${fixedDecimal(61 * temperature, 2)}m 빠릅니다. 이를 0.61로 나누면 ${temperature}℃입니다.`);
+      }
+      if (kind === 3) {
+        const length = pick(rng, [120, 160, 180, 200, 240]), firstTenth = pick(rng, [4, 5, 6]), secondTenth = pick(rng, [7, 8, 9]);
+        if (secondTenth <= firstTenth) return generators.secondDecimalDivisionEquation({ rng, level, variant });
+        const differenceTenth = length * (secondTenth - firstTenth);
+        return result(`길이가 같은 두 막대를 물에 세웠습니다. 가 막대는 전체의 ${fixedDecimal(firstTenth, 1)}, 나 막대는 전체의 ${fixedDecimal(secondTenth, 1)}만큼 물에 잠겼고, 물 위로 나온 길이의 차는 ${fixedDecimal(differenceTenth, 1)}cm입니다. 막대 한 개의 길이를 구하세요.${decimalDivisionEvidence("62d-submerged-sticks", [firstTenth, secondTenth, differenceTenth])}`, `${length}cm`, `물 위 길이의 차는 전체 길이의 ${fixedDecimal(secondTenth - firstTenth, 1)}입니다. ${fixedDecimal(differenceTenth, 1)}÷${fixedDecimal(secondTenth - firstTenth, 1)}=${length}cm입니다.`);
+      }
+      if (kind === 4) {
+        const boysLast = (int(rng, 2, 5) + int(rng, 0, 3)) * 50, girlsLast = boysLast * 13 / 10;
+        const boysNow = boysLast * 11 / 10, girlsNow = girlsLast * 8 / 10, totalNow = boysNow + girlsNow;
+        return result(`작년 남학생 수는 여학생 수의 10/13이었습니다. 올해 남학생은 작년보다 0.1배만큼 늘고 여학생은 작년보다 0.2배만큼 줄어 모두 ${totalNow}명이 되었습니다. 올해 남학생과 여학생 수를 차례로 구하세요.${decimalDivisionEvidence("62d-student-change", [totalNow])}`, `${boysNow}명, ${girlsNow}명`, `작년 남학생을 10몫, 여학생을 13몫으로 두면 올해는 11몫과 10.4몫입니다. 전체 ${totalNow}명에 맞추면 올해 남학생 ${boysNow}명, 여학생 ${girlsNow}명입니다.`);
+      }
+      const heightHundred = pick(rng, [500, 750, 1000, 1250, 1500]), differenceHundred = Math.round(heightHundred * (0.7 - 0.4 * 0.4));
+      return result(`같은 높이에서 두 공을 떨어뜨렸습니다. 가 공은 떨어진 높이의 0.7배씩, 나 공은 0.4배씩 튀어 오릅니다. 가 공이 처음 튀어 오른 높이는 나 공이 두 번째로 튀어 오른 높이보다 ${fixedDecimal(differenceHundred, 2)}m 높았습니다. 처음 떨어뜨린 높이를 구하세요.${decimalDivisionEvidence("62d-two-balls", [differenceHundred])}`, `${fixedDecimal(heightHundred, 2)}m`, `처음 높이를 x라 하면 0.7x-0.4×0.4x=0.54x입니다. 0.54x=${fixedDecimal(differenceHundred, 2)}이므로 x=${fixedDecimal(heightHundred, 2)}m입니다.`);
+    },
+    spaceViewsAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      const heights = Array.from({ length: 2 + (level === 2 ? 1 : 0) }, () => Array.from({ length: 3 }, () => int(rng, 1, 2 + level)));
+      const encoded = heights.map(row => row.join(".")).join(";");
+      if (kind === 0) {
+        const projections = stackProjections(heights);
+        const front = projections.front.reduce((sum, value) => sum + value, 0);
+        const right = projections.right.reduce((sum, value) => sum + value, 0);
+        return result(`높이표대로 쌓은 모양을 앞과 오른쪽에서 보았습니다. 두 그림에 보이는 정사각형 수의 합을 구하세요.${heightMapTable({ title: "바닥 칸별 높이", heights })}${projectionViewsSvg({ heights })}${spaceEvidence("projection-area-sum", [front, right], `data-heights="${encoded}"`)}`, front + right, `앞에서 본 그림은 열별 최고 높이의 합 ${front}칸이고, 오른쪽에서 본 그림은 행별 최고 높이의 합 ${right}칸입니다. 따라서 ${front}+${right}=${front + right}칸입니다.`);
+      }
+      if (kind === 1) {
+        const original = stackProjections(heights);
+        const removable = [];
+        heights.forEach((row, y) => row.forEach((height, x) => {
+          if (!height) return;
+          const changed = heights.map(line => [...line]);
+          changed[y][x] -= 1;
+          if (sameProjection(original, stackProjections(changed))) removable.push([y, x]);
+        }));
+        const removableExplanation = removable.length
+          ? `세 그림이 모두 같은 위치는 ${removable.map(([y, x]) => `${y + 1}행 ${x + 1}열`).join(", ")}의 ${removable.length}곳입니다.`
+          : "세 그림이 모두 같은 위치는 없으므로 0곳입니다.";
+        return result(`쌓기나무 한 개를 맨 위에서 빼도 위·앞·오른쪽에서 본 세 그림이 모두 바뀌지 않는 바닥 칸은 몇 군데입니까?${heightMapTable({ title: "바닥 칸별 높이", heights })}${projectionViewsSvg({ heights })}${spaceEvidence("projection-safe-removal", [removable.length], `data-heights="${encoded}"`)}`, removable.length, `각 칸의 맨 위 쌓기나무를 하나씩 빼 보아 세 투영을 다시 계산합니다. ${removableExplanation}`);
+      }
+      if (kind === 2) {
+        const maxHeight = 2 + (level > 0 ? 1 : 0);
+        const sample = [[maxHeight, 1], [1, maxHeight]];
+        const projections = stackProjections(sample);
+        const candidates = enumerateHeightMaps({ ...projections, maxHeight });
+        return result(`위·앞·오른쪽에서 본 그림이 다음과 같고, 각 칸에는 ${maxHeight}개 이하를 쌓았습니다. 이 세 그림을 모두 만족하는 쌓기 방법은 몇 가지입니까?${projectionViewsSvg({ heights: sample })}${spaceEvidence("projection-candidate-count", [maxHeight, candidates.length], `data-top="${projections.top.join(".")}" data-front="${projections.front.join(".")}" data-right="${projections.right.join(".")}"`)}`, candidates.length, `위에서 본 네 칸에는 각각 1개 이상 ${maxHeight}개 이하를 놓고, 각 행과 열의 최고 높이가 앞·오른쪽 그림과 같도록 전부 확인하면 ${candidates.length}가지입니다.`);
+      }
+      if (kind === 3) {
+        const cells = cellsFromHeights(heights);
+        const surface = voxelSurface(cells);
+        return result(`한 모서리가 1cm인 정육면체를 높이표대로 빈틈없이 쌓았습니다. 완성된 입체도형의 겉넓이를 구하세요.${heightMapTable({ title: "바닥 칸별 높이", heights })}${isometricStackSvg(heights)}${spaceEvidence("height-map-surface", [surface], `data-heights="${encoded}"`)}`, `${surface}cm²`, `쌓기나무 ${cells.length}개의 면 중 서로 맞닿은 면을 제외하면 바깥에 드러난 면이 ${surface}개입니다. 한 면이 1cm²이므로 겉넓이는 ${surface}cm²입니다.`);
+      }
+      if (kind === 4) {
+        const candidates = [];
+        heights.forEach((row, y) => row.forEach((height, x) => {
+          if (height > 0) candidates.push([y, x]);
+        }));
+        const [y, x] = pick(rng, candidates);
+        const changed = heights.map(row => [...row]);
+        changed[y][x] -= 1;
+        const before = projectionSquareCount(stackProjections(heights));
+        const after = projectionSquareCount(stackProjections(changed));
+        return result(`높이표의 ${y + 1}행 ${x + 1}열 맨 위 쌓기나무 한 개를 뺐습니다. 위·앞·오른쪽에서 본 세 그림의 정사각형 수는 모두 합하여 몇 칸 줄어듭니까?${heightMapTable({ title: "빼기 전 높이표", heights })}${projectionViewsSvg({ heights })}${spaceEvidence("projection-removal-change", [y, x, before, after], `data-heights="${encoded}"`)}`, before - after, `빼기 전 세 그림의 정사각형 수 합은 ${before}칸, 뺀 뒤에는 ${after}칸입니다. 따라서 ${before}-${after}=${before - after}칸 줄어듭니다.`);
+      }
+      const blue = heights.flat().reduce((sum, height) => sum + Math.ceil(height / 2), 0);
+      const total = heights.flat().reduce((sum, height) => sum + height, 0);
+      return result(`높이표대로 쌓되 바닥에서 홀수 번째 층은 파란색, 짝수 번째 층은 노란색 쌓기나무를 사용했습니다. 파란색 쌓기나무는 모두 몇 개입니까?${heightMapTable({ title: "바닥 칸별 높이", heights })}${isometricStackSvg(heights, "층별 색 규칙으로 쌓은 정육면체")}${spaceEvidence("layer-color-count", [blue, total], `data-heights="${encoded}"`)}`, blue, `높이가 h인 칸의 파란색 수는 올림(h÷2)입니다. 모든 칸을 더하면 전체 ${total}개 중 파란색은 ${blue}개입니다.`);
+    },
+    stackingCubeCountAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const size = int(rng, 4 + level, 6 + level);
+        const answer = size ** 3 - (size - 2) ** 3;
+        return result(`한 모서리에 작은 정육면체가 ${size}개씩 놓이도록 큰 정육면체를 만들고, 겉면 한 겹만 남겨 속을 모두 비웠습니다. 남은 작은 정육면체는 몇 개입니까?${cuboidSvg({ a: size, b: size, c: size })}${spaceEvidence("hollow-cube-count", [size])}`, answer, `전체 ${size ** 3}개에서 안쪽 정육면체 ${(size - 2) ** 3}개를 빼면 ${answer}개입니다.`);
+      }
+      if (kind === 1) {
+        const maxHeight = 2 + (level > 0 ? 1 : 0);
+        const sample = [[maxHeight, 1], [1, maxHeight]];
+        const projections = stackProjections(sample);
+        const candidates = enumerateHeightMaps({ ...projections, maxHeight });
+        const totals = candidates.map(map => map.flat().reduce((sum, value) => sum + value, 0));
+        const minimum = Math.min(...totals), maximum = Math.max(...totals);
+        return result(`위·앞·오른쪽에서 본 그림이 다음과 같고 한 칸에는 ${maxHeight}개 이하를 쌓았습니다. 가능한 쌓기나무 수의 최솟값과 최댓값을 차례로 쓰세요.${projectionViewsSvg({ heights: sample })}${spaceEvidence("projection-min-max", [maxHeight, minimum, maximum, candidates.length], `data-top="${projections.top.join(".")}" data-front="${projections.front.join(".")}" data-right="${projections.right.join(".")}"`)}`, `${minimum}, ${maximum}`, `세 그림을 만족하는 높이표 ${candidates.length}가지를 전부 확인하면 전체 개수의 최솟값은 ${minimum}개, 최댓값은 ${maximum}개입니다. 정답은 ${minimum}, ${maximum}입니다.`);
+      }
+      if (kind === 2) {
+        const size = pick(rng, level === 0 ? [5] : [5, 7]);
+        const directions = level === 2 ? ["x", "y", "z"] : level === 1 ? ["x", "y"] : ["y"];
+        const cells = centeredTunnelCells({ size, hole: 1, directions });
+        const surface = voxelSurface(cells);
+        return result(`한 모서리에 작은 정육면체 ${size}개를 쌓은 큰 정육면체의 한가운데에 폭 1칸인 구멍을 ${directions.length}방향으로 끝까지 뚫었습니다. 남은 정육면체 수와 겉넓이를 차례로 구하세요. 작은 정육면체 한 면은 1cm²입니다.${tunnelCubeSvg({ size, hole: 1, directions })}${spaceEvidence("tunnel-count-surface", [size, directions.length, cells.length, surface])}`, `${cells.length}개, ${surface}cm²`, `좌표로 구멍에 해당하는 칸을 한 번씩만 제거하면 ${cells.length}개가 남습니다. 남은 각 조각의 이웃을 조사해 드러난 면을 세면 ${surface}면이므로 겉넓이는 ${surface}cm²입니다. 정답은 ${cells.length}개, ${surface}cm²입니다.`);
+      }
+      if (kind === 3) {
+        const maxHeight = 2 + (level > 0 ? 1 : 0);
+        const sample = level === 2 ? [[maxHeight, 1, maxHeight], [1, maxHeight, 1]] : [[maxHeight, 1], [1, maxHeight]];
+        const projections = stackProjections(sample);
+        const candidates = enumerateHeightMaps({ ...projections, maxHeight });
+        return result(`다음 위·앞·오른쪽 그림과 같은 쌓기를 만들려고 합니다. 한 칸에는 ${maxHeight}개 이하를 쌓을 때 가능한 방법은 몇 가지입니까? 회전한 모양도 바닥 칸의 위치가 다르면 다른 방법입니다.${projectionViewsSvg({ heights: sample })}${spaceEvidence("stack-method-count", [maxHeight, candidates.length], `data-top="${projections.top.join(".")}" data-front="${projections.front.join(".")}" data-right="${projections.right.join(".")}"`)}`, candidates.length, `위에서 보이는 칸을 1부터 ${maxHeight}까지 채우고 앞·오른쪽의 최고 높이를 모두 대조하면 ${candidates.length}가지입니다.`);
+      }
+      if (kind === 4) {
+        const size = 3 + level;
+        const heights = Array.from({ length: size }, (_, y) => Array.from({ length: size }, (_, x) => Math.max(1, size - Math.max(x, y))));
+        const cells = cellsFromHeights(heights);
+        const answer = internalCubeCount(cells);
+        return result(`계단 모양의 높이표대로 쌓았습니다. 어떤 바깥 면도 보이지 않아 완전히 안쪽에 있는 쌓기나무는 몇 개입니까?${heightMapTable({ title: "계단 모양 높이표", heights })}${isometricStackSvg(heights)}${spaceEvidence("hidden-interior-count", [answer], `data-heights="${heights.map(row => row.join(".")).join(";")}"`)}`, answer, `각 쌓기나무의 위·아래·앞·뒤·왼쪽·오른쪽 여섯 이웃을 확인합니다. 여섯 면이 모두 다른 쌓기나무와 맞닿은 조각은 ${answer}개입니다.`);
+      }
+      const cells = 4 + level;
+      const maxHeight = 3 + (level > 0 ? 1 : 0);
+      const total = cells + int(rng, 2, Math.min(6 + level * 2, cells * (maxHeight - 1)));
+      const methods = boundedCompositionCount(cells, total, maxHeight);
+      const footprint = [Array(cells).fill(1)];
+      return result(`위에서 보이는 바닥 칸이 일렬로 ${cells}칸이고 전체 쌓기나무가 ${total}개입니다. 각 칸에 1개 이상 ${maxHeight}개 이하를 쌓는 방법은 몇 가지입니까?${heightMapTable({ title: "위에서 본 바닥 모양", heights: footprint })}${spaceEvidence("footprint-total-methods", [cells, total, maxHeight, methods])}`, methods, `각 칸의 높이를 1부터 ${maxHeight}까지 두고 합이 ${total}이 되는 순서 있는 경우를 모두 세면 ${methods}가지입니다.`);
+    },
+    paintedStackingCubesAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const size = int(rng, 4 + level, 6 + level);
+        const answer = (size - 2) ** 3;
+        return result(`한 모서리에 작은 정육면체가 ${size}개씩 놓인 큰 정육면체의 바깥을 모두 색칠한 뒤 낱개로 나누었습니다. 색칠된 면이 하나도 없는 작은 정육면체는 몇 개입니까?${cuboidSvg({ a: size, b: size, c: size })}${spaceEvidence("painted-solid-interior", [size])}`, answer, `색칠되지 않은 조각은 겉 한 층을 뺀 안쪽 (${size - 2})×(${size - 2})×(${size - 2})개이므로 ${answer}개입니다.`);
+      }
+      if (kind === 1) {
+        const heights = [[2 + level, 1, 2], [1, 2 + level, 1], [2, 1, 2 + level]];
+        const cells = cellsFromHeights(heights);
+        const histogram = paintedFaceHistogram(cells);
+        const choices = histogram.map((count, faces) => ({ count, faces })).filter(item => item.faces >= 1 && item.faces <= 5 && item.count > 0);
+        const selected = pick(rng, choices);
+        return result(`높이표대로 쌓은 뒤 바닥에 닿은 면을 포함하여 바깥에 드러난 모든 면을 색칠했습니다. 색칠된 면이 정확히 ${selected.faces}개인 쌓기나무는 몇 개입니까?${heightMapTable({ title: "바닥 칸별 높이", heights })}${isometricStackSvg(heights)}${spaceEvidence("painted-height-histogram", [selected.faces, selected.count], `data-heights="${heights.map(row => row.join(".")).join(";")}"`)}`, selected.count, `각 조각의 여섯 이웃 칸을 조사해 비어 있는 방향을 색칠된 면으로 셉니다. 정확히 ${selected.faces}면이 색칠된 조각은 ${selected.count}개입니다.`);
+      }
+      if (kind === 2) {
+        const size = 3 + level;
+        const heights = Array.from({ length: size }, (_, y) => Array.from({ length: size }, (_, x) => Math.max(1, Math.ceil(size / 2 - Math.max(Math.abs(x - (size - 1) / 2), Math.abs(y - (size - 1) / 2))))));
+        const cells = cellsFromHeights(heights);
+        const histogram = paintedFaceHistogram(cells);
+        const choices = histogram.map((count, faces) => ({ count, faces })).filter(item => item.faces >= 2 && item.faces <= 5 && item.count > 0);
+        const selected = pick(rng, choices);
+        return result(`층이 올라갈수록 가운데로 좁아지는 높이표대로 쌓고 바닥을 포함한 바깥 면을 모두 색칠했습니다. 정확히 ${selected.faces}면이 색칠된 조각은 몇 개입니까?${heightMapTable({ title: "층별 쌓기 높이표", heights })}${isometricStackSvg(heights)}${spaceEvidence("painted-layer-histogram", [selected.faces, selected.count], `data-heights="${heights.map(row => row.join(".")).join(";")}"`)}`, selected.count, `모든 조각에서 이웃이 없는 방향을 세어 분류하면 ${selected.faces}면이 색칠된 조각은 ${selected.count}개입니다.`);
+      }
+      if (kind === 3) {
+        const side = 2 + level;
+        const heights = [[2 + level, 1, 2], [1, 3, 1], [2, 1, 2 + level]];
+        const surface = voxelSurface(cellsFromHeights(heights));
+        const answer = surface * side * side;
+        return result(`한 모서리 ${side}cm인 정육면체를 높이표대로 쌓고 바닥에 닿은 면을 포함한 바깥 면을 모두 색칠했습니다. 색칠한 넓이는 모두 몇 cm²입니까?${heightMapTable({ title: "바닥 칸별 높이", heights })}${isometricStackSvg(heights)}${spaceEvidence("painted-height-area", [side, surface], `data-heights="${heights.map(row => row.join(".")).join(";")}"`)}`, `${answer}cm²`, `드러난 면은 ${surface}개이고 한 면의 넓이는 ${side}²=${side * side}cm²입니다. 따라서 ${surface}×${side * side}=${answer}cm²입니다.`);
+      }
+      if (kind === 4) {
+        const a = int(rng, 4 + level, 6 + level), b = int(rng, 4, 6 + level), c = int(rng, 4, 5 + level);
+        const answer = 4 * ((a - 2) + (b - 2) + (c - 2));
+        return result(`가로 ${a}개, 세로 ${b}개, 높이 ${c}개의 작은 정육면체로 직육면체를 만들고 바깥을 모두 색칠했습니다. 색칠된 면이 정확히 2개인 작은 정육면체는 몇 개입니까?${cuboidSvg({ a, b, c })}${spaceEvidence("painted-cuboid-two-faces", [a, b, c])}`, answer, `모서리마다 꼭짓점 조각을 뺀 조각을 셉니다. 4×[(${a}-2)+(${b}-2)+(${c}-2)]=${answer}개입니다.`);
+      }
+      const heights = [[3, 2 + level, 1], [1, 3, 2], [2 + level, 1, 3]];
+      const cells = cellsFromHeights(heights);
+      const histogram = paintedFaceHistogram(cells);
+      const choices = histogram.map((count, faces) => ({ count, faces })).filter(item => item.faces >= 1 && item.faces <= 5 && item.count > 0);
+      const selected = pick(rng, choices);
+      return result(`복합 높이표대로 쌓은 뒤 바닥을 포함한 바깥 면을 모두 색칠했습니다. 색칠된 면이 정확히 ${selected.faces}개인 조각의 수를 구하세요.${heightMapTable({ title: "복합 쌓기 높이표", heights })}${isometricStackSvg(heights)}${spaceEvidence("painted-composite-histogram", [selected.faces, selected.count], `data-heights="${heights.map(row => row.join(".")).join(";")}"`)}`, selected.count, `좌표별로 여섯 방향의 이웃 유무를 검사하면 ${selected.faces}면이 색칠된 조각은 ${selected.count}개입니다.`);
+    },
+    spaceCuttingAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const a = int(rng, 4 + level, 7 + level), b = int(rng, 3 + level, 6 + level), c = int(rng, 4, 7 + level);
+        const layer = int(rng, 2, c - 1);
+        const answer = a * b;
+        return result(`가로 ${a}칸, 세로 ${b}칸, 높이 ${c}칸인 직육면체 쌓기의 바닥에서 ${layer}번째 층 정육면체의 중심을 모두 지나는 수평 절단면을 만들었습니다. 절단면이 지나는 작은 정육면체는 몇 개입니까?${cuboidSvg({ a, b, c, labels: ["수평 절단면", "", ""] })}${spaceEvidence("single-layer-cut", [a, b, c, layer])}`, answer, `한 층에는 가로 ${a}개, 세로 ${b}개가 있으므로 절단면이 지나는 조각은 ${a}×${b}=${answer}개입니다.`);
+      }
+      if (kind === 1) {
+        const size = pick(rng, level === 0 ? [5] : [5, 7]);
+        const answer = 3 * size * size - 3 * size + 1;
+        return result(`한 모서리에 작은 정육면체가 ${size}개인 큰 정육면체에서 서로 수직인 세 중앙 절단면이 작은 정육면체의 중심을 지나게 했습니다. 세 절단면 중 하나 이상이 지나는 작은 정육면체는 몇 개입니까?${cuboidSvg({ a: size, b: size, c: size, labels: ["중앙 절단", "중앙 절단", "중앙 절단"] })}${spaceEvidence("triple-center-cut", [size])}`, answer, `각 절단면은 ${size * size}개를 지나지만 두 절단면의 공통 줄 ${size}개가 세 번 겹쳐 세 줄을 빼고, 중앙 한 조각을 다시 더합니다. 3×${size * size}-3×${size}+1=${answer}개입니다.`);
+      }
+      if (kind === 2) {
+        const a = int(rng, 5 + level, 8 + level), b = int(rng, 3, 5 + level), c = int(rng, 3, 5 + level);
+        const cuts = int(rng, 2, Math.min(a - 1, 3 + level));
+        const answer = cuts * b * c;
+        return result(`가로 ${a}칸, 세로 ${b}칸, 높이 ${c}칸인 직육면체 쌓기에서 서로 다른 ${cuts}개 세로층의 정육면체 중심을 지나는 평행한 절단면을 만들었습니다. 절단면이 지나는 작은 정육면체는 모두 몇 개입니까?${cuboidSvg({ a, b, c, labels: [`평행 절단 ${cuts}개`, "", ""] })}${spaceEvidence("parallel-layer-cuts", [a, b, c, cuts])}`, answer, `절단면 하나는 세로 ${b}×높이 ${c}=${b * c}개를 지나고 서로 다른 층이라 겹치지 않습니다. ${cuts}×${b * c}=${answer}개입니다.`);
+      }
+      if (kind === 3) {
+        const bases = [
+          [[0, 0, 0], [1, 0, 0], [2, 0, 0]],
+          [[0, 0, 0], [1, 0, 0], [0, 1, 0]],
+          [[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]
+        ];
+        const base = bases[level];
+        const answer = addedCubeShapeCount(base);
+        return result(`그림의 쌓기나무에 한 개를 면끼리 붙여 새로운 입체를 만듭니다. 돌려서 같은 모양은 하나로 셀 때 서로 다른 모양은 몇 가지입니까?${polycubeSvg(base)}${spaceEvidence("add-one-polycube", [level, answer], `data-base-cells="${base.map(cell => cell.join(".")).join(";")}"`)}`, answer, `붙일 수 있는 모든 빈 이웃 칸을 만든 뒤 24가지 공간 회전을 적용해 같은 모양을 하나로 묶으면 ${answer}가지입니다.`);
+      }
+      if (kind === 4) {
+        const a = int(rng, 3 + level, 5 + level), b = int(rng, 3, 5 + level), c = int(rng, 3, 5 + level);
+        let removed = 0;
+        for (let x = 0; x < a; x += 1) for (let y = 0; y < b; y += 1) for (let z = 0; z < c; z += 1) if ((x + y + z) % 2 === 0) removed += 1;
+        const answer = a * b * c - removed;
+        return result(`가로 ${a}칸, 세로 ${b}칸, 높이 ${c}칸인 직육면체에서 좌표의 합이 짝수인 칸을 파란색으로 정했습니다. 파란색 조각을 모두 빼면 몇 개가 남습니까? 바닥의 왼쪽 앞 아래 칸 좌표를 (0,0,0)으로 합니다.${cuboidSvg({ a, b, c, labels: ["교차 색 규칙", "", ""] })}${spaceEvidence("parity-removal", [a, b, c, removed])}`, answer, `모든 좌표 (x,y,z)를 확인해 x+y+z가 짝수인 ${removed}개를 뺍니다. ${a * b * c}-${removed}=${answer}개가 남습니다.`);
+      }
+      const heights = [[2 + level, 3, 1], [1, 2 + level, 2], [2, 1, 3]];
+      const removals = [[0, 1], [2, 2]].slice(0, 1 + (level > 0 ? 1 : 0));
+      const changed = heights.map(row => [...row]);
+      removals.forEach(([y, x]) => { changed[y][x] -= 1; });
+      const front = stackProjections(changed).front.reduce((sum, value) => sum + value, 0);
+      return result(`높이표에서 ${removals.map(([y, x]) => `${y + 1}행 ${x + 1}열`).join(", ")}의 맨 위 쌓기나무를 한 개씩 뺐습니다. 그 뒤 앞에서 본 그림의 정사각형 수를 구하세요.${heightMapTable({ title: "빼기 전 높이표", heights })}${projectionViewsSvg({ heights: changed, title: "빼고 난 뒤 세 방향에서 본 그림" })}${spaceEvidence("remove-then-front", [front], `data-heights-before="${heights.map(row => row.join(".")).join(";")}" data-heights-after="${changed.map(row => row.join(".")).join(";")}"`)}`, front, `지정한 칸의 높이를 1씩 줄인 뒤 열별 최고 높이를 더하면 앞에서 본 정사각형은 ${front}칸입니다.`);
+    },
+    averageCalculationAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const mean = int(rng, 35, 75 + level * 8);
+        const offsets = shuffle(rng, [-8, -4, 0, 4, 8]);
+        const data = offsets.map(offset => mean + offset);
+        return result(`${data.join(", ")}의 평균을 구하세요.${averageProbabilityEvidence("plain-mean", data)}`, mean, `합은 ${mean * data.length}이고 자료는 ${data.length}개이므로 평균은 ${mean}입니다.`);
+      }
+      if (kind === 1) {
+        const meanA = int(rng, 65, 82 + level * 4);
+        const meanB = meanA + int(rng, 2, 6);
+        const known = [int(rng, 55, 90), int(rng, 55, 90), int(rng, 55, 90), int(rng, 55, 90)];
+        const missing = 5 * meanA - known.reduce((a, b) => a + b, 0);
+        if (missing < 40 || missing > 100) return generators.averageCalculationAdvanced({ rng, level, variant });
+        return result(`가 학생의 5회 평균은 ${meanA}점이고, 나 학생의 5회 평균은 ${meanB}점입니다. 가 학생의 점수가 ${known.join(", ")}, □일 때 □를 구하세요.${averageProbabilityEvidence("missing-score", [meanA, ...known])}`, missing, `가 학생의 총점은 5×${meanA}=${5 * meanA}점입니다. 알려진 점수의 합을 빼면 ${missing}점입니다.`);
+      }
+      if (kind === 2) {
+        const count = int(rng, 6, 10 + level);
+        const beforeMean = int(rng, 35, 70);
+        const oldValue = int(rng, 20, 75);
+        const newValue = int(rng, oldValue + 5, 95);
+        const afterMean = beforeMean + (newValue - oldValue) / count;
+        return result(`평균이 ${beforeMean}인 ${count}개의 수에서 한 수를 ${newValue}로 바꾸었더니 평균이 ${decimal(afterMean, 3)}가 되었습니다. 바꾸기 전 수를 구하세요.${averageProbabilityEvidence("replaced-value", [count, beforeMean, newValue, Math.round(afterMean * 1000)])}`, oldValue, `전체 합의 증가량은 ${count}×(${decimal(afterMean, 3)}-${beforeMean})=${newValue - oldValue}입니다. 새 수 ${newValue}에서 증가량을 빼면 ${oldValue}입니다.`);
+      }
+      if (kind === 3) {
+        const scores = [40, 60, 80, 100];
+        const counts = [int(rng, 2, 5), int(rng, 3, 7), int(rng, 4, 8), int(rng, 2, 5)];
+        const hiddenIndex = int(rng, 0, 3);
+        const totalCount = counts.reduce((a, b) => a + b, 0);
+        const totalScore = counts.reduce((sum, count, index) => sum + count * scores[index], 0);
+        const mean = totalScore / totalCount;
+        const candidates = Array.from({ length: 30 }, (_, index) => index + 1).filter(candidate => {
+          const next = [...counts];
+          next[hiddenIndex] = candidate;
+          return decimal(next.reduce((sum, count, index) => sum + count * scores[index], 0) / next.reduce((a, b) => a + b, 0), 2) === decimal(mean, 2);
+        });
+        if (candidates.length !== 1) return generators.averageCalculationAdvanced({ rng, level, variant });
+        const shown = counts.map((count, index) => index === hiddenIndex ? "□" : count);
+        return result(`점수별 학생 수를 조사한 표입니다. 전체 평균이 ${decimal(mean, 2)}점일 때 □에 알맞은 학생 수를 구하세요.${valueTable(scores.map(v => `${v}점`), shown)}${averageProbabilityEvidence("frequency-missing", [...scores, ...counts, hiddenIndex])}`, counts[hiddenIndex], `□를 학생 수로 두고 (점수×학생 수)의 합을 전체 학생 수로 나눈 값이 ${decimal(mean, 2)}가 되도록 계산하면 ${counts[hiddenIndex]}명입니다.`);
+      }
+      if (kind === 4) {
+        const a = int(rng, 6, 10 + level), b = int(rng, 6, 10 + level), overlap = int(rng, 2, Math.min(a, b) - 2);
+        const meanA = int(rng, 40, 70), meanB = int(rng, 40, 70), meanOverlap = int(rng, 35, 75);
+        const answer = (a * meanA + b * meanB - overlap * meanOverlap) / (a + b - overlap);
+        return result(`A모둠 ${a}명의 평균은 ${meanA}, B모둠 ${b}명의 평균은 ${meanB}입니다. 두 모둠에 모두 포함된 ${overlap}명의 평균이 ${meanOverlap}일 때, 중복 없이 합친 학생들의 평균을 구하세요.${averageProbabilityEvidence("overlap-mean", [a, meanA, b, meanB, overlap, meanOverlap])}`, decimal(answer, 3), `두 총합을 더하고 중복된 총합을 한 번 빼면 됩니다. 이를 ${a + b - overlap}명으로 나누면 ${decimal(answer, 3)}입니다.`);
+      }
+      const count = int(rng, 5, 9 + level), difference = int(rng, 2, 6), first = int(rng, 20, 50);
+      const mean = first + difference * (count - 1) / 2;
+      return result(`${count}개의 수가 작은 수부터 일정하게 ${difference}씩 커집니다. 평균이 ${decimal(mean, 1)}일 때 가장 작은 수를 구하세요.${averageProbabilityEvidence("sequence-first", [count, difference, Math.round(mean * 10)])}`, first, `등차로 늘어나는 자료의 평균은 가운데 값입니다. 평균에서 전체 증가량의 절반 ${difference * (count - 1) / 2}을 빼면 ${first}입니다.`);
+    },
+    averageApplicationAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const boys = int(rng, 12, 20 + level * 3), girls = int(rng, 12, 20 + level * 3);
+        const boysMean = int(rng, 70, 88), girlsMean = int(rng, 65, 85);
+        const totalMean = (boys * boysMean + girls * girlsMean) / (boys + girls);
+        return result(`남학생 ${boys}명의 평균은 ${boysMean}점이고, 전체 ${boys + girls}명의 평균은 ${decimal(totalMean, 2)}점입니다. 여학생 ${girls}명의 평균을 구하세요.${averageProbabilityEvidence("group-mean", [boys, boysMean, girls, Math.round(totalMean * 100)])}`, girlsMean, `전체 총점에서 남학생 총점을 빼고 ${girls}명으로 나누면 ${girlsMean}점입니다.`);
+      }
+      if (kind === 1) {
+        const people = int(rng, 12, 24), added = int(rng, 3, 8);
+        const total = lcm(people, people + added) * int(rng, 300, 700);
+        const before = total / people, after = total / (people + added), decrease = before - after;
+        return result(`${people}명이 같은 금액을 내어 물건을 빌리려 했습니다. ${added}명이 더 참여하자 한 사람당 ${decrease.toLocaleString()}원씩 덜 내게 되었습니다. 전체 대여료를 구하세요.${averageProbabilityEvidence("shared-cost", [people, added, decrease])}`, total, `처음 1인당 금액과 나중 금액의 차가 ${decrease}원이 되도록 식을 세우면 전체 금액은 ${total.toLocaleString()}원입니다.`);
+      }
+      if (kind === 2) {
+        const workers1 = int(rng, 3, 7), hours1 = int(rng, 4, 8), workers2 = int(rng, 5, 10), hours2 = int(rng, 3, 7);
+        const unit = int(rng, 2, 6 + level);
+        const total = unit * (workers1 * hours1 + workers2 * hours2);
+        return result(`같은 빠르기로 일하는 사람들이 넓이 ${total}m²의 밭을 모두 작업했습니다. 첫날 ${workers1}명이 ${hours1}시간, 둘째 날 ${workers2}명이 ${hours2}시간 일했습니다. 한 사람이 한 시간 동안 작업한 평균 넓이를 구하세요.${averageProbabilityEvidence("work-rate", [total, workers1, hours1, workers2, hours2])}`, unit, `전체 사람·시간은 ${workers1 * hours1}+${workers2 * hours2}=${workers1 * hours1 + workers2 * hours2}이므로 ${total}을 나누면 ${unit}m²입니다.`);
+      }
+      if (kind === 3) {
+        const count = int(rng, 5, 8 + level), mean = int(rng, 20, 45), known = Array.from({ length: count - 1 }, () => int(rng, 12, 50));
+        const missing = count * mean - known.reduce((a, b) => a + b, 0);
+        if (missing <= 0 || missing > 80) return generators.averageApplicationAdvanced({ rng, level, variant });
+        return result(`${count}개 과수원의 평균 수확량은 ${mean}t입니다. 그중 ${count - 1}곳의 수확량이 ${known.join(", ")}t일 때 나머지 한 곳의 수확량을 구하세요.${averageProbabilityEvidence("missing-harvest", [count, mean, ...known])}`, missing, `전체 수확량 ${count * mean}t에서 알려진 수확량의 합을 빼면 ${missing}t입니다.`);
+      }
+      if (kind === 4) {
+        const scores = [10, 20, 30, 40];
+        const counts = [int(rng, 1, 5), int(rng, 2, 7), int(rng, 2, 7), int(rng, 1, 5)];
+        const hidden = int(rng, 0, 3), total = counts.reduce((a, b) => a + b, 0), mean = counts.reduce((sum, c, i) => sum + c * scores[i], 0) / total;
+        const candidates = Array.from({ length: 30 }, (_, index) => index + 1).filter(candidate => {
+          const next = [...counts];
+          next[hidden] = candidate;
+          return decimal(next.reduce((sum, count, index) => sum + count * scores[index], 0) / next.reduce((a, b) => a + b, 0), 2) === decimal(mean, 2);
+        });
+        if (candidates.length !== 1) return generators.averageApplicationAdvanced({ rng, level, variant });
+        return result(`문항별 배점 합계와 학생 수를 나타낸 표입니다. 전체 ${total}명의 평균이 ${decimal(mean, 2)}점일 때 □에 알맞은 학생 수를 구하세요.${valueTable(scores.map(v => `${v}점`), counts.map((c, i) => i === hidden ? "□" : c))}${averageProbabilityEvidence("weighted-frequency", [...scores, ...counts, hidden])}`, counts[hidden], `가중합을 이용해 평균식을 세우면 □는 ${counts[hidden]}명입니다.`);
+      }
+      const days = int(rng, 7, 12), increase = int(rng, 20, 80), first = int(rng, 600, 1200), mean = first + increase * (days - 1) / 2;
+      return result(`${days}일 동안 매일 전날보다 ${increase}m씩 더 달렸더니 하루 평균이 ${decimal(mean, 1)}m였습니다. 첫날 달린 거리를 구하세요.${averageProbabilityEvidence("daily-first", [days, increase, Math.round(mean * 10)])}`, first, `일정하게 늘어난 자료의 평균에서 증가량의 절반을 빼면 ${first}m입니다.`);
+    },
+    eventCountAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const x = int(rng, 2, 4 + level), y = int(rng, 2, 4 + level), dx = int(rng, 1, x), dy = int(rng, 1, y);
+        const answer = combination(dx + dy, dx) * combination(x - dx + y - dy, x - dx);
+        return result(`가로 ${x}칸, 세로 ${y}칸인 격자에서 왼쪽 아래에서 오른쪽 위까지 오른쪽 또는 위로만 이동합니다. 가로 ${dx}칸, 세로 ${dy}칸 이동한 지점을 반드시 지나는 최단 경로는 몇 가지입니까?${averageProbabilityEvidence("grid-via", [x, y, dx, dy])}`, answer, `지정점까지 ${combination(dx + dy, dx)}가지, 그 점부터 도착점까지 ${combination(x - dx + y - dy, x - dx)}가지이므로 곱하면 ${answer}가지입니다.`);
+      }
+      if (kind === 1) {
+        const limit = int(rng, 60, 120 + level * 20), a = pick(rng, [2, 3, 4, 5]), b = pick(rng, [3, 5, 6, 7].filter(v => v !== a));
+        const answer = Math.floor(limit / a) + Math.floor(limit / b) - Math.floor(limit / lcm(a, b));
+        return result(`1부터 ${limit}까지의 자연수 중 ${a}의 배수 또는 ${b}의 배수인 수는 몇 개입니까?${averageProbabilityEvidence("multiple-union", [limit, a, b])}`, answer, `각 배수의 개수를 더하고 공배수를 한 번 빼면 ${answer}개입니다.`);
+      }
+      if (kind === 2) {
+        const people = int(rng, 5, 7 + level);
+        const answer = 2 * factorial(people - 1);
+        return result(`서로 다른 ${people}명을 한 줄로 세울 때, 특정한 두 사람이 서로 이웃하는 경우는 몇 가지입니까?${averageProbabilityEvidence("adjacent-pair", [people])}`, answer, `두 사람을 한 묶음으로 보면 ${people - 1}개를 배열하는 ${(people - 1)}!가지이고 묶음 안 순서가 2가지이므로 ${answer}가지입니다.`);
+      }
+      if (kind === 3) {
+        const teams = int(rng, 5, 8 + level);
+        return result(`${teams}개 팀이 다른 모든 팀과 한 번씩 경기할 때 전체 경기 수를 구하세요.${averageProbabilityEvidence("round-robin", [teams])}`, combination(teams, 2), `경기는 두 팀을 고르는 경우와 같으므로 ${teams}C2=${combination(teams, 2)}번입니다.`);
+      }
+      if (kind === 4) {
+        const points = int(rng, 6, 9 + level);
+        const answer = combination(points, 2) + combination(points, 3);
+        return result(`원 위에 서로 다른 점 ${points}개가 있습니다. 두 점을 이은 선분의 수와 세 점을 이은 삼각형의 수를 모두 더하면 몇 개입니까?${averageProbabilityEvidence("circle-segments-triangles", [points])}`, answer, `선분은 ${points}C2=${combination(points, 2)}개, 삼각형은 ${points}C3=${combination(points, 3)}개이므로 모두 ${answer}개입니다.`);
+      }
+      const differences = level === 0 ? [1, 2] : level === 1 ? [2, 3] : [2, 3, 4];
+      let answer = 0;
+      for (let a = 1; a <= 6; a += 1) for (let b = 1; b <= 6; b += 1) if (differences.includes(Math.abs(a - b))) answer += 1;
+      return result(`서로 다른 두 주사위를 동시에 던질 때 나온 눈의 차가 ${differences.join(" 또는 ")}인 경우는 몇 가지입니까?${averageProbabilityEvidence("dice-difference", differences)}`, answer, `순서쌍을 모두 세면 조건을 만족하는 경우는 ${answer}가지입니다.`);
+    },
+    eventProbabilityAdvanced({ rng, level, variant = 0 }) {
+      const kind = variant % 6;
+      if (kind === 0) {
+        const redA = int(rng, 2, 5), blueA = int(rng, 2, 5), redB = int(rng, 2, 5), blueB = int(rng, 2, 5);
+        const numerator = redA * blueB + blueA * redB, denominator = (redA + blueA) * (redB + blueB);
+        return result(`가 주머니에는 빨간 공 ${redA}개와 파란 공 ${blueA}개, 나 주머니에는 빨간 공 ${redB}개와 파란 공 ${blueB}개가 있습니다. 각 주머니에서 한 개씩 꺼낼 때 서로 다른 색일 가능성을 분수로 나타내세요.${averageProbabilityEvidence("different-colors", [redA, blueA, redB, blueB])}`, fraction(numerator, denominator), `빨강-파랑 또는 파랑-빨강인 경우를 더하면 ${fraction(numerator, denominator)}입니다.`);
+      }
+      if (kind === 1) {
+        const people = int(rng, 5, 8 + level);
+        return result(`서로 다른 ${people}명 중 한 명을 정해 두었습니다. 모두를 임의로 한 줄로 세울 때 정해 둔 사람이 맨 앞에 설 가능성을 분수로 나타내세요.${averageProbabilityEvidence("fixed-front", [people])}`, fraction(1, people), `모든 사람은 맨 앞에 설 가능성이 같으므로 ${fraction(1, people)}입니다.`);
+      }
+      if (kind === 2) {
+        const shots = int(rng, 4, 6 + level), atLeast = int(rng, 2, shots - 1);
+        const favorable = Array.from({ length: shots - atLeast + 1 }, (_, i) => combination(shots, atLeast + i)).reduce((a, b) => a + b, 0);
+        return result(`한 번 명중할 가능성이 1/2인 사수가 독립적으로 ${shots}발을 쏩니다. ${atLeast}발 이상 명중할 가능성을 분수로 나타내세요.${averageProbabilityEvidence("at-least-hits", [shots, atLeast])}`, fraction(favorable, 2 ** shots), `${shots}번의 성공·실패 배열 ${2 ** shots}가지 중 ${atLeast}번 이상 성공하는 배열을 조합으로 세면 ${favorable}가지이므로 ${fraction(favorable, 2 ** shots)}입니다.`);
+      }
+      if (kind === 3) {
+        const choices = int(rng, 3, 5), people = int(rng, 3, Math.min(choices, 4 + level));
+        const allDistinct = factorial(choices) / factorial(choices - people);
+        const numerator = choices ** people - allDistinct;
+        return result(`${people}명이 각각 ${choices}개의 번호 중 하나를 같은 가능성으로 고릅니다. 적어도 두 명이 같은 번호를 고를 가능성을 분수로 나타내세요.${averageProbabilityEvidence("same-choice", [people, choices])}`, fraction(numerator, choices ** people), `전체 ${choices ** people}가지에서 모두 다른 번호를 고르는 ${allDistinct}가지를 빼면 되므로 ${fraction(numerator, choices ** people)}입니다.`);
+      }
+      if (kind === 4) {
+        const p1n = int(rng, 1, 4), p1d = p1n + int(rng, 2, 5), p2n = int(rng, 1, 4), p2d = p2n + int(rng, 2, 5);
+        const numerator = p1d * p2d - (p1d - p1n) * (p2d - p2n), denominator = p1d * p2d;
+        return result(`서로 독립인 두 사건 A, B가 일어날 가능성이 각각 ${p1n}/${p1d}, ${p2n}/${p2d}입니다. 적어도 하나가 일어날 가능성을 분수로 나타내세요.${averageProbabilityEvidence("at-least-one", [p1n, p1d, p2n, p2d])}`, fraction(numerator, denominator), `둘 다 일어나지 않을 가능성을 1에서 빼면 ${fraction(numerator, denominator)}입니다.`);
+      }
+      const total = int(rng, 8, 14 + level * 2), winners = int(rng, 3, Math.min(6, total - 2));
+      return result(`${total}개의 제비 중 당첨 제비가 ${winners}개 있습니다. 한 번에 하나씩 되돌려 넣지 않고 2개를 뽑을 때 모두 당첨일 가능성을 분수로 나타내세요.${averageProbabilityEvidence("two-winners", [total, winners])}`, fraction(combination(winners, 2), combination(total, 2)), `전체 2개 조합 ${combination(total, 2)}가지 중 당첨 2개 조합은 ${combination(winners, 2)}가지이므로 ${fraction(combination(winners, 2), combination(total, 2))}입니다.`);
     },
     average({ rng, level }) {
       const count = 4 + Math.min(level, 1);
@@ -2974,6 +5721,119 @@
       }
       const answer = decimal(2 * 3.14 * radius * radius + 2 * 3.14 * radius * height, 2);
       return result(`원주율을 3.14로 할 때 밑면의 반지름이 ${radius}cm, 높이가 ${height}cm인 원기둥의 겉넓이를 구하세요.`, answer, `두 밑면과 옆면의 넓이를 더하면 2 × 3.14 × ${radius}² + 2 × 3.14 × ${radius} × ${height} = ${answer}cm²입니다.`);
+    },
+    continuedRatioAdvanced({ rng, level }) {
+      const [first, middle, last] = pick(rng, [[3, 4, 5], [4, 7, 3], [5, 6, 7], [7, 5, 8], [8, 9, 5]]);
+      const leftScale = int(rng, 2, 4 + level), rightScale = int(rng, 2, 5 + level);
+      const a = first * leftScale, b = middle * leftScale, c = middle * rightScale, d = last * rightScale;
+      const answer = `${first}:${middle}:${last}`;
+      return result(`세 수 ㄱ, ㄴ, ㄷ에 대하여 ㄱ:ㄴ=${a}:${b}, ㄴ:ㄷ=${c}:${d}입니다. ㄱ:ㄴ:ㄷ을 가장 간단한 자연수의 연비로 나타내세요.${circleSolidEvidence("continued-ratio", [a, b, c, d, first, middle, last])}`, answer, `두 비의 공통 항 ㄴ을 같게 맞추면 ㄱ:ㄴ:ㄷ=${answer}입니다.`);
+    },
+    complexCircleAreaOneAdvanced({ rng, level }) {
+      const kind = int(rng, 0, 2), pi = pick(rng, [3, 3.14]);
+      if (kind === 0) {
+        const radius = int(rng, 4, 7 + level), side = radius * 2;
+        const answer = decimal(side * side - pi * radius * radius, 2);
+        return result(`한 변이 ${side}cm인 정사각형 안에 원을 꼭 맞게 그렸습니다. 원주율을 ${pi}로 할 때 정사각형 안에서 원 밖에 있는 부분의 넓이를 구하세요.${circleCompositeSvg({ kind: "square-circle", a: side })}${circleSolidEvidence("square-minus-circle", [side, radius, pi])}`, answer, `정사각형 넓이 ${side}²에서 원의 넓이 ${pi}×${radius}²을 빼면 ${answer}cm²입니다.`);
+      }
+      if (kind === 1) {
+        const inner = int(rng, 2, 4 + level), outer = inner + int(rng, 2, 4);
+        const answer = decimal(pi * (outer * outer - inner * inner), 2);
+        return result(`반지름이 ${outer}cm, ${inner}cm인 두 동심원 사이의 색칠한 부분의 넓이를 구하세요. (원주율: ${pi})${circleCompositeSvg({ kind: "ring", a: outer, b: inner })}${circleSolidEvidence("annulus", [outer, inner, pi])}`, answer, `큰 원에서 작은 원을 빼면 ${pi}×(${outer}²-${inner}²)=${answer}cm²입니다.`);
+      }
+      const radius = int(rng, 2, 4 + level), count = 3;
+      const answer = decimal((count * 2 * radius) * (2 * radius) - count * pi * radius * radius, 2);
+      return result(`반지름이 ${radius}cm인 같은 원 ${count}개를 직사각형 안에 꼭 맞게 나란히 놓았습니다. 직사각형 안에서 원 밖에 있는 부분의 넓이를 구하세요. (원주율: ${pi})${circleCompositeSvg({ kind: "rectangle-circles", a: radius, count })}${circleSolidEvidence("rectangle-minus-circles", [radius, count, pi])}`, answer, `직사각형 넓이 ${count * 2 * radius}×${2 * radius}에서 원 ${count}개의 넓이를 빼면 ${answer}cm²입니다.`);
+    },
+    complexCircleAreaTwoAdvanced({ rng, level }) {
+      const kind = int(rng, 0, 2), pi = pick(rng, [3, 3.14]);
+      if (kind === 0) {
+        const radius = int(rng, 4, 8 + level), angle = 90, segmentPi = 3;
+        const answer = decimal(segmentPi * radius * radius / 4 - radius * radius / 2, 2);
+        return result(`반지름이 ${radius}cm이고 중심각이 ${angle}°인 부채꼴에서 두 반지름을 이은 직각삼각형을 뺐습니다. 남은 활꼴의 넓이를 구하세요. (원주율: ${segmentPi})${circleCompositeSvg({ kind: "segment", a: radius, b: angle })}${circleSolidEvidence("quarter-segment", [radius, angle, segmentPi])}`, answer, `부채꼴 ${segmentPi}×${radius}²÷4에서 직각삼각형 ${radius}×${radius}÷2를 빼면 ${answer}cm²입니다.`);
+      }
+      if (kind === 1) {
+        const inner = int(rng, 2, 4 + level), outer = inner + int(rng, 2, 4), angle = 90, sectorPi = 3;
+        const answer = decimal(sectorPi * (outer * outer - inner * inner) * angle / 360, 2);
+        return result(`중심각이 ${angle}°이고 반지름이 각각 ${outer}cm, ${inner}cm인 두 부채꼴 사이의 넓이를 구하세요. (원주율: ${sectorPi})${circleCompositeSvg({ kind: "sector-difference", a: outer, b: inner })}${circleSolidEvidence("annular-sector", [outer, inner, angle, sectorPi])}`, answer, `두 원 넓이의 차에 ${angle}/360을 곱하면 ${answer}cm²입니다.`);
+      }
+      const radius = int(rng, 3, 6 + level), count = 3;
+      const outside = (count * 2 * radius) * (2 * radius) - count * pi * radius * radius;
+      const answer = decimal(count * pi * radius * radius - outside, 2);
+      return result(`반지름이 ${radius}cm인 원 ${count}개가 꼭 맞게 들어간 직사각형이 있습니다. 원 ${count}개의 넓이 합과 원 밖 직사각형 부분의 넓이의 차를 구하세요. (원주율: ${pi})${circleCompositeSvg({ kind: "rectangle-circles", a: radius, count })}${circleSolidEvidence("circle-outside-difference", [radius, count, pi])}`, answer, `원 넓이의 합에서 직사각형 안의 나머지 넓이를 빼면 ${answer}cm²입니다.`);
+    },
+    locusLengthAreaAdvanced({ rng, level }) {
+      const kind = int(rng, 0, 2), pi = pick(rng, [3, 3.14]);
+      if (kind === 0) {
+        const width = int(rng, 8, 13 + level), height = int(rng, 5, 9 + level), radius = int(rng, 1, 3);
+        const answer = decimal(2 * (width + height) + 2 * pi * radius, 2);
+        return result(`반지름이 ${radius}cm인 원이 가로 ${width}cm, 세로 ${height}cm인 직사각형의 바깥 변을 따라 미끄러지지 않고 한 바퀴 돕니다. 원의 중심이 움직인 거리를 구하세요. (원주율: ${pi})${locusDiagramSvg({ kind: "rectangle", a: width, b: height, r: radius })}${circleSolidEvidence("rolling-rectangle", [width, height, radius, pi])}`, answer, `직선 구간은 직사각형 둘레 ${2 * (width + height)}cm이고 네 모퉁이의 호를 합하면 반지름 ${radius}cm인 원 한 바퀴입니다. 합은 ${answer}cm입니다.`);
+      }
+      if (kind === 1) {
+        const length = int(rng, 5, 10 + level), angle = pick(rng, [90, 120, 180, 270]);
+        const answer = decimal(2 * pi * length * angle / 360, 2);
+        return result(`길이가 ${length}cm인 선분을 한 끝점을 중심으로 ${angle}° 회전시켰습니다. 다른 끝점이 움직인 거리를 구하세요. (원주율: ${pi})${locusDiagramSvg({ kind: "pivot", a: length, b: angle, r: 0 })}${circleSolidEvidence("pivot-arc", [length, angle, pi])}`, answer, `반지름 ${length}cm인 원주의 ${angle}/360이므로 이동 거리는 ${answer}cm입니다.`);
+      }
+      const width = int(rng, 6, 10), height = int(rng, 5, 8), rope = int(rng, 3, Math.min(width, height));
+      const answer = decimal(pi * rope * rope * 3 / 4, 2);
+      return result(`가로 ${width}m, 세로 ${height}m인 직사각형 우리의 한 꼭짓점 바깥에 동물을 길이 ${rope}m인 줄로 묶었습니다. 우리 안으로 들어갈 수 없을 때 움직일 수 있는 최대 넓이를 구하세요. (원주율: ${pi})${locusDiagramSvg({ kind: "tether", a: width, b: height, r: rope })}${circleSolidEvidence("corner-tether", [width, height, rope, pi])}`, answer, `우리 때문에 원의 1/4은 갈 수 없으므로 반지름 ${rope}m인 원의 3/4인 ${answer}m²입니다.`);
+    },
+    circleApplicationsAdvanced({ rng, level }) {
+      const kind = int(rng, 0, 2);
+      if (kind === 0) {
+        const points = pick(rng, [8, 10, 12, 15, 18]), gaps = int(rng, 2, Math.min(5, points - 2));
+        const answer = decimal(360 * gaps / points, 2);
+        return result(`원주를 ${points}등분한 점이 있습니다. 한 점에서 원주를 따라 ${gaps}칸 떨어진 점까지 이은 두 반지름 사이의 작은 중심각은 몇 도입니까?${circlePointsSvg({ points, gaps })}${circleSolidEvidence("equal-points-angle", [points, gaps])}`, answer, `한 칸의 중심각은 360÷${points}°이고 ${gaps}칸이므로 ${answer}°입니다.`);
+      }
+      if (kind === 1) {
+        const inscribed = pick(rng, [25, 30, 35, 40, 45, 50]), answer = inscribed * 2;
+        return result(`같은 호를 보는 원주각이 ${inscribed}°입니다. 그 호에 대한 작은 중심각의 크기를 구하세요.${inscribedAngleSvg({ angle: inscribed })}${circleSolidEvidence("inscribed-central", [inscribed])}`, answer, `같은 호를 보는 중심각은 원주각의 2배이므로 ${inscribed}×2=${answer}°입니다.`);
+      }
+      const sides = pick(rng, [5, 6, 8, 9, 10, 12]), answer = 360 / sides;
+      return result(`원의 둘레 위에 같은 간격으로 ${sides}개의 점을 찍고 이웃한 점을 차례로 이었습니다. 만들어진 정다각형의 한 중심각은 몇 도입니까?${circlePointsSvg({ points: sides, gaps: 1 })}${circleSolidEvidence("regular-central", [sides])}`, answer, `원의 중심 둘레 360°를 ${sides}등분하므로 ${answer}°입니다.`);
+    },
+    cylinderAdvanced({ rng, level }) {
+      const kind = int(rng, 0, 2), pi = 3.14;
+      if (kind === 0) {
+        const radius = int(rng, 2, 5 + level), height = int(rng, 8, 14 + level);
+        const answer = decimal(2 * pi * radius * height, 2);
+        return result(`반지름이 ${radius}cm, 높이가 ${height}cm인 원기둥의 옆면을 빈틈없이 감싸는 종이의 넓이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "cylinder-net", a: radius, b: height })}${circleSolidEvidence("cylinder-lateral", [radius, height, pi])}`, answer, `옆면 전개도는 가로 ${2 * pi * radius}cm, 세로 ${height}cm인 직사각형이므로 ${answer}cm²입니다.`);
+      }
+      if (kind === 1) {
+        const radius = int(rng, 2, 5), width = int(rng, 8, 13 + level), turns = int(rng, 3, 7);
+        const answer = decimal(2 * pi * radius * width * turns, 2);
+        return result(`반지름이 ${radius}cm이고 폭이 ${width}cm인 원기둥 모양 롤러를 ${turns}바퀴 굴렸습니다. 겹치지 않게 칠한 넓이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "cylinder-wrap", a: radius, b: width, c: turns })}${circleSolidEvidence("roller-area", [radius, width, turns, pi])}`, answer, `한 바퀴에 ${2 * pi * radius}×${width}cm²를 칠하므로 ${turns}바퀴는 ${answer}cm²입니다.`);
+      }
+      const unit = int(rng, 3, 6 + level), circumference = 3 * unit, height = 4 * unit, path = 5 * unit;
+      return result(`원기둥 옆면을 한 바퀴 감아 오른 선을 전개했더니 가로 ${circumference}cm, 세로 ${height}cm인 직사각형의 대각선이 되었습니다. 선의 길이를 구하세요.${solidDiagramSvg({ kind: "cylinder-wrap", a: decimal(circumference / (2 * pi), 2), b: height, c: 1 })}${circleSolidEvidence("cylinder-helix", [circumference, height])}`, path, `전개도에서 ${circumference}-${height}-${path}는 3:4:5인 직각삼각형이므로 선의 길이는 ${path}cm입니다.`);
+    },
+    coneAdvanced({ rng, level }) {
+      const kind = int(rng, 0, 2), pi = 3.14;
+      if (kind === 0) {
+        const radius = int(rng, 2, 4 + level), multiple = int(rng, 2, 5), slant = radius * multiple, answer = 360 / multiple;
+        return result(`밑면의 반지름이 ${radius}cm, 모선이 ${slant}cm인 원뿔의 옆면을 펼쳤습니다. 부채꼴의 중심각을 구하세요.${solidDiagramSvg({ kind: "cone-net", a: radius, b: slant })}${circleSolidEvidence("cone-net-angle", [radius, slant])}`, answer, `부채꼴의 호 ${2 * pi * radius}cm는 반지름 ${slant}cm인 원주의 ${radius}/${slant}이므로 중심각은 ${answer}°입니다.`);
+      }
+      if (kind === 1) {
+        const radius = int(rng, 3, 6 + level), slant = radius + int(rng, 4, 8), ribs = int(rng, 5, 8);
+        const answer = decimal(ribs * slant + 2 * pi * radius, 2);
+        return result(`원뿔 모양 골조를 만들려고 길이 ${slant}cm인 모선 철사 ${ribs}개와 밑면 둘레 철사 한 개를 사용합니다. 밑면 반지름이 ${radius}cm일 때 필요한 철사의 전체 길이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "cone-net", a: radius, b: slant })}${circleSolidEvidence("cone-frame", [radius, slant, ribs, pi])}`, answer, `모선은 ${slant}×${ribs}cm, 밑면 둘레는 ${2 * pi * radius}cm이므로 모두 ${answer}cm입니다.`);
+      }
+      const radius = int(rng, 2, 5), turns = int(rng, 2, 5), slant = radius * turns;
+      return result(`밑면의 반지름이 ${radius}cm이고 모선이 ${slant}cm인 원뿔을 옆으로 굴립니다. 꼭짓점을 중심으로 처음 방향으로 돌아올 때까지 원뿔은 몇 바퀴 구릅니까?${solidDiagramSvg({ kind: "cone-net", a: radius, b: slant })}${circleSolidEvidence("cone-roll", [radius, slant])}`, turns, `꼭짓점 둘레의 큰 원주는 밑면 원주의 ${slant}/${radius}=${turns}배이므로 ${turns}바퀴입니다.`);
+    },
+    solidsOfRevolutionAdvanced({ rng, level }) {
+      const kind = int(rng, 0, 2), pi = 3.14;
+      if (kind === 0) {
+        const radius = int(rng, 3, 7 + level), height = int(rng, 6, 12 + level), answer = radius * 2 + height;
+        return result(`가로 ${radius}cm, 세로 ${height}cm인 직사각형을 세로인 한 변을 회전축으로 하여 한 바퀴 돌렸습니다. 생기는 원기둥의 밑면 지름과 높이의 합을 구하세요.${solidDiagramSvg({ kind: "profile", a: radius, b: height, c: 0 })}${circleSolidEvidence("rotate-rectangle", [radius, height])}`, answer, `밑면 반지름은 ${radius}cm, 지름은 ${radius * 2}cm이고 높이는 ${height}cm이므로 합은 ${answer}cm입니다.`);
+      }
+      if (kind === 1) {
+        const radius = int(rng, 3, 7 + level), height = int(rng, 6, 12 + level), answer = radius * 2 + height;
+        return result(`밑변 ${radius}cm, 높이 ${height}cm인 직각삼각형을 높이인 변을 회전축으로 한 바퀴 돌렸습니다. 생기는 원뿔의 밑면 지름과 높이의 합을 구하세요.${solidDiagramSvg({ kind: "profile", a: radius, b: height, c: 1 })}${circleSolidEvidence("rotate-triangle", [radius, height])}`, answer, `밑면 반지름은 ${radius}cm이므로 지름은 ${radius * 2}cm, 높이는 ${height}cm입니다. 합은 ${answer}cm입니다.`);
+      }
+      const outer = int(rng, 5, 8 + level), inner = int(rng, 2, outer - 2), height = int(rng, 8, 14);
+      const answer = decimal(pi * outer * outer, 2);
+      return result(`계단 모양 평면도형을 오른쪽 세로선을 회전축으로 한 바퀴 돌렸습니다. 회전축에 수직인 단면 가운데 가장 큰 단면의 넓이를 구하세요. (원주율: ${pi})${solidDiagramSvg({ kind: "stepped", a: outer, b: height, c: inner })}${circleSolidEvidence("rotate-stepped", [outer, inner, height, pi])}`, answer, `가장 큰 단면은 반지름 ${outer}cm인 원이므로 넓이는 ${pi}×${outer}²=${answer}cm²입니다.`);
     },
     polygonDiagonals({ rng, level, variant = 0 }) {
       const sideChoices = level === 0 ? [4, 5, 6] : level === 1 ? [5, 6, 7, 8] : [6, 7, 8, 9, 10];
@@ -3909,7 +6769,15 @@
     [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
     [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],
     [type => type.id === "5-1-u6-t3", "perimeterAreaSquareCompositionAdvanced"],
-    [type => type.id === "5-1-u6-t4", "quadrilateralAreaAdvanced"]
+    [type => type.id === "5-1-u6-t4", "quadrilateralAreaAdvanced"],
+    [type => type.id === "6-2-u4-t4", "continuedRatioAdvanced"],
+    [type => type.id === "6-2-u5-t3", "complexCircleAreaOneAdvanced"],
+    [type => type.id === "6-2-u5-t4", "complexCircleAreaTwoAdvanced"],
+    [type => type.id === "6-2-u5-t5", "locusLengthAreaAdvanced"],
+    [type => type.id === "6-2-u5-t6", "circleApplicationsAdvanced"],
+    [type => type.id === "6-2-u6-t1", "cylinderAdvanced"],
+    [type => type.id === "6-2-u6-t2", "coneAdvanced"],
+    [type => type.id === "6-2-u6-t3", "solidsOfRevolutionAdvanced"]
   ];
 
   function generatorKey(typeOrName) {
