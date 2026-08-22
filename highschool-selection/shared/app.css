@@ -131,7 +131,21 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .fact-list li b { font-weight: 850; }
 .evidence-state { padding: 3px 7px; border-radius: 99px; background: #eaf7f0; color: var(--success); font-size: 9px; font-style: normal; white-space: nowrap; }
 .evidence-state.observed { background: #eef2f6; color: var(--navy); }
+.evidence-state.confirmed { background: #e8f1ff; color: #24568f; }
 .evidence-state.needs-review { background: #fff8e5; color: var(--warning); }
+.academy-evaluation { margin: 18px 0; border-top: 5px solid var(--accent); }
+.academy-evaluation header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+.academy-evaluation header > b { padding: 7px 10px; border-radius: 99px; background: var(--ink); color: #fff; white-space: nowrap; }
+.evaluation-badges, .evaluation-axes { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0; }
+.evaluation-badges span, .evaluation-axes span { padding: 5px 8px; border: 1px solid var(--line); border-radius: 99px; background: #fff; font-size: 12px; }
+.academy-evaluation ol { margin: 12px 0; padding-left: 22px; }
+.academy-evaluation li + li { margin-top: 6px; }
+body[data-program="SH"] .academy-evaluation { --accent: #bd5d37; }
+body[data-program="DP"] .academy-evaluation { --accent: #315c85; }
+body[data-program="WM"] .academy-evaluation { --accent: #35705a; }
+body[data-program="ED"] .academy-evaluation { --accent: #775c8d; }
+body[data-program="DG"] .academy-evaluation { --accent: #8a6730; }
+body[data-program="SM"] .academy-evaluation { --accent: #286d75; }
 .style-note { padding: 13px 14px; border-left: 3px solid var(--accent); background: #fff7ef; }
 .style-note b { display: block; margin-bottom: 3px; font-size: 11px; }
 .style-note p { margin: 0; color: #625246; font-size: 12px; }
@@ -371,6 +385,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .overview-score .score-card strong { margin: 0; text-align: right; }
   .overview-score .score-card .score-facts { grid-column: 1 / -1; }
   .axis-grid, .priority-list { grid-template-columns: 1fr; }
+  .academy-evaluation header { display: block; }
+  .academy-evaluation header > b { display: inline-flex; margin-top: 9px; }
   .report-page .app-main { padding-top: 18px; padding-bottom: 28px; }
   .diagnostic-overview > header, .overview-items { padding: 15px; }
   .item-dot { min-height: 40px; }
@@ -405,6 +421,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .report-page .page-title h1 { font-size: 25pt; }
   .diagnostic-cover { display: block; }
   .diagnostic-overview > header { padding: 4mm; }
+  .academy-evaluation { margin: 3mm 0; padding: 4mm; break-inside: avoid; }
+  .academy-evaluation p, .academy-evaluation li { font-size: 8pt; }
+  .evaluation-badges, .evaluation-axes { margin: 2mm 0; gap: 1.2mm; }
+  .evaluation-badges span, .evaluation-axes span { padding: 1mm 1.6mm; font-size: 7pt; }
   .overview-score { grid-template-columns: 42mm 1fr; min-height: 0; }
   .overview-score .score-card, .overview-items, .report-comments { padding: 4mm; }
   .overview-score .score-card strong { margin: 4mm 0; font-size: 40pt; }

@@ -34,12 +34,12 @@
     generationKinds: ["parameterized", "bespoke", "figure_only"],
     difficultyBands: ["lowered", "standard", "raised"],
     modes: [
-      { id: "SH", label: "SH 모드", rule: "고등과정 선발·중등 누적 심화" },
-      { id: "DP", label: "DP 모드", rule: "중1 입학 선수 과정과 공통수학 입반을 시험별 분리" },
-      { id: "WM", label: "WM 모드", rule: "기본/실력 승급형·전범위 누적" },
-      { id: "ED", label: "ED 모드", rule: "중1 시작 초등 누적과 고등선행 중등 누적 분리" },
-      { id: "DG", label: "DG 모드", rule: "이차함수-부등식 연결·심화 수준" },
-      { id: "SM", label: "SM 모드", rule: "추천 샘플의 범위·난도 구조" }
+      { id: "SH", label: "황소 고등형", rule: "고등과정 선발·중등 누적 심화" },
+      { id: "DP", label: "돌파형", rule: "중1 입학 선수 과정과 공통수학 입반을 시험별 분리" },
+      { id: "WM", label: "원수학형", rule: "기본/실력 승급형·전범위 누적" },
+      { id: "ED", label: "이든형", rule: "중1 시작 초등 누적과 고등선행 중등 누적 분리" },
+      { id: "DG", label: "깊생형", rule: "이차함수-부등식 연결·심화 수준" },
+      { id: "SM", label: "생수형", rule: "추천 샘플의 범위·난도 구조" }
     ],
     // The public bank stores a *blueprint*, not originals or answer keys.
     // A profile gives the planner its scope, report axes and type priorities.

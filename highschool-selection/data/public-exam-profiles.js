@@ -23,6 +23,13 @@
       publishedAt: "2026-05-11",
       checkedAt: "2026-08-22"
     },
+    "SH-SONGPA-2025-08-MIRROR": {
+      title: "생각하는황소 송파학원 2025년 8월 편입·고등과정 입학시험 안내 미러",
+      url: "https://www.gangmom.kr/news/6881a2a758e2e1569b75bf91",
+      grade: "B",
+      publishedAt: "2025-08",
+      checkedAt: "2026-08-23"
+    },
     "DP-ENTRY-MIRROR": {
       title: "돌파수학 2026년 8월 입반 공지 미러",
       url: "https://academy.prompie.com/academies/detail/6pm5v0k/%EB%8F%8C%ED%8C%8C%EC%88%98%ED%95%99%EC%84%9C%EC%B4%88%EA%B4%80%ED%95%99%EC%9B%90/",
@@ -62,7 +69,8 @@
       facts: [
         { label: "현재 과정", value: "기본정석 Light · 기본정석 Plus · 실력정석", state: "verified", sourceIds: ["SH-CURRICULUM-OFFICIAL", "SH-REFORM-OFFICIAL"] },
         { label: "현행 과목", value: "공통수학1·2 병렬 운영", state: "verified", sourceIds: ["SH-CURRICULUM-OFFICIAL"] },
-        { label: "우리 모의고사", value: "중등 누적 40문항", state: "observed", sourceIds: [] }
+        { label: "우리 판매용 모의고사", value: "중등 누적 40문항 · 120분", state: "confirmed", sourceIds: [] },
+        { label: "공개 시간 사례", value: "고등과정 입학시험 110분", state: "verified", sourceIds: ["SH-SONGPA-2025-08-MIRROR"] }
       ],
       cutline: {
         state: "verified",
@@ -74,7 +82,7 @@
         sourceIds: ["SH-WIRYE-2026-06-MIRROR"]
       },
       style: "중등 수·식, 함수·좌표, 평면·입체도형, 경우의 수·확률을 한 회차에 누적 배치합니다.",
-      caveat: "우리 보유 원본을 기준으로 제작합니다. 지점·회차별 외부 커트라인은 우리 시험에 자동 적용하지 않습니다."
+      caveat: "우리 보유 원본을 기준으로 제작합니다. 120분은 우리 판매용 모의고사 운영 시간이며, 공개된 110분 사례와 지점·회차별 커트라인은 참고 근거로만 분리합니다."
     },
     {
       code: "DP",
@@ -191,8 +199,8 @@
   ];
 
   root.HIGHSELECT_PUBLIC_PROFILES = {
-    updatedAt: "2026-08-22",
-    evidencePolicy: "A=공식 원문, B=공식 게시물 미러, C=독립 정리, 관찰=사용자 제공 원본/익명 결과. 수치는 해당 회차에만 적용.",
+    updatedAt: "2026-08-23",
+    evidencePolicy: "A=공식 원문, B=공식 게시물 미러, C=독립 정리, 관찰=사용자 제공 원본/익명 결과, 운영 확정=우리 모의고사 설정. 외부 수치는 해당 회차에만 적용.",
     sources,
     profiles
   };

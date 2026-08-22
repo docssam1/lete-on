@@ -82,6 +82,22 @@
       unit: aggregateItems(items, function (item) { const value = parts(item); return value.slice(2).join(" · "); })
     };
   }
+  function evaluationSection(report) {
+    const exam = HIGHSELECT_CATALOG.exams.find(function (item) { return item.id === report.examId; });
+    const resolved = exam && HIGHSELECT_ACADEMY_EVALUATION_PROFILES.resolve(report.examId, exam.programId);
+    if (!resolved) return "";
+    const profile = resolved.profile;
+    const variant = resolved.exam;
+    document.body.dataset.program = profile.programId;
+    const badges = [
+      variant ? variant.paperVariant : profile.displayName,
+      variant ? variant.scope : profile.paperStyle,
+      variant ? variant.duration : profile.defaultDuration
+    ].map(function (value) { return `<span>${esc(value)}</span>`; }).join("");
+    const criteria = profile.evaluationCriteria.map(function (value) { return `<li>${esc(value)}</li>`; }).join("");
+    const axes = profile.primaryAxes.map(function (value) { return `<span>${esc(value)}</span>`; }).join("");
+    return `<section class="panel academy-evaluation"><header><div><p class="eyebrow">학원별 평가 프로필</p><h2>${esc(profile.reportTitle)}</h2></div><b>${esc(profile.displayName)}</b></header><div class="evaluation-badges">${badges}</div><p>${esc(profile.paperStyle)} · ${esc(profile.difficultyFlow)}</p><div class="evaluation-axes">${axes}</div><ol>${criteria}</ol><p class="notice">${esc(profile.decisionPolicy)}</p></section>`;
+  }
   function render(report) {
     document.getElementById("title").textContent = report.examTitle;
     document.getElementById("meta").textContent = `${session.name} 학생 · ${new Date(report.submittedAt).toLocaleString("ko-KR")} · 검증 채점`;
@@ -107,7 +123,7 @@
     const comparison = report.previousAttempt;
     const comparisonSection = comparison ? `<section class="panel round-comparison"><h2>응시 기록 · 회차 비교</h2><p><b>점수 변화</b> · ${comparison.score}점 → ${report.score}점 (${comparison.scoreDelta > 0 ? "+" : ""}${comparison.scoreDelta}점)</p><div class="analysis-grid">${roundGroup("흔들린 문항", comparison.groups.shaky)}${roundGroup("미해결 문항", comparison.groups.unresolved)}${roundGroup("해결된 문항", comparison.groups.resolved)}${roundGroup("유지 문항", comparison.groups.stable)}</div>${commentList(comparisonComments)}</section>` : "";
     const axes = curriculumAxes(report.items);
-    root.innerHTML = `<section class="diagnostic-cover"><article class="panel diagnostic-overview"><header><div><p class="eyebrow">진단 요약</p><h2>총점과 문항별 결과</h2></div><span class="report-stamp">${report.questionCount} ITEMS</span></header><div class="overview-score"><div class="score-card"><span>총점</span><strong>${report.score}<small> / ${report.totalPoints}</small></strong><div class="score-facts"><b>정답률 ${report.accuracy}%</b><b>정답 ${report.correctCount}/${report.questionCount}</b></div></div><div class="overview-items"><h3>문항별 ○/×</h3><div class="item-results">${dots}</div></div></div></article></section><section class="analysis-grid axis-grid">${bars("영역별 수행률", report.byDomain)}${bars("학년·학기별 수행률", axes.gradeTerm)}${bars("단원별 수행률", axes.unit)}${bars("세부 유형별 수행률", report.byType)}${bars("난이도별 수행률", localizedDifficultyRows(report.byDifficulty))}</section>${cutlineSection(report.cutline)}${commentsSection}<section class="panel priority-panel"><h2>취약 유형 우선순위</h2>${weak ? `<ol class="priority-list">${weak}</ol>` : '<p class="status ok">확인된 취약 우선순위가 없습니다.</p>'}</section><section class="panel prescription-panel"><h2>오답 문항 처방</h2><p class="status">승인된 유사문제 세트의 연결 상태만 표시합니다.</p><div class="table-scroll"><table class="data-table"><thead><tr><th>문항</th><th>처방</th><th>유사문제 세트</th></tr></thead><tbody>${prescriptionRows}</tbody></table></div></section>${comparisonSection}<section class="panel item-detail auxiliary-results"><h2>문항별 진단 근거</h2><div class="table-scroll"><table class="data-table"><thead><tr><th>문항</th><th>○/×</th><th>배점</th><th>영역</th><th>학년·학기·단원</th><th>세부 유형</th><th>난이도</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+    root.innerHTML = `<section class="diagnostic-cover"><article class="panel diagnostic-overview"><header><div><p class="eyebrow">진단 요약</p><h2>총점과 문항별 결과</h2></div><span class="report-stamp">${report.questionCount} ITEMS</span></header><div class="overview-score"><div class="score-card"><span>총점</span><strong>${report.score}<small> / ${report.totalPoints}</small></strong><div class="score-facts"><b>정답률 ${report.accuracy}%</b><b>정답 ${report.correctCount}/${report.questionCount}</b></div></div><div class="overview-items"><h3>문항별 ○/×</h3><div class="item-results">${dots}</div></div></div></article></section>${evaluationSection(report)}<section class="analysis-grid axis-grid">${bars("영역별 수행률", report.byDomain)}${bars("학년·학기별 수행률", axes.gradeTerm)}${bars("단원별 수행률", axes.unit)}${bars("세부 유형별 수행률", report.byType)}${bars("난이도별 수행률", localizedDifficultyRows(report.byDifficulty))}</section>${cutlineSection(report.cutline)}${commentsSection}<section class="panel priority-panel"><h2>취약 유형 우선순위</h2>${weak ? `<ol class="priority-list">${weak}</ol>` : '<p class="status ok">확인된 취약 우선순위가 없습니다.</p>'}</section><section class="panel prescription-panel"><h2>오답 문항 처방</h2><p class="status">승인된 유사문제 세트의 연결 상태만 표시합니다.</p><div class="table-scroll"><table class="data-table"><thead><tr><th>문항</th><th>처방</th><th>유사문제 세트</th></tr></thead><tbody>${prescriptionRows}</tbody></table></div></section>${comparisonSection}<section class="panel item-detail auxiliary-results"><h2>문항별 진단 근거</h2><div class="table-scroll"><table class="data-table"><thead><tr><th>문항</th><th>○/×</th><th>배점</th><th>영역</th><th>학년·학기·단원</th><th>세부 유형</th><th>난이도</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
   }
   async function load() {
     const api = String(HIGHSELECT_RUNTIME.apiBase || "").replace(/\/$/, "");
