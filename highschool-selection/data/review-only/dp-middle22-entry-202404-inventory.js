@@ -127,6 +127,10 @@
       || inventory.correctionSummary.itemNumbers.join(",") !== "1"
       || inventory.correctionSummary.type !== "missing_source_key_completion"
       || inventory.correctionSummary.protectedArtifactRequired !== true) issues.push("inventory.correction_summary");
+    if (!inventory || !inventory.artifactStatus
+      || inventory.artifactStatus.protectedScorer !== "verified"
+      || inventory.artifactStatus.printAudit !== "passed"
+      || inventory.artifactStatus.signedPageAssets !== "verified") issues.push("inventory.artifact_status");
     const list = inventory && Array.isArray(inventory.items) ? inventory.items : [];
     if (list.length !== 30) issues.push("inventory.item_count");
     const seen = new Set();
@@ -159,11 +163,8 @@
 
   function evaluateReviewGate(inventory) {
     const issues = Array.from(validateReviewInventory(inventory));
-    issues.push("review.protected_scorer_pending");
-    issues.push("review.print_audit_pending");
-    issues.push("review.signed_assets_pending");
     issues.push("review.final_exam_confirmation_pending");
-    return Object.freeze({ canAssemble: false, canRelease: false, issues: Object.freeze(Array.from(new Set(issues)).sort()) });
+    return Object.freeze({ canAssemble: issues.length === 1, canRelease: false, issues: Object.freeze(Array.from(new Set(issues)).sort()) });
   }
 
   const inventory = Object.freeze({
@@ -195,6 +196,11 @@
       itemNumbers: Object.freeze([1]),
       type: "missing_source_key_completion",
       protectedArtifactRequired: true
+    }),
+    artifactStatus: Object.freeze({
+      protectedScorer: "verified",
+      printAudit: "passed",
+      signedPageAssets: "verified"
     }),
     sourceExamId: SOURCE_EXAM_ID,
     sourceAssetId: SOURCE_ASSET_ID,
