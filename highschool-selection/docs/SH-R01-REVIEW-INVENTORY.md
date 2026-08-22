@@ -1,5 +1,7 @@
 # SH-R01 review-only inventory
 
+> 최신 상태: 이 파일이 설명하는 공개 inventory는 초안 이력과 중립 라우팅을 보존하는 불변 review-only 자료다. 실제 운영 승격 판단은 별도의 보호 `rv-20260822-fastlane-v2` 상태 패킷에서 40문항 모두 검증 완료되었고, 현재 남은 게이트는 시험 1회 전체 최종 확인뿐이다. 공개 inventory의 `draft` 값을 운영 미검수로 해석하거나 released 데이터로 직접 바꾸지 않는다.
+
 `data/review-only/sh-r01-inventory.js` is a public routing inventory, not an approved question bank and not a response schema. It converts the 40-row audit draft into metadata that can be reviewed one item at a time without publishing source questions, answer values, solutions, or storage locations.
 
 ## Public fields
@@ -34,7 +36,7 @@ The final classifications preserve `EXT` when the primary solving structure is o
 
 `lineageRef` contains neutral source-exam, source-asset, lineage, original-question, and question-type IDs with `relation=original`. The shared source asset ID is only a future join key for the private source registry; it is not a file locator and does not authorize access.
 
-Curriculum, major, detail, and response values outside the 12 delegated rows remain candidates copied or minimally paraphrased from the draft audit taxonomy. The 2022 curriculum audit refreshed Q5, Q6, Q14, Q21, Q22, Q25, Q26, Q31, Q32, and Q39; the response-shape audit refreshed Q35 to `unordered_set`. `sourcePage` is limited to the problem pages 1–8 and does not identify any private file.
+Curriculum, major, detail, and response values outside the 12 delegated rows remain candidates in this historical public inventory. Their protected operational counterparts were later verified in the v2 status packet. The 2022 curriculum audit refreshed Q5, Q6, Q14, Q21, Q22, Q25, Q26, Q31, Q32, and Q39; the response-shape audit refreshed Q35 to `unordered_set`. `sourcePage` is limited to the problem pages 1–8 and does not identify any private file.
 
 ## Promotion boundary
 

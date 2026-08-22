@@ -1,5 +1,7 @@
 # SH-R01 회차 단위 검수 승인
 
+> 상태: 과거 변경이력 화면 설명. `round-decision` 쓰기 API는 비활성화되었으며, 최신 운영 결정은 보호 v2 상태 패킷이 준비된 뒤 `final-confirmation`으로 시험 1회 전체를 한 번 확인하는 방식만 사용한다.
+
 ## 목적
 
 문항별로 사용자 결정을 반복해서 받지 않는다. 독립 검산과 2022 개정 분류 감사를 먼저 완료하고, 운영자는 차단 해소 9문항과 분류 재검수 12문항의 변경이력을 한 화면에서 확인한 뒤 회차 검수안 전체를 한 번만 결정한다.
@@ -23,9 +25,9 @@
 5. 모든 문항의 답 검산·분류·시각 감사·원본 지문 대조와 최종 인쇄 proof가 별도로 통과해야 한다.
 6. 따라서 회차 결정 상태와 무관하게 이 정적 구현의 `canRelease`는 항상 `false`다.
 
-## 운영 API 계약
+## 현재 운영 API 계약
 
-- `GET /admin/exam-reviews/sh-selection-r01/round-decision`
-- `POST /admin/exam-reviews/sh-selection-r01/round-decision`
+- `GET /admin/exam-reviews/sh-selection-r01`
+- `POST /admin/exam-reviews/sh-selection-r01/final-confirmation`
 
-요청 본문에는 시험 식별자, 회차 코드, 검수 버전과 `approve` 또는 `return` 결정만 포함한다. 문항 내용이나 답값, 파일 주소, 자유 입력 메모는 받지 않는다.
+최종 확인 요청에는 시험 식별자, 회차 코드, 검수 버전, `confirmed`, 전체 문항 수, 활성 문항 수, 채점 제외 문항 수만 포함한다. 문항 내용이나 답값, 파일 주소, 자유 입력 메모는 받지 않는다. 과거 `round-decision` 엔드포인트는 호출하지 않는다.
