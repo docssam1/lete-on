@@ -20,7 +20,6 @@
     "approvalcode", "approvalcodehash", "response", "responsevalue", "studentname", "email", "phone",
     "sourcepath", "sourcelocator", "storagepath", "bucket", "pdfurl", "pageurl", "video", "videourl"
   ]);
-  const FORBIDDEN_NAMES = ["\ud669\uc18c", "\ub3cc\ud30c", "\uc6d0\uc218\ud559", "\uc774\ub4e0", "\uae4a\uc740\uc0dd\uac01", "\uae4a\uc0dd", "\uc0dd\uc218"];
   const FORBIDDEN_MEDIA_TERMS = ["\uc601\uc0c1", "\uac15\uc758", "\uc720\ud29c\ube0c", "youtube", "youtu.be"];
 
   function fail(message) { throw new Error(message); }
@@ -41,9 +40,6 @@
 
   function assertPublicOnly(value, seen) {
     if (typeof value === "string") {
-      FORBIDDEN_NAMES.forEach(function (name) {
-        if (value.includes(name)) fail("분석지에 공개할 수 없는 기관명이 포함되어 있습니다.");
-      });
       FORBIDDEN_MEDIA_TERMS.forEach(function (term) {
         if (value.toLowerCase().includes(term)) fail("분석지에 연결할 수 없는 콘텐츠가 포함되어 있습니다.");
       });

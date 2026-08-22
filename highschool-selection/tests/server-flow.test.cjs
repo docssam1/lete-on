@@ -219,7 +219,7 @@ test("SH-R01 completes login, schema, submission and no-store diagnostic report 
   const validated = reportSecurity.validateReport(report, {
     attemptId,
     session: { studentId: "student_a" },
-    catalog: { exams: [{ id: EXAM_ID, title: "SH 고등 선발 대비 1회", questionCount: 40, programId: "SH", curriculumVersion: "2022-revised", releaseStatus: "released", answerStatus: "verified", classificationStatus: "verified" }] },
+    catalog: { exams: [{ id: EXAM_ID, title: "황소 고등 선발 대비 1회", questionCount: 40, programId: "SH", curriculumVersion: "2022-revised", releaseStatus: "released", answerStatus: "verified", classificationStatus: "verified" }] },
     cutlinePolicies: { referenceCutlines: [], examAssignments: [] }
   });
   assert.equal(validated.score, 40);

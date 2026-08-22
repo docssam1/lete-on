@@ -13,6 +13,9 @@ const catalog = context.globalThis.HIGHSELECT_CATALOG;
 test("first SH exam is review-complete but stays locked until final whole-round confirmation", () => {
   const exam = catalog.exams.find(item => item.id === "sh-selection-r01");
   assert.equal(exam.questionCount, 40);
+  assert.equal(exam.durationMinutes, 120);
+  assert.equal(exam.durationScope, "our-sale-mock");
+  assert.equal(exam.title, "황소 고등 선발 대비 1회");
   assert.equal(exam.pageCount, 8);
   assert.equal(exam.sourcePageCount, 11);
   assert.equal(exam.privateAnswerPageCount, 3);
@@ -55,7 +58,7 @@ test("the audited DP source revision is a separate locked review round", () => {
   assert.equal(exam.releaseStatus, "review_pending");
 });
 
-test("operational student pages use neutral program codes", () => {
+test("operational student pages keep stable codes and show Korean academy names", () => {
   assert.deepEqual(Array.from(catalog.programs, item => item.id), ["SH", "DP", "WM", "ED", "DG", "SM"]);
   const operationalSources = [
     catalogSource,
@@ -65,7 +68,8 @@ test("operational student pages use neutral program codes", () => {
     fs.readFileSync(path.join(root, "report.html"), "utf8"),
     fs.readFileSync(path.join(root, "data", "question-bank-schema.js"), "utf8")
   ].join("\n");
-  ["황소", "돌파", "원수학", "이든", "깊은생각", "깊생", "생수"].forEach(name => assert.equal(operationalSources.includes(name), false, `${name} 노출`));
+  ["황소", "돌파", "원수학", "이든", "깊은생각", "깊생", "생수"].forEach(name => assert.equal(operationalSources.includes(name), true, `${name} 표시 누락`));
+  ["sourceAssetId", "sourcePath", "G:\\", "approvalCode", "answerKey"].forEach(term => assert.equal(operationalSources.includes(term), false, `${term} 운영 화면 노출`));
 });
 
 test("shared product branding is multi-track rather than high-school-only", () => {

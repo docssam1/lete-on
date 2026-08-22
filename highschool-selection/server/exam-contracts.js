@@ -7,7 +7,9 @@ const dpCommon1Schema = require("../data/review-only/dp-cm1-entry-202405-respons
 const EXAMS = Object.freeze({
   "sh-selection-r01": Object.freeze({
     examId: "sh-selection-r01",
-    title: "SH 고등 선발 대비 1회",
+    title: "황소 고등 선발 대비 1회",
+    durationMinutes: 120,
+    durationScope: "our-sale-mock",
     questionCount: 40,
     pageCount: 8,
     responseSchemaVersion: shR01Schema.SCHEMA_VERSION,
@@ -21,7 +23,7 @@ const EXAMS = Object.freeze({
   }),
   "dp-middle2-2-transfer": Object.freeze({
     examId: "dp-middle2-2-transfer",
-    title: "DP 중2-2 편입 1차 모의고사",
+    title: "돌파 중2-2 편입 1차 모의고사",
     deliveryRole: "first-sale-mock",
     formProfile: "sale-mock-a4-v1",
     questionCount: 30,
@@ -37,7 +39,7 @@ const EXAMS = Object.freeze({
   }),
   "dp-common1-entry-202405": Object.freeze({
     examId: "dp-common1-entry-202405",
-    title: "DP 공통수학1 입학 1차 모의고사",
+    title: "돌파 공통수학1 입학 1차 모의고사",
     deliveryRole: "first-sale-mock",
     formProfile: "sale-mock-a4-v1",
     questionCount: 30,

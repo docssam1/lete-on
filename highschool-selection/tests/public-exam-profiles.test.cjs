@@ -11,7 +11,7 @@ test("advertising profiles cover all six isolated program codes", () => {
 });
 
 test("every advertising fact exposes its evidence state and source ids", () => {
-  const states = new Set(["verified", "observed", "needs-review"]);
+  const states = new Set(["verified", "observed", "confirmed", "needs-review"]);
   data.profiles.forEach(profile => {
     assert.ok(profile.summary);
     assert.ok(profile.style);
@@ -36,6 +36,7 @@ test("every advertising fact exposes its evidence state and source ids", () => {
       assert.ok(Array.isArray(fact.sourceIds));
       fact.sourceIds.forEach(id => assert.ok(data.sources[id], `missing source ${id}`));
       if (fact.state === "verified") assert.ok(fact.sourceIds.length, `${profile.code} verified fact needs a public source`);
+      if (fact.state === "confirmed") assert.equal(fact.sourceIds.length, 0, `${profile.code} product confirmation must not cite an external source`);
     });
   });
 });

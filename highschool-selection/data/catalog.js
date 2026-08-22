@@ -4,8 +4,8 @@
   const programs = [
     {
       id: "SH",
-      name: "고등 선발",
-      shortName: "SH",
+      name: "생각하는황소 고등 선발",
+      shortName: "황소 고등",
       description: "고등과정 입반을 위한 중등 누적 선발 대비",
       scope: "중등 누적 과정",
       levels: ["실력정석", "기본정석 PLUS", "기본정석 LIGHT"],
@@ -13,8 +13,8 @@
     },
     {
       id: "DP",
-      name: "입학·편입 진단 A",
-      shortName: "DP",
+      name: "돌파수학 입학·편입",
+      shortName: "돌파",
       description: "중1 입학·공통수학1 입학·편입 시험 대비",
       scope: "중등 심화 또는 공통수학1",
       levels: ["중1 입학", "공통수학1 입학", "편입", "상위반"],
@@ -22,8 +22,8 @@
     },
     {
       id: "WM",
-      name: "입학·승급 진단 B",
-      shortName: "WM",
+      name: "원수학 입학·승급",
+      shortName: "원수학",
       description: "공통수학1·2 기본/실력 과정의 승급·입학 대비",
       scope: "중등 누적 + 공통수학1·2",
       levels: ["기본", "실력", "실력직행", "전과정 심화"],
@@ -31,8 +31,8 @@
     },
     {
       id: "ED",
-      name: "입학·선행 진단 C",
-      shortName: "ED",
+      name: "이든수학 입학·선행",
+      shortName: "이든",
       description: "중1 시작반과 고등선행 입학 테스트 대비",
       scope: "중1 입학 선수과정·중등 심화",
       levels: ["중1 시작", "중등 심화", "고등선행"],
@@ -40,8 +40,8 @@
     },
     {
       id: "DG",
-      name: "심화 입학 진단",
-      shortName: "DG",
+      name: "깊은생각 심화 입학",
+      shortName: "깊생",
       description: "중3-1·공통수학1·공통수학2 도형의 방정식까지",
       scope: "중3 심화 + 공통수학1·2",
       levels: ["1레벨", "2레벨", "일반 입테"],
@@ -49,8 +49,8 @@
     },
     {
       id: "SM",
-      name: "추천 진단",
-      shortName: "SM",
+      name: "생수수학 추천 진단",
+      shortName: "생수",
       description: "제공받은 추천 샘플을 기준으로 한 공통수학 대비",
       scope: "중등 삼각비 + 공통수학",
       levels: ["공통수학2 기본"],
@@ -62,11 +62,13 @@
     {
       id: "sh-selection-r01",
       programId: "SH",
-      title: "SH 고등 선발 대비 1회",
+      title: "황소 고등 선발 대비 1회",
       track: "중등 누적 선발",
       curriculumVersion: "2022-revised",
-      scopeLabel: "중등 누적 선발 · 40문항",
+      scopeLabel: "중등 누적 선발 · 40문항 · 120분",
       questionCount: 40,
+      durationMinutes: 120,
+      durationScope: "our-sale-mock",
       pageCount: 8,
       sourcePageCount: 11,
       privateAnswerPageCount: 3,
@@ -90,12 +92,12 @@
         visualReviewIssues: 0,
         releaseDecision: "final_confirmation_pending"
       },
-      note: "보호된 v2 검수 기록에서 40문항의 정답·분류·응답 구성·시각·원본 지문·교정 산출물과 인쇄·서명 전달 감사를 완료했습니다. 시험 1회 전체 최종 확인과 releaseStatus 전환 전에는 학생에게 열리지 않습니다."
+      note: "보호된 v2 검수 기록에서 40문항의 정답·분류·응답 구성·시각·원본 지문·교정 산출물과 인쇄·서명 전달 감사를 완료했습니다. 판매용 모의고사 운영 시간은 120분입니다. 실제 학원 공개 사례의 시간은 별도 근거값으로 관리하며, 시험 1회 전체 최종 확인과 releaseStatus 전환 전에는 학생에게 열리지 않습니다."
     },
     {
       id: "dp-middle1-entry",
       programId: "DP",
-      title: "DP 중1 입학 진단",
+      title: "돌파 중1 입학 진단",
       track: "중1 입학",
       curriculumVersion: "2022-revised",
       scopeLabel: "초5-1~초6-2 누적 · 30문항",
@@ -113,7 +115,7 @@
     {
       id: "dp-common1-entry",
       programId: "DP",
-      title: "DP 공통수학1 입학 진단",
+      title: "돌파 공통수학1 입학 진단",
       track: "공통수학1 입학",
       curriculumVersion: "2022-revised",
       scopeLabel: "공통수학1 · 실제 원본 유형 감사 중",
@@ -131,7 +133,7 @@
     {
       id: "dp-middle2-2-transfer",
       programId: "DP",
-      title: "DP 중2-2 편입 1차 모의고사",
+      title: "돌파 중2-2 편입 1차 모의고사",
       track: "중2-2 전 과정까지 편입",
       curriculumVersion: "2022-revised",
       scopeLabel: "중1-1~중2-2 누적 · 30문항",
@@ -153,7 +155,7 @@
     {
       id: "dp-common1-entry-202405",
       programId: "DP",
-      title: "DP 공통수학1 입학 1차 모의고사",
+      title: "돌파 공통수학1 입학 1차 모의고사",
       track: "공통수학1 입학",
       curriculumVersion: "2022-revised",
       scopeLabel: "중2-1~중3-2 누적 · 30문항",
@@ -175,7 +177,7 @@
     {
       id: "wm-algebra-geometry-diagnostic",
       programId: "WM",
-      title: "WM 대수·기하 누적 진단",
+      title: "원수학 대수·기하 누적 진단",
       track: "대수·기하",
       curriculumVersion: "2022-revised",
       scopeLabel: "목표 규격 대수 25 · 기하 25 (보유 기하 원본 26문항 충돌)",
@@ -197,7 +199,7 @@
     {
       id: "ed-middle1-entry",
       programId: "ED",
-      title: "ED 중1 시작 진단",
+      title: "이든 중1 시작 진단",
       track: "중1 시작",
       curriculumVersion: "2022-revised",
       scopeLabel: "초5 12문항 + 초6 18문항 · 총 30문항",
@@ -215,7 +217,7 @@
     {
       id: "ed-high-advance-entry",
       programId: "ED",
-      title: "ED 고등선행 입학 진단",
+      title: "이든 고등선행 입학 진단",
       track: "고등선행",
       curriculumVersion: "2022-revised",
       scopeLabel: "중2-1·중3-1·중2-2·중3-2 누적",
@@ -233,7 +235,7 @@
     {
       id: "dg-entry-common",
       programId: "DG",
-      title: "DG 입학 진단 대비",
+      title: "깊생 입학 진단 대비",
       track: "1·2레벨 도전",
       curriculumVersion: "2022-revised",
       scopeLabel: "중3-1·공통수학1·공통수학2 도형의 방정식까지",
@@ -251,7 +253,7 @@
     {
       id: "sm-common2-basic-r01",
       programId: "SM",
-      title: "SM 공통수학2 기본 1회",
+      title: "생수 공통수학2 기본 1회",
       track: "기본 입반 샘플",
       curriculumVersion: "2022-revised",
       scopeLabel: "삼각비의 활용(길이)~이차부등식",
@@ -269,7 +271,7 @@
     {
       id: "sm-common2-basic-r02",
       programId: "SM",
-      title: "SM 공통수학2 기본 2회",
+      title: "생수 공통수학2 기본 2회",
       track: "기본 샘플",
       curriculumVersion: "2022-revised",
       scopeLabel: "삼각비~부등식의 성질과 일차부등식",
@@ -287,7 +289,7 @@
     {
       id: "sm-common2-basic-r03",
       programId: "SM",
-      title: "SM 공통수학2 기본 3회",
+      title: "생수 공통수학2 기본 3회",
       track: "기본 샘플",
       curriculumVersion: "2022-revised",
       scopeLabel: "특수한 각의 삼각비~이차부등식",
@@ -304,5 +306,5 @@
     }
   ];
 
-  root.HIGHSELECT_CATALOG = { programs, exams, updatedAt: "2026-08-22", writer: "T" };
+  root.HIGHSELECT_CATALOG = { programs, exams, updatedAt: "2026-08-23", writer: "T" };
 })(typeof window !== "undefined" ? window : globalThis);

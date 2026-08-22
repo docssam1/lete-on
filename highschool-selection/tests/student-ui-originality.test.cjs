@@ -8,7 +8,7 @@ const test = require("node:test");
 const root = path.resolve(__dirname, "..");
 const read = relative => fs.readFileSync(path.join(root, relative), "utf8");
 
-test("student operational pages use neutral program identity", () => {
+test("student operational pages render Korean academy identity from stable catalog codes", () => {
   const operational = [
     "login.html",
     "library.html",
@@ -18,9 +18,9 @@ test("student operational pages use neutral program identity", () => {
     "shared/exam-page.js",
     "shared/report-page.js"
   ].map(read).join("\n");
-  ["생각하는황소", "돌파수학", "원수학", "이든수학", "깊은생각", "생수수학"].forEach(name => {
-    assert.doesNotMatch(operational, new RegExp(name));
-  });
+  const catalog = read("data/catalog.js");
+  ["생각하는황소", "돌파수학", "원수학", "이든수학", "깊은생각", "생수수학"].forEach(name => assert.match(catalog, new RegExp(name)));
+  ["SH", "DP", "WM", "ED", "DG", "SM"].forEach(code => assert.match(catalog, new RegExp(`id: "${code}"`)));
   assert.match(read("library.html"), /program\.shortName/);
 });
 

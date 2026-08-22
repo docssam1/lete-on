@@ -275,7 +275,7 @@ test("revalidates approved composite total, section minimums, and review band", 
   assert.throws(() => security.validateReport(wrongApproval, approvedCompositeContext()));
 });
 
-test("rejects answer keys, private fields, academy names, and video fields recursively", () => {
+test("allows academy names but rejects answer keys, private fields, and video fields recursively", () => {
   const answer = validReport(); answer.items[0].correctAnswer = "4";
   assert.throws(() => security.validateReport(answer, context));
   const answerImage = validReport(); answerImage.items[0].answerImageUrl = "https://example.test/answer.png";
@@ -283,7 +283,7 @@ test("rejects answer keys, private fields, academy names, and video fields recur
   const privatePath = validReport(); privatePath.sourcePath = "private/original.pdf";
   assert.throws(() => security.validateReport(privatePath, context));
   const academy = validReport(); academy.comments[0].text = "황소 자료를 복습하세요.";
-  assert.throws(() => security.validateReport(academy, context));
+  assert.equal(security.validateReport(academy, context).comments[0].text, "황소 자료를 복습하세요.");
   const video = validReport(); video.videoUrl = "https://example.test/lesson";
   assert.throws(() => security.validateReport(video, context));
   const mediaText = validReport(); mediaText.comments[4].text = "풀이 영상을 보고 복습하세요.";
@@ -308,10 +308,13 @@ test("report page has printable output and no local report/cache/answer fallback
   assert.equal(page.includes("validateReport"), true);
   assert.equal(html.includes("report-security.js"), true);
   assert.equal(html.includes("cutline-policies.js"), true);
+  assert.equal(html.includes("academy-evaluation-profiles.js"), true);
   assert.equal(html.includes("window.print()"), true);
   assert.equal(html.includes("@media print"), true);
   assert.equal(page.includes('item.state === "correct" ? "○" : "×"'), true);
   assert.equal(page.includes("문항별 O/X"), false);
+  assert.equal(page.includes("학원별 평가 프로필"), true);
+  assert.equal(page.includes("HIGHSELECT_ACADEMY_EVALUATION_PROFILES.resolve"), true);
   assert.equal(page.includes("합격 기준 확인 필요 — 점수/진단만 제공"), false);
   ["영상", "correctAnswer", "answerSpec", "해설", "approvalCode"].forEach(value => assert.equal((page + html).includes(value), false));
 });

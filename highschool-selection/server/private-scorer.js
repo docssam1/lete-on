@@ -7,7 +7,7 @@ const shR01Metadata = require("../data/sh-r01-diagnostic-metadata.js");
 
 const TYPES = new Set(["input", "multi_input", "ordered_list", "unordered_set", "self_check"]);
 const DIFFICULTIES = new Set(["lowered", "standard", "raised"]);
-const FORBIDDEN_PUBLIC_TEXT = /(?:https?:\/\/|[A-Za-z]:[\\/]|\\\\|\.pdf\b|\.hwp\b|황소|돌파|원수학|이든|깊은생각|깊생|생수)/i;
+const FORBIDDEN_PUBLIC_TEXT = /(?:https?:\/\/|[A-Za-z]:[\\/]|\\\\|\.pdf\b|\.hwp\b)/i;
 
 function fail(message) { throw new Error(message); }
 function text(value, label, max) {

@@ -1,6 +1,16 @@
 # Question bank pipeline
 
-This pipeline stores review metadata, not question text, answer values, solution text, original files, or filesystem locations. Public mode values are limited to `SH`, `DP`, `WM`, `ED`, `DG`, and `SM`; the writer value is always `T`.
+This pipeline stores review metadata, not question text, answer values, solution text, original files, or filesystem locations. Stable internal mode values are limited to `SH`, `DP`, `WM`, `ED`, `DG`, and `SM`. Our service displays the Korean academy names. Only MathFlat worksheet titles and writer metadata stay neutral (`SH`/`DP`/... and writer `T`).
+
+## 0. User entry paths and academy separation
+
+The bank supports three entry paths without duplicating an item:
+
+1. 시험지별 — 추천 모의고사와 승인된 원본·쌍둥이·유사 회차
+2. 교재·단원별 — 학년 → 대단원 → 소단원 → 세부유형
+3. 유형별 — 풀이 구조, 핵심 조건, 그림 구조, 정답 유일성 규칙
+
+Academy names are visible in our library, exam title, bank filter, and diagnostic report. Each academy resolves to a separate evaluation profile. The shared responsive/A4 shell does not make the paper structure, duration, difficulty curve, report axes, or cutoff policy identical.
 
 ## 1. Register identity and curriculum
 
@@ -47,6 +57,8 @@ relation = original | twin | similar
 
 For an original, `questionId` equals `originalQuestionId`; a twin or similar item must point to a distinct original. The asset variant must match the lineage relation, and the variant family ID must equal the original question ID. This preserves round-to-item-to-type ancestry without publishing source content.
 
+Before a generator is written, every source item records its givens, asked value, solution flow, answer class, visual structure, and difficulty rule. A type is split when the visual structure, asked quantity, solution flow, or uniqueness condition changes. One trusted data object must generate the prompt, visual, answer, solution, reference, and difficulty variant together.
+
 ## 5. Run deterministic gates
 
 `shared/question-bank-validation.js` evaluates gates in this fixed order:
@@ -78,6 +90,18 @@ The duplicate rule is scoped to one assembled form. An approved original questio
 At least one `original` item is required by default, so an exam cannot be assembled entirely from twins or similar items. The minimum can be raised for a specific blueprint but cannot be negative.
 
 The result is a deterministic issue list plus aggregate counts. Only an assembly with `eligible: true` may proceed to the existing approval and release process.
+
+## 7. Generator and release audit
+
+- lowered, standard, and raised each receive at least 1,000 deterministic generation trials before release;
+- every generated candidate runs exhaustive uniqueness and an independent answer check;
+- formulas, tables, graphs, nets, and solid geometry use their dedicated visual/math audit;
+- PC, phone, and A4 rendering are inspected separately;
+- answers and solutions never appear in the student prompt payload;
+- only `sourceMatched:true` and `verified:true` items can open;
+- unresolved, stale, or draft items stay visible as locked metadata, never as a released question.
+
+The private source-memory guide `method-premier-question-bank-guide-v1` is the evidence source for this workflow. Its file path and original source assets stay outside the public repository.
 
 ## Verification
 

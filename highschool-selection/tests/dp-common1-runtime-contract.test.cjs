@@ -8,7 +8,7 @@ const EXAM_ID = "dp-common1-entry-202405";
 test("DP common math 1 first sale mock is wired without an inferred cutline", () => {
   const contract = contracts.getExamContract(EXAM_ID);
   assert.equal(contract.examId, EXAM_ID);
-  assert.equal(contract.title, "DP 공통수학1 입학 1차 모의고사");
+  assert.equal(contract.title, "돌파 공통수학1 입학 1차 모의고사");
   assert.equal(contract.deliveryRole, "first-sale-mock");
   assert.equal(contract.formProfile, "sale-mock-a4-v1");
   assert.equal(contract.questionCount, 30);
