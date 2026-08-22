@@ -781,12 +781,12 @@ export const EXAMS = [
 ];
 
 export const PRACTICE_EXAM_TYPES = [
-  { id: "mock-1", label: "필즈 대비 실전 1회", questions: ["repeat-shape-color-dual","edge-sum-grid","grid-number-placement-five","five-card-sum-pyramid","order-position-seven-people","arrow-number-grid","addition-table-grid-offset","total-difference","shape-sum-table-bottom-target","equal-line-sum-eight-cards-twelve","bus-board-then-leave","shape-sum-table-bottom-target","shape-equation-add-subtract","two-digit-parity-gap","balance-scale-star-target","square-tile-growth","symbol-relation","fold-number-cut-sum-main-diagonal","go-stone-difference-inverse","number-line-six-points"] },
-  { id: "mock-2", label: "필즈 대비 실전 2회", questions: ["edge-sum-grid","l-grid-placement","repeat-four-items-with-duplicate","five-card-sum-pyramid","order-position","addition-table-grid-offset","arrow-number-grid","shape-sum-table-bottom-target","equal-line-sum-eight-cards-fifteen-top-left","total-difference","two-digit-even-ones-greater-gap","shape-sum-table-bottom-target","bus-board-then-leave","shape-equation-add-subtract","fold-number-cut-sum-main-diagonal","square-tile-growth","balance-scale-star-target","symbol-relation","number-line-six-points","go-stone-difference-inverse-white"] },
-  { id: "mock-3", label: "필즈 대비 실전 3회", questions: ["cube-count-solid","set-union-count","chained-number-condition","cube-different-shape","shape-sum-table","vertical-addition","person-item-logic","shape-equation","number-table-rule","cut-recut-pieces","repeat-pattern","triangle-count","function-machine","operator-insertion","custom-operation","fold-hole-count","two-digit-card-enumeration","erase-expression-target","collection-repeat-gap","magic-square"] },
-  { id: "mock-4", label: "필즈 대비 실전 4회", questions: ["balance-scale","rod-length-ratio","number-card-mixed-operations","fold-number-remaining-sum","equal-line-sum","magic-square","hidden-score-ranking","two-digit-even-count","number-table-rule","function-machine","square-count","reverse-initial-count","calendar-weekday-sum","growing-shape-count","cryptarithm","shape-equation","shape-sum-table","shape-sum-table","height-order","person-item-logic"] },
-  { id: "mock-5", label: "필즈 대비 실전 5회", questions: ["shape-sum-table","colored-shape-number","unused-number-card-equations","magic-square","edge-sum-grid","cryptarithm","repeat-shape-color-dual","go-stone-difference-inverse","balance-scale","rod-length-ratio","fold-diagonal-hole-count","fold-diagonal-unfold","set-union-count","equalize-transfer","two-digit-card-threshold-count","cube-add-to-match","order-position","number-table-rule","alternating-line-total","split-merge-tree"] },
-  { id: "mock-6", label: "필즈 대비 실전 6회", questions: ["congruent-partition","magic-square","edge-sum-grid","shape-equation","shape-sum-table","symbol-relation","order-position","person-item-logic","latin-square","fold-diagonal-unfold","cube-fill-box","edge-sum-grid","latin-square","total-difference","set-union-count","number-card-plus-minus","function-machine","chained-number-condition","cube-hidden-count","repeat-pattern"] }
+  { id: "mock-1", label: "실전 모의고사 1회", questions: ["repeat-shape-color-dual","edge-sum-grid","grid-number-placement-five","five-card-sum-pyramid","order-position-seven-people","arrow-number-grid","addition-table-grid-offset","total-difference","shape-sum-table-bottom-target","equal-line-sum-eight-cards-twelve","bus-board-then-leave","shape-sum-table-bottom-target","shape-equation-add-subtract","two-digit-parity-gap","balance-scale-star-target","square-tile-growth","symbol-relation","fold-number-cut-sum-main-diagonal","go-stone-difference-inverse","number-line-six-points"] },
+  { id: "mock-2", label: "실전 모의고사 2회", questions: ["edge-sum-grid","l-grid-placement","repeat-four-items-with-duplicate","five-card-sum-pyramid","order-position","addition-table-grid-offset","arrow-number-grid","shape-sum-table-bottom-target","equal-line-sum-eight-cards-fifteen-top-left","total-difference","two-digit-even-ones-greater-gap","shape-sum-table-bottom-target","bus-board-then-leave","shape-equation-add-subtract","fold-number-cut-sum-main-diagonal","square-tile-growth","balance-scale-star-target","symbol-relation","number-line-six-points","go-stone-difference-inverse-white"] },
+  { id: "mock-3", label: "실전 모의고사 3회", questions: ["cube-count-solid","set-union-count","chained-number-condition","cube-different-shape","shape-sum-table","vertical-addition","person-item-logic","shape-equation","number-table-rule","cut-recut-pieces","repeat-pattern","triangle-count","function-machine","operator-insertion","custom-operation","fold-hole-count","two-digit-card-enumeration","erase-expression-target","collection-repeat-gap","magic-square"] },
+  { id: "mock-4", label: "실전 모의고사 4회", questions: ["balance-scale","rod-length-ratio","number-card-mixed-operations","fold-number-remaining-sum","equal-line-sum","magic-square","hidden-score-ranking","two-digit-even-count","number-table-rule","function-machine","square-count","reverse-initial-count","calendar-weekday-sum","growing-shape-count","cryptarithm","shape-equation","shape-sum-table","shape-sum-table","height-order","person-item-logic"] },
+  { id: "mock-5", label: "실전 모의고사 5회", questions: ["shape-sum-table","colored-shape-number","unused-number-card-equations","magic-square","edge-sum-grid","cryptarithm","repeat-shape-color-dual","go-stone-difference-inverse","balance-scale","rod-length-ratio","fold-diagonal-hole-count","fold-diagonal-unfold","set-union-count","equalize-transfer","two-digit-card-threshold-count","cube-add-to-match","order-position","number-table-rule","alternating-line-total","split-merge-tree"] },
+  { id: "mock-6", label: "실전 모의고사 6회", questions: ["congruent-partition","magic-square","edge-sum-grid","shape-equation","shape-sum-table","symbol-relation","order-position","person-item-logic","latin-square","fold-diagonal-unfold","cube-fill-box","edge-sum-grid","latin-square","total-difference","set-union-count","number-card-plus-minus","function-machine","chained-number-condition","cube-hidden-count","repeat-pattern"] }
 ].map((exam) => ({ ...exam, questions: exam.questions.map((typeId, index) => ({
   ...question(index + 1, typeId),
   verified: true
@@ -837,7 +837,7 @@ export const FINAL_EXAM_TYPES = [
   {
     id: "final-1",
     stage: "final",
-    label: "파이널 모의고사 1회 교체본",
+    label: "파이널 모의고사 1회",
     file: "검증된 20유형 기반 교체 시험지 (기존 중복 원본 제외)",
     sourceViewer: false,
     replacement: true,
@@ -856,7 +856,7 @@ export const FINAL_EXAM_TYPES = [
   {
     id: "final-2",
     stage: "final",
-    label: "필즈선발대비 실전 모의고사 파이널 2회",
+    label: "파이널 모의고사 2회",
     file: "필즈선발대비 실전 모의고사 파이널 2회.pdf",
     sourceViewer: false,
     questions: [
@@ -878,7 +878,7 @@ export const FINAL_EXAM_TYPES = [
   {
     id: "final-3",
     stage: "final",
-    label: "필즈선발대비 실전 모의고사 파이널 3회",
+    label: "파이널 모의고사 3회",
     file: "필즈선발대비 실전 모의고사 파이널 3회.pdf",
     sourceViewer: false,
     questions: [

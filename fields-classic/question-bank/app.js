@@ -1,4 +1,4 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822l";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822m";
 import { GENERATORS } from "./generators.js?v=20260822k";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260822e";
@@ -15,12 +15,18 @@ const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
 const domainIndex = Object.fromEntries(DOMAINS.map((domain, index) => [domain.id, index]));
-const stageIds = new Set([...AGE_STAGES.map((item) => item.id), "diagnostic", "practice", "final"]);
+const stageIds = new Set([...AGE_STAGES.map((item) => item.id), "ours", "diagnostic", "practice", "final"]);
 const EXAM_SOURCES = [...DIAGNOSTIC_EXAM_TYPES, ...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES];
+const OUR_MOCK_EXAM_GROUPS = [
+  { label: "진단 모의고사", exams: DIAGNOSTIC_EXAM_TYPES },
+  { label: "실전 모의고사", exams: PRACTICE_EXAM_TYPES },
+  { label: "파이널 모의고사", exams: FINAL_EXAM_TYPES }
+];
+const OUR_MOCK_EXAMS = OUR_MOCK_EXAM_GROUPS.flatMap((group) => group.exams);
 
 const state = {
   mode: "exam",
-  stage: stageIds.has(params.get("age")) ? params.get("age") : "k6_winter",
+  stage: stageIds.has(params.get("age")) ? params.get("age") : "ours",
   selected: { exam: new Set(), curriculum: new Set(), type: new Set() },
   count: 20,
   difficulty: "actual",
@@ -220,7 +226,7 @@ function setMode(mode) {
 }
 
 function renderStageButtons() {
-  const stages = [{ id: "diagnostic", label: "진단 모의고사" }, ...AGE_STAGES, { id: "practice", label: "실전 모의고사" }, { id: "final", label: "파이널 모의고사" }];
+  const stages = [{ id: "ours", label: "우리 모의고사" }, ...AGE_STAGES];
   $("examAgeButtons").innerHTML = stages.map((item) => `<button type="button" class="${item.id === state.stage ? "active" : ""}" data-stage="${item.id}">${item.label}</button>`).join("");
   $("examAgeButtons").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.stage = button.dataset.stage;
@@ -230,6 +236,7 @@ function renderStageButtons() {
 }
 
 function visibleExams() {
+  if (state.stage === "ours") return OUR_MOCK_EXAMS;
   if (state.stage === "diagnostic") return DIAGNOSTIC_EXAM_TYPES;
   if (state.stage === "practice") return PRACTICE_EXAM_TYPES;
   if (state.stage === "final") return FINAL_EXAM_TYPES;
@@ -243,10 +250,12 @@ function examKey(examId, number) {
 function renderExamList() {
   const exams = visibleExams();
   const stage = AGE_STAGES.find((item) => item.id === state.stage);
-  $("examStageTitle").textContent = stage?.label || (state.stage === "diagnostic" ? "진단 모의고사" : state.stage === "final" ? "파이널 모의고사" : "실전 모의고사");
+  $("examStageTitle").textContent = stage?.label || (state.stage === "ours" ? "우리 모의고사" : state.stage === "diagnostic" ? "진단 모의고사" : state.stage === "final" ? "파이널 모의고사" : "실전 모의고사");
   $("examStageMeta").textContent = `${exams.length}개 시험지 · 원본 문항 번호 기준`;
-  $("examNotice").textContent = "원본 문제의 문항 번호를 고른 뒤, 그 문제보다 쉽게·같게·어렵게 유사문제를 만들 수 있습니다. 연산 테스트는 이 문제은행에서 제외합니다.";
-  $("examTypeList").innerHTML = exams.map((exam) => {
+  $("examNotice").textContent = state.stage === "ours"
+    ? "진단·실전·파이널 모의고사를 먼저 고릅니다. 문항을 고르면 그 구조를 유지한 유사문제를 만들 수 있습니다."
+    : "원본 선발시험의 문항 번호를 고른 뒤 유사문제를 만듭니다. 원본 시험 진단은 정답 대조가 끝난 시험지부터 별도로 제공합니다.";
+  const examMarkup = (exam) => {
     const rows = exam.questions.map((sourceQuestion) => {
       const item = typeById(sourceQuestion.typeId);
       const verified = sourceQuestion.verified === true;
@@ -268,6 +277,14 @@ function renderExamList() {
     const fileName = String(exam.file || "").replace(/\((\d{6}|\d{8})\)/g, "");
     const sourceLink = exam.sourceViewer === false || !exam.sourcePageCount ? "" : `<a class="source-view-link" href="./selection-test-viewer.html?exam=${exam.id}&student=${encodeURIComponent(student)}">원문 보기</a>`;
     return `<details class="tree-group" open><summary><strong>${exam.label}</strong><span>${exam.questions.length}문항</span></summary><div class="exam-source"><span>${fileName}</span>${sourceLink}</div>${rows}</details>`;
+  };
+  const groups = state.stage === "ours"
+    ? OUR_MOCK_EXAM_GROUPS
+    : [{ label: "", exams }];
+  $("examTypeList").innerHTML = groups.map((group) => {
+    if (!group.exams.length) return "";
+    const heading = group.label ? `<div class="exam-collection-title"><strong>${group.label}</strong><span>${group.exams.length}개 시험지</span></div>` : "";
+    return `<section class="exam-collection">${heading}${group.exams.map(examMarkup).join("")}</section>`;
   }).join("") || `<div class="source-notice">이 시기의 원본 시험지는 아직 등록되지 않았습니다.</div>`;
 
   $("examTypeList").querySelectorAll("input[data-exam-key]").forEach((input) => input.addEventListener("change", () => {
@@ -2602,7 +2619,8 @@ setMode("exam");
   if (!wanted) return;
   const exam = EXAM_SOURCES.find((item) => item.id === wanted);
   if (!exam) return;
-  if (exam.stage && stageIds.has(exam.stage)) state.stage = exam.stage;
+  if (OUR_MOCK_EXAMS.includes(exam)) state.stage = "ours";
+  else if (exam.stage && stageIds.has(exam.stage)) state.stage = exam.stage;
   else if (FINAL_EXAM_TYPES.includes(exam)) state.stage = "final";
   else if (PRACTICE_EXAM_TYPES.includes(exam)) state.stage = "practice";
   else if (DIAGNOSTIC_EXAM_TYPES.includes(exam)) state.stage = "diagnostic";
