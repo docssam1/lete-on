@@ -80,9 +80,9 @@
       officialWeight: false,
       responseCandidate: row[9],
       responseSlotCount: row[10],
-      answerStatus: "found_pending_independent_check",
+      answerStatus: number === 1 ? "key_completed_private" : "verified_private",
       classificationStatus: "agent_verified",
-      resolutionStatus: "review_blocked",
+      resolutionStatus: "agent_verified",
       lineageRef: Object.freeze({
         sourceExamId: SOURCE_EXAM_ID,
         sourceAssetId: SOURCE_ASSET_ID,
@@ -118,8 +118,15 @@
       || inventory.sourceLayout.questionPages.join(",") !== "3,4,5,6,7,8,9,10"
       || inventory.sourceLayout.answerPage !== 11) issues.push("inventory.source_layout");
     if (!inventory || !inventory.answerAvailability || inventory.answerAvailability.itemCount !== 30
+      || inventory.answerAvailability.sourceKeyValues !== 29
+      || inventory.answerAvailability.missingSourceKeys !== 1
+      || inventory.answerAvailability.privateCompletions !== 1
       || inventory.answerAvailability.detailedSolutions !== false
-      || inventory.answerAvailability.independentCheck !== "pending") issues.push("inventory.answer_availability");
+      || inventory.answerAvailability.independentCheck !== "verified_private") issues.push("inventory.answer_availability");
+    if (!inventory || !inventory.correctionSummary || inventory.correctionSummary.count !== 1
+      || inventory.correctionSummary.itemNumbers.join(",") !== "1"
+      || inventory.correctionSummary.type !== "missing_source_key_completion"
+      || inventory.correctionSummary.protectedArtifactRequired !== true) issues.push("inventory.correction_summary");
     const list = inventory && Array.isArray(inventory.items) ? inventory.items : [];
     if (list.length !== 30) issues.push("inventory.item_count");
     const seen = new Set();
@@ -138,8 +145,9 @@
       if (!item || !Number.isSafeInteger(item.responseSlotCount) || item.responseSlotCount < 1 || item.responseSlotCount > 4) issues.push(`${prefix}.response_slots`);
       if (item && item.responseCandidate === "input" && item.responseSlotCount !== 1) issues.push(`${prefix}.input_slots`);
       if (!item || item.pointCandidate !== 1 || item.officialWeight !== false) issues.push(`${prefix}.point`);
-      if (!item || item.answerStatus !== "found_pending_independent_check") issues.push(`${prefix}.answer_status`);
-      if (!item || item.classificationStatus !== "agent_verified" || item.resolutionStatus !== "review_blocked") issues.push(`${prefix}.review_status`);
+      const expectedAnswerStatus = item && item.number === 1 ? "key_completed_private" : "verified_private";
+      if (!item || item.answerStatus !== expectedAnswerStatus) issues.push(`${prefix}.answer_status`);
+      if (!item || item.classificationStatus !== "agent_verified" || item.resolutionStatus !== "agent_verified") issues.push(`${prefix}.review_status`);
       const ref = item && item.lineageRef;
       if (!ref || ref.sourceExamId !== inventory.sourceExamId || ref.sourceAssetId !== inventory.sourceAssetId) issues.push(`${prefix}.lineage.source`);
       if (!ref || !core.isNeutralId(ref.lineageId, "lineage", MODE) || !core.isNeutralId(ref.questionTypeId, "type", MODE)) issues.push(`${prefix}.lineage.id`);
@@ -151,9 +159,9 @@
 
   function evaluateReviewGate(inventory) {
     const issues = Array.from(validateReviewInventory(inventory));
-    if (inventory && inventory.items.some(function (item) { return item.resolutionStatus === "review_blocked"; })) {
-      issues.push("review.answer_audit_pending");
-    }
+    issues.push("review.protected_scorer_pending");
+    issues.push("review.print_audit_pending");
+    issues.push("review.signed_assets_pending");
     issues.push("review.final_exam_confirmation_pending");
     return Object.freeze({ canAssemble: false, canRelease: false, issues: Object.freeze(Array.from(new Set(issues)).sort()) });
   }
@@ -174,7 +182,20 @@
       questionPages: Object.freeze([3, 4, 5, 6, 7, 8, 9, 10]),
       answerPage: 11
     }),
-    answerAvailability: Object.freeze({ itemCount: 30, detailedSolutions: false, independentCheck: "pending" }),
+    answerAvailability: Object.freeze({
+      itemCount: 30,
+      sourceKeyValues: 29,
+      missingSourceKeys: 1,
+      privateCompletions: 1,
+      detailedSolutions: false,
+      independentCheck: "verified_private"
+    }),
+    correctionSummary: Object.freeze({
+      count: 1,
+      itemNumbers: Object.freeze([1]),
+      type: "missing_source_key_completion",
+      protectedArtifactRequired: true
+    }),
     sourceExamId: SOURCE_EXAM_ID,
     sourceAssetId: SOURCE_ASSET_ID,
     items
