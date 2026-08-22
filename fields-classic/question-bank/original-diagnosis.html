@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f3f7fa" />
+  <title>필즈 더 클래식 원본 시험 진단</title>
+  <link rel="stylesheet" href="./original-diagnosis.css?v=20260822a" />
+</head>
+<body>
+  <header class="diagnosis-header">
+    <a href="./index.html" class="back-link">문제은행</a>
+    <div><span>ORIGINAL TEST REVIEW</span><strong>원본 시험 진단</strong></div>
+    <span id="studentName"></span>
+  </header>
+  <main class="diagnosis-shell">
+    <section class="exam-select-panel" aria-labelledby="examSelectTitle">
+      <div>
+        <span>시험지를 푼 뒤 채점한 결과를 입력합니다.</span>
+        <h1 id="examSelectTitle">어떤 원본 시험을 진단할까요?</h1>
+      </div>
+      <select id="examSelect" aria-label="원본 시험 선택"></select>
+    </section>
+
+    <section class="score-panel" aria-live="polite">
+      <div><span>입력 완료</span><strong id="answeredCount">0 / 20</strong></div>
+      <div><span>맞힌 문항</span><strong id="correctCount">0</strong></div>
+      <div><span>현재 점수</span><strong id="scoreValue">-</strong></div>
+      <button type="button" id="clearAnswers">입력 지우기</button>
+    </section>
+
+    <section class="response-panel" aria-labelledby="responseTitle">
+      <div class="section-heading"><div><span id="examTiming"></span><h2 id="responseTitle"></h2></div><p>각 문항에 O 또는 X를 한 번만 선택하세요.</p></div>
+      <div id="responseGrid" class="response-grid"></div>
+    </section>
+
+    <section class="result-panel" id="resultPanel" hidden aria-labelledby="resultTitle">
+      <div class="section-heading"><div><span>유형별 진단</span><h2 id="resultTitle">학습 결과</h2></div><p>틀린 문항의 사고 구조를 기준으로 정리했습니다.</p></div>
+      <div class="result-summary" id="resultSummary"></div>
+      <div class="weak-types" id="weakTypes"></div>
+    </section>
+  </main>
+  <script type="module" src="./original-diagnosis.js?v=20260822a"></script>
+</body>
+</html>

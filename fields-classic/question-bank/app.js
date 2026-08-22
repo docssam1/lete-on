@@ -275,8 +275,8 @@ function renderExamList() {
     // 링크만 걸어 두면 빈 뷰어로 들어가게 된다.
     // 파일명에 붙은 괄호 안 시행일(230206 등)은 화면에 내보내지 않는다. 파일을 찾는 데만 쓰는 값이다.
     const fileName = String(exam.file || "").replace(/\((\d{6}|\d{8})\)/g, "");
-    const sourceLink = exam.sourceViewer === false || !exam.sourcePageCount ? "" : `<a class="source-view-link" href="./selection-test-viewer.html?exam=${exam.id}&student=${encodeURIComponent(student)}">원문 보기</a>`;
-    return `<details class="tree-group" open><summary><strong>${exam.label}</strong><span>${exam.questions.length}문항</span></summary><div class="exam-source"><span>${fileName}</span>${sourceLink}</div>${rows}</details>`;
+    const diagnosisLink = exam.sourcePageCount ? `<a class="source-view-link" href="./original-diagnosis.html?exam=${exam.id}&student=${encodeURIComponent(student)}">O/X 진단</a>` : "";
+    return `<details class="tree-group" open><summary><strong>${exam.label}</strong><span>${exam.questions.length}문항</span></summary><div class="exam-source"><span>${fileName}</span>${diagnosisLink}</div>${rows}</details>`;
   };
   const groups = state.stage === "ours"
     ? OUR_MOCK_EXAM_GROUPS
