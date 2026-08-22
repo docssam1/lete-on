@@ -153,7 +153,7 @@
     {
       id: "dp-common1-entry-202405",
       programId: "DP",
-      title: "DP 공통수학1 원본형",
+      title: "DP 공통수학1 입학 1차 모의고사",
       track: "공통수학1 입학",
       curriculumVersion: "2022-revised",
       scopeLabel: "중2-1~중3-2 누적 · 30문항",
@@ -162,13 +162,15 @@
       sourcePageCount: 11,
       privateAnswerPageCount: 1,
       sourceRole: "actual-revision",
+      deliveryRole: "first-sale-mock",
+      formProfile: "sale-mock-a4-v1",
       sourceStatus: "audited",
       answerStatus: "found",
       classificationStatus: "verified",
       releaseStatus: "review_pending",
       assetPolicy: "signed-page-images",
       visible: true,
-      note: "2024년 5월 원본 판본을 보존하고, 조건이 부족했던 29번만 같은 세부유형·난도의 검산 완료 문항으로 교체했습니다. 이 판본의 시간과 기준은 회차 전체 승인 전에는 판정에 사용하지 않습니다."
+      note: "2024년 5월 원본 판본은 출제 근거로 보존하고, 학생 제공본은 공통 A4 폼의 1차 판매용 모의고사로 운영합니다. 조건이 부족했던 29번만 같은 세부유형·난도의 검산 완료 문항으로 교체했습니다. 이 판본의 시간과 기준은 회차 전체 승인 전에는 판정에 사용하지 않습니다."
     },
     {
       id: "wm-algebra-geometry-diagnostic",

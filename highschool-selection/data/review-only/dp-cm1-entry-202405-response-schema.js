@@ -11,7 +11,7 @@
 
   if (!inventoryModule || !inventoryModule.inventory) throw new Error("DP CM1 entry review inventory is required");
 
-  const EXAM_ID = "dp-common1-entry";
+  const EXAM_ID = "dp-common1-entry-202405";
   const SCHEMA_VERSION = "dp-cm1-entry-202405-response-v1";
   const PRIVATE_KEY = /(?:answer(?:key|spec|value)?|solution|explanation|sourcepath|filepath|pdfurl|downloadurl|storageurl|correct)/i;
 
