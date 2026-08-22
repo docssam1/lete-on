@@ -1,4 +1,4 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822k";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822l";
 import { GENERATORS } from "./generators.js?v=20260822k";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260822e";
@@ -15,7 +15,8 @@ const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
 const domainIndex = Object.fromEntries(DOMAINS.map((domain, index) => [domain.id, index]));
-const stageIds = new Set([...AGE_STAGES.map((item) => item.id), "practice", "final"]);
+const stageIds = new Set([...AGE_STAGES.map((item) => item.id), "diagnostic", "practice", "final"]);
+const EXAM_SOURCES = [...DIAGNOSTIC_EXAM_TYPES, ...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES];
 
 const state = {
   mode: "exam",
@@ -51,7 +52,7 @@ function withProblemContext(problem, item, reference) {
 }
 
 function isReady(item) {
-  // 진단 문제은행은 건드리지 않는다. 이 문제은행은 원본 1:1 대조(sourceMatched)
+  // 진단 유사문제 화면은 건드리지 않는다. 이 문제은행은 원본 1:1 대조(sourceMatched)
   // 또는 공용 엔진 독립 검산(bankApproved)을 통과하고 실제 생성 경로가 있는
   // 유형만 연다. 이름만 비슷한 레거시 이미지나 시제품은 열지 않는다.
   const ownGenerator = item?.generator && GENERATORS[item.generator];
@@ -61,7 +62,7 @@ function isReady(item) {
 }
 
 function hasVerifiedSource(typeId) {
-  return [...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES].some((exam) => exam.questions.some((sourceQuestion) => sourceQuestion.verified && sourceQuestion.typeId === typeId));
+  return EXAM_SOURCES.some((exam) => exam.questions.some((sourceQuestion) => sourceQuestion.verified && sourceQuestion.typeId === typeId));
 }
 
 function isSelectableType(item) {
@@ -219,7 +220,7 @@ function setMode(mode) {
 }
 
 function renderStageButtons() {
-  const stages = [...AGE_STAGES, { id: "practice", label: "실전 모의고사" }, { id: "final", label: "파이널 모의고사" }];
+  const stages = [{ id: "diagnostic", label: "진단 모의고사" }, ...AGE_STAGES, { id: "practice", label: "실전 모의고사" }, { id: "final", label: "파이널 모의고사" }];
   $("examAgeButtons").innerHTML = stages.map((item) => `<button type="button" class="${item.id === state.stage ? "active" : ""}" data-stage="${item.id}">${item.label}</button>`).join("");
   $("examAgeButtons").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.stage = button.dataset.stage;
@@ -229,6 +230,7 @@ function renderStageButtons() {
 }
 
 function visibleExams() {
+  if (state.stage === "diagnostic") return DIAGNOSTIC_EXAM_TYPES;
   if (state.stage === "practice") return PRACTICE_EXAM_TYPES;
   if (state.stage === "final") return FINAL_EXAM_TYPES;
   return EXAMS.filter((exam) => exam.stage === state.stage);
@@ -241,7 +243,7 @@ function examKey(examId, number) {
 function renderExamList() {
   const exams = visibleExams();
   const stage = AGE_STAGES.find((item) => item.id === state.stage);
-  $("examStageTitle").textContent = stage?.label || (state.stage === "final" ? "파이널 모의고사" : "실전 모의고사");
+  $("examStageTitle").textContent = stage?.label || (state.stage === "diagnostic" ? "진단 모의고사" : state.stage === "final" ? "파이널 모의고사" : "실전 모의고사");
   $("examStageMeta").textContent = `${exams.length}개 시험지 · 원본 문항 번호 기준`;
   $("examNotice").textContent = "원본 문제의 문항 번호를 고른 뒤, 그 문제보다 쉽게·같게·어렵게 유사문제를 만들 수 있습니다. 연산 테스트는 이 문제은행에서 제외합니다.";
   $("examTypeList").innerHTML = exams.map((exam) => {
@@ -251,10 +253,12 @@ function renderExamList() {
       const ready = verified && isSelectableType(item);
       const page = typeof exam.pageFor === "function" ? `원본 ${exam.pageFor(sourceQuestion.number)}쪽` : "원본 문항";
       const key = examKey(exam.id, sourceQuestion.number);
+      const sourceTitle = sourceQuestion.note || item?.label || "분류 확인 중";
+      const typeDetail = item?.label && sourceTitle !== item.label ? `세부 유형: ${item.label} · ` : "";
       return `<label class="exam-row ${ready ? "" : "not-ready"}"${ready ? ` data-preview-type="${item.id}"` : ""}>
         <span class="number">${sourceQuestion.number}번</span>
         <input type="checkbox" data-exam-key="${key}" ${state.selected.exam.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
-        <span><strong>${item?.label || "분류 확인 중"}</strong><span>${item?.middle || ""} · ${page} · 실제 출제</span></span>
+        <span><strong>${sourceTitle}</strong><span>${item?.middle || ""} · ${typeDetail}${page} · 실제 출제</span></span>
         <em class="type-status ${ready ? "" : "fixed"}">${verified ? typeStatus(item) : "원본 대조 중"}</em>
       </label>`;
     }).join("");
@@ -415,7 +419,7 @@ function selectedReferences() {
     return result;
   }
   const result = [];
-  for (const exam of [...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES]) {
+  for (const exam of EXAM_SOURCES) {
     for (const sourceQuestion of exam.questions) {
       if (state.selected.exam.has(examKey(exam.id, sourceQuestion.number))) {
         result.push({
@@ -2596,11 +2600,12 @@ setMode("exam");
 (function preselectExam() {
   const wanted = params.get("exam");
   if (!wanted) return;
-  const exam = [...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES].find((item) => item.id === wanted);
+  const exam = EXAM_SOURCES.find((item) => item.id === wanted);
   if (!exam) return;
   if (exam.stage && stageIds.has(exam.stage)) state.stage = exam.stage;
   else if (FINAL_EXAM_TYPES.includes(exam)) state.stage = "final";
   else if (PRACTICE_EXAM_TYPES.includes(exam)) state.stage = "practice";
+  else if (DIAGNOSTIC_EXAM_TYPES.includes(exam)) state.stage = "diagnostic";
   renderStageButtons();
   renderExamList();
   let picked = 0;
@@ -2611,6 +2616,8 @@ setMode("exam");
   });
   if (!picked) return;
   state.count = picked;
+  $("questionCount").value = String(picked);
+  $("countChoices").querySelectorAll("button").forEach((button) => button.classList.toggle("active", Number(button.dataset.count) === picked));
   renderExamList();
   updateSummary();
 })();

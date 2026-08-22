@@ -255,6 +255,10 @@ export const TYPES = [
   type("magic-card", "number", "수 카드와 식", "마법카드로 수 찾기", { status: "curriculum" }),
   type("reverse-thinking", "logic", "과정 추론", "거꾸로 생각하기", { generator: "halfGiveReverse", sourceMatched: true }),
   type("argument-logic", "logic", "조건 추리", "조건을 따져 옳고 그름 판단하기", { status: "curriculum" }),
+  // 진단 모의고사 원본의 구조 색인이다. 생성기를 만들기 전에는 문제은행에서 잠근다.
+  type("diagnostic-dialogue-condition-number", "number", "조건에 맞는 수", "대화 속 여러 조건으로 수 구하기", { status: "classified" }),
+  type("diagnostic-number-relation", "number", "수 사이의 약속", "여러 수의 관계로 빈칸 구하기", { status: "classified" }),
+  type("diagnostic-two-digit-cryptarithm", "number", "복면산과 식", "두 자리 수 덧셈 복면산", { status: "classified" }),
 
   // 더클래식 1과정 1권: 단원 안에서도 실제 문항의 풀이 구조가 바뀌는 곳마다
   // 별도 유형으로 나눈다. 페이지는 판본마다 달라질 수 있어 문제 번호만 런타임에 쓴다.
@@ -787,6 +791,47 @@ export const PRACTICE_EXAM_TYPES = [
   ...question(index + 1, typeId),
   verified: true
 })) }));
+
+// 진단 화면(`mock/index.html`)의 QS 25문항을 문제은행 시험지 탭에도 연결한다.
+// 진단·처방 화면의 유사문제 로직은 여기서 재사용하거나 수정하지 않는다. 이 목록은
+// 원본 문항의 구조와 문제은행 세부 유형을 잇는 색인이다. 전용 생성기가 없는 문항은
+// `isReady` 게이트에서 잠긴 채 보이며, 이름만 비슷한 다른 유형을 대신 열지 않는다.
+export const DIAGNOSTIC_EXAM_TYPES = [
+  {
+    id: "diagnostic-mock",
+    stage: "diagnostic",
+    label: "필즈 대비 선발 진단 모의고사",
+    file: "필즈 대비 선발 진단 모의고사 · 25문항",
+    sourceViewer: false,
+    questions: [
+      question(1, "rod-length-ratio", "같은 단위로 나타낸 막대의 길이"),
+      question(2, "diagnostic-dialogue-condition-number", "대화 속 조건에 맞는 수 구하기"),
+      question(3, "equalize-transfer", "주고받아 같게 만들기"),
+      question(4, "fold-hole-count", "한 번 접은 색종이의 구멍 개수"),
+      question(5, "total-difference", "더 많이 가진 수와 전체 수로 두 수 구하기"),
+      question(6, "order-position", "줄 세우기에서 등수 정하기"),
+      question(7, "set-union-count", "집합과 포함 관계"),
+      question(8, "balance-order-chain", "양팔저울로 무게 순서 정하기"),
+      question(9, "diagnostic-number-relation", "수의 관계 조건으로 빈칸 구하기"),
+      question(10, "shape-sum-table", "같은 두 도형의 수가 있는 표"),
+      question(11, "paired-sequences", "두 수열의 규칙"),
+      question(12, "repeat-pattern", "도형 패턴의 규칙"),
+      question(13, "symbol-relation", "도형으로 수 나타내기"),
+      question(14, "magic-square", "마방진의 합 일정"),
+      question(15, "bus-change", "타고 내린 승객의 수"),
+      question(16, "number-pyramid", "두 번 모으는 수 피라미드"),
+      question(17, "grid-number-placement", "이웃 조건에 맞는 숫자 배치"),
+      question(18, "two-digit-condition", "조건에 맞는 두 자리 수"),
+      question(19, "symbol-sum-grid", "같은 세 도형의 수가 있는 표"),
+      question(20, "diagnostic-two-digit-cryptarithm", "두 자리 수 덧셈 복면산"),
+      question(21, "arrow-number-grid", "화살표 수 배열 규칙"),
+      question(22, "triangle-tile-growth", "삼각형 도형 증가 규칙"),
+      question(23, "go-stone-difference-inverse", "바둑돌 차이로 번째 찾기"),
+      question(24, "symbol-relation", "도형이 나타내는 수"),
+      question(25, "cube-pattern-sequence", "쌓기나무 규칙")
+    ].map((entry) => ({ ...entry, verified: true }))
+  }
+];
 
 export const FINAL_EXAM_TYPES = [
   {
