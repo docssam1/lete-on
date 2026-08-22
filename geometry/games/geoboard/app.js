@@ -24,8 +24,8 @@ import {
   samePoint, pointKey, targetPoints, acceptsAnswer,
   isClosed, vertexCount, edgeCount,
   pointOnSegment, segmentsIntersect
-} from "./levels.js?v=geoboard-3";
-import { messages, text } from "./i18n.js?v=geoboard-3";
+} from "./levels.js?v=geoboard-5";
+import { messages, text } from "./i18n.js?v=geoboard-5";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
@@ -555,19 +555,22 @@ function renderLevelList() {
 
 const tutorialSteps = ["tutorial1", "tutorial2", "tutorial3", "tutorial4"];
 const tutorialScenes = [
-  { points: [[0, 1]] },
-  { points: [[0, 1], [2, 1]] },
-  { points: [[0, 2], [2, 2], [1, 0]] },
-  { points: [[0, 2], [2, 2], [1, 0], [0, 2]], solved: true }
+  { points: [[0, 1]], duration: 3600 },
+  { points: [[0, 1], [2, 1]], duration: 4400 },
+  { points: [[0, 2], [2, 2], [1, 0]], duration: 5600 },
+  { points: [[0, 2], [2, 2], [1, 0], [0, 2]], duration: 6800, readyAt: 5700, solved: true }
 ];
 const tutorialGrid = { cols: 3, rows: 3 };
-const TUTORIAL_SCENE_MS = 5200;
+const TUTORIAL_DRAG_MS = reducedMotion ? 520 : 1050;
 let tutorialStep = 0;
 let tutorialTimers = [];
+let tutorialFrames = new Set();
 
 function clearTutorialTimers() {
   tutorialTimers.forEach(clearTimeout);
   tutorialTimers = [];
+  tutorialFrames.forEach(cancelAnimationFrame);
+  tutorialFrames.clear();
 }
 
 function tutorialLater(callback, delay) {
@@ -576,30 +579,73 @@ function tutorialLater(callback, delay) {
   return timer;
 }
 
-function placeTutorialHand(point) {
-  ui.tutorialHand.style.left = `${pegX(point[0], tutorialGrid)}%`;
-  ui.tutorialHand.style.top = `${pegY(point[1], tutorialGrid)}%`;
-  ui.tutorialHand.classList.remove("tap");
-  void ui.tutorialHand.offsetWidth;
-  ui.tutorialHand.classList.add("tap");
+function tutorialFrame(callback) {
+  const frame = requestAnimationFrame((time) => {
+    tutorialFrames.delete(frame);
+    callback(time);
+  });
+  tutorialFrames.add(frame);
+}
 
+function setTutorialHandPosition(x, y) {
+  ui.tutorialHand.style.left = `${x}%`;
+  ui.tutorialHand.style.top = `${y}%`;
+  ui.tutorialHand.classList.add("visible");
+}
+
+function pulseTutorialPeg(point) {
   const peg = ui.tutorialPegs.querySelector(`[data-x="${point[0]}"][data-y="${point[1]}"]`);
   peg?.classList.remove("active");
   void peg?.getBoundingClientRect();
   peg?.classList.add("active");
 }
 
-function addTutorialBand(from, to, solved) {
-  ui.tutorialBands.append(svgNode("line", {
-    class: `tutorial-band${solved ? " solved" : ""}`,
-    x1: pegX(from[0], tutorialGrid), y1: pegY(from[1], tutorialGrid),
-    x2: pegX(to[0], tutorialGrid), y2: pegY(to[1], tutorialGrid)
-  }));
+function tapTutorialPeg(point) {
+  setTutorialHandPosition(pegX(point[0], tutorialGrid), pegY(point[1], tutorialGrid));
+  ui.tutorialHand.classList.remove("tap");
+  void ui.tutorialHand.offsetWidth;
+  ui.tutorialHand.classList.add("tap");
+  pulseTutorialPeg(point);
+}
+
+function animateTutorialBand(from, to, onDone) {
+  const fromX = pegX(from[0], tutorialGrid);
+  const fromY = pegY(from[1], tutorialGrid);
+  const toX = pegX(to[0], tutorialGrid);
+  const toY = pegY(to[1], tutorialGrid);
+  const band = svgNode("line", {
+    class: "tutorial-band",
+    x1: fromX, y1: fromY, x2: fromX, y2: fromY
+  });
+  ui.tutorialBands.append(band);
+  ui.tutorialHand.classList.add("dragging");
+
+  let started = null;
+  const draw = (time) => {
+    if (started === null) started = time;
+    const raw = Math.max(0, Math.min(1, (time - started) / TUTORIAL_DRAG_MS));
+    const eased = raw < .5 ? 4 * raw * raw * raw : 1 - Math.pow(-2 * raw + 2, 3) / 2;
+    const x = fromX + (toX - fromX) * eased;
+    const y = fromY + (toY - fromY) * eased;
+    band.setAttribute("x2", x);
+    band.setAttribute("y2", y);
+    setTutorialHandPosition(x, y);
+    if (raw < 1) {
+      tutorialFrame(draw);
+      return;
+    }
+
+    ui.tutorialHand.classList.remove("dragging");
+    tapTutorialPeg(to);
+    onDone?.();
+  };
+  tutorialFrame(draw);
 }
 
 function playTutorialScene(scene) {
   ui.tutorialBands.replaceChildren();
   ui.tutorialPegs.replaceChildren();
+  ui.tutorialHand.classList.remove("visible", "tap", "dragging");
   for (let y = 0; y < tutorialGrid.rows; y += 1) {
     for (let x = 0; x < tutorialGrid.cols; x += 1) {
       ui.tutorialPegs.append(svgNode("circle", {
@@ -609,20 +655,33 @@ function playTutorialScene(scene) {
     }
   }
 
-  scene.points.forEach((point, index) => {
-    const moveAt = 350 + index * 720;
-    tutorialLater(() => placeTutorialHand(point), moveAt);
-    if (index > 0) {
-      tutorialLater(() => addTutorialBand(scene.points[index - 1], point, scene.solved), moveAt + 360);
-    }
+  tutorialLater(() => tapTutorialPeg(scene.points[0]), 400);
+  scene.points.slice(1).forEach((point, offset) => {
+    const index = offset + 1;
+    const moveAt = 1350 + offset * 1450;
+    tutorialLater(() => animateTutorialBand(scene.points[index - 1], point, () => {
+      if (!scene.solved || index !== scene.points.length - 1) return;
+      ui.tutorialBands.querySelectorAll(".tutorial-band").forEach((band) => band.classList.add("solved"));
+    }), moveAt);
   });
 }
 
 // Only on the very first problem of a first visit — never again on this device.
+function releaseTutorialPwaDefer() {
+  delete document.documentElement.dataset.pwaDefer;
+  window.dispatchEvent(new CustomEvent("gfield:tutorial-finished"));
+}
+
 function openTutorial() {
   const replay = params.get("tutorial") === "1";
-  if (state.problem !== 0 || state.level !== readyLevels[0].id) return;
-  if (!replay && localStorage.getItem(TUTORIAL_KEY) === "done") return;
+  if (state.problem !== 0 || state.level !== readyLevels[0].id) {
+    releaseTutorialPwaDefer();
+    return;
+  }
+  if (!replay && localStorage.getItem(TUTORIAL_KEY) === "done") {
+    releaseTutorialPwaDefer();
+    return;
+  }
   state.locked = true;
   tutorialStep = 0;
   ui.tutorial.hidden = false;
@@ -638,16 +697,22 @@ function renderTutorial() {
     if (index === tutorialStep) dot.className = "active";
     return dot;
   }));
-  ui.tutorialWatching.textContent = t(tutorialStep === tutorialSteps.length - 1 ? "tutorialReady" : "tutorialWatching");
-  ui.tutorialNext.textContent = t(tutorialStep === tutorialSteps.length - 1 ? "tutorialStart" : "tutorialSkip");
-  playTutorialScene(tutorialScenes[tutorialStep]);
+  const scene = tutorialScenes[tutorialStep];
+  ui.tutorialWatching.textContent = t("tutorialWatching");
+  ui.tutorialNext.textContent = t("tutorialSkip");
+  playTutorialScene(scene);
   speak(line);
 
   if (tutorialStep < tutorialSteps.length - 1) {
     tutorialLater(() => {
       tutorialStep += 1;
       renderTutorial();
-    }, TUTORIAL_SCENE_MS);
+    }, scene.duration);
+  } else {
+    tutorialLater(() => {
+      ui.tutorialWatching.textContent = t("tutorialReady");
+      ui.tutorialNext.textContent = t("tutorialStart");
+    }, scene.readyAt);
   }
 }
 
@@ -657,6 +722,7 @@ function finishTutorial() {
   ui.tutorial.hidden = true;
   state.locked = false;
   if ("speechSynthesis" in window) speechSynthesis.cancel();
+  releaseTutorialPwaDefer();
 }
 
 /* ---------------------------------------------------------------- language */
