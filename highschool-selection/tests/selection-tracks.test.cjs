@@ -102,18 +102,23 @@ test("program-track scopes preserve their evidence status instead of inferring a
   });
 
   const transfer = data.programTrackBindings.find(item => item.id === "DP:middle-transfer");
-  assert.equal(transfer.evidenceStatus, "observed");
+  assert.equal(transfer.evidenceStatus, "verified");
   assert.equal(transfer.scopeKey, "middle1-1-to-middle2-2");
-  assert.deepEqual(Array.from(transfer.evidenceRefs), ["USER:DP-MIDDLE2-2-TRANSFER-SCOPE"]);
+  assert.deepEqual(Array.from(transfer.evidenceRefs), ["EXAM:dp-middle2-2-transfer"]);
   assert.equal(data.programTrackBindings.some(item => item.trackId === "high-transfer"), false);
 });
 
 test("DP middle2-2 transfer is a separate locked card and never inherits a generic cutoff", () => {
   const exam = catalog.exams.find(item => item.id === "dp-middle2-2-transfer");
   assert.equal(exam.programId, "DP");
-  assert.equal(exam.questionCount, null);
-  assert.equal(exam.sourceStatus, "candidate_scope_conflict");
-  assert.equal(exam.releaseStatus, "blocked");
+  assert.equal(exam.questionCount, 30);
+  assert.equal(exam.pageCount, 10);
+  assert.equal(exam.sourcePageCount, 11);
+  assert.equal(exam.privateAnswerPageCount, 1);
+  assert.equal(exam.sourceStatus, "audited");
+  assert.equal(exam.answerStatus, "found");
+  assert.equal(exam.classificationStatus, "verified");
+  assert.equal(exam.releaseStatus, "review_pending");
   const resolved = data.resolveExamTrack(exam.id);
   assert.equal(resolved.track.id, "middle-transfer");
   assert.equal(resolved.binding.scopeKey, "middle1-1-to-middle2-2");
