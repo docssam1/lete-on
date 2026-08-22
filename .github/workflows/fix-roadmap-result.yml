@@ -1,0 +1,71 @@
+name: One-time roadmap result visibility fix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-roadmap-result.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch roadmap result flow
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          files = [Path('roadmap/index.html'), Path('roadmap/demo/index.html')]
+          old = """    fillComment(diagData);      // 상담 코멘트
+    drawProgressGraph(diagData);// 사고력 진도 꺾은선 그래프
+    document.getElementById('studentResult').style.display='block';"""
+          new = """    fillComment(diagData);      // 상담 코멘트
+    document.getElementById('studentResult').style.display='block';
+    try{ drawProgressGraph(diagData); }catch(err){ console.error('drawProgressGraph failed',err); } // 그래프 오류가 나도 코멘트/분석은 표시"""
+
+          old_plain = """    fillComment(diagData);
+    drawProgressGraph(diagData);
+    document.getElementById('studentResult').style.display='block';"""
+          new_plain = """    fillComment(diagData);
+    document.getElementById('studentResult').style.display='block';
+    try{ drawProgressGraph(diagData); }catch(err){ console.error('drawProgressGraph failed',err); }"""
+
+          for p in files:
+            s = p.read_text(encoding='utf-8')
+            c1 = s.count(old)
+            c2 = s.count(old_plain)
+            total = c1 + c2
+            if total == 0:
+              raise SystemExit(f'{p}: target sequence not found; aborting')
+            s = s.replace(old, new).replace(old_plain, new_plain)
+            p.write_text(s, encoding='utf-8')
+            print(f'{p}: patched {total} result-flow occurrence(s)')
+          PY
+      - name: Verify result section and JS markers
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ['roadmap/index.html','roadmap/demo/index.html']:
+            s=Path(name).read_text(encoding='utf-8')
+            assert '<section id="studentResult"' in s
+            assert "document.getElementById('studentResult').style.display='block';" in s
+            assert "try{ drawProgressGraph(diagData); }catch(err)" in s
+            assert 'id="studentComment"' in s
+            assert 'id="levelDelta"' in s
+            print(name, 'OK')
+          PY
+      - name: Commit fix and remove one-time workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/fix-roadmap-result.yml
+          git add roadmap/index.html roadmap/demo/index.html
+          git commit -m "fix(roadmap): keep analysis/comment visible when graph rendering fails"
+          git push origin main
