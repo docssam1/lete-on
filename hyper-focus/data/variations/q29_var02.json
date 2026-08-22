@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q29",
+  "variationId": "q29_var02",
+  "subType": "number_grid_pattern",
+  "status": "draft",
+  "source": {"problemImage": "./assets/svg/variations/q29_var02.svg"},
+  "contentBinding": {"canonicalSource": "./canonical/q29.json", "hfDataTypeId": 29},
+  "problem": {"prompt": "네모 칸의 수가 가진 가로와 세로 규칙을 찾아 물음표에 알맞은 수를 쓰세요. 답은 위쪽 줄의 왼쪽, 오른쪽, 아래쪽 순서로 쓰세요."},
+  "machineReadable": {
+    "payloadType": "number_grid_pattern",
+    "layout": "canonical_staggered_boxes",
+    "rowStep": 4,
+    "columnStep": 9,
+    "cells": [
+      {"row": 0, "col": 0, "value": 6}, {"row": 0, "col": 1, "value": 10}, {"row": 0, "col": 2, "value": 14},
+      {"row": 1, "col": 2, "value": 23},
+      {"row": 2, "col": 0, "value": 24}, {"row": 2, "col": 1, "value": null, "slot": 1}, {"row": 2, "col": 2, "value": 32}, {"row": 2, "col": 3, "value": null, "slot": 2},
+      {"row": 3, "col": 1, "value": 37}, {"row": 3, "col": 3, "value": null, "slot": 3}, {"row": 3, "col": 4, "value": 49}
+    ],
+    "solvingModel": {"expectedAnswer": [28, 36, 45], "verificationMethod": "fit_row_and_column_steps"}
+  },
+  "answerValidation": {"answerType": "ordered_slots", "expectedAnswer": [28, 36, 45]},
+  "solutionHint": "가로로 한 칸 갈 때마다 4씩 커지고, 세로로 한 칸 내려갈 때마다 9씩 커집니다. 따라서 물음표에는 차례로 28, 36, 45가 들어갑니다."
+}

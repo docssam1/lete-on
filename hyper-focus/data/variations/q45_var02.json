@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q45",
+  "variationId": "q45_var02",
+  "subType": "shortest_path_grid",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/svg/variations/q45_var02.svg"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q45.json",
+    "hfDataTypeId": 45
+  },
+  "problem": {
+    "prompt": "미술관에서 출발하여 동물원으로 가는 가장 가까운 길은 모두 몇 가지인지 구하세요."
+  },
+  "machineReadable": {
+    "payloadType": "shortest_path_grid",
+    "coordinateSystem": {
+      "origin": "top_left",
+      "rowDirection": "down",
+      "colDirection": "right"
+    },
+    "nodeGrid": { "rows": 4, "cols": 4 },
+    "missingNodes": [{ "row": 0, "col": 3 }],
+    "blockedEdges": [
+      { "from": { "row": 1, "col": 0 }, "to": { "row": 2, "col": 0 } }
+    ],
+    "routeRule": {
+      "start": { "row": 0, "col": 0, "label": "미술관" },
+      "end": { "row": 3, "col": 3, "label": "동물원" },
+      "movement": "orthogonal_existing_edges",
+      "countShortestOnly": true,
+      "edgeLength": "equal_unit"
+    },
+    "countingModel": {
+      "method": "dp_count_shortest_paths",
+      "countTable": [
+        [1, 1, 1, null],
+        [1, 2, 3, 3],
+        [0, 2, 5, 8],
+        [0, 2, 7, 15]
+      ],
+      "expectedAnswer": 15
+    }
+  },
+  "answerValidation": {
+    "answerType": "integer_with_unit",
+    "unit": "가지",
+    "expectedAnswer": 15
+  },
+  "solutionHint": "미술관에서 가까운 점부터 1을 적습니다. 그다음 각 점에 위쪽과 왼쪽에서 오는 길의 수를 더해 적으면 동물원에는 15가 됩니다. 따라서 답은 15가지입니다."
+}

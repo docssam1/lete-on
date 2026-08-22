@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">벌집의 모든 칸을 한 번씩 지나 옳은 식 만들기 유사문제 2</title>
+  <desc id="desc">숫자와 연산 기호가 적힌 세 개의 일곱 칸 벌집에서 옳은 식이 되는 길을 찾는 문제입니다.</desc>
+  <defs>
+    <polygon id="hex" points="0,-34 30,-17 30,17 0,34 -30,17 -30,-17"/>
+    <filter id="shadow" x="-10%" y="-14%" width="120%" height="136%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#333333" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <rect width="760" height="430" rx="24" fill="#ffffff"/>
+  <text x="380" y="43" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#202027">모든 칸을 한 번씩 지나 옳은 식을 만드세요</text>
+  <text x="380" y="72" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#59606a">이웃한 칸으로만 움직이고, 숫자가 이어지면 한 수로 읽어요.</text>
+  <rect x="25" y="93" width="710" height="282" rx="22" fill="#fafafa" stroke="#dedede" stroke-width="2" filter="url(#shadow)"/>
+
+  <g font-family="'Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle" fill="#25252b">
+    <g id="q27-board-1" transform="translate(145 227)">
+      <text x="-88" y="-98" font-size="18" font-weight="900">(1)</text>
+      <g data-cell="TL" data-value="7" transform="translate(-30 -51)"><use href="#hex" fill="#ffffff" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="25">7</text></g>
+      <g data-cell="TR" data-value="4" transform="translate(30 -51)"><use href="#hex" fill="#ffffff" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="25">4</text></g>
+      <g data-cell="R" data-value="=" transform="translate(60 0)"><use href="#hex" fill="#e9e9e9" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="27" font-weight="800">=</text></g>
+      <g data-cell="BR" data-value="8" transform="translate(30 51)"><use href="#hex" fill="#ffffff" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="25">8</text></g>
+      <g data-cell="BL" data-value="6" transform="translate(-30 51)"><use href="#hex" fill="#ffffff" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="25">6</text></g>
+      <g data-cell="L" data-value="-" transform="translate(-60 0)"><use href="#hex" fill="#e9e9e9" stroke="#596575" stroke-width="2"/><text dy="0.30em" font-size="30" font-weight="800">−</text></g>
+      <g data-cell="C" data-value="2"><use href="#hex" fill="#f3f3f3" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="25">2</text></g>
+    </g>
+
+    <g id="q27-board-2" transform="translate(380 227)">
+      <text x="-88" y="-98" font-size="18" font-weight="900">(2)</text>
+      <g data-cell="TL" data-value="9" transform="translate(-30 -51)"><use href="#hex" fill="#ffffff" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="25">9</text></g>
+      <g data-cell="TR" data-value="+" transform="translate(30 -51)"><use href="#hex" fill="#e9e9e9" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="28" font-weight="800">+</text></g>
+      <g data-cell="R" data-value="4" transform="translate(60 0)"><use href="#hex" fill="#ffffff" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="25">4</text></g>
+      <g data-cell="BR" data-value="-" transform="translate(30 51)"><use href="#hex" fill="#e9e9e9" stroke="#596575" stroke-width="2"/><text dy="0.30em" font-size="30" font-weight="800">−</text></g>
+      <g data-cell="BL" data-value="=" transform="translate(-30 51)"><use href="#hex" fill="#e9e9e9" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="27" font-weight="800">=</text></g>
+      <g data-cell="L" data-value="6" transform="translate(-60 0)"><use href="#hex" fill="#ffffff" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="25">6</text></g>
+      <g data-cell="C" data-value="7"><use href="#hex" fill="#f3f3f3" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="25">7</text></g>
+    </g>
+
+    <g id="q27-board-3" transform="translate(615 227)">
+      <text x="-88" y="-98" font-size="18" font-weight="900">(3)</text>
+      <g data-cell="TL" data-value="8" transform="translate(-30 -51)"><use href="#hex" fill="#ffffff" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="25">8</text></g>
+      <g data-cell="TR" data-value="9" transform="translate(30 -51)"><use href="#hex" fill="#ffffff" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="25">9</text></g>
+      <g data-cell="R" data-value="2" transform="translate(60 0)"><use href="#hex" fill="#ffffff" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="25">2</text></g>
+      <g data-cell="BR" data-value="8" transform="translate(30 51)"><use href="#hex" fill="#ffffff" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="25">8</text></g>
+      <g data-cell="BL" data-value="4" transform="translate(-30 51)"><use href="#hex" fill="#ffffff" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="25">4</text></g>
+      <g data-cell="L" data-value="=" transform="translate(-60 0)"><use href="#hex" fill="#e9e9e9" stroke="#596575" stroke-width="2"/><text dy="0.36em" font-size="27" font-weight="800">=</text></g>
+      <g data-cell="C" data-value="-"><use href="#hex" fill="#e9e9e9" stroke="#596575" stroke-width="2"/><text dy="0.30em" font-size="30" font-weight="800">−</text></g>
+    </g>
+  </g>
+
+  <rect x="190" y="392" width="380" height="26" rx="13" fill="#eeeeee"/>
+  <text x="380" y="410" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#444444">길을 다 그은 뒤, 계산이 맞는지 다시 확인해 보세요.</text>
+</svg>

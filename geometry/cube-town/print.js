@@ -1,30 +1,83 @@
 import { levels as countLevels } from "../games/count-heights/levels.js";
 import { COPY_BUILD_LEVELS } from "../data/copy-build-levels.js";
+import { levels as viewLevels } from "../games/three-views/levels.js";
 
 const $ = (selector) => document.querySelector(selector);
 const GAME_COPY_WOOD = "copy-wood";
 const GAME_COPY_COLOR = "copy-color";
+// 원목 관찰과 컬러 색칠을 한 권에 섞는 모드. 지오메트리 랩의 "똑같이 쌓기"
+// 카드가 난이도 중을 고르면 이 모드로 딥링크한다 — 두 풀은 같은 커리큘럼을
+// 앞뒤로 나눈 절반이라(COPY_BUILD_LEVELS의 0~4 / 5~9), 아이에게는 "본 모양을
+// 그대로 옮긴다"는 하나의 공부다. 카드를 둘로 갈라 두면 같은 공부를 두 번
+// 고르게 된다.
+const GAME_COPY_MIXED = "copy-mixed";
 const GAME_COUNT = "count-heights";
+const GAME_VIEWS = "three-views";
+
+// 섞기 모드에서 한 문제를 컬러로 낼지 원목으로 낼지는 문제 자신이 들고 다닌다.
+// 인쇄 직전에 다시 정하면 같은 화면에서 인쇄를 두 번 눌렀을 때 색/원목 배치가
+// 달라져, 미리 보고 고른 것과 다른 학습지가 나온다.
+const COPY_MODE_KEY = "__copyColor";
+
+function isCopyGame(game) {
+  return game === GAME_COPY_WOOD || game === GAME_COPY_COLOR || game === GAME_COPY_MIXED;
+}
+
+// 섞기 모드에서만 문제별 표시를 따르고, 나머지는 게임이 곧 표시 방식이다.
+function copyIsColor(game, problem) {
+  if (game === GAME_COPY_MIXED) return Boolean(problem && problem[COPY_MODE_KEY]);
+  return game === GAME_COPY_COLOR;
+}
+
 let selectedProblems = [];
+
+// 표지 테마 — 지오메트리 랩의 학습지 표지와 같은 개념을 쓴다. "쌓기를 옮겨
+// 적는 공부"(copy 2종 · 개수 세기)는 원목 앰버, "보고 알아내는 공부"(여러
+// 방향에서 본 모양)는 블루. 색은 포인트로만 쓰므로 흑백 인쇄에서도 표지의
+// 짜임(테두리 · 구분선 · 캐릭터 실루엣)은 그대로 성립한다.
+//
+// 캐릭터는 world-map/assets/geometry-characters.png 한 장을 3x3 스프라이트로
+// 잘라 쓴다. 칸 이름은 worksheet/styles.css의 .gw-char-* 와 같은 규칙이다.
+const COVER_THEMES = {
+  stack: { accent: "#b0741c", chars: ["gw-char-cubie", "gw-char-box"] },
+  view: { accent: "#1e6f9e", chars: ["gw-char-protractor", "gw-char-sphere"] }
+};
 
 const GAME_COPY = {
   [GAME_COPY_WOOD]: {
     title: "똑같이 쌓기 · 원목 관찰",
     cover: "똑같이 쌓기<br />원목 관찰",
     subtitle: "입체 모양을 살펴보고,<br />각 자리의 높이를 기록해 보세요.",
-    instruction: "문제 모양을 보고, 위에서 본 바닥판의 각 칸에 쌓기나무 높이를 써 보세요."
+    instruction: "문제 모양을 보고, 위에서 본 바닥판의 각 칸에 쌓기나무 높이를 써 보세요.",
+    theme: "stack"
   },
   [GAME_COPY_COLOR]: {
     title: "똑같이 쌓기 · 컬러 색칠",
     cover: "똑같이 쌓기<br />컬러 색칠",
     subtitle: "색과 위치를 자세히 살펴보고,<br />같은 모양에 똑같이 색칠해 보세요.",
-    instruction: "왼쪽의 색깔 쌓기나무를 보고, 오른쪽의 같은 모양에 위치와 색을 똑같이 칠하세요."
+    instruction: "왼쪽의 색깔 쌓기나무를 보고, 오른쪽의 같은 모양에 위치와 색을 똑같이 칠하세요.",
+    theme: "stack"
+  },
+  [GAME_COPY_MIXED]: {
+    title: "똑같이 쌓기",
+    cover: "똑같이 쌓기",
+    subtitle: "모양과 색을 자세히 살펴보고,<br />본 그대로 옮겨 보세요.",
+    instruction: "원목 문제는 위에서 본 칸에 높이를 쓰고, 색깔 문제는 오른쪽 모양에 똑같이 색칠하세요.",
+    theme: "stack"
   },
   [GAME_COUNT]: {
     title: "쌓기나무 개수 세기",
     cover: "쌓기나무<br />개수 세기",
     subtitle: "쌓기나무 맨 위에 수를 쓰고,<br />쓴 수를 모두 더해 보세요.",
-    instruction: "문제 모양의 각 쌓기나무 맨 위에 들어갈 수를 쓰고, 모두 더하여 전체 개수를 구하세요."
+    instruction: "문제 모양의 각 쌓기나무 맨 위에 들어갈 수를 쓰고, 모두 더하여 전체 개수를 구하세요.",
+    theme: "stack"
+  },
+  [GAME_VIEWS]: {
+    title: "여러 방향에서 본 모양",
+    cover: "여러 방향에서<br />본 모양",
+    subtitle: "쌓기나무를 앞, 옆, 위에서 본 모양을<br />색칠해 보세요.",
+    instruction: "쌓기나무를 앞, 옆, 위에서 본 모양을 각각 색칠해 보세요.",
+    theme: "view"
   }
 };
 
@@ -53,12 +106,21 @@ function normalizeCopyProblem(problem) {
   return Array.isArray(problem) ? { grid: problem, colorMap: null } : problem;
 }
 
+// 섞기 모드의 표시 방식을 문제에 새겨 준다 (원본은 건드리지 않는다 —
+// COPY_BUILD_LEVELS는 게임 화면도 함께 읽는 공용 데이터다).
+function tagCopyMode(problem, color) {
+  return { ...normalizeCopyProblem(problem), [COPY_MODE_KEY]: color };
+}
+
 function transformCopyProblem(problem, transform, suffix) {
   const normalized = normalizeCopyProblem(problem);
   return {
     id: `copy-${suffix}-${Math.random().toString(36).slice(2)}`,
     grid: transform(normalized.grid),
-    colorMap: normalized.colorMap ? transform(normalized.colorMap) : null
+    colorMap: normalized.colorMap ? transform(normalized.colorMap) : null,
+    // 회전·대칭 변형본도 원본과 같은 표시 방식을 이어받아야 한다 — 안 그러면
+    // 섞기 모드에서 색칠 문제의 회전본이 갑자기 원목 문제로 나온다.
+    [COPY_MODE_KEY]: Boolean(normalized[COPY_MODE_KEY])
   };
 }
 
@@ -86,21 +148,47 @@ function expandVariants(pool, isCopy) {
 function problemPool() {
   const game = $("#gameSelect").value;
   const level = $("#levelSelect").value;
+  if (game === GAME_VIEWS) {
+    if (level === "all") return viewLevels.flatMap((entry) => entry.pool);
+    return viewLevels[Number(level) - 1].pool;
+  }
   if (game === GAME_COUNT) {
-    if (level === "all") return countLevels.flatMap((entry) => entry.problems);
-    return countLevels[Number(level) - 1].problems;
+    // WHY .pool (not .problems): .problems is the 5-problem session slice the
+    // game deals out per visit; paper sheets use the full 20-problem curated
+    // pool so a 20-question book has no repeats.
+    if (level === "all") return countLevels.flatMap((entry) => entry.pool);
+    return countLevels[Number(level) - 1].pool;
   }
   const entries = level === "all"
     ? COPY_BUILD_LEVELS
     : [COPY_BUILD_LEVELS[Number(level) - 1]];
-  const color = game === GAME_COPY_COLOR;
-  return entries.flatMap((entry) => entry.problems.slice(color ? 5 : 0, color ? 10 : 5));
+  // 각 레벨의 problems는 앞 5개가 원목, 뒤 5개가 컬러다.
+  const wood = () => entries.flatMap((entry) => entry.problems.slice(0, 5));
+  const color = () => entries.flatMap((entry) => entry.problems.slice(5, 10));
+  if (game === GAME_COPY_MIXED) {
+    return wood().map((problem) => tagCopyMode(problem, false))
+      .concat(color().map((problem) => tagCopyMode(problem, true)));
+  }
+  return game === GAME_COPY_COLOR ? color() : wood();
 }
 
+// three-views problems already carry a hand-authored 20-problem pool per level
+// and their views are pre-derived from a fixed heightmap convention (see
+// games/three-views/levels.js), so — unlike copy — they are used as-is
+// with no rotate/mirror expansion: transforming the map would leave the
+// pre-baked front/side/top views describing the wrong shape.
+//
+// count-heights problems are ALSO used as-is. The game's pools are curated so
+// that every column's top face is visible from the fixed 3/4 camera (the child
+// writes a number on each top). Rotating or mirroring the heightmap moves tall
+// columns in front of short ones, hiding top faces — the printed circles then
+// sit on occluded cubes and the sheet becomes unsolvable.
 function pickProblems() {
   const game = $("#gameSelect").value;
   const requested = Number($("#countSelect").value);
-  const expanded = shuffled(expandVariants(problemPool(), game !== GAME_COUNT));
+  const pool = problemPool();
+  const useAsIs = game === GAME_VIEWS || game === GAME_COUNT;
+  const expanded = useAsIs ? shuffled(pool) : shuffled(expandVariants(pool, true));
   selectedProblems = Array.from({ length: requested }, (_, index) => expanded[index % expanded.length]);
 }
 
@@ -270,8 +358,12 @@ function renderCopyQuestion(problem, index, target, colorMode) {
   if (blankCanvas) drawProblem(blankCanvas, problem, { blank: !workedExample });
 }
 
+// three-views questions carry a 3D picture plus three view grids, so they need
+// far more room than the copy/count questions — one column of two per page
+// instead of the usual 2x2 grid.
 function createQuestionSheet(pageIndex, pageCount) {
-  const config = GAME_COPY[$("#gameSelect").value];
+  const game = $("#gameSelect").value;
+  const config = GAME_COPY[game];
   const section = document.createElement("section");
   section.className = "sheet question-sheet";
   section.innerHTML = `
@@ -280,15 +372,62 @@ function createQuestionSheet(pageIndex, pageCount) {
       <div class="student-lines"><span>이름</span><i></i><span>날짜</span><i></i></div>
     </header>
     <div class="sheet-kicker"><p>${config.instruction}</p><b>${pageIndex + 1} / ${pageCount}</b></div>
-    <div class="question-grid"></div>
+    <div class="question-grid${game === GAME_VIEWS ? " views-question-grid" : ""}"></div>
   `;
   $("#questionSheets").append(section);
   return section.querySelector(".question-grid");
 }
 
+// Renders an empty dotted grid (question side) or a filled-in grid (answer
+// side) straight from a views.{front,side,top} array — the data already
+// encodes the correct front/side/top orientation, so it is never recomputed.
+function viewGridMarkup(view, answers = false) {
+  const rows = view.length;
+  const cols = view[0].length;
+  const cells = view
+    .flatMap((row) => row.map((filled) => `<span class="${answers && filled ? "filled" : ""}"></span>`))
+    .join("");
+  return `<div class="view-answer-grid" style="--v-rows:${rows};--v-cols:${cols}">${cells}</div>`;
+}
+
+function viewsFigureMarkup(problem, answers) {
+  return `
+    <figure><figcaption>앞에서 본 모양</figcaption>${viewGridMarkup(problem.views.front, answers)}</figure>
+    <figure><figcaption>옆에서 본 모양</figcaption>${viewGridMarkup(problem.views.side, answers)}</figure>
+    <figure><figcaption>위에서 본 모양</figcaption>${viewGridMarkup(problem.views.top, answers)}</figure>
+  `;
+}
+
+function renderViewsQuestion(problem, index, target) {
+  const article = document.createElement("article");
+  article.className = "question views-question";
+  article.innerHTML = `
+    <span class="question-number">${index + 1}</span>
+    <div class="views-layout">
+      <figure class="views-cube"><figcaption>쌓기나무 모양</figcaption><canvas class="cube-canvas"></canvas></figure>
+      <div class="views-grids">${viewsFigureMarkup(problem, false)}</div>
+    </div>
+  `;
+  target.append(article);
+  drawProblem(article.querySelector(".cube-canvas"), { heights: problem.map });
+}
+
 function renderAnswer(problem, index) {
   const game = $("#gameSelect").value;
   const article = document.createElement("article");
+  if (game === GAME_VIEWS) {
+    article.className = "answer-item views-answer-item";
+    article.innerHTML = `
+      <h2>${index + 1}번</h2>
+      <div class="views-layout">
+        <figure class="views-cube"><canvas class="answer-canvas"></canvas></figure>
+        <div class="views-grids">${viewsFigureMarkup(problem, true)}</div>
+      </div>
+    `;
+    $("#answers").append(article);
+    drawProblem(article.querySelector(".answer-canvas"), { heights: problem.map });
+    return;
+  }
   article.className = `answer-item ${game !== GAME_COUNT ? "copy-answer-item" : ""}`;
   if (game === GAME_COUNT) {
     const heights = problem.heights.flat().filter(Boolean);
@@ -299,7 +438,7 @@ function renderAnswer(problem, index) {
     article.innerHTML = `
       <h2>${index + 1}번</h2>
       <canvas class="answer-canvas"></canvas>
-      ${game === GAME_COPY_WOOD ? topViewMarkup(problem, true) : ""}
+      ${!copyIsColor(game, problem) ? topViewMarkup(problem, true) : ""}
       <p class="answer-total">사용한 쌓기나무 <b>${total}</b>개</p>
     `;
   }
@@ -309,13 +448,32 @@ function renderAnswer(problem, index) {
 }
 
 function updateLevelOptions() {
-  const isCopy = $("#gameSelect").value !== GAME_COUNT;
+  // Only the copy games (똑같이 쌓기) are limited to levels 1-3; count-heights
+  // and three-views both ship five full levels.
+  const limitedLevels = isCopyGame($("#gameSelect").value);
   $("#levelSelect").querySelectorAll("option").forEach((option) => {
     const value = Number(option.value);
-    option.hidden = isCopy && value > 3;
-    option.disabled = isCopy && value > 3;
+    option.hidden = limitedLevels && value > 3;
+    option.disabled = limitedLevels && value > 3;
   });
-  if (isCopy && Number($("#levelSelect").value) > 3) $("#levelSelect").value = "all";
+  if (limitedLevels && Number($("#levelSelect").value) > 3) $("#levelSelect").value = "all";
+}
+
+// 표지 = 제목 + 부제 + 테마(포인트 색 · 캐릭터). data-theme 하나만 바꾸면
+// print.css가 색을 갈아 주고, 캐릭터는 테마가 지명한 스프라이트 칸으로 다시
+// 그린다.
+function renderCover(config) {
+  const theme = COVER_THEMES[config.theme] ? config.theme : "stack";
+  $("#coverTitle").innerHTML = config.cover;
+  $("#coverSubtitle").innerHTML = config.subtitle;
+  const cover = $("#coverSheet");
+  cover.dataset.theme = theme;
+  const slot = $("#coverMascots");
+  slot.replaceChildren(...COVER_THEMES[theme].chars.map((cls) => {
+    const el = document.createElement("i");
+    el.className = `gw-char ${cls}`;
+    return el;
+  }));
 }
 
 function generate() {
@@ -324,20 +482,21 @@ function generate() {
   $("#questionSheets").replaceChildren();
   $("#answers").replaceChildren();
   const game = $("#gameSelect").value;
-  const perPage = game === GAME_COUNT ? 5 : 4;
+  $("#answers").className = `answer-grid${game === GAME_VIEWS ? " views-answer-grid" : ""}`;
+  const perPage = game === GAME_COUNT ? 5 : game === GAME_VIEWS ? 2 : 4;
   const pageCount = Math.ceil(selectedProblems.length / perPage);
   for (let page = 0; page < pageCount; page += 1) {
     const target = createQuestionSheet(page, pageCount);
     selectedProblems.slice(page * perPage, page * perPage + perPage).forEach((problem, offset) => {
       const index = page * perPage + offset;
       if (game === GAME_COUNT) renderCountQuestion(problem, index, target);
-      else renderCopyQuestion(problem, index, target, game === GAME_COPY_COLOR);
+      else if (game === GAME_VIEWS) renderViewsQuestion(problem, index, target);
+      else renderCopyQuestion(problem, index, target, copyIsColor(game, problem));
     });
   }
   selectedProblems.forEach(renderAnswer);
   const config = GAME_COPY[game];
-  $("#coverTitle").innerHTML = config.cover;
-  $("#coverSubtitle").innerHTML = config.subtitle;
+  renderCover(config);
   const selectedLevel = $("#levelSelect").value;
   $("#coverLevel").textContent = selectedLevel === "all" ? "전체 혼합" : `레벨 ${selectedLevel}`;
   $("#coverCount").textContent = `${selectedProblems.length} QUESTIONS`;
@@ -353,6 +512,12 @@ $("#answerToggle").addEventListener("change", () => { $("#answerSheet").hidden =
 $("#generate").addEventListener("click", generate);
 $("#printButton").addEventListener("click", () => window.print());
 
+// 지오메트리 랩의 연습책 카드가 이 주소로 딥링크한다:
+//   print.html?game=<...>&level=<all|1..5>&count=<n>&cover=1
+// 랩은 "무엇을 몇 문제, 표지를 넣어" 까지만 정하고 실제 문제 고르기와 인쇄는
+// 여기가 한다. 넘어온 값은 모두 select의 실제 option으로만 좁혀 받는다 —
+// 주소창에서 손으로 고친 값이 화면에 없는 상태를 만들면, 보이는 설정과 뽑히는
+// 문제가 어긋난다.
 function applyInitialParams() {
   const params = new URLSearchParams(window.location.search);
   const initialGame = params.get("game");
@@ -365,6 +530,19 @@ function applyInitialParams() {
     const option = $("#levelSelect").querySelector(`option[value="${initialLevel}"]`);
     if (option && !option.disabled) $("#levelSelect").value = initialLevel;
   }
+  // 문제 수는 이 페이지의 선택지(5/10/20)와 랩의 선택지가 다를 수 있으므로,
+  // 없는 값이 오면 가장 가까운 선택지로 붙인다. 무시하고 기본값으로 되돌리면
+  // 20문제를 시킨 사람이 조용히 10문제를 받는다.
+  const initialCount = Number(params.get("count"));
+  if (initialCount > 0) {
+    const options = Array.from($("#countSelect").options).map((o) => Number(o.value));
+    const nearest = options.reduce((best, value) => (
+      Math.abs(value - initialCount) < Math.abs(best - initialCount) ? value : best
+    ), options[0]);
+    $("#countSelect").value = String(nearest);
+  }
+  const initialCover = params.get("cover");
+  if (initialCover !== null) $("#coverToggle").checked = initialCover !== "0";
 }
 
 applyInitialParams();

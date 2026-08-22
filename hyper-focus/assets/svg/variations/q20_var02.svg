@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">서로 다른 길이의 막대를 이어 만들 수 있는 길이 세기 유사문제 2</title>
+  <desc id="desc">길이가 3, 5, 7, 9센티미터인 막대 네 개가 있습니다.</desc>
+  <defs><linearGradient id="r" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#7eb9df"/><stop offset="1" stop-color="#3e86b5"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".12"/></filter></defs>
+  <rect width="760" height="430" rx="24" fill="#fff"/>
+  <text x="380" y="43" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#20272b">막대를 이어 만들 수 있는 서로 다른 길이를 세어 보세요</text>
+  <text x="380" y="73" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#59636a">같은 길이는 한 번만 세고, 막대는 각각 한 번만 사용할 수 있습니다.</text>
+  <g transform="translate(160 112)" filter="url(#s)" font-family="Arial,sans-serif" font-size="17" font-weight="800" fill="#343c41">
+    <rect x="90" width="72" height="28" rx="10" fill="url(#r)"/><text x="70" y="21" text-anchor="end">3 cm</text>
+    <rect x="90" y="58" width="120" height="28" rx="10" fill="url(#r)"/><text x="70" y="79" text-anchor="end">5 cm</text>
+    <rect x="90" y="116" width="168" height="28" rx="10" fill="url(#r)"/><text x="70" y="137" text-anchor="end">7 cm</text>
+    <rect x="90" y="174" width="216" height="28" rx="10" fill="url(#r)"/><text x="70" y="195" text-anchor="end">9 cm</text>
+  </g>
+  <rect x="165" y="348" width="430" height="42" rx="12" fill="#eff7fb" stroke="#a7c9dd"/><text x="380" y="375" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="16" font-weight="800" fill="#345d75">만들어진 길이가 같으면 막대 조합이 달라도 한 번만 셉니다.</text>
+</svg>

@@ -11,8 +11,43 @@
 
 ## 현재 게임
 
-- index.html - 똑같이 쌓기
+- games/copy-build/ - 똑같이 쌓기
 - games/count-heights/ - 쌓기나무 개수 세기
+- games/hidden-count/ - 숨은 쌓기나무 찾기
+- games/fill-box/ - 큐브 박스 채우기
+- games/cube-tunnel/ - 큐브 터널
+- games/cube-piece-lab/ - 큐브 조각 연구소
+- games/cube-memory/ - 큐브 메모리
+- games/three-views/ - 세 방향 관찰소
+- games/crystal-cubes/ - 크리스털 큐브
+- games/cube-blueprint/ - 큐브 설계도
+- games/find-shape/ - 단서로 모양 찾기
+- games/minmax/ - 최대·최소 큐브 챌린지
+- games/paper-fold/ - 색종이 접고 펼치기
+- games/paper-turn/ - 색종이 접고 돌리고 뒤집기
+
+## 색종이 생각 놀이터
+
+`origami-studio/`에서 두 개의 독립 과정을 선택합니다.
+
+1. 접고 펼치기: 한 번 접기, 작업 위치, 대칭 도형, 잘린 수의 합
+2. 접고 돌리고 뒤집기: 뒤집기, 자른 선 되짚기, 회전, 반사, 연속 동작 추적
+
+두 과정은 각각 5레벨, 레벨마다 10문제이며 한 회차에 5문제를 풉니다. `worksheet/paper-fold/`에서는 두 과정의 유형을 함께 골라 학습지와 풀이가 포함된 정답지를 만들 수 있습니다.
+
+## 후속 게임 설계
+
+RAY와 프리즘 자료를 시각적으로 확인해 기존 게임과 겹치지 않는 후속 영역을 정리했습니다.
+
+- 거울 저택
+- 점판 공작소
+- 폴리오미노 퍼즐
+- 똑같이 나누기
+- 전개도 전망대
+- 소마큐브 공방
+- 길 잇기 산책로
+
+레벨 구성, 문제 검증, 학습지 연결과 개발 순서는 `docs/12_SOURCE_BACKED_FUTURE_GAMES.md`를 따릅니다.
 
 ## 공통 성장 요소
 

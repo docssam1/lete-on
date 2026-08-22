@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">선을 따라 만들 수 있는 정사각형 세기 유사문제 2</title>
+  <desc id="desc">일부 선분이 빠진 네 칸 격자에서 크고 작은 정사각형을 모두 세는 문제입니다.</desc>
+  <defs>
+    <filter id="shadow" x="-12%" y="-12%" width="124%" height="136%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#333333" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <rect width="760" height="430" rx="24" fill="#ffffff"/>
+  <text x="380" y="45" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="24" font-weight="800" fill="#202027">크고 작은 정사각형을 모두 찾아보세요</text>
+  <text x="380" y="75" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="16" font-weight="700" fill="#59606a">네 변이 모두 이어진 모양만 세어요.</text>
+
+  <rect x="138" y="94" width="484" height="276" rx="22" fill="#fafafa" stroke="#dedede" stroke-width="2" filter="url(#shadow)"/>
+
+  <g id="q16-grid-segments" transform="translate(264 111)" stroke="#4f4f55" stroke-width="3" stroke-linecap="square" fill="none">
+    <g id="q16-horizontal-segments">
+      <line data-kind="h" data-x="0" data-y="0" x1="0" y1="0" x2="58" y2="0"/>
+      <line data-kind="h" data-x="1" data-y="0" x1="58" y1="0" x2="116" y2="0"/>
+      <line data-kind="h" data-x="2" data-y="0" x1="116" y1="0" x2="174" y2="0"/>
+      <line data-kind="h" data-x="0" data-y="1" x1="0" y1="58" x2="58" y2="58"/>
+      <line data-kind="h" data-x="1" data-y="1" x1="58" y1="58" x2="116" y2="58"/>
+      <line data-kind="h" data-x="2" data-y="1" x1="116" y1="58" x2="174" y2="58"/>
+      <line data-kind="h" data-x="3" data-y="1" x1="174" y1="58" x2="232" y2="58"/>
+      <line data-kind="h" data-x="0" data-y="2" x1="0" y1="116" x2="58" y2="116"/>
+      <line data-kind="h" data-x="1" data-y="2" x1="58" y1="116" x2="116" y2="116"/>
+      <line data-kind="h" data-x="2" data-y="2" x1="116" y1="116" x2="174" y2="116"/>
+      <line data-kind="h" data-x="3" data-y="2" x1="174" y1="116" x2="232" y2="116"/>
+      <line data-kind="h" data-x="0" data-y="3" x1="0" y1="174" x2="58" y2="174"/>
+      <line data-kind="h" data-x="1" data-y="3" x1="58" y1="174" x2="116" y2="174"/>
+      <line data-kind="h" data-x="2" data-y="3" x1="116" y1="174" x2="174" y2="174"/>
+      <line data-kind="h" data-x="3" data-y="3" x1="174" y1="174" x2="232" y2="174"/>
+      <line data-kind="h" data-x="1" data-y="4" x1="58" y1="232" x2="116" y2="232"/>
+      <line data-kind="h" data-x="2" data-y="4" x1="116" y1="232" x2="174" y2="232"/>
+      <line data-kind="h" data-x="3" data-y="4" x1="174" y1="232" x2="232" y2="232"/>
+    </g>
+    <g id="q16-vertical-segments">
+      <line data-kind="v" data-x="0" data-y="0" x1="0" y1="0" x2="0" y2="58"/>
+      <line data-kind="v" data-x="0" data-y="1" x1="0" y1="58" x2="0" y2="116"/>
+      <line data-kind="v" data-x="0" data-y="2" x1="0" y1="116" x2="0" y2="174"/>
+      <line data-kind="v" data-x="1" data-y="0" x1="58" y1="0" x2="58" y2="58"/>
+      <line data-kind="v" data-x="1" data-y="2" x1="58" y1="116" x2="58" y2="174"/>
+      <line data-kind="v" data-x="1" data-y="3" x1="58" y1="174" x2="58" y2="232"/>
+      <line data-kind="v" data-x="2" data-y="1" x1="116" y1="58" x2="116" y2="116"/>
+      <line data-kind="v" data-x="2" data-y="2" x1="116" y1="116" x2="116" y2="174"/>
+      <line data-kind="v" data-x="3" data-y="0" x1="174" y1="0" x2="174" y2="58"/>
+      <line data-kind="v" data-x="3" data-y="1" x1="174" y1="58" x2="174" y2="116"/>
+      <line data-kind="v" data-x="3" data-y="2" x1="174" y1="116" x2="174" y2="174"/>
+      <line data-kind="v" data-x="3" data-y="3" x1="174" y1="174" x2="174" y2="232"/>
+      <line data-kind="v" data-x="4" data-y="1" x1="232" y1="58" x2="232" y2="116"/>
+      <line data-kind="v" data-x="4" data-y="2" x1="232" y1="116" x2="232" y2="174"/>
+      <line data-kind="v" data-x="4" data-y="3" x1="232" y1="174" x2="232" y2="232"/>
+    </g>
+  </g>
+
+  <rect x="222" y="389" width="316" height="27" rx="14" fill="#eeeeee"/>
+  <text x="380" y="408" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#444444">한 칸짜리부터 크기별로 표시해 보세요.</text>
+</svg>

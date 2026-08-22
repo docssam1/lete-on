@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">반대편까지 구멍이 뚫린 쌓기나무 유사문제 2</title>
+  <desc id="desc">앞면과 윗면의 검은 칸에서 반대편까지 관통하도록 쌓기나무를 뺀 직육면체입니다.</desc>
+  <defs>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="145%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#333333" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <rect width="760" height="430" rx="24" fill="#ffffff"/>
+  <text x="380" y="42" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="24" font-weight="800" fill="#1a1a2e">검은 칸에서 반대편까지 구멍을 뚫었어요</text>
+  <text x="380" y="72" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="16" font-weight="700" fill="#4f5965">남아 있는 쌓기나무는 모두 몇 개일까요?</text>
+
+  <rect x="74" y="88" width="612" height="292" rx="20" fill="#fafafa" stroke="#dedede" stroke-width="2" filter="url(#shadow)"/>
+
+  <g id="q04-prism-faces">
+    <polygon points="185,160 365,160 437,96 257,96" fill="#f5f5f5"/>
+    <rect x="185" y="160" width="180" height="180" fill="#ffffff"/>
+    <polygon points="365,160 437,96 437,276 365,340" fill="#e9e9e9"/>
+  </g>
+
+  <g id="q04-top-holes">
+    <polygon data-x="2" data-y="2" points="248,144 293,144 311,128 266,128" fill="#202020" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="5 3"/>
+  </g>
+  <g id="q04-front-holes">
+    <rect data-x="2" data-z="2" x="230" y="205" width="45" height="45" fill="#202020" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="5 3"/>
+    <rect data-x="2" data-z="4" x="230" y="295" width="45" height="45" fill="#202020" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="5 3"/>
+    <rect data-x="3" data-z="2" x="275" y="205" width="45" height="45" fill="#202020" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="5 3"/>
+    <rect data-x="3" data-z="4" x="275" y="295" width="45" height="45" fill="#202020" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="5 3"/>
+  </g>
+
+  <g id="q04-prism-grid" fill="none" stroke="#4d4d4d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M185 160L257 96"/>
+    <path d="M230 160L302 96"/>
+    <path d="M275 160L347 96"/>
+    <path d="M320 160L392 96"/>
+    <path d="M365 160L437 96"/>
+    <path d="M185 160H365"/>
+    <path d="M203 144H383"/>
+    <path d="M221 128H401"/>
+    <path d="M239 112H419"/>
+    <path d="M257 96H437"/>
+    <path d="M185 160V340"/>
+    <path d="M230 160V340"/>
+    <path d="M275 160V340"/>
+    <path d="M320 160V340"/>
+    <path d="M365 160V340"/>
+    <path d="M185 160H365"/>
+    <path d="M185 205H365"/>
+    <path d="M185 250H365"/>
+    <path d="M185 295H365"/>
+    <path d="M185 340H365"/>
+    <path d="M365 160V340"/>
+    <path d="M383 144V324"/>
+    <path d="M401 128V308"/>
+    <path d="M419 112V292"/>
+    <path d="M437 96V276"/>
+    <path d="M365 160L437 96"/>
+    <path d="M365 205L437 141"/>
+    <path d="M365 250L437 186"/>
+    <path d="M365 295L437 231"/>
+    <path d="M365 340L437 276"/>
+  </g>
+
+  <g font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#3f4650">
+    <rect x="500" y="125" width="150" height="40" rx="12" fill="#ffffff" stroke="#d7d7d7"/>
+    <rect x="514" y="135" width="20" height="20" fill="#202020" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="4 2"/>
+    <text x="544" y="151">관통 구멍</text>
+    <rect x="500" y="177" width="150" height="34" rx="17" fill="#eeeeee"/>
+    <text x="575" y="199" text-anchor="middle">앞면 4 × 4칸</text>
+    <rect x="500" y="221" width="150" height="34" rx="17" fill="#eeeeee"/>
+    <text x="575" y="243" text-anchor="middle">뒤로 4칸</text>
+  </g>
+
+  <rect x="205" y="394" width="350" height="26" rx="13" fill="#fff1f1"/>
+  <text x="380" y="412" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#a33b3b">겹치는 구멍은 한 번만 세어요.</text>
+</svg>

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q24",
+  "variationId": "q24_var01",
+  "subType": "change_plus_to_minus",
+  "status": "verified",
+  "source": {},
+  "presentation": {"mode": "text-only"},
+  "contentBinding": {"canonicalSource": "./canonical/q24.json", "hfDataTypeId": 24},
+  "problem": {"prompt": "아래 식에서 + 한 개를 -로 바꾸어 식이 성립하게 하려고 합니다. 바꿀 기호에 동그라미 하세요.  1+2+3+4+5+6=11"},
+  "machineReadable": {
+    "payloadType": "change_plus_to_minus",
+    "numbers": [1, 2, 3, 4, 5, 6],
+    "originalTotal": 21,
+    "targetValue": 11,
+    "changeCount": 1,
+    "solvingModel": {"difference": 10, "changedNumber": 5, "validChangeCount": 1, "expectedAnswer": 5},
+    "expectedAnswer": 5
+  },
+  "answerValidation": {"answerType": "number", "expectedAnswer": 5},
+  "solutionHint": "처음 합은 21이고 목표 11보다 10 큽니다. +5를 -5로 바꾸면 합이 5의 두 배인 10만큼 줄어 11이 됩니다."
+}

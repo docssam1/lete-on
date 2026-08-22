@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q39",
+  "variationId": "q39_var02",
+  "subType": "logic_matrix",
+  "status": "draft",
+  "source": {"problemImage": "./assets/svg/variations/q39_var02.svg"},
+  "contentBinding": {"canonicalSource": "./canonical/q39.json", "hfDataTypeId": 39},
+  "problem": {"prompt": "A, B, C, D 네 사람은 사과, 배, 귤, 딸기 중 좋아하는 과일을 두 가지씩 말했습니다. 조건을 보고 B가 좋아하는 두 과일을 쓰세요."},
+  "machineReadable": {
+    "payloadType": "logic_matrix",
+    "entities": ["A", "B", "C", "D"],
+    "categories": ["사과", "배", "귤", "딸기"],
+    "eachEntityChooses": 2,
+    "categoryCounts": {"사과": 2, "배": 3, "귤": 2, "딸기": 1},
+    "onlyEntity": {"category": "딸기", "entity": "C"},
+    "knownLikes": {"A": ["사과", "귤"], "B": ["사과"], "D": ["배", "귤"]},
+    "queryEntity": "B",
+    "solvingModel": {"validMatrixCount": 1, "expectedAnswer": ["사과", "배"]}
+  },
+  "answerValidation": {"answerType": "matching_pair", "expectedAnswer": ["사과", "배"]},
+  "solutionHint": "A와 B가 사과를 좋아하므로 사과 2명은 모두 정해집니다. A와 D가 귤을 좋아하므로 귤 2명도 모두 정해집니다. 딸기는 C만 좋아하므로 B의 남은 과일은 배입니다."
+}

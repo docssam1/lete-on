@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q42",
+  "typeId": 42,
+  "title": "이웃하지 않게 3칸 색칠하는 방법 수 구하기",
+  "problemType": "TYPE-06",
+  "subType": "grid_fill_cases",
+  "answerType": "count",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q42.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 42,
+    "originalQuestionId": "q42_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "grid_fill_cases",
+      "boardShape": {
+        "cellCount": 7,
+        "layout": "3_bottom_3_middle_1_top_center"
+      },
+      "fillRule": {
+        "fillCount": 3,
+        "adjacencyForbidden": true,
+        "adjacencyType": "edge_touch"
+      },
+      "solvingModel": {
+        "expectedAnswer": 8,
+        "strategy": [
+          "한 칸을 먼저 기준으로 정한다.",
+          "그 칸과 이웃한 칸을 제외한다.",
+          "남은 칸에서 2칸을 고르는 경우를 센다."
+        ]
+      },
+      "judgementRule": {
+        "checks": [
+          "fix_one_circle_first"
+        ],
+        "description": "먼저 한 칸을 정해 경우를 나누면 중복 없이 셀 수 있다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 가능한 경우의 수를 정한 뒤, 칸 배치와 이웃 관계를 조절해 그 수가 나오게 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "cellCount": 5,
+          "fillCount": 2
+        },
+        "baseMode": {
+          "cellCount": 7,
+          "fillCount": 3
+        },
+        "hardMode": {
+          "cellCount": 8,
+          "fillCount": 3,
+          "mustPreserve": [
+            "non adjacent fill",
+            "single valid count"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "칸 배치",
+          "칠할 칸 수"
+        ],
+        "mustPreserve": [
+          "이웃하지 않게 고르는 구조",
+          "중복 없이 경우를 세는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "이웃 기준이 모호한 문제",
+          "회전 중복 여부가 불명확한 문제",
+          "경우의 수가 여러 해석으로 갈리는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "grid_coloring_cases_svg",
+        "svgRequired": true,
+        "renderer": "grid_fill_cases"
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "count",
+    "expectedAnswer": 8,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "count_non_adjacent_fills",
+      "checks": [
+        "전체 칸 수가 7칸인지 확인",
+        "3칸을 칠하는지 확인",
+        "모두 이웃하지 않는 경우 수가 8인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q42 경로 존재 확인",
+      "hf_data.json typeId 42의 originalProblem.answer가 8가지인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 grid_fill_cases인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

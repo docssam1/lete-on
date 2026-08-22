@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q12",
+  "variationId": "q12_var01",
+  "subType": "paper_hole_fold",
+  "status": "verified",
+  "source": {
+    "problemImage": "./assets/svg/variations/q12_var01.svg"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q12.json",
+    "hfDataTypeId": 12
+  },
+  "problem": {
+    "prompt": "정사각형 색종이를 그림처럼 두 번 접어 구멍을 1개 뚫었습니다. 색종이를 펼치면 구멍은 모두 몇 개입니까?"
+  },
+  "machineReadable": {
+    "payloadType": "paper_hole_fold",
+    "foldSequence": ["right_to_left", "bottom_to_top"],
+    "punchCount": 1,
+    "punchPoints": [{ "x": 0.28, "y": 0.32 }],
+    "symmetryMultiplier": 4,
+    "expectedAnswer": 4,
+    "solvingModel": { "layerCount": 4, "formula": "1 × 4", "expectedAnswer": 4 }
+  },
+  "answerValidation": {
+    "answerType": "integer",
+    "expectedAnswer": 4
+  },
+  "solutionHint": "한 번 접으면 종이가 2겹, 다시 한 번 접으면 4겹입니다. 접은 선 위가 아닌 곳에 구멍을 1개 뚫었으므로 펼치면 4개가 됩니다."
+}

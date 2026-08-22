@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Gfield 보캡 테스트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#faf6ee; --paper:#fffdf8; --ink:#2d3a2e; --sub:#6b7a6c;
+    --green:#3e7a4e; --green-soft:#e3efe5; --accent:#e8a13c; --accent-soft:#fdf1dd;
+    --bad:#c05248; --bad-soft:#f9e6e4; --line:#e4ddcd;
+    --radius:18px; --shadow:0 4px 18px rgba(61,72,52,.10);
+    --display-font:'Jua','Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  body{
+    font-family:'Segoe UI','Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+    background:var(--cream); color:var(--ink);
+    min-height:100vh; display:flex; justify-content:center;
+  }
+  #app{width:100%; max-width:520px; padding:18px 16px 40px; position:relative; z-index:1;}
+  h1{font-family:var(--display-font); font-weight:400; font-size:22px; letter-spacing:-.3px;}
+  .sec-title, .btitle, .mode .mt, .score-ring .n, .big-score, .rscore{font-family:var(--display-font);}
+  .top{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .top .logo{font-size:30px; display:inline-block; animation:logoBob 2.5s ease-in-out infinite;}
+  .top .sub{font-size:12px; color:var(--sub);}
+  .top h1{
+    font-size:26px;
+    line-height:1.2;
+    color:#ffcf4d;
+    -webkit-text-stroke:1px #8a5310;
+    paint-order:stroke fill;
+    text-shadow:0 2px 0 #d9812a, 0 5px 0 #a05a17, 0 9px 14px rgba(89,54,10,.35);
+    letter-spacing:.5px;
+  }
+  @keyframes logoBob{0%,100%{transform:translateY(0) rotate(-4deg);}50%{transform:translateY(-6px) rotate(4deg);}}
+
+  /* ── 배경 반짝임(앰비언트) ─────────────────────────── */
+  .bg-sparkle{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-repeat:repeat; opacity:.35;
+  }
+  .bg-sparkle.s1{
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,.9) 1px, transparent 1.6px),
+      radial-gradient(circle, rgba(232,161,60,.7) 1.2px, transparent 1.8px);
+    background-size:140px 140px, 210px 210px;
+    background-position:0 0, 60px 90px;
+    animation:driftA 38s linear infinite;
+  }
+  .bg-sparkle.s2{
+    background-image:radial-gradient(circle, rgba(62,122,78,.55) 1.4px, transparent 2px);
+    background-size:180px 180px;
+    background-position:40px 20px;
+    animation:driftB 52s linear infinite;
+    opacity:.22;
+  }
+  @keyframes driftA{to{background-position:140px 140px, 210px -60px;}}
+  @keyframes driftB{to{background-position:-180px 100px;}}
+  .card{
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:18px; margin-bottom:14px;
+  }
+  .sec-title{font-size:13px; font-weight:700; color:var(--sub); margin-bottom:10px; letter-spacing:.5px;}
+  .chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{
+    border:1.5px solid var(--line); background:#fff; border-radius:999px;
+    padding:9px 14px; font-size:14px; cursor:pointer; color:var(--ink);
+    transition:all .1s; box-shadow:0 4px 0 #ddd4bf;
+  }
+  .chip:active{transform:translateY(3px); box-shadow:0 1px 0 #ddd4bf;}
+  .chip.on{border-color:var(--green); background:var(--green-soft); font-weight:700;}
+  .chip .d{font-size:11px; color:var(--sub); display:block;}
+  .mode-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .mode{
+    border:1.5px solid var(--line); background:#fff; border-radius:14px;
+    padding:11px 9px; cursor:pointer; text-align:left; transition:all .15s;
+    box-shadow:0 4px 0 #ddd4bf;
+  }
+  .mode:active{transform:translateY(3px); box-shadow:0 1px 0 #ddd4bf;}
+  .mode.on{
+    border-color:var(--green); background:var(--green-soft);
+    box-shadow:0 4px 0 #ddd4bf, 0 0 0 2px var(--green), 0 0 0 4px rgba(232,161,60,.55);
+    animation:modeBounce .35s ease-out;
+  }
+  @keyframes modeBounce{0%{transform:scale(.9);}55%{transform:scale(1.06);}100%{transform:scale(1);}}
+  .mode .mi{
+    font-size:20px; display:inline-flex; align-items:center; justify-content:center;
+    min-width:40px; height:34px; padding:0 9px; line-height:1;
+    border-radius:30% 70% 65% 35%/45% 35% 65% 55%;
+    background:linear-gradient(150deg, var(--green-soft), #d9ecdb);
+    white-space:nowrap;
+  }
+  .mode.on .mi{background:linear-gradient(150deg, #ffe6b8, var(--accent-soft));}
+  .mode .mt{font-family:var(--display-font); font-weight:400; font-size:12.5px; margin-top:6px; line-height:1.4;}
+  .mode .md{font-size:11px; color:var(--sub); margin-top:3px; line-height:1.45;}
+  .mode[disabled]{opacity:.4;}
+  .btn{
+    display:block; width:100%; border:none; border-radius:14px;
+    padding:15px; font-size:17px; font-weight:400; cursor:pointer;
+    font-family:var(--display-font); letter-spacing:.3px;
+    background:var(--green); color:#fff;
+    box-shadow:0 5px 0 #2e5c3a, 0 9px 16px rgba(62,122,78,.32), inset 0 1px 0 rgba(255,255,255,.35);
+    transition:transform .1s, box-shadow .1s;
+  }
+  .btn:active{transform:translateY(4px); box-shadow:0 1px 0 #2e5c3a, inset 0 1px 0 rgba(255,255,255,.35);}
+  .btn.ghost{
+    background:#fff; color:var(--ink); border:1.5px solid var(--line);
+    box-shadow:0 4px 0 #ddd4bf; font-weight:400;
+  }
+  .btn.ghost:active{box-shadow:0 1px 0 #ddd4bf;}
+  .btn.warn{background:var(--accent); box-shadow:0 5px 0 #a8701f, 0 9px 16px rgba(232,161,60,.32), inset 0 1px 0 rgba(255,255,255,.35);}
+  .btn.warn:active{box-shadow:0 1px 0 #a8701f, inset 0 1px 0 rgba(255,255,255,.35);}
+  .btn[disabled]{opacity:.45; cursor:default;}
+  .row{display:flex; gap:10px;}
+  .row .btn{flex:1;}
+
+  /* quiz */
+  .qtop{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+  .qtop .prog{font-size:13px; font-weight:700; color:var(--sub);}
+  .qtop .stars{font-size:14px; color:var(--accent); font-weight:800;}
+  .pbar{height:6px; background:var(--line); border-radius:99px; overflow:hidden; margin-bottom:16px;}
+  .pbar i{display:block; height:100%; background:var(--green); border-radius:99px; transition:width .3s;}
+  .ask{animation:cardBreathe 6s ease-in-out infinite;}
+  @keyframes cardBreathe{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
+  .ask{
+    text-align:center; padding:22px 10px 18px;
+  }
+  .ask .what{font-size:13px; color:var(--sub); margin-bottom:12px;}
+  .speak-big{
+    width:92px; height:92px; border-radius:50%; border:none; cursor:pointer;
+    background:radial-gradient(circle at 34% 28%, #fff 0%, var(--green-soft) 45%, #cfe8d5 100%);
+    border:2px solid var(--green);
+    font-size:38px; transition:transform .1s; margin-bottom:8px;
+    box-shadow:0 4px 0 #2e5c3a, inset 0 2px 3px rgba(255,255,255,.7);
+  }
+  .speak-big:active{transform:scale(.94);}
+  .speak-big.playing{animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(62,122,78,.35);}50%{box-shadow:0 0 0 14px rgba(62,122,78,0);}}
+  .ask .again{font-size:12px; color:var(--sub);}
+  .qtext{
+    font-size:17px; line-height:1.55; margin-top:10px; min-height:26px;
+    font-weight:600;
+  }
+  .qtext.hidden-q{color:transparent; user-select:none;}
+  .peek{font-size:12px; color:var(--sub); background:none; border:none; cursor:pointer; text-decoration:underline; margin-top:4px;}
+
+  .hintbox{
+    background:var(--accent-soft); border:1.5px dashed var(--accent);
+    border-radius:12px; padding:10px 12px; margin:12px 0 4px;
+    font-size:15px; text-align:center; letter-spacing:2px; font-weight:700;
+    display:none;
+  }
+  .hintbox.show{display:block;}
+
+  .mic-area{text-align:center; padding:8px 0 4px;}
+  .mic{
+    width:78px; height:78px; border-radius:50%; border:none; cursor:pointer;
+    background:var(--accent); color:#fff; font-size:32px;
+    box-shadow:var(--shadow); transition:transform .1s;
+  }
+  .mic:active{transform:scale(.94);}
+  .mic.listening{background:var(--bad); animation:pulse2 .9s infinite;}
+  @keyframes pulse2{0%,100%{box-shadow:0 0 0 0 rgba(192,82,72,.4);}50%{box-shadow:0 0 0 16px rgba(192,82,72,0);}}
+  .mic-label{font-size:12px; color:var(--sub); margin-top:6px;}
+  .heard{
+    min-height:22px; font-size:14px; color:var(--sub); margin-top:8px; font-style:italic;
+  }
+  .typebox{display:none; gap:8px; margin-top:10px;}
+  .typebox.show{display:flex;}
+  .typebox input{
+    flex:1; border:1.5px solid var(--line); border-radius:12px; padding:12px 14px;
+    font-size:16px; background:#fff; outline:none;
+  }
+  .typebox input:focus{border-color:var(--green);}
+  .typebox button{
+    border:none; border-radius:12px; padding:0 18px; background:var(--green);
+    color:#fff; font-weight:800; font-size:15px; cursor:pointer;
+  }
+  .choices2{display:grid; gap:9px; margin-top:6px;}
+  .choice{
+    border:1.5px solid var(--line); background:#fff; border-radius:13px;
+    padding:13px 14px; font-size:16px; font-weight:700; cursor:pointer;
+    text-align:left; color:var(--ink); transition:all .12s;
+  }
+  .choice:active{transform:scale(.985);}
+  .toolrow{display:flex; gap:8px; margin-top:14px;}
+  .tool{
+    flex:1; border:1.5px solid var(--line); background:#fff; border-radius:12px;
+    padding:10px; font-size:13px; font-weight:700; cursor:pointer; color:var(--ink);
+    box-shadow:0 4px 0 #ddd4bf; transition:transform .1s, box-shadow .1s;
+  }
+  .tool:active{background:var(--cream); transform:translateY(3px); box-shadow:0 1px 0 #ddd4bf;}
+
+  /* feedback */
+  .fb{text-align:center; padding:26px 12px;}
+  .fb .big{font-size:52px;}
+  .fb .msg{font-size:20px; font-weight:800; margin-top:8px;}
+  .fb .ans{margin-top:14px; font-size:15px; line-height:1.6;}
+  .fb .ans b{font-size:19px;}
+  .fb.good .msg{color:var(--green);}
+  .fb.bad .msg{color:var(--bad);}
+  .fb .said{font-size:13px; color:var(--sub); margin-top:6px;}
+
+  /* result */
+  .score-ring{
+    width:130px; height:130px; border-radius:50%; margin:8px auto 14px;
+    display:flex; align-items:center; justify-content:center;
+    background:conic-gradient(from -90deg,
+      var(--green) 0%, var(--accent) calc(var(--pct)*.55%),
+      #7db8e8 calc(var(--pct)*1%), var(--line) 0);
+    box-shadow:0 6px 16px rgba(61,72,52,.18);
+  }
+  .score-ring>div{
+    width:104px; height:104px; border-radius:50%; background:var(--paper);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+  .score-ring .n{font-size:30px; font-weight:900;}
+  .score-ring .t{font-size:12px; color:var(--sub);}
+  .wrong-list{margin-top:12px;}
+  .wrong-item{
+    display:flex; justify-content:space-between; align-items:center;
+    border-top:1px solid var(--line); padding:10px 2px; font-size:14px;
+  }
+  .wrong-item:first-child{border-top:none;}
+  .wrong-item .w{font-weight:800;}
+  .wrong-item .k{color:var(--sub);}
+  .best{font-size:12px; color:var(--sub); text-align:center; margin-top:8px;}
+  .note{font-size:12px; color:var(--sub); line-height:1.6; margin-top:10px;}
+
+  /* game FX */
+  .fx-p{
+    position:fixed; width:9px; height:9px; border-radius:2px; z-index:999;
+    pointer-events:none; animation:fxfly .7s cubic-bezier(.15,.8,.4,1) forwards;
+  }
+  @keyframes fxfly{to{transform:translate(var(--dx),var(--dy)) rotate(520deg); opacity:0;}}
+  .fx-ko{
+    position:fixed; z-index:999; pointer-events:none; font-weight:900; font-size:22px;
+    color:var(--green); text-shadow:0 2px 0 #fff; animation:fxko .9s ease-out forwards;
+  }
+  @keyframes fxko{0%{opacity:0; transform:translateY(6px) scale(.6);}25%{opacity:1; transform:scale(1.15);}100%{opacity:0; transform:translateY(-46px) scale(1);}}
+  .shake{animation:shake .4s;}
+  @keyframes shake{20%{transform:translateX(-7px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(3px);}}
+
+  /* rush mode */
+  .rush-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-weight:800;}
+  .rush-top .lives{font-size:16px; letter-spacing:2px;}
+  .rush-top .rscore{font-size:15px;}
+  .rush-top .combo{font-size:13px; color:var(--accent);}
+  .combo.big{animation:comboPop .3s;}
+  @keyframes comboPop{50%{transform:scale(1.5);}}
+  .fall-zone{
+    position:relative; height:200px; overflow:hidden; border-radius:14px;
+    border:1.5px dashed var(--line);
+    background:linear-gradient(180deg, #f2fbf4 0%, var(--accent-soft) 100%);
+    margin-bottom:12px;
+  }
+  .fall-zone .ground{position:absolute; left:0; right:0; bottom:0; height:5px; background:var(--bad); opacity:.35;}
+  .falling{
+    position:absolute; top:-70px; left:6%; right:6%; text-align:center;
+    font-size:16px; font-weight:700; line-height:1.45;
+    background:var(--paper); border:1.5px solid var(--line); border-radius:12px;
+    padding:10px 12px; box-shadow:var(--shadow);
+    animation:fallDown var(--dur) linear forwards;
+  }
+  @keyframes fallDown{from{transform:translateY(0);}to{transform:translateY(var(--fdist, 275px));}}
+  .fz-deco{position:absolute; pointer-events:none; font-size:24px; opacity:.55; animation:fzfloat 7s ease-in-out infinite; filter:drop-shadow(0 2px 2px rgba(0,0,0,.08));}
+  @keyframes fzfloat{0%,100%{transform:translateY(0) translateX(0);}50%{transform:translateY(-14px) translateX(6px);}}
+  .fz-tw{position:absolute; pointer-events:none; font-size:14px; animation:fztw 2s ease-in-out infinite;}
+  .fz-sun{position:absolute; right:8%; top:8%; font-size:22px; pointer-events:none; z-index:0;}
+  .fz-sun::before{
+    content:""; position:absolute; left:50%; top:50%; width:70px; height:70px;
+    transform:translate(-50%,-50%); border-radius:50%;
+    background:conic-gradient(from 0deg, rgba(255,214,56,.5) 0 8deg, transparent 8deg 20deg);
+    animation:sunSpin 20s linear infinite; z-index:-1;
+  }
+  @keyframes sunSpin{to{transform:translate(-50%,-50%) rotate(360deg);}}
+  .fz-grass{position:absolute; bottom:6px; font-size:20px; pointer-events:none; z-index:1;}
+  @keyframes fztw{0%,100%{opacity:.12; transform:scale(.65) rotate(-8deg);}50%{opacity:.95; transform:scale(1.2) rotate(8deg);}}
+  .upload-help{
+    background:#eef5ff; border:1.5px dashed #268be1; border-radius:12px;
+    padding:11px 12px; font-size:12.5px; line-height:1.65; margin-bottom:10px;
+  }
+  .upload-help b{color:#0755a8;}
+  .promptbox{
+    background:#fff; border:1px solid var(--line); border-radius:10px;
+    padding:9px 11px; font-size:12px; line-height:1.6; color:#333;
+    white-space:pre-wrap; margin:8px 0; font-family:inherit;
+  }
+  .uparea{
+    width:100%; min-height:170px; border:1.5px solid var(--line); border-radius:12px;
+    padding:11px 12px; font-size:13.5px; line-height:1.6; resize:vertical;
+    font-family:inherit; background:#fff; outline:none;
+  }
+  .uparea:focus{border-color:var(--green);}
+  .upname{
+    width:100%; border:1.5px solid var(--line); border-radius:12px; padding:11px 13px;
+    font-size:15px; background:#fff; outline:none; margin-bottom:9px;
+  }
+  .upcount{font-size:12.5px; font-weight:800; color:var(--green); min-height:20px; margin-top:7px;}
+  .addset{
+    width:100%; border:2px dashed var(--green); background:var(--green-soft); color:var(--green);
+    border-radius:14px; padding:13px; font-size:14.5px; font-weight:800; cursor:pointer; margin-bottom:11px;
+  }
+  .falling.paused{animation-play-state:paused;}
+  .choice.good{border-color:var(--green); background:var(--green-soft);}
+  .choice.badc{border-color:var(--bad); background:var(--bad-soft);}
+  .rush-over{text-align:center; padding:20px 10px;}
+  .rush-over .big-score{font-size:44px; font-weight:900; color:var(--green);}
+
+  /* arcade lobby */
+  body{background:linear-gradient(180deg, #eaf4ff 0%, var(--cream) 26%, #f3ead7 100%); background-attachment:fixed;}
+  .bookshelf{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .bookcard{
+    position:relative; border:none; border-radius:16px; padding:16px 14px 14px 20px;
+    text-align:left; cursor:pointer; color:#fff; overflow:hidden;
+    background:linear-gradient(150deg, hsl(var(--bh) 55% 52%), hsl(var(--bh) 62% 36%));
+    box-shadow:inset 4px 0 0 hsl(var(--bh) 60% 26%), inset 0 1px 0 hsl(var(--bh) 70% 68%),
+      0 6px 0 hsl(var(--bh) 45% 28%), 0 12px 22px hsl(var(--bh) 50% 30% / .35);
+    transition:transform .12s;
+  }
+  .bookcard:active{transform:translateY(4px); box-shadow:inset 4px 0 0 hsl(var(--bh) 60% 26%), 0 2px 0 hsl(var(--bh) 45% 28%);}
+  .bookcard::after{
+    content:""; position:absolute; top:-40%; bottom:-40%; left:-60%; width:35%;
+    background:linear-gradient(75deg, transparent, rgba(255,255,255,.55), transparent);
+    transform:skewX(-18deg); animation:bookSheen 4.5s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes bookSheen{0%,20%{left:-60%;}55%,100%{left:130%;}}
+  .bookcard .bicon{font-size:30px; display:block; filter:drop-shadow(0 3px 3px rgba(0,0,0,.25)); transition:transform .18s;}
+  .bookcard:active .bicon{transform:rotate(-8deg) scale(1.12);}
+  .bookcard .btitle{display:block; font-weight:900; font-size:15px; margin-top:8px; line-height:1.3; text-shadow:0 1px 0 rgba(0,0,0,.25);}
+  .bookcard .blevel{
+    position:absolute; top:10px; right:10px; font-size:10.5px; font-weight:800;
+    background:rgba(255,255,255,.92); color:hsl(var(--bh) 55% 32%);
+    border-radius:999px; padding:3px 9px;
+  }
+  .bookcard .bmeta{display:block; font-size:11.5px; opacity:.9; margin-top:3px;}
+  .bookcard .bprog{display:block; height:6px; margin-top:9px; border-radius:99px; background:rgba(0,0,0,.28); overflow:hidden;}
+  .bookcard .bprog i{display:block; height:100%; background:#ffd62f; border-radius:99px; box-shadow:0 0 8px #ffd62f; animation:progGlow 2.2s ease-in-out infinite;}
+  @keyframes progGlow{0%,100%{box-shadow:0 0 6px #ffd62f;}50%{box-shadow:0 0 13px #ffe98a;}}
+  .backbar{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  .backbtn{
+    border:1.5px solid var(--line); background:#fff; border-radius:12px;
+    padding:8px 13px; font-size:14px; font-weight:800; cursor:pointer; color:var(--ink);
+    box-shadow:0 3px 0 #d8cfba;
+  }
+  .backbtn:active{transform:translateY(2px); box-shadow:0 1px 0 #d8cfba;}
+  .chaplist{display:flex; flex-direction:column; gap:9px;}
+  .chap{
+    display:flex; align-items:stretch; gap:8px;
+  }
+  .chap-main{
+    flex:1; display:flex; align-items:center; gap:11px; text-align:left; cursor:pointer;
+    border:1.5px solid var(--line); border-radius:14px; background:var(--paper);
+    padding:11px 12px; box-shadow:0 4px 0 #e2dac7, 0 7px 14px rgba(61,72,52,.08);
+    transition:transform .1s;
+  }
+  .chap-main:active{transform:translateY(3px); box-shadow:0 1px 0 #e2dac7;}
+  .chap-main .cnum{
+    flex:none; width:34px; height:34px; border-radius:50%; display:grid; place-items:center;
+    font-weight:900; color:#fff; font-size:15px;
+    background:radial-gradient(circle at 35% 28%, hsl(var(--bh) 62% 62%), hsl(var(--bh) 55% 44%) 60%, hsl(var(--bh) 58% 32%));
+    box-shadow:0 3px 0 hsl(var(--bh) 50% 28%), inset 0 0 0 2px hsl(var(--bh) 70% 72% / .7), inset 0 -3px 4px hsl(var(--bh) 45% 22% / .55);
+  }
+  .chap-main.gold3{
+    border-color:#e8b93c;
+    box-shadow:0 4px 0 #e2dac7, 0 7px 14px rgba(61,72,52,.08), 0 0 0 2px #ffd97a, 0 0 14px rgba(255,214,56,.5);
+  }
+  .chap-main .cbody{flex:1; min-width:0;}
+  .chap-main .cbody b{display:block; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .chap-main .cbody small{color:var(--sub); font-size:11.5px;}
+  .chap-main .cstars{color:var(--accent); font-size:13px; letter-spacing:1px; flex:none;}
+  .cdl{display:flex; flex-direction:column; gap:5px; justify-content:center;}
+  .cdl button{
+    border:1.5px solid var(--line); background:#fff; border-radius:9px; cursor:pointer;
+    font-size:11px; font-weight:800; padding:4px 8px; color:var(--ink);
+    box-shadow:0 2px 0 #e2dac7;
+  }
+  .cdl button:active{transform:translateY(1px); box-shadow:none;}
+
+  /* 3D falling card + arcade zone */
+  .fall-zone{
+    height:min(46vh, 340px);
+    background:linear-gradient(180deg, #cfe8ff 0%, #e2f2fa 30%, #eef6e8 58%, #fdf0d5 82%, #f2ddba 100%);
+    border:2px solid #d9cfb8;
+    box-shadow:inset 0 -14px 22px rgba(180,120,40,.16), inset 0 10px 18px rgba(120,170,230,.2);
+  }
+  .fall-zone .ground{
+    height:10px; opacity:1; background:repeating-linear-gradient(90deg, #c05248 0 26px, #a8433a 26px 52px);
+    box-shadow:0 -3px 6px rgba(192,82,72,.4); border-radius:0 0 10px 10px;
+  }
+  .falling{
+    background:linear-gradient(180deg, hsl(var(--fh,140) 80% 97%), hsl(var(--fh,140) 72% 88%));
+    border:2px solid hsl(var(--fh,140) 55% 46%);
+    border-bottom-width:5px;
+    color:hsl(var(--fh,140) 60% 20%);
+    box-shadow:0 7px 0 hsl(var(--fh,140) 50% 40% / .32), 0 13px 24px hsl(var(--fh,140) 65% 42% / .38), inset 0 2px 0 #fff;
+    transition:background .2s linear, border-color .2s linear, color .2s linear;
+  }
+  .choice{box-shadow:0 4px 0 #ddd4bf, 0 7px 13px rgba(61,72,52,.1);}
+  .choice:active{transform:translateY(3px); box-shadow:0 1px 0 #ddd4bf;}
+  .choice.good{box-shadow:0 4px 0 #2e5c3a, 0 7px 13px rgba(62,122,78,.3);}
+  .choice.badc{box-shadow:0 4px 0 #8f3d36;}
+
+  /* 쌓기나무(GFIELD Cube Town) 성공 연출 이식 */
+  .success{position:fixed; inset:0; z-index:1000; display:none; place-items:center; overflow:hidden; pointer-events:none; isolation:isolate;}
+  .success.show{display:grid; animation:success-stage 1.2s ease-out both;}
+  .success::before{
+    content:""; position:absolute; inset:-25%; z-index:-3; opacity:0;
+    background:radial-gradient(circle at center, rgba(255,248,185,.98) 0 8%, rgba(255,203,55,.48) 26%, rgba(16,44,72,.12) 49%, transparent 68%);
+  }
+  .success.show::before{animation:success-flash 1.05s ease-out both;}
+  .success-rays{
+    position:absolute; width:min(920px,112vw); aspect-ratio:1; z-index:-2; opacity:0; border-radius:50%;
+    background:repeating-conic-gradient(from 4deg, rgba(255,214,56,.78) 0 4deg, transparent 4deg 12deg);
+    -webkit-mask-image:radial-gradient(circle, #000 0 16%, rgba(0,0,0,.84) 31%, transparent 67%);
+    mask-image:radial-gradient(circle, #000 0 16%, rgba(0,0,0,.84) 31%, transparent 67%);
+  }
+  .success.show .success-rays{animation:success-rays 1.05s ease-out both;}
+  .success-badge{
+    position:absolute; width:min(600px,86vw); height:min(260px,42vw); min-height:140px; z-index:-1; opacity:0;
+    background:linear-gradient(145deg, #268be1 0 44%, #0755a8 45% 100%);
+    clip-path:polygon(0 45%, 12% 36%, 6% 14%, 27% 24%, 36% 0, 48% 20%, 65% 2%, 70% 25%, 94% 15%, 88% 39%, 100% 50%, 87% 61%, 96% 88%, 71% 77%, 63% 100%, 49% 78%, 31% 98%, 27% 74%, 3% 84%, 12% 62%);
+    filter:drop-shadow(0 8px 0 #063e7e) drop-shadow(0 18px 28px rgba(13,49,86,.34));
+  }
+  .success.show .success-badge{animation:success-badge 1.08s cubic-bezier(.18,.82,.22,1) both;}
+  .success strong{
+    position:relative; z-index:3; color:#ffd62f; font-size:clamp(46px, 12vw, 120px); font-weight:1000;
+    line-height:.88; white-space:nowrap; -webkit-text-stroke:clamp(2px,.35vw,5px) #fff0a2; paint-order:stroke fill;
+    text-shadow:0 4px 0 #f39309, 0 9px 0 #c84a13, 0 14px 0 #7d2b12, 0 22px 32px rgba(67,25,8,.46);
+  }
+  .success.show strong{animation:success-pop 1.12s cubic-bezier(.13,.88,.22,1) both;}
+  .success i{
+    position:absolute; left:50%; top:50%; width:15px; height:42px; border-radius:3px;
+    color:#ffd62f; background:currentColor; opacity:0;
+    box-shadow:34px 12px 0 -3px currentColor, -25px 28px 0 -5px currentColor;
+  }
+  .success.show i{animation:sb-confetti 1.15s cubic-bezier(.16,.76,.22,1) both;}
+  .success i:nth-of-type(2n){color:#57c785;}
+  .success i:nth-of-type(3n){color:#ff7b6b;}
+  .success i:nth-of-type(4n){color:#438de1;}
+  .success i:nth-of-type(5n){color:#9c58d8;}
+  .success i:nth-of-type(1){--x:-310px; --y:-190px; --r:-96deg;}
+  .success i:nth-of-type(2){--x:295px; --y:-185px; --r:112deg;}
+  .success i:nth-of-type(3){--x:-270px; --y:195px; --r:-148deg;}
+  .success i:nth-of-type(4){--x:280px; --y:200px; --r:142deg;}
+  .success i:nth-of-type(5){--x:-370px; --y:5px; --r:-82deg;}
+  .success i:nth-of-type(6){--x:375px; --y:16px; --r:88deg;}
+  .success i:nth-of-type(7){--x:-160px; --y:-255px; --r:-42deg;}
+  .success i:nth-of-type(8){--x:160px; --y:-260px; --r:48deg;}
+  .success i:nth-of-type(9){--x:-145px; --y:260px; --r:-132deg;}
+  .success i:nth-of-type(10){--x:150px; --y:262px; --r:128deg;}
+  .success i:nth-of-type(11){--x:-350px; --y:-105px; --r:-70deg;}
+  .success i:nth-of-type(12){--x:348px; --y:115px; --r:74deg;}
+  @keyframes success-stage{0%{opacity:0;} 5%,78%{opacity:1;} 100%{opacity:0;}}
+  @keyframes success-flash{0%{opacity:0; transform:scale(.2);} 12%{opacity:1;} 65%{opacity:.55;} 100%{opacity:0; transform:scale(1.16);}}
+  @keyframes success-rays{0%{opacity:0; transform:scale(.12) rotate(-14deg);} 14%{opacity:1;} 100%{opacity:0; transform:scale(1.2) rotate(12deg);}}
+  @keyframes success-badge{0%{opacity:0; transform:scale(.08) rotate(-9deg);} 24%{opacity:1; transform:scale(1.14) rotate(2deg);} 48%{transform:scale(.96) rotate(-1deg);} 74%{opacity:1; transform:scale(1.02);} 100%{opacity:0; transform:scale(1.2);}}
+  @keyframes success-pop{0%{transform:scale(.08) rotate(-9deg); opacity:0; filter:blur(8px);} 24%{transform:scale(1.2) rotate(2deg); opacity:1; filter:blur(0);} 46%{transform:scale(.94) rotate(-1deg);} 66%{transform:scale(1.04);} 78%{opacity:1;} 100%{transform:scale(1.24); opacity:0; filter:blur(1px);}}
+  @keyframes sb-confetti{0%{transform:translate(-50%,-50%) scale(.15) rotate(0); opacity:0;} 12%{opacity:1;} 100%{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1) rotate(var(--r)); opacity:0;}}
+  .hide{display:none !important;}
+
+  /* ── 워드서치 (3D 원판) ───────────────────────────── */
+  .ws-guide{
+    background:linear-gradient(135deg, #fff3d6, #ffe6b8);
+    border:1.5px solid var(--accent); border-radius:12px;
+    padding:10px 12px; font-size:13px; font-weight:800; text-align:center;
+    color:#8a5a12; margin-bottom:11px;
+  }
+  .ws-guide.flash{animation:wsflash .5s 2;}
+  @keyframes wsflash{0%,100%{transform:scale(1);}50%{transform:scale(1.05); background:#ffd98a;}}
+  .ws-clues{display:flex; flex-direction:column; gap:7px; margin-bottom:12px;}
+  .ws-clue{
+    display:flex; align-items:center; gap:9px; text-align:left; cursor:pointer;
+    border:1.5px solid var(--line); border-radius:12px; background:var(--paper);
+    padding:9px 11px; font-size:13px; line-height:1.4; color:var(--ink);
+    box-shadow:0 3px 0 #e2dac7; transition:transform .1s;
+  }
+  .ws-clue:active{transform:translateY(2px); box-shadow:none;}
+  .ws-clue .cdot{
+    flex:none; width:24px; height:24px; border-radius:50%; display:grid; place-items:center;
+    font-size:12px; font-weight:900; color:#fff; background:var(--sub);
+  }
+  .ws-clue.on{border-color:var(--accent); background:var(--accent-soft); font-weight:700;}
+  .ws-clue.on .cdot{background:var(--accent); animation:pulse 1.2s infinite;}
+  .ws-clue.done{opacity:.5; text-decoration:line-through;}
+  .ws-clue.done .cdot{background:var(--green);}
+  .ws-stage{
+    perspective:1000px; display:grid; place-items:center;
+    padding:8px 0 14px; margin-bottom:4px;
+    position:relative;
+  }
+  .ws-stage::before{
+    content:""; position:absolute; inset:-4px 6%; z-index:-1; border-radius:50%;
+    background:radial-gradient(ellipse at center, rgba(120,74,28,.28) 0%, rgba(120,74,28,.14) 45%, transparent 72%);
+  }
+  .ws-board{
+    position:relative;
+    transform:rotateX(15deg);
+    border-radius:50%; padding:16px;
+    background:radial-gradient(circle at 50% 30%, #8fd94a, #4e9c1f 62%, #2f6a10);
+    box-shadow:0 16px 0 #24540c, 0 26px 40px rgba(30,60,10,.45), inset 0 3px 10px rgba(255,255,255,.5);
+  }
+  .ws-board.intro{animation:wsSpin 1.7s cubic-bezier(.22,.9,.3,1) both;}
+  @keyframes wsSpin{
+    0%{transform:rotateX(60deg) rotateZ(-220deg) scale(.35); opacity:0;}
+    35%{opacity:1;}
+    70%{transform:rotateX(10deg) rotateZ(14deg) scale(1.06);}
+    100%{transform:rotateX(17deg) rotateZ(0) scale(1);}
+  }
+  .ws-inner{
+    border-radius:50%; padding:12px; background:radial-gradient(circle at 50% 34%, #2c3742, #141b22);
+    box-shadow:inset 0 5px 14px rgba(0,0,0,.6);
+  }
+  .ws-grid{display:grid; gap:3px;}
+  .ws-cell{
+    width:100%; aspect-ratio:1; border:none; cursor:pointer; padding:0;
+    border-radius:50%; font-weight:900; font-size:13px; color:#20303c;
+    font-family:'Segoe UI',sans-serif;
+    background:radial-gradient(circle at 35% 28%, #ffffff, #e3e9ee 62%, #b9c4cc);
+    box-shadow:0 2px 0 #8e9aa3, inset 0 1px 2px #fff;
+    transition:transform .1s, background .12s;
+    user-select:none; -webkit-user-select:none; touch-action:none;
+  }
+  .ws-cell.dim{opacity:0; pointer-events:none;}
+  .ws-cell.sel{
+    background:radial-gradient(circle at 35% 28%, #ffe89a, #f2b23c 60%, #d98d13);
+    color:#4a2c02; transform:scale(1.14); box-shadow:0 3px 0 #a4670a, 0 0 12px rgba(242,178,60,.9);
+  }
+  .ws-cell.found{
+    background:radial-gradient(circle at 35% 28%, var(--fc1), var(--fc2) 62%, var(--fc3));
+    color:#fff; box-shadow:0 2px 0 rgba(0,0,0,.3), inset 0 1px 2px rgba(255,255,255,.6);
+    transform:scale(1.05);
+    animation:wsFoundPop .4s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes wsFoundPop{0%{transform:scale(.7);}55%{transform:scale(1.25);}100%{transform:scale(1.05);}}
+  .ws-cell.shuffling{animation:wsShuf .16s linear infinite;}
+  @keyframes wsShuf{0%{transform:rotateY(0) scale(1);}50%{transform:rotateY(180deg) scale(1.15);}100%{transform:rotateY(360deg) scale(1);}}
+  .ws-hud{display:flex; justify-content:space-between; align-items:center; margin-bottom:9px; font-weight:800; font-size:14px;}
+  .ws-hud .wsleft{color:var(--sub); font-size:13px;}
+
+  @media (prefers-reduced-motion: reduce){
+    .top .logo{animation:none;}
+    .bg-sparkle{animation:none;}
+    .bookcard::after{animation:none; display:none;}
+    .bookcard .bprog i{animation:none;}
+    .ask{animation:none;}
+    .fz-sun::before{animation:none;}
+  }
+</style>
+</head>
+<body>
+<div class="bg-sparkle s1" aria-hidden="true"></div>
+<div class="bg-sparkle s2" aria-hidden="true"></div>
+<div id="app"></div>
+
+<script src="vocab-data.js"></script>
+<script src="books-data.js"></script>
+<script>
+(function(){
+  'use strict';
+  const $app = document.getElementById('app');
+  const DAYS = window.VOCAB_DAYS || [];
+  const LS_KEY = 'gfield_vocab_quiz_v1';
+
+  // 내 단어장(사진 등록 + 직접 업로드) + reading-world 교재들을 한 책장으로
+  const CUSTOM_KEY = 'gfield_vocab_custom_v1';
+  const loadCustomSets = () => { try{ return JSON.parse(localStorage.getItem(CUSTOM_KEY)) || []; }catch(e){ return []; } };
+  const saveCustomSets = a => { try{ localStorage.setItem(CUSTOM_KEY, JSON.stringify(a)); }catch(e){} };
+  const PHOTO_BOOK = {
+    id: 'photo', title: '내 단어장', level: '직접 등록', icon: '📸', hue: 180,
+    chapters: [],
+  };
+  function refreshPhotoBook(){
+    PHOTO_BOOK.chapters = DAYS.map(d => ({ id: d.id, label: d.date + ' · ' + d.label, words: d.words }))
+      .concat(loadCustomSets());
+  }
+  refreshPhotoBook();
+  const BOOKS = [PHOTO_BOOK].concat(window.VOCAB_BOOKS || []);
+
+  // ── 상태 ──────────────────────────────────────────────
+  let nav = { screen: 'books' };
+  let sel = { bookId: 'photo', dayId: DAYS[0] && DAYS[0].id, mode: 'ko' };
+  const bookById = id => BOOKS.find(b => b.id === id) || BOOKS[0];
+  let quiz = null;   // {words, i, right:[], wrong:[], stars, hintLevel, heard}
+  let recog = null, listening = false;
+
+  const store = () => { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e){ return {}; } };
+  const save  = (s) => { try { localStorage.setItem(LS_KEY, JSON.stringify(s)); } catch(e){} };
+
+  const dayById = id => {
+    for (const b of BOOKS){
+      const c = b.chapters.find(x => x.id === id);
+      if (c) return c;
+    }
+    return bookById(sel.bookId).chapters[0];
+  };
+  const chapterHasKw = c => c.words.every(w => Array.isArray(w.kw) && w.kw.length);
+  const koMain = w => w.koShow.split(',')[0].replace(/\([^)]*\)/g,'').trim();
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  // ── 게임 효과 (펑! 파티클 · 한글 뜻 팝업) ─────────────
+  const FX_COLORS = ['#e8a13c','#3e7a4e','#c05248','#7db8e8','#e87dc4','#f2d34c'];
+  function burst(x, y, n){
+    for (let i = 0; i < (n || 20); i++){
+      const el = document.createElement('i');
+      el.className = 'fx-p';
+      el.style.left = x + 'px'; el.style.top = y + 'px';
+      el.style.background = FX_COLORS[i % FX_COLORS.length];
+      const a = Math.random() * Math.PI * 2, d = 45 + Math.random() * 85;
+      el.style.setProperty('--dx', Math.cos(a) * d + 'px');
+      el.style.setProperty('--dy', (Math.sin(a) * d - 30) + 'px');
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 750);
+    }
+  }
+  function popKo(x, y, text){
+    const el = document.createElement('span');
+    el.className = 'fx-ko'; el.textContent = text;
+    document.body.appendChild(el);
+    el.style.left = Math.max(8, x - el.offsetWidth / 2) + 'px';
+    el.style.top = (y - 30) + 'px';
+    setTimeout(() => el.remove(), 950);
+  }
+  function playSuccessArpeggio(){
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    const context = new AudioContextClass();
+    const now = context.currentTime;
+    const master = context.createGain();
+    master.gain.setValueAtTime(0.0001, now);
+    master.gain.exponentialRampToValueAtTime(0.22, now + 0.018);
+    master.gain.exponentialRampToValueAtTime(0.0001, now + 0.48);
+    master.connect(context.destination);
+    [196, 294, 392, 587].forEach((frequency, index) => {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = index === 0 ? 'triangle' : 'sine';
+      oscillator.frequency.setValueAtTime(frequency, now);
+      oscillator.frequency.exponentialRampToValueAtTime(frequency * 1.55, now + 0.22);
+      gain.gain.setValueAtTime(index === 0 ? 0.34 : 0.18, now + index * 0.018);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.38 + index * 0.025);
+      oscillator.connect(gain).connect(master);
+      oscillator.start(now + index * 0.018);
+      oscillator.stop(now + 0.5);
+    });
+    window.setTimeout(() => context.close(), 650);
+  }
+  const FX_PHRASES = ['GREAT!', 'PERFECT!', 'AWESOME!', 'EXCELLENT!', 'SUPER!'];
+  function showSuccessFx(){
+    let el = document.getElementById('successFx');
+    if (!el){
+      el = document.createElement('div');
+      el.id = 'successFx'; el.className = 'success'; el.setAttribute('aria-hidden', 'true');
+      el.innerHTML = '<div class="success-rays"></div><div class="success-badge"></div><strong></strong>'
+        + '<i></i>'.repeat(12);
+      document.body.appendChild(el);
+    }
+    el.querySelector('strong').textContent = FX_PHRASES[Math.floor(Math.random() * FX_PHRASES.length)];
+    el.classList.remove('show');
+    void el.offsetWidth;
+    el.classList.add('show');
+  }
+  function buzz(pattern){
+    try{ if (navigator.vibrate) navigator.vibrate(pattern); }catch(e){}
+  }
+  function centerOf(el){
+    const r = el.getBoundingClientRect();
+    return [r.left + r.width / 2, r.top + r.height / 2];
+  }
+
+  // ── 음성 합성 (문제 읽어주기) ──────────────────────────
+  function speak(text, lang, cb){
+    try{
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang; u.rate = 0.92;
+      const vs = speechSynthesis.getVoices().filter(v => v.lang && v.lang.indexOf('en') === 0);
+      if (lang.indexOf('en') === 0 && vs.length) u.voice = vs.find(v => /US|Google US/i.test(v.name)) || vs[0];
+      u.onend = () => { markPlaying(false); if (cb) cb(); };
+      u.onerror = () => markPlaying(false);
+      markPlaying(true);
+      speechSynthesis.speak(u);
+    }catch(e){ markPlaying(false); }
+  }
+  function markPlaying(on){
+    const b = document.querySelector('.speak-big');
+    if (b) b.classList.toggle('playing', on);
+  }
+
+  // ── 음성 인식 (답 듣기) ────────────────────────────────
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  function startListen(){
+    if (!SR){ toggleType(true); return; }
+    if (listening){ stopListen(); return; }
+    recog = new SR();
+    recog.lang = (sel.mode === 'ko' || sel.mode === 'endefko') ? 'ko-KR' : 'en-US';
+    if (sel.mode === 'endef') recog.maxAlternatives = 1;
+    recog.interimResults = false;
+    recog.maxAlternatives = 4;
+    listening = true; updateMicUI();
+    recog.onresult = (ev) => {
+      const alts = [];
+      for (const r of ev.results[0]) alts.push(r.transcript);
+      listening = false; updateMicUI();
+      handleAnswer(alts);
+    };
+    recog.onerror = () => {
+      listening = false; updateMicUI();
+      const h = document.querySelector('.heard');
+      if (h) h.textContent = '잘 안 들렸어요. 마이크를 다시 눌러 보세요. (또는 아래 "직접 입력")';
+    };
+    recog.onend = () => { listening = false; updateMicUI(); };
+    try{ recog.start(); }catch(e){ listening = false; updateMicUI(); }
+  }
+  function stopListen(){ try{ recog && recog.stop(); }catch(e){} listening = false; updateMicUI(); }
+  function updateMicUI(){
+    const m = document.querySelector('.mic');
+    const l = document.querySelector('.mic-label');
+    if (m) m.classList.toggle('listening', listening);
+    if (l) l.textContent = listening ? '듣고 있어요… 답을 말하세요!' : '마이크를 누르고 답을 말하세요';
+  }
+
+  // ── 정답 판정 ──────────────────────────────────────────
+  const normKo = s => String(s).replace(/\s+/g,'').replace(/[.,!?~]/g,'');
+  const normEn = s => String(s).toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ').trim();
+
+  function isCorrect(word, saidList){
+    if (sel.mode === 'ko' || sel.mode === 'endefko'){
+      const accepted = word.ko.map(normKo);
+      return saidList.some(said => {
+        const t = normKo(said);
+        return accepted.some(a => a && (t === a || t.indexOf(a) >= 0));
+      });
+    } else if (sel.mode === 'endef'){
+      // 말로 하는 뜻 설명은 문장이 저마다 달라서, 핵심 키워드가
+      // kwNeed개 이상 들어 있으면 정답으로 본다.
+      const kws = (word.kw || []).map(normEn);
+      const need = word.kwNeed || 1;
+      return saidList.some(said => {
+        const t = ' ' + normEn(said) + ' ';
+        return kws.filter(a => a && t.indexOf(' '+a+' ') >= 0 || (a.indexOf(' ')>=0 && t.indexOf(a)>=0)).length >= need;
+      });
+    } else {
+      const accepted = [word.en].concat(word.enAlt || []).map(normEn).filter(Boolean);
+      return saidList.some(said => {
+        const t = normEn(said);
+        return accepted.some(a => t === a || (' '+t+' ').indexOf(' '+a+' ') >= 0);
+      });
+    }
+  }
+
+  // ── 힌트 (아주 조금씩 3단계) ──────────────────────────
+  function hintText(word, level){
+    if (sel.mode === 'pick') return '🇰🇷 ' + word.koShow;
+    if (sel.mode === 'endef'){
+      const ws = word.def.split(' ');
+      if (level === 1) return ws[0] + ' …';
+      if (level === 2) return ws.slice(0,3).join(' ') + ' …';
+      return ws.slice(0, Math.ceil(ws.length/2)).join(' ') + ' …';
+    }
+    if (sel.mode === 'ko' || sel.mode === 'endefko'){
+      const ans = koMain(word);
+      const chars = [...ans];
+      if (level === 1) return '●'.repeat(chars.length) + `  (${chars.length}글자)`;
+      if (level === 2) return chars.map((c,i)=> i===0 ? c : (c===' ' ? ' ' : '●')).join('');
+      return chars.map((c,i)=> (i===0 || i===chars.length-1) ? c : (c===' ' ? ' ' : '●')).join('');
+    } else {
+      const ans = word.en;
+      const chars = [...ans];
+      const mask = (keep) => chars.map((c,i)=> c===' ' ? ' ' : (c==='-' ? '-' : (keep(i,c) ? c : '_'))).join(' ');
+      if (level === 1) return `${word.pos ? word.pos + ' · ' : ''}${chars.filter(c=>c!==' '&&c!=='-').length} letters`;
+      if (level === 2) return mask((i)=> i===0 || chars[i-1]===' ');
+      return mask((i)=> i===0 || i===chars.length-1 || chars[i-1]===' ');
+    }
+  }
+
+  // ── 화면들 ─────────────────────────────────────────────
+  function starsFor(chapterId){
+    const s2 = store();
+    let best = 0;
+    for (const m of ['ko', 'endefko', 'koq', 'en', 'endef', 'pick']){
+      const r = s2[chapterId + '_' + m];
+      if (r && r.total) best = Math.max(best, r.right / r.total);
+    }
+    return best >= 1 ? 3 : best >= .8 ? 2 : best >= .6 ? 1 : 0;
+  }
+  function home(){
+    stopListen(); speechSynthesis.cancel();
+    if (rush) rush.over = true;
+    if (ws) ws.over = true;
+    if (nav.screen === 'chapters') return lobbyChapters();
+    if (nav.screen === 'play') return lobbyPlay();
+    return lobbyBooks();
+  }
+  function lobbyBooks(){
+    nav.screen = 'books';
+    $app.innerHTML = `
+      <div class="top"><span class="logo">🕹️</span>
+        <div><h1>보캡 아케이드</h1><div class="sub">Gfield Reading Town · 교재별 단어 게임</div></div>
+      </div>
+      <div class="bookshelf">
+        ${BOOKS.filter(b => b.chapters.length).map(b => {
+          const nw = b.chapters.reduce((n, c) => n + c.words.length, 0);
+          const done = b.chapters.filter(c => starsFor(c.id) > 0).length;
+          const pct = Math.round(done / b.chapters.length * 100);
+          return `<button class="bookcard" style="--bh:${b.hue}" data-book="${b.id}">
+            <span class="bicon">${b.icon}</span>
+            <span class="blevel">${esc(b.level)}</span>
+            <span class="btitle">${esc(b.title)}</span>
+            <span class="bmeta">${b.chapters.length}챕터 · ${nw}단어</span>
+            <span class="bprog"><i style="width:${pct}%"></i></span>
+          </button>`;
+        }).join('')}
+      </div>
+      <div class="note">📥 챕터 목록에서 단어장(단어·영영뜻·한글뜻)을 내려받아 외울 수 있어요.<br>
+      📸 <b>내 단어장</b>을 열면 직접 업로드할 수 있어요 — 단어 사진을 GPT·제미나이로 바꿔서 붙여넣기만 하면 이 기기에 계속 저장돼요.</div>`;
+    $app.querySelectorAll('[data-book]').forEach(b => b.onclick = () => {
+      sel.bookId = b.dataset.book;
+      nav.screen = 'chapters';
+      home();
+    });
+  }
+  function lobbyChapters(){
+    nav.screen = 'chapters';
+    const b = bookById(sel.bookId);
+    $app.innerHTML = `
+      <div class="backbar">
+        <button class="backbtn" id="back">← 책장</button>
+        <div><h1 style="font-size:18px">${b.icon} ${esc(b.title)}</h1>
+        <div class="sub" style="font-size:11.5px;color:var(--sub)">${esc(b.level)} · 챕터를 골라 게임을 시작하세요</div></div>
+      </div>
+      ${b.id === 'photo' ? '<button class="addset" id="addset">➕ 내 단어장 업로드 (GPT·제미나이로 사진 변환)</button>' : ''}
+      <div class="chaplist">
+        ${b.chapters.map((c, i) => {
+          const st3 = starsFor(c.id);
+          const rushBest = store()['rush_' + c.id];
+          const custom = String(c.id).charAt(0) === 'u';
+          return `<div class="chap" style="--bh:${b.hue}">
+            <button class="chap-main${st3 === 3 ? ' gold3' : ''}" data-chap="${c.id}">
+              <span class="cnum">${i + 1}</span>
+              <span class="cbody"><b>${esc(c.label)}</b>
+                <small>${c.words.length}단어${rushBest ? ' · ⚡' + rushBest + '점' : ''}${custom ? ' · 내가 올림' : ''}</small></span>
+              <span class="cstars">${'★'.repeat(st3)}${'☆'.repeat(3 - st3)}</span>
+            </button>
+            <div class="cdl">
+              <button data-csv="${c.id}">📥 저장</button>
+              ${custom ? `<button data-del="${c.id}">🗑️ 삭제</button>` : `<button data-print="${c.id}">🖨️ 인쇄</button>`}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    const addBtn = $app.querySelector('#addset');
+    if (addBtn) addBtn.onclick = uploadScreen;
+    $app.querySelectorAll('[data-del]').forEach(el => el.onclick = () => {
+      const c = dayById(el.dataset.del);
+      if (!confirm(`"${c.label}" 단어장을 지울까요?`)) return;
+      saveCustomSets(loadCustomSets().filter(x => x.id !== el.dataset.del));
+      refreshPhotoBook();
+      home();
+    });
+    $app.querySelector('#back').onclick = () => { nav.screen = 'books'; home(); };
+    $app.querySelectorAll('[data-chap]').forEach(el => el.onclick = () => {
+      sel.dayId = el.dataset.chap;
+      nav.screen = 'play';
+      persistSel();
+      home();
+    });
+    $app.querySelectorAll('[data-csv]').forEach(el => el.onclick = () => downloadCsv(dayById(el.dataset.csv), b));
+    $app.querySelectorAll('[data-print]').forEach(el => el.onclick = () => printSheet(dayById(el.dataset.print), b));
+  }
+  function lobbyPlay(){
+    nav.screen = 'play';
+    const b = bookById(sel.bookId);
+    const c = dayById(sel.dayId);
+    const hasKw = chapterHasKw(c);
+    const hasDef = c.words.every(w => w.def);
+    const defDis = hasDef ? '' : 'disabled style="opacity:.4"';
+    if (!hasDef && ['en', 'endefko', 'pick', 'rush', 'ws'].indexOf(sel.mode) >= 0) sel.mode = 'ko';
+    if (!hasKw && sel.mode === 'endef') sel.mode = 'ko';
+    const bestKey = sel.dayId + '_' + sel.mode;
+    const best = store()[bestKey];
+    $app.innerHTML = `
+      <div class="backbar">
+        <button class="backbtn" id="back">← 챕터</button>
+        <div><h1 style="font-size:17px">${esc(c.label)}</h1>
+        <div class="sub" style="font-size:11.5px;color:var(--sub)">${b.icon} ${esc(b.title)} · ${c.words.length}단어</div></div>
+      </div>
+      <div class="card">
+        <div class="sec-title">🎯 어떤 게임으로 할까요?</div>
+        <div class="mode-grid">
+          <button class="mode ${sel.mode==='ko'?'on':''}" data-mode="ko">
+            <div class="mi">🔊→🇰🇷</div><div class="mt">영어 단어 듣고<br>한글 뜻 말하기</div>
+          </button>
+          <button class="mode ${sel.mode==='endefko'?'on':''}" data-mode="endefko" ${defDis}>
+            <div class="mi">🔊🇺🇸→🇰🇷</div><div class="mt">영어 뜻 듣고<br>한글 뜻 말하기</div>
+          </button>
+          <button class="mode ${sel.mode==='koq'?'on':''}" data-mode="koq">
+            <div class="mi">🔊🇰🇷→🇺🇸</div><div class="mt">한글 뜻 듣고<br>영어 단어 말하기</div>
+          </button>
+          <button class="mode ${sel.mode==='en'?'on':''}" data-mode="en" ${defDis}>
+            <div class="mi">🔊→🇺🇸</div><div class="mt">영어 뜻 듣고<br>영어 단어 말하기</div>
+          </button>
+          <button class="mode ${sel.mode==='endef'?'on':''}" data-mode="endef" ${hasKw ? '' : 'disabled style="opacity:.4"'}>
+            <div class="mi">🔊→💬</div><div class="mt">영어 단어 듣고<br>영어로 뜻 말하기${hasKw ? '' : '<br><small>(내 단어장 전용)</small>'}</div>
+          </button>
+          <button class="mode ${sel.mode==='pick'?'on':''}" data-mode="pick" ${defDis}>
+            <div class="mi">📖→👆</div><div class="mt">영어 뜻 읽고<br>단어 고르기</div>
+          </button>
+          <button class="mode ${sel.mode==='rush'?'on':''}" data-mode="rush" ${defDis}>
+            <div class="mi">🌠⚡</div><div class="mt">떨어지는 뜻 잡기<br>(타임어택)</div>
+          </button>
+          <button class="mode ${sel.mode==='ws'?'on':''}" data-mode="ws" ${defDis}>
+            <div class="mi">🔤🎯</div><div class="mt">워드서치<br>(3D 원판)</div>
+          </button>
+        </div>
+        ${best ? `<div class="best">🏆 이 게임 최고 기록: ${best.right}/${best.total}</div>` : ''}
+      </div>
+      <button class="btn" id="start">게임 시작! 🚀</button>
+      <div class="row" style="margin-top:10px">
+        <button class="btn ghost" id="dlc">📥 단어장 저장</button>
+        <button class="btn ghost" id="dlp">🖨️ 인쇄</button>
+      </div>`;
+    $app.querySelector('#back').onclick = () => { nav.screen = 'chapters'; home(); };
+    $app.querySelectorAll('[data-mode]').forEach(el => el.onclick = () => {
+      if (el.disabled) return;
+      sel.mode = el.dataset.mode;
+      persistSel();
+      home();
+    });
+    $app.querySelector('#start').onclick = () => startQuiz();
+    $app.querySelector('#dlc').onclick = () => downloadCsv(c, b);
+    $app.querySelector('#dlp').onclick = () => printSheet(c, b);
+  }
+
+  // ── 내 단어장 업로드 (GPT·제미나이 변환 텍스트 붙여넣기) ──
+  const AI_PROMPT = `사진 속 영어 단어표를 아래 형식의 텍스트로만 정리해줘.
+한 줄에 한 단어씩, 구분자는 | 를 써줘:
+
+단어 | 품사 | 쉬운 영영뜻 | 한글뜻
+
+규칙:
+- 영영뜻은 교재 문장을 그대로 베끼지 말고, 같은 뜻의 쉬운 영어로 새로 써줘
+- 한글뜻이 여러 개면 쉼표로 이어줘
+- 다른 설명 없이 단어 줄만 출력해줘`;
+  function parseWordText(text){
+    const words = [];
+    for (let line of String(text || '').split(/\n+/)){
+      line = line.trim().replace(/^\d+[.)]\s*/, '');
+      if (!line || line.indexOf('|') < 0) continue;
+      const parts = line.split(/\s*\|\s*/).filter(x => x !== '');
+      if (parts.length < 2) continue;
+      let en = '', pos = '', def = '', koShow = '';
+      if (parts.length >= 4){ en = parts[0]; pos = parts[1]; def = parts[2]; koShow = parts[3]; }
+      else if (parts.length === 3){ en = parts[0]; def = parts[1]; koShow = parts[2]; }
+      else { en = parts[0]; koShow = parts[1]; }
+      if (!/[a-zA-Z]/.test(en) || !/[가-힣]/.test(koShow)) continue;
+      const ko = koShow.split(/[,·/]/).map(x => x.trim()).filter(Boolean);
+      words.push({ en: en.trim(), pos: pos.trim(), def: def.trim(), ko, koShow: koShow.trim() });
+    }
+    return words;
+  }
+  function uploadScreen(){
+    $app.innerHTML = `
+      <div class="backbar">
+        <button class="backbtn" id="back">← 챕터</button>
+        <div><h1 style="font-size:17px">📸 내 단어장 업로드</h1></div>
+      </div>
+      <div class="card">
+        <div class="upload-help">
+          <b>이렇게 하세요:</b><br>
+          ① 단어 페이지를 사진 찍어 GPT나 제미나이에 올리고<br>
+          ② 아래 프롬프트를 복사해서 같이 보내면<br>
+          ③ 형식에 맞는 텍스트가 나와요 → 그걸 아래에 붙여넣고 저장!
+          <div class="promptbox" id="aiprompt">${esc(AI_PROMPT)}</div>
+          <button class="backbtn" id="copyprompt" style="width:100%">📋 프롬프트 복사</button>
+        </div>
+        <input class="upname" id="upname" placeholder="단어장 이름 (예: Week 2 Unit 1)" maxlength="40">
+        <textarea class="uparea" id="uptext" placeholder="apple | n | a round red or green fruit | 사과&#10;run | v | to move fast with your legs | 달리다"></textarea>
+        <div class="upcount" id="upcount"></div>
+      </div>
+      <button class="btn" id="upsave">저장하기 💾</button>
+      <div class="note">저장하면 이 기기에 계속 남아 있어요 (브라우저 데이터 삭제 전까지).<br>영영뜻이 없는 단어는 일부 게임에서 빠질 수 있어요.</div>`;
+    const $t = $app.querySelector('#uptext');
+    const $c = $app.querySelector('#upcount');
+    $t.oninput = () => {
+      const n = parseWordText($t.value).length;
+      $c.textContent = n ? `✅ ${n}개 단어 인식됨` : '';
+    };
+    $app.querySelector('#back').onclick = () => { nav.screen = 'chapters'; home(); };
+    $app.querySelector('#copyprompt').onclick = async (e) => {
+      try{ await navigator.clipboard.writeText(AI_PROMPT); e.target.textContent = '복사됐어요! ✅'; }
+      catch(err){ alert(AI_PROMPT); }
+    };
+    $app.querySelector('#upsave').onclick = () => {
+      const words = parseWordText($t.value);
+      if (words.length < 2){ alert('단어를 2개 이상 인식하지 못했어요.\n형식: 단어 | 품사 | 영영뜻 | 한글뜻'); return; }
+      const name = $app.querySelector('#upname').value.trim() || ('내 단어장 ' + (loadCustomSets().length + 1));
+      const sets = loadCustomSets();
+      sets.push({ id: 'u' + Date.now(), label: name, words });
+      saveCustomSets(sets);
+      refreshPhotoBook();
+      nav.screen = 'chapters';
+      showSuccessFx(); playSuccessArpeggio();
+      home();
+    };
+  }
+
+  // ── 점수 자랑하기 (공유 / 클립보드) ───────────────────
+  async function brag(text){
+    const url = 'https://docssam1.github.io/lete-on/vocab-quiz/';
+    const full = text + '\n' + url;
+    try{
+      if (navigator.share){ await navigator.share({ text: full }); return; }
+    }catch(e){ if (e && e.name === 'AbortError') return; }
+    try{
+      await navigator.clipboard.writeText(full);
+      alert('점수가 복사됐어요! 채팅방에 붙여넣기 하세요 📋');
+    }catch(e){ alert(full); }
+  }
+
+  // ── 단어장 다운로드 (CSV · 인쇄) ──────────────────────
+  function downloadCsv(c, b){
+    const rows = [['단어', '품사', '영영뜻', '한글뜻']]
+      .concat(c.words.map(w => [w.en, w.pos || '', w.def || '', w.koShow]));
+    const csv = '\ufeff' + rows.map(r =>
+      r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = (`${b.title} - ${c.label}`.replace(/[·]/g, '-').replace(/[\\/:*?"<>|]/g, '') + ' 단어장.csv');
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  }
+  function printSheet(c, b){
+    const rows = c.words.map((w, i) => `<tr><td>${i + 1}</td><td class="w">${esc(w.en)}</td>` +
+      `<td>${esc(w.def || '')}</td><td>${esc(w.koShow)}</td></tr>`).join('');
+    const win = window.open('', '_blank');
+    if (!win) return;
+    win.document.write(`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8">` +
+      `<title>${esc(b.title)} - ${esc(c.label)} 단어장</title><style>` +
+      `body{font-family:'Segoe UI','Apple SD Gothic Neo',sans-serif; padding:24px; color:#222;}` +
+      `h1{font-size:19px; margin:0 0 2px;} p{margin:0 0 14px; color:#666; font-size:12.5px;}` +
+      `table{width:100%; border-collapse:collapse; font-size:13px;}` +
+      `th,td{border:1px solid #bbb; padding:7px 9px; text-align:left; vertical-align:top;}` +
+      `th{background:#eef3ec;} td.w{font-weight:700; white-space:nowrap;}` +
+      `</style></head><body><h1>${esc(b.title)} — ${esc(c.label)}</h1>` +
+      `<p>단어 ${c.words.length}개 · Gfield 보캡 아케이드</p>` +
+      `<table><tr><th>#</th><th>단어</th><th>영영뜻</th><th>한글뜻</th></tr>${rows}</table>` +
+      `</body></html>`);
+    win.document.close();
+    setTimeout(() => { try{ win.print(); }catch(e){} }, 350);
+  }
+
+  function startQuiz(retryWords){
+    if (sel.mode === 'rush'){ rushStart(); return; }
+    if (sel.mode === 'ws'){ wsStart(); return; }
+    const day = dayById(sel.dayId);
+    const words = (retryWords && retryWords.length ? retryWords : day.words.slice())
+      .slice().sort(() => Math.random() - .5);
+    quiz = { words, i: 0, right: [], wrong: [], stars: words.length, hintLevel: 0 };
+    question();
+  }
+
+  function askText(w){ return (sel.mode === 'en' || sel.mode === 'endefko' || sel.mode === 'pick') ? w.def : sel.mode === 'koq' ? koMain(w) : w.en; }
+  function askLang(){ return sel.mode === 'koq' ? 'ko-KR' : 'en-US'; }
+
+  function question(auto){
+    stopListen();
+    const w = quiz.words[quiz.i];
+    quiz.hintLevel = 0;
+    const isPick = sel.mode === 'pick';
+    const pct = Math.round(quiz.i / quiz.words.length * 100);
+    let choices = [];
+    if (isPick){
+      const day = dayById(sel.dayId);
+      choices = day.words.filter(x => x.en !== w.en).sort(() => Math.random() - .5).slice(0,3).concat([w])
+        .sort(() => Math.random() - .5);
+    }
+    $app.innerHTML = `
+      <div class="card">
+        <div class="qtop">
+          <span class="prog">${quiz.i+1} / ${quiz.words.length}</span>
+          <span class="stars">⭐ ${quiz.stars}</span>
+        </div>
+        <div class="pbar"><i style="width:${pct}%"></i></div>
+        <div class="ask">
+          <div class="what">${sel.mode==='ko' ? '🔊 영어 단어를 듣고 <b>한글 뜻</b>을 말하세요' : sel.mode==='en' ? '🔊 영어 설명을 듣고 <b>영어 단어</b>를 말하세요' : sel.mode==='endefko' ? '🔊 영어 설명을 듣고 <b>한글 뜻</b>을 말하세요' : sel.mode==='koq' ? '🔊 한글 뜻을 듣고 <b>영어 단어</b>를 말하세요' : '🔊 영어 단어를 듣고 <b>영어 문장으로 뜻</b>을 말하세요'}</div>
+          <button class="speak-big" id="play">🔊</button>
+          <div class="again">눌러서 다시 듣기</div>
+          <div class="qtext${isPick ? '' : ' hidden-q'}" id="qtext">${esc(askText(w))}</div>
+          ${isPick ? '' : '<button class="peek" id="peek">👀 글자로 보기</button>'}
+        </div>
+        <div class="hintbox" id="hintbox"></div>
+        ${isPick ? `
+        <div class="choices2">
+          ${choices.map(c => `<button class="choice" data-pick="${esc(c.en)}">${esc(c.en)}${c.pos ? ` <span style="color:var(--sub);font-weight:400">(${esc(c.pos)})</span>` : ''}</button>`).join('')}
+        </div>
+        <div class="toolrow">
+          <button class="tool" id="hint">💡 힌트: 한글 뜻 (⭐-1)</button>
+          <button class="tool" id="skip">건너뛰기 →</button>
+        </div>` : `
+        <div class="mic-area">
+          <button class="mic" id="mic">🎤</button>
+          <div class="mic-label">마이크를 누르고 답을 말하세요</div>
+          <div class="heard"></div>
+          <div class="typebox" id="typebox">
+            <input id="typein" placeholder="${(sel.mode==='ko'||sel.mode==='endefko') ? '한글 뜻 입력' : sel.mode==='endef' ? 'type the meaning in English' : 'type the English word'}" autocomplete="off">
+            <button id="typego">확인</button>
+          </div>
+        </div>
+        <div class="toolrow">
+          <button class="tool" id="hint">💡 힌트 (⭐-1)</button>
+          <button class="tool" id="typetoggle">⌨️ 직접 입력</button>
+          <button class="tool" id="skip">건너뛰기 →</button>
+        </div>`}
+      </div>
+      <button class="btn ghost" id="quit">그만하고 처음으로</button>`;
+
+    const $ = sel2 => $app.querySelector(sel2);
+    $('#play').onclick = () => speak(askText(w), askLang());
+    if ($('#peek')) $('#peek').onclick = (e) => {
+      $('#qtext').classList.remove('hidden-q');
+      e.target.classList.add('hide');
+    };
+    if ($('#mic')) $('#mic').onclick = startListen;
+    const maxHint = isPick ? 1 : 3;
+    $('#hint').onclick = () => {
+      if (quiz.hintLevel >= maxHint) return;
+      quiz.hintLevel++;
+      if (quiz.stars > 0) quiz.stars--;
+      $('.stars').textContent = '⭐ ' + quiz.stars;
+      const hb = $('#hintbox');
+      hb.textContent = hintText(w, quiz.hintLevel);
+      hb.classList.add('show');
+      if (quiz.hintLevel >= maxHint) $('#hint').disabled = true;
+    };
+    if ($('#typetoggle')) $('#typetoggle').onclick = () => toggleType();
+    if ($('#typego')) $('#typego').onclick = submitTyped;
+    if ($('#typein')) $('#typein').onkeydown = (e) => { if (e.key === 'Enter') submitTyped(); };
+    $app.querySelectorAll('[data-pick]').forEach(b => b.onclick = () => finishOne(b.dataset.pick === w.en, b.dataset.pick));
+    $('#skip').onclick = () => finishOne(false, '(건너뜀)');
+    $('#quit').onclick = home;
+
+    if (auto !== false && !isPick) setTimeout(() => speak(askText(w), askLang()), 350);
+  }
+
+  function toggleType(force){
+    const tb = document.querySelector('#typebox');
+    if (!tb) return;
+    const show = force === true ? true : !tb.classList.contains('show');
+    tb.classList.toggle('show', show);
+    if (show){ const i = tb.querySelector('input'); i && i.focus(); }
+  }
+  function submitTyped(){
+    const i = document.querySelector('#typein');
+    if (!i || !i.value.trim()) return;
+    handleAnswer([i.value.trim()]);
+  }
+
+  function handleAnswer(saidList){
+    const w = quiz.words[quiz.i];
+    const ok = isCorrect(w, saidList);
+    finishOne(ok, saidList[0] || '');
+  }
+
+  function finishOne(ok, said){
+    stopListen(); speechSynthesis.cancel();
+    const w = quiz.words[quiz.i];
+    (ok ? quiz.right : quiz.wrong).push(w);
+    const answerLine = `<b>${esc(w.en)}</b>${w.pos ? ` <span style="color:var(--sub)">(${esc(w.pos)})</span>` : ''}<br>= ${esc(w.koShow)}<br><span style="font-size:13px;color:var(--sub)">${esc(w.def)}</span>`;
+    $app.innerHTML = `
+      <div class="card fb ${ok?'good':'bad'}">
+        <div class="big">${ok ? '🎉' : '🤔'}</div>
+        <div class="msg">${ok ? '정답이에요!' : '아까워요!'}</div>
+        <div class="ans">${answerLine}</div>
+        ${said ? `<div class="said">내가 말한 것: “${esc(said)}”</div>` : ''}
+      </div>
+      <button class="btn" id="next">${quiz.i+1 >= quiz.words.length ? '결과 보기 🏁' : '다음 문제 →'}</button>`;
+    if (ok){
+      const [cx, cy] = centerOf($app.querySelector('.fb .big'));
+      burst(cx, cy, 26);
+      popKo(cx, cy - 20, koMain(w) + '!');
+      showSuccessFx();
+      playSuccessArpeggio();
+      buzz(60);
+    } else {
+      $app.querySelector('.fb').classList.add('shake');
+      buzz([40, 60, 40]);
+    }
+    speak(w.en, 'en-US');
+    $app.querySelector('#next').onclick = () => {
+      quiz.i++;
+      if (quiz.i >= quiz.words.length) result(); else question();
+    };
+  }
+
+  // 결과 점수 카운트업 애니메이션 (rAF, ~0.8초)
+  function countUpScore(el, target, total){
+    if (!el) return;
+    if (!total || target <= 0){ el.textContent = `${target}/${total}`; return; }
+    const dur = 800;
+    const t0 = performance.now();
+    const step = (now) => {
+      const p = Math.min(1, (now - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const cur = Math.round(eased * target);
+      el.textContent = `${cur}/${total}`;
+      if (p < 1) requestAnimationFrame(step); else el.textContent = `${target}/${total}`;
+    };
+    requestAnimationFrame(step);
+  }
+
+  function result(){
+    const total = quiz.words.length, right = quiz.right.length;
+    const pct = Math.round(right / total * 100);
+    const s = store();
+    const key = sel.dayId + '_' + sel.mode;
+    if (!s[key] || right > s[key].right){ s[key] = { right, total }; save(s); }
+    const wrongRows = quiz.wrong.map(w => `
+      <div class="wrong-item">
+        <span class="w">${esc(w.en)}</span><span class="k">${esc(w.koShow)}</span>
+      </div>`).join('');
+    $app.innerHTML = `
+      <div class="card" style="text-align:center">
+        <div class="sec-title">오늘의 결과</div>
+        <div class="score-ring" style="--pct:${pct}"><div>
+          <span class="n" id="scoreN">0/${total}</span><span class="t">${pct}점 · ⭐${quiz.stars}</span>
+        </div></div>
+        <div style="font-weight:800; font-size:18px">${pct===100 ? '완벽해요! 🏆' : pct>=70 ? '잘했어요! 💪' : '한 번 더 해볼까요? 🌱'}</div>
+        <div class="best">🏆 최고 기록: ${s[key].right}/${s[key].total}</div>
+      </div>
+      ${quiz.wrong.length ? `
+      <div class="card">
+        <div class="sec-title">✏️ 틀린 단어 (${quiz.wrong.length}개)</div>
+        <div class="wrong-list">${wrongRows}</div>
+      </div>
+      <button class="btn warn" id="retry">틀린 것만 다시! 🔁</button>` : ''}
+      <button class="btn" style="margin-top:10px; background:#268be1" id="brag">📣 점수 자랑하기</button>
+      <div class="row" style="margin-top:10px">
+        <button class="btn ghost" id="again">전체 다시</button>
+        <button class="btn ghost" id="home">처음으로</button>
+      </div>`;
+    countUpScore($app.querySelector('#scoreN'), right, total);
+    if (pct >= 80){
+      [200, 500, 800].forEach((t, i) => setTimeout(() =>
+        burst(60 + Math.random() * (window.innerWidth - 120), 90 + i * 40, 22), t));
+    }
+    if (pct === 100){
+      buzz([80, 60, 80, 60, 160]);
+    }
+    if (pct >= 80){
+      showSuccessFx();
+      playSuccessArpeggio();
+    }
+    const r = $app.querySelector('#retry');
+    if (r) r.onclick = () => startQuiz(quiz.wrong);
+    $app.querySelector('#brag').onclick = () => {
+      const b = bookById(sel.bookId), c = dayById(sel.dayId);
+      brag(`🕹️ Gfield 보캡 아케이드\n${b.title} · ${c.label}\n${right}/${total} (${pct}점) ${pct===100?'💯 만점!':'🎯'}`);
+    };
+    $app.querySelector('#again').onclick = () => startQuiz();
+    $app.querySelector('#home').onclick = home;
+  }
+
+  // ── 떨어지는 뜻 잡기 (타임어택) ────────────────────────
+  let rush = null;
+  function rushStart(){
+    stopListen(); speechSynthesis.cancel();
+    rush = { queue: [], lives: 3, score: 0, combo: 0, dur: 8, over: false, answered: false };
+    rushRound();
+  }
+  function rushDraw(){
+    const day = dayById(sel.dayId);
+    if (!rush.queue.length) rush.queue = day.words.slice().sort(() => Math.random() - .5);
+    return rush.queue.pop();
+  }
+  function rushRound(){
+    const day = dayById(sel.dayId);
+    const w = rushDraw();
+    rush.answered = false;
+    const choices = day.words.filter(x => x.en !== w.en).sort(() => Math.random() - .5).slice(0,3)
+      .concat([w]).sort(() => Math.random() - .5);
+    $app.innerHTML = `
+      <div class="card">
+        <div class="rush-top">
+          <span class="lives">${'❤️'.repeat(rush.lives)}${'🖤'.repeat(3 - rush.lives)}</span>
+          <span class="combo${rush.combo >= 3 ? ' big' : ''}">${rush.combo > 1 ? '🔥 콤보 x' + rush.combo : ''}</span>
+          <span class="rscore">🏆 ${rush.score}</span>
+        </div>
+        <div class="fall-zone">
+          <span class="fz-deco" style="left:5%; top:6%">☁️</span>
+          <span class="fz-deco" style="right:7%; top:13%; animation-delay:-3s">☁️</span>
+          <span class="fz-deco" style="left:10%; bottom:22%; font-size:19px; animation-delay:-1.5s">🎈</span>
+          <span class="fz-tw" style="left:22%; top:26%">✨</span>
+          <span class="fz-tw" style="right:18%; top:40%; animation-delay:-.7s">⭐</span>
+          <span class="fz-tw" style="left:14%; top:56%; animation-delay:-1.2s">✨</span>
+          <span class="fz-tw" style="right:10%; bottom:26%; animation-delay:-.4s">🌟</span>
+          <span class="fz-sun">☀️</span>
+          <span class="fz-grass" style="left:6%">🌿</span>
+          <span class="fz-grass" style="left:46%">🌿</span>
+          <span class="fz-grass" style="right:8%">🌿</span>
+          <div class="falling" id="fall" style="--dur:${rush.dur}s">${esc(w.def)}</div>
+          <div class="ground"></div>
+        </div>
+        <div class="choices2">
+          ${choices.map(c => `<button class="choice" data-pick="${esc(c.en)}">${esc(c.en)}</button>`).join('')}
+        </div>
+      </div>
+      <button class="btn ghost" id="quit">그만하기</button>`;
+    const fall = $app.querySelector('#fall');
+    fall.addEventListener('animationend', () => rushMiss(w, null));
+    const zone = $app.querySelector('.fall-zone');
+    fall.style.setProperty('--fdist', (zone.clientHeight + 80) + 'px');
+    if (rush.raf) cancelAnimationFrame(rush.raf);
+    const tick = () => {
+      if (rush.answered || rush.over) return;
+      const zr = zone.getBoundingClientRect();
+      const fr = fall.getBoundingClientRect();
+      const prog = Math.min(1, Math.max(0, (fr.bottom - zr.top) / (zr.height + fr.height)));
+      fall.style.setProperty('--fh', Math.round(140 - prog * 130));
+      rush.raf = requestAnimationFrame(tick);
+    };
+    rush.raf = requestAnimationFrame(tick);
+    $app.querySelectorAll('[data-pick]').forEach(b => b.onclick = () => {
+      if (rush.answered) return;
+      if (b.dataset.pick === w.en) rushHit(w, b); else rushMiss(w, b);
+    });
+    $app.querySelector('#quit').onclick = () => { rush.over = true; home(); };
+  }
+  function rushHit(w, btn){
+    rush.answered = true;
+    $app.querySelector('#fall').classList.add('paused');
+    btn.classList.add('good');
+    const [cx, cy] = centerOf(btn);
+    burst(cx, cy, 24);
+    popKo(cx, cy, koMain(w) + '!');
+    playSuccessArpeggio();
+    buzz(rush.combo >= 5 ? [30, 30, 30, 30, 60] : 50);
+    rush.combo++;
+    rush.score += 10 + Math.min(rush.combo - 1, 10) * 2;
+    rush.dur = Math.max(4.5, rush.dur - 0.25);
+    setTimeout(() => { if (!rush.over) rushRound(); }, 750);
+  }
+  function rushMiss(w, btn){
+    if (rush.answered) return;
+    rush.answered = true;
+    const fall = $app.querySelector('#fall');
+    if (fall) fall.classList.add('paused');
+    if (btn) btn.classList.add('badc');
+    const good = $app.querySelector(`[data-pick="${(w.en || '').replace(/"/g,'\\"')}"]`);
+    if (good){
+      good.classList.add('good');
+      const [cx, cy] = centerOf(good);
+      popKo(cx, cy, koMain(w));
+    }
+    const card = $app.querySelector('.card');
+    if (card) card.classList.add('shake');
+    buzz([40, 60, 40]);
+    rush.combo = 0;
+    rush.lives--;
+    setTimeout(() => {
+      if (rush.over) return;
+      if (rush.lives <= 0) rushOver(); else rushRound();
+    }, 1300);
+  }
+  function rushOver(){
+    rush.over = true;
+    const st2 = store();
+    const key = 'rush_' + sel.dayId;
+    const prev = st2[key] || 0;
+    const isBest = rush.score > prev;
+    if (isBest){ st2[key] = rush.score; save(st2); }
+    $app.innerHTML = `
+      <div class="card rush-over">
+        <div style="font-size:46px">${isBest ? '👑' : '💥'}</div>
+        <div style="font-weight:800; font-size:18px; margin-top:6px">${isBest ? '신기록!' : '게임 오버!'}</div>
+        <div class="big-score">${rush.score}점</div>
+        <div class="best">🏆 최고 기록: ${Math.max(rush.score, prev)}점</div>
+      </div>
+      <button class="btn warn" id="again">한 번 더! ⚡</button>
+      <button class="btn" style="margin-top:10px; background:#268be1" id="brag2">📣 점수 자랑하기</button>
+      <button class="btn ghost" style="margin-top:10px" id="home2">처음으로</button>`;
+    if (isBest){
+      showSuccessFx();
+      playSuccessArpeggio();
+      [150, 450, 750].forEach((t, i) => setTimeout(() =>
+        burst(60 + Math.random() * (window.innerWidth - 120), 100 + i * 50, 24), t));
+    }
+    $app.querySelector('#again').onclick = rushStart;
+    $app.querySelector('#brag2').onclick = () => {
+      const b = bookById(sel.bookId), c = dayById(sel.dayId);
+      brag(`🌠⚡ 떨어지는 뜻 잡기 ${rush.score}점${isBest ? ' 👑 신기록!' : '!'}\n${b.title} · ${c.label}`);
+    };
+    $app.querySelector('#home2').onclick = home;
+  }
+
+  // ── 마지막 선택(교재·챕터·게임) 기억 ──────────────────
+  function persistSel(){
+    const s2 = store();
+    s2._sel = { bookId: sel.bookId, dayId: sel.dayId, mode: sel.mode };
+    save(s2);
+  }
+  (function restoreSel(){
+    const saved = store()._sel;
+    if (saved && dayById(saved.dayId) && bookById(saved.bookId)) Object.assign(sel, saved);
+  })();
+  // ── 워드서치 (3D 원판) ─────────────────────────────
+  let ws = null, wsUp = null;
+  const WS_ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const WS_DIRS = [[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]];
+  const WS_COLORS = [
+    ['#8fd0ff','#2f86d8','#1b5fa0'], ['#ffd08a','#f0872c','#b85c10'],
+    ['#b6f0b0','#43ac47','#237a2b'], ['#ffb0c8','#e2568c','#a52a5f'],
+    ['#d6b8ff','#8a5ae0','#5c33a8'],
+  ];
+  const wsKey = w => w.en.toUpperCase().replace(/[^A-Z]/g, '');
+
+  function wsBuild(words, size){
+    const grid = Array.from({length: size}, () => Array(size).fill(''));
+    const placed = [];
+    for (const w of words){
+      const L = wsKey(w);
+      let ok = false;
+      for (let t = 0; t < 400 && !ok; t++){
+        const d = WS_DIRS[Math.floor(Math.random() * WS_DIRS.length)];
+        const r0 = Math.floor(Math.random() * size), c0 = Math.floor(Math.random() * size);
+        const r1 = r0 + d[0] * (L.length - 1), c1 = c0 + d[1] * (L.length - 1);
+        if (r1 < 0 || r1 >= size || c1 < 0 || c1 >= size) continue;
+        let fits = true;
+        for (let i = 0; i < L.length; i++){
+          const ch = grid[r0 + d[0] * i][c0 + d[1] * i];
+          if (ch && ch !== L[i]){ fits = false; break; }
+        }
+        if (!fits) continue;
+        const cells = [];
+        for (let i = 0; i < L.length; i++){
+          grid[r0 + d[0] * i][c0 + d[1] * i] = L[i];
+          cells.push([r0 + d[0] * i, c0 + d[1] * i]);
+        }
+        placed.push({ word: w, key: L, cells });
+        ok = true;
+      }
+      if (!ok) return null;
+    }
+    // 원판이라 모서리는 비워 둔다
+    const mid = (size - 1) / 2, rad = size / 2 + .06;
+    const mask = [];
+    for (let r = 0; r < size; r++){
+      mask.push([]);
+      for (let c = 0; c < size; c++){
+        const inside = Math.hypot(r - mid, c - mid) <= rad - .5;
+        mask[r].push(inside);
+        if (!grid[r][c]) grid[r][c] = WS_ALPHA[Math.floor(Math.random() * 26)];
+      }
+    }
+    for (const pl of placed) for (const [r, c] of pl.cells) mask[r][c] = true;
+    return { grid, placed, mask };
+  }
+
+  function wsStart(){
+    stopListen(); speechSynthesis.cancel();
+    const c = dayById(sel.dayId);
+    const pool = c.words.filter(w => { const k = wsKey(w); return k.length >= 3 && k.length <= 9 && w.def; });
+    if (pool.length < 3){ alert('이 챕터는 워드서치에 쓸 단어가 부족해요 (3~9글자 단어 3개 이상 필요).'); return; }
+    const shuffled = pool.slice().sort(() => Math.random() - .5);
+    const rounds = [];
+    for (let i = 0; i < shuffled.length; i += 5){
+      const g = shuffled.slice(i, i + 5);
+      if (g.length >= 3) rounds.push(g);
+    }
+    ws = { rounds, ri: 0, found: 0, total: rounds.reduce((n, r) => n + r.length, 0), over: false, clue: -1 };
+    wsRound();
+  }
+
+  function wsRound(){
+    const words = ws.rounds[ws.ri];
+    const size = Math.max(9, Math.min(12, Math.max.apply(null, words.map(w => wsKey(w).length)) + 3));
+    let built = null;
+    for (let t = 0; t < 40 && !built; t++) built = wsBuild(words, size);
+    if (!built){ ws.ri++; return ws.ri < ws.rounds.length ? wsRound() : wsOver(); }
+    ws.g = built; ws.size = size; ws.clue = -1; ws.done = []; ws.intro = true;
+    ws.sel = null;
+
+    $app.innerHTML = `
+      <div class="card">
+        <div class="ws-hud">
+          <span class="wsleft">라운드 ${ws.ri + 1} / ${ws.rounds.length}</span>
+          <span>🔤 ${ws.found} / ${ws.total}</span>
+        </div>
+        <div class="ws-guide" id="wsguide">찾을 영영 뜻을 선택하고 워드를 골라주세요 👇</div>
+        <div class="ws-clues">
+          ${words.map((w, i) => `<button class="ws-clue" data-clue="${i}">
+            <span class="cdot">${i + 1}</span><span class="ctext">${esc(w.def)}</span></button>`).join('')}
+        </div>
+        <div class="ws-stage">
+          <div class="ws-board intro" id="wsboard"><div class="ws-inner">
+            <div class="ws-grid" id="wsgrid" style="grid-template-columns:repeat(${size}, minmax(0,1fr)); width:min(84vw, 400px)">
+              ${built.grid.map((row, r) => row.map((ch, c) =>
+                `<button class="ws-cell${built.mask[r][c] ? '' : ' dim'}" data-r="${r}" data-c="${c}">${ch}</button>`).join('')).join('')}
+            </div>
+          </div></div>
+        </div>
+      </div>
+      <button class="btn ghost" id="quit">그만하기</button>`;
+
+    // 인트로: 판이 돌면서 글자가 섞이다 자리를 잡는다
+    const cells = [...$app.querySelectorAll('.ws-cell')];
+    cells.forEach(el => el.classList.add('shuffling'));
+    const shuf = setInterval(() => {
+      for (const el of cells) if (!el.classList.contains('dim'))
+        el.textContent = WS_ALPHA[Math.floor(Math.random() * 26)];
+    }, 60);
+    setTimeout(() => {
+      clearInterval(shuf);
+      cells.forEach(el => {
+        el.classList.remove('shuffling');
+        el.textContent = built.grid[+el.dataset.r][+el.dataset.c];
+      });
+      const bd = $app.querySelector('#wsboard');
+      if (bd) bd.classList.remove('intro');
+      ws.intro = false;
+    }, 1500);
+
+    $app.querySelectorAll('[data-clue]').forEach(el => el.onclick = () => {
+      const i = +el.dataset.clue;
+      if (ws.intro || ws.done.indexOf(i) >= 0) return;
+      ws.clue = i;
+      $app.querySelectorAll('.ws-clue').forEach(x => x.classList.remove('on'));
+      el.classList.add('on');
+      $app.querySelector('#wsguide').textContent = '이제 판에서 그 단어를 찾아 드래그하세요! 🔍';
+      speak(words[i].def, 'en-US');
+    });
+    wsBindGrid(words);
+    $app.querySelector('#quit').onclick = () => { ws.over = true; home(); };
+  }
+
+  function wsBindGrid(words){
+    const grid = $app.querySelector('#wsgrid');
+    const cellAt = (x, y) => {
+      const el = document.elementFromPoint(x, y);
+      return el && el.classList.contains('ws-cell') && !el.classList.contains('dim') ? el : null;
+    };
+    const clearSel = () => $app.querySelectorAll('.ws-cell.sel').forEach(el => el.classList.remove('sel'));
+    const pathBetween = (a, b) => {
+      const [r0, c0] = a, [r1, c1] = b;
+      const dr = r1 - r0, dc = c1 - c0;
+      if (dr !== 0 && dc !== 0 && Math.abs(dr) !== Math.abs(dc)) return null;
+      const n = Math.max(Math.abs(dr), Math.abs(dc));
+      const sr = Math.sign(dr), sc = Math.sign(dc);
+      const out = [];
+      for (let i = 0; i <= n; i++) out.push([r0 + sr * i, c0 + sc * i]);
+      return out;
+    };
+    const paint = () => {
+      clearSel();
+      if (!ws.sel || !ws.sel.path) return;
+      for (const [r, c] of ws.sel.path){
+        const el = grid.querySelector(`[data-r="${r}"][data-c="${c}"]`);
+        if (el) el.classList.add('sel');
+      }
+    };
+    const begin = el => {
+      if (ws.intro) return;
+      if (ws.clue < 0){
+        const g = $app.querySelector('#wsguide');
+        g.textContent = '먼저 위에서 영영 뜻을 선택해 주세요! ☝️';
+        g.classList.remove('flash'); void g.offsetWidth; g.classList.add('flash');
+        buzz([30, 40, 30]);
+        return;
+      }
+      const a = [+el.dataset.r, +el.dataset.c];
+      ws.sel = { a, path: [a] };
+      paint();
+    };
+    const extend = el => {
+      if (!ws.sel) return;
+      const path = pathBetween(ws.sel.a, [+el.dataset.r, +el.dataset.c]);
+      if (path) { ws.sel.path = path; paint(); }
+    };
+    const finish = () => {
+      if (!ws.sel || !ws.sel.path){ ws.sel = null; return; }
+      const path = ws.sel.path;
+      ws.sel = null;
+      const letters = path.map(([r, c]) => ws.g.grid[r][c]).join('');
+      const want = wsKey(words[ws.clue]);
+      const hit = letters === want || letters.split('').reverse().join('') === want;
+      clearSel();
+      if (!hit){
+        buzz([40, 60, 40]);
+        const g = $app.querySelector('#wsguide');
+        g.textContent = '그 단어가 아니에요. 다시 찾아보세요 🤔';
+        g.classList.remove('flash'); void g.offsetWidth; g.classList.add('flash');
+        return;
+      }
+      const ci = ws.clue;
+      const col = WS_COLORS[ci % WS_COLORS.length];
+      for (const [r, c] of path){
+        const el = grid.querySelector(`[data-r="${r}"][data-c="${c}"]`);
+        if (!el) continue;
+        el.classList.add('found');
+        el.style.setProperty('--fc1', col[0]);
+        el.style.setProperty('--fc2', col[1]);
+        el.style.setProperty('--fc3', col[2]);
+      }
+      const clueEl = $app.querySelector(`[data-clue="${ci}"]`);
+      clueEl.classList.remove('on'); clueEl.classList.add('done');
+      ws.done.push(ci); ws.clue = -1; ws.found++;
+      const rect = clueEl.getBoundingClientRect();
+      burst(rect.left + rect.width / 2, rect.top + rect.height / 2, 20);
+      popKo(rect.left + rect.width / 2, rect.top, koMain(words[ci]));
+      playSuccessArpeggio(); buzz(60);
+      speak(words[ci].en, 'en-US');
+      $app.querySelector('.ws-hud span:last-child').textContent = `🔤 ${ws.found} / ${ws.total}`;
+      if (ws.done.length >= words.length){
+        showSuccessFx();
+        setTimeout(() => {
+          if (ws.over) return;
+          ws.ri++;
+          if (ws.ri < ws.rounds.length) wsRound(); else wsOver();
+        }, 1500);
+      } else {
+        $app.querySelector('#wsguide').textContent = '찾을 영영 뜻을 선택하고 워드를 골라주세요 👇';
+      }
+    };
+
+    // 드래그와 '두 번 탭' 두 방식을 한 흐름으로 처리한다.
+    // 누를 때 시작점이 없으면 시작점을 잡고, 이미 있으면 그 자리를 끝점으로 확정한다.
+    grid.addEventListener('pointerdown', e => {
+      const el = cellAt(e.clientX, e.clientY);
+      if (!el) return;
+      e.preventDefault();
+      if (ws.sel){ extend(el); finish(); }
+      else { begin(el); ws.dragged = false; }
+    });
+    grid.addEventListener('pointermove', e => {
+      if (!ws.sel || !e.buttons && e.pointerType === 'mouse') return;
+      const el = cellAt(e.clientX, e.clientY);
+      if (!el) return;
+      const before = ws.sel.path.length;
+      extend(el);
+      if (ws.sel.path.length !== before) ws.dragged = true;
+    });
+    if (wsUp) document.removeEventListener('pointerup', wsUp);
+    wsUp = () => {
+      if (!ws || ws.over || !ws.sel) return;
+      // 끌어서 두 칸 이상 지났으면 확정, 제자리 탭이면 시작점으로 남겨 둔다
+      if (ws.dragged && ws.sel.path.length > 1) finish();
+    };
+    document.addEventListener('pointerup', wsUp);
+  }
+
+  function wsOver(){
+    ws.over = true;
+    const s2 = store();
+    const key = sel.dayId + '_ws';
+    const prev = s2[key];
+    if (!prev || ws.found > prev.right){ s2[key] = { right: ws.found, total: ws.total }; save(s2); }
+    const pct = Math.round(ws.found / ws.total * 100);
+    $app.innerHTML = `
+      <div class="card" style="text-align:center">
+        <div class="sec-title">워드서치 결과</div>
+        <div class="score-ring" style="--pct:${pct}"><div>
+          <span class="n">${ws.found}/${ws.total}</span><span class="t">${pct}점</span>
+        </div></div>
+        <div style="font-weight:800; font-size:18px">${pct === 100 ? '전부 찾았어요! 🏆' : '잘했어요! 💪'}</div>
+      </div>
+      <button class="btn warn" id="again">한 번 더! 🔤</button>
+      <button class="btn" style="margin-top:10px; background:#268be1" id="brag3">📣 점수 자랑하기</button>
+      <button class="btn ghost" style="margin-top:10px" id="home3">처음으로</button>`;
+    if (pct >= 80){ showSuccessFx(); playSuccessArpeggio(); }
+    $app.querySelector('#again').onclick = wsStart;
+    $app.querySelector('#brag3').onclick = () => {
+      const b = bookById(sel.bookId), c = dayById(sel.dayId);
+      brag(`🔤 워드서치 ${ws.found}/${ws.total} (${pct}점)\n${b.title} · ${c.label}`);
+    };
+    $app.querySelector('#home3').onclick = home;
+  }
+
+  // 음성 목록이 늦게 로드되는 브라우저 대응
+  if (typeof speechSynthesis !== 'undefined') speechSynthesis.onvoiceschanged = () => {};
+  home();
+})();
+</script>
+</body>
+</html>

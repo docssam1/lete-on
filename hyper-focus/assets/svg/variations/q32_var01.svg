@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">거울에 비친 두 디지털 식의 빈칸 합 구하기 유사문제 1</title>
+  <desc id="desc">오른쪽 거울에 비친 모습으로 84는 21 더하기 빈칸과 같고, 빈칸은 21 더하기 15와 같은 두 디지털 식입니다.</desc>
+  <defs>
+    <g id="a"><rect x="8" y="0" width="32" height="6" rx="3"/></g><g id="b"><rect x="40" y="5" width="6" height="32" rx="3"/></g>
+    <g id="c"><rect x="40" y="43" width="6" height="32" rx="3"/></g><g id="d"><rect x="8" y="75" width="32" height="6" rx="3"/></g>
+    <g id="e"><rect x="2" y="43" width="6" height="32" rx="3"/></g><g id="f"><rect x="2" y="5" width="6" height="32" rx="3"/></g>
+    <g id="g"><rect x="8" y="37" width="32" height="6" rx="3"/></g>
+    <g id="d1"><use href="#b"/><use href="#c"/></g>
+    <g id="m1"><use href="#f"/><use href="#e"/></g>
+    <g id="d2"><use href="#a"/><use href="#b"/><use href="#g"/><use href="#e"/><use href="#d"/></g>
+    <g id="d4"><use href="#f"/><use href="#g"/><use href="#b"/><use href="#c"/></g>
+    <g id="m4"><use href="#b"/><use href="#g"/><use href="#f"/><use href="#e"/></g>
+    <g id="d5"><use href="#a"/><use href="#f"/><use href="#g"/><use href="#c"/><use href="#d"/></g>
+    <g id="d8"><use href="#a"/><use href="#b"/><use href="#c"/><use href="#d"/><use href="#e"/><use href="#f"/><use href="#g"/></g>
+    <linearGradient id="mirror" x1="0" x2="1"><stop offset="0" stop-color="#e7ecee"/><stop offset="0.48" stop-color="#ffffff"/><stop offset="1" stop-color="#b8c3c8"/></linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#333333" flood-opacity="0.10"/></filter>
+  </defs>
+  <rect width="760" height="430" rx="24" fill="#ffffff"/>
+  <text x="380" y="42" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#20272b">거울에 비친 두 디지털 식을 원래 방향으로 읽어 보세요</text>
+  <text x="380" y="71" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#59636a">두 빈칸에 들어갈 원래 수의 합을 구하세요.</text>
+  <rect x="100" y="95" width="570" height="265" rx="22" fill="#fafafa" stroke="#dedede" stroke-width="2" filter="url(#shadow)"/>
+  <g id="q32-visible-equations" color="#666d72">
+    <g data-line="1" data-visible-equation="84 = 21 + blank" transform="translate(160 120)">
+      <use href="#d8"/><use href="#m4" x="54"/>
+      <text x="139" y="59" font-family="Arial,sans-serif" font-size="49" font-weight="700" fill="#666d72">=</text>
+      <use href="#d2" x="205"/><use href="#m1" x="259"/>
+      <text x="328" y="61" font-family="Arial,sans-serif" font-size="45" font-weight="600" fill="#666d72">+</text>
+      <rect x="390" y="0" width="70" height="82" fill="#ffffff" stroke="#9da5a9" stroke-width="3"/>
+    </g>
+    <g data-line="2" data-visible-equation="blank = 21 + 15" transform="translate(160 235)">
+      <rect width="70" height="82" fill="#ffffff" stroke="#9da5a9" stroke-width="3"/>
+      <text x="139" y="59" font-family="Arial,sans-serif" font-size="49" font-weight="700" fill="#666d72">=</text>
+      <use href="#d2" x="205"/><use href="#m1" x="259"/>
+      <text x="328" y="61" font-family="Arial,sans-serif" font-size="45" font-weight="600" fill="#666d72">+</text>
+      <use href="#m1" x="390"/><use href="#d5" x="444"/>
+    </g>
+  </g>
+  <rect x="684" y="105" width="16" height="242" rx="8" fill="url(#mirror)" stroke="#aeb9be" stroke-width="2"/>
+  <text x="692" y="376" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="13" font-weight="900" fill="#657078">거울</text>
+  <rect x="211" y="390" width="338" height="26" rx="13" fill="#eeeeee"/>
+  <text x="380" y="409" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#4d555a">숫자 하나뿐 아니라 식 전체의 좌우 순서도 되돌리세요.</text>
+</svg>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>GFIELD Origami Studio</title>
-  <link rel="stylesheet" href="./styles.css?v=origami-1" />
+  <link rel="stylesheet" href="./styles.css?v=origami-3" />
   <link rel="stylesheet" href="../shared/pwa.css?v=2" />
   <link rel="manifest" href="/geometry/manifest.webmanifest" />
   <meta name="theme-color" content="#155d62" />
@@ -22,15 +22,20 @@
     <section class="studio-intro">
       <div>
         <p class="eyebrow">ORIGAMI STUDIO</p>
-        <h1 data-i18n="title">색종이 접기</h1>
-        <p data-i18n="subtitle">한 번 접기부터 잘려 나간 수 더하기까지, 한 단계씩 익혀요.</p>
+        <h1 data-i18n="title">색종이 생각 놀이터</h1>
+        <p data-i18n="subtitle">접고 펼치고, 돌리고 뒤집으며 종이의 변화를 단계별로 익혀요.</p>
       </div>
       <img src="../world-map/assets/foldy-character.webp" alt="색종이 접기 안내 캐릭터 폴디" />
     </section>
 
-    <section class="level-section" aria-labelledby="levelTitle">
-      <header><div><p class="eyebrow" data-i18n="course">5단계 코스</p><h2 id="levelTitle" data-i18n="choose">시작할 레벨을 골라요</h2></div><span data-i18n="fiveEach">레벨마다 10문제 · 한 번에 5문제</span></header>
-      <div id="levelGrid" class="level-grid"></div>
+    <section class="level-section course-section course-fold" aria-labelledby="foldCourseTitle">
+      <header><div><p class="eyebrow" data-i18n="courseOne">COURSE 1 · 접고 펼치기</p><h2 id="foldCourseTitle" data-i18n="foldCourseTitle">접은 종이를 펼치면?</h2><p class="course-description" data-i18n="foldCourseDesc">한 번 접기, 작업 위치, 대칭 도형과 잘린 수를 익혀요.</p></div><span data-i18n="fiveEach">레벨마다 10문제 · 한 번에 5문제</span></header>
+      <div id="foldLevelGrid" class="level-grid"></div>
+    </section>
+
+    <section class="level-section course-section course-turn" aria-labelledby="turnCourseTitle">
+      <header><div><p class="eyebrow" data-i18n="courseTwo">COURSE 2 · 접고 돌리고 뒤집기</p><h2 id="turnCourseTitle" data-i18n="turnCourseTitle">방향을 끝까지 따라가요</h2><p class="course-description" data-i18n="turnCourseDesc">뒤집기, 돌리기와 여러 동작의 순서를 추적해요.</p></div><span data-i18n="fiveEach">레벨마다 10문제 · 한 번에 5문제</span></header>
+      <div id="turnLevelGrid" class="level-grid"></div>
     </section>
 
     <aside class="worksheet-strip">
@@ -39,7 +44,7 @@
       <a href="../worksheet/paper-fold/" data-i18n="openWorksheet">학습지 만들기</a>
     </aside>
   </main>
-  <script type="module" src="./app.js?v=origami-2"></script>
+  <script type="module" src="./app.js?v=origami-3"></script>
   <script src="../shared/pwa.js?v=3" defer></script>
 </body>
 </html>

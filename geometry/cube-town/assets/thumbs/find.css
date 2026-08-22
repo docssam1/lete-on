@@ -1,0 +1,8 @@
+.game-thumb.thumb-find::before,
+.game-thumb.thumb-find .thumb-art {
+  display: none;
+}
+
+.game-thumb.thumb-find {
+  background: center / cover no-repeat url("./find.webp?v=20260820b");
+}

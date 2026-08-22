@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f3f7fa" />
   <title>필즈 더 클래식 문제은행</title>
-  <link rel="stylesheet" href="./styles.css?v=20260814a" />
+  <link rel="stylesheet" href="./styles.css?v=20260822m" />
 </head>
 <body>
   <header class="app-header">
@@ -63,9 +63,18 @@
             <div class="choice-grid count-choices" id="countChoices"><button data-count="10">10</button><button data-count="15">15</button><button data-count="20" class="active">20</button><button data-count="25">25</button><button data-count="30">30</button></div>
             <label class="count-input"><input id="questionCount" type="number" min="1" max="50" value="20" /><span>문제</span></label>
           </section>
-          <section class="setting-block">
+          <section class="setting-block" id="difficultySetting">
             <div class="setting-title"><strong>난이도</strong><span>선택한 원본 문제 기준</span></div>
             <div class="choice-grid difficulty-choices" id="difficultyChoices"><button data-level="basic">이 문제보다 쉽게</button><button data-level="actual" class="active">이 문제와 같게</button><button data-level="advanced">이 문제보다 어렵게</button></div>
+          </section>
+          <section class="setting-block" id="curriculumStageSetting" hidden>
+            <div class="setting-title"><strong>교재 학습 단계</strong><span>1~10권 원본 구성 기준</span></div>
+            <div class="choice-grid curriculum-stage-choices" id="curriculumStageChoices">
+              <button data-stage="concept"><strong>개념</strong><span>활동·예시</span></button>
+              <button data-stage="type" class="active"><strong>유형</strong><span>더클 확인</span></button>
+              <button data-stage="practice"><strong>연습</strong><span>더클 연습</span></button>
+              <button data-stage="advanced"><strong>심화</strong><span>더클 도전</span></button>
+            </div>
           </section>
           <section class="setting-block">
             <div class="setting-title"><strong>문제 배열</strong></div>
@@ -97,8 +106,9 @@
     <div class="dialog-actions"><button id="printAnswerButton" type="button">답안 인쇄</button><button id="closeAnswerBottom" class="primary" type="button">확인</button></div>
   </dialog>
 
-<script src="../../geometry/worksheet/generators.js?v=20260814d"></script>
-<script src="../../geometry/worksheet/render.js?v=20260814d"></script>
-<script type="module" src="./app.js?v=20260814d"></script>
+  <script src="../../geometry/worksheet/generators.js?v=20260820b"></script>
+  <script src="../../geometry/worksheet/render.js?v=20260818a"></script>
+  <script src="../../geometry/worksheet/card.js?v=ws-one-1"></script>
+  <script type="module" src="./app.js?v=20260822n"></script>
 </body>
 </html>

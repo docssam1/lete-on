@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" aria-labelledby="title desc">
+  <title id="title">복합 도형을 최소 정사각형으로 나누기 유사문제 2</title>
+  <desc id="desc">위쪽 너비 세 칸, 아래쪽 너비 다섯 칸인 ㄱ자형 격자 도형입니다.</desc>
+  <defs><clipPath id="c"><path d="M0 0H150V150H250V250H0Z"/></clipPath><filter id="s"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity=".12"/></filter></defs>
+  <rect width="760" height="430" rx="24" fill="#fff"/>
+  <text x="380" y="43" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="23" font-weight="800" fill="#20272b">가장 적은 수의 정사각형으로 나누세요</text>
+  <text x="380" y="73" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="15" font-weight="700" fill="#59636a">정사각형은 서로 같은 크기가 아니어도 됩니다.</text>
+  <g transform="translate(255 110)" filter="url(#s)"><path d="M0 0H150V150H250V250H0Z" fill="#fffdf8" stroke="#39444a" stroke-width="3"/><g clip-path="url(#c)" stroke="#aeb5b8" stroke-width="1.3" stroke-dasharray="4 4"><path d="M50 0V250M100 0V250M150 0V250M200 0V250M0 50H250M0 100H250M0 150H250M0 200H250"/></g></g>
+  <rect x="191" y="388" width="378" height="27" rx="14" fill="#f0eeeb"/>
+  <text x="380" y="407" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-size="14" font-weight="800" fill="#4d555a">큰 정사각형을 놓은 뒤 끝에 남는 한 칸도 빠뜨리지 마세요.</text>
+</svg>

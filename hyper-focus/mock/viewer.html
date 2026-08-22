@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hyper Focus 문제지 뷰어 | 지필드 영재교육</title>
+<style>
+:root{--navy:#102440;--gold:#c9a54c;--ink:#18202b;--muted:#667085;--line:#d9dee7;--paper:#fff;--bg:#eef1f5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Pretendard,"Noto Sans KR",system-ui,sans-serif;word-break:keep-all}
+.toolbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;background:rgba(16,36,64,.96);color:#fff;box-shadow:0 4px 18px rgba(0,0,0,.18)}
+.toolbar b{font-size:14px}.actions{display:flex;gap:7px;flex-wrap:nowrap;justify-content:flex-end}.actions button,.actions a{flex:0 0 auto;white-space:nowrap;border:1px solid rgba(255,255,255,.3);border-radius:7px;background:#fff;color:var(--navy);padding:8px 11px;text-decoration:none;font:800 12px inherit;cursor:pointer}.actions .gold{background:var(--gold);border-color:var(--gold)}
+.pages{width:min(210mm,calc(100% - 24px));margin:22px auto}.sheet{position:relative;min-height:297mm;margin:0 0 18px;padding:15mm 15mm 18mm;background:var(--paper);box-shadow:0 10px 35px rgba(20,33,54,.15);overflow:hidden}
+.watermark{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;color:rgba(16,36,64,.045);font-size:42px;font-weight:950;transform:rotate(-28deg);white-space:nowrap}
+.head{position:relative;display:flex;justify-content:space-between;align-items:end;border-bottom:3px solid var(--navy);padding-bottom:10px;margin-bottom:18px}.brand{color:var(--navy);font-size:12px;font-weight:950;letter-spacing:.14em}.head h1{margin:5px 0 0;font-size:24px;letter-spacing:-.04em}.meta{text-align:right;color:var(--muted);font-size:11px;font-weight:750;line-height:1.65}
+.instructions{position:relative;margin-bottom:16px;padding:10px 12px;border:1px solid #e4d3aa;background:#fffbef;border-radius:7px;font-size:11px;line-height:1.65}
+.question{position:relative;break-inside:avoid;padding:14px 0 17px;border-bottom:1px dashed #cdd4df}.qhead{display:grid;grid-template-columns:31px 1fr;gap:8px;align-items:start}.num{display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:var(--navy);color:#fff;font-size:13px;font-weight:950}.prompt{font-size:14px;font-weight:800;line-height:1.6}.tag{display:inline-block;margin:0 0 5px;padding:3px 7px;border-radius:999px;background:#eef2f7;color:#496078;font-size:9px;font-weight:850}
+.figure{margin:10px auto 5px;min-height:150px;display:flex;align-items:center;justify-content:center}.hf-views,.q01-views{display:flex;gap:18px;justify-content:center;align-items:center;flex-wrap:wrap;margin:0}.hf-views figure,.q01-views figure{margin:0;text-align:center}.hf-fig svg,.q01-fig svg{display:block;width:170px;max-height:190px}.hf-grid svg{display:block;width:auto;max-width:125px;height:auto;margin:auto}.hf-views figcaption,.q01-views figcaption{margin-top:4px;color:#667;font-size:10px;line-height:1.45}.answer-line{text-align:right;font-size:12px;font-weight:800;margin-top:5px}
+.hf-variation-problem{display:block;width:auto;max-width:100%;max-height:210px;object-fit:contain;margin:auto}
+.hf-variation-text-only{width:min(520px,100%);padding:10px 12px;border:1px solid #d9dee7;border-radius:8px;color:#7a8492;font-size:10px}.hf-variation-text-only b{display:block;margin-bottom:7px;color:#53647a}.hf-variation-text-only span{display:block;height:27px;border-bottom:1px solid #d9dee7}
+.hf-spatial{display:flex;align-items:center;justify-content:center;gap:18px;width:100%;max-width:640px}.hf-spatial figure,.hf-three-views figure{margin:0;text-align:center}.hf-spatial figcaption,.hf-three-views figcaption{margin-top:3px;color:#667;font-size:10px}.hf-spatial-main{width:150px}.hf-option-grid{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(72px,1fr));gap:7px}.hf-option{position:relative;min-height:74px;padding:5px;border:1px solid #d7dde5;border-radius:7px;background:#fff}.hf-option b{position:absolute;top:3px;left:4px;z-index:2;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--navy);color:#fff;font-size:9px}.hf-option svg{display:block;width:68px;height:68px;margin:auto}.hf-net-wrap .hf-net{display:block;width:110px;max-height:150px}.hf-three-views{display:flex;align-items:end;justify-content:center;gap:22px;flex-wrap:wrap}.hf-view-grid{display:block;width:auto;max-width:120px;height:auto}.hf-die{display:block;width:95px}.hf-dice-path{display:block;width:auto;max-width:230px;max-height:170px}
+.solutions{display:none}.solutions.show{display:block}.solution{position:relative;padding:13px 0;border-bottom:1px solid var(--line);font-size:12px;line-height:1.75}.solution b{color:var(--navy)}.empty{padding:80px 20px;text-align:center;color:var(--muted)}
+@media(max-width:720px){.toolbar{display:block;padding:8px 10px;overflow-x:auto;background:var(--navy);box-shadow:0 3px 12px rgba(0,0,0,.2)}.toolbar>b{display:none}.actions{width:max-content;min-width:100%;justify-content:flex-start;flex-wrap:nowrap}.actions button,.actions a{padding:8px 10px}.pages{width:100%;margin:0}.sheet{min-height:0;margin:0;padding:22px 14px;box-shadow:none}.head{align-items:start}.head h1{font-size:19px}.meta{font-size:9px}.question{padding:13px 0}.prompt{font-size:13px}.hf-fig svg,.q01-fig svg{width:140px}.hf-grid svg{max-width:105px}.hf-spatial{align-items:center;gap:10px;flex-wrap:wrap}.hf-spatial-main{width:120px}.hf-option-grid{width:100%;flex-basis:100%;grid-template-columns:repeat(4,1fr)}.hf-option{min-height:63px}.hf-option svg{width:57px;height:57px}.hf-three-views{gap:14px}.hf-view-grid{max-width:92px}.figure{min-height:125px}}
+@media print{body{background:#fff}.toolbar{display:none}.pages{width:100%;margin:0}.sheet{width:210mm;min-height:297mm;margin:0;padding:13mm 14mm;box-shadow:none;page-break-after:always}.sheet:last-child{page-break-after:auto}.solutions:not(.show){display:none!important}@page{size:A4 portrait;margin:0}}
+</style>
+</head>
+<body>
+<header class="toolbar"><b>G-FIELD HYPER FOCUS VIEWER</b><div class="actions"><a id="backLink" href="./">채점 화면</a><button type="button" id="regenBtn">다른 문제</button><button type="button" id="answerBtn">정답·풀이 보기</button><button type="button" class="gold" onclick="window.print()">인쇄</button></div></header>
+<main id="pages" class="pages"><div class="sheet"><div class="empty">문제지를 만드는 중입니다.</div></div></main>
+<script src="../../config.js"></script>
+<script src="./access-policy.js"></script>
+<script src="../generator/q01.js"></script>
+<script src="../generator/stacking.js"></script>
+<script src="../generator/spatial.js"></script>
+<script src="../generator/reasoning.js"></script>
+<script src="../generator/advanced.js"></script>
+<script src="../generator/logic.js"></script>
+<script src="../generator/combinatorics.js"></script>
+<script src="../generator/applications.js"></script>
+<script src="./exam-blueprints.js"></script>
+<script src="./variation-bank.js"></script>
+<script src="./mock-core.js"></script>
+<script>
+(async function(){
+  const params=new URLSearchParams(location.search);
+  const mode=params.get('mode')==='practice'?'practice':'exam';
+  const examId=params.get('exam')||HFMockBlueprints.reviewExamId;
+  const student=HFMock.safeStudent(params.get('student'));
+  const seed=HFMock.normalizeSeed(params.get('seed')||HFMock.makeSeed());
+  const typeIds=(params.get('types')||'').split(',').map(Number).filter(Boolean);
+  const count=Number(params.get('count'));
+  const difficulty=['easy','same','hard'].includes(params.get('difficulty'))?params.get('difficulty'):'same';
+  const difficultyByType={};
+  (params.get('levels')||'').split(',').forEach(pair=>{const [rawId,level]=pair.split(':');const typeId=Number(rawId);if(typeId&&['easy','same','hard'].includes(level))difficultyByType[typeId]=level;});
+  const storedAccess=HFAccessPolicy.storedAccess(window.GFIELD_CONFIG);
+  let doc;
+  try{
+    if(mode==='practice')await HFMock.preparePractice(typeIds);else await HFMock.prepareExam(examId);
+    doc=mode==='practice'
+      ?HFMock.createPractice(typeIds,{seed,countPerType:count,difficulty,difficultyByType,accessTier:storedAccess.paid?'paid':'free'})
+      :HFMock.createExam(examId,seed);
+  }catch(error){
+    document.getElementById('pages').innerHTML=`<section class="sheet"><div class="empty">${String(error.message||error)}<br><a href="./?exam=${encodeURIComponent(examId)}">돌아가기</a></div></section>`;
+    document.getElementById('answerBtn').style.display='none';
+    document.getElementById('regenBtn').style.display='none';
+    return;
+  }
+  const pages=document.getElementById('pages');
+  if(!doc.questions.length){
+    pages.innerHTML='<section class="sheet"><div class="empty">선택된 약점 유형이 없습니다.<br><a href="./">진단 모의고사로 돌아가기</a></div></section>';
+    document.getElementById('answerBtn').style.display='none';
+    document.getElementById('regenBtn').style.display='none';
+    return;
+  }
+  if(doc.questions.every(q=>q.sourceMode==='variation-bank'))document.getElementById('regenBtn').style.display='none';
+  const perPage=mode==='practice'?4:2;
+  const chunks=[];
+  for(let i=0;i<doc.questions.length;i+=perPage)chunks.push(doc.questions.slice(i,i+perPage));
+  const today=new Intl.DateTimeFormat('ko-KR',{dateStyle:'medium'}).format(new Date());
+  function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function sheet(chunk,pageNo){return `<section class="sheet"><div class="watermark">${esc(student)} · GFIELD</div><div class="head"><div><div class="brand">G-FIELD GIFTED EDUCATION</div><h1>${esc(doc.title)}</h1></div><div class="meta">${esc(student)} 학생<br>${esc(doc.subtitle)}<br>${today} · ${pageNo}/${chunks.length}</div></div>${pageNo===1?`<div class="instructions">문제의 조건과 그림을 자세히 살펴보고 답을 쓰세요. ${doc.durationMinutes?`권장 시간은 ${doc.durationMinutes}분입니다.`:''} 정답과 풀이는 문제를 모두 푼 뒤 확인하세요.</div>`:''}${chunk.map(q=>`<article class="question"><div class="qhead"><span class="num">${q.number}</span><div><span class="tag">${esc(q.typeCode)} · ${esc(q.typeTitle)} · ${esc(q.difficultyLabel)}</span><div class="prompt">${esc(q.prompt)}</div></div></div><div class="figure">${q.problemHtml}</div><div class="answer-line">답: ____________________</div></article>`).join('')}</section>`;}
+  const solutionChunks=[];for(let i=0;i<doc.questions.length;i+=8)solutionChunks.push(doc.questions.slice(i,i+8));
+  const solutionHtml=solutionChunks.map((chunk,index)=>`<section class="sheet solutions"><div class="watermark">${esc(student)} · GFIELD</div><div class="head"><div><div class="brand">ANSWER &amp; GUIDE</div><h1>정답 및 간단 풀이</h1></div><div class="meta">${esc(student)} 학생<br>${index+1}/${solutionChunks.length}</div></div>${chunk.map(q=>`<div class="solution"><b>${q.number}. ${esc(q.typeTitle)}</b><br>${esc(q.answerText)}</div>`).join('')}</section>`).join('');
+  pages.innerHTML=chunks.map((chunk,index)=>sheet(chunk,index+1)).join('')+solutionHtml;
+  const canonical=new URLSearchParams(params);canonical.set('seed',seed);canonical.set('student',student);if(mode==='exam')canonical.set('exam',examId);history.replaceState(null,'',`${location.pathname}?${canonical}`);
+  const back=new URL('./',location.href);back.searchParams.set('student',student);back.searchParams.set('seed',seed);back.searchParams.set('exam',examId);document.getElementById('backLink').href=back;
+  document.getElementById('answerBtn').onclick=function(){const open=!document.querySelector('.solutions')?.classList.contains('show');document.querySelectorAll('.solutions').forEach(el=>el.classList.toggle('show',open));this.textContent=open?'정답·풀이 닫기':'정답·풀이 보기';};
+  document.getElementById('regenBtn').onclick=function(){params.set('seed',HFMock.makeSeed());params.set('student',student);location.search=params;};
+})();
+</script>
+</body>
+</html>

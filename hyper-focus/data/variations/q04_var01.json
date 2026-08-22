@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q04",
+  "variationId": "q04_var01",
+  "subType": "stacking_hole_removed",
+  "status": "draft",
+  "source": {
+    "problemImage": "./assets/svg/variations/q04_var01.svg"
+  },
+  "contentBinding": {
+    "canonicalSource": "./canonical/q04.json",
+    "hfDataTypeId": 4
+  },
+  "machineReadable": {
+    "payloadType": "stacking_hole_removed",
+    "coordinateSystem": {
+      "frontFace": {
+        "xDirection": "left_to_right",
+        "zDirection": "top_to_bottom",
+        "indexBase": 1
+      },
+      "topFace": {
+        "xDirection": "left_to_right",
+        "yDirection": "front_to_back",
+        "indexBase": 1
+      }
+    },
+    "container": {
+      "width": 5,
+      "height": 4,
+      "depth": 5,
+      "totalCells": 100
+    },
+    "sourceObservedMarks": {
+      "frontFaceBlackCells": [
+        { "x": 2, "z": 2 },
+        { "x": 2, "z": 4 },
+        { "x": 4, "z": 2 },
+        { "x": 4, "z": 4 }
+      ],
+      "topFaceBlackCells": [
+        { "x": 2, "y": 2 },
+        { "x": 4, "y": 3 }
+      ]
+    },
+    "layerCountModel": {
+      "countingOrder": "top_to_bottom",
+      "layers": [
+        { "z": 1, "removedBlockCount": 2 },
+        { "z": 2, "removedBlockCount": 8 },
+        { "z": 3, "removedBlockCount": 2 },
+        { "z": 4, "removedBlockCount": 8 },
+        { "z": 5, "removedBlockCount": 2 }
+      ],
+      "removedBlockCount": 22
+    },
+    "holeRule": {
+      "frontFaceThroughLength": 4,
+      "topFaceThroughLength": 5,
+      "overlapMustBeDeduplicated": true,
+      "overlapCount": 4
+    },
+    "countingModel": {
+      "totalBlockCount": 100,
+      "removedBlockCount": 22,
+      "remainingBlockCount": 78
+    }
+  },
+  "answerValidation": {
+    "answerType": "integer_with_unit",
+    "unit": "개",
+    "expectedAnswer": 78
+  },
+  "problem": {
+    "prompt": "쌓기나무를 쌓은 다음 검은색 부분이 반대편까지 구멍이 뚫리도록 쌓기나무를 빼냈습니다. 남은 쌓기나무는 모두 몇 개인가요?"
+  },
+  "solutionHint": "처음에는 쌓기나무가 100개입니다. 위에서 뚫은 구멍 2개와 앞에서 뚫은 구멍을 겹치지 않게 층별로 세면 2 + 8 + 2 + 8 + 2 = 22개가 빠집니다. 따라서 100 - 22 = 78개가 남습니다."
+}

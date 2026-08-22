@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "hf-canonical-problem-v1",
+  "questionId": "q38",
+  "typeId": 38,
+  "title": "원형 배열에서 바라보는 방향 기준 순서 판단하기",
+  "problemType": "TYPE-04",
+  "subType": "circular_viewpoint_order",
+  "answerType": "ordinal",
+  "dataLevel": "L4",
+  "renderMode": "structured_svg",
+  "source": {
+    "originalProblemPng": {
+      "path": "./assets/problems/q38.png"
+    }
+  },
+  "editableLayers": {
+    "text": false,
+    "numbers": false,
+    "choices": false,
+    "shapes": true,
+    "layout": true
+  },
+  "contentBinding": {
+    "contentSource": "hf_data.json",
+    "typeId": 38,
+    "originalQuestionId": "q38_origin",
+    "preservePaths": [
+      "title",
+      "subType",
+      "originalProblem.text",
+      "originalProblem.answer",
+      "originalProblem.answerStory",
+      "originalProblem.renderData.renderStrategy",
+      "originalProblem.renderData.mustPreserve",
+      "aiTutorPack.audioScript",
+      "aiTutorPack.docssamPhrase",
+      "aiTutorPack.mentalHack",
+      "aiTutorPack.studentMistake",
+      "aiTutorPack.docsamRules",
+      "variationPolicy.variationRule",
+      "variationPolicy.mustPreserve"
+    ]
+  },
+  "machineReadable": {
+    "status": "verified",
+    "payload": {
+      "payloadType": "circular_viewpoint_order",
+      "participantCount": 10,
+      "anchor": "지연",
+      "viewpointRule": {
+        "reference": "지연의 오른쪽 2번째 사람",
+        "question": "그 사람과 마주 보는 사람은 지연의 왼쪽 몇 번째인가"
+      },
+      "solvingModel": {
+        "expectedAnswer": 3,
+        "strategy": [
+          "원형에 10명을 같은 간격으로 놓는다.",
+          "지연의 오른쪽 2번째를 표시한다.",
+          "마주 보는 사람을 찾고 지연 기준 왼쪽 몇 번째인지 센다."
+        ]
+      },
+      "judgementRule": {
+        "checks": [
+          "draw_circle",
+          "rotate_paper"
+        ],
+        "description": "원을 그려 기준 사람의 시선을 맞추고 오른쪽·왼쪽 순서를 다시 센다."
+      },
+      "answerFirstGenerationRule": {
+        "enabled": true,
+        "description": "유사문제는 먼저 정답 순번을 정한 뒤, 원형 인원 수와 기준 위치를 조정해 그 순번이 나오도록 만든다."
+      },
+      "generationTemplate": {
+        "easyMode": {
+          "participantCount": 6
+        },
+        "baseMode": {
+          "participantCount": 10
+        },
+        "hardMode": {
+          "participantCount": 12,
+          "mustPreserve": [
+            "viewpoint shift",
+            "single valid ordinal"
+          ]
+        }
+      },
+      "generationConstraints": {
+        "canChange": [
+          "전체 인원 수",
+          "기준 사람",
+          "오른쪽/왼쪽 몇 번째인지"
+        ],
+        "mustPreserve": [
+          "원형 배열 구조",
+          "바라보는 방향 기준 순서를 따지는 구조",
+          "정답이 하나로 결정되는 구조"
+        ],
+        "forbiddenChanges": [
+          "마주 보는 사람이 존재하지 않는 홀수 인원 문제",
+          "시점 기준이 모호한 문제",
+          "순서가 여러 개로 해석되는 문제"
+        ]
+      },
+      "renderSpec": {
+        "renderStrategy": "circular_seating_svg",
+        "svgRequired": true,
+        "renderer": "circular_viewpoint_order"
+      }
+    }
+  },
+  "answerValidation": {
+    "answerType": "ordinal",
+    "expectedAnswer": 3,
+    "mustMatchContentAnswer": true,
+    "sourceAnswerPath": "originalProblem.answer",
+    "derivation": {
+      "method": "count_from_anchor_after_opposite_lookup",
+      "checks": [
+        "인원 수가 10명인지 확인",
+        "오른쪽 2번째를 맞게 찾는지 확인",
+        "마주 보는 사람 위치가 왼쪽 3번째인지 확인"
+      ]
+    }
+  },
+  "validation": {
+    "requiredChecks": [
+      "problem_assets.json에 q38 경로 존재 확인",
+      "hf_data.json typeId 38의 originalProblem.answer가 3번째인지 확인",
+      "hf_core.json 및 problem_map.json의 subType이 circular_viewpoint_order인지 확인"
+    ],
+    "completionStatus": "verified"
+  }
+}

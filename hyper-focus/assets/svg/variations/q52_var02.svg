@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" aria-labelledby="title desc">
+  <title id="title">도형 무게 양팔저울</title>
+  <desc id="desc">네모 한 개와 원 한 개가 원 네 개와 같고, 세모 세 개가 네모 두 개와 원 세 개와 같다. 아래 저울의 왼쪽 접시에는 네모 두 개와 세모 한 개가 놓여 있다.</desc>
+  <rect width="720" height="430" fill="#fff"/>
+  <defs>
+    <g id="c"><circle r="15" fill="#7aa6d8" stroke="#26384d" stroke-width="2"/></g>
+    <g id="s"><rect x="-15" y="-15" width="30" height="30" fill="#ef9f4f" stroke="#26384d" stroke-width="2"/></g>
+    <g id="t"><path d="M0-18 18 15H-18Z" fill="#66b884" stroke="#26384d" stroke-width="2"/></g>
+    <g id="bal" fill="none" stroke="#53647a" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M150 28H570" stroke-width="5"/>
+      <path d="M360 28V70M328 105H392L360 70Z" stroke-width="4"/>
+      <path d="M150 28V80M270 28V80M140 80Q210 112 280 80" stroke-width="3"/>
+      <path d="M440 28V80M580 28V80M430 80Q510 112 590 80" stroke-width="3"/>
+      <circle cx="360" cy="28" r="7" fill="#fff" stroke-width="4"/>
+    </g>
+  </defs>
+  <g transform="translate(0 5)">
+    <use href="#bal"/>
+    <use href="#s" x="188" y="62"/><use href="#c" x="230" y="62"/>
+    <use href="#c" x="462" y="62"/><use href="#c" x="498" y="62"/><use href="#c" x="534" y="62"/><use href="#c" x="570" y="62"/>
+  </g>
+  <g transform="translate(0 140)">
+    <use href="#bal"/>
+    <use href="#t" x="168" y="60"/><use href="#t" x="210" y="60"/><use href="#t" x="252" y="60"/>
+    <use href="#s" x="446" y="62"/><use href="#s" x="478" y="62"/><use href="#c" x="510" y="62"/><use href="#c" x="542" y="62"/><use href="#c" x="574" y="62"/>
+  </g>
+  <g transform="translate(0 280)">
+    <use href="#bal"/>
+    <use href="#s" x="168" y="62"/><use href="#s" x="210" y="62"/><use href="#t" x="252" y="60"/>
+    <text x="510" y="72" text-anchor="middle" font-family="sans-serif" font-size="42" fill="#26384d">?</text>
+  </g>
+</svg>

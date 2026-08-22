@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "hf-variation-problem-v1",
+  "baseQuestionId": "q52",
+  "variationId": "q52_var01",
+  "subType": "balance_smallest_unit",
+  "status": "verified",
+  "presentation": { "mode": "image", "answerUnit": "개" },
+  "source": { "problemImage": "./assets/svg/variations/q52_var01.svg" },
+  "contentBinding": { "canonicalSource": "./canonical/q52.json", "hfDataTypeId": 52 },
+  "machineReadable": {
+    "payloadType": "balance_smallest_unit",
+    "unitObject": "circle",
+    "equations": [
+      { "left": { "square": 1, "circle": 2 }, "right": { "circle": 5 } },
+      { "left": { "triangle": 2 }, "right": { "square": 1, "circle": 3 } }
+    ],
+    "target": { "square": 1, "triangle": 1 },
+    "expectedAnswer": 6
+  },
+  "answerValidation": { "answerType": "integer", "expectedAnswer": 6 },
+  "problem": {
+    "prompt": "두 양팔저울이 모두 평형을 이룹니다. 아래 저울의 왼쪽 접시에 있는 네모 1개와 세모 1개를 원과 바꾸려면, 빈 접시에 원을 몇 개 놓아야 합니까?"
+  },
+  "solutionHint": "네모 1개는 원 3개와 같습니다. 세모 2개는 원 6개와 같으므로 세모 1개는 원 3개입니다. 따라서 네모 1개와 세모 1개는 원 6개입니다."
+}

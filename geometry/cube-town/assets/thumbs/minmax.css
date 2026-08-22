@@ -1,0 +1,8 @@
+.game-thumb.thumb-minmax::before,
+.game-thumb.thumb-minmax .thumb-art {
+  display: none;
+}
+
+.game-thumb.thumb-minmax {
+  background: center / cover no-repeat url("./minmax.webp?v=20260820b");
+}
