@@ -74,8 +74,8 @@
       trackId: "middle-transfer",
       scopeKey: "middle1-1-to-middle2-2",
       scopeLabel: "중1-1~중2-2 누적",
-      evidenceStatus: "observed",
-      evidenceRefs: ["USER:DP-MIDDLE2-2-TRANSFER-SCOPE"]
+      evidenceStatus: "verified",
+      evidenceRefs: ["EXAM:dp-middle2-2-transfer"]
     },
     {
       id: "DP:common-math-entry",
