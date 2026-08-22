@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822j";
-import { GENERATORS } from "./generators.js?v=20260822j";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822k";
+import { GENERATORS } from "./generators.js?v=20260822k";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260822e";
 import { book03Markup } from "./book03-renderers.js?v=20260822e";
@@ -9,6 +9,7 @@ import { book06Markup } from "./book06-renderers.js?v=20260822g";
 import { book07Markup } from "./book07-renderers.js?v=20260822h";
 import { book08Markup } from "./book08-renderers.js?v=20260822i";
 import { book09Markup } from "./book09-renderers.js?v=20260822j";
+import { book10Markup } from "./book10-renderers.js?v=20260822k";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -2355,6 +2356,7 @@ function visualMarkup(visual) {
   if (visual.kind === "book7") return `<div class="visual book07-visual">${book07Markup(visual)}</div>`;
   if (visual.kind === "book8") return `<div class="visual book08-visual">${book08Markup(visual)}</div>`;
   if (visual.kind === "book9") return `<div class="visual book09-visual">${book09Markup(visual)}</div>`;
+  if (visual.kind === "book10") return `<div class="visual book10-visual">${book10Markup(visual)}</div>`;
   if (visual.kind.startsWith("g1-")) return `<div class="visual g1-source-visual">${g1SourceMarkup(visual)}</div>`;
   if (visual.kind === "hidden-card-conditions") return `<div class="visual hidden-card-visual">${hiddenCardConditionsMarkup(visual)}</div>`;
   if (visual.kind === "shape-matrix-rule") return `<div class="visual shape-matrix-visual">${shapeMatrixRuleMarkup(visual)}</div>`;

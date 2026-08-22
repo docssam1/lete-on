@@ -619,6 +619,53 @@ export const TYPES = [
   type("profession-assignment-b9", "logic", "조건표 추리", "가능한 직업 표로 사람의 직업 정하기", { generator: "professionAssignmentBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
   type("activity-enrollment-b9", "logic", "조건표 추리", "활동 선택표와 인원수로 빠진 활동 찾기", { generator: "activityEnrollmentBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
 
+  // 더클래식 1과정 10권: 182문항을 교재에 인쇄된 문제 번호와 네 단계로 직접 대조했다.
+  type("multi-method-multiplication-b10", "number", "곱셈을 간편하게", "같은 곱셈을 넓이·격자·세로셈으로 계산하기", { generator: "multiMethodMultiplicationBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("same-tens-complement-product-b10", "number", "곱셈을 간편하게", "십의 자리가 같고 일의 자리 합이 10인 곱셈", { generator: "sameTensComplementProductBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("same-ones-complement-product-b10", "number", "곱셈을 간편하게", "일의 자리가 같고 십의 자리 합이 10인 곱셈", { generator: "sameOnesComplementProductBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("factor-pair-divisor-count-b10", "number", "약수와 곱셈", "곱이 되는 두 수의 짝으로 약수 개수 구하기", { generator: "factorPairDivisorCountBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("multi-count-consecutive-decomposition-b10", "number", "연속수의 합", "한 수를 여러 개수의 연속수 합으로 나타내기", { generator: "multiCountConsecutiveDecompositionBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("calendar-consecutive-sum-weekday-b10", "number", "연속수의 활용", "달력에서 이어진 날짜의 합으로 요일 찾기", { generator: "calendarConsecutiveSumWeekdayBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("consecutive-page-range-b10", "number", "연속수의 활용", "연속한 쪽수의 합으로 처음과 끝 찾기", { generator: "consecutivePageRangeBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("same-parity-consecutive-sum-b10", "number", "연속수의 합", "연속한 홀수 또는 짝수의 합 구하기", { generator: "sameParityConsecutiveSumBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("rectangular-number-grid-sum-b10", "number", "연속수의 활용", "직사각형 수 배열표의 합 구하기", { generator: "rectangularNumberGridSumBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("shaped-number-grid-sum-b10", "number", "연속수의 활용", "수 배열표에서 색칠한 모양의 합 구하기", { generator: "shapedNumberGridSumBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("calendar-block-sum-b10", "number", "연속수의 활용", "달력 3×3 날짜 묶음의 합과 가운데 수", { generator: "calendarBlockSumBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("all-consecutive-decompositions-b10", "number", "연속수의 합", "한 수를 연속수의 합으로 나타내는 방법 모두 찾기", { generator: "allConsecutiveDecompositionsBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("consecutive-tens-digit-condition-b10", "number", "연속수의 활용", "자리 숫자 합 조건으로 세 연속수 찾기", { generator: "consecutiveTensDigitConditionBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("consecutive-vertical-addition-b10", "number", "연속수의 활용", "세 연속수 세로셈의 가려진 숫자 찾기", { generator: "consecutiveVerticalAdditionBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+
+  type("two-symbol-coefficient-weight-b10", "number", "대응 관계", "두 종류 물건의 개수를 바꾼 식으로 무게 구하기", { generator: "twoSymbolCoefficientWeightBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("two-symbol-score-difference-b10", "number", "대응 관계", "두 과녁의 횟수를 바꾼 점수로 차 구하기", { generator: "twoSymbolScoreDifferenceBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("shared-term-equation-b10", "number", "대응 관계", "두 식의 공통 묶음을 지워 남은 값 구하기", { generator: "sharedTermEquationBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("container-double-content-b10", "number", "대응 관계", "빈 통과 가득 찬 통의 차로 내용물 구하기", { generator: "containerDoubleContentBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("three-pair-sums-values-b10", "number", "대응 관계", "세 대상의 두 개씩 합으로 각각의 값 구하기", { generator: "threePairSumsValuesBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("closed-perimeter-spacing-difference-b10", "number", "간격과 개수", "닫힌 둘레의 서로 다른 간격에서 개수 차 구하기", { generator: "closedPerimeterSpacingDifferenceBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("same-budget-price-count-b10", "number", "대응 관계", "같은 돈으로 가격이 다른 물건의 개수 비교하기", { generator: "sameBudgetPriceCountBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("new-participants-equal-share-b10", "number", "대응 관계", "사람 수가 늘어난 뒤 똑같이 나누는 수 비교하기", { generator: "newParticipantsEqualShareBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("catch-up-growing-amount-b10", "number", "따라잡기", "서로 다르게 늘어나는 양이 같아지는 때", { generator: "catchUpGrowingAmountBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("catch-up-shrinking-amount-b10", "number", "따라잡기", "서로 다르게 줄어드는 양이 같아지는 때", { generator: "catchUpShrinkingAmountBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("catch-up-distance-b10", "number", "따라잡기", "거리와 빠르기의 차로 따라잡는 시간 구하기", { generator: "catchUpDistanceBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("four-object-weight-system-b10", "logic", "대응 관계", "네 물건의 여러 무게 식을 이어 각각 구하기", { generator: "fourObjectWeightSystemBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("delayed-start-catch-up-b10", "number", "따라잡기", "늦게 시작한 저금액이 같아지는 달 구하기", { generator: "delayedStartCatchUpBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+
+  type("repeated-digit-number-count-b10", "number", "조건에 맞는 수", "숫자를 여러 번 써서 만들 수 있는 수의 개수", { generator: "repeatedDigitNumberCountBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("binary-switch-count-b10", "number", "경우의 수", "켜기와 끄기의 서로 다른 모습 수 세기", { generator: "binarySwitchCountBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("monotone-digit-enumeration-b10", "number", "조건에 맞는 수", "자리 숫자가 커지거나 작아지는 수 세기", { generator: "monotoneDigitEnumerationBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("monotone-digit-rank-b10", "number", "조건에 맞는 수", "자리 숫자가 한 방향으로 변하는 수의 순서", { generator: "monotoneDigitRankBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("distinct-card-target-sum-b10", "number", "숫자 카드", "서로 다른 카드를 골라 목표 합 만들기", { generator: "distinctCardTargetSumBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("digit-sum-three-digit-count-b10", "number", "조건에 맞는 수", "자리 숫자의 합이 같은 세 자리 수 세기", { generator: "digitSumThreeDigitCountBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("digit-sum-ranked-number-b10", "number", "조건에 맞는 수", "자리 숫자 합이 같은 수의 순서 찾기", { generator: "digitSumRankedNumberBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("three-digit-step-count-b10", "number", "조건에 맞는 수", "이웃한 자리 숫자의 차가 같은 세 자리 수", { generator: "threeDigitStepCountBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("monotone-digit-count-b10", "number", "조건에 맞는 수", "자리 숫자가 차례로 작아지는 세 자리 수", { generator: "monotoneDigitCountBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("route-product-count-b10", "number", "경우의 수", "여러 구간에서 길을 하나씩 고르는 방법 수", { generator: "routeProductCountBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("lineup-count-b10", "number", "경우의 수", "여러 사람이 한 줄로 서는 순서의 수", { generator: "lineupCountBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+
+  type("number-baseball-b10", "logic", "숫자 야구", "S와 B 단서로 서로 다른 세 자리 수 찾기", { generator: "numberBaseballBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("most-frequent-digit-b10", "number", "수와 숫자", "범위에서 가장 많이 쓰인 숫자 찾기", { generator: "mostFrequentDigitBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("digit-occurrence-range-b10", "number", "수와 숫자", "양의 수 범위에서 특정 숫자가 쓰인 횟수", { generator: "digitOccurrenceRangeBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+  type("positive-range-number-digit-count-b10", "number", "수와 숫자", "양의 수 구간을 이어 쓸 때 전체 숫자 수", { generator: "positiveRangeNumberDigitCountBook10", sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 문제 번호별 대조" }),
+
   // 더클래식 1과정 2권: 단원 이름이 아니라 실제 풀이 구조로 나눈 세부 유형이다.
   // 원본 페이지와 단원 테스트를 대조한 항목만 sourceMatched로 기록한다. 생성기가 없는
   // 유형은 커리큘럼 화면에 보이되, 검증이 끝날 때까지 선택할 수 없다.
@@ -1272,7 +1319,50 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "preference-count-matrix-b9": "각 열의 전체 표시 수를 맞추며 비어 있는 칸을 하나씩 채웁니다.",
   "apartment-neighbor-logic-b9": "오른쪽 옆집 조건으로 각 층을 만들고 위아래 조건으로 두 층을 맞춥니다.",
   "profession-assignment-b9": "가능한 직업이 하나뿐인 사람부터 정하고 같은 직업 칸을 다른 사람에게서 지웁니다.",
-  "activity-enrollment-b9": "활동별 전체 인원에 맞게 표시를 채운 뒤 컴퓨터 칸이 비는 학생을 찾습니다."
+  "activity-enrollment-b9": "활동별 전체 인원에 맞게 표시를 채운 뒤 컴퓨터 칸이 비는 학생을 찾습니다.",
+  "g1-odd-even-sum-difference": "홀수와 짝수를 차례로 한 쌍씩 묶어 각 쌍에서 생기는 차이를 더합니다.",
+  "multi-method-multiplication-b10": "한 수를 십의 자리와 일의 자리로 나누어 각각 곱한 뒤 두 값을 더합니다.",
+  "same-tens-complement-product-b10": "같은 십의 자리와 합이 10인 일의 자리를 표시해 빠른 곱셈 규칙을 적용합니다.",
+  "same-ones-complement-product-b10": "같은 일의 자리와 합이 10인 십의 자리를 표시해 두 부분으로 계산합니다.",
+  "factor-pair-divisor-count-b10": "곱해서 목표 수가 되는 두 수를 작은 수부터 짝지어 빠짐없이 씁니다.",
+  "multi-count-consecutive-decomposition-b10": "연속수의 개수를 2개부터 바꾸며 첫 수가 자연수가 되는 경우를 찾습니다.",
+  "calendar-consecutive-sum-weekday-b10": "날짜 합을 연속수로 나눈 뒤 마지막 날짜가 놓인 요일 칸을 찾습니다.",
+  "consecutive-page-range-b10": "쪽수 합을 쪽 수로 나누어 가운데 쪽을 찾고 앞뒤로 이어 씁니다.",
+  "same-parity-consecutive-sum-b10": "홀수나 짝수를 2씩 이어 쓰고 양끝을 짝지어 더합니다.",
+  "rectangular-number-grid-sum-b10": "가운데 수를 기준으로 같은 거리의 두 수를 짝지어 합을 구합니다.",
+  "shaped-number-grid-sum-b10": "색칠한 칸을 가로·세로의 같은 간격끼리 묶어 더합니다.",
+  "calendar-block-sum-b10": "달력 3×3 묶음은 가운데 날짜를 중심으로 앞뒤 수가 짝을 이룹니다.",
+  "all-consecutive-decompositions-b10": "연속수의 개수를 하나씩 늘리며 가능한 첫 수를 빠짐없이 확인합니다.",
+  "consecutive-tens-digit-condition-b10": "십의 자리 합과 일의 자리 합을 따로 맞춘 뒤 세 수가 연속인지 확인합니다.",
+  "consecutive-vertical-addition-b10": "전체 합을 세 연속수로 나누어 각 수를 찾은 뒤 가려진 숫자를 읽습니다.",
+  "two-symbol-coefficient-weight-b10": "두 식에서 개수가 하나씩 바뀐 부분을 비교해 두 물건의 차를 먼저 찾습니다.",
+  "two-symbol-score-difference-b10": "두 식을 나란히 놓고 서로 바뀐 과녁 한 개씩의 점수 차를 찾습니다.",
+  "shared-term-equation-b10": "두 식에 똑같이 들어 있는 묶음을 지우고 남은 도형의 값을 구합니다.",
+  "container-double-content-b10": "가득 찬 통의 무게에서 같은 수의 빈 통 무게를 뺍니다.",
+  "three-pair-sums-values-b10": "세 짝의 합을 모두 더해 둘로 가른 뒤 각 짝의 합을 빼 값을 찾습니다.",
+  "closed-perimeter-spacing-difference-b10": "닫힌 둘레에서는 전체 길이를 간격으로 나눈 수가 세운 개수와 같습니다.",
+  "same-budget-price-count-b10": "가진 돈을 각 물건의 가격으로 나누어 살 수 있는 개수를 비교합니다.",
+  "new-participants-equal-share-b10": "나중 사람 수와 한 사람 몫으로 전체를 구한 뒤 처음 사람 수로 나눕니다.",
+  "catch-up-growing-amount-b10": "처음 차이를 찾고 한 번마다 줄어드는 차로 나누어 같아지는 때를 찾습니다.",
+  "catch-up-shrinking-amount-b10": "두 양의 처음 차이와 한 번마다 줄어드는 양의 차를 비교합니다.",
+  "catch-up-distance-b10": "두 사람의 빠르기 차만큼 매분 가까워지는 거리를 표시합니다.",
+  "four-object-weight-system-b10": "공통 물건을 지울 수 있는 두 식부터 비교하고 찾은 값을 다음 식에 넣습니다.",
+  "delayed-start-catch-up-b10": "먼저 시작한 달 수와 늦게 시작한 달 수를 나란히 적어 저금액을 비교합니다.",
+  "repeated-digit-number-count-b10": "첫 자리에는 0을 빼고, 각 자리에 놓을 수 있는 카드 수를 차례로 셉니다.",
+  "binary-switch-count-b10": "전등을 하나 늘릴 때마다 앞의 각 모습에 켠 모습과 끈 모습이 생깁니다.",
+  "monotone-digit-enumeration-b10": "첫 자리부터 정하고 그보다 크거나 작은 카드만 다음 자리에 놓습니다.",
+  "monotone-digit-rank-b10": "조건에 맞는 수를 첫 자리부터 작은 순서로 묶어 목표 순서를 찾습니다.",
+  "distinct-card-target-sum-b10": "가장 작은 카드부터 짝을 바꾸며 목표 합이 되는 묶음을 빠짐없이 확인합니다.",
+  "digit-sum-three-digit-count-b10": "백의 자리를 먼저 정하고 남은 합을 십의 자리와 일의 자리에 나눕니다.",
+  "digit-sum-ranked-number-b10": "백의 자리와 십의 자리를 작은 순서로 정하며 조건에 맞는 수를 씁니다.",
+  "three-digit-step-count-b10": "백의 자리와 십의 자리 차를 일의 자리에도 똑같이 이어 봅니다.",
+  "monotone-digit-count-b10": "백의 자리보다 작은 숫자, 다시 그보다 작은 숫자를 차례로 놓습니다.",
+  "route-product-count-b10": "첫 구간의 각 길마다 다음 구간에서 이어 갈 수 있는 길을 모두 셉니다.",
+  "lineup-count-b10": "첫 자리부터 설 수 있는 사람을 정하고 다음 자리의 사람 수를 하나씩 줄입니다.",
+  "number-baseball-b10": "0S 0B인 숫자를 먼저 지우고, 자리까지 맞는 숫자와 자리만 다른 숫자를 나눕니다.",
+  "most-frequent-digit-b10": "각 숫자가 일·십·백의 자리에 나타나는 횟수를 따로 세어 더합니다.",
+  "digit-occurrence-range-b10": "목표 숫자가 각 자리에 오는 수를 세고 두 자리에 함께 오는 수도 확인합니다.",
+  "positive-range-number-digit-count-b10": "한 자리·두 자리·세 자리 구간으로 나누어 쓰인 숫자 수를 더합니다."
 });
 
 export const textbookGuideForType = (id) => TEXTBOOK_CONCEPT_GUIDES[id] || "문제에 보이는 관계를 한 단계씩 표시한 뒤 같은 규칙을 적용합니다.";
@@ -2854,6 +2944,172 @@ const BOOK09_UNIT04_REFS = Object.freeze({
   "activity-enrollment-b9": stageReferences({ practice: [problemNumbers("practice", 1, [18])] })
 });
 
+const BOOK10_UNIT01_REFS = Object.freeze({
+  "napier-multiplication": stageReferences({
+    concept: [problemNumbers("activity", 1, [1])],
+    practice: [problemNumbers("practice", 1, [1])]
+  }),
+  "area-model-multiplication": stageReferences({
+    concept: [problemNumbers("activity", 1, [2])],
+    practice: [problemNumbers("practice", 1, [2])]
+  }),
+  "multi-method-multiplication-b10": stageReferences({ concept: [problemNumbers("activity", 1, [3])] }),
+  "same-tens-complement-product-b10": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [3])]
+  }),
+  "same-ones-complement-product-b10": stageReferences({
+    type: [problemNumbers("check", 1, [3, 4])],
+    practice: [problemNumbers("practice", 1, [4])]
+  }),
+  "factor-pair-divisor-count-b10": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2])],
+    practice: [problemNumbers("practice", 1, [5, 6])]
+  }),
+  "consecutive-sum-even-count": stageReferences({
+    concept: [problemNumbers("activity", 2, [3, 4])],
+    practice: [problemNumbers("practice", 1, [7, 8])]
+  }),
+  "consecutive-sum-odd-count": stageReferences({
+    concept: [problemNumbers("activity", 3, [1, 2])],
+    practice: [problemNumbers("practice", 1, [15, 16])]
+  }),
+  "consecutive-numbers-from-sum": stageReferences({
+    concept: [problemNumbers("activity", 2, [5, 6]), problemNumbers("activity", 3, [3, 4, 5])],
+    type: [problemNumbers("check", 2, [1, 2])],
+    practice: [problemNumbers("practice", 1, [9, 10, 11, 17, 18, 19])]
+  }),
+  "multi-count-consecutive-decomposition-b10": stageReferences({
+    concept: [problemNumbers("activity", 3, [6])],
+    practice: [problemNumbers("practice", 1, [12, 20, 26])]
+  }),
+  "calendar-consecutive-sum-weekday-b10": stageReferences({
+    concept: [problemNumbers("activity", 3, [7])],
+    type: [problemNumbers("check", 2, [3])],
+    practice: [problemNumbers("practice", 1, [13, 21])]
+  }),
+  "consecutive-page-range-b10": stageReferences({
+    concept: [problemNumbers("activity", 3, [8])],
+    type: [problemNumbers("check", 2, [4])],
+    practice: [problemNumbers("practice", 1, [14, 22])]
+  }),
+  "same-parity-consecutive-sum-b10": stageReferences({
+    type: [problemNumbers("check", 3, [1])],
+    practice: [problemNumbers("practice", 1, [23])]
+  }),
+  "rectangular-number-grid-sum-b10": stageReferences({ type: [problemNumbers("check", 3, [2])] }),
+  "shaped-number-grid-sum-b10": stageReferences({
+    type: [problemNumbers("check", 3, [3])],
+    practice: [problemNumbers("practice", 1, [24])],
+    advanced: [problemNumbers("advanced", 1, [2])]
+  }),
+  "calendar-block-sum-b10": stageReferences({
+    type: [problemNumbers("check", 3, [4])],
+    practice: [problemNumbers("practice", 1, [25])]
+  }),
+  "g1-odd-even-sum-difference": stageReferences({ advanced: [problemNumbers("advanced", 1, [1])] }),
+  "all-consecutive-decompositions-b10": stageReferences({ advanced: [problemNumbers("advanced", 1, [3, 4])] }),
+  "consecutive-tens-digit-condition-b10": stageReferences({ advanced: [problemNumbers("advanced", 1, [5])] }),
+  "consecutive-vertical-addition-b10": stageReferences({ advanced: [problemNumbers("advanced", 1, [6])] })
+});
+
+const BOOK10_UNIT02_REFS = Object.freeze({
+  "two-symbol-coefficient-weight-b10": stageReferences({
+    concept: [problemNumbers("activity", 1, [1])],
+    practice: [problemNumbers("practice", 1, [1, 2])],
+    advanced: [problemNumbers("advanced", 1, [1])]
+  }),
+  "two-symbol-score-difference-b10": stageReferences({
+    concept: [problemNumbers("activity", 1, [2])],
+    practice: [problemNumbers("practice", 1, [3])]
+  }),
+  "shared-term-equation-b10": stageReferences({
+    concept: [problemNumbers("activity", 1, [3])],
+    practice: [problemNumbers("practice", 1, [4])]
+  }),
+  "container-double-content-b10": stageReferences({
+    concept: [problemNumbers("activity", 1, [4])],
+    practice: [problemNumbers("practice", 1, [5])]
+  }),
+  "three-pair-sums-values-b10": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [6, 7, 8, 9])],
+    advanced: [problemNumbers("advanced", 1, [3])]
+  }),
+  "closed-perimeter-spacing-difference-b10": stageReferences({
+    concept: [problemNumbers("activity", 2, [1])],
+    practice: [problemNumbers("practice", 1, [10])],
+    advanced: [problemNumbers("advanced", 1, [5])]
+  }),
+  "same-budget-price-count-b10": stageReferences({
+    concept: [problemNumbers("activity", 2, [2])],
+    practice: [problemNumbers("practice", 1, [11])]
+  }),
+  "new-participants-equal-share-b10": stageReferences({
+    concept: [problemNumbers("activity", 2, [3, 4])],
+    practice: [problemNumbers("practice", 1, [12, 13])]
+  }),
+  "catch-up-growing-amount-b10": stageReferences({
+    type: [problemNumbers("check", 2, [1, 2])],
+    practice: [problemNumbers("practice", 1, [14, 15])]
+  }),
+  "catch-up-shrinking-amount-b10": stageReferences({
+    type: [problemNumbers("check", 2, [3])],
+    practice: [problemNumbers("practice", 1, [16])]
+  }),
+  "catch-up-distance-b10": stageReferences({
+    type: [problemNumbers("check", 2, [4])],
+    practice: [problemNumbers("practice", 1, [17])]
+  }),
+  "four-object-weight-system-b10": stageReferences({ advanced: [problemNumbers("advanced", 1, [2])] }),
+  "delayed-start-catch-up-b10": stageReferences({ advanced: [problemNumbers("advanced", 1, [4])] })
+});
+
+const BOOK10_UNIT03_REFS = Object.freeze({
+  "digit-card-number-enumeration": stageReferences({ concept: [problemNumbers("activity", 1, [1, 2, 3, 4, 5, 6, 7, 8])], practice: [problemNumbers("practice", 1, [3, 4, 5, 6])] }),
+  "repeated-digit-number-count-b10": stageReferences({ type: [problemNumbers("check", 1, [1, 2])], practice: [problemNumbers("practice", 1, [7, 8])] }),
+  "binary-switch-count-b10": stageReferences({ type: [problemNumbers("check", 1, [3, 4])], practice: [problemNumbers("practice", 1, [9, 10])] }),
+  "monotone-digit-enumeration-b10": stageReferences({ concept: [problemNumbers("activity", 2, [1, 2])], practice: [problemNumbers("practice", 1, [11, 12, 13])] }),
+  "monotone-digit-rank-b10": stageReferences({ concept: [problemNumbers("activity", 2, [3])] }),
+  "distinct-card-target-sum-b10": stageReferences({
+    type: [problemNumbers("check", 2, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [14, 15, 16])],
+    advanced: [problemNumbers("advanced", 1, [5])]
+  }),
+  "digit-sum-three-digit-count-b10": stageReferences({ advanced: [problemNumbers("advanced", 1, [1])] }),
+  "digit-sum-ranked-number-b10": stageReferences({ advanced: [problemNumbers("advanced", 1, [2])] }),
+  "three-digit-step-count-b10": stageReferences({ advanced: [problemNumbers("advanced", 1, [3])] }),
+  "monotone-digit-count-b10": stageReferences({ advanced: [problemNumbers("advanced", 1, [4])] }),
+  "route-product-count-b10": stageReferences({ practice: [problemNumbers("practice", 1, [1])] }),
+  "lineup-count-b10": stageReferences({ practice: [problemNumbers("practice", 1, [2])] })
+});
+
+const BOOK10_UNIT04_REFS = Object.freeze({
+  "number-baseball-b10": stageReferences({
+    concept: [problemNumbers("activity", 1, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [1, 2, 3, 4])],
+    advanced: [problemNumbers("advanced", 1, [5])]
+  }),
+  "digit-occurrence-count": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2, 4])],
+    practice: [problemNumbers("practice", 1, [5, 6, 7, 8])]
+  }),
+  "most-frequent-digit-b10": stageReferences({ type: [problemNumbers("check", 1, [3])] }),
+  "total-written-digits": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2])],
+    type: [problemNumbers("check", 2, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [10, 11, 12, 17, 18, 19, 20])],
+    advanced: [problemNumbers("advanced", 1, [3])]
+  }),
+  "last-number-from-digit-total": stageReferences({
+    concept: [problemNumbers("activity", 2, [3, 4, 5, 6])],
+    practice: [problemNumbers("practice", 1, [13, 14, 15, 16])],
+    advanced: [problemNumbers("advanced", 1, [4])]
+  }),
+  "digit-occurrence-range-b10": stageReferences({ advanced: [problemNumbers("advanced", 1, [1, 2])] }),
+  "positive-range-number-digit-count-b10": stageReferences({ practice: [problemNumbers("practice", 1, [9])] })
+});
+
 export const CURRICULUM = [
   { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [
     detailedStagedUnit("도형 움직이기", [
@@ -3080,10 +3336,32 @@ export const CURRICULUM = [
     ], [6,3], [4,2], 5, 20, BOOK09_UNIT04_REFS)
   ] },
   { id: "book-10", label: "10권", title: "연속수와 따라잡기", units: [
-    stagedUnit("연속수의 합", ["consecutive-number-addition","odd-even-sum-difference"], [3,6,8], [4,4,4], 6, 26),
-    stagedUnit("따라잡기", ["catch-up"], [4,4], [4,4], 5, 17),
-    stagedUnit("조건에 맞는 수", ["two-digit-condition","chained-number-condition"], [8,3], [4,4], 5, 16),
-    stagedUnit("숫자 야구게임", ["number-baseball"], [4,6], [4,4], 5, 20)
+    detailedStagedUnit("연속수의 합", [
+      "napier-multiplication", "area-model-multiplication", "multi-method-multiplication-b10",
+      "same-tens-complement-product-b10", "same-ones-complement-product-b10", "factor-pair-divisor-count-b10",
+      "consecutive-sum-even-count", "consecutive-sum-odd-count", "consecutive-numbers-from-sum",
+      "multi-count-consecutive-decomposition-b10", "calendar-consecutive-sum-weekday-b10",
+      "consecutive-page-range-b10", "same-parity-consecutive-sum-b10", "rectangular-number-grid-sum-b10",
+      "shaped-number-grid-sum-b10", "calendar-block-sum-b10", "g1-odd-even-sum-difference",
+      "all-consecutive-decompositions-b10", "consecutive-tens-digit-condition-b10", "consecutive-vertical-addition-b10"
+    ], [3,6,8], [4,4,4], 6, 26, BOOK10_UNIT01_REFS),
+    detailedStagedUnit("따라잡기", [
+      "two-symbol-coefficient-weight-b10", "two-symbol-score-difference-b10", "shared-term-equation-b10",
+      "container-double-content-b10", "three-pair-sums-values-b10", "closed-perimeter-spacing-difference-b10",
+      "same-budget-price-count-b10", "new-participants-equal-share-b10", "catch-up-growing-amount-b10",
+      "catch-up-shrinking-amount-b10", "catch-up-distance-b10", "four-object-weight-system-b10",
+      "delayed-start-catch-up-b10"
+    ], [4,4], [4,4], 5, 17, BOOK10_UNIT02_REFS),
+    detailedStagedUnit("조건에 맞는 수", [
+      "digit-card-number-enumeration", "repeated-digit-number-count-b10", "binary-switch-count-b10",
+      "monotone-digit-enumeration-b10", "monotone-digit-rank-b10", "distinct-card-target-sum-b10",
+      "digit-sum-three-digit-count-b10", "digit-sum-ranked-number-b10", "three-digit-step-count-b10",
+      "monotone-digit-count-b10", "route-product-count-b10", "lineup-count-b10"
+    ], [8,3], [4,4], 5, 16, BOOK10_UNIT03_REFS),
+    detailedStagedUnit("숫자 야구게임", [
+      "number-baseball-b10", "digit-occurrence-count", "most-frequent-digit-b10", "total-written-digits",
+      "last-number-from-digit-total", "digit-occurrence-range-b10", "positive-range-number-digit-count-b10"
+    ], [4,6], [4,4], 5, 20, BOOK10_UNIT04_REFS)
   ] }
 ].map((book, index) => ({
   ...book,

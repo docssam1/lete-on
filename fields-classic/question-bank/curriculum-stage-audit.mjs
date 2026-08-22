@@ -106,12 +106,12 @@ assert(unitCount === 40, `expected 40 units, got ${unitCount}`);
 assert(rangeCount === 244, `expected 244 ranges, got ${rangeCount}`);
 assert(sourceQuestionCount === 1613, `expected 1613 source questions, got ${sourceQuestionCount}`);
 assert(sourceKeys.size === sourceQuestionCount, "source question keys are not unique");
-assert(curriculumTypeIds.size === 387, `expected 387 curriculum types, got ${curriculumTypeIds.size}`);
-assert(detailedTypeCount === 420, `expected 420 detailed types, got ${detailedTypeCount}`);
-assert(detailedReferenceCount === 793, `expected 793 detailed references, got ${detailedReferenceCount}`);
-assert(detailedQuestionCount === 1431, `expected 1431 detailed source questions, got ${detailedQuestionCount}`);
+assert(curriculumTypeIds.size === 425, `expected 425 curriculum types, got ${curriculumTypeIds.size}`);
+assert(detailedTypeCount === 472, `expected 472 detailed types, got ${detailedTypeCount}`);
+assert(detailedReferenceCount === 892, `expected 892 detailed references, got ${detailedReferenceCount}`);
+assert(detailedQuestionCount === 1613, `expected 1613 detailed source questions, got ${detailedQuestionCount}`);
 const fullyDetailedBooks = CURRICULUM.filter((book) => book.units.every((unit) => unit.typeStudyRefs));
-assert(fullyDetailedBooks.map((book) => book.id).join(",") === "book-01,book-02,book-03,book-04,book-05,book-06,book-07,book-08,book-09", "fully detailed book set changed");
+assert(fullyDetailedBooks.map((book) => book.id).join(",") === "book-01,book-02,book-03,book-04,book-05,book-06,book-07,book-08,book-09,book-10", "fully detailed book set changed");
 for (const book of fullyDetailedBooks) {
   const source = [...sourceKeys].filter((key) => key.startsWith(`${book.id}/`));
   const detailed = detailedSourceKeysByBook.get(book.id) || new Set();
