@@ -4,13 +4,20 @@ const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
 const domainById = Object.fromEntries(DOMAINS.map((domain) => [domain.id, domain]));
-let exam = EXAMS.find((item) => item.id === params.get("exam")) || EXAMS[0];
+const DIAGNOSIS_EXAMS = EXAMS.filter((item) => item.verified);
+let exam = DIAGNOSIS_EXAMS.find((item) => item.id === params.get("exam")) || DIAGNOSIS_EXAMS[0];
 let responses = loadResponses(exam.id);
 
+if (params.get("exam") !== exam.id) {
+  const next = new URL(location.href);
+  next.searchParams.set("exam", exam.id);
+  history.replaceState(null, "", next);
+}
+
 $("studentName").textContent = student;
-$("examSelect").innerHTML = EXAMS.map((item) => `<option value="${item.id}" ${item.id === exam.id ? "selected" : ""}>${item.label}</option>`).join("");
+$("examSelect").innerHTML = DIAGNOSIS_EXAMS.map((item) => `<option value="${item.id}" ${item.id === exam.id ? "selected" : ""}>${item.label}</option>`).join("");
 $("examSelect").addEventListener("change", () => {
-  exam = EXAMS.find((item) => item.id === $("examSelect").value) || EXAMS[0];
+  exam = DIAGNOSIS_EXAMS.find((item) => item.id === $("examSelect").value) || DIAGNOSIS_EXAMS[0];
   responses = loadResponses(exam.id);
   const next = new URL(location.href);
   next.searchParams.set("exam", exam.id);
