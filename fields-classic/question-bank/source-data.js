@@ -524,6 +524,61 @@ export const TYPES = [
   type("kaprekar-495-b7", "number", "수의 규칙", "세 자리 수의 큰 수와 작은 수를 빼 495 만들기", { generator: "kaprekar495", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
   type("three-circle-equal-sum-b7", "number", "수 배열과 합", "세 원 안의 합이 같도록 색칠한 수 찾기", { generator: "threeCircleEqualSum", sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 문제 번호별 대조" }),
 
+  // 더클래식 1과정 8권: 164문항을 네 단계와 인쇄 문제 번호로 직접 대조했다.
+  // 곱셈 매트릭스처럼 풀이 구조가 완전히 같은 유형만 기존 공용 유형을 재사용한다.
+  type("balance-difference-deduction-b8", "number", "묶음수와 매트릭스", "저울의 두 묶음 차이로 도형 무게 구하기", { generator: "balanceDifferenceDeductionBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("overlap-circle-sum-b8", "number", "묶음수와 매트릭스", "겹친 두 원의 합으로 색칠한 수 구하기", { generator: "overlapCircleSumBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("symbol-additive-chain-b8", "number", "묶음수와 매트릭스", "도형 덧셈식을 이어 각 도형 수 구하기", { generator: "symbolAdditiveChainBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("addition-matrix-target-b8", "number", "덧셈 매트릭스", "묶음수로 덧셈 매트릭스의 색칠한 합 구하기", { generator: "additionMatrixTargetBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("addition-matrix-complete-b8", "number", "덧셈 매트릭스", "도형값을 찾아 덧셈 매트릭스의 빈 합 완성하기", { generator: "additionMatrixCompleteBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("symbol-operation-deduction-b8", "number", "도형이 나타내는 수", "0·1과 곱셈 성질로 도형 수 구하기", { generator: "symbolOperationDeductionBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("symbol-cross-equation-b8", "number", "도형이 나타내는 수", "가로·세로 도형 계산식을 함께 풀기", { generator: "symbolCrossEquationBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("conditional-symbol-chain-b8", "logic", "도형이 나타내는 수", "서로 다른 한 자리 수 조건을 이어 표 완성하기", { generator: "conditionalSymbolChainBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("conditional-two-digit-symbol-b8", "logic", "도형이 나타내는 수", "도형 관계와 자리수 조건으로 두 자리 수 찾기", { generator: "conditionalTwoDigitSymbolBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("cyclic-pair-sums-b8", "number", "도형이 나타내는 수", "세 도형의 두 개씩 합으로 각 값 구하기", { generator: "cyclicPairSumsBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+
+  type("pyramid-cryptarithm-b8", "number", "복면산", "피라미드 모양 세로셈의 받아올림 추리", { generator: "pyramidCryptarithmBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("blank-digit-vertical-addition-b8", "number", "복면산", "세로 덧셈의 여러 빈 숫자 합 구하기", { generator: "blankDigitVerticalAdditionBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("all-digits-once-cryptarithm-b8", "number", "복면산", "주어진 숫자를 한 번씩 써서 세로셈 완성하기", { generator: "allDigitsOnceCryptarithmBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("ordered-symbol-cryptarithm-b8", "number", "복면산", "서로 다른 도형의 크기 조건까지 맞추기", { generator: "orderedSymbolCryptarithmBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("repeated-symbol-cryptarithm-b8", "number", "복면산", "한 도형이 반복되는 세로 덧셈", { generator: "repeatedSymbolCryptarithmBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("multi-symbol-cryptarithm-b8", "number", "복면산", "여러 도형과 받아올림이 있는 세로 덧셈", { generator: "multiSymbolCryptarithmBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("doubled-symbol-result-b8", "number", "복면산", "도형 수를 두 배해 나온 결과로 값 찾기", { generator: "doubledSymbolResultBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("letter-pyramid-cryptarithm-b8", "number", "복면산", "문자 피라미드 세로셈으로 네 자리 수 만들기", { generator: "letterPyramidCryptarithmBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("repeated-number-multiple-answers-b8", "number", "복면산", "같은 숫자로 만든 수의 가능한 값 모두 찾기", { generator: "repeatedNumberMultipleAnswersBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("linked-cryptarithm-b8", "number", "복면산", "서로 이어진 두 복면산으로 도형 값 찾기", { generator: "linkedCryptarithmBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("subtract-to-repeated-number-b8", "number", "복면산", "두 한 자리 수를 빼 같은 숫자 두 자리 수 만들기", { generator: "subtractToRepeatedNumberBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+
+  type("equalize-transfer-b8", "number", "합차와 배수", "두 사람이 같아지도록 옮기는 수 구하기", { generator: "equalizeTransferBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("chained-equalize-transfer-b8", "number", "합차와 배수", "세 사람의 차를 이어 양을 같게 만들기", { generator: "chainedEqualizeTransferBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("total-difference-bars-b8", "number", "합차와 배수", "합과 차를 막대로 나타내 두 수 구하기", { generator: "totalDifferenceBarsBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("future-age-sum-b8", "number", "합차와 배수", "몇 년 뒤 두 사람 나이의 합으로 나이 구하기", { generator: "futureAgeSumBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("table-total-difference-b8", "number", "합차와 배수", "표의 전체 합과 두 사람의 차로 빈칸 구하기", { generator: "tableTotalDifferenceBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("reverse-transfer-three-b8", "number", "합차와 배수", "세 사람의 합과 주고받은 뒤의 관계 거꾸로 풀기", { generator: "reverseTransferThreeBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("sum-multiple-bars-b8", "number", "합차와 배수", "두 수의 합과 몇 배 관계로 각각 구하기", { generator: "sumMultipleBarsBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("difference-multiple-bars-b8", "number", "합차와 배수", "두 수의 차와 몇 배 관계로 각각 구하기", { generator: "differenceMultipleBarsBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("sum-multiple-offset-b8", "number", "합차와 배수", "전체 합과 몇 배보다 많고 적은 관계 풀기", { generator: "sumMultipleOffsetBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("three-person-difference-b8", "logic", "합차와 배수", "세 사람의 차와 두 사람의 합으로 값 구하기", { generator: "threePersonDifferenceBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("transfer-to-multiple-b8", "number", "합차와 배수", "한쪽에서 옮긴 뒤 몇 배가 되게 만들기", { generator: "transferToMultipleBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("conditional-three-share-b8", "logic", "합차와 배수", "세 사람의 주고받기 조건으로 처음 수 구하기", { generator: "conditionalThreeShareBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("reverse-double-offset-b8", "number", "합차와 배수", "더한 뒤 처음 수의 두 배보다 작은 관계 거꾸로 풀기", { generator: "reverseDoubleOffsetBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+
+  type("reverse-arithmetic-chain-b8", "number", "거꾸로 생각하기", "더하기와 빼기 과정을 마지막에서 거꾸로 풀기", { generator: "reverseArithmeticChainBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("reverse-transfer-events-b8", "number", "거꾸로 생각하기", "여러 사람에게 주고받은 수를 거꾸로 찾기", { generator: "reverseTransferEventsBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("reverse-multiply-divide-b8", "number", "거꾸로 생각하기", "곱하고 더하고 나눈 과정을 거꾸로 풀기", { generator: "reverseMultiplyDivideBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("reverse-split-equal-b8", "number", "거꾸로 생각하기", "똑같이 나눈 뒤 주고받은 처음 수 구하기", { generator: "reverseSplitEqualBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("give-as-much-once-b8", "number", "거꾸로 생각하기", "상대가 가진 만큼 한 번 준 처음 수 구하기", { generator: "giveAsMuchOnceBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("give-as-much-return-b8", "number", "거꾸로 생각하기", "상대가 가진 만큼 준 뒤 일부를 돌려받기", { generator: "giveAsMuchReturnBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("shaded-fraction-count-b8", "number", "분수로 거꾸로 풀기", "색칠한 분수만큼의 구슬 수 구하기", { generator: "shadedFractionCountBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("fraction-given-away-original-b8", "number", "분수로 거꾸로 풀기", "일부를 쓰고 남은 수로 처음 수 구하기", { generator: "fractionGivenAwayOriginalBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("sequential-fraction-remains-b8", "number", "분수로 거꾸로 풀기", "일부를 쓰고 남은 것의 일부를 다시 준 처음 수", { generator: "sequentialFractionRemainsBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("fraction-difference-whole-b8", "number", "분수로 거꾸로 풀기", "두 분수만큼의 양 차이로 전체 구하기", { generator: "fractionDifferenceWholeBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("fraction-share-difference-b8", "number", "분수로 거꾸로 풀기", "두 모둠의 분수와 인원 차이로 각각 구하기", { generator: "fractionShareDifferenceBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("reverse-two-container-transfers-b8", "logic", "거꾸로 생각하기", "두 상자에서 두 번 주고받은 처음 수", { generator: "reverseTwoContainerTransfersBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("three-container-condition-b8", "logic", "거꾸로 생각하기", "세 주머니의 합과 같은 수 조건으로 처음 수", { generator: "threeContainerConditionBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("sequential-fraction-consumption-b8", "number", "분수로 거꾸로 풀기", "남은 것의 일정한 분수를 차례로 먹은 처음 수", { generator: "sequentialFractionConsumptionBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+  type("fraction-subgroup-count-b8", "number", "분수로 거꾸로 풀기", "두 집단의 일부에 해당하는 사람 수 합하기", { generator: "fractionSubgroupCountBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
+
   // 더클래식 1과정 2권: 단원 이름이 아니라 실제 풀이 구조로 나눈 세부 유형이다.
   // 원본 페이지와 단원 테스트를 대조한 항목만 sourceMatched로 기록한다. 생성기가 없는
   // 유형은 커리큘럼 화면에 보이되, 검증이 끝날 때까지 선택할 수 없다.
@@ -1093,7 +1148,56 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "reverse-add-palindrome-b7": "수를 거꾸로 읽은 수와 더하고, 앞뒤가 같아질 때까지 같은 과정을 반복합니다.",
   "minimum-stone-moves-b7": "처음과 목표에서 같은 자리에 있는 돌은 그대로 두고 다른 자리의 돌만 셉니다.",
   "kaprekar-495-b7": "세 숫자로 가장 큰 수와 가장 작은 수를 만들어 빼는 과정을 495가 될 때까지 반복합니다.",
-  "three-circle-equal-sum-b7": "완성된 원의 합을 기준으로 다른 원에서 알고 있는 수를 빼 색칠한 수를 구합니다."
+  "three-circle-equal-sum-b7": "완성된 원의 합을 기준으로 다른 원에서 알고 있는 수를 빼 색칠한 수를 구합니다.",
+  "balance-difference-deduction-b8": "수평인 저울 두 개에서 양쪽에 함께 있는 묶음을 지우고 남은 차이로 한 도형의 수를 찾습니다.",
+  "overlap-circle-sum-b8": "겹친 부분을 두 원에서 모두 센다는 점을 표시하고, 한 원의 합에서 보이는 수를 뺍니다.",
+  "symbol-additive-chain-b8": "같은 도형끼리 모인 가장 간단한 식부터 풀고, 찾은 값을 다음 식에 차례로 넣습니다.",
+  "addition-matrix-target-b8": "가로 묶음과 세로 묶음의 수를 먼저 구한 뒤 만나는 칸에서는 두 수를 더합니다.",
+  "addition-matrix-complete-b8": "완성된 칸에서 가로·세로 도형 값을 찾고 같은 규칙으로 빈칸을 채웁니다.",
+  "symbol-operation-deduction-b8": "0을 더하거나 곱한 결과와 1을 곱한 결과를 먼저 이용해 확실한 도형부터 찾습니다.",
+  "symbol-cross-equation-b8": "가로식과 세로식에서 같은 도형이 만나는 곳을 표시하고 한 식씩 이어 풉니다.",
+  "conditional-symbol-chain-b8": "도형마다 가능한 한 자리 수를 적고 서로 다른 수 조건에 어긋나는 후보를 지웁니다.",
+  "conditional-two-digit-symbol-b8": "십의 자리와 일의 자리 조건을 나누어 적고 도형 관계를 모두 만족하는 두 자리 수만 남깁니다.",
+  "cyclic-pair-sums-b8": "세 도형을 두 개씩 더한 식을 모두 더해 전체를 두 번 센 값임을 이용합니다.",
+  "pyramid-cryptarithm-b8": "피라미드 아래쪽 일의 자리부터 더하고 받아올림을 바로 위 자리에 표시합니다.",
+  "blank-digit-vertical-addition-b8": "일의 자리부터 빈칸을 하나씩 채우고 받아올림을 포함해 빈 숫자의 합을 구합니다.",
+  "all-digits-once-cryptarithm-b8": "각 자리의 합과 받아올림을 맞추면서 이미 쓴 숫자는 후보에서 지웁니다.",
+  "ordered-symbol-cryptarithm-b8": "세로셈을 만족하는 후보를 만든 뒤 도형의 크기 순서 조건으로 하나만 남깁니다.",
+  "repeated-symbol-cryptarithm-b8": "반복되는 같은 도형에는 같은 숫자를 넣고 일의 자리에서 생긴 받아올림을 십의 자리에 보냅니다.",
+  "multi-symbol-cryptarithm-b8": "각 자리에서 가능한 도형값과 받아올림을 적고 다른 자리의 같은 도형과 맞춰 봅니다.",
+  "doubled-symbol-result-b8": "같은 도형 두 개를 더한 값부터 찾고 결과의 각 자리 숫자를 거꾸로 확인합니다.",
+  "letter-pyramid-cryptarithm-b8": "아랫자리의 문자부터 더해 받아올림을 기록하고 위 자리의 문자값을 차례로 정합니다.",
+  "repeated-number-multiple-answers-b8": "같은 숫자로 이루어진 수를 하나씩 대입해 세로셈이 맞는 경우를 빠짐없이 찾습니다.",
+  "linked-cryptarithm-b8": "첫 번째 세로셈에서 정해진 도형값을 두 번째 세로셈의 같은 도형에 그대로 넣습니다.",
+  "subtract-to-repeated-number-b8": "일의 자리에서 받아내림 여부를 확인하고 결과의 십의 자리와 일의 자리가 같은지 맞춥니다.",
+  "equalize-transfer-b8": "두 양의 차이는 옮긴 수의 두 배만큼 줄어드므로 차를 똑같이 두 수로 가릅니다.",
+  "chained-equalize-transfer-b8": "한 번 옮길 때 준 사람과 받은 사람의 수를 함께 바꾸어 세 사람의 수가 같아지는지 확인합니다.",
+  "total-difference-bars-b8": "큰 수에서 차이를 떼어 놓고 남은 합을 똑같이 두 수로 가릅니다.",
+  "future-age-sum-b8": "몇 년 뒤에는 두 사람 모두 같은 해 수만큼 나이가 늘므로 늘어난 합을 먼저 뺍니다.",
+  "table-total-difference-b8": "표의 이미 아는 수를 전체에서 빼 두 빈칸의 합을 구하고, 차를 이용해 나눕니다.",
+  "reverse-transfer-three-b8": "마지막 상태에서 받은 수는 빼고 준 수는 더하며 세 사람의 처음 수로 돌아갑니다.",
+  "sum-multiple-bars-b8": "작은 수를 한 묶음으로 놓고 큰 수의 묶음 수까지 더한 전체 묶음으로 합을 나눕니다.",
+  "difference-multiple-bars-b8": "큰 수와 작은 수의 겹치는 한 묶음을 지우고 남은 묶음 수로 차를 나눕니다.",
+  "sum-multiple-offset-b8": "몇 배보다 더 많거나 적은 양을 먼저 합에서 떼어 낸 뒤 같은 묶음으로 나눕니다.",
+  "three-person-difference-b8": "두 사람씩의 차를 한 줄 순서로 잇고 주어진 합에 맞는 값을 거꾸로 찾습니다.",
+  "transfer-to-multiple-b8": "옮긴 뒤 두 사람의 수를 식이나 막대로 나타내고 몇 배 관계가 맞는 수를 찾습니다.",
+  "conditional-three-share-b8": "주고받은 뒤의 세 사람 관계를 먼저 정리하고 마지막 상태에서 처음 상태로 되돌아갑니다.",
+  "reverse-double-offset-b8": "결과가 처음 수의 두 배에서 얼마 작은지 식으로 나타내 반대 계산으로 처음 수를 찾습니다.",
+  "reverse-arithmetic-chain-b8": "마지막 수에서 시작해 더하기는 빼기, 빼기는 더하기로 바꾸어 거꾸로 계산합니다.",
+  "reverse-transfer-events-b8": "마지막 사건부터 받은 수는 빼고 준 수는 더하며 사건 순서를 거꾸로 따라갑니다.",
+  "reverse-multiply-divide-b8": "마지막 계산부터 나누기는 곱하기, 곱하기는 나누기로 바꾸어 처음 수를 찾습니다.",
+  "reverse-split-equal-b8": "똑같이 나눈 뒤의 한 몫에서 주고받은 수를 되돌리고 몫의 개수만큼 합칩니다.",
+  "give-as-much-once-b8": "준 뒤 상대의 수가 두 배가 되는 점을 이용해 마지막 두 수에서 처음 수를 되돌립니다.",
+  "give-as-much-return-b8": "마지막에 돌려준 수부터 되돌린 뒤 상대가 가진 만큼 주었던 순간을 찾아 처음 수를 구합니다.",
+  "shaded-fraction-count-b8": "전체를 분모만큼 똑같이 나누고 색칠한 조각 수인 분자만큼 묶습니다.",
+  "fraction-given-away-original-b8": "남은 양이 전체의 몇 분의 몇인지 찾고 남은 수를 그 조각 수만큼 거꾸로 늘립니다.",
+  "sequential-fraction-remains-b8": "두 번째로 남은 양부터 거꾸로 한 단계씩 전체 조각 수로 복원합니다.",
+  "fraction-difference-whole-b8": "두 분수의 차가 전체를 똑같이 나눈 몇 조각인지 찾고 한 조각의 수를 구합니다.",
+  "fraction-share-difference-b8": "두 모둠의 전체를 같은 분모 조각으로 나타내고 알려진 사람 수 차와 맞춥니다.",
+  "reverse-two-container-transfers-b8": "두 번째로 옮긴 수부터 반대로 옮기고 첫 번째 이동도 되돌려 처음 두 상자를 찾습니다.",
+  "three-container-condition-b8": "마지막 세 상자의 관계와 전체 합을 함께 맞춘 뒤 이동을 거꾸로 되돌립니다.",
+  "sequential-fraction-consumption-b8": "마지막에 남은 양에서 시작해 먹기 전의 조각 수를 단계마다 거꾸로 복원합니다.",
+  "fraction-subgroup-count-b8": "각 집단의 전체를 분모만큼 나누어 해당 분자만큼의 사람 수를 각각 구한 뒤 더합니다."
 });
 
 export const textbookGuideForType = (id) => TEXTBOOK_CONCEPT_GUIDES[id] || "문제에 보이는 관계를 한 단계씩 표시한 뒤 같은 규칙을 적용합니다.";
@@ -2310,6 +2414,174 @@ const BOOK07_UNIT04_REFS = Object.freeze({
   "three-circle-equal-sum-b7": stageReferences({ practice: [problemNumbers("practice", 1, [19])] })
 });
 
+const BOOK08_UNIT01_REFS = Object.freeze({
+  "balance-difference-deduction-b8": stageReferences({
+    concept: [problemNumbers("activity", 1, [1])],
+    practice: [problemNumbers("practice", 1, [1, 3])],
+    advanced: [problemNumbers("advanced", 1, [5])]
+  }),
+  "overlap-circle-sum-b8": stageReferences({ practice: [problemNumbers("practice", 1, [2])] }),
+  "symbol-additive-chain-b8": stageReferences({
+    concept: [problemNumbers("activity", 1, [2, 4])],
+    advanced: [problemNumbers("advanced", 1, [3])]
+  }),
+  "addition-matrix-target-b8": stageReferences({
+    concept: [problemNumbers("activity", 1, [3])],
+    type: [problemNumbers("check", 1, [1, 3])],
+    practice: [problemNumbers("practice", 1, [4, 6])]
+  }),
+  "addition-matrix-complete-b8": stageReferences({
+    concept: [problemNumbers("activity", 1, [5])],
+    type: [problemNumbers("check", 1, [2, 4])],
+    practice: [problemNumbers("practice", 1, [5, 7])],
+    advanced: [problemNumbers("advanced", 1, [1, 2])]
+  }),
+  "symbol-operation-deduction-b8": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2])],
+    practice: [problemNumbers("practice", 1, [8, 9, 10, 11])]
+  }),
+  "symbol-cross-equation-b8": stageReferences({
+    concept: [problemNumbers("activity", 2, [3, 4])],
+    practice: [problemNumbers("practice", 1, [12, 13, 15])],
+    advanced: [problemNumbers("advanced", 1, [4])]
+  }),
+  "multiplication-matrix-products": stageReferences({
+    type: [problemNumbers("check", 2, [1])],
+    practice: [problemNumbers("practice", 1, [14])]
+  }),
+  "multiplication-matrix-placement": stageReferences({
+    type: [problemNumbers("check", 2, [2, 3])],
+    practice: [problemNumbers("practice", 1, [16, 17])]
+  }),
+  "conditional-symbol-chain-b8": stageReferences({ practice: [problemNumbers("practice", 1, [18])] }),
+  "conditional-two-digit-symbol-b8": stageReferences({ practice: [problemNumbers("practice", 1, [19])] }),
+  "cyclic-pair-sums-b8": stageReferences({ advanced: [problemNumbers("advanced", 1, [6])] })
+});
+
+const BOOK08_UNIT02_REFS = Object.freeze({
+  "pyramid-cryptarithm-b8": stageReferences({ concept: [problemNumbers("activity", 1, [1, 2, 3, 4])] }),
+  "blank-digit-vertical-addition-b8": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [7, 8])]
+  }),
+  "all-digits-once-cryptarithm-b8": stageReferences({
+    type: [problemNumbers("check", 1, [3])],
+    practice: [problemNumbers("practice", 1, [9])],
+    advanced: [problemNumbers("advanced", 1, [3])]
+  }),
+  "ordered-symbol-cryptarithm-b8": stageReferences({
+    type: [problemNumbers("check", 1, [4])],
+    practice: [problemNumbers("practice", 1, [10])],
+    advanced: [problemNumbers("advanced", 1, [4])]
+  }),
+  "repeated-symbol-cryptarithm-b8": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2])],
+    practice: [problemNumbers("practice", 1, [1, 2, 13, 14, 15, 16, 17, 18])]
+  }),
+  "multi-symbol-cryptarithm-b8": stageReferences({
+    concept: [problemNumbers("activity", 2, [3, 4, 5, 6])],
+    type: [problemNumbers("check", 2, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [3, 4, 5, 6])]
+  }),
+  "doubled-symbol-result-b8": stageReferences({ practice: [problemNumbers("practice", 1, [11, 12])] }),
+  "letter-pyramid-cryptarithm-b8": stageReferences({ advanced: [problemNumbers("advanced", 1, [1])] }),
+  "repeated-number-multiple-answers-b8": stageReferences({ advanced: [problemNumbers("advanced", 1, [2])] }),
+  "linked-cryptarithm-b8": stageReferences({ advanced: [problemNumbers("advanced", 1, [5])] }),
+  "subtract-to-repeated-number-b8": stageReferences({ advanced: [problemNumbers("advanced", 1, [6])] })
+});
+
+const BOOK08_UNIT03_REFS = Object.freeze({
+  "equalize-transfer-b8": stageReferences({
+    concept: [problemNumbers("activity", 1, [1])],
+    type: [problemNumbers("check", 1, [3])],
+    practice: [problemNumbers("practice", 1, [1, 10])]
+  }),
+  "chained-equalize-transfer-b8": stageReferences({
+    concept: [problemNumbers("activity", 1, [2])],
+    practice: [problemNumbers("practice", 1, [2])]
+  }),
+  "total-difference-bars-b8": stageReferences({
+    concept: [problemNumbers("activity", 1, [3, 4, 5, 6])],
+    practice: [problemNumbers("practice", 1, [3, 4, 5, 6])]
+  }),
+  "future-age-sum-b8": stageReferences({
+    type: [problemNumbers("check", 1, [1])],
+    practice: [problemNumbers("practice", 1, [7])]
+  }),
+  "table-total-difference-b8": stageReferences({
+    type: [problemNumbers("check", 1, [2])],
+    practice: [problemNumbers("practice", 1, [8])]
+  }),
+  "reverse-transfer-three-b8": stageReferences({
+    type: [problemNumbers("check", 1, [4])],
+    practice: [problemNumbers("practice", 1, [9])]
+  }),
+  "sum-multiple-bars-b8": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2])],
+    practice: [problemNumbers("practice", 1, [11, 12])]
+  }),
+  "difference-multiple-bars-b8": stageReferences({
+    concept: [problemNumbers("activity", 2, [3, 4])],
+    practice: [problemNumbers("practice", 1, [13, 14])]
+  }),
+  "sum-multiple-offset-b8": stageReferences({
+    type: [problemNumbers("check", 2, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [15, 16, 17, 18])]
+  }),
+  "three-person-difference-b8": stageReferences({ advanced: [problemNumbers("advanced", 1, [1, 2])] }),
+  "transfer-to-multiple-b8": stageReferences({ advanced: [problemNumbers("advanced", 1, [3, 4])] }),
+  "conditional-three-share-b8": stageReferences({ advanced: [problemNumbers("advanced", 1, [5])] }),
+  "reverse-double-offset-b8": stageReferences({ advanced: [problemNumbers("advanced", 1, [6])] })
+});
+
+const BOOK08_UNIT04_REFS = Object.freeze({
+  "reverse-arithmetic-chain-b8": stageReferences({
+    concept: [problemNumbers("activity", 1, [1])],
+    practice: [problemNumbers("practice", 1, [1, 3, 4])]
+  }),
+  "reverse-transfer-events-b8": stageReferences({
+    concept: [problemNumbers("activity", 1, [2])],
+    practice: [problemNumbers("practice", 1, [2])]
+  }),
+  "reverse-multiply-divide-b8": stageReferences({
+    concept: [problemNumbers("activity", 1, [3])],
+    practice: [problemNumbers("practice", 1, [5])]
+  }),
+  "reverse-split-equal-b8": stageReferences({
+    concept: [problemNumbers("activity", 1, [4])],
+    practice: [problemNumbers("practice", 1, [6])]
+  }),
+  "give-as-much-once-b8": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [7, 8])]
+  }),
+  "give-as-much-return-b8": stageReferences({
+    type: [problemNumbers("check", 1, [3, 4])],
+    practice: [problemNumbers("practice", 1, [9, 10])]
+  }),
+  "shaded-fraction-count-b8": stageReferences({ practice: [problemNumbers("practice", 1, [11])] }),
+  "fraction-given-away-original-b8": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2, 3, 4])],
+    practice: [problemNumbers("practice", 1, [12, 13, 14, 15])]
+  }),
+  "sequential-fraction-remains-b8": stageReferences({
+    type: [problemNumbers("check", 2, [1])],
+    practice: [problemNumbers("practice", 1, [16])]
+  }),
+  "fraction-difference-whole-b8": stageReferences({
+    type: [problemNumbers("check", 2, [2])],
+    practice: [problemNumbers("practice", 1, [17])]
+  }),
+  "fraction-share-difference-b8": stageReferences({
+    type: [problemNumbers("check", 2, [3, 4])],
+    practice: [problemNumbers("practice", 1, [18, 19])]
+  }),
+  "reverse-two-container-transfers-b8": stageReferences({ advanced: [problemNumbers("advanced", 1, [1])] }),
+  "three-container-condition-b8": stageReferences({ advanced: [problemNumbers("advanced", 1, [2])] }),
+  "sequential-fraction-consumption-b8": stageReferences({ advanced: [problemNumbers("advanced", 1, [3])] }),
+  "fraction-subgroup-count-b8": stageReferences({ advanced: [problemNumbers("advanced", 1, [4])] })
+});
+
 export const CURRICULUM = [
   { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [
     detailedStagedUnit("도형 움직이기", [
@@ -2476,10 +2748,32 @@ export const CURRICULUM = [
     ], [5,5], [7,4], 6, 20, BOOK07_UNIT04_REFS)
   ] },
   { id: "book-08", label: "8권", title: "매트릭스와 복면산", units: [
-    stagedUnit("묶음수와 매트릭스", ["shape-sum-table"], [5,4], [4,3], 6, 19),
-    stagedUnit("복면산", ["cryptarithm"], [4,6], [4,4], 6, 18),
-    stagedUnit("합차와 배수문제", ["total-difference","unit-length-multiple"], [6,4], [4,4], 6, 18),
-    stagedUnit("거꾸로 생각하기", ["reverse-thinking"], [4,4], [4,4], 4, 19)
+    detailedStagedUnit("묶음수와 매트릭스", [
+      "balance-difference-deduction-b8", "overlap-circle-sum-b8", "symbol-additive-chain-b8",
+      "addition-matrix-target-b8", "addition-matrix-complete-b8", "symbol-operation-deduction-b8",
+      "symbol-cross-equation-b8", "multiplication-matrix-products", "multiplication-matrix-placement",
+      "conditional-symbol-chain-b8", "conditional-two-digit-symbol-b8", "cyclic-pair-sums-b8"
+    ], [5,4], [4,3], 6, 19, BOOK08_UNIT01_REFS),
+    detailedStagedUnit("복면산", [
+      "pyramid-cryptarithm-b8", "blank-digit-vertical-addition-b8", "all-digits-once-cryptarithm-b8",
+      "ordered-symbol-cryptarithm-b8", "repeated-symbol-cryptarithm-b8", "multi-symbol-cryptarithm-b8",
+      "doubled-symbol-result-b8", "letter-pyramid-cryptarithm-b8", "repeated-number-multiple-answers-b8",
+      "linked-cryptarithm-b8", "subtract-to-repeated-number-b8"
+    ], [4,6], [4,4], 6, 18, BOOK08_UNIT02_REFS),
+    detailedStagedUnit("합차와 배수문제", [
+      "equalize-transfer-b8", "chained-equalize-transfer-b8", "total-difference-bars-b8",
+      "future-age-sum-b8", "table-total-difference-b8", "reverse-transfer-three-b8",
+      "sum-multiple-bars-b8", "difference-multiple-bars-b8", "sum-multiple-offset-b8",
+      "three-person-difference-b8", "transfer-to-multiple-b8", "conditional-three-share-b8",
+      "reverse-double-offset-b8"
+    ], [6,4], [4,4], 6, 18, BOOK08_UNIT03_REFS),
+    detailedStagedUnit("거꾸로 생각하기", [
+      "reverse-arithmetic-chain-b8", "reverse-transfer-events-b8", "reverse-multiply-divide-b8",
+      "reverse-split-equal-b8", "give-as-much-once-b8", "give-as-much-return-b8",
+      "shaded-fraction-count-b8", "fraction-given-away-original-b8", "sequential-fraction-remains-b8",
+      "fraction-difference-whole-b8", "fraction-share-difference-b8", "reverse-two-container-transfers-b8",
+      "three-container-condition-b8", "sequential-fraction-consumption-b8", "fraction-subgroup-count-b8"
+    ], [4,4], [4,4], 4, 19, BOOK08_UNIT04_REFS)
   ] },
   { id: "book-09", label: "9권", title: "도형분할과 논리", units: [
     stagedUnit("도형의 분할과 넓이", ["congruent-partition","unit-area-fraction"], [7,6], [5,4], 6, 22),
