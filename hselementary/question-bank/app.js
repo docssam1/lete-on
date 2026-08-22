@@ -8,6 +8,70 @@
   const hash = (value) => [...value].reduce((sum, character) => Math.imul(sum ^ character.charCodeAt(0), 16777619), 2166136261) >>> 0;
   const typeDisplayName = type => type.label && type.label !== "핵심 유형" ? type.label : type.name;
 
+  function renderMathNotation(markup) {
+    const template = document.createElement("template");
+    template.innerHTML = String(markup ?? "");
+    const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+    textNodes.forEach(node => {
+      const parent = node.parentElement;
+      if (parent?.closest("svg, script, style, code, .math-fraction, .math-unit, [data-math-raw]")) return;
+      const matches = [...node.nodeValue.matchAll(/(\d+)\s*\/\s*(\d+)|((?:km|cm|mm|m|[a-zA-Z])([²³]))/g)].filter(match => !match[2] || Number(match[2]) !== 0);
+      if (!matches.length) return;
+      const fragment = document.createDocumentFragment();
+      let cursor = 0;
+      matches.forEach(match => {
+        fragment.append(node.nodeValue.slice(cursor, match.index));
+        if (match[1]) {
+          const fraction = document.createElement("span");
+          fraction.className = "math-fraction";
+          fraction.setAttribute("role", "img");
+          fraction.setAttribute("aria-label", `${match[2]}분의 ${match[1]}`);
+          const numerator = document.createElement("span");
+          numerator.textContent = match[1];
+          const denominator = document.createElement("span");
+          denominator.textContent = match[2];
+          fraction.append(numerator, denominator);
+          fragment.append(fraction);
+        } else {
+          const unit = document.createElement("span");
+          unit.className = "math-unit";
+          unit.setAttribute("aria-label", `${match[3].slice(0, -1)} ${match[4] === "²" ? "제곱" : "세제곱"}`);
+          unit.append(match[3].slice(0, -1));
+          const power = document.createElement("sup");
+          power.textContent = match[4];
+          unit.append(power);
+          fragment.append(unit);
+        }
+        cursor = match.index + match[0].length;
+      });
+      fragment.append(node.nodeValue.slice(cursor));
+      node.replaceWith(fragment);
+    });
+
+    template.content.querySelectorAll("svg text").forEach(text => {
+      if (text.children.length) return;
+      const matches = [...text.textContent.matchAll(/(km|cm|mm|m)([²³])/g)];
+      if (!matches.length) return;
+      const fragment = document.createDocumentFragment();
+      let cursor = 0;
+      matches.forEach(match => {
+        fragment.append(text.textContent.slice(cursor, match.index), match[1]);
+        const power = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+        power.setAttribute("baseline-shift", "super");
+        power.setAttribute("font-size", "70%");
+        power.textContent = match[2] === "²" ? "2" : "3";
+        fragment.append(power);
+        cursor = match.index + match[0].length;
+      });
+      fragment.append(text.textContent.slice(cursor));
+      text.replaceChildren(fragment);
+    });
+    return template.innerHTML;
+  }
+
   const types = curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types.map(type => ({
     ...type,
     semesterId: semester.id,
@@ -159,7 +223,7 @@
     if (!generated) return;
     const popover = ensurePreviewPopover();
     previewAnchor = anchor;
-    popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header><div class="type-preview-question">${generated.prompt}</div><footer>${escapeHtml(currentDifficultyLabel())} 대표 문제</footer>`;
+    popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header><div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} 대표 문제</footer>`;
     popover.hidden = false;
     requestAnimationFrame(() => positionTypePreview(anchor));
   }
@@ -247,7 +311,7 @@
       <div class="page-label">문제 ${pageIndex + 1}</div>
       <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item">
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>
-        <div class="question-prompt">${question.prompt}</div>
+        <div class="question-prompt">${renderMathNotation(question.prompt)}</div>
         <div class="answer-line">답</div>
       </article>`).join("")}</div>${watermark()}
     </section>`).join("");
@@ -257,8 +321,8 @@
     $("solutionView").innerHTML = chunk(state.questions, 8).map((page, pageIndex) => `<section class="print-page answer-page">
       <div class="page-label">정답·풀이 ${pageIndex + 1}</div>
       <div class="solution-list">${page.map(question => `<article class="solution-item">
-        <header><b>${question.number}</b><span>${escapeHtml(typeDisplayName(question.type))}</span><strong>${escapeHtml(question.answer)}</strong></header>
-        <p>${escapeHtml(question.solution)}</p>
+        <header><b>${question.number}</b><span>${escapeHtml(typeDisplayName(question.type))}</span><strong>${renderMathNotation(escapeHtml(question.answer))}</strong></header>
+        <p>${renderMathNotation(escapeHtml(question.solution))}</p>
       </article>`).join("")}</div>${watermark()}
     </section>`).join("");
   }

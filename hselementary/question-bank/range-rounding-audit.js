@@ -89,10 +89,10 @@ function expectedAnswer(generated) {
       const [secondLength, secondUnit, secondPrice] = numbers(attribute(prompt, "second"));
       return String(Math.ceil(firstLength / firstUnit) * firstPrice + Math.ceil(secondLength / secondUnit) * secondPrice);
     }
-    if (kind === "units") {
-      const width = Number(attribute(prompt, "width"));
-      const height = Number(attribute(prompt, "height"));
-      return String(Math.round(2 * (width + height) / 10));
+    if (kind === "unit-package") {
+      const [firstLength, firstUnit, firstPrice] = numbers(attribute(prompt, "first"));
+      const [secondLength, secondUnit, secondPrice] = numbers(attribute(prompt, "second"));
+      return String(Math.ceil(firstLength / firstUnit) * firstPrice + Math.ceil(secondLength / secondUnit) * secondPrice);
     }
     if (kind === "fare") {
       const [baseDistance, baseFare] = numbers(attribute(prompt, "base"));
@@ -133,6 +133,10 @@ for (const type of types) {
         if (generated.generator !== type.generatorKey) throw new Error(`생성기 연결이 ${generated.generator}입니다.`);
         const expected = expectedAnswer(generated);
         if (String(generated.answer) !== expected) throw new Error(`정답 ${generated.answer}, 독립 검산 ${expected}`);
+        if (generated.prompt.includes('data-application-kind="unit-package"')) {
+          if (!/\d+ m \d{1,2} cm/.test(generated.prompt)) throw new Error("m·cm 환산 표기가 없습니다.");
+          if (/\d+ cm 0 mm|problem-svg|ㄱ자 모양 판/.test(generated.prompt)) throw new Error("원본 구조와 다른 단위·도형 표현이 남아 있습니다.");
+        }
       } catch (error) {
         failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: ${error.message}`);
       }

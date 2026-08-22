@@ -824,7 +824,7 @@
   };
 
   const scaledAreaSvg = ({ originalArea, numerator, denominator, expected }) => {
-    const body = `<rect class="shape-fill" x="20" y="55" width="82" height="64"/><text x="61" y="87">${originalArea}cm²</text><path class="folded" d="M116 87 H164"/><path class="folded" d="M154 78 L164 87 L154 96"/><polygon class="highlight-fill" points="178,126 256,126 240,48 162,48"/><text x="209" y="84">각 변</text><text x="209" y="101">${numerator}/${denominator}배</text>`;
+    const body = `<rect class="shape-fill" x="20" y="55" width="82" height="64"/><text x="61" y="87">${originalArea}cm²</text><path class="folded" d="M116 87 H164"/><path class="folded" d="M154 78 L164 87 L154 96"/><polygon class="highlight-fill" points="178,126 256,126 240,48 162,48"/><text x="209" y="84">각 변</text><text x="202" y="96">${numerator}</text><line class="fraction-bar" x1="195" y1="101" x2="209" y2="101"/><text x="202" y="111">${denominator}</text><text x="216" y="105" text-anchor="start">배</text>`;
     return measureSvg({ kind: "scaled-area", values: [originalArea, numerator, denominator], expected, aria: "직사각형의 각 변을 같은 비율로 늘여 만든 평행사변형", body });
   };
 
@@ -2924,13 +2924,21 @@
         return result(`빨간 리본 ${firstLength}cm와 노란 리본 ${secondLength}cm가 필요합니다. 빨간 리본은 ${firstUnit}cm 단위로만 팔며 한 묶음에 ${firstPrice.toLocaleString()}원, 노란 리본은 ${secondUnit}cm 단위로만 팔며 한 묶음에 ${secondPrice.toLocaleString()}원입니다. 필요한 리본을 사는 데 드는 최소 금액을 구하세요.${evidence}`, answer, `빨간 리본은 ${firstLength} ÷ ${firstUnit}을 올림한 ${firstCount}묶음, 노란 리본은 ${secondLength} ÷ ${secondUnit}을 올림한 ${secondCount}묶음이 필요합니다. 따라서 ${firstCount} × ${firstPrice.toLocaleString()} + ${secondCount} × ${secondPrice.toLocaleString()} = ${answer.toLocaleString()}원입니다.`);
       }
       if (variant % 3 === 1) {
-        const widthMm = int(rng, 42 + level * 5, 78 + level * 8);
-        const heightMm = int(rng, 24 + level * 4, 57 + level * 7);
-        const perimeterMm = 2 * (widthMm + heightMm);
-        const answer = roundTo(perimeterMm / 10, 1);
-        const svg = `<svg class="problem-svg" viewBox="0 0 300 150" role="img" aria-label="ㄱ자 모양의 판"><path d="M55 30h75v42h110v55H55z" fill="#eaf6fb" stroke="#173b54" stroke-width="3"/><text x="140" y="145" text-anchor="middle">전체 가로 ${widthMm} mm</text><text x="42" y="82" text-anchor="middle" transform="rotate(-90 42 82)">전체 세로 ${Math.floor(heightMm / 10)} cm ${heightMm % 10} mm</text></svg>`;
-        const evidence = `<span hidden data-application-kind="units" data-width="${widthMm}" data-height="${heightMm}" data-application-expected="${answer}"></span>`;
-        return result(`아래 ㄱ자 모양 판의 둘레는 약 몇 cm인지 자연수로 나타내세요.${svg}${evidence}`, answer, `ㄱ자 모양의 들어간 두 변을 바깥쪽으로 옮겨 생각하면 둘레는 전체 가로와 전체 세로의 합의 2배입니다. 2 × (${widthMm} + ${heightMm}) = ${perimeterMm}mm = ${decimal(perimeterMm / 10, 1)}cm이고, 반올림하여 자연수로 나타내면 약 ${answer}cm입니다.`);
+        const firstUnit = pick(rng, [40, 50, 60]);
+        const secondUnit = pick(rng, [30, 40, 50]);
+        const firstMeters = int(rng, 4 + level, 8 + level * 2);
+        const secondMeters = int(rng, 3 + level, 7 + level * 2);
+        const firstCentimeters = int(rng, 11, 89);
+        const secondCentimeters = int(rng, 13, 87);
+        const firstLength = firstMeters * 100 + firstCentimeters;
+        const secondLength = secondMeters * 100 + secondCentimeters;
+        const firstPrice = int(rng, 5, 9 + level * 2) * 100;
+        const secondPrice = int(rng, 4, 8 + level * 2) * 100;
+        const firstCount = Math.ceil(firstLength / firstUnit);
+        const secondCount = Math.ceil(secondLength / secondUnit);
+        const answer = firstCount * firstPrice + secondCount * secondPrice;
+        const evidence = `<span hidden data-application-kind="unit-package" data-first="${firstLength},${firstUnit},${firstPrice}" data-second="${secondLength},${secondUnit},${secondPrice}" data-application-expected="${answer}"></span>`;
+        return result(`행사용 장식을 만들기 위해 빨간 리본 ${firstMeters} m ${firstCentimeters} cm와 노란 리본 ${secondMeters} m ${secondCentimeters} cm가 필요합니다. 빨간 리본은 ${firstUnit} cm 단위로만 팔며 한 묶음에 ${firstPrice.toLocaleString()}원, 노란 리본은 ${secondUnit} cm 단위로만 팔며 한 묶음에 ${secondPrice.toLocaleString()}원입니다. 필요한 리본을 사는 데 드는 최소 금액을 구하세요.${evidence}`, answer, `빨간 리본은 ${firstMeters} m ${firstCentimeters} cm = ${firstLength} cm이므로 ${firstLength} ÷ ${firstUnit}을 올림한 ${firstCount}묶음이 필요합니다. 노란 리본은 ${secondMeters} m ${secondCentimeters} cm = ${secondLength} cm이므로 ${secondLength} ÷ ${secondUnit}을 올림한 ${secondCount}묶음이 필요합니다. 따라서 ${firstCount} × ${firstPrice.toLocaleString()} + ${secondCount} × ${secondPrice.toLocaleString()} = ${answer.toLocaleString()}원입니다.`);
       }
       const baseDistance = pick(rng, [800, 1000, 1200]);
       const baseFare = int(rng, 28, 36) * 100;
