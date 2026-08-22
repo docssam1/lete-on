@@ -6,6 +6,7 @@ import { BOOK05_GENERATORS } from "./book05-generators.js?v=20260822f";
 import { BOOK06_GENERATORS } from "./book06-generators.js?v=20260822g";
 import { BOOK07_GENERATORS } from "./book07-generators.js?v=20260822h";
 import { BOOK08_GENERATORS } from "./book08-generators.js?v=20260822i";
+import { BOOK09_GENERATORS } from "./book09-generators.js?v=20260822j";
 
 const COLORS = ["흰색", "검은색"];
 const SHAPES = ["동그라미", "세모", "네모"];
@@ -5238,6 +5239,7 @@ export const GENERATORS = {
   ...BOOK06_GENERATORS,
   ...BOOK07_GENERATORS,
   ...BOOK08_GENERATORS,
+  ...BOOK09_GENERATORS,
   equalPartitionTwo,
   equalPartitionThree,
   equalPartitionFour,

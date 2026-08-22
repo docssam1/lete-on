@@ -579,6 +579,46 @@ export const TYPES = [
   type("sequential-fraction-consumption-b8", "number", "분수로 거꾸로 풀기", "남은 것의 일정한 분수를 차례로 먹은 처음 수", { generator: "sequentialFractionConsumptionBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
   type("fraction-subgroup-count-b8", "number", "분수로 거꾸로 풀기", "두 집단의 일부에 해당하는 사람 수 합하기", { generator: "fractionSubgroupCountBook8", sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 문제 번호별 대조" }),
 
+  // 더클래식 1과정 9권: 교재에 인쇄된 문제 번호로 개념·유형·연습·심화를 대조했다.
+  type("latin-square-congruent-partition-b9", "geometry", "합동 도형 분할", "각 조각에 1부터 4까지 한 번씩 들어가는 합동 분할", { generator: "latinSquareCongruentPartitionBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("equal-sum-congruent-partition-b9", "geometry", "합동 도형 분할", "각 조각의 수의 합이 같은 합동 분할", { generator: "equalSumCongruentPartitionBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("landmark-congruent-partition-b9", "geometry", "합동 도형 분할", "표식이 같은 위치에 놓이는 합동 분할", { generator: "landmarkCongruentPartitionBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("congruent-composite-partition-b9", "geometry", "합동 도형 분할", "복합 도형을 네 합동 도형으로 나누기", { generator: "congruentCompositePartitionBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("triangle-equal-subdivision-b9", "geometry", "도형의 등분", "정삼각형을 같은 크기의 조각으로 나누어 세기", { generator: "triangleEqualSubdivisionBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("hexagon-equal-subdivision-b9", "geometry", "도형의 등분", "정육각형을 같은 크기의 조각으로 나누어 세기", { generator: "hexagonEqualSubdivisionBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("tetromino-cover-count-b9", "geometry", "도형 채우기", "표식 칸을 제외하고 네 칸 블록으로 채우기", { generator: "tetrominoCoverCountBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("quadrilateral-grid-area-b9", "geometry", "모눈 넓이", "모눈 위 사각형의 넓이 구하기", { generator: "quadrilateralGridAreaBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("shaded-composite-grid-area-b9", "geometry", "모눈 넓이", "모눈 위 복합 색칠 도형의 넓이 구하기", { generator: "shadedCompositeGridAreaBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("parallelogram-grid-area-b9", "geometry", "모눈 넓이", "모눈 위 평행사변형의 넓이 구하기", { generator: "parallelogramGridAreaBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+
+  type("cube-solid-to-views-b9", "geometry", "쌓기나무 바탕그림", "입체 모양을 앞·옆 모양으로 나타내기", { generator: "cubeSolidToViewsBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("cube-layer-views-b9", "geometry", "쌓기나무 바탕그림", "층별 모양을 앞·옆 모양으로 나타내기", { generator: "cubeLayerViewsBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("cube-shell-interior-b9", "geometry", "쌓기나무 채우기", "직육면체의 겉면을 걷어 낸 안쪽 개수", { generator: "cubeShellInteriorBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("cube-view-model-choice-b9", "geometry", "쌓기나무 바탕그림", "위·앞·옆 모양과 맞는 입체 고르기", { generator: "cubeViewModelChoiceBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+
+  type("magic-square-swap-pair-b9", "number", "마방진", "두 수의 자리를 바꾸어 마방진 고치기", { generator: "magicSquareSwapPairBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("magic-square-four-pair-sum-b9", "number", "마방진", "4×4 마방진에서 두 빈칸의 합 구하기", { generator: "magicSquareFourPairSumBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("triangle-edge-extreme-six-b9", "number", "수 배열과 합", "1부터 6까지로 삼각형 한 변 합의 가장 큰·작은 값", { generator: "triangleEdgeExtremeSixBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("triangle-edge-extreme-nine-b9", "number", "수 배열과 합", "1부터 9까지로 삼각형 한 변 합의 가장 큰·작은 값", { generator: "triangleEdgeExtremeNineBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("heptagon-ring-equal-sum-b9", "number", "수 배열과 합", "칠각형 일곱 줄의 세 수 합 같게 만들기", { generator: "heptagonRingEqualSumBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("overlap-region-equal-sum-b9", "number", "수 배열과 합", "겹친 두 도형 안의 수 합 같게 만들기", { generator: "overlapRegionEqualSumBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("grid-line-sum-minimum-b9", "number", "수 배열과 합", "가로·세로 합을 맞추는 가운데 수의 최솟값", { generator: "gridLineSumMinimumBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("circle-chain-equal-sum-b9", "number", "수 배열과 합", "이어진 원의 세 수 합 같게 만들기", { generator: "circleChainEqualSumBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("triangle-line-equal-sum-b9", "number", "수 배열과 합", "삼각형과 직선의 세 수 합 같게 만들기", { generator: "triangleLineEqualSumBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("circular-magic-maximum-b9", "number", "마방진", "원형 마방진의 한 줄 합을 가장 크게 만들기", { generator: "circularMagicMaximumBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+
+  type("fixed-value-order-assignment-b9", "logic", "순서와 비교", "주어진 값과 차이 조건으로 사람의 값 정하기", { generator: "fixedValueOrderAssignmentBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("line-ranking-constraints-b9", "logic", "순서와 비교", "여러 앞뒤 조건으로 줄의 순위 정하기", { generator: "lineRankingConstraintsBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("exclusion-grid-ranking-b9", "logic", "조건표 추리", "가능하지 않은 등수를 지워 순위 정하기", { generator: "exclusionGridRankingBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("exact-one-ranking-predictions-b9", "logic", "참말과 거짓말", "두 예상 중 하나만 맞는 순위 추리", { generator: "exactOneRankingPredictionsBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("exact-one-answer-assignment-b9", "logic", "참말과 거짓말", "두 답 중 하나만 맞는 정답 추리", { generator: "exactOneAnswerAssignmentBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("pair-group-inference-b9", "logic", "모둠 추리", "회의 참석 기록으로 같은 모둠 짝 찾기", { generator: "pairGroupInferenceBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("all-false-circular-seating-b9", "logic", "자리 배치", "모두 거짓인 조건으로 원탁 자리 정하기", { generator: "allFalseCircularSeatingBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("preference-count-matrix-b9", "logic", "조건표 추리", "선호 표와 열 합으로 빠진 표시 찾기", { generator: "preferenceCountMatrixBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("apartment-neighbor-logic-b9", "logic", "자리 배치", "위·아래·옆집 조건으로 아파트 자리 정하기", { generator: "apartmentNeighborLogicBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("profession-assignment-b9", "logic", "조건표 추리", "가능한 직업 표로 사람의 직업 정하기", { generator: "professionAssignmentBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+  type("activity-enrollment-b9", "logic", "조건표 추리", "활동 선택표와 인원수로 빠진 활동 찾기", { generator: "activityEnrollmentBook9", sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 문제 번호별 대조" }),
+
   // 더클래식 1과정 2권: 단원 이름이 아니라 실제 풀이 구조로 나눈 세부 유형이다.
   // 원본 페이지와 단원 테스트를 대조한 항목만 sourceMatched로 기록한다. 생성기가 없는
   // 유형은 커리큘럼 화면에 보이되, 검증이 끝날 때까지 선택할 수 없다.
@@ -1197,7 +1237,42 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "reverse-two-container-transfers-b8": "두 번째로 옮긴 수부터 반대로 옮기고 첫 번째 이동도 되돌려 처음 두 상자를 찾습니다.",
   "three-container-condition-b8": "마지막 세 상자의 관계와 전체 합을 함께 맞춘 뒤 이동을 거꾸로 되돌립니다.",
   "sequential-fraction-consumption-b8": "마지막에 남은 양에서 시작해 먹기 전의 조각 수를 단계마다 거꾸로 복원합니다.",
-  "fraction-subgroup-count-b8": "각 집단의 전체를 분모만큼 나누어 해당 분자만큼의 사람 수를 각각 구한 뒤 더합니다."
+  "fraction-subgroup-count-b8": "각 집단의 전체를 분모만큼 나누어 해당 분자만큼의 사람 수를 각각 구한 뒤 더합니다.",
+  "latin-square-congruent-partition-b9": "각 조각의 모양을 먼저 맞추고 1, 2, 3, 4가 한 번씩 들어가는지 확인합니다.",
+  "equal-sum-congruent-partition-b9": "모양이 같은 조각끼리 나눈 뒤 각 조각 안의 수를 더해 모두 같은지 확인합니다.",
+  "landmark-congruent-partition-b9": "조각을 돌려 겹쳤을 때 표식도 같은 자리에 오는지 확인합니다.",
+  "congruent-composite-partition-b9": "칸 수만 보지 말고 조각을 돌리거나 뒤집어 완전히 포개지는지 확인합니다.",
+  "triangle-equal-subdivision-b9": "전체 조각 수에서 표시된 조각 수를 빼 남은 조각을 셉니다.",
+  "hexagon-equal-subdivision-b9": "가운데에서 같은 크기로 나뉜 조각을 한 바퀴 차례로 세어 봅니다.",
+  "tetromino-cover-count-b9": "나무가 있는 칸을 빼고 남은 칸 수를 네 칸씩 묶습니다.",
+  "quadrilateral-grid-area-b9": "모눈의 온칸과 반칸을 짝지어 사각형의 넓이를 구합니다.",
+  "shaded-composite-grid-area-b9": "큰 직사각형 넓이에서 비어 있는 작은 직사각형 넓이를 뺍니다.",
+  "parallelogram-grid-area-b9": "평행사변형을 잘라 옮겨 같은 밑변과 높이의 직사각형으로 생각합니다.",
+  "cube-solid-to-views-b9": "앞과 옆에서 같은 줄에 보이는 쌓기나무 중 가장 높은 층을 적습니다.",
+  "cube-layer-views-b9": "각 층의 칸을 포개어 앞과 옆의 세로줄별 최고 층을 찾습니다.",
+  "cube-shell-interior-b9": "가로·세로·높이에서 겉의 두 층을 각각 빼고 안쪽 개수를 곱합니다.",
+  "cube-view-model-choice-b9": "위에서 본 자리와 앞·옆의 최고 층을 세 조건 모두 맞춰 봅니다.",
+  "magic-square-swap-pair-b9": "가로와 세로 합이 어긋난 두 줄을 찾아 두 수의 자리를 한 번 바꿉니다.",
+  "magic-square-four-pair-sum-b9": "한 줄의 전체 합에서 같은 줄에 보이는 두 수를 빼 A와 B의 합을 구합니다.",
+  "triangle-edge-extreme-six-b9": "세 꼭짓점의 수가 두 번씩 더해지는 점을 이용해 한 변 합을 가장 크게 또는 작게 만듭니다.",
+  "triangle-edge-extreme-nine-b9": "꼭짓점에 놓을 세 수를 먼저 정하고 각 변의 남은 칸을 같은 합으로 맞춥니다.",
+  "heptagon-ring-equal-sum-b9": "한 줄씩 겹쳐 쓰는 꼭짓점 수를 보며 일곱 줄의 합을 차례로 맞춥니다.",
+  "overlap-region-equal-sum-b9": "겹친 부분은 양쪽에 함께 있으므로 겹치지 않은 부분끼리의 합을 맞춥니다.",
+  "grid-line-sum-minimum-b9": "가로 합과 세로 합을 모두 만족하는 가운데 수를 작은 수부터 넣어 봅니다.",
+  "circle-chain-equal-sum-b9": "한 줄의 합에서 같은 줄에 이미 보이는 두 수를 빼 빈 원의 수를 찾습니다.",
+  "triangle-line-equal-sum-b9": "빈칸이 있는 줄과 완성된 줄의 합을 비교해 모자란 수를 찾습니다.",
+  "circular-magic-maximum-b9": "가장 큰 수를 가운데 두고 바깥 수를 작은 수와 큰 수끼리 짝지어 봅니다.",
+  "fixed-value-order-assignment-b9": "가장 작은 값부터 차이 조건을 이어 붙여 사람마다 값을 정합니다.",
+  "line-ranking-constraints-b9": "누가 누구보다 앞인지 화살표로 이어 한 줄 순서를 만듭니다.",
+  "exclusion-grid-ranking-b9": "될 수 없는 칸을 지우고 한 칸만 남은 사람부터 등수를 정합니다.",
+  "exact-one-ranking-predictions-b9": "각 사람의 두 예상 중 하나만 맞도록 표시해 가능한 순위를 하나로 좁힙니다.",
+  "exact-one-answer-assignment-b9": "각 줄에서 맞는 답을 하나만 남기며 모든 문제의 답이 겹치지 않게 맞춥니다.",
+  "pair-group-inference-b9": "회의에 함께 나온 두 사람은 같은 모둠이 아니므로 가능한 짝에서 지웁니다.",
+  "all-false-circular-seating-b9": "모든 말을 반대로 바꾼 뒤 원탁을 한 자리씩 채웁니다.",
+  "preference-count-matrix-b9": "각 열의 전체 표시 수를 맞추며 비어 있는 칸을 하나씩 채웁니다.",
+  "apartment-neighbor-logic-b9": "오른쪽 옆집 조건으로 각 층을 만들고 위아래 조건으로 두 층을 맞춥니다.",
+  "profession-assignment-b9": "가능한 직업이 하나뿐인 사람부터 정하고 같은 직업 칸을 다른 사람에게서 지웁니다.",
+  "activity-enrollment-b9": "활동별 전체 인원에 맞게 표시를 채운 뒤 컴퓨터 칸이 비는 학생을 찾습니다."
 });
 
 export const textbookGuideForType = (id) => TEXTBOOK_CONCEPT_GUIDES[id] || "문제에 보이는 관계를 한 단계씩 표시한 뒤 같은 규칙을 적용합니다.";
@@ -2582,6 +2657,203 @@ const BOOK08_UNIT04_REFS = Object.freeze({
   "fraction-subgroup-count-b8": stageReferences({ advanced: [problemNumbers("advanced", 1, [4])] })
 });
 
+const BOOK09_UNIT01_REFS = Object.freeze({
+  "rotational-partition-two": stageReferences({
+    concept: [problemNumbers("activity", 1, [2])],
+    type: [problemNumbers("check", 1, [2])],
+    practice: [problemNumbers("practice", 1, [1])]
+  }),
+  "rotational-partition-four": stageReferences({
+    concept: [problemNumbers("activity", 1, [1, 6, 7])],
+    type: [problemNumbers("check", 1, [1])],
+    practice: [problemNumbers("practice", 1, [9, 10])]
+  }),
+  "symbol-balanced-congruent-partition": stageReferences({
+    concept: [problemNumbers("activity", 1, [4])],
+    practice: [problemNumbers("practice", 1, [6, 7])],
+    advanced: [problemNumbers("advanced", 1, [3, 4])]
+  }),
+  "latin-square-congruent-partition-b9": stageReferences({
+    concept: [problemNumbers("activity", 1, [3])],
+    practice: [problemNumbers("practice", 1, [2])]
+  }),
+  "equal-sum-congruent-partition-b9": stageReferences({
+    concept: [problemNumbers("activity", 1, [5])],
+    practice: [problemNumbers("practice", 1, [3])]
+  }),
+  "congruent-composite-partition-b9": stageReferences({ practice: [problemNumbers("practice", 1, [8])] }),
+  "triangle-equal-subdivision-b9": stageReferences({ type: [problemNumbers("check", 1, [3])] }),
+  "hexagon-equal-subdivision-b9": stageReferences({
+    type: [problemNumbers("check", 1, [4, 5])],
+    practice: [problemNumbers("practice", 1, [11, 12])]
+  }),
+  "landmark-congruent-partition-b9": stageReferences({
+    practice: [problemNumbers("practice", 1, [4])],
+    advanced: [problemNumbers("advanced", 1, [1, 2])]
+  }),
+  "tetromino-cover-count-b9": stageReferences({ practice: [problemNumbers("practice", 1, [5])] }),
+  "unit-grid-area": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2])],
+    practice: [problemNumbers("practice", 1, [13, 14])]
+  }),
+  "oblique-square-grid-area": stageReferences({
+    concept: [problemNumbers("activity", 2, [3])],
+    type: [problemNumbers("check", 2, [1])],
+    practice: [problemNumbers("practice", 1, [19])],
+    advanced: [problemNumbers("advanced", 1, [5])]
+  }),
+  "quadrilateral-grid-area-b9": stageReferences({
+    concept: [problemNumbers("activity", 2, [4])],
+    type: [problemNumbers("check", 2, [2])],
+    practice: [problemNumbers("practice", 1, [15, 16])]
+  }),
+  "shaded-composite-grid-area-b9": stageReferences({
+    concept: [problemNumbers("activity", 2, [5, 6])],
+    type: [problemNumbers("check", 2, [4])],
+    practice: [problemNumbers("practice", 1, [17, 18, 20, 22])],
+    advanced: [problemNumbers("advanced", 1, [6])]
+  }),
+  "parallelogram-grid-area-b9": stageReferences({
+    type: [problemNumbers("check", 2, [3])],
+    practice: [problemNumbers("practice", 1, [21])]
+  })
+});
+
+const BOOK09_UNIT02_REFS = Object.freeze({
+  "cube-count-solid": stageReferences({
+    concept: [problemNumbers("activity", 1, [1])],
+    practice: [problemNumbers("practice", 1, [1])]
+  }),
+  "cube-fill-rectangular-box": stageReferences({
+    concept: [problemNumbers("activity", 1, [2])],
+    practice: [problemNumbers("practice", 1, [2])]
+  }),
+  "cube-hidden-count-walled": stageReferences({
+    concept: [problemNumbers("activity", 1, [3])],
+    practice: [problemNumbers("practice", 1, [3])]
+  }),
+  "cube-hidden-count": stageReferences({ practice: [problemNumbers("practice", 1, [4])] }),
+  "cube-solid-to-views-b9": stageReferences({
+    concept: [problemNumbers("activity", 1, [4, 5])],
+    practice: [problemNumbers("practice", 1, [5])]
+  }),
+  "cube-top-number-grid": stageReferences({
+    type: [problemNumbers("check", 1, [1])],
+    practice: [problemNumbers("practice", 1, [7])]
+  }),
+  "cube-missing-view": stageReferences({
+    type: [problemNumbers("check", 1, [2, 3])],
+    practice: [problemNumbers("practice", 1, [8])]
+  }),
+  "cube-layer-views-b9": stageReferences({
+    type: [problemNumbers("check", 1, [4, 5])],
+    practice: [problemNumbers("practice", 1, [9, 10])]
+  }),
+  "cube-three-views": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2])],
+    practice: [problemNumbers("practice", 1, [11, 12])]
+  }),
+  "cube-three-view-minmax": stageReferences({
+    type: [problemNumbers("check", 2, [1, 2, 3, 4, 5])],
+    practice: [problemNumbers("practice", 1, [13, 14])],
+    advanced: [problemNumbers("advanced", 1, [1, 2])]
+  }),
+  "cube-fill-box": stageReferences({ advanced: [problemNumbers("advanced", 1, [3])] }),
+  "cube-black-white-alternating": stageReferences({ advanced: [problemNumbers("advanced", 1, [4])] }),
+  "cube-shell-interior-b9": stageReferences({ advanced: [problemNumbers("advanced", 1, [5])] }),
+  "cube-view-model-choice-b9": stageReferences({ practice: [problemNumbers("practice", 1, [6])] })
+});
+
+const BOOK09_UNIT03_REFS = Object.freeze({
+  "magic-square-three-complete": stageReferences({
+    concept: [problemNumbers("activity", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [1])]
+  }),
+  "magic-square-three-target": stageReferences({ concept: [problemNumbers("activity", 1, [3])] }),
+  "magic-square-four-pair-sum-b9": stageReferences({
+    concept: [problemNumbers("activity", 1, [4])],
+    practice: [problemNumbers("practice", 1, [4])]
+  }),
+  "magic-square-swap-pair-b9": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [5])]
+  }),
+  "triangle-edge-extreme-six-b9": stageReferences({
+    concept: [problemNumbers("activity", 2, [1])],
+    practice: [problemNumbers("practice", 1, [8])]
+  }),
+  "triangle-edge-sum-six": stageReferences({
+    concept: [problemNumbers("activity", 2, [2])],
+    practice: [problemNumbers("practice", 1, [9])]
+  }),
+  "triangle-edge-extreme-nine-b9": stageReferences({
+    concept: [problemNumbers("activity", 2, [3])],
+    practice: [problemNumbers("practice", 1, [10, 11])]
+  }),
+  "triangle-edge-sum-nine": stageReferences({ concept: [problemNumbers("activity", 2, [4])] }),
+  "polygon-ring-equal-sum": stageReferences({
+    type: [problemNumbers("check", 2, [1])],
+    practice: [problemNumbers("practice", 1, [12, 13])]
+  }),
+  "heptagon-ring-equal-sum-b9": stageReferences({
+    type: [problemNumbers("check", 2, [2])],
+    practice: [problemNumbers("practice", 1, [14])]
+  }),
+  "overlap-region-equal-sum-b9": stageReferences({
+    practice: [problemNumbers("practice", 1, [15])],
+    advanced: [problemNumbers("advanced", 1, [1])]
+  }),
+  "circle-line-ring-equal-sum": stageReferences({ advanced: [problemNumbers("advanced", 1, [2])] }),
+  "grid-line-sum-minimum-b9": stageReferences({ advanced: [problemNumbers("advanced", 1, [3])] }),
+  "circle-chain-equal-sum-b9": stageReferences({ advanced: [problemNumbers("advanced", 1, [4])] }),
+  "triangle-line-equal-sum-b9": stageReferences({ advanced: [problemNumbers("advanced", 1, [5])] }),
+  "magic-square-four-target": stageReferences({ practice: [problemNumbers("practice", 1, [2])] }),
+  "magic-square-four-complete": stageReferences({ practice: [problemNumbers("practice", 1, [3])] }),
+  "circular-magic-line-sum": stageReferences({ practice: [problemNumbers("practice", 1, [6])] }),
+  "circular-magic-maximum-b9": stageReferences({ practice: [problemNumbers("practice", 1, [7])] })
+});
+
+const BOOK09_UNIT04_REFS = Object.freeze({
+  "shape-difference-chain": stageReferences({
+    concept: [problemNumbers("activity", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [1, 2])]
+  }),
+  "measurement-order-chain": stageReferences({
+    concept: [problemNumbers("activity", 1, [3, 4])],
+    practice: [problemNumbers("practice", 1, [3, 4])],
+    advanced: [problemNumbers("advanced", 1, [1])]
+  }),
+  "fixed-value-order-assignment-b9": stageReferences({
+    concept: [problemNumbers("activity", 1, [5, 6])],
+    practice: [problemNumbers("practice", 1, [5, 6])]
+  }),
+  "ordinal-line-placement": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [10])]
+  }),
+  "line-ranking-constraints-b9": stageReferences({
+    type: [problemNumbers("check", 1, [3, 4])],
+    practice: [problemNumbers("practice", 1, [7, 8, 9, 11, 12])]
+  }),
+  "circular-seat-placement": stageReferences({
+    concept: [problemNumbers("activity", 2, [1, 2])],
+    practice: [problemNumbers("practice", 1, [13, 14, 16])],
+    advanced: [problemNumbers("advanced", 1, [3])]
+  }),
+  "exclusion-grid-ranking-b9": stageReferences({ concept: [problemNumbers("activity", 2, [3])] }),
+  "exact-one-ranking-predictions-b9": stageReferences({
+    type: [problemNumbers("check", 2, [1])],
+    practice: [problemNumbers("practice", 1, [19, 20])]
+  }),
+  "exact-one-answer-assignment-b9": stageReferences({ type: [problemNumbers("check", 2, [2])] }),
+  "pair-group-inference-b9": stageReferences({ advanced: [problemNumbers("advanced", 1, [2])] }),
+  "all-false-circular-seating-b9": stageReferences({ advanced: [problemNumbers("advanced", 1, [4])] }),
+  "preference-count-matrix-b9": stageReferences({ advanced: [problemNumbers("advanced", 1, [5])] }),
+  "apartment-neighbor-logic-b9": stageReferences({ practice: [problemNumbers("practice", 1, [15])] }),
+  "profession-assignment-b9": stageReferences({ practice: [problemNumbers("practice", 1, [17])] }),
+  "activity-enrollment-b9": stageReferences({ practice: [problemNumbers("practice", 1, [18])] })
+});
+
 export const CURRICULUM = [
   { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [
     detailedStagedUnit("도형 움직이기", [
@@ -2776,10 +3048,36 @@ export const CURRICULUM = [
     ], [4,4], [4,4], 4, 19, BOOK08_UNIT04_REFS)
   ] },
   { id: "book-09", label: "9권", title: "도형분할과 논리", units: [
-    stagedUnit("도형의 분할과 넓이", ["congruent-partition","unit-area-fraction"], [7,6], [5,4], 6, 22),
-    stagedUnit("쌓기나무의 개수", ["cube-count-solid","cube-hidden-count-walled","cube-hidden-count","cube-fill-rectangular-box","cube-fill-box","cube-three-view-minmax","cube-painted-faces","cube-painted-cube-count","cube-black-white-alternating","cube-tunnel"], [5,2], [5,5], 5, 14),
-    stagedUnit("마방진", ["magic-square"], [4,4], [2,3], 5, 15),
-    stagedUnit("논리 추리", ["person-item-logic","chained-number-condition"], [6,4], [4,5], 5, 20)
+    detailedStagedUnit("도형의 분할과 넓이", [
+      "rotational-partition-two", "rotational-partition-four", "symbol-balanced-congruent-partition",
+      "latin-square-congruent-partition-b9", "equal-sum-congruent-partition-b9",
+      "landmark-congruent-partition-b9", "congruent-composite-partition-b9",
+      "triangle-equal-subdivision-b9", "hexagon-equal-subdivision-b9", "tetromino-cover-count-b9",
+      "unit-grid-area", "oblique-square-grid-area", "quadrilateral-grid-area-b9",
+      "shaded-composite-grid-area-b9", "parallelogram-grid-area-b9"
+    ], [7,6], [5,4], 6, 22, BOOK09_UNIT01_REFS),
+    detailedStagedUnit("쌓기나무의 개수", [
+      "cube-count-solid", "cube-fill-rectangular-box", "cube-hidden-count-walled", "cube-hidden-count",
+      "cube-solid-to-views-b9", "cube-top-number-grid", "cube-missing-view", "cube-layer-views-b9",
+      "cube-three-views", "cube-three-view-minmax", "cube-fill-box", "cube-black-white-alternating",
+      "cube-shell-interior-b9", "cube-view-model-choice-b9"
+    ], [5,2], [5,5], 5, 14, BOOK09_UNIT02_REFS),
+    detailedStagedUnit("마방진", [
+      "magic-square-three-complete", "magic-square-three-target", "magic-square-four-target",
+      "magic-square-four-complete", "magic-square-swap-pair-b9", "magic-square-four-pair-sum-b9",
+      "triangle-edge-extreme-six-b9", "triangle-edge-sum-six", "triangle-edge-extreme-nine-b9",
+      "triangle-edge-sum-nine", "polygon-ring-equal-sum", "heptagon-ring-equal-sum-b9",
+      "overlap-region-equal-sum-b9", "circle-line-ring-equal-sum", "grid-line-sum-minimum-b9",
+      "circle-chain-equal-sum-b9", "triangle-line-equal-sum-b9", "circular-magic-line-sum",
+      "circular-magic-maximum-b9"
+    ], [4,4], [2,2], 5, 15, BOOK09_UNIT03_REFS),
+    detailedStagedUnit("논리 추리", [
+      "shape-difference-chain", "measurement-order-chain", "fixed-value-order-assignment-b9",
+      "ordinal-line-placement", "line-ranking-constraints-b9", "circular-seat-placement",
+      "exclusion-grid-ranking-b9", "exact-one-ranking-predictions-b9", "exact-one-answer-assignment-b9",
+      "pair-group-inference-b9", "all-false-circular-seating-b9", "preference-count-matrix-b9",
+      "apartment-neighbor-logic-b9", "profession-assignment-b9", "activity-enrollment-b9"
+    ], [6,3], [4,2], 5, 20, BOOK09_UNIT04_REFS)
   ] },
   { id: "book-10", label: "10권", title: "연속수와 따라잡기", units: [
     stagedUnit("연속수의 합", ["consecutive-number-addition","odd-even-sum-difference"], [3,6,8], [4,4,4], 6, 26),
