@@ -55,6 +55,8 @@ jobs:
           cp -R number_magic/. _site/number_magic/
           cp -R personality/. _site/personality/
           cp -R premier/. _site/premier/
+          rm -rf _site/premier/qa
+          test ! -e _site/premier/qa
           cp -R reading-world/. _site/reading-world/
           cp -R roadmap/. _site/roadmap/
           cp -R vocab-quiz/. _site/vocab-quiz/

@@ -20,6 +20,11 @@ const FILES = {
     path.join(PREMIER_DIR, "renderers-utilization-3-q08-q14.js"),
     path.join(PREMIER_DIR, "renderers-utilization-3-q15-q20.js")
   ],
+  round4Renderers: [
+    path.join(PREMIER_DIR, "renderers-utilization-4-q01-q07.js"),
+    path.join(PREMIER_DIR, "renderers-utilization-4-q08-q14.js"),
+    path.join(PREMIER_DIR, "renderers-utilization-4-q15-q20.js")
+  ],
   deployWorkflow: path.resolve(PREMIER_DIR, "..", ".github", "workflows", "deploy-pages.yml")
 };
 
@@ -133,8 +138,8 @@ const examsSource = readRequired(FILES.exams);
 const exams = loadExams(examsSource);
 const examIds = Object.keys(exams).sort();
 
-verify("활용 1·2·3회만 등록되어 있다", () => {
-  assert.deepEqual(examIds, ["utilization-1", "utilization-2", "utilization-3"]);
+verify("활용 1·2·3·4회만 등록되어 있다", () => {
+  assert.deepEqual(examIds, ["utilization-1", "utilization-2", "utilization-3", "utilization-4"]);
 });
 
 verify("각 회차에 1~20번이 정확히 한 번씩 있다", () => {
@@ -195,6 +200,7 @@ verify("모바일과 A3 인쇄 레이아웃이 서로 분리되고 배포 대상
   assert.match(styles, /@media\s+print\s*\{[\s\S]*?\.exam-page\s*\{[^}]*height:\s*420mm/s, "인쇄 한 쪽 높이가 A3 420mm로 고정되지 않았습니다.");
   assert.match(styles, /@media\s+print\s*\{[\s\S]*?\.paper-grid\s*\{[^}]*height:\s*348mm/s, "인쇄 2단 문제 영역 높이가 고정되지 않았습니다.");
   assert.match(styles, /@media\s+print\s*\{[\s\S]*?\.answer-space\s*\{[^}]*display:\s*none/s, "인쇄에서 빈 답란 때문에 문항이 다음 쪽으로 밀릴 수 있습니다.");
+  assert.match(deploy, /cp\s+-R\s+premier\/\.\s+_site\/premier\/[\s\S]*?rm\s+-rf\s+_site\/premier\/qa[\s\S]*?test\s+!\s+-e\s+_site\/premier\/qa/, "정답 검산 파일 premier/qa가 공개 Pages 산출물에서 제외되지 않습니다.");
   assert.match(deploy, /-\s*'premier\/\*\*'/, "premier 변경이 Pages 배포 조건에 없습니다.");
   assert.match(deploy, /cp\s+-R\s+premier\/\.\s+_site\/premier\//, "premier 폴더가 Pages 결과물에 복사되지 않습니다.");
 });
@@ -202,22 +208,26 @@ verify("모바일과 A3 인쇄 레이아웃이 서로 분리되고 배포 대상
 let round1;
 let round2;
 let round3;
-verify("세 회차 그림 파일을 VM에서 안전하게 등록할 수 있다", () => {
+let round4;
+verify("네 회차 그림 파일을 VM에서 안전하게 등록할 수 있다", () => {
   round1 = rendererRegistry(FILES.round1Renderer);
   round2 = rendererRegistry(FILES.round2Renderer);
   round3 = mergeRendererRegistries(FILES.round3Renderers.map(rendererRegistry));
+  round4 = mergeRendererRegistries(FILES.round4Renderers.map(rendererRegistry));
   const forbiddenContent = /(?:정답|해설|풀이)\s*(?:[:：]|보기|확인)|\b(?:answerKey|correctAnswer|solution|explanation)\b/i;
   assert.doesNotMatch(round1.source, forbiddenContent, "1회 그림 파일에 정답·해설 데이터가 있습니다.");
   assert.doesNotMatch(round2.source, forbiddenContent, "2회 그림 파일에 정답·해설 데이터가 있습니다.");
   assert.doesNotMatch(round3.source, forbiddenContent, "3회 그림 파일에 정답·해설 데이터가 있습니다.");
+  assert.doesNotMatch(round4.source, forbiddenContent, "4회 그림 파일에 정답·해설 데이터가 있습니다.");
 });
 
 verify("모든 figure ID가 해당 회차 그림 파일에 등록되고 실제 마크업을 만든다", () => {
-  assert.ok(round1 && round2 && round3, "그림 파일 등록 검사가 먼저 통과해야 합니다.");
+  assert.ok(round1 && round2 && round3 && round4, "그림 파일 등록 검사가 먼저 통과해야 합니다.");
   [
     [exams["utilization-1"], round1, "u1-"],
     [exams["utilization-2"], round2, "u2-"],
-    [exams["utilization-3"], round3, "u3-"]
+    [exams["utilization-3"], round3, "u3-"],
+    [exams["utilization-4"], round4, "u4-"]
   ].forEach(([exam, renderer, prefix]) => {
     const referenced = exam.questions.filter((item) => item.figure).map((item) => String(item.figure));
     assert.equal(new Set(referenced).size, referenced.length, `${exam.id}가 같은 figure ID를 여러 문항에 공유합니다.`);
@@ -706,9 +716,296 @@ verify("3회 렌더러 세 파일이 뷰어에서 모두 로드된다", () => {
   FILES.round3Renderers.forEach((file) => assert.match(viewer, new RegExp(path.basename(file).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))));
 });
 
+verify("4회 1번은 달력 십자 다섯 날짜 조건에서 18일만 남는다", () => {
+  const candidates = [];
+  for (let day = 1; day <= 31; day += 1) {
+    const column = (day - 1) % 7;
+    if (day - 7 < 1 || day + 7 > 31 || column === 0 || column === 6) continue;
+    const sum = (day - 7) + (day - 1) + day + (day + 1) + (day + 7);
+    if ([5, 6, 9].every((divisor) => sum % divisor === 0)) candidates.push(day);
+  }
+  assert.deepEqual(candidates, [18]);
+});
+
+verify("4회 2번은 마지막 같은 수에서 거꾸로 복원하면 알파벳 카드 13명이다", () => {
+  const candidates = [];
+  for (let alphabet = 0; alphabet <= 29; alphabet += 1) {
+    const number = 29 - alphabet;
+    if (number < 8 || alphabet + 8 < 4) continue;
+    if (number - 8 + 4 + 5 === alphabet + 8 - 4) candidates.push(alphabet);
+  }
+  assert.deepEqual(candidates, [13]);
+  assert.match(question(exams, "utilization-4", 2).prompt, /숫자\s*카드나\s*알파벳\s*카드\s*가운데\s*한\s*장씩/);
+});
+
+verify("4회 3번은 세 갈래 수열의 32번째 값이 44다", () => {
+  const sequence = [];
+  for (let index = 1; index <= 32; index += 1) {
+    if (index % 3 === 1) sequence.push(1);
+    else if (index % 3 === 2) sequence.push(4 * ((index + 1) / 3));
+    else sequence.push(2 * (index / 3) + 3);
+  }
+  assert.deepEqual(sequence.slice(0, 12), [1, 4, 5, 1, 8, 7, 1, 12, 9, 1, 16, 11]);
+  assert.equal(sequence[31], 44);
+});
+
+verify("4회 4번은 도형 네 값과 빈 세로합이 유일하다", () => {
+  const candidates = [];
+  for (let circle = 0; circle <= 20; circle += 1) for (let triangle = 0; triangle <= 20; triangle += 1) {
+    for (let square = 0; square <= 20; square += 1) for (let diamond = 0; diamond <= 20; diamond += 1) {
+      if (2 * circle + 2 * triangle !== 8) continue;
+      if (2 * square + 2 * circle !== 6) continue;
+      if (circle + 3 * diamond !== 13) continue;
+      if (triangle + 3 * diamond !== 15) continue;
+      candidates.push([circle, triangle, square, diamond, circle + square + 2 * diamond]);
+    }
+  }
+  assert.deepEqual(candidates, [[1, 3, 2, 4, 11]]);
+});
+
+verify("4회 5번은 회전·뒤집기 동치인 오각형 표시가 8종이다", () => {
+  function transforms(bits) {
+    const rotations = range(0, 4).map((shift) => bits.map((_, index) => bits[(index + shift) % 5]).join(""));
+    const reversed = bits.slice().reverse();
+    return rotations.concat(range(0, 4).map((shift) => reversed.map((_, index) => reversed[(index + shift) % 5]).join("")));
+  }
+  const classes = new Set();
+  for (let mask = 0; mask < 32; mask += 1) {
+    const bits = range(0, 4).map((bit) => (mask >> bit) & 1);
+    classes.add(transforms(bits).sort()[0]);
+  }
+  assert.equal(classes.size, 8);
+  assert.match(question(exams, "utilization-4", 5).prompt, /돌리거나\s*뒤집/);
+});
+
+verify("4회 6번은 거울상 02:52를 실제 05:25로 복원해 02:05를 구한다", () => {
+  const reflect = { "0": "0", "1": "1", "2": "5", "5": "2", "8": "8" };
+  const mirrored = "02:52";
+  const actual = mirrored.replace(/[01258]/g, (digit) => reflect[digit]);
+  assert.equal(actual, "05:25");
+  const [hours, minutes] = actual.split(":").map(Number);
+  assert.equal((hours * 60 + minutes - (3 * 60 + 20) + 24 * 60) % (24 * 60), 2 * 60 + 5);
+  assert.match(question(exams, "utilization-4", 6).prompt, /거울에\s*비친\s*모습/);
+});
+
+verify("4회 7번은 네 주사위 전개도의 빈 면이 각각 하나로 정해진다", () => {
+  const missingFaces = [[4, 5, 6], [4, 5, 1], [5, 1, 3], [2, 1, 3]];
+  missingFaces.forEach((faces) => {
+    assert.equal(new Set(faces).size, 3);
+    faces.forEach((face) => assert.ok(face >= 1 && face <= 6));
+  });
+  assert.ok(round4.registry.get("u4-q7")({}, question(exams, "utilization-4", 7)).includes("<svg"));
+});
+
+verify("4회 8번은 명시한 표준 획수 규칙에서 오이의 두 획수가 고정된다", () => {
+  const strokes = { 영: 5, 재: 6, 수: 4, 학: 7, 오: 3, 이: 2 };
+  assert.equal(`${strokes.영}${strokes.재}`, "56");
+  assert.equal(`${strokes.수}${strokes.학}`, "47");
+  assert.equal(`${strokes.오}${strokes.이}`, "32");
+  assert.match(question(exams, "utilization-4", 8).prompt, /바른\s*획순/);
+});
+
+verify("4회 9번은 응답하지 않은 3명을 제외한 포함·배제로 술래잡기만 3명이다", () => {
+  const union = 30 - 3;
+  const both = 15 + 24 - union;
+  assert.equal(15 - both, 3);
+});
+
+verify("4회 10번은 2~9의 행·열 곱 배치가 하나다", () => {
+  const rowProducts = [8, 42, 72, 15];
+  const columnProducts = [10, 18, 32, 63];
+  const rowPairs = rowProducts.map((product) => {
+    const pairs = [];
+    for (let a = 2; a <= 9; a += 1) for (let b = a + 1; b <= 9; b += 1) if (a * b === product) pairs.push([a, b]);
+    assert.equal(pairs.length, 1);
+    return pairs[0];
+  });
+  const rowOptions = rowPairs.map(([a, b]) => {
+    const options = [];
+    for (let firstColumn = 0; firstColumn < 4; firstColumn += 1) {
+      for (let secondColumn = 0; secondColumn < 4; secondColumn += 1) {
+        if (firstColumn === secondColumn) continue;
+        const row = [null, null, null, null];
+        row[firstColumn] = a;
+        row[secondColumn] = b;
+        options.push(row);
+      }
+    }
+    return options;
+  });
+  const completions = [];
+  function chooseRow(rowIndex, grid) {
+    if (rowIndex === 4) {
+      for (let column = 0; column < 4; column += 1) {
+        const values = grid.map((row) => row[column]).filter((value) => value !== null);
+        if (values.length !== 2 || values[0] * values[1] !== columnProducts[column]) return;
+      }
+      completions.push(grid.map((row) => row.slice()));
+      return;
+    }
+    rowOptions[rowIndex].forEach((row) => chooseRow(rowIndex + 1, grid.concat([row])));
+  }
+  chooseRow(0, []);
+  assert.deepEqual(completions, [[[2, null, 4, null], [null, 6, null, 7], [null, null, 8, 9], [5, 3, null, null]]]);
+});
+
+verify("4회 11번은 홀수·짝수 번째 항을 분리하면 25번째가 26이다", () => {
+  const sequence = range(1, 25).map((index) => index % 2 === 1 ? index + 1 : (index / 2) * 3);
+  assert.deepEqual(sequence.slice(0, 8), [2, 3, 4, 6, 6, 9, 8, 12]);
+  assert.equal(sequence[24], 26);
+});
+
+verify("4회 12번은 저울 비교에서 가장 무거운 배와 가장 가벼운 오렌지가 유일하다", () => {
+  const fruits = ["배", "수박", "사과", "오렌지"];
+  const orders = [];
+  permutations(fruits, (lightToHeavy) => {
+    const weight = Object.fromEntries(lightToHeavy.map((fruit, index) => [fruit, index]));
+    if (!(weight.배 > weight.수박)) return;
+    if (!(weight.사과 > weight.오렌지)) return;
+    if (!(weight.수박 > weight.오렌지)) return;
+    if (!(weight.배 > weight.사과)) return;
+    orders.push(lightToHeavy.slice());
+  });
+  assert.ok(orders.length > 0);
+  assert.deepEqual([...new Set(orders.map((order) => order[0]))], ["오렌지"]);
+  assert.deepEqual([...new Set(orders.map((order) => order[3]))], ["배"]);
+});
+
+verify("4회 13번은 사람 기준 오른쪽을 명시하면 원탁 배치가 하나다", () => {
+  const people = ["B", "C", "D", "E", "F"];
+  const arrangements = [];
+  permutations(people, (tail) => {
+    const seats = ["A", ...tail];
+    const at = (person) => seats.indexOf(person);
+    const adjacent = (a, b) => (Math.abs(at(a) - at(b)) === 1 || Math.abs(at(a) - at(b)) === 5);
+    if (!(adjacent("A", "D") && adjacent("A", "E"))) return;
+    if ((at("C") + 3) % 6 !== at("D")) return;
+    if ((at("C") + 5) % 6 !== at("E")) return;
+    if (adjacent("D", "F")) return;
+    arrangements.push(seats.slice());
+  });
+  assert.deepEqual(arrangements, [["A", "E", "C", "F", "B", "D"]]);
+  const prompt = question(exams, "utilization-4", 13).prompt;
+  assert.match(prompt, /가운데를\s*바라보고/);
+  assert.match(prompt, /각\s*사람이\s*보는\s*방향의\s*오른쪽/);
+  assert.match(prompt, /바로\s*양옆/);
+});
+
+verify("4회 14번은 주어진 세 모서리 수를 만족하는 짝수 마방진이 하나다", () => {
+  const values = [2, 4, 6, 8, 10, 12, 14, 16, 18];
+  const remaining = values.filter((value) => ![16, 12, 4].includes(value));
+  const completions = [];
+  permutations(remaining, (p) => {
+    const grid = [16, p[0], p[1], p[2], p[3], p[4], 12, p[5], 4];
+    const lines = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
+    ];
+    if (lines.every((line) => line.reduce((sum, index) => sum + grid[index], 0) === 30)) completions.push(grid);
+  });
+  assert.deepEqual(completions, [[16, 6, 8, 2, 10, 18, 12, 14, 4]]);
+});
+
+verify("4회 15번은 10원·50원 동전 조합이 5가지다", () => {
+  const combinations = [];
+  for (let tens = 0; tens <= 20; tens += 1) for (let fifties = 0; fifties <= 4; fifties += 1) {
+    if (10 * tens + 50 * fifties === 200) combinations.push([tens, fifties]);
+  }
+  assert.deepEqual(combinations, [[0, 4], [5, 3], [10, 2], [15, 1], [20, 0]]);
+});
+
+verify("4회 16번은 네 학생의 키를 모두 cm로 바꾸면 최댓값이 하나다", () => {
+  const heights = { 연두: 129 + 6 };
+  heights.주홍 = heights.연두 - 9;
+  heights.윤수 = heights.주홍 - 5;
+  heights.보라 = heights.윤수 + 15;
+  assert.deepEqual(heights, { 연두: 135, 주홍: 126, 윤수: 121, 보라: 136 });
+  assert.equal(Math.max(...Object.values(heights)), 136);
+  const markup = round4.registry.get("u4-q16")({}, question(exams, "utilization-4", 16));
+  assert.match(markup, /연두/);
+  assert.doesNotMatch(markup, /현두/);
+});
+
+verify("4회 17번은 두 분홍색 위치를 구별하면 ④만 대칭 규칙과 어긋난다", () => {
+  const prompt = question(exams, "utilization-4", 17).prompt;
+  assert.match(prompt, /진한\s*분홍색과\s*연한\s*분홍색의\s*위치/);
+  assert.match(round4.source, /const one = mirrorTile\([^;]+right:\s*LIGHT_PINK,\s*bottom:\s*PINK/);
+  assert.match(round4.source, /const four = mirrorTile\([^;]+right:\s*LIGHT_PINK,\s*bottom:\s*PINK[\s\S]+top:\s*PINK,\s*left:\s*LIGHT_PINK/);
+  const reflectedAcrossCorner = { top: "light", left: "dark" };
+  const choiceFourSecondTile = { top: "dark", left: "light" };
+  assert.notDeepEqual(choiceFourSecondTile, reflectedAcrossCorner);
+});
+
+verify("4회 18번은 새 양을 행·열마다 한 마리씩 더하는 배치가 6가지다", () => {
+  const placements = [];
+  permutations([0, 1, 2], (columns) => placements.push(columns.slice()));
+  assert.equal(placements.length, 6);
+  placements.forEach((columns) => {
+    assert.equal(new Set(columns).size, 3);
+  });
+  const prompt = question(exams, "utilization-4", 18).prompt;
+  assert.match(prompt, /한\s*마리까지만/);
+  assert.match(prompt, /서로\s*다른\s*배치\s*방법/);
+  const markup = round4.registry.get("u4-q18")({}, question(exams, "utilization-4", 18));
+  const renderedCounts = Array.from(markup.matchAll(/data-sheep-count="(\d+)"/g), (match) => Number(match[1]));
+  assert.deepEqual(renderedCounts, [2, 3, 0, 2, 0, 3, 1, 2, 2]);
+  assert.deepEqual([
+    renderedCounts.slice(0, 3).reduce((sum, value) => sum + value, 0),
+    renderedCounts.slice(3, 6).reduce((sum, value) => sum + value, 0),
+    renderedCounts.slice(6, 9).reduce((sum, value) => sum + value, 0)
+  ], [5, 5, 5]);
+  assert.deepEqual([0, 1, 2].map((column) => renderedCounts[column] + renderedCounts[column + 3] + renderedCounts[column + 6]), [5, 5, 5]);
+});
+
+verify("4회 19번은 다섯 접기의 실제 층 순서에서 가장 위 수가 1이다", () => {
+  const values = [
+    [2, 1, 3, 1, 6, 7, 8, 9],
+    [5, 7, 4, 9, 2, 3, 5, 4],
+    [4, 7, 5, 1, 6, 9, 1, 7],
+    [1, 2, 3, 5, 5, 5, 3, 2]
+  ];
+  const reverseStack = (stack) => stack.slice().reverse();
+  let grid = values.map((row) => row.map((value) => [value]));
+  const rightToLeft = (paper) => paper.map((row) => {
+    const middle = row.length / 2;
+    return row.slice(0, middle).map((stack, x) => stack.concat(reverseStack(row[2 * middle - 1 - x])));
+  });
+  const leftToRight = (paper) => paper.map((row) => {
+    const middle = row.length / 2;
+    return row.slice(middle).map((stack, index) => stack.concat(reverseStack(row[middle - 1 - index])));
+  });
+  const topToBottom = (paper) => {
+    const middle = paper.length / 2;
+    return paper.slice(middle).map((row, index) => row.map((stack, x) => stack.concat(reverseStack(paper[middle - 1 - index][x]))));
+  };
+  const bottomToTop = (paper) => {
+    const middle = paper.length / 2;
+    return paper.slice(0, middle).map((row, y) => row.map((stack, x) => stack.concat(reverseStack(paper[2 * middle - 1 - y][x]))));
+  };
+  grid = rightToLeft(grid);
+  grid = topToBottom(grid);
+  grid = leftToRight(grid);
+  grid = bottomToTop(grid);
+  grid = rightToLeft(grid);
+  assert.equal(grid.length, 1);
+  assert.equal(grid[0].length, 1);
+  assert.equal(grid[0][0].length, 32);
+  assert.equal(grid[0][0][grid[0][0].length - 1], 1);
+});
+
+verify("4회 20번은 열 막대의 아홉 겹침을 한 번씩 빼 264cm다", () => {
+  assert.equal(10 * 30 - 9 * 4, 264);
+});
+
+verify("4회 렌더러 세 파일이 뷰어에서 모두 로드된다", () => {
+  const viewer = readRequired(FILES.viewer);
+  FILES.round4Renderers.forEach((file) => assert.match(viewer, new RegExp(path.basename(file).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))));
+});
+
 if (failures.length > 0) {
   console.error(`\n${failures.length}개 검사가 실패했고 ${passed}개가 통과했습니다.`);
   process.exitCode = 1;
 } else {
-  console.log(`\n전체 ${passed}개 검사 통과: 프리미어 활용 1·2·3회 뷰어 데이터가 배포 기준을 만족합니다.`);
+  console.log(`\n전체 ${passed}개 검사 통과: 프리미어 활용 1·2·3·4회 뷰어 데이터가 배포 기준을 만족합니다.`);
 }
