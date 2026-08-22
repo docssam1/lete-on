@@ -27,9 +27,22 @@ test("practice bank keeps SH middle cumulative taxonomy inside a multi-track sel
 test("academy profiles select report axes and type priorities without publishing source material", () => {
   assert.deepEqual(Array.from(bank.academyProfiles, profile => profile.id), ["SH", "DP", "WM", "ED", "DG", "SM"]);
   const dp = bank.academyProfiles.find(profile => profile.id === "DP");
+  const linearFunctionTransfer = dp.targets.find(target => target.id === "middle-linear-function-transfer");
+  assert.equal(linearFunctionTransfer.scopeKey, "middle1-1-to-linear-function");
+  assert.equal(linearFunctionTransfer.scopeKind, "terminal-unit");
+  assert.equal(linearFunctionTransfer.terminalUnit.course, "중2-1");
+  assert.equal(linearFunctionTransfer.terminalUnit.unit, "일차함수");
+  assert.equal(linearFunctionTransfer.usage, "question-bank-only");
+  assert.equal(linearFunctionTransfer.label, "일차함수까지 편입");
+  assert.equal(pageSource.includes("{label:'일차함수',state:'종료 단원'}"), true);
+  assert.equal(pageSource.includes("target.usage==='question-bank-only'"), true);
+  assert.equal(pageSource.includes("특정 원본 회차나 커트라인을 연결하지 않습니다"), true);
   const transfer = dp.targets.find(target => target.id === "middle2-2-transfer");
   assert.equal(transfer.scopeKey, "middle1-1-to-middle2-2");
-  assert.equal(transfer.state, "user-confirmed");
+  assert.equal(transfer.scopeKind, "terminal-unit");
+  assert.equal(transfer.terminalUnit.unit, "전 과정");
+  assert.equal(transfer.state, "verified-original");
+  assert.equal(transfer.label, "중2-2 전 과정까지 편입 1차");
   assert.equal(transfer.difficultyPlan, "기준 우선 · 올림 유형으로 변별");
   assert.equal(dp.targets.some(target => target.id === "director-transfer"), true);
   assert.equal(dp.targets.find(target => target.id === "director-transfer").difficultyPlan.includes("올림 우선"), true);
