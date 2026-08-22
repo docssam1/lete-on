@@ -6,7 +6,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 
-const PREMIER_DIR = path.resolve(__dirname, "..");
+const PREMIER_DIR = path.resolve(__dirname, "..", "..", "premier");
 const FILES = {
   exams: path.join(PREMIER_DIR, "exams.js"),
   index: path.join(PREMIER_DIR, "index.html"),
@@ -179,6 +179,12 @@ verify("시험 데이터에 정답·해설·풀이 값이 없다", () => {
     });
   }
   walk(exams, "PREMIER_EXAMS");
+});
+
+verify("정답 전수 검산기는 공개 premier 경로 밖에 있다", () => {
+  const relativeValidator = path.relative(path.resolve(PREMIER_DIR, ".."), __filename).replace(/\\/g, "/");
+  assert.match(relativeValidator, /^\.github\/qa\/premier-validate\.js$/);
+  assert.ok(!relativeValidator.startsWith("premier/"), "정답 검산 파일이 GitHub Pages의 공개 premier 경로 안에 있습니다.");
 });
 
 verify("서재·뷰어에 정답/해설 표시 기능이 없다", () => {
