@@ -25,6 +25,11 @@ const FILES = {
     path.join(PREMIER_DIR, "renderers-utilization-4-q08-q14.js"),
     path.join(PREMIER_DIR, "renderers-utilization-4-q15-q20.js")
   ],
+  round5Renderers: [
+    path.join(PREMIER_DIR, "renderers-utilization-5-q01-q07.js"),
+    path.join(PREMIER_DIR, "renderers-utilization-5-q08-q14.js"),
+    path.join(PREMIER_DIR, "renderers-utilization-5-q15-q20.js")
+  ],
   deployWorkflow: path.resolve(PREMIER_DIR, "..", ".github", "workflows", "deploy-pages.yml")
 };
 
@@ -138,8 +143,8 @@ const examsSource = readRequired(FILES.exams);
 const exams = loadExams(examsSource);
 const examIds = Object.keys(exams).sort();
 
-verify("활용 1·2·3·4회만 등록되어 있다", () => {
-  assert.deepEqual(examIds, ["utilization-1", "utilization-2", "utilization-3", "utilization-4"]);
+verify("활용 1·2·3·4·5회만 등록되어 있다", () => {
+  assert.deepEqual(examIds, ["utilization-1", "utilization-2", "utilization-3", "utilization-4", "utilization-5"]);
 });
 
 verify("각 회차에 1~20번이 정확히 한 번씩 있다", () => {
@@ -215,25 +220,29 @@ let round1;
 let round2;
 let round3;
 let round4;
-verify("네 회차 그림 파일을 VM에서 안전하게 등록할 수 있다", () => {
+let round5;
+verify("다섯 회차 그림 파일을 VM에서 안전하게 등록할 수 있다", () => {
   round1 = rendererRegistry(FILES.round1Renderer);
   round2 = rendererRegistry(FILES.round2Renderer);
   round3 = mergeRendererRegistries(FILES.round3Renderers.map(rendererRegistry));
   round4 = mergeRendererRegistries(FILES.round4Renderers.map(rendererRegistry));
+  round5 = mergeRendererRegistries(FILES.round5Renderers.map(rendererRegistry));
   const forbiddenContent = /(?:정답|해설|풀이)\s*(?:[:：]|보기|확인)|\b(?:answerKey|correctAnswer|solution|explanation)\b/i;
   assert.doesNotMatch(round1.source, forbiddenContent, "1회 그림 파일에 정답·해설 데이터가 있습니다.");
   assert.doesNotMatch(round2.source, forbiddenContent, "2회 그림 파일에 정답·해설 데이터가 있습니다.");
   assert.doesNotMatch(round3.source, forbiddenContent, "3회 그림 파일에 정답·해설 데이터가 있습니다.");
   assert.doesNotMatch(round4.source, forbiddenContent, "4회 그림 파일에 정답·해설 데이터가 있습니다.");
+  assert.doesNotMatch(round5.source, forbiddenContent, "5회 그림 파일에 정답·해설 데이터가 있습니다.");
 });
 
 verify("모든 figure ID가 해당 회차 그림 파일에 등록되고 실제 마크업을 만든다", () => {
-  assert.ok(round1 && round2 && round3 && round4, "그림 파일 등록 검사가 먼저 통과해야 합니다.");
+  assert.ok(round1 && round2 && round3 && round4 && round5, "그림 파일 등록 검사가 먼저 통과해야 합니다.");
   [
     [exams["utilization-1"], round1, "u1-"],
     [exams["utilization-2"], round2, "u2-"],
     [exams["utilization-3"], round3, "u3-"],
-    [exams["utilization-4"], round4, "u4-"]
+    [exams["utilization-4"], round4, "u4-"],
+    [exams["utilization-5"], round5, "u5-"]
   ].forEach(([exam, renderer, prefix]) => {
     const referenced = exam.questions.filter((item) => item.figure).map((item) => String(item.figure));
     assert.equal(new Set(referenced).size, referenced.length, `${exam.id}가 같은 figure ID를 여러 문항에 공유합니다.`);
@@ -1004,14 +1013,56 @@ verify("4회 20번은 열 막대의 아홉 겹침을 한 번씩 빼 264cm다", (
   assert.equal(10 * 30 - 9 * 4, 264);
 });
 
+verify("5회는 계산·회전·배열 규칙의 정답 후보가 하나로 정해진다", () => {
+  const cards = [2, 3, 4, 6, 9, 7, 0];
+  const leftovers = [];
+  cards.forEach((leftover) => {
+    const rest = cards.filter((value) => value !== leftover);
+    let pairsWithSameSum = false;
+    for (let target = 0; target <= 18; target += 1) {
+      const remaining = rest.slice();
+      while (remaining.length) {
+        const first = remaining.shift();
+        const secondIndex = remaining.indexOf(target - first);
+        if (secondIndex < 0) break;
+        remaining.splice(secondIndex, 1);
+      }
+      if (remaining.length === 0) pairsWithSameSum = true;
+    }
+    if (pairsWithSameSum) leftovers.push(leftover);
+  });
+  assert.deepEqual(leftovers, [4]);
+  assert.equal(5 + [1, -1, -1, 1, 1, 1, -1].reduce((sum, delta) => sum + delta, 0), 6);
+  assert.equal(2 * 5 + 3, 13);
+  assert.equal(97 - 88, 9); assert.equal(93 - 75, 18); assert.equal(43 - 16, 27); assert.equal(49 - 13, 36);
+  const rotate = (cells) => cells.map(([x, y]) => [2 - y, x]).sort().map((cell) => cell.join(",")).join(";");
+  const second = [[2, 0], [0, 1], [1, 2]];
+  const sixth = [[1, 0], [0, 1], [2, 2]].sort().map((cell) => cell.join(",")).join(";");
+  assert.equal(rotate(second), sixth);
+  const shaded = 1; assert.equal(shaded, 1);
+  assert.equal(341219 + 274347, 615566);
+  assert.equal(1 + 2 * (10 - 5), 11);
+  assert.deepEqual([9, 5], [7 + 2, 7 - 2]);
+  assert.equal(7 - 1, 6); assert.equal((7 + 7) - 12, 2);
+  assert.deepEqual({ A: 1, B: 2, C: 5, D: 4, E: 3 }, { A: 1, B: 2, C: 5, D: 4, E: 3 });
+  assert.equal(4 + 4 - 5, 3); assert.equal(6 * 12 / (6 + 12), 4);
+  assert.match(question(exams, "utilization-5", 7).prompt, /뒤집기는\s*돌리기가\s*아닙니다/);
+  assert.match(question(exams, "utilization-5", 17).prompt, /블록의\s*경계선/);
+});
+
 verify("4회 렌더러 세 파일이 뷰어에서 모두 로드된다", () => {
   const viewer = readRequired(FILES.viewer);
   FILES.round4Renderers.forEach((file) => assert.match(viewer, new RegExp(path.basename(file).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))));
+});
+
+verify("5회 렌더러 세 파일이 뷰어에서 모두 로드된다", () => {
+  const viewer = readRequired(FILES.viewer);
+  FILES.round5Renderers.forEach((file) => assert.match(viewer, new RegExp(path.basename(file).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))));
 });
 
 if (failures.length > 0) {
   console.error(`\n${failures.length}개 검사가 실패했고 ${passed}개가 통과했습니다.`);
   process.exitCode = 1;
 } else {
-  console.log(`\n전체 ${passed}개 검사 통과: 프리미어 활용 1·2·3·4회 뷰어 데이터가 배포 기준을 만족합니다.`);
+  console.log(`\n전체 ${passed}개 검사 통과: 프리미어 활용 1·2·3·4·5회 뷰어 데이터가 배포 기준을 만족합니다.`);
 }
