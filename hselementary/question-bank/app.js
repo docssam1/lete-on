@@ -1,7 +1,8 @@
 (() => {
   const curriculum = window.HSE_CURRICULUM;
   const generatorApi = window.HSE_GENERATORS;
-  if (!curriculum || !generatorApi) throw new Error("초등 문제은행 데이터를 불러오지 못했습니다.");
+  const mathNotation = window.HSE_MATH_NOTATION;
+  if (!curriculum || !generatorApi || !mathNotation) throw new Error("초등 문제은행 데이터를 불러오지 못했습니다.");
 
   const $ = (id) => document.getElementById(id);
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
@@ -11,6 +12,34 @@
   function renderMathNotation(markup) {
     const template = document.createElement("template");
     template.innerHTML = String(markup ?? "");
+    function appendMathTokens(target, tokens) {
+      tokens.forEach(token => {
+        if (token.type === "text") {
+          target.append(token.value);
+        } else if (token.type === "fraction") {
+          const fraction = document.createElement("span");
+          fraction.className = "math-fraction";
+          fraction.setAttribute("role", "img");
+          fraction.setAttribute("aria-label", mathNotation.fractionAria(token));
+          const numerator = document.createElement("span");
+          const denominator = document.createElement("span");
+          appendMathTokens(numerator, token.numerator);
+          appendMathTokens(denominator, token.denominator);
+          fraction.append(numerator, denominator);
+          target.append(fraction);
+        } else {
+          const unit = document.createElement("span");
+          unit.className = "math-unit";
+          unit.setAttribute("aria-label", `${token.base} ${token.power === "2" ? "제곱" : "세제곱"}`);
+          unit.append(token.base);
+          const power = document.createElement("sup");
+          power.textContent = token.power;
+          unit.append(power);
+          target.append(unit);
+        }
+      });
+    }
+
     const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_TEXT);
     const textNodes = [];
     while (walker.nextNode()) textNodes.push(walker.currentNode);
@@ -18,55 +47,30 @@
     textNodes.forEach(node => {
       const parent = node.parentElement;
       if (parent?.closest("svg, script, style, code, .math-fraction, .math-unit, [data-math-raw]")) return;
-      const matches = [...node.nodeValue.matchAll(/(\d+)\s*\/\s*(\d+)|((?:km|cm|mm|m|[a-zA-Z])([²³]))/g)].filter(match => !match[2] || Number(match[2]) !== 0);
-      if (!matches.length) return;
+      const tokens = mathNotation.tokenize(node.nodeValue);
+      if (tokens.length === 1 && tokens[0].type === "text" && tokens[0].value === node.nodeValue) return;
       const fragment = document.createDocumentFragment();
-      let cursor = 0;
-      matches.forEach(match => {
-        fragment.append(node.nodeValue.slice(cursor, match.index));
-        if (match[1]) {
-          const fraction = document.createElement("span");
-          fraction.className = "math-fraction";
-          fraction.setAttribute("role", "img");
-          fraction.setAttribute("aria-label", `${match[2]}분의 ${match[1]}`);
-          const numerator = document.createElement("span");
-          numerator.textContent = match[1];
-          const denominator = document.createElement("span");
-          denominator.textContent = match[2];
-          fraction.append(numerator, denominator);
-          fragment.append(fraction);
-        } else {
-          const unit = document.createElement("span");
-          unit.className = "math-unit";
-          unit.setAttribute("aria-label", `${match[3].slice(0, -1)} ${match[4] === "²" ? "제곱" : "세제곱"}`);
-          unit.append(match[3].slice(0, -1));
-          const power = document.createElement("sup");
-          power.textContent = match[4];
-          unit.append(power);
-          fragment.append(unit);
-        }
-        cursor = match.index + match[0].length;
-      });
-      fragment.append(node.nodeValue.slice(cursor));
+      appendMathTokens(fragment, tokens);
       node.replaceWith(fragment);
     });
 
     template.content.querySelectorAll("svg text").forEach(text => {
       if (text.children.length) return;
-      const matches = [...text.textContent.matchAll(/(km|cm|mm|m)([²³])/g)];
+      const normalized = mathNotation.normalizeMathText(text.textContent).replace(/(km|cm|mm|m)\^([23])/g, "$1$2");
+      const matches = [...normalized.matchAll(/(km|cm|mm|m)([²³]|[23])(?!\d)/g)];
       if (!matches.length) return;
       const fragment = document.createDocumentFragment();
       let cursor = 0;
       matches.forEach(match => {
-        fragment.append(text.textContent.slice(cursor, match.index), match[1]);
+        fragment.append(normalized.slice(cursor, match.index), match[1]);
         const power = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
         power.setAttribute("baseline-shift", "super");
         power.setAttribute("font-size", "70%");
-        power.textContent = match[2] === "²" ? "2" : "3";
+        power.textContent = match[2] === "²" || match[2] === "2" ? "2" : "3";
         fragment.append(power);
         cursor = match.index + match[0].length;
       });
-      fragment.append(text.textContent.slice(cursor));
+      fragment.append(normalized.slice(cursor));
       text.replaceChildren(fragment);
     });
     return template.innerHTML;

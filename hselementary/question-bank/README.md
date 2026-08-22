@@ -26,6 +26,8 @@
 
 - `curriculum.js`: 학기·단원·유형 분류
 - `generators.js`: 난이도별 문제·정답·풀이 생성기
+- `math-notation.js`: 분수·대분수·문자/빈칸 분수와 넓이/부피 단위를 판독하는 공통 표기 모듈
+- `math-notation-audit.js`: 482개 전 유형의 분수·대분수·문자/빈칸 분수·넓이/부피 단위·SVG 치수 표기 검수
 - `mixed-operation-audit.js`: 5-1 자연수의 혼합 계산 4유형의 식·답·유일한 기호 조합 검산
 - `factors-audit.js`: 5-1 약수와 배수 12유형의 약수·소인수·공약수·공배수 조건 검산
 - `correspondence-audit.js`: 5-1 규칙과 대응 4유형의 변환 규칙·대응표·도형 배열·실제 조건 검산

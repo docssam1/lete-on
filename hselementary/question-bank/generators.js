@@ -1223,7 +1223,27 @@
 
   const averageProbabilityEvidence = (kind, values) => `<span hidden data-average-probability-kind="${kind}" data-values="${values.join(",")}"></span>`;
   const fractionDivisionEvidence = (kind, values) => `<span hidden data-fraction-division-kind="${kind}" data-values="${values.join(",")}"></span>`;
-  const fractionTrapezoidSvg = ({ top, bottom, height = "□" }) => `<svg class="geometry-diagram area-diagram fraction-trapezoid" viewBox="0 0 260 176" data-trapezoid="${top},${bottom},${height}" aria-label="윗변 ${top}cm, 아랫변 ${bottom}cm, 높이 ${height}cm인 사다리꼴"><polygon class="highlight-fill" points="72,38 174,38 224,136 30,136"/><line class="dimension" x1="72" y1="25" x2="174" y2="25"/><line class="dimension" x1="30" y1="151" x2="224" y2="151"/><line class="dimension" x1="52" y1="38" x2="52" y2="136"/><text x="123" y="15">${top}cm</text><text x="127" y="165">${bottom}cm</text><text x="24" y="87">${height}cm</text></svg>`;
+  const svgMeasurementAria = (value, unit = "cm") => {
+    const text = String(value);
+    const match = text.match(/^(?:(\d+)\s+)?(\d+)\/(\d+)$/);
+    if (!match) return `${text}${unit}`;
+    const [, whole = "", numerator, denominator] = match;
+    return whole ? `${whole}와 ${denominator}분의 ${numerator}${unit}` : `${denominator}분의 ${numerator}${unit}`;
+  };
+  const svgMeasurementLabel = ({ x, y, value, unit = "cm" }) => {
+    const text = String(value);
+    const match = text.match(/^(?:(\d+)\s+)?(\d+)\/(\d+)$/);
+    if (!match) return `<text x="${x}" y="${y}">${text}${unit}</text>`;
+    const [, whole = "", numerator, denominator] = match;
+    const wholeWidth = whole ? whole.length * 7 + 4 : 0;
+    const fractionWidth = Math.max(numerator.length, denominator.length) * 7 + 5;
+    const unitWidth = unit.length * 7;
+    const start = x - (wholeWidth + fractionWidth + unitWidth) / 2;
+    const fractionCenter = start + wholeWidth + fractionWidth / 2;
+    const unitStart = start + wholeWidth + fractionWidth + 2;
+    return `<g class="svg-measurement" aria-hidden="true">${whole ? `<text class="svg-measure-text" x="${start.toFixed(1)}" y="${y}">${whole}</text>` : ""}<text class="svg-measure-fraction" x="${fractionCenter.toFixed(1)}" y="${y - 6}">${numerator}</text><line class="fraction-bar" x1="${(fractionCenter - fractionWidth / 2 + 1).toFixed(1)}" y1="${y}" x2="${(fractionCenter + fractionWidth / 2 - 1).toFixed(1)}" y2="${y}"/><text class="svg-measure-fraction" x="${fractionCenter.toFixed(1)}" y="${y + 7}">${denominator}</text><text class="svg-measure-text" x="${unitStart.toFixed(1)}" y="${y}">${unit}</text></g>`;
+  };
+  const fractionTrapezoidSvg = ({ top, bottom, height = "□" }) => `<svg class="geometry-diagram area-diagram fraction-trapezoid" viewBox="0 0 260 176" data-trapezoid="${top},${bottom},${height}" role="img" aria-label="윗변 ${svgMeasurementAria(top)}, 아랫변 ${svgMeasurementAria(bottom)}, 높이 ${svgMeasurementAria(height)}인 사다리꼴"><polygon class="highlight-fill" points="72,38 174,38 224,136 30,136"/><line class="dimension" x1="72" y1="25" x2="174" y2="25"/><line class="dimension" x1="30" y1="151" x2="224" y2="151"/><line class="dimension" x1="52" y1="38" x2="52" y2="136"/>${svgMeasurementLabel({ x: 123, y: 15, value: top })}${svgMeasurementLabel({ x: 127, y: 165, value: bottom })}${svgMeasurementLabel({ x: 24, y: 87, value: height })}</svg>`;
   const equalTriangleSvg = ({ leftBase, leftHeight, rightBase }) => `<svg class="geometry-diagram fraction-division-shape" viewBox="0 0 240 166" data-equal-triangles="${leftBase},${leftHeight},${rightBase}" aria-label="넓이가 같은 두 직각삼각형"><path class="shape-fill" d="M28 128 L28 42 L104 128 Z"/><path class="highlight-fill" d="M132 128 L212 128 L212 54 Z"/><path class="folded" d="M28 42 V128 H104 M132 128 H212 V54"/><text x="48" y="151">${leftBase}cm</text><text x="4" y="88">${leftHeight}cm</text><text x="158" y="151">${rightBase}cm</text><text x="214" y="90">□cm</text><text x="84" y="28">두 색칠한 부분의 넓이는 같습니다.</text></svg>`;
   const angularSolidEvidence = (kind, values) => `<span hidden data-angular-solid-kind="${kind}" data-values="${values.join(",")}"></span>`;
   const angularPrismSvg = ({ sides, side, height }) => {
