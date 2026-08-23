@@ -28,6 +28,20 @@ function boxesOverlap(a, b) {
   return smaller > 0 && (xOverlap * yOverlap) / smaller >= 0.55;
 }
 
+function pageKey(entry) {
+  return `${entry.sourceRef}:${entry.page}`;
+}
+
+function keyedPageRegistry(entries, label) {
+  const registry = new Map();
+  for (const entry of entries || []) {
+    const key = pageKey(entry);
+    if (registry.has(key)) fail(`Duplicate ${label} page: ${key}`);
+    registry.set(key, JSON.parse(JSON.stringify(entry)));
+  }
+  return registry;
+}
+
 function mergeIndex(base, layout) {
   const items = base.items.map(item => JSON.parse(JSON.stringify(item)));
   const bySourcePage = new Map();
@@ -39,18 +53,24 @@ function mergeIndex(base, layout) {
   }
 
   const newItems = [];
-  const unresolvedPages = [];
-  const excludedPageCandidates = [];
-  const layoutPages = [];
+  const unresolvedByPage = keyedPageRegistry(base.unresolvedPages, "unresolved");
+  const excludedByPage = keyedPageRegistry(base.excludedPageCandidates, "excluded");
+  const layoutByPage = keyedPageRegistry(base.layoutPages, "layout");
 
   for (const source of layout.sources || []) {
     const baseSource = (base.sources || []).find(entry => entry.sourceFingerprint === source.sourceFingerprint);
     if (!baseSource) fail(`Layout source not present in base index: ${source.sourceFingerprint}`);
     for (const page of source.pages || []) {
       const pageKey = `${baseSource.sourceRef}:${page.page}`;
+      if (!Number.isSafeInteger(page.page) || page.page < 1 || page.page > baseSource.pageCount) {
+        fail(`Layout page outside source: ${pageKey}`);
+      }
       const existing = bySourcePage.get(pageKey) || [];
+      unresolvedByPage.delete(pageKey);
+      excludedByPage.delete(pageKey);
+      layoutByPage.delete(pageKey);
       if (page.disposition === "excluded_candidate") {
-        excludedPageCandidates.push({
+        excludedByPage.set(pageKey, {
           sourceRef: baseSource.sourceRef,
           privateSourceMemoryId: source.sourceMemoryId,
           page: page.page,
@@ -60,7 +80,7 @@ function mergeIndex(base, layout) {
         continue;
       }
       if (page.disposition !== "layout_candidate" || !Array.isArray(page.anchors) || page.anchors.length === 0) {
-        unresolvedPages.push({
+        unresolvedByPage.set(pageKey, {
           sourceRef: baseSource.sourceRef,
           privateSourceMemoryId: source.sourceMemoryId,
           page: page.page,
@@ -101,7 +121,7 @@ function mergeIndex(base, layout) {
         newItems.push(privateItem);
         added += 1;
       }
-      layoutPages.push({
+      layoutByPage.set(pageKey, {
         sourceRef: baseSource.sourceRef,
         privateSourceMemoryId: source.sourceMemoryId,
         page: page.page,
@@ -112,14 +132,14 @@ function mergeIndex(base, layout) {
         reviewStatus: "pending"
       });
       if (page.coverageStatus === "partial") {
-        unresolvedPages.push({
+        unresolvedByPage.set(pageKey, {
           sourceRef: baseSource.sourceRef,
           privateSourceMemoryId: source.sourceMemoryId,
           page: page.page,
           reason: "partial-layout-coverage"
         });
       } else if (added === 0 && existing.length === 0) {
-        unresolvedPages.push({
+        unresolvedByPage.set(pageKey, {
           sourceRef: baseSource.sourceRef,
           privateSourceMemoryId: source.sourceMemoryId,
           page: page.page,
@@ -129,6 +149,11 @@ function mergeIndex(base, layout) {
       bySourcePage.set(pageKey, existing);
     }
   }
+
+  const byPageOrder = (a, b) => a.sourceRef.localeCompare(b.sourceRef) || a.page - b.page;
+  const unresolvedPages = Array.from(unresolvedByPage.values()).sort(byPageOrder);
+  const excludedPageCandidates = Array.from(excludedByPage.values()).sort(byPageOrder);
+  const layoutPages = Array.from(layoutByPage.values()).sort(byPageOrder);
 
   const seen = new Set();
   for (const item of items) {
@@ -157,9 +182,10 @@ function mergeIndex(base, layout) {
       layoutCandidatePages: layoutPages.length,
       excludedPageCandidates: excludedPageCandidates.length,
       unresolvedPages: unresolvedPages.length,
-      visuallyVerified: 0,
+      visuallyVerified: items.filter(item => item.discoveryStatus === "visual_verified").length,
       curriculumApproved: 0,
-      answerVerified: 0
+      answerVerified: 0,
+      verifiedExcludedPages: excludedPageCandidates.filter(page => page.reviewStatus === "visual_verified").length
     },
     items,
     layoutPages,
@@ -183,4 +209,4 @@ if (require.main === module) {
   process.stdout.write(`${JSON.stringify(result.counts)}\n`);
 }
 
-module.exports = Object.freeze({ boxesOverlap, mergeIndex });
+module.exports = Object.freeze({ boxesOverlap, keyedPageRegistry, mergeIndex });

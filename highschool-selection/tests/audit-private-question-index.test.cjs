@@ -20,8 +20,10 @@ function fixture() {
   });
   return {
     schemaVersion: index.INDEX_SCHEMA_VERSION,
+    status: "draft",
+    policy: { releaseLocked: true },
     counts: { questionCandidates: 1, unresolvedPages: 0, excludedPageCandidates: 0 },
-    sources: [{ sourceRef, sourceFingerprint: fingerprint, pageCount: 1 }],
+    sources: [{ sourceRef, sourceFingerprint: fingerprint, privateSourceMemoryId: "private-source", pageCount: 1 }],
     items: [{ ...item, privateRef: { sourceMemoryId: "private-source" } }],
     unresolvedPages: [],
     excludedPageCandidates: []
@@ -41,4 +43,25 @@ test("private index audit rejects leaked answers", () => {
   const result = auditor.audit(value, null);
   assert.equal(result.ok, false);
   assert.match(result.errors.join("\n"), /forbidden private index keys/);
+});
+
+test("private index audit rejects release-state changes and private locations", () => {
+  const value = fixture();
+  value.status = "released";
+  value.policy.releaseLocked = false;
+  value.items[0].privateRef.evidenceLocator = "G:\\private\\original.pdf";
+  const result = auditor.audit(value, null);
+  assert.equal(result.ok, false);
+  assert.match(result.errors.join("\n"), /status must remain draft/);
+  assert.match(result.errors.join("\n"), /policy\.releaseLocked/);
+  assert.match(result.errors.join("\n"), /private path or URL strings/);
+});
+
+test("private index audit binds source refs and private source ids", () => {
+  const value = fixture();
+  value.sources[0].sourceRef = core.createSharedBankId("source", `sha256:${"a".repeat(64)}`);
+  const result = auditor.audit(value, null);
+  assert.equal(result.ok, false);
+  assert.match(result.errors.join("\n"), /sourceRef fingerprint mismatch/);
+  assert.match(result.errors.join("\n"), /missing source/);
 });

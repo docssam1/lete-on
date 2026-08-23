@@ -74,3 +74,25 @@ test("exclusion candidates never become question items automatically", () => {
   assert.equal(result.excludedPageCandidates.length, 1);
   assert.equal(result.excludedPageCandidates[0].reviewStatus, "pending");
 });
+
+test("partial layout runs preserve unresolved pages that were not processed", () => {
+  const base = baseFixture();
+  base.sources[0].pageCount = 4;
+  base.unresolvedPages = [
+    { sourceRef: base.sources[0].sourceRef, privateSourceMemoryId: "src-private", page: 2, reason: "pending" },
+    { sourceRef: base.sources[0].sourceRef, privateSourceMemoryId: "src-private", page: 3, reason: "pending" }
+  ];
+  const result = merger.mergeIndex(base, {
+    sources: [{
+      sourceMemoryId: "src-private",
+      sourceFingerprint: base.sources[0].sourceFingerprint,
+      pages: [{ page: 2, disposition: "unresolved", reason: "layout-anchor-not-found" }]
+    }]
+  });
+
+  assert.deepEqual(
+    result.unresolvedPages.map(entry => [entry.page, entry.reason]),
+    [[2, "layout-anchor-not-found"], [3, "pending"]]
+  );
+  assert.equal(result.counts.unresolvedPages, 2);
+});

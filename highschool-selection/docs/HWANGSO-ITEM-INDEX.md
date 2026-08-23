@@ -29,6 +29,8 @@
 
 `layout_candidate`가 추가된 문항 색인 계약은 `schemaVersion: 2`이며, v1을 병합한 산출물에는 `predecessorSchemaVersion: 1`을 함께 기록한다.
 
-자동 제외 후보를 원본 렌더에서 직접 확인한 뒤에는 `apply-private-layout-review.cjs`로만 판정을 반영한다. 실제 Mission 페이지였으면 주문항 1~6의 잠금 문항을 만들고 `visual_verified`로 기록하며, 실제 채점표·기록표였으면 문항을 만들지 않고 페이지 제외 검수 상태만 `visual_verified`로 올린다. 어느 경우에도 교육과정이나 답안 상태는 변경하지 않는다.
+자동 제외 후보나 완전 미해결 페이지를 원본 렌더에서 직접 확인한 뒤에는 `apply-private-layout-review.cjs`로만 판정을 반영한다. `--record-decisions`로 비공개 결정 매니페스트를 만들거나, 재실행할 때 `--decision-file`로 불러온다. 매니페스트는 source-memory ID와 SHA-256을 함께 기록해 현재 원본과 묶는다. 정확히 6칸인 Mission 페이지였으면 주문항 1~6의 잠금 문항을 만들고 `visual_verified`로 기록하며, 실제 채점표·기록표였으면 문항을 만들지 않고 페이지 제외 검수 상태만 `visual_verified`로 올린다. 3·4·5칸 또는 혼합 레이아웃은 이 자동 적용 대상이 아니다. 어느 경우에도 교육과정이나 답안 상태는 변경하지 않는다.
+
+미해결 페이지 검수는 `render-private-layout-review.py --queue unresolved`로 별도 큐를 만든다. `--reason layout-anchor-not-found` 또는 `--reason partial-layout-coverage`, `--source-id`, `--offset`, `--limit`으로 범위를 제한한다. 미해결 큐는 `--limit`을 생략해도 최대 40쪽만 렌더하며, 현재 색인된 문항 상자를 원본 위에 표시한다. 생성된 접촉시트와 `review-manifest.json`은 비공개 검수 산출물이므로 `tmp/` 등 Git 비추적 위치에만 둔다.
 
 OCR 결과는 발견 보조 자료일 뿐 정답·유형·문항 경계의 최종 근거로 사용하지 않는다. 모든 신규 문항은 `releaseStatus: locked`로 시작하고 사용자 회차 검수 전에는 공개 시험에 배정하지 않는다.

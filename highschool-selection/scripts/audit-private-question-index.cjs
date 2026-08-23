@@ -3,26 +3,57 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const core = require("../data/question-bank-core.js");
 const indexSchema = require("../data/question-item-index.js");
 
 const FORBIDDEN_KEYS = new Set([
-  "prompt", "answer", "solution", "explanation", "ocrText", "sourceText",
-  "path", "localPath", "downloadPath", "downloadUrl", "fileName"
+  "prompt", "answer", "solution", "explanation", "ocrtext", "sourcetext",
+  "path", "localpath", "downloadpath", "downloadurl", "filename", "filepath",
+  "drivepath", "privatelocation", "url", "uri", "root", "directory", "dirname",
+  "content", "rawtext", "fulltext", "excerpt", "pageimage", "base64", "blob", "binary"
 ]);
+const PRIVATE_LOCATION_PATTERN = /(?:\b[a-z]:[\\/]|\\\\|file:\/\/|https?:\/\/|\/(?:Users|home|mnt)\/)/i;
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, ""));
 }
 
-function scanForbidden(value, trail, findings) {
+function scanForbidden(value, trail, findings, privateLocations) {
   if (Array.isArray(value)) {
-    value.forEach((entry, index) => scanForbidden(entry, `${trail}[${index}]`, findings));
+    value.forEach((entry, index) => scanForbidden(entry, `${trail}[${index}]`, findings, privateLocations));
+    return;
+  }
+  if (typeof value === "string") {
+    if (PRIVATE_LOCATION_PATTERN.test(value)) privateLocations.push(trail);
     return;
   }
   if (!value || typeof value !== "object") return;
   for (const [key, entry] of Object.entries(value)) {
-    if (FORBIDDEN_KEYS.has(key)) findings.push(`${trail}.${key}`);
-    scanForbidden(entry, `${trail}.${key}`, findings);
+    const normalizedKey = key.replace(/[-_]/g, "").toLowerCase();
+    if (FORBIDDEN_KEYS.has(normalizedKey)) {
+      findings.push(`${trail}.${key}`);
+    }
+    scanForbidden(entry, `${trail}.${key}`, findings, privateLocations);
+  }
+}
+
+function validatePageQueue(entries, label, sourceByRef, errors) {
+  const seen = new Set();
+  for (const entry of entries || []) {
+    const key = `${entry.sourceRef}:${entry.page}`;
+    if (seen.has(key)) errors.push(`duplicate ${label} page: ${key}`);
+    seen.add(key);
+    const source = sourceByRef.get(entry.sourceRef);
+    if (!source) {
+      errors.push(`${label} page missing source: ${key}`);
+      continue;
+    }
+    if (entry.privateSourceMemoryId !== source.privateSourceMemoryId) {
+      errors.push(`${label} private source mismatch: ${key}`);
+    }
+    if (!Number.isSafeInteger(entry.page) || entry.page < 1 || entry.page > source.pageCount) {
+      errors.push(`${label} page outside source: ${key}`);
+    }
   }
 }
 
@@ -30,9 +61,32 @@ function audit(candidate, predecessor) {
   const errors = [];
   const ids = new Set();
   const slots = new Set();
-  const sourceByRef = new Map((candidate.sources || []).map(source => [source.sourceRef, source]));
+  const sourceByRef = new Map();
   if (candidate.schemaVersion !== indexSchema.INDEX_SCHEMA_VERSION) {
     errors.push(`schemaVersion must be ${indexSchema.INDEX_SCHEMA_VERSION}`);
+  }
+  if (candidate.status !== "draft") errors.push("status must remain draft");
+  if (!candidate.policy || candidate.policy.releaseLocked !== true) {
+    errors.push("policy.releaseLocked must remain true");
+  }
+
+  const privateSourceIds = new Set();
+  for (const source of candidate.sources || []) {
+    if (sourceByRef.has(source.sourceRef)) errors.push(`duplicate sourceRef: ${source.sourceRef}`);
+    sourceByRef.set(source.sourceRef, source);
+    if (!/^[0-9a-f]{64}$/.test(String(source.sourceFingerprint || ""))) {
+      errors.push(`invalid source fingerprint: ${source.sourceRef}`);
+    } else {
+      const expectedRef = core.createSharedBankId("source", `sha256:${source.sourceFingerprint}`);
+      if (source.sourceRef !== expectedRef) errors.push(`sourceRef fingerprint mismatch: ${source.sourceRef}`);
+    }
+    if (!source.privateSourceMemoryId || privateSourceIds.has(source.privateSourceMemoryId)) {
+      errors.push(`duplicate or missing private source id: ${source.sourceRef}`);
+    }
+    privateSourceIds.add(source.privateSourceMemoryId);
+    if (!Number.isSafeInteger(source.pageCount) || source.pageCount < 1) {
+      errors.push(`invalid source pageCount: ${source.sourceRef}`);
+    }
   }
 
   for (const item of candidate.items || []) {
@@ -43,6 +97,9 @@ function audit(candidate, predecessor) {
     slots.add(slotKey);
     const source = sourceByRef.get(item.sourceRef);
     if (!source) errors.push(`missing source: ${item.id}`);
+    if (source && (!item.privateRef || item.privateRef.sourceMemoryId !== source.privateSourceMemoryId)) {
+      errors.push(`private source mismatch: ${item.id}`);
+    }
     if (source && (!Number.isSafeInteger(item.locator.page) || item.locator.page < 1 || item.locator.page > source.pageCount)) {
       errors.push(`page outside source: ${item.id}`);
     }
@@ -63,9 +120,15 @@ function audit(candidate, predecessor) {
     }
   }
 
+  validatePageQueue(candidate.unresolvedPages, "unresolved", sourceByRef, errors);
+  validatePageQueue(candidate.excludedPageCandidates, "excluded", sourceByRef, errors);
+  validatePageQueue(candidate.layoutPages, "layout", sourceByRef, errors);
+
   const forbidden = [];
-  scanForbidden(candidate, "$", forbidden);
+  const privateLocations = [];
+  scanForbidden(candidate, "$", forbidden, privateLocations);
   if (forbidden.length) errors.push(`forbidden private index keys: ${forbidden.join(", ")}`);
+  if (privateLocations.length) errors.push(`private path or URL strings: ${privateLocations.join(", ")}`);
   if (candidate.counts && candidate.counts.questionCandidates !== (candidate.items || []).length) {
     errors.push("questionCandidates count mismatch");
   }
@@ -78,6 +141,20 @@ function audit(candidate, predecessor) {
 
   let preservedPredecessorItems = 0;
   if (predecessor) {
+    const predecessorSources = new Map((predecessor.sources || []).map(source => [source.sourceRef, source]));
+    for (const [sourceRef, oldSource] of predecessorSources) {
+      const currentSource = sourceByRef.get(sourceRef);
+      if (!currentSource) errors.push(`predecessor source missing: ${sourceRef}`);
+      else if (JSON.stringify(currentSource) !== JSON.stringify(oldSource)) {
+        errors.push(`predecessor source changed: ${sourceRef}`);
+      }
+    }
+    for (const [key, value] of Object.entries(predecessor.policy || {})) {
+      if (!candidate.policy || candidate.policy[key] !== value) errors.push(`predecessor policy changed: ${key}`);
+    }
+    if (predecessor.curriculumVersion != null && candidate.curriculumVersion !== predecessor.curriculumVersion) {
+      errors.push("predecessor curriculumVersion changed");
+    }
     const candidateById = new Map((candidate.items || []).map(item => [item.id, item]));
     for (const oldItem of predecessor.items || []) {
       const current = candidateById.get(oldItem.id);
@@ -124,4 +201,4 @@ if (require.main === module) {
   if (!result.ok) process.exit(1);
 }
 
-module.exports = Object.freeze({ audit });
+module.exports = Object.freeze({ audit, scanForbidden, validatePageQueue });
