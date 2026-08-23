@@ -65,3 +65,30 @@ test("private index audit binds source refs and private source ids", () => {
   assert.match(result.errors.join("\n"), /sourceRef fingerprint mismatch/);
   assert.match(result.errors.join("\n"), /missing source/);
 });
+
+test("private index audit validates rejected candidate quarantine", () => {
+  const value = fixture();
+  value.rejectedCandidates = [{
+    id: value.items[0].id,
+    sourceRef: value.items[0].sourceRef,
+    privateSourceMemoryId: "private-source",
+    page: 1,
+    reason: "visual-rejected-layout-anchor",
+    reviewStatus: "visual_verified"
+  }];
+  value.counts.rejectedCandidates = 1;
+  value.counts.activeQuestionCandidates = 0;
+  value.visualReviewPages = [{
+    privateSourceMemoryId: "private-source",
+    page: 1,
+    resolution: "verified_mission_six_cell_replacing_candidates",
+    rejectedCandidateIds: [value.items[0].id]
+  }];
+  const accepted = auditor.audit(value, null);
+  assert.equal(accepted.ok, true);
+
+  value.rejectedCandidates[0].page = 2;
+  const rejected = auditor.audit(value, null);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /locator mismatch/);
+});

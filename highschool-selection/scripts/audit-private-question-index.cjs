@@ -132,6 +132,46 @@ function audit(candidate, predecessor) {
   if (candidate.counts && candidate.counts.questionCandidates !== (candidate.items || []).length) {
     errors.push("questionCandidates count mismatch");
   }
+  const rejectedIds = new Set();
+  const itemById = new Map((candidate.items || []).map(item => [item.id, item]));
+  for (const entry of candidate.rejectedCandidates || []) {
+    if (rejectedIds.has(entry.id)) errors.push(`duplicate rejected candidate: ${entry.id}`);
+    rejectedIds.add(entry.id);
+    const item = itemById.get(entry.id);
+    if (!item) {
+      errors.push(`rejected candidate item missing: ${entry.id}`);
+      continue;
+    }
+    if (entry.sourceRef !== item.sourceRef || entry.page !== item.locator.page) {
+      errors.push(`rejected candidate locator mismatch: ${entry.id}`);
+    }
+    const source = sourceByRef.get(item.sourceRef);
+    if (!source || entry.privateSourceMemoryId !== source.privateSourceMemoryId) {
+      errors.push(`rejected candidate source mismatch: ${entry.id}`);
+    }
+    if (entry.reason !== "visual-rejected-layout-anchor" || entry.reviewStatus !== "visual_verified") {
+      errors.push(`rejected candidate lacks visual decision: ${entry.id}`);
+    }
+    if (item.discoveryStatus !== "layout_candidate" || item.releaseStatus !== "locked" ||
+        item.classificationStatus !== "pending" || item.answerStatus !== "missing") {
+      errors.push(`rejected candidate state changed: ${entry.id}`);
+    }
+    const review = (candidate.visualReviewPages || []).find(page =>
+      page.privateSourceMemoryId === entry.privateSourceMemoryId && page.page === entry.page &&
+      page.resolution === "verified_mission_six_cell_replacing_candidates"
+    );
+    if (!review || !Array.isArray(review.rejectedCandidateIds) || !review.rejectedCandidateIds.includes(entry.id)) {
+      errors.push(`rejected candidate visual decision missing: ${entry.id}`);
+    }
+  }
+  const hasRejectedRegistry = Array.isArray(candidate.rejectedCandidates);
+  if (hasRejectedRegistry && candidate.counts && candidate.counts.rejectedCandidates !== rejectedIds.size) {
+    errors.push("rejectedCandidates count mismatch");
+  }
+  if (hasRejectedRegistry && candidate.counts &&
+      candidate.counts.activeQuestionCandidates !== (candidate.items || []).length - rejectedIds.size) {
+    errors.push("activeQuestionCandidates count mismatch");
+  }
   if (candidate.counts && candidate.counts.unresolvedPages !== (candidate.unresolvedPages || []).length) {
     errors.push("unresolvedPages count mismatch");
   }
@@ -179,7 +219,9 @@ function audit(candidate, predecessor) {
       uniqueLocatorSlots: slots.size,
       preservedPredecessorItems,
       unresolvedPages: (candidate.unresolvedPages || []).length,
-      excludedPageCandidates: (candidate.excludedPageCandidates || []).length
+      excludedPageCandidates: (candidate.excludedPageCandidates || []).length,
+      rejectedCandidates: rejectedIds.size,
+      activeQuestionCandidates: (candidate.items || []).length - rejectedIds.size
     },
     errors
   };

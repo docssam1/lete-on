@@ -41,7 +41,7 @@ function missionAnchors() {
 }
 
 function parseDecision(value) {
-  const match = /^([a-z0-9-]+):(\d+):(exclude|mission|mission6)$/.exec(String(value || ""));
+  const match = /^([a-z0-9-]+):(\d+):(exclude|mission|mission6|mission6_replace_candidates)$/.exec(String(value || ""));
   if (!match) fail(`Invalid decision: ${value}`);
   return {
     sourceMemoryId: match[1],
@@ -58,7 +58,7 @@ function normalizeDecisionRecord(value) {
   if (!/^[a-z0-9-]+$/.test(sourceMemoryId) || !Number.isSafeInteger(page) || page < 1) {
     fail(`Invalid decision record: ${JSON.stringify(value)}`);
   }
-  if (!new Set(["exclude", "mission6"]).has(resolution)) {
+  if (!new Set(["exclude", "mission6", "mission6_replace_candidates"]).has(resolution)) {
     fail(`Invalid decision resolution: ${resolution}`);
   }
   return { sourceMemoryId, page, resolution };
@@ -132,6 +132,11 @@ function validateReviewInput(result) {
       seen.add(key);
     }
   }
+  const rejectedIds = new Set();
+  for (const entry of result.rejectedCandidates || []) {
+    if (rejectedIds.has(entry.id)) fail(`Duplicate rejected candidate: ${entry.id}`);
+    rejectedIds.add(entry.id);
+  }
 }
 
 function queueLocation(result, sourceMemoryId, page) {
@@ -153,6 +158,7 @@ function applyReviews(base, decisions) {
   const result = JSON.parse(JSON.stringify(base));
   validateReviewInput(result);
   const reviewPages = Array.isArray(result.visualReviewPages) ? result.visualReviewPages : [];
+  const rejectedCandidates = Array.isArray(result.rejectedCandidates) ? result.rejectedCandidates : [];
   const decisionKeys = new Set();
 
   for (const decision of decisions) {
@@ -191,11 +197,35 @@ function applyReviews(base, decisions) {
       continue;
     }
 
-    if (resolution !== "mission6") fail(`Unsupported visual resolution: ${decision.resolution}`);
+    if (!new Set(["mission6", "mission6_replace_candidates"]).has(resolution)) {
+      fail(`Unsupported visual resolution: ${decision.resolution}`);
+    }
     location.queue.splice(location.index, 1);
     const pageItems = result.items.filter(item => item.sourceRef === source.sourceRef && item.locator.page === decision.page);
-    if (pageItems.length > 0) fail(`Mission6 review requires an empty page index: ${decisionKey}`);
-    let nextSlot = 1;
+    if (resolution === "mission6" && pageItems.length > 0) {
+      fail(`Mission6 review requires an empty page index: ${decisionKey}`);
+    }
+    if (resolution === "mission6_replace_candidates") {
+      if (pageItems.length === 0) fail(`Mission6 replacement requires existing candidates: ${decisionKey}`);
+      if (pageItems.some(item =>
+        item.discoveryStatus !== "layout_candidate" || item.releaseStatus !== "locked" ||
+        item.classificationStatus !== "pending" || item.answerStatus !== "missing"
+      )) fail(`Mission6 replacement found a non-candidate item: ${decisionKey}`);
+      for (const item of pageItems) {
+        if (rejectedCandidates.some(entry => entry.id === item.id)) {
+          fail(`Candidate already rejected: ${item.id}`);
+        }
+        rejectedCandidates.push({
+          id: item.id,
+          sourceRef: item.sourceRef,
+          privateSourceMemoryId: decision.sourceMemoryId,
+          page: decision.page,
+          reason: "visual-rejected-layout-anchor",
+          reviewStatus: "visual_verified"
+        });
+      }
+    }
+    let nextSlot = pageItems.reduce((max, item) => Math.max(max, item.locator.slot), 0) + 1;
     for (const anchor of missionAnchors()) {
       const slot = nextSlot++;
       const locatorKey = itemIndex.createLocatorKey(source.sourceFingerprint, decision.page, slot);
@@ -226,7 +256,10 @@ function applyReviews(base, decisions) {
       privateSourceMemoryId: decision.sourceMemoryId,
       sourceRef: source.sourceRef,
       page: decision.page,
-      resolution: "verified_mission_six_cell",
+      resolution: resolution === "mission6"
+        ? "verified_mission_six_cell"
+        : "verified_mission_six_cell_replacing_candidates",
+      rejectedCandidateIds: resolution === "mission6_replace_candidates" ? pageItems.map(item => item.id) : [],
       evidenceLocator: `PDF p.${decision.page}, Mission 1-6`
     });
   }
@@ -243,11 +276,14 @@ function applyReviews(base, decisions) {
   result.generatedAt = new Date().toISOString();
   result.status = "draft";
   result.visualReviewPages = reviewPages;
+  result.rejectedCandidates = rejectedCandidates.sort((a, b) => a.id.localeCompare(b.id));
   result.excludedPageCandidates.sort((a, b) => a.sourceRef.localeCompare(b.sourceRef) || a.page - b.page);
   result.unresolvedPages.sort((a, b) => a.sourceRef.localeCompare(b.sourceRef) || a.page - b.page);
   result.counts = {
     ...result.counts,
     questionCandidates: result.items.length,
+    activeQuestionCandidates: result.items.length - result.rejectedCandidates.length,
+    rejectedCandidates: result.rejectedCandidates.length,
     excludedPageCandidates: result.excludedPageCandidates.length,
     unresolvedPages: result.unresolvedPages.length,
     visuallyVerified: result.items.filter(item => item.discoveryStatus === "visual_verified").length,
@@ -268,7 +304,7 @@ if (require.main === module) {
       if (args[index] === "--decision" && args[index + 1]) decisions.push(parseDecision(args[index + 1]));
     }
     if (!basePath || !outputPath || (!decisionFile && decisions.length === 0)) {
-      fail("Usage: node apply-private-layout-review.cjs --base <index.json> --output <reviewed.json> [--decision-file <private-review.json>] [--decision <source:page:exclude|mission6> ...]");
+      fail("Usage: node apply-private-layout-review.cjs --base <index.json> --output <reviewed.json> [--decision-file <private-review.json>] [--decision <source:page:exclude|mission6|mission6_replace_candidates> ...]");
     }
     const base = readJson(path.resolve(basePath));
     if (decisionFile) decisions.push(...decisionsFromManifest(readJson(path.resolve(decisionFile)), base));

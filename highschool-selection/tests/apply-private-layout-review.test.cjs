@@ -129,3 +129,41 @@ test("recorded decision manifests contain only bound source metadata and decisio
   ]);
   assert.equal(JSON.stringify(manifest).includes("prompt"), false);
 });
+
+test("Mission replacement preserves spurious IDs as rejected and appends six new slots", () => {
+  const value = fixture();
+  const source = value.sources[0];
+  const old = index.createItemIndexEntry({
+    id: core.createSharedBankId("question", index.createLocatorKey(source.sourceFingerprint, 4, 1)),
+    sourceRef: source.sourceRef,
+    locator: { page: 4, slot: 1, kind: "exercise", box: { x: 0.1, y: 0.1, width: 0.2, height: 0.2 } },
+    discoveryStatus: "layout_candidate",
+    curriculum: null,
+    classificationStatus: "pending",
+    answerStatus: "missing",
+    reuse: core.PROGRAM_MODES,
+    releaseStatus: "locked"
+  });
+  value.items.push({ ...old, privateRef: { sourceMemoryId: "source-one", printedLabelHint: "9" } });
+  value.counts.questionCandidates = 1;
+  value.unresolvedPages.push({
+    sourceRef: source.sourceRef,
+    privateSourceMemoryId: "source-one",
+    page: 4,
+    reason: "partial-layout-coverage"
+  });
+  const result = review.applyReviews(value, [{
+    sourceMemoryId: "source-one",
+    page: 4,
+    resolution: "mission6_replace_candidates"
+  }]);
+
+  assert.equal(result.items[0].id, old.id);
+  assert.equal(result.rejectedCandidates[0].id, old.id);
+  assert.equal(result.items.length, 7);
+  assert.deepEqual(result.items.slice(1).map(item => item.locator.slot), [2, 3, 4, 5, 6, 7]);
+  assert.equal(result.counts.questionCandidates, 7);
+  assert.equal(result.counts.rejectedCandidates, 1);
+  assert.equal(result.counts.activeQuestionCandidates, 6);
+  assert.equal(result.unresolvedPages.length, 0);
+});
