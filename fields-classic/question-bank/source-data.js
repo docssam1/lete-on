@@ -117,7 +117,7 @@ export const TYPES = [
   type("balance-scale", "logic", "무게 비교", "양팔저울의 균형 관계", { generator: "sourceBalanceRelations", sourceMatched: true }),
   type("balance-scale-three-objects", "logic", "무게 비교", "세 물건 양팔저울 관계", { generator: "balanceScaleThreeObjects", sourceMatched: true }),
   type("balance-scale-circle-target", "logic", "무게 비교", "세 저울의 관계로 필요한 원 개수 구하기", { generator: "balanceScaleCircleTarget", sourceMatched: true }),
-  type("balance-scale-star-target", "logic", "무게 비교", "두 저울의 관계로 필요한 별 개수 구하기", { generator: "balanceScaleStarTarget", sourceMatched: true }),
+  type("balance-scale-star-target", "logic", "무게 비교", "기호 양팔저울 관계", { generator: "balanceScaleStarTarget", sourceMatched: true }),
   type("balance-scale-four-objects", "logic", "무게 비교", "네 물건을 잇는 세 양팔저울", { generator: "balanceScaleFourObjects", sourceMatched: true }),
   type("symbol-relation", "number", "복면산과 식", "여러 기호의 관계로 값 구하기", { generator: "symbolRelationThreeToFour", sourceMatched: true }),
   type("symbol-relation-2to3", "number", "복면산과 식", "별 두 개와 원 세 개의 관계식", { generator: "symbolRelationTwoToThree", sourceMatched: true }),
@@ -259,6 +259,7 @@ export const TYPES = [
   type("diagnostic-dialogue-condition-number", "number", "조건에 맞는 수", "대화 속 여러 조건으로 수 구하기", { status: "classified" }),
   type("diagnostic-number-relation", "number", "수 사이의 약속", "여러 수의 관계로 빈칸 구하기", { status: "classified" }),
   type("diagnostic-two-digit-cryptarithm", "number", "복면산과 식", "두 자리 수 덧셈 복면산", { status: "classified" }),
+  type("diagnostic-animal-balance-order", "logic", "양팔저울", "동물 양팔저울로 무게 순서 정하기", { generator: "diagnosticAnimalBalanceOrder", sourceMatched: true, textbookSource: "필즈 대비 선발 진단 모의고사 8번" }),
 
   // 더클래식 1과정 1권: 단원 안에서도 실제 문항의 풀이 구조가 바뀌는 곳마다
   // 별도 유형으로 나눈다. 페이지는 판본마다 달라질 수 있어 문제 번호만 런타임에 쓴다.
@@ -811,7 +812,7 @@ export const DIAGNOSTIC_EXAM_TYPES = [
       question(5, "total-difference", "더 많이 가진 수와 전체 수로 두 수 구하기"),
       question(6, "order-position", "줄 세우기에서 등수 정하기"),
       question(7, "set-union-count", "집합과 포함 관계"),
-      question(8, "balance-order-chain", "양팔저울로 무게 순서 정하기"),
+      question(8, "diagnostic-animal-balance-order", "동물 양팔저울로 무게 순서 정하기"),
       question(9, "diagnostic-number-relation", "수의 관계 조건으로 빈칸 구하기"),
       question(10, "shape-sum-table", "같은 두 도형의 수가 있는 표"),
       question(11, "paired-sequences", "두 수열의 규칙"),

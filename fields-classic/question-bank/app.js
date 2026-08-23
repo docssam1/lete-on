@@ -1,5 +1,5 @@
-import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260822m";
-import { GENERATORS } from "./generators.js?v=20260822k";
+import { AGE_STAGES, DOMAINS, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js?v=20260823a";
+import { GENERATORS } from "./generators.js?v=20260823a";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260822e";
 import { book03Markup } from "./book03-renderers.js?v=20260822e";
@@ -15,7 +15,6 @@ const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
 const domainIndex = Object.fromEntries(DOMAINS.map((domain, index) => [domain.id, index]));
-const stageIds = new Set([...AGE_STAGES.map((item) => item.id), "ours", "diagnostic", "practice", "final"]);
 const EXAM_SOURCES = [...DIAGNOSTIC_EXAM_TYPES, ...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES];
 const OUR_MOCK_EXAM_GROUPS = [
   { label: "진단 모의고사", exams: DIAGNOSTIC_EXAM_TYPES },
@@ -23,10 +22,24 @@ const OUR_MOCK_EXAM_GROUPS = [
   { label: "파이널 모의고사", exams: FINAL_EXAM_TYPES }
 ];
 const OUR_MOCK_EXAMS = OUR_MOCK_EXAM_GROUPS.flatMap((group) => group.exams);
+const MOCK_EXAM_NAV = [
+  { id: "diagnostic", label: "진단 모의고사", exams: DIAGNOSTIC_EXAM_TYPES },
+  ...PRACTICE_EXAM_TYPES.map((exam) => ({ id: `exam:${exam.id}`, label: exam.label.replace("실전 모의고사 ", "실전 "), exams: [exam] })),
+  ...FINAL_EXAM_TYPES.map((exam) => ({ id: `exam:${exam.id}`, label: exam.label.replace("파이널 모의고사 ", "파이널 "), exams: [exam] }))
+];
+const stageIds = new Set([...AGE_STAGES.map((item) => item.id), ...MOCK_EXAM_NAV.map((item) => item.id)]);
+
+function requestedStage() {
+  const requested = params.get("age");
+  if (requested === "ours" || requested === "diagnostic") return "diagnostic";
+  if (requested === "practice") return `exam:${PRACTICE_EXAM_TYPES[0]?.id}`;
+  if (requested === "final") return `exam:${FINAL_EXAM_TYPES[0]?.id}`;
+  return stageIds.has(requested) ? requested : "diagnostic";
+}
 
 const state = {
   mode: "exam",
-  stage: stageIds.has(params.get("age")) ? params.get("age") : "ours",
+  stage: requestedStage(),
   selected: { exam: new Set(), curriculum: new Set(), type: new Set() },
   count: 20,
   difficulty: "actual",
@@ -226,8 +239,8 @@ function setMode(mode) {
 }
 
 function renderStageButtons() {
-  const stages = [{ id: "ours", label: "우리 모의고사" }, ...AGE_STAGES];
-  $("examAgeButtons").innerHTML = stages.map((item) => `<button type="button" class="${item.id === state.stage ? "active" : ""}" data-stage="${item.id}">${item.label}</button>`).join("");
+  const button = (item) => `<button type="button" class="${item.id === state.stage ? "active" : ""}" data-stage="${item.id}">${item.label}</button>`;
+  $("examAgeButtons").innerHTML = `${MOCK_EXAM_NAV.map(button).join("")}<span class="stage-separator">원본 선발시험</span>${AGE_STAGES.map(button).join("")}`;
   $("examAgeButtons").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
     state.stage = button.dataset.stage;
     renderStageButtons();
@@ -236,10 +249,8 @@ function renderStageButtons() {
 }
 
 function visibleExams() {
-  if (state.stage === "ours") return OUR_MOCK_EXAMS;
-  if (state.stage === "diagnostic") return DIAGNOSTIC_EXAM_TYPES;
-  if (state.stage === "practice") return PRACTICE_EXAM_TYPES;
-  if (state.stage === "final") return FINAL_EXAM_TYPES;
+  const mockStage = MOCK_EXAM_NAV.find((item) => item.id === state.stage);
+  if (mockStage) return mockStage.exams;
   return EXAMS.filter((exam) => exam.stage === state.stage);
 }
 
@@ -250,11 +261,14 @@ function examKey(examId, number) {
 function renderExamList() {
   const exams = visibleExams();
   const stage = AGE_STAGES.find((item) => item.id === state.stage);
-  $("examStageTitle").textContent = stage?.label || (state.stage === "ours" ? "우리 모의고사" : state.stage === "diagnostic" ? "진단 모의고사" : state.stage === "final" ? "파이널 모의고사" : "실전 모의고사");
+  const mockStage = MOCK_EXAM_NAV.find((item) => item.id === state.stage);
+  $("examStageTitle").textContent = stage?.label || mockStage?.label || "시험지 선택";
   $("examStageMeta").textContent = `${exams.length}개 시험지 · 원본 문항 번호 기준`;
-  $("examNotice").textContent = state.stage === "ours"
-    ? "진단·실전·파이널 모의고사를 먼저 고릅니다. 문항을 고르면 그 구조를 유지한 유사문제를 만들 수 있습니다."
-    : "원본 선발시험의 문항 번호를 고른 뒤 유사문제를 만듭니다. 원본 시험 진단은 정답 대조가 끝난 시험지부터 별도로 제공합니다.";
+  $("examNotice").textContent = state.stage === "diagnostic"
+    ? "필즈 대비 선발 진단 모의고사의 문항을 고릅니다. 문항 구조를 유지한 유사문제를 만들 수 있습니다."
+    : mockStage
+      ? `${mockStage.label}의 문항을 고릅니다. 실제 출제 구조를 기준으로 유사문제를 만듭니다.`
+      : "원본 선발시험의 문항 번호를 고른 뒤 유사문제를 만듭니다. 원본 시험 진단은 정답 대조가 끝난 시험지부터 별도로 제공합니다.";
   const examMarkup = (exam) => {
     const rows = exam.questions.map((sourceQuestion) => {
       const item = typeById(sourceQuestion.typeId);
@@ -275,13 +289,11 @@ function renderExamList() {
     // 링크만 걸어 두면 빈 뷰어로 들어가게 된다.
     // 파일명에 붙은 괄호 안 시행일(230206 등)은 화면에 내보내지 않는다. 파일을 찾는 데만 쓰는 값이다.
     const fileName = String(exam.file || "").replace(/\((\d{6}|\d{8})\)/g, "");
-    const diagnosisLink = exam.verified && exam.sourcePageCount ? `<a class="source-view-link" href="./original-diagnosis.html?exam=${exam.id}&student=${encodeURIComponent(student)}">O/X 진단</a>` : "";
+    const diagnosisLink = exam.verified && exam.sourcePageCount ? `<a class="source-view-link" href="./original-diagnosis.html?exam=${exam.id}&student=${encodeURIComponent(student)}">빠른 채점·진단</a>` : "";
     const diagnosisStatus = diagnosisLink || `<span class="exam-source-status">유형 대조 중</span>`;
     return `<details class="tree-group" open><summary><strong>${exam.label}</strong><span>${exam.questions.length}문항</span></summary><div class="exam-source"><span>${fileName}</span>${diagnosisStatus}</div>${rows}</details>`;
   };
-  const groups = state.stage === "ours"
-    ? OUR_MOCK_EXAM_GROUPS
-    : [{ label: "", exams }];
+  const groups = [{ label: "", exams }];
   $("examTypeList").innerHTML = groups.map((group) => {
     if (!group.exams.length) return "";
     const heading = group.label ? `<div class="exam-collection-title"><strong>${group.label}</strong><span>${group.exams.length}개 시험지</span></div>` : "";
@@ -1280,13 +1292,20 @@ function balanceScaleCircleTargetMarkup(visual) {
 }
 
 function balanceScaleStarTargetMarkup(visual) {
-  const symbols = { circle: "○", star: "☆", diamond: "◇" };
+  const symbols = { circle: "○", square: "□", star: "☆", triangle: "△" };
   const pieces = (kind, count) => Array.from({ length: count }, () => `<i class="weight-piece ${kind}" aria-label="${symbols[kind]}">${symbols[kind]}</i>`).join("");
   const scale = (left, right, label) => `<div class="balance-example three-object-scale"><div class="balance-pan">${left}</div><b>=</b><div class="balance-pan">${right}</div><small>${label}</small></div>`;
-  const first = scale(`${pieces("star", visual.starLeft)}${pieces("circle", 1)}`, pieces("diamond", visual.diamondRight), "[그림 1]");
-  const second = scale(`${pieces("circle", visual.circleLeft)}${pieces("diamond", 1)}`, pieces("star", visual.starRight), "[그림 2]");
-  const third = scale(`${pieces("circle", visual.targetCircleCount)}${pieces("diamond", visual.targetDiamonds)}`, "<strong>☆ (　)개</strong>", "[그림 3]");
-  return `<div class="three-object-balances">${first}${second}${third}${visual.hint ? `<p class="balance-hint">${visual.hint}</p>` : ""}</div>`;
+  if (visual.mode === "direct") {
+    const first = scale(pieces("circle", visual.circleCount), pieces("square", visual.squareCount), "[그림 1]");
+    return `<div class="three-object-balances balance-learning-step is-direct">${first}<strong class="balance-target">○ 1개 = □ (　)개</strong></div>`;
+  }
+  if (visual.mode === "cancel") {
+    const first = scale(`${pieces("circle", visual.circleCount)}${pieces("triangle", visual.triangleCount)}`, `${pieces("square", visual.squareCount)}${pieces("triangle", visual.triangleCount)}`, "[그림 1]");
+    return `<div class="three-object-balances balance-learning-step is-cancel">${first}<p class="balance-hint">양쪽에 똑같이 있는 △를 함께 지워 보세요.</p><strong class="balance-target">○ 1개 = □ (　)개</strong></div>`;
+  }
+  const first = scale(pieces("circle", visual.circleCount), pieces("square", visual.squareCount), "[그림 1]");
+  const second = scale(`${pieces("star", visual.starCount)}${pieces("square", visual.extraSquares)}`, pieces("circle", visual.rightCircleCount), "[그림 2]");
+  return `<div class="three-object-balances balance-learning-step is-substitute">${first}${second}<p class="balance-hint">[그림 1]의 ○를 □로 바꾸어 넣어 보세요.</p><strong class="balance-target">☆ 1개 = □ (　)개</strong></div>`;
 }
 
 function balanceScaleFourObjectsMarkup(visual) {
@@ -2048,6 +2067,17 @@ function balanceOrderChainMarkup(visual) {
   return `<div class="balance-order-work">${visual.relations.map(scale).join("")}</div>`;
 }
 
+const DIAGNOSTIC_ANIMAL_ASSETS = {
+  토끼: "animal-rabbit.png", 거북: "animal-turtle.png", 다람쥐: "animal-squirrel.png",
+  여우: "animal-fox.png", 사슴: "animal-deer.png", 오리: "animal-duck.png"
+};
+
+function diagnosticAnimalBalanceOrderMarkup(visual) {
+  const load = (name) => `<div class="animal-balance-load"><img src="../mock/assets/${DIAGNOSTIC_ANIMAL_ASSETS[name]}" alt="${name}" /><strong>${name}</strong></div>`;
+  const scale = (row, index) => `<figure class="animal-balance ${row.heavier}">${load(row.left)}<span class="animal-balance-beam"></span><span class="animal-balance-pivot"></span>${load(row.right)}<figcaption>[저울 ${index + 1}]</figcaption></figure>`;
+  return `<div class="animal-balance-order-work">${visual.relations.map(scale).join("")}</div>`;
+}
+
 function balanceUnitEquationsMarkup(visual) {
   const side = (items) => `<div class="balance-equation-side">${items.map((item) => `<i>${item}</i>`).join("")}</div>`;
   return `<div class="balance-unit-work"><p>${visual.unit} = ${visual.unitGrams}g</p>${visual.equations.map((row) => `<div>${side(row.left)}<b>=</b>${side(row.right)}</div>`).join("")}</div>`;
@@ -2425,6 +2455,7 @@ function visualMarkup(visual) {
   if (visual.kind === "number-sequences") return `<div class="visual number-sequences-visual">${numberSequencesMarkup(visual)}</div>`;
   if (visual.kind === "equal-partition-tree") return `<div class="visual equal-partition-visual">${equalPartitionTreeMarkup(visual)}</div>`;
   if (visual.kind === "balance-order-chain") return `<div class="visual balance-order-visual">${balanceOrderChainMarkup(visual)}</div>`;
+  if (visual.kind === "diagnostic-animal-balance-order") return `<div class="visual diagnostic-animal-balance-visual">${diagnosticAnimalBalanceOrderMarkup(visual)}</div>`;
   if (visual.kind === "balance-unit-equations") return `<div class="visual balance-unit-visual">${balanceUnitEquationsMarkup(visual)}</div>`;
   if (visual.kind === "distinct-shape-equations") return `<div class="visual distinct-shape-visual">${distinctShapeEquationsMarkup(visual)}</div>`;
   if (visual.kind === "symbol-pattern-sequence") return `<div class="visual symbol-pattern-visual">${symbolPatternSequenceMarkup(visual)}</div>`;
@@ -2620,10 +2651,9 @@ setMode("exam");
   if (!wanted) return;
   const exam = EXAM_SOURCES.find((item) => item.id === wanted);
   if (!exam) return;
-  if (OUR_MOCK_EXAMS.includes(exam)) state.stage = "ours";
+  if (OUR_MOCK_EXAMS.includes(exam)) state.stage = `exam:${exam.id}`;
   else if (exam.stage && stageIds.has(exam.stage)) state.stage = exam.stage;
-  else if (FINAL_EXAM_TYPES.includes(exam)) state.stage = "final";
-  else if (PRACTICE_EXAM_TYPES.includes(exam)) state.stage = "practice";
+  else if (FINAL_EXAM_TYPES.includes(exam) || PRACTICE_EXAM_TYPES.includes(exam)) state.stage = `exam:${exam.id}`;
   else if (DIAGNOSTIC_EXAM_TYPES.includes(exam)) state.stage = "diagnostic";
   renderStageButtons();
   renderExamList();

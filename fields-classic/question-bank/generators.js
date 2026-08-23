@@ -1887,6 +1887,31 @@ function balanceOrderChain({ difficulty = 2 }) {
   };
 }
 
+function diagnosticAnimalBalanceOrder({ difficulty = 2 }) {
+  const count = difficulty === 3 ? 4 : 3;
+  const ordered = shuffle(["토끼", "거북", "다람쥐", "여우", "사슴", "오리"]).slice(0, count);
+  const relations = [];
+  for (let index = 0; index < count - 1; index += 1) {
+    const reverse = Math.random() < 0.5;
+    relations.push(reverse
+      ? { left: ordered[index + 1], right: ordered[index], heavier: "left" }
+      : { left: ordered[index], right: ordered[index + 1], heavier: "right" });
+  }
+  if (difficulty >= 2) {
+    const reverse = Math.random() < 0.5;
+    relations.push(reverse
+      ? { left: ordered.at(-1), right: ordered[0], heavier: "left" }
+      : { left: ordered[0], right: ordered.at(-1), heavier: "right" });
+  }
+  return {
+    prompt: "다음 양팔저울을 보고 가장 가벼운 동물을 쓰세요.",
+    visual: { kind: "diagnostic-animal-balance-order", relations: shuffle(relations) },
+    answer: ordered[0],
+    solution: `저울판이 내려간 쪽이 더 무겁습니다. ${ordered.join(" → ")} 순서이므로 가장 가벼운 동물은 ${ordered[0]}입니다.`,
+    meta: { ordered, relations }
+  };
+}
+
 function balanceGivenUnitWeight({ difficulty = 2 }) {
   const symbols = shuffle(["●", "◆", "■", "★"]);
   const [unit, first, second, target] = symbols;
@@ -3410,17 +3435,49 @@ const BALANCE_STAR_TEMPLATES = {
 };
 
 function balanceScaleStarTarget({ difficulty = 2 }) {
-  const template = sample(BALANCE_STAR_TEMPLATES[difficulty] || BALANCE_STAR_TEMPLATES[2]);
-  const { starLeft, diamondRight, circleLeft, starRight, targetCircleCount, targetDiamonds, weights, answer } = template;
-  const hint = difficulty === 1
-    ? `도움: 각 물건의 무게를 같은 크기의 칸으로 나타내어 두 저울에 모두 맞는 수를 찾아보세요.`
-    : "";
+  if (difficulty === 1) {
+    const circleCount = sample([2, 3]);
+    const factor = sample([2, 3]);
+    const squareCount = circleCount * factor;
+    return {
+      prompt: "다음 양팔저울은 수평입니다. ○ 1개는 □ 몇 개의 무게와 같은지 구하세요.",
+      visual: { kind: "balance-scale-star-target", level: 1, mode: "direct", circleCount, squareCount, factor },
+      answer: `${factor}개`,
+      solution: `○ ${circleCount}개와 □ ${squareCount}개의 무게가 같습니다. ○ 1개씩 똑같이 나누면 ○ 1개는 □ ${factor}개의 무게와 같습니다.`,
+      meta: { difficulty, mode: "direct", circleCount, squareCount, factor, answer: factor }
+    };
+  }
+
+  if (difficulty === 2) {
+    const circleCount = sample([2, 3]);
+    const factor = sample([2, 3]);
+    const squareCount = circleCount * factor;
+    const triangleCount = sample([1, 2]);
+    return {
+      prompt: "다음 양팔저울은 수평입니다. ○ 1개는 □ 몇 개의 무게와 같은지 구하세요.",
+      visual: { kind: "balance-scale-star-target", level: 2, mode: "cancel", circleCount, squareCount, triangleCount, factor },
+      answer: `${factor}개`,
+      solution: `양쪽에 똑같이 있는 △ ${triangleCount}개를 함께 지우면 ○ ${circleCount}개 = □ ${squareCount}개가 됩니다. ○ 1개씩 똑같이 나누면 ○ 1개는 □ ${factor}개의 무게와 같습니다.`,
+      meta: { difficulty, mode: "cancel", circleCount, squareCount, triangleCount, factor, answer: factor }
+    };
+  }
+
+  const template = sample([
+    { circleCount: 2, factor: 2, starCount: 1, extraSquares: 2, rightCircleCount: 3 },
+    { circleCount: 2, factor: 2, starCount: 2, extraSquares: 2, rightCircleCount: 4 },
+    { circleCount: 2, factor: 3, starCount: 1, extraSquares: 2, rightCircleCount: 2 },
+    { circleCount: 3, factor: 2, starCount: 1, extraSquares: 2, rightCircleCount: 3 },
+    { circleCount: 3, factor: 2, starCount: 2, extraSquares: 2, rightCircleCount: 4 },
+    { circleCount: 3, factor: 3, starCount: 1, extraSquares: 3, rightCircleCount: 3 }
+  ]);
+  const squareCount = template.circleCount * template.factor;
+  const starWeight = (template.rightCircleCount * template.factor - template.extraSquares) / template.starCount;
   return {
-    prompt: "다음 양팔저울은 모두 수평입니다. [그림 3]의 오른쪽 접시에 ☆를 몇 개 올려놓으면 수평이 되는지 구하세요.",
-    visual: { kind: "balance-scale-star-target", starLeft, diamondRight, circleLeft, starRight, targetCircleCount, targetDiamonds, hint },
-    answer: `${answer}개`,
-    solution: `두 저울에 모두 맞도록 무게를 같은 크기의 칸으로 나타내면 ☆는 ${weights.star}칸, ○는 ${weights.circle}칸, ◇는 ${weights.diamond}칸으로 둘 수 있습니다. [그림 3]의 왼쪽은 ${targetCircleCount * weights.circle} + ${targetDiamonds * weights.diamond} = ${targetCircleCount * weights.circle + targetDiamonds * weights.diamond}칸이고, ☆ ${answer}개의 무게와 같습니다.`,
-    meta: { difficulty, starLeft, diamondRight, circleLeft, starRight, targetCircleCount, targetDiamonds, weights, answer }
+    prompt: "다음 양팔저울은 모두 수평입니다. ☆ 1개는 □ 몇 개의 무게와 같은지 구하세요.",
+    visual: { kind: "balance-scale-star-target", level: 3, mode: "substitute", squareCount, starWeight, ...template },
+    answer: `${starWeight}개`,
+    solution: `[그림 1]에서 ○ 1개는 □ ${template.factor}개의 무게와 같습니다. 이를 [그림 2]의 ○ ${template.rightCircleCount}개 자리에 바꾸어 넣으면 오른쪽은 □ ${template.rightCircleCount * template.factor}개가 됩니다. □ ${template.extraSquares}개를 빼면 ☆ ${template.starCount}개는 □ ${template.rightCircleCount * template.factor - template.extraSquares}개와 같으므로 ☆ 1개는 □ ${starWeight}개의 무게와 같습니다.`,
+    meta: { difficulty, mode: "substitute", squareCount, starWeight, ...template, answer: starWeight }
   };
 }
 
@@ -5247,6 +5304,7 @@ export const GENERATORS = {
   equalPartitionFour,
   reverseTransferTotal,
   balanceOrderChain,
+  diagnosticAnimalBalanceOrder,
   balanceGivenUnitWeight,
   distinctShapeValueEquation,
   constantStepNumberSequence,
