@@ -618,7 +618,9 @@ assert(preservedBankPair.length === 2 && new Set(preservedBankPair.map((row) => 
   ["hyper-focus/mock/index.html", ["config.js", "access-policy.js", "spatial.js", "reasoning.js", "exam-blueprints.js", "variation-bank.js", "prepareExam", "questionList", "resultFromMarks", "practiceDifficultyByType", "선택 난이도로 시험지 만들기", "viewer.html"]],
   ["hyper-focus/mock/viewer.html", ["config.js", "access-policy.js", "spatial.js", "exam-blueprints.js", "variation-bank.js", "preparePractice", "difficultyByType", "createPractice", "window.print", "solutions", "flex-wrap:nowrap"]],
   ["hyper-focus/review.html", ["spatial.js", "HFQ09", "generateQ09", "기존 variation 눈 검수표", "generator-status.json", "viewerReadyVariationCount", "원본 기준", "눈 검수"]],
-  ["hyper-focus/index.html", ["mock/access-policy.js", "맞춤 시험지", "유형당 2문항 자동 시험지 만들기", "MAX_SELECTED_TYPES"]]
+  ["hyper-focus/diagnosis.html", ["mock/access-policy.js", "맞춤 시험지", "유형당 2문항 자동 시험지 만들기", "MAX_SELECTED_TYPES", "approvalCode", "gfield_hf_approval_"]],
+  ["hyper-focus/index.html", ["portal.css", "portal-data.js", "portal-auth.js", "portal.js", "프로그램 신청하기", "VIP", "productShelf"]],
+  ["hyper-focus/vip/index.html", ["portal-auth.js", "VIP Lounge", "categoryNav", "contentGrid", "app.js"]]
 ].forEach(([relativePath, needles]) => {
   const html = fs.readFileSync(path.join(root, relativePath), "utf8");
   needles.forEach((needle) => assert(html.includes(needle), `${relativePath}: ${needle} 계약 누락`));
@@ -640,9 +642,33 @@ assert(!mockIndex.includes("0/10"), "고정 10문항 진행률이 남아 있음"
 assert(!mockIndex.includes("약점별 4문제"), "고정 4문항 문구가 남아 있음");
 assert(!mockIndex.includes("set('count','4')"), "고정 4문항 URL이 남아 있음");
 assert(!mockIndex.includes("기존 유사문제 검수") && !mockIndex.includes("눈 검수표"), "학생 진단 화면에 내부 문제은행 검수 링크가 남아 있음");
-const hyperFocusIndex = fs.readFileSync(path.join(root, "hyper-focus/index.html"), "utf8");
-assert(!hyperFocusIndex.includes("sim-card") && !hyperFocusIndex.includes("문제은행 검수"), "학생 화면에 유사문제 카드 또는 문제은행 검수 UI가 남아 있음");
-assert(hyperFocusIndex.includes("최대 20개 유형") && hyperFocusIndex.includes("유형마다 난이도"), "최대 20유형·개별 난이도 안내 누락");
+const hyperFocusDiagnosis = fs.readFileSync(path.join(root, "hyper-focus/diagnosis.html"), "utf8");
+assert(!hyperFocusDiagnosis.includes("sim-card") && !hyperFocusDiagnosis.includes("문제은행 검수"), "학생 진단 화면에 유사문제 카드 또는 문제은행 검수 UI가 남아 있음");
+assert(hyperFocusDiagnosis.includes("최대 20개 유형") && hyperFocusDiagnosis.includes("유형마다 난이도"), "최대 20유형·개별 난이도 안내 누락");
+assert(hyperFocusDiagnosis.includes("migrateLegacyPhoneHistory") && hyperFocusDiagnosis.includes("recordMode:'approval-code-v1'"), "승인번호 기록 이관·제출 계약 누락");
+assert(!hyperFocusDiagnosis.includes("parentPhone"), "학생 진단 화면에 전화번호 입력 또는 출력이 다시 노출됨");
+const portalDataSource = fs.readFileSync(path.join(root, "hyper-focus/portal-data.js"), "utf8");
+const portalContext = { window: {} };
+vm.createContext(portalContext);
+vm.runInContext(portalDataSource, portalContext);
+const portalProducts = portalContext.window.GFIELD_HF_PORTAL.products;
+assert(portalProducts.length === 4, "포털 큰 책 배너 4개 계약 불일치");
+assert(portalProducts.map((product) => product.key).join(",") === "hyperfocus,mock,vip,problem-bank", "포털 상품 순서·키 불일치");
+assert(portalProducts.every((product) => product.permission && product.title && product.description), "포털 상품 권한·표시 정보 누락");
+const authSource = fs.readFileSync(path.join(root, "hyper-focus/portal-auth.js"), "utf8");
+assert(authSource.includes("gfield_hf_portal_session_v1") && authSource.includes("gfield_hf_name") && authSource.includes("gfield_hf_code"), "포털·진단 공유 세션 계약 누락");
+assert(hyperFocusDiagnosis.includes("return{role:'student',backend:'legacy'"), "진단 레거시 학생 역할 계약 누락");
+assert(hyperFocusDiagnosis.includes("document.body.classList.remove('intro-active')") && hyperFocusDiagnosis.includes("document.getElementById('page2')?.style.display==='block'"), "승인 학생 진단 화면의 인트로 즉시 종료 계약 누락");
+assert(!/01[016789]\d{7,8}/.test(authSource), "관리자 승인번호 또는 전화번호가 포털 인증 코드에 평문으로 노출됨");
+const adminSource = fs.readFileSync(path.join(root, "hyper-focus/admin.html"), "utf8");
+const adminAppSource = fs.readFileSync(path.join(root, "hyper-focus/admin-app.js"), "utf8");
+const adminContractSource = `${adminSource}\n${adminAppSource}`;
+["mock", "vip", "problem-bank"].forEach((permission) => assert(new RegExp(`[\"']${permission}[\"']`).test(adminContractSource), `관리자 상품 권한 계약 누락: ${permission}`));
+assert(adminContractSource.includes("portal-auth.js"), "관리자 상품 권한 계약 누락: portal-auth.js");
+assert(/sessionStorage\.getItem\(["']gfield_hf_gh_token["']\)/.test(adminContractSource), "관리자 GitHub 토큰 세션 저장 계약 누락");
+assert(!adminContractSource.includes("localStorage.getItem('gfield_hf_gh_token')"), "GitHub 토큰이 영구 localStorage에 남음");
+const viewerSource = fs.readFileSync(path.join(root, "hyper-focus/mock/viewer.html"), "utf8");
+assert(viewerSource.includes("GFieldHFPortalAuth") && viewerSource.includes("portalPaid") && viewerSource.includes("problem-bank"), "문제지 뷰어에 포털 유료 권한 전달 누락");
 const sharedConfig = fs.readFileSync(path.join(root, "config.js"), "utf8");
 assert(sharedConfig.includes('"key": "hyperfocus-extra"'), "통합관리 유료 추가 문제 권한 프로그램 누락");
 

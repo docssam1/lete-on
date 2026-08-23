@@ -2,7 +2,7 @@
   "version": 1,
   "name": "Fields Classic question bank",
   "root": "..",
-  "updated": "2026-08-21",
+  "updated": "2026-08-23",
   "sources": [
     {
       "id": "handover",
@@ -70,9 +70,9 @@
       "path": "hyper-focus/qa/HF_VISIBILITY_DECISIONS.md",
       "kind": "markdown",
       "sensitivity": "public",
-      "sha256": "502a061f2b78bd57ff6632e88d3db68bce67a72d229b99b78bc83fe81f939e83",
-      "size": 3754,
-      "mtime_ns": 1787232438545882200
+      "sha256": "41c0f6ff538e3bdff330f08b5e28703b3a97f1270f8d915a5b1e8d8587400bd9",
+      "size": 4934,
+      "mtime_ns": 1787488038823953000
     },
     {
       "id": "hf-q06-q09-generator-audit",
@@ -4195,6 +4195,31 @@
           "role": "source",
           "locator": "file identity and title",
           "note": "Fingerprint verified; page-level content not yet inspected"
+        }
+      ]
+    },
+    {
+      "id": "hf-premier-source-visibility-rules",
+      "title": "프리미어 원본 단일정답·가시성 검수 규칙",
+      "aliases": [
+        "프리미어 모의고사 원본 검수"
+      ],
+      "tags": [
+        "hyper-focus",
+        "premier",
+        "single-answer",
+        "visibility"
+      ],
+      "summary": "대본과 불일치 풀이를 답 근거에서 제외하고 문장·그림 충돌, 회전·반사, 다답 그리기 문항을 공개 전에 잠그는 규칙이다.",
+      "status": "verified",
+      "sensitivity": "internal",
+      "updated": "2026-08-23",
+      "pointers": [
+        {
+          "source_id": "hf-visibility-decisions",
+          "role": "decision",
+          "locator": "section 프리미어 원본 모의고사",
+          "note": "원본 대조와 공개 잠금 기준"
         }
       ]
     }
