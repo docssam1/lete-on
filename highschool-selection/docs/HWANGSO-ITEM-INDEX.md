@@ -16,8 +16,17 @@
 
 1. `page_located`: 페이지 안에 문항 후보가 있음만 확인
 2. `ocr_candidate`: 스캔 인식으로 문항 블록과 좌표를 찾았으나 사람이 미확인
-3. `visual_verified`: 원본 페이지에서 문항 경계를 직접 확인
-4. 교육과정은 `pending → reviewed → approved` 순서로 확정
-5. 답안은 원본 답지 대조와 가능한 독립 검산을 거쳐야 `verified`
+3. `layout_candidate`: 인쇄 번호·열·Mission 격자 구조로 경계 후보를 찾았으나 사람이 미확인
+4. `visual_verified`: 원본 페이지에서 문항 경계를 직접 확인
+5. 교육과정은 `pending → reviewed → approved` 순서로 확정
+6. 답안은 원본 답지 대조와 가능한 독립 검산을 거쳐야 `verified`
+
+2차 레이아웃 탐색에서 채점표·학습상황표·표지·안내문으로 보이는 페이지는 문항에서 즉시 삭제하지 않고 `excludedPageCandidates`에 넣는다. 이 후보도 원본을 직접 본 뒤에만 제외 확정한다. Mission의 (1), (2) 같은 소문항은 주문항 하나에 포함하며 별도 ID를 만들지 않는다. 기존 ID는 유지하고 새 레이아웃 후보는 해당 페이지의 기존 최대 슬롯 다음 번호로만 추가한다.
+
+일반 번호형 페이지에서 OCR이 연속 번호 일부를 놓치면 발견된 상자만 후보로 추가하고 `coverageStatus: partial`과 `partial-layout-coverage` 미해결 기록을 함께 남긴다. 누락 번호의 위치를 추측해 상자를 만들지 않는다.
+
+`audit-private-question-index.cjs`는 v2 생성 후 ID·페이지/슬롯·좌표 스키마·잠금 상태·금지 필드와 v1 항목의 바이트 수준 동일성을 검사한다. 원문/답/풀이/OCR 전문/로컬 경로가 색인에 들어가면 감사에 실패한다.
+
+`layout_candidate`가 추가된 문항 색인 계약은 `schemaVersion: 2`이며, v1을 병합한 산출물에는 `predecessorSchemaVersion: 1`을 함께 기록한다.
 
 OCR 결과는 발견 보조 자료일 뿐 정답·유형·문항 경계의 최종 근거로 사용하지 않는다. 모든 신규 문항은 `releaseStatus: locked`로 시작하고 사용자 회차 검수 전에는 공개 시험에 배정하지 않는다.
