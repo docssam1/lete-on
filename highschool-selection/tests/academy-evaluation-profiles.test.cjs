@@ -20,7 +20,7 @@ test("all six academies have distinct paper and evaluation profiles", () => {
 test("academy profile resolution keeps exam-specific scope and time separate", () => {
   const sh = data.resolve("sh-selection-r01", "SH");
   assert.equal(sh.profile.displayName, "황소 고등");
-  assert.equal(sh.exam.duration, "120분");
+  assert.equal(sh.exam.duration, "110분");
   assert.equal(sh.exam.scope, "중등 누적 40문항");
   const dp = data.resolve("dp-middle2-2-transfer", "DP");
   assert.equal(dp.exam.scope, "중1-1~중2-2 전 과정");

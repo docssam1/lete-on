@@ -69,7 +69,7 @@
       facts: [
         { label: "현재 과정", value: "기본정석 Light · 기본정석 Plus · 실력정석", state: "verified", sourceIds: ["SH-CURRICULUM-OFFICIAL", "SH-REFORM-OFFICIAL"] },
         { label: "현행 과목", value: "공통수학1·2 병렬 운영", state: "verified", sourceIds: ["SH-CURRICULUM-OFFICIAL"] },
-        { label: "우리 판매용 모의고사", value: "중등 누적 40문항 · 120분", state: "confirmed", sourceIds: [] },
+        { label: "우리 판매용 모의고사", value: "중등 누적 40문항 · 110분", state: "confirmed", sourceIds: [] },
         { label: "공개 시간 사례", value: "고등과정 입학시험 110분", state: "verified", sourceIds: ["SH-SONGPA-2025-08-MIRROR"] }
       ],
       cutline: {
@@ -82,7 +82,7 @@
         sourceIds: ["SH-WIRYE-2026-06-MIRROR"]
       },
       style: "중등 수·식, 함수·좌표, 평면·입체도형, 경우의 수·확률을 한 회차에 누적 배치합니다.",
-      caveat: "우리 보유 원본을 기준으로 제작합니다. 120분은 우리 판매용 모의고사 운영 시간이며, 공개된 110분 사례와 지점·회차별 커트라인은 참고 근거로만 분리합니다."
+      caveat: "우리 제작·보유 시험지를 기준으로 하며 공식 기출로 표시하지 않습니다. 110분은 우리 판매용 모의고사 운영 설정이고, 외부 공개 사례와 지점·회차별 커트라인은 별도 참고 근거로 관리합니다."
     },
     {
       code: "DP",

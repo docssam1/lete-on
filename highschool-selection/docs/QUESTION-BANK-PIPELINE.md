@@ -12,6 +12,10 @@ The bank supports three entry paths without duplicating an item:
 
 Academy names are visible in our library, exam title, bank filter, and diagnostic report. Each academy resolves to a separate evaluation profile. The shared responsive/A4 shell does not make the paper structure, duration, difficulty curve, report axes, or cutoff policy identical.
 
+The question registry itself is shared across academies. One approved question keeps one ID and lineage when reused in another compatible form. Academy blueprints select from the shared registry; they do not create academy-specific copies. Every reuse reruns curriculum, notation, difficulty, placement, scoring, and visual checks, and never inherits another exam's cutoff.
+
+For Hwangso high-school selection, the private Hwangso middle-school textbook collection is the first type-reference source because the selection scope is middle-school cumulative. Older or discontinued materials remain reference-only until their terminology, symbols, and scope are cross-walked to the 2022 revised curriculum.
+
 ## 1. Register identity and curriculum
 
 Use `data/question-bank-core.js` to derive a stable neutral ID from an opaque registry key. The returned ID contains only an entity prefix, a mode code, and a deterministic digest. Registry keys must not be copied into published records.
