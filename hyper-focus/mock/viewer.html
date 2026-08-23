@@ -27,6 +27,8 @@
 <header class="toolbar"><b>G-FIELD HYPER FOCUS VIEWER</b><div class="actions"><a id="backLink" href="./">채점 화면</a><button type="button" id="regenBtn">다른 문제</button><button type="button" id="answerBtn">정답·풀이 보기</button><button type="button" class="gold" onclick="window.print()">인쇄</button></div></header>
 <main id="pages" class="pages"><div class="sheet"><div class="empty">문제지를 만드는 중입니다.</div></div></main>
 <script src="../../config.js"></script>
+<script src="../data.js"></script>
+<script src="../portal-auth.js"></script>
 <script src="./access-policy.js"></script>
 <script src="../generator/q01.js"></script>
 <script src="../generator/stacking.js"></script>
@@ -52,11 +54,14 @@
   const difficultyByType={};
   (params.get('levels')||'').split(',').forEach(pair=>{const [rawId,level]=pair.split(':');const typeId=Number(rawId);if(typeId&&['easy','same','hard'].includes(level))difficultyByType[typeId]=level;});
   const storedAccess=HFAccessPolicy.storedAccess(window.GFIELD_CONFIG);
+  const portalSession=window.GFieldHFPortalAuth?.current();
+  const portalPaid=window.GFieldHFPortalAuth?.canAccess(portalSession,'hyperfocus-extra')||window.GFieldHFPortalAuth?.canAccess(portalSession,'problem-bank');
+  const accessTier=portalPaid||storedAccess.paid?'paid':'free';
   let doc;
   try{
     if(mode==='practice')await HFMock.preparePractice(typeIds);else await HFMock.prepareExam(examId);
     doc=mode==='practice'
-      ?HFMock.createPractice(typeIds,{seed,countPerType:count,difficulty,difficultyByType,accessTier:storedAccess.paid?'paid':'free'})
+      ?HFMock.createPractice(typeIds,{seed,countPerType:count,difficulty,difficultyByType,accessTier})
       :HFMock.createExam(examId,seed);
   }catch(error){
     document.getElementById('pages').innerHTML=`<section class="sheet"><div class="empty">${String(error.message||error)}<br><a href="./?exam=${encodeURIComponent(examId)}">돌아가기</a></div></section>`;
@@ -82,7 +87,7 @@
   const solutionHtml=solutionChunks.map((chunk,index)=>`<section class="sheet solutions"><div class="watermark">${esc(student)} · GFIELD</div><div class="head"><div><div class="brand">ANSWER &amp; GUIDE</div><h1>정답 및 간단 풀이</h1></div><div class="meta">${esc(student)} 학생<br>${index+1}/${solutionChunks.length}</div></div>${chunk.map(q=>`<div class="solution"><b>${q.number}. ${esc(q.typeTitle)}</b><br>${esc(q.answerText)}</div>`).join('')}</section>`).join('');
   pages.innerHTML=chunks.map((chunk,index)=>sheet(chunk,index+1)).join('')+solutionHtml;
   const canonical=new URLSearchParams(params);canonical.set('seed',seed);canonical.set('student',student);if(mode==='exam')canonical.set('exam',examId);history.replaceState(null,'',`${location.pathname}?${canonical}`);
-  const back=new URL('./',location.href);back.searchParams.set('student',student);back.searchParams.set('seed',seed);back.searchParams.set('exam',examId);document.getElementById('backLink').href=back;
+  const back=mode==='practice'?new URL('../diagnosis.html?section=similar',location.href):new URL('./',location.href);back.searchParams.set('student',student);back.searchParams.set('seed',seed);if(mode==='exam')back.searchParams.set('exam',examId);document.getElementById('backLink').href=back;
   document.getElementById('answerBtn').onclick=function(){const open=!document.querySelector('.solutions')?.classList.contains('show');document.querySelectorAll('.solutions').forEach(el=>el.classList.toggle('show',open));this.textContent=open?'정답·풀이 닫기':'정답·풀이 보기';};
   document.getElementById('regenBtn').onclick=function(){params.set('seed',HFMock.makeSeed());params.set('student',student);location.search=params;};
 })();

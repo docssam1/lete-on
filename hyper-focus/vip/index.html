@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#121a23">
+  <title>G-FIELD Premier · VIP Lounge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@400;600;700;800&family=Noto+Serif+KR:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="../data.js"></script>
+  <script src="../portal-data.js"></script>
+  <script src="../portal-auth.js"></script>
+  <script src="./data.js"></script>
+</head>
+<body>
+  <header>
+    <a href="../"><span>G</span><b>G-FIELD PREMIER<small>VIP LOUNGE</small></b></a>
+    <div><em id="memberName"></em><a href="../">나의 서재</a></div>
+  </header>
+  <main id="app" hidden>
+    <section class="hero">
+      <p>MEMBERS-ONLY EDITORIAL ARCHIVE</p>
+      <h1>VIP Lounge</h1>
+      <blockquote>자료와 강의, 칼럼과 매거진이 따로 흩어지지 않도록 하나의 주제로 연결합니다.</blockquote>
+    </section>
+    <nav class="category-nav" id="categoryNav" aria-label="VIP 콘텐츠 분류"></nav>
+    <section class="content-layout">
+      <aside>
+        <p>ARCHIVE INDEX</p>
+        <h2 id="sectionTitle">자료실</h2>
+        <div id="sectionDescription"></div>
+        <dl id="sectionStats"></dl>
+      </aside>
+      <div class="content-grid" id="contentGrid"></div>
+    </section>
+  </main>
+  <section class="blocked" id="blocked" hidden>
+    <p>PRIVATE CATALOG</p><h1>VIP 라운지 이용 권한이 필요합니다.</h1>
+    <a href="../">서재로 돌아가기</a>
+  </section>
+  <div class="detail" id="detail" hidden>
+    <div class="detail-backdrop" data-close></div>
+    <article><button type="button" data-close>×</button><div id="detailBody"></div></article>
+  </div>
+  <script src="./app.js"></script>
+</body>
+</html>

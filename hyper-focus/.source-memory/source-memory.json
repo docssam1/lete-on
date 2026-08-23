@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "name": "Hyper Focus portal decisions",
+  "root": "..",
+  "updated": "2026-08-23",
+  "sources": [
+    {
+      "id": "hf-portal-architecture-v1",
+      "title": "Hyper Focus 프리미어 포털 구조 인수인계",
+      "path": "docs/HANDOFF_PORTAL_ARCHITECTURE.md",
+      "kind": "markdown",
+      "sensitivity": "public",
+      "sha256": "faef01b7628e4fa9282fa6622e2bcc86562dfad345faa50088a01533a65eb914",
+      "size": 4719,
+      "mtime_ns": 1787460777462994000
+    }
+  ],
+  "records": [
+    {
+      "id": "hf.portal-foundation",
+      "title": "Hyper Focus 프리미어 포털 구조 결정",
+      "aliases": [],
+      "tags": [
+        "hyper-focus",
+        "portal",
+        "architecture"
+      ],
+      "summary": "모의고사 완성 전 공통 로그인·상품 권한·4권 서재·VIP 단일 콘텐츠 계약을 먼저 고정하고, 검수 완료 회차만 목록에 연결한다.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-23",
+      "pointers": [
+        {
+          "source_id": "hf-portal-architecture-v1",
+          "role": "decision",
+          "locator": "결정, URL과 역할, 상품 권한, 다음 구현 순서",
+          "note": "2026-08-23 사용자 요구와 브라우저 검수에 따라 확정"
+        }
+      ]
+    },
+    {
+      "id": "hf.portal-auth-contract",
+      "title": "Hyper Focus 포털 승인번호·권한 보존 계약",
+      "aliases": [],
+      "tags": [
+        "hyper-focus",
+        "approval-code",
+        "access-control"
+      ],
+      "summary": "94739a0의 승인번호 기록 이관과 approvalCode 제출을 유지하고 상품 배너는 모두 표시하되 미승인 상품은 잠근다. 관리자 원문 번호는 새 공개 코드에 반복하지 않는다.",
+      "status": "verified",
+      "sensitivity": "internal",
+      "updated": "2026-08-23",
+      "pointers": [
+        {
+          "source_id": "hf-portal-architecture-v1",
+          "role": "decision",
+          "locator": "반드시 보존하는 승인번호 계약, 관리자와 보안 경계",
+          "note": "QA에서 마이그레이션·제출·잠금·비노출을 검증"
+        }
+      ]
+    },
+    {
+      "id": "hf.vip-linked-content",
+      "title": "VIP 라운지 연동 콘텐츠 계약",
+      "aliases": [],
+      "tags": [
+        "hyper-focus",
+        "vip",
+        "content-model"
+      ],
+      "summary": "자료실·프리미엄 설명회·DOCSSAM 칼럼·교육 매거진은 vip/data.js 단일 배열을 공유하고 kind, tags, relatedIds로 상호 연결한다.",
+      "status": "verified",
+      "sensitivity": "public",
+      "updated": "2026-08-23",
+      "pointers": [
+        {
+          "source_id": "hf-portal-architecture-v1",
+          "role": "decision",
+          "locator": "VIP 단일 콘텐츠 계약",
+          "note": "네 영역 공통 데이터와 관련 콘텐츠 규칙 확정"
+        }
+      ]
+    }
+  ]
+}
