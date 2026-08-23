@@ -692,6 +692,21 @@ test("manual replacement requires only unrejected protected layout candidates an
   assert.deepEqual(rejected, rejectedBefore);
 });
 
+test("manual replacement accepts mixed locked OCR and layout candidates", () => {
+  const value = manualReplacementInput();
+  value.items[0].discoveryStatus = "ocr_candidate";
+
+  const result = review.applyReviews(value, [manualReplacementDecision()]);
+
+  assert.equal(result.rejectedCandidates.length, 2);
+  assert.deepEqual(
+    result.rejectedCandidates.map(entry => entry.id).sort(),
+    value.items.map(item => item.id).sort()
+  );
+  assert.equal(result.visualReviewPages[0].resolution, "verified_manual_items_replacing_candidates");
+  assert.equal(result.counts.activeQuestionCandidates, 2);
+});
+
 test("decision manifests reject unknown answer-bearing or source-bearing keys", () => {
   const value = manualReplacementInput();
   const source = value.sources[0];

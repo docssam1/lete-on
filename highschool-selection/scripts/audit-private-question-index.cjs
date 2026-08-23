@@ -75,6 +75,12 @@ function boxesOverlap(left, right) {
   return overlapWidth * overlapHeight > 0.000001;
 }
 
+function isReplaceableLockedCandidate(item) {
+  return new Set(["layout_candidate", "ocr_candidate"]).has(item.discoveryStatus) &&
+    item.releaseStatus === "locked" && item.classificationStatus === "pending" &&
+    item.answerStatus === "missing";
+}
+
 function isReviewedLabel(value) {
   const label = String(value == null ? "" : value).trim();
   return Boolean(label) && label.length <= 64 && !/[\x00-\x1f\x7f]/.test(label) &&
@@ -548,8 +554,7 @@ function audit(candidate, predecessor) {
         entry.reviewStatus !== "visual_verified") {
       errors.push(`rejected candidate lacks visual decision: ${entry.id}`);
     }
-    if (item.discoveryStatus !== "layout_candidate" || item.releaseStatus !== "locked" ||
-        item.classificationStatus !== "pending" || item.answerStatus !== "missing") {
+    if (!isReplaceableLockedCandidate(item)) {
       errors.push(`rejected candidate state changed: ${entry.id}`);
     }
     const expectedResolution = isManualReplacement
@@ -758,10 +763,9 @@ function audit(candidate, predecessor) {
       if ((review.rejectedCandidateIds || []).some(id => predecessorRejectedIds.has(id))) {
         errors.push(`non-question replacement predecessor candidate already rejected: ${key}`);
       }
-      if (predecessorPageItems.some(item =>
-        item.discoveryStatus !== "layout_candidate" || item.releaseStatus !== "locked" ||
-        item.classificationStatus !== "pending" || item.answerStatus !== "missing"
-      )) errors.push(`non-question replacement predecessor state mismatch: ${key}`);
+      if (predecessorPageItems.some(item => !isReplaceableLockedCandidate(item))) {
+        errors.push(`non-question replacement predecessor state mismatch: ${key}`);
+      }
       for (const oldItem of predecessorPageItems) {
         const currentItem = itemById.get(oldItem.id);
         if (!currentItem || JSON.stringify(currentItem) !== JSON.stringify(oldItem)) {

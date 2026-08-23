@@ -424,7 +424,7 @@ function manualReplacementFixture(options = {}) {
         kind: "exercise",
         box: { x: slot === 2 ? 0.08 : 0.58, y: 0.18, width: 0.3, height: 0.3 }
       },
-      discoveryStatus: "layout_candidate",
+      discoveryStatus: options.mixedOcr && slot === 2 ? "ocr_candidate" : "layout_candidate",
       curriculum: null,
       classificationStatus: "pending",
       answerStatus: "missing",
@@ -497,6 +497,15 @@ test("private index audit validates closed manual replacement registries and pre
   const unbound = auditor.audit(candidate, null);
   assert.equal(unbound.ok, false);
   assert.match(unbound.errors.join("\n"), /requires a predecessor index/);
+});
+
+test("private index audit validates a manual replacement with mixed locked OCR candidates", () => {
+  const { predecessor, candidate } = manualReplacementFixture({ mixedOcr: true });
+  const accepted = auditor.audit(candidate, predecessor);
+
+  assert.equal(accepted.ok, true, accepted.errors.join("\n"));
+  assert.equal(accepted.counts.rejectedCandidates, 2);
+  assert.equal(accepted.counts.activeQuestionCandidates, 3);
 });
 
 test("private index audit rejects manual replacement registry, slot, queue, and state drift", () => {

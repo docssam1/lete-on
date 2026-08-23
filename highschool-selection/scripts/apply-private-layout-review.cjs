@@ -451,6 +451,12 @@ function hasBoundVisualReview(reviewPages, source, item) {
   return item.id === expectedId;
 }
 
+function isReplaceableLockedCandidate(item) {
+  return new Set(["layout_candidate", "ocr_candidate"]).has(item.discoveryStatus) &&
+    item.releaseStatus === "locked" && item.classificationStatus === "pending" &&
+    item.answerStatus === "missing";
+}
+
 function applyReviews(base, decisions) {
   const result = JSON.parse(JSON.stringify(base));
   validateReviewInput(result);
@@ -490,10 +496,9 @@ function applyReviews(base, decisions) {
       if (replacesCandidates && pageItems.length === 0) {
         fail(`Non-question replacement requires existing candidates: ${decisionKey}`);
       }
-      if (replacesCandidates && pageItems.some(item =>
-        item.discoveryStatus !== "layout_candidate" || item.releaseStatus !== "locked" ||
-        item.classificationStatus !== "pending" || item.answerStatus !== "missing"
-      )) fail(`Non-question replacement found a non-candidate item: ${decisionKey}`);
+      if (replacesCandidates && pageItems.some(item => !isReplaceableLockedCandidate(item))) {
+        fail(`Non-question replacement found a non-candidate item: ${decisionKey}`);
+      }
       if (replacesCandidates && pageItems.some(item =>
         rejectedCandidates.some(entry => entry.id === item.id)
       )) fail(`Non-question replacement found an already rejected candidate: ${decisionKey}`);
@@ -555,10 +560,9 @@ function applyReviews(base, decisions) {
       if (replacesCandidates && pageItems.length === 0) {
         fail(`Manual item replacement requires existing candidates: ${decisionKey}`);
       }
-      if (replacesCandidates && pageItems.some(item =>
-        item.discoveryStatus !== "layout_candidate" || item.releaseStatus !== "locked" ||
-        item.classificationStatus !== "pending" || item.answerStatus !== "missing"
-      )) fail(`Manual item replacement found a non-candidate item: ${decisionKey}`);
+      if (replacesCandidates && pageItems.some(item => !isReplaceableLockedCandidate(item))) {
+        fail(`Manual item replacement found a non-candidate item: ${decisionKey}`);
+      }
       if (replacesCandidates && pageItems.some(item =>
         rejectedCandidates.some(entry => entry.id === item.id)
       )) fail(`Manual item replacement found an already rejected candidate: ${decisionKey}`);
@@ -674,10 +678,9 @@ function applyReviews(base, decisions) {
     }
     if (resolution === "mission6_replace_candidates") {
       if (pageItems.length === 0) fail(`Mission6 replacement requires existing candidates: ${decisionKey}`);
-      if (pageItems.some(item =>
-        item.discoveryStatus !== "layout_candidate" || item.releaseStatus !== "locked" ||
-        item.classificationStatus !== "pending" || item.answerStatus !== "missing"
-      )) fail(`Mission6 replacement found a non-candidate item: ${decisionKey}`);
+      if (pageItems.some(item => !isReplaceableLockedCandidate(item))) {
+        fail(`Mission6 replacement found a non-candidate item: ${decisionKey}`);
+      }
       for (const item of pageItems) {
         if (rejectedCandidates.some(entry => entry.id === item.id)) {
           fail(`Candidate already rejected: ${item.id}`);
