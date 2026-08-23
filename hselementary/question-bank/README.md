@@ -2,6 +2,13 @@
 
 중등 성취도 진단 문제은행과 분리된 초등 교재 전용 프로그램입니다.
 
+## 학생 이름 권한 계약
+
+- 기본값은 로그인 이름 자동 입력 및 읽기 전용입니다.
+- 이름 변경은 통합 관리자의 `초등 문제은행 · 학생 이름 변경` 권한(`hselementary:student-name:edit`) 또는 `window.HSELEMENTARY_ACCESS.studentNameEditors` 관리자 승인 목록에 포함된 경우에만 허용합니다.
+- URL의 `student` 값은 기존 서재 연결을 위해 이름 전달에만 사용하며, URL 값만으로 편집 권한을 얻을 수 없습니다.
+- 권장 로그인 세션 형식은 `window.HSELEMENTARY_SESSION = { name, permissions }` 또는 통합 로그인 세션 `window.GFIELD_SESSION`이며, 저장형 세션의 `hse-session`·`gfield-session`도 같은 JSON 구조로 읽습니다.
+
 ## 분류 범위
 
 - 학년: 4·5·6학년

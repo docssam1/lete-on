@@ -269,6 +269,18 @@ button{
   box-shadow:0 0 0 3px rgba(47,116,217,.12);
 }
 
+.input-text[readonly]{
+  border-color:#d9e3eb;
+  background:#f2f6f9;
+  color:#4b6274;
+  cursor:default;
+}
+
+.input-text[readonly]:focus{
+  border-color:#d9e3eb;
+  box-shadow:none;
+}
+
 .tag-row{
   display:flex;
   flex-wrap:wrap;
