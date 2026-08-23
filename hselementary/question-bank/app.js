@@ -285,10 +285,27 @@
     state.generation += 1;
     const level = currentLevel();
     const baseSeed = (Date.now() + state.generation * 1000003) >>> 0;
+    const seenPrompts = new Set();
+    const seenAnswersByType = new Map();
     state.questions = Array.from({ length: state.count }, (_, index) => {
       const type = selected[index % selected.length];
-      const seed = (baseSeed + index * 7919 + hash(type.id)) >>> 0;
-      const generated = generatorApi.generate(type, level.rank, state.difficulty, seed, index);
+      const typeAnswers = seenAnswersByType.get(type.id) || new Set();
+      let generated;
+      let uniquePromptFallback;
+      for (let attempt = 0; attempt < 32; attempt += 1) {
+        const seed = (baseSeed + index * 7919 + attempt * 104729 + hash(type.id)) >>> 0;
+        const candidate = generatorApi.generate(type, level.rank, state.difficulty, seed, index);
+        if (!candidate || seenPrompts.has(candidate.prompt)) continue;
+        uniquePromptFallback ||= candidate;
+        if (!typeAnswers.has(String(candidate.answer))) {
+          generated = candidate;
+          break;
+        }
+      }
+      generated ||= uniquePromptFallback || generatorApi.generate(type, level.rank, state.difficulty, (baseSeed + index * 7919 + hash(type.id)) >>> 0, index);
+      seenPrompts.add(generated.prompt);
+      typeAnswers.add(String(generated.answer));
+      seenAnswersByType.set(type.id, typeAnswers);
       return { number: index + 1, type, level, difficulty: currentDifficultyLabel(), ...generated };
     });
     state.view = "problem";

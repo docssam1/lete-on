@@ -970,15 +970,17 @@
     return `<svg class="geometry-diagram decimal-l-shape" viewBox="0 0 240 166" data-decimal-shape="${width},${height},${topWidth},${rightHeight}" aria-label="전체 가로 ${decimal(width, 2)}cm, 전체 세로 ${decimal(height, 2)}cm, 윗변 ${decimal(topWidth, 2)}cm, 오른쪽 세로변 ${decimal(rightHeight, 2)}cm인 ㄱ자 모양 도형"><path class="shape-fill" d="M${left} ${top} H${left + topW} V${top + cutH} H${left + w} V${top + h} H${left} Z"/><line class="crease" x1="${left + topW}" y1="${top}" x2="${left + topW}" y2="${top + cutH}"/><text x="${left + w / 2 - 16}" y="${top + h + 20}">${decimal(width, 2)}cm</text><text x="${left - 34}" y="${top + h / 2}">${decimal(height, 2)}cm</text><text x="${left + topW / 2 - 16}" y="${top - 10}">${decimal(topWidth, 2)}cm</text><text x="${left + w + 8}" y="${top + cutH + rightH / 2}">${decimal(rightHeight, 2)}cm</text></svg>`;
   };
 
-  const decimalSquareStackSvg = ({ side, count, offset }) => {
+  const decimalSquareStackSvg = ({ side, count, offset, target }) => {
     const shown = Math.min(count, 6);
-    const scale = Math.min(82 / side, 18 / offset);
+    const scale = Math.min(70 / side, 17.5 / offset);
     const size = side * scale;
     const step = offset * scale;
     const startX = 30;
-    const startY = 36;
-    const squares = Array.from({ length: shown }, (_, index) => `<rect class="${index === shown - 1 ? "highlight-fill" : "shape-fill"}" x="${(startX + index * step).toFixed(1)}" y="${(startY + index * step).toFixed(1)}" width="${size.toFixed(1)}" height="${size.toFixed(1)}"/>`).join("");
-    return `<svg class="geometry-diagram decimal-square-stack" viewBox="0 0 240 166" data-square-stack="${side},${count},${offset}" aria-label="같은 간격으로 겹쳐 놓은 정사각형"><g>${squares}</g>${count > shown ? `<text x="${startX + shown * step + 8}" y="${startY + shown * step}">… ${count}장</text>` : ""}<path class="folded" d="M${startX} ${startY - 8} H${startX + size}"/><text x="${startX + size / 2 - 18}" y="${startY - 14}">${decimal(side, 2)}cm</text><path class="folded" d="M${startX + size + 8} ${startY + size - 4} l${step} ${step}"/><text x="${startX + size + 18}" y="${startY + size + 18}">${decimal(offset, 2)}cm 이동</text></svg>`;
+    const startY = 20;
+    const squares = Array.from({ length: shown }, (_, index) => `<rect class="shape-fill" x="${(startX + index * step).toFixed(1)}" y="${(startY + index * step).toFixed(1)}" width="${size.toFixed(1)}" height="${size.toFixed(1)}"/>`).join("");
+    const continuationX = startX + shown * step;
+    const continuationY = startY + shown * step;
+    return `<svg class="geometry-diagram decimal-square-stack" viewBox="0 0 260 190" data-square-stack="${side},${count},${offset},${target}" aria-label="한 변이 ${decimal(side, 2)}cm인 정사각형 ${count}장을 가로와 세로로 각각 ${decimal(offset, 2)}cm씩 옮겨 겹쳐 놓은 그림"><g>${squares}</g>${count > shown ? `<line class="crease" x1="${(continuationX - step / 2).toFixed(1)}" y1="${(continuationY - step / 2).toFixed(1)}" x2="${(continuationX + 22).toFixed(1)}" y2="${(continuationY + 22).toFixed(1)}"/><text x="${(continuationX + 42).toFixed(1)}" y="${(continuationY + 28).toFixed(1)}">… ${count}장</text>` : ""}<text x="${(startX + size / 2).toFixed(1)}" y="10">한 변 ${decimal(side, 2)}cm</text><text x="220" y="42">가로·세로</text><text x="220" y="58">${decimal(offset, 2)}cm씩 이동</text></svg>`;
   };
 
   const decimalEvidence = (kind, values, extra = "") => `<span hidden data-decimal-kind="${kind}" data-values="${values.join(",")}" ${extra}></span>`;
@@ -3595,14 +3597,20 @@
         const evidence = decimalEvidence("missing-factor-digit", [a, b, d, e, productScale, hidden]);
         return result(`다음 곱셈식의 □에 들어갈 숫자를 구하세요.<div class="equation">${a}.${b}□ × 0.${d}${e} = ${fixedDecimal(productScale, 4)}</div>${evidence}`, hidden, `□에 0부터 9까지 넣어 곱을 확인하면 조건에 맞는 숫자는 ${candidates.join(", ")}이고, 따라서 ${hidden}입니다.`);
       }
-      const count = 3 + level * 2;
-      const offsetScale = int(rng, 5, 12 + level * 3);
-      const commonScale = int(rng, 24 + level * 6, 52 + level * 10);
-      const sideScale = commonScale + (count - 1) * offsetScale;
-      const answerScale = commonScale * commonScale;
-      const svg = decimalSquareStackSvg({ side: sideScale / 10, count, offset: offsetScale / 10 });
-      const evidence = decimalEvidence("overlapping-squares", [sideScale, count, offsetScale, commonScale, answerScale]);
-      return result(`한 변의 길이가 ${fixedDecimal(sideScale, 1)}cm인 정사각형 종이 ${count}장을 가로와 세로 방향으로 각각 ${fixedDecimal(offsetScale, 1)}cm씩 일정하게 옮겨 겹쳐 놓았습니다. 모든 종이가 공통으로 겹치는 부분의 넓이를 구하세요.${svg}${evidence}`, fixedDecimal(answerScale, 2), `첫 종이와 마지막 종이의 가로·세로 이동 거리는 각각 ${fixedDecimal((count - 1) * offsetScale, 1)}cm입니다. 공통 부분의 한 변은 ${fixedDecimal(sideScale, 1)}-${fixedDecimal((count - 1) * offsetScale, 1)}=${fixedDecimal(commonScale, 1)}cm이므로 넓이는 ${fixedDecimal(answerScale, 2)}cm²입니다.`);
+      const target = 3;
+      const sideUnits = 4;
+      const count = pick(rng, [40, 60, 80, 100, 120].slice(level, level + 3));
+      const offsetScale = pick(rng, [10, 15, 20, 25, 30].slice(level, level + 3));
+      const sideScale = sideUnits * offsetScale;
+      const exactCellCount = 2 * count + 4 * sideUnits - 6 * target;
+      const answerScale = exactCellCount * offsetScale * offsetScale;
+      const svg = decimalSquareStackSvg({ side: sideScale / 10, count, offset: offsetScale / 10, target });
+      const evidence = decimalEvidence("exact-three-overlap-squares", [sideScale, count, offsetScale, target, sideUnits, exactCellCount, answerScale]);
+      const sideText = decimal(sideScale / 10, 1);
+      const offsetText = decimal(offsetScale / 10, 1);
+      const cellAreaText = decimal(offsetScale * offsetScale / 100, 2);
+      const answerText = decimal(answerScale / 100, 2);
+      return result(`한 변의 길이가 ${sideText}cm인 정사각형 종이 ${count}장을 가로와 세로 방향으로 각각 ${offsetText}cm씩 일정하게 옮겨 겹쳐 놓았습니다. 정확히 ${target}장만 겹쳐지는 부분의 넓이를 모두 더한 값을 구하세요.${svg}${evidence}`, answerText, `한 변을 ${offsetText}cm씩 나누면 가로와 세로가 각각 ${sideUnits}칸입니다. 처음과 마지막에는 정확히 ${target}장이 겹치는 작은 정사각형이 1개씩 있고, 그 사이 ${count - 2}곳에는 2개씩 있으므로 모두 1+2×${count - 2}+1=${exactCellCount}개입니다. 작은 정사각형 한 개의 넓이는 ${offsetText}×${offsetText}=${cellAreaText}cm²이므로 전체 넓이는 ${exactCellCount}×${cellAreaText}=${answerText}cm²입니다.`);
     },
     decimalMultiply({ rng, level }) {
       const a = int(rng, 12, 79) / 10;
