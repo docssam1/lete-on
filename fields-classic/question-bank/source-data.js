@@ -2409,7 +2409,8 @@ const BOOK06_UNIT04_REFS = Object.freeze({
 });
 
 // 7권은 교사용 지도서의 정답 표기와 수업용 교재의 인쇄 문제 번호를 함께 대조했다.
-// 설명 예시와 리뷰는 제외하고 활동·확인·연습·도전 180문항만 한 유형에 한 번씩 배정한다.
+// 설명 예시를 제외하고 현재 권의 활동·확인·연습·도전 180문항만 한 유형에 한 번씩 배정한다.
+// 책 뒤 리뷰는 이 집계와 분리해 6권 유형의 재출제 근거로 연결한다.
 const BOOK07_UNIT01_REFS = Object.freeze({
   "calendar-month-shift-weekday-b7": stageReferences({
     concept: [problemNumbers("activity", 1, [1, 2])],
@@ -3156,6 +3157,70 @@ const BOOK10_UNIT04_REFS = Object.freeze({
   "positive-range-number-digit-count-b10": stageReferences({ practice: [problemNumbers("practice", 1, [9])] })
 });
 
+const reviewQuestionLinks = (rows) => Object.freeze(rows.flatMap(([group, numbers, typeId]) =>
+  numbers.map((number) => Object.freeze({ group, number, typeId }))
+));
+
+export const CURRICULUM_REVIEW_CROSSWALK = Object.freeze({
+  "book-02": Object.freeze({
+    sourceBookId: "book-01",
+    verified: true,
+    links: reviewQuestionLinks([
+      [1, [1], "shape-mirror-direction"],
+      [1, [2, 3], "shape-quarter-half-turn"],
+      [1, [4, 10], "symbol-balanced-congruent-partition"],
+      [1, [5], "digital-digit-transform"],
+      [1, [6, 7], "digital-two-digit-transform"],
+      [1, [8], "digital-transform-board-sum"],
+      [1, [9], "rotational-partition-two"],
+      [2, [1, 4, 5], "fold-cut-shape-choice"],
+      [2, [2, 3, 6], "fold-number-cut-sum-textbook"],
+      [2, [7], "fold-punch-shape-count"],
+      [2, [8], "fold-hole-count"],
+      [2, [9], "fold-cut-piece-count"],
+      [3, [1], "circular-magic-line-sum"],
+      [3, [2, 3], "cross-shape-magic-sum"],
+      [3, [4], "equal-line-sum-eight-cards"],
+      [3, [5], "triangle-edge-sum-six"],
+      [3, [6, 7], "gakuro-grid-sum"],
+      [3, [8], "circle-line-ring-equal-sum"],
+      [4, [1, 2], "two-digit-condition"],
+      [4, [3, 4], "place-value-condition-three"],
+      [4, [5, 9], "person-item-logic"],
+      [4, [6, 7], "relative-order-logic"],
+      [4, [8], "place-value-condition-four"]
+    ])
+  }),
+  "book-03": Object.freeze({
+    sourceBookId: "book-02",
+    verified: true,
+    links: reviewQuestionLinks([
+      [1, [1], "equal-partition-four"],
+      [1, [2], "equal-partition-three"],
+      [1, [3, 4, 5, 10], "shape-sum-table"],
+      [1, [6], "equalize-transfer"],
+      [1, [7, 8, 9], "total-difference"],
+      [2, [1], "balance-order-chain"],
+      [2, [2, 3, 4], "balance-given-unit-weight"],
+      [2, [5, 6, 7, 8, 9, 10], "distinct-shape-value-equation"],
+      [3, [1], "interleaved-number-sequence"],
+      [3, [2, 3], "repeating-symbol-sequence"],
+      [3, [4], "square-border-stone-growth"],
+      [3, [5], "matchstick-shared-polygon-growth"],
+      [3, [6], "staircase-tile-growth"],
+      [3, [7], "repeated-fold-cut-count"],
+      [3, [8], "triangular-stone-growth"],
+      [4, [1, 8], "four-number-center-rule"],
+      [4, [2, 4], "number-grid-row-rule"],
+      [4, [3], "two-digit-compose-rule"],
+      [4, [5], "sudoku-three-row-column"],
+      [4, [6], "sudoku-three-region"],
+      [4, [7], "sudoku-four-square-region"],
+      [4, [9], "sudoku-four-irregular-region"]
+    ])
+  })
+});
+
 export const CURRICULUM = [
   { id: "book-01", label: "1권", title: "도형 움직이기와 마방진", units: [
     detailedStagedUnit("도형 움직이기", [
@@ -3409,16 +3474,24 @@ export const CURRICULUM = [
       "last-number-from-digit-total", "digit-occurrence-range-b10", "positive-range-number-digit-count-b10"
     ], [4,6], [4,4], 5, 20, BOOK10_UNIT04_REFS)
   ] }
-].map((book, index) => ({
-  ...book,
-  source: {
-    textbook: `더클래식 1과정 ${index + 1}권 수업용 교재`,
-    unitTest: CURRICULUM_TEST_FILES[book.id],
-    unitTestQuestionCount: 25,
-    unitTestPageCount: CURRICULUM_TEST_PAGE_COUNTS[book.id],
-    goldenBellIncluded: false,
-    reviewIncluded: index === 0
-  }
-}));
+].map((book, index) => {
+  const review = CURRICULUM_REVIEW_CROSSWALK[book.id];
+  return {
+    ...book,
+    source: {
+      textbook: `더클래식 1과정 ${index + 1}권 수업용 교재`,
+      unitTest: CURRICULUM_TEST_FILES[book.id],
+      unitTestQuestionCount: 25,
+      unitTestPageCount: CURRICULUM_TEST_PAGE_COUNTS[book.id],
+      goldenBellIncluded: false,
+      reviewIncluded: index > 0,
+      reviewSourceBookId: index > 0 ? `book-${String(index).padStart(2, "0")}` : null,
+      reviewSourceBookLabel: index > 0 ? `${index}권` : null,
+      reviewRole: index > 0 ? "previous-book-review" : null,
+      reviewQuestionCount: review?.links.length || 0,
+      reviewVerified: Boolean(review?.verified)
+    }
+  };
+});
 
 export const typeById = (id) => byId[id];
