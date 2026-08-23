@@ -41,4 +41,6 @@ Mission이 아닌 특수 편집 페이지는 `manual_items` 결정으로만 복�
 
 미해결 페이지 검수는 `render-private-layout-review.py --queue unresolved`로 별도 큐를 만든다. 반영 뒤 좌표 재검수는 `--queue reviewed --reason verified_mission_variable_cell`을 사용한다. `--reason layout-anchor-not-found` 또는 `--reason partial-layout-coverage`, `--source-id`, `--page source-memory-id:쪽`, `--offset`, `--limit`으로 범위를 제한한다. 미해결 큐는 `--limit`을 생략해도 최대 40쪽만 렌더하며, 현재 활성 색인 문항 상자만 원본 위에 표시하고 격리된 `rejectedCandidates` 상자는 다시 겹쳐 그리지 않는다. 생성된 접촉시트와 `review-manifest.json`은 비공개 검수 산출물이므로 `tmp/` 등 Git 비추적 위치에만 둔다.
 
+미해결 큐가 비었다고 모든 활성 후보의 사람 검수가 끝난 것은 아니다. `layoutPages`에 남은 `candidate_full`·`partial` 페이지는 `--queue layout --reason candidate_full`처럼 별도 렌더해 자동 경계를 원문과 대조한다. `layout` 큐도 `--limit`을 생략하면 한 번에 최대 40쪽만 렌더한다. 검수 완료 수는 `unresolvedPages`가 아니라 활성 항목의 `discoveryStatus: visual_verified` 개수로 따로 집계하며, `ocr_candidate`와 `layout_candidate`는 계속 잠근다.
+
 OCR 결과는 발견 보조 자료일 뿐 정답·유형·문항 경계의 최종 근거로 사용하지 않는다. 모든 신규 문항은 `releaseStatus: locked`로 시작하고 사용자 회차 검수 전에는 공개 시험에 배정하지 않는다.

@@ -21,6 +21,20 @@ class ReviewQueueTests(unittest.TestCase):
             "excludedPageCandidates": [
                 {"privateSourceMemoryId": "source-a", "page": 9, "reason": "non-question-layout"}
             ],
+            "layoutPages": [
+                {
+                    "privateSourceMemoryId": "source-b",
+                    "page": 14,
+                    "coverageStatus": "partial",
+                    "reviewStatus": "pending",
+                },
+                {
+                    "privateSourceMemoryId": "source-a",
+                    "page": 12,
+                    "coverageStatus": "candidate_full",
+                    "reviewStatus": "pending",
+                },
+            ],
             "visualReviewPages": [
                 {
                     "privateSourceMemoryId": "source-a",
@@ -79,6 +93,17 @@ class ReviewQueueTests(unittest.TestCase):
         )
         self.assertEqual(total, 1)
         self.assertEqual(MODULE.entry_reason(queue[0]), "verified_mission_variable_cell")
+
+    def test_layout_queue_uses_coverage_status_and_supports_bounded_filtering(self):
+        queue, total = MODULE.select_queue(
+            self.index,
+            "layout",
+            reasons=["candidate_full"],
+            limit=1,
+        )
+        self.assertEqual(total, 1)
+        self.assertEqual(queue[0]["page"], 12)
+        self.assertEqual(MODULE.entry_reason(queue[0]), "candidate_full")
 
     def test_page_items_omits_quarantined_rejected_candidates(self):
         index = {

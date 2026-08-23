@@ -22,13 +22,19 @@ def load_json(path: Path) -> dict:
 
 QUEUE_FIELDS = {
     "excluded": "excludedPageCandidates",
+    "layout": "layoutPages",
     "reviewed": "visualReviewPages",
     "unresolved": "unresolvedPages",
 }
 
 
 def entry_reason(entry: dict) -> str:
-    return str(entry.get("reason") or entry.get("resolution") or "unknown")
+    return str(
+        entry.get("reason")
+        or entry.get("resolution")
+        or entry.get("coverageStatus")
+        or "unknown"
+    )
 
 
 def fit_thumbnail(page: pymupdf.Page, width: int) -> Image.Image:
@@ -196,7 +202,7 @@ def main() -> None:
         for book in discovery.get("books", [])
     }
     limit = args.limit
-    if args.queue == "unresolved" and limit is None:
+    if args.queue in {"layout", "unresolved"} and limit is None:
         limit = 40
     queue, filtered_total = select_queue(
         index,
