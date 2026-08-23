@@ -19,29 +19,38 @@ NM_TGEN['ml1_double'] = function(params, rng) {
   if (doX2) {
     const n      = R(rng, 1, Math.floor(max / 2));
     const answer = 2 * n;
+    /* 표기 순서를 섞어 같은 (n,answer)라도 다른 식으로 보이게 */
+    const tex = pick(rng, [
+      `${n} \\times 2 = \\square`,
+      `2 \\times ${n} = \\square`
+    ]);
     return {
       prompt: {
         ko: `${n}의 두 배는?`,
         en: `What is double ${n}?`,
         zh: `${n}的两倍是多少？`
       },
-      tex: `${n} \\times 2 = \\square`,
+      tex,
       answer,
       answerType: 'number',
       widget: 'array',
       array: { n: answer, rows: 2 }
     };
   } else {
-    /* d2: 짝수 n = R(rng,1,max/4)*2 → n/2 가 정수 보장 */
-    const n      = R(rng, 1, Math.floor(max / 4)) * 2;
+    /* d2: 짝수 n = R(rng,1,max/2)*2 → n/2 가 정수 보장, max를 최대로 활용 */
+    const n      = R(rng, 1, Math.floor(max / 2)) * 2;
     const answer = n / 2;
+    const tex = pick(rng, [
+      `${n} \\div 2 = \\square`,
+      `\\dfrac{${n}}{2} = \\square`
+    ]);
     return {
       prompt: {
         ko: `${n}을 반으로 나누면?`,
         en: `What is half of ${n}?`,
         zh: `${n}除以2等于多少？`
       },
-      tex: `${n} \\div 2 = \\square`,
+      tex,
       answer,
       answerType: 'number',
       widget: 'array',
@@ -527,6 +536,18 @@ NM_TGEN['ml11_squares'] = function(params, rng) {
     const hi     = params.hi || 20;
     const n      = R(rng, lo, hi);
     const answer = n * n;
+    /* lo~hi 범위 자체는 레벨 설계값(threads.js)이라 그대로 두고,
+       같은 n이라도 다른 식으로 보이도록 표기를 섞어 문항 다양성을 늘린다 */
+    const tex = pick(rng, [
+      `${n}^2 = \\square`,
+      `\\square = ${n}^2`,
+      `${n} \\times ${n} = \\square`,
+      `\\square = ${n} \\times ${n}`,
+      `(${n})^2 = \\square`,
+      `\\square = (${n})^2`,
+      `(${n}) \\times (${n}) = \\square`,
+      `\\square = (${n}) \\times (${n})`
+    ]);
 
     return {
       prompt: {
@@ -534,7 +555,7 @@ NM_TGEN['ml11_squares'] = function(params, rng) {
         en: `What is ${n} squared?`,
         zh: `${n}的平方是多少？`
       },
-      tex: `${n}^2 = \\square`,
+      tex,
       answer,
       answerType: 'steps',
       widget: 'array',
@@ -545,9 +566,10 @@ NM_TGEN['ml11_squares'] = function(params, rng) {
     };
   }
 
-  /* 거듭제곱: base^exp (2·3·5, exp=2~5) */
-  const base   = pick(rng, [2, 3, 5]);
-  const exp    = R(rng, 2, 5);
+  /* 거듭제곱: base^exp — base·exp 후보는 threads.js가 아닌 이 함수 내부 값이라
+     자유롭게 넓힐 수 있다 (2·3·5→더 다양한 밑, exp 2~5→2~6) */
+  const base   = pick(rng, [2, 3, 4, 5, 6, 7, 9, 10]);
+  const exp    = R(rng, 2, 6);
   const answer = Math.pow(base, exp) | 0;   /* 항상 정수 */
 
   /* 연속 곱셈 단계: base² → base³ → … → base^exp */
@@ -565,7 +587,10 @@ NM_TGEN['ml11_squares'] = function(params, rng) {
       en: `What is ${base} to the power of ${exp}?`,
       zh: `${base}的${exp}次方是多少？`
     },
-    tex: `${base}^{${exp}} = \\square`,
+    tex: pick(rng, [
+      `${base}^{${exp}} = \\square`,
+      `\\square = ${base}^{${exp}}`
+    ]),
     answer,
     answerType: 'steps',
     widget: 'steps',
@@ -580,25 +605,42 @@ NM_TGEN['ml_pair10'] = function(params, rng) {
   const lv     = params.level  || 'main';
 
   if (target === 10) {
-    const bMax = lv === 'practice' ? 5 : 9;
-    const b      = R(rng, 2, bMax);
-    const answer = 2 * b * 5;            /* = 10 × b */
+    /* 2×5=10 짝은 고정하되, 곱해지는 인수 개수(총 3~5개)와 값을 다양화하고
+       짝의 위치도 섞어 같은 값이라도 다른 식으로 보이게 한다 */
+    const bMax      = lv === 'practice' ? 12 : 12;
+    const extraCount= lv === 'practice' ? R(rng, 1, 2) : R(rng, 2, 3);
+    const extras = [];
+    for (let i = 0; i < extraCount; i++) {
+      let v;
+      do { v = R(rng, 2, bMax); } while (v === 2 || v === 5);
+      extras.push(v);
+    }
+    const factors = shuffle(rng, [2, 5, ...extras]);
+    const tex = factors.join(' \\times ') + ' = \\square';
+
+    const steps = [{ tex: '2 \\times 5 = \\square', blank: 10 }];
+    let running = 10;
+    extras.forEach(v => {
+      const prev = running;
+      running *= v;
+      steps.push({ tex: `${prev} \\times ${v} = \\square`, blank: running });
+    });
+    const answer = running;
+
     return {
-      prompt:{ ko:`2 × ${b} × 5를 쌍을 찾아 쉽게 계산해요`,
-               en:`Find the pair to easily compute 2 × ${b} × 5`,
-               zh:`找到乘积为10的对，轻松计算 2 × ${b} × 5` },
-      tex:`2 \\times ${b} \\times 5 = \\square`,
+      prompt:{ ko:`${factors.join(' × ')}를 쌍을 찾아 쉽게 계산해요`,
+               en:`Find the pair to easily compute ${factors.join(' × ')}`,
+               zh:`找到乘积为10的对，轻松计算 ${factors.join(' × ')}` },
+      tex,
       answer, answerType:'steps', widget:'steps',
-      steps:[
-        { tex:`2 \\times 5 = \\square`,     blank:10      },
-        { tex:`10 \\times ${b} = \\square`, blank:answer  }
-      ]
+      steps
     };
   }
 
   if (mode === 'decomp') {
     /* 분해곱셈법: n × 25 → (k×4) × 25 = k×100  (4의 배수 n=4k) */
-    const k      = R(rng, 2, 12);
+    const kMax   = lv === 'practice' ? 12 : 40;
+    const k      = R(rng, 2, kMax);
     const n      = k * 4;
     const answer = n * 25;
     return {
@@ -615,41 +657,66 @@ NM_TGEN['ml_pair10'] = function(params, rng) {
     };
   }
 
-  /* target===100: 4×25=100 쌍 포함 세 수 곱 */
-  const bMax2 = lv === 'practice' ? 5 : 9;
-  const b      = R(rng, 2, bMax2);
-  const answer = 4 * b * 25;             /* = 100 × b */
+  /* target===100: 4×25=100 짝은 고정, 인수 개수(3~5개)와 값을 다양화 */
+  const bMax2      = lv === 'practice' ? 9 : 12;
+  const extraCount2= lv === 'practice' ? 1 : R(rng, 2, 3);
+  const extras2 = [];
+  for (let i = 0; i < extraCount2; i++) {
+    let v;
+    do { v = R(rng, 2, bMax2); } while (v === 4 || v === 25);
+    extras2.push(v);
+  }
+  const factors2 = shuffle(rng, [4, 25, ...extras2]);
+  const tex2 = factors2.join(' \\times ') + ' = \\square';
+
+  const steps2 = [{ tex: '4 \\times 25 = \\square', blank: 100 }];
+  let running2 = 100;
+  extras2.forEach(v => {
+    const prev = running2;
+    running2 *= v;
+    steps2.push({ tex: `${prev} \\times ${v} = \\square`, blank: running2 });
+  });
+  const answer2 = running2;
+
   return {
-    prompt:{ ko:`4 × ${b} × 25를 쌍을 찾아 계산해요`,
-             en:`Find the pair to compute 4 × ${b} × 25`,
-             zh:`找到乘积为100的对，计算 4 × ${b} × 25` },
-    tex:`4 \\times ${b} \\times 25 = \\square`,
-    answer, answerType:'steps', widget:'steps',
-    steps:[
-      { tex:`4 \\times 25 = \\square`,      blank:100    },
-      { tex:`100 \\times ${b} = \\square`,  blank:answer }
-    ]
+    prompt:{ ko:`${factors2.join(' × ')}를 쌍을 찾아 계산해요`,
+             en:`Find the pair to compute ${factors2.join(' × ')}`,
+             zh:`找到乘积为100的对，计算 ${factors2.join(' × ')}` },
+    tex: tex2,
+    answer: answer2, answerType:'steps', widget:'steps',
+    steps: steps2
   };
 };
 
 /* ── ML_GAUSS — 가우스 덧셈 (등차수열 합) ────────────────────── */
 NM_TGEN['ml_gauss'] = function(params, rng) {
   const lv = params.level || 'main';
-  const nMax = lv === 'practice' ? 5 : 10;
-  const n      = R(rng, 3, nMax) * 2;
-  const total  = n * (n + 1) / 2;
-  const pairs  = n / 2;
-  const pairSum= n + 1;
+  /* 시작수·공차·항수를 모두 다양화 (1부터 시작하는 짝수 n개 고정 탈피).
+     항수는 짝의 개수 계산(가우스 페어링)을 그대로 쓸 수 있도록 항상 짝수로 뽑는다. */
+  const diffs      = lv === 'practice' ? [1, 2] : [1, 2, 3];
+  const d          = pick(rng, diffs);
+  const termsList  = lv === 'practice' ? [4, 6, 8, 10] : [4, 6, 8, 10, 12, 14, 16, 18, 20];
+  const terms      = pick(rng, termsList);
+  const a1Max      = lv === 'practice' ? 10 : 50;
+  const a1         = R(rng, 1, a1Max);
+  const last       = a1 + (terms - 1) * d;
+  const pairSum    = a1 + last;
+  const pairs      = terms / 2;
+  const total      = pairSum * pairs;
+
+  const seqTex = d === 1
+    ? `${a1} + ${a1 + 1} + \\cdots + ${last}`
+    : `${a1} + ${a1 + d} + ${a1 + 2 * d} + \\cdots + ${last}`;
 
   return {
-    prompt:{ ko:`1부터 ${n}까지 더하면 얼마일까요?`,
-             en:`What is the sum from 1 to ${n}?`,
-             zh:`1加到${n}等于多少？` },
-    tex:`1 + 2 + \\cdots + ${n} = \\square`,
+    prompt:{ ko:`${a1}부터 ${last}까지 ${d === 1 ? '' : `${d}씩 `}더하면 얼마일까요?`,
+             en:`What is ${a1} + ${a1 + d} + \\dots + ${last}?`,
+             zh:`从${a1}加到${last}${d === 1 ? '' : `（每次加${d}）`}等于多少？` },
+    tex:`${seqTex} = \\square`,
     answer:total, answerType:'steps', widget:'steps',
     steps:[
-      { tex:`1 + ${n} = \\square`,               blank:pairSum },
-      { tex:`\\text{쌍의 수} = ${n} \\div 2 = \\square`, blank:pairs },
+      { tex:`${a1} + ${last} = \\square`,               blank:pairSum },
+      { tex:`\\text{쌍의 수} = ${terms} \\div 2 = \\square`, blank:pairs },
       { tex:`${pairSum} \\times ${pairs} = \\square`, blank:total  }
     ]
   };
@@ -658,14 +725,19 @@ NM_TGEN['ml_gauss'] = function(params, rng) {
 /* ── ML_X9 — ×9 전략 (n×9=n×10−n) ──────────────────────────── */
 NM_TGEN['ml_x9'] = function(params, rng) {
   const lv = params.level || 'main';
-  const n      = lv === 'practice' ? R(rng, 2, 12) : R(rng, 2, 99);
+  /* 교재 사례(4291×9, 8466×9)처럼 main은 네 자리까지, practice는 두 자리까지 */
+  const n      = lv === 'practice' ? R(rng, 2, 60) : R(rng, 2, 9999);
   const answer = n * 9;
+  const tex = pick(rng, [
+    `${n} \\times 9 = \\square`,
+    `9 \\times ${n} = \\square`
+  ]);
 
   return {
     prompt:{ ko:`${n} × 9를 ×10 빼기 전략으로 계산해요`,
              en:`Compute ${n} × 9 using the ×10 minus strategy`,
              zh:`用×10减的策略计算 ${n} × 9` },
-    tex:`${n} \\times 9 = \\square`,
+    tex,
     answer, answerType:'steps', widget:'steps',
     steps:[
       { tex:`${n} \\times 10 = \\square`,        blank:n*10   },
@@ -676,12 +748,14 @@ NM_TGEN['ml_x9'] = function(params, rng) {
 
 /* ── ML_OVERMUL — 더 곱해주고 빼기 (올림빼기) ───────────────── */
 NM_TGEN['ml_overmul'] = function(params, rng) {
-  const lv      = params.level || 'main';
-  const rounds  = lv === 'practice' ? [10] : [10, 100];
+  const lv = params.level || 'main';
+  /* practice: 10에 가까운 수만. main: 10~100 사이 몇십에 가까운 수까지 확대
+     (교재 사례 956×28, 873×37은 30·40에 가까운 두 자리 수를 곱하는 형태) */
+  const rounds  = lv === 'practice' ? [10] : [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
   const round   = pick(rng, rounds);
   const k       = R(rng, 1, 3);
   const near    = round - k;
-  const aMax    = lv === 'practice' ? 9 : (round === 10 ? 19 : 9);
+  const aMax    = lv === 'practice' ? 29 : 999;
   const a       = R(rng, 2, aMax);
   const answer  = a * near;
 
@@ -801,14 +875,19 @@ NM_TGEN['ml_x5'] = function(params, rng) {
   const lv   = params.level || 'main';
 
   if (mode === 'mul') {
-    const nMax = lv === 'practice' ? 19 : 49;
+    /* 교재 사례(2734×5)처럼 main은 세·네 자리까지 확대, practice는 두 자리 */
+    const nMax = lv === 'practice' ? 99 : 4999;
     const n      = R(rng, 1, nMax) * 2;
     const answer = n * 5;
+    const tex = pick(rng, [
+      `${n} \\times 5 = \\square`,
+      `5 \\times ${n} = \\square`
+    ]);
     return {
       prompt:{ ko:`${n} × 5를 ×10÷2 전략으로 계산해요`,
                en:`Compute ${n} × 5 using ×10÷2`,
                zh:`用×10÷2策略计算 ${n} × 5` },
-      tex:`${n} \\times 5 = \\square`,
+      tex,
       answer, answerType:'steps', widget:'steps',
       steps:[
         { tex:`${n} \\times 10 = \\square`,   blank:n*10   },
@@ -818,7 +897,7 @@ NM_TGEN['ml_x5'] = function(params, rng) {
   }
 
   /* div: n ÷ 5 = n × 2 ÷ 10 */
-  const qMax = lv === 'practice' ? 9 : 19;
+  const qMax = lv === 'practice' ? 49 : 2499;
   const q      = R(rng, 1, qMax);
   const n      = q * 5;
   const answer = q;
@@ -841,15 +920,20 @@ NM_TGEN['ml_x25'] = function(params, rng) {
   const lv   = params.level || 'main';
 
   if (mode === 'mul') {
-    const kMax = lv === 'practice' ? 8 : 20;
+    /* 교재 사례(7345×25)처럼 main은 세·네 자리까지 확대, practice는 두 자리 */
+    const kMax = lv === 'practice' ? 40 : 999;
     const k      = R(rng, 1, kMax);
     const n      = k * 4;
     const answer = n * 25;
+    const tex = pick(rng, [
+      `${n} \\times 25 = \\square`,
+      `25 \\times ${n} = \\square`
+    ]);
     return {
       prompt:{ ko:`${n} × 25를 ×100÷4 전략으로 계산해요`,
                en:`Compute ${n} × 25 using ×100÷4`,
                zh:`用×100÷4策略计算 ${n} × 25` },
-      tex:`${n} \\times 25 = \\square`,
+      tex,
       answer, answerType:'steps', widget:'steps',
       steps:[
         { tex:`${n} \\times 100 = \\square`,  blank:n*100  },
@@ -859,7 +943,7 @@ NM_TGEN['ml_x25'] = function(params, rng) {
   }
 
   /* div: n ÷ 25 = n × 4 ÷ 100 */
-  const qMax25 = lv === 'practice' ? 8 : 20;
+  const qMax25 = lv === 'practice' ? 24 : 999;
   const q      = R(rng, 1, qMax25);
   const n      = q * 25;
   const answer = q;
@@ -905,16 +989,14 @@ NM_TGEN['ml_div_decomp'] = function(params, rng) {
 /* ── ML_DIV_SIMPLIFY — 약분 나눗셈 ─────────────────────────── */
 NM_TGEN['ml_div_simplify'] = function(params, rng) {
   const lv = params.level || 'main';
-  const PAIRS_EASY = [[48,6],[54,6],[60,6],[56,8],[48,8],[54,9]];
-  const PAIRS_ALL  = [
-    [84,12],[96,12],[72,12],[60,12],
-    [63, 9],[81, 9],[54, 9],
-    [64, 8],[56, 8],[48, 8],
-    [70, 7],[84, 7],[56, 7],
-    [60, 6],[72, 6],[54, 6]
-  ];
-  const PAIRS = lv === 'practice' ? PAIRS_EASY : PAIRS_ALL;
-  const [a, b] = pick(rng, PAIRS);
+  /* 고정 (a,b) 목록 대신 나누는 수 b와 몫 q를 직접 뽑아 a=b×q를 만든다.
+     gcd(b×q, b) = b 이므로 항상 약분→정수 나눗셈으로 이어진다.
+     교재 사례(5427÷9, 3668÷28)처럼 main은 두 자리 나누는 수·큰 몫까지 확대 */
+  const bRange = lv === 'practice' ? [4, 12] : [4, 60];
+  const qRange = lv === 'practice' ? [3, 20] : [10, 400];
+  const b      = R(rng, bRange[0], bRange[1]);
+  const q      = R(rng, qRange[0], qRange[1]);
+  const a      = b * q;
   const gcd    = (x, y) => y === 0 ? x : gcd(y, x % y);
   const g      = gcd(a, b);
   const sa     = a / g;
@@ -938,38 +1020,46 @@ NM_TGEN['ml_div_simplify'] = function(params, rng) {
 /* ── ML_DIV_EXPAND — 부풀려 나눗셈 (양쪽 같은 배수) ─────────── */
 NM_TGEN['ml_div_expand'] = function(params, rng) {
   const lv   = params.level || 'main';
-  const mode = lv === 'practice' ? 'x2' : pick(rng, ['x2','x4']);
+  const mode = lv === 'practice' ? 'x2' : pick(rng, ['x2', 'x4']);
   if (mode === 'x2') {
-    const q      = R(rng, 1, 19);
-    const b      = 5;
+    /* 5로 끝나는 나누는 수는 모두 ×2 하면 끝자리가 0이 된다.
+       교재 사례(8085÷55)처럼 나누는 수를 5·15·…·95까지 확대 */
+    const dTensMax = lv === 'practice' ? 4 : 9;
+    const dTens  = R(rng, 0, dTensMax);
+    const b      = dTens * 10 + 5;               /* 5,15,...,95 */
+    const qMax   = lv === 'practice' ? 39 : 199;
+    const q      = R(rng, 1, qMax);
     const a      = q * b;
     const answer = q;
+    const b2     = b * 2;
     return {
-      prompt:{ ko:`${a} ÷ 5를 부풀려서 계산해요`,
-               en:`Expand to compute ${a} ÷ 5`,
-               zh:`扩大计算 ${a} ÷ 5` },
-      tex:`${a} \\div 5 = \\square`,
+      prompt:{ ko:`${a} ÷ ${b}를 부풀려서 계산해요`,
+               en:`Expand to compute ${a} ÷ ${b}`,
+               zh:`扩大计算 ${a} ÷ ${b}` },
+      tex:`${a} \\div ${b} = \\square`,
       answer, answerType:'steps', widget:'steps',
       steps:[
-        { tex:`${a} \\times 2 = \\square`, blank:a*2  },
-        { tex:`${a*2} \\div 10 = \\square`, blank:answer }
+        { tex:`${a} \\times 2 = \\square`,     blank:a*2  },
+        { tex:`${a*2} \\div ${b2} = \\square`, blank:answer }
       ]
     };
   }
-  /* x4: n÷25 → 4n÷100 */
-  const q      = R(rng, 1, 12);
-  const b      = 25;
-  const a      = q * b;
+  /* x4: 25 또는 75로 나누기 → ×4 하면 100 또는 300 (교재 사례 3150÷75) */
+  const base   = pick(rng, [25, 75]);
+  const qMax   = lv === 'practice' ? 12 : 99;
+  const q      = R(rng, 1, qMax);
+  const a      = q * base;
   const answer = q;
+  const b4     = base * 4;
   return {
-    prompt:{ ko:`${a} ÷ 25를 부풀려서 계산해요`,
-             en:`Expand to compute ${a} ÷ 25`,
-             zh:`扩大计算 ${a} ÷ 25` },
-    tex:`${a} \\div 25 = \\square`,
+    prompt:{ ko:`${a} ÷ ${base}를 부풀려서 계산해요`,
+             en:`Expand to compute ${a} ÷ ${base}`,
+             zh:`扩大计算 ${a} ÷ ${base}` },
+    tex:`${a} \\div ${base} = \\square`,
     answer, answerType:'steps', widget:'steps',
     steps:[
-      { tex:`${a} \\times 4 = \\square`,    blank:a*4    },
-      { tex:`${a*4} \\div 100 = \\square`, blank:answer  }
+      { tex:`${a} \\times 4 = \\square`,     blank:a*4    },
+      { tex:`${a*4} \\div ${b4} = \\square`, blank:answer  }
     ]
   };
 };
@@ -978,7 +1068,10 @@ NM_TGEN['ml_div_expand'] = function(params, rng) {
 NM_TGEN['ml_frac_same'] = function(params, rng) {
   const op  = params.op || 'add';
   const lv  = params.level || 'main';
-  const DENS = lv === 'practice' ? [3,4,5,6] : [3,4,5,6,7,8,9,10];
+  /* 분모 후보를 넓혀 (분모,분자1,분자2) 조합 수를 크게 늘린다 */
+  const DENS = lv === 'practice'
+    ? [3,4,5,6,7,8,9,10,11,12]
+    : [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
   const den = pick(rng, DENS);
   let num1, num2;
 
@@ -1012,13 +1105,25 @@ NM_TGEN['ml_frac_same'] = function(params, rng) {
   };
 };
 
+/* 서로소인 (d1,d2) 쌍을 maxD 이하 범위에서 모두 나열 (분모 후보 확대용) */
+function _fracDiffGcd(a, b) { while (b) { const t = b; b = a % b; a = t; } return a; }
+function _coprimePairs(maxD) {
+  const list = [];
+  for (let a = 2; a <= maxD; a++) {
+    for (let b = a + 1; b <= maxD; b++) {
+      if (_fracDiffGcd(a, b) === 1) list.push([a, b]);
+    }
+  }
+  return list;
+}
+const _COPRIME_PRACTICE = _coprimePairs(9);
+const _COPRIME_MAIN     = _coprimePairs(14);
+
 /* ── ML_FRAC_DIFF — 분수 덧뺄셈 (이분모/통분) ──────────────── */
 NM_TGEN['ml_frac_diff'] = function(params, rng) {
   const op = params.op || 'add';
   const lv = params.level || 'main';
-  const COPRIME_PAIRS = lv === 'practice'
-    ? [[2,3],[2,5],[3,4]]
-    : [[2,3],[2,5],[3,4],[3,5],[4,5],[2,7],[3,7]];
+  const COPRIME_PAIRS = lv === 'practice' ? _COPRIME_PRACTICE : _COPRIME_MAIN;
   const [d1, d2] = pick(rng, COPRIME_PAIRS);
   const lcd = d1 * d2;
   const n1  = R(rng, 1, d1 - 1);
@@ -1107,7 +1212,13 @@ NM_TGEN['ml_veda'] = function(params, rng) {
 /* ── ML_DIFF2SQ — 차가 2인 두 수의 곱 (n²−1) ────────────────── */
 NM_TGEN['ml_diff2sq'] = function(params, rng) {
   const lv = params.level || 'main';
-  const n      = lv === 'practice' ? R(rng, 5, 10) : R(rng, 5, 20);
+  /* 교재 사례(97×99, 249×251)처럼 main은 두 자리~세 자리 일부까지 확대 */
+  let n;
+  if (lv === 'practice') {
+    n = R(rng, 5, 60);
+  } else {
+    n = pick(rng, ['2d', '2d', '3d']) === '2d' ? R(rng, 20, 99) : R(rng, 100, 250);
+  }
   const a      = n - 1;
   const b      = n + 1;
   const sq     = n * n;
