@@ -3,27 +3,41 @@
   const auth = window.GFieldHFPortalAuth;
   const portal = window.GFIELD_HF_PORTAL;
   const data = window.GFIELD_HF_VIP_DATA || { items: [] };
-  const session = auth.current();
   const sections = portal.vipSections;
   const $ = selector => document.querySelector(selector);
+  let session = null;
+  let contentItems = Array.isArray(data.items) ? data.items.slice() : [];
   let active = sections[0].key;
 
   function esc(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[char]);
   }
   function publishedItems() {
-    return data.items.filter(item => item && ["reviewed", "published"].includes(item.status));
+    return contentItems.filter(item => item && item.status === "published");
+  }
+
+  async function loadRemoteContent() {
+    if (!auth.isSupabaseEnabled()) return;
+    const client = await auth.client();
+    const { data: rows, error } = await client
+      .from("hf_vip_contents")
+      .select("id,kind,title,summary,content_date,tags,body_html,status,published_at")
+      .order("content_date", { ascending: false, nullsFirst: false });
+    if (error) throw error;
+    contentItems = (rows || []).map(row => ({
+      id: row.id,
+      kind: row.kind,
+      title: row.title,
+      summary: row.summary,
+      date: row.content_date || String(row.published_at || "").slice(0, 10),
+      tags: row.tags || [],
+      bodyHtml: row.body_html,
+      status: row.status,
+      relatedIds: []
+    }));
   }
   function safeBody(html) {
-    const template = document.createElement("template");
-    template.innerHTML = String(html || "");
-    template.content.querySelectorAll("script,style,iframe,object,embed,link,meta,form,input,button,textarea").forEach(node => node.remove());
-    template.content.querySelectorAll("*").forEach(node => Array.from(node.attributes).forEach(attribute => {
-      const name = attribute.name.toLowerCase();
-      const value = attribute.value.trim().toLowerCase();
-      if (name.startsWith("on") || name === "style" || (["href", "src"].includes(name) && (value.startsWith("javascript:") || value.startsWith("data:text/html")))) node.removeAttribute(attribute.name);
-    }));
-    return template.innerHTML;
+    return String(html || "").split(/\n{2,}/).map(paragraph => `<p>${esc(paragraph).replace(/\n/g, "<br>")}</p>`).join("");
   }
   function relatedFor(item) {
     const explicit = new Set(Array.isArray(item.relatedIds) ? item.relatedIds : []);
@@ -62,15 +76,24 @@
     setTimeout(() => { $("#detail").hidden = true; }, 160);
   }
 
-  if (!session || !auth.canAccess(session, "vip")) {
-    $("#blocked").hidden = false;
-    return;
+  async function init() {
+    session = await auth.ready();
+    if (!session || !auth.canAccess(session, "vip")) {
+      $("#blocked").hidden = false;
+      return;
+    }
+    await loadRemoteContent();
+    $("#app").hidden = false;
+    $("#memberName").textContent = session.name;
+    $("#categoryNav").innerHTML = sections.map((section, index) => `<button type="button" data-kind="${esc(section.key)}"><span>0${index + 1}</span><b>${esc(section.label)}</b><small>${esc(section.description)}</small></button>`).join("");
+    $("#categoryNav").addEventListener("click", event => { const button = event.target.closest("[data-kind]"); if (button) { active = button.dataset.kind; render(); } });
+    $("#contentGrid").addEventListener("click", event => { const button = event.target.closest("[data-id]"); if (button) openDetail(button.dataset.id); });
+    $("#detail").addEventListener("click", event => { const close = event.target.closest("[data-close]"); const card = event.target.closest("[data-id]"); if (close) closeDetail(); else if (card) openDetail(card.dataset.id); });
+    render();
   }
-  $("#app").hidden = false;
-  $("#memberName").textContent = session.name;
-  $("#categoryNav").innerHTML = sections.map((section, index) => `<button type="button" data-kind="${esc(section.key)}"><span>0${index + 1}</span><b>${esc(section.label)}</b><small>${esc(section.description)}</small></button>`).join("");
-  $("#categoryNav").addEventListener("click", event => { const button = event.target.closest("[data-kind]"); if (button) { active = button.dataset.kind; render(); } });
-  $("#contentGrid").addEventListener("click", event => { const button = event.target.closest("[data-id]"); if (button) openDetail(button.dataset.id); });
-  $("#detail").addEventListener("click", event => { const close = event.target.closest("[data-close]"); const card = event.target.closest("[data-id]"); if (close) closeDetail(); else if (card) openDetail(card.dataset.id); });
-  render();
+
+  init().catch(error => {
+    console.error("VIP Lounge initialization failed", error);
+    $("#blocked").hidden = false;
+  });
 })();

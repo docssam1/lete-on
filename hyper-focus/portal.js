@@ -5,7 +5,8 @@
   const auth = window.GFieldHFPortalAuth;
   const $ = selector => document.querySelector(selector);
   const $$ = selector => Array.from(document.querySelectorAll(selector));
-  let session = auth.current();
+  let session = null;
+  let mfaMode = false;
 
   function esc(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -114,10 +115,19 @@
 
   async function login(event) {
     event.preventDefault();
-    const name = $("#loginName").value.trim();
-    const code = $("#loginCode").value.trim();
     const error = $("#loginError");
     error.textContent = "";
+    if (mfaMode) {
+      const result = await auth.verifyMfa($("#loginMfa").value);
+      if (!result) {
+        error.textContent = "인증 앱의 최신 6자리 번호를 다시 확인해 주세요.";
+        return;
+      }
+      location.href = result.role === "admin" ? "./admin.html" : "./";
+      return;
+    }
+    const name = $("#loginName").value.trim();
+    const code = $("#loginCode").value.trim();
     if (!name || !code) {
       error.textContent = "학생 이름과 승인번호를 모두 입력해 주세요.";
       return;
@@ -125,6 +135,19 @@
     const result = await auth.signIn(name, code);
     if (!result) {
       error.textContent = "이름과 승인번호가 일치하지 않습니다.";
+      return;
+    }
+    if (result.role === "mfa_enrollment_required") {
+      location.href = "./admin-mfa.html";
+      return;
+    }
+    if (result.role === "mfa_required") {
+      mfaMode = true;
+      $("#loginMfaRow").hidden = false;
+      $("#loginName").disabled = true;
+      $("#loginCode").disabled = true;
+      $("#loginSubmit").textContent = "관리자 2단계 인증";
+      $("#loginMfa").focus();
       return;
     }
     if (result.role === "admin") {
@@ -137,21 +160,40 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  renderPublic();
-  hrefs();
-  setMode();
-  $("#loginForm").addEventListener("submit", login);
-  $$('[data-login-open]').forEach(button => button.addEventListener("click", () => showModal($("#loginModal"))));
-  $$('[data-modal-close]').forEach(button => button.addEventListener("click", () => closeModal($("#loginModal"))));
-  $$('[data-collection-close]').forEach(button => button.addEventListener("click", () => closeModal($("#collectionModal"))));
-  $("[data-logout]").addEventListener("click", () => { auth.signOut(); session = null; setMode(); });
-  document.addEventListener("click", event => {
-    const trigger = event.target.closest("[data-product]");
-    if (trigger) openProduct(trigger.dataset.product);
+  function bindEvents() {
+    $("#loginForm").addEventListener("submit", login);
+    $$('[data-login-open]').forEach(button => button.addEventListener("click", () => showModal($("#loginModal"))));
+    $$('[data-modal-close]').forEach(button => button.addEventListener("click", () => closeModal($("#loginModal"))));
+    $$('[data-collection-close]').forEach(button => button.addEventListener("click", () => closeModal($("#collectionModal"))));
+    $("[data-logout]").addEventListener("click", async () => {
+      await auth.signOut();
+      session = null;
+      setMode();
+    });
+    document.addEventListener("click", event => {
+      const trigger = event.target.closest("[data-product]");
+      if (trigger) openProduct(trigger.dataset.product);
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key !== "Escape") return;
+      $$(".modal.visible").forEach(closeModal);
+    });
+  }
+
+  async function init() {
+    renderPublic();
+    hrefs();
+    bindEvents();
+    session = await auth.ready();
+    setMode();
+    if (new URLSearchParams(location.search).get("login") === "1" && !session) showModal($("#loginModal"));
+  }
+
+  init().catch(error => {
+    console.error("Hyper Focus portal initialization failed", error);
+    renderPublic();
+    hrefs();
+    setMode();
+    if (new URLSearchParams(location.search).get("login") === "1") showModal($("#loginModal"));
   });
-  document.addEventListener("keydown", event => {
-    if (event.key !== "Escape") return;
-    $$(".modal.visible").forEach(closeModal);
-  });
-  if (new URLSearchParams(location.search).get("login") === "1" && !session) showModal($("#loginModal"));
 })();

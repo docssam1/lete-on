@@ -657,10 +657,14 @@ assert(portalProducts.map((product) => product.key).join(",") === "hyperfocus,mo
 assert(portalProducts.every((product) => product.permission && product.title && product.description), "포털 상품 권한·표시 정보 누락");
 const authSource = fs.readFileSync(path.join(root, "hyper-focus/portal-auth.js"), "utf8");
 assert(authSource.includes("gfield_hf_portal_session_v1") && authSource.includes("gfield_hf_name") && authSource.includes("gfield_hf_code"), "포털·진단 공유 세션 계약 누락");
-assert(!authSource.includes("01020837265"), "관리자 승인번호가 포털 인증 코드에 평문으로 노출됨");
+assert(!/01[016789]\d{7,8}/.test(authSource), "관리자 승인번호 또는 전화번호가 포털 인증 코드에 평문으로 노출됨");
 const adminSource = fs.readFileSync(path.join(root, "hyper-focus/admin.html"), "utf8");
-["'mock'", "'vip'", "'problem-bank'", "portal-auth.js", "sessionStorage.getItem('gfield_hf_gh_token')"].forEach((needle) => assert(adminSource.includes(needle), `관리자 상품 권한 계약 누락: ${needle}`));
-assert(!adminSource.includes("localStorage.getItem('gfield_hf_gh_token')"), "GitHub 토큰이 영구 localStorage에 남음");
+const adminAppSource = fs.readFileSync(path.join(root, "hyper-focus/admin-app.js"), "utf8");
+const adminContractSource = `${adminSource}\n${adminAppSource}`;
+["mock", "vip", "problem-bank"].forEach((permission) => assert(new RegExp(`[\"']${permission}[\"']`).test(adminContractSource), `관리자 상품 권한 계약 누락: ${permission}`));
+assert(adminContractSource.includes("portal-auth.js"), "관리자 상품 권한 계약 누락: portal-auth.js");
+assert(/sessionStorage\.getItem\(["']gfield_hf_gh_token["']\)/.test(adminContractSource), "관리자 GitHub 토큰 세션 저장 계약 누락");
+assert(!adminContractSource.includes("localStorage.getItem('gfield_hf_gh_token')"), "GitHub 토큰이 영구 localStorage에 남음");
 const viewerSource = fs.readFileSync(path.join(root, "hyper-focus/mock/viewer.html"), "utf8");
 assert(viewerSource.includes("GFieldHFPortalAuth") && viewerSource.includes("portalPaid") && viewerSource.includes("problem-bank"), "문제지 뷰어에 포털 유료 권한 전달 누락");
 const sharedConfig = fs.readFileSync(path.join(root, "config.js"), "utf8");

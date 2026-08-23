@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="./portal.css">
   <script src="./data.js"></script>
   <script src="./portal-data.js"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="./supabase-client.js"></script>
   <script src="./portal-auth.js"></script>
 </head>
 <body>
@@ -111,8 +113,9 @@
       <form id="loginForm">
         <label>학생 이름<input id="loginName" name="name" autocomplete="name" placeholder="학생 이름"></label>
         <label>승인번호<input id="loginCode" name="code" type="password" autocomplete="current-password" placeholder="GF로 시작하는 승인번호"></label>
+        <label id="loginMfaRow" hidden>관리자 인증 앱 6자리<input id="loginMfa" name="mfa" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000"></label>
         <p class="form-error" id="loginError" role="alert"></p>
-        <button class="button primary wide" type="submit">서재 입장하기</button>
+        <button class="button primary wide" id="loginSubmit" type="submit">서재 입장하기</button>
       </form>
       <a class="login-help" data-consult href="#">승인번호가 기억나지 않나요? 상담하기</a>
     </section>

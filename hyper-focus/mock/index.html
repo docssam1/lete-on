@@ -21,6 +21,10 @@
 <section class="gate" id="gate"><div class="gate-card"><div class="eyebrow">G-FIELD HYPER FOCUS</div><h1 id="gateTitle">Hyper Focus 진단</h1><p id="gateDescription">시험 결과에서 약점 유형을 찾고, 선택한 난이도로 맞춤 시험지를 자동 생성합니다.</p><div class="form"><input id="studentName" autocomplete="name" placeholder="학생 이름"><input id="accessCode" type="password" placeholder="추가 문제 승인번호 (선택)"><button type="button" id="enterBtn">진단 시작하기</button></div><div id="gateError" class="error"></div><div class="hint">유형마다 쉽게·같게·어렵게를 고를 수 있으며 난이도별 2문항까지 포함됩니다. 3번째 문제부터는 유료 추가 문제입니다.</div></div></section>
 <div class="app" id="app"><header class="top"><div class="top-inner"><div class="top-row"><div><div class="eyebrow">HYPER FOCUS DIAGNOSIS</div><h1 id="mockTitle">Hyper Focus 진단</h1></div><div class="student" id="studentDisplay"></div></div><nav class="nav"><a id="viewerLink" class="gold" target="_blank" rel="noopener">시험지 뷰어·인쇄</a><button type="button" id="newExamBtn">새 문제로 다시 보기</button><a href="../">Hyper Focus 전체 진단</a></nav></div></header><main class="shell"><section class="intro"><div><h2>문제지에서 채점한 결과를 표시하세요</h2><p id="mockDescription">시험 구성표에 등록된 순서로 문제를 불러옵니다.</p></div><div class="seed" id="seedDisplay"></div></section><div class="progress"><div class="track"><div class="fill" id="progressFill"></div></div><span class="prog-text" id="progressText">0</span></div><section class="list" id="questionList"></section><button type="button" class="submit" id="submitBtn">채점하고 진단 받기</button><section class="result" id="result"></section></main></div>
 <script src="../../config.js"></script>
+<script src="../data.js"></script>
+<script src="../supabase-config.js"></script>
+<script src="../supabase-client.js"></script>
+<script src="../portal-auth.js"></script>
 <script src="./access-policy.js"></script>
 <script src="../generator/q01.js"></script>
 <script src="../generator/stacking.js"></script>
@@ -30,40 +34,59 @@
 <script src="./variation-bank.js"></script>
 <script src="./mock-core.js"></script>
 <script>
-(function(){
+(async function(){
   const params=new URLSearchParams(location.search);
   const examId=params.get('exam')||HFMockBlueprints.reviewExamId;
   let student='';let accessTier='free';let exam=null;let marks={};let weakTypeIds=[];let practiceDifficultyByType={};
   const $=id=>document.getElementById(id);
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const portalSession=await window.GFieldHFPortalAuth?.ready();
+  const remoteMode=Boolean(window.GFieldHFPortalAuth?.isSupabaseEnabled());
+  const secureMock=window.GFieldHFSecureMock;
+  const secureMockEnabled=window.GFIELD_HF_SUPABASE_CONFIG?.features?.secureMockDelivery===true;
   function historyKey(){return `hf-mock-history:${exam.id}:${student}`;}
   function marksKey(){return `hf-mock-marks:${exam.id}:${student}:${exam.seed}`;}
+  function lockRemote(title,message,loginRequired){
+    $('gateTitle').textContent=title;
+    $('gateDescription').textContent=message;
+    document.querySelector('.gate .form').style.display='none';
+    document.querySelector('.gate .hint').style.display='none';
+    if(loginRequired){
+      const link=document.createElement('a');
+      link.href='../?login=1';link.textContent='승인번호로 로그인';
+      link.style.cssText='display:inline-flex;margin-top:16px;color:#102440;font-weight:900';
+      $('gateDescription').after(link);
+    }
+  }
   const requestedBlueprint=HFMockBlueprints.getExam(examId);
   if(requestedBlueprint){$('gateTitle').textContent=requestedBlueprint.title;$('gateDescription').textContent=requestedBlueprint.description;}
   async function enter(){
-    const name=$('studentName').value.trim();const code=$('accessCode').value.trim();
+    const name=remoteMode?String(portalSession?.name||'').trim():$('studentName').value.trim();const code=remoteMode?'':$('accessCode').value.trim();
     if(!name){$('gateError').textContent='학생 이름을 입력해 주세요.';return}
-    if(code){
+    if(remoteMode){
+      accessTier=window.GFieldHFPortalAuth.canAccess(portalSession,'hyperfocus-extra')||window.GFieldHFPortalAuth.canAccess(portalSession,'problem-bank')?'paid':'free';
+    }else if(code){
       $('gateError').textContent='승인번호를 확인하는 중입니다.';
       try{const verified=await HFAccessPolicy.verifyCode(code,window.GFIELD_CONFIG);if(!verified.valid){$('gateError').textContent='승인번호가 올바르지 않습니다. 비워 두면 난이도별 2문항 시험지를 이용할 수 있습니다.';return}accessTier=verified.paid?'paid':'free';HFAccessPolicy.saveVerifiedHash(verified.paid?verified.hash:'');}catch(error){$('gateError').textContent=String(error.message||error);return}
     }else accessTier=HFAccessPolicy.storedAccess(window.GFIELD_CONFIG).paid?'paid':'free';
     student=HFMock.safeStudent(name);
     const seed=HFMock.normalizeSeed(params.get('seed')||HFMock.makeSeed());
     $('gateError').textContent='문제은행을 불러오는 중입니다.';$('enterBtn').disabled=true;
-    try{await HFMock.prepareExam(examId);exam=HFMock.createExam(examId,seed)}catch(error){$('gateError').textContent=String(error.message||error);$('enterBtn').disabled=false;return}
+    try{if(remoteMode)exam=await secureMock.loadExam(examId,seed);else{await HFMock.prepareExam(examId);exam=HFMock.createExam(examId,seed)}}catch(error){$('gateError').textContent=String(error.message||error);$('enterBtn').disabled=false;return}
     $('gateError').textContent='';$('enterBtn').disabled=false;
-    try{marks=JSON.parse(localStorage.getItem(marksKey())||'{}')}catch(e){marks={}}
+    if(remoteMode)marks={};else try{marks=JSON.parse(localStorage.getItem(marksKey())||'{}')}catch(e){marks={}}
     $('gate').style.display='none';$('app').style.display='block';
     $('mockTitle').textContent=exam.title;$('mockDescription').textContent=exam.description;
     $('studentDisplay').textContent=`${student} 학생 · ${accessTier==='paid'?'추가 문제 이용 가능':'난이도별 2문항 포함'}`;
     $('seedDisplay').textContent=`${exam.subtitle} · 문제지 번호 ${exam.seed}`;
     if(exam.questions.every(q=>q.sourceMode==='variation-bank'))$('newExamBtn').style.display='none';
-    const url=new URL('./viewer.html',location.href);url.searchParams.set('exam',exam.id);url.searchParams.set('student',student);url.searchParams.set('seed',exam.seed);$('viewerLink').href=url;
+    const url=new URL('./viewer.html',location.href);url.searchParams.set('exam',exam.id);if(!remoteMode)url.searchParams.set('student',student);url.searchParams.set('seed',exam.seed);$('viewerLink').href=url;
+    if(remoteMode){$('viewerLink').removeAttribute('target');$('viewerLink').removeAttribute('rel');}
     renderQuestions();
-    history.replaceState(null,'',`${location.pathname}?exam=${encodeURIComponent(exam.id)}&student=${encodeURIComponent(student)}&seed=${exam.seed}`);
+    const canonical=new URLSearchParams({exam:exam.id,seed:String(exam.seed)});if(!remoteMode)canonical.set('student',student);history.replaceState(null,'',`${location.pathname}?${canonical}`);
   }
   function renderQuestions(){$('questionList').innerHTML=exam.questions.map(q=>`<article class="qcard ${marks[q.number]||''}" id="qcard${q.number}"><div class="number">${String(q.number).padStart(2,'0')}</div><div class="qmeta"><b>${esc(q.typeTitle)}</b><span>${esc(q.typeCode)} · ${esc(q.difficultyLabel)} · 시험지 ${q.number}번</span></div><div class="ox"><button type="button" class="${marks[q.number]==='o'?'on-o':''}" onclick="setMark(${q.number},'o')">O</button><button type="button" class="${marks[q.number]==='x'?'on-x':''}" onclick="setMark(${q.number},'x')">X</button></div></article>`).join('');updateProgress();}
-  function setMark(number,value){marks[number]=value;try{localStorage.setItem(marksKey(),JSON.stringify(marks))}catch(e){}renderQuestions();}
+  function setMark(number,value){marks[number]=value;if(!remoteMode)try{localStorage.setItem(marksKey(),JSON.stringify(marks))}catch(e){}renderQuestions();}
   function updateProgress(){const done=exam.questions.filter(q=>marks[q.number]).length;$('progressText').textContent=`${done}/${exam.questions.length}`;$('progressFill').style.width=`${done/exam.questions.length*100}%`;}
   function saveHistory(summary){try{const old=JSON.parse(localStorage.getItem(historyKey())||'[]').filter(row=>row.seed!==exam.seed);old.unshift({examId:exam.id,seed:exam.seed,date:new Date().toISOString(),score:summary.score,wrongTypeIds:summary.wrongTypeIds});localStorage.setItem(historyKey(),JSON.stringify(old.slice(0,10)))}catch(e){}}
   function setPracticeDifficulty(typeId,difficulty){
@@ -85,28 +108,39 @@
     return `<div class="practice-maker"><div class="practice-head"><span>맞춤 시험지 · 최대 ${HFAccessPolicy.MAX_SELECTED_TYPES}유형</span><span>${accessTier==='paid'?'추가 문제 권한 확인':'난이도별 2문항 포함'}</span></div><div class="practice-types">${rows}</div><div class="practice-footer">${paidCount}<button type="button" class="make" onclick="openPracticeBank()">선택 난이도로 시험지 만들기</button><span class="practice-note">${accessTier==='paid'?'3문항 이상도 선택할 수 있습니다.':'3번째 문제부터 유료입니다.'}</span><span class="practice-error" id="practiceError"></span></div></div>`;
   }
   function openPracticeBank(){
+    if(remoteMode&&!window.GFieldHFPortalAuth.canAccess(portalSession,'hyperfocus')){const denied=$('practiceError');if(denied)denied.textContent='맞춤 시험지 학습 권한이 없습니다.';return}
     const count=Number($('practiceCount')?.value);const error=$('practiceError');
     try{HFAccessPolicy.validatePracticeRequest({countPerType:count,difficulty:'same',accessTier});}catch(reason){if(error)error.textContent=String(reason.message||reason);return}
     for(const typeId of weakTypeIds){const difficulty=practiceDifficultyByType[typeId]||'same';const available=HFMock.getPracticeAvailability(typeId,accessTier)[difficulty]||0;if(available<count){if(error)error.textContent=`q${String(typeId).padStart(2,'0')} ${HFMock.DIFFICULTY_LABEL[difficulty]} 문제는 현재 ${available}문항만 준비되었습니다.`;return}}
     const levels=weakTypeIds.map(typeId=>`${typeId}:${practiceDifficultyByType[typeId]||'same'}`).join(',');
-    const purl=new URL('./viewer.html',location.href);purl.searchParams.set('mode','practice');purl.searchParams.set('exam',exam.id);purl.searchParams.set('student',student);purl.searchParams.set('types',weakTypeIds.join(','));purl.searchParams.set('count',String(count));purl.searchParams.set('levels',levels);purl.searchParams.set('seed',HFMock.makeSeed());window.open(purl,'_blank','noopener');
+    const purl=new URL('./viewer.html',location.href);purl.searchParams.set('mode','practice');purl.searchParams.set('exam',exam.id);if(!remoteMode)purl.searchParams.set('student',student);purl.searchParams.set('types',weakTypeIds.join(','));purl.searchParams.set('count',String(count));purl.searchParams.set('levels',levels);purl.searchParams.set('seed',HFMock.makeSeed());if(remoteMode)location.href=purl;else window.open(purl,'_blank','noopener');
   }
-  function submit(){
+  async function submit(){
     const missing=exam.questions.filter(q=>!marks[q.number]);if(missing.length){alert(`아직 ${missing.length}문항을 표시하지 않았습니다.`);return}
-    const summary=HFMock.resultFromMarks(exam,marks);weakTypeIds=summary.wrongTypeIds.slice(0,HFAccessPolicy.MAX_SELECTED_TYPES);practiceDifficultyByType={};saveHistory(summary);
+    const summary=HFMock.resultFromMarks(exam,marks);weakTypeIds=summary.wrongTypeIds.slice(0,HFAccessPolicy.MAX_SELECTED_TYPES);practiceDifficultyByType={};
+    if(remoteMode){
+      try{await secureMock.saveAttempt({examId:exam.id,seed:exam.seed,marks,score:summary.score,wrongTypeIds:summary.wrongTypeIds})}catch(error){alert(`응시 기록을 안전하게 저장하지 못했습니다. 다시 시도해 주세요.\n${String(error.message||error)}`);return}
+    }else saveHistory(summary);
     const verdict=summary.score>=90?'검수한 핵심 유형이 매우 안정적입니다.':summary.score>=70?'기본 구조는 이해했습니다. 틀린 유형을 다른 문제로 한 번 더 확인하세요.':'틀린 유형의 문제 조건과 풀이 순서를 다시 확인하는 연습이 필요합니다.';
     const wrongHtml=summary.wrongRows.length?summary.wrongRows.map(row=>`<div class="wrong"><span><b>${row.question.number}번 X</b> · ${esc(row.question.typeTitle)} · ${esc(row.question.difficultyLabel)}</span><span>${esc(row.question.typeCode)}</span></div>`).join(''):'<div class="locked">모든 문제를 맞혔습니다. 새 문제지로 한 번 더 확인해 보세요.</div>';
     let practice='';
     if(summary.wrongTypeIds.length){practice=renderPracticeMaker()}
-    const reportUrl=new URL('./viewer.html',location.href);reportUrl.searchParams.set('exam',exam.id);reportUrl.searchParams.set('student',student);reportUrl.searchParams.set('seed',exam.seed);
-    $('result').innerHTML=`<section class="hero"><div class="score">${summary.score}</div><div><h2>${esc(student)} 학생의 Hyper Focus 진단</h2><p>${esc(verdict)}<br>정답 ${summary.correctCount}문항 · 오답 ${summary.wrongCount}문항</p></div></section><section class="panel"><h3>유형별 수행률</h3><div class="bars">${summary.byType.map(row=>`<div class="bar"><span>${esc(row.title)}</span><div class="bar-track"><div class="bar-fill" style="width:${row.rate}%"></div></div><strong>${row.correct}/${row.total}</strong></div>`).join('')}</div></section><section class="panel"><h3>틀린 문항과 약점 유형</h3>${wrongHtml}</section><div class="actions-result">${practice}<a href="${esc(reportUrl)}" target="_blank" rel="noopener">시험지·정답 다시 보기</a><button type="button" onclick="window.print()">진단지 인쇄</button></div>`;
+    const reportUrl=new URL('./viewer.html',location.href);reportUrl.searchParams.set('exam',exam.id);if(!remoteMode)reportUrl.searchParams.set('student',student);reportUrl.searchParams.set('seed',exam.seed);
+    const reportTarget=remoteMode?'':' target="_blank" rel="noopener"';
+    $('result').innerHTML=`<section class="hero"><div class="score">${summary.score}</div><div><h2>${esc(student)} 학생의 Hyper Focus 진단</h2><p>${esc(verdict)}<br>정답 ${summary.correctCount}문항 · 오답 ${summary.wrongCount}문항</p></div></section><section class="panel"><h3>유형별 수행률</h3><div class="bars">${summary.byType.map(row=>`<div class="bar"><span>${esc(row.title)}</span><div class="bar-track"><div class="bar-fill" style="width:${row.rate}%"></div></div><strong>${row.correct}/${row.total}</strong></div>`).join('')}</div></section><section class="panel"><h3>틀린 문항과 약점 유형</h3>${wrongHtml}</section><div class="actions-result">${practice}<a href="${esc(reportUrl)}"${reportTarget}>시험지·정답 다시 보기</a><button type="button" onclick="window.print()">진단지 인쇄</button></div>`;
     $('result').style.display='block';$('result').scrollIntoView({behavior:'smooth',block:'start'});
   }
   window.setMark=setMark;window.setPracticeDifficulty=setPracticeDifficulty;window.openPracticeBank=openPracticeBank;
   $('enterBtn').onclick=enter;$('submitBtn').onclick=submit;
-  $('newExamBtn').onclick=()=>{location.search=`exam=${encodeURIComponent(exam.id)}&student=${encodeURIComponent(student)}&seed=${HFMock.makeSeed()}`};
-  $('studentName').value=params.get('student')||'';
-  $('studentName').addEventListener('keydown',e=>{if(e.key==='Enter')enter()});$('accessCode').addEventListener('keydown',e=>{if(e.key==='Enter')enter()});
+  $('newExamBtn').onclick=()=>{const next=new URLSearchParams({exam:exam.id,seed:String(HFMock.makeSeed())});if(!remoteMode)next.set('student',student);location.search=next};
+  if(remoteMode){
+    if(!portalSession||!window.GFieldHFPortalAuth.canAccess(portalSession,'mock')){lockRemote('학습 권한이 필요합니다','이 모의고사를 응시할 수 있는 승인 권한이 없습니다.',true);return}
+    if(!secureMockEnabled||typeof secureMock?.loadExam!=='function'||typeof secureMock?.saveAttempt!=='function'){lockRemote('온라인 모의고사 · 검수 대기','문제와 응시 기록을 안전하게 전송하는 연결이 완료된 뒤 공개됩니다.',false);return}
+    await enter();
+  }else{
+    $('studentName').value=params.get('student')||'';
+    $('studentName').addEventListener('keydown',e=>{if(e.key==='Enter')enter()});$('accessCode').addEventListener('keydown',e=>{if(e.key==='Enter')enter()});
+  }
 })();
 </script>
 </body>

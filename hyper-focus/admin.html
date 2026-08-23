@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>하이퍼포커스 승인번호 관리</title>
   <style>
-    *{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:#172033;font-family:Pretendard,"Malgun Gothic",sans-serif}.wrap{max-width:1280px;margin:auto;padding:28px 18px 70px}h1{margin:0 0 6px}.sub{color:#667085;margin-bottom:22px}.card{background:#fff;border:1px solid #e4e7ec;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 8px 24px rgba(16,24,40,.05)}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}input,select,button{font:inherit;border-radius:9px;padding:10px 12px;border:1px solid #d0d5dd}input{min-width:210px;flex:1}button{background:#173b6c;color:#fff;border:0;font-weight:800;cursor:pointer}.danger{background:#b42318}.ghost{background:#eef2f7;color:#344054}.save{background:#0f766e}.status{font-size:12px;color:#667085;margin-left:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #eef0f3;padding:10px;text-align:left;white-space:nowrap}th{background:#f8fafc}.code{font-family:Consolas,monospace;font-weight:900;color:#16417c;cursor:pointer}.tag{display:inline-block;padding:3px 8px;border-radius:99px;background:#edf4ff;color:#175cd3;font-size:11px}.tag.online{background:#ecfdf3;color:#067647}.note{font-size:12px;line-height:1.7;color:#475467;background:#fffaeb;border:1px solid #fedf89;border-radius:10px;padding:12px;margin-top:12px}@media(max-width:900px){.table-wrap{overflow:auto}table{min-width:1050px}}
+    *{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:#172033;font-family:Pretendard,"Malgun Gothic",sans-serif}.wrap{max-width:1280px;margin:auto;padding:28px 18px 70px}h1{margin:0 0 6px}.sub{color:#667085;margin-bottom:22px}.card{background:#fff;border:1px solid #e4e7ec;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 8px 24px rgba(16,24,40,.05)}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}input,select,button{font:inherit;border-radius:9px;padding:10px 12px;border:1px solid #d0d5dd}input{min-width:210px;flex:1}button{background:#173b6c;color:#fff;border:0;font-weight:800;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.danger{background:#b42318}.ghost{background:#eef2f7;color:#344054}.save{background:#0f766e}.status{font-size:12px;color:#667085;margin-left:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #eef0f3;padding:10px;text-align:left;white-space:nowrap}th{background:#f8fafc}.code{font-family:Consolas,monospace;font-weight:900;color:#16417c}.tag{display:inline-block;padding:3px 8px;border-radius:99px;background:#edf4ff;color:#175cd3;font-size:11px}.tag.online{background:#ecfdf3;color:#067647}.tag.suspended,.tag.archived{background:#fef3f2;color:#b42318}.note{font-size:12px;line-height:1.7;color:#475467;background:#fffaeb;border:1px solid #fedf89;border-radius:10px;padding:12px;margin-top:12px}.row-actions{display:flex;gap:5px}.row-actions button{padding:7px 9px;font-size:11px}@media(max-width:900px){.table-wrap{overflow:auto}table{min-width:1120px}}
   </style>
 </head>
 <body><div class="wrap">
   <h1>프리미어 하이퍼포커스 승인번호 관리</h1>
-  <div class="sub">필즈더클래식과 같은 학생별 승인번호 체계입니다.</div>
+  <div class="sub">학생별 승인번호와 상품 권한을 관리합니다.</div>
 
-  <div class="card">
+  <div class="card" id="legacySyncCard">
     <div class="row">
       <input id="ghKey" type="password" placeholder="GitHub 토큰">
-      <button class="ghost" onclick="saveGhKey()">토큰 저장</button>
-      <button class="save" onclick="saveToGitHub()">💾 GitHub에 저장</button>
+      <button class="ghost" type="button" data-save-key>토큰 저장</button>
+      <button class="save" type="button" data-save-github>💾 GitHub에 저장</button>
       <span class="status" id="saveStatus">변경 없음</span>
     </div>
   </div>
@@ -25,40 +25,17 @@
     <div class="row">
       <input id="newName" placeholder="학생 이름">
       <select id="newType"><option value="internal">재원</option><option value="online">온라인</option></select>
-      <button onclick="addStudent()">학생 등록·승인번호 발급</button>
+      <button type="button" data-add-student>학생 등록·승인번호 발급</button>
     </div>
-    <div class="note">기존 이름+전화번호 기록과 자동 저장 전화번호는 삭제하지 않습니다. 학생이 새 승인번호로 처음 로그인하면 같은 기기에 남아 있는 기존 진도만 새 승인번호 기록으로 복사합니다.<br>모든 상품 배너는 학생 서재에 보이며, 아래에서 승인한 상품만 열립니다.</div>
+    <div class="note" id="adminNote">기존 이름+전화번호 기록과 자동 저장 전화번호는 삭제하지 않습니다. 모든 상품 배너는 학생 서재에 보이며, 아래에서 승인한 상품만 열립니다.</div>
   </div>
 
-  <div class="card table-wrap"><table><thead><tr><th>승인번호</th><th>학생</th><th>구분</th><th>문항 진단</th><th>추가 문제</th><th>모의고사</th><th>VIP 라운지</th><th>문제 은행</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+  <div class="card table-wrap"><table><thead><tr><th>승인번호</th><th>학생</th><th>구분·상태</th><th>문항 진단</th><th>추가 문제</th><th>모의고사</th><th>VIP 라운지</th><th>문제 은행</th><th>관리</th></tr></thead><tbody id="rows"></tbody></table></div>
 </div>
 <script src="./data.js"></script>
+<script src="./supabase-config.js"></script>
+<script src="./supabase-client.js"></script>
 <script src="./portal-auth.js"></script>
-<script>
-const adminSession=window.GFieldHFPortalAuth?.current();
-if(!adminSession||adminSession.role!=='admin'){location.replace('./?login=1');throw new Error('관리자 로그인이 필요합니다.')}
-const REPO='docssam1/lete-on',BRANCH='main',FILE_PATH='hyper-focus/data.js';
-const D=window.GFIELD_HF_DATA||{students:[],studentCode:{},studentType:{},access:{}};
-D.students=Array.isArray(D.students)?D.students:[];D.studentCode=D.studentCode||{};D.studentType=D.studentType||{};D.access=D.access||{};
-const chars='ABCDEFGHJKLMNPQRSTUVWXY23456789';
-function esc(v){return String(v||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function randomIndex(max){const values=new Uint32Array(1);crypto.getRandomValues(values);return values[0]%max}
-function genCode(){let s;do{s='GF';while(s.length<8)s+=chars[randomIndex(chars.length)]}while(Object.values(D.studentCode).includes(s));return s}
-function ensure(name){if(!D.studentCode[name])D.studentCode[name]=genCode();if(!D.studentType[name])D.studentType[name]='internal';if(!Array.isArray(D.access[name]))D.access[name]=['hyperfocus']}
-function checked(a,key){return a.includes(key)?'checked':''}
-function render(){const body=document.getElementById('rows');body.innerHTML=D.students.map((name,index)=>{ensure(name);const a=D.access[name],online=D.studentType[name]==='online';return `<tr><td class="code" onclick="copyCodeAt(${index})" title="클릭하여 복사">${esc(D.studentCode[name])}</td><td>${esc(name)}</td><td><span class="tag${online?' online':''}">${online?'온라인':'재원'}</span></td><td><input type="checkbox" ${checked(a,'hyperfocus')} onchange="toggleAt(${index},'hyperfocus',this.checked)"></td><td><input type="checkbox" ${checked(a,'hyperfocus-extra')} onchange="toggleAt(${index},'hyperfocus-extra',this.checked)"></td><td><input type="checkbox" ${checked(a,'mock')} onchange="toggleAt(${index},'mock',this.checked)"></td><td><input type="checkbox" ${checked(a,'vip')} onchange="toggleAt(${index},'vip',this.checked)"></td><td><input type="checkbox" ${checked(a,'problem-bank')} onchange="toggleAt(${index},'problem-bank',this.checked)"></td><td><button class="danger" onclick="removeStudentAt(${index})">삭제</button></td></tr>`}).join('')}
-function dirty(){document.getElementById('saveStatus').textContent='● 저장되지 않은 변경 있음'}
-function copyCode(code){navigator.clipboard?.writeText(code);document.getElementById('saveStatus').textContent='📋 '+code+' 복사됨'}
-function copyCodeAt(index){const name=D.students[index];if(name)copyCode(D.studentCode[name])}
-function toggle(name,key,on){ensure(name);const a=D.access[name],i=a.indexOf(key);if(on&&i<0)a.push(key);if(!on&&i>=0)a.splice(i,1);if(on&&['hyperfocus-extra','problem-bank'].includes(key)&&!a.includes('hyperfocus'))a.push('hyperfocus');dirty()}
-function toggleAt(index,key,on){const name=D.students[index];if(name)toggle(name,key,on)}
-function addStudent(){const el=document.getElementById('newName'),name=el.value.trim(),type=document.getElementById('newType').value;if(!name)return;if(D.students.includes(name)){alert('이미 등록된 학생입니다.');return}D.students.push(name);D.studentType[name]=type;D.studentCode[name]=genCode();D.access[name]=['hyperfocus'];el.value='';render();dirty();alert(`${name} 학생 승인번호\n\n${D.studentCode[name]}\n\n카카오톡으로 전달해 주세요.`)}
-function removeStudent(name){if(!confirm(`${name} 학생의 하이퍼포커스 권한을 삭제할까요?`))return;D.students=D.students.filter(n=>n!==name);delete D.studentCode[name];delete D.studentType[name];delete D.access[name];render();dirty()}
-function removeStudentAt(index){const name=D.students[index];if(name)removeStudent(name)}
-function buildFile(){return `/* =========================================================\n * 지필드 영재교육 · 프리미어 하이퍼포커스\n * 학생별 승인번호 및 이용 권한 — 관리자 콘솔 자동 생성\n * 기존 전화번호 기반 기록은 레거시 키에 그대로 보존됩니다.\n * 생성: ${new Date().toLocaleString('ko-KR')}\n * ========================================================= */\nwindow.GFIELD_HF_DATA = ${JSON.stringify(D,null,2)};\n`}
-function ghKeyGet(){try{return sessionStorage.getItem('gfield_hf_gh_token')||''}catch(e){return''}}
-function ghKeySet(v){try{sessionStorage.setItem('gfield_hf_gh_token',v)}catch(e){}}
-function saveGhKey(){const v=document.getElementById('ghKey').value.trim();if(!v)return alert('토큰을 입력하세요.');ghKeySet(v);alert('이 브라우저 탭을 닫기 전까지만 토큰을 보관합니다. ✅')}
-async function saveToGitHub(){const token=ghKeyGet();if(!token)return alert('먼저 GitHub 토큰을 저장하세요.');const st=document.getElementById('saveStatus');st.textContent='GitHub에 저장 중…';try{let sha=null;const get=await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`,{headers:{Authorization:'token '+token,Accept:'application/vnd.github+json'}});if(get.ok)sha=(await get.json()).sha;else if(get.status!==404)throw new Error('파일 확인 오류 '+get.status);const content=btoa(unescape(encodeURIComponent(buildFile()))),body={message:'admin: 하이퍼포커스 승인번호 갱신',content,branch:BRANCH};if(sha)body.sha=sha;const put=await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`,{method:'PUT',headers:{Authorization:'token '+token,Accept:'application/vnd.github+json'},body:JSON.stringify(body)});if(!put.ok){const e=await put.json().catch(()=>({}));throw new Error(e.message||('저장 오류 '+put.status))}st.textContent='✅ 저장 완료 · '+new Date().toLocaleTimeString('ko-KR');alert('승인번호 데이터가 GitHub에 저장되었습니다.')}catch(e){st.textContent='❌ '+e.message;alert('저장 실패\n\n'+e.message)}}
-document.getElementById('ghKey').value=ghKeyGet();render();
-</script></body></html>
+<script src="./admin-app.js"></script>
+</body>
+</html>
