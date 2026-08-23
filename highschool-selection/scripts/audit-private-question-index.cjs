@@ -13,6 +13,8 @@ const FORBIDDEN_KEYS = new Set([
   "content", "rawtext", "fulltext", "excerpt", "pageimage", "base64", "blob", "binary"
 ]);
 const PRIVATE_LOCATION_PATTERN = /(?:\b[a-z]:[\\/]|\\\\|file:\/\/|https?:\/\/|\/(?:Users|home|mnt)\/)/i;
+const REVIEWED_LABEL_PATTERN = /^(?:[1-9]\d*|개념탐구 [1-9]\d*|예제 [1-9]\d*-[1-9]\d*|[1-9]\d* \([1-9]\d*\)-\([1-9]\d*\))$/;
+const CANONICAL_PROGRAM_MODES = Object.freeze([...core.PROGRAM_MODES].sort());
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, ""));
@@ -67,6 +69,56 @@ function boxesOverlap(left, right) {
     Math.min(left.y + left.height, right.y + right.height) - Math.max(left.y, right.y)
   );
   return overlapWidth * overlapHeight > 0.000001;
+}
+
+function isReviewedLabel(value) {
+  const label = String(value == null ? "" : value).trim();
+  return Boolean(label) && label.length <= 64 && !/[\x00-\x1f\x7f]/.test(label) &&
+    !PRIVATE_LOCATION_PATTERN.test(label) && REVIEWED_LABEL_PATTERN.test(label);
+}
+
+function validateExactKeys(value, allowedKeys, label, errors) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    errors.push(`${label} must be an object`);
+    return false;
+  }
+  const actual = Object.keys(value).sort();
+  const expected = [...allowedKeys].sort();
+  if (actual.length !== expected.length || actual.some((key, index) => key !== expected[index])) {
+    errors.push(`${label} has unknown or missing keys`);
+    return false;
+  }
+  return true;
+}
+
+function hasBoundVisualReview(candidate, source, item) {
+  if (!source || !item || !item.locator || !item.privateRef) return false;
+  const reviews = (candidate.visualReviewPages || []).filter(review =>
+    review.sourceRef === item.sourceRef && review.page === item.locator.page &&
+    review.privateSourceMemoryId === source.privateSourceMemoryId
+  );
+  if (reviews.length !== 1) return false;
+  const review = reviews[0];
+  if (review.resolution === "verified_manual_items") {
+    return item.privateRef.layoutKind === "manual-reviewed-item" &&
+      Array.isArray(review.itemIds) && review.itemIds.includes(item.id);
+  }
+  const isVariable = review.resolution === "verified_mission_variable_cell";
+  const isMissionSix = new Set([
+    "verified_mission_six_cell",
+    "verified_mission_six_cell_replacing_candidates"
+  ]).has(review.resolution);
+  if (!isVariable && !isMissionSix) return false;
+  const expectedLayoutKind = isVariable ? "mission-variable-cell" : "mission-six-cell";
+  const order = item.privateRef.layoutOrder;
+  if (item.privateRef.layoutKind !== expectedLayoutKind || !Number.isSafeInteger(order) || order < 1 ||
+      !Number.isSafeInteger(review.itemCount) || order > review.itemCount ||
+      item.privateRef.printedLabelHint !== String(order)) return false;
+  const expectedId = core.createSharedBankId(
+    "question",
+    indexSchema.createLocatorKey(source.sourceFingerprint, item.locator.page, item.locator.slot)
+  );
+  return item.id === expectedId;
 }
 
 function validateVariableMissionReviews(candidate, sourceByRef, errors) {
@@ -131,6 +183,11 @@ function validateVariableMissionReviews(candidate, sourceByRef, errors) {
       if (item.locator.slot !== expected) {
         errors.push(`variable Mission slot mismatch: ${item.id}`);
       }
+      const expectedId = core.createSharedBankId(
+        "question",
+        indexSchema.createLocatorKey(source.sourceFingerprint, review.page, expected)
+      );
+      if (item.id !== expectedId) errors.push(`variable Mission id mismatch: ${item.id}`);
       if (item.privateRef.evidenceLocator !== `PDF p.${review.page}, Mission ${expected}`) {
         errors.push(`variable Mission evidence mismatch: ${item.id}`);
       }
@@ -155,6 +212,189 @@ function validateVariableMissionReviews(candidate, sourceByRef, errors) {
     if (!review || review.resolution !== "verified_mission_variable_cell") {
       errors.push(`variable Mission visual decision missing: ${item.id}`);
     }
+  }
+}
+
+function validateManualReviews(candidate, sourceByRef, errors) {
+  const unresolvedKeys = new Set((candidate.unresolvedPages || []).map(entry => `${entry.sourceRef}:${entry.page}`));
+  const excludedKeys = new Set((candidate.excludedPageCandidates || []).map(entry => `${entry.sourceRef}:${entry.page}`));
+  const layoutKeys = new Set((candidate.layoutPages || []).map(entry => `${entry.sourceRef}:${entry.page}`));
+  const rejectedIds = new Set((candidate.rejectedCandidates || []).map(entry => entry.id));
+  const continuationByKey = new Map();
+  for (const fragment of candidate.continuationFragments || []) {
+    const key = `${fragment.sourceRef}:${fragment.fragmentPage}:${fragment.printedLabelHint}`;
+    validateExactKeys(fragment, [
+      "sourceRef", "privateSourceMemoryId", "reviewPage", "fragmentPage",
+      "printedLabelHint", "continuationFrom", "reviewStatus", "evidenceLocator"
+    ], `continuation fragment ${key}`, errors);
+    if (continuationByKey.has(key)) errors.push(`duplicate continuation fragment: ${key}`);
+    continuationByKey.set(key, fragment);
+    const source = sourceByRef.get(fragment.sourceRef);
+    if (!source) {
+      errors.push(`continuation fragment missing source: ${key}`);
+      continue;
+    }
+    if (fragment.privateSourceMemoryId !== source.privateSourceMemoryId) {
+      errors.push(`continuation fragment private source mismatch: ${key}`);
+    }
+    const from = fragment.continuationFrom || {};
+    validateExactKeys(from, ["page", "printedLabelHint"], `continuationFrom ${key}`, errors);
+    if (!Number.isSafeInteger(fragment.reviewPage) || fragment.reviewPage < 1 ||
+        !Number.isSafeInteger(fragment.fragmentPage) || fragment.fragmentPage < 1 ||
+        fragment.fragmentPage > source.pageCount ||
+        !Number.isSafeInteger(from.page) || from.page < 1 || from.page >= fragment.fragmentPage) {
+      errors.push(`continuation fragment page linkage invalid: ${key}`);
+    }
+    if (fragment.reviewPage !== fragment.fragmentPage) {
+      errors.push(`continuation fragment must belong to its reviewed page: ${key}`);
+    }
+    if (!isReviewedLabel(fragment.printedLabelHint) || !isReviewedLabel(from.printedLabelHint)) {
+      errors.push(`continuation fragment label invalid: ${key}`);
+    }
+    if (fragment.reviewStatus !== "visual_verified") {
+      errors.push(`continuation fragment lacks visual verification: ${key}`);
+    }
+    if (fragment.evidenceLocator !==
+        `PDF p.${fragment.fragmentPage}, continuation of p.${from.page} item ${from.printedLabelHint}`) {
+      errors.push(`continuation fragment evidence mismatch: ${key}`);
+    }
+    const targets = (candidate.items || []).filter(item =>
+      item.sourceRef === fragment.sourceRef && item.locator && item.locator.page === from.page &&
+      item.privateRef && item.privateRef.printedLabelHint === from.printedLabelHint
+    );
+    if (targets.length !== 1 || (targets[0] && rejectedIds.has(targets[0].id)) ||
+        (targets[0] && (targets[0].discoveryStatus !== "visual_verified" ||
+          !targets[0].privateRef || targets[0].privateRef.discoveryConfidence !== "visual_verified")) ||
+        (targets[0] && !hasBoundVisualReview(candidate, source, targets[0]))) {
+      errors.push(`continuation fragment target must be one active item: ${key}`);
+    }
+  }
+
+  const manualReviewKeys = new Set();
+  for (const review of candidate.visualReviewPages || []) {
+    if (review.resolution !== "verified_manual_items") continue;
+    const key = `${review.sourceRef}:${review.page}`;
+    validateExactKeys(review, [
+      "privateSourceMemoryId", "sourceRef", "page", "resolution", "itemCount",
+      "itemIds", "continuationKeys", "evidenceLocator"
+    ], `manual visual review ${key}`, errors);
+    manualReviewKeys.add(key);
+    const source = sourceByRef.get(review.sourceRef);
+    if (!source) continue;
+    if (unresolvedKeys.has(key) || excludedKeys.has(key) || layoutKeys.has(key)) {
+      errors.push(`manual review remains in a pending page queue: ${key}`);
+    }
+    if (!Number.isSafeInteger(review.itemCount) || review.itemCount < 0 || review.itemCount > 12 ||
+        !Array.isArray(review.itemIds) || review.itemIds.length !== review.itemCount ||
+        new Set(review.itemIds).size !== review.itemIds.length) {
+      errors.push(`manual review item registry invalid: ${key}`);
+    }
+    if (review.itemCount === 0 && (!Array.isArray(review.continuationKeys) || review.continuationKeys.length === 0)) {
+      errors.push(`manual review must contain an item or continuation: ${key}`);
+    }
+    const pageItems = (candidate.items || []).filter(item =>
+      item.sourceRef === review.sourceRef && item.locator && item.locator.page === review.page
+    );
+    const items = pageItems.filter(item =>
+      item.privateRef && item.privateRef.layoutKind === "manual-reviewed-item"
+    ).sort((left, right) => left.privateRef.layoutOrder - right.privateRef.layoutOrder);
+    if (pageItems.length !== review.itemCount || items.length !== review.itemCount) {
+      errors.push(`manual review itemCount mismatch: ${key}`);
+    }
+    const labels = new Set();
+    items.forEach((item, index) => {
+      const expected = index + 1;
+      validateExactKeys(item, [
+        "id", "sourceRef", "locator", "discoveryStatus", "curriculum",
+        "classificationStatus", "answerStatus", "reuse", "releaseStatus", "privateRef"
+      ], `manual item ${item.id}`, errors);
+      validateExactKeys(item.locator, ["page", "slot", "kind", "box"], `manual item locator ${item.id}`, errors);
+      validateExactKeys(item.locator && item.locator.box, [
+        "x", "y", "width", "height"
+      ], `manual item box ${item.id}`, errors);
+      validateExactKeys(item.privateRef, [
+        "sourceMemoryId", "printedLabelHint", "layoutOrder", "layoutKind",
+        "discoveryConfidence", "evidenceLocator"
+      ], `manual item privateRef ${item.id}`, errors);
+      if (!new Set(["concept", "example", "exercise", "unknown"]).has(item.locator.kind) || !item.locator.box) {
+        errors.push(`manual review locator invalid: ${item.id}`);
+      }
+      if (!item.locator.box || !(item.locator.box.width > 0) || !(item.locator.box.height > 0)) {
+        errors.push(`manual review box must have positive area: ${item.id}`);
+      }
+      if (!isReviewedLabel(item.privateRef.printedLabelHint) || labels.has(item.privateRef.printedLabelHint)) {
+        errors.push(`manual review label invalid or duplicate: ${item.id}`);
+      }
+      labels.add(item.privateRef.printedLabelHint);
+      if (item.privateRef.layoutOrder !== expected || item.locator.slot !== expected) {
+        errors.push(`manual review order or slot mismatch: ${item.id}`);
+      }
+      if (item.discoveryStatus !== "visual_verified" ||
+          item.privateRef.discoveryConfidence !== "visual_verified" ||
+          item.privateRef.sourceMemoryId !== source.privateSourceMemoryId) {
+        errors.push(`manual review lacks bound visual verification: ${item.id}`);
+      }
+      if (item.curriculum !== null || item.classificationStatus !== "pending" ||
+          item.answerStatus !== "missing" || item.releaseStatus !== "locked" ||
+          JSON.stringify(item.reuse) !== JSON.stringify(CANONICAL_PROGRAM_MODES)) {
+        errors.push(`manual review protected item state mismatch: ${item.id}`);
+      }
+      const expectedId = core.createSharedBankId(
+        "question",
+        indexSchema.createLocatorKey(source.sourceFingerprint, review.page, expected)
+      );
+      if (item.id !== expectedId) errors.push(`manual review id mismatch: ${item.id}`);
+      if (item.privateRef.evidenceLocator !== `PDF p.${review.page}, item ${item.privateRef.printedLabelHint}`) {
+        errors.push(`manual review evidence mismatch: ${item.id}`);
+      }
+    });
+    const actualItemIds = new Set(items.map(item => item.id));
+    if (!Array.isArray(review.itemIds) || review.itemIds.some(id => !actualItemIds.has(id)) ||
+        actualItemIds.size !== new Set(review.itemIds || []).size) {
+      errors.push(`manual review itemIds mismatch: ${key}`);
+    }
+    for (let left = 0; left < items.length; left += 1) {
+      for (let right = left + 1; right < items.length; right += 1) {
+        if (items[left].locator.box && items[right].locator.box &&
+            boxesOverlap(items[left].locator.box, items[right].locator.box)) {
+          errors.push(`manual review boxes overlap: ${key}`);
+        }
+      }
+    }
+    for (const fragment of continuationByKey.values()) {
+      if (fragment.sourceRef === review.sourceRef && fragment.fragmentPage === review.page &&
+          labels.has(fragment.printedLabelHint)) {
+        errors.push(`manual item and continuation labels overlap: ${key}:${fragment.printedLabelHint}`);
+      }
+    }
+    const expectedContinuationKeys = new Set(
+      Array.from(continuationByKey.entries())
+        .filter(([, fragment]) => fragment.sourceRef === review.sourceRef && fragment.reviewPage === review.page)
+        .map(([continuationKey]) => continuationKey)
+    );
+    if (!Array.isArray(review.continuationKeys) ||
+        review.continuationKeys.length !== new Set(review.continuationKeys).size ||
+        review.continuationKeys.some(continuationKey => !expectedContinuationKeys.has(continuationKey)) ||
+        expectedContinuationKeys.size !== new Set(review.continuationKeys || []).size) {
+      errors.push(`manual review continuation registry mismatch: ${key}`);
+    }
+    if (review.evidenceLocator !== `PDF p.${review.page}, visually reviewed manual items ${review.itemCount}`) {
+      errors.push(`manual review evidence mismatch: ${key}`);
+    }
+  }
+
+  for (const item of candidate.items || []) {
+    if (!item.privateRef || item.privateRef.layoutKind !== "manual-reviewed-item") continue;
+    const key = `${item.sourceRef}:${item.locator && item.locator.page}`;
+    if (!manualReviewKeys.has(key)) errors.push(`manual item visual decision missing: ${item.id}`);
+  }
+  for (const [key, fragment] of continuationByKey) {
+    const reviews = (candidate.visualReviewPages || []).filter(review =>
+      review.resolution === "verified_manual_items" && review.sourceRef === fragment.sourceRef &&
+      review.page === fragment.reviewPage && Array.isArray(review.continuationKeys) &&
+      review.continuationKeys.includes(key)
+    );
+    if (reviews.length !== 1) errors.push(`continuation fragment visual decision missing: ${key}`);
   }
 }
 
@@ -225,6 +465,7 @@ function audit(candidate, predecessor) {
   validatePageQueue(candidate.excludedPageCandidates, "excluded", sourceByRef, errors);
   validatePageQueue(candidate.layoutPages, "layout", sourceByRef, errors);
   validateVariableMissionReviews(candidate, sourceByRef, errors);
+  validateManualReviews(candidate, sourceByRef, errors);
 
   const forbidden = [];
   const privateLocations = [];
@@ -287,6 +528,18 @@ function audit(candidate, predecessor) {
   if (candidate.counts && candidate.counts.verifiedExcludedPages != null &&
       candidate.counts.verifiedExcludedPages !== (candidate.excludedPageCandidates || []).filter(page => page.reviewStatus === "visual_verified").length) {
     errors.push("verifiedExcludedPages count mismatch");
+  }
+  const continuationCount = (candidate.continuationFragments || []).length;
+  const manualVerifiedCount = (candidate.items || []).filter(item =>
+    item.privateRef && item.privateRef.layoutKind === "manual-reviewed-item"
+  ).length;
+  if ((manualVerifiedCount > 0 || continuationCount > 0) &&
+      (!candidate.counts || candidate.counts.continuationFragments !== continuationCount)) {
+    errors.push("continuationFragments count mismatch");
+  }
+  if ((manualVerifiedCount > 0 || continuationCount > 0) &&
+      (!candidate.counts || candidate.counts.manualVerified !== manualVerifiedCount)) {
+    errors.push("manualVerified count mismatch");
   }
 
   let preservedPredecessorItems = 0;
@@ -353,4 +606,12 @@ if (require.main === module) {
   if (!result.ok) process.exit(1);
 }
 
-module.exports = Object.freeze({ audit, boxesOverlap, scanForbidden, validatePageQueue, validateVariableMissionReviews });
+module.exports = Object.freeze({
+  audit,
+  boxesOverlap,
+  isReviewedLabel,
+  scanForbidden,
+  validateManualReviews,
+  validatePageQueue,
+  validateVariableMissionReviews
+});

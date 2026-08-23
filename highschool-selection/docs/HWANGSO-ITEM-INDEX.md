@@ -35,6 +35,8 @@
 
 3·4·5칸 Mission은 고정 템플릿으로 추정하지 않는다. 원본에서 주문항 경계를 직접 확인해 SHA 결합 결정 매니페스트에 순서·표시번호·정규화 박스를 모두 기록한 `mission_variable` 판정만 허용한다. 박스가 겹치거나 표시번호와 읽기 순서가 1부터 연속하지 않으면 적용기는 거부한다.
 
+Mission이 아닌 특수 편집 페이지는 `manual_items` 결정으로만 복구한다. 주문항마다 원본에 표시된 짧은 라벨, 구조 종류(`concept`, `example`, `exercise`, `unknown`), 페이지 읽기 순서와 정확 박스를 기록하며 최대 12개까지만 허용한다. 이어지는 소문항 조각은 새 문항 ID를 만들지 않고 같은 원본의 앞쪽 시작 문항에 직접 연결된 `continuationFragments`로 남긴다. 시작 문항이 아직 색인되지 않았거나 기존 후보가 섞인 페이지는 부분 확정하지 않고 미해결 큐에 유지한다.
+
 미해결 페이지 검수는 `render-private-layout-review.py --queue unresolved`로 별도 큐를 만든다. 반영 뒤 좌표 재검수는 `--queue reviewed --reason verified_mission_variable_cell`을 사용한다. `--reason layout-anchor-not-found` 또는 `--reason partial-layout-coverage`, `--source-id`, `--page source-memory-id:쪽`, `--offset`, `--limit`으로 범위를 제한한다. 미해결 큐는 `--limit`을 생략해도 최대 40쪽만 렌더하며, 현재 색인된 문항 상자를 원본 위에 표시한다. 생성된 접촉시트와 `review-manifest.json`은 비공개 검수 산출물이므로 `tmp/` 등 Git 비추적 위치에만 둔다.
 
 OCR 결과는 발견 보조 자료일 뿐 정답·유형·문항 경계의 최종 근거로 사용하지 않는다. 모든 신규 문항은 `releaseStatus: locked`로 시작하고 사용자 회차 검수 전에는 공개 시험에 배정하지 않는다.

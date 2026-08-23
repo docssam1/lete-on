@@ -228,3 +228,230 @@ test("variable Mission anchors require three to five positive-area boxes", () =>
   zero.box.width = 0;
   assert.throws(() => review.normalizedMissionAnchors([zero, anchor(2), anchor(3)]), /positive area/);
 });
+
+test("manual item reviews preserve arbitrary labels and link continuations without new fragment IDs", () => {
+  const value = fixture();
+  const source = value.sources[0];
+  value.unresolvedPages.push(
+    { sourceRef: source.sourceRef, privateSourceMemoryId: "source-one", page: 4, reason: "layout-anchor-not-found" },
+    { sourceRef: source.sourceRef, privateSourceMemoryId: "source-one", page: 5, reason: "layout-anchor-not-found" }
+  );
+  const result = review.applyReviews(value, [
+    {
+      sourceMemoryId: "source-one",
+      page: 4,
+      resolution: "manual_items",
+      anchors: [{
+        kind: "exercise",
+        printedLabelHint: "42",
+        layoutOrder: 1,
+        box: { x: 0.07, y: 0.08, width: 0.84, height: 0.8 }
+      }]
+    },
+    {
+      sourceMemoryId: "source-one",
+      page: 5,
+      resolution: "manual_items",
+      anchors: [{
+        kind: "example",
+        printedLabelHint: "예제 43-1",
+        layoutOrder: 1,
+        box: { x: 0.52, y: 0.08, width: 0.39, height: 0.7 }
+      }],
+      continuations: [{
+        fragmentPage: 5,
+        printedLabelHint: "42 (2)-(3)",
+        continuationFrom: { page: 4, printedLabelHint: "42" }
+      }]
+    }
+  ]);
+  assert.deepEqual(result.items.map(item => item.privateRef.printedLabelHint), ["42", "예제 43-1"]);
+  assert.equal(result.items.length, 2);
+  assert.equal(result.continuationFragments.length, 1);
+  assert.equal(result.visualReviewPages[1].continuationKeys.length, 1);
+  assert.equal(result.counts.manualVerified, 2);
+  assert.equal(result.counts.continuationFragments, 1);
+  assert.equal(result.unresolvedPages.length, 0);
+});
+
+test("manual item continuations fail atomically when their starting item is absent", () => {
+  const value = fixture();
+  const source = value.sources[0];
+  value.unresolvedPages.push({
+    sourceRef: source.sourceRef,
+    privateSourceMemoryId: "source-one",
+    page: 5,
+    reason: "layout-anchor-not-found"
+  });
+  assert.throws(() => review.applyReviews(value, [{
+    sourceMemoryId: "source-one",
+    page: 5,
+    resolution: "manual_items",
+    anchors: [{
+      kind: "exercise",
+      printedLabelHint: "43",
+      layoutOrder: 1,
+      box: { x: 0.52, y: 0.08, width: 0.39, height: 0.7 }
+    }],
+    continuations: [{
+      fragmentPage: 5,
+      printedLabelHint: "42 (2)-(3)",
+      continuationFrom: { page: 4, printedLabelHint: "42" }
+    }]
+  }]), /link one exact starting item/);
+  assert.equal(value.items.length, 0);
+  assert.equal(value.unresolvedPages.length, 1);
+});
+
+test("manual item continuations reject an unverified layout candidate target", () => {
+  const value = fixture();
+  const source = value.sources[0];
+  const candidate = index.createItemIndexEntry({
+    id: core.createSharedBankId("question", index.createLocatorKey(source.sourceFingerprint, 4, 1)),
+    sourceRef: source.sourceRef,
+    locator: { page: 4, slot: 1, kind: "exercise", box: { x: 0.07, y: 0.08, width: 0.84, height: 0.8 } },
+    discoveryStatus: "layout_candidate",
+    curriculum: null,
+    classificationStatus: "pending",
+    answerStatus: "missing",
+    reuse: core.PROGRAM_MODES,
+    releaseStatus: "locked"
+  });
+  value.items.push({
+    ...candidate,
+    privateRef: {
+      sourceMemoryId: "source-one",
+      printedLabelHint: "42",
+      discoveryConfidence: "candidate_only"
+    }
+  });
+  value.unresolvedPages.push({
+    sourceRef: source.sourceRef,
+    privateSourceMemoryId: "source-one",
+    page: 5,
+    reason: "layout-anchor-not-found"
+  });
+  assert.throws(() => review.applyReviews(value, [{
+    sourceMemoryId: "source-one",
+    page: 5,
+    resolution: "manual_items",
+    anchors: [],
+    continuations: [{
+      fragmentPage: 5,
+      printedLabelHint: "42 (2)-(3)",
+      continuationFrom: { page: 4, printedLabelHint: "42" }
+    }]
+  }]), /visually verified starting item/);
+});
+
+test("manual item continuations reject a self-marked visual target without a bound review", () => {
+  const value = fixture();
+  const source = value.sources[0];
+  const candidate = index.createItemIndexEntry({
+    id: core.createSharedBankId("question", index.createLocatorKey(source.sourceFingerprint, 4, 1)),
+    sourceRef: source.sourceRef,
+    locator: { page: 4, slot: 1, kind: "exercise", box: { x: 0.07, y: 0.08, width: 0.84, height: 0.8 } },
+    discoveryStatus: "visual_verified",
+    curriculum: null,
+    classificationStatus: "pending",
+    answerStatus: "missing",
+    reuse: core.PROGRAM_MODES,
+    releaseStatus: "locked"
+  });
+  value.items.push({
+    ...candidate,
+    privateRef: {
+      sourceMemoryId: "source-one",
+      printedLabelHint: "42",
+      discoveryConfidence: "visual_verified",
+      evidenceLocator: "PDF p.4, item 42"
+    }
+  });
+  value.unresolvedPages.push({
+    sourceRef: source.sourceRef,
+    privateSourceMemoryId: "source-one",
+    page: 5,
+    reason: "layout-anchor-not-found"
+  });
+  assert.throws(() => review.applyReviews(value, [{
+    sourceMemoryId: "source-one",
+    page: 5,
+    resolution: "manual_items",
+    anchors: [],
+    continuations: [{
+      fragmentPage: 5,
+      printedLabelHint: "42 (2)-(3)",
+      continuationFrom: { page: 4, printedLabelHint: "42" }
+    }]
+  }]), /review-bound starting item/);
+});
+
+test("manual item anchors reject unsafe kinds, duplicate labels, overlap, and invalid continuation pages", () => {
+  const anchor = (label, order, x, kind = "exercise") => ({
+    kind,
+    printedLabelHint: label,
+    layoutOrder: order,
+    box: { x, y: 0.1, width: 0.3, height: 0.3 }
+  });
+  assert.throws(() => review.normalizedManualAnchors([
+    anchor("1", 1, 0.1, "mission")
+  ]), /kind is not allowed/);
+  assert.throws(() => review.normalizedManualAnchors([
+    anchor("1", 1, 0.05), anchor("1", 2, 0.55)
+  ]), /duplicate manual_items label/);
+  assert.throws(() => review.normalizedManualAnchors([
+    anchor("1", 1, 0.1), anchor("2", 2, 0.2)
+  ]), /must not overlap/);
+  assert.throws(() => review.normalizedContinuations([{
+    fragmentPage: 5,
+    printedLabelHint: "2 (1)-(2)",
+    continuationFrom: { page: 4, printedLabelHint: "2" }
+  }], 4), /fragment must be on the reviewed page/);
+  assert.throws(() => review.normalizedManualAnchors([
+    anchor("정답 42", 1, 0.1)
+  ]), /reviewed label grammar/);
+  assert.throws(() => review.normalizedManualAnchors([
+    anchor("이 문항은 반드시 시각 검수", 1, 0.1)
+  ]), /reviewed label grammar/);
+  assert.deepEqual(
+    review.normalizedManualAnchors([
+      anchor("42", 1, 0.05), anchor("개념탐구 7", 2, 0.37), anchor("예제 7-1", 3, 0.69)
+    ]).map(entry => entry.printedLabelHint),
+    ["42", "개념탐구 7", "예제 7-1"]
+  );
+  assert.equal(review.normalizedContinuations([{
+    fragmentPage: 5,
+    printedLabelHint: "42 (2)-(3)",
+    continuationFrom: { page: 4, printedLabelHint: "42" }
+  }], 5)[0].printedLabelHint, "42 (2)-(3)");
+});
+
+test("manual item and continuation labels must be disjoint in normalized and direct decisions", () => {
+  const decision = {
+    sourceMemoryId: "source-one",
+    page: 5,
+    resolution: "manual_items",
+    anchors: [{
+      kind: "exercise",
+      printedLabelHint: "42",
+      layoutOrder: 1,
+      box: { x: 0.07, y: 0.08, width: 0.84, height: 0.8 }
+    }],
+    continuations: [{
+      fragmentPage: 5,
+      printedLabelHint: "42",
+      continuationFrom: { page: 4, printedLabelHint: "41" }
+    }]
+  };
+  assert.throws(() => review.normalizeDecisionRecord(decision), /must be disjoint/);
+
+  const value = fixture();
+  value.unresolvedPages.push({
+    sourceRef: value.sources[0].sourceRef,
+    privateSourceMemoryId: "source-one",
+    page: 5,
+    reason: "layout-anchor-not-found"
+  });
+  assert.throws(() => review.applyReviews(value, [decision]), /must be disjoint/);
+  assert.equal(value.unresolvedPages.length, 1);
+});
