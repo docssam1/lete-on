@@ -361,6 +361,108 @@
           "note": "A권에서 확인. B~F도 동일 패턴으로 보이나 미검증"
         }
       ]
+    },
+    {
+      "id": "csy.mid.inventory",
+      "title": "창의수연 중급 전체 단원 재고",
+      "aliases": [],
+      "tags": [
+        "창의수연",
+        "중급",
+        "목차",
+        "ADVANCE",
+        "재고"
+      ],
+      "summary": "중급은 6권 33개 단원. A5·B5·C7·D5·E6·F5. 현재 앱 ADVANCE에는 25개만 있어 8개가 빠져 있다.",
+      "status": "verified",
+      "sensitivity": "internal",
+      "updated": "2026-08-23",
+      "pointers": [
+        {
+          "source_id": "csy-mid-A",
+          "role": "source",
+          "locator": "중급 A Contents(p.1)",
+          "note": "각 권 목차 페이지에서 직접 확인"
+        },
+        {
+          "source_id": "csy-mid-B",
+          "role": "source",
+          "locator": "중급 B Contents(p.1)",
+          "note": "각 권 목차 페이지에서 직접 확인"
+        },
+        {
+          "source_id": "csy-mid-C",
+          "role": "source",
+          "locator": "중급 C Contents(p.1)",
+          "note": "각 권 목차 페이지에서 직접 확인"
+        },
+        {
+          "source_id": "csy-mid-D",
+          "role": "source",
+          "locator": "중급 D Contents(p.1)",
+          "note": "각 권 목차 페이지에서 직접 확인"
+        },
+        {
+          "source_id": "csy-mid-E",
+          "role": "source",
+          "locator": "중급 E Contents(p.1)",
+          "note": "각 권 목차 페이지에서 직접 확인"
+        },
+        {
+          "source_id": "csy-mid-F",
+          "role": "source",
+          "locator": "중급 F Contents(p.1)",
+          "note": "각 권 목차 페이지에서 직접 확인"
+        }
+      ]
+    },
+    {
+      "id": "csy.plan.order",
+      "title": "진도계획표의 통합 난이도 순번 구조",
+      "aliases": [],
+      "tags": [
+        "진도표",
+        "난이도",
+        "구조"
+      ],
+      "summary": "한 권 = 이론 4회 + 공방 1회 + SONA 1회이며 권 사이에 경시가 들어간다. 전체과정 열에 통합 순번이 매겨져 있다.",
+      "status": "draft",
+      "sensitivity": "internal",
+      "updated": "2026-08-23",
+      "pointers": [
+        {
+          "source_id": "csy-plan",
+          "role": "source",
+          "locator": "미리보기 스트림 초급 A~C 구간",
+          "note": "HWP PrvText 해독. D권 이후 행은 미확보"
+        }
+      ]
+    },
+    {
+      "id": "nm.advance.redesign",
+      "title": "ADVANCE 재설계 — 난이도순 8단계 33유닛",
+      "aliases": [
+        "중급 재설계",
+        "8단계 33유닛"
+      ],
+      "tags": [
+        "설계",
+        "ADVANCE",
+        "커리큘럼",
+        "재배열"
+      ],
+      "summary": "원본 권 순서를 버리고 선행관계·난이도·교과 진도로 재배열한 설계. 차근차근 곱하기를 맨 앞으로, 분해곱셈법을 짝 만들기 뒤로, 가우스를 뒤로 옮겼다.",
+      "status": "verified",
+      "sensitivity": "internal",
+      "updated": "2026-08-23",
+      "pointers": [
+        {
+          "source_id": "csy-mid-A",
+          "role": "decision",
+          "locator": "CURRICULUM-SOURCES.md §6",
+          "note": "원장 지시(난이도 재조정 허용)에 따른 설계 결정"
+        }
+      ]
     }
   ],
   "note": "원본은 Google Drive(비공개)에만 둔다. 이 카탈로그는 위치와 판정만 기록하며 원문을 복사하지 않는다.",
