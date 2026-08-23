@@ -167,3 +167,64 @@ test("Mission replacement preserves spurious IDs as rejected and appends six new
   assert.equal(result.counts.activeQuestionCandidates, 6);
   assert.equal(result.unresolvedPages.length, 0);
 });
+
+test("fingerprint-bound manifests can apply exact variable Mission anchors", () => {
+  const value = fixture();
+  const source = value.sources[0];
+  value.unresolvedPages.push({
+    sourceRef: source.sourceRef,
+    privateSourceMemoryId: "source-one",
+    page: 4,
+    reason: "layout-anchor-not-found"
+  });
+  const anchors = [
+    { printedLabelHint: "1", layoutOrder: 1, box: { x: 0.04, y: 0.18, width: 0.44, height: 0.34 } },
+    { printedLabelHint: "2", layoutOrder: 2, box: { x: 0.04, y: 0.52, width: 0.44, height: 0.42 } },
+    { printedLabelHint: "3", layoutOrder: 3, box: { x: 0.52, y: 0.18, width: 0.44, height: 0.34 } },
+    { printedLabelHint: "4", layoutOrder: 4, box: { x: 0.52, y: 0.52, width: 0.44, height: 0.42 } }
+  ];
+  const decisions = review.decisionsFromManifest({
+    schemaVersion: 1,
+    sources: [{
+      privateSourceMemoryId: source.privateSourceMemoryId,
+      sourceFingerprint: source.sourceFingerprint
+    }],
+    decisions: [{ sourceMemoryId: "source-one", page: 4, resolution: "mission_variable", anchors }]
+  }, value);
+  const result = review.applyReviews(value, decisions);
+  assert.equal(result.items.length, 4);
+  assert.deepEqual(result.items.map(item => item.privateRef.printedLabelHint), ["1", "2", "3", "4"]);
+  assert.equal(result.visualReviewPages[0].itemCount, 4);
+  assert.equal(result.visualReviewPages[0].resolution, "verified_mission_variable_cell");
+});
+
+test("variable Mission anchors reject overlap and non-sequential labels", () => {
+  assert.throws(() => review.normalizedMissionAnchors([
+    { printedLabelHint: "1", layoutOrder: 1, box: { x: 0.1, y: 0.1, width: 0.5, height: 0.5 } },
+    { printedLabelHint: "2", layoutOrder: 2, box: { x: 0.4, y: 0.4, width: 0.5, height: 0.5 } },
+    { printedLabelHint: "3", layoutOrder: 3, box: { x: 0.1, y: 0.7, width: 0.2, height: 0.2 } }
+  ]), /must not overlap/);
+  assert.throws(() => review.normalizedMissionAnchors([
+    { printedLabelHint: "1", layoutOrder: 1, box: { x: 0.1, y: 0.1, width: 0.2, height: 0.2 } },
+    { printedLabelHint: "3", layoutOrder: 2, box: { x: 0.4, y: 0.1, width: 0.2, height: 0.2 } },
+    { printedLabelHint: "2", layoutOrder: 3, box: { x: 0.7, y: 0.1, width: 0.2, height: 0.2 } }
+  ]), /sequential labels/);
+});
+
+test("variable Mission anchors require three to five positive-area boxes", () => {
+  const anchor = number => ({
+    printedLabelHint: String(number),
+    layoutOrder: number,
+    box: { x: 0.05 + (number - 1) * 0.2, y: 0.1, width: 0.15, height: 0.2 }
+  });
+  assert.throws(() => review.normalizedMissionAnchors([anchor(1), anchor(2)]), /three to five/);
+  assert.throws(() => review.normalizedMissionAnchors([
+    anchor(1), anchor(2), anchor(3), anchor(4), anchor(5), anchor(6)
+  ]), /three to five/);
+  const missing = anchor(1);
+  delete missing.box;
+  assert.throws(() => review.normalizedMissionAnchors([missing, anchor(2), anchor(3)]), /exact reviewed boxes/);
+  const zero = anchor(1);
+  zero.box.width = 0;
+  assert.throws(() => review.normalizedMissionAnchors([zero, anchor(2), anchor(3)]), /positive area/);
+});

@@ -50,6 +50,47 @@ function parseDecision(value) {
   };
 }
 
+function normalizedMissionAnchors(value) {
+  if (!Array.isArray(value) || value.length < 3 || value.length > 5) {
+    fail("mission_variable requires three to five reviewed anchors");
+  }
+  const anchors = value.map((anchor, index) => {
+    if (!anchor || !anchor.box || typeof anchor.box !== "object") {
+      fail("mission_variable anchors require exact reviewed boxes");
+    }
+    if (!(Number(anchor.box.width) > 0) || !(Number(anchor.box.height) > 0)) {
+      fail("mission_variable anchor boxes must have positive area");
+    }
+    const printedLabelHint = String(anchor && anchor.printedLabelHint || "");
+    const layoutOrder = Number(anchor && anchor.layoutOrder);
+    if (printedLabelHint !== String(index + 1) || layoutOrder !== index + 1) {
+      fail("mission_variable anchors must use sequential labels and layoutOrder");
+    }
+    const locator = itemIndex.createLocator({
+      page: 1,
+      slot: index + 1,
+      kind: "mission",
+      box: anchor.box
+    });
+    return {
+      kind: "mission",
+      printedLabelHint,
+      layoutOrder,
+      box: { ...locator.box }
+    };
+  });
+  for (let left = 0; left < anchors.length; left += 1) {
+    for (let right = left + 1; right < anchors.length; right += 1) {
+      const a = anchors[left].box;
+      const b = anchors[right].box;
+      const overlapWidth = Math.max(0, Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x));
+      const overlapHeight = Math.max(0, Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y));
+      if (overlapWidth * overlapHeight > 0.000001) fail("mission_variable anchor boxes must not overlap");
+    }
+  }
+  return anchors;
+}
+
 function normalizeDecisionRecord(value) {
   if (!value || typeof value !== "object") fail("Decision record must be an object");
   const sourceMemoryId = String(value.sourceMemoryId || "");
@@ -58,9 +99,13 @@ function normalizeDecisionRecord(value) {
   if (!/^[a-z0-9-]+$/.test(sourceMemoryId) || !Number.isSafeInteger(page) || page < 1) {
     fail(`Invalid decision record: ${JSON.stringify(value)}`);
   }
-  if (!new Set(["exclude", "mission6", "mission6_replace_candidates"]).has(resolution)) {
+  if (!new Set(["exclude", "mission6", "mission6_replace_candidates", "mission_variable"]).has(resolution)) {
     fail(`Invalid decision resolution: ${resolution}`);
   }
+  if (resolution === "mission_variable") {
+    return { sourceMemoryId, page, resolution, anchors: normalizedMissionAnchors(value.anchors) };
+  }
+  if (value.anchors != null) fail(`${resolution} decisions cannot include custom anchors`);
   return { sourceMemoryId, page, resolution };
 }
 
@@ -197,12 +242,12 @@ function applyReviews(base, decisions) {
       continue;
     }
 
-    if (!new Set(["mission6", "mission6_replace_candidates"]).has(resolution)) {
+    if (!new Set(["mission6", "mission6_replace_candidates", "mission_variable"]).has(resolution)) {
       fail(`Unsupported visual resolution: ${decision.resolution}`);
     }
     location.queue.splice(location.index, 1);
     const pageItems = result.items.filter(item => item.sourceRef === source.sourceRef && item.locator.page === decision.page);
-    if (resolution === "mission6" && pageItems.length > 0) {
+    if (new Set(["mission6", "mission_variable"]).has(resolution) && pageItems.length > 0) {
       fail(`Mission6 review requires an empty page index: ${decisionKey}`);
     }
     if (resolution === "mission6_replace_candidates") {
@@ -226,7 +271,10 @@ function applyReviews(base, decisions) {
       }
     }
     let nextSlot = pageItems.reduce((max, item) => Math.max(max, item.locator.slot), 0) + 1;
-    for (const anchor of missionAnchors()) {
+    const reviewedAnchors = resolution === "mission_variable"
+      ? normalizedMissionAnchors(decision.anchors)
+      : missionAnchors();
+    for (const anchor of reviewedAnchors) {
       const slot = nextSlot++;
       const locatorKey = itemIndex.createLocatorKey(source.sourceFingerprint, decision.page, slot);
       const entry = itemIndex.createItemIndexEntry({
@@ -246,7 +294,7 @@ function applyReviews(base, decisions) {
           sourceMemoryId: decision.sourceMemoryId,
           printedLabelHint: anchor.printedLabelHint,
           layoutOrder: anchor.layoutOrder,
-          layoutKind: "mission-six-cell",
+          layoutKind: resolution === "mission_variable" ? "mission-variable-cell" : "mission-six-cell",
           discoveryConfidence: "visual_verified",
           evidenceLocator: `PDF p.${decision.page}, Mission ${anchor.printedLabelHint}`
         }
@@ -258,9 +306,12 @@ function applyReviews(base, decisions) {
       page: decision.page,
       resolution: resolution === "mission6"
         ? "verified_mission_six_cell"
-        : "verified_mission_six_cell_replacing_candidates",
+        : resolution === "mission6_replace_candidates"
+          ? "verified_mission_six_cell_replacing_candidates"
+          : "verified_mission_variable_cell",
       rejectedCandidateIds: resolution === "mission6_replace_candidates" ? pageItems.map(item => item.id) : [],
-      evidenceLocator: `PDF p.${decision.page}, Mission 1-6`
+      itemCount: reviewedAnchors.length,
+      evidenceLocator: `PDF p.${decision.page}, Mission 1-${reviewedAnchors.length}`
     });
   }
 
@@ -329,6 +380,7 @@ module.exports = Object.freeze({
   createDecisionManifest,
   decisionsFromManifest,
   missionAnchors,
+  normalizedMissionAnchors,
   normalizeDecisionRecord,
   parseDecision,
   queueLocation,

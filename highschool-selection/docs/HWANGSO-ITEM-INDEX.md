@@ -33,6 +33,8 @@
 
 부분 인식 페이지가 실제 6칸 Mission으로 확인됐지만 기존 숫자 앵커가 그래프·수식 숫자를 잘못 잡은 경우에는 `mission6_replace_candidates`만 사용한다. 기존 ID와 항목은 삭제하거나 재사용하지 않고 `rejectedCandidates`에 시각 기각 근거를 남긴다. 실제 Mission 6개는 해당 페이지 최대 슬롯 다음 번호로 추가하며, 활성 후보 수는 전체 이력 항목 수에서 기각 후보 수를 뺀 값으로 별도 집계한다.
 
-미해결 페이지 검수는 `render-private-layout-review.py --queue unresolved`로 별도 큐를 만든다. `--reason layout-anchor-not-found` 또는 `--reason partial-layout-coverage`, `--source-id`, `--offset`, `--limit`으로 범위를 제한한다. 미해결 큐는 `--limit`을 생략해도 최대 40쪽만 렌더하며, 현재 색인된 문항 상자를 원본 위에 표시한다. 생성된 접촉시트와 `review-manifest.json`은 비공개 검수 산출물이므로 `tmp/` 등 Git 비추적 위치에만 둔다.
+3·4·5칸 Mission은 고정 템플릿으로 추정하지 않는다. 원본에서 주문항 경계를 직접 확인해 SHA 결합 결정 매니페스트에 순서·표시번호·정규화 박스를 모두 기록한 `mission_variable` 판정만 허용한다. 박스가 겹치거나 표시번호와 읽기 순서가 1부터 연속하지 않으면 적용기는 거부한다.
+
+미해결 페이지 검수는 `render-private-layout-review.py --queue unresolved`로 별도 큐를 만든다. 반영 뒤 좌표 재검수는 `--queue reviewed --reason verified_mission_variable_cell`을 사용한다. `--reason layout-anchor-not-found` 또는 `--reason partial-layout-coverage`, `--source-id`, `--page source-memory-id:쪽`, `--offset`, `--limit`으로 범위를 제한한다. 미해결 큐는 `--limit`을 생략해도 최대 40쪽만 렌더하며, 현재 색인된 문항 상자를 원본 위에 표시한다. 생성된 접촉시트와 `review-manifest.json`은 비공개 검수 산출물이므로 `tmp/` 등 Git 비추적 위치에만 둔다.
 
 OCR 결과는 발견 보조 자료일 뿐 정답·유형·문항 경계의 최종 근거로 사용하지 않는다. 모든 신규 문항은 `releaseStatus: locked`로 시작하고 사용자 회차 검수 전에는 공개 시험에 배정하지 않는다.

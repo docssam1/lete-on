@@ -22,8 +22,13 @@ def load_json(path: Path) -> dict:
 
 QUEUE_FIELDS = {
     "excluded": "excludedPageCandidates",
+    "reviewed": "visualReviewPages",
     "unresolved": "unresolvedPages",
 }
+
+
+def entry_reason(entry: dict) -> str:
+    return str(entry.get("reason") or entry.get("resolution") or "unknown")
 
 
 def fit_thumbnail(page: pymupdf.Page, width: int) -> Image.Image:
@@ -38,6 +43,7 @@ def select_queue(
     queue_name: str,
     reasons: Iterable[str] = (),
     source_ids: Iterable[str] = (),
+    page_keys: Iterable[str] = (),
     offset: int = 0,
     limit: int | None = None,
 ) -> tuple[list[dict], int]:
@@ -51,11 +57,17 @@ def select_queue(
 
     reason_filter = set(reasons)
     source_filter = set(source_ids)
+    page_filter = set(page_keys)
     queue = [dict(entry) for entry in index.get(QUEUE_FIELDS[queue_name], [])]
     if reason_filter:
-        queue = [entry for entry in queue if entry.get("reason") in reason_filter]
+        queue = [entry for entry in queue if entry_reason(entry) in reason_filter]
     if source_filter:
         queue = [entry for entry in queue if entry.get("privateSourceMemoryId") in source_filter]
+    if page_filter:
+        queue = [
+            entry for entry in queue
+            if f'{entry.get("privateSourceMemoryId")}:{entry.get("page")}' in page_filter
+        ]
     queue.sort(key=lambda entry: (entry.get("privateSourceMemoryId", ""), int(entry.get("page", 0))))
 
     total = len(queue)
@@ -145,7 +157,7 @@ def make_sheet(
         y = margin + row * (tile_height + gap)
         label = (
             f'{entry["privateSourceMemoryId"]}  PDF {entry["page"]}  '
-            f'{entry["reason"]}  indexed={entry["indexedItemCount"]}'
+            f'{entry_reason(entry)}  indexed={entry["indexedItemCount"]}'
         )
         draw.rectangle((x, y, x + tile_width, y + label_height), fill="white")
         draw.text((x + 10, y + 13), label, fill="black", font=font)
@@ -163,6 +175,7 @@ def main() -> None:
     parser.add_argument("--queue", choices=sorted(QUEUE_FIELDS), default="excluded")
     parser.add_argument("--reason", action="append", default=[])
     parser.add_argument("--source-id", action="append", default=[])
+    parser.add_argument("--page", action="append", default=[], help="Exact privateSourceMemoryId:page selector")
     parser.add_argument("--offset", type=int, default=0)
     parser.add_argument("--limit", type=int)
     parser.add_argument("--batch-size", type=int, default=4)
@@ -183,6 +196,7 @@ def main() -> None:
         args.queue,
         reasons=args.reason,
         source_ids=args.source_id,
+        page_keys=args.page,
         offset=args.offset,
         limit=limit,
     )
@@ -202,7 +216,7 @@ def main() -> None:
     manifest_entries = []
     for start in range(0, len(queue), args.batch_size):
         batch = queue[start : start + args.batch_size]
-        reason_label = "mixed" if len({entry.get("reason") for entry in batch}) > 1 else batch[0].get("reason", "unknown")
+        reason_label = "mixed" if len({entry_reason(entry) for entry in batch}) > 1 else entry_reason(batch[0])
         safe_reason = "".join(character if character.isalnum() or character in "-_" else "-" for character in reason_label)
         output = args.output_dir / f"{args.queue}-{safe_reason}-review-{start // args.batch_size + 1:02d}.jpg"
         make_sheet(batch, source_files, indexed_items, output, args.tile_width)
@@ -211,7 +225,7 @@ def main() -> None:
                 {
                     "privateSourceMemoryId": entry["privateSourceMemoryId"],
                     "page": int(entry["page"]),
-                    "reason": entry.get("reason"),
+                    "reason": entry_reason(entry),
                     "indexedItemCount": int(entry.get("indexedItemCount", 0)),
                     "sheet": output.name,
                 }
@@ -224,6 +238,7 @@ def main() -> None:
         "filters": {
             "reasons": sorted(set(args.reason)),
             "sourceIds": sorted(set(args.source_id)),
+            "pages": sorted(set(args.page)),
             "offset": args.offset,
             "limit": limit,
         },

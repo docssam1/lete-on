@@ -21,6 +21,13 @@ class ReviewQueueTests(unittest.TestCase):
             "excludedPageCandidates": [
                 {"privateSourceMemoryId": "source-a", "page": 9, "reason": "non-question-layout"}
             ],
+            "visualReviewPages": [
+                {
+                    "privateSourceMemoryId": "source-a",
+                    "page": 11,
+                    "resolution": "verified_mission_variable_cell",
+                }
+            ],
         }
 
     def test_selects_and_sorts_requested_reason(self):
@@ -51,6 +58,27 @@ class ReviewQueueTests(unittest.TestCase):
             MODULE.select_queue(self.index, "unresolved", offset=-1)
         with self.assertRaisesRegex(ValueError, "limit"):
             MODULE.select_queue(self.index, "unresolved", limit=0)
+
+    def test_exact_page_selector_keeps_only_requested_source_page_pairs(self):
+        queue, total = MODULE.select_queue(
+            self.index,
+            "unresolved",
+            page_keys=["source-a:7", "source-b:8"],
+        )
+        self.assertEqual(total, 2)
+        self.assertEqual(
+            [(entry["privateSourceMemoryId"], entry["page"]) for entry in queue],
+            [("source-a", 7), ("source-b", 8)],
+        )
+
+    def test_reviewed_queue_uses_resolution_as_its_reason(self):
+        queue, total = MODULE.select_queue(
+            self.index,
+            "reviewed",
+            reasons=["verified_mission_variable_cell"],
+        )
+        self.assertEqual(total, 1)
+        self.assertEqual(MODULE.entry_reason(queue[0]), "verified_mission_variable_cell")
 
 
 if __name__ == "__main__":

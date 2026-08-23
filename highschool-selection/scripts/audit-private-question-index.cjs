@@ -57,6 +57,107 @@ function validatePageQueue(entries, label, sourceByRef, errors) {
   }
 }
 
+function boxesOverlap(left, right) {
+  const overlapWidth = Math.max(
+    0,
+    Math.min(left.x + left.width, right.x + right.width) - Math.max(left.x, right.x)
+  );
+  const overlapHeight = Math.max(
+    0,
+    Math.min(left.y + left.height, right.y + right.height) - Math.max(left.y, right.y)
+  );
+  return overlapWidth * overlapHeight > 0.000001;
+}
+
+function validateVariableMissionReviews(candidate, sourceByRef, errors) {
+  const reviewByPage = new Map();
+  const unresolvedKeys = new Set((candidate.unresolvedPages || []).map(entry => `${entry.sourceRef}:${entry.page}`));
+  const excludedKeys = new Set((candidate.excludedPageCandidates || []).map(entry => `${entry.sourceRef}:${entry.page}`));
+  const layoutKeys = new Set((candidate.layoutPages || []).map(entry => `${entry.sourceRef}:${entry.page}`));
+  for (const review of candidate.visualReviewPages || []) {
+    const key = `${review.sourceRef}:${review.page}`;
+    if (reviewByPage.has(key)) errors.push(`duplicate visual review page: ${key}`);
+    reviewByPage.set(key, review);
+    const source = sourceByRef.get(review.sourceRef);
+    if (!source) {
+      errors.push(`visual review page missing source: ${key}`);
+      continue;
+    }
+    if (review.privateSourceMemoryId !== source.privateSourceMemoryId) {
+      errors.push(`visual review private source mismatch: ${key}`);
+    }
+    if (!Number.isSafeInteger(review.page) || review.page < 1 || review.page > source.pageCount) {
+      errors.push(`visual review page outside source: ${key}`);
+    }
+    if (review.resolution !== "verified_mission_variable_cell") continue;
+
+    if (unresolvedKeys.has(key) || excludedKeys.has(key) || layoutKeys.has(key)) {
+      errors.push(`variable Mission remains in a pending page queue: ${key}`);
+    }
+
+    if (!Number.isSafeInteger(review.itemCount) || review.itemCount < 3 || review.itemCount > 5) {
+      errors.push(`variable Mission itemCount must be three to five: ${key}`);
+    }
+    if (!Array.isArray(review.rejectedCandidateIds) || review.rejectedCandidateIds.length !== 0) {
+      errors.push(`variable Mission cannot reject existing candidates: ${key}`);
+    }
+    const pageItems = (candidate.items || []).filter(item =>
+      item.sourceRef === review.sourceRef && item.locator && item.locator.page === review.page
+    );
+    const items = pageItems.filter(item =>
+      item.privateRef && item.privateRef.layoutKind === "mission-variable-cell"
+    ).sort((left, right) => left.privateRef.layoutOrder - right.privateRef.layoutOrder);
+    if (pageItems.length !== review.itemCount || items.length !== review.itemCount) {
+      errors.push(`variable Mission itemCount mismatch: ${key}`);
+    }
+    items.forEach((item, index) => {
+      const expected = index + 1;
+      if (item.locator.kind !== "mission" || !item.locator.box) {
+        errors.push(`variable Mission locator invalid: ${item.id}`);
+      }
+      if (!item.locator.box || !(item.locator.box.width > 0) || !(item.locator.box.height > 0)) {
+        errors.push(`variable Mission box must have positive area: ${item.id}`);
+      }
+      if (item.discoveryStatus !== "visual_verified" ||
+          item.privateRef.discoveryConfidence !== "visual_verified") {
+        errors.push(`variable Mission lacks visual verification: ${item.id}`);
+      }
+      if (item.privateRef.sourceMemoryId !== source.privateSourceMemoryId) {
+        errors.push(`variable Mission private source mismatch: ${item.id}`);
+      }
+      if (item.privateRef.layoutOrder !== expected || item.privateRef.printedLabelHint !== String(expected)) {
+        errors.push(`variable Mission order or label mismatch: ${item.id}`);
+      }
+      if (item.locator.slot !== expected) {
+        errors.push(`variable Mission slot mismatch: ${item.id}`);
+      }
+      if (item.privateRef.evidenceLocator !== `PDF p.${review.page}, Mission ${expected}`) {
+        errors.push(`variable Mission evidence mismatch: ${item.id}`);
+      }
+    });
+    if (review.evidenceLocator !== `PDF p.${review.page}, Mission 1-${review.itemCount}`) {
+      errors.push(`variable Mission review evidence mismatch: ${key}`);
+    }
+    for (let left = 0; left < items.length; left += 1) {
+      for (let right = left + 1; right < items.length; right += 1) {
+        if (items[left].locator.box && items[right].locator.box &&
+            boxesOverlap(items[left].locator.box, items[right].locator.box)) {
+          errors.push(`variable Mission boxes overlap: ${key}`);
+        }
+      }
+    }
+  }
+
+  for (const item of candidate.items || []) {
+    if (!item.privateRef || item.privateRef.layoutKind !== "mission-variable-cell") continue;
+    const key = `${item.sourceRef}:${item.locator && item.locator.page}`;
+    const review = reviewByPage.get(key);
+    if (!review || review.resolution !== "verified_mission_variable_cell") {
+      errors.push(`variable Mission visual decision missing: ${item.id}`);
+    }
+  }
+}
+
 function audit(candidate, predecessor) {
   const errors = [];
   const ids = new Set();
@@ -123,6 +224,7 @@ function audit(candidate, predecessor) {
   validatePageQueue(candidate.unresolvedPages, "unresolved", sourceByRef, errors);
   validatePageQueue(candidate.excludedPageCandidates, "excluded", sourceByRef, errors);
   validatePageQueue(candidate.layoutPages, "layout", sourceByRef, errors);
+  validateVariableMissionReviews(candidate, sourceByRef, errors);
 
   const forbidden = [];
   const privateLocations = [];
@@ -177,6 +279,14 @@ function audit(candidate, predecessor) {
   }
   if (candidate.counts && candidate.counts.excludedPageCandidates !== (candidate.excludedPageCandidates || []).length) {
     errors.push("excludedPageCandidates count mismatch");
+  }
+  if (candidate.counts && candidate.counts.visuallyVerified != null &&
+      candidate.counts.visuallyVerified !== (candidate.items || []).filter(item => item.discoveryStatus === "visual_verified").length) {
+    errors.push("visuallyVerified count mismatch");
+  }
+  if (candidate.counts && candidate.counts.verifiedExcludedPages != null &&
+      candidate.counts.verifiedExcludedPages !== (candidate.excludedPageCandidates || []).filter(page => page.reviewStatus === "visual_verified").length) {
+    errors.push("verifiedExcludedPages count mismatch");
   }
 
   let preservedPredecessorItems = 0;
@@ -243,4 +353,4 @@ if (require.main === module) {
   if (!result.ok) process.exit(1);
 }
 
-module.exports = Object.freeze({ audit, scanForbidden, validatePageQueue });
+module.exports = Object.freeze({ audit, boxesOverlap, scanForbidden, validatePageQueue, validateVariableMissionReviews });
