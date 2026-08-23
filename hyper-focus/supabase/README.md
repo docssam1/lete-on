@@ -2,7 +2,7 @@
 
 이 폴더는 Hyper Focus 전용 Supabase 기반입니다. 필즈더클래식의 기존 Supabase 프로젝트와 합치지 않습니다.
 
-현재 상태는 **로컬 기반 구현 완료, 원격 프로젝트 미생성, 배포 비활성**입니다. `supabase-config.js`의 `enabled`는 의도적으로 `false`입니다. 별도 프로젝트 생성·비용 확인·실제 RLS 검증 전에는 `true`로 바꾸지 않습니다.
+현재 상태는 **Hyper Focus 전용 원격 프로젝트·DB migration·두 Edge Function 배포 완료, 학생 전환·웹 배포 비활성**입니다. 프로젝트 `gfield-hyper-focus`(`uqtkxhchtbcizzteuvsq`, 서울 리전)는 기존 필즈더클래식 프로젝트와 분리되어 있습니다. `supabase-config.js`의 `enabled`는 의도적으로 `false`이며, 관리자 MFA·학생 재발급·실사용 RLS 검증 전에는 `true`로 바꾸지 않습니다.
 
 ## 절대 금지
 
@@ -60,8 +60,16 @@ Free 요금제는 비용이 없지만 비활성 프로젝트 일시정지와 저
 
 ## 현재 잠금 항목
 
-- 원격 Supabase 프로젝트가 아직 없음
-- 실제 DB migration/RLS smoke test 미실행
+- 관리자 계정 부트스트랩과 TOTP 등록 미실행
+- 실제 관리자·학생 두 계정을 사용한 AAL2, 교차 학생 차단, 번호 회전 RLS 통합 테스트 미실행
 - 보안형 모의고사 loader/saveAttempt 미구현
+- `data.js`의 기존 학생 명단·옛 승인번호 제거 전
+- 앱 내 브라우저 연결 오류로 모바일·데스크톱 실제 화면 검수 미완료
 - 현재 정적 레거시 관리자 로그인은 공개 SHA-256 비교이므로 임시 호환 모드일 뿐이며, Supabase+AAL2 전환 전에는 이 브랜치를 운영 보안 완료본으로 배포할 수 없음
 - 승인번호 회전·계정 상태 변경은 학생별 DB 작업 잠금 후 Auth를 갱신하고 완료합니다. 작업 중에는 학생 RLS 접근을 즉시 막고, 중단된 작업은 15분 뒤 새 관리자 요청으로 덮어써 복구하므로 동시 실행으로 DB/Auth 버전이 엇갈리지 않습니다.
+
+## Advisor 검토 기록
+
+- `hf_submit_diagnosis`, `hf_import_legacy_diagnosis`의 `SECURITY DEFINER` 경고는 의도된 예외입니다. 두 함수 모두 JWT의 본인 ID만 사용하고 활성 세션·활성 `hyperfocus` 권한·입력 범위·학생별 잠금을 함수 안에서 재검사합니다.
+- 새 빈 DB의 미사용 인덱스 안내는 실제 사용량이 쌓인 뒤 다시 판단합니다.
+- 학생용 정책과 관리자용 정책이 나뉘어 발생하는 multiple permissive policy 알림은 역할별 접근 경로를 명확히 유지하기 위한 현재 설계입니다.

@@ -5,8 +5,8 @@
   // Supabase remains disabled until a separate Hyper Focus project is verified.
   root.GFIELD_HF_SUPABASE_CONFIG = Object.freeze({
     enabled: false,
-    projectUrl: "",
-    publishableKey: "",
+    projectUrl: "https://uqtkxhchtbcizzteuvsq.supabase.co",
+    publishableKey: "sb_publishable_eYf7Q48ml5LZcBmtJ1X--w_Nbe4l47i",
     adminEmail: "",
     sdkUrl: "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3/+esm",
     features: Object.freeze({

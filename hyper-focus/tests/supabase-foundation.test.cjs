@@ -64,6 +64,8 @@ async function testLegacyAuth() {
 function testStaticSecurityContracts() {
   const publicConfig = read("supabase-config.js");
   assert.match(publicConfig, /enabled:\s*false/);
+  assert.match(publicConfig, /https:\/\/uqtkxhchtbcizzteuvsq\.supabase\.co/);
+  assert.match(publicConfig, /sb_publishable_[A-Za-z0-9_-]+/);
   assert.match(publicConfig, /@supabase\/supabase-js@2\.112\.3/);
   assert.doesNotMatch(publicConfig, /sb_(?:secret|service_role)_[A-Za-z0-9]|SUPABASE_(?:SECRET|SERVICE_ROLE)_KEY\s*[:=]/i);
 
@@ -109,6 +111,11 @@ function testStaticSecurityContracts() {
   assert.doesNotMatch(migration, /grant\s+insert,\s*update\s+on\s+table\s+public\.hf_mock_attempts\s+to\s+authenticated/i);
   assert.doesNotMatch(migration, /grant\s+insert\s+on\s+table\s+public\.hf_diagnosis_attempts\s+to\s+authenticated/i);
   assert.doesNotMatch(migration, /source_fingerprint|details\s+jsonb/i);
+
+  const advisorHardening = read("supabase/migrations/20260823102500_harden_advisor_findings.sql");
+  assert.match(advisorHardening, /add column id uuid primary key/);
+  assert.match(advisorHardening, /hf_entitlements_permission_key_idx/);
+  assert.match(advisorHardening, /hf_asset_url_events_no_client_access/);
 
   const signedAsset = read("supabase/functions/signed-asset-url/index.ts");
   assert.match(signedAsset, /assetId/);
