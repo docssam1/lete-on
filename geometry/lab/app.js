@@ -105,6 +105,11 @@
     fold: null,
     foldCount: 20,
     levelNote: "",
+    // 단계·영역을 바꿔서 골라 두었던 유형이 전부 이 조합에서 지원되지 않게
+    // 잘려나가, 대신 첫 유형을 자동으로 골라 준 경우의 안내 한 줄. 유형 줄의
+    // 기존 안내 자리(#typeNote)를 그대로 재활용해 보여 준다 — 새 안내
+    // 영역을 만들면 화면에 "왜 바뀌었는지" 알리는 자리가 두 곳이 된다.
+    typeAutoNote: "",
     // 미리보기는 학습지 쪽과 마찬가지로 자기 시드를 따로 쓴다 — "새 문제"를
     // 눌러도 아래의 선택은 그대로 있어야 한다.
     previewType: null,
@@ -204,11 +209,13 @@
     if (kept.length) { state.types = kept; return; }
     const fallback = GEN.TYPES.filter((t) => t.defaultOn && supportsLevel(t.code)).map((t) => t.code);
     state.types = fallback.length ? fallback : GEN.typesForLevel(state.level).slice(0, 1);
+    state.typeAutoNote = "골라 둔 유형이 이 단계에서는 제공되지 않아 " + typeLabel(state.types[0]) + " 유형으로 자동으로 바꿨어요.";
   }
 
   // 준비 중 단계를 고르면 가장 가까운 제공 단계로 옮기고 왜 옮겼는지 남긴다
   // (학습지 생성기의 나이 선택과 같은 규칙).
   function setLevel(level) {
+    state.typeAutoNote = "";
     const wanted = GEN.normalizeLevel(level);
     const info = GEN.levelInfo(wanted);
     if (levelOffered(wanted)) {
@@ -233,13 +240,20 @@
     if (state.book && !books.some((b) => b.code === state.book)) state.book = null;
     if (state.fold && !folds.some((f) => f.code === state.fold)) state.fold = null;
     if (state.domain === DOMAIN_FOLD) {
-      if (!state.fold && folds.length) state.fold = folds[0].code;
+      if (!state.fold && folds.length) {
+        state.fold = folds[0].code;
+        state.typeAutoNote = "골라 둔 유형이 이 단계에서는 제공되지 않아 " + foldInfo(state.fold).label + " 유형으로 자동으로 바꿨어요.";
+      }
       return;
     }
-    if (!state.book && !GEN.typesForLevel(state.level).length && books.length) state.book = books[0].code;
+    if (!state.book && !GEN.typesForLevel(state.level).length && books.length) {
+      state.book = books[0].code;
+      state.typeAutoNote = "골라 둔 유형이 이 단계에서는 제공되지 않아 " + bookInfo(state.book).label + " 유형으로 자동으로 바꿨어요.";
+    }
   }
 
   function setDomain(domain) {
+    state.typeAutoNote = "";
     state.domain = domain;
     if (domain === DOMAIN_FOLD) state.book = null;
     else state.fold = null;
@@ -271,26 +285,20 @@
   }
 
   function renderLevels() {
-    const band = $("stageBand");
     const row = $("builderLevels");
-    band.replaceChildren();
     row.replaceChildren();
     // "전체" 배지는 커리큘럼 아홉 단계 목록(GEN.LEVELS)에 없다 — 그 아홉을
     // 섞으라는 지시일 뿐 학년 하나가 아니기 때문(generators.js ALL_LEVEL
-    // 주석 참고). 그래서 띠 맨 앞에 따로 붙인다.
+    // 주석 참고). 그래서 줄 맨 앞에 따로 붙인다.
+    //
+    // WHY 배지가 한 곳뿐인가: 예전에는 페이지 맨 위에도 같은 아홉 단계 띠가
+    // 따로 있었다. "학습지 만들기" 안의 것과 내용이 완전히 같아 위아래로 두 번
+    // 고르는 것처럼 보였으므로, 위쪽 독립 섹션은 지우고 이 줄 하나만 남겼다
+    // (안내 문구는 위 field-note.stage-static-note로 옮겨 붙였다, index.html
+    // 참고).
     const allInfo = GEN.levelInfo(GEN.ALL_LEVEL);
     [allInfo].concat(GEN.LEVELS).forEach((info) => {
-      // 띠에서 고르면 아래 "학습지 만들기"로 스크롤해 그 단계를 선택해 준다 —
-      // 띠는 커리큘럼 안내이자 곧바로 쓰는 입구이기도 하다.
       const offered = levelOffered(info.code);
-      const bandEl = stageBadge(info, band);
-      if (offered) {
-        bandEl.addEventListener("click", () => {
-          setLevel(info.code);
-          renderAll();
-          $("builder").scrollIntoView({ behavior: "smooth", block: "start" });
-        });
-      }
       const rowEl = stageBadge(info, row);
       if (offered) {
         rowEl.addEventListener("click", () => { setLevel(info.code); renderAll(); });
@@ -450,14 +458,19 @@
     else renderCubeTypes(grid);
     const note = $("typeNote");
     if (note) {
-      if (state.domain === DOMAIN_FOLD) {
+      if (state.typeAutoNote) {
+        // 단계·영역을 바꿔 골라 둔 유형이 전부 잘려나간 경우의 안내가, 이 줄의
+        // 다른 안내보다 우선한다 — 방금 화면이 왜 바뀌었는지가 지금 가장 궁금한
+        // 정보이기 때문이다.
+        note.textContent = state.typeAutoNote;
+      } else if (state.domain === DOMAIN_FOLD) {
         note.textContent = "색종이 학습지는 한 번에 한 유형씩 만들어요. 만들기를 누르면 색종이 접기 학습지 화면이 그 유형으로 열려요.";
       } else if (state.book) {
         note.textContent = "이 학습지는 손으로 고른 문제 풀을 그대로 쓰므로 한 번에 하나만 만들어요.";
       } else {
         note.textContent = "선택한 단계에서 제공하지 않는 유형은 흐리게 표시돼요. 여러 장을 함께 고르면 한 학습지에 섞여 나와요.";
       }
-      note.classList.toggle("is-warn", Boolean(state.book) && state.domain === DOMAIN_CUBE);
+      note.classList.toggle("is-warn", Boolean(state.typeAutoNote) || (Boolean(state.book) && state.domain === DOMAIN_CUBE));
     }
   }
 
