@@ -59,3 +59,22 @@ test("the public index rejects prompt, answer, path, and unverified release fiel
   assert.throws(() => index.createItemIndexEntry({ ...base, path: "private/path" }), /protected or unknown fields/);
   assert.throws(() => index.createItemIndexEntry({ ...base, releaseStatus: "approved" }), /release locked/);
 });
+
+test("layout-detected items remain discovery-only and release locked", () => {
+  const fingerprint = "d".repeat(64);
+  const entry = index.createItemIndexEntry({
+    id: core.createSharedBankId("question", index.createLocatorKey(fingerprint, 22, 9)),
+    sourceRef: core.createSharedBankId("source", `sha256:${fingerprint}`),
+    locator: { page: 22, slot: 9, kind: "mission", box: { x: 0.51, y: 0.42, width: 0.45, height: 0.23 } },
+    discoveryStatus: "layout_candidate",
+    curriculum: null,
+    classificationStatus: "pending",
+    answerStatus: "missing",
+    reuse: ["SH", "DP"],
+    releaseStatus: "locked"
+  });
+
+  assert.equal(entry.discoveryStatus, "layout_candidate");
+  assert.equal(entry.releaseStatus, "locked");
+  assert.equal(entry.curriculum, null);
+});
