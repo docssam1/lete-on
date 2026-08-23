@@ -1817,18 +1817,24 @@
       }
 
       const digits = makeDigits();
-      const lowPlace = int(rng, 0, Math.min(2, digitCount - 6));
-      const highPlace = lowPlace + 4;
+      const lowPlace = int(rng, 0, Math.min(2, digitCount - 7));
+      const scaleUpPower = int(rng, 2, 4);
+      const scaleDownPower = int(rng, 1, 3);
+      const maximumGap = Math.min(5, scaleUpPower + scaleDownPower);
+      const placeGap = int(rng, 3, maximumGap);
+      const highPlace = lowPlace + placeGap;
       const baseDigit = int(rng, 1, 3);
       const multiplier = int(rng, 2, 3);
       const lowDigit = baseDigit * multiplier;
       digits[digitCount - lowPlace - 1] = lowDigit;
       digits[digitCount - highPlace - 1] = baseDigit;
       const value = Number(digits.join(""));
-      const multipliedDigitValue = lowDigit * 10 ** (lowPlace + 3);
-      const dividedDigitValue = baseDigit * 10 ** (highPlace - 2);
+      const multipliedDigitValue = lowDigit * 10 ** (lowPlace + scaleUpPower);
+      const dividedDigitValue = baseDigit * 10 ** (highPlace - scaleDownPower);
       const answer = multipliedDigitValue / dividedDigitValue;
-      return result(`${value.toLocaleString()}을 1000배 한 수에서 숫자 ${lowDigit}가 나타내는 값은, ${value.toLocaleString()}을 100분의 1로 한 수에서 숫자 ${baseDigit}가 나타내는 값의 몇 배인지 구하세요.`, answer, `1000배 한 수에서 숫자 ${lowDigit}의 값은 ${multipliedDigitValue.toLocaleString()}, 100분의 1로 한 수에서 숫자 ${baseDigit}의 값은 ${dividedDigitValue.toLocaleString()}이므로 ${multipliedDigitValue.toLocaleString()} ÷ ${dividedDigitValue.toLocaleString()} = ${answer}배입니다.`);
+      const scaleUp = 10 ** scaleUpPower;
+      const scaleDown = 10 ** scaleDownPower;
+      return result(`${value.toLocaleString()}을 ${scaleUp.toLocaleString()}배 한 수에서 숫자 ${lowDigit}가 나타내는 값은, ${value.toLocaleString()}을 ${scaleDown.toLocaleString()}분의 1로 한 수에서 숫자 ${baseDigit}가 나타내는 값의 몇 배인지 구하세요.`, answer, `${scaleUp.toLocaleString()}배 한 수에서 숫자 ${lowDigit}의 값은 ${multipliedDigitValue.toLocaleString()}, ${scaleDown.toLocaleString()}분의 1로 한 수에서 숫자 ${baseDigit}의 값은 ${dividedDigitValue.toLocaleString()}이므로 ${multipliedDigitValue.toLocaleString()} ÷ ${dividedDigitValue.toLocaleString()} = ${answer}배입니다.`);
     },
     largeNumberCompare({ rng, level, variant = 0 }) {
       const blankNumber = (prefix, suffix, place) => {
@@ -2032,7 +2038,7 @@
       return result(`수 카드 ${digits.map(value => `<span class="digit-card">${value}</span>`).join("")}를 한 번씩 모두 사용해 만들 수 있는 가장 큰 수와 가장 작은 수의 차를 구하세요.`, largest - smallest, `가장 큰 수는 ${largest.toLocaleString()}, 가장 작은 수는 ${smallest.toLocaleString()}이므로 차는 ${(largest - smallest).toLocaleString()}입니다.`);
     },
     multiAngle({ rng, level, variant = 0 }) {
-      const rayCount = int(rng, 6 + level, 7 + level);
+      const rayCount = int(rng, 5 + level, 9 + level);
       if (variant % 3 === 0) {
         const answer = rayCount * (rayCount - 1) / 2;
         return result(`한 점에서 뻗은 ${rayCount}개의 반직선 중 두 개를 골라 만들 수 있는 180°보다 작은 각은 모두 몇 개인지 구하세요.${rayFanSvg(rayCount)}`, answer, `각은 서로 다른 반직선 2개를 고르면 하나씩 정해집니다. 따라서 ${rayCount} × ${rayCount - 1} ÷ 2 = ${answer}개입니다.`);
@@ -2610,7 +2616,7 @@
         const count = int(rng, 18 + level * 8, 36 + level * 15);
         const total = count * count;
         const answer = count * 2 - 1;
-        return result(`1부터 시작하는 연속된 홀수를 더했더니 합이 ${total.toLocaleString()}이었습니다. 더한 홀수 중 가장 큰 수를 구하세요.`, answer, `처음 ${count}개 홀수의 합은 ${count}² = ${total.toLocaleString()}입니다. ${count}번째 홀수는 2 × ${count} - 1 = ${answer}입니다.`);
+        return result(`1부터 시작하는 연속된 홀수를 더했더니 합이 ${total.toLocaleString()}이었습니다. 더한 홀수 중 가장 큰 수를 구하세요.`, answer, `1부터 연속한 홀수를 ${count}개 더한 합은 ${count} × ${count} = ${total.toLocaleString()}입니다. 가장 큰 홀수는 ${count}번째이므로 2 × ${count} - 1 = ${answer}입니다.`);
       }
       const first = int(rng, 12 + level * 10, 45 + level * 25);
       const center = first + 4;

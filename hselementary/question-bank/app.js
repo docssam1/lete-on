@@ -9,6 +9,7 @@
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
   const hash = (value) => [...value].reduce((sum, character) => Math.imul(sum ^ character.charCodeAt(0), 16777619), 2166136261) >>> 0;
   const typeDisplayName = type => type.label && type.label !== "핵심 유형" ? type.label : type.name;
+  const difficultyBandLabel = type => ({ "-1": "심화 쉬움", "0": "심화 기준", "1": "심화 어려움" })[String(type.difficultyBand)] || "심화 기준";
 
   function renderMathNotation(markup) {
     const template = document.createElement("template");
@@ -120,7 +121,7 @@
   }
 
   function currentDifficultyLabel() {
-    return ({ "-1": "심화 낮춤", "0": "심화 기준", "1": "심화 올림" })[String(state.difficulty)] || "심화 기준";
+    return ({ "-1": "심화 쉬움", "0": "심화 기준", "1": "심화 어려움" })[String(state.difficulty)] || "심화 기준";
   }
 
   function visibleTypes() {
@@ -155,7 +156,7 @@
     return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" tabindex="0">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
-      '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + type.grade + '학년 ' + type.term + '학기 · 심화 문제은행</small></span>' +
+      '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i></small></span>' +
       '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "준비 중") + '</span>' +
     '</label>';
   }
@@ -228,7 +229,7 @@
     if (!generated) return;
     const popover = ensurePreviewPopover();
     previewAnchor = anchor;
-    popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header><div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} 대표 문제</footer>`;
+    popover.innerHTML = `<header><span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong></header><div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} 변형 대표 문제</footer>`;
     popover.hidden = false;
     requestAnimationFrame(() => positionTypePreview(anchor));
   }
@@ -250,7 +251,7 @@
     $("selectedQuestionSummary").textContent = `${selected.length ? state.count : 0}문항`;
     $("generateButton").disabled = selected.length === 0;
     $("selectedTypeList").innerHTML = selected.length ? selected.map(type =>
-      '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(typeDisplayName(type)) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · 소단원 ' + type.subunitNumber + '</small></span>' +
+      '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(typeDisplayName(type)) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · ' + difficultyBandLabel(type) + '</small></span>' +
       '<button type="button" data-remove-type="' + type.id + '" aria-label="' + escapeHtml(typeDisplayName(type)) + ' 선택 해제">×</button></div>'
     ).join("") : '<p>왼쪽 교육과정 트리에서 유형을 선택하세요.</p>';
   }
