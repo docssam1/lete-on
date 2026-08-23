@@ -65,9 +65,9 @@
       title: "황소 고등 선발 대비 1회",
       track: "중등 누적 선발",
       curriculumVersion: "2022-revised",
-      scopeLabel: "중등 누적 선발 · 40문항 · 120분",
+      scopeLabel: "중등 누적 선발 · 40문항 · 110분",
       questionCount: 40,
-      durationMinutes: 120,
+      durationMinutes: 110,
       durationScope: "our-sale-mock",
       pageCount: 8,
       sourcePageCount: 11,
@@ -92,7 +92,7 @@
         visualReviewIssues: 0,
         releaseDecision: "final_confirmation_pending"
       },
-      note: "보호된 v2 검수 기록에서 40문항의 정답·분류·응답 구성·시각·원본 지문·교정 산출물과 인쇄·서명 전달 감사를 완료했습니다. 판매용 모의고사 운영 시간은 120분입니다. 실제 학원 공개 사례의 시간은 별도 근거값으로 관리하며, 시험 1회 전체 최종 확인과 releaseStatus 전환 전에는 학생에게 열리지 않습니다."
+      note: "보호된 v2 검수 기록에서 40문항의 정답·분류·응답 구성·시각·원본 지문·교정 산출물과 인쇄·서명 전달 감사를 완료했습니다. 판매용 모의고사 운영 시간은 110분입니다. 실제 학원 공개 사례의 시간은 별도 근거값으로 관리하며, 시험 1회 전체 최종 확인과 releaseStatus 전환 전에는 학생에게 열리지 않습니다."
     },
     {
       id: "dp-middle1-entry",

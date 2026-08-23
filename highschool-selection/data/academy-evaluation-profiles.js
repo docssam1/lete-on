@@ -11,7 +11,7 @@
       programId: "SH",
       displayName: "황소 고등",
       paperStyle: "중등 전 범위를 한 회차에 누적 배치하는 40문항 선발형",
-      defaultDuration: "120분 · 우리 판매용 모의고사",
+      defaultDuration: "110분 · 우리 판매용 모의고사",
       difficultyFlow: "기본 정확도에서 복합 조건·도형 추론까지 누적 변별",
       reportTitle: "황소 고등 선발 진단",
       primaryAxes: Object.freeze(["중등 누적 영역", "학년·학기·단원", "세부유형", "난이도", "취약 유형 우선순위"]),
@@ -100,7 +100,7 @@
   });
 
   const examOverrides = Object.freeze({
-    "sh-selection-r01": Object.freeze({ scope: "중등 누적 40문항", duration: "120분", paperVariant: "황소 고등 선발 1회" }),
+    "sh-selection-r01": Object.freeze({ scope: "중등 누적 40문항", duration: "110분", paperVariant: "황소 고등 선발 1회" }),
     "dp-middle1-entry": Object.freeze({ scope: "초5-1~초6-2 누적", duration: "확인 필요", paperVariant: "돌파 중1 입학" }),
     "dp-middle2-2-transfer": Object.freeze({ scope: "중1-1~중2-2 전 과정", duration: "원본 회차 150분", paperVariant: "돌파 중2-2 편입" }),
     "dp-common1-entry-202405": Object.freeze({ scope: "중2-1~중3-2 누적", duration: "회차 확인 필요", paperVariant: "돌파 공통수학1 입학" }),

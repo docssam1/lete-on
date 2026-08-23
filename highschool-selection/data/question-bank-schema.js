@@ -10,6 +10,29 @@
       common1: ["다항식", "방정식과 부등식", "경우의 수", "행렬"],
       common2: ["도형의 방정식", "집합과 명제", "함수와 그래프"]
     },
+    sharedRegistry: {
+      identityPolicy: "한 문항은 하나의 ID로 관리하고 학원별 시험지에 복제하지 않음",
+      consumers: ["SH", "DP", "WM", "ED", "DG", "SM"],
+      sourcePriorities: [
+        {
+          id: "hwangso-middle-textbooks",
+          label: "황소 중등 교재",
+          priorityFor: ["SH"],
+          reusableFor: ["DP", "WM", "ED", "DG", "SM"],
+          status: "private-source-indexing",
+          rule: "황소 고등 선발의 중등 누적 유형을 우선 대조하고 다른 시험은 범위·난도·표기 호환성을 다시 검사"
+        }
+      ],
+      compatibilityChecks: [
+        "2022 개정 교육과정 범위 일치",
+        "학년·대단원·소단원·세부유형 일치",
+        "핵심 조건과 풀이 구조 일치",
+        "시험별 난도·배점·문항 위치 적합",
+        "구교육과정 기호·용어·범위 제거 또는 현행화",
+        "정답·그림·수식 감사와 사용자 승인"
+      ],
+      perExamOverrides: ["배점", "문항 순서", "시험시간", "난도 곡선", "평가축", "커트라인·과락"]
+    },
     practice: {
       stages: [
         { id: "original", label: "본시험", description: "승인된 원본으로 현재 위치를 확인" },

@@ -13,7 +13,7 @@ const catalog = context.globalThis.HIGHSELECT_CATALOG;
 test("first SH exam is review-complete but stays locked until final whole-round confirmation", () => {
   const exam = catalog.exams.find(item => item.id === "sh-selection-r01");
   assert.equal(exam.questionCount, 40);
-  assert.equal(exam.durationMinutes, 120);
+  assert.equal(exam.durationMinutes, 110);
   assert.equal(exam.durationScope, "our-sale-mock");
   assert.equal(exam.title, "황소 고등 선발 대비 1회");
   assert.equal(exam.pageCount, 8);

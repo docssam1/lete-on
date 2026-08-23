@@ -52,6 +52,16 @@ test("academy profiles select report axes and type priorities without publishing
   assert.equal(dp.scorePolicy.includes("원본 배점·컷"), true);
 });
 
+test("one shared question registry can serve every academy blueprint", () => {
+  assert.equal(bank.sharedRegistry.identityPolicy.includes("하나의 ID"), true);
+  assert.deepEqual(Array.from(bank.sharedRegistry.consumers), ["SH", "DP", "WM", "ED", "DG", "SM"]);
+  const hwangso = bank.sharedRegistry.sourcePriorities.find(source => source.id === "hwangso-middle-textbooks");
+  assert.deepEqual(Array.from(hwangso.priorityFor), ["SH"]);
+  assert.deepEqual(Array.from(hwangso.reusableFor), ["DP", "WM", "ED", "DG", "SM"]);
+  assert.equal(bank.sharedRegistry.compatibilityChecks.some(rule => rule.includes("2022 개정")), true);
+  assert.equal(bank.sharedRegistry.perExamOverrides.includes("커트라인·과락"), true);
+});
+
 test("practice bank is student-session gated and exposes no admin route", () => {
   assert.equal(pageSource.includes("../shared/runtime.js"), true);
   assert.equal(pageSource.includes("../shared/auth.js"), true);

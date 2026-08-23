@@ -8,7 +8,7 @@ const EXAMS = Object.freeze({
   "sh-selection-r01": Object.freeze({
     examId: "sh-selection-r01",
     title: "황소 고등 선발 대비 1회",
-    durationMinutes: 120,
+    durationMinutes: 110,
     durationScope: "our-sale-mock",
     questionCount: 40,
     pageCount: 8,
