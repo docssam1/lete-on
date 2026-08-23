@@ -424,7 +424,15 @@
 }
 .nm-gp-goal{display:flex;align-items:center;gap:6px;font-size:17px;font-weight:800;color:var(--gold-deep);}
 .nm-gp-goal-n{font-size:24px;font-weight:900;color:var(--blue-deep);}
-.nm-gp-rowline{display:flex;align-items:center;gap:10px;}
+.nm-gp-rowline{display:flex;align-items:center;gap:10px;max-width:100%;}
+/* 서수(왼쪽에서 몇째) 줄은 절대 줄바꿈 금지 — 넘치면 칸을 줄이고, 그래도 넘치면 가로 스크롤 */
+.nm-gp-row.oneline{
+  flex-wrap:nowrap;max-width:100%;width:100%;gap:4px;justify-content:center;padding:2px;
+}
+/* 칸이 적으면 크게(최대 52px), 9칸까지 늘어나면 자동으로 줄어들어 항상 한 화면에 */
+.nm-gp-row.oneline .nm-gp-cell{
+  flex:1 1 0;min-width:0;max-width:52px;height:auto;aspect-ratio:1/1;
+}
 .nm-gp-arrow{font-size:26px;animation:gp-point 1s ease-in-out infinite;}
 .nm-gp-arrow.flip{transform:scaleX(-1);}
 @keyframes gp-point{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
@@ -469,7 +477,13 @@
 }
 .nm-sc-replay:active{transform:translateY(2px);box-shadow:none;}
 .nm-sc-scene{display:flex;justify-content:center;}
-.nm-sc-row{flex-wrap:wrap;gap:8px;max-width:340px;}
+.nm-sc-row{
+  flex-wrap:nowrap;gap:4px;max-width:100%;width:100%;justify-content:center;padding:2px;
+}
+.nm-sc-row .nm-sc-char{
+  flex:1 1 0;min-width:0;max-width:58px;height:auto;aspect-ratio:1/1;
+  font-size:clamp(18px,5.2vw,32px);
+}
 .nm-sc-char{
   width:58px;height:58px;border-radius:16px;
   border:2.5px solid var(--line);background:#fff;
@@ -483,7 +497,9 @@
   animation:tc-pop .3s ease;
 }
 .nm-sc-char:disabled{cursor:default;}
-.nm-sc-stairs{align-items:flex-end;gap:5px;max-width:340px;flex-wrap:nowrap;}
+.nm-sc-stairs{align-items:flex-end;gap:4px;max-width:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:2px;}
+.nm-sc-stairs::-webkit-scrollbar{display:none}
+.nm-sc-stairs .nm-sc-stairq{flex:0 0 auto}
 .nm-sc-stairq{display:flex;flex-direction:column;align-items:center;gap:0;}
 .nm-sc-stairq-em{font-size:19px;line-height:1.15;}
 .nm-sc-stairq-bar{

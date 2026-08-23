@@ -9,6 +9,22 @@
 
 const {R, pick, shuffle} = NM_RNG;
 
+/* 같은 덧셈/보수 사실이라도 등식을 여러 형태로 보여주는 헬퍼.
+   k(아는 부분) + need(빈칸) = target 이라는 같은 사실을 8가지 식으로 표현해
+   문항 노출 다양성을 크게 늘린다 (NS2·NS3·NS4 공용). */
+function _bondForms(k, need, target) {
+  return [
+    `${k} + \\square = ${target}`,
+    `\\square + ${k} = ${target}`,
+    `${target} = ${k} + \\square`,
+    `${target} = \\square + ${k}`,
+    `${target} - ${k} = \\square`,
+    `${target} - \\square = ${k}`,
+    `\\square = ${target} - ${k}`,
+    `${k} = ${target} - \\square`
+  ];
+}
+
 /* ── 자릿값 이름 헬퍼 ── */
 const PLACE_KO  = ['일','십','백','천','만'];
 const PLACE_EN  = ['ones','tens','hundreds','thousands','ten-thousands'];
@@ -58,73 +74,81 @@ NM_TGEN['ns2_split'] = function(params, rng){
   const a = R(rng, 1, n - 1);
   const b = n - a;
 
-  /* 절반 확률로 □+b=n vs a+□=n */
-  const blankFirst = rng() < 0.5;
-  const tex = blankFirst
-    ? `\\square + ${b} = ${n}`
-    : `${a} + \\square = ${n}`;
-  const answerVal = blankFirst ? a : b;
-  const knownPart = blankFirst ? b : a;
+  /* 어느 쪽을 아는 부분으로 보여줄지 + 등식을 8가지 형태 중 하나로 표현 */
+  const knownIsA = rng() < 0.5;
+  const k    = knownIsA ? a : b;
+  const need = knownIsA ? b : a;
+  const tex  = pick(rng, _bondForms(k, need, n));
 
   return {
     prompt: {
-      ko: `${n}을 ${knownPart}과 얼마로 가를까요?`,
-      en: `Split ${n}: ${knownPart} and how much?`,
-      zh: `把${n}分成${knownPart}和多少？`
+      ko: `${n}을 ${k}과 얼마로 가를까요?`,
+      en: `Split ${n}: ${k} and how much?`,
+      zh: `把${n}分成${k}和多少？`
     },
     tex,
-    answer: answerVal,
+    answer: need,
     answerType: 'number',
     widget: 'cubes',
     cubes: { piles: [a, b], moveTo: n }
   };
 };
 
-/* ── NS3 보수 5·10 ── */
+/* ── NS3 보수 5·10 ──
+   params.target은 "이 레벨에서 다룰 최대 목표수"로 해석한다 — 실제 문항은
+   2~target 사이의 여러 부분목표(subTarget)를 오가며 만들어 문항 다양성을 늘린다
+   (보수 5·10은 조합 수가 본질적으로 적어 target을 고정값으로만 쓰면 20문항
+   안에서 반복이 심하다). */
 NM_TGEN['ns3_comp510'] = function(params, rng){
   params = params || {};
   const target = params.target || 10;
-  /* k는 1 이상, target-1 이하 */
-  const k = R(rng, 1, target - 1);
-  const need = target - k;
+  /* 목표수 근방(±2)까지 살짝 넓혀 20문항 안 중복을 더 낮춘다 */
+  const subTarget = R(rng, 2, target + 2);
+  const k = R(rng, 1, subTarget - 1);
+  const need = subTarget - k;
+  const tex = pick(rng, _bondForms(k, need, subTarget));
 
   return {
     prompt: {
-      ko: `${k}에서 ${target}을 만들려면 얼마가 더 필요해요?`,
-      en: `You have ${k}. How many more to make ${target}?`,
-      zh: `有${k}个，还需要几个才能凑成${target}？`
+      ko: `${k}에서 ${subTarget}을 만들려면 얼마가 더 필요해요?`,
+      en: `You have ${k}. How many more to make ${subTarget}?`,
+      zh: `有${k}个，还需要几个才能凑成${subTarget}？`
     },
-    tex: `${k} + \\square = ${target}`,
+    tex,
     answer: need,
     answerType: 'steps',
-    steps: [{ tex: `${k} + \\square = ${target}`, blank: need }],
+    steps: [{ tex: `${k} + \\square = ${subTarget}`, blank: need }],
     widget: 'tenframe',
-    cubes: { piles: [k, need], moveTo: target }
+    cubes: { piles: [k, need], moveTo: subTarget }
   };
 };
 
-/* ── NS4 보수 100·1000 ── */
+/* ── NS4 보수 100·1000 ──
+   NS3와 같은 이유로 target을 "최대 목표수"로 해석해, step의 배수인 여러
+   부분목표(subTarget) 사이를 오가며 문항을 만든다. */
 NM_TGEN['ns4_comp100'] = function(params, rng){
   params = params || {};
   const target = params.target || 100;
   const step   = params.step   || 10;
 
-  /* a: step의 배수이면서 target 미만 */
-  const multCount = Math.floor(target / step) - 1; /* 1 ~ multCount */
-  const mult = R(rng, 1, multCount);
+  const maxMult   = Math.floor(target / step);        /* subTarget = subMult*step */
+  const subMult   = R(rng, 2, maxMult);
+  const subTarget = subMult * step;
+  const mult      = R(rng, 1, subMult - 1);
   const a = mult * step;
-  const b = target - a;
+  const b = subTarget - a;
+  const tex = pick(rng, _bondForms(a, b, subTarget));
 
   return {
     prompt: {
-      ko: `${a}에 얼마를 더하면 ${target}이 될까요?`,
-      en: `What do you add to ${a} to get ${target}?`,
-      zh: `${a}加多少等于${target}？`
+      ko: `${a}에 얼마를 더하면 ${subTarget}이 될까요?`,
+      en: `What do you add to ${a} to get ${subTarget}?`,
+      zh: `${a}加多少等于${subTarget}？`
     },
-    tex: `${a} + \\square = ${target}`,
+    tex,
     answer: b,
     answerType: 'steps',
-    steps: [{ tex: `${a} + \\square = ${target}`, blank: b }],
+    steps: [{ tex: `${a} + \\square = ${subTarget}`, blank: b }],
     widget: 'steps'
   };
 };
@@ -138,32 +162,49 @@ NM_TGEN['ns5_twin'] = function(params, rng){
   const n = R(rng, min, max);
   /* near-double 변형 (~30% 확률) */
   const variant = rng();
-  let tex, answer, promptKo, promptEn, promptZh;
+  let m, answer, promptKo, promptEn, promptZh;
 
   if(variant < 0.33 && n > min){
     /* near-double: n + (n-1) */
-    const m = n - 1;
-    tex = `${n} + ${m} = \\square`;
+    m = n - 1;
     answer = n + m;
     promptKo = `${n} 더하기 ${m}은 얼마일까요?`;
     promptEn = `What is ${n} + ${m}?`;
     promptZh = `${n}加${m}等于多少？`;
   } else if(variant < 0.66 && n < max){
     /* near-double: n + (n+1) */
-    const m = n + 1;
-    tex = `${n} + ${m} = \\square`;
+    m = n + 1;
     answer = n + m;
     promptKo = `${n} 더하기 ${m}은 얼마일까요?`;
     promptEn = `What is ${n} + ${m}?`;
     promptZh = `${n}加${m}等于多少？`;
   } else {
     /* pure double */
-    tex = `${n} + ${n} = \\square`;
+    m = n;
     answer = 2 * n;
     promptKo = `${n}의 두 배는 얼마일까요?`;
     promptEn = `What is double ${n}?`;
     promptZh = `${n}的两倍是多少？`;
   }
+
+  /* 같은 (n,m) 조합이라도 더하는 순서·등식 방향을 섞어 문항 다양성을 늘린다.
+     순수 두 배(m===n)일 때는 덧셈·곱셈 두 표현이 모두 자연스러우므로
+     ×2 표기도 후보에 넣어 형태를 더 늘린다. */
+  const forms = [
+    `${n} + ${m} = \\square`,
+    `${m} + ${n} = \\square`,
+    `\\square = ${n} + ${m}`,
+    `\\square = ${m} + ${n}`
+  ];
+  if (m === n) {
+    forms.push(
+      `${n} \\times 2 = \\square`,
+      `2 \\times ${n} = \\square`,
+      `\\square = ${n} \\times 2`,
+      `\\square = 2 \\times ${n}`
+    );
+  }
+  const tex = pick(rng, forms);
 
   return {
     prompt: { ko: promptKo, en: promptEn, zh: promptZh },
@@ -171,7 +212,7 @@ NM_TGEN['ns5_twin'] = function(params, rng){
     answer,
     answerType: 'number',
     widget: 'cubes',
-    cubes: { piles: [n, n], moveTo: answer }
+    cubes: { piles: [n, m], moveTo: answer }
   };
 };
 

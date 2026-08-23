@@ -2,6 +2,13 @@
 
 중등 성취도 진단 문제은행과 분리된 초등 교재 전용 프로그램입니다.
 
+## 학생 이름 권한 계약
+
+- 기본값은 로그인 이름 자동 입력 및 읽기 전용입니다.
+- 이름 변경은 통합 관리자의 `초등 문제은행 · 학생 이름 변경` 권한(`hselementary:student-name:edit`) 또는 `window.HSELEMENTARY_ACCESS.studentNameEditors` 관리자 승인 목록에 포함된 경우에만 허용합니다.
+- URL의 `student` 값은 기존 서재 연결을 위해 이름 전달에만 사용하며, URL 값만으로 편집 권한을 얻을 수 없습니다.
+- 권장 로그인 세션 형식은 `window.HSELEMENTARY_SESSION = { name, permissions }` 또는 통합 로그인 세션 `window.GFIELD_SESSION`이며, 저장형 세션의 `hse-session`·`gfield-session`도 같은 JSON 구조로 읽습니다.
+
 ## 분류 범위
 
 - 학년: 4·5·6학년
@@ -51,6 +58,7 @@
 - `space-solids-6-2-audit.js`: 6-2 공간과 입체 24유형의 높이표·세 방향 투영·가능한 쌓기 전수 탐색·색칠 면·절단·회전 중복 독립 검산
 - `circle-solids-6-2-audit.js`: 6-2 이어진 비·원의 넓이·자취·원기둥·원뿔·회전체 8유형의 수치·반올림·단일 정답·그림 근거 독립 검산
 - `movement-audit.js`: 4-1 평면도형 이동 12개 세부 유형의 생성기 분기 고정 검산
+- `shape-pattern-audit.js`: 4-1 나열된 도형 규칙 8개 세부 유형의 실제 SVG 점·선 수, 원본 답 기준값, 역산 단일정답 검산
 - `GEOMETRY_VALIDATION.md`: 쌓기나무·입체도형·색종이 접기의 단일정답·가시성 검수 기준
 - `app.js`: 필터, 선택, 학습지, 워터마크, 인쇄
 - `index.html`, `styles.css`: 문제은행 화면

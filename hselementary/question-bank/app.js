@@ -2,7 +2,8 @@
   const curriculum = window.HSE_CURRICULUM;
   const generatorApi = window.HSE_GENERATORS;
   const mathNotation = window.HSE_MATH_NOTATION;
-  if (!curriculum || !generatorApi || !mathNotation) throw new Error("초등 문제은행 데이터를 불러오지 못했습니다.");
+  const identityApi = window.HSE_IDENTITY;
+  if (!curriculum || !generatorApi || !mathNotation || !identityApi) throw new Error("초등 문제은행 데이터를 불러오지 못했습니다.");
 
   const $ = (id) => document.getElementById(id);
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
@@ -285,10 +286,27 @@
     state.generation += 1;
     const level = currentLevel();
     const baseSeed = (Date.now() + state.generation * 1000003) >>> 0;
+    const seenPrompts = new Set();
+    const seenAnswersByType = new Map();
     state.questions = Array.from({ length: state.count }, (_, index) => {
       const type = selected[index % selected.length];
-      const seed = (baseSeed + index * 7919 + hash(type.id)) >>> 0;
-      const generated = generatorApi.generate(type, level.rank, state.difficulty, seed, index);
+      const typeAnswers = seenAnswersByType.get(type.id) || new Set();
+      let generated;
+      let uniquePromptFallback;
+      for (let attempt = 0; attempt < 32; attempt += 1) {
+        const seed = (baseSeed + index * 7919 + attempt * 104729 + hash(type.id)) >>> 0;
+        const candidate = generatorApi.generate(type, level.rank, state.difficulty, seed, index);
+        if (!candidate || seenPrompts.has(candidate.prompt)) continue;
+        uniquePromptFallback ||= candidate;
+        if (!typeAnswers.has(String(candidate.answer))) {
+          generated = candidate;
+          break;
+        }
+      }
+      generated ||= uniquePromptFallback || generatorApi.generate(type, level.rank, state.difficulty, (baseSeed + index * 7919 + hash(type.id)) >>> 0, index);
+      seenPrompts.add(generated.prompt);
+      typeAnswers.add(String(generated.answer));
+      seenAnswersByType.set(type.id, typeAnswers);
       return { number: index + 1, type, level, difficulty: currentDifficultyLabel(), ...generated };
     });
     state.view = "problem";
@@ -334,7 +352,6 @@
   function renderWorksheet() {
     const student = $("studentNameInput").value.trim();
     const selected = [...state.selected].map(id => typeById.get(id)).filter(Boolean);
-    if (student) localStorage.setItem("hseStudent", student);
     $("worksheetStudent").textContent = student;
     $("worksheetTitle").textContent = state.view === "problem" ? "맞춤 유사문제" : "맞춤 유사문제 정답·풀이";
     $("worksheetMeta").textContent = `심화 문제은행 · ${currentDifficultyLabel()} · ${state.questions.length}문항 · ${state.selected.size}개 유형`;
@@ -417,12 +434,26 @@
   $("solutionTab").addEventListener("click", () => { state.view = "solution"; renderWorksheet(); });
   $("printButton").addEventListener("click", () => print());
   $("watermarkToggle").addEventListener("change", () => { if (state.questions.length) renderWorksheet(); });
+  $("studentNameInput").addEventListener("input", () => { if (state.questions.length) renderWorksheet(); });
   addEventListener("resize", () => positionTypePreview(previewAnchor));
   addEventListener("scroll", () => hideTypePreview(true), true);
   addEventListener("keydown", event => { if (event.key === "Escape") hideTypePreview(true); });
 
   const params = new URLSearchParams(location.search);
-  $("studentNameInput").value = params.get("student") || localStorage.getItem("hseStudent") || "";
+  const identity = identityApi.resolve({
+    session: window.HSELEMENTARY_SESSION || window.GFIELD_SESSION,
+    access: window.HSELEMENTARY_ACCESS,
+    localStorage,
+    sessionStorage,
+    search: location.search
+  });
+  const studentNameInput = $("studentNameInput");
+  studentNameInput.value = identity.name;
+  studentNameInput.readOnly = !identity.canEditName;
+  studentNameInput.setAttribute("aria-readonly", identity.canEditName ? "false" : "true");
+  studentNameInput.dataset.identitySource = identity.source || "none";
+  studentNameInput.dataset.nameEditPermission = identity.canEditName ? "granted" : "locked";
+  studentNameInput.title = identity.canEditName ? "관리자가 학생 이름 변경을 허용했습니다." : "로그인한 이름이 자동으로 적용됩니다.";
   const reviewType = typeById.get(params.get("type"));
   if (reviewType?.generator) {
     state.level = "simwha";
