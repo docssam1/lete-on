@@ -73,6 +73,8 @@ function testStaticSecurityContracts() {
   const client = read("supabase-client.js");
   assert.match(client, /sessionStorage/);
   assert.match(client, /detectSessionInUrl:\s*false/);
+  assert.match(client, /allowAdminMfaSetup/);
+  assert.match(client, /adminMfaSetupClient/);
   assert.doesNotMatch(client, /SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY/);
 
   const migration = read("supabase/migrations/20260823070755_initial_hyper_focus_auth.sql");
@@ -160,6 +162,11 @@ function testStaticSecurityContracts() {
   assert.doesNotMatch(diagnosis, /p_(?:phone|approval_code)\s*:/i);
 
   const adminMfa = read("admin-mfa.html");
+  assert.match(adminMfa, /id="loginForm"/);
+  assert.match(adminMfa, /adminMfaSetupClient/);
+  assert.match(adminMfa, /client\.auth\.getUser/);
+  assert.match(adminMfa, /user\.app_metadata\?\.hf_role==='admin'/);
+  assert.match(adminMfa, /AAL2 세션을 확인했습니다/);
   assert.match(adminMfa, /mfa\.unenroll/);
 
   const adminBootstrap = read("supabase/bootstrap-admin.ts");

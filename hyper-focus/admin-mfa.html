@@ -16,6 +16,10 @@
     <div class="eyebrow">G-FIELD ADMIN SECURITY</div>
     <h1>관리자 2단계 인증 설정</h1>
     <p id="guide">인증 앱에 QR 코드를 등록한 뒤 표시되는 6자리 번호를 입력하세요.</p>
+    <form class="form" id="loginForm" hidden>
+      <input id="password" type="password" autocomplete="current-password" placeholder="관리자 비밀번호" aria-label="관리자 비밀번호">
+      <button type="submit">로그인</button>
+    </form>
     <div class="qr" id="qr"><span>보안 설정을 확인하는 중입니다.</span></div>
     <div class="secret" id="secret" hidden></div>
     <form class="form" id="verifyForm" hidden>
@@ -30,24 +34,35 @@
     const errorEl=document.getElementById('error');
     const qrEl=document.getElementById('qr');
     const form=document.getElementById('verifyForm');
+    const loginForm=document.getElementById('loginForm');
     const secretEl=document.getElementById('secret');
-    if(!window.GFieldHFSupabase?.enabled()){
-      errorEl.textContent='Supabase 보안 전환이 아직 활성화되지 않았습니다.';
-      qrEl.textContent='관리자 설정 대기';
-      return;
+    const guide=document.getElementById('guide');
+    let client;
+
+    function adminEmail(){return String(window.GFieldHFSupabase?.config?.().adminEmail||'').trim().toLowerCase()}
+    function showLogin(message){
+      form.hidden=true;secretEl.hidden=true;loginForm.hidden=false;
+      qrEl.textContent='DOCSSAM 관리자 로그인 후 인증 앱을 등록합니다.';
+      guide.textContent='이 화면은 관리자 2단계 인증 전용입니다. 학생·자료 권한은 열리지 않습니다.';
+      if(message)errorEl.textContent=message;
+      document.getElementById('password').focus();
     }
-    try{
-      const client=await window.GFieldHFSupabase.ready();
-      const {data:sessionData}=await client.auth.getSession();
-      const session=sessionData.session;
-      if(!session||session.user?.app_metadata?.hf_role!=='admin'){
-        location.replace('./?login=1');
-        return;
-      }
+    async function verifiedAdmin(){
+      const {data,error}=await client.auth.getUser();
+      const user=data?.user;
+      if(error||!user)return null;
+      if(String(user.email||'').toLowerCase()!==adminEmail())return null;
+      return user.app_metadata?.hf_role==='admin'?user:null;
+    }
+    async function setupMfa(){
+      const user=await verifiedAdmin();
+      if(!user){showLogin();return}
+      loginForm.hidden=true;
       const {data:assurance}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
       if(assurance?.currentLevel==='aal2'){
-        location.replace('./admin.html');
-        return;
+        qrEl.innerHTML='<b>관리자 2단계 인증이 이미 확인되었습니다.</b>';
+        guide.textContent='AAL2 세션 확인이 끝났습니다. 운영 전환은 별도 검수 뒤 진행합니다.';
+        form.hidden=true;secretEl.hidden=true;return;
       }
       const {data:factors,error:factorError}=await client.auth.mfa.listFactors();
       if(factorError)throw factorError;
@@ -72,16 +87,35 @@
       }
       form.hidden=false;
       document.getElementById('code').focus();
-      form.addEventListener('submit',async event=>{
-        event.preventDefault();
-        errorEl.textContent='';
+      form.onsubmit=async event=>{
+        event.preventDefault();errorEl.textContent='';
         const code=document.getElementById('code').value.trim();
         if(!/^\d{6}$/.test(code)){errorEl.textContent='6자리 번호를 입력하세요.';return}
         const {data:challenge,error:challengeError}=await client.auth.mfa.challenge({factorId:factor.id});
         if(challengeError||!challenge){errorEl.textContent='인증 요청을 만들지 못했습니다.';return}
         const {error:verifyError}=await client.auth.mfa.verify({factorId:factor.id,challengeId:challenge.id,code});
         if(verifyError){errorEl.textContent='번호가 일치하지 않습니다. 인증 앱의 최신 번호를 입력하세요.';return}
-        location.replace('./admin.html');
+        qrEl.innerHTML='<b>관리자 2단계 인증이 완료되었습니다.</b>';
+        guide.textContent='AAL2 세션을 확인했습니다. 운영 전환은 별도 검수 뒤 진행합니다.';
+        form.hidden=true;secretEl.hidden=true;
+      };
+    }
+    try{
+      client=await window.GFieldHFSupabase.adminMfaSetupClient();
+      const {data:sessionData}=await client.auth.getSession();
+      if(sessionData.session)await setupMfa();else showLogin();
+      loginForm.addEventListener('submit',async event=>{
+        event.preventDefault();errorEl.textContent='';
+        const password=document.getElementById('password').value;
+        if(!password){errorEl.textContent='관리자 비밀번호를 입력하세요.';return}
+        const {data,error}=await client.auth.signInWithPassword({email:adminEmail(),password});
+        document.getElementById('password').value='';
+        if(error||!data.session){showLogin('로그인 정보를 확인하세요.');return}
+        if(!await verifiedAdmin()){
+          await client.auth.signOut({scope:'local'});
+          showLogin('DOCSSAM 관리자 계정만 사용할 수 있습니다.');return;
+        }
+        await setupMfa();
       });
     }catch(error){
       console.error('Admin MFA setup failed',error);
