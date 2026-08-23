@@ -2,15 +2,19 @@
 
 // Regression checks for 4-2 unit 6 drawings and answers.
 global.window = {};
+require("./curriculum.js");
 require("./generators.js");
 
 const api = window.HSE_GENERATORS;
-const types = [
-  { id: "4-2-u6-t1", name: "정다각형과 대각선" },
-  { id: "4-2-u6-t2", name: "정다각형의 활용" },
-  { id: "4-2-u6-t3", name: "평면 덮기" },
-  { id: "4-2-u6-t4", name: "도형 나누기와 만들기" }
-].map(type => ({ ...type, semesterId: "4-2", unitId: "4-2-u6", unitName: "다각형" }));
+const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "4-2");
+const unit = semester.units.find(item => item.id === "4-2-u6");
+const types = unit.subunits.flatMap(subunit => subunit.types.map(type => ({
+  ...type,
+  semesterId: semester.id,
+  unitId: unit.id,
+  unitName: unit.name,
+  subunitName: subunit.name
+})));
 
 const attribute = (tag, name) => tag.match(new RegExp("\\b" + name + "=\"([^\"]*)\""))?.[1];
 const check = (condition, message) => {
@@ -47,7 +51,7 @@ for (const type of types) {
       check(generated && generated.answer && generated.solution, context + ": 결과가 비어 있습니다.");
       check(!/NaN|undefined/.test(generated.prompt + generated.answer + generated.solution), context + ": 계산값이 깨졌습니다.");
 
-      if (type.id === "4-2-u6-t1") {
+      if (type.generatorKey === "polygonDiagonals") {
         const svg = generated.prompt.match(/<svg class="geometry-diagram polygon-diagonal"[^>]*>/)?.[0];
         check(Boolean(svg), context + ": 대각선 도형이 없습니다.");
         const sides = Number(attribute(svg, "data-polygon-sides"));
@@ -60,7 +64,7 @@ for (const type of types) {
         }
       }
 
-      if (type.id === "4-2-u6-t2") {
+      if (type.generatorKey === "regularPolygonApplication") {
         const meet = generated.prompt.match(/<svg class="geometry-diagram regular-meet"[^>]*>/)?.[0];
         if (meet) {
           const angles = (attribute(meet, "data-angles") || "").split(",").map(Number);
@@ -75,7 +79,7 @@ for (const type of types) {
         }
       }
 
-      if (type.id === "4-2-u6-t3") {
+      if (type.generatorKey === "tessellationCover") {
         const svg = generated.prompt.match(/<svg class="geometry-diagram tile-board"[^>]*>/)?.[0];
         check(Boolean(svg), context + ": 타일 그림이 없습니다.");
         const rows = Number(attribute(svg, "data-tile-rows"));
@@ -85,7 +89,7 @@ for (const type of types) {
         check(Number(generated.answer) === expected, context + ": 타일 수가 그림의 행·열과 맞지 않습니다.");
       }
 
-      if (type.id === "4-2-u6-t4") {
+      if (type.generatorKey === "shapePartitionCompose") {
         const svg = generated.prompt.match(/<svg class="geometry-diagram piece-placement"[^>]*>/)?.[0];
         check(Boolean(svg), context + ": 조각 그림이 없습니다.");
         const rows = Number(attribute(svg, "data-piece-rows"));
@@ -98,4 +102,4 @@ for (const type of types) {
   }
 }
 
-console.log("다각형 감사 통과: 4유형, " + generatedCount + "개 생성");
+console.log("다각형 감사 통과: " + types.length + "유형, " + generatedCount + "개 생성");

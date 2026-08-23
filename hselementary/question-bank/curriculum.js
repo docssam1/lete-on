@@ -44,6 +44,7 @@
   const sourcedMovement = (label, difficultyBand, sourceTier, exploration) => sourced(label, difficultyBand, sourceTier, movementEvidence[exploration - 1]);
   const sourcedBarGraph = (label, difficultyBand, sourceTier, exploration) => sourced(label, difficultyBand, sourceTier, barGraphEvidence[exploration - 1]);
   const sourcedRules = (label, difficultyBand, sourceTier, exploration) => sourced(label, difficultyBand, sourceTier, rulesEvidence[exploration - 1]);
+  const sourced42 = (label, difficultyBand, sourceEvidence) => sourced(label, difficultyBand, "advanced", sourceEvidence);
 
   const semester = (id, units) => ({
     id,
@@ -257,8 +258,40 @@
       ["삼각형", "삼각형의 개수", "예각삼각형, 직각삼각형, 둔각삼각형", "이등변삼각형", "정삼각형"],
       ["소수의 덧셈과 뺄셈", "소수의 이해", "소수의 덧셈과 뺄셈", "소수의 덧셈과 뺄셈 활용", "조건에 맞는 소수"],
       ["사각형", "수선과 평행선", "평행선의 조건과 성질", "평행선 사이의 각도 ①", "평행선 사이의 각도 ②", "사각형의 종류와 성질", "사각형의 성질의 활용", "정사각형", "사각형의 개수"],
-      ["꺾은선그래프", "꺾은선그래프의 이해", "꺾은선그래프의 활용"],
-      ["다각형", "정다각형과 대각선", "정다각형의 활용", "평면 덮기", "도형 나누기와 만들기"]
+      ["꺾은선그래프",
+        detailed("꺾은선그래프의 이해", "lineGraphUnderstanding", [
+          sourced42("두 날의 자료 값 차 구하기", -1, "4-2 심화 p.52-53 개념탐구 1·Mission"),
+          sourced42("연속한 여러 날의 자료 값 합", 0, "4-2 심화 p.52-53 개념탐구 1·Mission"),
+          sourced42("가장 큰 값과 가장 작은 값의 차", 0, "4-2 심화 p.52-53 개념탐구 1·Mission")
+        ]),
+        detailed("꺾은선그래프의 활용", "lineGraphApplication", [
+          sourced42("두 이동 그래프와 연료 사용량 비교", 0, "4-2 심화 p.54-55 개념탐구 2·Mission"),
+          sourced42("물탱크 그래프에서 한 수도꼭지의 시간 역산", 1, "4-2 심화 p.54-55 개념탐구 2·Mission"),
+          sourced42("두 판매 그래프와 단가로 금액 차 구하기", 1, "4-2 심화 p.54-55 개념탐구 2·Mission")
+        ])
+      ],
+      ["다각형",
+        detailed("정다각형과 대각선", "polygonDiagonals", [
+          sourced42("한 꼭짓점에서 그을 수 있는 대각선 수", -1, "4-2 심화 p.58-59 개념탐구 1·Mission"),
+          sourced42("전체 대각선 수로 정다각형 역산", 1, "4-2 심화 p.58-59 개념탐구 1·Mission"),
+          sourced42("두 정다각형의 대각선 수 차", 0, "4-2 심화 p.58-59 개념탐구 1·Mission")
+        ]),
+        detailed("정다각형의 활용", "regularPolygonApplication", [
+          sourced42("한 내각으로 한 외각 구하기", -1, "4-2 심화 p.60-61 개념탐구 2·Mission"),
+          sourced42("정다각형의 한 변으로 둘레 구하기", -1, "4-2 심화 p.60-61 개념탐구 2·Mission"),
+          sourced42("한 점을 채운 정다각형의 빈 각", 0, "4-2 심화 p.60-61 개념탐구 2·Mission")
+        ]),
+        detailed("평면 덮기", "tessellationCover", [
+          sourced42("정사각형 타일로 덮은 바닥의 타일 수", -1, "4-2 심화 p.62-63 개념탐구 3·Mission"),
+          sourced42("교차 색칠한 타일 중 한 색의 수", 0, "4-2 심화 p.62-63 개념탐구 3·Mission"),
+          sourced42("서로 다른 크기 직사각형의 덮기", 0, "4-2 심화 p.62-63 개념탐구 3·Mission")
+        ]),
+        detailed("도형 나누기와 만들기", "shapePartitionCompose", [
+          sourced42("ㄴ자 조각을 돌려 놓는 방법의 수", 0, "4-2 심화 p.64 개념탐구 4·Mission"),
+          sourced42("막대 조각을 돌려 놓는 방법의 수", 0, "4-2 심화 p.64 개념탐구 4·Mission"),
+          sourced42("ㅜ자 조각을 돌려 놓는 방법의 수", 1, "4-2 심화 p.64 개념탐구 4·Mission")
+        ])
+      ]
     ]),
     semester("5-1", [
       ["자연수의 혼합 계산", "혼합 계산의 순서", "하나의 식으로 나타내기", "식 세워 풀기", "혼합 계산식 만들기"],

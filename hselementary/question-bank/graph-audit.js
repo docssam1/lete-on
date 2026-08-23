@@ -15,10 +15,15 @@ const barGraphTypes = barGraphUnit.subunits.flatMap(subunit => subunit.types.map
   unitName: barGraphUnit.name,
   subunitName: subunit.name
 })));
-const lineGraphTypes = [
-  { id: "4-2-u5-t1", name: "꺾은선그래프의 이해", semesterId: "4-2", unitId: "4-2-u5", unitName: "꺾은선그래프" },
-  { id: "4-2-u5-t2", name: "꺾은선그래프의 활용", semesterId: "4-2", unitId: "4-2-u5", unitName: "꺾은선그래프" }
-];
+const semester42 = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "4-2");
+const lineGraphUnit = semester42.units.find(unit => unit.id === "4-2-u5");
+const lineGraphTypes = lineGraphUnit.subunits.flatMap(subunit => subunit.types.map(type => ({
+  ...type,
+  semesterId: semester42.id,
+  unitId: lineGraphUnit.id,
+  unitName: lineGraphUnit.name,
+  subunitName: subunit.name
+})));
 
 const attribute = (tag, name) => tag.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1];
 const numberList = value => (value || "").split(",").filter(Boolean).map(Number);
