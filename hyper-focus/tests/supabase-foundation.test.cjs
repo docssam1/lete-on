@@ -173,7 +173,15 @@ function testStaticSecurityContracts() {
   assert.match(adminBootstrap, /from\("hf_admin_accounts"\)\.upsert/);
   assert.doesNotMatch(adminBootstrap, /sb_secret_[A-Za-z0-9_-]{8,}/);
 
-  const adminBootstrapWrapper = read("supabase/bootstrap-admin-local.ps1");
+  const adminBootstrapWrapperBytes = fs.readFileSync(
+    path.join(root, "supabase/bootstrap-admin-local.ps1")
+  );
+  assert.deepEqual(
+    [...adminBootstrapWrapperBytes.subarray(0, 3)],
+    [0xef, 0xbb, 0xbf],
+    "Windows PowerShell 5.1 requires a UTF-8 BOM to parse Korean prompt text safely"
+  );
+  const adminBootstrapWrapper = adminBootstrapWrapperBytes.toString("utf8");
   assert.match(adminBootstrapWrapper, /Read-Host[\s\S]*-AsSecureString/);
   assert.match(adminBootstrapWrapper, /\^sb_secret_/);
   assert.match(adminBootstrapWrapper, /PreviousEnvironment/);
