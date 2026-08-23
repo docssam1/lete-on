@@ -7,6 +7,7 @@
   "use strict";
 
   const PROGRAM_MODES = Object.freeze(["SH", "DP", "WM", "ED", "DG", "SM"]);
+  const SHARED_BANK_SCOPE = "BNK";
   const WRITER = "T";
   const ENTITY_PREFIXES = Object.freeze({
     exam: "exm",
@@ -42,6 +43,7 @@
   const DIFFICULTY_BANDS = Object.freeze(["lowered", "standard", "raised"]);
   const REVIEW_STATUSES = Object.freeze(["draft", "audit_pending", "approved", "excluded"]);
   const NEUTRAL_ID_PATTERN = /^(exm|qst|var|fig|pol|src|typ|lin|apr|lrn|atm|pst)-(sh|dp|wm|ed|dg|sm)-([0-9a-f]{16})$/;
+  const SHARED_ID_PATTERN = /^(qst|var|fig|src|typ|lin)-bnk-([0-9a-f]{16})$/;
   const CODE_PATTERN = /^[A-Z0-9][A-Z0-9_-]{0,31}$/;
   const OPAQUE_KEY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$/;
 
@@ -101,6 +103,31 @@
     const canonical = `${entity}:${normalizedMode}:${key}`;
     const digest = digest32(canonical, 0x811c9dc5) + digest32(canonical, 0x9e3779b9);
     return `${prefix}-${normalizedMode.toLowerCase()}-${digest}`;
+  }
+
+  function createSharedBankId(entity, stableKey) {
+    const prefix = ENTITY_PREFIXES[entity];
+    invariant(["question", "variant", "figure", "source", "type", "lineage"].includes(entity), "shared bank entity is not allowed");
+    const key = String(stableKey == null ? "" : stableKey);
+    invariant(OPAQUE_KEY_PATTERN.test(key), "stableKey must be an opaque registry key without spaces or paths");
+    const canonical = `shared:${entity}:${key}`;
+    const digest = digest32(canonical, 0x811c9dc5) + digest32(canonical, 0x9e3779b9);
+    return `${prefix}-${SHARED_BANK_SCOPE.toLowerCase()}-${digest}`;
+  }
+
+  function parseSharedBankId(value) {
+    const match = String(value == null ? "" : value).match(SHARED_ID_PATTERN);
+    if (!match) return null;
+    const entity = Object.keys(ENTITY_PREFIXES).find(function (key) {
+      return ENTITY_PREFIXES[key] === match[1];
+    });
+    return Object.freeze({ entity, scope: SHARED_BANK_SCOPE, digest: match[2] });
+  }
+
+  function isSharedBankId(value, entity) {
+    const parsed = parseSharedBankId(value);
+    if (!parsed) return false;
+    return !entity || parsed.entity === entity;
   }
 
   function parseNeutralId(value) {
@@ -246,6 +273,7 @@
 
   return Object.freeze({
     PROGRAM_MODES,
+    SHARED_BANK_SCOPE,
     WRITER,
     ENTITY_PREFIXES,
     CURRICULUM_LEVELS,
@@ -259,8 +287,11 @@
     REVIEW_STATUSES,
     STATUS_TRANSITIONS,
     createNeutralId,
+    createSharedBankId,
     parseNeutralId,
+    parseSharedBankId,
     isNeutralId,
+    isSharedBankId,
     createCurriculumPath,
     createCurriculumHierarchy,
     validateCurriculumPath,
