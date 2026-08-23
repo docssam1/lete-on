@@ -1,4 +1,4 @@
-/* Numbers of Magic — 유닛 C-17: ×25 / ÷25 전략 (중급 D 챕터3) */
+/* Numbers of Magic — 유닛 C-17: ×25 전략 (중급 창의전략 4단계) */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
@@ -6,13 +6,13 @@ window.NM_UNITS = window.NM_UNITS || {};
 window.NM_UNITS['C-17'] = {
   id:'C-17', tier:'intermediate', level:'C', order:17,
   generator:'ml_x25',
-  title:{ ko:'×25 / ÷25 전략', en:'The ×25 / ÷25 Strategy', zh:'×25/÷25策略' },
-  subtitle:{ ko:'25는 100의 4분의 1! ×25=×100÷4, ÷25=×4÷100', en:'25 is a quarter of 100! ×25=×100÷4, ÷25=×4÷100', zh:'25是100的四分之一！×25=×100÷4，÷25=×4÷100' },
+  title:{ ko:'×25 전략', en:'The ×25 Strategy', zh:'×25策略' },
+  subtitle:{ ko:'25는 100의 4분의 1! ×25 = ×100 ÷ 4', en:'25 is a quarter of 100! ×25 = ×100 ÷ 4', zh:'25是100的四分之一！×25 = ×100 ÷ 4' },
   icon:'🪙',
 
   practice:{
     generator:'ml_x25', level:'practice', count:5,
-    params:{ mode:'mul' },
+    params:{ level:'practice', mode:'mul' },
     intro:{
       ko:'25를 곱할 때는 100을 곱하고 4로 나누면 돼. 25는 100의 4분의 1이니까! 준비됐지?',
       en:"To multiply by 25, multiply by 100 and divide by 4 — because 25 is a quarter of 100! Ready?",
@@ -34,37 +34,37 @@ window.NM_UNITS['C-17'] = {
               en:'You may divide first: 36÷4=9, then 9×100=900. If the number is a multiple of 4, dividing first is much easier — the same idea as decomposition (C-03)!',
               zh:'也可以先除：36÷4=9，9×100=900。是4的倍数时先除容易得多——和分解乘法(C-03)是同一个思路！'} },
 
-      { tag:{ko:'② ÷25 = ×4 ÷ 100',en:'2) ÷25 = ×4 ÷ 100',zh:'② ÷25 = ×4 ÷ 100'},
-        head:{ko:'175÷25: 700÷100 = 7!',en:'175÷25: 700÷100 = 7!',zh:'175÷25：700÷100=7！'},
-        desc:{ko:'나누기 25도 뒤집으면 쉬워요! ÷25는 <b>×4 하고 ÷100</b>. 175÷25 = 175×4÷100 = 700÷100 = <b>7</b>. ×4는 <b>두 배의 두 배</b>: 175×2=350, 350×2=700. 나눗셈이 두 배 두 번으로 변신!',
-              en:'Dividing by 25 flips easily too! ÷25 means <b>×4 then ÷100</b>. 175÷25 = 175×4÷100 = 700÷100 = <b>7</b>. And ×4 is <b>double the double</b>: 175×2=350, 350×2=700. Division becomes two doublings!',
-              zh:'除以25翻转一下也简单！÷25就是<b>×4再÷100</b>。175÷25 = 175×4÷100 = 700÷100 = <b>7</b>。×4就是<b>翻倍再翻倍</b>：175×2=350，350×2=700。除法变成两次翻倍！'},
-        mathSteps:['175 ÷ 25','= 175 × 4 ÷ 100','= 700 ÷ 100','= 7'],
-        result:{ko:'175÷25=7! 네 배 하고 00 지우기.',en:'175÷25=7! Quadruple, then drop two zeros.',zh:'175÷25=7！乘4，去掉两个0。'},
-        book:{ko:'왜 될까? a÷25 = a÷(100/4) = a×4÷100. 나누는 수를 100으로 부풀리는 대신 나눠지는 수도 똑같이 4배 — 몫은 변하지 않아요.',
-              en:'Why? a÷25 = a÷(100/4) = a×4÷100. We inflate the divisor to 100 while quadrupling the dividend equally — the quotient stays the same.',
-              zh:'为什么？a÷25 = a÷(100/4) = a×4÷100。把除数扩到100的同时被除数也同样×4——商不变。'} },
+      { tag:{ko:'② ×250, ×2500도 똑같이',en:'2) ×250 and ×2500 work the same way',zh:'② ×250、×2500也一样'},
+        head:{ko:'12×250: 12000÷4 = 3000!',en:'12×250: 12000÷4 = 3000!',zh:'12×250：12000÷4=3000！'},
+        desc:{ko:'250은 1000의 4분의 1, 2500은 10000의 4분의 1이에요 — <b>×25 가족</b>이죠. 그래서 ×250은 <b>×1000 하고 ÷4</b>: 12×250 = 12×1000÷4 = 12000÷4 = <b>3000</b>. 0의 개수만 늘어날 뿐 방법은 완전히 똑같아요. ×25 하나만 익히면 ×250, ×2500까지 전부 내 것!',
+              en:'250 is a quarter of 1000, and 2500 is a quarter of 10000 — they\'re all part of the <b>×25 family</b>. So ×250 means <b>×1000 then ÷4</b>: 12×250 = 12×1000÷4 = 12000÷4 = <b>3000</b>. Only the zeros change — the method stays identical. Master ×25, and ×250, ×2500 come free!',
+              zh:'250是1000的四分之一，2500是10000的四分之一——都是<b>×25家族</b>。所以×250就是<b>×1000再÷4</b>：12×250 = 12×1000÷4 = 12000÷4 = <b>3000</b>。只是0的个数变多，方法完全一样。学会×25，×250、×2500也顺带学会！'},
+        mathSteps:['12 × 250','= 12 × 1000 ÷ 4','= 12000 ÷ 4','= 3000'],
+        result:{ko:'12×250=3000! ×25 가족은 전부 같은 방법.',en:'12×250=3000! The whole ×25 family uses the same trick.',zh:'12×250=3000！×25家族都是同一招。'},
+        book:{ko:'0을 붙이는 규칙: ×25는 0 두 개(×100), ×250은 0 세 개(×1000), ×2500은 0 네 개(×10000). 붙인 0의 개수만큼 마지막에 ÷4를 해요.',
+              en:'The zero rule: ×25 adds two zeros (×100), ×250 adds three (×1000), ×2500 adds four (×10000). However many zeros you add, finish with one ÷4.',
+              zh:'加0规则：×25加两个0(×100)，×250加三个0(×1000)，×2500加四个0(×10000)。不管加几个0，最后都÷4一次。'} },
 
       { tag:{ko:'③ 동전으로 기억하기',en:'3) Remember with coins',zh:'③ 用硬币记忆'},
         head:{ko:'25원 4개 = 100원!',en:'Four 25s make 100!',zh:'4个25凑成100！'},
-        desc:{ko:'외우는 법: <b>25가 4개 모이면 100</b>. 그래서 25 곱하기 = 100 곱하기의 4분의 1, 25로 나누기 = 100으로 나누기의 4배. 이 가족을 통째로 기억해요: <b>×5=×10÷2, ×25=×100÷4, ×50=×100÷2, ×125=×1000÷8</b>. 모두 "딱 떨어지는 수의 조각"이에요!',
-              en:'How to remember: <b>four 25s make 100</b>. So ×25 is a quarter of ×100, and ÷25 is four times ÷100. Learn the whole family: <b>×5=×10÷2, ×25=×100÷4, ×50=×100÷2, ×125=×1000÷8</b>. Each is a "fraction of a round number"!',
-              zh:'记忆方法：<b>4个25凑成100</b>。所以×25是×100的四分之一，÷25是÷100的4倍。整个家族一起记：<b>×5=×10÷2，×25=×100÷4，×50=×100÷2，×125=×1000÷8</b>。都是"整数的分块"！'},
+        desc:{ko:'외우는 법: <b>25가 4개 모이면 100</b>. 그래서 25 곱하기 = 100 곱하기의 4분의 1. 이 가족을 통째로 기억해요: <b>×5=×10÷2, ×25=×100÷4, ×50=×100÷2, ×125=×1000÷8</b>. 모두 "딱 떨어지는 수의 조각"이에요!',
+              en:'How to remember: <b>four 25s make 100</b>. So ×25 is a quarter of ×100. Learn the whole family: <b>×5=×10÷2, ×25=×100÷4, ×50=×100÷2, ×125=×1000÷8</b>. Each is a "fraction of a round number"!',
+              zh:'记忆方法：<b>4个25凑成100</b>。所以×25是×100的四分之一。整个家族一起记：<b>×5=×10÷2，×25=×100÷4，×50=×100÷2，×125=×1000÷8</b>。都是"整数的分块"！'},
         mathSteps:['×5 = ×10÷2','×25 = ×100÷4','×50 = ×100÷2','×125 = ×1000÷8'],
         result:{ko:'딱 떨어지는 수의 조각 가족! 하나를 알면 넷을 알아요.',en:'The round-number fraction family! Know one, know all four.',zh:'整数分块家族！会一个就会四个。'},
         book:null }
     ],
-    rule:{ ko:'① ×25 = ×100 후 ÷4 (4의 배수면 ÷4 먼저)  ② ÷25 = ×4 후 ÷100  ③ ÷4는 반의 반, ×4는 두 배의 두 배',
-      en:'① ×25 = ×100 then ÷4 (÷4 first for multiples of 4)  ② ÷25 = ×4 then ÷100  ③ ÷4 = half of half; ×4 = double of double',
-      zh:'① ×25 = ×100后÷4(4的倍数先÷4)  ② ÷25 = ×4后÷100  ③ ÷4折半两次，×4翻倍两次' }
+    rule:{ ko:'① ×25 = ×100 후 ÷4 (4의 배수면 ÷4 먼저)  ② ×250=×1000÷4, ×2500=×10000÷4 — 0만 늘어남  ③ ÷4는 반의 반',
+      en:'① ×25 = ×100 then ÷4 (÷4 first for multiples of 4)  ② ×250=×1000÷4, ×2500=×10000÷4 — only the zeros grow  ③ ÷4 = half of half',
+      zh:'① ×25 = ×100后÷4(4的倍数先÷4)  ② ×250=×1000÷4，×2500=×10000÷4——只是0变多  ③ ÷4折半两次' }
   },
 
   check:{
     fills:[
       { tex:'48 \\times 25 = \\square', answer:1200,
         hint:{ ko:'48÷4=12, 12×100=?', en:'48÷4=12, then 12×100=?', zh:'48÷4=12，12×100=？' } },
-      { tex:'350 \\div 25 = \\square', answer:14,
-        hint:{ ko:'350×4=1400, 1400÷100=?', en:'350×4=1400, 1400÷100=?', zh:'350×4=1400，1400÷100=？' } }
+      { tex:'16 \\times 25 = \\square', answer:400,
+        hint:{ ko:'16×100=1600, 1600÷4=?', en:'16×100=1600, 1600÷4=?', zh:'16×100=1600，1600÷4=？' } }
     ],
     open:{ ko:'×25=×100÷4인 이유를 설명하고, 같은 원리로 ×125는 어떻게 계산할지 말해 봐요.',
       en:'Explain why ×25=×100÷4, and using the same idea, how would you compute ×125?',
@@ -76,18 +76,18 @@ window.NM_UNITS['C-17'] = {
 
   lab:{
     generator:'ml_x25', level:'main', count:4,
-    params:{ mode:'div' },
+    params:{ mode:'mul', level:'main' },
     intro:{
-      ko:'이번엔 ÷25 마법! 네 배 하고 100으로 나눠봐.',
-      en:'Now ÷25 magic! Quadruple, then divide by 100.',
-      zh:'现在是÷25魔法！乘4再除以100。'
+      ko:'이번엔 더 큰 수! ×100 하고 4로 나눠봐.',
+      en:'Now with bigger numbers! Multiply by 100, then divide by 4.',
+      zh:'现在数更大了！乘100再除以4。'
     }
   },
 
   arena:{
     generator:'ml_x25', level:'main', count:8, timeLimit:300,
     params:{ mode:'mul' },
-    rule:{ ko:'5분 안에 ×25/÷25 문제를 모두 풀어요!', en:'Solve all ×25/÷25 problems in 5 minutes!', zh:'5分钟内解答所有×25/÷25题！' }
+    rule:{ ko:'5분 안에 ×25 문제를 모두 풀어요!', en:'Solve all ×25 problems in 5 minutes!', zh:'5分钟内解答所有×25题！' }
   },
 
   stamp:{ label:{ ko:'×25 달인', en:'×25 Master', zh:'×25达人' }, coins:30 },

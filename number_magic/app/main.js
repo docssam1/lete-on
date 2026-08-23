@@ -1292,7 +1292,7 @@ function handlePractice(val,body,u){
     return;
   }
   if(val==='del'){S.sub.inp=(S.sub.inp||'').slice(0,-1);}
-  else if((S.sub.inp||'').length<6&&!(val==='.'&&(S.sub.inp||'').includes('.'))){S.sub.inp=(S.sub.inp||'')+val;}
+  else if((S.sub.inp||'').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.'))){S.sub.inp=(S.sub.inp||'')+val;}
   $('#pscreen').textContent=S.sub.inp||' ';
 }
 
@@ -1508,7 +1508,7 @@ function stepLabNumpad(body,u){
   S.sub.labStarted=true;
   renderMath(body);
   say(first?L(cfg.intro):L(cur.prompt));
-  buildNumpad($('#pad'),val=>handleLabNumpad(val,body,u));
+  buildNumpad($('#pad'),val=>handleLabNumpad(val,body,u),{decimal:!Number.isInteger(cur.answer)});
 }
 function handleLabNumpad(val,body,u){
   const cur=S.sub.cur;const need=u.lab.count||4;
@@ -1523,7 +1523,8 @@ function handleLabNumpad(val,body,u){
     }else{toast(pickVoice(u.voice.wrong),false);S.sub.inp='';$('#pscreen').textContent=' ';}
     return;
   }
-  if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
+  if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
+  else if((S.sub.inp||'').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
   $('#pscreen').textContent=S.sub.inp||' ';
 }
 function pickTile(el,i,n,body,u){
@@ -1571,9 +1572,10 @@ function nextArena(body,u,need){
       S.sub.ai++;
       if(S.sub.ai>=need){clearInterval(window._nmTimer);arenaEnd(body,u);return;}
       nextArena(body,u,need);return;}
-    if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);else if((S.sub.inp||'').length<4)S.sub.inp=(S.sub.inp||'')+val;
+    if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
+    else if((S.sub.inp||'').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
     $('#pscreen').textContent=S.sub.inp||' ';
-  });
+  },{decimal:!Number.isInteger(cur.answer)});
 }
 function arenaEnd(body,u){
   const need=u.arena.count||10;const sc=S.sub.score;

@@ -1169,4 +1169,172 @@ NM_TGEN['ml_decimal_mul'] = function(params, rng) {
   };
 };
 
+/* ── ML_PARTIAL — 차근차근 곱하기 (부분곱 세로셈) ────────────
+   자리별로 쪼개 각각 곱한 뒤 모두 더한다 (받아올림을 미루는 전략) */
+NM_TGEN['ml_partial'] = function(params, rng) {
+  const lv = params.level || 'main';
+
+  /* 두 수의 십의 자리·일의 자리 모두 0이 되지 않도록 1~9에서 뽑는다 */
+  const tensA = R(rng, 1, 9);
+  const onesA = R(rng, 1, 9);
+  const a     = tensA * 10 + onesA;
+
+  if (lv === 'practice') {
+    /* 두 자리 × 한 자리 */
+    const b      = R(rng, 1, 9);
+    const p1     = b * onesA;
+    const p2     = b * (tensA * 10);
+    const answer = p1 + p2;
+    return {
+      prompt:{ ko:`${a} × ${b}를 자리별로 나누어 곱해요`,
+               en:`Break ${a} × ${b} apart by place value`,
+               zh:`把 ${a} × ${b} 按数位拆开相乘` },
+      tex:`${a} \\times ${b} = \\square`,
+      answer, answerType:'steps', widget:'steps',
+      steps:[
+        { tex:`${b} \\times ${onesA} = \\square`,       blank:p1     },
+        { tex:`${b} \\times ${tensA * 10} = \\square`,  blank:p2     },
+        { tex:`${p1} + ${p2} = \\square`,                blank:answer }
+      ]
+    };
+  }
+
+  /* main: 두 자리 × 두 자리 */
+  const tensB  = R(rng, 1, 9);
+  const onesB  = R(rng, 1, 9);
+  const b      = tensB * 10 + onesB;
+  const p1     = onesB * onesA;
+  const p2     = onesB * (tensA * 10);
+  const p3     = (tensB * 10) * onesA;
+  const p4     = (tensB * 10) * (tensA * 10);
+  const answer = p1 + p2 + p3 + p4;
+  return {
+    prompt:{ ko:`${a} × ${b}를 자리별로 나누어 곱해요`,
+             en:`Break ${a} × ${b} apart by place value`,
+             zh:`把 ${a} × ${b} 按数位拆开相乘` },
+    tex:`${a} \\times ${b} = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${onesB} \\times ${onesA} = \\square`,            blank:p1     },
+      { tex:`${onesB} \\times ${tensA * 10} = \\square`,       blank:p2     },
+      { tex:`${tensB * 10} \\times ${onesA} = \\square`,       blank:p3     },
+      { tex:`${tensB * 10} \\times ${tensA * 10} = \\square`,  blank:p4     },
+      { tex:`${p1} + ${p2} + ${p3} + ${p4} = \\square`,        blank:answer }
+    ]
+  };
+};
+
+/* ── ML_END9 — "9"로 끝나는 수의 곱 ───────────────────────────
+   1 크게 만들어 곱하고, 더 곱한 만큼 한 번 뺀다 (49×34 = 50×34−34) */
+NM_TGEN['ml_end9'] = function(params, rng) {
+  const lv = params.level || 'main';
+
+  let a;
+  if (lv === 'practice') {
+    a = pick(rng, [19, 29, 39, 49]);
+  } else {
+    const cands = [];
+    for (let i = 1; i <= 9; i++) cands.push(i * 10 + 9);  /* 19,29,...,99 */
+    cands.push(199);
+    a = pick(rng, cands);
+  }
+  const b      = lv === 'practice' ? R(rng, 2, 9) : R(rng, 12, 48);
+  const bumped = (a + 1) * b;
+  const answer = a * b;
+
+  return {
+    prompt:{ ko:`${a} × ${b}: ${a + 1}을 곱하고 ${b}를 한 번 빼요`,
+             en:`${a} × ${b}: multiply by ${a + 1}, then subtract ${b} once`,
+             zh:`${a} × ${b}：先乘 ${a + 1}，再减一次 ${b}` },
+    tex:`${a} \\times ${b} = \\square`,
+    answer, answerType:'steps', widget:'steps',
+    steps:[
+      { tex:`${a + 1} \\times ${b} = \\square`, blank:bumped },
+      { tex:`${bumped} - ${b} = \\square`,      blank:answer }
+    ]
+  };
+};
+
+/* ── ML_FRAC_MULDIV — 분수의 곱셈·나눗셈 ──────────────────────
+   분모를 고정해 박고 분자만 답으로 받는다 (ml_frac_same과 같은 패턴) */
+NM_TGEN['ml_frac_muldiv'] = function(params, rng) {
+  const op   = params.op || 'mul';
+  const lv   = params.level || 'main';
+  const dMax = lv === 'practice' ? 5 : 9;
+
+  const d1 = R(rng, 2, dMax);
+  const d2 = R(rng, 2, dMax);
+  const n1 = R(rng, 1, d1 - 1);
+  const n2 = R(rng, 1, d2 - 1);   /* div일 때도 n2>=1 항상 보장 */
+
+  if (op === 'mul') {
+    const answer = n1 * n2;
+    return {
+      prompt:{ ko:`분자는 분자끼리, 분모는 분모끼리 곱해요`,
+               en:`Multiply numerators together and denominators together`,
+               zh:`分子乘分子，分母乘分母` },
+      tex:`\\dfrac{${n1}}{${d1}} \\times \\dfrac{${n2}}{${d2}} = \\dfrac{\\square}{${d1 * d2}}`,
+      answer, answerType:'number', widget:'numpad'
+    };
+  }
+
+  /* div: (n1/d1) ÷ (n2/d2) = (n1/d1) × (d2/n2) */
+  const answer = n1 * d2;
+  return {
+    prompt:{ ko:`나눗셈을 곱셈으로 바꾸고 뒤집어요`,
+             en:`Turn division into multiplication and flip the second fraction`,
+             zh:`把除法变成乘法，再把第二个分数倒过来` },
+    tex:`\\dfrac{${n1}}{${d1}} \\div \\dfrac{${n2}}{${d2}} = \\dfrac{\\square}{${d1 * n2}}`,
+    answer, answerType:'number', widget:'numpad'
+  };
+};
+
+/* ── ML_FRAC_CONV — 분수 전환 나눗셈 (나눗셈을 분수로 쪼개 소수로) ──
+   675÷4 = 600/4 + 40/4 + 35/4 = 150+10+8.75 = 168.75 */
+NM_TGEN['ml_frac_conv'] = function(params, rng) {
+  const lv   = params.level || 'main';
+  const DENS = lv === 'practice' ? [2, 4, 5, 8] : [2, 4, 5, 8, 20, 25];
+  const d    = pick(rng, DENS);
+  const n    = lv === 'practice' ? R(rng, 100, 999) : R(rng, 1000, 9999);
+  /* d가 2·4·5·8·20·25뿐이라 소수 셋째자리 이하에서 끊기므로 반올림해도 오차 없음 */
+  const answer = Math.round(n / d * 1000) / 1000;
+
+  return {
+    prompt:{ ko:`${n} ÷ ${d}: 수를 쪼개서 나누고 소수로 나타내요`,
+             en:`${n} ÷ ${d}: split the number apart, divide, and write it as a decimal`,
+             zh:`${n} ÷ ${d}：把数拆开来除，用小数表示` },
+    tex:`${n} \\div ${d} = \\square`,
+    answer, answerType:'number', widget:'numpad'
+  };
+};
+
+/* ── ML_DECIMAL_DIV — 소수를 나누기 ───────────────────────────
+   48.96÷0.8 → 489.6÷8=61.2: 나누는 수를 자연수로 만들어 나눈다.
+   부동소수 오차를 없애려면 몫·나누는 수를 정수 스케일로 먼저 정하고
+   나누어지는 수는 그 곱으로 역산한다. */
+NM_TGEN['ml_decimal_div'] = function(params, rng) {
+  const lv     = params.level || 'main';
+  const qi     = R(rng, 10, 99);                                /* 몫 = qi/10 (소수 한 자리) */
+  const vi     = lv === 'practice' ? R(rng, 2, 9) : R(rng, 11, 99);
+  const vScale = lv === 'practice' ? 10 : 100;                  /* v = vi/vScale */
+  const nScale = 10 * vScale;                                   /* n = qi*vi/nScale */
+
+  const q      = qi / 10;
+  const v      = vi / vScale;
+  const n      = (qi * vi) / nScale;
+  const answer = Math.round(q * 100) / 100;
+
+  const trim = s => s.indexOf('.') === -1 ? s : s.replace(/0+$/, '').replace(/\.$/, '');
+  const nStr = trim(n.toFixed(lv === 'practice' ? 2 : 3));
+  const vStr = trim(v.toFixed(lv === 'practice' ? 1 : 2));
+
+  return {
+    prompt:{ ko:`${nStr} ÷ ${vStr}: 나누는 수를 자연수로 만들어 나눠요`,
+             en:`${nStr} ÷ ${vStr}: turn the divisor into a whole number, then divide`,
+             zh:`${nStr} ÷ ${vStr}：把除数变成整数再除` },
+    tex:`${nStr} \\div ${vStr} = \\square`,
+    answer, answerType:'number', widget:'numpad'
+  };
+};
+
 })();
