@@ -115,6 +115,12 @@ test("static build contains no local approval preview bypass", () => {
   assert.equal(admin.includes("'HS-'"), false);
 });
 
+test("unauthenticated library redirect stays quiet in the browser console", () => {
+  const library = fs.readFileSync(path.join(root, "library.html"), "utf8");
+  assert.equal(library.includes("throw new Error('redirect')"), false);
+  assert.match(library, /const session=HIGHSELECT_AUTH\.requireSession\(\);\s*if\(session\)\{/);
+});
+
 test("SH answer sheet keeps the hsmiddle 40-item layout without video UI", () => {
   const examPage = fs.readFileSync(path.join(root, "shared", "exam-page.js"), "utf8");
   const examHtml = fs.readFileSync(path.join(root, "exam.html"), "utf8");
