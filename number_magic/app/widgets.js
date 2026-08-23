@@ -1153,7 +1153,8 @@ function renderGridPaint(problem, container, onAnswer){
     const a=document.createElement('span');a.className='nm-gp-arrow';a.textContent='👉';line.appendChild(a);
   }
   const row=document.createElement('div');
-  row.className='nm-gp-row';
+  // 서수(single) 모드는 "왼쪽에서 몇째"가 의미를 가지므로 절대 줄바꿈되면 안 됨 → 한 줄 고정
+  row.className='nm-gp-row'+(mode==='single'?' oneline':'');
   line.appendChild(row);
   if(mode==='single' && problem.dir==='right'){
     const a=document.createElement('span');a.className='nm-gp-arrow flip';a.textContent='👈';line.appendChild(a);
