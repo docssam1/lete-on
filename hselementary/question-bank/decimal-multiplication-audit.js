@@ -24,6 +24,22 @@ const attribute = (prompt, name) => {
 const numbers = value => value.split(",").map(Number);
 const fixed = (value, places) => (value / 10 ** places).toFixed(places);
 
+function exactOverlapCellCount(count, sideUnits, target) {
+  let cells = 0;
+  for (let row = 0; row < count + sideUnits - 1; row += 1) {
+    for (let column = 0; column < count + sideUnits - 1; column += 1) {
+      let layers = 0;
+      for (let sheet = 0; sheet < count; sheet += 1) {
+        if (column >= sheet && column < sheet + sideUnits && row >= sheet && row < sheet + sideUnits) layers += 1;
+      }
+      if (layers === target) cells += 1;
+    }
+  }
+  return cells;
+}
+
+if (exactOverlapCellCount(100, 4, 3) !== 198) throw new Error("원본 100장 겹침 구조의 작은 정사각형 수가 198개가 아닙니다.");
+
 function expectedAnswer(generated) {
   const kind = attribute(generated.prompt, "decimal-kind");
   const values = numbers(attribute(generated.prompt, "values"));
@@ -96,7 +112,10 @@ function expectedAnswer(generated) {
     return String(Math.floor(Math.log10(product)) + 1);
   }
   if (kind === "decimal-distributive") return fixed((values[0] - values[1] + values[2]) * values[3], 3);
-  if (kind === "decimal-l-area") return fixed(values[0] * values[1] - values[2] * values[3], 2);
+  if (kind === "decimal-l-area") {
+    const [width, height, topWidth, rightHeight] = values;
+    return fixed(width * height - (width - topWidth) * (height - rightHeight), 4);
+  }
   if (kind === "wrong-decimal-operation") return fixed((values[0] * values[1] + values[2]) * values[0], 3);
   if (kind === "relative-distance") return fixed((values[0] - values[1]) * values[2] / 6, 2);
   if (kind === "missing-factor-digit") {
@@ -105,11 +124,16 @@ function expectedAnswer(generated) {
     if (candidates.length !== 1) throw new Error(`빈칸 숫자 후보가 ${candidates.length}개입니다.`);
     return String(candidates[0]);
   }
-  if (kind === "overlapping-squares") return fixed(values[3] * values[3], 2);
+  if (kind === "exact-three-overlap-squares") {
+    const [sideScale, count, offsetScale, target] = values;
+    if (sideScale % offsetScale !== 0) throw new Error("한 변이 이동 간격의 정수배가 아닙니다.");
+    const cells = exactOverlapCellCount(count, sideScale / offsetScale, target);
+    return String(Number(fixed(cells * offsetScale * offsetScale, 2)));
+  }
   throw new Error(`알 수 없는 검산 유형 ${kind}입니다.`);
 }
 
-const visualKinds = new Set(["decimal-l-area", "overlapping-squares"]);
+const visualKinds = new Set(["decimal-l-area", "exact-three-overlap-squares"]);
 const failures = [];
 let generatedCount = 0;
 for (const type of types) {
@@ -123,7 +147,12 @@ for (const type of types) {
         const kind = attribute(generated.prompt, "decimal-kind");
         const expected = expectedAnswer(generated);
         if (String(generated.answer) !== expected) throw new Error(`정답 ${generated.answer}, 독립 검산 ${expected}`);
-        if (kind === "overlapping-squares" && generated.prompt.includes("공통 한 변")) throw new Error("그림에 정답이 되는 공통 변 길이가 노출되었습니다.");
+        if (kind === "exact-three-overlap-squares") {
+          const [sideScale, count, offsetScale, target] = numbers(attribute(generated.prompt, "values"));
+          const stackValues = numbers(attribute(generated.prompt, "square-stack"));
+          if (`${sideScale / 10},${count},${offsetScale / 10},${target}` !== stackValues.join(",")) throw new Error("그림의 정사각형 조건이 지문과 다릅니다.");
+          if (generated.prompt.includes("작은 정사각형") || generated.prompt.includes("198개")) throw new Error("그림이나 지문에 풀이 핵심이 노출되었습니다.");
+        }
         if (visualKinds.has(kind) && !generated.prompt.includes("<svg")) throw new Error("그림이 필요한 문제에 SVG가 없습니다.");
         if (generated.prompt.includes("<svg") && !/aria-label="[^"]+"/.test(generated.prompt)) throw new Error("그림의 설명이 없습니다.");
         generatedCount += 1;
