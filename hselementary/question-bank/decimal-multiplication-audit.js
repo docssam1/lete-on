@@ -96,7 +96,10 @@ function expectedAnswer(generated) {
     return String(Math.floor(Math.log10(product)) + 1);
   }
   if (kind === "decimal-distributive") return fixed((values[0] - values[1] + values[2]) * values[3], 3);
-  if (kind === "decimal-l-area") return fixed(values[0] * values[1] - values[2] * values[3], 2);
+  if (kind === "decimal-l-area") {
+    const [width, height, topWidth, rightHeight] = values;
+    return fixed(width * height - (width - topWidth) * (height - rightHeight), 4);
+  }
   if (kind === "wrong-decimal-operation") return fixed((values[0] * values[1] + values[2]) * values[0], 3);
   if (kind === "relative-distance") return fixed((values[0] - values[1]) * values[2] / 6, 2);
   if (kind === "missing-factor-digit") {

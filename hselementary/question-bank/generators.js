@@ -957,15 +957,17 @@
     return `<svg class="geometry-diagram lattice-center" viewBox="0 0 240 166" data-lattice-size="${width},${height}" aria-label="중심이 표시된 직사각형 모눈"><rect x="${left.toFixed(1)}" y="${top.toFixed(1)}" width="${(width * cell).toFixed(1)}" height="${(height * cell).toFixed(1)}"/><g>${grid}</g><circle class="folded" cx="120" cy="82" r="5"/><text x="132" y="82">O</text></svg>`;
   };
 
-  const decimalLShapeSvg = ({ width, height, cutWidth, cutHeight }) => {
+  const decimalLShapeSvg = ({ width, height, topWidth, rightHeight }) => {
     const scale = Math.min(150 / width, 104 / height);
     const left = 42;
     const top = 28;
     const w = width * scale;
     const h = height * scale;
-    const cw = cutWidth * scale;
-    const ch = cutHeight * scale;
-    return `<svg class="geometry-diagram decimal-l-shape" viewBox="0 0 240 166" data-decimal-shape="${width},${height},${cutWidth},${cutHeight}" aria-label="오른쪽 위가 잘린 ㄱ자 모양 도형"><path class="shape-fill" d="M${left} ${top} H${left + w - cw} V${top + ch} H${left + w} V${top + h} H${left} Z"/><line class="crease" x1="${left + w - cw}" y1="${top}" x2="${left + w - cw}" y2="${top + ch}"/><text x="${left + w / 2 - 16}" y="${top + h + 20}">${decimal(width, 2)}cm</text><text x="${left - 34}" y="${top + h / 2}">${decimal(height, 2)}cm</text><text x="${left + w - cw / 2 - 12}" y="${top + ch + 18}">${decimal(cutWidth, 2)}cm</text><text x="${left + w - cw - 38}" y="${top + ch / 2 + 4}">${decimal(cutHeight, 2)}cm</text></svg>`;
+    const topW = topWidth * scale;
+    const rightH = rightHeight * scale;
+    const cutW = w - topW;
+    const cutH = h - rightH;
+    return `<svg class="geometry-diagram decimal-l-shape" viewBox="0 0 240 166" data-decimal-shape="${width},${height},${topWidth},${rightHeight}" aria-label="전체 가로 ${decimal(width, 2)}cm, 전체 세로 ${decimal(height, 2)}cm, 윗변 ${decimal(topWidth, 2)}cm, 오른쪽 세로변 ${decimal(rightHeight, 2)}cm인 ㄱ자 모양 도형"><path class="shape-fill" d="M${left} ${top} H${left + topW} V${top + cutH} H${left + w} V${top + h} H${left} Z"/><line class="crease" x1="${left + topW}" y1="${top}" x2="${left + topW}" y2="${top + cutH}"/><text x="${left + w / 2 - 16}" y="${top + h + 20}">${decimal(width, 2)}cm</text><text x="${left - 34}" y="${top + h / 2}">${decimal(height, 2)}cm</text><text x="${left + topW / 2 - 16}" y="${top - 10}">${decimal(topWidth, 2)}cm</text><text x="${left + w + 8}" y="${top + cutH + rightH / 2}">${decimal(rightHeight, 2)}cm</text></svg>`;
   };
 
   const decimalSquareStackSvg = ({ side, count, offset }) => {
@@ -3549,14 +3551,18 @@
         return result(`분배법칙을 이용하여 계산하세요.<div class="equation">(${fixedDecimal(aScale, 2)} - ${fixedDecimal(bScale, 2)}) × ${fixedDecimal(cScale, 1)} + ${fixedDecimal(dScale, 2)} × ${fixedDecimal(cScale, 1)}</div>${evidence}`, fixedDecimal(answerScale, 3), `공통인 ${fixedDecimal(cScale, 1)}을 묶으면 (${fixedDecimal(aScale, 2)}-${fixedDecimal(bScale, 2)}+${fixedDecimal(dScale, 2)})×${fixedDecimal(cScale, 1)}=${fixedDecimal(answerScale, 3)}입니다.`);
       }
       if (kind === 6) {
-        const widthScale = int(rng, 72 + level * 12, 118 + level * 20);
-        const heightScale = int(rng, 58 + level * 10, 96 + level * 18);
-        const cutWidthScale = int(rng, 18, Math.floor(widthScale / 2));
-        const cutHeightScale = int(rng, 16, Math.floor(heightScale / 2));
+        const widthCandidates = Array.from({ length: 301 + level * 50 }, (_, index) => 640 + level * 80 + index).filter(value => value % 10 !== 0);
+        const widthScale = pick(rng, widthCandidates);
+        const heightScale = int(rng, 580 + level * 70, 880 + level * 110);
+        const topWidthScale = int(rng, Math.ceil(widthScale * 0.42), Math.floor(widthScale * 0.7));
+        const rightHeightScale = int(rng, Math.ceil(heightScale * 0.42), Math.floor(heightScale * 0.7));
+        const cutWidthScale = widthScale - topWidthScale;
+        const cutHeightScale = heightScale - rightHeightScale;
         const answerScale = widthScale * heightScale - cutWidthScale * cutHeightScale;
-        const svg = decimalLShapeSvg({ width: widthScale / 10, height: heightScale / 10, cutWidth: cutWidthScale / 10, cutHeight: cutHeightScale / 10 });
-        const evidence = decimalEvidence("decimal-l-area", [widthScale, heightScale, cutWidthScale, cutHeightScale, answerScale]);
-        return result(`다음 ㄱ자 모양 도형의 넓이를 구하세요.${svg}${evidence}`, fixedDecimal(answerScale, 2), `전체 직사각형 넓이 ${fixedDecimal(widthScale, 1)}×${fixedDecimal(heightScale, 1)}에서 잘린 직사각형 넓이 ${fixedDecimal(cutWidthScale, 1)}×${fixedDecimal(cutHeightScale, 1)}을 빼면 ${fixedDecimal(answerScale, 2)}cm²입니다.`);
+        const svg = decimalLShapeSvg({ width: widthScale / 100, height: heightScale / 100, topWidth: topWidthScale / 100, rightHeight: rightHeightScale / 100 });
+        const evidence = decimalEvidence("decimal-l-area", [widthScale, heightScale, topWidthScale, rightHeightScale, answerScale]);
+        const answer = fixedDecimal(answerScale, 4);
+        return result(`다음 ㄱ자 모양 도형의 넓이를 구하세요.${svg}${evidence}`, answer, `잘린 직사각형의 가로는 ${fixedDecimal(widthScale, 2)}-${fixedDecimal(topWidthScale, 2)}=${fixedDecimal(cutWidthScale, 2)}cm이고, 세로는 ${fixedDecimal(heightScale, 2)}-${fixedDecimal(rightHeightScale, 2)}=${fixedDecimal(cutHeightScale, 2)}cm입니다. 전체 직사각형 넓이 ${fixedDecimal(widthScale, 2)}×${fixedDecimal(heightScale, 2)}에서 잘린 직사각형 넓이 ${fixedDecimal(cutWidthScale, 2)}×${fixedDecimal(cutHeightScale, 2)}을 빼면 ${answer}cm²입니다.`);
       }
       if (kind === 7) {
         const divisorScale = int(rng, 125 + level * 20, 285 + level * 45);
