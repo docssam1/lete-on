@@ -1200,7 +1200,7 @@
     return `<svg class="geometry-diagram cube-net" viewBox="0 0 230 170" data-net-values="${values.join(",")}" aria-label="여섯 면의 위치와 수가 표시된 정육면체 전개도"><g>${cells.map(([x, y], index) => `<rect class="${index === highlight ? "highlight-fill" : "shape-fill"}" x="${32 + x * size}" y="${24 + y * size}" width="${size}" height="${size}"/><text x="${51 + x * size}" y="${48 + y * size}">${values[index]}</text>`).join("")}</g></svg>`;
   };
 
-  const diceSvg = ({ top, front, right }) => cuboidSvg({ a: 1, b: 1, c: 1, labels: [top, front, right] }).replace("data-cuboid-dimensions", `data-dice-faces="${top},${front},${right}" data-cuboid-dimensions`);
+  const diceSvg = ({ top, front, right }) => `<svg class="geometry-diagram dice-diagram" viewBox="0 0 260 176" data-dice-faces="${top},${front},${right}" aria-label="윗면 ${top}, 앞면 ${front}, 오른쪽 면 ${right}인 주사위"><polygon class="shape-fill" points="48,62 164,62 214,30 98,30"/><polygon class="highlight-fill" points="48,62 164,62 164,142 48,142"/><polygon class="shape-fill" points="164,62 214,30 214,110 164,142"/><text x="130" y="47">${top}</text><text x="106" y="106">${front}</text><text x="190" y="88">${right}</text></svg>`;
 
   const factorTriples = value => {
     const triples = [];
@@ -1223,6 +1223,173 @@
   const dicePathSvg = moves => {
     const arrows = { N: "↑", S: "↓", E: "→", W: "←" };
     return `<div class="equation dice-path" data-dice-path="${moves.join("")}">${moves.map(move => arrows[move]).join(" ")}</div>`;
+  };
+
+  // The cuboid unit needs its own checked drawings: the older generic net and
+  // arrow-only dice helpers are kept for other units.
+  const cuboidVectorKey = vector => vector.join(",");
+  const cuboidSameVector = (left, right) => left.every((value, index) => value === right[index]);
+  const cuboidOppositeVector = vector => vector.map(value => -value);
+  const advancedCubeNetCells = [[0, 1], [1, 1], [2, 1], [3, 1], [1, 0], [1, 2]];
+  const foldCubeNet = cells => {
+    const positions = new Map(cells.map(([x, y], index) => [`${x},${y}`, index]));
+    const frames = Array(cells.length).fill(null);
+    frames[0] = { normal: [0, 0, 1], up: [0, 1, 0], right: [1, 0, 0] };
+    const queue = [0];
+    const nextFrame = (frame, dx, dy) => {
+      if (dx === 1) return { normal: frame.right, up: frame.up, right: cuboidOppositeVector(frame.normal) };
+      if (dx === -1) return { normal: cuboidOppositeVector(frame.right), up: frame.up, right: frame.normal };
+      if (dy === -1) return { normal: frame.up, up: cuboidOppositeVector(frame.normal), right: frame.right };
+      return { normal: cuboidOppositeVector(frame.up), up: frame.normal, right: frame.right };
+    };
+    while (queue.length) {
+      const index = queue.shift();
+      const [x, y] = cells[index];
+      [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => {
+        const neighbor = positions.get(`${x + dx},${y + dy}`);
+        if (neighbor === undefined) return;
+        const frame = nextFrame(frames[index], dx, dy);
+        if (frames[neighbor]) {
+          if (!cuboidSameVector(frames[neighbor].normal, frame.normal) || !cuboidSameVector(frames[neighbor].up, frame.up)) throw new Error("접을 수 없는 전개도입니다.");
+          return;
+        }
+        frames[neighbor] = frame;
+        queue.push(neighbor);
+      });
+    }
+    if (frames.some(frame => !frame) || new Set(frames.map(frame => cuboidVectorKey(frame.normal))).size !== 6) throw new Error("정육면체가 되지 않는 전개도입니다.");
+    return frames;
+  };
+  const advancedCubeNetPairs = cells => {
+    const frames = foldCubeNet(cells);
+    const pairs = [];
+    frames.forEach((frame, index) => {
+      const opposite = frames.findIndex(candidate => cuboidSameVector(candidate.normal, cuboidOppositeVector(frame.normal)));
+      if (index < opposite) pairs.push([index, opposite]);
+    });
+    return pairs;
+  };
+  const advancedCubeNetSvg = ({ cells = advancedCubeNetCells, values = [], highlight = -1, candidates = [] }) => {
+    const visibleCells = [...cells, ...candidates];
+    const minX = Math.min(...visibleCells.map(([x]) => x));
+    const maxX = Math.max(...visibleCells.map(([x]) => x));
+    const minY = Math.min(...visibleCells.map(([, y]) => y));
+    const maxY = Math.max(...visibleCells.map(([, y]) => y));
+    const columns = maxX - minX + 1;
+    const rows = maxY - minY + 1;
+    const size = Math.min(38, 220 / columns, 132 / rows);
+    const left = 130 - (maxX - minX + 1) * size / 2;
+    const top = 83 - (maxY - minY + 1) * size / 2;
+    const cellHtml = cells.map(([x, y], index) => `<rect class="${index === highlight ? "highlight-fill" : "shape-fill"}" x="${left + (x - minX) * size}" y="${top + (y - minY) * size}" width="${size}" height="${size}"/><text x="${left + (x - minX + .5) * size}" y="${top + (y - minY + .58) * size}" text-anchor="middle">${values[index] ?? ""}</text>`).join("");
+    const candidateHtml = candidates.map(([x, y], index) => `<rect class="crease candidate-cell" x="${left + (x - minX) * size}" y="${top + (y - minY) * size}" width="${size}" height="${size}"/><text class="candidate-number" x="${left + (x - minX + .5) * size}" y="${top + (y - minY + .58) * size}" text-anchor="middle">${index + 1}</text>`).join("");
+    return `<svg class="geometry-diagram cube-net" viewBox="0 0 260 166" data-advanced-net="${cells.map(cell => cell.join(".")).join(";")}" data-net-candidates="${candidates.map(cell => cell.join(".")).join(";")}" data-net-cell-size="${size.toFixed(2)}" aria-label="정육면체 전개도와 변에 맞닿은 후보 칸">${cellHtml}${candidateHtml}</svg>`;
+  };
+  const cuboidNetLayout = ({ a, b, c }) => {
+    const faces = [
+      { x: c, y: c, w: a, h: b }, { x: 0, y: c, w: c, h: b }, { x: c + a, y: c, w: c, h: b },
+      { x: c, y: 0, w: a, h: c }, { x: c, y: c + b, w: a, h: c }, { x: c, y: 2 * c + b, w: a, h: b }
+    ];
+    return { faces, width: a + 2 * c, height: 2 * (b + c) };
+  };
+  const measuredCuboidNetSvg = ({ a, b, c, sheet = null, title = "직육면체 전개도" }) => {
+    const layout = cuboidNetLayout({ a, b, c });
+    const scale = Math.min(148 / layout.width, 114 / layout.height);
+    const left = 55;
+    const top = 26;
+    const faces = layout.faces.map((face, index) => `<rect class="${index % 2 ? "highlight-fill" : "shape-fill"}" x="${left + face.x * scale}" y="${top + face.y * scale}" width="${face.w * scale}" height="${face.h * scale}"/>`).join("");
+    const sheetBox = sheet ? `<rect class="crease" x="${left - sheet.marginX * scale}" y="${top - sheet.marginY * scale}" width="${sheet.width * scale}" height="${sheet.height * scale}"/><text x="${left + 8}" y="18">종이 ${sheet.width}cm × ${sheet.height}cm</text>` : "";
+    return `<svg class="geometry-diagram cuboid-net" viewBox="0 0 260 190" data-cuboid-net-bounds="${layout.width},${layout.height}" aria-label="${title}, 가로 ${layout.width}cm 세로 ${layout.height}cm">${sheetBox}${faces}<text x="55" y="176">전개도 가로 ${layout.width}cm</text><text x="174" y="92">세로 ${layout.height}cm</text></svg>`;
+  };
+  const cuboidGridSvg = ({ a, b, c, cuts = [] }) => {
+    const cell = Math.min(22, 166 / (a + b * .58), 82 / (c + b * .34));
+    const depthX = cell * .58, depthY = -cell * .34;
+    const x = 36, y = 52 - b * depthY;
+    const frontRight = x + a * cell;
+    const backX = b * depthX, backY = b * depthY;
+    const frontGrid = Array.from({ length: a + 1 }, (_, i) => `<line class="crease" x1="${x + i * cell}" y1="${y}" x2="${x + i * cell}" y2="${y + c * cell}"/>`).join("") + Array.from({ length: c + 1 }, (_, i) => `<line class="crease" x1="${x}" y1="${y + i * cell}" x2="${frontRight}" y2="${y + i * cell}"/>`).join("");
+    const topGrid = Array.from({ length: a + 1 }, (_, i) => `<line class="crease" x1="${x + i * cell}" y1="${y}" x2="${x + i * cell + backX}" y2="${y + backY}"/>`).join("") + Array.from({ length: b + 1 }, (_, i) => `<line class="crease" x1="${x + i * depthX}" y1="${y + i * depthY}" x2="${frontRight + i * depthX}" y2="${y + i * depthY}"/>`).join("");
+    const sideGrid = Array.from({ length: b + 1 }, (_, i) => `<line class="crease" x1="${frontRight + i * depthX}" y1="${y + i * depthY}" x2="${frontRight + i * depthX}" y2="${y + i * depthY + c * cell}"/>`).join("") + Array.from({ length: c + 1 }, (_, i) => `<line class="crease" x1="${frontRight}" y1="${y + i * cell}" x2="${frontRight + backX}" y2="${y + backY + i * cell}"/>`).join("");
+    const cutLines = cuts.map(({ axis, at }) => axis === "a"
+      ? `<polyline class="folded cut-plane" points="${x + at * cell},${y + c * cell} ${x + at * cell},${y} ${x + at * cell + backX},${y + backY}"/>`
+      : `<polyline class="folded cut-plane" points="${x + at * depthX},${y + at * depthY} ${frontRight + at * depthX},${y + at * depthY} ${frontRight + at * depthX},${y + at * depthY + c * cell}"/>`).join("");
+    return `<svg class="geometry-diagram cuboid-grid" viewBox="0 0 260 176" data-cuboid-grid="${a},${b},${c}" data-cuboid-cuts="${cuts.map(cut => `${cut.axis}.${cut.at}`).join(";")}" aria-label="가로 ${a}칸, 세로 ${b}칸, 높이 ${c}칸인 모눈 직육면체"><polygon class="shape-fill" points="${x},${y} ${frontRight},${y} ${frontRight + backX},${y + backY} ${x + backX},${y + backY}"/><polygon class="highlight-fill" points="${x},${y} ${frontRight},${y} ${frontRight},${y + c * cell} ${x},${y + c * cell}"/><polygon class="shape-fill" points="${frontRight},${y} ${frontRight + backX},${y + backY} ${frontRight + backX},${y + backY + c * cell} ${frontRight},${y + c * cell}"/>${frontGrid}${topGrid}${sideGrid}${cutLines}<text x="130" y="164">가로 ${a}칸 · 세로 ${b}칸 · 높이 ${c}칸</text></svg>`;
+  };
+  const cornerCutBoxSvg = ({ width, height, cut }) => `<svg class="geometry-diagram corner-cut-box" viewBox="0 0 280 170" data-corner-cut="${width},${height},${cut}" aria-label="모서리에서 같은 크기의 정사각형을 잘라 접는 종이"><rect class="shape-fill" x="42" y="27" width="166" height="112"/><g class="cutout-fill">${[[42, 27], [208 - 24, 27], [42, 139 - 24], [208 - 24, 139 - 24]].map(([x, y]) => `<rect x="${x}" y="${y}" width="24" height="24"/>`).join("")}</g><line class="folded" x1="66" y1="27" x2="66" y2="139"/><line class="folded" x1="184" y1="27" x2="184" y2="139"/><line class="folded" x1="42" y1="51" x2="208" y2="51"/><line class="folded" x1="42" y1="115" x2="208" y2="115"/><text x="102" y="162">${width}cm × ${height}cm, 모서리 ${cut}cm</text></svg>`;
+  const cuboidEdgeRouteSvg = ({ a, b, c }) => `<svg class="geometry-diagram cuboid-edge-route" viewBox="0 0 260 176" data-edge-route="${a},${b},${c}" aria-label="서로 마주 보는 꼭짓점을 모서리만 따라 잇는 직육면체"><polygon class="shape-fill" points="48,62 164,62 214,30 98,30"/><polygon class="highlight-fill" points="48,62 164,62 164,142 48,142"/><polygon class="shape-fill" points="164,62 214,30 214,110 164,142"/><polyline class="folded" points="48,142 164,142 214,110 214,30"/><circle cx="48" cy="142" r="4"/><text x="33" y="156">A</text><circle cx="214" cy="30" r="4"/><text x="220" y="28">B</text><text x="104" y="160">${a}cm</text><text x="192" y="136">${b}cm</text><text x="218" y="72">${c}cm</text></svg>`;
+  const cuboidEdgeRelationSvg = ({ a, b, c }) => `<svg class="geometry-diagram cuboid-edge-relation" viewBox="0 0 260 176" data-edge-relation="${a},${b},${c}" aria-label="한 모서리만 굵게 표시한 직육면체"><polygon class="shape-fill" points="48,62 164,62 214,30 98,30"/><polygon class="highlight-fill" points="48,62 164,62 164,142 48,142"/><polygon class="shape-fill" points="164,62 214,30 214,110 164,142"/><line class="folded" x1="48" y1="142" x2="164" y2="142"/><circle cx="48" cy="142" r="4"/><text x="33" y="156">A</text><circle cx="164" cy="142" r="4"/><text x="168" y="156">B</text><text x="104" y="170">${a}cm</text><text x="198" y="136">${b}cm</text><text x="218" y="72">${c}cm</text></svg>`;
+  const loopCuboidSvg = ({ a, b, c, showDimensions = true }) => `<svg class="geometry-diagram cuboid-loops" viewBox="0 0 270 186" data-loop-cuboid="${a},${b},${c}" data-loop-count="3" aria-label="서로 다른 세 방향으로 끈을 두른 직육면체"><polygon class="shape-fill" points="48,66 164,66 214,34 98,34"/><polygon class="highlight-fill" points="48,66 164,66 164,146 48,146"/><polygon class="shape-fill" points="164,66 214,34 214,114 164,146"/><path class="folded" d="M48 104 H164 L214 72 M98 34 V114"/><path class="folded" d="M72 55 L188 55 L188 135 L72 135 Z"/><path class="crease" d="M42 70 L204 70 M42 142 L204 142"/>${showDimensions ? `<text x="105" y="174">가로 ${a}cm · 세로 ${b}cm · 높이 ${c}cm</text>` : `<text x="105" y="174">서로 다른 세 방향의 끈</text>`}<text x="218" y="28">끈</text></svg>`;
+  const stackedBoxLoopSvg = ({ width, stack }) => {
+    const top = 26;
+    const height = 120;
+    const rowHeight = height / stack;
+    const dividers = Array.from({ length: stack - 1 }, (_, index) => `<line class="crease" x1="68" y1="${top + (index + 1) * rowHeight}" x2="198" y2="${top + (index + 1) * rowHeight}"/>`).join("");
+    return `<svg class="geometry-diagram stacked-box-loop" viewBox="0 0 270 186" data-stack-loop="${width},${stack}" data-loop-count="1" aria-label="같은 상자 ${stack}개를 쌓아 한 고리로 묶은 앞모습"><rect class="shape-fill" x="68" y="${top}" width="130" height="${height}"/>${dividers}<rect class="folded" x="61" y="19" width="144" height="134" rx="5"/><text x="133" y="174" text-anchor="middle">고리 안쪽 가로 ${width}cm · 같은 상자 ${stack}개</text></svg>`;
+  };
+  const diceRowSvg = count => {
+    const gap = 6;
+    const size = Math.min(44, (244 - gap * (count - 1)) / count);
+    const total = count * size + (count - 1) * gap;
+    const left = (280 - total) / 2;
+    const cubes = Array.from({ length: count }, (_, index) => {
+      const x = left + index * (size + gap);
+      return `<rect class="${index % 2 ? "highlight-fill" : "shape-fill"}" x="${x}" y="28" width="${size}" height="${size}"/><text x="${x + size / 2}" y="${28 + size / 2}" text-anchor="middle">주사위</text>`;
+    }).join("");
+    const contacts = Array.from({ length: count - 1 }, (_, index) => `<text x="${left + (index + 1) * size + index * gap + gap / 2}" y="20" text-anchor="middle">7</text>`).join("");
+    return `<svg class="geometry-diagram dice-row" viewBox="0 0 280 110" data-dice-row="${count}" aria-label="같은 방향으로 나란히 놓은 주사위">${cubes}${contacts}<text x="140" y="98" text-anchor="middle">맞닿는 두 면의 합은 7입니다.</text></svg>`;
+  };
+  const stackedDiceSvg = touching => `<svg class="geometry-diagram stacked-dice" viewBox="0 0 240 180" data-stacked-dice="${touching}" aria-label="같은 수가 맞닿도록 쌓은 두 주사위"><rect class="highlight-fill" x="88" y="92" width="64" height="64"/><rect class="shape-fill" x="88" y="28" width="64" height="64"/><line class="folded" x1="88" y1="92" x2="152" y2="92"/><text x="120" y="86" text-anchor="middle">맞닿은 면 ${touching}</text><text x="120" y="18" text-anchor="middle">윗주사위의 윗면 ${7 - touching}</text><text x="120" y="174" text-anchor="middle">바닥면은 보이지 않습니다.</text></svg>`;
+  const diceViewSumsSvg = sums => `<svg class="geometry-diagram dice-view-sums" viewBox="0 0 310 142" data-dice-view-sums="${sums.join(",")}" aria-label="같은 주사위를 세로축 둘레로 90도씩 돌려 본 세 모습의 면 합">${sums.map((sum, index) => `<g transform="translate(${14 + index * 100},16)"><polygon class="shape-fill" points="0,24 48,24 68,12 20,12"/><polygon class="highlight-fill" points="0,24 48,24 48,72 0,72"/><polygon class="shape-fill" points="48,24 68,12 68,60 48,72"/><text class="dice-sum-value" x="34" y="91">합 ${sum}</text><text class="dice-turn-label" x="34" y="112">${index ? `${index * 90}° 돌림` : "처음"}</text></g>`).join("")}</svg>`;
+  const orientationKey = state => [state.top, state.bottom, state.north, state.south, state.east, state.west].join(",");
+  const allDiceOrientations = start => {
+    const states = new Map([[orientationKey(start), start]]);
+    const queue = [start];
+    while (queue.length) {
+      const state = queue.shift();
+      ["N", "S", "E", "W"].forEach(move => {
+        const next = rollDice(state, move);
+        const key = orientationKey(next);
+        if (!states.has(key)) { states.set(key, next); queue.push(next); }
+      });
+    }
+    return [...states.values()];
+  };
+  const standardDiceStart = () => ({ top: 1, bottom: 6, north: 2, south: 5, east: 3, west: 4 });
+  const allStandardDiceOrientations = () => {
+    const mirror = { top: 1, bottom: 6, north: 2, south: 5, east: 4, west: 3 };
+    const states = [...allDiceOrientations(standardDiceStart()), ...allDiceOrientations(mirror)];
+    return [...new Map(states.map(state => [orientationKey(state), state])).values()];
+  };
+  const turnDiceVertically = state => ({ top: state.top, bottom: state.bottom, north: state.west, south: state.east, east: state.north, west: state.south });
+  const pathCoordinates = moves => moves.reduce((points, move) => {
+    const [x, y] = points[points.length - 1];
+    const steps = { N: [0, -1], S: [0, 1], E: [1, 0], W: [-1, 0] };
+    points.push([x + steps[move][0], y + steps[move][1]]);
+    return points;
+  }, [[0, 0]]);
+  const diceGridPathSvg = ({ paths, labels = [] }) => {
+    const multiple = paths.length > 1;
+    const viewWidth = multiple ? 330 : 260;
+    const panelWidth = viewWidth / paths.length;
+    const panels = paths.map((moves, pathIndex) => {
+      const coords = pathCoordinates(moves);
+      const minX = Math.min(...coords.map(([x]) => x));
+      const maxX = Math.max(...coords.map(([x]) => x));
+      const minY = Math.min(...coords.map(([, y]) => y));
+      const maxY = Math.max(...coords.map(([, y]) => y));
+      const cell = Math.min(multiple ? 19 : 28, (panelWidth - 28) / (maxX - minX + 1), 92 / (maxY - minY + 1));
+      const centerX = panelWidth * (pathIndex + .5);
+      const centerY = 82;
+      const px = x => centerX + (x - (minX + maxX) / 2) * cell;
+      const py = y => centerY + (y - (minY + maxY) / 2) * cell;
+      const grid = Array.from({ length: maxX - minX + 2 }, (_, i) => `<line class="path-grid" x1="${px(minX + i) - cell / 2}" y1="${py(minY) - cell / 2}" x2="${px(minX + i) - cell / 2}" y2="${py(maxY) + cell / 2}"/>`).join("") + Array.from({ length: maxY - minY + 2 }, (_, i) => `<line class="path-grid" x1="${px(minX) - cell / 2}" y1="${py(minY + i) - cell / 2}" x2="${px(maxX) + cell / 2}" y2="${py(minY + i) - cell / 2}"/>`).join("");
+      const start = coords[0], end = coords[coords.length - 1];
+      return `${pathIndex ? `<line class="panel-separator" x1="${panelWidth * pathIndex}" y1="18" x2="${panelWidth * pathIndex}" y2="142"/>` : ""}<text class="path-title" x="${centerX}" y="13">${labels[pathIndex] ? `${labels[pathIndex]} 길` : "굴림 경로"}</text>${grid}<polyline class="dice-path path-${pathIndex + 1}" points="${coords.map(([x, y]) => `${px(x)},${py(y)}`).join(" ")}"/><circle class="path-start" cx="${px(start[0])}" cy="${py(start[1])}" r="4"/><circle class="path-end path-${pathIndex + 1}" cx="${px(end[0])}" cy="${py(end[1])}" r="4"/>`;
+    }).join("");
+    return `<svg class="geometry-diagram dice-grid-path${multiple ? " multi-path" : ""}" viewBox="0 0 ${viewWidth} 166" data-dice-grid-path="${paths.map(path => path.join("")).join(";")}" aria-label="${labels.length ? labels.join(", ") + " " : ""}격자 위의 주사위 굴림 경로">${panels}<text class="path-legend" x="${viewWidth / 2}" y="157">○ 출발　● 도착</text></svg>`;
+  };
+  const selfAvoidingDicePath = (rng, length) => {
+    const candidates = [["E", "N", "E", "E", "S", "E", "N"], ["N", "E", "E", "S", "E", "N", "N"], ["E", "E", "N", "W", "N", "E", "E"], ["N", "N", "E", "S", "E", "E", "N"]];
+    return pick(rng, candidates.filter(path => path.length >= length)).slice(0, length);
   };
 
   const averageProbabilityEvidence = (kind, values) => `<span hidden data-average-probability-kind="${kind}" data-values="${values.join(",")}"></span>`;
@@ -3621,179 +3788,264 @@
     cuboidPropertiesAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 5;
       if (kind === 0) {
-        const side = int(rng, 4, 8 + level);
-        const height = int(rng, 7, 14 + level * 3);
-        return result(`가로 ${height}cm, 세로 ${4 * side}cm인 직사각형 띠를 세로 방향만 이어 붙여 밑면이 정사각형인 직육면체를 만들었습니다. 직육면체의 높이를 구하세요.${cuboidEvidence("strip-height", [side, height, 4 * side])}`, height, `띠의 긴 변 ${4 * side}cm는 밑면 정사각형의 둘레가 되고, 이어 붙이지 않은 변 ${height}cm가 높이가 됩니다.`);
+        const dimensions = [int(rng, 2, 4 + level), int(rng, 2, 5 + level), int(rng, 2, 4 + level)];
+        const answer = dimensions.reduce((product, value) => product * value, 1);
+        return result(`모눈 한 칸이 작은 정육면체 한 개를 나타냅니다. 그림과 같은 직육면체를 만드는 작은 정육면체는 모두 몇 개인지 구하세요.${cuboidGridSvg({ a: dimensions[0], b: dimensions[1], c: dimensions[2] })}${cuboidEvidence("grid-cube-count", dimensions)}`, answer, `가로 ${dimensions[0]}칸, 세로 ${dimensions[1]}칸, 높이 ${dimensions[2]}칸이므로 ${dimensions.join("×")}=${answer}개입니다.`);
       }
       if (kind === 1) {
-        const cube = int(rng, 2, 4 + level);
-        const counts = [int(rng, 2, 3 + level), int(rng, 2, 4 + level), int(rng, 2, 3 + level)];
-        const count = counts.reduce((a, b) => a * b, 1);
-        const edgeSum = count * 12 * cube;
-        return result(`가로 ${counts[0] * cube}cm, 세로 ${counts[1] * cube}cm, 높이 ${counts[2] * cube}cm인 직육면체를 한 모서리 ${cube}cm인 정육면체로 모두 잘랐습니다. 만든 정육면체의 개수와 모든 정육면체의 모서리 길이의 합을 더한 값을 구하세요.${cuboidSvg({ a: counts[0] * cube, b: counts[1] * cube, c: counts[2] * cube })}${cuboidEvidence("cube-cut", [cube, ...counts])}`, count + edgeSum, `정육면체는 ${counts.join("×")}=${count}개이고, 한 개의 모서리 합은 12×${cube}=${12 * cube}cm입니다. 따라서 ${count}+${edgeSum}=${count + edgeSum}입니다.`);
+        const unit = pick(rng, [2, 3, 4, 5].slice(0, 2 + level));
+        const factors = [int(rng, 2, 4 + level), int(rng, 2, 4 + level), int(rng, 2, 3 + level)];
+        const dimensions = factors.map(value => value * unit);
+        const side = gcdMany(dimensions);
+        const counts = dimensions.map(value => value / side);
+        const count = counts.reduce((product, value) => product * value, 1);
+        const answer = `${count}개, ${12 * side}cm`;
+        return result(`가로 ${dimensions[0]}cm, 세로 ${dimensions[1]}cm, 높이 ${dimensions[2]}cm인 직육면체를 가능한 한 큰 같은 정육면체로 남김없이 자릅니다. 자른 정육면체의 개수와 정육면체 한 개의 모든 모서리 길이의 합을 차례로 쓰세요.${cuboidSvg({ a: dimensions[0], b: dimensions[1], c: dimensions[2] })}${cuboidEvidence("max-cube-cut", [...dimensions, side, count, 12 * side])}`, answer, `세 길이를 모두 나누는 가장 큰 길이는 ${side}cm입니다. 각 방향으로 ${counts.join(", ")}개씩 잘리므로 ${count}개이고, 한 개의 모서리 길이의 합은 12×${side}=${12 * side}cm입니다.`);
       }
       if (kind === 2) {
-        const parts = int(rng, 3, 5 + level);
-        const unit = int(rng, 2, 5);
-        const b = int(rng, 4, 8 + level);
-        const c = int(rng, 3, 7 + level);
-        const answer = parts * 4 * (unit + b + c);
-        return result(`가로 ${parts * unit}cm, 세로 ${b}cm, 높이 ${c}cm인 직육면체를 가로 방향으로 똑같이 ${parts}조각 냈습니다. 모든 조각의 모서리 길이의 합을 구하세요.${cuboidSvg({ a: parts * unit, b, c })}${cuboidEvidence("cut-edge-sum", [parts, unit, b, c])}`, answer, `한 조각의 크기는 ${unit}×${b}×${c}이고 모서리 합은 4×(${unit}+${b}+${c})입니다. ${parts}조각이므로 ${answer}cm입니다.`);
+        const partsA = int(rng, 2, 3 + level);
+        const partsB = int(rng, 2, 3 + level);
+        const unitA = int(rng, 2, 4 + level);
+        const unitB = int(rng, 2, 4 + level);
+        const height = int(rng, 2, 5 + level);
+        const answer = partsA * partsB * 4 * (unitA + unitB + height);
+        return result(`그림처럼 가로와 세로 두 방향으로 잘라 모두 같은 크기의 조각을 만들었습니다. 모든 조각의 모서리 길이의 합을 구하세요.${cuboidGridSvg({ a: partsA * unitA, b: partsB * unitB, c: height, cuts: Array.from({ length: partsA - 1 }, (_, index) => ({ axis: "a", at: (index + 1) * unitA })).concat(Array.from({ length: partsB - 1 }, (_, index) => ({ axis: "b", at: (index + 1) * unitB }))) })}${cuboidEvidence("cut-edge-sum-2d", [partsA, partsB, unitA, unitB, height])}`, answer, `조각 하나의 크기는 ${unitA}cm×${unitB}cm×${height}cm입니다. 한 조각의 모서리 길이의 합은 4×(${unitA}+${unitB}+${height})cm이고, 조각은 ${partsA}×${partsB}=${partsA * partsB}개이므로 ${answer}cm입니다.`);
       }
       if (kind === 3) {
         const n = int(rng, 3, 5 + level);
-        return result(`한 모서리를 똑같이 ${n}등분한 정육면체를 모든 눈금선을 따라 잘랐습니다. 생기는 작은 정육면체는 몇 개입니까?${cuboidEvidence("full-cube-cut", [n])}`, n ** 3, `가로, 세로, 높이 방향으로 각각 ${n}개씩이므로 ${n}×${n}×${n}=${n ** 3}개입니다.`);
+        const types = [];
+        for (let a = 1; a <= n; a += 1) for (let b = a; b <= n; b += 1) for (let c = b; c <= n; c += 1) types.push([a, b, c]);
+        return result(`한 모서리가 ${n}칸인 정육면체 모눈을 눈금선 따라 잘라 만들 수 있는 직육면체를 셉니다. 돌려서 같은 크기가 되는 것은 한 가지로 셀 때, 서로 다른 크기의 직육면체는 모두 몇 가지인지 구하세요.${cuboidGridSvg({ a: n, b: n, c: n })}${cuboidEvidence("grid-cuboid-types", [n, types.length])}`, types.length, `가로·세로·높이를 작은 수부터 a≤b≤c가 되게 정하면 돌려서 같은 것은 한 번만 셀 수 있습니다. 가능한 세 수를 모두 확인하면 ${types.length}가지입니다.`);
       }
-      const count = int(rng, 3, 6 + level);
-      const a = int(rng, 2, 5 + level);
-      const b = int(rng, 3, 7 + level);
-      const c = int(rng, 4, 8 + level);
-      const answer = 4 * (count * a + b + c);
-      return result(`크기가 ${a}cm×${b}cm×${c}cm인 직육면체 ${count}개를 ${a}cm인 모서리끼리 한 줄로 이어 붙였습니다. 만든 큰 직육면체의 모든 모서리 길이의 합을 구하세요.${cuboidSvg({ a: count * a, b, c })}${cuboidEvidence("joined-edge-sum", [count, a, b, c])}`, answer, `큰 직육면체의 크기는 ${count * a}×${b}×${c}이므로 모서리의 합은 4×(${count * a}+${b}+${c})=${answer}cm입니다.`);
+      const brick = [int(rng, 1, 3), int(rng, 2, 4 + level), int(rng, 3, 5 + level)];
+      const count = pick(rng, [6, 8, 12, 16, 18, 24].slice(0, 3 + level));
+      const dimensions = new Set();
+      for (let x = 1; x <= count; x += 1) for (let y = 1; y <= count; y += 1) {
+        if (count % (x * y)) continue;
+        const z = count / (x * y);
+        [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]].forEach(permutation => {
+          const outer = [x * brick[permutation[0]], y * brick[permutation[1]], z * brick[permutation[2]]].sort((left, right) => left - right);
+          dimensions.add(outer.join("×"));
+        });
+      }
+      return result(`크기가 ${brick.join("cm×")}cm인 같은 블록 ${count}개를 모두 같은 방향으로 놓고, 빈틈없이 직육면체가 되게 쌓습니다. 큰 직육면체의 서로 다른 크기는 몇 가지인지 구하세요. 큰 직육면체를 돌려서 같은 크기가 되는 것은 한 가지로 셉니다.${cuboidSvg({ a: brick[0], b: brick[1], c: brick[2] })}${cuboidEvidence("cuboid-assembly-count", [...brick, count, dimensions.size])}`, dimensions.size, `블록의 세 방향을 놓는 방법과 ${count}를 세 수의 곱으로 나타내는 방법을 모두 확인합니다. 바깥 크기를 작은 수부터 정리해 겹치는 경우를 빼면 ${dimensions.size}가지입니다.`);
     },
     cuboidNetAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 5;
-      const a = int(rng, 5, 9 + level);
-      const b = int(rng, 3, a - 1);
-      const c = int(rng, 2, b);
       if (kind === 0) {
-        const wrong = [a + 1, c];
-        const choices = shuffle(rng, [[a, b], [a, c], [b, c], wrong]);
-        const index = choices.findIndex(pair => pair === wrong) + 1;
-        return result(`가로 ${a}cm, 세로 ${b}cm, 높이 ${c}cm인 직육면체의 전개도에 들어갈 수 없는 면을 고르세요.<div class="equation">${choices.map((pair, i) => `${i + 1}. ${pair[0]}cm×${pair[1]}cm`).join("　")}</div>${cuboidEvidence("invalid-face", [a, b, c, index])}`, index, `직육면체의 면은 ${a}×${b}, ${a}×${c}, ${b}×${c} 세 종류뿐이므로 ${index}번입니다.`);
+        const a = int(rng, 5, 8 + level), b = int(rng, 3, 5 + level), c = int(rng, 2, 4 + level);
+        const layout = cuboidNetLayout({ a, b, c });
+        const papers = shuffle(rng, [[layout.width, layout.height], [layout.height, layout.width], [layout.width - 1, layout.height + 2], [layout.width + 2, layout.height - 1]]);
+        const answer = papers.map(([width, height], index) => ((width >= layout.width && height >= layout.height) || (width >= layout.height && height >= layout.width)) ? index + 1 : null).filter(Boolean);
+        return result(`그림의 전개도를 자르지 않고 종이 안에 그리려고 합니다. 종이를 90° 돌려도 됩니다. 전개도가 들어가는 종이의 번호를 모두 쓰세요.${measuredCuboidNetSvg({ a, b, c })}<div class="equation">${papers.map(([width, height], index) => `${index + 1}. ${width}cm×${height}cm`).join("　")}</div>${cuboidEvidence("net-paper-fit", [a, b, c, layout.width, layout.height, ...papers.flat(), ...answer])}`, answer.join(", "), `전개도의 가로와 세로는 ${layout.width}cm, ${layout.height}cm입니다. 종이를 돌린 경우까지 비교하면 ${answer.join(", ")}번 종이에 들어갑니다.`);
       }
       if (kind === 1) {
-        const side = int(rng, 3, 7 + level);
-        const width = 4 * side + int(rng, 0, side - 1);
-        const height = 3 * side + int(rng, 0, side - 1);
-        return result(`가로 ${width}cm, 세로 ${height}cm인 종이에 가로 4칸, 세로 3칸 안에 들어가는 정육면체 전개도를 그립니다. 만들 수 있는 가장 큰 정육면체의 한 모서리 길이를 구하세요.${cubeNetSvg({})}${cuboidEvidence("largest-net", [width, height])}`, Math.min(Math.floor(width / 4), Math.floor(height / 3)), `전개도 한 칸의 한 변은 가로 기준 ${width}÷4, 세로 기준 ${height}÷3을 모두 넘지 않아야 합니다. 두 값의 자연수 부분 중 작은 값이 답입니다.`);
+        const cut = int(rng, 2, 4 + level);
+        const width = 4 * cut + int(rng, 4, 8 + level);
+        const height = 4 * cut + int(rng, 4, 8 + level);
+        const baseA = width - 2 * cut, baseB = height - 2 * cut;
+        const answer = 4 * (baseA + baseB + cut);
+        return result(`직사각형 종이의 네 모서리에서 한 변 ${cut}cm인 정사각형을 잘라 내고, 점선을 따라 접어 뚜껑 없는 상자를 만들었습니다. 만들어진 상자의 모든 모서리 길이의 합을 구하세요.${cornerCutBoxSvg({ width, height, cut })}${cuboidEvidence("corner-cut-edge-sum", [width, height, cut, baseA, baseB])}`, answer, `상자의 가로와 세로는 ${baseA}cm, ${baseB}cm이고 높이는 ${cut}cm입니다. 모든 모서리 길이의 합은 4×(${baseA}+${baseB}+${cut})=${answer}cm입니다.`);
       }
       if (kind === 2) {
-        const side = int(rng, 3, 8 + level);
-        const answer = 12 * side * side;
-        return result(`한 모서리 ${side}cm인 정육면체의 전개도를 가로 4칸, 세로 3칸인 직사각형 안에 그립니다. 필요한 가장 작은 도화지의 넓이를 구하세요.${cubeNetSvg({})}${cuboidEvidence("net-paper", [side])}`, answer, `도화지의 가로는 ${4 * side}cm, 세로는 ${3 * side}cm이므로 넓이는 ${answer}cm²입니다.`);
+        const a = int(rng, 5, 8 + level), b = int(rng, 3, 5 + level), c = int(rng, 2, 4 + level);
+        const layout = cuboidNetLayout({ a, b, c });
+        const answer = layout.width * layout.height;
+        return result(`그림과 똑같은 전개도를 한 장의 직사각형 도화지에 빈틈없이 그립니다. 이 전개도를 담는 가장 작은 직사각형 도화지의 넓이를 구하세요.${measuredCuboidNetSvg({ a, b, c })}${cuboidEvidence("minimum-cuboid-net-paper", [a, b, c, layout.width, layout.height])}`, answer, `그림의 가로는 ${layout.width}cm, 세로는 ${layout.height}cm이므로 필요한 도화지의 넓이는 ${layout.width}×${layout.height}=${answer}cm²입니다.`);
       }
       if (kind === 3) {
-        const side = int(rng, 3, 7 + level);
-        const marginW = int(rng, 1, 4);
-        const marginH = int(rng, 1, 4);
-        const width = 4 * side + marginW;
-        const height = 3 * side + marginH;
-        const answer = width * height - 6 * side * side;
-        return result(`가로 ${width}cm, 세로 ${height}cm인 종이에 한 모서리 ${side}cm인 정육면체의 전개도를 그려 오렸습니다. 남는 종이의 넓이를 구하세요.${cubeNetSvg({})}${cuboidEvidence("net-waste", [width, height, side])}`, answer, `종이 넓이 ${width * height}cm²에서 정사각형 6개의 넓이 ${6 * side * side}cm²를 빼면 ${answer}cm²입니다.`);
+        const a = int(rng, 4, 7 + level), b = int(rng, 3, 5 + level), c = int(rng, 2, 4 + level);
+        const layout = cuboidNetLayout({ a, b, c });
+        const marginX = int(rng, 1, 3), marginY = int(rng, 1, 3);
+        const width = layout.width + 2 * marginX, height = layout.height + 2 * marginY;
+        const faces = 2 * (a * b + a * c + b * c);
+        const answer = width * height - faces;
+        return result(`가로 ${width}cm, 세로 ${height}cm인 종이 한가운데에 그림과 같은 직육면체 전개도를 그리고 오렸습니다. 남은 종이의 넓이를 구하세요.${measuredCuboidNetSvg({ a, b, c, sheet: { width, height, marginX, marginY } })}${cuboidEvidence("net-waste", [a, b, c, width, height, faces])}`, answer, `종이의 넓이는 ${width}×${height}=${width * height}cm²이고, 전개도 여섯 면의 넓이는 ${faces}cm²입니다. 남는 넓이는 ${answer}cm²입니다.`);
       }
-      const faces = [[a, b], [a, c], [b, c]];
-      const answer = Math.min(...faces.flat());
-      return result(`크기가 각각 ${faces.map(pair => `${pair[0]}cm×${pair[1]}cm`).join(", ")}인 직사각형 종이가 두 장씩 있습니다. 각 종이를 잘라 정육면체의 여섯 면을 만들 때 가능한 가장 큰 정육면체의 한 모서리를 구하세요.${cuboidEvidence("face-paper-cube", [a, b, c])}`, answer, `여섯 면 모두 같은 정사각형이어야 하므로 모든 종이의 짧은 변을 넘을 수 없습니다. 가장 작은 길이는 ${answer}cm입니다.`);
+      const libraries = [
+        [[2, 0], [1, 1], [2, 1], [0, 2], [1, 2]],
+        [[1, 0], [1, 1], [0, 2], [1, 2], [0, 3]],
+        [[1, 0], [0, 1], [1, 1], [1, 2], [2, 2]],
+        [[1, 0], [2, 0], [1, 1], [0, 2], [1, 2]],
+        [[1, 0], [1, 1], [1, 2], [0, 3], [1, 3]],
+        [[2, 0], [0, 1], [1, 1], [2, 1], [2, 2]],
+        [[1, 0], [1, 1], [0, 2], [1, 2], [1, 3]],
+        [[1, 0], [0, 1], [1, 1], [2, 1], [1, 2]]
+      ];
+      const base = pick(rng, libraries);
+      const occupied = new Set(base.map(cell => cell.join(",")));
+      const candidates = new Map();
+      base.forEach(([x, y]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => {
+        const cell = [x + dx, y + dy];
+        if (!occupied.has(cell.join(","))) candidates.set(cell.join(","), cell);
+      }));
+      const candidateCells = [...candidates.values()];
+      const validIndexes = candidateCells.map((cell, index) => {
+        try { foldCubeNet([...base, cell]); return index + 1; } catch { return null; }
+      }).filter(Boolean);
+      const answer = validIndexes.join(", ");
+      return result(`그림의 다섯 칸에 번호가 붙은 칸 하나를 변이 맞닿게 이어 붙입니다. 정육면체 전개도가 되게 하는 번호를 모두 쓰세요.${advancedCubeNetSvg({ cells: base, candidates: candidateCells })}${cuboidEvidence("cube-net-completion-positions", [...base.flat(), ...candidateCells.flat(), ...validIndexes])}`, answer, `번호가 붙은 위치마다 한 칸을 더해 실제로 접어 봅니다. 여섯 면이 겹치지 않고 정육면체가 되는 번호는 ${answer}입니다.`);
     },
     cuboidNetViewAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 5;
-      const values = shuffle(rng, [1, 2, 3, 4, 5, 6]);
-      const opposite = [2, 3, 0, 1, 5, 4];
       if (kind === 0) {
-        const marked = int(rng, 0, 5);
-        const answer = values[opposite[marked]];
-        return result(`다음 전개도를 접었을 때 색칠한 ${values[marked]}의 면과 마주 보는 면의 수를 구하세요.${cubeNetSvg({ values, highlight: marked })}${cuboidEvidence("opposite-face", [...values, marked])}`, answer, `이 전개도에서 마주 보는 위치의 짝은 가로줄의 첫째-셋째, 둘째-넷째, 위-아래 면입니다. 따라서 ${answer}입니다.`);
+        const pairs = advancedCubeNetPairs(advancedCubeNetCells);
+        const values = shuffle(rng, [1, 2, 3, 4, 5, 6]);
+        const valid = pairs.map(pair => pair.map(index => values[index]));
+        const vertex = [pairs[0][0], pairs[1][0], pairs[2][1]].map(index => values[index]);
+        const invalid = [...pairs[0].map(index => values[index]), values[pick(rng, pairs[1])]];
+        const choices = shuffle(rng, [vertex, valid.map(pair => pair[0]), valid.map(pair => pair[1]), invalid]);
+        const answer = choices.findIndex(choice => choice.join(",") === invalid.join(",")) + 1;
+        return result(`그림의 전개도를 접었을 때 한 꼭짓점에서 만날 수 없는 세 면의 번호를 고르세요.<div class="equation cuboid-choice-grid">${choices.map((choice, index) => `<span>${index + 1}. ${choice.join(", ")}</span>`).join("")}</div>${advancedCubeNetSvg({ values })}${cuboidEvidence("invalid-vertex-triple", [...values, ...pairs.flat(), answer])}`, answer, `한 꼭짓점에서는 서로 마주 보는 두 면이 함께 만날 수 없습니다. ${answer}번에는 서로 마주 보는 두 면이 있으므로 불가능합니다.`);
       }
-      if (kind === 1) return result(`직육면체의 한 모서리를 골랐습니다. 그 모서리와 만나지 않으면서 방향이 수직인 모서리는 모두 몇 개입니까?${cuboidEvidence("perpendicular-edges", [])}`, 4, `고른 모서리의 양 끝에서 뻗는 4개는 만나므로 제외합니다. 반대쪽 두 꼭짓점에서 같은 두 방향으로 놓인 4개가 만나지 않으면서 수직입니다.`);
+      if (kind === 1) {
+        const a = int(rng, 4, 7 + level), b = int(rng, 3, 6 + level), c = int(rng, 2, 5 + level);
+        return result(`그림에서 굵게 표시한 모서리 AB와 평행한 다른 모서리 수, 그리고 AB와 만나지 않으면서 수직인 모서리 수를 차례로 쓰세요.${cuboidEdgeRelationSvg({ a, b, c })}${cuboidEvidence("edge-relation-count", [a, b, c, 3, 4])}`, "3개, 4개", `AB와 같은 방향의 모서리는 모두 4개이므로 AB를 빼면 3개입니다. AB에 수직인 두 방향의 모서리 중 AB의 양 끝에서 만나지 않는 것은 각각 2개씩이므로 4개입니다.`);
+      }
       if (kind === 2) {
-        const answer = values[1] + values[2] + values[4];
-        return result(`다음 전개도를 접었을 때 ${values[1]}, ${values[2]}, ${values[4]}가 적힌 세 면이 만나는 꼭짓점에서 세 수의 합을 구하세요.${cubeNetSvg({ values })}${cuboidEvidence("vertex-face-sum", [...values, 1, 2, 4])}`, answer, `세 면은 어느 두 면도 서로 마주 보지 않으므로 한 꼭짓점에서 만납니다. 합은 ${answer}입니다.`);
+        const pairs = advancedCubeNetPairs(advancedCubeNetCells);
+        const primes = shuffle(rng, [2, 3, 5, 7, 11, 13]);
+        const values = Array(6).fill(0);
+        pairs.forEach((pair, index) => { values[pair[0]] = primes[index * 2]; values[pair[1]] = primes[index * 2 + 1]; });
+        const products = [];
+        for (let first = 0; first < 2; first += 1) for (let second = 0; second < 2; second += 1) for (let third = 0; third < 2; third += 1) products.push(values[pairs[0][first]] * values[pairs[1][second]] * values[pairs[2][third]]);
+        products.sort((left, right) => left - right);
+        const answer = products[products.length - 2] - products[1];
+        return result(`전개도를 접어 생기는 8개 꼭짓점마다 만나는 세 면의 수를 곱합니다. 두 번째로 작은 곱과 두 번째로 큰 곱의 차를 구하세요.${advancedCubeNetSvg({ values })}${cuboidEvidence("vertex-product-rank", [...values, ...products])}`, answer, `각 꼭짓점에서는 서로 마주 보는 세 쌍에서 하나씩 선택됩니다. 여덟 곱을 작은 수부터 정리하면 두 번째 수는 ${products[1]}, 두 번째로 큰 수는 ${products[products.length - 2]}이므로 차는 ${answer}입니다.`);
       }
       if (kind === 3) {
-        const marked = int(rng, 0, 5);
-        const answer = values[marked] * values[opposite[marked]];
-        return result(`전개도에서 색칠한 면과, 접었을 때 그 면과 마주 보는 면에 적힌 수의 곱을 구하세요.${cubeNetSvg({ values, highlight: marked })}${cuboidEvidence("opposite-product", [...values, marked])}`, answer, `${values[marked]}의 맞은편 수는 ${values[opposite[marked]]}이므로 곱은 ${answer}입니다.`);
+        const pairs = advancedCubeNetPairs(advancedCubeNetCells);
+        let values, products;
+        do {
+          values = shuffle(rng, [1, 2, 3, 4, 5, 6]);
+          products = pairs.map(pair => values[pair[0]] * values[pair[1]]);
+        } while (products.filter(product => product === Math.max(...products)).length !== 1);
+        const answer = Math.max(...products);
+        return result(`전개도를 접었을 때 서로 마주 보는 세 쌍의 면에 적힌 수를 각각 곱합니다. 그중 가장 큰 곱을 구하세요.${advancedCubeNetSvg({ values })}${cuboidEvidence("opposite-product-max", [...values, ...products])}`, answer, `마주 보는 세 쌍의 곱은 ${products.join(", ")}입니다. 가장 큰 곱은 ${answer}입니다.`);
       }
-      const scale = int(rng, 1, 3 + level);
-      const [a, b, c] = [scale, 2 * scale, 4 * scale];
-      return result(`크기가 ${a}cm×${b}cm×${c}cm인 직육면체에서 서로 마주 보는 꼭짓점을 겉면 위의 직선으로 잇습니다. 가능한 경로 중 가장 짧은 길이를 구하세요.${cuboidSvg({ a, b, c })}${cuboidEvidence("surface-shortest", [a, b, c])}`, 5 * scale, `두 면을 펼치면 후보 길이는 √((${a}+${b})²+${c}²), √((${a}+${c})²+${b}²), √((${b}+${c})²+${a}²)입니다. 가장 짧은 것은 ${5 * scale}cm입니다.`);
+      const a = int(rng, 3, 6 + level), b = int(rng, 3, 6 + level), c = int(rng, 3, 6 + level);
+      const answer = a + b + c;
+      return result(`그림의 A에서 B까지 직육면체의 모서리만 따라 가장 짧게 갑니다. 필요한 길이를 구하세요.${cuboidEdgeRouteSvg({ a, b, c })}${cuboidEvidence("edge-route-shortest", [a, b, c])}`, answer, `A와 B는 서로 마주 보는 꼭짓점입니다. 어느 짧은 길을 택해도 가로, 세로, 높이를 한 번씩 지나므로 ${a}+${b}+${c}=${answer}cm입니다.`);
     },
     cuboidApplicationAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 5;
       if (kind === 0) {
-        const count = pick(rng, [12, 18, 24, 30].slice(0, 2 + level));
-        const triples = factorTriples(count);
-        const best = [...triples].sort((x, y) => (x[0] * x[1] + x[1] * x[2] + x[2] * x[0]) - (y[0] * y[1] + y[1] * y[2] + y[2] * y[0]))[0];
-        return result(`한 모서리 1cm인 쌓기나무 ${count}개를 빈틈없이 넣는 겉넓이가 가장 작은 직육면체 상자의 가로, 세로, 높이를 큰 수부터 쓰세요.${cuboidEvidence("smallest-box", [count])}`, best.join(", "), `곱이 ${count}인 자연수 세 쌍을 모두 비교하면 서로 가장 가까운 ${best.join("×")}에서 겉넓이가 가장 작습니다.`);
+        const maps = [
+          [[1, 2, 1], [2, 3, 2]],
+          [[2, 1, 3], [1, 2, 2]],
+          [[1, 3, 2], [2, 2, 1], [1, 2, 3]]
+        ];
+        const heights = pick(rng, maps.slice(0, 1 + level));
+        const dimensions = [heights[0].length, heights.length, Math.max(...heights.flat())].sort((left, right) => right - left);
+        return result(`각 바닥 칸에 쌓인 정육면체의 높이가 표와 같습니다. 이 쌓기나무 전체를 넣는 가장 작은 직육면체 상자의 가로, 세로, 높이를 큰 수부터 쓰세요.${heightMapTable({ title: "바닥 칸별 높이", heights })}${isometricStackSvg(heights)}${cuboidEvidence("minimum-cover-box", [...heights.flat(), ...dimensions])}`, dimensions.join(", "), `바닥의 가로 칸 수, 세로 칸 수, 가장 높은 칸을 확인하면 상자의 세 길이는 ${dimensions.join("cm, ")}cm입니다.`);
       }
       const a = int(rng, 4, 8 + level), b = int(rng, 3, 7 + level), c = int(rng, 2, 6 + level);
-      if (kind === 1) return result(`가로 ${a}cm, 세로 ${b}cm, 높이 ${c}cm인 직육면체에 가로-세로, 세로-높이, 높이-가로 방향으로 끈을 한 바퀴씩 둘렀습니다. 사용한 끈의 전체 길이를 구하세요.${cuboidSvg({ a, b, c })}${cuboidEvidence("three-loops", [a, b, c])}`, 4 * (a + b + c), `세 고리 길이는 2(${a}+${b}), 2(${b}+${c}), 2(${c}+${a})이므로 합은 ${4 * (a + b + c)}cm입니다.`);
+      if (kind === 1) {
+        const loops = [2 * (a + b), 2 * (b + c), 2 * (c + a)];
+        const answer = loops.reduce((sum, value) => sum + value, 0);
+        return result(`그림처럼 서로 다른 세 방향으로 끈을 한 바퀴씩 둘렀습니다. 세 끈의 길이를 모두 더한 값을 구하세요.${loopCuboidSvg({ a, b, c })}${cuboidEvidence("three-loops", [a, b, c, ...loops])}`, answer, `세 끈의 길이는 각각 ${loops.map(value => `${value}cm`).join(", ")}입니다. 모두 더하면 ${answer}cm입니다.`);
+      }
       if (kind === 2) {
-        const small = [int(rng, 2, 4), int(rng, 2, 4), int(rng, 2, 4)];
-        const counts = [int(rng, 2, 4 + level), int(rng, 2, 4 + level), int(rng, 2, 3 + level)];
-        const box = small.map((value, i) => value * counts[i] + int(rng, 0, value - 1));
-        const answer = counts.reduce((x, y) => x * y, 1);
-        return result(`안쪽 크기가 ${box.join("cm×")}cm인 상자에 ${small.join("cm×")}cm인 직육면체를 방향을 바꾸지 않고 빈틈없이 최대한 넣습니다. 몇 개까지 넣을 수 있습니까?${cuboidEvidence("max-pack", [...box, ...small])}`, answer, `각 방향으로 ${box.map((value, i) => Math.floor(value / small[i])).join(", ")}개씩 들어가므로 모두 ${answer}개입니다.`);
+        let small;
+        do { small = [int(rng, 2, 4), int(rng, 2, 5), int(rng, 3, 6)]; } while (new Set(small).size !== 3);
+        const box = [small[0] * int(rng, 2, 4 + level) + int(rng, 0, small[0] - 1), small[1] * int(rng, 2, 4 + level) + int(rng, 0, small[1] - 1), small[2] * int(rng, 2, 3 + level) + int(rng, 0, small[2] - 1)];
+        const orientations = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
+        const counts = orientations.map(order => order.map((axis, index) => Math.floor(box[index] / small[axis])).reduce((product, value) => product * value, 1));
+        const answer = Math.max(...counts);
+        return result(`안쪽 크기가 ${box.join("cm×")}cm인 상자에 크기가 ${small.join("cm×")}cm인 같은 직육면체를 모두 한 방향으로 가지런히 넣습니다. 놓는 방향을 바꾸어 비교할 때 최대 몇 개까지 들어가는지 구하세요.${cuboidSvg({ a: box[0], b: box[1], c: box[2] })}${cuboidEvidence("max-pack-rotations", [...box, ...small, ...counts])}`, answer, `작은 직육면체의 세 방향을 상자의 세 방향에 대응시키는 6가지 방법을 모두 비교합니다. 각 방법의 개수는 ${counts.join(", ")}개이므로 가장 많은 것은 ${answer}개입니다.`);
       }
       if (kind === 3) {
         const stack = int(rng, 3, 5 + level);
         const h = int(rng, 2, 6 + level);
-        const rope = 2 * (a + stack * h);
-        return result(`가로 ${a}cm인 같은 상자 ${stack}개를 세로로 쌓고, 가로와 전체 높이를 지나는 한 고리로 묶었더니 끈이 ${rope}cm 들었습니다. 상자 한 개의 높이를 구하세요.${cuboidEvidence("stack-height", [a, stack, rope])}`, h, `한 고리의 반은 ${rope}÷2=${rope / 2}cm이고 가로 ${a}cm를 빼면 전체 높이는 ${stack * h}cm입니다. ${stack}으로 나누면 ${h}cm입니다.`);
+        const knot = pick(rng, [4, 6, 8]);
+        const rope = 2 * (a + stack * h) + knot;
+        return result(`가로 ${a}cm인 같은 상자 ${stack}개를 세로로 쌓고 그림처럼 한 고리로 묶었습니다. 매듭을 묶는 데 ${knot}cm를 더 써서 끈의 전체 길이가 ${rope}cm였습니다. 상자 한 개의 높이를 구하세요.${stackedBoxLoopSvg({ width: a, stack })}${cuboidEvidence("stack-height", [a, stack, knot, rope, h])}`, h, `매듭 부분을 빼면 고리 길이는 ${rope}-${knot}=${rope - knot}cm입니다. 반으로 나누어 가로 ${a}cm를 빼면 전체 높이는 ${stack * h}cm이므로, 상자 한 개의 높이는 ${stack * h}÷${stack}=${h}cm입니다.`);
       }
-      const loops = [2 * (a + b), 2 * (b + c), 2 * (c + a)].sort((x, y) => x - y);
-      const shortest = Math.min(a, b, c);
-      return result(`직육면체를 서로 다른 세 방향으로 한 바퀴씩 묶은 끈의 길이가 ${loops.join("cm, ")}cm입니다. 직육면체의 가장 짧은 모서리를 구하세요.${cuboidEvidence("edges-from-loops", loops)}`, shortest, `세 길이의 반을 두 변의 합으로 바꾼 뒤, 두 작은 합을 더하고 큰 합을 빼어 2로 나누면 가장 짧은 모서리는 ${shortest}cm입니다.`);
+      const edges = [int(rng, 6, 10 + level), int(rng, 3, 5 + level), int(rng, 2, 3 + level)].sort((left, right) => right - left);
+      const loops = [2 * (edges[0] + edges[1]), 2 * (edges[1] + edges[2]), 2 * (edges[2] + edges[0])].sort((left, right) => left - right);
+      return result(`직육면체를 세 방향으로 한 바퀴씩 두른 끈의 길이가 ${loops.map(value => `${value}cm`).join(", ")}입니다. 가장 짧은 모서리의 길이를 구하세요.${loopCuboidSvg({ a: edges[0], b: edges[1], c: edges[2], showDimensions: false })}${cuboidEvidence("edges-from-loops", [...edges, ...loops])}`, edges[2], `각 끈 길이의 반은 두 모서리의 합입니다. 가장 작은 두 합을 더하고 가장 큰 합을 빼면 가장 짧은 모서리의 2배가 되어, 가장 짧은 모서리는 ${edges[2]}cm입니다.`);
     },
     diceArrangementAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 5;
-      const top = pick(rng, [1, 2, 3, 4, 5, 6]);
-      const front = pick(rng, [1, 2, 3, 4, 5, 6].filter(v => v !== top && v !== 7 - top));
-      const right = pick(rng, [1, 2, 3, 4, 5, 6].filter(v => ![top, 7 - top, front, 7 - front].includes(v)));
-      if (kind === 0) return result(`마주 보는 두 면의 합이 7인 주사위의 위, 앞, 오른쪽 면은 그림과 같습니다. 보이지 않는 아랫면의 수를 구하세요.${diceSvg({ top, front, right })}${cuboidEvidence("dice-bottom", [top, front, right])}`, 7 - top, `윗면 ${top}과 아랫면은 마주 보므로 합이 7입니다. 따라서 ${7 - top}입니다.`);
+      if (kind === 0) return result(`서로 다른 여섯 글자를 정육면체의 여섯 면에 하나씩 적습니다. 정육면체를 돌려 같은 배치는 한 가지로 셉니다. 서로 다른 배치는 모두 몇 가지인지 구하세요.${diceSvg({ top: "가", front: "나", right: "다" })}${cuboidEvidence("dice-labeling-count", [6, 30])}`, 30, `한 글자를 윗면에 고정해도 됩니다. 맞은편 글자는 5가지이고, 옆면 네 글자는 정육면체를 돌려 같은 배열을 한 번만 세면 3×2×1=6가지입니다. 따라서 5×6=30가지입니다.`);
       if (kind === 1) {
-        const values = [top, front, 7 - top, 7 - front, right, "□"];
-        return result(`마주 보는 두 면의 합이 7인 주사위 전개도입니다. □에 들어갈 수를 구하세요.${cubeNetSvg({ values, highlight: 5 })}${cuboidEvidence("dice-net-missing", [top, front, right])}`, 7 - right, `${right}과 □의 면은 전개도를 접으면 마주 보므로 □=${7 - right}입니다.`);
+        const pairs = advancedCubeNetPairs(advancedCubeNetCells);
+        const values = Array(6).fill(0);
+        const pairValues = shuffle(rng, [[1, 6], [2, 5], [3, 4]]);
+        pairs.forEach((pair, index) => { values[pair[0]] = pairValues[index][0]; values[pair[1]] = pairValues[index][1]; });
+        const blank = pick(rng, [0, 1, 2, 3, 4, 5]);
+        const opposite = pairs.find(pair => pair.includes(blank)).find(index => index !== blank);
+        const answer = values[blank];
+        const displayed = values.map((value, index) => index === blank ? "□" : value);
+        return result(`마주 보는 두 면의 합이 7인 주사위 전개도입니다. □에 들어갈 수를 구하세요.${advancedCubeNetSvg({ values: displayed, highlight: blank })}${cuboidEvidence("dice-net-missing", [...values, blank, opposite])}`, answer, `□의 면과 마주 보는 면의 수는 ${values[opposite]}입니다. 두 면의 합이 7이므로 □=${answer}입니다.`);
       }
       if (kind === 2) {
-        const tops = Array.from({ length: 3 + level }, () => int(rng, 1, 6));
-        return result(`마주 보는 두 면의 합이 7인 주사위 ${tops.length}개를 한 줄로 놓았습니다. 윗면의 수가 차례로 ${tops.join(", ")}일 때 바닥면 수의 합을 구하세요.${cuboidEvidence("dice-bottom-sum", tops)}`, tops.reduce((sum, value) => sum + 7 - value, 0), `각 바닥면은 7에서 윗면을 뺀 수이므로 합은 ${tops.map(value => 7 - value).join("+")}=${tops.reduce((sum, value) => sum + 7 - value, 0)}입니다.`);
+        const states = allStandardDiceOrientations();
+        let start, sums, candidates;
+        do {
+          start = pick(rng, states);
+          const views = [start];
+          views.push(turnDiceVertically(views[0]));
+          views.push(turnDiceVertically(views[1]));
+          sums = views.map(state => state.top + state.south + state.east);
+          candidates = states.filter(state => {
+            const viewsForState = [state, turnDiceVertically(state), turnDiceVertically(turnDiceVertically(state))];
+            return viewsForState.every((view, index) => view.top + view.south + view.east === sums[index]);
+          });
+        } while (candidates.length !== 1);
+        return result(`같은 표준 주사위를 세 번 보았습니다. 처음 모습에서 보이는 세 면의 합은 ${sums[0]}이고, 윗면에서 보았을 때 시계 방향으로 90°씩 돌린 뒤의 합은 차례로 ${sums[1]}, ${sums[2]}입니다. 처음 주사위의 아랫면 수를 구하세요.${diceViewSumsSvg(sums)}${cuboidEvidence("dice-view-sums", [start.top, start.south, start.east, ...sums, start.bottom])}`, start.bottom, `시계 방향으로 90°씩 돌린 순서에 맞추어, 마주 보는 두 면의 합이 7인 모든 주사위 방향을 세 합과 대조하면 한 방향만 남습니다. 그때 처음 윗면은 ${start.top}이므로 아랫면은 ${start.bottom}입니다.`);
       }
       if (kind === 3) {
-        const touching = int(rng, 1, 6);
         const count = int(rng, 3, 5 + level);
-        const answer = 2 * (count - 1) * touching;
-        return result(`같은 주사위 ${count}개를 한 줄로 이어 붙였습니다. 서로 맞닿는 두 면에는 모두 ${touching}이 적혀 있습니다. 맞닿아 보이지 않는 면에 적힌 수의 합을 구하세요.${cuboidEvidence("dice-touching", [count, touching])}`, answer, `맞닿는 곳은 ${count - 1}군데이고 한 곳마다 ${touching}이 적힌 면 2개가 숨습니다. 합은 ${answer}입니다.`);
+        const answer = 7 * (count - 1);
+        return result(`같은 방향의 표준 주사위 ${count}개를 한 줄로 놓았습니다. 이웃한 두 주사위가 맞닿는 면은 서로 마주 보는 면이므로 두 수의 합은 7입니다. 보이지 않는 모든 맞닿은 면의 수의 합을 구하세요.${diceRowSvg(count)}${cuboidEvidence("dice-contact-sum", [count, count - 1, answer])}`, answer, `맞닿는 곳은 ${count - 1}곳이고, 한 곳마다 보이지 않는 두 면의 합은 7입니다. 따라서 모두 7×${count - 1}=${answer}입니다.`);
       }
-      const touching = int(rng, 1, 6);
-      const floor = int(rng, 1, 6);
+      const touching = pick(rng, [1, 2, 3, 4, 5, 6]);
+      const floor = 7 - touching;
       const answer = 42 - 2 * touching - floor;
-      return result(`주사위 2개를 쌓았습니다. 맞닿은 두 면에는 같은 수 ${touching}이 적혀 있고, 아래 주사위의 바닥면은 ${floor}입니다. 바닥면과 맞닿은 면을 제외하고 보이는 모든 면의 수의 합을 구하세요.${cuboidEvidence("dice-visible", [touching, floor])}`, answer, `주사위 2개의 모든 면의 합은 42입니다. 맞닿은 두 면 ${2 * touching}과 바닥면 ${floor}을 빼면 ${answer}입니다.`);
+      return result(`같은 수 ${touching}이 적힌 면끼리 맞닿도록 표준 주사위 두 개를 쌓았습니다. 아랫주사위의 바닥면과 두 주사위가 맞닿은 면은 보이지 않습니다. 보이는 모든 면의 수의 합을 구하세요.${stackedDiceSvg(touching)}${cuboidEvidence("dice-visible", [touching, floor, answer])}`, answer, `두 주사위의 모든 면의 수의 합은 42입니다. 맞닿아 숨은 두 면의 수 ${touching}과 ${touching}, 바닥면 ${floor}을 빼면 ${answer}입니다.`);
     },
     diceRollingAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 5;
-      const top = pick(rng, [1, 2, 3, 4, 5, 6]);
-      const front = pick(rng, [1, 2, 3, 4, 5, 6].filter(v => v !== top && v !== 7 - top));
-      const right = pick(rng, [1, 2, 3, 4, 5, 6].filter(v => ![top, 7 - top, front, 7 - front].includes(v)));
-      const start = diceOrientation(top, front, right);
       if (kind === 0) {
-        const moves = Array.from({ length: 3 + level }, () => pick(rng, ["N", "S", "E", "W"]));
+        const start = pick(rng, allStandardDiceOrientations());
+        const moves = selfAvoidingDicePath(rng, 3 + level);
         const end = moves.reduce(rollDice, start);
-        return result(`그림의 주사위를 화살표 방향으로 한 칸씩 굴렸습니다. 마지막 윗면의 수를 구하세요.${diceSvg({ top, front, right })}${dicePathSvg(moves)}${cuboidEvidence("dice-roll-top", [top, front, right, ...moves.map(v => "NSEW".indexOf(v))])}`, end.top, `방향마다 윗면과 이동 방향 쪽 면을 차례로 바꾸어 추적하면 마지막 윗면은 ${end.top}입니다.`);
+        return result(`그림의 주사위를 격자 길을 따라 한 칸씩 굴렸습니다. 마지막 칸에서의 윗면 수를 구하세요.${diceSvg({ top: start.top, front: start.south, right: start.east })}${diceGridPathSvg({ paths: [moves] })}${cuboidEvidence("dice-roll-top", [start.top, start.bottom, start.north, start.south, start.east, start.west, ...moves.map(move => "NSEW".indexOf(move))])}`, end.top, `격자 길을 따라 한 칸씩 굴리며 윗면을 바꾸어 기록하면 마지막 윗면은 ${end.top}입니다.`);
       }
       if (kind === 1) {
-        const moves = ["E", "N", "E", "S"].slice(0, 3 + Math.min(level, 1));
-        const end = moves.reduce(rollDice, start);
-        return result(`처음 주사위의 위, 앞, 오른쪽 면은 그림과 같습니다. 화살표대로 굴렸을 때 마지막 윗면과 마주 보는 면의 수를 구하세요.${diceSvg({ top, front, right })}${dicePathSvg(moves)}${cuboidEvidence("dice-roll-opposite", [top, front, right, ...moves.map(v => "NSEW".indexOf(v))])}`, end.bottom, `굴림을 차례로 적용하면 마지막 윗면은 ${end.top}이고 그 맞은편은 ${end.bottom}입니다.`);
+        const labels = shuffle(rng, [1, 2, 3, 4, 5, 6]);
+        const start = { top: labels[0], bottom: labels[1], north: labels[2], south: labels[3], east: labels[4], west: labels[5] };
+        const end = rollDice(start, "E");
+        return result(`1부터 6까지의 수를 한 번씩 임의로 적은 같은 주사위를 동쪽으로 한 칸 굴린 기록입니다. 굴린 뒤 윗면과 마주 보는 면의 수를 구하세요.${diceSvg({ top: start.top, front: start.south, right: start.east })}${diceGridPathSvg({ paths: [["E"]] })}<div class="equation">처음 위 ${start.top}, 처음 오른쪽 ${start.east}　→　굴린 뒤 위 ${end.top}</div>${cuboidEvidence("dice-opposite-record", [start.top, start.bottom, start.north, start.south, start.east, start.west, end.top, end.bottom])}`, end.bottom, `동쪽으로 굴리면 처음 오른쪽 면은 아랫면으로 갑니다. 굴린 뒤 윗면 ${end.top}과 마주 보는 면은 ${end.bottom}입니다.`);
       }
       if (kind === 2) {
-        const tops = Array.from({ length: 4 + level }, () => int(rng, 1, 6));
-        const answer = tops.reduce((sum, value) => sum + 7 - value, 0);
-        return result(`마주 보는 두 면의 합이 7인 주사위 ${tops.length}개의 윗면이 ${tops.join(", ")}입니다. 모든 바닥면의 합을 구하세요.${cuboidEvidence("rolling-bottom-sum", tops)}`, answer, `바닥면은 각각 ${tops.map(value => 7 - value).join(", ")}이므로 합은 ${answer}입니다.`);
+        const start = pick(rng, allStandardDiceOrientations());
+        const paths = [["E", "N", "E", "E"], ["N", "N", "E", "S"], ["E", "E", "S", "E"]].map(path => path.slice(0, 2 + level));
+        const ends = paths.map(path => path.reduce(rollDice, start));
+        const answer = ends.reduce((sum, state) => sum + state.bottom, 0);
+        return result(`같은 방향으로 놓은 주사위 세 개를 각각 A, B, C 길을 따라 굴렸습니다. 세 주사위의 마지막 바닥면 수의 합을 구하세요.${diceSvg({ top: start.top, front: start.south, right: start.east })}${diceGridPathSvg({ paths, labels: ["A", "B", "C"] })}${cuboidEvidence("rolling-bottom-paths", [start.top, start.bottom, start.north, start.south, start.east, start.west, ...ends.map(state => state.bottom)])}`, answer, `A, B, C 길을 따라 굴린 뒤 바닥면은 차례로 ${ends.map(state => state.bottom).join(", ")}입니다. 합은 ${answer}입니다.`);
       }
       if (kind === 3) {
-        const moves = Array.from({ length: 5 + level }, () => pick(rng, ["N", "E", "S", "W"]));
+        const start = pick(rng, allStandardDiceOrientations());
+        const moves = selfAvoidingDicePath(rng, 5 + level);
         let state = start;
         let answer = 0;
         moves.forEach(move => { state = rollDice(state, move); answer += state.top; });
-        return result(`그림의 주사위를 화살표 길을 따라 굴릴 때, 각 칸에 도착한 직후 윗면 수의 합을 구하세요.${diceSvg({ top, front, right })}${dicePathSvg(moves)}${cuboidEvidence("dice-path-sum", [top, front, right, ...moves.map(v => "NSEW".indexOf(v))])}`, answer, `각 이동 뒤의 윗면을 차례로 기록해 더하면 ${answer}입니다.`);
+        return result(`그림의 주사위를 격자 길을 따라 굴립니다. 매 칸에 도착한 직후의 윗면 수를 모두 더한 값을 구하세요.${diceSvg({ top: start.top, front: start.south, right: start.east })}${diceGridPathSvg({ paths: [moves] })}${cuboidEvidence("dice-path-sum", [start.top, start.bottom, start.north, start.south, start.east, start.west, ...moves.map(move => "NSEW".indexOf(move))])}`, answer, `각 이동 뒤의 윗면을 차례로 기록해 더하면 ${answer}입니다.`);
       }
       const pathA = ["E", "N", "E"];
       const pathB = ["N", "E", "N"];
-      const sumPath = path => { let state = start; return path.reduce((sum, move) => { state = rollDice(state, move); return sum + state.top; }, 0); };
-      const sumA = sumPath(pathA), sumB = sumPath(pathB);
-      return result(`주사위의 위가 ${top}, 앞이 ${front}일 때 오른쪽 면의 수를 구하세요. 경로 A(${pathA.join("-")})에서 도착할 때마다 본 윗면의 합은 ${sumA}, 경로 B(${pathB.join("-")})의 합은 ${sumB}입니다.${cuboidEvidence("dice-two-paths", [top, front, sumA, sumB])}`, right, `오른쪽 면 후보 중 위·앞면과 같거나 마주 보는 수를 제외하고 두 경로를 굴려 보면 두 합을 동시에 만족하는 수는 ${right} 하나입니다.`);
+      const states = allStandardDiceOrientations();
+      let start, candidates, sumA, sumB;
+      const sumPath = (state, path) => path.reduce((sum, move) => { const next = rollDice(state, move); Object.assign(state, next); return sum + state.top; }, 0);
+      do {
+        start = pick(rng, states);
+        sumA = sumPath({ ...start }, pathA);
+        sumB = sumPath({ ...start }, pathB);
+        candidates = states.filter(state => state.top === start.top && state.south === start.south && sumPath({ ...state }, pathA) === sumA && sumPath({ ...state }, pathB) === sumB);
+      } while (candidates.length !== 1);
+      return result(`표준 주사위의 위가 ${start.top}, 앞이 ${start.south}입니다. A와 B의 격자 길을 따라 굴렸을 때 각 칸에 도착한 뒤 윗면의 합이 각각 ${sumA}, ${sumB}였습니다. 처음 오른쪽 면의 수를 구하세요.${diceGridPathSvg({ paths: [pathA, pathB], labels: ["A", "B"] })}${cuboidEvidence("dice-two-paths", [start.top, start.south, sumA, sumB, start.east])}`, start.east, `위와 앞면 조건을 만족하는 오른쪽 면 후보를 두 길에 각각 적용합니다. 두 합을 모두 만족하는 방향은 하나이고, 오른쪽 면은 ${start.east}입니다.`);
     },
     prismElementsNetAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 6;
