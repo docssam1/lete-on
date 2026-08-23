@@ -7,7 +7,7 @@
     enabled: false,
     projectUrl: "https://uqtkxhchtbcizzteuvsq.supabase.co",
     publishableKey: "sb_publishable_eYf7Q48ml5LZcBmtJ1X--w_Nbe4l47i",
-    adminEmail: "",
+    adminEmail: "docssam1@gmail.com",
     sdkUrl: "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3/+esm",
     features: Object.freeze({
       secureMockDelivery: false

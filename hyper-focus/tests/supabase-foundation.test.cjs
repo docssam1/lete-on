@@ -66,6 +66,7 @@ function testStaticSecurityContracts() {
   assert.match(publicConfig, /enabled:\s*false/);
   assert.match(publicConfig, /https:\/\/uqtkxhchtbcizzteuvsq\.supabase\.co/);
   assert.match(publicConfig, /sb_publishable_[A-Za-z0-9_-]+/);
+  assert.match(publicConfig, /adminEmail:\s*"docssam1@gmail\.com"/);
   assert.match(publicConfig, /@supabase\/supabase-js@2\.112\.3/);
   assert.doesNotMatch(publicConfig, /sb_(?:secret|service_role)_[A-Za-z0-9]|SUPABASE_(?:SECRET|SERVICE_ROLE)_KEY\s*[:=]/i);
 
@@ -160,6 +161,25 @@ function testStaticSecurityContracts() {
 
   const adminMfa = read("admin-mfa.html");
   assert.match(adminMfa, /mfa\.unenroll/);
+
+  const adminBootstrap = read("supabase/bootstrap-admin.ts");
+  assert.match(adminBootstrap, /Deno\.env\.get/);
+  assert.match(adminBootstrap, /HF_ADMIN_EMAIL/);
+  assert.match(adminBootstrap, /HF_ADMIN_PASSWORD/);
+  assert.match(adminBootstrap, /adminPassword\.length < 16/);
+  assert.match(adminBootstrap, /auth\.admin\.createUser/);
+  assert.match(adminBootstrap, /email_confirm:\s*true/);
+  assert.match(adminBootstrap, /app_metadata:\s*\{ hf_role: "admin" \}/);
+  assert.match(adminBootstrap, /from\("hf_admin_accounts"\)\.upsert/);
+  assert.doesNotMatch(adminBootstrap, /sb_secret_[A-Za-z0-9_-]{8,}/);
+
+  const adminBootstrapWrapper = read("supabase/bootstrap-admin-local.ps1");
+  assert.match(adminBootstrapWrapper, /Read-Host[\s\S]*-AsSecureString/);
+  assert.match(adminBootstrapWrapper, /\^sb_secret_/);
+  assert.match(adminBootstrapWrapper, /PreviousEnvironment/);
+  assert.match(adminBootstrapWrapper, /SetEnvironmentVariable/);
+  assert.match(adminBootstrapWrapper, /ZeroFreeBSTR/);
+  assert.doesNotMatch(adminBootstrapWrapper, /sb_secret_[A-Za-z0-9_-]{8,}/);
 
   const viewer = read("mock/viewer.html");
   assert.match(viewer, /secureMockDelivery/);

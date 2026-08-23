@@ -24,15 +24,13 @@
    npx -y supabase@2.115.0 functions deploy signed-asset-url
    ```
 
-3. 관리자 계정을 로컬에서 한 번만 부트스트랩합니다. 실제 값은 환경 변수로만 전달합니다.
+3. 관리자 계정을 로컬에서 한 번만 부트스트랩합니다. 관리자 이메일을 먼저 확정한 뒤 아래 래퍼를 실행합니다. secret key와 비밀번호는 마스킹된 로컬 프롬프트로만 입력되며 명령 인수·PowerShell 기록·Git에 넣지 않습니다. 래퍼는 실행이 끝나면 관련 환경 변수를 제거합니다.
 
    ```powershell
-   $env:SUPABASE_URL='<PROJECT_URL>'
-   $env:SUPABASE_SECRET_KEY='<SECRET_KEY>'
-   $env:HF_ADMIN_EMAIL='<ADMIN_EMAIL>'
-   $env:HF_ADMIN_PASSWORD='<16자 이상 임시 강력 비밀번호>'
-   deno run --allow-env --allow-net hyper-focus/supabase/bootstrap-admin.ts
+   .\hyper-focus\supabase\bootstrap-admin-local.ps1 -AdminEmail '<확정한 관리자 이메일>'
    ```
+
+   Supabase Dashboard의 **Project Settings → API Keys**에서 해당 Hyper Focus 프로젝트의 `sb_secret_...` 키를 확인해 프롬프트에 입력합니다. 이 키는 브라우저 코드나 채팅에 붙여 넣지 않습니다.
 
 4. `DOCSSAM`으로 로그인해 TOTP를 등록하고 6자리 인증을 완료합니다. 관리자 함수는 AAL2 세션만 허용합니다. 기본 TOTP MFA는 모든 Supabase 프로젝트에서 사용할 수 있습니다: <https://supabase.com/docs/guides/auth/auth-mfa/totp>
 5. 관리자 화면에서 기존 학생 25명을 새 계정으로 만들고 새 승인번호를 한 번만 전달합니다. 번호는 공개 식별자 4자와 비밀 난수 16자로 구성되며 서버에도 원문을 저장하지 않습니다.
@@ -60,7 +58,7 @@ Free 요금제는 비용이 없지만 비활성 프로젝트 일시정지와 저
 
 ## 현재 잠금 항목
 
-- 관리자 계정 부트스트랩과 TOTP 등록 미실행
+- 관리자 이메일 도메인 확정, 계정 부트스트랩과 TOTP 등록 미실행
 - 실제 관리자·학생 두 계정을 사용한 AAL2, 교차 학생 차단, 번호 회전 RLS 통합 테스트 미실행
 - 보안형 모의고사 loader/saveAttempt 미구현
 - `data.js`의 기존 학생 명단·옛 승인번호 제거 전
