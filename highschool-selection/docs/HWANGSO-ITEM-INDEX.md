@@ -29,4 +29,6 @@
 
 `layout_candidate`가 추가된 문항 색인 계약은 `schemaVersion: 2`이며, v1을 병합한 산출물에는 `predecessorSchemaVersion: 1`을 함께 기록한다.
 
+자동 제외 후보를 원본 렌더에서 직접 확인한 뒤에는 `apply-private-layout-review.cjs`로만 판정을 반영한다. 실제 Mission 페이지였으면 주문항 1~6의 잠금 문항을 만들고 `visual_verified`로 기록하며, 실제 채점표·기록표였으면 문항을 만들지 않고 페이지 제외 검수 상태만 `visual_verified`로 올린다. 어느 경우에도 교육과정이나 답안 상태는 변경하지 않는다.
+
 OCR 결과는 발견 보조 자료일 뿐 정답·유형·문항 경계의 최종 근거로 사용하지 않는다. 모든 신규 문항은 `releaseStatus: locked`로 시작하고 사용자 회차 검수 전에는 공개 시험에 배정하지 않는다.
