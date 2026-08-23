@@ -590,6 +590,57 @@ test("manual replacement can correct a protected candidate-full page outside the
   assert.equal(result.counts.activeQuestionCandidates, 2);
 });
 
+test("non-question replacement quarantines a protected candidate-full false positive", () => {
+  const value = manualReplacementInput();
+  value.unresolvedPages = [];
+  value.counts.unresolvedPages = 0;
+  value.layoutPages[0].coverageStatus = "candidate_full";
+  const beforeItems = JSON.parse(JSON.stringify(value.items));
+
+  const result = review.applyReviews(value, [{
+    sourceMemoryId: "source-one",
+    page: 4,
+    resolution: "exclude_replace_candidates"
+  }]);
+
+  assert.deepEqual(result.items, beforeItems);
+  assert.deepEqual(result.rejectedCandidates.map(entry => entry.id),
+    beforeItems.map(item => item.id).sort());
+  assert.ok(result.rejectedCandidates.every(entry =>
+    entry.reason === "visual-confirmed-non-question-replacement" &&
+    entry.reviewStatus === "visual_verified"
+  ));
+  assert.equal(result.layoutPages.length, 0);
+  assert.equal(result.excludedPageCandidates.at(-1).reviewStatus, "visual_verified");
+  assert.deepEqual(result.visualReviewPages[0], {
+    privateSourceMemoryId: "source-one",
+    sourceRef: value.sources[0].sourceRef,
+    page: 4,
+    resolution: "verified_non_question_replacing_candidates",
+    rejectedCandidateIds: beforeItems.map(item => item.id),
+    evidenceLocator: "PDF p.4"
+  });
+  assert.equal(result.counts.activeQuestionCandidates, 0);
+});
+
+test("non-question replacement rejects non-candidates and non-full layout fallback", () => {
+  let value = manualReplacementInput();
+  value.unresolvedPages = [];
+  value.counts.unresolvedPages = 0;
+  value.layoutPages[0].coverageStatus = "candidate_full";
+  value.items[0].discoveryStatus = "visual_verified";
+  assert.throws(() => review.applyReviews(value, [{
+    sourceMemoryId: "source-one", page: 4, resolution: "exclude_replace_candidates"
+  }]), /non-candidate item/);
+
+  value = manualReplacementInput();
+  value.unresolvedPages = [];
+  value.counts.unresolvedPages = 0;
+  assert.throws(() => review.applyReviews(value, [{
+    sourceMemoryId: "source-one", page: 4, resolution: "exclude_replace_candidates"
+  }]), /Review candidate not found/);
+});
+
 test("layout-only fallback remains closed to non-replacement decisions", () => {
   const value = manualReplacementInput();
   value.unresolvedPages = [];

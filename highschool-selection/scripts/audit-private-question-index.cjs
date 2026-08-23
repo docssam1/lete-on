@@ -543,18 +543,23 @@ function audit(candidate, predecessor) {
     }
     const isMissionReplacement = entry.reason === "visual-rejected-layout-anchor";
     const isManualReplacement = entry.reason === "visual-confirmed-manual-replacement";
-    if ((!isMissionReplacement && !isManualReplacement) || entry.reviewStatus !== "visual_verified") {
+    const isNonQuestionReplacement = entry.reason === "visual-confirmed-non-question-replacement";
+    if ((!isMissionReplacement && !isManualReplacement && !isNonQuestionReplacement) ||
+        entry.reviewStatus !== "visual_verified") {
       errors.push(`rejected candidate lacks visual decision: ${entry.id}`);
     }
     if (item.discoveryStatus !== "layout_candidate" || item.releaseStatus !== "locked" ||
         item.classificationStatus !== "pending" || item.answerStatus !== "missing") {
       errors.push(`rejected candidate state changed: ${entry.id}`);
     }
+    const expectedResolution = isManualReplacement
+      ? "verified_manual_items_replacing_candidates"
+      : isNonQuestionReplacement
+        ? "verified_non_question_replacing_candidates"
+        : "verified_mission_six_cell_replacing_candidates";
     const review = (candidate.visualReviewPages || []).find(page =>
       page.privateSourceMemoryId === entry.privateSourceMemoryId && page.page === entry.page &&
-      page.sourceRef === entry.sourceRef && page.resolution === (isManualReplacement
-        ? "verified_manual_items_replacing_candidates"
-        : "verified_mission_six_cell_replacing_candidates")
+      page.sourceRef === entry.sourceRef && page.resolution === expectedResolution
     );
     if (!review || !Array.isArray(review.rejectedCandidateIds) || !review.rejectedCandidateIds.includes(entry.id)) {
       errors.push(`rejected candidate visual decision missing: ${entry.id}`);
@@ -607,8 +612,44 @@ function audit(candidate, predecessor) {
   const manualReplacementReviews = (candidate.visualReviewPages || []).filter(review =>
     review.resolution === "verified_manual_items_replacing_candidates"
   );
+  const nonQuestionReplacementReviews = (candidate.visualReviewPages || []).filter(review =>
+    review.resolution === "verified_non_question_replacing_candidates"
+  );
+  for (const review of nonQuestionReplacementReviews) {
+    const key = `${review.sourceRef}:${review.page}`;
+    validateExactKeys(review, [
+      "privateSourceMemoryId", "sourceRef", "page", "resolution",
+      "rejectedCandidateIds", "evidenceLocator"
+    ], `non-question replacement review ${key}`, errors);
+    const excludedMatches = (candidate.excludedPageCandidates || []).filter(entry =>
+      entry.sourceRef === review.sourceRef && entry.privateSourceMemoryId === review.privateSourceMemoryId &&
+      entry.page === review.page && entry.reason === "visual-confirmed-non-question" &&
+      entry.reviewStatus === "visual_verified"
+    );
+    if (excludedMatches.length !== 1) {
+      errors.push(`non-question replacement exclusion mismatch: ${key}`);
+    }
+    const pageItemIds = (candidate.items || []).filter(item =>
+      item.sourceRef === review.sourceRef && item.locator && item.locator.page === review.page
+    ).sort((left, right) => left.locator.slot - right.locator.slot).map(item => item.id);
+    if (!Array.isArray(review.rejectedCandidateIds) ||
+        JSON.stringify(review.rejectedCandidateIds) !== JSON.stringify(pageItemIds)) {
+      errors.push(`non-question replacement registry mismatch: ${key}`);
+    }
+    if ((candidate.unresolvedPages || []).some(entry =>
+      entry.sourceRef === review.sourceRef && entry.page === review.page
+    ) || (candidate.layoutPages || []).some(entry =>
+      entry.sourceRef === review.sourceRef && entry.page === review.page
+    )) errors.push(`non-question replacement remains queued: ${key}`);
+    if (review.evidenceLocator !== `PDF p.${review.page}`) {
+      errors.push(`non-question replacement evidence mismatch: ${key}`);
+    }
+  }
   if (manualReplacementReviews.length > 0 && !predecessor) {
     errors.push("manual replacement audit requires a predecessor index");
+  }
+  if (nonQuestionReplacementReviews.length > 0 && !predecessor) {
+    errors.push("non-question replacement audit requires a predecessor index");
   }
   if (predecessor) {
     const predecessorItemById = new Map((predecessor.items || []).map(item => [item.id, item]));
@@ -672,6 +713,59 @@ function audit(candidate, predecessor) {
         const currentItem = itemById.get(id);
         if (!oldItem || !currentItem || JSON.stringify(oldItem) !== JSON.stringify(currentItem)) {
           errors.push(`manual replacement predecessor item mismatch: ${id}`);
+        }
+      }
+    }
+
+    const predecessorNonQuestionReviews = new Map(
+      (predecessor.visualReviewPages || [])
+        .filter(review => review.resolution === "verified_non_question_replacing_candidates")
+        .map(review => [`${review.sourceRef}:${review.page}`, review])
+    );
+    const currentNonQuestionReviews = new Map(
+      nonQuestionReplacementReviews.map(review => [`${review.sourceRef}:${review.page}`, review])
+    );
+    for (const [key, oldReview] of predecessorNonQuestionReviews) {
+      const currentReview = currentNonQuestionReviews.get(key);
+      if (!currentReview || JSON.stringify(currentReview) !== JSON.stringify(oldReview)) {
+        errors.push(`non-question replacement predecessor review changed: ${key}`);
+      }
+    }
+    for (const review of nonQuestionReplacementReviews) {
+      const key = `${review.sourceRef}:${review.page}`;
+      if (predecessorNonQuestionReviews.has(key)) continue;
+      const predecessorLayoutMatches = (predecessor.layoutPages || []).filter(entry =>
+        entry.privateSourceMemoryId === review.privateSourceMemoryId && entry.page === review.page &&
+        entry.sourceRef === review.sourceRef && entry.coverageStatus === "candidate_full" &&
+        entry.reviewStatus === "pending"
+      );
+      if (predecessorLayoutMatches.length !== 1) {
+        errors.push(`non-question replacement predecessor queue mismatch: ${key}`);
+      }
+      if ((predecessor.visualReviewPages || []).some(entry =>
+        entry.sourceRef === review.sourceRef && entry.page === review.page
+      )) errors.push(`non-question replacement predecessor page already reviewed: ${key}`);
+      const predecessorPageItems = (predecessor.items || []).filter(item =>
+        item.sourceRef === review.sourceRef && item.locator && item.locator.page === review.page
+      ).sort((left, right) => left.locator.slot - right.locator.slot);
+      const expectedRejectedIds = predecessorPageItems.map(item => item.id);
+      if (JSON.stringify(review.rejectedCandidateIds) !== JSON.stringify(expectedRejectedIds)) {
+        errors.push(`non-question replacement predecessor registry mismatch: ${key}`);
+      }
+      const predecessorRejectedIds = new Set(
+        (predecessor.rejectedCandidates || []).map(entry => entry.id)
+      );
+      if ((review.rejectedCandidateIds || []).some(id => predecessorRejectedIds.has(id))) {
+        errors.push(`non-question replacement predecessor candidate already rejected: ${key}`);
+      }
+      if (predecessorPageItems.some(item =>
+        item.discoveryStatus !== "layout_candidate" || item.releaseStatus !== "locked" ||
+        item.classificationStatus !== "pending" || item.answerStatus !== "missing"
+      )) errors.push(`non-question replacement predecessor state mismatch: ${key}`);
+      for (const oldItem of predecessorPageItems) {
+        const currentItem = itemById.get(oldItem.id);
+        if (!currentItem || JSON.stringify(currentItem) !== JSON.stringify(oldItem)) {
+          errors.push(`non-question replacement predecessor item mismatch: ${oldItem.id}`);
         }
       }
     }

@@ -699,3 +699,39 @@ test("private index audit accepts a pending candidate-full layout predecessor fa
   assert.equal(rejected.ok, false);
   assert.match(rejected.errors.join("\n"), /predecessor queue mismatch/);
 });
+
+test("private index audit validates candidate-full non-question replacement quarantine", () => {
+  const built = manualReplacementFixture();
+  const predecessor = built.predecessor;
+  predecessor.unresolvedPages = [];
+  predecessor.counts.unresolvedPages = 0;
+  predecessor.layoutPages = [{
+    sourceRef: predecessor.sources[0].sourceRef,
+    privateSourceMemoryId: "private-source",
+    page: 2,
+    layoutKind: "two-column-numbered",
+    detectedAnchors: predecessor.items.length,
+    addedCandidates: predecessor.items.length,
+    coverageStatus: "candidate_full",
+    reviewStatus: "pending"
+  }];
+  predecessor.counts.layoutCandidatePages = 1;
+  const candidate = review.applyReviews(predecessor, [{
+    sourceMemoryId: "private-source",
+    page: 2,
+    resolution: "exclude_replace_candidates"
+  }]);
+
+  const accepted = auditor.audit(candidate, predecessor);
+  assert.equal(accepted.ok, true, accepted.errors.join("\n"));
+  assert.equal(accepted.counts.activeQuestionCandidates, 1);
+
+  const unbound = auditor.audit(candidate, null);
+  assert.equal(unbound.ok, false);
+  assert.match(unbound.errors.join("\n"), /non-question replacement audit requires a predecessor/);
+
+  candidate.visualReviewPages[0].rejectedCandidateIds.reverse();
+  const rejected = auditor.audit(candidate, predecessor);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /non-question replacement registry mismatch/);
+});

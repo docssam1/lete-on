@@ -91,7 +91,7 @@ function missionAnchors() {
 }
 
 function parseDecision(value) {
-  const match = /^([a-z0-9-]+):(\d+):(exclude|mission|mission6|mission6_replace_candidates)$/.exec(String(value || ""));
+  const match = /^([a-z0-9-]+):(\d+):(exclude|exclude_replace_candidates|mission|mission6|mission6_replace_candidates)$/.exec(String(value || ""));
   if (!match) fail(`Invalid decision: ${value}`);
   return {
     sourceMemoryId: match[1],
@@ -250,7 +250,7 @@ function normalizeDecisionRecord(value) {
     fail(`Invalid decision record: ${JSON.stringify(value)}`);
   }
   if (!new Set([
-    "exclude", "mission6", "mission6_replace_candidates", "mission_variable",
+    "exclude", "exclude_replace_candidates", "mission6", "mission6_replace_candidates", "mission_variable",
     "manual_items", "manual_items_replace_candidates"
   ]).has(resolution)) {
     fail(`Invalid decision resolution: ${resolution}`);
@@ -475,12 +475,40 @@ function applyReviews(base, decisions) {
     const location = queueLocation(result, decision.sourceMemoryId, decision.page, {
       // A detector can incorrectly mark a partially indexed page as candidate_full,
       // leaving it outside the unresolved queue. Only a complete manual replacement
-      // may fall back to that protected layout queue; other resolutions remain closed.
-      allowLayoutFallback: resolution === "manual_items_replace_candidates"
+      // or a visual non-question replacement may use that protected fallback.
+      allowLayoutFallback: new Set([
+        "exclude_replace_candidates", "manual_items_replace_candidates"
+      ]).has(resolution)
     });
     if (!location) fail(`Review candidate not found: ${decisionKey}`);
 
-    if (resolution === "exclude") {
+    if (new Set(["exclude", "exclude_replace_candidates"]).has(resolution)) {
+      const pageItems = result.items.filter(item =>
+        item.sourceRef === source.sourceRef && item.locator.page === decision.page
+      ).sort((left, right) => left.locator.slot - right.locator.slot);
+      const replacesCandidates = resolution === "exclude_replace_candidates";
+      if (replacesCandidates && pageItems.length === 0) {
+        fail(`Non-question replacement requires existing candidates: ${decisionKey}`);
+      }
+      if (replacesCandidates && pageItems.some(item =>
+        item.discoveryStatus !== "layout_candidate" || item.releaseStatus !== "locked" ||
+        item.classificationStatus !== "pending" || item.answerStatus !== "missing"
+      )) fail(`Non-question replacement found a non-candidate item: ${decisionKey}`);
+      if (replacesCandidates && pageItems.some(item =>
+        rejectedCandidates.some(entry => entry.id === item.id)
+      )) fail(`Non-question replacement found an already rejected candidate: ${decisionKey}`);
+      if (replacesCandidates) {
+        for (const item of pageItems) {
+          rejectedCandidates.push({
+            id: item.id,
+            sourceRef: source.sourceRef,
+            privateSourceMemoryId: decision.sourceMemoryId,
+            page: decision.page,
+            reason: "visual-confirmed-non-question-replacement",
+            reviewStatus: "visual_verified"
+          });
+        }
+      }
       const verified = {
         sourceRef: source.sourceRef,
         privateSourceMemoryId: decision.sourceMemoryId,
@@ -498,7 +526,10 @@ function applyReviews(base, decisions) {
         privateSourceMemoryId: decision.sourceMemoryId,
         sourceRef: source.sourceRef,
         page: decision.page,
-        resolution: "verified_non_question",
+        resolution: replacesCandidates
+          ? "verified_non_question_replacing_candidates"
+          : "verified_non_question",
+        ...(replacesCandidates ? { rejectedCandidateIds: pageItems.map(item => item.id) } : {}),
         evidenceLocator: `PDF p.${decision.page}`
       });
       continue;
@@ -756,7 +787,7 @@ if (require.main === module) {
       if (args[index] === "--decision" && args[index + 1]) decisions.push(parseDecision(args[index + 1]));
     }
     if (!basePath || !outputPath || (!decisionFile && decisions.length === 0)) {
-      fail("Usage: node apply-private-layout-review.cjs --base <index.json> --output <reviewed.json> [--decision-file <fingerprint-bound private-review.json; supports manual_items and manual_items_replace_candidates>] [--decision <source:page:exclude|mission6|mission6_replace_candidates> ...]");
+      fail("Usage: node apply-private-layout-review.cjs --base <index.json> --output <reviewed.json> [--decision-file <fingerprint-bound private-review.json; supports replacement decisions>] [--decision <source:page:exclude|exclude_replace_candidates|mission6|mission6_replace_candidates> ...]");
     }
     const base = readJson(path.resolve(basePath));
     if (decisionFile) decisions.push(...decisionsFromManifest(readJson(path.resolve(decisionFile)), base));
