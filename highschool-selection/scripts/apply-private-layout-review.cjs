@@ -7,9 +7,26 @@ const core = require("../data/question-bank-core.js");
 const itemIndex = require("../data/question-item-index.js");
 
 const REVIEWED_LABEL_PATTERN = /^(?:[1-9]\d*|개념탐구 [1-9]\d*|예제 [1-9]\d*-[1-9]\d*|[1-9]\d* \([1-9]\d*\)-\([1-9]\d*\))$/;
+const MANUAL_REVIEW_RESOLUTIONS = new Set([
+  "verified_manual_items",
+  "verified_manual_items_replacing_candidates"
+]);
 
 function fail(message) {
   throw new Error(message);
+}
+
+function validateInputKeys(value, allowedKeys, requiredKeys, label) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    fail(`${label} must be an object`);
+  }
+  const allowed = new Set(allowedKeys);
+  const actual = Object.keys(value);
+  const unknown = actual.filter(key => !allowed.has(key));
+  const missing = requiredKeys.filter(key => !Object.prototype.hasOwnProperty.call(value, key));
+  if (unknown.length > 0 || missing.length > 0) {
+    fail(`${label} has unknown or missing keys`);
+  }
 }
 
 function readJson(filePath) {
@@ -91,6 +108,17 @@ function normalizedMissionAnchors(value) {
     if (!anchor || !anchor.box || typeof anchor.box !== "object") {
       fail("mission_variable anchors require exact reviewed boxes");
     }
+    validateInputKeys(
+      anchor,
+      ["kind", "printedLabelHint", "layoutOrder", "box"],
+      ["printedLabelHint", "layoutOrder", "box"],
+      "mission_variable anchor"
+    );
+    if (Object.prototype.hasOwnProperty.call(anchor, "kind") && anchor.kind !== "mission") {
+      fail("mission_variable anchor kind must remain mission");
+    }
+    validateInputKeys(anchor.box, ["x", "y", "width", "height"], ["x", "y", "width", "height"],
+      "mission_variable anchor box");
     if (!(Number(anchor.box.width) > 0) || !(Number(anchor.box.height) > 0)) {
       fail("mission_variable anchor boxes must have positive area");
     }
@@ -131,6 +159,14 @@ function normalizedManualAnchors(value) {
     if (!anchor || !anchor.box || typeof anchor.box !== "object") {
       fail("manual_items anchors require exact reviewed boxes");
     }
+    validateInputKeys(
+      anchor,
+      ["kind", "printedLabelHint", "layoutOrder", "box"],
+      ["kind", "printedLabelHint", "layoutOrder", "box"],
+      "manual_items anchor"
+    );
+    validateInputKeys(anchor.box, ["x", "y", "width", "height"], ["x", "y", "width", "height"],
+      "manual_items anchor box");
     if (!(Number(anchor.box.width) > 0) || !(Number(anchor.box.height) > 0)) {
       fail("manual_items anchor boxes must have positive area");
     }
@@ -168,6 +204,18 @@ function normalizedContinuations(value, decisionPage) {
   }
   const seen = new Set();
   return value.map(fragment => {
+    validateInputKeys(
+      fragment,
+      ["fragmentPage", "printedLabelHint", "continuationFrom"],
+      ["fragmentPage", "printedLabelHint", "continuationFrom"],
+      "manual_items continuation"
+    );
+    validateInputKeys(
+      fragment.continuationFrom,
+      ["page", "printedLabelHint"],
+      ["page", "printedLabelHint"],
+      "manual_items continuationFrom"
+    );
     const fragmentPage = Number(fragment && fragment.fragmentPage);
     const fromPage = Number(fragment && fragment.continuationFrom && fragment.continuationFrom.page);
     if (!Number.isSafeInteger(fragmentPage) || fragmentPage < 1 ||
@@ -201,13 +249,30 @@ function normalizeDecisionRecord(value) {
   if (!/^[a-z0-9-]+$/.test(sourceMemoryId) || !Number.isSafeInteger(page) || page < 1) {
     fail(`Invalid decision record: ${JSON.stringify(value)}`);
   }
-  if (!new Set(["exclude", "mission6", "mission6_replace_candidates", "mission_variable", "manual_items"]).has(resolution)) {
+  if (!new Set([
+    "exclude", "mission6", "mission6_replace_candidates", "mission_variable",
+    "manual_items", "manual_items_replace_candidates"
+  ]).has(resolution)) {
     fail(`Invalid decision resolution: ${resolution}`);
   }
+  const customResolution = resolution === "mission_variable" ||
+    new Set(["manual_items", "manual_items_replace_candidates"]).has(resolution);
+  validateInputKeys(
+    value,
+    customResolution
+      ? resolution === "mission_variable"
+        ? ["sourceMemoryId", "page", "resolution", "anchors"]
+        : ["sourceMemoryId", "page", "resolution", "anchors", "continuations"]
+      : ["sourceMemoryId", "page", "resolution"],
+    customResolution
+      ? ["sourceMemoryId", "page", "resolution", "anchors"]
+      : ["sourceMemoryId", "page", "resolution"],
+    "decision record"
+  );
   if (resolution === "mission_variable") {
     return { sourceMemoryId, page, resolution, anchors: normalizedMissionAnchors(value.anchors) };
   }
-  if (resolution === "manual_items") {
+  if (new Set(["manual_items", "manual_items_replace_candidates"]).has(resolution)) {
     const anchors = normalizedManualAnchors(value.anchors);
     const continuations = normalizedContinuations(value.continuations, page);
     validateManualLabelDisjoint(anchors, continuations);
@@ -225,13 +290,41 @@ function decisionsFromManifest(manifest, base) {
   if (!manifest || manifest.schemaVersion !== 1 || !Array.isArray(manifest.decisions) || manifest.decisions.length === 0) {
     fail("Decision manifest must use schemaVersion 1 and contain decisions");
   }
+  validateInputKeys(
+    manifest,
+    ["schemaVersion", "status", "sources", "decisions"],
+    ["schemaVersion", "sources", "decisions"],
+    "decision manifest"
+  );
+  if (Object.prototype.hasOwnProperty.call(manifest, "status") &&
+      manifest.status !== "visual-review-decision") {
+    fail("Decision manifest status must be visual-review-decision");
+  }
+  if (!Array.isArray(manifest.sources) || manifest.sources.length === 0) {
+    fail("Decision manifest must contain bound sources");
+  }
   const baseSources = new Map((base.sources || []).map(source => [source.privateSourceMemoryId, source]));
   const fingerprints = new Map();
   for (const source of manifest.sources || []) {
+    validateInputKeys(
+      source,
+      ["privateSourceMemoryId", "sourceFingerprint"],
+      ["privateSourceMemoryId", "sourceFingerprint"],
+      "manifest source"
+    );
+    if (!/^[a-z0-9-]+$/.test(String(source.privateSourceMemoryId || "")) ||
+        !/^[0-9a-f]{64}$/.test(String(source.sourceFingerprint || ""))) {
+      fail("Manifest source metadata is invalid");
+    }
     if (fingerprints.has(source.privateSourceMemoryId)) fail(`Duplicate manifest source: ${source.privateSourceMemoryId}`);
     fingerprints.set(source.privateSourceMemoryId, source.sourceFingerprint);
   }
   const decisions = manifest.decisions.map(normalizeDecisionRecord);
+  const usedSourceIds = new Set(decisions.map(decision => decision.sourceMemoryId));
+  if (fingerprints.size !== usedSourceIds.size ||
+      Array.from(fingerprints.keys()).some(sourceMemoryId => !usedSourceIds.has(sourceMemoryId))) {
+    fail("Manifest sources must exactly match decision sources");
+  }
   for (const decision of decisions) {
     const source = baseSources.get(decision.sourceMemoryId);
     if (!source) fail(`Manifest source not found in index: ${decision.sourceMemoryId}`);
@@ -280,6 +373,7 @@ function validateReviewInput(result) {
   for (const [name, queue] of [
     ["excluded", result.excludedPageCandidates],
     ["unresolved", result.unresolvedPages],
+    ["layout", result.layoutPages],
     ["visual review", result.visualReviewPages]
   ]) {
     const seen = new Set();
@@ -325,7 +419,7 @@ function hasBoundVisualReview(reviewPages, source, item) {
   );
   if (reviews.length !== 1) return false;
   const review = reviews[0];
-  if (review.resolution === "verified_manual_items") {
+  if (MANUAL_REVIEW_RESOLUTIONS.has(review.resolution)) {
     return item.privateRef.layoutKind === "manual-reviewed-item" &&
       Array.isArray(review.itemIds) && review.itemIds.includes(item.id);
   }
@@ -380,6 +474,10 @@ function applyReviews(base, decisions) {
         reviewStatus: "visual_verified"
       };
       location.queue.splice(location.index, 1);
+      const layoutAt = (result.layoutPages || []).findIndex(entry =>
+        entry.privateSourceMemoryId === decision.sourceMemoryId && entry.page === decision.page
+      );
+      if (layoutAt >= 0) result.layoutPages.splice(layoutAt, 1);
       result.excludedPageCandidates.push(verified);
       reviewPages.push({
         privateSourceMemoryId: decision.sourceMemoryId,
@@ -391,22 +489,58 @@ function applyReviews(base, decisions) {
       continue;
     }
 
-    if (!new Set(["mission6", "mission6_replace_candidates", "mission_variable", "manual_items"]).has(resolution)) {
+    if (!new Set([
+      "mission6", "mission6_replace_candidates", "mission_variable",
+      "manual_items", "manual_items_replace_candidates"
+    ]).has(resolution)) {
       fail(`Unsupported visual resolution: ${decision.resolution}`);
     }
     location.queue.splice(location.index, 1);
+    const layoutAt = (result.layoutPages || []).findIndex(entry =>
+      entry.privateSourceMemoryId === decision.sourceMemoryId && entry.page === decision.page
+    );
+    if (layoutAt >= 0) result.layoutPages.splice(layoutAt, 1);
     const pageItems = result.items.filter(item => item.sourceRef === source.sourceRef && item.locator.page === decision.page);
-    if (resolution === "manual_items") {
-      if (pageItems.length > 0) fail(`Manual item review requires an empty page index: ${decisionKey}`);
+    if (new Set(["manual_items", "manual_items_replace_candidates"]).has(resolution)) {
+      const replacesCandidates = resolution === "manual_items_replace_candidates";
+      if (!replacesCandidates && pageItems.length > 0) {
+        fail(`Manual item review requires an empty page index: ${decisionKey}`);
+      }
+      if (replacesCandidates && pageItems.length === 0) {
+        fail(`Manual item replacement requires existing candidates: ${decisionKey}`);
+      }
+      if (replacesCandidates && pageItems.some(item =>
+        item.discoveryStatus !== "layout_candidate" || item.releaseStatus !== "locked" ||
+        item.classificationStatus !== "pending" || item.answerStatus !== "missing"
+      )) fail(`Manual item replacement found a non-candidate item: ${decisionKey}`);
+      if (replacesCandidates && pageItems.some(item =>
+        rejectedCandidates.some(entry => entry.id === item.id)
+      )) fail(`Manual item replacement found an already rejected candidate: ${decisionKey}`);
       const reviewedAnchors = normalizedManualAnchors(decision.anchors);
       const reviewedContinuations = normalizedContinuations(decision.continuations, decision.page);
       validateManualLabelDisjoint(reviewedAnchors, reviewedContinuations);
       if (reviewedAnchors.length === 0 && reviewedContinuations.length === 0) {
         fail(`Manual item review is empty: ${decisionKey}`);
       }
+      const orderedPageItems = [...pageItems].sort((left, right) => left.locator.slot - right.locator.slot);
+      if (replacesCandidates) {
+        for (const item of orderedPageItems) {
+          rejectedCandidates.push({
+            id: item.id,
+            sourceRef: item.sourceRef,
+            privateSourceMemoryId: decision.sourceMemoryId,
+            page: decision.page,
+            reason: "visual-confirmed-manual-replacement",
+            reviewStatus: "visual_verified"
+          });
+        }
+      }
       const itemIds = [];
+      let nextManualSlot = replacesCandidates
+        ? orderedPageItems.reduce((max, item) => Math.max(max, item.locator.slot), 0) + 1
+        : 1;
       for (const anchor of reviewedAnchors) {
-        const slot = itemIds.length + 1;
+        const slot = nextManualSlot++;
         const locatorKey = itemIndex.createLocatorKey(source.sourceFingerprint, decision.page, slot);
         const entry = itemIndex.createItemIndexEntry({
           id: core.createSharedBankId("question", locatorKey),
@@ -440,13 +574,11 @@ function applyReviews(base, decisions) {
         }
         const targets = result.items.filter(item =>
           item.sourceRef === source.sourceRef && item.locator.page === fragment.continuationFrom.page &&
-          item.privateRef && item.privateRef.printedLabelHint === fragment.continuationFrom.printedLabelHint
+          item.privateRef && item.privateRef.printedLabelHint === fragment.continuationFrom.printedLabelHint &&
+          !rejectedCandidates.some(entry => entry.id === item.id)
         );
         if (targets.length !== 1) {
           fail(`Manual continuation must link one exact starting item: ${decisionKey}`);
-        }
-        if (rejectedCandidates.some(entry => entry.id === targets[0].id)) {
-          fail(`Manual continuation cannot link a rejected item: ${targets[0].id}`);
         }
         if (targets[0].discoveryStatus !== "visual_verified" || !targets[0].privateRef ||
             targets[0].privateRef.discoveryConfidence !== "visual_verified") {
@@ -478,11 +610,16 @@ function applyReviews(base, decisions) {
         privateSourceMemoryId: decision.sourceMemoryId,
         sourceRef: source.sourceRef,
         page: decision.page,
-        resolution: "verified_manual_items",
+        resolution: replacesCandidates
+          ? "verified_manual_items_replacing_candidates"
+          : "verified_manual_items",
+        ...(replacesCandidates ? { rejectedCandidateIds: orderedPageItems.map(item => item.id) } : {}),
         itemCount: reviewedAnchors.length,
         itemIds,
         continuationKeys,
-        evidenceLocator: `PDF p.${decision.page}, visually reviewed manual items ${reviewedAnchors.length}`
+        evidenceLocator: replacesCandidates
+          ? `PDF p.${decision.page}, visually reviewed manual replacement items ${reviewedAnchors.length}`
+          : `PDF p.${decision.page}, visually reviewed manual items ${reviewedAnchors.length}`
       });
       continue;
     }
@@ -581,6 +718,8 @@ function applyReviews(base, decisions) {
     continuationFragments: result.continuationFragments.length,
     excludedPageCandidates: result.excludedPageCandidates.length,
     unresolvedPages: result.unresolvedPages.length,
+    addedLayoutCandidates: result.items.filter(item => item.discoveryStatus === "layout_candidate").length,
+    layoutCandidatePages: (result.layoutPages || []).length,
     visuallyVerified: result.items.filter(item => item.discoveryStatus === "visual_verified").length,
     manualVerified: result.items.filter(item =>
       item.privateRef && item.privateRef.layoutKind === "manual-reviewed-item"
@@ -602,7 +741,7 @@ if (require.main === module) {
       if (args[index] === "--decision" && args[index + 1]) decisions.push(parseDecision(args[index + 1]));
     }
     if (!basePath || !outputPath || (!decisionFile && decisions.length === 0)) {
-      fail("Usage: node apply-private-layout-review.cjs --base <index.json> --output <reviewed.json> [--decision-file <private-review.json>] [--decision <source:page:exclude|mission6|mission6_replace_candidates> ...]");
+      fail("Usage: node apply-private-layout-review.cjs --base <index.json> --output <reviewed.json> [--decision-file <fingerprint-bound private-review.json; supports manual_items and manual_items_replace_candidates>] [--decision <source:page:exclude|mission6|mission6_replace_candidates> ...]");
     }
     const base = readJson(path.resolve(basePath));
     if (decisionFile) decisions.push(...decisionsFromManifest(readJson(path.resolve(decisionFile)), base));

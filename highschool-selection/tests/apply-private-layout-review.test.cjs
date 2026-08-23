@@ -455,3 +455,217 @@ test("manual item and continuation labels must be disjoint in normalized and dir
   assert.throws(() => review.applyReviews(value, [decision]), /must be disjoint/);
   assert.equal(value.unresolvedPages.length, 1);
 });
+
+function manualReplacementInput() {
+  const value = fixture();
+  const source = value.sources[0];
+  for (const [slot, label] of [[2, "7"], [5, "9"]]) {
+    const candidate = index.createItemIndexEntry({
+      id: core.createSharedBankId(
+        "question",
+        index.createLocatorKey(source.sourceFingerprint, 4, slot)
+      ),
+      sourceRef: source.sourceRef,
+      locator: {
+        page: 4,
+        slot,
+        kind: "exercise",
+        box: { x: slot === 2 ? 0.08 : 0.58, y: 0.18, width: 0.3, height: 0.3 }
+      },
+      discoveryStatus: "layout_candidate",
+      curriculum: null,
+      classificationStatus: "pending",
+      answerStatus: "missing",
+      reuse: core.PROGRAM_MODES,
+      releaseStatus: "locked"
+    });
+    value.items.push({
+      ...candidate,
+      privateRef: {
+        sourceMemoryId: "source-one",
+        printedLabelHint: label,
+        discoveryConfidence: "candidate_only"
+      }
+    });
+  }
+  value.counts.questionCandidates = value.items.length;
+  value.layoutPages = [{
+    sourceRef: source.sourceRef,
+    privateSourceMemoryId: "source-one",
+    page: 4,
+    layoutKind: "two-column-numbered",
+    detectedAnchors: 2,
+    addedCandidates: 2,
+    coverageStatus: "partial",
+    reviewStatus: "pending"
+  }];
+  value.counts.layoutCandidatePages = 1;
+  value.counts.addedLayoutCandidates = 2;
+  value.unresolvedPages.push({
+    sourceRef: source.sourceRef,
+    privateSourceMemoryId: "source-one",
+    page: 4,
+    reason: "partial-layout-coverage"
+  });
+  value.counts.unresolvedPages = 1;
+  return value;
+}
+
+function manualReplacementDecision() {
+  return {
+    sourceMemoryId: "source-one",
+    page: 4,
+    resolution: "manual_items_replace_candidates",
+    anchors: [
+      {
+        kind: "concept",
+        printedLabelHint: "개념탐구 10",
+        layoutOrder: 1,
+        box: { x: 0.06, y: 0.08, width: 0.4, height: 0.78 }
+      },
+      {
+        kind: "example",
+        printedLabelHint: "예제 10-1",
+        layoutOrder: 2,
+        box: { x: 0.53, y: 0.08, width: 0.4, height: 0.78 }
+      }
+    ]
+  };
+}
+
+test("fingerprint-bound manual replacement quarantines every candidate and appends deterministic slots", () => {
+  const value = manualReplacementInput();
+  const beforeItems = JSON.parse(JSON.stringify(value.items));
+  const manifest = review.createDecisionManifest(value, [manualReplacementDecision()]);
+  const decisions = review.decisionsFromManifest(manifest, value);
+  const result = review.applyReviews(value, decisions);
+  const oldIds = beforeItems.map(item => item.id);
+  const replacementReview = result.visualReviewPages.find(entry => entry.page === 4);
+  const newItems = result.items.filter(item => item.privateRef.layoutKind === "manual-reviewed-item");
+
+  assert.deepEqual(result.items.slice(0, 2), beforeItems);
+  assert.deepEqual(result.rejectedCandidates.map(entry => entry.id), [...oldIds].sort());
+  assert.ok(result.rejectedCandidates.every(entry =>
+    entry.reason === "visual-confirmed-manual-replacement" && entry.reviewStatus === "visual_verified"
+  ));
+  assert.deepEqual(newItems.map(item => item.locator.slot), [6, 7]);
+  assert.deepEqual(newItems.map(item => item.id), [6, 7].map(slot =>
+    core.createSharedBankId(
+      "question",
+      index.createLocatorKey(value.sources[0].sourceFingerprint, 4, slot)
+    )
+  ));
+  assert.deepEqual(replacementReview, {
+    privateSourceMemoryId: "source-one",
+    sourceRef: value.sources[0].sourceRef,
+    page: 4,
+    resolution: "verified_manual_items_replacing_candidates",
+    rejectedCandidateIds: oldIds,
+    itemCount: 2,
+    itemIds: newItems.map(item => item.id),
+    continuationKeys: [],
+    evidenceLocator: "PDF p.4, visually reviewed manual replacement items 2"
+  });
+  assert.equal(result.counts.questionCandidates, 4);
+  assert.equal(result.counts.rejectedCandidates, 2);
+  assert.equal(result.counts.activeQuestionCandidates, 2);
+  assert.equal(result.unresolvedPages.length, 0);
+  assert.equal(result.layoutPages.length, 0);
+  assert.equal(result.counts.layoutCandidatePages, 0);
+});
+
+test("manual replacement requires only unrejected protected layout candidates and fails atomically", () => {
+  const empty = fixture();
+  empty.unresolvedPages.push({
+    sourceRef: empty.sources[0].sourceRef,
+    privateSourceMemoryId: "source-one",
+    page: 4,
+    reason: "layout-anchor-not-found"
+  });
+  assert.throws(() => review.applyReviews(empty, [manualReplacementDecision()]), /requires existing candidates/);
+
+  const unsafe = manualReplacementInput();
+  unsafe.items[0].discoveryStatus = "visual_verified";
+  const unsafeBefore = JSON.parse(JSON.stringify(unsafe));
+  assert.throws(() => review.applyReviews(unsafe, [manualReplacementDecision()]), /non-candidate item/);
+  assert.deepEqual(unsafe, unsafeBefore);
+
+  const rejected = manualReplacementInput();
+  rejected.rejectedCandidates = [{ id: rejected.items[1].id }];
+  const rejectedBefore = JSON.parse(JSON.stringify(rejected));
+  assert.throws(() => review.applyReviews(rejected, [manualReplacementDecision()]), /already rejected candidate/);
+  assert.deepEqual(rejected, rejectedBefore);
+});
+
+test("decision manifests reject unknown answer-bearing or source-bearing keys", () => {
+  const value = manualReplacementInput();
+  const source = value.sources[0];
+  const decision = manualReplacementDecision();
+  assert.throws(() => review.decisionsFromManifest({
+    schemaVersion: 1,
+    sources: [{
+      privateSourceMemoryId: source.privateSourceMemoryId,
+      sourceFingerprint: source.sourceFingerprint
+    }],
+    decisions: [{ ...decision, answerValue: "42" }]
+  }, value), /unknown or missing keys/);
+
+  const anchorLeak = manualReplacementDecision();
+  anchorLeak.anchors[0].promptText = "private source text";
+  assert.throws(() => review.createDecisionManifest(value, [anchorLeak]), /unknown or missing keys/);
+
+  const boxLeak = manualReplacementDecision();
+  boxLeak.anchors[0].box.answerValue = "42";
+  assert.throws(() => review.createDecisionManifest(value, [boxLeak]), /unknown or missing keys/);
+
+  const cleanManifest = review.createDecisionManifest(value, [manualReplacementDecision()]);
+  assert.throws(() => review.decisionsFromManifest({ ...cleanManifest, answerValue: "42" }, value),
+    /unknown or missing keys/);
+  assert.throws(() => review.decisionsFromManifest({ ...cleanManifest, status: "approved" }, value),
+    /status must be visual-review-decision/);
+  assert.throws(() => review.decisionsFromManifest({
+    ...cleanManifest,
+    sources: [
+      ...cleanManifest.sources,
+      { privateSourceMemoryId: "unused-source", sourceFingerprint: "C:\\secret\\answers.pdf" }
+    ]
+  }, value), /metadata is invalid/);
+});
+
+test("manual replacement continuation resolves the one active item when the old label is reused", () => {
+  const value = manualReplacementInput();
+  value.unresolvedPages.push({
+    sourceRef: value.sources[0].sourceRef,
+    privateSourceMemoryId: "source-one",
+    page: 5,
+    reason: "layout-anchor-not-found"
+  });
+  const replacement = manualReplacementDecision();
+  replacement.anchors = [
+    {
+      kind: "exercise",
+      printedLabelHint: "7",
+      layoutOrder: 1,
+      box: { x: 0.06, y: 0.08, width: 0.4, height: 0.78 }
+    },
+    {
+      kind: "exercise",
+      printedLabelHint: "9",
+      layoutOrder: 2,
+      box: { x: 0.53, y: 0.08, width: 0.4, height: 0.78 }
+    }
+  ];
+  const result = review.applyReviews(value, [replacement, {
+    sourceMemoryId: "source-one",
+    page: 5,
+    resolution: "manual_items",
+    anchors: [],
+    continuations: [{
+      fragmentPage: 5,
+      printedLabelHint: "7 (2)-(3)",
+      continuationFrom: { page: 4, printedLabelHint: "7" }
+    }]
+  }]);
+  assert.equal(result.continuationFragments.length, 1);
+  assert.equal(result.continuationFragments[0].continuationFrom.printedLabelHint, "7");
+});

@@ -15,6 +15,10 @@ const FORBIDDEN_KEYS = new Set([
 const PRIVATE_LOCATION_PATTERN = /(?:\b[a-z]:[\\/]|\\\\|file:\/\/|https?:\/\/|\/(?:Users|home|mnt)\/)/i;
 const REVIEWED_LABEL_PATTERN = /^(?:[1-9]\d*|개념탐구 [1-9]\d*|예제 [1-9]\d*-[1-9]\d*|[1-9]\d* \([1-9]\d*\)-\([1-9]\d*\))$/;
 const CANONICAL_PROGRAM_MODES = Object.freeze([...core.PROGRAM_MODES].sort());
+const MANUAL_REVIEW_RESOLUTIONS = new Set([
+  "verified_manual_items",
+  "verified_manual_items_replacing_candidates"
+]);
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, ""));
@@ -99,7 +103,7 @@ function hasBoundVisualReview(candidate, source, item) {
   );
   if (reviews.length !== 1) return false;
   const review = reviews[0];
-  if (review.resolution === "verified_manual_items") {
+  if (MANUAL_REVIEW_RESOLUTIONS.has(review.resolution)) {
     return item.privateRef.layoutKind === "manual-reviewed-item" &&
       Array.isArray(review.itemIds) && review.itemIds.includes(item.id);
   }
@@ -260,10 +264,10 @@ function validateManualReviews(candidate, sourceByRef, errors) {
     }
     const targets = (candidate.items || []).filter(item =>
       item.sourceRef === fragment.sourceRef && item.locator && item.locator.page === from.page &&
-      item.privateRef && item.privateRef.printedLabelHint === from.printedLabelHint
+      item.privateRef && item.privateRef.printedLabelHint === from.printedLabelHint &&
+      !rejectedIds.has(item.id)
     );
-    if (targets.length !== 1 || (targets[0] && rejectedIds.has(targets[0].id)) ||
-        (targets[0] && (targets[0].discoveryStatus !== "visual_verified" ||
+    if (targets.length !== 1 || (targets[0] && (targets[0].discoveryStatus !== "visual_verified" ||
           !targets[0].privateRef || targets[0].privateRef.discoveryConfidence !== "visual_verified")) ||
         (targets[0] && !hasBoundVisualReview(candidate, source, targets[0]))) {
       errors.push(`continuation fragment target must be one active item: ${key}`);
@@ -272,11 +276,13 @@ function validateManualReviews(candidate, sourceByRef, errors) {
 
   const manualReviewKeys = new Set();
   for (const review of candidate.visualReviewPages || []) {
-    if (review.resolution !== "verified_manual_items") continue;
+    if (!MANUAL_REVIEW_RESOLUTIONS.has(review.resolution)) continue;
     const key = `${review.sourceRef}:${review.page}`;
+    const replacesCandidates = review.resolution === "verified_manual_items_replacing_candidates";
     validateExactKeys(review, [
       "privateSourceMemoryId", "sourceRef", "page", "resolution", "itemCount",
-      "itemIds", "continuationKeys", "evidenceLocator"
+      "itemIds", "continuationKeys", "evidenceLocator",
+      ...(replacesCandidates ? ["rejectedCandidateIds"] : [])
     ], `manual visual review ${key}`, errors);
     manualReviewKeys.add(key);
     const source = sourceByRef.get(review.sourceRef);
@@ -295,15 +301,52 @@ function validateManualReviews(candidate, sourceByRef, errors) {
     const pageItems = (candidate.items || []).filter(item =>
       item.sourceRef === review.sourceRef && item.locator && item.locator.page === review.page
     );
-    const items = pageItems.filter(item =>
+    const reviewRejectedIds = new Set(
+      Array.isArray(review.rejectedCandidateIds) ? review.rejectedCandidateIds : []
+    );
+    if (replacesCandidates && (reviewRejectedIds.size === 0 ||
+        reviewRejectedIds.size !== (review.rejectedCandidateIds || []).length)) {
+      errors.push(`manual replacement rejected registry invalid: ${key}`);
+    }
+    const rejectedPageItems = pageItems.filter(item => reviewRejectedIds.has(item.id));
+    const items = pageItems.filter(item => !reviewRejectedIds.has(item.id)).filter(item =>
       item.privateRef && item.privateRef.layoutKind === "manual-reviewed-item"
     ).sort((left, right) => left.privateRef.layoutOrder - right.privateRef.layoutOrder);
-    if (pageItems.length !== review.itemCount || items.length !== review.itemCount) {
+    const unregisteredPageItems = pageItems.filter(item =>
+      !reviewRejectedIds.has(item.id) &&
+      (!item.privateRef || item.privateRef.layoutKind !== "manual-reviewed-item")
+    );
+    if (pageItems.length !== review.itemCount + reviewRejectedIds.size ||
+        rejectedPageItems.length !== reviewRejectedIds.size ||
+        unregisteredPageItems.length !== 0 || items.length !== review.itemCount) {
       errors.push(`manual review itemCount mismatch: ${key}`);
     }
+    if (!replacesCandidates && reviewRejectedIds.size !== 0) {
+      errors.push(`manual review cannot reject existing candidates: ${key}`);
+    }
+    const expectedRejectedCandidateIds = [...rejectedPageItems]
+      .sort((left, right) => left.locator.slot - right.locator.slot)
+      .map(item => item.id);
+    if (replacesCandidates &&
+        JSON.stringify(review.rejectedCandidateIds) !== JSON.stringify(expectedRejectedCandidateIds)) {
+      errors.push(`manual replacement rejectedCandidateIds mismatch: ${key}`);
+    }
+    const pageRejectedRegistry = (candidate.rejectedCandidates || []).filter(entry =>
+      entry.sourceRef === review.sourceRef && entry.page === review.page &&
+      entry.reason === "visual-confirmed-manual-replacement"
+    );
+    const registryRejectedIds = new Set(pageRejectedRegistry.map(entry => entry.id));
+    if (replacesCandidates && (registryRejectedIds.size !== reviewRejectedIds.size ||
+        Array.from(reviewRejectedIds).some(id => !registryRejectedIds.has(id)))) {
+      errors.push(`manual replacement rejectedCandidates mismatch: ${key}`);
+    }
+    const firstManualSlot = replacesCandidates
+      ? rejectedPageItems.reduce((max, item) => Math.max(max, item.locator.slot), 0) + 1
+      : 1;
     const labels = new Set();
     items.forEach((item, index) => {
       const expected = index + 1;
+      const expectedSlot = firstManualSlot + index;
       validateExactKeys(item, [
         "id", "sourceRef", "locator", "discoveryStatus", "curriculum",
         "classificationStatus", "answerStatus", "reuse", "releaseStatus", "privateRef"
@@ -326,7 +369,7 @@ function validateManualReviews(candidate, sourceByRef, errors) {
         errors.push(`manual review label invalid or duplicate: ${item.id}`);
       }
       labels.add(item.privateRef.printedLabelHint);
-      if (item.privateRef.layoutOrder !== expected || item.locator.slot !== expected) {
+      if (item.privateRef.layoutOrder !== expected || item.locator.slot !== expectedSlot) {
         errors.push(`manual review order or slot mismatch: ${item.id}`);
       }
       if (item.discoveryStatus !== "visual_verified" ||
@@ -341,16 +384,16 @@ function validateManualReviews(candidate, sourceByRef, errors) {
       }
       const expectedId = core.createSharedBankId(
         "question",
-        indexSchema.createLocatorKey(source.sourceFingerprint, review.page, expected)
+        indexSchema.createLocatorKey(source.sourceFingerprint, review.page, expectedSlot)
       );
       if (item.id !== expectedId) errors.push(`manual review id mismatch: ${item.id}`);
       if (item.privateRef.evidenceLocator !== `PDF p.${review.page}, item ${item.privateRef.printedLabelHint}`) {
         errors.push(`manual review evidence mismatch: ${item.id}`);
       }
     });
-    const actualItemIds = new Set(items.map(item => item.id));
-    if (!Array.isArray(review.itemIds) || review.itemIds.some(id => !actualItemIds.has(id)) ||
-        actualItemIds.size !== new Set(review.itemIds || []).size) {
+    const expectedItemIds = items.map(item => item.id);
+    if (!Array.isArray(review.itemIds) ||
+        JSON.stringify(review.itemIds) !== JSON.stringify(expectedItemIds)) {
       errors.push(`manual review itemIds mismatch: ${key}`);
     }
     for (let left = 0; left < items.length; left += 1) {
@@ -378,7 +421,10 @@ function validateManualReviews(candidate, sourceByRef, errors) {
         expectedContinuationKeys.size !== new Set(review.continuationKeys || []).size) {
       errors.push(`manual review continuation registry mismatch: ${key}`);
     }
-    if (review.evidenceLocator !== `PDF p.${review.page}, visually reviewed manual items ${review.itemCount}`) {
+    const expectedReviewEvidence = replacesCandidates
+      ? `PDF p.${review.page}, visually reviewed manual replacement items ${review.itemCount}`
+      : `PDF p.${review.page}, visually reviewed manual items ${review.itemCount}`;
+    if (review.evidenceLocator !== expectedReviewEvidence) {
       errors.push(`manual review evidence mismatch: ${key}`);
     }
   }
@@ -390,7 +436,7 @@ function validateManualReviews(candidate, sourceByRef, errors) {
   }
   for (const [key, fragment] of continuationByKey) {
     const reviews = (candidate.visualReviewPages || []).filter(review =>
-      review.resolution === "verified_manual_items" && review.sourceRef === fragment.sourceRef &&
+      MANUAL_REVIEW_RESOLUTIONS.has(review.resolution) && review.sourceRef === fragment.sourceRef &&
       review.page === fragment.reviewPage && Array.isArray(review.continuationKeys) &&
       review.continuationKeys.includes(key)
     );
@@ -478,6 +524,9 @@ function audit(candidate, predecessor) {
   const rejectedIds = new Set();
   const itemById = new Map((candidate.items || []).map(item => [item.id, item]));
   for (const entry of candidate.rejectedCandidates || []) {
+    validateExactKeys(entry, [
+      "id", "sourceRef", "privateSourceMemoryId", "page", "reason", "reviewStatus"
+    ], `rejected candidate ${entry.id}`, errors);
     if (rejectedIds.has(entry.id)) errors.push(`duplicate rejected candidate: ${entry.id}`);
     rejectedIds.add(entry.id);
     const item = itemById.get(entry.id);
@@ -492,7 +541,9 @@ function audit(candidate, predecessor) {
     if (!source || entry.privateSourceMemoryId !== source.privateSourceMemoryId) {
       errors.push(`rejected candidate source mismatch: ${entry.id}`);
     }
-    if (entry.reason !== "visual-rejected-layout-anchor" || entry.reviewStatus !== "visual_verified") {
+    const isMissionReplacement = entry.reason === "visual-rejected-layout-anchor";
+    const isManualReplacement = entry.reason === "visual-confirmed-manual-replacement";
+    if ((!isMissionReplacement && !isManualReplacement) || entry.reviewStatus !== "visual_verified") {
       errors.push(`rejected candidate lacks visual decision: ${entry.id}`);
     }
     if (item.discoveryStatus !== "layout_candidate" || item.releaseStatus !== "locked" ||
@@ -501,7 +552,9 @@ function audit(candidate, predecessor) {
     }
     const review = (candidate.visualReviewPages || []).find(page =>
       page.privateSourceMemoryId === entry.privateSourceMemoryId && page.page === entry.page &&
-      page.resolution === "verified_mission_six_cell_replacing_candidates"
+      page.sourceRef === entry.sourceRef && page.resolution === (isManualReplacement
+        ? "verified_manual_items_replacing_candidates"
+        : "verified_mission_six_cell_replacing_candidates")
     );
     if (!review || !Array.isArray(review.rejectedCandidateIds) || !review.rejectedCandidateIds.includes(entry.id)) {
       errors.push(`rejected candidate visual decision missing: ${entry.id}`);
@@ -517,6 +570,15 @@ function audit(candidate, predecessor) {
   }
   if (candidate.counts && candidate.counts.unresolvedPages !== (candidate.unresolvedPages || []).length) {
     errors.push("unresolvedPages count mismatch");
+  }
+  if (candidate.counts && candidate.counts.layoutCandidatePages != null &&
+      candidate.counts.layoutCandidatePages !== (candidate.layoutPages || []).length) {
+    errors.push("layoutCandidatePages count mismatch");
+  }
+  if (candidate.counts && candidate.counts.addedLayoutCandidates != null &&
+      candidate.counts.addedLayoutCandidates !==
+      (candidate.items || []).filter(item => item.discoveryStatus === "layout_candidate").length) {
+    errors.push("addedLayoutCandidates count mismatch");
   }
   if (candidate.counts && candidate.counts.excludedPageCandidates !== (candidate.excludedPageCandidates || []).length) {
     errors.push("excludedPageCandidates count mismatch");
@@ -540,6 +602,71 @@ function audit(candidate, predecessor) {
   if ((manualVerifiedCount > 0 || continuationCount > 0) &&
       (!candidate.counts || candidate.counts.manualVerified !== manualVerifiedCount)) {
     errors.push("manualVerified count mismatch");
+  }
+
+  const manualReplacementReviews = (candidate.visualReviewPages || []).filter(review =>
+    review.resolution === "verified_manual_items_replacing_candidates"
+  );
+  if (manualReplacementReviews.length > 0 && !predecessor) {
+    errors.push("manual replacement audit requires a predecessor index");
+  }
+  if (predecessor) {
+    const predecessorItemById = new Map((predecessor.items || []).map(item => [item.id, item]));
+    const predecessorReplacementReviews = new Map(
+      (predecessor.visualReviewPages || [])
+        .filter(review => review.resolution === "verified_manual_items_replacing_candidates")
+        .map(review => [`${review.sourceRef}:${review.page}`, review])
+    );
+    const currentReplacementReviews = new Map(
+      manualReplacementReviews.map(review => [`${review.sourceRef}:${review.page}`, review])
+    );
+    for (const [key, oldReview] of predecessorReplacementReviews) {
+      const currentReview = currentReplacementReviews.get(key);
+      if (!currentReview || JSON.stringify(currentReview) !== JSON.stringify(oldReview)) {
+        errors.push(`manual replacement predecessor review changed: ${key}`);
+      }
+    }
+    for (const review of manualReplacementReviews) {
+      const key = `${review.sourceRef}:${review.page}`;
+      const oldReview = predecessorReplacementReviews.get(key);
+      if (oldReview) continue;
+      const predecessorQueueMatches = [
+        ...(predecessor.unresolvedPages || []),
+        ...(predecessor.excludedPageCandidates || [])
+      ].filter(entry =>
+        entry.privateSourceMemoryId === review.privateSourceMemoryId && entry.page === review.page &&
+        entry.sourceRef === review.sourceRef
+      );
+      if (predecessorQueueMatches.length !== 1) {
+        errors.push(`manual replacement predecessor queue mismatch: ${key}`);
+      }
+      const predecessorPageReviews = (predecessor.visualReviewPages || []).filter(entry =>
+        entry.sourceRef === review.sourceRef && entry.page === review.page
+      );
+      if (predecessorPageReviews.length > 0) {
+        errors.push(`manual replacement predecessor page already reviewed: ${key}`);
+      }
+      const predecessorPageItems = (predecessor.items || []).filter(item =>
+        item.sourceRef === review.sourceRef && item.locator && item.locator.page === review.page
+      ).sort((left, right) => left.locator.slot - right.locator.slot);
+      const expectedRejectedIds = predecessorPageItems.map(item => item.id);
+      if (JSON.stringify(review.rejectedCandidateIds) !== JSON.stringify(expectedRejectedIds)) {
+        errors.push(`manual replacement predecessor registry mismatch: ${key}`);
+      }
+      const predecessorRejectedIds = new Set(
+        (predecessor.rejectedCandidates || []).map(entry => entry.id)
+      );
+      if ((review.rejectedCandidateIds || []).some(id => predecessorRejectedIds.has(id))) {
+        errors.push(`manual replacement predecessor candidate already rejected: ${key}`);
+      }
+      for (const id of Array.isArray(review.rejectedCandidateIds) ? review.rejectedCandidateIds : []) {
+        const oldItem = predecessorItemById.get(id);
+        const currentItem = itemById.get(id);
+        if (!oldItem || !currentItem || JSON.stringify(oldItem) !== JSON.stringify(currentItem)) {
+          errors.push(`manual replacement predecessor item mismatch: ${id}`);
+        }
+      }
+    }
   }
 
   let preservedPredecessorItems = 0;

@@ -409,3 +409,268 @@ test("private index audit requires manual and continuation count fields", () => 
   assert.match(rejected.errors.join("\n"), /manualVerified count mismatch/);
   assert.match(rejected.errors.join("\n"), /continuationFragments count mismatch/);
 });
+
+function manualReplacementFixture(options = {}) {
+  const predecessor = fixture();
+  const source = predecessor.sources[0];
+  source.pageCount = options.withContinuation ? 3 : 2;
+  for (const [slot, label] of [[2, "7"], [5, "9"]]) {
+    const old = index.createItemIndexEntry({
+      id: core.createSharedBankId("question", index.createLocatorKey(source.sourceFingerprint, 2, slot)),
+      sourceRef: source.sourceRef,
+      locator: {
+        page: 2,
+        slot,
+        kind: "exercise",
+        box: { x: slot === 2 ? 0.08 : 0.58, y: 0.18, width: 0.3, height: 0.3 }
+      },
+      discoveryStatus: "layout_candidate",
+      curriculum: null,
+      classificationStatus: "pending",
+      answerStatus: "missing",
+      reuse: ["SH"],
+      releaseStatus: "locked"
+    });
+    predecessor.items.push({
+      ...old,
+      privateRef: {
+        sourceMemoryId: "private-source",
+        printedLabelHint: label,
+        discoveryConfidence: "candidate_only"
+      }
+    });
+  }
+  predecessor.unresolvedPages = [2, ...(options.withContinuation ? [3] : [])].map(page => ({
+    sourceRef: source.sourceRef,
+    privateSourceMemoryId: "private-source",
+    page,
+    reason: page === 2 ? "partial-layout-coverage" : "layout-anchor-not-found"
+  }));
+  predecessor.counts.questionCandidates = predecessor.items.length;
+  predecessor.counts.unresolvedPages = predecessor.unresolvedPages.length;
+  const decisions = [{
+    sourceMemoryId: "private-source",
+    page: 2,
+    resolution: "manual_items_replace_candidates",
+    anchors: [
+      {
+        kind: options.sameLabel ? "exercise" : "concept",
+        printedLabelHint: options.sameLabel ? "7" : "개념탐구 10",
+        layoutOrder: 1,
+        box: { x: 0.06, y: 0.08, width: 0.4, height: 0.78 }
+      },
+      {
+        kind: options.sameLabel ? "exercise" : "example",
+        printedLabelHint: options.sameLabel ? "9" : "예제 10-1",
+        layoutOrder: 2,
+        box: { x: 0.53, y: 0.08, width: 0.4, height: 0.78 }
+      }
+    ]
+  }];
+  if (options.withContinuation) {
+    decisions.push({
+      sourceMemoryId: "private-source",
+      page: 3,
+      resolution: "manual_items",
+      anchors: [],
+      continuations: [{
+        fragmentPage: 3,
+        printedLabelHint: options.sameLabel ? "7 (2)-(3)" : "10 (2)-(3)",
+        continuationFrom: {
+          page: 2,
+          printedLabelHint: options.sameLabel ? "7" : "개념탐구 10"
+        }
+      }]
+    });
+  }
+  return { predecessor, candidate: review.applyReviews(predecessor, decisions) };
+}
+
+test("private index audit validates closed manual replacement registries and predecessor identity", () => {
+  const { predecessor, candidate } = manualReplacementFixture();
+  const accepted = auditor.audit(candidate, predecessor);
+  assert.equal(accepted.ok, true, accepted.errors.join("\n"));
+  assert.equal(accepted.counts.preservedPredecessorItems, predecessor.items.length);
+  assert.equal(accepted.counts.rejectedCandidates, 2);
+  assert.equal(accepted.counts.activeQuestionCandidates, 3);
+
+  const unbound = auditor.audit(candidate, null);
+  assert.equal(unbound.ok, false);
+  assert.match(unbound.errors.join("\n"), /requires a predecessor index/);
+});
+
+test("private index audit rejects manual replacement registry, slot, queue, and state drift", () => {
+  let built = manualReplacementFixture();
+  built.candidate.visualReviewPages[0].rejectedCandidateIds.reverse();
+  let rejected = auditor.audit(built.candidate, built.predecessor);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /rejectedCandidateIds mismatch/);
+
+  built = manualReplacementFixture();
+  built.candidate.visualReviewPages[0].itemIds.reverse();
+  rejected = auditor.audit(built.candidate, built.predecessor);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /itemIds mismatch/);
+
+  built = manualReplacementFixture();
+  const manual = built.candidate.items.find(item => item.privateRef.layoutKind === "manual-reviewed-item");
+  manual.locator = { ...manual.locator, slot: manual.locator.slot + 1 };
+  rejected = auditor.audit(built.candidate, built.predecessor);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /order or slot mismatch|id mismatch/);
+
+  built = manualReplacementFixture();
+  const replacementReview = built.candidate.visualReviewPages[0];
+  built.candidate.unresolvedPages.push({
+    sourceRef: replacementReview.sourceRef,
+    privateSourceMemoryId: replacementReview.privateSourceMemoryId,
+    page: replacementReview.page,
+    reason: "partial-layout-coverage"
+  });
+  built.candidate.counts.unresolvedPages += 1;
+  rejected = auditor.audit(built.candidate, built.predecessor);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /remains in a pending page queue/);
+
+  built = manualReplacementFixture();
+  const old = built.candidate.items.find(item =>
+    built.candidate.rejectedCandidates.some(entry => entry.id === item.id)
+  );
+  old.releaseStatus = "released";
+  rejected = auditor.audit(built.candidate, built.predecessor);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /rejected candidate state changed/);
+  assert.match(rejected.errors.join("\n"), /predecessor item changed/);
+
+  built = manualReplacementFixture();
+  built.predecessor.items = built.predecessor.items.filter(item => item.locator.page !== 2);
+  rejected = auditor.audit(built.candidate, built.predecessor);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /predecessor registry mismatch|predecessor item mismatch/);
+});
+
+test("private index audit rejects manual replacement quarantine and review tampering", () => {
+  let built = manualReplacementFixture();
+  built.candidate.rejectedCandidates[0].reason = "visual-rejected-layout-anchor";
+  let rejected = auditor.audit(built.candidate, built.predecessor);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /rejectedCandidates mismatch|visual decision missing/);
+
+  built = manualReplacementFixture();
+  built.candidate.visualReviewPages[0].answerValue = "42";
+  rejected = auditor.audit(built.candidate, built.predecessor);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /unknown or missing keys/);
+
+  built = manualReplacementFixture();
+  const manualItems = built.candidate.items.filter(item =>
+    item.privateRef.layoutKind === "manual-reviewed-item"
+  );
+  manualItems[1].locator = {
+    ...manualItems[1].locator,
+    box: { ...manualItems[0].locator.box }
+  };
+  rejected = auditor.audit(built.candidate, built.predecessor);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /boxes overlap/);
+});
+
+test("manual replacement items can be continuation targets only through their bound review", () => {
+  const { predecessor, candidate } = manualReplacementFixture({ withContinuation: true });
+  let accepted = auditor.audit(candidate, predecessor);
+  assert.equal(accepted.ok, true, accepted.errors.join("\n"));
+
+  const replacementReview = candidate.visualReviewPages.find(entry =>
+    entry.resolution === "verified_manual_items_replacing_candidates"
+  );
+  replacementReview.itemIds.shift();
+  replacementReview.itemCount -= 1;
+  accepted = auditor.audit(candidate, predecessor);
+  assert.equal(accepted.ok, false);
+  assert.match(accepted.errors.join("\n"), /target must be one active item|itemIds mismatch|itemCount mismatch/);
+});
+
+test("private index audit resolves a continuation through the active replacement when labels are reused", () => {
+  const { predecessor, candidate } = manualReplacementFixture({ withContinuation: true, sameLabel: true });
+  const accepted = auditor.audit(candidate, predecessor);
+  assert.equal(accepted.ok, true, accepted.errors.join("\n"));
+});
+
+test("private index audit accepts sequential manual replacement batches and freezes earlier reviews", () => {
+  const firstBatch = manualReplacementFixture().candidate;
+  const source = firstBatch.sources[0];
+  source.pageCount = 4;
+  const old = index.createItemIndexEntry({
+    id: core.createSharedBankId("question", index.createLocatorKey(source.sourceFingerprint, 4, 3)),
+    sourceRef: source.sourceRef,
+    locator: {
+      page: 4,
+      slot: 3,
+      kind: "exercise",
+      box: { x: 0.08, y: 0.18, width: 0.84, height: 0.3 }
+    },
+    discoveryStatus: "layout_candidate",
+    curriculum: null,
+    classificationStatus: "pending",
+    answerStatus: "missing",
+    reuse: ["SH"],
+    releaseStatus: "locked"
+  });
+  firstBatch.items.push({
+    ...old,
+    privateRef: {
+      sourceMemoryId: "private-source",
+      printedLabelHint: "11",
+      discoveryConfidence: "candidate_only"
+    }
+  });
+  firstBatch.unresolvedPages.push({
+    sourceRef: source.sourceRef,
+    privateSourceMemoryId: "private-source",
+    page: 4,
+    reason: "partial-layout-coverage"
+  });
+  firstBatch.counts.questionCandidates += 1;
+  firstBatch.counts.activeQuestionCandidates += 1;
+  firstBatch.counts.unresolvedPages += 1;
+
+  const secondBatch = review.applyReviews(firstBatch, [{
+    sourceMemoryId: "private-source",
+    page: 4,
+    resolution: "manual_items_replace_candidates",
+    anchors: [{
+      kind: "exercise",
+      printedLabelHint: "11",
+      layoutOrder: 1,
+      box: { x: 0.06, y: 0.08, width: 0.88, height: 0.78 }
+    }]
+  }]);
+  const accepted = auditor.audit(secondBatch, firstBatch);
+  assert.equal(accepted.ok, true, accepted.errors.join("\n"));
+
+  const earlierReview = secondBatch.visualReviewPages.find(entry => entry.page === 2);
+  earlierReview.evidenceLocator = "PDF p.2, visually reviewed manual replacement items 999";
+  const rejected = auditor.audit(secondBatch, firstBatch);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /predecessor review changed|manual review evidence mismatch/);
+});
+
+test("private index audit proves a new replacement was eligible in its predecessor", () => {
+  let built = manualReplacementFixture();
+  built.predecessor.unresolvedPages = [];
+  built.predecessor.counts.unresolvedPages = 0;
+  let rejected = auditor.audit(built.candidate, built.predecessor);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /predecessor queue mismatch/);
+
+  built = manualReplacementFixture();
+  built.predecessor.rejectedCandidates = [{
+    ...built.candidate.rejectedCandidates[0],
+    reason: "visual-rejected-layout-anchor"
+  }];
+  built.predecessor.counts.rejectedCandidates = 1;
+  built.predecessor.counts.activeQuestionCandidates = built.predecessor.items.length - 1;
+  rejected = auditor.audit(built.candidate, built.predecessor);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /predecessor candidate already rejected/);
+});
