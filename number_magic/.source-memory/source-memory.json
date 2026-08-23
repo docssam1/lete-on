@@ -1,0 +1,368 @@
+{
+  "version": 1,
+  "name": "수의 마법 교재 근거 (창의수연·교과연산·유아연산)",
+  "root": "G:/내 드라이브/창의수연",
+  "updated": "2026-08-23",
+  "sources": [
+    {
+      "id": "csy-jonghap",
+      "title": "창의수연 종합편(원리 해설)",
+      "path": "창의수연(종합편.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "11UPm8VOAVpCfZpLtrTN1ib9XfzzCj3dm"
+    },
+    {
+      "id": "csy-jonghap-sol",
+      "title": "창의수연 종합편 해설부분",
+      "path": "201308_창의수연(종합편)_해설부분 (1).pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1eF906Ppz0mmlCJtFj4hsm3mzGWwR5uJw"
+    },
+    {
+      "id": "csy-plan",
+      "title": "창의수연 난이도 및 진도계획표",
+      "path": "창의수연 난이도 및 진도계획표_12.12.5 수정.hwp",
+      "kind": "hwp",
+      "sensitivity": "private",
+      "drive_id": "13JERmkPGJ0sIvfMBOZT84A9efPZkZXKK"
+    },
+    {
+      "id": "csy-mid-A",
+      "title": "창의수연 중급 A 해설집",
+      "path": "창의수연 해설집/201212_창의수연(중급_A_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1Pa9U3FxsB655ENqu_LoTCvIqYbcUP8TA"
+    },
+    {
+      "id": "csy-mid-B",
+      "title": "창의수연 중급 B 해설집",
+      "path": "창의수연 해설집/201212_창의수연(중급_B_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1hOFT1CAm1XDFAoO2Zo_NAr9EXu9SMLMy"
+    },
+    {
+      "id": "csy-mid-C",
+      "title": "창의수연 중급 C 해설집",
+      "path": "창의수연 해설집/201212_창의수연(중급_C_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1D7P6b6k2BWOj-WlkDfrMIDW6dhc81F3i"
+    },
+    {
+      "id": "csy-mid-D",
+      "title": "창의수연 중급 D 해설집",
+      "path": "창의수연 해설집/201212_창의수연(중급_D_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1hGU74ZBK9JY54ZTFK7g9UkwXSsiR59fN"
+    },
+    {
+      "id": "csy-mid-E",
+      "title": "창의수연 중급 E 해설집",
+      "path": "창의수연 해설집/201212_창의수연(중급_E_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1btS4SPdPakXPWMwZ_Q7F752GyJidVLOR"
+    },
+    {
+      "id": "csy-mid-F",
+      "title": "창의수연 중급 F 해설집",
+      "path": "창의수연 해설집/201212_창의수연(중급_F_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1KSZpUoaFzqbDGnNRRBVpYAYABD_ZNMhF"
+    },
+    {
+      "id": "csy-high-A",
+      "title": "창의수연 고급 A 해설집",
+      "path": "창의수연 해설집/201212_창의수연(고급_A_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "10r1ZVTCjSLX61IspFH717yvgS9SlAI-A"
+    },
+    {
+      "id": "csy-high-B",
+      "title": "창의수연 고급 B 해설집",
+      "path": "창의수연 해설집/201212_창의수연(고급_B_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1gaujRX-Nd-OJmLH8d-TPQMNg1q1FKjW6"
+    },
+    {
+      "id": "csy-high-C",
+      "title": "창의수연 고급 C 해설집",
+      "path": "창의수연 해설집/201212_창의수연(고급_C_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "19K1kyprb8PX6pYWxe-z7NQTBJ6RQAX1z"
+    },
+    {
+      "id": "csy-high-D",
+      "title": "창의수연 고급 D 해설집",
+      "path": "창의수연 해설집/201212_창의수연(고급_D_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "107QGTerOLw1ZY8z5glyxe-kSt1eltzwU"
+    },
+    {
+      "id": "csy-high-E",
+      "title": "창의수연 고급 E 해설집",
+      "path": "창의수연 해설집/201212_창의수연(고급_E_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1Jln5XTbXD-7WBlNy8J1kwZPz5Ggpph-0"
+    },
+    {
+      "id": "csy-low-A",
+      "title": "창의수연 초급 A 해설집",
+      "path": "창의수연 해설집/201212_창의수연(초급_A_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1jJ7gxl7zwveO4g0mFMDfjPlngqgExc1e"
+    },
+    {
+      "id": "csy-low-B",
+      "title": "창의수연 초급 B 해설집",
+      "path": "창의수연 해설집/201212_창의수연(초급_B_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1AV5ZI2uIf1fm8S09B0I0mZHNbU5m5hJC"
+    },
+    {
+      "id": "csy-low-C",
+      "title": "창의수연 초급 C 해설집",
+      "path": "창의수연 해설집/201212_창의수연(초급_C_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1IOzCW75U6WAo4rkCmEvIyFRyegXh8Dyd"
+    },
+    {
+      "id": "csy-low-D",
+      "title": "창의수연 초급 D 해설집",
+      "path": "창의수연 해설집/201212_창의수연(초급_D_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "13nBJIqrNBnSQWWTYn_4yYXxiA35ye9tl"
+    },
+    {
+      "id": "csy-low-E",
+      "title": "창의수연 초급 E 해설집",
+      "path": "창의수연 해설집/201212_창의수연(초급_E_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "19r7TKF-OOjv8WHNQA5Dpd3QWzjXm6keN"
+    },
+    {
+      "id": "csy-low-F",
+      "title": "창의수연 초급 F 해설집",
+      "path": "창의수연 해설집/201212_창의수연(초급_F_해설집)_ver5.pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1X4yqa9K1Pza2Kr8KwEF9dR7Ihf-hF1Rt"
+    },
+    {
+      "id": "csy-low-G",
+      "title": "창의수연 초급 G 해설집",
+      "path": "창의수연 해설집/201212_창의수연(초급_G_해설지).pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1qeeXogy59iwuPrzm7HyeVDjFYiDtPVbl"
+    },
+    {
+      "id": "csy-low-H",
+      "title": "창의수연 초급 H 해설집",
+      "path": "창의수연 해설집/201212_창의수연(초급_H_해설지).pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "1JrmRrnQrL3RQo5WXlUPCSlR5ozzbnxHQ"
+    },
+    {
+      "id": "csy-low-I",
+      "title": "창의수연 초급 I 해설집",
+      "path": "창의수연 해설집/201212_창의수연(초급_I_해설지).pdf",
+      "kind": "pdf",
+      "sensitivity": "private",
+      "drive_id": "14-FRBTPPOB1Ie4uvXMbYq9nbjiXekMPV"
+    },
+    {
+      "id": "gyogwa-elem",
+      "title": "교과 초등연산 A~F (문제집+답지)",
+      "path": "교과연산/연산/초등연산",
+      "kind": "folder",
+      "sensitivity": "private",
+      "drive_id": "1zdnoOooxA-eZTqbRGWy6PW6GVc9mSPRr"
+    },
+    {
+      "id": "gyogwa-mid-G",
+      "title": "교과 중등연산 G",
+      "path": "교과연산/연산/중등연산 G",
+      "kind": "folder",
+      "sensitivity": "private",
+      "drive_id": "1PaNgDCl_UxLZhFZUnu9F0Vek3vJqdczN"
+    },
+    {
+      "id": "yua-drill",
+      "title": "유아 연산드릴 G1-1~G1-3",
+      "path": "연산드릴(유아) (1)",
+      "kind": "folder",
+      "sensitivity": "private",
+      "drive_id": "1FHXT_slup008Hd3WHshQ5knhNColj0YA"
+    },
+    {
+      "id": "yua-drill-ans",
+      "title": "유아 연산드릴 정답",
+      "path": "유아연산드릴(정답) (2)",
+      "kind": "folder",
+      "sensitivity": "private",
+      "drive_id": "1oQ1YEBmxAioU2RISDbVDssJVlrrLvryc"
+    }
+  ],
+  "records": [
+    {
+      "id": "csy.mid-A.toc",
+      "title": "창의수연 중급 A 단원 구성",
+      "aliases": [
+        "중급 A 목차",
+        "ADVANCE A단계"
+      ],
+      "tags": [
+        "창의수연",
+        "중급",
+        "목차",
+        "ADVANCE"
+      ],
+      "summary": "중급 A는 다섯 단원(곱셈의 비밀/곱해서 10/차근차근 곱하기/분해곱셈법/곱해서 100)과 복습·SONA·배틀로 끝난다.",
+      "status": "verified",
+      "sensitivity": "internal",
+      "updated": "2026-08-23",
+      "pointers": [
+        {
+          "source_id": "csy-mid-A",
+          "role": "source",
+          "locator": "Contents(p.1), 본문 p.2·12·22·31·41",
+          "note": "원본 목차 페이지에서 직접 확인. 앱 C-01~C-04에는 차근차근 곱하기가 빠져 있었다."
+        }
+      ]
+    },
+    {
+      "id": "csy.unit-structure",
+      "title": "창의수연 한 단원의 학습 흐름",
+      "aliases": [
+        "수연 단원 흐름",
+        "TIME BATTLE"
+      ],
+      "tags": [
+        "창의수연",
+        "학습설계",
+        "플로우"
+      ],
+      "summary": "메모장(개념)→Training Course(연습)→Storytelling Math(문장제)→핵심체크(토의 질문)→TIME BATTLE(5분 10문항).",
+      "status": "verified",
+      "sensitivity": "internal",
+      "updated": "2026-08-23",
+      "pointers": [
+        {
+          "source_id": "csy-mid-A",
+          "role": "source",
+          "locator": "중급 A 각 단원 반복 구조(p.2~11 등)",
+          "note": "다섯 단원 모두 같은 순서로 반복됨을 확인"
+        }
+      ]
+    },
+    {
+      "id": "csy.philosophy",
+      "title": "창의수연의 목적과 핵심 원리",
+      "aliases": [],
+      "tags": [
+        "창의수연",
+        "철학",
+        "원리"
+      ],
+      "summary": "연산 속도가 아니라 수를 다루기 쉬운 형태로 재구성하는 사고력이 목적. 기반은 분배법칙과 수의 규칙성.",
+      "status": "verified",
+      "sensitivity": "internal",
+      "updated": "2026-08-23",
+      "pointers": [
+        {
+          "source_id": "csy-jonghap",
+          "role": "source",
+          "locator": "1.창의수연이란?(p.1~2), 3.창의수연의 원리(p.7~8)",
+          "note": "\"연산을 빨리하는 방법이 아니다\"라는 문장을 원문에서 확인"
+        }
+      ]
+    },
+    {
+      "id": "csy.jonghap.techniques",
+      "title": "종합편이 다루는 계산 기법 목록",
+      "aliases": [],
+      "tags": [
+        "창의수연",
+        "기법",
+        "곱셈",
+        "제곱"
+      ],
+      "summary": "Veda I~III, 제곱수의 법칙 I~II, 두 자릿수 곱셈 I~II, 큰 수 분해 제곱법, 두 수의 상관관계(평균·차 이용).",
+      "status": "verified",
+      "sensitivity": "internal",
+      "updated": "2026-08-23",
+      "pointers": [
+        {
+          "source_id": "csy-jonghap",
+          "role": "source",
+          "locator": "p.9~21",
+          "note": "ADVANCE/CHALLENGE 설계 시 기법 풀로 사용"
+        }
+      ]
+    },
+    {
+      "id": "csy.series.structure",
+      "title": "창의수연 시리즈 권 구성",
+      "aliases": [],
+      "tags": [
+        "창의수연",
+        "시리즈",
+        "등급"
+      ],
+      "summary": "해설집 기준 초급 A~I(9권), 중급 A~F(6권), 고급 A~E(5권). 앱의 PRIME/ADVANCE/CHALLENGE 3단 사다리와 대응한다.",
+      "status": "verified",
+      "sensitivity": "internal",
+      "updated": "2026-08-23",
+      "pointers": [
+        {
+          "source_id": "csy-mid-A",
+          "role": "source",
+          "locator": "해설집 폴더 전체 파일 목록",
+          "note": "Drive 폴더 실물 파일명으로 확인"
+        }
+      ]
+    },
+    {
+      "id": "gyogwa.elem.structure",
+      "title": "교과 초등연산 교재 구성",
+      "aliases": [],
+      "tags": [
+        "교과연산",
+        "초등",
+        "구성"
+      ],
+      "summary": "초등연산 A~F 각 권이 20회차(A01~A20) 구성이며 회차마다 STEP2 심화본과 답지가 따로 있다.",
+      "status": "draft",
+      "sensitivity": "internal",
+      "updated": "2026-08-23",
+      "pointers": [
+        {
+          "source_id": "gyogwa-elem",
+          "role": "source",
+          "locator": "초등연산 A 폴더 파일 목록(A01~A20, 각 STEP2)",
+          "note": "A권에서 확인. B~F도 동일 패턴으로 보이나 미검증"
+        }
+      ]
+    }
+  ],
+  "note": "원본은 Google Drive(비공개)에만 둔다. 이 카탈로그는 위치와 판정만 기록하며 원문을 복사하지 않는다.",
+  "fingerprint_note": "원본은 원장님 PC의 G:/내 드라이브/창의수연 에만 있다. 이 컨테이너에는 마운트되지 않으므로 sha256/size는 비어 있다. 원본이 있는 PC에서 `source_memory.py refresh <catalog> --write` 를 한 번 실행하면 지문이 채워지고 이후 원본 변경을 자동 감지한다. drive_id 로 Google Drive에서 직접 열 수도 있다."
+}
