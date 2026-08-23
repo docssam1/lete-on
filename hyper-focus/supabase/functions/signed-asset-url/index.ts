@@ -1,9 +1,12 @@
+// deno-lint-ignore no-import-prefix
 import { createClient } from "npm:@supabase/supabase-js@2.112.3";
 
 const ALLOWED_ORIGINS = new Set([
   "https://lete-on.gfieldacademy.net",
   "http://127.0.0.1:4177",
-  "http://localhost:4177"
+  "http://localhost:4177",
+  "http://127.0.0.1:41873",
+  "http://localhost:41873"
 ]);
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SIGNED_URL_SECONDS = 180;
@@ -14,7 +17,9 @@ function environmentKey(mapName: string, singleName: string, legacyName: string)
     try {
       const parsed = JSON.parse(mapValue) as Record<string, unknown>;
       if (typeof parsed.default === "string") return parsed.default;
-    } catch (_) {}
+    } catch (_) {
+      // Ignore malformed optional key maps and fall back to named variables.
+    }
   }
   return Deno.env.get(singleName) || Deno.env.get(legacyName) || "";
 }
@@ -124,12 +129,40 @@ Deno.serve(async request => {
   }
 
   const table = assetType === "vip" ? "hf_vip_assets" : "hf_mock_assets";
-  const { data: asset, error: assetError } = await userClient
+  const { data: visibleAsset, error: assetError } = await userClient
     .from(table)
-    .select("id,bucket_id,object_path")
+    .select("id")
     .eq("id", assetId)
     .maybeSingle();
-  if (assetError || !asset) return json(request, 404, { error: "asset_not_available" });
+  if (assetError || !visibleAsset) return json(request, 404, { error: "asset_not_available" });
+
+  // RLS proves visibility with the harmless id column. Bucket/object paths are
+  // fetched only with the service role after that authorization decision.
+  const serviceResult = assetType === "mock"
+    ? await serviceClient.from("hf_mock_assets")
+      .select("id,bucket_id,object_path,asset_kind")
+      .eq("id", visibleAsset.id)
+      .maybeSingle()
+    : await serviceClient.from("hf_vip_assets")
+      .select("id,bucket_id,object_path")
+      .eq("id", visibleAsset.id)
+      .maybeSingle();
+  const serviceAssetError = serviceResult.error;
+  const asset = serviceResult.data as null | {
+    id: string;
+    bucket_id: string;
+    object_path: string;
+    asset_kind?: string;
+  };
+  const expectedBucket = assetType === "mock" ? "hf-mock-private" : "hf-vip-private";
+  if (serviceAssetError || !asset || asset.bucket_id !== expectedBucket) {
+    return json(request, 404, { error: "asset_not_available" });
+  }
+  // Raw problem/answer JSON must pass secure-mock's checksum, revision and
+  // schema sanitizers. Never expose those objects through the generic signer.
+  if (assetType === "mock" && asset.asset_kind !== "cover") {
+    return json(request, 404, { error: "asset_not_available" });
+  }
 
   const { data: signed, error: signedError } = await serviceClient.storage
     .from(asset.bucket_id)

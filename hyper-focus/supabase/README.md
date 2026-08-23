@@ -2,19 +2,19 @@
 
 이 폴더는 Hyper Focus 전용 Supabase 기반입니다. 필즈더클래식의 기존 Supabase 프로젝트와 합치지 않습니다.
 
-현재 상태는 **Hyper Focus 전용 원격 프로젝트·DB migration·두 Edge Function 배포 완료, 학생 전환·웹 배포 비활성**입니다. 프로젝트 `gfield-hyper-focus`(`uqtkxhchtbcizzteuvsq`, 서울 리전)는 기존 필즈더클래식 프로젝트와 분리되어 있습니다. `supabase-config.js`의 `enabled`는 의도적으로 `false`이며, 관리자 MFA·학생 재발급·실사용 RLS 검증 전에는 `true`로 바꾸지 않습니다.
+현재 상태는 **Hyper Focus 전용 원격 프로젝트·기존 DB migration·기존 두 Edge Function 배포 완료, 보안형 모의고사 코드는 로컬 브랜치에서 검증 완료, 학생 전환·웹 배포 비활성**입니다. 프로젝트 `gfield-hyper-focus`(`uqtkxhchtbcizzteuvsq`, 서울 리전)는 기존 필즈더클래식 프로젝트와 분리되어 있습니다. 새 `secure-mock` migration과 Edge Function은 아직 원격에 적용하지 않았다. `supabase-config.js`의 `enabled`와 `features.secureMockDelivery`는 의도적으로 `false`이며, 실제 학생·권한·private asset E2E와 화면 연결 전에는 바꾸지 않습니다.
 
 ## 절대 금지
 
 - 브라우저 JS, Git, 로그, URL에 `sb_secret_...`, service-role 키, 관리자 비밀번호를 넣지 않습니다.
 - 현재 `data.js`의 옛 승인번호를 Supabase에 복사하지 않습니다. 학생 전원에게 새 번호를 발급하고 옛 번호는 폐기합니다.
-- 보안형 모의고사 로더와 서버 응시 저장이 완성되기 전에 `secureMockDelivery`를 켜지 않습니다.
+- 보안형 모의고사 화면 연결과 실제 DB·Storage E2E가 완성되기 전에 `secureMockDelivery`를 켜지 않습니다.
 - 실제 검증 전 이 브랜치를 보안 전환 완료로 `main`에 병합하지 않습니다.
 
 ## 새 프로젝트 적용 순서
 
 1. Supabase에서 Hyper Focus 전용 프로젝트와 지역을 확정합니다. 기존 프로젝트 `fgahqumaldheqettmvqg`는 사용하지 않습니다.
-2. CLI를 고정 버전으로 연결합니다.
+2. CLI를 고정 버전으로 연결합니다. 새 빈 프로젝트를 처음 구성할 때는 아래 순서로 적용합니다.
 
    ```powershell
    npx -y supabase@2.115.0 link --project-ref <NEW_PROJECT_REF>
@@ -22,7 +22,10 @@
    npx -y supabase@2.115.0 config push
    npx -y supabase@2.115.0 functions deploy admin-students
    npx -y supabase@2.115.0 functions deploy signed-asset-url
+   npx -y supabase@2.115.0 functions deploy secure-mock
    ```
+
+   이미 기존 `signed-asset-url`이 배포된 현재 프로젝트에 보안형 모의고사를 추가할 때는 일반 서명 함수 수정본을 먼저 배포하고, 그다음 `db push` → `config push` → `secure-mock` 배포 순서를 지킵니다. 새 migration이 저장소 경로 열의 학생 직접 조회를 먼저 막기 때문에 순서를 바꾸면 기존 서명 함수가 잠시 실패할 수 있습니다. 실제 적용은 1회분 개발 데이터와 복구 지점을 준비한 별도 승인 작업으로 진행합니다.
 
 3. 관리자 계정을 로컬에서 한 번만 부트스트랩합니다. 관리자 이메일을 먼저 확정한 뒤 아래 래퍼를 실행합니다. secret key와 비밀번호는 마스킹된 로컬 프롬프트로만 입력되며 명령 인수·PowerShell 기록·Git에 넣지 않습니다. 래퍼는 실행이 끝나면 관련 환경 변수를 원래 값으로 되돌립니다.
 
@@ -38,7 +41,7 @@
 5. 관리자 화면에서 기존 학생 25명을 새 계정으로 만들고 새 승인번호를 한 번만 전달합니다. 번호는 공개 식별자 4자와 비밀 난수 16자로 구성되며 서버에도 원문을 저장하지 않습니다.
 6. 옛 번호가 모두 폐기됐음을 확인한 뒤 `data.js`의 학생 승인번호 목록을 비웁니다. `enabled: true`만으로 이 공개 파일이 사라지지 않고 여러 화면이 계속 불러오므로, 실제 운영 전환은 레거시 기록 이관 확인과 공개 학생 명단 제거를 한 배포에서 함께 처리합니다. 첫 전환 기간에는 이 기기의 옛 전화번호·승인번호 기반 진단 기록을 인증된 RPC로 가져오되, 번호와 전화번호 자체는 업로드하지 않습니다. 공개 명단을 비운 뒤에도 브라우저에 승인번호 기록이 정확히 1명분만 있으면 로컬 키를 직접 찾아 이관하며, 공용 기기처럼 여러 명분이 있으면 오이관을 막기 위해 자동 선택하지 않습니다.
 7. 유료 PDF·모의고사 manifest·정답·VIP 자료를 private Storage로 옮깁니다. 문제 manifest에는 정답을 넣지 않습니다.
-8. 보안형 모의고사 `loadExam`과 서버 `saveAttempt`를 구현·검증한 뒤에만 `features.secureMockDelivery=true`로 바꿉니다. 그 전에는 학생 화면이 자동으로 `검수 대기` 잠금을 표시합니다.
+8. 보안형 모의고사 `listExams`·`loadExam`·`loadAnswers`·`saveAttempt` 서버 계약, 화면 연결, 실제 DB·Storage E2E를 모두 검증한 뒤에만 `features.secureMockDelivery=true`로 바꿉니다. 그 전에는 학생 화면이 자동으로 `검수 대기` 잠금을 표시합니다.
 9. `supabase-config.js`에는 프로젝트 URL, publishable 키, 관리자 이메일만 넣고 마지막에 `enabled=true`로 전환합니다.
 
 ## 원격 필수 검증
@@ -62,7 +65,8 @@ Free 요금제는 비용이 없지만 비활성 프로젝트 일시정지와 저
 
 - 관리자 계정 부트스트랩과 TOTP 등록 미실행
 - 실제 관리자·학생 두 계정을 사용한 AAL2, 교차 학생 차단, 번호 회전 RLS 통합 테스트 미실행
-- 보안형 모의고사 loader/saveAttempt 미구현
+- 보안형 모의고사 전달 코드와 정적 계약 검사는 완료했지만 새 migration·Edge Function 원격 미적용, private asset·회차 데이터 없음
+- `mock/index.html`·`mock/viewer.html`의 `loadAnswers → O/X → saveAttempt` 화면 연결, 회차별 RLS 권한 처리, 명시적 재응시 흐름 미구현
 - `data.js`의 기존 학생 명단·옛 승인번호 제거 전
 - 앱 내 브라우저 연결 오류로 모바일·데스크톱 실제 화면 검수 미완료
 - 현재 정적 레거시 관리자 로그인은 공개 SHA-256 비교이므로 임시 호환 모드일 뿐이며, Supabase+AAL2 전환 전에는 이 브랜치를 운영 보안 완료본으로 배포할 수 없음

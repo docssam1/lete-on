@@ -52,6 +52,8 @@
 
 각 회차는 답과 화면 검수가 끝난 뒤에만 해당 그룹의 `items`에 URL을 넣는다. 빈 회차는 `검수 중`으로 보이며 응시 링크를 만들지 않는다.
 
+감사 수치만 담는 공개 안전 목록은 `mock/premier-release-catalog.js`에 별도로 둔다. 활용 8회·파이널 3회·최종 4회, 총 15회가 모두 `review_pending`, `href: null` 상태이며 문항·정답·원본 경로·자산 주소는 포함하지 않는다. 현재 감사 결과는 전체 300문항 중 정답 검산 225문항, 잠금 75문항이다. 한 회차라도 잠금 문항이나 모바일 시각 게이트가 남아 있으면 회차 전체를 공개하지 않는다.
+
 ### 원본 보유 현황과 비공개 경계
 
 - 활용 모의고사: 1~8회 원본 8개
@@ -59,6 +61,8 @@
 - 최종 모의고사: 1~4회 원본 4개
 
 원본 PDF의 파일 지문과 문항별 페이지 근거는 Git에서 제외된 로컬 색인 `.source-memory/premier-private-local.json`에만 둔다. 원본 PDF, 렌더 페이지, 답안, 대본은 공개 저장소에 복사하지 않는다. 정식 문제 페이지 이미지는 저장소를 비공개로 바꾸거나 Supabase 비공개 저장소의 서명 URL 전송을 연결하기 전까지 커밋하지 않는다.
+
+`origin/main`의 기존 `premier/` 정적 뷰어에는 활용 1~8회와 파이널 1회의 문제 문장·그림 코드 180문항이 인증 없이 직접 열리는 상태다. 포털의 잠금 배너는 정적 파일 직접 주소를 보호하지 못한다. 유료 운영 전에는 이 payload를 private Storage 기반 전달로 옮기고 정적 공개본을 제거해야 하며, 새 유료 회차를 `premier/`에 추가하면 안 된다. 기존 정적 파일 제거는 운영 URL에 영향을 주므로 별도 승인·복구 계획과 함께 처리한다.
 
 활용 1회 원본은 1~4쪽의 20문항과 5~7쪽의 번호별 풀이가 서로 대응하지 않는다. 따라서 뒤쪽 풀이와 영상 대본을 답안 근거로 사용하지 않고 각 문항을 독립 계산한다. 1회는 19문항이 검산을 통과했고, 16번은 문장에 적힌 단위 정사각형 수와 실제 그림이 달라 수정 승인 전까지 잠근다.
 
@@ -149,10 +153,31 @@ relatedIds, status
 
 현재 사이트는 정적 배포이므로 위 조치는 화면 보호와 실수 방지 수준이다. 학생 승인번호 원문과 유료 자료 URL을 진짜 비공개로 만들려면 다음 단계에서 서버 로그인, 행 단위 권한, 짧은 세션 또는 서명 URL로 옮겨야 한다. 브라우저에 GitHub 쓰기 토큰을 두는 방식도 그때 제거한다.
 
+### 보안형 모의고사 전달 기반
+
+`secure-mock.js`, `supabase/functions/secure-mock`, `20260823151425_secure_mock_delivery_v1.sql`은 유료 모의고사를 위한 비공개 전달 계약이다.
+
+- 브라우저는 승인번호·학생 UUID·점수·정답 수·오답 유형을 보내지 않고 `listExams`, `loadExam`, `loadAnswers`, `saveAttempt`만 호출한다.
+- Edge Function은 JWT와 학생 RLS를 먼저 확인한 뒤 service role을 사용한다.
+- 문제 manifest와 보호 답안은 `questionKey + revision` 및 SHA-256·바이트 크기로 고정한다.
+- 문제 그림만 짧은 private Storage 서명 URL로 반환하고 원본 경로·manifest·답안 JSON은 일반 서명 함수로 내려주지 않는다.
+- 정답을 확인하면 응시 상태를 `grading`으로 원자 전환하고, O/X만 받은 서버가 점수·오답 문항·약점 유형을 다시 계산한다.
+- 응시 시작과 제출은 탭의 안정 UUID 및 DB 잠금으로 재시도 중복을 막고 회차당 최대 3회로 제한한다.
+
+이 코드는 아직 원격 DB에 적용하거나 Edge Function으로 배포하지 않았다. `supabase-config.js`의 `enabled`와 `features.secureMockDelivery`도 계속 `false`이고 `mock/index.html`·`mock/viewer.html`에는 스크립트를 연결하지 않았다. 실제 PostgreSQL 적용, 1회분 private asset, 학생 두 계정 교차 접근, 답안 전후, 권한 회수, 모바일·A4 인쇄를 검증하기 전에는 기능을 켜지 않는다.
+
+배포 순서는 기존 일반 서명 함수의 우회 차단 수정본 → DB migration → `secure-mock` Edge Function → 1회분 E2E → 화면 연결 순이다. migration을 먼저 적용하면 현재 배포된 일반 서명 함수가 숨겨진 저장소 경로 열을 읽지 못해 일시 장애가 날 수 있다.
+
 ## 검증
 
 ```powershell
+node hyper-focus/qa/validate_premier_release_catalog.cjs
+node hyper-focus/tests/secure-mock.test.cjs
+node hyper-focus/tests/secure-mock-backend.test.cjs
+node hyper-focus/tests/supabase-foundation.test.cjs
 node hyper-focus/qa/validate_mock.js
+node hyper-focus/qa/validate_variations.js
+node hyper-focus/qa/verify_q04_q09_visual_contract.js
 node hyper-focus/qa/validate_portal_browser.cjs http://127.0.0.1:4177
 ```
 
@@ -167,7 +192,10 @@ node hyper-focus/qa/validate_portal_browser.cjs http://127.0.0.1:4177
 
 ## 다음 구현 순서
 
-1. 검수 완료된 모의고사를 `portal-data.js` 그룹에 연결
-2. VIP 게시 관리자와 PDF→페이지 이미지 업로드를 `vip/data.js` 계약에 연결
-3. 서버 인증·권한 저장소 도입 후 공개 `data.js`와 브라우저 GitHub 토큰 제거
-4. 다른 기기에서도 승인번호별 과거 회차를 복원하는 중앙 기록 조회 추가
+1. 기존 `premier/` 공개 payload의 private Storage 이전·정적 공개본 제거 계획 확정
+2. 검수 완료 문항만 넣은 1회분 문제 manifest·보호 답안·문제 이미지를 비공개 저장소에 올리고 회차·권한 행 준비
+3. 일반 서명 함수 → DB migration → `secure-mock` 순으로 개발 환경에 적용하고 익명·교차 학생·권한 회수·답안 전후·재시도 E2E 검증
+4. `mock/index.html`·`mock/viewer.html`을 새 API에 연결: 전역 `mock` 권한 선차단 제거, `loadAnswers` 뒤 O/X, 서버 영수증 표시, 오류 문자열 escape, 명시적 재응시
+5. 모바일·데스크톱·A4 인쇄를 통과한 회차만 공개 목록에 연결한 뒤 마지막에 `secureMockDelivery=true` 전환
+6. VIP 게시 관리자와 PDF→페이지 이미지 업로드를 `vip/data.js` 계약에 연결
+7. 공개 `data.js`와 브라우저 GitHub 토큰 제거 및 다른 기기의 승인번호별 과거 회차 중앙 복원 추가
