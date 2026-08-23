@@ -181,6 +181,12 @@ function testStaticSecurityContracts() {
   assert.match(adminBootstrapWrapper, /ZeroFreeBSTR/);
   assert.doesNotMatch(adminBootstrapWrapper, /sb_secret_[A-Za-z0-9_-]{8,}/);
 
+  const adminBootstrapLauncher = read("supabase/run-bootstrap-admin.cmd");
+  assert.match(adminBootstrapLauncher, /-ExecutionPolicy Bypass/);
+  assert.match(adminBootstrapLauncher, /bootstrap-admin-local\.ps1/);
+  assert.match(adminBootstrapLauncher, /docssam1@gmail\.com/);
+  assert.doesNotMatch(adminBootstrapLauncher, /sb_secret_[A-Za-z0-9_-]{8,}/);
+
   const viewer = read("mock/viewer.html");
   assert.match(viewer, /secureMockDelivery/);
   assert.match(viewer, /GFieldHFSecureMock/);
