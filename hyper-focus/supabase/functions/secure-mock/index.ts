@@ -678,10 +678,15 @@ async function loadAnswers(
   });
   if (revealError) mapRpcError(revealError, "reveal");
   const reveal = rpcRow(revealData, "answer_reveal_failed");
-  if (Number(reveal.manifest_revision) !== revision) throw new ApiError(409, "answer_revision_mismatch");
+  if (Number(reveal.manifest_revision) !== revision
+    || !["grading", "submitted"].includes(String(reveal.status))
+    || typeof reveal.answers_viewed_at !== "string"
+    || !Number.isFinite(Date.parse(reveal.answers_viewed_at))) {
+    throw new ApiError(409, "answer_revision_mismatch");
+  }
 
   // The policy becomes true only after hf_reveal_mock_answers commits the exact
-  // owner/revision grading transition.
+  // owner/revision reveal gate. A submitted attempt keeps its score and receipt.
   const visibleAnswer = await resolveVisibleAsset(userClient, String(attempt.mock_exam_id), revision, "answer");
   const [manifestAsset, answerAsset] = await Promise.all([
     serviceAsset(service, String(attempt.manifest_asset_id)),

@@ -42,15 +42,19 @@
 
 `hyperfocus-extra` 또는 `problem-bank` 권한은 문제지 뷰어까지 유료 등급으로 전달된다. 이 계약은 `diagnosis.html`과 `mock/viewer.html` 양쪽에서 함께 검사한다.
 
+단, 현재 맞춤 문제 생성기와 variation 데이터는 공개 브라우저 JS에 있어 이 검사는 UI 이용 제한일 뿐 유료 보안 경계가 아니다. 개발자 도구에서 클라이언트 값을 바꾸면 추가 문제 생성을 흉내 낼 수 있으므로, 난이도별 3번째 이후 유료 문제를 실제 판매하기 전에는 서버가 권한을 검사해 문제지 또는 짧은 서명 자료만 반환하는 별도 Secure Problem Bank 경로로 옮겨야 한다. 그 전에는 추가 문제 기능을 보안 완료로 표시하거나 유료 공개하면 안 된다.
+
 ## 모의고사 연결
 
-공개 목록은 `portal-data.js`가 관리한다.
+`portal-data.js`는 큰 책과 15개 회차 자리만 관리한다.
 
 - 활용 모의고사 8회
 - 파이널 모의고사 3회
 - 최종 모의고사 4회
 
-각 회차는 답과 화면 검수가 끝난 뒤에만 해당 그룹의 `items`에 URL을 넣는다. 빈 회차는 `검수 중`으로 보이며 응시 링크를 만들지 않는다.
+회차 URL을 `portal-data.js`에 직접 넣지 않는다. `portal-collection.js`가 공개 안전 목록 `mock/premier-release-catalog.js`와 로그인 학생의 `secure-mock.listExams()` 응답을 교집합으로 결합한다. 공개 목록이 `published`이고 `visualGate=false`이며 학생 JWT의 RLS 목록에도 있는 회차만 `./mock/?exam=<slug>` 링크를 만든다. URL에는 학생·승인번호·seed·attempt를 넣지 않는다.
+
+15개 자리는 항상 보인다. `review_pending`은 `검수 중`, 공개 검수를 통과했지만 개인 회차 권한이 없는 항목은 `잠김`, 교집합을 통과한 회차만 `응시하기`로 표시한다. 기능 플래그가 꺼져 있으면 서버를 호출하지 않고 15개 모두를 `검수 중`으로 둔다. 목록 오류·로그아웃·모달 닫기 경합도 링크를 만들지 않는 잠금 우선으로 처리한다.
 
 감사 수치만 담는 공개 안전 목록은 `mock/premier-release-catalog.js`에 별도로 둔다. 활용 8회·파이널 3회·최종 4회, 총 15회가 모두 `review_pending`, `href: null` 상태이며 문항·정답·원본 경로·자산 주소는 포함하지 않는다. 현재 감사 결과는 전체 300문항 중 정답 검산 225문항, 잠금 75문항이다. 한 회차라도 잠금 문항이나 모바일 시각 게이트가 남아 있으면 회차 전체를 공개하지 않는다.
 
@@ -161,10 +165,13 @@ relatedIds, status
 - Edge Function은 JWT와 학생 RLS를 먼저 확인한 뒤 service role을 사용한다.
 - 문제 manifest와 보호 답안은 `questionKey + revision` 및 SHA-256·바이트 크기로 고정한다.
 - 문제 그림만 짧은 private Storage 서명 URL로 반환하고 원본 경로·manifest·답안 JSON은 일반 서명 함수로 내려주지 않는다.
-- 정답을 확인하면 응시 상태를 `grading`으로 원자 전환하고, O/X만 받은 서버가 점수·오답 문항·약점 유형을 다시 계산한다.
-- 응시 시작과 제출은 탭의 안정 UUID 및 DB 잠금으로 재시도 중복을 막고 회차당 최대 3회로 제한한다.
+- 영상 해설을 보며 바로 O/X를 제출하는 경로와, 보호 정답을 연 뒤 O/X를 제출하는 경로를 모두 허용한다. 두 경로 모두 서버가 점수·오답 문항·약점 유형을 다시 계산한다.
+- `loadAnswers`는 선택 동작이다. 학생이 정답 버튼을 누르면 즉시 열람 시각을 기록하고 공개하며, `answers_released_at`은 현재 표시 정보이지 지연 공개 차단 시각이 아니다.
+- 일반 `mock` 상품 권한은 회차 자료 접근 권한으로 쓰지 않는다. 구매 상품은 포함 회차마다 활성 `hf_mock_entitlements` 행을 만들고, Edge와 RLS는 해당 회차 권한만 인정한다.
+- 관리자 화면의 `활용 8회`, `파이널 3회`, `최종 4회` 토글은 `set_mock_bundle` 한 동작으로 정확한 회차별 권한을 원자적으로 만들거나 회수한다. 일부 회차만 있는 상태는 `partial`, 카탈로그 자체가 8·3·4 계약과 다르면 `catalog_error`로 표시한다. 원격 관리자 화면에는 전체 회차를 여는 일반 `mock` 체크박스를 두지 않는다.
+- 응시 시작과 제출은 탭의 안정 UUID 및 DB 잠금으로 재시도 중복을 막는다. 현재 자동 진입점은 최초 1회만 만들고, 탭 기록이 사라지면 같은 제출 회차를 읽기 전용으로 재개한다. 2·3회차는 향후 명시적 재응시 동작으로만 열어야 한다.
 
-이 코드는 아직 원격 DB에 적용하거나 Edge Function으로 배포하지 않았다. `supabase-config.js`의 `enabled`와 `features.secureMockDelivery`도 계속 `false`이고 `mock/index.html`·`mock/viewer.html`에는 스크립트를 연결하지 않았다. 실제 PostgreSQL 적용, 1회분 private asset, 학생 두 계정 교차 접근, 답안 전후, 권한 회수, 모바일·A4 인쇄를 검증하기 전에는 기능을 켜지 않는다.
+이 코드는 아직 원격 DB에 적용하거나 Edge Function으로 배포하지 않았다. `mock/index.html`·`mock/viewer.html`, 포털 15회 목록, 관리자 3개 상품 토글 연결과 로컬 모의 서버 기반 데스크톱·390px 모바일 검수는 완료했지만, `supabase-config.js`의 `enabled`와 `features.secureMockDelivery`는 계속 `false`다. 실제 PostgreSQL 적용, 1회분 private asset, 학생 두 계정 교차 접근, 답안 전후, 권한 회수, A4 인쇄를 검증하기 전에는 기능을 켜지 않는다.
 
 배포 순서는 기존 일반 서명 함수의 우회 차단 수정본 → DB migration → `secure-mock` Edge Function → 1회분 E2E → 화면 연결 순이다. migration을 먼저 적용하면 현재 배포된 일반 서명 함수가 숨겨진 저장소 경로 열을 읽지 못해 일시 장애가 날 수 있다.
 
@@ -174,6 +181,10 @@ relatedIds, status
 node hyper-focus/qa/validate_premier_release_catalog.cjs
 node hyper-focus/tests/secure-mock.test.cjs
 node hyper-focus/tests/secure-mock-backend.test.cjs
+node hyper-focus/tests/secure-mock-ui.test.cjs
+node hyper-focus/tests/mock-product-bundles.test.cjs
+node hyper-focus/tests/mock-bundle-admin-ui.test.cjs
+node hyper-focus/tests/portal-secure-collection.test.cjs
 node hyper-focus/tests/supabase-foundation.test.cjs
 node hyper-focus/qa/validate_mock.js
 node hyper-focus/qa/validate_variations.js
@@ -185,6 +196,8 @@ node hyper-focus/qa/validate_portal_browser.cjs http://127.0.0.1:4177
 
 - 공개 프로그램 4개
 - DEMO: 열림 1개, 잠김 3개
+- 모의고사 15회 자리, `검수 중`·`잠김`·`응시하기` 교집합 표시
+- 관리자 활용 8회·파이널 3회·최종 4회 토글과 부분 승인 표시
 - 진단 승인번호 자동 로그인
 - VIP 직접 URL 접근 차단
 - 데스크톱·모바일 가로 넘침 없음
@@ -194,8 +207,9 @@ node hyper-focus/qa/validate_portal_browser.cjs http://127.0.0.1:4177
 
 1. 기존 `premier/` 공개 payload의 private Storage 이전·정적 공개본 제거 계획 확정
 2. 검수 완료 문항만 넣은 1회분 문제 manifest·보호 답안·문제 이미지를 비공개 저장소에 올리고 회차·권한 행 준비
-3. 일반 서명 함수 → DB migration → `secure-mock` 순으로 개발 환경에 적용하고 익명·교차 학생·권한 회수·답안 전후·재시도 E2E 검증
-4. `mock/index.html`·`mock/viewer.html`을 새 API에 연결: 전역 `mock` 권한 선차단 제거, `loadAnswers` 뒤 O/X, 서버 영수증 표시, 오류 문자열 escape, 명시적 재응시
+3. 일반 서명 함수 → DB migration → `secure-mock` 순으로 개발 환경에 적용하고 익명·교차 학생·회차별 권한 회수·영상 채점·답안 열람 채점·제출 뒤 열람·재시도 E2E 검증
+4. 별도 `startNewAttempt` 계약과 확인 화면을 만들어야만 2·3회차 재응시를 연다. 단순 페이지 열기나 새 탭은 응시 횟수를 늘리면 안 된다.
 5. 모바일·데스크톱·A4 인쇄를 통과한 회차만 공개 목록에 연결한 뒤 마지막에 `secureMockDelivery=true` 전환
 6. VIP 게시 관리자와 PDF→페이지 이미지 업로드를 `vip/data.js` 계약에 연결
-7. 공개 `data.js`와 브라우저 GitHub 토큰 제거 및 다른 기기의 승인번호별 과거 회차 중앙 복원 추가
+7. 난이도별 3번째 이후 유료 맞춤 문제 생성을 서버 권한·RLS 기반 전달로 옮겨 공개 브라우저 `accessTier` 신뢰 제거
+8. 공개 `data.js`와 브라우저 GitHub 토큰 제거 및 다른 기기의 승인번호별 과거 회차 중앙 복원 추가

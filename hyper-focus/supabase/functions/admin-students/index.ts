@@ -1,14 +1,39 @@
-import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.112.3";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 const ALLOWED_ORIGINS = new Set([
   "https://lete-on.gfieldacademy.net",
   "http://127.0.0.1:4177",
-  "http://localhost:4177"
+  "http://localhost:4177",
+  "http://127.0.0.1:41873",
+  "http://localhost:41873"
 ]);
 const CODE_ALPHABET = "ABCDEFGHJKMNPQRSTVWXYZ23456789";
 const EMAIL_DOMAIN = "auth.gfieldacademy.net";
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const PERMISSIONS = new Set(["hyperfocus", "hyperfocus-extra", "mock", "vip", "problem-bank"]);
+// `mock` is derived from per-exam product bundles and cannot be toggled here.
+const PERMISSIONS = new Set(["hyperfocus", "hyperfocus-extra", "vip", "problem-bank"]);
+const MOCK_BUNDLE_ACTION_FIELDS = new Set(["action", "studentId", "bundleKey", "enabled"]);
+const MOCK_PRODUCT_BUNDLES: Record<string, { series: "utilization" | "final" | "last"; slugs: readonly string[] }> = Object.freeze({
+  "premier-utilization": Object.freeze({
+    series: "utilization",
+    slugs: Object.freeze([
+      "premier-utilization-01", "premier-utilization-02",
+      "premier-utilization-03", "premier-utilization-04",
+      "premier-utilization-05", "premier-utilization-06",
+      "premier-utilization-07", "premier-utilization-08"
+    ])
+  }),
+  "premier-final": Object.freeze({
+    series: "final",
+    slugs: Object.freeze(["premier-final-01", "premier-final-02", "premier-final-03"])
+  }),
+  "premier-last": Object.freeze({
+    series: "last",
+    slugs: Object.freeze([
+      "premier-last-01", "premier-last-02", "premier-last-03", "premier-last-04"
+    ])
+  })
+});
 
 function environmentKey(mapName: string, singleName: string, legacyName: string): string {
   const mapValue = Deno.env.get(mapName);
@@ -16,7 +41,9 @@ function environmentKey(mapName: string, singleName: string, legacyName: string)
     try {
       const parsed = JSON.parse(mapValue) as Record<string, unknown>;
       if (typeof parsed.default === "string") return parsed.default;
-    } catch (_) {}
+    } catch (_) {
+      // A malformed optional key map falls through to the single-key names.
+    }
   }
   return Deno.env.get(singleName) || Deno.env.get(legacyName) || "";
 }
@@ -115,6 +142,61 @@ function formatCode(body: string): string {
 
 function normalizeCode(value: string): string {
   return value.toUpperCase().replace(/[\s-]+/gu, "");
+}
+
+function containsControlCharacter(value: string): boolean {
+  for (const character of value) {
+    const code = character.charCodeAt(0);
+    if (code <= 31 || code === 127) return true;
+  }
+  return false;
+}
+
+function mockBundleStates(
+  studentId: string,
+  exams: Array<Record<string, unknown>>,
+  entitlements: Array<Record<string, unknown>>,
+  now: number
+): Record<string, { state: "full" | "partial" | "none" | "catalog_error"; activeCount: number; expectedCount: number }> {
+  const catalogBySlug = new Map<string, string>();
+  exams.forEach(exam => {
+    const slug = String(exam.slug || "");
+    const bundle = Object.values(MOCK_PRODUCT_BUNDLES).find(candidate => candidate.slugs.includes(slug));
+    if (
+      bundle
+      && exam.series === bundle.series
+      && Number(exam.round_no) === bundle.slugs.indexOf(slug) + 1
+    ) {
+      catalogBySlug.set(slug, String(exam.id || ""));
+    }
+  });
+  const activeExamIds = new Set(
+    entitlements.filter(entitlement => {
+      const starts = Date.parse(String(entitlement.starts_at || ""));
+      const expires = entitlement.expires_at ? Date.parse(String(entitlement.expires_at)) : null;
+      return entitlement.student_id === studentId
+        && !entitlement.revoked_at
+        && Number.isFinite(starts)
+        && starts <= now
+        && (expires === null || (Number.isFinite(expires) && expires > now));
+    }).map(entitlement => String(entitlement.mock_exam_id || ""))
+  );
+
+  const result: Record<string, { state: "full" | "partial" | "none" | "catalog_error"; activeCount: number; expectedCount: number }> = {};
+  Object.values(MOCK_PRODUCT_BUNDLES).forEach(bundle => {
+    const catalogIds = bundle.slugs
+      .map(slug => catalogBySlug.get(slug))
+      .filter((id): id is string => Boolean(id));
+    const activeCount = catalogIds.filter(id => activeExamIds.has(id)).length;
+    const expectedCount = bundle.slugs.length;
+    const state = catalogIds.length !== expectedCount
+      ? "catalog_error"
+      : activeCount === expectedCount
+        ? "full"
+        : activeCount === 0 ? "none" : "partial";
+    result[bundle.series] = { state, activeCount, expectedCount };
+  });
+  return result;
 }
 
 async function derivedPassword(name: string, code: string): Promise<string> {
@@ -327,13 +409,25 @@ Deno.serve(async request => {
 
   try {
     if (action === "list") {
-      const { data: rows, error } = await service
-        .from("hf_students")
-        .select("id,display_name,student_type,account_status,created_at,hf_entitlements(permission_key,starts_at,expires_at,revoked_at)")
-        .order("display_name", { ascending: true });
-      if (error) throw error;
+      const [studentResult, examResult, mockEntitlementResult] = await Promise.all([
+        service
+          .from("hf_students")
+          .select("id,display_name,student_type,account_status,created_at,hf_entitlements(permission_key,starts_at,expires_at,revoked_at)")
+          .order("display_name", { ascending: true }),
+        service
+          .from("hf_mock_exams")
+          .select("id,slug,series,round_no"),
+        service
+          .from("hf_mock_entitlements")
+          .select("student_id,mock_exam_id,starts_at,expires_at,revoked_at")
+      ]);
+      if (studentResult.error || examResult.error || mockEntitlementResult.error) {
+        throw studentResult.error || examResult.error || mockEntitlementResult.error;
+      }
       const now = Date.now();
-      const students = (rows || []).map(row => ({
+      const exams = (examResult.data || []) as Array<Record<string, unknown>>;
+      const mockEntitlements = (mockEntitlementResult.data || []) as Array<Record<string, unknown>>;
+      const students = (studentResult.data || []).map(row => ({
         id: row.id,
         name: row.display_name,
         type: row.student_type,
@@ -343,7 +437,8 @@ Deno.serve(async request => {
           const starts = Date.parse(String(entry.starts_at || ""));
           const expires = entry.expires_at ? Date.parse(String(entry.expires_at)) : null;
           return !entry.revoked_at && starts <= now && (expires === null || expires > now);
-        }).map((entry: Record<string, unknown>) => entry.permission_key)
+        }).map((entry: Record<string, unknown>) => entry.permission_key),
+        mockBundles: mockBundleStates(String(row.id), exams, mockEntitlements, now)
       }));
       return json(request, 200, { students });
     }
@@ -352,7 +447,7 @@ Deno.serve(async request => {
       const name = cleanName(payload.name);
       const studentType = String(payload.studentType || "");
       if (
-        name.length < 1 || name.length > 80 || /[\u0000-\u001f\u007f]/u.test(name)
+        name.length < 1 || name.length > 80 || containsControlCharacter(name)
         || !["internal", "online"].includes(studentType)
       ) return json(request, 400, { error: "invalid_student" });
 
@@ -452,6 +547,45 @@ Deno.serve(async request => {
       });
       if (error || changed !== true) throw error || new Error("entitlement_change_failed");
       return json(request, 200, { ok: true });
+    }
+
+    if (action === "set_mock_bundle") {
+      if (Object.keys(payload).some(key => !MOCK_BUNDLE_ACTION_FIELDS.has(key))) {
+        return json(request, 400, { error: "invalid_mock_bundle_request" });
+      }
+      const bundleKey = String(payload.bundleKey || "");
+      if (!Object.hasOwn(MOCK_PRODUCT_BUNDLES, bundleKey) || typeof payload.enabled !== "boolean") {
+        return json(request, 400, { error: "invalid_mock_bundle" });
+      }
+      const value = payload.enabled;
+      const { data: changed, error } = await service.rpc("hf_set_student_mock_bundle", {
+        p_student_id: studentId,
+        p_bundle_key: bundleKey,
+        p_enabled: value,
+        p_starts_at: null,
+        p_expires_at: null,
+        p_granted_by: authData.user.id
+      });
+      if (error) {
+        if (error.code === "22023") return json(request, 400, { error: "invalid_mock_bundle" });
+        if (error.code === "23503") return json(request, 404, { error: "student_not_found" });
+        if (error.code === "55000") return json(request, 409, { error: "mock_bundle_not_ready" });
+        throw error;
+      }
+      const row = Array.isArray(changed) ? changed[0] : null;
+      const changedCount = Number(row?.changed_count);
+      if (
+        !row || row.bundle_key !== bundleKey || row.enabled !== value
+        || !Number.isInteger(changedCount) || changedCount < 0
+        || typeof row.mock_menu_active !== "boolean"
+      ) throw new Error("mock_bundle_change_failed");
+      return json(request, 200, {
+        ok: true,
+        bundleKey,
+        enabled: value,
+        changedCount,
+        mockMenuActive: row.mock_menu_active
+      });
     }
 
     return json(request, 400, { error: "invalid_action" });

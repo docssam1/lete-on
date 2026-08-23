@@ -206,12 +206,15 @@ function testStaticSecurityContracts() {
   assert.match(viewer, /secureMockDelivery/);
   assert.match(viewer, /GFieldHFSecureMock/);
   assert.match(viewer, /검수 대기/);
-  assert.match(viewer, /if\(remoteMode\)params\.delete\('student'\)/);
+  assert.doesNotMatch(viewer, /canAccess\(portalSession,'mock'\)/);
+  assert.match(viewer, /secureMock\.loadExam\(examId\)/);
+  assert.match(viewer, /secureMock\.loadAnswers\(doc\.attemptId\)/);
+  assert.match(viewer, /remoteExam\?new URLSearchParams\(\{exam:doc\.id\}\)/);
 
   const mockIndex = read("mock/index.html");
-  assert.match(mockIndex, /GFieldHFPortalAuth\.canAccess\(portalSession,'mock'\)/);
-  assert.match(mockIndex, /if\(remoteMode\)exam=await secureMock\.loadExam/);
-  assert.match(mockIndex, /secureMock\.saveAttempt/);
+  assert.doesNotMatch(mockIndex, /canAccess\(portalSession,'mock'\)/);
+  assert.match(mockIndex, /if\(remoteMode\)exam=await secureMock\.loadExam\(examId\)/);
+  assert.match(mockIndex, /secureMock\.saveAttempt\(\{attemptId:exam\.attemptId,marks\}\)/);
   assert.match(mockIndex, /온라인 모의고사 · 검수 대기/);
   assert.ok(
     mockIndex.indexOf("if(!secureMockEnabled") < mockIndex.indexOf("await enter();"),

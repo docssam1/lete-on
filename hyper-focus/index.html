@@ -11,9 +11,12 @@
   <link rel="stylesheet" href="./portal.css">
   <script src="./data.js"></script>
   <script src="./portal-data.js"></script>
+  <script src="./mock/premier-release-catalog.js"></script>
   <script src="./supabase-config.js"></script>
   <script src="./supabase-client.js"></script>
+  <script src="./secure-mock.js"></script>
   <script src="./portal-auth.js"></script>
+  <script src="./portal-collection.js"></script>
 </head>
 <body>
   <header class="site-header">
@@ -128,6 +131,10 @@
       <p class="catalog-label">MOCK EXAM CATALOG</p>
       <h2 id="collectionTitle">온라인 모의고사</h2>
       <p>과정을 선택하면 검수 완료된 회차만 응시 화면으로 연결됩니다.</p>
+      <div class="collection-connection">
+        <p id="collectionStatus" role="status" aria-live="polite" hidden></p>
+        <button id="collectionRetry" type="button" hidden>권한 다시 확인</button>
+      </div>
       <div id="collectionGroups"></div>
     </section>
   </div>

@@ -64,8 +64,9 @@ alter table public.hf_mock_attempts
     ),
   add constraint hf_mock_attempts_grading_state_check
     check (
-      status not in ('grading', 'submitted')
-      or answers_viewed_at is not null
+      (status = 'in_progress' and answers_viewed_at is null)
+      or (status = 'grading' and answers_viewed_at is not null)
+      or status in ('submitted', 'review_pending')
     ),
   add constraint hf_mock_attempts_submission_digest_check
     check (
@@ -148,6 +149,8 @@ alter table public.hf_mock_attempts
 
 -- The service-only RPCs repeat the authorization check. This keeps a future
 -- Edge refactor from accidentally turning the service key into an IDOR path.
+-- Product bundles must provision one active hf_mock_entitlements row for each
+-- included exam; a generic product entitlement is intentionally not a pass.
 create or replace function hf_private.has_active_mock_access(
   p_student_id uuid,
   p_mock_exam_id uuid
@@ -173,25 +176,14 @@ as $$
         and exam.status = 'published'
         and exam.published_at <= now()
     )
-    and (
-      exists (
-        select 1
-        from public.hf_entitlements as entitlement
-        where entitlement.student_id = p_student_id
-          and entitlement.permission_key = 'mock'
-          and entitlement.revoked_at is null
-          and entitlement.starts_at <= now()
-          and (entitlement.expires_at is null or entitlement.expires_at > now())
-      )
-      or exists (
-        select 1
-        from public.hf_mock_entitlements as entitlement
-        where entitlement.student_id = p_student_id
-          and entitlement.mock_exam_id = p_mock_exam_id
-          and entitlement.revoked_at is null
-          and entitlement.starts_at <= now()
-          and (entitlement.expires_at is null or entitlement.expires_at > now())
-      )
+    and exists (
+      select 1
+      from public.hf_mock_entitlements as entitlement
+      where entitlement.student_id = p_student_id
+        and entitlement.mock_exam_id = p_mock_exam_id
+        and entitlement.revoked_at is null
+        and entitlement.starts_at <= now()
+        and (entitlement.expires_at is null or entitlement.expires_at > now())
     );
 $$;
 
@@ -297,14 +289,42 @@ begin
     return;
   end if;
 
+  -- Losing sessionStorage or receiving a fresh client event must never spend
+  -- another paid attempt. Resume the latest compatible submitted attempt. Any
+  -- other history requires a future explicit retake action, which this RPC
+  -- intentionally does not implement.
+  select attempt.*
+  into v_attempt
+  from public.hf_mock_attempts as attempt
+  where attempt.student_id = p_student_id
+    and attempt.mock_exam_id = p_mock_exam_id
+  order by attempt.attempt_no desc
+  limit 1
+  for update;
+
+  if found then
+    if v_attempt.status = 'submitted'
+       and v_attempt.manifest_asset_id = p_manifest_asset_id
+       and v_attempt.manifest_revision = p_manifest_revision
+       and v_attempt.question_count = p_question_count then
+      return query select
+        v_attempt.id, v_attempt.attempt_no, v_attempt.seed,
+        v_attempt.manifest_revision, v_attempt.status, v_attempt.started_at;
+      return;
+    end if;
+    raise exception 'explicit retake required' using errcode = '55000';
+  end if;
+
   select coalesce(max(attempt.attempt_no), 0) + 1
   into v_next_attempt
   from public.hf_mock_attempts as attempt
   where attempt.student_id = p_student_id
     and attempt.mock_exam_id = p_mock_exam_id;
 
-  if v_next_attempt > 3 then
-    raise exception 'mock attempt limit reached' using errcode = '22023';
+  -- Defense in depth: this entry point may create only the first attempt.
+  -- Attempts 2 and 3 require a future, explicit retake RPC.
+  if v_next_attempt <> 1 then
+    raise exception 'explicit retake required' using errcode = '55000';
   end if;
 
   -- Keep the seed comfortably inside JavaScript's exact integer range.
@@ -401,7 +421,14 @@ begin
         answers_viewed_at = coalesce(attempt.answers_viewed_at, clock_timestamp())
     where attempt.id = v_attempt.id
     returning * into v_attempt;
-  elsif v_attempt.answers_viewed_at is null then
+  elsif v_attempt.status = 'submitted' and v_attempt.answers_viewed_at is null then
+    -- A video-guided direct submission may reveal answers afterwards. Preserve
+    -- the submitted receipt and grading result; only record the reveal gate.
+    update public.hf_mock_attempts as attempt
+    set answers_viewed_at = clock_timestamp()
+    where attempt.id = v_attempt.id
+    returning * into v_attempt;
+  elsif v_attempt.status = 'grading' and v_attempt.answers_viewed_at is null then
     raise exception 'attempt answer state is invalid' using errcode = '55000';
   end if;
 
@@ -507,8 +534,11 @@ begin
     raise exception 'submission idempotency conflict' using errcode = '23505';
   end if;
 
-  if v_attempt.status <> 'grading' or v_attempt.answers_viewed_at is null then
-    raise exception 'answers must be revealed before self grading' using errcode = '55000';
+  if not (
+    (v_attempt.status = 'in_progress' and v_attempt.answers_viewed_at is null)
+    or (v_attempt.status = 'grading' and v_attempt.answers_viewed_at is not null)
+  ) then
+    raise exception 'attempt cannot be submitted from current grading state' using errcode = '55000';
   end if;
   if (select count(*) from pg_catalog.jsonb_object_keys(p_marks)) <> v_attempt.question_count
      or exists (
@@ -566,7 +596,7 @@ end;
 $$;
 
 -- Asset reads remain RLS-scoped. Answer metadata is visible only after the
--- owner has atomically entered grading for the exact manifest revision.
+-- owner has atomically revealed answers for the exact manifest revision.
 drop policy hf_mock_exams_entitled_select on public.hf_mock_exams;
 create policy hf_mock_exams_entitled_select
 on public.hf_mock_exams for select to authenticated
@@ -574,23 +604,13 @@ using (
   status = 'published'
   and published_at <= now()
   and (select hf_private.is_active_student())
-  and (
-    exists (
-      select 1 from public.hf_entitlements as entitlement
-      where entitlement.student_id = (select auth.uid())
-        and entitlement.permission_key = 'mock'
-        and entitlement.revoked_at is null
-        and entitlement.starts_at <= now()
-        and (entitlement.expires_at is null or entitlement.expires_at > now())
-    )
-    or exists (
-      select 1 from public.hf_mock_entitlements as entitlement
-      where entitlement.student_id = (select auth.uid())
-        and entitlement.mock_exam_id = hf_mock_exams.id
-        and entitlement.revoked_at is null
-        and entitlement.starts_at <= now()
-        and (entitlement.expires_at is null or entitlement.expires_at > now())
-    )
+  and exists (
+    select 1 from public.hf_mock_entitlements as entitlement
+    where entitlement.student_id = (select auth.uid())
+      and entitlement.mock_exam_id = hf_mock_exams.id
+      and entitlement.revoked_at is null
+      and entitlement.starts_at <= now()
+      and (entitlement.expires_at is null or entitlement.expires_at > now())
   )
 );
 
@@ -605,23 +625,13 @@ using (
     where exam.id = hf_mock_assets.mock_exam_id
       and exam.status = 'published'
       and exam.published_at <= now()
-      and (
-        exists (
-          select 1 from public.hf_entitlements as entitlement
-          where entitlement.student_id = (select auth.uid())
-            and entitlement.permission_key = 'mock'
-            and entitlement.revoked_at is null
-            and entitlement.starts_at <= now()
-            and (entitlement.expires_at is null or entitlement.expires_at > now())
-        )
-        or exists (
-          select 1 from public.hf_mock_entitlements as entitlement
-          where entitlement.student_id = (select auth.uid())
-            and entitlement.mock_exam_id = exam.id
-            and entitlement.revoked_at is null
-            and entitlement.starts_at <= now()
-            and (entitlement.expires_at is null or entitlement.expires_at > now())
-        )
+      and exists (
+        select 1 from public.hf_mock_entitlements as entitlement
+        where entitlement.student_id = (select auth.uid())
+          and entitlement.mock_exam_id = exam.id
+          and entitlement.revoked_at is null
+          and entitlement.starts_at <= now()
+          and (entitlement.expires_at is null or entitlement.expires_at > now())
       )
       and (
         (

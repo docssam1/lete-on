@@ -2,7 +2,7 @@
 
 이 폴더는 Hyper Focus 전용 Supabase 기반입니다. 필즈더클래식의 기존 Supabase 프로젝트와 합치지 않습니다.
 
-현재 상태는 **Hyper Focus 전용 원격 프로젝트·기존 DB migration·기존 두 Edge Function 배포 완료, 보안형 모의고사 코드는 로컬 브랜치에서 검증 완료, 학생 전환·웹 배포 비활성**입니다. 프로젝트 `gfield-hyper-focus`(`uqtkxhchtbcizzteuvsq`, 서울 리전)는 기존 필즈더클래식 프로젝트와 분리되어 있습니다. 새 `secure-mock` migration과 Edge Function은 아직 원격에 적용하지 않았다. `supabase-config.js`의 `enabled`와 `features.secureMockDelivery`는 의도적으로 `false`이며, 실제 학생·권한·private asset E2E와 화면 연결 전에는 바꾸지 않습니다.
+현재 상태는 **Hyper Focus 전용 원격 프로젝트·기존 DB migration·기존 두 Edge Function 배포 완료, 보안형 모의고사 코드와 화면 연결은 로컬 브랜치에서 검증 완료, 학생 전환·웹 배포 비활성**입니다. 프로젝트 `gfield-hyper-focus`(`uqtkxhchtbcizzteuvsq`, 서울 리전)는 기존 필즈더클래식 프로젝트와 분리되어 있습니다. 새 `secure-mock` migration과 Edge Function은 아직 원격에 적용하지 않았다. `supabase-config.js`의 `enabled`와 `features.secureMockDelivery`는 의도적으로 `false`이며, 실제 학생·회차별 권한·private asset E2E 전에는 바꾸지 않습니다.
 
 ## 절대 금지
 
@@ -44,6 +44,12 @@
 8. 보안형 모의고사 `listExams`·`loadExam`·`loadAnswers`·`saveAttempt` 서버 계약, 화면 연결, 실제 DB·Storage E2E를 모두 검증한 뒤에만 `features.secureMockDelivery=true`로 바꿉니다. 그 전에는 학생 화면이 자동으로 `검수 대기` 잠금을 표시합니다.
 9. `supabase-config.js`에는 프로젝트 URL, publishable 키, 관리자 이메일만 넣고 마지막에 `enabled=true`로 전환합니다.
 
+모의고사 판매 권한은 일반 `permission_key='mock'`로 전체 회차를 열지 않습니다. `20260823162348_secure_mock_product_bundles.sql`의 `hf_set_student_mock_bundle`이 활용 8회·파이널 3회·최종 4회 상품을 정확한 회차별 `hf_mock_entitlements` 행으로 원자적으로 승인·회수합니다. 브라우저는 회차 ID 목록이나 개수를 보내지 않고 `set_mock_bundle`에 `studentId`, 고정 `bundleKey`, `enabled`만 보냅니다. 원격 관리자 화면에는 일반 `mock` 체크박스가 없고, 상품별 `full`·`partial`·`none`·`catalog_error` 상태를 표시합니다.
+
+학생 포털은 큰 온라인 모의고사 책을 여는 메뉴 권한과 실제 회차 자료 권한을 분리합니다. 큰 책은 항상 기존 상품 권한으로 잠금/열림을 표시하지만, 내부 15회 목록은 공개 안전 카탈로그와 인자 없는 `listExams()` RLS 응답의 교집합만 링크로 만듭니다. 기능 플래그가 꺼지거나 목록 확인이 실패하면 모두 잠급니다.
+
+영상 해설을 보며 정답을 열지 않고 O/X를 제출하는 경로와, 정답을 연 뒤 제출하는 경로는 모두 지원합니다. 정답 버튼은 현재 즉시 공개 동작이며 `answers_released_at`은 지연 공개 차단에 사용하지 않습니다.
+
 ## 원격 필수 검증
 
 - 익명 사용자는 학생·권한·기록·private Storage를 읽지 못함
@@ -53,7 +59,7 @@
 - 관리자 AAL1은 거부되고 AAL2만 통과함
 - 정지·보관·권한 회수는 즉시 반영됨
 - 레거시 이관을 두 번 실행해도 중복되지 않으며 충돌은 `review_pending`으로 남음
-- 모의고사 manifest에 정답이 없고 답안 asset은 제출/공개 시각 정책을 통과한 뒤에만 보임
+- 모의고사 manifest에 정답이 없고 답안 asset은 명시적인 정답 열람 RPC가 열람 시각을 기록한 뒤에만 보임. 영상 채점 제출만으로는 열리지 않음
 - 데스크톱과 모바일에서 로그인, 진단, 인쇄, 로그아웃을 실제 확인함
 - Supabase Security Advisor와 Performance Advisor의 새 경고를 검토함
 
@@ -63,12 +69,13 @@ Free 요금제는 비용이 없지만 비활성 프로젝트 일시정지와 저
 
 ## 현재 잠금 항목
 
-- 관리자 계정 부트스트랩과 TOTP 등록 미실행
+- Supabase 관리자 부트스트랩·TOTP 전환은 사용자 결정으로 이번 작업 범위에서 보류했으며, 현재 승인번호 관리자 흐름을 유지함
 - 실제 관리자·학생 두 계정을 사용한 AAL2, 교차 학생 차단, 번호 회전 RLS 통합 테스트 미실행
 - 보안형 모의고사 전달 코드와 정적 계약 검사는 완료했지만 새 migration·Edge Function 원격 미적용, private asset·회차 데이터 없음
-- `mock/index.html`·`mock/viewer.html`의 `loadAnswers → O/X → saveAttempt` 화면 연결, 회차별 RLS 권한 처리, 명시적 재응시 흐름 미구현
+- `mock/index.html`·`mock/viewer.html` 화면 연결, 영상 채점·답안 열람 채점, 제출 잠금, 회차별 RLS, 포털 15회 목록, 관리자 8·3·4 상품 토글 계약은 로컬 검증 완료. 실제 DB 적용과 명시적 2·3회차 재응시 흐름은 미구현
+- 난이도별 3번째 이후 유료 맞춤 문제는 아직 공개 브라우저 생성기와 `accessTier`에 의존하므로 서버 보안 경계가 아님. 별도 Secure Problem Bank API·RLS로 옮기기 전에는 유료 보호 완료로 간주하거나 공개 판매하지 않음
 - `data.js`의 기존 학생 명단·옛 승인번호 제거 전
-- 앱 내 브라우저 연결 오류로 모바일·데스크톱 실제 화면 검수 미완료
+- 로컬 모의 서버 기반 Chromium에서 데스크톱·390px 모바일 화면은 통과했지만 실제 Supabase 데이터와 운영 브라우저 E2E는 미완료
 - 현재 정적 레거시 관리자 로그인은 공개 SHA-256 비교이므로 임시 호환 모드일 뿐이며, Supabase+AAL2 전환 전에는 이 브랜치를 운영 보안 완료본으로 배포할 수 없음
 - 승인번호 회전·계정 상태 변경은 학생별 DB 작업 잠금 후 Auth를 갱신하고 완료합니다. 작업 중에는 학생 RLS 접근을 즉시 막고, 중단된 작업은 15분 뒤 새 관리자 요청으로 덮어써 복구하므로 동시 실행으로 DB/Auth 버전이 엇갈리지 않습니다.
 

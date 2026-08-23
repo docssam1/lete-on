@@ -34,6 +34,7 @@ function testRevisionAndAttemptSchema() {
     /wrong_question_keys text\[\] not null/,
     /wrong_type_keys text\[\] not null/,
     /status in \('in_progress', 'grading', 'submitted', 'review_pending'\)/,
+    /status = 'in_progress' and answers_viewed_at is null[\s\S]*status = 'grading' and answers_viewed_at is not null[\s\S]*status in \('submitted', 'review_pending'\)/,
     /hf_mock_attempts_marks_object_check[\s\S]*jsonb_typeof\(marks\) = 'object'/,
     /hf_mock_attempts_active_exam_idx[\s\S]*student_id, mock_exam_id\)[\s\S]*status in \('in_progress', 'grading'\)/,
     /hf_mock_attempts_submission_event_idx[\s\S]*where submission_event_id is not null/
@@ -53,12 +54,68 @@ function testServiceOnlyRpcContract() {
     assert.match(migration, new RegExp(`grant execute on function public\\.${name}\\([\\s\\S]*?to service_role;`, "i"));
   });
   assert.match(migration, /pg_catalog\.pg_advisory_xact_lock/);
-  assert.match(migration, /mock attempt limit reached/);
+  assert.match(migration, /if v_next_attempt <> 1 then[\s\S]*raise exception 'explicit retake required'/);
   assert.match(migration, /load event idempotency conflict/);
   assert.match(migration, /submission idempotency conflict/);
-  assert.match(migration, /status = 'grading'[\s\S]*answers_viewed_at = coalesce/);
-  assert.match(migration, /v_attempt\.status <> 'grading' or v_attempt\.answers_viewed_at is null/);
+  const reveal = section(migration, "create or replace function public.hf_reveal_mock_answers", "$$;");
+  assert.match(reveal, /v_attempt\.status = 'in_progress'[\s\S]*set status = 'grading',[\s\S]*answers_viewed_at = coalesce/);
+  const submittedReveal = section(
+    reveal,
+    "elsif v_attempt.status = 'submitted' and v_attempt.answers_viewed_at is null then",
+    "elsif v_attempt.status = 'grading' and v_attempt.answers_viewed_at is null then"
+  );
+  assert.match(submittedReveal, /set answers_viewed_at = clock_timestamp\(\)/);
+  assert.doesNotMatch(submittedReveal, /set status|correct_count|score|submitted_at|submission_event_id|submission_digest/);
+
+  const submit = section(migration, "create or replace function public.hf_submit_mock_attempt", "$$;");
+  assert.match(submit, /v_attempt\.status = 'in_progress' and v_attempt\.answers_viewed_at is null/);
+  assert.match(submit, /v_attempt\.status = 'grading' and v_attempt\.answers_viewed_at is not null/);
+  assert.ok(
+    submit.indexOf("if v_attempt.status = 'submitted' then")
+      < submit.indexOf("if not (\n    (v_attempt.status = 'in_progress'")
+  );
+  const submitUpdate = section(submit, "update public.hf_mock_attempts as attempt", "returning * into v_attempt;");
+  assert.doesNotMatch(submitUpdate, /answers_viewed_at/);
   assert.match(migration, /v_seed :=[\s\S]*& 2147483647::bigint/);
+}
+
+function testPerExamEntitlementAndReadOnlyResume() {
+  assert.doesNotMatch(migration, /permission_key\s*=\s*'mock'/);
+  const access = section(
+    migration,
+    "create or replace function hf_private.has_active_mock_access",
+    "$$;"
+  );
+  assert.match(access, /from public\.hf_mock_entitlements as entitlement/);
+  assert.match(access, /entitlement\.mock_exam_id = p_mock_exam_id/);
+
+  const examPolicy = section(
+    migration,
+    "create policy hf_mock_exams_entitled_select",
+    "drop policy hf_mock_assets_entitled_select"
+  );
+  assert.match(examPolicy, /from public\.hf_mock_entitlements as entitlement/);
+  assert.match(examPolicy, /entitlement\.mock_exam_id = hf_mock_exams\.id/);
+  const assetPolicy = section(
+    migration,
+    "create policy hf_mock_assets_entitled_select",
+    "-- Data API writes remain forbidden"
+  );
+  assert.match(assetPolicy, /from public\.hf_mock_entitlements as entitlement/);
+  assert.match(assetPolicy, /entitlement\.mock_exam_id = exam\.id/);
+
+  const begin = section(migration, "create or replace function public.hf_begin_mock_attempt", "$$;");
+  const latestLookup = begin.indexOf("order by attempt.attempt_no desc");
+  const submittedResume = begin.indexOf("if v_attempt.status = 'submitted'", latestLookup);
+  const nextAttempt = begin.indexOf("select coalesce(max(attempt.attempt_no), 0) + 1");
+  assert.ok(latestLookup >= 0 && submittedResume > latestLookup && nextAttempt > submittedResume);
+  assert.match(begin, /v_attempt\.manifest_asset_id = p_manifest_asset_id/);
+  assert.match(begin, /v_attempt\.manifest_revision = p_manifest_revision/);
+  assert.match(begin, /v_attempt\.question_count = p_question_count/);
+  assert.match(begin, /raise exception 'explicit retake required'/);
+  const noHistoryCreate = section(begin, "select coalesce(max(attempt.attempt_no), 0) + 1", "returning * into v_attempt;");
+  assert.match(noHistoryCreate, /if v_next_attempt <> 1 then[\s\S]*raise exception 'explicit retake required'/);
+  assert.match(noHistoryCreate, /insert into public\.hf_mock_attempts/);
 }
 
 function testRlsAndLeastPrivilege() {
@@ -123,10 +180,13 @@ function testManifestAndAssetFailClosedRules() {
 function testAnswerAndSubmissionDerivation() {
   const answers = section(edge, "async function loadAnswers(", "function validateMarks(");
   assert.ok(answers.indexOf('service.rpc("hf_reveal_mock_answers"') < answers.indexOf('resolveVisibleAsset(userClient'));
+  assert.match(answers, /\["grading", "submitted"\]\.includes\(String\(reveal\.status\)\)/);
+  assert.match(answers, /typeof reveal\.answers_viewed_at !== "string"/);
   assert.match(answers, /readVerifiedJson\(service, answerAsset, MAX_ANSWER_BYTES\)/);
   assert.match(answers, /validateAnswerManifest\(answerJson, manifest, exam\.raw, revision\)/);
 
   const save = section(edge, "async function saveAttempt(", "Deno.serve(");
+  assert.doesNotMatch(save, /hf_reveal_mock_answers|resolveVisibleAsset\([^)]*"answer"/);
   assert.match(save, /readVerifiedJson\(service, manifestAsset, MAX_MANIFEST_BYTES\)/);
   assert.match(save, /const correctCount = manifest\.questions\.length - wrongQuestions\.length/);
   assert.match(save, /const wrongQuestionKeys = wrongQuestions\.map/);
@@ -150,6 +210,7 @@ function testGenericSignerCannotBypassJsonValidation() {
 function main() {
   testRevisionAndAttemptSchema();
   testServiceOnlyRpcContract();
+  testPerExamEntitlementAndReadOnlyResume();
   testRlsAndLeastPrivilege();
   testEdgeAuthorizationOrderAndInputs();
   testManifestAndAssetFailClosedRules();

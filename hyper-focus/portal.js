@@ -3,10 +3,17 @@
 
   const catalog = window.GFIELD_HF_PORTAL;
   const auth = window.GFieldHFPortalAuth;
+  const collectionUi = window.GFieldHFPortalCollection;
   const $ = selector => document.querySelector(selector);
   const $$ = selector => Array.from(document.querySelectorAll(selector));
   let session = null;
   let mfaMode = false;
+  let currentCollection = null;
+  let collectionViewToken = 0;
+  const secureExamLoader = collectionUi?.createExamLoader?.() || Object.freeze({
+    load: () => Promise.reject(new Error("회차 목록 모듈을 준비하지 못했습니다.")),
+    reset: () => {}
+  });
 
   function esc(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -88,15 +95,104 @@
     toast.timer = setTimeout(() => el.classList.remove("show"), 2800);
   }
 
-  function openCollection(product) {
+  function collectionGroups(product, exams, remoteLoaded) {
+    if (collectionUi?.buildGroups) {
+      return collectionUi.buildGroups(
+        window.GFIELD_HF_PREMIER_RELEASE_CATALOG,
+        exams,
+        { remoteLoaded }
+      );
+    }
+    return product.groups.map(group => ({
+      key: group.key,
+      label: group.label,
+      note: group.note,
+      count: group.count,
+      rounds: Array.from({ length: group.count }, (_, index) => ({
+        number: index + 1,
+        label: `${group.label} ${index + 1}회`,
+        state: "review_pending",
+        action: "검수 중",
+        href: null
+      }))
+    }));
+  }
+
+  function renderCollectionGroups(product, exams, remoteLoaded) {
+    const groups = collectionGroups(product, exams, remoteLoaded);
+    $("#collectionGroups").innerHTML = groups.map(group => `<section class="exam-group"><header><div><small>${esc(group.note)}</small><h3>${esc(group.label)}</h3></div><span>${esc(group.count)}회</span></header><div class="exam-list">${group.rounds.map(round => round.href
+      ? `<a href="${esc(round.href)}" aria-label="${esc(round.label)} 응시하기"><b>${esc(round.number)}</b><span>${esc(round.label)}</span><i>${esc(round.action)}</i></a>`
+      : `<button type="button" disabled aria-label="${esc(round.label)} ${esc(round.action)}"><b>${esc(round.number)}</b><span>${esc(round.label)}</span><i>${esc(round.action)}</i></button>`).join("")}</div></section>`).join("");
+    return groups;
+  }
+
+  function setCollectionStatus(message, retry) {
+    const status = $("#collectionStatus");
+    const button = $("#collectionRetry");
+    status.textContent = String(message || "");
+    status.hidden = !message;
+    button.hidden = retry !== true;
+  }
+
+  function secureCollectionAvailable() {
+    return collectionUi?.canLoadRemote?.(
+      window.GFIELD_HF_SUPABASE_CONFIG,
+      session,
+      window.GFieldHFSecureMock
+    ) === true;
+  }
+
+  function secureCollectionConfigured() {
+    const config = window.GFIELD_HF_SUPABASE_CONFIG;
+    return config?.enabled === true && config?.features?.secureMockDelivery === true;
+  }
+
+  async function openCollection(product, options = {}) {
+    currentCollection = product;
+    const currentSession = session;
+    const viewToken = ++collectionViewToken;
     $("#collectionTitle").textContent = product.shortTitle;
-    $("#collectionGroups").innerHTML = product.groups.map(group => {
-      const items = Array.from({ length: group.count }, (_, index) => group.items[index] || null);
-      return `<section class="exam-group"><header><div><small>${esc(group.note)}</small><h3>${esc(group.label)}</h3></div><span>${group.count}회</span></header><div class="exam-list">${items.map((item, index) => item?.href
-        ? `<a href="${esc(item.href)}"><b>${index + 1}</b><span>${esc(item.label || `${index + 1}회`)}</span><i>응시하기</i></a>`
-        : `<button type="button" disabled><b>${index + 1}</b><span>${index + 1}회</span><i>검수 중</i></button>`).join("")}</div></section>`;
-    }).join("");
-    showModal($("#collectionModal"));
+    renderCollectionGroups(product, [], false);
+    setCollectionStatus("", false);
+    if (options.keepOpen !== true || $("#collectionModal").hidden) showModal($("#collectionModal"));
+
+    // 현재 기능 플래그가 꺼져 있으면 기존 검수 대기 화면만 보여 주고 요청하지 않습니다.
+    if (!secureCollectionConfigured()) return;
+    if (!secureCollectionAvailable()) {
+      setCollectionStatus("로그인 정보를 확인하지 못해 모든 회차를 잠금 상태로 표시합니다.", false);
+      return;
+    }
+
+    setCollectionStatus("학생별 이용 가능 회차를 확인하고 있습니다.", false);
+    try {
+      const exams = await secureExamLoader.load(
+        currentSession,
+        () => window.GFieldHFSecureMock.listExams(),
+        { force: options.force === true }
+      );
+      if (viewToken !== collectionViewToken || session !== currentSession || currentCollection !== product) return;
+      const groups = renderCollectionGroups(product, exams, true);
+      const openCount = groups.flatMap(group => group.rounds).filter(round => round.state === "open").length;
+      setCollectionStatus(
+        openCount ? `승인된 공개 회차 ${openCount}개를 확인했습니다.` : "현재 승인된 공개 회차가 없습니다.",
+        false
+      );
+    } catch (_) {
+      if (viewToken !== collectionViewToken || session !== currentSession || currentCollection !== product) return;
+      renderCollectionGroups(product, [], false);
+      setCollectionStatus("회차 권한을 확인하지 못했습니다. 모든 회차를 잠금 상태로 표시합니다.", true);
+    }
+  }
+
+  function closeCollection() {
+    collectionViewToken += 1;
+    currentCollection = null;
+    setCollectionStatus("", false);
+    closeModal($("#collectionModal"));
+  }
+
+  function retryCollection() {
+    if (currentCollection) openCollection(currentCollection, { force: true, keepOpen: true });
   }
 
   function openProduct(key) {
@@ -154,6 +250,7 @@
       location.href = "./admin.html";
       return;
     }
+    secureExamLoader.reset();
     session = result;
     closeModal($("#loginModal"));
     setMode();
@@ -164,9 +261,12 @@
     $("#loginForm").addEventListener("submit", login);
     $$('[data-login-open]').forEach(button => button.addEventListener("click", () => showModal($("#loginModal"))));
     $$('[data-modal-close]').forEach(button => button.addEventListener("click", () => closeModal($("#loginModal"))));
-    $$('[data-collection-close]').forEach(button => button.addEventListener("click", () => closeModal($("#collectionModal"))));
+    $$('[data-collection-close]').forEach(button => button.addEventListener("click", closeCollection));
+    $("#collectionRetry").addEventListener("click", retryCollection);
     $("[data-logout]").addEventListener("click", async () => {
       await auth.signOut();
+      secureExamLoader.reset();
+      if (!$("#collectionModal").hidden) closeCollection();
       session = null;
       setMode();
     });
@@ -176,7 +276,10 @@
     });
     document.addEventListener("keydown", event => {
       if (event.key !== "Escape") return;
-      $$(".modal.visible").forEach(closeModal);
+      $$(".modal.visible").forEach(modal => {
+        if (modal.id === "collectionModal") closeCollection();
+        else closeModal(modal);
+      });
     });
   }
 

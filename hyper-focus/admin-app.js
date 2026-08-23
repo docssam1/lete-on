@@ -5,7 +5,11 @@
   const REPO = "docssam1/lete-on";
   const BRANCH = "main";
   const FILE_PATH = "hyper-focus/data.js";
-  const PERMISSIONS = ["hyperfocus", "hyperfocus-extra", "mock", "vip", "problem-bank"];
+  const MOCK_BUNDLES = Object.freeze([
+    Object.freeze({ series: "utilization", key: "premier-utilization", label: "활용 8회", expectedCount: 8 }),
+    Object.freeze({ series: "final", key: "premier-final", label: "파이널 3회", expectedCount: 3 }),
+    Object.freeze({ series: "last", key: "premier-last", label: "최종 4회", expectedCount: 4 })
+  ]);
   const CHARS = "ABCDEFGHJKLMNPQRSTUVWXY23456789";
   const legacy = root.GFIELD_HF_DATA || { students: [], studentCode: {}, studentType: {}, access: {} };
   let remoteStudents = [];
@@ -53,6 +57,35 @@
     return permissions.includes(key) ? "checked" : "";
   }
 
+  function permissionCell(permissions, key, disabled) {
+    return `<td><input type="checkbox" data-permission="${key}" ${checked(permissions, key)} ${disabled ? "disabled" : ""} aria-label="${key}"></td>`;
+  }
+
+  function legacyMockCell(permissions) {
+    return `<td><label class="legacy-mock"><input type="checkbox" data-permission="mock" ${checked(permissions, "mock")}>레거시 전체</label></td>`;
+  }
+
+  function remoteMockCell(student) {
+    const states = student.mockBundles && typeof student.mockBundles === "object" ? student.mockBundles : {};
+    const archived = student.status === "archived";
+    return `<td><div class="bundle-list">${MOCK_BUNDLES.map(bundle => {
+      const state = states[bundle.series] && typeof states[bundle.series] === "object" ? states[bundle.series] : {};
+      const stateName = ["full", "partial", "none", "catalog_error"].includes(state.state) ? state.state : "catalog_error";
+      const activeCount = Number.isInteger(state.activeCount) ? state.activeCount : 0;
+      const expectedCount = Number.isInteger(state.expectedCount) ? state.expectedCount : bundle.expectedCount;
+      const detail = stateName === "partial" ? `${activeCount}/${expectedCount}` : stateName === "catalog_error" ? "목록 오류" : "";
+      const disabled = archived || stateName === "catalog_error";
+      return `<label class="bundle-toggle ${stateName}"><input type="checkbox" data-mock-bundle="${bundle.key}" data-bundle-state="${stateName}" ${stateName === "full" ? "checked" : ""} ${disabled ? "disabled" : ""} aria-label="${bundle.label}"><span>${bundle.label}</span><small>${detail}</small></label>`;
+    }).join("")}</div></td>`;
+  }
+
+  function applyMixedBundleStates() {
+    document.querySelectorAll('[data-bundle-state="partial"]').forEach(input => {
+      input.indeterminate = true;
+      input.setAttribute("aria-checked", "mixed");
+    });
+  }
+
   function renderLegacy() {
     $("#rows").innerHTML = legacy.students.map((name, index) => {
       ensureLegacy(name);
@@ -62,7 +95,11 @@
         <td><button class="ghost code" type="button" data-action="copy">${esc(legacy.studentCode[name])}</button></td>
         <td>${esc(name)}</td>
         <td><span class="tag${online ? " online" : ""}">${online ? "온라인" : "재원"}</span></td>
-        ${PERMISSIONS.map(key => `<td><input type="checkbox" data-permission="${key}" ${checked(permissions, key)}></td>`).join("")}
+        ${permissionCell(permissions, "hyperfocus", false)}
+        ${permissionCell(permissions, "hyperfocus-extra", false)}
+        ${legacyMockCell(permissions)}
+        ${permissionCell(permissions, "vip", false)}
+        ${permissionCell(permissions, "problem-bank", false)}
         <td><button class="danger" type="button" data-action="remove">삭제</button></td>
       </tr>`;
     }).join("");
@@ -76,10 +113,15 @@
         <td><button class="ghost" type="button" data-action="rotate">새 번호 발급</button></td>
         <td>${esc(student.name)}</td>
         <td><span class="tag${online ? " online" : ""}">${online ? "온라인" : "재원"}</span> <span class="tag ${esc(student.status)}">${esc(student.status)}</span></td>
-        ${PERMISSIONS.map(key => `<td><input type="checkbox" data-permission="${key}" ${checked(permissions, key)} ${student.status === "archived" ? "disabled" : ""}></td>`).join("")}
+        ${permissionCell(permissions, "hyperfocus", student.status === "archived")}
+        ${permissionCell(permissions, "hyperfocus-extra", student.status === "archived")}
+        ${remoteMockCell(student)}
+        ${permissionCell(permissions, "vip", student.status === "archived")}
+        ${permissionCell(permissions, "problem-bank", student.status === "archived")}
         <td><div class="row-actions"><select data-action="status"><option value="active" ${student.status === "active" ? "selected" : ""}>활성</option><option value="suspended" ${student.status === "suspended" ? "selected" : ""}>정지</option><option value="archived" ${student.status === "archived" ? "selected" : ""}>보관</option></select></div></td>
       </tr>`;
     }).join("");
+    applyMixedBundleStates();
   }
 
   function dirty() {
@@ -104,6 +146,32 @@
     const { data, error } = await client.functions.invoke("admin-students", { body });
     if (error || data?.error) throw new Error("관리자 작업을 처리하지 못했습니다.");
     return data || {};
+  }
+
+  function setRowBusy(row, busy) {
+    row.querySelectorAll("input,select,button").forEach(control => { control.disabled = busy; });
+    row.setAttribute("aria-busy", busy ? "true" : "false");
+  }
+
+  async function changeMockBundle(row, input) {
+    const student = remoteStudents[Number(row.dataset.index)];
+    const bundle = MOCK_BUNDLES.find(item => item.key === input.dataset.mockBundle);
+    if (!student || !bundle) return;
+    setStatus(`${bundle.label} 권한을 변경하는 중…`);
+    setRowBusy(row, true);
+    try {
+      await invokeAdmin({
+        action: "set_mock_bundle",
+        studentId: student.id,
+        bundleKey: bundle.key,
+        enabled: input.checked
+      });
+      await loadRemote();
+    } catch (error) {
+      setStatus("❌ 모의고사 상품 권한 변경 실패");
+      alert(error.message);
+      await loadRemote().catch(() => {});
+    }
   }
 
   async function loadRemote() {
@@ -251,7 +319,9 @@
     $("#rows").addEventListener("change", async event => {
       const row = event.target.closest("tr[data-index]");
       if (!row) return;
-      if (event.target.dataset.permission) {
+      if (event.target.dataset.mockBundle && remoteMode) {
+        await changeMockBundle(row, event.target);
+      } else if (event.target.dataset.permission) {
         const key = event.target.dataset.permission;
         if (remoteMode) {
           const student = remoteStudents[Number(row.dataset.index)];
@@ -270,7 +340,7 @@
 
     if (remoteMode) {
       $("#legacySyncCard").hidden = true;
-      $("#adminNote").textContent = "승인번호 원문은 데이터베이스에도 저장하지 않습니다. 새 학생 등록과 번호 재발급 때 한 번만 표시되므로 즉시 안전하게 전달하세요. 학생 삭제 대신 정지·보관 상태를 사용합니다.";
+      $("#adminNote").textContent = "승인번호 원문은 데이터베이스에도 저장하지 않습니다. 모의고사는 활용 8회·파이널 3회·최종 4회 상품 단위로 승인하며, 일부 회차만 연결된 상태는 노란색 개수로 표시됩니다. 학생 삭제 대신 정지·보관 상태를 사용합니다.";
       await loadRemote();
     } else {
       $("[data-save-key]").addEventListener("click", saveGithubKey);
