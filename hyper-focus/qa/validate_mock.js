@@ -657,6 +657,8 @@ assert(portalProducts.map((product) => product.key).join(",") === "hyperfocus,mo
 assert(portalProducts.every((product) => product.permission && product.title && product.description), "포털 상품 권한·표시 정보 누락");
 const authSource = fs.readFileSync(path.join(root, "hyper-focus/portal-auth.js"), "utf8");
 assert(authSource.includes("gfield_hf_portal_session_v1") && authSource.includes("gfield_hf_name") && authSource.includes("gfield_hf_code"), "포털·진단 공유 세션 계약 누락");
+assert(hyperFocusDiagnosis.includes("return{role:'student',backend:'legacy'"), "진단 레거시 학생 역할 계약 누락");
+assert(hyperFocusDiagnosis.includes("document.body.classList.remove('intro-active')") && hyperFocusDiagnosis.includes("document.getElementById('page2')?.style.display==='block'"), "승인 학생 진단 화면의 인트로 즉시 종료 계약 누락");
 assert(!/01[016789]\d{7,8}/.test(authSource), "관리자 승인번호 또는 전화번호가 포털 인증 코드에 평문으로 노출됨");
 const adminSource = fs.readFileSync(path.join(root, "hyper-focus/admin.html"), "utf8");
 const adminAppSource = fs.readFileSync(path.join(root, "hyper-focus/admin-app.js"), "utf8");

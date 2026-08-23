@@ -45,6 +45,10 @@ async function noOverflow(page, label) {
     await desktop.locator("#page2").waitFor({ state: "visible" });
     assert.equal(await desktop.locator("#parentPhone").count(), 0);
     assert.match(await desktop.locator("#studentInfoDisplay").textContent(), /DEMO.*승인번호 확인 완료/);
+    await desktop.waitForTimeout(16000);
+    assert.equal(await desktop.locator("#page2").isVisible(), true);
+    assert.equal(await desktop.locator("#gfieldIntro").isVisible(), false);
+    assert.equal(await desktop.locator("#introPreview").isVisible(), false);
 
     await desktop.goto(`${base}/hyper-focus/vip/`, { waitUntil: "networkidle" });
     assert.equal(await desktop.locator("#blocked:not([hidden])").count(), 1);
