@@ -18,13 +18,13 @@
   });
 
   root.GFIELD_HF_PREMIER_RELEASE_CATALOG = Object.freeze({
-    version: "2026-08-23",
+    version: "2026-08-24",
     series: Object.freeze([
       Object.freeze({
         key: "utilization",
         label: "활용 모의고사",
         rounds: Object.freeze([
-          round("premier-utilization-01", "활용 모의고사 1회", 19, 1, true),
+          round("premier-utilization-01", "활용 모의고사 1회", 20, 0, true),
           round("premier-utilization-02", "활용 모의고사 2회", 13, 7, true),
           round("premier-utilization-03", "활용 모의고사 3회", 16, 4, true),
           round("premier-utilization-04", "활용 모의고사 4회", 14, 6, true),

@@ -18,7 +18,7 @@ assert.deepStrictEqual(Object.keys(catalog).sort(), ["series", "version"], "카�
 assert.strictEqual(catalog.series.length, 3, "회차 묶음은 활용·파이널·최종 세 개여야 합니다.");
 
 const expected = [
-  ["utilization", "premier-utilization", 8, [[19, 1], [13, 7], [16, 4], [14, 6], [19, 1], [15, 5], [13, 7], [17, 3]]],
+  ["utilization", "premier-utilization", 8, [[20, 0], [13, 7], [16, 4], [14, 6], [19, 1], [15, 5], [13, 7], [17, 3]]],
   ["final", "premier-final", 3, [[8, 12], [13, 7], [16, 4]]],
   ["last", "premier-last", 4, [[16, 4], [17, 3], [14, 6], [15, 5]]]
 ];
@@ -63,5 +63,26 @@ const serialized = JSON.stringify(catalog).toLowerCase();
   "010", "@", "published"
 ].forEach((token) => assert(!serialized.includes(token), `공개 카탈로그에 금지된 값이 있습니다: ${token}`));
 
+const publicPremierRoot = path.resolve(root, "..", "premier");
+const publicContext = { window: {} };
+vm.createContext(publicContext);
+for (const relativePath of ["renderers.js", "renderers-utilization-1.js", "exams.js"]) {
+  const filePath = path.join(publicPremierRoot, relativePath);
+  vm.runInContext(fs.readFileSync(filePath, "utf8"), publicContext, { filename: filePath });
+}
+const utilizationOne = publicContext.window.PREMIER_EXAMS["utilization-1"];
+assert.strictEqual(utilizationOne.questions.length, 20, "활용 1회는 20문항이어야 합니다.");
+const utilizationOneQ16 = utilizationOne.questions.find((question) => question.number === 16);
+assert.match(utilizationOneQ16.prompt, /정사각형 7개/, "활용 1회 16번 문구는 실제 7칸 그림과 일치해야 합니다.");
+assert(!/정사각형 9개/.test(utilizationOneQ16.prompt), "활용 1회 16번의 원본 오류 문구가 다시 들어갔습니다.");
+const utilizationOneQ16Svg = publicContext.window.PremierFigures.render("u1-q16", utilizationOneQ16);
+const q16Cells = new Set(
+  [...utilizationOneQ16Svg.matchAll(/<rect x="([\d.]+)" y="([\d.]+)" width="52" height="52"/g)]
+    .map((match) => `${match[1]},${match[2]}`)
+);
+assert.strictEqual(q16Cells.size, 7, "활용 1회 16번 벡터 그림은 서로 다른 정사각형 7칸이어야 합니다.");
+assert.match(utilizationOneQ16Svg, /<polygon points=/, "활용 1회 16번 색칠 영역이 누락되었습니다.");
+
 console.log("PASS");
 console.log(`- safe Premier release catalog: ${catalog.series.flatMap((series) => series.rounds).length} rounds`);
+console.log("- utilization 1 q16 wording/render contract: 7 cells");
