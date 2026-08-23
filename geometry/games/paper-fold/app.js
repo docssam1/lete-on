@@ -1,4 +1,5 @@
 import { levels, validateLevels } from "./levels.js?v=paper-fold-5";
+import { audioCueUrl } from "./audio-cues.js?v=paper-fold-audio-2";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
 validateLevels();
@@ -113,7 +114,7 @@ const t = (key, vars = {}) => {
 const ui = {
   paper: $("#paper"), status: $("#foldStatus"), prompt: $("#prompt"), answerPrompt: $("#answerPrompt"), interaction: $("#interaction"), next: $("#nextButton"),
   rotate: $("#rotateButton"), flip: $("#flipButton"), guide: $("#foldyGuide"), bubble: $("#guideBubble"), toast: $("#toast"), success: $("#success"),
-  tutorial: $("#tutorial"), tutorialText: $("#tutorialText"), tutorialDots: $("#tutorialDots"), tutorialNext: $("#tutorialNext"), levelDialog: $("#levelDialog"), levelList: $("#levelList"), complete: $("#completeDialog")
+  tutorial: $("#tutorial"), tutorialText: $("#tutorialText"), tutorialDots: $("#tutorialDots"), tutorialNext: $("#tutorialNext"), tutorialDemo: $("#tutorialDemo"), levelDialog: $("#levelDialog"), levelList: $("#levelList"), complete: $("#completeDialog")
 };
 
 const problem = () => state.queue[state.problem];
@@ -151,6 +152,53 @@ function playTone(kind) {
     oscillator.connect(gain).connect(context.destination);
     oscillator.start(); oscillator.stop(context.currentTime + .17);
   } catch { /* Audio is optional. */ }
+}
+
+let activeVoiceAudio = null;
+
+function stopVoice() {
+  if (activeVoiceAudio) {
+    activeVoiceAudio.pause();
+    activeVoiceAudio.currentTime = 0;
+    activeVoiceAudio = null;
+  }
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+}
+
+function speakFallback(line) {
+  if (!state.audio || !("speechSynthesis" in window)) return;
+  const utterance = new SpeechSynthesisUtterance(line);
+  utterance.lang = { ko: "ko-KR", zh: "zh-CN", ja: "ja-JP", en: "en-US" }[state.lang];
+  utterance.rate = 1;
+  utterance.pitch = 1.16;
+  speechSynthesis.speak(utterance);
+}
+
+// Checked-in MP3 plays first. Browser speech is only a fallback for an unavailable
+// file or a browser that blocks autoplay before the learner has touched the page.
+function speak(line, cueKey) {
+  if (!state.audio) return;
+  stopVoice();
+  if (!cueKey || typeof Audio !== "function") return speakFallback(line);
+  const audio = new Audio(audioCueUrl(state.lang, cueKey));
+  audio.preload = "auto";
+  activeVoiceAudio = audio;
+  let failed = false;
+  const fallback = () => {
+    if (failed) return;
+    failed = true;
+    if (activeVoiceAudio === audio) activeVoiceAudio = null;
+    speakFallback(line);
+  };
+  audio.addEventListener("ended", () => { if (activeVoiceAudio === audio) activeVoiceAudio = null; }, { once: true });
+  audio.addEventListener("error", fallback, { once: true });
+  const playing = audio.play();
+  if (playing?.catch) playing.catch(fallback);
+}
+
+function foldySays(message, cueKey) {
+  setGuide(message);
+  speak(message, cueKey);
 }
 
 function markHtml(marks, type = "punch") {
@@ -333,7 +381,8 @@ async function resolveCorrect() {
   state.solved = true;
   rewardProblem();
   playTone("success");
-  showSuccess();
+  const celebration = showSuccess();
+  speak(celebration.label, celebration.cue);
   setGuide(t("correct"));
   renderAll();
 }
@@ -485,10 +534,16 @@ function rewardProblem() {
 }
 
 function showSuccess() {
-  ui.success.querySelector("strong").textContent = ["GOOD JOB!", "GREAT JOB!", "SUCCESS!"][state.problem % 3];
+  const celebration = [
+    { label: "GOOD JOB!", cue: "successGood" },
+    { label: "GREAT JOB!", cue: "successGreat" },
+    { label: "SUCCESS!", cue: "successPop" },
+  ][state.problem % 3];
+  ui.success.querySelector("strong").textContent = celebration.label;
   ui.success.classList.remove("show");
   void ui.success.offsetWidth;
   ui.success.classList.add("show");
+  return celebration;
 }
 
 function resetProblem() {
@@ -552,6 +607,11 @@ function renderTutorial() {
   ui.tutorialText.textContent = t(tutorial[tutorialStep]);
   ui.tutorialDots.innerHTML = tutorial.map((_, index) => `<i class="${index === tutorialStep ? "active" : ""}"></i>`).join("");
   ui.tutorialNext.textContent = t(tutorialStep === tutorial.length - 1 ? "start" : "tutorialNext");
+  ui.tutorialDemo.dataset.step = String(tutorialStep);
+  ui.tutorialDemo.classList.remove("replay");
+  void ui.tutorialDemo.offsetWidth;
+  ui.tutorialDemo.classList.add("replay");
+  speak(t(tutorial[tutorialStep]), tutorial[tutorialStep]);
 }
 
 function applyLanguage() {
@@ -579,17 +639,17 @@ ui.paper.addEventListener("click", (event) => {
   if (event.target.closest("[data-fold]")) return foldPaper();
 });
 ui.paper.addEventListener("pointerdown", startPlacedDrag);
-$("#hintButton").addEventListener("click", () => { state.hints += 1; const p = problem(); setGuide(state.folded ? t("hintFolded", { axis: axisText(p.fold.axis) }) : t("hintReady")); });
+$("#hintButton").addEventListener("click", () => { state.hints += 1; const p = problem(); foldySays(state.folded ? t("hintFolded", { axis: axisText(p.fold.axis) }) : t("hintReady"), state.folded ? "hintFolded" : "hintReady"); });
 $("#retryButton").addEventListener("click", resetProblem);
 ui.rotate.addEventListener("click", rotateSelected); ui.flip.addEventListener("click", flipSelected);
 ui.next.addEventListener("click", nextProblem);
 $("#levelButton").addEventListener("click", () => { ui.levelDialog.hidden = false; });
 $("#closeLevels").addEventListener("click", () => { ui.levelDialog.hidden = true; });
 ui.levelDialog.addEventListener("click", (event) => { if (event.target === ui.levelDialog) ui.levelDialog.hidden = true; });
-ui.tutorialNext.addEventListener("click", () => { if (tutorialStep < tutorial.length - 1) { tutorialStep += 1; renderTutorial(); } else { localStorage.setItem(tutorialKey, "done"); ui.tutorial.hidden = true; setGuide(t("startGuide")); } });
+ui.tutorialNext.addEventListener("click", () => { if (tutorialStep < tutorial.length - 1) { tutorialStep += 1; renderTutorial(); } else { localStorage.setItem(tutorialKey, "done"); ui.tutorial.hidden = true; stopVoice(); setGuide(t("startGuide")); } });
 $("#nextLevelButton").addEventListener("click", () => state.level < 4 ? selectLevel(state.level + 1) : location.assign("../../origami-studio/"));
 $("#practiceButton").addEventListener("click", () => selectLevel(state.level));
-$("#soundButton").addEventListener("click", (event) => { state.audio = !state.audio; localStorage.setItem("gfield-audio-muted", String(!state.audio)); event.currentTarget.classList.toggle("muted", !state.audio); applyLanguage(); });
+$("#soundButton").addEventListener("click", (event) => { state.audio = !state.audio; if (!state.audio) stopVoice(); localStorage.setItem("gfield-audio-muted", String(!state.audio)); event.currentTarget.classList.toggle("muted", !state.audio); applyLanguage(); });
 
 applyLanguage();
 renderLevelList();
