@@ -630,13 +630,21 @@ function audit(candidate, predecessor) {
       const key = `${review.sourceRef}:${review.page}`;
       const oldReview = predecessorReplacementReviews.get(key);
       if (oldReview) continue;
-      const predecessorQueueMatches = [
+      const predecessorPendingMatches = [
         ...(predecessor.unresolvedPages || []),
         ...(predecessor.excludedPageCandidates || [])
       ].filter(entry =>
         entry.privateSourceMemoryId === review.privateSourceMemoryId && entry.page === review.page &&
         entry.sourceRef === review.sourceRef
       );
+      const predecessorLayoutFallbackMatches = (predecessor.layoutPages || []).filter(entry =>
+        entry.privateSourceMemoryId === review.privateSourceMemoryId && entry.page === review.page &&
+        entry.sourceRef === review.sourceRef && entry.coverageStatus === "candidate_full" &&
+        entry.reviewStatus === "pending"
+      );
+      const predecessorQueueMatches = predecessorPendingMatches.length > 0
+        ? predecessorPendingMatches
+        : predecessorLayoutFallbackMatches;
       if (predecessorQueueMatches.length !== 1) {
         errors.push(`manual replacement predecessor queue mismatch: ${key}`);
       }

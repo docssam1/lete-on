@@ -574,6 +574,50 @@ test("fingerprint-bound manual replacement quarantines every candidate and appen
   assert.equal(result.counts.layoutCandidatePages, 0);
 });
 
+test("manual replacement can correct a protected candidate-full page outside the unresolved queue", () => {
+  const value = manualReplacementInput();
+  value.unresolvedPages = [];
+  value.counts.unresolvedPages = 0;
+  value.layoutPages[0].coverageStatus = "candidate_full";
+
+  const result = review.applyReviews(value, [manualReplacementDecision()]);
+
+  assert.equal(result.unresolvedPages.length, 0);
+  assert.equal(result.layoutPages.length, 0);
+  assert.equal(result.rejectedCandidates.length, 2);
+  assert.equal(result.visualReviewPages.length, 1);
+  assert.equal(result.visualReviewPages[0].resolution, "verified_manual_items_replacing_candidates");
+  assert.equal(result.counts.activeQuestionCandidates, 2);
+});
+
+test("layout-only fallback remains closed to non-replacement decisions", () => {
+  const value = manualReplacementInput();
+  value.unresolvedPages = [];
+  value.counts.unresolvedPages = 0;
+  value.layoutPages[0].coverageStatus = "candidate_full";
+  const decision = {
+    ...manualReplacementDecision(),
+    resolution: "manual_items"
+  };
+
+  assert.throws(() => review.applyReviews(value, [decision]), /Review candidate not found/);
+});
+
+test("layout-only fallback requires a pending candidate-full record", () => {
+  for (const mutate of [
+    entry => { entry.coverageStatus = "partial"; },
+    entry => { entry.reviewStatus = "visual_verified"; }
+  ]) {
+    const value = manualReplacementInput();
+    value.unresolvedPages = [];
+    value.counts.unresolvedPages = 0;
+    value.layoutPages[0].coverageStatus = "candidate_full";
+    mutate(value.layoutPages[0]);
+    assert.throws(() => review.applyReviews(value, [manualReplacementDecision()]),
+      /Review candidate not found/);
+  }
+});
+
 test("manual replacement requires only unrejected protected layout candidates and fails atomically", () => {
   const empty = fixture();
   empty.unresolvedPages.push({

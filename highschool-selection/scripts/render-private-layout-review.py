@@ -77,11 +77,18 @@ def select_queue(
 
 def page_items(index: dict) -> dict[tuple[str, int], list[dict]]:
     grouped: dict[tuple[str, int], list[dict]] = {}
+    rejected_ids = {
+        entry.get("id")
+        for entry in index.get("rejectedCandidates", [])
+        if isinstance(entry.get("id"), str)
+    }
     source_refs = {
         source.get("sourceRef"): source.get("privateSourceMemoryId")
         for source in index.get("sources", [])
     }
     for item in index.get("items", []):
+        if item.get("id") in rejected_ids:
+            continue
         source_id = source_refs.get(item.get("sourceRef"))
         page = item.get("locator", {}).get("page")
         if not source_id or not isinstance(page, int):

@@ -80,6 +80,20 @@ class ReviewQueueTests(unittest.TestCase):
         self.assertEqual(total, 1)
         self.assertEqual(MODULE.entry_reason(queue[0]), "verified_mission_variable_cell")
 
+    def test_page_items_omits_quarantined_rejected_candidates(self):
+        index = {
+            "sources": [{"sourceRef": "source-ref-a", "privateSourceMemoryId": "source-a"}],
+            "items": [
+                {"id": "old", "sourceRef": "source-ref-a", "locator": {"page": 4, "slot": 1}},
+                {"id": "active", "sourceRef": "source-ref-a", "locator": {"page": 4, "slot": 2}},
+            ],
+            "rejectedCandidates": [{"id": "old"}],
+        }
+
+        grouped = MODULE.page_items(index)
+
+        self.assertEqual([item["id"] for item in grouped[("source-a", 4)]], ["active"])
+
 
 if __name__ == "__main__":
     unittest.main()

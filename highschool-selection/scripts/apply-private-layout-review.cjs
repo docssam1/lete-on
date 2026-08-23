@@ -396,7 +396,7 @@ function validateReviewInput(result) {
   }
 }
 
-function queueLocation(result, sourceMemoryId, page) {
+function queueLocation(result, sourceMemoryId, page, { allowLayoutFallback = false } = {}) {
   const matches = [];
   for (const [name, queue] of [
     ["excluded", result.excludedPageCandidates || []],
@@ -408,7 +408,17 @@ function queueLocation(result, sourceMemoryId, page) {
     if (index >= 0) matches.push({ name, queue, index, entry: queue[index] });
   }
   if (matches.length > 1) fail(`Page appears in multiple review queues: ${sourceMemoryId}:${page}`);
-  return matches[0] || null;
+  if (matches.length === 1) return matches[0];
+  if (!allowLayoutFallback) return null;
+
+  const layoutQueue = result.layoutPages || [];
+  const layoutIndex = layoutQueue.findIndex(entry =>
+    entry.privateSourceMemoryId === sourceMemoryId && entry.page === page &&
+    entry.coverageStatus === "candidate_full" && entry.reviewStatus === "pending"
+  );
+  return layoutIndex >= 0
+    ? { name: "layout", queue: layoutQueue, index: layoutIndex, entry: layoutQueue[layoutIndex] }
+    : null;
 }
 
 function hasBoundVisualReview(reviewPages, source, item) {
@@ -462,7 +472,12 @@ function applyReviews(base, decisions) {
     if (reviewPages.some(entry =>
       entry.privateSourceMemoryId === decision.sourceMemoryId && entry.page === decision.page
     )) fail(`Page already visually reviewed: ${decisionKey}`);
-    const location = queueLocation(result, decision.sourceMemoryId, decision.page);
+    const location = queueLocation(result, decision.sourceMemoryId, decision.page, {
+      // A detector can incorrectly mark a partially indexed page as candidate_full,
+      // leaving it outside the unresolved queue. Only a complete manual replacement
+      // may fall back to that protected layout queue; other resolutions remain closed.
+      allowLayoutFallback: resolution === "manual_items_replace_candidates"
+    });
     if (!location) fail(`Review candidate not found: ${decisionKey}`);
 
     if (resolution === "exclude") {

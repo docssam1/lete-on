@@ -674,3 +674,28 @@ test("private index audit proves a new replacement was eligible in its predecess
   assert.equal(rejected.ok, false);
   assert.match(rejected.errors.join("\n"), /predecessor candidate already rejected/);
 });
+
+test("private index audit accepts a pending candidate-full layout predecessor fallback", () => {
+  const built = manualReplacementFixture();
+  built.predecessor.unresolvedPages = [];
+  built.predecessor.counts.unresolvedPages = 0;
+  built.predecessor.layoutPages = [{
+    sourceRef: built.predecessor.sources[0].sourceRef,
+    privateSourceMemoryId: "private-source",
+    page: 2,
+    layoutKind: "two-column-numbered",
+    detectedAnchors: 2,
+    addedCandidates: 2,
+    coverageStatus: "candidate_full",
+    reviewStatus: "pending"
+  }];
+  built.predecessor.counts.layoutCandidatePages = 1;
+
+  const accepted = auditor.audit(built.candidate, built.predecessor);
+  assert.equal(accepted.ok, true, accepted.errors.join("\n"));
+
+  built.predecessor.layoutPages[0].coverageStatus = "partial";
+  const rejected = auditor.audit(built.candidate, built.predecessor);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.errors.join("\n"), /predecessor queue mismatch/);
+});
