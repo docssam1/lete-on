@@ -530,37 +530,176 @@
     const start = rowIndex * (rowIndex + 1) / 2 + 1;
     return `<div>${Array.from({ length: rowIndex + 1 }, (_, columnIndex) => `<span>${start + columnIndex}</span>`).join("")}</div>`;
   }).join("")}</div>`;
-  const shapePatternSvg = (kind) => {
-    if (kind === "squares") {
-      const groups = [1, 2, 3].map((count, groupIndex) => {
-        const startX = 12 + groupIndex * 78;
-        const boxes = Array.from({ length: count }, (_, index) => `<rect x="${startX + index * 17}" y="35" width="17" height="17"/>`).join("");
-        return `${boxes}<text x="${startX + count * 8.5}" y="72">${count}번째</text>`;
-      }).join("");
-      return `<svg class="pattern-diagram" viewBox="0 0 250 90" aria-label="정사각형을 이어 붙인 규칙">${groups}</svg>`;
+  const patternNumber = value => Number(value.toFixed(3));
+  const patternPointKey = point => `${patternNumber(point[0])},${patternNumber(point[1])}`;
+  const uniquePatternEdges = edges => {
+    const unique = new Map();
+    edges.forEach(edge => {
+      const first = patternPointKey(edge[0]);
+      const second = patternPointKey(edge[1]);
+      const key = first < second ? `${first}|${second}` : `${second}|${first}`;
+      if (!unique.has(key)) unique.set(key, edge);
+    });
+    return [...unique.values()];
+  };
+  const patternPointsFromEdges = edges => {
+    const unique = new Map();
+    edges.flat().forEach(point => unique.set(patternPointKey(point), { x: point[0], y: point[1], kind: "joint" }));
+    return [...unique.values()];
+  };
+  const uniquePatternPoints = points => {
+    const unique = new Map();
+    points.forEach(point => unique.set(patternPointKey([point.x, point.y]), point));
+    return [...unique.values()];
+  };
+  const polygonChainModel = (sides, count) => {
+    const edges = [];
+    if (sides === 4) {
+      for (let index = 0; index < count; index += 1) {
+        const vertices = [[index, 0], [index + 1, 0], [index + 1, 1], [index, 1]];
+        vertices.forEach((point, vertexIndex) => edges.push([point, vertices[(vertexIndex + 1) % vertices.length]]));
+      }
+    } else {
+      const radius = 1;
+      const step = Math.sqrt(3) * radius;
+      for (let index = 0; index < count; index += 1) {
+        const centerX = index * step;
+        const vertices = Array.from({ length: 6 }, (_, vertexIndex) => {
+          const angle = (30 + vertexIndex * 60) * Math.PI / 180;
+          return [centerX + radius * Math.cos(angle), radius * Math.sin(angle)];
+        });
+        vertices.forEach((point, vertexIndex) => edges.push([point, vertices[(vertexIndex + 1) % vertices.length]]));
+      }
     }
-    if (kind === "dots") {
-      const groups = [1, 2, 3].map((size, groupIndex) => {
-        const startX = 30 + groupIndex * 82;
-        const dots = Array.from({ length: size }, (_, row) => Array.from({ length: row + 1 }, (_, column) => `<circle cx="${startX + (column - row / 2) * 13}" cy="${22 + row * 13}" r="3.5"/>`).join("")).join("");
-        return `${dots}<text x="${startX}" y="78">${size}번째</text>`;
-      }).join("");
-      return `<svg class="pattern-diagram" viewBox="0 0 250 90" aria-label="삼각형으로 늘어나는 점의 규칙">${groups}</svg>`;
+    const uniqueEdges = uniquePatternEdges(edges);
+    return { edges: uniqueEdges, points: patternPointsFromEdges(uniqueEdges) };
+  };
+  const boxChainModel = count => {
+    const project = (x, y, z) => [x + y * 0.55, -z + y * 0.38];
+    const edges = [];
+    for (let x = 0; x < count; x += 1) {
+      for (const y of [0, 1]) for (const z of [0, 1]) edges.push([project(x, y, z), project(x + 1, y, z)]);
     }
-    const groups = [1, 2, 3].map((stage, groupIndex) => {
-      const side = stage * 2 + 1;
-      const cell = 5;
-      const startX = 16 + groupIndex * 82;
-      const startY = 15;
-      const cells = Array.from({ length: side * side }, (_, index) => {
-        const row = Math.floor(index / side);
-        const column = index % side;
-        const border = row === 0 || column === 0 || row === side - 1 || column === side - 1;
-        return `<rect class="${border ? "pattern-dark" : "pattern-light"}" x="${startX + column * cell}" y="${startY + row * cell}" width="${cell}" height="${cell}"/>`;
+    for (let x = 0; x <= count; x += 1) {
+      for (const z of [0, 1]) edges.push([project(x, 0, z), project(x, 1, z)]);
+      for (const y of [0, 1]) edges.push([project(x, y, 0), project(x, y, 1)]);
+    }
+    return { edges, points: patternPointsFromEdges(edges) };
+  };
+  const crossedSquareModel = stage => {
+    const points = [];
+    for (let position = 0; position <= stage; position += 1) {
+      points.push({ x: position, y: 0, kind: "point" }, { x: position, y: stage, kind: "point" });
+      if (position > 0 && position < stage) points.push({ x: 0, y: position, kind: "point" }, { x: stage, y: position, kind: "point" });
+    }
+    for (let step = 1; step < stage * 2; step += 1) {
+      const position = step / 2;
+      points.push({ x: position, y: position, kind: "point" }, { x: stage - position, y: position, kind: "point" });
+    }
+    return {
+      edges: [
+        [[0, 0], [stage, 0]], [[stage, 0], [stage, stage]],
+        [[stage, stage], [0, stage]], [[0, stage], [0, 0]],
+        [[0, 0], [stage, stage]], [[stage, 0], [0, stage]]
+      ],
+      points: uniquePatternPoints(points)
+    };
+  };
+  const spiralGridModel = stage => {
+    const points = Array.from({ length: stage * stage }, (_, index) => ({
+      x: index % stage,
+      y: Math.floor(index / stage),
+      kind: "point"
+    }));
+    const order = [];
+    let left = 0;
+    let right = stage - 1;
+    let top = 0;
+    let bottom = stage - 1;
+    while (left <= right && top <= bottom) {
+      for (let x = left; x <= right; x += 1) order.push([x, top]);
+      top += 1;
+      for (let y = top; y <= bottom; y += 1) order.push([right, y]);
+      right -= 1;
+      if (top <= bottom) {
+        for (let x = right; x >= left; x -= 1) order.push([x, bottom]);
+        bottom -= 1;
+      }
+      if (left <= right) {
+        for (let y = bottom; y >= top; y -= 1) order.push([left, y]);
+        left += 1;
+      }
+    }
+    const edges = order.slice(1).map((point, index) => [order[index], point]);
+    return { edges, points };
+  };
+  const hexClusterModel = stage => {
+    const points = [];
+    const radius = stage - 1;
+    for (let q = -radius; q <= radius; q += 1) {
+      for (let r = -radius; r <= radius; r += 1) {
+        if (Math.max(Math.abs(q), Math.abs(r), Math.abs(q + r)) > radius) continue;
+        points.push({ x: q + r / 2, y: r * Math.sqrt(3) / 2, kind: "stone" });
+      }
+    }
+    return { edges: [], points };
+  };
+  const dottedSquareChainModel = count => {
+    const points = [];
+    for (let halfStep = 0; halfStep <= count * 2; halfStep += 1) {
+      points.push({ x: halfStep / 2, y: 0, kind: "point" }, { x: halfStep / 2, y: 1, kind: "point" });
+    }
+    for (let index = 0; index <= count; index += 1) points.push({ x: index, y: 0.5, kind: "point" });
+    const edges = [];
+    for (let index = 0; index < count; index += 1) {
+      edges.push([[index, 0], [index + 1, 0]], [[index, 1], [index + 1, 1]], [[index, 0], [index, 1]], [[index + 1, 0], [index + 1, 1]]);
+    }
+    return { edges: uniquePatternEdges(edges), points: uniquePatternPoints(points) };
+  };
+  const coinCheckerModel = stage => ({
+    edges: [],
+    points: Array.from({ length: stage * stage }, (_, index) => {
+      const row = Math.floor(index / stage);
+      const column = index % stage;
+      const low = (row + column) % 2 === 0;
+      return { x: column, y: row, kind: low ? "coin-low" : "coin-high", label: low ? "50" : "100" };
+    })
+  });
+  const shapePatternSvg = (kind, stageValues, modelAt, ariaLabel, attributes = {}) => {
+    const panelWidth = 112;
+    const stageGroups = stageValues.map((stage, index) => {
+      const model = modelAt(stage);
+      const allPoints = [
+        ...model.points.map(point => [point.x, point.y]),
+        ...model.edges.flat()
+      ];
+      const minX = Math.min(...allPoints.map(point => point[0]));
+      const maxX = Math.max(...allPoints.map(point => point[0]));
+      const minY = Math.min(...allPoints.map(point => point[1]));
+      const maxY = Math.max(...allPoints.map(point => point[1]));
+      const width = Math.max(1, maxX - minX);
+      const height = Math.max(1, maxY - minY);
+      const scale = Math.min(92 / width, 66 / height, kind === "coin-checker" ? 19 : 24);
+      const left = index * panelWidth + (panelWidth - width * scale) / 2 - minX * scale;
+      const top = 8 + (68 - height * scale) / 2 - minY * scale;
+      const coordinate = point => [patternNumber(left + point[0] * scale), patternNumber(top + point[1] * scale)];
+      const edges = model.edges.map((edge, edgeIndex) => {
+        const [x1, y1] = coordinate(edge[0]);
+        const [x2, y2] = coordinate(edge[1]);
+        return `<line class="pattern-edge" data-stage="${stage}" data-edge="${edgeIndex + 1}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
       }).join("");
-      return `${cells}<text x="${startX + side * cell / 2}" y="78">${stage}번째</text>`;
+      const points = model.points.map((point, pointIndex) => {
+        const [cx, cy] = coordinate([point.x, point.y]);
+        const isCoin = point.kind === "coin-low" || point.kind === "coin-high";
+        const radius = isCoin ? Math.max(4.2, Math.min(7, scale * 0.28)) : point.kind === "stone" ? 3 : 2.7;
+        const circle = `<circle class="pattern-point pattern-${point.kind}" data-stage="${stage}" data-point="${pointIndex + 1}" data-point-kind="${point.kind}" cx="${cx}" cy="${cy}" r="${patternNumber(radius)}"/>`;
+        const label = point.label ? `<text class="pattern-coin-label" x="${cx}" y="${patternNumber(cy + 1.7)}">${point.label}</text>` : "";
+        return circle + label;
+      }).join("");
+      return `<g class="pattern-stage" data-stage="${stage}" data-expected-lines="${model.edges.length}" data-expected-points="${model.points.length}">${edges}${points}<text class="pattern-stage-label" x="${index * panelWidth + panelWidth / 2}" y="102">${stage}번째</text></g>`;
     }).join("");
-    return `<svg class="pattern-diagram" viewBox="0 0 250 90" aria-label="테두리가 늘어나는 타일의 규칙">${groups}</svg>`;
+    const metadata = Object.entries(attributes).map(([name, value]) => ` ${name}="${value}"`).join("");
+    return `<svg class="pattern-diagram pattern-source" viewBox="0 0 ${panelWidth * stageValues.length} 112" role="img" aria-label="${ariaLabel}" data-pattern-kind="${kind}" data-stage-values="${stageValues.join(",")}" data-source-verified="true"${metadata}>${stageGroups}</svg>`;
   };
   const digitPlaceCounts = (values, digit) => {
     const counts = [];
@@ -2507,21 +2646,60 @@
       return result(`세 꼭짓점의 수로 가운데 수를 만드는 규칙을 찾아 ?에 알맞은 수를 구하세요.<div class="number-trios"><span>${topOne}<br>${leftOne} · <b>${topOne * (leftOne + rightOne)}</b> · ${rightOne}</span><span>${topTwo}<br>${leftTwo} · <b>${topTwo * (leftTwo + rightTwo)}</b> · ${rightTwo}</span><span>${top}<br>${left} · <b>?</b> · ${right}</span></div>`, answer, `아래 두 수의 합에 위의 수를 곱하는 규칙입니다. (${left} + ${right}) × ${top} = ${answer}입니다.`);
     },
     advancedShapePattern({ rng, level, variant = 0 }) {
-      if (variant % 3 === 0) {
-        const target = int(rng, 14 + level * 5, 28 + level * 10);
-        const answer = 3 * target + 1;
-        return result(`정사각형을 한 변씩 이어 붙여 한 줄로 늘어놓습니다. ${target}번째 모양에 필요한 성냥개비 수를 구하세요.${shapePatternSvg("squares")}`, answer, `첫 정사각형은 4개가 필요하고 하나를 더 붙일 때마다 3개씩 늘어납니다. 4 + 3 × ${target - 1} = ${answer}개입니다.`);
+      const fixedVariant = ((variant % 8) + 8) % 8;
+      if (fixedVariant === 0) {
+        const sides = level === 0 ? 4 : pick(rng, [4, 6]);
+        const shapeName = sides === 4 ? "정사각형" : "정육각형";
+        const target = int(rng, 9 + level * 3, 15 + level * 5);
+        const answer = sides + (target - 1) * (sides - 1);
+        const diagram = shapePatternSvg("polygon-chain", [1, 2, 3], stage => polygonChainModel(sides, stage), `${shapeName}을 한 변씩 이어 붙인 규칙`, { "data-polygon-sides": sides });
+        return result(`${shapeName}을 한 변씩 겹치게 이어 붙입니다. ${target}개를 이어 붙이는 데 필요한 성냥개비는 모두 몇 개인지 구하세요.${diagram}`, answer, `첫 ${shapeName}에는 ${sides}개가 필요하고, 하나를 더 붙일 때마다 겹치는 한 변을 제외한 ${sides - 1}개가 늘어납니다. ${sides} + ${sides - 1} × ${target - 1} = ${answer}개입니다.`);
       }
-      if (variant % 3 === 1) {
-        const target = int(rng, 12 + level * 4, 22 + level * 8);
-        const answer = target * (target + 1) / 2;
-        return result(`점을 삼각형 모양으로 한 줄씩 늘려 놓습니다. ${target}번째 모양에 놓이는 점은 모두 몇 개인지 구하세요.${shapePatternSvg("dots")}`, answer, `점의 수는 1 + 2 + … + ${target}이므로 ${target} × ${target + 1} ÷ 2 = ${answer}개입니다.`);
+      if (fixedVariant === 1) {
+        const sides = level === 0 ? 4 : pick(rng, [4, 6]);
+        const shapeName = sides === 4 ? "정사각형" : "정육각형";
+        const shapeCount = int(rng, 10 + level * 3, 17 + level * 5);
+        const matchsticks = sides + (shapeCount - 1) * (sides - 1);
+        const diagram = shapePatternSvg("polygon-chain-inverse", [1, 2, 3], stage => polygonChainModel(sides, stage), `${shapeName}을 한 변씩 이어 붙인 규칙`, { "data-polygon-sides": sides });
+        return result(`${shapeName}을 그림과 같이 한 변씩 겹치게 이어 붙입니다. 성냥개비 ${matchsticks}개로 만들 수 있는 ${shapeName}은 모두 몇 개인지 구하세요.${diagram}`, shapeCount, `첫 ${shapeName}을 만들고 남는 성냥개비는 ${matchsticks} - ${sides} = ${matchsticks - sides}개입니다. 한 개를 더 붙일 때마다 ${sides - 1}개가 필요하므로 (${matchsticks} - ${sides}) ÷ ${sides - 1} + 1 = ${shapeCount}개입니다.`);
       }
-      const target = int(rng, 7 + level * 3, 13 + level * 5);
-      const side = target * 2 + 1;
-      const dark = 4 * side - 4;
-      const light = (side - 2) ** 2;
-      return result(`정사각형 타일을 늘려 ${target}번째 모양을 만들었습니다. 테두리는 검은 타일, 안쪽은 흰 타일입니다. 검은 타일과 흰 타일의 수를 차례로 구하세요.${shapePatternSvg("rings")}`, `${dark}, ${light}`, `${target}번째 모양의 한 변은 ${side}칸입니다. 테두리는 4 × ${side} - 4 = ${dark}개이고, 안쪽은 한 변이 ${side - 2}칸인 정사각형이므로 ${light}개입니다.`);
+      if (fixedVariant === 2) {
+        const target = int(rng, 8 + level * 3, 14 + level * 5);
+        const answer = 8 * target + 4;
+        const diagram = shapePatternSvg("box-chain", [1, 2, 3], boxChainModel, "성냥개비로 만든 입체 상자를 이어 붙인 규칙");
+        return result(`성냥개비로 만든 상자를 한 면씩 겹치게 일렬로 이어 붙입니다. 상자 ${target}개를 만드는 데 필요한 성냥개비는 모두 몇 개인지 구하세요.${diagram}`, answer, `상자 한 개에는 12개가 필요하고, 상자를 하나 더 붙일 때마다 겹친 면의 네 변을 함께 쓰므로 8개씩 늘어납니다. 12 + 8 × ${target - 1} = ${answer}개입니다.`);
+      }
+      if (fixedVariant === 3) {
+        const target = int(rng, 6 + level * 2, 10 + level * 3);
+        const answer = 8 * target - 3;
+        const diagram = shapePatternSvg("crossed-square-points", [1, 2, 3], crossedSquareModel, "정사각형의 둘레와 두 대각선 위 점이 늘어나는 규칙");
+        return result(`정사각형의 둘레와 두 대각선 위에 같은 간격으로 점을 찍습니다. 그림의 규칙대로 만든 ${target}번째 도형에 찍힌 점은 모두 몇 개인지 구하세요.${diagram}`, answer, `첫 번째는 5개이고 도형이 한 단계 커질 때마다 둘레와 대각선의 점이 합해 8개씩 늘어납니다. 5 + 8 × ${target - 1} = ${answer}개입니다.`);
+      }
+      if (fixedVariant === 4) {
+        const target = int(rng, 7 + level, 10 + level * 2);
+        const answer = target * target;
+        const diagram = shapePatternSvg("spiral-grid-points", [1, 2, 3, 4], spiralGridModel, "점을 이어 만든 소용돌이 정사각형 규칙");
+        return result(`점을 이어 소용돌이 모양을 만듭니다. ${target}번째 도형에 있는 점은 모두 몇 개인지 구하세요.${diagram}`, answer, `${target}번째 도형의 점은 가로 ${target}줄, 세로 ${target}줄의 정사각형 배열을 이룹니다. ${target} × ${target} = ${answer}개입니다.`);
+      }
+      if (fixedVariant === 5) {
+        const target = int(rng, 6 + level, 9 + level * 2);
+        const answer = 3 * target * (target - 1) + 1;
+        const diagram = shapePatternSvg("hex-stone-cluster", [1, 2, 3, 4], hexClusterModel, "육각형 모양으로 퍼지는 바둑돌 규칙");
+        const ringSum = target * (target - 1) / 2;
+        return result(`바둑돌을 가운데에서부터 육각형 모양으로 한 겹씩 늘려 놓습니다. ${target}번째 도형에 필요한 바둑돌은 모두 몇 개인지 구하세요.${diagram}`, answer, `가운데 1개에서 시작하여 둘째부터 한 겹마다 6개, 12개, 18개처럼 6개씩 더 늘어납니다. 1 + 6 × (1 + 2 + … + ${target - 1}) = 1 + 6 × ${ringSum} = ${answer}개입니다.`);
+      }
+      if (fixedVariant === 6) {
+        const squareCount = int(rng, 9 + level * 3, 16 + level * 5);
+        const pointCount = 5 * squareCount + 3;
+        const diagram = shapePatternSvg("dotted-square-chain", [1, 2, 3, 4], dottedSquareChainModel, "변 위의 점으로 정사각형을 이어 붙인 규칙");
+        return result(`정사각형을 한 변씩 이어 붙이고, 모든 꼭짓점과 각 변의 가운데에 점을 찍습니다. 점을 모두 ${pointCount}개 찍어 만들 수 있는 정사각형은 몇 개인지 구하세요.${diagram}`, squareCount, `첫 정사각형에는 점이 8개이고, 정사각형을 하나 더 붙일 때마다 새 점이 5개씩 늘어납니다. (${pointCount} - 8) ÷ 5 + 1 = ${squareCount}개입니다.`);
+      }
+      const target = int(rng, 6 + level, 10 + level * 2);
+      const lowCount = Math.ceil(target * target / 2);
+      const highCount = Math.floor(target * target / 2);
+      const answer = lowCount * 50 + highCount * 100;
+      const diagram = shapePatternSvg("coin-checker", [1, 2, 3, 4], coinCheckerModel, "50원과 100원 동전을 번갈아 놓은 규칙", { "data-low-value": 50, "data-high-value": 100 });
+      return result(`50원짜리 동전과 100원짜리 동전을 그림처럼 번갈아 정사각형 모양으로 놓습니다. ${target}번째 도형에 놓인 동전의 금액은 모두 얼마인지 구하세요.${diagram}`, answer, `${target}번째는 ${target} × ${target} = ${target * target}개의 동전으로 이루어집니다. 50원짜리는 ${lowCount}개, 100원짜리는 ${highCount}개이므로 50 × ${lowCount} + 100 × ${highCount} = ${answer}원입니다.`);
     },
     conditionedNumberCount({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
