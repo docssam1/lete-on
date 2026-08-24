@@ -18,7 +18,7 @@ assert.deepStrictEqual(Object.keys(catalog).sort(), ["series", "version"], "카�
 assert.strictEqual(catalog.series.length, 3, "회차 묶음은 활용·파이널·최종 세 개여야 합니다.");
 
 const expected = [
-  ["utilization", "premier-utilization", 8, [[20, 0, false], [13, 7, true], [16, 4, true], [14, 6, true], [20, 0, false], [15, 5, true], [13, 7, true], [17, 3, true]]],
+  ["utilization", "premier-utilization", 8, [[20, 0, false], [13, 7, true], [16, 4, true], [14, 6, true], [20, 0, false], [15, 5, true], [13, 7, true], [20, 0, false]]],
   ["final", "premier-final", 3, [[8, 12, true], [13, 7, true], [16, 4, true]]],
   ["last", "premier-last", 4, [[16, 4, true], [17, 3, true], [14, 6, true], [15, 5, true]]]
 ];
@@ -65,12 +65,14 @@ const serialized = JSON.stringify(catalog).toLowerCase();
 
 const publicPremierRoot = path.resolve(root, "..", "premier");
 const premierCss = fs.readFileSync(path.join(publicPremierRoot, "styles.css"), "utf8");
+const premierViewer = fs.readFileSync(path.join(publicPremierRoot, "viewer.html"), "utf8");
 assert.match(premierCss, /@page\s*\{\s*size:\s*A4 portrait;/i, "프리미어 인쇄 용지는 A4 세로여야 합니다.");
 assert.match(premierCss, /\.exam-pages\s*\{[^}]*zoom:\s*\.7070707071;/s, "A3 원본 캔버스를 A4로 정확히 축소해야 합니다.");
 assert(!/@page\s*\{\s*size:\s*A3/i.test(premierCss), "A3 인쇄 설정이 다시 들어갔습니다.");
+assert.match(premierViewer, /renderers-utilization-8\.js\?v=20260824-2/, "활용 8회 교체 그림은 브라우저 캐시를 갱신해야 합니다.");
 const publicContext = { window: {} };
 vm.createContext(publicContext);
-for (const relativePath of ["renderers.js", "renderers-utilization-1.js", "renderers-utilization-5-q15-q20.js", "exams.js"]) {
+for (const relativePath of ["renderers.js", "renderers-utilization-1.js", "renderers-utilization-5-q15-q20.js", "renderers-utilization-8.js", "exams.js"]) {
   const filePath = path.join(publicPremierRoot, relativePath);
   vm.runInContext(fs.readFileSync(filePath, "utf8"), publicContext, { filename: filePath });
 }
@@ -108,8 +110,53 @@ for (const shape of ["one", "two"]) {
 }
 assert.strictEqual(new Set(["zero-hidden-blocks"]).size, 1, "활용 5회 교체 17번의 숨은 블록 후보는 0 하나여야 합니다.");
 
+const utilizationEight = publicContext.window.PREMIER_EXAMS["utilization-8"];
+const utilizationEightQ5 = utilizationEight.questions.find((question) => question.number === 5);
+assert.match(utilizationEightQ5.prompt, /겹치지 않게/, "활용 8회 교체 5번은 거울축 위 점의 중복을 배제해야 합니다.");
+assert.match(utilizationEightQ5.prompt, /제자리에서 하나로만 셉니다/, "활용 8회 교체 5번은 거울축 위 점의 처리 방법을 알려야 합니다.");
+const utilizationEightQ5Svg = publicContext.window.PremierFigures.render("u8-q5", utilizationEightQ5);
+const mirrorAxis = Number(utilizationEightQ5Svg.match(/data-mirror-axis="([\d.]+)"/)[1]);
+const paperPoints = [...utilizationEightQ5Svg.matchAll(/data-paper-point="\d+" data-role="(line|right)" cx="([\d.]+)" cy="([\d.]+)"/g)].map((match) => ({ role: match[1], x: Number(match[2]), y: Number(match[3]) }));
+assert.strictEqual(paperPoints.length, 6, "활용 8회 교체 5번의 종이 위 점은 6개여야 합니다.");
+assert(paperPoints.every((point) => point.role === "line" ? point.x === mirrorAxis : point.x > mirrorAxis), "활용 8회 교체 5번의 모든 점은 거울축 위 또는 관찰자 쪽에 있어야 합니다.");
+const reflectedPoints = paperPoints.map((point) => ({ x: 2 * mirrorAxis - point.x, y: point.y }));
+const visiblePointCandidates = new Set([...paperPoints, ...reflectedPoints].map((point) => `${point.x},${point.y}`));
+assert.strictEqual(visiblePointCandidates.size, 10, "활용 8회 교체 5번의 겹치지 않는 점 후보는 하나의 확정된 집합이어야 합니다.");
+
+const utilizationEightQ11 = utilizationEight.questions.find((question) => question.number === 11);
+const utilizationEightQ11Svg = publicContext.window.PremierFigures.render("u8-q11", utilizationEightQ11);
+const trianglePoints = [...utilizationEightQ11Svg.matchAll(/data-triangle-point="(\d+),(\d+)" cx="([\d.]+)" cy="([\d.]+)"/g)].map((match) => ({ row: Number(match[1]), column: Number(match[2]), x: Number(match[3]), y: Number(match[4]) }));
+assert.strictEqual(trianglePoints.length, 14, "활용 8회 교체 11번은 2·3·4·5개 점의 네 줄이어야 합니다.");
+const nearest = 45;
+trianglePoints.forEach((point) => trianglePoints.forEach((other) => {
+  if (point === other) return;
+  const sameRowNeighbor = point.row === other.row && Math.abs(point.column - other.column) === 1;
+  const diagonalNeighbor = Math.abs(point.row - other.row) === 1 && (point.column === other.column || point.column === other.column + (point.row > other.row ? 1 : -1));
+  if (!sameRowNeighbor && !diagonalNeighbor) return;
+  assert(Math.abs(Math.hypot(point.x - other.x, point.y - other.y) - nearest) < 0.001, "활용 8회 교체 11번의 가까운 점 간격이 정삼각 격자와 다릅니다.");
+}));
+const squaredDistances = (a, b) => (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
+const triangleSizes = new Set();
+for (let a = 0; a < trianglePoints.length; a += 1) for (let b = a + 1; b < trianglePoints.length; b += 1) for (let c = b + 1; c < trianglePoints.length; c += 1) {
+  const distances = [squaredDistances(trianglePoints[a], trianglePoints[b]), squaredDistances(trianglePoints[a], trianglePoints[c]), squaredDistances(trianglePoints[b], trianglePoints[c])];
+  if (Math.max(...distances) - Math.min(...distances) < 0.02 && distances[0] > 1) triangleSizes.add(Math.round(distances[0] * 100) / 100);
+}
+assert(triangleSizes.size >= 2, "활용 8회 교체 11번은 크기가 다른 정삼각형을 실제로 포함해야 합니다.");
+
+const utilizationEightQ18 = utilizationEight.questions.find((question) => question.number === 18);
+assert.match(utilizationEightQ18.prompt, /세 조각/, "활용 8회 교체 18번은 목표 조각 수를 명시해야 합니다.");
+const utilizationEightQ18Svg = publicContext.window.PremierFigures.render("u8-q18", utilizationEightQ18);
+const dissectionChoices = [...utilizationEightQ18Svg.matchAll(/data-dissection-choice="(\d+)" data-piece-count="(\d+)" data-congruent="(true|false)"/g)].map((match) => ({ choice: Number(match[1]), pieceCount: Number(match[2]), congruent: match[3] === "true" }));
+assert.strictEqual(dissectionChoices.length, 4, "활용 8회 교체 18번은 네 보기를 모두 표시해야 합니다.");
+const validDissections = dissectionChoices.filter((choice) => choice.pieceCount === 3 && choice.congruent);
+assert.strictEqual(validDissections.length, 1, "활용 8회 교체 18번의 정답 후보는 하나여야 합니다.");
+assert.match(utilizationEightQ18Svg, /M36 24V96M60 24V96/, "활용 8회 교체 18번의 유일한 정답은 너비가 같은 세 직사각형이어야 합니다.");
+
 console.log("PASS");
 console.log(`- safe Premier release catalog: ${catalog.series.flatMap((series) => series.rounds).length} rounds`);
 console.log("- utilization 1 q16 wording/render contract: 7 cells");
 console.log("- utilization 1 print contract: A4 portrait, 4 pages");
 console.log("- utilization 5 q17 replacement contract: all blocks visible, zero hidden candidates");
+console.log("- utilization 8 q5 mirror contract: unique reflected point set");
+console.log(`- utilization 8 q11 triangle-lattice contract: ${triangleSizes.size} exact side lengths`);
+console.log("- utilization 8 q18 dissection contract: one congruent three-piece candidate");
