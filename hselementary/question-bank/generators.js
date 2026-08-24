@@ -333,7 +333,7 @@
     const radians = angle * Math.PI / 180;
     const dx = 72 * Math.sin(radians);
     const dy = 72 * Math.cos(radians);
-    return `<svg class="geometry-diagram fold-diagram" viewBox="0 0 240 160" aria-label="종이를 접은 각도 그림"><rect x="42" y="24" width="150" height="112"/><line class="crease" x1="117" y1="25" x2="117" y2="136"/><line class="folded" x1="117" y1="105" x2="${(117 + dx).toFixed(1)}" y2="${(105 - dy).toFixed(1)}"/><line class="original" x1="117" y1="105" x2="${(117 - dx).toFixed(1)}" y2="${(105 - dy).toFixed(1)}"/><text x="117" y="67">${angle * 2}°</text></svg>`;
+    return `<svg class="geometry-diagram fold-diagram" viewBox="0 0 240 160" data-fold-half="${angle}" aria-label="종이를 접은 각도 그림"><rect x="42" y="24" width="150" height="112"/><line class="crease" x1="117" y1="25" x2="117" y2="136"/><line class="folded" x1="117" y1="105" x2="${(117 + dx).toFixed(1)}" y2="${(105 - dy).toFixed(1)}"/><line class="original" x1="117" y1="105" x2="${(117 - dx).toFixed(1)}" y2="${(105 - dy).toFixed(1)}"/><text x="117" y="67">${angle * 2}°</text></svg>`;
   };
   const rotatedSquareSvg = (angle) => `<svg class="geometry-diagram rotated-square" viewBox="0 0 240 176" aria-label="회전한 정사각형"><rect x="55" y="38" width="92" height="92"/><rect x="55" y="38" width="92" height="92" transform="rotate(${angle} 101 84)"/><path d="M101 84 L101 42 A42 42 0 0 1 ${(101 + 42 * Math.sin(angle * Math.PI / 180)).toFixed(1)} ${(84 - 42 * Math.cos(angle * Math.PI / 180)).toFixed(1)}"/><text x="112" y="53">${angle}°</text></svg>`;
   const clockSvg = (hour, minute) => {
@@ -736,7 +736,50 @@
     }
     const topY = startY;
     const bottomY = y;
-    return `<svg class="geometry-diagram staircase-diagram" viewBox="0 0 240 ${(bottomY + 16).toFixed(0)}" aria-label="계단 모양으로 이어진 수직 선분"><line class="original" x1="10" y1="${topY}" x2="${(x + 30).toFixed(1)}" y2="${topY}"/><line class="original" x1="10" y1="${bottomY}" x2="${(x + 30).toFixed(1)}" y2="${bottomY}"/>${segments.join("")}${labels.join("")}</svg>`;
+    return `<svg class="geometry-diagram staircase-diagram" viewBox="0 0 240 ${(bottomY + 16).toFixed(0)}" data-staircase-verticals="${verticals.join(",")}" data-staircase-hidden="${hiddenIndex}" aria-label="계단 모양으로 이어진 수직 선분"><line class="original" x1="10" y1="${topY}" x2="${(x + 30).toFixed(1)}" y2="${topY}"/><line class="original" x1="10" y1="${bottomY}" x2="${(x + 30).toFixed(1)}" y2="${bottomY}"/>${segments.join("")}${labels.join("")}</svg>`;
+  };
+
+  const lineFamiliesSvg = (horizontalCount, verticalCount, diagonalCount) => {
+    const horizontals = Array.from({ length: horizontalCount }, (_, index) => {
+      const y = 30 + index * 38;
+      return `<line data-family="horizontal" x1="18" y1="${y}" x2="222" y2="${y}"/>`;
+    }).join("");
+    const verticals = Array.from({ length: verticalCount }, (_, index) => {
+      const x = 54 + index * (132 / Math.max(1, verticalCount - 1));
+      return `<line data-family="vertical" x1="${x.toFixed(1)}" y1="14" x2="${x.toFixed(1)}" y2="142"/>`;
+    }).join("");
+    const diagonals = Array.from({ length: diagonalCount }, (_, index) => {
+      const offset = index * 20;
+      return `<line data-family="diagonal" x1="${24 + offset}" y1="142" x2="${116 + offset}" y2="18"/>`;
+    }).join("");
+    return `<svg class="geometry-diagram line-families" viewBox="0 0 240 158" data-line-families="${horizontalCount},${verticalCount},${diagonalCount}" aria-label="서로 수직이거나 평행한 여러 직선">${horizontals}${verticals}${diagonals}</svg>`;
+  };
+
+  const parallelDistanceRatioSvg = (parts, total, fromIndex, toIndex) => {
+    const top = 22;
+    const height = 118;
+    const sum = parts.reduce((acc, value) => acc + value, 0);
+    const ys = [top];
+    parts.forEach(value => ys.push(ys[ys.length - 1] + height * value / sum));
+    const names = ["가", "나", "다", "라", "마", "바"];
+    const lines = ys.map((y, index) => `<line x1="28" y1="${y.toFixed(1)}" x2="212" y2="${y.toFixed(1)}"/><text x="14" y="${(y + 4).toFixed(1)}">${names[index]}</text>`).join("");
+    const partLabels = parts.map((value, index) => `<text x="88" y="${((ys[index] + ys[index + 1]) / 2 + 4).toFixed(1)}">${value}</text>`).join("");
+    return `<svg class="geometry-diagram parallel-distance-ratio" viewBox="0 0 240 168" data-distance-parts="${parts.join(",")}" data-distance-total="${total}" data-distance-target="${fromIndex},${toIndex}" aria-label="간격의 비가 표시된 평행선"><g>${lines}</g><line class="crease" x1="68" y1="${ys[0]}" x2="68" y2="${ys[ys.length - 1]}"/>${partLabels}<text x="132" y="160">가장 먼 거리 ${total}cm</text></svg>`;
+  };
+
+  const parallelCandidateSvg = (targetAngle, angles) => {
+    const panelWidth = 58;
+    const names = ["가", "나", "다", "라"];
+    const panels = angles.map((angle, index) => {
+      const x = 8 + index * panelWidth;
+      const centerX = x + 28;
+      const centerY = 94;
+      const radians = angle * Math.PI / 180;
+      const dx = 42 * Math.cos(radians);
+      const dy = 42 * Math.sin(radians);
+      return `<g data-candidate="${index + 1}" data-angle="${angle}"><line x1="${x}" y1="${centerY}" x2="${x + 52}" y2="${centerY}"/><line x1="${(centerX - dx).toFixed(1)}" y1="${(centerY + dy).toFixed(1)}" x2="${(centerX + dx).toFixed(1)}" y2="${(centerY - dy).toFixed(1)}"/><text x="${centerX}" y="18">${names[index]}</text><text x="${centerX}" y="116">${angle}°</text></g>`;
+    }).join("");
+    return `<svg class="geometry-diagram parallel-candidates" viewBox="0 0 240 132" data-target-angle="${targetAngle}" aria-label="한 직선과 후보 직선들이 같은 수평선을 만나는 각">${panels}</svg>`;
   };
 
   const parallelTransversalSvg = (count, angle, hiddenAt = -1) => {
@@ -756,7 +799,7 @@
       const label = index === hiddenAt ? "?" : `${angle}°`;
       return `<text x="${(midX + 22).toFixed(1)}" y="${(y - 8).toFixed(1)}">${label}</text>`;
     }).join("");
-    return `<svg class="geometry-diagram parallel-transversal" viewBox="0 0 240 ${(bottomY + 24).toFixed(0)}" aria-label="평행선을 가로지르는 직선"><g>${lines}<line x1="${(midX - spread).toFixed(1)}" y1="${top - 12}" x2="${(midX + spread).toFixed(1)}" y2="${(bottomY + 12).toFixed(1)}"/></g>${marks}</svg>`;
+    return `<svg class="geometry-diagram parallel-transversal" viewBox="0 0 240 ${(bottomY + 24).toFixed(0)}" data-parallel-count="${count}" data-parallel-angle="${angle}" aria-label="평행선을 가로지르는 직선"><g>${lines}<line x1="${(midX - spread).toFixed(1)}" y1="${top - 12}" x2="${(midX + spread).toFixed(1)}" y2="${(bottomY + 12).toFixed(1)}"/></g>${marks}</svg>`;
   };
 
   const triangleVertexSplitSvg = (a, b, c) => {
@@ -813,6 +856,51 @@
     return `<svg class="geometry-diagram zigzag-chain" viewBox="0 0 240 148" aria-label="평행선 사이의 꺾인 선"><line x1="10" y1="${top}" x2="230" y2="${top}"/><line x1="10" y1="${bottom}" x2="230" y2="${bottom}"/><polyline points="${path}"/>${labels.join("")}</svg>`;
   };
 
+  const alternatingAngleChain = (rng, segmentCount) => {
+    for (let attempt = 0; attempt < 40; attempt += 1) {
+      const magnitudes = Array.from({ length: segmentCount }, () => int(rng, 24, 58));
+      const directions = magnitudes.map((value, index) => index % 2 === 0 ? value : -value);
+      const yValues = [0];
+      directions.forEach((direction, index) => yValues.push(yValues[yValues.length - 1] + Math.sin(direction * Math.PI / 180) * (52 + (index % 2) * 8)));
+      const netY = yValues[yValues.length - 1];
+      const yRange = Math.max(...yValues) - Math.min(...yValues);
+      if (Math.abs(netY) < 28 || Math.abs(netY) / Math.max(1, yRange) < 0.42) continue;
+      const interiorAngles = directions.slice(0, -1).map((value, index) => 180 - Math.abs(value - directions[index + 1]));
+      return { directions, interiorAngles, entry: magnitudes[0], exit: magnitudes[magnitudes.length - 1] };
+    }
+    const directions = Array.from({ length: segmentCount }, (_, index) => index % 2 === 0 ? 52 : -26);
+    const interiorAngles = directions.slice(0, -1).map((value, index) => 180 - Math.abs(value - directions[index + 1]));
+    return { directions, interiorAngles, entry: 52, exit: Math.abs(directions[directions.length - 1]) };
+  };
+
+  const exactAngleChainSvg = ({ directions, interiorAngles, exteriorIndex = -1 }) => {
+    const raw = [[0, 0]];
+    directions.forEach((direction, index) => {
+      const radians = direction * Math.PI / 180;
+      const length = 52 + (index % 2) * 8;
+      raw.push([raw[raw.length - 1][0] + Math.cos(radians) * length, raw[raw.length - 1][1] + Math.sin(radians) * length]);
+    });
+    const xs = raw.map(point => point[0]);
+    const ys = raw.map(point => point[1]);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+    const scale = Math.min(190 / Math.max(1, maxX - minX), 88 / Math.max(1, maxY - minY));
+    const points = raw.map(([x, y]) => [24 + (x - minX) * scale, 30 + (y - minY) * scale]);
+    const path = points.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
+    const labels = [`<text x="${(points[0][0] + 12).toFixed(1)}" y="${(points[0][1] + (directions[0] > 0 ? -12 : 12)).toFixed(1)}">${Math.abs(directions[0])}°</text>`];
+    interiorAngles.forEach((value, index) => {
+      const shown = index === exteriorIndex ? 180 - value : value;
+      const label = index === exteriorIndex ? `밖 ${shown}°` : `${shown}°`;
+      const below = directions[index] > 0 && directions[index + 1] < 0;
+      labels.push(`<text x="${points[index + 1][0].toFixed(1)}" y="${(points[index + 1][1] + (below ? 15 : -15)).toFixed(1)}">${label}</text>`);
+    });
+    const last = points[points.length - 1];
+    labels.push(`<text x="${(last[0] - 12).toFixed(1)}" y="${(last[1] + (directions[directions.length - 1] > 0 ? -12 : 12)).toFixed(1)}">㉮</text>`);
+    return `<svg class="geometry-diagram exact-angle-chain" viewBox="0 0 240 150" data-chain-directions="${directions.join(",")}" data-chain-interiors="${interiorAngles.join(",")}" data-chain-exterior="${exteriorIndex}" data-chain-line-gap="${Math.abs(last[1] - points[0][1]).toFixed(1)}" aria-label="각도에 맞춰 그린 평행선 사이의 꺾인 선"><line x1="10" y1="${points[0][1].toFixed(1)}" x2="230" y2="${points[0][1].toFixed(1)}"/><line x1="10" y1="${last[1].toFixed(1)}" x2="230" y2="${last[1].toFixed(1)}"/><polyline points="${path}"/>${labels.join("")}</svg>`;
+  };
+
   const laserMirrorSvg = (theta, bounces) => {
     const left = 20;
     const right = 220;
@@ -822,16 +910,67 @@
     const points = xs.map((x, index) => [x, index % 2 === 0 ? top : bottom]);
     const path = points.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
     const [mx, my] = points[1];
-    return `<svg class="geometry-diagram laser-mirror" viewBox="0 0 240 144" aria-label="평행한 두 거울 사이의 레이저"><line x1="10" y1="${top}" x2="230" y2="${top}"/><line x1="10" y1="${bottom}" x2="230" y2="${bottom}"/><polyline points="${path}"/><text x="${(mx + 16).toFixed(1)}" y="${(my - 6).toFixed(1)}">${theta}°</text></svg>`;
+    return `<svg class="geometry-diagram laser-mirror" viewBox="0 0 240 144" data-laser-angle="${theta}" data-laser-bounces="${bounces}" aria-label="평행한 두 거울 사이의 레이저"><line x1="10" y1="${top}" x2="230" y2="${top}"/><line x1="10" y1="${bottom}" x2="230" y2="${bottom}"/><polyline points="${path}"/><text x="${(mx + 16).toFixed(1)}" y="${(my - 6).toFixed(1)}">${theta}°</text></svg>`;
   };
 
-  const parallelogramSplitSvg = (angleA, angleADM, labelD = "D") => {
+  const parallelogramSplitSvg = (angleD, parts = 2) => {
     const ax = 40;
     const ay = 128;
-    const dx = 68;
-    const dy = 30;
+    const angleA = 180 - angleD;
+    const side = 74;
+    const angleARadians = angleA * Math.PI / 180;
+    const dx = ax + side * Math.cos(angleARadians);
+    const dy = ay - side * Math.sin(angleARadians);
     const width = 132;
-    return `<svg class="geometry-diagram parallelogram-split" viewBox="0 0 240 160" aria-label="평행사변형의 각 나누기"><polygon points="${ax},${ay} ${(ax + width).toFixed(1)},${ay} ${(ax + width - (ax - dx)).toFixed(1)},${dy} ${dx},${dy}"/><line x1="${dx}" y1="${dy}" x2="${(ax + 60).toFixed(1)}" y2="${ay}"/><text x="${ax + 20}" y="${ay - 10}">${angleA}°</text><text x="${dx + 26}" y="${dy + 20}">${angleADM}°</text><text x="${ax - 10}" y="${ay + 14}">A</text><text x="${dx - 10}" y="${dy - 6}">${labelD}</text></svg>`;
+    const splitRadians = angleD / parts * Math.PI / 180;
+    const t = (ay - dy) / Math.sin(splitRadians);
+    const mx = dx + t * Math.cos(splitRadians);
+    return `<svg class="geometry-diagram parallelogram-split" viewBox="0 0 240 160" data-parallelogram-angle="${angleD}" data-parallelogram-parts="${parts}" aria-label="평행사변형의 각을 똑같이 나눈 선"><polygon points="${ax},${ay} ${(ax + width).toFixed(1)},${ay} ${(dx + width).toFixed(1)},${dy.toFixed(1)} ${dx.toFixed(1)},${dy.toFixed(1)}"/><line x1="${dx.toFixed(1)}" y1="${dy.toFixed(1)}" x2="${mx.toFixed(1)}" y2="${ay}"/><text x="${(dx + 20).toFixed(1)}" y="${(dy + 16).toFixed(1)}">${angleD}°</text><text x="${mx.toFixed(1)}" y="${(ay - 10).toFixed(1)}">M</text><text x="${ax - 10}" y="${ay + 14}">A</text><text x="${(dx - 10).toFixed(1)}" y="${(dy - 6).toFixed(1)}">D</text></svg>`;
+  };
+
+  const latticePointsSvg = (columns, rows) => {
+    const gap = Math.min(42, 170 / Math.max(columns - 1, rows - 1));
+    const width = (columns - 1) * gap;
+    const height = (rows - 1) * gap;
+    const left = (240 - width) / 2;
+    const top = (140 - height) / 2;
+    const points = Array.from({ length: columns * rows }, (_, index) => {
+      const x = left + index % columns * gap;
+      const y = top + Math.floor(index / columns) * gap;
+      return `<circle class="shape-fill" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4"/>`;
+    }).join("");
+    return `<svg class="geometry-diagram lattice-points" viewBox="0 0 240 140" data-lattice-columns="${columns}" data-lattice-rows="${rows}" aria-label="같은 간격으로 배열한 점">${points}</svg>`;
+  };
+
+  const convexHull = points => {
+    const sorted = points.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+    const lower = [];
+    sorted.forEach(point => {
+      while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], point) <= 0) lower.pop();
+      lower.push(point);
+    });
+    const upper = [];
+    sorted.slice().reverse().forEach(point => {
+      while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], point) <= 0) upper.pop();
+      upper.push(point);
+    });
+    return lower.slice(0, -1).concat(upper.slice(0, -1));
+  };
+
+  const convexQuadrilateralCount = (columns, rows) => {
+    const points = Array.from({ length: columns * rows }, (_, index) => [index % columns, Math.floor(index / columns)]);
+    let count = 0;
+    for (let a = 0; a < points.length - 3; a += 1) {
+      for (let b = a + 1; b < points.length - 2; b += 1) {
+        for (let c = b + 1; c < points.length - 1; c += 1) {
+          for (let d = c + 1; d < points.length; d += 1) {
+            if (convexHull([points[a], points[b], points[c], points[d]]).length === 4) count += 1;
+          }
+        }
+      }
+    }
+    return count;
   };
 
   const rhombusDiagonalSvg = (p, q) => {
@@ -842,7 +981,7 @@
     return `<svg class="geometry-diagram rhombus-diagonal" viewBox="0 0 240 164" aria-label="마름모의 대각선"><polygon points="${(cx - halfP).toFixed(1)},${cy} ${cx},${(cy - halfQ).toFixed(1)} ${(cx + halfP).toFixed(1)},${cy} ${cx},${(cy + halfQ).toFixed(1)}"/><line class="crease" x1="${(cx - halfP).toFixed(1)}" y1="${cy}" x2="${(cx + halfP).toFixed(1)}" y2="${cy}"/><line class="crease" x1="${cx}" y1="${(cy - halfQ).toFixed(1)}" x2="${cx}" y2="${(cy + halfQ).toFixed(1)}"/></svg>`;
   };
 
-  const shapeChainCards = (shapes) => `<div class="triangle-angle-cards">${shapes.map(shape => `<div><b>${shape.label}</b><span>${shape.icon}</span><small>변 ${shape.sides}개</small></div>`).join("")}</div>`;
+  const shapeChainCards = (shapes) => `<div class="triangle-angle-cards" data-shape-sides="${shapes.map(shape => shape.sides).join(",")}">${shapes.map(shape => `<div><b>${shape.label}</b><span>${shape.icon}</span><small>변 ${shape.sides}개</small></div>`).join("")}</div>`;
 
   const anglePointSvg = (labels) => angleWheelSvg(labels);
 
@@ -852,7 +991,7 @@
     const size = 42;
     const rects = Array.from({ length: shown }, (_, index) => `<rect x="${(16 + index * step).toFixed(1)}" y="30" width="${size}" height="${size}"/>`).join("");
     const more = count > shown ? `<text x="${(16 + shown * step + 6).toFixed(1)}" y="56">…</text>` : "";
-    return `<svg class="geometry-diagram paper-stack" viewBox="0 0 240 100" aria-label="겹쳐 붙인 정사각형 색종이"><g>${rects}</g>${more}<text x="18" y="88">한 변 ${side}cm</text></svg>`;
+    return `<svg class="geometry-diagram paper-stack" viewBox="0 0 240 100" data-paper-side="${side}" data-paper-count="${count}" aria-label="겹쳐 붙인 정사각형 색종이"><g>${rects}</g>${more}<text x="18" y="88">한 변 ${side}cm</text></svg>`;
   };
 
   const nestedSquareSvg = (a, b, c) => {
@@ -862,7 +1001,7 @@
     const cw = c * scale;
     const top = 14;
     const left = 20;
-    return `<svg class="geometry-diagram nested-square" viewBox="0 0 240 160" aria-label="정사각형을 이어 붙인 도형"><rect x="${left}" y="${top}" width="${aw.toFixed(1)}" height="${aw.toFixed(1)}"/><rect x="${(left + aw).toFixed(1)}" y="${top}" width="${bw.toFixed(1)}" height="${bw.toFixed(1)}"/><rect x="${left}" y="${(top + Math.max(aw, bw)).toFixed(1)}" width="${cw.toFixed(1)}" height="${cw.toFixed(1)}"/><text x="${(left + aw / 2).toFixed(1)}" y="${(top + aw / 2).toFixed(1)}">가</text><text x="${(left + aw + bw / 2).toFixed(1)}" y="${(top + bw / 2).toFixed(1)}">나</text><text x="${(left + cw / 2).toFixed(1)}" y="${(top + Math.max(aw, bw) + cw / 2).toFixed(1)}">다</text></svg>`;
+    return `<svg class="geometry-diagram nested-square" viewBox="0 0 240 160" data-square-sides="${a},${b},${c}" aria-label="정사각형을 이어 붙인 도형"><rect x="${left}" y="${top}" width="${aw.toFixed(1)}" height="${aw.toFixed(1)}"/><rect x="${(left + aw).toFixed(1)}" y="${top}" width="${bw.toFixed(1)}" height="${bw.toFixed(1)}"/><rect x="${left}" y="${(top + Math.max(aw, bw)).toFixed(1)}" width="${cw.toFixed(1)}" height="${cw.toFixed(1)}"/><text x="${(left + aw / 2).toFixed(1)}" y="${(top + aw / 2).toFixed(1)}">가</text><text x="${(left + aw + bw / 2).toFixed(1)}" y="${(top + bw / 2).toFixed(1)}">나</text><text x="${(left + cw / 2).toFixed(1)}" y="${(top + Math.max(aw, bw) + cw / 2).toFixed(1)}">다</text></svg>`;
   };
 
   const gridRectSvg = (m, n, mark = null) => {
@@ -874,7 +1013,37 @@
     const verticalLines = Array.from({ length: m + 1 }, (_, index) => `<line x1="${(left + index * cell).toFixed(1)}" y1="${top}" x2="${(left + index * cell).toFixed(1)}" y2="${(top + height).toFixed(1)}"/>`).join("");
     const horizontalLines = Array.from({ length: n + 1 }, (_, index) => `<line x1="${left}" y1="${(top + index * cell).toFixed(1)}" x2="${(left + width).toFixed(1)}" y2="${(top + index * cell).toFixed(1)}"/>`).join("");
     const marker = mark ? `<rect class="folded" x="${(left + (mark[0] - 1) * cell).toFixed(1)}" y="${(top + (mark[1] - 1) * cell).toFixed(1)}" width="${cell.toFixed(1)}" height="${cell.toFixed(1)}"/>` : "";
-    return `<svg class="geometry-diagram grid-rect" viewBox="0 0 240 ${(top + height + 14).toFixed(0)}" aria-label="${m} 곱하기 ${n} 격자"><g>${verticalLines}${horizontalLines}</g>${marker}</svg>`;
+    return `<svg class="geometry-diagram grid-rect" viewBox="0 0 240 ${(top + height + 14).toFixed(0)}" data-grid-size="${m},${n}" data-grid-mark="${mark ? mark.join(",") : ""}" aria-label="${m} 곱하기 ${n} 격자"><g>${verticalLines}${horizontalLines}</g>${marker}</svg>`;
+  };
+
+  const filledRectangleCount = widths => {
+    const rows = widths.length;
+    const columns = Math.max(...widths);
+    let count = 0;
+    for (let top = 0; top < rows; top += 1) {
+      for (let bottom = top; bottom < rows; bottom += 1) {
+        for (let left = 0; left < columns; left += 1) {
+          for (let right = left; right < columns; right += 1) {
+            let full = true;
+            for (let row = top; row <= bottom && full; row += 1) {
+              if (right >= widths[row]) full = false;
+            }
+            if (full) count += 1;
+          }
+        }
+      }
+    }
+    return count;
+  };
+
+  const staircaseGridSvg = widths => {
+    const rows = widths.length;
+    const columns = Math.max(...widths);
+    const cell = Math.min(28, 180 / columns, 112 / rows);
+    const left = 28;
+    const top = 14;
+    const cells = widths.map((width, row) => Array.from({ length: width }, (_, column) => `<rect x="${(left + column * cell).toFixed(1)}" y="${(top + row * cell).toFixed(1)}" width="${cell.toFixed(1)}" height="${cell.toFixed(1)}"/>`).join("")).join("");
+    return `<svg class="geometry-diagram staircase-grid" viewBox="0 0 240 ${(top + rows * cell + 16).toFixed(0)}" data-staircase-widths="${widths.join(",")}" aria-label="계단 모양으로 이어진 모눈">${cells}</svg>`;
   };
 
   const measureSvg = ({ kind, values, expected, aria, body, extra = "", viewBox = "0 0 280 190" }) => `<svg class="geometry-diagram area-diagram" viewBox="${viewBox}" data-measure-kind="${kind}" data-measure-values="${values.join(",")}" data-measure-expected="${expected}" ${extra} aria-label="${aria}">${body}</svg>`;
@@ -6378,11 +6547,35 @@
       return result('왼쪽 ' + selected.name + '을 돌리는 것은 가능하지만 뒤집는 것은 불가능합니다. 오른쪽 ' + selected.rows + '행 ' + selected.cols + '열 모눈 안에 선을 맞추어 완전히 놓을 수 있는 서로 다른 방법은 모두 몇 가지입니까?' + piecePlacementSvg(selected), answer, '조각을 돌려 생기는 서로 다른 방향을 모두 확인하고, 각 방향에서 모눈을 벗어나지 않는 위치를 셉니다. 이 조각은 모두 ' + answer + '가지 위치에 놓을 수 있습니다.');
     },
     quadPerpParallelDistance({ rng, level, variant = 0 }) {
-      const segCount = level === 0 ? 3 : level === 2 ? pick(rng, [5, 6]) : pick(rng, [4, 5]);
+      if (variant === 0 || variant === 1) {
+        const horizontalCount = 2 + int(rng, 0, Math.min(1, level));
+        const verticalCount = 2 + int(rng, 0, Math.min(1, level));
+        const diagonalCount = variant === 1 ? 1 + level : int(rng, 0, Math.min(1, level));
+        const diagram = lineFamiliesSvg(horizontalCount, verticalCount, diagonalCount);
+        if (variant === 0) {
+          const answer = horizontalCount * verticalCount;
+          return result(`그림의 직선 중 수직인 관계에 있는 두 직선을 한 쌍으로 셀 때, 수직인 두 직선은 모두 몇 쌍인지 구하세요.${diagram}`, answer, `가로 방향 직선 ${horizontalCount}개는 세로 방향 직선 ${verticalCount}개와 각각 수직입니다. 따라서 ${horizontalCount} × ${verticalCount} = ${answer}쌍입니다.`);
+        }
+        const chooseTwo = value => value * (value - 1) / 2;
+        const answer = chooseTwo(horizontalCount) + chooseTwo(verticalCount) + chooseTwo(diagonalCount);
+        return result(`그림의 직선 중 평행인 관계에 있는 두 직선을 한 쌍으로 셀 때, 평행인 두 직선은 모두 몇 쌍인지 구하세요.${diagram}`, answer, `같은 방향끼리 두 직선을 고릅니다. 가로 ${horizontalCount}개, 세로 ${verticalCount}개, 비스듬한 직선 ${diagonalCount}개에서 각각 두 개씩 고른 쌍을 더하면 ${answer}쌍입니다.`);
+      }
+      if (variant === 2) {
+        const parts = level === 0 ? [1, 2, 1] : level === 1 ? [2, 3, 4] : [2, 3, 4, 5];
+        const unit = int(rng, 3, 7 + level * 2);
+        const total = parts.reduce((sum, value) => sum + value, 0) * unit;
+        const fromIndex = 1;
+        const toIndex = parts.length;
+        const targetRatio = parts.slice(fromIndex, toIndex).reduce((sum, value) => sum + value, 0);
+        const answer = targetRatio * unit;
+        const names = ["가", "나", "다", "라", "마", "바"];
+        return result(`서로 이웃한 평행선 사이 거리의 비가 위에서부터 ${parts.join(":")}이고, 가장 먼 두 평행선 사이의 거리가 ${total}cm입니다. ${names[fromIndex]}와 ${names[toIndex]} 사이의 거리를 구하세요.${parallelDistanceRatioSvg(parts, total, fromIndex, toIndex)}`, answer, `비의 합은 ${parts.join("+")}=${parts.reduce((sum, value) => sum + value, 0)}이고 한 부분은 ${total}÷${parts.reduce((sum, value) => sum + value, 0)}=${unit}cm입니다. 구하려는 구간의 비는 ${parts.slice(fromIndex, toIndex).join("+")}=${targetRatio}이므로 ${unit}×${targetRatio}=${answer}cm입니다.`);
+      }
+      const segCount = 3 + level;
       const verticals = Array.from({ length: segCount }, () => int(rng, 2, 6 + level * 2));
       const horizontals = Array.from({ length: segCount }, () => int(rng, 2, 7 + level * 2));
       const total = verticals.reduce((sum, value) => sum + value, 0);
-      if (level === 2 && variant % 2 === 1) {
+      if (variant === 4) {
         const hiddenIndex = int(rng, 0, segCount - 1);
         const known = verticals.filter((_, index) => index !== hiddenIndex);
         const answer = verticals[hiddenIndex];
@@ -6392,68 +6585,58 @@
       return result(`아래 그림과 같이 수직인 선분을 계속 이어 그렸습니다. 가장 먼 두 평행선 사이의 거리를 구하세요.${staircaseSvg(horizontals, verticals)}`, total, `가장 먼 두 평행선 사이의 거리는 같은 방향의 수직 구간의 길이를 모두 더한 값과 같습니다. ${verticals.join(" + ")} = ${total}cm입니다.`);
     },
     quadParallelAngleCondition({ rng, level, variant = 0 }) {
-      if (variant % 2 === 0) {
+      if (variant === 0 || variant === 1) {
         const count = 3 + level;
         const angle = int(rng, 40, 140);
-        const askAlternate = rng() > 0.5;
-        const single = askAlternate ? 180 - angle : angle;
+        const relation = variant === 0 ? "동위각" : "엇각";
+        const single = angle;
         const answer = single * (count - 1);
-        return result(`서로 평행한 직선 ${count}개를 한 직선이 가로지릅니다. 맨 위 교점에서 만들어지는 한 각의 크기가 ${angle}°일 때, 나머지 ${count - 1}개의 교점에서 이 각과 ${askAlternate ? "엇각" : "동위각"} 관계에 있는 각의 크기를 모두 더한 값을 구하세요.${parallelTransversalSvg(count, angle)}`, answer, `평행선을 가로지르는 한 직선이 만드는 ${askAlternate ? "엇각" : "동위각"}은 크기가 모두 같습니다. 관계에 있는 각은 한 개당 ${single}°이고 이런 교점이 ${count - 1}개이므로 ${single} × ${count - 1} = ${answer}°입니다.`);
+        return result(`서로 평행한 직선 ${count}개를 한 직선이 가로지릅니다. 맨 위 교점에서 만들어지는 한 각의 크기가 ${angle}°일 때, 나머지 ${count - 1}개의 교점에서 이 각과 ${relation} 관계에 있는 각의 크기를 모두 더한 값을 구하세요.${parallelTransversalSvg(count, angle)}`, answer, `평행선을 가로지르는 한 직선이 만드는 ${relation}은 크기가 모두 같습니다. 관계에 있는 각은 한 개당 ${single}°이고 이런 교점이 ${count - 1}개이므로 ${single} × ${count - 1} = ${answer}°입니다.`);
       }
-      const a = int(rng, 30, 65 + level * 5);
-      const c = int(rng, 30, 65 + level * 5);
-      const b = 180 - a - c;
-      const answer = a + c;
-      return result(`삼각형 ABC에서 ∠A=${a}°, ∠C=${c}°입니다. 꼭짓점 B를 지나고 변 AC에 평행한 직선을 그었을 때 이 직선과 변 BA, 변 BC가 이루는 두 각을 각각 ㉠, ㉡이라고 하면 ㉠+㉡의 크기를 구하세요.${triangleVertexSplitSvg(a, b, c)}`, answer, `평행선에서 엇각은 크기가 같으므로 ㉠=∠A=${a}°, ㉡=∠C=${c}°입니다. 따라서 ㉠+㉡ = ${a} + ${c} = ${answer}°이며, 이는 삼각형의 세 각의 합 180°에서 ∠B(${b}°)를 뺀 값과 같습니다.`);
+      const targetAngle = pick(rng, [40, 50, 60, 70]);
+      const matchCount = 1 + level;
+      const distractors = [targetAngle + 10, targetAngle + 20, Math.max(20, targetAngle - 10)];
+      const angles = [targetAngle, ...Array.from({ length: matchCount }, () => targetAngle), ...distractors].slice(0, 4);
+      for (let index = angles.length - 1; index > 1; index -= 1) {
+        const swap = int(rng, 1, index);
+        [angles[index], angles[swap]] = [angles[swap], angles[index]];
+      }
+      const answer = angles.slice(1).filter(angle => angle === targetAngle).length;
+      return result(`그림에서 직선 가와 후보 직선들은 같은 수평선을 만납니다. 표시된 각의 크기를 비교할 때 직선 가와 평행한 후보 직선은 모두 몇 개인지 구하세요.${parallelCandidateSvg(targetAngle, angles)}`, answer, `같은 직선이 두 직선을 가로지를 때 같은 위치의 각이 같으면 두 직선은 평행합니다. 가의 각 ${targetAngle}°와 같은 후보는 ${answer}개입니다.`);
     },
     quadAngleChainOne({ rng, level, variant = 0 }) {
-      const bendCount = level === 0 ? 1 : 2;
-      const chain = buildZigzagChain(rng, bendCount);
-      if (level === 2 && variant % 2 === 1) {
-        const exteriorIndex = int(rng, 0, bendCount - 1);
+      const segmentCount = variant === 0 ? 2 : 3 + Math.min(level, 1);
+      const chain = alternatingAngleChain(rng, segmentCount);
+      const exteriorIndex = variant === 2 ? int(rng, 0, chain.interiorAngles.length - 1) : -1;
+      const diagram = exactAngleChainSvg({ ...chain, exteriorIndex });
+      if (exteriorIndex >= 0) {
         const exterior = 180 - chain.interiorAngles[exteriorIndex];
-        const shown = chain.interiorAngles.map((value, index) => index === exteriorIndex ? `${exterior}°(바깥쪽에서 잰 각)` : `${value}°`);
-        return result(`직선 가와 나는 서로 평행합니다. 그림과 같이 꺾인 선의 각이 ${chain.entry}°, ${shown.join(", ")}일 때 ㉮의 크기를 구하세요.${zigzagChainSvg(chain.entry, chain.interiorAngles, chain.exit, "exit")}`, chain.exit, `바깥쪽에서 잰 각 ${exterior}°는 안쪽 각으로 ${180 - exterior}°입니다. 각 꺾인 점마다 평행선과 평행한 보조선을 그어 엇각으로 나누어 더하면 ㉮ = ${chain.exit}°입니다.`);
+        return result(`직선 가와 나는 서로 평행합니다. 그림의 꺾인 점 중 하나에는 바깥쪽 각 ${exterior}°가 표시되어 있습니다. ㉮의 크기를 구하세요.${diagram}`, chain.exit, `바깥쪽 각 ${exterior}°와 안쪽 각의 합은 180°이므로 안쪽 각은 ${chain.interiorAngles[exteriorIndex]}°입니다. 각 꺾인 점에 평행한 보조선을 그어 표시된 각을 차례로 옮기면 ㉮=${chain.exit}°입니다.`);
       }
-      return result(`직선 가와 나는 서로 평행합니다. 그림과 같이 꺾인 선이 있을 때 ㉮의 크기를 구하세요.${zigzagChainSvg(chain.entry, chain.interiorAngles, chain.exit, "exit")}`, chain.exit, `각 꺾인 점마다 평행선과 평행한 보조선을 그으면 엇각으로 나뉩니다. 이를 차례로 계산하면 ㉮ = ${chain.exit}°입니다.`);
+      return result(`직선 가와 나는 서로 평행합니다. 그림과 같이 ${segmentCount - 1}번 꺾인 선이 있을 때 ㉮의 크기를 구하세요.${diagram}`, chain.exit, `각 꺾인 점에 평행한 보조선을 그어 동위각과 엇각을 차례로 옮기면 마지막 선분이 평행선과 이루는 각은 ${chain.exit}°입니다.`);
     },
     quadAngleChainTwo({ rng, level, variant = 0 }) {
-      if (level === 2 && variant % 2 === 1) {
+      if (variant === 1) {
         const theta = int(rng, 25, 70);
-        const bounces = int(rng, 3, 5);
+        const bounces = 3 + level;
         const answer = 180 - 2 * theta;
         return result(`평행한 두 개의 거울 사이에서 레이저가 그림처럼 여러 번 반사되었습니다. 거울과 이루는 각이 ${theta}°로 일정할 때, 반사되는 점에서 두 레이저 사이의 각 ㉠의 크기를 구하세요.${laserMirrorSvg(theta, bounces)}`, answer, `입사각과 반사각이 같으므로 레이저가 거울과 이루는 각은 항상 ${theta}°로 일정합니다. 두 레이저 사이의 각은 180° - ${theta}° - ${theta}° = ${answer}°입니다.`);
       }
-      const bendCount = level === 0 ? 3 : 4 + int(rng, 0, 1);
-      const chain = buildZigzagChain(rng, bendCount, [25, 75], [18, 60]);
-      return result(`직선 ㄱㄴ과 직선 ㄷㄹ은 서로 평행합니다. 그림과 같이 여러 번 꺾인 선이 있을 때 ㉮의 크기를 구하세요.${zigzagChainSvg(chain.entry, chain.interiorAngles, chain.exit, "exit")}`, chain.exit, `각 꺾인 점마다 평행선과 평행한 보조선을 그으면 엇각으로 나뉩니다. 이를 순서대로 계산하면 ㉮ = ${chain.exit}°입니다.`);
+      const chain = alternatingAngleChain(rng, 4 + level);
+      return result(`직선 ㄱㄴ과 직선 ㄷㄹ은 서로 평행합니다. 그림과 같이 여러 번 꺾인 선이 있을 때 ㉮의 크기를 구하세요.${exactAngleChainSvg({ ...chain })}`, chain.exit, `각 꺾인 점마다 평행선과 평행한 보조선을 그어 각을 차례로 옮기면 마지막 선분이 평행선과 이루는 각은 ${chain.exit}°입니다.`);
     },
     quadPropertyRelations({ rng, level, variant = 0 }) {
-      if (variant % 3 === 0) {
-        const parts = level === 2 ? 3 : 2;
-        const k = int(rng, 10 + level * 4, 22 + level * 6);
-        const beta = parts * k;
-        const angleA = 180 - beta;
-        const angleADM = beta / parts;
-        const answer = beta - angleADM;
-        return result(`평행사변형 ABCD에서 ∠D를 ${parts === 3 ? "삼등분" : "이등분"}하는 선을 그어 변 AB와 만나는 점을 M이라고 하겠습니다. ∠D=${beta}°일 때 ∠AMD의 크기를 구하세요.${parallelogramSplitSvg(angleA, angleADM)}`, answer, `AB와 DC는 평행하므로 ∠A = 180° - ${beta}° = ${angleA}°입니다. ∠ADM은 ∠D를 ${parts}등분한 것 중 하나이므로 ${beta} ÷ ${parts} = ${angleADM}°입니다. 삼각형 ADM에서 ∠AMD = 180° - ${angleA}° - ${angleADM}° = ${answer}°입니다.`);
+      if (variant === 0) {
+        const [columns, rows] = level === 0 ? [3, 2] : level === 1 ? [3, 3] : [4, 3];
+        const answer = convexQuadrilateralCount(columns, rows);
+        return result(`가로와 세로의 점 사이 간격이 같은 점판입니다. 네 점을 꼭짓점으로 골라 만들 수 있는 볼록한 사각형은 모두 몇 개인지 구하세요. 점의 위치가 다르면 서로 다른 사각형으로 셉니다.${latticePointsSvg(columns, rows)}`, answer, `네 점을 고른 뒤 세 점이 한 직선 위에 있거나 한 점이 삼각형 안에 들어가는 경우를 제외합니다. 조건을 만족하는 네 점의 묶음을 빠짐없이 세면 ${answer}개입니다.`);
       }
-      if (variant % 3 === 1) {
-        const triples = [[3, 4, 5], [6, 8, 10], [5, 12, 13]];
-        const [legA, legB, hyp] = pick(rng, triples);
-        const k = int(rng, 2, 4 + level);
-        const half1 = legA * k;
-        const half2 = legB * k;
-        const side = hyp * k;
-        const sum = 2 * (half1 + half2);
-        const diff = Math.abs(half1 - half2) * 2;
-        const answer = 4 * side;
-        return result(`두 대각선의 길이의 합이 ${sum}cm, 차가 ${diff}cm인 마름모가 있습니다. 이 마름모의 두 대각선을 따라 잘라 생기는 4개의 직각삼각형을 겹치지 않게 이어 붙여 직사각형을 만들 때, 네 변의 길이의 합을 구하세요.${rhombusDiagonalSvg(half1, half2)}`, answer, `대각선의 반은 (${sum}+${diff})÷2÷2 = ${half1}cm, (${sum}-${diff})÷2÷2 = ${half2}cm입니다. 직각삼각형의 빗변은 √(${half1}²+${half2}²) = ${side}cm이고, 이 변이 직사각형의 네 변이 되므로 둘레는 ${side} × 4 = ${answer}cm입니다.`);
-      }
-      const apexAngle = int(rng, 20 + level * 5, 59 + level * 5) * 2;
-      const base = (180 - apexAngle) / 2;
-      const answer = 90 + apexAngle / 2;
-      return result(`꼭지각이 ${apexAngle}°인 이등변삼각형 모양의 종이를 접어서 마름모를 만들었습니다. 새로 생긴 마름모의 한 각(둔각)의 크기를 구하세요.`, answer, `이등변삼각형의 밑각은 (180° - ${apexAngle}°) ÷ 2 = ${base}°입니다. 접어서 만든 마름모의 둔각은 180° - ${base}° = ${answer}°입니다.`);
+      const parts = 2;
+      const half = int(rng, 42, 68);
+      const beta = parts * half;
+      const angleA = 180 - beta;
+      const answer = half;
+      return result(`평행사변형 ABCD에서 ∠D를 이등분하는 선이 변 AB와 만나는 점을 M이라고 하겠습니다. ∠D=${beta}°일 때 ∠AMD의 크기를 구하세요.${parallelogramSplitSvg(beta, parts)}`, answer, `AB와 DC는 평행하므로 ∠A=180°-${beta}°=${angleA}°입니다. ∠ADM=${beta}°÷2=${half}°이므로 삼각형 ADM에서 ∠AMD=180°-${angleA}°-${half}°=${answer}°입니다.`);
     },
     quadPropertyApplication({ rng, level, variant = 0 }) {
       if (variant % 2 === 0) {
@@ -6461,7 +6644,8 @@
           { label: "정삼각형", icon: "△", sides: 3 },
           { label: "정사각형", icon: "□", sides: 4 },
           { label: "마름모", icon: "◇", sides: 4 },
-          { label: "정오각형", icon: "⬠", sides: 5 }
+          { label: "직사각형", icon: "▭", sides: 4 },
+          { label: "평행사변형", icon: "▱", sides: 4 }
         ];
         const count = 3 + level;
         const shapes = Array.from({ length: count }, () => pick(rng, pool));
@@ -6532,7 +6716,7 @@
       return result(`그림과 같이 정사각형 가, 나, 다를 겹치지 않게 붙였습니다. 정사각형 다의 한 변은 가와 나의 한 변의 길이의 합과 같습니다. 가의 한 변이 ${a}cm이고 나와 다의 한 변의 길이의 합이 ${total}cm일 때, 나의 한 변의 길이를 구하세요.${nestedSquareSvg(a, b, c)}`, b, `다 = 가 + 나 = ${a} + 나이고, 나 + 다 = ${total}이므로 나 + (${a}+나) = ${total}입니다. 2 × 나 = ${total} - ${a} = ${total - a}이므로 나 = ${b}cm입니다.`);
     },
     quadRectangleCount({ rng, level, variant = 0 }) {
-      if (level === 2) {
+      if (variant === 2) {
         const m = int(rng, 3, 5);
         const n = int(rng, 3, 4);
         const rectCount = (m * (m + 1) / 2) * (n * (n + 1) / 2);
@@ -6540,18 +6724,23 @@
         for (let size = 1; size <= Math.min(m, n); size += 1) squareCount += (m - size + 1) * (n - size + 1);
         return result(`가로로 ${m}칸, 세로로 ${n}칸인 모눈에서 선을 따라 그릴 수 있는 크고 작은 직사각형은 모두 몇 개이고, 그중 정사각형은 몇 개인지 차례로 구하세요.${gridRectSvg(m, n)}`, `${rectCount}, ${squareCount}`, `가로선 중 2개, 세로선 중 2개를 고르면 직사각형 1개가 정해지므로 직사각형의 개수는 (1+2+…+${m}) × (1+2+…+${n}) = ${m * (m + 1) / 2} × ${n * (n + 1) / 2} = ${rectCount}개입니다. 이 중 정사각형은 한 변의 길이별로 세어 더하면 ${squareCount}개입니다.`);
       }
-      if (variant % 2 === 0) {
+      if (variant === 0) {
         const m = int(rng, 2 + level, 4 + level);
         const n = int(rng, 2 + level, 4 + level);
         const answer = (m * (m + 1) / 2) * (n * (n + 1) / 2);
         return result(`가로로 ${m}칸, 세로로 ${n}칸인 모눈에서 선을 따라 그릴 수 있는 크고 작은 직사각형은 모두 몇 개인지 구하세요.${gridRectSvg(m, n)}`, answer, `가로선 중 2개를 고르는 방법은 1+2+…+${m} = ${m * (m + 1) / 2}가지, 세로선 중 2개를 고르는 방법은 1+2+…+${n} = ${n * (n + 1) / 2}가지입니다. 두 경우를 곱하면 직사각형의 개수는 ${m * (m + 1) / 2} × ${n * (n + 1) / 2} = ${answer}개입니다.`);
       }
-      const m = int(rng, 3 + level, 5 + level);
-      const n = int(rng, 3 + level, 5 + level);
-      const r = int(rng, 1, m);
-      const c = int(rng, 1, n);
-      const answer = r * (m - r + 1) * c * (n - c + 1);
-      return result(`가로로 ${m}칸, 세로로 ${n}칸인 직사각형 모눈 안에 깃발이 하나 그려져 있습니다. 깃발을 포함한 크고 작은 직사각형은 모두 몇 개인지 구하세요.${gridRectSvg(m, n, [r, c])}`, answer, `깃발이 있는 칸을 포함하려면 왼쪽으로 ${r}가지, 오른쪽으로 ${m - r + 1}가지, 위로 ${c}가지, 아래로 ${n - c + 1}가지 중 하나씩 선택하면 됩니다. ${r} × ${m - r + 1} × ${c} × ${n - c + 1} = ${answer}개입니다.`);
+      if (variant === 1) {
+        const m = int(rng, 3 + level, 5 + level);
+        const n = int(rng, 3 + level, 5 + level);
+        const r = int(rng, 1, m);
+        const c = int(rng, 1, n);
+        const answer = r * (m - r + 1) * c * (n - c + 1);
+        return result(`가로로 ${m}칸, 세로로 ${n}칸인 직사각형 모눈 안에 깃발이 하나 그려져 있습니다. 깃발을 포함한 크고 작은 직사각형은 모두 몇 개인지 구하세요.${gridRectSvg(m, n, [r, c])}`, answer, `깃발이 있는 칸을 포함하려면 왼쪽으로 ${r}가지, 오른쪽으로 ${m - r + 1}가지, 위로 ${c}가지, 아래로 ${n - c + 1}가지 중 하나씩 선택하면 됩니다. ${r} × ${m - r + 1} × ${c} × ${n - c + 1} = ${answer}개입니다.`);
+      }
+      const widths = level === 0 ? [2, 3, 4] : level === 1 ? [2, 3, 4, 5] : [3, 4, 5, 6, 6];
+      const answer = filledRectangleCount(widths);
+      return result(`그림과 같이 계단 모양으로 이어진 모눈에서 선을 따라 그릴 수 있는 크고 작은 직사각형은 모두 몇 개인지 구하세요.${staircaseGridSvg(widths)}`, answer, `위쪽 행과 아래쪽 행을 정한 뒤, 그 사이의 모든 행에 공통으로 있는 연속한 칸을 골라 직사각형을 셉니다. 빠짐없이 더하면 ${answer}개입니다.`);
     },
     factorMultipleAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {

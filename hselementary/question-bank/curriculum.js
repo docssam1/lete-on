@@ -75,7 +75,8 @@
               difficultyBand: Number.isInteger(type.difficultyBand) ? type.difficultyBand : 0,
               sourceTier: type.sourceTier || "advanced",
               sourceVerified: Boolean(type.sourceVerified),
-              sourceEvidence: type.sourceEvidence || ""
+              sourceEvidence: type.sourceEvidence || "",
+              reviewLocked: Boolean(type.reviewLocked)
             }))
           };
         })
@@ -257,7 +258,54 @@
       ["분수의 덧셈과 뺄셈", "분수의 이해", "분수의 종류와 크기 비교", "분수의 덧셈과 뺄셈 1", "분수의 덧셈과 뺄셈 2", "조건에 맞는 분수 찾기", "식 세워 풀기"],
       ["삼각형", "삼각형의 개수", "예각삼각형, 직각삼각형, 둔각삼각형", "이등변삼각형", "정삼각형"],
       ["소수의 덧셈과 뺄셈", "소수의 이해", "소수의 덧셈과 뺄셈", "소수의 덧셈과 뺄셈 활용", "조건에 맞는 소수"],
-      ["사각형", "수선과 평행선", "평행선의 조건과 성질", "평행선 사이의 각도 ①", "평행선 사이의 각도 ②", "사각형의 종류와 성질", "사각형의 성질의 활용", "정사각형", "사각형의 개수"],
+      ["사각형",
+        detailed("수선과 평행선", "quadPerpParallelDistance", [
+          sourced42("수직인 두 직선의 쌍 세기", -1, "4-2 심화 p.35-36 개념탐구 1·Mission"),
+          sourced42("평행인 두 직선의 쌍 세기", -1, "4-2 심화 p.35-36 개념탐구 1·Mission"),
+          sourced42("비로 주어진 평행선 사이 거리", 0, "4-2 심화 p.35-36 개념탐구 1·Mission"),
+          sourced42("연속한 수선으로 전체 거리 구하기", 0, "4-2 심화 p.35-36 개념탐구 1·Mission"),
+          sourced42("전체 거리에서 수선의 빈 길이 구하기", 1, "4-2 심화 p.35-36 개념탐구 1·Mission")
+        ]),
+        detailed("평행선의 조건과 성질", "quadParallelAngleCondition", [
+          sourced42("여러 평행선의 동위각 합", -1, "4-2 심화 p.37-38 개념탐구 2·Mission"),
+          sourced42("여러 평행선의 엇각 합", 0, "4-2 심화 p.37-38 개념탐구 2·Mission"),
+          sourced42("각의 조건으로 평행한 직선 찾기", 1, "4-2 심화 p.37-38 개념탐구 2·Mission")
+        ]),
+        detailed("평행선 사이의 각도 ①", "quadAngleChainOne", [
+          sourced42("한 번 꺾인 선의 끝각", -1, "4-2 심화 p.39-40 개념탐구 3·Mission"),
+          sourced42("두 번 꺾인 선의 끝각", 0, "4-2 심화 p.39-40 개념탐구 3·Mission"),
+          sourced42("바깥각이 섞인 꺾은선", 1, "4-2 심화 p.39-40 개념탐구 3·Mission")
+        ]),
+        detailed("평행선 사이의 각도 ②", "quadAngleChainTwo", [
+          sourced42("여러 번 꺾인 선의 끝각", 1, "4-2 심화 p.41-42 개념탐구 4·Mission"),
+          sourced42("평행한 거울 사이 레이저의 각", 1, "4-2 심화 p.41-42 개념탐구 4·Mission")
+        ]),
+        detailed("사각형의 종류와 성질", "quadPropertyRelations", [
+          sourced42("점 배열에서 볼록한 사각형 세기", 1, "4-2 심화 p.43-44 개념탐구 5·Mission"),
+          sourced42("평행사변형의 각을 나눈 선", 0, "4-2 심화 p.43-44 개념탐구 5·Mission"),
+          { label: "접어 만든 마름모의 각", reviewLocked: true },
+          { label: "사다리꼴과 마름모의 복합 각", reviewLocked: true }
+        ]),
+        detailed("사각형의 성질의 활용", "quadPropertyApplication", [
+          sourced42("이어 붙인 여러 도형의 둘레", 0, "4-2 심화 p.45-46 개념탐구 6·Mission"),
+          { label: "사각형과 삼각형의 복합 각", reviewLocked: true },
+          { label: "평행사변형과 마름모의 길이 관계", reviewLocked: true }
+        ]),
+        detailed("정사각형", "quadSquareSpecial", [
+          sourced42("겹쳐 이어 붙인 정사각형의 둘레", 0, "4-2 심화 p.47-48 개념탐구 7·Mission"),
+          sourced42("접은 정사각형에서 생긴 각", 1, "4-2 심화 p.47-48 개념탐구 7·Mission"),
+          sourced42("붙여 놓은 정사각형의 변 길이", 0, "4-2 심화 p.47-48 개념탐구 7·Mission"),
+          { label: "정사각형 대각선의 복합 각", reviewLocked: true }
+        ]),
+        detailed("사각형의 개수", "quadRectangleCount", [
+          sourced42("직사각형 모눈의 모든 직사각형", -1, "4-2 심화 p.49-50 개념탐구 8·Mission"),
+          sourced42("표시한 칸을 포함하는 직사각형", 0, "4-2 심화 p.49-50 개념탐구 8·Mission"),
+          sourced42("직사각형과 정사각형을 함께 세기", 0, "4-2 심화 p.49-50 개념탐구 8·Mission"),
+          sourced42("계단 모양 모눈의 직사각형", 1, "4-2 심화 p.49-50 개념탐구 8·Mission"),
+          { label: "대각선이 있는 모눈의 사각형", reviewLocked: true },
+          { label: "동심 직사각형 세기", reviewLocked: true },
+          { label: "평행사변형과 사다리꼴 세기", reviewLocked: true }
+        ])],
       ["꺾은선그래프",
         detailed("꺾은선그래프의 이해", "lineGraphUnderstanding", [
           sourced42("두 날의 자료 값 차 구하기", -1, "4-2 심화 p.52-53 개념탐구 1·Mission"),

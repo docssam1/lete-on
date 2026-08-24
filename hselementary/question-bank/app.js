@@ -150,14 +150,14 @@
   }
 
   function typeTreeRow(type) {
-    const ready = Boolean(type.generator);
+    const ready = Boolean(type.generator) && !type.reviewLocked;
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
     return '<label class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" tabindex="0">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
       '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i></small></span>' +
-      '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "준비 중") + '</span>' +
+      '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "검수 대기") + '</span>' +
     '</label>';
   }
 
@@ -169,7 +169,7 @@
       const unitTypes = visible.filter(type => type.unitId === unit.id);
       if (!unitTypes.length) return "";
       const isOpen = !state.collapsedUnits.has(unit.id);
-      const readyCount = unitTypes.filter(type => type.generator).length;
+      const readyCount = unitTypes.filter(type => type.generator && !type.reviewLocked).length;
       return '<section class="tree-unit ' + (isOpen ? "is-open" : "") + '">' +
         '<button class="tree-unit-toggle" type="button" data-tree-unit="' + unit.id + '" aria-expanded="' + isOpen + '">' +
           '<span class="tree-chevron" aria-hidden="true">›</span><span class="tree-unit-number">' + unit.number + '</span>' +
@@ -223,7 +223,7 @@
 
   function showTypePreview(typeId, anchor) {
     const type = typeById.get(typeId);
-    if (!type?.generator) return;
+    if (!type?.generator || type.reviewLocked) return;
     clearTimeout(previewHideTimer);
     const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.variant ?? 0);
     if (!generated) return;
@@ -282,7 +282,7 @@
   }
 
   function buildQuestions() {
-    const selected = [...state.selected].map(id => typeById.get(id)).filter(type => type?.generator);
+    const selected = [...state.selected].map(id => typeById.get(id)).filter(type => type?.generator && !type.reviewLocked);
     if (!selected.length) return;
     state.generation += 1;
     const level = currentLevel();
@@ -456,7 +456,7 @@
   studentNameInput.dataset.nameEditPermission = identity.canEditName ? "granted" : "locked";
   studentNameInput.title = identity.canEditName ? "관리자가 학생 이름 변경을 허용했습니다." : "로그인한 이름이 자동으로 적용됩니다.";
   const reviewType = typeById.get(params.get("type"));
-  if (reviewType?.generator) {
+  if (reviewType?.generator && !reviewType.reviewLocked) {
     state.level = "simwha";
     state.grade = reviewType.grade;
     state.term = reviewType.term;
@@ -469,5 +469,5 @@
   }
   renderUnitOptions();
   renderCatalog();
-  if (reviewType?.generator && params.get("review") === "1") buildQuestions();
+  if (reviewType?.generator && !reviewType.reviewLocked && params.get("review") === "1") buildQuestions();
 })();
