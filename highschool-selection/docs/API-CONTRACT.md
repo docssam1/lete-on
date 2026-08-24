@@ -99,4 +99,8 @@ pages[] = { number, url, mimeType }
 
 `POST /practice-sets/plan`은 승인된 문항의 중립 ID, 교육과정 코드, 원문→쌍둥이→유사문제 관계, 난이도, 숙달 상태와 재도전 예정일만 반환합니다. 문제 원문, 답, 풀이, 원본 위치는 반환하지 않습니다.
 
-계획 결과가 완전하더라도 `releaseStatus=approval_required`이며, 관리자가 해당 `practiceSetId`를 승인하기 전에는 페이지 API가 응답하지 않습니다. `GET /practice-sets/:practiceSetId/pages`는 시험지와 같은 학생별 단기 서명 이미지 정책을 적용합니다. 풀이 결과는 정답 값이 아니라 `correct|incorrect`와 문항·계열 중립 ID만 반복 이력에 기록합니다.
+학생 요청 본문은 `{ mode }`만 허용합니다. `learnerId`, 후보 문항, 이전 풀이 이력은 요청에서 받지 않습니다. 학습자 ID와 후보는 로그인 세션·서버 비공개 레지스트리에서 결정하며, 검수된 시도 저장소가 연결되기 전에는 서버가 빈 이력으로만 첫 계획을 만듭니다. 학생에게 해당 프로그램의 공개 완료된 시험별 승인이 하나도 없으면 계획을 만들지 않습니다. 같은 학생·과정·계획일·정책·선택 문항 조합은 같은 중립 `practiceSetId`를 사용하며, 저장 충돌을 덮어쓰지 않습니다.
+
+계획 결과가 완전하더라도 `releaseStatus=approval_required`이며, 관리자가 해당 `practiceSetId`를 승인하기 전에는 페이지 API가 응답하지 않습니다. `POST /practice-sets/:practiceSetId/approve`는 관리자 세션, 동일 출처 `Origin`, `X-Highselect-Admin: 1`, JSON 본문 `{ decisionVersion }`을 요구합니다. 승인 직전에 학생의 현재 프로그램 권한과 비공개 문항 레지스트리로 계획을 다시 계산해 정확히 일치할 때만 `released`로 바꿉니다.
+
+`GET /practice-sets/:practiceSetId/pages`는 시험지와 같은 학생별 단기 서명 이미지 정책을 적용합니다. 승인된 렌더 자산이 연결되지 않은 계획은 승인 상태와 무관하게 잠금을 유지합니다. `POST /practice-sets/:practiceSetId/attempts`도 서버의 검수된 채점 구성이 연결되기 전에는 잠금을 유지하며, 이후 풀이 결과는 정답 값이 아니라 `correct|incorrect`와 문항·계열 중립 ID만 반복 이력에 기록합니다.

@@ -16,6 +16,11 @@ const reviewSecurity = require("../shared/review-security.js");
 const releaseGate = require("../shared/sh-r01-release-gate.js");
 const reviewInventory = require("../data/review-only/sh-r01-inventory.js").inventory;
 const selectionTracks = require("../data/selection-tracks.js");
+const questionBankCore = require("../data/question-bank-core.js");
+const practiceCore = require("../data/practice-bank-core.js");
+const practicePlanner = require("../shared/practice-set-planner.js");
+const practiceRegistryModule = require("./practice-registry.js");
+const practiceStoreModule = require("./practice-store.js");
 
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -241,6 +246,14 @@ function createApp(options) {
   const scorer = opts.scorer || privateScorer.createAdapter({ data: opts.privateScorer, scorerPath: opts.privateScorerPath });
   const store = opts.store || createStore({ filePath: opts.attemptStorePath });
   const reviewStore = opts.reviewStore || reviewStoreModule.createStore({ data: opts.privateReviews, filePath: opts.privateReviewPath });
+  const loadPracticeMode = opts.loadPracticeMode || practiceRegistryModule.createLoader({
+    data: opts.privatePracticeRegistry,
+    filePath: opts.privatePracticeRegistryPath
+  });
+  const practiceStore = opts.practiceStore || practiceStoreModule.createStore({
+    data: opts.privatePracticeStore,
+    filePath: opts.privatePracticeStorePath
+  });
   const staticRoot = path.resolve(opts.staticRoot || path.join(__dirname, ".."));
   const configuredOrigin = String(opts.publicOrigin || process.env.HIGHSELECT_PUBLIC_ORIGIN || "").trim();
   const dummyApprovalHash = security.hashApprovalCode("INVALID-APPROVAL-CODE", Buffer.alloc(16, 0).toString("base64url"));
@@ -281,6 +294,51 @@ function createApp(options) {
       }
     }
     throw new HttpError(409, "시험 검수 상태가 동시에 변경되었습니다. 새로고침 후 다시 시도해 주세요.");
+  }
+
+  function requirePracticeInfrastructure() {
+    if (!loadPracticeMode || !practiceStore) throw new HttpError(503, "비공개 반복연습 저장소가 연결되지 않았습니다.");
+  }
+
+  function requireStudentPracticeMode(context, mode) {
+    if (context.user.role !== "student") throw new HttpError(403, "학생 계정에서만 반복연습을 계획할 수 있습니다.");
+    const allowed = context.user.grants.some(function (examId) {
+      const exam = contracts.getExamContract(examId);
+      const privateExam = context.config.exams[examId];
+      return exam && exam.programCode === mode && privateExam && privateConfig.isReleased(privateExam);
+    });
+    if (!allowed) throw new HttpError(403, "이 과정의 반복연습 승인이 필요합니다.");
+  }
+
+  function practiceLearnerId(studentId, mode) {
+    const subject = security.opaqueSubject(studentId, sessionSecret);
+    return questionBankCore.createNeutralId("learner", mode, `student:${subject}`);
+  }
+
+  function practicePlanTime() {
+    return `${new Date(now()).toISOString().slice(0, 10)}T00:00:00.000Z`;
+  }
+
+  function readPracticeSet(practiceSetId) {
+    requirePracticeInfrastructure();
+    const state = practiceStore.read(practiceSetId);
+    if (!state) throw new HttpError(404, "반복연습 계획을 찾을 수 없습니다.");
+    return state;
+  }
+
+  function persistPracticeSet(practiceSetId, mutate) {
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const current = readPracticeSet(practiceSetId);
+      try {
+        const saved = practiceStore.update(practiceSetId, current.revision, mutate);
+        if (!saved) throw new HttpError(404, "반복연습 계획을 찾을 수 없습니다.");
+        return saved.record;
+      } catch (error) {
+        if (error && (error.code === "PRACTICE_BUSY" || error.code === "PRACTICE_CONFLICT")) continue;
+        throw error;
+      }
+    }
+    throw new HttpError(409, "반복연습 계획이 동시에 변경되었습니다. 새로고침 후 다시 시도해 주세요.");
   }
 
   async function api(request, response, pathname, url) {
@@ -340,6 +398,139 @@ function createApp(options) {
         issuedAt: new Date(issuedAtMs).toISOString()
       }, { "Set-Cookie": security.sessionCookie(token, { name: cookieName, secure: cookieSecure, maxAgeSeconds: sessionSeconds }) });
       return true;
+    }
+
+    if (request.method === "POST" && pathname === "/practice-sets/plan") {
+      requirePracticeInfrastructure();
+      const context = currentUser(request, loadConfig, sessionSecret, cookieName, now);
+      const body = await readJson(request, 16 * 1024);
+      exactKeys(body, new Set(["mode"]), "반복연습 계획");
+      const mode = String(body.mode == null ? "" : body.mode).trim().toUpperCase();
+      if (!questionBankCore.PROGRAM_MODES.includes(mode)) throw new HttpError(400, "반복연습 과정 코드가 올바르지 않습니다.");
+      requireStudentPracticeMode(context, mode);
+      const registry = loadPracticeMode(mode);
+      if (!registry) throw new HttpError(423, "이 과정의 검수된 반복연습 문항이 아직 준비되지 않았습니다.");
+      const learnerId = practiceLearnerId(context.user.studentId, mode);
+      let plan;
+      try {
+        plan = practicePlanner.buildPracticeSetPlan({
+          mode,
+          learnerId,
+          policy: registry.policy,
+          candidates: registry.candidates,
+          history: [],
+          asOf: practicePlanTime()
+        });
+        practiceCore.assertPracticeMetadataOnly(plan);
+      } catch (_) {
+        throw new HttpError(503, "검수된 반복연습 문항 구성을 확인해 주세요.");
+      }
+      let stored;
+      try {
+        stored = practiceStore.put({ practiceSetId: plan.id, studentId: context.user.studentId, plan, approval: null }).record;
+      } catch (error) {
+        if (error && (error.code === "PRACTICE_BUSY" || error.code === "PRACTICE_CONFLICT")) {
+          throw new HttpError(409, "반복연습 계획이 동시에 변경되었습니다. 다시 시도해 주세요.");
+        }
+        throw error;
+      }
+      sendJson(response, 201, stored.plan);
+      return true;
+    }
+
+    const practiceApproveMatch = pathname.match(/^\/practice-sets\/([^/]+)\/approve$/);
+    if (request.method === "POST" && practiceApproveMatch) {
+      requirePracticeInfrastructure();
+      const context = requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      requireAdminMutation(request, true, configuredOrigin);
+      const practiceSetId = decodeURIComponent(practiceApproveMatch[1]);
+      const body = await readJson(request, 16 * 1024);
+      exactKeys(body, new Set(["decisionVersion"]), "반복연습 승인");
+      const decisionVersion = Number(body.decisionVersion);
+      if (!Number.isSafeInteger(decisionVersion) || decisionVersion < 1) throw new HttpError(400, "반복연습 승인 버전이 올바르지 않습니다.");
+      const current = readPracticeSet(practiceSetId).record;
+      if (current.plan.learnerId !== practiceLearnerId(current.studentId, current.plan.mode)) {
+        throw new HttpError(409, "반복연습 계획의 학생 결속 정보를 확인할 수 없습니다.");
+      }
+      const owner = context.config.students.find(function (student) { return student.studentId === current.studentId; });
+      const ownerStillAuthorized = owner && owner.role === "student" && !privateConfig.isStudentExpired(owner, now()) && owner.grants.some(function (examId) {
+        const exam = contracts.getExamContract(examId);
+        const privateExam = context.config.exams[examId];
+        return exam && exam.programCode === current.plan.mode && privateExam && privateConfig.isReleased(privateExam);
+      });
+      if (!ownerStillAuthorized) throw new HttpError(409, "학생의 현재 과정 승인을 확인할 수 없습니다.");
+      if (current.plan.releaseStatus === "blocked") throw new HttpError(423, "차단된 반복연습 계획은 승인할 수 없습니다.");
+      if (current.plan.releaseStatus === "released") {
+        if (!current.approval || current.approval.decisionVersion !== decisionVersion) throw new HttpError(409, "이미 다른 승인 버전으로 확정된 반복연습 계획입니다.");
+        sendJson(response, 200, current.plan);
+        return true;
+      }
+      const registry = loadPracticeMode(current.plan.mode);
+      if (!registry) throw new HttpError(423, "이 과정의 검수된 반복연습 문항이 더 이상 준비되어 있지 않습니다.");
+      let rebuilt;
+      try {
+        rebuilt = practicePlanner.buildPracticeSetPlan({
+          mode: current.plan.mode,
+          learnerId: current.plan.learnerId,
+          policy: registry.policy,
+          candidates: registry.candidates,
+          history: [],
+          asOf: current.plan.plannedAt
+        });
+      } catch (_) {
+        throw new HttpError(503, "검수된 반복연습 문항 구성을 확인해 주세요.");
+      }
+      if (JSON.stringify(rebuilt) !== JSON.stringify(current.plan)) throw new HttpError(409, "반복연습 문항 구성이 계획 이후 변경되어 다시 계획해야 합니다.");
+      const approvalId = questionBankCore.createNeutralId("approval", current.plan.mode, `practice:${practiceSetId}:${decisionVersion}`);
+      let released;
+      try {
+        released = practicePlanner.releasePracticeSet(current.plan, {
+          id: approvalId,
+          practiceSetId,
+          status: "approved",
+          decisionVersion
+        });
+      } catch (_) {
+        throw new HttpError(409, "반복연습 계획의 승인 조건이 일치하지 않습니다.");
+      }
+      const saved = persistPracticeSet(practiceSetId, function (record) {
+        if (record.plan.releaseStatus !== "approval_required") return record;
+        return {
+          practiceSetId: record.practiceSetId,
+          studentId: record.studentId,
+          plan: released,
+          approval: {
+            approvalId,
+            decisionVersion,
+            approvedAt: new Date(now()).toISOString(),
+            approvedBy: context.user.studentId
+          }
+        };
+      });
+      if (saved.plan.releaseStatus !== "released" || !saved.approval || saved.approval.decisionVersion !== decisionVersion) {
+        throw new HttpError(409, "반복연습 계획의 승인 상태가 변경되었습니다.");
+      }
+      sendJson(response, 200, saved.plan);
+      return true;
+    }
+
+    const practiceDeliveryMatch = pathname.match(/^\/practice-sets\/([^/]+)\/(pages|attempts)$/);
+    if (practiceDeliveryMatch) {
+      const context = currentUser(request, loadConfig, sessionSecret, cookieName, now);
+      const practiceSetId = decodeURIComponent(practiceDeliveryMatch[1]);
+      const action = practiceDeliveryMatch[2];
+      const record = readPracticeSet(practiceSetId).record;
+      if (context.user.role !== "student" || record.studentId !== context.user.studentId) throw new HttpError(404, "반복연습 계획을 찾을 수 없습니다.");
+      if (record.plan.learnerId !== practiceLearnerId(record.studentId, record.plan.mode)) throw new HttpError(409, "반복연습 계획의 학생 결속 정보를 확인할 수 없습니다.");
+      requireStudentPracticeMode(context, record.plan.mode);
+      if (record.plan.releaseStatus !== "released" || !record.approval) throw new HttpError(423, "관리자 승인이 끝난 반복연습 계획만 열 수 있습니다.");
+      if (action === "pages" && request.method === "GET") {
+        throw new HttpError(423, "검수된 반복연습 페이지 자산이 아직 연결되지 않았습니다.");
+      }
+      if (action === "attempts" && request.method === "POST") {
+        throw new HttpError(423, "검수된 반복연습 채점 구성이 아직 연결되지 않았습니다.");
+      }
+      throw new HttpError(405, "허용되지 않은 요청입니다.");
     }
 
     if (pathname === "/admin/access-grants" || pathname.startsWith("/admin/access-grants/")) {

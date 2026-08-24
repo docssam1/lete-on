@@ -11,6 +11,10 @@
 - `GET /exams/:examId/response-schema`
 - `POST /exams/:examId/attempts`
 - `GET /attempts/:attemptId/report`
+- `POST /practice-sets/plan`
+- `POST /practice-sets/:practiceSetId/approve`
+- `GET /practice-sets/:practiceSetId/pages` (승인 렌더 자산 연결 전 잠금)
+- `POST /practice-sets/:practiceSetId/attempts` (검수 채점기 연결 전 잠금)
 - `GET /page-assets/:examId/page-NN.png?sub=...&exp=...&sig=...`
 - `GET /admin/access-grants`
 - `POST /admin/access-grants`
@@ -33,6 +37,8 @@
 | `HIGHSELECT_PRIVATE_CONFIG_PATH` | 공개 저장소 밖의 학생·시험 승인 설정 JSON 절대경로 |
 | `HIGHSELECT_PRIVATE_SCORER_PATH` | 공개 저장소 밖의 답안·분류·채점 JSON 절대경로 |
 | `HIGHSELECT_PRIVATE_REVIEW_PATH` | 공개 저장소 밖의 문항 검수 상태·보호 근거 이미지 연결 JSON 절대경로 |
+| `HIGHSELECT_PRIVATE_PRACTICE_REGISTRY_PATH` | 공개 저장소 밖의 반복연습 정책·검수 완료 후보 메타데이터 JSON 절대경로 |
+| `HIGHSELECT_PRIVATE_PRACTICE_PATH` | 반복연습 계획·관리자 승인 상태 JSON 절대경로 |
 | `HIGHSELECT_ATTEMPT_STORE_PATH` | 제출 결과 저장 JSON 절대경로 |
 | `HIGHSELECT_PUBLIC_ORIGIN` | `https://` 운영 출처. 생략 시 프록시 Host를 HTTPS로 사용 |
 
@@ -99,6 +105,12 @@ detailType, difficulty(lowered|standard|raised), evidence[]
 
 문항 결정과 회차 최종 확인 변경 요청은 관리자 세션, 현재 운영 출처와 같은 `Origin`, `X-Highselect-Admin: 1`, JSON 형식을 모두 요구합니다. 저장은 버전 확인·같은 디렉터리 잠금·임시 파일 flush·원자 교체를 거칩니다. 최종 확인 API는 회차 확인만 기록하며 공개 설정의 `releaseStatus`나 `finalRoundConfirmation`을 자동 변경하지 않습니다. 사용자의 실제 회차 확인 뒤 별도 배포 검증과 명시적 운영 승격이 필요합니다.
 
+## 비공개 반복연습 설정
+
+`HIGHSELECT_PRIVATE_PRACTICE_REGISTRY_PATH`는 `highselect-private-practice-registry/v1` JSON이며 프로그램 코드별 검수 정책과 문제 원문·정답·경로를 제외한 후보 메타데이터만 둡니다. `HIGHSELECT_PRIVATE_PRACTICE_PATH`는 `highselect-private-practice/v1` JSON이며 학생의 비공개 소유 ID, 중립 계획, 관리자 승인만 저장합니다. 두 파일은 공개 Git에 넣지 않습니다.
+
+학생은 공개 완료된 시험에 대한 현재 개별 승인이 있는 프로그램만 계획할 수 있습니다. 관리자는 승인 직전에 학생 권한, HMAC 기반 학습자 결속, 현재 레지스트리로 재생성한 계획을 모두 대조합니다. 계획 파일의 학생 ID나 문항 구성이 바뀌면 공개하지 않고 `409`로 닫습니다. 저장은 같은 디렉터리 잠금, revision 비교, 임시 파일 flush, 원자 교체를 사용합니다. 승인 렌더 자산과 비공개 채점기가 별도로 검수·연결되기 전에는 페이지와 시도 제출 경로가 `423`으로 잠겨 있습니다.
+
 ## 점수와 판정
 
 SH-R01은 공식 배점이 확인되지 않았으므로 문항당 1점, 40점 만점의 **운영 점수**만 계산합니다. 시험과 정확히 연결된 버전 커트라인이 승인되지 않은 동안 서버는 `cutlineDecision: null`을 반환하고 화면은 합격/불합격을 표시하지 않습니다.
@@ -114,7 +126,7 @@ docker build -f highschool-selection/server/Dockerfile -t highselect-server .
 통합 검증은 다음 파일에 있습니다.
 
 ```text
-node --test highschool-selection/tests/server-flow.test.cjs highschool-selection/tests/admin-access-grants.test.cjs highschool-selection/tests/admin-exam-reviews.test.cjs highschool-selection/tests/review-store.test.cjs
+node --test highschool-selection/tests/server-flow.test.cjs highschool-selection/tests/admin-access-grants.test.cjs highschool-selection/tests/admin-exam-reviews.test.cjs highschool-selection/tests/review-store.test.cjs highschool-selection/tests/practice-set-runtime.test.cjs highschool-selection/tests/practice-store.test.cjs
 ```
 
 검증 범위는 보안 쿠키, 시험별 승인, 8쪽 서명 이미지, 위변조 거부, 무답안 40문항 스키마, 제출·운영 채점·분석지, 미완료 release gate 차단, 관리자 문항 검수·회차 최종 확인, 보호 근거 이미지 서명, PDF 정적 노출 차단입니다.
